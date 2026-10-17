@@ -69,9 +69,10 @@ export default [
     },
   },
   {
-    // VOICE1: the voice service's NODE door needs node globals (process, Buffer) - a Worker that never runs in node does not
+    // VOICE1: the voice service's NODE door needs node globals (process, Buffer) - a Worker that never runs in node does not;
+    // VOICE-REVOKE: and the interval its sweep runs on (the Worker's is a cron)
     files: ['server-voice/src/node.js'],
-    languageOptions: { globals: { process: 'readonly', Buffer: 'readonly', clearTimeout: 'readonly' } },
+    languageOptions: { globals: { process: 'readonly', Buffer: 'readonly', clearTimeout: 'readonly', setInterval: 'readonly', clearInterval: 'readonly' } },
   },
   {
     // AUDIT 68 X2: tests, tools, scripts, the desktop shell and these

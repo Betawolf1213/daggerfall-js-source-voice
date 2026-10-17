@@ -1,13 +1,15 @@
 // VOICE-RELAY-DOOR (bible/11-Multiplayer/Voice-Arc.md, the relay's doors): THE VOICE SERVICE'S TWO QUESTIONS, asked of
 // real Rooms over their own fake storage (test/fakeRoom.mjs fakeRooms) through the hello a player runs through - a real
 // signed token, its subject (tokenSub) the account the door is asked about. The secret first, then the ask's shape, then the
-// object: the place's own or the layer the asker stands in; the hub's bus for the party, read as every hub reading is.
+// object: the place's own or the layer the asker stands in; the hub's bus for the party and the mute, read as every hub
+// reading is. A room that does not answer is `unavailable`, never a no (VOICE-REVOKE).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fakeRoom, fakeRooms } from '../fakeRoom.mjs';
 import { routeVoiceDoor, isVoiceDoor, ctEqualStrings, voicePresenceObject } from '../../server/src/voiceDoor.js';
 import { VOICE_PRESENCE_PATH, VOICE_PARTY_OF_PATH, VOICE_RELAY_SECRET_HEADER } from '../../src/net/voice/voiceWire.js';
 import { SOCIAL_ROOM, PARTY_OFFLINE_MS, layerName } from '../../src/net/wire.js';
+import { mintOrder } from '../../src/net/identityToken.js';
 
 const SECRET = 's3cret-voice';
 const ask = (path, body, { secret = SECRET, method = 'POST' } = {}) => new Request(`https://relay.test${path}`, {
@@ -66,14 +68,17 @@ test('VOICE-RELAY-DOOR presence: the room the client named, in the relay\'s own 
   assert.equal(world.made.size, before, 'no object stood for a refused shape');
 });
 
-test('VOICE-RELAY-DOOR a room that does not answer is a refusal, never an exception out of the Worker', async () => {
+test('VOICE-RELAY-DOOR a room that does not answer is `unavailable` (503) - never an exception out of the Worker, and never a "no" the voice service\'s sweep would drop every call on', async () => {
   const throwing = { idFromName: (n) => n, get: () => ({ fetch: async () => { throw Object.assign(new Error('reset'), { retryable: true }); } }) };
   const failing = { idFromName: (n) => n, get: () => ({ fetch: async () => new Response('{}', { status: 503 }) }) };
-  for (const ROOMS of [throwing, failing]) {
-    const env = { ROOMS, VOICE_RELAY_SECRET: SECRET };
-    assert.deepEqual(await door(env, VOICE_PRESENCE_PATH, { acct: 'acct-alice', room: 'world:12,34' }), { status: 200, body: { here: false } });
-    assert.deepEqual(await door(env, VOICE_PARTY_OF_PATH, { acct: 'acct-alice' }), { status: 200, body: { party: null } });
-  }
+  const warn = console.warn; console.warn = () => {};
+  try {
+    for (const ROOMS of [throwing, failing]) {
+      const env = { ROOMS, VOICE_RELAY_SECRET: SECRET };
+      assert.deepEqual(await door(env, VOICE_PRESENCE_PATH, { acct: 'acct-alice', room: 'world:12,34' }), { status: 503, body: { error: 'unavailable' } });
+      assert.deepEqual(await door(env, VOICE_PARTY_OF_PATH, { acct: 'acct-alice' }), { status: 503, body: { error: 'unavailable' } });
+    }
+  } finally { console.warn = warn; }
 });
 
 test('VOICE-RELAY-DOOR party-of: the hub\'s bus answers, as every hub reading does - a lapsed seat walked out, a stale pointer cleared', async () => {
@@ -92,4 +97,26 @@ test('VOICE-RELAY-DOOR party-of: the hub\'s bus answers, as every hub reading do
   assert.equal(await partyOf('acct-dave'), null, 'a party gone');
   assert.equal(hub.store.get('acct:acct-dave').party, null, 'and the record\'s pointer cleared, as _myParty clears it');
   assert.deepEqual([...world.made.keys()], [SOCIAL_ROOM], 'the bus alone was asked');
+});
+
+test('VOICE-REVOKE party-of says the mute too: off the account\'s sockets on the bus, which every mute order rewrites (the newest order over a token minted before it), else the bus\'s own order for an account with no socket', async () => {
+  const world = fakeRooms();
+  const env = { ROOMS: world.ROOMS, VOICE_RELAY_SECRET: SECRET };
+  const hub = world.room(SOCIAL_ROOM);
+  const nowS = Math.floor(Date.now() / 1000);
+  const standing = async (acct) => (await door(env, VOICE_PARTY_OF_PATH, { acct })).body;
+  await hub.hello(hub.connect(), 'erin', null, { tokenSub: 'acct-erin', mu: nowS + 600 });
+  await hub.hello(hub.connect(), 'erin2', null, { tokenSub: 'acct-erin' });
+  assert.deepEqual(await standing('acct-erin'), { party: null, mu: nowS + 600 }, 'the token\'s mute, the latest of its tabs');
+  assert.deepEqual(await standing('acct-carol'), { party: null, mu: 0 }, 'no socket, no order: no mute');
+  // a moderator's signed order, carried in: it rewrites a socket's mute, and the bus keeps it for an account away
+  const mod = hub.connect(); await hub.hello(mod, 'kestrel', null, { tokenSub: 'acct-kestrel' });
+  const kp = await hub.signer();
+  const order = (s, mu, i) => mintOrder({ s, mu }, kp.privateKey, { subtle: globalThis.crypto.subtle, nowS: i });
+  await hub.raw(mod, JSON.stringify({ t: 'mute', order: await order('acct-erin', 0, nowS) }));
+  assert.equal((await standing('acct-erin')).mu, 0, 'lifted: the order over the token');
+  const mod2 = hub.connect(); await hub.hello(mod2, 'merlin', null, { tokenSub: 'acct-merlin' });   // a carrier's own MUTE_HZ_MAX
+  await hub.raw(mod2, JSON.stringify({ t: 'mute', order: await order('acct-gone', nowS + 900, nowS) }));
+  assert.deepEqual(await standing('acct-gone'), { party: null, mu: nowS + 900 }, 'away, the order alone');
+  assert.deepEqual(await door(env, VOICE_PARTY_OF_PATH, { acct: 'a'.repeat(129) }), { status: 400, body: { error: 'bad ask' } });
 });

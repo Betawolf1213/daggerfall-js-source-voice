@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { mintToken, MAX_TTL_S, _b64url } from '../../src/net/identityToken.js';
 import { VOICE_V, VOICE_TOKEN_TTL_S, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceRoomName, VOICE_ROOM_MAX } from '../../src/net/voice/voiceWire.js';
-import { VOICE_PLACE_MS } from '../../src/net/voice/voiceProximity.js';
+import { VOICE_PLACE_MS, VOICE_PLACE_REFRESH_MS } from '../../src/net/voice/voiceProximity.js';
 import { authorizeVoice } from '../../server-voice/src/roomAuthorizer.js';
 import { ProximityPolicy, VOICE_PLACE_STALE_MS, VOICE_ROOM_IDLE_MS } from '../../server-voice/src/proximityPolicy.js';
 import { RoomSharder, VOICE_SHARD_IDLE_MS, shardRoomName } from '../../server-voice/src/roomSharder.js';
@@ -24,42 +24,51 @@ async function keys() {
   return { priv: kp.privateKey, pub: kp.publicKey, pubB64: _b64url.encode(raw) };
 }
 const who = (s, extra = {}) => ({ s, n: 'Bran', k: 'guest', ...extra });
-const env = (k, extra = {}) => ({ IDENTITY_PUBLIC_KEY: k.pubB64, LIVEKIT_URL: 'wss://voice.test', LIVEKIT_API_KEY: 'devkey', LIVEKIT_API_SECRET: 'devsecret_devsecret_devsecret_devsecret', presenceOf: () => true, ...extra });
+const env = (k, extra = {}) => ({ IDENTITY_PUBLIC_KEY: k.pubB64, LIVEKIT_URL: 'wss://voice.test', LIVEKIT_ADMIN_URL: 'https://sfu.test', LIVEKIT_API_KEY: 'devkey', LIVEKIT_API_SECRET: 'devsecret_devsecret_devsecret_devsecret', presenceOf: () => true, ...extra });
 const post = (path, body) => new Request(`https://voice.test${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-const io = (t = NOW_S * 1000) => ({ now: () => t, subtle, fetch: async () => { throw new Error('no network in this test'); } });
+/** The SFU's admin door answers (a mint makes its room first); nothing else is on the network. */
+const sfuOk = async (url) => { if (String(url).startsWith('https://sfu.test/twirp/')) return { ok: true, json: async () => ({}) }; throw new Error('no network in this test'); };
+const io = (t = NOW_S * 1000) => ({ now: () => t, subtle, fetch: sfuOk });
+const vx = (key, ly = 0) => voiceRoomName('proximity', key, ly, subtle);
 
 // ─── THE AUTHORIZER ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('VOICE1 authorizer: the identity is the token\'s verified subject; a bad signature, an expired token, a wrong room, a room not really stood in and a party not sat in are refused with the plan\'s status', async () => {
+test('VOICE1 authorizer: the identity is the token\'s verified subject; a bad signature, an expired token, a wrong room, a room not really stood in and a party not sat in are refused with the plan\'s status; the seat it is for rides the answer', async () => {
   const k = await keys(), other = await keys();
   const tok = await mintToken(who('peer_aaaa'), k.priv, { subtle, nowS: NOW_S });
-  const ok = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null, presenceOf: () => true });
-  assert.equal(ok.ok, true); assert.equal(ok.identity, 'peer_aaaa'); assert.equal(ok.name, 'Bran'); assert.equal(ok.room, voiceRoomName('proximity', 'cell:1.2')); assert.equal(ok.canPublish, true);
+  const ok = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true });
+  assert.equal(ok.ok, true); assert.equal(ok.identity, 'peer_aaaa'); assert.equal(ok.name, 'Bran'); assert.equal(ok.room, await vx('cell:1.2')); assert.equal(ok.canPublish, true);
+  assert.deepEqual(ok.seat, { c: 'x', k: 'cell:1.2', l: 0 }, 'what the credential is for - the sweep reads it back (revoker.js)');
   assert.equal(ok.ttl, VOICE_TOKEN_TTL_S, 'the credential\'s life, bounded by the token\'s');
   // a room the relay does not see this identity in is refused, same shape as a party not sat in
-  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null, presenceOf: () => false }), { ok: false, why: 'not-in-room', status: 403 });
-  // a caller that forgot to wire presenceOf at all refuses too - fail closed, never skip the check
-  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null }), { ok: false, why: 'not-in-room', status: 403 });
+  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => false }), { ok: false, why: 'not-in-room', status: 403 });
+  // a caller that forgot to wire presenceOf at all refuses too - fail closed, never skip the check - and so does a relay that did not answer
+  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S }), { ok: false, why: 'not-in-room', status: 403 });
+  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => null }), { ok: false, why: 'not-in-room', status: 403 });
   // signed by someone else
   const forged = await mintToken(who('peer_aaaa'), other.priv, { subtle, nowS: NOW_S });
-  assert.deepEqual(await authorizeVoice({ token: forged, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null, presenceOf: () => true }), { ok: false, why: 'bad-token:signature', status: 401 });
+  assert.deepEqual(await authorizeVoice({ token: forged, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true }), { ok: false, why: 'bad-token:signature', status: 401 });
   // expired
-  const old = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S + MAX_TTL_S + 60, partyOf: () => null, presenceOf: () => true });
+  const old = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S + MAX_TTL_S + 60, presenceOf: () => true });
   assert.equal(old.ok, false); assert.equal(old.status, 401); assert.match(old.why, /^bad-token:/);
   // a token near its end bounds the credential
-  const late = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S + MAX_TTL_S - 20, partyOf: () => null, presenceOf: () => true });
+  const late = await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S + MAX_TTL_S - 20, presenceOf: () => true });
   assert.equal(late.ok, true); assert.equal(late.ttl, 20);
   // no key: 503, never a guess
-  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: null, subtle, nowS: NOW_S, partyOf: () => null, presenceOf: () => true }), { ok: false, why: 'no-public-key', status: 503 });
+  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: null, subtle, nowS: NOW_S, presenceOf: () => true }), { ok: false, why: 'no-public-key', status: 503 });
   // a party: the hub's word, not the client's
   const partyAsk = { token: tok, channel: 'party', room: null, party: 'q1abc2def3' };
-  assert.deepEqual(await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null }), { ok: false, why: 'not-in-party', status: 403 });
-  assert.deepEqual(await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => 'q9other999' }), { ok: false, why: 'not-in-party', status: 403 });
-  const inParty = await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: async (acct) => (acct === 'peer_aaaa' ? 'q1abc2def3' : null) });
-  assert.equal(inParty.ok, true); assert.equal(inParty.room, 'vp_q1abc2def3');
-  // muted: may listen, not publish
+  assert.deepEqual(await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S }), { ok: false, why: 'not-in-party', status: 403 });
+  assert.deepEqual(await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, standingOf: () => null }), { ok: false, why: 'not-in-party', status: 403 }, 'the hub silent: refused');
+  assert.deepEqual(await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, standingOf: () => ({ party: 'q9other999', mu: 0 }) }), { ok: false, why: 'not-in-party', status: 403 });
+  const inParty = await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, standingOf: async (acct) => (acct === 'peer_aaaa' ? { party: 'q1abc2def3', mu: 0 } : null) });
+  assert.equal(inParty.ok, true); assert.equal(inParty.room, 'vp_q1abc2def3'); assert.deepEqual(inParty.seat, { c: 'p', k: 'q1abc2def3', l: 0 });
+  // muted: may listen, not publish - muted by the token, or by the hub (an order heard after the token was minted)
   const muted = await mintToken(who('peer_aaaa', { mu: NOW_S + 600 }), k.priv, { subtle, nowS: NOW_S });
-  assert.equal((await authorizeVoice({ token: muted, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, partyOf: () => null, presenceOf: () => true })).canPublish, false);
+  assert.equal((await authorizeVoice({ token: muted, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true })).canPublish, false);
+  const hubMuted = async (mu) => (await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true, standingOf: () => ({ party: null, mu }) })).canPublish;
+  assert.deepEqual([await hubMuted(NOW_S + 1), await hubMuted(NOW_S), await hubMuted(0)], [false, true, true], 'the hub\'s mute, until its second');
+  assert.equal((await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, standingOf: () => ({ party: 'q1abc2def3', mu: NOW_S + 600 }) })).canPublish, false, 'a party seat muted alike');
 });
 
 // ─── THE PROXIMITY POLICY ───────────────────────────────────────────────────────────────────────────────────────────
@@ -68,6 +77,7 @@ test('VOICE1 policy: hearing is MUTUAL and FRESH - a listener hears a publisher 
   const clock = { t: 0 };
   const p = new ProximityPolicy({ now: () => clock.t });
   assert.equal(VOICE_PLACE_STALE_MS, 6 * VOICE_PLACE_MS);
+  assert.ok(VOICE_PLACE_REFRESH_MS < VOICE_PLACE_STALE_MS, 'VOICE-HEAR: a still client says its word again inside the window, or a pair that never moved goes deaf');
   p.place('r', 'a', ['b', 'c', 'a']);   // a names itself: ignored
   assert.deepEqual(p.allowFor('r', 'a'), [], 'nobody named a back yet');
   p.place('r', 'b', ['a']);
@@ -153,7 +163,7 @@ test('VOICE1 sharder: assign() is O(1) per call regardless of room population - 
   assert.ok(bigAfterGrowth < small * 10 + 50, `assign() must not slow down with room population (small=${small.toFixed(1)}ms, bigAfterGrowth=${bigAfterGrowth.toFixed(1)}ms)`);
 });
 
-test('VOICE1 credential: an HS256 JWT LiveKit reads - issuer the key, subject the identity, one room, the microphone alone, no data, no metadata writes; a muted holder may not publish', async () => {
+test('VOICE1 credential: an HS256 JWT LiveKit reads - issuer the key, subject the identity, one room, the microphone alone, no data, no metadata writes; a muted holder may not publish; the seat in its metadata; the sweep\'s list bearer admins no room', async () => {
   const tok = await mintLiveKitToken({ apiKey: 'devkey', apiSecret: 'secret', identity: 'peer_aaaa', name: 'Bran', room: 'vx_cell_1', ttlS: 120, nowS: NOW_S }, subtle);
   const [h, , sig] = tok.split('.');
   assert.deepEqual(JSON.parse(Buffer.from(h, 'base64url').toString()), { alg: 'HS256', typ: 'JWT' });
@@ -169,6 +179,9 @@ test('VOICE1 credential: an HS256 JWT LiveKit reads - issuer the key, subject th
   assert.equal(quiet.video.canPublish, false); assert.deepEqual(quiet.video.canPublishSources, []);
   const admin = readJwtClaims(await mintLiveKitAdminToken({ apiKey: 'k', apiSecret: 's', room: 'r', nowS: NOW_S }, subtle));
   assert.deepEqual(admin.video, { room: 'r', roomAdmin: true, roomCreate: true }); assert.equal(admin.exp, NOW_S + 60);
+  assert.deepEqual(readJwtClaims(await mintLiveKitAdminToken({ apiKey: 'k', apiSecret: 's', nowS: NOW_S }, subtle)).video, { roomList: true });
+  assert.equal(c.metadata, undefined, 'no seat named, none carried');
+  assert.equal(readJwtClaims(await mintLiveKitToken({ apiKey: 'k', apiSecret: 's', identity: 'x', room: 'r', ttlS: 1, nowS: NOW_S, metadata: '{"c":"p"}' }, subtle)).metadata, '{"c":"p"}');
   await assert.rejects(() => mintLiveKitToken({ apiKey: '', apiSecret: 's', identity: 'x', room: 'r', ttlS: 1, nowS: NOW_S }, subtle), TypeError);
   await assert.rejects(() => mintLiveKitToken({ apiKey: 'k', apiSecret: 's', identity: 'x', room: 'r', ttlS: 1.5, nowS: NOW_S }, subtle), TypeError);
   assert.equal(readJwtClaims('garbage'), null);
@@ -192,8 +205,9 @@ test('VOICE1 doors: /health; the token door mints for a verified holder and refu
   const res = await handle(post('/v1/voice/token', { token: tok, room: 'cell:1.2', channel: 'proximity' }), e, io());
   assert.equal(res.status, 200); assert.equal(res.headers.get('cache-control'), 'no-store');
   const a = await res.json();
-  assert.equal(a.ok, true); assert.equal(a.v, VOICE_V); assert.equal(a.url, 'wss://voice.test'); assert.equal(a.identity, 'peer_aaaa'); assert.equal(a.room, 'vx_cell_1_2'); assert.equal(a.ttl, VOICE_TOKEN_TTL_S); assert.equal(a.canPublish, true);
-  const c = readJwtClaims(a.token); assert.equal(c.sub, 'peer_aaaa'); assert.equal(c.video.room, 'vx_cell_1_2'); assert.equal(c.iss, 'devkey');
+  assert.equal(a.ok, true); assert.equal(a.v, VOICE_V); assert.equal(a.url, 'wss://voice.test'); assert.equal(a.identity, 'peer_aaaa'); assert.equal(a.room, await vx('cell:1.2')); assert.equal(a.ttl, VOICE_TOKEN_TTL_S); assert.equal(a.canPublish, true);
+  const c = readJwtClaims(a.token); assert.equal(c.sub, 'peer_aaaa'); assert.equal(c.video.room, await vx('cell:1.2')); assert.equal(c.iss, 'devkey');
+  assert.deepEqual(JSON.parse(c.metadata), { c: 'x', k: 'cell:1.2', l: 0 }, 'VOICE-REVOKE: the seat rides the credential');
   // an impersonation: a body naming another id changes nothing - the subject is the token's
   const imp = await (await handle(post('/v1/voice/token', { token: tok, room: 'cell:1.2', channel: 'proximity', playerId: 'peer_zzzz', identity: 'peer_zzzz' }), e, io())).json();
   assert.equal(imp.identity, 'peer_aaaa');
@@ -206,9 +220,10 @@ test('VOICE1 doors: /health; the token door mints for a verified holder and refu
   // the party
   assert.equal((await handle(post('/v1/voice/token', { token: tok, channel: 'party', party: 'q9other999' }), e, io())).status, 403);
   const pa = await (await handle(post('/v1/voice/token', { token: tok, channel: 'party', party: 'q1abc2def3' }), e, io())).json();
-  assert.equal(pa.room, 'vp_q1abc2def3');
-  // no media server configured, no public key: 503 both
+  assert.equal(pa.room, 'vp_q1abc2def3'); assert.deepEqual(JSON.parse(readJwtClaims(pa.token).metadata), { c: 'p', k: 'q1abc2def3', l: 0 });
+  // no media server configured - or none whose seats it can take back (VOICE-REVOKE) - no public key: 503 all
   assert.equal((await handle(post('/v1/voice/token', { token: tok, room: 'cell:1', channel: 'proximity' }), { ...e, LIVEKIT_URL: '' }, io())).status, 503);
+  assert.deepEqual(await (await handle(post('/v1/voice/token', { token: tok, room: 'cell:1', channel: 'proximity' }), { ...e, LIVEKIT_ADMIN_URL: '' }, io())).json(), { ok: false, error: 'no-media-server' });
   _resetForTests();
   assert.equal((await handle(post('/v1/voice/token', { token: tok, room: 'cell:1', channel: 'proximity' }), { ...e, IDENTITY_PUBLIC_KEY: '' }, io())).status, 503);
   _resetForTests();
@@ -227,35 +242,51 @@ test('VOICE1 doors: /health; the token door mints for a verified holder and refu
   assert.equal((await handle(post('/v1/voice/place', { token: forged, room: 'cell:1.2', near: [] }), e, io())).status, 401);
 });
 
-test('VOICE-RELAY-DOOR the service asks the relay itself: the room and the layer the client named, behind the shared secret; the answer kept PRESENCE_CACHE_MS per layer; the relay\'s no, or no relay at all, refuses', async () => {
+test('VOICE-RELAY-DOOR the service asks the relay itself: the room and the layer the client named, behind the shared secret, and the hub\'s word on the mute; the answer kept PRESENCE_CACHE_MS per layer; the relay\'s no, its silence, or no relay at all, refuses', async () => {
   _resetForTests();
   const k = await keys();
   const asked = [];
-  let here = true;
+  let here = true, up = true;
   const fetchImpl = async (url, init) => {
+    if (String(url).startsWith('https://sfu.test/')) return sfuOk(url);
     asked.push([url, init.headers['x-voice-relay-secret'], JSON.parse(init.body)]);
-    return { ok: true, json: async () => ({ here }) };
+    if (!up) return { ok: false, status: 503, json: async () => ({ error: 'unavailable' }) };
+    return { ok: true, json: async () => (url.endsWith('/party-of') ? { party: null, mu: 0 } : { here }) };
   };
+  const presenceAsks = () => asked.filter(([u]) => u.endsWith('/presence'));
   const e = env(k, { presenceOf: undefined, RELAY_URL: 'https://relay.test/', VOICE_RELAY_SECRET: 's3cret' });
   const tok = await mintToken(who('peer_aaaa'), k.priv, { subtle, nowS: NOW_S });
   const mint = async (body, t = NOW_S * 1000) => handle(post('/v1/voice/token', { token: tok, channel: 'proximity', ...body }), e, { ...io(t), fetch: fetchImpl });
   const res = await mint({ room: 'world:12,34', ly: 2 });
   assert.equal(res.status, 200);
-  assert.equal((await res.json()).room, 'vx_world_12_34_l2', 'the layer\'s own voice room');
-  assert.deepEqual(asked, [['https://relay.test/internal/voice/presence', 's3cret', { acct: 'peer_aaaa', room: 'world:12,34', ly: 2 }]]);
+  const layered = await res.json();
+  assert.equal(layered.room, await vx('world:12,34', 2), 'the layer\'s own voice room');
+  assert.deepEqual(JSON.parse(readJwtClaims(layered.token).metadata), { c: 'x', k: 'world:12,34', l: 2 }, 'the seat names its layer - the one the sweep asks after');
+  assert.deepEqual(asked, [
+    ['https://relay.test/internal/voice/party-of', 's3cret', { acct: 'peer_aaaa' }],
+    ['https://relay.test/internal/voice/presence', 's3cret', { acct: 'peer_aaaa', room: 'world:12,34', ly: 2 }],
+  ], 'the hub\'s standing (the mute a proximity seat obeys too), then the room');
   await mint({ room: 'world:12,34', ly: 2 }, NOW_S * 1000 + 4000);
-  assert.equal(asked.length, 1, 'kept inside the cache\'s life');
+  assert.equal(asked.length, 2, 'kept inside the cache\'s life');
   await mint({ room: 'world:12,34' }, NOW_S * 1000 + 4000);
   assert.deepEqual(asked.at(-1)[2], { acct: 'peer_aaaa', room: 'world:12,34', ly: 0 }, 'another layer is another question');
   here = false;
   const no = await mint({ room: 'world:56,78' });
   assert.equal(no.status, 403); assert.equal((await no.json()).error, 'not-in-room');
+  // the relay silent (its door's `unavailable`): refused - and never kept, so the next ask asks again
+  here = true; up = false;
+  const silent = await mint({ room: 'world:9,9' }, NOW_S * 1000 + 10_000);
+  assert.equal(silent.status, 403);
+  up = true;
+  const n = presenceAsks().length;
+  assert.equal((await mint({ room: 'world:9,9' }, NOW_S * 1000 + 10_001)).status, 200, 'the relay back: admitted');
+  assert.equal(presenceAsks().length, n + 1, 'the silence was not cached as an answer');
   _resetForTests();
   const none = await handle(post('/v1/voice/token', { token: tok, channel: 'proximity', room: 'world:12,34' }), env(k, { presenceOf: undefined }), { ...io(), fetch: fetchImpl });
   assert.equal(none.status, 403, 'no relay configured: fail closed');
 });
 
-test('VOICE1 doors: a token mint creates the SFU room first when an admin door is set - auto_create:false would else refuse the first join', async () => {
+test('VOICE1 doors: a token mint creates the SFU room first - auto_create:false would else refuse the first join - and with no admin door mints nothing (VOICE-REVOKE: a seat it could not take back)', async () => {
   _resetForTests();
   const k = await keys();
   const calls = [];
@@ -263,11 +294,11 @@ test('VOICE1 doors: a token mint creates the SFU room first when an admin door i
   const e = env(k, { LIVEKIT_ADMIN_URL: 'https://sfu.test' });
   const tok = await mintToken(who('peer_aaaa'), k.priv, { subtle, nowS: NOW_S });
   await handle(post('/v1/voice/token', { token: tok, room: 'cell:1.2', channel: 'proximity' }), e, { ...io(), fetch: fetchImpl });
-  assert.deepEqual(calls[0], ['/twirp/livekit.RoomService/CreateRoom', { name: 'vx_cell_1_2', empty_timeout: 300, max_participants: 16 }]);
-  // no admin door: no call, and the mint still succeeds (the SFU's own auto_create is then the only net)
+  assert.deepEqual(calls[0], ['/twirp/livekit.RoomService/CreateRoom', { name: await vx('cell:1.2'), empty_timeout: 300, max_participants: 16 }]);
   _resetForTests();
-  const res = await handle(post('/v1/voice/token', { token: tok, room: 'cell:1.2', channel: 'proximity' }), env(k), io());
-  assert.equal(res.status, 200);
+  calls.length = 0;
+  const res = await handle(post('/v1/voice/token', { token: tok, room: 'cell:1.2', channel: 'proximity' }), env(k, { LIVEKIT_ADMIN_URL: undefined }), { ...io(), fetch: fetchImpl });
+  assert.equal(res.status, 503); assert.deepEqual(calls, []);
 });
 
 test('VOICE1 rates: VOICE_MINT_PER_MIN mints a minute an identity, VOICE_PLACE_HZ_MAX place frames a second, each 429 past it and open again when the window turns', async () => {
@@ -296,13 +327,14 @@ test('VOICE1 doors: a room past VOICE_ROOM_MAX overflows to a second SFU room, n
   };
   const answers = [];
   for (let i = 0; i < VOICE_ROOM_MAX; i++) answers.push(await mint(`peer_${String(i).padStart(4, '0')}`));
-  for (const a of answers) assert.equal(a.room, 'vx_cell_1_2', 'the first VOICE_ROOM_MAX seats fill the base room');
+  const base = await vx('cell:1.2');
+  for (const a of answers) assert.equal(a.room, base, 'the first VOICE_ROOM_MAX seats fill the base room');
   const overflow = await mint('peer_over1');
-  assert.equal(overflow.room, 'vx_cell_1_2_s1', 'the 17th joiner is NOT refused - a second physical room opens');
+  assert.equal(overflow.room, `${base}_s1`, 'the 17th joiner is NOT refused - a second physical room opens');
   assert.notEqual(overflow.room, answers[0].room, 'a different shard is a different SFU room the client actually joins');
   // sticky: minting again for an already-seated identity returns it to the SAME shard, not a re-roll
   const again = await mint('peer_0000');
-  assert.equal(again.room, 'vx_cell_1_2', 'an already-seated identity stays in its shard on reconnect');
+  assert.equal(again.room, base, 'an already-seated identity stays in its shard on reconnect');
   // the place door keys its mutual-hearing policy off the PHYSICAL room: an overflow peer and a base-room peer,
   // though sharing the same game room key, sit in different SFU rooms and must not be told they can hear each other
   const tokA = await mintToken(who('peer_0000'), k.priv, { subtle, nowS: NOW_S });
@@ -312,8 +344,8 @@ test('VOICE1 doors: a room past VOICE_ROOM_MAX overflows to a second SFU room, n
   assert.deepEqual(overSide.allow, [], 'different shards never become mutually audible even if both name each other');
   // the sharder itself agrees: each identity's seat is in the shard its token actually named
   const sh = _peekSharderForTests();
-  assert.equal(sh.shardOf('vx_cell_1_2', 'peer_0000'), 0);
-  assert.equal(sh.shardOf('vx_cell_1_2', 'peer_over1'), 1);
+  assert.equal(sh.shardOf(base, 'peer_0000'), 0);
+  assert.equal(sh.shardOf(base, 'peer_over1'), 1);
 });
 
 test('VOICE1 doors: a lost neighbour is told to the SFU through the admin door - GetParticipant for its tracks, UpdateSubscriptions off - and a dead admin door costs nothing', async () => {
@@ -332,8 +364,8 @@ test('VOICE1 doors: a lost neighbour is told to the SFU through the admin door -
   assert.deepEqual(calls, [], 'nothing lost yet: the SFU is not bothered');
   await run({ token: tok, room: 'cell:1', near: [] });
   assert.deepEqual(calls, [
-    ['/twirp/livekit.RoomService/GetParticipant', { room: 'vx_cell_1', identity: 'peer_bbbb' }, true],
-    ['/twirp/livekit.RoomService/UpdateSubscriptions', { room: 'vx_cell_1', identity: 'peer_aaaa', track_sids: ['TR_peer_bbbb'], subscribe: false }, true],
+    ['/twirp/livekit.RoomService/GetParticipant', { room: await vx('cell:1'), identity: 'peer_bbbb' }, true],
+    ['/twirp/livekit.RoomService/UpdateSubscriptions', { room: await vx('cell:1'), identity: 'peer_aaaa', track_sids: ['TR_peer_bbbb'], subscribe: false }, true],
   ]);
   // the admin door down: the answer still comes, the policy still holds
   const warn = console.warn; console.warn = () => {};
@@ -353,28 +385,34 @@ test('VOICE1 doors: the place door sweeps the per-isolate policy once an idle wi
   const tokAt = (nowS) => mintToken(who('peer_aaaa'), k.priv, { subtle, nowS });
   // a frames 'cell:1' once, then never again - its room entry sits idle from here on
   await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:1', near: [] }), e, ioClock());
-  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), true, 'the idle room is held, pre-sweep');
+  assert.equal(_peekPolicyForTests().rooms.has(await vx('cell:1')), true, 'the idle room is held, pre-sweep');
   // short of the idle window: a frame elsewhere must NOT yet have swept it away
   clock.t += VOICE_ROOM_IDLE_MS - 1;
   await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:2', near: [] }), e, ioClock());
-  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), true, 'not idle long enough to sweep yet');
+  assert.equal(_peekPolicyForTests().rooms.has(await vx('cell:1')), true, 'not idle long enough to sweep yet');
   // past the idle window: the next place frame (to ANY room) pays the sweep's rent and drops the idle one
   clock.t += 2;
   await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:2', near: [] }), e, ioClock());
-  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), false, 'the idle room was swept, not merely read as stale');
+  assert.equal(_peekPolicyForTests().rooms.has(await vx('cell:1')), false, 'the idle room was swept, not merely read as stale');
 });
 
 // ─── BY SOURCE ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('VOICE1 by source: the service is linted with the tree and holds no secret of its own; the Worker exports a fetch alone; the node door is the same handle', () => {
+test('VOICE1 by source: the service is linted with the tree and holds no secret of its own; the Worker exports a fetch and the sweep\'s cron; the node door is the same handle and sweeps on its own clock', () => {
   const lint = JSON.parse(rd('package.json')).scripts.lint;
   assert.ok(lint.includes('server-voice/src/'), 'npm run lint reaches the voice service');
   const idx = rd('server-voice/src/index.js');
-  assert.match(idx, /^export default \{ fetch:/m, 'a module Worker exports handlers');
+  assert.match(idx, /^export default \{\n  fetch: .*\n  scheduled: .*sweep\(env\)/m, 'a module Worker exports handlers: the doors, and the sweep each cron');
   assert.doesNotMatch(idx, /devsecret|API_SECRET\s*=\s*'/, 'no secret in the tree - the pair is env');
-  assert.match(rd('server-voice/src/node.js'), /import \{ handle \} from '\.\/index\.js'/);
-  for (const f of ['index.js', 'roomAuthorizer.js', 'proximityPolicy.js', 'livekitToken.js', 'node.js']) assert.ok(rd(`server-voice/src/${f}`).startsWith('// @ts-check'), `${f} opts in`);
-  assert.match(rd('server-voice/wrangler.toml'), /name = "daggerfall-voice"/);
+  const node = rd('server-voice/src/node.js');
+  assert.match(node, /import \{ handle, sweep \} from '\.\/index\.js'/);
+  assert.match(node, /setInterval\(\(\) => \{[^]*?sweep\(e\)[^]*?\}, VOICE_SWEEP_MS\)/, 'the node service sweeps every VOICE_SWEEP_MS');
+  assert.match(node, /close: \(\) => \{ clearInterval\(sweeper\);/, 'and stops with the server');
+  for (const f of ['index.js', 'roomAuthorizer.js', 'proximityPolicy.js', 'livekitToken.js', 'revoker.js', 'node.js']) assert.ok(rd(`server-voice/src/${f}`).startsWith('// @ts-check'), `${f} opts in`);
+  const toml = rd('server-voice/wrangler.toml');
+  assert.match(toml, /name = "daggerfall-voice"/);
+  assert.match(toml, /^\[triggers\]\ncrons = \["\* \* \* \* \*"\]$/m, 'the Worker sweeps each minute');
+  assert.match(toml, /^LIVEKIT_ADMIN_URL = "https:\/\//m, 'and has the SFU\'s admin door to sweep with');
   assert.match(rd('deploy/voice/livekit.yaml'), /auto_create: false/, 'a room is made by a credential, never by a name typed at the server');
   assert.match(rd('deploy/voice/compose.yaml'), /livekit\/livekit-server/);
 });

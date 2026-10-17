@@ -4,14 +4,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import {
-  VOICE_FULL_RANGE, VOICE_SILENT_RANGE, VOICE_RESUB_RANGE, VOICE_SUBS_MAX, VOICE_PLACE_MS,
+  VOICE_FULL_RANGE, VOICE_SILENT_RANGE, VOICE_RESUB_RANGE, VOICE_SUBS_MAX, VOICE_PLACE_MS, VOICE_PLACE_REFRESH_MS,
   voiceGainAt, feetDistance, panFor, proximitySet, subscriptionDiff,
 } from '../../../src/net/voice/voiceProximity.js';
 import { VoiceState, VOICE_STATUS } from '../../../src/net/voice/voiceState.js';
 import { VOICE_DEFAULTS, VOICE_PREF_KEY, projectVoiceSettings, loadVoiceSettings, saveVoiceSetting } from '../../../src/net/voice/voiceSettings.js';
 import { PREF_DEFAULTS, _resetForTests as resetPrefs } from '../../../src/systems/uiPrefs.js';
-import { VOICE_V, VOICE_CHANNELS, VOICE_TOKEN_TTL_S, VOICE_REMINT_AHEAD_S, voiceRoomName, validTokenAsk, validPlaceAsk, validTokenAnswer, voiceUrlOk, VOICE_PLACE_MAX, voiceRoomKeyOk, voiceLayerOf } from '../../../src/net/voice/voiceWire.js';
+import { VOICE_V, VOICE_CHANNELS, VOICE_TOKEN_TTL_S, VOICE_REMINT_AHEAD_S, voiceRoomName, validTokenAsk, validPlaceAsk, validTokenAnswer, validPlaceAnswer, voiceUrlOk, VOICE_PLACE_MAX, voiceRoomKeyOk, voiceLayerOf } from '../../../src/net/voice/voiceWire.js';
 import { VoiceSpatialAudio, VOICE_RAMP_S } from '../../../src/net/voice/voiceSpatialAudio.js';
 import { VoiceTransport, _setVoiceSdkForTests } from '../../../src/net/voice/voiceTransport.js';
 import { VoiceClient, VOICE_TEXT, VOICE_RETRY_MIN_MS, DEFAULT_VOICE_SERVICE } from '../../../src/net/voice/voiceClient.js';
@@ -19,6 +20,8 @@ import { CHAT_SAY_RANGE } from '../../../src/net/chat.js';
 import { DEFAULT_BINDINGS } from '../../../src/systems/inputActions.js';
 
 const rd = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
+/** A proximity room's SFU name, worked out here by node's own SHA-256 - not the module's. */
+const vx = (key, ly = 0) => `vx_${createHash('sha256').update(`proximity|${key}|${ly}`).digest('hex').slice(0, 32)}`;
 
 // ─── THE PROXIMITY LAW ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -134,14 +137,14 @@ test('VOICE1 settings: opt-in, push-to-talk, a free key, one pref row; the proje
 
 // ─── THE WIRE ───────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('VOICE1 wire: the room\'s name is derived, never taken; the asks are projected; the answer is refused unless whole', () => {
+test('VOICE1 wire: the room\'s name is derived, never taken; the asks are projected; the answers are refused unless whole', async () => {
   assert.equal(VOICE_V, 1); assert.deepEqual(VOICE_CHANNELS, ['proximity', 'party']);
   assert.ok(VOICE_TOKEN_TTL_S <= 300 && VOICE_REMINT_AHEAD_S < VOICE_TOKEN_TTL_S);
-  assert.equal(voiceRoomName('proximity', 'cell:12.34:5'), 'vx_cell_12_34_5');
-  assert.equal(voiceRoomName('party', 'q1abc2def3'), 'vp_q1abc2def3');
-  assert.equal(voiceRoomName('party', 'cell:1'), null, 'a party room needs a party id');
-  assert.equal(voiceRoomName('proximity', '../etc'), null);
-  assert.equal(voiceRoomName('guild', 'x'), null);
+  assert.equal(await voiceRoomName('proximity', 'cell:12.34:5'), vx('cell:12.34:5'));
+  assert.equal(await voiceRoomName('party', 'q1abc2def3'), 'vp_q1abc2def3');
+  assert.equal(await voiceRoomName('party', 'cell:1'), null, 'a party room needs a party id');
+  assert.equal(await voiceRoomName('proximity', '../etc'), null);
+  assert.equal(await voiceRoomName('guild', 'x'), null);
   const t = 'v1.abc.def';
   assert.deepEqual(validTokenAsk({ token: t, room: 'cell:1.2', channel: 'proximity' }), { token: t, channel: 'proximity', room: 'cell:1.2', party: null, ly: 0 });
   assert.equal(validTokenAsk({ token: t, room: 'cell:1.2', channel: 'proximity', party: 'q1abc2def3' }), null, 'a party on a proximity ask is a wrong shape');
@@ -157,16 +160,24 @@ test('VOICE1 wire: the room\'s name is derived, never taken; the asks are projec
   for (const bad of [{ ...good, v: 2 }, { ...good, ok: false }, { ...good, ttl: 0 }, { ...good, ttl: 4000 }, { ...good, url: 'http://x' }, { ...good, token: '' }]) assert.equal(validTokenAnswer(bad), null);
   assert.ok(voiceUrlOk('wss://a.b') && voiceUrlOk('ws://localhost:7880') && voiceUrlOk('ws://127.0.0.1:7880'));
   assert.ok(!voiceUrlOk('ws://evil.example') && !voiceUrlOk('https://a.b') && !voiceUrlOk('nope'));
+  // VOICE-HEAR: the place answer - who may hear my microphone - read whole or not at all
+  assert.deepEqual(validPlaceAnswer({ ok: true, v: 1, allow: ['peer_b', 'peer_a', 'peer_b'] }), ['peer_b', 'peer_a']);
+  assert.deepEqual(validPlaceAnswer({ ok: true, v: 1, allow: [] }), []);
+  assert.deepEqual(validPlaceAnswer({ ok: true, v: 1, allow: Array.from({ length: VOICE_PLACE_MAX }, (_, i) => `peer_${i}`) })?.length, VOICE_PLACE_MAX);
+  for (const bad of [null, 'allow', { ok: true, v: 2, allow: [] }, { ok: false, v: 1, allow: [] }, { ok: true, v: 1 }, { ok: true, v: 1, allow: 'peer_a' },
+    { ok: true, v: 1, allow: ['peer_a', 'x'] }, { ok: true, v: 1, allow: ['peer_a', 7] }, { ok: true, v: 1, allow: Array.from({ length: VOICE_PLACE_MAX + 1 }, (_, i) => `peer_${i}`) }]) {
+    assert.equal(validPlaceAnswer(bad), null, JSON.stringify(bad));
+  }
 });
 
-test('VOICE-RELAY-DOOR wire: a room is a key the relay routes (net/wire.js roomOf) - the open world\'s `world:<x>,<y>` first among them - and a crowded place\'s layer is its own voice room', () => {
+test('VOICE-RELAY-DOOR wire: a room is a key the relay routes (net/wire.js roomOf) - the open world\'s `world:<x>,<y>` first among them - and a crowded place\'s layer is its own voice room', async () => {
   // the keys online.js roomKeyFor mints, each admitted: the open world's cell (a comma - the shape the first wire refused),
   // a dungeon re-laid small, a building in its town, an instance
   for (const key of ['world:12,34', 'world:-3,-1', 'dungeon:m187853213.s', 'interior:m206728581.131590', 'dungeon:m187853213.i0123456789abcdef.89abcdef']) assert.equal(voiceRoomKeyOk(key), true, key);
   for (const key of ['../etc', 'world', 'World:1,2', 'world:1,2/x', `world:${'1'.repeat(75)}`, 12, null, undefined]) assert.equal(voiceRoomKeyOk(key), false, String(key));
-  assert.equal(voiceRoomName('proximity', 'world:12,34'), 'vx_world_12_34');
-  assert.equal(voiceRoomName('proximity', 'world:12,34', 2), 'vx_world_12_34_l2', 'a layer is its own crowd');
-  assert.equal(voiceRoomName('proximity', 'world:12,34', 8), null, 'past LAYERS_MAX');
+  assert.equal(await voiceRoomName('proximity', 'world:12,34'), vx('world:12,34'));
+  assert.equal(await voiceRoomName('proximity', 'world:12,34', 2), vx('world:12,34', 2), 'a layer is its own crowd');
+  assert.equal(await voiceRoomName('proximity', 'world:12,34', 8), null, 'past LAYERS_MAX');
   // the layer: absent is the place; an integer 0..7; anything else refuses the ask
   assert.deepEqual([undefined, 0, 1, 7].map(voiceLayerOf), [0, 0, 1, 7]);
   for (const bad of [8, -1, 1.5, '2', null, NaN]) assert.equal(voiceLayerOf(bad), null, String(bad));
@@ -176,6 +187,22 @@ test('VOICE-RELAY-DOOR wire: a room is a key the relay routes (net/wire.js roomO
   assert.equal(validTokenAsk({ token: t, channel: 'party', party: 'q1abc2def3', ly: 1 }), null, 'a party has no layer');
   assert.deepEqual(validPlaceAsk({ token: t, room: 'world:12,34', ly: 3, near: [] }), { token: t, room: 'world:12,34', ly: 3, near: [] });
   assert.equal(validPlaceAsk({ token: t, room: 'world:12,34', ly: -1, near: [] }), null);
+});
+
+test('VOICE-ROOMS wire: two rooms of the game are never one room of the SFU - an instance and the ungated keys spelled like it, a layer and a key that spells one, each its own digest; a shard\'s suffix cannot be spelled inside one', async () => {
+  // an instance (net/instanceRoom.js: its owner and party alone get in) and keys the relay routes beside it that a
+  // spelling-based name folded onto it - every one a key a stranger could hello into and be "present" in
+  const twins = ['dungeon:m187853213.i0123456789abcdef.89abcdef', 'dungeon:m187853213,i0123456789abcdef,89abcdef', 'dungeon:m187853213_i0123456789abcdef_89abcdef', 'dungeon:m187853213.i0123456789abcdef_89abcdef'];
+  for (const k of twins) assert.equal(voiceRoomKeyOk(k), true, `${k} is a key the relay routes`);
+  const names = await Promise.all(twins.map((k) => voiceRoomName('proximity', k)));
+  assert.equal(new Set(names).size, twins.length, 'each its own SFU room');
+  // a layer, and a key that spells the layer's old suffix
+  assert.notEqual(await voiceRoomName('proximity', 'world:12,34', 2), await voiceRoomName('proximity', 'world:12,34_l2'));
+  assert.notEqual(await voiceRoomName('proximity', 'world:12,34', 1), await voiceRoomName('proximity', 'world:12,34'));
+  // the digest's one shape: a fixed length of hex, so `_s<n>` after it (roomSharder.js) is always the shard's
+  for (const n of [...names, await voiceRoomName('proximity', 'world:12,34_s1')]) assert.match(n, /^vx_[0-9a-f]{32}$/);
+  // a channel is in the digest too: a party's room is its id, never a key's
+  assert.notEqual(await voiceRoomName('proximity', 'world:1,1'), await voiceRoomName('party', 'q1abc2def3'));
 });
 
 // ─── THE SPATIAL GRAPH ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -242,7 +269,12 @@ function fakeSdk() {
   const RoomEvent = { TrackSubscribed: 'ts', TrackUnsubscribed: 'tu', ParticipantDisconnected: 'pd', ActiveSpeakersChanged: 'as', Reconnecting: 'rc', Reconnected: 'rd', Disconnected: 'dc', TrackPublished: 'tp' };
   const Track = { Kind: { Audio: 'audio', Video: 'video' }, Source: { Microphone: 'microphone' } };
   class Room {
-    constructor(opts) { this.opts = opts; this.handlers = new Map(); this.remoteParticipants = new Map(); this.connected = null; this.localParticipant = { published: [], publishTrack: async (t, o) => { this.localParticipant.published.push([t, o]); } }; rooms.push(this); }
+    constructor(opts) {
+      this.opts = opts; this.handlers = new Map(); this.remoteParticipants = new Map(); this.connected = null;
+      // `log`: the microphone's publish and every permission set, in order - who may hear it, and from when
+      const lp = this.localParticipant = { published: [], log: [], publishTrack: async (t, o) => { lp.published.push([t, o]); lp.log.push(['publish']); }, setTrackSubscriptionPermissions: (all, list) => { lp.log.push(['perm', all, list.map((p) => [p.participantIdentity, p.allowAll])]); } };
+      rooms.push(this);
+    }
     on(ev, fn) { this.handlers.set(ev, fn); }
     emit(ev, ...a) { this.handlers.get(ev)?.(...a); }
     async connect(url, token, o) { if (url.includes('refuse')) throw new Error('could not connect'); this.connected = { url, token, o }; }
@@ -252,6 +284,8 @@ function fakeSdk() {
   const createLocalAudioTrack = async (o) => { if (o.deviceId === 'refuse') { const e = new Error('denied'); e.name = 'NotAllowedError'; throw e; } return { o, muted: false, stopped: false, async mute() { this.muted = true; }, async unmute() { this.muted = false; }, stop() { this.stopped = true; }, async setDeviceId(id) { this.o.deviceId = id; } }; };
   return { Room, RoomEvent, Track, createLocalAudioTrack, rooms };
 }
+/** The permission sets a room's local participant was given, in order. */
+const perms = (room) => room.localParticipant.log.filter(([k]) => k === 'perm');
 
 test('VOICE1 transport: autoSubscribe off, a track received only for a named identity (and remembered for one that arrives later), speakers, a dropped participant, the mic published once and stopped on leave', async () => {
   const sdk = fakeSdk();
@@ -259,6 +293,7 @@ test('VOICE1 transport: autoSubscribe off, a track received only for a named ide
   const t = new VoiceTransport({ sdk, onTrack: (id, s) => got.push([id, s]), onTrackGone: (id) => gone.push(id), onSpeakers: (ids) => speakers.push(ids), onLeft: (id) => gone.push('left:' + id), onState: (s) => states.push(s) });
   const room = await t.connect('wss://x', 'tok', { identity: 'me' });
   assert.equal(room.connected.o.autoSubscribe, false, 'nothing is received unasked');
+  assert.deepEqual(room.localParticipant.log, [['perm', false, []]], 'VOICE-HEAR: nobody may hear the microphone the moment the room is joined');
   assert.deepEqual(states, ['connected']);
   const p1 = room.addParticipant('p1');
   assert.equal(t.subscribe('p1', true), true); assert.equal(p1.trackPublications.get('Tp1').subscribed, true);
@@ -283,16 +318,33 @@ test('VOICE1 transport: autoSubscribe off, a track received only for a named ide
   await assert.rejects(() => t.openMic({}), /no room/);
 });
 
+test('VOICE-HEAR transport: who may hear my microphone is the publisher\'s own permission on the SFU - a list allows exactly those identities, null the whole room, [] nobody; a reconnect says it again; a leave forgets it', async () => {
+  const sdk = fakeSdk();
+  const t = new VoiceTransport({ sdk });
+  assert.equal(t.setListeners(['peer_a']), false, 'no room: nothing to tell');
+  const room = await t.connect('wss://x', 'tok', { identity: 'me' });
+  assert.deepEqual(perms(room).at(-1), ['perm', false, []], 'joined: nobody - the earlier list was never a room\'s');
+  assert.equal(t.setListeners(['peer_a', 'peer_b']), true);
+  assert.deepEqual(perms(room).at(-1), ['perm', false, [['peer_a', true], ['peer_b', true]]]);
+  t.setListeners(null); assert.deepEqual(perms(room).at(-1), ['perm', true, []]);
+  t.setListeners(['peer_c']);
+  const before = perms(room).length;
+  room.emit('rc'); room.emit('rd');
+  assert.equal(perms(room).length, before + 1); assert.deepEqual(perms(room).at(-1), ['perm', false, [['peer_c', true]]], 'the reconnected session holds the same law');
+  await t.disconnect(); assert.deepEqual(t.listeners, []);
+});
+
 // ─── THE CLIENT OVER A FAKE TRANSPORT AND A FAKE SERVICE ────────────────────────────────────────────────────────────
 
-function fakeService({ answer = null, status = 200 } = {}) {
+function fakeService({ answer = null, status = 200, place = () => ({ ok: true, v: 1, allow: [] }) } = {}) {
   const calls = [];
   const fetchImpl = async (url, init) => {
     const body = JSON.parse(init.body);
     calls.push([new URL(url).pathname, body]);
     if (status !== 200) return { ok: false, status, json: async () => ({}) };
     if (url.endsWith('/token')) return { ok: true, json: async () => answer ?? { ok: true, v: 1, url: 'wss://sfu.test', token: 'lk', identity: 'me', room: 'vx_' + body.room, ttl: 120 } };
-    return { ok: true, json: async () => ({ ok: true, v: 1, allow: [] }) };
+    const a = await place(body);
+    return a === null ? { ok: false, status: 503, json: async () => ({}) } : { ok: true, json: async () => a };
   };
   return { calls, fetchImpl };
 }
@@ -473,6 +525,54 @@ test('VOICE-RELAY-DOOR client: the layer the room\'s welcome said rides the mint
   assert.equal(c.stats.mints, 2, 'the same layer said again is no move');
   c.setRoom('world:12,34', 1.5); c.frame([0, 0, 0], 0, []); await settle(c);
   assert.equal(c._session?.ly, 0, 'a layer that is not one is the place');
+});
+
+test('VOICE-HEAR client: my microphone is heard by exactly whom the service\'s mutual answer names - nobody before it is published, nobody on an answer not whole or none at all, never a session\'s it was not asked for; the word is said again while the set holds still; a party\'s room is its members\'', async () => {
+  let allow = ['peer1'], hold = null;
+  const svc = fakeService({ place: () => (hold ? hold.then(() => ({ ok: true, v: 1, allow: ['peer1'] })) : typeof allow === 'function' ? allow() : { ok: true, v: 1, allow }) });
+  const { c, sdk, clock } = makeClient({ svc });
+  c.setEnabled(true); c.setRoom('cell:1'); c.frame([0, 0, 0], 0, []); await settle(c);
+  const room = sdk.rooms[0];
+  const firstPublish = room.localParticipant.log.findIndex(([k]) => k === 'publish');
+  assert.ok(firstPublish > 0, 'the microphone published');
+  assert.ok(room.localParticipant.log.slice(0, firstPublish).every(([k, all, list]) => k === 'perm' && all === false && list.length === 0), 'and only after nobody was allowed it');
+  room.addParticipant('peer1');
+  const near = [{ id: 'peer1', feet: [2, 0, 0] }];
+  const places = () => svc.calls.filter(([p]) => p === '/v1/voice/place').length;
+  clock.t += VOICE_PLACE_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.deepEqual(perms(room).at(-1), ['perm', false, [['peer1', true]]], 'the service named peer1: peer1 alone');
+  // the set holds still: inside VOICE_PLACE_REFRESH_MS nothing is said, past it the word again - the service's stale window is longer
+  const n = places();
+  clock.t += VOICE_PLACE_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.equal(places(), n, 'not yet');
+  clock.t += VOICE_PLACE_REFRESH_MS - VOICE_PLACE_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.equal(places(), n + 1, 'said again though nothing moved');
+  // an answer not whole: nobody, never the last list
+  allow = ['peer1', 'x'];
+  clock.t += VOICE_PLACE_REFRESH_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.deepEqual(perms(room).at(-1), ['perm', false, []]);
+  allow = ['peer1']; clock.t += VOICE_PLACE_REFRESH_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.deepEqual(perms(room).at(-1), ['perm', false, [['peer1', true]]]);
+  // the service away: nobody
+  allow = () => null;
+  clock.t += VOICE_PLACE_REFRESH_MS; c.frame([0, 0, 0], 0, near); await settle(c);
+  assert.deepEqual(perms(room).at(-1), ['perm', false, []]);
+  // an answer that lands after its session was left is not the new session's law
+  allow = ['peer1'];
+  let release; hold = new Promise((r) => { release = r; });
+  clock.t += VOICE_PLACE_REFRESH_MS; c.frame([0, 0, 0], 0, near); await tick();
+  c.setRoom('cell:2'); c.frame([0, 0, 0], 0, []); await settle(c);
+  const fresh = sdk.rooms.at(-1);
+  assert.notEqual(fresh, room);
+  release(); hold = null; await settle(c); await tick();
+  assert.ok(perms(fresh).length > 0 && perms(fresh).every(([, all, list]) => all === false && list.length === 0), 'the old room\'s answer never reached the new one');
+  // a party: every member vouched for at the door
+  sdk.Room.prototype.connect = async function (url, token, o) { this.connected = { url, token, o }; };
+  c.setChannel('party'); c.setParty('q1abc2def3'); c.frame([0, 0, 0], 0, []); await settle(c);
+  const party = sdk.rooms.at(-1);
+  assert.deepEqual(perms(party).at(-1), ['perm', true, []]);
+  const pub = party.localParticipant.log.findIndex(([k]) => k === 'publish');
+  assert.deepEqual(party.localParticipant.log.slice(0, pub).at(-1), ['perm', true, []], 'said before the microphone is published');
 });
 
 test('VOICE1 client: the credential is re-minted before its end', async () => {

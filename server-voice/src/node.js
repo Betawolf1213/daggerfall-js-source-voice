@@ -5,10 +5,12 @@
 //   node server-voice/src/node.js            env from the process; PORT default 7890
 //
 // VOICE_PARTY_STUB='{"acct":"partyId",...}' lets the podman proof answer party membership without a relay beside it.
+// The sweep (revoker.js) runs every VOICE_SWEEP_MS beside the server - the Worker's cron, here - and stops with it.
 // VOICE_PRESENCE_STUB='["acct",...]' admits proximity voice without a relay beside it - every listed account reads as present in every room it asks for; set RELAY_URL and VOICE_RELAY_SECRET instead once a relay exists.
 
 import { createServer } from 'node:http';
-import { handle } from './index.js';
+import { handle, sweep } from './index.js';
+import { VOICE_SWEEP_MS } from './revoker.js';
 import { VOICE_BODY_MAX_BYTES } from '../../src/net/voice/voiceWire.js';
 
 export function startVoiceService({ port = Number(process.env.PORT ?? 7890), env = process.env, host = '127.0.0.1' } = {}) {
@@ -34,7 +36,14 @@ export function startVoiceService({ port = Number(process.env.PORT ?? 7890), env
     res.writeHead(out.status, Object.fromEntries(out.headers));
     res.end(Buffer.from(await out.arrayBuffer()));
   });
-  return new Promise((resolve) => server.listen(port, host, () => resolve({ server, port: /** @type {any} */ (server.address()).port, close: () => new Promise((r) => server.close(() => r(undefined))) })));
+  let sweeping = false;
+  const sweeper = setInterval(() => {
+    if (sweeping) return;   // a slow SFU never stacks sweeps
+    sweeping = true;
+    sweep(e).catch((err) => console.warn('[voice] sweep', err?.message ?? err)).finally(() => { sweeping = false; });
+  }, VOICE_SWEEP_MS);
+  sweeper.unref?.();
+  return new Promise((resolve) => server.listen(port, host, () => resolve({ server, port: /** @type {any} */ (server.address()).port, close: () => { clearInterval(sweeper); return new Promise((r) => server.close(() => r(undefined))); } })));
 }
 
 if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1].replace(/\\/g, '/')}`).href.replace(/file:\/\/(?=[A-Za-z]:)/, 'file:///')) {

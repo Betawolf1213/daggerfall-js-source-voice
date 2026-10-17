@@ -5,8 +5,8 @@
 import { VoiceState } from './voiceState.js';
 import { VoiceTransport } from './voiceTransport.js';
 import { VoiceSpatialAudio } from './voiceSpatialAudio.js';
-import { proximitySet, subscriptionDiff, voiceGainAt, panFor, feetDistance, VOICE_PLACE_MS } from './voiceProximity.js';
-import { validTokenAnswer, voiceUrlOk, VOICE_REMINT_AHEAD_S } from './voiceWire.js';
+import { proximitySet, subscriptionDiff, voiceGainAt, panFor, feetDistance, VOICE_PLACE_MS, VOICE_PLACE_REFRESH_MS } from './voiceProximity.js';
+import { validTokenAnswer, validPlaceAnswer, voiceUrlOk, VOICE_REMINT_AHEAD_S } from './voiceWire.js';
 import { jittered } from '../backoff.js';
 import { t } from '../../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 
@@ -74,6 +74,8 @@ export class VoiceClient {
     this._retryAt = -Infinity; this._retryMs = VOICE_RETRY_MIN_MS;
     this._tokenEndsAt = Infinity;
     this._lastPlaceAt = -Infinity;
+    /** when the place word was last said - said again by VOICE_PLACE_REFRESH_MS even when the set holds still */
+    this._lastSaidAt = -Infinity;
     /** @type {string[]} the proximity ids placed last - what the server was told */
     this._placed = [];
     this.identity = null;
@@ -152,7 +154,7 @@ export class VoiceClient {
     for (const id of open) this.transport.subscribe(id, true);
     for (const id of drop) { this.transport.subscribe(id, false); this._onTrackGone(id); }
     const ids = set.map((s) => s.id);
-    if (open.length || drop.length) { this._placed = ids; this._place(ids).catch(() => {}); }
+    if (open.length || drop.length || now - this._lastSaidAt >= VOICE_PLACE_REFRESH_MS) { this._placed = ids; this._lastSaidAt = now; this._place(ids).catch(() => {}); }
   }
 
   // ─── the service ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -181,6 +183,9 @@ export class VoiceClient {
       if (!ans || !voiceUrlOk(ans.url)) return this._fail('badAnswer', VOICE_TEXT.badAnswer());
       try { await this.transport.connect(ans.url, ans.token, { identity: ans.identity }); }
       catch (e) { return this._fail('sfu', `${VOICE_TEXT.sfu()}: ${e?.message ?? e}`); }
+      // who may hear the microphone, before it is published: a party's room is its members' (vouched for at the door);
+      // a proximity room's nobody until the service's first mutual answer names them (_place)
+      this.transport.setListeners(want.channel === 'party' ? null : []);
       this.identity = ans.identity;
       this._tokenEndsAt = this._now() / 1000 + ans.ttl;
       this._ensureSpatial();
@@ -193,7 +198,7 @@ export class VoiceClient {
       if (this.state.status !== 'denied') this.state.setStatus('open');
       this.state.setPartyJoined(want.channel === 'party');
       this._applyMute();
-      this._retryMs = VOICE_RETRY_MIN_MS; this._placed = []; this._lastPlaceAt = -Infinity;
+      this._retryMs = VOICE_RETRY_MIN_MS; this._placed = []; this._lastPlaceAt = -Infinity; this._lastSaidAt = -Infinity;
       if (want.channel === 'party') for (const id of this.transport.participants()) { this.transport.subscribe(id, true); }
       return true;
     } catch (e) { return this._fail('error', String(e?.message ?? e)); }
@@ -211,10 +216,15 @@ export class VoiceClient {
     return false;
   }
 
+  /** My place word, and the service's answer made the SFU's law: exactly the listeners its mutual policy names may hear
+   *  my microphone - an answer that is not whole (or none) allows nobody, never the last one. */
   async _place(ids) {
-    if (!this._session || this._session.channel !== 'proximity' || !this._placeToken) return;
+    const session = this._session;
+    if (!session || session.channel !== 'proximity' || !this._placeToken) return;
     this.stats.places++;
-    await this._post('/v1/voice/place', { token: this._placeToken, room: this._session.room, ...(this._session.ly > 0 ? { ly: this._session.ly } : {}), near: ids });
+    const raw = await this._post('/v1/voice/place', { token: this._placeToken, room: session.room, ...(session.ly > 0 ? { ly: session.ly } : {}), near: ids }).catch(() => null);
+    if (this._session !== session) return;   // an answer for a session already left
+    this.transport.setListeners(validPlaceAnswer(raw) ?? []);
   }
 
   _ensureSpatial() {

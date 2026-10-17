@@ -32,10 +32,11 @@ export async function mintLiveKitToken({ apiKey, apiSecret, identity, name, room
   return `${signing}.${b64url(sig)}`;
 }
 
-/** A LiveKit server-API call's bearer - the same JWT with a `roomAdmin` grant on the room, no identity needed. */
-export async function mintLiveKitAdminToken({ apiKey, apiSecret, room, nowS, ttlS = 60 }, subtle) {
+/** A LiveKit server-API call's bearer - the same JWT with a `roomAdmin` grant on the room, no identity needed; with no
+ *  room, the `roomList` grant alone (the sweep's ListRooms - revoker.js), which admins no room. */
+export async function mintLiveKitAdminToken({ apiKey, apiSecret, room = null, nowS, ttlS = 60 }, subtle) {
   const header = { alg: 'HS256', typ: 'JWT' };
-  const claims = { iss: apiKey, sub: apiKey, iat: nowS, nbf: nowS - 10, exp: nowS + ttlS, video: { room, roomAdmin: true, roomCreate: true } };
+  const claims = { iss: apiKey, sub: apiKey, iat: nowS, nbf: nowS - 10, exp: nowS + ttlS, video: room ? { room, roomAdmin: true, roomCreate: true } : { roomList: true } };
   const signing = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(claims))}`;
   const key = await subtle.importKey('raw', enc.encode(apiSecret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = new Uint8Array(await subtle.sign('HMAC', key, enc.encode(signing)));

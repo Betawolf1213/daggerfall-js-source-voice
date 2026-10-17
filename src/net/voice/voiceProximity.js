@@ -9,6 +9,11 @@ export const VOICE_SILENT_RANGE = 40;
 export const VOICE_RESUB_RANGE = 44;
 /** How often membership is re-read and pushed to the server (ms) - a rate limit, not a precision knob. */
 export const VOICE_PLACE_MS = 500;
+/** The longest a place word goes unsaid while the set holds still (ms): the service's mutual policy reads a word older
+ *  than 6 * VOICE_PLACE_MS as nothing (server-voice proximityPolicy.js VOICE_PLACE_STALE_MS), and its answer is the
+ *  list of who may hear my microphone - so the word is said again well inside that, or the list empties under a pair
+ *  that never moved. */
+export const VOICE_PLACE_REFRESH_MS = 3 * VOICE_PLACE_MS;
 /** Caps subscriptions in a crowd (nearest win) so one client never opens more than this many decoders. */
 export const VOICE_SUBS_MAX = 8;
 

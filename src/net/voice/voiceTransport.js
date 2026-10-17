@@ -37,6 +37,8 @@ export class VoiceTransport {
     this.micTrack = null;
     /** @type {Set<string>} the identities whose audio I asked to receive */
     this.subscribed = new Set();
+    /** @type {string[]|null} who may hear my microphone - null for everyone in the room (setListeners) */
+    this.listeners = [];
     this.identity = null;
   }
 
@@ -57,13 +59,27 @@ export class VoiceTransport {
     room.on(RoomEvent.ParticipantDisconnected, (participant) => { this.subscribed.delete(participant.identity); this.onLeft?.(participant.identity); });
     room.on(RoomEvent.ActiveSpeakersChanged, (speakers) => this.onSpeakers?.(speakers.map((s) => s.identity)));
     room.on(RoomEvent.Reconnecting, () => this.onState?.('reconnecting'));
-    room.on(RoomEvent.Reconnected, () => { this.onState?.('connected'); this._resubscribe(); });
+    room.on(RoomEvent.Reconnected, () => { this.onState?.('connected'); this._resubscribe(); this.setListeners(this.listeners); });
     room.on(RoomEvent.Disconnected, (reason) => this.onState?.('disconnected', reason != null ? String(reason) : undefined));
     // a participant arriving after my subscribe ask: their publication is marked wanted as it appears
     room.on(RoomEvent.TrackPublished, (pub, participant) => { if (this.subscribed.has(participant.identity)) { try { pub.setSubscribed(true); } catch { /* not yet */ } } });
     await room.connect(url, token, { autoSubscribe: false });
+    this.setListeners([]);   // nobody hears the microphone until the caller names who may - before anything is published
     this.onState?.('connected');
     return room;
+  }
+
+  /** WHO MAY HEAR MY MICROPHONE - the SFU's own law, held by the publisher: a listener's client can ask for any track,
+   *  and LiveKit refuses it unless the track's publisher allowed that identity. `null` allows everyone in the room (a
+   *  party's room, every member vouched for at its door); a list allows exactly those identities (proximity: the
+   *  service's mutual answer to my place word); `[]` allows nobody. */
+  setListeners(ids) {
+    this.listeners = ids === null ? null : [...ids];
+    const lp = this.room?.localParticipant;
+    if (!lp?.setTrackSubscriptionPermissions) return false;
+    if (ids === null) lp.setTrackSubscriptionPermissions(true, []);
+    else lp.setTrackSubscriptionPermissions(false, ids.map((id) => ({ participantIdentity: id, allowAll: true })));
+    return true;
   }
 
   /** Captures and publishes the microphone - asked for only here, after the player's opt-in. */
@@ -101,7 +117,7 @@ export class VoiceTransport {
   /** Leave: the microphone stopped, the room gone. Safe to call twice. */
   async disconnect() {
     const room = this.room;
-    this.room = null; this.subscribed.clear();
+    this.room = null; this.subscribed.clear(); this.listeners = [];
     if (this.micTrack) { try { this.micTrack.stop(); } catch { /* stopped */ } this.micTrack = null; }
     if (room) { try { await room.disconnect(); } catch { /* already down */ } }
   }

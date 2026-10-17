@@ -10,7 +10,7 @@
 //   env.IDENTITY_PUBLIC_KEY   base64url raw Ed25519, the account service's /v1/pubkey
 //   env.LIVEKIT_URL           the wss:// (ws:// on localhost) the CLIENT opens
 //   env.LIVEKIT_API_KEY / env.LIVEKIT_API_SECRET   the pair in livekit.yaml `keys:`
-//   env.LIVEKIT_ADMIN_URL     (optional) the http(s) RoomService door, for server-side unsubscribes
+//   env.LIVEKIT_ADMIN_URL     the http(s) RoomService door - REQUIRED: the room made, the seats swept (revoker.js), unsubscribes
 //   env.RELAY_URL             (optional) the relay's https door for the party word and room-presence check; absent, both channels refuse
 //   env.VOICE_RELAY_SECRET    the shared secret RELAY_URL's relay checks on both doors above; absent on either side, the relay refuses rather than guessing
 //   env.CORS_ORIGIN           (optional) the one origin answered, default *
@@ -21,6 +21,7 @@ import { authorizeVoice } from './roomAuthorizer.js';
 import { ProximityPolicy, VOICE_ROOM_IDLE_MS } from './proximityPolicy.js';
 import { RoomSharder, shardRoomName } from './roomSharder.js';
 import { mintLiveKitToken, mintLiveKitAdminToken } from './livekitToken.js';
+import { sweepVoice, seatMeta } from './revoker.js';
 
 /** The service's own version, said on /health - bumped when a shape here changes. */
 export const VOICE_SERVICE_VERSION = 1;
@@ -32,7 +33,7 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 
 /** The per-isolate state: the policy, the imported key, the rate buckets. `_resetForTests` empties it. */
 let _state = null;
-const stateOf = (now) => (_state ??= { policy: new ProximityPolicy({ now }), sharder: new RoomSharder({ now }), key: undefined, mints: new Map(), places: new Map(), presence: new Map(), lastSweptAt: -Infinity });
+const stateOf = (now) => (_state ??= { policy: new ProximityPolicy({ now }), sharder: new RoomSharder({ now }), key: undefined, mints: new Map(), places: new Map(), presence: new Map(), standing: new Map(), lastSweptAt: -Infinity, sweepFrom: 0 });
 export function _resetForTests() { _state = null; }
 /** A test's read of the live per-isolate policy, to tell "swept away" from "merely stale" - never called in production. */
 export function _peekPolicyForTests() { return _state?.policy ?? null; }
@@ -43,18 +44,20 @@ export function _peekSharderForTests() { return _state?.sharder ?? null; }
  *  second, and hitting the relay on every one would trade real latency/CCU cost for no gain. */
 const PRESENCE_CACHE_MS = 5000;
 const PRESENCE_CACHE_MAX = 4096;
-function cachedPresenceOf(state, presenceOf, now) {
-  return async (acct, room, ly) => {
-    const key = `${acct}|${room}|${ly}`;
-    const had = state.presence.get(key);
-    if (had && now() - had.at < PRESENCE_CACHE_MS) return had.here;
-    const here = await presenceOf(acct, room, ly);
-    state.presence.delete(key);
-    if (state.presence.size >= PRESENCE_CACHE_MAX) state.presence.delete(state.presence.keys().next().value);
-    state.presence.set(key, { here, at: now() });
-    return here;
-  };
+/** A relay answer kept PRESENCE_CACHE_MS under `key` in `map` - never a null one (the relay did not answer). */
+function cached(map, now, key, ask) {
+  const had = map.get(key);
+  if (had && now() - had.at < PRESENCE_CACHE_MS) return had.v;
+  return ask().then((v) => {
+    map.delete(key);
+    if (v === null) return v;
+    if (map.size >= PRESENCE_CACHE_MAX) map.delete(map.keys().next().value);
+    map.set(key, { v, at: now() });
+    return v;
+  });
 }
+const cachedPresenceOf = (state, presenceOf, now) => async (acct, room, ly) => cached(state.presence, now, `${acct}|${room}|${ly}`, () => presenceOf(acct, room, ly));
+const cachedStandingOf = (state, standingOf, now) => async (acct) => cached(state.standing, now, acct, () => standingOf(acct));
 
 /** A token bucket per identity: `max` in `windowMs`. True when admitted. */
 function admit(map, who, max, windowMs, now) {
@@ -64,31 +67,34 @@ function admit(map, who, max, windowMs, now) {
   b.n++; return true;
 }
 
-/** `partyOf(acct)` via the relay's real door; the old URL here (`RELAY_URL/party/<acct>`) was never routed by the relay, so party voice silently never actually checked anything in production. */
-async function partyOfVia(env, fetchImpl) {
+/** One of the relay's two doors, asked behind the shared secret: its answer, or null when it gave none (no relay
+ *  configured, a refusal, an outage) - which every caller reads as "unknown", never as a yes. */
+async function askRelay(env, fetchImpl, path, body) {
+  if (!env.RELAY_URL || !env.VOICE_RELAY_SECRET) return null;
+  try {
+    const res = await fetchImpl(`${String(env.RELAY_URL).replace(/\/+$/, '')}${path}`, { method: 'POST', headers: { 'content-type': 'application/json', [VOICE_RELAY_SECRET_HEADER]: env.VOICE_RELAY_SECRET }, body: JSON.stringify(body), signal: AbortSignal.timeout(3000) });
+    return res.ok ? await res.json() : null;
+  } catch { return null; }
+}
+
+/** `standingOf(acct)` - the hub's word on the party `acct` sits in and the mute it is under (`{ party, mu }`), or null.
+ *  The old party URL here (`RELAY_URL/party/<acct>`) was never routed by the relay, so party voice checked nothing. */
+async function standingVia(env, fetchImpl) {
   return async (/** @type {string} */ acct) => {
-    if (typeof env.partyOf === 'function') return env.partyOf(acct);   // a test's, or node.js's stub
-    if (!env.RELAY_URL || !env.VOICE_RELAY_SECRET) return null;
-    try {
-      const res = await fetchImpl(`${String(env.RELAY_URL).replace(/\/+$/, '')}${VOICE_PARTY_OF_PATH}`, { method: 'POST', headers: { 'content-type': 'application/json', [VOICE_RELAY_SECRET_HEADER]: env.VOICE_RELAY_SECRET }, body: JSON.stringify({ acct }), signal: AbortSignal.timeout(3000) });
-      if (!res.ok) return null;
-      const a = await res.json();
-      return typeof a?.party === 'string' ? a.party : null;
-    } catch { return null; }
+    if (typeof env.standingOf === 'function') return env.standingOf(acct);   // a test's
+    if (typeof env.partyOf === 'function') return { party: (await env.partyOf(acct)) ?? null, mu: 0 };   // node.js's stub, a test's
+    const a = await askRelay(env, fetchImpl, VOICE_PARTY_OF_PATH, { acct });
+    return a ? { party: typeof a.party === 'string' ? a.party : null, mu: Number.isSafeInteger(a.mu) && a.mu > 0 ? a.mu : 0 } : null;
   };
 }
 
-/** `presenceOf(acct, room, ly)` - the relay's real word on whether `acct` is hello'd into `room` (its layer `ly`) right now, instead of trusting the client's claim; no relay configured reads as a refusal, same fail-closed shape as `partyOf`. */
+/** `presenceOf(acct, room, ly)` - the relay's word on whether `acct` is hello'd into `room` (its layer `ly`) right now,
+ *  instead of trusting the client's claim: true, false, or null when the relay did not answer. */
 async function presenceOfVia(env, fetchImpl) {
   return async (/** @type {string} */ acct, /** @type {string} */ room, /** @type {number} */ ly) => {
     if (typeof env.presenceOf === 'function') return env.presenceOf(acct, room, ly);   // a test's, or node.js's stub
-    if (!env.RELAY_URL || !env.VOICE_RELAY_SECRET) return false;
-    try {
-      const res = await fetchImpl(`${String(env.RELAY_URL).replace(/\/+$/, '')}${VOICE_PRESENCE_PATH}`, { method: 'POST', headers: { 'content-type': 'application/json', [VOICE_RELAY_SECRET_HEADER]: env.VOICE_RELAY_SECRET }, body: JSON.stringify({ acct, room, ly }), signal: AbortSignal.timeout(3000) });
-      if (!res.ok) return false;
-      const a = await res.json();
-      return a?.here === true;
-    } catch { return false; }
+    const a = await askRelay(env, fetchImpl, VOICE_PRESENCE_PATH, { acct, room, ly });
+    return a ? a.here === true : null;
   };
 }
 
@@ -136,27 +142,28 @@ export async function handle(request, env, { now = () => Date.now(), fetch: fetc
   let body;
   try { body = await request.json(); } catch { return json({ ok: false, error: 'json' }, 400, origin); }
   const nowS = Math.floor(now() / 1000);
-  const partyOf = await partyOfVia(env, fetchImpl);
+  const standingOf = cachedStandingOf(st, await standingVia(env, fetchImpl), now);
   const presenceOf = cachedPresenceOf(st, await presenceOfVia(env, fetchImpl), now);
 
   if (url.pathname === '/v1/voice/token') {
     const ask = validTokenAsk(body);
     if (!ask) return json({ ok: false, error: 'shape' }, 400, origin);
-    if (!voiceUrlOk(env.LIVEKIT_URL) || !env.LIVEKIT_API_KEY || !env.LIVEKIT_API_SECRET) return json({ ok: false, error: 'no-media-server' }, 503, origin);
-    const a = await authorizeVoice(ask, { publicKey: st.key, subtle, nowS, partyOf, presenceOf });
+    // VOICE-REVOKE: a service that cannot reach the SFU's admin door cannot take a seat back (revoker.js) - so it gives none
+    if (!voiceUrlOk(env.LIVEKIT_URL) || !env.LIVEKIT_API_KEY || !env.LIVEKIT_API_SECRET || !env.LIVEKIT_ADMIN_URL) return json({ ok: false, error: 'no-media-server' }, 503, origin);
+    const a = await authorizeVoice(ask, { publicKey: st.key, subtle, nowS, standingOf, presenceOf });
     if (!a.ok) return json({ ok: false, error: a.why }, a.status, origin);
     if (!admit(st.mints, a.identity, VOICE_MINT_PER_MIN, 60_000, now())) return json({ ok: false, error: 'rate' }, 429, origin);
     // party is capped at VOICE_PARTY_MAX and never overflows; only a proximity room can need a second shard
     const room = ask.channel === 'proximity' ? shardRoomName(a.room, st.sharder.assign(a.room, a.identity)) : a.room;
     await ensureRoom(env, fetchImpl, room);
-    const token = await mintLiveKitToken({ apiKey: env.LIVEKIT_API_KEY, apiSecret: env.LIVEKIT_API_SECRET, identity: a.identity, name: a.name, room, ttlS: a.ttl, nowS, canPublish: a.canPublish }, subtle);
+    const token = await mintLiveKitToken({ apiKey: env.LIVEKIT_API_KEY, apiSecret: env.LIVEKIT_API_SECRET, identity: a.identity, name: a.name, room, ttlS: a.ttl, nowS, canPublish: a.canPublish, metadata: seatMeta(a.seat) }, subtle);
     return json({ ok: true, v: VOICE_V, url: env.LIVEKIT_URL, token, identity: a.identity, room, ttl: a.ttl, canPublish: a.canPublish }, 200, origin);
   }
 
   if (url.pathname === '/v1/voice/place') {
     const ask = validPlaceAsk(body);
     if (!ask) return json({ ok: false, error: 'shape' }, 400, origin);
-    const a = await authorizeVoice({ token: ask.token, channel: 'proximity', room: ask.room, ly: ask.ly, party: null }, { publicKey: st.key, subtle, nowS, partyOf, presenceOf });
+    const a = await authorizeVoice({ token: ask.token, channel: 'proximity', room: ask.room, ly: ask.ly, party: null }, { publicKey: st.key, subtle, nowS, presenceOf });
     if (!a.ok) return json({ ok: false, error: a.why }, a.status, origin);
     if (!admit(st.places, a.identity, VOICE_PLACE_HZ_MAX, 1000, now())) return json({ ok: false, error: 'rate' }, 429, origin);
     // the policy is keyed by the PHYSICAL (sharded) room - two shards of one base room are two separate worlds
@@ -175,4 +182,22 @@ export async function handle(request, env, { now = () => Date.now(), fetch: fetc
   return json({ ok: false, error: 'no such door' }, 404, origin);
 }
 
-export default { fetch: (/** @type {Request} */ request, /** @type {any} */ env) => handle(request, env) };
+/**
+ * VOICE-REVOKE: one sweep of the SFU's seats (revoker.js), over this isolate's caches of the relay's answers - the
+ * Worker's cron runs it each minute, the node service every VOICE_SWEEP_MS.
+ * @param {any} env
+ * @param {{ now?: () => number, fetch?: typeof fetch, subtle?: SubtleCrypto }} [io]
+ */
+export async function sweep(env, { now = () => Date.now(), fetch: fetchImpl = globalThis.fetch, subtle = crypto.subtle } = {}) {
+  const st = stateOf(now);
+  const standingOf = cachedStandingOf(st, await standingVia(env, fetchImpl), now);
+  const presenceOf = cachedPresenceOf(st, await presenceOfVia(env, fetchImpl), now);
+  const out = await sweepVoice({ env, fetchImpl, subtle, nowS: Math.floor(now() / 1000), start: st.sweepFrom, presenceOf, standingOf });
+  st.sweepFrom = out.next;
+  return out;
+}
+
+export default {
+  fetch: (/** @type {Request} */ request, /** @type {any} */ env) => handle(request, env),
+  scheduled: (/** @type {any} */ _event, /** @type {any} */ env, /** @type {any} */ ctx) => ctx.waitUntil(sweep(env).catch((e) => console.warn('[voice] sweep', e?.message ?? e))),
+};
