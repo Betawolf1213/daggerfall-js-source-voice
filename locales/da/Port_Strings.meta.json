@@ -13044,6 +13044,46 @@
   "tr": "910cd7743100",
   "by": "claude-in-session"
  },
+ "naval.hold.noSea": {
+  "en": "4f93ca143fe3",
+  "tr": "25d2cf163fb3",
+  "by": "claude-in-session"
+ },
+ "naval.hold.noShip": {
+  "en": "68b3079dcef6",
+  "tr": "853d64b065bc",
+  "by": "claude-in-session"
+ },
+ "naval.hold.none": {
+  "en": "10e60af31578",
+  "tr": "2e4368349e84",
+  "by": "claude-in-session"
+ },
+ "naval.hold.notYours": {
+  "en": "9e41d867422a",
+  "tr": "a50565ee2ac5",
+  "by": "claude-in-session"
+ },
+ "naval.hold.opened": {
+  "en": "c48c91d3e7e0",
+  "tr": "a75ea4770fda",
+  "by": "claude-in-session"
+ },
+ "naval.hold.rowboat": {
+  "en": "eee72926f893",
+  "tr": "808ef57c7e95",
+  "by": "claude-in-session"
+ },
+ "naval.hold.title": {
+  "en": "cfedb67f8c4d",
+  "tr": "bc86bba7a9c0",
+  "by": "claude-in-session"
+ },
+ "naval.hold.titleNamed": {
+  "en": "389a5f30dda9",
+  "tr": "288113204a14",
+  "by": "claude-in-session"
+ },
  "naval.yard.grogDrunk": {
   "en": "c5d2a00c9e0e",
   "tr": "67ba46d37cb6",
@@ -18897,6 +18937,11 @@
  "sea.chart.cardLine": {
   "en": "cfcf144b8cb2",
   "tr": "cfcf144b8cb2",
+  "by": "claude-in-session"
+ },
+ "sea.chart.cardPortLine": {
+  "en": "9e49a349a794",
+  "tr": "6e7a88f22262",
   "by": "claude-in-session"
  },
  "sea.chart.close": {

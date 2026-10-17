@@ -1629,7 +1629,12 @@ and stows into, the one the helm weighs - its picture the Merchant's
 (InventoryContainerImages 6), the player's own; its TextureArchive is
 nought, so the pack's drop-icon arms stand down, as DFU's do. A box on no
 boat of the runtime's throws in OpenCargo (kept: the box is always a
-boat's).
+boat's). CARGO-ANYWHERE (2026-10-17, `03-World/Naval-Refit.md`): the target
+says it is the player's own storage (`storage: true`), so the Enhanced skins
+open it beside the pack, two-way, as the classic skin and the mod's own
+window do; and the hold has doors of the port's own beside the box - the
+hold's key (F4), the helm's Hold and the Fleet page's Hold
+(`scenes/holdDoor.js`), at any time and wherever she lies.
 
 ### Variants and ports
 

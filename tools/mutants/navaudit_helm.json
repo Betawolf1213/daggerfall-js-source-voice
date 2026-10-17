@@ -616,8 +616,8 @@
   {
     "name": "NAV1H-the-share-unread-oars",
     "file": "src/systems/comeSailAway/comeSailAway.js",
-    "old": "f(b.modifierMoveSpeedOar)) * hurt);",
-    "new": "f(b.modifierMoveSpeedOar)));",
+    "old": "f(b.modifierMoveSpeedOar)) * hurt) * peace());",
+    "new": "f(b.modifierMoveSpeedOar))) * peace());",
     "tests": [
       "test/systems/comeSailAway/csa_wind.test.js"
     ]
@@ -625,8 +625,8 @@
   {
     "name": "NAV1H-the-share-unread-sail",
     "file": "src/systems/comeSailAway/comeSailAway.js",
-    "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b));",
-    "new": "f(b.modifierMoveSpeedSail))) * rigOf(b));",
+    "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b)) * peace());",
+    "new": "f(b.modifierMoveSpeedSail))) * rigOf(b)) * peace());",
     "tests": [
       "test/systems/comeSailAway/csa_wind.test.js"
     ]

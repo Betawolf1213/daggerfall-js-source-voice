@@ -184,6 +184,7 @@ test('AUDIT NAV2 F17 a journey holds the helm under the travel view: the helm pa
     townTalk: { hudCovered: false }, modes: { hudCovered: false }, gamePaused: () => false, hudRenderEnabled: () => true, touch: null,
     cursorActive: () => true, pointerSurfaces: new Set(), csaKeyLabel: () => '', csaHelmHooks: {}, travelView, _travelUIHolder: { ui: null },
     navalOn: () => true,   // PIN MOVED (SHIP-CREW): the panel's Orders button asks whether the naval arc is on
+    holdsCargo: (hull) => hull > 0,   // PIN MOVED (CARGO-ANYWHERE): and its Hold whether her hull carries one
   };
   const draw = mount(scope, fn('csaDrawHelmPanel'), 'csaDrawHelmPanel');
   draw();

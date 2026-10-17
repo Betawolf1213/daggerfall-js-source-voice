@@ -14,6 +14,7 @@
 //     terrainAt(pos) -> the terrain a summoned boat stands on (Come Sail Away's own arm), or null
 //     veilApart(rec, boat) -> whether she lies on the other side of the Veil from the player (AUDIT CAPTAIN'S SEA P5)
 //     changed() -> the word a rename or a refit owes (the boats' record said again)
+//     openHold(uid) -> bool  CARGO-ANYWHERE: her hold's window, wherever she lies (scenes/holdDoor.js openShip)
 //   }
 
 import {
@@ -27,6 +28,8 @@ import { batteriesOf } from '../systems/naval/navalShips.js';
 import { CREW_ORDERS, CREW_ROLES } from '../systems/naval/shipCrew.js';
 import { MOBILE } from '../systems/naval/navalBoarding.js';
 import { optionPath } from '../ui/settings/settingsMap.js';   // ORG2: a switch named in a line says where it lives
+import { holdsCargo } from './holdDoor.js';   // CARGO-ANYWHERE: the hulls that carry a hold
+import { t } from '../systems/textManager.js';   // CARGO-ANYWHERE: the hold's words in the player's language
 
 /** The hulls whose prefab carries a live `Crewed` node (Come Sail Away's Small Ship, Large Galley and Carrack - the
  *  Rowboat's is inactive): a ship with hands, who sail her to a port and mend her where she lies. */
@@ -167,6 +170,7 @@ export function createFleetHost(deps) {
         status: why.st, upgrades: { ...rec.upgrades }, loan: why.loan,
         // HOLDINGS: her named hands and their posts (a laid-up ship's signed on here), a Bard's calling his to keep
         hands: CREWED_HULLS.includes(rec.hull) && at.boat ? handsOf(at.boat) : [],
+        hold: holdsCargo(rec.hull),   // CARGO-ANYWHERE: her Hold button - every hull but the Rowboat's
         can: { summon: why.summon, away: why.away, repair: why.repair, yard: why.yard, refit: why.refit },
       });
     }
@@ -256,6 +260,13 @@ export function createFleetHost(deps) {
       }
       const out = n?.repairAway?.(at.boat) ?? { ok: false, text: 'Not here.' };
       return said(out.ok, out.text);
+    }
+    if (verb === 'hold') {
+      // CARGO-ANYWHERE (bible/03-World/Naval-Refit.md): her hold, wherever she lies - here, away, laid up or packed - and
+      // in a fight too; a Rowboat carries none (holdDoor.js HULL_HOLDS)
+      if (!holdsCargo(rec.hull)) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
+      if (!deps.openHold) return said(false, t('naval.hold.noSea', 'Come Sail Away is not running.'));
+      return said(true, t('naval.hold.opened', 'Her hold is opened.'), () => !!deps.openHold(uid));
     }
     if (verb === 'yard') {
       if (why.yard) return said(false, why.yard);

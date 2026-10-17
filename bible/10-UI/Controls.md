@@ -449,6 +449,7 @@ On Enhanced Plus the saddle panel's Dismount is `HorseMount`'s own handler, and 
 | `BoatTimeScaleDown` | KPADSUBTRACT |  | Slow time down at the helm |
 | `BoatTimeScaleReset` | KPADENTER |  | Put time back to normal at the helm |
 | `Spyglass` | K |  | Raise or lower the spyglass (aboard) |
+| `ShipHold` | F4 |  | Cargo - the hold of the ship at hand (her helm, her deck, her cabin), else of the last helmed, else the fleet's first, wherever she lies (CARGO-ANYWHERE, `03-World/Naval-Refit.md`) |
 
 ### Project Legacy (drawn, and answering, while `project-legacy` is on)
 

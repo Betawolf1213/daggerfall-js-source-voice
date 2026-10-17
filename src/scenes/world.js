@@ -604,6 +604,9 @@ import { windWidgetFrameUrl as csaWindWidgetFrameUrl, waveDerivedUrl as csaWaveD
 import { WAVE_FRAME_COUNT as CSA_WAVE_FRAME_COUNT, waveDitherOf as csaWaveDitherOf } from '../systems/comeSailAway/comeSailAwayWaves.js';   // CSA-F
 import { ComeSailAwayRenderer, softParticleTexture as csaSoftParticleTexture } from '../render/comeSailAwayRender.js';   // CSA-F: the waves' and the particles' passes
 import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_TAG_RANGE } from './naval/navalHost.js';   // NAV-H: the sea fight - the Iliac Bay's ships, the guns, boarding, the law and the word
+import { peaceWayOf } from '../systems/comeSailAway/peaceWay.js';   // PEACE-WAY: her way out of a fight
+import { createRaidAshore } from './raidAshore.js';   // RAID-ASHORE: a voyage's raid thrown back where I stand
+import { createHoldDoor, holdsCargo } from './holdDoor.js';   // CARGO-ANYWHERE: a ship's hold from anywhere
 import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
 import { createHarbourOffice } from './harbourOffice.js';
 import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Eltheric Ocean's waters, charts, strands and legends
@@ -8341,6 +8344,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     wayScale: (underSail) => naval?.wayScale(underSail) ?? 1,   // AUDIT NAV1 (the helm): her hurts in her way - the canvas left, a wreck's oars
     sailRefused: () => naval?.sailRefused() ?? null,   // ...and no sail on a wreck or a rig shot away, said once
     brake: () => naval?.brake() ?? 0,   // ...and a heave-to's brake beside a struck ship
+    // PEACE-WAY (systems/comeSailAway/peaceWay.js): her way out of a fight - no enemy near (this runtime's own word, below),
+    // no boarding, no broadside laid
+    peaceWay() { return peaceWayOf({ enemies: !!this.enemiesNearby(), boarding: !!naval?.boarding, aiming: !!naval?.aiming }); },
     warp: (boat, s) => naval?.warp?.(boat, s) ?? null,   // QUAYS: her hands warping her in alongside a harbour's quay
     drift: (boat) => naval?.drift?.(boat) ?? null,   // SERPENT1: the sea serpent's maelstrom pulling her, a blow's throw - added to the current under her
     gale: (boat) => naval?.gale?.(boat) ?? null,   // SERPENT4: the sea serpent's gale - her canvas on her quarter on every heading, her helm quicker
@@ -8541,6 +8547,23 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const w = makeInventoryWindow({ loot: cargoLootTarget(cargo) });
     if (w && !modes?.mountWindow?.(w)) (w.dispose?.bind(w) ?? w._closeSilently?.bind(w))?.();   // a slot already held: the pack built for it is put away again
   };
+  /** CARGO-ANYWHERE (scenes/holdDoor.js): a ship of mine's hold from wherever I am - at hand (her helm, her deck, her
+   *  cabin), else my last helm's or my fleet's first, wherever she lies; the hold's key, the helm's Hold, the Fleet's. */
+  const holdDoor = createHoldDoor({
+    csa: () => (csaOn() ? csaRuntime : null),
+    aboard: () => (navalOn() ? naval?.boatInPlay?.() ?? null : null) ?? (csaRuntime?.AllBoats ?? []).find((b) => b?.uid != null && csaStandsOn(b)) ?? null,
+    cabin: () => modes?.sailingCabin ?? null,
+    partsOf: (uid) => (playerEntity.items ?? []).find((it) => it?.templateIndex === CSA_PARTS_TEMPLATE && it.UID === uid) ?? null,
+    openHold: (loot) => {
+      if (!inventoryDoorReady()) return false;
+      const w = makeInventoryWindow({ loot, ...(loot.onClose ? { onClose: loot.onClose } : {}) });
+      if (w && !modes?.mountWindow?.(w)) { (w.dispose?.bind(w) ?? w._closeSilently?.bind(w))?.(); return false; }
+      return !!w;
+    },
+    nameOf: (uid) => fleetHost?.nameOf?.({ uid }) ?? '',
+    weigh: (items) => totalWeight(items ?? []),
+    say: (text) => townTalk.say(text),
+  });
   /** COMPANION-KIT (2026-10-01, Mac: companions "act as storage"): my companion activated - his pack (the party's live
    *  list, naval.companionPack) opened as a storage beside mine, over whatever the mode draws (a building's, a dungeon's
    *  or the street's slot). Answers whether it opened. */
@@ -9633,6 +9656,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // laid up, by her port's side - so no Fleet order carries her across it (the crossing is a voyage of its own)
     veilApart: (rec, boat) => { const p = playerTravelPixel(); const hers = boat?.MapPixel ? inEther(boat.MapPixel.X, boat.MapPixel.Y) : !!rec?.port?.ether; return etherSea && inEther(p.x, p.y) !== hers; },
     changed: () => surfacePlayer(),
+    openHold: (uid) => holdDoor.openShip(uid),   // CARGO-ANYWHERE: her hold, from the Fleet page, wherever she lies
   }) : null;
   // SHIPYARDS (2026-10-11, Mac: "A new highly detailed shipmaster vendor and crew recruitment station within it. All
   // detailed functions including ship upgrading should be present here, along with ship buying"): THE SHIPMASTER'S
@@ -10313,6 +10337,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     hold: (action, on) => csaHelmHold(action, on),
     position: () => csaCall(() => { const b = csaRuntime?.state?.CurrentBoat; if (b) csaRuntime.StartShowBoatPosition(b); }),   // the position box's reading, from the wheel (DECLARED: the box itself is out of reach there)
     orders: () => { const b = csaRuntime?.state?.CurrentBoat; if (b) navalOrders(b); },   // SHIP-CREW: her captain's orders, from the wheel
+    cargo: () => { const b = csaRuntime?.state?.CurrentBoat; if (b) holdDoor.openBoat(b); },   // CARGO-ANYWHERE: her hold, from the wheel
   };
   /** SHIP-CREW: a boat of mine's orders as a list (shipCrew.js orderRows) - the one picked given (navalHost giveOrder). */
   function navalOrders(boat) {
@@ -10586,7 +10611,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!csaRuntime || !csaOn() || !isEnhancedPlus() || typeof document === 'undefined' || !walkMode) { if (enhancedHelmMounted()) hideEnhancedHelm(); csaHelmInput.held.clear(); return; }
     let helm = null;
     csaCall(() => { helm = csaRuntime.helmPanelState(); });
-    if (helm) helm = { ...helm, orders: navalOn() };   // SHIP-CREW: the Orders button while the naval arc is on
+    if (helm) helm = { ...helm, orders: navalOn(), cargo: holdsCargo(helm.hull) };   // SHIP-CREW: the Orders button while the naval arc is on; CARGO-ANYWHERE: her Hold
     if (!helm) csaHelmInput.held.clear();
     const ab = helm ? null : csaAboard.aboard;
     if (!helm && !ab) { drawEnhancedHelm({ helm: null, aboard: null }, csaHelmHooks); return; }   // SEA-TOWN (FIELD BUGS 2026-10-11c): no helm, aboard nothing - the panel goes (ui/enhanced/enhancedHelm.js), and the key's name and the cover's reads it never shows are not made every frame ashore
@@ -19680,6 +19705,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
   });
   const questAudioSource = new QuestAudioSource(audio);
+  // RAID-ASHORE (scenes/raidAshore.js): a voyage's raid thrown back where I stand - its crew and last raiders withdrawn
+  // from the street's pool and, below deck, the room's (Warm Ashes' Leave Ship asks it; the quest's end sweeps again)
+  const raidAshore = createRaidAshore({ pools: () => [{ foes: () => exteriorFoes.foes, remove: (f) => exteriorFoes.removeFoe(f) }, modes?.interiorPool?.() ? { foes: () => modes.interiorPool().foes, remove: (f) => modes.interiorPool()?.removeFoe(f) } : null] });
   questBridge = createQuestBridge({
     data: questPack,
     world: questWorld,
@@ -19725,6 +19753,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       renownQuestEnded?.(q);   // RENOWN1: a quest done online pays its Renown XP
       cardQuestEnded(q);   // CARDS9: and a guild's quest, now and then, one of its guild's cards
       naval?.raidEnded(q);   // NAV-D: a raid the sea fight started - won (its leader down) or run out - ends its boarding
+      raidAshore.questEnded(q);   // RAID-ASHORE: a raid ended ashore - what its last ticks stood, withdrawn
     },
     // TK-i: the six rumor seams land in the mill (TalkManager's own
     // methods, 1:1)
@@ -20059,6 +20088,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // NAV-D: "Leave Ship" asks the sea fight first (scenes/naval/navalHost.js leaveShipGate) - a raid it started is its own
     // (the boarders thrown back, nothing sailed); a voyage's raid waits while its raiders' hold is open
     leaveShipGate: (quest) => naval?.leaveShipGate(quest) ?? 'proceed',
+    // RAID-ASHORE (scenes/raidAshore.js): a raid thrown back where I stand - its crew and last raiders withdrawn from the
+    // street's pool and, below deck, the room's
+    raidAshore: (quest) => raidAshore.over(quest),
     // THE MERGE (NAV-D, OWS3): a raid quest running, whoever started it - the one answer every starter asks (raidUnderWay)
     raidRunning: () => [...questBridge.machine.quests.values()].some((q) => WA_RAID_QUESTS.includes(q.questName) && !q.questComplete && !q.questTombstoned),
   });
@@ -32249,6 +32281,8 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (oceanHoles) { _ohTime += gamePaused() ? 0 : dt * worldTimeScale(); oceanHoles.checkSettings(); ohAbyss?.update(); }
     saddleDrawPanel();   // STEED-UI: the saddle panel, as the helm's below - every mode, so a door takes it down
     csaDrawHelmPanel();   // CSA-L: the helm panel, once a frame in every mode
+    holdDoor.frame();   // CARGO-ANYWHERE: the helm I hold, remembered - and the hold's key, in every mode (the cabin's too)
+    if (csaRuntime && walkMode && playerSpawned && !modes?.transitioning && !travelView?.active && hccActionPressed('ShipHold')) holdDoor.press();
     spoilsRecoverFrame();   // WB5: a boss's spoils no save holds, back to their character as it stands up - before it can save, online or not
     if (onlineOn && playerSpawned) { if (!online) onlineStart(); onlineFrame(now, dt); } else { if (_peerCandleLights.length) peerCandlesFrame([], dt);   /* PEERLIGHT2: offline, no one's candle stays lit */ serpentAway(!onlineOn); /* SERPENT1: its bar put away - offline, my ship let go of its coil */ sdFightAway(); /* SD8c: and the Remnant's */ if (!onlineOn && modes?.gateArenaDay?.() != null) { ejectFromCourt(COURT_TEXT.collapse); gateCourt?.leave(); /* AUDIT SS: and its floor into the pack - online, the frame's own court does it */ } if (player.arena) player.arena = modes?.gateArenaDay?.() != null ? courtRing() : null; if (!player.arena) player.arena = arenaBouts.ring(); /* ARENA2: my bout's ring on the arena's sand */ siegeHud?.hide(); /* AUDIT-SEATS C1: no online frame (a load, a spawn), no battle's tick - its HUD hidden, never frozen; the next tick draws it again */ }   // DUEL1: no online frame, no duel's law to hold the body - the ring is the live duel's alone; WB3b: the court's is its floor's, and offline there is no court   // ONLINE1: the pose out, the peers in - after the look is paid, before the camera is read and any mode draws
     deadlandsAirFrame();   // WB6b: after the court's ways out have run, online or not - the frame it is gone is the frame its air falls silent

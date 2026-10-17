@@ -179,6 +179,7 @@ function shipCard(el, s, { rerender, meter, door }) {
   if (s.where === 'here' || s.where === 'away') acts.append(button(el, 'Send away', c.away, () => act('away')));
   if (s.crewed && s.where !== 'packed') acts.append(button(el, 'Repair', c.repair, () => act('repair')));
   if (s.where !== 'packed' && s.where !== 'away') acts.append(button(el, 'Shipwright', c.yard, () => act('yard')));
+  if (s.hold) acts.append(button(el, 'Hold', null, () => act('hold')));   // CARGO-ANYWHERE: her hold, wherever she lies
   acts.append(button(el, _open?.uid === s.uid && _open.panel === 'refit' ? 'Close refits' : 'Refit', null, () => { _open = _open?.uid === s.uid && _open.panel === 'refit' ? null : { uid: s.uid, panel: 'refit' }; rerender(); }));
   acts.append(button(el, 'Rename', null, () => { _open = { uid: s.uid, panel: 'rename' }; _draft = s.name ?? ''; _said = null; rerender(); }));
   if (s.crewed && s.where !== 'packed') acts.append(button(el, _open?.uid === s.uid && _open.panel === 'crew' ? 'Close crew' : 'Crew', null, () => { _open = _open?.uid === s.uid && _open.panel === 'crew' ? null : { uid: s.uid, panel: 'crew' }; rerender(); }));

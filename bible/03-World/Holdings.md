@@ -143,6 +143,7 @@ card.
 | Send away | she sails for the port nearest the player and is laid up there (`LayUpBoat`: her hold into PackedCargoes under her number, placed again it is aboard) | laid up, packed, at her helm, fighting, another player aboard; a boat with no crew not here |
 | Repair | her hands, wherever she lies (below); the boat underfoot, her captain's order Make repairs | no crew, packed, no hands aboard, nothing to mend, her hands fighting her |
 | Shipwright | a door to the yard's window (`navalYardWindow.js`) for a ship laid up or lying here, at a port | away from a port; she elsewhere; fighting |
+| Hold | CARGO-ANYWHERE (2026-10-17, `03-World/Naval-Refit.md`): her hold's window, wherever she lies - here, away, laid up (PackedCargoes, live) or packed (her parts weighed again as it shuts) - a door handed to the menu (`scenes/holdDoor.js openShip`) | a Rowboat (no hold) |
 | Refit | the panel below | below |
 | Rename | the field below | - |
 

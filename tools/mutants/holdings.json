@@ -193,8 +193,8 @@
   {
     "name": "FLEET-rigging-unread",
     "file": "src/systems/comeSailAway/comeSailAway.js",
-    "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b));",
-    "new": "f(b.modifierMoveSpeedSail)) * hurt));",
+    "old": "f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b)) * peace());",
+    "new": "f(b.modifierMoveSpeedSail)) * hurt)) * peace());",
     "tests": [
       "test/systems/naval/fleet.test.js"
     ]
