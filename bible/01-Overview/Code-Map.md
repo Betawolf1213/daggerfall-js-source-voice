@@ -40,6 +40,8 @@ and what it takes out lands loose in `src/scenes/` or `src/systems/`.
 | `src/` | The game client. Everything the browser and the desktop app run. |
 | `server/` | The relay (a Cloudflare Worker, one Durable Object `Room` per room): the wire's authority. `server/src/index.js` is its host. |
 | `server-account/` | The account service (a Cloudflare Worker): accounts, and what the realm keeps between sessions - guilds, boards, ladders. `migrations/` are D1 migrations - applied, never edited. |
+| `server-voice/` | The voice service (a Cloudflare Worker, or the same handler under node beside the media server): who may join which voice room, the media server's credentials, and the sweep that takes a seat back once it no longer qualifies (`11-Multiplayer/Voice-Arc.md`). |
+| `deploy/` | What a host of ours runs beside the Workers: `deploy/voice/`, the voice stack's compose file, the media server's config and its env template. |
 | `app/` | The desktop app's Electron shell (`main.cjs`, preloads, packaging). |
 | `bible/` | The design record, one folder a section (`01-Overview/` to `12-Enhanced-AI/`). `Home.md` is the index and its Process rules bind every change. `01-Overview/` holds the overview pages - this map, `Port-Doctrine.md`, `Port-Ledger.md`, `Host-Split.md` - and files its dated records by kind: `audits/` (every audit and review), `bugs/` (the field-bug passes, the bug lists, the incident), `handoffs/` (hand-offs, integrations, the dated asks and status snapshots). |
 | `test/` | Every test, in the folder of the layer it tests and, there, its feature's folder (`test/systems/arena/`) - mapped below. `bible/09-Testing/Testing.md` has one row per file, by its name. |
@@ -236,6 +238,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/net/serpent/` | The sea serpent, the sea's world boss (`11-Multiplayer/Sea-Serpent.md`) - online - the law both ends run. |
 | `src/net/siege/` | Sieges of a seat - online - the law both ends run. |
 | `src/net/superDungeon/` | The Abyss Dungeon, the super dungeons (`11-Multiplayer/Super-Dungeons-Look.md`) - online - the law both ends run. |
+| `src/net/voice/` | Proximity and party voice (`11-Multiplayer/Voice-Arc.md`): the client, its LiveKit transport and the wire the voice service and the relay share - online - the law both ends run. |
 | `src/net/wild/` | The Wrothgarian open zone (`11-Multiplayer/Wild-Zone.md`) - online - the law both ends run. |
 
 #### `src/player/`
@@ -309,7 +312,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/quest/` | The quest machine: the parser, its tables, actions and conditions. |
 | `src/systems/region/` | A region's conditions, hubs and power - the law. |
 | `src/systems/rest/` | Resting: the rest window, its supplies and its warning - the law. |
-| `src/systems/revenant/` | The Revenant: the feud, its companions (their kit, their errands abroad), its art, personality, voice, trophy and fate. |
+| `src/systems/revenant/` | The Revenant: the feud, its companions (their kit, their errands abroad, their stars), its art, personality, voice, trophy and fate. |
 | `src/systems/roleplayRealism/` | The Roleplay Realism mod - the law. |
 | `src/systems/roleplayRealismItems/` | The Roleplay Realism: Items mod - the law. |
 | `src/systems/save/` | Saving and loading - the law. |
