@@ -308,6 +308,12 @@ const WALL_FALL_G = 9.8;
 const EG_GUST_DT_MAX = 0.1;
 /** EG6a: how far across a Gust section's line its push reaches (m - an island's 3 m and a body pushed off it). */
 export const EG_GUST_REACH_M = 6;
+/** THE ASCENT (spec law 9): how far over its course's top (m) and under its foot a Gust section still pushes - a body jumping
+ *  on the course (its flight is a metre and a half), never a storey over it (THE ASCENT keeps EG_FRAG_HEADROOM_CM.course - 4.5 m
+ *  - over a course; the sweep, seed 210: a bridge 21 m over a Gust's floor, pushed off it) or under it. */
+export const EG_GUST_STOREY_M = Object.freeze({ over: 3, under: 2 });
+/** Is the realm height `ry` on Gust section `g`'s storey? The laws before stack no storeys: every height is. */
+export const egGustStorey = (g, ry) => (g.spec.law ?? 0) < 9 || (ry >= g.y - EG_GUST_STOREY_M.under && ry <= (g.y1 ?? g.y) + EG_GUST_STOREY_M.over);
 
 // ── AUDIT EG III: SPIREBRIDGE'S PLANK (section 15) ────────────────────────────────────────────────────────────────
 /** A Spirebridge's plank: how deep it stands (m), how long it takes to lay itself across (s - none under reduced motion), its
@@ -1088,7 +1094,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       const footing = spireFooting();
       // THE GUST (section 10.3): the Steps' breath over a Gust section of the hall I stand in, Iron Footing taking its share
       if (dt > 0 && footing < 1) {
-        const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1);
+        const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1 && egGustStorey(q, ry));
         if (g) { gustAt(t, _gust); if (_gust.push) body.collider?.move?.(body.pos, _gust.push * (1 - footing) * Math.min(dt, EG_GUST_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping); }
       }
       // EG-ZL - THE GUST'S WIND (section 10.3: "the wind rising (AmbientWindMoanDeep)"): a second before each gust over a Gust
