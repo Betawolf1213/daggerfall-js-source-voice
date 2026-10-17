@@ -54,18 +54,18 @@ import {
 import {
   GUILD_FOUND_RENOWN, GUILD_MEMBERS_MAX, GUILD_NAME_MIN, GUILD_NAME_MAX, GUILD_RANK_NAME_MAX, GUILD_MOVE_MAX,
   GUILD_RENAME_GOLD,
-} from './guildLaw.js';   // GUILD1: the bounds its refusals name; GUILD2a: a new name's price
-import { GUILD_VAULT_SLOTS, GUILD_VAULT_HALL_SLOTS } from './guildVaultLaw.js';   // GUILD2b: the vault's shelf, in its refusal's own sentence
+} from './guild/guildLaw.js';   // GUILD1: the bounds its refusals name; GUILD2a: a new name's price
+import { GUILD_VAULT_SLOTS, GUILD_VAULT_HALL_SLOTS } from './guild/guildVaultLaw.js';   // GUILD2b: the vault's shelf, in its refusal's own sentence
 import { MARKET_PRICE_MAX, MARKET_UNITS_MAX, MARKET_LISTINGS_MAX, MARKET_ORDERS_MAX, AUCTION_BID_MAX } from './marketLaw.js';   // PROF5: the bounds its refusals name
 import { GUILD_WRITS_MAX, GUILD_STORES_MAX, COMMISSIONS_MAX, COMMISSIONS_FOR_MAX, WRIT_POSTS_MAX, WRIT_OPS_MAX, GUILD_CONTRACTS_MAX, CONTRACT_PAY_MAX, CONTRACT_DEEDS_MAX } from './writLaw.js';   // PROF6: the bounds its refusals name; SILVER-WAYS: a contract's
 import { RENOWN_TRACKS_MAX } from './renown.js';   // RENOWN1: the tracks' bound, in its refusal's own sentence (RENOWN-CHAR: back with the tracks)
-import { SERPENT_EMBERS } from './serpentHoardLaw.js';   // AUDIT 625 P4: the embers this build's serpent hoard mints, said with its claim
+import { SERPENT_EMBERS } from './serpent/serpentHoardLaw.js';   // AUDIT 625 P4: the embers this build's serpent hoard mints, said with its claim
 import { HERALDRY_CHANGE_DRAKES } from './heraldryLaw.js';   // GUILD1d: a change's cost, in its refusal's own sentence
 import { t, localizedTable } from '../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 import { VENDOR_REFUSAL_WORDS } from './vendorLaw.js';   // HOME-VENDOR: a trader's refusals
 import { busyRead, busyAnswer, busyWaitMs, retryAfterMs, BUSY_HOLD_MS } from './busyLaw.js';   // BUSY-GATE: the reads that stand back while the service is overloaded
-import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
-import { cardById } from './iliacCards.js';   // AUDIT CARDS-6 D7: the card a short deck lacks, said by its name
+import { ARENA_TEXT } from '../systems/arena/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
+import { cardById } from './iliac/iliacCards.js';   // AUDIT CARDS-6 D7: the card a short deck lacks, said by its name
 import { jittered } from './backoff.js';   // STORM-SHED: a failed mint's hold, jittered as every book's wait is
 
 /** WHERE THE SERVICE IS. Its own constant beside the relay's
@@ -320,7 +320,7 @@ const REFUSAL_WORDS = {
   // (FIELD BUGS 2026-09-30): the words say that rule. They named only "before the realm" - but the old lane's deposits
   // made since are held the same - and never said what a realm character may still take out
   'guild-treasury-old': () => t('account.refusal.guildTreasuryOld', 'A realm character takes out only the gold realm characters put in, and not that much of theirs is left. The rest came in before the realm or from a character outside it - it stays in the treasury.'),
-  // WB5b: a gate's kill receipt carried to the service. net/gateClaims.js says nothing of these to the player - it keeps
+  // WB5b: a gate's kill receipt carried to the service. net/gate/gateClaims.js says nothing of these to the player - it keeps
   // what they do not settle and lets go of what they do - but a word the service can say is a word with a sentence.
   'no-gate-key': () => t('account.refusal.noGateKey', 'The account service cannot check a gate\'s receipt right now. It is kept and tried again.'),
   receipt: () => t('account.refusal.receipt', 'That gate\'s receipt was not signed by the gate, or it has run out.'),
@@ -630,7 +630,7 @@ const REFUSAL_WORDS = {
   'commission-not-made': () => t('account.refusal.commissionNotMade', 'A commission is filled with a piece of your own make.'),
   'commission-worn': () => t('account.refusal.commissionWorn', 'A commission is new work: that piece is worn.'),
   // HOME-CROSSED (FIELD BUGS 2026-09-30): a home customs carried in - RESTORE's words for a crossed deed
-  // (systems/onlineHomes.js HOME_CROSSED_LINES, pinned equal), and a realm act asked while the last is still out
+  // (systems/online/onlineHomes.js HOME_CROSSED_LINES, pinned equal), and a realm act asked while the last is still out
   'home-crossed': () => t('account.refusal.homeCrossed', 'That came into the realm through customs. The bank of the Empire does not buy it back. It stays your home.'),
   busy: () => t('account.refusal.busy', 'Your last dealing with the realm is still being settled. Try again in a moment.'),
   server: () => t('account.refusal.server', 'The account service had a problem. Try again.'),
@@ -669,6 +669,10 @@ const REFUSAL_WORDS = {
   'wed-partner': () => t('account.refusal.wedPartner', 'They cannot be wed now - they are wed already, of no house, or no longer the one who stood with you.'),   // AUDIT LEGACY III O1
   'lineage-too-large': () => t('account.refusal.lineageTooLarge', 'Your family\'s record has grown past what the realm keeps for one family.'),   // AUDIT LEGACY III O2/P1
   'wed-spent': () => t('account.refusal.wedSpent', 'That wedding was not yours to answer.'),
+  // REZ-BLOODLINE AUDIT R1 (server-account/src/legacy.js realmRaise): a party's Resurrect the realm will not take back
+  'not-dead': () => t('account.refusal.notDead', 'The realm holds no death of that character to take back.'),
+  'raise-late': () => t('account.refusal.raiseLate', 'Too late - that death stands for good now.'),
+  'raise-no-line': () => t('account.refusal.raiseNoLine', 'Only a character of a house (Project Legacy) is held for a Resurrect.'),
   // AUDIT REALM2 S2: the online acts that cost gold are a realm character's
   'realm-only': () => t('account.refusal.realmOnly', 'Only an online character of the realm can do that.'),
   // REALM P2.1: a trade's sid another pair settled (server-account/src/realmTrade.js)
@@ -1289,7 +1293,18 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * handed the token again within TOKEN_REUSE_MS - the retry mints nothing. A relay deploy's reconnect wave was a mint a
  * player and another a busy refusal; it is a mint a player.
  *
- * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void }}
+ * DOOR-TOKEN (FIELD BUGS 2026-10-16b, the Discord: "Partied players popping in and out randomly after leaving tombs at
+ * graveyard ... also partied players inside tombs are invisible for a time"): A TOKEN MINTED AHEAD OF THE DOOR. A place
+ * change opens a new room, and its socket asked for its token only as it opened - a mint on the wire (seconds, for a
+ * player: TOKEN-WAIT) between the door and the hello, the player invisible to the party on both sides of it. The host
+ * says a place change is coming and when the next room's socket will ask (`minter.ahead(room, withinMs)` -
+ * scenes/doorTokenHost.js, each door its own margin), and a mint goes then only when the token held could not open that
+ * room by then: none held, spent there, or its reuse minute out within `withinMs`. AUDIT (2026-10-16, A2): the margin was
+ * one 20 s (TOKEN_AHEAD_MS) at every door, though the next socket asks within a frame or a build: a door with the held
+ * token 40-60 s old minted though that token would still have opened the room - twice the mints at a 40-55 s door gap.
+ * `minter.holds(room)` says whether a room would be handed one now, nothing on the wire.
+ *
+ * @returns {((room?: string|null) => Promise<string|null>) & { lastWhy: string|null, coolMs: () => number, opened: (room: string|null, token: string) => void, unopened: (room: string|null, token: string) => void, ahead: (room?: string|null, withinMs?: number) => boolean, holds: (room: string|null) => boolean }}
  */
 export function accountTokenMinter({ fetch, storage, onIssued = null, character = null, now = () => Date.now(), rand = Math.random }) {
   /** @type {{ token: string, secret: string, character: string|null, at: number, rooms: Set<string> } | null} */
@@ -1304,22 +1319,15 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
     if (!(now() - held.at < TOKEN_REUSE_MS)) return null;
     return held.token;
   };
-  const minter = Object.assign(async (/** @type {string|null} */ room = null) => {
-    const session = storedSession(storage);
-    if (!session) { minter.lastWhy = 'no-session'; console.warn('[account] no identity token: no sign-in stored on this device'); return null; }   // TOKEN-WAIT
+  /** The character the next mint names (RENOWN1) - read at each ask; a seam that throws costs the level, never the hello. */
+  const namedNow = () => {
     let named = null;
-    try { named = character?.() ?? null; } catch { named = null; }   // a seam that throws costs the level, never the hello
-    named = typeof named === 'string' && named ? named : null;
-    const again = reuse(room, session.secret, named);
-    if (again) { minter.lastWhy = null; return again; }
-    // a mint already on the wire (the sockets of one connect open together): its token, if this room has not had it
-    if (minting) {
-      await minting.catch(() => null);
-      const shared = reuse(room, session.secret, named);
-      if (shared) { minter.lastWhy = null; return shared; }
-    }
-    // STORM-SHED: a failure's hold, while it runs, answers every room at once with its word - nothing on the wire
-    if (cool.secret === session.secret && now() < cool.until) { minter.lastWhy = cool.why; return null; }
+    try { named = character?.() ?? null; } catch { named = null; }
+    return typeof named === 'string' && named ? named : null;
+  };
+  /** One mint on the wire for this sign-in, shared by every room asking while it flies (`minting`), its answer held or
+   *  its failure's hold set (STORM-SHED) - the one door the minter and DOOR-TOKEN's `ahead` both mint through. */
+  const start = (/** @type {any} */ session, /** @type {string|null} */ named) => {
     const p = mintFresh(session, named).then((token) => {
       if (token) {
         held = { token, secret: session.secret, character: named, at: now(), rooms: new Set() };   // STORM-SHED: opened by a hello (`opened`), never by the mint
@@ -1334,7 +1342,25 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
       return token;
     });
     minting = p;
-    try { return await p; } finally { if (minting === p) minting = null; }
+    const done = () => { if (minting === p) minting = null; };
+    p.then(done, done);
+    return p;
+  };
+  const minter = Object.assign(async (/** @type {string|null} */ room = null) => {
+    const session = storedSession(storage);
+    if (!session) { minter.lastWhy = 'no-session'; console.warn('[account] no identity token: no sign-in stored on this device'); return null; }   // TOKEN-WAIT
+    const named = namedNow();
+    const again = reuse(room, session.secret, named);
+    if (again) { minter.lastWhy = null; return again; }
+    // a mint already on the wire (the sockets of one connect open together): its token, if this room has not had it
+    if (minting) {
+      await minting.catch(() => null);
+      const shared = reuse(room, session.secret, named);
+      if (shared) { minter.lastWhy = null; return shared; }
+    }
+    // STORM-SHED: a failure's hold, while it runs, answers every room at once with its word - nothing on the wire
+    if (cool.secret === session.secret && now() < cool.until) { minter.lastWhy = cool.why; return null; }
+    return start(session, named);
   }, {
     lastWhy: /** @type {string|null} */ (null),
     /** STORM-SHED: a hello carried `token` into `room` (net/online.js) - the relay spends it there, so that room is minted
@@ -1353,6 +1379,27 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
     coolMs: () => {
       const session = storedSession(storage);
       return session && cool.secret === session.secret ? Math.max(0, cool.until - now()) : 0;
+    },
+    /** DOOR-TOKEN: a place change is coming, into `room` when the host knows it (null: a room no token has opened yet),
+     *  its socket asking within `withinMs` - a mint goes NOW when the token held could not open it by then, so the socket
+     *  finds one held. Never a second mint while one flies, never through a failure's hold (STORM-SHED), never without a
+     *  sign-in. True when a mint went. */
+    ahead: (/** @type {string|null} */ room = null, withinMs = 0) => {
+      const session = storedSession(storage);
+      if (!session || minting) return false;
+      if (cool.secret === session.secret && now() < cool.until) return false;
+      const named = namedNow();
+      const by = now() + Math.max(0, Number(withinMs) || 0);   // AUDIT A2: when its socket asks - the door's own margin
+      const opens = !!held && held.secret === session.secret && held.character === named && by - held.at < TOKEN_REUSE_MS && !(room != null && held.rooms.has(room));
+      if (opens) return false;
+      start(session, named);
+      return true;
+    },
+    /** DOOR-TOKEN: does this minter hold a token `room` would be handed now, nothing on the wire (the reuse law) - a
+     *  session whose hello went without one asks again the moment it does (net/online.js). */
+    holds: (/** @type {string|null} */ room) => {
+      const session = storedSession(storage);
+      return !!session && reuse(room, session.secret, namedNow()) != null;
     },
   });
 
@@ -1432,7 +1479,7 @@ export function accountPlayBeat({ fetch, storage }) {
   };
 }
 
-/** INT8: a duel's result, the relay's signed receipt (net/duelReceipt.js
+/** INT8: a duel's result, the relay's signed receipt (net/duel/duelReceipt.js
  *  `d1`) carried by either of its fighters - `{ recorded, wins, losses }`
  *  (or `{ recorded: false, why }`). DUEL1's loser's own report retired. */
 export const claimDuelReceipt = (io, receipt) => call(io, '/v1/duel/claim', { receipt });
@@ -1481,7 +1528,7 @@ export const claimGateReceipt = (io, receipt, extra = null) => call(io, '/v1/gat
  * WB5b: THE GATES' ONE CALL, bound to this device's stored session (read
  * at each call, as the duels' are). With no session there is no account
  * to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and
- * net/gateClaims.js keeps the receipt for when there is one.
+ * net/gate/gateClaims.js keeps the receipt for when there is one.
  */
 export function accountGates({ fetch, storage }) {
   const io = () => { const s = storedSession(storage); return s ? { fetch, base: serviceBase(storage), secret: s.secret } : null; };
@@ -1498,7 +1545,7 @@ export const claimRaidReceipt = (io, receipt, character, name = null, cid = null
 
 /**
  * RAID4: THE TOWNS' ONE CALL, bound to this device's stored session (the gates' own shape). With no session there is
- * no account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/raidClaims.js keeps the
+ * no account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/raid/raidClaims.js keeps the
  * receipt for when there is one.
  */
 export function accountRaids({ fetch, storage }) {
@@ -1514,13 +1561,13 @@ export function accountRaids({ fetch, storage }) {
  *  fought it and this device's claim id (the hoard's key) - `{ recorded, slain, renown, spoils, order }` (SERPENT5: and
  *  `title`, `aura`, `titleNew`, `auraNew` - the Old Coil's grants on its first write, acct135), or
  *  `{ recorded: false, why }` (`claimed`, `guest`). */
-// AUDIT 625 P4: and the embers this build's hoard mints (systems/serpentSpoils.js serpentEmbers) - the row counts what the
+// AUDIT 625 P4: and the embers this build's hoard mints (systems/serpent/serpentSpoils.js serpentEmbers) - the row counts what the
 // claim says, so a build from before them, saying none, is counted none
 export const claimSerpentReceipt = (io, receipt, character, name = null, cid = null) => call(io, '/v1/serpent/claim', { receipt, character, name, ...(cid ? { cid } : {}), stones: SERPENT_EMBERS });
 
 /**
  * SERPENT1: THE SERPENTS' ONE CALL, bound to this device's stored session (the raids' own shape). With no session there
- * is no account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/serpentClaims.js keeps the
+ * is no account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/serpent/serpentClaims.js keeps the
  * receipt for when there is one.
  */
 export function accountSerpents({ fetch, storage }) {
@@ -1537,7 +1584,7 @@ export const claimSdReceipt = (io, receipt) => call(io, '/v1/sd/claim', { receip
 
 /**
  * SD9b: THE HOURS' ONE CALL, bound to this device's stored session (the gates' own shape). With no session there is no
- * account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/sdClaims.js keeps the receipt for
+ * account to claim for: `{ ok: false, error: 'no-session' }`, never a knock - and net/superDungeon/sdClaims.js keeps the receipt for
  * when there is one.
  */
 export function accountSds({ fetch, storage }) {

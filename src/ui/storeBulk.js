@@ -2,10 +2,10 @@
 // LOOT-BULK (2026-10-16): Take all and Stash all walk the list the player is looking at, top to bottom, through the
 // same plan a single click uses. One click. The room still hears a container when its window closes, not per item.
 import { stacksWith } from '../systems/inventory.js';
-import { LOOT_LIST_MAX } from '../systems/loot.js';
+import { LOOT_LIST_MAX } from '../systems/loot/loot.js';
 import { t } from '../systems/textManager.js';
 
-/** A room container's list, past which a close cannot be said (systems/loot.js LOOT_LIST_MAX). */
+/** A room container's list, past which a close cannot be said (systems/loot/loot.js LOOT_LIST_MAX). */
 export const CONTAINER_LIST_CAP = LOOT_LIST_MAX;
 /** Said when Stash all stops because the next row would put a room container past that cap. */
 export const containerFull = () => t('inventory.store.containerFull', 'This container cannot hold any more.');

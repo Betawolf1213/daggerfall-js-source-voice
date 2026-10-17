@@ -20,16 +20,16 @@
 // is why it stands beside them rather than among them. The search matches the row's own name, lower-cased.
 //
 // Classic skin: not drawn there. THE NATIVE-WINDOW RULE (bible/Home.md) holds every element of a native window to a DFU
-// source, and DFU's window has no control for this; shift-click (ui/nativeInventory.js) is the classic skin's half.
+// source, and DFU's window has no control for this; shift-click (ui/native/nativeInventory.js) is the classic skin's half.
 //
 // LOOT-BULK (2026-10-16): the same bar on a container (a chest, a corpse). A rarity menu beside the pages, listing only
 // the tiers this list holds, each with its count, and a material menu of the same shape for armour and weapons. The
 // ground and a reward tray stay whole.
 import { PACK_PAGES, pageOf } from './packPages.js';
 import { isMaterialItem } from '../systems/materialsBag.js';
-import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/lootRarity.js';
-import { materialName } from '../systems/itemInfo.js';   // MAT-FILTER: the metal the card already says
-import { isAmmunition } from '../systems/itemTemplates.js';
+import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/loot/lootRarity.js';
+import { materialName } from '../systems/item/itemInfo.js';   // MAT-FILTER: the metal the card already says
+import { isAmmunition } from '../systems/item/itemTemplates.js';
 import { t } from '../systems/textManager.js';
 
 /** The remote kinds (enhancedInventory.js remoteModel) that carry the bar: the player's own stores, and a container. */
