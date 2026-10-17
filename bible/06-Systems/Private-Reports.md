@@ -107,7 +107,7 @@ own session.
 
 ## The service
 
-- **Table.** `private_reports`, migration 0127 (`server-account/migrations/0127_private_reports.sql`). One report per
+- **Table.** `private_reports`, migration 0129 (`server-account/migrations/0129_private_reports.sql`). One report per
   send per account (`UNIQUE (from_id, rid)`). An account that is deleted takes its reports with it (`CASCADE`), as it
   takes its letters. The table's CHECKs repeat the law's bounds; the law, asked before every insert, is what keeps a
   row the client could not read from being written (AUDIT PRIVATE-REPORT DOC-19). A CHECK that ever refused would be
@@ -133,7 +133,7 @@ own session.
   service's 4 KiB.
 - **Context** is kept in its shape and nothing else (`reportContextOf`): an update number, a build hash, and
   `desktop` or `browser`. Anything else a client sends beside the words is dropped, never stored.
-- **Version.** `ACCOUNT_VERSION` acct153 (acct152 and migration 0126 on its branch, renumbered past SAFE's at the merge). It deploys with migration 0127 through `account-deploy.yml` on the merge to
+- **Version.** `ACCOUNT_VERSION` acct154 (acct152 then acct153, and migration 0126 then 0127, on its branch, renumbered past SAFE's and INT16-INT19's at the merges). It deploys with migration 0129 through `account-deploy.yml` on the merge to
   main. The site's form against a service not yet deployed is answered `not-found`, and the form says the service's
   sentence for a failure. Nothing is lost, because the draft stays in the form.
 

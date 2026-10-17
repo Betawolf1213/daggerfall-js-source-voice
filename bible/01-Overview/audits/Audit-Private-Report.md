@@ -13,13 +13,13 @@ pass, every finding reproduced or traced before it was acted on:
 
 | Lane | Over | How |
 |---|---|---|
-| SVC - the service | `server-account/src/reports.js`, the five routes and the send's body bound (`index.js`), migration 0127, `src/net/reportLaw.js`, the reader's count (`post.js`, `heartbeat.js`) | the real Worker over the test D1 (`test/accountDb.mjs`); probe tests; a module hook serving a mutated copy of one file, so the snapshot stayed untouched |
+| SVC - the service | `server-account/src/reports.js`, the five routes and the send's body bound (`index.js`), migration 0127 (0129 since the merge of INT16-INT19), `src/net/reportLaw.js`, the reader's count (`post.js`, `heartbeat.js`) | the real Worker over the test D1 (`test/accountDb.mjs`); probe tests; a module hook serving a mutated copy of one file, so the snapshot stayed untouched |
 | CLI - the client's state | `net/privateReport.js` `ReportDesk`, `net/serverPost.js` `PostBox`, `chatCommands.js`'s `/bug`, the world host's line | probe tests over the real service: an account switched on one sitting, answers landing out of order, the counts |
 | UI - the window | `ui/enhanced/enhancedReport.js`, `enhancedPost.js`, `enhancedMenu.js`'s landing and keys, `pauseDoor.js`, `enhancedStyle.js` | headless Chromium on a probe page over the real modules: a face rebuilt mid-typing, keys held and pressed, focus after every act, the accessibility tree, contrast, 320 to 1280 px |
 | DOC - the record | `Private-Reports.md`, `SECURITY.md`, the README, the index lines, the PR's text, all 67 new rows in each of the 13 languages | every claim against the code and the repository's settings; every row read |
 | TEST - the pins | both test files, `privatereport.json` and the 13 re-aimed records, the Testing.md rows | probe mutants against the tests; recounts by the manifest's method |
 
-What reached a player: nothing (the pull request is unmerged and acct153 undeployed). On the branch: the pause face
+What reached a player: nothing (the pull request is unmerged and its account version undeployed). On the branch: the pause face
 rebuilt mid-typing took the player's place and the next Space changed the report's kind (UI-1); Escape did nothing
 anywhere in the form `/bug` lands in (UI-2); another account on the same sitting found the last one's draft, its list
 and a reader's opened reports (CLI-1); a title with emoji in it could be refused as a full queue (SVC-1); and the
