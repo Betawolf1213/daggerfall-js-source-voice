@@ -4531,6 +4531,8 @@
   ["test/law9_proofs.test.js","test/net/eliteGates/law9_proofs.test.js"],
   ["test/law9_rooms.test.js","test/net/eliteGates/law9_rooms.test.js"],
   ["test/law9_route.test.js","test/net/eliteGates/law9_route.test.js"],
+  ["test/lootbulk.test.js","test/ui/lootbulk.test.js"],
+  ["test/containerpreview.test.js","test/systems/containerpreview.test.js"],
   ["src/voice/voiceClient.js","src/net/voice/voiceClient.js"],
   ["src/voice/voiceProximity.js","src/net/voice/voiceProximity.js"],
   ["src/voice/voiceSettings.js","src/net/voice/voiceSettings.js"],
