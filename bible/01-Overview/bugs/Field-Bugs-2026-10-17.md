@@ -6,7 +6,7 @@ a post in the general channel Mac handed over the same night, read at main's `39
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | Boar, "Interface of enchanting workbench" (2026-10-13, bumped twice): "As you can see, buttons are on on another" - the Holdings tab's Stores page at a home's enchanting station, the Reforge with Essence's rows a name a word a line beside one press a piece | Every line's press was a child of the piece's row, and the row's button track is one cell: each press drew on the first, and the track squeezed the name | fixed (REFORGE-STACK) |
-| 2 | slick, in #general, minutes after the Elite Breach went live (relay `world213`, `acct149`): "Playing a new character I made last night and it's flagged by the new key thing" - the notice: "The realm is reviewing this character: a Weir Key it carries is not as the game makes it. Trading is frozen until it is gone." | The account service judges a checkpoint with the item law, which it loads headless: the Weir Key's home (`systems/eliteGates/weirKey.js`) pulls the Spire's law and its picture in, and the law imported none of it, so template 575 was a `template` finding there - every character carrying a key was held, with a strike. The tests ran the law in a process that had imported the key's home, where the registry knew it | Fixed - KEY-LAW below: item law 7, `acct150`, migration 0125 |
+| 2 | slick, in #general, minutes after the Elite Breach went live (relay `world213`, `acct149`): "Playing a new character I made last night and it's flagged by the new key thing" - the notice: "The realm is reviewing this character: a Weir Key it carries is not as the game makes it. Trading is frozen until it is gone." | The account service judges a checkpoint with the item law, which it loads headless: the Weir Key's home (`systems/eliteGates/weirKey.js`) pulls the Spire's law and its picture in, and the law imported none of it, so template 575 was a `template` finding there - every character carrying a key was held, with a strike. The tests ran the law in a process that had imported the key's home, where the registry knew it | Fixed - KEY-LAW below: item law 7, `acct151`, migration 0125 |
 
 ## REFORGE-STACK: a press a line, under the piece
 
@@ -66,7 +66,7 @@ DFU has no Weir Key and no realm; this is our own law, and no DFU member or ledg
 
 FIXED. The key's row, but its name and its picture, is a leaf that imports nothing (WEIR_KEY_LAW_ROW); `weirKey.js` lays its name and
 picture over it and registers it as before, and the law reads it beside the registry, as it reads the rest's rows - item
-law 7 (`acct150`; tech1_roster's LAW_SERVICE names it). Migration 0125 lifts, as MAKER-KEPT's 0123 did, every character
+law 7 (`acct151`; tech1_roster's LAW_SERVICE names it). Migration 0125 lifts, as MAKER-KEPT's 0123 did, every character
 not staff's whose law findings were only `template` on 575: the hold, a timed end, the strikes and the timed holds
 served, written as a staff act (`by: 'key-law'`), `law_sig` kept so a checkpoint the old Worker judges before it moves is
 no new strike. A character with any other finding, or one past its kept list, is left as it was. The account deploy's

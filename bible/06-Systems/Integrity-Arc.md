@@ -54,7 +54,7 @@ nothing. A copy given a fresh id is a new piece to the ledger, and a new piece i
 
 ### INT1 - the item law (`src/systems/item/itemLaw.js`)
 
-KEY-LAW (2026-10-17, law 7, `acct150`; `01-Overview/bugs/Field-Bugs-2026-10-17.md`; slick: "flagged by the new key
+KEY-LAW (2026-10-17, law 7, `acct151`; `01-Overview/bugs/Field-Bugs-2026-10-17.md`; slick: "flagged by the new key
 thing"): the Weir Key's row (`src/systems/eliteGates/weirKeyRow.js`, a leaf) is read beside the registry, as the rest's,
 Deep Waters' fish and the two mods' are - this service loads none of the key's home, so law 6 found every Weir Key a
 template no honest client mints, and held its owner's trade with a strike, the hour the Elite Breach went live. The
