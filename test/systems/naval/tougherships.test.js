@@ -200,7 +200,7 @@ test('SALVAGE on the host: a ship sunk leaves her wreckage afloat beside her cas
   const got = salvageOf(classById('pirateBrig'));
   assert.equal(storesIn(h.hold), got.stores, 'her stores in my hold');
   assert.equal(st.guns.barrels, BARREL.stock, 'her powder: my barrels to their stock, never past it');
-  assert.ok(h.log.say.includes(`You haul her wreckage aboard: ${got.stores} carpenter's stores and 1 fire barrel.`), h.log.say.join(' | '));
+  assert.ok(h.log.say.includes(`You haul the wreckage aboard: ${got.stores} carpenter's stores and 1 fire barrel.`), h.log.say.join(' | '));
   assert.equal(afloat().some((f) => isSalvage(f.lot)), false, 'hauled in');
   // a Large Boat rolls no barrels: the stores alone
   const lb = await atSea({ boatHull: HULL.LargeBoat, hull: hullBuild(HULL.LargeBoat).hullHp, sail: hullBuild(HULL.LargeBoat).sailHp, crew: 0, barrels: 0 });
@@ -208,7 +208,7 @@ test('SALVAGE on the host: a ship sunk leaves her wreckage afloat beside her cas
   frames(lb, 0.3);
   assert.equal(storesIn(lb.hold), salvageOf(classById('pirateSloop')).stores);
   assert.equal(lb.host._myState(lb.boat).guns.barrels, 0);
-  assert.ok(lb.log.say.includes('You haul her wreckage aboard: 2 carpenter\'s stores.'));
+  assert.ok(lb.log.say.includes('You haul the wreckage aboard: 2 carpenter\'s stores.'));
   // a swimmer 50 m off a boat of mine: into his pack, a store a piece
   const s = await atSea();
   s.runtime.sailing = false;
@@ -328,7 +328,7 @@ test('QUICK-REPAIRS her hands spend her stores on their own once a fight is over
   assert.equal(storesIn(away.hold), 5, 'nobody aboard her: nothing spent');
   const at = await atSea({ boatHull: HULL.LargeBoat, hull: Math.round(lbHull.hullHp * 0.7), sail: lbHull.sailHp, crew: 0, stores: 5 });
   frames(at, 5);
-  assert.ok(storesIn(at.hold) < 5 || at.host._myState(at.boat).credit > 0, 'at her helm: my own hands at the stores');
+  assert.ok(storesIn(at.hold) < 5 || at.host._myState(at.boat).credit > 0, 'at the helm: my own hands at the stores');
   assert.equal(FIELD_QUIET_S, 15, 'her hands turn to sooner');
 });
 

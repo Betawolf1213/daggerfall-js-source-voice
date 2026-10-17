@@ -248,12 +248,12 @@ test('CAPT-TRADE the exchange\'s tab: each good\'s stand, its two prices and how
   const hold = [mintGood('iron', 3)];
   const x = h.office.exchange({ uid: 42, cargo: hold });
   const t = exchangeText(x);
-  assert.match(t.lede, /^Wayrest's exchange\. Her hold carries 36 kg of goods; your purse 5,000 gold\.$/);
+  assert.match(t.lede, /^Wayrest's exchange\. The hold carries 36 kg of goods; your purse 5,000 gold\.$/);
   const wine = t.rows.find((r) => r.id === 'wine');
   assert.match(wine.words, /^Made here - cheap - buy at \d+ gold a cask \(30 left today\) - sell at \d+ gold \(4 wanted\)$/);
   const iron = t.rows.find((r) => r.id === 'iron');
-  assert.deepEqual([iron.extra, iron.canSell], ['In her hold: 3 pigs', true]);
-  assert.equal(exchangeText(h.office.exchange(null)).lede, 'Wayrest\'s exchange - deal from your helm, into her hold.');
+  assert.deepEqual([iron.extra, iron.canSell], ['In the hold: 3 pigs', true]);
+  assert.equal(exchangeText(h.office.exchange(null)).lede, 'Wayrest\'s exchange - trade from the helm, into the hold.');
   const proto = Object.getPrototypeOf(globalThis.document.createElement('div'));
   proto.removeAttribute ??= function removeAttribute(k) { delete this.attrs[k]; };
   const model = { name: 'Small Ship', uid: 42, offer: () => ({ rows: [], whole: 0, gold: 5000 }), ship: () => ({ hull: 1, maxHull: 1, sail: 1, maxSail: 1, crew: 1, maxCrew: 1, barrels: 0 }), exchange: () => h.office.exchange({ uid: 42, cargo: hold }) };

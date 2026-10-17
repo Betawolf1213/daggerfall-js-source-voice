@@ -49,7 +49,7 @@ test('YARD-ROWS: the mounted fleet page - every ship\'s row a fleet row, her pre
     for (const r of rows) {
       assert.ok(r.className.split(' ').includes('dfyard-fleetrow'), 'a fleet row');
       const acts = byClass(r, 'dfyard-acts')[0];
-      assert.deepEqual(byClass(acts, 'dfnaval-btn').map((b) => b.textContent), ['Sell her', 'Bring her here', 'Lay her up', 'Name her']);
+      assert.deepEqual(byClass(acts, 'dfnaval-btn').map((b) => b.textContent), ['Sell', 'Bring here', 'Lay up', 'Rename']);
       assert.equal(byClass(acts, 'dfyard-name').length, 1, 'her name box among her acts');
     }
   } finally { view?.close?.(); host.remove(); }

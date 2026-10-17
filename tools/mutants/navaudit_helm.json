@@ -846,7 +846,7 @@
   {
     "name": "NAV1H-the-wreck-hint-unsaid",
     "file": "src/ui/naval/navalHud.js",
-    "old": "      : ship.wrecked ? (ship.repairing ? 'Crippled - her crew at the repairs' : ship.repairOrdered ? 'Crippled - her crew stands to the repairs' : ship.stores > 0 ? 'Crippled - order repairs, or make port' : 'Crippled - make port for a shipwright')   // AUDIT NAV1: the way out of a wreck, said - SEA-REPAIR: her stores the other\n",
+    "old": "      : ship.wrecked ? (ship.repairing ? 'Crippled - crew repairing' : ship.repairOrdered ? 'Crippled - repairs ordered' : ship.stores > 0 ? 'Crippled - order repairs, or make port' : 'Crippled - make port for a shipwright')   // AUDIT NAV1: the way out of a wreck, said - SEA-REPAIR: her stores the other\n",
     "new": "",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"

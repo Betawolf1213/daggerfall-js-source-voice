@@ -22,7 +22,8 @@ The owner, later the same day, to the queue: *"I also want the ability to have a
 who want to show off their ship name. Additionally, enemies and merchants should have their own unique liveries, flags
 hosted, etc"* - two slices more, SHIP-PLAQUE (12) and SEA-COLOURS (13). And after them: *"Please once more audit
 everything and ensure perfection. Also fix a pre existing issue where AI can actually use the overworld as time
-dilation"* - AUDIT 2 and TIME-DILATION (14).
+dilation"* - AUDIT 2 and TIME-DILATION (14). And last: *"please reformat the text to not refer to the ship as "Her".
+Text needs to be mundane, readable and not AI-like"* - SHIP-IT (15).
 
 The owner, the same day, to the queue: *"A firmament styled captain skill tree along with making improvements to the
 ship upgrade system"* - and a player's ask beside it: a skill tree for the ship *"integrated with leveling"*, levels that
@@ -54,6 +55,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | SHIP-PLAQUE | 12 | her name on her bows, where her captain shows it: a board of dark wood with her name cut in gilt in Daggerfall's own lettering, laid on each bow's planking below her rail and read the right way from alongside, seen by every player | `scenes/comeSailAway/shipPlaque.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`hullSurface`, `plaqueNameOf`, the draw's boards), `systems/fleet.js` (`plaque`, `setShipPlaque`), `scenes/fleetHost.js` (`plaque`), `ui/fleetPage.js` (Show her name), `systems/comeSailAway/comeSailAwayWire.js` (`p`), `scenes/comeSailAway/comeSailAwayPeers.js` (`plaqueName`), `world/eliteGates/pseudoArchives.js` (PLAQUE_ARCHIVE), `scenes/world.js` (the pool's `plaqueOf`, `plaqueFont`; the word's `plaque`) |
 | SEA-COLOURS | 13 | every ship of the sea in her own paint and under her own flag of cloth - a navy's crown, a merchant house, a pirate crew, a legend's own; a pirate under false colours painted and flagged as the house she passes for; her colours down once struck - the same on every screen, off who she is | `systems/naval/seaColours.js`, `scenes/naval/navalHost.js` (`seaWho`, `buildOne`'s paint, `seaFlags`), `scenes/shipFlagHost.js` (`seaFlags`), `render/shipFlagPass.js` (FLAGS_MAX), `scenes/world.js` (the flag host's `seaFlags`) |
 | TIME-DILATION | 14 | the sea's AI never on the Overworld's clock against a traveller who cannot answer it: a journey held at x1 inside a hostile ship's reach (NAV-H's law, the helm's already), the Overworld brought down for her, and online a sea another player shares kept at real time | `systems/travel/travelThreat.js` (`foeRate`, `threatCap`'s `held`), `systems/naval/seaClock.js`, `scenes/naval/navalHost.js` (`threats`' `holds`, `frame`'s seconds), `scenes/world.js` (the governor's two paths, the view's `danger`, `tvJourneyUp`, `travelViewCanGo`) |
+| SHIP-IT | 15 | the game's words call a ship "the ship", "this ship" or "it" - never "her" or "she" - and say it plainly: every refusal, notice, button, card and hint of the sea, the Fleet, the shipyard, the crew hall, the captain's stars, the tutorials and the crew's chatter; the thirteen drafted languages drafted again for the 104 keys whose English moved | the words of `scenes/fleetHost.js`, `ui/fleetPage.js`, `scenes/naval/navalHost.js`, `ui/naval/navalHud.js`, `ui/naval/navalPlunderWindow.js`, `ui/naval/navalYardWindow.js`, `ui/shipyardWindow.js`, `ui/captainTreeWindow.js`, `ui/captainPage.js`, `ui/deckPlanWindow.js`, `systems/shipyards.js`, `systems/crewHall.js`, `systems/naval/*` and `systems/comeSailAway/*` among others; `locales/*/Port_Strings.csv` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
 
@@ -779,6 +781,31 @@ traced to a real caller and fixed, or is recorded below as why not:
   made true; SHIP-LIVERY's sea ships "as built", the wheel's law and the Rowboat's hold said as they are.
 
 Recorded, not changed: a fitting's corners are read drawn in by FIT_INSET (5 cm), so a crate flush with her rail stands.
+
+## SHIP-IT - the ship is "it" (15)
+
+The owner: *"please reformat the text to not refer to the ship as "Her". Text needs to be mundane, readable and not
+AI-like"*. Every string a player reads that called a ship "her" or "she" now says "the ship", "this ship" or "it", and
+says it in plain words - about 300 strings, this branch's and the older sea's alike:
+
+- **Refusals and notices** say what is wrong and what to do: `This ship is in your pack. Launch it from its parts.`,
+  `Not while the ship is in combat.`, `This ship has no crew aboard. Hire crew at a shipwright.`, `Ship renamed to
+  {name}.`, `Deck layout saved: 2 fittings.`, `The ships are locked together. Board before they break free!`
+- **Buttons and labels** are the act alone: `Sell`, `Lay up`, `Bring here`, `Rename` (the Fleet's panel saves with
+  `Save name`, apart from the card's `Rename` that opens it), `Claim`, `Scuttle`, `Raise flag`, `Apply paint`,
+  `Save layout`, `Show name`.
+- **The captain's stars** read as stats: `Gun damage`, `Turning speed`, `Cargo capacity`, `Guns reload 3% faster`;
+  the sky's notes say what a star costs and what a level opens.
+- **The crew's chatter** keeps its sailors' voice without the pronoun: `Steady as we go.`, `Coming about!`,
+  `It'll hold, give it time.`
+
+Kept: a woman is still "her" (a crew member paid off or knocked senseless, Ysolde and the other captains, the songs, the
+NPCs of the Bay); Come Sail Away's own words (`You cannot pack a boat you are driving!`) stand as the mod has them; the
+code's `'hers'` (a ship flying her own colours, `seaColours.js seaFlagOf`) is a value, not a word; the comments and this
+bible keep their voice. The 104 keys whose English moved were drafted again for the thirteen machine-drafted languages
+(`tools/l10nInSession.mjs`, TRANSLATE-BRIEF), the ship never a feminine pronoun there either beyond the noun's own
+grammar. The tests pinning the words, the 39 mutant records aimed at them and the one bible anchor
+(`Field-Bugs-2026-10-12d.md`) moved with them; the 39 mutants still die.
 
 ## THE FOUR HOSTS RULE
 

@@ -14092,7 +14092,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const link = result.link;
     if (link.type !== playerEntity.ownedShip) return false;
     const boat = csaRuntime.AllBoats.find((b) => b.uid === link.uid && b.hull === link.hull && !b.inside);
-    if (!boat?.MapPixel) { townTalk.say('Summon your linked ship from Holdings > Fleet, or place her parts, first.'); return true; }
+    if (!boat?.MapPixel) { townTalk.say('Summon your linked ship from Holdings > Fleet, or place its parts, first.'); return true; }
     if (csaRuntime.isSailing()) { townTalk.say('Leave the helm before entering the cabin.'); return true; }
     modes?.forceExitToExterior({ cacheScene: !loading });
     cabinLink.close();

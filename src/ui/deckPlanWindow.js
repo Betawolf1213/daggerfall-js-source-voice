@@ -62,13 +62,13 @@ export const FIT_INSET = 0.05;
  * @param {(m: number) => number[] | null} [footprint]
  */
 export function placeRefusal(deck, at, others, me = null, footprint = () => null) {
-  if (!deck?.walkable?.(at[0], at[1])) return t('naval.deck.offDeck', 'That is no deck of hers - set it on her open deck.');
-  if (others.some((f) => Math.hypot(f.x - at[0], f.z - at[1]) < FITTING_GAP)) return t('naval.deck.crowded', 'Too near another fitting.');
+  if (!deck?.walkable?.(at[0], at[1])) return t('naval.deck.offDeck', 'That spot isn\'t on the open deck.');
+  if (others.some((f) => Math.hypot(f.x - at[0], f.z - at[1]) < FITTING_GAP)) return t('naval.deck.crowded', 'Too close to another fitting.');
   const fp = me ? footprint(me.m) : null;
   if (!fp) return null;
   const box = fittingCorners(at[0], at[1], me.yaw, fp);
-  if (!box.every(([x, z]) => deck.walkable(x, z))) return t('naval.deck.offDeck', 'That is no deck of hers - set it on her open deck.');
-  if (others.some((f) => { const o = footprint(f.m); return !!o && boxesMeet(box, fittingCorners(f.x, f.z, f.yaw, o)); })) return t('naval.deck.crowded', 'Too near another fitting.');
+  if (!box.every(([x, z]) => deck.walkable(x, z))) return t('naval.deck.offDeck', 'That spot isn\'t on the open deck.');
+  if (others.some((f) => { const o = footprint(f.m); return !!o && boxesMeet(box, fittingCorners(f.x, f.z, f.yaw, o)); })) return t('naval.deck.crowded', 'Too close to another fitting.');
   return null;
 }
 
@@ -98,10 +98,10 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
   root.setAttribute('aria-modal', 'true');
   const box = el(doc, 'div', 'dpw-box');
   box.setAttribute('data-grim', 'wood');
-  const title = el(doc, 'h2', null, t('naval.deck.title', 'Her deck - {name}', { name }));
+  const title = el(doc, 'h2', null, t('naval.deck.title', 'Deck - {name}', { name }));
   const body = el(doc, 'div', 'dpw-body');
   const canvas = /** @type {HTMLCanvasElement} */ (el(doc, 'canvas', 'dpw-plan'));
-  canvas.setAttribute('aria-label', t('naval.deck.planAria', 'The plan of her deck, seen from above'));
+  canvas.setAttribute('aria-label', t('naval.deck.planAria', 'Deck plan, top view'));
   const side = el(doc, 'div', 'dpw-side');
   const count = el(doc, 'div', 'dpw-say');
   const listBox = el(doc, 'div', 'dpw-list');
@@ -110,14 +110,14 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
   const btn = (label, fn, cls = 'act') => { const b = el(doc, 'button', cls, label); b.onclick = (e) => { e.stopPropagation(); fn(); }; return b; };
   const turnL = btn(t('naval.deck.turnLeft', 'Turn left (Q)'), () => turn(-1));
   const turnR = btn(t('naval.deck.turnRight', 'Turn right (E)'), () => turn(1));
-  const remove = btn(t('naval.deck.remove', 'Take away (Del)'), () => takeAway());
+  const remove = btn(t('naval.deck.remove', 'Remove (Del)'), () => takeAway());
   const tools = el(doc, 'div', 'dpw-acts');
   tools.append(turnL, turnR, remove);
   side.append(count, listBox, tools);
   body.append(canvas, side);
   const acts = el(doc, 'div', 'dpw-acts');
-  acts.append(btn(t('naval.deck.clearAll', 'Clear her deck'), () => { list = []; picked = -1; tell(t('naval.deck.cleared', 'Every fitting taken up - Fit her out to keep it so.')); }),
-    btn(t('naval.flag.close', 'Close'), () => close()), btn(t('naval.deck.save', 'Fit her out'), () => keep(), 'act primary'));
+  acts.append(btn(t('naval.deck.clearAll', 'Clear deck'), () => { list = []; picked = -1; tell(t('naval.deck.cleared', 'All fittings removed. Click Save layout to keep this.')); }),
+    btn(t('naval.flag.close', 'Close'), () => close()), btn(t('naval.deck.save', 'Save layout'), () => keep(), 'act primary'));
   box.append(title, body, say, acts);
   root.append(box);
   host.append(root);
@@ -127,7 +127,7 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
     const items = DECK_FITTINGS.map(([m]) => {
       const b = el(doc, 'button', m === chosen ? 'on' : null, fittingName(m));
       b.setAttribute('aria-pressed', m === chosen ? 'true' : 'false');
-      b.onclick = () => { chosen = m; picked = -1; drawList(); tell(t('naval.deck.choose', 'Click her deck to set {what} there.', { what: fittingName(m) })); };
+      b.onclick = () => { chosen = m; picked = -1; drawList(); tell(t('naval.deck.choose', 'Click the deck to place {what}.', { what: fittingName(m) })); };
       return b;
     });
     listBox.replaceChildren(...items);
@@ -212,14 +212,14 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
   /** A press on the plan at a screen point: a fitting there taken up, else the chosen one set there. */
   function press(sx, sy, pointerId = null) {
     const i = under(sx, sy);
-    if (i >= 0) { picked = i; dragging = true; if (pointerId != null) canvas.setPointerCapture?.(pointerId); tell(t('naval.deck.taken', '{what} taken up - drag it, turn it, or take it away.', { what: fittingName(list[i].m) })); return; }
+    if (i >= 0) { picked = i; dragging = true; if (pointerId != null) canvas.setPointerCapture?.(pointerId); tell(t('naval.deck.taken', '{what} selected. Drag to move, Q/E to turn, Del to remove.', { what: fittingName(list[i].m) })); return; }
     const [x, z] = toDeck(sx, sy).map(snap);
-    if (list.length >= DECK_FITTINGS_MAX) { tell(t('naval.deck.full', 'Her deck carries {max} fittings at the most.', { max: DECK_FITTINGS_MAX }), true); return; }
+    if (list.length >= DECK_FITTINGS_MAX) { tell(t('naval.deck.full', 'A deck holds at most {max} fittings.', { max: DECK_FITTINGS_MAX }), true); return; }
     const why = placeRefusal(deck, [x, z], list, { m: Number(chosen), yaw: 0 }, footprint);   // AUDIT 2: its whole box
     if (why) { tell(why, true); return; }
     list.push({ m: chosen, x, z, yaw: 0 });
     picked = list.length - 1;
-    tell(t('naval.deck.set1', '{what} set on her deck.', { what: fittingName(chosen) }));
+    tell(t('naval.deck.set1', '{what} placed.', { what: fittingName(chosen) }));
   }
   canvas.addEventListener('pointerdown', (e) => { const [sx, sy] = local(e); press(sx, sy, e.pointerId); });
   canvas.addEventListener('pointermove', (e) => {
@@ -240,10 +240,10 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
     list[picked] = { ...f, yaw };
     draw();
   }
-  function takeAway() { if (picked < 0) return; list.splice(picked, 1); picked = -1; tell(t('naval.deck.removed', 'The fitting is taken away.')); }
+  function takeAway() { if (picked < 0) return; list.splice(picked, 1); picked = -1; tell(t('naval.deck.removed', 'Fitting removed.')); }
   function keep() {
     const r = save(fittingsOf(list));
-    if (r?.ok) close(); else tell(r?.text ?? t('naval.deck.bad', 'Those fittings cannot stand on her.'), true);
+    if (r?.ok) close(); else tell(r?.text ?? t('naval.deck.bad', 'Those fittings can\'t be placed on this ship.'), true);
   }
   function onKey(e) {
     if (dead) return;
@@ -263,7 +263,7 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
 
   layout();
   drawList();
-  tell(t('naval.deck.hint', 'Choose a fitting, then click her deck to set it. Click one to take it up and drag it.'));
+  tell(t('naval.deck.hint', 'Pick a fitting, then click the deck to place it. Click a placed fitting to select and drag it.'));
 
   function teardown() {
     if (dead) return false;

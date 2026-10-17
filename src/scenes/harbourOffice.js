@@ -56,9 +56,9 @@ export function createHarbourOffice(deps) {
   function event(ev) {
     const r = L.contractEvent(ev);
     for (const c of r.done) { deps.credit?.(c.pay); deps.mid?.(`Contract done - ${c.title}. ${gold(c.pay)} paid by ${c.port?.name ?? c.crown}'s harbourmaster.`, 5); }
-    for (const c of r.failed) deps.mid?.(`Contract failed - ${c.title}.${c.kind === 'delivery' ? ' The cargo went down with her.' : ''}`, 5);
+    for (const c of r.failed) deps.mid?.(`Contract failed - ${c.title}.${c.kind === 'delivery' ? ' The cargo went down with the ship.' : ''}`, 5);
     for (const c of r.moved) deps.say?.(`${c.title}: ${movedWords(c)}.`, 3);
-    for (const c of r.voided ?? []) deps.mid?.(c.kind === 'delivery' ? cargoVoidWords(c) : `Bounty void - ${c.title}. She went down by another hand.`, 5);   // AUDIT CAPTAIN'S SEA B4; FIELD BUGS 2026-10-13c PORT-TOWNS
+    for (const c of r.voided ?? []) deps.mid?.(c.kind === 'delivery' ? cargoVoidWords(c) : `Bounty void - ${c.title}. Someone else sank it.`, 5);   // AUDIT CAPTAIN'S SEA B4; FIELD BUGS 2026-10-13c PORT-TOWNS
     return r;
   }
   /** The clock's step: every contract whose term is out failed, and said. FIELD BUGS 2026-10-13c PORT-TOWNS: and every
@@ -116,7 +116,7 @@ export function createHarbourOffice(deps) {
     if (!o.can) return { ok: false, text: o.why };
     if (!deps.carrack?.(o.price, port)) return { ok: false, text: 'The Admiralty\'s yard has no carrack to give today.' };
     deps.pay?.(o.price);
-    return { ok: true, text: `The Admiralty's carrack is yours - she waits at ${port.name}. See Holdings > Fleet.` };
+    return { ok: true, text: `The Admiralty's carrack is yours. It is waiting at ${port.name}. See Holdings > Fleet.` };
   }
 
   /**
@@ -155,11 +155,11 @@ export function createHarbourOffice(deps) {
   const roomFor = (room, kg) => (room && Number.isFinite(room.stops) && Number.isFinite(room.load) ? Math.max(0, Math.floor((room.stops - room.load - 1e-6) / Math.max(1e-6, kg))) : Infinity);
   /** `n` of a good bought into `hold` - as many as the exchange sells today, the purse pays for and her room takes. */
   function buyGood(port, day, hold, id, n, room = null) {
-    if (!hold) return { ok: false, text: 'Goods go in a ship\'s hold - deal at the exchange from her helm.' };
+    if (!hold) return { ok: false, text: 'Goods go in a ship\'s hold. Trade at the exchange from the helm.' };
     const r = exchangeOf(port, day, L.dealtAt(port.key, day), L.stats?.().trade).find((x) => x.id === id);
     if (!r || r.sells <= 0) return { ok: false, text: r?.exotic ? `${r.name} is not sold here.` : `The exchange sells no more ${goodById(id)?.name ?? 'of that'} today.` };
     const fit = roomFor(room?.(), r.kg);
-    if (fit <= 0) return { ok: false, text: 'She can carry no more - laden deeper, she would lie dead in the water.' };
+    if (fit <= 0) return { ok: false, text: 'The ship can\'t carry any more. Any heavier and it couldn\'t move.' };
     const k = Math.min(asked(n), r.sells, Math.floor((deps.gold?.() ?? 0) / r.sell), fit);
     if (k <= 0) return { ok: false, text: `Not enough gold - ${gold(r.sell)} a ${r.unit}.` };
     deps.pay?.(k * r.sell);
@@ -169,7 +169,7 @@ export function createHarbourOffice(deps) {
   }
   /** `n` of a good sold out of `hold` - as many as she carries and the exchange buys today. */
   function sellGood(port, day, hold, id, n) {
-    if (!hold) return { ok: false, text: 'Goods are sold out of a ship\'s hold - deal at the exchange from her helm.' };
+    if (!hold) return { ok: false, text: 'Goods are sold from a ship\'s hold. Trade at the exchange from the helm.' };
     const r = exchangeOf(port, day, L.dealtAt(port.key, day), L.stats?.().trade).find((x) => x.id === id);
     const have = goodIn(hold, id);
     if (!r || have <= 0) return { ok: false, text: `You carry no ${goodById(id)?.name ?? 'such goods'}.` };

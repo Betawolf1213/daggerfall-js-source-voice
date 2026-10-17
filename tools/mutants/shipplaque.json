@@ -389,7 +389,7 @@
   {
     "name": "FH-unnamed-unsaid",
     "file": "src/scenes/fleetHost.js",
-    "old": "      if (!rec.name) return said(false, t('naval.plaque.unnamed', 'Name her first - she has no name to show.'));\n",
+    "old": "      if (!rec.name) return said(false, t('naval.plaque.unnamed', 'Give the ship a name first.'));\n",
     "new": "",
     "tests": [
       "test/systems/naval/shipplaque.test.js"
@@ -443,7 +443,7 @@
   {
     "name": "FP-unnamed-enabled",
     "file": "src/ui/fleetPage.js",
-    "old": "s.named ? null : t('naval.plaque.unnamed', 'Name her first - she has no name to show.'), () => act('plaque'",
+    "old": "s.named ? null : t('naval.plaque.unnamed', 'Give the ship a name first.'), () => act('plaque'",
     "new": "null, () => act('plaque'",
     "tests": [
       "test/systems/naval/shipplaque.test.js"

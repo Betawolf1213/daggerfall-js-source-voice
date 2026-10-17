@@ -254,7 +254,7 @@
   {
     "name": "SC-fleet-act-unwired",
     "file": "src/scenes/fleetHost.js",
-    "old": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'Those colours cannot be flown.'));",
+    "old": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'That flag can\\'t be used.'));",
     "new": "",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
@@ -263,8 +263,8 @@
   {
     "name": "SC-fleet-word-unsaid",
     "file": "src/scenes/fleetHost.js",
-    "old": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'Those colours cannot be flown.'));\n      deps.changed?.();",
-    "new": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'Those colours cannot be flown.'));",
+    "old": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'That flag can\\'t be used.'));\n      deps.changed?.();",
+    "new": "      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'That flag can\\'t be used.'));",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]
@@ -272,7 +272,7 @@
   {
     "name": "SC-fleet-rowboat-flies",
     "file": "src/scenes/fleetHost.js",
-    "old": "      if (!flagSizeOf(rec.hull)) return said(false, t('naval.flag.noMast', 'She has no masthead to fly a flag from.'));",
+    "old": "      if (!flagSizeOf(rec.hull)) return said(false, t('naval.flag.noMast', 'This ship has no masthead for a flag.'));",
     "new": "",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
@@ -290,7 +290,7 @@
   {
     "name": "SC-page-guild-ungated",
     "file": "src/ui/fleetPage.js",
-    "old": "    armed ? null : t('naval.flag.noArms', 'Your guild has no arms to fly - or you are of no guild.'), () => { if (armed) set('guild', !d.guild); }",
+    "old": "    armed ? null : t('naval.flag.noArms', 'Your guild has no arms, or you\\'re not in a guild.'), () => { if (armed) set('guild', !d.guild); }",
     "new": "    null, () => { set('guild', !d.guild); }",
     "tests": [
       "test/systems/naval/shipcolours.test.js"

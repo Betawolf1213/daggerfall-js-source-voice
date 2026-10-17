@@ -365,7 +365,7 @@ test('FLEET REPAIRS MADE AWAY: her hands mend her free to FIELD_MEND_CAP of each
   let r = s.host.repairAway(boat);
   st = s.host.fleetStatus(boat);
   assert.equal(r.ok, true);
-  assert.match(r.text, /needs carpenter's stores for the rest/);
+  assert.match(r.text, /need carpenter's stores for the rest/);
   assert.ok(Math.abs(st.hull - st.maxHull * FIELD_MEND_CAP) < 1e-6, `the free reach: ${st.hull}`);
   assert.ok(Math.abs(st.sail - st.maxSail * FIELD_MEND_CAP) < 1e-6);
   assert.equal(st.wrecked, false, 'refloated');
@@ -379,12 +379,12 @@ test('FLEET REPAIRS MADE AWAY: her hands mend her free to FIELD_MEND_CAP of each
   // plenty: whole
   addItem(boat.Cargo.Items, mintStores(40));
   r = s.host.repairAway(boat);
-  assert.match(r.text, /She's sound, Captain\./);
+  assert.match(r.text, /All repaired, Captain\./);
   assert.equal(s.host.fleetStatus(boat).wants, false);
-  assert.deepEqual(s.host.repairAway(boat), { ok: false, text: 'She needs no repairs.', spent: 0 });
+  assert.deepEqual(s.host.repairAway(boat), { ok: false, text: 'This ship doesn\'t need repairs.', spent: 0 });
   // the refusals
   const row = await sea({ hull: 1 });
-  assert.equal(row.host.repairAway(row.boat).text, 'She has no crew to make her repairs.');
+  assert.equal(row.host.repairAway(row.boat).text, 'This ship has no crew to make repairs.');
 });
 
 test('FLEET the berth a summoned ship is brought to: the free berth of a known harbour nearest the player - none taken by a ship of the sea or a boat of mine - on the sea\'s top, her bow along it; none known, none (source pins over the harbour\'s own law)', () => {
@@ -464,14 +464,14 @@ test('FLEET Summon: brought round to the port\'s free berth (SummonBoat at it) -
   assert.equal(w.berthHull, 2, 'the berth asked for her own hull - alongside its quay');
   const b = s.rt.GetPlacedBoatWithUID(1);
   assert.deepEqual([b.GameObject.position[0], b.GameObject.position[2]], [300, 300]);
-  assert.equal(host.act(1, 'summon').text, 'She is already here.');
+  assert.equal(host.act(1, 'summon').text, 'This ship is already here.');
   b.GameObject.activeSelf = false; b.MapPixel = { X: 15, Y: 20 };
   w.nearPort = false;
   assert.equal(host.act(1, 'summon').text, 'Your ships are brought round to a port - go to one.');
   w.nearPort = true; w.hostile = true;
-  assert.equal(host.act(1, 'summon').text, 'Not while she is fighting.');
+  assert.equal(host.act(1, 'summon').text, 'Not while the ship is in combat.');
   w.hostile = false; w.inside = true;
-  assert.equal(host.act(1, 'summon').text, 'Call her from outdoors.');
+  assert.equal(host.act(1, 'summon').text, 'Go outdoors to summon a ship.');
   w.inside = false;
   w.berth = null;
   r = host.act(1, 'summon');
@@ -482,7 +482,7 @@ test('FLEET Summon: brought round to the port\'s free berth (SummonBoat at it) -
   assert.equal(s.rt.placing, true, 'the placing click, armed');
 });
 
-test('FLEET Send away: she sails for the nearest port and is laid up there (LayUpBoat; her title made again for a small boat); refused at her helm, fighting, for a small boat not here, with another player aboard', () => {
+test('FLEET Send away: she sails for the nearest port and is laid up there (LayUpBoat; her title made again for a small boat); refused at the helm, fighting, for a small boat not here, with another player aboard', () => {
   const { s, w, host } = fleetWorld();
   titleDeed(mintDeed(2, 0, 1, 1));
   host.act(1, 'summon');
@@ -497,7 +497,7 @@ test('FLEET Send away: she sails for the nearest port and is laid up there (LayU
   assert.equal(titleOf(2), null, 'spent on placing');
   const boat = s.rt.GetPlacedBoatWithUID(2);
   boat.GameObject.activeSelf = false;
-  assert.equal(host.act(2, 'away').text, 'She has no crew to sail her to a port - go to her.');
+  assert.equal(host.act(2, 'away').text, 'This ship has no crew to sail it to port. Go to it yourself.');
   boat.GameObject.activeSelf = true;
   assert.equal(host.act(2, 'away').ok, true);
   assert.ok(titleOf(2), 'the book stands for her laid up');
@@ -505,19 +505,19 @@ test('FLEET Send away: she sails for the nearest port and is laid up there (LayU
   host.act(1, 'summon');
   const one = s.rt.GetPlacedBoatWithUID(1);
   w.hostile = true;
-  assert.equal(host.act(1, 'away').text, 'Not while she is fighting.');
+  assert.equal(host.act(1, 'away').text, 'Not while the ship is in combat.');
   w.hostile = false;
   s.rt.StartSailing(one);
-  assert.equal(host.act(1, 'away').text, 'Not while you are at her helm.');
+  assert.equal(host.act(1, 'away').text, 'Not while you are at the helm.');
 });
 
 test('FLEET Repair: her hands wherever she lies (the sea fight\'s repairAway); refused for a boat with no crew; Shipwright: a door to the yard\'s window at a port, for a ship laid up (her stand-in: her number, her laid-up hold) or lying here', () => {
   const { s, w, host } = fleetWorld();
   titleDeed(mintDeed(2, 0, 1, 1));
   assert.deepEqual(host.act(1, 'repair'), { ok: true, text: 'Mended.' });
-  assert.equal(host.act(1, 'repair').text, 'She needs no repairs.');
+  assert.equal(host.act(1, 'repair').text, 'This ship doesn\'t need repairs.');
   titleDeed(mintDeed(1, 0, 2, 1));
-  assert.equal(host.act(2, 'repair').text, 'She has no crew to make her repairs.');
+  assert.equal(host.act(2, 'repair').text, 'This ship has no crew to make repairs.');
   const r = host.act(1, 'yard');
   assert.equal(typeof r.door, 'function');
   r.door();
@@ -531,8 +531,8 @@ test('FLEET Refit: at a port, her loan paid; the shipwright\'s gold from the pur
   const { s, w, host } = fleetWorld({ gold: 5000 });
   claimedShip({ uid: 1, hull: 2, value: 1, credit: { region: 1, due: 99 } });
   w.accounts[1] = { loanTotal: 1234, loanDueDate: 99 };
-  assert.equal(host.act(1, 'refit', 'hull').text, "She was bought on the bank's credit: pay Anticlere's 1234 gold first.");
-  assert.equal(host.offer(1).why, "She was bought on the bank's credit: pay Anticlere's 1234 gold first.");
+  assert.equal(host.act(1, 'refit', 'hull').text, 'This ship was bought on credit. Pay the 1234 gold owed to Anticlere first.');
+  assert.equal(host.offer(1).why, 'This ship was bought on credit. Pay the 1234 gold owed to Anticlere first.');
   w.accounts[1].loanTotal = 0;
   w.nearPort = false;
   assert.equal(host.act(1, 'refit', 'hull').text, 'Ships are refitted at a port.');
@@ -556,9 +556,9 @@ test('FLEET Refit: at a port, her loan paid; the shipwright\'s gold from the pur
   assert.equal(host.act(1, 'refit', 'hull').text, 'The shipwright asks 1500 gold.');
   addRefit(1, 'hull'); addRefit(1, 'hull');
   w.gold = 1e9;
-  assert.equal(host.act(1, 'refit', 'hull').text, 'The shipwright will not work Steel for a captain under level 3.', 'REFIT-ORES: the metals past the third ask a captain\'s level');
+  assert.equal(host.act(1, 'refit', 'hull').text, 'Steel refits need captain level 3.', 'REFIT-ORES: the metals past the third ask a captain\'s level');
   for (let i = 0; i < 9; i++) addRefit(1, 'hull');
-  assert.equal(host.act(1, 'refit', 'hull').text, 'She has every refit of that kind.');
+  assert.equal(host.act(1, 'refit', 'hull').text, 'This ship has every refit of that kind.');
   titleDeed(mintDeed(0, 0, 9, 1));
   assert.deepEqual(host.offer(9).rows.map((r) => r.id), ['hold', 'rigging', 'hull'], 'a Rowboat carries no guns to refit');
 });
@@ -572,13 +572,13 @@ test('REFIT-ORES at the Fleet: a metal tier refused under her captain\'s level, 
   assert.deepEqual([row.tier, row.max, row.next.level, row.next.locked, row.afford, host.offer(1).level], [3, 12, 3, true, false, 1]);
   near(row.share, 0.24);
   near(row.next.share, 0.28);
-  assert.equal(host.act(1, 'refit', 'guns').text, 'The shipwright will not work Steel for a captain under level 3.');
+  assert.equal(host.act(1, 'refit', 'guns').text, 'Steel refits need captain level 3.');
   level = 3;
   s.pack.push(item(621, 4), item(620, 6));
   row = host.offer(1).rows.find((r) => r.id === 'guns');
   assert.deepEqual(row.next.mats.map((m) => [m.kind, m.n, m.have, m.melt]), [['steel', 4, 4, 0], ['iron', 10, 10, 0]], 'the steel ingots counted as Iron too');
   assert.equal(row.afford, false);
-  assert.equal(host.act(1, 'refit', 'guns').text, 'The shipwright needs more - one store will not serve for two.');
+  assert.equal(host.act(1, 'refit', 'guns').text, 'Not enough materials - one item can\'t count for two requirements.');
   assert.equal(materialCount([s.pack], 'steel'), 4, 'nothing taken');
   assert.deepEqual(w.paid, [], 'nothing paid');
   s.pack.length = 0;
@@ -607,10 +607,10 @@ test('REFIT-ORES at the Fleet: a metal tier refused under her captain\'s level, 
 test('FLEET Rename: the ledger\'s law, said on her card; refused names say why', () => {
   const { host } = fleetWorld();
   titleDeed(mintDeed(2, 0, 1, 1));
-  assert.deepEqual(host.act(1, 'rename', 'Gull'), { ok: true, text: 'She is the Gull now.' });
+  assert.deepEqual(host.act(1, 'rename', 'Gull'), { ok: true, text: 'Ship renamed to Gull.' });
   assert.equal(host.model().ships[0].label, 'Gull');
   assert.equal(host.act(1, 'rename', 'Admin').ok, false);
-  assert.deepEqual(host.act(1, 'rename', ''), { ok: true, text: "She is called by her hull again: Small Ship 'I'." });
+  assert.deepEqual(host.act(1, 'rename', ''), { ok: true, text: "Name cleared. The ship is shown as Small Ship 'I'." });
   assert.equal(host.nameOf({ uid: 1 }), '');
 });
 
@@ -658,9 +658,9 @@ test('FLEET the page: a card a ship - her name, hull, worth, the bank\'s claim, 
   assert.equal(doors.length, 1, 'the yard\'s door handed to the menu');
   buttons(d, 'Refit')[0].onclick();
   d = draw();
-  assert.match(d.textContent, /pay Alik'r's 5000 gold first/);
-  assert.match(d.textContent, /You hold 0 Timber, 0 Iron, 0 Pitch \(your pack and her hold\), and 100,000 gold\./);
-  assert.match(d.textContent, /Hull0 of 12Her hull and canvas: \+0% now, \+10% with the next refit\.Next: 600 gold, 3 Timber \(you hold 0\), 3 Pitch \(you hold 0\), 3 Iron \(you hold 0\)\./);
+  assert.match(d.textContent, /Pay the 5000 gold owed to Alik'r first/);
+  assert.match(d.textContent, /You hold 0 Timber, 0 Iron, 0 Pitch \(your pack and the ship's hold\), and 100,000 gold\./);
+  assert.match(d.textContent, /Hull0 of 12Hull and sail strength: \+0% now, \+10% with the next refit\.Next: 600 gold, 3 Timber \(you have 0\), 3 Pitch \(you have 0\), 3 Iron \(you have 0\)\./);
   assert.equal((d.textContent.match(/Timber: Wood Bundles - a Wood-Axe gathers them - or planks and logs\./g) ?? []).length, 1, 'each short material\'s hint once');
   assert.equal(buttons(d, 'Refit').every((b) => b.attrs['aria-disabled'] === 'true'), true, 'every refit refused while the loan stands');
   buttons(d, 'Summon')[0].onclick();
@@ -672,9 +672,9 @@ test('FLEET the page: a card a ship - her name, hull, worth, the bank\'s claim, 
   const f = byTag(d, 'input')[0];
   assert.equal(f.maxLength, 24);
   f.value = 'Tern'; f.oninput();
-  buttons(d, 'Name her')[0].onclick();
+  buttons(d, 'Save name')[0].onclick();
   d = draw();
-  assert.match(d.textContent, /She is the Tern now\./);
+  assert.match(d.textContent, /Ship renamed to Tern\./);
   assert.match(d.textContent, /TernAfloat/);
   setHoldingsProvider(null);
   assert.equal(fleetPageShown(), false);
@@ -703,6 +703,6 @@ test('FLEET a deed bought goes to the book at the counter, never the pack - stam
   assert.ok(world.indexOf('let fleetHost = null;') < world.indexOf('const csaRuntime = csaOn() ? createComeSailAwayRuntime({'), 'declared before the boats read their refits through it');
   // the prize's words
   const host = read('src/scenes/naval/navalHost.js');
-  assert.match(host, /her title is in your Fleet ledger \(Holdings\)/);
+  assert.match(host, /The title is in your Fleet ledger \(Holdings\)/);
   void HULL_PRICES;
 });

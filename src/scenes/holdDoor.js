@@ -74,8 +74,8 @@ export function createHoldDoor(deps) {
 
   /** A standing boat's hold opened. */
   function openBoat(boat) {
-    if (!boat?.Cargo) return said(false, t('naval.hold.none', 'There is no hold here to open.'));
-    if (!opens(boat.hull, boat.Cargo.Items)) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
+    if (!boat?.Cargo) return said(false, t('naval.hold.none', 'There\'s no hold here.'));
+    if (!opens(boat.hull, boat.Cargo.Items)) return said(false, t('naval.hold.rowboat', 'Rowboats have no hold.'));
     return !!deps.openHold?.({ ...cargoLootTarget(boat.Cargo), title: titleOf(boat.uid) });
   }
 
@@ -84,9 +84,9 @@ export function createHoldDoor(deps) {
     const boat = afloat(uid);
     if (boat) return openBoat(boat);
     const rec = ships().find((s) => String(s.uid) === String(uid)) ?? null;
-    if (!rec) return said(false, t('naval.hold.notYours', 'No such ship of yours.'));
+    if (!rec) return said(false, t('naval.hold.notYours', 'You don\'t own that ship.'));
     const r = csa();
-    if (!holdsCargo(rec.hull) && !r?.laidUpHold?.(uid)?.length) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
+    if (!holdsCargo(rec.hull) && !r?.laidUpHold?.(uid)?.length) return said(false, t('naval.hold.rowboat', 'Rowboats have no hold.'));
     if (!r?.laidUpHold) return said(false, t('naval.hold.noSea', 'Come Sail Away is not running.'));
     const items = r.laidUpHold(uid);
     const parts = deps.partsOf?.(uid) ?? null;

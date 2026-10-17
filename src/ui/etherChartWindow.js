@@ -243,7 +243,7 @@ export function chartModel(word, v, w, h, { measure = null, pick = null } = {}) 
     const lair = hauntOf(legend);
     const [x, y] = toScreen(v, lair.px + 0.5, lair.py + 0.5, w, h);
     const r = HAUNT_PX * k;
-    if (on(x, y, r)) haunts.push({ x, y, r, name: l.name, sails: !!l.sails, sub: l.sails ? (l.trait === 'night' ? t('sea.chart.hauntNight', 'Her haunt - by night') : t('sea.chart.haunt', 'Her haunt')) : t('sea.chart.hauntSunk', 'Sunk - she will rise again'), inside: false, at: /** @type {number[]|null} */ (null), box: /** @type {number[]|null} */ (null) });
+    if (on(x, y, r)) haunts.push({ x, y, r, name: l.name, sails: !!l.sails, sub: l.sails ? (l.trait === 'night' ? t('sea.chart.hauntNight', 'Hunting ground - at night') : t('sea.chart.haunt', 'Hunting ground')) : t('sea.chart.hauntSunk', 'Sunk - will return'), inside: false, at: /** @type {number[]|null} */ (null), box: /** @type {number[]|null} */ (null) });
   }
   // AUDIT CAPTAIN'S SEA X14: the names placed greedily - ports first, then by the chart's own order - and one that would
   // stand over a name already lettered on both its sides left unlettered (a pointer or a tap still names it).

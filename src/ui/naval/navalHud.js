@@ -552,10 +552,10 @@ function aimTail(a) {
  */
 function fightCard(b) {
   if (b.kind === 'board') {
-    if (b.phase !== 'fight') return { name: `Grappling ${b.name}`, sub: 'Hauling her alongside', state: '', kind: '' };
+    if (b.phase !== 'fight') return { name: `Grappling ${b.name}`, sub: 'Hauling alongside', state: '', kind: '' };
     return {
       name: `Boarding ${b.name}`, sub: b.captain ? `Captain ${b.captain} - ${b.captainDown ? 'down' : 'standing'}` : '',
-      state: `${b.down} of ${b.total} down - ${b.captainDown ? `they yield at ${b.yieldAt}` : 'cut down her captain'}`, kind: 'board',
+      state: `${b.down} of ${b.total} down - ${b.captainDown ? `they yield at ${b.yieldAt}` : 'defeat their captain'}`, kind: 'board',
     };
   }
   if (b.phase !== 'fight') return { name: `${b.name} grapples you`, sub: 'Stand by to repel boarders', state: '', kind: 'sinking' };
@@ -564,7 +564,7 @@ function fightCard(b) {
 
 /** RAM-BOARD: the card's line for a ship my stem has fouled, in reach - the grapples' key, or the heave-to's. */
 function fouledText(board, key) {
-  if (board.kind === 'board') return t('naval.foul.board', 'Fouled - {key}: board her', { key });
+  if (board.kind === 'board') return t('naval.foul.board', 'Fouled - {key}: board', { key });
   return board.heaving ? t('naval.foul.heaving', 'Fouled - heaving to') : t('naval.foul.heave', 'Fouled - {key}: heave to', { key });
 }
 
@@ -573,12 +573,12 @@ function cardState(t, board, key) {
   const mine = board != null && board.name === t.name;
   if (t.state === 'sinking') return { text: 'Going down', kind: 'sinking' };
   // AUDIT NAV1 (the presentation): one wording with the plate's hint ("open ... hold") - it read "her hold" here
-  if (t.state === 'prize') return mine && board.kind === 'hold' ? { text: `Taken - ${key}: open her hold`, kind: 'board' } : { text: 'Taken', kind: '' };
+  if (t.state === 'prize') return mine && board.kind === 'hold' ? { text: `Taken - ${key}: open hold`, kind: 'board' } : { text: 'Taken', kind: '' };
   if (t.boarded) return { text: 'Boarded', kind: '' };
   // RAM-BOARD (systems/naval/navalFoul.js): her bow fouled in my stem - boarded as she stands, her colours flying
   if (t.fouled && t.state === 'afloat' && mine && (board.kind === 'board' || board.kind === 'heave')) return { text: fouledText(board, key), kind: 'board' };
   if (t.state === 'struck') {
-    if (mine && board.kind === 'board') return { text: `Colours struck - ${key}: board her`, kind: 'board' };
+    if (mine && board.kind === 'board') return { text: `Colours struck - ${key}: board`, kind: 'board' };
     // AUDIT NAV1 (the helm): in reach but too fast - the refusal said nothing
     if (mine && board.kind === 'heave') return { text: board.heaving ? 'Colours struck - heaving to' : `Colours struck - ${key}: heave to`, kind: 'board' };
     return { text: 'Colours struck', kind: '' };
@@ -658,7 +658,7 @@ export function navalHudText(model, keys = {}, { touch = false } = {}) {
       : model.board ? (model.board.kind === 'heave' && model.board.heaving ? `Heaving to beside ${model.board.name}`
       : `${boardKey}: ${model.board.kind === 'hold' ? `open ${model.board.name}'s hold` : model.board.kind === 'yard' ? model.board.name
         : model.board.kind === 'heave' ? `heave to beside ${model.board.name}` : `board ${model.board.name}`}`)
-      : ship.wrecked ? (ship.repairing ? 'Crippled - her crew at the repairs' : ship.repairOrdered ? 'Crippled - her crew stands to the repairs' : ship.stores > 0 ? 'Crippled - order repairs, or make port' : 'Crippled - make port for a shipwright')   // AUDIT NAV1: the way out of a wreck, said - SEA-REPAIR: her stores the other
+      : ship.wrecked ? (ship.repairing ? 'Crippled - crew repairing' : ship.repairOrdered ? 'Crippled - repairs ordered' : ship.stores > 0 ? 'Crippled - order repairs, or make port' : 'Crippled - make port for a shipwright')   // AUDIT NAV1: the way out of a wreck, said - SEA-REPAIR: her stores the other
       : !model.armed ? 'No guns aboard'
       : `${touch ? 'Hold and drag' : `Hold ${aimKey}`} to aim - ${bracePress}`,
     brace: touch && !!model.armed,
@@ -669,7 +669,7 @@ export function navalHudText(model, keys = {}, { touch = false } = {}) {
   const tl = model.tally;
   const tally = tl ? {
     hits: `${tl.hits} of ${tl.balls} ${tl.balls === 1 ? 'ball' : 'balls'} struck`, miss: tl.hits === 0,
-    rest: [tl.holed ? `${tl.holed} below her waterline` : null, tl.rig ? `${tl.rig} through her rigging` : null, tl.men ? t('naval.tally.men', '{n, plural, one {# of her men down} other {# of her men down}}', { n: tl.men }) : null].filter(Boolean).map((x) => ` - ${x}`).join(''),   // CARD-CREW: the men the volley took
+    rest: [tl.holed ? `${tl.holed} below the waterline` : null, tl.rig ? `${tl.rig} in the rigging` : null, tl.men ? t('naval.tally.men', '{n, plural, one {# crew down} other {# crew down}}', { n: tl.men }) : null].filter(Boolean).map((x) => ` - ${x}`).join(''),   // CARD-CREW: the men the volley took
   } : null;
   const fight = model.boarding?.name ? fightCard(model.boarding) : null;
   return { plate, aim, card, warn, tally, fight };

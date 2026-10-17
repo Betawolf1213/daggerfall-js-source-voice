@@ -260,7 +260,7 @@
   {
     "name": "SCH-done-unsaid",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (!wantsRepair(s.damage)) { s.crew.give(CREW_ORDERS.stand); deps.say?.(`${mate ? `${mate}: ` : ''}Repairs done, Captain. She's sound.`, 4); }",
+    "old": "    if (!wantsRepair(s.damage)) { s.crew.give(CREW_ORDERS.stand); deps.say?.(`${mate ? `${mate}: ` : ''}Repairs done, Captain.`, 4); }",
     "new": "    if (!wantsRepair(s.damage)) { s.crew.give(CREW_ORDERS.stand); }",
     "tests": [
       "test/systems/naval/shipcrew.test.js"

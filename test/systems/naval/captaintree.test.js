@@ -288,15 +288,15 @@ test('REFIT-ORES a piece melted down: a weapon\'s metal, or a piece of plate\'s 
 });
 
 test('REFIT-ORES the refit\'s words, the Fleet page\'s and the shipyard\'s: her line at its numeral, what it betters her by now and next, what the next asks and what the player holds, a metal\'s pieces melted, a level asked (mutants: the share, the melt, the lock)', () => {
-  const row = { id: 'guns', label: 'Guns', what: 'The weight of her broadsides', tier: 3, share: 0.24, next: { gold: 6000, share: 0.28, level: 3, locked: true, mats: [{ kind: 'steel', label: 'Steel', n: 4, have: 4, melt: 1 }, { kind: 'iron', label: 'Iron', n: 10, have: 12, melt: 0 }] } };
+  const row = { id: 'guns', label: 'Guns', what: 'Broadside damage', tier: 3, share: 0.24, next: { gold: 6000, share: 0.28, level: 3, locked: true, mats: [{ kind: 'steel', label: 'Steel', n: 4, have: 4, melt: 1 }, { kind: 'iron', label: 'Iron', n: 10, have: 12, melt: 0 }] } };
   const w = refitRowWords(row);
   assert.equal(w.name, 'Guns III');
-  assert.equal(w.gain, 'The weight of her broadsides: +24% now, +28% with the next refit.');
-  assert.equal(w.asks, 'Next: 6,000 gold, 4 Steel (you hold 4), 10 Iron (you hold 12).');
-  assert.match(w.melt, /melts down 1 Steel of the arms and plate you carry/);
-  assert.equal(w.lock, 'Needs a captain of level 3 - earned at sea.');
+  assert.equal(w.gain, 'Broadside damage: +24% now, +28% with the next refit.');
+  assert.equal(w.asks, 'Next: 6,000 gold, 4 Steel (you have 4), 10 Iron (you have 12).');
+  assert.match(w.melt, /Melts down weapons and armour you carry for 1 Steel/);
+  assert.equal(w.lock, 'Needs captain level 3.');
   const done = refitRowWords({ ...row, tier: 12, share: 0.6, next: null });
-  assert.deepEqual(done, { name: 'Guns XII', gain: 'The weight of her broadsides: +60%.', asks: null, melt: null, lock: null });
+  assert.deepEqual(done, { name: 'Guns XII', gain: 'Broadside damage: +60%.', asks: null, melt: null, lock: null });
   assert.equal(refitRowWords({ ...row, next: { ...row.next, locked: false, mats: [{ ...row.next.mats[0], melt: 0 }] } }).melt, null);
 });
 
@@ -308,13 +308,13 @@ test('CAPTAIN-TREE the window\'s words: every star named, its half and kind; a s
   assert.equal(starKindWords(starOf('c_line')), 'The Commander · keystone');
   assert.equal(starKindWords(starOf('m_quick')), 'The Master · notable');
   assert.deepEqual([starStatWords('way', 0.06), starStatWords('oars', -0.12), starStatWords('boarders', 2), starStatWords('foul', 8), starStatWords('reload', 0.03), starStatWords('reload', -0.1)],
-    ['Way under sail +6%', 'Way under oars -12%', 'Hands over the rail +2', 'A rammed ship held fouled +8 s', 'Her guns\' reload 3% quicker', 'Her guns\' reload 10% slower']);
-  assert.deepEqual(starLines(starOf('m_wind')), [{ text: 'Way under sail +12%', neg: false }, { text: 'Way under oars -12%', neg: true }]);
+    ['Speed under sail +6%', 'Speed under oars -12%', 'Boarding party size +2', 'Time a rammed ship stays fouled +8 s', 'Guns reload 3% faster', 'Guns reload 10% slower']);
+  assert.deepEqual(starLines(starOf('m_wind')), [{ text: 'Speed under sail +12%', neg: false }, { text: 'Speed under oars -12%', neg: true }]);
   assert.deepEqual(skySummary(['helm', 'c_rel1', 'm_hold1']).map((l) => l.key), ['cargo', 'reload'], 'CAPTAIN_STATS\' order');
   assert.equal(starRefusal(['helm'], 'm_way1', 1), null);
-  assert.equal(starRefusal(['helm'], 'm_wind', 3), 'The way there takes 5 points and you have 3 left. A captain earns a point a level, at sea.');
-  assert.equal(starRefusal(['helm'], 'm_way1', 0), 'The way there takes 1 point and you have 0 left. A captain earns a point a level, at sea.');
-  assert.equal(starRefusal(['helm'], 'nope', 9), 'That star is not in the captain\'s sky.');
+  assert.equal(starRefusal(['helm'], 'm_wind', 3), 'Reaching this star costs 5 points. You have 3. You get one point per captain level.');
+  assert.equal(starRefusal(['helm'], 'm_way1', 0), 'Reaching this star costs 1 point. You have 0. You get one point per captain level.');
+  assert.equal(starRefusal(['helm'], 'nope', 9), 'Unknown star.');
   assert.equal(starRefusal(['helm', 'm_way1'], 'm_way1', 0), null, 'held');
 });
 
@@ -365,7 +365,7 @@ test('CAPTAIN-TREE the window: a star pressed sets the whole way to it while the
     assert.deepEqual(w.model().pending, ['helm', 'c_rel1', 'c_rel2', 'c_drill'], 'the whole way');
     w.take('c_line');
     assert.deepEqual(w.model().pending.length, 4, 'two more than the one point left: refused');
-    assert.match(f.text(host), /The way there takes 2 points and you have 1 left/);
+    assert.match(f.text(host), /Reaching this star costs 2 points\. You have 1\./);
     w.take('m_way1');
     assert.equal(w.model().pending.length, 5);
     w.giveBack('c_rel1');
@@ -373,11 +373,11 @@ test('CAPTAIN-TREE the window: a star pressed sets the whole way to it while the
     w.take('c_rel1');
     assert.deepEqual(w.model().changes, { added: 2, removed: 0 });
     assert.equal(w.tryClose(), false, 'asked first');
-    assert.match(f.text(host), /Your changes are not accepted yet/);
+    assert.match(f.text(host), /You have changes that aren't accepted/);
     w.accept();
     assert.deepEqual(L.tree(), ['helm', 'm_way1', 'c_rel1']);
     assert.equal(changed, 1);
-    assert.match(f.text(host), /Your stars are set/);
+    assert.match(f.text(host), /Stars saved/);
     assert.equal(w.tryClose(), true);
     assert.equal(exits, 1);
     assert.equal(f.win.listeners.has('keydown'), false, 'the keyboard given back');
@@ -389,7 +389,7 @@ test('CAPTAIN-TREE the window: a star pressed sets the whole way to it while the
 
 test('CAPTAIN-TREE the Captain page: her level, her XP\'s meter to the next, the stars set of her points, and the door to the stars through the menu\'s hand-off (mutants: the meter\'s floor, the door)', () => {
   assert.deepEqual(levelMeter({ xp: 1200, level: 5, points: 4, next: xpForLevel(6) }), { now: 1200 - xpForLevel(5), max: xpForLevel(6) - xpForLevel(5), label: `${(xpForLevel(6) - 1200).toLocaleString('en-US')} XP to level 6` });
-  assert.equal(levelMeter({ xp: 99999, level: 30, points: 29, next: null }).label, 'The highest level a captain reaches');
+  assert.equal(levelMeter({ xp: 99999, level: 30, points: 29, next: null }).label, 'Maximum level');
   assert.equal(levelMeter(null), null);
   const f = fakeDoc();
   const el = (tag, cls = null, text = null) => { const e = f.mk(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };

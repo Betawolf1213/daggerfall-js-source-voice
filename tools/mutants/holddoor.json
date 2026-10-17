@@ -92,8 +92,8 @@
   {
     "name": "HOLD-fleet-act-refused",
     "file": "src/scenes/fleetHost.js",
-    "old": "      return said(true, t('naval.hold.opened', 'Her hold is opened.'), () => !!deps.openHold(uid));",
-    "new": "      return said(false, t('naval.hold.opened', 'Her hold is opened.'));",
+    "old": "      return said(true, t('naval.hold.opened', 'Hold opened.'), () => !!deps.openHold(uid));",
+    "new": "      return said(false, t('naval.hold.opened', 'Hold opened.'));",
     "tests": [
       "test/scenes/holddoor.test.js"
     ]

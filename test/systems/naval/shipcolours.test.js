@@ -207,10 +207,10 @@ test('SHIP-COLOURS the Fleet: a Colours act on every hull with a masthead - hois
   const m = host.model();
   assert.deepEqual(m.ships.map((r) => [r.uid, r.flag, r.colours]).sort(), [[31, true, null], [32, false, null]]);
   assert.equal(m.guildArms, null);
-  assert.deepEqual([host.act(32, 'colours', fitFlag({})).ok, host.act(32, 'colours', fitFlag({})).text], [false, 'She has no masthead to fly a flag from.']);
+  assert.deepEqual([host.act(32, 'colours', fitFlag({})).ok, host.act(32, 'colours', fitFlag({})).text], [false, 'This ship has no masthead for a flag.']);
   assert.equal(host.act(31, 'colours', { field: 'plaid' }).ok, false);
   const r = host.act(31, 'colours', fitFlag({ field: 'vert' }));
-  assert.deepEqual([r.ok, r.text], [true, 'Her new colours are hoisted.']);
+  assert.deepEqual([r.ok, r.text], [true, 'New flag raised.']);
   assert.equal(changed, 1, 'her word said again');
   assert.equal(fleetShip(31).colours.field, 'vert');
   // the page
@@ -237,7 +237,7 @@ test('SHIP-COLOURS the Fleet: a Colours act on every hull with a masthead - hois
   crimson.onclick();
   d = draw();
   assert.ok(all(d, (c) => c.className === 'hld-flag')[0].innerHTML.includes('fill="#b3262e"'));
-  press(d, 'Hoist her colours')[0].onclick();
+  press(d, 'Raise flag')[0].onclick();
   assert.equal(fleetShip(31).colours.field, 'crimson');
   // the guild's arms, once the guild has them
   arms = ARMS;
@@ -251,13 +251,13 @@ test('SHIP-COLOURS the Fleet: a Colours act on every hull with a masthead - hois
   d = draw();
   assert.ok(all(d, (c) => c.className === 'hld-flag')[0].innerHTML.includes('fill="#1d1d1d"'), 'her guild\'s Sable field');
   assert.equal(press(d, 'Flying your guild\'s arms').length, 1);
-  press(d, 'Hoist her colours')[0].onclick();
+  press(d, 'Raise flag')[0].onclick();
   assert.equal(fleetShip(31).colours.guild, true);
   resetFleetPage();
   d = draw();
   press(d, 'Colours')[0].onclick();
   d = draw();
-  press(d, 'Strike her flag')[0].onclick();
+  press(d, 'Remove flag')[0].onclick();
   assert.equal(fleetShip(31).colours, null, 'struck: her pennant');
   setHoldingsProvider(null);
 });

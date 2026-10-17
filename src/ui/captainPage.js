@@ -43,7 +43,7 @@ export function standingMeter(standing, rank) {
 export function levelMeter(stars) {
   if (!stars) return null;
   const floor = xpForLevel(stars.level);
-  if (stars.next == null) return { now: 1, max: 1, label: t('captain.page.top', 'The highest level a captain reaches') };
+  if (stars.next == null) return { now: 1, max: 1, label: t('captain.page.top', 'Maximum level') };
   return { now: Math.max(0, stars.xp - floor), max: Math.max(1, stars.next - floor), label: t('captain.page.toNext', '{n} XP to level {level}', { n: Math.max(0, stars.next - stars.xp).toLocaleString('en-US'), level: stars.level + 1 }) };
 }
 
@@ -67,7 +67,7 @@ export function drawCaptainPage(detail, rerender, { el, divider, meter = null, d
     card.append(holdingMeter(el, meter, t('captain.page.xp', 'XP'), mtr.now, mtr.max, null), el('span', 'hld-sub', mtr.label));   // the kit's own brass fill
     const left = Math.max(0, s.points - s.set);
     card.append(el('span', 'hld-sub', left ? t('captain.page.left', '{set} of {points} stars set - {left} to spend.', { set: s.set, points: s.points, left }) : t('captain.page.spent', '{set} of {points} stars set.', { set: s.set, points: s.points })));
-    card.append(el('span', 'hld-sub', t('captain.page.what', 'The Master\'s stars better a ship\'s way, helm, hold, hull and trade; the Commander\'s her guns, her shot, her boarders and her ram. Your level also opens the metal refits - Steel at level 3, on to Daedric.')));
+    card.append(el('span', 'hld-sub', t('captain.page.what', 'Master stars improve your ships\' speed, steering, cargo, hull and trade prices. Commander stars improve guns, shot, boarding and ramming. Your captain level also unlocks metal refits, from Steel at level 3 up to Daedric.')));
     const open = holdingsProvider()?.captain?.openStars;
     if (typeof open === 'function') {
       const acts = el('div', 'hld-acts');

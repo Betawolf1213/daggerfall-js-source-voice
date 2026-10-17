@@ -753,8 +753,8 @@
   {
     "name": "FH-deck-unsaid",
     "file": "src/scenes/fleetHost.js",
-    "old": "return said(false, t('naval.deck.bad', 'Those fittings cannot stand on her.'));   // none clears her deck; a thing that is no list is refused\n      deps.changed?.();",
-    "new": "return said(false, t('naval.deck.bad', 'Those fittings cannot stand on her.'));   // none clears her deck; a thing that is no list is refused",
+    "old": "return said(false, t('naval.deck.bad', 'Those fittings can\\'t be placed on this ship.'));   // none clears her deck; a thing that is no list is refused\n      deps.changed?.();",
+    "new": "return said(false, t('naval.deck.bad', 'Those fittings can\\'t be placed on this ship.'));   // none clears her deck; a thing that is no list is refused",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -762,8 +762,8 @@
   {
     "name": "FH-deckplan-unopened",
     "file": "src/scenes/fleetHost.js",
-    "old": "return said(true, t('naval.deck.opened', 'The plan of her deck is opened.'), () => !!deps.openDeck(uid));",
-    "new": "return said(true, t('naval.deck.opened', 'The plan of her deck is opened.'));",
+    "old": "return said(true, t('naval.deck.opened', 'Deck plan opened.'), () => !!deps.openDeck(uid));",
+    "new": "return said(true, t('naval.deck.opened', 'Deck plan opened.'));",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]

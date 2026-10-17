@@ -168,7 +168,7 @@ test('SEA-REPAIR on the host: MAKE REPAIRS mends her to whole out of the fight\'
   const whole = await atSea({ stores: 5 });
   whole.host.frame(0.1);
   assert.equal(whole.host.giveOrder(whole.boat, CREW_ORDERS.repair).ok, false);
-  assert.ok(whole.log.say.some((l) => /needs no repairs/.test(l)));
+  assert.ok(whole.log.say.some((l) => /No repairs needed/.test(l)));
   const h = await atSea({ hull: 210, sail: 160, stores: 10 });
   h.host.frame(0.1);
   const mate = h.host.crewOf(h.boat).hands[0].name;

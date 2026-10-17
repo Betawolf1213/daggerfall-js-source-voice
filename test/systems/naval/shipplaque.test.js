@@ -318,11 +318,11 @@ test('SHIP-PLAQUE the ledger, the Fleet and the word: a named ship\'s alone, a n
   });
   const row = (u) => host.model().ships.find((x) => x.uid === u);
   assert.deepEqual([row(41).plaque, row(41).named, row(42).named], [true, true, false]);
-  assert.deepEqual([host.act(42, 'plaque', true).ok, host.act(42, 'plaque', true).text], [false, 'Name her first - she has no name to show.']);
+  assert.deepEqual([host.act(42, 'plaque', true).ok, host.act(42, 'plaque', true).text], [false, 'Give the ship a name first.']);
   const off = host.act(41, 'plaque', false);
-  assert.deepEqual([off.ok, off.text, fleetShip(41).plaque, changed], [true, 'Her name boards are taken down.', false, 1]);
+  assert.deepEqual([off.ok, off.text, fleetShip(41).plaque, changed], [true, 'Ship name hidden.', false, 1]);
   const on = host.act(41, 'plaque', true);
-  assert.deepEqual([on.ok, on.text, fleetShip(41).plaque], [true, 'Her name is cut on her bows - every ship that sights her reads it.', true]);
+  assert.deepEqual([on.ok, on.text, fleetShip(41).plaque], [true, 'Ship name shown on the bow.', true]);
   assert.equal(host.act(41, 'plaque', 'x').ok, false, 'no choice');
   const el = (tag, cls, text) => {
     const n = { tag, children: [], attrs: {}, title: '', className: cls ?? '', innerHTML: '', style: { setProperty() {} }, _t: text == null ? '' : String(text), setAttribute(k, v) { n.attrs[k] = v; }, append(...c) { n.children.push(...c); } };
@@ -334,16 +334,16 @@ test('SHIP-PLAQUE the ledger, the Fleet and the word: a named ship\'s alone, a n
   resetFleetPage();
   const draw = () => { const d = el('div', 'px-qdetail'); drawFleetPage(d, () => {}, { el, divider: (t) => el('h4', null, t), meter: () => el('div') }); return d; };
   let d = draw();
-  const hide = all(d, (c) => c.tag === 'button' && c.textContent === 'Take down her name');
+  const hide = all(d, (c) => c.tag === 'button' && c.textContent === 'Hide name');
   assert.equal(hide.length, 1, 'shown: take it down');
-  const show = all(d, (c) => c.tag === 'button' && c.textContent === 'Show her name');
+  const show = all(d, (c) => c.tag === 'button' && c.textContent === 'Show name');
   assert.equal(show.length, 1, 'the unnamed ship\'s');
   assert.equal(show[0].attrs['aria-disabled'], 'true');
-  assert.equal(show[0].title, 'Name her first - she has no name to show.');
+  assert.equal(show[0].title, 'Give the ship a name first.');
   hide[0].onclick();
   assert.equal(fleetShip(41).plaque, false, 'through the act');
   d = draw();
-  assert.equal(all(d, (c) => c.tag === 'button' && c.textContent === 'Show her name').length, 2);
+  assert.equal(all(d, (c) => c.tag === 'button' && c.textContent === 'Show name').length, 2);
   setHoldingsProvider(null);
   // the word
   const v = (o) => ({ hull: 2, variant: 0, position: [0, 0, 0], rotation: [0, 0, 0, 1], sails: 0, helm: false, light: false, name: 'Gull', ...o });

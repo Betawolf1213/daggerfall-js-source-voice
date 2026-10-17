@@ -108,10 +108,10 @@ const isOf = (item, kind) => { const m = MATERIALS[kind]; return !!m && !!item &
 /** The four refits, each UPGRADE_TIERS deep: what it betters, by how much a tier, and what it is built of. Guns only on
  *  a hull that carries them. */
 export const UPGRADE_LINES = Object.freeze([
-  Object.freeze({ id: 'hold', label: 'Hold', what: 'Cargo she carries before she rides low', per: 0.2, effect: 'cargo', mats: Object.freeze(['timber', 'iron']), guns: false }),
-  Object.freeze({ id: 'rigging', label: 'Rigging', what: 'Her way under sail', per: 0.04, effect: 'speed', mats: Object.freeze(['timber', 'pitch']), guns: false }),
-  Object.freeze({ id: 'hull', label: 'Hull', what: 'Her hull and canvas', per: 0.1, effect: 'hull', mats: Object.freeze(['timber', 'pitch', 'iron']), guns: false }),
-  Object.freeze({ id: 'guns', label: 'Guns', what: 'The weight of her broadsides', per: 0.08, effect: 'guns', mats: Object.freeze(['iron', 'pitch']), guns: true }),
+  Object.freeze({ id: 'hold', label: 'Hold', what: 'More cargo before the ship slows', per: 0.2, effect: 'cargo', mats: Object.freeze(['timber', 'iron']), guns: false }),
+  Object.freeze({ id: 'rigging', label: 'Rigging', what: 'Speed under sail', per: 0.04, effect: 'speed', mats: Object.freeze(['timber', 'pitch']), guns: false }),
+  Object.freeze({ id: 'hull', label: 'Hull', what: 'Hull and sail strength', per: 0.1, effect: 'hull', mats: Object.freeze(['timber', 'pitch', 'iron']), guns: false }),
+  Object.freeze({ id: 'guns', label: 'Guns', what: 'Broadside damage', per: 0.08, effect: 'guns', mats: Object.freeze(['iron', 'pitch']), guns: true }),
 ]);
 /** The shipwright's own three tiers - timber, iron and pitch. */
 export const BASE_TIERS = 3;

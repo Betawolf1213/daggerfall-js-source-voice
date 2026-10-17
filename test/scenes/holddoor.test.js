@@ -48,7 +48,7 @@ function world() {
   return { s, w, door, pack, ship };
 }
 
-test('CARGO-ANYWHERE the ship at hand: at her helm hers, on her deck hers, below in her cabin hers - in that order; none at hand, none (mutants: the helm, the deck, the cabin unread)', () => {
+test('CARGO-ANYWHERE the ship at hand: at the helm hers, on her deck hers, below in her cabin hers - in that order; none at hand, none (mutants: the helm, the deck, the cabin unread)', () => {
   const { s, w, door, ship } = world();
   const a = ship(1, 2), b = ship(2, 4, [400, 34, 200]), c = ship(3, 3, [700, 34, 200]);
   assert.equal(door.atHand(), null);
@@ -80,7 +80,7 @@ test('CARGO-ANYWHERE a standing boat\'s hold opens TWO-WAY under her name - the 
   const row = ship(4, 0, [900, 34, 200]);
   assert.equal(door.openBoat(row), false);
   assert.equal(w.opened.length, n);
-  assert.equal(w.said.at(-1), 'A rowboat carries no hold.');
+  assert.equal(w.said.at(-1), 'Rowboats have no hold.');
 });
 
 test('CARGO-ANYWHERE any ship of mine by her number, wherever she lies: afloat far off (her boat\'s own hold), laid up (Come Sail Away\'s PackedCargoes under her number - the list her placing takes back aboard), packed (the same list, her parts weighed again as the window shuts, as PackBoat weighs them) - and a ship not mine said so (mutants: the laid-up hold, the parts unweighed)', () => {
@@ -118,7 +118,7 @@ test('CARGO-ANYWHERE any ship of mine by her number, wherever she lies: afloat f
   const n = w.opened.length;
   assert.equal(door.openShip(99), false);
   assert.equal(w.opened.length, n);
-  assert.equal(w.said.at(-1), 'No such ship of yours.');
+  assert.equal(w.said.at(-1), 'You don\'t own that ship.');
 });
 
 test('CARGO-ANYWHERE THE HOLD\'S KEY: the ship at hand\'s, else the last whose helm I took (while she is still mine), else my fleet\'s first with a hold, wherever she lies - and with none, said (mutants: the last helm forgotten, a Rowboat picked)', () => {
@@ -134,7 +134,7 @@ test('CARGO-ANYWHERE THE HOLD\'S KEY: the ship at hand\'s, else the last whose h
   door.frame();
   assert.equal(door.lastHelm, 2);
   door.press();
-  assert.equal(w.opened.at(-1).items(), b.Cargo.Items, 'at her helm');
+  assert.equal(w.opened.at(-1).items(), b.Cargo.Items, 'at the helm');
   s.rt.StopSailing();
   door.frame();
   door.press();
@@ -156,10 +156,10 @@ test('CARGO-ANYWHERE the Fleet page: a Hold on every card of a ship with one, pr
   const m = host.model();
   assert.deepEqual(m.ships.map((r) => [r.uid, r.hold]).sort(), [[1, true], [4, false]]);
   const r = host.act(1, 'hold');
-  assert.deepEqual([r.ok, r.text], [true, 'Her hold is opened.']);
+  assert.deepEqual([r.ok, r.text], [true, 'Hold opened.']);
   assert.equal(r.door(), true);
   assert.deepEqual(asked, [1]);
-  assert.deepEqual(host.act(4, 'hold').text, 'A rowboat carries no hold.');
+  assert.deepEqual(host.act(4, 'hold').text, 'Rowboats have no hold.');
   // the page
   const el = (tag, cls, text) => {
     const n = { tag, children: [], attrs: {}, title: '', className: cls ?? '', _t: text == null ? '' : String(text), setAttribute(k, v) { n.attrs[k] = v; }, append(...c) { n.children.push(...c); } };
@@ -178,7 +178,7 @@ test('CARGO-ANYWHERE the Fleet page: a Hold on every card of a ship with one, pr
   assert.equal(doors.length, 1, 'the door handed to the menu (the pause steps aside, the hold opens)');
   assert.equal(doors[0](), true);
   assert.deepEqual(asked, [1, 1]);
-  const said = () => { const d2 = el('div', 'px-qdetail'); drawFleetPage(d2, () => {}, { el, divider: (t) => el('h4', null, t), meter: (a, b) => el('div', null, `${a}/${b}`), door: (fn) => doors.push(fn) }); return d2.textContent.includes('Her hold is opened.'); };
+  const said = () => { const d2 = el('div', 'px-qdetail'); drawFleetPage(d2, () => {}, { el, divider: (t) => el('h4', null, t), meter: (a, b) => el('div', null, `${a}/${b}`), door: (fn) => doors.push(fn) }); return d2.textContent.includes('Hold opened.'); };
   assert.equal(said(), true, 'opened: its card says so');
   // AUDIT 2026-10-17: a door that will not open - its card never keeps the word that it opened
   opens = false;

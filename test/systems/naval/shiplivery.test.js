@@ -355,23 +355,23 @@ test('SHIP-LIVERY, CABIN-LOOK and DECK-PROPS on the Fleet: each card says the pa
   const rows = () => host.model().ships.map((r) => [r.uid, r.paints, r.livery, r.cabin, r.fittings]).sort((a, b) => a[0] - b[0]);
   assert.deepEqual(rows(), [[41, ['strake', 'accent', 'sail'], null, 0, 0], [42, ['stain'], null, null, 0], [43, ['strake', 'accent', 'sail'], null, null, 0]]);
   let r = host.act(41, 'livery', { strake: 4, sail: 3, stain: 2, cabin: 9 });
-  assert.deepEqual([r.ok, r.text, changed], [true, 'She is painted - every ship that sights her sees it.', 1]);
+  assert.deepEqual([r.ok, r.text, changed], [true, 'Ship painted. Other players will see it.', 1]);
   assert.deepEqual([fleetShip(41).livery, fleetShip(41).cabin], [{ strake: 4, accent: 0, sail: 3, stain: 0 }, 9], 'the parts her hull takes; her cabin stained');
   for (const bad of [{ strake: 40 }, { strake: 5, cabin: 99 }, { strake: 5, cabin: 1.5 }, 'red']) {
     r = host.act(41, 'livery', bad);
-    assert.deepEqual([r.ok, r.text], [false, 'The shipwright has no such paint.'], JSON.stringify(bad));
+    assert.deepEqual([r.ok, r.text], [false, 'Unknown paint.'], JSON.stringify(bad));
   }
   assert.deepEqual([fleetShip(41).livery.strake, fleetShip(41).cabin, changed], [4, 9, 1], 'a paint refused leaves her whole as she was, her word unsaid');
   assert.equal(host.act(42, 'livery', { stain: 3, cabin: 5 }).ok, true);
   assert.deepEqual([fleetShip(42).livery, fleetShip(42).cabin], [{ strake: 0, accent: 0, sail: 0, stain: 3 }, 0], 'no cabin of hers: none stained');
   assert.equal(host.act(43, 'livery', { strake: 1, cabin: 99 }).ok, true, 'no cabin of hers: her cabin\'s paint not asked');
   r = host.act(41, 'livery', null);
-  assert.deepEqual([r.ok, r.text, fleetShip(41).livery, fleetShip(41).cabin], [true, 'Her paint is stripped - she is as she was built.', null, 0]);
+  assert.deepEqual([r.ok, r.text, fleetShip(41).livery, fleetShip(41).cabin], [true, 'Paint removed. The ship is back to its original look.', null, 0]);
   r = host.act(41, 'deck', [{ m: 41812, x: 1, z: 2 }, { m: 41815, x: 0, z: 0 }]);
-  assert.deepEqual([r.ok, r.text, fleetShip(41).deck.length], [true, 'Her deck is fitted out: 2 fittings.', 2]);
+  assert.deepEqual([r.ok, r.text, fleetShip(41).deck.length], [true, 'Deck layout saved: 2 fittings.', 2]);
   assert.equal(changed, 5, 'her word said again');
   assert.deepEqual([host.act(41, 'deck', 'x').ok, fleetShip(41).deck.length, changed], [false, 2, 5], 'a thing that is no list refused, her deck as it was');
-  assert.deepEqual([host.act(41, 'deck', []).text, fleetShip(41).deck.length], ['Her deck is cleared.', 0]);
+  assert.deepEqual([host.act(41, 'deck', []).text, fleetShip(41).deck.length], ['Deck cleared.', 0]);
   host.act(41, 'deck', [{ m: 41812, x: 1, z: 2 }]);
   assert.equal(rows()[0][4], 1);
   r = host.act(41, 'deckPlan');
@@ -406,12 +406,12 @@ test('SHIP-LIVERY, CABIN-LOOK and DECK-PROPS on the Fleet: each card says the pa
   swatch('Cabin wood', 'Tan').onclick();
   d = draw();
   assert.ok(all(d, (c) => c.className === 'hld-flag')[0].innerHTML.includes('#202c50'), 'her picture in the paint chosen');
-  press(d, 'Paint her')[0].onclick();
+  press(d, 'Apply paint')[0].onclick();
   assert.deepEqual([fleetShip(41).livery, fleetShip(41).cabin], [{ strake: 4, accent: 0, sail: 0, stain: 0 }, 14], 'painted through the act');
   d = draw();
   press(cardOf(d, 41), 'Paint')[0].onclick();
   d = draw();
-  press(d, 'Strip her paint')[0].onclick();
+  press(d, 'Remove paint')[0].onclick();
   assert.deepEqual([fleetShip(41).livery, fleetShip(41).cabin], [null, 0]);
   setHoldingsProvider(null);
   resetFleetPage();
@@ -432,7 +432,7 @@ test('DECK-PROPS the plan\'s door: her hull\'s deck from the pool, each fitting\
     overlay: (d) => { made = d; return { done: false }; },
   });
   assert.equal(door(99), false);
-  assert.deepEqual(said, ['Her deck is not known yet - stand her in the world first.']);
+  assert.deepEqual(said, ['The deck isn\'t loaded yet. Place the ship in the world first.']);
   titleDeed(mintDeed(1, 0, 52, 1));
   assert.deepEqual([door(52), said.length, made], [false, 2, null], 'no open deck of hers known');
   assert.equal(door(51), true);
@@ -520,14 +520,14 @@ function fakeDoc({ w = 400, h = 400 } = {}) {
   return { createElement: mk, getElementById: () => null, head: mk('head'), documentElement: { dataset: {} }, turns };
 }
 
-test('DECK-PROPS the plan of her deck: a click sets the fitting chosen where it is deck and room; refused off her deck, too near another, or past the most; a click on one takes it up - turned (Q, E), taken away (Delete); Fit her out hands the ledger the list through the door (mutants: the refusals, the turn, the save)', () => {
+test('DECK-PROPS the plan of her deck: a click sets the fitting chosen where it is deck and room; refused off her deck, too near another, or past the most; a click on one takes it up - turned (Q, E), taken away (Delete); Save layout hands the ledger the list through the door (mutants: the refusals, the turn, the save)', () => {
   const doc = fakeDoc();
   const saved = { add: globalThis.addEventListener, rem: globalThis.removeEventListener, si: globalThis.setInterval, ci: globalThis.clearInterval };
   globalThis.addEventListener = () => {}; globalThis.removeEventListener = () => {}; globalThis.setInterval = () => 1; globalThis.clearInterval = () => {};
   try {
     const deck = { cell: 0.5, minX: -2, minZ: -4, nx: 8, nz: 16, y: new Float32Array(128).fill(3), walkable: (x, z) => Math.abs(x) < 2 && Math.abs(z) < 4 };
-    assert.equal(placeRefusal(deck, [5, 0], []), 'That is no deck of hers - set it on her open deck.');
-    assert.equal(placeRefusal(deck, [0, 0], [{ x: 0.3, z: 0 }]), 'Too near another fitting.');
+    assert.equal(placeRefusal(deck, [5, 0], []), 'That spot isn\'t on the open deck.');
+    assert.equal(placeRefusal(deck, [0, 0], [{ x: 0.3, z: 0 }]), 'Too close to another fitting.');
     assert.equal(placeRefusal(deck, [0, 0], [{ x: 1, z: 0 }]), null);
     let kept = null;
     const host = doc.createElement('div');

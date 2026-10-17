@@ -171,8 +171,8 @@ test('ETHER-CHART2 the grid and the scale: the longest bar of 1, 2, 5, 10, 20, 5
 test('ETHER-CHART2 a haunt named in view: on a plate in a corner of her square\'s part in view no name takes - of those (AUDIT ETHER-CHART2 U6) the one over the fewest isles\' marks; at a far zoom her name alone over it, giving way to a port\'s; her state in words (mutants: the corner, the marks, the yield)', () => {
   const m = M.chartModel(word(), at(2), W, H);
   const wake = m.haunts.find((t) => t.name === 'Sorrow\'s Wake'), queen = m.haunts.find((t) => t.name === 'The Drowned Queen');
-  assert.equal(wake.sub, 'Her haunt');
-  assert.equal(queen.sub, 'Sunk - she will rise again');
+  assert.equal(wake.sub, 'Hunting ground');
+  assert.equal(queen.sub, 'Sunk - will return');
   for (const t of [wake, queen]) {
     assert.equal(t.inside, true);
     assert.ok(t.box[1] >= 0 && t.box[0] >= 0 && t.box[2] <= W && t.box[3] <= H, `${t.name}: in view`);
@@ -199,7 +199,7 @@ test('ETHER-CHART2 a haunt named in view: on a plate in a corner of her square\'
   }
   assert.ok(weighed >= 2, `corners weighed (${weighed})`);
   const night = M.chartModel(word({ legends: [{ id: 'lantern', name: 'The Lantern-Eater', trait: 'night', sails: true }] }), { cx: h.px - 300, cy: h.py, zoom: 0 }, W, H);
-  assert.equal(night.haunts[0]?.sub, 'Her haunt - by night');
+  assert.equal(night.haunts[0]?.sub, 'Hunting ground - at night');
   // x1: her name alone over her square - or none, where a port's name stands
   const far = M.chartModel(word(), at(0, -40), W, H);
   assert.ok(far.haunts.length >= 2 && far.haunts.every((t) => !t.inside));

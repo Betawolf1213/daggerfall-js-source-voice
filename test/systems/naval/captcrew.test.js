@@ -112,7 +112,7 @@ test('CAPT-CREW in a captain\'s words: the crew card ends a hand\'s line with hi
   assert.equal(handService(hand('Cora', 'Gunner', 12), false), 'Veteran - 12 fights won', 'a second gunner\'s worth is not hers');
   assert.equal(handService(hand('Ann', 'First Mate', 1, 1), true), 'Green - 1 fight won, 1 boarding', 'a Green mate is worth no hand yet');
   assert.deepEqual(['Gunner', 'Carpenter', 'Lookout', 'Cook', 'Bosun', 'First Mate'].map((r) => postWords(r, 3)),
-    ['the guns reload 13% quicker', 'her hands mend 45% faster', 'her lookout sees 40% further', 'spirits last 100% longer at sea', '4% more way under sail', '2 more hands over the rail']);
+    ['the guns reload 13% quicker', 'the crew repairs 45% faster', 'the lookout sees 40% further', 'spirits last 100% longer at sea', '4% more way under sail', '2 more hands over the rail']);
   assert.equal(postWords('Deckhand', 3), '');
 });
 

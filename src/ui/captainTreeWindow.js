@@ -62,28 +62,28 @@ export const starName = (id) => NAMES[id]?.() ?? id;
 /** What a star is, as its card says it: "The Master · notable". */
 export function starKindWords(star) {
   if (!star) return '';
-  if (star.kind === 'start') return t('captain.kind.start', 'Where every captain begins');
+  if (star.kind === 'start') return t('captain.kind.start', 'Starting star');
   const half = star.sec === 'master' ? t('captain.half.master', 'The Master') : t('captain.half.commander', 'The Commander');
   const kind = star.kind === 'keystone' ? t('captain.kind.keystone', 'keystone') : star.kind === 'notable' ? t('captain.kind.notable', 'notable') : t('captain.kind.small', 'star');
   return `${half} · ${kind}`;
 }
 /** Each stat's label. */
 const LABELS = Object.freeze({
-  way: () => t('captain.stat.way', 'Way under sail'), oars: () => t('captain.stat.oars', 'Way under oars'),
-  turn: () => t('captain.stat.turn', 'Her helm\'s swing'), cargo: () => t('captain.stat.cargo', 'Cargo before she rides low'),
-  hull: () => t('captain.stat.hull', 'Hull and canvas'), repair: () => t('captain.stat.repair', 'Her hands\' repairs'),
-  trade: () => t('captain.stat.trade', 'The exchange\'s spread closed'), harm: () => t('captain.stat.harm', 'Her guns\' harm'),
-  reload: () => t('captain.stat.reload', 'Her guns\' reload'), aim: () => t('captain.stat.aim', 'Her gun crews\' aim'),
-  grape: () => t('captain.stat.grape', 'Men struck by grapeshot'), chain: () => t('captain.stat.chain', 'Canvas torn by chain shot'),
-  heated: () => t('captain.stat.heated', 'Heated shot\'s chance of fire'), boarders: () => t('captain.stat.boarders', 'Hands over the rail'),
-  ram: () => t('captain.stat.ram', 'Her ram\'s harm'), foul: () => t('captain.stat.foul', 'A rammed ship held fouled'),
+  way: () => t('captain.stat.way', 'Speed under sail'), oars: () => t('captain.stat.oars', 'Speed under oars'),
+  turn: () => t('captain.stat.turn', 'Turning speed'), cargo: () => t('captain.stat.cargo', 'Cargo capacity'),
+  hull: () => t('captain.stat.hull', 'Hull and sail strength'), repair: () => t('captain.stat.repair', 'Crew repair speed'),
+  trade: () => t('captain.stat.trade', 'Better exchange prices'), harm: () => t('captain.stat.harm', 'Gun damage'),
+  reload: () => t('captain.stat.reload', 'Gun reload speed'), aim: () => t('captain.stat.aim', 'Gun accuracy'),
+  grape: () => t('captain.stat.grape', 'Grapeshot crew damage'), chain: () => t('captain.stat.chain', 'Chain shot sail damage'),
+  heated: () => t('captain.stat.heated', 'Heated shot fire chance'), boarders: () => t('captain.stat.boarders', 'Boarding party size'),
+  ram: () => t('captain.stat.ram', 'Ram damage'), foul: () => t('captain.stat.foul', 'Time a rammed ship stays fouled'),
 });
 /** A stat's line: "Way under sail +6%" - hands a count, the foul seconds, the reload quicker (a share off it). */
 export function starStatWords(key, v) {
   const sign = v > 0 ? '+' : v < 0 ? '-' : '';
   const a = Math.abs(v);
   const n = key === 'boarders' ? `${sign}${Math.round(a)}` : key === 'foul' ? `${sign}${Math.round(a)} s` : `${sign}${Math.round(a * 100)}%`;
-  if (key === 'reload') return v >= 0 ? t('captain.stat.reloadQuick', 'Her guns\' reload {n} quicker', { n: `${Math.round(a * 100)}%` }) : t('captain.stat.reloadSlow', 'Her guns\' reload {n} slower', { n: `${Math.round(a * 100)}%` });
+  if (key === 'reload') return v >= 0 ? t('captain.stat.reloadQuick', 'Guns reload {n} faster', { n: `${Math.round(a * 100)}%` }) : t('captain.stat.reloadSlow', 'Guns reload {n} slower', { n: `${Math.round(a * 100)}%` });
   return `${LABELS[key]?.() ?? key} ${n}`;
 }
 /** A star's lines: its stats in words, a price (a stat under 0) marked. */
@@ -95,13 +95,13 @@ export function skySummary(held) {
 }
 /** Why `id` cannot be set now, in words - null when it can (the law's way to it, the points left). Pure. */
 export function starRefusal(held, id, points) {
-  if (!starOf(id)) return t('captain.no.unknown', 'That star is not in the captain\'s sky.');
+  if (!starOf(id)) return t('captain.no.unknown', 'Unknown star.');
   const h = heldStars(held);
   if (h.includes(id)) return null;
   const way = wayTo(h, id);
-  if (!way?.length) return t('captain.no.way', 'No way leads there from your stars.');
+  if (!way?.length) return t('captain.no.way', 'This star isn\'t connected to any of your stars.');
   const left = points - (h.length - 1);
-  if (way.length > left) return t('captain.no.points', 'The way there takes {need} {need, plural, one {point} other {points}} and you have {left} left. A captain earns a point a level, at sea.', { need: way.length, left: Math.max(0, left) });
+  if (way.length > left) return t('captain.no.points', 'Reaching this star costs {need} {need, plural, one {point} other {points}}. You have {left}. You get one point per captain level.', { need: way.length, left: Math.max(0, left) });
   return null;
 }
 
@@ -165,7 +165,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     b.onclick = (e) => { e.stopPropagation(); fn(); };
     return b;
   };
-  const undoBtn = btn(t('captain.sky.forget', 'Forget changes'), '', () => { pending = committed.slice(); refresh(); say(t('captain.sky.forgot', 'Your stars are as they were.')); });
+  const undoBtn = btn(t('captain.sky.forget', 'Discard changes'), '', () => { pending = committed.slice(); refresh(); say(t('captain.sky.forgot', 'Changes discarded.')); });
   const goBtn = btn(t('captain.sky.accept', 'Accept'), 'fmt-go', () => accept());
   const sideBtn = btn(t('captain.sky.summary', 'Summary'), '', () => { side.classList.toggle('shut'); dirty = true; });
   const helmBtn = btn(t('captain.sky.helmBtn', 'Helm'), '', () => fit(), t('captain.sky.helmAria', 'Centre on the Helm'));
@@ -177,8 +177,8 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
   const tip = el('div', 'fmt-tip');
   tip.setAttribute('data-grim', 'ink');
   const coarse = !!globalThis.matchMedia?.('(pointer: coarse)')?.matches;
-  const hint = el('div', 'fmt-hint', coarse ? t('captain.sky.hintTouch', 'Tap a star to read it, tap it again to set the way to it · Hold a star to take it back · Drag to look about · Pinch to zoom')
-    : t('captain.sky.hint', 'Click a star to set the way to it · Right-click a star to take it back · Drag to look about · Wheel to zoom · H: the Helm'));
+  const hint = el('div', 'fmt-hint', coarse ? t('captain.sky.hintTouch', 'Tap a star to see it, tap again to take it · Hold a star to remove it · Drag to pan · Pinch to zoom')
+    : t('captain.sky.hint', 'Click a star to take it and the stars on the way to it · Right-click to remove · Drag to pan · Scroll to zoom · H: back to the Helm'));
   hint.setAttribute('data-grim', 'ink');
   const sayBox = el('div', 'fmt-say');
   sayBox.setAttribute('data-grim', 'ink');
@@ -246,9 +246,9 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     const left = c.points - (pending.length - 1);
     levelChip.replaceChildren(el('span', null, t('captain.sky.level', 'Level')), el('b', null, String(c.level)),
       el('span', 'of', c.next == null ? t('captain.sky.top', 'the highest') : t('captain.sky.xp', '{xp} of {next} XP', { xp: c.xp.toLocaleString('en-US'), next: c.next.toLocaleString('en-US') })));
-    levelChip.title = t('captain.sky.levelTip', 'A captain\'s level is earned at sea: ships sunk and taken, boarders thrown back, prizes claimed, contracts done, leagues sailed, charts raised, isles charted, and goods sold at the exchange.');
+    levelChip.title = t('captain.sky.levelTip', 'Captain XP comes from sinking and capturing ships, beating off boarders, claiming prizes, finishing contracts, distance sailed, treasure charts, charting isles and selling goods at the exchange.');
     pointsChip.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('captain.sky.of', 'of {n}', { n: c.points })));
-    pointsChip.title = t('captain.sky.pointsTip', 'A point for every level past the first.');
+    pointsChip.title = t('captain.sky.pointsTip', 'One point per level after the first.');
     const ch = changes(), n = ch.added + ch.removed;
     goBtn.textContent = n ? t('captain.sky.acceptN', 'Accept ({n})', { n }) : t('captain.sky.accept', 'Accept');
     goBtn.disabled = !n;
@@ -261,13 +261,13 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     const parts = [el('h3', null, t('captain.sky.sumHead', 'What your stars do'))];
     const ul = el('ul');
     const lines = skySummary(pending);
-    if (!lines.length) ul.append(el('li', 'none', t('captain.sky.none', 'Nothing set yet. Spend a point beside the Helm.')));
+    if (!lines.length) ul.append(el('li', 'none', t('captain.sky.none', 'No stars taken yet. Start next to the Helm.')));
     for (const l of lines) ul.append(el('li', l.neg ? 'neg' : null, l.text));
     parts.push(ul);
-    parts.push(el('h3', null, t('captain.half.master', 'The Master')), el('p', 'fmt-sign', t('captain.sky.masterLore', 'The seamanship of a ship: her canvas, her oars and her helm, her hold and her trade, her shipwright\'s care.')));
-    parts.push(el('h3', null, t('captain.half.commander', 'The Commander')), el('p', 'fmt-sign', t('captain.sky.commanderLore', 'Her war: the guns\' drill and their aim, the shot locker - grape, chain and heated shot - her boarders and her ram.')));
-    parts.push(el('p', 'fmt-note', t('captain.sky.note', 'Your stars sail with every ship of yours, from her next reading. A star taken back is free, and so is every change: a captain\'s sky is relearned on the deck.')));
-    if (c.level < 3) parts.push(el('p', 'fmt-note', t('captain.sky.oreNote', 'At level 3 a shipwright works Steel into a ship past her third refit - and each metal after it, to Daedric, at a higher level.')));
+    parts.push(el('h3', null, t('captain.half.master', 'The Master')), el('p', 'fmt-sign', t('captain.sky.masterLore', 'Seamanship: sails, oars, steering, cargo, trade and repairs.')));
+    parts.push(el('h3', null, t('captain.half.commander', 'The Commander')), el('p', 'fmt-sign', t('captain.sky.commanderLore', 'Combat: gun reload and accuracy, grapeshot, chain shot and heated shot, boarding and ramming.')));
+    parts.push(el('p', 'fmt-note', t('captain.sky.note', 'Stars apply to all of your ships. Removing or changing stars is free.')));
+    if (c.level < 3) parts.push(el('p', 'fmt-note', t('captain.sky.oreNote', 'From level 3, shipwrights can refit a ship past tier III with Steel. Each later metal, up to Daedric, needs a higher level.')));
     side.replaceChildren(...parts);
   }
 
@@ -281,15 +281,15 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     parts.push(ul);
     let foot = null, no = false;
     const H = heldSet();
-    if (id === 'helm') foot = t('captain.tip.helm', 'Every captain holds the Helm. Set a star beside it.');
+    if (id === 'helm') foot = t('captain.tip.helm', 'Everyone starts with the Helm. Take a star next to it.');
     else if (H.has(id)) {
       const n = takesBack(pending, id).length;
-      foot = n > 1 ? t('captain.tip.backMany', 'Right-click to take it back, with the {n} stars set beyond it.', { n: n - 1 }) : t('captain.tip.back', 'Right-click to take it back.');
+      foot = n > 1 ? t('captain.tip.backMany', 'Right-click to remove it and the {n} stars after it.', { n: n - 1 }) : t('captain.tip.back', 'Right-click to remove.');
     } else {
       const why = starRefusal(pending, id, captain().points);
       if (why) { foot = why; no = true; } else {
         const n = wayTo(pending, id)?.length ?? 0;
-        foot = t('captain.tip.take', 'Click to set the way to it: {n} {n, plural, one {point} other {points}}.', { n });
+        foot = t('captain.tip.take', 'Click to take: {n} {n, plural, one {point} other {points}}.', { n });
       }
     }
     parts.push(el('p', `ft${no ? ' no' : ''}`, foot));
@@ -328,7 +328,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
     pending = committed.slice();
     for (const k of added) burst(k);
     try { changed(); } catch { /* the save's word is the host's */ }
-    say(t('captain.sky.set', 'Your stars are set. Every ship of yours sails on them.'));
+    say(t('captain.sky.set', 'Stars saved. They apply to all of your ships.'));
     refresh();
   }
 
@@ -448,7 +448,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
   globalThis.addEventListener?.('keydown', onKey, true);
   /** Closing with a change not accepted asks first - once; the second close lets it go. */
   function tryClose() {
-    if (unaccepted() && !armedClose) { armedClose = true; say(t('captain.sky.unaccepted', 'Your changes are not accepted yet. Close again to let them go.'), true); return false; }
+    if (unaccepted() && !armedClose) { armedClose = true; say(t('captain.sky.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'), true); return false; }
     close();
     return true;
   }
@@ -676,7 +676,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
   refresh();
   fit();
   hold();
-  if (captain().points === 0) say(t('captain.sky.noPoints', 'A captain earns a point a level. Win your first at sea - a ship sunk or taken, a contract done, a league sailed.'), false, true);
+  if (captain().points === 0) say(t('captain.sky.noPoints', 'You get one point per captain level. Earn XP at sea: sink or capture a ship, finish a contract, or just sail.'), false, true);
   goBtn.focus?.({ preventScroll: true });
 
   /** Down, and nothing said - the door's own dispose (it is the one closing). */
