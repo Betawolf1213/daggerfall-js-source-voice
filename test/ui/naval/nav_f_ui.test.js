@@ -61,7 +61,7 @@ test('NAV-F the ship plate\'s words: her name, the crown\'s waters and the ancho
   const b = Object.fromEntries(plate.batteries.map((x) => [x.side, x]));
   assert.equal(b.port.count, '6 long guns');
   assert.equal(b.starboard.count, '1 long gun');
-  assert.equal(b.bow.count, '2 chain shot');
+  assert.equal(b.bow.count, '2 chasers');   // PIN MOVED (SHOT-KINDS): chain shot is a load now, the bore its chasers
   assert.equal(b.stern.count, '0 barrels');
   assert.equal(b.port.fill, 25);
   assert.equal(b.port.ready, false);

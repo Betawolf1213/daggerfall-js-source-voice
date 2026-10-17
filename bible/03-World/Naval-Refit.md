@@ -31,6 +31,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | CARGO-ANYWHERE | 1 | a ship's hold opened from anywhere - the hold's key (F4), the helm's Hold, the Fleet page's Hold - at hand, last helmed or the fleet's first, wherever she lies; the hold two-way on the Enhanced skins | `scenes/holdDoor.js`, `systems/comeSailAway/comeSailAwayItems.js` (`cargoLootTarget`), `ui/enhanced/enhancedInventory.js` (`remoteModel`), `scenes/fleetHost.js` (`hold`), `ui/fleetPage.js`, `ui/enhanced/enhancedHelm.js` (`helmButtons`), `systems/inputActions.js` (`ShipHold`), `scenes/world.js` |
 | RAM-BOARD | 5 | a ram fouls her: for FOUL_S her way is held and she is boarded as she stands, her whole crew against me | `systems/naval/navalFoul.js`, `scenes/naval/navalHost.js` (`checkRams`, `boardingGap`, `footReach`, `stepHeaveTo`, `crewShips`, `word`, `targetCardOf`), `systems/naval/navalAI.js` (`stepCaptain`), `ui/naval/navalHud.js` (`cardState`) |
 | RAID-ASHORE | 2 | a voyage's raid fought where the player stands ends there: its crew and last raiders withdrawn, the quest ended; one raid at a time on the fast travel | `scenes/raidAshore.js`, `systems/warmAshesShips.js` (`LeaveShip`, `onPreFastTravel`), `scenes/world.js` (`raidAshore`, Warm Ashes' host, the quest's end) |
+| SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
 
@@ -196,6 +197,56 @@ CHANGED (`systems/naval/navalFoul.js`, the law; the host wires it):
 
 The law, the muster, the haul and the prize are unchanged; the struck law stands for every ship not fouled.
 
+## SHOT-KINDS - what the guns are loaded with (items 3 and 4)
+
+FOUND. A gun was a bore and one load: navalShips.js GUNS gave each kind its muzzle speed, scatter, reload and its
+harm to her hull, canvas and crew, and the load came with the bore - the broadsides, swivels and great guns threw round
+shot and the Small Ship's and the Carrack's bow chasers chain (GUNS `chain` IS chain shot). The only choice a captain
+had was where to look.
+
+CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and the captains read it):
+- **Four loads** (`SHOT_ORDER`): ROUND SHOT (what every number of GUNS was tuned on), GRAPESHOT (slower, a cone 2.4
+  times the scatter and a sweep 0.45 m wider - it meets what a ball would pass - a fifth of a ball's hole and FOUR times
+  its men, close in: whole to GRAPE_FULL_S of flight, half by GRAPE_SPENT_S), CHAIN SHOT (a wider tumble, four times a
+  ball's canvas, a fifth of its hole) and HEATED SHOT (a ball a little softer, slow to load - the furnace - that sets her
+  alight 45% of hull hits where a cold ball's FIRE_CHANCE is 6%, and her canvas where it passes through her rig).
+- **Every number is relative to the bore's own load** (`shotGun`): a gun loaded with its own load, or none said, IS its
+  GUNS row - every captain's duels and odds stand as they were tuned; a chaser loaded with round shot throws a long gun's
+  kind of ball (its chain's factors undone).
+- **The load is the battery group's** (`navalGunnery.js LOAD_GROUPS`, `createGunDeck` `load`/`setLoad`): the two
+  broadsides as one, the bow chasers, the stern guns - each its bores' own until changed (a group at its own load is
+  said as none). A change draws a loaded battery and loads it again in SHOT_SWITCH (half) of the new load's reload; one
+  reloading takes the new shot in, its clock scaled to the new load's. The fire barrels carry none. The save keeps the
+  loads (`gunsRecord`: `loads` only when one is not her bores' own).
+- **The aim and the volley are the load's** (`aimSolution` `shot`, `volleyLaunches`): laid with its muzzle speed (grape
+  falls shorter and is laid higher), flown with its speed and scatter; the helm's look on a ship lays chain for her
+  canvas whatever bore throws it (`lookOnShip`, `aimStrikes`).
+- **The ball keeps it** (`navalShots.js`): swept with its load's radius, every event saying it, a hit its time aloft;
+  the host strikes with the loaded gun (`loadedGun` - grapeshot's men by its time aloft) and heated shot's fire.
+- **The helm's choice** (`scenes/naval/navalLoads.js`): the group the guns are laid with, else the one the look bears on,
+  else her first with guns. THE WHEEL while the guns are laid steps it on or back (one step a SHOT_WHEEL_S - a
+  trackpad's stream steps once; the camera's zoom waits); the helm panel's Shot button ("Broadsides: Grapeshot"); the
+  ShotCycle key - appended to the actions, in Combat, unbound (the letters are spent; a mod's group would ship it a key,
+  KB1 law 3) - and a pad button chosen for it. Each change is said: "Broadsides: Grapeshot - loading".
+- **The HUD**: each battery's load under its count (the chasers named as the bore, "2 chasers", now chain is a load),
+  coloured by load (hidden on a short screen); the aim's line names it ("Port broadside, grapeshot - 90 m").
+- **The picture** (item 4): each load its own ball (`navalRender.js ballPictures` - grapeshot's ring of five small balls
+  opening over its first 1.2 s, chain shot's two half-balls tumbling about each other with the chain between, heated
+  shot red-hot in a glow trailing three fading glows), muzzle (grape's wider, lower smoke; heated shot's red flash),
+  splash (grape's spatter of six small spouts over SPATTER_M; heated shot's hiss of steam), hull hit (grape's peppering;
+  heated shot's embers) and canvas hit (chain tears twice the scraps and cracks a spar) - `navalEffects.js shotMuzzle`,
+  `shotSplash`, `shotHit`, `shotTear`, the host's one door each.
+- **The room** (`navalWire.js` `o`): a volley loaded with other than its bores' own says its load by SHOT_CODES, so
+  every client flies the same balls and the victim's client judges the same blow; an older build's word says none - its
+  bores' own.
+- **The captains** (`navalAI.js captainLoads`): every captain fights her bores' own loads but a PIRATE who means to board,
+  who loads her broadsides and chasers with GRAPE the moment she decides to (the guns drawn while she closes) - Black
+  Flag's boarders sweep the deck they will take, and grape leaves the prize whole. Her chasers fire it as they bear, and
+  the broadsides a boarder held fire it too (`boarderBroadsides`: round shot into a prize she means to take, never). She
+  keeps it through the fight within GRAPE_KEEP of GRAPE_CLOSE_M and draws it once the fight is done or opened past
+  that; her lay, lead and reach are her load's (`gunnery`, `batteryReach`). The dead zones (LAY_MIN) are sounded with
+  the bores' own loads.
+
 ## THE FOUR HOSTS RULE
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
@@ -220,6 +271,14 @@ The law, the muster, the haul and the prize are unchanged; the struck law stands
   `classicpages`, `viewtoggle`, `uicalm`) and the helm panel's (`shipcrew`, `auditnav2_helm`, `fb1011c_seatown`).
 - `test/systems/naval/ramboard.test.js` (6) on the real naval host and pool, and `tools/mutants/ramboard.json` (17, all
   dead).
+- `test/systems/naval/shotkinds.test.js` (10) on the law, the gunnery, the shots, the real naval host and pool, the wire,
+  the helm, the captains, the HUD, the picture and the world's wiring, and `tools/mutants/shotkinds.json` (66, all
+  dead); the pins it moved: the muzzle event's (`nav_a_guns`), the chasers' count (`nav_f_ui`), the hull hit's spy
+  (`navaudit_presentation`), the boarder's held broadsides (`navaudit_captains`: held while round shot, grape alongside),
+  the wheel's rung (`spyglass`, `audit24_wave37`), the helm panel's model (`holddoor`, `shipcrew`), the action list's
+  (`inputactions`, `qs2_inputs`, `classicpages`, `viewtoggle`, `uicalm`, `tech1_hosts`, `modewheel`); the records re-aimed
+  by content in `crewhold`, `holdings`, `navaudit_captains`, `navaudit_guns`, `navaudit_helm`, `navaudit_presentation`,
+  `shipcrew` and `spyglass` (all dead).
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

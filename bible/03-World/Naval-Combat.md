@@ -115,6 +115,8 @@ highest):
 | chain shot | 58 m/s | 30 - 196 m | 7 s | 3 / 16 / 1 |
 | fire barrel | rolled over the stern | where it drifts (FLOAT_DRIFT of the wind) | BARREL_DROP_S (1.2 s), BARREL.stock aboard | 45 / 6 / 3, and always a fire - BARREL.burnPerSecond for BARREL.burn |
 
+SHOT-KINDS (2026-10-17, `03-World/Naval-Refit.md` SHOT-KINDS): the table is each bore with its OWN load - a battery group (the broadsides as one, the bow, the stern) may be loaded with round, grape, chain or heated shot (`systems/naval/shotKinds.js`), each factor over the bore's own; the `chain` row is the chasers' bore loaded with its own chain.
+
 TOUGHER-SHIPS (2026-10-03, below): the crew a ball takes is the gun's (`shotMen` - what the wire says) over
 SHIP_TOUGHNESS, on the ball's own roll (`ballMen`): a long gun's one man 0.625 of a man on the average. CREW-HOLD
 (2026-10-06, below): a player's ship's over PLAYER_CREW_TOUGHNESS (3.2) - 0.3125.

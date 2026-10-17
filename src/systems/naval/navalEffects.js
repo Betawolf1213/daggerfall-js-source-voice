@@ -17,6 +17,12 @@
 //   timber - AUDIT NAV1 (the presentation, #15): planks off a holed hull, laid long on the sea (`aspect`), drifting
 //            slow and gone after TIMBER_LIFE or so; and a battered hull's SMOLDER - grey smoke along her deck, more as
 //            she is hurt
+// SHOT-KINDS (bible/03-World/Naval-Refit.md): EACH LOAD ITS OWN PICTURE (`shotMuzzle`, `shotSplash`, `shotHit`,
+// `shotTear` - the host's one door per event, the load said): GRAPESHOT leaves in a wider, lower cone of smoke and
+// lands as a SPATTER - a scatter of small spouts over the sea, a peppering of splinters over a hull; CHAIN SHOT tears
+// twice the canvas a ball does and cracks spars (dark splinters among the scraps); HEATED SHOT flashes red at the
+// muzzle, HISSES into the sea (a white puff of steam over its spout) and throws EMBERS where it strikes. Round shot is
+// the picture it always was.
 // Every particle ages to its `life` and is gone; the whole field is held under PARTICLE_BUDGET, so a long broadside
 // never costs the frame more than its budget - past it, what a fight's picture misses least goes first (EVICT_RANK).
 
@@ -32,6 +38,8 @@ export const EVICT_RANK = Object.freeze({ spray: 0, foam: 0, glint: 0, debris: 1
  *  its worst (puffs a second). */
 export const TIMBER_LIFE = 18;
 export const SMOLDER_RATE = 3;
+/** SHOT-KINDS: the spread a grapeshot's spatter lands over (m) - its bag of balls opened in flight. */
+export const SPATTER_M = 3;
 /** Gravity on spray and debris (m/s^2). */
 const G = 9.81;
 
@@ -124,6 +132,57 @@ export function createNavalEffects({ random = Math.random, wind = () => [0, 0, 0
       push({ kind: 'shred', pos: [...pos], vel: [d[0] * sp + jitter(1.2), d[1] * sp + jitter(0.8), d[2] * sp + jitter(1.2)], age: 0, life: 2 + r() * 1.5, size0: 0.3 + r() * 0.35, size1: 0.25, drag: 1.6, gravity: 1.6, color: [0.86 + jitter(0.04), 0.82 + jitter(0.04), 0.7], alpha: 0.95, rot: r() * 6.28, spin: jitter(6), blend: 'alpha', solid: true });
     }
   }
+  // SHOT-KINDS: each load's picture over the ball's own
+  /** A volley's gun firing `shot` - grape's cone wider and lower, heated shot's flash red. */
+  function shotMuzzle(pos, dir, scale = 1, shot = null) {
+    muzzle(pos, dir, scale);
+    const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+    const d = [dir[0] / l, dir[1] / l, dir[2] / l];
+    if (shot === 'grape') smoke(pos, [d[0], d[1] * 0.4 - 0.1, d[2]], scale * 1.25, 4);
+    if (shot === 'heated') push({ kind: 'flash', pos: [pos[0] + d[0] * 0.8, pos[1] + d[1] * 0.8, pos[2] + d[2] * 0.8], vel: [d[0] * 9, d[1] * 9, d[2] * 9], age: 0, life: 0.16, size0: 1.4 * scale, size1: 2.6 * scale, drag: 0, lift: 0, color: [1, 0.36, 0.1], alpha: 1, rot: r() * 6.28, spin: 0, blend: 'add' });
+  }
+  /** A ball of `shot` into the sea: grape a spatter of small spouts over SPATTER_M, heated shot's spout hissing (steam). */
+  function shotSplash(pos, big = false, shot = null) {
+    if (shot === 'grape') {
+      for (let i = 0; i < 6; i++) {
+        const a = r() * 6.28, d = r() * SPATTER_M;
+        const at = [pos[0] + Math.sin(a) * d, pos[1], pos[2] + Math.cos(a) * d];
+        for (let k = 0; k < 3; k++) push({ kind: 'spray', pos: [at[0] + jitter(0.1), at[1] + 0.05, at[2] + jitter(0.1)], vel: [jitter(0.6), 2.5 + r() * 2, jitter(0.6)], age: 0, life: 0.5 + r() * 0.4, size0: 0.3, size1: 0.55, drag: 0.4, gravity: G, color: [0.9, 0.95, 1], alpha: 0.75, rot: r() * 6.28, spin: jitter(1), blend: 'alpha' });
+        push({ kind: 'foam', flat: true, pos: [at[0], at[1] + 0.04, at[2]], vel: [0, 0, 0], age: 0, life: 1.4, size0: 0.4, size1: 1.8, drag: 0, lift: 0, color: [0.92, 0.96, 1], alpha: 0.55, rot: r() * 6.28, spin: 0, blend: 'alpha' });
+      }
+      return;
+    }
+    splash(pos, big);
+    if (shot === 'heated') {
+      for (let i = 0; i < 4; i++) push({ kind: 'smoke', pos: [pos[0] + jitter(0.4), pos[1] + 0.3, pos[2] + jitter(0.4)], vel: [jitter(0.4), 2.2 + r() * 1.2, jitter(0.4)], age: 0, life: 1.6 + r(), size0: 0.8, size1: 3.2, drag: 0.8, lift: 0.5, color: [0.95, 0.95, 0.94], alpha: 0.6, rot: r() * 6.28, spin: jitter(0.3), blend: 'alpha' });
+    }
+  }
+  /** A ball of `shot` into a hull: grape peppers her (small splinters over SPATTER_M, a thin puff), heated shot throws
+   *  embers; round and chain the ball's own. */
+  function shotHit(pos, dir, heavy = false, scale = 1, shot = null) {
+    if (shot === 'grape') {
+      const k = Math.max(1, Number(scale) || 1);
+      for (let i = 0; i < 16; i++) {
+        const at = [pos[0] + jitter(SPATTER_M * 0.5), pos[1] + jitter(0.8), pos[2] + jitter(SPATTER_M * 0.5)];
+        push({ kind: 'debris', pos: at, vel: [jitter(3), 1 + r() * 3, jitter(3)], age: 0, life: 0.8 + r() * 0.8, size0: (0.08 + r() * 0.1) * k, size1: 0.08 * k, drag: 0.3, gravity: G, color: [0.4 + jitter(0.06), 0.28 + jitter(0.04), 0.17], alpha: 1, rot: r() * 6.28, spin: jitter(14), blend: 'alpha', solid: true });
+      }
+      smoke(pos, [0, 0.5, 0], 0.4 * k, 2);
+      return;
+    }
+    hit(pos, dir, heavy, scale);
+    if (shot === 'heated') {
+      for (let i = 0; i < 10; i++) push({ kind: 'ember', pos: [pos[0] + jitter(0.3), pos[1] + jitter(0.3), pos[2] + jitter(0.3)], vel: [jitter(3), 1.5 + r() * 3.5, jitter(3)], age: 0, life: 0.8 + r() * 1.1, size0: 0.26, size1: 0.06, drag: 0.6, lift: 0.3, color: [1, 0.5 + r() * 0.2, 0.15], alpha: 1, rot: 0, spin: 0, blend: 'add' });
+    }
+  }
+  /** A ball of `shot` through her canvas: chain tears twice the scraps and cracks a spar; heated shot leaves embers. */
+  function shotTear(pos, dir, shot = null) {
+    tear(pos, dir);
+    if (shot === 'chain') {
+      tear(pos, dir);
+      hit(pos, dir, false, 0.6);
+    }
+    if (shot === 'heated') burn(pos, 0.1);
+  }
   /** AUDIT NAV1 (the presentation, #15): planks off a holed hull - `n` afloat about where she was struck (`pos` on the
    *  sea), laid long, drifting slow. */
   function timber(pos, n = 2) {
@@ -194,6 +253,7 @@ export function createNavalEffects({ random = Math.random, wind = () => [0, 0, 0
 
   return {
     muzzle, flash, smoke, splash, hit, blast, burn, glint, tear, founder, timber, smolder, step, drawList, offsetAll,
+    shotMuzzle, shotSplash, shotHit, shotTear,   // SHOT-KINDS
     clear() { parts = []; },
     get count() { return parts.length; },
   };

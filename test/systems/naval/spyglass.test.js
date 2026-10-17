@@ -286,7 +286,7 @@ test('SPYGLASS the crew\'s cries by what is known: a hostile sail\'s hail names 
 });
 
 test('SPYGLASS the world: the Spyglass action appended, a port row in Come Sail Away\'s group, shared onto K beside the road\'s follow; the touch corner\'s and the pad\'s to choose; the glass\'s frame - raised aboard alone, down under a window, the travel view, a laid broadside; the lens narrowed at the frame\'s three, the look slowed, the wheel its magnification; the road\'s follow never read aboard (mutants: each seam)', () => {
-  assert.equal(ACTIONS.at(-3), 'Spyglass');   // PIN MOVED (UI-CALM, CARGO-ANYWHERE): the saddle panel's key and the hold's appended after it
+  assert.equal(ACTIONS.at(-4), 'Spyglass');   // SHOT-KINDS: and the guns' load   // PIN MOVED (UI-CALM, CARGO-ANYWHERE): the saddle panel's key and the hold's appended after it
   assert.ok(PORT_ACTIONS.includes('Spyglass'));
   assert.ok(DEFAULT_SHARES.some(([c, a, p]) => c === 'KeyK' && a === 'Spyglass' && p === 'FollowPaths'));
   assert.ok(!DEFAULT_BINDINGS.some(([, a]) => a === 'Spyglass'), 'it owns no key - a share');
@@ -306,7 +306,7 @@ test('SPYGLASS the world: the Spyglass action appended, a port row in Come Sail 
   assert.match(w, /fovY: glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\), aspect: worldAspect,/, 'the far ring through it');
   assert.equal((w.match(/lookScale\(\) \* glassLookScale\(spyglass\.lens\)/g) || []).length, 2, 'the mouse\'s look and the finger\'s and pad\'s');
   assert.equal((w.match(/lookScale\(\) \* lookInvert\(\) \* glassLookScale\(spyglass\.lens\)/g) || []).length, 2);
-  assert.match(w, /\|\| modes\?\.wheel\?\.\(e\) \|\| spyglassWheel\(e\.deltaY\) \|\| mwViewWheel\(e\.deltaY\)\) e\.preventDefault\(\);/, 'the wheel: the glass\'s before the camera\'s');
+  assert.match(w, /\|\| modes\?\.wheel\?\.\(e\) \|\| spyglassWheel\(e\.deltaY\) \|\| shotWheel\(e\.deltaY\) \|\| mwViewWheel\(e\.deltaY\)\) e\.preventDefault\(\);/, 'the wheel: the glass\'s before the camera\'s');   // PIN MOVED (SHOT-KINDS: the laid guns' load before the camera too)
   assert.match(w, /spyglass\.zoom = Math\.max\(GLASS_ZOOM_MIN, Math\.min\(GLASS_ZOOM_MAX, deltaY < 0 \? spyglass\.zoom \* 2 : spyglass\.zoom \/ 2\)\);/);
   assert.match(w, /function travelFollowPressed\(\) \{ return !naval\?\.aboard\?\.\(\) && pressed\(latch\.edge, keys, 'FollowPaths'\); \}/, 'a deck has no road');
   assert.match(w, /glassUp: spyglass\.up,/, 'the plate\'s Glass brass while it is up');

@@ -317,8 +317,8 @@
   {
     "name": "NAV1-broadsides-alongside",
     "file": "src/systems/naval/navalAI.js",
-    "old": "    gunnery(ship, world, enemy ?? (ship.cls.faction === 'merchant' ? threat : null), out, { broadsides: ship.mode !== 'board' });",
-    "new": "    gunnery(ship, world, enemy ?? (ship.cls.faction === 'merchant' ? threat : null), out, { broadsides: true });",
+    "old": "export const boarderBroadsides = (ship) => ship.mode !== 'board' || ship.guns.load('starboard') === 'grape';",
+    "new": "export const boarderBroadsides = (ship) => true;",
     "tests": [
       "test/systems/naval/navaudit_captains.test.js"
     ]

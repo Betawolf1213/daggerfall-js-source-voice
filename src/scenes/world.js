@@ -9965,6 +9965,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     spyglass.zoom = Math.max(GLASS_ZOOM_MIN, Math.min(GLASS_ZOOM_MAX, deltaY < 0 ? spyglass.zoom * 2 : spyglass.zoom / 2));
     return true;
   }
+  /** SHOT-KINDS: the wheel while the guns are laid steps their load (scenes/naval/navalLoads.js) - the camera's zoom waits. */
+  const shotWheel = (deltaY) => !!naval?.shotWheel?.(deltaY);
   /** AUDIT CAPTAIN'S SEA S6: the glass's own sight test - a ship behind the land is not held (the tags' law, a cache of
    *  its own off the look the glass is held along). */
   const glassSight = createSightCache();
@@ -10338,6 +10340,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     position: () => csaCall(() => { const b = csaRuntime?.state?.CurrentBoat; if (b) csaRuntime.StartShowBoatPosition(b); }),   // the position box's reading, from the wheel (DECLARED: the box itself is out of reach there)
     orders: () => { const b = csaRuntime?.state?.CurrentBoat; if (b) navalOrders(b); },   // SHIP-CREW: her captain's orders, from the wheel
     cargo: () => { const b = csaRuntime?.state?.CurrentBoat; if (b) holdDoor.openBoat(b); },   // CARGO-ANYWHERE: her hold, from the wheel
+    shot: () => { naval?.cycleShot?.(1); },   // SHOT-KINDS: her guns' load stepped on, from the wheel
   };
   /** SHIP-CREW: a boat of mine's orders as a list (shipCrew.js orderRows) - the one picked given (navalHost giveOrder). */
   function navalOrders(boat) {
@@ -10611,7 +10614,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!csaRuntime || !csaOn() || !isEnhancedPlus() || typeof document === 'undefined' || !walkMode) { if (enhancedHelmMounted()) hideEnhancedHelm(); csaHelmInput.held.clear(); return; }
     let helm = null;
     csaCall(() => { helm = csaRuntime.helmPanelState(); });
-    if (helm) helm = { ...helm, orders: navalOn(), cargo: holdsCargo(helm.hull) };   // SHIP-CREW: the Orders button while the naval arc is on; CARGO-ANYWHERE: her Hold
+    if (helm) helm = { ...helm, orders: navalOn(), cargo: holdsCargo(helm.hull), shot: navalOn() ? naval?.shotLabel?.() ?? null : null };   // SHIP-CREW: the Orders button while the naval arc is on; CARGO-ANYWHERE: her Hold; SHOT-KINDS: her guns' load
     if (!helm) csaHelmInput.held.clear();
     const ab = helm ? null : csaAboard.aboard;
     if (!helm && !ab) { drawEnhancedHelm({ helm: null, aboard: null }, csaHelmHooks); return; }   // SEA-TOWN (FIELD BUGS 2026-10-11c): no helm, aboard nothing - the panel goes (ui/enhanced/enhancedHelm.js), and the key's name and the cover's reads it never shows are not made every frame ashore
@@ -17833,7 +17836,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (e.pointerType !== 'touch' && document.pointerLockElement !== canvas) setClickDelay((latch.activate ??= createActivateGate()));
     requestLook(canvas);
   });   // U8b/U8c: native windows own the pointer
-  canvas.addEventListener('wheel', (e) => { if (townTalk.wheel(e) || quickLootWheel(e.deltaY) || modes?.wheel?.(e) || spyglassWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }, { passive: false });   // U-scroll: an open window owns the wheel; QUICK-LOOT B4: the plaque owns the wheel FIRST, and only while it is listing something - the ladder's own law ("an open window owns the wheel"), applied to a live list under the crosshair; MW-D25: otherwise the Morrowind camera zoom
+  canvas.addEventListener('wheel', (e) => { if (townTalk.wheel(e) || quickLootWheel(e.deltaY) || modes?.wheel?.(e) || spyglassWheel(e.deltaY) || shotWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }, { passive: false });   // U-scroll: an open window owns the wheel; QUICK-LOOT B4: the plaque owns the wheel FIRST, and only while it is listing something - the ladder's own law ("an open window owns the wheel"), applied to a live list under the crosshair; MW-D25: otherwise the Morrowind camera zoom
   // ROAD-C c2/S4: THE OTHER TWO PHASES. This host already routed
   // `pointerdown` into the mode machine; the automap's chrome is
   // press-HOLD and drag driven, so a host that delivers `down` alone
@@ -32284,6 +32287,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (oceanHoles) { _ohTime += gamePaused() ? 0 : dt * worldTimeScale(); oceanHoles.checkSettings(); ohAbyss?.update(); }
     holdDoor.frame();   // CARGO-ANYWHERE: the helm I hold, remembered - and the hold's key, in every mode (the cabin's too)
     if (csaRuntime && walkMode && playerSpawned && !modes?.transitioning && !travelView?.active && hccActionPressed('ShipHold')) holdDoor.press();
+    if (navalOn() && hccActionPressed('ShotCycle')) naval?.cycleShot?.(1);   // SHOT-KINDS: the guns' load, from its key (at a helm with guns - the host's own test)
     saddleDrawPanel();   // STEED-UI: the saddle panel, as the helm's below - every mode, so a door takes it down
     csaDrawHelmPanel();   // CSA-L: the helm panel, once a frame in every mode
     spoilsRecoverFrame();   // WB5: a boss's spoils no save holds, back to their character as it stands up - before it can save, online or not

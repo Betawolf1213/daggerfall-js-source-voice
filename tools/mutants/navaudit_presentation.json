@@ -337,8 +337,8 @@
   {
     "name": "NAVP-hit-burst-unscaled",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "e.gun === 'heavy', burstScale(e.point)); sound(",
-    "new": "e.gun === 'heavy'); sound(",
+    "old": "e.gun === 'heavy', burstScale(e.point), e.shot); sound(",
+    "new": "e.gun === 'heavy', 1, e.shot); sound(",
     "tests": [
       "test/systems/naval/navaudit_presentation.test.js"
     ]
@@ -1361,8 +1361,8 @@
   {
     "name": "NAVP-timber-off-the-rig",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "if (e.zone === 'rig') { effects.tear(e.point, e.dir ?? [0, 0, 1]);",
-    "new": "if (e.zone === 'rig') { effects.tear(e.point, e.dir ?? [0, 0, 1]); effects.timber([e.point[0], seaY, e.point[2]], TIMBER_PER_HIT);",
+    "old": "if (e.zone === 'rig') { effects.shotTear(e.point, e.dir ?? [0, 0, 1], e.shot);",
+    "new": "if (e.zone === 'rig') { effects.shotTear(e.point, e.dir ?? [0, 0, 1], e.shot); effects.timber([e.point[0], seaY, e.point[2]], TIMBER_PER_HIT);",
     "tests": [
       "test/systems/naval/navaudit_presentation.test.js"
     ]

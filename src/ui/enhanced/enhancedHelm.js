@@ -140,6 +140,7 @@ export function helmButtons(h) {
     { act: 'faster', label: '+', kind: 'tap', action: A.faster, disabled: !(h.timeScaleIndex < h.timeScaleMax) });
   if (h.orders) out.push({ act: 'orders', label: 'Orders', kind: 'hook' });   // SHIP-CREW: her captain's orders (the naval arc on)
   if (h.cargo) out.push({ act: 'cargo', label: 'Hold', kind: 'hook' });   // CARGO-ANYWHERE: her hold, from the wheel (scenes/holdDoor.js)
+  if (h.shot) out.push({ act: 'shot', label: h.shot, kind: 'hook' });   // SHOT-KINDS: her guns' load, stepped on (scenes/naval/navalLoads.js - its label)
   out.push({ act: 'position', label: 'Position', kind: 'hook' });
   out.push({ act: 'leave', label: 'Leave the helm', kind: 'tap', action: A.disembark });
   return out;

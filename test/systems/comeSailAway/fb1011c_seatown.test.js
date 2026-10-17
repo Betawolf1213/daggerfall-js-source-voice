@@ -256,7 +256,7 @@ test('SEA-TOWN HUDS: the naval HUD with no ship near (or the HUD covered) is han
   hs.helm = { raised: 0 };
   csaDrawHelmPanel();
   const at = helmDrawn.pop();
-  assert.deepEqual(at.state.helm, { raised: 0, orders: true, cargo: false }, 'at the helm: the panel\'s state, as before (PIN MOVED, CARGO-ANYWHERE: her Hold - this stub names no hull)');
+  assert.deepEqual(at.state.helm, { raised: 0, orders: true, cargo: false, shot: null }, 'at the helm: the panel\'s state, as before (PIN MOVED, CARGO-ANYWHERE: her Hold - this stub names no hull; SHOT-KINDS: no naval host, no load)');
   assert.equal(at.state.freeKey, '[FreeMouse]', 'and its key\'s name');
   assert.equal(labels, 1);
   hs.helm = null;

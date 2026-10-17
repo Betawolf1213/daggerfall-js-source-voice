@@ -192,6 +192,14 @@ export const ACTIONS = Object.freeze([
   // helm I took, else the first of my fleet, wherever she lies (scenes/holdDoor.js). On F4: the letters are spent, F1 and
   // F3 are the browser's (ui/input.js BROWSER_STEALS), F2 the saddle panel's. Appended, like every port action before it.
   'ShipHold',
+  // SHOT-KINDS (2026-10-17, the owner: "Different cannon shot types, for example a grape shot to thin out crew, Chain to
+  // try to take down their sail, etc"; bible/03-World/Naval-Refit.md): THE GUNS' LOAD - one press steps the load of the
+  // guns at hand (the battery laid, else the one the look bears on) on: round, grape, chain, heated (scenes/naval/
+  // navalLoads.js). It ships with no key - every letter is spent, and the helm's own Shot button and the wheel while the
+  // guns are laid choose it - and a player gives it one in the Controls pane, or a pad button (ui/plus/plusPadBinds.js).
+  // Drawn in Combat, not Come Sail Away's group: a mod's group is its MOD_ACTIONS and every row of those ships a key
+  // (KB1 law 3) - so it is live always, and answers only at a helm with guns. Appended, like every port action before it.
+  'ShotCycle',
 ]);
 
 /** AUDIT SOC D3: THE PORT'S OWN ROWS, NAMED SO THE CLASSIC WINDOWS CAN YIELD THEM.
@@ -209,7 +217,7 @@ export const PORT_ACTIONS = Object.freeze(['SocialInteract', 'QuickUse1', 'Quick
   'TorchToggleLight', 'TorchDrop', 'TorchThrow', 'ShoulderSwitch', 'AutoPerspective', 'FollowPaths', 'HorseMount', 'HorseSummon', 'DebugOverlay',
   'BoatDisembark', 'BoatToggleLight', 'BoatToggleSail', 'BoatTrimRight', 'BoatTrimLeft', 'BoatTrimModifier',
   'BoatTimeScaleUp', 'BoatTimeScaleDown', 'BoatTimeScaleReset', 'TravelView', 'WalkMode', 'TogglePerspective', 'ActChoice', 'BoatSailUp', 'BoatSailDown', 'Professions',
-  'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass', 'SaddlePanel', 'ShipHold']);   // SPYGLASS: the captain's glass   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
+  'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass', 'SaddlePanel', 'ShipHold', 'ShotCycle']);   // SPYGLASS: the captain's glass   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
 
 const ACTION_SET = new Set(ACTIONS);
 
@@ -526,6 +534,7 @@ export const ACTION_GROUPS = Object.freeze([
   g('Combat', [
     ['ReadyWeapon', 'Ready or sheathe weapon'], ['SwingWeapon', 'Swing weapon'], ['SwitchHand', 'Switch hand'],
     ['WeaponTechnique', 'Weapon technique (hold to aim)'],   // TECH1
+    ['ShotCycle', 'Shot (aboard)'],   // SHOT-KINDS: the guns' load at a helm, stepped on
   ]),
   g('Magic', [
     ['CastSpell', 'Spellbook'], ['RecastSpell', 'Ready the last spell'], ['AbortSpell', 'Drop the readied spell'],

@@ -76,8 +76,8 @@
   {
     "name": "NAV1H-the-look-on-a-ship-ignored",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    return aimSolution(boatPose(boat), side, look ? { ...look, at: lookOnShip(boat, side, look) } : null, deps.seaY());",
-    "new": "    return aimSolution(boatPose(boat), side, look ? { ...look, at: null } : null, deps.seaY());",
+    "old": "look ? { ...look, at: lookOnShip(boat, side, look) } : null, deps.seaY(), { shot: myBoatState(boat).guns.load(side) });",
+    "new": "look ? { ...look, at: null } : null, deps.seaY(), { shot: myBoatState(boat).guns.load(side) });",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
     ]
@@ -85,7 +85,7 @@
   {
     "name": "NAV1H-round-shot-for-the-canvas",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    const p = best.rig && bat.gun !== 'chain' && best.hull ? best.hull.c : best.point;",
+    "old": "    const p = best.rig && load !== 'chain' && best.hull ? best.hull.c : best.point;",
     "new": "    const p = best.point;",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
@@ -94,7 +94,7 @@
   {
     "name": "NAV1H-chain-for-the-hull",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    const p = best.rig && bat.gun !== 'chain' && best.hull ? best.hull.c : best.point;",
+    "old": "    const p = best.rig && load !== 'chain' && best.hull ? best.hull.c : best.point;",
     "new": "    const p = best.rig && best.hull ? best.hull.c : best.point;",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
@@ -130,8 +130,8 @@
   {
     "name": "NAV1H-the-going-down-struck",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "      if (!e.boat || st === SHIP_STATES.sunk || st === SHIP_STATES.sinking) continue;\n      const boxes = [hullBox(e.boat), ...(solution.gun === 'chain'",
-    "new": "      if (!e.boat || st === SHIP_STATES.sunk) continue;\n      const boxes = [hullBox(e.boat), ...(solution.gun === 'chain'",
+    "old": "      if (!e.boat || st === SHIP_STATES.sunk || st === SHIP_STATES.sinking) continue;\n      const boxes = [hullBox(e.boat), ...(solution.shot === 'chain'",
+    "new": "      if (!e.boat || st === SHIP_STATES.sunk) continue;\n      const boxes = [hullBox(e.boat), ...(solution.shot === 'chain'",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
     ]
@@ -139,7 +139,7 @@
   {
     "name": "NAV1H-chain-blind-to-canvas",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "      const boxes = [hullBox(e.boat), ...(solution.gun === 'chain' ? rigBoxesOf(e.boat) : [])].filter(Boolean);",
+    "old": "      const boxes = [hullBox(e.boat), ...(solution.shot === 'chain' ? rigBoxesOf(e.boat) : [])].filter(Boolean);",
     "new": "      const boxes = [hullBox(e.boat)].filter(Boolean);",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"

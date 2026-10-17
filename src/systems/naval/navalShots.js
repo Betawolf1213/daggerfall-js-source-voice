@@ -23,10 +23,15 @@
 // FLOTSAM - the casks a sunk ship leaves (NAV-D) - floats FLOTSAM_LIFE seconds, and the first collector (the
 // player's boat) within FLOTSAM_REACH picks it up - a 'pickup'. Whatever floats DRIFTS: FLOAT_DRIFT of the wind's
 // vector a second, downwind, as a cask does.
+// SHOT-KINDS (bible/03-World/Naval-Refit.md): a ball keeps the load it left with (`shot`, navalGunnery.js volleyLaunches;
+// null its bore's own) - its sweep the loaded gun's (shotKinds.js shotGun: a bag of grape and a tumbling chain sweep wider
+// than a ball), and every event it raises says it, a hit with its flight `t` (grapeshot's men fall off with it -
+// shotKinds.js shotReach).
 
-import { shotPosition, segmentBoxEntry, segmentCrossesDown, toBoxLocal } from './navalBallistics.js';
+import { shotPosition, shotVelocity, segmentBoxEntry, segmentCrossesDown, toBoxLocal } from './navalBallistics.js';
 import { hitZone } from './navalDamage.js';
 import { GUNS, BARREL, SHIP_TOUGHNESS } from './navalShips.js';
+import { shotGun } from './shotKinds.js';
 
 /** A ball's longest flight (s). */
 export const BALL_LIFE = 9;
@@ -73,7 +78,7 @@ export function createShotField(deps) {
     const back = Math.max(0, since);
     for (const l of launches) {
       balls.push({
-        volley: id, shooter, owner, resolve, side, gun: l.gun, weight: l.weight ?? 1, index: l.index, count: launches.length,   // GALLEON-WEIGHT: to its hit
+        volley: id, shooter, owner, resolve, side, gun: l.gun, shot: l.shot ?? null, weight: l.weight ?? 1, index: l.index, count: launches.length,   // GALLEON-WEIGHT: to its hit; SHOT-KINDS: its load
         p0: [...l.p0], v0: [...l.v0], born: clock - back + Math.max(0, l.delay ?? 0), t: 0, shown: false, prev: [...l.p0], pos: [...l.p0], spin: random() * Math.PI * 2,
       });
     }
@@ -126,11 +131,12 @@ export function createShotField(deps) {
   }
 
   /**
-   * One piece of a ball's flight, `a` to `next`: the canvas it tears on the way, then whatever stops it - a hull, the
-   * land or the sea. True when the ball is done.
+   * One piece of a ball's flight, `a` to `next` (its flight's `t1` there): the canvas it tears on the way, then whatever
+   * stops it - a hull, the land or the sea. True when the ball is done.
    */
-  function flyPiece(b, a, next, targets, seaY) {
-    const radius = GUNS[b.gun]?.radius ?? 0.1;
+  function flyPiece(b, a, next, targets, seaY, t1 = b.t) {
+    const radius = shotGun(b.gun, GUNS[b.gun], b.shot)?.radius ?? 0.1;
+    const flight = (k) => b.t + (t1 - b.t) * k;   // SHOT-KINDS: its time aloft where it meets her
     const ship = nearestHit(targets, a, next, radius, b.shooter);
     const sea = segmentCrossesDown(a, next, seaY);
     const land = groundAlong(a, next);
@@ -139,17 +145,17 @@ export function createShotField(deps) {
     // the canvas it tears on the way - before whatever stops it
     for (const r of rigsCrossed(targets, a, next, radius, b, firstT)) {
       (b.rigged ??= new Set()).add(r.t.id);
-      emit({ type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: r.t.id, gun: b.gun, weight: b.weight, point: r.e.point, zone: 'rig', dir, resolve: b.resolve });
+      emit({ type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: r.t.id, gun: b.gun, shot: b.shot, t: flight(r.e.t), weight: b.weight, point: r.e.point, zone: 'rig', dir, resolve: b.resolve });
     }
     if (firstT === Infinity) return false;
     const at = (k) => [a[0] + (next[0] - a[0]) * k, a[1] + (next[1] - a[1]) * k, a[2] + (next[2] - a[2]) * k];
     if (ship && ship.e.t === firstT) {
       emit({
-        type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: ship.t.id, gun: b.gun, weight: b.weight, point: ship.e.point,
+        type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: ship.t.id, gun: b.gun, shot: b.shot, t: flight(ship.e.t), weight: b.weight, point: ship.e.point,
         zone: hitZone(ship.e.point[1] - seaY), dir, resolve: b.resolve,
       });
-    } else if (land != null && land === firstT) emit({ type: 'land', volley: b.volley, shooter: b.shooter, gun: b.gun, point: at(land) });
-    else emit({ type: 'splash', volley: b.volley, shooter: b.shooter, gun: b.gun, point: [at(sea ?? 0)[0], seaY, at(sea ?? 0)[2]] });
+    } else if (land != null && land === firstT) emit({ type: 'land', volley: b.volley, shooter: b.shooter, gun: b.gun, shot: b.shot, point: at(land) });
+    else emit({ type: 'splash', volley: b.volley, shooter: b.shooter, gun: b.gun, shot: b.shot, point: [at(sea ?? 0)[0], seaY, at(sea ?? 0)[2]] });
     return true;
   }
 
@@ -164,7 +170,7 @@ export function createShotField(deps) {
       const age = clock - b.born;
       if (!b.shown) {
         b.shown = true;
-        emit({ type: 'muzzle', volley: b.volley, shooter: b.shooter, owner: b.owner, side: b.side, gun: b.gun, index: b.index, count: b.count, pos: [...b.p0], dir: [...b.v0], resolve: b.resolve });
+        emit({ type: 'muzzle', volley: b.volley, shooter: b.shooter, owner: b.owner, side: b.side, gun: b.gun, shot: b.shot, index: b.index, count: b.count, pos: [...b.p0], dir: [...b.v0], resolve: b.resolve });
       }
       if (age > BALL_LIFE) { emit({ type: 'gone', volley: b.volley, shooter: b.shooter, gun: b.gun }); continue; }
       // its flight since the last step, BALL_STEP_S at a time - one piece in an ordinary frame
@@ -172,7 +178,7 @@ export function createShotField(deps) {
       while (!ended && b.t < age) {
         const t1 = Math.min(age, b.t + BALL_STEP_S);
         const a = b.pos, next = shotPosition(b.p0, b.v0, t1, undefined, [0, 0, 0]);
-        ended = flyPiece(b, a, next, targets, seaY);
+        ended = flyPiece(b, a, next, targets, seaY, t1);
         if (!ended) { b.prev = a; b.pos = next; b.t = t1; }
       }
       if (!ended) keep.push(b);
@@ -207,8 +213,9 @@ export function createShotField(deps) {
 
   return {
     fireVolley, dropBarrel, dropFlotsam, step, offsetAll,
-    /** The balls in the air, for the draw: `{ pos, gun, spin }`. */
-    balls: () => balls.filter((b) => b.shown).map((b) => ({ pos: b.pos, gun: b.gun, spin: b.spin + (clock - b.born) * 12 })),
+    /** The balls in the air, for the draw: `{ pos, gun, shot, spin, age, vel }` - SHOT-KINDS: its load, its time aloft (a
+     *  bag of grape opens) and its way (a heated ball trails along it). */
+    balls: () => balls.filter((b) => b.shown).map((b) => ({ pos: b.pos, gun: b.gun, shot: b.shot, spin: b.spin + (clock - b.born) * 12, age: clock - b.born, vel: shotVelocity(b.v0, b.t) })),
     /** What floats, for the draw: `{ kind, pos, phase }`. */
     floaters: () => floaters.map((f) => ({ kind: f.kind, pos: f.pos, id: f.id, phase: f.phase, lot: f.lot, from: f.from, owner: f.owner ?? null, deep: !!f.deep })),   // CAPT-WATERS: a deep ship's cask
     /** AUDIT NAV1 (online #15): one floater itself, by id (its place and owner the host's to set), or null. */

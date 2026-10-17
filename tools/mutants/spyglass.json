@@ -548,8 +548,8 @@
   {
     "name": "SPY-W-wheel-unread",
     "file": "src/scenes/world.js",
-    "old": "|| modes?.wheel?.(e) || spyglassWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }",
-    "new": "|| modes?.wheel?.(e) || mwViewWheel(e.deltaY)) e.preventDefault(); }",
+    "old": "|| modes?.wheel?.(e) || spyglassWheel(e.deltaY) || shotWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }",
+    "new": "|| modes?.wheel?.(e) || shotWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }",
     "tests": [
       "test/systems/naval/spyglass.test.js"
     ]

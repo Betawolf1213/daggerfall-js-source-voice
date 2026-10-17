@@ -184,7 +184,7 @@ test('CARGO-ANYWHERE the helm\'s Hold and the hold\'s key: a hook button on the 
   const base = { hasSails: true, sailsUp: true, light: false };
   assert.ok(helmButtons({ ...base, cargo: true }).some((b) => b.act === 'cargo' && b.label === 'Hold' && b.kind === 'hook'));
   assert.ok(!helmButtons({ ...base, cargo: false }).some((b) => b.act === 'cargo'));
-  assert.equal(ACTIONS.at(-1), 'ShipHold');
+  assert.equal(ACTIONS.at(-2), 'ShipHold');   // PIN MOVED (SHOT-KINDS: ShotCycle appended after)
   assert.ok(PORT_ACTIONS.includes('ShipHold'));
   assert.ok(DEFAULT_BINDINGS.some(([c, a]) => c === 'F4' && a === 'ShipHold'));
   assert.ok(MOD_ACTIONS['come-sail-away'].some((r) => r.action === 'ShipHold' && r.legacy === null));
@@ -192,7 +192,7 @@ test('CARGO-ANYWHERE the helm\'s Hold and the hold\'s key: a hook button on the 
   assert.match(WORLD, /const holdDoor = createHoldDoor\(\{/);
   assert.match(WORLD, /holdDoor\.frame\(\);[^\n]*\n {4}if \(csaRuntime && walkMode && playerSpawned && !modes\?\.transitioning && !travelView\?\.active && hccActionPressed\('ShipHold'\)\) holdDoor\.press\(\);/);
   assert.match(WORLD, /cargo: \(\) => \{ const b = csaRuntime\?\.state\?\.CurrentBoat; if \(b\) holdDoor\.openBoat\(b\); \},/);
-  assert.match(WORLD, /if \(helm\) helm = \{ \.\.\.helm, orders: navalOn\(\), cargo: holdsCargo\(helm\.hull\) \};/);
+  assert.match(WORLD, /if \(helm\) helm = \{ \.\.\.helm, orders: navalOn\(\), cargo: holdsCargo\(helm\.hull\), shot: navalOn\(\) \? naval\?\.shotLabel\?\.\(\) \?\? null : null \};/);   // PIN MOVED (SHOT-KINDS: and her guns' load)
   assert.match(WORLD, /openHold: \(uid\) => holdDoor\.openShip\(uid\),/);
   assert.match(WORLD, /cabin: \(\) => modes\?\.sailingCabin \?\? null,/, 'below deck: the cabin\'s ship');
 });

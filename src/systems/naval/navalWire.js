@@ -64,6 +64,10 @@
 //       hold, her casks and the chart in her papers the deep's on every client (a peer's copy of her was open water's)
 //   e - AUDIT CAPTAIN'S SEA D8: the casks of `f` of a deep ship's (or the Eltheric Ocean's) cargo, each its id - a peer's
 //       haul of one drawn as rich as its owner's (it was DEEP_TIER tiers poorer)
+//   o - SHOT-KINDS (bible/03-World/Naval-Refit.md): the volleys of `v` loaded with other than their bores' own, each
+//       [id, shot] - the volley's id and its load by SHOT_CODES' row (systems/naval/shotKinds.js), so every client flies
+//       the same grape, chain or heated shot and the victim's client judges the same blow. A volley it does not name
+//       (an older build's word says none) is its bores' own; a pair for no volley of the word reads as nothing
 //   `k`, `m` and `l` are keys of their own because an older build's door checks every field of `s` and `p` by count: it
 //   passes a word with them whole and reads none of them, and a newer door reads an older build's word as saying none.
 //   Nor are theirs counted: a newer build's longer entry reads as its first fields, never the whole word refused.
@@ -92,6 +96,7 @@ import { DENSITY_KEYS } from './navalDirector.js';
 import { REGION_NAMES } from '../../formats/mapsFile.js';
 import { HULL_NAMES, HULL_VARIANT_COUNTS } from '../comeSailAway/comeSailAwayBoat.js';
 import { TEMPERS } from './navalAI.js';
+import { SHOT_CODES, SHOT_ORDER } from './shotKinds.js';
 
 /** The radius within which players stand one sea between them (m): a ship's fighting reach and then some. */
 export const NAVAL_SHARE_RADIUS = 1200;
@@ -134,7 +139,7 @@ const U32 = 0xffffffff;
  *   laid?: string[] }} view
  */
 export function navalWireRecord(view, toWire = (p) => p) {
-  const s = [], v = [], b = [], k = [], d = [], e = [];
+  const s = [], v = [], b = [], k = [], d = [], e = [], o = [];
   for (const sh of view?.ships ?? []) {
     if (s.length >= NAVAL_WIRE_SHIPS) break;
     const cls = SHIP_CLASSES.findIndex((c) => c.id === sh.classId);
@@ -155,6 +160,7 @@ export function navalWireRecord(view, toWire = (p) => p) {
     const p = toWire(vo.pos);
     v.push([vo.id >>> 0, vo.shooter | 0, vo.hull | 0, side, r2(p[0]), r2(p[1]), r2(p[2]), r4(vo.yaw), r2(vo.vel?.[0] ?? 0), r2(vo.vel?.[2] ?? 0), r4(vo.elevation), vo.seed >>> 0, r2(vo.skill ?? 0.5),
       Math.max(0, Math.min(NAVAL_VOLLEY_KEEP_MS, Math.round(vo.age ?? 0)))]);
+    if (vo.shot != null && SHOT_CODES[vo.shot] != null) o.push([vo.id >>> 0, SHOT_CODES[vo.shot]]);   // SHOT-KINDS
   }
   for (const ba of view?.barrels ?? []) {
     if (b.length >= NAVAL_WIRE_BARRELS) break;
@@ -176,6 +182,7 @@ export function navalWireRecord(view, toWire = (p) => p) {
   if (w.length) out.w = w;
   if (d.length) out.d = d;
   if (e.length) out.e = e;
+  if (o.length) out.o = o;
   const me = view?.me;
   if (me) out.p = [pct(me.hull), me.crippled ? 1 : 0, me.boarders === false ? 0 : 1];
   // AUDIT GN-G3: my boat's laid broadsides - a bit a side (SIDE_CODES), said only while one is
@@ -303,6 +310,11 @@ export function validNavalRecord(raw) {
   if (!Array.isArray(deepCasks) || deepCasks.length > NAVAL_WIRE_CASKS || !deepCasks.every((x) => int(x, 0, U32))) return null;
   for (const sh of ships) if (deepShips.includes(sh.n)) sh.deep = true;
   for (const c of casks) if (c.lot !== SALVAGE_LOT && deepCasks.includes(c.id)) c.deep = true;
+  // SHOT-KINDS: the volleys' loads (an older build's word says none - their bores' own)
+  const loaded = raw.o ?? [];
+  if (!Array.isArray(loaded) || loaded.length > NAVAL_WIRE_VOLLEYS) return null;
+  for (const w of loaded) if (!Array.isArray(w) || w.length !== 2 || !int(w[0], 0, U32) || !int(w[1], 0, SHOT_ORDER.length - 1)) return null;
+  for (const vo of volleys) { const w = loaded.find((x) => x[0] === vo.id); if (w) vo.shot = SHOT_ORDER[w[1]]; }
   return { ships, volleys, barrels, me, law, traffic: raw.t === undefined ? TRAFFIC_DEFAULT : DENSITY_KEYS[raw.t], casks, captains, boat, spent: [...spent], laid };
 }
 

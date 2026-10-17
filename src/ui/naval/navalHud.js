@@ -352,6 +352,12 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
 .dfnaval-gun-count { font-size: 11px; letter-spacing: 0; word-spacing: -2px; font-weight: 400; color: #d8cfae; }   /* the spaces give the 2.6px "12 great guns" lacked in a 70.7px battery - the letters keep theirs */
 .dfnaval-gun.ready { border-color: ${T.brassHi} ${T.brassLo} #5c3f1a ${T.brass}; }
 .dfnaval-gun.ready .dfnaval-gun-count { color: ${T.brassHi}; }
+/* SHOT-KINDS: each battery's load under its count, a colour a load - the grape's lead, the chain's iron, the heated shot's glow */
+.dfnaval-gun-load { position: relative; z-index: 1; display: block; line-height: 1.15; font-size: 11px; letter-spacing: 0.04em; color: #b9b29c; text-shadow: 1px 1px 0 #050608; }
+.dfnaval-gun-load:empty, .dfnaval-hud.short .dfnaval-gun-load { display: none; }   /* a short screen's chips keep two lines - the aim's line names the load */
+.dfnaval-gun-load.shot-grape { color: #c9d3d8; }
+.dfnaval-gun-load.shot-chain { color: #9fb7c9; }
+.dfnaval-gun-load.shot-heated { color: #ff9a4a; text-shadow: 1px 1px 0 #050608, 0 0 4px rgba(255,120,40,0.55); }
 .dfnaval-gun.active { background: #2c2413; box-shadow: 0 0 0 1px #050608, 0 0 8px rgba(243,207,134,0.45); }
 .dfnaval-gun.active .dfnaval-gun-side { color: ${T.gold}; text-shadow: 1px 1px 0 rgb(93,77,12); }
 .dfnaval-gun.gun-empty { opacity: 0.5; }   /* HUD-CLASS (AUDIT 2026-10-05): its own word - as the bare 'empty' it took the enhanced sheet's .empty component, 16px under the plate (its row 36 -> 52px) */
@@ -502,7 +508,20 @@ const pct = (v) => Math.max(0, Math.min(100, Math.round((Number(v) || 0) * 100))
  *  Veil" (AUDIT CAPTAIN'S SEA D19: "The Shallows, 0 leagues past the Veil" while she sailed in it). */
 export const etherWatersWords = (e) => (e.veil ? 'The Veil' : `${String(e.bandName ?? '').replace(/^./, (c) => c.toUpperCase())}, ${Math.max(0, Math.round(Number(e.depth) || 0))} ${Math.round(Number(e.depth) || 0) === 1 ? 'league' : 'leagues'} past the Veil`);
 const SIDE_WORDS = Object.freeze({ bow: 'Bow', port: 'Port', starboard: 'Starboard', stern: 'Stern' });
-const GUN_WORDS = Object.freeze({ long: 'long guns', swivel: 'swivels', heavy: 'great guns', chain: 'chain shot', barrel: 'fire barrels' });
+// SHOT-KINDS: the chasers named as the bore they are - chain shot is a load now (each battery's own line, `load`)
+const GUN_WORDS = Object.freeze({ long: 'long guns', swivel: 'swivels', heavy: 'great guns', chain: 'chasers', barrel: 'fire barrels' });
+/** SHOT-KINDS (scenes/naval/navalLoads.js, systems/naval/shotKinds.js): a battery's load as its chip says it - one word -
+ *  and as the aim's line does, in the player's language; '' for none (a barrel's). */
+const SHOT_CHIP = Object.freeze({
+  round: () => t('naval.shot.chip.round', 'round'), grape: () => t('naval.shot.chip.grape', 'grape'),
+  chain: () => t('naval.shot.chip.chain', 'chain'), heated: () => t('naval.shot.chip.heated', 'heated'),
+});
+const SHOT_LINE = Object.freeze({
+  round: () => t('naval.shot.line.round', 'round shot'), grape: () => t('naval.shot.line.grape', 'grapeshot'),
+  chain: () => t('naval.shot.line.chain', 'chain shot'), heated: () => t('naval.shot.line.heated', 'heated shot'),
+});
+export const shotChipWord = (shot) => SHOT_CHIP[shot]?.() ?? '';
+export const shotLineWord = (shot) => SHOT_LINE[shot]?.() ?? '';
 
 /** AUDIT NAV1 (the helm): the aim line's tail - on target, or why the battery will not fire yet. */
 function aimTail(a) {
@@ -593,10 +612,11 @@ export function navalHudText(model, keys = {}, { touch = false } = {}) {
     // AUDIT NAV1 (the presentation): a loaded side stands FULL brass (it filled to 97% and dropped to nought, loaded);
     // `fresh` the flash of one just come ready
     fill: pct((b.loaded ?? b.ready) ? 1 : b.progress), ready: !!b.ready, fresh: !!b.fresh, active: !!b.active, empty: b.gun === 'barrel' && !(b.barrels > 0),
+    load: b.gun === 'barrel' ? '' : shotChipWord(b.shot), shot: b.gun === 'barrel' ? null : b.shot ?? null,   // SHOT-KINDS: what it is loaded with
   }));
   const a = model.aim;
   const aim = a ? {
-    text: a.barrel ? `${SIDE_WORDS[a.side]} - roll a fire barrel` : `${SIDE_WORDS[a.side]} ${a.side === 'bow' || a.side === 'stern' ? 'chasers' : 'broadside'} - `,
+    text: a.barrel ? `${SIDE_WORDS[a.side]} - roll a fire barrel` : `${SIDE_WORDS[a.side]} ${a.side === 'bow' || a.side === 'stern' ? 'chasers' : 'broadside'}${a.shot ? `, ${shotLineWord(a.shot)}` : ''} - `,   // SHOT-KINDS: and its load
     range: a.barrel ? '' : `${a.range} m${a.range >= a.max - 1 ? ' (longest)' : ''}`,
     hot: !!a.hot && (a.state ?? 'ready') === 'ready', dim: !!a.state && a.state !== 'ready', target: aimTail(a),
   } : null;
@@ -740,8 +760,9 @@ function build(doc) {
     const fill = el(doc, 'i', 'dfnaval-gun-fill');
     const word = el(doc, 'span', 'dfnaval-gun-side', SIDE_WORDS[side]);
     const count = el(doc, 'span', 'dfnaval-gun-count');
-    g.append(fill, word, count);
-    guns[side] = { g, fill, count };
+    const load = el(doc, 'span', 'dfnaval-gun-load');   // SHOT-KINDS: its load
+    g.append(fill, word, count, load);
+    guns[side] = { g, fill, count, load };
     rose.append(g);
   }
   rose.append(el(doc, 'i', 'dfnaval-ship'));
@@ -917,6 +938,8 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
       if (!b) continue;
       cls(`gunc-${side}`, g.g, `dfnaval-gun ${side}${b.ready ? ' ready' : ''}${b.fresh ? ' fresh' : ''}${b.active ? ' active' : ''}${b.empty ? ' gun-empty' : ''}`);
       put(`gunn-${side}`, g.count, b.count);
+      put(`gunl-${side}`, g.load, b.load);
+      cls(`gunlc-${side}`, g.load, `dfnaval-gun-load${b.shot ? ` shot-${b.shot}` : ''}`);
       if (shown[`gunf-${side}`] !== b.fill) { shown[`gunf-${side}`] = b.fill; g.fill.style.height = `${b.fill}%`; }
     }
     show('rose', parts.rose, p.batteries.length > 0);
