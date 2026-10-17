@@ -764,7 +764,7 @@ THE FOUR HOSTS (rule 17e): the gear rides the sworn's one layer - `scenes/world.
 which stands them in the street, in buildings (`scenes/worldModes.js`) and underground (`scenes/dungeonContext.js`) through
 `applySwornStrength`; no host line. `scenes/exterior.js` (the bench) stands no sworn one - FLAGGED, as REVENANT-COMPANION is.
 
-Pinned: `test/systems/revenant/rvngear.test.js` (9); `tools/mutants/rvngear.json` (29).
+Pinned: `test/systems/revenant/rvngear.test.js` (9); `tools/mutants/rvngear.json` (29, all dead).
 
 ## 41. Its art (RVN-ARTS, 2026-10-17)
 
@@ -835,7 +835,7 @@ its `strikePlayer`) WIRED, and `scenes/dungeonContext.js` WIRED for a foe of the
 offline, or past the room's shared run). The sworn half rides `swornFightStep`, the companion layer's frame
 (`scenes/world.js` alone stands the sworn; `scenes/exterior.js` FLAGGED, as section 40).
 
-Pinned: `test/systems/revenant/rvnarts.test.js` (14); `tools/mutants/rvnarts.json` (45).
+Pinned: `test/systems/revenant/rvnarts.test.js` (14); `tools/mutants/rvnarts.json` (45, all dead).
 
 ## 42. Abroad (RVN-ERRAND, 2026-10-17)
 
@@ -910,4 +910,4 @@ THE FOUR HOSTS (rule 17e): an errand is the sworn's record and the companion lay
 layer for its street, `scenes/worldModes.js`'s buildings and `scenes/dungeonContext.js`'s dungeons alike, so an errand
 returns wherever the player is; no host line. `scenes/exterior.js` stands no sworn one - FLAGGED, as section 40.
 
-Pinned: `test/systems/revenant/rvnerrand.test.js` (8); `tools/mutants/rvnerrand.json` (40).
+Pinned: `test/systems/revenant/rvnerrand.test.js` (8); `tools/mutants/rvnerrand.json` (40, all dead).

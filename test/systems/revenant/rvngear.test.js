@@ -91,7 +91,7 @@ test('RVN-GEAR THE SLOTS: a melee weapon (Dagger to War Axe), each armour piece 
   assert.deepEqual([107, 106, 105, 102, 103, 104, 108, 109, 112].map((t) => G.gearKeyOf(plate(t, 0))), ['head', 'rightArm', 'leftArm', 'body', 'hands', 'legs', 'feet', 'shield', 'shield']);
   assert.equal(G.gearKeyOf(amulet()), 'charm');
   assert.equal(G.gearKeyOf({ group: 'MensClothing', templateIndex: 141 }), null);
-  assert.equal(G.twoHanded(blade(122)), true, 'the Claymore'); assert.equal(G.twoHanded(blade(120)), false, 'the Longsword');
+  assert.equal(G.needsBothHands(blade(122)), true, 'the Claymore'); assert.equal(G.needsBothHands(blade(120)), false, 'the Longsword');
 });
 
 test('RVN-GEAR THE REFUSALS: the rank\'s metal and its tier, each saying the rank it needs; a beast takes a charm alone; a broken, a quest, a summoned piece, an artifact never; a shield wants a one-handed weapon given, a two-hander no shield (mutants: a cap off by one; the kind unread; the shield\'s rule gone; a broken piece worn)', () => {

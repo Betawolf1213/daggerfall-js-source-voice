@@ -186,7 +186,7 @@ export function deliverHaul(player, haul) {
 }
 
 /** The haul in words - "412 gold, 6 Orichalcum Ore, 2 Bear Hide and 2 pieces of gear" - or "nothing". */
-export function haulWords(haul) {
+export function errandHaulWords(haul) {
   const parts = [];
   if (haul?.gold > 0) parts.push(t('rvn.errand.haul.gold', '{n} gold', { n: haul.gold }));
   for (const [key, n] of haul?.units ?? []) parts.push(t('rvn.errand.haul.goods', '{n} {what}', { n, what: goodsName(key) }));

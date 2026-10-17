@@ -236,8 +236,8 @@
   {
     "name": "RVN-ARTS-adaptation-overridden",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "taken[cls] = Math.min(taken[cls] ?? 1, ART.WARD.TAKEN);",
-    "new": "taken[cls] = ART.WARD.TAKEN;",
+    "old": "taken[cls] = Math.min(taken[cls] ?? 1, ART_LAW.WARD.TAKEN);",
+    "new": "taken[cls] = ART_LAW.WARD.TAKEN;",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"
     ]

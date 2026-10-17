@@ -133,8 +133,8 @@ test('RVN-ERRAND THE HAUL: drawn on its seed (one seed, one haul); gold by level
   assert.equal(f.units.reduce((n, [, k]) => n + k, 0), (3 + 2 * 4) * 3, 'Forage: its full units');
   const off = E.errandHaul(rec(r), won, { level: 12, rarity: false });
   assert.ok(off.items.every((it) => rarityOf(it) === 'common'), 'Loot rarity off: Common');
-  assert.equal(E.haulWords({ gold: 412, units: [['ore:ebony', 6], ['hide:dreugh', 2]], items: [{}] }), '412 gold, 6 Ebony Ore, 2 Dreugh Hide and a piece of gear');
-  assert.equal(E.haulWords({ gold: 0, units: [], items: [] }), 'nothing');
+  assert.equal(E.errandHaulWords({ gold: 412, units: [['ore:ebony', 6], ['hide:dreugh', 2]], items: [{}] }), '412 gold, 6 Ebony Ore, 2 Dreugh Hide and a piece of gear');
+  assert.equal(E.errandHaulWords({ gold: 0, units: [], items: [] }), 'nothing');
 });
 
 // ── the acts ────────────────────────────────────────────────────────
@@ -174,7 +174,7 @@ test('RVN-ERRAND SENT, AND BACK: it leaves the party (its portal - the layer rea
   assert.equal(units, haul.units.reduce((n, [, k]) => n + k, 0), 'its goods in my pack (offline, no bag)');
   assert.equal(said.length, 1);
   assert.deepEqual([said[0].kind, said[0].kicker], ['errand_back', 'Returned']);
-  assert.match(said[0].line, new RegExp(`Back from High Rock with ${E.haulWords(haul).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.`));
+  assert.match(said[0].line, new RegExp(`Back from High Rock with ${E.errandHaulWords(haul).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.`));
   assert.equal(RC.callRefusal(rec(r), T0 + DAY), null, 'it may be called');
 });
 

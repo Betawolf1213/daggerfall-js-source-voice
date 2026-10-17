@@ -128,7 +128,7 @@
   {
     "name": "RVN-GEAR-left-hand-kept",
     "file": "src/systems/revenant/revenantGear.js",
-    "old": "      if (twoHanded(it)) slots[EQUIP_SLOTS.LeftHand] = null;\n",
+    "old": "      if (needsBothHands(it)) slots[EQUIP_SLOTS.LeftHand] = null;\n",
     "new": "",
     "tests": [
       "test/systems/revenant/rvngear.test.js"

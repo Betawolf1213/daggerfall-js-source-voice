@@ -99,7 +99,7 @@ export function armedKind(mobileType) {
 }
 /** A melee weapon (Dagger .. War Axe): what the weapon slot takes. */
 export const meleeWeapon = (item) => item?.group === 'Weapons' && Number.isInteger(item.templateIndex) && item.templateIndex >= WEAPONS.Dagger && item.templateIndex <= WEAPONS.War_Axe;
-export const twoHanded = (item) => !!item && item.group === 'Weapons' && getItemHands(item) === ITEM_HANDS.Both;
+export const needsBothHands = (item) => !!item && item.group === 'Weapons' && getItemHands(item) === ITEM_HANDS.Both;
 /** The slot a piece goes to - 'weapon', an armour place, 'charm' - or null for one no sworn one wears. */
 export function gearKeyOf(item) {
   if (!item || typeof item !== 'object') return null;
@@ -146,8 +146,8 @@ export function gearRefusal(r, item, { gear = r?.companion?.gear ?? {}, kindName
   const tier = gearTier(item);
   if (tier > GEAR.RARITY_CAP[rank]) return t('rvn.gear.no.tier', 'It must rise to Rank {rank} to bear a {tier} piece.', { rank: ROMAN[GEAR.RARITY_CAP.findIndex((cap, i) => i > 0 && cap >= tier)], tier: tierWord(tier) });
   if (key === 'shield' && !gear.weapon) return t('rvn.gear.no.shieldAlone', 'Give it a one-handed weapon first.');
-  if (key === 'shield' && twoHanded(gear.weapon)) return t('rvn.gear.no.shieldTwoHanded', 'Its weapon needs both hands.');
-  if (key === 'weapon' && twoHanded(item) && gear.shield) return t('rvn.gear.no.twoHandedShield', 'Take back its shield first.');
+  if (key === 'shield' && needsBothHands(gear.weapon)) return t('rvn.gear.no.shieldTwoHanded', 'Its weapon needs both hands.');
+  if (key === 'weapon' && needsBothHands(item) && gear.shield) return t('rvn.gear.no.twoHandedShield', 'Take back its shield first.');
   return null;
 }
 
@@ -178,7 +178,7 @@ export function wornGear(r) {
     if (!it || typeof it !== 'object') continue;
     if (key !== 'charm' && !armed) continue;
     if (Number.isFinite(it.currentCondition) && it.currentCondition <= 0) continue;
-    if (key === 'shield' && (!gear.weapon || twoHanded(gear.weapon))) continue;
+    if (key === 'shield' && (!gear.weapon || needsBothHands(gear.weapon))) continue;
     out.push([key, it]);
   }
   return out;
@@ -232,7 +232,7 @@ export function applySwornGear(entity, r, { cleared = [] } = {}) {
     }
     if (s == null) continue;
     if (key === 'weapon') {
-      if (twoHanded(it)) slots[EQUIP_SLOTS.LeftHand] = null;
+      if (needsBothHands(it)) slots[EQUIP_SLOTS.LeftHand] = null;
       entity.weapon = it;
     }
     slots[s] = it;

@@ -30,7 +30,7 @@ import { registerPlayerHurtListener } from '../../characters/playerEntity.js';  
 import { MINUTES_PER_DAY } from '../gameDate.js';   // RVN11: "twice in a day"
 import { ownMinutes } from '../worldTick.js';
 import { applySwornGear, gearKeyOf, gearRefusal, gearItems, isGearKey } from './revenantGear.js';   // RVN-GEAR: its kit
-import { ERRAND, errandPlace, newErrand, errandUntil, errandHaul, deliverHaul, haulWords, errandWords, errandLeftWords } from './revenantErrands.js';   // RVN-ERRAND: one abroad
+import { ERRAND, errandPlace, newErrand, errandUntil, errandHaul, deliverHaul, errandHaulWords, errandWords, errandLeftWords } from './revenantErrands.js';   // RVN-ERRAND: one abroad
 import { swornArtStep, swornMendStep, forgetSwornArt } from './revenantArts.js';   // RVN-ARTS: its art, for me
 import { playerDoor } from '../playerDoor.js';   // RVN-ARTS: the scene its art reaches through
 import { t } from '../textManager.js';   // L10N4: RVN-GEAR's and RVN-ERRAND's words through the text core
@@ -209,8 +209,8 @@ export function returnFromErrand(id, now) {
   deliverHaul(_player, haul);
   const p = errandPlace(e.place);
   const body = haul.won
-    ? t('rvn.errand.back', 'Back from {place} with {haul}.', { place: p?.name ?? '', haul: haulWords(haul) })
-    : t('rvn.errand.backHurt', 'Back, hurt, from {place} with {haul}. It must recover.', { place: p?.name ?? '', haul: haulWords(haul) });
+    ? t('rvn.errand.back', 'Back from {place} with {haul}.', { place: p?.name ?? '', haul: errandHaulWords(haul) })
+    : t('rvn.errand.backHurt', 'Back, hurt, from {place} with {haul}. It must recover.', { place: p?.name ?? '', haul: errandHaulWords(haul) });
   _errandWords.push({ ...revenantMomentEvent('arrive', r, _player?.name, { body }), kind: 'errand_back', kicker: 'Returned' });
   return haul;
 }

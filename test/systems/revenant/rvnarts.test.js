@@ -77,7 +77,7 @@ test('RVN-ARTS THE LAW: six arts, one in ARTS_CHANCE, from rank II; each family\
   assert.deepEqual([...A.ARTS], ['mending', 'warding', 'warcry', 'siphon', 'barrage', 'nova']);
   assert.deepEqual([A.ARTS_CHANCE, A.ART_RANK], [0.35, 2]);
   assert.deepEqual(JSON.parse(JSON.stringify(A.ART_POOL)), { blade: ['warding', 'warcry', 'siphon', 'mending'], beast: ['warcry', 'mending', 'nova'], brute: ['warcry', 'nova', 'warding'], caster: ['mending', 'warding', 'barrage', 'siphon', 'nova'] });
-  assert.deepEqual(JSON.parse(JSON.stringify(A.ART)), {
+  assert.deepEqual(JSON.parse(JSON.stringify(A.ART_LAW)), {
     MEND: { AT: 0.5, CHANNEL: 2, HEAL: 0.2 }, WARD: { AT: 0.75, CHANNEL: 1.5, TAKEN: 0.65, SECONDS: 10 }, CRY: { REACH: 20, CHANNEL: 1, BLOWS: 1.2, SECONDS: 12 },
     SIPHON: { REACH: 8.5, WINDUP: 1.3, MULT: 1 }, BARRAGE: { REACH: 12, WINDUP: 1.1, STEP: 0.45, COUNT: 3, MULT: 0.6 }, NOVA: { REACH: 3.8, WINDUP: 1.4, MULT: 1.2 },
     COOLDOWN: [14, 20], FIRST: [3, 6],
@@ -85,7 +85,7 @@ test('RVN-ARTS THE LAW: six arts, one in ARTS_CHANCE, from rank II; each family\
     SWORN_STRIKE: { COOLDOWN: [16, 22], SIPHON: 1, SIPHON_HEAL: 1 / 3, BARRAGE: 1.5, NOVA: 0.8, NOVA_REACH: 5 },
   });
   for (const c of Object.values(A.ART_COLORS)) { assert.notDeepEqual([...c], [...B.BLOW_COLOR]); assert.notDeepEqual([...c], [...B.IRON_COLOR]); assert.notDeepEqual([...c], [...F.SIG.COLOR]); }
-  assert.ok(A.ART.SIPHON.MULT < F.SIG.MULT && A.ART.NOVA.MULT < F.SIG.MULT && A.ART.BARRAGE.MULT * A.ART.BARRAGE.COUNT < F.SIG.MULT, 'every thrown art lighter than the signature');
+  assert.ok(A.ART_LAW.SIPHON.MULT < F.SIG.MULT && A.ART_LAW.NOVA.MULT < F.SIG.MULT && A.ART_LAW.BARRAGE.MULT * A.ART_LAW.BARRAGE.COUNT < F.SIG.MULT, 'every thrown art lighter than the signature');
   assert.equal(A.SWORN_GIFT_SECONDS, 30);
 });
 

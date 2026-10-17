@@ -1,6 +1,6 @@
 // @ts-check
 // RVN-ARTS (2026-10-17, the owner: "Give revenants the chance to have unique telegraphed abilities, magic abilities like
-// healing or other buffs, etc (Must be balanced)") - A REVENANT'S ART. One revenant in ARTS_CHANCE is born with an art,
+// healing or other buffs, etc (Must be balanced)") - A REVENANT'S ART_LAW. One revenant in ARTS_CHANCE is born with an art,
 // drawn on its id from its family's pool (revenantFeud.js signatureFamily - a blade, a beast, a brute, or the casters and
 // the rest), so it is the same on every read, every load and every client, and an older record has the one its id draws.
 // Every art has two halves: what it does to the player while it hunts them, and what it does for them once it is sworn.
@@ -63,10 +63,10 @@ export const ART_NAMES = Object.freeze({
   get barrage() { return t('rvn.art.name.barrage', 'Barrage'); }, get nova() { return t('rvn.art.name.nova', 'Nova'); },
 });
 /** The three that channel (a disc about its own feet, broken by a blow), and the three that are thrown at me. */
-export const CHANNELS = Object.freeze(['mending', 'warding', 'warcry']);
+export const ART_CHANNELS = Object.freeze(['mending', 'warding', 'warcry']);
 /** Every number, hostile then sworn. The thrown three's weights are on the pyre's blast (SIG.PYRE_BASE, SIG.PYRE_PER a
  *  level) - SIG.MULT is the signature's. */
-export const ART = Object.freeze({
+export const ART_LAW = Object.freeze({
   MEND: Object.freeze({ AT: 0.5, CHANNEL: 2.0, HEAL: 0.2 }),
   WARD: Object.freeze({ AT: 0.75, CHANNEL: 1.5, TAKEN: 0.65, SECONDS: 10 }),
   CRY: Object.freeze({ REACH: 20, CHANNEL: 1.0, BLOWS: 1.2, SECONDS: 12 }),
@@ -88,7 +88,7 @@ export const ART_COLORS = Object.freeze({
 /** The blow classes a ward takes less of (RVN2's - adaptBlowClass). */
 const WARD_CLASSES = Object.freeze(['blade', 'blunt', 'axe', 'h2h', 'arrow']);
 
-/** ITS ART, drawn on its id: one in ARTS_CHANCE, from its family's pool; else null. */
+/** ITS ART_LAW, drawn on its id: one in ARTS_CHANCE, from its family's pool; else null. */
 export function drawArt(id, mobileType) {
   if (typeof id !== 'string' || !id || !Number.isInteger(mobileType)) return null;
   const rolls = idStream(id, 'art');
@@ -109,9 +109,9 @@ export function artWords(r, { sworn = !!r?.sworn } = {}) {
   if (sworn) {
     const rank = Math.max(1, Math.min(5, r.rank | 0));
     switch (art) {
-      case 'mending': return t('rvn.art.sworn.mending', 'Art: {n} - when you fall under {at} of your health it heals {share} of it (every {m} minutes).', { n, at: pct(ART.SWORN_MEND.AT), share: pct(ART.SWORN_MEND.SHARE + ART.SWORN_MEND.PER_RANK * rank), m: ART.SWORN_MEND.COOLDOWN / 60 });
-      case 'warding': return t('rvn.art.sworn.warding', 'Art: {n} - as it goes into a fight it shields you for {points} (every {s} seconds).', { n, points: ART.SWORN_WARD.BASE + ART.SWORN_WARD.PER_RANK * rank, s: ART.SWORN_WARD.COOLDOWN });
-      case 'warcry': return t('rvn.art.sworn.warcry', 'Art: {n} - as it goes into a fight your Strength rises by {points} (every {s} seconds).', { n, points: ART.SWORN_CRY.BASE + ART.SWORN_CRY.PER_RANK * rank, s: ART.SWORN_CRY.COOLDOWN });
+      case 'mending': return t('rvn.art.sworn.mending', 'Art: {n} - when you fall under {at} of your health it heals {share} of it (every {m} minutes).', { n, at: pct(ART_LAW.SWORN_MEND.AT), share: pct(ART_LAW.SWORN_MEND.SHARE + ART_LAW.SWORN_MEND.PER_RANK * rank), m: ART_LAW.SWORN_MEND.COOLDOWN / 60 });
+      case 'warding': return t('rvn.art.sworn.warding', 'Art: {n} - as it goes into a fight it shields you for {points} (every {s} seconds).', { n, points: ART_LAW.SWORN_WARD.BASE + ART_LAW.SWORN_WARD.PER_RANK * rank, s: ART_LAW.SWORN_WARD.COOLDOWN });
+      case 'warcry': return t('rvn.art.sworn.warcry', 'Art: {n} - as it goes into a fight your Strength rises by {points} (every {s} seconds).', { n, points: ART_LAW.SWORN_CRY.BASE + ART_LAW.SWORN_CRY.PER_RANK * rank, s: ART_LAW.SWORN_CRY.COOLDOWN });
       case 'siphon': return t('rvn.art.sworn.siphon', 'Art: {n} - now and then it draws its foe\'s life and gives you a third of it.', { n });
       case 'barrage': return t('rvn.art.sworn.barrage', 'Art: {n} - now and then it looses a barrage on its foe.', { n });
       default: return t('rvn.art.sworn.nova', 'Art: {n} - now and then it strikes every foe about it.', { n });
@@ -149,7 +149,7 @@ function mayArt(f) {
 const stateOf = (f, art) => (f._art ??= { art, used: {}, ready: null, live: null, wardUntil: 0, wardWas: null, cryUntil: 0, cryBand: [], called: false });
 
 /**
- * THE HOSTILE ART, a frame of it (each pool's foe loop, beside the signature's - scenes/exteriorFoes.js, scenes/dungeonContext.js):
+ * THE HOSTILE ART_LAW, a frame of it (each pool's foe loop, beside the signature's - scenes/exteriorFoes.js, scenes/dungeonContext.js):
  * `ctx` - `feet` my feet in the pool's frame; `onMe()` whether its fight is with me; `strike(spell)` a spell at me through the
  * host's door (my save answers it); `say(ev)` an event said (its card, else its line); `sfx(element, at)` a cast's sound;
  * `foes()` the pool's live records (its band). Answers what happened this frame ('start', 'broken', 'landed', 'hit', 'missed')
@@ -171,19 +171,19 @@ export function revenantArtFrame(f, ctx) {
   if (st.live) return liveStep(f, st, now, ctx, feet);
   const engaged = !!f.ai?.detected && !!f.ai?.inSight && (ctx.onMe?.() ?? true);
   if (!engaged) return null;
-  if (st.ready == null) st.ready = now + U(ART.FIRST[0], ART.FIRST[1], rolls);
+  if (st.ready == null) st.ready = now + U(ART_LAW.FIRST[0], ART_LAW.FIRST[1], rolls);
   if (windupNear(feet, now)) return null;   // one wind-up near me at a time - its own brain's too
   const d = flat(at, feet), hp = e.health / Math.max(1, e.maxHealth || 1);
   const yaw = yawTo(at, feet);
-  if (art === 'mending' && !st.used.mending && hp < ART.MEND.AT) return channel(f, st, now, ART.MEND.CHANNEL, ctx);
-  if (art === 'warding' && !st.used.warding && hp < ART.WARD.AT) return channel(f, st, now, ART.WARD.CHANNEL, ctx);
-  if (art === 'warcry' && !st.used.warcry && d <= ART.CRY.REACH) return channel(f, st, now, ART.CRY.CHANNEL, ctx);
+  if (art === 'mending' && !st.used.mending && hp < ART_LAW.MEND.AT) return channel(f, st, now, ART_LAW.MEND.CHANNEL, ctx);
+  if (art === 'warding' && !st.used.warding && hp < ART_LAW.WARD.AT) return channel(f, st, now, ART_LAW.WARD.CHANNEL, ctx);
+  if (art === 'warcry' && !st.used.warcry && d <= ART_LAW.CRY.REACH) return channel(f, st, now, ART_LAW.CRY.CHANNEL, ctx);
   if (now < st.ready) return null;
-  if (art === 'siphon' && d <= ART.SIPHON.REACH) return thrown(f, st, now, [{ kind: 'charge', origin: at, yaw, windup: ART.SIPHON.WINDUP, at: now }], ctx);
-  if (art === 'nova' && d <= ART.NOVA.REACH + 1) return thrown(f, st, now, [{ kind: 'ring', origin: at, yaw, windup: ART.NOVA.WINDUP, at: now }], ctx);
-  if (art === 'barrage' && d <= ART.BARRAGE.REACH) {
+  if (art === 'siphon' && d <= ART_LAW.SIPHON.REACH) return thrown(f, st, now, [{ kind: 'charge', origin: at, yaw, windup: ART_LAW.SIPHON.WINDUP, at: now }], ctx);
+  if (art === 'nova' && d <= ART_LAW.NOVA.REACH + 1) return thrown(f, st, now, [{ kind: 'ring', origin: at, yaw, windup: ART_LAW.NOVA.WINDUP, at: now }], ctx);
+  if (art === 'barrage' && d <= ART_LAW.BARRAGE.REACH) {
     const marks = [];
-    for (let i = 0; i < ART.BARRAGE.COUNT; i++) marks.push({ kind: 'pyre', aimed: true, windup: ART.BARRAGE.WINDUP, at: now + i * ART.BARRAGE.STEP });
+    for (let i = 0; i < ART_LAW.BARRAGE.COUNT; i++) marks.push({ kind: 'pyre', aimed: true, windup: ART_LAW.BARRAGE.WINDUP, at: now + i * ART_LAW.BARRAGE.STEP });
     return thrown(f, st, now, marks, ctx);
   }
   return null;
@@ -204,7 +204,7 @@ function channel(f, st, now, seconds, ctx) {
 /** A thrown art begun: its marks, each made at its own `at` (a barrage's later ones re-aimed at my feet then). */
 function thrown(f, st, now, marks, ctx) {
   st.live = { channel: false, marks: marks.map((m) => ({ ...m, key: null, blow: null, landed: false })) };
-  st.ready = now + U(ART.COOLDOWN[0], ART.COOLDOWN[1], ctx.rolls ?? Math.random);
+  st.ready = now + U(ART_LAW.COOLDOWN[0], ART_LAW.COOLDOWN[1], ctx.rolls ?? Math.random);
   liveStep(f, st, now, ctx, ctx.feet);
   call(f, st, ctx, 'start');
   ctx.sfx?.(element(f, st.art), f.ai.feet);
@@ -220,7 +220,7 @@ function call(f, st, ctx, what) {
   if (what === 'start') {
     if (st.called) return;
     st.called = true;
-    const body = CHANNELS.includes(st.art) ? t('rvn.art.call.channel', 'Strike it to break the spell!') : st.art === 'siphon' ? t('rvn.art.call.siphon', 'Step out of its line!') : st.art === 'nova' ? t('rvn.art.call.nova', 'Step away from it!') : t('rvn.art.call.barrage', 'Keep moving!');
+    const body = ART_CHANNELS.includes(st.art) ? t('rvn.art.call.channel', 'Strike it to break the spell!') : st.art === 'siphon' ? t('rvn.art.call.siphon', 'Step out of its line!') : st.art === 'nova' ? t('rvn.art.call.nova', 'Step away from it!') : t('rvn.art.call.barrage', 'Keep moving!');
     ctx.say(revenantEvent('art', r, { body, line: t('rvn.art.call.line', '{given} calls on its {n}! {body}', { given: r.given, n, body }) }));
   } else if (what === 'broken') ctx.say(revenantEvent('art', r, { body: t('rvn.art.broken.body', 'Its {n} is broken.', { n }), line: t('rvn.art.broken.line', '{given}\'s {n} is broken!', { given: r.given, n }) }));
 }
@@ -263,29 +263,29 @@ function liveStep(f, st, now, ctx, feet) {
 /** A thrown art's blast on me: through the host's door (my save answers it); a siphon drinks what it drew. */
 function landOnMe(f, st, ctx) {
   const e = f.entity, lvl = e.level ?? 1;
-  const mult = st.art === 'siphon' ? ART.SIPHON.MULT : st.art === 'barrage' ? ART.BARRAGE.MULT : ART.NOVA.MULT;
+  const mult = st.art === 'siphon' ? ART_LAW.SIPHON.MULT : st.art === 'barrage' ? ART_LAW.BARRAGE.MULT : ART_LAW.NOVA.MULT;
   ctx.strike(pyreSpell(ART_NAMES[st.art], element(f, st.art), /** @type {any} */ (mult)));   // pyreSpell's `mult` reads as the signature's literal
-  if (st.art === 'siphon') e.health = Math.min(e.maxHealth || e.health, e.health + Math.round(artMagnitude(lvl, ART.SIPHON.MULT)));
+  if (st.art === 'siphon') e.health = Math.min(e.maxHealth || e.health, e.health + Math.round(artMagnitude(lvl, ART_LAW.SIPHON.MULT)));
 }
 /** A channel whole: its heal, its ward or its cry. */
 function resolveChannel(f, st, now, ctx) {
   const e = f.entity, rev = e.revenant;
-  if (st.art === 'mending') e.health = Math.min(e.maxHealth || e.health, e.health + Math.round((e.maxHealth || 0) * ART.MEND.HEAL));
+  if (st.art === 'mending') e.health = Math.min(e.maxHealth || e.health, e.health + Math.round((e.maxHealth || 0) * ART_LAW.MEND.HEAL));
   else if (st.art === 'warding' && rev?.edge && !st.wardWas) {
     st.wardWas = rev.edge;
     rev.edge = wardEdge(rev.edge);
-    st.wardUntil = now + ART.WARD.SECONDS;
+    st.wardUntil = now + ART_LAW.WARD.SECONDS;
   } else if (st.art === 'warcry' && st.cryUntil === 0) {
     st.cryBand = [f, ...(ctx.foes?.() ?? []).filter((x) => x !== f && !x.dead && x.retinueOf === rev?.id && x.entity)];
-    for (const x of st.cryBand) x.entity.damageScale = (Number.isFinite(x.entity.damageScale) && x.entity.damageScale > 0 ? x.entity.damageScale : 1) * ART.CRY.BLOWS;
-    st.cryUntil = now + ART.CRY.SECONDS;
+    for (const x of st.cryBand) x.entity.damageScale = (Number.isFinite(x.entity.damageScale) && x.entity.damageScale > 0 ? x.entity.damageScale : 1) * ART_LAW.CRY.BLOWS;
+    st.cryUntil = now + ART_LAW.CRY.SECONDS;
   }
 }
 /** Its ward's edge: every blow class at WARD.TAKEN or its adaptation's own less - never its weakness. */
 export function wardEdge(edge) {
   /** @type {Record<string, number>} */
   const taken = { ...(edge?.taken ?? {}) };
-  for (const cls of WARD_CLASSES) if (cls !== edge?.weak) taken[cls] = Math.min(taken[cls] ?? 1, ART.WARD.TAKEN);
+  for (const cls of WARD_CLASSES) if (cls !== edge?.weak) taken[cls] = Math.min(taken[cls] ?? 1, ART_LAW.WARD.TAKEN);
   return Object.freeze({ ...(edge ?? {}), taken: Object.freeze(taken) });
 }
 /** Its ward and its cry run out. */
@@ -293,7 +293,7 @@ function stepTimers(f, s, now) {
   const rev = f?.entity?.revenant;
   if (s.wardWas && (now >= s.wardUntil || !rev)) { if (rev) rev.edge = s.wardWas; s.wardWas = null; }
   if (s.cryUntil > 0 && now >= s.cryUntil) {
-    for (const x of s.cryBand) if (x.entity && Number.isFinite(x.entity.damageScale)) x.entity.damageScale /= ART.CRY.BLOWS;
+    for (const x of s.cryBand) if (x.entity && Number.isFinite(x.entity.damageScale)) x.entity.damageScale /= ART_LAW.CRY.BLOWS;
     s.cryBand = []; s.cryUntil = -1;   // spent: once a fight
   }
 }
@@ -321,10 +321,10 @@ export const mightBundle = (points, rounds) => ({
     magnitudeBaseLow: points, magnitudeBaseHigh: points, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 1 }],
 });
 /** A round's worth of seconds - the rounds a sworn gift lasts are ROUND_SECONDS each (the card's 30 s). */
-export const SWORN_GIFT_SECONDS = ART.SWORN_WARD.ROUNDS * ROUND_SECONDS;
+export const SWORN_GIFT_SECONDS = ART_LAW.SWORN_WARD.ROUNDS * ROUND_SECONDS;
 
 /**
- * A SWORN ONE'S ART, a frame of it on its body (`rec` - the companion layer's; systems/revenant/revenantCompanions.js
+ * A SWORN ONE'S ART_LAW, a frame of it on its body (`rec` - the companion layer's; systems/revenant/revenantCompanions.js
  * swornFightStep, every frame): as it goes into a fight, its Ward or its War Cry on me; in a fight, its Siphon, Barrage or
  * Nova on its foe - through the scene's door (systems/playerDoor.js: my harm, a foe MY harm may reach). Mending answers a
  * hurt (swornMendStep). Answers what it did, or null.
@@ -341,7 +341,7 @@ export function swornArtStep(rec, r, door, { rolls = Math.random, say = null } =
   const rank = Math.max(1, Math.min(5, r.rank | 0));
   if (art === 'warding' || art === 'warcry') {
     if (!began || now < s.ready) return null;
-    const W = art === 'warding' ? ART.SWORN_WARD : ART.SWORN_CRY;
+    const W = art === 'warding' ? ART_LAW.SWORN_WARD : ART_LAW.SWORN_CRY;
     const points = W.BASE + W.PER_RANK * rank;
     door.castOnPlayer?.(art === 'warding' ? shieldBundle(points, W.ROUNDS) : mightBundle(points, W.ROUNDS));
     s.ready = now + W.COOLDOWN;
@@ -349,10 +349,10 @@ export function swornArtStep(rec, r, door, { rolls = Math.random, say = null } =
     return art;
   }
   if (art === 'mending' || !tgt) return null;
-  if (began && s.ready < now) s.ready = now + U(ART.FIRST[0], ART.FIRST[1], rolls);
+  if (began && s.ready < now) s.ready = now + U(ART_LAW.FIRST[0], ART_LAW.FIRST[1], rolls);
   if (now < s.ready) return null;
   const mine = new Set(door.foes?.() ?? []);
-  const lvl = door.player?.()?.level ?? 1, S = ART.SWORN_STRIKE;
+  const lvl = door.player?.()?.level ?? 1, S = ART_LAW.SWORN_STRIKE;
   if (art === 'nova') {
     const at = rec.ai?.feet;
     const near = at ? [...mine].filter((x) => x?.ai?.feet && flat(x.ai.feet, at) <= S.NOVA_REACH) : [];
@@ -373,15 +373,15 @@ export function swornArtStep(rec, r, door, { rolls = Math.random, say = null } =
  * sworn at my side. Answers the record that mended, or null.
  */
 export function swornMendStep(entity, after, sworn, standing, { say = null } = {}) {
-  if (!entity?.isPlayer || entity.peer || !(after > 0) || after >= (entity.maxHealth || 1) * ART.SWORN_MEND.AT) return null;
+  if (!entity?.isPlayer || entity.peer || !(after > 0) || after >= (entity.maxHealth || 1) * ART_LAW.SWORN_MEND.AT) return null;
   const now = tacticsNow();
   for (const r of sworn ?? []) {
     if (artOf(r) !== 'mending' || !standing?.(r.id)) continue;
     const s = swornState(r.id);
     if (now < s.mendReady) continue;
     const rank = Math.max(1, Math.min(5, r.rank | 0));
-    healMine(entity, (entity.maxHealth || 0) * (ART.SWORN_MEND.SHARE + ART.SWORN_MEND.PER_RANK * rank));
-    s.mendReady = now + ART.SWORN_MEND.COOLDOWN;
+    healMine(entity, (entity.maxHealth || 0) * (ART_LAW.SWORN_MEND.SHARE + ART_LAW.SWORN_MEND.PER_RANK * rank));
+    s.mendReady = now + ART_LAW.SWORN_MEND.COOLDOWN;
     say?.(t('rvn.art.sworn.mends', '{given} mends your wounds.', { given: r.given }));
     return r;
   }
