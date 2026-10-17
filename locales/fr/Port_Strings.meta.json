@@ -1739,6 +1739,11 @@
   "tr": "28afcb2f60a9",
   "by": "claude-in-session"
  },
+ "account.refusal.lineageLaw": {
+  "en": "c47f84ad8535",
+  "tr": "37c861e2d52a",
+  "by": "claude-in-session"
+ },
  "account.refusal.lineageModel": {
   "en": "1db7f75d16bf",
   "tr": "ce984079c162",
@@ -2692,6 +2697,16 @@
  "account.refusal.profTransmuter": {
   "en": "a5a5443d1f7d",
   "tr": "28a07137c05b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.progressPlay": {
+  "en": "80a24bb3eb49",
+  "tr": "c2595b0d37ec",
+  "by": "claude-in-session"
+ },
+ "account.refusal.progressSeat": {
+  "en": "02299624c393",
+  "tr": "94e28ae85959",
   "by": "claude-in-session"
  },
  "account.refusal.protected": {

@@ -1085,28 +1085,22 @@ jobs:
           # (curl 28) - the busiest reads on a database that sheds load (Scale-Arc PRIMARY-TRIPS) - and failed deploys
           # whose Worker had taken and whose every other call answered. A hang that wrote is no false pass: a second
           # first beat answers playedS above 0 and fails; a route that hangs every time still fails after seven asks.
-          post() {
-            local out=$1 url=$2 data=$3 got=404
+          # INT16: ONE RETRY FOR EVERY SMOKE CALL (`ask`, the call's own curl words after its file and URL): `post` the JSON
+          # calls', `put` the realm character's first save - a first save whose answer was lost (000) and landed answers its
+          # retry 409 `seq` 1, which the smoke reads as landed. One loop, so its law is pinned and mutated once.
+          ask() {
+            local out=$1 url=$2 got=404
+            shift 2
             for i in $(seq 1 7); do
-              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' -X POST "$url" -H 'content-type: application/json' -d "$data") || got=000
+              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' "$@" "$url") || got=000
               if [ "$got" != "404" ] && [ "$got" != "000" ] && [ "${got#5}" = "$got" ]; then break; fi
               echo "  $url -> $got (attempt $i, an old instance or the platform's first moments?)" >&2
               sleep 5
             done
             echo "$got"
           }
-          # INT16: the realm character's first save, a PUT through the same retry - a first save whose answer was lost (000)
-          # and landed answers its retry 409 `seq` 1, which the smoke reads as landed
-          put() {
-            local out=$1 url=$2 data=$3 lease=$4 got=404
-            for i in $(seq 1 7); do
-              got=$(curl -sS --max-time 15 -o "$out" -w '%{http_code}' -X PUT "$url" -H "authorization: Bearer $secret" -H "x-realm-lease: $lease" -H 'x-realm-seq: 1' -d "$data") || got=000
-              if [ "$got" != "404" ] && [ "$got" != "000" ] && [ "${got#5}" = "$got" ]; then break; fi
-              echo "  $url -> $got (attempt $i, an old instance or the platform's first moments?)" >&2
-              sleep 5
-            done
-            echo "$got"
-          }
+          post() { ask "$1" "$2" -X POST -H 'content-type: application/json' -d "$3"; }
+          put() { ask "$1" "$2" -X PUT -H "authorization: Bearer $secret" -H "x-realm-lease: $4" -H 'x-realm-seq: 1' -d "$3"; }
 
           # ACC4: THE BEAT IS ONE UPDATE ... RETURNING with numbered
           # parameters. node:sqlite runs both; this asks D1 itself.
