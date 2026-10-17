@@ -37,7 +37,10 @@ dropped, and nothing said why.
 Why no test saw it: `test/net/eliteGates/egfrag_client.test.js` pressed a handle by its key from the arrival plate and
 counted the `pz` sent. It never asked what the screen said or whether the room took the turn.
 
-DFU has no Spire, no Athenaeum and no Orrery. This is our own hall's code, so no DFU member or ledger row moves.
+DFU has no Spire, no Athenaeum and no Orrery. This is our own hall's code, so no DFU member moves. The new file cites
+Ledger A, as the breach's files do, and `01-Overview/Port-Ledger.md` section A's ELITE-GATES row names it
+(`test/tooling/doctrine.test.js` holds every file that cites Ledger A to a row that names it - the PR's first CI run
+failed there).
 
 FIXED.
 - **The draw on this screen.** `spireOrreryOf(seed, spec)` draws an Athenaeum's Orrery as the relay does: orreryOf of the
