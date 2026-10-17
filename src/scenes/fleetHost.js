@@ -24,7 +24,7 @@
 import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
   shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
-  REFIT_NUMERALS, meltCount, materialsFor, refitShare, setShipLivery, setShipCabin, setShipFittings,
+  REFIT_NUMERALS, meltCount, materialsFor, refitShare, setShipLivery, setShipCabin, setShipFittings, setShipPlaque,
 } from '../systems/fleet.js';
 import { captainRefit } from '../systems/naval/captainTree.js';   // CAPTAIN-TREE: her captain's stars over her refits
 import { flagSizeOf } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: the hulls that fly a flag
@@ -185,6 +185,7 @@ export function createFleetHost(deps) {
         paints: liveryPartsOf(rec.hull), livery: rec.livery ?? null,   // SHIP-LIVERY: the parts her paint takes, and her paint
         cabin: cabinShipType(rec.hull) !== SHIP_TYPES.None ? rec.cabin ?? 0 : null,   // CABIN-LOOK: her cabin's stain (null: she has no cabin)
         fittings: rec.deck?.length ?? 0,   // DECK-PROPS: how many fittings stand on her deck
+        plaque: !!rec.plaque, named: !!rec.name,   // SHIP-PLAQUE: her name on her bows, and whether she has one to show
         can: { summon: why.summon, away: why.away, repair: why.repair, yard: why.yard, refit: why.refit },
       });
     }
@@ -235,6 +236,13 @@ export function createFleetHost(deps) {
       if (!v.ok) return said(false, v.reason);
       deps.changed?.();
       return said(true, v.name ? `She is the ${v.name} now.` : `She is called by her hull again: ${shipLabel(rec)}.`);
+    }
+    if (verb === 'plaque') {
+      // SHIP-PLAQUE: her name shown on her bows, or taken down - wherever she lies, free; a named ship's alone
+      if (!rec.name) return said(false, t('naval.plaque.unnamed', 'Name her first - she has no name to show.'));
+      if (!setShipPlaque(uid, arg)) return said(false, t('naval.plaque.bad', 'That is no choice for her name board.'));   // shown or not, nothing else
+      deps.changed?.();
+      return said(true, rec.plaque ? t('naval.plaque.shown', 'Her name is cut on her bows - every ship that sights her reads it.') : t('naval.plaque.hidden', 'Her name boards are taken down.'));
     }
     if (verb === 'colours') {
       // SHIP-COLOURS: her flag hoisted (systems/naval/shipFlag.js's), or struck for the mod's pennant (null) - wherever she lies

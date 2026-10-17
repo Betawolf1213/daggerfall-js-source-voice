@@ -14504,6 +14504,36 @@
   "tr": "7c77a6fec76f",
   "by": "claude-in-session"
  },
+ "naval.plaque.bad": {
+  "en": "24a52217a33f",
+  "tr": "7b8d118e413b",
+  "by": "claude-in-session"
+ },
+ "naval.plaque.hidden": {
+  "en": "28b96a53cfe0",
+  "tr": "ee8ce03edcc7",
+  "by": "claude-in-session"
+ },
+ "naval.plaque.hide": {
+  "en": "1a86654a5b8f",
+  "tr": "99706ea4a81a",
+  "by": "claude-in-session"
+ },
+ "naval.plaque.show": {
+  "en": "dd616742af45",
+  "tr": "a3308f5e1fb7",
+  "by": "claude-in-session"
+ },
+ "naval.plaque.shown": {
+  "en": "344e1b64111d",
+  "tr": "64754257de0b",
+  "by": "claude-in-session"
+ },
+ "naval.plaque.unnamed": {
+  "en": "1e3699c40b6d",
+  "tr": "c69849d04cc5",
+  "by": "claude-in-session"
+ },
  "naval.refit.asks": {
   "en": "e5b6b89f62b2",
   "tr": "cc06f62e8564",

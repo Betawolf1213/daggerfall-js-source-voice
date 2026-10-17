@@ -287,7 +287,7 @@ const variantOfItem = (it) => (it?.message | 0) % 10;
 function recordFor(uid, hull, variant, value) {
   let r = _ships.get(uid);
   if (!r) {
-    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null, colours: null, livery: null, cabin: 0, deck: [] };   // DECK-PROPS: `deck` her fittings   // SHIP-COLOURS: `colours` her flag (null: the mod's pennant); SHIP-LIVERY: `livery` her paint (null: as built), `cabin` her cabin's stain (0: as built)
+    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null, colours: null, livery: null, cabin: 0, deck: [], plaque: false };   // SHIP-PLAQUE: `plaque` her name on her bows; DECK-PROPS: `deck` her fittings   // SHIP-COLOURS: `colours` her flag (null: the mod's pennant); SHIP-LIVERY: `livery` her paint (null: as built), `cabin` her cabin's stain (0: as built)
     _ships.set(uid, r);
   }
   return r;
@@ -344,7 +344,7 @@ export function renameShip(uid, raw) {
   const r = _ships.get(uid);
   if (!r) return { ok: false, name: '', reason: 'No such ship of yours.' };
   const v = shipNameVerdict(raw);
-  if (v.ok) r.name = v.name;
+  if (v.ok) { r.name = v.name; if (!r.name) r.plaque = false; }   // SHIP-PLAQUE: a name taken off takes her board with it
   return v;
 }
 /** SHIP-COLOURS (bible/03-World/Naval-Refit.md): her flag set - systems/naval/shipFlag.js shipFlagOf's, or null (none:
@@ -373,6 +373,14 @@ export function setShipCabin(uid, paint) {
   const r = _ships.get(uid);
   if (!r || !isPaint(paint)) return false;
   r.cabin = paint;
+  return true;
+}
+/** SHIP-PLAQUE (bible/03-World/Naval-Refit.md): her name shown on her bows, or not - her captain's choice, a named ship's
+ *  alone (an unnamed one has none to show). Answers whether it is as asked now. */
+export function setShipPlaque(uid, on) {
+  const r = _ships.get(uid);
+  if (!r || typeof on !== 'boolean' || (on && !r.name)) return false;
+  r.plaque = on;
   return true;
 }
 /** DECK-PROPS (bible/03-World/Naval-Refit.md): her deck's fittings set - systems/naval/deckFittings.js fittingsOf's (a
@@ -407,7 +415,7 @@ export function fleetSaveData() {
   return {
     v: FLEET_SAVE_VERSION,
     ships: [..._ships.values()].map((r) => ({ uid: r.uid, hull: r.hull, variant: r.variant, value: r.value, name: r.name, upgrades: { ...r.upgrades },
-      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid), ...(r.colours ? { colours: { ...r.colours } } : {}), ...(r.livery ? { livery: { ...r.livery } } : {}), ...(r.cabin ? { cabin: r.cabin } : {}), ...(r.deck?.length ? { deck: r.deck.map((f) => ({ ...f })) } : {}) })),   // SHIP-COLOURS; SHIP-LIVERY; DECK-PROPS
+      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid), ...(r.colours ? { colours: { ...r.colours } } : {}), ...(r.livery ? { livery: { ...r.livery } } : {}), ...(r.cabin ? { cabin: r.cabin } : {}), ...(r.deck?.length ? { deck: r.deck.map((f) => ({ ...f })) } : {}), ...(r.plaque ? { plaque: true } : {}) })),   // SHIP-COLOURS; SHIP-LIVERY; DECK-PROPS; SHIP-PLAQUE
     crossed: [..._crossed],   // AUDIT SHIPYARDS L1-2: the numbers that came through customs
   };
 }
@@ -435,6 +443,7 @@ export function restoreFleetSaveData(data) {
     r.livery = liveryOf(s.livery, r.hull);   // SHIP-LIVERY: her paint, as it may be (none, or one the door refuses: as built)
     r.cabin = isPaint(s.cabin) ? s.cabin : 0;   // CABIN-LOOK: her cabin's stain
     r.deck = fittingsOf(s.deck);   // DECK-PROPS: her fittings, as the door takes them
+    r.plaque = s.plaque === true && !!r.name;   // SHIP-PLAQUE: her name on her bows - a named ship's
     if (s.title) _book.push(mintDeed(r.hull, r.variant, r.uid, r.value));
   }
 }

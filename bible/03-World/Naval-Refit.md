@@ -49,6 +49,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | DECK-PROPS | 8 | Daggerfall's crates and chests stood on her open deck by a plan of it from above - drawn with her, rocking with her, standing in her colliders, seen by every player | `systems/naval/deckFittings.js`, `scenes/comeSailAway/deckFittingsHost.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`fitBoats`, `fitDeps`), `ui/deckPlanWindow.js`, `scenes/deckPlanDoor.js`, `ui/naval/navalPlunderDoor.js` (`createDeckPlanOverlay`), `systems/fleet.js` (`deck`, `setShipFittings`), `scenes/fleetHost.js` (`deck`, `deckPlan`), `ui/fleetPage.js` (Deck), `systems/comeSailAway/comeSailAwayWire.js` (`d`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
 | COMBAT-FEEL | 4 | the fight felt at my rail: gun smoke carried by the air and hanging, a ball's fall a spout grown for the eye far off, a near pass whistling and a near fall drenching her, the side a blow came from and her hull bar's loss on her plate, a burning ship's magazine going up as she founders and the air boiling up off her, my battered boat smoking in a fight, her card's men and my volley's count of them, each battery's seconds to load | `systems/naval/navalEffects.js` (`step`'s air, `smoke`'s `hang`, `splash`'s `scale`, `spout`, `drench`, `founder`), `systems/naval/navalShots.js` (`pass`, `boxGap`, `segmentNearBox`), `scenes/naval/navalFeel.js`, `systems/naval/navalSounds.js` (`whistle`), `tools/navalSfx.mjs` (`naval-whistle`), `scenes/naval/navalHost.js` (the feel's wiring, `tallyMen`, the card's `crew`, the batteries' `left`), `ui/naval/navalHud.js` (`plateLoss`, the rose's blow, the batteries' seconds, the card's crew bar, the tally's men) |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
+| SHIP-PLAQUE | 12 | her name on her bows, where her captain shows it: a board of dark wood with her name cut in gilt in Daggerfall's own lettering, laid on each bow's planking below her rail and read the right way from alongside, seen by every player | `scenes/comeSailAway/shipPlaque.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`hullSurface`, `plaqueNameOf`, the draw's boards), `systems/fleet.js` (`plaque`, `setShipPlaque`), `scenes/fleetHost.js` (`plaque`), `ui/fleetPage.js` (Show her name), `systems/comeSailAway/comeSailAwayWire.js` (`p`), `scenes/comeSailAway/comeSailAwayPeers.js` (`plaqueName`), `world/eliteGates/pseudoArchives.js` (PLAQUE_ARCHIVE), `scenes/world.js` (the pool's `plaqueOf`, `plaqueFont`; the word's `plaque`) |
 | SEA-COLOURS | 13 | every ship of the sea in her own paint and under her own flag of cloth - a navy's crown, a merchant house, a pirate crew, a legend's own; a pirate under false colours painted and flagged as the house she passes for; her colours down once struck - the same on every screen, off who she is | `systems/naval/seaColours.js`, `scenes/naval/navalHost.js` (`seaWho`, `buildOne`'s paint, `seaFlags`), `scenes/shipFlagHost.js` (`seaFlags`), `render/shipFlagPass.js` (FLAGS_MAX), `scenes/world.js` (the flag host's `seaFlags`) |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -607,6 +608,46 @@ greatest reach found nineteen things; each was traced to a real caller before it
 - **The merge**: main moved under the branch (LOOT-BULK, HIEROPHANT-TIER); merged, its four doc conflicts kept both
   sides' lines and counts.
 
+## SHIP-PLAQUE - her name on her bows (item 12)
+
+FOUND. A ship's name (HOLDINGS' rename, `fleet.js renameShip`) was told in words alone - the Fleet's pages, the holdings,
+the boats' word (`n`) read back for a hover - and never on the ship herself: alongside her, a stranger could not read it.
+
+- **Her captain's choice** (`fleet.js setShipPlaque`, kept on her record and in the save): a named ship's alone - an
+  unnamed one has none to show (the Fleet's act and page say so: *Name her first*), and a name taken off takes her board
+  with it (`renameShip`), as a save that says one for an unnamed ship is never believed. Free, wherever she lies.
+- **The board** (`scenes/comeSailAway/shipPlaque.js paintPlaque`): her name cut in gilt in Daggerfall's own lettering -
+  FONT0003, the shops' face, read through `formats/fntFile.js` (its glyphs from ASCII 33, a space the fixed width less
+  one, a pixel between glyphs, DaggerfallFont's own) - on dark planed wood in a raised, bevelled frame, PLAQUE_SCALE (3)
+  texels a font pixel, the cut's shadow down and aft. Where FONT0003 is not to be had (no ARENA2 FONT file) her name is
+  cut in the port's block letters (five by seven, a small letter its capital) and the pool says so once.
+- **Laid on her planking, not hung in the air**: each hull's bows are read where they are DRAWN - the pool's `hullSurface`,
+  her still meshes in her MeshObject's frame (her colliders, the deck's, stand a hull's walls too coarsely) - by rays cast
+  in from her side. HER PLANKING is the mesh most rays into her lower bows meet first (never a gunport's lid, a cathead, a
+  shroud stood off her or a bulkhead behind her); HER RAIL the highest her planking stands at a station, found to a
+  quarter of a letter; the board's run starts aft of the stem's sharp turn, where her bow is PLAQUE_BREADTH (0.45) of her
+  half-breadth out, and never runs aft of PLAQUE_AFT_SHARE (0.55) of her length; its top a tenth of a letter under the
+  lowest rail along its run. It is a grid of those hits, stood PLAQUE_STANDOFF (3 cm) proud of her along each one's
+  normal (a side wound either way faces out), so it follows a flaring bow - every port ship's and the mod's own
+  fallbacks. Her letters are PLAQUE_LETTER (1.2%) of her length, 0.22 to 0.6 m; a name too long for her bow is cut
+  smaller to fit, never stretched.
+- **Her stern would not serve**: a port ship's is a rounded V (a flat board would stand 0.6 m off it at its ends) and the
+  Large Boat's rudder stands in its middle - so her name is on each bow, as a ship's often is.
+- **Read the right way from alongside**: the world is drawn left-handed (`render/cardTableDraw.js`'s note), so seen from
+  her starboard her bow is to the right and that board runs aft to bow; the port board bow to aft. Each triangle is
+  counter-clockwise about her outward side, the renderer's front, as every model's; its picture goes up bottom row first
+  (`formats/color32Order.js`), so its top row is along her top edge.
+- **Drawn with her** by the boats' one pool in her MeshObject's frame (her heel and pitch with it), in her dissolve, under
+  a pseudo-archive of its own (PLAQUE_ARCHIVE, 38193, `world/eliteGates/pseudoArchives.js`): each hull's planking and bow
+  stations read once a session, each name's picture painted once whatever hull shows it, a board's two meshes made once a
+  hull and a name, and let go once not drawn for PLAQUE_IDLE_DRAWS (1800) - its picture with it once no board shows that
+  name.
+- **Seen by every player**: the boats' word says `p` (1: her name shown - a named boat's) only while one of mine shows it,
+  and a peer reads it back to her name (`plaqueName`); a list not one a boat is never believed, and never a reason to drop
+  the word. A sea ship shows none: her name is told by the target card (NAV-F).
+
+DEPARTURE from nothing: Daggerfall has no sea, nor Daggerfall Unity; Come Sail Away's boats carry no name.
+
 ## SEA-COLOURS - the sea's ships in their own colours (item 13)
 
 FOUND. A ship of the sea sailed as built (the pool's paint read a sea boat as none, `comeSailAwayPool.js liveryCodeOf`)
@@ -669,6 +710,10 @@ drawn (a dungeon's water, past the reach).
   exterior frame alone (`world.js navalFrame`, after the modes' frame has returned for a room or a dungeon) - its effects,
   its shot field and its HUD with it. `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED:
   no sea fight is fought indoors or below ground; `exterior.js` (the bench) - FLAGGED: no naval host.
+- SHIP-PLAQUE: the Fleet ledger and its page are the world host's (the pool's `plaqueOf` and `plaqueFont`, and the boats'
+  word's `plaque`, are wired there); the boards are drawn by the boats' one pool, so `worldModes.js` (interiors - a
+  dungeon's water) and `dungeonContext.js` (a dungeon's water) show them as the street does; `exterior.js` (the bench) -
+  FLAGGED: no Come Sail Away runtime, no Fleet.
 - SEA-COLOURS: the sea's ships are the naval host's, stood and stepped in the world host's exterior frame alone; their
   paint is drawn by the boats' one pool wherever they stand, and their cloth by the exterior's flag pass (the world host's
   `seaFlags`). `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED: no sea ship sails there;
@@ -738,6 +783,16 @@ drawn (a dungeon's water, past the reach).
   flags nearest first and the flag host's cap, and the real naval host painting her as she is built - a peer's copy the
   same - and saying her flag until she strikes) and `tools/mutants/seacolours.json` (26, all dead); `shiplivery`'s pool
   test draws a sea ship in her own paint, `shipcolours`' wiring pin moved for the flag host's `seaFlags`.
+- SHIP-PLAQUE: `test/systems/naval/shipplaque.test.js` (6: the lettering and the picture; every port ship's bows and the
+  mod's own - her planking found, a board each side flush on her flare, under her rail, in her bows aft of the stem's
+  turn, facing out, reading the right way and right way up, the sides a mirror, a long name cut smaller, a side wound
+  either way and a bulkhead behind her planking; the boards made and let go; the real pool - mine by my ledger, a peer's
+  by her word, a sea ship none, in her heeled hull's frame, FONT0003 and its fallback, swept once undrawn; the ledger, the
+  Fleet's act and page, the word and its reader, and the world's wiring) and `tools/mutants/shipplaque.json` (54, all
+  dead); the boards on all four port hulls, both sides, also seen in a software render. The pins it moved: the
+  ledger's record (`fleet`: `plaque`), the world's pool line (`shiplivery`: `plaqueOf` follows it), the pseudo-archives'
+  free number (`eglook_registry`: 38193 taken), the hard-coded strings' map (`l10n4`: the pool's fallback line, the
+  registry's row); the record re-aimed by content in `shiplivery` (the word's `d`, all dead).
 - AUDIT (2026-10-17): `test/systems/naval/auditrefit.test.js` (4: the near miss's sphere, a peer's magazine and her
   going down heard, the flag's cloth, the rammer's foul sent; 5 with the one classic read) and
   `tools/mutants/auditrefit.json` (16: 15 dead, 1 equivalent as recorded - the reject's clamp, which only tightens it);

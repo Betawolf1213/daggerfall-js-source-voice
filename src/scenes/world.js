@@ -7636,7 +7636,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // the colliders and the rays never did, so a mod switched off mid-game left an invisible deck standing
   const _csaOnAtLoad = latchModLoaded('come-sail-away', (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })());   // AUDIT PRE-MERGE 0928 S4: and the mod's other doors (the shelf's rows, its keys, its effect's restore) read this answer too
   const csaOn = () => _csaOnAtLoad;
-  const csa = createComeSailAwayPool({ renderer, pipeline, log: console, liveryOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.livery ?? null : null), fittingsOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.deck ?? [] : []) });   // SHIP-LIVERY: a boat of mine's paint, the Fleet's; DECK-PROPS: and her fittings
+  const csa = createComeSailAwayPool({ renderer, pipeline, log: console, liveryOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.livery ?? null : null), fittingsOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.deck ?? [] : []),   // SHIP-LIVERY: a boat of mine's paint, the Fleet's; DECK-PROPS: and her fittings
+    plaqueOf: (boat) => { const r = boat.uid ? fleetShip(boat.uid) : null; return r?.plaque && r.name ? r.name : null; }, plaqueFont: () => fetchBytes('FONT0003.FNT') });   // SHIP-PLAQUE: her name on her bows, in the shops' lettering
   /** MENU-ORDER: the shipmaster's cards' pictures - each hull's portrait boat, drawn after the frame's own pass (below) */
   const shipPortraits = createShipPortraits({ renderer, canvas, doc: typeof document !== 'undefined' ? document : null, portrait: (hull) => (csaOn() ? csa.portrait(hull) : null) });
   /** NAV-H: the naval host (made below, with Come Sail Away's runtime) - declared here, beside the pool whose sea list
@@ -8997,6 +8998,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       name: fleetHost?.nameOf(b) ?? '',   // HOLDINGS: her name, for every other player to read over her
       flag: shipFlags.wireFlag(b),   // SHIP-COLOURS: and the flag she flies
       livery: b.uid ? fleetShip(b.uid)?.livery ?? null : null, fittings: b.uid ? fleetShip(b.uid)?.deck ?? [] : [],   // SHIP-LIVERY: and her paint; DECK-PROPS: her fittings
+      plaque: !!(b.uid && fleetShip(b.uid)?.plaque),   // SHIP-PLAQUE: her name on her bows
     }));
     const rec = csaWireRecord(view, campToWire);
     if (rec && modes?.sailingCabin) rec.cabin = 1;

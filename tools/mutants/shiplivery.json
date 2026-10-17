@@ -780,8 +780,8 @@
   {
     "name": "WIRE-d-always",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "...(fitted ? { d } : {}) };",
-    "new": "...{ d } };",
+    "old": "...(fitted ? { d } : {}), ...(boarded",
+    "new": "...{ d }, ...(boarded",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]

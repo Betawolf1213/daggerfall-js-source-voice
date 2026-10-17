@@ -75,12 +75,13 @@ const int = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
  * turn in degrees, each a real second's) - and `toWire` converting a scene point to the wire frame.
  * @returns {{ b: number[][], m?: number[][], u?: number[], n?: string[], f?: (number|number[])[] } | null} null when none stands (the
  *   reader drops mine); `m` only while a boat is under way; `u` only while one carries her number; HOLDINGS: `n` only while
- *   one is named; SHIP-COLOURS: `f` only while one flies a flag (each view's `flag`)
+ *   one is named; SHIP-COLOURS: `f` only while one flies a flag (each view's `flag`); SHIP-PLAQUE: `p` (1: her name shown on
+ *   her bows, each view's `plaque` - a named boat's) only while one shows it
  */
 export function csaWireRecord(view, toWire = (p) => p) {
   if (!Array.isArray(view)) return null;
-  const b = [], m = [], n = [], u = [], f = [], l = [], d = [];
-  let underWay = false, named = false, flagged = false, painted = false, fitted = false;
+  const b = [], m = [], n = [], u = [], f = [], l = [], d = [], pl = [];
+  let underWay = false, named = false, flagged = false, painted = false, fitted = false, boarded = false;
   for (const v of view) {
     if (b.length >= CSA_WIRE_BOATS_MAX) break;
     if (!v || !int(v.hull, 0, HULL_NAMES.length - 1) || !finite3(v.position) || !Array.isArray(v.rotation) || v.rotation.length !== 4) continue;
@@ -110,9 +111,12 @@ export function csaWireRecord(view, toWire = (p) => p) {
     const fit = fittingsCode(v.fittings);   // DECK-PROPS: her fittings, or none
     d.push(fit);
     if (fit.length) fitted = true;
+    const shows = v.plaque === true && !!(name?.ok && name.name);   // SHIP-PLAQUE: her name on her bows - a named boat's
+    pl.push(shows ? 1 : 0);
+    if (shows) boarded = true;
   }
   if (!b.length) return null;
-  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}), ...(flagged ? { f } : {}), ...(painted ? { l } : {}), ...(fitted ? { d } : {}) };   // HOLDINGS: `n` only while one is named; SHIP-COLOURS: `f` while one flies a flag; SHIP-LIVERY: `l` while one is painted
+  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}), ...(flagged ? { f } : {}), ...(painted ? { l } : {}), ...(fitted ? { d } : {}), ...(boarded ? { p: pl } : {}) };   // SHIP-PLAQUE: `p` while one shows her name; HOLDINGS: `n` only while one is named; SHIP-COLOURS: `f` while one flies a flag; SHIP-LIVERY: `l` while one is painted
 }
 
 /**
@@ -156,6 +160,7 @@ export function validCsaRecord(raw) {
     if (paint) boat.livery = paint;
     const fits = Array.isArray(raw.d) && raw.d.length === raw.b.length ? fittingsOfCode(raw.d[boats.length]) : [];   // DECK-PROPS: hers, where she is fitted
     if (fits.length) boat.fittings = fits;
+    if (name && Array.isArray(raw.p) && raw.p.length === raw.b.length && raw.p[boats.length] === 1) boat.plaque = true;   // SHIP-PLAQUE: her name on her bows - never a reason to drop the word
     boats.push(boat);
   }
   // A cabin keeps its owner's fleet on the exterior stream; only the player is below deck.

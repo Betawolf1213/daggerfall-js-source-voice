@@ -470,7 +470,7 @@ test('SHIP-LIVERY and DECK-PROPS on the boats\' word: `l` a number a boat and `d
   assert.match(peers, /s\.boat\.fittings = w\.fittings \?\? \[\];/);
   const world = rd('src/scenes/world.js');
   assert.match(world, /livery: b\.uid \? fleetShip\(b\.uid\)\?\.livery \?\? null : null, fittings: b\.uid \? fleetShip\(b\.uid\)\?\.deck \?\? \[\] : \[\],/);
-  assert.match(world, /liveryOf: \(boat\) => \(boat\.uid \? fleetShip\(boat\.uid\)\?\.livery \?\? null : null\), fittingsOf: \(boat\) => \(boat\.uid \? fleetShip\(boat\.uid\)\?\.deck \?\? \[\] : \[\]\) \}\);/);
+  assert.match(world, /liveryOf: \(boat\) => \(boat\.uid \? fleetShip\(boat\.uid\)\?\.livery \?\? null : null\), fittingsOf: \(boat\) => \(boat\.uid \? fleetShip\(boat\.uid\)\?\.deck \?\? \[\] : \[\]\),/);   // PIN MOVED (SHIP-PLAQUE: the pool's `plaqueOf` follows)
 });
 
 // ── her cabin ────────────────────────────────────────────────────────────────────────────────────────────────────────

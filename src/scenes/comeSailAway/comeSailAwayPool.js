@@ -59,6 +59,8 @@ import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut, galleonGlow, GALLEON_N
 import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut, carrackGlow, CARRACK_NIGHT } from '../../world/ships/carrackArt.js';   // SHIPS-2: and the new carrack's,
 import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../../world/ships/largeBoatArt.js';   // and the new large boat's
 import { toColor32 } from '../../formats/color32Order.js';
+import { createShipPlaques, BLOCK_LETTERS, fntLetters } from './shipPlaque.js';   // SHIP-PLAQUE: her name on her bows
+import { FntFile } from '../../formats/fntFile.js';   // SHIP-PLAQUE: FONT0003, the boards' lettering
 import { addVendorTextures } from '../../systems/textureReplacement.js';
 import { adoptLight } from '../../render/lightId.js';   // LIGHT-ID: a lantern's light named by its lantern
 
@@ -160,12 +162,15 @@ export const STILL_FRAMES = 20;
 export const RIG_STILL_M = 0.001;
 
 /**
- * @param {{ renderer?: any, pipeline?: any, fetchFn?: any, log?: any, liveryOf?: ((boat: any) => any) | null, fittingsOf?: ((boat: any) => any[]) | null }} [o]
+ * @param {{ renderer?: any, pipeline?: any, fetchFn?: any, log?: any, liveryOf?: ((boat: any) => any) | null, fittingsOf?: ((boat: any) => any[]) | null,
+ *   plaqueOf?: ((boat: any) => string | null) | null, plaqueFont?: (() => Promise<Uint8Array>) | null }} [o]
  *   SHIP-LIVERY: `liveryOf(boat)` a boat of mine's livery (the Fleet's ledger, by her number); a peer's boat says its own
  *   (`boat.livery`, its owner's word), and a sea ship her own (SEA-COLOURS: the naval host's, systems/naval/seaColours.js). DECK-PROPS: `fittingsOf(boat)` a boat of mine's deck
- *   fittings, the same way (a peer's `boat.fittings`)
+ *   fittings, the same way (a peer's `boat.fittings`). SHIP-PLAQUE: `plaqueOf(boat)` the name a boat of mine shows on her
+ *   bows (null: none; a peer's `boat.plaqueName`, a sea ship none); `plaqueFont()` FONT0003's bytes, the boards' lettering
+ *   (none, or none to be had: the block letters)
  */
-export function createComeSailAwayPool({ renderer = null, pipeline = null, fetchFn = null, log = console, liveryOf = null, fittingsOf = null } = {}) {
+export function createComeSailAwayPool({ renderer = null, pipeline = null, fetchFn = null, log = console, liveryOf = null, fittingsOf = null, plaqueOf = null, plaqueFont = null } = {}) {
   /** @type {any} */ let models = null;
   let modelsLoading = null, modelsFailed = false;
   /** @type {any[]} */ const boats = [];
@@ -189,6 +194,20 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     if (boat._liveryRec !== rec || boat._liveryCode == null) { boat._liveryRec = rec; boat._liveryCode = liveryCode(rec); }
     return boat._liveryCode;
   };
+  // SHIP-PLAQUE (scenes/comeSailAway/shipPlaque.js): her name on her bows - laid on her planking (hullSurface, below),
+  // lettered in FONT0003 once its bytes are in (the block letters where they are not to be had)
+  /** @type {any} */ let plaqueLetters = plaqueFont ? null : BLOCK_LETTERS;
+  /** @type {Promise<void> | null} */ let plaqueLoad = null;
+  const lettersNow = () => {
+    if (!plaqueLetters && !plaqueLoad) {
+      plaqueLoad = Promise.resolve().then(() => plaqueFont()).then((b) => { plaqueLetters = fntLetters(new FntFile().load(b)); },
+        (e) => { log?.warn?.('[plaque] FONT0003.FNT will not load - her name is cut in block letters', e); plaqueLetters = BLOCK_LETTERS; });
+    }
+    return plaqueLetters;
+  };
+  const plaques = createShipPlaques({ renderer, surfaceOf: (hull) => hullSurface(hull), buildOf: (hull) => hullBuild(hull), letters: lettersNow });
+  /** The name a boat shows on her bows: mine by my ledger, a peer's by her owner's word, a sea ship none. */
+  const plaqueNameOf = (boat) => (mineBoats.has(boat) ? plaqueOf?.(boat) ?? null : peerBoats.includes(boat) ? boat.plaqueName || null : null);
   const _cullOn = !cullDisabled();   // AUDIT NAV1 (#13): ?cull=off, read once, as the world reads it
   const _cullPv = new Float32Array(16), _cullPlanes = new Float32Array(24), _cullSphere = new Float32Array(4), _cullBox = new Float32Array(6);
   const meshes = new Map();      // rendererModelKey -> gpu mesh | null
@@ -808,8 +827,11 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       const frame = hullRec ? made(hullRec) : null;   // PERF-SAILS2: made as it is read
       if (batch && frame) one(batch.mesh, frame, paint);
       for (const c of still) if (!batch || !frame || !batch.nodes.has(c.node)) one(c.gpu, made(c.rec), paint);
+      const shown = boat.MeshObject ? plaqueNameOf(boat) : null;   // SHIP-PLAQUE: her name boards, in her hull's frame
+      if (shown) for (const mesh of plaques.meshesFor(boat, shown)) one(mesh, frame ?? worldOf(boat.MeshObject), paint);
       if (fade < 1) r.setDissolve?.(1);
     }
+    plaques.sweep();
     return n;
   }
 
@@ -959,7 +981,41 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     return deck;
   }
 
+  /** SHIP-PLAQUE: a hull's drawn surface at rest in her MeshObject's frame - each still mesh she wears (her planking, her
+   *  transom, her rails: a MeshFilter's mesh, a classic model's once the pipeline holds it; a sail baked as it fills, a
+   *  flag, and a billboard are none) - `[{ positions, indices, name }]`, or null with no models. Her colliders are the
+   *  deck's (deckOf) and stand a hull's walls coarsely; her name board is laid on what is seen. */
+  function hullSurface(hull) {
+    if (!models) return null;
+    const probe = new Boat(hull, 0);
+    spawnBoat(probe, { models, player: () => ({ position: [0, 0, 0], rotation: [0, 0, 0, 1] }), billboardSize: billboardSizeOf, modelBounds: modelBoundsOf });
+    const frame = invertAffine(probe.MeshObject.worldMatrix());
+    const out = [];
+    const stack = [probe.MeshObject];
+    while (stack.length) {
+      const n = stack.pop();
+      if (n === probe.FlagObject || n.activeSelf === false) continue;
+      for (const c of n.children) stack.push(c);
+      const mr = n.getComponent?.('MeshRenderer'), mf = n.getComponent?.('MeshFilter');
+      if (!mr || mr.m_Enabled === false || mr.materials?.[0]?.billboard || mf?.baked) continue;
+      const cpu = mr.classicModel != null ? pipeline?.cpuModels?.get(mr.classicModel) : null;
+      const g = mr.classicModel != null ? (cpu?.positions && cpu.indices ? cpu : null) : mf?.m_Mesh?.mesh ? models.geometry(mf.m_Mesh.mesh) : null;
+      if (!g?.positions || !g.indices) continue;
+      const m = frame ? multiply(frame, n.worldMatrix(), new Float32Array(16)) : n.worldMatrix();
+      const p = g.positions, pos = new Float64Array(p.length);
+      for (let i = 0; i < p.length; i += 3) {
+        const x = p[i], y = p[i + 1], z = p[i + 2];
+        pos[i] = m[0] * x + m[4] * y + m[8] * z + m[12];
+        pos[i + 1] = m[1] * x + m[5] * y + m[9] * z + m[13];
+        pos[i + 2] = m[2] * x + m[6] * y + m[10] * z + m[14];
+      }
+      out.push({ positions: pos, indices: g.indices, name: n.name ?? '' });
+    }
+    return out;
+  }
+
   return {
+    hullSurface,   // SHIP-PLAQUE
     ensureModels, spawn, spawnNow, preload, ready: () => preloaded, remove, setVariant, frame, batches, people, draw, lights, offsetAll, destroyAll,
     deckOf,   // DECK-WALK
     hullRig,   // OWS2

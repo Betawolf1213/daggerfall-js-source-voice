@@ -379,6 +379,8 @@ function shipCard(el, s, { rerender, meter, door, arms = null }) {
   if (s.hold) acts.append(button(el, 'Hold', null, () => act('hold')));   // CARGO-ANYWHERE: her hold, wherever she lies
   acts.append(button(el, _open?.uid === s.uid && _open.panel === 'refit' ? 'Close refits' : 'Refit', null, () => { _open = _open?.uid === s.uid && _open.panel === 'refit' ? null : { uid: s.uid, panel: 'refit' }; rerender(); }));
   acts.append(button(el, 'Rename', null, () => { _open = { uid: s.uid, panel: 'rename' }; _draft = s.name ?? ''; _said = null; rerender(); }));
+  // SHIP-PLAQUE: her name cut on her bows, or taken down - a named ship's (an unnamed one is told to name her first)
+  acts.append(button(el, s.plaque ? t('naval.plaque.hide', 'Take down her name') : t('naval.plaque.show', 'Show her name'), s.named ? null : t('naval.plaque.unnamed', 'Name her first - she has no name to show.'), () => act('plaque', !s.plaque)));
   if (s.crewed && s.where !== 'packed') acts.append(button(el, _open?.uid === s.uid && _open.panel === 'crew' ? 'Close crew' : 'Crew', null, () => { _open = _open?.uid === s.uid && _open.panel === 'crew' ? null : { uid: s.uid, panel: 'crew' }; rerender(); }));
   // SHIP-COLOURS: her flag - every hull with a masthead
   if (s.flag) acts.append(button(el, t('naval.flag.open', 'Colours'), null, () => { const open = _open?.uid === s.uid && _open.panel === 'colours'; _open = open ? null : { uid: s.uid, panel: 'colours' }; _flag = open ? null : s.colours ?? null; _said = null; rerender(); }));

@@ -239,7 +239,7 @@ const HARDCODED = {
   'src/scenes/camps.js': 3,
   'src/scenes/caravanHost.js': 13,
   'src/scenes/comeSailAway/comeSailAwayPeers.js': 1,
-  'src/scenes/comeSailAway/comeSailAwayPool.js': 6,
+  'src/scenes/comeSailAway/comeSailAwayPool.js': 7,   // SHIP-PLAQUE: +1, the log's line when FONT0003 will not load - a developer's, never a player's
   'src/scenes/comeSailAway/shipLiveryPaint.js': 1,
   'src/scenes/corpseMarker.js': 3,
   'src/scenes/dataSource.js': 29,
@@ -778,7 +778,7 @@ const HARDCODED = {
   'src/world/oceanHoles.js': 9,
   'src/world/outdoors.js': 2,
   'src/world/passiveFish.js': 5,
-  'src/world/eliteGates/pseudoArchives.js': 42,   // NAVAL-REFIT: +2, the ship's paint's and her cabin's rows (LIVERY_ARCHIVE, CABIN_ARCHIVE) - the registry's own words for a developer, never a player's
+  'src/world/eliteGates/pseudoArchives.js': 43,   // NAVAL-REFIT: +3, the ship's paint's, her cabin's and her name boards' rows (LIVERY_ARCHIVE, CABIN_ARCHIVE, PLAQUE_ARCHIVE) - the registry's own words for a developer, never a player's
   'src/world/superDungeon/sdDungeon.js': 6,
   'src/world/superDungeon/sdRealm.js': 10,
   'src/world/spawnedDungeons.js': 3,
