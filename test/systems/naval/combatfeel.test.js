@@ -136,6 +136,7 @@ test('COMBAT-FEEL NEAR-MISS a ball going by a ship that hears it within NEAR_MIS
   assert.equal(run([{ id: 'mine', box: BOX }], by).filter((e) => e.type === 'pass').length, 0, 'a ship that does not hear');
   assert.equal(run([{ id: 'mine', box: BOX, ear: true }], by, 'mine').filter((e) => e.type === 'pass').length, 0, 'never its own shooter');
   assert.equal(run([{ id: 'mine', box: BOX, ear: true }], { p0: [12, 0, -60], v0: [0, 0, 200] }).filter((e) => e.type === 'pass').length, 0, 'past NEAR_MISS_M: unheard');
+  assert.equal(run([{ id: 'mine', box: BOX, ear: true }], { p0: [1 + NEAR_MISS_M + 1.5, 0, -60], v0: [0, 0, 200] }).filter((e) => e.type === 'pass').length, 0, 'within her sphere\'s reach, past NEAR_MISS_M of her planking: unheard');
   ev = run([{ id: 'mine', box: BOX, ear: true }], { p0: [0, 0, -9], v0: [0, 0, 200] });
   assert.deepEqual(ev.filter((e) => e.type !== 'muzzle').map((e) => e.type), ['hit'], 'struck, not passed');
 });

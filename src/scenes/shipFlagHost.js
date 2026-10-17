@@ -9,21 +9,24 @@
 //          (systems/fleet.js `colours`): flown as systems/naval/shipFlag.js flownFlag reads them - the guild's arms while
 //          the flag is the guild's and the guild has any (`guildArms`, the account's guild book)
 //   THEIRS - another player's boat stood here (scenes/comeSailAway/comeSailAwayPeers.js) whose word says a flag
+//   THE SEA'S - SEA-COLOURS (systems/naval/seaColours.js): a ship of the sea flying her colours, within SEA_FLAG_M, the
+//          nearest first (the naval host's `seaFlags`) - her wave her seed's
 //
 // The cloth hangs from her FlagObject (the mod aims it down her wind - its forward is the fly) at her hull's size
 // (shipFlag.js flagSizeOf); a boat with no FlagObject, or none standing, flies none. Each flag's phase is her number's,
 // so a fleet at anchor does not wave as one.
 import { flownFlag, flagKey, flagSizeOf } from '../systems/naval/shipFlag.js';
-import { flyOf } from '../render/shipFlagPass.js';
+import { flyOf, FLAGS_MAX } from '../render/shipFlagPass.js';
 
 /** A boat's wave phase from her number (radians). */
 export const flagPhaseOf = (uid) => (((Number(uid) >>> 0) * 2654435761) >>> 0) / 0xffffffff * Math.PI * 2;
 
 /**
  * @param {{ myBoats: () => any[], coloursOf: (uid: number) => any, guildArms?: () => any, peerFlags?: () => { boat: any, flag: any }[],
- *   shown?: () => boolean }} deps - `myBoats` my boats standing; `coloursOf` a ship's colours by her number (the ledger's);
- *   `peerFlags` the peers' boats that say one; `shown` whether the cloth is drawn this frame (the exterior's pass - a boat
- *   on a dungeon's water flies her pennant, no cloth being drawn there)
+ *   seaFlags?: () => { boat: any, flag: any, phase?: number }[], shown?: () => boolean }} deps - `myBoats` my boats standing;
+ *   `coloursOf` a ship's colours by her number (the ledger's); `peerFlags` the peers' boats that say one; `seaFlags` the
+ *   sea's ships' (SEA-COLOURS); `shown` whether the cloth is drawn this frame (the exterior's pass - a boat on a dungeon's
+ *   water flies her pennant, no cloth being drawn there)
  */
 export function createShipFlagHost(deps) {
   /** @type {WeakMap<any, any>} the flag a boat flies this frame */
@@ -38,7 +41,7 @@ export function createShipFlagHost(deps) {
     flown = new WeakMap();
     list = [];
     if (deps.shown && !deps.shown()) return;
-    const take = (boat, flag) => {
+    const take = (boat, flag, phase = boat?.uid ?? list.length) => {
       if (!boat || !flag) return;
       const size = flagSizeOf(boat.hull);
       const node = boat.FlagObject;
@@ -46,10 +49,11 @@ export function createShipFlagHost(deps) {
       const top = node.position;
       if (!Array.isArray(top) || !top.every(Number.isFinite)) return;
       flown.set(boat, flag);   // flown where it is drawn - her pennant's cubes left out for it
-      list.push({ key: flagKey(flag), flag, top, fly: flyOf(node.forward), size, phase: flagPhaseOf(boat.uid ?? list.length) });
+      list.push({ key: flagKey(flag), flag, top, fly: flyOf(node.forward), size, phase: flagPhaseOf(phase) });
     };
     for (const boat of deps.myBoats() ?? []) take(boat, mineOf(boat));
     for (const p of deps.peerFlags?.() ?? []) take(p.boat, p.flag);
+    for (const p of deps.seaFlags?.() ?? []) { if (list.length >= FLAGS_MAX) break; take(p.boat, p.flag, p.phase); }   // SEA-COLOURS: the nearest, to the pass's cap
   }
 
   return {

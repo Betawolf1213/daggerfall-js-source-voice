@@ -20,8 +20,8 @@ import { bannerClock, BANNER_TEXTURE_IDLE_S } from './bannerPass.js';
 /** The quads along the fly and down the hoist. */
 export const FLAG_COLS = 12;
 export const FLAG_ROWS = 3;
-/** The most flags a frame draws. */
-export const FLAGS_MAX = 16;
+/** The most flags a frame draws - SEA-COLOURS: the sea's ships' with the players', the nearest first (a cloth is one draw). */
+export const FLAGS_MAX = 24;
 /** The canvas a flag is drawn on, pixels wide (two thirds as tall). */
 export const FLAG_TEX_W = 96;
 /** A flag that would not paint is asked again this long on (s) - never every frame. */

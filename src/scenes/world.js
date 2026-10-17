@@ -9713,6 +9713,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     coloursOf: (uid) => fleetShip(uid)?.colours ?? null,
     guildArms: () => guildBook?.guild?.heraldry ?? null,
     peerFlags: () => (shipFlagPass ? csaPeers?.flagged?.() ?? [] : []),
+    seaFlags: () => (shipFlagPass && navalOn() ? naval?.seaFlags?.() ?? [] : []),   // SEA-COLOURS: the sea's ships' own
     shown: () => !!shipFlagPass && _mode() === 'exterior',   // the exterior's pass draws the cloth - elsewhere her pennant flies
   });
   // SHIPYARDS (2026-10-11, Mac: "A new highly detailed shipmaster vendor and crew recruitment station within it. All

@@ -162,7 +162,7 @@ export const RIG_STILL_M = 0.001;
 /**
  * @param {{ renderer?: any, pipeline?: any, fetchFn?: any, log?: any, liveryOf?: ((boat: any) => any) | null, fittingsOf?: ((boat: any) => any[]) | null }} [o]
  *   SHIP-LIVERY: `liveryOf(boat)` a boat of mine's livery (the Fleet's ledger, by her number); a peer's boat says its own
- *   (`boat.livery`, its owner's word), a sea ship wears none. DECK-PROPS: `fittingsOf(boat)` a boat of mine's deck
+ *   (`boat.livery`, its owner's word), and a sea ship her own (SEA-COLOURS: the naval host's, systems/naval/seaColours.js). DECK-PROPS: `fittingsOf(boat)` a boat of mine's deck
  *   fittings, the same way (a peer's `boat.fittings`)
  */
 export function createComeSailAwayPool({ renderer = null, pipeline = null, fetchFn = null, log = console, liveryOf = null, fittingsOf = null } = {}) {
@@ -181,7 +181,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   // SHIP-LIVERY (scenes/comeSailAway/shipLiveryPaint.js): the paint shop, and which boats are mine (my ledger says their paint)
   const mineBoats = new WeakSet();
   const paints = createLiveryPaint({ renderer, pipeline, log, portArchiveOf: (hull) => { const s = PORT_SHIPS.find((x) => x.hull === hull); return s && models?.[s.key] ? PORT_ART[s.key].archive : null; } });
-  /** A boat's paint as the word's number (0 as built): mine by my ledger, a peer's by its owner's word, a sea ship's none -
+  /** A boat's paint as the word's number (0 as built): mine by my ledger, a peer's by its owner's word, a sea ship's her own -
    *  mine read again only when her ledger's record is another (fleet.js setShipLivery sets a new one), not every draw. */
   const liveryCodeOf = (boat) => {
     if (!mineBoats.has(boat)) return boat.livery | 0;

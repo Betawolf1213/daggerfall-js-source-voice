@@ -201,6 +201,11 @@ test('SHIP-LIVERY and DECK-PROPS over the real pool: my boat drawn by her paint 
   renderer.draws.length = 0;
   pool.draw(renderer);
   assert.ok(renderer.draws.some((r) => r?.get?.(`${GALLEON_ARCHIVE}_${GTEX.hullSide0}`)), 'a peer\'s by her word, whatever her number is in my ledger');
+  const own = pool.spawnSeaNow(Object.assign(new Boat(2, 0), { livery: liveryCode({ strake: 4 }) }));   // SEA-COLOURS: her own, the naval host's (seaColours.js)
+  renderer.draws.length = 0;
+  pool.draw(renderer);
+  assert.ok(renderer.draws.some((r) => r?.get?.(`${GALLEON_ARCHIVE}_${GTEX.hullSide0}`)), 'a sea ship in her own colours');
+  pool.remove(own);
   // DECK-PROPS
   const deck = pool.deckOf(2);
   let spot = null;
@@ -258,6 +263,10 @@ test('DECK-PROPS standing: a fitting whose model is not loaded waits - its model
   const stood = node()[0];
   fitBoats([boat], () => fittingsOf(list), o);
   assert.equal(node()[0], stood, 'a boat fitted by her list\'s key let be');
+  loaded.delete(41813);
+  fitBoats([boat], () => fittingsOf(list), o);
+  assert.equal(node()[0], stood, 'fitted, let be - a model\'s bounds let go since or not (its mesh stands)');
+  loaded.add(41813);
   const moved = fittingsOf([{ m: 41812, x: 1, z: 0 }]);
   fitBoats([boat], () => moved, { ...o, deckOf: () => null });
   assert.equal(node()[0], stood, 'her deck not baked yet: the next frame');

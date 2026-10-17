@@ -114,6 +114,8 @@ import { shotGun, shotFireChance, shotRigFire, naturalShot } from '../../systems
 import { captainWorth, struckGun, statScale } from '../../systems/naval/captainTree.js';   // CAPTAIN-TREE: what her captain's stars do at sea
 import { createNavalLoads } from './navalLoads.js';   // SHOT-KINDS: the captain's choice of load, at the helm
 import { createVolleyTally } from './navalTally.js';   // AUDIT NAV1 G17: my volley's tally - CARD-CREW: and her men it took
+import { seaLiveryOf, seaFlagsOf } from '../../systems/naval/seaColours.js';   // SEA-COLOURS: the sea's ships in their own paint and flags
+import { liveryCode } from '../../systems/naval/shipLivery.js';
 
 /** The record's name in the save's per-mod slot (systems/modSaveData.js) - the port's own, as the Sigil Broker's is. */
 export const NAVAL_SAVE_VENDOR = 'NavalCombat';
@@ -1238,6 +1240,8 @@ export function createNavalHost(deps) {
     return as;
   }
   const falseFlagFor = (e) => disguiseOf(e)?.flag ?? null;
+  /** SEA-COLOURS: who she is, as her paint and her flag read it (systems/naval/seaColours.js). */
+  const seaWho = (e) => ({ cls: e.ship.cls, seed: e.ship.seed, crown: e.ship.flag ?? null, legend: e.legend ?? null, disguise: falseFlagFor(e) });
   /** What I know of her - KNOW's. */
   const knownOf = (e) => e?.known ?? KNOW.hull;
   /** Whether her false colours still hold for me: not yet seen through by the glass, no black flag run up. */
@@ -2073,6 +2077,7 @@ export function createNavalHost(deps) {
           e.boat.IdleObject?.setActive?.(false);
           e.boat.ActiveObject?.setActive?.(true);
           e.boat.flagColor = NAVAL_FACTIONS[e.ship.cls?.faction]?.flag ?? null;   // her colours: the faction's own pennant
+          e.boat.livery = liveryCode(seaLiveryOf(seaWho(e)));   // SEA-COLOURS: her own paint - the pool draws it as a peer's
           if (e.shed) { e.shed = false; e.fade = 0; }   // AUDIT PEER-HULL-RANGE: a hull given back and built again fades in
         }
       } catch (err) {
@@ -5595,6 +5600,8 @@ export function createNavalHost(deps) {
     collidable() { const f = deps.feet(); return [...sea.values()].filter((e) => e.boat && dist2d(e.ship.pos, f) < COLLIDE_RANGE).map((e) => e.boat); },
     /** Every sea ship's boat (their particles ride Come Sail Away's lists). */
     boats: () => [...sea.values()].map((e) => e.boat).filter(Boolean),
+    /** SEA-COLOURS: the sea's flags of cloth this frame, the nearest first (scenes/shipFlagHost.js `seaFlags`). */
+    seaFlags: () => seaFlagsOf(sea.values(), deps.feet(), seaWho),
     setEnabled(v) { if (enabled && !v) stowPlunder(); enabled = !!v; if (!enabled) clear(); },   // AUDIT KEEP-PLUNDER D3: stowed before the switch takes the sea
     get enabled() { return enabled; },
     get aiming() { return aiming; },

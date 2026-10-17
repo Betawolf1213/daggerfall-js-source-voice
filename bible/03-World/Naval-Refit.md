@@ -18,6 +18,10 @@ The owner, 2026-10-17: *"This will be a naval improvement session."* - nine item
 
 And: *"No band aids, I want you to be as detailed as possible."*
 
+The owner, later the same day, to the queue: *"I also want the ability to have a name plaque on the ship itself for those
+who want to show off their ship name. Additionally, enemies and merchants should have their own unique liveries, flags
+hosted, etc"* - two slices more, SHIP-PLAQUE (12) and SEA-COLOURS (13).
+
 The owner, the same day, to the queue: *"A firmament styled captain skill tree along with making improvements to the
 ship upgrade system"* - and a player's ask beside it: a skill tree for the ship *"integrated with leveling"*, levels that
 *"unlock upgrading with ores from steel to Ebony and beyond"*, the Firmament's *"Master and commander sections"*, and
@@ -45,6 +49,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | DECK-PROPS | 8 | Daggerfall's crates and chests stood on her open deck by a plan of it from above - drawn with her, rocking with her, standing in her colliders, seen by every player | `systems/naval/deckFittings.js`, `scenes/comeSailAway/deckFittingsHost.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`fitBoats`, `fitDeps`), `ui/deckPlanWindow.js`, `scenes/deckPlanDoor.js`, `ui/naval/navalPlunderDoor.js` (`createDeckPlanOverlay`), `systems/fleet.js` (`deck`, `setShipFittings`), `scenes/fleetHost.js` (`deck`, `deckPlan`), `ui/fleetPage.js` (Deck), `systems/comeSailAway/comeSailAwayWire.js` (`d`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
 | COMBAT-FEEL | 4 | the fight felt at my rail: gun smoke carried by the air and hanging, a ball's fall a spout grown for the eye far off, a near pass whistling and a near fall drenching her, the side a blow came from and her hull bar's loss on her plate, a burning ship's magazine going up as she founders and the air boiling up off her, my battered boat smoking in a fight, her card's men and my volley's count of them, each battery's seconds to load | `systems/naval/navalEffects.js` (`step`'s air, `smoke`'s `hang`, `splash`'s `scale`, `spout`, `drench`, `founder`), `systems/naval/navalShots.js` (`pass`, `boxGap`, `segmentNearBox`), `scenes/naval/navalFeel.js`, `systems/naval/navalSounds.js` (`whistle`), `tools/navalSfx.mjs` (`naval-whistle`), `scenes/naval/navalHost.js` (the feel's wiring, `tallyMen`, the card's `crew`, the batteries' `left`), `ui/naval/navalHud.js` (`plateLoss`, the rose's blow, the batteries' seconds, the card's crew bar, the tally's men) |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
+| SEA-COLOURS | 13 | every ship of the sea in her own paint and under her own flag of cloth - a navy's crown, a merchant house, a pirate crew, a legend's own; a pirate under false colours painted and flagged as the house she passes for; her colours down once struck - the same on every screen, off who she is | `systems/naval/seaColours.js`, `scenes/naval/navalHost.js` (`seaWho`, `buildOne`'s paint, `seaFlags`), `scenes/shipFlagHost.js` (`seaFlags`), `render/shipFlagPass.js` (FLAGS_MAX), `scenes/world.js` (the flag host's `seaFlags`) |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
 
@@ -326,7 +331,8 @@ ShowPlayerDamage) stays the player's own body's - a hit on her hull is her plate
 
 FOUND. Come Sail Away's boats fly a PENNANT: her FlagObject's particle system streams small cubes downwind off her
 masthead (the prefab's FlagEmitter; the mod aims the FlagObject down her wind, ComeSailAway.cs's flag rotation), drawn by
-the world host's particle pass (`scenes/world.js csaParticleLists`, a sea ship's tinted her faction's). A captain could
+the world host's particle pass (`scenes/world.js csaParticleLists`, a sea ship's tinted her faction's - SEA-COLOURS gives
+her cloth of her own). A captain could
 neither choose it nor fly anything else; a guild's arms (`net/heraldryLaw.js`, GUILD1d/GUILD2c) flew on its hall's
 banners alone.
 
@@ -601,6 +607,44 @@ greatest reach found nineteen things; each was traced to a real caller before it
 - **The merge**: main moved under the branch (LOOT-BULK, HIEROPHANT-TIER); merged, its four doc conflicts kept both
   sides' lines and counts.
 
+## SEA-COLOURS - the sea's ships in their own colours (item 13)
+
+FOUND. A ship of the sea sailed as built (the pool's paint read a sea boat as none, `comeSailAwayPool.js liveryCodeOf`)
+under the mod's pennant of cubes tinted by her faction alone (`navalHost.js buildOne`'s `flagColor`, NAVAL_FACTIONS'
+`flag`): every pirate one black, every merchantman one gold, every navy one red - whatever crown she served or house she
+sailed for. Her colours were said in words alone (`shipKnowledge.js coloursWords`: "Wayrest's royal ensign").
+
+- **Who she is decides it** (`systems/naval/seaColours.js`, pure): her class (its faction and hull), her seed, the crown
+  her flag says (`navalShips.js flagOf`: a navy's own, a merchantman's home port's or another's; the Isles' past the Veil),
+  her legend's id, and the crown she passes for under false colours (`shipKnowledge.js falseFlagOf`, the host's
+  `falseFlagFor`). Every client stands her off the naval word's class and seed, so every player sees the same ship and
+  NOTHING NEW RIDES THE WIRE.
+- **A navy** wears her crown's livery under white canvas and flies its royal ensign (CROWN_COLOURS): Daggerfall's azure
+  and dagger, Wayrest's crimson and rose, Sentinel's gold and sun - the crowns' own metals (`net/townSeatLaw.js
+  KINGDOM_BANNER_COLOURS`) and the charges the Bay's crowns are told by (the card table's suits, `render/cardFaces.js`).
+- **A merchantman** is of one of eight MERCHANT_HOUSES, off her seed on its own stream (HOUSE_SALT): its house paint,
+  and her crown's merchant colours - the crown's field parted with the house's colour, the house's device on it, a
+  swallowtail. Past the Veil, the Isles' teal.
+- **A pirate** is of one of six PIRATE_CREWS (CREW_SALT): its dark paint and its black flag - a skull, crossed blades, a
+  serpent, a dagger, a bat. ONE UNDER FALSE COLOURS is painted as the merchant house she passes for, so her hull gives her
+  away no sooner than her flag, and flies that house's colours in the crown she pretends until the black flag goes up
+  (the host's `e.colours` 'false' to 'hers', as her pennant always turned).
+- **A legend** wears and flies her own (LEGEND_COLOURS), whatever her class's faction: Sorrow's Wake's raven on ash, the
+  Drowned Queen's crown on teal over sea-green planking, the Ninefold Hunger's wolf, the Lantern-Eater's flame on a black
+  pennant, the Pale Regent's crown on purple, the Starless all black.
+- **Her paint** is SHIP-LIVERY's, set on her boat as her hull is built (`buildOne`: `boat.livery`, the code a peer's word
+  carries) and drawn by the pool as a peer's is - painted by the hull's own parts (`liveryOf(raw, hull)`: a galley takes
+  her stain and canvas). The houses and crews are few by design: each pair of hull and paint is painted once a session
+  (`shipLiveryPaint.js`), so the sea's variety costs a bounded set of pictures.
+- **Her flag** is SHIP-COLOURS' cloth at her masthead (`seaFlagOf`): her own while her colours fly, the house's under
+  false colours, none once struck, sinking or gone down; a prize flies her captor's pennant as before. The naval host
+  says the frame's (`seaFlags`: within SEA_FLAG_M, 450 m - past it the cloth is a speck - the nearest first) and the flag
+  host takes them after the players' own to the pass's cap (FLAGS_MAX, raised to 24), each waving on her seed's phase; a
+  ship past the cap or the reach flies her pennant of cubes as before.
+
+DEPARTURE from nothing: Daggerfall has no sea, nor Daggerfall Unity. The mod's pennant stays for a ship whose cloth is not
+drawn (a dungeon's water, past the reach).
+
 ## THE FOUR HOSTS RULE
 
 
@@ -625,6 +669,10 @@ greatest reach found nineteen things; each was traced to a real caller before it
   exterior frame alone (`world.js navalFrame`, after the modes' frame has returned for a room or a dungeon) - its effects,
   its shot field and its HUD with it. `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED:
   no sea fight is fought indoors or below ground; `exterior.js` (the bench) - FLAGGED: no naval host.
+- SEA-COLOURS: the sea's ships are the naval host's, stood and stepped in the world host's exterior frame alone; their
+  paint is drawn by the boats' one pool wherever they stand, and their cloth by the exterior's flag pass (the world host's
+  `seaFlags`). `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED: no sea ship sails there;
+  `exterior.js` (the bench) - FLAGGED: no naval host.
 - RAID-ASHORE's withdraw reads the world host's two pools - the street's and, through `worldModes.js`'s `interiorPool`,
   the sailing cabin's room; `dungeonContext.js` - FLAGGED: no voyage's raid is fought below ground.
 
@@ -664,7 +712,8 @@ greatest reach found nineteen things; each was traced to a real caller before it
   crew's worth (`captcrew`), the Captain page's wiring (`captlog`); the records re-aimed by content in `auditcaptsea`,
   `captcrew`, `csa_sailing`, `holdings`, `navaudit_guns`, `navaudit_helm`, `peaceway`, `ramboard` and `shotkinds`.
 - `test/systems/naval/shiplivery.test.js` (14) on the livery's law and word, the painter, a port ship's pictures repainted,
-  the paint shop, the real pool (mine painted by my ledger, a peer's by her word, a sea ship as built; fittings stood in
+  the paint shop, the real pool (mine painted by my ledger, a peer's by her word, a sea ship as built - SEA-COLOURS: in her
+  own once her code is set; fittings stood in
   her tree, drawn and in her colliders), the fitting-out, the fittings' law and word, the ledger and its save, the
   Fleet's acts and its Paint panel, the plan's door, the cabin's stain and its wiring, the deck plan's window and the
   paint's picture, and `tools/mutants/shiplivery.json` (132: 130 dead, 2 equivalent as recorded - a zero code's guard,
@@ -684,6 +733,11 @@ greatest reach found nineteen things; each was traced to a real caller before it
   list (`doctrine`), the card's model (`nav_f_ui`: her `crew`, and her hull bar's bite flashing it), the HUD's class holes
   (`hudclass_sheets`: the plate's frames - `barLoss`'s since the AUDIT), the registry's English (`l10n4`: its two new rows); the records re-aimed by
   content in `nav_b` (the wind's line), `nav_h`, `navaudit_helm`, `navaudit_presentation`, `shipstance` and `shotkinds`.
+- SEA-COLOURS: `test/systems/naval/seacolours.test.js` (6: a navy's crown, a merchant house, a pirate crew and her
+  disguise, a legend's own, the colours down, every table through the flag's door and every hull's parts, the frame's
+  flags nearest first and the flag host's cap, and the real naval host painting her as she is built - a peer's copy the
+  same - and saying her flag until she strikes) and `tools/mutants/seacolours.json` (26, all dead); `shiplivery`'s pool
+  test draws a sea ship in her own paint, `shipcolours`' wiring pin moved for the flag host's `seaFlags`.
 - AUDIT (2026-10-17): `test/systems/naval/auditrefit.test.js` (4: the near miss's sphere, a peer's magazine and her
   going down heard, the flag's cloth, the rammer's foul sent; 5 with the one classic read) and
   `tools/mutants/auditrefit.json` (16: 15 dead, 1 equivalent as recorded - the reject's clamp, which only tightens it);
