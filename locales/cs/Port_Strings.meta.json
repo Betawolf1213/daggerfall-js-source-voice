@@ -8999,6 +8999,36 @@
   "tr": "f0a6dfb7a731",
   "by": "claude-in-session"
  },
+ "guild.wayBack.drift": {
+  "en": "4a8efa34812c",
+  "tr": "82b2d6263a9a",
+  "by": "claude-in-session"
+ },
+ "guild.wayBack.paced": {
+  "en": "876c3132be18",
+  "tr": "52997b993730",
+  "by": "claude-in-session"
+ },
+ "guild.wayBack.quests": {
+  "en": "efe2d99e8ab8",
+  "tr": "4796ee58b182",
+  "by": "claude-in-session"
+ },
+ "guild.wayBack.shut": {
+  "en": "daa202715d31",
+  "tr": "d3ac249fc595",
+  "by": "claude-in-session"
+ },
+ "guild.wayBack.skills": {
+  "en": "62d0901476fa",
+  "tr": "d847775fe6d5",
+  "by": "claude-in-session"
+ },
+ "guild.wayBack.standing": {
+  "en": "5dade7618eb7",
+  "tr": "bc328891a1dd",
+  "by": "claude-in-session"
+ },
  "holdings.horse.boons.hungry": {
   "en": "7456bcdd5990",
   "tr": "aa8be1f7b097",
