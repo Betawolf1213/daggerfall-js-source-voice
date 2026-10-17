@@ -783,8 +783,8 @@ drawn (a dungeon's water, past the reach).
   flags nearest first and the flag host's cap, and the real naval host painting her as she is built - a peer's copy the
   same - and saying her flag until she strikes) and `tools/mutants/seacolours.json` (26, all dead); `shiplivery`'s pool
   test draws a sea ship in her own paint, `shipcolours`' wiring pin moved for the flag host's `seaFlags`.
-- SHIP-PLAQUE: `test/systems/naval/shipplaque.test.js` (6: the lettering and the picture; every port ship's bows and the
-  mod's own - her planking found, a board each side flush on her flare, under her rail, in her bows aft of the stem's
+- SHIP-PLAQUE: `test/systems/naval/shipplaque.test.js` (6: the lettering and the picture; every hull's bows (the rowboat's
+  too) and the mod's own - her planking found, a board each side flush on her flare, under her rail, in her bows aft of the stem's
   turn, facing out, reading the right way and right way up, the sides a mirror, a long name cut smaller, a side wound
   either way and a bulkhead behind her planking; the boards made and let go; the real pool - mine by my ledger, a peer's
   by her word, a sea ship none, in her heeled hull's frame, FONT0003 and its fallback, swept once undrawn; the ledger, the

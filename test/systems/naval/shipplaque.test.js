@@ -132,8 +132,8 @@ test('SHIP-PLAQUE on every port ship\'s bows: her planking found (never a gunpor
   const pool = await freshPool();
   const pic = paintPlaque("Sea Wolf's Fang", BLOCK_LETTERS);
   const aspect = pic.width / pic.height, share = (7 * PLAQUE_SCALE) / pic.height;
-  const PLANKING = { 1: 'NewLargeBoat', 2: 'NewGalleon', 3: 'Trireme', 4: 'NewCarrack' };
-  for (const hull of [1, 2, 3, 4]) {
+  const PLANKING = { 0: 'Dingy', 1: 'NewLargeBoat', 2: 'NewGalleon', 3: 'Trireme', 4: 'NewCarrack' };
+  for (const hull of [0, 1, 2, 3, 4]) {
     const s = pool.hullSurface(hull), b = hullBuild(hull);
     const i = plankingOf(s, b);
     assert.equal(s[i].name, PLANKING[hull], `hull ${hull}'s planking`);
