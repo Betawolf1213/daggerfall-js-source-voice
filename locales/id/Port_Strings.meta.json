@@ -529,6 +529,11 @@
   "tr": "c642eeed5cbe",
   "by": "claude-in-session"
  },
+ "account.glyph.wikimaid": {
+  "en": "28aa6cf63e1f",
+  "tr": "28aa6cf63e1f",
+  "by": "claude-in-session"
+ },
  "account.local.codeEmpty": {
   "en": "e98c67419698",
   "tr": "7202a3287699",
@@ -8452,6 +8457,41 @@
  "instance.door.unavailable": {
   "en": "7ef00096d28e",
   "tr": "82491695e46c",
+  "by": "claude-in-session"
+ },
+ "inventory.store.anyMaterial": {
+  "en": "8177dd78731e",
+  "tr": "c431bcc6f55f",
+  "by": "claude-in-session"
+ },
+ "inventory.store.anyRarity": {
+  "en": "cc8474c6626b",
+  "tr": "34e71c64267d",
+  "by": "claude-in-session"
+ },
+ "inventory.store.containerFull": {
+  "en": "25e48df7aefe",
+  "tr": "046f374250c1",
+  "by": "claude-in-session"
+ },
+ "inventory.store.materialIn": {
+  "en": "030f080652b6",
+  "tr": "47fde474feeb",
+  "by": "claude-in-session"
+ },
+ "inventory.store.rarityIn": {
+  "en": "4edd5e0b523a",
+  "tr": "24186b39198d",
+  "by": "claude-in-session"
+ },
+ "inventory.store.stashAll": {
+  "en": "2490f5ae2af4",
+  "tr": "a69af3ae480a",
+  "by": "claude-in-session"
+ },
+ "inventory.store.takeAll": {
+  "en": "d3b3b1b348b9",
+  "tr": "4d90dd93b162",
   "by": "claude-in-session"
  },
  "knight.seatHouse": {
@@ -18617,6 +18657,11 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "14cb9eeda612",
+  "by": "claude-in-session"
+ },
+ "quest.possessedChild.shamTrail": {
+  "en": "a04e4542dca6",
+  "tr": "48084d3bc651",
   "by": "claude-in-session"
  },
  "quest.repair.elsewhere": {
