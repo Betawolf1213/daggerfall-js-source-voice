@@ -928,7 +928,6 @@ const bundleNames = (dir) => {
   }
   return _bundleNames.get(dir);
 };
-/** Is this tracked raster a vendored bundle's own art? */
 // ── STUDIO1: THE GAME'S OWN ARTISTS' PICTURES ANSWER TO THE STUDIO'S ROSTER ──
 //
 // public/art/studio/ (bible/07-Rendering/Studio-Art.md) is where the game's artists paint. It is no vendored bundle - no
@@ -944,7 +943,14 @@ const studioMembers = (at) => new Set(studioListing(at).files.map((f) => `${STUD
 const STUDIO_WORN = studioMembers(root);
 /** Is this tracked file a picture the studio wears? */
 const studioArt = (f) => STUDIO_WORN.has(f);
+/** AUDIT STUDIO1 E5: the arm admits only what the studio wears - never a stranger's picture, the guide, a working file,
+ *  a picture named for nothing, one outside an artist's folder, or art outside the studio (whatever the folder holds). */
+test('doctrine STUDIO1: the studio arm admits only what the studio wears (AUDIT STUDIO1 E5)', () => {
+  for (const f of ['public/art/studio/stranger/38181_2-0.png', 'public/art/studio/README.md', 'public/art/studio/trashBattery/wip.psd', 'public/art/studio/trashBattery/notes.png', 'public/art/studio/38181_1-0.png', 'public/art/held-map.png']) assert.equal(studioArt(f), false, f);
+  for (const f of STUDIO_WORN) assert.match(f, /^public\/art\/studio\/[^/]+\/.+\.png$/i);
+});
 
+/** Is this tracked raster a vendored bundle's own art? */
 function bundleArt(f) {
   for (const dir of BUNDLE_ART.keys()) {
     if (f.startsWith(dir)) return bundleNames(dir).has(f.split('/').pop().toLowerCase());

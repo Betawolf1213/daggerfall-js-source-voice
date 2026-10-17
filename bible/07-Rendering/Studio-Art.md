@@ -55,7 +55,8 @@ public/art/studio/
 - **Refused files.** A file the rules refuse is left out of what the game is served, and named in the problems.
   `node tools/studioArt.mjs check` says them to the artist, and `test/systems/studioArt/studio1_folder.test.js` F1 fails
   the suite on any problem, so none ships. The check also refuses a picture git would never commit (a folder named as
-  a `.gitignore` pattern) and a name of a painted model's archive that is none of its slots.
+  a `.gitignore` pattern) and a name of a painted model's archive that is none of its slots. It exits 1 on a problem
+  (`studioCli`, which takes the tree it reads - AUDIT STUDIO1 E13).
 - **The roster.** Each row is the doctrine decision: who may paint here, and the word that approved them. Two artists
   are on it: trashBattery and Redclaw. trashBattery's "you and I" was said to Redclaw, and Mac's word covers both. An
   artist's folder is made by their first picture.
@@ -249,11 +250,13 @@ from the player's own ARENA2.
   - F4: the plugin, build and dev;
   - F5: the check;
   - F6: the slots and each model's door.
-- **`test/systems/studioArt/auditstudio1.test.js`** (10): the audit's fixes, S1-S10 (`01-Overview/audits/Audit-Studio1.md`).
-- **`test/tooling/doctrine.test.js`**: the studio arm on a tree of its own.
+- **`test/systems/studioArt/auditstudio1.test.js`** (16): the audit's fixes, S1-S10, and lane E's killers, S11-S16
+  (`01-Overview/audits/Audit-Studio1.md`).
+- **`test/tooling/doctrine.test.js`**: the studio arm on a tree of its own, and the arm itself over the real tree
+  (AUDIT STUDIO1 E5).
 - **Updated pins:**
   - `test/world/dflook.test.js` L8: the look is laid inside wearPainted's paint;
   - `test/systems/texturereplacement.test.js`: the bootstrap's Promise.all carries the studio's registration;
   - `test/systems/dfmod1.test.js`: the icons' cache key carries the studio's generation.
-- **Mutants:** `tools/mutants/studio1.json`, all dead; the records of other slices the studio moved (DF-LOOK,
+- **Mutants:** `tools/mutants/studio1.json`, 140, all dead; the records of other slices the studio moved (DF-LOOK,
   BEACON-TOWER, RRI1, THUNDERLOCK-ART, AUDIT VIRT, VE2) re-aimed by content, all dead.

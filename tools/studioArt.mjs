@@ -74,28 +74,29 @@ export async function checkStudio(at = root) {
   return { listing, problems, notes };
 }
 
-async function list() {
-  const listing = studioListing(root);
+async function list(at, log) {
+  const listing = studioListing(at);
   const own = studioByKey(listing);
   for (const set of STUDIO_SETS) {
     const slots = studioSlots(set);
-    console.log(`\n${set.title} - archive ${set.archive}, ${slots.length} slots${set.door === 'painted' ? '' : ' (on the texture door)'}`);
+    log(`\n${set.title} - archive ${set.archive}, ${slots.length} slots${set.door === 'painted' ? '' : ' (on the texture door)'}`);
     for (const s of slots) {
       const p = await s.picture();
       const by = own.get(s.key);
-      console.log(`  ${s.key.padEnd(12)} ${`${p.width} x ${p.height}`.padEnd(10)} ${s.name}${by ? `   <- studio: ${by.path}` : ''}`);
+      log(`  ${s.key.padEnd(12)} ${`${p.width} x ${p.height}`.padEnd(10)} ${s.name}${s.cutout ? ' (glass)' : ''}${by ? `   <- studio: ${by.path}` : ''}`);
       own.delete(s.key);
     }
   }
   if (own.size) {
-    console.log("\nPictures of no painted model (Daggerfall's own textures, a mod's, or a name to check - see `check`):");
-    for (const e of own.values()) console.log(`  ${e.key.padEnd(12)} ${e.path}`);
+    log("\nPictures of no painted model (Daggerfall's own textures, a mod's, or a name to check - see `check`):");
+    for (const e of own.values()) log(`  ${e.key.padEnd(12)} ${e.path}`);
   }
-  console.log(`\nThe studio: ${listing.files.length} picture(s) worn, ${listing.problems.length} problem(s) - node tools/studioArt.mjs check says which.`);
+  log(`\nThe studio: ${listing.files.length} picture(s) worn, ${listing.problems.length} problem(s) - node tools/studioArt.mjs check says which.`);
+  return 0;
 }
 
-async function templates(dir = null) {
-  const out = dir ? resolve(dir) : join(root, 'studio-templates');   // a folder named is the caller's; the default is the checkout's (ignored)
+async function templates(at, log, dir = null) {
+  const out = dir ? resolve(dir) : join(at, 'studio-templates');   // a folder named is the caller's; the default is the checkout's (ignored)
   let n = 0;
   for (const set of STUDIO_SETS) {
     mkdirSync(join(out, set.id), { recursive: true });
@@ -105,19 +106,28 @@ async function templates(dir = null) {
       n++;
     }
   }
-  console.log(`${n} templates in ${out}`);
+  log(`${n} templates in ${out}`);
+  return 0;
 }
 
-async function check() {
-  const { listing, problems, notes } = await checkStudio(root);
-  for (const n of notes) console.log(`note: ${n}`);
-  for (const p of problems) console.log(`PROBLEM: ${p}`);
-  console.log(`${listing.files.length} picture(s) worn by ${listing.roster.length} artist(s) on the roster; ${problems.length} problem(s).`);
-  if (problems.length) process.exitCode = 1;
+async function check(at, log) {
+  const { listing, problems, notes } = await checkStudio(at);
+  for (const n of notes) log(`note: ${n}`);
+  for (const p of problems) log(`PROBLEM: ${p}`);
+  log(`${listing.files.length} picture(s) worn by ${listing.roster.length} artist(s) on the roster; ${problems.length} problem(s).`);
+  return problems.length ? 1 : 0;
 }
 
-if (isMain(import.meta.url)) {
-  const [cmd = 'list', arg] = process.argv.slice(2);
-  const run = { list, templates: () => templates(arg), check }[cmd];
-  if (!run) { console.error('usage: node tools/studioArt.mjs [list | templates [dir] | check]'); process.exitCode = 2; } else await run();
+/**
+ * The tool's commands, run over the checkout at `at` (AUDIT STUDIO1 E13: a tree of a test's own), each line said to
+ * `log`. Answers the exit code: 0, 1 when `check` finds a problem, 2 for a command it does not know.
+ */
+export async function studioCli([cmd = 'list', arg] = [], { at = root, log = console.log } = {}) {
+  if (cmd === 'list') return list(at, log);
+  if (cmd === 'templates') return templates(at, log, arg);
+  if (cmd === 'check') return check(at, log);
+  log('usage: node tools/studioArt.mjs [list | templates [dir] | check]');
+  return 2;
 }
+
+if (isMain(import.meta.url)) process.exitCode = await studioCli(process.argv.slice(2));

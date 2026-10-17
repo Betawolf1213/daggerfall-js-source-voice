@@ -22,24 +22,35 @@
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, existsSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { writePng, readPng } from '../../../tools/pngIO.mjs';
 import { setValue } from '../../../src/systems/settings/settings.js';
 import {
   addVendorTextures, clearVendorTextures, clearTextureReplacements, setTextureReplacements, hasTextureReplacement,
   decodedTexture, preloadTextureArchive, preloadTextureRecord, isVendorArchive, vendorTextureStandIn, setTextureDeriveContext,
-  holdTextureTiers, textureTiersSettled, studioRecordsOf, PRELOAD_CONCURRENCY,
+  holdTextureTiers, textureTiersSettled, studioRecordsOf, PRELOAD_CONCURRENCY, textureKey, addVendorTextures as addVendor, textureTierEpoch,
 } from '../../../src/systems/textureReplacement.js';
+import { APP_ROOT } from '../../../src/systems/appRoot.js';
+import { LAST_CLASSIC_TEXTURE_ARCHIVE } from '../../../src/formats/textureFile.js';
+import { registerCarrackArt, _resetCarrackArt } from '../../../src/world/ships/carrackArt.js';
+import { registerLargeBoatArt, _resetLargeBoatArt } from '../../../src/world/ships/largeBoatArt.js';
+import { townPictureEntries, TOWN_PICTURES } from '../../../src/world/townPictures.js';
+import { installSurvivalIcons } from '../../../src/systems/survival/items.js';
+import { installThunderlockIcons, PAPERDOLL_OFFSET } from '../../../src/systems/thunderlock.js';
+import { yardArt, YARD_ARCHIVE } from '../../../src/world/merchantYards/merchantYardArt.js';
+import { PORT_PAINTERS, PORT_ARCHIVE } from '../../../src/world/portArt.js';
+import { lefayArt } from '../../../src/world/lefayArt.js';
+import { LEFAY_ARCHIVE } from '../../../src/world/lefayMonument.js';
 import {
-  installStudioArt, studioLanded, studioUrl, studioFile, wearPainted, studioGeneration, _resetStudioArt, STUDIO_INDEX, STUDIO_HOLD_MS,
+  installStudioArt, studioLanded, studioUrl, studioFile, wearPainted, paintedReplacement, studioGeneration, _resetStudioArt, STUDIO_INDEX, STUDIO_HOLD_MS,
 } from '../../../src/systems/studioArt/studioArt.js';
-import { STUDIO_SETS, studioSlots } from '../../../src/systems/studioArt/studioSlots.js';
-import { studioListing, STUDIO_TREE } from '../../../scripts/studioArtIndex.mjs';
-import { checkStudio } from '../../../tools/studioArt.mjs';
+import { STUDIO_SETS, studioSlots, slotLabel } from '../../../src/systems/studioArt/studioSlots.js';
+import { studioListing, pngSize, STUDIO_TREE, STUDIO_MAX_SIDE, STUDIO_MAX_BYTES } from '../../../scripts/studioArtIndex.mjs';
+import { checkStudio, studioCli } from '../../../tools/studioArt.mjs';
 import { createDataPipeline } from '../../../src/scenes/dataPipeline.js';
 import { dfmodGroundLayers } from '../../../src/systems/dfmodTextures.js';
 import { registerGalleonArt, galleonArt, _resetGalleonArt, GALLEON_ARCHIVE, GALLEON_NIGHT, TEX as GALLEON_TEX } from '../../../src/world/ships/galleonArt.js';
@@ -73,7 +84,7 @@ function served(files, { gate = null, index = true, fail = false } = {}) {
   return { fetch, asked, most: () => most };
 }
 function reset() {
-  _resetStudioArt(); clearVendorTextures(); clearTextureReplacements(); _resetGalleonArt();
+  _resetStudioArt(); clearVendorTextures(); clearTextureReplacements(); _resetGalleonArt(); _resetCarrackArt(); _resetLargeBoatArt();
   setValue('Enhancements', 'AssetInjection', 'True');
   setTextureDeriveContext({ classicRgba: async () => null });
 }
@@ -271,7 +282,8 @@ test('AUDIT STUDIO1 S7: the ground - a ground archive\'s set lays the studio\'s 
     // a classic TEXTURE file of the test's own: four 4 x 4 records, each its own grey
     const tex = { recordCount: 4, getDFBitmap: (r) => r, getColor32: (r) => ({ width: 4, height: 4, colors: new Uint8ClampedArray(64).fill(40 + r) }) };
     addVendorTextures([{ archive: 302, record: 2, studio: true, fileName: 'studio:a/302_2-0.png', load: async () => picture(8, 8, [220, 30, 30]) }]);
-    assert.deepEqual(studioRecordsOf(302), [2]);
+    addVendorTextures([{ archive: 302, record: 3, fileName: 'a pack of the port\'s', load: async () => picture(4, 4, [1, 1, 1]) }]);
+    assert.deepEqual(studioRecordsOf(302), [2], 'the studio\'s records alone');
     for (const gate of ['False', 'True']) {
       setValue('Enhancements', 'AssetInjection', gate);
       const layers = await dfmodGroundLayers(302, tex, { decode });
@@ -354,6 +366,8 @@ test('AUDIT STUDIO1 S10: the folder\'s plumbing - a folder git ignores is refuse
     put('38181_4-0--caf\u00e9.png', picture(64, 64, [9, 9, 9]));   // C5/C6: git quotes it
     mkdirSync(join(tree, 'a', 'CON'), { recursive: true });
     writeFileSync(join(tree, 'a', 'CON', '38181_5-0.png'), picture(64, 64, [9, 9, 9]));   // C6: Windows keeps the name
+    mkdirSync(join(tree, 'a', 'wagons.'), { recursive: true });
+    writeFileSync(join(tree, 'a', 'wagons.', '38181_10-0.png'), picture(64, 64, [9, 9, 9]));   // C6: Windows drops a name's last dot
     put('.DS_Store', 'finder');   // C7: passed over
     put('._38181_6-0.png', 'appledouble');
     put('38181_7-0.png', picture(64, 64, [9, 9, 9]));
@@ -366,10 +380,11 @@ test('AUDIT STUDIO1 S10: the folder\'s plumbing - a folder git ignores is refuse
     assert.match(said('a/38181_3-0--my cart #1.png'), /letters, digits and _ \. - only/);
     assert.match(said('a/38181_4-0--caf\u00e9.png'), /letters, digits and _ \. - only/);
     assert.match(said('a/CON/38181_5-0.png'), /letters, digits and _ \. - only/);
+    assert.match(said('a/wagons./38181_10-0.png'), /a letter or digit at each end/);
     assert.match(said('a/38181_8-0.png'), /a link, not a picture/);
     assert.match(said('a/38181_9-0.png'), /a link, not a picture/);
     assert.ok(!problems.some((p) => p.startsWith('a/.DS_Store') || p.startsWith('a/._')), 'litter passed over, never said');
-    assert.equal(problems.length, 6);
+    assert.equal(problems.length, 7);
     // a dangling file the walk finds but cannot read is said, not thrown
     assert.doesNotThrow(() => studioListing(dir));
   } finally { rmSync(dir, { recursive: true, force: true }); }
@@ -382,3 +397,246 @@ test('AUDIT STUDIO1 S10: the folder\'s plumbing - a folder git ignores is refuse
     assert.ok(existsSync(join(out, 'mine', 'wagons', '38181_1-0--cart-side-boards-weathered-oak.png')));
   } finally { rmSync(out, { recursive: true, force: true }); }
 });
+
+// ---- AUDIT STUDIO1 lane E: the pins its survivors asked for (K1-K17), each through its real producer where one exists ----
+
+/** A served studio of real Responses (TEST THE SHAPE THE PRODUCER MINTS: a 404 is a page, not a missing method). */
+function responses(files, { gate = null, root = undefined } = {}) {
+  const asked = [];
+  const fetch = async (url) => {
+    asked.push(url);
+    if (gate) await gate;
+    if (url === studioUrl(STUDIO_INDEX, root)) return new Response(JSON.stringify({ studio: 1, files: Object.keys(files) }), { status: 200 });
+    for (const [path, bytes] of Object.entries(files)) if (url === studioUrl(path, root)) return new Response(bytes, { status: 200 });
+    return new Response('<!doctype html>not here', { status: 404 });
+  };
+  return { fetch, asked };
+}
+/** A picture whose top row is white (its rows' order shows). */
+const topWhite = (w, h, rgb) => { const data = new Uint8Array(w * h * 4); for (let i = 0; i < w * h; i++) data.set(i < w ? [255, 255, 255, 255] : [...rgb, 255], i * 4); return writePng({ width: w, height: h, data }); };
+
+test('AUDIT STUDIO1 S11 (lane E K1-K3, K9, K10): the studio\'s own law - its URLs under the site\'s root, the install\'s answers to real responses, each name\'s frame, map and dye kept, the classic boundary, and landed waiting for the install', async () => {
+  // K1: under the site root (APP_ROOT, never the document), every segment encoded, slashes kept; a root of the caller's
+  assert.equal(studioUrl('a b/38181_1-0--#1.png', 'http://x/game/'), 'http://x/game/art/studio/a%20b/38181_1-0--%231.png');
+  assert.equal(studioUrl(STUDIO_INDEX), new URL('art/studio/index.json', APP_ROOT).href);
+  reset();
+  try {
+    const rooted = responses({ 'a/38181_1-0.png': picture(2, 2, [6, 6, 6]) }, { root: 'http://x/game/' });
+    assert.equal(await installStudioArt({ fetch: rooted.fetch, root: 'http://x/game/', decode }), 1);
+    assert.equal(rooted.asked[0], 'http://x/game/art/studio/index.json', 'the listing under the root given');
+    await studioLanded();
+    assert.ok(rooted.asked.includes('http://x/game/art/studio/a/38181_1-0.png'), 'and its pictures');
+    // K2: a listing with no files, or a 404 that carries JSON, is nothing - and never a throw
+    reset();
+    assert.equal(await installStudioArt({ fetch: async () => new Response('{"studio":1}', { status: 200 }), decode }), 0);
+    assert.equal(await studioLanded(), 0, 'landed answers too');
+    reset();
+    assert.equal(await installStudioArt({ fetch: async () => new Response(JSON.stringify({ studio: 1, files: ['a/38181_1-0.png'] }), { status: 404 }), decode }), 0);
+    assert.equal(hasTextureReplacement(WAGON_ARCHIVE, 1), false);
+    // K3: each name's frame, map and dye registered as it says
+    reset();
+    const iron = studioFile('a/233_6-0_Iron.png');
+    await installStudioArt({ fetch: responses({ 'a/38181_1-2.png': picture(2, 2, [1, 1, 1]), 'a/233_5-0_Normal.png': picture(2, 2, [2, 2, 2]), 'a/233_6-0_Iron.png': picture(2, 2, [3, 3, 3]) }).fetch, decode });
+    assert.equal(hasTextureReplacement(WAGON_ARCHIVE, 1, 2), true);
+    assert.equal(hasTextureReplacement(WAGON_ARCHIVE, 1, 0), false);
+    assert.equal(hasTextureReplacement(233, 5, 0, 'Normal'), true);
+    assert.equal(hasTextureReplacement(233, 5, 0), false, 'a normal map is never worn as the picture');
+    assert.equal(hasTextureReplacement(233, 6, 0, 'Albedo', iron.dye), true);
+    assert.equal(hasTextureReplacement(233, 6, 0), false);
+    await studioLanded();
+    assert.deepEqual(red(decodedTexture(WAGON_ARCHIVE, 1, 2)), [1, 1, 1], 'a port archive\'s frame decoded at the install');
+    // K9: TEXTURE.511 is Daggerfall's (left to its load), 512 past it (decoded at the install)
+    reset();
+    assert.equal(LAST_CLASSIC_TEXTURE_ARCHIVE, 511);
+    await installStudioArt({ fetch: responses({ 'a/511_0-0.png': picture(2, 2, [1, 1, 1]), 'a/512_0-0.png': picture(2, 2, [2, 2, 2]) }).fetch, decode });
+    await studioLanded();
+    assert.equal(decodedTexture(511, 0), null);
+    assert.deepEqual(red(decodedTexture(512, 0)), [2, 2, 2]);
+    // K10: landed waits for the install in flight; a late picture keeps its rows; one that will not decode is no picture
+    reset();
+    let open;
+    const gate = new Promise((r) => { open = r; });
+    const install = installStudioArt({ fetch: responses({ 'a/38221_0-0.png': topWhite(2, 3, [40, 50, 60]), 'a/38221_1-0.png': new Uint8Array([1, 2, 3]) }, { gate }).fetch, decode });
+    let landed = false;
+    studioLanded().then(() => { landed = true; });
+    const puts = [];
+    wearPainted(38221, 0, () => 'painted', (p, how) => puts.push([p, how]), { topDown: true });
+    await turns();
+    assert.equal(landed, false, 'the icon waits for the install');
+    open();
+    await install; await studioLanded(); await turns();
+    assert.equal(landed, true);
+    assert.equal(puts.length, 2);
+    assert.deepEqual([...puts[1][0].colors.subarray(0, 3)], [255, 255, 255], 'the late picture top-down too: its white row first');
+    assert.equal(paintedReplacement(38221, 1, { topDown: true }), null);
+  } finally { reset(); }
+});
+
+test('AUDIT STUDIO1 S12 (lane E K4-K8): the registry\'s merges through the real producers - the install\'s own entries hold against a ship registered after; a mod\'s record of a real archive makes no stand-in; the studio over a mod picture already decoded; an absorbed registration counted, the doll\'s place kept; two non-studio registrations, the later whole', async () => {
+  reset();
+  try {
+    // K4
+    await installStudioArt({ fetch: responses({ [`a/${GALLEON_ARCHIVE}_${GALLEON_TEX.deck}-0.png`]: picture(4, 4, [200, 10, 10]) }).fetch, decode });
+    assert.ok(registerGalleonArt(addVendorTextures) > 0);
+    await preloadTextureArchive(GALLEON_ARCHIVE, { decode });
+    assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.deck)), [200, 10, 10]);
+    // K5: Climates & Calories' tent - one record of the real TEXTURE.050 - under the studio's (the game's order: the
+    // mod's icons register as its module loads, the studio at the boot)
+    reset();
+    assert.ok(installSurvivalIcons({ fetchBytes: async () => picture(2, 2, [1, 2, 3]) }) > 0);
+    await installStudioArt({ fetch: responses({ 'a/50_7-0.png': picture(2, 2, [5, 5, 5]) }).fetch, decode });
+    assert.equal(isVendorArchive(50), false, 'TEXTURE.050 is a real file: no stand-in branch for it');
+    await preloadTextureArchive(50, { decode });
+    assert.deepEqual(red(decodedTexture(50, 7)), [5, 5, 5]);
+    // K6: the studio over a mod's picture already decoded (its fileName its key - Climates & Calories' icons)
+    reset();
+    assert.ok(installSurvivalIcons({ fetchBytes: async () => picture(2, 2, [1, 2, 3]) }) > 0);
+    await preloadTextureArchive(532, { decode });
+    assert.deepEqual(red(decodedTexture(532, 0)), [1, 2, 3]);
+    await installStudioArt({ fetch: responses({ 'a/532_0-0.png': picture(2, 2, [9, 8, 7]) }).fetch, decode });
+    await studioLanded();
+    assert.deepEqual(red(decodedTexture(532, 0)), [9, 8, 7]);
+    assert.equal(isVendorArchive(532), true);
+    // K7: the Thunderlock's icons under the studio's: the doll's place theirs; a registration the studio absorbs is
+    // counted and moves the tiers' epoch, and its missing offset leaves the place as it was
+    reset();
+    assert.equal(installThunderlockIcons({ fetchBytes: async () => picture(2, 2, [1, 2, 3]) }), 5);
+    await installStudioArt({ fetch: responses({ 'a/560_0-0.png': picture(2, 2, [4, 5, 6]) }).fetch, decode });
+    assert.deepEqual(vendorTextureStandIn(560).getOffset(0), PAPERDOLL_OFFSET);
+    assert.equal(isVendorArchive(560), true);
+    const epoch = textureTierEpoch();
+    assert.equal(addVendor([{ archive: 560, record: 0, standIn: true, fileName: 'later', load: async () => picture(2, 2, [1, 2, 3]) }]), 1, 'absorbed, and counted');
+    assert.notEqual(textureTierEpoch(), epoch, 'a scene asks its archives again');
+    assert.deepEqual(vendorTextureStandIn(560).getOffset(0), PAPERDOLL_OFFSET, 'the first place on the doll holds');
+    // K8: between two non-studio registrations the later replaces the earlier - mark, place and picture
+    reset();
+    addVendor([{ archive: 562, record: 0, standIn: true, offset: { x: 1, y: 1 }, fileName: 'one', load: async () => picture(2, 2, [1, 1, 1]) }]);
+    addVendor([{ archive: 562, record: 0, fileName: 'two', load: async () => picture(2, 2, [2, 2, 2]) }]);
+    assert.equal(isVendorArchive(562), false);
+    assert.deepEqual(vendorTextureStandIn(562).getOffset(0), { x: 0, y: 0 });
+    await preloadTextureArchive(562, { decode });
+    assert.deepEqual(red(decodedTexture(562, 0)), [2, 2, 2]);
+  } finally { reset(); }
+});
+
+const plain = (w, h) => writePng({ width: w, height: h, data: new Uint8Array(w * h * 4).fill(200) });
+const header = (w, h) => { const b = Buffer.from(plain(1, 1)); b.writeUInt32BE(w, 16); b.writeUInt32BE(h, 20); return b; };
+const ROSTER = { artists: [{ folder: 'trashBattery', name: 'trashBattery', approved: 't' }, { folder: 'Redclaw', name: 'Redclaw', approved: 't' }] };
+function tree(files, roster = ROSTER) {
+  const at = mkdtempSync(join(tmpdir(), 'auditstudio1-'));
+  const dir = join(at, STUDIO_TREE);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'artists.json'), JSON.stringify(roster));
+  for (const [path, bytes] of Object.entries(files)) { mkdirSync(dirname(join(dir, path)), { recursive: true }); writeFileSync(join(dir, path), bytes); }
+  return at;
+}
+const listed = (files, roster) => { const at = tree(files, roster); try { return studioListing(at); } finally { rmSync(at, { recursive: true, force: true }); } };
+
+test('AUDIT STUDIO1 S13 (lane E K11-K13): the listing - each limit by number on both sides, the boundary byte, any case of .png, the sort that keeps a slot, each roster fault alone, a roster that is no list, and a PNG\'s header read whole', () => {
+  assert.equal(STUDIO_MAX_SIDE, 2048);
+  assert.equal(STUDIO_MAX_BYTES, 4 * 1024 * 1024);
+  const top = plain(4, 4);
+  const l = listed({
+    'Redclaw/38181_1-0.png': header(64, STUDIO_MAX_SIDE + 1),
+    'Redclaw/38181_2-0.png': header(64, 0),
+    'Redclaw/38181_3-0.PNG': plain(4, 4),
+    'Redclaw/38181_4-0.png': Buffer.concat([top, Buffer.alloc(STUDIO_MAX_BYTES - top.length)]),
+    'Redclaw/38181_6-0.png': header(STUDIO_MAX_SIDE, STUDIO_MAX_SIDE),
+    'Red/38181_5-0.png': plain(4, 4),
+    'Red-claw/38181_5-0.png': plain(4, 4),
+  }, { artists: [...ROSTER.artists, { folder: 'Red', name: 'Red', approved: 't' }, { folder: 'Red-claw', name: 'Rc', approved: 't' }] });
+  assert.deepEqual(l.files, ['Red-claw/38181_5-0.png', 'Redclaw/38181_3-0.PNG', 'Redclaw/38181_4-0.png', 'Redclaw/38181_6-0.png'], 'the exact limits pass; each side past them, a side of 0 and the second of a slot do not');
+  assert.equal(l.problems.length, 3);
+  for (const bad of [{ folder: 'trash Battery', name: 'x', approved: 'y' }, { folder: '../up', name: 'x', approved: 'y' }, { folder: '', name: 'x', approved: 'y' }, { folder: 'ok', name: '', approved: 'y' }, { folder: 'ok', approved: 'y' }, { folder: 'ok', name: 'x', approved: '' }, { folder: 'NUL', name: 'x', approved: 'y' }]) {
+    const one = listed({ 'Redclaw/38181_1-0.png': plain(4, 4) }, { artists: [bad, ROSTER.artists[1]] });
+    assert.deepEqual(one.files, ['Redclaw/38181_1-0.png'], JSON.stringify(bad));
+    assert.deepEqual(one.roster.map((a) => a.folder), ['Redclaw'], JSON.stringify(bad));
+    assert.equal(one.problems.length, 1, JSON.stringify(bad));
+  }
+  assert.deepEqual(listed({ 'Redclaw/38181_1-0.png': plain(4, 4) }, { artists: {} }).files, [], 'a roster that is no list: no artist, and no throw');
+  assert.equal(listed({}, { artists: [{ folder: 'Redclaw', name: 'a', approved: 'b' }, { folder: 'redclaw', name: 'c', approved: 'd' }] }).roster.length, 1);
+  assert.equal(pngSize(Buffer.from(plain(1, 1)).subarray(0, 23)), null, '23 bytes are too few');
+  const notIhdr = Buffer.from(plain(1, 1)); notIhdr.write('IDAT', 12, 'latin1');
+  assert.equal(pngSize(notIhdr), null, 'IHDR first');
+  const badSig = Buffer.from(plain(1, 1)); badSig[6] = 0;
+  assert.equal(pngSize(badSig), null, 'the whole signature');
+});
+
+test('AUDIT STUDIO1 S14 (lane E K14, K15, E13): the tool - the check carries the folder\'s problems and notes a stretch either way and by a sixty-fourth; `check` answers 1 on a problem and 0 on none, `list` names each studio picture beside its slot, an unknown command 2; `templates` writes a PNG a slot, each named for its key', async () => {
+  const at = tree({ 'stranger/38181_2-0.png': plain(4, 4), 'Redclaw/38181_3-0.png': plain(64, 128), 'Redclaw/38181_2-0.png': plain(65, 64) });
+  try {
+    const { problems, notes } = await checkStudio(at);
+    assert.ok(problems.some((p) => p.startsWith('stranger/38181_2-0.png:')));
+    assert.deepEqual(notes.map((n) => n.split(':')[0]).sort(), ['Redclaw/38181_2-0.png', 'Redclaw/38181_3-0.png']);
+    const said = [];
+    assert.equal(await studioCli(['check'], { at, log: (l) => said.push(l) }), 1);
+    assert.ok(said.some((l) => l.startsWith('PROBLEM: stranger/38181_2-0.png')));
+    said.length = 0;
+    assert.equal(await studioCli(['list'], { at, log: (l) => said.push(l) }), 0);
+    assert.ok(said.some((l) => /^ {2}38181_3-0 .*running gear {3}<- studio: Redclaw\/38181_3-0\.png$/.test(l)), 'list names the studio\'s picture beside its slot');
+    assert.equal(await studioCli(['bogus'], { at, log: () => {} }), 2);
+  } finally { rmSync(at, { recursive: true, force: true }); }
+  const clean = tree({ 'Redclaw/38181_1-0.png': plain(64, 64) });
+  try { assert.equal(await studioCli(['check'], { at: clean, log: () => {} }), 0); } finally { rmSync(clean, { recursive: true, force: true }); }
+  const out = mkdtempSync(join(tmpdir(), 'auditstudio1-tpl-'));
+  try {
+    assert.equal(await studioCli(['templates', out], { log: () => {} }), 0);
+    const names = readdirSync(out, { recursive: true }).filter((f) => String(f).endsWith('.png'));
+    assert.equal(names.length, 248);
+    for (const f of names) assert.ok(studioFile(`a/${String(f).split('/').pop()}`), f);
+    assert.ok(pngSize(readFileSync(join(out, String(names[0])))));
+  } finally { rmSync(out, { recursive: true, force: true }); }
+});
+
+test('AUDIT STUDIO1 S15 (lane E K16): the slots are the keys the game asks under - each set\'s real registration or its host\'s archive - named, sorted and painted as the game paints them', async () => {
+  const set = (id) => STUDIO_SETS.find((x) => x.id === id);
+  const keysOf = (id) => studioSlots(set(id)).map((x) => x.key);
+  const captured = (register) => { let entries = []; register((e) => { entries = e; return e.length; }); return entries; };
+  reset();
+  const ships = { galleon: captured(registerGalleonArt), carrack: captured(registerCarrackArt), largeboat: captured(registerLargeBoatArt) };
+  reset();
+  for (const [id, entries] of Object.entries(ships)) {
+    assert.deepEqual(new Set(keysOf(id)), new Set(entries.map((e) => textureKey(e.archive, e.record, 0))), `${id}: her registration's records, night twins and all`);
+    for (const x of studioSlots(set(id))) {
+      const e = entries.find((y) => y.record === x.record);
+      const [a, b] = [await x.picture(), await e.build()];
+      assert.deepEqual(a && [a.width, a.height, [...a.data]], b && [b.width, b.height, [...b.data]], `${id} ${x.key}: the picture she wears`);
+    }
+  }
+  assert.deepEqual(new Set(keysOf('hangings')), new Set(townPictureEntries(() => true).map((e) => textureKey(e.archive, e.record, 0))));
+  for (const x of studioSlots(set('hangings'))) {
+    assert.equal(x.name, TOWN_PICTURES[x.record].name);
+    assert.deepEqual([...(await x.picture()).data], [...(await TOWN_PICTURES[x.record].draw()).data]);
+  }
+  assert.deepEqual(keysOf('yards'), yardArt().map(([r]) => textureKey(YARD_ARCHIVE, r, 0)));
+  assert.deepEqual(new Set(keysOf('port')), new Set(PORT_PAINTERS.map(([r]) => textureKey(PORT_ARCHIVE, r, 0))));
+  for (const x of studioSlots(set('port'))) assert.deepEqual([...(await x.picture()).data], [...PORT_PAINTERS.find(([r]) => r === x.record)[1]().colors]);
+  assert.deepEqual(keysOf('lefay'), lefayArt().map(([r]) => textureKey(LEFAY_ARCHIVE, r, 0)));
+  assert.equal(set('wagons').archive, WAGON_ARCHIVE);
+  let total = 0;
+  for (const st of STUDIO_SETS) {
+    const slots = studioSlots(st);
+    total += slots.length;
+    assert.deepEqual(slots.map((x) => x.record), slots.map((x) => x.record).sort((u, v) => u - v), `${st.id} in record order`);
+    for (const x of slots) assert.ok(typeof x.name === 'string' && x.name && !/undefined|[A-Z]{2}|[a-z][A-Z]/.test(x.name), `${st.id} ${x.key}: "${x.name}"`);
+    assert.equal(new Set(slots.map((x) => x.name)).size, slots.length, `${st.id}: a name a slot`);
+  }
+  assert.equal(total, 248);
+  const name = (id, rec) => studioSlots(set(id)).find((x) => x.record === rec)?.name;
+  assert.equal(name('galleon', GALLEON_TEX.hullSide0), 'hull side 0');
+  assert.equal(name('galleon', GALLEON_TEX.deck), 'deck');
+  assert.ok(studioSlots(set('galleon')).some((x) => / - at night$/.test(x.name)));
+  assert.equal(name('lefay', lefayArt()[2][0]), 'gilt point');
+  assert.equal(name('lefay', lefayArt()[4][0]), 'bronze edge');
+  assert.equal(name('yards', yardArt()[1][0]), 'plank');
+  assert.equal(studioSlots(set('wagons'))[0].name, 'floorboards');
+  assert.equal(name('wagons', WAGON_TEX.harness), 'harness straps');
+  assert.equal(slotLabel(' (Red) tapestry! '), 'red-tapestry');
+});
+
+test('AUDIT STUDIO1 S16 (lane E K17): the studio is wired - its plugin serves and builds the listing, and its page is built', async () => {
+  const cfg = (await import('../../../vite.config.js')).default;
+  assert.ok(cfg.plugins.some((p) => p?.name === 'studio-art-index'), 'the listing is served and built (scripts/studioArtIndex.mjs)');
+  assert.equal(cfg.build.rollupOptions.input.studio, 'studio.html');
+});
+

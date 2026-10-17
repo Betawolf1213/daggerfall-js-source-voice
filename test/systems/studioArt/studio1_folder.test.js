@@ -21,6 +21,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { writePng } from '../../../tools/pngIO.mjs';
 import {
   studioListing, studioArtIndex, studioIndexJson, pngSize, STUDIO_TREE, STUDIO_INDEX_PATH, STUDIO_MAX_SIDE, STUDIO_MAX_BYTES,
@@ -31,7 +32,7 @@ import { STUDIO_SETS, studioSlots, slotLabel } from '../../../src/systems/studio
 import { WAGON_ARCHIVE, LOOK_RECORDS, lookRecord, wagonArt } from '../../../src/world/wagonArt.js';
 import { WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS } from '../../../src/systems/wagon/wagonLooks.js';
 
-const ROOT = new URL('../../../', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('../../../', import.meta.url));   // AUDIT STUDIO1 E16: a checkout under a path with a space
 const png = (w, h) => writePng({ width: w, height: h, data: new Uint8Array(w * h * 4).fill(200) });
 const ROSTER = { artists: [{ folder: 'trashBattery', name: 'trashBattery', approved: 'the test' }, { folder: 'Redclaw', name: 'Redclaw', approved: 'the test' }] };
 
@@ -53,8 +54,9 @@ const header = (w, h) => { const b = Buffer.from(png(1, 1)); b.writeUInt32BE(w, 
 test('STUDIO1 F1: the folder as it stands passes its own check, and its roster names the two artists it was opened for', async () => {
   const { listing, problems } = await checkStudio(ROOT);
   assert.deepEqual(problems, [], 'the studio\'s folder - every pull request that brings a picture runs this');
-  assert.deepEqual(listing.roster.map((a) => a.folder), ['trashBattery', 'Redclaw']);
-  for (const a of listing.roster) assert.match(a.approved, /2026-10-17/);
+  // the two it was opened for stay on it; an artist the guide adds joins them (AUDIT STUDIO1 E14)
+  for (const f of ['trashBattery', 'Redclaw']) assert.ok(listing.roster.some((a) => a.folder === f), f);
+  for (const a of listing.roster) assert.ok(a.name && a.approved, `${a.folder}: a name and the word that approved them`);
   const top = readdirSync(join(ROOT, STUDIO_TREE));
   assert.ok(top.includes('README.md') && top.includes('artists.json'), 'the guide and the roster');
 });

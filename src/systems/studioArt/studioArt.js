@@ -39,6 +39,8 @@ export const STUDIO_INDEX = 'index.json';
 /** What parts a picture's name from its label (`38181_1-0--cart-side.png`): a DFU name never holds it - its record and
  *  frame are digits on either side of ONE dash. */
 export const STUDIO_LABEL = '--';
+/** A picture's file name: what it replaces, then its label after STUDIO_LABEL if it has one. */
+const STUDIO_FILE = new RegExp(`^(.+?)(?:${STUDIO_LABEL}(.+))?\\.png$`, 'i');
 /** How long an archive's first load waits for the studio's listing (textureReplacement.js holdTextureTiers), ms: one
  *  small fetch, and past this the world loads without it - its pictures then land as each area loads again. */
 export const STUDIO_HOLD_MS = 3000;
@@ -56,7 +58,7 @@ export const askedDye = (token) => Object.hasOwn(DYE_COLORS, token) && dyeToken(
 export function studioFile(path) {
   const parts = String(path ?? '').split('/');
   if (parts.length < 2 || parts.some((p) => !p || p === '.' || p === '..')) return null;
-  const m = /^(.+?)(?:--(.+))?\.png$/i.exec(parts[parts.length - 1]);
+  const m = STUDIO_FILE.exec(parts[parts.length - 1]);
   const e = m && textureEntry(`${m[1]}.png`);
   if (!e || (e.dye != null && !askedDye(e.dye))) return null;
   return {

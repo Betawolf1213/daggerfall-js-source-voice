@@ -24,7 +24,7 @@ import { writePng, readPng } from '../../../tools/pngIO.mjs';
 import { setValue } from '../../../src/systems/settings/settings.js';
 import {
   addVendorTextures, clearVendorTextures, clearTextureReplacements, setTextureReplacements, hasTextureReplacement,
-  decodedTexture, preloadTextureArchive, isVendorArchive, vendorTextureStandIn, setTextureDeriveContext,
+  decodedTexture, preloadTextureArchive, isVendorArchive, vendorTextureStandIn, setTextureDeriveContext, setBundleTextures,
 } from '../../../src/systems/textureReplacement.js';
 import {
   studioFile, studioEntries, studioUrl, installStudioArt, paintedReplacement, wearPainted, studioLanded, studioWorn,
@@ -43,20 +43,21 @@ function picture(w, h, rgb) {
   return writePng({ width: w, height: h, data });
 }
 /** A served studio: `files` path -> PNG bytes; the listing names `listed` (all of them unless said). `gate` holds every
- *  answer until it is opened (a slow network). */
+ *  answer until it is opened (a slow network). Real Responses (AUDIT STUDIO1 E8 - TEST THE SHAPE THE PRODUCER MINTS): a
+ *  miss is a page, not a missing method. */
 function served(files, { listed = Object.keys(files), index = true, gate = null } = {}) {
   const asked = [];
   const fetch = async (url) => {
     asked.push(url);
     if (gate) await gate;
-    if (url === studioUrl(STUDIO_INDEX)) return index ? { ok: true, json: async () => ({ studio: 1, files: listed }) } : { ok: false, status: 404 };
-    for (const [path, bytes] of Object.entries(files)) if (url === studioUrl(path)) return { ok: true, arrayBuffer: async () => Uint8Array.from(bytes).buffer };
-    return { ok: false, status: 404 };
+    if (url === studioUrl(STUDIO_INDEX) && index) return new Response(JSON.stringify({ studio: 1, files: listed }), { status: 200 });
+    for (const [path, bytes] of Object.entries(files)) if (url === studioUrl(path)) return new Response(Uint8Array.from(bytes), { status: 200 });
+    return new Response('<!doctype html>not here', { status: 404 });
   };
   return { fetch, asked };
 }
 function reset() {
-  _resetStudioArt(); clearVendorTextures(); clearTextureReplacements(); _resetGalleonArt();
+  _resetStudioArt(); clearVendorTextures(); clearTextureReplacements(); setBundleTextures([]); _resetGalleonArt();
   setValue('Enhancements', 'AssetInjection', 'True');
   setTextureDeriveContext({ classicRgba: async () => null });   // a pipeline's, as the game's is up (her stand-ins are built through it)
 }
@@ -117,8 +118,12 @@ test('STUDIO1 D2: the studio\'s picture holds its key on the vendor tier - over 
     setValue('Enhancements', 'AssetInjection', 'False');
     assert.equal(hasTextureReplacement(GALLEON_ARCHIVE, GALLEON_TEX.trim), true);
     assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.trim)), [10, 200, 10]);
-    // a player's own loose pick answers first, as it does over every picture of the port's
+    // AUDIT STUDIO1 D3: a texture mod a player attaches (the bundle tier) is drawn under it, Replace Game Artwork on
     setValue('Enhancements', 'AssetInjection', 'True');
+    setBundleTextures([{ archive: GALLEON_ARCHIVE, record: GALLEON_TEX.trim, fileName: 'mod.dfmod:trim', src: 'mod.dfmod@1:trim', image: async () => readPng(picture(4, 4, [200, 200, 10])) }]);
+    await preloadTextureArchive(GALLEON_ARCHIVE, { decode });
+    assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.trim)), [10, 200, 10], 'the studio over an attached mod');
+    // a player's own loose pick answers first, as it does over every picture of the port's
     setTextureReplacements([`${GALLEON_ARCHIVE}_${GALLEON_TEX.trim}-0.png`], async () => picture(4, 4, [10, 10, 200]));
     await preloadTextureArchive(GALLEON_ARCHIVE, { decode });
     assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.trim)), [10, 10, 200]);
