@@ -36,7 +36,8 @@ export function postNoticeText(event) {
   if (event?.kind === 'new') return ps.length === 1 ? one(ps[0]) : `${ps.length} new messages in your mailbox. ${where}`;
   // PRIVATE-REPORT: a reader's private reports - said apart from the post, and never what they say (the world tab is read
   // over a shoulder, on a stream)
-  if (event?.kind === 'reports') return t('report.notice', '{n, plural, one {# private report is waiting to be read.} other {# private reports are waiting to be read.}} Type /bug, or open the mailbox beside the hourglass.', { n: event.unread });
+  // AUDIT PRIVATE-REPORT CLI-6: `/mail`, never `/bug` - `/bug` lands on the send form, and the inbox is the mailbox's door
+  if (event?.kind === 'reports') return t('report.notice', '{n, plural, one {# private report is waiting to be read.} other {# private reports are waiting to be read.}} Type /mail, or open the mailbox beside the hourglass, and press Private reports.', { n: event.unread });
   const n = event?.count ?? 0;
   if (n === 1 && ps.length === 1) return one(ps[0]);
   return `You have ${n} message${n === 1 ? '' : 's'} waiting in your mailbox. ${where}`;
@@ -84,7 +85,8 @@ export class PostBox {
     this._lookActs = 0;
     /** PRIVATE-REPORT: the report form's desk (net/privateReport.js), for the sitting; and, for a reader of the private
      *  reports alone, the service's count of them (`{ unread, open }`) - null for everyone else. */
-    this.desk = new ReportDesk({ ioOf: () => this.ioOf?.() ?? null });
+    this.desk = new ReportDesk({ ioOf: () => this.ioOf?.() ?? null, onCounts: (c) => this._deskCounts(c) });
+    /** AUDIT PRIVATE-REPORT CLI-1: the session the box's state is for. @type {string|null} */ this._secret = null;
     /** @type {{ unread: number, open: number } | null} */ this.reports = null;
   }
 
@@ -97,16 +99,35 @@ export class PostBox {
   _io() {
     const io = this.ioOf?.() ?? null;
     if (!io?.secret) {
-      if (this.state !== 'signed-out') { this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this._changed(); }
+      this._secret = null;
+      if (this.state !== 'signed-out') { this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this.desk.reset(); this._changed(); }
       return null;
     }
+    // AUDIT PRIVATE-REPORT CLI-1: ANOTHER ACCOUNT ON THE SAME SITTING (the pause face's profile signs out and in) - the box
+    // is the last account's until it looks, and a reader's count drew the inbox's door for an account that reads nothing:
+    // all of it goes, the desk with it, and the next look is due at once
+    if (this._secret !== null && io.secret !== this._secret) {
+      this.state = 'unknown'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null;
+      this.error = null; this.at = 0; this.desk.reset(); this._changed();
+    }
+    this._secret = io.secret;
     return io;
+  }
+
+  /** AUDIT PRIVATE-REPORT CLI-2: THE DESK'S COUNTS ARE THE ENVELOPE'S - a report read or closed is off the count now, not
+   *  at the next look three minutes on; and the next look's rise is measured from what this sitting last knew, so a new
+   *  report after the only unread one was read is said. A reader's alone: the box holds counts only for a reader. */
+  _deskCounts(/** @type {{ unread: number, open: number }} */ c) {
+    if (!this.reports) return;
+    if (this.reports.unread === c.unread && this.reports.open === c.open) return;
+    this.reports = { unread: c.unread, open: c.open };
+    this._changed();
   }
 
   /** A refusal the whole box answers to: `auth` forgets the session, a guest is a guest. True when it was one. */
   _boxRefusal(io, error) {
-    if (error === 'auth') { forgetSession(io?.storage); this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this.error = error; this._changed(); return true; }
-    if (error === 'post-needs-account') { this.state = 'guest'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.error = error; this._changed(); return true; }
+    if (error === 'auth') { forgetSession(io?.storage); this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this.desk.reset(); this.error = error; this._changed(); return true; }
+    if (error === 'post-needs-account') { this.state = 'guest'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.desk.reset(); this.error = error; this._changed(); return true; }
     return false;
   }
 
@@ -122,12 +143,15 @@ export class PostBox {
     const io = this._io();
     if (!io) return { ok: false, error: 'signed-out' };
     this._lookActs = this._acts;
-    return this._take(await postBoxCall(io), io);
+    return this._take(await postBoxCall(io), io, true, io.secret);
   }
 
   /** What a look does with the box's answer - its own call's, or a heartbeat's `post` part. */
-  _take(r, io = this.ioOf?.() ?? null, restamp = true) {
+  _take(r, io = this.ioOf?.() ?? null, restamp = true, secret = this._secret) {
     if (restamp) this.at = this.now();
+    // AUDIT PRIVATE-REPORT CLI-1: AN ANSWER FOR A SESSION NO LONGER STANDING IS NOBODY'S - another account signed in while it
+    // was out: never taken (its post, a reader's count) nor acted on (its `auth` would forget the new session); looked again
+    if (secret !== (this.ioOf?.()?.secret ?? null)) { this.at = 0; return { ok: false, error: 'stale' }; }
     if (r?.ok && this._lookActs !== this._acts) { this.at = 0; return { ok: true, stale: true }; }   // set out before a change of this sitting's: looked at again, never taken
     if (!r?.ok) {
       if (!this._boxRefusal(io, r?.error)) { this.state = 'error'; this.error = r?.error ?? 'server'; this._changed(); }
@@ -176,6 +200,7 @@ export class PostBox {
         this.at = this.now();
         if (!this._io()) return undefined;
         this._lookActs = this._acts;
+        this._lookSecret = this._secret;   // AUDIT PRIVATE-REPORT CLI-1: whose look this is
         this._looking = new Promise((r) => { settle = r; });
         return true;
       },
@@ -183,7 +208,7 @@ export class PostBox {
         const done = settle;
         settle = null;
         this._looking = null;
-        const out = this._take(r, undefined, false);
+        const out = this._take(r, undefined, false, this._lookSecret);
         done?.(out);
       },
     };

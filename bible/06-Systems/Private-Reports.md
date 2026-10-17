@@ -8,10 +8,12 @@ SERVER-POST, `10-UI/UI-Arc.md` SERVER-POST).
 
 ## Why private, and why in the client
 
-Exploits were reported in chat and on Discord, where every player could read them before they were fixed. The
-exploit audit (`01-Overview/audits/Exploit-Audit-2026-10-11.md`) found dupes and gold farms after they had spread. A
-report sent from the client goes to the account service and nowhere else. It reaches no chat log, no Notice Board, no
-letter and no GitHub issue.
+Before this slice the game had no private way in: a player who found an exploit could tell it only in chat or on
+Discord, where every player could read it before it was fixed. The exploit audit
+(`01-Overview/audits/Exploit-Audit-2026-10-11.md`) found dupes and gold farms by reading the code; the next one may be
+found by a player first. A report sent from the client goes to the account service and nowhere else. It reaches no chat
+log, no Notice Board, no letter and no GitHub issue. (AUDIT PRIVATE-REPORT DOC-4: this paragraph said exploits had been
+reported in chat and had spread - its cite says neither.)
 
 **Nothing reads the reports in an Actions log.** The repository is public, and so is every workflow run's log and
 summary. The operator's workflows that read D1 (`sd-clears.yml`, `server-post.yml`'s dry run) print what they read,
@@ -30,22 +32,50 @@ own session.
   renamed at the merge that brought SAFE3 in.
 - **The form** (`ui/enhanced/enhancedReport.js`). It asks what the report is about (an exploit, a bug, or account or
   server security, each with a line of what it means), a short title, and what happens and how to make it happen
-  (a counter shows the characters left). Before anything is sent, the form says what goes with the report: the
+  (a counter under the field shows the characters used of the 3,000, counted as the law counts them - AUDIT
+  PRIVATE-REPORT DOC-8 UI-11: it is the field's description, `aria-describedby`, never part of its name). Before
+  anything is sent, the form says what goes with the report: the
   player's username, and the build the pause window prints (`buildTag.js`, REL8), with whether this is the desktop
   app or a browser (`net/privateReport.js` `reportContext`). Nothing else is sent: no location, no user agent and no
   save.
 - **The form is never rebuilt while the player types in it.** The window draws on every change of the box or the
   desk, including the heartbeat's look every three minutes. A report pane answers a draw with `update`, which touches
-  only the Send button and the list under the form. The window rebuilds a pane only when its key changes
-  (`reportPaneKey`).
-- **A send is one report, however often it is asked.** The client mints a `rid` once per draft (`ReportDesk.send`). If
-  the answer is lost, the same send is asked again and the service answers with the report it already made
-  (`repeat`). If the draft changes after a failure, it is a new send (`setDraft`), never answered with the old one's
-  report. The draft lives on the PostBox for the sitting, so a half-written report survives the pause face being
-  rebuilt, closed or reopened.
+  only what moved: the Send button, the fields' being down while a send is out (and their values, when a send that
+  landed emptied the draft), and the list under the form. The window rebuilds a pane only when its key changes
+  (`reportPaneKey`). (AUDIT PRIVATE-REPORT UI-12: this said the Send button and the list alone.)
+- **A face rebuilt mid-typing keeps the caret** (AUDIT PRIVATE-REPORT UI-1). The pause face itself is rebuilt by
+  anything that renders it (the cloud's answer, a quest's clock), and the window with it. Every control of the window
+  carries `data-focus` (`enhancedPost.js` `keyed`), the key `ui/domRepaint.js` gives the focus and the caret back by; and
+  the window's landing on a fresh open (`/bug`: the draft's own kind, else **An exploit** - UI-14) never takes a focus
+  already inside it. Before the audit the landing took it to the first choice, where the next Space changed the
+  report's kind.
+- **Keys.** Escape leaves the window from inside a field, as the notice and arena windows let it (`enhancedMenu.js`
+  `onKey` - UI-2: `/bug` lands the focus in the form, and its Escape did nothing). A held Space or Enter types in a
+  field (`pauseDoor.js`'s repeat guard stands down for a text field - UI-10: the guard, AUDIT LEGACY III U1's, ate
+  every repeat).
+- **A send is one report, however often it is asked.** The client mints a `rid` for the draft's CLEANED words
+  (`ReportDesk.send`, keyed to `reportWordsOf`'s answer). If the answer is lost, the same send is asked again and the
+  service answers with the report it already made (`repeat`) - however the raw text was touched between, a space typed
+  and deleted (AUDIT PRIVATE-REPORT CLI-8). A change of the kind, the title or the words after a failure is a new send,
+  never answered with the old one's report (TEST-6). One send at a time (`busy`). A send that lands empties the form
+  only if it still holds the words that went (CLI-9). The draft lives on the PostBox for the sitting, so a half-written
+  report survives the pause face being rebuilt, closed or reopened.
+- **A send's end is said where the player is** (AUDIT PRIVATE-REPORT UI-4, ASYNC NEVER DROPS). The desk keeps how the
+  last send ended (`lastSend`), and the first form standing in the page when it lands says it, once - a face rebuilt
+  mid-send had the old form say it to a window no longer there. Said, the fields are given back and THEN the focus
+  (UI-3: the title after a send, the field a refusal names, else Send; a focus given to a field still disabled went
+  nowhere, and the press had left it on the page's body).
+- **The desk is one account's** (AUDIT PRIVATE-REPORT CLI-1). The draft, the send's id, the list and a reader's inbox
+  and opened reports belong to the session that asked for them. They go the moment another session stands in its
+  place (the pause face's profile signs out and in) or none does: the box clears its desk, and the desk clears itself
+  at its own next call. An answer that set out under one session and lands under another is nobody's, never taken -
+  the desk's (`_stale`) and the box's (`_take`). Before the audit the next account's form held the last one's draft
+  and listed its titles.
 - **The reporter's list.** The player's own reports are listed under the form, newest first, each with **Sent**,
-  **Read by the developers**, or how it was closed: **Fixed**, **Won't fix** or **Duplicate**. The list holds titles and
-  states only. The service never answers with the words back, or with which reader read a report.
+  **Read by the developers**, or how it was closed: **Fixed**, **Won't fix** or **Duplicate**. Each row holds the
+  report's title, kind and day and its state (AUDIT PRIVATE-REPORT DOC-18: "titles and states only"). The service never
+  answers with the words back, or with which reader read a report. The list is looked at each time the form opens
+  (CLI-5: once a sitting, a report read or fixed since still said Sent).
 
 ## The readers' side
 
@@ -58,28 +88,49 @@ own session.
   `post` part) carries `reports: { unread, open }` (`post.js` `postBoxOf`). Nobody else's box carries the key or
   costs a statement for it. The envelope counts unread reports with the post (`PostBox.waiting`). A rise is said on
   the world tab as a count only, never a report's words, because the world tab is read over shoulders and on streams
-  (`postNoticeText`, `kind: 'reports'`).
+  (`postNoticeText`, `kind: 'reports'`) - and on a sitting's first look when any wait. It says where they are: "Type
+  /mail, or open the mailbox beside the hourglass, and press Private reports." (AUDIT PRIVATE-REPORT CLI-6 DOC-3 UI-9:
+  it said `/bug`, which opens the form.) The desk's counts are the envelope's (CLI-2): a report opened is off the count
+  at once, not at the next look three minutes on, and a new one after it is said.
 - **The inbox.** Open reports are listed with the unopened first, then the newest; closed reports are listed with the
-  last closed first. Each row shows its kind, who sent it and when. Opening a report shows its words and the build it
-  came from, and stamps it read with the reader's id. It can be closed as fixed, won't fix or duplicate, and opened
-  again. Closing stamps when and by whom.
+  last closed first. Each row shows its kind, who sent it and when. The Open tab counts what is open, **Open (3)**
+  (AUDIT PRIVATE-REPORT DOC-14: it was a report's state word). A list is a page of `REPORT_INBOX_MAX` (100), and
+  **Show older reports** adds the next under the rows held (SVC-4: past a hundred, the oldest unopened report was
+  reached only by closing the noise above it one at a time). A look that fails over a list held says so (UI-7), and an
+  older look answering after a newer one is never taken (CLI-4). Opening a report shows its words and the build it
+  came from, and stamps it read with the first reader's id - a second reader's opening stamps nothing. It can be closed
+  as fixed, won't fix or duplicate, and opened again; every close is down while one is out (UI-8), and the focus lands
+  on what stands in the pressed button's place (UI-6). Closing stamps when and by whom, and reads it if nobody had;
+  opening it again clears the close and reads nothing (SVC-6: a report opened again unread told its reporter "Read by
+  the developers"). A reader taken off the list loses the inbox and the reports they had opened at the refusal
+  (CLI-1).
 
 ## The service
 
 - **Table.** `private_reports`, migration 0127 (`server-account/migrations/0127_private_reports.sql`). One report per
   send per account (`UNIQUE (from_id, rid)`). An account that is deleted takes its reports with it (`CASCADE`), as it
-  takes its letters. The table's CHECKs hold the law's bounds, so a row the client could not read is never written.
+  takes its letters. The table's CHECKs repeat the law's bounds; the law, asked before every insert, is what keeps a
+  row the client could not read from being written (AUDIT PRIVATE-REPORT DOC-19). A CHECK that ever refused would be
+  said aloud - a 500 - never read as a full queue (SVC-1: the insert was `INSERT OR IGNORE`, which skips a row a CHECK
+  refuses as quietly as a twin's; it is `ON CONFLICT (from_id, rid) DO NOTHING`).
 - **Routes.** Five POSTs, each needing a session, with every id in the body: `/v1/report/send`, `/v1/report/mine`,
   `/v1/report/inbox`, `/v1/report/read`, `/v1/report/close` (`index.js`, `service.js` `ROUTES`). A guest is refused
   with `report-needs-account` (403). A guest's row is a device, and nobody could follow up a report filed under it once
   storage is cleared. Every refusal word has a sentence (`net/accountClient.js` `REFUSALS`).
 - **Bounds** (`src/net/reportLaw.js`, which both ends read). A title is 3 to 80 characters and the words are 10 to
-  3,000, cleaned on both ends: control characters out, Windows line ends made one. An account may send
-  `REPORT_SEND_MAX` (5) an hour (`report-rate`, 429), and may hold `REPORT_OPEN_MAX` (20) open
-  (`report-full`, 409). The open bound is the insert's own `WHERE`, so two racing sends cannot both pass it, and a
-  closed report makes room. A send asked again under its `rid` is answered before the hour's bound is counted. The
-  send reads its body to `REPORT_BODY_BYTES` (24 KiB), not the service's 4 KiB (`service.js` `MAX_BODY_BYTES`):
-  3,000 characters of any script past ASCII are past 4 KiB as UTF-8.
+  3,000 (`REPORT_SUBJECT_*`, `REPORT_WORDS_*` - SVC-7: never `REPORT_BODY_*`, CHAT SAFETY's byte bound's name in the
+  same Worker). A character is a code point (`charsOf`), as the table's `length()` counts one (AUDIT PRIVATE-REPORT
+  SVC-1: the law counted UTF-16 units, so an emoji counted twice - a title the table took was refused, and two emoji
+  passed the law the table refused). Both ends clean the words by the house's one law, `net/wire.js` `visibleText`
+  (SVC-2: a private control-character strip let zero-width spaces, soft hyphens and a direction override through):
+  line by line, a tab a space first, each line's trailing space and the blank lines at either end gone; a title is one
+  line, its whitespace collapsed. An account may send `REPORT_SEND_MAX` (5) an hour (`report-rate`, 429), and may hold
+  `REPORT_OPEN_MAX` (20) open (`report-full`, 409). A full queue is said before the hour is counted, so a refusal for
+  it costs none of the five and a report closed makes room at once (SVC-3); and the open bound is the insert's own
+  `WHERE` too, so sends racing past that count cannot land past it. A send asked again under its `rid` is answered
+  before either bound. The send reads its body to `REPORT_BODY_BYTES` (24 KiB), not the service's 4 KiB (`service.js`
+  `MAX_BODY_BYTES`): 3,000 characters of any script past ASCII are past 4 KiB as UTF-8. The other four routes read the
+  service's 4 KiB.
 - **Context** is kept in its shape and nothing else (`reportContextOf`): an update number, a build hash, and
   `desktop` or `browser`. Anything else a client sends beside the words is dropped, never stored.
 - **Version.** `ACCOUNT_VERSION` acct153 (acct152 and migration 0126 on its branch, renumbered past SAFE's at the merge). It deploys with migration 0127 through `account-deploy.yml` on the merge to
@@ -101,30 +152,48 @@ is: it lists "Support requests and communications with project staff" and "Error
 among what is collected, and "Detect cheating, exploits, abuse, or unauthorized access" among its uses. This slice
 writes no new version, and asks no account to tick again.
 Reports are kept: the service deletes no account today, and a player's row removed by hand (a deletion request) takes
-its reports with it (`CASCADE`).
+its reports with it (`CASCADE`). The Policy's retention paragraph names the chat-safety reports alone (deleted ninety
+days after the case is resolved); a private report falls under its general rule and is kept while its account is
+(AUDIT PRIVATE-REPORT DOC-15). Whether the Policy says so at its next revision is Mac's.
 
 ## Translations
 
-Every sentence the form, the inbox, the notice, `/help` and the refusals say goes through `t()` (L10N4's ratchet).
-The 67 new keys are drafted in-session for the thirteen whole languages (`tools/l10nInSession.mjs`). The twelve still
-drafting owe them with the rest of their catalog.
+Every sentence the form, the inbox, the notice, `/help` and the refusals say goes through `t()` (L10N4's ratchet) -
+the form's "no session" too (AUDIT PRIVATE-REPORT CLI-7 DOC-11: it fell to the post's untranslated "...to receive
+post"). The 68 new keys are drafted in-session for the thirteen whole languages (`tools/l10nInSession.mjs`). The twelve
+still drafting owe them with the rest of their catalog. AUDIT PRIVATE-REPORT DOC-12 DOC-13: `report.sentFrom` is a
+noun phrase where a preposition would bend the build's words into a case they lack (de, ru, cs, ro), and French's
+"de {from}" is "envoyé par {from}" (no elision before a vowel). DOC-20: a report whose account is gone - which
+CASCADE never leaves - names nobody, rather than a phrase each language must case (`fromLine`).
 
 ## SECURITY.md
 
-`SECURITY.md` at the root is the public policy that GitHub shows on the Security tab. It names both channels: `/bug`
-in the game, and GitHub's private vulnerability reporting for holes in the code or the servers that need no game
-account. It also says what to include, what counts, how to act in good faith under the Terms, and what happens next.
-GitHub's **Report a vulnerability** button exists only once private vulnerability reporting is switched on in the
-repository's settings (Settings, Code security). That switch is Mac's to flip and is not in this tree.
+`SECURITY.md` at the root is the public policy that GitHub shows on the Security tab. It names `/bug` in the game
+(on either skin; the mailbox's door on the enhanced skin), and GitHub's private vulnerability reporting for holes in the
+code or the servers that need no game account - **where the Security tab shows a Report a vulnerability button**, and
+`/bug` where it does not (AUDIT PRIVATE-REPORT DOC-1: the repository's private vulnerability reporting was off when the
+audit read it - the API answered `enabled: false` - and the page sent a researcher with no account to a flow that was
+not there). That switch is Mac's to flip (Settings, Code security) and is not in this tree. The page also says what to
+include, what counts (silver, not Marks - DOC-9), how to act in good faith under the Terms - with a sentence that it
+promises nothing beyond what the Terms say (DOC-2: the wording is Mac's to strengthen) - and what happens next.
 
 ## Tests
 
-- `test/server/private_reports_service.test.js`: the table and the doors, a send (its cleaning, its `rid`, its own body
-  bound), the two bounds, the reporter's list, the readers alone, the reader's count on the box and the heartbeat.
-- `test/net/private_reports_client.test.js`: the desk over the real service (a lost answer asked again, a changed
-  draft), the reader's box and its notice, the form and the inbox in the mailbox window on a fake DOM, and the doors.
-- `tools/mutants/privatereport.json`: 29 mutants, all dead. Two SERVER-POST records were re-aimed at the lines this
-  slice moved (`serverpost.json`: the envelope's count, the classic skin's door), and both are dead.
+- `test/server/private_reports_service.test.js` (12): the table and the doors, a send (its cleaning, its `rid`, its own
+  body bound and the others' 4 KiB), the two bounds by number and by account and hour, a race at the open bound, the
+  reporter's list, the readers alone, the inbox's order and pages, the stamps of a second reader and a close, a report
+  opened again, the reader's count on the box and the heartbeat - and nobody else's box asking the table.
+- `test/net/private_reports_client.test.js` (7): the desk over the real service (a lost answer asked again, the rid the
+  cleaned words', a draft typed mid-send, the coalesced look), the reader's box and its notice, the form and the inbox
+  in the mailbox window on a fake DOM (whose disabled control takes no focus, as a browser's), the inbox's pages, the
+  desk one account's, and the doors.
+- `tools/mutants/privatereport.json`: 83 mutants, all dead (29 before AUDIT PRIVATE-REPORT). The slice
+  re-aimed 13 existing records in 11 lists by content at the lines it moved, all dead: the two SERVER-POST records
+  (`serverpost.json`: the envelope's count, the classic skin's door), the `ACCOUNT_VERSION` lines (`bal9`, `br5`,
+  `crafthold` twice, `fb1004d_knight_house`, `gatekeys`, `hackedgold`, `nameas`, `tech1`) and `HOST_COMMANDS`
+  (`egaudit5_c`, `party-travel`) - DOC-7: this said two. The audit re-aimed `auditlegacy3.json`'s held-key record at
+  UI-10's line, dead.
+- `01-Overview/audits/Audit-Private-Report.md`: AUDIT PRIVATE-REPORT, the findings and their verdicts.
 
 ## Open
 

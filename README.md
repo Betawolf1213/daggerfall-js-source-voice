@@ -45,8 +45,8 @@ or normal releases behind a paywall.
 ## Reporting exploits and security issues
 
 Privately, please: type `/bug` in the game, or see [`SECURITY.md`](SECURITY.md)
-for GitHub's private vulnerability reporting and what to include. Please don't post
-exploits in public until they are fixed.
+for the other ways in and what to include. Please don't post exploits in public until
+they are fixed.
 
 ## Scripts
 

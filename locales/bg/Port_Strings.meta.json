@@ -19349,11 +19349,6 @@
   "tr": "b5200ac593ed",
   "by": "claude-in-session"
  },
- "report.deleted": {
-  "en": "772839b9036a",
-  "tr": "fd366ea3781a",
-  "by": "claude-in-session"
- },
  "report.door": {
   "en": "e86da3567b04",
   "tr": "e149d7be8c4d",
@@ -19464,9 +19459,14 @@
   "tr": "79353e3b6496",
   "by": "claude-in-session"
  },
+ "report.more": {
+  "en": "ac53ab8d3b14",
+  "tr": "532020f9c16c",
+  "by": "claude-in-session"
+ },
  "report.notice": {
-  "en": "404a60f4b69a",
-  "tr": "6b8976b3109c",
+  "en": "c809bf123d9d",
+  "tr": "09132a72cf01",
   "by": "claude-in-session"
  },
  "report.openFailed": {
@@ -19557,6 +19557,11 @@
  "report.tabClosed": {
   "en": "88d86b7721d5",
   "tr": "cb6eea0fbe4a",
+  "by": "claude-in-session"
+ },
+ "report.tabOpen": {
+  "en": "cf9b77061f7b",
+  "tr": "dde14ff552f5",
   "by": "claude-in-session"
  },
  "report.tabOpenCount": {

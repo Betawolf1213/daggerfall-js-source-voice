@@ -12,7 +12,7 @@
 // THE FORM IS NEVER REBUILT UNDER THE HANDS TYPING IN IT. The window draws on every change of the box or the desk (a
 // heartbeat's look, my list answering); a pane answers a draw with `update`, which touches only what moved - the Send
 // button, the list under the form - and the window rebuilds a pane only when its key changes.
-import { REPORT_KINDS, REPORT_SUBJECT_MAX, REPORT_BODY_MAX } from '../../net/reportLaw.js';
+import { REPORT_KINDS, REPORT_SUBJECT_MAX, REPORT_WORDS_MAX, charsOf } from '../../net/reportLaw.js';
 import { reportStateText, reportKindText } from '../../net/privateReport.js';
 import { t } from '../../systems/textManager.js';
 
@@ -38,8 +38,16 @@ export function reportBuildText(/** @type {any} */ ctx) {
 /** A state's chip's classes - the sheet colours a fixed report (enhancedStyle.js `.pr-state.pr-fixed`). */
 const stateClass = (/** @type {string} */ state) => ['pm-state', 'pr-state', `pr-${state}`].join(' ');
 
-/** Who sent a report, as an inbox says it - its account's name, or that the account is gone. */
-const fromText = (/** @type {string|null} */ from) => from ?? t('report.deleted', 'a deleted account');
+/** A report's line in the inbox: its kind, who sent it and when (and its state, where `state` is given). AUDIT
+ *  PRIVATE-REPORT DOC-20: a report whose account is gone - which CASCADE never leaves - says no "from" at all, rather
+ *  than a phrase each language must bend into the sentence's case. */
+const fromLine = (/** @type {any} */ k, /** @type {any} */ p, /** @type {string|null} */ state = null) => {
+  const kind = reportKindText(p.kind), day = k.day(p.sentAt);
+  if (!p.from) return [kind, day, state].filter(Boolean).join(' - ');
+  return state
+    ? t('report.fromState', '{kind} - from {from} - {day} - {state}', { kind, from: p.from, day, state })
+    : t('report.from', '{kind} - from {from} - {day}', { kind, from: p.from, day });
+};
 
 /** The key a pane stands under - the window rebuilds a pane only when it changes. */
 export const reportPaneKey = (/** @type {any} */ keep, /** @type {any} */ box) =>
@@ -100,15 +108,20 @@ function composePane(k, key) {
 
   const bodyField = el('label', 'pr-field');
   const body = /** @type {any} */ (keyed(el('textarea', null), 'body'));
-  body.rows = 7; body.maxLength = REPORT_BODY_MAX; body.value = desk.draft.body;
+  body.rows = 7; body.maxLength = REPORT_WORDS_MAX; body.value = desk.draft.body;
   body.placeholder = t('report.bodyHint', 'What happens, where, and the steps that make it happen again.');
-  const count = el('span', 'pr-count');   // read where it stands, never announced - a live region would speak every keystroke
-  const counted = () => { count.textContent = `${body.value.length} / ${REPORT_BODY_MAX}`; };
+  // the characters used of the bound, counted as the law counts them (code points - reportLaw.js charsOf); read where it
+  // stands, never announced (a live region would speak every keystroke), and AUDIT PRIVATE-REPORT UI-11: outside the
+  // field's label, its description - inside, it was part of the field's name, renamed at every key
+  const count = el('span', 'pr-count');
+  count.id = 'pr-count';
+  body.setAttribute('aria-describedby', 'pr-count');
+  const counted = () => { count.textContent = `${charsOf(body.value)} / ${REPORT_WORDS_MAX}`; };
   body.addEventListener('input', () => { desk.setDraft({ body: body.value }); counted(); });
   counted();
-  bodyField.append(el('span', 'pr-label', t('report.bodyLabel', 'What happens, and how to make it happen')), body, count);
+  bodyField.append(el('span', 'pr-label', t('report.bodyLabel', 'What happens, and how to make it happen')), body);
 
-  root.append(kinds, subjectField, bodyField,
+  root.append(kinds, subjectField, bodyField, count,
     el('p', 'pr-sends', t('report.sends', 'Sent with it: your username, and this game\'s build - {build}.', { build: reportBuildText(desk.context()) })));
 
   const sendWord = () => (desk.sending ? t('prof.page.stores.sending', 'Sending...') : t('report.send', 'Send privately'));
@@ -135,6 +148,25 @@ function composePane(k, key) {
     }
   };
 
+  /** AUDIT PRIVATE-REPORT UI-4 (ASYNC NEVER DROPS): A SEND'S END IS SAID BY THE PANE STANDING WHEN IT LANDS - the desk keeps
+   *  it (`lastSend`) and the first pane in the page to update says it, once. A face rebuilt mid-send, or the window closed
+   *  and opened again, had the old pane say it to a window no longer in the page: the fields emptied in silence, or a
+   *  refusal was never said at all. */
+  const sayLast = () => {
+    const last = desk.lastSend;
+    if (!last || root.isConnected === false) return null;
+    desk.lastSend = null;
+    if (last.ok) k.tell(last.repeat ? t('report.sentBefore', 'That report had already reached the developers. Thank you.') : t('report.sent', 'Sent. Thank you - only the developers can read it.'), true);
+    else k.tell(k.refusal(last.error));
+    return last;
+  };
+  /** AUDIT PRIVATE-REPORT UI-3: the field a send's end points at - the title after a send, the field a refusal names,
+   *  else Send. A focus given to a field still disabled goes nowhere, so it is given after the fields are back. */
+  const focusFor = (/** @type {any} */ said) => {
+    const at = said.ok ? subject : said.error === 'report-kind' ? radios[0] : said.error === 'report-subject' ? subject : said.error === 'report-body' ? body : send;
+    at?.focus?.();
+  };
+
   const update = () => {
     const busy = desk.sending;
     send.disabled = busy;
@@ -145,26 +177,25 @@ function composePane(k, key) {
     if (body.value !== desk.draft.body) { body.value = desk.draft.body; counted(); }
     for (const r of radios) r.checked = desk.draft.kind === r.value;
     if (desk.version !== mineSeen) { mineSeen = desk.version; drawMine(); }
+    // the fields given back above, THEN the focus - by the pane that says the end, wherever the send was pressed (UI-4: a
+    // face rebuilt mid-send said it in the new form and left the focus on the page's body)
+    const said = sayLast();
+    if (said) focusFor(said);
+    return said;
   };
 
   const sendIt = async () => {
     if (desk.sending) return;
     k.tell('');
     const going = desk.send();
-    update();
-    const r = await going;
-    if (r.ok) {
-      k.tell(r.repeat ? t('report.sentBefore', 'That report had already reached the developers. Thank you.') : t('report.sent', 'Sent. Thank you - only the developers can read it.'), true);
-      subject.focus?.();
-    } else {
-      k.tell(k.refusal(r.error));
-      const at = r.error === 'report-kind' ? radios[0] : r.error === 'report-subject' ? subject : r.error === 'report-body' ? body : null;
-      at?.focus?.();
-    }
+    // the law's refusal is the desk's at once, said (and focused) by this first update; a send that set out, once it
+    // answers - by this pane, or by whichever stands in the page then
+    if (update()) return;
+    await going;
     update();
   };
 
-  if (desk.mine === null) desk.loadMine().catch(() => {});
+  desk.loadMine().catch(() => {});   // AUDIT PRIVATE-REPORT CLI-5: looked at each time the form opens - a report read or closed since says so
   update();
   return { key, root, update };
 }
@@ -182,22 +213,27 @@ function inboxPane(k, key) {
     n.setAttribute('aria-pressed', w === which ? 'true' : 'false');
     return n;
   };
-  const openTab = tab('open', reportStateText('open'));
+  const openTab = tab('open', t('report.tabOpen', 'Open'));   // AUDIT PRIVATE-REPORT DOC-14: the list's word, not a report's state
   tabs.append(openTab, tab('closed', t('report.tabClosed', 'Closed')));
   const list = el('div', 'pm-list');
   const foot = el('div', 'pm-foot');
   foot.append(keyed(button('pm-back', t('account.card.act.back', 'Back'), () => k.go(null, { focus: 'inbox' })), 'back'),
     keyed(button('pm-retry', t('report.again', 'Look again'), () => { desk.loadInbox(which).catch(() => {}); }), 'again'));
-  root.append(tabs, list, foot);
+  // AUDIT PRIVATE-REPORT SVC-4: the next page, under the rows held - an old unopened report past the first hundred is reached
+  const more = /** @type {any} */ (keyed(button('pr-more', t('report.more', 'Show older reports'), () => { desk.loadInbox(which, { more: true }).catch(() => {}); }), 'more'));
+  root.append(tabs, list, more, foot);
 
   let sig = null;
   const update = () => {
     const n = desk.counts.open;
-    openTab.textContent = n ? t('report.tabOpenCount', 'Open ({n})', { n }) : reportStateText('open');
+    openTab.textContent = n ? t('report.tabOpenCount', 'Open ({n})', { n }) : t('report.tabOpen', 'Open');
     const rows = desk.inbox[which];
-    const now = JSON.stringify([rows, desk.inboxError]);
+    more.hidden = !(rows && desk.inboxMore[which]);
+    const now = JSON.stringify([rows, desk.inboxError, desk.inboxMore[which]]);
     if (now === sig) return;   // a heartbeat's look that moved nothing here redraws nothing
     sig = now;
+    // AUDIT PRIVATE-REPORT UI-7: a failed look said, rows held or not - "Look again" had failed in silence over a list
+    if (desk.inboxError && rows) k.tell(k.refusal(desk.inboxError));
     const had = k.held();
     list.textContent = '';
     try { drawRows(rows); } finally { k.focus(had); }
@@ -209,7 +245,7 @@ function inboxPane(k, key) {
       const row = /** @type {any} */ (keyed(el('button', `pm-row${p.read ? '' : ' unread'}`), p.id));
       row.type = 'button';
       const text = el('span', 'pm-text');
-      text.append(el('span', 'pm-subject', p.subject), el('span', 'pm-from', t('report.from', '{kind} - from {from} - {day}', { kind: reportKindText(p.kind), from: fromText(p.from), day: k.day(p.sentAt) })));
+      text.append(el('span', 'pm-subject', p.subject), el('span', 'pm-from', fromLine(k, p)));
       row.append(el('span', 'pm-dot'), text);
       if (!p.read) row.append(el('span', 'pm-sr', ` - ${t('report.unread', 'unread')}`));
       if (which === 'closed') row.append(el('span', stateClass(p.state), reportStateText(p.state)));
@@ -230,7 +266,7 @@ function readingPane(k, key) {
   let failed = null;
   let sig = null;
   const update = () => {
-    const now = JSON.stringify([desk.opened.get(id) ?? null, failed]);
+    const now = JSON.stringify([desk.opened.get(id) ?? null, failed, desk.closing.has(id)]);
     if (now === sig) return;
     sig = now;
     const had = k.held();
@@ -249,23 +285,41 @@ function readingPane(k, key) {
       return;
     }
     root.append(el('h4', 'pm-subject', r.subject),
-      el('p', 'pm-from', t('report.fromState', '{kind} - from {from} - {day} - {state}', { kind: reportKindText(r.kind), from: fromText(r.from), day: k.day(r.sentAt), state: reportStateText(r.state) })),
+      el('p', 'pm-from', fromLine(k, r, reportStateText(r.state))),
       el('p', 'pm-from pr-context', t('report.sentFrom', 'Sent from {build}', { build: reportBuildText(r.context) })),
       el('p', 'pm-body', r.body));
     const acts = el('div', 'pm-foot pr-acts');
     acts.append(back);
-    const close = (/** @type {string} */ state, /** @type {string} */ text) => keyed(button(['pr-close', `pr-${state}`].join(' '), text, async () => {
-      k.tell('');
-      const res = await desk.close(id, state);
-      if (res.ok) k.tell(state === 'open' ? t('report.reopened', 'Opened again.') : t('report.closedAs', 'Closed: {state}.', { state: reportStateText(state) }), true);
-      else k.tell(k.refusal(res.error));
-    }), `close-${state}`);
+    // AUDIT PRIVATE-REPORT UI-8: down while its close is out - a second press sent a second close
+    const busy = desk.closing.has(id);
+    /** AUDIT PRIVATE-REPORT UI-15: said only while this report is the one standing - a reader gone Back was told of it */
+    const here = () => k.keep.view === 'reading' && k.keep.reportId === id && root.isConnected !== false;
+    const close = (/** @type {string} */ state, /** @type {string} */ text) => {
+      const n = /** @type {any} */ (keyed(button(['pr-close', `pr-${state}`].join(' '), text, async () => {
+        k.tell('');
+        const res = await desk.close(id, state);
+        if (!here()) return;
+        if (res.ok) k.tell(state === 'open' ? t('report.reopened', 'Opened again.') : t('report.closedAs', 'Closed: {state}.', { state: reportStateText(state) }), true);
+        else if (res.error !== 'busy') k.tell(k.refusal(res.error));
+        // AUDIT PRIVATE-REPORT UI-6: the pressed button is gone with its state - the pane drawn now, and the focus to the
+        // first of the new ones (it had fallen to the window's Close, where a reflexive Enter shut the window)
+        update();
+        k.focus(res.ok ? (state === 'open' ? 'close-fixed' : 'close-open') : `close-${state}`);
+      }), `close-${state}`));
+      n.disabled = busy;
+      return n;
+    };
     if (r.state === 'open') acts.append(close('fixed', reportStateText('fixed')), close('wontfix', reportStateText('wontfix')), close('duplicate', reportStateText('duplicate')));
     else acts.append(close('open', t('report.reopen', 'Open again')));
     root.append(acts);
   };
   const load = () => {
-    desk.open(id).then((r) => { if (!r.ok) { failed = r.error; k.tell(k.refusal(r.error)); update(); } }).catch(() => { failed = 'server'; update(); });
+    desk.open(id).then((r) => {
+      if (r.ok) return;
+      failed = r.error;
+      if (k.keep.view === 'reading' && k.keep.reportId === id && root.isConnected !== false) k.tell(k.refusal(r.error));   // AUDIT PRIVATE-REPORT UI-15
+      update();
+    }).catch(() => { failed = 'server'; update(); });
   };
   load();
   update();

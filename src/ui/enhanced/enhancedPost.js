@@ -166,11 +166,17 @@ export function postWindow(doc, { box, onClose, every = POST_TICK_MS, keep = {} 
     const a = /** @type {any} */ (doc).activeElement;
     return a && view.contains?.(a) ? (a.getAttribute?.('data-key') ?? null) : null;
   };
-  const keyed = (/** @type {any} */ n, /** @type {string} */ key) => { n.setAttribute('data-key', key); return n; };
+  // PRIVATE-REPORT (AUDIT PRIVATE-REPORT UI-1): and `data-focus`, the key the pause face's repaint finds a control by
+  // (ui/domRepaint.js focusOf) - a face rebuilt gives the focus and the caret back to the same field
+  const keyed = (/** @type {any} */ n, /** @type {string} */ key) => { n.setAttribute('data-key', key); n.setAttribute('data-focus', `pm-${key}`); return n; };
   const focusKey = (/** @type {string|null} */ key) => {
     if (!key) return;
     const n = /** @type {HTMLElement|null} */ (view.querySelector?.(`[data-key="${key}"]`));
-    if (n) n.focus?.({ preventScroll: true }); else close.focus?.();
+    if (n) { n.focus?.({ preventScroll: true }); return; }
+    // AUDIT PRIVATE-REPORT UI-6: in a report pane, a control gone (a closed report's row, a state's button) gives the focus
+    // to the pane's first control - the window's Close was where a reflexive Enter shut the whole window
+    const first = keep.view ? /** @type {HTMLElement|null} */ (view.querySelector?.('[data-key]:not([disabled])')) : null;
+    (first ?? close).focus?.();
   };
 
   const empty = (/** @type {string} */ text) => view.append(el('p', 'pm-empty', text));
@@ -192,12 +198,15 @@ export function postWindow(doc, { box, onClose, every = POST_TICK_MS, keep = {} 
     if (!b?.desk || b.state === 'unknown' || b.state === 'signed-out') return;
     const doors = el('div', 'pm-foot pm-doors');
     doors.append(keyed(button('pm-report', t('report.door', 'Report a bug or exploit'), () => go('report', { focus: 'kind-exploit' })), 'report'));
-    if (b.reports) doors.append(keyed(button('pm-inbox', b.reports.unread ? t('report.inboxDoorNew', 'Private reports ({n} new)', { n: b.reports.unread }) : t('report.inboxDoor', 'Private reports'), () => go('inbox', { which: 'open' })), 'inbox'));
+    if (b.reports) doors.append(keyed(button('pm-inbox', b.reports.unread ? t('report.inboxDoorNew', 'Private reports ({n} new)', { n: b.reports.unread }) : t('report.inboxDoor', 'Private reports'), () => go('inbox', { which: 'open', focus: 'tab-open' })), 'inbox'));   // AUDIT PRIVATE-REPORT UI-6: into the pane, never to Close
     view.append(doors);
   };
   /** The window's kit, for a report pane (ui/enhanced/enhancedReport.js reportPane). */
   const kit = (/** @type {any} */ b) => ({
-    keep, box: b, el, button, keyed, tell, go, refusal: postRefusalText, day: postDayText,
+    keep, box: b, el, button, keyed, tell, go, day: postDayText,
+    // AUDIT PRIVATE-REPORT CLI-7: a report's own sentence for no session - the post's ("...to receive post") was the wrong
+    // one, and untranslated
+    refusal: (/** @type {string|undefined} */ w) => (w === 'signed-out' ? t('report.signIn', 'Sign in to an account to send a private report.') : postRefusalText(w)),
     held: focusKeyOf, focus: (/** @type {string|null} */ key) => { if (key) focusKey(key); },
   });
 
@@ -330,7 +339,16 @@ export function postWindow(doc, { box, onClose, every = POST_TICK_MS, keep = {} 
   let tick = null;
   const step = () => { if (win.isConnected === false && tick) { clearInterval(tick); tick = null; return; } draw(); };
   tick = setInterval(step, every);
-  // PRIVATE-REPORT: opened on the form (`/bug`), the focus on its first choice
-  if (!openId) globalThis.requestAnimationFrame?.(() => (keep.view === 'report' ? focusKey('kind-exploit') : close.focus?.()));
+  // PRIVATE-REPORT: opened on the form (`/bug`), the focus on its choice - the draft's kind, else the first (AUDIT
+  // PRIVATE-REPORT UI-14). AUDIT PRIVATE-REPORT UI-1: A FOCUS ALREADY IN THE WINDOW STAYS - a face rebuilt mid-typing (the
+  // cloud's answer, a quest's clock) gives the focus and the caret back (domRepaint.js), and this frame's landing had then
+  // taken them to the first choice, where the next Space changed the report's kind
+  if (!openId) {
+    globalThis.requestAnimationFrame?.(() => {
+      const a = /** @type {any} */ (doc).activeElement;
+      if (a && win.contains?.(a)) return;
+      if (keep.view === 'report') focusKey(`kind-${box()?.desk?.draft?.kind ?? 'exploit'}`); else close.focus?.();
+    });
+  }
   return { root: win, stop: () => { if (tick) clearInterval(tick); tick = null; }, draw, close, openOne };
 }

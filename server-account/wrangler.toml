@@ -167,7 +167,7 @@ BUILDER_HANDLES = ""
 APPROVER_HANDLES = "Lattymoy"
 # PRIVATE-REPORT (2026-10-17, Mac: "Can we add a private disclosure method for exploits/bugs with the client";
 # bible/06-Systems/Private-Reports.md): WHO READS THE PRIVATE REPORTS - the exploits, bugs and security holes players
-# send from the mailbox (/report). Nobody else sees one: not a moderator, not a developer this list does not name, because
+# send from the mailbox (/bug). Nobody else sees one: not a moderator, not a developer this list does not name, because
 # an exploit read by one more person is one more person who can use it before it is fixed. Comma-separated handles,
 # case-insensitive, read at every call - a handle taken off loses the inbox on its next request. Empty: the reports wait,
 # unread, until a handle is written here.

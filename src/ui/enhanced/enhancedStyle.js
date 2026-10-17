@@ -2738,6 +2738,9 @@ ${SUPPORT_MARKS_CSS}
 .px-postwin .pr-field input, .px-postwin .pr-field textarea { min-height: 44px; padding: 10px 12px; background: #0b0e12;
   border: 1px solid var(--iron); color: var(--bone); font: inherit; font-size: 15px; }
 .px-postwin .pr-field textarea { min-height: 140px; resize: vertical; line-height: 1.45; }
+.px-postwin .pr-field textarea::placeholder, .px-postwin .pr-field input::placeholder { color: var(--dim); }   /* AUDIT PRIVATE-REPORT UI-13: the browser's grey read 4.2:1 */
+.px-postwin .pr-more { align-self: flex-start; margin-top: 8px; }
+.px-postwin .pr-more[hidden] { display: none; }
 .px-postwin .pr-field input:focus-visible, .px-postwin .pr-field textarea:focus-visible { outline: none; border-color: var(--brass); }
 .px-postwin .pr-field input:disabled, .px-postwin .pr-field textarea:disabled { opacity: 0.6; }
 .px-postwin .pr-count { align-self: flex-end; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
