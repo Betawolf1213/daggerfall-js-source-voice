@@ -101,7 +101,7 @@
   {
     "name": "AUDIT-C4-days-of-rest",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "  if (stateOf(r) === 'resting' && Number.isFinite(now) && until - now > REVENANT_REST_MIN) {",
+    "old": "  if (stateOf(r) === 'resting' && Number.isFinite(now) && until - now > most) {",
     "new": "  if (false) {",
     "tests": [
       "test/systems/revenant/revenant_audit.test.js"

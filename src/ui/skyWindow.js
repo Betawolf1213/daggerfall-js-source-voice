@@ -204,16 +204,21 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
     goBtn.disabled = !n;
     undoBtn.disabled = !n;
     side.replaceChildren(...sky.side(el, pending));
+    placeSide();
     dirty = true;
   }
+  /** AUDIT RVN-STARS S22: the summary under the bar wherever the bar ends - a long name wraps it past the sheet's 74px. */
+  function placeSide() { side.style.top = `${Math.max(74, Math.round(barFoot() + 8))}px`; }
 
   // ── the tip ──
   function showTip(id, sx, sy) {
     const s = starOf(id);
     if (!s) { tip.classList.remove('on'); return; }
     const tone = sky.tone(s);
-    const nm = el('div', `nm${tone === 'main' ? '' : ' life'}`, sky.name(id));
-    if (tone !== 'main' && tone !== 'life' && !grim) nm.style.color = toneOf(s).lit;   // a sky's own tone
+    const nm = el('div', `nm${tone === 'life' ? ' life' : ''}`, sky.name(id));
+    if (tone !== 'main' && tone !== 'life') {   // a sky's own tone, in either dress (AUDIT RVN-STARS S19: Grimoire's `.nm.life` inked it the Road's green)
+      if (typeof nm.style.setProperty === 'function') nm.style.setProperty('color', toneOf(s).lit, 'important'); else nm.style.color = toneOf(s).lit;
+    }
     const parts = [nm, el('div', 'kd', sky.kindWords(s))];
     const ul = el('ul');
     for (const l of sky.statLines(s)) ul.append(el('li', l.neg ? 'neg' : null, l.text));
@@ -399,6 +404,7 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
     canvas.width = Math.max(1, Math.round(vw() * dpr));
     canvas.height = Math.max(1, Math.round(vh() * dpr));
     hold();
+    placeSide();
     dirty = true;
   }
   resize();
@@ -604,7 +610,7 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
   fit();
   hold();
   if (sky.points() === 0 && W.noPoints) say(W.noPoints, false, true);
-  goBtn.focus?.({ preventScroll: true });
+  (goBtn.disabled ? homeBtn : goBtn).focus?.({ preventScroll: true });   // AUDIT RVN-STARS S21: a disabled Accept takes no focus - the dialog's first press does
 
   /** Down, and nothing said - the door's own dispose (it is the one closing). */
   function teardown() {

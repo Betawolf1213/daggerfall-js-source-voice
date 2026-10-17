@@ -82,7 +82,7 @@ import { personalityFor, isPersonality, personalityLabel, voiceLine, beastBody, 
 import { ADAPT_HOW, DESERT, deserterSplit, LOYALTY, movedLoyalty, ROUT, FESTER, festersOn, WRATH_MAX, idStream, TOOK_MAX, LAIR_RING_R, RUMOR_CHANCE, RUMOR_PX, RUMOR_WEAK, RUMOR_NAMED, RUMOR_HINTS, weaknessKind, lairAfter, sameLair, feudFields, newFeudFields, feudScars, withScars, weaponFeudClass, drawSignature, sanitizeLoyalty, hashStr, SIG_RANK, lessonOf, withLesson, adaptEdge, adaptBlowClass, ADAPT, isWeakBlow, metalOf, willMatters, WEAK, WEAK_NAMES, FLINCH_LINES, FLINCH_HEALTH, WEAKNESS_ELEMENTS, signatureStamp } from './revenantFeud.js';
 import { sanitizeGear, gearItems } from './revenantGear.js';   // RVN-GEAR: a sworn one's kit - its record's, read back; inventory as its pack is
 import { sanitizeErrand } from './revenantErrands.js';   // RVN-ERRAND: one abroad, read back
-import { rvnHeldStars, rvnLevelOf, rvnStarPoints, rvnLoyaltyMove } from './revenantStars.js';   // RVN-STARS: its sky and its level, read back; its loyalty's losses as its oath bears them
+import { rvnHeldStars, rvnLevelOf, rvnStarPoints, rvnLoyaltyMove, rvnXpOf } from './revenantStars.js';   // RVN-STARS: its sky and its level, read back; its loyalty's losses as its oath bears them
 import { t } from '../textManager.js';   // AUDIT RVN D7: the new cards' kickers in the player's language
 import { tagHit, HIT_TAGS } from '../../ui/hitNumbers.js';   // RVN3: the "Weakness" word on my blow's number
 import { SOUND } from '../soundClips.js';   // RVN3: the hiss of a weakness found
@@ -190,7 +190,7 @@ export const REVENANT_EPITHETS = Object.freeze({
  *  and `sentDay` (the day it was last sent away). RVN-GEAR: `gear`, its kit (systems/revenant/revenantGear.js - a slot's
  *  key -> the item it wears). RVN-ERRAND: `errand` while its state is 'errand' - abroad (systems/revenant/revenantErrands.js). RVN-STARS:
  *  `xp` its level's, earned at my side, and `stars` its sky (systems/revenant/revenantStars.js).
- *  @typedef {{ state: 'with'|'away'|'resting'|'errand', health: number|null, maxHealth: number|null, until: number|null, items: any[], loyalty: number, rested: boolean, sentDay: number|null, gear: Record<string, any>, errand: any, worn: boolean, paid: number|null, xp: number, stars: string[] }} RevenantCompanion */
+ *  @typedef {{ state: 'with'|'away'|'resting'|'errand', health: number|null, maxHealth: number|null, until: number|null, items: any[], loyalty: number, rested: boolean, sentDay: number|null, gear: Record<string, any>, errand: any, worn: boolean, paid: number[], xp: number, stars: string[], lossCarry: number }} RevenantCompanion */
 /** @typedef {{ id: string, rev: number, mobileType: number, gender: 'male'|'female', given: string, epithet: string,
  *   name: string, rank: number, kills: number, escapes: number, returns: number, trait: string|null, elite: boolean,
  *   born: number, dueAt: number, out: boolean, outAt: number, defeated: boolean, defeatedAt: number|null,
@@ -309,12 +309,16 @@ function sanitizeCompanion(c, personality = null, rank = 1) {
     gear: sanitizeGear(c?.gear),   // RVN-GEAR: its kit, the known slots alone
     errand,   // RVN-ERRAND: where it is, and when it is back
     worn: state === 'resting' && c?.worn === true,   // AUDIT RVN F6: resting from a road (a hard errand, a recall) - no call bonus after it
-    paid: Number.isInteger(c?.paid) && c.paid >= 0 ? c.paid >>> 0 : null,   // AUDIT RVN F7: the seed of the last errand its loyalty was paid for
-    xp: xpOf(c?.xp),   // RVN-STARS: its level, earned at my side
-    stars: rvnHeldStars(c?.stars, rvnStarPoints(rvnLevelOf(xpOf(c?.xp)), rank)),   // RVN-STARS: its sky through the law, as its level and its rank allow
+    paid: paidOf(c?.paid),   // AUDIT RVN F7, AUDIT RVN-STARS S4: the seeds of the last PAID_KEEP errands its loyalty and XP were paid for
+    xp: rvnXpOf(c?.xp),   // RVN-STARS: its level, earned at my side (AUDIT RVN-STARS S12: whole, to the top level's)
+    stars: rvnHeldStars(c?.stars, rvnStarPoints(rvnLevelOf(rvnXpOf(c?.xp)), rank)),   // RVN-STARS: its sky through the law, as its level and its rank allow
+    lossCarry: Number.isFinite(c?.lossCarry) ? Math.max(-0.999999, Math.min(0, c.lossCarry)) : 0,   // AUDIT RVN-STARS S6: a loss's fraction its oath carries
   };
 }
-const xpOf = (v) => (Number.isFinite(v) && v > 0 ? Math.floor(v) : 0);
+/** AUDIT RVN-STARS S4: how many errands' seeds a record keeps as paid - one seed was paid again after one more errand and a
+ *  reload (the mirror's newer `paid`, the save's errand). */
+export const PAID_KEEP = 16;
+const paidOf = (v) => (Array.isArray(v) ? v : Number.isInteger(v) ? [v] : []).filter((x) => Number.isInteger(x) && x >= 0).map((x) => x >>> 0).slice(-PAID_KEEP);
 /** A record read back (a save, the app's storage) - the shape checked, anything else dropped. */
 function sanitize(r) {
   if (r && isStr(r.id) && r.id && r.gone === true) return { id: r.id, rev: isNum(r.rev) ? r.rev : 0, gone: true };   // a tombstone: the id and its revision alone

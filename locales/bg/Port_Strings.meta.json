@@ -3859,9 +3859,9 @@
   "tr": "55b7c78d9cfb",
   "by": "claude-in-session"
  },
- "captain.tip.backMany": {
-  "en": "272ef7420808",
-  "tr": "fe2659f47915",
+ "captain.tip.backAfter": {
+  "en": "2fb8520769ab",
+  "tr": "8be981666038",
   "by": "claude-in-session"
  },
  "captain.tip.helm": {
@@ -21199,9 +21199,9 @@
   "tr": "519c82d51d6e",
   "by": "claude-in-session"
  },
- "rvn.art.sworn.mending": {
-  "en": "b223434a5c17",
-  "tr": "40ac197cede4",
+ "rvn.art.sworn.mendingSecs": {
+  "en": "5093e40b319c",
+  "tr": "2014137d1246",
   "by": "claude-in-session"
  },
  "rvn.art.sworn.mends": {
@@ -21774,6 +21774,11 @@
   "tr": "a4bf68789c27",
   "by": "claude-in-session"
  },
+ "rvn.roster.rail": {
+  "en": "759f9cdcb417",
+  "tr": "d57f7baede59",
+  "by": "claude-in-session"
+ },
  "rvn.roster.recall": {
   "en": "3f7e1fd9149c",
   "tr": "7d4818ca9654",
@@ -21807,6 +21812,11 @@
  "rvn.roster.starsLeft": {
   "en": "9773ae5420f4",
   "tr": "6a8776a0a20d",
+  "by": "claude-in-session"
+ },
+ "rvn.roster.starsNone": {
+  "en": "42de2a6407ee",
+  "tr": "e2aaad0f3c0c",
   "by": "claude-in-session"
  },
  "rvn.roster.starsSet": {
@@ -22124,9 +22134,9 @@
   "tr": "bee680f8a1d6",
   "by": "claude-in-session"
  },
- "rvn.stars.no.points": {
-  "en": "5949580adb3d",
-  "tr": "57e6a5763ff0",
+ "rvn.stars.no.pointsAfter": {
+  "en": "1bb784e222b9",
+  "tr": "05ca0a55c052",
   "by": "claude-in-session"
  },
  "rvn.stars.no.unknown": {
@@ -22139,9 +22149,9 @@
   "tr": "d8a1cab42d41",
   "by": "claude-in-session"
  },
- "rvn.stars.noPoints": {
-  "en": "2e559b16f25c",
-  "tr": "6c47d0eaaf63",
+ "rvn.stars.noPointsAfter": {
+  "en": "53b0c9f6d330",
+  "tr": "2d755d1a2acb",
   "by": "claude-in-session"
  },
  "rvn.stars.none": {
@@ -22199,9 +22209,14 @@
   "tr": "6efd53efed7b",
   "by": "claude-in-session"
  },
- "rvn.stars.stat.haste": {
-  "en": "03a0293a0b21",
-  "tr": "b4a1f03b4b0a",
+ "rvn.stars.stat.bold": {
+  "en": "09ab33456d00",
+  "tr": "5b9f144b4d15",
+  "by": "claude-in-session"
+ },
+ "rvn.stars.stat.hasteShorter": {
+  "en": "32e46f4f3243",
+  "tr": "7af646cc6b6f",
   "by": "claude-in-session"
  },
  "rvn.stars.stat.haul": {
@@ -22224,9 +22239,9 @@
   "tr": "17c8904642b3",
   "by": "claude-in-session"
  },
- "rvn.stars.stat.rest": {
-  "en": "18c89139d582",
-  "tr": "3b3be2fa9c38",
+ "rvn.stars.stat.restShorter": {
+  "en": "09410f8a274a",
+  "tr": "3ade403689d9",
   "by": "claude-in-session"
  },
  "rvn.stars.stat.roadLong": {
@@ -22254,9 +22269,9 @@
   "tr": "55b7c78d9cfb",
   "by": "claude-in-session"
  },
- "rvn.stars.tip.backMany": {
-  "en": "272ef7420808",
-  "tr": "fe2659f47915",
+ "rvn.stars.tip.backAfter": {
+  "en": "2fb8520769ab",
+  "tr": "8be981666038",
   "by": "claude-in-session"
  },
  "rvn.stars.tip.oath": {

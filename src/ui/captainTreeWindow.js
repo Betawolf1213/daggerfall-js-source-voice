@@ -20,7 +20,7 @@
 // revenant's sky came (ui/revenantStarsWindow.js), one home for both; this file is the captain's sky as that window
 // draws it (its words, its tones, its wheel).
 
-import { t } from '../systems/textManager.js';
+import { t, formatNumber } from '../systems/textManager.js';
 import {
   CAPTAIN_STARS, CAPTAIN_EDGES, CAPTAIN_STATS, starOf, heldStars, wayTo, takesBack, starStats, captainOf,
 } from '../systems/naval/captainTree.js';
@@ -144,7 +144,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
       const c = captain(), left = c.points - (pending.length - 1);
       const level = el('span', 'fmt-purse');
       level.replaceChildren(el('span', null, t('captain.sky.level', 'Level')), el('b', null, String(c.level)),
-        el('span', 'of', c.next == null ? t('captain.sky.top', 'the highest') : t('captain.sky.xp', '{xp} of {next} XP', { xp: c.xp.toLocaleString('en-US'), next: c.next.toLocaleString('en-US') })));
+        el('span', 'of', c.next == null ? t('captain.sky.top', 'the highest') : t('captain.sky.xp', '{xp} of {next} XP', { xp: formatNumber(c.xp), next: formatNumber(c.next) })));   // AUDIT RVN-STARS S25: the player's own grouping
       level.title = t('captain.sky.levelTip', 'Captain XP comes from sinking and capturing ships, beating off boarders, claiming prizes, finishing contracts, distance sailed, treasure charts, charting isles and selling goods at the exchange.');
       const pts = el('span', 'fmt-purse life');
       pts.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('captain.sky.of', 'of {n}', { n: c.points })));
@@ -177,7 +177,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
       unaccepted: t('captain.sky.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'),
       set: t('captain.sky.set', 'Stars saved. They apply to all of your ships.'),
       startTip: t('captain.tip.helm', 'Everyone starts with the Helm. Take a star next to it.'),
-      backMany: (n) => t('captain.tip.backMany', 'Right-click to remove it and the {n} stars after it.', { n }),
+      backMany: (n) => t('captain.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"
       back: t('captain.tip.back', 'Right-click to remove.'),
       take: (n) => t('captain.tip.take', 'Click to take: {n} {n, plural, one {point} other {points}}.', { n }),
       noPoints: t('captain.sky.noPoints', 'You get one point per captain level. Earn XP at sea: sink or capture a ship, finish a contract, or just sail.'),

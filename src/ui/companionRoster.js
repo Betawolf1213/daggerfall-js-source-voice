@@ -46,7 +46,9 @@ import { itemLongName } from '../systems/item/itemInfo.js';
 import { itemValueOf } from '../systems/item/itemTemplates.js';
 import { rarityOf, RARITIES } from '../systems/loot/lootRarity.js';
 
-export const COMPANION_PAGE_SECTIONS = Object.freeze([['companions', 'Companions']]);
+/** The rail's row, its word read when it is read (AUDIT RVN-STARS S23: a level reached names "the Companions page" in the
+ *  player's language - the rail said it in English). */
+export const COMPANION_PAGE_SECTIONS = Object.freeze([(() => { const row = ['companions']; Object.defineProperty(row, 1, { enumerable: true, get: () => t('rvn.roster.rail', 'Companions') }); return Object.freeze(row); })()]);
 export const COMPANION_PAGE_STYLE_ID = 'companion-roster-css';
 const FACE_BOX = 48;
 const SLOT_BOX = 40;
@@ -245,9 +247,11 @@ function gearSheet(el, r, rerender, kindName) {
   }
   return box;
 }
-/** RVN-STARS (Revenants.md section 44): its level and the stars it has to set - a line on its row. */
+/** RVN-STARS (Revenants.md section 44): its level and the stars it has to set - a line on its row (AUDIT RVN-STARS S28: none
+ *  yet said so, never "0 of 0"). */
 export function starsLine(r) {
   const s = rvnStarsOf(r), left = Math.max(0, s.points - s.set);
+  if (!s.points) return t('rvn.roster.starsNone', 'Level {level} · no stars to set yet', { level: s.level });
   return left ? t('rvn.roster.starsLeft', 'Level {level} · {n, plural, one {a star} other {# stars}} to set', { level: s.level, n: left })
     : t('rvn.roster.starsSet', 'Level {level} · {set} of {points} stars set', { level: s.level, set: s.set, points: s.points });
 }
@@ -317,7 +321,7 @@ function row(el, r, { now, rerender, meter, here, kindName, stars }) {
   text.append(...loyaltyRow(el, r, meter));   // RVN11 (22.4): its loyalty, wherever it is
   const art = artWords(r, { sworn: true });   // RVN-ARTS: its art, for me
   if (art) text.append(el('span', 'cmp-art', art));
-  text.append(el('span', `cmp-stars${rvnStarsOf(r).points > rvnStarsOf(r).set ? ' is-left' : ''}`, starsLine(r)));   // RVN-STARS
+  text.append(el('span', `cmp-stars${state !== 'errand' && rvnStarsOf(r).points > rvnStarsOf(r).set ? ' is-left' : ''}`, starsLine(r)));   // RVN-STARS - AUDIT RVN-STARS S28: gold only where its Stars can set them
   if (_notice?.id === r.id) text.append(el('span', 'cmp-why', _notice.text));
   const acts = el('div', 'cmp-acts');
   if (_confirm === r.id) {

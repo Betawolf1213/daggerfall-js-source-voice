@@ -13,6 +13,7 @@
 // page put back on Companions when it closes. One door's shape, built once (`overPage`), for both.
 
 import { mountEnhancedChunk } from './enhanced/enhancedChunk.js';
+import { registerOverlay } from './enhanced/enhancedOverlays.js';   // AUDIT RVN-STARS S8: the QuickDial's key asks the sky first
 import { firmamentBook } from '../net/firmament/firmamentBook.js';
 
 /**
@@ -56,7 +57,7 @@ function overPage({ alive, below, back, id, label, load, mount }) {
       },
     });
   }
-  return { open, drop, up: () => !!host };
+  return { open, drop, up: () => !!host, view: () => view };
 }
 
 /**
@@ -80,14 +81,32 @@ export function firmamentOver({ alive, below, back }) {
 
 /**
  * RVN-STARS: a door's sworn revenant's stars - the Companions page's Stars (`hook(id)`), the sky over the page as the
- * Firmament is; `back()` puts the page back (on Companions). Offline and online alike: its sky is the save's.
+ * Firmament is; `back()` puts the page back (on Companions), the focus on its Stars again (AUDIT RVN-STARS S21). Offline
+ * and online alike: its sky is the save's. AUDIT RVN-STARS S8: on the overlays' stack while it stands, the QuickDial's key
+ * asking it first, as the Firmament's own window and the captain's door do (`dialCloser`) - the F5 sheet's own entry under
+ * it had shut the sheet and thrown away an unaccepted sky unasked.
  * @param {{ alive: () => boolean, below: () => void, back: () => void }} o
  */
 export function revenantStarsOver({ alive, below, back }) {
+  let last = null;
   const o = overPage({
-    alive, below, back, id: 'enhanced-revenant-stars-view', label: 'revenant-stars',
+    alive, below, id: 'enhanced-revenant-stars-view', label: 'revenant-stars',
+    back: () => { back(); refocus(last); },
     load: () => import('./revenantStarsWindow.js'),
-    mount: ({ mountRevenantStarsWindow }, h, id, onExit) => mountRevenantStarsWindow(h, { id, onExit }),
+    mount: ({ mountRevenantStarsWindow }, h, id, onExit) => {
+      let unregister = () => {};
+      const view = mountRevenantStarsWindow(h, { id, onExit: () => { unregister(); onExit(); } });
+      const closer = () => { if (view.tryClose() === false) unregister = registerOverlay(closer); };
+      unregister = registerOverlay(closer);
+      return { ...view, destroy: () => { unregister(); view.destroy(); } };
+    },
   });
-  return { hook: (id) => o.open(id), drop: o.drop, up: o.up };
+  return { hook: (id) => { last = id; o.open(id); }, drop: o.drop, up: o.up, /** Test seam: the window standing. */ view: o.view };
+}
+/** The page's Stars button for `id` focused again (the page is mounted now, or a lazy chunk's moment later). */
+function refocus(id) {
+  if (!id || typeof document === 'undefined') return;
+  const go = () => /** @type {any} */ (globalThis.document?.querySelector?.(`[data-focus="cmp-${id}-stars"]`))?.focus?.({ preventScroll: true });   // read late: a page gone by then focuses nothing
+  go();
+  setTimeout(go, 60);
 }

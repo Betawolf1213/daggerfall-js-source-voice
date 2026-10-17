@@ -38,8 +38,8 @@
   {
     "name": "RVN-STARS-errand-danger-unread",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "RVN_XP.ERRAND * n0(place?.days) * n0(place?.danger)",
-    "new": "RVN_XP.ERRAND * n0(place?.days)",
+    "old": "RVN_XP.ERRAND * n0(place?.days) * (1 - (Number(road) || 0)) * n0(place?.danger)",
+    "new": "RVN_XP.ERRAND * n0(place?.days) * (1 - (Number(road) || 0))",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -47,8 +47,8 @@
   {
     "name": "RVN-STARS-curve",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "Math.round(50 * (L - 1) ** 1.7)",
-    "new": "Math.round(50 * (L - 1) ** 1.6)",
+    "old": "Math.round(75 * (L - 1) ** 1.7)",
+    "new": "Math.round(75 * (L - 1) ** 1.6)",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -155,8 +155,8 @@
   {
     "name": "RVN-STARS-unsworn-sky",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "(r?.sworn && Array.isArray(r.companion?.stars) ? rvnStarStats(r.companion.stars) : NONE)",
-    "new": "(Array.isArray(r?.companion?.stars) ? rvnStarStats(r.companion.stars) : NONE)",
+    "old": "(r?.sworn && Array.isArray(r.companion?.stars) ? rvnStarStats(",
+    "new": "(Array.isArray(r?.companion?.stars) ? rvnStarStats(",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -164,8 +164,8 @@
   {
     "name": "RVN-STARS-awaken-unsworn",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "!!r?.sworn && Array.isArray(r.companion?.stars) && r.companion.stars.includes('g_wake')",
-    "new": "Array.isArray(r?.companion?.stars) && r.companion.stars.includes('g_wake')",
+    "old": "export const rvnAwakened = (r) => rvnStatsOf(r).awaken > 0;",
+    "new": "export const rvnAwakened = (r) => Array.isArray(r?.companion?.stars) && r.companion.stars.includes('g_wake');",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -173,8 +173,8 @@
   {
     "name": "RVN-STARS-loyal-unread",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "(d < 0 ? d * (1 - rvnStatsOf(r).loyal) : d)",
-    "new": "d",
+    "old": "const exact = d * (1 - rvnStatsOf(r).loyal) + ",
+    "new": "const exact = d + ",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -182,8 +182,8 @@
   {
     "name": "RVN-STARS-gain-cut",
     "file": "src/systems/revenant/revenantStars.js",
-    "old": "(d < 0 ? d * (1 - rvnStatsOf(r).loyal) : d)",
-    "new": "d * (1 - rvnStatsOf(r).loyal)",
+    "old": "  if (!(d < 0)) return d;",
+    "new": "  if (false) return d;",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -200,7 +200,7 @@
   {
     "name": "RVN-STARS-sky-unsanitized",
     "file": "src/systems/revenant/revenant.js",
-    "old": "stars: rvnHeldStars(c?.stars, rvnStarPoints(rvnLevelOf(xpOf(c?.xp)), rank)),",
+    "old": "stars: rvnHeldStars(c?.stars, rvnStarPoints(rvnLevelOf(rvnXpOf(c?.xp)), rank)),",
     "new": "stars: Array.isArray(c?.stars) ? c.stars : ['oath'],",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -218,7 +218,7 @@
   {
     "name": "RVN-STARS-xp-unkept",
     "file": "src/systems/revenant/revenant.js",
-    "old": "xp: xpOf(c?.xp),",
+    "old": "xp: rvnXpOf(c?.xp),",
     "new": "xp: 0,",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -254,7 +254,7 @@
   {
     "name": "RVN-STARS-won-xp-unpaid",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "c.loyalty = movedLoyalty(c.loyalty, LOYALTY.WON); c.xp = (c.xp | 0) + xp; });",
+    "old": "c.loyalty = movedLoyalty(c.loyalty, LOYALTY.WON); c.xp = rvnXpOf(rvnXpOf(c.xp) + xp); });",
     "new": "c.loyalty = movedLoyalty(c.loyalty, LOYALTY.WON); });",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -272,8 +272,8 @@
   {
     "name": "RVN-STARS-errand-xp-twice",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "if (c.paid !== e.seed) c.xp = (c.xp | 0) + rvnXpErrand(",
-    "new": "c.xp = (c.xp | 0) + rvnXpErrand(",
+    "old": "if (!paid && was < RVN_XP.ERRAND_LEVEL_MOST) c.xp",
+    "new": "if (was < RVN_XP.ERRAND_LEVEL_MOST) c.xp",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -281,8 +281,8 @@
   {
     "name": "RVN-STARS-errand-xp-unpaid",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "c.xp = (c.xp | 0) + rvnXpErrand(errandPlace(e.place), haul.won);",
-    "new": "c.xp = (c.xp | 0);",
+    "old": "c.xp = rvnXpOf(rvnXpOf(c.xp) + rvnXpErrand(errandPlace(e.place), haul.won, e.sky?.road ?? 0));",
+    "new": "c.xp = rvnXpOf(c.xp);",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -290,8 +290,8 @@
   {
     "name": "RVN-STARS-level-unsaid",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "if (!s || s.level <= was) return;",
-    "new": "return;",
+    "old": "if (!s || s.level <= was) return null;",
+    "new": "return null;",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -299,8 +299,8 @@
   {
     "name": "RVN-STARS-said-every-win",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "if (!s || s.level <= was) return;",
-    "new": "if (!s) return;",
+    "old": "if (!s || s.level <= was) return null;",
+    "new": "if (!s) return null;",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -317,8 +317,8 @@
   {
     "name": "RVN-STARS-set-lawless",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "set = rvnHeldStars(ids, rvnStarsOf(r).points); c.stars = set;",
-    "new": "set = ['oath', ...ids]; c.stars = set;",
+    "old": "    set = rvnHeldStars(ids, rvnStarsOf(r).points);",
+    "new": "    set = ['oath', ...ids];",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -326,7 +326,7 @@
   {
     "name": "RVN-STARS-body-unread",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "  if (body) applySwornStrength(body, revenantRecord(_player, id), { fresh: false });\n",
+    "old": "    applySwornStrength(body, revenantRecord(_player, id), { fresh: false });\n",
     "new": "",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -344,7 +344,7 @@
   {
     "name": "RVN-STARS-fall-loss-whole",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "rvnLoyaltyMove(r, LOYALTY.KNOCKED)",
+    "old": "rvnLoyaltyMove(r, LOYALTY.KNOCKED, c)",
     "new": "LOYALTY.KNOCKED",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -371,7 +371,7 @@
   {
     "name": "RVN-STARS-sent-twice-whole",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "movedLoyalty(c.loyalty, rvnLoyaltyMove(r, LOYALTY.SENT_TWICE))",
+    "old": "movedLoyalty(c.loyalty, rvnLoyaltyMove(r, LOYALTY.SENT_TWICE, c))",
     "new": "movedLoyalty(c.loyalty, LOYALTY.SENT_TWICE)",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -380,7 +380,7 @@
   {
     "name": "RVN-STARS-kin-whole",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "rvnLoyaltyMove(r, LOYALTY.KIN_EXECUTED)",
+    "old": "rvnLoyaltyMove(r, LOYALTY.KIN_EXECUTED, c)",
     "new": "LOYALTY.KIN_EXECUTED",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -389,7 +389,7 @@
   {
     "name": "RVN-STARS-odds-unread",
     "file": "src/systems/revenant/revenantErrands.js",
-    "old": "+ gearPower(r) + rvnStatsOf(r).odds;",
+    "old": "+ gearPower(r) + skyOf(r, e).odds;",
     "new": "+ gearPower(r);",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -398,7 +398,7 @@
   {
     "name": "RVN-STARS-road-unread",
     "file": "src/systems/revenant/revenantErrands.js",
-    "old": "* MINUTES_PER_DAY * (1 - rvnStatsOf(r).road))",
+    "old": "* MINUTES_PER_DAY * (1 - rvnErrandSky(r).road))",
     "new": "* MINUTES_PER_DAY)",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -407,8 +407,8 @@
   {
     "name": "RVN-STARS-errand-road-unread",
     "file": "src/systems/revenant/revenantErrands.js",
-    "old": "until: Math.floor(now) + errandMinutes(r, p),",
-    "new": "until: Math.floor(now) + p.days * MINUTES_PER_DAY,",
+    "old": "  const sky = rvnErrandSky(r);   // AUDIT RVN-STARS S2, S3",
+    "new": "  const sky = { odds: 0, haul: 0, road: 0, bold: false };   // AUDIT RVN-STARS S2, S3",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -443,8 +443,8 @@
   {
     "name": "RVN-STARS-art-unread",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "more = 1 + st.art,",
-    "new": "more = 1,",
+    "old": "const more = (1 + st.art) * (drawArt",
+    "new": "const more = (1) * (drawArt",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -470,8 +470,8 @@
   {
     "name": "RVN-STARS-words-unread",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "m: Math.round(A.mendCooldown / 6) / 10",
-    "new": "m: 2",
+    "old": "s: Math.round(A.mendCooldown) });",
+    "new": "s: 120 });",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -479,8 +479,8 @@
   {
     "name": "RVN-STARS-win-points-unchecked",
     "file": "src/ui/revenantStarsWindow.js",
-    "old": "  if (way.length > left) return t('rvn.stars.no.points',",
-    "new": "  if (false) return t('rvn.stars.no.points',",
+    "old": "  if (way.length > left) return t('rvn.stars.no.pointsAfter',",
+    "new": "  if (false) return t('rvn.stars.no.pointsAfter',",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]
@@ -542,7 +542,7 @@
   {
     "name": "RVN-STARS-page-line-unsaid",
     "file": "src/ui/companionRoster.js",
-    "old": "  text.append(el('span', `cmp-stars${rvnStarsOf(r).points > rvnStarsOf(r).set ? ' is-left' : ''}`, starsLine(r)));   // RVN-STARS\n",
+    "old": "  text.append(el('span', `cmp-stars${state !== 'errand' && rvnStarsOf(r).points > rvnStarsOf(r).set ? ' is-left' : ''}`, starsLine(r)));   // RVN-STARS - AUDIT RVN-STARS S28: gold only where its Stars can set them\n",
     "new": "",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
@@ -571,6 +571,321 @@
     "file": "src/ui/enhanced/enhancedMenu.js",
     "old": "  else if (at === 'companions') { pauseTab = 'holdings'; holdSec = 'companions'; }   // RVN-STARS: back from a sworn one's stars\n",
     "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-carried-whole-unscaled",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "    if (k !== 1 && c.maxHealth > 0) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-body-health-unscaled",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "    if (k !== 1) rescaleBody(body, k);\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-poise-untold",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "  } else if (!Number.isFinite(entity._swornWhole)) entity.healthMult",
+    "new": "  } else if (false) entity.healthMult",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-clamp-place-days",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "const most = Math.round(roadDays(p, e.sky) * MINUTES_PER_DAY);",
+    "new": "const most = Math.round(p.days * MINUTES_PER_DAY);",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-errand-sky-unkept",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "const skyOf = (r, e) => e?.sky ?? rvnErrandSky(r);",
+    "new": "const skyOf = (r) => rvnErrandSky(r);",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-errand-sky-unsaved",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "  const sky = rvnErrandSkyOf(e.sky);",
+    "new": "  const sky = null;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-one-seed-kept",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "export const PAID_KEEP = 16;",
+    "new": "export const PAID_KEEP = 1;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-bold-unread",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "const share = won ? 1 : sky.bold ? 0 : ERRAND.HARD_SHARE;",
+    "new": "const share = won ? 1 : ERRAND.HARD_SHARE;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-carry-dropped",
+    "file": "src/systems/revenant/revenantStars.js",
+    "old": "  if (c) c.lossCarry = Math.round((exact - whole) * 1e6) / 1e6;",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-taught-whole",
+    "file": "src/systems/revenant/revenantArts.js",
+    "old": "(drawArt(r?.id, r?.mobileType) ? 1 : ART_LAW.SWORN_TAUGHT)",
+    "new": "1",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-side-unread",
+    "file": "src/systems/revenant/revenantArts.js",
+    "old": "  if (now < _sideMendReady) return null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-errand-level-bound-gone",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "if (!paid && was < RVN_XP.ERRAND_LEVEL_MOST) c.xp",
+    "new": "if (!paid) c.xp",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-xp-unbounded",
+    "file": "src/systems/revenant/revenantStars.js",
+    "old": "export const rvnXpOf = (v) => Math.min(RVN_XP_MOST, Math.floor(n0(Number(v))));",
+    "new": "export const rvnXpOf = (v) => Math.floor(n0(Number(v)));",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-fine-days-place",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "let fine = Math.floor(U.FINE_A_DAY * days);",
+    "new": "let fine = Math.floor(U.FINE_A_DAY * p.days);",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-pieces-days-place",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "v.items === 'many' ? days :",
+    "new": "v.items === 'many' ? p.days :",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-call-bonus-whole",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "Math.round(LOYALTY.CALLED * (1 - rvnStatsOf(r).rest))",
+    "new": "LOYALTY.CALLED",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-errand-xp-place-days",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "rvnXpErrand(errandPlace(e.place), haul.won, e.sky?.road ?? 0)",
+    "new": "rvnXpErrand(errandPlace(e.place), haul.won)",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-level-words-first",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "  if (lifted) _levelLines.push(lifted);",
+    "new": "  if (lifted) popupMessage(lifted);",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-points-uncapped",
+    "file": "src/systems/revenant/revenantStars.js",
+    "old": "rvnStarStats(rvnHeldStars(r.companion.stars, rvnStarsOf(r).points))",
+    "new": "rvnStarStats(r.companion.stars)",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-points-float",
+    "file": "src/systems/revenant/revenantStars.js",
+    "old": "  points = Math.floor(points);   // AUDIT RVN-STARS S17: a point is whole\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-body-unbounded",
+    "file": "src/systems/revenant/revenantStars.js",
+    "old": "health: 0.5, blows: 0.4, art: 0.4,",
+    "new": "health: 0.6, blows: 0.4, art: 0.4,",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-stack-off",
+    "file": "src/ui/firmamentOver.js",
+    "old": "      unregister = registerOverlay(closer);\n      return { ...view",
+    "new": "      return { ...view",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-asked-never",
+    "file": "src/ui/firmamentOver.js",
+    "old": "const closer = () => { if (view.tryClose() === false) unregister = registerOverlay(closer); };",
+    "new": "const closer = () => { view.destroy(); };",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-grave-ink-life",
+    "file": "src/ui/skyWindow.js",
+    "old": "nm${tone === 'life' ? ' life' : ''}",
+    "new": "nm${tone === 'main' ? '' : ' life'}",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-unsworn-purse",
+    "file": "src/ui/revenantStarsWindow.js",
+    "old": "const purse = () => (book.record()?.sworn ? reading().points : 0);",
+    "new": "const purse = () => reading().points;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-focus-disabled",
+    "file": "src/ui/skyWindow.js",
+    "old": "(goBtn.disabled ? homeBtn : goBtn).focus?.(",
+    "new": "goBtn.focus?.(",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-side-unplaced",
+    "file": "src/ui/skyWindow.js",
+    "old": "function placeSide() { side.style.top = `${Math.max(74, Math.round(barFoot() + 8))}px`; }",
+    "new": "function placeSide() {}",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-rail-english",
+    "file": "src/ui/companionRoster.js",
+    "old": "get: () => t('rvn.roster.rail', 'Companions')",
+    "new": "get: () => 'Companions'",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-bold-unsaid",
+    "file": "src/ui/revenantStarsWindow.js",
+    "old": "    case 'bold': return t('rvn.stars.stat.bold', 'A hard road brings back nothing');\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-rest-clamp-bare",
+    "file": "src/systems/revenant/revenantCompanions.js",
+    "old": "  const most = rvnRestMinutes(r, REVENANT_REST_MIN);   // AUDIT RVN-STARS S27",
+    "new": "  const most = REVENANT_REST_MIN;   // AUDIT RVN-STARS S27",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-none-unsaid",
+    "file": "src/ui/companionRoster.js",
+    "old": "  if (!s.points) return t('rvn.roster.starsNone',",
+    "new": "  if (false) return t('rvn.roster.starsNone',",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-gold-abroad",
+    "file": "src/ui/companionRoster.js",
+    "old": "`cmp-stars${state !== 'errand' && rvnStarsOf",
+    "new": "`cmp-stars${rvnStarsOf",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-part-day-dropped",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "days = whole + (road - whole > 1e-9 &&",
+    "new": "days = whole + 0 * (road - whole > 1e-9 &&",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-part-day-rounded",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "`errand-part:${e.seed >>> 0}`)() < road - whole ? 1 : 0);",
+    "new": "`errand-part:${e.seed >>> 0}`)() < 0.5 ? 1 : 0);",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ]
+  },
+  {
+    "name": "RVN-STARS-part-day-on-the-haul-dice",
+    "file": "src/systems/revenant/revenantErrands.js",
+    "old": "idStream(`${r?.id}`, `errand-part:${e.seed >>> 0}`)() < road",
+    "new": "rolls() < road",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ]

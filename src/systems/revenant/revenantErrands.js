@@ -33,13 +33,16 @@
 //    begun after the save, and a save made while it was abroad sends it abroad again (a record that has since left the
 //    player comes back as the save had it, as one with a pack does), to return as it would have.
 //  - RVN-STARS (Revenants.md section 44): its sky's Road - `odds` more strength abroad (errandPower), `haul` a share more
-//    of the gold and the goods (never the pieces), `road` a share off the days (errandMinutes - the place's own days still
-//    the clamp's bound, errandUntil).
+//    of the gold and the goods (never the pieces), `road` a share off the days (errandMinutes), `bold` a hard road bringing
+//    back nothing (Fortune's Road). AUDIT RVN-STARS S2, S3: taken onto the errand as it sets out (`e.sky` -
+//    revenantStars.js rvnErrandSky), so the clamp holds it to its own road (errandUntil - the Vigil's longer road was cut
+//    back to the place's days at the first wake) and a sky set at home after a save made abroad moves neither its odds nor
+//    its haul; S14: a piece and a fine good a day of its own road, not the place's.
 
 import { PROVINCES, CITIES } from '../../world/tamriel/tamrielGeography.js';
 import { idStream, isDevoted } from './revenantFeud.js';
 import { gearPower } from './revenantGear.js';
-import { rvnStatsOf, rvnStatScale } from './revenantStars.js';   // RVN-STARS: its Road's stars
+import { rvnErrandSky, rvnErrandSkyOf } from './revenantStars.js';   // RVN-STARS: its Road's stars, taken onto an errand
 import { tieredGear } from '../eliteFoes.js';
 import { lootRarityOn } from '../loot/lootRarity.js';
 import { materialOf } from '../../net/professionLaw.js';
@@ -105,15 +108,20 @@ export const ERRAND_PLACES = Object.freeze([
 ]);
 export const errandPlace = (key) => ERRAND_PLACES.find((p) => p.key === key) ?? null;
 
-/** Its strength abroad: its rank, its kit's weight and its stars' (RVN-STARS `odds`). */
-export const errandPower = (r) => Math.max(1, r?.rank | 0) + gearPower(r) + rvnStatsOf(r).odds;
+/** RVN-STARS: an errand's sky - the one it set out with (AUDIT RVN-STARS S3), else its record's now (the page's offer, or an
+ *  errand older than the stars). */
+const skyOf = (r, e) => e?.sky ?? rvnErrandSky(r);
+/** The days of a road to `p` under `sky` - the place's, less its `road` share (AUDIT RVN-STARS S14). */
+const roadDays = (p, sky) => p.days * (1 - (sky?.road ?? 0));
+/** Its strength abroad: its rank, its kit's weight and its stars' (RVN-STARS `odds` - errand `e`'s own, when it has one). */
+export const errandPower = (r, e = null) => Math.max(1, r?.rank | 0) + gearPower(r) + skyOf(r, e).odds;
 /** RVN-STARS: how many minutes its errand to `p` takes - the place's days, less its Road's `road` share. */
-export const errandMinutes = (r, p) => Math.round((p?.days ?? 0) * MINUTES_PER_DAY * (1 - rvnStatsOf(r).road));
-/** Its chance to come back with the whole haul from `p` (a place). */
-export function errandOdds(r, p) {
+export const errandMinutes = (r, p) => Math.round((p?.days ?? 0) * MINUTES_PER_DAY * (1 - rvnErrandSky(r).road));
+/** Its chance to come back with the whole haul from `p` (a place) - on errand `e`, the sky it set out with. */
+export function errandOdds(r, p, e = null) {
   if (!p) return 0;
   const O = ERRAND.ODDS;
-  const odds = O.BASE + O.PER * (errandPower(r) - p.danger) + (isDevoted(r?.companion?.loyalty) ? O.DEVOTED : 0);
+  const odds = O.BASE + O.PER * (errandPower(r, e) - p.danger) + (isDevoted(r?.companion?.loyalty) ? O.DEVOTED : 0);
   return Math.round(Math.max(O.MIN, Math.min(O.MAX, odds)) * 1000) / 1000;
 }
 /** The odds' kind - 'good', 'fair' or 'grim' (the page's chip). */
@@ -132,20 +140,25 @@ export function newErrand(r, key, venture, now, seed) {
   const s = Number.isInteger(seed) && seed >= 0 ? seed >>> 0 : 0;
   const cities = CITIES.filter((c) => c.province === key);
   const city = cities.length ? cities[Math.min(cities.length - 1, Math.floor(idStream(`${r?.id}`, `errand-city:${s}`)() * cities.length))].name : null;
-  return { place: key, venture, city, at: Math.floor(now), until: Math.floor(now) + errandMinutes(r, p), seed: s };   // RVN-STARS: its road
+  const sky = rvnErrandSky(r);   // AUDIT RVN-STARS S2, S3: its sky as it sets out - its road, its odds, its haul
+  return { place: key, venture, city, at: Math.floor(now), until: Math.floor(now) + Math.round(roadDays(p, sky) * MINUTES_PER_DAY), seed: s, sky: { ...sky } };
 }
-/** An errand read back (a save, the mirror): its place and venture known, its minutes whole and in order, else none. */
+/** An errand read back (a save, the mirror): its place and venture known, its minutes whole and in order, its sky within
+ *  the stars' bounds (none: an errand older than the stars), else none. */
 export function sanitizeErrand(e) {
   if (!e || typeof e !== 'object' || !errandPlace(e.place) || !isVenture(e.venture)) return null;
   if (!Number.isInteger(e.at) || !Number.isInteger(e.until) || e.until < e.at) return null;
-  return { place: e.place, venture: e.venture, city: typeof e.city === 'string' && e.city ? e.city.slice(0, 40) : null, at: e.at, until: e.until, seed: Number.isInteger(e.seed) && e.seed >= 0 ? e.seed >>> 0 : 0 };
+  const sky = rvnErrandSkyOf(e.sky);
+  return { place: e.place, venture: e.venture, city: typeof e.city === 'string' && e.city ? e.city.slice(0, 40) : null, at: e.at, until: e.until, seed: Number.isInteger(e.seed) && e.seed >= 0 ? e.seed >>> 0 : 0, ...(sky ? { sky: { ...sky } } : {}) };
 }
-/** When it is back - never more than its place's days from `now` (an older clock under the record reads its days as
- *  more, as a rest's would - revenantCompanions.js restUntil, whose wake writes the clamp back: AUDIT RVN F5). */
+/** When it is back - never more than its own road's days from `now` (an older clock under the record reads its days as
+ *  more, as a rest's would - revenantCompanions.js restUntil, whose wake writes the clamp back: AUDIT RVN F5; AUDIT
+ *  RVN-STARS S2: its own road, the sky it set out with - the place's days cut the Vigil's longer road back at once). */
 export function errandUntil(e, now) {
   const p = errandPlace(e?.place);
   if (!p || !Number.isFinite(e?.until)) return now;
-  return Number.isFinite(now) && e.until - now > p.days * MINUTES_PER_DAY ? now + p.days * MINUTES_PER_DAY : e.until;
+  const most = Math.round(roadDays(p, e.sky) * MINUTES_PER_DAY);
+  return Number.isFinite(now) && e.until - now > most ? now + most : e.until;
 }
 /** AUDIT RVN F1: the minutes one wake's step pushes every errand's return back - `own` the own clock's movement since the
  *  last wake, `raised` the raises' (worldTick.js raisedMinutes; a count that went back - a new session's - is none). Online
@@ -188,16 +201,20 @@ export function errandHaul(r, e, { level = 1, rarity = lootRarityOn() } = {}) {
   if (!p || !v) return { won: false, gold: 0, units: [], items: [] };
   const rolls = idStream(`${r?.id}`, `errand:${e.seed >>> 0}`);
   const rank = Math.max(1, Math.min(5, r?.rank | 0)), lv = Math.max(1, level | 0);
-  const won = rolls() < errandOdds(r, p);
-  const share = won ? 1 : ERRAND.HARD_SHARE;
-  const more = rvnStatScale(rvnStatsOf(r), 'haul');   // RVN-STARS: its Road's haul - the gold and the goods, never the pieces
+  const sky = skyOf(r, e), road = roadDays(p, sky);   // AUDIT RVN-STARS S3: the sky it set out with
+  // AUDIT RVN-STARS S14: a piece and a fine good a day of its own road - a part day's by its share, drawn on a stream of its
+  // own (no dice moved; a road of whole days, every errand without stars, draws none): rounded, Morrowind's 2.55 days kept 3
+  const whole = Math.floor(road + 1e-9), days = whole + (road - whole > 1e-9 && idStream(`${r?.id}`, `errand-part:${e.seed >>> 0}`)() < road - whole ? 1 : 0);
+  const won = rolls() < errandOdds(r, p, e);
+  const share = won ? 1 : sky.bold ? 0 : ERRAND.HARD_SHARE;   // AUDIT RVN-STARS S5: Fortune's Road - a hard road brings back nothing
+  const more = 1 + Math.max(0, sky.haul);   // RVN-STARS: its Road's haul - the gold and the goods, never the pieces
   const scale = (1 + ERRAND.DANGER_GOLD * (p.danger - 1)) * (1 + ERRAND.RANK_HAUL * (rank - 1));
   const [lo, hi] = ERRAND.GOLD;
   const gold = Math.floor(lv * p.days * (lo + rolls() * (hi - lo)) * scale * v.gold * share * more);
   const U = ERRAND.UNITS;
   const goods = (U.BASE + U.PER_DANGER * p.danger) * p.days * v.units * share;
   const cheap = p.goods.filter((k) => goodsTier(k) < U.FINE_TIER);
-  let fine = Math.floor(U.FINE_A_DAY * p.days);   // AUDIT RVN F4: the finest at most so many - past them, the cheaper goods
+  let fine = Math.floor(U.FINE_A_DAY * days);   // AUDIT RVN F4: the finest at most so many - past them, the cheaper goods (AUDIT RVN-STARS S14: a day of its own road)
   /** @type {Map<string, number>} */
   const counts = new Map();
   const draw = (n) => {
@@ -208,7 +225,7 @@ export function errandHaul(r, e, { level = 1, rarity = lootRarityOn() } = {}) {
     }
   };
   draw(Math.floor(goods));
-  const want = v.items === 'many' ? p.days : rolls() < Number(v.items) ? 1 : 0;
+  const want = v.items === 'many' ? days : rolls() < Number(v.items) ? 1 : 0;   // AUDIT RVN-STARS S14: a piece a day of its own road
   const pieces = Math.round(want * share);   // hard-won: half, a lone piece kept (a half rounds up)
   const items = [];
   for (let i = 0; i < pieces; i++) {

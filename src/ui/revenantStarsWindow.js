@@ -11,7 +11,7 @@
 // and its three ties to the aspects. Nothing here decides what may be set - the law is revenantStars.js, and the oath's
 // keeper (revenantCompanions.js setSwornStars) asks it again, and refuses while it is abroad.
 
-import { t } from '../systems/textManager.js';
+import { t, formatNumber } from '../systems/textManager.js';
 import { RVN_STARS, RVN_STAR_EDGES, RVN_STAR_STATS, rvnStarOf, rvnHeldStars, rvnWayTo, rvnTakesBack, rvnStarStats } from '../systems/revenant/revenantStars.js';
 import { swornStarsBook } from '../systems/revenant/revenantCompanions.js';
 import { artOf, drawArt, taughtArt, ART_NAMES } from '../systems/revenant/revenantArts.js';
@@ -19,8 +19,9 @@ import { ERRAND } from '../systems/revenant/revenantErrands.js';
 import { mountSkyWindow } from './skyWindow.js';
 import { GRIM_TONES } from './grimoireDress.js';
 
-/** The sky's own edge: its keystones and its aspects' names. */
-export const RVN_SKY_EDGE = 760;
+/** The sky's own edge: its keystones, its aspects' names, and the keystones' names beside them (AUDIT RVN-STARS S28: at 760
+ *  "Grave Pact" ran off a phone's edge at the fitted zoom). */
+export const RVN_SKY_EDGE = 820;
 
 // ─── THE WORDS (pure) ───────────────────────────────────────────────
 
@@ -69,22 +70,23 @@ export function rvnStarStatWords(key, v) {
     case 'health': return t('rvn.stars.stat.health', 'Health {n}', { n: `${sign}${pct(a)}` });
     case 'blows': return t('rvn.stars.stat.blows', 'Damage {n}', { n: `${sign}${pct(a)}` });
     case 'art': return t('rvn.stars.stat.art', 'Art strength {n}', { n: `${sign}${pct(a)}` });
-    case 'haste': return t('rvn.stars.stat.haste', 'Its art recharges {n} faster', { n: pct(a) });
+    case 'haste': return t('rvn.stars.stat.hasteShorter', 'Its art\'s cooldowns {n} shorter', { n: pct(a) });   // AUDIT RVN-STARS S26: a share of the time, not of the pace
     case 'awaken': return t('rvn.stars.stat.awaken', 'Learns an art of its kind, if it was born without one');
+    case 'bold': return t('rvn.stars.stat.bold', 'A hard road brings back nothing');
     case 'odds': return t('rvn.stars.stat.odds', 'Mission odds {n}', { n: `${sign}${pct(a * ERRAND.ODDS.PER)}` });
     case 'haul': return t('rvn.stars.stat.haul', 'Mission gold and materials {n}', { n: `${sign}${pct(a)}` });
     case 'road': return v >= 0 ? t('rvn.stars.stat.roadShort', 'Missions {n} shorter', { n: pct(a) }) : t('rvn.stars.stat.roadLong', 'Missions {n} longer', { n: pct(a) });
     case 'loyal': return t('rvn.stars.stat.loyal', 'Loyalty losses {n} smaller', { n: pct(a) });
-    case 'rest': return t('rvn.stars.stat.rest', 'Recovers {n} faster', { n: pct(a) });
+    case 'rest': return t('rvn.stars.stat.restShorter', 'Rests {n} shorter', { n: pct(a) });   // AUDIT RVN-STARS S26: half the rest is twice as fast, not 50% faster
     default: return `${key} ${sign}${pct(a)}`;
   }
 }
-/** A star's lines: its stats in words, a price (a stat under 0, the road's longer) marked. */
-export const rvnStarLines = (star) => Object.entries(star?.stats ?? {}).map(([k, v]) => ({ text: rvnStarStatWords(k, v), neg: v < 0 }));
+/** A star's lines: its stats in words, a price (a stat under 0, the road's longer, a hard road's nothing) marked. */
+export const rvnStarLines = (star) => Object.entries(star?.stats ?? {}).map(([k, v]) => ({ text: rvnStarStatWords(k, v), neg: v < 0 || k === 'bold' }));
 /** The sky's sums as the side panel says them, in RVN_STAR_STATS' order: `[{ key, text, neg }]` (each sum under its most). */
 export function rvnSkySummary(held) {
   const s = rvnStarStats(held);
-  return RVN_STAR_STATS.filter((k) => s[k]).map((k) => ({ key: k, text: rvnStarStatWords(k, s[k]), neg: s[k] < 0 }));
+  return RVN_STAR_STATS.filter((k) => s[k]).map((k) => ({ key: k, text: rvnStarStatWords(k, s[k]), neg: s[k] < 0 || k === 'bold' }));
 }
 /** Why `id` cannot be set now, in words - null when it can (the law's way to it, the points left). Pure. */
 export function rvnStarRefusal(held, id, points) {
@@ -94,7 +96,7 @@ export function rvnStarRefusal(held, id, points) {
   const way = rvnWayTo(h, id);
   if (!way?.length) return t('rvn.stars.no.way', 'This star isn\'t connected to any of its stars.');
   const left = points - (h.length - 1);
-  if (way.length > left) return t('rvn.stars.no.points', 'Reaching this star costs {need} {need, plural, one {point} other {points}}. It has {left}. It gets one point per level, and one per rank past the first.', { need: way.length, left: Math.max(0, left) });
+  if (way.length > left) return t('rvn.stars.no.pointsAfter', 'Reaching this star costs {need} {need, plural, one {point} other {points}}. It has {left}. It gets one point per level after the first, and one per rank past the first.', { need: way.length, left: Math.max(0, left) });
   return null;
 }
 /** Its art in the side panel's words: the one it has (born or awakened), or what Awakened Art would teach it. */
@@ -111,8 +113,9 @@ export function rvnArtNote(r) {
 const G = GRIM_TONES;
 /** THE GRAVE's own tone, past the Firmament's two: a grave-light violet (Plus), a mulberry ink (Grimoire). */
 const GRAVE_TONE = Object.freeze({
-  plus: Object.freeze({ edge: 'rgba(132,104,176,0.45)', edgeLit: '#d8432f', path: 'rgba(180,140,240,0.55)', rim: '#7a62a8', lit: '#d4bcff', litRim: '#6b4fa0', glow: 'rgba(190,150,255,0.75)' }),
-  grim: Object.freeze({ edge: 'rgba(78,42,110,0.5)', edgeLit: G.red, path: 'rgba(78,42,110,0.45)', rim: '#4e2a6e', lit: '#6b3f8f', litRim: G.goldLeaf, glow: 'rgba(78,42,110,0.3)' }),
+  // a way's fill the lit red its lines are drawn in, as the battle ring's (AUDIT RVN-STARS S28: a violet fill on red lines)
+  plus: Object.freeze({ edge: 'rgba(132,104,176,0.45)', edgeLit: '#d8432f', path: 'rgba(216,67,47,0.5)', rim: '#7a62a8', lit: '#d4bcff', litRim: '#6b4fa0', glow: 'rgba(190,150,255,0.75)' }),
+  grim: Object.freeze({ edge: 'rgba(78,42,110,0.5)', edgeLit: G.red, path: 'rgba(181,36,24,0.45)', rim: '#4e2a6e', lit: '#6b3f8f', litRim: G.goldLeaf, glow: 'rgba(78,42,110,0.3)' }),
 });
 /** THE OATH: a bond - its ring, an inner ring, and three ties out to the aspects (up, and down to either side). */
 function drawOath(ctx, x, y, r, rim, line) {
@@ -137,26 +140,28 @@ function drawOath(ctx, x, y, r, rim, line) {
  */
 export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), changed = () => {}, onExit = () => {}, doc = document }) {
   const reading = () => book.stars();
+  /** AUDIT RVN-STARS S20: a record no longer sworn has no points to set (the window opened on a lazy chunk's race). */
+  const purse = () => (book.record()?.sworn ? reading().points : 0);
   const name = book.record()?.name ?? '';
   /** @type {import('./skyWindow.js').SkyDesc} */
   const sky = {
     label: t('rvn.stars.title', '{name}\'s Stars', { name }),
     stars: RVN_STARS, edges: RVN_STAR_EDGES, edge: RVN_SKY_EDGE, seed: 31337, start: 'oath',
     held: rvnHeldStars, wayTo: rvnWayTo, takesBack: rvnTakesBack,
-    points: () => reading().points,
+    points: purse,
     committed: () => book.tree(),
     commit: (ids) => book.setTree(ids),
     name: rvnStarName, kindWords: rvnStarKindWords, statLines: rvnStarLines, summary: rvnSkySummary, refusal: rvnStarRefusal,
     tone: (s) => (s?.sec === 'grave' ? 'grave' : s?.sec === 'road' ? 'life' : 'main'),
     tones: { grave: GRAVE_TONE },
     chips(el, pending) {
-      const c = reading(), left = c.points - (pending.length - 1);
+      const c = reading(), points = purse(), left = points - (pending.length - 1);
       const level = el('span', 'fmt-purse');
       level.replaceChildren(el('span', null, t('rvn.stars.level', 'Level')), el('b', null, String(c.level)),
-        el('span', 'of', c.next == null ? t('rvn.stars.top', 'the highest') : t('rvn.stars.xp', '{xp} of {next} XP', { xp: c.xp.toLocaleString('en-US'), next: c.next.toLocaleString('en-US') })));
+        el('span', 'of', c.next == null ? t('rvn.stars.top', 'the highest') : t('rvn.stars.xp', '{xp} of {next} XP', { xp: formatNumber(c.xp), next: formatNumber(c.next) })));   // AUDIT RVN-STARS S25: the player's own grouping
       level.title = t('rvn.stars.levelTip', 'It earns XP from fights won at your side (more for stronger foes) and from missions it comes home from.');
       const pts = el('span', 'fmt-purse life');
-      pts.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('rvn.stars.of', 'of {n}', { n: c.points })));
+      pts.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('rvn.stars.of', 'of {n}', { n: points })));
       pts.title = t('rvn.stars.pointsTip', 'One point per level after the first, and one per rank past the first.');
       return [level, pts];
     },
@@ -194,10 +199,10 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       unaccepted: t('rvn.stars.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'),
       set: t('rvn.stars.set', 'Stars saved.'),
       startTip: t('rvn.stars.tip.oath', 'Every sworn revenant starts with the Oath. Take a star next to it.'),
-      backMany: (n) => t('rvn.stars.tip.backMany', 'Right-click to remove it and the {n} stars after it.', { n }),
+      backMany: (n) => t('rvn.stars.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"
       back: t('rvn.stars.tip.back', 'Right-click to remove.'),
       take: (n) => t('rvn.stars.tip.take', 'Click to take: {n} {n, plural, one {point} other {points}}.', { n }),
-      noPoints: t('rvn.stars.noPoints', 'It gets one point per level. It earns XP from fights won at your side and from missions.'),
+      noPoints: t('rvn.stars.noPointsAfter', 'It gets one point per level after the first. It earns XP from fights won at your side and from missions.'),
     },
   };
   return mountSkyWindow(host, sky, { changed, onExit, doc });

@@ -128,8 +128,8 @@
   {
     "name": "RVN-ARTS-sworn-mend-no-cooldown",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "PER_RANK: 0.02, COOLDOWN: 120 }),",
-    "new": "PER_RANK: 0.02, COOLDOWN: 0 }),",
+    "old": "PER_RANK: 0.02, COOLDOWN: 120, SIDE: 0.5 }),",
+    "new": "PER_RANK: 0.02, COOLDOWN: 0, SIDE: 0.5 }),",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"
     ]
@@ -155,7 +155,7 @@
   {
     "name": "RVN-ARTS-sworn-heal-moved",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "SIPHON_HEAL: 1 / 3,",
+    "old": "SIPHON_HEAL: 1 / 4,",
     "new": "SIPHON_HEAL: 1 / 2,",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"
