@@ -13044,6 +13044,31 @@
   "tr": "1d85b34abe7e",
   "by": "claude-in-session"
  },
+ "naval.foul.board": {
+  "en": "13f72c852c87",
+  "tr": "797dfe772b1b",
+  "by": "claude-in-session"
+ },
+ "naval.foul.heave": {
+  "en": "8b572af57f86",
+  "tr": "4b3b222966dc",
+  "by": "claude-in-session"
+ },
+ "naval.foul.heaving": {
+  "en": "197571c43aeb",
+  "tr": "a00233c9938c",
+  "by": "claude-in-session"
+ },
+ "naval.foul.leave": {
+  "en": "ee50bf8f53a4",
+  "tr": "e574420bc0d1",
+  "by": "claude-in-session"
+ },
+ "naval.foul.rammed": {
+  "en": "e68d95f2ed16",
+  "tr": "4822eb02a1f6",
+  "by": "claude-in-session"
+ },
  "naval.hold.noSea": {
   "en": "4f93ca143fe3",
   "tr": "5af8dd17d088",

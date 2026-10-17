@@ -92,8 +92,8 @@
   {
     "name": "RAID-ASHORE-world-room-unswept",
     "file": "src/scenes/world.js",
-    "old": "remove: (f) => exteriorFoes.removeFoe(f) }, modes?.interiorPool?.() ? { foes: () => modes.interiorPool().foes, remove: (f) => modes.interiorPool()?.removeFoe(f) } : null] });",
-    "new": "remove: (f) => exteriorFoes.removeFoe(f) }] });",
+    "old": "remove: (f) => exteriorFoes.removeFoe(f) }, inner ? { foes: () => inner.foes, remove: (f) => inner.removeFoe(f) } : null];",
+    "new": "remove: (f) => exteriorFoes.removeFoe(f) }];",
     "tests": [
       "test/systems/quest/raidashore.test.js"
     ]

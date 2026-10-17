@@ -70,7 +70,9 @@ carries its row instead. It stands on three things the port already had:
 - **The tally**: once your volley's last ball is down, the line under the aim counts it - how many struck, how many
   below her waterline, how many through her rigging.
 - **Interact boards** (E): a ship that has struck her colours within BOARD_RANGE of the helm, the way under
-  BOARD_SPEED - the grapples fly, she is hauled alongside, and you go over her rail. On foot (swimming up, or from a
+  BOARD_SPEED - the grapples fly, she is hauled alongside, and you go over her rail. RAM-BOARD (2026-10-17,
+  `03-World/Naval-Refit.md`): or one your stem has rammed - FOULED for FOUL_S, her way held, boarded as she stands
+  ("Fouled - E: board her") against her whole crew. On foot (swimming up, or from a
   deck alongside) the same press within FOOT_BOARD_M of her side with the look on her. The target card and the plate's
   hint say the key ("Colours struck - E: board her"). Too fast beside her, the same press HEAVES TO (AUDIT NAV1): the
   sails struck and her way taken off at Come Sail Away's `brake` - HEAVE_TO_DECEL (HELM-WAY), or at a way past HELM-WAY's

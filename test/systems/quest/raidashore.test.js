@@ -160,7 +160,7 @@ test('RAID-ASHORE one raid at a time on the fast travel too: a voyage by ship wh
 });
 
 test('RAID-ASHORE the world host\'s wiring: one withdraw built before the quest bridge over the street\'s pool and the room\'s, Leave Ship\'s seam its `over`, and the quest\'s end its `questEnded`', () => {
-  assert.match(WORLD, /const raidAshore = createRaidAshore\(\{ pools: \(\) => \[\{ foes: \(\) => exteriorFoes\.foes, remove: \(f\) => exteriorFoes\.removeFoe\(f\) \}, modes\?\.interiorPool\?\.\(\) \? \{ foes: \(\) => modes\.interiorPool\(\)\.foes, remove: \(f\) => modes\.interiorPool\(\)\?\.removeFoe\(f\) \} : null\] \}\);\n {2}questBridge = createQuestBridge\(\{/);
+  assert.match(WORLD, /const raidAshore = createRaidAshore\(\{ pools: \(\) => \{\n\s+const inner = modes\?\.interiorPool\?\.\(\);\n\s+return \[\{ foes: \(\) => exteriorFoes\.foes, remove: \(f\) => exteriorFoes\.removeFoe\(f\) \}, inner \? \{ foes: \(\) => inner\.foes, remove: \(f\) => inner\.removeFoe\(f\) \} : null\];\n\s+\} \}\);\n {2}questBridge = createQuestBridge\(\{/);   // the room's pool read once, guarded on `modes` (declared below - audit24_wave37)
   assert.match(WORLD, /raidAshore: \(quest\) => raidAshore\.over\(quest\),/);
   assert.match(WORLD, /naval\?\.raidEnded\(q\);[^\n]*\n {6}raidAshore\.questEnded\(q\);/);
 });

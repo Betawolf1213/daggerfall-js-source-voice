@@ -107,6 +107,8 @@ import { createGalleonGunDeck } from '../../systems/naval/galleonGunDeck.js';   
 import { timeScale } from '../../systems/timeScale.js';   // AUDIT GN2-GN3: the real clock another player's word comes on
 import { markStolen } from '../../systems/stolenGoods.js';   // STOLEN-GOODS AUDIT S4: a lawful ship's hold, taken by Piracy, is stolen goods
 import { dockFor, madeFast, warpStep, quaySide, landwardOf, quayFrame, quayToScene, sceneToQuay, gangwayFoot, DOCK_WAY, DOCK_REACH_M, DOCK_REFUSED, GANGWAY_REACH, GANGWAY_ASHORE, GANGWAY_FACING, gangwaySide, QUAY_GAP, QUAY_WIDTH, QUAY_DECK_UP } from '../../systems/naval/quays.js';   // QUAYS: docking at a harbour's quays
+import { foul, fouledBy, boardableState } from '../../systems/naval/navalFoul.js';   // RAM-BOARD: a ram fouls her, and a fouled ship is boarded as she stands
+import { t } from '../../systems/textManager.js';   // RAM-BOARD: its words in the player's language
 
 /** The record's name in the save's per-mod slot (systems/modSaveData.js) - the port's own, as the Sigil Broker's is. */
 export const NAVAL_SAVE_VENDOR = 'NavalCombat';
@@ -3320,14 +3322,14 @@ export function createNavalHost(deps) {
    *  beams of `at` (else where `boat` lies), `boat`'s way under BOARD_SPEED unless `anySpeed` - else null. */
   function boardingGap(boat, e, { anySpeed = false, at = null, pose = boatPose(boat) } = {}) {
     if (!anySpeed && Math.hypot(pose.velocity[0], pose.velocity[2]) > BOARD_SPEED) return null;
-    if (e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded || !e.boat) return null;
+    if (!boardableState(e.ship, myId(), clock) || !e.boat) return null;   // RAM-BOARD: struck, or fouled by my stem
     const d = dist2d(e.ship.pos, at ?? pose.position) - (hullBuild(e.ship.hull).beam + hullBuild(boat.hull).beam);
     return d > BOARD_RANGE ? null : d;
   }
   /** ON FOOT, one law (`boardableOnFoot`'s, and CREW-MUSTER's): whether `feet` stand within FOOT_BOARD_M of struck `e`'s
    *  side - not taken, her hull standing - to go over her rail. */
   function footReach(e, feet) {
-    return e.ship.damage.state === SHIP_STATES.struck && !e.ship.boarded && !!e.boat && dist2d(e.ship.pos, feet) - hullBuild(e.ship.hull).beam <= FOOT_BOARD_M;
+    return boardableState(e.ship, myId(), clock) && !!e.boat && dist2d(e.ship.pos, feet) - hullBuild(e.ship.hull).beam <= FOOT_BOARD_M;   // RAM-BOARD: or fouled by my stem
   }
 
   // ── heave to (AUDIT NAV1, the helm) ─────────────────────────────────────────────────────────────────────────────
@@ -3355,7 +3357,7 @@ export function createNavalHost(deps) {
     const e = sea.get(heaveTo.id);
     const v = boat ? boatPose(boat).velocity : null;
     const slow = !v || Math.hypot(v[0], v[2]) <= BOARD_SPEED;
-    if (slow || clock > heaveTo.until || !e || e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded) heaveTo = null;
+    if (slow || clock > heaveTo.until || !e || !boardableState(e.ship, myId(), clock)) heaveTo = null;   // RAM-BOARD: struck, or fouled by me
   }
   /** Come Sail Away's `brake` seam: her way comes off at the heave-to's brake while she heaves to (0: her own rate). */
   const brake = () => (enabled && heaveTo && myBoat() ? heaveTo.decel : 0);
@@ -3471,7 +3473,7 @@ export function createNavalHost(deps) {
     // the fight: its muster's tally, the player's distance
     if (dist2d(deps.feet(), entry.ship.pos) > ABANDON_RANGE) {
       if (b.kind === 'repel') { castOff(b, entry, 'abandon'); return; }   // AUDIT NAV1 (B6, B7): my own deck left to them
-      deps.say?.('You leave the fight. Her crew stands down.', 3);
+      deps.say?.(entry.ship.damage.state === SHIP_STATES.afloat ? t('naval.foul.leave', 'You leave the fight. Her crew runs back to her guns.') : 'You leave the fight. Her crew stands down.', 3);   // RAM-BOARD: a sound ship fights on
       for (const f of b.foes) deps.board?.removeFoe?.(f.handle);
       b.foes = [];
       entry.ship.boarded = false;
@@ -4040,6 +4042,8 @@ export function createNavalHost(deps) {
       deps.mid?.(galley ? 'Your ram smashes into her hull!' : 'You ram her!', 2);
       chargePlayer('fire', e);
       e.myBlowAt = clock;
+      // RAM-BOARD (systems/naval/navalFoul.js): her bow fouled in my stem - boarded as she stands while it holds
+      if (e.ship.damage.state === SHIP_STATES.afloat && !e.ship.boarded) { foul(e.ship, myId(), clock); deps.say?.(t('naval.foul.rammed', 'Her bow is fouled in yours - board her before she breaks free!'), 3); }
       if (e.owner) deps.sendHit?.(navalHitData(e.owner, { n: e.n, hull: Math.min(400, dealt), crew: ramMenSaid(dealt), zone: 'holed' }));
       else strike(e, { hull: dealt, sail: 0, crew: ramMen(dealt, random()) }, myId());
       const st = myBoatState(boat);
@@ -4744,7 +4748,7 @@ export function createNavalHost(deps) {
     const ships = [...sea.values()].filter((e) => !e.owner).map((e) => ({
       n: e.n, classId: e.ship.cls.id, variant: e.ship.variant, pos: e.ship.pos, yaw: e.ship.yaw, speed: e.ship.speed, sails: e.ship.sails,
       hull: e.ship.damage.hullShare(), sail: e.ship.damage.sailShare(), crew: e.ship.damage.crewShare(),
-      state: e.ship.boarded && e.ship.damage.state === SHIP_STATES.struck ? 'boarded' : e.ship.damage.state, heel: e.ship.heel, seed: e.ship.seed, fire: e.ship.damage.fire > 0,
+      state: e.ship.boarded && (e.ship.damage.state === SHIP_STATES.struck || e.ship.damage.state === SHIP_STATES.afloat) ? 'boarded' : e.ship.damage.state, heel: e.ship.heel, seed: e.ship.seed, fire: e.ship.damage.fire > 0,   // RAM-BOARD: a sound ship being boarded is said boarded too - no peer grapples her under the fight
       runOut: [...e.ship.runOut.keys()].reduce((m, side) => m | (1 << SIDES.indexOf(side)), 0),
       gen: e.gen, region: e.region,
       // AUDIT NAV2 F1/F3/F5: her captain as I sail her - her temper (a raider's bold is mine, not her seed's), her mode
@@ -5142,6 +5146,7 @@ export function createNavalHost(deps) {
       // AUDIT CAPTAIN'S SEA S24: an unknown hull's hurts are no more read than her colours - no bars till she is made
       // out, as she wears no tag (whose bar the card's mirrors)
       hull: made ? s.damage.hullShare() : null, sail: made && s.damage.maxSail > 0 ? s.damage.sailShare() : null, state: s.damage.state, boarded: !!s.boarded,
+      ...(s.damage.state === SHIP_STATES.afloat && fouledBy(s, myId(), clock) ? { fouled: true } : {}),   // RAM-BOARD: her bow in my stem
       distance: Math.round(dist2d(s.pos, from)),
       ...stance, bound: known < KNOW.colours || hid ? '' : boundOf(e),   // SEA-PEACE: sized up as I stand; SHIP-STANCE: as her tag - a struck ship neither; SHIP-TAGS
     };
@@ -5512,7 +5517,7 @@ export function createNavalHost(deps) {
           const peer = me || other ? null : (deps.peerBoats?.() ?? []).find((p) => p.id === t);
           const [pos, yaw] = me ? [me.GameObject.position, yawOfRot(me.GameObject.rotation)] : other ? [other.ship.pos, other.ship.yaw] : [peer?.pos ?? null, peer?.yaw];
           if (pos) { toward = Number.isFinite(yaw) ? abeam(e, pos, yaw) : pos; way = 'board'; }   // CREW-MUSTER: she goes over the other's rail
-        } else if (st === SHIP_STATES.struck && !e.ship.boarded && !boarding) {
+        } else if (boardableState(e.ship, myId(), clock) && !boarding) {   // RAM-BOARD: struck, or fouled by my stem
           // CREW-MUSTER (FIELD BUGS 2026-10-14; Mac's call): a boarding of her I could make NOW - my helm's own reach
           // (boardingGap: in range and my way under BOARD_SPEED), or my feet's (footReach) - and hers is the repel's side
           const from = helm ? helm.GameObject.position : (feet ??= deps.feet());

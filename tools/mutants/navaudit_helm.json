@@ -974,7 +974,7 @@
   {
     "name": "NAV1H-the-heave-held-past-its-end",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (slow || clock > heaveTo.until || !e || e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded) heaveTo = null;",
+    "old": "    if (slow || clock > heaveTo.until || !e || !boardableState(e.ship, myId(), clock)) heaveTo = null;   // RAM-BOARD: struck, or fouled by me",
     "new": "    if (slow) heaveTo = null;",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"

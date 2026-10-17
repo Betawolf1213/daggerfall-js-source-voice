@@ -29,6 +29,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | ISLE-TRADE | 7 | every Eltheric isle's freeport makes a good of the Bay of its own and sells it as made; the chart's card names it | `systems/naval/tradeGoods.js` (`isleGood`, `portTrade`, `exchangeOf`), `ui/etherChartWindow.js` |
 | PEACE-WAY | 6 | out of a fight her way, and its coming on, PEACE_WAY (1.15) of what it is in one | `systems/comeSailAway/peaceWay.js`, `systems/comeSailAway/comeSailAway.js` (`peace`, the speed arms, `moveAccelOwn`), `scenes/world.js` (the runtime's `peaceWay`) |
 | CARGO-ANYWHERE | 1 | a ship's hold opened from anywhere - the hold's key (F4), the helm's Hold, the Fleet page's Hold - at hand, last helmed or the fleet's first, wherever she lies; the hold two-way on the Enhanced skins | `scenes/holdDoor.js`, `systems/comeSailAway/comeSailAwayItems.js` (`cargoLootTarget`), `ui/enhanced/enhancedInventory.js` (`remoteModel`), `scenes/fleetHost.js` (`hold`), `ui/fleetPage.js`, `ui/enhanced/enhancedHelm.js` (`helmButtons`), `systems/inputActions.js` (`ShipHold`), `scenes/world.js` |
+| RAM-BOARD | 5 | a ram fouls her: for FOUL_S her way is held and she is boarded as she stands, her whole crew against me | `systems/naval/navalFoul.js`, `scenes/naval/navalHost.js` (`checkRams`, `boardingGap`, `footReach`, `stepHeaveTo`, `crewShips`, `word`, `targetCardOf`), `systems/naval/navalAI.js` (`stepCaptain`), `ui/naval/navalHud.js` (`cardState`) |
 | RAID-ASHORE | 2 | a voyage's raid fought where the player stands ends there: its crew and last raiders withdrawn, the quest ended; one raid at a time on the fast travel | `scenes/raidAshore.js`, `systems/warmAshesShips.js` (`LeaveShip`, `onPreFastTravel`), `scenes/world.js` (`raidAshore`, Warm Ashes' host, the quest's end) |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -166,6 +167,35 @@ the same win leaves the five standing and the quest running, and five struck cal
 Left as found: a transition while a wave is in flight (into the cabin and out) re-arms that wave - DFU's own CreateFoe
 law (`onTransitionExterior`), the same for every quest; it is not this report.
 
+## RAM-BOARD - ram her and board her (item 5)
+
+FOUND. Every way aboard another ship asked one thing: `state === struck` - her hull battered under STRUCK_AT (a quarter
+of it) or every hand down. The helm's grapples (`navalHost.js boardingGap`), the rail on foot (`footReach`), the heave-to
+beside her (`stepHeaveTo`) and the crews' muster toward her (`crewShips`, CREW-MUSTER's one law) each asked it, so the
+only way to take a ship was to batter her first, and a ram - the stem put into her side at RAM_SPEED or more - was only
+damage.
+
+CHANGED (`systems/naval/navalFoul.js`, the law; the host wires it):
+- **A ram fouls her** (`checkRams`): a ram that strikes home on a ship still afloat FOULS her for FOUL_S (20 s) - by me
+  (`foul`, the rammer's id), renewed by a fresh ram - and says so ("Her bow is fouled in yours - board her before she
+  breaks free!"). The ram's own law is as it was: its damage, its recoil, its act of fire (piracy on a lawful ship, a
+  navy in sight provoked).
+- **Boarded as she stands** (`boardableState`): every door that asked for struck asks for struck OR afloat and fouled BY
+  ME - never one being boarded, a prize, or a ship going down. Her card reads "Fouled - E: board her" (or "heave to"
+  coming up too fast - `navalHud.js cardState`; the card model says `fouled` only while it holds - `targetCardOf`). The
+  boarding is the boarding there always was: grapples, the haul, her MUSTER over her crew's share - a sound ship's whole
+  crew, MUSTER_MAX at most, her captain at their head (`navalBoarding.js musterOf`) - the fight, the prize and her fate.
+  A ship fouled by another player is theirs to board.
+- **Her way held** (`navalAI.js stepCaptain` -> `holdFouled`): while fouled her captain's helm runs as ever and then her
+  way comes off at FOUL_DECEL to FOUL_WAY (1.2 m/s, under BOARD_SPEED - a boarding from her lee is never left behind)
+  and her canvas comes in; her guns still answer - she has not struck.
+- **Online**: a sound ship being boarded is said 'boarded' on the room's word as a struck one is (`word` - a peer reads it
+  as struck and boarded: no peer grapples her under the fight); the boarder adopts her at the grapple as ever, so a ship
+  another stands is fouled in the rammer's copy and taken over before her stander's word can sail her off.
+- **Left**: a boarding of a sound ship given up past ABANDON_RANGE says "Her crew runs back to her guns" - she fights on.
+
+The law, the muster, the haul and the prize are unchanged; the struck law stands for every ship not fouled.
+
 ## THE FOUR HOSTS RULE
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
@@ -188,6 +218,8 @@ law (`onTransitionExterior`), the same for every quest; it is not this report.
 - `test/scenes/holddoor.test.js` (6) over Come Sail Away's real runtime and the Fleet's ledger and host, and
   `tools/mutants/holddoor.json` (16, all dead); the action list's pins moved for `ShipHold` (`inputactions`, `qs2_inputs`,
   `classicpages`, `viewtoggle`, `uicalm`) and the helm panel's (`shipcrew`, `auditnav2_helm`, `fb1011c_seatown`).
+- `test/systems/naval/ramboard.test.js` (6) on the real naval host and pool, and `tools/mutants/ramboard.json` (17, all
+  dead).
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

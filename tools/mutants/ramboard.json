@@ -1,0 +1,155 @@
+[
+  {
+    "name": "RAMB-foul-never-set",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "{ foul(e.ship, myId(), clock); deps.say?.",
+    "new": "{ deps.say?.",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-helm-struck-only",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "    if (!boardableState(e.ship, myId(), clock) || !e.boat) return null;   // RAM-BOARD: struck, or fouled by my stem",
+    "new": "    if (e.ship.damage.state !== SHIP_STATES.struck || e.ship.boarded || !e.boat) return null;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-rail-struck-only",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "    return boardableState(e.ship, myId(), clock) && !!e.boat && dist2d(e.ship.pos, feet)",
+    "new": "    return e.ship.damage.state === SHIP_STATES.struck && !e.ship.boarded && !!e.boat && dist2d(e.ship.pos, feet)",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-heave-struck-only",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "    if (slow || clock > heaveTo.until || !e || !boardableState(e.ship, myId(), clock)) heaveTo = null;",
+    "new": "    if (slow || clock > heaveTo.until || !e || e.ship.damage.state !== SHIP_STATES.struck) heaveTo = null;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-word-afloat",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "state: e.ship.boarded && (e.ship.damage.state === SHIP_STATES.struck || e.ship.damage.state === SHIP_STATES.afloat) ? 'boarded'",
+    "new": "state: e.ship.boarded && e.ship.damage.state === SHIP_STATES.struck ? 'boarded'",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-abandon-stands-down",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "deps.say?.(entry.ship.damage.state === SHIP_STATES.afloat ? t('naval.foul.leave',",
+    "new": "deps.say?.(false ? t('naval.foul.leave',",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-card-unsaid",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "      ...(s.damage.state === SHIP_STATES.afloat && fouledBy(s, myId(), clock) ? { fouled: true } : {}),",
+    "new": "      ...({}),",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-hold-unread",
+    "file": "src/systems/naval/navalAI.js",
+    "old": "  holdFouled(ship, dt, world.now);   // RAM-BOARD",
+    "new": "  // holdFouled(ship, dt, world.now);   // RAM-BOARD",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-hud-card-struck-words",
+    "file": "src/ui/naval/navalHud.js",
+    "old": "if (t.fouled && t.state === 'afloat' && mine && (board.kind === 'board' || board.kind === 'heave')) return",
+    "new": "if (false) return",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-foul-length",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "export const FOUL_S = 20;",
+    "new": "export const FOUL_S = 10;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-foul-way",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "export const FOUL_WAY = 1.2;",
+    "new": "export const FOUL_WAY = 3;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-foul-decel",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "export const FOUL_DECEL = 4;",
+    "new": "export const FOUL_DECEL = 2;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-anyones-foul",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "export const fouledBy = (ship, by, now) => isFouled(ship, now) && ship.fouled.by === by;",
+    "new": "export const fouledBy = (ship, by, now) => isFouled(ship, now);",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-foul-forever",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "export const isFouled = (ship, now) => !!ship?.fouled && now < ship.fouled.until;",
+    "new": "export const isFouled = (ship, now) => !!ship?.fouled;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-boarded-twice",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "  if (!ship || ship.boarded) return false;",
+    "new": "  if (!ship) return false;",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-sound-unfouled",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "  return st === 'struck' || (st === 'afloat' && fouledBy(ship, by, now));",
+    "new": "  return st === 'struck' || st === 'afloat';",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  },
+  {
+    "name": "RAMB-sails-up",
+    "file": "src/systems/naval/navalFoul.js",
+    "old": "  ship.sails = Math.max(0, (ship.sails ?? 0) - Math.max(0, dt) * 0.5);\n",
+    "new": "",
+    "tests": [
+      "test/systems/naval/ramboard.test.js"
+    ]
+  }
+]

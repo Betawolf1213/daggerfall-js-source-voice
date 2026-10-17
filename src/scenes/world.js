@@ -19707,7 +19707,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const questAudioSource = new QuestAudioSource(audio);
   // RAID-ASHORE (scenes/raidAshore.js): a voyage's raid thrown back where I stand - its crew and last raiders withdrawn
   // from the street's pool and, below deck, the room's (Warm Ashes' Leave Ship asks it; the quest's end sweeps again)
-  const raidAshore = createRaidAshore({ pools: () => [{ foes: () => exteriorFoes.foes, remove: (f) => exteriorFoes.removeFoe(f) }, modes?.interiorPool?.() ? { foes: () => modes.interiorPool().foes, remove: (f) => modes.interiorPool()?.removeFoe(f) } : null] });
+  const raidAshore = createRaidAshore({ pools: () => {
+    const inner = modes?.interiorPool?.();
+    return [{ foes: () => exteriorFoes.foes, remove: (f) => exteriorFoes.removeFoe(f) }, inner ? { foes: () => inner.foes, remove: (f) => inner.removeFoe(f) } : null];
+  } });
   questBridge = createQuestBridge({
     data: questPack,
     world: questWorld,
@@ -32279,10 +32282,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // AUDIT OH-F B5: and BEFORE the online frame - a Recall's reactivation renames the dungeon, and its map id is the
     // relay room's key (online.js roomKeyFor): the drowned dungeon never joins its dry template's room for a frame.
     if (oceanHoles) { _ohTime += gamePaused() ? 0 : dt * worldTimeScale(); oceanHoles.checkSettings(); ohAbyss?.update(); }
-    saddleDrawPanel();   // STEED-UI: the saddle panel, as the helm's below - every mode, so a door takes it down
-    csaDrawHelmPanel();   // CSA-L: the helm panel, once a frame in every mode
     holdDoor.frame();   // CARGO-ANYWHERE: the helm I hold, remembered - and the hold's key, in every mode (the cabin's too)
     if (csaRuntime && walkMode && playerSpawned && !modes?.transitioning && !travelView?.active && hccActionPressed('ShipHold')) holdDoor.press();
+    saddleDrawPanel();   // STEED-UI: the saddle panel, as the helm's below - every mode, so a door takes it down
+    csaDrawHelmPanel();   // CSA-L: the helm panel, once a frame in every mode
     spoilsRecoverFrame();   // WB5: a boss's spoils no save holds, back to their character as it stands up - before it can save, online or not
     if (onlineOn && playerSpawned) { if (!online) onlineStart(); onlineFrame(now, dt); } else { if (_peerCandleLights.length) peerCandlesFrame([], dt);   /* PEERLIGHT2: offline, no one's candle stays lit */ serpentAway(!onlineOn); /* SERPENT1: its bar put away - offline, my ship let go of its coil */ sdFightAway(); /* SD8c: and the Remnant's */ if (!onlineOn && modes?.gateArenaDay?.() != null) { ejectFromCourt(COURT_TEXT.collapse); gateCourt?.leave(); /* AUDIT SS: and its floor into the pack - online, the frame's own court does it */ } if (player.arena) player.arena = modes?.gateArenaDay?.() != null ? courtRing() : null; if (!player.arena) player.arena = arenaBouts.ring(); /* ARENA2: my bout's ring on the arena's sand */ siegeHud?.hide(); /* AUDIT-SEATS C1: no online frame (a load, a spawn), no battle's tick - its HUD hidden, never frozen; the next tick draws it again */ }   // DUEL1: no online frame, no duel's law to hold the body - the ring is the live duel's alone; WB3b: the court's is its floor's, and offline there is no court   // ONLINE1: the pose out, the peers in - after the look is paid, before the camera is read and any mode draws
     deadlandsAirFrame();   // WB6b: after the court's ways out have run, online or not - the frame it is gone is the frame its air falls silent

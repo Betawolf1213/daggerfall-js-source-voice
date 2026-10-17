@@ -40,6 +40,7 @@ import { PARTY_GREEN_CSS } from '../../net/social.js';   // SHIPMATES: the crew'
 import { spellIconPicture } from '../enhanced/enhancedArt.js';   // COMPANION-KIT: a companion's effects' icons over his bar - AUDIT WK-U8: fitted to their tiles
 import { showFitted } from '../textureCanvas.js';   // AUDIT WK-U8: a fitted picture into its <img>, as every fitted slot puts one
 import { clampDpr, screenDpr } from '../iconFit.js';   // AUDIT WK-U8: the tiles' device pixels - the screen's, times the HUD's scale the bar rides
+import { t } from '../../systems/textManager.js';   // RAM-BOARD: the card's new words in the player's language (fouledText)
 import { partyFxKey, partyFxAbbrev } from '../../net/partyBuffs.js';   // COMPANION-KIT: the party card's own effect row's key and words
 
 export const NAVAL_HUD_STYLE_ID = 'dagger-naval-hud-style';
@@ -531,6 +532,12 @@ function fightCard(b) {
   return { name: 'Repel the boarders', sub: `From ${b.name}`, state: b.raid ? 'Hold your deck' : `${b.down} of ${b.total} down`, kind: 'sinking' };
 }
 
+/** RAM-BOARD: the card's line for a ship my stem has fouled, in reach - the grapples' key, or the heave-to's. */
+function fouledText(board, key) {
+  if (board.kind === 'board') return t('naval.foul.board', 'Fouled - {key}: board her', { key });
+  return board.heaving ? t('naval.foul.heaving', 'Fouled - heaving to') : t('naval.foul.heave', 'Fouled - {key}: heave to', { key });
+}
+
 /** The card's state line: what she is doing, and - when she is in reach - the key that goes over her rail. */
 function cardState(t, board, key) {
   const mine = board != null && board.name === t.name;
@@ -538,6 +545,8 @@ function cardState(t, board, key) {
   // AUDIT NAV1 (the presentation): one wording with the plate's hint ("open ... hold") - it read "her hold" here
   if (t.state === 'prize') return mine && board.kind === 'hold' ? { text: `Taken - ${key}: open her hold`, kind: 'board' } : { text: 'Taken', kind: '' };
   if (t.boarded) return { text: 'Boarded', kind: '' };
+  // RAM-BOARD (systems/naval/navalFoul.js): her bow fouled in my stem - boarded as she stands, her colours flying
+  if (t.fouled && t.state === 'afloat' && mine && (board.kind === 'board' || board.kind === 'heave')) return { text: fouledText(board, key), kind: 'board' };
   if (t.state === 'struck') {
     if (mine && board.kind === 'board') return { text: `Colours struck - ${key}: board her`, kind: 'board' };
     // AUDIT NAV1 (the helm): in reach but too fast - the refusal said nothing
