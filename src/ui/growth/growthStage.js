@@ -131,6 +131,17 @@ export function stageBack() {
   return false;
 }
 
+/**
+ * GROWTH5: LEAVING ASKS FIRST - another page, another tab, another revenant, the sheet's key or the QuickDial's: the
+ * face's own ask (unaccepted stars said once), never full screen's. Answers whether the face held the press; the second
+ * press goes (AUDIT RVN-STARS S8's law, for every face the stage holds).
+ */
+export function stageAsks() {
+  const me = live;
+  if (!me) return false;
+  try { return !!me.face?.back?.(); } catch { return false; }
+}
+
 /** The stage's dress: the pane's height, its bar, the full-screen box over the window. */
 export const STAGE_CSS = `
 .px-sys .gr-stagebar { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin: 0 0 6px; }

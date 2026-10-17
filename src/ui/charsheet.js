@@ -833,7 +833,7 @@ export class CharSheet {
     const showHth = ids.includes(SKILLS.HandToHand);
     const lines = (twoColumn ? Math.ceil(ids.length / 2) : ids.length) + (showHth ? 1 : 0);
     // SCHOOLS1: the Specialisation row under it, while Master Skills is in force and a path is chosen or open
-    // GROWTH4 (bible/10-UI/Growth.md section 7): where the guide opens (the enhanced pause's Growth tab - a document), the
+    // GROWTH4 (bible/10-UI/Growth.md section 8): where the guide opens (the enhanced pause's Growth tab - a document), the
     // row stands whenever this class can ever meet a path: S reads them all, opened or not
     const guide = typeof this.hooks?.growth === 'function';
     const pathText = pathOf(e) ? t('schools.sheet.chosen', '{name}  (S)', { name: pathOf(e).name })
@@ -891,7 +891,7 @@ export class CharSheet {
     }
   }
 
-  /** GROWTH4 (bible/10-UI/Growth.md section 7; the owner, asked: the classic skin reaches the Growth tab): THE GUIDE
+  /** GROWTH4 (bible/10-UI/Growth.md section 8; the owner, asked: the classic skin reaches the Growth tab): THE GUIDE
    *  FROM THE CLASSIC SHEET - the enhanced pause window on its Specialisations page (the family's), pushed as this
    *  sheet's child: it draws over the sheet, and when it goes the sheet is back. A host with no document (node) has no
    *  hook, and the rows ask in DFU's boxes as before. Answers whether it opened. */

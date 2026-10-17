@@ -75,8 +75,11 @@ export const NODE_R = Object.freeze({ small: 9, road: 9, notable: 16, keystone: 
 
 // ─── THE SHEET ──────────────────────────────────────────────────────
 
-/** What Escape says over unaccepted stars - the window's own Escape and the Growth tab's back() (GROWTH3) alike. */
+/** What Escape says over unaccepted stars - the window's own Escape. */
 const UNACCEPTED_ESCAPE = 'Your changes are not accepted yet. Press Escape again to discard them.';
+/** GROWTH5: what a press that would leave the sky says in the Growth tab (back(): Escape, another page or tab, the sheet's
+ *  or the QuickDial's key) - any of them, so it names none. */
+const unacceptedLeave = () => t('firmament.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or do that again to discard them.');
 
 export const FIRM_CSS = `
 .fmt-root { position: fixed; inset: 0; z-index: 14; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; }
@@ -846,7 +849,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   function back() {
     if (dead) return false;
     if (confirmBox.classList.contains('on')) { confirmBox.classList.remove('on'); return true; }
-    if (unaccepted() && !armedClose) { armedClose = true; say(UNACCEPTED_ESCAPE, true); return true; }
+    if (unaccepted() && !armedClose) { armedClose = true; say(unacceptedLeave(), true); return true; }
     return false;
   }
 

@@ -199,7 +199,7 @@ export function createCharSheetWindow(deps = {}) {
     // same hooks: PX25 built the Stats page to take them.
     return enhancedSheetPageOverlay(hooks, deps.entity, deps.pause ?? null);   // F5-QUESTS: and the host's pause bag
   }
-  // GROWTH4 (bible/10-UI/Growth.md section 7): the classic sheet's S and W rows open the Growth tab's guide - the enhanced
+  // GROWTH4 (bible/10-UI/Growth.md section 8): the classic sheet's S and W rows open the Growth tab's guide - the enhanced
   // pause window on either skin (pauseDoor.js growthPageAt), pushed as the sheet's own child with this host's pause bag;
   // its Resume comes back to the sheet. No document (node), no hook: the rows keep DFU's boxes.
   if (typeof document !== 'undefined') hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {} });
@@ -257,7 +257,10 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
   };
   // PX28: AFTER `close` exists - a const is not hoisted, and the
   // first placement of this line read it before its initialiser.
-  unregister = registerOverlay(close);
+  // GROWTH5 (AUDIT RVN-STARS S8's law): the QuickDial's key asks a sky on the Growth stage first - unaccepted stars said
+  // once, the window kept, the arm laid again; the second press puts it away
+  const dialClose = () => { if (view?.asksFirst?.()) { unregister = registerOverlay(dialClose); return; } close(); };
+  unregister = registerOverlay(dialClose);
   // MAC-C (2026-09-17, Mac: "you can exit out of the F6 menu
   // (inventory) by pressing F6 again, but you cannot do the same for
   // the F5 one (char sheet)" + "it would be extra cool if you could
@@ -299,6 +302,7 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
     e.stopPropagation();
     if (e.repeat) return;   // AUDIT KB1: a held key's repeat is swallowed, not an open-shut flicker
     const toPack = !acts.includes('CharacterSheet');   // the pack's key crosses over; the sheet's own closes (UXB1-S: a key that is both is the sheet's)
+    if (view?.asksFirst?.()) return;      // GROWTH5: a sky's unaccepted stars asked about once first
     if (toPack) pack();                   // the door closes the page FIRST, then the host's arm fills the slot it freed
     else close();
   }

@@ -316,7 +316,7 @@ export function choosePath(entity, id) {
 export const PATH_DECLINED_TEXT = 'You can choose a specialisation later in your skill screen.';
 /** The No's line, in the player's language. */
 export const pathDeclinedText = () => t('schools.declined', PATH_DECLINED_TEXT);
-/** GROWTH4 (bible/10-UI/Growth.md section 7): the No's line where the enhanced pause window stands - its Growth tab is
+/** GROWTH4 (bible/10-UI/Growth.md section 8): the No's line where the enhanced pause window stands - its Growth tab is
  *  where every path is read and chosen (the classic skin's stays the skill screen's: its S row opens the same guide). */
 export const PATH_DECLINED_GROWTH_TEXT = 'You can choose a specialisation later on the Growth tab of the pause menu.';
 export const pathDeclinedGrowthText = () => t('schools.declinedGrowth', PATH_DECLINED_GROWTH_TEXT);

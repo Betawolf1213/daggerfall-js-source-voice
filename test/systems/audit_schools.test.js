@@ -708,7 +708,7 @@ test('AUDIT SCHOOLS L4 M1 / L5 H3: THE ONE ASK (scenes/shared.js raisePlayerSkil
   three.masterSkillsInfoSeen = true;
   raisePlayerSkills(three, { ask, rolls: () => 0.99 });
   assert.equal(asks.length, 2);
-  // PIN MOVED (GROWTH4, bible/10-UI/Growth.md section 7): the enhanced skin's box sends the player to the Growth tab; the
+  // PIN MOVED (GROWTH4, bible/10-UI/Growth.md section 8): the enhanced skin's box sends the player to the Growth tab; the
   // classic skin's to the skill screen, whose S row opens the same guide
   assert.deepEqual(asks[1].rows, ['Specialisation', '', '3 specialisations are open to you:', 'Riftwalker, Warden, Necromancer', '', 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.']);
   assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden]).at(-1), 'Choose one in your skill screen. The choice cannot be undone.', 'the classic skin\'s');

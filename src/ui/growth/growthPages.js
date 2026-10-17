@@ -7,6 +7,7 @@
 export const GROWTH_PAGE_SECTIONS = Object.freeze([
   Object.freeze(['level', 'Level']), Object.freeze(['specs', 'Specialisations']),
   Object.freeze(['firmament', 'Firmament']), Object.freeze(['captain', 'Captain\'s Stars']),
+  Object.freeze(['revenants', 'Revenant Stars']),   // GROWTH5: each sworn revenant's sky (RVN-STARS)
 ]);
 /** A family's guide by name - the classic sheet's S row lands on the arcane, its W row on the martial (GROWTH4). */
 export const SPEC_LANDINGS = Object.freeze({ 'specs:arcane': 'arcane', 'specs:martial': 'martial' });

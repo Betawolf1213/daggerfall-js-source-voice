@@ -32,12 +32,12 @@
   {
     "name": "GROWTH1-captain-for-any-host",
     "file": "src/ui/growth/growthTab.js",
-    "old": "return GROWTH_PAGE_SECTIONS.filter(([id]) => id !== 'captain' || typeof ctx?.captain?.stars === 'function');",
-    "new": "return GROWTH_PAGE_SECTIONS.filter(() => true);",
+    "old": "(id !== 'captain' || typeof ctx?.captain?.stars === 'function')",
+    "new": "(true)",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
-    "note": "A host with no ships draws a Captain's Stars page that can only say it has nothing."
+    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the rail's filter, the revenants' beside it. A host with no ships draws a Captain's Stars page that can only say it has nothing."
   },
   {
     "name": "GROWTH1-due-off-the-points",
@@ -222,22 +222,22 @@
   {
     "name": "GROWTH3-unaccepted-not-asked",
     "file": "src/ui/firmamentWindow.js",
-    "old": "if (unaccepted() && !armedClose) { armedClose = true; say(UNACCEPTED_ESCAPE, true); return true; }",
+    "old": "if (unaccepted() && !armedClose) { armedClose = true; say(unacceptedLeave(), true); return true; }",
     "new": "",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
-    "note": "Unaccepted stars dropped on the first Escape without a word."
+    "note": "GROWTH5 (PIN MOVED): re-aimed by content - its words now fit any press that leaves. Unaccepted stars dropped on the first Escape without a word."
   },
   {
     "name": "GROWTH3-embedded-captain-own-escape",
-    "file": "src/ui/captainTreeWindow.js",
+    "file": "src/ui/skyWindow.js",
     "old": "case 'Escape': if (embed) { used = false; break; } tryClose(); break;",
     "new": "case 'Escape': tryClose(); break;",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
-    "note": "The captain's sky closes itself under the window."
+    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the captain's window draws through the one sky window (RVN-STARS' skyWindow.js), embedded there. The captain's sky closes itself under the window."
   },
   {
     "name": "GROWTH3-embedded-level-own-escape",
@@ -368,5 +368,115 @@
       "test/ui/growth/growth1_tab.test.js"
     ],
     "note": "The Captain page's stars open over the world again, not on the tab."
+  },
+  {
+    "name": "GROWTH5-revenants-for-none",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "(id !== 'revenants' || sworn(ctx).length > 0)",
+    "new": "(true)",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A Revenant Stars page with no revenant sworn."
+  },
+  {
+    "name": "GROWTH5-due-abroad-counted",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "for (const r of sworn(ctx)) if (!r.abroad) due.revenants",
+    "new": "for (const r of sworn(ctx)) if (true) due.revenants",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The rail marks stars a revenant abroad cannot set."
+  },
+  {
+    "name": "GROWTH5-first-in-the-list",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "?? list.find((r) => !r.abroad && r.points > r.set) ?? list[0];",
+    "new": "?? list[0];",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The page opens on the first sworn, not the one with stars to set."
+  },
+  {
+    "name": "GROWTH5-stage-not-keyed",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "drawStage(detail, `rvn:${pick.id}`,",
+    "new": "drawStage(detail, 'rvn',",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "Another revenant chosen keeps the last one's sky on the stage."
+  },
+  {
+    "name": "GROWTH5-away-unsaid",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "lead: pick.abroad ? t('growth.rvn.leadAway'",
+    "new": "lead: false ? t('growth.rvn.leadAway'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A revenant away: the page never says why its sky will not change."
+  },
+  {
+    "name": "GROWTH5-sheet-key-unasked",
+    "file": "src/ui/charSheetDoor.js",
+    "old": "    if (view?.asksFirst?.()) return;      // GROWTH5",
+    "new": "    // GROWTH5",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "The sheet's key closes a sky with unaccepted stars unasked."
+  },
+  {
+    "name": "GROWTH5-menu-never-asks",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "asksFirst: () => mode === 'pause' && pauseTab === 'growth' && growthAsks(),",
+    "new": "asksFirst: () => false,",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "The doors ask a menu that never asks its stage."
+  },
+  {
+    "name": "GROWTH5-tab-unasked",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "if (pauseTab === 'growth' && id !== 'growth' && growthAsks()) return; ",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "Another tab throws a sky's unaccepted stars away unasked."
+  },
+  {
+    "name": "GROWTH5-rail-unasked",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "if (sec !== id && stageAsks()) return; ",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "Another page throws a sky's unaccepted stars away unasked."
+  },
+  {
+    "name": "GROWTH5-picker-unasked",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "if (rvn !== r.id) { if (stageAsks()) return; dropStage();",
+    "new": "if (rvn !== r.id) { dropStage();",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "Another revenant chosen throws the last one's unaccepted stars away unasked."
+  },
+  {
+    "name": "GROWTH5-asks-full-screen",
+    "file": "src/ui/growth/growthStage.js",
+    "old": "try { return !!me.face?.back?.(); } catch { return false; }",
+    "new": "try { if (me.face?.back?.()) return true; } catch { /* the face's */ } return me.full;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "A dial or sheet key that leaves full screen instead of putting the window away."
   }
 ]

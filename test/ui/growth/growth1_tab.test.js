@@ -22,7 +22,7 @@ import * as AP from '../../../src/systems/arcanePaths.js';
 import * as MP from '../../../src/systems/martialPaths.js';
 import { specGuideModel, skillStand, skillStandText, spellLines, techniqueLines, stateTag, SPEC_STATES } from '../../../src/ui/growth/specGuide.js';
 import { GROWTH_PAGE_SECTIONS, growthPageAt, SPEC_LANDINGS } from '../../../src/ui/growth/growthPages.js';
-import { growthSections, growthDue, resetGrowthTab, growthSection, setGrowthSection } from '../../../src/ui/growth/growthTab.js';
+import { growthSections, growthDue, resetGrowthTab, growthSection, setGrowthSection, setGrowthRevenant, drawGrowthTab } from '../../../src/ui/growth/growthTab.js';
 import { drawStage, dropStage, stageBack, stageLive, stageFace } from '../../../src/ui/growth/growthStage.js';
 import { _resetForTests } from '../../../src/systems/uiPrefs.js';
 
@@ -53,8 +53,8 @@ test('GROWTH1 THE TAB: Growth stands after Stats in the window\'s one list; a la
   assert.match(menu, /growth: pauseGrowth,/);
   assert.match(menu, /else if \(growthPageAt\(at\)\) pauseTab = 'growth';/);
   assert.match(menu, /resetGrowthTab\(at\);/);
-  assert.deepEqual(GROWTH_PAGE_SECTIONS.map(([id]) => id), ['level', 'specs', 'firmament', 'captain']);
-  for (const at of ['growth', 'level', 'specs', 'firmament', 'captain', 'specs:arcane', 'specs:martial']) assert.equal(growthPageAt(at), true, at);
+  assert.deepEqual(GROWTH_PAGE_SECTIONS.map(([id]) => id), ['level', 'specs', 'firmament', 'captain', 'revenants']);
+  for (const at of ['growth', 'level', 'specs', 'firmament', 'captain', 'revenants', 'specs:arcane', 'specs:martial']) assert.equal(growthPageAt(at), true, at);
   for (const at of ['stats', 'holdings', 'family', null, undefined, 'specs:nope']) assert.equal(growthPageAt(at), false, String(at));
   assert.deepEqual(SPEC_LANDINGS, { 'specs:arcane': 'arcane', 'specs:martial': 'martial' });
   resetGrowthTab('specs:martial'); assert.equal(growthSection(), 'specs');
@@ -73,9 +73,14 @@ test('GROWTH1 THE RAIL: the Captain\'s Stars where the host hands a captain\'s s
   const e = spellsword({ mastered: [LB, AR] });
   e.readyToLevelUp = true;
   const due = growthDue({ entity: e, captain: { model: () => ({ stars: { points: 6, set: 2 } }) } });
-  assert.deepEqual(due, { level: 1, specs: 1, firmament: 0, captain: 4 });
+  assert.deepEqual(due, { level: 1, specs: 1, firmament: 0, captain: 4, revenants: 0 });
   e.readyToLevelUp = false;
-  assert.deepEqual(growthDue({ entity: e }), { level: 0, specs: 1, firmament: 0, captain: 0 });
+  assert.deepEqual(growthDue({ entity: e }), { level: 0, specs: 1, firmament: 0, captain: 0, revenants: 0 });
+  // GROWTH5: the Revenant Stars while one is sworn; its mark the points unset of those at your side (abroad, a sky waits)
+  const sworn = () => [{ id: 'a', name: 'Ulfgar', level: 4, points: 5, set: 2, abroad: false }, { id: 'b', name: 'Mara', level: 3, points: 2, set: 0, abroad: true }];
+  assert.deepEqual(growthSections({ revenants: sworn }).map(([id]) => id), ['level', 'specs', 'firmament', 'revenants']);
+  assert.deepEqual(growthSections({ revenants: () => [] }).map(([id]) => id), ['level', 'specs', 'firmament']);
+  assert.equal(growthDue({ revenants: sworn }).revenants, 3);
 });
 
 // ── GROWTH2: the guide's law ────────────────────────────────────────────────────────────────────────────────────────
@@ -240,10 +245,13 @@ test('GROWTH3 THE WINDOWS, EMBEDDED (by source; tools/growthProbe.mjs drives the
   assert.match(firm, /if \(dead \|\| \(embed && !root\.isConnected\)\) return;/);
   assert.match(firm, /case 'Escape':\n\s*if \(embed\) \{ used = false; break; \}/);
   assert.match(firm, /let unregister = embed \? \(\) => \{\} : registerOverlay\(overlayClose\);/);
-  assert.match(firm, /if \(unaccepted\(\) && !armedClose\) \{ armedClose = true; say\(UNACCEPTED_ESCAPE, true\); return true; \}/);
-  const cap = rd('src/ui/captainTreeWindow.js');
-  assert.match(cap, /case 'Escape': if \(embed\) \{ used = false; break; \} tryClose\(\); break;/);
-  assert.match(cap, /if \(dead \|\| !unaccepted\(\) \|\| armedClose\) return false;/);
+  assert.match(firm, /if \(unaccepted\(\) && !armedClose\) \{ armedClose = true; say\(unacceptedLeave\(\), true\); return true; \}/);
+  // the captain's and the revenants' skies are one window (ui/skyWindow.js - RVN-STARS), embedded once for both
+  const sky = rd('src/ui/skyWindow.js');
+  assert.match(sky, /case 'Escape': if \(embed\) \{ used = false; break; \} tryClose\(\); break;/);
+  assert.match(sky, /if \(dead \|\| !unaccepted\(\) \|\| armedClose\) return false;/);
+  assert.match(sky, /if \(dead \|\| \(embed && !root\.isConnected\)\) return;/);
+  assert.match(rd('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/);
   const lv = rd('src/ui/enhanced/enhancedLevelUp.js');
   assert.match(lv, /if \(embed\) root\.classList\.add\('lv-embed'\);/);
   assert.match(lv, /if \(!embed\) unregister = registerOverlay\(closeArm\);/);
@@ -344,3 +352,32 @@ test('GROWTH THE WINDOW, DRIVEN: the Stats page\'s Growth door (its count) lands
     } finally { menu2.unmount(); setHoldingsProvider(null); }
   } finally { restore(); dropStage(); }
 });
+
+// GROWTH5 (the owner: "add a section for the upcoming revenant tree"; bible/10-UI/Growth.md section 7) - after the driven
+// window, whose document it draws on
+test('GROWTH5 THE REVENANT STARS PAGE: its rail row marks the stars to set; a picker of the sworn, the first with stars to set chosen; its sky on the stage keyed by the one chosen; another chosen (or the Companions page\'s Stars, setGrowthRevenant) moves the stage; one away says it waits (mutants: the first in the list chosen; the stage not keyed by the one; the away line lost)', async () => {
+  const doc = globalThis.document;
+  const sworn = () => [{ id: 'b', name: 'Mara', level: 3, points: 2, set: 2, abroad: false }, { id: 'a', name: 'Ulfgar', level: 4, points: 5, set: 2, abroad: false }, { id: 'c', name: 'Hrolf', level: 2, points: 1, set: 0, abroad: true }];
+  const el = (t, c, x) => { const n = doc.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+  const ctx = { el, divider: (x) => el('h4', 'px-divider', x), revenants: sworn, render: () => {} };
+  const draw = () => { const body = el('div', 'px-body'); drawGrowthTab(body, ctx); return body; };
+  const text = (n, cls) => n.querySelectorAll('*').filter((x) => String(x.className).split(' ').includes(cls)).map((x) => x.textContent);
+  const keyed = () => stageLive()?.key;
+  resetGrowthTab('revenants');
+  try {
+    let body = draw();
+    const row = body.querySelectorAll('button').find((b) => String(b.className).includes('px-qrow') && b.textContent.includes('Revenant Stars'));
+    assert.match(row.textContent, /Revenant Stars3$/, 'Ulfgar\'s three to set; Hrolf\'s abroad wait');
+    assert.deepEqual(text(body, 'gr-rvnname'), ['Mara', 'Ulfgar', 'Hrolf']);
+    assert.deepEqual(text(body, 'gr-rvnsub'), ['Level 3', 'Level 4 · 3 to set', 'Level 2 · away']);
+    assert.equal(keyed(), 'rvn:a', 'the first with stars to set');
+    body.querySelectorAll('button').find((b) => b.textContent.startsWith('Hrolf')).onclick();
+    body = draw();
+    assert.equal(keyed(), 'rvn:c');
+    assert.ok(text(body, 'gr-stagelead').some((x) => /^Hrolf is away\./.test(x)), 'away: it says so');
+    setGrowthRevenant('b');
+    draw();
+    assert.equal(keyed(), 'rvn:b', 'the Companions page\'s Stars choose it');
+  } finally { dropStage(); resetGrowthTab(null); }
+});
+
