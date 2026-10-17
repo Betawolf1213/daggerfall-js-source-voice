@@ -1,7 +1,7 @@
 // EG6a (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 9, 10.4 and 10.5): THE SPAN SOLVER'S
 // CLI AND THE COURSE SWEEP.
 //
-// The solver is the law's (net/egSpanLaw.js - the relay and every client draw the same course); this only drives it, as
+// The solver is the law's (net/eliteGates/egSpanLaw.js - the relay and every client draw the same course); this only drives it, as
 // tools/sdScoreProbe.mjs drives the Hour's score (section 9).
 //
 //     node tools/egSpanSolve.mjs <seed> <hall> [geo]
@@ -13,23 +13,23 @@
 //         THE SWEEP (section 10.5): every course the generator lays in a circle of the band, for each seed, crossed STEP BY
 //         STEP BY THE REAL MOTOR - player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0, every gap
 //         a plain running jump; the online page's parkour at skill 0 for a riser alone) on player/collider.js Collider, over
-//         the circle's floors (world/egHall.js egCircleColliderTris, the one bucket the dungeon stands) and its pieces as
-//         the screen rides them (scenes/egSpan.js createEgSpan - the Steps' stepTris slabs, moving on the shared clock,
+//         the circle's floors (world/eliteGates/egHall.js egCircleColliderTris, the one bucket the dungeon stands) and its pieces as
+//         the screen rides them (scenes/eliteGates/egSpan.js createEgSpan - the Steps' stepTris slabs, moving on the shared clock,
 //         carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness (test/world/superDungeon/sd7b_steps.test.js) is
 //         the model. A pilot plays each pair as a player would: it stands where it will run from, waits for a launch the
 //         solver says lands (egJumpLands - its window held either side of the launch, its own piece standing under it to
 //         the last, no gust in the flight), runs at the landing and jumps at the edge (what slides under it on the way, a
 //         Rail's travel meeting its neighbour's, it stands on); a riser it runs up. Each band's
 //         circle is the seed's (its first circle and the seed's fifth after it, its ground of span decrees the seed's from
-//         the second). `--golden` adds the law pin's four seeds (test/egz_frag.test.js). A course that is not crossed
+//         the second). `--golden` adds the law pin's four seeds (test/net/eliteGates/egz_frag.test.js). A course that is not crossed
 //         fails the run, naming its seed, hall, road and step; the exit code says so.
 //
 // CI runs 25 seeds a band on every pull request (.github/workflows/eg-sweep.yml, called by verify.yml), 500 nightly, and
 // 500 again before every relay deploy (relay-deploy.yml).
 //
 // THE ASCENT (LAW 9, 2026-10-16; bible/11-Multiplayer/Elite-Gates-Ascent.md section 6): A HALL OF THE ASCENT'S LAW IS WALKED
-// ALONG ITS ROUTE (sweepRoute), every road the route proves (net/egRouteProof.js egRouteRoads - the main way, THE FORK's
-// other where it lays one; a side way never): the pilot turns onto each link (net/egSpanLaw.js egRouteSolved - the road's
+// ALONG ITS ROUTE (sweepRoute), every road the route proves (net/eliteGates/egRouteProof.js egRouteRoads - the main way, THE FORK's
+// other where it lays one; a side way never): the pilot turns onto each link (net/eliteGates/egSpanLaw.js egRouteSolved - the road's
 // legs) and runs its walks and bridges, takes its stairs up and down, runs off its Drops, CLIMBS its climbs with the real
 // climbing motor (player/parkour.js on the online page's lane at Climbing 0 with its fatigue spent - THE ROUTE'S PROOFS' own
 // case - walked to the face, Forward held into it, resting on each ledge until its grip is back), and crosses each span
@@ -46,31 +46,31 @@
 // The climb faces a hall's collider does not stand (a synthetic hall's) the sweep stands itself (sweepClimbTris).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { egCircleSpecs, egFirstHallOf } from '../src/net/egLaw.js';
-import { egHallOf, egSpecForget } from '../src/net/egLaw.js';
+import { egCircleSpecs, egFirstHallOf } from '../src/net/eliteGates/egLaw.js';
+import { egHallOf, egSpecForget } from '../src/net/eliteGates/egLaw.js';
 import { egSpanPairs, egPairWindows, egSpanProof, egRoadCross, egFastCross, egCrossMin, egCourseOf, egJumpLands, egJumpReach, egPieceAt, egPendHits,
-  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/egSpanLaw.js';
-import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_RISE_M } from '../src/net/egRouteProof.js';   // THE ASCENT: the route's legs
-import { egRouteLen } from '../src/net/egRoute.js';
+  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
+import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_RISE_M } from '../src/net/eliteGates/egRouteProof.js';   // THE ASCENT: the route's legs
+import { egRouteLen } from '../src/net/eliteGates/egRoute.js';
 import { egSynth9Give } from './lib/egLaw9Synth.mjs';   // THE ASCENT: synthetic LAW 9 halls, until THE ROOMS lays them
-import { egCircleColliderTris } from '../src/world/egHall.js';
-import { createEgSpan, egStepKey, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/scenes/egSpan.js';
-import { egGustSections } from '../src/world/egLook.js';
+import { egCircleColliderTris } from '../src/world/eliteGates/egHall.js';
+import { createEgSpan, egStepKey, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../src/scenes/eliteGates/egSpan.js';
+import { egGustSections } from '../src/world/eliteGates/egLook.js';
 import { PlayerMotor, walkSpeed } from '../src/player/motor.js';
 import { Collider } from '../src/player/collider.js';
 import { realmToDungeon, dungeonToRealm } from '../src/net/superDungeon/sdBrain.js';
 import { gustAt } from '../src/world/superDungeon/sdSteps.js';
 import { identity } from '../src/world/mat4.js';
-import { egPolyIn } from '../src/net/egShape.js';   // EG-HERO-LAY: a hero's floors, crossed as still ground
+import { egPolyIn } from '../src/net/eliteGates/egShape.js';   // EG-HERO-LAY: a hero's floors, crossed as still ground
 import { isMain } from './lib/isMain.mjs';
 
 /** THE SPAN BUILD on the motor (section 10.2 - SD7b's: Speed 10, Running 0), and its skills for the parkour (a riser). */
 export const SWEEP_BUILD = Object.freeze({ speed: 10, running: 0, swimming: 30 });
 const SKILL0 = Object.freeze({ climbing: 0, jumping: 0, khajiit: false, enhanced: false, fatigue: 1, load: 0 });
 /** THE ASCENT (LAW 9): a climb on the way is climbed at Climbing 0 with its fatigue spent - THE ROUTE'S PROOFS' grip
- *  (net/egRouteProof.js EG_GRIP_S, parkour.js gripSeconds(0, 0)) - by a body that walked to its face (the proofs' pace). */
+ *  (net/eliteGates/egRouteProof.js EG_GRIP_S, parkour.js gripSeconds(0, 0)) - by a body that walked to its face (the proofs' pace). */
 const CLIMB0 = Object.freeze({ ...SKILL0, fatigue: 0 });
-/** The law pin's seeds (test/egz_frag.test.js) - every pull request sweeps their circles too. */
+/** The law pin's seeds (test/net/eliteGates/egz_frag.test.js) - every pull request sweeps their circles too. */
 export const SWEEP_GOLDEN = Object.freeze([77, 0xbeef, 3, 12345]);
 /** The pilot's frame, its margins (s, m), and how long a course may take before it is called lost (s of the clock). */
 const DT = 1 / 60;
@@ -92,7 +92,7 @@ const TIMED = new Set(['beat', 'moon', 'slag', 'crumble', 'bone', 'sink']);
 const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 /** Still ground under me: the circle's floors, a Falling Wall's or a Collapsing Tube's segment, one of Grath's islands
- *  (scenes/egSpan.js's own buckets). */
+ *  (scenes/eliteGates/egSpan.js's own buckets). */
 const onGround = (key) => key === EG_FLOOR_KEY || /^eg:(wall|tube|isle):/.test(key ?? '');
 
 /** A circle of `band` for `seed`, and its ground of span decrees (none in the first circle - its law has none). */
@@ -136,7 +136,7 @@ export function sweepStand(seed, c, geo) {
 export const SWEEP_CLIMB_KEY = 'eg:climbface';
 /**
  * THE ASCENT (LAW 9) - A HALL'S CLIMB FACES the circle's collider does not stand (a synthetic hall's, before THE ROOMS' collider
- * stands them - world/egHall.js): every climb's pitches (spec.climbs - net/egRouteProof.js egClimbPitches), each a wall from
+ * stands them - world/eliteGates/egHall.js): every climb's pitches (spec.climbs - net/eliteGates/egRouteProof.js egClimbPitches), each a wall from
  * its ledge to the next, set back a ledge's depth (`d`) a pitch into the wall from the first face's line - each stood only
  * where a level ray from a metre before it, at its middle height, meets nothing within a metre and a half. Triangles in the
  * dungeon's frame.
@@ -252,7 +252,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
   };
   // the gust's sections of this hall (the screen's own reach: its Gust pieces, 4 m either side)
   const gz = egGustSections([spec]);
-  // THE ASCENT (LAW 9): a section pushes only about its own line (the screen's EG_GUST_REACH_M - scenes/egSpan.js), never a
+  // THE ASCENT (LAW 9): a section pushes only about its own line (the screen's EG_GUST_REACH_M - scenes/eliteGates/egSpan.js), never a
   // course of another line beside its z (a hall's courses stand side by side)
   const gusty = (r, z, a, b, x = null) => { if (!gz.some((g) => g.road === r && z >= g.z0 && z <= g.z1 && (x == null || Math.abs(x - g.x) <= EG_GUST_REACH_M))) return false; for (let u = a; u <= b; u += 0.05) if (gustAt(u).push) return true; return false; };
 
@@ -432,7 +432,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
     return 'stuck';
   };
   /** THE ASCENT (LAW 9) - UP CLIMB LEG `g` BY THE REAL CLIMBING MOTOR (player/parkour.js on the online page's lane, Climbing 0
-   *  with fatigue spent - THE ROUTE'S PROOFS' own case, net/egRouteProof.js): to its foot, a whole grip first, then Forward
+   *  with fatigue spent - THE ROUTE'S PROOFS' own case, net/eliteGates/egRouteProof.js): to its foot, a whole grip first, then Forward
    *  held into its face - the free climb's start, the wall, the hang at the lip, the mantle - and on each rest ledge the grip
    *  waited back with the feet on its floor, then on; until it stands on the lip's floor, then on to the link's top. Null, or
    *  why not (a fall - the highest it reached and its grip; never up). */
@@ -496,7 +496,7 @@ export function sweepCourse(S, spec, road, t0, trace = null) {
 /**
  * THE ASCENT (LAW 9; bible/11-Multiplayer/Elite-Gates-Ascent.md section 6) - ONE ROAD WALKED ALONG THE ROUTE BY THE REAL
  * MOTOR: hall `spec`'s road `road` (0 the main way, 1 THE FORK's other) from the arrival plate at shared second `t0`, link by
- * link along its path (net/egSpanLaw.js egRouteSolved) - turning onto each, running its walks and bridges, taking its stairs
+ * link along its path (net/eliteGates/egSpanLaw.js egRouteSolved) - turning onto each, running its walks and bridges, taking its stairs
  * up and down, running off its Drops, CLIMBING its climbs with the real climbing motor (climbUp - Climbing 0, fatigue spent,
  * a rest on each ledge), and crossing each span link's course pair by pair as THE PLANNER crosses a course (crossPairs) -
  * to the door, standing on the end plate. `{ ok, seed, h, road, step, why, t }` - `step` the link it failed on (`link <i>

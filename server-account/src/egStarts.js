@@ -4,14 +4,14 @@
 //
 // bible/11-Multiplayer/Elite-Gates.md sections 5 and 16.6. A breach may start at any Redoubt its opener may start at -
 // any Redoubt they have taken this season, or, until they take one this season, floor(best / 2) of their all-time best
-// (src/net/egStartLaw.js egStartsFrom, the law the start window asks by too). The season is the arena's
+// (src/net/eliteGates/egStartLaw.js egStartsFrom, the law the start window asks by too). The season is the arena's
 // (src/net/arena/arenaLaw.js arenaSeasonOf - eight weeks), as the boards' is.
 //
 // `/v1/eg/starts` is THE START WINDOW'S PREFLIGHT: for each member of the opener's party (the client names them - at most
 // EG_STARTS_ASK_MAX, the opener always among them), which starts they may make; null for one who may make none (no such
 // account, or a guest: the Spire's feats are recorded). With it the opener's own Weir Keys and whether the day's Rehearsal
 // is still free, so the window asks once - and the relay's public half (`rk`, GATE_PUBLIC_KEY: not a secret, it can
-// verify and cannot sign), which verifies the hub's signature on an arch a stranger stands (src/net/egCallSig.js).
+// verify and cannot sign), which verifies the hub's signature on an arch a stranger stands (src/net/eliteGates/egCallSig.js).
 // /v1/eg/keys hands the same `rk` to every signed-in client, opener or not.
 //
 // The open (eg.js openEg) and every admission (admitEg) are held to the same law: no carries.
@@ -19,7 +19,7 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { egStartsFrom } from '../../src/net/egStartLaw.js';
+import { egStartsFrom } from '../../src/net/eliteGates/egStartLaw.js';
 import { arenaSeasonOf, ARENA_SEASON_EPOCH_S, ARENA_SEASON_S } from '../../src/net/arena/arenaLaw.js';
 import { ID_RE } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';

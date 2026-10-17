@@ -36,7 +36,7 @@ test('LAMP-KEEPER II THE PICK: a shop\'s keeper (182_0-2) stands as the lamp one
   assert.deepEqual([...LAMP_KEEPER_RECORDS], [0, 1, 2]);
   assert.deepEqual({ ...LAMP_CLASSIC }, { archive: RR_NPC_ARCHIVE, record: 6 }, 'Kludge Town\'s street lamp - the record the bug drew');
   assert.deepEqual(RR_NPC_XML_SCALE[6], [3, 0.8], 'and the stretch Roleplay & Realism gives it');
-  assert.equal(LAMP_ARCHIVE, 38232);   // PIN MOVED (AUDIT EG V, the merge of main): 38241 is the Spire's Broken Galleries (world/pseudoArchives.js EG_BAND_ARCHIVES) - the lamp moved to the first free number after the harbour's
+  assert.equal(LAMP_ARCHIVE, 38232);   // PIN MOVED (AUDIT EG V, the merge of main): 38241 is the Spire's Broken Galleries (world/eliteGates/pseudoArchives.js EG_BAND_ARCHIVES) - the lamp moved to the first free number after the harbour's
   for (const r of [0, 1, 2]) assert.equal(isLampCandidate(keeper(r), shop), true);
   assert.equal(isLampCandidate(keeper(3), shop), false, 'not every 182 person');
   assert.equal(isLampCandidate({ textureArchive: 184, textureRecord: 2 }, shop), false);

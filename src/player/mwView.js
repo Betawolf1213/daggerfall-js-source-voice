@@ -116,9 +116,9 @@ export function setEotbCartYields(fn) { eotbCartYields = typeof fn === 'function
  * rock"): IN THE SPIRE BOTH CAMERAS PULL IN AT ONCE AGAINST A WALL AND EASE BACK OUT OVER 0.25 s, never snapping. Each
  * lane's own casts still decide how far the camera may stand (the Morrowind camera's sphere casts, camera.cpp:186/:200;
  * Eye Of The Beholder's axis casts and its line of sight) - over the fragments' collider proxy, the drawn rock's inner
- * envelope (world/egHall.js egCircleColliderTris), so the camera never stands inside visible rock - and the Spire only
+ * envelope (world/eliteGates/egHall.js egCircleColliderTris), so the camera never stands inside visible rock - and the Spire only
  * keeps it from springing back out the frame a wall leaves the cast: out from the focal at most its whole free distance
- * every SPIRE_CAMERA_EASE_S, never past where the cast allows. The breach client says when (scenes/egClient.js -
+ * every SPIRE_CAMERA_EASE_S, never past where the cast allows. The breach client says when (scenes/eliteGates/egClient.js -
  * `setSpireCamera`); everywhere else both lanes are their own, as they were. A departure from camera.cpp and from the
  * mod, Ledger A (ELITE-GATES).
  */
@@ -158,8 +158,8 @@ export function spireCameraFrame(out, full, dt) {
 /**
  * EG-ZN (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md section 11.8, "The camera in rock"): ON A SHAFT'S LEDGE
  * FACING A DROP, THE PITCH BIASES 20 DEGREES DOWN AND THE CAMERA RISES TO LOOK OVER THE EDGE, so the landing is seen, not
- * the back. The breach client says where my feet stand (`setSpireShaft` - scenes/egClient.js: the shaft's way down while I
- * stand on its rim or a flight above its Drop's landing, world/egHall.js egShaftLedgeAt, and whether the screen stands
+ * the back. The breach client says where my feet stand (`setSpireShaft` - scenes/eliteGates/egClient.js: the shaft's way down while I
+ * stand on its rim or a flight above its Drop's landing, world/eliteGates/egHall.js egShaftLedgeAt, and whether the screen stands
  * still); this seam judges the facing on the frame's yaw, and both lanes lay the bias on their own eye: the camera's pitch
  * SPIRE_SHAFT_PITCH under the look's, its pivot SPIRE_SHAFT_RISE_M over its own (the casts start there), both eased over
  * SPIRE_SHAFT_EASE_S as the facing comes and goes - under reduced motion none (AUDIT EG III: section 11.8's camera never

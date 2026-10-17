@@ -7,9 +7,9 @@
 // of molten iron far down its chasm, two conveyors and a slag weir across it, drop-hammers hanging in its vault. Written on
 // the authoring kit (tools/egHeroKit.mjs) and the reference's mesh and writer (tools/egRefFragScene.mjs refFragMesh,
 // writeRefFragFbx) - no game data, no third-party art, no trigonometry - and committed as the .fbx tools/fragBake.mjs bakes
-// (tools/bakeEgHeroForgeGut.mjs). Re-run it and the same bytes come out (test/eghero_wellhead.test.js holds it to them).
+// (tools/bakeEgHeroForgeGut.mjs). Re-run it and the same bytes come out (test/tooling/eghero_wellhead.test.js holds it to them).
 //
-// THE ENVELOPE - net/egFragLaw.js egFragPassage('forge') from EG_SLAG_LAW (the code-built passage it stands in for):
+// THE ENVELOPE - net/eliteGates/egFragLaw.js egFragPassage('forge') from EG_SLAG_LAW (the code-built passage it stands in for):
 //   frame      1 unit 1 m, Z up, the course along +Y; the mouth at Y 0 centred on X 0, the exit at Y 31
 //   mouth      8.4 m wide (halfW 420), 6.5 m high (height 650) - the code-built passage's floor and vault; the exit the same,
 //              at the mouth's height (yB 0)
@@ -45,7 +45,7 @@ export const FORGE_GUT = Object.freeze({
 });
 const F = FORGE_GUT;
 const SEED = 0x7f01;
-/** The dress records' slots each art object names (world/egBandArt.js EG_DRESS). */
+/** The dress records' slots each art object names (world/eliteGates/egBandArt.js EG_DRESS). */
 const D = Object.freeze(['floor', 'brass', 'root', 'arena', 'cobble', 'edge', 'molten', 'pillar']);
 const [FLOOR, IRON, ROCK, ARENA, , EDGE, MOLTEN, ASHLAR] = [0, 1, 2, 3, 4, 5, 6, 7];
 
@@ -307,7 +307,7 @@ export function heroForgeGutScene() {
   cube('anchor.hazard.spouteast', 3.4, F.zB + 0.8, 0);
   // THE SIGNATURE: the hammers (a disc of r 3, told 1.4 s) over each landing's two spots in turn, and the hammer line over
   // each conveyor's middle; the cooling slag's two lanes, 4 m wide, from the crust's near edge onto 1.5 m of the far landing
-  // (EG_SLAG_LIP_CM), the east spout half a cycle behind the west (net/egSpanLaw.js egSlagState)
+  // (EG_SLAG_LIP_CM), the east spout half a cycle behind the west (net/eliteGates/egSpanLaw.js egSlagState)
   const spots = (name, pts) => { const m = add(refFragMesh(name)); for (const [x, y] of pts) levelDisc(m, x, y, 0, 3, 16); };
   spots('hazard.hammer.near', [[-1.8, 3.4], [1.8, 3.4]]);
   spots('hazard.hammer.far.ph3000', [[-1.8, 27.6], [1.8, 27.6]]);

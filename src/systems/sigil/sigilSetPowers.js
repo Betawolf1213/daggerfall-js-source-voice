@@ -465,7 +465,7 @@ let _pending = null;
 let _bossBlowAt = -Infinity, _pendingBoss = false;
 export function setBossStruck() { _bossBlowAt = _now(); }
 /** AUDIT EG V (lane8 L8-1; Elite-Gates.md section 15's death saves, Sigil-Sets.md 6e): A SPIRE FOE'S BLOW. The Spire's lords
- *  and legion strike through the dungeon context's door (scenes/egFight.js landShare -> strikePlayer), never the attack
+ *  and legion strike through the dungeon context's door (scenes/eliteGates/egFight.js landShare -> strikePlayer), never the attack
  *  formula's struck tail, so their blows carried no foe's mark - and the two hurt-listener saves the Spire holds to its
  *  next Redoubt, Shed Skin and the Panoply's own Reprieve, never once answered a blow in the Spire, where the Panoply
  *  drops. The fight's driver marks a body's blow as it lands (never a hazard, a zone or a drain - no foe's blow), taken by
@@ -653,7 +653,7 @@ const _spireRedoubts = new Map();
 export function registerSpireRedoubt(key, fn) { if (typeof fn === 'function') _spireRedoubts.set(key, fn); else _spireRedoubts.delete(key); }
 /** The Elite Breach the player stands in now (the host's `setSpireRecovery` word - any value but null and false), or null. */
 export const spireRoomNow = () => spireRoom();
-/** The host's word (scenes/egClient.js, as the room says a Redoubt was taken): every death save recovers at once - the
+/** The host's word (scenes/eliteGates/egClient.js, as the room says a Redoubt was taken): every death save recovers at once - the
  *  four above, held or still on a timer - and the next round says each is ready again. EG-ZH: and every other death save
  *  registered beside them (systems/loot/lootPowers.js - Divine Grace and the Ghost-King's Vigil), each its own. */
 export function spireRedoubtTaken() {

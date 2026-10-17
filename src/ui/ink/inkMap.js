@@ -42,7 +42,7 @@ import { getPixelColorIndex, FILTER_SRC } from '../travel/travelMapWindow.js';  
 import { GATE_RING_CSS, GATE_FILL_CSS } from '../gate/gateMapMark.js';   // WB1: the Oblivion Gate's ring, in the omen's own colours
 import { SERPENT_MAP_INK } from '../serpentMapMark.js';   // SERPENT1: the sea serpent's ring, in the sea's colours
 import { SD_MAP_INK } from '../superDungeon/sdMapMark.js';   // SD2c: the Super dungeon's ring, in its omen's brass
-import { EG_ARCH_MAP_INK } from '../egArchMapMark.js';   // EG-F: my company's Elite arch, in its gold
+import { EG_ARCH_MAP_INK } from '../eliteGates/egArchMapMark.js';   // EG-F: my company's Elite arch, in its gold
 import { LODE_RING_CSS, LODE_FILL_CSS } from '../lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's Motherlodes, in the compass's aqua
 import { POI_RING_CSS, POI_FILL_CSS } from '../poi/poiMapMark.js';   // POI-2: the approved POIs, in their violet
 import { BOUNTY_RING_CSS, BOUNTY_FILL_CSS, REVENANT_RING_CSS, REVENANT_FILL_CSS } from '../bounty/bountyMapMark.js';   // BOUNTY1: a held bounty's black circle; RVN7c: a revenant's lair in blood red

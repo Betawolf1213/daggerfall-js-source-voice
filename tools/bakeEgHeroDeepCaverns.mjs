@@ -5,11 +5,11 @@
 // EG-HERO (2026-10-13, the owner: "You have to author the fragments"; bible/11-Multiplayer/Elite-Gates.md section 11.6:
 // "each fragment its own bake script and byte-for-byte test"). The scene is the port's own (tools/egHeroDeepCavernsScene.mjs
 // writes it); the bake is tools/fragBake.mjs's. Its SPEC: the Oblivion Caverns, deep (`deep` - band 3, the cave's reverb,
-// the kit's magma light, the Sluice its engine: net/egFragLaw.js EG_FRAGS), a chamber whose play is its two dry ledges
-// (`balcony` - EG_PLAYS, section 11.4; egFragChamber's deep play), the hero `deepcaverns` (net/egHeroFrags.js lays any hero
+// the kit's magma light, the Sluice its engine: net/eliteGates/egFragLaw.js EG_FRAGS), a chamber whose play is its two dry ledges
+// (`balcony` - EG_PLAYS, section 11.4; egFragChamber's deep play), the hero `deepcaverns` (net/eliteGates/egHeroFrags.js lays any hero
 // but the reference). The two halves land beside the source -
-// `LAW` registered in net/egHeroFrags.js, `MESH` in world/egHeroFragModel.js - each held to its bytes by
-// test/eghero_wellhead.test.js.
+// `LAW` registered in net/eliteGates/egHeroFrags.js, `MESH` in world/eliteGates/egHeroFragModel.js - each held to its bytes by
+// test/tooling/eghero_wellhead.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

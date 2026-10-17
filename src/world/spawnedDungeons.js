@@ -248,7 +248,7 @@ export function dungeonSightLine(metres, direction, tier = 'regular') {
 }
 /** EG-F (bible/11-Multiplayer/Elite-Gates.md section 2, the sight line): the line's law for any thing seen - `what` (its
  *  article with it), the distance to the nearest ten metres (never under ten), the host's compass word. An Elite Breach's
- *  arch says it (scenes/egArch.js): "You see an Elite Breach 140 metres to the North!" */
+ *  arch says it (scenes/eliteGates/egArch.js): "You see an Elite Breach 140 metres to the North!" */
 export function sightLineOf(what, metres, direction) {
   const m = Math.max(10, Math.round(metres / 10) * 10);
   return `You see ${what} ${m} metres to the ${direction}!`;

@@ -6,10 +6,10 @@
 // "each fragment its own bake script and byte-for-byte test, as every bake in the port has"). The scene is the port's own
 // (tools/egHeroEclipseScene.mjs writes it); the bake is tools/fragBake.mjs's, the reference's script's shape
 // (tools/bakeEgRefFrag.mjs). Its SPEC says what the scene cannot: which fragment it is (`id`), its library kit (the Eclipse
-// Vault - its band, reverb, light and engine follow, net/egFragLaw.js EG_FRAGS), its class (a chamber), which hero of the
+// Vault - its band, reverb, light and engine follow, net/eliteGates/egFragLaw.js EG_FRAGS), its class (a chamber), which hero of the
 // kit it is (`variant` 'eclipse' - a hero a hall may lay, never the reference), and its play (section 11.4, EG_PLAYS: a
-// second fight floor on two stairs where Casters stand - the two galleries - and an engine, the Moon-Mirror). The two halves land beside the source: `LAW` (registered in net/egHeroFrags.js) and `MESH` (registered in
-// world/egHeroFragModel.js), each held to its bytes by test/eghero_shade.test.js.
+// second fight floor on two stairs where Casters stand - the two galleries - and an engine, the Moon-Mirror). The two halves land beside the source: `LAW` (registered in net/eliteGates/egHeroFrags.js) and `MESH` (registered in
+// world/eliteGates/egHeroFragModel.js), each held to its bytes by test/tooling/eghero_shade.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

@@ -31,7 +31,7 @@
 //
 // EG-ZR (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 15): A THIRD ONLINE TERM, THE SPIRE'S
 // STONESKIN - `spireHp`, whole points of health a Stoneskin holder carries while it stands in an Elite Breach
-// (systems/spireVestiges.js puts it on and takes it off at every exit - setSpireHp, the fraction kept), read by the same
+// (systems/eliteGates/spireVestiges.js puts it on and takes it off at every exit - setSpireHp, the fraction kept), read by the same
 // accessor beside Renown's. No save meets it: the Spire refuses every save (Elite-Gates.md section 24's made level), and the
 // term goes at the first frame out of it. The room's shares of a body are of the body without it (spireBodyMax): the points are
 // a cushion over it, never a larger body for a blow's share to take more of.

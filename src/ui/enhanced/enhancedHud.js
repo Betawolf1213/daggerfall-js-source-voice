@@ -276,7 +276,7 @@ function drawGateMark(gate, playerXZ, heading01) {
 }
 
 // EG-F (bible/11-Multiplayer/Elite-Gates.md section 6.4): AN ELITE BREACH'S ARCH - the gate's diamond in the arch's gold
-// (scenes/egArch.js EG_ARCH_GOLD - the Spire's "it holds"), where my company's arch stands while the call stands (scenes/
+// (scenes/eliteGates/egArch.js EG_ARCH_GOLD - the Spire's "it holds"), where my company's arch stands while the call stands (scenes/
 // world.js through egClient.archCompass); the gate's bearing law, hidden never removed.
 const archMarkCss = () => 'position:absolute;top:50%;width:7px;height:7px;margin:-4px 0 0 -4px;transform:rotate(45deg);'
   + 'background:#ffc752;box-shadow:0 0 6px 2px rgba(255,199,82,0.75);pointer-events:none';

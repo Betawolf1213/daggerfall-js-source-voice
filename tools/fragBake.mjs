@@ -3,11 +3,11 @@
 //     node tools/fragBake.mjs --list <in.fbx>        every object as the bake reads it - a marker and what it says, or art
 //
 // EG6c (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 11.6 - "Authored hero fragments (EG6c, as Mac authors
-// them), modelled in Blender"). A fragment has a LAW HALF the relay reads (section 11.5 - net/egFragLaw.js's record and its
+// them), modelled in Blender"). A fragment has a LAW HALF the relay reads (section 11.5 - net/eliteGates/egFragLaw.js's record and its
 // reader, egFragRecordFault) and a MESH HALF only the client draws. Mac authors both in one scene: the art as meshes wearing
 // the band's dress, the law as NAMED MARKERS beside it. Each fragment has its own .fbx and its own bake script (the
 // reference's is tools/bakeEgRefFrag.mjs), which hands bakeFrag its SPEC - `{ id, kit, class, variant, play, source }`:
-// its name, its library kit (net/egFragLaw.js EG_FRAGS - its band, reverb, light and engine follow), its class, which hero
+// its name, its library kit (net/eliteGates/egFragLaw.js EG_FRAGS - its band, reverb, light and engine follow), its class, which hero
 // of the kit it is, a chamber's play (section 11.4) - and writes the two JSONs a test re-bakes byte for byte.
 //
 // ONE DFU MEMBER, ONE EXPORT: nothing here re-reads what another bake already reads. tools/shipBake.mjs sceneObjects
@@ -43,14 +43,14 @@
 //   edge.<label>                     a walk-graph edge: a strip from one node's disc to another's
 //   anchor.<kind>.<label>            a place of the legion: rift, caster, lurker, niche, engine or hazard (a small box;
 //                                    the middle of its foot)
-//   hazard.<kind>.<label>[.per<ms>][.ph<ms>]   a hazard of net/egFragLaw.js EG_HAZARDS, in its kind's shape
+//   hazard.<kind>.<label>[.per<ms>][.ph<ms>]   a hazard of net/eliteGates/egFragLaw.js EG_HAZARDS, in its kind's shape
 //                                    (EG_HAZARD_SHAPES): a lane (fall, surge, slag) one rectangle along its length (its
 //                                    bite the capsule inside it - the law's lanes are capsules); spots
 //                                    (basalt, hammer, hammerline) one disc each, all one size; lanes (cascade) one rectangle
 //                                    each, falling along +Y; a wisp's path (per required) its swing's rectangle; the mist a
 //                                    plane at its line; the tide a disc; the Eclipse its moon-shafts' ring as a disc. `per`
 //                                    its cycle where its law leaves one free, `ph` its phase
-//   course.<kind>.<label>[.amp<cm>][.per<ms>][.ph<ms>][.beat<n>]   an inner piece (net/egLaw.js EG_STEP's kinds, the
+//   course.<kind>.<label>[.amp<cm>][.per<ms>][.ph<ms>][.beat<n>]   an inner piece (net/eliteGates/egLaw.js EG_STEP's kinds, the
 //                                    Steps' records): a box whose top is the piece's top. A Drift and a Rail say amp and
 //                                    per, a Pendulum, a Vent and a Gust per, a Drum amp (it rolls at the law's
 //                                    EG_DRUM_MPS), a Moon branch ph and beat (cm - the beams' origin along +Y), a Beat beat
@@ -62,29 +62,29 @@
 //
 // ═══ THE ART ═══════════════════════════════════════════════════════════════════════════════════════════════════════
 //
-// Every other object is art. Each of its faces wears a material NAMED for a record of its band's dress (world/egBandArt.js
+// Every other object is art. Each of its faces wears a material NAMED for a record of its band's dress (world/eliteGates/egBandArt.js
 // EG_DRESS: floor, brass, root, arena, cobble, edge, molten, pillar), so it draws under its band's archive
-// (world/pseudoArchives.js EG_BAND_ARCHIVES) and needs no number of its own. Each art object carries normals and a UV map.
-// The mesh half is one sub-mesh a record, lowest first (world/meshKit.js packs it so).
+// (world/eliteGates/pseudoArchives.js EG_BAND_ARCHIVES) and needs no number of its own. Each art object carries normals and a UV map.
+// The mesh half is one sub-mesh a record, lowest first (world/eliteGates/meshKit.js packs it so).
 //
 // ═══ WHAT IT REFUSES, BY NAME ══════════════════════════════════════════════════════════════════════════════════════
 //
 // An export no Blender 5.1 wrote (the port's own reference writer apart - FRAG_REF_WRITER), a marker name it cannot read, a
 // floor or ceiling not flat or not one outline, a socket not upright across the course, an edge not between two nodes, a
 // hazard not in its kind's shape, an inner piece whose clock its name does not say, art without the band's dress or without
-// normals or UVs - and then every fault net/egFragLaw.js egFragRecordFault finds in the record (THE CEILING CLAMP, VOLUMES
+// normals or UVs - and then every fault net/eliteGates/egFragLaw.js egFragRecordFault finds in the record (THE CEILING CLAMP, VOLUMES
 // STAND APART, the budget, the hazard law, the sockets on the box's faces), and an inner course THE TIMED SOLVER does not
-// prove (net/egSpanLaw.js egSpanProof). Never a guess: a refused scene is fixed in Blender.
+// prove (net/eliteGates/egSpanLaw.js egSpanProof). Never a guess: a refused scene is fixed in Blender.
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { readFbx, nodeAt, childNamed, property70 } from './fbxRead.mjs';
 import { layerReader, cornerWelder } from './fbxMesh.mjs';
 import { sceneObjects, assertBlenderFill, fillFace, round4 } from './shipBake.mjs';
 import { isMain } from './lib/isMain.mjs';
-import { EG_FRAGS, EG_HAZARDS, EG_HAZARD_SHAPES, EG_FRAG_ANCHORS, EG_FRAG_LIGHTS, EG_FRAG_SEALS, EG_ALCOVE_HOLDS, EG_FRAG_V, EG_FRAG_SOCKET_TOL_CM, EG_SLAG_LANE_CM, egFragArea2, egFragInPoly, egFragRecordFault, egFragSteps, egFragSwept, egFragHazardPlan } from '../src/net/egFragLaw.js';
-import { EG_STEP } from '../src/net/egLaw.js';
-import { egSpanProof, egRoadCross, EG_DRUM_MPS, EG_MOON_EVERY_S, EG_SLAG_CYCLE_S } from '../src/net/egSpanLaw.js';
-import { EG_DRESS } from '../src/world/egBandArt.js';
+import { EG_FRAGS, EG_HAZARDS, EG_HAZARD_SHAPES, EG_FRAG_ANCHORS, EG_FRAG_LIGHTS, EG_FRAG_SEALS, EG_ALCOVE_HOLDS, EG_FRAG_V, EG_FRAG_SOCKET_TOL_CM, EG_SLAG_LANE_CM, egFragArea2, egFragInPoly, egFragRecordFault, egFragSteps, egFragSwept, egFragHazardPlan } from '../src/net/eliteGates/egFragLaw.js';
+import { EG_STEP } from '../src/net/eliteGates/egLaw.js';
+import { egSpanProof, egRoadCross, EG_DRUM_MPS, EG_MOON_EVERY_S, EG_SLAG_CYCLE_S } from '../src/net/eliteGates/egSpanLaw.js';
+import { EG_DRESS } from '../src/world/eliteGates/egBandArt.js';
 
 /** The port's own writer of the reference fragment (tools/egRefFragScene.mjs) as its SceneInfo names it: no Blender wrote
  *  that file, so no Blender's cut of its faces is in question - the port's is the only one there is. */
@@ -277,7 +277,7 @@ function discOf(o, pts, faces) {
   if (Math.abs((b[3] - b[0]) - (b[5] - b[2])) > FRAG_ROUND_CM) throw new Error(`${o.name}: not a disc (${b[3] - b[0]} by ${b[5] - b[2]} cm)`);
   return { x: Math.round((b[0] + b[3]) / 2), z: Math.round((b[2] + b[5]) / 2), r: Math.round(Math.max(b[3] - b[0], b[5] - b[2]) / 2), y: b[1] };
 }
-/** A LANE from its rectangle: the law's lane is a capsule (net/egShape.js egInShape - every point within w/2 of its line),
+/** A LANE from its rectangle: the law's lane is a capsule (net/eliteGates/egShape.js egInShape - every point within w/2 of its line),
  *  so its line is the rectangle's middle line drawn in by w/2 at each end - the capsule inside the rectangle Mac drew, its
  *  bite never past it (a rectangle no longer than it is wide is a disc, its line a point). */
 function laneOf(r) {
@@ -290,7 +290,7 @@ function oneSize(o, sizes) {
   return Math.max(...sizes);
 }
 
-/** A HAZARD's record (net/egFragLaw.js's fields, cm and ms) from its marker: its kind's shape (EG_HAZARD_SHAPES). */
+/** A HAZARD's record (net/eliteGates/egFragLaw.js's fields, cm and ms) from its marker: its kind's shape (EG_HAZARD_SHAPES). */
 function hazardOf(o, mk, pts) {
   const shape = EG_HAZARD_SHAPES[mk.of];
   const h = { kind: mk.of, x: 0, y: 0, z: 0, w: 0, r: 0, ring: 0, period: mk.clock.per ?? 0, phase: mk.clock.ph ?? 0, sh: null, spots: null, lanes: null, path: null };
@@ -317,14 +317,14 @@ function hazardOf(o, mk, pts) {
 export function fragPiece(mk, b) {
   const [x, w] = snapped(b, 0), [z, d] = snapped(b, 2), c = mk.clock;
   const piece = { kind: mk.of, x, y: b[4], z, w, d, amp: c.amp ?? 0, period: c.per ?? 0, phase: c.ph ?? 0, beat: c.beat ?? 0, gap: 0, after: 0 };
-  if (mk.of === 'drum') piece.period = Math.trunc((4 * piece.amp * 1000) / (EG_DRUM_MPS * 100));   // net/egFragLaw.js egFragPassage's roll
+  if (mk.of === 'drum') piece.period = Math.trunc((4 * piece.amp * 1000) / (EG_DRUM_MPS * 100));   // net/eliteGates/egFragLaw.js egFragPassage's roll
   if (mk.of === 'moon') piece.period = EG_MOON_EVERY_S * 1000;
   if (mk.of === 'slag') { piece.amp = EG_SLAG_LANE_CM; piece.period = EG_SLAG_CYCLE_S * 1000; }
   return piece;
 }
 
 /**
- * THE BAKE: the FBX's bytes in, `{ law, mesh }` out - the law half (net/egFragLaw.js's record, refused if its reader finds
+ * THE BAKE: the FBX's bytes in, `{ law, mesh }` out - the law half (net/eliteGates/egFragLaw.js's record, refused if its reader finds
  * a fault, its inner course proven by THE TIMED SOLVER) and the mesh half (positions, normals and UVs, a sub-mesh a dress
  * record, the collider's proxy). Pure. `tree` the bytes parsed (a test hands in one it changed, to see the bake refuse
  * it); `source` the FBX's path as the files record it.
@@ -342,7 +342,7 @@ export function bakeFrag(fbxBytes, spec, tree = readFbx(fbxBytes), source = spec
   const origin = [(mb[0][0] + mb[0][1]) / 2, (mb[1][0] + mb[1][1]) / 2, mb[2][0]];
   const toFrag = (p) => [p[0] - origin[0], p[2] - origin[2], p[1] - origin[1]];
   const F = EG_FRAGS[spec.kit];
-  if (!F) throw new Error(`kit ${spec.kit}: no such fragment (net/egFragLaw.js EG_FRAGS)`);
+  if (!F) throw new Error(`kit ${spec.kit}: no such fragment (net/eliteGates/egFragLaw.js EG_FRAGS)`);
 
   // ── THE LAW HALF: each marker read
   const by = (kind) => marks.filter((m) => m.mk?.kind === kind).map((m) => ({ ...m, pts: cmPoints(m.o, toFrag) }));

@@ -46,7 +46,7 @@
   },
   {
     "name": "SD7A-a-step-standing-still",
-    "file": "src/net/egSpanLaw.js",
+    "file": "src/net/eliteGates/egSpanLaw.js",
     "old": "  if (s.kind === 'drift') out[0] = s.x + egDriftDx(s, t);",
     "new": "  if (s.kind === 'drift') out[0] = s.x;",
     "tests": [
@@ -64,7 +64,7 @@
   },
   {
     "name": "SD7A-a-beat-that-never-goes",
-    "file": "src/net/egSpanLaw.js",
+    "file": "src/net/eliteGates/egSpanLaw.js",
     "old": "export const EG_BEAT_SOLID_S = 2.4;",
     "new": "export const EG_BEAT_SOLID_S = 3.6;",
     "tests": [
@@ -82,7 +82,7 @@
   },
   {
     "name": "SD7A-no-warning-before-the-beat",
-    "file": "src/net/egSpanLaw.js",
+    "file": "src/net/eliteGates/egSpanLaw.js",
     "old": "  return u >= EG_BEAT_SOLID_S - EG_BEAT_BLINK_S && u < EG_BEAT_SOLID_S;",
     "new": "  return false;",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "SD7A-a-riser-on-the-beat",
-    "file": "src/net/egSpanLaw.js",
+    "file": "src/net/eliteGates/egSpanLaw.js",
     "old": "  if (s.kind !== 'beat') return true;",
     "new": "  if (s.kind !== 'beat' && s.kind !== 'riser') return true;",
     "tests": [
@@ -181,7 +181,7 @@
   },
   {
     "name": "SD7A-a-step-up-in-the-Crumble",
-    "file": "src/net/egSpanLaw.js",
+    "file": "src/net/eliteGates/egSpanLaw.js",
     "old": "      if (sec.descend) y = Math.max(0, y - drop);",
     "new": "      if (sec.descend) y = sec.pieces.indexOf(p) % 2 ? y - 2 * drop : y + drop * 0.5;",
     "tests": [

@@ -35,7 +35,7 @@ import { frameCss, scopeRules } from './enhanced/enhancedFrame.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 import { isBound, BOUND_LINE } from '../systems/item/itemBound.js';   // SS4: the wares are bound, and the card says so
 import { paintTitle, titleBadge } from './playerBadge.js';   // WB9g: the Gatebreaker's word, in its own fire
-import { EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../net/egPay.js';   // EG-E1: the Panoply sink's price and its nine pieces
+import { EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../net/eliteGates/egPay.js';   // EG-E1: the Panoply sink's price and its nine pieces
 
 /** @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
 const el = (tag, cls = null, text = null) => {

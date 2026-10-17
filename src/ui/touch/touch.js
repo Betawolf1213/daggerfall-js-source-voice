@@ -102,7 +102,7 @@ const GYRO_MAX_DT = 0.1;        // TI2: a motion sample older than this (a backg
 // EG-ZH (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 27.8 - TOUCH AND THE
 // PAD): IN THE SPIRE the right half is look and Jump a held button in its corner, so a jump with a camera correction needed
 // two right thumbs, and the stick sprinted only past RUN_THROW. Inside an Elite Breach alone (the breach client's word,
-// `setTouchSpire` - scenes/egClient.js; null everywhere else, and the layer is TI2's exactly):
+// `setTouchSpire` - scenes/eliteGates/egClient.js; null everywhere else, and the layer is TI2's exactly):
 //   - a JUMP press that keeps sliding becomes look (past TAP_PX, the drag's own law and gain);
 //   - an UPWARD FLICK on the look half - EG_FLICK_PX or more up within EG_FLICK_MS - jumps too (the look it made stands);
 //   - ON SPANS (the Spire's traversal ground) the stick runs at full throw: Run at any throw past the dead zone, and the

@@ -297,7 +297,7 @@ reference surface absent · **Departure** = deliberate, ledgered.
 | Area | then | now | what moved, and what is left |
 |---|---|---|---|
 | **formats-core** | Verbatim | **Verbatim** | 46/50 API classes cited, `API/Save` 14/14. The malformed-CIF runaway parse was in the AUDIT-44 wave. Residue: `DFValidator`, `PowerOfTwo`. |
-| **formats-game** | Verbatim readers / broken consumer | **Verbatim** | The `ItemRecord` conversions were in the wave; ROAD-A A4 took the classic-import stragglers (building-level MAPSAVE, the native bank record, `LegacyArtifactIndexBitfieldCheck`). ~~Ledger row `:824`'s one residue is the phone path - no zip arm in the saves picker, a desktop-first charter call.~~ **CLOSED (OT1, 2026-09-10): the saves picker took the ARENA2 door's zip arm, and the row is struck whole.** |
+| **formats-game** | Verbatim readers / broken consumer | **Verbatim** | The `ItemRecord` conversions were in the wave; ROAD-A A4 took the classic-import stragglers (building-level MAPSAVE, the native bank record, `LegacyArtifactIndexBitfieldCheck`). ~~Ledger row `:825`'s one residue is the phone path - no zip arm in the saves picker, a desktop-first charter call.~~ **CLOSED (OT1, 2026-09-10): the saves picker took the ARENA2 door's zip arm, and the row is struck whole.** |
 | **formats-mw** | Departure lane, faithful within it | **Departure lane, now consumed** | `clipSweepTimes` has a production caller: `combat/fpArm.js:"const sweep = reachSweep ? clipSweepTimes"` runs the whole-clip reach sweep the superseded page said had never run in the game. 17 modules / 8,842 lines. |
 | **world-terrain** | Near-1:1 | **Near-1:1** | ROAD-A A1 moved the texture season onto `DaggerfallDateTime.SeasonValue` - climate swaps, the winter sunlight term and sky selection - and demoted `?season` to a debug override. The lightning flash stays a recorded enhanced-lane departure. |
 | **world-layout** | Near-1:1 | **Near-1:1** | `rmbLayout`'s shared-block mutation is gated: `attachWindmillRecord` runs only when `enhanced` is true, is idempotent by a `subs.findIndex(r => r?.windmill)` guard, and the header names `subRecords.length` as the count three subsystems bind on (`world/rmbLayout.js:"subRecords.length is the exact"` the gated call, `world/rmbLayout.js:"const already = subs.findIndex"` the guard). |
@@ -906,7 +906,7 @@ they are closed (`RegionPowerAndConditionsUpdate`, vampirism/lycanthropy).
 
 That accounts for 15 of the 19, leaving **4 unstruck rows that carry a
 route** (the fourth, `:944`, A MOD'S MATERIALS, added by VE1 and routed to
-the Rendering arc) - plus `:827`, struck at its head but carrying a live
+the Rendering arc) - plus `:828`, struck at its head but carrying a live
 PENDING clause in its tail, for **six rows that still owe work: items 1-4
 and 6 below, and the Materials row** (item 5 was the sixth, OT1 struck it; item 7 the seventh, DR1). The measurement this section was first written over read 246
 rows, 216 struck and fourteen still owing; what closed the gap is the
@@ -1042,7 +1042,7 @@ ships, which is the warning the section's own preamble opens with.
 14. **`:803` the small-residue trio** (biography GP arm, arrow roll
     notes, the faceUV zero-length guard) -> their arcs. The biography GP
     arm has a Ledger A row of its own and is inert on all 18 shipping
-    `BIOG*.TXT` files; the faceUV guard rides row `:745`.
+    `BIOG*.TXT` files; the faceUV guard rides row `:746`.
 
 ## 3. The deliberate departures, which are not on the road
 

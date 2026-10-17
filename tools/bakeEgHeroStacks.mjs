@@ -5,11 +5,11 @@
 // EG-HERO (2026-10-13, Mac: "You have to author the fragments"; bible/11-Multiplayer/Elite-Gates.md section 11.6: "each
 // fragment its own bake script and byte-for-byte test, as every bake in the port has"). The scene is the port's own
 // (tools/egHeroStacksScene.mjs writes it); the bake is tools/fragBake.mjs's. Its SPEC: the fragment (`id`), its library kit
-// (the Fallen Stacks - its band, reverb, light and engine follow, net/egFragLaw.js EG_FRAGS), its class (a chamber), which
-// hero of the kit it is (`variant` 'stacks' - a hero a hall may lay, net/egHeroFrags.js egHeroFragLaws) and a chamber's play
+// (the Fallen Stacks - its band, reverb, light and engine follow, net/eliteGates/egFragLaw.js EG_FRAGS), its class (a chamber), which
+// hero of the kit it is (`variant` 'stacks' - a hero a hall may lay, net/eliteGates/egHeroFrags.js egHeroFragLaws) and a chamber's play
 // (section 11.4: a second fight floor on its stairs where Casters stand, and THE SHELF, the kit's engine). The halves land
-// beside the source: `LAW` (registered in net/egHeroFrags.js) and `MESH` (in world/egHeroFragModel.js), each held to its
-// bytes by test/eghero_galleries.test.js.
+// beside the source: `LAW` (registered in net/eliteGates/egHeroFrags.js) and `MESH` (in world/eliteGates/egHeroFragModel.js), each held to its
+// bytes by test/tooling/eghero_galleries.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

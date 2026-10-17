@@ -7,9 +7,9 @@
 // sheet, tube, strip, the Moon-Mirror - are that file's): a scene written from numbers alone (no game data, no third-party
 // art, no trigonometry - tools/egHeroKit.mjs RINGS and its integer hash), written by the reference's own writer
 // (tools/egRefFragScene.mjs writeRefFragFbx) and baked by tools/fragBake.mjs (tools/bakeEgHeroEclipse.mjs, its bake script).
-// Re-run it and the same bytes come out (test/eghero_shade.test.js holds it to them). Not a DFU member; tooling, never shipped.
+// Re-run it and the same bytes come out (test/tooling/eghero_shade.test.js holds it to them). Not a DFU member; tooling, never shipped.
 //
-// THE ENVELOPE (the kit's code-built chamber, net/egFragLaw.js egFragChamber('eclipse', r, R) as net/egLaw.js lays it): the
+// THE ENVELOPE (the kit's code-built chamber, net/eliteGates/egFragLaw.js egFragChamber('eclipse', r, R) as net/eliteGates/egLaw.js lays it): the
 // court's fight floor of radius R = 16 m (the Deepway's chamber - `const R = 1600`), its middle where the hall's `court`
 // puts it, 4 m past the slot's start (edge + 400 + R): so the mouth at the slot's start (the court's bridge), the floor's
 // middle 20 m in, and the exit 4 m past the floor's far rim, 40 m from the mouth, both on the course's line and the floor's
@@ -51,7 +51,7 @@ export const ECLIPSE_FBX = 'src/assets/egfrags/source/egheroEclipse.fbx';
 
 /** The hall (m): the fight floor's radius `R` about its middle `cy` along +Y, the passage's length `len` (mouth to exit),
  *  the gatehouses' half-width and clear height, the galleries' height `up`, the vault's ceiling, the stairs' width, the
- *  moon-shafts' ring (net/egFragLaw.js EG_ECLIPSE_RING_M), the dome's slot (from `slot0` in to `slot1` out). */
+ *  moon-shafts' ring (net/eliteGates/egFragLaw.js EG_ECLIPSE_RING_M), the dome's slot (from `slot0` in to `slot1` out). */
 export const ECLIPSE = Object.freeze({ R: 16, cy: 20, len: 40, gateHW: 3, gateH: 7, up: 3.5, vault: 10, stairW: 3, ring: 9, slot0: 7, slot1: 11.2 });
 const { R, cy: CY, len: LEN, gateHW: GW, gateH: GH, up: UP, vault: VAULT, stairW: SW } = ECLIPSE;
 const RG = RINGS[24];

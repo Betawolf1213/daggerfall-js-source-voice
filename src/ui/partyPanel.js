@@ -404,7 +404,7 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
   let alive = true;
   let warned = false;
   // EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 27.4): THE SPIRE'S ROWS - the host's word, by account, of each
-  // member's state in a breach (ui/egParty.js egPartyDeco: the numeral, the classes, the mark, the title, the absent
+  // member's state in a breach (ui/eliteGates/egParty.js egPartyDeco: the numeral, the classes, the mark, the title, the absent
   // ring, the place line), painted over the card only where it moved; null outside a breach.
   let spire = null;
   let spireWas = null;
@@ -752,7 +752,7 @@ export function createPartyPanel({ social, doc = document, art = null, faceLoade
     },
     /** COMPANION-KIT: the host's companions seam, handed in after the build (the party's panel is made over `social`). */
     setCompanions(fn) { companions = typeof fn === 'function' ? fn : null; compPainted = null; },
-    /** EG-G1: the host's Spire rows seam (ui/egParty.js egPartyDeco by account, or null outside a breach). */
+    /** EG-G1: the host's Spire rows seam (ui/eliteGates/egParty.js egPartyDeco by account, or null outside a breach). */
     setSpire(fn, onTap = null) { spire = typeof fn === 'function' ? fn : null; spireTap = typeof onTap === 'function' ? onTap : null; spireWas = null; },   // AUDIT EG V (c, L7-7): and a row's tap
     /** What the panel currently draws, for a host or a pin that wants it without walking the DOM. */
     cardCount: () => cards.size,

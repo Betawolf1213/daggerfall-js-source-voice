@@ -94,7 +94,7 @@ export const sdHourShown = (h) => sdHour(h) || SD_HOURS;
 export const sdTurnsFor = (t) => Math.min(sdHour(t), SD_HOURS - sdHour(t));
 
 /** The slot's own seed for a draw (a slot is public; the draw is the law's, the same everywhere). EG-PLAY: exported -
- *  the Elite Breach's halls draw with the same mix (net/egLaw.js egSeed; ONE DFU MEMBER, ONE EXPORT). */
+ *  the Elite Breach's halls draw with the same mix (net/eliteGates/egLaw.js egSeed; ONE DFU MEMBER, ONE EXPORT). */
 export function sdSeed(s, salt) {
   let h = (Math.imul(s >>> 0, 0x9e3779b1) ^ salt) >>> 0;
   h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
@@ -274,12 +274,12 @@ export function orreryTurned(R, who, id, road, after, now) {
 export const orreryLashed = (R, max = 256) => Object.entries(R.ids).filter(([, net]) => net >= 0).map(([id]) => id).slice(0, max);
 /**
  * EG-H3 (2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 8.4 and 31, EG4): ONE TURN OF A STONE, JUDGED - the
- * Hour's realm's judge (server/src/index.js _sdTurn) and the Spire's Athenaeum's (net/egBrain.js), one law over the one
+ * Hour's realm's judge (server/src/index.js _sdTurn) and the Spire's Athenaeum's (net/eliteGates/egBrain.js), one law over the one
  * draw (orreryOf, widened): nothing while the Concord holds or while the stone's gear has not settled (SD_STONE_SETTLE_MS
  * since `last[i]`); under THE STONES' RIGHTS (`R` - the Hour's thread; the Spire's company keeps none) a turner that may
  * not turn now is told to wait (`{ wait: true }`), and a turn it takes is counted to it by the road before and after
  * (orreryTurned); else the turn - orreryStep's answer. `lock` the hall's `{ st, f, ok }`. The judge the realm ran,
- * extracted whole: THE GOLDEN FRAMES' Orrery (test/egseam_law.test.js) hold the Hour's every word to what it said.
+ * extracted whole: THE GOLDEN FRAMES' Orrery (test/net/eliteGates/egseam_law.test.js) hold the Hour's every word to what it said.
  * @returns {null | { wait: boolean, st?: number[], f?: number, ok?: boolean, x?: boolean, lit?: number }}
  */
 export function orreryJudge(o, lock, last, i, a, now, R = null, who = '', id = '') {

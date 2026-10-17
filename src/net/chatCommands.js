@@ -219,7 +219,7 @@ export const helpLines = () => [...HELP_LINES.slice(0, -1), breachHelpLine(), HE
 /**
  * AUDIT EG V (c, L7-1): THE ELITE BREACH'S DOOR IN THE CHAT - what `/breach` was given: its words after it, whole (`pick 2`,
  * `vote yes`, `buy tonic`, `ping danger`, `annals 3`, `surplus reroll`, `bequest 1`), '' for `/breach` alone, null for any
- * other line. The host (scenes/world.js onSend) hands them to the breach client (scenes/egClient.js command) and sends
+ * other line. The host (scenes/world.js onSend) hands them to the breach client (scenes/eliteGates/egClient.js command) and sends
  * nothing; a one-word door read every two-word command as no command at all. Pure.
  * @param {string} text
  */

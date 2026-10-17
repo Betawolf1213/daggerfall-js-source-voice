@@ -6,7 +6,7 @@
 // Blender; until his arrive, ONE REFERENCE FRAGMENT proves the path his will take - a scene written here, from numbers
 // alone (no game data, no third-party art, no trigonometry: the octagons' corners are Math.SQRT1_2's), committed as the
 // .fbx tools/fragBake.mjs bakes exactly as it bakes one of his (tools/bakeEgRefFrag.mjs, the reference's own bake
-// script). Re-run it and the same bytes come out (test/eg6c_bake.test.js holds it to them).
+// script). Re-run it and the same bytes come out (test/tooling/eg6c_bake.test.js holds it to them).
 //
 // It is written as Blender writes an export (tools/fbxWrite.mjs, Blender's FBX defaults - Y up, Z front, X right, units
 // in centimetres): each object's origin at the middle of its box, its vertices about it in Blender's own Z-up axes, its
@@ -100,7 +100,7 @@ function faceNormal(pts) {
 export function refFragScene() {
   const out = [];
   const add = (m) => { out.push(m); return m; };
-  // ── THE ART, in the Galleries' dress (world/egBandArt.js EG_DRESS's records by name)
+  // ── THE ART, in the Galleries' dress (world/eliteGates/egBandArt.js EG_DRESS's records by name)
   add(refFragMesh('Floor_Near', ['floor', 'pillar'])).level(-3, 0, 0, 9, 0).level(0, 0, 3, 9, 0).across(-3, 3, 9, -0.6, 0, 1, true);
   add(refFragMesh('Floor_Far', ['floor', 'pillar'])).level(-3, 21, 3, 25.5, 0).level(-3, 25.5, 3, 30, 0).across(-3, 3, 21, -0.6, 0, 1);
   add(refFragMesh('Walls', ['pillar'])).box(-3.5, 0, -0.6, -3, 30, 6).box(3, 0, -0.6, 3.5, 30, 6);

@@ -1,9 +1,9 @@
 // THE ASCENT (LAW 9, 2026-10-16; bible/11-Multiplayer/Elite-Gates-Ascent.md sections 1, 4 and 6): SYNTHETIC LAW 9 HALLS - a
 // hall laid as a way, for THE ROUTE'S PROOFS and the sweep's pilot to be run on before THE ROOMS (LAW 9's own generator,
-// net/egLaw.js layHall) lays them. Each is a spec of THE ASCENT's law in the contract's shape (`law` 9, `route` - nodes, links
+// net/eliteGates/egLaw.js layHall) lays them. Each is a spec of THE ASCENT's law in the contract's shape (`law` 9, `route` - nodes, links
 // of section 1's kinds and roads, the main way - `climbs`, `voids`), standing on the law's own elements (discs, lanes, bands,
-// ramps, a course laid by the span generator, net/egSpanLaw.js egSpanOf) - so the circle's collider stands it
-// (world/egHall.js egCircleColliderTris) and the screen rides its pieces (scenes/egSpan.js createEgSpan), as a real hall's:
+// ramps, a course laid by the span generator, net/eliteGates/egSpanLaw.js egSpanOf) - so the circle's collider stands it
+// (world/eliteGates/egHall.js egCircleColliderTris) and the screen rides its pieces (scenes/eliteGates/egSpan.js createEgSpan), as a real hall's:
 //
 //   the arrival plate -> a corridor along +z -> a landing that turns -> a corridor along +x -> A STAIR up (a ramp, 3-5 m at
 //   3 in 5) -> a landing that turns -> a corridor along +z to A CLIMB (one or two pitches of 2.5-2.9 m, a rest ledge 1.2 m
@@ -13,11 +13,11 @@
 //   between) -> a corridor to the end plate and its door.
 //
 // Its dies are the seed's and the hall's; a hall THE TIMED SOLVER refuses is drawn again from the next try, as the law's are.
-// egSynth9Give gives a circle's five through net/egLaw.js egSpecGive (the relay's own seam for a hall given), so every reader
+// egSynth9Give gives a circle's five through net/eliteGates/egLaw.js egSpecGive (the relay's own seam for a hall given), so every reader
 // of the circle - the collider, the screen's spans, the sweep - builds them. A tool's and a test's; nothing that runs a breach.
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { egSpecGive, egSeed, EG_STEP, EG_BAND_PIECES, EG_HALL_PITCH, egFirstHallOf } from '../../src/net/egLaw.js';
-import { egSpanOf, egSpanProof } from '../../src/net/egSpanLaw.js';
+import { egSpecGive, egSeed, EG_STEP, EG_BAND_PIECES, EG_HALL_PITCH, egFirstHallOf } from '../../src/net/eliteGates/egLaw.js';
+import { egSpanOf, egSpanProof } from '../../src/net/eliteGates/egSpanLaw.js';
 import { sdRng } from '../../src/net/superDungeon/sdBrain.js';
 
 /** The synthetic halls' die's salt (a die of their own). */
@@ -132,7 +132,7 @@ function lay(seed, h, band, slot, c, geo, at, own) {
     if (!l || k > 64) break;
     at0 = l.b;
   }
-  // THE COURSE'S STEPS, the ground after each run (net/egLaw.js's own measure - the next still ground along its line)
+  // THE COURSE'S STEPS, the ground after each run (net/eliteGates/egLaw.js's own measure - the next still ground along its line)
   const steps = S.lay();
   for (const s of steps) {
     const far = s.z + s.d / 2, next = steps.find((q) => q.road === s.road && q.i > s.i);
@@ -162,7 +162,7 @@ function lay(seed, h, band, slot, c, geo, at, own) {
 }
 
 /** A SYNTHETIC CIRCLE GIVEN: seed `seed`'s circle `c` (ground `geo`), its five halls synthetic LAW 9 halls in `band` (`o[s]`
- *  slot s's own options - egSynth9Hall's), each given as the relay gives a hall (net/egLaw.js egSpecGive) - every reader of the
+ *  slot s's own options - egSynth9Hall's), each given as the relay gives a hall (net/eliteGates/egLaw.js egSpecGive) - every reader of the
  *  circle builds them until egSpecForget. Answers the halls. */
 export function egSynth9Give(seed, c, geo = 0, band = 0, o = {}) {
   const out = [];

@@ -9,7 +9,7 @@
 // and each void's plan drawn. A law 4-8 hall (no route) draws its course's line along +z.
 //
 // A tool's own (the lab's page): no game data, nothing the game imports. Ledger A (ELITE-GATES).
-import { EG_ROOM_NAMES } from '../net/egRoomLaw.js';
+import { EG_ROOM_NAMES } from '../net/eliteGates/egRoomLaw.js';
 
 /** Each link kind's colour on the map (CSS). */
 export const EG_MAP_KIND_COLORS = Object.freeze({ walk: '#f2efe6', stair: '#f5c542', climb: '#ff5a4f', drop: '#d264ff', span: '#3fd3ff', bridge: '#62e07a' });

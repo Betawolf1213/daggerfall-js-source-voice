@@ -1,9 +1,9 @@
 // THE SPIRE LAB (EG-G2, 2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 25 - EG16's
 // "the lab checks, frame-synced probes"). An Elite Breach's circle drawn by the game's own renderer and the Spire's own
-// parts, with no game data - every piece of it is made in code: the halls (world/egHall.js) in their band's dress
-// (world/egBandArt.js), the pieces batched and culled (scenes/egSpan.js, scenes/egPieceBatch.js), the waystones (world/
-// egLook.js), the sky, the mist and THE EDGE LINE (scenes/egLookDraw.js), and a telegraph through the Spire's own stage
-// in the shelf's danger palette (render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE, scenes/egFight.js egLookShapes). The frame is
+// parts, with no game data - every piece of it is made in code: the halls (world/eliteGates/egHall.js) in their band's dress
+// (world/eliteGates/egBandArt.js), the pieces batched and culled (scenes/eliteGates/egSpan.js, scenes/eliteGates/egPieceBatch.js), the waystones (world/
+// egLook.js), the sky, the mist and THE EDGE LINE (scenes/eliteGates/egLookDraw.js), and a telegraph through the Spire's own stage
+// in the shelf's danger palette (render/gate/gateTelegraph.js TELEGRAPH_FS_SPIRE, scenes/eliteGates/egFight.js egLookShapes). The frame is
 // the dungeon arm's for a circle (scenes/worldModes.js: the Spire's trilight and key, its haze and the Hour's grade, its
 // lamps, the circle and the dynamic draws, the cull before them, the sky after the solid geometry, the fight's pass last)
 // in the same calls, so what this page shows is what a member in the Spire sees.
@@ -21,8 +21,8 @@
 //   ?palette=standard|contrast|deutan|tritan  ?fill=50-100   a danger disc on the court in that look (?shape=off: none)
 //   ?mist            a circle with a Mist Stair or the Sinking Stair, the camera over its sheet, the clock at its surge
 //   ?grey            the frame in grey (the lab check's)  ?nopanel the panel hidden (probes)
-//   ?reduced         reduced motion (EG-LOOK: the air held still - scenes/egLookDraw.js drawAir)
-//   ?door            the door open at the hall's end plate: its gold beam (render/egLightPass.js) and its foot's halo
+//   ?reduced         reduced motion (EG-LOOK: the air held still - scenes/eliteGates/egLookDraw.js drawAir)
+//   ?door            the door open at the hall's end plate: its gold beam (render/eliteGates/egLightPass.js) and its foot's halo
 //   ?frames=<n>      draw n frames and rest (a probe reads the last - tools/spireLabProbe.mjs)
 //   ?view=map        THE ASCENT (LAW 9 - Elite-Gates-Ascent.md section 8): THE MAP - the hall straight down, in plan (an
 //                    orthographic eye, no haze), its ROUTE drawn over it (src/tools/spireMap.js: links by kind and road, the
@@ -32,7 +32,7 @@
 //                    undercroft, crossing, corridor, switchback, scarp - the circle's, any hall), a body's eyes a step in from
 //                    its mouth; `room-<k>-over` from over its middle, looking down across it
 //   ?view=swatch (or ?swatch)   EG-LOOK: THE BAND'S PICTURES on a wall in the void beside the arrival plate - every record
-//                    the band paints on a quad at its intended texels a metre, the right way up (world/egBandArt.js
+//                    the band paints on a quad at its intended texels a metre, the right way up (world/eliteGates/egBandArt.js
 //                    EG_KIT_MAP), lit by the band's own light and three of its lamps; ?rec=<record> the eye 5 m before one
 // `window.__frame` counts drawn frames (the probes frame-sync on it - bible/Home.md's Process); `window.__lab` answers a
 // probe's questions (the batch's stats, the look's state).
@@ -43,23 +43,23 @@ import { skyGain } from '../render/deadlands.js';
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gate/gateTelegraph.js';
 import { realmArt } from '../world/superDungeon/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../world/superDungeon/sdRealm.js';
-import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/egHall.js';
-import { createEgGroundLook } from '../scenes/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
-import { EG_VISTA_PLACES, EG_VISTA_REACH } from '../world/egVista.js';   // EG-LOOK (THE WRECK): where a wing hangs, for ?wing
-import { egRuinBands } from '../world/egRuin.js';   // EG-LOOK (THE RUIN): the bands a circle's ruin wears
-import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/egBandArt.js';
-import { createMeshKit } from '../world/meshKit.js';   // EG-LOOK: the swatch wall
-import { egAtmosOf } from '../world/egAtmos.js';
-import { buildEgLookModel, egMistSheets } from '../world/egLook.js';
-import { egPaletteOf, egFillOf } from '../ui/egAccess.js';   // the shelf's palette and fill, their one home
-import { createEgSpan } from '../scenes/egSpan.js';
-import { createEgLookDraw } from '../scenes/egLookDraw.js';
-import { egLookShapes } from '../scenes/egFight.js';
-import { egCircleSpecs, egFirstHallOf, egBandOfCircle } from '../net/egLaw.js';
-import { egPieceAt } from '../net/egSpanLaw.js';   // EG-LOOK: a piece's view at a moment it stands
-import { egIsleDisc } from '../world/egHall.js';
-import { egMistAt } from '../net/egFragLaw.js';
-import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
+import { buildEgCircleModel, egCircleLights, egLightsWith, egHallLighting, egHallFog, egHallGrade, egToDungeon, egHallCentre } from '../world/eliteGates/egHall.js';
+import { createEgGroundLook } from '../scenes/eliteGates/egGroundLook.js';   // EG-LOOK: the ruin and the wreck, as the circle's host stands them
+import { EG_VISTA_PLACES, EG_VISTA_REACH } from '../world/eliteGates/egVista.js';   // EG-LOOK (THE WRECK): where a wing hangs, for ?wing
+import { egRuinBands } from '../world/eliteGates/egRuin.js';   // EG-LOOK (THE RUIN): the bands a circle's ruin wears
+import { egBandArt, egBandArchive, EG_BAND_RECORDS, EG_KIT_MAP, EG_DRESS } from '../world/eliteGates/egBandArt.js';
+import { createMeshKit } from '../world/eliteGates/meshKit.js';   // EG-LOOK: the swatch wall
+import { egAtmosOf } from '../world/eliteGates/egAtmos.js';
+import { buildEgLookModel, egMistSheets } from '../world/eliteGates/egLook.js';
+import { egPaletteOf, egFillOf } from '../ui/eliteGates/egAccess.js';   // the shelf's palette and fill, their one home
+import { createEgSpan } from '../scenes/eliteGates/egSpan.js';
+import { createEgLookDraw } from '../scenes/eliteGates/egLookDraw.js';
+import { egLookShapes } from '../scenes/eliteGates/egFight.js';
+import { egCircleSpecs, egFirstHallOf, egBandOfCircle } from '../net/eliteGates/egLaw.js';
+import { egPieceAt } from '../net/eliteGates/egSpanLaw.js';   // EG-LOOK: a piece's view at a moment it stands
+import { egIsleDisc } from '../world/eliteGates/egHall.js';
+import { egMistAt } from '../net/eliteGates/egFragLaw.js';
+import { EG_LIGHT_KIND, EG_DOOR_BEAM } from '../world/eliteGates/egLights.js';   // EG-LOOK: ?door - the beam and its foot's halo
 import { INTERIOR_LIGHT_DIR } from '../world/interior/interiorLights.js';
 import { perspective, lookAt, identity, mirrorProjectionX, ortho, multiply } from '../world/mat4.js';
 import { egMapDraw, egRoomViews } from './spireMap.js';   // THE ASCENT: the map's route, the rooms' views
@@ -87,7 +87,7 @@ const SLOT = MIST ? SPECS.indexOf(MIST.spec) : Math.max(0, Math.min(4, Number(pa
 const SPEC = SPECS[SLOT];
 for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, { white: true }); }
 for (const [rec, art] of egBandArt(BAND)) { renderer.uploadTexture(egBandArchive(BAND), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(BAND), rec, art.emission, { white: true }); }   // EG-LOOK: a cutout picture's holes asked (the host's way)
-// THE RUIN: a Brink circle's band above too (world/egRuin.js egRuinBands - its first halls' ruin wears it), the host's way
+// THE RUIN: a Brink circle's band above too (world/eliteGates/egRuin.js egRuinBands - its first halls' ruin wears it), the host's way
 for (const b of egRuinBands(C)) if (b !== BAND) for (const [rec, art] of egBandArt(b)) { renderer.uploadTexture(egBandArchive(b), rec, art.albedo, art.cutout ? { cutout: true } : {}); renderer.uploadEmissionTexture?.(egBandArchive(b), rec, art.emission, { white: true }); }
 const circleMesh = renderer.createMesh(buildEgCircleModel(SEED, C, 0));
 const lookModel = buildEgLookModel(SEED, C, 0), lookMesh = lookModel ? renderer.createMesh(lookModel) : null;
@@ -116,7 +116,7 @@ const SWATCH = params.get('view') === 'swatch' || params.has('swatch') || params
 const SW = Object.freeze({ x: -34, z: (SPEC.arrive?.z ?? 0) + 4, y: 1, col: 4.6, row: 5.2, cols: 7 });
 /** Repeats a quad shows of each record (u, v): a tiling picture twice (its seams seen), a laid-out one once. */
 const SW_REP = Object.freeze({ [EG_DRESS.edge]: [8, 8], [EG_DRESS.molten]: [3, 3], [EG_DRESS.root]: [1, 1], 61: [2, 1], 63: [1, 1], 64: [1, 1], 67: [1, 1], 68: [1, 1], 69: [1, 1], 71: [1, 1], 81: [3, 3] });
-/** Which way a record's v runs up the quad: the kit's own (EG_KIT_MAP), the walls' up (world/egHall.js), the rest from its top. */
+/** Which way a record's v runs up the quad: the kit's own (EG_KIT_MAP), the walls' up (world/eliteGates/egHall.js), the rest from its top. */
 const swUp = (rec) => (EG_KIT_MAP[rec] ? EG_KIT_MAP[rec].v === 'up' : rec === EG_DRESS.pillar);
 /** Where record k's quad stands: its centre in the hall's frame. */
 const swAt = (k) => [SW.x, SW.y + (2 - Math.floor(k / SW.cols)) * SW.row + 2.3, SW.z + ((k % SW.cols) - (SW.cols - 1) / 2) * SW.col];
@@ -177,7 +177,7 @@ const VIEWS = {
   // THE ASCENT: inside each room archetype (the circle's first of each, any hall), and over it
   ...Object.fromEntries(egRoomViews(SPECS).reverse().map((v) => [`room-${v.name}`, { spec: v.spec, at: v.at, yaw: v.yaw, pitch: v.pitch }])),
 };
-/** EG-LOOK (THE WRECK): ?wing=<n> - the camera 70 m from the band's wing n toward its hall (world/egVista.js EG_VISTA_PLACES,
+/** EG-LOOK (THE WRECK): ?wing=<n> - the camera 70 m from the band's wing n toward its hall (world/eliteGates/egVista.js EG_VISTA_PLACES,
  *  at the band's reach; a Court's place in a Court hall), looking at it. */
 function wingView(n) {
   const P = EG_VISTA_PLACES[n];
@@ -243,7 +243,7 @@ let last = performance.now();
 window.__frame = 0;
 window.__lab = { circle: C, band: BAND, hall: egFirstHallOf(C) + SLOT, batch: () => span.batchStats(), look: () => look.state(), air: () => look.airState(), stats: () => ({ ground: ground.stats(), air: look.airState(), draws: dynamicDraws.filter((d) => !d.hidden && !d.culled).length }), eye: (x, y, z, yawDeg, pitchDeg) => { cam.pos = [x, y, z]; cam.yaw = (yawDeg * Math.PI) / 180; cam.pitch = (pitchDeg * Math.PI) / 180; }, view: (n) => { viewSel.value = n; setView(n); } };
 
-/** EG-LOOK: ?door - the door's beam over the hall's end plate, as world/egLights.js egSpireLights stands it through the
+/** EG-LOOK: ?door - the door's beam over the hall's end plate, as world/eliteGates/egLights.js egSpireLights stands it through the
  *  closing (the way's gold), for its own pass and its foot's halo. */
 const DOOR_AT = SPEC.end ? egToDungeon(SPEC, SPEC.end.x, SPEC.end.y ?? 0, SPEC.end.z) : null;
 const LIGHTS = params.has('door') && DOOR_AT ? [{ k: EG_LIGHT_KIND.beam, x: DOOR_AT[0], y: DOOR_AT[1], z: DOOR_AT[2], h: EG_DOOR_BEAM.h, w: EG_DOOR_BEAM.w, r: 0, c: LOOK.palette.safety, a: 1, f: 0 }] : [];
@@ -275,7 +275,7 @@ function frame(now) {
   renderer.setMoonlight(L.key);
   applyFog(renderer, MAPV ? { ...dungeonFog(lane, egHallFog(C)), density: 0, start: 1e6, end: 2e6 } : dungeonFog(lane, egHallFog(C)));   // THE ASCENT: the map unhazed
   renderer.setSceneGrade?.(egHallGrade(C));
-  ground.frame(cam.pos, clock);   // EG-LOOK: the eye's hall's ruin drawn, the wreck placed about it (scenes/egCircleHost.js egCircleFrame)
+  ground.frame(cam.pos, clock);   // EG-LOOK: the eye's hall's ruin drawn, the wreck placed about it (scenes/eliteGates/egCircleHost.js egCircleFrame)
   const lit = egLightsWith(EMPTY_LIT, [], lamps, cam.pos);
   renderer.setPointLights(lit.data, null, lit.colors);
   renderer.setClearColor(INTERIOR_CLEAR);
@@ -287,7 +287,7 @@ function frame(now) {
   if (swatchMesh) renderer.drawMesh(swatchMesh, identity(), null, NO_SHADOW);   // EG-LOOK: the band's pictures
   for (const d of dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? null, d.noShadow ? NO_SHADOW : WITH_SHADOW);
   if (look.drawSky(proj, view, clock, courtFogNow(), skyGain(renderer._fogColor, egHallFog(C).color))) renderer.markForeignPass();
-  // the fight's pass: the sky's next quadrant, the mist, THE AIR, the telegraphs, the lines last (scenes/egClient.js drawPass)
+  // the fight's pass: the sky's next quadrant, the mist, THE AIR, the telegraphs, the lines last (scenes/eliteGates/egClient.js drawPass)
   if (look.paintSky(renderer._worldViewportPx ?? null, lane, clock)) renderer.markForeignPass();   // EG-LOOK: painted for the next frame's fetch
   if (look.drawUnder(proj, view, cam.pos, clock, courtFogNow())) renderer.markForeignPass();
   if (look.drawAir(proj, view, cam.pos, clock, courtFogNow(), lane, REDUCED, LIGHTS, renderer._worldViewportPx?.[3] ?? 0)) renderer.markForeignPass();   // EG-LOOK: the motes and the halos

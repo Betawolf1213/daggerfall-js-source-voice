@@ -195,7 +195,7 @@ import { validHoldemIn, validHoldemOut } from './holdemTable.js';   // CARDS5: t
 import { validIliacIn, validIliacOut } from './iliac/iliacTable.js';   // CARDS10: the relay's Iliac table's words both ways - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds
 import { validGambitIn, validGambitOut } from './gambit/gambitTable.js';   // KG5: the relay's King's Gambit table's words both ways - gambitTable.js imports the law (kingsGambit.js, which brings enemyBasics.js and mathf.js) and Hold'em's bounds
 import { validGateMods, GATE_FEEDS_MAX } from './gate/gateMods.js';   // WB8b: the Warden's marks on a gate's state - gateMods.js imports nothing, so the worker's graph stays flat
-import { egStampOk } from './egShape.js';   // EG-FULL: a Spire blow's FULL shape stamp, checked as the wire carries it - egShape.js imports nothing, so the worker's graph stays flat
+import { egStampOk } from './eliteGates/egShape.js';   // EG-FULL: a Spire blow's FULL shape stamp, checked as the wire carries it - egShape.js imports nothing, so the worker's graph stays flat
 export { validRollSpec, validRoll, rollDice, ROLL_DICE_MAX, ROLL_SIDES_MAX, ROLL_MOD_MAX };
 export { validHoldemIn, validHoldemOut };
 export { validIliacIn, validIliacOut };
@@ -1443,7 +1443,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world212';   // EG-PLAY (2026-10-11, bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY; world195, world197, world198, world199, world200, world201, world203, world205, world206 then world211 on its branch, renumbered past main's COATS1 world195, CHAT-LANG world196, BAL8 world197, SPAWN-REBIRTH world198, AUDIT ETHER-OW world199, PEER-ACTS world200, CHAT-TRADE world201, FIVE-ASKS world202, KG-SET world203, KG5 world204, PVP-LOOT + QUEST-HOME world205, SERPENT5 world206, ONE-BODY world207, INSTANCES world208, WEAPON-GLOW1 world209, HUB-PULL + DO-ASK world210 and TIDY2 world211 at the merges; NOT YET DEPLOYED): AN ELITE BREACH'S ROOM - the hub opens a breach on the account service's signed order and calls its company (`eg` `open`, `call`), the breach's room `eg:<16hex>` admits its company alone and runs its halls by the director's law (net/egLaw.js, net/egBrain.js; EG-FULL: net/egShape.js, net/egBodies.js, net/egLegion.js, net/egLords.js, net/egVestige.js, net/egRun.js) and signs its receipts (net/egReceipt.js); the `eg` frame's kinds and bounds here (validEgIn, validEgOut, validEgOpenTell)
+export const RELAY_VERSION = 'world212';   // EG-PLAY (2026-10-11, bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY; world195, world197, world198, world199, world200, world201, world203, world205, world206 then world211 on its branch, renumbered past main's COATS1 world195, CHAT-LANG world196, BAL8 world197, SPAWN-REBIRTH world198, AUDIT ETHER-OW world199, PEER-ACTS world200, CHAT-TRADE world201, FIVE-ASKS world202, KG-SET world203, KG5 world204, PVP-LOOT + QUEST-HOME world205, SERPENT5 world206, ONE-BODY world207, INSTANCES world208, WEAPON-GLOW1 world209, HUB-PULL + DO-ASK world210 and TIDY2 world211 at the merges; NOT YET DEPLOYED): AN ELITE BREACH'S ROOM - the hub opens a breach on the account service's signed order and calls its company (`eg` `open`, `call`), the breach's room `eg:<16hex>` admits its company alone and runs its halls by the director's law (net/eliteGates/egLaw.js, net/eliteGates/egBrain.js; EG-FULL: net/eliteGates/egShape.js, net/eliteGates/egBodies.js, net/eliteGates/egLegion.js, net/eliteGates/egLords.js, net/eliteGates/egVestige.js, net/eliteGates/egRun.js) and signs its receipts (net/eliteGates/egReceipt.js); the `eg` frame's kinds and bounds here (validEgIn, validEgOut, validEgOpenTell)
 // world211:   TIDY2 (2026-10-16, Mac: "Do everything"; bible/01-Overview/Code-Map.md; NOT YET DEPLOYED; world209 on its branch, renumbered past main's WEAPON-GLOW1 world209 and HUB-PULL + DO-ASK world210 at the merge): the relay's own files into feature folders (net/gate/, net/wild/, net/arena/, net/siege/, net/superDungeon/ and the rest, systems/arena/ under them) - no behaviour moved: the bundle's bytes are its re-based imports and the paths its comments name, and a deploy drops every connected player once
 // world210:   HUB-PULL + DO-ASK (2026-10-16, bible/11-Multiplayer/Scale-Arc.md HUB-PULL and DO-ASK; Mac: "Is the server okay?", then "Yes and do any other improvements along the way"; NOT YET DEPLOYED; world208 then world209 on its branch, renumbered past main's INSTANCES world208 and WEAPON-GLOW1 world209 at the merges): THE BUS NEVER CALLS A SHARD - the live relay's hub was refused by the runtime's subrequest depth (a Durable Object's every call charged to the newest call it serves, so the bus's push rode the shard's hand-up and the shard's next hand-up rode the push, a hop deeper each round); each shard (and a court's copy) now keeps one poll at its bus (net/hubShards.js HUB_INTERNAL_POLL), answered with every delivery it has not acknowledged, its `ack` and `gone` said on the next, a woken bus's resync its first answer's `rs` - `/internal/hub/down` and `/internal/hub/resync` gone. And THE WORKER'S ASK OF A ROOM (server/src/relayScale.js askRoom): a room reset before it ran the upgrade asked once more, an overloaded one never, what is left a 503. No frame a client reads changes shape.
 // world209:   WEAPON-GLOW1 (2026-10-16, bible/05-Combat/Weapon-Glow.md; NOT YET DEPLOYED; world208 on its branch, renumbered past main's INSTANCES world208 at the merge): a look's held weapon may carry its glow - a word, LOOK_GLOW_RE (`fire2`, `arcane2`) - which validLookItem keeps on a weapon in a hand and drops anywhere else (lookGlowOk), so a peer's Morrowind body draws the weapon glowing as its owner's card says.
@@ -1819,7 +1819,7 @@ function peerFxOf(hk, hp, hb, hq, hu, uq) {
 /** EG-H1 (EG8d; bible/11-Multiplayer/Elite-Gates.md section 10.8 - RIDDEN POSES): a pose on an Elite Breach's moving piece
  *  (a Drift, a Rail, a Drum) carries `pl` - `[i, dx, dy, dz]`, the piece's index in its hall's course and the body's offset
  *  from the piece's top (m, to the cm) at the sender's time - so a receiver draws it on the piece at its own clock and the
- *  relay judges it on the piece's clock position (net/egFair.js egRideAt). OMITTED off a piece (validLook's `class` law); a
+ *  relay judges it on the piece's clock position (net/eliteGates/egFair.js egRideAt). OMITTED off a piece (validLook's `class` law); a
  *  field out of bounds is no ride, never clamped into one. */
 export const POSE_RIDE_OFF_MAX = 8;
 const riddenOf = (pl) => (Array.isArray(pl) && pl.length === 4 && Number.isInteger(pl[0]) && pl[0] >= 0 && pl[0] <= 255 && pl.slice(1).every((v) => finite(v) && Math.abs(v) <= POSE_RIDE_OFF_MAX)
@@ -2095,7 +2095,7 @@ export function parseClient(text, { hasHello = false } = {}) {
     const r = validRiteIn(m);
     return r ? { t: 'rite', ...r } : { error: 'bad rite' };
   }
-  if (m.t === 'eg') {   // EG-PLAY: a word on an Elite Breach - the open to the hub, a member's admission, door and blows to its room - projected by validEgIn; the hub and the room's director (net/egBrain.js) judge it
+  if (m.t === 'eg') {   // EG-PLAY: a word on an Elite Breach - the open to the hub, a member's admission, door and blows to its room - projected by validEgIn; the hub and the room's director (net/eliteGates/egBrain.js) judge it
     if (!hasHello) return { error: 'eg before hello' };
     const r = validEgIn(m);
     return r ? { t: 'eg', ...r } : { error: 'bad eg' };
@@ -5606,13 +5606,13 @@ export function validSdFoundTell(b) {
 //
 // ONE FRAME TYPE, `eg`, with a kind. The opener says its signed open order to the HUB (`open` - the service's word,
 // net/identityToken.js `egopen`, and where the company answers from); the hub freezes the company from its party record,
-// opens the breach's room (`eg:<16hex>`, net/egLaw.js) and says the CALL to every member (`call`). Each member enters the
-// room with its own signed admission (`in`); the room's director (net/egBrain.js) runs the halls and says the breach
+// opens the breach's room (`eg:<16hex>`, net/eliteGates/egLaw.js) and says the CALL to every member (`call`). Each member enters the
+// room with its own signed admission (`in`); the room's director (net/eliteGates/egBrain.js) runs the halls and says the breach
 // (`st` whole, `sg` a stage, `co` the company, `fall`, `rd` a Redoubt, `end`), each member's receipt (`rcpt` - `e1`,
-// net/egReceipt.js).
+// net/eliteGates/egReceipt.js).
 //
-// EG-FULL (2026-10-11, Mac: "I said I want everything"): THE FIGHTS IN THE SPIRE'S OWN WORDS (net/egBodies.js) - `efs` a
-// fight's whole state, `ead`/`emv`/`ehp`/`edie`/`efl` its bodies, `eb` a blow with its FULL shape stamp (net/egShape.js),
+// EG-FULL (2026-10-11, Mac: "I said I want everything"): THE FIGHTS IN THE SPIRE'S OWN WORDS (net/eliteGates/egBodies.js) - `efs` a
+// fight's whole state, `ead`/`emv`/`ehp`/`edie`/`efl` its bodies, `eb` a blow with its FULL shape stamp (net/eliteGates/egShape.js),
 // `ecut` a feint, `etx` tethers, `emk` marks, `eph` a phase, `efell` a lord's fall, `eob` an errand's state, `ez` a zone,
 // `esay` a beat's words, `egust`/`edark`/`erail` the place's own; THE RUN'S - `offer` (a member's Vestiges), `ask`/`asked`/
 // `tally` (the company's word), `egot` and `run` (a member's run), `rise` (a recall), `eping` (a ping), `pz` (an
@@ -5622,8 +5622,8 @@ export function validSdFoundTell(b) {
 // relay's clock; every point the hall's own frame.
 //
 // EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 21, 10.8 and 15): WHAT THE RELAY JUDGES - a
-// member's own word of its body (`vt`, thousandths: the body counted, enforced in the Spire - net/egBrain.js egBodyWord) and
-// the shared clock's ping (`clk` and its answer, the relay's `now` - net/egClock.js); the count's fall (`bd`, to the fallen);
+// member's own word of its body (`vt`, thousandths: the body counted, enforced in the Spire - net/eliteGates/egBrain.js egBodyWord) and
+// the shared clock's ping (`clk` and its answer, the relay's `now` - net/eliteGates/egClock.js); the count's fall (`bd`, to the fallen);
 // a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
 // told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
 //
@@ -5651,25 +5651,25 @@ export function validSdFoundTell(b) {
 export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal', 'tonic', 'mast', 'wkpaid']);   // AUDIT EG III (lane1 #5): `tonic` a Spire Tonic drunk; AUDIT EG III: `wkpaid` a Redoubt the service paid already this week (section 16.3); AUDIT EG III (section 15): `mast` - Spirebridge asked; EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell', 'ebridge']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`; AUDIT EG III: Spirebridge's `ebridge`
-/** AUDIT EG III (Elite-Gates.md section 15): the longest a Spirebridge stands on the wire (ms - net/egSpanLaw.js EG_SB_MS, 6 s,
+/** AUDIT EG III (Elite-Gates.md section 15): the longest a Spirebridge stands on the wire (ms - net/eliteGates/egSpanLaw.js EG_SB_MS, 6 s,
  *  pinned under it: wire.js imports no law of the Spire's), and the most gaps a hall's chain numbers. */
 export const EG_SB_WIRE_MS = 10_000;
 export const EG_GAP_WIRE_MAX = 999;
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal', 'toll']);   // EG-ZI: `toll` the pull's toll, to its member
-/** EG-ZI (Elite-Gates.md section 10.6): the most quarters a pull's toll says (net/egLaw.js EG_TOLL_QUARTERS - pinned equal:
+/** EG-ZI (Elite-Gates.md section 10.6): the most quarters a pull's toll says (net/eliteGates/egLaw.js EG_TOLL_QUARTERS - pinned equal:
  *  wire.js imports no law of the Spire's). */
 export const EG_TOLL_WIRE_MAX = 4;
 export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'bd', 'clk', 'spec', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);   // EG-H1: `bd` the count's fall of me, `clk` the clock's answer
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
 export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
-/** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). AUDIT EG III: THE SEAL's
+/** How a breach ends (the `end` frame's `why`, net/eliteGates/egReceipt.js EG_END_WHYS' room half). AUDIT EG III: THE SEAL's
  *  `'seal'` too - the director's `egEnd(B, 'seal')` (section 13.3, for a deploy that opens fewer bands than four) said an
  *  end and a state this list refused, so every screen would have dropped them; the client words it (EG_END_TEXT.seal). */
 export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home', 'seal']);
 /** The room's refusals, in words. */
 export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours', 'the road is shut', 'the breach took the key', 'the void is too old']);   // EG-H2: THE DRAIN's refusal at the hub (its stake handed back); EG-ZA: a void refused - the breach took the order (its own receipts settle the stake), or it is past EG_VOID_MAX_S
-/** The beats a room names (`esay`'s `w` - the client words each: scenes/egFight.js EG_SAY). */
+/** The beats a room names (`esay`'s `w` - the client words each: scenes/eliteGates/egFight.js EG_SAY). */
 export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantrest', 'stunned', 'scent', 'scorched', 'phase', 'images', 'examination', 'cage', 'passed', 'failed', 'challenge', 'challengewon',
   'challengeend', 'conquest', 'muster', 'tithe', 'bare', 'twinfell', 'twinraised', 'crossing', 'chaining', 'grounded', 'anchors', 'vanish', 'tether', 'tetherbroken', 'eclipse', 'mirrors', 'relit', 'landed',
   'broken', 'stirs', 'raised', 'raisebroken', 'door', 'recalled', 'home', 'goldrun', 'mimic', 'memento', 'relicbroken', 'silenced', 'orrerytrue', 'chamberdone', 'freed', 'desertertook', 'sapperfed',
@@ -5720,7 +5720,7 @@ export const egCallKey = (sub) => `egcall:${sub}`;
 const EG_ORDER_RE = /^v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 const EG_ORDER_MAX = 1024;
 const EG_RECEIPT_RE = /^e1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
-/** EG-F: the hub's signature over a call's arch fields on the wire (net/egCallSig.js signEgCall - 64 bytes, base64url). */
+/** EG-F: the hub's signature over a call's arch fields on the wire (net/eliteGates/egCallSig.js signEgCall - 64 bytes, base64url). */
 export const EG_CALL_SG_RE = /^[A-Za-z0-9_-]{86}$/;
 const EG_RECEIPT_WIRE_MAX = 640;
 const EG_B_RE = /^[0-9a-f]{16}$/;
@@ -5741,7 +5741,7 @@ const egId = (s) => typeof s === 'string' && ID_RE.test(s);
 const egText = (s, max = 64) => (typeof s === 'string' && s.length <= max ? sanitizeName(s) : null);
 /** Where a member answered from (the landing): its map pixel and its place there, the MapsFile frame. EG-F: the arch's
  *  site - its pixel, its foot in that pixel's own frame (metres from the pixel's corner, the gate's spot's frame - the
- *  height the world frame's) and its turn; exported for the cell's arch word (scenes/egArch.js validEgArchWord). */
+ *  height the world frame's) and its turn; exported for the cell's arch word (scenes/eliteGates/egArch.js validEgArchWord). */
 export function egSite(s) {
   if (!s || typeof s !== 'object' || !intIn(s.px, 0, 999) || !intIn(s.py, 0, 499)) return null;
   if (![s.x, s.y, s.z].every((v) => finite(v) && Math.abs(v) <= 1e7) || !finite(s.yaw) || Math.abs(s.yaw) > 8) return null;
@@ -5753,7 +5753,7 @@ function egCompany(co, full) {
   if (!Array.isArray(co) || co.length < 1 || co.length > EG_COMPANY_MAX) return null;
   const out = [];
   for (const t of co) {
-    // AUDIT EG V (c, L3-10): a full row's eleventh, `here` (0 or 1 - net/egBrain.js egCompanyOf), kept; a row of ten has none
+    // AUDIT EG V (c, L3-10): a full row's eleventh, `here` (0 or 1 - net/eliteGates/egBrain.js egCompanyOf), kept; a row of ten has none
     if (!Array.isArray(t) || !(full ? t.length === 10 || t.length === 11 : t.length === 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
     if (full && !(t.slice(3, 8).every((v) => v === 0 || v === 1) && intIn(t[8], 0, 2) && (t[9] === 0 || t[9] === 1) && (t.length === 10 || t[10] === 0 || t[10] === 1))) return null;
     out.push(full ? [t[0], sanitizeName(t[1]), ...t.slice(2)] : [t[0], sanitizeName(t[1]), t[2]]);
@@ -5768,17 +5768,17 @@ function egStage(m) {
   return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
 }
 /** EG-ZQ (Elite-Gates.md section 14, Colossal): a body's size on the wire, thousandths of its look's - 0 its look's own, else
- *  within these (Colossal's rank II, the largest the law folds, is 1400: net/egLaw.js EG_DECREES, pinned under it - wire.js
+ *  within these (Colossal's rank II, the largest the law folds, is 1400: net/eliteGates/egLaw.js EG_DECREES, pinned under it - wire.js
  *  imports no law of the Spire's). */
 export const EG_SIZE_WIRE_MIN = 500;
 export const EG_SIZE_WIRE_MAX = 2000;
-/** AUDIT EG V (lane1 #18): the longest dim outline's lead a blow says (ms - net/egShape.js EG_OUTLINE_MAX_MS, pinned equal:
+/** AUDIT EG V (lane1 #18): the longest dim outline's lead a blow says (ms - net/eliteGates/egShape.js EG_OUTLINE_MAX_MS, pinned equal:
  *  wire.js imports no law of the Spire's). */
 export const EG_OUTLINE_WIRE_MAX = 30_000;
-/** AUDIT EG V (lane1 #7): a body's facing on the wire (radians, hundredths - net/egBodies.js egYawOf), within a turn either way. */
+/** AUDIT EG V (lane1 #7): a body's facing on the wire (radians, hundredths - net/eliteGates/egBodies.js egYawOf), within a turn either way. */
 export const EG_YAW_WIRE_MAX = 7;
 const egYaw = (v) => finite(v) && Math.abs(v) <= EG_YAW_WIRE_MAX;
-/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]` - EG-ZJ: its
+/** A body (net/eliteGates/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]` - EG-ZJ: its
  *  feet and its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
  *  `eob`, a lord's phase) and since when; EG-ZQ: its size (0, or EG_SIZE_WIRE_MIN..EG_SIZE_WIRE_MAX thousandths); AUDIT EG V
  *  (lane1 #7): its facing, which the relay judges a flank by. */
@@ -5791,21 +5791,21 @@ function egBody(t) {
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
-/** A blow (net/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
+/** A blow (net/eliteGates/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
  *  push, span. THE ASCENT (LAW 9; Elite-Gates-Ascent.md section 2): `y`, the height it lands at (a hall that judges by height
- *  says it - net/egBodies.js egAim; a coordinate's bound), so every screen draws and judges it on its own storey; none
+ *  says it - net/eliteGates/egBodies.js egAim; a coordinate's bound), so every screen draws and judges it on its own storey; none
  *  before. */
 function egBlowW(m) {
   if (!m || !intIn(m.i, 1, 1e9) || !intIn(m.o, 0, 1e9) || !Array.isArray(m.s) || m.s.length < 1 || m.s.length > 10 || !m.s.every((s) => egStampOk(s, EG_XZ_MAX))) return null;
   if (!gateMs(m.at) || !intIn(m.wu, 0, 30_000) || !finite(m.p) || m.p < 0 || m.p > 10 || !finite(m.b) || m.b < 0 || m.b > 999) return null;
   if (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el)) return null;
   if (!(m.ch === 0 || m.ch === 1) || !finite(m.pu) || m.pu < 0 || m.pu > 20 || !intIn(m.sp, 0, 60_000)) return null;
-  if (m.on != null && !(Array.isArray(m.on) && m.on.length >= 1 && m.on.length <= 8 && m.on.every(egId))) return null;   // AUDIT EG IV (lane1 #5): the members a failure blow names (net/egShape.js egBlowOn)
+  if (m.on != null && !(Array.isArray(m.on) && m.on.length >= 1 && m.on.length <= 8 && m.on.every(egId))) return null;   // AUDIT EG IV (lane1 #5): the members a failure blow names (net/eliteGates/egShape.js egBlowOn)
   if (m.ol != null && !intIn(m.ol, 1, EG_OUTLINE_WIRE_MAX)) return null;   // AUDIT EG V (lane1 #18): a chained shape's dim outline's lead
   if (m.y != null && !egXZ(m.y)) return null;   // THE ASCENT: the height it lands at
   return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}), ...(m.y != null ? { y: m.y } : {}) };
 }
-/** A zone (net/egLords.js zoneOut). THE ASCENT (section 2): `y`, the floor it lies on (a hall that judges by height says it). */
+/** A zone (net/eliteGates/egLords.js zoneOut). THE ASCENT (section 2): `y`, the floor it lies on (a hall that judges by height says it). */
 function egZone(m) {
   if (!m || !intIn(m.i, 1, 1e9) || !EG_ZONE_KINDS.includes(m.kind) || !egStampOk(m.s, EG_XZ_MAX) || !egMs(m.from) || !egMs(m.until)) return null;
   if (!finite(m.p) || m.p < 0 || m.p > 1 || !finite(m.b) || m.b < 0 || m.b > 99 || (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el))) return null;
@@ -5830,7 +5830,7 @@ function egProgress(pg) {
   }
   return out;
 }
-/** AUDIT EG III (lane2 #1): the most Reliquaries' circles a run's row carries (net/egBrain.js oweEnd's own 64). */
+/** AUDIT EG III (lane2 #1): the most Reliquaries' circles a run's row carries (net/eliteGates/egBrain.js oweEnd's own 64). */
 export const EG_RUN_REL_MAX = 64;
 /** A member's run: `[sub, reliquaries, lumen, shards, tonics, cantrips, vestiges, mastery, circles?]` - AUDIT EG III: each
  *  Reliquary's circle, the newest EG_RUN_REL_MAX (an eight-field row, an older relay's, still read). */
@@ -5844,10 +5844,10 @@ function egRunW(t) {
 }
 const egDecreesW = (a) => egList(a, (p) => (Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 31) && intIn(p[1], 1, 2) ? [...p] : null), 9);
 /** EG-ZF (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 27.6, THE RECAP): a number of the recap's - all a member
- *  dealt or healed in a breach (net/egTally.js), whole. */
+ *  dealt or healed in a breach (net/eliteGates/egTally.js), whole. */
 const EG_TALLY_WIRE_MAX = 1e9;
 const egTallyN = (v) => intIn(v, 0, EG_TALLY_WIRE_MAX);
-/** EG-ZF: a Court's DAMAGE CHART at its lord's fall (`rd`'s and an end's `dm` - net/egTally.js egChartOf): at most a
+/** EG-ZF: a Court's DAMAGE CHART at its lord's fall (`rd`'s and an end's `dm` - net/eliteGates/egTally.js egChartOf): at most a
  *  company's rows, each `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]` (the lord's part and the
  *  heaviest never past the whole), most dealt first, no member twice; anything else is no chart. */
 const egChartW = (a) => {
@@ -5855,7 +5855,7 @@ const egChartW = (a) => {
     && intIn(t[4], 0, EG_TALLY_WIRE_MAX) && egTallyN(t[5]) && t[5] <= t[2] && intIn(t[6], 0, 99) && egTallyN(t[7]) ? [...t] : null), EG_COMPANY_MAX);
   return rows && rows.every((r, i) => i === 0 || r[2] <= rows[i - 1][2]) && new Set(rows.map((r) => r[0])).size === rows.length ? rows : null;
 };
-/** EG-ZF: each member's part in the breach (`st`'s and `end`'s `ds` - net/egTally.js egTalliesOf): `[sub, dealt, healed]`,
+/** EG-ZF: each member's part in the breach (`st`'s and `end`'s `ds` - net/eliteGates/egTally.js egTalliesOf): `[sub, dealt, healed]`,
  *  at most a company's, no member twice. */
 const egTalliesW = (a) => {
   const rows = egList(a, (t) => (Array.isArray(t) && t.length === 3 && egId(t[0]) && egTallyN(t[1]) && egTallyN(t[2]) ? [...t] : null), EG_COMPANY_MAX);
@@ -5899,7 +5899,7 @@ export function validEgIn(m) {
   }
 }
 /** EG-H2 (section 22, THE LAW PIN): a hall's spec as the room says it - an object naming its seed and hall (hall `h`), of
- *  at most EG_SPEC_WIRE_MAX characters, handed on whole (the relay's own bytes: net/egLaw.js egSpecGive takes them). */
+ *  at most EG_SPEC_WIRE_MAX characters, handed on whole (the relay's own bytes: net/eliteGates/egLaw.js egSpecGive takes them). */
 export const EG_SPEC_WIRE_MAX = 32_768;
 const egSpecW = (sp, h) => {
   if (!sp || typeof sp !== 'object' || Array.isArray(sp) || sp.h !== h || !intIn(sp.seed, 0, 0xffffffff) || !intIn(sp.geo ?? 0, 0, 8)) return null;
@@ -5918,7 +5918,7 @@ export function validEgOut(m) {
       const co = egCompany(m.co, false), site = egSite(m.site);
       if (typeof m.b !== 'string' || !EG_B_RE.test(m.b) || typeof m.o !== 'string' || typeof m.os !== 'string' || !ID_RE.test(m.os)) return null;
       if (!intIn(m.seed, 0, 0xffffffff) || !gateMs(m.op) || !(m.rh === 0 || m.rh === 1) || !co || !site) return null;
-      // EG-F (section 6.4): the start Redoubt, the Wager, and the hub's signature over the arch's fields (net/egCallSig.js -
+      // EG-F (section 6.4): the start Redoubt, the Wager, and the hub's signature over the arch's fields (net/eliteGates/egCallSig.js -
       // '' unsigned: a stranger then stands no arch); a call that says none of them is EG-PLAY's, read as Hall 1, no Wager
       const ew = intIn(m.ew, 0, 999) ? m.ew : 0, sg = typeof m.sg === 'string' && EG_CALL_SG_RE.test(m.sg) ? m.sg : '';
       const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];

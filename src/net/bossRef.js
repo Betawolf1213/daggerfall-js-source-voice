@@ -30,7 +30,7 @@
 // marked in place. Not a DFU member. Ledger A (INT).
 //
 // EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 21): THE SPIRE'S JUDGE BESIDE THEM - judgeShapes,
-// one judge for every FULL shape stamp, per fight floor, on SHARED-TIME trails (net/egFair.js's time law - `[t, x, y, z, h]`,
+// one judge for every FULL shape stamp, per fight floor, on SHARED-TIME trails (net/eliteGates/egFair.js's time law - `[t, x, y, z, h]`,
 // `t` the pose's own send time on the relay's clock), and judgePlace, the hall's own hazards at their landing. The three
 // above keep their arrival-timed trails: their enforcement is off (BODY_DEFAULT.enforce), so their error was never paid.
 import { ATTACK_BY_ID, ATTACKS, profileOf, hostBlowUnder } from './gate/gateBrain.js';
@@ -39,12 +39,12 @@ import { SD_BLOW_BY_ID, SD_BLOWS, SD_RESET_PCT, SD_END_PCT, SD_ARENA_SLACK, blow
 import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, coilHolds, serpentShipsFighting, serpentOnShip } from './serpent/serpentBrain.js';
 import { shapeMeets, fleetShare } from '../systems/serpent/serpentStrike.js';
 import { deepIn, BODY_AFTER_MS } from './bossBody.js';
-import { egInBlow, egInShape } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
-import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS, EG_TS_LAG_MAX_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails; AUDIT EG V: the edge a trail is whole to
-import { egVentAt, EG_VENT_PCT } from './egLaw.js';
-import { egStampFloors } from './egLaw.js';   // THE ASCENT - HEIGHT: a stamp lands on the floors of its own storey
-import { egFeetY, egOneStorey } from './egWalkGraph.js';
-import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
+import { egInBlow, egInShape } from './eliteGates/egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
+import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS, EG_TS_LAG_MAX_MS } from './eliteGates/egFair.js';   // EG-H1: THE TIME LAW's trails; AUDIT EG V: the edge a trail is whole to
+import { egVentAt, EG_VENT_PCT } from './eliteGates/egLaw.js';
+import { egStampFloors } from './eliteGates/egLaw.js';   // THE ASCENT - HEIGHT: a stamp lands on the floors of its own storey
+import { egFeetY, egOneStorey } from './eliteGates/egWalkGraph.js';
+import { egHazardParts, EG_HAZARDS } from './eliteGates/egFragLaw.js';
 
 const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 /** The living bodies a fight counts (a fighter of its own, not dead by its census). */
@@ -201,16 +201,16 @@ export function judgeSerpent(f, bodies, now) {
 }
 
 // ── EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 21): THE SPIRE - ONE JUDGE FOR EVERY SHAPE ──
-// Every Spire blow travels with its FULL shape stamp (net/egShape.js - its kind and every number), so one judge tests any
-// blow a lord, an add, an engine or a decree throws, per fight floor (section 11.7 - net/egFair.js egFightFloorAt), against
-// the member's SHARED-TIME trail (net/egFair.js - the time law: where it stood at the landing is its last pose SENT at or
+// Every Spire blow travels with its FULL shape stamp (net/eliteGates/egShape.js - its kind and every number), so one judge tests any
+// blow a lord, an add, an engine or a decree throws, per fight floor (section 11.7 - net/eliteGates/egFair.js egFightFloorAt), against
+// the member's SHARED-TIME trail (net/eliteGates/egFair.js - the time law: where it stood at the landing is its last pose SENT at or
 // before it, where it stood after is the first SENT after it, waited for up to EG_POSE_WAIT_MS; no pose within
 // EG_POSE_NEAR_MS of the landing, not counted), deep in it by THE WIDTH RULE's margin both times (deepIn). What it answers
 // feeds net/bossBody.js's count (bodyStruck) and the census. WHAT IS COUNTED is the gate's law: a plain blow's share; an
 // element's blow is the struck member's own save, so it is SEEN (the census) and takes nothing (`share` 0). Each blow
 // once per body (`bh`), marked done (`bj`) once its wait is over.
 /** THE ASCENT (Elite-Gates-Ascent.md section 2): does a trail entry `e` (`[t, x, y, z, h]`) stand in the storey of a blow
- *  landing at height `by` (net/egWalkGraph.js egOneStorey - its fight floor's top, else its feet)? Any when `by` is not
+ *  landing at height `by` (net/eliteGates/egWalkGraph.js egOneStorey - its fight floor's top, else its feet)? Any when `by` is not
  *  known (a hall that judges in plan alone, a blow that says no height). */
 const inStorey = (spec, e, by) => !Number.isFinite(by) || egOneStorey(egFightFloorAt(spec, e[1], e[2], e[3])?.y ?? e[2], by);
 /**
@@ -244,18 +244,18 @@ function caughtWhile(test, tr, from, until, h, spec, ys, { free = false, point =
 }
 /** The fight floors' heights a stamp lands on: those whose plan holds its anchor (a CHECK's, every floor: null). EG-HERO-LAY: a
  *  hero's fight floor, its polygon. THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, those of the
- *  storey of the blow's own height `y` alone (net/egLaw.js egStampFloors - the rule's one home). */
+ *  storey of the blow's own height `y` alone (net/eliteGates/egLaw.js egStampFloors - the rule's one home). */
 const floorsUnder = (spec, s, y = NaN) => egStampFloors(spec, s, y, 1);
 /**
- * EG-H1 - THE SPIRE'S BLOWS (`F.blows`, net/egBodies.js - each said with its FULL stamp): each landed blow judged on each
+ * EG-H1 - THE SPIRE'S BLOWS (`F.blows`, net/eliteGates/egBodies.js - each said with its FULL stamp): each landed blow judged on each
  * living member's shared-time trail once its trail is ready (egTrailReady) - `[{sub, share, i, k: 0}]`, `share` the blow's
  * `p` for a plain blow (its points need a maximum health the relay does not hold: the struck member's favour), 0 for an
  * element's (seen, never counted). A feint never lands (its cut takes it off the fight). The blows marked in place.
  * EG-ZB (sections 11.7, 19 and 21): each hit says its blow's landing, thrower and name (`at`, `o`, `nm` - the census's
  * Vestiges and the feats read them); a blow with a span (`sp` - a charge's run, a burning bridge) also catches a body that
  * steps into it while it lasts; a hunted member's Bite (`hn`) is judged off the floors. `spec` the hall's fight ground
- * (net/egWalkGraph.js egFightView). AUDIT EG V (lane1 #9; section 13.2's CHECK class): a blow that NAMES its members (`on` - an
- * errand's failure blow: the Chain Snaps, a Soul Burst, the Cage Closes; net/egShape.js egBlowOn) is counted on exactly those
+ * (net/eliteGates/egWalkGraph.js egFightView). AUDIT EG V (lane1 #9; section 13.2's CHECK class): a blow that NAMES its members (`on` - an
+ * errand's failure blow: the Chain Snaps, a Soul Burst, the Cage Closes; net/eliteGates/egShape.js egBlowOn) is counted on exactly those
  * members, wherever their trail stands at its landing (in the hall, a pose near it - the time law), and on no one else: its
  * marks only ride them, so where they lie decides nothing - the screen's own verdict (egBlowVerdict).
  * @param {any} F the hall's fight @param {Array<{sub: string, tr?: number[][]}>} bodies the living members, each its trail
@@ -268,7 +268,7 @@ export function judgeShapes(F, bodies, now, spec) {
   for (const a of F.blows ?? []) {
     if (a.bj || now < a.at) continue;
     a.bh ??= [];
-    // THE ASCENT (section 2): the blow's own height (`y` - its thrower's storey, net/egBodies.js egAim) in a hall that judges by height
+    // THE ASCENT (section 2): the blow's own height (`y` - its thrower's storey, net/eliteGates/egBodies.js egAim) in a hall that judges by height
     const by = egFeetY(spec, a.y), share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0], by), sp = Math.max(0, a.sp ?? 0), test = (x, z) => egInBlow(a, x, z);
     for (const b of bodies) {
       if (a.bh.includes(b.sub)) continue;   // caught, or judged at its landing
@@ -283,7 +283,7 @@ export function judgeShapes(F, bodies, now, spec) {
       }
       if (sp > 0) {
         // EG-ZB (section 21): A LINGERING FIELD (a charge's run, a burning bridge) catches at its landing as a blow does, or by
-        // any pose sent inside it while it lasts - the screens' own verdict (net/egShape.js egBlowVerdict's span)
+        // any pose sent inside it while it lasts - the screens' own verdict (net/eliteGates/egShape.js egBlowVerdict's span)
         a.bl ??= {}; a.bt ??= {};
         if (!a.bl[b.sub]) { if (!egTrailReady(b.tr, a.at, now)) continue; a.bl[b.sub] = 1; if (deepShared(test, b.tr, a.at, F.h, spec, ys, free, by)) { a.bh.push(b.sub); out.push(hit); continue; } }
         // AUDIT EG V (lane4 L4-1; section 21): read to the edge the trail is whole to - a pose is placed up to
@@ -304,8 +304,8 @@ export function judgeShapes(F, bodies, now, spec) {
 }
 /**
  * EG-H1 - THE HALL'S OWN HAZARDS, judged at their landing on a fight floor (section 21: "a modified client that ignores
- * vents and magma is seen"): a Rampart vent's every eruption (net/egLaw.js egVentAt - from the hall's wake `hw`) and each
- * fragment hazard's live part aimed at a fight floor or a CHECK's (net/egFragLaw.js egHazardParts - its key once), found at
+ * vents and magma is seen"): a Rampart vent's every eruption (net/eliteGates/egLaw.js egVentAt - from the hall's wake `hw`) and each
+ * fragment hazard's live part aimed at a fight floor or a CHECK's (net/eliteGates/egFragLaw.js egHazardParts - its key once), found at
  * the beat they are live (`F.hzq`, the queue; `F.hzk`, the keys seen) and judged on each living member's trail as a blow
  * is, within the hazard's own height (egHazardBites' band) - `[{sub, share, i: 0, k: 1}]`, `share` a plain hazard's (the
  * basalt, the cascade, the hammers), 0 for an element's (seen). The screens judge their own feet as they did; this is the

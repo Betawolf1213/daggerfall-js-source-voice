@@ -48,13 +48,13 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { arenaWeekOf, arenaSeasonOf, arenaSeasonEndsS, ARENA_SEASON_S } from '../../src/net/arena/arenaLaw.js';
-import { egValkRedoubt, egSpoilsPasses, egPanoplyHit, egEmbersOf, egSpoilsSeed, EG_PANOPLY_PITY, EG_VALK_KEY_ODDS, EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../src/net/egPay.js';
+import { egValkRedoubt, egSpoilsPasses, egPanoplyHit, egEmbersOf, egSpoilsSeed, EG_PANOPLY_PITY, EG_VALK_KEY_ODDS, EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../src/net/eliteGates/egPay.js';
 import { egStrikeStatement, egStrikeAnswer, deedStatements, deedEvent, deedAnswer } from './marks.js';
 import { EMBERS_EARNED_SQL } from './accounts.js';
 
 const int = (v) => (Number.isSafeInteger(Number(v)) ? Number(v) : 0);
 const hex = (b) => [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
-/** The most Reliquaries an end receipt names (net/egBrain.js oweEnd's own slice). */
+/** The most Reliquaries an end receipt names (net/eliteGates/egBrain.js oweEnd's own slice). */
 const RL_MAX = 64;
 
 /** The first arena week of the season holding `nowS`: a Redoubt is the account's first this season when no row of it was
@@ -97,7 +97,7 @@ export async function egRedoubtPay({ db, nowS, rand }, player, c, { env = null, 
   const ctx = { db, nowS };
   const b = c.b, w = c.w, week = arenaWeekOf(nowS), payable = c.rh === 1 ? 0 : 1;
   const nonce = hex(rand(new Uint8Array(8)));
-  // AUDIT EG V (lane8 L8-5): the spoils roll on the receipt's seed mixed with this claim's own draw (net/egPay.js
+  // AUDIT EG V (lane8 L8-5): the spoils roll on the receipt's seed mixed with this claim's own draw (net/eliteGates/egPay.js
   // egSpoilsSeed) - the pity reads the passes the client will roll on it
   const hits = Array.from({ length: egSpoilsPasses(w) }, (_, p) => egPanoplyHit(egSpoilsSeed(c.c, nonce), w, p));
   // THE ROW: paid where the account has no paid row of this Redoubt this week (never a Rehearsal's); its embers a first

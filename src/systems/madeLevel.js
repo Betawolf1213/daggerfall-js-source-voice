@@ -2,10 +2,10 @@
 // EG-H2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 24, slice EG7): THE
 // MADE LEVEL'S RULES - one law for the three made levels the world host stands a player in: the Burning Court (an
 // Oblivion Gate's arena, world/gate/gateArena.js), the Shattered Hour (world/superDungeon/sdRealm.js) and an Elite Breach's circle - the
-// Spire (world/egHall.js). Each rule's door asked the level itself (`gateArenaDay`, `sdRealmSlot`, `egHallBreach`,
+// Spire (world/eliteGates/egHall.js). Each rule's door asked the level itself (`gateArenaDay`, `sdRealmSlot`, `egHallBreach`,
 // `isGateArena`, `_sdRealm`, `_egHall`), so a third made level grew a third copy of every check and one was forgotten
 // (THE FOUR HOSTS RULE's own failure: the pause's Save never learnt the Spire). Now a door asks THIS law what the level
-// under the player turns off, and test/egmade_law.test.js sweeps the hosts so no door asks a level again (THE ONE
+// under the player turns off, and test/systems/eliteGates/egmade_law.test.js sweeps the hosts so no door asks a level again (THE ONE
 // CONSTRUCTION SEAM).
 //
 //   madeLevelOf(loc)      'court' | 'hour' | 'spire' | null - the location's own predicates, read in one place
@@ -22,8 +22,8 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { isGateArena, COURT_TEXT } from '../world/gate/gateArena.js';
 import { isSdRealm, SD_REALM_TEXT } from '../world/superDungeon/sdRealm.js';
-import { isEgHall } from '../world/egHall.js';
-import { EG_TEXT } from '../net/egLaw.js';
+import { isEgHall } from '../world/eliteGates/egHall.js';
+import { EG_TEXT } from '../net/eliteGates/egLaw.js';
 
 /** The made levels, by the law's names. */
 export const MADE_LEVELS = Object.freeze(['court', 'hour', 'spire']);
@@ -53,8 +53,8 @@ export const EG_NO_FLIGHT_TEXT = 'The Spire\'s spans are walked, not flown.';
  *   portalStone   'refused'  - a Portal Stone's portal
  *   companions    'out'      - GATE-ALONE, SD-ALONE: lifted at the door, stood again outside
  *   regen         'off'      - the court's law (systems/courtRules.js): no natural regeneration
- *   potions       'counted'  - THE POTION LAW: two restoring potions a hall (systems/spireKit.js, the count the breach's
- *                              client keeps - ui/egHud.js EG_POTIONS_PER_HALL)
+ *   potions       'counted'  - THE POTION LAW: two restoring potions a hall (systems/eliteGates/spireKit.js, the count the breach's
+ *                              client keeps - ui/eliteGates/egHud.js EG_POTIONS_PER_HALL)
  *   levitate      'banned'   - the Levitate ward (characters/playerEntity.js registerLevitateWard)
  *   slowfall      'banned'   - the motor's slow fall written false (the effect still runs)
  *   techFlight    'refused'  - a weapon technique's leap or dash, on traversal ground
@@ -114,8 +114,8 @@ let _here = null;
 let _traverse = null;
 /**
  * The world host's word on the made level under the player (scenes/world.js - its mode machine's `madeLevel`), and
- * whether its feet stand on the Spire's traversal ground (off the hall's fight floor - scenes/egClient.js onTraverse).
- * A door with no host in reach reads them: an item's use (systems/spireKit.js), a technique (combat/techniques.js), the
+ * whether its feet stand on the Spire's traversal ground (off the hall's fight floor - scenes/eliteGates/egClient.js onTraverse).
+ * A door with no host in reach reads them: an item's use (systems/eliteGates/spireKit.js), a technique (combat/techniques.js), the
  * motor's forgiveness. Null removes either. A word that throws is no made level.
  * @param {(() => any) | null} here @param {(() => any) | null} [traverse]
  */

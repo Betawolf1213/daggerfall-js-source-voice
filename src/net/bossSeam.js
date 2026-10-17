@@ -21,14 +21,14 @@
 // brain's own function (the same reference - nothing between the host and the law); where it was not (a birth's
 // arguments, the refusals a join takes, the serpent's zone and hand), a thin map hands the brain exactly the arguments
 // the host handed it before. The relay's hosts call through the seam (server/src/index.js), and THE GOLDEN FRAMES
-// (test/egseam_law.test.js) hold every word a court, a realm and a cell say to what they said before it.
+// (test/net/eliteGates/egseam_law.test.js) hold every word a court, a realm and a cell say to what they said before it.
 //
 // What the seam does not take: the gate's crystals, host and heals and the Remnant's Echoes and Hearts are each brain's
 // own blows beside its boss (`applyCrystalHit`, `applyHostHit`, `applyEchoHit`, `applyHeartHit`) and stay so.
 //
 // EG-ZK (2026-10-12; section 13.1, "The Spire's lords are written to it"): THE SPIRE'S LORDS keep the contract too, ONE plug
-// for every lord and champion (net/egLords.js EG_SEAM - it imports this board, so the relay's graph walks as before). The
-// breach's director (net/egBrain.js) calls it inside its one beat with the legion and the place's hazards: the seam is a
+// for every lord and champion (net/eliteGates/egLords.js EG_SEAM - it imports this board, so the relay's graph walks as before). The
+// breach's director (net/eliteGates/egBrain.js) calls it inside its one beat with the legion and the place's hazards: the seam is a
 // contract the director calls, not a second host.
 //
 // Pure: a plug board, no state. Not a DFU member. Ledger A (ELITE-GATES).

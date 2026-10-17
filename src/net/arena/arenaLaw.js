@@ -90,7 +90,7 @@ export const arenaSeasonOf = (nowS) => Math.max(1, Math.floor((Math.floor(Number
 export const arenaSeasonEndsS = (season) => ARENA_SEASON_EPOCH_S + Math.max(1, Math.floor(season)) * ARENA_SEASON_S;
 /** EG-E (bible/11-Multiplayer/Elite-Gates.md section 19): THE ARENA WEEK holding `nowS` - 0 the season epoch's first, seven
  *  days each, Monday 00:00 UTC to Monday; the week an Elite Breach's Redoubt pays once an account in (server-account/src/eg.js),
- *  the Spire's Proclamation's (net/egLaw.js egProclamationOf) and the Broker's Panoply sink's. Never before the epoch's. */
+ *  the Spire's Proclamation's (net/eliteGates/egLaw.js egProclamationOf) and the Broker's Panoply sink's. Never before the epoch's. */
 export const ARENA_WEEK_S = 7 * 24 * 3600;
 export const arenaWeekOf = (nowS) => Math.max(0, Math.floor((Math.floor(Number(nowS) || 0) - ARENA_SEASON_EPOCH_S) / ARENA_WEEK_S));
 /** A season's day, 1-based (1..56). */

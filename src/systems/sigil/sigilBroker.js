@@ -52,7 +52,7 @@ import { registerModSaveData } from '../modSaveData.js';
 import { isLocked } from '../item/itemLock.js';
 import { addItem } from '../inventory.js';
 import { isEquipped } from '../equip.js';   // SS5: a worn ware is taken off before it is dismantled
-import { EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../net/egPay.js';   // EG-E1: the Panoply sink's price and its pieces
+import { EG_SINK_EMBERS, EG_PANOPLY_IDS } from '../../net/eliteGates/egPay.js';   // EG-E1: the Panoply sink's price and its pieces
 
 /** A day of the shared clock, in milliseconds - the stock's life. */
 export const BROKER_DAY_MS = 86_400_000;

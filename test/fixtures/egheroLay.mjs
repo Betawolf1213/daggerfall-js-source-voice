@@ -1,8 +1,8 @@
 // EG-HERO-LAY (2026-10-13; bible/11-Multiplayer/Elite-Gates.md section 31, EG-HERO-LAY): THE LAYING'S TEST HEROES - written
 // as every hero is (a scene from numbers - tools/egRefFragScene.mjs refFragMesh and writeRefFragFbx - baked by
 // tools/fragBake.mjs bakeFrag, the producer's own shape: TEST THE SHAPE THE PRODUCER MINTS), never committed as assets and
-// never registered: test/eghero_lay.test.js lays them through net/egLaw.js egHeroSeam and draws them through
-// world/egHall.js egHeroMeshSeam. Beside the reference re-labelled layable (`{ ...egRefFrag, variant: 'test' }`):
+// never registered: test/net/eliteGates/eghero_lay.test.js lays them through net/eliteGates/egLaw.js egHeroSeam and draws them through
+// world/eliteGates/egHall.js egHeroMeshSeam. Beside the reference re-labelled layable (`{ ...egRefFrag, variant: 'test' }`):
 //   egLayChamber  an Oblivion Caverns CHAMBER: a 32 m square fight floor about its middle (its court reaches 16 m), a mouth
 //                 and an exit 5 m wide on thresholds, a balcony 3.5 m up on the +x wall and its stair (play `balcony`),
 //                 five rifts set in the walls, a Caster on the balcony, a Lurker, the Sluice's anchor, falling basalt, a

@@ -81,20 +81,20 @@ const HARDCODED = {
   'src/net/decorLaw.js': 5,
   'src/net/duel/duelRecord.js': 6,
   'src/net/duel/duelSession.js': 36,
-  'src/net/egAnnals.js': 57,
-  'src/net/egAscent.js': 15,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): THE ROUTE PLANNER's refusals and THE ROUTE'S SANITY's (egAscentWhy's and egAscentSane's `why` - no program stands, the way's height, a stair too steep, the main way crossing itself) - read by a test and the lab, never said to a player, kept as egSpanLaw.js's are
-  'src/net/egBrain.js': 10,
-  'src/net/egFeats.js': 19,
-  'src/net/egFragLaw.js': 85,
-  'src/net/egHerald.js': 14,   // AUDIT EG V (a2, L8-7): +1, a deeper breach's start on the herald's Redoubt posts (', from Redoubt N') - the Discord channel's English, as every herald post is
-  'src/net/egLaw.js': 196,   // THE ASCENT - THE ROOMS (LAW 9): +5, a law 9 try's refusals (egAscentProof's `why` - a course's, the way's, the pieces in no course; ascentLaid's note past the wire's bound) - read by a test and the lab, never said to a player; EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are; AUDIT EG V (a1): +2, The Fraying's name and line (the decrees' table, the arc's English, owed its localization wave with the rest)
-  'src/net/egLegion.js': 10,
-  'src/net/egLords.js': 89,   // AUDIT EG V (the lords' group): +34, every lord's two phase cards, each its name and its one order (EG_LORD_PHASES, EG_GAROTH_SIG_ORDERS - section 13.2's card, drawn on every screen) - the arc's English, owed EG-L10N with the rest; AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
-  'src/net/egRouteProof.js': 8,   // THE ASCENT - THE PROOFS (LAW 9): THE ROUTE'S refusals (egLegRefusal's and egClimbGrip's `why` - a stair too steep, a Drop upward or past the billed fall, a climb downward, faceless or past the grip) - read by a test and the sweep's tool, never said to a player, kept as egSpanLaw.js's are
-  'src/net/egRoomLaw.js': 31,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): the room reader's faults (egRoomFault's `why` - read by a test, never said to a player, kept as egFragLaw.js's record faults are) and the ten rooms' names (EG_ROOM_NAMES - the lab's map; the arc's English, owed its localization wave with the rest)
-  'src/net/egRun.js': 18,
-  'src/net/egSpanLaw.js': 16,   // PIN MOVED (AUDIT EG V, f: +4, THE TIMED SOLVER's law-8 refusals (egSpanProof's `why` - the set pieces' margin, the Collapsing Tube's, the Forge Line's hammers) - read by a test and the sweep's tool, never said to a player, kept as egLaw.js's hero refusals are)
-  'src/net/egVestige.js': 60,
+  'src/net/eliteGates/egAnnals.js': 57,
+  'src/net/eliteGates/egAscent.js': 15,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): THE ROUTE PLANNER's refusals and THE ROUTE'S SANITY's (egAscentWhy's and egAscentSane's `why` - no program stands, the way's height, a stair too steep, the main way crossing itself) - read by a test and the lab, never said to a player, kept as egSpanLaw.js's are
+  'src/net/eliteGates/egBrain.js': 10,
+  'src/net/eliteGates/egFeats.js': 19,
+  'src/net/eliteGates/egFragLaw.js': 85,
+  'src/net/eliteGates/egHerald.js': 14,   // AUDIT EG V (a2, L8-7): +1, a deeper breach's start on the herald's Redoubt posts (', from Redoubt N') - the Discord channel's English, as every herald post is
+  'src/net/eliteGates/egLaw.js': 196,   // THE ASCENT - THE ROOMS (LAW 9): +5, a law 9 try's refusals (egAscentProof's `why` - a course's, the way's, the pieces in no course; ascentLaid's note past the wire's bound) - read by a test and the lab, never said to a player; EG-HERO-LAY: +16, the hero fit's refusals (net/eliteGates/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are; AUDIT EG V (a1): +2, The Fraying's name and line (the decrees' table, the arc's English, owed its localization wave with the rest)
+  'src/net/eliteGates/egLegion.js': 10,
+  'src/net/eliteGates/egLords.js': 89,   // AUDIT EG V (the lords' group): +34, every lord's two phase cards, each its name and its one order (EG_LORD_PHASES, EG_GAROTH_SIG_ORDERS - section 13.2's card, drawn on every screen) - the arc's English, owed EG-L10N with the rest; AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
+  'src/net/eliteGates/egRouteProof.js': 8,   // THE ASCENT - THE PROOFS (LAW 9): THE ROUTE'S refusals (egLegRefusal's and egClimbGrip's `why` - a stair too steep, a Drop upward or past the billed fall, a climb downward, faceless or past the grip) - read by a test and the sweep's tool, never said to a player, kept as egSpanLaw.js's are
+  'src/net/eliteGates/egRoomLaw.js': 31,   // THE ASCENT - THE ROOMS AND THE WAYS (LAW 9): the room reader's faults (egRoomFault's `why` - read by a test, never said to a player, kept as egFragLaw.js's record faults are) and the ten rooms' names (EG_ROOM_NAMES - the lab's map; the arc's English, owed its localization wave with the rest)
+  'src/net/eliteGates/egRun.js': 18,
+  'src/net/eliteGates/egSpanLaw.js': 16,   // PIN MOVED (AUDIT EG V, f: +4, THE TIMED SOLVER's law-8 refusals (egSpanProof's `why` - the set pieces' margin, the Collapsing Tube's, the Forge Line's hammers) - read by a test and the sweep's tool, never said to a player, kept as egLaw.js's hero refusals are)
+  'src/net/eliteGates/egVestige.js': 60,
   'src/net/firmament/firmamentLaw.js': 42,
   'src/net/firmament/firmamentTree.js': 113,
   'src/net/fortLaw.js': 21,
@@ -184,10 +184,10 @@ const HARDCODED = {
   'src/render/deepWatersRender.js': 13,
   'src/render/duelWall.js': 1,
   'src/render/dynamicSkiesRenderer.js': 1,
-  'src/render/egLightPass.js': 1,
-  'src/render/egMistPass.js': 1,
-  'src/render/egSkyPass.js': 1,
-  'src/render/egStairPass.js': 2,
+  'src/render/eliteGates/egLightPass.js': 1,
+  'src/render/eliteGates/egMistPass.js': 1,
+  'src/render/eliteGates/egSkyPass.js': 1,
+  'src/render/eliteGates/egStairPass.js': 2,
   'src/render/enhancedLighting.js': 4,
   'src/render/enhancedSky.js': 1,
   'src/render/farRing.js': 1,
@@ -246,11 +246,11 @@ const HARDCODED = {
   'src/scenes/dungeon.js': 3,
   'src/scenes/dungeonContext.js': 13,
   'src/scenes/dungeonDivers.js': 15,
-  'src/scenes/egArch.js': 2,
-  'src/scenes/egCall.js': 1,
-  'src/scenes/egClient.js': 58,   // AUDIT EG V (c): the usage, the refusals' copies and the Annals' line routed or gone
-  'src/scenes/egFight.js': 63,   // AUDIT EG IV (the lords' group): +1, the Rampart's `gateheld` beat (EG_SAY - the march holds the gate)
-  'src/scenes/egSpan.js': 5,
+  'src/scenes/eliteGates/egArch.js': 2,
+  'src/scenes/eliteGates/egCall.js': 1,
+  'src/scenes/eliteGates/egClient.js': 58,   // AUDIT EG V (c): the usage, the refusals' copies and the Annals' line routed or gone
+  'src/scenes/eliteGates/egFight.js': 63,   // AUDIT EG IV (the lords' group): +1, the Rampart's `gateheld` beat (EG_SAY - the march holds the gate)
+  'src/scenes/eliteGates/egSpan.js': 5,
   'src/scenes/etherHost.js': 9,
   'src/scenes/exterior.js': 15,
   'src/scenes/exteriorFoes.js': 1,
@@ -353,9 +353,9 @@ const HARDCODED = {
   'src/systems/dungeon/dungeonEcho.js': 6,
   'src/systems/dungeon/dungeonTier.js': 3,
   'src/systems/dynamicSkies/dynamicSkies.js': 3,
-  'src/systems/egFind.js': 1,
-  'src/systems/egLordArms.js': 8,
-  'src/systems/egSpoils.js': 8,
+  'src/systems/eliteGates/egFind.js': 1,
+  'src/systems/eliteGates/egLordArms.js': 8,
+  'src/systems/eliteGates/egSpoils.js': 8,
   'src/systems/enchanting.js': 7,
   'src/systems/enchantmentCatalogue.js': 65,
   'src/systems/equip.js': 3,
@@ -499,7 +499,7 @@ const HARDCODED = {
   'src/systems/snowfall.js': 12,
   'src/systems/snowfallRuntime.js': 10,
   'src/systems/spell/spellEffects.js': 29,
-  'src/systems/spireKit.js': 1,
+  'src/systems/eliteGates/spireKit.js': 1,
   'src/systems/staleChunk.js': 6,
   'src/systems/startDungeon.js': 1,
   'src/systems/statusReadout.js': 2,
@@ -582,12 +582,12 @@ const HARDCODED = {
   'src/ui/deathScreen.js': 2,
   'src/ui/decorPanel.js': 96,
   'src/ui/duelPrompt.js': 2,
-  'src/ui/egArchMapMark.js': 1,
-  'src/ui/egBeats.js': 85,
-  'src/ui/egBoardWindow.js': 15,
-  'src/ui/egHud.js': 39,   // AUDIT EG V (a1): +2, the rest's beacon - *The next circle bears: ...* and *The next Court: ...* (egNextCircleText) - the arc's English, owed its localization wave with the rest
-  'src/ui/egSpireHud.js': 15,   // AUDIT EG IV (the lords' group): +1, an errand's numerals' markup (egSigilHtml's `given` - a template the scan counts; its words are the company's numerals and names)
-  'src/ui/egStartWindow.js': 5,
+  'src/ui/eliteGates/egArchMapMark.js': 1,
+  'src/ui/eliteGates/egBeats.js': 85,
+  'src/ui/eliteGates/egBoardWindow.js': 15,
+  'src/ui/eliteGates/egHud.js': 39,   // AUDIT EG V (a1): +2, the rest's beacon - *The next circle bears: ...* and *The next Court: ...* (egNextCircleText) - the arc's English, owed its localization wave with the rest
+  'src/ui/eliteGates/egSpireHud.js': 15,   // AUDIT EG IV (the lords' group): +1, an errand's numerals' markup (egSigilHtml's `given` - a template the scan counts; its words are the company's numerals and names)
+  'src/ui/eliteGates/egStartWindow.js': 5,
   'src/ui/enhanced/enhancedAccount.js': 8,
   'src/ui/enhanced/enhancedBook.js': 1,
   'src/ui/enhanced/enhancedCharSheet.js': 1,
@@ -761,9 +761,9 @@ const HARDCODED = {
   'src/world/card/cardRegulars.js': 10,
   'src/world/ships/carrackModel.js': 7,
   'src/world/ships/carrackRig.js': 2,
-  'src/world/egHall.js': 1,
-  'src/world/egLights.js': 1,
-  'src/world/egTelegraph.js': 3,
+  'src/world/eliteGates/egHall.js': 1,
+  'src/world/eliteGates/egLights.js': 1,
+  'src/world/eliteGates/egTelegraph.js': 3,
   'src/world/ethericSea.js': 8,
   'src/world/ships/galleonModel.js': 7,
   'src/world/ships/galleonRig.js': 18,
@@ -775,7 +775,7 @@ const HARDCODED = {
   'src/world/oceanHoles.js': 9,
   'src/world/outdoors.js': 2,
   'src/world/passiveFish.js': 5,
-  'src/world/pseudoArchives.js': 40,
+  'src/world/eliteGates/pseudoArchives.js': 40,
   'src/world/superDungeon/sdDungeon.js': 6,
   'src/world/superDungeon/sdRealm.js': 10,
   'src/world/spawnedDungeons.js': 3,

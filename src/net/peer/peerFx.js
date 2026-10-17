@@ -40,7 +40,7 @@ export const FX_MIN_GAP_S = 0.25;
 // Elite-Gates.md section 26 (THE SPIRE MIX): in the Spire the peers' sounds play 4 dB down, so eight players' blows,
 // steps and swings never mask the cues that matter. Every peer sound plays inside `peerHeard` - this file's blows and
 // hurts, the walkers' steps, swings and cries (net/remotePlayers.js), their climbing (net/peer/peerClimb.js) - and a place
-// that turns them down hands its scope in (systems/egMix.js createSpireMix's `peers`); with none, a sound is as it was.
+// that turns them down hands its scope in (systems/eliteGates/egMix.js createSpireMix's `peers`); with none, a sound is as it was.
 /** @type {((run: () => any) => any) | null} */
 let _peerScope = null;
 /** The place's scope over every peer sound (`(run) => run()` with a gain about it), or null to let them be. */

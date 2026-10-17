@@ -97,7 +97,7 @@ export function boxNearGate(clear, px, py, x0, z0, x1, z1, margin = 0) {
 }
 
 /** EG-F: an arch's clearing about its foot, metres - its stone (the gate's GATE_HALF_W at 0.62, 4.8 either side), the
- *  opener's landing before it (scenes/egArch.js EG_ARCH_LANDING_M) and room to walk round. */
+ *  opener's landing before it (scenes/eliteGates/egArch.js EG_ARCH_LANDING_M) and room to walk round. */
 export const EG_ARCH_ROCK_M = 14;
 /** EG-F: the key joining a set's members' keys. */
 export const CLEAR_KEY_JOIN = '|';

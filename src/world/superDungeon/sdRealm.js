@@ -187,8 +187,8 @@ const UP = [0, 1, 0];
  * point SD_ROOT_DEPTH down); what hangs under it is the hang's (world/superDungeon/sdIslandModel.js, a noShadow mesh a stage). Its
  * floor at the realm's y 0, or `y` (SD7b: the Steps' checkpoints stand high). EG-LOOK (Elite-Gates-Look.md section 2): two
  * options the Spire's discs take and the Hour never does - `teeth: false` lays no brass gear teeth round the rim (the
- * Spire's cornice is its ruin's - world/egRuin.js), `floor: false` no floor (the Spire's floors are cut into their inlay's
- * regions - world/egGround.js egDiscFloor); by default both are laid as they always were, byte for byte.
+ * Spire's cornice is its ruin's - world/eliteGates/egRuin.js), `floor: false` no floor (the Spire's floors are cut into their inlay's
+ * regions - world/eliteGates/egGround.js egDiscFloor); by default both are laid as they always were, byte for byte.
  */
 export function realmIsland(f, cx, cz, r, rec, { uvOf = tileUv, y: y0 = 0, bands = 0, teeth = true, floor = true } = {}) {
   const C = (x, y, z) => realmToDungeon(cx + x, y0 + y, cz + z);

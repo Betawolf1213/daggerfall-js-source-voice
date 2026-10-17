@@ -26,7 +26,7 @@
 // wire's relaySupportsGate, WB3), and nothing else happens.
 //
 // EG-F (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 6.3): AND THE ELITE BREACHES'
-// ARCHES, which are this stone at 0.62 (scenes/egArch.js, the pool that owns them, handed in as `arches`): stood in this
+// ARCHES, which are this stone at 0.62 (scenes/eliteGates/egArch.js, the pool that owns them, handed in as `arches`): stood in this
 // pool's frame, their stones drawn in its world pass, their fires and gold beacons in its pass beside the gate's (each
 // with its own per-draw values - render/gate/gatePass.js gatePassValues; the gate's record names none and draws as it drew),
 // their lights, eye boxes, plaques and presses answered beside the gate's. The host's frame already runs this pool's

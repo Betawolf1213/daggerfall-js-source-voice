@@ -4045,7 +4045,7 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
 - **EG-ZM**: the stake's clock on the hourly cron (`spendLapsedStakes`, 14 days past a stake's `until`).
 - **AUDIT EG III**: a void after a Redoubt returns the key, a voided Rehearsal gives the day's back, the first breach's
   mercy judged at the end, an admission's `eg_live` ending at its stake's `until`.
-- **AUDIT EG IV** (the net group, `01-Overview/Audit-EG-IV.md`):
+- **AUDIT EG IV** (the net group, `01-Overview/audits/Audit-EG-IV.md`):
   - an open whose answer was lost is asked again by its request id (`/v1/eg/open`'s `again`). The service answers with
     the stake it took, for its void, or with `none` (404) where it took none;
   - the launch gift's letter is sent by migration 0119 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
@@ -4054,7 +4054,7 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
   - the opener's `'empty'` end clears their `eg_live`;
   - Spire Champion is kept only once a season's late ends are claimed;
   - the routes' comment names what the open reads and what it and the admission refuse.
-- **AUDIT EG V** (fix group D, `01-Overview/Audit-EG-V.md`), in migration 0119:
+- **AUDIT EG V** (fix group D, `01-Overview/audits/Audit-EG-V.md`), in migration 0119:
   - a stake's open order re-signed for a later open carries the stake's own issue, never a fresh one (L4-5);
   - a Redoubt's spoils seed mixes the receipt's seed with the service's own 8-byte draw kept on the row
     (`eg_redoubts.nonce`, `eg_runs.nonce`), answered by the claim, so a player holding several receipts cannot choose
@@ -4078,7 +4078,7 @@ of section 20), added as every honour is: the ids last in `identityToken.js` `TI
 - **Auras** (3): `beaconlight` Beaconlight (Kynbane's: gold-white motes), `burningstair` The Burning Stair
   (Wellhead-Walker's: falling embers), `firstlight` Firstlight (First of the Spire's: a dawn-white ring) - each with its
   title, in its title's paint (`AURA_PAINT`), never sold.
-- Pins: `test/egeco_honours.test.js`; every pinned list of the titles and auras moved (PIN MOVED).
+- Pins: `test/net/eliteGates/egeco_honours.test.js`; every pinned list of the titles and auras moved (PIN MOVED).
 
 ## RAID4 — the towns defended (2026-09-28, acct17)
 

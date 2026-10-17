@@ -339,15 +339,15 @@ import { createSdHost } from './superDungeon/sdHost.js';   // SD2b: the Hollow i
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
 import { SdOmenPassRenderer } from '../render/superDungeon/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
 import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/superDungeon/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
-import { egRoomKey, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
-import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
-import { createEgArchPool, egArchPlace, egArchSite, EG_ARCH_GATE_NEAR_M } from './egArch.js';   // EG-F: the Elite Breach's arch - its pool, its place, its site; a Dagon's Breach near
-import { createEgCallPortal, createEgCallPrompt } from './egCall.js';   // EG-F: the call's portal at my feet, and its prompt
-import { openEgStartWindow, egStartAsk } from '../ui/egStartWindow.js';   // EG-F: the start window, over DFU's list picker; AUDIT EG III (lane4 #12): its question's door
+import { egRoomKey, EG_TEXT } from '../net/eliteGates/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
+import { createEgClient } from './eliteGates/egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
+import { createEgArchPool, egArchPlace, egArchSite, EG_ARCH_GATE_NEAR_M } from './eliteGates/egArch.js';   // EG-F: the Elite Breach's arch - its pool, its place, its site; a Dagon's Breach near
+import { createEgCallPortal, createEgCallPrompt } from './eliteGates/egCall.js';   // EG-F: the call's portal at my feet, and its prompt
+import { openEgStartWindow, egStartAsk } from '../ui/eliteGates/egStartWindow.js';   // EG-F: the start window, over DFU's list picker; AUDIT EG III (lane4 #12): its question's door
 import { gateClearSet } from '../world/gate/gateClearance.js';   // EG-F: the gate's clearing and every standing arch's, one set
-import { EG_LAST_WORD_MIN } from '../net/egLaw.js';   // EG-F: a quest falling due inside a breach's last word
-import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
-import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
+import { EG_LAST_WORD_MIN } from '../net/eliteGates/egLaw.js';   // EG-F: a quest falling due inside a breach's last word
+import { createEgFight } from './eliteGates/egFight.js';   // EG-PLAY: a hall's fight
+import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/eliteGates/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
 import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
 import { registerPlayerDeathSave } from '../characters/playerEntity.js';   // EG-FULL: the fall's death save (the witness's damage mod rides main's import of registerPlayerDamageMod, below) (EG-H2: the Spire's Levitate ward is the one ward's, by the made level's law)
 import { registerMadeLevelHere, madeRuleHere, madeSaysHere } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every per-level door below asks the one law
@@ -374,10 +374,10 @@ import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil B
 import { createBrokerOverlay, closeBrokerDoor } from '../ui/brokerDoor.js';   // SET7: her window, a lazy chunk behind its door
 import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: the Broker's Panoply sink - its nine rows and their names
 import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
-import { EG_SINK_EMBERS } from '../net/egPay.js';   // EG-E1: the sink's price
-import { openEgBoard, createEgBoardDoor } from '../ui/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
-import { egRecapsKept } from '../ui/egHud.js';   // AUDIT EG V (c, L7-19): the last runs this device kept, on the boards' own tab
-import { registerEgFind, egFindThrow } from '../systems/egFind.js';   // EG-E3: the dungeon's find
+import { EG_SINK_EMBERS } from '../net/eliteGates/egPay.js';   // EG-E1: the sink's price
+import { openEgBoard, createEgBoardDoor } from '../ui/eliteGates/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
+import { egRecapsKept } from '../ui/eliteGates/egHud.js';   // AUDIT EG V (c, L7-19): the last runs this device kept, on the boards' own tab
+import { registerEgFind, egFindThrow } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find
 import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigil/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
 import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText, panoplySale } from '../systems/sigil/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
 import { drawGateBanner } from '../ui/gate/gateBanner.js';
@@ -419,8 +419,8 @@ import { createSdClaims } from '../net/superDungeon/sdClaims.js';   // SD9b: the
 import { announceHonour } from '../ui/lootBanner.js';   // HONOUR-BANNER: a title or an aura granted, as a loot banner
 import { readSdReceipt } from '../net/superDungeon/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/superDungeon/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
-import { egSpoilsDay, egSpoilsList, egSpoilsSeedOf, EG_SPOILS_TEXT } from '../systems/egSpoils.js';   // EG-E: a Redoubt's spoils; AUDIT EG V: on the claim's seed
-import { egReliquaryGrant } from '../systems/egSpoils.js';   // AUDIT EG III (Elite-Gates.md section 16.3): an end's Reliquaries opened
+import { egSpoilsDay, egSpoilsList, egSpoilsSeedOf, EG_SPOILS_TEXT } from '../systems/eliteGates/egSpoils.js';   // EG-E: a Redoubt's spoils; AUDIT EG V: on the claim's seed
+import { egReliquaryGrant } from '../systems/eliteGates/egSpoils.js';   // AUDIT EG III (Elite-Gates.md section 16.3): an end's Reliquaries opened
 import { createSdSpoils, clearOfPillars } from './superDungeon/sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpent/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gate/gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
@@ -429,8 +429,8 @@ import { createDeadlandsAir } from './deadlandsAir.js';   // WB6b: and their air
 import { createGateVeil } from '../ui/gate/gateVeil.js';   // WB6c: the step through the gate - a vortex of fire in and out
 import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../systems/gate/gateScore.js';   // WB7: the Warden's score - the court's own music
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/superDungeon/sdScore.js';   // SD13: the Hour's own score
-import { createSpireScoreHost } from '../systems/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
-import { egHallFog } from '../world/egHall.js';   // EG-G2: the Spire's haze, its sky's gain (EG-LOOK: its band's own)
+import { createSpireScoreHost } from '../systems/eliteGates/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
+import { egHallFog } from '../world/eliteGates/egHall.js';   // EG-G2: the Spire's haze, its sky's gain (EG-LOOK: its band's own)
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
 import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
@@ -24131,7 +24131,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  offset that moved). Between anchors it runs on the page's clock alone, so it never steps back.
    *  EG-ZD (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 10.8, EG-H1's host flag): IN A BREACH, THE CORRECTED CLOCK -
    *  the spans move on it (the dungeon arm's `sdClock` reads this), so every member sees every platform where the relay
-   *  has it: the breach's client's anchored seconds (scenes/egClient.js spanSeconds - the clock its fight already runs
+   *  has it: the breach's client's anchored seconds (scenes/eliteGates/egClient.js spanSeconds - the clock its fight already runs
    *  on), the welcome's offset everywhere else and before the room has answered a ping. */
   const deadlandsShared = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + _sharedOffsetMs });
   const deadlandsSeconds = () => egClient?.spanSeconds() ?? deadlandsShared();
@@ -24201,12 +24201,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     yaw: () => cam.yaw,   // WB13a: the way out of a blow on me, turned as the screen is
     shake: (amount) => betterAmbience.weaponKick(amount),   // WB13d: his landings near me felt, under the player's own maxShake
   }) : null;
-  // EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH ON THIS SCREEN (scenes/egClient.js) -
+  // EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH ON THIS SCREEN (scenes/eliteGates/egClient.js) -
   // the Weir Key's use and the open, the hub's call and `/breach`, the step into a circle, the halls (the pull, the door,
-  // a new circle), the fight (scenes/egFight.js - the gate's own pieces about the hall), the Redoubt, the way out, the
+  // a new circle), the fight (scenes/eliteGates/egFight.js - the gate's own pieces about the hall), the Redoubt, the way out, the
   // tracker and the receipts. Online only.
   const _accountEg = accountEg({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
-  const egNow = () => egClient?.breachNow() ?? Date.now() + _sharedOffsetMs;   // EG-ZD (section 10.8): in a breach the corrected clock (scenes/egClient.js breachNow), the welcome's offset elsewhere
+  const egNow = () => egClient?.breachNow() ?? Date.now() + _sharedOffsetMs;   // EG-ZD (section 10.8): in a breach the corrected clock (scenes/eliteGates/egClient.js breachNow), the welcome's offset elsewhere
   /** A line on the screen for its length (the court's), and a saving throw against a blow's element (the gate's). */
   const egMid = (text) => setMidScreenText(text, courtSaySeconds(text));
   const egSave = (e, el = 'fire') => { const w = GATE_SAVES[el] ?? GATE_SAVES.fire; return savingThrow(w[0], w[1], e); };
@@ -24229,8 +24229,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return true;
   }
   // ── EG-F (bible/11-Multiplayer/Elite-Gates.md sections 5, 6.3 and 6.4): THE ARCH AND THE CALL ────────────────────────
-  // the arch pool (scenes/egArch.js - drawn through the gate's pool below), the call's portal and its prompt
-  // (scenes/egCall.js), the key's facts for its refusals, and the start window (ui/egStartWindow.js - DFU's list picker,
+  // the arch pool (scenes/eliteGates/egArch.js - drawn through the gate's pool below), the call's portal and its prompt
+  // (scenes/eliteGates/egCall.js), the key's facts for its refusals, and the start window (ui/eliteGates/egStartWindow.js - DFU's list picker,
   // the boat variant picker's way, and DFU's YesNo box). Online alone, as the breach is.
   const egFeet = () => (walkMode && playerSpawned && (modes?.mode ?? 'exterior') === 'exterior' ? player.feetAt() : null);
   const egProbes = () => ({ ground: (o, d, m) => collider.surfaceHit(o, d, m)?.dist, wall: (o, d, m) => collider.raycastHit(o, d, m)?.dist });
@@ -24246,7 +24246,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   }) : null;
   if (_egCallPortal) portalGates.drawAlso(() => _egCallPortal.batches());   // EG-F: the call's portal drawn with the Portal Stone's, on the flats' axis
   const egCallPrompt = params.has('online') ? createEgCallPrompt({ onAnswer: () => egClient?.command(''), touch: isTouchDevice(), doc: document }) : null;
-  /** The key's facts (scenes/egArch.js egKeyRefusal): the Portal Stone's holds, the water, a boat, a location's footprint,
+  /** The key's facts (scenes/eliteGates/egArch.js egKeyRefusal): the Portal Stone's holds, the water, a boat, a location's footprint,
    *  a Dagon's Breach near, and the arch's site where it would stand (null: no room - egArchPlace). */
   const egKeyFacts = () => {
     const f = egFeet(), px = playerTravelPixel(), g = gatePool?.place?.() ?? null;
@@ -24258,7 +24258,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       site: at.at && Number.isSafeInteger(px?.x) ? egArchSite(at.at, at.yaw, px.x, px.y, state.pixelTranslation(px.x, px.y)) : null,
     };
   };
-  /** EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW): THE BOARDS' ONE DOOR (ui/egBoardWindow.js createEgBoardDoor) -
+  /** EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW): THE BOARDS' ONE DOOR (ui/eliteGates/egBoardWindow.js createEgBoardDoor) -
    *  `/breach board`, the Timers row's Elite entries and the start window all open the boards here, in the skin worn (the
    *  enhanced panel, or the classic skin's DFU pickers on the mode's window slot), one at a time. */
   const egBoardDoor = createEgBoardDoor({
@@ -24328,7 +24328,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
   // EG15 (Elite-Gates.md sections 15 and 19, THE BATTLEMAGE'S PANOPLY): the Reprieve's half for the party mates within its
   // reach (each a Shield at ALLY-CAST's door - the receiver's own client applies it), and THE SPIRE'S RECOVERY - a death
-  // save spent in a breach held to that breach's next Redoubt (scenes/egClient.js `redoubt`)
+  // save spent in a breach held to that breach's next Redoubt (scenes/eliteGates/egClient.js `redoubt`)
   setSetPowersAllies({
     near: (m) => { const f = player.feetAt(); return (allyMarksNear() ?? []).filter((p) => p.mate && p.feet && Math.hypot(p.feet[0] - f[0], p.feet[1] - f[1], p.feet[2] - f[2]) <= m); },
     shield: (a, sp) => castAtAllyDoor(a.id, allyCastFrame(sp, effectiveLevel(playerEntity), a.id)),
@@ -24336,7 +24336,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   setSpireRecovery(() => modes?.egHallBreach?.() ?? null);
   // EG-E3 (Elite-Gates.md section 5, THE DUNGEON'S FIND): an elite foe's death in a dungeon online asks the account service
   // for a Weir Key - the owner for its own kill, the striking joiner for its (scenes/dungeonContext.js egFindStruck); a yes
-  // throws the key from the body and restacks the pack (systems/egFind.js)
+  // throws the key from the body and restacks the pack (systems/eliteGates/egFind.js)
   if (params.has('online')) registerEgFind({
     ask: (t) => _accountEg.find(t), selfId: () => online?.id ?? null, online: () => !!online && online.status === 'open', say: (l) => chatNotice(l),
     tierNow: () => (_mode() === 'dungeon' && modes?.dungeonLocation ? dungeonTier(modes?.dungeonLocation) : null),
@@ -24353,14 +24353,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _egSpoilsIn = inSpire;
   };
   /** EG-E (Elite-Gates.md section 19): WHAT A REDOUBT PAID - the account service's word on my Redoubt receipt (scenes/
-   *  egClient.js `paid`): its Marks and the guild's deed as a haul card; its spoils (systems/egSpoils.js - rolled on the
+   *  egClient.js `paid`): its Marks and the guild's deed as a haul card; its spoils (systems/eliteGates/egSpoils.js - rolled on the
    *  seed the claim answered - AUDIT EG V: the receipt's mixed with the service's own draw - at the level the breach
    *  admitted, the lord's arm and card by its key, the Panoply's pity as the service forced it, and the Deadlands Embers it
    *  paid), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
    *  Hour's pool (the Spire is a dungeon's frame as the Hour is, and the two are never stood in at once), once a receipt
    *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too.
    *  AUDIT EG III (section 16.3): an END's claim (`q` 'x') opens its Reliquaries - those the service answered (`rl`), each a
-   *  roll at its Redoubt's depth off the seed the end's claim answered (systems/egSpoils.js egReliquaryGrant), straight into the pack
+   *  roll at its Redoubt's depth off the seed the end's claim answered (systems/eliteGates/egSpoils.js egReliquaryGrant), straight into the pack
    *  through the same pool, once an end and account. */
   function egSpoilsPaid(c, d) {
     if (c?.q === 'x') {
@@ -24649,7 +24649,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  death); where I stand held a few metres past each change (A10, sdScorePlace's `was`). */
   let _hourScoreHeld = false, _hourScoreMade = false, _hourPlace = null;
   const _hourScore = createHourScore();
-  const _spireScore = createSpireScoreHost({ music, now: () => Date.now() + _sharedOffsetMs });   // EG-G2: the Spire's score holds the music before the Hour's (systems/egScore.js)
+  const _spireScore = createSpireScoreHost({ music, now: () => Date.now() + _sharedOffsetMs });   // EG-G2: the Spire's score holds the music before the Hour's (systems/eliteGates/egScore.js)
   const sdScoreWhere = () => {
     if ((modes?.mode ?? 'exterior') !== 'dungeon') return (_hourPlace = null);
     if (modes?.sdRealmSlot?.() != null) { const [x, , z] = sdDungeonToRealm(player.pos[0], player.pos[1], player.pos[2]); return (_hourPlace = sdScorePlace(x, z, _hourPlace)); }
@@ -29103,7 +29103,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     for (const d of visiblePeers) {
       const look = peerDraw(d.shown?.cv | 0, veilOn, _veilT, d.id);
       if (look.kind === 'hidden') { _hiddenPeers.add(d.id); continue; }   // INVIS-NET: the classic lane - the concealed stand nowhere here
-      const veil = look.kind === 'conceal' ? look.visual : egClient?.allyVeil(social?.accountOfPeer?.(d.id), d.shown, onlineToScene) ?? null; if (veil) _veils.set(d.id, veil);   // AUDIT EG V (h; Elite-Gates.md section 8.2): an ally on the Spire's traversal ground at 60% (scenes/egClient.js allyVeil)
+      const veil = look.kind === 'conceal' ? look.visual : egClient?.allyVeil(social?.accountOfPeer?.(d.id), d.shown, onlineToScene) ?? null; if (veil) _veils.set(d.id, veil);   // AUDIT EG V (h; Elite-Gates.md section 8.2): an ally on the Spire's traversal ground at 60% (scenes/eliteGates/egClient.js allyVeil)
       seen.push(d);
     }
     peerCandlesFrame(seen, dt);   // PEERLIGHT2: the others' Light spells - candle and light, in the live mode's engine; INVIS-NET x PEERLIGHT2 (the merge): hung only before a player drawn here, so the classic lane's concealed carry no candle to give them away
@@ -29670,7 +29670,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
     egLights: () => { _egLightList.length = 0; for (const L of egClient?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); for (const L of sdSpoilsPool?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); return _egLightList; },   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils' - AUDIT EG III (lane4 #10): one list refilled a frame
     drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
-    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, egHallFog(modes?.egHallCircle?.()).color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
+    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, egHallFog(modes?.egHallCircle?.()).color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/eliteGates/egSkyPass.js) - the band's void, the Spire's underside
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
     egWitness: () => !!egClient?.witnessing(),   // AUDIT EG III (lane4 #1, lane6 #1): a witness's body, held under the hall - the spans never cast it back, the dither pass tries nothing for it

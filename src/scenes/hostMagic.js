@@ -80,7 +80,7 @@ import { noteFeudHarm, elementFeudClass } from '../systems/feudLedger.js';   // 
 import { noteSkillChallenge } from '../systems/skillSoftcap.js';   // BAL9: a spell answers its foe, as a blow does
 import { sandSpellRefusal } from '../systems/arena/arenaKit.js';   // AUDIT ARENA-LADDER: the sand's kit law
 import { createMwMagicFx } from './mwMagicFx.js';   // MW-SPELLFX1: Morrowind's spell effects, drawn by every host through this engine
-import { egAllyLook } from '../ui/egAccess.js';   // EG-ZG (Elite-Gates.md section 25.4): THE QUIET COMPANY - another player's spell effects in a Spire trial
+import { egAllyLook } from '../ui/eliteGates/egAccess.js';   // EG-ZG (Elite-Gates.md section 25.4): THE QUIET COMPANY - another player's spell effects in a Spire trial
 import { CONCEAL_MODE } from '../systems/combatVisuals.js';   // EG-ZG: an ally's flat drawn translucent, as a revealed foe's is (alpha alone)
 import { fpsSpellCasting } from '../combat/fpsSpellCasting.js';   // CAST-SPEED: the ONE pair of hands, whose motion gates the click
 
@@ -1277,7 +1277,7 @@ export function createPlayerMagic({
     return true;
   }
 
-  /** EG-ZG (Elite-Gates.md section 25.4 - THE QUIET COMPANY): an ally's flat at the quiet share (`q` ui/egAccess.js
+  /** EG-ZG (Elite-Gates.md section 25.4 - THE QUIET COMPANY): an ally's flat at the quiet share (`q` ui/eliteGates/egAccess.js
    *  egAllyLook's), translucent in the billboards' blended phase (CONCEAL_MODE.reveal - alpha alone, no ripple, no shade). */
   const allyConceal = (q) => (q ? { mode: CONCEAL_MODE.reveal, alpha: q.alpha, t: 0, phase: 0 } : null);
   /** MW-SPELLFX1: a missile's Morrowind bolt (scenes/mwMagicFx.js) - placed now, moved with the flight, ended with it. EG-ZG:
@@ -1745,7 +1745,7 @@ export function createPlayerMagic({
       const q = casterId != null ? (peerBodies?.() ?? []).find((b) => b && b.id === casterId && Array.isArray(b.feet)) : null;
       const feet = q ? q.feet : [from[0], from[1] - CAPSULE_HEIGHT * 0.9, from[2]];
       // EG-ZG (Elite-Gates.md section 25.4 - THE QUIET COMPANY): during a Spire trial another player's effects draw at 60% with
-      // no light of their own (ui/egAccess.js egAllyLook - the Spire's client says when); everywhere else, as they always were
+      // no light of their own (ui/eliteGates/egAccess.js egAllyLook - the Spire's client says when); everywhere else, as they always were
       const quiet = egAllyLook();
       mwFx.cast(look, feet, quiet ? { alpha: quiet.alpha } : undefined);
       if (rangeType === 2 || rangeType === 4) {

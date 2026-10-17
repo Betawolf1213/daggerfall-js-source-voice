@@ -211,7 +211,7 @@ jobs:
       #
       # A deploy restarts every Elite Breach's room. The relay's public `/v1/eg/live` (it names no breach) says how many
       # are live, whether every one stands between trials, the spec laws they were opened under and the longest's last
-      # word. THE DRAIN: a breach under a law this build does not draw (src/net/egDurable.js EG_LAWS - the line below
+      # word. THE DRAIN: a breach under a law this build does not draw (src/net/eliteGates/egDurable.js EG_LAWS - the line below
       # reads it) would be voided by its own room as it wakes, so the deploy waits until none is live or the longest's
       # last word has passed - a developer shuts the road meanwhile (`/relay egDrain on`, and `off` after). THE HOLD:
       # otherwise it waits, at most twenty minutes, until every live breach is between trials (a closing, a swap or a
@@ -222,7 +222,7 @@ jobs:
         if: steps.live.outputs.version != steps.ver.outputs.version && github.event.inputs.force != 'true'
         run: |
           url='https://daggerfall-online.mackcothran.workers.dev/v1/eg/live'
-          laws=$(grep -oP "^export const EG_LAWS = Object\.freeze\(\{\K[^}]*" src/net/egDurable.js | grep -oP '\d+(?=:)' | tr '\n' ' ')
+          laws=$(grep -oP "^export const EG_LAWS = Object\.freeze\(\{\K[^}]*" src/net/eliteGates/egDurable.js | grep -oP '\d+(?=:)' | tr '\n' ' ')
           echo "this build draws the spec laws: ${laws}"
           tries=0
           while :; do
@@ -248,7 +248,7 @@ jobs:
 
       # EG-ZA (bible/11-Multiplayer/Elite-Gates.md section 22): A FORCE DEPLOY VOIDS EVERY LIVE ELITE BREACH, never spends
       # its keys. The deploy stamps the Worker with the moment before it goes (`EG_VOID_BEFORE`, epoch ms): a breach's room
-      # woken under the stamp whose breach opened before it ends it as a void (src/net/egDurable.js egForceVoided) - the
+      # woken under the stamp whose breach opened before it ends it as a void (src/net/eliteGates/egDurable.js egForceVoided) - the
       # entered members' end receipts say `void` and its opener who never entered is handed the void itself, so every stake
       # comes back and the Redoubts taken stay. The next deploy carries no stamp.
       - name: Deploy

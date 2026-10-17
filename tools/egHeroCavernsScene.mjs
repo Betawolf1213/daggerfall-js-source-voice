@@ -7,7 +7,7 @@
 // numbers alone (no game data, no third-party art, no trigonometry - tools/egHeroKit.mjs's tables and hash noise), as
 // tools/egRefFragScene.mjs writes the reference, through the same writer (writeRefFragFbx), and tools/bakeEgHeroCaverns.mjs
 // bakes the .fbx it writes through tools/fragBake.mjs like any export of Mac's. Re-run it and the same bytes come out
-// (test/eghero_galleries.test.js holds it to them).
+// (test/tooling/eghero_galleries.test.js holds it to them).
 //
 // THE PLACE (section 11.2's row): the Deadlands' lava tubes under the torn halls. A floating mass of basalt, its underside
 // torn and hanging into the void, bored through by a lava tube - not a box: an elliptical bore 8.5 m across and 7.7 m to its
@@ -20,7 +20,7 @@
 // cut along its west wall, fed by a spout under a sluice gate and spilling into the lake, a basalt kerb with THE EDGE LINE
 // along its lip. An alcove behind a false wall in the east wall holds a page of the Annals.
 //
-// THE ENVELOPE - the code-built Caverns passage's (net/egFragLaw.js egFragPassage, the default kit; net/egLaw.js EG_CAVE):
+// THE ENVELOPE - the code-built Caverns passage's (net/eliteGates/egFragLaw.js egFragPassage, the default kit; net/eliteGates/egLaw.js EG_CAVE):
 //   the mouth 6 m wide and 5.2 m high (halfW 300, height 520) at the foot of the mouth (0, 0, 0), the floor at Z 0;
 //   28 m long (len 2800): one exit, 6 m by 5.2 m, its floor at Z 0 (yB 0), at Y 28;
 //   a chasm from Y 8 to Y 21 (the kit's 9-19, its 10 m widened to 13 m for a real crossing) crossed on three ledges, the
@@ -52,7 +52,7 @@ const TA = 3 / 0.707106781, TC = 3.2, TB = 3.2 / 0.707106781;
 const PUSH = 0.85, BENCH = 0.35;
 /** The rock round the bore (m): the mass's least thickness over its widest push. */
 const SKIN = 2.0;
-/** The alcove's doorway in the east wall: its middle along Y, its half-width, its height (world/egHall.js NICHE: 2 m by
+/** The alcove's doorway in the east wall: its middle along Y, its half-width, its height (world/eliteGates/egHall.js NICHE: 2 m by
  *  2.6 m, its niche 3 m deep from the wall's inner face), the portal's jambs and lintel round it. */
 const DOOR = Object.freeze({ y: 4.4, hw: 1.0, h: 2.6, jamb: 0.35, deep: 3.0 });
 
@@ -82,7 +82,7 @@ const ROWS = (() => {
 })();
 const NR = ROWS.length - 1;
 
-/** ROOT's basalt: the dark band of the record's own rock (world/egBandArt.js rootArt - its works, rows 87-98 between the
+/** ROOT's basalt: the dark band of the record's own rock (world/eliteGates/egBandArt.js rootArt - its works, rows 87-98 between the
  *  gold seam and the void's haze, v 0.235-0.32 as the renderer reads v up), walked out and back so a long face never leaves
  *  it; a leg every 0.55 m. */
 const ROCK_V0 = 0.235, ROCK_V1 = 0.32;
@@ -181,7 +181,7 @@ function basaltSpur(m, x, y, r, z0, z1, mat) {
 
 /** THE COURSE (the bridge's planks that fell, the kit's ledges): each `[label, x, y0, y1, top]` - its middle across, its
  *  near and far ends along the course, its top (m); 2.6 m wide. The gaps 1.7, 1.8, 1.8 and 1.7 m, the middle plank 0.25 m
- *  under the first and the last 0.3 m over it (each inside THE SPAN BUILD's reach - net/egSpanLaw.js egJumpReach). */
+ *  under the first and the last 0.3 m over it (each inside THE SPAN BUILD's reach - net/eliteGates/egSpanLaw.js egJumpReach). */
 const PLANKS = Object.freeze([['a', 0.5, 9.7, 11.7, -0.2], ['b', -0.5, 13.5, 15.5, -0.45], ['c', 0.4, 17.3, 19.3, -0.15]]);
 const PLANK_W = 2.6;
 /** The bridge's anchor posts at the lips: [x, y] each (a post r 0.35), and the floors' corners notched round them -
@@ -199,7 +199,7 @@ const RIB = Object.freeze([[4.9, 14.6, 4.4], [3.7, 14.4, 6.4], [2.0, 14.7, 7.6],
 export function heroCavernsScene() {
   const out = [];
   const add = (m) => { out.push(m); return m; };
-  // ══ THE ART, in the Galleries' dress (world/egBandArt.js EG_DRESS by name) ═════════════════════════════════════════
+  // ══ THE ART, in the Galleries' dress (world/eliteGates/egBandArt.js EG_DRESS by name) ═════════════════════════════════════════
   // ── THE BORE AND THE MASS: one shell, broken open over the chasm (the rims the rock's thickness round the slot)
   const rock = add(refFragMesh('Bore', ['root', 'molten']));
   shell(rock, {
@@ -407,7 +407,7 @@ export function heroCavernsScene() {
   cube('anchor.engine.sluice', -2.0, 26.9, 0);
   cube('anchor.hazard.spout', -2.7, 26.1, 0);
   cube('anchor.hazard.fissure', 0, 7.2, 0);
-  // the hazards, each in its kind's shape (net/egFragLaw.js EG_HAZARD_SHAPES): the fall's lane across the passage, the
+  // the hazards, each in its kind's shape (net/eliteGates/egFragLaw.js EG_HAZARD_SHAPES): the fall's lane across the passage, the
   // basalt's two discs (one size), the surge's 4 m lane along the channel over the far floor
   add(refFragMesh('hazard.fall.curtain.ph1200')).level(-3, FALL_Y0, 3, FALL_Y1, 0);
   add(refFragMesh('hazard.basalt.columns.ph3100')).disc(0.8, 2.7, 0, 2.5).disc(-0.9, 5.2, 0, 2.5);

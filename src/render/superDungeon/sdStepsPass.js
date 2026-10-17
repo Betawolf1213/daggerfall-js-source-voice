@@ -14,7 +14,7 @@
 // same pass - a circle's gone Beats and my fallen Crumbles (and the Ossuary's bone bridges, the Crumble's law), as many as
 // the circle lays (`max` - the uniforms' count for that pass; the Hour's stays its fifteen); A GHOST SLAB (`slab`): each
 // ghost's top filled too, at its state's fourth share - a peer standing on a Crumble I have seen fall is drawn standing on
-// it; and THE FOG FLOOR the Spire's lines keep (`fogFloor` - world/egLook.js EG_FOG_FLOOR: a fog visibility of at least its
+// it; and THE FOG FLOOR the Spire's lines keep (`fogFloor` - world/eliteGates/egLook.js EG_FOG_FLOOR: a fog visibility of at least its
 // floor within its reach). Built without them, its text and its buffer are the Hour's, byte for byte.
 //
 // A foreign pass: it owns its program and its state; the host marks it. Not a DFU member. Ledger A (SUPER-DUNGEONS).
@@ -29,7 +29,7 @@ import { stepEdges } from '../../world/superDungeon/sdStepsModel.js';
 /** The ghosts: their width (px), the hand's reach and lift over the top (m), their gold, their light at rest and at
  *  the return (L3), and how long before the return it brightens (s - a Beat plate's; a Crumble pin's over its rewind). */
 export const SD_GHOST = Object.freeze({ px: 2, hand: 0.9, lift: 0.02, color: SD_LIGHT.gold, base: 0.45, peak: 1.1, rise: 0.3 });
-/** The steps a ghost can stand for in `course` (EG-H3, EG4: a course record - net/egSpanLaw.js courseOf), in its order:
+/** The steps a ghost can stand for in `course` (EG-H3, EG4: a course record - net/eliteGates/egSpanLaw.js courseOf), in its order:
  *  the Beat's plates and the Crumble's pins. */
 export const sdGhostStepsOf = (course) => course.steps.filter((s) => s.kind === 'beat' || s.kind === 'crumble');
 /** The Hour's. */
@@ -115,7 +115,7 @@ void main() {
   vWorld = far ? wb : wa;
 }`;
 export const SD_STEPS_PASS_VS = sdStepsPassVs();
-/** The fragment stage - EG-ZL: with `fogFloor`, its light keeps the Spire's fog floor (world/egLook.js egFogKept's law). */
+/** The fragment stage - EG-ZL: with `fogFloor`, its light keeps the Spire's fog floor (world/eliteGates/egLook.js egFogKept's law). */
 export const sdStepsPassFs = (fogFloor = false) => `#version 300 es
 precision highp float;
 in float vK;
@@ -168,7 +168,7 @@ export class SdStepsPass {
   /** Add the ghosts (`step`, `state`: SD_GHOST_STEPS.length vec4s each, written in place by the Steps) onto the frame,
    *  `steps` the pixel law's levels, `vw` x `vh` the world image (px - the drawing buffer's when not said). Answers
    *  whether any drew. AUDIT EG III (lane4 #5): `color` their line's (the Steps' gold when not said - the Spire's
-   *  ghosts take the danger palette's safety, scenes/egSpan.js egGhostRgb). */
+   *  ghosts take the danger palette's safety, scenes/eliteGates/egSpan.js egGhostRgb). */
   draw(proj, view, step, state, fog = null, steps = 10, vw = 0, vh = 0, color = SD_GHOST.color) {
     this.drawn = false;
     let any = false;

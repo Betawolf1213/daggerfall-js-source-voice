@@ -6,7 +6,7 @@
     "new": "AND w = ?3 AND paid = 1) THEN 1 ELSE 0 END AS paid) q",
     "why": "a Redoubt paid once ever, never again the next week",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -16,7 +16,7 @@
     "new": "CASE WHEN ?9 = 1 OR NOT EXISTS (SELECT 1 FROM eg_redoubts WHERE account = ?2 AND w = ?3 AND wk = ?7",
     "why": "the same Redoubt paid twice a week - the farm AUDIT EG0 G6 shut",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -26,7 +26,7 @@
     "new": "payable = 1;",
     "why": "a Rehearsal (no key staked) paying Marks, embers and a key",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -36,7 +36,7 @@
     "new": "THEN ?11 ELSE ?11 END,",
     "why": "a first-this-season ember paid every week",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -46,7 +46,7 @@
     "new": "CASE WHEN q.paid = 2 THEN 0 WHEN",
     "why": "a Redoubt the week already paid paying embers",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -56,7 +56,7 @@
     "new": "AND paid = 1 AND wk >= 0) THEN ?11",
     "why": "a new season's first never a first",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -66,7 +66,7 @@
     "new": "THEN 0 ELSE 0 END)`);",
     "why": "ten misses and the eleventh still a miss",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -76,7 +76,7 @@
     "new": "THEN ${1} ELSE 0 END)`);",
     "why": "a Valkynaz's second pass forced and the first named",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "new": "forced.push(`(CASE WHEN ${count} >= ",
     "why": "every pass read off the count before the first - a Valkynaz's second never forced at nine",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "new": "    n = hit ? `(${n} + 1)` : ",
     "why": "a piece by its own draw leaving the count climbing",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "new": "THEN ${n} + 1 ELSE ${n} + 1 END)`;",
     "why": "the forced piece leaving the count at ten - every pass after it forced",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -116,7 +116,7 @@
     "new": "${pitySql('0', hits).forced}",
     "why": "the row's forced passes never read off the count",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "new": "WHERE id = ?2`).bind(b, player.id, w, nonce));",
     "why": "a receipt the week does not pay moving the pity",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -136,7 +136,7 @@
     "new": "AND paid = 1`)",
     "why": "a second Valkynaz the same week finding a key",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -146,7 +146,7 @@
     "new": "UPDATE players SET eg_keys = eg_keys + 1 WHERE id = ?2",
     "why": "the key's week never kept - a key every Valkynaz",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -156,7 +156,7 @@
     "new": "if (egValkRedoubt(w) && draw(1)) {",
     "why": "a key at every paid Valkynaz, not one in four",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -166,7 +166,7 @@
     "new": "if (draw(EG_VALK_KEY_ODDS)) {",
     "why": "a key at any Redoubt",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "new": "weir: paid ?",
     "why": "a key's word on a Redoubt no Valkynaz guards",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "new": "",
     "why": "a Redoubt striking no silver",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "new": "marks: true ? await egStrikeAnswer(",
     "why": "an unpaid Redoubt's answer saying the week's line",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "new": "...(recorded ? {} : {}),",
     "why": "a receipt carried again not said again",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "new": "const event = deedEvent('eg', `${w}`);",
     "why": "one deed a Redoubt for every breach of it",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -226,7 +226,7 @@
     "new": "export const egStrikeRid = (week, w) => `eg:${w}`;",
     "why": "a Redoubt's silver once ever, never the next week",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -236,7 +236,7 @@
     "new": "AND w = ?${p + 1} AND nonce = ?${p + 2})`,",
     "why": "an unpaid claim marking its guild's deed",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -246,7 +246,7 @@
     "new": "eg: Object.freeze({ amount: 25 }),",
     "why": "the Redoubt's 20 silver another number",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -256,7 +256,7 @@
     "new": "kinds: Object.freeze(['gate', 'raid', 'serpent']), perDay: 150 }",
     "why": "the Spire's silver outside the day's combat cap",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "new": "{ env, character: null }",
     "why": "the claiming character never reaching the deed",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -276,7 +276,7 @@
     "new": "r.q === 'w') await grantSpoils(",
     "why": "a Redoubt the week already paid filling the budget",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "new": "  bought: 400,   // EG-E1",
     "why": "the week's piece already bought answered as a bad shape",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -296,7 +296,7 @@
     "new": "...({})",
     "why": "a short sale's purse and price unsaid",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -306,7 +306,7 @@
     "new": ")';",
     "why": "the Spire's embers never spendable",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -316,7 +316,7 @@
     "new": "(mine.has(w) ? true : !paidWeek.has(w))",
     "why": "a Reliquary sealed in a circle the week already paid opening",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "new": "(mine.has(w) ? mine.get(w) : true)",
     "why": "a circle never taken here but paid in another breach this week opening",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -336,7 +336,7 @@
     "new": "",
     "why": "a Rehearsal's end opening Reliquaries",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -346,7 +346,7 @@
     "new": "        AND NOT EXISTS (SELECT 1 FROM eg_sink WHERE account = ?1)\n",
     "why": "one Panoply piece ever, never the next week",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "new": "",
     "why": "the sink selling twice a week, the second sale's embers spent for nothing",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -366,7 +366,7 @@
     "new": "      RETURNING",
     "why": "a piece sold to a purse that cannot pay",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "new": ".bind(player.id, week, 1, nowS),",
     "why": "the Panoply sold for one ember",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -386,7 +386,7 @@
     "new": "SELECT ?1, ?2, ?3, ?4 WHERE 1')",
     "why": "a refused sale writing the week's row",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -396,7 +396,7 @@
     "new": "if (typeof piece !== 'string') return { error: 'piece' };",
     "why": "the sink selling what is not a Panoply piece",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -406,7 +406,7 @@
     "new": "  const piece",
     "why": "a guest row, one storage clear from gone, buying",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -416,7 +416,7 @@
     "new": ", ...(",
     "why": "the week's sale never said, a lost answer never asked after",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -426,7 +426,7 @@
     "new": "post('/v1/eg/claim', { receipt })",
     "why": "the client never naming the claiming character",
     "tests": [
-      "test/egeco_service.test.js"
+      "test/net/eliteGates/egeco_service.test.js"
     ]
   },
   {
@@ -436,7 +436,7 @@
     "new": "",
     "why": "a refused sale keeping the embers",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "new": "  const lost = insigniaUnheard(r);\n  if (false) {",
     "why": "a sale the service holds, its answer lost, refunded and kept",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -456,7 +456,7 @@
     "new": "  delete item.stonesPaid;",
     "why": "the embers spent and no piece",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "new": "  return { ok: true, data: r.data, item };",
     "why": "a held sale not saved - a page closed keeps the embers too",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -476,7 +476,7 @@
     "new": "  if (stoneCount(spendableStonesIn(items)) < EG_SINK_EMBERS) return { ok: false, error: 'stones' };",
     "why": "the price never taken",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -486,7 +486,7 @@
     "new": "",
     "why": "the sink's piece priced as the day's stock - a dismantle paying embers back",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -496,7 +496,7 @@
     "new": "  if (!spendStones",
     "why": "a piece the host cannot make paid for",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -506,7 +506,7 @@
     "new": "    if (false) {\n      const head = el('li', 'broker-insignia-head broker-panoply-head');",
     "why": "the Panoply never drawn",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -516,7 +516,7 @@
     "new": "  return '';",
     "why": "a short purse offered the Buy",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -526,7 +526,7 @@
     "new": " || ",
     "why": "a ware pressable while a Panoply piece is sold",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "new": "bought: false, spent: piece !== null",
     "why": "the week's piece not marked bought",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -546,7 +546,7 @@
     "new": "bought: piece === id, spent: false",
     "why": "the rest still offered once the week's piece is bought",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -556,7 +556,7 @@
     "new": "  return 'Buy';",
     "why": "a short purse's button saying Buy",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   },
   {
@@ -576,7 +576,7 @@
     "new": "eg: 'Breach closed' });",
     "why": "a Redoubt's silver carded as a breach's",
     "tests": [
-      "test/egeco_broker.test.js"
+      "test/systems/eliteGates/egeco_broker.test.js"
     ]
   }
 ]

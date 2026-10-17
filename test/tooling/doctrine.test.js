@@ -690,13 +690,13 @@ const PUBLIC_ALLOWLIST = new Map([
   // EG6c (2026-10-12, Elite-Gates.md section 11.6): THE REFERENCE HERO FRAGMENT - the port's own stand-in for Mac's
   // authored fragments, a scene written from numbers alone by tools/egRefFragScene.mjs (no image, no game data, no
   // third-party art) and committed as the .fbx tools/fragBake.mjs bakes; tools/bakeEgRefFrag.mjs re-makes its two halves,
-  // and test/eg6c_bake.test.js holds the scene and both halves to their bytes.
+  // and test/tooling/eg6c_bake.test.js holds the scene and both halves to their bytes.
   ['src/assets/egfrags/source/egRefFrag.fbx', 'OURS - the reference hero fragment\'s scene, written by tools/egRefFragScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egRefFrag.law.json', 'OURS - egRefFrag.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgRefFrag.mjs; numbers only'],
   ['src/assets/egfrags/egRefFrag.mesh.json', 'OURS - egRefFrag.fbx\'s mesh half baked by tools/bakeEgRefFrag.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // EG-HERO (the Soul Cairn, 2026-10-13, the owner: "You have to author the fragments"): THE OSSUARY AND THE MIST STAIR, the
   // Cairn's hero fragments, each a scene written from numbers alone by its tools/egHero*Scene.mjs (no image, no game data,
-  // no third-party art) and baked by its tools/bakeEgHero*.mjs; test/eghero_cairn.test.js holds each scene and both halves
+  // no third-party art) and baked by its tools/bakeEgHero*.mjs; test/tooling/eghero_cairn.test.js holds each scene and both halves
   // to their bytes.
   ['src/assets/egfrags/source/egheroOssuary.fbx', 'OURS - the Ossuary\'s scene, written by tools/egHeroOssuaryScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egheroOssuary.law.json', 'OURS - egheroOssuary.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroOssuary.mjs; numbers only'],
@@ -706,7 +706,7 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/egfrags/egheroMistStair.mesh.json', 'OURS - egheroMistStair.fbx\'s mesh half baked by tools/bakeEgHeroMistStair.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // EG-HERO (2026-10-13, the owner: "You have to author the fragments"): THE SHADE'S TWO HEROES - the Gloam Thicket's
   // passage and the Eclipse Vault's chamber, each a scene written from numbers alone by its tools/egHero*Scene.mjs and
-  // baked by its tools/bakeEgHero*.mjs; test/eghero_shade.test.js holds each scene and both its halves to their bytes.
+  // baked by its tools/bakeEgHero*.mjs; test/tooling/eghero_shade.test.js holds each scene and both its halves to their bytes.
   ['src/assets/egfrags/source/egheroGloam.fbx', 'OURS - the Gloam Thicket hero passage\'s scene, written by tools/egHeroGloamScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egheroGloam.law.json', 'OURS - egheroGloam.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroGloam.mjs; numbers only'],
   ['src/assets/egfrags/egheroGloam.mesh.json', 'OURS - egheroGloam.fbx\'s mesh half baked by tools/bakeEgHeroGloam.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
@@ -716,7 +716,7 @@ const PUBLIC_ALLOWLIST = new Map([
   // EG-HERO (2026-10-13, Mac: "You have to author the fragments"; Elite-Gates.md section 31, EG-HERO (the Broken
   // Galleries)): THE GALLERIES' THREE HERO FRAGMENTS - scenes the port writes from numbers alone (tools/egHeroCavernsScene.mjs,
   // egHeroStacksScene.mjs, egHeroColonnadeScene.mjs - no image, no game data, no third-party art), committed as the .fbx
-  // tools/fragBake.mjs bakes; each its own bake script re-makes its two halves, and test/eghero_galleries.test.js holds every
+  // tools/fragBake.mjs bakes; each its own bake script re-makes its two halves, and test/tooling/eghero_galleries.test.js holds every
   // scene and half to its bytes.
   ['src/assets/egfrags/source/egheroCaverns.fbx', 'OURS - the Oblivion Caverns hero passage\'s scene, written by tools/egHeroCavernsScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egheroCaverns.law.json', 'OURS - egheroCaverns.fbx\'s law half baked by tools/bakeEgHeroCaverns.mjs; numbers only'],
@@ -730,7 +730,7 @@ const PUBLIC_ALLOWLIST = new Map([
   // EG-HERO (2026-10-13, the owner: "You have to author the fragments"): THE HAVOC WELLHEAD'S HERO FRAGMENTS - the Forge Gut,
   // the Clan Pit and the Oblivion Caverns, deep, each a scene written from numbers alone by its tools/egHero*Scene.mjs (no
   // image, no game data, no third-party art), committed as the .fbx tools/fragBake.mjs bakes; each tools/bakeEgHero*.mjs
-  // re-makes its two halves, and test/eghero_wellhead.test.js holds each scene and both halves to their bytes.
+  // re-makes its two halves, and test/tooling/eghero_wellhead.test.js holds each scene and both halves to their bytes.
   ['src/assets/egfrags/source/egheroForgeGut.fbx', 'OURS - a Wellhead hero fragment\'s scene, written by tools/egHeroForgeGutScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egheroForgeGut.law.json', 'OURS - egheroForgeGut.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroForgeGut.mjs; numbers only'],
   ['src/assets/egfrags/egheroForgeGut.mesh.json', 'OURS - egheroForgeGut.fbx\'s mesh half baked by tools/bakeEgHeroForgeGut.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],

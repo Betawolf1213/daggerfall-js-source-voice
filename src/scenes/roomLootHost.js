@@ -150,7 +150,7 @@ export function createRoomLoot(host) {
       if (f.src?.eliteFoe) grantEliteLoot(e, terms.lv, rolls);
       rollCorpseKit(e, o);
       stampWonWeapons(e.items, terms.n ?? 1, { rolls });
-      raiseEnemyDeath(e, { ...o, level: terms.lv, room: true });   // `room`: the room's base, every client's - no kill (systems/egFind.js asks at the kill)
+      raiseEnemyDeath(e, { ...o, level: terms.lv, room: true });   // `room`: the room's base, every client's - no kill (systems/eliteGates/egFind.js asks at the kill)
       return { items: e.items, lootCap: Number.isInteger(e.lootCap) ? e.lootCap : null };
     } finally {
       e.items = saved.items; e.weapon = saved.weapon; e.armorValues = saved.armorValues; e.equip = saved.equip; e.level = saved.level;

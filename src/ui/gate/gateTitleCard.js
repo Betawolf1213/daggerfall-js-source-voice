@@ -13,7 +13,7 @@
 // Not a DFU member. Ledger A (WB).
 import { GATE_RING_CSS } from './gateMapMark.js';
 import { injectEnhancedFonts } from '../enhanced/enhancedStyle.js';   // the classic face, loaded by the gate's own screens
-import { egReducedMotion } from '../egAccess.js';   // AUDIT EG V (c, L7-17): reduced motion - the port's row or the system's
+import { egReducedMotion } from '../eliteGates/egAccess.js';   // AUDIT EG V (c, L7-17): reduced motion - the port's row or the system's
 
 /** A card comes in over TITLE_IN_MS and goes over TITLE_OUT_MS; it stands at least TITLE_HOLD_MS. */
 export const TITLE_IN_MS = 300;
@@ -75,7 +75,7 @@ function build(doc) {
 }
 
 /** Draw the card for a model (null hides it); `hidden` is the HUD's own hide and the step's fire. AUDIT EG V (c, L7-17;
- *  Elite-Gates.md section 25.7): `still` reduced motion - the port's row or the system's (ui/egAccess.js egReducedMotion,
+ *  Elite-Gates.md section 25.7): `still` reduced motion - the port's row or the system's (ui/eliteGates/egAccess.js egReducedMotion,
  *  read here unless the caller says) - the name never flies in and the rule never sweeps: the wake's and the fall's card
  *  in the Spire stood still where its arrival card and THE FALL's did. */
 export function drawGateTitleCard(model, { hidden = false, doc = globalThis.document, still = egReducedMotion() } = {}) {

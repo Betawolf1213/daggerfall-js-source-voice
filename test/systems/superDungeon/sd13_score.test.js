@@ -22,7 +22,7 @@ import { SD_ARENA, SD_ORRERY, dungeonToRealm, realmToDungeon } from '../../../sr
 import { SD_FIRST_STEP } from '../../../src/world/superDungeon/sdHall.js';
 import { SD_BAR_NEAR_M } from '../../../src/ui/superDungeon/sdRemnantBar.js';
 import { sdPhase } from '../../../src/net/superDungeon/sdLaw.js';
-import { createSpireScoreHost } from '../../../src/systems/egScore.js';
+import { createSpireScoreHost } from '../../../src/systems/eliteGates/egScore.js';
 
 const W = readFileSync(new URL('../../../src/scenes/world.js', import.meta.url), 'utf8');
 const constOf = (name) => { const at = W.indexOf(`\n  const ${name} = `); assert.ok(at > 0, name); return W.slice(at + 1, W.indexOf('\n  };\n', at) + 5); };

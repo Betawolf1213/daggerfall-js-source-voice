@@ -277,8 +277,8 @@ Mithril, light enough for a spellsword - the seven body pieces, a kite shield an
 at once - every affix at the Legendary band's TOP and the Spire-Saber's blow the sigil's greatest (12): the Spire's top
 drop pays what the Warden and the Brass do (the design's "No Gilded piece"). No resistance on any piece: Battlemage's
 Bearing raises every one, so the set alone stands at +15 an element at most, far under the saving throw's immunity (AUDIT
-FINAL's lesson). Each record's id is the pay law's (`net/egPay.js` `EG_PANOPLY_IDS`, `panoply-<key>`), the one the
-account service's weekly sink sells by. It rolls no drop of its own: a Redoubt's spoils decide WHETHER (`systems/egSpoils.js`
+FINAL's lesson). Each record's id is the pay law's (`net/eliteGates/egPay.js` `EG_PANOPLY_IDS`, `panoply-<key>`), the one the
+account service's weekly sink sells by. It rolls no drop of its own: a Redoubt's spoils decide WHETHER (`systems/eliteGates/egSpoils.js`
 `rollEgSpoils` - the pay law's draw and the service's pity) and `mintPanoplyPiece` picks WHICH, off one draw; the sink
 mints by id (`panoplyPieceById`). No world drop, shelf or day's stock rolls one: her day's stock stays the four sets of the
 world and the Regalia (`systems/aetheric.js` `PANOPLY_SET_PIECES`).
@@ -374,7 +374,7 @@ price and their week (`ui/brokerWindow.js`).
   loot's blow listeners none. The Warden's court marks nothing (its bytes are the gate's).
 - The Spire's lords and its legion (`Elite-Gates.md` section 15) strike through the dungeon context's door too, no struck
   tail - and the two hurt-listener saves the Spire holds to its next Redoubt answer them (AUDIT EG V: neither had ever
-  triggered there, where the Panoply drops): a body's blow is marked as a Spire foe's as it lands (`scenes/egFight.js`
+  triggered there, where the Panoply drops): a body's blow is marked as a Spire foe's as it lands (`scenes/eliteGates/egFight.js`
   landShare -> `setSpireStruck`; never a hazard's, a zone's or a drain's), taken by the damage door as it opens, and read
   by Shed Skin and the Reprieve alone. Spite, the Wrath, Riposte, Blood for Blood and the loot's blow listeners hear no foe
   in it - no foe of the door's stands behind it.
@@ -1034,15 +1034,15 @@ THE FOUR HOSTS. The cast is told by the one engine every host builds (`scenes/ho
 streaming page that keeps the party and the Spire, WIRED by EG-E's host wiring (`11-Multiplayer/Elite-Gates.md` section
 31): `setSetPowersAllies` (the party mates within 8 m, cast at through `castAtAllyDoor`) and `setSpireRecovery` (the
 breach the player stands in, `modes.egHallBreach()`), with `spireRedoubtTaken` called as the room says a Redoubt was taken
-(`scenes/egClient.js`). `scenes/exterior.js`, the offline town page, wires neither - the sets are online gear. Section
+(`scenes/eliteGates/egClient.js`). `scenes/exterior.js`, the offline town page, wires neither - the sets are online gear. Section
 15's Divine Grace and the Ghost-King's Vigil (`systems/loot/lootPowers.js`), the loot's saves, are held in the Spire too
 (EG-ZH: `lootSpireHeld`).
 
-Pinned: `test/eg15_panoply.test.js` (15); `tools/mutants/eg15.json` (91, all dead). The older pins it moved: SET1's,
+Pinned: `test/systems/eliteGates/eg15_panoply.test.js` (15); `tools/mutants/eg15.json` (91, all dead). The older pins it moved: SET1's,
 SD9d's and SERPENT-SET's set lists and records, SET3's states and voice, SERPENT-SET's heal imports, and the cast
 engine's release tail (FIX-F's, AUDIT 36's and QG1's: the tell sits after the raise, before the clear); their records
 re-aimed by content (SET1's order, SD9d's three, SERPENT-SET's four, SET3's three, AUDIT 625's Shed Skin guard, RENOWN1's
-save and AUDIT RENOWN1's magery), every one dead. The records' import of the pay law brings `net/egPay.js` into the
+save and AUDIT RENOWN1's magery), every one dead. The records' import of the pay law brings `net/eliteGates/egPay.js` into the
 account Worker's bundle, so the account deploy's path filter names it (ACC4). At the arc's merge of main #880 to #899
 (a43a033e63, 2026-10-14), main's SCHOOLS3 had moved the same gift into `systems/playerHeal.js` as `manaMine`. That is its
 one home now (ONE EXPORT): Discipline's return calls `manaMine`, `systems/loot/lootPowers.js` reads it as `gainMana`, and

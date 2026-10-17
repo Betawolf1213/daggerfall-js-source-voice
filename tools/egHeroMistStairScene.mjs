@@ -6,16 +6,16 @@
 // 11.6 and the EG-HERO (the Soul Cairn) record). Section 11.2's row is the brief: "stairs wound down a pit of mist", its
 // signature "mist surges: a rising band that hides the depth below a line for 3 s. It never hides footing: edge lines and
 // inner platforms draw over it, and it stops 0.3 m below any landing within one jump" - the band is the hall's own pass
-// (world/egLook.js egMistSheets, from this scene's `hazard.mist` line); this scene gives it a pit to rise in. Written as
+// (world/eliteGates/egLook.js egMistSheets, from this scene's `hazard.mist` line); this scene gives it a pit to rise in. Written as
 // the reference is (tools/egRefFragScene.mjs refFragMesh and writeRefFragFbx) with the hero kit's shapes
 // (tools/egHeroKit.mjs): no game data, no third-party art, no trigonometry. tools/bakeEgHeroMistStair.mjs bakes it.
 //
-// THE ENVELOPE (net/egFragLaw.js egFragShaft('mist') - where a hall lays the code-built shaft, it can lay this): a shaft
+// THE ENVELOPE (net/eliteGates/egFragLaw.js egFragShaft('mist') - where a hall lays the code-built shaft, it can lay this): a shaft
 // 33 m along Blender's +Y and 8 m across (x -4..4, the kit's halfW 400); its rim Y 0..3 at Z 0 (EG_SHAFT_RIM_CM) under
 // 6.5 m of vault (EG_SHAFT_HEIGHT_CM), the mouth (socket.in) 8 m by 6.5 m; four flights down (the kit's three or four, each
 // EG_SHAFT_FLIGHT_CM 0.9 m under the last - THE ENVELOPE's step down - 2.6 m apart, the kit's 2.4-2.8; ledges 2.4 m by
 // 2 m, EG_STEP.ledge's, swinging from side to side 1.5 m off the line), a Drop of 4 m (EG_SHAFT_DROP_CM's 3-4.5) onto its
-// 6 m walled landing (the Drop's own, scenes/egSpan.js), and the foot Y 30..33 (EG_SHAFT_FOOT_CM) at Z -7.6, the exit
+// 6 m walled landing (the Drop's own, scenes/eliteGates/egSpan.js), and the foot Y 30..33 (EG_SHAFT_FOOT_CM) at Z -7.6, the exit
 // (socket.out.main) 8 m by 4.6 m in its tunnel; the mist's line 3 m under the foot (the kit's yB - 300). Blows land on
 // none of it: its floors are traversal ground. Nothing stands behind the mouth or past the exit; the drawn rock pushes
 // outward from that envelope, never in, never on the floor.
@@ -27,7 +27,7 @@
 // of slate hung in the void, a bone portal at each end in its recessed face, its root hanging below.
 //
 // Every walkable rim wears THE EDGE LINE (section 25.3): the mouth's, the pit's lip, the foot's two (the flights and the
-// landing are the span's own pieces, edged by their own set, scenes/egSpan.js).
+// landing are the span's own pieces, edged by their own set, scenes/eliteGates/egSpan.js).
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { refFragMesh, writeRefFragFbx } from './egRefFragScene.mjs';
@@ -53,7 +53,7 @@ export const MIST_STAIR = Object.freeze({
 });
 const { W, WALL, RIM, HEIGHT, FOOT, LEN, MIST, POOL, TOP } = MIST_STAIR;
 const [DROP0, DROP1] = MIST_STAIR.DROP;
-/** The far end of the pit (behind the Drop's own far wall, scenes/egSpan.js DROP_WALL_T 0.3 thick at the landing's edge). */
+/** The far end of the pit (behind the Drop's own far wall, scenes/eliteGates/egSpan.js DROP_WALL_T 0.3 thick at the landing's edge). */
 const FAR = DROP1 + 0.32;
 /** The pit's floor of rock under its pool. */
 const BED = POOL - 0.4;
@@ -67,7 +67,7 @@ const RIM_ZC = RIM_SPRING - AR * R32[4][1], FOOT_ZC = FOOT_SPRING - AR * R32[4][
 /** The arch's corner k (0..8, west to east) of the vault centred at height zc, `out` beyond its radius. */
 const archAt = (k, zc, out = 0) => [(AR + out) * ARCH[k][0], zc + (AR + out) * ARCH[k][1]];
 
-// ── the dress records by name (world/egBandArt.js EG_DRESS)
+// ── the dress records by name (world/eliteGates/egBandArt.js EG_DRESS)
 const SLATE = ['root'], ASHLAR = ['pillar'], BONE = ['brass'], SOUL = ['molten'], GOLD = ['edge'];
 
 // ── the pit's plan, and noise always outward
@@ -187,7 +187,7 @@ export function mistStairScene() {
   add(refFragMesh('anchor.hazard.deep')).box(-0.15, 16.35, POOL, 0.15, 16.65, POOL + 0.3);
   // the mist surge: its line 3 m under the foot (section 11.2 - sight, never harm; it never hides footing)
   add(refFragMesh('hazard.mist.sea.ph6000')).level(-W, RIM, W, DROP1, MIST);
-  // the four flights and the Drop's landing (net/egSpanLaw.js `ledge` and `drop` - the span's own pieces)
+  // the four flights and the Drop's landing (net/eliteGates/egSpanLaw.js `ledge` and `drop` - the span's own pieces)
   MIST_STAIR.FLIGHTS.forEach(([x, y0, y1, top], q) => add(refFragMesh(`course.ledge.${'abcd'[q]}`)).box(x - MIST_STAIR.LEDGE_W / 2, y0, top - 0.6, x + MIST_STAIR.LEDGE_W / 2, y1, top));
   add(refFragMesh('course.drop.landing')).box(-3, DROP0, FOOT - 0.6, 3, DROP1, FOOT);
   // the alcove: a sealed niche in the rim's east wall (lumen behind a false wall)

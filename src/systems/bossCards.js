@@ -12,8 +12,8 @@ import { mintIliacCard } from './iliac/iliacItems.js';
 /** Each boss's own card: the Gate's Warden, the Sea Serpent, the Abyss Dungeon's Brass Remnant (net/iliac/iliacCards.js). */
 export const BOSS_CARDS = Object.freeze({
   gate: 'valkynaz-ruhn', serpent: 'sethrakul', abyss: 'brass-remnant',
-  // EG-E (Elite-Gates.md section 19): each Battlespire lord its own, by its key (net/egLaw.js EG_LORDS) - the Redoubt's
-  // spoils draw `bossCardRoll(lord, rolls)` (systems/egSpoils.js)
+  // EG-E (Elite-Gates.md section 19): each Battlespire lord its own, by its key (net/eliteGates/egLaw.js EG_LORDS) - the Redoubt's
+  // spoils draw `bossCardRoll(lord, rolls)` (systems/eliteGates/egSpoils.js)
   hound: 'eg-grath', spellmaster: 'eg-spellmaster', armsmaster: 'eg-armsmaster', ilthys: 'eg-ilthys',
   cairnkeeper: 'eg-cairnkeeper', twins: 'eg-twins', morvayn: 'eg-morvayn',
   dusk: 'eg-dusk', stalker: 'eg-stalker', seyth: 'eg-seyth',

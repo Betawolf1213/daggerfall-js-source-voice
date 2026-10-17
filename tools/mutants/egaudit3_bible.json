@@ -5,7 +5,7 @@
     "old": "export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home', 'seal']);",
     "new": "export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home']);",
     "tests": [
-      "test/egaudit3_bible.test.js"
+      "test/net/eliteGates/egaudit3_bible.test.js"
     ]
   }
 ]

@@ -307,41 +307,41 @@ import { orreryOf, orreryJudge, orreryLit, orreryFresh, orreryRightsFresh, orrer
 import { applyEchoHit, applyHeartHit, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS } from '../../src/net/superDungeon/sdRemnant.js';   // SD8b: the Brass Remnant's law - the realm runs its fight by it
 import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/superDungeon/sdReceipt.js';   // SD9a: the Hour's receipt - minted at the Remnant's fall, kept by the hub
 // EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): THE BREACH JOINS THE
-// BUNDLE - net/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/egBrain.js (the director)
-// and net/egReceipt.js (the `e1` receipt). The hub opens a breach on the service's signed order; its room runs the halls.
-// EG-FULL (2026-10-11, Mac: "I said I want everything"): the director's own pieces in place of the gate's - net/egShape.js
-// (the FULL shape stamps and their floors), net/egBodies.js (the fight's bodies and blows), net/egLegion.js (the legion's
-// sixteen kinds), net/egLords.js (the thirteen lords and the champions), net/egVestige.js and net/egRun.js (the run: the
+// BUNDLE - net/eliteGates/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/eliteGates/egBrain.js (the director)
+// and net/eliteGates/egReceipt.js (the `e1` receipt). The hub opens a breach on the service's signed order; its room runs the halls.
+// EG-FULL (2026-10-11, Mac: "I said I want everything"): the director's own pieces in place of the gate's - net/eliteGates/egShape.js
+// (the FULL shape stamps and their floors), net/eliteGates/egBodies.js (the fight's bodies and blows), net/eliteGates/egLegion.js (the legion's
+// sixteen kinds), net/eliteGates/egLords.js (the thirteen lords and the champions), net/eliteGates/egVestige.js and net/eliteGates/egRun.js (the run: the
 // Vestiges, the company's word, the decrees, the caches, the Sutler).
-import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
-import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
-// EG-H2 (2026-10-12, Elite-Gates.md section 22): DURABILITY - net/egDurable.js (time across a restart, THE HOLD, the law
+import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/eliteGates/egLaw.js';
+import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/eliteGates/egBrain.js';
+// EG-H2 (2026-10-12, Elite-Gates.md section 22): DURABILITY - net/eliteGates/egDurable.js (time across a restart, THE HOLD, the law
 // pin, the secret receipt seeds, the live list and its cap); the breach's end and its ground, a hall's spec for `spec`
-import { egResume, egHoldDone, egRelease, egBeatGap, egReceiptSeed, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, EG_INTERNAL_LIVE, EG_INTERNAL_STAGE, EG_LIVE_SAID_MS } from '../../src/net/egDurable.js';   // AUDIT EG III: and how long the live door's answer is kept
-import { egEnd, egGeo } from '../../src/net/egBrain.js';
-import { egHallOf, egCircleOfHall, EG_LAST_WORD_MS, EG_ABSENT_TRIAL_MS } from '../../src/net/egLaw.js';   // AUDIT EG III: and a closed socket's body held for the absence's window
-import { mintEgReceipt } from '../../src/net/egReceipt.js';
+import { egResume, egHoldDone, egRelease, egBeatGap, egReceiptSeed, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, EG_INTERNAL_LIVE, EG_INTERNAL_STAGE, EG_LIVE_SAID_MS } from '../../src/net/eliteGates/egDurable.js';   // AUDIT EG III: and how long the live door's answer is kept
+import { egEnd, egGeo } from '../../src/net/eliteGates/egBrain.js';
+import { egHallOf, egCircleOfHall, EG_LAST_WORD_MS, EG_ABSENT_TRIAL_MS } from '../../src/net/eliteGates/egLaw.js';   // AUDIT EG III: and a closed socket's body held for the absence's window
+import { mintEgReceipt } from '../../src/net/eliteGates/egReceipt.js';
 // EG-ZA (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 22 and 23): A KEY IS NEVER LOST - the hub's
 // open retried and its call told the room, an open the room never took voided by the room (its tombstone first), a client's
 // void of a stake no call answered, every receipt held at the hub (`egrc:<sub>`) until its account says it is counted, a
-// `force` deploy's void; and THE TICK (net/egDurable.js egTickAt)
-import { EG_VOID_MAX_S, EG_DONE_KEY, EG_OPEN_HUB_TRIES, EG_INTERNAL_VOID, EG_INTERNAL_CALLED, EG_INTERNAL_RCPT, EG_RC_PREFIX, EG_RC_TELL_MS, EG_RC_OWED_MAX, egRcKey, egRcId, egRcFold, egRcSpent, egRcLive, egDoneWith, egDoneOf, egVoidable, egTickAt } from '../../src/net/egDurable.js';
-import { readEgReceipt, EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';
+// `force` deploy's void; and THE TICK (net/eliteGates/egDurable.js egTickAt)
+import { EG_VOID_MAX_S, EG_DONE_KEY, EG_OPEN_HUB_TRIES, EG_INTERNAL_VOID, EG_INTERNAL_CALLED, EG_INTERNAL_RCPT, EG_RC_PREFIX, EG_RC_TELL_MS, EG_RC_OWED_MAX, egRcKey, egRcId, egRcFold, egRcSpent, egRcLive, egDoneWith, egDoneOf, egVoidable, egTickAt } from '../../src/net/eliteGates/egDurable.js';
+import { readEgReceipt, EG_RECEIPT_TTL_S } from '../../src/net/eliteGates/egReceipt.js';
 import { verifyEgOpenAnyAge } from '../../src/net/identityToken.js';
-// EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 20): net/egHerald.js
+// EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 20): net/eliteGates/egHerald.js
 // JOINS THE BUNDLE - the Spire's herald (its posts, the hub's reckoning of the Descent's tops, First of the Spire and the
 // seals said; pure - it imports gateHerald.js, egLaw.js and arenaLaw.js, all here). A breach's room tells the hub its news
 // (EG_INTERNAL_HERALD), and the hub posts off its alarm beside the other heralds.
-import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS, validEgHeraldTell, readEgHeraldState, egHeraldFold, egHeraldNext, egHeraldPost } from '../../src/net/egHerald.js';
+import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS, validEgHeraldTell, readEgHeraldState, egHeraldFold, egHeraldNext, egHeraldPost } from '../../src/net/eliteGates/egHerald.js';
 // EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 21): WHAT THE RELAY JUDGES - each member's pose at its
-// SHARED time (net/egFair.js's time law) onto its socket's trail and THE FAIR TRAIL, the Spire's blows and hazards judged on
-// those trails and the body counted, ENFORCED in the Spire (net/egBrain.js egCount - the member's one life), the room's
+// SHARED time (net/eliteGates/egFair.js's time law) onto its socket's trail and THE FAIR TRAIL, the Spire's blows and hazards judged on
+// those trails and the body counted, ENFORCED in the Spire (net/eliteGates/egBrain.js egCount - the member's one life), the room's
 // heals restored to it, the member's own word of its body (`vt`), the shared clock's ping answered (`clk`)
-import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/egBrain.js';
-import { egHeal } from '../../src/net/egBrain.js';   // EG-ZF (Elite-Gates.md section 27.6): what a companion's spell healed in a member - the recap's healing
-import { EG_HEAL_CAST_MS } from '../../src/net/egBrain.js';   // AUDIT EG IV (lane3 #3): how far back a relayed cast corroborates a heal word's healer
-import { egPoseClock, egPoseShared, egTrailPush, EG_TRAIL_MS, EG_TS_LAG_MAX_MS } from '../../src/net/egFair.js';   // AUDIT EG V (L4-1): the edge no pose can still land before
-import { signEgCall } from '../../src/net/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
+import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/eliteGates/egBrain.js';
+import { egHeal } from '../../src/net/eliteGates/egBrain.js';   // EG-ZF (Elite-Gates.md section 27.6): what a companion's spell healed in a member - the recap's healing
+import { EG_HEAL_CAST_MS } from '../../src/net/eliteGates/egBrain.js';   // AUDIT EG IV (lane3 #3): how far back a relayed cast corroborates a heal word's healer
+import { egPoseClock, egPoseShared, egTrailPush, EG_TRAIL_MS, EG_TS_LAG_MAX_MS } from '../../src/net/eliteGates/egFair.js';   // AUDIT EG V (L4-1): the edge no pose can still land before
+import { signEgCall } from '../../src/net/eliteGates/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 import { egHubGate, EG_HUB_KINDS } from './relay.js';   // AUDIT EG IV (lane3 #5): the hub's own breach words on a bucket of their own
 
@@ -514,7 +514,7 @@ export default {
     if (isArenaExhibitionRoom(key) && !exhibitionAdmits(arenaExhibitionHourOf(key), sharedClassicMinutes(Date.now()))) return json({ error: 'no such bout' }, 404);
     // SD3: a Super dungeon's realm is `sd:<slot>` and nothing else (the keys the hub mints - net/superDungeon/sdLaw.js sdRoomKey)
     if (key.startsWith('sd:') && !isSdRoom(key)) return json({ error: 'no such room' }, 404);
-    // EG-PLAY: an Elite Breach's room is `eg:<16hex>` and nothing else (net/egLaw.js isEgRoom) - and it admits nobody until
+    // EG-PLAY: an Elite Breach's room is `eg:<16hex>` and nothing else (net/eliteGates/egLaw.js isEgRoom) - and it admits nobody until
     // the hub has opened it (the room's own record, below)
     if (key.startsWith('eg:') && !isEgRoom(key)) return json({ error: 'no such room' }, 404);
     if (String(request.headers.get('Upgrade') ?? '').toLowerCase() !== 'websocket') return json({ error: 'websocket only' }, 426);
@@ -7347,7 +7347,7 @@ export class Room {
   }
 
   // ───────────────────────────── EG-E3: THE SPIRE'S HERALD ─────────────────────────────
-  // net/egHerald.js. The gate's channel and door (_heraldOf, _heraldSend); its own record (EG_HERALD_KEY: the posts owed,
+  // net/eliteGates/egHerald.js. The gate's channel and door (_heraldOf, _heraldSend); its own record (EG_HERALD_KEY: the posts owed,
   // First of the Spire's flag, the bands said, the season's Descent tops, the news folded), the news a breach's room tells
   // (EG_INTERNAL_HERALD) folded into it by the herald's law, and the posts it owes posted off the hub's alarm.
   /** THE HUB'S HALF: a breach's news, folded once into the herald's record - the reckoning kept with no herald too (the
@@ -7713,9 +7713,9 @@ export class Room {
   // bible/11-Multiplayer/Elite-Gates.md sections 6, 7 and 23. The HUB opens a breach on the account service's signed order
   // (`egopen`): it freezes the company from the opener's party, draws the breach's seed, opens the breach's room
   // (EG_INTERNAL_OPEN) and says the call to every member. The ROOM (`eg:<16hex>`) admits its company alone, each member
-  // with its own signed admission (`egadmit`, spent once), and runs the halls by the director's law (net/egBrain.js) on its
+  // with its own signed admission (`egadmit`, spent once), and runs the halls by the director's law (net/eliteGates/egBrain.js) on its
   // alarm: the stages, the count, the legion, the champion and the lord, the falls, the Redoubts, the end - and mints
-  // each receipt the breach owes (`e1`, net/egReceipt.js).
+  // each receipt the breach owes (`e1`, net/eliteGates/egReceipt.js).
   /** The breach this room holds - the instance's, else storage's; null for a room the hub never opened. */
   async _egOf() {
     if (this._eg === undefined) {
@@ -7734,14 +7734,14 @@ export class Room {
    * EG-H2 (Elite-Gates.md section 22): A BREACH'S ROOM WOKE (its record read from storage - a deploy's restart, an eviction):
    * a law this relay does not draw ends the breach as a void (the stake returned, the Redoubts taken kept - the opener
    * who never entered is handed the void itself); between trials it holds until its company is back (the beat releases
-   * it); mid-trial the gap since its last beat is given back (net/egDurable.js egResume). Every member here is told the
+   * it); mid-trial the gap since its last beat is given back (net/eliteGates/egDurable.js egResume). Every member here is told the
    * breach and its fight again, its clocks moved.
    */
   async _egResume(B, now) {
     const how = egResume(B, now, this._egVoidBefore());   // EG-ZA: and THE FORCE VOID - a breach live when a `force` deploy stamped the Worker
     if (how === 'void') {
       const out = [];
-      egEnd(B, 'void', now, out);   // EG-ZA: the opener who never entered is owed the void by the end itself (net/egBrain.js egEnd)
+      egEnd(B, 'void', now, out);   // EG-ZA: the opener who never entered is owed the void by the end itself (net/eliteGates/egBrain.js egEnd)
       this._egFan(out);
       await this._egMint(B, now);
       await this._egSave(B, now, true);
@@ -7766,7 +7766,7 @@ export class Room {
   /** EG-ZA: THE FORCE VOID's stamp - the ms a `force` relay deploy set (`EG_VOID_BEFORE`, .github/workflows/relay-deploy.yml),
    *  0 for none. */
   _egVoidBefore() { const v = Number(this.env?.EG_VOID_BEFORE); return Number.isSafeInteger(v) && v > 0 ? v : 0; }
-  /** EG-ZA: the room's tombstone (`egdone` - net/egDurable.js egDoneWith), the instance's, else storage's; null for none. */
+  /** EG-ZA: the room's tombstone (`egdone` - net/eliteGates/egDurable.js egDoneWith), the instance's, else storage's; null for none. */
   async _egDoneOf() {
     if (this._egDone === undefined) await this._egOf();
     if (this._egDone === undefined) { const d = await this.state.storage.get(EG_DONE_KEY); if (this._egDone === undefined) this._egDone = d && typeof d === 'object' && Number.isSafeInteger(d.until) ? d : null; }
@@ -7813,14 +7813,14 @@ export class Room {
     }
     return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, y: p.y, z: p.z, dead: !!b.pose.dd, at: b.eAt ?? now }; });
   }
-  // ── EG-H1 (EG8d): WHAT THE RELAY JUDGES (net/egFair.js, net/egBrain.js; Elite-Gates.md section 21) ──
+  // ── EG-H1 (EG8d): WHAT THE RELAY JUDGES (net/eliteGates/egFair.js, net/eliteGates/egBrain.js; Elite-Gates.md section 21) ──
   /** The line the Spire's count runs by: the hub's BOSS_BODY body line (its depth, its pace) - its enforcement the Spire's
    *  own (EG_BODY_ENFORCE), whatever the gate's says. */
   _egLine() { return this._bodyLine().body; }
   /**
-   * A MEMBER'S POSE at its SHARED time (net/egFair.js egPoseShared - its own `ts` plus its socket's offset, the least
+   * A MEMBER'S POSE at its SHARED time (net/eliteGates/egFair.js egPoseShared - its own `ts` plus its socket's offset, the least
    * `arrival - ts` over its last poses): onto its SOCKET's trail in the hall's own frame (a ridden pose at its piece's clock
-   * position - net/egBrain.js egPoseIn, which feeds THE FAIR TRAIL). In memory alone, as INT11's trails are: a woken
+   * position - net/eliteGates/egBrain.js egPoseIn, which feeds THE FAIR TRAIL). In memory alone, as INT11's trails are: a woken
    * instance knows no trail, and judges no body it does not know.
    */
   _egPoseIn(ws, a, p, now) {
@@ -7858,7 +7858,7 @@ export class Room {
    * HEARTBEAT_MS standing still - net/online.js sendPose), so a member standing still, a backgrounded tab or a client holding
    * its poses back through a wind-up had no pose within EG_POSE_NEAR_MS of any landing and took nothing. Every living
    * member's trail is held at its newest pose: a closed socket's to now, an open one's to now less EG_TS_LAG_MAX_MS - a pose
-   * is placed at most that before it arrives (net/egFair.js egPoseShared), so its trail up to there is whole, the stand-ins
+   * is placed at most that before it arrives (net/eliteGates/egFair.js egPoseShared), so its trail up to there is whole, the stand-ins
    * never stand over a pose still on its way, and the judge still waits for the pose sent after a landing (a dodge in its
    * last round trip is no hit). AUDIT EG V (lane4 L4-10; section 22): a room woken mid-trial holds each body at the pose its
    * record kept (`m.lp`, _egSave), until the member says another.
@@ -7901,7 +7901,7 @@ export class Room {
     for (const o of owed) {
       try {
         // EG-H2 (section 22): A SECRET, DETERMINISTIC SEED - HMAC(rs, sub|R|kind), the room's secret drawn at the open and
-        // never sent (net/egDurable.js egReceiptSeed): a room woken before its save mints the same roll again, never a
+        // never sent (net/eliteGates/egDurable.js egReceiptSeed): a room woken before its save mints the same roll again, never a
         // second. A void carries none; a breach opened before the secret (none kept) draws its seed as it did.
         const seed = o.claims.q === 'v' ? {} : { c: B.rs ? await egReceiptSeed(B.rs, o.sub, o.claims.q === 'w' ? o.claims.w : 0, o.claims.q, crypto.subtle) : rand32() };
         const r = await mintEgReceipt({ ...o.claims, ...seed }, key, { subtle: crypto.subtle, nowS });
@@ -8020,7 +8020,7 @@ export class Room {
     return t != null && now - t <= EG_HEAL_CAST_MS;
   }
   /** A breach room's own word on a hello: the company's alone (a registered member), by the director's law
-   *  (net/egBrain.js egAdmitWord) - or the refusal's words. */
+   *  (net/eliteGates/egBrain.js egAdmitWord) - or the refusal's words. */
   async _egAdmit(key, who, now) {
     const B = await this._egOf();
     if (!B || B.b !== egBreachOfRoom(key)) return 'the breach is closed';
@@ -8076,12 +8076,12 @@ export class Room {
       await this._egArm(now + BRAIN_TICK_MS);
       return;
     }
-    if (m.k === 'clk') { this._send(ws, JSON.stringify({ t: 'eg', k: 'clk', c: m.c, now: Date.now() })); if (Number.isInteger(m.h)) { const all = (this._egClocks ??= new Map()); let c = all.get(ws); if (!c) all.set(ws, c = egPoseClock()); c.h = m.h; } return; }   // EG-H1: the shared clock's ping, answered at once (section 10.8); the delay its corrected clock measured places its poses (net/egFair.js egPoseShared)
+    if (m.k === 'clk') { this._send(ws, JSON.stringify({ t: 'eg', k: 'clk', c: m.c, now: Date.now() })); if (Number.isInteger(m.h)) { const all = (this._egClocks ??= new Map()); let c = all.get(ws); if (!c) all.set(ws, c = egPoseClock()); c.h = m.h; } return; }   // EG-H1: the shared clock's ping, answered at once (section 10.8); the delay its corrected clock measured places its poses (net/eliteGates/egFair.js egPoseShared)
     if (m.k === 'vt') { egBodyWord(B, a.sub, m.v, now, this._egLine(), EG_BODY_ENFORCE); return; }   // EG-H1: its body, in its own word
     if (m.k === 'down') { if (egDown(B, a.sub, m.h, pose, now)) await this._egArm(now + BRAIN_TICK_MS); return; }
     if (m.k === 'spec') {
       // EG-H2 (section 22, THE LAW PIN): a hall of this circle (or the next) in the breach's own law's bytes, to the socket
-      // that asked - a client whose law is not the breach's builds from them (net/egLaw.js egSpecGive)
+      // that asked - a client whose law is not the breach's builds from them (net/eliteGates/egLaw.js egSpecGive)
       const c = B.h > 0 ? egCircleOfHall(B.h) : 1, hc = egCircleOfHall(m.h);
       if (B.end || (hc !== c && hc !== c + 1)) return;
       this._send(ws, JSON.stringify({ t: 'eg', k: 'spec', egv: B.egv, h: m.h, sp: egHallOf(B.seed, m.h, egGeo(B), B.egv) }));   // EG-ZC: drawn in that law (the law before kept)
@@ -8093,15 +8093,15 @@ export class Room {
       return;
     }
     // EG-ZF (section 27.6): WHAT COMPANIONS' SPELLS HEALED IN THIS MEMBER, and whose - each healer the socket in this room its
-    // peer id names (a member of the breach, else nobody: net/egTally.js credits only the company); believed within the
-    // member's heal bucket - the recap's healing, a Court's chart, and the count's mend (net/egBrain.js egHeal, the gate's
+    // peer id names (a member of the breach, else nobody: net/eliteGates/egTally.js credits only the company); believed within the
+    // member's heal bucket - the recap's healing, a Court's chart, and the count's mend (net/eliteGates/egBrain.js egHeal, the gate's
     // GATE-HEAL and AUDIT INT11 law). A figure for the round-up: it keeps no beat and wakes nothing.
     // AUDIT EG IV (lane3 #3; section 16.1): a healer's part in the hall only where this room relayed its cast to the member
     if (m.k === 'heal') { egHeal(B, a.sub, m.h.map(([id, n]) => [this._idFirst(id)?.[1]?.sub ?? '', n]), now, this._egLine(), EG_BODY_ENFORCE, (by) => this._egCastSaw(by, a.sub, now)); return; }
     if (m.k === 'hit') this._egFan(egBlow(B, a.sub, m, pose, now));
     else {
       // EG-FULL: a member's other words - a Vestige picked, the company's word, a Cantrip, a purchase, a ping, a bequest,
-      // forsaking, an Athenaeum's turn (net/egBrain.js egWord)
+      // forsaking, an Athenaeum's turn (net/eliteGates/egBrain.js egWord)
       const out = egWord(B, a.sub, m, pose, now, rand01);
       this._egFan(out);
       if (m.k === 'forsake' || m.k === 'pick' || m.k === 'fell') { await this._egMint(B, now); await this._egSave(B, now, true); }
@@ -8109,7 +8109,7 @@ export class Room {
     if (!(this._egBeatArmedTo > now)) { this._egBeatArmedTo = now + BRAIN_TICK_MS; await this._egArm(now + BRAIN_TICK_MS); }
   }
   /** ONE BEAT of a breach's alarm while it lives: the director stepped over the members' bodies, its frames fanned, its
-   *  receipts minted, the breach checkpointed - the next beat armed (EG-ZA: net/egDurable.js egTickAt - BRAIN_TICK_MS while
+   *  receipts minted, the breach checkpointed - the next beat armed (EG-ZA: net/eliteGates/egDurable.js egTickAt - BRAIN_TICK_MS while
    *  a trial runs with anyone here, a second otherwise: the count, the open window and an absent member's fall run on; none
    *  while the arch rises). False when the room holds no live breach nor tombstone - the alarm is the room's other duties'
    *  then. */
@@ -8141,7 +8141,7 @@ export class Room {
       return true;
     }
     // EG-ZA (section 22, THE COST): THE TICK - a trial's beat only while a trial runs with its company here, a second
-    // otherwise (never past the stage's end), none while the arch rises (net/egDurable.js egTickAt)
+    // otherwise (never past the stage's end), none while the arch rises (net/eliteGates/egDurable.js egTickAt)
     const here = [...this._all()].some(([, b]) => b.id);
     await this.state.storage.setAlarm(egTickAt(B, now, here));
     return true;
@@ -8228,7 +8228,7 @@ export class Room {
     const kept = validEgOpenTell({ ...tell, co: res.co, site: res.site });
     const company = kept ? kept.co : co, called = company.map((t) => t[0]);
     const call = { k: 'call', b: c.eb, o: tell.o, os: c.s, seed: res.seed ?? tell.seed, op: res.op ?? tell.op, rh: tell.rh, co: company, site: kept ? kept.site : m.site, ew: tell.ew, wg: tell.wg ?? [] };
-    // EG-F (section 6.3): THE HUB SIGNS THE ARCH'S FIELDS (net/egCallSig.js) with the receipts' key - the opener's client
+    // EG-F (section 6.3): THE HUB SIGNS THE ARCH'S FIELDS (net/eliteGates/egCallSig.js) with the receipts' key - the opener's client
     // carries them on its world cell, and a stranger stands the arch only when this verifies
     call.sg = await signEgCall(call, await this._receiptKeyOf(), { subtle: crypto.subtle });
     await this._egLiveAdd(c.eb, { egv: Number.isSafeInteger(res.egv) ? res.egv : 0, until: call.op + EG_LAST_WORD_MS }, now);   // EG-H2: on the hub's live list until its last word
@@ -8277,7 +8277,7 @@ export class Room {
     else if (said?.no === 'old') no('the void is too old');
   }
   /** EG-ZA (section 23): THE HUB HOLDS A BREACH'S RECEIPTS - `by` account to `[{ id, r, e }]` folded into each one's
-   *  `egrc:<sub>` (net/egDurable.js egRcFold), 128 a batch. Answers what each holds now. */
+   *  `egrc:<sub>` (net/eliteGates/egDurable.js egRcFold), 128 a batch. Answers what each holds now. */
   async _egRcKeep(by, nowS) {
     const out = new Map();
     if (!by.size) return out;

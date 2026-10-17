@@ -6,7 +6,7 @@
 // 11.6). Written from numbers alone (no game data, no third-party art, no trigonometry - tools/egHeroKit.mjs's tables, and
 // circles finer than them by halving: a chord's middle pushed out to the circle with Math.sqrt), through the reference's
 // writer (tools/egRefFragScene.mjs writeRefFragFbx), and baked by tools/bakeEgHeroStacks.mjs through tools/fragBake.mjs.
-// test/eghero_galleries.test.js writes it again and holds it to the committed bytes.
+// test/tooling/eghero_galleries.test.js writes it again and holds it to the committed bytes.
 //
 // THE PLACE (section 11.2's row: "an Athenaeum wing fallen on its side ... a broken dome becomes a chamber with two
 // balconies"): the Athenaeum's rotunda torn loose into the void - its marble drum lined with gilded stacks, its gilded dome
@@ -14,15 +14,15 @@
 // Battlemage-blue inlay) standing alone in the drum over the void, the drum's lower courses torn off below. Two galleries
 // survive as BALCONIES east and west (play `balcony`), 3.5 m up against the shelves, each reached by a marble stair that
 // fans up from a slot in the floor across the gap; their fronts are parapets (walls - section 25.3: they carry no edge line).
-// THE CASCADE is the Stacks' signature: four lanes 4 m deep across the floor, toppling one after another (net/egFragLaw.js
+// THE CASCADE is the Stacks' signature: four lanes 4 m deep across the floor, toppling one after another (net/eliteGates/egFragLaw.js
 // EG_HAZARDS.cascade - told 1.2 s, 1.5 s apart). The company comes in through the rotunda's portal and crosses the gap on
 // two bookcases that fell across it (the kit's ledges - "bookcases become platforms"), and leaves over a bridge to the
-// far portal. THE SHELF (net/egFragLaw.js EG_ENGINES.shelf, play `engine`) stands on its plinth at the floor's south-west
+// far portal. THE SHELF (net/eliteGates/egFragLaw.js EG_ENGINES.shelf, play `engine`) stands on its plinth at the floor's south-west
 // rim; a seam alcove in the east gallery's back wall holds a Vestige shard; the floor of the fallen wing stands on its edge
 // beside the portal ("floors become walls").
 //
-// THE ENVELOPE - the code-built Stacks chamber's (net/egFragLaw.js egFragChamber 'stacks', R the proving court's 14 m - the
-// page's own: "one proving court in three is a chamber (the Fallen Stacks' broken dome)", net/egLaw.js `R = 1400`):
+// THE ENVELOPE - the code-built Stacks chamber's (net/eliteGates/egFragLaw.js egFragChamber 'stacks', R the proving court's 14 m - the
+// page's own: "one proving court in three is a chamber (the Fallen Stacks' broken dome)", net/eliteGates/egLaw.js `R = 1400`):
 //   a fight floor of radius R (14 m) about its middle C = (0, 23.5), the floor at Z 0;
 //   its ring wall at R + 9 m (the drum's inner face 22.5 m, its outer 23.5 m); the mouth (6 m by 8 m) on the drum's outer
 //   face at Y 0, the exit (6 m by 8 m, its floor at Z 0) on its far face at Y 47;
@@ -154,7 +154,7 @@ function frameBox(m, E, u0, v0, z0, u1, v1, z1, mat) {
 
 /** THE COURSE: the two bookcases fallen across the gap - `[label, x, y0, y1, top]` (m), 2.6 m wide; the threshold's lip at
  *  Y 1.24 (the drum's inner face at the doorway's jambs), the gaps 1.6, 1.6 and 1.26 m to the floor's front (each inside THE
- *  SPAN BUILD's reach: the first 0.3 m up, the second 0.5 m down, the floor 0.2 m up - net/egSpanLaw.js egJumpReach). */
+ *  SPAN BUILD's reach: the first 0.3 m up, the second 0.5 m down, the floor 0.2 m up - net/eliteGates/egSpanLaw.js egJumpReach). */
 const SHELVES = Object.freeze([['a', 0.3, 2.84, 4.64, 0.3], ['b', -0.3, 6.24, 8.24, -0.2]]);
 const SHELF_W = 2.6, THRESH = 1.24;
 /** The cascade's four lanes across the floor: their middles along Y (each 4 m deep, 1.5 m apart). */

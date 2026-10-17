@@ -6,10 +6,10 @@
 // the EG-HERO (the Soul Cairn) record). The scene is the port's own, written from numbers by tools/egHeroMistStairScene.mjs;
 // the bake is tools/fragBake.mjs's, the one every authored fragment goes through. Its SPEC says what the scene cannot:
 // which fragment it is (`id`), its library kit (the Mist Stair - the Soul Cairn's: its band, its reverb Cave and its want
-// of an engine follow, net/egFragLaw.js EG_FRAGS), its class (a shaft, laid where a Deepway or a Low Road goes down),
-// which hero of the kit it is (`variant` 'mist-stair' - a hall may lay it, net/egHeroFrags.js egHeroFragLaws), and a
-// chamber's play (a shaft names none). The halves land beside the source: `LAW` (registered in net/egHeroFrags.js) and
-// `MESH` (registered in world/egHeroFragModel.js), each held to its bytes by test/eghero_cairn.test.js.
+// of an engine follow, net/eliteGates/egFragLaw.js EG_FRAGS), its class (a shaft, laid where a Deepway or a Low Road goes down),
+// which hero of the kit it is (`variant` 'mist-stair' - a hall may lay it, net/eliteGates/egHeroFrags.js egHeroFragLaws), and a
+// chamber's play (a shaft names none). The halves land beside the source: `LAW` (registered in net/eliteGates/egHeroFrags.js) and
+// `MESH` (registered in world/eliteGates/egHeroFragModel.js), each held to its bytes by test/tooling/eghero_cairn.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

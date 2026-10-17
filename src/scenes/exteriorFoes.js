@@ -334,7 +334,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   let _onDuel = null;           // DUEL1: (from, record | null, nowMs) - the duel ring a peer stands in, off their foes frame (null: theirs is down)
   let _onDuelClear = null;      // DUEL1: called wherever clearPuppets runs - the peers' rings go with the puppets
   let _onPortals = null;        // PORTAL1: (from, record) - the portal a peer opened, off their foes frame (systems/portalStone.js validPortalRecord)
-  let _onEgArch = null;         // EG-F: (from, record) - an Elite Breach's arch a peer opened, off their foes frame (scenes/egArch.js validEgArchWord)
+  let _onEgArch = null;         // EG-F: (from, record) - an Elite Breach's arch a peer opened, off their foes frame (scenes/eliteGates/egArch.js validEgArchWord)
   let _foesSeq = 0;             // my frames out, numbered
   // AUDIT WORLD6b B4/C3: an OWNER's record - the last frame number applied (a stale frame is not the world), when it
   // arrived (an owner whose stream has died is swept after staleMs), and the build generation (a build the clear or

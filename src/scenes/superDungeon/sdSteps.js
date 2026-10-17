@@ -99,7 +99,7 @@ const BEAT_FRAMES = Object.freeze(SD_STEPS_RECORD.beat.map((rec, k) => (k === 0 
 const BEAT_FALTER = new Map([[key(SD_STEPS_RECORD.beat[0]), key(SD_STEPS_RECORD.falter)]]);
 const CRUMBLE_STAGES = Object.freeze(SD_STEPS_RECORD.crumble.map((rec, k) => (k === 0 ? null : new Map([[key(SD_STEPS_RECORD.crumble[0]), key(rec)]]))));
 const WAYSTONE_DARK = new Map([[key(SD_STEPS_RECORD.parts), key(SD_STEPS_RECORD.partsDark)]]);
-/** EG-ZL (Elite-Gates.md section 10.3): the same maps for the Spire's Steps (scenes/egSpan.js) - one set of pictures. */
+/** EG-ZL (Elite-Gates.md section 10.3): the same maps for the Spire's Steps (scenes/eliteGates/egSpan.js) - one set of pictures. */
 export { BEAT_FRAMES as SD_BEAT_FRAMES, CRUMBLE_STAGES as SD_CRUMBLE_STAGES, WAYSTONE_DARK as SD_WAYSTONE_DARK };
 /** SD-LOOK S9 - THE CHUNKS' WAYS (EG-ZL: exported, the Spire's Crumbles fall by them too): each chunk tumbling outward
  *  about its own horizontal axis (kx, 0, kz), its drift outward (ox, oz), its own spin and its own share of the fall. */
@@ -156,7 +156,7 @@ const hide = (d) => { if (d && !d.hidden) { d.object.matrix.fill(0); d.hidden = 
  * @param {{ renderer?: any, audio?: any, ending?: string | null, lite?: boolean, course?: any }} deps - SD-LOOK S9: `ending` the Hollow's Ending
  *   (net/superDungeon/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touch/touchDevice.js isTouchDevice -
  *   its own by default): two chunks a Crumble step, not four, and the pendulums' gears without teeth; EG-H3 (EG4):
- *   `course` the course it rides (net/egSpanLaw.js courseOf's record - the Hour's by default), its ghosts at most
+ *   `course` the course it rides (net/eliteGates/egSpanLaw.js courseOf's record - the Hour's by default), its ghosts at most
  *   SD_GHOSTS_MAX
  */
 export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice(), course = SD_COURSE } = {}) {

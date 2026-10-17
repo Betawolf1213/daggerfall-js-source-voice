@@ -22,10 +22,10 @@
 // 6.3): THE ELITE BREACH'S ARCH IS THE GATE'S MODEL AT 0.62, and this pass draws its fire and beacon too. What was compiled
 // in - the membrane's colour and size, the beacon's height, its foot under the ground, where its light starts and its
 // colour - is a PER-DRAW value now, set inside the loop (`gatePassValues`): an arch's membrane tinted toward gold and
-// scaled with its stone, its beacon gold, standing EG_ARCH_BEACON_UP_M over its foot (scenes/egArch.js), its light from
+// scaled with its stone, its beacon gold, standing EG_ARCH_BEACON_UP_M over its foot (scenes/eliteGates/egArch.js), its light from
 // its own lintel. THE GATE'S OWN DRAW IS WHAT IT WAS: a record that names none of them takes the gate's - scale exactly 1,
 // tint exactly white, the beacon's 400 under, 1200 tall, its light at the same fraction, BEACON_COLOR - and every one of
-// those multiplies or stands in exactly where its literal stood (test/egarch_law.test.js pins the values and the calls).
+// those multiplies or stands in exactly where its literal stood (test/net/eliteGates/egarch_law.test.js pins the values and the calls).
 // GATE_PASS_MAX rises to 4: the day's gate and several arches can stand in one view.
 //
 // Not a DFU member. Ledger A (WB).
@@ -67,7 +67,7 @@ export const BEACON_WIDEN = 0.006;
  *  the twelve metres above (BEACON_FS) and is under a thirtieth of itself at the crown. */
 export const BEACON_START_M = 15;
 /** The most gates a frame draws (one a day stands; a collapsing yesterday's beside it) - EG-F: and the Elite Breaches'
- *  arches beside them (scenes/egArch.js stands at most two strangers' a cell, and the company's own). */
+ *  arches beside them (scenes/eliteGates/egArch.js stands at most two strangers' a cell, and the company's own). */
 export const GATE_PASS_MAX = 4;
 /** EG-F: where the beacon's light starts along its column, as the fraction the gate's shader held as a literal (its four
  *  places, so a uniform carries the same float the literal compiled to). */
@@ -109,7 +109,7 @@ uniform vec3 uCamPos;
  *  place a parameter - the gate's literal (`MEMBRANE_VS` ... `BEACON_FS`, exported as they always were: the Hollow's omen
  *  builds the gate's column from them - render/superDungeon/sdOmenPass.js) or the uniform the pass sets per draw (`MEMBRANE_DRAW_VS`
  *  ... `BEACON_DRAW_FS`, what GatePassRenderer compiles). A per-draw source with the gate's values written back in IS the
- *  gate's source, byte for byte (test/egarch_law.test.js), so every pin on the gate's shaders holds for what is drawn. */
+ *  gate's source, byte for byte (test/net/eliteGates/egarch_law.test.js), so every pin on the gate's shaders holds for what is drawn. */
 const membraneVs = (decl, scale) => HEAD + `layout(location = 0) in vec2 aXY;   // the quad: x across the arch (metres), y up it (metres, the gate's frame)
 uniform mat4 uVP;
 uniform vec3 uOrigin;   // the gate's foot in the scene (its rise already in y)

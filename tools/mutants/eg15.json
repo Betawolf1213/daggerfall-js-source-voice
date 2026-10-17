@@ -6,7 +6,7 @@
     "new": "'numidium']);",
     "why": "the set no sigil may name: every Panoply piece refused",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -16,7 +16,7 @@
     "new": "colour: '#5c7cc4', aetheric: false,",
     "why": "the Broker and every win would roll it",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -26,7 +26,7 @@
     "new": "colour: '#5c7cc5',",
     "why": "not Battlemage blue",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -36,7 +36,7 @@
     "new": "{ resist: [6, 15], magicka: [10, 30] }",
     "why": "a number off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -46,7 +46,7 @@
     "new": "{ resist: [5, 15], magicka: [10, 25] }",
     "why": "a number off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -56,7 +56,7 @@
     "new": "{ armed: [25, 50], refund: [5, 15] }",
     "why": "a number off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -66,7 +66,7 @@
     "new": "{ armed: [20, 50], refund: [5, 10] }",
     "why": "a number off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -76,7 +76,7 @@
     "new": "{ shield: [15, 35], recover: [240, 120] }",
     "why": "a number off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -86,7 +86,7 @@
     "new": "{ shield: [15, 40], recover: [180, 120] }",
     "why": "a recovery off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -96,7 +96,7 @@
     "new": "export const REPRIEVE_BELOW = 0.25;",
     "why": "the line off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -106,7 +106,7 @@
     "new": "export const REPRIEVE_SECONDS = 7;",
     "why": "the window off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -116,7 +116,7 @@
     "new": "export const REPRIEVE_METRES = 10;",
     "why": "the allies' reach off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -126,7 +126,7 @@
     "new": "export const REPRIEVE_ALLY_SHARE = 1;",
     "why": "the allies given the whole shield",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -136,7 +136,7 @@
     "new": "...NUMIDIUM_SET_PIECES]);",
     "why": "a Panoply piece no reader knows - forged to the wire",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -146,7 +146,7 @@
     "new": "'panoply', 'Ebony', SIGIL_POWER_MAX",
     "why": "the make off the design",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -156,7 +156,7 @@
     "new": "'panoply', 'Mithril', SIGIL_POWER_MAX - 1, affixes",
     "why": "the Spire's top drop under the top",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -166,7 +166,7 @@
     "new": "[t('armor'), t('stat', 'luck'), t('resist', 'magic')]",
     "why": "a resistance on a piece, toward immunity",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -176,7 +176,7 @@
     "new": "[t('armor'), m('stat', 'intelligence'), t('skill', SKILLS.Destruction)]",
     "why": "an affix off the band's top",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -186,7 +186,7 @@
     "new": "'The Spire-Shield', 'Armor', 112,",
     "why": "a Tower Shield, not the design's Kite",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -196,7 +196,7 @@
     "new": "mithril('helm',",
     "why": "the sink sells an id no record has",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -206,7 +206,7 @@
     "new": "Math.floor(rolls() * (n - 1)) || 0",
     "why": "the Saber never picked",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -216,7 +216,7 @@
     "new": "  const n = PANOPLY_SET_PIECES.length;\n  rolls();\n  return mintAetheric(",
     "why": "a draw the spoils' order never counted",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -226,7 +226,7 @@
     "new": "Math.max(0, Math.floor(rolls() * n) || 0)",
     "why": "a draw of 1 picks nothing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -236,7 +236,7 @@
     "new": "const r = aethericById(id);",
     "why": "the sink mints any Aetheric record",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -246,7 +246,7 @@
     "new": "",
     "why": "the channel folds nothing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -256,7 +256,7 @@
     "new": "out.magicka += Number(m.magicka) || 0;",
     "why": "a fraction of a point on the maximum",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -266,7 +266,7 @@
     "new": "+ renownMpOf(this);",
     "why": "the live maximum never reads the Bearing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -276,7 +276,7 @@
     "new": "const hp = renownHpOf(entity), mp = renownMpOf(entity);",
     "why": "a save keeps the Bearing's magicka",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -286,7 +286,7 @@
     "new": "  if (renownHpOf(entity)) Object.assign",
     "why": "at Renown 1 the save never takes the Bearing off",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -296,7 +296,7 @@
     "new": "  const raw = Math.max(0, (entity.maxMagicka ?? 0) - (entity.renownMp | 0));",
     "why": "the magery takes a third of the Bearing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -306,7 +306,7 @@
     "new": "  if (whole > 0) entity.magicka = entity.magicka + whole;",
     "why": "magicka past the maximum",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -316,7 +316,7 @@
     "new": "  _manaOwed = 0;",
     "why": "the fraction lost",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -326,7 +326,7 @@
     "new": "{ _healOwed = 0; }",
     "why": "a test's reset keeps the last fraction",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -336,7 +336,7 @@
     "new": "",
     "why": "the cast engine never tells a cast",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -346,7 +346,7 @@
     "new": "tellPlayerCast(playerEntity, sp, cost); ",
     "why": "a cast that went nowhere told as cast",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -356,7 +356,7 @@
     "new": "  for (const fn of _listeners.values()) fn(entity, spell, spent);",
     "why": "a throwing listener stops the rest, and the cast",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -366,7 +366,7 @@
     "new": "  const spent = cost;",
     "why": "a cost below 0, or none, told",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -376,7 +376,7 @@
     "new": "",
     "why": "the Discipline never hears a cast",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -386,7 +386,7 @@
     "new": "for (const el of RESIST_ELEMENTS.slice(1)) add(m().resist, el, bearing.resist);",
     "why": "fire missed",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -396,7 +396,7 @@
     "new": " }",
     "why": "no magicka",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -406,7 +406,7 @@
     "new": "{ pct += disc.armed * elementShare(target, _s.armed); }",
     "why": "every blow after a cast armed",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -416,7 +416,7 @@
     "new": "pct += disc.armed;",
     "why": "an immune foe takes the element",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -426,7 +426,7 @@
     "new": "if (disc && _s.armed >= 0)",
     "why": "a fist spends the weapon's blow",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -436,7 +436,7 @@
     "new": "  return t === 'Immune' ? 0 : 1;",
     "why": "a resisting foe takes it whole",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -446,7 +446,7 @@
     "new": "[EFFECT_FLAGS.Fire, EFFECT_FLAGS.Frost, EFFECT_FLAGS.Shock, EFFECT_FLAGS.Poison, EFFECT_FLAGS.Magic]",
     "why": "poison read as shock",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -456,7 +456,7 @@
     "new": "  const el = spell?.element;",
     "why": "a cast in a duel, offline or on three pieces arms",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -466,7 +466,7 @@
     "new": "if (Number.isInteger(el)) _s.armed = el;",
     "why": "an element outside the five arms",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -476,7 +476,7 @@
     "new": "",
     "why": "the cost never kept",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -486,7 +486,7 @@
     "new": "if (v) manaMine(attacker, (_s.lastCost * v.armed) / 100);",
     "why": "the wrong share returned",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -496,7 +496,7 @@
     "new": "",
     "why": "no blow returns anything",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -506,7 +506,7 @@
     "new": "  returned(attacker);",
     "why": "an off-hand blow that does not count whole returns magicka - a pair of weapons doubles the per-blow charge TWO-HANDS (AUDIT 2) holds to a whole blow",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -516,7 +516,7 @@
     "new": "    d -= took;",
     "why": "a shield that never runs out",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -526,7 +526,7 @@
     "new": "    _s.reprieve -= took;",
     "why": "a shield that soaks nothing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -536,7 +536,7 @@
     "new": "if (_s.reprieve > 0 && d > 0 && tierOf(entity, 'panoply', 2))",
     "why": "a shield past its 6 s",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -546,7 +546,7 @@
     "new": "  const line = max * REPRIEVE_BELOW;\n  if (!(after < line)) return;",
     "why": "every blow under the line raises it",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -556,7 +556,7 @@
     "new": "  const v = tierOf(entity, 'panoply', 2);\n  const max = entity?.maxHealth;\n  if (!v || !(max > 0) || saved) return;",
     "why": "a killing blow raises it",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -566,7 +566,7 @@
     "new": "  const v = tierOf(entity, 'panoply', 2);\n  const max = entity?.maxHealth;\n  if (!v || !(max > 0) || !(after > 0)) return;",
     "why": "a saved killing blow raises it on top of the save",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -576,7 +576,7 @@
     "new": "",
     "why": "a shield every crossing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -586,7 +586,7 @@
     "new": "",
     "why": "it never recovers",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -596,7 +596,7 @@
     "new": "const points = Math.max(1, Math.round((max * v.shield) / 50));",
     "why": "the shield off its share",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -606,7 +606,7 @@
     "new": "_s.reprieveUntil = now + REPRIEVE_SECONDS + 1;",
     "why": "a window past 6 s",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -616,7 +616,7 @@
     "new": "reprieve: _s.reprieve,",
     "why": "the HUD shows a shield past its window",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -626,7 +626,7 @@
     "new": "    if (st.reprieve < 0) out.push({ key: 'reprieve',",
     "why": "the shield never shown",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -636,7 +636,7 @@
     "new": "",
     "why": "the shield unsaid",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -646,7 +646,7 @@
     "new": "",
     "why": "the shield unheard",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -656,7 +656,7 @@
     "new": "shieldAllies(points)",
     "why": "each ally the whole shield",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -666,7 +666,7 @@
     "new": "_allies.near(15)",
     "why": "the allies asked for past 8 m",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -676,7 +676,7 @@
     "new": "_allies.shield(ally, reprieveBundle(points)); n++;",
     "why": "a cast that never left counted",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -686,7 +686,7 @@
     "new": "  for (const ally of near) if (_allies.shield(ally, reprieveBundle(points))) n++;",
     "why": "one ally's throw stops the rest",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -696,7 +696,7 @@
     "new": "  near = _allies.near(REPRIEVE_METRES) ?? [];",
     "why": "a host's throw takes the Reprieve's word with it",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -706,7 +706,7 @@
     "new": "durationBase: Math.ceil(REPRIEVE_SECONDS / ROUND_SECONDS),",
     "why": "an ally's shield ending before 6 s",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -716,7 +716,7 @@
     "new": "magnitudeBaseLow: Math.max(1, Math.round(points) || 0), magnitudeBaseHigh",
     "why": "a frame every door refuses",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -726,7 +726,7 @@
     "new": "magnitudeLevelBase: 1, magnitudeLevelHigh: 1, magnitudePerLevel: 1,",
     "why": "a receiver's pool grown by the caster's level",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -736,7 +736,7 @@
     "new": "_allies = typeof door?.near === 'function' ?",
     "why": "a door with no shield kept open",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -746,7 +746,7 @@
     "new": "const spireHeld = (k) => !k;",
     "why": "no breach holds a death save",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -756,7 +756,7 @@
     "new": "return room !== undefined && spireRoom() != null;",
     "why": "a hold in every breach",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -766,7 +766,7 @@
     "new": "function spireHold(k) { void k; }",
     "why": "nothing ever held",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -776,7 +776,7 @@
     "new": "const spireRoom = () => { const r = _spireRoom(); return r == null || r === false ? null : r; };",
     "why": "a host's throw breaks the powers",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -786,7 +786,7 @@
     "new": "return r == null ? null : r;",
     "why": "a host answering false holds as a breach",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -796,7 +796,7 @@
     "new": "",
     "why": "a Redoubt inside the timer recovers nothing",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -806,7 +806,7 @@
     "new": "",
     "why": "the Redoubt leaves the holds",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -816,7 +816,7 @@
     "new": "if (now < r.at()) continue;",
     "why": "the round says a held save is ready",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -826,7 +826,7 @@
     "new": "const wait = (k, n) => time(n);",
     "why": "the chip never reads Redoubt",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -836,7 +836,7 @@
     "new": "else if (st.unbrokenLeft)",
     "why": "a held Unbroken shows no chip",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -846,7 +846,7 @@
     "new": "  if (now < _s.unbrokenReady) return false;\n",
     "why": "Unbroken a timer in the Spire",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -856,7 +856,7 @@
     "new": "  if (now < _s.hourReady) return false;\n",
     "why": "The Hour Turns a timer in the Spire",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -866,7 +866,7 @@
     "new": "  if (now < _s.shedReady) return;\n",
     "why": "Shed Skin a timer in the Spire",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -876,7 +876,7 @@
     "new": "",
     "why": "Unbroken never held",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -886,7 +886,7 @@
     "new": "",
     "why": "The Hour Turns never held",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -896,7 +896,7 @@
     "new": "",
     "why": "Shed Skin never held",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -906,7 +906,7 @@
     "new": "",
     "why": "the Reprieve never held",
     "tests": [
-      "test/eg15_panoply.test.js"
+      "test/systems/eliteGates/eg15_panoply.test.js"
     ]
   },
   {
@@ -916,7 +916,7 @@
     "new": "",
     "why": "the Reprieve unheard",
     "tests": [
-      "test/eg15_panoply.test.js",
+      "test/systems/eliteGates/eg15_panoply.test.js",
       "test/systems/set3_powers.test.js"
     ]
   }

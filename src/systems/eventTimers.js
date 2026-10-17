@@ -18,7 +18,7 @@ import { wallMsForClassicMinutes } from '../net/wire.js';
 import { seatWeekOf, seatWeekStartMs, seatPhaseOf, SEAT_RECKONING_MS, seasonOf, seatSeasonName, battleLengthMs, SIGN_CLOSES_MS, guildWords } from '../net/townSeatLaw.js';
 import { serpentAt, serpentTimes, serpentPhase, serpentBossOf, SERPENT_EVERY_DAYS } from '../net/serpent/serpentLaw.js';   // SERPENT-TIMERS: the sea serpent's day
 import { sdPhase, SD_COLLAPSE_MS } from '../net/superDungeon/sdLaw.js';   // SD2c: the Super dungeon's record, once it is news
-import { egTimes } from '../net/egLaw.js';   // EG-F: an Elite Breach's clock - the company's own row
+import { egTimes } from '../net/eliteGates/egLaw.js';   // EG-F: an Elite Breach's clock - the company's own row
 import { arenaSeasonOf, arenaSeasonEndsS } from '../net/arena/arenaLaw.js';   // EG-ZM: the Spire's boards keep the arena's season
 
 const DAY_MS = 86_400_000;
@@ -90,7 +90,7 @@ export function eventTimerRows(src) {
   // SD19: the next one's rise, once this one is gone - never where (a Hollow risen is a find), only not before when
   else if (sdNow === 'gone' && Number.isFinite(sdRec?.next) && sdRec.next > now) coming(`sd:${(sdRec.s ?? 0) + 1}`, 'super', 'An Abyss Dungeon rises', sdRec.next, null, 'Not before this - somewhere in the Bay, its omen burning brass over it');
 
-  // ── AN ELITE BREACH (net/egLaw.js egTimes: the call's opening, the open window, THE COUNT) ── EG-F (bible/11-Multiplayer/
+  // ── AN ELITE BREACH (net/eliteGates/egLaw.js egTimes: the call's opening, the open window, THE COUNT) ── EG-F (bible/11-Multiplayer/
   // Elite-Gates.md section 2, the Timers row): the company's alone (the host hands it only the call it holds) - a new kind
   // beside the gate's and the Abyss Dungeon's: "Elite Breach opens 4:12" while the arch stands sealed, then the window to
   // answer, then the hall the company stands in and what is left on the count (`until` its end, held or running).

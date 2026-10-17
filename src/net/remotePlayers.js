@@ -882,7 +882,7 @@ export class RemotePlayers {
       const veil = conceal(peer.id) ?? null;
       // MWBODY1: a peer standing in a Morrowind body (net/peer/peerBodies.js) draws no doll/mobile; its name still rides this pass, at the body's own head
       const bodyH = bodyHeight(peer.id);
-      if (bodyH > 0) { if (!veil || /** @type {any} */ (veil).named) this._shown.push({ peer, height: bodyH }); continue; }   // AUDIT EG V (h): a veil that keeps the name (an ally drawn at 60% on the Spire's traversal ground - scenes/egClient.js allyVeil)
+      if (bodyH > 0) { if (!veil || /** @type {any} */ (veil).named) this._shown.push({ peer, height: bodyH }); continue; }   // AUDIT EG V (h): a veil that keeps the name (an ally drawn at 60% on the Spire's traversal ground - scenes/eliteGates/egClient.js allyVeil)
       live.add(peer.id);
       // 2026-09-17: a peer whose class maps onto a class-enemy sprite (classMobileType) is drawn as that sprite,
       // animated off their synced pose (_syncMobilePeer) - the same billboard a hostile Warrior/Mage/etc. already

@@ -1584,7 +1584,7 @@ export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
  * key), a member's admission (`admit`) and a receipt the relay signed (`claim` - EG-E1: with the claiming character, its
  * guild's deed). EG-E1: the Broker's Panoply piece (`sink` - one of EG_PANOPLY_IDS, once an account an arena week; the
  * week's sale rides `keys`' `sink`); EG-E2: the three boards (`board` - the Descent's brackets, the Depths, the Deepest
- * Redoubts: ui/egBoardWindow.js reads it). Every answer is `call`'s shape, waited for ACCOUNT_ACT_WAIT_MS at most; no session
+ * Redoubts: ui/eliteGates/egBoardWindow.js reads it). Every answer is `call`'s shape, waited for ACCOUNT_ACT_WAIT_MS at most; no session
  * is `no-session`, never a throw. `me()` the signed-in account's id - the receipts this device may offer are its alone
  * (AUDIT WB A9's law); `guest()` whether it is a guest's.
  */

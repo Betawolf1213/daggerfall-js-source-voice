@@ -34,7 +34,7 @@
 // (server-account/src/marks.js), which keeps every balance and the one
 // ledger, and the client. Pure: no clock, no DOM, no network.
 // ═══════════════════════════════════════════════════════════════════
-import { EG_PAY_MARKS } from './egPay.js';   // EG-E1: what a Redoubt strikes - the pay law's own number
+import { EG_PAY_MARKS } from './eliteGates/egPay.js';   // EG-E1: what a Redoubt strikes - the pay law's own number
 
 /** The most an account's balance - or a guild's Marks treasury - holds. */
 export const MARKS_MAX = 10_000_000;
@@ -66,7 +66,7 @@ export const MARK_WORTH_GOLD = 10;
  *               kind's own), `amount` the service's dice, at most `perDay` an account a UTC day.
  *   eg        - EG-E1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19): a
  *               Redoubt of the Elite Breach taken - its `w` receipt the relay signed at the lord's fall and the service
- *               counted - EG_PAY_MARKS (20, net/egPay.js), once an account a Redoubt an arena week (the week's pay), under
+ *               counted - EG_PAY_MARKS (20, net/eliteGates/egPay.js), once an account a Redoubt an arena week (the week's pay), under
  *               the COMBAT cap.
  */
 export const MARKS_FAUCETS = Object.freeze({

@@ -264,7 +264,7 @@ export const ILIAC_CARDS = Object.freeze([
     fx: [{ on: 'end', do: 'buff', to: 'self', n: 1 }] },
   // ── EG-E (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19: "the lord's card: bossCardRoll(bossKey, rolls),
   //    each lord its own key in BOSS_CARDS"): THE BATTLESPIRE'S LORDS, each its own card at the aetheric tier, found
-  //    only in its Redoubt's spoils (systems/egSpoils.js) - the Galleries', the Cairn's, the Shade's and the Wellhead's. ──
+  //    only in its Redoubt's spoils (systems/eliteGates/egSpoils.js) - the Galleries', the Cairn's, the Shade's and the Wellhead's. ──
   { id: 'eg-grath', name: 'Grath, the Hound', kind: 'unit', cost: 5, power: 7, tier: 'aetheric', tags: ['daedra', 'beast'], emblem: 'beast',
     fx: [{ on: 'reveal', do: 'weaken', to: 'here.theirs', pick: 'strongest', n: 3 }] },
   { id: 'eg-spellmaster', name: 'The Last Spellmaster', kind: 'unit', cost: 5, power: 6, tier: 'aetheric', tags: ['undead', 'mage'], emblem: 'mage',

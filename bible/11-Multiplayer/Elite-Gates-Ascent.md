@@ -7,8 +7,8 @@ Asked: climbing both on the route and off it (*"Both"*), and inside PR #800. Wha
 recorded in `Elite-Gates.md` section 31 (THE ASCENT) and that record wins where the two differ.
 
 `Elite-Gates-Look.md` (EG-LOOK) dressed the halls without touching the law. This page changes the law: the hall
-generator (`net/egLaw.js` layHall), its proofs (`net/egSpanLaw.js`), the relay's judging of where a body stands, and
-the client's clamp. Laws 4-8 stay byte for byte (`net/egDurable.js` EG_LAWS - a breach opened under a law keeps it);
+generator (`net/eliteGates/egLaw.js` layHall), its proofs (`net/eliteGates/egSpanLaw.js`), the relay's judging of where a body stands, and
+the client's clamp. Laws 4-8 stay byte for byte (`net/eliteGates/egDurable.js` EG_LAWS - a breach opened under a law keeps it);
 LAW 9 is new. The relay version for the arc (`world212` since the sixth merge of main) is not yet deployed, so it carries LAW 9 with it.
 
 ## What was wrong (measured over 600 halls of law 8, 2026-10-16)
@@ -55,7 +55,7 @@ THE ROUTE is the law's one measure of progress. Wherever the arc measured progre
 
 LAW 9's ways cross over and under each other, so a floor may stand over another floor - a fight floor too. Every test
 that asks "is this point on the floor" in plan alone answers by height as well: the fight floor's own tests (`egOnFight`,
-`egFightPieceAt`, `egKeepOnFight`, `egFloorTest`, `net/egFloor.js` onFloor), the blow judge (a stamp lands on the fight
+`egFightPieceAt`, `egKeepOnFight`, `egFloorTest`, `net/eliteGates/egFloor.js` onFloor), the blow judge (a stamp lands on the fight
 floor the body stands on, never on the one over or under it - `net/bossRef.js` judgeShapes' floor), the walk graph's drop
 portals (only where a body can actually fall - an open edge over the floor below, never through a ceiling or a wall), the
 fliers' air (`egAirOf`), the legion's and the lords' places and charges, the haven grid, the Molten Rim, the client's
@@ -115,7 +115,7 @@ vantages and a room's second floor, and come back or end. At most three roads a 
 
 ## 6. The proofs
 
-THE MEDIAN and the span proofs (`net/egSpanLaw.js`) hold over THE ROUTE rather than z: a road's crossing time is its
+THE MEDIAN and the span proofs (`net/eliteGates/egSpanLaw.js`) hold over THE ROUTE rather than z: a road's crossing time is its
 links' times along it - a walk at the span build's run over its real length, a stair at the motor's climb of a stair, a
 climb at the climbing motor's speed and its mantle, a drop at its fall, a span by the span generator's own timed solver -
 and every road 0 and 1 holds the median within 1.6 times its fastest, the windows and the waits as before. The real-motor
@@ -132,9 +132,9 @@ before (EG_HALL_PITCH).
 ## 8. The dress
 
 Every room, corridor turn, stair, tower, climb wall and crossing is dressed as EG-LOOK dresses the ground
-(`world/egGround.js`: the academy's walls outward of the collider, vaults, stairs with treads and balustrades, the
+(`world/eliteGates/egGround.js`: the academy's walls outward of the collider, vaults, stairs with treads and balustrades, the
 towers' drums, the climb walls' masonry with its holds and ledges, the band's forms) and the ruin stands about them
-(`world/egRuin.js`: foundations under every floor, cornices, bridges' arches). The lab (`spire.html`) gains a MAP view - the
+(`world/eliteGates/egRuin.js`: foundations under every floor, cornices, bridges' arches). The lab (`spire.html`) gains a MAP view - the
 hall from above with its route drawn - and views inside each room.
 
 ## 9. The slices

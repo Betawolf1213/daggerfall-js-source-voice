@@ -757,7 +757,7 @@ export const EG_ORDER_FIELDS = Object.freeze(['eb', 'ez', 'ew', 'rh', 'ewg']);  
 export const EG_ORDER_BREACH_RE = /^[0-9a-f]{16}$/;
 export const EG_ORDER_ZID_RE = /^[a-z0-9]{16,32}$/;
 export const EG_ORDER_START_MAX = 999;
-/** EG-F: the most decrees an open's Wager carries (net/egStartLaw.js EG_WAGER_MAX, pinned equal). */
+/** EG-F: the most decrees an open's Wager carries (net/eliteGates/egStartLaw.js EG_WAGER_MAX, pinned equal). */
 export const EG_ORDER_WAGER_MAX = 3;
 /** Whether a claim set's breach fields are an Elite Breach order's (`rh` an open's alone). */
 export function egOrderValid(c) {
@@ -765,7 +765,7 @@ export function egOrderValid(c) {
   if (!Number.isSafeInteger(c.ew) || c.ew < 0 || c.ew > EG_ORDER_START_MAX) return false;
   if (c.rh !== undefined && !(c.o === 'egopen' && c.rh === 1)) return false;
   // EG-F (section 18): THE WAGER on an open alone - one to EG_ORDER_WAGER_MAX decree numbers, distinct (the service
-  // holds their families apart - net/egStartLaw.js egWagerOf); never on a Rehearsal
+  // holds their families apart - net/eliteGates/egStartLaw.js egWagerOf); never on a Rehearsal
   if (c.ewg !== undefined && !(c.o === 'egopen' && c.rh === undefined && Array.isArray(c.ewg) && c.ewg.length >= 1 && c.ewg.length <= EG_ORDER_WAGER_MAX
     && c.ewg.every((d) => Number.isSafeInteger(d) && d >= 0 && d <= 31) && new Set(c.ewg).size === c.ewg.length)) return false;
   return true;

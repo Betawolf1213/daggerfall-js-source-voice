@@ -24,7 +24,7 @@
 //
 // ═══ THE CLAIM ═════════════════════════════════════════════════════
 //
-// The relay's `e1` receipts (src/net/egReceipt.js), carried here by the account they name: a Redoubt taken (`w`) -
+// The relay's `e1` receipts (src/net/eliteGates/egReceipt.js), carried here by the account they name: a Redoubt taken (`w`) -
 // one row a (breach, account, Redoubt), the signed win's spoils, and the stake spent; the member's end (`x`) - one row a
 // (breach, account), the live breach cleared, and the stake settled (spent, or returned once ever by the first breach's
 // mercy when the breach took no Redoubt); a void (`v`) - the stake given back. Guests are answered `guest` and counted
@@ -57,7 +57,7 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { verifyEgReceipt, EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';
+import { verifyEgReceipt, EG_RECEIPT_TTL_S } from '../../src/net/eliteGates/egReceipt.js';
 import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZM: the post's sender, as the box shows it
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
@@ -65,16 +65,16 @@ import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js'
 import { egStandingOf, egFirstPost, egBoardsMoved } from './egHonours.js';   // EG-ZF: the recap's board line; First of the Spire's letter; AUDIT EG III: the boards' kept rankings forgotten at a claim
 import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
 import { arenaWeekOf } from '../../src/net/arena/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
-import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
+import { egMayStart, egWagerOf } from '../../src/net/eliteGates/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
 import { egStartsFor } from './egStarts.js';
-import { egSpoilsSeed } from '../../src/net/egPay.js';   // AUDIT EG V (L8-5): the spoils' seed, the receipt's mixed with the claim's own draw
+import { egSpoilsSeed } from '../../src/net/eliteGates/egPay.js';   // AUDIT EG V (L8-5): the spoils' seed, the receipt's mixed with the claim's own draw
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
 export const EG_KEY_ODDS_RITE = 1 / 4;
 export const EG_KEY_ODDS_SD = 1 / 3;
 export const EG_KEY_PITY = 5;
-/** A live breach's bound past its open: the last word (36 game hours, three real ones - src/net/egLaw.js
+/** A live breach's bound past its open: the last word (36 game hours, three real ones - src/net/eliteGates/egLaw.js
  *  EG_LAST_WORD_MS, pinned equal), the open window before it, and ten minutes' slack. */
 export const EG_LAST_WORD_S = 10_800;
 export const EG_OPEN_WINDOW_S = 600;
@@ -82,7 +82,7 @@ export const EG_LIVE_SLACK_S = 600;
 export const EG_LIVE_S = EG_LAST_WORD_S + EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
 /** AUDIT EG III (lane3 #15): how long after its open's ask a breach admits a member - the sealed hour and the open window
  *  (EG_OPEN_WINDOW_S: the relay's 5 and at most 5 real minutes from the opening) and the slack an order takes to reach the
- *  room. The page answers the call only while its breach is open (src/scenes/egClient.js `answer`), so a later ask is a
+ *  room. The page answers the call only while its breach is open (src/scenes/eliteGates/egClient.js `answer`), so a later ask is a
  *  breach that has closed behind its company: it locks no account out for three hours. */
 export const EG_ADMIT_WINDOW_S = EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
 /** EG-E3 (2026-10-12, Mac: "I said I want everything"; section 5, "The dungeon's find"): a dungeon elite's odds of a key,
@@ -94,7 +94,7 @@ export const EG_FIND_PER_DAY = 6;
 export const EG_FIND_KEYS_PER_WEEK = 2;
 /** A request id an open is idempotent on, a breach id, an order id. */
 export const EG_RQ_RE = /^[a-z0-9]{16,32}$/;
-/** EG-ZM: how long after its order's issue a breach's void may be asked - the relay's (src/net/egDurable.js EG_VOID_MAX_S,
+/** EG-ZM: how long after its order's issue a breach's void may be asked - the relay's (src/net/eliteGates/egDurable.js EG_VOID_MAX_S,
  *  pinned equal; that module is the relay's, outside this Worker's bundle). */
 export const EG_VOID_WINDOW_S = 7 * 24 * 3600;
 /** EG-ZM (section 23, "The clock"): THE STAKE'S CLOCK - a stake still `held` this long past its `until` is spent by the
@@ -131,7 +131,7 @@ export const EG_STAKE_POST_HELD = Object.freeze({
 });
 /** AUDIT EG IV (lane3 #4, lane9 #24; section 5, "The launch gift"): THE LAUNCH GIFT'S LETTER - the key migration 0113 adds
  *  to every account with a recorded Dagon's Breach kill, worded in the mailbox by the same migration (server_post, batch
- *  `spire-launch`, HOURS-FIRST's send - 0094), its words these (test/egaudit4_net_service.test.js holds the migration's
+ *  `spire-launch`, HOURS-FIRST's send - 0094), its words these (test/net/eliteGates/egaudit4_net_service.test.js holds the migration's
  *  statement to them). It carries no item: the key is the balance's, already counted. */
 export const EG_LAUNCH_POST = Object.freeze({
   batch: 'spire-launch',
@@ -145,7 +145,7 @@ export const EG_LAUNCH_POST = Object.freeze({
   ].join('\n'),
 });
 /** EG-ZF (section 27.7): the first-time lines' bits the account keeps - sixteen, room past the page's nine and the
- *  Rehearsal's own (src/ui/egBeats.js EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT). */
+ *  Rehearsal's own (src/ui/eliteGates/egBeats.js EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT). */
 export const EG_FIRST_BITS_MAX = 0xffff;
 const BREACH_RE = /^[0-9a-f]{16}$/;
 
@@ -295,7 +295,7 @@ export async function admitEg({ db, nowS, subtle, rand }, player, body, key) {
  * EG-ZA (2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 20, 21 and 23's table): WHAT THE REST OF A RECEIPT SAYS,
  * kept on the row its claim wrote (each guarded by that row, so only a recorded receipt writes): a Redoubt's `sh` (its
  * share of the circle's damage, thousandths) and `m` (THE FAIR TRAIL's measures over the circle - JSON, for staff; they
- * gate nothing until EG21); an end's company `co` (`[n, tag]` - net/egReceipt.js egCompanyTag), by which the Descent keeps
+ * gate nothing until EG21); an end's company `co` (`[n, tag]` - net/eliteGates/egReceipt.js egCompanyTag), by which the Descent keeps
  * a company one row (egHonours.js egDescentCompanies). A receipt from before the relay minted them writes nothing.
  * @param {any} db @param {{ id: string }} player @param {any} c the verified claims
  */
@@ -403,7 +403,7 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
   } else if (c.q === 'x') {
     // the stake (section 23): a void gives it back - AUDIT EG III (lane3 #1): held, or spent by the breach's Redoubts;
     // the first breach's mercy gives it back once ever - AUDIT EG III (lane3 #6): only on the relay's word that the BREACH
-    // ended with no Redoubt taken (`nr`, on every end its end owes - net/egBrain.js oweEnd), whichever member's end carries
+    // ended with no Redoubt taken (`nr`, on every end its end owes - net/eliteGates/egBrain.js oweEnd), whichever member's end carries
     // it (the opener's own may have come first, a fall or a forsaking while the company played on); the opener's end
     // without that word holds the stake for it while the mercy may still be paid (a Redoubt's receipt spends it, the
     // stake's clock at the last), and spends it otherwise; any other member's end settles nothing
@@ -436,7 +436,7 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
 }
 
 /** AUDIT EG V (lane8 L8-5; section 16.3): AN END'S SPOILS SEED - its receipt's `c` mixed with the draw its row keeps
- *  (net/egPay.js egSpoilsSeed), `{ seed }`; `{}` with no row (a guest's end writes none). */
+ *  (net/eliteGates/egPay.js egSpoilsSeed), `{ seed }`; `{}` with no row (a guest's end writes none). */
 async function egEndSeedOf(db, player, c) {
   const r = await db.prepare('SELECT nonce FROM eg_runs WHERE b = ?1 AND account = ?2').bind(c.b, player.id).first();
   return r ? { seed: egSpoilsSeed(c.c, r.nonce) } : {};

@@ -215,7 +215,7 @@ export const gateArt = () => [[GATE_STONE_RECORD, gateStoneArt()], [GATE_PLINTH_
 
 // ═══ EG-F: THE ARCH'S SKIN ═══════════════════════════════════════════════════════════════════════════════════════
 // EG-F (2026-10-12, the Elite Gates arc, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section
-// 6.3): an Elite Breach's arch is the gate's model at 0.62 (scenes/egArch.js), and its skin is the Spire's - "Imperial
+// 6.3): an Elite Breach's arch is the gate's model at 0.62 (scenes/eliteGates/egArch.js), and its skin is the Spire's - "Imperial
 // white marble inlaid with gold, cracked through with the Warden's basalt". Painted here as the gate's own is, on the
 // gate's own noise and its own veins' walk: a mottled white-grey marble, a lattice of gold inlay set in it (the inlay's
 // gleam its own emission, faint, so the arch reads by night), and the gate's basalt veins running through it as cracks

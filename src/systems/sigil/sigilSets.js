@@ -278,7 +278,7 @@ export const SIGIL_SETS = Object.freeze({
   }),
   // EG15 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19): THE BATTLEMAGE'S
   // PANOPLY - the war-gear the Imperial Battlemages wore in the Spire, taken by the Kyn: an Aetheric set no world drop,
-  // shelf or day's stock rolls; a Redoubt's spoils carry a piece (systems/egSpoils.js) and the Broker's weekly sink sells
+  // shelf or day's stock rolls; a Redoubt's spoils carry a piece (systems/eliteGates/egSpoils.js) and the Broker's weekly sink sells
   // one by its id (the account service's). Its patron the Battlemages themselves; its colour Battlemage blue
   // (Elite-Gates.md section 25.2's [92,124,196]: blue is yours).
   panoply: Object.freeze({

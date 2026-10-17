@@ -6,8 +6,8 @@
 //   'super'   - reserved for the Abyss Breach. The code keeps `super` for the Abyss tier as the dungeons do; nothing
 //               answers it until it is built (section 2, "Why the Abyss tier is not built here").
 // GATE_TIER_TEXT holds the words. The Regular tier's word is the event's own name, unchanged ("Dagon's Breach" - the
-// gate's pool says it, scenes/gate/gatePool.js), and the Elite tier's is the breach's own (net/egLaw.js EG_TEXT.name) -
-// test/eglook_registry.test.js holds both equal to their homes. Its surfaces: the arch's plaque (World Tooltips - the
+// gate's pool says it, scenes/gate/gatePool.js), and the Elite tier's is the breach's own (net/eliteGates/egLaw.js EG_TEXT.name) -
+// test/world/eliteGates/eglook_registry.test.js holds both equal to their homes. Its surfaces: the arch's plaque (World Tooltips - the
 // title, *The Battlespire* under it, and to anyone outside the company *<opener>'s company*), the sight line (the Elite
 // Dungeon's own law, world/spawnedDungeons.js dungeonSightLine), the Timers row (*Elite Breach opens 4:12*, then *Hall 17 -
 // 24:10 left*) and the arrival card. The arch and its rows are EG9's to stand; this is the one law they read.
@@ -20,7 +20,7 @@ export const GATE_TIERS = Object.freeze(['regular', 'elite', 'super']);
 export const GATE_TIER_TEXT = Object.freeze({ regular: "Dagon's Breach", elite: 'Elite Breach', super: 'Abyss Breach' });
 /** An Elite Breach's plaque's line under its title (section 2). */
 export const GATE_TIER_SUB = Object.freeze({ elite: 'The Battlespire' });
-/** An Elite Breach's room key - net/egLaw.js egRoomKey's `eg:<16hex>`, read here without importing the relay's law. */
+/** An Elite Breach's room key - net/eliteGates/egLaw.js egRoomKey's `eg:<16hex>`, read here without importing the relay's law. */
 const EG_ROOM_RE = /^eg:[0-9a-f]{16}$/;
 
 /**
@@ -62,5 +62,5 @@ export function gateSightLine(metres, direction, tier = 'elite') {
 }
 
 /** THE TIMERS ROW (section 2, the company's alone): before it opens, *Elite Breach opens 4:12*; inside, *Hall 17 - 24:10
- *  left*. `clock` the count's words already made (net/egLaw.js egCountText). */
+ *  left*. `clock` the count's words already made (net/eliteGates/egLaw.js egCountText). */
 export const eliteTimerText = ({ h = 0, clock = '' } = {}) => (h > 0 ? `Hall ${h} - ${clock} left` : `${GATE_TIER_TEXT.elite} opens ${clock}`);

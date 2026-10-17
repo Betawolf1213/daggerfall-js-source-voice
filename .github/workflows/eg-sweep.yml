@@ -1,6 +1,6 @@
 # EG6a (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 10.5 "The sweep"): THE COURSE SWEEP.
 #
-# Every course the Elite Breach's span generator lays (src/net/egSpanLaw.js egSpanOf) is crossed STEP BY STEP BY THE REAL
+# Every course the Elite Breach's span generator lays (src/net/eliteGates/egSpanLaw.js egSpanOf) is crossed STEP BY STEP BY THE REAL
 # PLAYER MOTOR - src/player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0) on the real Collider,
 # over each circle's floors and its pieces as the screen rides them (tools/egSpanSolve.mjs --sweep; SD7b's harness is
 # the model). The timed solver proves a course on the motor's closed form; this proves it on the motor itself. A course
@@ -18,7 +18,7 @@
 # and the pilot walks its ROUTE (tools/egSpanSolve.mjs sweepRoute) - turning onto each link, running its stairs, CLIMBING its
 # climbs with the real climbing motor (player/parkour.js at Climbing 0 with its fatigue spent, resting on each ledge), running
 # off its Drops, crossing each course pair by pair - to the door, on every road the route proves. The circle's own halls are
-# swept so the moment they are THE ASCENT's (net/egLaw.js EG_SPEC 9): the step above walks them. Until THE ROOMS lays them,
+# swept so the moment they are THE ASCENT's (net/eliteGates/egLaw.js EG_SPEC 9): the step above walks them. Until THE ROOMS lays them,
 # the second step walks SYNTHETIC LAW 9 halls (tools/lib/egLaw9Synth.mjs - a corridor, a turn, a stair, a climb of one or two
 # pitches and the long way round it, a side climb never asked, a Drop and a course, given as the relay gives a hall): 25
 # seeds a band and the golden four, five halls each, both roads - about 50 s a band; it runs when the step above fails too. It stays a fixed 25 (synthetic halls are the pilot's bench,

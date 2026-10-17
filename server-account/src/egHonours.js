@@ -5,14 +5,14 @@
 //
 // ═══ THE FEATS ═════════════════════════════════════════════════════
 //
-// A Redoubt's `w` receipt names its lord (`lk`) and the feats its Court saw (`ft`, three bits - src/net/egFeats.js).
+// A Redoubt's `w` receipt names its lord (`lk`) and the feats its Court saw (`ft`, three bits - src/net/eliteGates/egFeats.js).
 // The account keeps them a lord at a time (`eg_feats`, the bits OR'ed - a feat once held is held), never from a
 // Rehearsal. A band's lords' feats, all held (egBandMastered), are that band's Master.
 //
 // ═══ THE ANNALS ════════════════════════════════════════════════════
 //
 // A member's end (`x`) says the pages of the Annals of 3E 398 the breach gave them (`an`, a bit a page -
-// src/net/egAnnals.js). The account keeps every page it was ever given (`players.eg_annals`, OR'ed), a Rehearsal's too:
+// src/net/eliteGates/egAnnals.js). The account keeps every page it was ever given (`players.eg_annals`, OR'ed), a Rehearsal's too:
 // a page is the Spire's lore, not its pay, and the relay says what it gave. `/v1/eg/keys` answers both (egRecordOf).
 //
 // ═══ THE HONOURS ═══════════════════════════════════════════════════
@@ -55,14 +55,14 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { arenaSeasonOf, arenaSeasonDay, arenaSeasonEndsS, arenaWeekOf } from '../../src/net/arena/arenaLaw.js';
-import { egBandMastered, EG_FEAT_BANDS } from '../../src/net/egFeats.js';
-import { egProclamationOf, EG_DECREE_BY_KEY } from '../../src/net/egLaw.js';
+import { egBandMastered, EG_FEAT_BANDS } from '../../src/net/eliteGates/egFeats.js';
+import { egProclamationOf, EG_DECREE_BY_KEY } from '../../src/net/eliteGates/egLaw.js';
 import { topWithMe, ARENA_BOARD_TOP } from './arena.js';
 import { boardNamesOf } from './boardNames.js';
 import { isSpireFirst } from './titles.js';   // EG-ZF: First of the Spire's list - its letter's addressees
 import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZF: the post's sender, as the box shows it
-import { egWagerOf } from '../../src/net/egStartLaw.js';   // AUDIT EG V (L8-9): the Wager's decrees, read
-import { EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
+import { egWagerOf } from '../../src/net/eliteGates/egStartLaw.js';   // AUDIT EG V (L8-9): the Wager's decrees, read
+import { EG_RECEIPT_TTL_S } from '../../src/net/eliteGates/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
 
 /** THE SPIRE'S HONOURS on the row (`players.eg_honours`), a bit each, in section 19's table's order - each a title of
  *  the same id (src/net/identityToken.js TITLES). */

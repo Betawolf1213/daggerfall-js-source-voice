@@ -574,15 +574,15 @@ const NO_FOG_RANGE = new Float32Array([0, 1]);
  * own fragment stage with three things more, made from TELEGRAPH_FS's text (each needle asserted - the gate's program is
  * the same bytes it was, and every pin on it stands):
  *   READABLE IN THE FOG - `uFogFloor` (floor, within, ease): within `within` metres a shape keeps a fog visibility of at
- *     least `floor`, eased out past it (world/egLook.js egFogKept - the same numbers), so the Shade's fog and the Cairn's
+ *     least `floor`, eased out past it (world/eliteGates/egLook.js egFogKept - the same numbers), so the Shade's fog and the Cairn's
  *     haze never fade a warning;
  *   `port:telegraphFill` - `uFillK`, the fill's opacity (0.5 to 1); the line is never thinned by it;
  *   `port:dangerPalette`'s style bit - `uLook`: 1 a second dark keyline outside the first, 2 a 45-degree hatch through the
- *     fill (world/egLook.js EG_LOOK_BIT). Its colours ride the pass's existing uEdgeCol and uColor;
+ *     fill (world/eliteGates/egLook.js EG_LOOK_BIT). Its colours ride the pass's existing uEdgeCol and uColor;
  *   THE HAVEN GRAMMAR (section 25.5) - a pool of its own, TELEGRAPH_POOL_HAVEN: gold and lit (never the darkened floor
  *     burning ground is), its line bright, a dark keyline outside it and chevrons flowing inward to its heart - so a haven
  *     never relies on gold against red (a deuteranopia pair);
- *   EG-ZD (2026-10-12, section 13.2 - an EG-H1 departure retired): THE FEINT'S DASHED FADE - `uLook` 4 (world/egLook.js
+ *   EG-ZD (2026-10-12, section 13.2 - an EG-H1 departure retired): THE FEINT'S DASHED FADE - `uLook` 4 (world/eliteGates/egLook.js
  *     EG_LOOK_BIT.dash): a cut blow's whole mark broken into stripes as it fades, Feud-Arc section 7.3's own grammar
  *     (render/foeTelegraph.js TELL5 - `step(0.5, fract((across + along) * 2.5))`, here across the court's own axes the
  *     hatch's other way), so a feint reads dashed and never as a blow still to come.
@@ -833,7 +833,7 @@ export class GateTelegraphRenderer {
 
   /**
    * EG-ZG (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 11.7 - EG6b): THE TELEGRAPHS PER FIGHT FLOOR, the
-   * Spire's stage alone. `plan` world/egTelegraph.js egFloorPlan's answer - `{ draws, buf, n }`: the frame's clipped floor
+   * Spire's stage alone. `plan` world/eliteGates/egTelegraph.js egFloorPlan's answer - `{ draws, buf, n }`: the frame's clipped floor
    * triangles in one buffer (uploaded once here) and each shape-floor draw in THE TELEGRAPH BUDGET's order, mine last.
    * A floor's draw is the gate's own `draw` over that floor's triangles at its height (this pass's vertex array and count
    * lent to the floor's for the call, the floor's circle its court - `f.over` - so its rim, the ring's and the spokes'
@@ -888,7 +888,7 @@ export class GateTelegraphRenderer {
    * AUDIT EG V (L6-5; Elite-Gates.md sections 11.9 and 29, EVERY ALLOCATION HAS AN OWNER): every GL object this pass made let
    * go - its program, its three vertex arrays and their buffers (the quad's, the walkways' strip, EG-ZG's fight floors' growing
    * DYNAMIC buffer) - once; a destroyed pass draws nothing. The breach's fight frees its own at every way out of the Spire
-   * (scenes/egFight.js leave); the Burning Court's and the Hour's are a screen's, kept.
+   * (scenes/eliteGates/egFight.js leave); the Burning Court's and the Hour's are a screen's, kept.
    */
   destroy() {
     const gl = this.gl;

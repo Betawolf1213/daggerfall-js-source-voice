@@ -83,7 +83,7 @@
 // number at the Legendary band's TOP, as the Regalia's and the Brass's
 // (the Spire's top drop). No resistance on any piece: the set's 2-piece
 // tier raises every one. It rolls no drop of its own - a Redoubt's
-// spoils decide WHETHER (systems/egSpoils.js rollEgSpoils) and
+// spoils decide WHETHER (systems/eliteGates/egSpoils.js rollEgSpoils) and
 // mintPanoplyPiece picks WHICH; the Broker's weekly sink mints one by
 // its id (panoplyPieceById, the pay law's EG_PANOPLY_IDS).
 // ═══════════════════════════════════════════════════════════════════
@@ -96,7 +96,7 @@ import { affixesWorth, validAffix, AFFIX_RANGES, registerAethericLore } from './
 import { SKILLS } from './skills.js';
 import { SIGIL_POWER_MAX, SIGIL_BANDS } from './sigil/sigil.js';
 import { setPieceKind, setById, raidSetOf } from './sigil/sigilSets.js';   // AUDIT SET D6: the kinds a set counts, for the wire's cross-check
-import { EG_PANOPLY_IDS } from '../net/egPay.js';   // EG15: the nine ids the account service's sink sells by (pure, no imports)
+import { EG_PANOPLY_IDS } from '../net/eliteGates/egPay.js';   // EG15: the nine ids the account service's sink sells by (pure, no imports)
 
 /** The tier's id, as `item.rarity` wears it. */
 export const AETHERIC = 'aetheric';
@@ -278,7 +278,7 @@ export const NUMIDIUM_SET_PIECES = Object.freeze([
  *  the Legendary band's TOP and the Spire-Saber's blow the sigil's greatest (the Regalia's and the Brass's measure: the
  *  Spire's top drop - "No Gilded piece"). NO RESISTANCE on any piece: Battlemage's Bearing, the 2-piece tier, raises
  *  every one, so the set alone stands at +15 an element at most, far under the saving throw's immunity (the Regalia's
- *  AUDIT FINAL lesson). Each record's id is `panoply-<key>`, the pay law's (net/egPay.js EG_PANOPLY_IDS). */
+ *  AUDIT FINAL lesson). Each record's id is `panoply-<key>`, the pay law's (net/eliteGates/egPay.js EG_PANOPLY_IDS). */
 const mithril = (key, name, group, templateIndex, affixes, lore) => record(`panoply-${key}`, name, group, templateIndex, 'panoply', 'Mithril', SIGIL_POWER_MAX, affixes, lore);
 export const PANOPLY_SET_PIECES = Object.freeze([
   mithril('warhelm', "The Battlemage's Warhelm", 'Armor', 107, [t('armor'), t('stat', 'intelligence'), t('skill', SKILLS.Destruction)],
@@ -420,7 +420,7 @@ export function rollNumidiumPiece(rolls = Math.random) {
   return mintAetheric(NUMIDIUM_SET_PIECES[Math.min(NUMIDIUM_SET_PIECES.length - 1, Math.floor(rolls() * NUMIDIUM_SET_PIECES.length))]);
 }
 
-/** EG15, WHICH PANOPLY PIECE (systems/egSpoils.js rollEgSpoils, once its own draw - net/egPay.js egPanoplyHit, or the
+/** EG15, WHICH PANOPLY PIECE (systems/eliteGates/egSpoils.js rollEgSpoils, once its own draw - net/eliteGates/egPay.js egPanoplyHit, or the
  *  service's pity - has said one drops): one of the nine at even odds, off ONE draw of `rolls`. It decides nothing about
  *  WHETHER: no chance of its own, so the pay law's odds and the service's pity count stay the one word on a drop. */
 export function mintPanoplyPiece(rolls = Math.random) {
@@ -428,7 +428,7 @@ export function mintPanoplyPiece(rolls = Math.random) {
   return mintAetheric(PANOPLY_SET_PIECES[Math.max(0, Math.min(n - 1, Math.floor(rolls() * n) || 0))]);
 }
 /** EG15, THE SINK'S PIECE (the Broker's weekly sale of the buyer's choosing, the account service's `eg_sink`): the piece
- *  the pay law names by its id (net/egPay.js EG_PANOPLY_IDS), freshly minted - null for any other id. */
+ *  the pay law names by its id (net/eliteGates/egPay.js EG_PANOPLY_IDS), freshly minted - null for any other id. */
 export function panoplyPieceById(id) {
   const r = EG_PANOPLY_IDS.includes(id) ? aethericById(id) : null;
   return r ? mintAetheric(r) : null;

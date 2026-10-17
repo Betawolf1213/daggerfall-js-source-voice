@@ -140,7 +140,7 @@ export function createPortalGates({
     open, mine, applyOwner, tick, wireRecord, forgetSteps,
     /** The vortexes, drawn with the street's flats. */
     batches: () => { const more = _also?.(); return more?.length ? [...fx.batches(), ...more] : fx.batches(); },
-    /** EG-F: another pool's portals drawn with these, on the same axis - the Elite call's (scenes/egCall.js). */
+    /** EG-F: another pool's portals drawn with these, on the same axis - the Elite call's (scenes/eliteGates/egCall.js). */
     drawAlso(batchesOf) { _also = batchesOf; },
     /** Every portal, for the tests. */
     get gates() { return gates; },

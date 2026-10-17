@@ -11,7 +11,7 @@ This page is to the Spire what `Super-Dungeons-Look.md` (SD-LOOK) is to the Hour
 is dark, structure does not glow, light appears only where it means something (`Elite-Gates.md` section 25.2's five
 lights), every surface reads as Daggerfall pixel art (SD-LOOK's pixel law: painted in code through ramps, about 32
 texels a metre, NEAREST, features 4-8 texels wide, every texel quantized). Nothing here touches the law: the hall spec
-(`net/egLaw.js`), the collider (`world/egHall.js` `egCircleColliderTris`), the clamps and the relay are as they were, so
+(`net/eliteGates/egLaw.js`), the collider (`world/eliteGates/egHall.js` `egCircleColliderTris`), the clamps and the relay are as they were, so
 no relay or account version moves for the look.
 
 ## What was wrong (the lab, 2026-10-15, `spire.html`, before)
@@ -22,7 +22,7 @@ The Spire was the Hour's island kit in four colours. Measured on the built circl
   the Hour's grade, in all four. The bands differed only in their textures' hue.
 - **Discs in a haze.** Plates and courts were the Hour's `realmIsland`: a 48-gon with the Hour's brass gear teeth on its
   rim (55-60% of a circle's triangles) and a 0.5 m lip. Nothing hung under them, nothing stood near them, nothing drifted
-  past them. The Spire's underside model (`world/egUnderside.js`) drew only during the stair's fall.
+  past them. The Spire's underside model (`world/eliteGates/egUnderside.js`) drew only during the stair's fall.
 - **Box halls.** Passages were axis-aligned slabs with a flat lid; the kits' dress 2-5 boxes; a chamber's ring wall 32
   one-sided quads; the end plate's door two posts and a lintel.
 - **The Hour's motifs.** The span pieces wore the Steps' clock faces; the textures were the Hour's painters (flags, ashlar,
@@ -45,19 +45,19 @@ Five layers, near to far, each its own module and its own budget:
 
 | layer | what | where it is built | drawn |
 |---|---|---|---|
-| **1 THE GROUND** | the law's floors, walls and vaults, dressed as the academy: cornices for rims, architecture for passages and chambers | `world/egHall.js` (the circle's mesh, as today) | the circle's one mesh, occluders as today |
-| **2 THE RUIN** | everything that is the academy but not the law: the foundations hanging under every floor, column rings and arches round the courts and plates, statues, banners, the brazier-columns that carry the lamps, a stone bridge's arches under every way | `world/egRuin.js` (new, pure - built in the swap's worker with the circle) | one mesh a hall, `noShadow`, culled a hall at a time |
-| **3 THE WRECK** | the torn wings drifting 120-450 m out from each hall; the sealed Spire overhead | `world/egVista.js` (new, pure) | one mesh a band (`noShadow`), placed about the hall the eye stands in |
-| **4 THE AIR** | motes (embers, soul-motes, moon-dust, sparks and ash), the halos of the lamps and fixtures | `render/egMotes.js` (new), `render/superDungeon/sdHalo.js` (reused) | one draw each |
-| **5 THE SKY** | each band's realm painted into an octahedral map: its horizon, its deep, its landmarks | `render/egSkyMap.js` (new, SD5b's law) | one triangle at the far plane |
+| **1 THE GROUND** | the law's floors, walls and vaults, dressed as the academy: cornices for rims, architecture for passages and chambers | `world/eliteGates/egHall.js` (the circle's mesh, as today) | the circle's one mesh, occluders as today |
+| **2 THE RUIN** | everything that is the academy but not the law: the foundations hanging under every floor, column rings and arches round the courts and plates, statues, banners, the brazier-columns that carry the lamps, a stone bridge's arches under every way | `world/eliteGates/egRuin.js` (new, pure - built in the swap's worker with the circle) | one mesh a hall, `noShadow`, culled a hall at a time |
+| **3 THE WRECK** | the torn wings drifting 120-450 m out from each hall; the sealed Spire overhead | `world/eliteGates/egVista.js` (new, pure) | one mesh a band (`noShadow`), placed about the hall the eye stands in |
+| **4 THE AIR** | motes (embers, soul-motes, moon-dust, sparks and ash), the halos of the lamps and fixtures | `render/eliteGates/egMotes.js` (new), `render/superDungeon/sdHalo.js` (reused) | one draw each |
+| **5 THE SKY** | each band's realm painted into an octahedral map: its horizon, its deep, its landmarks | `render/eliteGates/egSkyMap.js` (new, SD5b's law) | one triangle at the far plane |
 
-The **air and light** (fog, trilight, key, grade, the lamps' tint) become a table a band (`world/egAtmos.js`), and the
+The **air and light** (fog, trilight, key, grade, the lamps' tint) become a table a band (`world/eliteGates/egAtmos.js`), and the
 **lords** are drawn oversized (section 9).
 
 ## 1. The bands
 
-Each band is one art direction carried through every layer. The ramps are section 25.1's (`world/egBandArt.js`
-`EG_BAND_RAMPS`); the forms below are the kit's (`world/egKit.js` `EG_KIT_STYLE`).
+Each band is one art direction carried through every layer. The ramps are section 25.1's (`world/eliteGates/egBandArt.js`
+`EG_BAND_RAMPS`); the forms below are the kit's (`world/eliteGates/egKit.js` `EG_KIT_STYLE`).
 
 ### 1.1 The Broken Galleries (circles 1-5) - the academy's upper halls, still over the Deadlands
 
@@ -129,7 +129,7 @@ A Brink hall (circles 6, 11 and 16, slot 1 - `Elite-Gates.md` section 8.9) tears
 first third wears the band above's dress, its last third the band below's, and the middle mixes them by the hall's own
 seed, piece by piece (a column of the one beside a thorn of the other). The atmosphere and sky are the new band's.
 
-## 2. THE GROUND (`world/egHall.js`)
+## 2. THE GROUND (`world/eliteGates/egHall.js`)
 
 The law's surfaces exactly where they are; only how they are dressed changes.
 
@@ -152,10 +152,10 @@ The law's surfaces exactly where they are; only how they are dressed changes.
 - Every new drawn piece outside the floors is marked as an occluder (EG-ZN's law - the camera dithers it); nothing new
   rises unmarked on a floor; no vertex inside the collider's proxy.
 
-## 3. THE RUIN (`world/egRuin.js`, new, pure)
+## 3. THE RUIN (`world/eliteGates/egRuin.js`, new, pure)
 
 `buildEgRuinParts(seed, c, geo, { lite })` answers one `{ h, model, sphere }` a hall of the circle: a mesh of
-everything the academy is that the law is not. Built in the swap's worker beside the circle (`world/egCircleParts.js`
+everything the academy is that the law is not. Built in the swap's worker beside the circle (`world/eliteGates/egCircleParts.js`
 `egCircleBuild` carries `ruins`), on the main thread for the first stand, byte for byte the same. **None of it is a
 collider; all of it stands outside every floor's footprint in plan, or below every floor's top** (no visual larger than
 the law), and nothing of it pokes through another floor of the hall (a test against every disc, band, lane and ramp).
@@ -180,7 +180,7 @@ floor, so it never lies about where the floor ends.
 ### 3.3 The column rings and the brazier-columns
 
 - Round every court and isle: columns on a ring at the rim plus 2.5 m, one each 6-9 m of arc, never within 4 m of a way
-  onto the disc (the ways' ends: `net/egLaw.js` `egMoltenRim`'s `ends`, the passages' mouths, the ring walls' gaps),
+  onto the disc (the ways' ends: `net/eliteGates/egLaw.js` `egMoltenRim`'s `ends`, the passages' mouths, the ring walls' gaps),
   rising from 20-40 m below to heights the seed draws (broken drums at their tops; one in three whole, carrying an
   entablature fragment to its neighbour).
 - **The lamps move onto them.** `egCircleLights` stands each court's and plate's lamps on a column of its ring, at the
@@ -203,13 +203,13 @@ One spire a foundation, columns every 12 m, no statues or banners, bridges' arch
 At most 20,000 triangles a hall and 14 records (14 draws) for the hall the eye stands in; the other halls culled by
 sphere (they stand 500 m apart). Built in the worker in under 40 ms a circle.
 
-## 4. THE WRECK (`world/egVista.js`, new, pure)
+## 4. THE WRECK (`world/eliteGates/egVista.js`, new, pure)
 
 - A band's set of torn wings (section 1's), each a low-poly model (200-1,500 triangles), placed on a ring 120-450 m
   from each hall's centre, 30-160 m above or below its floors, never inside the cone from any floor to the door or the
   Court's lord, turning slowly about its own axis (a turn a few minutes), drawn `noShadow` with the hall's fog
   (they melt into the haze with distance - that is the depth).
-- **The sealed Spire overhead**: `world/egUnderside.js`'s model, stood in the hall at the band's angular size
+- **The sealed Spire overhead**: `world/eliteGates/egUnderside.js`'s model, stood in the hall at the band's angular size
   (`EG_SKIES` `underside`), scaled so it stands inside the far plane, its rim's light the band's deep. The sky's painted
   disc goes (one underside, never two).
 - One mesh a band (its wings) plus the underside, made once a band (when the band's dress goes up), freed with it.
@@ -217,7 +217,7 @@ sphere (they stand 500 m apart). Built in the worker in under 40 ms a circle.
 
 ## 5. THE AIR
 
-- **`render/egMotes.js`** (new, SD14c's motion law made a generator of a layout and its colours): a band's motes about
+- **`render/eliteGates/egMotes.js`** (new, SD14c's motion law made a generator of a layout and its colours): a band's motes about
   the hall the eye stands in (the hall's centre handed each frame): the Galleries' embers rising and ash falling, the
   Cairn's soul-motes rising slow, the Shade's moon-dust falling, the Wellhead's sparks and ash; 600-1,000 points, one
   draw, additive, depth-tested, fogged, the band's own colours under L2 except the embers' and sparks' hottest (L3,
@@ -227,7 +227,7 @@ sphere (they stand 500 m apart). Built in the worker in under 40 ms a circle.
   classic set's bloom.
 - **The Cairn's mist sheets**: the band's mist under every rim, below the cornice's foot (EgMistPass's sheet, held still).
 
-## 6. THE SKY (`render/egSkyMap.js`, new)
+## 6. THE SKY (`render/eliteGates/egSkyMap.js`, new)
 
 SD5b's law: a 512 x 512 octahedral map painted a quadrant a frame by a band's painter (its own fragment shader, every
 texel through `SD_PIXEL_GLSL`), fetched by one triangle at the far plane with the band's gain against its fog. Each band's
@@ -237,7 +237,7 @@ below; soul-stars and the aurora; the moon with its craters and halo; the erupti
 stars. Live over the map: only slow drifts (the ash, the aurora, the currents) on whole cycles of a period, so the sky
 never jumps. The Spire's underside is the wreck's model (section 4), not painted.
 
-## 7. THE ATMOSPHERE (`world/egAtmos.js`, new, pure)
+## 7. THE ATMOSPHERE (`world/eliteGates/egAtmos.js`, new, pure)
 
 A table a band: `fog` (mode, density, colour), `trilight` (sky, equator, ground), `key` (direction, colour, scale), the
 lane's `grade` (`setSceneGrade` - adaptKey, adaptMax, bloom, vignette, contrast), the lamps' tint, the motes' and the
@@ -258,9 +258,9 @@ glass and the Wellhead's basalt black wherever the key did not fall - the archit
 ambient is set from its stone's own brightness (the three dark bands' stone lifted a step - `Elite-Gates.md` section
 25.1), its eye let open wider (the Cairn 1.45, the Shade 2.0, the Wellhead 1.6; the Galleries the Hour's 1.15), and the
 law pinned: a face of a band's middle stone turned from its key, lit by the equator alone at the eye's widest, reads over
-0.012 linear (`test/eglook_atmos.test.js`).
+0.012 linear (`test/world/eliteGates/eglook_atmos.test.js`).
 
-## 8. THE KIT'S RECORDS (`world/egBandArt.js`, `world/egKit.js`)
+## 8. THE KIT'S RECORDS (`world/eliteGates/egBandArt.js`, `world/eliteGates/egKit.js`)
 
 Each band paints the same records in its own archive (`EG_BAND_ARCHIVES`), so every builder names a record and the band's
 dress picks the picture. The records the ground wears today (`EG_DRESS`: floor 0, metal 1, root 2, arena 4, walk 31, edge
@@ -282,7 +282,7 @@ dress picks the picture. The records the ground wears today (`EG_DRESS`: floor 0
 | 71 | `inlay` | the courts' sigil mosaics and the rims' borders: tesserae in the band's accent and metal, laid IN the floor (the floor's own top cut into regions - never a decal over it) |
 | 81 | `chain` | the band's metal in links (the Hour's record 81, the band's own) |
 
-## 9. THE LORDS, OVERSIZED (`scenes/egFight.js`)
+## 9. THE LORDS, OVERSIZED (`scenes/eliteGates/egFight.js`)
 
 The lords and champions stay Daggerfall's own sprites (never a model - Mac). Each is drawn at its PRESENCE: its body's
 scale (`EG_LORDS` - the relay's `bodyR` and the client's hit target, both unchanged) times `EG_LORD_PRESENCE` (1.6 a lord,

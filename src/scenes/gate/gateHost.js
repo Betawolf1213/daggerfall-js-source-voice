@@ -121,7 +121,7 @@ export function hostShapes(s, now, P, out = []) {
  */
 export function createGateHost({ renderer = null, getTexture = null, uploadRecordFrame = null, audio = null, cam = () => null, feet = () => null, player = () => null, land = () => {}, say = () => {}, send = () => false, blowQ = null, centre = null } = {}) {
   // EG-PLAY: THE FLOOR'S CENTRE in the dungeon's frame - the court's (net/gate/gateBrain.js COURT_CENTRE), or an Elite Breach
-  // hall's own origin (world/egHall.js egHallCentre): every place this driver reads or draws is about it
+  // hall's own origin (world/eliteGates/egHall.js egHallCentre): every place this driver reads or draws is about it
   const COURT_CENTRE = centre ?? GATE_COURT_CENTRE;
   const courtToDungeon = (x, y, z) => [COURT_CENTRE[0] + x, COURT_CENTRE[1] + y, COURT_CENTRE[2] + z];
   /** the fight this driver is on (its day); each body standing by its number - its look, its batch, what it has cued,

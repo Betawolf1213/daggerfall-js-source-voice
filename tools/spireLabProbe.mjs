@@ -20,8 +20,8 @@ import { createServer } from 'vite';
 import { chromium } from 'playwright';
 import { writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
-import { EG_EDGE_LINE } from '../src/world/egLook.js';
-import { EG_DANGER_PALETTES } from '../src/ui/egAccess.js';   // the palettes' one home since AUDIT EG III
+import { EG_EDGE_LINE } from '../src/world/eliteGates/egLook.js';
+import { EG_DANGER_PALETTES } from '../src/ui/eliteGates/egAccess.js';   // the palettes' one home since AUDIT EG III
 
 process.env.PLAYWRIGHT_BROWSERS_PATH ??= '/opt/pw-browsers';
 const shots = process.env.SPIRE_SHOTS ?? '/tmp';

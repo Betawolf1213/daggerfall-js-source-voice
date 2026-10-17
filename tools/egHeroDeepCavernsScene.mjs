@@ -8,11 +8,11 @@
 // standing out of the lake. Written on the authoring kit (tools/egHeroKit.mjs) and the reference's mesh and writer
 // (tools/egRefFragScene.mjs refFragMesh, writeRefFragFbx) - no game data, no third-party art, no trigonometry - and committed
 // as the .fbx tools/fragBake.mjs bakes (tools/bakeEgHeroDeepCaverns.mjs). Re-run it and the same bytes come out
-// (test/eghero_wellhead.test.js holds it to them).
+// (test/tooling/eghero_wellhead.test.js holds it to them).
 //
-// THE ENVELOPE - net/egFragLaw.js egFragChamber('deep', r, R) as the halls call it (the court disc it stands in for):
+// THE ENVELOPE - net/eliteGates/egFragLaw.js egFragChamber('deep', r, R) as the halls call it (the court disc it stands in for):
 //   frame      1 unit 1 m, Z up, the course along +Y; the mouth at Y 0 centred on X 0, the exit at Y 36
-//   fight      the low floor a circle of R 16 m (the Deepway's chamber, net/egLaw.js `deepway`: R 1600) about (0, 18), the
+//   fight      the low floor a circle of R 16 m (the Deepway's chamber, net/eliteGates/egLaw.js `deepway`: R 1600) about (0, 18), the
 //              magma lake 0.8 m under its kerbed rim; THE MAGMA TIDE (`tide`, a disc of r 16 over it - section 11.2: the low
 //              floor floods 15 s in 60, told 5 s ahead); the two dry floors (play `balcony` - egFragChamber's deep balconies
 //              250 cm up, from R - 3 m to R + 3.5 m, here two, east and west, each on two stairs): no point of the low

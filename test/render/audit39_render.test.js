@@ -107,7 +107,7 @@ test('audit39 F49: the emissive table is TextureReader.emissiveTextures, verbati
 // no longer SKIPPED - GetFireWallColors32 is ported (formats/baseImageFile.js) and the arm takes it, TextureReader.cs:303's
 // `if (settings.archive != FireWallsArchive)` and :309's `else if (hasReferenceTexture)`: every other emissive record
 // still reuses its albedo, and 356 lerps from FIRE_WALL_COLOR at FIRE_WALL_SCALE over the classic albedo, never on a
-// stand-in (test/egz_art.test.js drives it on synthetic bytes).
+// stand-in (test/systems/eliteGates/egz_art.test.js drives it on synthetic bytes).
 test('audit39 F49: the upload arm reuses the ALBEDO, after the window arm, and the fire walls take GetFireWallColors32', () => {
   const s = src('src/scenes/dataPipeline.js');
   // TextureReader.cs:301-308 "Just reuse albedo map for basic colour

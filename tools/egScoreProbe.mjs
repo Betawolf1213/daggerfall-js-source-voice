@@ -1,7 +1,7 @@
 // EG-G2 - THE SCORE OF THE SPIRE, PLAYED BY THE GAME'S OWN PLAYER IN A REAL BROWSER, RENDERED AND MEASURED (the Hour's own
 // probe's method, tools/sdScoreProbe.mjs; bible/11-Multiplayer/Elite-Gates.md section 26).
 //
-// node holds the score's shape and its law (test/eglook_score.test.js); what node cannot answer is what the songs SOUND
+// node holds the score's shape and its law (test/systems/eliteGates/eglook_score.test.js); what node cannot answer is what the songs SOUND
 // like through the game's own song player and FM bank: whether every song sounds, whether the mix stays under its ceiling
 // at the highest MusicVolume, whether the war grows by phase and the count and the Valkynaz stand over it, whether the
 // halls sit under the fights, and whether the end decays inside the time the law gives it. So: the repo's own modules
@@ -27,7 +27,7 @@ const KEYS = ['hall', 'yard', 'set', 'lord1', 'lord2', 'lord3', 'valk', 'redoubt
 
 const PAGE = `<!doctype html><html><body><script type=module>
 import { SongPlayer } from '/src/systems/song/songPlayer.js';
-import { spireScoreSongs, SPIRE_END_MS } from '/src/systems/egScore.js';
+import { spireScoreSongs, SPIRE_END_MS } from '/src/systems/eliteGates/egScore.js';
 const RATE = 44100, CTX = { band: ${BAND}, motif: ${BAND * 3}, valk: ${BAND * 3 + 3}, seed: 1 };
 window.endS = SPIRE_END_MS / 1000;
 window.render = async (key, seconds) => {

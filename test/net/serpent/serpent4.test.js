@@ -257,7 +257,7 @@ test('SERPENT4 a hand\'s own weapons ("also let players on the ship be able to h
   assert.deepEqual(validSerpentIn({ k: 'hit', d: 12, z: 0, r: 1 }), { k: 'hit', d: 12, z: 0, r: 1 });
   assert.deepEqual(validSerpentIn({ k: 'hit', d: 12, z: 0 }), { k: 'hit', d: 12, z: 0 });
   assert.equal(validSerpentIn({ k: 'hit', d: 12, z: 0, r: 2 }), null);
-  assert.ok(src('../server/src/index.js').includes('SERPENT_SEAM.hit(f, a.sub, m.d, m.r, pose, now, null, { z: m.z })'), 'the relay hears its `r`');   // PIN MOVED (EG-H3, EG3): through THE BOSS SEAM (net/bossSeam.js - the brain's own law, its frames byte for byte: test/egseam_law.test.js)
+  assert.ok(src('../server/src/index.js').includes('SERPENT_SEAM.hit(f, a.sub, m.d, m.r, pose, now, null, { z: m.z })'), 'the relay hears its `r`');   // PIN MOVED (EG-H3, EG3): through THE BOSS SEAM (net/bossSeam.js - the brain's own law, its frames byte for byte: test/net/eliteGates/egseam_law.test.js)
   assert.ok(src('../src/net/bossSeam.js').includes('applySerpentHit(f, sub, d, o.z, pose, now, r === 1)'), 'the seam hands the brain the word\'s `r` 1 as a hand\'s own weapons');
 });
 

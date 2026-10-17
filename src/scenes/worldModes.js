@@ -119,10 +119,10 @@ import { applyFog, DUNGEON_FOG } from '../render/underwaterFog.js';
 import { gateArenaLocation, gateArenaBlocks, isGateArena, buildCourtModel, buildWalkSlabModel, walkSlabs, slabMatrix, courtFloorTris, courtLightsNear, withCourtLights, courtDoorAabb, COURT_ARCHIVE, COURT_FOG, COURT_TEXT } from '../world/gate/gateArena.js';   // WB3b: the Burning Court - a level made in code on this host's dungeon arm
 import { isSdRealm, sdRealmLocation, sdRealmBlocks, buildRealmModel, realmColliderTris, realmLightsWith, realmLighting, SD_REALM_ARCHIVE, SD_REALM_FOG } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour, a made level as the court is
 import { realmArt } from '../world/superDungeon/sdRealmArt.js';   // SD5a: its art, made in code
-import { isEgHall, egHallLocation, egHallBlocks, egLightsWith, egHallLighting, egHallFog, egHallGrade } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
-import { egRoomKey } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
-import { createEgCircleHost } from './egCircleHost.js';   // HOST-SPLIT (EG-LOOK): an Elite Breach's circle on this screen, moved out of this host
-import { EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
+import { isEgHall, egHallLocation, egHallBlocks, egLightsWith, egHallLighting, egHallFog, egHallGrade } from '../world/eliteGates/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
+import { egRoomKey } from '../net/eliteGates/egLaw.js';   // EG-PLAY: its room, its halls, its words
+import { createEgCircleHost } from './eliteGates/egCircleHost.js';   // HOST-SPLIT (EG-LOOK): an Elite Breach's circle on this screen, moved out of this host
+import { EG_OCCLUDE_CHEST_M } from './eliteGates/egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
 import { madeLevelOf } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): which made level stands under the player - one law
 import { SD_HOUR_GRADE } from '../world/superDungeon/sdLook.js';   // SD-LOOK: the Hour's grade on the lane
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
@@ -9340,7 +9340,7 @@ export function createWorldModes(host) {
     const hit = { dfLocation, blocksFile: sdRealmBlocks(blocks), sdRealm: r.s, sdHollow: r.hollow ?? null, climateBase: site?.climateBase ?? 2, season: site?.season ?? 0, group: sdRoomKey(r.s), door: null, dfBlock: null, recordIndex: -1 };
     return gatedTransition((live) => dungeonTransition(hit, [], true, live));
   }
-  /** EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): INTO AN ELITE BREACH'S CIRCLE (world/egHall.js) -
+  /** EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): INTO AN ELITE BREACH'S CIRCLE (world/eliteGates/egHall.js) -
    *  the Hour's law: this host's dungeon arm with a level made in code, entered from the open world where the member
    *  answered the call (the world host steps the veil first - scenes/world.js egEnter). `r` is { b: the breach, seed: its
    *  seed, c: the circle, site: the climate and region where it was answered }. The breach's room is the relay's
@@ -9593,12 +9593,12 @@ export function createWorldModes(host) {
     ctx.addActivationNamer((key) => ((typeof key === 'string' && key.startsWith('spoil')) ? host.spoilName?.(key) ?? null : null));
   }
   /** EG-PLAY: AN ELITE BREACH'S CIRCLE on this screen - its mesh, its band's dress, its waystones, its portcullises, its
-   *  occluders and THE SWAP (scenes/egCircleHost.js - HOST-SPLIT, EG-LOOK: moved out of this host, its seams read here). */
+   *  occluders and THE SWAP (scenes/eliteGates/egCircleHost.js - HOST-SPLIT, EG-LOOK: moved out of this host, its seams read here). */
   const egCircle = createEgCircleHost({ renderer, host, wm: { get mode() { return mode; }, get dungeonCtx() { return dungeonCtx; }, get dungeonLoc() { return dungeonLoc; } } });
   const { standEgHall, egCircleFrame, egPrebuild, egSwapCircle, egBandsDown, egOcc, egSwap } = egCircle;
   /** EG-ZN (2026-10-12, Elite-Gates.md section 11.8): THE OCCLUDERS DITHERED, this frame - after its beginFrame (the shadow
    *  record open) and before the dynamic draws: the circle's rock a ray from the third-person eye to my body (its pivot and
-   *  its chest) crosses dithered out, the rest of the circle drawn whole (scenes/egOcclude.js). First person, a witness's
+   *  its chest) crosses dithered out, the rest of the circle drawn whole (scenes/eliteGates/egOcclude.js). First person, a witness's
    *  eye and a free camera try nothing, and whatever was dithering comes back whole. */
   function egOccludeFrame(mwv, dt) {
     const feet = mwv?.thirdPerson && mwv.focal && !host.egWitness?.() && !decorTool.flying() ? player.bodyFeetAt?.() ?? player.feetAt() : null;
@@ -9624,7 +9624,7 @@ export function createWorldModes(host) {
     dungeonCtx?.egSpanSafe?.(at);
     return true;
   }
-  // EG-PLAY: IN A HALL OF AN ELITE BREACH THE GATE'S SIX COMBAT SEAMS ARE THE HALL'S FIGHT'S (scenes/egFight.js, through the
+  // EG-PLAY: IN A HALL OF AN ELITE BREACH THE GATE'S SIX COMBAT SEAMS ARE THE HALL'S FIGHT'S (scenes/eliteGates/egFight.js, through the
   // outer host's eg* seams) - the dungeon host's gate arms (the boss's, the crystals' and the host's bodies, and the doors
   // their blows leave through) serve the hall unchanged; everywhere else each is the gate's own, as it was. And the
   // hall's bodies ride the dungeon's billboards with the rest.
@@ -11062,7 +11062,7 @@ export function createWorldModes(host) {
       { const _fog = dungeonFog(!!renderer.lightingLane, betterAmbience.dungeonFog() ?? DUNGEON_FOG); applyFog(renderer, dungeonCtx.underwaterFogSettings?.(cam.pos[1], player.pos, _fog) ?? _fog); }
       if (isArenaFloor(dungeonLoc)) applyFog(renderer, dungeonFog(!!renderer.lightingLane, ARENA_FLOOR_FOG));   // ARENA2: the night air over the colosseum, thin enough to see the far tiers
       if (isSdRealm(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, SD_REALM_FOG, _hourFog), _hourFogColor); renderer.setSceneGrade?.(SD_HOUR_GRADE); }   // SD5a: the Hour's brass haze over the dungeon's; SD-LOOK: and its grade - the eye held down, the void black   // AUDIT SD IV (R5): into kept ones, nothing made
-      if (isEgHall(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, egHallFog(dungeonLoc.egCircle), _hourFog), _hourFogColor); renderer.setSceneGrade?.(egHallGrade(dungeonLoc.egCircle)); egCircleFrame(mwv.eye); }   // EG-PLAY: the Spire's haze; EG-LOOK: its band's own haze and grade (world/egAtmos.js); its portcullises stood or sunk, its ruin and wreck placed about the eye (scenes/egCircleHost.js)
+      if (isEgHall(dungeonLoc)) { applyFog(renderer, dungeonFog(!!renderer.lightingLane, egHallFog(dungeonLoc.egCircle), _hourFog), _hourFogColor); renderer.setSceneGrade?.(egHallGrade(dungeonLoc.egCircle)); egCircleFrame(mwv.eye); }   // EG-PLAY: the Spire's haze; EG-LOOK: its band's own haze and grade (world/eliteGates/egAtmos.js); its portcullises stood or sunk, its ruin and wreck placed about the eye (scenes/eliteGates/egCircleHost.js)
       if (isGateArena(dungeonLoc)) applyFog(renderer, dungeonFog(!!renderer.lightingLane, COURT_FOG));   // WB3b: the Deadlands' air in the court, over the dungeon's   // AUDIT-EL F6   // BA1: FoggyDungeons' linear fog is the base the water murk overrides
       // AUDIT DISC19: THE CANDLE BURNS WHITE UNDERGROUND TOO. One shared
       // colour lit every light down here - the dungeon's 0.8, or the lane's
@@ -11103,7 +11103,7 @@ export function createWorldModes(host) {
         mwViewDrawBody(canvas, { proj, view, eye: mwv.eye, feet: player.bodyFeetAt(), yaw: player.bodyYawFor(cam.yaw), viewYaw: cam.yaw });   // MW-D24; DISC18: the body at the capsule's own feet, not the camera's smoothed ones
         host.drawPeerBodies?.({ proj, view, eye: mwv.eye });   // MWBODY1: the others' bodies, after the player's own
       } finally { renderer.flushCharacterSpriteBatch?.(); }   // MWNPC2: every body's picture in one bind of the sprite target
-      if (isEgHall(dungeonLoc)) dungeonCtx.egSpanCull?.(proj, view);   // EG-G2: the Spire's pieces batched a kind and culled against this frame's frustum (scenes/egPieceBatch.js) - every one noShadow, so the shadow record never moves with a cull
+      if (isEgHall(dungeonLoc)) dungeonCtx.egSpanCull?.(proj, view);   // EG-G2: the Spire's pieces batched a kind and culled against this frame's frustum (scenes/eliteGates/egPieceBatch.js) - every one noShadow, so the shadow record never moves with a cull
       if (isEgHall(dungeonLoc)) egOccludeFrame(mwv, dt);   // EG-ZN (section 11.8): the rock between the camera and my body dithered out
       if (dungeonCtx.staticBatch) renderer.drawMesh(dungeonCtx.staticBatch, BATCH_IDENTITY, null);   // PERF5: the level's static models, one call per texture
       for (const d of dungeonCtx.drawList) if (!d._batched) renderer.drawMesh(d.mesh, d.matrix, d.texRemap ?? dungeonCtx.texRemap);   // AUDIT PRE-MERGE 1003 W4: a climate-free model's own table
@@ -11113,7 +11113,7 @@ export function createWorldModes(host) {
       drawArenaWall(); if (isArenaFloor(dungeonLoc)) host.drawSky?.(cam.yaw, cam.pitch + (host.climbFeel?.pitch?.() ?? 0), fieldOfView() + (host.climbFeel?.fovRad() ?? 0), largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight), renderer.worldViewportPx ?? [0, 0, renderer.gl.drawingBufferWidth, renderer.gl.drawingBufferHeight]);   // ARENA5: the Hall of Champions' plaques - opaque, before the flats; HOTFIX 1003l (live: "the private sessions are missing the sky and the entrance is black"): the floor is drawn as a dungeon, cleared to black - the world's own sky over it now, after the opaque level (it shades only what nothing nearer claimed) and before the flats
       if (isGateArena(dungeonLoc)) host.drawGateBackdrop?.({ proj, view, eye: mwv.eye });   // WB6a: the Deadlands' sea and sky - after the court's solid geometry, so they burn only where they show (PERF2's law), before its flats, so a flat blended over the sky lands on it
       if (isSdRealm(dungeonLoc)) host.drawSdSky?.({ proj, view, eye: mwv.eye });   // SD5b: the Hour's sky - after its islands, before its flats (PERF2's law)
-      if (isEgHall(dungeonLoc)) host.drawEgSky?.({ proj, view, eye: mwv.eye });   // EG-PLAY; EG-G2: the Spire's own sky (render/egSkyPass.js - its band's void and the Spire's underside)
+      if (isEgHall(dungeonLoc)) host.drawEgSky?.({ proj, view, eye: mwv.eye });   // EG-PLAY; EG-G2: the Spire's own sky (render/eliteGates/egSkyPass.js - its band's void and the Spire's underside)
       dungeonCtx.flatAnims.tick(dt);   // FA1
       renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), player.pos));   // TACT4: a foe's wind-up on the ground
       renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)

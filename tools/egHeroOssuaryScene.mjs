@@ -10,7 +10,7 @@
 // kit's shapes (tools/egHeroKit.mjs RINGS, fbm2, grid, lathe, sweep): no game data, no third-party art, no trigonometry -
 // every number IEEE arithmetic, so the test writes the same bytes again. tools/bakeEgHeroOssuary.mjs bakes it.
 //
-// THE ENVELOPE (net/egFragLaw.js egFragPassage('ossuary') - where a hall lays the code-built one, it can lay this):
+// THE ENVELOPE (net/eliteGates/egFragLaw.js egFragPassage('ossuary') - where a hall lays the code-built one, it can lay this):
 //   a passage 28 m along Blender's +Y, its floor 6 m across (x -3..3) at Z 0, 5.6 m of headroom (the kit's `height` 560:
 //   the ceiling clamp's plane); the mouth (socket.in) 6 m by 5.6 m at Y 0, the one exit (socket.out.main) the same at
 //   Y 28, at the mouth's height (the kit's yB 0); a near fight floor Y 0..9 (zA 900) and a far one Y 19..28 (zB 1900),
@@ -64,7 +64,7 @@ const ZC = SPRING - AR * R32[2][1];          // its centre's height (4.6366)
 /** The arch's crown (7.938). */
 export const OSSUARY_CROWN = r4(ZC + AR);
 
-// ── the dress records by name (world/egBandArt.js EG_DRESS) - the slot each mesh lists them in
+// ── the dress records by name (world/eliteGates/egBandArt.js EG_DRESS) - the slot each mesh lists them in
 const SLATE = ['root'], ASHLAR = ['pillar'], BONE = ['brass'], SOUL = ['molten'], GOLD = ['edge'];
 
 // ── noise, always outward
@@ -346,7 +346,7 @@ export function ossuaryScene() {
   // the soul-wisps: each a figure of eight over its fight floor (section 11.2 - they tether only there)
   add(refFragMesh('hazard.wisp.near.per9000.ph4500')).level(-2, 1.5, 2, 7.5, 1.2);
   add(refFragMesh('hazard.wisp.far.per11000.ph5500')).level(-2, 20.5, 2, 26.5, 1.2);
-  // the bone bridges: the Crumble's law in the Ossuary's dress (net/egSpanLaw.js `bone`)
+  // the bone bridges: the Crumble's law in the Ossuary's dress (net/eliteGates/egSpanLaw.js `bone`)
   ['a', 'b', 'c'].forEach((k, i) => { const [y0, y1] = OSSUARY.BONES[i]; add(refFragMesh(`course.bone.${k}`)).box(-OSSUARY.BONE_W / 2, y0, -0.6, OSSUARY.BONE_W / 2, y1, 0); });
   // the alcove: the sealed loculus of the far floor's west bay (a page of the Annals behind a false wall)
   add(refFragMesh('alcove.seam.page.loculus')).box(-4.2, 24.95, PLINTH, -3.4, 25.95, 2.45);

@@ -7,9 +7,9 @@
 // tools/fragBake.mjs's, the one every authored fragment goes through. Its SPEC says what the scene cannot: which fragment
 // it is (`id`), the library kit it belongs to (the Oblivion Caverns - its band, reverb, light and engine follow, net/
 // egFragLaw.js EG_FRAGS), its class, which hero of the kit it is (`variant` - 'reference': the stand-in, which no hall
-// lays - net/egHeroFrags.js), and a chamber's play (a passage names none). The two halves land beside the source:
-// `LAW` (net/egFragLaw.js's record, the relay's - registered in net/egHeroFrags.js) and `MESH` (the client's - registered
-// in world/egHeroFragModel.js), each held to its bytes by test/eg6c_bake.test.js.
+// lays - net/eliteGates/egHeroFrags.js), and a chamber's play (a passage names none). The two halves land beside the source:
+// `LAW` (net/eliteGates/egFragLaw.js's record, the relay's - registered in net/eliteGates/egHeroFrags.js) and `MESH` (the client's - registered
+// in world/eliteGates/egHeroFragModel.js), each held to its bytes by test/tooling/eg6c_bake.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

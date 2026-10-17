@@ -17,11 +17,11 @@
 // frame of what it covers - then open. Shut past VEIL_HOLD_MAX_S it opens on whatever stands. `warm` builds it ahead,
 // in the browser's idle time, so the first step does not pay for its program.
 // EG-ZE (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 7): THE SPIRE'S STAIR - three themes more (`egFall`,
-// `egVeil`, `egCut`), drawn by render/egStairPass.js on its own clock (world/egLights.js EG_STAIR_VEIL: the dither
+// `egVeil`, `egCut`), drawn by render/eliteGates/egStairPass.js on its own clock (world/eliteGates/egLights.js EG_STAIR_VEIL: the dither
 // 0.8 s each way - the fire's law run at that pace), the fall held shut its least, the band's chime as it closes, and
 // the hall it steps to held centred over it (a label of its own beside the canvas).
 // EG-ZO (2026-10-12, Elite-Gates.md section 7): THE FALL PAST THE SPIRE'S UNDERSIDE - the full fall is a camera falling
-// past a modelled underside (world/egUnderside.js), drawn on this canvas in its own pass (render/egStairPass.js): the
+// past a modelled underside (world/eliteGates/egUnderside.js), drawn on this canvas in its own pass (render/eliteGates/egStairPass.js): the
 // underside and its four pictures made A SLICE A TICK from the fall's first frame (never in the tick the veil shuts in,
 // whose end runs the step's own work - THE SWAP), uploaded as one more slice, and every GL allocation of it freed as the
 // fall ends - the veil opened, a look that is not this fall taken, the veil destroyed. The canvas has a depth buffer for
@@ -35,9 +35,9 @@ import { loseGlContext, onPageGone } from '../../render/glRelease.js';   // GL-L
 import { SdVeilRenderer, SD_VEIL_MODE, sdVeilQuarters } from '../../render/superDungeon/sdVeil.js';
 import { midiNote } from '../../systems/gate/gateScore.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../../systems/superDungeon/sdScore.js';
-import { EgStairRenderer, EG_STAIR_MODE } from '../../render/egStairPass.js';   // EG-ZE: THE SPIRE'S STAIR
-import { EG_STAIR_VEIL } from '../../world/egLights.js';
-import { egUndersideParts, egFallCamera } from '../../world/egUnderside.js';   // EG-ZO: THE FALL PAST THE SPIRE'S UNDERSIDE
+import { EgStairRenderer, EG_STAIR_MODE } from '../../render/eliteGates/egStairPass.js';   // EG-ZE: THE SPIRE'S STAIR
+import { EG_STAIR_VEIL } from '../../world/eliteGates/egLights.js';
+import { egUndersideParts, egFallCamera } from '../../world/eliteGates/egUnderside.js';   // EG-ZO: THE FALL PAST THE SPIRE'S UNDERSIDE
 
 /** Over the world and its HUD (z 4, appended after .hud, which it ties and follows - ui/nameLayer.js AUDIT NAME1 F4
  *  maps the page's layers), under the chat and the party (5): a word said as the fire closes is still read. No pointer. */
@@ -87,12 +87,12 @@ export const VEIL_HOUR_CUES = Object.freeze({
   mended: Object.freeze(HOUR_CHIME_MENDED.map((c) => chimePitch(c[3]))),
   chime: 364,
 });
-/** EG-ZE (2026-10-12, Elite-Gates.md section 7): THE SPIRE'S STAIR - its three themes drawn by render/egStairPass.js (the
+/** EG-ZE (2026-10-12, Elite-Gates.md section 7): THE SPIRE'S STAIR - its three themes drawn by render/eliteGates/egStairPass.js (the
  *  full fall past the Spire's underside at a band's first hall, the band's veil at every other step, the plain cut under
- *  reduced motion - world/egLook.js egStairOf), each its mode there; its canvas a third of the device's pixels, drawn
+ *  reduced motion - world/eliteGates/egLook.js egStairOf), each its mode there; its canvas a third of the device's pixels, drawn
  *  pixelated (the Hour's pixel law); the least each stands shut (the fall's, long enough to be seen to fall - the swap's
  *  own work runs inside it); the band's chime as it closes and at a pull's flash (the Concord's chime, the step's own
- *  `chime` pitch - world/egLights.js egStairChime) and the deep wind under the fall; and the hall it steps to, held
+ *  `chime` pitch - world/eliteGates/egLights.js egStairChime) and the deep wind under the fall; and the hall it steps to, held
  *  centred over it while the upload lands. */
 export const VEIL_EG_MODE = Object.freeze({ [VEIL_THEMES.egFall]: EG_STAIR_MODE.fall, [VEIL_THEMES.egVeil]: EG_STAIR_MODE.veil, [VEIL_THEMES.egCut]: EG_STAIR_MODE.cut });
 export const VEIL_EG_SCALE = 1 / 3;

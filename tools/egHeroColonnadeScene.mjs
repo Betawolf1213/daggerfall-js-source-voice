@@ -5,19 +5,19 @@
 // EG-HERO (2026-10-13, Mac: "You have to author the fragments"; bible/11-Multiplayer/Elite-Gates.md sections 11.2 and 11.6).
 // Written from numbers alone (no game data, no third-party art, no trigonometry - tools/egHeroKit.mjs's tables and hash),
 // through the reference's writer (tools/egRefFragScene.mjs writeRefFragFbx), baked by tools/bakeEgHeroColonnade.mjs through
-// tools/fragBake.mjs; test/eghero_galleries.test.js writes it again and holds it to the committed bytes.
+// tools/fragBake.mjs; test/tooling/eghero_galleries.test.js writes it again and holds it to the committed bytes.
 //
 // THE PLACE (section 11.2's row: "a colonnade toppled across the void: drums as steps, arches to run along"): the Galleries'
 // great colonnade come down across the void. The company enters under a standing arch, onto a length of its entablature
 // still riding two columns whose feet are gone into the dark; crosses on a drum lying where it fell (the course's still
 // piece) and on two drums ROLLING back and forth along fallen architraves at the law's fixed 2.0 m/s (its signature -
-// net/egSpanLaw.js EG_DRUM_MPS, ridden as Rails); and lands on the far length of entablature, out under the second arch. On
+// net/eliteGates/egSpanLaw.js EG_DRUM_MPS, ridden as Rails); and lands on the far length of entablature, out under the second arch. On
 // either side the colonnade stands broken in the void - columns rising from nowhere to broken tops and gilded capitals, a
 // lintel still bridging two of them, one column fallen right across under the course, loose drums adrift below. A capital
 // standing clear of the near landing's east side holds lumen past an optional hard jump (the alcove). Open to the sky: no
 // wall, no vault, no ceiling.
 //
-// THE ENVELOPE - the code-built Colonnade passage's (net/egFragLaw.js egFragPassage 'colonnade'):
+// THE ENVELOPE - the code-built Colonnade passage's (net/eliteGates/egFragLaw.js egFragPassage 'colonnade'):
 //   open (`open` 1, `height` 0 - no walls, no vault): the mouth 5 m wide (halfW 250) at the foot of the mouth (0, 0, 0), the
 //   floor at Z 0, its opening under the arch 4.6 m to the spring (a socket keeps at least 3.5 m);
 //   28 m long (len 2800), one exit 5 m wide at Y 28, its floor at Z 0;
@@ -47,7 +47,7 @@ const ARCH = Object.freeze({ r: 0.42, x: 3.05, spring: 4.6, ri: 3.05, ro: 3.85 }
 const ARCH_Y = Object.freeze([[0.02, 1.28], [LEN - 1.28, LEN - 0.02]]);
 /** THE COURSE: `[kind, label, y0, y1, top, amp (cm), ph (ms)]` - the still drum 0.35 m up off the near landing (its gap
  *  2.2 m), the rolling drums level (their gaps 2.6 m and 3.0 m, their travel 1.2 m either way, half a roll apart: at their
- *  nearest they pass 0.6 m apart, and each stays past net/egSpanLaw.js EG_RAIL_CLEAR of the still ground beside it), the far
+ *  nearest they pass 0.6 m apart, and each stays past net/eliteGates/egSpanLaw.js EG_RAIL_CLEAR of the still ground beside it), the far
  *  landing 2.6 m past the second. 3 m wide each. */
 const COURSE = Object.freeze([['still', 'a', 6.8, 9.4, 0.35, 0, 0], ['drum', 'b', 12.0, 15.0, 0, 120, 300], ['drum', 'c', 18.0, 21.0, 0, 120, 1500]]);
 const PIECE_W = 3.0;

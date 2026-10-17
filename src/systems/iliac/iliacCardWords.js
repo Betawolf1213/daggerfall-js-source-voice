@@ -230,7 +230,7 @@ const WORDS = Object.freeze({
   'brass-remnant': [() => t('cards.iliacSet.brassRemnant.rules', 'End of turn: this gains +1 power.'),
     () => t('cards.iliacSet.brassRemnant.flavor', 'It keeps the Hour in the Abyss. Every turn of the Hour turns it harder.')],
   // ── EG-E (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19): THE BATTLESPIRE'S LORDS - found only in their
-  //    Redoubts' spoils (systems/egSpoils.js); their words here since the merge of main past KG-SET. ──
+  //    Redoubts' spoils (systems/eliteGates/egSpoils.js); their words here since the merge of main past KG-SET. ──
   'eg-grath': [() => t('cards.iliacSet.egGrath.rules', 'Reveal: the strongest enemy unit here loses 3 power.'),
     () => t('cards.iliacSet.egGrath.flavor', 'The Kyn loosed him on the Galleries. The bridges still smoke where he ran.')],
   'eg-spellmaster': [() => t('cards.iliacSet.egSpellmaster.rules', 'Reveal: draw 2 cards.'),

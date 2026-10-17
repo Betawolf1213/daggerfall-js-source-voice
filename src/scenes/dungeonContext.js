@@ -262,9 +262,9 @@ import { createSdRemnant } from './superDungeon/sdRemnant.js';   // SD8c: the Br
 import { sdMarksOf } from '../net/superDungeon/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
 import { SD_NO_RIFT } from '../net/superDungeon/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
-import { isEgHall } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle - a made place (EG-H2: its refusals the made level's law's)
+import { isEgHall } from '../world/eliteGates/egHall.js';   // EG-PLAY: an Elite Breach's circle - a made place (EG-H2: its refusals the made level's law's)
 import { madeLevelOf, madeLevelRule, madeLevelSays } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every refusal below asks the one law
-import { createEgSpan, egSpanCollider } from './egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor; AUDIT EG V (L6-10): the collider's doors they use
+import { createEgSpan, egSpanCollider } from './eliteGates/egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor; AUDIT EG V (L6-10): the collider's doors they use
 import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';
@@ -301,7 +301,7 @@ import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';  
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
 import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
-import { egFindStruck, egFindKill } from '../systems/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner; PARTY-LOOT: a room's body's kill
+import { egFindStruck, egFindKill } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner; PARTY-LOOT: a room's body's kill
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
 import { dropFoeCard } from '../systems/card/cardSources.js';   // AUDIT CARDS-6 A3: a joiner's copy of a body draws for its own card
 import { FOE_LEVEL_MAX, CELL_LOOSE_PUPPETS, sharedClassicMinutes, hitClassField, hitClassOf } from '../net/wire.js';   // TELL8: a blow's class on a hit   // SEARCH1: a room's search stamp, read as the world minute it was searched at   // AUDIT RENOWN1 GAME-3: the stream's bound on a class foe's level; SUMMON-SYNC: an owner's loose stands a reader stands, the cell's allowance
@@ -1966,7 +1966,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!_sdStepsStood) { _sdStepsStood = true; sdSteps.stand({ dynamicDraws, collider }); }
     return sdSteps.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
   }
-  // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/egSpan.js) - every step of the circle's
+  // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/eliteGates/egSpan.js) - every step of the circle's
   // courses, stood the first frame the outer host asks and moved on the realm's clock, ridden BEFORE the motor (the Steps'
   // way); the landing of the void's cast-back answered to the mode machine
   let egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle, geo: dfLocation.egGeo ?? 0 }) : null;
@@ -5808,7 +5808,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) reportPlayerKill(f.entity, REMOTE_KILL);
-    if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) egFindStruck(f.entity, roomLootOn() && roomCanonOfFoe(f) != null).catch(() => {});   // EG-E3: my blow killed an elite - my client asks the find (systems/egFind.js); a room's body's key to my pack (PARTY-LOOT)
+    if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) egFindStruck(f.entity, roomLootOn() && roomCanonOfFoe(f) != null).catch(() => {});   // EG-E3: my blow killed an elite - my client asks the find (systems/eliteGates/egFind.js); a room's body's key to my pack (PARTY-LOOT)
     // LOOT7-CHECK DUNGEON-DIED: ...and the kill notice with it - the striker's own, said at the striker (damageFoe's death
     // arm speaks none for a peer's blow at the host); a death the host's record names nobody for is the host's to say
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) sayEnemyDied((l) => hudText.add(l), f.mobileType, f.entity);
@@ -6929,7 +6929,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       spawnCorpse(foe);
       playRareDrop(audio, foe.ai.feet, foe.entity.items);   // LR3: the chime for a Rare or better on the body
       if (!_roomBody) stampWonWeapons(foe.entity.items, _sharedFoe(foe) ? fightN(foe) : 1);   // SIGIL1: the body's Magic+ weapons won online may carry a sigil; a bigger fight, better odds
-      if (!_roomBody) raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck'), by: foe._killedBy ?? null }); else egFindKill(foe.entity, foe._killedBy ?? null).catch(() => {});   // EG-E3: the striker the foes stream names (a joiner's kill is the joiner's find) - a room's body raises its death in the room's base, which the find never answers, so its kill asks here (PARTY-LOOT; systems/egFind.js); UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
+      if (!_roomBody) raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck'), by: foe._killedBy ?? null }); else egFindKill(foe.entity, foe._killedBy ?? null).catch(() => {});   // EG-E3: the striker the foes stream names (a joiner's kill is the joiner's find) - a room's body raises its death in the room's base, which the find never answers, so its kill asks here (PARTY-LOOT; systems/eliteGates/egFind.js); UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
       return;
     }
     // C15 knockback (WeaponManager.WeaponDamage): WEAPON hits carry
@@ -9506,7 +9506,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         flashPlayerDamage(_fallDmg);   // BA1: RemoveHealth carries the amount
         if (!immersiveFootsteps.applyPlayerFallDamage()) audio.playOneShot(SOUND.FallDamage, FOOTSTEP_VOLUME);   // AUDIT 58: PlayerFootsteps.cs:307-311; IF1: the mod's Hard_Landing_2 when it owns the stride
       } else if (fell > FALL_DAMAGE_THRESHOLD / 2) {
-        if (egSpan?.overDrop?.()) { /* EG-ZG (Elite-Gates.md section 25.8): a Drop the course asked for lands on the fight's designed thud and dust (scenes/egFight.js), never the grunt */ }
+        if (egSpan?.overDrop?.()) { /* EG-ZG (Elite-Gates.md section 25.8): a Drop the course asked for lands on the fight's designed thud and dust (scenes/eliteGates/egFight.js), never the grunt */ }
         else if (!immersiveFootsteps.hardFallAlert()) audio.playOneShot(SOUND.FallHard, FOOTSTEP_VOLUME);   // AUDIT 58: PlayerFootsteps.cs:315-319; IF1: the mod's Hard_Landing_1 when it owns the stride
       }
     },
@@ -10475,8 +10475,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     egSpanSafe(p) { egSpan?.setSafe(p); },
     egRecircle(r) { return egRecircle(r); },   // EG-H3 (EG10): THE SWAP - a new circle's spans in this same level
     egSpanCull(proj, view) { return egSpan?.cull(proj, view) ?? 0; },   // EG-G2 (Elite-Gates.md section 11.9): the spans' pieces culled against this frame's frustum, before the draws
-    egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/egClient.js drawPass)
-    egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/egClient.js rideDraw)
+    egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/eliteGates/egClient.js drawPass)
+    egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/eliteGates/egClient.js rideDraw)
     /** EG-ZP (Elite-Gates.md section 29): a teardown run once as this context is destroyed - an owner's own GPU objects,
      *  draws and buckets stood into it (the mode machine's Elite circle - worldModes.js egCircleDown), let go on every
      *  way the context ends: the exit, a load or a teleport out, an abandoned build. */

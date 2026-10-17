@@ -558,7 +558,7 @@ export const GATE_LANDING_M = 10;
  * dungeonEntranceLanding), in the scene's frame NOW: the gate's pixel's translation plus its spot (systems/gate/gateOmen.js
  * gateSceneXZ's own sum), so a recentre since the player went in moves it with the world. Null off the built ground.
  * EG-F (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 6.4): OR AN ARCH RECORD - an Elite Breach's arch, `{ px,
- * py, spot, yaw }` (scenes/egArch.js egArchLandingFor: its site and its turn, with no day), the opener's landing before it.
+ * py, spot, yaw }` (scenes/eliteGates/egArch.js egArchLandingFor: its site and its turn, with no day), the opener's landing before it.
  * @param {{day?: number, yaw?: number, px: number, py: number, spot: number[]}} g the gate walked into (scenes/gate/gatePool.js enter), or an arch
  * @param {{pixelTranslation: (px: number, py: number) => number[], heightAt: (x: number, z: number) => number}} at
  */

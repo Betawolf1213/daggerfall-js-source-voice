@@ -128,7 +128,7 @@ import { exportSavesZip, collectSlots, importSlots, entriesFromFiles, slotPathOf
 import { appStorage, tabStorage } from '../../systems/appStorage.js';   // SP1: the store under this build - the browser's on the site, the file store in the app   // SAV4: the slot store; SLOTS1: every slot
 import { uiSkin, SKIN_NAMES, isEnhanced } from '../../systems/uiSkin.js';   // FD1: which boot rail
 import { getPref, setPref, isOpen, setOpen, PREF_DEFAULTS } from '../../systems/uiPrefs.js';
-import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS } from '../egAccess.js';   // EG-G1: the Spire's danger palettes, named once
+import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS } from '../eliteGates/egAccess.js';   // EG-G1: the Spire's danger palettes, named once
 import { TOUCH_BUTTON_SLOTS, touchButtonSlots, nextTouchButton, touchButtonChoices } from '../touch/touchButtons.js';   // TOUCH-BUTTONS: the corner's three slots
 import { DEFAULT_SERVER } from '../../net/online.js';   // ONLINE1: the relay this port hosts, the field's placeholder   // R7: the port's own switches; SO1: the folded tiers' memory
 import { GATE_CROWD_TIERS } from '../../net/gate/gateCrowd.js';   // GATE-CROWD: how many other players a gate's court draws
@@ -2905,13 +2905,13 @@ function portRowsInterface({ pause = false } = {}) {
   return out.filter(Boolean);   // FT13
 }
 
-/** EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S ACCESSIBILITY ROWS (ui/egAccess.js) - reduced
+/** EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S ACCESSIBILITY ROWS (ui/eliteGates/egAccess.js) - reduced
  *  motion, the danger palette and a danger fill's light; every device, both skins. AUDIT EG V (c, L7-10): their words in the
  *  player's language, as the rows around them (L10N4). */
 function spireAccessRows() {
   const motion = prefRow('reducedMotion', t('menu.spire.motion.name', 'Reduced motion'), t('menu.spire.motion.note', 'Nothing on the HUD pulses, flies or rises. Your system\'s own setting does the same.'));
   const palette = choiceRow('dangerPalette', t('menu.spire.palette.name', 'Danger colours'), t('menu.spire.palette.note', 'The colour of a blow\'s edge, of safe ground and of a hazard.'),
-    EG_DANGER_PALETTE_KEYS.map((k) => [k, EG_DANGER_PALETTES[k].name]));   // AUDIT EG V (c, L7-10): each its own t() (ui/egAccess.js)
+    EG_DANGER_PALETTE_KEYS.map((k) => [k, EG_DANGER_PALETTES[k].name]));   // AUDIT EG V (c, L7-10): each its own t() (ui/eliteGates/egAccess.js)
   const fill = choiceRow('telegraphFill', t('menu.spire.fill.name', 'Danger fill'), t('menu.spire.fill.note', 'How brightly a blow\'s ground fills. Its edge stays whole.'),
     [[1, '100%'], [0.85, '85%'], [0.7, '70%'], [0.5, '50%']]);
   for (const [row, key] of [[palette, 'dangerPalette'], [fill, 'telegraphFill']]) if (row?.dataset) { row.dataset.opt = key; row.dataset.pref = key; }   // ORG2: the map finds it by its key

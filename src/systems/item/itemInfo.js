@@ -46,7 +46,7 @@ import { hasArtifactEffect, hasArtifactSubtype, ARTIFACTS } from '../artifactEff
 import { isRestItem, restItemLines } from '../rest/restItems.js'; import { isPortalStone, portalStoneLines } from '../portalStone.js';   // REST6: the seven's cards; PORTAL1: and the Portal Stone's
 import { maskText } from '../../net/nameFilter.js';   // TEXT-F1: a name a player typed, its words starred
 import { isWalletItem, WALLET_CARD_LINES } from '../walletItem.js';   // WALLET1: the wallet's card
-import { isWeirKey } from '../weirKey.js'; import { EG_TEXT } from '../../net/egLaw.js';   // AUDIT EG V (c, L8-6): the Weir Key's card and its line (Elite-Gates.md section 5)
+import { isWeirKey } from '../eliteGates/weirKey.js'; import { EG_TEXT } from '../../net/eliteGates/egLaw.js';   // AUDIT EG V (c, L8-6): the Weir Key's card and its line (Elite-Gates.md section 5)
 import { isIliacCard, isCardBinder, iliacCardName, iliacCardLines, BINDER_CARD_LINES, isCardPack, CARD_PACK_LINES } from '../iliac/iliacItems.js';   // CARDS8: a card's name and lines, the binder's
 import { isSurvivalItem, isCampingEquipment, isCampfireKit, isSkillet } from '../survival/items.js';   // SURV5: the survival items' own info box
 import { isFood, foodOf, foodStage, foodSatiety, isWaterskin, waterIn, WATERSKIN_CAPACITY_KG, STAGE_WORDS, FOOD_STAGE } from '../survival/food.js';   // ROAD-U: the identity DFU reads off the item's own record

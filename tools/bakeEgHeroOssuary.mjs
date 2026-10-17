@@ -6,10 +6,10 @@
 // the EG-HERO (the Soul Cairn) record). The scene is the port's own, written from numbers by tools/egHeroOssuaryScene.mjs;
 // the bake is tools/fragBake.mjs's, the one every authored fragment goes through. Its SPEC says what the scene cannot:
 // which fragment it is (`id`), its library kit (the Ossuary - the Soul Cairn's: its band, its reverb Stoneroom and its
-// engine the soul-bell follow, net/egFragLaw.js EG_FRAGS), its class (a passage, laid where a span section stands), which
-// hero of the kit it is (`variant` 'ossuary' - a hall may lay it, net/egHeroFrags.js egHeroFragLaws), and a chamber's play
-// (a passage names none). The halves land beside the source: `LAW` (registered in net/egHeroFrags.js) and `MESH`
-// (registered in world/egHeroFragModel.js), each held to its bytes by test/eghero_cairn.test.js.
+// engine the soul-bell follow, net/eliteGates/egFragLaw.js EG_FRAGS), its class (a passage, laid where a span section stands), which
+// hero of the kit it is (`variant` 'ossuary' - a hall may lay it, net/eliteGates/egHeroFrags.js egHeroFragLaws), and a chamber's play
+// (a passage names none). The halves land beside the source: `LAW` (registered in net/eliteGates/egHeroFrags.js) and `MESH`
+// (registered in world/eliteGates/egHeroFragModel.js), each held to its bytes by test/tooling/eghero_cairn.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

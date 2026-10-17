@@ -6,10 +6,10 @@
 // fragment its own bake script and byte-for-byte test, as every bake in the port has"). The scene is the port's own
 // (tools/egHeroCavernsScene.mjs writes it); the bake is tools/fragBake.mjs's, the one every authored fragment goes through.
 // Its SPEC says what the scene cannot: the fragment (`id`), its library kit (the Oblivion Caverns - its band, reverb, light
-// and engine follow, net/egFragLaw.js EG_FRAGS), its class (a passage), which hero of the kit it is (`variant` - 'caverns':
-// a hero a hall may lay, net/egHeroFrags.js egHeroFragLaws), and a chamber's play (a passage names none). The two halves land
-// beside the source: `LAW` (net/egFragLaw.js's record - registered in net/egHeroFrags.js) and `MESH` (registered in
-// world/egHeroFragModel.js), each held to its bytes by test/eghero_galleries.test.js.
+// and engine follow, net/eliteGates/egFragLaw.js EG_FRAGS), its class (a passage), which hero of the kit it is (`variant` - 'caverns':
+// a hero a hall may lay, net/eliteGates/egHeroFrags.js egHeroFragLaws), and a chamber's play (a passage names none). The two halves land
+// beside the source: `LAW` (net/eliteGates/egFragLaw.js's record - registered in net/eliteGates/egHeroFrags.js) and `MESH` (registered in
+// world/eliteGates/egHeroFragModel.js), each held to its bytes by test/tooling/eghero_galleries.test.js.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { bakeFrag, fragJson } from './fragBake.mjs';

@@ -7,9 +7,9 @@
 // no trigonometry - the circles are tools/egHeroKit.mjs RINGS, the noise its integer hash), written as Blender writes an
 // export by the reference's own writer (tools/egRefFragScene.mjs writeRefFragFbx) and baked by tools/fragBake.mjs exactly
 // as one of Mac's would be (tools/bakeEgHeroGloam.mjs, its bake script). Re-run it and the same bytes come out
-// (test/eghero_shade.test.js holds it to them). Not a DFU member; tooling, never shipped.
+// (test/tooling/eghero_shade.test.js holds it to them). Not a DFU member; tooling, never shipped.
 //
-// THE ENVELOPE (the kit's code-built passage, net/egFragLaw.js egFragPassage('gloam')): a mouth 7 m wide and 6.5 m high
+// THE ENVELOPE (the kit's code-built passage, net/eliteGates/egFragLaw.js egFragPassage('gloam')): a mouth 7 m wide and 6.5 m high
 // on the course's line (`halfW` 350, `height` 650), 28 m long (`len` 2800), open to the moon (no vault - its `ceil` null),
 // its far floor at the near one's height (`yB` 0), one exit facing +Y at its far end; its chasm crossed on Moon branches
 // alone (EG_FRAG_PIECES.gloam), the beams' origin at the chasm's near lip (`beat` = zA, as the kit lays it). In Blender's
@@ -25,9 +25,9 @@
 //   - black-glass trunks (floor's flags stretched along them into bark) standing at the walls and rising from the deep
 //     beside the chasm, leaning, tapering, the two at the mouth and the two at the exit bound in moon-silver (brass);
 //     four boughs reaching from the chasm's trunks to the outer end of each Moon branch, under its top (the branch is
-//     the scenes' to stand - net/egSpanLaw.js `moon`, its gold rim the lit one's); a canopy of boughs arching over at
+//     the scenes' to stand - net/eliteGates/egSpanLaw.js `moon`, its gold rim the lit one's); a canopy of boughs arching over at
 //     9-12 m and leaving the middle open to the moon;
-//   - a mere of quicksilver far down in the chasm (molten, under its luminance law - world/egBandArt.js egMoltenGlow);
+//   - a mere of quicksilver far down in the chasm (molten, under its luminance law - world/eliteGates/egBandArt.js egMoltenGlow);
 //   - the Moon-Mirror (the kit's engine, EG_ENGINES.mirror) on its pedestal against the near landing's east wall;
 //   - THE EDGE LINE (edge) on every walkable rim: the mouth, both lips and the exit - the landings' only open edges.
 // THE LAW, as the bake's markers: two fight floors; the mouth, the lips and the exit opened; four Moon branches across
@@ -152,7 +152,7 @@ export const colBox = (m, x, y, h, z0, z1) => m.box(r4(x - h), r4(y - h), z0, r4
 /** A small marker cube (an anchor's or a light's box) of side s, its foot at z. */
 export const cube = (out, name, x, y, z, s = 0.3) => out.push(refFragMesh(name).box(r4(x - s / 2), r4(y - s / 2), z, r4(x + s / 2), r4(y + s / 2), r4(z + s)));
 
-/** THE MOON-MIRROR (net/egFragLaw.js EG_ENGINES.mirror - the Shade's engine) on mesh `m` (slots: 0 black glass, 1 its
+/** THE MOON-MIRROR (net/eliteGates/egFragLaw.js EG_ENGINES.mirror - the Shade's engine) on mesh `m` (slots: 0 black glass, 1 its
  *  silver): a turned pedestal of black glass standing at (x, y), 1.2 m high, and its silver disc (0.55 m across its
  *  radius, 8 cm thick) 1.85 m up, turned to face `facing` ([x, y, z], Blender's axes) on a silver arm. */
 export function moonMirror(m, x, y, facing) {
@@ -172,7 +172,7 @@ export function moonMirror(m, x, y, facing) {
 
 // ── THE GLOAM THICKET ───────────────────────────────────────────────────────────────────────────────────────────────
 
-/** The passage's length, its mouth's half-width and height (m - net/egFragLaw.js egFragPassage('gloam')'s `len`, `halfW`
+/** The passage's length, its mouth's half-width and height (m - net/eliteGates/egFragLaw.js egFragPassage('gloam')'s `len`, `halfW`
  *  and `height`), the chasm's near and far lips (m along +Y). */
 export const GLOAM = Object.freeze({ len: 28, halfW: 3.5, height: 6.5, lipNear: 5.5, lipFar: 23 });
 /** The landings' outlines (counter-clockwise from +Z, m): glades of the thicket, the mouth's 7 m opening to 9.2 m. */

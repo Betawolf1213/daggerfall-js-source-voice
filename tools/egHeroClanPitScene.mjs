@@ -7,11 +7,11 @@
 // its two gate towers, the chieftains' dais where the Casters stand, and over the far gate the Honour Horn. Written on the
 // authoring kit (tools/egHeroKit.mjs) and the reference's mesh and writer (tools/egRefFragScene.mjs refFragMesh,
 // writeRefFragFbx) - no game data, no third-party art, no trigonometry - and committed as the .fbx tools/fragBake.mjs bakes
-// (tools/bakeEgHeroClanPit.mjs). Re-run it and the same bytes come out (test/eghero_wellhead.test.js holds it to them).
+// (tools/bakeEgHeroClanPit.mjs). Re-run it and the same bytes come out (test/tooling/eghero_wellhead.test.js holds it to them).
 //
-// THE ENVELOPE - net/egFragLaw.js egFragChamber('clanpit', r, R) as the halls call it (the court disc it stands in for):
+// THE ENVELOPE - net/eliteGates/egFragLaw.js egFragChamber('clanpit', r, R) as the halls call it (the court disc it stands in for):
 //   frame      1 unit 1 m, Z up, the course along +Y; the mouth at Y 0 centred on X 0, the exit at Y 36
-//   fight      the pit's floor a circle of R 16 m (the Deepway's chamber, net/egLaw.js `deepway`: R 1600) about (0, 18),
+//   fight      the pit's floor a circle of R 16 m (the Deepway's chamber, net/eliteGates/egLaw.js `deepway`: R 1600) about (0, 18),
 //              open to the burning sky (the kit's reverb, `quarry`); THE HONOUR HORN's ring (r 6 - section 11.2, the hall's
 //              `horn` spot at the chamber's middle) set in it in iron
 //   mouth      the court's bridge (BRIDGE_HALF 200): a gate 4 m wide and 6 m high through the south tower, onto the pit's
