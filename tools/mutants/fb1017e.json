@@ -1,0 +1,152 @@
+[
+  {
+    "name": "KEY-LIFT-last-clear-unread",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  SELECT c.id, COALESCE((SELECT MAX(s.id)",
+    "new": "  SELECT c.id, 0 * COALESCE((SELECT MAX(s.id)",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "every finding a lift or a person already cleared counted again - the report's 0123 history, the gap 0125 left"
+  },
+  {
+    "name": "KEY-LIFT-copies-clear-ends",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "OR (json_extract(s.detail, '$.act') = 'clear' AND COALESCE(json_extract(s.detail, '$.by'), '') <> 'auto-hold')))",
+    "new": "OR (json_extract(s.detail, '$.act') = 'clear')))",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "0120's copies' clear read as zeroing a count it never zeroed"
+  },
+  {
+    "name": "KEY-LIFT-rollback-unread",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "json_extract(s.detail, '$.act') = 'rollback'",
+    "new": "json_extract(s.detail, '$.act') = 'rolled'",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "a rollback's zeroed count read as standing"
+  },
+  {
+    "name": "KEY-LIFT-key-unasked",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "DELETE FROM key_lift WHERE NOT EXISTS (SELECT 1 FROM realm_findings f",
+    "new": "DELETE FROM key_lift WHERE 0 AND NOT EXISTS (SELECT 1 FROM realm_findings f",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "a timed hold with no key in it lifted"
+  },
+  {
+    "name": "KEY-LIFT-timed-act",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "    AND json_extract(s.detail, '$.act') = 'timed');",
+    "new": "    AND json_extract(s.detail, '$.act') = 'timedx');",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "0120's conversion's week read as the key's"
+  },
+  {
+    "name": "KEY-LIFT-excused-counted",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  WHERE f.kind = 'law' AND f.id > k.since AND COALESCE(json_extract(f.detail, '$.excused'), 0) <> 1 AND (",
+    "new": "  WHERE f.kind = 'law' AND f.id > k.since AND (",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "an excused finding, which held nothing, counted as a strike"
+  },
+  {
+    "name": "KEY-LIFT-uid-strikes",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "WHERE NOT (json_extract(j.value, '$.code') = 'uid'",
+    "new": "WHERE NOT (json_extract(j.value, '$.code') = 'uidx'",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "an id on another piece, never a strike, counted as one"
+  },
+  {
+    "name": "KEY-LIFT-count-guard",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "    OR COALESCE(json_extract(f.detail, '$.count'), 0) > json_array_length(f.detail, '$.findings')\n",
+    "new": "",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "a finding past its kept list read as only the key's"
+  },
+  {
+    "name": "KEY-LIFT-three",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "DELETE FROM key_lift WHERE other >= 3",
+    "new": "DELETE FROM key_lift WHERE other >= 4",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "three other findings, a week without the key, lifted"
+  },
+  {
+    "name": "KEY-LIFT-kept-uncapped",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "MIN(c.strikes + 3 * c.law_holds, key_lift.other)",
+    "new": "MIN(c.strikes + 3 * c.law_holds, 99)",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "the key's strikes kept"
+  },
+  {
+    "name": "KEY-LIFT-staff",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  WHERE (c.held IS NULL OR c.held <> 'staff') AND",
+    "new": "  WHERE 1 AND",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "staff's own hold's count moved by the lift"
+  },
+  {
+    "name": "KEY-LIFT-other-hold-lifted",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  held = CASE WHEN held = 'law' AND (law_sig IS NULL OR law_sig = 'template:575') THEN NULL ELSE held END,",
+    "new": "  held = CASE WHEN held = 'law' THEN NULL ELSE held END,",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "a hold another finding makes lifted until the next checkpoint"
+  },
+  {
+    "name": "KEY-LIFT-key-sig-kept",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  law_sig = CASE WHEN law_sig = 'template:575' THEN NULL ELSE law_sig END,",
+    "new": "  law_sig = law_sig,",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "the key's stale signature kept - the next real finding no strike"
+  },
+  {
+    "name": "KEY-LIFT-strikes-zeroed",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  strikes = (SELECT k.kept FROM key_lift k WHERE k.char_id = realm_characters.id),",
+    "new": "  strikes = 0,",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "another finding's strike forgiven with the key's"
+  },
+  {
+    "name": "KEY-LIFT-fade-dropped",
+    "file": "server-account/migrations/0129_key_lift.sql",
+    "old": "  law_at = (SELECT CASE WHEN k.kept > 0 THEN k.other_at END FROM",
+    "new": "  law_at = (SELECT CASE WHEN k.kept > 0 THEN NULL END FROM",
+    "tests": [
+      "test/server/fb1017e_keylift.test.js"
+    ],
+    "why": "a kept strike with no time to fade from - kept for good"
+  }
+]
