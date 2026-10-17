@@ -134,12 +134,11 @@ function drawOath(ctx, x, y, r, rim, line) {
 
 /**
  * Mount sworn revenant `id`'s stars over `host`. `book` its keeper (revenantCompanions.js swornStarsBook - tests hand
- * their own); `changed` once a sky is accepted; `onExit` when it closes. GROWTH5 (bible/10-UI/Growth.md section 7): `embed`
- * draws it in the pause window's Growth tab (skyWindow.js's embedding).
+ * their own); `changed` once a sky is accepted; `onExit` when it closes.
  * @param {HTMLElement} host
- * @param {{ id: string, book?: ReturnType<typeof swornStarsBook>, changed?: () => void, onExit?: (reason?: string) => void, doc?: Document, embed?: boolean }} deps
+ * @param {{ id: string, book?: ReturnType<typeof swornStarsBook>, changed?: () => void, onExit?: (reason?: string) => void, doc?: Document }} deps
  */
-export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), changed = () => {}, onExit = () => {}, doc = document, embed = false }) {
+export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), changed = () => {}, onExit = () => {}, doc = document }) {
   const reading = () => book.stars();
   /** AUDIT RVN-STARS S20: a record no longer sworn has no points to set (the window opened on a lazy chunk's race). */
   const purse = () => (book.record()?.sworn ? reading().points : 0);
@@ -198,7 +197,6 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       hint: t('rvn.stars.hint', 'Click a star to take it and the stars on the way to it · Right-click to remove · Drag to pan · Scroll to zoom · H: back to the Oath'),
       hintTouch: t('rvn.stars.hintTouch', 'Tap a star to see it, tap again to take it · Hold a star to remove it · Drag to pan · Pinch to zoom'),
       unaccepted: t('rvn.stars.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'),
-      unacceptedEsc: t('rvn.stars.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or do that again to discard them.'),   // GROWTH5: in the tab (any press that leaves)
       set: t('rvn.stars.set', 'Stars saved.'),
       startTip: t('rvn.stars.tip.oath', 'Every sworn revenant starts with the Oath. Take a star next to it.'),
       backMany: (n) => t('rvn.stars.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"
@@ -207,5 +205,5 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       noPoints: t('rvn.stars.noPointsAfter', 'It gets one point per level after the first. It earns XP from fights won at your side and from missions.'),
     },
   };
-  return mountSkyWindow(host, sky, { changed, onExit, doc, embed });
+  return mountSkyWindow(host, sky, { changed, onExit, doc });
 }

@@ -550,23 +550,21 @@
   },
   {
     "name": "RVN-STARS-door-pause-unhooked",
-    "file": "src/ui/enhanced/enhancedMenu.js",
-    "old": "stars: (id) => { setGrowthRevenant(id); setGrowthSection('revenants'); pauseTab = 'growth'; render(); }",
-    "new": "stars: null",
+    "file": "src/ui/pauseDoor.js",
+    "old": "    get openRevenantStars() { return rvnStars.hook; },\n",
+    "new": "",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
-    ],
-    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the Companions page's Stars open the Growth tab on that revenant - unhooked, the page draws no Stars"
+    ]
   },
   {
     "name": "RVN-STARS-door-sheet-unhooked",
-    "file": "src/ui/growth/growthTab.js",
-    "old": "mountRevenantStarsWindow(host, { id: pick.id, embed: true })",
-    "new": "mountRevenantStarsWindow(host, { id: pick.id })",
+    "file": "src/ui/charSheetDoor.js",
+    "old": "      openRevenantStars: rvnStars.hook,   // RVN-STARS: a sworn one's stars (firmamentOver.js revenantStarsOver)\n",
+    "new": "",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
-    ],
-    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the Growth tab draws the sky in its pane - unembedded, it lays itself over the window with its own Escape"
+    ]
   },
   {
     "name": "RVN-STARS-door-menu-unrouted",
@@ -768,23 +766,21 @@
   },
   {
     "name": "RVN-STARS-stack-off",
-    "file": "src/ui/charSheetDoor.js",
-    "old": "const dialClose = () => { if (view?.asksFirst?.()) { unregister = registerOverlay(dialClose); return; } close(); };",
-    "new": "const dialClose = () => { if (view?.asksFirst?.()) { return; } close(); };",
+    "file": "src/ui/firmamentOver.js",
+    "old": "      unregister = registerOverlay(closer);\n      return { ...view",
+    "new": "      return { ...view",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
-    ],
-    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the sheet door's QuickDial arm, laid again after it asked - off the stack, the second press reaches nothing"
+    ]
   },
   {
     "name": "RVN-STARS-asked-never",
-    "file": "src/ui/skyWindow.js",
-    "old": "    say(W.unacceptedEsc ?? W.unaccepted, true);\n    return true;",
-    "new": "    return false;",
+    "file": "src/ui/firmamentOver.js",
+    "old": "const closer = () => { if (view.tryClose() === false) unregister = registerOverlay(closer); };",
+    "new": "const closer = () => { view.destroy(); };",
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
-    ],
-    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the embedded sky's back() asks over unaccepted stars - never asked, the first press throws them away"
+    ]
   },
   {
     "name": "RVN-STARS-grave-ink-life",
@@ -839,7 +835,7 @@
     "tests": [
       "test/systems/revenant/rvnstars.test.js"
     ],
-    "note": "TEXT (PIN MOVED): re-aimed by content - the plain words. "
+    "note": "TEXT (PIN MOVED): re-aimed by content - the plain words."
   },
   {
     "name": "RVN-STARS-rest-clamp-bare",

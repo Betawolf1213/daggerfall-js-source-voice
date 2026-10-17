@@ -1165,17 +1165,11 @@ do, each aspect, and its art: its own, awakened, or what Awakened Art would teac
 and gives it back to the Stars button as it closes; while it stands it is on the overlays' stack, so the QuickDial's key
 asks it first, as the Firmament's own window does - an unaccepted sky is never dropped unasked (section 45 S8, S21, S22).
 
-**GROWTH5 (2026-10-17, the owner: "add a section for the upcoming revenant tree"; `10-UI/Growth.md` section 7)**: the sky
-is drawn IN the pause window now - the Growth tab's Revenant Stars page, one sworn revenant's sky at a time on the tab's
-stage (`mountRevenantStarsWindow`'s `embed`, through `skyWindow.js`'s), and the Companions page's Stars open the tab on
-that revenant. The door over the window below (`firmamentOver.js`) is DELETED; S8's law holds on the stage - every press
-that would leave the sky (Escape, another page or tab, the sheet's key, the QuickDial's) asks it first. As #999 merged
-it, the paragraph below is its record.
-
-**The doors** (as RVN-STARS built them, before GROWTH5): the Companions page (`ui/companionRoster.js`) says each sworn one's level and the stars it has to set ("Level
+**The doors**: the Companions page (`ui/companionRoster.js`) says each sworn one's level and the stars it has to set ("Level
 3 · 2 stars to set", gold while any wait) and gives it **Stars** (none abroad). Its sky is laid over the pause window as the
-Firmament is over the Stats page - `ui/firmamentOver.js revenantStarsOver`, the Firmament's own door built once (`overPage`)
-for both - from either door that draws the page (`ui/pauseDoor.js`, `ui/charSheetDoor.js`), and the page is put back on
+Firmament was over the Stats page - `ui/firmamentOver.js revenantStarsOver`, the Firmament's own door built once (`overPage`)
+for both (GROWTH3 drew the Firmament in the pause window's Growth tab and its door went; this one stays - the owner, of a
+Growth-tab page for it: "Keep it on the companion page", `10-UI/Growth.md` section 1) - from either door that draws the page (`ui/pauseDoor.js`, `ui/charSheetDoor.js`), and the page is put back on
 Companions when it closes (`enhancedMenu.js` lands on `at: 'companions'`). Offline and online alike: the sky is the save's.
 The mission sheet's days are its own road's ("Black Marsh - 82 hours, danger V").
 

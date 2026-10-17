@@ -89,7 +89,7 @@ test('ASCEND-ANYTIME by source: the Growth tab\'s Level page draws the Ascension
 test('ASCEND-ANYTIME by source: the pause window (Tab\'s dial, Escape) hands the Growth tab the rollout, and swaps nothing in over itself', () => {
   const door = read('src/ui/pauseDoor.js');
   assert.match(door, /ascendScreen: \(\) => \(playerEntity \? levelUpScreenFor\(playerEntity\) : null\),/, 'the pause door hands the rollout to the menu');
-  assert.doesNotMatch(door, /openAscend|enhanced-ascend-view|firmamentOver|dropAscend/, 'no screen over the window: the Ascension and the sky are drawn in it');
+  assert.doesNotMatch(door, /openAscend|enhanced-ascend-view|firmamentOver\(|openFirmament|dropAscend/, 'no Ascension or Firmament over the window: both are drawn in it (a sworn revenant\'s stars still stand over it - RVN-STARS)');
   assert.doesNotMatch(door, /^import .*(enhancedLevelUp|levelUpView)\.js/m, 'the window stays out of the boot bundle');
 });
 

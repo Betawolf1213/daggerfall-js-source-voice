@@ -41,6 +41,7 @@ import { PIXEL_FAMILIES } from './pixelifyFive.js';   // FONT3: the wait card na
 import { eventActions } from './input.js';   // MAC-C: the REGISTRY's answer for the two window keys
 import { mountEnhancedChunk, paintChunkNotice } from './enhanced/enhancedChunk.js';   // MENU1: the one lazy-chunk door, and the notice it paints when a chunk is gone
 import { registerOverlay } from './enhanced/enhancedOverlays.js';   // PX28: Tab puts it away
+import { revenantStarsOver } from './firmamentOver.js';   // RVN-STARS: a sworn one's stars, over Companions
 import { pauseMenuHooks, pauseMenuAct, openPauseFlow } from './pauseDoor.js';   // F5-QUESTS: the pause window's own hooks and act - a cycle (pauseDoor imports this door), read only at call time
 import { CharSheet, LevelUpScreen, charSheetArtLoaded } from './charsheet.js';
 import { charSheetHooks } from './charSheetNav.js';
@@ -199,7 +200,7 @@ export function createCharSheetWindow(deps = {}) {
     // same hooks: PX25 built the Stats page to take them.
     return enhancedSheetPageOverlay(hooks, deps.entity, deps.pause ?? null);   // F5-QUESTS: and the host's pause bag
   }
-  // GROWTH4 (bible/10-UI/Growth.md section 8): the classic sheet's S and W rows open the Growth tab's guide - the enhanced
+  // GROWTH4 (bible/10-UI/Growth.md section 7): the classic sheet's S and W rows open the Growth tab's guide - the enhanced
   // pause window on either skin (pauseDoor.js growthPageAt), pushed as the sheet's own child with this host's pause bag;
   // its Resume comes back to the sheet. No document (node), no hook: the rows keep DFU's boxes.
   if (typeof document !== 'undefined') hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {} });
@@ -240,10 +241,18 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
   // z-index 13, the pause door's depth: they are peers, never stacked.
   host.style.cssText = 'position:fixed;inset:0;z-index:13;background:transparent;overflow:hidden';
   document.body.append(host);
-  // GROWTH3: the Firmament and the Ascension are drawn IN the window now (its Growth tab - ui/growth/growthStage.js), so
-  // nothing stands over this page: its unmount takes a face on the stage down with it
+  // GROWTH3: the Firmament and the Ascension are drawn IN the window now (its Growth tab - ui/growth/growthStage.js) - its
+  // unmount takes a face on the stage down with it. A sworn revenant's stars still stand over the page (RVN-STARS; the
+  // owner: "Keep it on the companion page"), the page back on Companions when they close.
+  let landing = 'stats';   // RVN-STARS: the page the next mount lands on (remountPage)
+  const rvnStars = revenantStarsOver({
+    alive: () => !fired,
+    below: () => { try { view?.unmount?.(); } catch { /* already gone */ } view = null; },
+    back: () => remountPage('companions'),
+  });
   const close = () => {
     if (fired) return;
+    rvnStars.drop();   // RVN-STARS: the sheet key closes a sworn one's stars too
     try { view?.unmount?.(); } catch { /* already gone */ }
     view = null;
     host.remove();
@@ -328,13 +337,25 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
       // this door owns the entity it is about. A host that handed no entity gets no Ascension, the same refusal the
       // three above give for a door they were handed none of.
       ascendScreen: entity ? () => levelUpScreenFor(entity) : undefined,
+      openRevenantStars: rvnStars.hook,   // RVN-STARS: a sworn one's stars (firmamentOver.js revenantStarsOver)
     }, () => seams);
     return {
       mode: 'pause',
       at: 'stats',
       onAction: pauseMenuAct(menuHooks, close),
       hooks: menuHooks,
+      ...(landing === 'stats' ? {} : { at: landing }),   // RVN-STARS: back on the Companions page a sworn one's stars were opened from
     };
+  }
+
+  /** RVN-STARS: the page again after a sworn one's stars closed over it - on the page they were opened from (`at`). */
+  function remountPage(at = 'stats') {
+    landing = at;
+    mountEnhancedChunk({
+      load: () => import('./enhanced/enhancedMenu.js'),
+      alive: () => !fired, host, onDismiss: close, label: 'charsheet',
+      mount: (mod) => { seams = mod; view = mod.mountEnhancedMenu(host, pageOpts()); },
+    });
   }
 
   // `globalThis` and OPTIONAL, for the reason this file's own forks

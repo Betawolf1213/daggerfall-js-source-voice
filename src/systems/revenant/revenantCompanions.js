@@ -470,7 +470,7 @@ export function swornFightWon(id) {
 function levelWords(r, was) {
   const s = r ? rvnStarsOf(revenantRecord(_player, r.id)) : null;
   if (!s || s.level <= was) return null;
-  return t('rvn.stars.levelUp', '{given} reaches level {level} - {n, plural, one {a star} other {# stars}} to set on the Growth tab.', { given: r.given, level: s.level, n: Math.max(1, s.points - s.set) });
+  return t('rvn.stars.levelUp', '{given} reaches level {level} - {n, plural, one {a star} other {# stars}} to set on the Companions page.', { given: r.given, level: s.level, n: Math.max(1, s.points - s.set) });
 }
 
 /** ONE OF ITS OWN KIND EXECUTED IN ITS SIGHT (systems/revenant/revenantFate.js finishExecution - `mobileType` the executed's): each

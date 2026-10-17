@@ -10,7 +10,7 @@
 import '../../modsOff.js';
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 
 const _store = new Map();
 globalThis.localStorage = {
@@ -176,7 +176,7 @@ test('RVN-STARS XP EARNED: a fight won at my side (swornFightStep\'s win) is 5 a
   N.revenantCompanionUpdate(me, r.id, (c) => { c.xp = 70; });
   heard.length = 0;
   RC.swornFightWon(r.id);
-  assert.deepEqual(heard, [`${r.given} reaches level 2 - a star to set on the Growth tab.`]);
+  assert.deepEqual(heard, [`${r.given} reaches level 2 - a star to set on the Companions page.`]);
   RC.swornFightWon(r.id);
   assert.equal(heard.length, 1, 'said once a level');
   // an errand home
@@ -571,35 +571,23 @@ test('RVN-STARS THE WINDOW: the captain\'s sky window (ui/skyWindow.js) drawing 
   });
 });
 
-// PIN MOVED (GROWTH5, bible/10-UI/Growth.md section 7; the owner: "add a section for the upcoming revenant tree"): a sworn
-// one's sky is drawn IN the pause window's Growth tab now (its `embed` mode on the tab's stage), not over the window
-// through firmamentOver.js (DELETED). AUDIT RVN-STARS S8's law holds on that stage: every press that would leave the sky
-// - Escape, another page or tab, the sheet's key, the QuickDial's - asks the sky first.
-test('RVN-STARS AUDIT RVN-STARS S8 THE QUICKDIAL\'S KEY ASKS THE SKY FIRST, in the Growth tab: the embedded sky\'s back() asks once over unaccepted stars and the window stands, the second goes and nothing is set; the sheet door\'s dial arm and its key ask the menu first (asksFirst), the menu asks its stage, and the tab, the rail and the revenants\' picker ask before they leave (mutants: the sky off the stack; asked never)', async () => {
-  const { mountRevenantStarsWindow } = await import('../../../src/ui/revenantStarsWindow.js');
+test('RVN-STARS AUDIT RVN-STARS S8 THE QUICKDIAL\'S KEY ASKS THE SKY FIRST: the door lays the sky on the overlays\' stack while it stands - a close with an unaccepted sky asks once, the second puts it away and the page back, the sky never set (mutants: the sky off the stack; asked never)', async () => {
+  const { revenantStarsOver } = await import('../../../src/ui/firmamentOver.js');
+  const { closeTopOverlay } = await import('../../../src/ui/enhanced/enhancedOverlays.js');
   await withWindow(async (f) => {
     const r = sworn({ rank: 3 });
-    const host = f.mk('div');
-    f.doc.body.append(host);
-    const view = mountRevenantStarsWindow(host, { id: r.id, embed: true });
-    assert.equal(view.back(), false, 'nothing pending: nothing to ask');
-    view.take('b_hp1');
-    assert.equal(view.back(), true, 'asked: the window stands');
-    assert.match(f.text(f.doc.body), /You have unaccepted changes\. Press Accept to keep them, or do that again to discard them\./);
-    assert.equal(view.back(), false, 'the second press goes');
-    view.destroy();
-    assert.deepEqual(rec(r).companion.stars, ['oath'], 'nothing set');
+    let backs = 0;
+    const door = revenantStarsOver({ alive: () => true, below: () => {}, back: () => backs++ });
+    door.hook(r.id);
+    for (let i = 0; i < 50 && !door.view(); i++) await new Promise((res) => setTimeout(res, 5));   // the lazy chunk
+    door.view().take('b_hp1');
+    assert.equal(closeTopOverlay(), true);
+    assert.deepEqual([door.up(), backs], [true, 0], 'asked: still up');
+    assert.match(f.text(f.doc.body), /You have changes that aren't accepted/);
+    assert.equal(closeTopOverlay(), true);
+    assert.deepEqual([door.up(), backs, rec(r).companion.stars], [false, 1, ['oath']], 'put away, the page back, nothing set');
+    assert.equal(closeTopOverlay(), false, 'nothing of the sky left on the stack');
   });
-  const sheet = read('src/ui/charSheetDoor.js');
-  assert.match(sheet, /const dialClose = \(\) => \{ if \(view\?\.asksFirst\?\.\(\)\) \{ unregister = registerOverlay\(dialClose\); return; \} close\(\); \};\n\s+unregister = registerOverlay\(dialClose\);/, 'the dial arm asks, and is laid again');
-  assert.match(sheet, /if \(view\?\.asksFirst\?\.\(\)\) return;\s+\/\/ GROWTH5/, 'the sheet\'s key asks');
-  const menu = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /asksFirst: \(\) => mode === 'pause' && pauseTab === 'growth' && growthAsks\(\),/);
-  assert.match(menu, /b\.onclick = \(\) => \{ if \(pauseTab === 'growth' && id !== 'growth' && growthAsks\(\)\) return;/, 'another tab asks');
-  const tab = read('src/ui/growth/growthTab.js');
-  assert.match(tab, /b\.onclick = \(\) => \{ if \(sec !== id && stageAsks\(\)\) return;/, 'another page asks');
-  assert.match(tab, /if \(rvn !== r\.id\) \{ if \(stageAsks\(\)\) return; dropStage\(\); rvn = r\.id; \}/, 'another revenant asks');
-  assert.match(read('src/ui/growth/growthStage.js'), /try \{ return !!me\.face\?\.back\?\.\(\); \} catch \{ return false; \}/, 'the face\'s own ask, never full screen\'s');
 });
 
 // ── the page and the doors ──────────────────────────────────────────
@@ -656,18 +644,26 @@ test('RVN-STARS THE PAGE: each sworn one\'s level and the stars it has to set (n
   assert.match(read('src/ui/companionRoster.js'), /get: \(\) => t\('rvn\.roster\.rail', 'Companions'\)/);
 });
 
-// PIN MOVED (GROWTH5, bible/10-UI/Growth.md section 7): the doors lay no sky over the pause window now - the Companions
-// page's Stars open the Growth tab on that revenant, whose page draws its sky on the tab's stage (its `embed` mode).
-test('RVN-STARS THE DOORS: the Companions page\'s Stars open the pause window\'s Growth tab on that sworn one\'s Revenant Stars page, which draws its sky in the pane (the one sky window, embedded - the captain\'s stars the same); firmamentOver.js is gone; no host grew (PIN: the doors)', () => {
-  assert.equal(existsSync(new URL('../../../src/ui/firmamentOver.js', import.meta.url)), false, 'the door over the window, DELETED');
-  assert.match(read('src/ui/companionRoster.js'), /`cmp-\$\{r\.id\}-stars`/, 'its Stars button');
+test('RVN-STARS THE DOORS: both doors that draw the pause window lay its sky over it (ui/firmamentOver.js revenantStarsOver - the Firmament\'s own door, built once) and put the page back on Companions; the menu lands there and hands its page the door; no host grew (PIN: the doors)', () => {
+  const over = read('src/ui/firmamentOver.js');
+  assert.match(over, /export function revenantStarsOver\(\{ alive, below, back \}\) \{\n\s+let last = null;\n\s+const o = overPage\(\{/);
+  assert.match(over, /load: \(\) => import\('\.\/revenantStarsWindow\.js'\),/);
+  assert.match(over, /const view = mountRevenantStarsWindow\(h, \{ id, onExit: \(\) => \{ unregister\(\); onExit\(\); \} \}\);/);
+  assert.match(over, /back: \(\) => \{ back\(\); refocus\(last\); \},/, 'AUDIT RVN-STARS S21: the focus back on its Stars');
+  assert.match(over, /\[data-focus="cmp-\$\{id\}-stars"\]/);
+  assert.match(read('src/ui/companionRoster.js'), /`cmp-\$\{r\.id\}-stars`/, 'the key the door focuses');
+  const pause = read('src/ui/pauseDoor.js');
+  assert.match(pause, /get openRevenantStars\(\) \{ return rvnStars\.hook; \},/);
+  assert.match(pause, /view = seams\.mountEnhancedMenu\(host, \{ mode: 'pause', hooks, onAction: act, at: 'companions' \}\);/);
+  assert.match(pause, /rvnStars\.drop\(\);   \/\/ RVN-STARS: a sworn one's stars go with this window/);   // PIN MOVED (GROWTH3: the Firmament's door went to the Growth tab)
+  const sheet = read('src/ui/charSheetDoor.js');
+  assert.match(sheet, /openRevenantStars: rvnStars\.hook,/);
+  assert.match(sheet, /back: \(\) => remountPage\('companions'\),/);
+  assert.match(sheet, /rvnStars\.drop\(\);/);
+  assert.match(sheet, /\.\.\.\(landing === 'stats' \? \{\} : \{ at: landing \}\),/);
   const menu = read('src/ui/enhanced/enhancedMenu.js');
-  assert.match(menu, /stars: \(id\) => \{ setGrowthRevenant\(id\); setGrowthSection\('revenants'\); pauseTab = 'growth'; render\(\); \}/);
-  assert.match(menu, /else if \(at === 'companions'\) \{ pauseTab = 'holdings'; holdSec = 'companions'; \}/, 'a landing on Companions');
-  const tab = read('src/ui/growth/growthTab.js');
-  assert.match(tab, /import\('\.\.\/revenantStarsWindow\.js'\)\.then\(\(\{ mountRevenantStarsWindow \}\) =>\n\s+mountRevenantStarsWindow\(host, \{ id: pick\.id, embed: true \}\)\)/);
-  assert.match(read('src/ui/revenantStarsWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/);
-  assert.match(read('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/, 'the captain\'s stars in the same window');
-  for (const door of ['src/ui/pauseDoor.js', 'src/ui/charSheetDoor.js']) assert.doesNotMatch(read(door), /revenantStarsOver|openRevenantStars|firmamentOver/, `${door}: nothing laid over the window`);
+  assert.match(menu, /else if \(at === 'companions'\) \{ pauseTab = 'holdings'; holdSec = 'companions'; \}/);
+  assert.match(menu, /stars: typeof hooks\.openRevenantStars === 'function' \? hooks\.openRevenantStars : null/);
+  assert.match(read('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/, 'the captain\'s stars in the same window');   // PIN MOVED (GROWTH3: and drawn in the Growth tab, embedded)
   for (const host of ['src/scenes/world.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js', 'src/scenes/exterior.js']) assert.doesNotMatch(read(host), /revenantStars|rvnStar|swornStars/, `${host}: never wired in a host`);
 });

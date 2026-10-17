@@ -132,7 +132,7 @@ export function stageBack() {
 }
 
 /**
- * GROWTH5: LEAVING ASKS FIRST - another page, another tab, another revenant, the sheet's key or the QuickDial's: the
+ * GROWTH5: LEAVING ASKS FIRST - another page, another tab, the sheet's key or the QuickDial's: the
  * face's own ask (unaccepted stars said once), never full screen's. Answers whether the face held the press; the second
  * press goes (AUDIT RVN-STARS S8's law, for every face the stage holds).
  */
