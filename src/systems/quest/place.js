@@ -24,9 +24,10 @@ import { QuestResource, matchFirst } from './questResource.js';
 import { Symbol as QuestSymbol } from './symbol.js';
 import { intParse } from './parseUtils.js';   // AUDIT 68 S30-tryparse-dup: the quest layer's one int.Parse
 import { placesTable } from './tables.js';
-import { mergeNamedBuildings, makeBuildingKey, blockBuildingCount } from '../talkTopics.js';
+import { mergeNamedBuildings, makeBuildingKey, blockBuildingCount } from '../talk/talkTopics.js';
 import { generateBuildingName } from '../../world/buildingNames.js';
 import { surname, firstName, getNameBankOfRegion, GENDERS } from '../../characters/nameHelper.js';
+import { localizedText, getLocalizedLocationName, getLocalizedRegionName } from '../textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: the place names shown
 import { RDB_RESOURCE_TYPES } from '../../formats/blocksFile.js';
 import { stampLayout, layoutStampOfMapId, recordStands, recordHeldBack, CLASSIC_LAYOUT } from '../layoutPins.js';   // WD3: a building site keeps its town's layout
 import { curatedMarkerSpot, curateSiteMarkers } from './markerCuration.js';   // FIELD BUGS 2026-10-04d QUEST-MARKERS: the town packs' unreachable markers, on the floor
@@ -34,9 +35,9 @@ import { questReachOn, questReachPixels, nearbyIndices, indicesWithin, mapTableP
 import { longitudeLatitudeToMapPixel } from '../../formats/mapsFile.js';
 import { stringHash } from '../../formats/netRuntime.js';   // QUEST-AUDIT II SHARED-SEAT: a shared copy's re-seat, seeded (a leaf)
 import { getSeed, setSeed } from '../../formats/dfRandom.js';   // AUDIT QA2: a shared re-seat's residence name, seeded and the state put back
-import { seededFirst } from '../wind.js';   // QUEST-AUDIT II SHARED-SEAT: the port's one seeded die (imports nothing)
-import { isMainStoryDungeon } from '../../world/dungeonTextures.js';   // KVAR-HOLD: the main story's own dungeons are no random quest's
-import { boundWorldDataBlocks } from '../../formats/worldDataReplacement.js';   // AUDIT QA2: Daggerfall's own blocks (BLOCKS.BSA, past the door) - what the mods took away
+import { seededFirst } from '../wind/wind.js';   // QUEST-AUDIT II SHARED-SEAT: the port's one seeded die (imports nothing)
+import { isMainStoryDungeon } from '../../world/dungeon/dungeonTextures.js';   // KVAR-HOLD: the main story's own dungeons are no random quest's
+import { boundWorldDataBlocks } from '../../formats/worldData/worldDataReplacement.js';   // AUDIT QA2: Daggerfall's own blocks (BLOCKS.BSA, past the door) - what the mods took away
 
 export const Scopes = Object.freeze({ None: 'none', Local: 'local', Remote: 'remote', Fixed: 'fixed' });
 
@@ -55,20 +56,57 @@ const EDITOR_FLAT_ARCHIVE = 199;
 const SPAWN_MARKER_RECORD = 11;
 const ITEM_MARKER_RECORD = 18;
 
+/**
+ * QUEST-CAPS (2026-10-14, Dudey: "almost every quest has problems to spawn enemies inside dungeons ... since we have
+ * smaller, regular and large dungeons. Quest enemies being placed outside of the rooms and halls"): A RE-LAID DUNGEON'S
+ * QUEST MARKERS ARE ITS INTERIOR BLOCKS'. A border block (its name begins B - GetRandomBlock's own test) is a cap of
+ * rock Daggerfall closes a layout with, set where its one way in meets the dungeon; its other pockets no corridor
+ * reaches (SD-REACH, world/superDungeon/sdDungeon.js SD_BORDER_BLOCK_RE). The small plus and the medium size draw their caps at
+ * random round the interior (GenerateSmallerDungeon's law), so a cap's quest marker there is all but always sealed -
+ * and the caps are four blocks of five and six of eight, so most of a quest's markers were. On such a build (the clone
+ * says its size: `smaller`, `medium`) a dungeon Place enumerates its interior blocks' markers alone, while they hold
+ * any; a build whose interior holds none keeps every marker, as before. The whole dungeon (Daggerfall's own layout,
+ * its caps where its makers set them) is DFU's enumeration, untouched. A quest already standing a target in a cap is
+ * laid again at the dungeon's next mount by the net that exists for it (questRepair.js relayBuiltDungeon: a target on
+ * a marker the build's enumeration no longer yields). Not a DFU member.
+ */
+export const QUEST_CAP_BLOCK_RE = /^b/i;
+/** QUEST-CAPS: whether this location's quest markers leave its border blocks out - a re-laid build whose interior
+ *  blocks hold at least one quest marker (spawn or item). */
+export function questCapsSkipped(world, location) {
+  const d = location?.dungeon;
+  if (!d || (d.smaller !== true && d.medium !== true)) return false;
+  for (const b of d.blocks ?? []) {
+    if (QUEST_CAP_BLOCK_RE.test(b?.blockName ?? '')) continue;
+    const blockData = world?.getBlock?.(b.blockName);
+    for (const group of blockData?.rdbBlock?.objectRootList ?? []) {
+      for (const obj of group?.rdbObjects ?? []) {
+        if (obj?.type !== RDB_RESOURCE_TYPES.Flat) continue;
+        const flat = obj.resources?.flatResource;
+        if (flat?.textureArchive === EDITOR_FLAT_ARCHIVE && (flat.textureRecord === SPAWN_MARKER_RECORD || flat.textureRecord === ITEM_MARKER_RECORD)) return true;
+      }
+    }
+  }
+  return false;
+}
+
 /** FIELD BUGS 29h (BOUNTY-LAIR): WHERE DFU STANDS A DUNGEON QUEST'S FOE - every quest spawn marker (199.11, the records
  *  EnumerateDungeonQuestMarkers :1522 collects) of a laid-out dungeon, in its scene's frame: the marker's place under its
  *  block's origin, as markerScenePosition puts a mounted one and collectDungeonEnemies an enemy's. `blocks` is the
  *  dungeon context's own (world/rdbLayout.js markers - archive-199 flats carry no archive, a treasure flat carries its
  *  216). */
 export function dungeonQuestSpawnSpots(blocks) {
-  const spots = [];
+  const spots = [], inner = [];
   for (const b of blocks ?? []) {
+    const cap = QUEST_CAP_BLOCK_RE.test(b?.name ?? '');   // QUEST-CAPS: a border block's pockets are no lair
     for (const m of b?.layout?.markers ?? []) {
       if ((m.archive ?? EDITOR_FLAT_ARCHIVE) !== EDITOR_FLAT_ARCHIVE || m.record !== SPAWN_MARKER_RECORD) continue;
-      spots.push([m.x + b.originX, m.y, m.z + b.originZ]);
+      const p = [m.x + b.originX, m.y, m.z + b.originZ];
+      spots.push(p);
+      if (!cap) inner.push(p);
     }
   }
-  return spots;
+  return inner.length ? inner : spots;
 }
 
 // Place.cs:621-623 - the wildcard building-type sets (exported so the
@@ -156,7 +194,7 @@ export class Place extends QuestResource {
     this.sitePending = true;   // no world seam -> the binding PENDS. AUDIT-QUEST F1: this line used to say
                                // it pended "LOUDLY"; setting a boolean is the definition of quiet, and 262
                                // of the 265 vendored quests started headless with nothing in the log at all.
-                               // The flag is the record; scenes/questBridge.js's construction report is the
+                               // The flag is the record; scenes/quest/questBridge.js's construction report is the
                                // noise, and it names the seam that was never wired.
     if (line !== null) this.setResource(line);
   }
@@ -280,11 +318,57 @@ export class Place extends QuestResource {
     }
     // QUEST-AUDIT II NEAR-SITE: a LOCAL site whose town the mods took its kind from - the nearest town's (AUDIT QA2: only
     // what the mods took away, _modsTookKind)
-    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];
+    let nearSite = false;   // QUEST-TOWN: a site re-seated in another town is marked as the first seat's is
+    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }
     // AUDIT PRE-MERGE 1003 WD2: a building with no marker to carry them to is none (_collectQuestSitesOfBuildingType never offers one)
     const next = found.length ? this._carryAssignments(held, found[this._range(found.length)]) : null;
     if (!next) return this._unseat(held);
-    this.siteDetails = { ...next, questUID: held.questUID ?? next.questUID, magicNumberIndex: held.magicNumberIndex ?? 0 };
+    this.siteDetails = { ...next, questUID: held.questUID ?? next.questUID, magicNumberIndex: held.magicNumberIndex ?? 0, ...(nearSite ? { nearSite: true } : {}) };
+    this._stampSiteLayout();
+    return true;
+  }
+
+  /**
+   * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both" - a Ledger A departure: DFU has one player, and no
+   * house it can own is ever a quest's, GetHousesForSale keeping every quest building off the market): A BUILDING SITE
+   * THAT BECAME A PLAYER'S HOME BEFORE ITS PLAYER REACHED IT IS CHOSEN AGAIN. Another player may buy a house after this
+   * quest chose it - no service can know another page's quests - and the quest would send its player into a stranger's
+   * home. The site is chosen again IN ITS OWN TOWN by the place's own law, as SetupLocalSite searches a town (Place.cs:
+   * 717-736 - the declared P2/P3, a house kind's any-house fallback, a person's home its house), whose collector keeps
+   * out every player's home and every building a quest holds (this one's own among them); what was assigned to it is
+   * carried onto the new building's markers (_carryAssignments), and its name is drawn anew, as a site's is - the
+   * journal and the map name the building the quest stands in now. NEVER a site its player has reached (`reached`: stood
+   * inside it, machine.js noteSiteReached) - what they found there stays where they found it - nor one with no law to
+   * choose by (Scopes.None, a questor's own hall), nor one in a layout its town does not stand in (reseatMovedSite's
+   * case). Where the town holds no other building of its kind the site stays, and the quest's rung opens the home to its
+   * player, as before. A shared copy chooses by its share's one die (reseatMovedSite's SHARED-SEAT). Answers whether it
+   * moved.
+   */
+  repickHomedSite(world) {
+    const sd = this.siteDetails;
+    if (this.scope === Scopes.None || sd?.siteType !== SITE_TYPES.Building || !(sd.buildingKey > 0) || sd.unseated || sd.reached) return false;
+    if (!world?.isPlayerHome?.(sd.mapId, sd.buildingKey) || !recordStands(sd)) return false;
+    const shareId = this.parentQuest?.shareId;
+    if (!shareId || !this.parentQuest.hooks?.sharedCopy?.(this.parentQuest)) return this._repickHomedSite(world);
+    let n = 0;
+    this._die = () => seededFirst(stringHash(`${shareId}|homed|${this.symbol?.name ?? ''}|${sd.buildingKey}|${n++}`));
+    try { return this._repickHomedSite(world); } finally { this._die = null; }
+  }
+  /** repickHomedSite's law, under whichever die it was handed. */
+  _repickHomedSite(world) {
+    const sd = this.siteDetails;
+    const location = this.siteTown(world);
+    if (!location) return false;
+    let { p2, p3 } = this.declaredSiteLaw();   // RESEAT-DECLARED's law: the place's declared P2/P3, never its fallback's -1
+    let { found } = this._searchTownSites(world, location, p2, p3);
+    // Person.cs's own fallback for a person's home asked by its group's building: a house of its town
+    if (!found.length && this.isPersonHome() && !(p2 === -1 && p3 === 1)) {
+      [p2, p3] = [-1, 1];
+      ({ found } = this._searchTownSites(world, location, p2, p3));
+    }
+    const next = found.length ? this._carryAssignments(sd, found[this._range(found.length)]) : null;
+    if (!next) return false;
+    this.siteDetails = { ...next, questUID: sd.questUID ?? next.questUID, magicNumberIndex: sd.magicNumberIndex ?? 0, ...(sd.nearSite ? { nearSite: true } : {}) };
     this._stampSiteLayout();
     return true;
   }
@@ -460,7 +544,9 @@ export class Place extends QuestResource {
       const near = this._nearTowns && this._modsTookKind(world, location, asked.p2, asked.p3) ? this._nearTownSites(world, location, asked.p2, asked.p3) : null;
       if (near) {
         this.p2 = near.houseFallback ? -1 : asked.p2;
-        this.siteDetails = near.found[this._range(near.found.length)];
+        // FIELD BUGS 2026-10-12g QUEST-TOWN: marked as taken in another town - the travel map is shown it at the quest's
+        // start and the quest's lens points at it (machine.js revealNearSites, ui/quest/questLens.js entryTarget)
+        this.siteDetails = { ...near.found[this._range(near.found.length)], nearSite: true };
         return;
       }
       throw new Error(`Could not find local site for ${this.symbol.original} with P2=${this.p2} in ${location.regionName}/${location.name}.`);
@@ -926,6 +1012,24 @@ export class Place extends QuestResource {
     return location?.exterior?.exteriorData ? location : null;
   }
 
+  /** QUEST-HOME: the building this site names, as its town stands - the town directory's merged record of it (its type,
+   *  faction, quality and name seed: the walk the collector makes, _townBuildingsOfType's), or null for none. The record a
+   *  host discovers a moved site's building by (the world host's questSiteMovedHere). */
+  siteBuilding(world) {
+    const sd = this.siteDetails;
+    const location = sd?.siteType === SITE_TYPES.Building && sd.buildingKey > 0 ? this.siteTown(world) : null;
+    if (!location) return null;
+    const blocks = townBlockGrid(world, location);
+    const merged = mergeNamedBuildings(location.exterior.buildings, blocks.filter((b) => b.dfBlock), { locationIndex: location.locationIndex ?? 0 });
+    for (const b of blocks) {
+      if (!b.dfBlock) continue;
+      const list = merged.get(b) ?? [];
+      const count = Math.min(list.length, blockBuildingCount(b.dfBlock) ?? list.length);
+      for (let i = 0; i < count; i++) if (makeBuildingKey(b.x, b.y, i) === sd.buildingKey) return { ...list[i], buildingKey: sd.buildingKey };
+    }
+    return null;
+  }
+
   /** CollectQuestSitesOfBuildingType (:1131-1250): the full block walk
    *  with the wildcard sets, the owned-house / guild-faction / TG+DB /
    *  already-assigned exclusions, the marker requirement, and the
@@ -1015,21 +1119,31 @@ export class Place extends QuestResource {
   _getBuildingName(world, buildingType, location, summary, buildingKey = 0) {
     if (isResidence(buildingType)) {
       const bank = getNameBankOfRegion(location.regionIndex);
+      // L10N3d: the house's name in the player's language (theNamedResidence) - one site, read where the name is drawn
       const named = () => {
         let name = surname(bank);
         if (!name) name = firstName(bank, [GENDERS.Male, GENDERS.Female][this._range(1)] ?? GENDERS.Male);
-        return name;
+        return localizedText('theNamedResidence', THE_NAMED_RESIDENCE).replaceAll('%s', name);
       };
       // AUDIT QA2: a shared copy's re-seat draws the house's name from the share and the building - DFRandom's one
       // state is each member's own, and two copies seated in one house named it twice; the state is put back after
       const shareId = this._die ? this.parentQuest?.shareId : null;
-      if (!shareId) return THE_NAMED_RESIDENCE.replace('%s', named());
+      if (!shareId) return named();
       const was = getSeed();
       setSeed(stringHash(`${shareId}|residence|${location.mapTableData?.mapId ?? 0}|${buildingKey}`));
-      try { return THE_NAMED_RESIDENCE.replace('%s', named()); } finally { setSeed(was); }
+      try { return named(); } finally { setSeed(was); }
     }
-    return generateBuildingName(summary.nameSeed, summary.buildingType,
-      { ...(world.buildingNameOpts?.() ?? {}), locationName: location.name, regionName: location.regionName, factionId: summary.factionId });
+    // L10N3e: the name shows THIS location and region AS SHOWN (:1320-1321)
+    // - the location's by its map id, the region's by its index; the
+    // canonical pair stays the key a palace is chosen by, as the site's
+    // own locationName and regionName stay the quest's keys.
+    const shownRegionName = Number.isInteger(location.regionIndex)
+      ? getLocalizedRegionName(location.regionIndex, () => location.regionName) : location.regionName;
+    return generateBuildingName(summary.nameSeed, summary.buildingType, {
+      ...(world.buildingNameOpts?.() ?? {}), locationName: location.name, regionName: location.regionName,
+      shownLocationName: getLocalizedLocationName(location.mapTableData?.mapId, location.name), shownRegionName,
+      factionId: summary.factionId,
+    });
   }
 
   _hasBuildingType(location, buildingType) {
@@ -1102,8 +1216,16 @@ export class Place extends QuestResource {
    *  markerID = block position + object position (the classic marker
    *  identity), block X/Z carried for layout. */
   _enumerateDungeonQuestMarkers(world, location) {
+    // QUEST-CAPS: a RE-LAID dungeon (the small plus, the medium size - world/smallerDungeons.js, the clone says its size)
+    // keeps its quest markers out of its border blocks while an interior block holds one (questCapsSkipped)
+    if (questCapsSkipped(world, location)) return this._enumerateDungeonQuestMarkersOf(world, location, true);
+    return this._enumerateDungeonQuestMarkersOf(world, location, false);
+  }
+  /** QUEST-CAPS: the enumeration's body; `interiorOnly` leaves the border blocks (names beginning B) out. */
+  _enumerateDungeonQuestMarkersOf(world, location, interiorOnly) {
     const spawn = [], item = [];
     for (const dungeonBlock of location.dungeon?.blocks ?? []) {
+      if (interiorOnly && QUEST_CAP_BLOCK_RE.test(dungeonBlock.blockName ?? '')) continue;
       const blockData = world.getBlock(dungeonBlock.blockName);
       if (!blockData) continue;
       for (const group of blockData.rdbBlock.objectRootList ?? []) {
@@ -1137,10 +1259,13 @@ export class Place extends QuestResource {
     const sd = this.siteDetails;
     if (sd.selectedMarker.targetResources !== null) {
       if (markerIndex > -1) {
+        // QUEST-CAPS: a re-laid dungeon enumerates fewer markers (its caps' left out) - an index past the list's end
+        // takes the list round (DFU's index is into the whole layout's list, and past its end it threw)
+        const nth = (list) => (list?.length && markerIndex >= list.length ? list[markerIndex % list.length] : list[markerIndex]);
         if (resource.isPerson || resource.isFoe || markerIndexPreference === MARKER_PREFERENCE.UseQuestMarker) {
-          assignResourceToMarker(resource.symbol.clone(), sd.questSpawnMarkers[markerIndex]);
+          assignResourceToMarker(resource.symbol.clone(), nth(sd.questSpawnMarkers));
         } else if (resource.isItem) {
-          assignResourceToMarker(resource.symbol.clone(), sd.questItemMarkers[markerIndex]);
+          assignResourceToMarker(resource.symbol.clone(), nth(sd.questItemMarkers));
         }
         return false;
       }
@@ -1273,15 +1398,17 @@ export class Place extends QuestResource {
     const sd = this.siteDetails;
     if (!sd) return false;
     const world = quest.hooks?.world;
+    // L10N3e: NameMacro2-4 SHOW the names (Place.cs:261, :265, :276,
+    // :281) - the location's by its map id, the region's by its index,
+    // each falling back to the canonical name the site keeps as its key.
     switch (macroType) {
       case 1: return sd.buildingName;           // NameMacro1
-      case 2: case 3: return sd.locationName;   // NameMacro2/3
+      case 2: case 3: return getLocalizedLocationName(sd.mapId, sd.locationName);   // NameMacro2/3
       case 4: {                                 // NameMacro4
-        if (sd.regionIndex === 0 && sd.regionName !== "Alik'r Desert") {
-          const index = world?.maps?.getRegionIndex?.(sd.regionName);
-          return world?.maps?.getRegion?.(index)?.name ?? sd.regionName;
-        }
-        return world?.maps?.getRegion?.(sd.regionIndex)?.name ?? sd.regionName;
+        const index = sd.regionIndex === 0 && sd.regionName !== "Alik'r Desert"
+          ? world?.maps?.getRegionIndex?.(sd.regionName) : sd.regionIndex;
+        const canonical = (i) => world?.maps?.getRegion?.(i)?.name ?? sd.regionName;
+        return Number.isInteger(index) ? getLocalizedRegionName(index, canonical) : canonical(index);
       }
       default: return false;
     }

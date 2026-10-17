@@ -23,16 +23,16 @@
 //   Sickle's steady hand draws DFU's Tanto in the hand.
 // ═══════════════════════════════════════════════════════════════════
 import { herbPatches, nodeKey, HERB_TABLES } from '../net/nodeLaw.js';
-import { tierOpen, TIER_RANKS, actBand, PROF_RANK_MAX, herbKey, storesFullIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
-import { natureStandsAt, insideRocks } from '../world/terrainNature.js';
+import { tierOpen, TIER_RANKS, actBand, PROF_RANK_MAX, herbKey, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
+import { natureStandsAt, insideRocks } from '../world/terrain/terrainNature.js';
 import { createHerbAct } from '../systems/herbAct.js';
-import { FT } from '../systems/foragingLaw.js';
-import { foragingActRefusal, foragingToolIn, actChecksRefusal } from '../systems/foragingInstall.js';
-import { materialLabel } from '../systems/profItems.js';
-import { templateByIndex } from '../systems/itemTemplates.js';
+import { FT } from '../systems/foraging/foragingLaw.js';
+import { foragingActRefusal, foragingToolIn, actChecksRefusal } from '../systems/foraging/foragingInstall.js';
+import { materialLabel } from '../systems/professions/profItems.js';
+import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { liveStat } from '../systems/statMods.js';
 import { getPref } from '../systems/uiPrefs.js';
-import { WORLD_MAP_TILE_DIM } from '../world/terrainTiles.js';
+import { WORLD_MAP_TILE_DIM } from '../world/terrain/terrainTiles.js';
 
 /** The item flats' archive - every plant's world picture is in it (its template's worldTextureRecord). */
 export const HERB_FLAT_ARCHIVE = 254;
@@ -48,7 +48,7 @@ export const PATCH_MARK = Object.freeze({ w: 2.2, h: 1.3 });
  * where DFU's nature would stand there - `{ key, slot, herb, tier, offSeason, local }`, `local` pixel-local metres.
  * NODE-CLEAR (AUDIT 2026-10-01 part four): never inside a rock piece (`rocks`, the pixel's) - one stood there, on the compass
  * and glowing, and no look reached it; it stands nowhere, as VEIN-CLEAR's last vein does.
- * VERGE1: `verge` (`(x, z, reach) => boolean`, the pixel's - world/roadVerge.js vergeClear), when handed, keeps a patch's
+ * VERGE1: `verge` (`(x, z, reach) => boolean`, the pixel's - world/road/roadVerge.js vergeClear), when handed, keeps a patch's
  * glow off the roads: a patch whose ring (PATCH_MARK's width) would reach one stands nowhere that day.
  * @param {{ px: number, py: number, day: number, climate: number, confirmed?: boolean, seasonalEye?: boolean,
  *   samples: Float32Array, tilemap: Uint8Array, locationRect?: any, rocks?: number[][],
@@ -120,7 +120,7 @@ export const SICKLE_HAND = Object.freeze({ group: 'Weapons', templateIndex: 114,
  * @returns {import('./gatherHost.js').GatherKind}
  */
 export function herbKind({ book }) {
-  const gone = (p) => book.taken(p.key, 'herbs') && book.taken(p.key, 'food');
+  const gone = (p) => goneIn(book, p.key, 'herbs') && goneIn(book, p.key, 'food');   // GATHER-SPEED: or being counted
   /** The patch's plan for its herbs (`basket` false) or its food, `only` that harvest (a tool's Use, a menu's row). */
   const planOf = (p, { entity, info, rank }, basket, only) => {
     const plan = patchPlan({
@@ -133,12 +133,12 @@ export function herbKind({ book }) {
   return {
     id: 'herb',
     professions: Object.freeze(['herbalism']),
-    nodesOf({ px, py, day, info, confirmed, specs, entry }) {
+    nodesOf({ px, py, day, info, confirmed, specs, entry, near }) {
       if (!HERB_TABLES[info.climate]) return [];
       return standPatches({
         px, py, day, climate: info.climate, confirmed, seasonalEye: specs('herbalism')[100] === 'seasonal-eye',
         samples: entry.samples, tilemap: entry.tilemap, locationRect: entry.locationRect ?? entry.wodSite ?? null,   // AUDIT 29 C8: a WoD site's rect, as nature keeps off it (terrainGen.js)
-        rocks: entry.rocks ?? [],   // NODE-CLEAR: and never inside a rock piece
+        rocks: [...(entry.rocks ?? []), ...(near ?? [])],   // NODE-CLEAR: and never inside a rock piece; ROCK-NEAR: a neighbour's reaching in too
         verge: entry.verge ?? null,   // VERGE1: nor over a road
         beach: entry.beach ?? null,   // AUDIT LANDFORMS II H2: the beach line DFU's own blend draws in a town's pixel
       });

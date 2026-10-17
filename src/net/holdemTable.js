@@ -3,12 +3,12 @@
 // pure, DOM-free and plain-data (the relay checkpoints it whole), one home for the relay and its pins. Section 5's
 // decisions, built: THE RELAY SHUFFLES (its own CSPRNG, handed in as `rand32` - shuffleDeck over the dice's unbiased
 // draw) and keeps the deck in this state, which no frame ever carries; THE RELAY RUNS THE TABLE (whose turn, the legal
-// actions, the pots - the cards' law, net/cardLaw.js); each seat is told ITS OWN hole cards in a frame addressed to it
+// actions, the pots - the cards' law, net/card/cardLaw.js); each seat is told ITS OWN hole cards in a frame addressed to it
 // alone, the room the public hand (viewFor's spectator's view: no hand until a showdown shows it, a folded hand never);
 // a seat that does not act in HOLDEM_CLOCK_MS is checked if it can be, folded if not (cardLaw timeoutAction); a seat
 // whose player leaves is folded out of turn (cardLaw foldSeat) and stood up at the hand's end.
 //
-// A TABLE'S SEATS ARE ITS CHAIRS. The client names the chair it took (world/cardTables.js cardTableSeats - the same
+// A TABLE'S SEATS ARE ITS CHAIRS. The client names the chair it took (world/card/cardTables.js cardTableSeats - the same
 // room, the same chairs, on every client), so the seat a frame names is a chair every eye at the table maps alike, and
 // the hand's `seed` (drawn here) is the cloth's - the room sees one picture (section 3).
 //
@@ -19,7 +19,7 @@
 // room or a player's id for that player alone; the relay stamps each with `t: 'holdem'`, the table's index and its clock.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { newHand, act, foldSeat, legalActions, viewFor, timeoutAction, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './cardLaw.js';
+import { newHand, act, foldSeat, legalActions, viewFor, timeoutAction, shuffleDeck, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './card/cardLaw.js';
 import { STAKE_ID_RE } from './identityToken.js';   // CARDS6: a stake's id, the service's shape
 
 /** MEASURE (CARDS5, section 5's 30 s): a seat's clock - checked if it can be, folded if not, when it runs out. */
@@ -32,7 +32,7 @@ export const HOLDEM_FIRST_MS = 2500;
 export const HOLDEM_RUNOUT_MS = 1400;
 /** The friendly table's chips: a stake to play with, never gold. */
 export const HOLDEM_CHIPS_BB = 100;
-/** The big blinds a table may be opened at - the taverns' own stakes (systems/cardTableSession.js TABLE_STAKES; a pin
+/** The big blinds a table may be opened at - the taverns' own stakes (systems/card/cardTableSession.js TABLE_STAKES; a pin
  *  holds the two alike - this file is the relay's and imports nothing of the client's). */
 export const HOLDEM_BBS = Object.freeze([2, 10, 50]);
 /** The tables one room keeps, and a seat's name's longest. */
@@ -51,7 +51,7 @@ export const holdemGoldTable = (index) => index === HOLDEM_GOLD_TABLE;
 /** A seat's chips and hand in the room's frame: what anyone at the table may see. */
 const seatView = (s) => (s ? { id: s.id, name: s.name, stack: s.stack, ...(s.leaving ? { leaving: true } : {}) } : null);
 
-/** CARDS6: a gold table's stake, in big blinds - the offline table's own buy-in (systems/cardTableSession.js
+/** CARDS6: a gold table's stake, in big blinds - the offline table's own buy-in (systems/card/cardTableSession.js
  *  BUY_IN_MIN_BB, BUY_IN_MAX_BB; equal by pin, the relay's bundle never carries the session). */
 export const HOLDEM_STAKE_MIN_BB = 20;
 export const HOLDEM_STAKE_MAX_BB = 100;
@@ -175,26 +175,39 @@ function deal(t, now, rand32) {
 }
 
 /**
+ * AUDIT CARDS-6 C2 (Iliac's iliacSitRefusal's twin): why `sit` would refuse this sit, or null when it would seat him
+ * (his own chair taken back included) - pure, nothing moved, so the relay asks it BEFORE it spends the room's sit budget:
+ * a socket sending sits refused 'taken' four a second kept every card table in the room 'busy' (AUDIT CARDS-3 A4's order).
+ * @param {any} t @param {{id: string, chair: number, stake?: {j: string, sub: string, amount: number}|null}} p
+ */
+export function sitRefusal(t, { id, chair, stake = null }) {
+  if (!Number.isInteger(chair) || chair < 0 || chair >= t.chairs) return 'no such chair';
+  const mine = chairOf(t, id);
+  if (mine >= 0 && t.seats[mine].leaving) return t.seats[mine].cashed ? 'cashed out' : null;   // CARDS6: his stack went home in a receipt - the chair is not his to play again
+  if (!!t.gold !== !!stake) return t.gold ? 'gold table' : 'friendly table';   // CARDS6: every seat staked, or none
+  if (t.seats[chair]) return 'taken';
+  if (mine >= 0) return 'seated';
+  if (stake && !(stake.amount >= HOLDEM_STAKE_MIN_BB * t.bb && stake.amount <= HOLDEM_STAKE_MAX_BB * t.bb)) return 'bad stake';
+  return null;
+}
+
+/**
  * A player sits in `chair` with the friendly chips - CARDS6: or, at a gold table, with his stake (`{j, sub, amount}`,
  * the service's order the relay checked). Answers the messages, or an error word.
  * @param {any} t @param {{id: string, name: string, chair: number, now: number, stake?: {j: string, sub: string, amount: number}|null}} p
  */
 export function sit(t, { id, name, chair, now, stake = null }) {
-  if (!Number.isInteger(chair) || chair < 0 || chair >= t.chairs) return 'no such chair';
+  const no = sitRefusal(t, { id, chair, stake });
+  if (no) return no;
   // AUDIT CARDS-3 E-N1: a player whose socket dropped mid-hand is folded and marked leaving - back in the room, his sit
   // keeps his own chair (whichever he names): he plays the next hand, never 'taken' by his own ghost until this one ends.
   // CARDS6: at a gold table with the stake his seat already holds (the relay asks no stake of him again)
   const mine = chairOf(t, id);
   if (mine >= 0 && t.seats[mine].leaving) {
-    if (t.seats[mine].cashed) return 'cashed out';   // CARDS6: his stack went home in a receipt - the chair is not his to play again
     delete t.seats[mine].leaving;
     if (!t.hand && liveChairs(t).length === HOLDEM_SEATS_MIN) t.nextDealAt = Math.max(t.nextDealAt, now + HOLDEM_FIRST_MS);
     return [room(t, [{ t: 'sit', seat: mine, name: t.seats[mine].name, at: now }])];
   }
-  if (!!t.gold !== !!stake) return t.gold ? 'gold table' : 'friendly table';   // CARDS6: every seat staked, or none
-  if (t.seats[chair]) return 'taken';
-  if (chairOf(t, id) >= 0) return 'seated';
-  if (stake && !(stake.amount >= HOLDEM_STAKE_MIN_BB * t.bb && stake.amount <= HOLDEM_STAKE_MAX_BB * t.bb)) return 'bad stake';
   t.seats[chair] = { id, name: String(name ?? '').slice(0, HOLDEM_NAME_MAX), stack: stake ? stake.amount : HOLDEM_CHIPS_BB * t.bb, ...(stake ? { stake: stake.j, sub: stake.sub } : {}) };
   if (!t.hand && liveChairs(t).length === HOLDEM_SEATS_MIN) t.nextDealAt = Math.max(t.nextDealAt, now + HOLDEM_FIRST_MS);
   return [room(t, [{ t: 'sit', seat: chair, name: t.seats[chair].name, at: now }])];
@@ -348,7 +361,7 @@ export function validHoldemOut(m) {
   if (!m || typeof m !== 'object' || !Number.isInteger(m.table) || m.table < 0 || m.table >= HOLDEM_TABLES_MAX) return false;
   if (typeof m.error === 'string') return m.error.length <= 40;   // the relay's refusal of a word (a chair taken, not your turn)
   if (m.n !== undefined && !(Number.isSafeInteger(m.n) && m.n >= 0)) return false;   // AUDIT CARDS-4 D1: the table's frame number
-  if (m.cashout !== undefined) return typeof m.cashout === 'string' && m.cashout.length <= HOLDEM_STAKE_MAX;   // CARDS6: a staked seat's receipt (net/cardReceipt.js reads it)
+  if (m.cashout !== undefined) return typeof m.cashout === 'string' && m.cashout.length <= HOLDEM_STAKE_MAX;   // CARDS6: a staked seat's receipt (net/card/cardReceipt.js reads it)
   if (m.hole) return Number.isInteger(m.hole.handNo) && Array.isArray(m.hole.cards) && m.hole.cards.length === 2 && m.hole.cards.every((c) => Number.isInteger(c) && c >= 0 && c < 52);
   if (m.turn) return Number.isInteger(m.turn.handNo) && !!m.turn.legal && typeof m.turn.legal === 'object' && Number.isFinite(m.turn.clockAt);
   if (!Array.isArray(m.events) || m.events.length > 32 || !m.events.every((e) => e && typeof e.t === 'string')) return false;

@@ -28,7 +28,7 @@ import { resurrectionSpell } from './resurrect.js';   // RESURRECT1: the sorcere
 import { applyHeadlessChargen } from './chargenSession.js';
 import { addItem } from './inventory.js';
 import { equipItem } from './equip.js';
-import { mintCondition, templateByIndex, itemBaseValue, setItemFields } from './itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
+import { mintCondition, templateByIndex, itemBaseValue, setItemFields } from './item/itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
 import { WEAPONS_ENUM, ARMOR_ENUM, createWeapon, ARROW_TEMPLATE } from '../combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from './armorMaterials.js';
 import { TRANSPORT_HORSE_TEMPLATE, hasHorse } from './inventorySession.js';   // TSR4: the mount is the pack's own question
@@ -36,10 +36,12 @@ import { BOOK_TEMPLATE, createBook } from './books.js';   // EB3: books in the p
 import { BOOK_ID_TITLES } from './booksData.js';
 import { setPref } from './uiPrefs.js';   // LR3: the loot door turns the ladder on for the session
 import { setModSetting } from './modSettings.js';   // FIELD BUGS 2026-09-29 (the sea) #5: the sea door turns Come Sail Away on
-import { applyRarity, LEGENDARIES, ROLLED_TIERS, exaltLegendary, WARDROBE_LEGENDARIES, cursePiece, SOCKET_EMPTY, GEM_IDS } from './lootRarity.js';   // LR3: one of everything the ladder can mint; LOOT2: and an Exalted; LOOT15: the wardrobe's; LOOT16: a curse
+import { applyRarity, LEGENDARIES, ROLLED_TIERS, exaltLegendary, WARDROBE_LEGENDARIES, ARCANE_LEGENDARIES, cursePiece, SOCKET_EMPTY, GEM_IDS, socketMax, addTechniqueLine } from './loot/lootRarity.js';   // LR3: one of everything the ladder can mint; LOOT2: and an Exalted; LOOT15: the wardrobe's; LOOT16: a curse; TECH1: a technique; BAL9c: the arcane three
+import { TECHNIQUE_IDS, TECHNIQUES, GAUNTLETS_TEMPLATE } from '../combat/technique/techniqueRoster.js';   // TECH1: one piece a technique, to try them all
 import { AETHERIC_RECORDS, mintAetheric } from './aetheric.js';   // SET6: the Aetheric rung - Ruhn's Regalia, whole (RAID4b: and the raiding parties' three sets)
-import { mintHourlock } from './gilded.js';   // GILDED1: the top rung's one record, to be seen and fired (its shot: createPellets, below)
+import { mintHourlock, mintGilded, GILDED_RECORDS } from './gilded.js';   // GILDED1: the top rung's first record, to be seen and fired (its shot: createPellets, below); GILDED2: and the world's two
 import { welkyndStone, varlaStone } from './ayleidStones.js';   // LOOT21: the Ayleid stones
+import { mintGem } from './gems.js';   // GEM2: the graded gems
 import { createThunderlock, createPellets, THUNDERLOCK_TEMPLATE, PELLET_TEMPLATE } from './thunderlock.js';   // TSR-GUN: the port's own weapon, and the import IS its registration
 
 /** The prebuilt characters. `race` is the DF race key (races.js RACES
@@ -88,7 +90,7 @@ export const TEST_LOOT = Object.freeze({
 
 /** FIELD BUGS 2026-09-29 (the sea) #5 (the Discord, through Mac: "Add a ship combat test menu option"): THE SEA
  *  BATTLE. A spawn, as the ride is: the baseline preset landed on the open Bay south of Daggerfall - the map pixel
- *  FIELD-CSA2 proved floats a Small Ship (test/field_csa2.test.js) - put at the helm of an armed Small Ship of their
+ *  FIELD-CSA2 proved floats a Small Ship (test/systems/comeSailAway/field_csa2.test.js) - put at the helm of an armed Small Ship of their
  *  own there, and a pirate brig launched on open water to stand in and engage (the naval host's own spawn door). Come
  *  Sail Away and Naval Combat are turned on at the door (enableTestSea), as the loot door turns its ladder on. */
 export const TEST_SEA = Object.freeze({
@@ -127,8 +129,8 @@ export function testEntryById(id) {
   return preset ? { preset, ride: false } : null;
 }
 
-/** TSR4: put a horse in the pack, minted the way the general store's
- *  shelf mints one (shopStock's add: mintCondition over the template's
+/** TSR4: put a horse in the pack, minted the way a shelf mints one (the
+ *  Stable's since MERCHANT-YARDS - systems/merchantYards.js yardStock) (shopStock's add: mintCondition over the template's
  *  own name and base value) - so the T window, the travel card and the
  *  pack all answer hasHorse the way they would for a bought one. Once:
  *  a pack that already carries a horse is left alone. */
@@ -249,8 +251,20 @@ export function seedTestGear(entity) {
   return added;
 }
 
+/** TECH1: the piece each technique family's sampler rides in the room - one of the family's own templates. */
+export const TECHNIQUE_TEST_BASES = Object.freeze({
+  archery: Object.freeze({ kind: 'weapon', templateIndex: WEAPONS_ENUM['Long Bow'] ?? 130, material: 1 }),
+  longBlade: Object.freeze({ kind: 'weapon', templateIndex: WEAPONS_ENUM.Longsword, material: 1 }),
+  shortBlade: Object.freeze({ kind: 'weapon', templateIndex: WEAPONS_ENUM.Dagger, material: 1 }),
+  axe: Object.freeze({ kind: 'weapon', templateIndex: WEAPONS_ENUM['Battle Axe'] ?? 127, material: 1 }),
+  blunt: Object.freeze({ kind: 'weapon', templateIndex: WEAPONS_ENUM.Mace ?? 124, material: 1 }),
+  handToHand: Object.freeze({ kind: 'armor', label: 'Steel Gauntlets', templateIndex: GAUNTLETS_TEMPLATE, material: ARMOR_MATERIAL.Steel }),
+});
+
 /** LR3: the ladder's bases - ten items across the three groups the
  *  ladder rolls, each minted the way the loot factories mint them. */
+/** GEM2: the graded gems the loot ladder's door lays beside the socketed bow - one of each grade the port adds. */
+export const TEST_GEMS = Object.freeze(['chipped-emerald', 'flawed-amber', 'flawless-ruby', 'perfect-diamond']);
 export const TEST_LOOT_BASES = Object.freeze([
   { kind: 'weapon', label: 'Steel Longsword', templateIndex: WEAPONS_ENUM.Longsword, material: 1 },
   { kind: 'weapon', label: 'Steel Dagger', templateIndex: WEAPONS_ENUM.Dagger, material: 1 },
@@ -333,15 +347,38 @@ export function seedTestLoot(entity, rolls = Math.random) {
   { const r = applyRarity(base(TEST_LOOT_BASES[0]), 'rare', rolls); cursePiece(r, rolls); put(r); }
   if (LEGENDARIES.length) { const l = legendaryItem(LEGENDARIES[0]); cursePiece(l, rolls); put(l); }
   // LOOT20 (section 12): a Rare with an empty socket and a Ruby to set in it, at the Mages Guild's Reforge
-  { const s = applyRarity(base(TEST_LOOT_BASES[0]), 'rare', rolls); s.socket = SOCKET_EMPTY; put(s); }
+  { const s = applyRarity(base(TEST_LOOT_BASES[0]), 'rare', rolls); s.sockets = [SOCKET_EMPTY]; put(s); }   // GEM1: the socket list
   put(mintCondition(setItemFields({ group: 'Gems', templateIndex: GEM_IDS.indexOf('ruby') })));
   // LOOT21 (section 13): the two Ayleid stones, found at the deepest sources - here to be used
   put(welkyndStone());
   put(varlaStone());
-  // GILDED1 (bible/06-Systems/Gilded.md): THE HOURLOCK, the Gilded rung's one record - minted whole, as the Brass Remnant
+  // GILDED1 (bible/06-Systems/Gilded.md): THE HOURLOCK, the Gilded rung's first record - minted whole, as the Brass Remnant
   // drops it - and a stack of its shot, so the toll can be heard; after every draw the room made before
   put(mintHourlock());
   put(createPellets(30));
+  // GILDED2 (Gilded.md section 7): the gate's Dragonfire Oath and the serpent's Sunken Sovereign, minted whole as their
+  // bosses drop them - no draw taken, so every draw after them is what it was
+  for (const r of GILDED_RECORDS) if (r.id !== 'the-hourlock') put(mintGilded(r));
+  // GEM1/GEM2 (bible/06-Systems/Gem-Sockets.md): a Rare long bow with its size's three wells, empty, and four graded gems
+  // to set in them from the pack's card - after every draw the room made before
+  { const b = applyRarity(base(TEST_LOOT_BASES[3]), 'rare', rolls); b.sockets = Array(socketMax(b)).fill(SOCKET_EMPTY); put(b); }
+  for (const id of TEST_GEMS) put(/** @type {any} */ (mintGem(id)));
+  // TRUE-CURSE (01-Overview/bugs/Field-Bugs-2026-10-10.md): a damned Legendary weapon, known - its bite at every blow tried,
+  // and the temple's refusal; after every draw the room made before
+  { const d = LEGENDARIES.find((rec) => rec.group === 'Weapons'); if (d) { const it = legendaryItem(d); cursePiece(it, rolls, { damned: true }); put(it); } }
+  // TECH1 (bible/05-Combat/Weapon-Techniques.md): THE TECHNIQUES - one Rare a technique, on a piece of its family (a Long
+  // Bow's two, a Longsword's, a Dagger's, a Battle Axe's, a Mace's, the Gauntlets' for the bare hand), its line at the
+  // band's middle, so every one can be tried on its key; after every draw the room made before
+  for (const id of TECHNIQUE_IDS) {
+    const fam = TECHNIQUES[id].families[0];
+    const piece = TECHNIQUE_TEST_BASES[fam];
+    if (!piece) continue;
+    const it = applyRarity(testItemOf(piece), 'rare', rolls);
+    if (addTechniqueLine(it, () => 0.5, { id })) put(it);
+  }
+  // BAL9c (bible/05-Combat/Balance-Arc.md section 15): THE ARCANE THREE, each on the first base its record fits (the
+  // Amulet, the Ring, the Longsword) - chosen, not rolled, after every draw the room made before
+  for (const rec of ARCANE_LEGENDARIES) put(legendaryItem(rec));
   return added;
 }
 /** LOOT14: the room's garments - a Formal Cloak and an Evening Gown, minted as a shelf mints clothing. */
@@ -427,7 +464,7 @@ export async function applyTestCharacter(playerEntity, preset, { fetchBytes, spe
  * (any Test Room entry) hands the armory to a character no save ever marked, straight into a live session.
  * `snap()` is the boot's own pick of the save its load door restores (AUDIT FINAL F9: world.js bootSnap, main's MW-EARLY
  * F3 one parse - the check asked the save a second time); without it, `loadSlot(key)` and `mostRecent()`, the save
- * slots' own synchronous readers (systems/saveSlots.js).
+ * slots' own synchronous readers (systems/save/saveSlots.js).
  * @param {URLSearchParams} params
  * @param {{ snap?: () => any, loadSlot?: (key: number) => any, mostRecent?: () => ({ snap: any } | null) }} saves
  */

@@ -16,17 +16,19 @@
 // The client's own modules, never a model of them - so what the fleet does is what the game does, and a change to the
 // client's law moves the fleet with it:
 //   - a guest made through POST /v1/auth/guest (TERMS1's versions ticked, each bot its own address - the service bounds
-//     an address's sign-ups), registered through /v1/auth/register, and a realm character created and given its first
+//     an address's sign-ups; AUDIT SCALE II L3: through the sign-in line, waiting the told wait as a player does),
+//     registered through /v1/auth/register, and a realm character created and given its first
 //     save through the realm's own client calls (systems/realmSaves.js realmCreate) - online is the realm's (REALM-DOOR);
 //   - three rooms as the world host holds them (scenes/world.js onlineStart): the PRESENCE session in its cell (and the
 //     cell's halo), the hub link (`chat:world`, the account's profile, the seat claimed) and the region link - each a
 //     net/online.js OnlineSession over this harness's WebSocket, each token from ONE net/accountClient.js
-//     accountTokenMinter for the bot, as the game shares one;
+//     accountTokenMinter for the bot, as the game shares one - AUDIT SCALE II L5: and ONE reconnect wave (SCALE2c, the
+//     page's), each socket offering the second wire (SCALE5b) as the world host's do, or the first (`--wire 1`);
 //   - poses from a walk, through OnlineSession.sendPose (its own POSE_HZ gate and crowd law), chat lines, and the
 //     session's own tick (pings, retries, halos);
 //   - the account calls the client makes on its own clocks, each by the client's own call and at the client's own
 //     constant: the play beat (net/playClock.js PLAY_BEAT_S), the mail (net/mail.js MAIL_POLL_MS), Renown while it is
-//     owed (net/renown.js RENOWN_REPORT_MS - a bot fighting), the realm checkpoint (systems/onlineCheckpoint.js
+//     owed (net/renown.js RENOWN_REPORT_MS - a bot fighting), the realm checkpoint (systems/online/onlineCheckpoint.js
 //     ONLINE_CHECKPOINT_MS, through the realm's own session, packed and idle-keyed), the town's Notice Board
 //     (net/boardLaw.js BOARD_CACHE_MS), the town's yards (scenes/homeYards.js YARD_TOWN_TTL_MS, no session), the towns'
 //     layouts once at the start, the seats' red lines (net/townSeatBook.js SEAT_RED_READ_MS), the Motherlodes
@@ -44,8 +46,9 @@
 //     service's own metrics point (server-account/src/metrics.js), kept in the isolate by tools/loadAccountEntry.mjs
 //     where a deploy writes it to Analytics Engine; and by statement, the rows D1 read and wrote - the figure the
 //     database is billed and throttled by (YARD-SHED and STORM-SHED read it off `wrangler d1 insights`);
-//   - THE RELAY, at the bots: frames and bytes in and out a bot-second by frame type, the latency of a pose from its
-//     sender's stamp (wire.js POSE_TS_MOD) to a listener, the closes by code and the refusals by word;
+//   - THE RELAY, at the bots: frames and bytes in and out a bot-second by frame type, what the frames said (a second-wire
+//     batch opened, AUDIT SCALE II L5), the latency of a pose from its sender's stamp (wire.js POSE_TS_MOD) to a
+//     listener - batched or alone - the closes by code and the refusals by word;
 //   - A DEPLOY (--scenario storm): the relay's process killed and started again on the same state, as a deploy restarts
 //     every Durable Object - and the reconnect wave second by second: the mints, the service's statements, the hellos
 //     refused, and how long until a quarter, half, nine in ten and every bot is welcomed back in its cell.
@@ -63,7 +66,7 @@
 // Measure a commit from a snapshot of it - `git worktree add <dir> <commit>`, server/node_modules linked into it.
 //
 // It is NOT in the suite and has no Testing.md row, for the account probe's reason (tools/accountProbe.mjs): it needs a
-// toolchain and minutes. Its parts that can be pinned without one are - test/scale3.test.js.
+// toolchain and minutes. Its parts that can be pinned without one are - test/net/scale3.test.js.
 import { spawn, execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { mkdtempSync, writeFileSync, rmSync, existsSync } from 'node:fs';
@@ -77,8 +80,9 @@ import { isMain } from './lib/isMain.mjs';
 import { OnlineSession } from '../src/net/online.js';
 import {
   accountTokenMinter, SESSION_KEY, SERVICE_KEY, beatPlay, register as registerCall,
-  accountBoard, accountHomes, accountSeats, accountProf, accountRenown, accountDecor,
+  accountBoard, accountHomes, accountSeats, accountProf, accountRenown, accountDecor, lineHoldMs,
 } from '../src/net/accountClient.js';
+import { reconnectWave } from '../src/net/reconnectWave.js';   // AUDIT SCALE II L5: a bot's one wave, as a page's
 import { inboxCall, MAIL_POLL_MS, MailBox } from '../src/net/mail.js';
 import { createNoticeBook } from '../src/net/noticeBook.js';
 import { startPlayClock } from '../src/net/playClock.js';
@@ -90,7 +94,7 @@ import { RENOWN_REPORT_MS } from '../src/net/renown.js';
 import { renownRid } from '../src/net/renownTracker.js';
 import { BOARD_CACHE_MS } from '../src/net/boardLaw.js';
 import { YARD_TOWN_TTL_MS } from '../src/scenes/homeYards.js';
-import { ONLINE_CHECKPOINT_MS } from '../src/systems/onlineCheckpoint.js';
+import { ONLINE_CHECKPOINT_MS } from '../src/systems/online/onlineCheckpoint.js';
 import { SEAT_RED_READ_MS } from '../src/net/townSeatBook.js';
 import { MOTHERLODE_READ_MS } from '../src/net/motherlodeBook.js';
 import { PROF_CLOSED_RECHECK_MS } from '../src/net/profBook.js';
@@ -126,6 +130,7 @@ export const KNOBS = Object.freeze({
   json: ['', 'a file to write every figure to'],
   keep: [0, '1 keeps the state directory (the D1 file, the Durable Objects) for a look afterwards'],
   trace: [0, '1 prints, each second of a storm, how the fleet\'s sessions stand (status, why, next retry)'],
+  wire: [2, 'the wire every socket offers: 2 the second (SCALE5b, batched poses and rosters - the game\'s own), 1 the first (a before-and-after)'],
 });
 
 /** `--name value` / `--name=value` pairs over KNOBS' defaults, typed as the default is. Unknown names are refused. */
@@ -150,6 +155,7 @@ export function parseArgs(argv) {
   for (const k of ['bots', 'cells', 'setup', 'threads', 'port']) if (!Number.isSafeInteger(out[k]) || out[k] < 1) throw new Error(`--${k} takes a whole number from 1, not ${out[k]}`);
   for (const k of ['movers', 'fighters', 'registered']) if (!(out[k] >= 0 && out[k] <= 1)) throw new Error(`--${k} is a share, 0 to 1, not ${out[k]}`);
   if (!(out['storm-at'] > 0 && out['storm-at'] < 1)) throw new Error(`--storm-at is a share of the play, between 0 and 1, not ${out['storm-at']}`);
+  if (out.wire !== 1 && out.wire !== 2) throw new Error(`--wire is 1 or 2, not ${out.wire}`);   // AUDIT SCALE II L5
   for (const k of ['ramp', 'chat-every', 'save-kb']) if (!(out[k] >= 0)) throw new Error(`--${k} cannot be negative`);
   return out;
 }
@@ -197,8 +203,40 @@ export function localFetch({ port, ip = null, note = null, request = httpRequest
   };
 }
 
+/** AUDIT SCALE II L5 (2026-10-11; Mac: "Lets do an audit on everything. Ensure perfection"): ONE FRAME THE ROOM SAID,
+ *  TALLIED - its kind in `saidByType`, a pose's age from its sender's stamp, a refusal by its word and a welcome to its
+ *  bot. A second-wire batch (SCALE5b) is opened as the client opens it (net/online.js _poses, _batch): each `poses` entry
+ *  `[id, slim pose]` is one pose, aged by its `ts` where it carries one, and each frame of a frame batch (`fb`) is its
+ *  own, a run of poses in it among them - never a batch within a batch. The first wire's frames are each one said. */
+export function tallySaid(tally, m, now, ws = null, room = null) {
+  if (!m || typeof m !== 'object') return;
+  if (m.t === 'poses') {
+    for (const e of Array.isArray(m.l) ? m.l : []) if (Array.isArray(e)) tallySaid(tally, { t: 'pose', id: e[0], p: e[1] }, now, ws, room);
+    return;
+  }
+  if (m.t === 'fb') {
+    for (const x of Array.isArray(m.f) ? m.f : []) if (x?.t !== 'fb') tallySaid(tally, x, now, ws, room);
+    return;
+  }
+  const t = typeof m.t === 'string' ? m.t : '?';
+  tally.saidByType[t] = (tally.saidByType[t] ?? 0) + 1;
+  if (t === 'pose') {
+    const ts = m.p?.ts;
+    if (Number.isSafeInteger(ts)) tally.poseMs.push(((now % POSE_TS_MOD) - ts + POSE_TS_MOD) % POSE_TS_MOD);
+  } else if (t === 'welcome') {
+    tally.onWelcome?.(ws, room);
+  } else if (t === 'error') {
+    const w = typeof m.m === 'string' ? m.m : '?';
+    tally.refusals[w] = (tally.refusals[w] ?? 0) + 1;
+    tally.refusedAt?.push([now, w]);   // AUDIT SCALE C5: when, for the storm's seconds
+  }
+}
+
 /** The bots' WebSocket: Node's own, opened only to the local relay (any other URL throws), each frame counted by type
- *  and each pose's latency taken from its sender's stamp. One class a fleet, so every socket lands in one tally. */
+ *  and each pose's latency taken from its sender's stamp. One class a fleet, so every socket lands in one tally.
+ *  AUDIT SCALE II L5: `inFrames`, `inBytes` and `inByType` are the frames on the wire - what a send costs the relay - and
+ *  `saidByType` what they carried (tallySaid): the first wire's every pose was its own frame, the second's are batched,
+ *  and its poses were counted as nothing - no pose ages at all - until this. */
 export function localWebSocket({ port, tally, Base = globalThis.WebSocket, now = () => Date.now() }) {
   const allowed = `ws://127.0.0.1:${port}/room/`;
   return class LoadSocket extends Base {
@@ -212,16 +250,13 @@ export function localWebSocket({ port, tally, Base = globalThis.WebSocket, now =
         const t = /^\{"t":"([a-z]+)"/.exec(text)?.[1] ?? '?';
         tally.inFrames += 1; tally.inBytes += text.length;
         tally.inByType[t] = (tally.inByType[t] ?? 0) + 1;
-        if (t === 'pose') {
-          const ts = /"ts":(\d+)/.exec(text)?.[1];
-          if (ts != null) tally.poseMs.push(((now() % POSE_TS_MOD) - Number(ts) + POSE_TS_MOD) % POSE_TS_MOD);
-        } else if (t === 'welcome') {
-          tally.onWelcome?.(this, room);
-        } else if (t === 'error') {
-          const m = /"m":"([^"]*)"/.exec(text)?.[1] ?? '?';
-          tally.refusals[m] = (tally.refusals[m] ?? 0) + 1;
-          tally.refusedAt?.push([now(), m]);   // AUDIT SCALE C5: when, for the storm's seconds
-        }
+        // the first wire's frames read as they always were, by their own text; a batch parsed, as the client parses it
+        let m = null;
+        if (t === 'poses' || t === 'fb') { try { m = JSON.parse(text); } catch { m = null; } }
+        else if (t === 'pose') { const ts = /"ts":(\d+)/.exec(text)?.[1]; m = { t, p: ts != null ? { ts: Number(ts) } : {} }; }
+        else if (t === 'error') m = { t, m: /"m":"([^"]*)"/.exec(text)?.[1] ?? '?' };
+        else m = { t };
+        tallySaid(tally, m, now(), this, room);
       });
       let opened = false, closed = false;
       this.addEventListener('open', () => { opened = true; });
@@ -251,10 +286,10 @@ export function localWebSocket({ port, tally, Base = globalThis.WebSocket, now =
   };
 }
 
-/** A fresh tally for the relay's side. */
+/** A fresh tally for the relay's side. AUDIT SCALE II L5: `saidByType`, the frames the room said (tallySaid). */
 export const relayTally = () => ({
   opened: 0, synthetic: 0, inFrames: 0, inBytes: 0, outFrames: 0, outBytes: 0,
-  inByType: {}, outByType: {}, closes: {}, refusals: {}, refusedAt: [], poseMs: [], onWelcome: null,
+  inByType: {}, saidByType: {}, outByType: {}, closes: {}, refusals: {}, refusedAt: [], poseMs: [], onWelcome: null,
 });
 
 /** The p-th percentile (0..1) of a list of numbers, or null for none. */
@@ -352,7 +387,7 @@ function stopDev(p) {
   if (process.platform === 'win32') { try { spawnSync('taskkill', ['/pid', String(p.pid), '/T', '/F']); } catch { /* already gone */ } return; }
   try { process.kill(-p.pid, 'SIGKILL'); } catch { /* already gone */ }
 }
-const stopAll = () => { for (const p of [...started]) stopDev(p); };
+export const stopAll = () => { for (const p of [...started]) stopDev(p); };
 // WINDOWS: taskkill returns before the OS actually frees the process's file handles (miniflare's sqlite-shm/-wal) - a
 // cleanup rmSync right after can hit EBUSY. Retry briefly rather than fail the whole run over a cleanup race.
 function rmStateRetrying(state) {
@@ -365,7 +400,7 @@ function rmStateRetrying(state) {
 
 // ═══ THE SERVICES ══════════════════════════════════════════════════════════════════════════════════════════════════
 
-async function standServices(o, state) {
+export async function standServices(o, state) {
   const accountPort = o.port, relayPort = o.port + 1;
   for (const port of [accountPort, relayPort]) {
     if (await portHeld(port)) throw new Error(`something already holds 127.0.0.1:${port} - stop it (an orphaned workerd: \`ps aux | grep workerd\`), or pass --port`);
@@ -428,7 +463,7 @@ async function standServices(o, state) {
 /** THE SERVICE'S OWN CLOCK (SCALE4b, server-account/src/cron.js), fired as the deploy fires it: the minute's list every
  *  minute of play and the hour's once as play begins - `wrangler dev --test-scheduled` answers /__scheduled. Its
  *  statements ride the service's own points (`cron:<job>`), counted with the rest. The two strings are cron.js's
- *  CRON_MINUTE and CRON_HOUR (test/scale3.test.js holds them together); a tree whose service keeps no clock (before
+ *  CRON_MINUTE and CRON_HOUR (test/net/scale3.test.js holds them together); a tree whose service keeps no clock (before
  *  SCALE4b) answers the firing with nothing, so one harness measures either. */
 export const FIRE_MINUTE = '* * * * *';
 export const FIRE_HOUR = '41 * * * *';
@@ -481,7 +516,7 @@ export function rolesOf(n, o) {
   return { mover: roll(o.movers, 0.6180339887498949), fighter: roll(o.fighters, 0.4142135623730951), registered: roll(o.registered, 0.7320508075688772) };
 }
 
-function makeBot(n, o, ctx) {
+export function makeBot(n, o, ctx) {
   const k = n % o.cells;
   const town = townPixel(k, o.edge === 1);
   const bot = {
@@ -497,11 +532,29 @@ function makeBot(n, o, ctx) {
   return bot;
 }
 
-async function setUp(bot, o) {
+/** AUDIT SCALE II L3 (2026-10-11; Mac: "Lets do an audit on everything. Ensure perfection"): how many times a bot asks
+ *  for its guest at the sign-in line before its setup fails - each after the wait the line told (ADMIT-LINE,
+ *  server-account/src/admit.js: never under a second), so a bot stands in the line at least half a minute. */
+export const LINE_ASKS_MAX = 30;
+
+/** A BOT'S GUEST, THROUGH THE SIGN-IN LINE (AUDIT SCALE II L3). ADMIT-LINE lets a quiet line's burst in at once
+ *  (ADMIT_BURST, 25) and tells the rest their place - 503 `queue` with the wait before asking again - and the harness
+ *  asked once and threw on it: a fleet past the burst failed its setup. A bot now does as a player does - waits the told
+ *  wait (the client's own hold, net/accountClient.js lineHoldMs) and asks again, up to LINE_ASKS_MAX times. Answers the
+ *  service's last word. */
+export async function guestThroughLine(fetch, { asks = LINE_ASKS_MAX, wait = (ms) => sleep(ms) } = {}) {
+  for (let n = 1; ; n++) {
+    const body = await fetch(`${LOAD_SERVICE}/v1/auth/guest`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ label: 'load', ...ACCEPTED }),
+    }).then((r) => r.json());
+    if (body?.error !== 'queue' || n >= asks) return body;
+    await wait(lineHoldMs(body.wait));
+  }
+}
+
+export async function setUp(bot, o) {
   const io0 = { fetch: bot.fetch, base: LOAD_SERVICE };
-  const made = await quietly(() => bot.fetch(`${LOAD_SERVICE}/v1/auth/guest`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ label: 'load', ...ACCEPTED }),
-  }).then((r) => r.json()));
+  const made = await quietly(() => guestThroughLine(bot.fetch));
   if (!made?.secret) throw new Error(`bot ${bot.n}: no guest (${JSON.stringify(made)})`);
   bot.account = { id: made.id, secret: made.secret, name: made.name };
   if (bot.registered) {
@@ -524,23 +577,28 @@ async function setUp(bot, o) {
   return bot;
 }
 
-/** The bot's three rooms, as the world host opens them. */
-function connect(bot, ctx) {
+/** The bot's three rooms, as the world host opens them. AUDIT SCALE II L5: and with what the world host hands every
+ *  session it opens (scenes/world.js) - the page's ONE wave (SCALE2c: net/reconnectWave.js, a bot its own page), so a
+ *  relay deploy's reconnect is spread by the hub's count and the three sockets wait for one slot; and the second wire
+ *  (SCALE5b), unless the run asks the first (`--wire 1`). Built without either, the harness measured per-session waves
+ *  and the first wire: neither SCALE2c's spread nor SCALE5b's batches. */
+export function connect(bot, ctx, o) {
   const t0 = ctx.clock();
   const pose = poseAt(bot, t0 / 1000);
   const { px, py } = bot.town;
   // the bot's own socket class over the fleet's: a socket opened at any time - a retry, a halo - is known as this bot's
   const Fleet = ctx.WS;
   const WS = class extends Fleet { constructor(url, protocols) { super(url, protocols); ctx.ownerOf.set(this, bot); } };
-  const presence = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, mintToken: bot.minter, WebSocketImpl: WS });
+  const page = { wave: reconnectWave(), wire2: o.wire !== 1 };   // AUDIT SCALE II L5: the bot's page - one wave, its wire
+  const presence = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, mintToken: bot.minter, WebSocketImpl: WS, ...page });
   presence.join(worldRoom(px, py), pose);
   presence.setHalo(cellHaloFor(px, py));
-  const hub = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, presence: false, WebSocketImpl: WS });
+  const hub = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, presence: false, WebSocketImpl: WS, ...page });
   hub.mintToken = bot.minter;
   hub.join(CHAT_WORLD_ROOM);
   hub.acct = bot.acct; hub.asecret = bot.asecret;
   hub.claim = true;
-  const region = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, presence: false, WebSocketImpl: WS });
+  const region = new OnlineSession({ url: ctx.relayUrl, name: bot.account.name, look: LOOK, id: bot.id, secret: bot.secret, presence: false, WebSocketImpl: WS, ...page });
   region.mintToken = bot.minter;
   region.join(chatRegionRoom(17));
   bot.presence = presence;
@@ -655,7 +713,7 @@ export class Fleet {
     for (let i = 0; i < this.bots.length; i++) {
       const due = start + (i / this.bots.length) * rampMs;
       if (due > Date.now()) await sleep(due - Date.now());
-      connect(this.bots[i], this.ctx);
+      connect(this.bots[i], this.ctx, this.o);
       this.bots[i].clocks = accountClocks(this.bots[i], this.o);
       this.bots[i].nextLine = Date.now() + Math.random() * this.o['chat-every'] * 1000;
     }
@@ -666,7 +724,7 @@ export class Fleet {
     this.ctx.account = accountTally();
     const r = this.relay;
     for (const k of ['inFrames', 'inBytes', 'outFrames', 'outBytes']) r[k] = 0;
-    r.inByType = {}; r.outByType = {}; r.closes = {}; r.refusals = {};
+    r.inByType = {}; r.saidByType = {}; r.outByType = {}; r.closes = {}; r.refusals = {};
     r.poseMs.list.length = 0; this.poseSeen = 0;
     return true;
   }
@@ -757,7 +815,7 @@ export function mergeFleets(finals, rand = Math.random) {
       account.byRoute.set(route, m);
     }
     for (const k of ['opened', 'synthetic', 'inFrames', 'inBytes', 'outFrames', 'outBytes']) relay[k] += f.relay[k];
-    for (const k of ['inByType', 'outByType', 'closes', 'refusals']) for (const [t, v] of Object.entries(f.relay[k])) relay[k][t] = (relay[k][t] ?? 0) + v;
+    for (const k of ['inByType', 'saidByType', 'outByType', 'closes', 'refusals']) for (const [t, v] of Object.entries(f.relay[k] ?? {})) relay[k][t] = (relay[k][t] ?? 0) + v;
     poseSeen += f.relay.poseSeen;
   }
   // the heaviest kept age's weight (poses heard a kept one stands for), and every fleet's sample cut to it
@@ -963,7 +1021,9 @@ export function report({ bots, o, account, relay, poseSeen, statsSum, playedMs, 
 
   console.log(`\n== THE RELAY, at the bots - ${r1(botSeconds)} bot-seconds, the fleet in ${threads} thread${threads > 1 ? 's' : ''}`);
   console.log(`frames a bot-second: ${r1(relay.inFrames / botSeconds)} in, ${r1(relay.outFrames / botSeconds)} out; bytes a bot-second: ${r1(relay.inBytes / botSeconds)} in, ${r1(relay.outBytes / botSeconds)} out`);
+  console.log(`the wire: the ${o.wire === 1 ? 'first' : 'second'} (--wire ${o.wire})`);
   console.log(`in by type:  ${JSON.stringify(relay.inByType)}`);
+  console.log(`said by type (a batch's frames each its own): ${JSON.stringify(relay.saidByType)}`);
   console.log(`out by type: ${JSON.stringify(relay.outByType)}`);
   console.log(`a pose, sender to listener: p50 ${percentile(relay.poseMs, 0.5) ?? '-'} ms, p95 ${percentile(relay.poseMs, 0.95) ?? '-'} ms, p99 ${percentile(relay.poseMs, 0.99) ?? '-'} ms (${poseSeen} heard, ${relay.poseMs.length} kept)`);
   console.log(`closes by code: ${JSON.stringify(relay.closes)}; refusals: ${JSON.stringify(relay.refusals)}`);
@@ -978,7 +1038,7 @@ export function report({ bots, o, account, relay, poseSeen, statsSum, playedMs, 
     botHours, botSeconds, routes, fleet, play: { requestsPerBotHour: play.requests / botHours, statementsPerBotHour: play.statements / botHours },
     totals: { requestsPerBotHour: totals.requests / botHours, statementsPerBotHour: totals.statements / botHours, rowsReadPerBotHour: rows.read / botHours, rowsWrittenPerBotHour: rows.written / botHours },
     statements: statements.slice(0, 40),
-    relay: { framesInPerBotSecond: relay.inFrames / botSeconds, framesOutPerBotSecond: relay.outFrames / botSeconds, bytesInPerBotSecond: relay.inBytes / botSeconds, bytesOutPerBotSecond: relay.outBytes / botSeconds, inByType: relay.inByType, outByType: relay.outByType, poseMs: { p50: percentile(relay.poseMs, 0.5), p95: percentile(relay.poseMs, 0.95), p99: percentile(relay.poseMs, 0.99), n: relay.poseMs.length }, closes: relay.closes, refusals: relay.refusals },
+    relay: { framesInPerBotSecond: relay.inFrames / botSeconds, framesOutPerBotSecond: relay.outFrames / botSeconds, bytesInPerBotSecond: relay.inBytes / botSeconds, bytesOutPerBotSecond: relay.outBytes / botSeconds, inByType: relay.inByType, saidByType: relay.saidByType, outByType: relay.outByType, poseMs: { p50: percentile(relay.poseMs, 0.5), p95: percentile(relay.poseMs, 0.95), p99: percentile(relay.poseMs, 0.99), n: relay.poseMs.length }, closes: relay.closes, refusals: relay.refusals },
     storm,
   };
 }

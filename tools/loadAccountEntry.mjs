@@ -15,6 +15,12 @@
 // returned - the same row, and the only door D1 opens on a statement's meta.
 import service from '../server-account/src/index.js';
 import { DB_ROOT } from '../server-account/src/service.js';
+// AUDIT SCALE II L2 (2026-10-11; Mac: "Lets do an audit on everything. Ensure perfection"): AND EVERY DURABLE OBJECT CLASS
+// THE SERVICE'S ENTRY EXPORTS. wrangler.toml binds them by class name from the entry it runs - this file, here - and
+// `wrangler dev` refuses an entry that does not export one ("Your Worker depends on the following Durable Objects, which
+// are not exported in your entrypoint file: AdmitGate"): from ADMIT-LINE on, the harness could not boot the service at
+// all. Every named export of the service's entry is passed through, so the next object it binds comes with it.
+export * from '../server-account/src/index.js';
 
 /** The points and statements kept between two reads of /__load/stats - bounded, so a long run cannot grow the isolate. */
 const POINTS_MAX = 500_000;

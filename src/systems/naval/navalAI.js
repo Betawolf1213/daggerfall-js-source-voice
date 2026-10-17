@@ -81,7 +81,7 @@
 // the pirates bold (BOLD_SHARE), and a boat lying still grappled only after GRAPPLE_STILL_S.
 
 import { classById, batteryOf, hullBuild, GUNS, HULL, SHIP_CLASSES, buildsStamp, SHIP_TOUGHNESS, shipBatteryWeight } from './navalShips.js';
-import { mulberry32 } from '../../combat/bloodArt.js';   // SEA-PEACE: the temper's draw (navalShips.js names on the same stream kind)
+import { mulberry32 } from '../../combat/blood/bloodArt.js';   // SEA-PEACE: the temper's draw (navalShips.js names on the same stream kind)
 import { createShipDamage, SHIP_STATES, STRUCK_AT, HOLED_BONUS, WATERLINE_BAND } from './navalDamage.js';
 import { createGunDeck, aimSolution, reloadSeconds } from './navalGunnery.js';
 import { NAVAL_DEG, rangeAt, SHOT_GRAVITY } from './navalBallistics.js';
@@ -90,6 +90,7 @@ import { wrapAngle } from '../../world/mat4.js';   // ONCRASH1: the port's one a
 import { steerage, HULL_HELM, HELM_WAY, WIND_RATED, WIND_SHARE, windShare } from '../helmWay.js';   // HELM-WAY: the player's own helm, the captains' too; SAIL-FREE: and the wind's share, one home
 import { stepErrand, MOOR_EASE_S } from './shipLife.js';   // SHIP-LIFE: a ship going somewhere
 import { nightSight } from './shipWatch.js';   // SHIP-WATCH: by night a lit ship is seen far, a dark one close
+import { legendOfClass, LEGEND_RELOAD_K } from './etherShips.js';   // ETHER-LEGENDS: a `gunnery` legend's quicker guns
 
 /** A galley's oars: its least way, as a share of its best. */
 export const OARS_FLOOR = 0.55;
@@ -367,7 +368,7 @@ export function createSeaShip({ id, seed, classId, variant = 0, pos, yaw = 0, na
     /** SHIP-LIFE: what she is about when no fight is hers (shipLife.js errandFor: moored, depart, voyage, arrive, patrol,
      *  lurk; null: her own cruise) */
     errand,
-    guns: createGunDeck(cls.hull, { crewed: true, crewShare: () => damage.crewShare() }),
+    guns: createGunDeck(cls.hull, { crewed: true, crewShare: () => damage.crewShare(), reloadScale: () => (legendOfClass(cls.id)?.trait === 'gunnery' ? LEGEND_RELOAD_K : 1) }),   // AUDIT CAPTAIN'S SEA D11: the Pale Regent's gunners (LEGEND_RELOAD_K had no reader)
     /** attacker id -> the time of its last blow */
     provoked: new Map(),
     /** contact id -> seconds it has lain still */
@@ -451,15 +452,18 @@ function sizeUp(c) {
 
 /**
  * SEA-PEACE: a captain's temper off her class and seed - a merchant peaceful, a navy dutiful, a pirate flagship bold,
- * and any other pirate bold on BOLD_SHARE of her seed's own draw, else wary (the host makes a raider bold).
+ * and any other pirate bold on BOLD_SHARE of her seed's own draw, else wary (the host makes a raider bold). CAPT-WATERS:
+ * `bold` the share of the deep waters' (navalDirector.js DEEP_BOLD) - the same draw, so a pirate bold on the coast is bold
+ * in the deep too.
  * @param {{ faction: string, flagship?: boolean }} cls
  * @param {number} seed
+ * @param {{ bold?: number }} [o]
  */
-export function temperOf(cls, seed) {
+export function temperOf(cls, seed, { bold = BOLD_SHARE } = {}) {
   if (cls.faction === 'merchant') return TEMPERS.peaceful;
   if (cls.faction === 'navy') return TEMPERS.dutiful;
   if (cls.flagship) return TEMPERS.bold;
-  return mulberry32(((seed >>> 0) ^ TEMPER_SALT) >>> 0)() < BOLD_SHARE ? TEMPERS.bold : TEMPERS.wary;
+  return mulberry32(((seed >>> 0) ^ TEMPER_SALT) >>> 0)() < bold ? TEMPERS.bold : TEMPERS.wary;
 }
 
 /** AUDIT NAV2 F25: a ship's measure (fightingPower's answer).
@@ -849,15 +853,18 @@ export function stepCaptain(ship, world) {
     const held = c.id === ship.target && (ship.mode === 'engage' || ship.mode === 'board');
     const lit = !!c.lit || !!flashed?.has(c.id);
     const see = nightSight(sight, { night: !!world.night, lit });   // SHIP-WATCH: by night, by her lanterns (or her guns)
-    if (hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {
+    // NAV-COST (2026-10-12): her sight asked FIRST - `hostile` (a wary pirate sizing a quarry up: shipPower, fightingPower)
+    // was asked of every ship in the sea, every frame, for each of mine, and nearly all of them hundreds of km off. Both
+    // halves read nothing they change, so the answer is the one it was.
+    if (dist < (held ? see * DISENGAGE : see) && hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {
       // SEA-EASE: a pirate fighting a player she stands by is hers first
       const rank = (held ? dist * 0.8 : dist) * (aids && fightsAny(c, aids) ? AID_PRIORITY : 1);
-      if (dist < (held ? see * DISENGAGE : see) && rank < enemyD) { enemy = c; enemyD = rank; }
+      if (rank < enemyD) { enemy = c; enemyD = rank; }
     }
     // a threat is anything hostile that would take US - SEA-PEACE: sized up by her own power, and a player who fired on
     // her a threat to a pirate too (a wary one runs from a stronger one; a bold one fights it out, as she did)
-    const theyTakeUs = c.kind === 'ship' ? c.ship && hostile(c.ship, { kind: 'ship', faction: ship.cls.faction, id: ship.id, ship }, world) : (ship.provoked.get(c.id) ?? -Infinity) > world.now - PROVOKED_S;
-    if (theyTakeUs && dist < nightSight(FLEE_RANGE, { night: !!world.night, lit }) && dist < threatD) { threat = c; threatD = dist; }   // SHIP-WATCH: a threat seen
+    if (dist < threatD && dist < nightSight(FLEE_RANGE, { night: !!world.night, lit })
+      && (c.kind === 'ship' ? c.ship && hostile(c.ship, { kind: 'ship', faction: ship.cls.faction, id: ship.id, ship }, world) : (ship.provoked.get(c.id) ?? -Infinity) > world.now - PROVOKED_S)) { threat = c; threatD = dist; }   // SHIP-WATCH: a threat seen
   }
   if (enemy) enemyD = bearingTo(ship, enemy.pos).dist;
   for (const c of world.contacts ?? []) {

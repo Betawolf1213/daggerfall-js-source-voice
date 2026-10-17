@@ -84,9 +84,12 @@ export function createShotField(deps) {
     floaters.push({ kind: 'barrel', id, shooter, owner, resolve, pos: [...pos], born: clock, life: BARREL.life, phase: random() * Math.PI * 2 });
   }
   /** A cask of a sunk ship's cargo, worth `lot` (NAV-D's); `owner` (AUDIT NAV1, online #15) the player whose sea it
-   *  floats in, when another's - hauled in here, it is only claimed of them. */
-  function dropFlotsam({ id, pos, lot = 0, from = null, owner = null }) {
-    floaters.push({ kind: 'flotsam', id, from, lot, owner, pos: [...pos], born: clock, life: FLOTSAM_LIFE, phase: random() * Math.PI * 2 });
+   *  floats in, when another's - hauled in here, it is only claimed of them. CAPT-WATERS: `deep` a ship of the deep
+   *  waters' - her casks rolled richer (navalHost.js pickFlotsam). CAPT-BOARD: a contract's wreck's cask a string lot
+   *  of its own (navalHost.js SITE_LOT) and its own `life`.
+   *  @param {{ id: string, pos: number[], lot?: number|string, from?: string|null, owner?: string|null, deep?: boolean, life?: number }} f */
+  function dropFlotsam({ id, pos, lot = 0, from = null, owner = null, deep = false, life = FLOTSAM_LIFE }) {
+    floaters.push({ kind: 'flotsam', id, from, lot, owner, deep: !!deep, pos: [...pos], born: clock, life, phase: random() * Math.PI * 2 });   // CAPT-BOARD: a wreck's casks their own `life`
   }
 
   const nearestHit = (targets, a, b, radius, shooter) => {
@@ -189,7 +192,7 @@ export function createShotField(deps) {
       }
       if (f.kind === 'flotsam') {
         const c = (deps.collectors?.() ?? []).find((k) => insideGrown(k.box, f.pos, FLOTSAM_REACH));
-        if (c) { emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, owner: f.owner, collector: c.id, point: [...f.pos] }); continue; }
+        if (c) { emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, owner: f.owner, deep: !!f.deep, collector: c.id, point: [...f.pos] }); continue; }
       }
       floatKeep.push(f);
     }
@@ -207,7 +210,7 @@ export function createShotField(deps) {
     /** The balls in the air, for the draw: `{ pos, gun, spin }`. */
     balls: () => balls.filter((b) => b.shown).map((b) => ({ pos: b.pos, gun: b.gun, spin: b.spin + (clock - b.born) * 12 })),
     /** What floats, for the draw: `{ kind, pos, phase }`. */
-    floaters: () => floaters.map((f) => ({ kind: f.kind, pos: f.pos, id: f.id, phase: f.phase, lot: f.lot, from: f.from, owner: f.owner ?? null })),
+    floaters: () => floaters.map((f) => ({ kind: f.kind, pos: f.pos, id: f.id, phase: f.phase, lot: f.lot, from: f.from, owner: f.owner ?? null, deep: !!f.deep })),   // CAPT-WATERS: a deep ship's cask
     /** AUDIT NAV1 (online #15): one floater itself, by id (its place and owner the host's to set), or null. */
     floater: (id) => floaters.find((f) => f.id === id) ?? null,
     /** AUDIT NAV1 (online #15): a floater gone without a word - hauled in by another, sunk in another's sea. */

@@ -1,7 +1,7 @@
 // @ts-check
 // TAVERN-TABLE (2026-10-08, the owner: "Lets instead place a specific table in each inn. A new property specifficaly used
 // for the card table"): WHERE A TAVERN'S CARD TABLE STANDS - pure, DOM-free. Every tavern stands the card table's own prop
-// (world/cardTableProp.js); this finds its floor, and the host (scenes/interiorContext.js, asked by scenes/worldModes.js
+// (world/card/cardTableProp.js); this finds its floor, and the host (scenes/interiorContext.js, asked by scenes/worldModes.js
 // for a tavern) stands it there - one of the room's `tables`, its seats round its own box through the host's probe.
 //
 // THE SPOT IS FOUND, not guessed: the room's own floor is walked from its entrance on a grid (PLACE_CELL), a cell walkable
@@ -12,6 +12,24 @@
 // across stood none). Nearest by the walk, not the crow: a closed door stops it, so the table stands in the room the
 // player walks into, never behind a wall. It stands on the highest floor under its own top (AUDIT TAVERN-TABLE L3: on
 // the entrance's, a table past a doorstep floated by the step).
+//
+// IT NEVER CUTS THE WALK (WALK-WHOLE, FIELD BUGS 2026-10-09c, "Card Table blocking": "it's in 'The Gold Dungeon' in
+// Menakat ... same tavern layout"). Nearest by the walk put it at the mouth of the first open doorway past a room too
+// small for its ring, its stools across the way through - a walk that leaves a cluttered entry room has only the doorway
+// to go by. A spot is passed over when the floor its table and ring cover, taken out of the walk, leaves any walked cell
+// unreachable from the entrance. The walk's own grid, so every client the same.
+//
+// AND NEVER IN THE WAY (WAY-ROUND, FIELD BUGS 2026-10-11e, the same thread: "another one at Dancing Castle in
+// Pilliweyn"). Read on the player's own taverns, WALK-WHOLE moved no table it was written for: the Gold Dungeon's
+// floor holds its ring only in the one corridor its two halves meet by, every spot there cut the walk, and the
+// fallback for a room with no other spot stood it at the first of them - the corridor, the screenshot's table. And a
+// spot in a doorway or an opening passed whenever the building went round another way: the Dancing Castle's gold table
+// stood in the mouth of the hall's way east, a doorway's table in a room with a second door. A spot is passed over now
+// when the walked cells round its table and lane, out to PLACE_ROUND_CELLS past them, fall apart with their cells taken
+// out - the way round the table goes round it, or the table stands in it (a cell WALK-WHOLE found cut off falls apart
+// from them too, so this one test asks both) - and a room with no spot left whole stands no table (the chips table
+// first, so a room with floor for one keeps that one). A table already stood that the window meets is in the window
+// whole, so the way round the next may go round the pair.
 //
 // EVERY CLIENT THE SAME TABLE (AUDIT TAVERN-TABLE M3). The walk's order is fixed and its avoid list is the record's,
 // but its probes run in each client's own world frame - the streamer's compensation shifts a building by however far
@@ -41,6 +59,12 @@ export const PLACE_REACH_M = 16;
 export const PLACE_FROM_DOOR_M = 3;
 /** The clear floor round the table's edge: the seat's distance out and a seated body behind it (metres). */
 export const PLACE_RING_M = SEAT_OUT + 0.4;
+/** WALK-WHOLE: the lane, in the walk's cells, the table's ring leaves round it for the walk to go by - a cell, and the
+ *  cell's own clear: half a metre and more between a stool and a wall. */
+export const PLACE_LANE_CELLS = 1;
+/** WAY-ROUND: how far past the table's lane, in the walk's cells, the way round it may go - a metre. Further, and it is
+ *  another way through the building. */
+export const PLACE_ROUND_CELLS = 2;
 /** A body's radius (half a unit off the lattice), and the two heights above the floor it must be clear at (the knees'
  *  and the head's). */
 export const PLACE_BODY_R = 0.2875;
@@ -63,7 +87,8 @@ export const PLACE_AVOID_DY = 2.5;
  * none within reach), `probe.open(x, y, z, r)` whether nothing of the room is within `r` of a point. `avoid` is
  * `[x, y, z, r]` the table and its ring keep `r` clear of (doors, people, flats, markers) on the entrance's storey
  * (PLACE_AVOID_DY) - or `[x, y, z, rx, rz]`, clear of a box of those half-extents (TAVERN-TABLES: a table already
- * stood, and its ring - the second keeps its own ring off the first's).
+ * stood, and its ring - the second keeps its own ring off the first's; WAY-ROUND: and the way round the next may go round
+ * it).
  * @param {{min: readonly number[], max: readonly number[]}} box
  * @param {number[]} start
  * @param {{floor: (x: number, y: number, z: number) => number|null, open: (x: number, y: number, z: number, r: number) => boolean}} probe
@@ -129,6 +154,69 @@ export function placedTableSpot(box, start, probe, avoid = []) {
   });
   const near = avoid.filter((a) => Math.abs(a[1] - floor0) <= PLACE_AVOID_DY);
   const fromDoor = Math.ceil(PLACE_FROM_DOOR_M / PLACE_CELL);
+  // WAY-ROUND: the tables already stood (an avoid box is one, TAVERN-TABLES) - each one's ring and lane, in the walk's
+  // cells as its own walk counted them, [i0, i1, k0, k1]
+  const stood = near.filter((a) => a.length > 4).map(([ax, , az, rx, rz]) => {
+    const ri = Math.max(0, Math.ceil((rx - PLACE_BODY_R) / PLACE_CELL)) + PLACE_LANE_CELLS, rk = Math.max(0, Math.ceil((rz - PLACE_BODY_R) / PLACE_CELL)) + PLACE_LANE_CELLS;
+    const ai = Math.round((ax - sx) / PLACE_CELL) + n, ak = Math.round((az - sz) / PLACE_CELL) + n;
+    return [ai - ri, ai + ri, ak - rk, ak + rk];
+  });
+  const before = new Int32Array(side * side), after = new Int32Array(side * side), seen = new Int32Array(side * side);
+  let stamp = 0;
+  /** Labels the walked cells of the window [i0, i1] x [k0, k1] that `out` leaves in pieces, joined within the window -
+   *  each cell's label its piece's first cell. */
+  const pieces = (lab, i0, i1, k0, k1, out) => {
+    stamp++;
+    for (let ck = k0; ck <= k1; ck++) for (let ci = i0; ci <= i1; ci++) {
+      const c0 = ck * side + ci;
+      if (dist[c0] < 0 || seen[c0] === stamp || out(ci, ck)) continue;
+      seen[c0] = stamp;
+      lab[c0] = c0;
+      const q = [c0];
+      for (let h = 0; h < q.length; h++) {
+        const c = q[h], qi = c % side, qk = (c - qi) / side;
+        for (const [di, dk] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const ni = qi + di, nk = qk + dk;
+          if (ni < i0 || nk < k0 || ni > i1 || nk > k1) continue;
+          const nc = nk * side + ni;
+          if (dist[nc] < 0 || seen[nc] === stamp || out(ni, nk)) continue;
+          seen[nc] = stamp;
+          lab[nc] = c0;
+          q.push(nc);
+        }
+      }
+    }
+  };
+  // whether the table and its ring at cell (i, k), and a lane round them, stand in the walk's way. WAY-ROUND: the walked
+  // cells round them, out to PLACE_ROUND_CELLS past the lane, in pieces before and after they are taken out - a piece
+  // that was one and is two goes on only by another way through the building, or by none. WALK-WHOLE's cut is the
+  // second: a cell the walk reached past them and reaches no more is cut off from the cells round them it was reached
+  // by, so the walk again from the entrance (WALK-WHOLE's own test) asks nothing this does not. A table already stood
+  // that the window meets is in it whole, lane and all: the way round the two goes round them both.
+  const inTheWay = (i, k, w) => {
+    const li = w.ri + PLACE_LANE_CELLS, lk = w.rk + PLACE_LANE_CELLS;
+    const out = (ci, ck) => Math.abs(ci - i) <= li && Math.abs(ck - k) <= lk;
+    const fi = first % side;
+    if (out(fi, (first - fi) / side)) return true;
+    const m = PLACE_ROUND_CELLS;
+    let [i0, i1, k0, k1] = [i - li, i + li, k - lk, k + lk];
+    for (const [a0, a1, b0, b1] of stood) {
+      if (a0 > i1 + m || a1 < i0 - m || b0 > k1 + m || b1 < k0 - m) continue;   // short of the window
+      [i0, i1, k0, k1] = [Math.min(i0, a0), Math.max(i1, a1), Math.min(k0, b0), Math.max(k1, b1)];
+    }
+    [i0, i1, k0, k1] = [Math.max(0, i0 - m), Math.min(side - 1, i1 + m), Math.max(0, k0 - m), Math.min(side - 1, k1 + m)];
+    pieces(before, i0, i1, k0, k1, () => false);
+    pieces(after, i0, i1, k0, k1, out);
+    const joined = new Map();   // a piece before -> the piece after its cells are in
+    for (let ck = k0; ck <= k1; ck++) for (let ci = i0; ci <= i1; ci++) {
+      const c = ck * side + ci;
+      if (dist[c] < 0 || out(ci, ck)) continue;
+      const was = joined.get(before[c]);
+      if (was === undefined) joined.set(before[c], after[c]);
+      else if (was !== after[c]) return true;
+    }
+    return false;
+  };
   for (const c of order) {
     if (dist[c] < fromDoor) continue;
     const i = c % side, k = (c - i) / side;
@@ -140,6 +228,7 @@ export function placedTableSpot(box, start, probe, avoid = []) {
       }
       if (!ok) continue;
       if (near.some(([ax, , az, r, rz = r]) => Math.abs(ax - cx) < w.hx + r && Math.abs(az - cz) < w.hz + rz)) continue;
+      if (inTheWay(i, k, w)) continue;
       let fy = -Infinity;   // the highest floor under its top
       for (let dk = -w.tk; dk <= w.tk; dk++) for (let di = -w.ti; di <= w.ti; di++) fy = Math.max(fy, floorOf[(k + dk) * side + (i + di)]);
       return { x: cx - w.mx, y: fy - y0, z: cz - w.mz, yawDeg: w.yawDeg, cx, cz, hx: w.hx, hz: w.hz };

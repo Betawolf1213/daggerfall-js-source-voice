@@ -6,14 +6,14 @@
 // a door for pictures from the player's own files, and the key's own switch - whether a shot is also saved as a PNG.
 //
 // ONE PANE, BOTH DOORS: the front door's shell and the pause window's System page draw this same function (the
-// menu's own law - ui/enhancedMenu.js SYSTEM_PANES), so the gallery a player opens at boot is the one they open mid-game.
+// menu's own law - ui/enhanced/enhancedMenu.js SYSTEM_PANES), so the gallery a player opens at boot is the one they open mid-game.
 //
 // IT DRAWS AT ONCE AND FILLS WHEN THE GALLERY ANSWERS. The menu repaints synchronously; IndexedDB answers later. The
 // pane stands with a line saying it is reading, and fills its own nodes in place - a repaint of the menu builds a new
 // pane and the old one's answer, finding its root gone, draws nothing.
 //
 // EVERY ALLOCATION HAS AN OWNER: each picture is an object URL, let go when the pane fills again and when the menu
-// unmounts (releaseShotsPane, ui/enhancedMenu.js unmount); the gallery's change listener goes with them.
+// unmounts (releaseShotsPane, ui/enhanced/enhancedMenu.js unmount); the gallery's change listener goes with them.
 import { listShots, deleteShot, setShotLoading, keepShot, onGalleryChange, shotCaption, GALLERY_MAX } from '../systems/shotGallery.js';
 import { getPref, setPref } from '../systems/uiPrefs.js';
 import { SHOT_DOWNLOAD_PREF, REVOKE_AFTER_MS } from './screenshot.js';
@@ -22,6 +22,7 @@ import { isEnhanced } from '../systems/uiSkin.js';
 import { bindings } from './input.js';
 import { codeForAction } from '../systems/inputActions.js';
 import { buttonText } from '../systems/controlsConfig.js';
+import { optionPath } from './settings/settingsMap.js';   // ORG2
 
 const el = (t, cls, txt) => {
   const n = document.createElement(t);
@@ -79,9 +80,9 @@ export function shotKeyName(store = bindings()) {
 
 export const LOADING_WORDS = Object.freeze({
   shots: 'Loading screens show the screenshots marked for them below.',
-  art: 'Loading screens show the night sky - choose Your screenshots on the Loading screens tile under Features to show these.',
-  off: 'Loading screens are off - turn them on with the Loading screens tile under Features.',
-  classic: 'Loading screens are drawn under the enhanced UI - the classic UI keeps Daggerfall\u2019s loads.',
+  art: `Loading screens show the night sky - choose Your screenshots on Loading screens (${optionPath('feat:loading-screen')}) to show these.`,   // ORG2
+  off: `Loading screens are off - turn them on in ${optionPath('feat:loading-screen')}.`,
+  classic: 'Loading screens are drawn under the enhanced UI - the classic UI keeps the original game\u2019s loads.',
 });
 /** Which of the words above stands: the skin first (the classic UI draws no loading screen), then the row. */
 export const loadingWordsKey = () => (isEnhanced() ? loadingMode() : 'classic');
@@ -249,7 +250,7 @@ function saveFile(s) {
   const url = URL.createObjectURL(s.blob);
   const a = el('a');
   a.href = url;
-  a.download = `daggerfall-shot-${s.id}.jpg`;
+  a.download = `dfo-shot-${s.id}.jpg`;
   document.body.append(a);
   a.click();
   a.remove();

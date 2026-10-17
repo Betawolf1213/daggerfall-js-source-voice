@@ -48,6 +48,8 @@
 //   getLocalizedQuestDisplayName(questName) - the localization table
 //                                override for picker labels (null =
 //                                the quest's own DisplayName)
+//   sharedClock()              - the shared world (REPUTE-GATE:
+//                                onlineRepute.js; absent = offline)
 //
 // The GUILD object a host passes offerGuildQuest is DFU's Guild:
 // { isMember(), rank, deity, getReputation(),
@@ -60,6 +62,8 @@ import { MEMBERSHIP_STATUS } from './questLists.js';
 import { QUEST_MESSAGES } from './quest.js';
 import { GUILD_GROUPS } from '../../formats/factionFile.js';
 import { GENDERS } from '../../characters/nameHelper.js';
+import { localizedText } from '../textManager.js';   // L10N3d: the wait box's two lines
+import { reputeGated } from './onlineRepute.js';   // REPUTE-GATE: online, two quests wait for their headers' standing
 
 /** DaggerfallQuestPopupWindow.cs:92 - TEXT.RSC's "You're too late, I
  *  gave the job to some spellsword" flavour family. */
@@ -85,7 +89,8 @@ export class QuestOfferFlow {
 
   /** QUEST-UID1: a LOAD discards the offer in hand. DFU cannot load under an open offer (the load window and the
    *  quickload key both stand on the HUD), so a pending offer never outlives the game it was parsed in; the port
-   *  quickloads from under any window (FIX-E, the death screen's F11), so the bridge's restore calls this - the
+   *  quickloaded from under any window (FIX-E) until DUPE-LOAD narrowed it to the death screen, and every load still
+   *  replaces the game an offer was parsed in, so the bridge's restore calls this - the
    *  offered quest was parsed in the game being replaced, and answering Yes must not start it in the loaded one. */
   reset() {
     this.offeredQuest = null;
@@ -144,10 +149,13 @@ export class QuestOfferFlow {
     this._guild = null;
     this._guildCtx = { guildGroup: null, buildingFactionId: factionId };
     this.offeredQuest = this.questLists.getQuest(questName, factionId);
-    // GetQuest answers null for a quest the reader has no source for,
-    // and DFU simply does not offer one (:273-279) - the prince has
-    // still been summoned and recorded either way.
-    if (!this.offeredQuest) return { kind: 'close' };
+    // GetQuest answers null for a quest the reader has no source for, or
+    // whose parse threw - a remote Place or Person with no site in the
+    // player's region (ParseQuest swallows it) - and DFU then offers
+    // nothing (:273-279). So does this: NO STEP, not a silent close step
+    // - the summoning reads the null as "no quest here" before it spends
+    // the gold or records the prince (daedraSummoning.js SUMMON-OFFER).
+    if (!this.offeredQuest) return null;
     return this._offerQuest();
   }
 
@@ -195,11 +203,14 @@ export class QuestOfferFlow {
     let rank = guild.rank;
     const level = this.machine.deps.playerLevel?.() ?? 0;
     if (guild.isSatisfyQuestReqByLevel?.() && level > rank) rank = level;
-    this.questPool = this.questLists.getGuildQuestPool(guildGroup, status, factionId, guild.getReputation(), rank);
+    // REPUTE-GATE (onlineRepute.js): online, Guard the Guild and Protect an Honored Mage wait for the standing their
+    // headers name - offline the pool is DFU's
+    this.questPool = reputeGated(this.questLists.getGuildQuestPool(guildGroup, status, factionId, guild.getReputation(), rank),
+      guild.getReputation(), !!this.deps.sharedClock?.());
     if (this.deps.guildQuestListBox) {
       return {
         kind: 'gettingQuests',
-        textLines: [GETTING_QUESTS_1, GETTING_QUESTS_2],
+        textLines: [localizedText('gettingQuests1', GETTING_QUESTS_1), localizedText('gettingQuests2', GETTING_QUESTS_2)],   // :578-579
         clickAnywhereToClose: true,
         onClose: () => this._gettingQuestsBoxClose(),
       };

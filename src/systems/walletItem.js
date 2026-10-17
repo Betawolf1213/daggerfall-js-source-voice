@@ -8,24 +8,24 @@
 // door that reads or spends one reads it where it always did: the bank's letters and the court's fines
 // (systems/banking.js, court.js), the Broker's embers (sigilBroker.js), the Reforge's shards (reforge.js), the save, the
 // realm's customs and its gold law. What the wallet changes is where the ENHANCED pack shows them - in the wallet's
-// sheet, not on its pages (ui/enhancedInventory.js packModel) - beside the two currencies that are no pieces at all: the
+// sheet, not on its pages (ui/enhanced/enhancedInventory.js packModel) - beside the two currencies that are no pieces at all: the
 // purse's gold (`entity.goldPieces`, E4's counter) and the account's silver (online, the marks book's balance -
 // `setWalletSilver`). The classic window is DFU's and keeps DFU's four tabs; there the wallet's Use says what it holds.
 //
 // THE PIECE: DFU's Small Sack's picture and price (ItemTemplates 86: TEXTURE.205 record 18, 1 gold - the picture is DFU's
-// own), no weight (`hasNoEncumbrance`, the Small Cart's column), one to a slot. BOUND (systems/itemBound.js - never
-// dropped, traded or sold; net/realmTradeLaw.js BOUND_TEMPLATES names it) and PACK-ONLY (`packOnly` - not even the wagon
+// own), no weight (`hasNoEncumbrance`, the Small Cart's column), one to a slot. BOUND (systems/item/itemBound.js - never
+// dropped, traded or sold; net/realm/realmTradeLaw.js BOUND_TEMPLATES names it) and PACK-ONLY (`packOnly` - not even the wagon
 // or the player's own storage take it: a wallet that left the pack would leave its pieces back on the pages). EVERY
 // CHARACTER HAS ONE: a new character's starting kit holds it (startingGear.js addSurvivalProvisions, the port's own tail -
 // DFU's kit and a mod's alike), and every character made before it is given one, once - PORTAL-GIFT's shape
-// (systems/gateSpoils.js): a save's `walletGift` mark says it has had it, a save from before the wallet carries none, and
+// (systems/gate/gateSpoils.js): a save's `walletGift` mark says it has had it, a save from before the wallet carries none, and
 // the gift is given as the save is restored (save.js restorePlayer - every load, offline and online, the realm's boot
 // among them).
 //
 // Not a DFU member: Daggerfall's currencies are its gold and its letters, in the pack's lists. Ledger A (WALLET1).
-import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from './itemTemplates.js';
+import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from './item/itemTemplates.js';
 import { addItem, LETTER_OF_CREDIT_TEMPLATE } from './inventory.js';
-import { SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE } from './gateSpoils.js';
+import { SIGIL_STONE_TEMPLATE, WELKYND_SHARD_TEMPLATE } from './gate/gateSpoils.js';
 import { isEquipped } from './equip.js';
 
 /** The wallet's template - the port's own, beside the gate's 570-572 and below the professions' reserved 600. */
@@ -137,6 +137,16 @@ export function walletContents(items, entity, { silver = walletSilver(), here = 
 }
 
 const num = (/** @type {number} */ n) => Number(n).toLocaleString('en-US');
+/** TRADE-LOC II (2026-10-11, from play: "Cant see how much a letter of credit is worth when trading directly with
+ *  players"): a LETTER OF CREDIT's worth as the gold it stands for ("12,500 gold"), or null for anything else - the line
+ *  below's figure, for a surface that names it under its own word (the pack's card says it as its Worth pair). */
+export const letterWorthGold = (/** @type {any} */ item) => (item?.templateIndex === LETTER_OF_CREDIT_TEMPLATE
+  ? `${num(Math.max(0, Math.trunc(Number(item.value) || 0)))} gold` : null);
+/** A LETTER OF CREDIT's worth, as a line - the gold it stands for (its `value`, the whole price it was minted at), or null
+ *  for anything else. TRADE-LOC (Dudey: "when players trade in any ui the letter of credit doesnt show how many gold its
+ *  worth when being clicked on it in the info box"): a letter is nothing but its worth, so a window that describes an item
+ *  without its price - the player trade's - says it here. */
+export const letterWorthLine = (/** @type {any} */ item) => { const g = letterWorthGold(item); return g == null ? null : `Worth ${g}`; };
 /** AUDIT 625 W5: the silver's words where no figure is counted, by why (walletContents' `silverWhy`): offline the
  *  account keeps it; online the page is asking it (every look asks afresh - the sheet, the classic box, the hotbar); an
  *  account that holds none (a guest's, the counting-houses not striking yet). The online wait once said the offline
@@ -175,7 +185,7 @@ export function walletLines(/** @type {ReturnType<typeof walletContents>} */ c) 
   return ['Your wallet holds:', ...walletLedger(c).flatMap((part) => part.rows.map(walletLine))];
 }
 
-/** The card's lines (systems/itemInfo.js): what a wallet is for. */
+/** The card's lines (systems/item/itemInfo.js): what a wallet is for. */
 export const WALLET_CARD_LINES = Object.freeze([
   'Holds your letters of credit, Deadlands Embers and Welkynd Shards,',
   'and counts your gold and your silver.',

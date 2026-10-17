@@ -33,7 +33,7 @@
 
 import { MARKET_RID_RE } from './marketLaw.js';
 import { ASK_AGAIN_NOW, jittered } from './backoff.js';
-import { walletReserve } from './realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took   // SCALE1: asks again spread out, and never at once into a minute's refusal
+import { walletReserve } from './realm/realmGoldLaw.js';   // MARKET-AUDIT: a refusal gives back exactly what the payment took   // SCALE1: asks again spread out, and never at once into a minute's refusal
 
 export const MARKET_KEPT_KEY = 'prof5.kept';
 export const MARKET_CACHE_MS = 60_000;
@@ -357,6 +357,9 @@ export function createMarketBook({ door, storage = null, character, now = () => 
     state,
     read,
     cached: (view, q) => cache.get(keyOf(view, q))?.data ?? null,
+    /** MARKET-SPEED: whether a read of this view would be answered by the minute's cache, nothing asked (`read`'s own test) -
+     *  the tab draws such a view once, never a "Reading the market..." frame before it. */
+    fresh: (view, q) => { const hit = cache.get(keyOf(view, q)); return !!hit && now() - hit.at < MARKET_CACHE_MS; },
     forget,
     /** AUDIT 30 U12: an act under way (the market's own, not the board window's). */
     get busy() { return !!_busy; },

@@ -16,11 +16,11 @@
 //     rasterizer the three masks share, and the Basic Roads classifier the context reads roads with;
 //   - SnowContextData's pure members (OutsideWeight, IsVanillaLocation) and BlanketSurfaceSamples.InterpolateQuad.
 // Single precision where the C# computes in float (Math.fround at every float operation), double where it computes
-// in double - pinned against the reference harness's traces (test/snowfall1_model.test.js).
+// in double - pinned against the reference harness's traces (test/systems/snowfall1_model.test.js).
 
 import { modSetting } from './modSettings.js';
 import { roundToInt, lerpF } from './mathf.js';   // Mathf.RoundToInt (banker's), Mathf.Lerp in float
-import { bytesToBase64, base64ToBytes } from './saveTransfer.js';   // Convert.ToBase64String / FromBase64String
+import { bytesToBase64, base64ToBytes } from './save/saveTransfer.js';   // Convert.ToBase64String / FromBase64String
 import { deflateRaw, inflateRaw } from '../formats/rawDeflate.js';   // DeflateStream
 
 const f32 = Math.fround;
@@ -1024,44 +1024,49 @@ export const roadCorners = (west, east) => ((east & 5) | (west & 0x50)) & 255;
  */
 export function predictRoadTile(x, y, flags, corners, ground, road, rect) {
   if (x < 0 || x >= 128 || y < 0 || y >= 128 || ground < 0 || ground > 3) return -1;
-  let tile = -1;
-  const paint = (record, rotate, flip, overwrite = true) => {
-    if ((!overwrite && tile >= 0) || record === 99) return false;
-    tile = (record << 2) | (rotate ? 1 : 0) | (flip ? 2 : 0);
-    return true;
-  };
+  // PERF-SNOW1 (2026-10-10): the classifier's `paint` is a module function over the tile it is handed (roadPaint), not a
+  // closure minted on every one of the up to six predictions a painted tile's classification asks - the same calls, in
+  // the same order, each answering what the closure did (the tile it would leave, or ROAD_UNPAINTED where it refused)
+  let tile = -1, t;
   let painted = false;
   const straight = road ? 46 : TRACK_STRAIGHT[ground];
   const diagonal = road ? 46 : TRACK_DIAGONAL[ground];
   const edge = road ? ROAD_EDGE[ground] : TRACK_EDGE[ground];
   if (flags !== 0) {
     const mid = x === 63 || x === 64, midY = y === 63 || y === 64;
-    if (((flags & 0x80) && mid && y > 63) || ((flags & 8) && mid && y < 64)) painted = paint(straight, false, x === 64) || painted;
-    if (((flags & 0x80) && mid && y === 63) || ((flags & 8) && mid && y === 64)) painted = paint(edge, x === y, x === 64, false) || painted;
-    if (((flags & 0x20) && midY && x > 63) || ((flags & 2) && midY && x < 64)) painted = paint(straight, true, y === 64) || painted;
-    if (((flags & 0x20) && midY && x === 63) || ((flags & 2) && midY && x === 64)) painted = paint(edge, x === y, x === 64, false) || painted;
-    if (((flags & 0x40) && x === y && x > 63) || ((flags & 4) && x === y && x < 64)) painted = paint(diagonal, false, false) || painted;
+    if (((flags & 0x80) && mid && y > 63) || ((flags & 8) && mid && y < 64)) { t = roadPaint(tile, straight, false, x === 64, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
+    if (((flags & 0x80) && mid && y === 63) || ((flags & 8) && mid && y === 64)) { t = roadPaint(tile, edge, x === y, x === 64, false); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
+    if (((flags & 0x20) && midY && x > 63) || ((flags & 2) && midY && x < 64)) { t = roadPaint(tile, straight, true, y === 64, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
+    if (((flags & 0x20) && midY && x === 63) || ((flags & 2) && midY && x === 64)) { t = roadPaint(tile, edge, x === y, x === 64, false); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
+    if (((flags & 0x40) && x === y && x > 63) || ((flags & 4) && x === y && x < 64)) { t = roadPaint(tile, diagonal, false, false, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
     if (!painted && (((flags & 0x40) && ((x === y + 1 && x > 63) || (x + 1 === y && y > 63))) || ((flags & 4) && ((x === y + 1 && x <= 64) || (x + 1 === y && y <= 64))))) {
-      painted = paint(edge, false, x === y + 1) || painted;
+      t = roadPaint(tile, edge, false, x === y + 1, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; }
     }
     const nx = 127 - x;
-    if (((flags & 1) && nx === y && x < 64) || ((flags & 0x10) && nx === y && x > 63)) painted = paint(diagonal, true, false) || painted;
+    if (((flags & 1) && nx === y && x < 64) || ((flags & 0x10) && nx === y && x > 63)) { t = roadPaint(tile, diagonal, true, false, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; } }
     if (!painted && (((flags & 1) && ((nx === y + 1 && x < 64) || (nx + 1 === y && y > 63))) || ((flags & 0x10) && ((nx === y + 1 && x >= 63) || (nx + 1 === y && y <= 64))))) {
-      painted = paint(edge, true, nx !== y + 1) || painted;
+      t = roadPaint(tile, edge, true, nx !== y + 1, true); if (t !== ROAD_UNPAINTED) { tile = t; painted = true; }
     }
     if (!road) {
-      if ((flags & 0x80) && (flags & 2) && x === 63 && y === 64) paint(TRACK_CORNER[ground], false, false);
-      if ((flags & 0x80) && (flags & 0x20) && x === 64 && y === 64) paint(TRACK_CORNER[ground], true, true);
-      if ((flags & 8) && (flags & 2) && x === 63 && y === 63) paint(TRACK_CORNER[ground], true, false);
-      if ((flags & 8) && (flags & 0x20) && x === 64 && y === 63) paint(TRACK_CORNER[ground], false, true);
+      if ((flags & 0x80) && (flags & 2) && x === 63 && y === 64) { t = roadPaint(tile, TRACK_CORNER[ground], false, false, true); if (t !== ROAD_UNPAINTED) tile = t; }
+      if ((flags & 0x80) && (flags & 0x20) && x === 64 && y === 64) { t = roadPaint(tile, TRACK_CORNER[ground], true, true, true); if (t !== ROAD_UNPAINTED) tile = t; }
+      if ((flags & 8) && (flags & 2) && x === 63 && y === 63) { t = roadPaint(tile, TRACK_CORNER[ground], true, false, true); if (t !== ROAD_UNPAINTED) tile = t; }
+      if ((flags & 8) && (flags & 0x20) && x === 64 && y === 63) { t = roadPaint(tile, TRACK_CORNER[ground], false, true, true); if (t !== ROAD_UNPAINTED) tile = t; }
     }
     if (road && x > rect.xMin && x < rect.xMax && y > rect.yMin && y < rect.yMax) return 184;
   }
-  if ((corners & 1) && x === 127 && y === 127) paint(edge, true, false);
-  if ((corners & 4) && x === 127 && y === 0) paint(edge, false, false);
-  if ((corners & 0x10) && x === 0 && y === 0) paint(edge, true, true);
-  if ((corners & 0x40) && x === 0 && y === 127) paint(edge, false, true);
+  if ((corners & 1) && x === 127 && y === 127) { t = roadPaint(tile, edge, true, false, true); if (t !== ROAD_UNPAINTED) tile = t; }
+  if ((corners & 4) && x === 127 && y === 0) { t = roadPaint(tile, edge, false, false, true); if (t !== ROAD_UNPAINTED) tile = t; }
+  if ((corners & 0x10) && x === 0 && y === 0) { t = roadPaint(tile, edge, true, true, true); if (t !== ROAD_UNPAINTED) tile = t; }
+  if ((corners & 0x40) && x === 0 && y === 127) { t = roadPaint(tile, edge, false, true, true); if (t !== ROAD_UNPAINTED) tile = t; }
   return tile;
+}
+/** PERF-SNOW1: the classifier's paint - the tile `record` painted (turned, flipped) over `tile`, or ROAD_UNPAINTED where it
+ *  is refused (no overwrite over a tile already painted, or record 99). */
+const ROAD_UNPAINTED = -2;
+function roadPaint(tile, record, rotate, flip, overwrite) {
+  if ((!overwrite && tile >= 0) || record === 99) return ROAD_UNPAINTED;
+  return (record << 2) | (rotate ? 1 : 0) | (flip ? 2 : 0);
 }
 
 /** BasicRoadsClassifier.Classify: a painted tile is the network's road when a road's prediction on any ground set is

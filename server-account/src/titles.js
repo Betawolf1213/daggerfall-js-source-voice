@@ -58,6 +58,9 @@
 //             a Brass Remnant's receipt on its kill's first write
 //             (sds.js claimSd) is a fact that happened, laid on the row
 //             (`sd_honours`, 0087) and held for good.
+//   I LOVE LAMP (LAMP-KEEPER II, 2026-10-14) - recorded the same way: the
+//             account's first word with a lamp keeper (lamp.js claimLamp),
+//             laid on the row (`lamp_title`, 0113) and held for good.
 //
 // WHY THAT AND NOT A `grants` TABLE. Mac asked that "all current
 // players should be granted the founder title", and the obvious
@@ -85,10 +88,12 @@
 // worn by a row nobody has looked at since.
 // ═══════════════════════════════════════════════════════════════════
 
-import { TITLES, GLYPHS, AURAS, SEAT_TITLES } from '../../src/net/identityToken.js';
+import { TITLES, GLYPHS, AURAS, SEAT_TITLES, CHAPTER_TITLES } from '../../src/net/identityToken.js';
 import { insigniaHeld, insigniaKeys } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - a title and an aura bought
 import { patreonTitlesOf } from './patreon.js';   // PATREON-LINK: a Patreon tier's title, held by the pledge
 import { SD_HONOUR_TITLE, SD_HONOUR_AURA } from './sds.js';   // SD9b: the Hour's grants on the row
+import { SERPENT_HONOUR_TITLE, SERPENT_HONOUR_AURA } from './serpents.js';   // SERPENT5: the Old Coil's grants on the row
+import { LAMP_TITLE } from './lamp.js';   // LAMP-KEEPER II: I Love Lamp on the row
 
 /** THE FOUNDER CUTOFF, and it is a date rather than a count because
  *  "all current players" is a statement about a MOMENT. Everyone who
@@ -310,6 +315,11 @@ export function titlesHeld(player, env) {
   // account's guildmaster characters' guilds hold (seatTurning.js seatTitlesOf), read by the caller and laid on the row
   // as `seatTitles` for this request alone
   if (Array.isArray(player?.seatTitles)) for (const t of player.seatTitles) if (SEAT_TITLES.includes(t) && !held.includes(t)) held.push(t);
+  // CHAP4c (Chapters-Arc 6): AND A CHAPTER'S SEAT'S - its Master, an officer, a Master who lost the seat this Season
+  // (CHAP6e: and a Master's of a whole Season, kept for good; a High Master is signed in the Master's place, never held) -
+  // derived from the account's characters' seats (npcChapters.js chapterTitlesOfAccount), laid on the row as
+  // `chapterTitles` for this request alone, while CHAPTER_TITLES is on
+  if (Array.isArray(player?.chapterTitles)) for (const t of player.chapterTitles) if (CHAPTER_TITLES.includes(t) && !held.includes(t)) held.push(t);
   // ARENA4 (2026-10-02, Mac: "Being a top rank PvE fighter comes with it's own title. Being the #1 pvp arena player comes
   // with it's own temporary title/glyph"): THE ARENA'S TWO, derived from the arena's rows as the founder is from a date -
   // read onto the row (`arena`, server-account/src/arena.js arenaHonoursOf) where a token is minted or a wardrobe shown.
@@ -317,10 +327,18 @@ export function titlesHeld(player, env) {
   // the season's #1, so it passes to whoever takes the top and lapses by itself. A row read without them holds neither.
   if (player?.arena?.grand === true) held.push('grandchampion');
   if (player?.arena?.champion === true) held.push('arenachampion');
+  if (player?.iliac?.champion === true) held.push('iliacchampion');   // CARDS10: Iliac Hand's season #1 (iliac.js), while they hold the top
+  if (player?.gambit?.champion === true) held.push('grandmaster');   // KG6: The King's Gambit's season #1 (gambit.js), while they hold the top
   // SD9b: HOURBREAKER - rolled on a Brass Remnant's kill's first write and laid on the row (sds.js claimSd, `sd_honours`),
   // held for good. A guest's kill is never written, so a guest row holds none
   if (typeof player?.handle === 'string' && player.handle && (Number(player?.sd_honours) & SD_HONOUR_TITLE)) held.push('hourbreaker');
   if (isHoursFirst(player, env)) held.push('hoursfirst');   // HOURS-FIRST: by name
+  // LAMP-KEEPER II: I LOVE LAMP - laid on the row by the account's first word with a lamp keeper (lamp.js claimLamp), held
+  // for good; a guest's word writes nothing, so a guest row holds none
+  if (typeof player?.handle === 'string' && player.handle && Number(player?.lamp_title) === 1) held.push(LAMP_TITLE);
+  // SERPENT5: COILBREAKER - rolled on a dealing ship's serpent kill's first write and laid on the row (serpents.js
+  // claimSerpent, `serpent_honours`), held for good; a guest's kill is never written, so a guest row holds none
+  if (typeof player?.handle === 'string' && player.handle && (Number(player?.serpent_honours) & SERPENT_HONOUR_TITLE)) held.push('coilbreaker');
   return held;
 }
 
@@ -341,6 +359,8 @@ export function aurasHeld(player, env) {
   if (typeof player?.handle === 'string' && player.handle && (Number(player?.sd_honours) & SD_HONOUR_AURA)) held.push('turninghour');
   if (isHoursFirst(player, env) && !held.includes(HOURS_FIRST_AURA)) held.push(HOURS_FIRST_AURA);   // HOURS-FIRST: with the title, by name
   for (const a of insigniaKeys(player?.insignia, 'aura')) if (!held.includes(a)) held.push(a);
+  // SERPENT5: THE MAELSTROM - the Old Coil's second grant, laid on the row as Coilbreaker is, held for good
+  if (typeof player?.handle === 'string' && player.handle && (Number(player?.serpent_honours) & SERPENT_HONOUR_AURA)) held.push('maelstrom');
   return held;
 }
 /** WB9g: the aura this player WEARS - the stored one, while they hold it (titleWorn's law). AEGIS: held by a list too. */

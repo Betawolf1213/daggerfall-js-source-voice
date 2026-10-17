@@ -30,9 +30,10 @@ import { SWING_MODS } from './playerWeapon.js';
 import { enchantChanceToHitMod } from '../systems/enchantments.js';
 import { weaponDamageMods, weaponBlowMods } from '../systems/entityMods.js';
 import { weaponSkillUsed, WEAPONS } from '../characters/weapons.js';
-import { skillsLevel } from '../characters/enemyEntity.js';
+import { skillsLevel } from '../characters/enemy/enemyEntity.js';
 import { equipTableOf, EQUIP_SLOTS } from '../systems/equip.js';
 import { getItemHands, ITEM_HANDS } from '../characters/equipTable.js';
+import { clawMetalDamage } from './clawMetal.js';   // BAL6-GAUNTLETS: the beast's claws take its gauntlets' metal
 
 const int = Math.trunc;
 const clamp = (x) => Math.max(3, Math.min(97, x));   // CalculateSuccessfulHit / pcaaoSuccessfulHit: 3..97
@@ -151,6 +152,7 @@ function damageModel(ctx, swing, foe) {
     const h2h = skillValue(entity, SKILLS.HandToHand);
     for (let r = handToHandMinDamage(h2h); r <= handToHandMaxDamage(h2h); r++) rolls.push(r);
     strMod = core.overhaul ? pcaaoDamageModifier(str) : damageModifier(str);
+    matMod = clawMetalDamage(entity);   // BAL6-GAUNTLETS: both cores add it where a weapon's material stands
   } else {
     for (let r = baseDamageMin(weapon); r <= baseDamageMax(weapon); r++) rolls.push(weaponDamageMods(weapon, r));
     matMod = WEAPON_MATERIAL_MODIFIER[weapon.material] ?? 0;
@@ -168,7 +170,7 @@ function damageModel(ctx, swing, foe) {
     if (!core.overhaul) return d;
     d = Math.max(0, d);
     if (critical && crit.damageMult !== 1) d = unityRound(Math.fround(d * crit.damageMult));
-    if (core.modules.conditionBasedEffectiveness && weapon && d >= 1) d = pcaaoAlterDamageBasedOnWepCondition(d, skillId === SKILLS.BluntWeapon, weapon);
+    if (core.modules.conditionBasedEffectiveness && weapon && d >= 1) d = pcaaoAlterDamageBasedOnWepCondition(d, skillId === SKILLS.BluntWeapon, weapon, core.modules.equipmentDamageEnhanced);   // BAL1: the edge rides the mod's wear
     return d;
   };
   const plain = rolls.map((r) => finish(one(r), false));

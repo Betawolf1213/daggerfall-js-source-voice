@@ -13,17 +13,26 @@
  *  log - a constructor fault the boot probe sees - prefixed, when `label` is
  *  given, `${label} shader: ` or `${label} link: `. */
 export function buildProgram(gl, vsSrc, fsSrc, label = '') {
+  // PERF-COMPILE1 (2026-10-10, stutter): ONE SYNC POINT, NOT THREE. A status query is a round trip that waits for the
+  // driver to finish - asked after each compile, it made the vertex stage finish before the fragment stage was even
+  // handed over, and the link wait a third. Both stages go in, the link goes in, and the one LINK_STATUS read waits
+  // once; the drivers that compile in parallel (ANGLE's worker threads) overlap the stages. A failure still throws the
+  // log it threw: a stage that did not compile is read only when the link failed (a compile fault always fails the
+  // link), and its log comes first, prefixed `${label} shader: `.
   const prog = gl.createProgram();
   const stage = (type, src) => {
     const sh = gl.createShader(type);
     gl.shaderSource(sh, src);
     gl.compileShader(sh);
-    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(`${label ? `${label} shader: ` : ''}${gl.getShaderInfoLog(sh)}`);
     gl.attachShader(prog, sh);
+    return sh;
   };
-  stage(gl.VERTEX_SHADER, vsSrc);
-  stage(gl.FRAGMENT_SHADER, fsSrc);
+  const vs = stage(gl.VERTEX_SHADER, vsSrc);
+  const fs = stage(gl.FRAGMENT_SHADER, fsSrc);
   gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(`${label ? `${label} link: ` : ''}${gl.getProgramInfoLog(prog)}`);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    for (const sh of [vs, fs]) if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(`${label ? `${label} shader: ` : ''}${gl.getShaderInfoLog(sh)}`);
+    throw new Error(`${label ? `${label} link: ` : ''}${gl.getProgramInfoLog(prog)}`);
+  }
   return prog;
 }

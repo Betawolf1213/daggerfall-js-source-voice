@@ -7,7 +7,7 @@
 // renderer - that is LEGACY7's to bring". This brings it. A member of the line standing in the world whose newest save
 // wrote down their LOOK (scenes/legacyHost.js writeCurrent - the hello's own recipe, systems/legacy/family.js
 // memberLook) is drawn as an online peer is drawn on this screen: a Morrowind body where this client stands those
-// (net/peerBodies.js - the enhanced lane with the data attached), else their class's sprite or their paperdoll as the
+// (net/peer/peerBodies.js - the enhanced lane with the data attached), else their class's sprite or their paperdoll as the
 // 'Other players' card says (net/remotePlayers.js). A member never played has no look and wears the town's outfit, as
 // before. Each is drawn by layers of their own - no footstep, no swing heard: a townsperson's steps are the town's.
 //
@@ -68,7 +68,7 @@ export function createFamilyBodies({ dolls, bodies = null }) {
 }
 
 /**
- * A ROOM'S SPRITES WITH THE LINE IN ITS OWN BODY (scenes/livingIndoors.js's `sprites`): one of the line with a look is
+ * A ROOM'S SPRITES WITH THE LINE IN ITS OWN BODY (scenes/livingWorld/livingIndoors.js's `sprites`): one of the line with a look is
  * stood in `family` and keeps a talk seat of its own here (the room's own shape: `nameNPC`, `personFaceRecordId`,
  * `_talkSeed`, `living`); everyone else goes to the room's own sprites (world/travellerSprites.js) as before.
  * @param {any} sprites - the room's createTravellerSprites @param {ReturnType<typeof createFamilyBodies>} family
@@ -111,6 +111,8 @@ export function familyRoomSprites(sprites, family, living = null) {
     batches: () => [...sprites.batches(), ...family.batches()],
     persons: () => [...sprites.persons(), ...seats],
     bodyOf: (/** @type {string} */ key) => sprites.bodyOf?.(key) ?? null,
+    /** MWNPC10c: the rest's Morrowind bodies (the line's are the family's). */
+    drawBodies(canvas, proj, view, eye, dt) { sprites.drawBodies?.(canvas, proj, view, eye, dt); },
     clear() { sprites.clear(); family.clear(); seats.length = 0; persons.clear(); },
     get size() { return (sprites.size ?? 0) + family.size; },
   };

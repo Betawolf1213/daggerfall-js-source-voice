@@ -274,6 +274,22 @@ function tellDoorOpen(entity) {
 /** A foe's blow at me came to nothing before any door was called (a shared foe's, weighed to nothing for the party
  *  beside me - partyScale.js partyFoeHits): the door's word on it all the same. */
 export function playerBlowCameToNothing(entity) { tellDoorOpen(entity); }
+// FULL-GUARD (FIELD BUGS 2026-10-11b): WHETHER THE HURT IN HAND IS A FOE'S BLOW. The one law of what a blow is stays the set
+// powers' (sigilSetPowers.js pendingPlayerBlow - the formula's struck tail's mark, taken as the door opened), handed in
+// here so this leaf imports none of it; until it is, no hurt is a blow.
+let _foeBlow = () => false;
+export function setFoeBlowProbe(fn) { _foeBlow = typeof fn === 'function' ? fn : () => false; }
+// AUDIT SCHOOLS (L1 M3): A FOE'S BLOW EVADED - named listeners `fn(entity) -> boolean`, asked once a foe's blow (the
+// struck tail's mark, setFoeBlowProbe) reaches a door that may say (no SetHealth(0) door, no duel's blow) and BEFORE any
+// modifier: one that answers true makes the blow land nothing - no modifier spends a charge on it (Iron Hide's ward,
+// Gearward's winding, Hold the Line's carry), no shield pool drinks it and no hurt listener hears it (the Seer's
+// Foresight). A blow at full health, a fall, a poison's round, a spell is never asked.
+const _evasions = new Map();
+export const registerPlayerBlowEvasion = namedRegistry(_evasions);
+function playerBlowEvaded(entity) {
+  for (const fn of _evasions.values()) { try { if (fn(entity) === true) return true; } catch { /* as below */ } }
+  return false;
+}
 /** The damage through every registered modifier, in registration order - a modifier that throws is skipped. */
 export function playerDamageMods(entity, dmg) {
   let d = dmg;
@@ -293,6 +309,22 @@ function tellHurt(entity, dmg, before, after, saved = false) {
 }
 
 /**
+ * INT9 (AUDIT): A DEATH ANOTHER'S WORD DECIDED - the open zone's referee's fall (net/wild/wildRef.js): no withholding, no guild's
+ * AvoidDeath, no death save - the referee called it, and its drop follows it whatever this machine says (hurtPlayer's
+ * doors turned it aside, and the fallen stood up with a fall already called on it). OnDeath's subscribers and the
+ * presenter, as the transition always tells them. Answers whether it was a death.
+ * @param {any} entity
+ */
+export function forcePlayerDeath(entity) {
+  if (!((entity?.health ?? 0) > 0)) return false;
+  entity.health = 0;
+  surfacePlayer();
+  hearDeath(entity);
+  _deathPresenter?.(entity);
+  return true;
+}
+
+/**
  * DUEL1: `spare` - A DUEL'S BLOW NEVER KILLS. Mac: "Loser drops to 1HP". A blow that would take a live player to zero
  * leaves them at ONE instead, and `spare(entity)` is told (the duel's law: the side that falls says so and has lost);
  * the avoid-death hook and the death presenter are never reached, because nobody died. Only the duel's own doors pass
@@ -306,6 +338,7 @@ export function hurtPlayer(entity, dmg, { bypassShield = false, spare = null } =
   if (!(dmg > 0)) return false;
   const portSays = !bypassShield && !spare;   // SET2: never on a SetHealth(0) door, never on a duel's blow
   if (portSays) {
+    if (_foeBlow() && playerBlowEvaded(entity)) return false;   // AUDIT SCHOOLS L1 M3: before any modifier spends a charge
     dmg = playerDamageMods(entity, dmg);
     if (!(dmg > 0)) return false;
   }
@@ -330,6 +363,17 @@ export function hurtPlayer(entity, dmg, { bypassShield = false, spare = null } =
     entity.health = 1;
     surfacePlayer();
     try { spare(entity); } catch { /* the duel's word is not the blow's problem */ }
+    return false;
+  }
+  // FULL-GUARD (FIELD BUGS 2026-10-11b, YeetMaster64: "I get one hit killed several times a day"; Mac: "No kill from full
+  // health"): a foe's one blow never takes a player at full health to dead - it leaves them at 1, told as what it took,
+  // and no death save is spent on it. A blow is the struck tail's mark (setFoeBlowProbe): a fall, a poison's round, a
+  // spell, a trap or a world boss's strike is none, and the next blow at 1 kills as it always has.
+  if (portSays && wasAlive && entity.health - dmg < 1 && entity.health >= (entity.maxHealth ?? Infinity) && _foeBlow()) {
+    const was = entity.health;
+    entity.health = 1;
+    surfacePlayer();
+    tellHurt(entity, was - 1, was, 1);
     return false;
   }
   // SET2: THE DEATH SAVE - damage that would take a live player to zero is asked of the registered saves first; one

@@ -10,7 +10,7 @@
 //
 // THE BAG IS AN ITEM IN THE PACK, the way the Small Cart is (DFU's
 // HasCart reads the cart's template in the pack): owning one is
-// holding one. Its own list is the save's (systems/save.js), and a bag
+// holding one. Its own list is the save's (systems/save/save.js), and a bag
 // sold or dropped while it holds anything is refused - the cart's own
 // rule (tradeModes.js), so nothing is ever left in a list nobody owns.
 //
@@ -28,7 +28,7 @@
 import { BAG_KG_LIMIT, BAG_WORDS, CARRIED_MAX, hasBag, isBagItem, depositOrderOk } from '../net/bagLaw.js';
 import { PLANT_GROUP_TEMPLATES, FOOD_KEYS, MINED_KEYS, withdrawable } from '../net/professionLaw.js';
 import { material } from '../net/nodeLaw.js';
-import { mintMaterialItem, withdrawIntoPack } from './profItems.js';
+import { mintMaterialItem, withdrawIntoPack } from './professions/profItems.js';
 import { addItem, totalWeight, effectiveUnitWeightInKg, canHoldAmount, carriedWeight, isSummoned, isEnchanted } from './inventory.js';
 import { entityMaxEncumbrance } from '../combat/formulas.js';
 
@@ -86,6 +86,16 @@ export function heldOf(entity, key) {
     for (const it of list) if (materialKeyOfItem(it) === key) n += it.stackCount ?? 1;
   }
   return n;
+}
+
+/** UNCOUNTED (FIELD BUGS 2026-10-09c, "Some ingredients won't let you store them"): every material the pack, the bag
+ *  and the wagon hold an item of - counted by the service or not - so the Stores page can name what it will not take. */
+export function heldKeysOf(entity) {
+  const keys = new Set();
+  for (const list of [entity?.items ?? [], entity?.bagItems ?? [], entity?.wagonItems ?? []]) {
+    for (const it of list) { const k = materialKeyOfItem(it); if (k) keys.add(k); }
+  }
+  return [...keys];
 }
 
 /** One unit's weight, in kg, as the pack weighs it. */
@@ -148,7 +158,7 @@ function listOf(entity, role) {
  * it holds is held (heldOf), so a station may use it as it uses the pack.
  * AUDIT2 BAG1 H3: the undo puts each back by its list's ROLE, read at the undo (listOf) - a split stack whose rest has gone
  * (merged, sold) comes back as a record of its own, never onto a record the lists no longer hold.
- * AUDIT2 BAG1 K3/K7/H2: `stamp` - a deposit's id, written into the save with the take (`entity.bagTakes`, systems/save.js)
+ * AUDIT2 BAG1 K3/K7/H2: `stamp` - a deposit's id, written into the save with the take (`entity.bagTakes`, systems/save/save.js)
  * with its material, units and `order`, so a page loaded later knows whether the save it booted saw these units go, and
  * can ask a deposit no kept act names (net/profBook.js strayStamps). The undo takes the stamp off with them.
  * @param {any} entity @param {string} key @param {number} n @param {string|null} [stamp] @param {string|null} [order]

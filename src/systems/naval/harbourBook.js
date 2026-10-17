@@ -23,7 +23,7 @@ export const HARBOUR_RETRY_S = 10;
 /**
  * @param {{
  *   harbourNear: () => ({ key: string, name?: string|null, rect: { minX: number, maxX: number, minZ: number, maxZ: number },
- *     ready?: () => boolean } | null),
+ *     ready?: () => boolean, reach?: number } | null),
  *   isWater: (x: number, z: number, hull: number) => boolean,
  * }} deps
  */
@@ -36,7 +36,7 @@ export function createHarbourBook(deps) {
   function step(clock) {
     const near = deps.harbourNear() ?? null;
     if (!near) return;
-    const sound = () => findHarbour({ rect: near.rect, isWater: (x, z, h) => deps.isWater(x, z, h) });
+    const sound = () => findHarbour({ rect: near.rect, isWater: (x, z, h) => deps.isWater(x, z, h), ...(near.reach ? { reach: near.reach } : {}) });   // AUDIT CAPTAIN'S SEA H1: an isle port's own reach
     const h = book.get(near.key);
     if (!h) { if (near.ready?.() !== false) book.set(near.key, { key: near.key, name: near.name ?? null, harbour: sound(), at: clock }); }
     else if (!h.harbour && clock - h.at >= HARBOUR_RETRY_S && near.ready?.() !== false) { h.harbour = sound(); h.at = clock; }

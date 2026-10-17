@@ -42,9 +42,9 @@
 import { accountKind, mintId, overRate } from './accounts.js';
 import { renownHeldSql } from './renownTracks.js';   // AUDIT LEGACY III O5: the bound counts the living's tracks
 import { isDeveloper } from './titles.js';
-import { marksOpenFor, balanceOf, gatherStrikeStatement, gatherStrikeRid, findLineAnswer } from './marks.js';   // SILVER-FINDS: a harvest's find
+import { marksOpenFor, balanceOf, gatherStrikeStatement, gatherStrikeRid, findLineStatements, findLineFrom } from './marks.js';   // SILVER-FINDS: a harvest's find; GATHER-SPEED: read in its batch
 import { dice } from './unitRoll.js';   // SILVER-FINDS: the service's dice, below this file and marks.js (which needs them too)
-import { CHAR_ID_RE } from './service.js';
+import { CHAR_ID_RE, readAll } from './service.js';   // GATHER-SPEED: a harvest's reads in one round trip
 import { MARKS_MAX, utcDay, gatherFindOf } from '../../src/net/marksLaw.js';
 import { renownForXp, RENOWN_XP_MAX, RENOWN_TRACKS_MAX } from '../../src/net/renown.js';
 import {
@@ -66,7 +66,7 @@ import {
   jewelHand, takesCracked, masterworkSpec, LAPIDARY,   // PROF10: the jeweller's hand, a Lapidary's cracked gem, the Master Jeweller's points
   PROVENANCE_RE,   // CRAFT4: a tempered piece's id
 } from '../../src/net/recipeLaw.js';
-import { mintProductRecord, readProductRecord } from '../../src/net/productRecord.js';   // CRAFT4: a tempered piece's record re-signed
+import { mintProductRecord, readProductRecord, MINT_VERSION } from '../../src/net/productRecord.js';   // CRAFT4: a tempered piece's record re-signed; CRAFT-PROCS: the mint's version
 import { temperableRecipe, temperFrom, temperCost, temperXp } from '../../src/net/temperLaw.js';   // CRAFT4: the temper
 import { signingKey } from './signing.js';
 import {
@@ -79,14 +79,24 @@ import {
 import { CLIMATES } from '../../src/formats/mapsTables.js';
 import { seatsOpenFor } from './townSeats.js';   // SEAT1d: the Levy, where the seats are this account's
 import { levyAt } from './seatHolding.js';
-import { levyOf, seatWeekOf } from '../../src/net/townSeatLaw.js';
+import { levyOf, seatWeekOf, seasonZeroOf } from '../../src/net/townSeatLaw.js';
 import { tideNow } from './tides.js';   // SEASON1 part two: the land's Tide (9.3)
 import { tideYield } from '../../src/net/tideLaw.js';
+import { firmStatement, firmStatsFrom, firmStatsOf } from './firmament.js';   // FIRM1: the Firmament's hand on a harvest and a craft
+import { yieldPct, xpPct, scaleQty, scaleXp } from '../../src/net/firmament/firmamentLaw.js';
 import { stationSteps } from '../../src/net/fortLaw.js';   // SEAT2b part two (7.5): a seat's crafting halls
 import { fortTiersOf } from './seatForts.js';   // SEAT2b part two: the halls standing at the seat
 import { RAM_KIT } from '../../src/net/professionLaw.js';   // SEAT2b part two: a siege work's place in the Stores
 import { SIEGE_GEM } from '../../src/net/professionLaw.js';   // PROF10: a Lapidary's Siege-cracked Gem, spent for a piece's gem
-import { CARRIED_MAX, DEPOSIT_MAX, CLAMP_ORDER, DEPOSIT_ORDERS, CARRIED_ROW_DAYS, heldOk, seenOk, depositOrderOk } from '../../src/net/bagLaw.js';   // BAG1: what a character carries, counted
+import { SURVEYOR } from '../../src/net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor (the Stonebreaker's id)
+import { CARRIED_MAX, DEPOSIT_MAX, CLAMP_ORDER, DEPOSIT_ORDERS, CARRIED_ROW_DAYS, heldOk, seenOk, depositOrderOk, looseOrder, LOOSE_ORIGIN, STATION_ORIGINS, WRIT_ORIGINS } from '../../src/net/bagLaw.js';   // BAG1: what a character carries, counted
+import { hallWrits, hallWritCountIn, hallWritId, hallHidden, HALL_WRIT_REP, memberWrit, memberWritId, MERIT_WRIT, chapterBandOf, chaptersSwitchOf, meritWeekOf, chapterFocusesOf, crackdownMerit, doctrineWritCount } from '../../src/net/npcChapterLaw.js';   // CHAP2a: a chapter's hall writs and what one pays its guild; CHAP3a: a member's own
+import { MAX_REPUTATION, GUILD_FACTION_IDS } from '../../src/systems/guild/guildFactions.js';   // CHAP2a: a hall writ's reputation, inside DFU's bound; the hidden two
+import { regionChapters } from './npcHalls.js';   // CHAP2a: the region's chapters, witnessed
+import { chaptersOpenFor } from './npcRoll.js';   // CHAP2a: hall writs while the Roll is open to the account
+import { receiptAsks, membersOf } from './npcReceipts.js';   // CHAP2b: a chapter's receipt asks beside its writs; CHAP3a: the reader's guilds
+import { meritStatement, meritOfAct, meritAsks } from './npcMerit.js';   // CHAP3a: a member's own writ's Merit, the board's Merit lines
+import { settleChaptersDue, regionStrengths, regionFocuses, masterSeatsIn, regionEvents, seasonNumberAt, regionBackings, regionPatrons, guildPatronBids } from './npcChapters.js';   // CHAP4d: the week's Focuses, a Master's chapters   // CHAP3b: the Turning before a chapter's writs, its band
 
 const DAY_S = 86_400;
 /** The pixels one read may ask after - a streamed 5 x 5. */
@@ -126,21 +136,31 @@ export function trackView(row, profession, nowS) {
 }
 /** CRAFT3: a rank's bit in a track's `free_respec` (0088) - 1 the choice at 50, 2 at 100. */
 export const freeBit = (rank) => (rank === 50 ? 1 : rank === 100 ? 2 : 0);
-export const trackRow = (db, player, character, profession) =>
-  db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2 AND profession = ?3').bind(player, character, trackOf(profession)).first();
-/** A Stores row's origin as a count's name - own, bought (with Drakes) or GOLD-MARKET's gold (bought with gold). */
-const originOf = (o) => (o === 'bought' || o === 'gold' ? o : 'own');
+/** GATHER-SPEED: a track's row as a statement, for a batch (trackRow asks it alone). */
+const trackStatement = (db, player, character, profession) =>
+  db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2 AND profession = ?3').bind(player, character, trackOf(profession));
+export const trackRow = (db, player, character, profession) => trackStatement(db, player, character, profession).first();
+/** A Stores row's origin as a count's name - own, bought (with Drakes), GOLD-MARKET's gold (bought with gold) or AUDIT
+ *  BAG-CRAFT's loose (a station's put-in the count did not hold - bagLaw.js LOOSE_ORIGIN). */
+const originOf = (o) => (o === 'bought' || o === 'gold' || o === LOOSE_ORIGIN ? o : 'own');
 /** GOLD-MARKET: a Stores count's gold units said only where there are any - a Stores nothing bought with gold keeps the
- *  shape every client before it read ({ material, own, bought }). */
+ *  shape every client before it read ({ material, own, bought }). AUDIT BAG-CRAFT: and its loose units likewise. */
 const withGold = (s) => {
   if (!(s.gold > 0)) delete s.gold;
+  if (!(s[LOOSE_ORIGIN] > 0)) delete s[LOOSE_ORIGIN];
   return s;
 };
 /** One material's count in a character's Stores, own, bought and (GOLD-MARKET) bought with gold, where held. PROF5: the
  *  market's answers read it too. */
 export async function storeOf(db, player, character, key) {
-  const { results = [] } = await db.prepare('SELECT origin, qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?3')
-    .bind(player, character, key).all();
+  return countFrom(key, (await storeStatement(db, player, character, key).all()).results ?? []);
+}
+/** GATHER-SPEED: a Stores count's (and BAG1: a carried count's) rows as a statement, for a batch - and its count off them. */
+const storeStatement = (db, player, character, key) =>
+  db.prepare('SELECT origin, qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?3').bind(player, character, key);
+const carriedStatement = (db, player, character, key) =>
+  db.prepare('SELECT origin, qty FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND material = ?3').bind(player, character, key);
+function countFrom(key, /** @type {any[]} */ results) {
   const out = { material: key, own: 0, bought: 0, gold: 0 };
   for (const r of results) out[originOf(r.origin)] = Number(r.qty);
   return withGold(out);
@@ -149,11 +169,7 @@ export async function storeOf(db, player, character, key) {
  *  by a deposit (bagLaw.js), own, bought and gold - in the Stores' own shape. A bound, never an inventory: the items are
  *  the save's. */
 export async function carriedOf(db, player, character, key) {
-  const { results = [] } = await db.prepare('SELECT origin, qty FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND material = ?3')
-    .bind(player, character, key).all();
-  const out = { material: key, own: 0, bought: 0, gold: 0 };
-  for (const r of results) out[originOf(r.origin)] = Number(r.qty);
-  return withGold(out);
+  return countFrom(key, (await carriedStatement(db, player, character, key).all()).results ?? []);
 }
 /** BAG1: THE COUNT CUT TO WHAT THE CLIENT SAYS IT HOLDS - bagLaw.js clampCarried in SQL: a statement an origin in
  *  CLAMP_ORDER (gold's first, own last), each cutting what the total still stands over the held count, read afresh so
@@ -185,18 +201,24 @@ export function clampStatements(db, { player, character, material, held, rid, se
 }
 /** BAG1: a count's total in SQL, every origin - `m` the material's SQL, `p` and `c` the player's and the character's. */
 const carriedSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_carried WHERE player = ${p} AND char_id = ${c} AND material = ${m}), 0)`;
-/** GOLD-MARKET: THE UNITS A STATION, A CRAFT, A WRIT OR A DRAKES ACT MAY SPEND of a material in SQL - own and bought,
- *  never bought with gold (the wall: gold's goods go to the pack or back on the market for gold, nowhere else). `m` the
- *  material's SQL, `p` and `c` the player's and the character's. */
-export const spendableSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ${p} AND char_id = ${c} AND material = ${m} AND origin != 'gold'), 0)`;
+/** GOLD-MARKET: THE UNITS A WRIT, THE GUILD STORES OR A DRAKES ACT MAY SPEND of a material in SQL - own and bought,
+ *  never bought with gold (the wall: gold's goods go to the pack or back on the market for gold, nowhere else); AUDIT
+ *  BAG-CRAFT A1: never loose (bagLaw.js WRIT_ORIGINS - the stations' wall: a unit the service never handed out reaches
+ *  no writ, no guild and no sale). `m` the material's SQL, `p` and `c` the player's and the character's. */
+const originsSql = (list) => list.map((o) => `'${o}'`).join(', ');
+export const spendableSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ${p} AND char_id = ${c} AND material = ${m} AND origin IN (${originsSql(WRIT_ORIGINS)})), 0)`;
+/** AUDIT BAG-CRAFT A1: THE UNITS A STATION MAY SPEND - a craft, a smelt, a brew, a temper: own, bought and loose, never
+ *  gold's (bagLaw.js STATION_ORIGINS); spent by `workStatements`, loose first. */
+export const workableSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ${p} AND char_id = ${c} AND material = ${m} AND origin IN (${originsSql(STATION_ORIGINS)})), 0)`;
 /** A character's harvests today, by profession. */
 async function todayOf(db, player, character, day) {
-  const { results = [] } = await db.prepare('SELECT profession, COUNT(*) AS n FROM node_harvests WHERE player = ?1 AND char_id = ?2 AND day = ?3 GROUP BY profession')
-    .bind(player, character, day).all();
-  return Object.fromEntries(results.map((r) => [r.profession, Number(r.n)]));
+  return todayFrom((await todayStatement(db, player, character, day).all()).results ?? []);
 }
-const writsToday = async (db, player, day) =>
-  Number((await db.prepare('SELECT COUNT(*) AS n FROM writs WHERE filled_by = ?1 AND day = ?2').bind(player, day).first())?.n ?? 0);
+const todayStatement = (db, player, character, day) =>
+  db.prepare('SELECT profession, COUNT(*) AS n FROM node_harvests WHERE player = ?1 AND char_id = ?2 AND day = ?3 GROUP BY profession').bind(player, character, day);
+const todayFrom = (/** @type {any[]} */ results) => Object.fromEntries(results.map((r) => [r.profession, Number(r.n)]));
+const writsStatement = (db, player, day) => db.prepare('SELECT COUNT(*) AS n FROM writs WHERE filled_by = ?1 AND day = ?2').bind(player, day);
+const writsToday = async (db, player, day) => Number((await writsStatement(db, player, day).first())?.n ?? 0);
 
 /**
  * PROF0 20: a day's harvests are kept two days. AUDIT2 BAG1 S1: a CARRIED one CARRIED_ROW_DAYS: its row is the answer a
@@ -217,27 +239,32 @@ export async function sweepHarvests(db, nowS, limit = 500) {
 
 /**
  * A CHARACTER'S PROFESSIONS, as the Professions and Stores tabs and the nodes read them: every track, today's harvests
- * and the nodes taken, the Stores, today's Court writs filled, and the bounds.
+ * and the nodes taken, the Stores, today's writs filled (the Court's and the halls', CHAP2a), and the bounds.
  */
 export async function profState({ db, nowS }, player, env, { character } = {}) {
   const refused = asks(player, { character, needRid: false }) ?? shut(player, env);
   if (refused) return refused;
   const day = utcDay(nowS);
-  const { results: rows = [] } = await db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2').bind(player.id, character).all();
+  // GATHER-SPEED: the state's eight reads in ONE round trip - the tracks, the Stores, the day's nodes, the carried count,
+  // the day's harvests, the Court's writs and the hides and hauls - where they were eight trips in a row
+  const [rows, stores, taken, carriedRows, today, writs, hunt, hauls] = await readAll(db, [
+    db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2').bind(player.id, character),
+    db.prepare('SELECT material, origin, qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND qty > 0 ORDER BY material').bind(player.id, character),
+    db.prepare('SELECT node, kind FROM node_harvests WHERE player = ?1 AND char_id = ?2 AND day = ?3').bind(player.id, character, day),
+    // BAG1: what the service counts the character as carrying, in the Stores' shape
+    db.prepare('SELECT material, origin, qty FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND qty > 0 ORDER BY material').bind(player.id, character),
+    todayStatement(db, player.id, character, day),
+    writsStatement(db, player.id, day),
+    huntStatement(db, player.id, day),
+    haulsStatement(db, player.id, day),
+  ]);
   const byProf = new Map(rows.map((r) => [r.profession, r]));
-  const { results: stores = [] } = await db.prepare('SELECT material, origin, qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND qty > 0 ORDER BY material')
-    .bind(player.id, character).all();
   const held = new Map();
   for (const r of stores) {
     const s = held.get(r.material) ?? { material: r.material, own: 0, bought: 0, gold: 0 };
     s[originOf(r.origin)] = Number(r.qty);
     held.set(r.material, s);
   }
-  const { results: taken = [] } = await db.prepare('SELECT node, kind FROM node_harvests WHERE player = ?1 AND char_id = ?2 AND day = ?3')
-    .bind(player.id, character, day).all();
-  // BAG1: what the service counts the character as carrying, in the Stores' shape
-  const { results: carriedRows = [] } = await db.prepare('SELECT material, origin, qty FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND qty > 0 ORDER BY material')
-    .bind(player.id, character).all();
   const carried = new Map();
   for (const r of carriedRows) {
     const c = carried.get(r.material) ?? { material: r.material, own: 0, bought: 0, gold: 0 };
@@ -247,13 +274,13 @@ export async function profState({ db, nowS }, player, env, { character } = {}) {
   return {
     character, day,
     tracks: PROFESSIONS.map((p) => trackView(byProf.get(p.id), p.id, nowS)),
-    today: await todayOf(db, player.id, character, day),
+    today: todayFrom(today),
     taken: taken.map((t) => `${t.node}|${t.kind}`),
     stores: [...held.values()].map(withGold),
     carried: [...carried.values()].map(withGold),
-    writs: { today: await writsToday(db, player.id, day), max: COURT_WRITS_PER_DAY },
-    hunt: await huntToday(db, player.id, day),   // PROF7: the account's hides today (PROF0 6)
-    hauls: await haulsToday(db, player.id, day),   // PROF8: the account's hauls today (PROF0 6)
+    writs: { today: Number(writs[0]?.n ?? 0), max: COURT_WRITS_PER_DAY },
+    hunt: huntFrom(hunt[0]),   // PROF7: the account's hides today (PROF0 6)
+    hauls: Number(hauls[0]?.n ?? 0),   // PROF8: the account's hauls today (PROF0 6)
     caps: { stores: STORES_MAX, withdraw: WITHDRAW_MAX, highHides: HIGH_HIDES_PER_DAY },   // CAP-OFF: no day's harvests, hides or hauls
   };
 }
@@ -263,10 +290,14 @@ export async function profState({ db, nowS }, player, env, { character } = {}) {
 /** What the witnesses say of each thing of `kind` in `keys` (a pixel "x,y", a dungeon its id): a Map of key to nodeLaw
  *  witnessedFact. */
 async function factsOf(db, keys, kind = 'pixel') {
+  if (!keys.length) return factsFrom(keys, []);
+  return factsFrom(keys, (await factsStatement(db, keys, kind).all()).results ?? []);
+}
+/** GATHER-SPEED: factsOf's read as a statement, for a batch - and its Map off the rows. */
+const factsStatement = (db, keys, kind) => db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = ?1 AND key IN (${keys.map((_, i) => `?${i + 2}`).join(', ')})`)
+  .bind(kind, ...keys);
+function factsFrom(keys, /** @type {any[]} */ results) {
   const out = new Map(keys.map((k) => [k, witnessedFact([])]));
-  if (!keys.length) return out;
-  const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = ?1 AND key IN (${keys.map((_, i) => `?${i + 2}`).join(', ')})`)
-    .bind(kind, ...keys).all();
   const rowsBy = new Map();
   for (const r of results) { const a = rowsBy.get(r.key) ?? []; a.push({ account: r.account, report: r.report, at: Number(r.at) }); rowsBy.set(r.key, a); }
   for (const [k, rows] of rowsBy) out.set(k, witnessedFact(rows));
@@ -290,9 +321,12 @@ export async function profPixels({ db }, player, env, { character, pixels, dunge
     want.push(pixelKey(p[0], p[1]));
   }
   const keys = [...new Set(want)];
-  const facts = await factsOf(db, keys);
   const dkeys = [...new Set(dungeons.map(String))];
-  const dfacts = await factsOf(db, dkeys, 'dungeon');
+  // GATHER-SPEED: the pixels' and the dungeons' witnesses in one round trip
+  const [prows = [], drows = []] = await readAll(db, [...(keys.length ? [factsStatement(db, keys, 'pixel')] : []), ...(dkeys.length ? [factsStatement(db, dkeys, 'dungeon')] : [])])
+    .then((r) => (keys.length ? r : [[], ...r]));
+  const facts = factsFrom(keys, prows);
+  const dfacts = factsFrom(dkeys, drows);
   return {
     pixels: keys.map((k) => { const [x, y] = k.split(',').map(Number); return { x, y, ...factView(facts.get(k)) }; }),
     dungeons: dkeys.map((k) => ({ id: Number(k), ...factView(dfacts.get(k)) })),
@@ -301,32 +335,71 @@ export async function profPixels({ db }, player, env, { character, pixels, dunge
 
 // ─── A HARVEST ───────────────────────────────────────────────────────
 
-/** SILVER-FINDS: a harvest's find as its answer says it - `{ marks: { struck, balance, today } }` where the harvest's
- *  line was struck (marks.js findLineAnswer, under the harvest's own line id), else nothing. */
-async function gatherMarksOf(ctx, player, env, rid) {
-  const m = await findLineAnswer(ctx, player, env, gatherStrikeRid(rid));
-  return m ? { marks: m } : {};
+/**
+ * GATHER-SPEED (2026-10-11, Mac: "look at gathering minigame performance and how the server affects it/slows down"):
+ * WHAT A HARVEST'S ANSWER READS, AS STATEMENTS - its track, the character's day, each Stores (or BAG1: carried) count it
+ * moved, the account's hides or hauls today and (SILVER-FINDS) its find's line, the day's finds and the balance. They
+ * were read one round trip each, after the harvest's own batch and its read-back: nine to fifteen trips to the
+ * database's primary before the player saw a thing. Now they ride ONE batch - the decision's own, behind its writes
+ * (`spec` the row the decision would write: a gem or a second find read where the roll found one, said where the row
+ * kept it), or harvestAnswer's for a request asked twice. Each entry `[name, statement]`; answerOf reads them by name.
+ * @param {any} db @param {any} player the account asking (its find's line, where it is linked) @param {any} env
+ * @param {{ player: string, char_id: string, day: number, profession: string, material: string, gem?: string|null,
+ *   extra?: string|null, carry: boolean }} spec @param {string} rid the harvest's request id @param {number} nowS
+ */
+function answerReads(db, player, env, spec, rid, nowS, { marks = true } = {}) {
+  /** @type {Array<[string, any]>} */
+  const q = [];
+  const { player: p, char_id: c, day } = spec;
+  q.push(['track', trackStatement(db, p, c, spec.profession)], ['today', todayStatement(db, p, c, day)], ['store', storeStatement(db, p, c, spec.material)]);
+  if (spec.gem) q.push(['gemStore', storeStatement(db, p, c, spec.gem)]);
+  if (spec.extra) q.push(['extraStore', storeStatement(db, p, c, spec.extra)]);   // PROF4: a tree's Resin; PROF7: a body's butchery
+  if (spec.carry) {
+    q.push(['carried', carriedStatement(db, p, c, spec.material)]);
+    if (spec.gem) q.push(['gemCarried', carriedStatement(db, p, c, spec.gem)]);
+    if (spec.extra) q.push(['extraCarried', carriedStatement(db, p, c, spec.extra)]);
+  }
+  if (spec.profession === 'hunting') q.push(['hunt', huntStatement(db, p, day)]);   // PROF7: the account's hides today
+  if (spec.profession === 'fishing') q.push(['hauls', haulsStatement(db, p, day)]);   // PROF8: the account's hauls today
+  // SILVER-FINDS - AUDIT GATHER-SPEED G5: asked only where a line may stand (a fresh harvest's find rolled none: none)
+  if (marks) findLineStatements(db, player, env, gatherStrikeRid(rid), nowS).forEach((st, i) => q.push([`marks${i}`, st]));
+  return q;
+}
+/** GATHER-SPEED: a harvest row's own spec for answerReads - what it wrote. */
+const specOf = (row) => ({ player: row.player, char_id: row.char_id, day: Number(row.day), profession: row.profession, material: row.material,
+  gem: row.gem ?? null, extra: row.extra ?? null, carry: Number(row.carry) === 1 });
+/** GATHER-SPEED: answerReads' rows by name, off a batch's answers that hold them at `from`. */
+function readsBy(/** @type {Array<[string, any]>} */ q, /** @type {any[][]} */ rows, from = 0) {
+  return new Map(q.map(([name], i) => [name, rows[from + i] ?? []]));
 }
 
 /** The answer a harvest's row gives - the first time (`rankBefore` the track's rank before it, so a rise is said), or
- *  again to a request asked twice. PROF2: a gem the strikes found, and its Stores. */
-async function harvestAnswer(db, row, nowS, extra, rankBefore = null) {
-  const t = trackView(await trackRow(db, row.player, row.char_id, row.profession), row.profession, nowS);
+ *  again to a request asked twice. PROF2: a gem the strikes found, and its Stores. GATHER-SPEED: its reads one round trip
+ *  (answerReads), its find's beside them. */
+async function harvestAnswer(db, player, env, row, nowS, extra, rankBefore = null) {
+  const q = answerReads(db, player, env, specOf(row), row.rid, nowS);
+  return answerOf(row, readsBy(q, await readAll(db, q.map(([, st]) => st))), nowS, extra, rankBefore);
+}
+/** GATHER-SPEED: a harvest's answer off its reads (answerReads, by name) - the shape it always had. SILVER-FINDS:
+ *  `{ marks: { struck, balance, today } }` where the harvest's line was struck (marks.js findLineFrom), else nothing. */
+function answerOf(row, /** @type {Map<string, any[]>} */ r, nowS, extra, rankBefore = null) {
+  const t = trackView(r.get('track')?.[0] ?? null, row.profession, nowS);
+  const marks = r.has('marks0') ? findLineFrom([r.get('marks0'), r.get('marks1'), r.get('marks2')]) : null;
   return {
-    ok: true, ...extra, ...(rankBefore === null ? {} : { rose: t.rank > rankBefore }), node: row.node, kind: row.kind, material: row.material, qty: Number(row.qty), xp: Number(row.xp),
-    track: t, today: (await todayOf(db, row.player, row.char_id, Number(row.day)))[row.profession] ?? 0,
-    store: await storeOf(db, row.player, row.char_id, row.material),
-    ...(row.gem ? { gem: row.gem, gemStore: await storeOf(db, row.player, row.char_id, row.gem) } : {}),
-    ...(row.extra ? { extra: row.extra, extraQty: Number(row.extra_qty ?? 1), extraStore: await storeOf(db, row.player, row.char_id, row.extra) } : {}),   // PROF4: a tree's Resin; PROF7: a body's butchery
+    ok: true, ...extra, ...(marks ? { marks } : {}), ...(rankBefore === null ? {} : { rose: t.rank > rankBefore }), node: row.node, kind: row.kind, material: row.material, qty: Number(row.qty), xp: Number(row.xp),
+    track: t, today: todayFrom(r.get('today') ?? [])[row.profession] ?? 0,
+    store: countFrom(row.material, r.get('store') ?? []),
+    ...(row.gem ? { gem: row.gem, gemStore: countFrom(row.gem, r.get('gemStore') ?? []) } : {}),
+    ...(row.extra ? { extra: row.extra, extraQty: Number(row.extra_qty ?? 1), extraStore: countFrom(row.extra, r.get('extraStore') ?? []) } : {}),   // PROF4: a tree's Resin; PROF7: a body's butchery
     // BAG1: a carried harvest says so, and what the service now counts the character carrying of each thing it gave - the
     // client mints the items into the bag or the pack, once, as the answer that lets the kept harvest go
     ...(Number(row.carry) === 1 ? {
-      carry: true, carried: await carriedOf(db, row.player, row.char_id, row.material),
-      ...(row.gem ? { gemCarried: await carriedOf(db, row.player, row.char_id, row.gem) } : {}),
-      ...(row.extra ? { extraCarried: await carriedOf(db, row.player, row.char_id, row.extra) } : {}),
+      carry: true, carried: countFrom(row.material, r.get('carried') ?? []),
+      ...(row.gem ? { gemCarried: countFrom(row.gem, r.get('gemCarried') ?? []) } : {}),
+      ...(row.extra ? { extraCarried: countFrom(row.extra, r.get('extraCarried') ?? []) } : {}),
     } : {}),
-    ...(row.profession === 'hunting' ? { hunt: await huntToday(db, row.player, Number(row.day)) } : {}),   // PROF7: the account's hides today
-    ...(row.profession === 'fishing' ? { hauls: await haulsToday(db, row.player, Number(row.day)) } : {}),   // PROF8: the account's hauls today
+    ...(row.profession === 'hunting' ? { hunt: huntFrom(r.get('hunt')?.[0]) } : {}),   // PROF7: the account's hides today
+    ...(row.profession === 'fishing' ? { hauls: Number(r.get('hauls')?.[0]?.n ?? 0) } : {}),   // PROF8: the account's hauls today
     ...(Number(row.trophy) === 1 ? { trophy: true } : {}),   // PROF8: a trophy the client puts in the pack
   };
 }
@@ -370,15 +443,14 @@ function traceOf(act) {
  *  tier are said, not bounded), every character's together. AUDIT 32 L2: the hides - the rows' units, a clean pelt's
  *  second among them - where it counted the bodies. */
 async function huntToday(db, player, day) {
-  const r = await db.prepare(`SELECT COALESCE(SUM(qty), 0) AS n, COALESCE(SUM(CASE WHEN tier >= ?3 THEN qty ELSE 0 END), 0) AS high
-    FROM node_harvests WHERE player = ?1 AND profession = 'hunting' AND day = ?2`).bind(player, day, HIGH_HIDE_TIER).first();
-  return { hides: Number(r?.n ?? 0), high: Number(r?.high ?? 0) };
+  return huntFrom(await huntStatement(db, player, day).first());
 }
+const huntStatement = (db, player, day) => db.prepare(`SELECT COALESCE(SUM(qty), 0) AS n, COALESCE(SUM(CASE WHEN tier >= ?3 THEN qty ELSE 0 END), 0) AS high
+    FROM node_harvests WHERE player = ?1 AND profession = 'hunting' AND day = ?2`).bind(player, day, HIGH_HIDE_TIER);
+const huntFrom = (r) => ({ hides: Number(r?.n ?? 0), high: Number(r?.high ?? 0) });
 /** PROF8 - the account's hauls today (CAP-OFF: said, no longer bounded), every character's together - the rows, a haul each. */
-async function haulsToday(db, player, day) {
-  const r = await db.prepare("SELECT COUNT(*) AS n FROM node_harvests WHERE player = ?1 AND profession = 'fishing' AND day = ?2").bind(player, day).first();
-  return Number(r?.n ?? 0);
-}
+const haulsStatement = (db, player, day) => db.prepare("SELECT COUNT(*) AS n FROM node_harvests WHERE player = ?1 AND profession = 'fishing' AND day = ?2").bind(player, day);
+
 /** PROF8 - a net's report, bounded (PROF0 5.1): a full net is the clean act; a school, the cast's landing within one of
  *  the day's two (nodeLaw schoolSpots) - the client's word, its one or none. */
 function netOf(act) {
@@ -401,7 +473,8 @@ function cutsOf(act, tier, lumberjack) {
  * at a tree), the act's end on the shared clock (epoch seconds)
  * and the request's id. The id must be today's and real by the law; `at` at most ten minutes past, at any hour (ANY-HOUR,
  * 2026-10-01, Mac: "Remove the time limit for professions. Should be available at any time"); the ground as the witnesses confirmed it, or taken at the claim's word at the least it is worth (a
- * pixel's tiers 1-2 and no march or signature; a dungeon's tier 3 and no gem); the tier inside the rank; the Stores'
+ * pixel's tiers 1-2 - its veins' 1-3, UNWITNESSED-ORE (nodeLaw UNCONFIRMED_VEIN_TIER) - and no march or signature; a
+ * dungeon's tier 3 and no gem); the tier inside the rank; the Stores'
  * room decided in the harvest's own INSERT - CAP-OFF (2026-10-07, Mac: "Remove the cap on life skills"): no day's cap.
  * The yield, and a gem, are the service's dice.
  *
@@ -423,7 +496,7 @@ export async function harvestNode(ctx, player, env, body = {}) {
   const T = carry ? 'prof_carried' : 'prof_stores';
   const ROOM = carry ? CARRIED_MAX : STORES_MAX;
   const prior = await db.prepare('SELECT * FROM node_harvests WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
-  if (prior) return harvestAnswer(db, prior, nowS, { repeat: true, ...(await gatherMarksOf(ctx, player, env, rid)) });   // before the switch: a harvest made is a harvest answered
+  if (prior) return harvestAnswer(db, player, env, prior, nowS, { repeat: true });   // before the switch: a harvest made is a harvest answered
   const closed = shut(player, env);
   if (closed) return closed;
   const n = parseNodeKey(node);
@@ -443,12 +516,23 @@ export async function harvestNode(ctx, player, env, body = {}) {
   // AUDIT 32 S4: a body's foe is the request's shape, refused before the hour's acts are spent (as a craft's dye is)
   const hide = isBody ? hideOfFoe(foe) : null;
   if (isBody && !hide) return { error: 'prof-foe' };
-  if (await overRate(ctx, `prof:${player.id}`, PROF_OPS_MAX, PROF_OPS_WINDOW_S)) return { error: 'prof-rate' };
-
   // THE GROUND, as the witnesses say it is - a pixel's, or a dungeon's; a body's none
   const wkind = deep ? 'dungeon' : 'pixel';
   const key = deep ? String(n.dungeon) : isBody ? null : pixelKey(n.x, n.y);
-  const fact = key === null ? null : (await factsOf(db, [key], wkind)).get(key);
+  const profession = law.profession;
+  // GATHER-SPEED: the hour's acts counted, the ground and the track read, and (SEAT1d) the Levy's seat asked - AT ONCE,
+  // three asks in flight together where they were four trips in a row. None reads what another writes; the hour's
+  // refusal still comes first, and a refused harvest's reads are only read
+  // FIRM1: and the character's Firmament beside its track (firmament.js firmStatement) - its yield and XP the service's
+  const [over, [factRows, trackRows, firmRows], levyKey] = await Promise.all([
+    overRate(ctx, `prof:${player.id}`, PROF_OPS_MAX, PROF_OPS_WINDOW_S),
+    readAll(db, [...(key === null ? [] : [factsStatement(db, [key], wkind)]), trackStatement(db, player.id, character, profession), firmStatement(db, player.id, character)])
+      .then((rows) => (key === null ? [[], ...rows] : rows)),
+    // A dungeon's vein and a body name no ground of a town
+    !deep && !isBody && seatsOpenFor(player, env) ? levyAt(db, nowS, region, [n.x, n.y]) : null,
+  ]);
+  if (over) return { error: 'prof-rate' };
+  const fact = key === null ? null : factsFrom([key], factRows).get(key);
   const confirmed = factConfirmed(fact);
   const witness = !isBody && Number.isSafeInteger(player.registered_at) && player.registered_at <= nowS - WITNESS.ageS ? 1 : 0;
   if (confirmed && (fact.climate !== climate || fact.region !== region)) {
@@ -465,8 +549,7 @@ export async function harvestNode(ctx, player, env, body = {}) {
   if (!deep && !isBody && !isHaul && n.slot >= (n.kind === 'vein' ? veinSlots({ climate, region, confirmed }) : nodeCount(climate, n.kind))) return { error: 'bad-node' };
 
   // THE TRACK it is worked under
-  const profession = law.profession;
-  const row = await trackRow(db, player.id, character, profession);
+  const row = trackRows[0] ?? null;
   const rank = rankOfXp(Number(row?.xp ?? 0));
   const specs = specsAt(row, nowS);
   const march = !deep && !isBody && confirmed && isMarch(region);
@@ -544,7 +627,11 @@ export async function harvestNode(ctx, player, env, body = {}) {
     }
   } else {
     // PROF2: THE PICK-AXE - a vein's ore, a boulder's stone, a dungeon vein's deep ore (PROF0 23)
-    const found = n.kind === 'vein' ? vein({ x: n.x, y: n.y, day, slot: n.slot, climate, region, confirmed })
+    // MINE-PERKS (Professions-Arc 43): a Surveyor's surface vein on ground the witnesses have not confirmed is its
+    // climate's whole table - their word its witness, for their own veins alone; never a signature (veinSlots above
+    // counted none), never the March's or a Tide's (named by the region, on confirmed ground alone)
+    const surveyed = n.kind === 'vein' && !confirmed && specs[100] === SURVEYOR;
+    const found = n.kind === 'vein' ? vein({ x: n.x, y: n.y, day, slot: n.slot, climate, region, confirmed, surveyed })
       : n.kind === 'boulder' ? boulder({ x: n.x, y: n.y, day, slot: n.slot, climate })
         : dungeonVein({ dungeon: n.dungeon, day, slot: n.slot, climate, confirmed });
     if (!found) return { error: 'bad-node' };
@@ -553,22 +640,28 @@ export async function harvestNode(ctx, player, env, body = {}) {
     const s = strikesOf(act, tier);
     clean = s.clean;
     if (n.kind === 'boulder') {
-      const y = boulderYield({ roll: roll(BOULDER_YIELD[0], BOULDER_YIELD[1]), march, cut: clean || specs[100] === 'stonebreaker', tideMult: tideYield(tide, 'boulder') }, dice(rand));
+      const y = boulderYield({ roll: roll(BOULDER_YIELD[0], BOULDER_YIELD[1]), march, cut: clean || specs[100] === SURVEYOR, tideMult: tideYield(tide, 'boulder') }, dice(rand));
       key2 = y.material;
       qty = y.qty;
     } else {
       key2 = found.material;
       qty = veinYield({ roll: roll(VEIN_YIELD[0], VEIN_YIELD[1]), deep, deepDelver: specs[50] === 'deep-delver', march, tideMult: tideYield(tide, 'vein') }, dice(rand));
       // a gem: each strike on the glint a chance (a Prospector's x1.1), on ground the witnesses confirmed - one at most
-      gem = veinGem({ kind: n.kind, climate, glints: s.glints, confirmed, prospector: specs[50] === 'prospector' }, () => dice(rand));
+      // (MINE-PERKS: or a Surveyor's own)
+      gem = veinGem({ kind: n.kind, climate, glints: s.glints, confirmed: confirmed || surveyed, prospector: specs[50] === 'prospector' }, () => dice(rand));
     }
   }
   if (!key2) return { error: 'bad-node' };
-  const xp = harvestXp(xpTier ?? tier, rank, clean);
+  // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S HAND - the character's tree, as this service keeps it, on the
+  // yield (the service's own die for the fraction) and the XP of the profession worked; after every draw above, so each
+  // of them is what it was
+  const firm = firmStatsFrom(firmRows?.[0], player, env);
+  const firmYield = yieldPct(firm, profession);
+  if (firmYield) qty = scaleQty(qty, firmYield, dice(rand));   // a die drawn only for a tree that moves the yield
+  const xp = scaleXp(harvestXp(xpTier ?? tier, rank, clean), xpPct(firm, profession));
   const nonce = mintId(rand);
   // SEAT1d (SEAT0 7.6): THE LEVY - a tenth of a harvest on ground in the bailiwick of a seat whose Levy rules this week
-  // goes to the seat's stockpile; the gatherer keeps at least one. A dungeon's vein and a body name no ground of a town.
-  const levyKey = !deep && !isBody && seatsOpenFor(player, env) ? await levyAt(db, nowS, region, [n.x, n.y]) : null;
+  // goes to the seat's stockpile; the gatherer keeps at least one (its seat asked above, beside the ground).
   const levy = levyKey == null ? 0 : Math.max(0, Math.min(levyOf(qty, dice(rand)), qty - 1));
   const kept = qty - levy;
   // SILVER-FINDS (2026-10-05, Mac: "Silver should be more accessible in more forms of interactions like foraging"): A
@@ -584,7 +677,9 @@ export async function harvestNode(ctx, player, env, body = {}) {
   // PROF7: Hunting's rare hides today, in hides (AUDIT 32 L2) - the account's, of tiers 5-6. CAP-OFF: its day of thirty
   // hides of any tier, and Fishing's of forty hauls, are counted no more
   const huntedHigh = "COALESCE((SELECT SUM(qty) FROM node_harvests WHERE player = ?1 AND profession = 'hunting' AND day = ?6 AND tier >= ?20), 0)";
-  await db.batch([
+  // GATHER-SPEED: the answer's reads (answerReads), behind the decision in its own batch - and the row read back first
+  const answer = answerReads(db, player, env, { player: player.id, char_id: character, day, profession, material: key2, gem, extra, carry }, rid, nowS, { marks: !!find });
+  const decided = [
     // BAG1: the carried count cut to what the pack and the bag hold of it, before the decision reads its room
     // AUDIT BAG1 B2/B3: and only the material the held count is of (`heldKey` - a herb, a log, a hide: the client names
     // the node's own; the Basket's roll is the service's, named nowhere), while the client's view is current, before a twin
@@ -642,10 +737,12 @@ export async function harvestNode(ctx, player, env, body = {}) {
       SELECT ?9, ?4, ?1, ?5, ?6, ?7 WHERE ?8 = 1 AND EXISTS (SELECT 1 FROM node_harvests WHERE ${mine})`)
       .bind(player.id, rid, nonce, key, pixelReport(climate, region), region, nowS, witness, wkind)]),
     ...(find ? [find] : []),   // SILVER-FINDS: the find, last
-  ]);
-  const made = await db.prepare('SELECT * FROM node_harvests WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
-  if (made?.n === nonce) return harvestAnswer(db, made, nowS, { ...(levy > 0 ? { levy: { qty: levy, key: levyKey } } : {}), ...(await gatherMarksOf(ctx, player, env, rid)) }, rank);
-  if (made) return harvestAnswer(db, made, nowS, { repeat: true, ...(await gatherMarksOf(ctx, player, env, rid)) });   // the same request, racing itself
+    db.prepare('SELECT * FROM node_harvests WHERE player = ?1 AND rid = ?2').bind(player.id, rid),
+  ];
+  const rows = await readAll(db, [...decided, ...answer.map(([, st]) => st)]);
+  const made = rows[decided.length - 1][0] ?? null;
+  if (made?.n === nonce) return answerOf(made, readsBy(answer, rows, decided.length), nowS, levy > 0 ? { levy: { qty: levy, key: levyKey } } : {}, rank);
+  if (made) return harvestAnswer(db, player, env, made, nowS, { repeat: true });   // the same request, racing itself
   if (await db.prepare('SELECT 1 FROM node_harvests WHERE day = ?1 AND node = ?2 AND kind = ?3 AND player = ?4 AND char_id = ?5')
     .bind(day, node, kind, player.id, character).first()) return { error: 'node-taken' };
   // CAP-OFF: no day's cap to say - `prof-cap`, `prof-account-cap`, `prof-hunt-cap` and `prof-fish-cap` are said no more
@@ -814,6 +911,11 @@ export function spendOrigins(db, { player, character, materialSql, qtySql, guard
   out.push(unbruisedClamp(db, { player, character, materialSql, guard, binds }));   // AUDIT PROF12 A1
   return out;
 }
+/** AUDIT BAG-CRAFT A1: A STATION'S SPEND - `qtySql` units over STATION_ORIGINS, loose first, then bought, then own (the
+ *  order spendStatements charges the last two in); the caller's decision holds them by `workableSql`. */
+export const workStatements = (db, opts) => spendOrigins(db, { ...opts, order: STATION_ORIGINS });
+/** AUDIT BAG-CRAFT A1: what a station may spend of a Stores count (`storeOf`'s shape) - own, bought and loose. */
+export const workHeld = (st) => (st?.own ?? 0) + (st?.bought ?? 0) + (st?.[LOOSE_ORIGIN] ?? 0);
 
 /**
  * WITHDRAW TO PACK: `{ character, material, qty, rid }` - `qty` units out of the Stores, bought first, for the client to
@@ -848,23 +950,26 @@ export async function withdrawStores(ctx, player, env, { character, material: ke
     ...(carrying ? clampStatements(db, { player: player.id, character, material: key, held, rid, seen: seenOk(seen) ? seen : null,
       twin: 'NOT EXISTS (SELECT 1 FROM prof_withdrawals WHERE player = ?1 AND rid = ?5)' }) : []),
     // THE DECISION: the Stores hold the units; BAG1: what it takes of each origin, read in the spend order (gold's, then
-    // bought, then own); and, carrying, room in the carried count
-    db.prepare(`INSERT OR IGNORE INTO prof_withdrawals (player, rid, char_id, material, qty, at, n, carry, own, bought, gold)
-      SELECT ?1, ?3, ?2, ?4, ?5, ?6, ?7, ?8, ?5 - g - b, b, g
-      FROM (SELECT MIN(?5, ${originHeld('gold')}) AS g, MIN(?5 - MIN(?5, ${originHeld('gold')}), ${originHeld('bought')}) AS b)
+    // AUDIT BAG-CRAFT A1's loose, then bought, then own); and, carrying, room in the carried count
+    db.prepare(`INSERT OR IGNORE INTO prof_withdrawals (player, rid, char_id, material, qty, at, n, carry, own, bought, gold, loose)
+      SELECT ?1, ?3, ?2, ?4, ?5, ?6, ?7, ?8, ?5 - g - l - b, b, g, l
+      FROM (SELECT g, l, MIN(?5 - g - l, ${originHeld('bought')}) AS b
+        FROM (SELECT g, MIN(?5 - g, ${originHeld(LOOSE_ORIGIN)}) AS l FROM (SELECT MIN(?5, ${originHeld('gold')}) AS g)))
       WHERE COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?4), 0) >= ?5
         AND (?8 = 0 OR ${carriedSql('?1', '?2', '?4')} + ?5 <= ?9)`)
       .bind(player.id, character, rid, key, qty, nowS, nonce, carrying ? 1 : 0, CARRIED_MAX),
     // BAG1: counted as carried, each origin as it left - BEFORE the spend, whose unbruised clamp reads the own units the
-    // Stores and the count hold together: counted after it, a withdrawn unbruised herb lost its count at the spend
+    // Stores and the count hold together: counted after it, a withdrawn unbruised herb lost its count at the spend. AUDIT
+    // BAG-CRAFT A1: never the loose units - the service never handed them out, and back in the pack they are as they were
     ...(carrying ? ['own', 'bought', 'gold'].map((o) => db.prepare(`INSERT INTO prof_carried (player, char_id, material, origin, qty)
       SELECT player, char_id, material, '${o}', ${o} FROM prof_withdrawals WHERE player = ?1 AND rid = ?2 AND n = ?3 AND carry = 1 AND ${o} > 0
       ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = prof_carried.qty + excluded.qty`).bind(player.id, rid, nonce)) : []),
-    // GOLD-MARKET: every origin goes to the pack - gold's first (the goods the wall keeps out of everything else)
+    // GOLD-MARKET: every origin goes to the pack - gold's first (the goods the wall keeps out of everything else); AUDIT
+    // BAG-CRAFT A1: the loose units next, walled the other way
     ...spendOrigins(db, {
       player: player.id, character, materialSql: '?3', qtySql: '?4',
       guard: 'EXISTS (SELECT 1 FROM prof_withdrawals WHERE player = ?1 AND rid = ?5 AND n = ?6)', binds: [key, qty, rid, nonce],
-      order: ['gold', 'bought', 'own'],
+      order: ['gold', LOOSE_ORIGIN, 'bought', 'own'],
     }),
   ]);
   const made = await db.prepare('SELECT * FROM prof_withdrawals WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
@@ -872,7 +977,7 @@ export async function withdrawStores(ctx, player, env, { character, material: ke
   if (made) return answer(made, { repeat: true });
   if (carrying) {
     const s = await storeOf(db, player.id, character, key);
-    if ((s.own + s.bought + (s.gold ?? 0)) >= qty) return { error: 'carried-full', material: key };
+    if ((s.own + s.bought + (s.gold ?? 0) + (s[LOOSE_ORIGIN] ?? 0)) >= qty) return { error: 'carried-full', material: key };
   }
   return { error: 'stores-short' };
 }
@@ -885,9 +990,13 @@ export async function withdrawStores(ctx, player, env, { character, material: ke
  * on a refusal. `held` is what it held of them BEFORE it took them out: the carried count is first cut to it (never
  * raised), so a pack that holds fewer than the count says - an herb brewed, a log sold to a shop - is believed at
  * once, and a pack that holds more than the count adds nothing: law 3's guarantee, the door open this one way.
- * `order` which origins move first: `all` (the Stores page - gold's, bought, own) or `spend` (a station's shortfall,
- * put in just before it spends - bought, own, never gold's). Refused `carried-short` past what the count holds after
+ * `order` which origins move first: `all` (the Stores page - gold's, bought, own) or `spend` (a writ's or the market's
+ * shortfall, put in just before it spends - bought, own, never gold's). Refused `carried-short` past what the count holds after
  * the cut, `stores-full` past the Stores' 5,000.
+ * BAG-CRAFT (FIELD BUGS 2026-10-09d, Mac: "I just want players to also be able to craft from their inventory, not just
+ * the store"): `work` - a station's shortfall - moves `spend`'s counted units and then units the count does not hold, as
+ * many as `held` names past the count once cut (bagLaw.js looseOrder), into the Stores as loose (LOOSE_ORIGIN - AUDIT
+ * BAG-CRAFT A1: a station's alone); the count is not touched for them. Its row's `loose` says them.
  */
 export async function depositStores(ctx, player, env, { character, material: key, qty, held, order = 'all', rid, seen = null } = {}) {
   const { db, nowS, rand } = ctx;
@@ -895,6 +1004,7 @@ export async function depositStores(ctx, player, env, { character, material: key
   if (refused) return refused;
   const answer = async (row, extra = {}) => ({
     ok: true, ...extra, material: row.material, qty: Number(row.qty), own: Number(row.own), bought: Number(row.bought), gold: Number(row.gold),
+    ...(Number(row.loose) > 0 ? { loose: Number(row.loose) } : {}),   // BAG-CRAFT: what the count did not hold - said where some moved
     store: await storeOf(db, player.id, row.char_id, row.material), carried: await carriedOf(db, player.id, row.char_id, row.material),
   });
   const prior = await db.prepare('SELECT * FROM prof_deposits WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
@@ -917,7 +1027,11 @@ export async function depositStores(ctx, player, env, { character, material: key
     before = `${before} + ${take[o]}`;
   }
   const of = (o) => take[o] ?? '0';
-  const movable = seq.map(cHeld).join(' + ');
+  // BAG-CRAFT: a station's deposit may move what the client holds past the count (read after the cut, in this batch) too
+  const loose = looseOrder(order);
+  const movable = `${seq.map(cHeld).join(' + ')}${loose ? ' + MAX(0, ?9 - COALESCE((SELECT SUM(qty) FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND material = ?4), 0))' : ''}`;
+  // BAG-CRAFT: the loose part - what the counted origins do not cover of the deposit (none but for `work`)
+  const loosePart = loose ? `?5 - (${of('own')}) - (${of('bought')}) - (${of('gold')})` : '0';
   const mine = 'EXISTS (SELECT 1 FROM prof_deposits WHERE player = ?1 AND rid = ?2 AND n = ?3)';
   await db.batch([
     // the count cut to what the client held - only while this request has made nothing (a racing twin of a landed deposit
@@ -925,11 +1039,11 @@ export async function depositStores(ctx, player, env, { character, material: key
     ...clampStatements(db, { player: player.id, character, material: key, held, rid, seen: seenOk(seen) ? seen : null,
       twin: 'NOT EXISTS (SELECT 1 FROM prof_deposits WHERE player = ?1 AND rid = ?5)' }),
     // THE DECISION: the count holds the units in the order's origins; the Stores have room; what moves of each, read now
-    db.prepare(`INSERT OR IGNORE INTO prof_deposits (player, rid, char_id, material, qty, own, bought, gold, at, n)
-      SELECT ?1, ?3, ?2, ?4, ?5, ${of('own')}, ${of('bought')}, ${of('gold')}, ?6, ?7
+    db.prepare(`INSERT OR IGNORE INTO prof_deposits (player, rid, char_id, material, qty, own, bought, gold, loose, at, n)
+      SELECT ?1, ?3, ?2, ?4, ?5, ${of('own')}, ${of('bought')}, ${of('gold')}, ${loosePart}, ?6, ?7
       WHERE ${movable} >= ?5
         AND COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?4), 0) + ?5 <= ?8`)
-      .bind(player.id, character, rid, key, qty, nowS, nonce, STORES_MAX),
+      .bind(player.id, character, rid, key, qty, nowS, nonce, STORES_MAX, ...(loose ? [held] : [])),   // ?9 bound only where read
     // the units out of the count and into the Stores, each origin as the decision read it
     ...['own', 'bought', 'gold'].flatMap((o) => [
       db.prepare(`UPDATE prof_carried SET qty = qty - (SELECT ${o} FROM prof_deposits WHERE player = ?1 AND rid = ?2 AND n = ?3)
@@ -938,13 +1052,17 @@ export async function depositStores(ctx, player, env, { character, material: key
         SELECT player, char_id, material, '${o}', ${o} FROM prof_deposits WHERE player = ?1 AND rid = ?2 AND n = ?3 AND ${o} > 0
         ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = prof_stores.qty + excluded.qty`).bind(player.id, rid, nonce),
     ]),
+    // AUDIT BAG-CRAFT A1: the loose part into the Stores as loose - a station's alone, never bought
+    db.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty)
+      SELECT player, char_id, material, '${LOOSE_ORIGIN}', loose FROM prof_deposits WHERE player = ?1 AND rid = ?2 AND n = ?3 AND loose > 0
+      ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = prof_stores.qty + excluded.qty`).bind(player.id, rid, nonce),
     db.prepare('DELETE FROM prof_carried WHERE player = ?1 AND char_id = ?2 AND qty = 0').bind(player.id, character),
   ]);
   const made = await db.prepare('SELECT * FROM prof_deposits WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
   if (made?.n === nonce) return answer(made);
   if (made) return answer(made, { repeat: true });
   const c = await carriedOf(db, player.id, character, key);
-  const could = seq.reduce((n, o) => n + (c[o] ?? 0), 0);
+  const could = seq.reduce((n, o) => n + (c[o] ?? 0), 0) + (loose ? Math.max(0, held - ((c.own ?? 0) + (c.bought ?? 0) + (c.gold ?? 0))) : 0);
   return could < qty ? { error: 'carried-short', material: key, carried: c } : { error: 'stores-full', material: key };
 }
 
@@ -977,6 +1095,7 @@ export async function smeltAtForge(ctx, player, env, { character, recipe: id, co
     const prof = r.xp ?? r.more?.profession ?? null;
     return {
       ok: true, ...extra, recipe: row.recipe, count: Number(row.count), own: Number(row.own), bought: Number(row.bought), xp: Number(row.xp),
+      ...(Number(row.loose) > 0 ? { loose: Number(row.loose) } : {}),   // AUDIT BAG-CRAFT A1: products made of loose goods, loose
       ...(r.act ? { first: Number(row.first) === 1, clean: Number(row.clean) === 1 } : {}),   // PROF11: a mason's work's first and its chisel
       track: prof ? trackView(await trackRow(db, player.id, row.char_id, prof), prof, nowS) : null,
       stores: await Promise.all([r.out, ...r.inputs.map((inp) => inp.key)].map((k) => storeOf(db, player.id, row.char_id, k))),
@@ -1008,37 +1127,42 @@ export async function smeltAtForge(ctx, player, env, { character, recipe: id, co
   // its first time's 500 (?11, where firstCraftPays) laid on in the decision; every other work's the smelt's
   const act = r.act ? clean === true : false;
   const cap = r.xp ? craftXpCap(r.xp, ranks) : 0;
-  const xp = r.act ? masonXp(count, rank, { clean: act }) : r.xp ? smeltXp(out.tier, count, rank) : 0;   // AUDIT 29 A7: the record's quarter, at the smith's rank
+  const xp = scaleXp(r.act ? masonXp(count, rank, { clean: act }) : r.xp ? smeltXp(out.tier, count, rank) : 0,   // AUDIT 29 A7: the record's quarter, at the smith's rank
+    r.xp ? xpPct(await firmStatsOf(db, player, env, character), trackOf(r.xp)) : 0);   // FIRM1: the Firmament's hand on the craft's XP
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 count ?6 out ?7 STORES_MAX ?8 xp ?9 now ?10 nonce ?11 the first time's XP
   // (PROF11: a mason's work's; 0 for every other) ?12 the chisel clean; the inputs ?13 on, two a one
   const binds = [player.id, character, rid, r.id, count, r.out, STORES_MAX, xp, nowS, nonce, r.act && firstCraftPays(r) ? FIRST_CRAFT_XP : 0, act ? 1 : 0];
-  const held = [], boughtOf = [];
+  const held = [], boughtOf = [], looseOf = [];
   r.inputs.forEach((inp, i) => {
     const k = `?${13 + 2 * i}`, need = `?${14 + 2 * i}`;
     binds.push(inp.key, inp.n * count);
-    held.push(`${spendableSql('?1', '?2', k)} >= ${need}`);   // GOLD-MARKET: never gold's units
-    // the products bought: the most any input's bought units reach, product by product (professionLaw smeltOrigin)
-    boughtOf.push(`((MIN(COALESCE((SELECT qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ${k} AND origin = 'bought'), 0), ${need}) + ${inp.n} - 1) / ${inp.n})`);
+    held.push(`${workableSql('?1', '?2', k)} >= ${need}`);   // GOLD-MARKET: never gold's units; AUDIT BAG-CRAFT A1: a station's loose ones too
+    const unitsOf = (o) => `COALESCE((SELECT qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ${k} AND origin = '${o}'), 0)`;
+    // the products bought: the most any input's bought units reach, product by product (professionLaw smeltOrigin) - AUDIT
+    // BAG-CRAFT A1: past its loose ones, which go first; and the products loose, the most any input's loose units reach
+    boughtOf.push(`((MIN(${unitsOf(LOOSE_ORIGIN)} + ${unitsOf('bought')}, ${need}) + ${inp.n} - 1) / ${inp.n})`);
+    looseOf.push(`((MIN(${unitsOf(LOOSE_ORIGIN)}, ${need}) + ${inp.n} - 1) / ${inp.n})`);
   });
-  const bought = boughtOf.length > 1 ? `MAX(${boughtOf.join(', ')})` : boughtOf[0];
+  const most = (list) => (list.length > 1 ? `MAX(${list.join(', ')})` : list[0]);
+  const bought = most(boughtOf), loose = most(looseOf);   // `bought` the products loose or bought, `loose` the loose ones
   await db.batch([
     // THE DECISION: every input held, the product's room - and its origin, read before a unit moves; the XP what the
     // track can take under the crafter's limit (AUDIT 29 A14: the answer says what was credited); PROF11: a mason's
     // first of a work its 500 laid on (`f`, kept), and its chisel kept
-    db.prepare(`INSERT OR IGNORE INTO prof_smelts (player, rid, char_id, recipe, count, own, bought, xp, at, n, first, clean)
-      SELECT ?1, ?3, ?2, ?4, ?5, ${per} * (?5 - MIN(?5, ${bought})), ${per} * MIN(?5, ${bought}),
+    db.prepare(`INSERT OR IGNORE INTO prof_smelts (player, rid, char_id, recipe, count, own, bought, loose, xp, at, n, first, clean)
+      SELECT ?1, ?3, ?2, ?4, ?5, ${per} * (?5 - MIN(?5, ${bought})), ${per} * (MIN(?5, ${bought}) - MIN(?5, ${loose})), ${per} * MIN(?5, ${loose}),
         MAX(0, MIN(?8 + f * ?11, ${Number(cap)} - COALESCE((SELECT xp FROM prof_tracks WHERE player = ?1 AND char_id = ?2 AND profession = '${trackOf(r.xp ?? 'smithing')}'), 0))), ?9, ?10, f, ?12
       FROM (SELECT CASE WHEN ?11 > 0 AND NOT EXISTS (SELECT 1 FROM prof_smelts WHERE player = ?1 AND char_id = ?2 AND recipe = ?4) THEN 1 ELSE 0 END AS f)
       WHERE ${held.join(' AND ')}
         AND COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?6), 0) + ${per} * ?5 <= ?7`).bind(...binds),
-    // the inputs out, each bought first
-    ...r.inputs.flatMap((inp) => spendStatements(db, {
+    // the inputs out, each bought first - AUDIT BAG-CRAFT A1: its loose units before them
+    ...r.inputs.flatMap((inp) => workStatements(db, {
       player: player.id, character, materialSql: '?3', qtySql: '?4', guard: 'EXISTS (SELECT 1 FROM prof_smelts WHERE player = ?1 AND rid = ?5 AND n = ?6)',
       binds: [inp.key, inp.n * count, rid, nonce],
     })),
-    // the products in, own and bought as the decision read them
-    ...['own', 'bought'].map((origin) => db.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty)
+    // the products in, own, bought and (AUDIT BAG-CRAFT A1) loose as the decision read them
+    ...['own', 'bought', LOOSE_ORIGIN].map((origin) => db.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty)
       SELECT ?1, ?2, ?4, '${origin}', ${origin} FROM prof_smelts WHERE player = ?1 AND rid = ?3 AND n = ?5 AND ${origin} > 0
       ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = prof_stores.qty + excluded.qty`).bind(player.id, character, rid, r.out, nonce)),
     // the XP the decision credited, under the crafter's limit - a smelt's Smithing; a log's none (PROF0 25)
@@ -1052,7 +1176,7 @@ export async function smeltAtForge(ctx, player, env, { character, recipe: id, co
   if (made) return answer(made, { repeat: true });
   for (const inp of r.inputs) {
     const st = await storeOf(db, player.id, character, inp.key);
-    if (st.own + st.bought < inp.n * count) return { error: st.own + st.bought + (st.gold ?? 0) >= inp.n * count ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET: short only of what gold bought
+    if (workHeld(st) < inp.n * count) return { error: workHeld(st) + (st.gold ?? 0) >= inp.n * count ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET: short only of what gold bought
   }
   return { error: 'stores-full', material: r.out };
 }
@@ -1175,18 +1299,19 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   const key = await signingKey(env, subtle);
   const u = dye ?? null;
   const hand = dishHand(r, specs[100]) ?? jewelHand(r, specs[50]);   // PROF9: a Chef's feast, a Provisioner's dish - the dish's wherever it goes; PROF10: a Goldsmith's Silver, a Gemcutter's gem
-  const records = await Promise.all(provs.map((p) => mintProductRecord({ p, s: player.id, h: character, r: r.id, q: quality, m: maker, c: seed, a: marked === 1 && maker !== null, u, f: hand }, key, { subtle, nowS })));   // AUDIT 30 L4: the mark signed; PROF7: the dye; PROF9: the hand
+  const records = await Promise.all(provs.map((p) => mintProductRecord({ p, s: player.id, h: character, r: r.id, q: quality, m: maker, c: seed, a: marked === 1 && maker !== null, u, f: hand, v: MINT_VERSION }, key, { subtle, nowS })));   // AUDIT 30 L4: the mark signed; PROF7: the dye; PROF9: the hand; CRAFT-PROCS: the law it mints under (its last pass)
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 quality ?6 count ?7 provenance ?8 provenance2 ?9 seed ?10 the XP before the
   // first craft's ?13 (AUDIT 32 S1: none for a recipe wholly of goods only a counter sells) ?11 now ?12 nonce ?14 the
   // profession ?15 heartwood ?16 the dye; the inputs ?17 on, two a one
   // PROF9: a dish's XP follows the rank, a clean pan's half again (cookXp); every other craft's its tier's (craftXp)
-  const xp = r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) : craftXp(r.tier, rank, false);   // PROF12: the Apothecary's steps
+  const xp = scaleXp(r.kind === 'dish' ? cookXp(rank, { clean: clean === true, steps: halls }) : craftXp(r.tier, rank, false),   // PROF12: the Apothecary's steps
+    xpPct(await firmStatsOf(db, player, env, character), craft));   // FIRM1: the Firmament's hand on the craft's XP
   const binds = [player.id, character, rid, r.id, quality, count, provs[0], provs[1] ?? null, seed, xp, nowS, nonce, firstCraftPays(r) ? FIRST_CRAFT_XP : 0, craft, wood ? 1 : 0, u];
   const held = [];
   inputs.forEach((inp, i) => {
     binds.push(inp.key, inp.n);
-    held.push(`${spendableSql('?1', '?2', `?${17 + 2 * i}`)} >= ?${18 + 2 * i}`);   // GOLD-MARKET: never gold's units
+    held.push(`${workableSql('?1', '?2', `?${17 + 2 * i}`)} >= ?${18 + 2 * i}`);   // GOLD-MARKET: never gold's units; AUDIT BAG-CRAFT A1: a station's loose ones too
   });
   // CRAFT2 (Professions-Arc 41.2): a first craft is its PATTERN AT ITS TIER's (recipeLaw firstCraftKin) - any recipe of it
   // made before (the first Ebony Longsword's after an Adamantium one, a Gold Ruby Ring's after a Gold Ring) and this is
@@ -1201,8 +1326,11 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   // smeltOrigin; a craft spends no gold's units): a piece of the counter's Linen was 'own', and its disenchant's Essence
   // own too - listed for gold over the wall. Read inside the batch, as the decision's own (?13 on: the inputs' keys)
   // (AUDIT PROF-541 R2-S5: `at` the first input key's bind - the kit's statement binds them from ?6)
-  const boughtAnySql = (/** @type {number} */ at) => `${inputs.map((_, i) => `COALESCE((SELECT qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?${at + i} AND origin = 'bought'), 0) > 0`).join(' OR ') || '0'}`;
-  const boughtWith = `CASE WHEN ${boughtAnySql(13)} THEN 'marks' END`;
+  // AUDIT BAG-CRAFT A1: AND A PIECE MADE OF LOOSE GOODS IS WALLED TO GOLD - 'gold' where any input held a loose unit (spent
+  // first): the service never saw those goods, and a piece made of them lists as a pack's piece does (MARKET-ANY: for
+  // gold alone, never Drakes, no Drakes commission or auction - law 3); a Ram Kit of them is loose, a station's alone
+  const anySql = (/** @type {number} */ at, /** @type {string} */ origin) => `${inputs.map((_, i) => `COALESCE((SELECT qty FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = ?${at + i} AND origin = '${origin}'), 0) > 0`).join(' OR ') || '0'}`;
+  const boughtWith = `CASE WHEN ${anySql(13, LOOSE_ORIGIN)} THEN 'gold' WHEN ${anySql(13, 'bought')} THEN 'marks' END`;
   if (siege) held.push(`COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ?1 AND char_id = ?2 AND material = '${RAM_KIT.key}'), 0) + ?6 <= ${STORES_MAX}`);   // SEAT2b part two: the kit's room
   await db.batch([
     // THE DECISION: every input held - and the XP what the track can take under the crafter's limit, the first craft's
@@ -1217,13 +1345,13 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
     // AUDIT PROF-541 B7: and bought where its inputs were, minted BEFORE the inputs go (their bought units read as they stand) -
     // SEAT2b part two: a siege work's kits into the Stores instead
     ...(siege ? [db.prepare(`INSERT INTO prof_stores (player, char_id, material, origin, qty)
-      SELECT ?1, ?2, ?4, CASE WHEN ${boughtAnySql(6)} THEN 'bought' ELSE 'own' END, count FROM prof_crafts WHERE player = ?1 AND rid = ?3 AND n = ?5
+      SELECT ?1, ?2, ?4, CASE WHEN ${anySql(6, LOOSE_ORIGIN)} THEN '${LOOSE_ORIGIN}' WHEN ${anySql(6, 'bought')} THEN 'bought' ELSE 'own' END, count FROM prof_crafts WHERE player = ?1 AND rid = ?3 AND n = ?5
       ON CONFLICT (player, char_id, material, origin) DO UPDATE SET qty = prof_stores.qty + excluded.qty`).bind(player.id, character, rid, RAM_KIT.key, nonce, ...inputs.map((inp) => inp.key))]
       : provs.map((p, i) => db.prepare(`INSERT INTO products (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at, marked, dye, hand, bought_with)
         SELECT ?4, ?1, ?2, ?6, ?7, ?8, ?9, quality, seed, ?10, at, ?11, dye, ?12, ${boughtWith} FROM prof_crafts WHERE player = ?1 AND rid = ?3 AND n = ?5`)
         .bind(player.id, character, rid, p, nonce, maker, r.id, r.templateIndex, r.material, records[i], marked, hand, ...inputs.map((inp) => inp.key)))),   // PROF9: a dish's hand (0069)
-    // the inputs out, each bought first
-    ...inputs.flatMap((inp) => spendStatements(db, {
+    // the inputs out, each bought first - AUDIT BAG-CRAFT A1: its loose units before them
+    ...inputs.flatMap((inp) => workStatements(db, {
       player: player.id, character, materialSql: '?3', qtySql: '?4', guard: decided, binds: [inp.key, inp.n, rid, nonce],
     })),
     // the XP the decision credited, under the crafter's limit - the recipe's profession's
@@ -1237,7 +1365,7 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   if (made) return craftAnswer(db, player, made, nowS, { repeat: true });
   for (const inp of inputs) {
     const st = await storeOf(db, player.id, character, inp.key);
-    if (st.own + st.bought < inp.n) return { error: st.own + st.bought + (st.gold ?? 0) >= inp.n ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET
+    if (workHeld(st) < inp.n) return { error: workHeld(st) + (st.gold ?? 0) >= inp.n ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET
   }
   if (siege) return { error: 'stores-full', material: RAM_KIT.key };   // SEAT2b part two: every input held - the kit's room is what failed
   return { error: 'stores-short' };
@@ -1298,10 +1426,11 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
     if (Number(p.quality) !== quality) return { error: 'prof-temper-stale' };
     const c = readProductRecord(p.record);
     if (!c) return { error: 'prof-temper' };
-    record = await mintProductRecord({ p: c.p, s: c.s, h: c.h, r: c.r, q: quality + 1, m: c.m, c: c.c, a: c.a === 1, u: c.u ?? null, f: c.f ?? null }, await signingKey(env, subtle), { subtle, nowS });
+    record = await mintProductRecord({ p: c.p, s: c.s, h: c.h, r: c.r, q: quality + 1, m: c.m, c: c.c, a: c.a === 1, u: c.u ?? null, f: c.f ?? null, v: c.v ?? null }, await signingKey(env, subtle), { subtle, nowS });   // CRAFT-PROCS: the craft's mint version kept - a piece made before mints as it was
   }
   const cost = temperCost(r);
   const cap = craftXpCap(craft, ranks);
+  const xp = scaleXp(temperXp(r, rank), xpPct(await firmStatsOf(db, player, env, character), craft));   // AUDIT UICALM-FIRM1 L2 L3: the Firmament's hand on a temper's XP, as on the anvil's
   const nonce = mintId(rand);
   const decided = 'EXISTS (SELECT 1 FROM prof_tempers WHERE player = ?1 AND rid = ?2 AND n = ?3)';
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 provenance ?6 the quality made ?7 the input ?8 its units ?9 the XP ?10 now
@@ -1314,12 +1443,16 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
     db.prepare(`INSERT OR IGNORE INTO prof_tempers (player, rid, char_id, recipe, provenance, quality, material, qty, xp, at, n)
       SELECT ?1, ?3, ?2, ?4, ?5, ?6, ?7, ?8,
         MAX(0, MIN(?9, ${Number(cap)} - COALESCE((SELECT xp FROM prof_tracks WHERE player = ?1 AND char_id = ?2 AND profession = ?12), 0))), ?10, ?11
-      WHERE ${spendableSql('?1', '?2', '?7')} >= ?8 AND ${piece}`)
-      .bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, temperXp(r, rank), nowS, nonce, craft),
-    // the input out, bought first
-    ...spendStatements(db, { player: player.id, character, materialSql: '?3', qtySql: '?4', guard: 'EXISTS (SELECT 1 FROM prof_tempers WHERE player = ?1 AND rid = ?5 AND n = ?6)', binds: [cost.key, cost.n, rid, nonce] }),
-    // a made piece's row at its new quality, its record re-signed
-    ...(provenance !== null ? [db.prepare(`UPDATE products SET quality = ?4, record = ?5 WHERE provenance = ?6 AND ${decided}`).bind(player.id, rid, nonce, quality + 1, record, provenance)] : []),
+      WHERE ${workableSql('?1', '?2', '?7')} >= ?8 AND ${piece}`)   // AUDIT BAG-CRAFT A1: a station's loose units too
+      .bind(player.id, character, rid, r.id, provenance, quality + 1, cost.key, cost.n, xp, nowS, nonce, craft),
+    // a made piece's row at its new quality, its record re-signed - AUDIT BAG-CRAFT A1: walled to gold where the input held a
+    // loose unit (spent first), read before the spend - a piece raised with goods the service never handed out lists as a
+    // pack's piece does (for gold alone)
+    ...(provenance !== null ? [db.prepare(`UPDATE products SET quality = ?4, record = ?5,
+        bought_with = CASE WHEN COALESCE((SELECT qty FROM prof_stores WHERE player = ?1 AND char_id = ?7 AND material = ?8 AND origin = '${LOOSE_ORIGIN}'), 0) > 0 THEN 'gold' ELSE bought_with END
+      WHERE provenance = ?6 AND ${decided}`).bind(player.id, rid, nonce, quality + 1, record, provenance, character, cost.key)] : []),
+    // the input out, bought first - AUDIT BAG-CRAFT A1: its loose units before them
+    ...workStatements(db, { player: player.id, character, materialSql: '?3', qtySql: '?4', guard: 'EXISTS (SELECT 1 FROM prof_tempers WHERE player = ?1 AND rid = ?5 AND n = ?6)', binds: [cost.key, cost.n, rid, nonce] }),
     // the XP the decision credited, under the crafter's limit - the craft's
     db.prepare(`INSERT INTO prof_tracks (player, char_id, profession, xp, updated_at)
       SELECT ?1, ?2, ?7, MIN(?4, xp), ?5 FROM prof_tempers WHERE player = ?1 AND rid = ?3 AND n = ?6
@@ -1334,10 +1467,10 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
     if (!p) return { error: 'prof-no-piece' };
     if (Number(p.quality) !== quality) return { error: 'prof-temper-stale' };
     const st = await storeOf(db, player.id, character, cost.key);
-    if (st.own + st.bought >= cost.n) return { error: 'prof-piece-busy' };   // listed, on the road or standing in a home
+    if (workHeld(st) >= cost.n) return { error: 'prof-piece-busy' };   // listed, on the road or standing in a home
   }
   const st = await storeOf(db, player.id, character, cost.key);
-  return { error: st.own + st.bought + (st.gold ?? 0) >= cost.n ? 'stores-gold' : 'stores-short', material: cost.key };
+  return { error: workHeld(st) + (st.gold ?? 0) >= cost.n ? 'stores-gold' : 'stores-short', material: cost.key };
 }
 
 // ─── THE SMITH'S STOCK (PROF0 24) ────────────────────────────────────
@@ -1395,7 +1528,7 @@ export async function buyStock(ctx, player, env, { character, material: key, qty
 
 /** A writ as the Work tab reads it: `state` open, mine (filled by this account) or taken. */
 const writView = (w, me) => ({
-  id: w.id, kind: w.kind, region: Number(w.region), material: w.material, tier: Number(w.tier), qty: Number(w.qty),
+  id: w.id, kind: w.kind, region: Number(w.region), faction: Number(w.faction ?? 0), material: w.material, tier: Number(w.tier), qty: Number(w.qty),
   pay: Number(w.pay), renown: Number(w.renown), expiresAt: Number(w.expires_at),
   state: !w.filled_by ? 'open' : w.filled_by === me ? 'mine' : 'taken',
 });
@@ -1424,34 +1557,149 @@ async function activeBefore(db, dayStartS) {
 /**
  * A REGION'S WRITS FOR THE DAY, written down on the day's first read: how many (`active` then) and each writ (nodeLaw
  * courtWrits over the region's witnessed ground in the day's season). A region whose ground nobody has witnessed posts
- * nothing yet, and nothing is written down - a later read posts once there is ground.
+ * nothing yet, and nothing is written down - a later read posts once there is ground. CHAP3b: a chapter's hall writs by
+ * its band (npcChapterLaw.js hallWritCountIn), the week's Turning settled first (`zero` the week Season 0 began, or null).
+ * AUDIT CHAP3 S2: the hall writs and their Turning only while the Chapters are not 'off' (`open`, CHAPTERS_OPEN).
  */
-async function postWrits(db, day, region, nowS) {
-  if (await db.prepare('SELECT 1 FROM writ_days WHERE day = ?1 AND region = ?2').bind(day, region).first()) return;
+async function postWrits(db, day, region, nowS, zero = null, open = 'off') {
+  const courtDone = !!(await db.prepare('SELECT 1 FROM writ_days WHERE day = ?1 AND region = ?2').bind(day, region).first());
+  // CHAP2a: and the region's chapters' hall writs, written down once a day beside the Court's (hall_writ_days) - none
+  // while the region has no witnessed chapter, so a chapter confirmed later in the day posts that day
+  const hallDone = chaptersSwitchOf(open) === 'off' || !!(await db.prepare('SELECT 1 FROM hall_writ_days WHERE day = ?1 AND region = ?2').bind(day, region).first());
+  if (courtDone && hallDone) return;
+  // AUDIT CHAP4 S2: the Chapters shut, the weeks that pass recorded shut - on a region's first read of the day, as the
+  // Court's writs are posted (npcChapters.js settleChaptersDue)
+  if (chaptersSwitchOf(open) === 'off') await settleChaptersDue(db, nowS, zero, open);
+  // AUDIT CHAP2 S1: the chapters (the isolate's kept answer) asked BEFORE the ground - a region with no chapter writes
+  // no hall_writ_days, and its every board read re-read the region's witnessed ground and the week's active accounts
+  const chapters = hallDone ? [] : await regionChapters(db, region, nowS * 1000);
+  if (courtDone && !chapters.length) return;
   const table = regionWritTable(region, await regionGround(db, region), daySeason(day));
   if (!table.length) return;
   const active = await activeBefore(db, day * DAY_S);
-  const writs = courtWrits(day, region, courtWritCount(active), table);
   const expires = (day + 1) * DAY_S;
-  await db.batch([
-    db.prepare('INSERT OR IGNORE INTO writ_days (day, region, active, posted, at) VALUES (?1, ?2, ?3, ?4, ?5)').bind(day, region, active, writs.length, nowS),
-    ...writs.map((w) => db.prepare(`INSERT OR IGNORE INTO writs (id, kind, day, region, slot, material, tier, qty, pay, renown, expires_at)
-      VALUES (?1, 'court', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`)
-      .bind(`c:${day}:${region}:${w.slot}`, day, region, w.slot, w.material, w.tier, w.units, w.pay, w.renown, expires)),
-  ]);
+  if (!courtDone) {
+    const writs = courtWrits(day, region, courtWritCount(active), table);
+    await db.batch([
+      db.prepare('INSERT OR IGNORE INTO writ_days (day, region, active, posted, at) VALUES (?1, ?2, ?3, ?4, ?5)').bind(day, region, active, writs.length, nowS),
+      ...writs.map((w) => db.prepare(`INSERT OR IGNORE INTO writs (id, kind, day, region, slot, material, tier, qty, pay, renown, expires_at)
+        VALUES (?1, 'court', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`)
+        .bind(`c:${day}:${region}:${w.slot}`, day, region, w.slot, w.material, w.tier, w.units, w.pay, w.renown, expires)),
+    ]);
+  }
+  if (chapters.length) {
+    await settleChaptersDue(db, nowS, zero, open);
+    const strengths = await regionStrengths(db, region, chapters);
+    const focuses = await regionFocuses(db, region, meritWeekOf(nowS));   // CHAP4d: every other writ the Master's family
+    // CHAP6a: a chapter whose halls a Crackdown shut posts none this Season. AUDIT CHAP5 E1: its writs pay as any - a
+    // Crackdown's half again is its members' Merit (deliverWrit), never Marks any account's bought units fetch
+    const events = await regionEvents(db, region, seasonNumberAt(nowS, zero));
+    const halls = chapters.filter((f) => !events.get(f)?.shut).flatMap((f) => hallWrits(day, region, f, doctrineWritCount(hallWritCountIn(active, strengths.get(f)), events.get(f)?.doctrine), table, focuses.get(f) ?? null)
+      .map((w) => ({ ...w, faction: f })));
+    // AUDIT CHAP3 S4: the region's hall writs in ONE statement over a bound JSON array (SCALE1's law - a region of many
+    // chapters at a busy realm's scale was a statement a writ, over a thousand), in their own batch: the Court's stand
+    // whatever becomes of them
+    await db.batch([
+      db.prepare('INSERT OR IGNORE INTO hall_writ_days (day, region, posted, at) VALUES (?1, ?2, ?3, ?4)').bind(day, region, halls.length, nowS),
+      db.prepare(`INSERT OR IGNORE INTO writs (id, kind, day, region, faction, slot, material, tier, qty, pay, renown, expires_at)
+        SELECT json_extract(value, '$[0]'), 'hall', ?1, ?2, json_extract(value, '$[1]'), json_extract(value, '$[2]'), json_extract(value, '$[3]'),
+          json_extract(value, '$[4]'), json_extract(value, '$[5]'), json_extract(value, '$[6]'), json_extract(value, '$[7]'), ?3
+        FROM json_each(?4)`)
+        .bind(day, region, expires, JSON.stringify(halls.map((w) => [hallWritId(day, region, w.faction, w.slot), w.faction, w.slot, w.material, w.tier, w.units, w.pay, w.renown]))),
+    ]);
+  }
 }
 
-/** THE WORK TAB'S WRITS for a region's board: today's Court writs, each open, mine or taken, and the account's day. */
+/** CHAP3a: A MEMBER'S OWN WRITS for the day - one for each guild of `members` (the character's on its Roll) keeping a
+ *  chapter in the region, drawn over the character (npcChapterLaw.js memberWrit), written down on its first read of
+ *  the board there. None while the region's ground is unwitnessed (a later read posts it). */
+async function postMemberWrits(db, day, region, nowS, character, members, zero = null) {
+  if (!members.length) return;
+  const chapters = new Set(await regionChapters(db, region, nowS * 1000));
+  const events = await regionEvents(db, region, seasonNumberAt(nowS, zero));   // CHAP6a: none from a shut hall
+  const want = members.filter((f) => chapters.has(f) && !events.get(f)?.shut);
+  if (!want.length) return;
+  // AUDIT CHAP3 E3: ONE A MEMBER A GUILD A UTC DAY, wherever posted - the first board of the day with a chapter of the
+  // guild (a member reading every region's board had one a region: the shared writs' race AUDIT CHAP2 E4 closed, opened
+  // again a region at a time); asked again inside each write
+  const { results: had = [] } = await db.prepare("SELECT faction FROM writs WHERE day = ?1 AND kind = 'member' AND owner = ?2")
+    .bind(day, character).all();
+  const posted = new Set(had.map((r) => Number(r.faction)));
+  const missing = want.filter((f) => !posted.has(f));
+  if (!missing.length) return;
+  const table = regionWritTable(region, await regionGround(db, region), daySeason(day));
+  const writs = missing.map((f) => ({ f, w: memberWrit(day, region, f, character, table) })).filter((x) => x.w);
+  if (!writs.length) return;
+  await db.batch(writs.map(({ f, w }) => db.prepare(`INSERT OR IGNORE INTO writs (id, kind, day, region, faction, owner, slot, material, tier, qty, pay, renown, expires_at)
+    SELECT ?1, 'member', ?2, ?3, ?4, ?5, 0, ?6, ?7, ?8, ?9, ?10, ?11
+    WHERE NOT EXISTS (SELECT 1 FROM writs WHERE day = ?2 AND kind = 'member' AND owner = ?5 AND faction = ?4)`)
+    .bind(memberWritId(day, region, f, character), day, region, f, character, w.material, w.tier, w.units, w.pay, w.renown, (day + 1) * DAY_S)));
+}
+
+/** CHAP3b: THE BOARD'S CHAPTER LINES - each chapter of the region, `{ faction, strength, band }`, a hidden guild's to its
+ *  members alone (`members`, the reader's guilds on its Roll) as its writs are. CHAP6a: and its Season's event (`event`,
+ *  a Rivalry's `rival` - a hidden rival named to its members alone - and `shut`); CHAP6b: a Schism's `sides`, a
+ *  Succession's `heir`, the `doctrine` holding, and the side the reader's account backs (`backed`). CHAP7a: and its
+ *  `patron` this Season, and - where the reader's character is its player guild's guildmaster - its guild's standing bid
+ *  for the Season after (`patronBid`, `{ season, marks }`, 0 for none); never a hidden guild's. */
+async function chapterLines(db, region, nowS, members, character = null, zero = null, account = null) {
+  const chapters = (await regionChapters(db, region, nowS * 1000)).filter((f) => !hallHidden(f) || members.includes(f));
+  const strengths = await regionStrengths(db, region, chapters);
+  // CHAP4d: and each chapter's Focus this week, and the Focuses its Master may choose where the reader is its Master
+  const focuses = await regionFocuses(db, region, meritWeekOf(nowS));
+  const masters = await masterSeatsIn(db, character, region, meritWeekOf(nowS));   // AUDIT CHAP4 S4: last week's Turning's seats
+  const events = await regionEvents(db, region, seasonNumberAt(nowS, zero), (f) => !hallHidden(f) || members.includes(f));
+  const backed = account ? await regionBackings(db, region, seasonNumberAt(nowS, zero), account) : new Map();   // CHAP6b: the reader's own
+  // CHAP7a: each chapter's patron this Season, and the reader's guild's bids for the next where it is the guildmaster
+  const n = seasonNumberAt(nowS, zero);
+  const patrons = await regionPatrons(db, region, n);
+  const gm = n != null && account && character ? await db.prepare('SELECT guild_id FROM guild_members WHERE player = ?1 AND char_id = ?2 AND rank = 0').bind(account, character).first() : null;
+  const bids = gm ? await guildPatronBids(db, region, /** @type {number} */ (n) + 1, String(gm.guild_id)) : null;
+  return chapters.map((f) => ({
+    faction: f, strength: strengths.get(f), band: chapterBandOf(strengths.get(f)).band, focus: focuses.get(f) ?? null,
+    ...(masters.has(f) ? { master: true, focuses: chapterFocusesOf(f) } : {}), ...events.get(f), ...(backed.has(f) ? { backed: backed.get(f) } : {}),
+    ...(patrons.has(`${f}|${region}`) && !hallHidden(f) ? { patron: patrons.get(`${f}|${region}`) } : {}),
+    ...(bids && !hallHidden(f) ? { patronBid: { season: /** @type {number} */ (n) + 1, marks: bids.get(f) ?? 0 } } : {}),
+  }));
+}
+
+/** CHAP2a: the hidden guilds (npcChapterLaw.js hallHidden) this character is a member of on its Roll - their chapters'
+ *  writs are its alone. None for a character with no Roll. */
+async function hiddenMemberships(db, player, character) {
+  const { results = [] } = await db.prepare(`SELECT faction_id FROM npc_roll WHERE char_id = ?1 AND player = ?2 AND member = 1
+    AND faction_id IN (${GUILD_FACTION_IDS.ThievesGuild}, ${GUILD_FACTION_IDS.DarkBrotherhood})`).bind(character, player).all();
+  return new Set(results.map((r) => Number(r.faction_id)));
+}
+
+/** THE WORK TAB'S WRITS for a region's board: today's Court writs and its chapters' hall writs (CHAP2a), each open, mine
+ *  or taken, and the account's day - the one allowance both share. CHAP3a: and the reader's own writ for each of its
+ *  guilds' chapters here (kind `member`, shown to its owner alone), and its account's Merit in them this week. CHAP3b:
+ *  and the region's chapters' Strength and band, the underworld's to its members alone, after the Turnings due. */
 export async function listWrits({ db, nowS }, player, env, { character, region } = {}) {
   const refused = asks(player, { character, needRid: false }) ?? shut(player, env);
   if (refused) return refused;
   if (!regionOk(region)) return { error: 'bad-region' };
   const day = utcDay(nowS);
-  await postWrits(db, day, region, nowS);
-  const { results = [] } = await db.prepare('SELECT * FROM writs WHERE day = ?1 AND region = ?2 ORDER BY slot').bind(day, region).all();
+  const halls = chaptersOpenFor(player, env);   // CHAP2a: a chapter's writs only where the Roll is open to the account
+  const zero = seasonZeroOf(env?.SEASON_ZERO_WEEK);
+  if (halls) await settleChaptersDue(db, nowS, zero, env?.CHAPTERS_OPEN);   // CHAP3b: the chapters' Strength as this week's Turning left it
+  await postWrits(db, day, region, nowS, zero, env?.CHAPTERS_OPEN);   // AUDIT CHAP3 S2: hall writs only while the Chapters are not 'off'
+  const members = halls ? await membersOf(db, player.id, character) : [];   // CHAP3a: the reader's guilds on its Roll
+  await postMemberWrits(db, day, region, nowS, character, members, zero);
+  // CHAP3a: a member's own writ to its owner alone - never another's, never another character's of the account - and only
+  // while it is the guild's member (or once it filled it)
+  const { results = [] } = await db.prepare("SELECT * FROM writs WHERE day = ?1 AND region = ?2 AND (owner = '' OR owner = ?3) ORDER BY kind, faction, slot")
+    .bind(day, region, character).all();
+  // and a hidden guild's to its members alone (and the one who filled it)
+  const hidden = halls && results.some((w) => w.kind === 'hall' && hallHidden(Number(w.faction))) ? await hiddenMemberships(db, player.id, character) : null;
+  const shown = (w) => w.kind === 'court' || (halls && (w.filled_by === player.id || (w.kind === 'member' ? members.includes(Number(w.faction))
+    : !hallHidden(Number(w.faction)) || hidden?.has(Number(w.faction)))));
   return {
     region, day, endsAt: (day + 1) * DAY_S,
-    writs: results.map((w) => writView(w, player.id)),
+    writs: results.filter(shown).map((w) => writView(w, player.id)),
+    receipts: await receiptAsks(db, player, env, character, region, nowS),   // CHAP2b: the region's chapters' receipt asks
+    merit: await meritAsks(db, player.id, character, region, nowS, members),   // CHAP3a: the account's Merit in the chapters here
+    chapters: halls ? await chapterLines(db, region, nowS, members, character, zero, player.id) : [],   // CHAP3b: the chapters here, their Strength
     today: { filled: await writsToday(db, player.id, day), max: COURT_WRITS_PER_DAY },
   };
 }
@@ -1466,7 +1714,9 @@ function renownAnswer(character, before, after) {
 }
 
 /**
- * A COURT WRIT TAKEN (PROF0 11: filled whole, once, by the first to deliver - so taking it is delivering it):
+ * A COURT WRIT TAKEN - or a hall writ (CHAP2a; its guild +2 on the Roll, below), or a member's own (CHAP3a: by its owner
+ * alone, paid as a hall writ, and its Merit - `merit` in the answer) - (PROF0 11: filled whole, once, by the first
+ * to deliver - so taking it is delivering it):
  * `{ character, id, rid }`. Decided by the writ's one UPDATE: still open and today's, the account under its three a day,
  * the Stores holding the units, the balance with room for the pay. Then the units out (bought first), the pay struck
  * (`writ`, the second faucet - its line id the writ's own, under the service's `:`), the XP to the profession that
@@ -1485,6 +1735,7 @@ export async function deliverWrit(ctx, player, env, { character, id, rid } = {})
       track: prof ? trackView(await trackRow(db, player.id, w.filled_char, prof), prof, nowS) : null,
       store: await storeOf(db, player.id, w.filled_char, w.material),
       today: { filled: await writsToday(db, player.id, day), max: COURT_WRITS_PER_DAY },
+      ...(w.kind === 'member' ? { merit: (await meritOfAct(db, w.filled_char, 'writ', w.id))[0]?.amount ?? 0 } : {}),   // CHAP3a
     };
   };
   const prior = await db.prepare('SELECT * FROM writs WHERE filled_by = ?1 AND rid = ?2').bind(player.id, rid).first();
@@ -1496,12 +1747,23 @@ export async function deliverWrit(ctx, player, env, { character, id, rid } = {})
   if (!w) return { error: 'no-writ' };
   // AUDIT 29 A16: a writ one filled oneself (its answer lost, the page reloaded, a new id) is answered as one's own
   if (w.filled_by === player.id) return answer(w, { repeat: true });
+  // CHAP2a: a hidden guild's writ is no writ to a character not its member on the Roll - as its listing never showed it.
+  // AUDIT CHAP2 S2: asked before the writ's day and fill, whose answers ('writ-expired', 'writ-taken') told a stranger
+  // walking the ids which regions keep the underworld's halls
+  // CHAP3a: a member's own writ is no writ to any character but its owner, nor to it once no member of the guild - as
+  // the board shows it to none
+  if (w.kind === 'member' && (w.owner !== character || !(await membersOf(db, player.id, character)).includes(Number(w.faction)))) return { error: 'no-writ' };
+  if (w.kind !== 'court' && hallHidden(Number(w.faction)) && !(await hiddenMemberships(db, player.id, character)).has(Number(w.faction))) return { error: 'no-writ' };
+  if (w.kind !== 'court' && !chaptersOpenFor(player, env)) return { error: 'chapters-closed' };   // CHAP2a
   if (Number(w.day) !== day || Number(w.expires_at) <= nowS) return { error: 'writ-expired' };
   if (w.filled_by) return { error: 'writ-taken' };
   if (await overRate(ctx, `prof:${player.id}`, PROF_OPS_MAX, PROF_OPS_WINDOW_S)) return { error: 'prof-rate' };
   const m = material(w.material);
   const prof = professionOfFamily(m?.family);
   const before = Number((await db.prepare('SELECT xp FROM renown_tracks WHERE player = ?1 AND char_id = ?2').bind(player.id, character).first())?.xp ?? 0);
+  // AUDIT CHAP5 E1: a member's own writ for a chapter under a Crackdown this Season earns half again its Merit
+  const merit = w.kind === 'member' && (await regionEvents(db, Number(w.region), seasonNumberAt(nowS, seasonZeroOf(env?.SEASON_ZERO_WEEK)), () => true))
+    .get(Number(w.faction))?.event === 'crackdown' ? crackdownMerit(MERIT_WRIT) : MERIT_WRIT;
   const nonce = mintId(rand);
   const filled = 'EXISTS (SELECT 1 FROM writs WHERE id = ?5 AND n = ?6)';
   await db.batch([
@@ -1513,6 +1775,14 @@ export async function deliverWrit(ctx, player, env, { character, id, rid } = {})
         AND ${spendableSql('?1', '?2', 'writs.material')} >= writs.qty   -- GOLD-MARKET: never gold's units
         AND COALESCE((SELECT balance FROM marks WHERE account = ?1), 0) + writs.pay <= ?9`)
       .bind(player.id, character, nowS, rid, id, nonce, day, COURT_WRITS_PER_DAY, MARKS_MAX),
+    // CHAP3a: A MEMBER'S OWN WRIT'S MERIT - MERIT_WRIT for the share of its units the member's own: what the bought units
+    // (spent first, below) leave of it, so read before the spend (npcMerit.js asks the tenure, the week's chapter, the cap)
+    ...(w.kind === 'member' ? [meritStatement(db, {
+      player: player.id, character, faction: Number(w.faction), region: Number(w.region), source: 'writ', ref: id, nowS,
+      amountSql: `(SELECT (qty - MIN(qty, COALESCE((SELECT b.qty FROM prof_stores b WHERE b.player = ?1 AND b.char_id = ?2
+        AND b.material = writs.material AND b.origin = 'bought'), 0))) * ?13 / qty FROM writs WHERE id = ?11 AND n = ?12)`,
+      guard: 'EXISTS (SELECT 1 FROM writs WHERE id = ?11 AND n = ?12)', binds: [id, nonce, merit],
+    })] : []),
     // the units out of the Stores, bought first
     ...spendStatements(db, {
       player: player.id, character, materialSql: '(SELECT material FROM writs WHERE id = ?3 AND n = ?4)',
@@ -1536,6 +1806,21 @@ export async function deliverWrit(ctx, player, env, { character, id, rid } = {})
       SELECT ?1, ?2, NULL, MIN(?7, renown), NULL, ?3, ?3 FROM writs WHERE id = ?5 AND n = ?6 AND renown > 0
         AND NOT EXISTS (SELECT 1 FROM renown_tracks WHERE player = ?1 AND char_id = ?2)
         AND ${renownHeldSql('?1')} < ?8`).bind(player.id, character, nowS, rid, id, nonce, RENOWN_XP_MAX, RENOWN_TRACKS_MAX),
+    // CHAP2a: A HALL WRIT'S GUILD REMEMBERS - HALL_WRIT_REP to the posting guild on the deliverer's Roll, where it has one: a
+    // witnessed act (the units the Stores gave), so outside the claims' pace and never owed past DFU's 100. The Roll's
+    // head moves under this delivery's own tag (the nonce), so a claim that read the Roll before it is refused its write
+    // (npcRoll.js: `roll-busy`, asked again) and never writes over the credit
+    ...(w.kind !== 'court' ? [   // CHAP3a: a member's own writ as a hall writ
+      // AUDIT CHAP2 S5: and only while the character stands (a delivery carries no lease - the board's, not the playing
+      // tab's - so a hall writ's credit is the one Roll write a lease does not guard); the claim sequence untouched (C1)
+      db.prepare(`UPDATE npc_roll_heads SET seq = seq + 1, tag = ?3, updated_at = ?4 WHERE char_id = ?2 AND player = ?1 AND EXISTS (SELECT 1 FROM writs WHERE id = ?5 AND n = ?3)
+        AND EXISTS (SELECT 1 FROM realm_characters WHERE id = ?2 AND player = ?1 AND dead_at IS NULL)`)
+        .bind(player.id, character, nonce, nowS, id),
+      db.prepare(`UPDATE npc_roll SET rep = MIN(?4, rep + ?3), owed = MAX(0, MIN(owed, ?4 - MIN(?4, rep + ?3)))
+        WHERE char_id = ?2 AND player = ?1 AND faction_id = (SELECT faction FROM writs WHERE id = ?5 AND n = ?6)
+          AND EXISTS (SELECT 1 FROM npc_roll_heads WHERE char_id = ?2 AND tag = ?6)`)
+        .bind(player.id, character, HALL_WRIT_REP, MAX_REPUTATION, id, nonce),
+    ] : []),
   ]);
   const now = await db.prepare('SELECT * FROM writs WHERE id = ?').bind(id).first();
   if (now?.n === nonce) {

@@ -25,14 +25,14 @@
 // AWAY: a window the roads hold the resident (trips.js) is handed in and the day bends round it - geared at home (an
 // armed traveller), walked out to the exit facing the road, away, walked home after; every walk to or from an away
 // window ARMED (LW0 decision 5 - the host draws the class sprite).
-import { NAV_CELL } from '../../world/cityNavigation.js';
+import { NAV_CELL } from '../../world/city/cityNavigation.js';
 import { BUILDING_TYPES } from '../../world/buildingNames.js';
 import { lwRng, lwSeed, rollInt, pickOf } from './seed.js';
 import { hasShopJob, WATCH_COMPANIES } from './census.js';
 import { exitNearest } from './places.js';
-import { MOBILE_TYPES } from '../../characters/mobileTypes.js';
-import { GUILDS } from '../guilds.js';
-import { ORDERS } from '../guildVariants.js';
+import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
+import { GUILDS } from '../guild/guilds.js';
+import { ORDERS } from '../guild/guildVariants.js';
 
 /** The living day turns at 04:00 (minutes after midnight). */
 export const DAY_START_MIN = 240;
@@ -313,12 +313,32 @@ export function guildHallOf(res, places, home) {
 }
 
 /** LW-ERRANDS: the days of the week a member keeps at their hall - two, their own, three apart (Daggerfall's week is
- *  seven days), the seed's alone. @param {Resident} res @param {number} day */
-export function guildDay(res, day) {
+ *  seven days), the seed's alone. CHAP5b (Chapters-Arc 9): `days` its hall's chapter's - one Failing, three Thriving and
+ *  Ascendant (GUILD_DAYS_BY_BAND) - each the first of GUILD_DAY_OFFSETS from the member's own day: the two are the same
+ *  two, the one the first of them. @param {Resident} res @param {number} day @param {number} [days] */
+export function guildDay(res, day, days = GUILD_DAYS) {
   const w = lwSeed(res.town, res.roll.charCodeAt(0), res.slot, 0x67696c64) % 7;   // 'gild'
   const d = ((day % 7) + 7) % 7;
-  return d === w || d === (w + 3) % 7;
+  return GUILD_DAY_OFFSETS.slice(0, days).some((o) => d === (w + o) % 7);
 }
+/** The evenings a week a member keeps at their hall where no chapter's band is known (offline, no sheet): two. */
+export const GUILD_DAYS = 2;
+/** CHAP5b: a member's guild days from their own day - the first `days` of these. */
+export const GUILD_DAY_OFFSETS = Object.freeze([0, 3, 5]);
+/** CHAP5b (Chapters-Arc 9: "a Thriving chapter gives guildDay a third, a Failing one a single day"): the evenings by the
+ *  hall's chapter's band, the chapter sheet's (net/npcChapterLaw.js CHAPTER_BANDS). */
+export const GUILD_DAYS_BY_BAND = Object.freeze({ failing: 1, steady: 2, thriving: 3, ascendant: 3 });
+/** CHAP5b: a hall's guild days by its chapter's band - `bandOf(faction)` the host's, off the sheet; GUILD_DAYS without one.
+ *  @param {Places} places @param {Spot|null} hall @param {((faction: number) => (string|null)) | null | undefined} bandOf */
+export function hallGuildDays(places, hall, bandOf) {
+  if (!bandOf || hall?.building == null) return GUILD_DAYS;
+  const band = bandOf(places.factions?.get(hall.building) ?? 0);
+  if (band === 'shut') return GUILD_DAYS_SHUT;   // CHAP6d: a hall a Crackdown shut keeps no evenings
+  return /** @type {Record<string, number>} */ (GUILD_DAYS_BY_BAND)[band ?? ''] ?? GUILD_DAYS;
+}
+/** CHAP6d (Chapters-Arc 7, 9: "a chapter whose halls are shut sends nobody - its two `guildsman` idle at home"): the
+ *  evenings a week at a hall shut for the Season. */
+export const GUILD_DAYS_SHUT = 0;
 
 const B = BUILDING_TYPES;
 /**
@@ -358,6 +378,16 @@ export const isLodger = (res, places, home) => !!home && home.building != null &
  *  go up to their room from the evening's supper there. */
 export const LODGE_BREAKFAST_MIN = Object.freeze([15, 45]);
 export const LODGE_UP_MIN = Object.freeze([20, 60]);
+/** LW9: a carter's stall at a market (hours: from the morning - from their coming in, at once - to the afternoon), and a
+ *  minstrel's evening playing a tavern (hours). */
+export const MARKET_STALL_H = Object.freeze([8, 13.5]);
+/** LW15: of a town's errands to a shop, the share that go to a public trader's house instead, to look (patrons.js). */
+export const PATRON_BROWSE_SHARE = 0.1;
+/** AUDIT LW-II B2: how late a patron may come to the trader's and still go in (minutes). */
+export const PATRON_LATE_MIN = 45;
+/** LW13: a visiting pilgrim's hours at the temple - the morning's, the evening's. */
+export const PILGRIM_TEMPLE_H = Object.freeze([8.5, 15.5]);
+export const MINSTREL_PLAY_H = Object.freeze([18.5, 23]);
 
 /** LW-ERRANDS: the shop an errand of `job` takes one into, of `shops` (the shops nearest home, the nearest first): of a
  *  kind ERRAND_NEEDS gives the trade and the town keeps, ERRAND_NEED_SHARE of the time, by weight, the nearer of its two
@@ -402,12 +432,14 @@ function favouritesNow(res, places, home) {
 /**
  * THE DAY: `res`'s entries for `day` (the day's number - the living day begins at `day * 1440 + DAY_START_MIN`).
  * @param {Resident} res @param {Places} places @param {number} day
- * @param {{ mpm: number, away?: readonly Away[], visitor?: boolean, home?: Spot|null, watch?: number }} opts - `away` the
+ * @param {{ mpm: number, away?: readonly Away[], visitor?: boolean, home?: Spot|null, watch?: number, bandOf?: ((faction: number) => (string|null)) | null, errands?: readonly { at: Spot|null, from: number, dur: number }[], browse?: readonly Spot[] }} opts - `away` the
  *   windows the roads hold them (trips.js); `visitor` a traveller lodging here (their home `home`, a tavern's door);
- *   WATCH-DAY `watch` the town's watch a shift (census.js watchShiftSize)
+ *   WATCH-DAY `watch` the town's watch a shift (census.js watchShiftSize); CHAP5b `bandOf(faction)` a hall's chapter's
+ *   band, the host's off the chapter sheet (none: every hall's two days); LW15 `errands` a patron's visits to a
+ *   trader's house (`{ at, from, dur }`), `browse` the doors of the town's public traders' houses (a browser's errand)
  * @returns {Entry[]}
  */
-export function dayPlan(res, places, day, { mpm, away = [], visitor = false, home: homeIn = null, watch: watchSize = 1 }) {
+export function dayPlan(res, places, day, { mpm, away = [], visitor = false, home: homeIn = null, watch: watchSize = 1, bandOf = null, errands = [], browse = [] }) {
   const D0 = day * DAY_MIN + DAY_START_MIN, D1 = D0 + DAY_MIN;
   const home = homeIn ?? (res.home != null ? places.doors.get(res.home) ?? null : null);
   if (!home) return [{ kind: 'home', at: /** @type {any} */ (null), t0: D0, t1: D1 }];   // a home off the net: always in
@@ -454,23 +486,28 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       if (houses.length) I('visit', houses[Math.floor(rng() * houses.length)], from + 45, rollInt(rng, 60, 120));
     }
   };
+  // LW15: a public trader's house now and then a browser's errand (its own draw - a town with none plans as ever)
+  const brng = browse.length ? lwRng(res.town, res.roll.charCodeAt(0), res.slot, day, 0x62726f77) : null;   // 'brow'
   const errand = (from) => {
+    if (brng && brng() < PATRON_BROWSE_SHARE) { I('shop', browse[Math.floor(brng() * browse.length) % browse.length], from, 10 + Math.floor(brng() * 15)); return; }
     if (rng() < ERRAND_SHOP_SHARE && fav.shops.length) I('shop', errandShop(job, places, fav.shops, rng), from, rollInt(rng, 15, 35));   // LW-ERRANDS: into a shop, of their need
     else I('market', fav.market, from, rollInt(rng, 20, 40));
   };
-  const job = visitor ? 'visitor' : res.job;
+  // LW9: a carter come to market keeps a stall; a minstrel come to play keeps the tavern's evening - their own visits
+  const job = visitor ? (res.job === 'carter' ? 'carter-visit' : res.job === 'minstrel' ? 'minstrel-visit' : res.job === 'pilgrim' ? 'pilgrim-visit' : 'visitor') : res.job;   // LW13: a pilgrim come to a temple town keeps its temple
   const lodger = isLodger(res, places, home);
   switch (job) {
     case 'keeper': case 'smith': case 'clerk': case 'scholar': case 'helper': case 'guildsman': {
       if (rng() < 0.25) errand(wake + 30);
-      const at = work ?? home;
+      // CHAP6d (Chapters-Arc 9): a guildsman whose hall a Crackdown shut keeps its working day at home
+      const at = job === 'guildsman' && work && hallGuildDays(places, work, bandOf) === GUILD_DAYS_SHUT ? home : work ?? home;
       I('work', at, h(job === 'smith' ? 7 : 8), 240);
       const lunch = rng();
       if (lunch < 0.3) I('tavern', fav.tavern, h(12), 45);
       else if (lunch < 0.5) I('market', fav.market, h(12), 30);
       I('work', at, h(12.5), 330, h(18));
       // LW-ERRANDS: on their guild's days, the evening at its hall first (a hall's own members are at it all day)
-      if (fav.guild && job !== 'guildsman' && guildDay(res, day)) I('guild', fav.guild, h(18), rollInt(rng, 60, 120));
+      if (fav.guild && job !== 'guildsman' && guildDay(res, day, hallGuildDays(places, fav.guild, bandOf))) I('guild', fav.guild, h(18), rollInt(rng, 60, 120));   // CHAP5b: its chapter's days
       evening();
       break;
     }
@@ -510,6 +547,7 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       evening();
       break;
     }
+    case 'carter': case 'hunter':   // LW9: a farm's and a village's own, at home
     case 'farmer': {
       I('fields', exitNearest(places, home.cell), h(6), 660, h(17));
       evening(h(18));
@@ -540,9 +578,10 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       I('work', work ?? home, h(11), 600, bed);
       break;
     }
+    case 'noble':   // LW9: a court's own, at home
     case 'courtier': {
       if (rng() < 0.35) I('social', places.square, h(15), rollInt(rng, 30, 60));
-      if (fav.guild && guildDay(res, day)) I('guild', fav.guild, h(16.5), rollInt(rng, 60, 120));   // LW-ERRANDS: their order's hall
+      if (fav.guild && guildDay(res, day, hallGuildDays(places, fav.guild, bandOf))) I('guild', fav.guild, h(16.5), rollInt(rng, 60, 120));   // LW-ERRANDS: their order's hall; CHAP5b: its chapter's days
       break;
     }
     case 'guard': {
@@ -576,10 +615,12 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       I('tavern', fav.tavern, h(19), rollInt(rng, 120, 200));
       break;
     }
+    case 'patrol': case 'retainer':   // LW9: a knight of the patrol, a noble's retainer, at home
     case 'mercenary': {
       I('social', places.square ?? fav.social[0] ?? null, h(10), rollInt(rng, 60, 120));
       I('tavern', fav.tavern, h(13), 60);
-      I('guild', fav.guild, h(15), rollInt(rng, 60, 120));
+      const stay = rollInt(rng, 60, 120);   // drawn whether or not the hall is open: the day's other draws as ever
+      if (hallGuildDays(places, fav.guild, bandOf) !== GUILD_DAYS_SHUT) I('guild', fav.guild, h(15), stay);   // CHAP6d: never a shut hall
       I('tavern', fav.tavern, h(19), rollInt(rng, 120, 240));
       break;
     }
@@ -587,7 +628,7 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       if (rng() < 0.3) I('temple', fav.temple, h(9), rollInt(rng, 20, 40));
       const outfitters = nearestOf(places, doorKinds(places).outfitters, home);
       if (outfitters.length && rng() < 0.6) I('shop', outfitters[Math.floor(rng() * Math.min(3, outfitters.length))], h(10), rollInt(rng, 30, 60));
-      I('guild', fav.guild, h(11.5), 60);
+      if (hallGuildDays(places, fav.guild, bandOf) !== GUILD_DAYS_SHUT) I('guild', fav.guild, h(11.5), 60);   // CHAP6d: never a shut hall
       I('social', places.square ?? fav.social[0] ?? null, h(14), rollInt(rng, 60, 120));
       I('tavern', lodger ? home : fav.tavern, h(18.5), rollInt(rng, 180, 300), lodger ? bed - rollInt(rng, LODGE_UP_MIN[0], LODGE_UP_MIN[1]) : undefined);   // LW-LODGE: a lodger sups at their own, and goes up before bed
       break;
@@ -600,6 +641,28 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
       I('temple', fav.temple, h(17), 45);
       break;
     }
+    case 'pilgrim-visit': {
+      // LW13: A PILGRIM COME TO A TEMPLE TOWN - its temple the morning long and again before the evening (a holy day's
+      // crowd: every band of the region's towns at once), the market between
+      I('temple', fav.temple, h(PILGRIM_TEMPLE_H[0]), rollInt(rng, 150, 210));
+      I('market', fav.market, h(13), rollInt(rng, 30, 60));
+      I('temple', fav.temple, h(PILGRIM_TEMPLE_H[1]), rollInt(rng, 90, 120));
+      I('tavern', lodger ? home : fav.tavern, h(19.5), rollInt(rng, 90, 150), lodger ? bed - rollInt(rng, LODGE_UP_MIN[0], LODGE_UP_MIN[1]) : undefined);
+      break;
+    }
+    case 'carter-visit': {
+      // LW9: THE CARTER AT MARKET - straight to a stall at the market as they come in, till the afternoon (their window cuts it)
+      I('stall', places.square ?? fav.market, h(MARKET_STALL_H[0]), (MARKET_STALL_H[1] - MARKET_STALL_H[0]) * 60, h(MARKET_STALL_H[1]), Infinity);
+      break;
+    }
+    case 'minstrel': case 'minstrel-visit': {
+      // LW9: THE MINSTREL plays a tavern's common room of an evening (lodged at it, away from home; at home, their own
+      // town's), a turn about the market first
+      I('market', fav.market, h(11), rollInt(rng, 30, 60));
+      const room = job === 'minstrel-visit' && lodger ? home : fav.tavern;
+      I('tavern', room, h(MINSTREL_PLAY_H[0]), (MINSTREL_PLAY_H[1] - MINSTREL_PLAY_H[0]) * 60, lodger && job === 'minstrel-visit' ? bed - rollInt(rng, LODGE_UP_MIN[0], LODGE_UP_MIN[1]) : undefined);
+      break;
+    }
     case 'visitor': {
       I('market', fav.market, h(9), rollInt(rng, 30, 60));
       if (fav.shops.length) I('shop', errandShop(job, places, fav.shops, rng), h(10.5), rollInt(rng, 30, 60));   // LW-ERRANDS: a visitor's wares
@@ -610,12 +673,44 @@ export function dayPlan(res, places, day, { mpm, away = [], visitor = false, hom
     }
     default: evening();
   }
+  // LW15: A PATRON'S ERRAND - to a player's trader's house at the minute the service's sale names, in and out again: laid
+  // in its minute's place among the day's intents (they are kept in the clock's order), the stay it falls in cut for it
+  // and taken up again after (a keeper slips out to the trader's and back to the counter)
+  for (const e of errands) if (e?.at) patronErrand(intents, e, mpm);
   // the larks and the restless take a turn about the town before the day's business (a stroll at first light)
   if (res.temper === 0 && res.social > 0.6 && job !== 'guard' && job !== 'farmer' && job !== 'fisher') { const at = intents.length; stroll(wake + 20); intents.unshift(...intents.splice(at)); }
   // LW-LODGE: a lodger breakfasts in the common room before anything (up in their room before it and after it)
   if (lodger) { const at = intents.length; I('tavern', home, wake + rollInt(rng, LODGE_BREAKFAST_MIN[0], LODGE_BREAKFAST_MIN[1]), rollInt(rng, 20, 40)); intents.unshift(...intents.splice(at)); }
   const start = startOut ? { at: startOut.at, kind: startOut.kind, mark: { duty: true, pair: startOut.pair } } : walkIn ? { at: walkIn.to, kind: walkIn.kind, mark: walkIn.mark, walk: walkIn } : null;
   return schedule(intents, { D0, D1, wake, bed, home, mpm, away, start, end: walkOut });
+}
+
+/**
+ * LW15: a patron's errand laid among a day's intents in its minute's place: the stay before it (none of the watch's) cut
+ * to leave in time, and what of it remains taken up again after the walk back.
+ * @param {{ kind: string, at: Spot|null, from: number, dur: number, until?: number, slack?: number, mark?: { duty?: boolean, pair?: 0|1|null } }[]} intents
+ * @param {{ at: Spot, from: number, dur: number }} e @param {number} mpm
+ */
+function patronErrand(intents, e, mpm) {
+  // AUDIT LW-II B2: an appointment - before every stay that begins at its minute or after (one begun at its very minute
+  // came first, was cut to nothing, and the errand behind it came most of an hour late); the stay it falls in, or ends
+  // within a walk of it, cut to leave in time; and it may come PATRON_LATE_MIN late and still go in (a hard end at its own
+  // dropped a tenth of the errands, a quarter at the online pace)
+  let k = intents.findIndex((it) => it.from >= e.from);
+  if (k < 0) k = intents.length;
+  /** @type {typeof intents} */
+  const add = [{ kind: 'shop', at: e.at, from: e.from, dur: e.dur, until: e.from + e.dur + PATRON_LATE_MIN }];
+  const prev = intents[k - 1];
+  if (prev?.at && !prev.mark?.duty) {
+    const end = Math.min(prev.from + prev.dur, prev.until ?? Infinity);
+    const leave = e.from - walkMinutes(prev.at, e.at, mpm);
+    if (end > leave) {
+      const back = e.from + e.dur + walkMinutes(e.at, prev.at, mpm);
+      if (end - back >= MIN_STAY) add.push({ ...prev, from: back, dur: end - back });
+      prev.until = Math.min(prev.until ?? Infinity, leave);   // none of it left before: the day skips it (taken up after)
+    }
+  }
+  intents.splice(k, 0, ...add);
 }
 
 /**

@@ -1,8 +1,8 @@
 // @ts-check
 // WB5 (2026-09-25, Mac: "On death the boss would physically spew out per player loot and bounce (sort of how dropping a
 // torch works) and have a sort of rarity glow attached to it"): THE SPOILS ON THE COURT'S FLOOR - one player's share of a
-// fallen boss (systems/gateSpoils.js rollSpoils, off the relay's receipt), spewed out of his chest piece by piece
-// (world/gateSpew.js - the thrown torch's own flight), each landing with the torch's own clatter, and at rest standing
+// fallen boss (systems/gate/gateSpoils.js rollSpoils, off the relay's receipt), spewed out of his chest piece by piece
+// (world/gate/gateSpew.js - the thrown torch's own flight), each landing with the torch's own clatter, and at rest standing
 // in its tier's beam (render/spoilsGlow.js) with a Rare-or-better's light and chime. Pressed, a piece goes into the
 // pack (GATE-UX: no longer walked over - below); leaving the court gathers whatever is still on the floor. Design:
 // bible/11-Multiplayer/World-Bosses.md section 7.
@@ -16,7 +16,7 @@
 //
 // A CRASH LOSES NOTHING. The court refuses the save (WB3b), so from the burst until a save holds them the spoils ride a
 // record in this device's storage (SPOILS_STORE_KEY - the day, when, whose, and THE PIECES AS ROLLED: the roll reads
-// the player's world as well as the seed - systems/gateSpoils.js - so a re-roll is not the same spoils). AUDIT WB A7: a
+// the player's world as well as the seed - systems/gate/gateSpoils.js - so a re-roll is not the same spoils). AUDIT WB A7: a
 // LIST of them, one a day and character - a second burst (another day, another character) before a save no longer
 // wrote over the first's. Taking a piece changes nothing there: it is in the pack, and the pack is only as safe as the
 // last save. At the next boot the records are asked (`recoverSpoils`): a save of a record's character written since
@@ -27,7 +27,7 @@
 // CLOCK. "A save since the burst" was read off two wall clocks (the record's `at` against the slot's realTime), so a
 // clock set ahead at the burst handed the same pieces back at every boot, and one set behind dropped a record no save
 // held. A record now carries an `id` (v SPOILS_RECORD_V) and is cleared when a save of its character LANDS after its
-// pieces entered the pack (`saved`, told by systems/saveSlots.js onSlotSaved) - never by comparing clocks; an older
+// pieces entered the pack (`saved`, told by systems/save/saveSlots.js onSlotSaved) - never by comparing clocks; an older
 // build's record keeps the old rule. And the record is written BEFORE the receipt is marked spent, and the mark is no
 // surer than the record: a record a full store would not hold leaves the mark in this session's memory alone, so a
 // crash leaves the receipt unspent for the hub to give again rather than spent with nothing kept.
@@ -58,7 +58,7 @@
 //
 // WB9f (2026-09-30, Mac: "Improve the loot drops that emit on his death and have them spread out more. The player should
 // be able to inspect and pick up the ground item, not just walk over it"): THE SPOILS, SPREAD AND HANDLED. The burst
-// throws each piece its own slot of a wider fan, kept on the court's floor (world/gateSpew.js keepLaunch, off the
+// throws each piece its own slot of a wider fan, kept on the court's floor (world/gate/gateSpew.js keepLaunch, off the
 // court's `keep` the burst hands in); and a resting piece is an ACTIVATION TARGET - `spoil:<i>` for an item (a pile of
 // one, so the plaque lists it with its tier and, under quick loot's stats, what it is), `spoilGold:<i>` for the gold -
 // that the press takes into the pack (`pick`), the hosts' ladder naming it (`nameOf`) and the plaque reading it
@@ -71,16 +71,18 @@
 // and the walk-over's reach (SPOILS_TAKE_M) went with it; leaving the court still gathers what is left (`gather`).
 //
 // Not a DFU member. Ledger A (WB).
-import { rollSpoils, nameEmbers, sigilStone } from '../systems/gateSpoils.js';
-import { seededRng } from '../systems/wind.js';
-import { spewLaunches, spewPiece, flySpew, keepLaunch, floorRayAt } from '../world/gateSpew.js';
+import { rollSpoils, nameEmbers, sigilStone } from '../systems/gate/gateSpoils.js';
+import { seededRng } from '../systems/wind/wind.js';
+import { spewLaunches, spewPiece, flySpew, keepLaunch, floorRayAt } from '../world/gate/gateSpew.js';
 import { SpoilsGlowRenderer, tierColour } from '../render/spoilsGlow.js';   // WBX3: the loot line
-import { RARITIES } from '../systems/lootRarity.js';
-import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS, validLootItem } from '../systems/loot.js';
+import { RARITIES } from '../systems/loot/lootRarity.js';
+import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS, validLootItem } from '../systems/loot/loot.js';
+import { isIliacCard, iliacCardName } from '../systems/iliac/iliacItems.js';   // AUDIT CARDS-6 A7: a boss's card taken, said by its own name
 import { billboardSize } from '../world/rmbFlats.js';
 import { SOUND } from '../systems/soundClips.js';
 import { CLIPS } from '../systems/handheldTorches.js';
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../player/activate.js';   // WB9f: a piece is pressed as a loot pile is
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a piece's light named by its piece
 
 /** WBX3: an item's picture stands this many metres a texel tall on the floor, and never taller than the most. */
 export const SPOILS_ICON_M_PER_PX = 0.022;
@@ -136,13 +138,26 @@ export function spoilsList(seed, level, claims = null) {
   const flat = () => RANDOM_TREASURE_ICONS[Math.floor(look() * RANDOM_TREASURE_ICONS.length)];
   if (claims?.x === 'rite') return [{ kind: 'item', item: sigilStone(), tier: SIGIL_TIER, record: flat() }];
   const s = rollSpoils(seed, level);
-  const pieces = s.pieces.map((p) => ({ kind: 'item', item: p.item, tier: p.tier, record: flat() }));
+  // AUDIT WORLD-REWARDS A1: the Dragonfire Oath's picture is drawn LAST of all (below) - drawn in its place among the pieces,
+  // it moved every picture after it (the ember's, the gold's, the card's, the gems') off what the seed gave them, in
+  // every spoils it came in. It still leaves among the pieces, its glow's line in the frame's first eight.
+  const pieces = s.pieces.map((p) => ({ kind: 'item', item: p.item, tier: p.tier, record: p.tier === 'gilded' ? null : flat() }));
   const ember = { kind: 'item', item: s.sigil, tier: SIGIL_TIER, record: flat() };
+  const gold = { kind: 'gold', gold: s.gold, tier: 'common', record: flat() };
+  // AUDIT CARDS-6 A8: the card's picture is drawn LAST, after the gold's - drawn between the ember's and the gold's, it
+  // moved the gold pile's picture off what the seed gave it before CARDS9, in every hoard the card came in
+  const card = s.card ? [{ kind: 'item', item: s.card, tier: 'aetheric', record: flat() }] : [];
+  // GEM2 (bible/06-Systems/Gem-Sockets.md section 4): the Warden's gem, its picture drawn after the card's - so every
+  // picture before it is what the seed gave it - and thrown after the card
+  const gems = (s.gems ?? []).map((g) => ({ kind: 'item', item: g, tier: 'common', record: flat() }));
+  for (const p of pieces) if (p.record === null) p.record = flat();   // AUDIT WORLD-REWARDS A1: the Oath's, last
   return [
     ...pieces,
+    ...card,   // CARDS9: the Warden's card, after the pieces
+    ...gems,   // GEM2: the Warden's gem, after the card
     ember,
     ...(claims?.r === 1 ? [{ ...ember, item: sigilStone() }] : []),
-    { kind: 'gold', gold: s.gold, tier: 'common', record: flat() },
+    gold,
   ];
 }
 
@@ -185,11 +200,11 @@ export const spentKey = (day, acct) => `${day}:${acct ?? ''}`;
 const recordsOf = (v) => (Array.isArray(v) ? v : v && typeof v === 'object' ? [v] : []);
 
 /** Whether a save of the character `who` was written after `at` (wall-clock ms, as the slots' realTime) - its pack holds
- *  every piece of a burst before it. `saves` the slots' SaveInfos (systems/saveSlots.js enumerateSaves). */
+ *  every piece of a burst before it. `saves` the slots' SaveInfos (systems/save/saveSlots.js enumerateSaves). */
 export const savedSince = (saves, who, at) => who != null && [...(saves ?? [])].some((i) => i?.characterId === who && (i.dateAndTime?.realTime ?? 0) > at);
 
 /** A piece off the record as the pack may take it, or null: gold a whole positive sum, an item one the port's own loot
- *  validator admits (systems/loot.js validLootItem - a template it knows, every declared field its kind). */
+ *  validator admits (systems/loot/loot.js validLootItem - a template it knows, every declared field its kind). */
 function keptPiece(p) {
   if (p?.kind === 'gold') return Number.isSafeInteger(p.gold) && p.gold > 0 ? { ...p } : null;
   const item = p?.kind === 'item' ? validLootItem(p.item) : null;
@@ -259,7 +274,7 @@ export function recoverSpoils(store, take, { who = null, saves = [], onHanded = 
  *   WB9f: `itemName` an item's word on the plaque (the host's - systems/worldTooltips.js lootPileName, the loot piles'
  *   own), when a resting piece is under the crosshair.
  *   SD9e: `gathered` the words leaving says when it gathers what is still on the floor (the Burning Court's by default;
- *   the Brass Remnant's arena says its own - systems/sdSpoils.js).
+ *   the Brass Remnant's arena says its own - systems/superDungeon/sdSpoils.js).
  *   AUDIT SD II (L5 F4): `me` the account the hub's link speaks for now (the signed-in session's - the token's subject),
  *   or null when unknown: a spent word is said only on its own account's socket (AUDIT WBX2 M6's law - said on another's,
  *   the hub forgot that account's copy of a receipt it never had the spoils of), and owed until it can be.
@@ -390,7 +405,10 @@ export function createSpoilsPool({
     if (f.taken) return;
     f.taken = true;
     take(f.piece);
-    say(f.piece.kind === 'gold' ? SPOILS_TEXT.gold(f.piece.gold) : SPOILS_TEXT.item(f.piece.item.name, f.piece.tier));
+    // AUDIT CARDS-6 A7: a card by its catalog's name ("Card: Valkynaz Ruhn" - iliacItems.js iliacCardName, the plaque's
+    // and the pack's); its stored name is the template's, and the floor said "You take Card (Aetheric)."
+    const name = (/** @type {any} */ item) => (isIliacCard(item) ? iliacCardName(item) : item.name);
+    say(f.piece.kind === 'gold' ? SPOILS_TEXT.gold(f.piece.gold) : SPOILS_TEXT.item(name(f.piece.item), f.piece.tier));
     if (f.batch) { renderer?.destroyBillboardBatch?.(f.batch); f.batch = null; }
     if (spewId && floor.every((g) => g.taken)) { held.set(spewId, { who: who(), day: rec?.day }); spewId = null; }   // AUDIT WBX S3: all of it in the pack
   }
@@ -411,8 +429,8 @@ export function createSpoilsPool({
      * THE BURST: the spoils of `day` for this player (the receipt's `seed`, the player's `level`) leave his chest `at`
      * (the dungeon's frame) toward `bearing` (the angle from him to the player). Once a day, on this device: a day
      * already spent is nothing. The pieces as rolled go into the device's record the moment they leave him.
-     * WB9f: `keep` the court's floor they must come to rest on (`{ centre, r, floorY }` - world/gateSpew.js keepLaunch).
-     * SD9e: `roll` answers the pieces instead, as the grant's does (the Brass Remnant's - systems/sdSpoils.js sdSpoilsList).
+     * WB9f: `keep` the court's floor they must come to rest on (`{ centre, r, floorY }` - world/gate/gateSpew.js keepLaunch).
+     * SD9e: `roll` answers the pieces instead, as the grant's does (the Brass Remnant's - systems/superDungeon/sdSpoils.js sdSpoilsList).
      */
     /** AUDIT SD II (L5 F4): the spent words still owed said again (the host's, while its hub link stands) - each on its
      *  own account's socket alone, the rest kept - answers how many are owed still. */
@@ -454,7 +472,7 @@ export function createSpoilsPool({
       say(text);
       return true;
     },
-    /** AUDIT ONLINE2 F3 (AUDIT RAID R8d): A SAVE WAS LOADED for `whoLoaded` (systems/saveSlots.js onSlotLoaded): the pack
+    /** AUDIT ONLINE2 F3 (AUDIT RAID R8d): A SAVE WAS LOADED for `whoLoaded` (systems/save/saveSlots.js onSlotLoaded): the pack
      *  is that save's, so the pieces this pool held in the old one are not in it - their records are let go of here, and
      *  kept on the device until the crash's door hands them again (it asks at the load). Answers how many it let go. */
     loaded(whoLoaded) {
@@ -468,7 +486,7 @@ export function createSpoilsPool({
     /** REALM P1.3: the records of `whoSaved` whose pieces are in the pack NOW - what a realm checkpoint composed at this
      *  moment holds, handed back to `saved` when it lands (a realm save lands later than it is made). */
     heldIds(whoSaved) { return [...held].filter(([, h]) => h.who === whoSaved).map(([id]) => id); },
-    /** AUDIT WBX S3: A SAVE LANDED for character `whoSaved` (systems/saveSlots.js onSlotSaved): every record of theirs
+    /** AUDIT WBX S3: A SAVE LANDED for character `whoSaved` (systems/save/saveSlots.js onSlotSaved): every record of theirs
      *  whose pieces are in the pack is held by it - cleared from the device, its receipt's mark made fast, and (AUDIT
      *  WBX S1) said spent to the hub if it was not yet. Answers how many were cleared. REALM P1.3: a realm checkpoint
      *  names the records it was composed holding (`only`, from heldIds), since it lands after pieces may have come in. */
@@ -558,7 +576,7 @@ export function createSpoilsPool({
       for (const f of floor) {
         if (f.taken || !f.fly.rest || (RARITIES[f.piece.tier]?.rank ?? 0) < RARITIES.rare.rank) continue;
         const c = tierColour(f.piece.tier), k = SPOILS_LIGHT.k * Math.min(1, (now() - f.restAt) / SPOILS_RISE_MS);
-        out.push({ x: f.fly.pos[0], y: f.fly.pos[1] + SPOILS_LIGHT.up, z: f.fly.pos[2], range: SPOILS_LIGHT.range, color: c.map((v) => v * k) });
+        out.push(adoptLight({ x: f.fly.pos[0], y: f.fly.pos[1] + SPOILS_LIGHT.up, z: f.fly.pos[2], range: SPOILS_LIGHT.range, color: c.map((v) => v * k) }, f));   // LIGHT-ID: the piece's own light
       }
       return out;
     },

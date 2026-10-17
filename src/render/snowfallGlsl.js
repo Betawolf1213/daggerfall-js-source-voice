@@ -31,6 +31,14 @@ export const SNOW_UNITS = Object.freeze({ dynamic: 16, static: 17, context: 18, 
  *  (render/waterSurface.js WATER_LAYER_UNITS), a layer of the one stack. */
 export const SNOW_LAYER = Object.freeze({ factor: -0.25, units: -0.25 });
 
+/** SNOW-TELL (2026-10-11, from play: "Can't see any boss ground attack overlays with heavy snow"): the most a tier's
+ *  surface stands over the ground under it, from the tier's own uniforms (systems/snowfallRuntime.js depthUniforms and
+ *  its tier's `radius`) - snowResolve's highest answer (the wild's depth or the settlement's, whichever is deeper, and
+ *  a road's berm over it; the caps and the path only pull it down), never more than SNOW_VS lifts it (the slope's
+ *  multiplier and the tracks only lessen it), and the surface offset over that. A foe's telegraph lies this far over
+ *  its ground while the snow is drawn (render/foeTelegraph.js telegraphLift), so the snow cannot bury it. */
+export const snowSurfaceRise = (u) => Math.max(0, u.depths[0], u.depths[1]) + Math.max(0, u.limits[0]) + Math.max(0, u.radius[2]);
+
 /** The law both programs share: Resolve, one bounded read of a track mask, and what a track and a body leave. */
 const SNOW_COMMON_GLSL = `
 uniform vec4 uSnowDepths;     // _BaseSnowDepth (the wild's), _SettlementSnowDepth, _LocationMaximumSnowDepth, _PathMaximumSnowDepth

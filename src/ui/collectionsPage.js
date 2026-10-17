@@ -1,24 +1,28 @@
 // @ts-check
 // COLLECTIONS (2026-10-08, Mac: "I think we add a new tab in holdings for the weapon codex and card collection"; answered:
-// "One 'Collections' tab"): THE COLLECTIONS PAGE on the Enhanced pause menu's Holdings rail (ui/enhancedMenu.js
+// "One 'Collections' tab"): THE COLLECTIONS PAGE on the Enhanced pause menu's Holdings rail (ui/enhanced/enhancedMenu.js
 // pauseHoldings) - what a character has gathered, in two parts under one switch:
 //
-//   THE CODEX (LOOT10, systems/lootCodex.js; bible/06-Systems/Loot-Arc.md section 12): every Legendary record and every
+//   THE CODEX (LOOT10, systems/loot/lootCodex.js; bible/06-Systems/Loot-Arc.md section 12): every Legendary record and every
 //     Aetheric set, found and not - a found one's name, its group, the day it was first found and what it is; an unfound
 //     one's group and where it is said to be. The rows, the lines a row opened shows and the sets' counts are the
 //     Reforge's Codex page's (ui/reforgeWindow.js renderCodex - AUDIT CARDS-5 D12 made the lines the same), read from the
 //     same codex, so the two never disagree; the Scry door is the guilds' window's alone. The pack's Codex button still
 //     opens that window.
 //   THE CARDS (CARDS8, bible/11-Multiplayer/Tavern-Cards.md section 26): the Card Binder's collection and its decks - the
-//     binder's own page (ui/cardBinderPage.js), drawn here.
+//     binder's own page (ui/card/cardBinderPage.js), drawn here.
 //
-// Dressed by the stone-and-brass kit's roles as the other Holdings pages are (ui/enhancedFrame.js FRAME_ROLES) - this
-// sheet writes geometry and the words' colours alone.
+// Dressed by the stone-and-brass kit's roles as the other Holdings pages are (ui/enhanced/enhancedFrame.js FRAME_ROLES) - this
+// sheet writes geometry and the words' colours alone. CARDS-PLUS (2026-10-13, bible/11-Multiplayer/Tavern-Cards.md
+// section 38): until then that sentence was a claim the roles did not keep - none named the switch, the codex's rows or
+// the binder's filters, chips and decks, and this sheet's own `background` and border colours painted over any that
+// might; the switch and the binder's presses are the kit's tiles now, a codex row its list line, a deck its panel.
 
-import { codexRows, codexSets, codexCount } from '../systems/lootCodex.js';
-import { lootRarityOn, powerLine, legendaryById, affixLine } from '../systems/lootRarity.js';
-import { setById } from '../systems/sigilSets.js';
-import { cardsPartShown, drawCardsPart, resetCardsPart, disarmCardsPart } from './cardBinderPage.js';
+import { codexRows, codexSets, codexCount, codexGilded } from '../systems/loot/lootCodex.js';   // AUDIT WORLD-REWARDS A5: and the Gilded rung's rows
+import { lootRarityOn, powerLine, legendaryById, affixLine, RARITIES } from '../systems/loot/lootRarity.js';
+import { gildedById } from '../systems/gilded.js';
+import { setById } from '../systems/sigil/sigilSets.js';
+import { cardsPartShown, drawCardsPart, resetCardsPart, disarmCardsPart } from './card/cardBinderPage.js';
 
 export const COLLECTION_PAGE_SECTIONS = Object.freeze([Object.freeze(['collections', 'Collections'])]);
 export const COLLECTION_PAGE_STYLE_ID = 'collections-page-css';
@@ -42,14 +46,13 @@ export function setCollectionsPart(/** @type {string} */ part) { if (COLLECTION_
 
 export const COLLECTION_PAGE_CSS = `
 .px-sys .coll-parts { display: flex; gap: 6px; margin: 2px 0 10px; }
-.px-sys .coll-part { padding: 4px 12px; border-width: 2px; border-style: solid; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; cursor: pointer; background: transparent; }
+.px-sys .coll-part { padding: 4px 12px; border-width: 2px; border-style: solid; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; cursor: pointer; }
 .px-sys .coll-part.on { color: #f3cf86; }
 .px-sys .codex-list { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 10px; }
-.px-sys .codex-line { display: flex; justify-content: space-between; gap: 10px; padding: 5px 9px; border-width: 1px; border-style: solid; text-align: left; cursor: pointer; background: transparent; }
+.px-sys .codex-line { display: flex; justify-content: space-between; gap: 10px; padding: 5px 9px 6px; border-width: 0 0 1px; border-style: solid; text-align: left; cursor: pointer; }
 .px-sys .codex-line .nm { font-size: 13px; color: #8b8578; }
 .px-sys .codex-line.found .nm { color: #e07a2e; }
 .px-sys .codex-line .sub { font-size: 11px; color: #8b8578; text-align: right; }
-.px-sys .codex-line.on { border-color: #e07a2e; }
 .px-sys .codex-whole { margin: 2px 0 10px 12px; font-size: 12px; color: #e9e4d9; }
 .px-sys .codex-whole li { margin: 2px 0; }
 .px-sys .codex-set { font-size: 12px; color: #bfe8ff; margin: 2px 0 8px; }
@@ -89,22 +92,19 @@ export function drawCollectionsPage(detail, rerender, kit) {
   else drawCardsPart(detail, rerender, kit);
 }
 
-/** THE CODEX PART: the Legendaries, found and not, then the Aetheric sets; a row pressed opens it whole. */
+/** THE CODEX PART: the Legendaries, found and not, then the Aetheric sets; a row pressed opens it whole. AUDIT WORLD-REWARDS
+ *  A5: and the Gilded rung's records first, over them all, as the Reforge's Codex page lists them - this page's rows are
+ *  that page's, and it never showed the rung (GILDED1), nor the gate's and the serpent's own hints (GILDED2). */
 function drawCodexPart(detail, rerender, { el, divider }) {
   const n = codexCount();
   const rows = codexRows();
+  detail.append(divider(`Gilded - ${n.gilded} of ${n.gildeds} found`));
+  const gilded = el('div', 'codex-list');
+  for (const r of codexGilded()) gilded.append(...codexLine(el, r, rerender));
+  detail.append(gilded);
   detail.append(divider(`Legendaries - ${n.legendary} of ${n.legendaries} found`));
   const list = el('div', 'codex-list');
-  for (const r of rows) {
-    const line = el('button', `codex-line${r.found ? ' found' : ''}${_picked === r.id ? ' on' : ''}`);
-    line.type = 'button';
-    line.dataset.record = r.id;
-    line.append(el('span', 'nm', r.found ? r.name : 'Unfound'), el('span', 'sub', r.found ? `${r.group} · found on day ${r.day}` : `${r.group} · ${r.hint}`));
-    line.setAttribute('data-focus', `codex-row-${r.id}`);
-    line.onclick = () => { _picked = _picked === r.id ? null : r.id; rerender(); };
-    list.append(line);
-    if (_picked === r.id) list.append(codexWhole(el, r));
-  }
+  for (const r of rows) list.append(...codexLine(el, r, rerender));
   detail.append(list);
   detail.append(divider(`Aetheric - ${n.aetheric} of ${n.aetherics} found`));
   for (const s of codexSets()) {
@@ -114,12 +114,29 @@ function drawCodexPart(detail, rerender, { el, divider }) {
     detail.append(p);
   }
 }
+/** One codex row, and - pressed - the record whole under it (a Legendary's or, AUDIT WORLD-REWARDS A5, a Gilded's). */
+function codexLine(el, r, rerender) {
+  const out = [];
+  {
+    const line = el('button', `codex-line${r.found ? ' found' : ''}${_picked === r.id ? ' on' : ''}`);
+    line.type = 'button';
+    line.dataset.record = r.id;
+    line.append(el('span', 'nm', r.found ? r.name : 'Unfound'), el('span', 'sub', r.found ? `${r.group} · found on day ${r.day}` : `${r.group} · ${r.hint}`));
+    line.setAttribute('data-focus', `codex-row-${r.id}`);
+    line.onclick = () => { _picked = _picked === r.id ? null : r.id; rerender(); };
+    if (r.kind === 'gilded' && r.found) line.dataset.rarity = 'gilded';
+    out.push(line);
+    if (_picked === r.id) out.push(codexWhole(el, r));
+  }
+  return out;
+}
 /** A codex row opened whole: what the record is (found), or where it is said to be. */
 function codexWhole(el, r) {
   const ul = el('ul', 'codex-whole');
-  ul.append(el('li', null, `Legendary · ${r.group}`));   // AUDIT CARDS-5 D12: the Reforge's own lines, in its order
+  ul.append(el('li', null, `${RARITIES[r.kind]?.label ?? 'Legendary'} · ${r.group}`));   // AUDIT CARDS-5 D12: the Reforge's own lines, in its order
   if (r.found) {
-    for (const a of legendaryById(r.id)?.affixes ?? []) { const line = affixLine({ rarity: 'legendary', affixes: [a] }, 0); if (line) ul.append(el('li', null, line)); }
+    const rec = r.kind === 'gilded' ? gildedById(r.id) : legendaryById(r.id);   // AUDIT WORLD-REWARDS A5: a Gilded record's lines, as the Reforge's
+    for (const a of rec?.affixes ?? []) { const line = affixLine({ rarity: r.kind ?? 'legendary', affixes: [a] }, 0); if (line) ul.append(el('li', null, line)); }
     if (r.power) ul.append(el('li', null, powerLine(r.power)));
     if (r.lore) ul.append(el('li', null, r.lore));
     ul.append(el('li', null, `First found on day ${r.day}`));

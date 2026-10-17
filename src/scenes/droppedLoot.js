@@ -21,12 +21,12 @@
 // via restorePiles below (AUDIT 23).
 
 import { lootCrown } from './lootLines.js';   // LOOT11: a pile's line of light
-/** WILD1 (net/wildRemains.js): the line over MY remains in the open zone - the zone's red, tall, pulsing, seen from
+/** WILD1 (net/wild/wildRemains.js): the line over MY remains in the open zone - the zone's red, tall, pulsing, seen from
  *  twice a find's reach: "marked for you to get them back". */
 export const WILD_MINE_MARK = Object.freeze({ colour: Object.freeze([0.95, 0.24, 0.16]), h: 9, pulse: true, reach: 80 });
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1 slice 3
 import { billboardSize } from '../world/rmbFlats.js';
-import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS } from '../systems/loot.js';
+import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS } from '../systems/loot/loot.js';
 import { CONTAINER_IMAGES } from '../ui/targetIconPanel.js';   // AUDIT 63 F22: InventoryContainerImages, the picture both makers hand CreateLootContainer
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../player/activate.js';   // AUDIT 65 MC-2: the ray's reach, the handler's own
 import { createPhysicalItems } from './physicalItemsLayer.js';   // PI1: Physical Items - every pool stands its own layer
@@ -34,7 +34,7 @@ import { createPhysicalItems } from './physicalItemsLayer.js';   // PI1: Physica
 // AUDIT 17e F34 / ONE DFU MEMBER, ONE EXPORT: this file re-declared
 // randomTreasureArchive and randomTreasureIconIndices, regressing the
 // single-sourcing the 2026-07-06b audit had already done in
-// systems/loot.js. Re-exported so existing importers keep working.
+// systems/loot/loot.js. Re-exported so existing importers keep working.
 export { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS };
 
 /** ROAD-G G5: what a player-dropped pile IS to the inventory window -
@@ -66,7 +66,7 @@ export const droppedLootHooks = (pile) => ({
   // would have given it.
   containerImage: () => CONTAINER_IMAGES.Chest,
   pos: [...pile.pos],
-  // WILD1: a body's remains in the open zone (net/wildRemains.js) take nothing - the room keeps them, and a piece put on
+  // WILD1: a body's remains in the open zone (net/wild/wildRemains.js) take nothing - the room keeps them, and a piece put on
   // them would be a piece no one else could ever see (COMPANION-WEIGHT's capacity door, at nothing)
   ...(pile.noStore ? { capacity: () => pile.noStore } : {}),
 });
@@ -283,7 +283,7 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
    *  container's identity travels beside them, DFU's loadID
    *  (DaggerfallInterior.cs:885-889). */
   function snapshotScene() {
-    return piles.filter((p) => (p.items.length || p.container) && p.owner !== 'wild').map((p) => ({   // WILD1: a body's remains are the room's (net/wildRemains.js), never a scene cache's - a copy at every re-entry
+    return piles.filter((p) => (p.items.length || p.container) && p.owner !== 'wild' && !p.unsaved).map((p) => ({   // STUCK-ARROWS: nor a LoadID-0 container (WOD5: "no save and no scene cache carries it") - a stuck shaft   // WILD1: a body's remains are the room's (net/wild/wildRemains.js), never a scene cache's - a copy at every re-entry
       pos: [...p.pos], archive: p.archive, record: p.record,
       container: !!p.container, containerKey: p.containerKey ?? null,
       items: p.items.map((it) => ({ ...it })),
@@ -316,7 +316,7 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
       // AUDIT 63 F22: a scene-built container keeps its identity and
       // its not-player-owned flag across the cache, so the marker pass
       // can tell a restored pile from one it still owes.
-      const pile = { id: ++_nextId, items: s.items?.map((it) => ({ ...it })) ?? [], pos: [s.pos[0], s.pos[1], s.pos[2]], archive: s.archive ?? RANDOM_TREASURE_ARCHIVE, record: s.record, batch: null, container: !!s.container, containerKey: s.containerKey ?? null, inactive: false, ...(s.physical ? { physical: true, settled: true } : {}) };   // PI1
+      const pile = { id: ++_nextId, items: s.items?.map((it) => ({ ...it })) ?? [], pos: [s.pos[0], s.pos[1], s.pos[2]], archive: s.archive ?? RANDOM_TREASURE_ARCHIVE, record: s.record, batch: null, container: !!s.container, containerKey: s.containerKey ?? null, inactive: false, ...(s.physical ? { physical: true, settled: true } : {}), ...(typeof s.remainsKey === 'string' ? { remainsKey: s.remainsKey } : {}) };   // PI1; AUDIT LW-III: a remains' pile keeps its key
       piles.push(pile);
       // RestoreSaveData:157-160 - `if (loot.Items.Count == 0)
       // RemoveLootContainer(loot)`, which is SetActive(false) for a
@@ -457,13 +457,13 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
   /** PX21c: what a pile HOLDS, by the same key lootTargets emits -
    *  read-only, for the hover plaque. */
   const contents = (key) => (physical.owns(key) ? physical.contents(key) : piles.find((p) => `droppedLoot:${p.id}` === key && !p.dead)?.items ?? null);   // PI1: a standing item is a pile of one
-  /** WILD1: a pile's own name, when one was given it (a body's remains in the open zone - net/wildRemains.js), else null
+  /** WILD1: a pile's own name, when one was given it (a body's remains in the open zone - net/wild/wildRemains.js), else null
    *  and the plaque's pile word stands. */
   const labelFor = (key) => piles.find((p) => `droppedLoot:${p.id}` === key && !p.dead)?.label ?? null;
   /** DW-E5: a live, drawable-elsewhere pile (not emptied into its deactivation) - the other pass's draw list. */
   const undrawnPiles = () => piles.filter((p) => p.drawn === false && alive(p));
   /** LOOT11 (the Loot arc): the piles a line of light may stand over - a dropped pile, a house's or a camp's treasure - each
    *  its crown and its list, read live (scenes/lootLines.js picks the Rare-or-better). */
-  const lootFinds = () => [...piles.filter((p) => alive(p) && p.items?.length && !presented(p)).map((p) => (p.wild?.mine ? { root: lootCrown(p.pos, p.size), items: p.items, mark: WILD_MINE_MARK } : { root: lootCrown(p.pos, p.size), items: p.items })), ...physical.finds()];   // PI1: and each standing item's own; WILD1: my remains, their own line
+  const lootFinds = () => [...piles.filter((p) => alive(p) && p.items?.length && !presented(p)).map((p) => (p.wild?.mine ? { root: lootCrown(p.pos, p.size), items: p.items, mark: WILD_MINE_MARK } : p.mark ? { root: lootCrown(p.pos, p.size), items: p.items, mark: p.mark } : { root: lootCrown(p.pos, p.size), items: p.items })), ...physical.finds()];   // PI1: and each standing item's own; WILD1: my remains, their own line; FB1013d: a pile that carries its own (the house's fallen - scenes/legacyRemainsStand.js)
   return { contents, labelFor, dropPile, dropPhysical, physical, seedPile, removePile, restorePiles, collectPixel, takePixel, snapshotWorld, restoreWorld, batches, tickFlats, lootTargets, pileFor, activePiles, undrawnPiles, containerSeeded, snapshotScene, releaseEmptied, offsetAll, groundMoved, lootFinds, _piles: piles };
 }

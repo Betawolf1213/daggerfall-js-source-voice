@@ -24,7 +24,7 @@
 // seconds of LZ4 (DREAM's textures are 383 MB), so at attach time the
 // bundle is opened once, its names written beside it as a small JSON
 // (`dfmod-index/<file>`), and closed. A boot registers from the JSON
-// alone; a bundle is opened - in a worker, formats/unityBundleClient.js
+// alone; a bundle is opened - in a worker, formats/unity/unityBundleClient.js
 // - the first time one of its pictures is asked for. The paperdoll's
 // 330 MB is never opened by a player who never looks at the doll.
 //
@@ -38,14 +38,14 @@
 // and read no dependency at all, so the add-ons lost to their own base.
 //
 // VE4 - MODS THAT SHIP WITH THE PORT. Vanilla Enhanced's Base, Masked Roads and Snowless Swamps and Jungles ship with
-// the port (systems/vanillaEnhancedPack.js, Mac 2026-10-05) and register HERE, beside the attached mods - one load
+// the port (systems/vanillaEnhanced/vanillaEnhancedPack.js, Mac 2026-10-05) and register HERE, beside the attached mods - one load
 // order, one walk, one set of doors; only where a picture comes from differs. An attached .dfmod under the same key
 // shadows the shipped one (the player's copy - a newer version - is the one read).
 //
 // Nothing here touches the DOM: the store and the opener are handed in.
 
-import { openUnityBundle } from '../formats/unityBundleClient.js';
-import { createBundlePool } from '../formats/unityBundlePool.js';   // DFMOD3: a few shared workers, not one per mod
+import { openUnityBundle } from '../formats/unity/unityBundleClient.js';
+import { createBundlePool } from '../formats/unity/unityBundlePool.js';   // DFMOD3: a few shared workers, not one per mod
 import { resampleRgba } from '../formats/resample.js';
 import { textureEntry, textureKey, setBundleTextures, textureReplacementEnabled, looseTextureExists, looseTextureBytes, looseTextureGeneration, decodePng, PRELOAD_CONCURRENCY } from './textureReplacement.js';
 import { toColor32 } from '../formats/color32Order.js';   // GROUND1: the terrain's layers are world texels, bottom row first
@@ -460,7 +460,7 @@ function install() {
     const rects = new Map();
     for (const [name, text] of Object.entries(index.xml ?? {})) {
       const rect = xmlRect(text);
-      if (rect) rects.set(name, rect);
+      if (rect) { rects.set(name, rect); rects.set(name.toUpperCase(), rect); }   // FACE-RECT: a CIF/RCI picture is keyed by its upper-cased name
       const scale = xmlScale(text);
       const e = scale && textureEntry(`${name}.png`);
       if (e && e.map === 'Albedo' && !e.dye) ((table[e.archive] ??= {})[e.record] ??= scale);
@@ -486,7 +486,9 @@ function install() {
       }
       const up = name.toUpperCase();
       if (/\.IMG$/.test(up)) { if (!_img.has(up)) _img.set(up, { key, name }); continue; }
-      if (/\.(CIF|RCI)_\d+-\d+(_[A-Z]+)?$/.test(up) && !_cifRci.has(up)) _cifRci.set(up, { key, name });   // DFMOD2: with a metal suffix too (a handheld weapon's frames)
+      // FACE-RECT (issue #639): and its xml's <rect> - PaperDollRenderer.DrawTexture(head) runs OverridePaperdollItemRect
+      // too (item null, MakeName's CIF arm), so a replaced face is drawn into the rect its sidecar gives, not the classic box
+      if (/\.(CIF|RCI)_\d+-\d+(_[A-Z]+)?$/.test(up) && !_cifRci.has(up)) _cifRci.set(up, { key, name, rect: rects.get(name) ?? rects.get(up) ?? null });   // DFMOD2: with a metal suffix too (a handheld weapon's frames)
     }
     _prio.push({ key, names, arrays, looseGround: new Set(index.looseGround ?? []) });   // ALIKR1: the archives a loose pack's ground decides (groundSource)
   }
@@ -618,6 +620,10 @@ export const dfmodCifRciImage = (file, record, frame = 0) => {
   const k = `${String(file).toUpperCase()}_${record}-${frame}`;
   return cached(`cif:${k}`, _cifRci.get(k));
 };
+
+/** FACE-RECT (issue #639): the `<rect>` an attached mod's xml gives one CIF/RCI record's picture - in the doll's own
+ *  space, as xmlRect reads it (TextureReplacement.OverridePaperdollItemRect) - or null for the classic record's box. */
+export const dfmodCifRciRect = (file, record, frame = 0) => _cifRci.get(`${String(file).toUpperCase()}_${record}-${frame}`)?.rect ?? null;
 
 /** DFMOD2: an attached mod's CIF/RCI picture by its whole TryImportCifRci name (`WEAPON03.CIF_0-4_Iron`) - the
  *  first-person weapon's ask - top-down RGBA, or null. */

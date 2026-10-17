@@ -55,7 +55,8 @@ import {
   marksSwitchOf, utcDay, marksAmountOk, exchangeGold, serpentStrikeOf, FIND_KINDS, lootFindOf,
 } from '../../src/net/marksLaw.js';
 import { dice } from './unitRoll.js';   // SILVER-FINDS: a loot find's amount is the service's dice
-import { guildMay } from '../../src/net/guildLaw.js';
+import { readAll } from './service.js';   // GATHER-SPEED: a find's reads in one round trip
+import { guildMay } from '../../src/net/guild/guildLaw.js';
 import { medianOf, MARKET_REPORT_MEDIANS } from '../../src/net/marketLaw.js';   // PROF5: the report's medians
 import { WITNESS } from '../../src/net/nodeLaw.js';   // AUDIT 625 S1: the finds open at the witnesses' own age
 
@@ -305,12 +306,26 @@ export function gatherStrikeStatement(ctx, player, env, { rid, nonce, amount }) 
  *  Marks not this account's). A line made is answered WHATEVER THE SWITCH SAYS NOW (AUDIT 28 M2's law, the exchange's
  *  own): a request asked again after the switch shut is told the find it made, never "none". */
 export async function findLineAnswer({ db, nowS }, player, env, lineRid) {
-  if (accountKind(player) !== 'linked') return null;   // a guest is never struck: no line to look for
-  const line = await lineOf(db, player.id, lineRid);
+  const asked = findLineStatements(db, player, env, lineRid, nowS);
+  return asked.length ? findLineFrom(await readAll(db, asked)) : null;
+}
+/** GATHER-SPEED: WHAT findLineAnswer READS, as statements - the line, the day's finds and the balance, one round trip (a
+ *  harvest's own batch carries them, behind the strike it may have made). None for a guest: never struck, no line. */
+export function findLineStatements(db, player, env, lineRid, nowS) {
+  if (accountKind(player) !== 'linked') return [];   // a guest is never struck: no line to look for
+  return [
+    db.prepare('SELECT * FROM marks_ledger WHERE actor = ? AND rid = ?').bind(player.id, lineRid),
+    db.prepare(`SELECT ${findsEarnedSql('?1', '?2', 'gather')} AS gathered, ${findsEarnedSql('?1', '?2', 'find')} AS found`).bind(player.id, utcDay(nowS)),
+    db.prepare('SELECT balance FROM marks WHERE account = ?').bind(player.id),
+  ];
+}
+/** GATHER-SPEED: findLineAnswer's answer off findLineStatements' rows - null where no find line stands. */
+export function findLineFrom(/** @type {any[][]} */ [lines = [], finds = [], balances = []]) {
+  const line = lines[0];
   if (!line || (line.kind !== 'gather' && line.kind !== 'find')) return null;
-  const today = await todayOf(db, player.id, utcDay(nowS));
-  return { struck: Number(line.amount), balance: await balanceOf(db, player.id),
-    today: { found: line.kind === 'gather' ? today.gathered : today.found, max: MARKS_FAUCETS[line.kind].perDay } };
+  const f = finds[0];
+  return { struck: Number(line.amount), balance: balances[0] ? Number(balances[0].balance) : 0,
+    today: { found: Number((line.kind === 'gather' ? f?.gathered : f?.found) ?? 0), max: MARKS_FAUCETS[line.kind].perDay } };
 }
 
 /**

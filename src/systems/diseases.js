@@ -41,7 +41,9 @@ import { isEntityImmuneToDisease } from './effects.js';   // AUDIT 63 F15: Assig
 import { INFECTION, startInfection } from './infection.js';   // V1: the three special infections OnMonsterHit mints
 import { FATIGUE_MULTIPLIER } from './statMods.js';
 import { dice100 } from '../combat/formulas.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
+import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 // ---- MagicAndEffectsEnums.Diseases, verbatim ----
 export const DISEASES = Object.freeze({
@@ -92,7 +94,7 @@ export const contractedMessageRecord = (diseaseType) => 100 + diseaseType;
 
 /** UI3: each disease's name, as its own contracted message says it (TEXT.RSC 100-116: "You have contracted Witches'
  *  Pox.", "...the Plague, a very serious...") - the name the Status box tells a player once incubation is over, and so
- *  the one the HUD's status widget may show from then (ui/hudStatus.js). Indexed by Diseases id. */
+ *  the one the HUD's status widget may show from then (ui/hud/hudStatus.js). Indexed by Diseases id. */
 export const DISEASE_NAMES = Object.freeze([
   "Witches' Pox", 'Plague', 'Yellow Fever', 'Stomach Rot', 'Consumption', 'Brain Fever', 'Swamp Rot', "Caliron's Curse",
   'Cholera', 'Leprosy', 'Wound Rot', 'Red Death', 'Blood Rot', 'Typhoid Fever', 'Dementia', 'Chrondiasis', 'Wizard Fever',
@@ -100,6 +102,8 @@ export const DISEASE_NAMES = Object.freeze([
 
 /** TextManager "youFeelSomewhatBad" - the daily-tick HUD alert. */
 export const YOU_FEEL_SOMEWHAT_BAD = 'You feel somewhat bad.';
+/** L10N3d: the alert as the hosts show it (DiseaseEffect.cs:165, PoisonEffect.cs:289), in the player's language. */
+export const youFeelSomewhatBadText = () => localizedText('youFeelSomewhatBad', YOU_FEEL_SOMEWHAT_BAD);
 
 // ---- The OnMonsterHit disease lists (declared inside DFU's
 // OnMonsterHit; hoisted here for the tests). Source comments: rat =
@@ -143,6 +147,7 @@ export function startDisease(target, diseaseType, currentDay, rolls = Math.rando
   if (!specialInfection && isEntityImmuneToDisease(target)) return null;
   if (!target.isPlayer || (target.level ?? 0) < 2) return null;   // Start: EndDisease for non-player hosts
   if (target.activeEffects?.some((a) => a.kind === 'disease' && a.disease === diseaseType && !a.ended)) return null;   // AddState no-op
+  noteFirstUse('afflictions');   // TUT1: the player's first disease (or curse of the blood)
   const data = DISEASE_DATA[diseaseType];
   const entry = {
     kind: 'disease', disease: diseaseType, permanent: true,
@@ -231,7 +236,7 @@ export function updateDiseaseEntry(entry, currentDay, sinks, rolls = Math.random
     entry.daysOfSymptomsLeft = 0;
     endDisease(entry);
   }
-  if (onAlert) onAlert(YOU_FEEL_SOMEWHAT_BAD);
+  if (onAlert) onAlert(youFeelSomewhatBadText());
 }
 
 /** The per-round disease pass for one entity (each DiseaseEffect's

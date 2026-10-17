@@ -19,7 +19,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import { mintId, overRate } from './accounts.js';
 import {
-  asks, shut, trackView, trackRow, storeOf, spendableSql, spendStatements, seatStepsFor,
+  asks, shut, trackView, trackRow, storeOf, spendableSql, spendStatements, seatStepsFor, workableSql, workStatements, workHeld,
 } from './professions.js';
 import { dice } from './unitRoll.js';   // SILVER-FINDS: the service's dice moved below professions.js and marks.js
 import { rankOfXp, specsAt, craftXpCap, STORES_MAX, PROF_OPS_MAX, PROF_OPS_WINDOW_S, ARCANE_ESSENCE, trackOf } from '../../src/net/professionLaw.js';
@@ -28,9 +28,11 @@ import {
   potionById, brewSpends, brewCount, potentChance, potentPct, potentAble, brewXp, brewFirstPays, DISTILLER,
   piecePoints, essenceOf, disenchantXp, DISENCHANTER,
 } from '../../src/net/alchemyLaw.js';
-import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjects, dropIfUnnamed } from './realm.js';   // AUDIT PROF-541 B2: a realm character's piece out of its record
-import { takeTradeGoods, tradeableRecord } from '../../src/net/realmTradeLaw.js';   // AUDIT PROF-541 B2: as MARKET-ANY's listGood takes a record's piece
+import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjects, dropIfUnnamed, craftHoldOf } from './realm.js';   // CRAFT-HOLD: a held character's craft   // AUDIT PROF-541 B2: a realm character's piece out of its record
+import { takeTradeGoods, tradeableRecord } from '../../src/net/realm/realmTradeLaw.js';   // AUDIT PROF-541 B2: as MARKET-ANY's listGood takes a record's piece
 import { pieceListable } from '../../src/net/marketLaw.js';   // AUDIT PROF-541 R2-S6: what the market lists is what disenchants
+import { firmStatsOf } from './firmament.js';   // FIRM1: the Firmament's hand on a brew's and a disenchant's XP
+import { xpPct, scaleXp } from '../../src/net/firmament/firmamentLaw.js';
 import { reforgeEssence, REFORGE_RANK } from '../../src/net/temperLaw.js';   // CRAFT4: the Reforge with Essence
 
 const HERB_RE = /^p[12]:\d+$/;
@@ -90,14 +92,14 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   if (rank < potion.rank) return { error: 'prof-rank' };
   const cap = craftXpCap('alchemy', ranks);
   const steps = await seatStepsFor(db, player.id, character, seat, 'alchemy', nowS);
-  // THE UNBRUISED HERBS (4.3): each herb's own units this brew spends (bought ones go first), at most what was picked
-  // unbruised
+  // THE UNBRUISED HERBS (4.3): each herb's own units this brew spends (bought ones go first - AUDIT BAG-CRAFT A1: and loose
+  // ones before them, never picked by this character), at most what was picked unbruised
   let unbruised = 0;
   const reckoned = [];
   for (const inp of inputs) {
     if (!HERB_RE.test(inp.key)) continue;
     const st = await storeOf(db, player.id, character, inp.key);
-    const ownSpent = Math.max(0, Math.min(inp.n, inp.n - st.bought));
+    const ownSpent = Math.max(0, Math.min(inp.n, inp.n - st.bought - (st.loose ?? 0)));
     const row = await db.prepare('SELECT qty FROM prof_unbruised WHERE player = ?1 AND char_id = ?2 AND material = ?3').bind(player.id, character, inp.key).first();
     const u = Math.min(ownSpent, Number(row?.qty ?? 0));
     if (u > 0) { unbruised += u; reckoned.push({ key: inp.key, n: u }); }
@@ -107,7 +109,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   // bypassed as it is drunk) - the die still cast first, so the dice after it fall as they did
   const potent = dice(rand) * 100 < chance && potentAble(potion) ? potentPct(specs[100]) : 0;
   const count = brewCount(rank, specs[50], potion);   // AUDIT PROF-541 R2-S1: the counter's goods alone one potion
-  const xp = brewXp(potion, rank, false);
+  const xp = scaleXp(brewXp(potion, rank, false), xpPct(await firmStatsOf(db, player, env, character), trackOf('alchemy')));   // FIRM1: the Firmament's hand on the brew's XP
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 potion ?5 keys ?6 count ?7 potent ?8 unbruised ?9 steps ?10 xp ?11 the first time's
   // ?12 now ?13 nonce; the inputs ?14 on, two a one
@@ -115,7 +117,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   const held = [];
   inputs.forEach((inp, i) => {
     binds.push(inp.key, inp.n);
-    held.push(`${spendableSql('?1', '?2', `?${14 + 2 * i}`)} >= ?${15 + 2 * i}`);   // GOLD-MARKET: never gold's units
+    held.push(`${workableSql('?1', '?2', `?${14 + 2 * i}`)} >= ?${15 + 2 * i}`);   // GOLD-MARKET: never gold's units; AUDIT BAG-CRAFT A1: a station's loose ones too
   });
   const decided = 'EXISTS (SELECT 1 FROM prof_brews WHERE player = ?1 AND rid = ?5 AND n = ?6)';
   await db.batch([
@@ -133,7 +135,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
       WHERE player = ?1 AND char_id = ?2 AND material = ?3 AND EXISTS (SELECT 1 FROM prof_brews WHERE player = ?1 AND rid = ?5 AND n = ?6)`)
       .bind(player.id, character, u.key, u.n, rid, nonce)),
     // the cauldron out of the Stores, each bought first
-    ...inputs.flatMap((inp) => spendStatements(db, {
+    ...inputs.flatMap((inp) => workStatements(db, {   // AUDIT BAG-CRAFT A1: its loose units before the bought
       player: player.id, character, materialSql: '?3', qtySql: '?4', guard: decided, binds: [inp.key, inp.n, rid, nonce],
     })),
     // the XP the decision credited, under the crafter's limit
@@ -147,7 +149,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   if (made) return brewAnswer(db, player, made, nowS, { repeat: true });
   for (const inp of inputs) {
     const st = await storeOf(db, player.id, character, inp.key);
-    if (st.own + st.bought < inp.n) return { error: st.own + st.bought + (st.gold ?? 0) >= inp.n ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET
+    if (workHeld(st) < inp.n) return { error: workHeld(st) + (st.gold ?? 0) >= inp.n ? 'stores-gold' : 'stores-short', material: inp.key };   // GOLD-MARKET
   }
   return { error: 'stores-short' };
 }
@@ -202,6 +204,11 @@ export async function disenchantPiece(ctx, player, env, { character, provenance,
   const p = await db.prepare('SELECT * FROM products WHERE provenance = ?1').bind(provenance).first();
   if (!p) return { error: 'prof-no-piece', ...(await db.prepare('SELECT 1 FROM prof_disenchants WHERE player = ?1 AND provenance = ?2').bind(player.id, provenance).first() ? { why: 'disenchanted' } : {}) };   // AUDIT PROF-541 B2
   if (p.owner !== player.id) return { error: 'prof-not-yours' };
+  // CRAFT-HOLD (the exploit audit): its Essence goes to the Stores the market sells from - a held character's craft is
+  // never turned to goods under another character's name (prepareRealmRecord's outbound hold reads the acting record alone).
+  // AUDIT CRAFT-HOLD: asked only where no record is - a realm actor's own record proves the piece its, below
+  const pieceHeld = side.at ? null : await craftHoldOf(db, player.id, provenance);
+  if (pieceHeld) return pieceHeld;
   const r = recipeById(p.recipe);
   if (!pieceListable(p.recipe)) return { error: 'prof-no-essence' };   // AUDIT PROF-541 R2-S6: arrows (marketLaw pieceListable) - no piece the pack holds by its record
   const points = piecePoints(r, p.hand == null ? null : Number(p.hand));
@@ -211,13 +218,13 @@ export async function disenchantPiece(ctx, player, env, { character, provenance,
   if (essence < 1) return { error: 'prof-no-essence' };
   const origin = p.bought_with === 'gold' ? 'gold' : p.char_id === character && p.bought_with == null ? 'own' : 'bought';
   const cap = craftXpCap('enchanting', ranks);
-  const xp = disenchantXp(r, rank, base);   // AUDIT PROF12 E2: the piece's recipe's tier, quartered; none for the counter's goods alone
+  const xp = scaleXp(disenchantXp(r, rank, base), xpPct(await firmStatsOf(db, player, env, character), 'enchanting'));   // AUDIT PROF12 E2: the piece's recipe's tier, quartered; none for the counter's goods alone - FIRM1: the Firmament's hand on it
   // AUDIT PROF-541 B2: THE RECORD'S OWN PIECE - a realm character's, out of the record its tab last checkpointed
   const prep = side.at ? await prepareRealmRecord(ctx, player.id, side.at, (save) => {
     const items = Array.isArray(save.items) ? save.items : [];
     const at = items.findIndex((rec) => rec?.provenance === provenance);
     return at >= 0 && tradeableRecord(items[at]) && takeTradeGoods(save, { items: [items[at]], gold: 0 }, [at]) ? null : 'prof-piece-gone';
-  }) : null;
+  }, { outbound: true }) : null;   // INT3: the Essence it yields goes to the Stores, and the market sells it
   if (prep?.error) return prep;
   const nonce = mintId(rand);
   const decided = 'EXISTS (SELECT 1 FROM prof_disenchants WHERE player = ?1 AND rid = ?2 AND n = ?3)';
@@ -285,7 +292,7 @@ async function reforgeAnswer(db, player, row, nowS, extra = {}) {
  * (temperLaw REFORGE_RANK; `prof-rank`) spends 2 Arcane Essence for a Magic piece's line or 5 for a Rare's (temperLaw
  * reforgeEssence - Legendary and up, none: law 7, `prof-reforge`), never gold's units, and is answered the seed the line
  * is rolled again with - the service's CSPRNG, as a craft's quality is its roll. The service cannot see the pack: the
- * piece and its line are the client's (systems/lootRarity.js reforgeAffix - the Loot arc's own Reforge: one line, and
+ * piece and its line are the client's (systems/loot/lootRarity.js reforgeAffix - the Loot arc's own Reforge: one line, and
  * once a piece is reforged, that line alone), the save's word as the Mages Guild's reforge is; the Essence is the bound.
  * DECIDED: no XP - the Essence's XP was its disenchanting's. Refused: the Essence short (`stores-short`, `stores-gold`).
  */

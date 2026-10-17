@@ -12,7 +12,7 @@
 // painting of two gauntleted hands holding a blank sheet (the FOURTH,
 // MAP-FIELD8, 2026-09-22: "replace the current paperdoll") - fills the
 // screen (a 4:3 stage, letterboxed into its own black), and the Iliac
-// Bay is inked onto the sheet at runtime by ui/inkMap.js: a 2D canvas
+// Bay is inked onto the sheet at runtime by ui/ink/inkMap.js: a 2D canvas
 // laid exactly over the parchment's rectangle. The hands and the paper
 // never move; the MAP moves under the pen - drag to pan, wheel to zoom
 // toward the cursor, clamped so the sheet is never blank at an edge
@@ -22,7 +22,7 @@
 //
 // ── WHAT THIS WINDOW IS TO THE HOST ──────────────────────────────
 //
-// The classic map's own mount, verbatim (ui/travelMapDoor.js): a
+// The classic map's own mount, verbatim (ui/travel/travelMapDoor.js): a
 // townTalk-slot overlay - isChoiceWindow (raw key codes), tick/draw per
 // frame, done when finished, gotoPlace / activateTeleportationTravel /
 // getTravelMapSaveData as one-shots. DOM only: draw() touches no GL,
@@ -84,37 +84,39 @@
 
 import { MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';
 import { REGION_NAMES, longitudeLatitudeToMapPixel, getPixelFromPixelID, patchRegionIndex } from '../formats/mapsFile.js';
-import { locationSummaryAt } from '../systems/mapDirectory.js';
-import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel.js';
-import { guildFastTravel } from '../systems/guildVariants.js';   // TP1: GuildManager.FastTravel
+import { locationSummaryAt } from '../systems/map/mapDirectory.js';
+import { calculateTravelTime, calculateTripCost, travelDays } from '../systems/travel/travel.js';
+import { guildFastTravel } from '../systems/guild/guildVariants.js';   // TP1: GuildManager.FastTravel
 import {
   travelMapFilters, freshTravelMapFilters, travelMapPopUpState, freshTravelMapPopUpState, setTravelMapPopUpState, travelMapSaveData,
   travelMapMarkedMapId, setTravelMapMarkedMapId,   // MAP2: the mod's mark outlives the window (AUDIT-TO1 G4)
-} from '../systems/travelMapState.js';
+} from '../systems/travel/travelMapState.js';
 // AUDIT-TO1 C1/C2/C3: the mod's laws on the DEFAULT skin, as the pure
 // functions the popup itself calls, so the two skins cannot drift.
-import { isPlayerControlledTravel, enforceShipRestriction, shipTravelRefusal, scaleTripCost, SHIP_REFUSAL_TEXT, ONLINE_TRAVEL_LINE } from './travelPopUp.js';
+import { isPlayerControlledTravel, enforceShipRestriction, shipTravelRefusal, scaleTripCost, SHIP_REFUSAL_TEXT, ONLINE_TRAVEL_LINE } from './travel/travelPopUp.js';
 // MAP2: the mod's map additions, through the SAME functions the classic
-// window calls (ui/travelMapOptions.js), so the two skins cannot drift.
-import { teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt } from './travelMapOptions.js';
-import { hasPortFor as hasPort } from '../systems/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
-import { noticeHold, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE3: this window's own click-anywhere boxes, as the enhanced panel
-import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travelOptionsText.js';
+// window calls (ui/travel/travelMapOptions.js), so the two skins cannot drift.
+import { teleportCost, teleportCostPrompt, portsFilterAllows, locationInfoRows, resumePrompt } from './travel/travelMapOptions.js';
+import { hasPortFor as hasPort } from '../systems/travel/travelPorts.js';   // SEAT2b part two: HasPort, or a members' Harbour at a seat (travelPorts.js hasPortFor)
+import { noticeHold, noticeRelease } from './enhanced/enhancedNotice.js';   // ENH-NOTICE3: this window's own click-anywhere boxes, as the enhanced panel
+import { TRAVEL_OPTIONS_TEXT as TO_TEXT, format as toFormat } from '../systems/travel/travelOptionsText.js';
 import { getDaggerfallDistance, MatchesCutOff } from '../systems/editDistance.js';
-import { checkLocationDiscovered, flipTravelMapFilter, travelMapDotColors } from './travelMapWindow.js';   // MAP-KEY: the classic's filter flip and its dots' colours
-import { readGateMark, gateMarkKey, GATE_RING_CSS, GATE_LEGEND_TEXT } from './gateMapMark.js';   // WB1: the Oblivion Gate's ring, read as the party is (SERPENT1: and the serpent's, by the same reader)
+import { checkLocationDiscovered, flipTravelMapFilter, travelMapDotColors } from './travel/travelMapWindow.js';   // MAP-KEY: the classic's filter flip and its dots' colours
+import { readGateMark, gateMarkKey, GATE_RING_CSS, GATE_LEGEND_TEXT } from './gate/gateMapMark.js';   // WB1: the Oblivion Gate's ring, read as the party is (SERPENT1: and the serpent's, by the same reader)
 import { SERPENT_RING_MAP_CSS, SERPENT_LEGEND_TEXT } from './serpentMapMark.js';   // SERPENT1: the sea serpent's ring, in the sea's colours
-import { SD_RING_MAP_CSS, SD_LEGEND_TEXT } from './sdMapMark.js';   // SD2c: the Super dungeon's ring once it is found, in its omen's brass
-import { readBountyMarks, bountyMarksKey, BOUNTY_RING_CSS, BOUNTY_LEGEND_TEXT, BOUNTY_LEGEND_RIM_CSS, REVENANT_RING_CSS, REVENANT_LEGEND_TEXT } from './bountyMapMark.js';   // BOUNTY1: held bounties' black circles, read as the gate's ring is
+import { SD_RING_MAP_CSS, SD_LEGEND_TEXT } from './superDungeon/sdMapMark.js';   // SD2c: the Super dungeon's ring once it is found, in its omen's brass
+import { LODE_RING_CSS, LODE_LEGEND_TEXT, lodeLegendText } from './lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, read by the bounty's reader
+import { POI_RING_CSS, POI_MARKS_MAX, poiLegendText } from './poi/poiMapMark.js';   // POI-2: the approved POIs' marks, read by the bounty's reader
+import { readBountyMarks, bountyMarksKey, BOUNTY_RING_CSS, BOUNTY_LEGEND_TEXT, BOUNTY_LEGEND_RIM_CSS, REVENANT_RING_CSS, REVENANT_LEGEND_TEXT } from './bounty/bountyMapMark.js';   // BOUNTY1: held bounties' black circles, read as the gate's ring is
 import { readRaidMarks, raidMarksKey, placeTip, tipKey, readTip, RAID_MARK_CSS, RAID_LEGEND_TEXT, RAID_HIT_PX, SEAT_TIP_TEXT_MAX } from './eventMapMarks.js';   // EVENT-TIP: the raided towns, and the card a world event answers a hover with
-import { readVendorMark, vendorMarkKey, VENDOR_MARK_CSS, VENDOR_RIM_CSS, VENDOR_LEGEND_TEXT } from './vendorMapMark.js';   // HOME-VENDOR: the trader's waypoint
-import { readQuestMarks, questMarksKey, QUEST_MARK_CSS, QUEST_LEGEND_TEXT, QUEST_HIT_PX, QUEST_MARK_LIFT, QUEST_RAID_LIFT, QUEST_FOLLOWED_TEXT } from './questMarks.js';   // GUIDE5: where the quests point
+import { readVendorMark, vendorMarkKey, VENDOR_MARK_CSS, VENDOR_RIM_CSS, VENDOR_LEGEND_TEXT } from './vendor/vendorMapMark.js';   // HOME-VENDOR: the trader's waypoint
+import { readQuestMarks, questMarksKey, QUEST_MARK_CSS, QUEST_LEGEND_TEXT, QUEST_HIT_PX, QUEST_MARK_LIFT, QUEST_RAID_LIFT, QUEST_FOLLOWED_TEXT } from './quest/questMarks.js';   // GUIDE5: where the quests point
 import {
   buildInkModel, buildInkMarks, paintInkStatic, paintInkOverlay, zoomBand, clampView, scaleMinOf, SCALE_MAX,   // MAP-FIELD2: placeNames is inkMap's law still, but this sheet no longer inks the names
   viewCentredOn, zoomAt, toPaper, toMap, BAND_MARKS, PARTY_LABEL_STACK, GATE_RING_MIN_PX,
   markKind, markInks, mapKeyGroups, KIND_WORD, paintKeyChip, KEY_CHIP_PX,   // MAP-KEY: the key, and each kind in its classic hue
   PEN,   // AUDIT GUIDE U16: the followed quest's diamond is the pen's ink, in the legend as on the sheet
-} from './inkMap.js';
+} from './ink/inkMap.js';
 // SOC6: the party's marks, read the one way both maps read them.
 import {
   readPartyMarks, partyMarksKey, partyHoverText, partyLabelText,
@@ -126,17 +128,17 @@ import {
 // the host already keeps into the place the tabs are gated by.
 import {
   createSheetSlot, stripLayout, stripHit, paintStrip, stripFont,
-} from './mapStrip.js';
-import { mapContextOf } from '../systems/mapTabs.js';
-import { createAutomapSheet } from './automapSheet.js';
-import { dungeonMap3dOn, tamrielMapOn } from './mapSkin.js';   // EM3-3D: the solid dungeon map's switch; TAMRIEL1: the continent's
+} from './map/mapStrip.js';
+import { mapContextOf } from '../systems/map/mapTabs.js';
+import { createAutomapSheet } from './automap/automapSheet.js';
+import { dungeonMap3dOn, tamrielMapOn } from './map/mapSkin.js';   // EM3-3D: the solid dungeon map's switch; TAMRIEL1: the continent's
 // TAMRIEL1 (2026-10-08, Mac: "the entirety of tamriel ... connected as a gigantic map ... seen by players ingame"): the
 // continent inked round the Bay on the world sheet - the sheet's pan box grows to the whole frame, the home view stays
 // the Bay's own fit, and past that fit the sheet is on the continent (ui/tamrielInk.js; bible/03-World/Tamriel.md)
 import { tamrielInkFor, paintTamrielInk, tamrielPlaceAt, onContinent } from './tamrielInk.js';
-import { tamrielFrameInBay } from '../world/tamrielFrame.js';
-import { tamrielLandVersion } from '../world/tamrielLand.js';   // TAMRIEL3: the trace's version, in the static key
-import { NOTE_MAX_CHARACTERS } from '../systems/automap.js';
+import { tamrielFrameInBay } from '../world/tamriel/tamrielFrame.js';
+import { tamrielLandVersion } from '../world/tamriel/tamrielLand.js';   // TAMRIEL3: the trace's version, in the static key
+import { NOTE_MAX_CHARACTERS } from '../systems/automap/automap.js';
 /** PLUS-MAP: the 3D map's tool glyphs - line drawings in the button's own colour (currentColor). */
 const TOOL_SVG = (d) => `<svg class="hmtoolicon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">${d}</svg>`;
 export const TOOL_ICONS = Object.freeze({
@@ -161,15 +163,15 @@ export const TAP_TIP_S = 4;
 /** ORBIT-FREE: how far (px) a locked drag must go the other way - past its drift - before it turns and tilts at once;
  *  and the drift itself: off-axis travel under ORBIT_DRIFT of the locked axis's, the slope the lock's own 2:1 forgives. */
 export const ORBIT_FREE_PX = 24, ORBIT_DRIFT = 0.5;
-import { createTownSheet } from './townSheet.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
+import { createTownSheet } from './town/townSheet.js';
+import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedStyle.js';
 import { quadPlacement } from './quadMap.js';   // MAP3: the sheet over the held paper's corners
 import { bindings } from './input.js';
 import { actionsForCode } from '../systems/inputActions.js';   // UXB1-S: every action its key carries, shared or not
 import { smoothstep } from '../systems/mathf.js';   // MAP-FIELD7: the ONE easing, so the sheet travels like everything else in the port
-import { hubMapWord, hubTitle } from '../systems/regionHubs.js';   // HUB1: a region hub's word on the label and its title in the box
-import { tierPhrase } from '../systems/dungeonTier.js';   // TIER1: a dungeon's tier and size on the label and in the box, online
-import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, TV_KIN_LEGEND, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, playerShown } from '../systems/travelViewFilters.js';   // OW-WHO / OW-KIN: the players' filters and colours, the Overworld's own
+import { hubMapWord, hubTitle } from '../systems/region/regionHubs.js';   // HUB1: a region hub's word on the label and its title in the box
+import { tierPhrase } from '../systems/dungeon/dungeonTier.js';   // TIER1: a dungeon's tier and size on the label and in the box, online
+import { TV_WHO_GROUPS, TV_WHO_TEXT, TV_KIN_COLORS, TV_KIN_LEGEND, travelViewWho, toggleTravelViewWho, cycleTravelViewRenown, playerShown } from '../systems/travel/travelViewFilters.js';   // OW-WHO / OW-KIN: the players' filters and colours, the Overworld's own
 import { seatInfoLine, seatTipOf } from '../net/townSeatLaw.js';   // SEAT1a: a seat's Charter in the box
 
 // ── THE SPRITE (Mac's, public/art/held-map.png) ──────────────────
@@ -181,13 +183,16 @@ import { APP_ROOT } from '../systems/appRoot.js';
 import { IT_POPUP, IT_TEXT, itMapRefusal, itMapPaths, itPopUpDefaults, itTogglePress, itTrip, playerPopUpRefusal, seafarerDiscovered } from '../systems/immersiveTravel.js';   // IT1: Immersive Travel's maps and popups, on this sheet
 import {
   WAYPOINT_KINDS, WAYPOINT_TEXT, shownWaypoints, onWaypoints, isWaypointFollowed, waypointKindsShown, toggleWaypointKind, listWaypoints,
-} from '../systems/mapWaypoints.js';   // WAYPOINTS: the flags on the sheet, and their key row
+} from '../systems/map/mapWaypoints.js';   // WAYPOINTS: the flags on the sheet, and their key row
 import { openWaypointMenu, closeWaypointMenu } from './waypointMenu.js';   // WAYPOINTS: the right-click menu
-import { wildInk, paintWildZone, paintWildRemains, paintWildKeyChip, paintWildCrows, paintWildFlames, paintWildLocks, paintWildGiants } from './wildMapInk.js';   // WILD1: the open zone's fog, red line and my remains
-import { WILD_TEXT, wildInside, wildRingAt } from '../systems/wildZone.js';   // WILD1: the zone's words on the map
-import { zoneMapInk, paintWildRings, paintZoneMapStatic, zoneMapView, zoneMapLimits, buildZoneLegend } from './wildZoneMap.js';   // WILD2: the rings, and the zone's own map
+import { wildInk, paintWildZone, paintWildRemains, paintWildKeyChip, paintWildCrows, paintWildFlames, paintWildLocks, paintWildGiants } from './wild/wildMapInk.js';   // WILD1: the open zone's fog, red line and my remains
+import { WILD_TEXT, wildInside, wildRingAt } from '../systems/wild/wildZone.js';   // WILD1: the zone's words on the map
+import { zoneMapInk, paintWildRings, paintZoneMapStatic, zoneMapView, zoneMapLimits, buildZoneLegend } from './wild/wildZoneMap.js';   // WILD2: the rings, and the zone's own map
 import { paintWaypointFlag, flagBox } from './waypointFlags.js';   // WAYPOINTS: the small flags
+import { mapUiScale } from './map/mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the map's interface at the screen's size
+import { getPref } from '../systems/uiPrefs.js';
 import { retroScreenRect } from '../systems/retroMode.js';   // DISC25-B: DFU's CustomScreenRect, the pillarbox's screen
+import { TRAVEL_VIEW_BUTTON } from '../scenes/travelView.js';   // TV1: the Overworld door's words (ETHER-OW: one home with the Eltheric chart's)
 
 export const HELD_MAP_URL = new URL('art/held-map.png', APP_ROOT ?? globalThis.document?.baseURI ?? 'https://invalid.invalid/').href;
 /** Its own pixels, and the stage's aspect. */
@@ -464,7 +469,7 @@ const CLOSE_S = 0.36;    // ...and lowers on a commit or a close, a touch quicke
 // SOC6: how often the window ASKS the host for its party, in seconds -
 // well under the eye's patience and well over the pose rate the hub
 // relays at (net/wire.js PARTY_SEND_MS). The classic window polls at
-// its own half second (ui/travelMapWindow.js PARTY_POLL_S); this sheet
+// its own half second (ui/travel/travelMapWindow.js PARTY_POLL_S); this sheet
 // repaints cheaply, so it asks twice as often.
 const PARTY_POLL_S = 0.25;
 /** The foot's line while a sheet with no keys of its own is up. DISC25-A: a sheet that has keys says them instead
@@ -472,13 +477,14 @@ const PARTY_POLL_S = 0.25;
 export const MAP_HINT = 'drag to pan · scroll to zoom · Esc to close';
 /** WILD2: the foot's line on the zone map. */
 export const ZONE_MAP_HINT = 'drag to pan · scroll to zoom · Esc for the world map';
-/** TV1: the foot row's door into the travel view (scenes/travelView.js), and its key on the sheet: O. */
-export const TRAVEL_VIEW_BUTTON = 'Overworld (O)';
+/** TV1: the foot row's door into the travel view, and its key on the sheet: O - the view's own words (scenes/travelView.js
+ *  TRAVEL_VIEW_BUTTON, one home since ETHER-OW: the Eltheric Ocean's chart wears the same door). */
+export { TRAVEL_VIEW_BUTTON };
 /** The scale a search or a journal click-through zooms to. */
 const FOCUS_SCALE = 6;
 /** How often the breathing rings repaint the sheet while one is up. */
 const PULSE_HZ = 10;
-/** FINDME: the red cross's half-beats a second - on, off, twice a second (a named rate: test/heldmap.test.js U61 keeps
+/** FINDME: the red cross's half-beats a second - on, off, twice a second (a named rate: test/ui/heldmap.test.js U61 keeps
  *  travel-law fragments such as `* 4)` out of this window's code). */
 const FINDME_BLINK_HZ = 4;
 const HANDS_LOST_TICKS = 45;   // AUDIT-MAP2: ticks without corners before the hands lane gives the sheet back to the sprite
@@ -511,7 +517,7 @@ const el = (t, cls, txt) => {
 const _chainCache = new WeakMap();
 
 export class HeldMapWindow {
-  /** deps: the classic map's own bag (ui/travelMapDoor.js lists it)
+  /** deps: the classic map's own bag (ui/travel/travelMapDoor.js lists it)
    *  plus `woods` (only heightMapBuffer is read), `roads()` (the
    *  network, inked only when it is the mod's), and optional `mapSize`
    *  {width, height} so a pin can stand up a small synthetic bay.
@@ -561,7 +567,7 @@ export class HeldMapWindow {
     this._inks = null;     // MAP-KEY: each kind's ink once a palette answers (_markInks)
     this._keySig = '';     // MAP-KEY: what the key last said, so it is rebuilt only when that changes
     // WILD2: THE ZONE MAP - the world sheet held to the Wrothgarian Mountains, its rings filled and its legend beside it
-    // (ui/wildZoneMap.js); `_zoneLegend` the legend's element while it stands, `_zoneRing` the ring it was built for
+    // (ui/wild/wildZoneMap.js); `_zoneLegend` the legend's element while it stands, `_zoneRing` the ring it was built for
     this._zoneMap = false; this._zoneLegend = null; this._zoneRing = -1;
     this.teleportationTravel = false;    // one-shot, cleared on close
     // IT1: IMMERSIVE TRAVEL. `_it` is a driver's or a captain's map - `{ kind, settings }` (the mod's CarriageMap built
@@ -570,6 +576,8 @@ export class HeldMapWindow {
     this._it = deps.immersive ?? null;
     this._itRefusal = null;
     this._gotoPlace = null;              // one-shot, consumed on first tick
+    this._openedOnPlace = false;         // FIND-FIRST: this open was a journal's place - the map is not on me
+    this._findMeFirst = false;           // FIND-FIRST: one-shot, the host's word (openOnMe)
     this._ticked = false;
 
     this._size = deps.mapSize ?? { width: MAP_WIDTH, height: MAP_HEIGHT };
@@ -581,7 +589,7 @@ export class HeldMapWindow {
     // the WINDOW; what is inked on the sheet is a TAB. `where` is the
     // host's own flags (isPlayerInsideDungeon, isPlayerInside, whether
     // the pixel carries a location) - DERIVED into a context by
-    // systems/mapTabs.js, never declared by a host.
+    // systems/map/mapTabs.js, never declared by a host.
     //
     // `has` is the sheets THIS window was built with, and the slot's
     // offer is the place's offer narrowed by it. Until EM3 and EM4
@@ -648,7 +656,7 @@ export class HeldMapWindow {
     this._staticKey = '';
     this._dirty = true;     // the canvas wants a repaint
     this._layoutKey = '';
-    this._paper = { w: 1, h: 1, dpr: 1 };
+    this._paper = { w: 1, h: 1, dpr: 1, k: 1 };
     this._view = { ox: 0, oy: 0, scale: 1 };
     this._goal = { ox: 0, oy: 0, scale: 1 };
 
@@ -675,6 +683,10 @@ export class HeldMapWindow {
     this._bountiesKey = '';
     this._revenants = [];   // RVN7c: the revenant lairs heard of - the host's `revenants`, read on the same poll
     this._revenantsKey = '';
+    this._lodes = [];   // MINE-PERKS: a Motherlode Sense's day's Motherlodes - the host's `lodes`, read on the same poll
+    this._lodesKey = '';
+    this._pois = [];   // POI-2: the approved POIs' marks - the host's `pois`, read on the same poll
+    this._poisKey = '';
     // EVENT-TIP: the raided towns (the host's `raids`, on the same poll), and the card under the pointer
     this._raids = [];
     this._raidsKey = '';
@@ -754,6 +766,8 @@ export class HeldMapWindow {
 
   /** GotoPlace: pending, consumed on the first tick. */
   gotoPlace(place) { this._gotoPlace = place; }
+  /** FIND-FIRST: the host's word that this open is the player's own map - it opens as a press of Find me. */
+  openOnMe() { this._findMeFirst = true; }
 
   /** GetTravelMapSaveData: a LIVE open panel's toggles win, exactly
    *  as the classic window hands its live popup. */
@@ -793,7 +807,7 @@ export class HeldMapWindow {
     // building's - all of them behind the AutoMap key, and none of
     // them could be closed by the key that opened them (Mac: "You
     // cannot press the M key to stow the map"). The classic twin has
-    // always taken its own binding back (ui/automapWindow.js); so does
+    // always taken its own binding back (ui/automap/automapWindow.js); so does
     // this one now. Both actions, on every sheet, because the tabs mean
     // one window can be entered by either key and the player should not
     // have to remember which.
@@ -886,7 +900,7 @@ export class HeldMapWindow {
       this._ticked = true;
       this._layout();
       this._tryHands();   // MAP3: the Morrowind arm takes the sheet, if it is drawn
-      if (this._gotoPlace) { this._consumeGotoPlace(); this._gotoPlace = null; }
+      if (this._gotoPlace) { this._consumeGotoPlace(); this._gotoPlace = null; this._openedOnPlace = true; }
       // MAP2 (TravelOptionsMapWindow.cs:322-345): opened during a journey,
       // the sheet centres on the player; opened with a destination still
       // pending, the mod asks whether to resume it. Once per open.
@@ -941,7 +955,10 @@ export class HeldMapWindow {
         // the map opens on the zone's own map - the world map one button (World map) away
         if (!this._zoneFirstTried && this._paper?.w > 1 && this._view && this._sheet) {
           this._zoneFirstTried = true;
-          try { if (this.deps.zoneFirst?.() && this._openZoneMap()) this._centerOnMe(); } catch (e) { console.warn('[map] zone map', e?.message ?? e); }
+          try {
+            if (this.deps.zoneFirst?.() && this._openZoneMap()) this._centerOnMe();
+            else if (this._findsMeFirst()) this._findMe();   // FIND-FIRST: the world map opens as Find me
+          } catch (e) { console.warn('[map] zone map', e?.message ?? e); }
         }
         this._setRaise(clamp(this._t / OPEN_S, 0, 1));
         if (this._t >= OPEN_S) { this._phase = 'map'; this._t = 0; this._renderCard(); }
@@ -1149,7 +1166,14 @@ export class HeldMapWindow {
     const vw = ui ? ui.w : (root.clientWidth || W);
     const vh = root.clientHeight || H;
     const dpr = globalThis.devicePixelRatio || 1;
-    const key = `${vw}x${vh}@${dpr}|${inset}|${this._lane}`;   // HOLD-CLOSE: the two lanes size the sheet differently
+    // FIELD BUGS 2026-10-09e MAP-SCALE ("icons and text too small on high resolutions", a 1440p monitor): THE MAP'S
+    // SCALE (ui/map/mapScale.js). The sheet is inked on a paper of the fitted size over `k` - every name, glyph and line at
+    // the size it was drawn for at 1080p - and laid back up at full device resolution (the backing keeps every device
+    // pixel: dpr x k a paper pixel); the chrome over it is zoomed by the same (`--hm-ui`, enhancedStyle.js). A pointer's
+    // client pixels come back through _paperPoint, over `k`.
+    const k = mapUiScale(vh, getPref('mapScale'));
+    root.style.setProperty?.('--hm-ui', String(k));
+    const key = `${vw}x${vh}@${dpr}|${inset}|${this._lane}|${k}`;   // HOLD-CLOSE: the two lanes size the sheet differently
     if (key === this._layoutKey) return;
     this._layoutKey = key;
     // HOLD-CLOSE: the PAPER is fitted to the screen and the painting follows from it (heldStageRect)
@@ -1161,7 +1185,8 @@ export class HeldMapWindow {
     c.ink.width = Math.max(1, Math.round(pw * dpr));
     c.ink.height = Math.max(1, Math.round(ph * dpr));
     const firstLayout = this._paper.w === 1;
-    this._paper = { w: pw, h: ph, dpr };
+    const was = this._paper;
+    this._paper = { w: pw / k, h: ph / k, dpr: dpr * k, k };
     this._stage = { x: sx, y: sy, w: sw, h: sh };
     if (this._lane === 'hands') {
       // MAP3: the sheet keeps the size the 4:3 fit gives it, but sits at
@@ -1170,7 +1195,9 @@ export class HeldMapWindow {
       // re-asked (a hold repacks the whole arm mesh); the placement is
       // recomputed for the new sheet size on the next tick.
       Object.assign(c.stage.style, { left: '0px', top: '0px', width: '100%', height: '100%' });
-      Object.assign(c.ink.style, { left: '0px', top: '0px' });
+      // MAP-SCALE: the held paper's matrix maps the PAPER's own pixels onto the sheet's corners, so the canvas's box is
+      // the paper's (over k) here - the backing is the device's either way
+      Object.assign(c.ink.style, { left: '0px', top: '0px', width: `${pw / k}px`, height: `${ph / k}px` });
       this._cornersKey = null;
     }
     if (firstLayout) {
@@ -1182,8 +1209,12 @@ export class HeldMapWindow {
       this._view = clampView(home, limits);
       this._goal = { ...this._view };
     } else {
-      this._view = clampView(this._view, this._limits());
-      this._goal = clampView(this._goal, this._limits());
+      // AUDIT FB1010 B1: a paper that changes size keeps the map point at its middle. The view's top-left was kept, so
+      // an open's aim - FIND-FIRST's glide to me, MAP2's journey centring, a journal's place - landed off the middle by
+      // the change when the Morrowind arm took the sheet a tick late or gave it back unfitted (MAP-FIT1)
+      const keep = (v) => ({ ...v, ox: v.ox + (was.w - this._paper.w) / (2 * v.scale), oy: v.oy + (was.h - this._paper.h) / (2 * v.scale) });
+      this._view = clampView(keep(this._view), this._limits());
+      this._goal = clampView(keep(this._goal), this._limits());
     }
     this._dirty = true;
   }
@@ -1197,7 +1228,7 @@ export class HeldMapWindow {
 
   /**
    * THE WORLD SHEET: the Iliac Bay, behind the contract
-   * (ui/mapStrip.js's SHEET_MEMBERS). Every member here delegates to
+   * (ui/map/mapStrip.js's SHEET_MEMBERS). Every member here delegates to
    * the method that has always done the work, so this is a ROUTE and
    * not a rewrite - the bay's ink, picks, labels and chrome are the
    * same code they were, reached through the seam the automap and town
@@ -1237,7 +1268,7 @@ export class HeldMapWindow {
         // and they are what makes the sheet readable zoomed out.
         //
         // `placeNames` itself is NOT deleted - it is inkMap's law and
-        // its own pin stands (test/heldmap.test.js): what went is this
+        // its own pin stands (test/ui/heldmap.test.js): what went is this
         // sheet's use of it, and the measure cache it needed.
         paintInkStatic(ctx, env.model, env.view, {
           paperW: env.paperW, paperH: env.paperH, dpr: env.dpr, band: env.band,
@@ -1253,7 +1284,7 @@ export class HeldMapWindow {
           markColor: rgbaCss(this._to?.settings?.markLocationColor),
           inks: this._markInks(),   // MAP-KEY: each kind in its classic dot's hue, or the pen with no palette
           // WILD1 (the owner: "the high risk area is marked with a highquality fog of war on the world map and red lines
-          // around it"): the open zone's fog and red line, under the marks (ui/wildMapInk.js)
+          // around it"): the open zone's fog and red line, under the marks (ui/wild/wildMapInk.js)
           // WILD2: and its four rings - their lines and bonuses here, filled and named on the zone map
           underMarks: (c) => {
             const ink = this._wildInk();
@@ -1291,6 +1322,8 @@ export class HeldMapWindow {
           sd: this._sd,   // SD2c
           bounties: this._bounties,   // BOUNTY1
           revenants: this._revenants,   // RVN7c
+          lodes: this._lodes,   // MINE-PERKS
+          pois: this._pois,   // POI-2
           raids: this._raids,   // EVENT-TIP: the towns under attack
           quests: this._quests,   // GUIDE5: where the quests point
           vendor: this._vendor,   // HOME-VENDOR: the trader's waypoint
@@ -1309,7 +1342,7 @@ export class HeldMapWindow {
           ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(env.paperW, fy); ctx.moveTo(fx, 0); ctx.lineTo(fx, env.paperH); ctx.stroke();
           ctx.restore();
         }
-        // WILD1: my remains in the open zone, where they lie and for how long (net/wildRemains.js, the host's word)
+        // WILD1: my remains in the open zone, where they lie and for how long (net/wild/wildRemains.js, the host's word)
         const remains = this.deps.wildRemains?.() ?? [];
         if (remains.length) paintWildRemains(ctx, env.view, remains, { pulse: env.pulse, label: WILD_TEXT.mine });
         // PVPDUNGEONS: crows circling every hall a body lies in (the hub's word - everyone's deaths), over the hall's own mark;
@@ -1394,6 +1427,7 @@ export class HeldMapWindow {
     leaving?.unmount?.();
     this._sheets.get(id)?.mount?.();
     this._writeHint();           // DISC25-A: the foot says the new sheet's keys
+    if (this._chrome?.root?.dataset) this._chrome.root.dataset.hmSheet = this._slot.live ?? id;   // FINDME-SHEET: which sheet is up, for the dress
     this._layoutKey = '';        // the new sheet's own coordinate space
     this._staticKey = '';
     this._layout();
@@ -1556,13 +1590,13 @@ export class HeldMapWindow {
    *  `ensure` (EM1) rather than called by the window directly - the
    *  world map's own picks and labels go on calling it, because they
    *  ARE the world sheet. */
-  /** WILD1: the open zone's ink - the fog's canvas and the edge's chains, built once a map (ui/wildMapInk.js) - or null
+  /** WILD1: the open zone's ink - the fog's canvas and the edge's chains, built once a map (ui/wild/wildMapInk.js) - or null
    *  before the host hands the zone's mask (no maps yet, or offline: the zone is online's alone). */
   _wildInk() {
     const mask = this.deps.wildMask?.() ?? null;
     return mask ? wildInk(mask) : null;
   }
-  /** WILD2: the rings' ink (ui/wildZoneMap.js), built once a map - or null offline. */
+  /** WILD2: the rings' ink (ui/wild/wildZoneMap.js), built once a map - or null offline. */
   _zoneInk() {
     const mask = this.deps.wildMask?.() ?? null;
     return mask ? zoneMapInk(mask) : null;
@@ -1650,6 +1684,14 @@ export class HeldMapWindow {
     if (!h || !mask || !this._view) return false;
     const [mx, my] = toMap(this._view, h.sx, h.sy);
     return wildInside(mask, mx, my);
+  }
+  /** FIND-FIRST (FIELD BUGS 2026-10-10, the Discord: "make 'Find me' the standard functionality on the world map when
+   *  I first open it"): the player's own world map opens as a press of Find me - unless the open was for somewhere
+   *  else: a journal's place, a journey Travel Options centres (MAP2) or asks to resume, a teleport's pick, a driver's
+   *  map. The host says which opens are the player's own (`openOnMe`). */
+  _findsMeFirst() {
+    return this._findMeFirst && !this._zoneMap && !this._openedOnPlace
+      && !this.teleportationTravel && !this._it && !this._to?.isTravelActive && this._top !== 'resume';
   }
   /** FINDME: glide to my pixel and blink a red cross over it for three seconds. */
   _findMe() {
@@ -1935,7 +1977,8 @@ export class HeldMapWindow {
       return p && this._onSheet(p) ? p : OFF_SHEET;
     }
     const r = this._chrome.ink.getBoundingClientRect?.() ?? { left: 0, top: 0 };
-    return [clientX - r.left, clientY - r.top];
+    const k = this._paper.k || 1;   // MAP-SCALE: a client pixel is 1/k of a paper pixel
+    return [(clientX - r.left) / k, (clientY - r.top) / k];
   }
 
   // ── SOC6: THE PARTY ON THE MAP ─────────────────────────────────
@@ -1971,6 +2014,14 @@ export class HeldMapWindow {
     const lairs = readBountyMarks(this.deps.revenants, this._size, REVENANT_LEGEND_TEXT);
     const lKey = bountyMarksKey(lairs);
     if (lKey !== this._revenantsKey) { this._revenantsKey = lKey; this._revenants = lairs; gateMoved = true; this._dirty = true; }
+    // MINE-PERKS: and a Motherlode Sense's Motherlodes - one rising, spent or gone, or the day's find made, with the map open
+    const lodes = readBountyMarks(this.deps.lodes, this._size, LODE_LEGEND_TEXT);
+    const mKey = bountyMarksKey(lodes);
+    if (mKey !== this._lodesKey) { this._lodesKey = mKey; this._lodes = lodes; gateMoved = true; this._dirty = true; }
+    // POI-2: and the approved POIs - one approved, moved or retired with the map open
+    const pois = readBountyMarks(this.deps.pois, this._size, poiLegendText(), POI_MARKS_MAX);   // AUDIT POI R7: every marked POI, past the bounty's eight
+    const pKey = bountyMarksKey(pois);
+    if (pKey !== this._poisKey) { this._poisKey = pKey; this._pois = pois; gateMoved = true; this._dirty = true; }
     // EVENT-TIP: the raided towns ride the same poll (a raid begins, withdraws or is cleansed while the map stands
     // open), and the card under a still pointer follows the marks - a countdown's second, a town cleansed under it
     const raids = readRaidMarks(this.deps.raids, this._size);
@@ -2020,7 +2071,7 @@ export class HeldMapWindow {
     if (!leg) return;
     leg.innerHTML = '';
     const trav = this._trav.filter((t) => playerShown(t));   // OW-WHO: the legend speaks for the players the sheet draws
-    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._vendor) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
+    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._pois.length && !this._vendor && !this._lodes.length) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
     if (this._party.length) {
       const dot = el('span', 'hmlegdot');
       dot.style.background = this._party.some((m) => m.online) ? PARTY_MARK_CSS : PARTY_OFFLINE_CSS;
@@ -2063,6 +2114,16 @@ export class HeldMapWindow {
       dot.style.background = REVENANT_RING_CSS;
       dot.style.boxShadow = `0 0 0 1px ${BOUNTY_LEGEND_RIM_CSS}`;
       leg.append(dot, el('span', 'hmlegtext', REVENANT_LEGEND_TEXT));
+    }
+    if (this._lodes.length) {   // MINE-PERKS: and a Motherlode's teal circle
+      const dot = el('span', 'hmlegdot');
+      dot.style.background = LODE_RING_CSS;
+      leg.append(dot, el('span', 'hmlegtext', lodeLegendText()));
+    }
+    if (this._pois.length) {   // POI-2: and a POI's violet circle
+      const dot = el('span', 'hmlegdot');
+      dot.style.background = POI_RING_CSS;
+      leg.append(dot, el('span', 'hmlegtext', poiLegendText()));
     }
     if (this._raids.length) {   // EVENT-TIP: and a raided town
       const dot = el('span', 'hmlegdot');
@@ -2162,7 +2223,7 @@ export class HeldMapWindow {
     }
     // OW-WHO (FIELD BUGS 2026-10-04e, "More filters for players in general ... both in Overworld map and travel map"):
     // THE PLAYERS' ROW - while the region's travellers are drawn: friends, guild, the rest, and the least Renown, the
-    // Overworld's own switches (systems/travelViewFilters.js - one store, so both maps answer alike)
+    // Overworld's own switches (systems/travel/travelViewFilters.js - one store, so both maps answer alike)
     if (this._trav.length) {
       const row = el('div', 'hmkeyrow');
       row.append(el('span', 'hmkeywho', TV_WHO_TEXT.title));   // never .hmkeyname: a phone hides those, and the grid would shift
@@ -2182,7 +2243,7 @@ export class HeldMapWindow {
       box.append(row);
     }
     // WAYPOINTS (2026-10-06, the player: "Add Waypoints to the filter on the worldmap"): THE WAYPOINTS' ROW - a switch per
-    // kind, the Overworld's own (systems/mapWaypoints.js - one store, so both maps answer alike), each with how many
+    // kind, the Overworld's own (systems/map/mapWaypoints.js - one store, so both maps answer alike), each with how many
     {
       const row = el('div', 'hmkeyrow');
       const head = el('span', 'hmkeywho', WAYPOINT_TEXT.title);
@@ -2418,8 +2479,10 @@ export class HeldMapWindow {
     }
     const r = box.getBoundingClientRect?.() ?? { width: 0, height: 0 };
     const at = placeTip(cx, cy, r.width, r.height, globalThis.innerWidth ?? 0, globalThis.innerHeight ?? 0);
-    box.style.left = `${at.left}px`;
-    box.style.top = `${at.top}px`;
+    // MAP-SCALE: the card is zoomed with the chrome, and a zoomed box's offsets are its own pixels - k of the screen's
+    const k = this._paper?.k || 1;
+    box.style.left = `${at.left / k}px`;
+    box.style.top = `${at.top / k}px`;
   }
 
   /** WB13c (2026-10-01, Mac: "AAA grade polish"): A FINGER HAS NO HOVER, so a phone never saw the breach's card (nor a
@@ -2561,7 +2624,7 @@ export class HeldMapWindow {
   }
 
   /** TO1 (:374-464), DisplayLocationInfo - the I key over a selected
-   *  place. The rows are ui/travelMapOptions.js's; this holds the box. */
+   *  place. The rows are ui/travel/travelMapOptions.js's; this holds the box. */
   _displayLocationInfo() {
     if (!this._selected || this._selected.coords || this._info) return;
     const summary = this._selected.summary;
@@ -2640,7 +2703,7 @@ export class HeldMapWindow {
     // info on the panel it stays display:none and the ROOT keeps
     // `hmmodal` on its own: the words moved, the modality did not, and
     // an empty .hmbox would paint a bordered blank over the bay
-    // (ui/enhancedStyle.js:"display: none; position: absolute; left" - the frame is the box's, not its
+    // (ui/enhanced/enhancedStyle.js:"display: none; position: absolute; left" - the frame is the box's, not its
     // children's).
     const open = modal && !(this._info && onPanel);
     box.classList.toggle('open', open);
@@ -2882,7 +2945,7 @@ export class HeldMapWindow {
     // BETWEEN CalculateTravelTime and CalculateTripCost exactly as DFU
     // orders them, so the Temple of Akatosh's blessing shortens the
     // fare and the days as well as the journey. The classic popup
-    // folds it at ui/travelPopUp.js; this is the same fold on the same
+    // folds it at ui/travel/travelPopUp.js; this is the same fold on the same
     // deps, and everything the card bills or commits reads the blessed
     // minutes.
     const minutes = guildFastTravel(this.deps.playerEntity?.() ?? null, time.minutes);
@@ -2892,7 +2955,7 @@ export class HeldMapWindow {
     //
     // TRAVEL-FARE (2026-09-22, kurkku): the FARE is billed online now -
     // the inn's gold is the price of the journey, not rent on elapsed
-    // time, and the popup's own reasoning is at ui/travelPopUp.js. The
+    // time, and the popup's own reasoning is at ui/travel/travelPopUp.js. The
     // two surfaces bill the SAME trip, so this clause has to move with
     // it or the enhanced map quotes one price and the classic popup
     // another for one ride.
@@ -2913,7 +2976,7 @@ export class HeldMapWindow {
     // drives it - has no fare and its own estimate: the classic one
     // asked with the two settings the mod has taken over inverted, then
     // divided by TWICE the speed multiplier, truncated. Verbatim what
-    // ui/travelPopUp.js computes for its own labels.
+    // ui/travel/travelPopUp.js computes for its own labels.
     const s = st.to?.settings;
     if (s && (sel.coords || isPlayerControlledTravel(s, st.opts))) {
       const w = calculateTravelTime(this.deps.getPlayerPixel(), dest, {
@@ -3133,6 +3196,10 @@ export class HeldMapWindow {
     injectEnhancedFonts();
     const root = el('div', 'hmroot');
     root.id = 'enhanced-travelmap';
+    // FINDME-SHEET (2026-10-11, Mac: "the worldmap is also missing the find me button next to close"): the root says
+    // which sheet is up, so a dress can drop a press on one sheet and keep it on another (ui/grimoireDress.js: Find me
+    // goes on the dungeon's sheet alone, as it was asked to)
+    root.dataset.hmSheet = this._slot?.live ?? '';
     // MAP-FIELD7: the sheet starts DOWN (on the stage, below) and the
     // chrome starts clear - each child is given its 0 as it is appended,
     // by the _setRaise(0) at the end of the mount. The root itself never
@@ -3651,9 +3718,13 @@ export class HeldMapWindow {
     // region-under-cursor law; the sea answers nothing
     const politic = this.deps.maps?.getPoliticIndex?.(px, py) ?? -1;
     const region = politic - 128;
+    // ORE-MAP (ui/oreMapTip.js): bare ground answers with its ore card where the host has one - online, the professions
+    // open (deps.oreAt) - and the card is asked again when the ground's witnessed state arrives
+    const ore = readTip(this.deps.oreAt?.(px, py, () => this._refreshTip()) ?? null);
     return {
       label: (region >= 0 && region < (this.deps.maps?.regionCount ?? 0)) ? (REGION_NAMES[region] ?? '') : '',
       cursor: '',
+      ...(ore ? { tip: ore } : {}),
     };
   }
 
@@ -3737,7 +3808,7 @@ export class HeldMapWindow {
     //   - the ship refusal (_toggleOpt below) is one of
     //     TravelOptionsPopUp.cs:168-180's three message boxes, which the
     //     classic twin still draws as a buttonless parchment
-    //     (ui/travelPopUp.js:"if (this.top === 'itPush' || this.top === 'itBox') return", `this.top` with no MB_BUTTONS)
+    //     (ui/travel/travelPopUp.js:"if (this.top === 'itPush' || this.top === 'itBox') return", `this.top` with no MB_BUTTONS)
     //   - "not enough gold" (_confirmDiseased below) is
     //     DaggerfallTravelPopUp.cs:394-406, showNotEnoughGoldPopup,
     //     `messageBox.ClickAnywhereToClose = true` over TEXT.RSC 454
@@ -3763,7 +3834,7 @@ export class HeldMapWindow {
     // (The `!onPanel` arms of this window - the info block drawn into
     // .hmbox, the card's own hmnotice/hmprompt lines - are its
     // classic-skin fork and unreachable in the shipping game:
-    // ui/travelMapDoor.js mounts it only under the enhanced skin with a
+    // ui/travel/travelMapDoor.js mounts it only under the enhanced skin with a
     // document. Kept so the fork is one place, unit-testable on both
     // skins. AUDIT ENH-NOTICE3 B19.)
     // No hint (AUDIT ENH-NOTICE3 B4): the card's refusals clear on the

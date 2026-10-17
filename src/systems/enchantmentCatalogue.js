@@ -10,7 +10,7 @@
 // spell maker has to supply.
 //
 // THE SIGN IS THE MECHANIC, and M3's own header described it
-// backwards - corrected there and pinned in test/enchanting.test.js.
+// backwards - corrected there and pinned in test/systems/enchanting.test.js.
 // A POWER costs POSITIVE points. A SIDE EFFECT costs NEGATIVE points,
 // so adding one to the total REDUCES it: taking a drawback BUYS you
 // budget. That is the whole trade the item maker offers, and it is
@@ -49,8 +49,10 @@
 // filter.
 
 import { SKILL_COUNT, SKILL_NAMES } from './skills.js';
-import { MOBILE_TYPES } from '../characters/mobileTypes.js';
-import { ENEMY_NAMES } from '../characters/enemyBasics.js';
+import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
+import { ENEMY_NAMES } from '../characters/enemy/enemyBasics.js';
+import { localizedStrings } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { getLocalizedSpellName, getLocalizedEnemyName } from './textManager.js';   // L10N3e: a spell's and a soul's name, by their own ids
 
 /** The ClassicParam a SINGLE-cost effect mints (AbsorbsSpells:45 and
  *  its five siblings all write `ClassicParam = -1`). It is a real
@@ -81,7 +83,11 @@ export const ENCHANTMENT_COSTS = Object.freeze({
   LowDamageVs: { costs: [-800, -900, -1000, -1200], labels: ['Undead', 'Daedra', 'Humanoid', 'Animals'] },
   PotentVs: { costs: [800, 900, 1000, 1200], labels: ['Undead', 'Daedra', 'Humanoid', 'Animals'] },
   RegensHealth: { costs: [4000, 3000, 3000], labels: ['all the time', 'in sunlight', 'in darkness'] },
-  SoulBound: { costs: [0, -10, -20, 0, 0, 0, 0, -10, -30, -90, -100, 0, -10, -30, -140, 0, -30, 0, -300, -100, 0, -30, -30, -300, -10, -500, -500, -100, -700, -1500, -1000, -8000, -1000, -2500, 0, -300, -300, -300, -300, 0, -5000, -100, -100] },
+  // DRAGON-SOUL (FIELD BUGS 2026-10-11, the owner: "Fuck matching DFU."): the Dragonling every encounter spawns (34)
+  // binds as the quest's (40) does, -5000 - DFU priced it at nothing, a soul the trap took and the picker named
+  // "Dragonling" beside the one worth five thousand. A departure (Port-Ledger A, DRAGON-SOUL); its SoulPts, the gold a
+  // soul adds to a shop's price, stay DFU's
+  SoulBound: { costs: [0, -10, -20, 0, 0, 0, 0, -10, -30, -90, -100, 0, -10, -30, -140, 0, -30, 0, -300, -100, 0, -30, -30, -300, -10, -500, -500, -100, -700, -1500, -1000, -8000, -1000, -2500, -5000, -300, -300, -300, -300, 0, -5000, -100, -100] },
   UserTakesDamage: { costs: [-6000, -1000], labels: ['in sunlight', 'in holy places'] },
   VampiricEffect: { costs: [2000, 1000], labels: ['at range', 'when strikes'] },
 
@@ -179,6 +185,35 @@ export function enchantmentParamValues(type) {
  *  CastWhen* - Levitate, not spell zero. */
 export const defaultParam = (type) => enchantmentParamValues(type)[0];
 
+/** L10N3d: DFU reads both of an enchantment's names through TextManager
+ *  - GroupName is `GetLocalizedText(EffectKey)` (AbsorbsSpells.cs:35 and
+ *  every sibling) and each setting's SecondaryDisplayName
+ *  `GetLocalizedText(classicTextKeys[i])` (BadRepWith.cs:60 and every
+ *  sibling with a param list). These are the rows whose English the port
+ *  holds as DFU's table has it; the other names and labels are spelled
+ *  their own way here ("Absorbs Spells" for DFU's "Absorbs spells",
+ *  "During Winter" for "during Winter") and stay as they are. */
+const ENCHANTMENT_TEXT = localizedStrings({
+  FeatherWeight: 'Feather Weight', IncreasedWeightAllowance: 'Increased Weight Allowance',
+  commoners: 'Commoners', merchants: 'Merchants', scholars: 'Scholars', nobility: 'Nobility', underworld: 'Underworld', all: 'All',
+  add25Percent: '25% additional', add50Percent: '50% additional',
+  allTheTime: 'all the time', inSunlight: 'in sunlight', inHolyPlaces: 'in holy places', inDarknessLower: 'in darkness',
+  undead: 'Undead', daedra: 'Daedra', humanoid: 'Humanoid', animalsUpper: 'Animals',
+  atRange: 'at range', whenStrikes: 'when strikes',
+});
+/** Those effects' classicTextKeys, in ClassicParam order. */
+const REP_KEYS = ['commoners', 'merchants', 'scholars', 'nobility', 'underworld', 'all'];   // BadRepWith.cs / GoodRepWith.cs
+const VS_KEYS = ['undead', 'daedra', 'humanoid', 'animalsUpper'];                         // LowDamageVs.cs / PotentVs.cs
+const LABEL_KEYS = Object.freeze({
+  BadRepWith: REP_KEYS, GoodRepWith: REP_KEYS,
+  IncreasedWeightAllowance: ['add25Percent', 'add50Percent'],
+  ItemDeteriorates: ['allTheTime', 'inSunlight', 'inHolyPlaces'],
+  LowDamageVs: VS_KEYS, PotentVs: VS_KEYS,
+  RegensHealth: ['allTheTime', 'inSunlight', 'inDarknessLower'],
+  UserTakesDamage: ['inSunlight', 'inHolyPlaces'],
+  VampiricEffect: ['atRange', 'whenStrikes'],
+});
+
 /** The parameter labels DFU comments each cost with. A single-cost
  *  effect has none, and EnhancesSkill's are the skill names, which
  *  skills.js already owns - so it has none here either. */
@@ -189,14 +224,20 @@ export const defaultParam = (type) => enchantmentParamValues(type)[0];
  *  from there rather than copied. (DFU's own trailing comments beside
  *  the SoulBound costs are creature names too, but they are code
  *  comments carrying spawn notes, not what the window prints: two of
- *  them read "Dragonling", and so do the two rows the picker shows.) */
+ *  them read "Dragonling", and so do the two rows the picker shows.)
+ *  L10N3e: a soul's and a spell's name as DFU words them, in the
+ *  player's language - GetLocalizedEnemyName(Enemies[i].ID) (SoulBound
+ *  .cs:64) and GetLocalizedSpellName(id) (CastWhenUsed.cs:67, and
+ *  CastWhenHeld/CastWhenStrikes :67 alike), read here when a list is
+ *  asked for, so the picker's alpha sort orders them as it shows them,
+ *  as DFU's does. */
 export const enchantmentParams = (type) => {
   const row = ENCHANTMENT_COSTS[type];
   if (!row) return [];
   if (type === 'EnhancesSkill') return SKILL_NAMES;
-  if (type === 'SoulBound') return SOUL_NAMES;
-  if (row.labels) return row.labels;
-  if (row.spells) return row.spells.map(([, , name]) => name);
+  if (type === 'SoulBound') return SOUL_NAMES.map((name, id) => getLocalizedEnemyName(id, name));
+  if (row.labels) return LABEL_KEYS[type]?.map((key) => ENCHANTMENT_TEXT[key]) ?? row.labels;
+  if (row.spells) return row.spells.map(([id, , name]) => getLocalizedSpellName(id, name));
   return [];
 };
 export const enchantmentTypes = () => Object.keys(ENCHANTMENT_COSTS);
@@ -559,5 +600,7 @@ export function primaryPick(type, { powers = [], sideEffects = [], selectingPowe
  *  EffectKey IS the enum name; its English strings are that name with
  *  a space before each interior capital, which is the same derivation
  *  U10 made for the skill names. Derived rather than listed, so a
- *  name can never drift from the key it belongs to. */
-export const enchantmentName = (type) => type.replace(/([a-z])([A-Z])/g, '$1 $2');
+ *  name can never drift from the key it belongs to. L10N3d: a name
+ *  whose English is DFU's own reads its TextManager row (above). */
+export const enchantmentName = (type) =>
+  (Object.hasOwn(ENCHANTMENT_TEXT, type) ? ENCHANTMENT_TEXT[type] : type.replace(/([a-z])([A-Z])/g, '$1 $2'));

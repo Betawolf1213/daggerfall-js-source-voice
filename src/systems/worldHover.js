@@ -23,11 +23,16 @@
 // gate - the ENH-NOTICE3 idiom in as many words ("the model decides
 // WHICH MODEL, the draw decides WHICH FACE"), and the reason AUDIT 39's
 // skin gate can stay above ensure() where it belongs.
-import { rarityAttr } from '../systems/lootRarity.js';   // LR1: a pile's rows wear their tier
-import { itemNameParts } from '../systems/itemInfo.js';   // RF6: ResolveItemLongName's name part (LR1: an unidentified item reads as its template on the plaque too)
+import { rarityAttr } from './loot/lootRarity.js';   // LR1: a pile's rows wear their tier
+import { isPersonalLoot } from './roomLoot.js';   // PARTY-LOOT: a row that is this player's own (their bonus), told apart from the room's base
+import { itemNameParts } from './item/itemInfo.js';   // RF6: ResolveItemLongName's name part (LR1: an unidentified item reads as its template on the plaque too)
 
-/** How many lines before the plaque says "and N more" instead. A pile
- *  is a glance, not a list to read; DFU's own loot windows scroll. */
+/** How many rows the plaque shows at once. FIELD BUGS 2026-10-11g LOOT-SCROLL ("Can't scroll loot pile / corpse": "I
+ *  can't scroll the item list with mouse wheel ... I can still take items from list one by one to get to the bottom of
+ *  it"): this was a ceiling - "a pile is a glance, not a list to read" - and the rows past it were a count the wheel
+ *  could not reach, while an elite's grant (BAL4) and LOOT-EASE put a body's best pieces past it. It is a WINDOW now:
+ *  the frame carries every row, the wheel walks them all, and the plaque shows HOVER_MAX of them about the lit one
+ *  (plaqueWindow), as DFU's own loot windows scroll. */
 export const HOVER_MAX = 6;
 
 /**
@@ -64,10 +69,10 @@ export const keyItemises = (key) => typeof key === 'string' && ITEMISED_KEYS.som
  */
 export const hoverItems = (items) => (items ?? []).filter(Boolean);
 
-/** WHICH item a visible row is, or null past the end. `row` is an
- *  index into what is DRAWN, so it is bounded by `max` and not by the
- *  pile's length - row 6 of a nine-item pile is the "and 3 more" tail,
- *  which names nothing and takes nothing. */
+/** WHICH item a row is, or null past the end. `row` is an index into
+ *  the rows, bounded by `max` as well as the pile's length - the take
+ *  passes Infinity (LOOT-SCROLL: the frame carries every row, and the
+ *  plaque's window is only what is drawn of them). */
 export function hoverItemAt(items, row, max = HOVER_MAX) {
   if (!Number.isInteger(row) || row < 0 || row >= max) return null;
   return hoverItems(items)[row] ?? null;
@@ -90,6 +95,7 @@ export function hoverLines(items, max = HOVER_MAX) {
     name: itemNameParts(it).name || 'Something',   // RF6: the long name's name part - a potion its %po, a soul trap its soul; LR1: unidentified is the bare template (the resolver already answers a template-less item its own name)
     stack: (it.stackCount ?? 1) > 1 ? it.stackCount : 0,
     rarity: rarityAttr(it),   // LR1: null with the switch off or for Common
+    mine: isPersonalLoot(it),   // PARTY-LOOT: this player's own bonus - every other row is the same for everyone in the room
     item: it,
   }));
   const shown = rows.slice(0, max);
@@ -240,7 +246,9 @@ export function resolveHover(hit, { name = null, contents = null } = {}) {
     // and what makes a family a host stands but cannot name VISIBLE
     // rather than papered over.
     if (!named?.title) return null;
-    const { shown, rest, empty } = hoverLines(contents?.(key) ?? null);
+    // LOOT-SCROLL: EVERY row - the selection and the take index the whole pile; the plaque draws HOVER_MAX of them at a
+    // time (plaqueWindow), so the wheel reaches what the "and N more" tail used to hide
+    const { shown, rest, empty } = hoverLines(contents?.(key) ?? null, Infinity);
     return frame(key, 'items', named.title, named.subs ?? [], shown, rest, empty);
   }
   const named = name?.(key, hit) ?? null;
@@ -349,8 +357,21 @@ export function selectedRow(sel, frame) {
   return sel.row >= 0 && sel.row < rows ? sel.row : -1;
 }
 
+/** LOOT-SCROLL: THE ROWS THE PLAQUE DRAWS - HOVER_MAX of an itemised frame's rows, the window that keeps the lit row
+ *  `lit` (an index into the WHOLE frame) in view. `from` is the last window's top over the same key, so a notch inside
+ *  the window moves the light and not the list, and a notch past its edge moves the list one row. `above` and `rest`
+ *  count what the window leaves out on each side. Pure. Answers the drawn frame and its top. */
+export function plaqueWindow(f, lit = -1, from = 0, max = HOVER_MAX) {
+  const n = f?.rows?.length ?? 0;
+  if (!f || f.kind !== 'items' || n <= max) return { frame: f, from: 0 };
+  let top = Math.max(0, Math.min(Number.isInteger(from) ? from : 0, n - max));
+  if (lit >= 0 && lit < top) top = lit;
+  else if (lit >= top + max) top = lit - max + 1;
+  return { frame: { ...f, rows: f.rows.slice(top, top + max), above: top, rest: n - top - max + (f.rest ?? 0) }, from: top };
+}
+
 export function frameSignature(f) {
   if (!f) return null;
-  const rows = f.rows.map((r) => `${r.name}\u0002${r.stack}\u0002${r.rarity ?? ''}`).join('\u001f');
+  const rows = f.rows.map((r) => `${r.name}\u0002${r.stack}\u0002${r.rarity ?? ''}${r.mine ? '\u0002m' : ''}`).join('\u001f');   // PARTY-LOOT: a row's owner is painted, so it is signed
   return `${f.key}|${f.kind}|${f.renown ?? ''}|${f.title}|${f.subs.join('\u001f')}|${rows}|${f.rest}|${f.empty ? 'e' : ''}${f.tone ? `|${f.tone}` : ''}`;   // RENOWN1: the boxed Renown is painted, so it is signed; UXB1-N: a tone that changes repaints
 }

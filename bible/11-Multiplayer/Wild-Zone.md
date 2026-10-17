@@ -62,7 +62,7 @@ of it?", then WILD-KEEPOUT2: "can you move the exact borders to right so wrothga
 found on that ground (`wildZone.js:"you move the exact"`) - never a notch; the east, the top and the south stay as
 cut. Every place on what is left - its streets, its buildings, its dungeons - is the zone's. NEAR it is within
 `WILD_NEAR_PX` (6) map pixels of that edge. ONLINE ALONE: offline the mountains are Daggerfall's own (the death
-penalty's law). The law is `src/systems/wildZone.js` (a leaf: the region test, the mask and its edge, the numbers, the
+penalty's law). The law is `src/systems/wild/wildZone.js` (a leaf: the region test, the mask and its edge, the numbers, the
 live flag the pools read at a spawn, and the death screen's state); the world host sets the flag each frame
 (`wildFrame`, `world.js:"const wildFrame ="`) from the region under the player AND the ring of the pixel under them
 (`world.js:"const here = _onlineWorldSession"` - region 16 outside the cut is not the zone), and says the crossing. A
@@ -99,16 +99,25 @@ ordinary dungeon.
 
 ## 3. The fights
 
-Two players standing in the zone may strike each other - never a member of my party, never my duel's opponent - in the
+Two players standing in the zone may strike each other - never KIN: a member of my party or one under its truce, my
+duel's opponent, or - MAC'S DECISION (2026-10-14, "Guildmates are friends") - a member of my guild - in the
 open country and, since PVPDUNGEON (2026-10-08, the owner: "players should be able to attack each other in dungeons
-too in the pvp zone"), in its dungeons (`wildCan`, `world.js:"const wildCan = ()"`). The frames are the duel's own
-(`strike`, `spell`, `result` on the `wild` frame) and THE DEFENDER RESOLVES EVERY BLOW on its own sheet
-(`src/net/wildFight.js`); there is no floor - a blow can kill. Outdoors the melee arm, the arrows and the cast
+too in the pvp zone"), in its dungeons (`wildCan`, `world.js:"const wildCan = ()"`). THE RELAY REFEREES EVERY BLOW
+(INT9, 2026-10-09, `06-Systems/Integrity-Arc.md` section 5; `src/net/wild/wildRef.js`): my own cell's socket says I stand in
+the zone (`zone` - its audit: never a halo's, again at each crossing and every `WILD_ZONE_KEEP_MS`) and a blow lands only
+where both fighters said so in the same cell, at the Royal Tourney's vitality (never the save's health; the bar kept at
+the hub as I cross, whole again only unstruck and in the zone `WILD_REF.mendMs`, or away `WILD_REF.riseMs`), every strike and spell a number the striker's own sheet rolled, judged on the weapon its look holds and the
+arms its token signs, the reach from the places the relay believes; the referee's word (`wref`) says what landed, and
+a fall. There is no floor - a blow can kill. Kin is one law at both ends (`wildRef.js:"export function wildKin"`): the
+referee asks it of every blow and cast, a duel's two and one guild read off the two sockets' verified guilds, the party
+and its truce asked of the hub only when neither is (`server/src/index.js:"const kin = wildKin({ duel: duelKin, guilds: [a.gi, tb.gi] })"`),
+and every client door asks it of its targets, a guild by the tags the relay stamps - a tag is one guild's alone
+(`world.js:"if (wildKin({ party: !!social?.isPartyPeer(peerId)"`). Outdoors the melee arm, the arrows and the cast
 engine's marks reach fair players through the duel's own arms (each falls through to the zone when no duel or battle
 stands). Underground the dungeon's own swing takes a fair player in reach, in view and in sight before any foe
 (`dungeonContext.js:"function resolvePlayerHit"` resolvePlayerHit, over the host's `wildBodies`/`wildStrike`), and its
 cast engine's marks are the fair players (`wildSpellMarks`/`wildSpellOut`); no arrow is aimed at a player there. The
-last fair attacker whose blow landed within `WILD_KILL_CREDIT_MS` (10 s) of a death is the killer. Inside buildings
+striker whose blow felled a fighter is its killer (the referee's word). Inside buildings
 there is no player fighting: the zone's danger there is its foes.
 
 ZONE-WATCH (2026-10-08, the owner: "attacking other players in cities will call the guards"): my blow or my spell on a
@@ -128,24 +137,73 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   Materials Bag, a vehicle, a deed, the spellbook). KEEP-WALLET (2026-10-09, the owner: "the wallet shouldnt drop in
   the zone"): the wallet, and the Deadlands Embers and Welkynd Shards it holds, stay with the fallen - the wallet is an
   organizer, its pieces lie in the pack itself, so the rule names each (`isWalletItem`, `walletHolds`;
-  `wildDeath.js:"if (isWalletItem(item) || walletHolds(item)) return false;"`). `src/systems/wildDeath.js`.
-- DROPPED: every other thing in the bag and in the cart, taken out, the character saved, and the records deposited in
-  the room's remains (section 5). WILD GOLD: and half the gold - `WILD_GOLD_LOSS` (0.5) of the purse and of the cart's
-  gold stack, as ONE pile record in the same remains (`takeWildGold`, `wildDeath.js:"export function takeWildGold"`),
+  `wildDropLaw.js:"if (isWalletItem(item) || walletHolds(item)) return false;"`). `src/systems/wild/wildDropLaw.js` (INT9:
+  the law's home, a leaf the account Worker bundles; `src/systems/wild/wildDeath.js` re-exports it).
+- DROPPED: every other thing in the bag and - while the wagon is with them (CART-AWAY, below) - in the cart, into the
+  room's remains (section 5). INT9: TAKEN OFF THE RECORD BY THE ACCOUNT SERVICE (`server-account/src/wild.js`,
+  `/v1/wild/fall`), never handed over by the fallen's game:
+  the fallen's tab asks as an act on its record (checkpointed as it will rise; the law
+  `wildDropLaw.js:"export function takeWildDeath"` the service's alone - the killer's piece, the gold, then the drop by
+  worth), against the relay's signed fall at a player's hand or on its own nonce at a foe's, naming the room its remains
+  lie in; the service answers the records it took, what the record lost (the tab takes out exactly that -
+  `wildDropLaw.js:"export function wildTakeTook"`) and its `remains` order over them for that room, the same order each
+  asking, good its minute; and the tab deposits them on it - the room keeps nothing else (INT9's audit: each valuable
+  piece under a fresh id, the id it had the fallen's own copy). WILD GOLD: and half the gold - `WILD_GOLD_LOSS` (0.5) of
+  the purse and, while the wagon is with them, of the cart's gold stack, as ONE pile record in the same remains
+  (`takeWildGold`, `wildDropLaw.js:"export function takeWildGold"`),
   for anyone to take; the usual death penalty is not taken on top (`world.js:"const goldLost ="`). LETTERS-DROP (the
   owner: "letter of credits should be dropped"): a letter of credit is the one piece the wallet holds that the death
   takes, as it takes the purse's coin - into the same remains at its whole value, unless a quest's or one the trade
-  refuses (`wildDeath.js:"item.templateIndex === TEMPLATES.Letter_of_credit && !item.questItem"`) - answered ahead
+  refuses (`wildDropLaw.js:"item.templateIndex === TEMPLATES.Letter_of_credit && !item.questItem"`) - answered ahead
   of the decor's kept-back list, which names the letter too.
+- CART-AWAY (FIELD BUGS 2026-10-15d; MAC'S DECISION, 2026-10-15, asked "If parked outside of the pvp zone in the
+  wrothgarian mountains, can it be lost?": "Yeah, if its parked outside the zone nothing should be lost"): THE CART'S
+  SHARE ONLY WHEN THE WAGON IS WITH THEM. Where it stands is the Horse Cart and Cargo record's
+  (`horseCartLaw.js:"export function newSaveData"`, the save's modData). WITH THEM: driven, beside them on foot (the
+  mod's WithPlayer never sent away - its next door parks it there), following, or parked (Deployed) on a map pixel of
+  the zone. AWAY: parked on any other pixel - the band about the zone (`wildNear`) is not the zone, no blow lands and
+  nothing drops there - stabled (WithPlayer with WAGON-STABLED's word, `03-World/Holdings.md`), or no wagon. Away, the
+  death takes nothing of the cart, neither a piece nor its gold's share (`takeWildDeath`'s `cart` option, and
+  `wildDropCandidates`' and `takeWildGold`'s); the bag, the purse and the killer's piece go as ever. THE TRUST: the
+  zone's mask is the map files', which the account service does not hold, so the fallen's own tab SAYS its wagon is away
+  (`cart` 0 on `/v1/wild/fall`, `src/systems/wild/wildCart.js` wildCartAway over the record the save writes and
+  `wildMaskOf`; with the mod switched off the wagon is Daggerfall's own, which goes where its owner goes), and the
+  service honours the word only where the record it keeps agrees by its mode
+  (`wildDropLaw.js:"export function wildCartMayBeAway"`: parked, stabled or none - never driven, following or beside
+  them unstabled; `server-account/src/wild.js:"const away = !seize"`), so a tab cannot keep a cart its own record says it
+  drives. A seizure honours no word - its carrier holds neither the record nor the mask - and a tab from before the word
+  says none: both take the cart as before. A fall asked again answers its first take whatever is said, so the fallen's
+  own ask, made first, is what its killer's seizure is answered too. Its limit is section 22's.
 - WORN: kept on a death to a foe. At another player's hand, in the open country (a cell room), the killer may take
-  ONE worn piece: the fallen's game offers the list (`worn`), the killer's body window picks (`pick`), and the
-  fallen's game takes the piece out, saves, and gives it (`gave`). The killer's game holds nothing until the gift
-  arrives (fail toward loss). While the body lies the fallen's socket stays in the cell (a cell has no host to hand
-  over), so the pick reaches them. A death at a player's hand underground drops the bag and the gold as any death
-  there does, and offers no worn piece.
-- THE DEATH CHECKPOINT. A dead character is never the realm's save, but a death in the zone puts things in the room
-  that anyone may take - so a game closed on the death screen must not come back holding them. The character is
-  saved AS IT WILL RISE: one health, where it fell, without what it dropped (`wildDeathCheckpoint`).
+  ONE worn piece: the fallen's game shows the list (`worn`, under the fall's id), the killer's body window picks
+  (`pick`, INT9: to the relay, in the room that refereed the fall, within `WILD_REF.pickMs`, naming what the offer
+  showed there), and the relay signs the fall with it. MAC'S DECISION (2026-10-14, "Yes, build it" - THE TWO-PHASE
+  HANDOFF): the fallen loses that piece only once the killer has it. The service takes it off the fallen's record INTO
+  ESCROW (`server-account/src/wild.js`, `wild_escrow`, in the fall's own batch - its ledger key the service's), where the
+  fallen's tab says its room signs collects (`collect` 1, online.js `wildCollectAt` over `relaySupportsWildCollect`); its
+  order says so (`we`), and the remains list the piece as their killer's alone. The killer's game asks the room for it
+  the moment the room says the remains, and the room answers no record - it signs the killer's COLLECT
+  (`wildReceipt.js:"export async function mintWildCollect"`, `g1`: the remains' id, the killer, the realm character its
+  socket plays), once, and says the same collect each time it is asked (`wildLaw.js:"export function collectAsk"`). The
+  killer's tab carries it to the service as an act on its own record (`/v1/wild/collect`, wildCollect): the piece into
+  that record and the escrow ended, one batch guarded to the one row - only then is it the killer's, and it arrives in
+  the service's answer, carried, never in a slot (`wildEscrowHost.js:"const wildCollected = (d) =>"`). NOBODY COLLECTING by the
+  remains' latest end (`until`: the order's minute and `WILD_REMAINS_MS`, WILD_ESCROW_HOLD_S) and a collect signed at
+  that moment spent (`WILD_COLLECT_TTL_S`, `escrowBackAt`), the fallen's own tab takes it back into its record
+  (`/v1/wild/reclaim`, wildReclaim) - watched on the zone's frame (`wildEscrowHost.js:"const wildEscrowFrame = () =>"`), and a
+  game closed meanwhile asks the service at its next play (`/v1/wild/escrows`). The piece is in the fallen's record, the
+  escrow, or one record - never two, never none; an end asked twice moves nothing twice. What the fallen sees: the
+  death screen says the piece is held until the killer collects it and comes back otherwise (`WILD_TEXT.deathHeld`), a
+  line says when (`heldNote`), and its return or its collection is said (`heldBack`, `heldTaken`). A record the judge
+  holds keeps the piece outright: it could never reach its killer. A tab whose room does not sign collects (an older
+  relay) is the room's old take: the piece off the record into the remains, the killer's alone (section 5).
+  While the body lies the fallen's socket stays in the
+  room, so the signed fall reaches them; a fallen that lets `WILD_FALL_GRACE_S` (30 s) go by is seized by its killer
+  (the record moved where it stands, its lease cleared). A death at a player's hand underground drops the bag and the
+  gold as any death there does, and offers no worn piece.
+- THE DEATH CHECKPOINT. A dead character is never the realm's save; its drop's act checkpoints it AS IT WILL RISE (one
+  health, where it fell) before the service is asked, and again after, without what it dropped
+  (`wildDeathCheckpoint`).
 - A DEATH IN A HALL (HALL-CROWS, the owner: "i dont see the crows circleling around the dungeon where i died on the
   zone map"): always locks the hall for the hour and sets the crows over it, whether or not the pack had anything to
   drop (`world.js:"if (modes?.mode === 'dungeon' && _wdunInside)"`; section 13).
@@ -160,12 +218,12 @@ Either death, at the first dead frame, while the room is still the player's (`wi
 
 ## 5. The remains
 
-The room's object keeps them (`src/net/wildLaw.js`, server `_wild*`): each remains its records and its owner, for
+The room's object keeps them (`src/net/wild/wildLaw.js`, server `_wild*`): each remains its records and its owner, for
 `WILD_REMAINS_MS` (`wire.js:"export const WILD_REMAINS_MS"` - twelve minutes since PVPDUNGEONS: the owner's ten to get
 back to them AFTER the two minutes' wait, since the despawn does not wait for the rise), at most
 `WILD_REMAINS_ITEMS_MAX` records and `WILD_ROOM_REMAINS_MAX` remains a room. The first `take` of a record wins it; the
 record goes to its taker alone (`got`) and the room hears what left (`rm`). On a player's side
-(`src/net/wildRemains.js`) each remains is an ordinary ground pile in the pool of the host they stand in - the
+(`src/net/wild/wildRemains.js`) each remains is an ordinary ground pile in the pool of the host they stand in - the
 street's, a building's, a dungeon's - so it is drawn, aimed at and opened with the very loot window every pile opens
 with. A take the window makes is lifted back out of the pack at once and asked of the room; the room's record arrives
 with `got` (a take of coin, WILD GOLD's, out of the purse it went to). Nothing can be put on remains (`noStore`, the
@@ -175,12 +233,31 @@ with the minutes left.
 - NOT A FRIEND'S (PVPDUNGEONS, the owner: "Party/guildmembers cant pick it up"): a fallen's remains are theirs and
   their foes', never their party's or their guild's. The room refuses the take
   (`server/src/index.js:"a fallen's remains are theirs and their"`) - a guildmate read off the sockets' own verified
-  guilds (the remains keep the fallen's `gi`), a party member asked of the hub (`_wdunKinOf`,
-  `server/src/index.js:"async _wdunKinOf"`, over `WDUN_INTERNAL_KIN`, kept a minute a pair, the stalest pair let go first past 512 - never the whole cache) - and a member's game
+  guilds (the remains keep the fallen's `gi` - INT9's audit: the service's order's `wg`, whoever carries it), a party member asked of the hub (`_wdunKinOf`,
+  `server/src/index.js:"async _wdunKinOf"`, over `WDUN_INTERNAL_KIN`, kept a minute a pair, the stalest pair let go first past 512 - never the whole cache; a hub that does not answer is kin, kept `WDUN_KIN_SILENT_MS`) - and a member's game
   never seeds the pile at all (`canTake`, `world.js:"canTake: (rec) =>"` and `wildRemains.js:"if (!canTake(rec))"`).
+  PVP-LOOT (FIELD BUGS 2026-10-14, "Equipped items Disappear after looting in PvP zone"): the DROP's law, never the
+  killer's worn piece. The record the service's order names (`wk`, `wi`) is its killer's whoever the fallen's guild or
+  party counts them (`wildLaw.js:"export const remainsNamedFor"`), and the room asks the friend law only of a record it
+  names for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`); a piece in escrow is a
+  collect, which the friend law never reads (section 4). The room had refused a killer who was the fallen's guildmate the
+  piece the service had already taken off the fallen's record, and it lay there for nobody
+  (`01-Overview/bugs/Field-Bugs-2026-10-14.md` PVP-LOOT). Guildmates are kin since (section 3), so the named piece meets the
+  friend law only where a party or a guild was joined between the fall and the take, or the hub is silent at it.
 - BESIDE THE BODY (PVPFIX, the owner: "place the pile next to the body not on top of it"): the pile stands a fixed
   step to the side of where they fell, the same on every client (`wildRemains.js:"- on top it was hidden"`) - on top
   it was inside the body and could not be aimed at.
+- KEPT THROUGH A CRASH (WILD-KEEP, FIELD BUGS 2026-10-09c, "Stuff pvp zone": "my game crashed before I could retrieve
+  it. When I logged back in, my gear was no longer visible on the map"). The room holds the pile its twelve minutes
+  whatever the client does; the client's one record of it (`world.js:"let _wildMine = null;"` - where it lies, the room,
+  its end, the hall) lived in memory, so a game crashed or closed came back with the world map's pulsing mark gone, the
+  pile not known for mine by its record, and a hall's lock refusing the hall my pile is my way back into (section 13).
+  It is kept on the device beside WILD-WAYPOINT's flag now, for the character that fell (`systems/wild/wildRemainsWaypoint.js`
+  keepMine / keptMine / forgetMine, its own key: a flag removed by hand keeps it), read back once by the zone's frame and
+  forgotten at its end or at the room's "gone". CLIENT-ONLY; NOT DONE, and the owner's: a record the account keeps (a
+  second device, a cleared storage), a clock that waits for a disconnected owner, and a relay log of a fall's records
+  that a lost pile could be granted back from - today nothing keeps them past the twelve minutes. Pinned by
+  `test/systems/wild/fb1009c_wildkeep.test.js`; `tools/mutants/fb1009c_wildkeep.json` (7, all dead).
 
 ## 6. The maps
 
@@ -188,7 +265,7 @@ with the minutes left.
   (`wildRingChains`, smoothed - section 18) - the lines alone since PVPDUNGEONS (the owner: "The 25%,50,75,100% marker
   shown on the world map when not clicking on the zone have to be removed",
   `wildZoneMap.js:"25%,50,75,100% marker shown"`): the zone map and its legend name each ring and its bonus.
-  `ui/wildZoneMap.js` paintWildRings.
+  `ui/wild/wildZoneMap.js` paintWildRings.
 - WILD2: THE ZONE MAP. A press on the zone on the world map - anything there since ZONE-ZOOM (section 18) - or the
   key's "Zone map" button holds the world sheet to the Wrothgarian Mountains (`_openZoneMap`): the same paper, ink and
   marks, the view fitted to the zone in the room the legend leaves (`zoneMapView`, the clamp `zoneMapLimits` - never
@@ -200,16 +277,16 @@ with the minutes left.
   and a dark line where a deeper ring begins, and a key of the four in the page's lower left (`_drawWildKey`).
 
 - THE WORLD MAP (enhanced, `src/ui/heldMap.js`): the zone under a drifting fog, built once on its own canvas
-  (`src/ui/wildMapInk.js` - the feathered mask times three octaves of value noise, in ash and dried blood) and drawn
+  (`src/ui/wild/wildMapInk.js` - the feathered mask times three octaves of value noise, in ash and dried blood) and drawn
   between the land and the marks, so a town in it still reads; its edge a red line over a dark halo, dashed brighter
   past the far band, never drawn along the map's own upper edge where the map ends; a key row "Open PvP zone". Over
   it since the later passes: the day's halls, the crows, my locks, the Greater Giants' skulls, and the border alight
   under the pointer (sections 12-18).
-- THE CLASSIC MAP (`src/ui/travelMapWindow.js`, which GrimoireUI dresses): the same zone as a dithered fog layer and a
+- THE CLASSIC MAP (`src/ui/travel/travelMapWindow.js`, which GrimoireUI dresses): the same zone as a dithered fog layer and a
   red rim, over the province map and over the Wrothgarian Mountains' own page, under the dots. CLASSIC-CUT
   (2026-10-08): on the province map too it is the cut alone, never the whole region - the picker bitmap's region laid
   over the map's by their two boxes (`wildPictureZone`, `wildZone.js:"export function wildPictureZone"`, over the
-  mask's `regionBox`; `travelMapWindow.js:"const isZone = wildPictureZone("`); pinned in `test/wild1_zone.test.js`.
+  mask's `regionBox`; `travelMapWindow.js:"const isZone = wildPictureZone("`); pinned in `test/systems/wild1_zone.test.js`.
 - WHO IS SEEN: in or near the zone only my party and my guild (`wildHidesPlayer`) - on the world map and the
   Overworld alike; and a player with no guild sends no region mark there at all.
 
@@ -234,7 +311,16 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
 
 - `{t:'wild', data}` (`validWildData`), from a hello'd socket in a PLACE room (a cell or a world room), gated on
   `WILD_RELAY_MIN` (177, `wire.js:"export const WILD_RELAY_MIN"`): the blows, a fallen's gear, a remains' deposit and
-  its takes (section 3-5).
+  its takes (section 3-5). INT9 (world185, `WILD_REF_RELAY_MIN`): the zone word (`zone`), the blows refereed and routed
+  to nobody, the killer's `pick` the room's, a deposit carrying the service's order on every chunk; `gave` and
+  `result` retired. The referee's own frame `{t:'wref', k}` (`validWildRefOut`): `hp`, `fell`, `rc` (the signed fall).
+  PVP-LOOT (world205 - world201 on its branch, one bump past main's world201 and world202 at the merge, and world203 on the integration, renumbered past main's world203 and world204 at the merge of main): the room's take asks the friend law of the drop's records alone (section 5); a guildmate is kin
+  at the referee (section 3); and the two-phase handoff (section 4) - the order's `we`
+  (`identityToken.js:"if (c.we !== undefined && c.we !== 1) return false;"`), the room's `cr` word to the killer
+  (`validWildOut`, the collect `g1`, `WILD_COLLECT_MAX`), `WILD_COLLECT_RELAY_MIN` (205; 201 on its branch and 203 on the integration, and main's world201 to world204 hand the record) for a tab to ask the escrow - an
+  older client drops `cr`, so it never takes the room's copy of a piece in escrow. Deploy the relay first, then the
+  account service (acct136: `wild_escrow`, migration 0118 - acct133 and 0113 on its branch, acct134 and 0115 on the integration; `/v1/wild/collect`, `/v1/wild/reclaim`, `/v1/wild/escrows`),
+  then the site.
 - `{t:'wdun', k, ...}` (`validWdunIn`/`validWdunOut`, `wire.js:"export function validWdunIn"` and
   `wire.js:"export function validWdunOut"`), to the social hub alone, from a socket whose social hello named its
   verified account, gated on `WDUN_RELAY_MIN` and `WDUN_GIANTS_RELAY_MIN` (177,
@@ -249,10 +335,14 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
 - And one field on the foe stream: `gg` (`wire.js:"if (r.gg !== undefined)"`), the Greater Giant a foe record is
   (0-7) - section 15.
 
-`src/net/wildLaw.js` joins the relay's bundle (the remains' law and the halls' record, `wdun*`). Deploy the relay
+`src/net/wild/wildLaw.js` joins the relay's bundle (the remains' law and the halls' record, `wdun*`). Deploy the relay
 first, then the site. A client on an older relay plays the mountains as they were - the zone is not raised there at
 all (`wildFrame` reads `online.wildOk`), and no `wdun` word is sent to a hub that would close the socket on it
 (`online.wdunOk`, `online.wdunGiantsOk`).
+
+CART-AWAY (2026-10-15, section 4) is one field on the account service's `/v1/wild/fall` body, `cart` (0 the wagon away,
+1 with them) - no relay frame and no migration. A service from before it ignores the word and a tab from before it says
+none: either way the cart is taken as it was, so the two deploy in either order.
 
 ## 9. The journeys (WILD3, PVPTIERS)
 
@@ -276,7 +366,7 @@ fast door - the travel map's journey and the carriage drivers' and the ships' an
 
 ## 10. The pace (WILD3)
 
-In the zone the travel dials run under a cap (systems/travelPace.js `setPaceZoneCap`, `WILD_PACE_CAP`): at most x20
+In the zone the travel dials run under a cap (systems/travel/travelPace.js `setPaceZoneCap`, `WILD_PACE_CAP`): at most x20
 off the road and x40 on it. A cap, never a write - the player's choice comes back the moment they leave. A stranger
 near holds the journey slower still (STRANGER-PACE, section 11).
 
@@ -326,7 +416,7 @@ Then "as centered as possible not on the border to the other tier... dont overri
   `worldModes.js:"(host.wildDungeonGate && !(await host.wildDungeonGate(hit, fromLoad)))"`), and the wandering spawner
   stands none there (`world.js:"{ const _wm = wildMaskOf"`). A hall is a clone of a real dungeon on an EMPTY pixel -
   never a place's, never beside one, never the sea (`wildHallFree`, `world.js:"const wildHallFree"`) - so a tier
-  always has its count wherever its places are. `src/systems/wildDungeons.js`, pure: the mask, a pixel test and a day
+  always has its count wherever its places are. `src/systems/wild/wildDungeons.js`, pure: the mask, a pixel test and a day
   in, the halls out.
 - WHERE: `WILD_DUNGEONS_PER_RING` (10, 8, 6, 4 - `wildDungeons.js:"export const WILD_DUNGEONS_PER_RING"`). Each
   pixel's distance to another ring's or the outside (`wildRingBorderDistance`,
@@ -335,6 +425,19 @@ Then "as centered as possible not on the border to the other tier... dont overri
   `WILD_HALL_SPACING` (3) pixels apart at least, each next one of the best few by the day's own roll - eased (two
   pixels, one, the whole ring) before the tier is ever short of its count (`wildHallPicks`,
   `wildDungeons.js:"export function wildHallPicks"`).
+- THE COST (WILD-FREE, 2026-10-11 - a player's load captured from the installed client: entering the world froze it
+  14.5 s, 8.1 s of them the day's first picks, asked by the nearest dungeon's list). `wildHallFree` is the host's
+  dearest pixel test - its last word the spawns' plateau (`spawnedDungeons.js:"export function spawnPlateauFloor"`, a
+  heightmap kernel summed for a pixel) - and the picks asked it of every pixel of every ring before they cut the band:
+  12,564 asks over the real zone (the player's ARENA2, its box 164 x 107), where the band reads 2,628. They ask it now
+  where an answer is read, once a pixel (`isFree`): the deepest level holding a free pixel (the old reduce's `maxBd`),
+  the band and its lowerings, the whole ring when the band is short. Every client stands the same halls, so nothing
+  moves - each step reads the free pixels it read, in the scan's order. Measured over the real zone in node 22: the
+  first day 19.2 s -> 4.0 s, the same 28 halls on each of 60 days to the byte; a later day was ~12 ms on both (the
+  plateau keeps its answers per pixel). FOUND READING IT: two arms of the law never decide - the two-pixel band (read
+  only when the band is short, and by then it IS the band, the floor already lowered to 2) and the whole ring's passes
+  (the band's one-pixel pass fills the count whenever the band holds it; a band that does not was the whole ring
+  already). They stand verbatim; their mutants are recorded equivalent (`tools/mutants/wildfree.json`).
 - WHEN: by the DAY - `wdunDay`, the relay's clock (`WDUN_DAY_MS`, `wire.js:"export const WDUN_DAY_MS"`; the hub's `st`
   carries it, and the client keeps the skew), never a client's own: every player sees the same halls (`wildActiveNow`,
   `world.js:"const wildActiveNow"`). A day gone, its halls leave the index (the one I stand in stays until I leave
@@ -361,7 +464,7 @@ Then "as centered as possible not on the border to the other tier... dont overri
 What no client may decide the social hub keeps (`server/src/index.js` `_wdun*`, `_wdunWord` at
 `server/src/index.js:"async _wdunWord(ws, acct, m, now)"`), in one small record (`WDUN_KEY`,
 `wildLaw.js:"export const WDUN_KEY"` - `{ locks, piles, inside, empty, crows, eps, giants }`), read once a wake and
-pruned as it is read (`wdunPrune`, `wildLaw.js:"export function wdunPrune"`). The law is pure (`src/net/wildLaw.js`
+pruned as it is read (`wdunPrune`, `wildLaw.js:"export function wdunPrune"`). The law is pure (`src/net/wild/wildLaw.js`
 wdun*); the hub reads, calls it and writes.
 
 - THE LOCK: an account that leaves a hall - walks out, is unstuck, falls - may not go in again for `WDUN_LOCK_MS` (an
@@ -375,9 +478,10 @@ wdun*); the hub reads, calls it and writes.
   `WDUN_STALE_MS` (three minutes) has left at its last word.
 - THE RESET: a hall that has stood empty `WDUN_RESET_MS` (twenty minutes) is wiped as the next account comes in - its
   world room's stored foes and loot forgotten (`_wdunWipe`, `server/src/index.js:"async _wdunWipe(h)"`; the room
-  refuses while anyone stands in it, `server/src/index.js:"async _wdunResetInternal"`) - and its EPOCH moves on: every
+  refuses while anyone stands in it, `server/src/index.js:"async _wdunResetInternal"`; AUDIT SCALE II R3-9: every layer of it
+  at once, SCALE5d - anyone standing in any layer holds the wipe) - and its EPOCH moves on: every
   client keys the hall's chests by it (`searchLocationKey`, `dungeonContext.js:"function searchLocationKey"`), so a
-  reset fills them again for everyone. The halls keep WORLD8's hour for the rest (DUNGEON-RESPAWN, section 21).
+  reset fills them again for everyone. The halls keep WORLD8's respawn for the rest - half an hour since RESPAWN-30 (DUNGEON-RESPAWN, section 21).
 - THE CROWS: a death in a hall (`wdunDie`, `wildLaw.js:"export function wdunDie"`) sets crows over it until the last
   remains in it go (`wdunGone`, `wildLaw.js:"export function wdunGone"`, told by the place room over
   `WDUN_INTERNAL_GONE`), said to everyone online (`cr`). On both maps three small black birds circle each such hall
@@ -420,7 +524,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
 
 - EIGHT, ALWAYS: `WILD_GIANTS_PER_RING` (2) a tier (`wildGiants.js:"export const WILD_GIANTS_PER_RING"`). Each WANDERS
   a pure walk of the relay's clock and the mask (`wildGiantsAt`, `wildGiants.js:"export function wildGiantsAt"`;
-  `src/systems/wildGiants.js`): a day's HOME, a free pixel of its own tier (the second of a tier kept apart from the
+  `src/systems/wild/wildGiants.js`): a day's HOME, a free pixel of its own tier (the second of a tier kept apart from the
   first), and legs of `WILD_GIANT_LEG_MS` (twenty minutes) between waypoints within `WILD_GIANT_ROAM_PX` (5) of it
   (`waypointOf`, `wildGiants.js:"function waypointOf"`), each giant's legs out of step with the others'. So every
   client sees every giant in the same place, walking the same way.
@@ -468,7 +572,7 @@ half health", "everyone in the zone should see the same ... that the big giant i
   `world.js:"const wildGiantMarks"` - a stood one at its body's own place); eleven by ten since GIANT-SKULL2 (the
   owner: "make the skulls a bit smaller", `wildMapInk.js:"the skulls a bit"`); a fallen one crossed out in red where
   it fell until it walks again. On the Overworld a Greater Giant stood near is marked "Giant", as the enemy it is
-  (PVPGIANT, `world.js:"PVPGIANT: the zone's"`).
+  (PVPGIANT, `travelViewMarks.js:"PVPGIANT: the zone's"`).
 
 ## 16. The zone's other laws (PVPDUNGEONS)
 
@@ -541,6 +645,8 @@ half health", "everyone in the zone should see the same ... that the big giant i
 - FINDME (the owner's screenshot: a full-width red cross): a "Find me" button left of Close - the view glides to my
   pixel and a red cross blinks over it for three seconds (`_findMe`, `heldMap.js:"_findMe() {"`), on the world map and
   the zone map. Not the zone's alone.
+  FIND-FIRST (FIELD BUGS 2026-10-10, the Discord: "make 'Find me' the standard functionality on the world map when I
+  first open it"): the player's own world map opens as this press (`01-Overview/bugs/Field-Bugs-2026-10-10.md`).
 
 ## 19. The mountains walkable (MOUNTAINS WALKABLE)
 
@@ -553,7 +659,7 @@ the planner its rock table (`tvWodRocks`, `world.js:"function tvWodRocks"`, whic
 on-foot rule outside the zone is removed - the patch had for a while let only roads and tracks be walked in region 16
 outside the cut), and the planner no longer reads it. Offline too: the law is the planner's, not the zone's. The
 words that promised the old rule say the new one: First Person Travel's roads switch is "planned by land"
-(`modSettings.js:"GeneralOptions.FirstPersonTravelFollowsRoads"`) and the Overworld's Free path is "straight across
+(`modSettings.js:"'GeneralOptions.FirstPersonTravelFollowsRoads': Object.freeze"`) and the Overworld's Free path is "straight across
 country" (`travelPathMode.js:"tipFree:"`), neither "round the mountains" any more.
 
 ## 20. The test build (TESTBUILD)
@@ -573,7 +679,8 @@ each is a line here, findable by its tag.
   someone was in and left) for everything and the same for elite dungeons 40 mins respawn timer for everything"):
   WORLD8's respawn (`06-Systems/Online-Arc.md`: a dead foe and an emptied container each back on their OWN clock from
   when it fell or was emptied) at the dungeon's own pace - a normal dungeon twenty minutes, an elite one forty; the
-  zone's halls and a Super dungeon keep the hour (`dungeonRespawnMs`,
+  zone's halls and a Super dungeon keep WORLD8's `RESPAWN_MS` - half an hour since RESPAWN-30 (2026-10-14, Mac: "Reduce
+  dungeon cooldown from 1 hour to 30 minutes" - "I meant the chest and foe respawn"; it was the hour) (`dungeonRespawnMs`,
   `dungeonRespawn.js:"export const dungeonRespawnMs"`; `dungeonContext.js:"const _respawnMs"`). Online alone, as
   WORLD8 is.
 - HEAL-CURSE (the owner: "Add a button to the temple services under heal disease named heal curse it removes being a
@@ -587,11 +694,11 @@ each is a line here, findable by its tag.
   (`healCurseBox`, `worldModes.js:"function healCurseBox"`). `src/systems/healCurse.js`.
 - REST-WARN (the owner: "Poison/Disease warning on rest, there should be one for when you attempt to rest"): a rest
   begun while a poison or a plain disease works asks first - "You are poisoned." / "Resting will not cure it." / "Rest
-  anyway?" (`restAilmentLines`, `restWarning.js:"export function restAilmentLines"`; `src/systems/restWarning.js`),
+  anyway?" (`restAilmentLines`, `restWarning.js:"export function restAilmentLines"`; `src/systems/rest/restWarning.js`),
   the rest window opening on its Yes once the box has left the slot (`world.js:"const restNow = ()"`). Wired in all
   four hosts' rests - the street's, the interior's, the dungeon's and the fixed city's (world.js, worldModes.js,
   dungeonContext.js, exterior.js; the last left out by the patch and wired after it, 2026-10-08, THE FOUR HOSTS RULE -
-  `test/pvpdungeons_game.test.js` sweeps all four). REST-WARN2 (the owner: "those are not enhanced
+  `test/systems/pvpdungeons_game.test.js` sweeps all four). REST-WARN2 (the owner: "those are not enhanced
   plus ui button and window"): THE DECISION BOX (`DecisionBoxWindow`,
   `decisionBox.js:"export class DecisionBoxWindow"`; `src/ui/decisionBox.js`) - DFU's message box with its YesNo
   buttons, drawn as the Plus decision dialog under the enhanced skin and DFU's parchment on the classic; Y / N, Return
@@ -631,7 +738,7 @@ each is a line here, findable by its tag.
   its north entrance, one each side of the road in from Privateer's Hold, a few paces inside the border, facing
   north - the road read off the town's own walk grid (`gothwayNorthSpots`,
   `gothwayBoards.js:"export function gothwayNorthSpots"`; `src/systems/gothwayBoards.js`), stood in the town's build
-  each with its foot on the ground (`world.js:"if (isGothwayGarden(dfLocation.name))"`) and counted a bounty board
+  each with its foot on the ground (`pixelBuild.js:"if (isGothwayGarden(dfLocation.name))"`) and counted a bounty board
   always (`boardSplitOf`, `world.js:"const boardSplitOf"`).
 - PVPFIX (the owner: "Undeniable Access/lockpicking should actually work on locked crates"): an armed Open spell fires
   on the next lock touched, a crate's as a door's, and the pick is tried in Grab mode too
@@ -647,10 +754,32 @@ each is a line here, findable by its tag.
   `saleRefused`). A death in the zone already kept it (section 4, `wildCanLose`). The player trade's table
   (`tradePack.js` `tradeRefusal`) is untouched: the hotfix closed the ground, the containers and the counters.
 
+## 21b. A party left is no fight for ten minutes (PARTY-TRUCE, FIELD BUGS 2026-10-09b)
+
+The Discord's "you can be teleported into a pvp zone and killed": a stranger invited a new player to his party, led the
+party's walk into the mountains and killed them there, and their pack lay on the ground. Nothing was broken - each
+door worked - but the doors made a trap: a party mate is never fair (`wildFair`), a kick or a leave ends a party in
+the instant, and the walk in (the one door into the zone no journey's gate asks, section 9) never named the zone.
+
+- A player who leaves my party, or whose party I leave, is no fight for `WILD_PARTY_TRUCE_MS` (ten minutes, a walk
+  out), both ways (`wildZone.js` `createPartyTruce`, read in `wildFair` beside the party; the zone frame reads
+  `social.partyPeers()` each frame and says `WILD_TEXT.truce` in the zone). Each client reads its own party, and INT9's
+  referee asks the hub (which keeps the party a record left, `partyWas`, the truce's ten minutes) of every blow, so a
+  doctored attacker gains nothing.
+- A party's walk that ends in the zone or within its band says so in its question (`world.js` `wildWalkRow`,
+  `WILD_TEXT.walkInto`), between the leader's line and "Travel with them?".
+- Not done, and the owner's to decide: a floor for new players (a level, a Renown, a first entry acknowledged). A
+  guild's members fight nobody of their own guild here (Mac, 2026-10-14, "Guildmates are friends" - section 3).
+
+Pinned by `test/systems/wild/fb1009b_partytruce.test.js` and `test/systems/travel/tv8_party_walk.test.js`; `tools/mutants/fb1009b_partytruce.json`.
+
 ## 22. Known limits
 
-- A modified client can still refuse to give a picked piece or to deposit what it should drop - the realm's budgets
-  and item ids are the check, as for every client-held pack.
+- INT9: a modified client can opt out of the zone's fights (never say `zone`) - it fights nobody and drops nothing to a
+  player - and a death to a foe is the client's own word; it cannot opt into another's fight, keep a drop the relay's
+  fall names (its killer seizes it), or deposit anything the service did not take. A fight across a cell's seam waits
+  for one of the two to cross (a fighter's bar is its own cell's), and the rest of lane 2's limits are
+  `06-Systems/Integrity-Arc.md` section 5's.
 - The maps' hiding is the receiving client's; a guildless player's own mark is never sent in the zone.
 - No player fighting inside the zone's buildings; underground no arrow is aimed at a player and no worn piece is
   claimed.
@@ -658,6 +787,17 @@ each is a line here, findable by its tag.
   halls by its own clock and keeps its own session's locks, and hears no one else's crows.
 - ZONE-WATCH's door reads a town's buildings too, but no player blow is struck indoors, so in practice it is the
   street's.
+
+- PARTY-TRUCE (FIELD BUGS 2026-10-09b) is held in memory: a player who reloads forgets the truces they stood in, and
+  the hub's record holds them for the referee (INT9).
+- A piece in escrow comes back only when its fallen plays again (its tab takes it back - there is no clock that moves a
+  record nobody plays); until then it is the escrow's, in no record. A fallen character deleted or dead for good while
+  one is held has no record to take it back into, and it stays the escrow's.
+- CART-AWAY (section 4): where a parked wagon stands is the fallen's own word, held to its record's mode alone. The
+  wagon's record is the player's own (whose horse and wagon stand where is never the service's), so a modified client
+  that writes its wagon parked off the zone keeps a cart it drove in - and rises with that record, the wagon parked where
+  it wrote. A fallen whose tab never asks is seized with its cart taken wherever it stood; and an ask that finds its
+  fallen already risen meets a hitched team the rise called to follow, with them: the cart is taken.
 
 ## 23. What the suite caught (WILD-SUITE, 2026-10-08)
 
@@ -677,11 +817,19 @@ The zone landed without a run of the suite. Four of what it caught were the sour
 
 ## Pins
 
-`test/wild1_zone.test.js`, `test/wild1_wire.test.js`, `test/wild1_fight.test.js`, `test/wild2_rings.test.js`,
-`test/pvpdungeons_game.test.js` (the halls' placement and foes, HEAL-CURSE, REST-WARN, SWAP-HANDS, GOTHWAY-BOARDS,
+`test/systems/wild1_zone.test.js`, `test/net/wild1_wire.test.js`, `test/net/wild1_fight.test.js`, `test/systems/wild2_rings.test.js`,
+`test/systems/pvpdungeons_game.test.js` (the halls' placement and foes, HEAL-CURSE, REST-WARN, SWAP-HANDS, GOTHWAY-BOARDS,
 ZONE-GIANTS' walks and the hub's giants, GIANT-FIELDS, GIANT-LEASH, CROW-NEWS, DUNGEON-RESPAWN, GREATER-GIANT,
-WILD-KEEPOUT, KEEP-SPELLBOOK - `tools/mutants/keepspellbook.json`, 9, all dead), `test/pvpdungeons_hub.test.js` (the `wdun` wire, the lock, the way back, the reset, the crows, the
-relay's hub and no friend's take); the host seams of section 23 in `test/bootorder.test.js`,
-`test/audit68_worldmodes.test.js`, `test/mapkeep.test.js`, `test/mwattach.test.js`, `test/audit26_uiwindows.test.js`
-and `test/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
-`test/wild1_zone.test.js`, `tools/mutants/keepwallet.json`.
+WILD-KEEPOUT, KEEP-SPELLBOOK - `tools/mutants/keepspellbook.json`, 9, all dead), `test/net/pvpdungeons_hub.test.js` (the `wdun` wire, the lock, the way back, the reset, the crows, the
+relay's hub and no friend's take); the host seams of section 23 in `test/scenes/bootorder.test.js`,
+`test/scenes/audit68_worldmodes.test.js`, `test/systems/automap/mapkeep.test.js`, `test/scenes/mwattach.test.js`, `test/ui/audit26_uiwindows.test.js`
+and `test/systems/talk/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
+`test/systems/wild1_zone.test.js`, `tools/mutants/keepwallet.json`. INT9 (the zone refereed, a death's drop taken off the record):
+`test/net/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5). PVP-LOOT (the
+killer's worn piece theirs whoever the fallen's guild or party counts them, end to end over the game's own pieces):
+`test/systems/fb1014_pvploot.test.js`, `tools/mutants/fb1014_pvploot.json`. Mac's two decisions of 2026-10-14 - guildmates kin,
+the two-phase handoff - end to end through the real relay room, account service and clients:
+`test/systems/fb1014_pvpescrow.test.js`, `tools/mutants/fb1014_pvpescrow.json`. CART-AWAY (Mac, 2026-10-15 - the cart's share
+only while the wagon is with them; through the real drop law, the real Horse Cart and Cargo runtime's records, the zone's
+own mask and the real account service): `test/systems/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
+dead).

@@ -9,12 +9,12 @@
 // crowns' charges, their royals, their seals), the back the Bay's medallion, the edge plain card stock, each chip value
 // its own colour with a stock-white edge band.
 //
-// THE LAYOUT AND THE MESHES ARE PURE (atlasCell, cardModel, chipModel, cardMatrix): pinned by test/cards3_draw.test.js;
+// THE LAYOUT AND THE MESHES ARE PURE (atlasCell, cardModel, chipModel, cardMatrix): pinned by test/net/card/cards3_draw.test.js;
 // only the painting needs a page.
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
-import { rankOf, suitOf, isCard } from '../net/cardLaw.js';
-import { CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, CHIP_VALUES } from '../world/cardMotion.js';
+import { rankOf, suitOf, isCard } from '../net/card/cardLaw.js';
+import { CARD_W, CARD_L, CARD_T, CHIP_R, CHIP_T, CHIP_VALUES } from '../world/card/cardMotion.js';
 import { trs } from '../world/mat4.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { paintFace, paintBack, STOCK } from './cardFaces.js';   // the suits' one home - the panel's and the cloth's alike
@@ -60,6 +60,16 @@ const onAtlas = (indices) => [{ textureArchive: CARD_ARCHIVE, textureRecord: CAR
  * @param {readonly number[]} face  the face's cell (atlasCell)
  */
 export function cardModel(face) {
+  return plateModel(cellUv(face), cellUv(CELL_BACK), cellUv(CELL_STOCK), onAtlas);
+}
+
+/**
+ * CARDS10: A PLATE on any atlas - the card's body cardModel lays, its three UV rectangles and its sub-meshes handed in
+ * (the Iliac Hand's cloth paints its own atlas: render/iliacTableDraw.js). `[u0, v0, u1, v1]` each, v up.
+ * @param {readonly number[]} faceUv @param {readonly number[]} backUv @param {readonly number[]} edgeUv
+ * @param {(indices: number[]) => any[]} subMeshes
+ */
+export function plateModel(faceUv, backUv, edgeUv, subMeshes) {
   const w = CARD_W / 2, l = CARD_L / 2, t = CARD_T / 2;
   const positions = [], normals = [], uvs = [], indices = [];
   const quad = (corners, n, uv) => {
@@ -67,7 +77,7 @@ export function cardModel(face) {
     corners.forEach((c, i) => { positions.push(...c); normals.push(...n); uvs.push(...uv[i]); });
     indices.push(base, base + 2, base + 1, base, base + 3, base + 2);   // counter-clockwise about its normal (the right hand's) - the renderer's front, as every model's
   };
-  const [fu0, fv0, fu1, fv1] = cellUv(face), [bu0, bv0, bu1, bv1] = cellUv(CELL_BACK), [su0, sv0, su1, sv1] = cellUv(CELL_STOCK);
+  const [fu0, fv0, fu1, fv1] = faceUv, [bu0, bv0, bu1, bv1] = backUv, [su0, sv0, su1, sv1] = edgeUv;
   // the face, +Y: the cell's top edge (v1) at +Z and its left edge (u0) at -X - the world is Daggerfall's (Unity's
   // left-handed axes, drawn through mirrorProjectionX), so seen from above with +Z away, +X runs to the RIGHT
   quad([[-w, t, -l], [w, t, -l], [w, t, l], [-w, t, l]], [0, 1, 0], [[fu0, fv0], [fu1, fv0], [fu1, fv1], [fu0, fv1]]);
@@ -79,7 +89,7 @@ export function cardModel(face) {
   quad([[-w, -t, l], [-w, -t, -l], [-w, t, -l], [-w, t, l]], [-1, 0, 0], s);
   quad([[-w, -t, l], [-w, t, l], [w, t, l], [w, -t, l]], [0, 0, 1], s);
   quad([[w, -t, -l], [w, t, -l], [-w, t, -l], [-w, -t, -l]], [0, 0, -1], s);
-  return { positions: new Float32Array(positions), normals: new Float32Array(normals), uvs: new Float32Array(uvs), indices: new Uint32Array(indices), subMeshes: onAtlas(indices) };
+  return { positions: new Float32Array(positions), normals: new Float32Array(normals), uvs: new Float32Array(uvs), indices: new Uint32Array(indices), subMeshes: subMeshes(indices) };
 }
 
 /** MEASURE (CARDS3): a chip's sides. */
@@ -141,7 +151,7 @@ export function paintAtlas(ctx) {
 }
 
 /**
- * The table's bodies on this renderer. `draw(poses)` draws `{cards, chips}` (world/cardScene.js poses); `destroy()`
+ * The table's bodies on this renderer. `draw(poses)` draws `{cards, chips}` (world/card/cardScene.js poses); `destroy()`
  * frees every mesh and the atlas, once. A renderer without the path (a test's) draws nothing and throws nothing.
  * @param {any} renderer
  * @param {{doc?: any}} [opts]

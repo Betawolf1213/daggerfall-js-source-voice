@@ -41,7 +41,7 @@ import { flatFieldFor, sowField } from './flatFields.js';   // WD3: a scene mode
 import { PROPS_OFFSET_Y } from './rmbLayout.js';   // FIELD BUGS 2026-10-04d CROPS: a field's batch stands where its misc model does
 
 /** RMBLayout's blockFlatsOffsetY: a block's flats stand this far (native units) below their records - and their lights
- *  do not (AddLight hangs at the record's -YPos plus the picture's height - world/cityLights.js). AUDIT YARD-LIGHT: so a
+ *  do not (AddLight hangs at the record's -YPos plus the picture's height - world/city/cityLights.js). AUDIT YARD-LIGHT: so a
  *  yard's lamp hangs the town's distance above its picture (scenes/homeYards.js yardLampOf). */
 export const BLOCK_FLATS_OFFSET_Y = -6;
 const NATURE_FLATS_OFFSET_Y = -2;
@@ -163,26 +163,15 @@ export function scaledBillboardSize(size, scale) {
 }
 
 /**
- * Collect every flat of one RMB block as {archive, record, x, y, z} with the
- * position at the billboard BASE (AlignToBase handled by the renderer via
- * the scaled size).
- * @param {object} dfBlock - BlocksFile.getBlock output (type Rmb).
- * @param {number} natureArchive - climate nature archive
- *   (dfLocation.climate.natureArchive).
- * @param {{climateIndex?:?number, solid?:?Function}} [fields] - FIELD BUGS
- *   2026-10-04d CROPS: for a crop field's batch, the raw climate it reads and
- *   the block's solids it keeps a metre off (world/flatFields.js
- *   blockSolids); a caller with neither sows every plant of the climate's
- *   nature archive.
- * @returns {Array<{archive:number,record:number,x:number,y:number,z:number,
- *   editor?:boolean}>}
+ * The block's misc flats alone - collectBlockFlats' first pass, its own export (HOLD-MONUMENT, 2026-10-14: the monument
+ * outside Privateer's Hold reads the block's start markers off them, world/lefayMonument.js lefaySpotOf, with no
+ * scenery sown and no climate asked).
+ * @param {{rmbBlock: {miscFlatObjectRecords: any[]}}} dfBlock
+ * @returns {Array<{archive:number,record:number,x:number,y:number,z:number,editor:boolean}>}
  */
-export function collectBlockFlats(dfBlock, natureArchive, { climateIndex = null, solid = null } = {}) {
-  const rmb = dfBlock.rmbBlock;
+export function collectMiscFlats(dfBlock) {
   const flats = [];
-
-  // Misc block flats (lights included - AddLights uses the same position).
-  for (const obj of rmb.miscFlatObjectRecords) {
+  for (const obj of dfBlock.rmbBlock.miscFlatObjectRecords) {
     flats.push({
       archive: obj.textureArchive,
       record: obj.textureRecord,
@@ -204,6 +193,30 @@ export function collectBlockFlats(dfBlock, natureArchive, { climateIndex = null,
       rawX: obj.xPos, rawY: obj.yPos, rawZ: obj.zPos,
     });
   }
+  return flats;
+}
+
+/**
+ * Collect every flat of one RMB block as {archive, record, x, y, z} with the
+ * position at the billboard BASE (AlignToBase handled by the renderer via
+ * the scaled size).
+ * @param {object} dfBlock - BlocksFile.getBlock output (type Rmb).
+ * @param {number} natureArchive - climate nature archive
+ *   (dfLocation.climate.natureArchive).
+ * @param {{climateIndex?:?number, solid?:?Function}} [fields] - FIELD BUGS
+ *   2026-10-04d CROPS: for a crop field's batch, the raw climate it reads and
+ *   the block's solids it keeps a metre off (world/flatFields.js
+ *   blockSolids); a caller with neither sows every plant of the climate's
+ *   nature archive.
+ * @returns {Array<{archive:number,record:number,x:number,y:number,z:number,
+ *   editor?:boolean}>}
+ */
+export function collectBlockFlats(dfBlock, natureArchive, { climateIndex = null, solid = null } = {}) {
+  const rmb = dfBlock.rmbBlock;
+  const flats = [];
+
+  // Misc block flats (lights included - AddLights uses the same position) - their own export (HOLD-MONUMENT).
+  for (const f of collectMiscFlats(dfBlock)) flats.push(f);
 
   // WD3: a scene model that is a FIELD OF FLATS (world/flatFields.js - the RMB Resource Pack's crop batches, which
   // Beautiful Cities lays over its farmland): the plants it sows, the climate's, round the spot the block places it.

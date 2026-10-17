@@ -27,8 +27,8 @@
 //
 // Not a DFU member: DFU has no such pass (its quest debugger is a developer's console). Ledger A (QREPAIR).
 import { MARKER_PREFERENCE, SITE_TYPES } from './place.js';
-import { ONLINE_DUNGEONS_STATE, portSize } from '../../world/smallerDungeons.js';   // AUDIT DELVE E1 / SD-ONLINE: the sizes the room builds online; MEDIUM-DISTINCT: the two stamps whose builds are medium
-import { isOnlinePage } from '../onlineLane.js';   // MEDIUM-DISTINCT's audit: offline a dungeon no link holds is built by the settings
+import { SMALLER_DUNGEONS_STATE, portSize } from '../../world/smallerDungeons.js';   // AUDIT DELVE E1 / INSTANCES: the size a quest's markers know online (the whole dungeon's); MEDIUM-DISTINCT: the two stamps whose builds are medium
+import { isOnlinePage } from '../online/onlineLane.js';   // MEDIUM-DISTINCT's audit: offline a dungeon no link holds is built by the settings
 import { isShelved } from './quest.js';   // QUEST-SHELF's audit: the repair mends no quest set aside
 
 const PLACEMENTS = Object.freeze({ PlaceNpc: 'npcSymbol', PlaceItem: 'itemSymbol', PlaceFoe: 'foeSymbol' });
@@ -136,6 +136,13 @@ const markerAddresses = (list) => (list ?? []).map((m) => `${m?.dungeonX},${m?.d
  * all - and each of its dungeons compared with its online build (a dungeon whose online size is the stamp's size
  * agrees, and nothing moves). A quest one of whose dungeons could not be read here (no world, no such location, a
  * throw) keeps its stamp: the size its markers there still know.
+ *
+ * INSTANCES (2026-10-15, bible/11-Multiplayer/Instances.md): AND THAT SIZE IS THE DUNGEON WHOLE NOW. Online a quest's
+ * markers are chosen on Daggerfall's own layout (the quest's world asks smallerDungeons.js dungeonSizeFor for it whole),
+ * the layout its instance builds - so every stamp but DFU's Disabled is re-laid on the whole dungeon at the load, the
+ * world's sizes' ONLINE_DUNGEONS_STATE among them, and stamped Disabled. A re-laid public room stands none of a quest's
+ * targets (systems/instancePlaces.js questMountsHere); its instance, or its whole room where the relay keeps no instance,
+ * stands them all.
  */
 export function relayOnlineDungeons(machine, env = {}) {
   let relaid = 0;
@@ -146,13 +153,13 @@ export function relayOnlineDungeons(machine, env = {}) {
 }
 
 /** One quest's re-lay (relayOnlineDungeons, above): whether its markers moved. AUDIT SD III (D5): asked of a quest a
- *  party member shares online too (systems/questShare.js receiveSharedQuest) - an older page lays every dungeon whole,
+ *  party member shares online too (systems/quest/questShare.js receiveSharedQuest) - an older page lays every dungeon whole,
  *  and its copy pointed into blocks this page's world-sized build has not; the load's pass alone re-laid it, the next
  *  time this player loaded online. */
 export function relayQuestOnline(quest, env = {}) {
-  if (!quest || quest.smallerDungeonsState === ONLINE_DUNGEONS_STATE) return false;
+  if (!quest || quest.smallerDungeonsState === SMALLER_DUNGEONS_STATE.Disabled) return false;   // INSTANCES: the whole dungeon's, as its markers know it
   const { moved, unread } = relayDungeonPlaces(quest);
-  if (!unread) quest.smallerDungeonsState = ONLINE_DUNGEONS_STATE;
+  if (!unread) quest.smallerDungeonsState = SMALLER_DUNGEONS_STATE.Disabled;
   if (!moved) return false;
   putBackPlacements(quest, env);
   return true;
@@ -183,6 +190,46 @@ function relayDungeonPlaces(quest, { only = null } = {}) {
 }
 
 /**
+ * QUEST-VOID (2026-10-12, a player online: the Dust of Restful Death's mummy in Ruins of Old Barbara's Place, "he cant
+ * find anything about it in the dungeon"; Mac: "the enemy is not marked on the map. i prob spawned the mob somewhere
+ * in the void"): THE NET UNDER THE MOUNT. The load's re-lays (relayOnlineDungeons, relayMovedLayouts) answer the drifts
+ * they know by the quest's stamp; this answers any other, at the one moment it costs the player: the dungeon as BUILT
+ * is in hand. `location` the built dungeon (its sized blocks, what the player walks); every quest linked to it whose
+ * Place there holds a target on a marker this build has not - a block address (dungeonX, dungeonZ) and flat
+ * (markerID) the enumeration of these blocks never yields - has that Place's markers enumerated again on THIS build
+ * and its placements put back (putBackPlacements: what is gone on purpose stays gone). A Place whose every target
+ * stands on a marker of this build is left alone, whatever else of its lists differs - nothing a player could find
+ * moves. `mapId` the mount's key for the dungeon (its site links'). Answers the count of Places re-laid. Run before the dungeon's scene mount (scenes/worldModes.js
+ * mountQuestResources). Not a DFU member (DFU's layout is the one size).
+ */
+export function relayBuiltDungeon(machine, location, env = {}, mapId = location?.mapTableData?.mapId ?? 0) {   // `mapId` the mount's own key (the dungeon adapter's currentMapId)
+  if (!machine?.getSiteLinks || !location?.dungeon?.blocks?.length) return 0;
+  let relaid = 0;
+  const seen = new Set();
+  for (const link of machine.getSiteLinks(SITE_TYPES.Dungeon, mapId, 0) ?? []) {
+    const quest = machine.getQuest?.(link.questUID);
+    if (!questRunning(quest) || isShelved(quest)) continue;
+    const place = quest.getPlace?.(link.placeSymbol);
+    const sd = place?.siteDetails;
+    if (!sd || sd.siteType !== SITE_TYPES.Dungeon || seen.has(place)) continue;
+    seen.add(place);
+    const world = quest.hooks?.world ?? null;
+    if (!world?.getBlock) continue;
+    let markers;
+    try { markers = place._enumerateDungeonQuestMarkers(world, location); } catch { continue; }
+    const here = new Set(`${markerAddresses(markers.questSpawnMarkers)};${markerAddresses(markers.questItemMarkers)}`.split(';'));
+    const held = [sd.selectedMarker, ...(sd.questSpawnMarkers ?? []), ...(sd.questItemMarkers ?? [])]
+      .filter((m) => (m?.targetResources?.length ?? 0) > 0 && Number.isInteger(m.dungeonX));   // a marker with no block address is not one to judge
+    if (!held.length || held.every((m) => here.has(markerAddresses([m])))) continue;
+    if (!markers.questSpawnMarkers && !markers.questItemMarkers) continue;   // a build with no markers at all: nowhere to stand them
+    place.siteDetails = { ...sd, questSpawnMarkers: markers.questSpawnMarkers, questItemMarkers: markers.questItemMarkers, selectedMarker: { targetResources: null } };
+    putBackPlacements(quest, env);
+    relaid++;
+  }
+  return relaid;
+}
+
+/**
  * MEDIUM-DISTINCT (2026-10-08, Mac: "Medium dungeons just copy and paste 2 layouts together"): A LAYOUT THE LAW MOVED.
  * A medium build no longer lays one interior block twice (world/smallerDungeons.js distinctInterior), so a dungeon whose
  * draws repeated is another layout now, and a running quest that chose its markers on the old one holds a marker in
@@ -199,7 +246,7 @@ export function relayMovedLayouts(machine, env = {}, online = isOnlinePage()) {
   return relaid;
 }
 /**
- * One quest's half of relayMovedLayouts - and a shared copy's on arrival (systems/questShare.js: a party member on an
+ * One quest's half of relayMovedLayouts - and a shared copy's on arrival (systems/quest/questShare.js: a party member on an
  * older page lays the old layout, and their copy's markers point into it). MEDIUM-DISTINCT's audit: only a dungeon
  * whose build MOVED (`distinct` - the clone says it took a block again) is compared, so a load reads no block of a
  * dungeon the law never touched; and offline only a dungeon a link holds - with none, the build is the settings' (the

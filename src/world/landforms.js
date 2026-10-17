@@ -122,11 +122,12 @@
 // (1.25 m - STREAMING_TERRAIN_SCALE).
 // ═══════════════════════════════════════════════════════════════════
 
-import { SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION, TERRAIN_SIZE, STREAMING_TERRAIN_SCALE, kernelTerms, sampleKernel, generateSamples, cubicInterpolator } from './terrainSampler.js';
-import { BEACH_JITTER, WORLD_MAP_TILE_DIM, blendLocationTerrain, locationFootprintRect } from './terrainTiles.js';
-import { DIR_DELTA, MAP_W, MAP_H } from './roadNetwork.js';
+import { SCALED_OCEAN_ELEVATION, SCALED_BEACH_ELEVATION, BASE_HEIGHT_SCALE, NOISE_MAP_SCALE, MAX_TERRAIN_HEIGHT, HEIGHTMAP_DIMENSION, TERRAIN_SIZE, STREAMING_TERRAIN_SCALE, kernelTerms, sampleKernel, generateSamples, cubicInterpolator } from './terrain/terrainSampler.js';
+import { BEACH_JITTER, WORLD_MAP_TILE_DIM, blendLocationTerrain, locationFootprintRect } from './terrain/terrainTiles.js';
+import { DIR_DELTA, MAP_W, MAP_H } from './road/roadNetwork.js';
 import { perlinNoise } from './perlin.js';
 import { CLIMATES } from '../formats/mapsTables.js';
+import { inEtherLaw, etherClimateAt } from './ethericSea.js';   // AUDIT CAPTAIN'S SEA G3: the Eltheric Ocean's climates past the table (worker-safe)
 
 
 /** At or under this, a height is DFU's: the beach line with its jitter, the highest height the tile classifier can
@@ -169,6 +170,18 @@ export const LANDFORM_DIALS = Object.freeze({
   // land's own height over the knee (at most 0.9 of it); `region` the region field's wavelength, `warp` how far the
   // shapes' domain is pushed about (over `warpScale`), and the rolling octaves' wavelengths and weights (samples).
   hills: Object.freeze({ uplandAt: 700, coast: 1.25, region: 2400, warp: 80, warpScale: 520, scales: Object.freeze([300, 125, 50]), weights: Object.freeze([1, 0.36, 0.1]) }),
+  // LANDFORM8 (WOD-PEAKS, 2026-10-09, the owner: "can you place more rounded not SUPER HUGE mountains?"): a mountain
+  // land's `peaks` - rounded mountains standing on its hills where World of Daggerfall's faceted spires stood
+  // (modSettings.js world-of-daggerfall `Mountains`, now off): one to a `cell` (samples) of the cells `fill` holds,
+  // each a bell (a cosine from its summit to its foot - round on top, easing out at the foot, never a crease) of its
+  // own girth (0.24 to 0.42 of a cell across its radius - 550 m to a kilometre in the mountains) and lean, as tall as
+  // `high` (kernel units) at most on the high ground - 200 m in the mountains, 140 m in the mountain woods - and lower
+  // on the low ground by the land's own `upland`; where two meet the taller stands. Centred as the hills are (PEAK_MEAN),
+  // so the land's average height stays DFU's, lifted; at most some 30 degrees on a bell's flank.
+  // MOUNTAINS-SHARP (2026-10-14, the owner: "Mountains shape (Dragontail/Wrothgarian). More pointy, less rounded (sharp),
+  // more height"): the mountain land's own - the Dragontail and the Wrothgarian Mountains are CLIMATE.PAK's Mountain -
+  // stand `sharp` peaks, (1 - q)^2 from summit to foot (a point on top, flanks that steepen toward it, easing out at
+  // the foot), twice as tall (400 m), on ridges 1.4 times as tall (`high` 112); the mountain woods keep their bells.
   // LANDFORM6: THE LAND WEARS ITS CLIMATE - each climate's hills: `low`/`high` their height (kernel units, either side of
   // the land) where the region field lies flat and where it rolls hardest, `upland` how much taller on the high ground,
   // and their `shape` (shapeRaw); a desert's `rockFrom` the slow rock field's level past which its sand gives way to mesas
@@ -177,8 +190,8 @@ export const LANDFORM_DIALS = Object.freeze({
   // on).
   lands: Object.freeze({
     woodlands: Object.freeze({ low: 4, high: 48, upland: 1.6, shape: 'rolling' }),
-    mountainWoods: Object.freeze({ low: 8, high: 56, upland: 1.6, shape: 'foothills' }),
-    mountain: Object.freeze({ low: 16, high: 80, upland: 1.6, shape: 'ridged' }),
+    mountainWoods: Object.freeze({ low: 8, high: 56, upland: 1.6, shape: 'foothills', peaks: Object.freeze({ cell: 380, fill: 0.34, high: 112 }) }),
+    mountain: Object.freeze({ low: 16, high: 112, upland: 1.6, shape: 'ridged', peaks: Object.freeze({ cell: 360, fill: 0.5, high: 320, sharp: true }) }),
     desert: Object.freeze({ low: 6, high: 26, upland: 1.3, shape: 'desert', rockFrom: 0.3 }),
     desert2: Object.freeze({ low: 6, high: 30, upland: 1.3, shape: 'desert', rockFrom: -0.1 }),
     rainforest: Object.freeze({ low: 8, high: 50, upland: 1.4, shape: 'knolls', cell: 120, fill: 0.62, edge: 0.88, roll: 0.15 }),
@@ -220,7 +233,7 @@ const CLIFF_FADE = (() => {
   for (let d2 = 0; d2 < out.length; d2++) out[d2] = Math.round(smooth01((Math.sqrt(d2) - from) / (full - from)) * 1024) / 1024;
   return out;
 })();
-const CLIFF_REACH = Math.ceil(LANDFORM_DIALS.cliff.full);
+export const CLIFF_REACH = Math.ceil(LANDFORM_DIALS.cliff.full);   // AUDIT CAPTAIN'S SEA G6: exported - the far ring's padded bytes reach it
 
 /**
  * AUDIT LANDFORMS II I1: how much of the lift a byte node keeps beside the sea - 0 within `cliff.from` map pixels of a
@@ -321,7 +334,7 @@ const LAND_OF_CLIMATE = (() => {
   return lut;
 })();
 /** LANDFORM6: a land's tallest hill, kernel units - `high` x `upland`. */
-const landTop = (land) => land.high * land.upland;
+const landTop = (land) => land.high * land.upland + (land.peaks ? land.peaks.high : 0);   // LANDFORM8: and its tallest peak
 /** LANDFORM6: the tallest hill a climate stands (`climate` a CLIMATE.PAK value; the woodlands' for any other), kernel
  *  units - what its hills' ease over the knee is measured by. */
 export function hillsTopOf(climate) {
@@ -329,11 +342,11 @@ export function hillsTopOf(climate) {
 }
 
 /** LANDFORM5/6: the most a hill stands over (or a dale under) the land anywhere, in kernel units - the mountains' top
- *  (128 units, 160 m). */
+ *  (MOUNTAINS-SHARP: their tallest ridge and peak, 499.2 units, 624 m). */
 export const HILLS_TOP = Math.max(...LANDS.map(landTop));
 
 /** LANDFORM1: the highest the landforms stand anything, in kernel units - DFU's ceiling, the most the lift adds and the
- *  tallest hill (about 3,180 m). Only WOODS.WLD's one glitch byte reaches it (the header, THE CEILING). */
+ *  tallest hill (MOUNTAINS-SHARP: about 3,644 m). Only WOODS.WLD's one glitch byte reaches it (the header, THE CEILING). */
 export const LANDFORM_CEILING = MAX_TERRAIN_HEIGHT + reliefLift(LOW_TOP) + HILLS_TOP;
 
 /** LANDFORM5: the octaves' offsets into the noise, so no two octaves (and neither field) share a lattice. */
@@ -519,6 +532,44 @@ function knolls(wx, wy, rock, land) {
   return gather * knollField(wx, wy, land.cell, land.fill, land.edge) + land.roll * rolling(wx, wy, land.cell / 110) + 0.05 * signed(wx / 90 + 63.7, wy / 90 + 29.1);
 }
 
+/** LANDFORM8: the mean of peakField over the land per unit of `fill` - its own law, integrated: a held cell's peak is
+ *  0.725 tall on average, its bell averages 0.2974 of that over its ellipse (1/2 - 2/pi^2), and the ellipse covers
+ *  pi r^2 / lean of the cell - E[r^2] = 0.1116 cell^2, E[1/lean] = ln(1.4)/0.4 = 0.84118. Overlaps (the taller kept) are rare. */
+export const PEAK_MEAN = 0.725 * (0.5 - 2 / (Math.PI * Math.PI)) * Math.PI * (0.0576 + 0.0864 * 0.5 + 0.0324 / 3) * 0.8411805915530323;   // ln(1.4)/0.4, written out: the ground asks no engine's own logarithm (AUDIT LANDFORMS III A8)
+/** MOUNTAINS-SHARP: the same for a `sharp` peak - (1 - q)^2 averages 1/6 over its ellipse, where the bell averages
+ *  1/2 - 2/pi^2. */
+export const PEAK_MEAN_SHARP = PEAK_MEAN / (6 * (0.5 - 2 / (Math.PI * Math.PI)));
+
+/** LANDFORM8: a mountain land's rounded peaks at a warped point - 0..1 of its `peaks.high`: one bell to a cell of the
+ *  cells `fill` holds, at its own place, girth, height and lean (an ellipse up to 1.4 to 1, turned its own way); the
+ *  taller where two meet. World-placed (cellHash): one number from every pixel and every client. MOUNTAINS-SHARP:
+ *  `sharp`, each is (1 - q)^2 instead of the bell - pointed on top - at the same place, girth, height and lean. */
+export function peakField(wx, wy, cell, fill, sharp = false) {
+  const fx = wx / cell, fy = wy / cell, cx = Math.floor(fx), cy = Math.floor(fy);
+  // a peak's centre lies 0.15..0.85 into its cell and its radius is at most 0.42 - it reaches at most 0.27 past its cell
+  const i0 = fx - cx < 0.3 ? -1 : 0, i1 = fx - cx > 0.7 ? 1 : 0, j0 = fy - cy < 0.3 ? -1 : 0, j1 = fy - cy > 0.7 ? 1 : 0;
+  let best = 0;
+  for (let j = j0; j <= j1; j++) {
+    for (let i = i0; i <= i1; i++) {
+      const ix = cx + i, iy = cy + j;
+      if (cellHash(ix, iy, 11) >= fill) continue;
+      const kx = (ix + 0.15 + 0.7 * cellHash(ix, iy, 12)) * cell, ky = (iy + 0.15 + 0.7 * cellHash(ix, iy, 13)) * cell;
+      const r = cell * (0.24 + 0.18 * cellHash(ix, iy, 14));
+      const dx = wx - kx, dy = wy - ky;
+      if (!(dx * dx + dy * dy < r * r)) continue;
+      const turn = 2 * cellHash(ix, iy, 15), ang = turn > 1 ? turn - 2 : turn, lean = 1 + 0.4 * cellHash(ix, iy, 16);
+      const ca = cosPi(ang), sa = sinPi(ang);
+      const ru = dx * ca + dy * sa, rv = (dy * ca - dx * sa) * lean;
+      const q = Math.sqrt(ru * ru + rv * rv) / r;
+      if (!(q < 1)) continue;
+      const t = 1 - q;
+      const v = (0.45 + 0.55 * cellHash(ix, iy, 17)) * (sharp ? t * t : 0.5 + 0.5 * cosPi(q));
+      if (v > best) best = v;
+    }
+  }
+  return best;
+}
+
 /** LANDFORM6: a swamp's ground - near flat: broad shallow hollows and low hummocks, nothing a walker would call a hill. */
 function hummocks(wx, wy) {
   return 0.55 * signed(wx / 380 + 12.1, wy / 380 + 70.3) + 0.3 * signed(wx / 95 + 93.9, wy / 95 + 41.5) + 0.15 * signed(wx / 34 + 2.7, wy / 34 + 61.9);
@@ -588,6 +639,21 @@ function landShape(j, wx, wy, gx, gy, rock) {
   return saturate((shapeRaw(land.shape, wx, wy, gx, gy, rock, land) - norm[0]) * norm[1]);
 }
 
+/** AUDIT CAPTAIN'S SEA G3: a node's land in the Eltheric Ocean's law - its isle's climate's (world/ethericSea.js
+ *  etherClimateAt; the Ocean's woodlands at sea) - remembered for the last few nodes (a pixel's samples ask the same
+ *  four, and the law's isle read is a cache lookup); outside the law the table's, held to the map as ever. */
+const _etherLand = new Map();
+function etherLandAt(x, y, climates) {
+  if (!inEtherLaw(x, y)) return LAND_OF_CLIMATE[climates[(y < 0 ? 0 : y >= MAP_H ? MAP_H - 1 : y) * MAP_W + (x < 0 ? 0 : x >= MAP_W ? MAP_W - 1 : x)]];
+  const k = x * 65536 + y;
+  let l = _etherLand.get(k);
+  if (l === undefined) {
+    if (_etherLand.size >= 64) _etherLand.clear();
+    l = LAND_OF_CLIMATE[etherClimateAt(x, y)] ?? 0;
+    _etherLand.set(k, l);
+  }
+  return l;
+}
 /** LANDFORM6: the share of each land at a world sample - a node at every map pixel's centre wearing its pixel's
  *  climate, read through a smoothstep-weighted bilinear (as the water's stilling is), so a climate's land holds whole
  *  over its own pixels and gives way to its neighbour's across about a pixel. Writes the shares into `_share` (by land)
@@ -599,10 +665,16 @@ function landShares(gx, gy, climates, span) {
   // a world of another hDim read its climates off 128-sample pixels
   const fx = gx / span - 0.5, fy = MAP_H + 0.5 - gy / span;
   const ix = Math.floor(fx), iy = Math.floor(fy);
-  // the four nodes, their coordinates held to the map
-  const x0 = ix < 0 ? 0 : ix >= MAP_W ? MAP_W - 1 : ix, x1 = ix + 1 < 0 ? 0 : ix + 1 >= MAP_W ? MAP_W - 1 : ix + 1;
-  const r0 = (iy < 0 ? 0 : iy >= MAP_H ? MAP_H - 1 : iy) * MAP_W, r1 = (iy + 1 < 0 ? 0 : iy + 1 >= MAP_H ? MAP_H - 1 : iy + 1) * MAP_W;
-  const l00 = LAND_OF_CLIMATE[climates[r0 + x0]], l10 = LAND_OF_CLIMATE[climates[r0 + x1]], l01 = LAND_OF_CLIMATE[climates[r1 + x0]], l11 = LAND_OF_CLIMATE[climates[r1 + x1]];
+  // the four nodes, their coordinates held to the map - AUDIT CAPTAIN'S SEA G3: a node in the Eltheric Ocean's law its isle's
+  // own climate (every isle wore the land of the Bay's corner pixel, held to the map, whatever its climate)
+  let l00, l10, l01, l11;
+  if (inEtherLaw(ix, iy) || inEtherLaw(ix + 1, iy + 1)) {
+    l00 = etherLandAt(ix, iy, climates); l10 = etherLandAt(ix + 1, iy, climates); l01 = etherLandAt(ix, iy + 1, climates); l11 = etherLandAt(ix + 1, iy + 1, climates);
+  } else {
+    const x0 = ix < 0 ? 0 : ix >= MAP_W ? MAP_W - 1 : ix, x1 = ix + 1 < 0 ? 0 : ix + 1 >= MAP_W ? MAP_W - 1 : ix + 1;
+    const r0 = (iy < 0 ? 0 : iy >= MAP_H ? MAP_H - 1 : iy) * MAP_W, r1 = (iy + 1 < 0 ? 0 : iy + 1 >= MAP_H ? MAP_H - 1 : iy + 1) * MAP_W;
+    l00 = LAND_OF_CLIMATE[climates[r0 + x0]]; l10 = LAND_OF_CLIMATE[climates[r0 + x1]]; l01 = LAND_OF_CLIMATE[climates[r1 + x0]]; l11 = LAND_OF_CLIMATE[climates[r1 + x1]];
+  }
   if (l00 === l10 && l00 === l01 && l00 === l11) { _share[l00] = 1; return 1 << l00; }
   const u = smooth01(fx - ix), v = smooth01(fy - iy);
   _share[l00] = 0; _share[l10] = 0; _share[l01] = 0; _share[l11] = 0;
@@ -659,6 +731,12 @@ export function hillsAt(gx, gy, macro, low, lattice = null, climates = null, out
     const amp = w * (land.low + (land.high - land.low) * region) * (1 + (land.upland - 1) * up);
     deep += amp;
     sum += amp * landShape(j, wx, wy, gx, gy, rock);
+    if (land.peaks) {   // LANDFORM8: a mountain land's rounded peaks, on its hills - taller on the high ground
+      const pa = w * land.peaks.high * (1 + (land.upland - 1) * up) / land.upland;   // the land's own upland: low ground's peaks lower
+      const sharp = !!land.peaks.sharp;   // MOUNTAINS-SHARP
+      sum += pa * (peakField(wx, wy, land.peaks.cell, land.peaks.fill, sharp) - land.peaks.fill * (sharp ? PEAK_MEAN_SHARP : PEAK_MEAN));   // centred: the land's mean stays its own
+      deep += pa;   // a river's valley carves a peak down as it carves a hill (AUDIT LANDFORMS III C1)
+    }
   }
   const ease = smooth01(e / (H.coast * top));
   if (out) out[0] = deep * ease;
@@ -914,7 +992,7 @@ export function landformLiftField(woods, px, py, locationRect = null, hDim = HEI
  * @param {?Uint8Array} [o.sites] - LANDFORM4: landformSites' table, the game's own locations; null pulls no ground (a
  *   world whose map table is not read - a test, a tool).
  * @param {boolean} [o.hills] - LANDFORM5: false leaves the hills out - the land the paths' own pins read their cuts on
- *   (test/auditlandforms.test.js); no kernel of the game passes it.
+ *   (test/world/terrain/auditlandforms.test.js); no kernel of the game passes it.
  * @param {?Uint8Array} [o.climates] - LANDFORM6: landformClimates' table, the land each climate wears; null stands every
  *   sample in woodlands (a test, a tool).
  * @param {number} [o.hDim]

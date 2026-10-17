@@ -58,8 +58,8 @@ import { modSetting } from './modSettings.js';
 import { liveStat } from './statMods.js';
 import { registerFormulaOverride, dice100 } from '../combat/formulas.js';
 import { createWeapon } from '../combat/enemyEquipment.js';
-import { createRandomArmor } from './loot.js';
-import { mintCondition, setItemFields } from './itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
+import { createRandomArmor } from './loot/loot.js';
+import { mintCondition, setItemFields } from './item/itemTemplates.js';   // MAC-N1: SetItem's name + value, the one export
 import { registerEnemyDeathHandler } from '../scenes/corpseMarker.js';
 import { GOLD_TEMPLATE } from './inventory.js';
 
@@ -275,14 +275,14 @@ export function addOrcish(loot, enemyId, rolls) {
  *  (MobileAffinity.Daedra) or an Orc (MobileTeams.Orcs) may drop its
  *  metal; every gold stack is divided by the level (never under 1) and
  *  multiplied by Range(1, luck's tenth + 1). */
-export function unlevelDroppedLoot(entity, { rolls = Math.random, r = null } = {}) {
+export function unlevelDroppedLoot(entity, { rolls = Math.random, r = null, luck = undefined, level: levelIn = undefined } = {}) {   // PARTY-LOOT: the raiser's Luck and level when it names them (a room's base rolls on the room's), else the player's
   if (!entity || !Array.isArray(entity.items)) return;
-  luckMod = int(playerLuck() / 10);
+  luckMod = int((luck ?? playerLuck()) / 10);
   const b = entity.basics ?? {};
   const id = entity.mobileType;
   if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls);
   else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls);
-  const level = playerLevel();
+  const level = levelIn != null ? Math.max(1, levelIn | 0) : playerLevel();
   for (const item of entity.items) {
     if (item.group !== 'Currency' || item.templateIndex !== GOLD_TEMPLATE) continue;
     item.stackCount = int((item.stackCount ?? 0) / level);

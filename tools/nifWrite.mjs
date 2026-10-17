@@ -1,4 +1,4 @@
-// A MORROWIND NIF, WRITTEN. The other end of src/formats/mwNifFile.js.
+// A MORROWIND NIF, WRITTEN. The other end of src/formats/morrowind/mwNifFile.js.
 //
 //     node tools/nifWrite.mjs <mesh.json> <out.nif> [--texture=NAME.dds]
 //                             [--node=NAME] [--keep-v]
@@ -262,6 +262,30 @@ export const WRITERS = {
     }
     keyGroup(o, rec.translations, 3);
     keyGroup(o, rec.scales, 1);
+  },
+
+  // MW-BOW1: a bow's limbs and string, drawn - the reader's NiGeomMorpherController (the time controller, the data,
+  // `alwaysUpdate`) and NiMorphData (the morph count, the vertex count, the relative-targets byte, then each morph's
+  // float keys - a quadratic key's tangents after its value, a TBC key's three floats - and its vectors).
+  NiGeomMorpherController(o, rec) {
+    o.ref(rec.next ?? -1).u16(rec.flags ?? 8).f32(rec.frequency ?? 1).f32(rec.phase ?? 0);
+    o.f32(rec.startTime ?? 0).f32(rec.stopTime ?? 0).ref(rec.target ?? -1);
+    o.ref(rec.data).u8(rec.alwaysUpdate ?? 0);
+  },
+
+  NiMorphData(o, rec) {
+    o.u32(rec.morphs.length).u32(rec.numVertices).u8(rec.relativeTargets ?? 1);
+    for (const m of rec.morphs) {
+      const keys = m.keys?.keys ?? [];
+      const type = m.keys?.type ?? 1;
+      o.u32(keys.length).u32(type);
+      for (const k of keys) {
+        o.f32(k.time).f32(k.value);
+        if (type === 2) o.f32(k.inTan).f32(k.outTan);
+        else if (type === 3) o.f32Array(k.tbc);
+      }
+      o.f32Array(m.vectors);
+    }
   },
 
   NiSkinData(o, rec) {

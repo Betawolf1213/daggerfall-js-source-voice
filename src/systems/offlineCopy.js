@@ -76,6 +76,14 @@ function rebaseWorldStamps(copy, delta, days, { questOwn = false } = {}) {
   const paidAt = ledger?.paidAt && typeof ledger.paidAt === 'object' ? ledger.paidAt : {};
   for (const k of Object.keys(paidAt)) if (Number.isSafeInteger(paidAt[k])) paidAt[k] = Math.max(0, paidAt[k] + delta);
   if (days) {
+    // AUDIT CAPTAIN'S SEA L4: the captain's ledger's days are the world's online and the one clock's offline - a legend
+    // ended, a strand gathered, the day's dealing - so they move by the days between the clocks, as a shelf's stock day
+    // does (a copy taken offline found a legend sunk for months, "gone down today", and a strand bare as long)
+    const cap = copy.modData?.[CAPTAIN_RECORD_VENDOR];
+    for (const map of [cap?.ether?.legends, cap?.ether?.harvested]) {
+      if (map && typeof map === 'object') for (const k of Object.keys(map)) if (Number.isFinite(map[k])) map[k] += days;
+    }
+    if (cap?.dealt && typeof cap.dealt === 'object' && Number.isFinite(cap.dealt.day)) cap.dealt.day += days;
     for (const scene of copy.sceneCache?.scenes ?? []) {
       for (const c of scene?.lootContainers ?? []) {
         if (!c || typeof c !== 'object') continue;
@@ -118,9 +126,12 @@ export const RAID_RECORD_VENDOR = 'world-events-raiding-parties';
 function dropLineage(copy) {
   if (copy.modData && typeof copy.modData === 'object') delete copy.modData[LEGACY_VENDOR];
 }
-/** AUDIT REST III D1: the bounty board's record (bountyBoard.js BOUNTY_VENDOR - pinned equal, test/auditrest3.test.js;
+/** AUDIT REST III D1: the bounty board's record (bountyBoard.js BOUNTY_VENDOR - pinned equal, test/systems/auditrest3.test.js;
  *  this module stays off the board's graph, as it does off the raid mod's). */
 export const BOUNTY_RECORD_VENDOR = 'bountyBoard';
+/** AUDIT CAPTAIN'S SEA L4: the captain's ledger's record (captainLedger.js CAPTAIN_SAVE_VENDOR - pinned equal,
+ *  test/systems/naval/auditcaptsea.test.js; this module stays off the ledger's graph as it does off the board's). */
+export const CAPTAIN_RECORD_VENDOR = 'Captain';
 
 /** The copy an offline slot keeps: the world's stamps rebased onto the character's clock, `worldMinutes` dropped. */
 export function offlineCopyOf(snap) {

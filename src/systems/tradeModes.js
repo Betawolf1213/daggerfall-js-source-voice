@@ -56,17 +56,24 @@
 import { calculateCost, calculateTradePrice, essentialPrice } from './shopStock.js';   // ESSENTIALS-HALF: online, a potion costs half
 import { GOLD_PIECE_WEIGHT_KG, isEnchanted } from './inventory.js';
 import { calculateItemRepairCost, repairRefusal } from './repairService.js';
-import { itemValueOf, conditionPercentage } from './itemTemplates.js';
-import { isOnlinePage } from './onlineLane.js';   // SELL-AS-FOUND: online, a sale reads a piece as it was found
+import { itemValueOf, conditionPercentage } from './item/itemTemplates.js';
+import { craftedRarityWorth } from './loot/lootRarity.js';   // CRAFT-WORTH: a crafted piece's rolled worth, never a counter's
+import { isOnlinePage } from './online/onlineLane.js';   // SELL-AS-FOUND: online, a sale reads a piece as it was found
 import { isCampfireKit } from './survival/items.js';   // AUDIT REST: the Campfire an essential online
-import { isFirewood } from './restItems.js';
+import { isFirewood } from './rest/restItems.js';
 import { isPotion } from './useItem.js';   // ESSENTIALS-HALF: the potion, by DFU's own IsPotion   // JAN1: the one value read; RRI2: ConditionPercentage, the Sell arm's third argument
 import { HOLIDAYS } from './holidays.js';
-import { GUILDS } from './guilds.js';
+import { GUILDS } from './guild/guilds.js';
 import { isBagItem } from '../net/bagLaw.js';   // BAG1: a loaded Materials Bag is never sold (the cart's rule)
+import { activeWagonItem } from './wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the wagon driven, read once for every counter (sellGuardOf)
+import { wagonSoldWhole } from './wagon/wagonUpkeep.js';   // WAGON-TIERS: a wagon's wear prices its sale only on Hard
+import { wagonUpkeepRules } from './upkeep/upkeepSwitch.js';   // WAGON-TIERS: the tier, through wagon upkeep's one accessor
+import { PATRON_COUNTER_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1: online, a counter's piece is no patron's
+import { clearStolen } from './stolenGoods.js';   // STOLEN-GOODS AUDIT S3: a piece bought at a counter is the buyer's, honestly
 import {
   cureOfferMessageOffset, TRADE_MESSAGE_BASE_ID, NOT_ENOUGH_GOLD_ID,
-} from './guildServiceActions.js';
+} from './guild/guildServiceActions.js';
+import { localizedText, formatText } from './textManager.js';   // L10N3d: the window's own lines
 
 /** The shared TEXT.RSC ids. DaggerfallTradeWindow declares both
  *  (:33-34) and so do the guild services; ONE DFU MEMBER, ONE EXPORT,
@@ -178,7 +185,6 @@ export function identifySpellPass(items, chance, rolls = Math.random) {
   return { successCount, total: list.length, identified, spendMagicka: list.length > 0 };
 }
 
-/** Internal_Strings.csv:1053 - `totalIdentified,{0} out of {1} identified.` */
 /** AUDIT 26 F067 - DoModeAction's magicka refusal
  *  (DaggerfallTradeWindow.cs:960-963). The string table the old flag
  *  waited on IS in the reference tree, and it settles the wording:
@@ -192,9 +198,13 @@ export function identifySpellPass(items, chance, rolls = Math.random) {
  *  (GodMode's `&& !GodMode` arm has no port counterpart, as
  *  motor.js:"this.transportMode = mode" already records for the levitation term.) */
 export const NOT_ENOUGH_SPELL_POINTS_TEXT = 'You do not have enough spell points left.';
+/** L10N3d: ...as the refusal shows it (:962), in the player's language. */
+export const notEnoughSpellPointsText = () => localizedText('notEnoughSpellpointsLeft', NOT_ENOUGH_SPELL_POINTS_TEXT);
 
+/** The tally (:990): string.Format over GetLocalizedText("totalIdentified"),
+ *  Internal_Strings.csv:1053 - `totalIdentified,{0} out of {1} identified.` */
 export const identifiedTallyText = (successCount, total) =>
-  `${successCount} out of ${total} identified.`;
+  formatText(localizedText('totalIdentified', '{0} out of {1} identified.'), successCount, total);
 
 /** The three Buy-mode holiday halvings (:444-449), as ONE predicate
  *  per arm so each can be pinned alone. `guildFactionId` is null
@@ -231,9 +241,45 @@ export function buyItemPrice(item, { quality = 0, priceAdjustment = 1000, holida
  *  after the find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new shelf's),
  *  or found before this - sells at its own condition, repaired or not. Offline, the mod's prices stand. */
 export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) {
+  // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): a wagon's condition is its wear, and its wear prices it only where
+  // the seller's wagon upkeep tier says so (Hard). On Boons - and Off - a counter buys it as DFU's plain wagon, which
+  // never wore: whole (bible/06-Systems/Wagon-Upkeep.md, The tiers)
+  if (wagonSoldWhole(item, wagonUpkeepRules())) return 100;
   const found = item?.foundCondition;
   if (!online || !Number.isInteger(found) || !(found < (item?.currentCondition ?? 0))) return conditionPercentage(item);
   return conditionPercentage({ currentCondition: found, maxCondition: item.maxCondition });
+}
+
+/** AUDIT LW-II-2 S1: THE COUNTER'S MARK (net/patronLaw.js PATRON_COUNTER_MARK) - ONLINE, EVERY PIECE AN NPC COUNTER SELLS
+ *  IS MARKED, and no town's patron takes it (patronLaw.js patronTakes): a patron paid more than an online counter asks
+ *  (a book three times its file price, a quality-1 smith's weapon a fifth over its ask), so a player bought at the
+ *  counter, stocked a hired trader and printed the difference. The counter's Buy hands every piece through here
+ *  (worldModes.js commitTrade's Buy arm and the keyed list's doBuy - every shop's shelf, a guild's, a caravan's on the
+ *  road); the mark rides the save, the item law and the market's listing, and a stack keeps it through a merge (either
+ *  part's) and a split (inventory.js addItem, splitStack). Offline nothing is written. Answers how many it marked.
+ *  STOLEN-GOODS AUDIT (2026-10-16, S3): and on either lane A PIECE BOUGHT AT A COUNTER IS THE BUYER'S, HONESTLY - its theft
+ *  mark (systems/stolenGoods.js) cleared before a stack's merge takes it. No shelf piece is stolen by construction (a sold
+ *  one never reaches a shelf - landSold), yet a peer's word for a shelf could carry one (an older build's sale, a hostile
+ *  client - world/interior/interiorShared.js applyInteriorLoot strips it too), and a piece stolen elsewhere and left on a shut
+ *  shelf stays marked there: paid for, it is the buyer's. */
+export function markCounterBought(items, { online = isOnlinePage() } = {}) {
+  for (const it of items ?? []) clearStolen(it);
+  if (!online) return 0;
+  let n = 0;
+  for (const it of items ?? []) if (it && typeof it === 'object') { it[PATRON_COUNTER_MARK] = true; n++; }
+  return n;
+}
+
+/** CRAFT-WORTH (2026-10-11): THE VALUE A COUNTER PAYS A PIECE ON - its own (itemValueOf), less what a crafted piece's
+ *  quality rolled onto it (lootRarity.js craftedRarityWorth): a counter pays for a crafted piece what it pays for the
+ *  plain piece its recipe makes, never for its Magic or Rare lines. Every selling arm reads it - the trade windows'
+ *  Sell and SellMagic, and the keyed shelf's (scenes/worldModes.js sellPrice). AUDIT CRAFT-WORTH: the roll comes off a
+ *  piece's OWN value alone - a piece with none is priced at its template's base (itemValueOf), which never held the roll. */
+export function counterValueOf(item) {
+  const v = itemValueOf(item);
+  if (!Number.isFinite(item?.value)) return v;   // AUDIT CRAFT-WORTH: the base the read falls back to carries no roll to take off
+  const rolled = craftedRarityWorth(item);
+  return rolled > 0 ? Math.max(1, v - rolled) : v;
 }
 
 /**
@@ -274,7 +320,7 @@ export function tradeCost(mode, staged = [], {
         // CalculateCost never reads - see the header; RRI2: Roleplay &
         // Realism: Items' override reads it, so the slot is passed.
         // SELL-AS-FOUND: online, no better than the condition the world handed the piece over at
-        cost += calculateCost(itemValueOf(item), quality, priceAdjustment, saleConditionPercentage(item, { online })) * stack;   // JAN1: an item with no finite value is priced at its base, never NaN
+        cost += calculateCost(counterValueOf(item), quality, priceAdjustment, saleConditionPercentage(item, { online })) * stack;   // JAN1: an item with no finite value is priced at its base, never NaN; CRAFT-WORTH: a crafted piece at its plain worth
         break;
       case 'SellMagic':
         // DFU's own TODO sits on this line: "Fencing base price higher
@@ -282,7 +328,7 @@ export function tradeCost(mode, staged = [], {
         // WITHOUT the stack multiply - a stack of five soul gems fences
         // for the price of one. Verbatim, and deliberately not "fixed".
         modeActionEnabled = true;
-        cost += calculateCost(itemValueOf(item), quality, priceAdjustment);
+        cost += calculateCost(counterValueOf(item), quality, priceAdjustment);   // CRAFT-WORTH: a fenced crafted piece at its plain worth
         break;
       case 'Repair':
         if (isBeingRepaired(item)) break;
@@ -384,6 +430,8 @@ export function tradeDecision(mode, { cost, tradePrice, gold = 0 }) {
  *  The sound alone (ParchmentScratching, already ported at :1084) is
  *  not that explanation - it plays where GoldPieces would have. */
 export const LETTER_OF_CREDIT_TEXT = 'You are paid with a letter of credit.';
+/** L10N3d: ...as the box shows it (:1093), in the player's language - both skins read it. */
+export const letterOfCreditText = () => localizedText('letterOfCredit', LETTER_OF_CREDIT_TEXT);
 
 /** ConfirmTrade's SELL arm (:1035-1050): the proceeds are weighed
  *  BEFORE they are paid, and a purse that would push the player past
@@ -426,6 +474,15 @@ export function localListAccepts(mode, item, { accepts = () => true, enchanted =
  *  textId | text } | { kind: 'ignore' }. Every 'stage' is a
  *  TransferItem call in DFU (:795, :817, :823, :826), so the window
  *  owes it TransferItem's own guards on top of this. */
+/** WAGONS2 (FINAL AUDIT): WHAT A COUNTER'S CLICK READS OFF THE ENTITY - PlayerEntity.WagonItems and .Items.GetItem
+ *  (:789-793; WAGONS1: the wagon DRIVEN, the best owned - a cart left over from an upgrade is an empty cart to sell) and
+ *  BAG1's bag - one home for the six places the two trade windows asked it, each its own copy (the copies were pinned
+ *  nowhere: any one turned back to the first wagon in the pack sold a loaded caravan while a spare cart was held). */
+export const sellGuardOf = (entity) => ({
+  wagonLoaded: (entity?.wagonItems ?? []).length > 0,
+  bagLoaded: (entity?.bagItems ?? []).length > 0,   // BAG1: the Materials Bag holding anything
+  usedWagon: activeWagonItem(entity?.items ?? []),
+});
 export function localClickDecision(mode, item, {
   inBasket = () => false, allowMagicRepairs = false, usingIdentifySpell = false,
   wagonLoaded = false, usedWagon = null, bagLoaded = false,
@@ -465,6 +522,8 @@ export function localClickDecision(mode, item, {
  *  Internal_Strings.csv:821 - `doesntNeedIdentify,This does not need to
  *  be identified.` (the row has no "item"). */
 export const DOESNT_NEED_IDENTIFY = 'This does not need to be identified.';
+/** L10N3d: ...as the refusal shows it, in the player's language - both skins read it. */
+export const doesntNeedIdentifyText = () => localizedText('doesntNeedIdentify', DOESNT_NEED_IDENTIFY);
 
 // The three clauses that stood here are all closed:
 //  - the IDENTIFY SPELL arm (:956-996) is live. identifySpellPass

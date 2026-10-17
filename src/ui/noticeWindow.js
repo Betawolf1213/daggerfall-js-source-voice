@@ -17,7 +17,8 @@
 // PROF1 (2026-09-28, Mac: "Begin!"): THE WORK TAB - the region's Court writs under the Court's purple seal, each with
 // its need, its pay and Renown, its time left, what the Stores hold of it and a Take that fills it from them (PROF0 11,
 // 21, 22: a Court writ is filled whole by the first to deliver, so taking it is delivering it); under them "Court writs
-// today: 1 of 3". Shown only while the professions are this account's (`work`, the host's).
+// today: 1 of 3" (CHAP2a: and the region's chapters' hall writs under their guilds' seals; AUDIT CHAP2 C5: the line
+// "Writs today", one allowance for both). Shown only while the professions are this account's (`work`, the host's).
 //
 // GUILD1e (2026-09-30, Mac: "Finish the seats"): THE GUILDS TAB (PROF0 10.1: "Recruitment posters (each guild's heraldry
 // and a line); a guild's own notes, members only") - the town's recruitment notes hung as their guilds' posters, and
@@ -34,16 +35,16 @@
 // open); the Work tab's day stands above its cards, not under the last; the cards straight; the words cut to what the
 // reader needs.
 //
-// THE HOUSE'S SHAPE, as the bounty board's (ui/bountyWindow.js) and the Broker's before it: a lazy chunk the door
+// THE HOUSE'S SHAPE, as the bounty board's (ui/bounty/bountyWindow.js) and the Broker's before it: a lazy chunk the door
 // (ui/noticeDoor.js) mounts in its own host - `mountNoticeBoard(host, deps)` answers `{ repaint, unmount }` - the back
 // key and a tap on the scrim leave through the door's own close. On the classic skins the window lays its own sheet,
 // the kit's rules cut to its selectors, so it wears the Enhanced Plus stone whichever UI is chosen (online forces the
 // enhanced lane, never necessarily its Plus face).
-import { closeOnOutsideTap } from './enhancedOverlays.js';
+import { closeOnOutsideTap } from './enhanced/enhancedOverlays.js';
 import { overlayAction, isTextEntryTarget } from './input.js';
-import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
-import { NOTICE_CSS, PROF_CSS } from './enhancedPlusStyle.js';
-import { frameCss } from './enhancedFrame.js';
+import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedStyle.js';
+import { NOTICE_CSS, PROF_CSS } from './enhanced/enhancedPlusStyle.js';
+import { frameCss } from './enhanced/enhancedFrame.js';
 import { isEnhancedPlus } from '../systems/uiSkin.js';
 import { scopeRules } from './brokerWindow.js';
 import {
@@ -51,11 +52,18 @@ import {
   BOUNTY_BOARD_LINE, noteIsNew,
 } from '../net/boardLaw.js';
 import { accountRefusalText } from '../net/accountClient.js';   // PROF1: a writ's refusal, in words
+import { hallPosterName, isChapterWrit, meritLineOf, chapterLineOf, chapterFocusLineOf, chapterPatronSheetLine, chapterPatronBidLine, chapterPatronBidsOf, chapterPatronBidSaid,
+  chapterBandOf, chapterBandEffectsLine, chapterDutiesLine, meritEarnsOf, chapterSeasonOf,
+  MERIT_WRIT, MERIT_RECEIPT, MERIT_TENURE_S, MERIT_CAP_WEEK, STRENGTH_START, STRENGTH_MIN, STRENGTH_MAX, STRENGTH_STEP_MAX, STRENGTH_IDLE, STRENGTH_SHORT, STRENGTH_TARGET,
+  CHAPTER_FAILING_FALL, CHAPTER_FAILING_MEETS, CHAPTER_EVENT_EFFECTS, CHAPTER_BANDS, CHAPTER_SEATS, SEAT_RANK, SEAT_TENURE_S, SEAT_ACCOUNT_AGE_S,
+  SEAT_MERIT_WEEKS, CHAPTER_EVENTS, CHAPTER_PATRON_MIN, CHAPTER_PATRON_BAND, ROLL_BOOK_RANK_MAX, ROLL_GAIN_DAY_MAX, HALL_WRIT_REP, RECEIPT_REP } from '../net/npcChapterLaw.js';   // CHAP7b: a chapter's patron, a guildmaster's bid; GUILD3d: the chapter's card - its band's effects, its duties
+import { chapterSeasonLines, chapterBackChoices, chapterBackedLine } from '../net/chapterEvents.js';   // CHAP6c: a chapter's Season - its lines, a member's choices   // CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ, its Merit; CHAP3b: a chapter's Strength
+import { t } from '../systems/textManager.js';   // STANDING-WORDS: the guide's rank and standing, in the player's language
 import { movedFirstText } from '../net/bagLaw.js';   // AUDIT2 BAG1 K8: what went into the Stores before a refusal
 import { createMarketTab } from './marketTab.js';   // PROF5: the Market tab
-import { createWorkTab } from './workTab.js';   // PROF6: the Work tab's guild writs and commissions
-import { createSeatTab } from './seatTab.js';   // SEAT1b: the Seat tab - a seat town's standings, pledges and Tribute
-import { createVendorTab } from './vendorTab.js';   // HOME-VENDOR: the Vendors tab, and a trader's stall
+import { createWorkTab, writWalledText } from './workTab.js';   // PROF6: the Work tab's guild writs and commissions; WRIT-WALL: what no writ may spend, in words
+import { createSeatTab, boardFold } from './seatTab.js';   // SEAT1b: the Seat tab - a seat town's standings, pledges and Tribute
+import { createVendorTab } from './vendor/vendorTab.js';   // HOME-VENDOR: the Vendors tab, and a trader's stall
 import { bannerSvg } from './heraldryArt.js';   // GUILD1e: a guild's banner over its notes and its posters
 
 /** @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
@@ -113,6 +121,39 @@ export const BOARD_WORDS = Object.freeze({
   noticeTip: 'Goes up on every board, under the red seal.',
 });
 
+/** PLAIN-UI (bible/10-UI/Plain-Words.md; a player: "Same issue with the new guild chapter systems"): the Work tab's fold
+ *  over the chapters' cards. */
+export const CHAPTER_GUIDE_TITLE = 'How chapters work';
+/**
+ * PLAIN-UI: HOW CHAPTERS WORK - what a chapter is and every name its card uses, `[name, words]`, its numbers the law's
+ * own (net/npcChapterLaw.js), so the words never drift from the rules. Pure.
+ */
+export function chapterGuide() {
+  const n = (/** @type {number} */ x) => Number(x).toLocaleString('en-US');
+  const days = (/** @type {number} */ s) => n(s / 86_400);
+  const bands = CHAPTER_BANDS.map((b, i) => (i ? `${b.name} from ${b.from}` : `${b.name} under ${CHAPTER_BANDS[1].from}`)).join(', ');
+  const events = CHAPTER_EVENTS.map((e) => e.name);
+  const patronBand = /** @type {{ name: string }} */ (CHAPTER_BANDS.find((b) => b.band === CHAPTER_PATRON_BAND)).name;
+  return [
+    ['What a chapter is', 'Each of Daggerfall\'s guilds - the Fighters and Mages Guilds, the temples, the knightly orders - keeps a chapter in every region where it has a hall, shared by every player online. The cards below are this region\'s. Join the guild at one of its halls, as you always would, and its chapters are yours.'],
+    // STANDING-WORDS / SEAT-WORDS (Field-Bugs-2026-10-15g): the guide said what a chair is and never that a guild's own
+    // review stops below it, nor how the standing itself moves online
+    // AUDIT GUILD-WORDS L1-5, L3-3: a chair's services are its own chapter's halls', for a member at 7 (seatedBook); L3-2,
+    // L3-4, L3-5: the pace a quest keeps and the real day, a receipt's first of the day; II C-3: no quest is said free of
+    // its guild's losses; II C-5: a chapter writ, yours or the chapter's; II C-8: the day turns at midnight UTC
+    [t('notice.chapters.rank.name', 'Your rank'), t('notice.chapters.rank.words', 'A guild\'s own review still promotes you, up to rank {cap}. Ranks {officer} and {master} are the chairs below; a chair\'s services are at its own chapter\'s halls, for a member at rank {cap}.', { cap: ROLL_BOOK_RANK_MAX, officer: SEAT_RANK.officer, master: SEAT_RANK.master })],
+    [t('notice.chapters.standing.name', 'Standing'), t('notice.chapters.standing.words', 'The realm keeps your standing with each of these guilds. Quests raise it at most {max} a real day for each, the day turning at midnight UTC - a larger reward is owed and paid on the days after. Beyond that pace, a chapter writ (yours or the chapter\'s) adds {writ}, and a closed Breach or a defended town adds {receipt} to each of your guilds that keeps a chapter there ({writ} more for the day\'s first, where the chapter asks for it).', { max: ROLL_GAIN_DAY_MAX, writ: HALL_WRIT_REP, receipt: RECEIPT_REP })],
+    ['Merit', `Your work for a chapter this week: ${n(MERIT_WRIT)} for filling your own chapter writ (one a day; goods you bought earn none), and a share of ${n(MERIT_RECEIPT)} for each Dagon's Breach closed or raided town defended in the region. It counts once you have been in the guild ${days(MERIT_TENURE_S)} real days - at most ${n(MERIT_CAP_WEEK)} an account a week in each chapter, and in one chapter of each guild a week.`],
+    // AUDIT PLAIN-UI W1: the whole of strengthAfter, failingWeekAfter, the Rivalry's swing and strengthSeasonEnd - "Merit
+    // raises it" alone hid the week's mark, the fall back toward 50 and the Failing band's fall
+    ['Strength', `The chapter's health, ${STRENGTH_MIN} to ${STRENGTH_MAX}, from ${STRENGTH_START}. The week's mark is ${STRENGTH_TARGET} Merit for every hundred players active (at least ${STRENGTH_TARGET}). At each Turning, Sunday 18:00 UTC, Strength rises 1 for each mark its members' Merit reached that week, up to ${STRENGTH_STEP_MAX}. A week short of the mark brings a chapter above ${STRENGTH_START} back ${STRENGTH_SHORT} toward it; a week with no Merit at all costs ${STRENGTH_IDLE}; a Failing chapter loses ${CHAPTER_FAILING_FALL} more unless its Merit reaches ${CHAPTER_FAILING_MEETS === 2 ? 'twice' : `${CHAPTER_FAILING_MEETS} times`} the mark. A Rivalry's winner takes ${CHAPTER_EVENT_EFFECTS.rivalrySwing} from the loser, and a Season's end brings every chapter halfway back to ${STRENGTH_START}.`],
+    ['Band', `Strength's name: ${bands}. A band sets the halls' prices, their shelf and how many chapter writs they post - each card says what its band does.`],
+    ['The chairs', `Rank ${SEAT_RANK.master} (the Master) and rank ${SEAT_RANK.officer} (${CHAPTER_SEATS.officer} council chairs) go at each Turning to the members with the most Merit over the last ${SEAT_MERIT_WEEKS} weeks, among those ${days(SEAT_TENURE_S)} real days in the guild, standing high enough in it for rank ${SEAT_RANK.officer}, on accounts ${days(SEAT_ACCOUNT_AGE_S)} real days old. The Master names the week's Focus - the goods the chapter writs ask for.`],
+    ['Season', `Each Season a chapter draws one event: ${events.slice(0, -1).join(', ')} or ${events[events.length - 1]}. A Schism or a Succession asks its members to back a side; the card says what this Season's does.`],
+    ['Patron', `A player guild's Guildmaster may bid silver (at least ${n(CHAPTER_PATRON_MIN)}) for a chapter's patronage next Season. The highest bid is spent and the rest go home; the patron's members pay ${patronBand} prices for training and spells in its halls, or the chapter's own where better.`],
+  ];
+}
+
 /**
  * The cards of a board, in the order they hang (the header's four arms, above). Pure over what the window is handed.
  * @param {{ town:{name:string}, rumour?:string[], bountyLine?:boolean, gate?:({subject:string, body:string}|null),
@@ -160,7 +201,7 @@ function injectSkin(doc = document) {
  *   nowS?: () => number,
  *   onExit?: (() => void) | null,
  *   work?: ({ book: any, region: number, regionName: string, countName: (key: string, n: number) => string,
- *     onTaken?: (r: any) => (string|void), writs?: any, regionNameOf?: (r: number) => string,
+ *     onTaken?: (r: any) => (string|void), sayLate?: (text: string) => void, setFocus?: ((faction: number, focus: string) => Promise<any>) | null, back?: ((faction: number, side: number) => Promise<any>) | null, patron?: ((faction: number, marks: number) => Promise<any>) | null, writs?: any, regionNameOf?: (r: number) => string,
  *     pieces?: (c: any) => any[], settle?: () => any, onList?: (data: any) => void, forgetMarket?: () => void } | null),
  *   market?: (any | null),
  *   guilds?: boolean,
@@ -168,7 +209,7 @@ function injectSkin(doc = document) {
  *   seat?: ({ seat: any, book: any, nameOf?: (key: number) => (string|null) } | null), seatBattle?: (seat: any, fight: any) => boolean,
  *   seatRoyal?: (seat: any, royal: any, watch: boolean) => boolean, seatRecords?: (seat: any) => Promise<boolean>,
  *   vendors?: any, traderOnly?: { title: string, sub?: string } | null,
- * }} deps HOME-VENDOR: `vendors` the Vendors tab's host (ui/vendorTab.js), `traderOnly` a stall's window. `work` - PROF1's Court writs for the board's region (net/profBook.js), or null where the professions are not
+ * }} deps HOME-VENDOR: `vendors` the Vendors tab's host (ui/vendor/vendorTab.js), `traderOnly` a stall's window. `work` - PROF1's Court writs for the board's region (net/profBook.js), or null where the professions are not
  *   this account's; PROF6: with `writs` (net/writBook.js) the guild writs and commissions beside them (ui/workTab.js),
  *   `pieces` the pieces in the save that answer a commission; `market` - PROF5's Market tab's host (ui/marketTab.js createMarketTab's `m`), or null where the
  *   market is not; `guilds` - GUILD1e: the Guilds tab shown (online, the board open); `guildOnly` - the board in a guild's
@@ -200,6 +241,7 @@ export function mountNoticeBoard(host, deps) {
   const character = () => deps.character?.() ?? null;
   const gme = () => gboard?.me ?? { canPin: false, live: 0, max: 3, keeper: false };
   let writs = null, writsError = null, writsStale = false, writsBusy = false;   // PROF1: the Work tab's list
+  let chapterGuideOpen = null;   // PLAIN-UI: How chapters work unfolded - null until the reader folds or unfolds it
   const work = deps.work ?? null;
   const workShown = () => !!work && work.book?.state?.open === true;
   // PROF5: the Market tab - its own state and views, the window's one-at-a-time door and its status line
@@ -270,6 +312,7 @@ export function mountNoticeBoard(host, deps) {
   let workBusy = false;
   const workMore = work?.writs ? createWorkTab({
     writs: work.writs, held: (m) => work.book.held(m), carrying: () => work.book.carrying?.() === true, region: work.region, regionName: work.regionName,   // AUDIT BAG1: whose count `held` is
+    walled: (m) => Number(work.book.walled?.(m)) || 0,   // WRIT-WALL: and what is held past it
     regionNameOf: work.regionNameOf ?? ((r) => String(r)), countName: work.countName, pieces: work.pieces ?? (() => []),
     reload: () => { work.book.forgetWrits?.(); loadWrits(true); },   // AUDIT 31 B7: a read begun before the act is read again
   }, {
@@ -460,40 +503,149 @@ export function mountNoticeBoard(host, deps) {
     render();
   }
 
-  /** A Court writ's card: its need, pay and Renown, its time left, what the Stores hold of it, and Take. */
+  /** A Court writ's card: its need, pay and Renown, its time left, what the Stores hold of it, and Take. CHAP2a: a hall
+   *  writ's the same, under the guild's seal and name (npcChapterLaw.js hallPosterName) - its pay its guild's standing too.
+   *  CHAP3a: a member's own writ its own, its pay Merit too. GUILD3a (bible/11-Multiplayer/Guilds-Made-Plain.md, ONE WORD,
+   *  ONE THING): a "Chapter writ" and "Your chapter writ" - "hall" is a guild's hall, never a card's kind. */
   function writNode(w) {
-    const li = el('li', `notice-card notice-writ seal-court${w.state !== 'open' ? ' done' : ''}`);
-    li.append(el('span', 'notice-pin'), el('span', 'writ-kind', 'Court writ'));
-    li.append(el('p', 'writ-need', `The Court of ${work.regionName} needs ${w.qty} ${work.countName(w.material, w.qty)}`));
-    li.append(el('p', 'writ-pay', `Pays ${w.pay.toLocaleString('en-US')} silver, ${w.renown.toLocaleString('en-US')} Renown`));
+    const poster = isChapterWrit(w.kind) ? hallPosterName(w.faction) ?? 'guild' : null;
+    const own = w.kind === 'member';
+    const li = el('li', `notice-card notice-writ ${poster ? 'seal-guild' : 'seal-court'}${w.state !== 'open' ? ' done' : ''}`);
+    li.append(el('span', 'notice-pin'), el('span', 'writ-kind', own ? 'Your chapter writ' : poster ? 'Chapter writ' : 'Court writ'));
+    li.append(el('p', 'writ-need', own
+      ? `Yours to fill: ${w.qty} ${work.countName(w.material, w.qty)}, for the ${poster} in ${work.regionName}`
+      : poster
+        ? `Wanted: ${w.qty} ${work.countName(w.material, w.qty)}, for the ${poster} in ${work.regionName}`
+        : `The Court of ${work.regionName} needs ${w.qty} ${work.countName(w.material, w.qty)}`));
+    // AUDIT CHAP3 C8: a member's own writ promises Merit only where the account's Merit line here says it can earn some
+    const m = own ? (writs?.merit ?? []).find((x) => x.faction === w.faction) : null;
+    const earns = meritEarnsOf(m);   // AUDIT GUILD3 L2: the law's one rule, the Duties line's too
+    li.append(el('p', 'writ-pay', `Pays ${w.pay.toLocaleString('en-US')} silver, ${w.renown.toLocaleString('en-US')} Renown${own && earns ? `, standing and Merit with the ${poster}` : poster ? ` and standing with the ${poster}` : ''}`));
     li.append(el('p', 'writ-left', w.state === 'mine' ? 'Taken by you' : w.state === 'taken' ? 'Filled by another' : timeLeftText(w.expiresAt, nowS())));
     const held = work.book.held(w.material);
+    // WRIT-WALL (FIELD BUGS 2026-10-13e, "Cant turn in writs": 100 Iron in the pack, "0 held" on the card and nothing
+    // said why): what is held and no writ may spend - looted, shop-bought, traded or gold-bought (net/profBook.js walled) -
+    // named on the card and on Take's title, wherever it is why the writ cannot be filled
+    const walled = w.state === 'open' && held < w.qty ? Number(work.book.walled?.(w.material)) || 0 : 0;
+    const walledSaid = walled > 0 ? writWalledText(walled, work.countName(w.material, walled)) : null;
     const take = el('div', 'writ-take');
     if (w.state === 'open') {
       const full = (work.book.state.writs?.today ?? 0) >= (work.book.state.writs?.max ?? 3);
       const b = button('primary notice-take', 'Take', () => takeWrit(w));
       b.disabled = busy || workBusy || held < w.qty || full;   // AUDIT 31 B10: nor while a guild writ's or a commission's act is out
-      if (held < w.qty) b.title = work.book.carrying?.() ? 'Not enough - your Stores, Materials Bag and pack together' : 'Not enough in your Stores';   // BAG1; AUDIT BAG1: and the pack
-      else if (full) b.title = 'You have filled today\'s Court writs';
+      if (held < w.qty) b.title = walledSaid ?? (work.book.carrying?.() ? 'Not enough - your Stores, Materials Bag and pack together' : 'Not enough in your Stores');   // BAG1; AUDIT BAG1: and the pack; WRIT-WALL: and what of them is walled
+      else if (full) b.title = 'You have filled today\'s writs';   // CHAP2a: the Court's and the halls' one allowance
       take.append(b);
     }
     take.append(el('span', null, `${held.toLocaleString('en-US')} ${work.book.carrying?.() ? 'held' : 'in your Stores'}`));   // BAG1: the Stores' and what is carried
-    li.append(take, el('span', 'notice-seal', ''));
+    li.append(take);
+    if (walledSaid) li.append(el('p', 'writ-walled', walledSaid));   // WRIT-WALL: on the card - a phone has no hover
+    li.append(el('span', 'notice-seal', ''));
     return li;
+  }
+
+  /** GUILD3d (bible/11-Multiplayer/Guilds-Made-Plain.md): A CHAPTER'S CARD - every line of one chapter of the region in one
+   *  panel under its guild's name and band, where they stood loose above the cards: its Strength and what its band does to
+   *  its halls (chapterBandEffectsLine), the reader's Merit there (CHAP3a), its Master's Focus (CHAP4d), its Season and
+   *  the sides a member may back (CHAP6c), its patron and the guildmaster's bid (CHAP7b), and its Duties - CHAP2b's
+   *  receipt asks, which stood as "Hall writ" cards with no Take (chapterDutiesLine). @param {any} c */
+  function chapterCard(c) {
+    const card = el('section', 'notice-panel notice-chapter-card');
+    card.append(el('h3', null, `${hallPosterName(c.faction) ?? 'Guild'} - ${chapterBandOf(c.strength).name}`));
+    card.append(el('p', 'notice-chapter', `${chapterLineOf(c)}.`));   // CHAP3b: the chapter here, its Strength (AUDIT GUILD3 W12: a sentence, as the card's others)
+    const merit = (writs?.merit ?? []).find((m) => m.faction === c.faction);
+    // GUILD3d: what the band does - AUDIT GUILD3 L3: none of its halls' where they are shut this Season (its season line says so)
+    const band = chapterBandEffectsLine(c.strength, c.faction, { shut: !!chapterSeasonOf(c)?.shut });
+    if (band) card.append(el('p', 'notice-chapter notice-band', band));
+    if (merit) card.append(el('p', 'notice-merit', `${meritLineOf(merit, nowS())}.`));   // CHAP3a: the account's Merit here (W12: a sentence)
+    // CHAP4d: and its Master's Focus this week - and, for its Master, the families to choose it from
+    const focusLine = chapterFocusLineOf(c.faction, c.focus);
+    if (focusLine) card.append(el('p', 'notice-chapter notice-focus', focusLine));
+    if (c.master && c.focuses?.length && work.setFocus) {
+      const row = el('p', 'notice-chapter notice-focus-pick', 'Your chapter\'s Focus this week: ');
+      for (const f of c.focuses) row.append(button(f === c.focus ? 'on' : '', f, () => setFocus(c.faction, f)));
+      card.append(row);
+    }
+    // CHAP6c: its Season - the event, the doctrine, shut halls - and, for a member of its guild here (its Merit line
+    // stands on the board), the sides it may back
+    for (const line of chapterSeasonLines(c.faction, work.region, c)) card.append(el('p', 'notice-chapter notice-season', line));
+    const choices = work.back && merit ? chapterBackChoices(c.faction, work.region, c) : [];
+    if (choices.length) {
+      const row = el('p', 'notice-chapter notice-back-pick', c.event === 'schism' ? 'Back a side: ' : 'Name who follows: ');
+      for (const ch of choices) row.append(button(ch.side === c.backed ? 'on' : '', ch.label, () => backSide(c, ch.side)));
+      card.append(row);
+    }
+    // CHAP7b: its patron this Season; and, for its guild's guildmaster (the board sends its bid to it alone), the guild's
+    // own bid for the Season after and what it may bid
+    const patronLine = chapterPatronSheetLine(c.patron, c.faction);   // AUDIT GUILD3 L6: and what its patronage buys here
+    if (patronLine) card.append(el('p', 'notice-chapter notice-patron', patronLine));
+    const bidLine = work.patron ? chapterPatronBidLine(c.patronBid) : null;
+    if (bidLine) {
+      card.append(el('p', 'notice-chapter notice-patron', bidLine));
+      const row = el('p', 'notice-chapter notice-patron-pick', c.patronBid.marks > 0 ? 'Raise the bid to: ' : 'Bid for it: ');
+      for (const m of chapterPatronBidsOf(c.patronBid)) row.append(button('', `${m.toLocaleString('en-US')} silver`, () => bidPatron(c, m)));
+      card.append(row);
+    }
+    // GUILD3d: its Duties - a gate held, a raid defended - and the reader's first of each today (CHAP2b's asks)
+    const duties = chapterDutiesLine(c.faction, writs?.receipts, merit);   // AUDIT GUILD3 L2: Merit promised where the reader earns it
+    if (duties) card.append(el('p', 'notice-chapter notice-duties', duties));
+    return card;
+  }
+
+  /** CHAP4d: a chapter's Master names its Focus - the list read again, the line its answer. */
+  /** CHAP6c: a member backs a side of its chapter's Season (a Schism's side, a Succession's candidate) - said as a
+   *  Focus is, in the chat when the board closed first. @param {any} c @param {number} side */
+  async function backSide(c, side) {
+    if (busy || workBusy || !work.back) return;
+    busy = true; render();
+    const r = await work.back(c.faction, side);
+    const said = r?.ok ? { ok: true, text: chapterBackedLine(c.faction, work.region, c, side) ?? 'Done.' } : { ok: false, text: accountRefusalText(r?.error) };
+    if (!alive) { work.sayLate?.(said.text); return; }
+    busy = false;
+    word = said;
+    loadWrits(true);
+  }
+
+  /** CHAP7b: a guildmaster bids its guild's silver for a chapter's patronage in the Season after - said as a backing is,
+   *  in the chat when the board closed first. @param {any} c @param {number} marks */
+  async function bidPatron(c, marks) {
+    if (busy || workBusy || !work.patron) return;
+    busy = true; render();
+    const r = await work.patron(c.faction, marks);
+    const said = r?.ok ? { ok: true, text: chapterPatronBidSaid(c.faction, r.data?.season ?? c.patronBid?.season, marks) ?? 'Bid made.' } : { ok: false, text: accountRefusalText(r?.error) };
+    if (!alive) { work.sayLate?.(said.text); return; }
+    busy = false;
+    word = said;
+    loadWrits(true);
+  }
+
+  async function setFocus(faction, focus) {
+    if (busy || workBusy || !work.setFocus) return;
+    busy = true; render();
+    const r = await work.setFocus(faction, focus);
+    const said = r?.ok ? { ok: true, text: chapterFocusLineOf(faction, focus) ?? 'Focus set.' } : { ok: false, text: accountRefusalText(r?.error) };
+    if (!alive) { work.sayLate?.(said.text); return; }   // AUDIT CHAP4 C: a Focus set as the board closed is said in the chat, as a Take is
+    busy = false;
+    word = said;
+    loadWrits(true);
   }
 
   async function takeWrit(w) {
     if (busy || workBusy) return;
     busy = true; render();
     const r = await work.book.deliver(w.id, work.region, { material: w.material, qty: w.qty });   // AUDIT BAG1 B9: the card's own word
-    if (!alive) return;
+    // AUDIT CHAP2 C1: the host hears a filled writ whether or not the board still stands - its balance, its Renown and a
+    // hall writ's Roll refresh were lost with a board closed while the answer was out
+    const said = r?.ok ? work.onTaken?.(r) : null;
+    if (!alive) { if (said) work.sayLate?.(said); return; }   // AUDIT CHAP3 C5: the line said in the chat, not lost with the board
     busy = false;
     if (r?.ok) {
       writs = work.book.state && writs ? { ...writs, writs: writs.writs.map((x) => (x.id === w.id ? { ...x, state: 'mine' } : x)), today: r.data?.today ?? writs.today } : writs;
-      word = { ok: true, text: work.onTaken?.(r) || `Writ filled: ${r.data?.pay ?? w.pay} silver.` };
+      word = { ok: true, text: said || `Writ filled: ${r.data?.pay ?? w.pay} silver.` };
     } else {
       word = { ok: false, text: `${accountRefusalText(r?.error)}${movedFirstText(r)}` };
-      if (r?.error === 'writ-taken' || r?.error === 'writ-expired') loadWrits(true);
+      // AUDIT CHAP3 C7: and a writ no longer the reader's (no-writ) or the Chapters shut: the list read again, its Take gone
+      if (r?.error === 'writ-taken' || r?.error === 'writ-expired' || r?.error === 'no-writ' || r?.error === 'chapters-closed') loadWrits(true);
     }
     render();
   }
@@ -502,11 +654,28 @@ export function mountNoticeBoard(host, deps) {
     const body = el('div', 'notice-cork');
     // BOARD-UI: the day's count above the cards - under the last card it stood off the bottom of a long list
     const today = writs?.today ?? { filled: work.book.state.writs?.today ?? 0, max: work.book.state.writs?.max ?? 3 };
-    body.append(el('p', 'notice-worktoday', `Court writs today: ${today.filled} of ${today.max}${writsStale ? ' - the list may be out of date' : ''}`));
+    // AUDIT CHAP2 C5: "Writs" - the count is every writ the account filled today, the Court's and the halls' (CALL 8)
+    body.append(el('p', 'notice-worktoday', `Writs today: ${today.filled} of ${today.max}${writsStale ? ' - the list may be out of date' : ''}`));
+    // CHAP3a: the account's Merit here - GUILD3d: on its chapter's card; above them only for a chapter the board draws
+    // no card for (a service from before the cards)
+    const carded = new Set((writs?.chapters ?? []).map((c) => c.faction));
+    for (const m of writs?.merit ?? []) if (!carded.has(m.faction)) body.append(el('p', 'notice-merit', meritLineOf(m, nowS())));
+    // PLAIN-UI: HOW CHAPTERS WORK over the cards - open for a reader with no Merit in any of them yet, folded for one with
+    // some. AUDIT PLAIN-UI T3: the service sends a Merit row for EVERY membership here (npcMerit.js meritAsks, 0 and a
+    // week's wait included), so its length folded the guide for the newest member, who needs it most
+    if (writs?.chapters?.length) {
+      const guide = boardFold(el, 'notice-panel chapter-guide board-guide', CHAPTER_GUIDE_TITLE,
+        chapterGuideOpen ?? !(writs?.merit ?? []).some((m) => Number(m?.merit) > 0), (o) => { chapterGuideOpen = o; });
+      const steps = el('ol');
+      for (const [name, words] of chapterGuide()) { const li = el('li'); li.append(el('b', null, `${name}. `), words); steps.append(li); }
+      guide.append(steps);
+      body.append(guide);
+    }
+    for (const c of writs?.chapters ?? []) body.append(chapterCard(c));   // GUILD3d: each chapter here, one card
     const grid = el('ul', 'notice-grid');
     grid.setAttribute('role', 'list');
     const list = writs?.writs ?? [];
-    for (const w of list) grid.append(writNode(w));
+    for (const w of list) grid.append(writNode(w));   // GUILD3d: the receipts' asks are their chapters' Duties lines now - a card that cannot be taken is no writ
     // PROF6: this region's guild writs and commissions in the Court's own grid (AUDIT 31 U14 - the Court's stood alone)
     const more = workMore ? workMore.cards(writs) : [];
     for (const c of more) grid.append(c);

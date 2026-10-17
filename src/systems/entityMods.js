@@ -28,6 +28,8 @@
 //   armorParts[7]   points OFF a blow's chance to land on that body
 //                   part (the hit formula adds the part's armour value)
 //   stats{name}     an attribute, by STAT_KEYS_ORDER name (liveStat)
+//   statMax{name}   FIRM-MAX: points on that attribute's live CEILING (liveStat's maxValue - DFU's StatMaxMods, the
+//                   Mace's channel), so a gain lands on a stat already at 100
 //   skills{id}      a skill, by id (skillValue)
 //   resist{element} a saving-throw bonus per element name
 //   weightMult      a fraction on the carrying capacity
@@ -59,12 +61,12 @@ export const WARDROBE_CHANNELS = Object.freeze(['warmth', 'dry', 'coldDegrees', 
 /** The empty record every fold may answer; frozen, shared. */
 export const EMPTY_MODS = Object.freeze({
   armorParts: Object.freeze(new Array(NUMBER_BODY_PARTS).fill(0)),
-  stats: Object.freeze({}), skills: Object.freeze({}), resist: Object.freeze({}), weightMult: 0,
+  stats: Object.freeze({}), statMax: Object.freeze({}), skills: Object.freeze({}), resist: Object.freeze({}), weightMult: 0,
   standing: Object.freeze(new Array(STANDING_CHANNELS).fill(0)),
   ...Object.fromEntries(WARDROBE_CHANNELS.map((k) => [k, 0])),
 });
 /** A fresh, writable record for a fold to fill. */
-export const newMods = () => ({ armorParts: new Array(NUMBER_BODY_PARTS).fill(0), stats: {}, skills: {}, resist: {}, weightMult: 0,
+export const newMods = () => ({ armorParts: new Array(NUMBER_BODY_PARTS).fill(0), stats: {}, statMax: {}, skills: {}, resist: {}, weightMult: 0,
   standing: new Array(STANDING_CHANNELS).fill(0), ...Object.fromEntries(WARDROBE_CHANNELS.map((k) => [k, 0])) });
 
 const _folds = new Map();
@@ -80,7 +82,7 @@ const _blowMods = new Map();
 /** SIGIL1: register a modifier over a WEAPON BLOW's whole damage - `fn(weapon, damage, attacker, target, info) -> damage`,
  *  read at the tail of FormulaHelper's weapon damage (after the strength, the material and the enemy-type term, before
  *  DFU's mod hook, its last line), where the
- *  attacker and the target are known: the online sigil (systems/sigil.js) is the one that needs them.
+ *  attacker and the target are known: the online sigil (systems/sigil/sigil.js) is the one that needs them.
  *  SET2: `info` is what the striker's host knew and the formula could not - `{ unaware }`, the struck foe had not
  *  noticed the striker (its AI's `detected`, read where the foe RECORD is in hand: combat/playerWeapon.js foeUnaware).
  *  Read under EITHER core - DFU's (combat/formulas.js weaponAttackDamage) and PCAAO's (combat/pcaao.js
@@ -110,6 +112,7 @@ export function computeEntityMods(entity) {
     if (!m) continue;
     if (Array.isArray(m.armorParts)) for (let i = 0; i < NUMBER_BODY_PARTS; i++) out.armorParts[i] += m.armorParts[i] | 0;
     for (const [k, v] of Object.entries(m.stats ?? {})) out.stats[k] = (out.stats[k] ?? 0) + (v | 0);
+    for (const [k, v] of Object.entries(m.statMax ?? {})) out.statMax[k] = (out.statMax[k] ?? 0) + (v | 0);   // FIRM-MAX
     for (const [k, v] of Object.entries(m.skills ?? {})) out.skills[k] = (out.skills[k] ?? 0) + (v | 0);
     for (const [k, v] of Object.entries(m.resist ?? {})) out.resist[k] = (out.resist[k] ?? 0) + (v | 0);
     out.weightMult += Number(m.weightMult) || 0;

@@ -80,12 +80,13 @@ current design "does not work in an enjoyable manner"):
 
 ## Where the economy stands (2026-10-01)
 
-- **Authority.** A realm character's gold is checked once, at its first save
-  (`server-account/src/realm.js`, `src/net/realmGoldLaw.js`); every later
-  checkpoint is stored as written, and every source - loot, quests, shop
-  sales, gate spoils (`src/systems/gateSpoils.js`) - is computed by the
-  client. "Assume infinite wealth" is already literally true. The budgets and
-  telemetry `06-Systems/Realm-Arc.md` planned are not built. A market
+- **Authority.** Every source - loot, quests, shop sales, gate spoils
+  (`src/systems/gate/gateSpoils.js`) - is computed by the client. Until INT2
+  (2026-10-09, `06-Systems/Integrity-Arc.md`) a realm character's gold was
+  checked once, at its first save, and "Assume infinite wealth" was literally
+  true; since, every checkpoint is judged - the item law over every piece, the
+  wealth against a budget the time played fills (MEASURE first, then enforced
+  by staff) - and a breach holds the character's trade. A market
   listing's wear is the client's word too: a lie about it buys a kit's work,
   and since KIT-CEILING a smith's - gold such a client can write for itself
   (`06-Systems/Professions-Arc.md`, "What the listing carries").
@@ -121,11 +122,15 @@ current design "does not work in an enjoyable manner"):
   `src/systems/healingSupply.js`) and COMPANION-WEIGHT (a crew companion's
   pack carries what a person of his strength can, DFU's MaxEncumbrance -
   `03-World/Naval-Combat.md`). Audited the same day (AUDIT ECON,
-  `01-Overview/Audit-Econ.md`).
+  `01-Overview/audits/Audit-Econ.md`).
 - **Phase 1 - see failure.** The server-side gold ledger: each checkpoint's
   gold and item deltas read against budgets, every faucet counted. Nothing
   later is tuned blind.
-- **Phase 2 - close the printers.** Cap what an NPC pays for a crafted piece;
+- **Phase 2 - close the printers.** Cap what an NPC pays for a crafted piece
+  (BUILT - CRAFT-WORTH, 2026-10-11, the exploit audit: a counter, the keyed shelf and a patron pay a crafted piece what
+  they pay the plain piece its recipe makes - its quality's Magic or Rare roll is power, never price; a Masterwork staff
+  of three planks had sold for ~1,280 gold, ~79k-320k gold an hour; `systems/tradeModes.js` counterValueOf,
+  `systems/loot/lootRarity.js` craftedRarityWorth, `net/patronLaw.js` patronWorth, `test/systems/craftworth.test.js`);
   customs reads the server's level, not the client's; a defaulted loan stops
   being free gold.
 - **Phase 3 - make the friction fair.** The Vault, Loadouts and secure
@@ -194,7 +199,7 @@ current design "does not work in an enjoyable manner"):
 The ask: "We need to make house pricing make sense online". Offered three ways,
 the choice was a new online price "by what you get (its footprint, scaled by
 town size) inside a fixed range the server enforces", with the coherence fixes
-beside it. Audited the same day (`01-Overview/Audit-HomePrice.md`); what the
+beside it. Audited the same day (`01-Overview/audits/Audit-HomePrice.md`); what the
 audit changed is folded in below.
 
 **What did not make sense.**
@@ -222,7 +227,7 @@ audit changed is folded in below.
 
 **The law** (`src/net/homeLaw.js`, read by both ends): an online home costs
 the GROUND its model stands on - the ARCH3D box's width by depth, in square
-metres (`systems/onlineHomes.js` `homeFootprintM2`, the renderer's 0.025 m a
+metres (`systems/online/onlineHomes.js` `homeFootprintM2`, the renderer's 0.025 m a
 unit; Daggerfall's meshes are centred on x and z, RMBLayout.cs:874, so the
 box's origin is no inflation) - at **300 gold a square metre**, raised by its
 town's size (`homeTownFactor`: 1 in a one-block hamlet, farm or manor, rising
@@ -236,7 +241,7 @@ house may well sit at the cap (unmeasured here), and past it price no longer
 follows size (AUDIT HOME-PRICE E3). A guild's hall is still the home's price and half again
 (`guildHallPrice`), so at most 375,000. Offline nothing changes: the bank's
 market and its buy-back read Daggerfall's own price; customs counts every deed
-at its own constant (`net/realmGoldLaw.js` `CUSTOMS_HOUSE_PRICE`, 100,000),
+at its own constant (`net/realm/realmGoldLaw.js` `CUSTOMS_HOUSE_PRICE`, 100,000),
 never either price (D10).
 
 **The bank's deed, online** (AUDIT HOME-PRICE C1, chosen: "Online price"). The
@@ -298,7 +303,7 @@ Update (AUDIT HOME-PRICE E2).
 **The four hosts.** `scenes/world.js` and `scenes/exterior.js` put the town's
 blocks on every door's building record and on the bank's directory
 (`townBlocks`, `homeTownBlocks`); `scenes/worldModes.js` prices the door, the
-deed and the sale; the dungeon host prices no door. `test/homeprice.test.js`
+deed and the sale; the dungeon host prices no door. `test/systems/homeprice.test.js`
 (8), `tools/mutants/homeprice.json` (56, all dead). **Not verified here:** this
 tree has no ARENA2, so the spread over Daggerfall's real house models was not
 measured - the rate, the factor and the range are set from the field's prices

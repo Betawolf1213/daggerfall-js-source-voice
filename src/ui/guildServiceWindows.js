@@ -11,14 +11,14 @@
 // extends DaggerfallMessageBox). So each is a short chain of U11
 // parchment boxes, with the list picker in the middle of training's.
 //
-// The LAW is systems/guildServiceActions.js; this file is the chain.
+// The LAW is systems/guild/guildServiceActions.js; this file is the chain.
 // One class runs all three, because all three are the same shape: a
 // queue of boxes, each optionally carrying buttons or an input field
 // or a picker, and each able to push the next.
 
-import { nativeMetrics } from './nativePanel.js';
+import { nativeMetrics } from './native/nativePanel.js';
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS } from './messageBox.js';
-import { noticeFrame, noticeRelease } from './enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
+import { noticeFrame, noticeRelease } from './enhanced/enhancedNotice.js';   // ENH-NOTICE2: the window's own click-anywhere box, as the enhanced panel
 import { ListPickerWindow, listPickerArtLoaded } from './listPicker.js';
 import { wrapText } from './talkWindow.js';
 import { InputMessageBoxWindow } from './inputMessageBox.js';   // CM11: a field box IS a pushed DaggerfallInputMessageBox
@@ -27,13 +27,15 @@ import {
   donate, DONATION_DEFAULT, DONATION_MAX_CHARACTERS,
   cureDiseaseOffer, payForCure, cureForFree,
   expandGuildMacros, NOT_ENOUGH_GOLD_ID, TRAINING_TOO_SKILLED_ID,
-} from '../systems/guildServiceActions.js';
+} from '../systems/guild/guildServiceActions.js';
 import { SKILL_NAMES, permanentSkillValue } from '../systems/skills.js';
-import { trainingMax } from '../systems/guildServices.js';   // RR2: the cap the refined price scales against
-import { rrTrainingCost, rrIntensiveCost, rrIntensiveOffered, RR_WEEK_BUTTON, RR_INTENSIVE_DAYS, RR_INTENSIVE_SKILL_POINTS, RR_TRAINING_LINES } from '../systems/rrRealism.js';   // RR2: GuildServiceTrainingRR's laws
+import { trainingMax } from '../systems/guild/guildServices.js';   // RR2: the cap the refined price scales against
+import { rrTrainingCost, rrIntensiveCost, rrIntensiveOffered, RR_WEEK_BUTTON, RR_INTENSIVE_DAYS, RR_INTENSIVE_SKILL_POINTS, RR_TRAINING_LINES } from '../systems/roleplayRealism/rrRealism.js';   // RR2: GuildServiceTrainingRR's laws
 import { goldAmount, totalGoldAmount, deductGold } from '../systems/court.js';   // AUDIT-RR F24: GetGoldAmount (PlayerEntity.cs:1313-1316) counts letters of credit
 import { isBanished, pardonPrice, grantPardon, penanceHelps, penancePrice, doPenance, banishmentLeft, banishmentDaysLeft } from '../systems/standing.js';   // REP3/REP4: the temple speaks for a bad name
-import { raceDisplayName, honorificOf } from '../systems/talkSession.js';
+import { raceDisplayName, honorificOf } from '../systems/talk/talkSession.js';
+import { getDivineLocalized } from '../systems/guild/guildVariants.js';   // L10N3d: the boxes' %god
+import { localizedText } from '../systems/textManager.js';
 
 /** The prompt DFU shows beside the donation field, from its
  *  Internal_Strings ("serviceDonateHowMuch") - the TextBox LABEL
@@ -42,9 +44,11 @@ import { raceDisplayName, honorificOf } from '../systems/talkSession.js';
 export const DONATE_HOW_MUCH = 'Donate how much money : ';
 /** DaggerfallInputMessageBox's own field for the donation box
  *  (DaggerfallGuildServiceDonation.cs:46-51: the label, Numeric,
- *  MaxCharacters 8, Text "1000"). */
+ *  MaxCharacters 8, Text "1000"). The label is read when the box is
+ *  raised, in the player's language (L10N3d). */
 export const DONATION_FIELD = Object.freeze({
-  numeric: true, maxCharacters: DONATION_MAX_CHARACTERS, initial: DONATION_DEFAULT, label: DONATE_HOW_MUCH,
+  numeric: true, maxCharacters: DONATION_MAX_CHARACTERS, initial: DONATION_DEFAULT,
+  get label() { return localizedText('serviceDonateHowMuch', DONATE_HOW_MUCH); },
 });
 /** "freeHolidayCuring" and "curedDisease". */
 export const FREE_HOLIDAY_CURING = "You are cured free from cost due to today's holiday.";
@@ -57,10 +61,19 @@ export const CURED_DISEASE = 'You are cured.';
  *    { rows, field: { numeric, maxCharacters, initial, label? }, onInput(text) }   rows = the tokens ABOVE, label = the field's own (DFU sets one or the other)
  *    { picker: [labels], onPick(i) }
  */
+/** QUEST-NOTE: the grace's clock (ms). */
+const graceNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+
 export class ServiceFlowWindow {
-  constructor(boxes = [], { onClose = null } = {}) {
+  constructor(boxes = [], { onClose = null, graceMs = 0 } = {}) {
     this.boxes = [...boxes];
     this.onClose = onClose;
+    // QUEST-NOTE (2026-10-13, a player: "killed the mage in question, but DFO never popped up saying the mage was
+    // killed"): A BOX THAT JUST APPEARED IS NOT CLOSED BY THE PRESS ALREADY ON ITS WAY. Online the game does not stop for
+    // it, and the swing or the step that killed the foe closed the box the kill raised before a word of it was drawn.
+    // A plain click-anywhere box ignores clicks and keys for `graceMs` after each box comes up (0: DFU's own, at once).
+    this.graceMs = Math.max(0, Number(graceMs) || 0);
+    this._shownAt = graceNow();
     this.done = false;
     this.isChoiceWindow = true;
     this._input = null;     // CM11: the pushed DaggerfallInputMessageBox while the top box carries a field
@@ -118,6 +131,7 @@ export class ServiceFlowWindow {
    *  returns boxes pushes them to the FRONT, because DFU's handlers
    *  show their next box immediately rather than behind the rest. */
   _advance(next = null) {
+    this._shownAt = graceNow();
     this.boxes.shift();
     if (next?.length) this.boxes.unshift(...next);
     this._picker = null;
@@ -129,7 +143,7 @@ export class ServiceFlowWindow {
   _close() { this.done = true; noticeRelease(this); this.onClose?.(); }
 
   push(boxes) {
-    if (boxes?.length) this.boxes.unshift(...boxes);
+    if (boxes?.length) { this.boxes.unshift(...boxes); this._shownAt = graceNow(); }
     this._syncPicker();
     this._syncValue();
   }
@@ -162,8 +176,12 @@ export class ServiceFlowWindow {
       else if (code === 'KeyN' && t.buttonsMulti.includes(MB_BUTTONS.No)) this._advance(t.onButton?.(MB_BUTTONS.No) ?? null);
       return;
     }
+    if (this._inGrace()) return;   // QUEST-NOTE
     this._advance(t.onClick?.() ?? null);
   }
+
+  /** QUEST-NOTE: whether the top plain box came up too recently to be closed by a press. */
+  _inGrace() { return this.graceMs > 0 && graceNow() - this._shownAt < this.graceMs; }
 
   /** ROAD-A7: the picker's hover seam (ListBox.MouseMove's highlight
    *  and VerticalScrollBar.Update's drag) reaches it through here. */
@@ -193,6 +211,7 @@ export class ServiceFlowWindow {
       return true;
     }
     if (t.field) { this._input?.click(); return true; }   // modal, not click-anywhere
+    if (this._inGrace()) return true;   // QUEST-NOTE: the swing that raised it does not close it
     this._advance(t.onClick?.() ?? null);
     return true;
   }
@@ -267,8 +286,8 @@ const identity = (entity, { shopName = null, cityName = null } = {}) => ({
  *  the host's - the clock advance and the fatigue drain belong to its
  *  ticker, not to a window. */
 export function buildTrainingFlow(entity, guild, membership, deps) {
-  const { rows, now, applyTraining, onClose, rolls = Math.random, guildTitle = '', shopName = null, cityName = null } = deps;
-  const offer = trainingOffer(entity, guild, membership, now());
+  const { rows, now, applyTraining, onClose, rolls = Math.random, guildTitle = '', shopName = null, cityName = null, priceFactor = 1 } = deps;
+  const offer = trainingOffer(entity, guild, membership, now(), priceFactor);   // CHAP3c: the hall's chapter's band on the price
   const ctx = { amount: offer.price, gold: goldAmount(entity), guildTitle, playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) };
   if (offer.kind === 'tooSoon') {
     return new ServiceFlowWindow([{ rows: macroRows(rows, offer.textId, ctx) }], { onClose });
@@ -279,7 +298,7 @@ export function buildTrainingFlow(entity, guild, membership, deps) {
     buttons: 'YesNo',
     onYes: () => {
       // The gold check happens BEFORE the picker opens (:76-89).
-      if (!canAffordTraining(entity, membership)) {
+      if (!canAffordTraining(entity, membership, priceFactor)) {
         return [{ rows: macroRows(rows, NOT_ENOUGH_GOLD_ID, ctx) }];
       }
       return [{
@@ -311,8 +330,8 @@ export function buildTrainingFlow(entity, guild, membership, deps) {
  *  points)` is the host's clock and skill store, ahead of applyTraining. */
 export function buildRefinedTrainingFlow(entity, guild, membership, deps) {
   const { rows, now, applyTraining, applyIntensive = null, onClose, rolls = Math.random, guildTitle = '', shopName = null, cityName = null,
-    variablePrice = true, intensive = false, level = entity.level ?? 1 } = deps;
-  const offer = trainingOffer(entity, guild, membership, now());
+    variablePrice = true, intensive = false, level = entity.level ?? 1, priceFactor = 1 } = deps;
+  const offer = trainingOffer(entity, guild, membership, now(), priceFactor);   // CHAP3c: the hall's chapter's band on the price
   const baseCtx = { gold: goldAmount(entity), guildTitle, playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) };
   if (offer.kind === 'tooSoon') {
     return new ServiceFlowWindow([{ rows: macroRows(rows, offer.textId, { ...baseCtx, amount: offer.price }) }], { onClose });
@@ -385,7 +404,7 @@ export function buildDonationFlow(entity, store, divineFactionId, deps) {
       if (amount === null) return null;
       const r = donate(entity, store, divineFactionId, amount, rolls);
       if (r.kind === 'invalid') return null;
-      const ctx = { amount, gold: goldAmount(entity), god: godName, playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) };
+      const ctx = { amount, gold: goldAmount(entity), god: getDivineLocalized(godName), playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) };
       return [{ rows: macroRows(rows, r.textId, ctx) }];
     },
   };
@@ -461,11 +480,11 @@ export function buildCureDiseaseFlow(entity, guild, membership, deps) {
   const offer = cureDiseaseOffer(entity, guild, membership, {
     quality, regionIndex, nowClassicMinutes: now(), priceAdjustment,
   });
-  const ctxFor = (amount) => ({ amount, gold: goldAmount(entity), god: godName, playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) });
+  const ctxFor = (amount) => ({ amount, gold: goldAmount(entity), god: getDivineLocalized(godName), playerName: entity.name ?? '', ...identity(entity, { shopName, cityName }) });
 
   if (offer.kind === 'freeHoliday') {
     cureForFree(entity);
-    return new ServiceFlowWindow([{ rows: line(FREE_HOLIDAY_CURING) }], { onClose });
+    return new ServiceFlowWindow([{ rows: line(localizedText('freeHolidayCuring', FREE_HOLIDAY_CURING)) }], { onClose });
   }
   if (offer.kind === 'noDisease') {
     return new ServiceFlowWindow([{ rows: macroRows(rows, offer.textId, ctxFor(0)) }], { onClose });
@@ -476,7 +495,7 @@ export function buildCureDiseaseFlow(entity, guild, membership, deps) {
     onYes: () => {
       const r = payForCure(entity, offer.cost);
       return r.kind === 'cured'
-        ? [{ rows: line(CURED_DISEASE) }]
+        ? [{ rows: line(localizedText('curedDisease', CURED_DISEASE)) }]
         : [{ rows: macroRows(rows, r.textId, ctxFor(offer.cost)) }];
     },
   }], { onClose });

@@ -83,7 +83,7 @@ function arena2DevServer() {
 // THE DEPLOY'S OWN NAME, stamped where a verifier can read it without
 // parsing minified JavaScript. `scripts/buildTag.mjs` already writes
 // HEAD's sha into src/buildTag.js at prebuild; that constant reaches
-// the browser inside a rollup chunk whose variable name is minified
+// the browser inside a bundled chunk whose variable name is minified
 // away, so the only thing tools/verify-deploy.mjs could compare was
 // the ENTRY CHUNK'S HASH - an exact-match test that fails the moment
 // another session pushes past your build tag, even though the deploy
@@ -116,6 +116,15 @@ export default defineConfig({
   base: './',
   build: {
     target: 'es2022',
+    // AUDIT DEPS1 (the review): Vite 8 minifies CSS with Lightning CSS -
+    // every page's inline <style> too - for `cssTarget`, which defaults to
+    // `target`, and es2022 reads as Safari 16.4. At 16.4 Lightning CSS drops
+    // a prefix that browser no longer needs (`-webkit-appearance` beside
+    // `appearance`), and the game runs below it: WebGL2 is Safari 15's, and
+    // SAFARI1 (test/systems/nolookbehind.test.js) keeps the modules parsing before
+    // 16.4. The floor is named here so a prefix a Safari 15 needs is kept
+    // (test/tree/csstarget.test.js builds a page through it).
+    cssTarget: ['es2022', 'safari15', 'ios15'],
     // EOTB5: EYE OF THE BEHOLDER'S SPRITES ARE FILES, NOT JAVASCRIPT.
     //
     // Vite inlines any asset under `assetsInlineLimit` (4 KB by
@@ -146,18 +155,48 @@ export default defineConfig({
     //
     // So the rule is the CLASS, not a list: nothing under vendor/ is ever
     // inlined. A mod's art and audio are files, fetched when the mod
-    // wants them (test/vendorinline.test.js walks every vendor folder and
+    // wants them (test/ui/vendorinline.test.js walks every vendor folder and
     // holds it). Everything outside vendor/ keeps Vite's default -
     // returning `undefined` falls back to the 4 KB limit, and a callback
     // that returned `true` would force-inline REGARDLESS of size, the
     // opposite mistake and just as quiet.
     assetsInlineLimit: (filePath) => (/[\\/]vendor[\\/]/.test(filePath) ? false : undefined),
+    // BUILD-LEFTOVERS (2026-10-15): THE CHUNK-SIZE WARNING IS A LINE AGAIN.
+    // At Vite's 500 kB it fired on every build - the world chunk, world.js
+    // and all it imports statically, is 2,662 kB - so it said nothing. Set
+    // just over today's largest chunk, it speaks when a chunk grows past the
+    // world. (AUDIT BUILD-LEFTOVERS, the second read: 2,500 sat over the
+    // world's 2,446 when written, and main's POI editor took it to 2,662 by
+    // the merge. And HOST-SPLIT does not shrink it: a module the host imports
+    // statically joins the host's chunk - pixelBuild.js is in it. Only a
+    // dynamic import takes code out; lower this when one does.)
+    chunkSizeWarningLimit: 2_750,
     // EVERY ROOT PAGE: the game, the voxel editor (viewer.html), the labs
     // and the prototypes. None carries game data - a page that draws the
     // game's art asks for the user's own ARENA2. AUDIT 68: a root page
     // missing here works under `npm run dev` and silently never ships;
-    // test/audit68_repo.test.js holds every tracked root *.html to a key.
+    // test/tooling/audit68_repo.test.js holds every tracked root *.html to a key.
     rollupOptions: {
+      // BUILD-LEFTOVERS: one warning is the design, not a fault. hudLayout.js
+      // loads revenantCard.js dynamically (the HUD preview's ghost) because
+      // revenantCard.js imports hudLayout.js statically - the dynamic edge
+      // keeps the two out of a cycle, it was never meant to split a chunk
+      // (hud.js imports revenantCard.js anyway). Only that pair is quiet;
+      // any other ineffective dynamic import still warns. The module is the
+      // log's `id` (its absolute path); the importer is read off the message,
+      // whose paths are the working directory's and come after a colour code
+      // (AUDIT BUILD-LEFTOVERS: a filter anchored to the message's start never
+      // matched a real build). Either separator, for a Windows build.
+      // AUDIT BUILD-LEFTOVERS, the second read: THIS tree's revenantCard.js
+      // (the build runs from the repository), hudLayout.js its only dynamic
+      // importer - and never a static one too, the mistake mwFirstPerson's was
+      // (the filter read any prefix and any static list, and quieted both)
+      onLog(level, log, handler) {
+        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && (log.id ?? '').replace(/\\/g, '/') === `${process.cwd().replace(/\\/g, '/')}/src/ui/revenant/revenantCard.js`
+          && /\bdynamically imported by (?:\.[\\/])?src[\\/]ui[\\/]hud[\\/]hudLayout\.js but\b/.test(log.message)
+          && !/statically imported by [^\n]*\bsrc[\\/]ui[\\/]hud[\\/]hudLayout\.js/.test(log.message)) return;
+        handler(level, log);
+      },
       input: {
         // THE SITE, THEN THE GAME (U60). The root document is the landing
         // page - what this is, how to play, credits, Play - and the game
@@ -174,6 +213,7 @@ export default defineConfig({
         viewer: 'viewer.html',
         sky: 'sky.html',   // ES1: the enhanced sky lab
         water: 'water.html', // WATER1: the enhanced water lab (src/tools/waterLab.js)
+        abyss: 'abyss.html', // SD-LAB: the Shattered Hour and the Rift, made in code, drawn by the game's renderer (src/tools/abyssLab.js)
         cards: 'cards.html', // CARDS3: the card table lab (src/tools/cardsLab.js) - tools/cardsProbe.mjs
         // MW-D: the Morrowind data inspector. Reads a player's own
         // archives and reports what is IN them; it draws nothing, stores
@@ -219,6 +259,9 @@ export default defineConfig({
         // can be opened on demand, at any size, with no ARENA2 on disk.
         // tools/levelUpProbe.mjs drives this page.
         levelUp: 'levelup.html',
+        // FIRM1: THE FIRMAMENT LAB - the passive tree's window over made-up purses, no service and no ARENA2, in either
+        // dress (`?dress=grimoire`), so the sky can be judged and driven by hand
+        firmament: 'firmament.html',
         // The texture-archive contact sheet: every record of one
         // TEXTURE.nnn laid out and numbered, to read off which record
         // an item template points at. The player's own ARENA2 through

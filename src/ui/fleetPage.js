@@ -1,6 +1,6 @@
 // @ts-check
 // THE FLEET PAGE (HOLDINGS, 2026-10-03 - bible/03-World/Holdings.md; Mac: "Ships show their values, current health, and
-// option to repair if theres crew (even if youre away) etc"). On the pause menu's Holdings rail (ui/enhancedMenu.js
+// option to repair if theres crew (even if youre away) etc"). On the pause menu's Holdings rail (ui/enhanced/enhancedMenu.js
 // pauseHoldings): every ship the player holds, a card each -
 //  - her name (her captain's, else her hull's), her hull and rig, her worth, the bank's claim on her while it stands;
 //  - where she is: at the player's helm, lying near, afloat how far and which way, laid up at a port, in the pack;
@@ -14,7 +14,7 @@
 
 import { holdingsProvider, ensureHoldingsStyle, holdingArt, holdingMeter, farWords } from './holdingsPages.js';
 import { SHIP_NAME_MAX, UPGRADE_LINES } from '../systems/fleet.js';
-import { CREW_ROLES } from '../systems/naval/shipCrew.js';
+import { CREW_ROLES, veteranOf, postsOf, postWords } from '../systems/naval/shipCrew.js';   // CAPT-CREW: a hand's rank, his post's worth
 
 export const FLEET_PAGE_SECTIONS = Object.freeze([Object.freeze(['fleet', 'Fleet'])]);
 /** Come Sail Away's two items' pictures: a deed's (209/5) for a ship whose title is held, her parts' (212/11) packed. */
@@ -87,18 +87,28 @@ function refitPanel(el, s, rerender, act) {
   return box;
 }
 
+/** CAPT-CREW: a hand's line under his name - his rank of service, what he has stood, and what his post is worth to her while
+ *  he is its best holder ("Veteran - 9 fights won, 2 boardings - the guns reload 10% quicker"). Pure. */
+export function handService(h, holds = false) {
+  const v = veteranOf(h);
+  const deeds = [h.fights ? `${h.fights} fight${h.fights === 1 ? '' : 's'} won` : '', h.boardings ? `${h.boardings} boarding${h.boardings === 1 ? '' : 's'}` : ''].filter(Boolean).join(', ');
+  const worth = holds ? postWords(h.role, v.tier) : '';
+  return [v.label, deeds, worth].filter(Boolean).join(' - ');
+}
+
 /** HOLDINGS: her named hands, each with his post - a list of CREW_ROLES (and a Bard's calling, his) to give him another.
  *  Each keeps his post's place on her deck (crewLife.js ROLE_POSTS); her Lookout her bow; one First Mate, who answers. */
 function crewPanel(el, s, act) {
   const box = el('div', 'hld-text');
   if (!s.hands?.length) { box.append(el('span', 'hld-sub', 'She has no hands aboard - hire them at a shipwright.')); return box; }
-  box.append(el('span', 'hld-sub', 'Each keeps his post on her deck: her First Mate by the helm, her Bosun at the mainmast, her Carpenter by the hatch, her Cook at the galley, her Gunners at the guns, her Lookout at the bow. With no Lookout named, a hand with no post keeps the bow, else a Gunner.'));
+  box.append(el('span', 'hld-sub', 'Each keeps his post on her deck: her First Mate by the helm, her Bosun at the mainmast, her Carpenter by the hatch, her Cook at the galley, her Gunners at the guns, her Lookout at the bow. With no Lookout named, a hand with no post keeps the bow, else a Gunner. A post is worth more in a seasoned hand - fights and boardings make him Seasoned, a Veteran, an Old Salt. A small crew is dealt the first posts - a Bosun, a Gunner, a Carpenter - so name her Lookout and her Cook here.'));   // AUDIT CAPTAIN'S SEA C7
+  const posts = postsOf(s.hands, new Set(s.hands.filter((h) => h.ashore).map((h) => h.name)));   // CAPT-CREW: each post's best holder aboard - the hand whose worth she sails on (AUDIT CAPTAIN'S SEA C2: none ashore with me)
   for (const h of s.hands) {
     const row = el('div', 'hld-refit hld-hand');
     const head = el('div', 'hld-head');
     head.append(el('span', 'hld-name', h.name), el('span', 'hld-state', h.role));
     row.append(head);
-    if (h.fights) row.append(el('span', 'hld-sub', `${h.fights} fight${h.fights === 1 ? '' : 's'} won`));
+    row.append(el('span', 'hld-sub', `${handService(h, posts[h.role]?.name === h.name)}${h.ashore ? ' - ashore with you' : ''}`));
     const pick = /** @type {HTMLSelectElement} */ (el('select', 'hld-field hld-select'));
     pick.setAttribute('aria-label', `${h.name}'s post`);
     for (const role of [...CREW_ROLES.filter((r) => !(h.bard && r === 'Lookout')), ...(h.bard ? ['Bard'] : [])]) {   // AUDIT HOLDINGS C3: a Bard keeps no lookout
@@ -187,7 +197,7 @@ export function drawFleetPage(detail, rerender, { el, divider, meter = null, doo
   const m = fleet()?.model?.() ?? { ships: [], gold: 0, atPort: false };
   detail.append(divider(`Fleet (${m.ships.length})`));
   if (!m.ships.length) {
-    detail.append(el('p', 'px-note', 'You hold no ship. A general store at a port sells a ship\'s deed - her title comes here, and she waits at the port - and a ship taken by boarding can be claimed as yours.'));
+    detail.append(el('p', 'px-note', 'You hold no ship. A port\'s shipyard sells them - a ship\'s title comes here, and she lies laid up where you bought her - and a ship taken by boarding can be claimed as yours.'));   // AUDIT SHIPYARDS L7-1: no general store sells one
     return;
   }
   const list = el('div', 'hld-list');

@@ -180,6 +180,10 @@ export class SnowfallSurface {
   }
   _sharedBlanket(B) {
     const gl = this.gl, uv = gl.createBuffer(), index = gl.createBuffer();
+    // PERF-ARENA: an element buffer bound is the BOUND VAO's state - with whatever array the last pass left bound (every
+    // still flat shares one now: render/renderer.js's arena), this bind and its unbind would have cut that array's
+    // indices away. No array bound, through the renderer so its shadow stays true
+    if (this.renderer?._bindVao) this.renderer._bindVao(null); else gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, uv); gl.bufferData(gl.ARRAY_BUFFER, B.uv, gl.STATIC_DRAW); gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, B.index, gl.STATIC_DRAW); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     return { uv, index };

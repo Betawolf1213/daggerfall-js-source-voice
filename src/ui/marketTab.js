@@ -56,6 +56,7 @@ import {
 } from '../net/marketLaw.js';
 import { QUALITY_NAMES, MASTERWORK } from '../net/recipeLaw.js';
 import { marksText, MARK_WORTH_GOLD } from '../net/marksLaw.js';
+import { pictureNode } from './menu/menuGlyphs.js';   // MENU-ORDER: a row's picture, the host's
 
 /** @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
 const el = (tag, cls = null, text = null) => {
@@ -104,6 +105,8 @@ const SHUT = ['market-closed', 'prof-need-account'];
 /** BOARD-UI: THE VIEWS IN THEIR PARTS - what is for sale ("Buy"), where to sell (the buy orders to fill, and your own
  *  listings - "Sell"), and the record. Every view of MARKET_VIEWS once (a pin holds it). */
 /** @type {ReadonlyArray<readonly [string, ReadonlyArray<string>]>} */
+/** MENU-ORDER: each view its picture (ui/menu/menuGlyphs.js), so the views read as the market's own and never as the board's tabs. */
+export const MARKET_VIEW_ICONS = Object.freeze({ materials: 'ore', crafted: 'station', auctions: 'gavel', goods: 'own', orders: 'list', mine: 'treasure', history: 'chart' });
 export const MARKET_VIEW_GROUPS = Object.freeze([
   /** @type {const} */ (['Buy', Object.freeze(['materials', 'crafted', 'auctions', 'goods'])]),
   /** @type {const} */ (['Sell', Object.freeze(['orders', 'mine'])]),
@@ -184,6 +187,9 @@ export function medianLineNode(line) {
  *   goodName?: (rec: any) => string,
  *   board?: number[]|null, tithe?: () => number|null,
  *   carried?: () => Map<string, number>, putIn?: (key: string, n: number) => Promise<{ ok: boolean, error?: string }>,
+ *   picture?: (key: string, wake: () => void) => ({ src: string, w: number, h: number }|null),
+ *   itemPicture?: (item: any, wake: () => void) => ({ src: string, w: number, h: number }|null),
+ *   piecePicture?: (piece: any, wake: () => void) => ({ src: string, w: number, h: number }|null),
  * }} m the host's market (scenes/world.js); `drop` - a piece a settled listing took, out of the save (AUDIT 30 C3); MARKET-ANY:
  *   `goods` - the pack's pieces, each with why it may not list (null: it may), `good(item)` - the piece's wire record, its
  *   index in the save and its taking, `goodName` - a pack piece's record named as the pack names it; PROF12: `apothecaries` the
@@ -236,9 +242,15 @@ export function createMarketTab(m, ui) {
   };
   /** AUDIT 30 U3: the last read asked - an answer to an earlier one (a view or a filter since left) is dropped. */
   let seq = 0;
-  async function load(force = false) {
+  async function load(force = false, { underAct = false } = {}) {
     const mine = ++seq;
-    st.loading = true; ui.rerender();
+    // MARKET-SPEED (2026-10-11): a read the minute's cache answers is drawn once, with its answer - it drew "Reading the
+    // market..." first, a whole window rebuilt for a frame; and a read an act asks (`underAct`) draws its waiting with the
+    // act's own end (the window's `run` draws it), never a rebuild of its own under the act's. AUDIT GATHER-SPEED G7: only
+    // that read - a view chosen while some other act runs draws its wait, or the press looked unheard
+    const quick = !force && m.book.fresh?.(st.view, q()) === true;
+    st.loading = !quick;
+    if (!quick && !(underAct && ui.busy())) ui.rerender();
     const r = await m.book.read(st.view, q(), { force });
     if (!ui.alive() || mine !== seq) return;
     st.loading = false;
@@ -261,7 +273,7 @@ export function createMarketTab(m, ui) {
   const settle = () => ui.run(async () => {
     const r = await m.book.settle(m.mint, m.putBack, m.drop ?? null);
     for (const x of arrived()) if (r?.ok) tried.add(x.id);
-    if (r?.settled) load(true);
+    if (r?.settled) load(true, { underAct: true });
     // MARKET-AUDIT P5: a collect refused is said, and an act still kept - each was said nowhere, and asked after no more
     const refused = (r?.refused ?? []).find(Boolean);
     return { ok: !!r?.ok && !refused, text: refused ? accountRefusalText(refused) : r?.settled ? MARKET_WORDS.settled
@@ -299,8 +311,8 @@ export function createMarketTab(m, ui) {
   /** An act through the window's door; its word, then the view read again - a press the market says has moved too. */
   const act = (start, okText) => ui.run(async () => {
     const r = await start();
-    if (r?.ok) { st.picked = null; load(true); return { ok: true, text: typeof okText === 'function' ? okText(r.data) : okText }; }
-    if (MOVED.includes(r?.error)) { st.picked = null; load(true); }
+    if (r?.ok) { st.picked = null; load(true, { underAct: true }); return { ok: true, text: typeof okText === 'function' ? okText(r.data) : okText }; }
+    if (MOVED.includes(r?.error)) { st.picked = null; load(true, { underAct: true }); }
     return { ok: false, text: r?.text ?? accountRefusalText(r?.error) };
   });
   /** What the Stores may spend or sell for Drakes of a material - never what gold bought (GOLD-MARKET's wall). */
@@ -343,6 +355,7 @@ export function createMarketTab(m, ui) {
       for (const id of ids) {
         const t = el('button', `notice-tab market-view${st.view === id ? ' on' : ''}`, labels.get(id) ?? id);
         t.setAttribute('type', 'button');
+        t.setAttribute('data-dficon', MARKET_VIEW_ICONS[id] ?? 'list');   // MENU-ORDER
         if (st.view === id) t.setAttribute('aria-current', 'page');
         t.onclick = () => { if (st.view !== id) go(id); };
         g.append(t);
@@ -410,6 +423,13 @@ export function createMarketTab(m, ui) {
   }
 
   const pick = (row) => { st.picked = st.picked === row.id ? null : row.id; st.qty = pickOf(row); ui.rerender(); };
+  /** MENU-ORDER: a row's name with its picture before it - a material's (the item the Stores withdraw it as) or a piece's
+   *  own, the host's to make (`m.picture`, `m.itemPicture`); none (no data, or not made yet) is the name alone. */
+  const wake = () => ui.rerender();
+  const named = (text, pic) => { const n = el('b', null, text); if (pic) { if (n.prepend) n.prepend(pic); else n.append(pic); } return n; };
+  const matPic = (key) => pictureNode(m.picture?.(key, wake) ?? null, el, 'market-pic');
+  const itemPic = (it) => pictureNode(m.itemPicture?.(it, wake) ?? null, el, 'market-pic');
+  const piecePic = (p) => pictureNode(m.piecePicture?.(p, wake) ?? null, el, 'market-pic');
   function rowButton(row, cls) {
     const b = el('button', `market-row${cls}${st.picked === row.id ? ' on' : ''}`);
     b.setAttribute('type', 'button');
@@ -420,7 +440,7 @@ export function createMarketTab(m, ui) {
   function materialRow(row) {
     const med = st.data?.medians?.[row.material];
     const b = rowButton(row, '');
-    b.append(el('b', null, `${m.name(row.material)} x${row.units.toLocaleString('en-US')}`),
+    b.append(named(`${m.name(row.material)} x${row.units.toLocaleString('en-US')}`, matPic(row.material)),
       el('span', 'market-price', `${priceText(row.price, row.currency)} each`),
       el('span', 'market-where', `${where(row)}${roadText(row)}`),
       el('span', 'market-median', `median ${medianText(med?.median ?? null)}`));
@@ -433,7 +453,7 @@ export function createMarketTab(m, ui) {
   function pieceRow(row) {
     const p = row.piece;
     const b = rowButton(row, ' market-piece');
-    b.append(el('b', null, m.pieceName(p)),
+    b.append(named(m.pieceName(p), piecePic(p)),
       el('span', 'market-quality', [QUALITY_NAMES[p.quality] ?? null, p.maker ? `made by ${p.maker}` : null, wearText(p.wear)].filter(Boolean).join(' · ')),
       el('span', 'market-price', priceText(row.price, row.currency)),
       el('span', 'market-where', `${where(row)}${roadText(row)}`));
@@ -445,7 +465,7 @@ export function createMarketTab(m, ui) {
   function goodRow(row) {
     const it = row.item;
     const b = rowButton(row, ' market-piece market-good');
-    b.append(el('b', null, goodName(it)),
+    b.append(named(goodName(it), itemPic(it)),
       el('span', 'market-quality', wearText(wearOf(it)) ?? 'whole'),
       el('span', 'market-price', priceText(row.price, row.currency)),
       el('span', 'market-where', `${where(row)}${roadText(row)}`));
@@ -493,7 +513,7 @@ export function createMarketTab(m, ui) {
   function auctionRow(a) {
     const p = a.piece;
     const b = rowButton(a, ' market-piece market-auction');
-    b.append(el('b', null, m.pieceName(p)),
+    b.append(named(m.pieceName(p), piecePic(p)),
       el('span', 'market-quality', [QUALITY_NAMES[p.quality] ?? null, p.maker ? `made by ${p.maker}` : null, wearText(p.wear)].filter(Boolean).join(' · ')),
       el('span', 'market-price', standing(a)),
       el('span', 'market-where', `${where(a)}${roadText({ ...a, kind: 'piece' })} · ${endsText(a.endsAt)}`));
@@ -556,7 +576,7 @@ export function createMarketTab(m, ui) {
       };
       inp.oninput = () => { st.weave[w.key] = intOf(inp.value, 1, 100); refresh(); };
       refresh();
-      row.append(el('b', null, m.name(w.key)), el('span', 'market-price', `${marksText(w.marks)} a bolt`), inp, b);
+      row.append(named(m.name(w.key), matPic(w.key)), el('span', 'market-price', `${marksText(w.marks)} a bolt`), inp, b);
       box.append(row);
     }
     box.append(el('p', 'notice-tip', 'Into your Stores, for the loom.'));   // AUDIT 32 R5: Outfitting practised since PROF7 - a bolt withdraws, and sews
@@ -588,7 +608,7 @@ export function createMarketTab(m, ui) {
       };
       inp.oninput = () => { st.weave[w.key] = intOf(inp.value, 1, 100); refresh(); };
       refresh();
-      row.append(el('b', null, m.name(w.key)), el('span', 'market-price', `${marksText(w.marks)} a measure`), inp, b);
+      row.append(named(m.name(w.key), matPic(w.key)), el('span', 'market-price', `${marksText(w.marks)} a measure`), inp, b);
       box.append(row);
     }
     box.append(el('p', 'notice-tip', 'For the alchemy station, into your Stores.'));

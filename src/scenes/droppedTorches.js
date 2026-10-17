@@ -39,7 +39,7 @@
 // mod's settings assigned on the foe's own manager (CasterOnly - no
 // saving throw, the foe its own caster) - the port's applySpell - and
 // the mod's light effect beside it: an active entry the magic round
-// counts down (AddState stacks a re-hit's rounds), a point light and a
+// counts down (a re-hit renews its rounds - effects.js renewRounds, STACK-CAP), a point light and a
 // looping flame billboard (TEXTURE.375 record 0, the fire missile's
 // flight loop, drawn upside down as the mod scales it) riding the foe
 // while the entry lives. ContinuousDamageHealth declares no
@@ -53,9 +53,10 @@
 // Bloodfall's GUID (no such mod); the Custom Tooltips names.
 
 import { GLOBAL_SCALE, pickFoeHit, RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
-import { templateByIndex } from '../systems/itemTemplates.js';
+import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { TEMPLATES } from '../systems/useItem.js';
-import { applySpell } from '../systems/effects.js';
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a light named by what burns, so the shadow pass knows one that moved
+import { applySpell, renewRounds } from '../systems/effects.js';
 import { calculateSuccessfulHit, calculateStruckBodyPart } from '../combat/formulas.js';
 import { liveStat } from '../systems/statMods.js';
 import { worldMinutes } from '../systems/worldTick.js';
@@ -309,10 +310,11 @@ export function createDroppedTorches({
     const sinks = foeSinks?.(f) ?? { hurt: (n) => { f.entity.health = Math.max(0, (f.entity.health ?? 0) - n); } };
     applySpell({ effects: [e], element: 0, rangeType: 0 }, level, f.entity, sinks, rolls, { entity: f.entity });
     if (st.fireLight) {
-      // the light effect: duration alone; AddState stacks a re-hit's rounds (0x4426)
+      // the light effect: duration alone; a re-hit renews its rounds, never stacks them (STACK-CAP - the mod's AddState,
+      // 0x4426, adds them up; it takes no initial round, so a fresh one stands at the whole duration)
       const list = (f.entity.activeEffects ??= []);
       const inc = list.find((a) => a.kind === ENEMY_FIRE_KIND);
-      if (inc) inc.roundsRemaining += st.fireDuration;
+      if (inc) renewRounds(inc, st.fireDuration);
       else list.push({ kind: ENEMY_FIRE_KIND, key: ENEMY_LIGHT_EFFECT_KEY, roundsRemaining: st.fireDuration });
     }
   }
@@ -399,12 +401,12 @@ export function createDroppedTorches({
       // (playerTorch.js:"this lane ships that": "it is a 0..1 BRIGHTNESS ... mapping a
       // brightness slider onto a radius would be a worse lie"). One
       // decision, one place; the dep the hosts never passed is gone.
-      out.push({ x: d.pos[0], y: d.pos[1] + Math.abs(d.size?.h ?? 0) / 2 + LIGHT_ABOVE_BILLBOARD, z: d.pos[2], range: 1 + (t?.capacityOrTarget ?? 0) * (d.time / full) });
+      out.push(adoptLight({ x: d.pos[0], y: d.pos[1] + Math.abs(d.size?.h ?? 0) / 2 + LIGHT_ABOVE_BILLBOARD, z: d.pos[2], range: 1 + (t?.capacityOrTarget ?? 0) * (d.time / full) }, d));   // LIGHT-ID: each light the torch's own, frame to frame
     }
     // the thrown torch's light hangs over its quad's own centre (0x3ad0-0x3aea), and its range is the template's, flat (0x3b41)
-    for (const p of projectiles) if (lit(p)) out.push({ x: p.pos[0], y: p.pos[1] + LIGHT_ABOVE_BILLBOARD, z: p.pos[2], range: templateByIndex(p.template)?.capacityOrTarget ?? 0 });
+    for (const p of projectiles) if (lit(p)) out.push(adoptLight({ x: p.pos[0], y: p.pos[1] + LIGHT_ABOVE_BILLBOARD, z: p.pos[2], range: templateByIndex(p.template)?.capacityOrTarget ?? 0 }, p));   // LIGHT-ID: one light in flight
     const playerRange = entity?.lightSource ? torchRange(entity.lightSource) : (templateByIndex(TEMPLATES.Torch)?.capacityOrTarget ?? 14);
-    for (const [f, fl] of flames) if (!f.dead) out.push({ x: fl.pos[0], y: fl.pos[1], z: fl.pos[2], range: playerRange });
+    for (const [f, fl] of flames) if (!f.dead) out.push(adoptLight({ x: fl.pos[0], y: fl.pos[1], z: fl.pos[2], range: playerRange }, fl));   // LIGHT-ID: a burning foe's, as it walks
     return out;
   }
   const batches = () => [...dropped.map((d) => d.batch), ...projectiles.map((p) => p.batch), ...[...flames.values()].map((fl) => fl.batch)].filter(Boolean);

@@ -52,6 +52,7 @@ import { CASTSPELL_COOLDOWN_TICK } from '../systems/spellcast.js';   // single s
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage
 import { triggerOpen, triggerLock } from '../systems/mysticism.js';   // X1: the Open/Lock door laws live there, not here
 import { dice100 } from '../combat/formulas.js';   // PT1: Dice100 has ONE home, and it is not this file
+import { localizedText, localizedTextList } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 
 // The RDB effect-action family (DaggerfallAction delegates that hurt
 // rather than move). Combat-arc row from Port-Ledger C:
@@ -106,7 +107,7 @@ export const DOOR_VERB_FLAGS = new Set([
 export const isActionDoorObject = (o) => !!o && o.kind === 'door' && !o.special;
 /** How far down a chain IsPlaying looks before it answers no (DaggerfallAction.IsPlaying's recursion, bounded here so
  *  a looped chain cannot overflow the stack). AUDIT DELVE A4: one home - the echo's chain walk reads it
- *  (systems/dungeonEcho.js ECHO_CHAIN_MAX). */
+ *  (systems/dungeon/dungeonEcho.js ECHO_CHAIN_MAX). */
 export const PLAY_DEPTH_MAX = 32;
 
 // Delegated relays (P10/U6): Teleport, the text actions and
@@ -150,8 +151,9 @@ export const TRIGGER_GATE = Object.freeze({
 /** The four states an action record's tween can be in - the only ones the graph ever mints
  *  (start / end at rest, forward / reverse mid-tween). */
 export const ACTION_STATES = Object.freeze(['start', 'forward', 'end', 'reverse']);
-/** The largest lock a record may carry off the wire: DFU's own values run 0..20 (MAGIC_LOCK_THRESHOLD), and a byte
- *  is past every one of them. */
+/** The largest lock a record may carry off the wire: a byte. Daggerfall's own values run to 255 (RDBLayout's
+ *  LOCK_VALUES - 50, 128 and 255 among them; SPELL-LOCK found this line saying 0..20), and what a peer's lock may do
+ *  to a door is `lockCeiling`'s law, not this bound's. */
 export const ACTION_LOCK_MAX = 255;
 
 /** AUDIT WORLD3 B1: the SHARED half of a save record - a save record with the picker's own retry latch removed.
@@ -292,22 +294,40 @@ export const DOOR_OPEN_DURATION = 1.5;
 export const ACTION_LOCK_VALUE = 16;
 export const MAGIC_LOCK_THRESHOLD = 20;
 
-// PlayerActivate.LookAtInteriorLock, verbatim: the chance-tiered
-// message a player sees activating a locked door. chance =
+/** SPELL-LOCK (FIELD BUGS 2026-10-13e): THE HARDEST LOCK A DOOR'S OWN DATA CAN GIVE IT - its starting lock (RDBLayout's
+ *  LOCK_VALUES; an interior's doors start at 0, DaggerfallInterior.AddActionDoors sets none), or LockDoor's 16 when the
+ *  door's own action can lock it (`_doorVerb`). Every other lock a door can carry is a Lock spell's, minted at its
+ *  caster's level (mysticism.js triggerLock, Lock.cs:116) - and Daggerfall has one player, who can always Open what
+ *  they locked (Open.cs:117 reads the same level). A peer's word is held to this ceiling (`restoreSaveData`'s
+ *  `remote`): one player's level-41 Lock on a shop's inner door reached every visitor for the room memory's thirty
+ *  days, magically held (>= MAGIC_LOCK_THRESHOLD: no pick, no bash) and past every lower level's Open. */
+export function lockCeiling(o) {
+  return Math.max(o?.startingLockValue | 0, o?.actionFlag === ACTION_FLAGS.LockDoor ? ACTION_LOCK_VALUE : 0);
+}
+
+/** SPELL-LOCK: whether a saved lock lands on this door. Up to the door's own ceiling, always. Past it the lock is a
+ *  Lock spell's: a peer's word never lands it (its caster's alone), and the player's own save lands it unless it is
+ *  past the player's level - a lock no Lock of theirs could have cast (Lock.cs:116 locks at the caster's level, and a
+ *  level never drops), which is a peer's lock this save took before SPELL-LOCK and kept: the trapped player's own
+ *  copy of the shop is mended on its next load. */
+function lockLands(o, lock, remote, level) {
+  if (lock <= lockCeiling(o)) return true;
+  if (remote) return false;
+  return !(Number.isFinite(level) && lock > level);
+}
+
+/** SPELL-LOCK: a peer's record kept for a door not hung yet (HOME-DOORS' early records) carries no lock - such a door
+ *  is a placed one, whose own data locks it at nothing (`lockCeiling` 0). */
+function withoutLock(r) {
+  if (!r || typeof r !== 'object' || r.lock == null) return r;
+  const { lock: _lock, ...rest } = r;
+  void _lock;
+  return rest;
+}
+
 // CalculateInteriorLockpickingChance = clamp(5*(level - lockValue) +
-// lockpickSkill, 5, 95).
-const LOCKPICK_CHANCE_TEXT = [
-  'You doubt your ability to open this lock...',
-  'This lock looks difficult...',
-  'You would be challenged by this lock...',
-  'This lock would prove a good challenge...',
-  'You think you should be able to pick this lock...',
-  'This lock seems relatively easy...',
-  'You are amused by this lock...',
-  'You laugh at the amateur quality of this lock...',
-  'You see a pathetic excuse for a lock...',
-  'This lock is an insult to your abilities...',
-];
+// lockpickSkill, 5, 95) - the chance LookAtInteriorLock's text tiers on
+// (lookAtLockText below).
 export function interiorLockpickingChance(level, lockValue, lockpickSkill) {
   const chance = 5 * (level - lockValue) + lockpickSkill;
   return Math.max(5, Math.min(95, chance));
@@ -329,14 +349,29 @@ export function exteriorLockpickingChance(lockValue, lockpickSkill) {
  *  snapshot, so the prose is ours with the keys cited). */
 export const LOCKPICKING_SUCCESS_TEXT = 'You successfully pick the lock.';
 export const LOCKPICKING_FAILURE_TEXT = 'You fail to pick the lock.';
+/** PlayerActivate.LookAtInteriorLock (:978-1008), verbatim: the
+ *  chance-tiered message a player sees activating a locked door - the
+ *  `lockpickChance` list (:982) above 45, its three single rows below,
+ *  and `magicLock` for a lock of 20 and up. */
 export function lookAtLockText(lockValue, level, lockpickSkill) {
-  if (lockValue >= MAGIC_LOCK_THRESHOLD) return 'This is a magically held lock...';
+  if (lockValue >= MAGIC_LOCK_THRESHOLD) return localizedText('magicLock', 'This is a magically held lock...');
   const chance = interiorLockpickingChance(level, lockValue, lockpickSkill);
-  if (chance < 30) return 'This lock has nothing to fear from you...';
-  if (chance < 35) return "It'd be a miracle if you picked this lock...";
-  if (chance >= 95) return LOCKPICK_CHANCE_TEXT[9];
-  if (chance >= 45) return LOCKPICK_CHANCE_TEXT[Math.trunc((chance - 45) / 5)];
-  return 'This lock looks to be beyond your skills...';
+  if (chance < 30) return localizedText('lockpickChance1', 'This lock has nothing to fear from you...');
+  if (chance < 35) return localizedText('lockpickChance2', "It'd be a miracle if you picked this lock...");
+  if (chance < 45) return localizedText('lockpickChance3', 'This lock looks to be beyond your skills...');
+  const lockpickChance = localizedTextList('lockpickChance', [
+    'You doubt your ability to open this lock...',
+    'This lock looks difficult...',
+    'You would be challenged by this lock...',
+    'This lock would prove a good challenge...',
+    'You think you should be able to pick this lock...',
+    'This lock seems relatively easy...',
+    'You are amused by this lock...',
+    'You laugh at the amateur quality of this lock...',
+    'You see a pathetic excuse for a lock...',
+    'This lock is an insult to your abilities...',
+  ]);
+  return chance >= 95 ? lockpickChance[9] : lockpickChance[Math.trunc((chance - 45) / 5)];
 }
 
 // ---- U6: the text actions, verbatim constants ----
@@ -391,7 +426,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this._links = new Map();  // `${ns}:${position}` -> object (the chain graph)
     this._doorCount = 0;
     // HOME-DOORS (AUDIT): a placed door's record that came before its door - a save's, the room's memory's or a peer's,
-    // read while the door was still being hung (its model is fetched, scenes/decorRoom.js) - kept by its key until the
+    // read while the door was still being hung (its model is fetched, scenes/decor/decorRoom.js) - kept by its key until the
     // door is added, and written with the scene's records meanwhile, so a visit that never hung it keeps its state
     this._early = new Map();
     this._damagePlayer = damagePlayer;
@@ -443,7 +478,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this.onTeleportPortal = null;
     this.onLockedDoor = null;
     this.onActionSound = null;
-    this.onPlayed = null;   // ECHO1: (o, triggerType) - every Receive that passed the gate, before its Play (systems/dungeonEcho.js)
+    this.onPlayed = null;   // ECHO1: (o, triggerType) - every Receive that passed the gate, before its Play (systems/dungeon/dungeonEcho.js)
     this.onShowText = null;
     this.onShowTextInput = null;
     this.onDoorText = null;
@@ -515,7 +550,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
       // life of the session - a door bricked open, for every player in the room, by one 146-byte frame.
       const rec = validActionRecord(raw);
       const o = rec && this.objects.get(rec.key);
-      if (!o) { if (rec) this._keepEarly(rec); continue; }   // HOME-DOORS (AUDIT): a placed door not hung yet takes it when it is
+      if (!o) { if (rec) this._keepEarly(withoutLock(rec)); continue; }   // HOME-DOORS (AUDIT): a placed door not hung yet takes it when it is (SPELL-LOCK: never a peer's lock)
       const opening = o.kind === 'door' && o.state !== 'forward' && rec.state === 'forward';
       // AUDIT WORLD3 B3: the author rings the RDB soundIndex on EVERY Play (`_play`, "if (PlaySound && Index > 0)"),
       // and a Play always moves the record's own state - a tween's start, or an INSTANT flip. Gating the peers' ring
@@ -523,7 +558,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
       // sliding in silence on every screen but the author's.
       const played = rec.state !== o.state
         || (o.kind === 'door' && rec.moveState != null && rec.moveState !== o.moveState);
-      this.restoreSaveData([rec]);
+      this.restoreSaveData([rec], { remote: true });   // SPELL-LOCK: a peer's lock lands only up to the door's own
       if (opening) this.onDoorState?.(o, true);
       if (played && o.index > 0) this.onActionSound?.(o);
       n++;
@@ -549,13 +584,13 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
   }
 
   /** ECHO1: the object `o`'s chain link - `_next`, DFU's ActivateNext, for a reader that walks the chain without
-   *  playing it (systems/dungeonEcho.js chainMovers). */
+   *  playing it (systems/dungeon/dungeonEcho.js chainMovers). */
   nextOf(o) {
     return this._next(o);
   }
 
   /** SENSE1 (the delve arc): every object some OTHER object's chain reaches - the keys `_next` resolves to. The look
-   *  round's secrets tier asks it which movers only a chain moves (systems/dungeonSense.js isSecretMover). A read of
+   *  round's secrets tier asks it which movers only a chain moves (systems/dungeon/dungeonSense.js isSecretMover). A read of
    *  the graph DFU only ever walks forward - not a DFU member. */
   chainTargets() {
     const out = new Set();
@@ -824,7 +859,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     this._early.set(rec.key, rec);
   }
 
-  /** HOME-DOORS (2026-09-30): a door taken back out - one an owner hung in a doorway (scenes/decorRoom.js), moved or
+  /** HOME-DOORS (2026-09-30): a door taken back out - one an owner hung in a doorway (scenes/decor/decorRoom.js), moved or
    *  removed. Not a DFU member (Daggerfall's doors are never taken down): the object, its place in the chain graph and
    *  its collider bucket go, open or shut. Answers whether there was one. */
   removeDoor(key) {
@@ -1385,18 +1420,23 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
    *
    *  Every field past {state, t, activationCount} is presence-gated:
    *  snapshots written before a field existed leave the live value, the
-   *  additive shape this save layer uses everywhere. */
-  restoreSaveData(list) {
+   *  additive shape this save layer uses everywhere.
+   *
+   *  SPELL-LOCK (FIELD BUGS 2026-10-13e): `remote` is a PEER'S word - an act (applyRemote) or a room's memory (a
+   *  building's, a dungeon's) - and its lock lands only up to the door's own `lockCeiling`. A lock past it is a Lock
+   *  spell's, its caster's alone: this door keeps the lock it has. The player's own save keeps its locks, but for one
+   *  past both the ceiling and `level` (the player's own): `lockLands`. */
+  restoreSaveData(list, { remote = false, level = null } = {}) {
     list?.forEach((sa) => {
       const o = this.objects.get(sa.key);
-      if (!o) { this._keepEarly(sa); return; }   // HOME-DOORS (AUDIT): a placed door, hung a moment later, takes it then
+      if (!o) { this._keepEarly(remote ? withoutLock(sa) : sa); return; }   // HOME-DOORS (AUDIT): a placed door, hung a moment later, takes it then
       o.state = sa.state;
       o.t = sa.t;
       // F185: activationCount deliberately NOT restored - an old
       // envelope still carrying the field is ignored, so every
       // counter starts the rebuilt scene at 0, as DFU's does.
       if (o.kind === 'door') {
-        if (sa.lock != null) o.currentLockValue = sa.lock;   // P10: door locks persist
+        if (sa.lock != null && lockLands(o, sa.lock, remote, level)) o.currentLockValue = sa.lock;   // P10: door locks persist; SPELL-LOCK: a Lock spell's, its caster's alone
         if (sa.failedSkillLevel != null) o.failedSkillLevel = sa.failedSkillLevel;   // F187: the pick latch survives
         if (sa.moveState != null) { o.moveState = sa.moveState; o.moveT = sa.moveT ?? 0; }
       }
@@ -1436,7 +1476,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
     }
   }
 
-  /** AUDIT LW-ROOMS (scenes/livingIndoors.js): `fn`'s answer with every
+  /** AUDIT LW-ROOMS (scenes/livingWorld/livingIndoors.js): `fn`'s answer with every
    *  door shut as the build hung it - each solid at its base, where a
    *  door open (its bucket gone: _settleDoorBucket) or carried off by its
    *  Move is no wall - and each bucket after as its live swing has it.

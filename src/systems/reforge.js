@@ -8,7 +8,7 @@
 // it at the Mages Guild to reroll one affix"). Three things, each a law
 // here and a face elsewhere:
 //
-//   - THE WELKYND SHARD (systems/gateSpoils.js, template 571 beside the
+//   - THE WELKYND SHARD (systems/gate/gateSpoils.js, template 571 beside the
 //     Sigil Stone): a sliver of Ayleid magicka-crystal, stacking and BOUND
 //     (itemBound.js: never sold, traded, dropped or listed), the
 //     Reforge's only coin.
@@ -24,23 +24,27 @@
 //   - LOOT17 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 9):
 //     THE HONE - a line taken up its own band, never lower (lootRarity.js
 //     honeAffix), the price doubling with every hone on the piece.
-//   - LOOT20 (section 12): THE SOCKETS - one of DFU's eight gems from the
-//     pack set in a piece's empty socket for gold (lootRarity.js setGem),
-//     and unset, the gem shattering.
+//   - LOOT20 (section 12): THE SOCKETS - a gem from the pack set in a
+//     piece's empty socket (lootRarity.js setGem), and unset, the gem
+//     shattering. GEM1 (bible/06-Systems/Gem-Sockets.md section 3): free,
+//     in any of a piece's sockets, worn or not - and the Reforge's own
+//     press, the EXTRACTION: the gem out whole, for gold by its grade.
 //
 // The window (ui/reforgeWindow.js) and the pack card's Salvage button
-// (ui/enhancedInventory.js) draw and ask; everything they do is here.
+// (ui/enhanced/enhancedInventory.js) draw and ask; everything they do is here.
 // OFF IS DFU EXACTLY: with the loot-rarity row off nothing salvages and
 // nothing is reforged.
 // ═══════════════════════════════════════════════════════════════════
 
-import { lootRarityOn, reforgeableLines, reforgeAffix, honeableLines, honeAffix, affixBand } from './lootRarity.js';   // LOOT17: and the hone
-import { GEM_IDS, gemKindOf, hasSocket, socketGem, setGem, unsetGem } from './lootRarity.js';   // LOOT20: the sockets
-import { welkyndShards, isWelkyndShard, WELKYND_SHARD } from './gateSpoils.js';
-import { isBound } from './itemBound.js';
-import { isLocked } from './itemLock.js';
-import { isEquipped } from './equip.js';
-import { addItem } from './inventory.js';
+import { lootRarityOn, reforgeableLines, reforgeAffix, honeableLines, honeAffix, affixBand } from './loot/lootRarity.js';   // LOOT17: and the hone
+import { rarityOf } from './loot/lootRarity.js';   // FB1012d SALVAGE-CLASSIC: the tier a piece's card wears
+import { ALL_GEM_IDS, SOCKET_EMPTY, gemKindOf, gemGrade, hasSocket, socketsOf, socketGem, socketGems, setGem, unsetGem } from './loot/lootRarity.js';   // LOOT20: the sockets; GEM1: a list of them, every grade of gem
+import { mintGem } from './gems.js';   // GEM1: an extracted gem, whole again
+import { welkyndShards, isWelkyndShard, WELKYND_SHARD } from './gate/gateSpoils.js';
+import { isBound } from './item/itemBound.js';
+import { isLocked } from './item/itemLock.js';
+import { isEquipped, notifyEquipChange } from './equip.js';   // GEM1: a worn piece's wearer folded again
+import { addItem, isEnchanted } from './inventory.js';   // AUDIT GEM: an enchanted gem is no loose stone
 import { totalGoldAmount, deductGold } from './court.js';
 import { itemIsIdentified } from './tradeModes.js';
 
@@ -57,7 +61,15 @@ export function salvageShards(item) {
   return t === 'magic' || t === 'rare' ? SALVAGE_SHARDS[t] : 0;
 }
 /** Why a piece may not be salvaged, or null: 'off', 'aetheric', 'gilded', 'artifact', 'quest', 'not' (nothing to salvage),
- *  'bound', 'worn', 'locked'. */
+ *  'classic', 'bound', 'worn', 'locked'.
+ *
+ *  FB1012d SALVAGE-CLASSIC (FIELD BUGS 2026-10-12b; Discord: "magic item with only cast on use effect cannot be salvaged"
+ *  - a "Blazing Holy Dagger of Fireballs", MAGIC.DEF's "Blazing %it of Fireballs" on a Holy Dagger): 'classic' is a piece
+ *  whose card wears Magic (lootRarity.js rarityOf: DFU's own magic, an Item Maker's enchantment, a soul-bound piece) that
+ *  the ladder never graded. LOOT9's law stands - it breaks for no shard: a guild's shelf sells that magic every day and its
+ *  Item Maker makes it, a found one cannot be told from a bought one, and shards come from what was found, never bought
+ *  (five of them are a Portal Stone) - and the faces now SAY so, where they listed it nowhere. A made piece (its
+ *  `provenance`) stays 'not': the Enchanting Station's disenchant is its door, as the Broker's dismantle is the Aetheric's. */
 export function salvageRefusal(item) {
   if (!lootRarityOn()) return 'off';
   if (!item) return 'not';
@@ -65,7 +77,8 @@ export function salvageRefusal(item) {
   if (item.rarity === 'gilded') return 'gilded';   // GILDED1: a static roll is never broken down
   if (item.artifact || item.rarity === 'artifact') return 'artifact';
   if (item.questItem) return 'quest';
-  if (!salvageShards(item)) return 'not';
+  if (socketGems(item).length) return 'gems';   // AUDIT GEM: a set gem is never broken with its piece - extracted or unset first (a Magic weapon holds one since GEM1, and the bulk salvage swept it)
+  if (!salvageShards(item)) return typeof item.provenance !== 'string' && rarityOf(item) === 'magic' ? 'classic' : 'not';   // FB1012d SALVAGE-CLASSIC: it wears Magic, and is never graded
   if (isBound(item)) return 'bound';
   if (isEquipped(item)) return 'worn';
   if (isLocked(item)) return 'locked';
@@ -182,16 +195,21 @@ export function honePiece(item, index, player, rolls = Math.random) {
   return { ok: true, line, price };
 }
 // ── LOOT20: the sockets ──────────────────────────────────────────────
-/** What setting a gem costs, the gem besides. */
-export const SET_GEM_PRICE = 100;
+/** GEM1 (bible/06-Systems/Gem-Sockets.md section 3): SETTING IS FREE - the gem is the price, in the pack or at the
+ *  Reforge alike (LOOT20 charged the guild's 100 gold, when the guild was the only door). What the Reforge alone does is
+ *  EXTRACT: a set gem out whole, for gold by its grade. */
+export const EXTRACT_PRICE = Object.freeze({ chipped: 50, flawed: 100, plain: 200, flawless: 400, perfect: 800 });
 /** A gem item the setting may take: of its kind, unlocked and not worn - the shards' own law (a gem is a jewel a slot
  *  takes too) - and never a quest's (AUDIT LOOT II B1: a quest's ruby is the one its giver waits for, `toting _item_`;
  *  set in a socket it was gone and the quest could never close, where the Salvage page refuses a quest's piece). */
-const looseGem = (it, gem) => gemKindOf(it) === gem && !it.questItem && !isLocked(it) && !isEquipped(it);
-/** The pack's loose gems, by kind: `{ ruby: 2, ... }`. */
-export const gemsHeld = (items) => Object.fromEntries(GEM_IDS.map((g) => [g, (Array.isArray(items) ? items : []).reduce((n, it) => n + (looseGem(it, g) ? (it.stackCount ?? 1) : 0), 0)]));
-/** Take one loose gem of a kind out of a pack (a stack shrinks, a last one goes). Answers whether it could. */
-export function takeGem(items, gem) {
+const looseGem = (it, gem) => gemKindOf(it) === gem && !it.questItem && !isLocked(it) && !isEquipped(it) && !isEnchanted(it);   // AUDIT GEM: never one the item maker enchanted (its powers would go into the socket and be lost)
+/** The pack's loose gems, by id: `{ ruby: 2, 'flawless-ruby': 1, ... }` - every gem, DFU's and the graded (GEM2). */
+export const gemsHeld = (items) => Object.fromEntries(ALL_GEM_IDS.map((g) => [g, (Array.isArray(items) ? items : []).reduce((n, it) => n + (looseGem(it, g) ? (it.stackCount ?? 1) : 0), 0)]));
+/** Take one loose gem of a kind out of a pack (a stack shrinks, a last one goes). Answers whether it could. AUDIT GEM:
+ *  `prefer` - the record the player pressed (a gem card's "Set in..."), taken first when it is a loose one of the kind. */
+export function takeGem(items, gem, prefer = null) {
+  const at = prefer && looseGem(prefer, gem) ? items.indexOf(prefer) : -1;
+  if (at >= 0) { if ((prefer.stackCount ?? 1) > 1) prefer.stackCount -= 1; else items.splice(at, 1); return true; }
   for (let i = items.length - 1; i >= 0; i--) {
     const it = items[i];
     if (!looseGem(it, gem)) continue;
@@ -200,44 +218,69 @@ export function takeGem(items, gem) {
   }
   return false;
 }
-/** What either socket press asks of a piece first, or null: 'off', 'not' (no socket), 'unknown', 'worn'. */
+/** What every socket press asks of a piece first, or null: 'off', 'not' (no socket), 'unknown'. GEM1: a WORN piece is
+ *  filled where it is worn - the press runs the wearer's fold again (refold) - where LOOT20 asked it taken off. */
 function socketWork(item) {
   if (!lootRarityOn()) return 'off';
   if (!hasSocket(item)) return 'not';
-  return !itemIsIdentified(item) ? 'unknown' : isEquipped(item) ? 'worn' : null;
+  return !itemIsIdentified(item) ? 'unknown' : null;
 }
-/** Why a gem may not be set in a piece now, or null: socketWork's, 'set' (a gem is in it - unset it first), 'nogem'
- *  (none of that kind loose in the pack), 'gold'. */
-export function setGemRefusal(item, gem, player) {
+/** A worn piece's lines moved: the wearer's folds run again at once (equip.js's listeners - the save's own seam). */
+const refold = (item, player) => { if (isEquipped(item)) notifyEquipChange(player); };
+/** Why a gem may not be set in a piece's socket `at` (the first empty one when omitted) now, or null: socketWork's,
+ *  'set' (no empty socket there - unset it first), 'nogem' (none of that gem loose in the pack). */
+export function setGemRefusal(item, gem, player, at = null) {
   const work = socketWork(item);
   if (work) return work;
-  if (socketGem(item)) return 'set';
-  if (!GEM_IDS.includes(gem) || !(gemsHeld(player?.items)[gem] > 0)) return 'nogem';
-  if (totalGoldAmount(player) < SET_GEM_PRICE) return 'gold';
+  const list = socketsOf(item);
+  if (list[at == null ? list.indexOf(SOCKET_EMPTY) : at] !== SOCKET_EMPTY) return 'set';
+  if (!ALL_GEM_IDS.includes(gem) || !(gemsHeld(player?.items)[gem] > 0)) return 'nogem';
   return null;
 }
-/** THE SETTING, MADE: the gem out of the pack, the gold paid, its line on the piece. Answers `{ ok: true, line }` or
- *  `{ ok: false, reason }` with nothing taken. */
-export function setGemPiece(item, gem, player) {
+/** THE SETTING, MADE: the gem out of the pack, its line on the piece (a worn one's wearer folded again). Answers
+ *  `{ ok: true, line }` or `{ ok: false, reason }` with nothing taken. */
+export function setGemPiece(item, gem, player, at = null, { from = null } = {}) {
   if (!player || !Array.isArray(player.items) || !player.items.includes(item)) return { ok: false, reason: 'gone' };
-  const why = setGemRefusal(item, gem, player);
+  const why = setGemRefusal(item, gem, player, at);
   if (why) return { ok: false, reason: why };
-  takeGem(player.items, gem);
-  deductGold(player, SET_GEM_PRICE);
-  return { ok: true, line: setGem(item, gem) };
+  takeGem(player.items, gem, from);   // AUDIT GEM: the pressed stone first
+  const line = setGem(item, gem, at);
+  refold(item, player);
+  return { ok: true, line };
 }
-/** Why a piece's gem may not be unset now, or null: socketWork's, 'empty' (no gem in it). Unsetting is free - and the
- *  gem shatters. */
-export function unsetGemRefusal(item) {
-  return socketWork(item) ?? (socketGem(item) ? null : 'empty');
+/** Why a piece's gem in socket `at` (the first set one when omitted) may not be unset now, or null: socketWork's,
+ *  'empty' (no gem there). Unsetting is free - and the gem shatters. */
+export function unsetGemRefusal(item, at = null) {
+  return socketWork(item) ?? (socketGem(item, at) ? null : 'empty');
 }
 /** THE UNSETTING, MADE: the gem's line gone, the socket empty, the gem shattered. Answers `{ ok: true, gem }` or
  *  `{ ok: false, reason }`. */
-export function unsetGemPiece(item, player) {
+export function unsetGemPiece(item, player, at = null) {
   if (!player || !Array.isArray(player.items) || !player.items.includes(item)) return { ok: false, reason: 'gone' };
-  const why = unsetGemRefusal(item);
+  const why = unsetGemRefusal(item, at);
   if (why) return { ok: false, reason: why };
-  return { ok: true, gem: unsetGem(item) };
+  const gem = unsetGem(item, at);
+  refold(item, player);
+  return { ok: true, gem };
+}
+/** What extracting a set gem costs - its grade's EXTRACT_PRICE - or null for an empty socket. */
+export const extractPrice = (item, at = null) => { const g = socketGem(item, at); return g ? EXTRACT_PRICE[gemGrade(g) ?? 'plain'] : null; };
+/** Why a piece's gem may not be EXTRACTED whole now, or null: unsetGemRefusal's, 'gold'. */
+export function extractGemRefusal(item, player, at = null) {
+  return unsetGemRefusal(item, at) ?? (totalGoldAmount(player) < (extractPrice(item, at) ?? 0) ? 'gold' : null);
+}
+/** THE EXTRACTION, MADE (the Reforge's): the gold paid, the gem out WHOLE into the pack, the socket empty. Answers
+ *  `{ ok: true, gem, price }` or `{ ok: false, reason }` with nothing taken. */
+export function extractGemPiece(item, player, at = null) {
+  if (!player || !Array.isArray(player.items) || !player.items.includes(item)) return { ok: false, reason: 'gone' };
+  const why = extractGemRefusal(item, player, at);
+  if (why) return { ok: false, reason: why };
+  const price = /** @type {number} */ (extractPrice(item, at));
+  const gem = /** @type {string} */ (unsetGem(item, at));
+  deductGold(player, price);
+  addItem(player.items, /** @type {any} */ (mintGem(gem)));
+  refold(item, player);
+  return { ok: true, gem, price };
 }
 /** THE REFORGE, MADE: paid (the shards, then the gold - DFU's purse-then-letters law), the line rolled again. Answers
  *  `{ ok: true, line, price }` or `{ ok: false, reason }` with nothing taken. */

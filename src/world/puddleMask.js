@@ -5,7 +5,7 @@
 // PUDDLE IS THE ART'S.
 //
 // DFU's shallow-water records - the town docks, moats and puddles (8, 23,
-// 33-36; world/waterCorners.js SHALLOW_WHOLE) and record 9 - carry their
+// 33-36; world/water/waterCorners.js SHALLOW_WHOLE) and record 9 - carry their
 // water as a SHAPE painted on the tile: a pool on sand, a puddle in the
 // grass. The enhanced water pass knew them only as "whole" (their corners
 // all four), so it laid a full 6.4 m square of shimmering water over the
@@ -28,10 +28,26 @@
 // the draw and the law are two questions). This is the picture only.
 // ═══════════════════════════════════════════════════════════════════
 
-import { SHALLOW_WHOLE, SHALLOW_DRAWN } from './waterCorners.js';
+import { SHALLOW_WHOLE, SHALLOW_DRAWN, WATER_DRAW_MASK_TABLE } from './water/waterCorners.js';
 
 /** The records the pass drew whole, in order: record 9 and DFU's shallow-water tiles. */
 export const PUDDLE_RECORDS = Object.freeze([...new Set([...SHALLOW_DRAWN, ...SHALLOW_WHOLE])].sort((a, b) => a - b));
+/** The records a ground archive paints (DFU's 56). */
+const GROUND_RECORDS = 56;
+const anyTurn = (r) => [0, 1, 2, 3].some((t) => WATER_DRAW_MASK_TABLE[(r << 2) | t]);
+/**
+ * SHORE-SILT (2026-10-12, Dudey's field video: a village pond's dirt shore, and a town's, freckled with blue blotches
+ * where the new water's bed should be): the records the draw calls part water and part ground - the marching shores,
+ * WATER-DRAW2's corners and saddles - whose water is NOT the art's alone (the puddles above are). The bed's silt
+ * (render/waterBedGlsl.js) covered their water where the corner table's bilinear coverage lies, and the art paints its
+ * water as a ragged shape that reaches past that line - 7 to 34% of a temperate shore tile was painted water left
+ * bare, outside the silt and outside the sheet: flat blue paint on the bank.
+ */
+export const SHORE_RECORDS = Object.freeze(Array.from({ length: GROUND_RECORDS - 1 }, (_, i) => i + 1)
+  .filter((r) => anyTurn(r) && !PUDDLE_RECORDS.includes(r)));
+/** SHORE-SILT: the records with no water at any turn - the ground the shores' water is told apart from. */
+export const DRY_RECORDS = Object.freeze(Array.from({ length: GROUND_RECORDS - 1 }, (_, i) => i + 1).filter((r) => !anyTurn(r)));
+
 /** How far (Euclidean RGB, 0..255 a channel) from one of the water tile's colours a texel may sit and still be water:
  *  a puddle's lighter or darker blue counts, a brown or a green does not (WATER5's tolerance). */
 export const WATER_COLOUR_TOLERANCE = 24;
@@ -92,6 +108,7 @@ export function waterColours(layer0) {
  * puddle layers are COPIED before they are written (a record's color32
  * may be another reader's too); every other layer is handed back as it
  * came. An archive with no water tile is handed back untouched.
+ * SHORE-SILT: the shore records' layers are copied and marked too, by their own rule (markShoreWater).
  * @param {Array<{width: number, height: number, colors: ArrayBufferView}>} layers - by record
  */
 export function markPuddleWater(layers, tolerance = WATER_COLOUR_TOLERANCE) {
@@ -117,6 +134,55 @@ export function markPuddleWater(layers, tolerance = WATER_COLOUR_TOLERANCE) {
     for (let i = 0; i < wet.length; i++) wet[i] = isWater(b[i * 4], b[i * 4 + 1], b[i * 4 + 2]) ? 1 : 0;
     cleanMask(wet, layer.width, layer.height);
     for (let i = 0; i < wet.length; i++) b[i * 4 + 3] = wet[i] ? 255 : 0;
+    out[rec] = { ...layer, colors: b };
+  }
+  return markShoreWater(out);   // SHORE-SILT: and each shore's painted water, by its own rule (markShoreWater)
+}
+
+/** SHORE-SILT: how much rarer on the dry tiles than on the wet ones a colour must be to be the water's - twenty times. */
+export const SHORE_DRY_RATIO = 0.05;
+
+/**
+ * SHORE-SILT: the colours that are the WATER's - painted by the wet tiles (record 0 and the shores) and twenty times
+ * rarer, as a share of the texels, on the dry ones (every record with no water at any turn). WATER5's tolerance cannot
+ * tell a shore's water from its ground: measured on ARENA2 it calls 30-100% of a dry record wet in the mountains, the
+ * swamp and every winter and rain set (their grounds share the water's blues). Asking the archive's own dry tiles
+ * does: a colour they paint is ground. And a shore paints more than record 0's blues - Vanilla Enhanced (worn by
+ * default) feathers its water into the bank in blue-greys record 0 never uses, and a blue its stone uses a few times
+ * in 2.6 million texels is still the water's, so the rule is a share, not an exclusion.
+ */
+export function shoreWaterColours(layers) {
+  const count = (records) => {
+    const c = new Map();
+    let total = 0;
+    for (const r of records) {
+      if (!layers[r]) continue;
+      const b = bytesOf(layers[r]);
+      total += b.length / 4;
+      for (let i = 0; i < b.length; i += 4) { const k = (b[i] << 16) | (b[i + 1] << 8) | b[i + 2]; c.set(k, (c.get(k) ?? 0) + 1); }
+    }
+    return { c, total: Math.max(total, 1) };
+  };
+  const wet = count([0, ...SHORE_RECORDS]), dry = count(DRY_RECORDS);
+  const water = new Set();
+  for (const [k, n] of wet.c) if ((dry.c.get(k) ?? 0) / dry.total < SHORE_DRY_RATIO * n / wet.total) water.add(k);
+  return water;
+}
+
+/** SHORE-SILT: each shore record's own water in its layer's alpha (255 water, 0 ground), cleaned into shapes - the
+ *  shores' layers copied, every other layer handed back as it came. Its one reader is the bed's silt. */
+export function markShoreWater(layers) {
+  if (!layers?.[0]) return layers;
+  const water = shoreWaterColours(layers);
+  const out = layers.slice();
+  for (const rec of SHORE_RECORDS) {
+    const layer = layers[rec];
+    if (!layer) continue;
+    const b = new Uint8Array(bytesOf(layer));   // a copy: a record's color32 may be another reader's too
+    const wet = new Uint8Array(layer.width * layer.height);
+    for (let i = 0; i < wet.length; i++) wet[i] = water.has((b[i * 4] << 16) | (b[i * 4 + 1] << 8) | b[i * 4 + 2]) ? 1 : 0;
+    cleanMask(wet, layer.width, layer.height, MIN_PATCH_TEXELS * Math.max(1, (layer.width * layer.height) / 4096));   // a speck is a speck at any size: Vanilla Enhanced paints 256 x 256
+    for (let i = 0; i < wet.length; i++) b[i * 4 + 3] = 255 * wet[i];
     out[rec] = { ...layer, colors: b };
   }
   return out;
@@ -162,7 +228,7 @@ export function puddleWetAt(layer, byte, fx, fz) {
  */
 export function carryPuddleMask(modLayers, classicMarked) {
   const out = modLayers.slice();
-  for (const rec of PUDDLE_RECORDS) {
+  for (const rec of [...PUDDLE_RECORDS, ...SHORE_RECORDS]) {   // SHORE-SILT: and the shores' water (Vanilla Enhanced, worn by default, repaints them in the classic layout)
     const m = modLayers[rec], c = classicMarked?.[rec];
     if (!m || !c) continue;
     const src = bytesOf(c), b = bytesOf(m).slice();
@@ -175,5 +241,19 @@ export function carryPuddleMask(modLayers, classicMarked) {
     }
     out[rec] = { ...m, colors: b };
   }
-  return out;
+  // SHORE-SILT: a set painted in Daggerfall's own palette (Vanilla Enhanced, worn by default) paints its shores' water
+  // past the classic shape - a feathered edge of blue flecks in the grass - so its shores are read by the rule itself,
+  // on its own colours; a truecolour set (GROUND1-W's DREAM) keeps the classic shape carried above
+  return palettedSet(modLayers) ? markShoreWater(out) : out;
+}
+
+/** SHORE-SILT: does a tile set paint in a palette - its water tile in at most 256 colours? */
+export function palettedSet(layers) {
+  if (!layers?.[0]) return false;
+  const b = bytesOf(layers[0]), seen = new Set();
+  for (let i = 0; i < b.length; i += 4) {
+    seen.add((b[i] << 16) | (b[i + 1] << 8) | b[i + 2]);
+    if (seen.size > 256) return false;
+  }
+  return true;
 }

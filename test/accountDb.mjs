@@ -1,6 +1,6 @@
 // The account service over node:sqlite with every migration applied - D1's surface as the Worker uses it (prepare /
 // bind / first / all / run, and batch as ONE transaction, rolled back whole when a statement throws) - and the Worker
-// stood on it with a registered-account helper. AUDIT 28's pins (test/audit28_marks.test.js, audit28_notice.test.js)
+// stood on it with a registered-account helper. AUDIT 28's pins (test/net/audit28_marks.test.js, audit28_notice.test.js)
 // drive the real service through it; marks1 and notice1 keep their own copies, written first.
 import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
@@ -9,15 +9,22 @@ import assert from 'node:assert/strict';
 import worker from '../server-account/src/index.js';
 import { _resetKeyForTests } from '../server-account/src/signing.js';
 import { _resetYardsKept } from '../server-account/src/decor.js';   // YARD-SHED: a stood service is a fresh isolate - no town's yards kept
+import { _resetBusyShed } from '../server-account/src/service.js';   // BUSY-GATE: and nothing shed
+import { forgetChapters } from '../server-account/src/npcHalls.js';   // AUDIT CHAP3 T4: nor any region's chapters - a test's first read is its own database's
 import { renownXpFor } from '../src/net/renown.js';
-import { mintReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
+import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // MERGE 2: TERMS1 - a request that makes an account carries the versions ticked
 import { r2, seatRealm } from './realmSeat.mjs';   // MERGE 2: a founding is a realm character's (AUDIT REALM2 S2)
-import { GUILD_FOUND_GOLD } from '../src/net/guildLaw.js';
+import { GUILD_FOUND_GOLD } from '../src/net/guild/guildLaw.js';
+import { ROLL_FACTIONS } from '../src/net/npcChapterLaw.js';   // AUDIT CHAP4 E3: a scene's chapters confirmed
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const { subtle } = globalThis.crypto;
 const MIGRATIONS = readdirSync(new URL('../server-account/migrations', import.meta.url)).filter((f) => f.endsWith('.sql')).sort();
+
+/** SEAT-CAP: D1's bound on one statement's parameters (Cloudflare's D1 limits) - node:sqlite's is 32,766, so a list bound
+ *  whole passed every test here and threw on the live database once it grew past 100 (the seats' Turning, 2026-10-11). */
+export const D1_MAX_BOUND = 100;
 
 /** A fresh database, every migration applied. */
 export function d1() {
@@ -31,11 +38,16 @@ export function d1() {
       const writes = /^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i.test(sql);
       let args = [];
       const api = {
-        bind(...a) { args = a; return api; },
+        bind(...a) {
+          if (a.length > D1_MAX_BOUND) throw new Error(`D1_ERROR: too many SQL variables (${a.length} bound, D1 takes ${D1_MAX_BOUND})`);   // SEAT-CAP: as D1 refuses it
+          args = a; return api;
+        },
         async first() { return stmt.get(...args) ?? null; },
-        async all() { return { results: stmt.all(...args) }; },
-        async run() { const r = stmt.run(...args); return { meta: { changes: Number(r.changes) } }; },
-        _result() { const results = stmt.all(...args); return { results, meta: { changes: writes ? Number(db.prepare('SELECT changes() AS c').get().c) : 0 } }; },
+        // SCALE4h: an answer's meta says its rows written, as D1's does (a table's rows - D1 counts its indexes' too), so a
+        // route's metrics point can be read over this database
+        async all() { const results = stmt.all(...args); return { results, meta: { rows_written: writes ? Number(db.prepare('SELECT changes() AS c').get().c) : 0 } }; },
+        async run() { const r = stmt.run(...args); return { meta: { changes: Number(r.changes), rows_written: writes ? Number(r.changes) : 0 } }; },
+        _result() { const results = stmt.all(...args); const n = writes ? Number(db.prepare('SELECT changes() AS c').get().c) : 0; return { results, meta: { changes: n, rows_written: n } }; },
       };
       return api;
     },
@@ -43,8 +55,33 @@ export function d1() {
       db.exec('BEGIN');
       try { const out = list.map((st) => st._result()); db.exec('COMMIT'); return out; } catch (e) { db.exec('ROLLBACK'); throw e; }
     },
+    /** SCALE4d: D1's Sessions API - a session over the same database. A fake has no replica, so every statement is the
+     *  primary's, as on a database whose read replication is off. Each session opened is recorded - its constraint and
+     *  the statements prepared through it - so a pin can say which statements a route ran on one. */
+    _sessions: [],
+    withSession(constraint) {
+      const rec = { constraint, statements: [] };
+      this._sessions.push(rec);
+      return new FakeD1Session(this, rec);
+    },
   };
 }
+
+/** SCALE4d: D1's session as the runtime makes one - a class whose methods read its own private fields, so a method
+ *  called off its object (an unbound `prepare`) throws, as workerd's D1DatabaseSession's does (AUDIT SCALE4d D8: a fake
+ *  of plain closures let a wrapper that dropped the binding pass). */
+class FakeD1Session {
+  #db; #rec;
+  constructor(db, rec) { this.#db = db; this.#rec = rec; }
+  prepare(sql) { this.#rec.statements.push(sql); return this.#db.prepare(sql); }
+  batch(list) { return this.#db.batch(list); }
+  /** SCALE4g: the session's position, as D1 writes one - the database's total changes so far, D1's shape (fixed-width
+   *  hex positions, so a newer one orders after an older one). */
+  getBookmark() { return d1Position(this.#db); }
+}
+
+/** SCALE4g: a fake database's position in D1's bookmark shape. */
+export const d1Position = (db) => `${Number(db._raw.prepare('SELECT total_changes() AS c').get().c).toString(16).padStart(8, '0')}-00000000-00000000-${'0'.repeat(32)}`;
 
 /** A UTC day's middle. */
 export const T0 = 1_800_000_000;
@@ -53,6 +90,8 @@ export const T0 = 1_800_000_000;
 export async function standService(extra = {}) {
   _resetKeyForTests();
   _resetYardsKept();
+  _resetBusyShed();
+  forgetChapters();
   const kp = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
   const pkcs8 = Buffer.from(new Uint8Array(await subtle.exportKey('pkcs8', kp.privateKey))).toString('base64');
   const gk = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
@@ -106,3 +145,10 @@ export async function standService(extra = {}) {
 
 /** A device's storage holding `who`'s session (net/accountClient.js SESSION_KEY). */
 export const sessionStorageOf = (sessionKey, who) => ({ getItem: (k) => (k === sessionKey ? JSON.stringify({ secret: who.secret, id: who.id }) : null) });
+
+/** AUDIT CHAP4 E3: A SCENE'S CHAPTERS CONFIRMED - each region's kept row (npcHalls.js npc_hall_regions, AUDIT CHAP3 S3)
+ *  naming `factions` (every guild of the Roll by default), as its witnessed towns' reports would leave it: the seats are
+ *  placed, and the titles minted, only at a chapter confirmed now. */
+export function confirmChapters(raw, regions, factions = ROLL_FACTIONS) {
+  for (const g of regions) raw.prepare('INSERT OR REPLACE INTO npc_hall_regions (region, chapters, ver, done, at) VALUES (?, ?, 1, 1, 0)').run(g, JSON.stringify([...factions]));
+}

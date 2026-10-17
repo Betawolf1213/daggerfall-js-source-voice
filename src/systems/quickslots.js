@@ -48,14 +48,16 @@ import { equipItem, equipTableOf, EQUIP_SLOTS, isBrokenItem, isForbiddenEquip, i
   getItemHands, ITEM_HANDS, getEquipSlot,   // UI2: the equip table's own answer - which pieces a slot of the body takes
   equipDelaySnapshot, billEquipDelayOnClose, ITEM_BROKEN_TEXT_ID, FORBIDDEN_EQUIPMENT_TEXT_ID } from './equip.js';
 import { isShieldTemplate } from './armorMaterials.js';
-import { itemLongName, conditionPercentage } from './itemInfo.js';
+import { itemLongName, conditionPercentage } from './item/itemInfo.js';
 import { isEnchanted } from './inventory.js';   // UI2: an enchanted piece shows its wear (its powers spend its condition - the pack's rule)
-import { isAmmunition } from './itemTemplates.js';   // THUNDERLOCK-ART: a stack of shot shows its count, never a wear bar (the pack's rule)
+import { shownSpellName } from './loot/loot.js';   // L10N3e: a slotted spell's name as the book shows it - the stored name stays the canonical one
+import { isAmmunition } from './item/itemTemplates.js';   // THUNDERLOCK-ART: a stack of shot shows its count, never a wear bar (the pack's rule)
 
 import { expandRowValues } from './quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
 import { racialSuppressInventory, LYCANTHROPY_SPELL_TAG } from './lycanthropy.js';   // DISC10-E L3: the pack's refusal, at the two doors that reach into it; HB-LYCFREE: the curse's free spell
 import { BOOK_TEMPLATE } from './books.js';   // AUDIT CARDS-5 C3: a book keyed by its text
 import { hotbarInForce } from './uiSkin.js';   // AUDIT CONTRIB H1: the diamond put away while the hotbar is
+import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 /** The slots a player fills. The two consumables are what the diamond's
  *  top and bottom cells show; `swap` is the second weapon the off-hand
  *  cell offers when the off hand is empty. */
@@ -105,9 +107,9 @@ const state = { c1: null, c2: null, swap: null };
  *  item: it carries no group, no template and no material, so
  *  `quickslotKey` has nothing to say about it. What it does carry is an
  *  INDEX - a SPELLS.STD record number, or the negative one a made spell
- *  mints (systems/spellMaker.js:"Mint the next custom") - and that index is already
+ *  mints (systems/spell/spellMaker.js:"Mint the next custom") - and that index is already
  *  this port's name for "which spell": it is what the save writes
- *  (systems/save.js:"TP-slice: the Recall"), what a restore reads back, and what
+ *  (systems/save/save.js:"TP-slice: the Recall"), what a restore reads back, and what
  *  `setReadiedByIndex` resolves a readied spell by. So the slot keeps
  *  the same key the rest of the port keeps, and a book that changed
  *  under it (a spell sold, a made spell deleted) leaves a GHOST that
@@ -328,7 +330,7 @@ export function emptySlotLine({ weapon = null, sheathed = false, readyKey = null
   return weapon && sheathed && readyKey ? `${QUICKSLOT_TEXT.emptySlot} ${QUICKSLOT_TEXT.readyWeapon(readyKey)}` : QUICKSLOT_TEXT.emptySlot;
 }
 
-export function useQuickslot(slot, opts = {}) { return (_performed = useQuickslotNow(slot, opts)); }   // AUDIT CONTRIB H3: what the press did, for the hotbar's flash
+export function useQuickslot(slot, opts = {}) { noteFirstUse('quickslots'); return (_performed = useQuickslotNow(slot, opts)); }   // TUT1: the first slot pressed   // AUDIT CONTRIB H3: what the press did, for the hotbar's flash
 function useQuickslotNow(slot, { entity = null, items = null, hooks = {}, say = null } = {}) {
   if (!CONSUMABLE_SLOTS.includes(slot)) throw new Error(`quickslots: ${slot} is not a consumable slot`);
   // DISC10-E L3: a quickslot USE is the inventory window's Use arm
@@ -638,7 +640,7 @@ export function clearSpellQuickslot() { spellState = null; }
 export function resolveSpellQuickslot(entity) {
   if (!spellState) return null;
   const spell = bookOf(entity).find((sp) => sp?.index === spellState.index) ?? null;
-  return { index: spellState.index, name: spell?.name || spellState.name, spell };
+  return { index: spellState.index, name: shownSpellName(spell) || shownSpellName(spellState), spell };   // L10N3e: drawn, so as shown
 }
 
 /**
@@ -764,7 +766,7 @@ export function cycleQuickslot(slot, { entity = null, dir = 1 } = {}) {
     const next = at < 0 ? (step > 0 ? 0 : list.length - 1) : (at + step + list.length) % list.length;
     setSpellQuickslot(list[next]);
     cycling = { slot, ms: QUICK_CYCLE_LINGER_MS };
-    return { slot, index: list[next].index, name: list[next].name, spell: list[next] };
+    return { slot, index: list[next].index, name: shownSpellName(list[next]), spell: list[next] };   // L10N3e: as shown
   }
   if (!CONSUMABLE_SLOTS.includes(slot)) throw new Error(`quickslots: ${slot} does not cycle`);
   const list = consumableCandidates(entity, slot);
@@ -885,7 +887,7 @@ export function tickQuickslotHold(dt, { isHeld = null, entity = null, onTap = nu
 }
 
 // ── THE SAVE ──────────────────────────────────────────────────────
-// Rides composeSessionState / restoreSessionState (systems/save.js),
+// Rides composeSessionState / restoreSessionState (systems/save/save.js),
 // the seam every host's save already passes through, so no host is
 // edited and none can forget it. A save without the block CLEARS the
 // slots - a pre-QS save, or another character's - exactly as FE1's
@@ -895,7 +897,7 @@ export function quickslotSaveData() {
   const out = {};
   for (const s of QUICKSLOTS) out[s] = state[s] ? { key: state[s].key, name: state[s].name } : null;
   // QS6: the spell slot rides the same block, keyed the way save.js
-  // already keys a spell - by index (systems/save.js:"TP-slice: the Recall").
+  // already keys a spell - by index (systems/save/save.js:"TP-slice: the Recall").
   out.spell = spellState ? { index: spellState.index, name: spellState.name } : null;
   // HB1: and the hotbar, on the same block - ten entries, each an item
   // kind or a spell index, exactly as the slots above key them.
@@ -954,7 +956,7 @@ export function restoreQuickslotSaveData(data) {
 // host edited.
 
 export const HOTBAR_SIZE = 10;
-/** PADPLUS1: THE CROSSBAR'S SIXTEEN. The Enhanced Plus crossbar (ui/enhancedHotbar.js, two sets of eight under LB
+/** PADPLUS1: THE CROSSBAR'S SIXTEEN. The Enhanced Plus crossbar (ui/enhanced/enhancedHotbar.js, two sets of eight under LB
  *  and RB) is the same bar, grown: slots 1-10 are the keyboard's 1-0 and the crossbar's first ten, slots 11-16 are
  *  the crossbar's alone. One model, so a potion dragged on with the mouse is on the pad's bar too, and one save. */
 export const HOTBAR_CAPACITY = 16;
@@ -992,7 +994,7 @@ export const HOTBAR_KINDS = Object.freeze(['consumable', 'weapon', 'light', 'shi
  *  light, but a lit torch that is ALSO equippable must read as a light.
  *
  *  UI2 (2026-09-27, Mac: "you should be able to slot spells and different items"): ANY ITEM GOES ON THE BAR, and a
- *  press is the pack's own primary act on it (ui/enhancedInventory.js localPrimaryAct, the PAD's quick act): a piece
+ *  press is the pack's own primary act on it (ui/enhanced/enhancedInventory.js localPrimaryAct, the PAD's quick act): a piece
  *  a slot of the body takes - armour, clothing, jewellery, a gem's crystal - is WORN, put on or taken off when it is
  *  on; everything else is USED, the pack's Use - a book read, a map read, the spellbook opened, food eaten, a tent
  *  pitched, and what cannot be used saying so. Which slot takes a piece is the equip table's answer, as the pack's. */
@@ -1118,7 +1120,7 @@ export function hotbarView(entity, { readiedIndex = null, size = HOTBAR_CAPACITY
     if (!e) return { slot: i, empty: true };
     if (e.type === 'spell') {
       const spell = book.find((sp) => sp?.index === e.index) ?? null;
-      return { slot: i, type: 'spell', name: spell?.name || e.name, index: e.index, spell,
+      return { slot: i, type: 'spell', name: shownSpellName(spell) || shownSpellName(e), index: e.index, spell,   // L10N3e: drawn, so as shown
         element: spell?.element ?? null, rangeType: spell?.rangeType ?? null,
         icon: spell?.noIcon ? null : iconOf(spell).icon ?? e.icon ?? null,   // UI2: the book's icon, else the one it was slotted with (NO-ICON: none)
         noIcon: !!spell?.noIcon,
@@ -1141,7 +1143,7 @@ export function hotbarView(entity, { readiedIndex = null, size = HOTBAR_CAPACITY
 /** UI2: which slots show their piece's wear - the kinds that wear in use (a weapon, a shield, a light), and of the worn
  *  pieces what the pack's tile shows a bar on (armour, and anything enchanted: its powers spend its condition). Never
  *  a gem, a book or a potion - a bar on everything is the noise the bar exists to cut. THUNDERLOCK-ART: and never
- *  ammunition, the pack's own word (ui/enhancedInventory.js wearPct: "an arrow is spent, not worn") - a stack of arrows
+ *  ammunition, the pack's own word (ui/enhanced/enhancedInventory.js wearPct: "an arrow is spent, not worn") - a stack of arrows
  *  or pellets slotted as a weapon drew a bar under its count, the two on top of each other. */
 const showsWear = (kind, item) => !isAmmunition(item) && (kind === 'weapon' || kind === 'shield' || kind === 'light'
   || item.group === 'Armor' || isEnchanted(item));   // AUDIT UI B6: anything enchanted - the Sanguine Rose spends its condition as a ring does (the pack's wearPct)

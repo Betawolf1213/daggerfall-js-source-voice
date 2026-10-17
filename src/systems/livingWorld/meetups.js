@@ -81,7 +81,7 @@ export function spotCircles(spotKey, present, t, roundMin) {
 
 /**
  * The DEAL: `who` paired off for a round in an order drawn from the key, the round and each one's id - two by two, the
- * odd three together, one alone none. LW-TALK: the rooms deal their tables on it (scenes/livingIndoors.js).
+ * odd three together, one alone none. LW-TALK: the rooms deal their tables on it (scenes/livingWorld/livingIndoors.js).
  * @template {Talker} T
  * @param {string} key @param {readonly T[]} who @param {number} round @param {number} start @param {number} end @param {number} beatMin - `from` after `start`
  * @returns {Circle[]}
@@ -163,8 +163,10 @@ export function circleLine(circle, t, lineMin, ctx = {}, memo = null) {
   const text = fillLine(script[index], {
     town: ctx.town, region: ctx.region, place: told ? told.item.place : placeOf(circle, at.k, ctx),
     a: firstNameOf(circle.members[at.k % n].name), b: firstNameOf(circle.members[(at.k + 1) % n].name),
-    who: told ? firstNameOf(told.item.who) : null, foe: told ? told.item.foe : null, player: ctx.player,   // LW7: a deed's, a fight's turner
+    who: told ? (told.item.kind === 'routed' ? told.item.who : firstNameOf(told.item.who)) : null, foe: told ? told.item.foe : null, player: ctx.player,   // LW7: a deed's, a fight's turner; AUDIT LW-II B14: a band's whole name ("the Red Hand", never "the")
     house: told?.item.house ?? null,   // LEGACY6: the house a kinsman's news is of
+    guild: told?.item.guild ?? null,   // CHAP5b: the guild a chapter's news is of
+    from: told?.item.from ?? null,   // LW16: the town the word was carried from
   });
   return { who, text, index, k: at.k };
 }
@@ -251,11 +253,18 @@ export function circleStands(spot, circle, street = null) {
     }
     if (places.length === n) got = places;
   }
-  // nowhere about its middle: along the way out to it, a pace apart, each facing the middle (the one on it, the spot)
-  got ??= circle.members.map((_, i) => {
-    const d = Math.max(0, Math.min(hold - STAND_MARGIN_M, rc + (i - (n - 1) / 2) * CIRCLE_APART));
-    return { x: spot.x + Math.sin(b) * d, z: spot.z + Math.cos(b) * d, yaw: d < rc ? b : b + Math.PI };
-  });
+  // nowhere about its middle: along the way out to it, a pace apart, each facing the middle (the one on it, the spot).
+  // AUDIT LW-III: the line laid WHOLE - drawn back from the way's hold, and where the way is shorter than the line,
+  // spread along all of it - each member clamped on their own, two of three stood on one clamp, 0.63 m apart
+  if (!got) {
+    const far = Math.max(0, hold - STAND_MARGIN_M), span = (n - 1) * CIRCLE_APART;
+    let d0 = Math.min(rc - span / 2, far - span), gap = CIRCLE_APART;
+    if (d0 < 0) { d0 = 0; gap = n > 1 ? far / (n - 1) : 0; }
+    got = circle.members.map((_, i) => {
+      const d = d0 + i * gap;
+      return { x: spot.x + Math.sin(b) * d, z: spot.z + Math.cos(b) * d, yaw: d < rc ? b : b + Math.PI };
+    });
+  }
   kept.set(key, got);
   return got;
 }

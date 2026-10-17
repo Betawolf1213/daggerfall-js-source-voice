@@ -9,7 +9,7 @@
 //   - the NAME the room knows them by;
 //   - their level, race and class, the eight attributes and the three vitals' maxima - THEIR word, the card their own
 //     game hands over when asked (net/profileCard.js composeCard: what their character sheet shows);
-//   - what they WEAR, slot by slot, named as the pack names an item (systems/itemInfo.js itemLongName) - off the card's
+//   - what they WEAR, slot by slot, named as the pack names an item (systems/item/itemInfo.js itemLongName) - off the card's
 //     look when it came, and off the room's copy of their look until it does (or if it never does).
 // So the card is useful the moment it opens: the gear and the badges are the room's already, and the sheet arrives a
 // frame later. A peer whose game cannot answer (the relay is older, or they did not) keeps the room's half, and a line
@@ -23,22 +23,31 @@
 import { isTextEntryTarget } from './input.js';
 import { titleBadge, glyphBadges, glyphSvgNode, paintTitle } from './playerBadge.js';
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS } from './pixelifyFive.js';
-import { EQUIP_SLOTS } from '../characters/paperdoll.js';
-import { itemLongName } from '../systems/itemInfo.js';
-import { raceDisplayName } from '../systems/talkSession.js';
+import { EQUIP_SLOTS } from '../characters/paperdoll/paperdoll.js';
+import { itemLongName } from '../systems/item/itemInfo.js';
+import { raceDisplayName } from '../systems/talk/talkSession.js';
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';
-import { duelRecordText } from '../net/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
+import { duelRecordText } from '../net/duel/duelRecord.js';   // DUEL1: the duelling record's words, the account card's own
 import { renownText } from '../net/renown.js';   // RENOWN1: Renown, left of the name
-import { guildTagText } from '../net/guildLaw.js';   // GUILD1c: the guild's tag, right of the name
+import { guildTagText } from '../net/guild/guildLaw.js';   // GUILD1c: the guild's tag, right of the name
+import { localizedStrings } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { houseLine } from '../net/houseLaw.js';   // LEGACY7: the house, under the name
 
 export const PROFILE_STYLE_ID = 'dagger-profile-style';
 
 /** The attributes as the classic sheet labels them, in STAT_KEYS_ORDER - the card's own order (net/wire.js CARD_ATTRS). */
-export const ATTR_SHORT = Object.freeze(['STR', 'INT', 'WIL', 'AGI', 'END', 'PER', 'SPD', 'LUC']);
-export const ATTR_LABELS = Object.freeze(['Strength', 'Intelligence', 'Willpower', 'Agility', 'Endurance', 'Personality', 'Speed', 'Luck']);
+/** L10N3d: TextProvider.GetAbbreviatedStatName / GetStatName (:537-576) and the vitals' rows, read in the player's
+ *  language when the card reads them - each element a getter by DFU's key. */
+const CARD_WORDS = localizedStrings({
+  STR: 'STR', INT: 'INT', WIL: 'WIL', AGI: 'AGI', END: 'END', PER: 'PER', SPD: 'SPD', LUC: 'LUC',
+  strength: 'Strength', intelligence: 'Intelligence', willpower: 'Willpower', agility: 'Agility', endurance: 'Endurance',
+  personality: 'Personality', speed: 'Speed', luck: 'Luck', health: 'Health', fatigue: 'Fatigue', magicka: 'Magicka',
+});
+const cardWords = (keys) => Object.freeze(keys.reduce((a, k, i) => Object.defineProperty(a, i, { enumerable: true, get: () => CARD_WORDS[k] }), []));
+export const ATTR_SHORT = cardWords(['STR', 'INT', 'WIL', 'AGI', 'END', 'PER', 'SPD', 'LUC']);
+export const ATTR_LABELS = cardWords(['strength', 'intelligence', 'willpower', 'agility', 'endurance', 'personality', 'speed', 'luck']);
 /** The card's three vitals, in its order. */
-export const VITAL_LABELS = Object.freeze(['Health', 'Fatigue', 'Magicka']);
+export const VITAL_LABELS = cardWords(['health', 'fatigue', 'magicka']);
 
 /** WHAT THEY WEAR, in the order a reader looks a figure over - head to foot, then the hands, then the trinkets - each
  *  slot the look can carry (net/wire.js LOOK_GROUPS: clothing, armour, weapons, jewellery) under the word a player
@@ -176,7 +185,7 @@ export function profileView({ name = null, peer = null, look = null, card = null
     // DUEL1 (Mac: "When inspecting a player, they should be able to send an invite to duel"; "Add a dueling K/D to the
     // ... player inspect profile"): the Challenge button's state as the host's duel law says it ({ label, enabled, why }
     // - null: no button, offline or on a relay that cannot carry a duel), and their record's line - the account
-    // service's count, read by the account the relay stamped on their card (net/duelRecord.js), never the card's word
+    // service's count, read by the account the relay stamped on their card (net/duel/duelRecord.js), never the card's word
     duel: duel && typeof duel.label === 'string' ? { label: duel.label, enabled: !!duel.enabled, why: duel.enabled ? null : (duel.why ?? null) } : null,
     // LEGACY7 part three: the Propose button's state as the house's law says it - the duel's shape (null: no button)
     wed: wed && typeof wed.label === 'string' ? { label: wed.label, enabled: !!wed.enabled, why: wed.enabled ? null : (wed.why ?? null) } : null,
