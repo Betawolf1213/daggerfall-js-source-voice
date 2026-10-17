@@ -446,7 +446,7 @@ test('WBX6 no regeneration in the court: the Regenerate effect\'s round and a ca
   } finally { setCourtRules(false); }
   assert.match(read('src/systems/enchantments.js'), /if \(round % REGEN_PER_ROUNDS !== 0 \|\| regenBarred\(\)\) return;/, 'a RegensHealth enchantment: nothing');
   assert.match(read('src/systems/effects.js'), /if \(n > 0 && sinks\.heal && !regenBarred\(\)\) sinks\.heal\(n\);/);
-  assert.match(hostText('src/scenes/world.js'), /\n    setCourtRules\(modes\?\.gateArenaDay\?\.\(\) != null\);/, 'the frame sets it, every frame');
+  assert.match(hostText('src/scenes/world.js'), /\n    setCourtRules\(madeRuleHere\('regen'\) === 'off'\);/, 'the frame sets it, every frame');   // PIN MOVED (EG-H2, Elite-Gates.md section 24): the made level's law (systems/madeLevel.js) - the court's row, the Hour's and the Spire's
 });
 
 test('WBX6 no wear on the blows at him: his stand-in carries spareGear, and damageEquipment spares the weapon and the struck armour for it alone - every other foe wears the gear as DFU\'s does (mutants: the stand-in unflagged; the spare for everyone)', () => {

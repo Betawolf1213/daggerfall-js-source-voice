@@ -31,6 +31,7 @@ import { SESSION_KEY } from '../../../src/net/accountClient.js';
 import { realmIo, createRealmSession, whenPageGoes } from '../../../src/systems/realmSaves.js';
 import { createRealmLine } from '../../../src/systems/legacy/realmLine.js';
 import { createLegacyHost, LEGACY_TEXT, REZ_HOLD_MS } from '../../../src/scenes/legacyHost.js';
+import { madeRuleHere } from '../../../src/systems/madeLevel.js';   // the merge of PR #800: the frame asks the made level's law whether a Resurrect is taken here (EG-H2) - none made, so it is
 import { personOf, familyRng, MODELS, LEGACY_MOD, isAlive } from '../../../src/systems/legacy/family.js';
 import { loadFamily } from '../../../src/systems/legacy/store.js';
 import { revivedOf, REZ_HOLD_S } from '../../../src/systems/legacy/revived.js';
@@ -195,7 +196,7 @@ async function party({ model = MODELS.bloodline, online = true, ear = true } = {
   const v = {
     _respawning: false, _rezSeen: null, _deadMark: null, _partyComposedAt: 0, _deathWasOnline: true,
     social: { acct: 'acct-ysolde', others: () => r.ysoldeHears ?? [] }, modes: { sdRealmSlot: () => null, clearDeath() {} },
-    legacyHost: r.host, rezSnapshot, rezFor, reviveForPlay, playerEntity: r.e, RESURRECT_HEALTH_PCT, RESURRECT_TEXT, DeathScreen,
+    legacyHost: r.host, madeRuleHere, rezSnapshot, rezFor, reviveForPlay, playerEntity: r.e, RESURRECT_HEALTH_PCT, RESURRECT_TEXT, DeathScreen,
     statedDeathLoss, stateDeathLoss, townTalk: r.townTalk, wildGhostEnd: () => {}, forgetLastSlew: () => {}, player: { stopAutorun() {} },
   };
   r.ysolde = v;

@@ -20,7 +20,7 @@ import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP1
 import { quickslotHand } from '../ui/quickslotTags.js';   // DISC21-C: an empty quickslot press reads the hand   // PX30
 import { lycanthropeAttackVoice, lycanthropeMoveSound } from '../systems/lycanthropy.js';   // V4: the beast's attack voice; LM1: the 4-20s move-sound loop; DISC10-E L3: the inventory refusal moved INTO the window door
 import { layoutDungeon, isDungeonExitDoor } from '../world/dungeon/dungeonLayout.js';
-import { isGateArena, COURT_TEXT } from '../world/gate/gateArena.js';
+import { isGateArena } from '../world/gate/gateArena.js';   // EG-H2: the court's refusals are the made level's law's (systems/madeLevel.js)
 import { isArenaFloor } from '../world/arena/arenaFloor.js';
 import { isArenaUndercroft } from '../world/arena/arenaCity.js';   // ARENA-FIX 4: the fighters' hall
 import { undercroftPopulation, chainTag, deepFoesOf, undercroftHallNear } from '../world/arena/arenaUndercroft.js';   // ARENA2: the arena floor's instance - what the sand will not allow
@@ -263,6 +263,9 @@ import { createSdRemnant } from './superDungeon/sdRemnant.js';   // SD8c: the Br
 import { sdMarksOf } from '../net/superDungeon/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
 import { SD_NO_RIFT } from '../net/superDungeon/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
+import { isEgHall } from '../world/eliteGates/egHall.js';   // EG-PLAY: an Elite Breach's circle - a made place (EG-H2: its refusals the made level's law's)
+import { madeLevelOf, madeLevelRule, madeLevelSays } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every refusal below asks the one law
+import { createEgSpan, egSpanCollider } from './eliteGates/egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor; AUDIT EG V (L6-10): the collider's doors they use
 import { realmToDungeon } from '../net/superDungeon/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeon/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemy/enemyBasics.js';
@@ -299,6 +302,7 @@ import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';  
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
 import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied, corpseEntityName } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice; L10N3e: a body's name as shown
+import { egFindStruck, egFindKill } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner; PARTY-LOOT: a room's body's kill
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
 import { dropFoeCard } from '../systems/card/cardSources.js';   // AUDIT CARDS-6 A3: a joiner's copy of a body draws for its own card
 import { FOE_LEVEL_MAX, CELL_LOOSE_PUPPETS, sharedClassicMinutes, hitClassField, hitClassOf } from '../net/wire.js';   // TELL8: a blow's class on a hit   // SEARCH1: a room's search stamp, read as the world minute it was searched at   // AUDIT RENOWN1 GAME-3: the stream's bound on a class foe's level; SUMMON-SYNC: an owner's loose stands a reader stands, the cell's allowance
@@ -487,6 +491,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
 
   const drawList = [];
   const dynamicDraws = [];
+  // EG-ZP (bible/11-Multiplayer/Elite-Gates.md section 29 - EVERY ALLOCATION HAS AN OWNER): the teardowns an owner hands
+  // this context for what it stood into it and keeps itself (the mode machine's Elite circle - worldModes.js egCircleDown),
+  // each run once as the context is destroyed (`addTeardown`)
+  const _teardowns = [];
   // STUCK-ARROWS (combat/arrowFlight.js): the stuck shafts' entries in dynamicDraws, by pile, and the 99800 mesh they wear
   const _stuckDraws = new Map();
   let _stuckGpu = null;
@@ -1026,6 +1034,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // elites among them, and its loot +50%. Read once here; every arm below asks it.
   const _superTier = dungeonTier(dfLocation) === 'super';
   const _sdRealm = isSdRealm(dfLocation);   // SD5a: the Shattered Hour, read once - every arm below asks the flag
+  const _egHall = isEgHall(dfLocation);   // EG-PLAY: an Elite Breach's circle, read once
+  const _made = madeLevelOf(dfLocation);   // EG-H2 (Elite-Gates.md section 24): the made level this is ('court', 'hour', 'spire' or null), read once - its rules are the law's (systems/madeLevel.js)
   // REST3 (2026-10-03, bible/06-Systems/Rest-Arc.md section 4; Mac: "Dungeon layouts now recieve multiple strategic
   // placements for campfires"): THE DUNGEON'S OWN FIRES (world/dungeon/dungeonFires.js). Placed here - after every block's
   // geometry is in the collider, before the flats are batched and the lights' flicker is sized - so a placed fire is a
@@ -1957,6 +1967,37 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!sdSteps) return null;
     if (!_sdStepsStood) { _sdStepsStood = true; sdSteps.stand({ dynamicDraws, collider }); }
     return sdSteps.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
+  }
+  // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/eliteGates/egSpan.js) - every step of the circle's
+  // courses, stood the first frame the outer host asks and moved on the realm's clock, ridden BEFORE the motor (the Steps'
+  // way); the landing of the void's cast-back answered to the mode machine
+  let egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle, geo: dfLocation.egGeo ?? 0 }) : null;
+  let _egSpanStood = false;
+  /** EG-H3: what the spans stood - their draws and their buckets - taken out again when a new circle is stood in place */
+  let _egSpanDraws = null, _egSpanKeys = [];
+  /** One frame of the spans, before the motor: the landing of a cast-back, or null. */
+  function egSpanRide(dt, body, live) {
+    if (!egSpan) return null;
+    if (!_egSpanStood) {
+      _egSpanStood = true;
+      const n0 = dynamicDraws.length, keys = (_egSpanKeys = []);
+      egSpan.stand({ dynamicDraws, collider: egSpanCollider(collider, keys) });   // AUDIT EG V (L6-10): a Spirebridge's plank leaves the collider at its end
+      _egSpanDraws = new Set(dynamicDraws.slice(n0));
+    }
+    return egSpan.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
+  }
+  /** EG-H3 (Elite-Gates.md sections 7 and 31, EG10): THE SWAP - a new circle stood in this same level (scenes/worldModes.js
+   *  egSwapCircle): the old circle's spans out of the draws and the collider (the slot emptied before they are freed),
+   *  then the next circle's made, stood at the next ride. */
+  function egRecircle({ seed, c, geo = 0 }) {
+    if (!_egHall) return false;
+    const was = egSpan, draws = _egSpanDraws, keys = _egSpanKeys;
+    egSpan = null; _egSpanDraws = null; _egSpanKeys = []; _egSpanStood = false;
+    if (draws) for (let i = dynamicDraws.length - 1; i >= 0; i--) if (draws.has(dynamicDraws[i])) dynamicDraws.splice(i, 1);
+    for (const k of keys) collider.removeBucket(k);
+    was?.clear();
+    egSpan = createEgSpan({ renderer, audio, seed, c, geo });
+    return true;
   }
   // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT in the Shattered Hour (scenes/superDungeon/sdRemnant.js) - the Remnant, its
   // Echoes and the Reset's Hearts, stood the first frame I stand here and placed every frame where the realm's fight (the
@@ -3150,7 +3191,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // A host that passes none falls to the constructor's standing
       // defaults, which is the crouched death's geometry lost.
       const _ms = opts.motorState?.() ?? null;
-      activeOverlay = new DeathScreen({ eyeHeight: _ms?.eyeLevel, capsuleHeight: _ms?.capsule, onReset: () => { if (!opts.onlineRespawn?.()) endRunToTitleMenu(renderer); }, ...(opts.onlineRespawn ? { rises: opts.legacyWillRise } : { online: false }) });   // AUDIT 28 B5: the standalone dungeon (no onlineRespawn) never respawns online - no loss shown; BAL4: the world's dungeon knows a Legacy rise   // D1; D-ONLINE1: online play respawns instead of ending the run (worldModes.js's opts.onlineRespawn, world.js's onlineRespawn)
+      activeOverlay = new DeathScreen({ eyeHeight: _ms?.eyeLevel, capsuleHeight: _ms?.capsule, onReset: () => { if (!opts.onlineRespawn?.()) endRunToTitleMenu(renderer); }, ...(opts.onlineRespawn ? { rises: opts.legacyWillRise } : { online: false }), penalty: madeLevelRule(_made, 'deathPenalty') !== 'none' });   // AUDIT 28 B5: the standalone dungeon (no onlineRespawn) never respawns online - no loss shown; BAL4: the world's dungeon knows a Legacy rise   // D1; D-ONLINE1: online play respawns instead of ending the run (worldModes.js's opts.onlineRespawn, world.js's onlineRespawn)
     }
   });
   // F117: Stendarr's rank-in-fifty, consulted by the door before the
@@ -3161,6 +3202,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // this hook closes over a submersion marker that dies with the
   // context, so above ground it must not be the one consulted.
   const _prevAvoidDeath = setAvoidDeathHook(() => {
+    if (madeLevelRule(_made, 'avoidDeath') === 'refused') return false;   // EG-H2 (Elite-Gates.md section 24): Stendarr does not reach into the Spire - its death is its own law's
     if (!avoidDeath(activeMemberships(playerEntity), { submerged: _submergedNow })) return false;
     hudText.add(avoidDeathText());
     return true;
@@ -5768,6 +5810,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) reportPlayerKill(f.entity, REMOTE_KILL);
+    if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) egFindStruck(f.entity, roomLootOn() && roomCanonOfFoe(f) != null).catch(() => {});   // EG-E3: my blow killed an elite - my client asks the find (systems/eliteGates/egFind.js); a room's body's key to my pack (PARTY-LOOT)
     // LOOT7-CHECK DUNGEON-DIED: ...and the kill notice with it - the striker's own, said at the striker (damageFoe's death
     // arm speaks none for a peer's blow at the host); a death the host's record names nobody for is the host's to say
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) sayEnemyDied((l) => hudText.add(l), f.mobileType, f.entity);
@@ -6891,7 +6934,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       spawnCorpse(foe);
       playRareDrop(audio, foe.ai.feet, foe.entity.items);   // LR3: the chime for a Rare or better on the body
       if (!_roomBody) stampWonWeapons(foe.entity.items, _sharedFoe(foe) ? fightN(foe) : 1);   // SIGIL1: the body's Magic+ weapons won online may carry a sigil; a bigger fight, better odds
-      if (!_roomBody) raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
+      if (!_roomBody) raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck'), by: foe._killedBy ?? null }); else egFindKill(foe.entity, foe._killedBy ?? null).catch(() => {});   // EG-E3: the striker the foes stream names (a joiner's kill is the joiner's find) - a room's body raises its death in the room's base, which the find never answers, so its kill asks here (PARTY-LOOT; systems/eliteGates/egFind.js); UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
       return;
     }
     // C15 knockback (WeaponManager.WeaponDamage): WEAPON hits carry
@@ -8206,7 +8249,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // :2492-2493). The world host builds a saved dungeon through the door's own build, and this line reset the colour
   // tier of the record the load had just restored - every step of the run went gray - stamped it and pruned the
   // store the save carried; quickLoad's re-fetch below came too late to keep any of it.
-  let automapRec = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? detachedAutomapRecord()   // ARENA2: nor the arena's floor   // AUDIT 27h M1: the court keeps no map, so it takes no slot from one
+  let automapRec = madeLevelRule(_made, 'automap') === 'off' || isArenaFloor(dfLocation) ? detachedAutomapRecord()   // ARENA2: nor the arena's floor   // AUDIT 27h M1: the court keeps no map, so it takes no slot from one   // EG-H2: a made level's map is the law's (the court, the Hour, the Spire)
     : enterDungeonAutomap(automapKey, classicMinutesRef.value, { fromLoad: !!opts.automapFromLoad });
   // ROAD-C c2/S1: the reveal MODEL (rows in DFU's block/element/model
   // walk order, the point-query hash grid, the draw partition). Bind
@@ -8491,6 +8534,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     targets.push(...camps.targets());   // SURV3: the fires, at the same 3.2
     if (sdEnd) targets.push(...sdEnd.targets());   // SD4b: the Rift and the Return, at a door's reach
     if (sdHall) targets.push(...sdHall.targets());   // SD6c: the stones' handles and the Ledger plaques
+    if (egSpan) targets.push(...egSpan.targets());   // EG-FULL LAYER THREE: an Athenaeum's Orrery stones, a chamber's engine
     return targets;
   }
 
@@ -8718,6 +8762,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     (key) => camps.hoverName?.(key) ?? null,            // SURV3/HEARTH1, likewise
     (key) => sdEnd?.hoverName(key) ?? null,             // SD4b: the Rift and the Return
     (key) => sdHall?.hoverName(key) ?? null,            // SD6c: a stone's handle, a Ledger plaque
+    (key) => egSpan?.hoverName(key) ?? null,            // EG-FULL LAYER THREE: an Orrery stone's handle, an engine
     (key, hit) => composeNamer(_hostNamers)(key, hit),  // ...and whatever the host stands
     _dungeonHoverName,                                  // ...then the mod's own ladder (.cs:285-296)
   ]);
@@ -9115,7 +9160,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         loadingPrevented: () => !!opts.dungeonOnline?.(),
         timers: (o) => opts.timers?.(o) ?? null,   // TIMERS1: the world host's source, through worldModes
         post: () => opts.post?.() ?? null,   // SERVER-POST: the mailbox's box, the world host's through worldModes
-        savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm,   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court
+        savingPrevented: () => madeLevelRule(_made, 'save') === 'refused' || isArenaFloor(dfLocation),   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court   // EG-H2: a made level's saves are the law's - the Spire's pause greys its Save too (it never asked the Spire)
         // SAV4: the slot window's seams over the same two verbs.
         playerName: () => playerEntity.name, playerId: () => playerEntity.characterId ?? null,
         saveAs: (saveName) => ctx.quickSave?.(saveName),
@@ -9136,8 +9181,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  idiom - an occupied slot refuses, the window closes itself). */
     toggleAutomap() {
       if (activeOverlay) return;
-      if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noMap); return; }
-      if (_sdRealm) { hudText.add(SD_REALM_TEXT.noMap); return; }   // SD5a: the Hour keeps no map, as the Deadlands keep none
+      if (madeLevelRule(_made, 'automap') === 'off') { hudText.add(madeLevelSays(_made, 'automap')); return; }   // WB3b, SD5a, EG-PLAY: no made level keeps a map - each refuses in its own words (EG-H2: the law's)
       if (isArenaFloor(dfLocation)) { hudText.add(ARENA_TEXT.refuse.map); return; }   // ARENA2: a made level with nothing to chart   // WB3b: an empty level, and no place to chart
       // EM3: THE SKIN FORK, at the one place this host builds the map.
       // The classic arm answers null without its native art and the
@@ -9326,7 +9370,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (!near) return null;
       return Math.atan2(near.normal[0], near.normal[2]);
     },
-    get playerSlowFalling() { return hasActiveEffect(playerEntity, 'slowfall'); },   // S8: hosts feed their motor (P14: the -105 * dt constant-speed law lives in the motor)
+    get playerSlowFalling() { return hasActiveEffect(playerEntity, 'slowfall') && madeLevelRule(_made, 'slowfall') !== 'banned'; },   // S8: hosts feed their motor (P14: the -105 * dt constant-speed law lives in the motor)   // EG-H2 (Elite-Gates.md section 10.7): the Spire bans the slow fall - a Drop would be a glide (the effect runs on, lifting nothing)
     toggleDebugHud() { debugHud = !debugHud; },
     reportMotor(grounded, velY, yaw) { _grounded = grounded; _motorYaw = yaw; _motorState = `g:${grounded ? 1 : 0} vy:${velY.toFixed(1)} yaw:${yaw.toFixed(2)}`; },
     // U7: the rest key. Pre-rest gates (the classic order): enemies
@@ -9345,8 +9389,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     restFromBed() { _restFromBed = true; try { this.toggleRest(); } finally { _restFromBed = false; } },
     toggleRest() {
       if (activeOverlay) return;
-      if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noRest); return; }
-      if (_sdRealm) { hudText.add(SD_REALM_TEXT.noRest); return; }   // SD5a: nor a rest
+      if (madeLevelRule(_made, 'rest') === 'refused') { hudText.add(madeLevelSays(_made, 'rest')); return; }   // WB3b, SD5a, EG-PLAY: no rest in a made level (the Spire's is a Redoubt's own) - EG-H2: the law's
       if (isArenaFloor(dfLocation)) { hudText.add(ARENA_TEXT.refuse.rest); return; }   // ARENA2: no rest on the sand (the duel's law)   // WB3b: an enemy is always near - the boss
       // S40: the gate itself moved to systems/rest/restSession.js. It was
       // written out here because this was the only host that could
@@ -9470,15 +9513,15 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         flashPlayerDamage(_fallDmg);   // BA1: RemoveHealth carries the amount
         if (!immersiveFootsteps.applyPlayerFallDamage()) audio.playOneShot(SOUND.FallDamage, FOOTSTEP_VOLUME);   // AUDIT 58: PlayerFootsteps.cs:307-311; IF1: the mod's Hard_Landing_2 when it owns the stride
       } else if (fell > FALL_DAMAGE_THRESHOLD / 2) {
-        if (!immersiveFootsteps.hardFallAlert()) audio.playOneShot(SOUND.FallHard, FOOTSTEP_VOLUME);   // AUDIT 58: PlayerFootsteps.cs:315-319; IF1: the mod's Hard_Landing_1 when it owns the stride
+        if (egSpan?.overDrop?.()) { /* EG-ZG (Elite-Gates.md section 25.8): a Drop the course asked for lands on the fight's designed thud and dust (scenes/eliteGates/egFight.js), never the grunt */ }
+        else if (!immersiveFootsteps.hardFallAlert()) audio.playOneShot(SOUND.FallHard, FOOTSTEP_VOLUME);   // AUDIT 58: PlayerFootsteps.cs:315-319; IF1: the mod's Hard_Landing_1 when it owns the stride
       }
     },
     reportMouse(dx, dy, locked) { _mouseState = `dx:${dx} dy:${dy} lock:${locked ? 'Y' : 'N'}`; },
     reportInput(keys, pitch) { _inputState = `keys:${keys} pitch:${pitch.toFixed(2)}`; },
     quickSave(saveName = QUICK_SAVE_NAME, { quiet = false, sink = null } = {}) {   // REALM P0.5: a quiet checkpoint takes no shot and says only a failure; P1.3: a realm character's goes to the service
       // WB3b: a save made in the court would load into a place that no longer stands (the court is the day's alone)
-      if (_sdRealm) { if (!quiet) hudText.add(SD_REALM_TEXT.noSave); return false; }   // SD5a: nor a save
-      if (isGateArena(dfLocation)) { if (!quiet) hudText.add(COURT_TEXT.noSave); return false; }
+      if (madeLevelRule(_made, 'save') === 'refused') { if (!quiet) hudText.add(madeLevelSays(_made, 'save')); return false; }   // SD5a, EG-PLAY: nor the Hour nor the Spire - EG-H2: the law's
       if (isArenaFloor(dfLocation)) { if (!quiet) hudText.add(ARENA_TEXT.refuse.save); return false; }   // ARENA2: a made level no save re-enters
       const snap = snapshotPlayer(playerEntity, {
         position: lastPlayerFeet, classicMinutes: classicMinutesRef.value,
@@ -10422,6 +10465,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     },
     /** SD4b: a press on a Super dungeon's Rift or Return - the press ladder's `sdrift:` / `sdreturn:` arm (worldModes.js). */
     sdPress(key) { return !!sdEnd?.press(key) || !!sdHall?.press(key); },   // SD6c: and the Orrery's hall
+    egPress(key) { return !!egSpan?.press(key); },   // EG-FULL LAYER THREE: an Elite Breach's stone or engine
     // SD-LOOK: the Rift's and the Return's picture for the hosts' pass (render/superDungeon/sdRiftPass.js, render/superDungeon/sdHalo.js) and their
     // lights for the light list - undefined where no Super dungeon's end stands here
     sdEndLook: sdEnd ? (eye, sky, hour) => sdEnd.look(eye, sky, hour) : undefined,
@@ -10434,6 +10478,18 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     /** SD7b: the Unmoored Steps' frame, BEFORE the motor (the mode machine's, beside the movers' ride): the steps moved and
      *  `body` carried; while `live`, the breath, the touch and the void - the landing of a cast-back, or null. */
     sdStepsRide(dt, body, live = true) { return sdStepsRide(dt, body, live); },
+    /** EG-PLAY: an Elite Breach's spans' frame, BEFORE the motor - the landing of the void's cast-back, or null; and the
+     *  place it would cast me back to set (a pull's landing). */
+    egSpanRide(dt, body, live = true) { return egSpanRide(dt, body, live); },
+    egSpanSafe(p) { egSpan?.setSafe(p); },
+    egRecircle(r) { return egRecircle(r); },   // EG-H3 (EG10): THE SWAP - a new circle's spans in this same level
+    egSpanCull(proj, view) { return egSpan?.cull(proj, view) ?? 0; },   // EG-G2 (Elite-Gates.md section 11.9): the spans' pieces culled against this frame's frustum, before the draws
+    egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/eliteGates/egClient.js drawPass)
+    egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/eliteGates/egClient.js rideDraw)
+    /** EG-ZP (Elite-Gates.md section 29): a teardown run once as this context is destroyed - an owner's own GPU objects,
+     *  draws and buckets stood into it (the mode machine's Elite circle - worldModes.js egCircleDown), let go on every
+     *  way the context ends: the exit, a load or a teleport out, an abandoned build. */
+    addTeardown(fn) { if (typeof fn === 'function') _teardowns.push(fn); },
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the
@@ -10720,6 +10776,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       sdEnd?.clear();   // SD4b: the Rift and the Return, and the bell
       sdHall?.clear();   // SD6c: the hall's meshes
       sdSteps?.clear();   // SD7b: the Steps' meshes
+      egSpan?.clear();   // EG-PLAY: an Elite Breach's spans' meshes
+      for (const fn of _teardowns.splice(0)) { try { fn(); } catch (e) { console.warn('[dungeon] a teardown failed:', e?.message ?? e); } }   // EG-ZP: and its circle's, the mode machine's own (worldModes.js egCircleDown) - each once
       sdRemnant?.clear();   // SD8c: the Remnant's
       sdHang?.clear();   // SD-LOOK S11: the hang's
       // NT1 (F214): the context minted its own cast engine; a spell in
