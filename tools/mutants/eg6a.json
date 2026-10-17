@@ -371,8 +371,8 @@
   {
     "name": "EG6A-the-reach-unasked",
     "file": "src/scenes/eliteGates/egSpan.js",
-    "old": "const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1);",
-    "new": "const g = gusts.find((q) => rz >= q.z0 && rz <= q.z1);",
+    "old": "const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1 && egGustStorey(q, ry));",
+    "new": "const g = gusts.find((q) => rz >= q.z0 && rz <= q.z1 && egGustStorey(q, ry));",
     "tests": [
       "test/world/eliteGates/eg6a_screen.test.js"
     ]
@@ -553,6 +553,16 @@
     "file": "src/scenes/world.js",
     "old": "b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); }",
     "new": "b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog), g = !!modes?.dungeonCtx?.egSpanDraw?.(proj, view, fog); if (a || b || g) renderer.markForeignPass(); }",
+    "tests": [
+      "test/world/eliteGates/eg6a_screen.test.js"
+    ]
+  },
+  {
+    "name": "EGSWEEP-gust-every-storey",
+    "file": "src/scenes/eliteGates/egSpan.js",
+    "old": "export const egGustStorey = (g, ry) => (g.spec.law ?? 0) < 9 ||",
+    "new": "export const egGustStorey = (g, ry) => true ||",
+    "why": "a law 9 Gust pushes a bridge a storey over it (band 3 seed 210)",
     "tests": [
       "test/world/eliteGates/eg6a_screen.test.js"
     ]

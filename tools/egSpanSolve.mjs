@@ -409,6 +409,17 @@ function pilotOf(S, spec, road, t0, trace = null) {
       // across the gap before it) is landed on as a player would, and walked onto the step from
       const level = onGround(key) && b && me().y >= b.y - 0.3;
       if (b ? key !== want && !key?.startsWith(`${want}:`) && !level : !onGround(key)) return fail(at, `landed on ${key ?? 'nothing'}, not ${want}`);
+      // landed on that ground short of a Crumble (a sinking flight): walked onto it, and its clock starts there - the screen
+      // starts it the frame my foot first stands on it (scenes/eliteGates/egSpan.js ride, `touched`), never at a landing beside it
+      // (the sweep, 500 seeds: a side lane across the gap before a course's last Crumble - the pilot's clock ran from the
+      // lane, 0.05-0.12 s early, and no launch to the ground came before it went)
+      const onStep = () => m.groundKey === want || !!m.groundKey?.startsWith(`${want}:`);
+      if (level && !onStep() && (EG_CRUMBLE_KINDS.includes(b.kind) || b.kind === 'sink')) {
+        for (let k = 0; k < 2 * 60 && !onStep() && me().z < b.z + b.d / 2 - RUNUP_M - 0.1; k++) {
+          const p = me();
+          if (frame(still({ forward: 1, run: true }), Math.atan2(b.x + egPieceAt(b, t).dx - p.x, b.z - p.z))) return fail(at, 'fell stepping onto the step');
+        }
+      }
       standSince = t;
       standLane = b?.kind === 'slag' ? Number(/:(\d+)$/.exec(key)?.[1] ?? -1) : -1;   // the spout whose crust I landed on
       if (t - t0 > (routed ? ROUTE_MAX_S : COURSE_MAX_S)) return fail(at, 'the course took too long');
