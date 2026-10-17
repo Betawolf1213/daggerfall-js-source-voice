@@ -5762,7 +5762,11 @@ accounts, titles, glyphs or auras, so there is no DFU member to read or depart f
   `TOKEN_RE`, pinned equal), from 800: every claim at once, a house at its bounds, the realm character and the arms -
   AUDIT LEGACY III O11's widest - took the WikiMaid's glyph word to 808, a token the service would sign and the relay
   refuse whole at every hello (no player holds every glyph, but the bound is held to the widest, as SEASON1 and O11 held
-  it); the whole token at the new bound is about 955 of TOKEN_MAX_CHARS' 1024.
+  it); the whole token at the new bound is about 955 of TOKEN_MAX_CHARS' 1024. And A PLACE SOCKET'S WIDEST ATTACHMENT (AUDIT ATTACH
+  A1, `test/net/auditattach.test.js`) is 1030 bytes with every glyph - the glyph list 185 of them, stored as words - past
+  the audit's tripwire of half the runtime's 2048; the tripwire is 1056 now, recorded there, 1018 bytes still under the
+  runtime's bound. Storing the glyphs as their places in GLYPHS would buy some 170 bytes back - a relay-wide change (eight
+  reads of `a.glyphs`, the staff's, the developers' and the Dungeon Master's rights among them), left for its own slice.
 - **The face** (`src/ui/playerBadge.js`, `WARREN_*`): five colours named once - the AMETHYST `#9d5cff`, the LILAC
   `#c390ff` (the title's one colour, 45 apart from the nearest title's, the Apostle's), a rabbit's BLUSH `#ffb8de`, the
   maid's FRILL `#fff5fb` and the PLUM `#4a1f6e`. "WikiMaid" is drawn amethyst into lilac into the blush, edged in black as
@@ -5781,7 +5785,9 @@ accounts, titles, glyphs or auras, so there is no DFU member to read or depart f
   - THE RABBITS, the third draw: WARREN_BUNNIES (6) cards, each a rabbit in profile (`WARREN_BUNNY.path`, cut by
     `glyphEdges` and filled in the shader) - a lilac coat lit from above and an amethyst line round it (gone once a
     pixel is wider than it), a white cotton tail past the haunch, a plum eye with a glint, the blush in its ear and on its
-    nose, and on its crown the WikiMaid's own headdress, three scallops of white lace on a plum band. Each hops round
+    nose, and on its crown the WikiMaid's own headdress, three scallops of white lace on a plum band. (CI's SD20c V14
+    sweep found the coat's light first written as a reversed smoothstep, which GLSL leaves undefined - the interpreter
+    and SwiftShader happened to mirror it; it is `1.0 - smoothstep(3.0, 14.0, ...)` now.) Each hops round
     the ring the way it faces as the eye sees it (the card's x the eye's own right, the cloak's emblem's law): WARREN_HOPS
     (3) hops of WARREN_HOP_S (0.45 s) - a crouch on the ground, then the air, stretched and narrowed (its bulk kept) -
     and a sit, the landing taken with a squash; a lap in twenty seconds; one sit in WARREN_BINKY_EVERY (4) a BINKY, a

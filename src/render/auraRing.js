@@ -1862,7 +1862,7 @@ vec4 warrenBunny(vec2 uv, vec3 s) {
   ${WARREN_BUNNY.frills.map((f) => `lace = max(lace, warrenDisc(g, ${v3(f)}, px));`).join(' ')}   // its scallops
   float cover = max(max(body, tail), lace);
   if (cover <= 0.0) return vec4(0.0);
-  vec3 col = WR_LILAC * mix(0.8, 1.06, smoothstep(14.0, 3.0, g.y));
+  vec3 col = WR_LILAC * mix(0.8, 1.06, 1.0 - smoothstep(3.0, 14.0, g.y));   // lit from above - never a reversed smoothstep, which GLSL leaves undefined (SD20c V14)
   col = mix(col, WR_AMETHYST * 0.85, clamp(0.5 + (d + 0.75) / px, 0.0, 1.0) * (1.0 - smoothstep(0.75, 1.75, px)));   // the line, gone once a pixel is wider than it
   col = mix(col, WR_BLUSH, warrenCapsule(g, ${wv2(WARREN_BUNNY.ear)}, ${wv2(WARREN_BUNNY.ear, 2)}, ${g3(WARREN_BUNNY.ear[4])}, px));
   col = mix(col, WR_PLUM, warrenCapsule(g, ${wv2(WARREN_BUNNY.band)}, ${wv2(WARREN_BUNNY.band, 2)}, ${g3(WARREN_BUNNY.band[4])}, px));
