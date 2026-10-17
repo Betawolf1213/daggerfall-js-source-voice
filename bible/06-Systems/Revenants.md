@@ -1042,3 +1042,107 @@ all dead (one more, the siphon's `took > 0` read as `>= 0`, is equivalent - a dr
 recorded). Two older records named lines this audit moved and were re-aimed at them, each still dead:
 `rvn11a.json` RVN11a-wake-unmarked (the rest's end now `c.rested = !c.worn`) and `rvn11b.json` RVN11b-rolled-before-move (the
 roll now after the errand's skip).
+
+## 44. Its stars (RVN-STARS, 2026-10-17)
+
+The owner: "So next up, I think we should develop a firnanament style tree for revnants. Just like we did for ships and
+characters".
+
+Each sworn revenant grows **a sky of its own** - the Firmament's shape (`06-Systems/Firmament.md`) as CAPTAIN-TREE made it a
+sky of its own (`03-World/Naval-Refit.md` CAPTAIN-TREE): a start in the middle, paths of small stars to notables and on to
+keystones, a star bought only beside one held. The law is `systems/revenant/revenantStars.js` (pure); the acts are
+`revenantCompanions.js` (`setSwornStars`, `swornStarsBook`); the window is `ui/revenantStarsWindow.js`, drawn in the one sky
+window (`ui/skyWindow.js`).
+
+**Its level** is earned at the player's side and kept on its oath (`companion.xp`):
+
+- a fight won beside the player (RVN11's win - `swornFightStep`, `swornFightWon`): 5 XP and 1 a level of the foe it fought, to
+  level 30 (`RVN_XP`, `rvnXpWon`: 6 to 35);
+- an errand come home (section 42): 15 a day abroad a danger, half for a hard road (`rvnXpErrand`: a Black Marsh errand 300,
+  a High Rock one 15) - once an errand, as its loyalty is (`paid`: a reload of a save made abroad brings the haul back again,
+  never the XP).
+
+It climbs 50 x (L - 1)^1.7 (`rvnXpForLevel`: level 2 at 50, 5 at 528, 10 at 2,095, 15 at 4,440, 20 at 7,462) to level 20.
+**A point a level past the first, and one for each rank past the first** it was sworn at (`rvnStarPoints`): a rank V
+revenant comes to the oath with four, and has 23 at the top. A level reached is said ("Grushnak reaches level 2 - a star to
+set on the Companions page."). Twenty levels is about 440 fights won at level-12 foes, or 210 at level-30 foes.
+
+**The sky** (`RVN_STARS`, 31 stars, `RVN_STAR_EDGES`): **THE OATH** in the middle, held by every sworn one, and three aspects
+about it, ten stars each. Each path runs small stars to a notable and on (but the Rite) to a keystone that gives much and
+costs a little. The six notables are joined in a ring (`RVN_STAR_CROSS`), the Grave's two through Awakened Art. 30 stars past
+the Oath and 23 points at the top: a revenant chooses.
+
+| Aspect | Path | Small stars | Notable | Keystone |
+|---|---|---|---|---|
+| **The Blade** (above) - its body | Flesh | +5% health x3 | Iron Sinew +10% health | Deathless: +25% health, -10% damage |
+| | Fury | +4% damage x3 | Relentless +8% damage | Bloodrage: +20% damage, -10% health |
+| **The Grave** (right) - its art | Power | +5% art strength x3 | Dark Focus +10% | Grave Pact: +15% art strength, -10% health |
+| | Rite | its art 5% quicker x3 | Swift Rite 10% quicker | - |
+| | (between their notables) | | **Awakened Art**: an art of its kind for one born without | |
+| **The Road** (left) - its missions and its oath | Road | +3% odds, +5% haul, +5% haul | Far-Walker: missions 15% shorter, +2% odds | Fortune's Road: +25% haul, 10% shorter, -5% odds |
+| | Oath | loyalty losses 10% smaller, recovers 10% faster, 10% faster | Oathbound: losses 20% smaller | Undying Vigil: recovers 30% faster, losses 20% smaller, missions 10% longer |
+
+**Holding stars** (`rvnHeldStars`, the door every sky comes in by - CAPTAIN-TREE's `heldStars`): the Oath, known stars once
+each, each joined to the Oath through held stars, no more than its points, in an order it could have set them. A star given
+back takes with it every star joined to the Oath only through it (`rvnTakesBack` - the ring keeps the rest); the way to one
+further is its shortest (`rvnWayTo`: Awakened Art is four from the Oath). Giving back is **free, at any time but abroad** -
+CAPTAIN-TREE's law, not the Firmament's silver and gold: the sky is the oath's, kept in the save and the mirror as its
+loyalty is (`sanitizeCompanion` reads it back through the law, its level and its rank - a hand-made sky is cut to what it
+may hold), and a deserter or a betrayer leaves with no oath and no sky. Set abroad, the oath refuses ("It is abroad - set its
+stars when it is back." - `swornStarsRefusal`), as its kit's acts do (AUDIT RVN F10).
+
+**What the stars do** (`rvnStarStats`, each a share, each sum kept under `RVN_STAR_MOST`) is read where the revenant's own
+numbers are read, never written into its record:
+
+- **health and damage** (`applySwornStrength`): over its rank's, at its every stand - `maxHealth` and the poise's `healthMult`
+  (TELL1) x(1 + health), `damageScale` x(1 + damage). A sky changed under a standing body strikes with its new damage at once;
+  its health is its next stand's.
+- **its art** (`revenantArts.js swornArtNumbers` - the steps and the page's words read the same): Mending's share, Ward's and
+  War Cry's points and its strikes' weight x(1 + art strength); every cooldown x(1 - quicker). **Awakened Art**: one born
+  without an art learns one of its family's pool, drawn on its id (`taughtArt` - its own stream, so the same on every read)
+  for as long as its sky holds the star (`artOf`); one born with an art keeps its own. A hostile revenant has no oath, so
+  none.
+- **abroad** (`revenantErrands.js`): odds in its strength (`errandPower` - 0.1 a point), the road off the place's days
+  (`errandMinutes`, its errand's minute set as it leaves; the place's days still the clamp's bound), the haul a share more of
+  the gold and the goods - never the pieces, and the more goods drawn after the pieces so a star never moves a piece's dice.
+- **its oath**: every loss of loyalty less by its share (`rvnLoyaltyMove` - a fall, a day away, a second sending in a day,
+  its kin executed in its sight; a gain whole; a half rounds to none, so the Oath's whole path makes a day away cost
+  nothing), and every rest shorter (`rvnRestMinutes` - a fall, a hard road, a recall).
+
+**Balanced, measured** (the whole sky's sums, `test/systems/revenant/rvnstars.test.js`):
+
+- Its body: the Blade's best is +50% health (Deathless's path, -10% damage) or +40% damage (Bloodrage's, -10% health); the
+  whole Blade +30% each. A rank's own is +25% health and +10% damage, so rank V stands at +125% and +50%: a whole Blade on a
+  rank I revenant (x1.25 x1.3 health) is still under a bare rank V's (x2.25).
+- Its art: at most +40% strength and 25% quicker (nine points of the Grave). A rank V Mending heals 30.8% of my health every
+  90 s at the most (22% every 120 s bare), only under 40% of my health - about twice the heal a minute, for most of a sky.
+- Abroad: at most +5% odds, 25% shorter roads (Far-Walker and Fortune's Road, the Vigil left) and +35% gold and goods. Over
+  section 42's measure (990 gold, 4,200 of worth a real hour at level 30, two abroad, rank V) that is about 1,780 gold an
+  hour - 0.9% of the wealth band's 200k - and 0.04 Legendaries an hour (a Plunder's piece a day is the place's days, so the
+  shorter road brings pieces a third sooner, never more a road).
+- Every sum is within `RVN_STAR_MOST` (art 0.4, quicker 0.25, odds 0.5 points, haul 0.35, road 0.25, losses 0.5, rest 0.5);
+  the whole sky meets the art, quicker, haul, losses and rest bounds exactly and the road's without the Vigil. The bounds are
+  the law's guard for a star a later sky adds.
+
+**The window** (`ui/revenantStarsWindow.js`): "{name}'s Stars", in the one sky window (`ui/skyWindow.js` - CAPTAIN-TREE's
+window taken out whole when this second sky came, so the captain's and the revenant's are one home; the Firmament's sheet,
+palettes and stars' sizes): the Blade in the battle ring's brass, the Road in the life ring's verdigris, the Grave in a
+grave-light violet of its own (a mulberry ink under DFO Grimoire), the Oath drawn as a bond - a ring and its three ties. Its
+level and XP, its points left; a star hovered reads its name, aspect and kind, its stats and what a press would do; pressed,
+the whole way is set while its points pay (refused, it says why); right-pressed (or held), taken back with those joined only
+through it; Accept gives the oath the sky - refused abroad, the sky stays pending and the window says why. The side panel
+says what its stars do, each aspect, and its art: its own, awakened, or what Awakened Art would teach it.
+
+**The doors**: the Companions page (`ui/companionRoster.js`) says each sworn one's level and the stars it has to set ("Level
+3 · 2 stars to set", gold while any wait) and gives it **Stars** (none abroad). Its sky is laid over the pause window as the
+Firmament is over the Stats page - `ui/firmamentOver.js revenantStarsOver`, the Firmament's own door built once (`overPage`)
+for both - from either door that draws the page (`ui/pauseDoor.js`, `ui/charSheetDoor.js`), and the page is put back on
+Companions when it closes (`enhancedMenu.js` lands on `at: 'companions'`). Offline and online alike: the sky is the save's.
+The mission sheet's days are its own road's ("Black Marsh - 82 hours, danger V").
+
+**HOST-SPLIT**: no host function grew (`hostceiling.test.js`). The fight's XP rides `swornFightWon`, which `world.js` already
+calls; the strength, the arts, the errands and the losses are each module's own seam. **Not seen in a live frame**: no
+ARENA2 data in the session - the window was exercised through a fake document, its canvas drawing nothing.
+
+Pinned: `test/systems/revenant/rvnstars.test.js` (13); `tools/mutants/rvnstars.json` (64, all dead). The captain's stars'
+window mutants (`captaintree.json` CT-win, re-aimed at `ui/skyWindow.js`) die on both skies' tests.

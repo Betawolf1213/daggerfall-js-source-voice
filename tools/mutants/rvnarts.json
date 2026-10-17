@@ -182,8 +182,8 @@
   {
     "name": "RVN-ARTS-family-unread",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "const pool = ART_POOL[signatureFamily(mobileType) ?? 'caster'];",
-    "new": "const pool = ART_POOL.caster;",
+    "old": "const artPool = (mobileType) => ART_POOL[signatureFamily(mobileType) ?? 'caster'];",
+    "new": "const artPool = () => ART_POOL.caster;",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"
     ]
@@ -344,8 +344,8 @@
   {
     "name": "RVN-ARTS-sworn-rank-unread",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "weight = S.RANK[0] + S.RANK[1] * rank;",
-    "new": "weight = 1;",
+    "old": "weight: (S.RANK[0] + S.RANK[1] * rank) * more,",
+    "new": "weight: more,",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"
     ]
@@ -497,7 +497,7 @@
   {
     "name": "RVN-ARTS-sworn-no-cooldown",
     "file": "src/systems/revenant/revenantArts.js",
-    "old": "  s.ready = now + U(S.COOLDOWN[0], S.COOLDOWN[1], rolls);\n  return art;",
+    "old": "  s.ready = now + U(A.strikeCooldown[0], A.strikeCooldown[1], rolls);\n  return art;",
     "new": "  return art;",
     "tests": [
       "test/systems/revenant/rvnarts.test.js"

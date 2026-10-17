@@ -201,8 +201,8 @@
   {
     "name": "REVENANT-COMPANION-health-boosted-at-every-door",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "  if (fresh) {\n    entity.maxHealth",
-    "new": "  if (true) {\n    entity.maxHealth",
+    "old": "  if (fresh) {\n    const starHealth",
+    "new": "  if (true) {\n    const starHealth",
     "tests": [
       "test/systems/revenant/revenant_companions.test.js"
     ]

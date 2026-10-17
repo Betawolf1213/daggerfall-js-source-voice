@@ -32,10 +32,14 @@
 //  - INVENTORY AS ITS PACK IS: an errand is the save's (revenant.js ensureMirror) - the mirror never brings back an errand
 //    begun after the save, and a save made while it was abroad sends it abroad again (a record that has since left the
 //    player comes back as the save had it, as one with a pack does), to return as it would have.
+//  - RVN-STARS (Revenants.md section 44): its sky's Road - `odds` more strength abroad (errandPower), `haul` a share more
+//    of the gold and the goods (never the pieces), `road` a share off the days (errandMinutes - the place's own days still
+//    the clamp's bound, errandUntil).
 
 import { PROVINCES, CITIES } from '../../world/tamriel/tamrielGeography.js';
 import { idStream, isDevoted } from './revenantFeud.js';
 import { gearPower } from './revenantGear.js';
+import { rvnStatsOf, rvnStatScale } from './revenantStars.js';   // RVN-STARS: its Road's stars
 import { tieredGear } from '../eliteFoes.js';
 import { lootRarityOn } from '../loot/lootRarity.js';
 import { materialOf } from '../../net/professionLaw.js';
@@ -101,8 +105,10 @@ export const ERRAND_PLACES = Object.freeze([
 ]);
 export const errandPlace = (key) => ERRAND_PLACES.find((p) => p.key === key) ?? null;
 
-/** Its strength abroad: its rank and its kit's weight. */
-export const errandPower = (r) => Math.max(1, r?.rank | 0) + gearPower(r);
+/** Its strength abroad: its rank, its kit's weight and its stars' (RVN-STARS `odds`). */
+export const errandPower = (r) => Math.max(1, r?.rank | 0) + gearPower(r) + rvnStatsOf(r).odds;
+/** RVN-STARS: how many minutes its errand to `p` takes - the place's days, less its Road's `road` share. */
+export const errandMinutes = (r, p) => Math.round((p?.days ?? 0) * MINUTES_PER_DAY * (1 - rvnStatsOf(r).road));
 /** Its chance to come back with the whole haul from `p` (a place). */
 export function errandOdds(r, p) {
   if (!p) return 0;
@@ -126,7 +132,7 @@ export function newErrand(r, key, venture, now, seed) {
   const s = Number.isInteger(seed) && seed >= 0 ? seed >>> 0 : 0;
   const cities = CITIES.filter((c) => c.province === key);
   const city = cities.length ? cities[Math.min(cities.length - 1, Math.floor(idStream(`${r?.id}`, `errand-city:${s}`)() * cities.length))].name : null;
-  return { place: key, venture, city, at: Math.floor(now), until: Math.floor(now) + p.days * MINUTES_PER_DAY, seed: s };
+  return { place: key, venture, city, at: Math.floor(now), until: Math.floor(now) + errandMinutes(r, p), seed: s };   // RVN-STARS: its road
 }
 /** An errand read back (a save, the mirror): its place and venture known, its minutes whole and in order, else none. */
 export function sanitizeErrand(e) {
@@ -184,20 +190,24 @@ export function errandHaul(r, e, { level = 1, rarity = lootRarityOn() } = {}) {
   const rank = Math.max(1, Math.min(5, r?.rank | 0)), lv = Math.max(1, level | 0);
   const won = rolls() < errandOdds(r, p);
   const share = won ? 1 : ERRAND.HARD_SHARE;
+  const more = rvnStatScale(rvnStatsOf(r), 'haul');   // RVN-STARS: its Road's haul - the gold and the goods, never the pieces
   const scale = (1 + ERRAND.DANGER_GOLD * (p.danger - 1)) * (1 + ERRAND.RANK_HAUL * (rank - 1));
   const [lo, hi] = ERRAND.GOLD;
-  const gold = Math.floor(lv * p.days * (lo + rolls() * (hi - lo)) * scale * v.gold * share);
+  const gold = Math.floor(lv * p.days * (lo + rolls() * (hi - lo)) * scale * v.gold * share * more);
   const U = ERRAND.UNITS;
-  const n = Math.floor((U.BASE + U.PER_DANGER * p.danger) * p.days * v.units * share);
+  const goods = (U.BASE + U.PER_DANGER * p.danger) * p.days * v.units * share;
   const cheap = p.goods.filter((k) => goodsTier(k) < U.FINE_TIER);
   let fine = Math.floor(U.FINE_A_DAY * p.days);   // AUDIT RVN F4: the finest at most so many - past them, the cheaper goods
   /** @type {Map<string, number>} */
   const counts = new Map();
-  for (let i = 0; i < n; i++) {
-    let k = drawGoods(p.goods, rolls);
-    if (goodsTier(k) >= U.FINE_TIER && fine-- <= 0) { if (!cheap.length) continue; k = drawGoods(cheap, rolls); }
-    counts.set(k, (counts.get(k) ?? 0) + 1);
-  }
+  const draw = (n) => {
+    for (let i = 0; i < n; i++) {
+      let k = drawGoods(p.goods, rolls);
+      if (goodsTier(k) >= U.FINE_TIER && fine-- <= 0) { if (!cheap.length) continue; k = drawGoods(cheap, rolls); }
+      counts.set(k, (counts.get(k) ?? 0) + 1);
+    }
+  };
+  draw(Math.floor(goods));
   const want = v.items === 'many' ? p.days : rolls() < Number(v.items) ? 1 : 0;
   const pieces = Math.round(want * share);   // hard-won: half, a lone piece kept (a half rounds up)
   const items = [];
@@ -206,6 +216,7 @@ export function errandHaul(r, e, { level = 1, rarity = lootRarityOn() } = {}) {
     const it = tieredGear(lv, tier, rolls);
     if (it) items.push(it);
   }
+  draw(Math.floor(goods * more) - Math.floor(goods));   // RVN-STARS: its haul's more goods, drawn after the pieces - its stars never move a piece's dice
   return { won, gold, units: [...counts.entries()], items };
 }
 
