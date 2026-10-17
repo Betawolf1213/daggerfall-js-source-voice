@@ -1,10 +1,12 @@
 // @ts-check
-// STUDIO1 (bible/07-Rendering/Studio-Art.md): THE SLOTS - every picture the port paints itself, which an artist's
-// picture in the studio takes the place of, named and drawn as the game wears it today.
+// STUDIO1 (bible/07-Rendering/Studio-Art.md): THE SLOTS - the pictures of the eight models the studio covers (the
+// wagons, carts and caravan, the three ships, the towns' hangings, the yards, the port, the LeFay monument), which an
+// artist's picture in the studio takes the place of, named and drawn as painted.
 //
 // These are the pictures trashBattery meant ("the cart textures look strange ... they're not unique textures yet"):
-// painted from numbers at the load and recoloured for each paint, under pseudo-archives of the port's own
-// (bible/01-Overview/DF-Art.md). Each slot is a key the studio's names use (`38181_1-0`), a name a person reads, the
+// painted from numbers at the load under pseudo-archives of the port's own (bible/01-Overview/DF-Art.md), the wagons'
+// recoloured for each paint. The port paints a few more it has no set for yet (the gate's, the Abyss's - the record's
+// Not yet). Each slot is a key the studio's names use (`38181_1-0`), a name a person reads, the
 // label the templates are saved under (`38181_1-0--cart-side-weathered-oak.png`) and its picture, painted on demand -
 // top-down RGBA, the way a PNG is - so the studio page (studio.html) and the tool (tools/studioArt.mjs) hand an artist
 // the picture they are replacing at its own size and shape. Painted here as the game paints them before DF-LOOK lays
@@ -14,7 +16,7 @@
 // Daggerfall's own textures are slots too - any `<archive>_<record>-<frame>` a texture pack can name - but they are
 // the player's data: the archive sheet (archive-sheet.html) reads them off the player's own ARENA2, and nothing here
 // draws them.
-import { wagonArt, wagonLookArt, WAGON_ARCHIVE, TEX as WAGON_TEX, LOOK_RECORDS, lookRecord } from '../../world/wagonArt.js';
+import { wagonArt, wagonLookArt, WAGON_ARCHIVE, TEX as WAGON_TEX, LOOK_RECORDS, lookRecord, isGlassRecord } from '../../world/wagonArt.js';
 import { WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS, LOOK_NAMES } from '../wagon/wagonLooks.js';
 import { GALLEON_ARCHIVE, TEX as GALLEON_TEX, GALLEON_NIGHT, galleonArt, galleonGlow, shipStandIns } from '../../world/ships/galleonArt.js';
 import { CARRACK_ARCHIVE, TEX as CARRACK_TEX, CARRACK_NIGHT, carrackArt, carrackGlow } from '../../world/ships/carrackArt.js';
@@ -23,7 +25,7 @@ import { TOWN_PICTURE_ARCHIVE, TOWN_PICTURES } from '../../world/townPictures.js
 import { LEFAY_ARCHIVE, LEFAY_GRANITE, LEFAY_MARBLE, LEFAY_GILT, LEFAY_PLAQUE, LEFAY_BRONZE } from '../../world/lefayMonument.js';
 import { lefayArt } from '../../world/lefayArt.js';
 import { YARD_ARCHIVE, YARD_REC, yardArt } from '../../world/merchantYards/merchantYardArt.js';
-import { PORT_ARCHIVE, PORT_REC, PORT_PAINTERS } from '../../world/portArt.js';
+import { PORT_ARCHIVE, PORT_REC, PORT_PAINTERS, PORT_HOW } from '../../world/portArt.js';
 import { textureKey, textureName } from '../textureReplacement.js';
 import { STUDIO_LABEL } from './studioArt.js';
 
@@ -54,13 +56,13 @@ function wagonSlots() {
   const out = [];
   for (const [rec, pic] of built) {
     const p = paintOf.get(rec);
-    out.push({ record: rec, name: p ? `${wagonName(rec)} - ${LOOK_NAMES[p[1][0]]}` : wagonName(rec), picture: () => pic });
+    out.push({ record: rec, name: p ? `${wagonName(rec)} - ${LOOK_NAMES[p[1][0]]}` : wagonName(rec), cutout: isGlassRecord(rec), picture: () => pic });
   }
   for (const [list, recs] of Object.entries(LOOK_RECORDS)) {
     const choices = WAGON_OUTSIDE_LOOKS[list] ?? CARAVAN_INSIDE_LOOKS[list];
     for (let i = 1; i < choices.length; i++) {
       const painted = new Map(/** @type {Array<[number, any]>} */ (wagonLookArt(list, i, choices[i])));
-      for (const rec of recs) out.push({ record: lookRecord(rec, i), name: `${wagonName(rec)} - ${LOOK_NAMES[choices[i]]}`, picture: () => painted.get(lookRecord(rec, i)) });
+      for (const rec of recs) out.push({ record: lookRecord(rec, i), name: `${wagonName(rec)} - ${LOOK_NAMES[choices[i]]}`, cutout: isGlassRecord(lookRecord(rec, i)), picture: () => painted.get(lookRecord(rec, i)) });
     }
   }
   return out.sort((a, b) => a.record - b.record);
@@ -74,6 +76,7 @@ function shipSlots(archive, tex, art, night, glow) {
   return entries.map((e) => ({
     record: e.record,
     name: dayOf.has(e.record) ? `${words(nameOf(tex, dayOf.get(e.record)))} - at night` : words(nameOf(tex, e.record)),
+    cutout: Object.hasOwn(night, e.record),   // a stern window by day: its glass a hole (the pool's cutOf)
     picture: () => e.build(),
   })).sort((a, b) => a.record - b.record);
 }
@@ -93,13 +96,13 @@ export const STUDIO_SETS = Object.freeze([
   { id: 'largeboat', title: 'The large boat', archive: LARGE_BOAT_ARCHIVE, door: 'vendor', slots: () => shipSlots(LARGE_BOAT_ARCHIVE, BOAT_TEX, largeBoatArt, {}, () => null) },
   { id: 'hangings', title: "Towns' tapestries, banners and rugs", archive: TOWN_PICTURE_ARCHIVE, door: 'vendor', slots: () => TOWN_PICTURES.map((p, record) => ({ record, name: p.name, picture: () => p.draw() })) },
   { id: 'yards', title: 'The stable, wagon yard and joinery', archive: YARD_ARCHIVE, door: 'painted', slots: () => yardArt().map(([record, pic]) => ({ record, name: words(nameOf(YARD_REC, record)), picture: () => pic })) },
-  { id: 'port', title: 'The shipyard and the lighthouse', archive: PORT_ARCHIVE, door: 'painted', slots: () => PORT_PAINTERS.map(([record, paint]) => ({ record, name: words(nameOf(PORT_REC, record)), picture: paint })) },
+  { id: 'port', title: 'The shipyard and the lighthouse', archive: PORT_ARCHIVE, door: 'painted', slots: () => PORT_PAINTERS.map(([record, paint]) => ({ record, name: words(nameOf(PORT_REC, record)), cutout: PORT_HOW[record]?.cutout === true, picture: paint })) },
   { id: 'lefay', title: 'The LeFay monument', archive: LEFAY_ARCHIVE, door: 'painted', slots: () => lefayArt().map(([record, pic]) => ({ record, name: LEFAY_NAMES[record], picture: () => pic })) },
 ]);
 
 /**
- * Every slot of a set, as an artist sees it: its key, its name, the file name a template is saved under and the
- * studio's names may use, and its picture (top-down RGBA, painted when asked).
+ * Every slot of a set, as an artist sees it: its key, its name, whether its door cuts holes where it is clear, the file
+ * name a template is saved under and the studio's names may use, and its picture (top-down RGBA, painted when asked).
  * @param {typeof STUDIO_SETS[number]} set
  */
 export function studioSlots(set) {
@@ -107,6 +110,7 @@ export function studioSlots(set) {
     const key = textureKey(set.archive, s.record, 0);
     return {
       set: set.id, archive: set.archive, record: s.record, key, name: s.name,
+      cutout: s.cutout === true,   // its door uploads it a cut-out: a texel under half opaque is a hole; every other slot is drawn solid
       fileName: `${textureName(set.archive, s.record, 0)}${STUDIO_LABEL}${slotLabel(s.name)}.png`,
       picture: async () => asRgba(await s.picture()),
     };

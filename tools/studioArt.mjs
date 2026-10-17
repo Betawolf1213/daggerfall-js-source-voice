@@ -17,6 +17,7 @@ import { writePng } from './pngIO.mjs';
 import { isMain } from './lib/isMain.mjs';
 import { studioListing, STUDIO_TREE } from '../scripts/studioArtIndex.mjs';
 import { studioEntries } from '../src/systems/studioArt/studioArt.js';
+import { LAST_CLASSIC_TEXTURE_ARCHIVE } from '../src/formats/textureFile.js';
 import { STUDIO_SETS, studioSlots } from '../src/systems/studioArt/studioSlots.js';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -26,14 +27,17 @@ const studioByKey = (listing) => new Map(studioEntries(listing.files).map((e) =>
 
 /**
  * THE CHECK: the folder's rules, then every picture decoded whole (a header can say PNG over bytes that will not
- * decode), and a picture of a painted slot whose shape is not the slot's (its face would stretch it) - `problems` fail,
- * `notes` are said. Exported for the suite (test/systems/studioArt/studio1_folder.test.js).
+ * decode) - `problems`, which fail - and `notes`, said: a picture of a painted slot whose shape is not the slot's (its
+ * face would stretch it), clear texels on a slot the game draws solid (they come out black), and a name that is a
+ * texture's but no slot's of a painted model (a digit dropped, the frame mistyped). Daggerfall's own archives' names
+ * cannot be checked here: they are the player's data. Exported for the suite (test/systems/studioArt/studio1_folder.test.js).
  */
 export async function checkStudio(at = root) {
   const listing = studioListing(at);
   const problems = [...listing.problems], notes = [];
   const slots = new Map();
   for (const set of STUDIO_SETS) for (const s of studioSlots(set)) slots.set(s.key, s);
+  const sets = new Map(STUDIO_SETS.map((s) => [s.archive, s]));
   for (const e of studioEntries(listing.files)) {
     let png;
     try { png = PNG.sync.read(readFileSync(join(at, STUDIO_TREE, e.path))); } catch (err) {
@@ -44,6 +48,11 @@ export async function checkStudio(at = root) {
     if (slot) {
       const p = await slot.picture();
       if (p && Math.abs(png.width / png.height - p.width / p.height) > 0.01) notes.push(`${e.path}: ${png.width} x ${png.height}, and ${slot.name} is ${p.width} x ${p.height} - it is stretched to the slot's shape`);
+      if (!slot.cutout && png.data.some((v, i) => (i & 3) === 3 && v < 128)) notes.push(`${e.path}: clear texels, and ${slot.name} is drawn solid - they come out black; paint them`);
+    } else if (e.map === 'Albedo' && sets.has(e.archive)) {
+      notes.push(`${e.path}: ${sets.get(e.archive).title} has no picture ${e.key} - the templates' names are its slots (a digit dropped, the frame mistyped?)`);
+    } else if (e.map === 'Albedo' && e.archive > LAST_CLASSIC_TEXTURE_ARCHIVE) {
+      notes.push(`${e.path}: archive ${e.archive} is none of the painted models' - it is worn only where a mod's own picture of that name stands (check the number)`);
     }
   }
   return { listing, problems, notes };

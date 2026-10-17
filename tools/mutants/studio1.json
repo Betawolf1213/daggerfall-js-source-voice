@@ -2,7 +2,7 @@
   {
     "name": "STUDIO1-a-later-stand-in-takes-the-key",
     "file": "src/systems/textureReplacement.js",
-    "old": "    if (prev?.studio && e.studio !== true) {",
+    "old": "    if (prev?.studio && !entry.studio) {",
     "new": "    if (false) {",
     "tests": [
       "test/systems/studioArt/studio1_door.test.js"
@@ -11,7 +11,7 @@
   {
     "name": "STUDIO1-the-stand-in-mark-not-taken",
     "file": "src/systems/textureReplacement.js",
-    "old": "      if (e.standIn === true) prev.standIn = true;\n",
+    "old": "  if (under.standIn) studio.standIn = true;\n",
     "new": "",
     "tests": [
       "test/systems/studioArt/studio1_door.test.js"
@@ -20,28 +20,30 @@
   {
     "name": "STUDIO1-the-offset-not-taken",
     "file": "src/systems/textureReplacement.js",
-    "old": "      prev.offset ??= e.offset ?? null;\n",
+    "old": "  studio.offset ??= under.offset ?? null;\n",
     "new": "",
     "tests": [
-      "test/systems/studioArt/studio1_door.test.js"
+      "test/systems/studioArt/studio1_door.test.js",
+      "test/systems/studioArt/auditstudio1.test.js"
     ]
   },
   {
     "name": "STUDIO1-a-displaced-stand-in-forgotten",
     "file": "src/systems/textureReplacement.js",
-    "old": "standIn: e.standIn === true || (e.studio === true && prev?.standIn === true)",
-    "new": "standIn: e.standIn === true",
+    "old": "    if (entry.studio && prev) coverWith(entry, prev.studio ? prev.under : prev);",
+    "new": "    if (false) coverWith(entry, prev.studio ? prev.under : prev);",
     "tests": [
-      "test/systems/studioArt/studio1_door.test.js"
+      "test/systems/studioArt/studio1_door.test.js",
+      "test/systems/studioArt/auditstudio1.test.js"
     ]
   },
   {
-    "name": "STUDIO1-a-displaced-offset-forgotten",
+    "name": "STUDIO1-a-late-cover-kept-undecoded",
     "file": "src/systems/textureReplacement.js",
-    "old": "offset: e.offset ?? (e.studio === true ? prev?.offset : null) ?? null",
-    "new": "offset: e.offset ?? null",
+    "old": "      dropDecoded(key);   // decoded again with what it covers\n",
+    "new": "",
     "tests": [
-      "test/systems/studioArt/studio1_door.test.js"
+      "test/systems/studioArt/auditstudio1.test.js"
     ]
   },
   {
@@ -74,8 +76,8 @@
   {
     "name": "STUDIO1-own-archives-left-undecoded",
     "file": "src/systems/studioArt/studioArt.js",
-    "old": "    await Promise.all(_worn.filter((e) => e.archive > CLASSIC_TEXTURE_LAST)",
-    "new": "    await Promise.all(_worn.filter((e) => e.archive > Infinity)",
+    "old": "  const own = _worn.filter((e) => e.archive > LAST_CLASSIC_TEXTURE_ARCHIVE);",
+    "new": "  const own = _worn.filter((e) => e.archive > Infinity);",
     "tests": [
       "test/systems/studioArt/studio1_door.test.js"
     ]
@@ -83,8 +85,8 @@
   {
     "name": "STUDIO1-daggerfall-decoded-at-install",
     "file": "src/systems/studioArt/studioArt.js",
-    "old": "    await Promise.all(_worn.filter((e) => e.archive > CLASSIC_TEXTURE_LAST)",
-    "new": "    await Promise.all(_worn.filter((e) => e.archive >= 0)",
+    "old": "  const own = _worn.filter((e) => e.archive > LAST_CLASSIC_TEXTURE_ARCHIVE);",
+    "new": "  const own = _worn.filter((e) => e.archive >= 0);",
     "tests": [
       "test/systems/studioArt/studio1_door.test.js"
     ]
@@ -92,10 +94,11 @@
   {
     "name": "STUDIO1-the-studio-never-late",
     "file": "src/systems/studioArt/studioArt.js",
-    "old": "  if (_install && !_landed) _install.then(",
-    "new": "  if (false) _install.then(",
+    "old": "      if (!got || _slots.get(slot) !== wear) return;",
+    "new": "      return;",
     "tests": [
-      "test/systems/studioArt/studio1_door.test.js"
+      "test/systems/studioArt/studio1_door.test.js",
+      "test/systems/studioArt/auditstudio1.test.js"
     ]
   },
   {

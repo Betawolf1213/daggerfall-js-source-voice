@@ -56,7 +56,7 @@ import { registerGalleonArt, GALLEON_ARCHIVE, galleonCut, galleonGlow, GALLEON_N
 import { registerCarrackArt, CARRACK_ARCHIVE, carrackCut, carrackGlow, CARRACK_NIGHT } from '../../world/ships/carrackArt.js';   // SHIPS-2: and the new carrack's,
 import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../../world/ships/largeBoatArt.js';   // and the new large boat's
 import { toColor32 } from '../../formats/color32Order.js';
-import { addVendorTextures } from '../../systems/textureReplacement.js';
+import { addVendorTextures, decodedTexture } from '../../systems/textureReplacement.js';
 import { adoptLight } from '../../render/lightId.js';   // LIGHT-ID: a lantern's light named by its lantern
 
 /** DungeonLightHandler.CheckLight's reach: UnscaledBlockRange x MeshReader.GlobalScale. */
@@ -546,7 +546,10 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     if (night == null) return;
     pipeline.uploadRecord(archive, night, { opaque: true });
     const glow = artOf(archive).glow(night);
-    if (glow) renderer?.uploadEmissionTexture?.(archive, night, toColor32(glow), { replacement: !pipeline.isClassicArt?.(archive) });
+    // STUDIO1: a night picture's own light - an emission picture of the twin (`38131_106-0_Emission.png`, the studio's
+    // or a pack's) - lights it where its artist put the glass; without one, the painted glass's glow does
+    const lit = decodedTexture(archive, night, 0, 'Emission');
+    if (lit || glow) renderer?.uploadEmissionTexture?.(archive, night, lit ?? toColor32(glow), { replacement: !pipeline.isClassicArt?.(archive) });
   }
 
   /** A renderer's drawn model, uploaded once with its textures; null this frame while it loads. */

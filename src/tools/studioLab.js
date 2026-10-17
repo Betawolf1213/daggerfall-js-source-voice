@@ -67,7 +67,7 @@ async function draw() {
       const button = el('button', null, 'template');
       button.title = s.fileName;
       button.addEventListener('click', () => save(painted, s.fileName));
-      const cell = el('div', by ? 'cell own' : 'cell', null, [pics, el('div', 'n', s.name), el('div', 'k', `${s.key} - ${painted.width} x ${painted.height}`), ...(by ? [el('div', 'by', by.path)] : []), button]);
+      const cell = el('div', by ? 'cell own' : 'cell', null, [pics, el('div', 'n', s.name), el('div', 'k', `${s.key} - ${painted.width} x ${painted.height}${s.cutout ? ' - glass' : ''}`), ...(by ? [el('div', 'by', by.path)] : []), button]);
       cells.push({ cell, section, text: `${s.name} ${s.key} ${set.title} ${by?.path ?? ''}`.toLowerCase(), own: !!by });
       grid.append(cell);
       own.delete(s.key);

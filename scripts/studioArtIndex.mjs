@@ -26,7 +26,7 @@ export const STUDIO_TREE = `public/${STUDIO_DIR}`;
 export const STUDIO_ROSTER = 'artists.json';
 /** The artists' guide. */
 export const STUDIO_README = 'README.md';
-/** The largest side a picture may have, texels - four times what Vanilla Enhanced's largest carries, and the studio's
+/** The largest side a picture may have, texels - a little over twice Vanilla Enhanced's largest (941), and the studio's
  *  pictures are decoded whole (the vendor tier takes no Texture detail cap). */
 export const STUDIO_MAX_SIDE = 2048;
 /** The largest file, bytes: every picture is published with the site and the desktop app. */
@@ -100,7 +100,7 @@ export function studioListing(root = process.cwd()) {
     if (!folders.has(artist)) { problems.push(`${path}: "${artist}" is not on the roster (${STUDIO_ROSTER}) - an artist is added there before their folder is worn`); continue; }
     if (!/\.png$/i.test(path)) { problems.push(`${path}: only PNG pictures go in the studio (keep working files - .psd, .aseprite, .kra - outside public/; everything here is published)`); continue; }
     const e = studioFile(path);
-    if (!e) { problems.push(`${path}: the name says nothing the game wears - name it <archive>_<record>-<frame>.png, a label after "${STUDIO_LABEL}" if you like (38181_1-0${STUDIO_LABEL}cart-side.png)`); continue; }
+    if (!e) { problems.push(`${path}: the name says nothing the game wears - name it <archive>_<record>-<frame>.png (a dye after it as the game asks it: _Iron, never _iron or _Silver), a label after "${STUDIO_LABEL}" if you like (38181_1-0${STUDIO_LABEL}cart-side.png)`); continue; }
     const full = join(dir, path);
     const bytes = statSync(full).size;
     if (bytes > STUDIO_MAX_BYTES) { problems.push(`${path}: ${(bytes / 1048576).toFixed(1)} MB - a picture may be ${STUDIO_MAX_BYTES / 1048576} MB at most`); continue; }

@@ -267,8 +267,8 @@
   {
     "name": "DFLOOK-the-twin's-glow-unuploaded",
     "file": "src/scenes/comeSailAway/comeSailAwayPool.js",
-    "old": "    if (glow) renderer?.uploadEmissionTexture?.(archive, night,",
-    "new": "    if (!glow) renderer?.uploadEmissionTexture?.(archive, night,",
+    "old": "    if (lit || glow) renderer?.uploadEmissionTexture?.(archive, night,",
+    "new": "    if (!(lit || glow)) renderer?.uploadEmissionTexture?.(archive, night,",
     "tests": [
       "test/systems/naval/auditgalleon_sea.test.js",
       "test/world/ships/auditgalleon2_prefab.test.js"

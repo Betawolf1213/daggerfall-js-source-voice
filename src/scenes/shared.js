@@ -1375,8 +1375,9 @@ export function ensureAudio(fetch = fetchBytes) {
   // (DFMOD1/DFMOD2), the shipped mods first (VE4), before the first archive loads (the hosts await it), warmed. This
   // seam kept a copy of it with a `?nomods` rule of its own; the rule is the door's now (dfmodTextures.js noModsPage).
   const textures = registerTextureStore().catch(() => 0);
-  // STUDIO1: the studio's pictures (public/art/studio/) on the texture door's vendor tier, the port's own archives'
-  // decoded - before the first archive loads and before a host paints its wagons (systems/studioArt/studioArt.js).
+  // STUDIO1: the studio's pictures (public/art/studio/) on the texture door's vendor tier - this answers at their
+  // registration; an archive's first load waits for it (a bounded while), and the port's own decode after it, a picture
+  // that lands after its host painted handed in late (systems/studioArt/studioArt.js wearPainted).
   const studio = installStudioArt().catch(() => 0);
   installRaidingParties();   // RAID1: the mod's save record, in every host - a save made in a dungeon carries the day's raids too
   installSmithing();   // PROF3: the Repair Kit's use on the item-use door, in every host (a kit is the pack's, offline too)

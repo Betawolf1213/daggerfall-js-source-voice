@@ -68,7 +68,7 @@ export function paintCaravanRoom(renderer, look) {
     wearPainted(WAGON_ARCHIVE, from, () => toColor32(dfLook(pic, lookSeed(WAGON_ARCHIVE, rec % LOOK_RECORD_STRIDE))), (c32) => {
       renderer.evictTexture?.(key); renderer.evictTexture?.(`${key}#opaque`);
       renderer.uploadTexture(WAGON_ARCHIVE, rec, c32, isGlassRecord(rec) ? { cutout: true } : { opaque: true });
-    });
+    }, { slot: key });   // the live record's slot: a room repainted while a picture was on its way keeps its new paint
   }
 }
 

@@ -28,8 +28,9 @@ import {
 } from '../../../src/systems/textureReplacement.js';
 import {
   studioFile, studioEntries, studioUrl, installStudioArt, paintedReplacement, wearPainted, studioLanded, studioWorn,
-  _resetStudioArt, STUDIO_INDEX, CLASSIC_TEXTURE_LAST,
+  _resetStudioArt, STUDIO_INDEX,
 } from '../../../src/systems/studioArt/studioArt.js';
+import { LAST_CLASSIC_TEXTURE_ARCHIVE } from '../../../src/formats/textureFile.js';
 import { registerGalleonArt, _resetGalleonArt, GALLEON_ARCHIVE, TEX as GALLEON_TEX } from '../../../src/world/ships/galleonArt.js';
 import { paintCaravanRoom, caravanRoomPictures } from '../../../src/scenes/caravanRoom.js';
 import { WAGON_ARCHIVE, TEX as WAGON_TEX, lookRecord } from '../../../src/world/wagonArt.js';
@@ -91,15 +92,18 @@ test('STUDIO1 D2: the studio\'s picture holds its key on the vendor tier - over 
     await preloadTextureArchive(GALLEON_ARCHIVE, { decode });
     assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, deck)), [200, 10, 10], 'her deck is the studio\'s');
     assert.notDeepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.trim)), [200, 10, 10], 'her other pictures are her own');
-    assert.equal(vendorTextureStandIn(GALLEON_ARCHIVE).getSize(deck).width, 4, 'the stand-in measures the studio\'s picture');
+    // AUDIT STUDIO1 A2: the stand-in answers the size of the picture the studio's covers (her painted 64), and hands the
+    // studio's own texels at their own size
+    assert.deepEqual(vendorTextureStandIn(GALLEON_ARCHIVE).getSize(deck), { width: 64, height: 64 }, 'the stand-in measures what the studio covers');
+    assert.deepEqual(vendorTextureStandIn(GALLEON_ARCHIVE).getBox(deck), { width: 64, height: 64 });
+    assert.equal(vendorTextureStandIn(GALLEON_ARCHIVE).getDFBitmap(deck).width, 4, '...and draws the studio\'s own picture');
     // her stand-ins first, the studio after: the studio's takes the key, and keeps the stand-in mark
     reset();
     registerGalleonArt(addVendorTextures);
     addVendorTextures([{ archive: GALLEON_ARCHIVE, record: GALLEON_TEX.trim, studio: true, fileName: 'studio:a/trim.png', load: async () => picture(4, 4, [10, 200, 10]) }]);
     await preloadTextureArchive(GALLEON_ARCHIVE, { decode });
     assert.deepEqual(red(decodedTexture(GALLEON_ARCHIVE, GALLEON_TEX.trim)), [10, 200, 10]);
-    // only her trim's key was the studio's: every record of hers still a stand-in
-    for (const r of Object.values(GALLEON_TEX)) assert.equal(isVendorArchive(GALLEON_ARCHIVE), true, `record ${r}`);
+    assert.equal(isVendorArchive(GALLEON_ARCHIVE), true, 'her archive still a stand-in, the studio\'s trim with it');
     // an offset (a worn stand-in's place on the doll) is taken from what is displaced or registered after
     addVendorTextures([{ archive: 560, record: 0, standIn: true, offset: { x: 3, y: 4 }, load: async () => picture(2, 2, [1, 2, 3]) }]);
     addVendorTextures([{ archive: 560, record: 0, studio: true, load: async () => picture(2, 2, [4, 5, 6]) }]);
@@ -131,8 +135,9 @@ test('STUDIO1 D3: the install reads the listing once, registers every picture, d
     assert.equal(await first, 2);
     assert.equal(s.asked.filter((u) => u === studioUrl(STUDIO_INDEX)).length, 1, 'the listing asked once');
     assert.deepEqual(studioWorn().map((e) => e.key), ['233_5-0', '38181_1-0']);
-    assert.ok(WAGON_ARCHIVE > CLASSIC_TEXTURE_LAST && 233 <= CLASSIC_TEXTURE_LAST);
-    assert.deepEqual(red(paintedReplacement(WAGON_ARCHIVE, 1)), [90, 20, 20], 'the port\'s own: decoded by the install, there at once');
+    assert.ok(WAGON_ARCHIVE > LAST_CLASSIC_TEXTURE_ARCHIVE && 233 <= LAST_CLASSIC_TEXTURE_ARCHIVE);
+    await studioLanded();   // AUDIT STUDIO1 A3: the registration answers first; the port's own pictures decode after it
+    assert.deepEqual(red(paintedReplacement(WAGON_ARCHIVE, 1)), [90, 20, 20], 'the port\'s own: decoded by the install');
     assert.equal(paintedReplacement(WAGON_ARCHIVE, 2), null, 'a record the studio has no picture of');
     assert.equal(hasTextureReplacement(233, 5), true, 'Daggerfall\'s record registered');
     assert.equal(decodedTexture(233, 5), null, '...and decoded with its archive, not by the install');
@@ -149,6 +154,7 @@ test('STUDIO1 D3: the install reads the listing once, registers every picture, d
     reset();
     const broken = served({ 'a/38181_3-0.png': new Uint8Array([1, 2, 3]) });
     assert.equal(await installStudioArt({ fetch: broken.fetch, decode }), 1, 'a picture that will not decode is registered...');
+    await studioLanded();
     assert.equal(paintedReplacement(WAGON_ARCHIVE, 3), null, '...and the painted one is worn');
   } finally { reset(); }
 });
@@ -157,6 +163,7 @@ test('STUDIO1 D4: the rows - color32 order for the wagons\' door (row 0 the pict
   reset();
   try {
     await installStudioArt({ fetch: served({ 'a/38221_0-0.png': picture(2, 3, [40, 50, 60]) }).fetch, decode });
+    await studioLanded();
     const up = paintedReplacement(38221, 0);
     const down = paintedReplacement(38221, 0, { topDown: true });
     const row = (img, y) => [...img.colors.subarray(y * img.width * 4, y * img.width * 4 + 3)];
@@ -177,6 +184,7 @@ test('STUDIO1 D5: wearPainted - painted with no studio picture, the studio\'s in
     // landed: the studio's at once, the painted one never painted
     puts.length = 0;
     await installStudioArt({ fetch: served({ 'a/38181_4-0.png': picture(2, 2, [70, 7, 7]) }).fetch, decode });
+    await studioLanded();
     let painted = 0;
     wearPainted(WAGON_ARCHIVE, 4, () => { painted++; return 'painted'; }, put);
     assert.equal(painted, 0);
@@ -192,6 +200,7 @@ test('STUDIO1 D5: wearPainted - painted with no studio picture, the studio\'s in
     assert.deepEqual(puts, [['painted', { replaced: false, late: false }], ['painted 5', { replaced: false, late: false }]]);
     open();
     await install;
+    await studioLanded();
     await new Promise((r) => setImmediate(r));
     assert.equal(puts.length, 3, 'record 5 has no studio picture: nothing more for it');
     assert.deepEqual([red(puts[2][0]), puts[2][1]], [[70, 7, 7], { replaced: true, late: true }]);
@@ -203,6 +212,7 @@ test('STUDIO1 D6: the doors - the caravan\'s room wears the studio\'s picture of
   try {
     const paint = lookRecord(WAGON_TEX.roomSide, 2);
     await installStudioArt({ fetch: served({ [`a/${WAGON_ARCHIVE}_${WAGON_TEX.roomFloor}-0.png`]: picture(2, 2, [11, 22, 33]), [`a/${WAGON_ARCHIVE}_${paint}-0.png`]: picture(2, 2, [44, 55, 66]) }).fetch, decode });
+    await studioLanded();
     const look = { w: 2 };
     const ups = new Map();
     paintCaravanRoom({ uploadTexture: (a, r, c, o) => ups.set(r, [c, o]), evictTexture() {} }, look);
