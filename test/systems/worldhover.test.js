@@ -30,7 +30,7 @@ import {
   showWorldPlaque, destroyWorldPlaque, hideWorldPlaque, plaqueAnchor, worldPlaqueOn, worldHoverFrame,
   worldHoverFaults, PLAQUE_GAP, PLAQUE_WATCHDOG_MS, _plaqueSignatureForTests, _setPlaqueClockForTests,
 } from '../../src/ui/worldPlaque.js';
-import { foldQuickLoot, quickLootWheel, resetQuickLoot, quickLootRow, quickLootStats, quickLootTake } from '../../src/systems/quickLoot.js';   // QUICK-LOOT B3: the two draw pins at the foot of this file drive the highlight through its own module
+import { foldQuickLoot, quickLootWheel, resetQuickLoot, quickLootRow, quickLootStats, quickLootTake, quickLootSelection } from '../../src/systems/quickLoot.js';   // QUICK-LOOT B3: the two draw pins at the foot of this file drive the highlight through its own module
 import { PREF_DEFAULTS, setPref } from '../../src/systems/uiPrefs.js';
 import { CROSSHAIR_ARM, crosshairCentreY } from '../../src/ui/hud/hudCrosshair.js';
 import { hudScale } from '../../src/ui/hud/hud.js';
@@ -608,6 +608,23 @@ test('WORLD-HOVER: an open window takes the plaque down - by law, not by schedul
     assert.equal(root().classList.contains('on'), true);
     assert.equal(worldHoverFrame({ eye: [0, 0, 0], dir: [0, 0, 1], collider, targets, cursorActive: true }), null);
     assert.equal(root().classList.contains('on'), false, 'and the node is actually hidden, not merely skipped');
+  });
+});
+
+test('SKIN-PLAQUE (FIELD BUGS 2026-10-16b): a gathering act\'s pick (gatherHost ACT_OWNS_LOOK) takes the plaque and its loot rows down - the body under the knife behind it is not named, and nothing stays lit for the wheel or a take', async () => {
+  const { ACT_OWNS_LOOK } = await import('../../src/scenes/gatherHost.js');
+  withPlaque((root) => {
+    resetQuickLoot();
+    const collider = { raycast: () => Infinity };
+    const body = { key: 'loot:1', distance: 1, reach: 3.2 };
+    const deps = { eye: [0, 0, 0], dir: [0, 0, 1], collider, contents: () => [{ name: 'Raw Meat' }, { name: 'Smelly Raw Meat' }], name: PILE };
+    assert.equal(worldHoverFrame({ ...deps, pick: () => body })?.key, 'loot:1', 'no act: the body\'s loot is the plaque\'s');
+    assert.equal(root().classList.contains('on'), true);
+    assert.notEqual(quickLootSelection(), null);
+    // the hosts' own shape: `gatherHost.hoverHit(ray) ?? ray` - the act's pick is kept over the body behind it
+    assert.equal(worldHoverFrame({ ...deps, pick: () => ACT_OWNS_LOOK ?? body }), null);
+    assert.equal(root().classList.contains('on'), false, 'the plaque is down mid-act');
+    assert.equal(quickLootSelection(), null, 'and nothing is lit for the wheel or a take');
   });
 });
 

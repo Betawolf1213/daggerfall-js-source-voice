@@ -18,7 +18,8 @@ import { bodyKey, parseNodeKey, utcDayOfMs } from '../../src/net/nodeLaw.js';
 import { xpForRank, SKINNING_KNIFE, TRACE_ACT, KNIFE_REFUSALS, TRACKER_M } from '../../src/net/professionLaw.js';
 import { TOOL_LIFE, recipeById } from '../../src/net/recipeLaw.js';
 import { createBodyStamps, bodiesOf, trackerMarks, huntPlan, huntKind, KNIFE_HAND, BODY_REACH, bodyId } from '../../src/scenes/huntHost.js';
-import { createGatherHost, aimAt, storesWhereLine } from '../../src/scenes/gatherHost.js';
+import { createGatherHost, aimAt, storesWhereLine, ACT_OWNS_LOOK } from '../../src/scenes/gatherHost.js';
+import { resolveHover } from '../../src/systems/worldHover.js';   // SKIN-PLAQUE: the plaque's own resolve
 import { registerPlayerKillListener, reportPlayerKill } from '../../src/systems/playerKills.js';
 import { setForagingHost } from '../../src/systems/foraging/foragingInstall.js';
 import { mintPiece, mintPieces, garmentItem, isCraftedFurniture, LOOM_KEPT_TEXT } from '../../src/systems/smithItems.js';
@@ -288,6 +289,12 @@ test('PROF7 host: a body is a node only while the pack holds a knife; targeted w
     bear.corpseMarker.pos = [0, 0, 2.3];
     h.host.tick(0.016);
     assert.equal(h.host.acting(), true);
+    // SKIN-PLAQUE (FIELD BUGS 2026-10-16b, "Quick loot is not suppressed when skinning"): the act owns the look - the
+    // hosts' pick (`hoverHit(ray) ?? ray`) keeps a hit that names nothing, so the body under the knife and its loot rows
+    // (the race's winner) are no plaque's while it plays
+    const behind = { key: `corpse:${h.stamps.of(bear.entity).key}`, distance: 1, reach: 3 };
+    assert.equal(h.host.hoverHit(behind) ?? behind, ACT_OWNS_LOOK);
+    assert.equal(resolveHover(h.host.hoverHit(behind) ?? behind, { name: () => ({ title: 'Grizzly Bear (dead)' }), contents: () => [{ name: 'Raw Meat' }] }), null, 'mid-skin: no plaque, no rows, no tooltip');
     h.trace(bear);
     await answered(book);
     assert.equal(asked.length, 1);
@@ -304,6 +311,7 @@ test('PROF7 host: a body is a node only while the pack holds a knife; targeted w
     h.foes.splice(h.foes.indexOf(rat), 1);
     h.host.tick(0.016);
     assert.deepEqual([h.host.acting(), asked.length], [false, 1]);
+    assert.notEqual(h.host.hoverHit(behind), ACT_OWNS_LOOK, 'SKIN-PLAQUE: the act over, the look is the plaque\'s again');
   } finally { h.done(); setForagingHost(null); }
 });
 

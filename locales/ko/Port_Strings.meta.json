@@ -8035,8 +8035,8 @@
   "by": "claude-in-session"
  },
  "guild.rankNeeds.reputationOwed": {
-  "en": "1dead1b02645",
-  "tr": "801813011cd2",
+  "en": "05acb0180996",
+  "tr": "f51b11c88729",
   "by": "claude-in-session"
  },
  "guild.rankNeeds.seat": {
@@ -8122,6 +8122,11 @@
  "instance.door.questHere": {
   "en": "15a2dad9b670",
   "tr": "24119ef69632",
+  "by": "claude-in-session"
+ },
+ "instance.door.questPublic": {
+  "en": "6b640e06fdf6",
+  "tr": "b272f77092fc",
   "by": "claude-in-session"
  },
  "instance.door.refused": {

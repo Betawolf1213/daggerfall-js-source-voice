@@ -54,6 +54,12 @@ nothing. A copy given a fresh id is a new piece to the ledger, and a new piece i
 
 ### INT1 - the item law (`src/systems/item/itemLaw.js`)
 
+MAKER-KEPT (2026-10-16, law 6, `acct146`; `01-Overview/bugs/Field-Bugs-2026-10-16b.md`; Flylighter: "Grandfathered Items
+triggering trade lock"): an Aetheric piece of a record the item maker took before AETHERIC-MAKER (MAKER_ERA_AETHERIC -
+Ruhn's Regalia and the raiding parties' three sets) keeps the maker's rows, held to the maker's own law; law 5 held every
+Aetheric piece to none, so those pieces were findings and their owners' trade held. Migration 0121 lifted the holds,
+timed holds and strikes that finding alone had laid, written as a staff act.
+
 One answer to "could an honest client of this port have minted this item?", asked by both ends: the account service of
 every item a realm checkpoint holds and every piece a listing, a trade or a vault takes, and the client of every item a
 peer hands it (`systems/loot/loot.js` validLootItem, through `setItemLaw` - the law registers itself there, so the loot module

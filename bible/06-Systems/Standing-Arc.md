@@ -138,6 +138,12 @@ guild skills fall short of rank 0's bars is told the probation ends only once th
 (AUDIT GUILD-WORDS II A-6); online, where a promotion does not wait (PROMO-NOW), the days say "- sooner if you earn the
 next rank" (II C-7); a probation the next review would begin is warned, below 0 or short of the skills (II A-7); and a
 review that will demote says so before it lands - each with when (II A-8).
+OWED-PACE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16b.md`; slater.mp3: "Can't gain reputation with the
+guild"): online the review counts what the Roll still owes the guild (`ctx.owed`, onPushEffects's standingOwedOf -
+`11-Multiplayer/Chapters-Arc.md` 3.3) against the EXPULSION alone: a member it would expel whose standing with the owed is
+-10 or more is put on probation again. The review runs on the character's days and the Roll pays on real ones, so a
+member whose quests had earned their way back was expelled before the reward arrived. The owed never ends a probation
+and never buys a rank.
 
 ## QFAIL-FREE - a missed quest costs nothing online
 
