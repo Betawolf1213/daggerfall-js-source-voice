@@ -57,7 +57,7 @@ const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 5
 const me = (id = 'char-rvn3') => ({ isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, reflexes: 2, stats: stats(), skills: new Array(40).fill(40), skillUses: new Array(40).fill(0), career: {}, activeEffects: [], items: [], health: 100, maxHealth: 100, magicka: 0, maxMagicka: 100, armorValues: new Array(7).fill(100), crimeCommitted: 4 });
 const foe = ({ mobileType = M.Orc, level = 6, plain = false } = {}) => {
   const e = makeEnemyEntity(mobileType, ENEMY_BASICS[mobileType], { ...stats(), attackModifierFlags: 0 }, level, () => 0.5);
-  if (!plain) e.champion = 'mighty';
+  if (!plain) { e.champion = 'mighty'; e.unquiet = true; }   // UNQUIET (Revenants.md section 46): a marked one - the only one that may rise
   return e;
 };
 /** A stand-in revenant of weakness `weak` (its stand's stamp, systems/revenant/revenant.js revenantStamp's shape). */
@@ -88,8 +88,8 @@ test('RVN3 THE LAW: a blow of its weakness - its class, its metal; the daylight\
   assert.equal(F.isWeakBlow('nonsense', 'nonsense'), false);
   assert.deepEqual([2, 3, 4, 1, 0].map((m) => F.metalOf({ material: m })), ['silver', 'elven', 'dwarven', null, null]);
   assert.equal(F.metalOf(null), null);
-  assert.equal(F.willMatters(2), false);
-  assert.equal(F.willMatters(3), true);
+  assert.equal(F.willMatters(1), false);   // PIN MOVED (UNQUIET, Revenants.md section 46 - the owner: "harder"): from rank 2
+  assert.equal(F.willMatters(2), true);
   assert.equal(F.willBroken(null), false);
   // PIN MOVED (FEUD BALANCE, Feud-Arc.md OPEN 22 - Mac: one stagger or one perfect dodge breaks it)
   assert.equal(F.willBroken({ weak: 0, staggers: 0, perfect: 0 }), false);
@@ -310,7 +310,8 @@ function rig(p) {
 const frame = (pool) => pool.update(0.016, [0, 0, 3], [0, 1.6, 3]);
 /** A rank-`rank` record as a flight makes one (an imp - mobile 2, the rig's career). */
 function revenantOf(p, rank) {
-  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
+  for (const x of N.livingRevenants().slice(0, Math.max(0, N.livingRevenants().length - N.REVENANT_MAX + 1))) N.revenantSlain(p, { revenant: { id: x.id } });   // UNQUIET (Revenants.md section 46): none rises while three hunt me - room made
+  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
   r.rank = rank;
   return r;
 }
@@ -368,12 +369,12 @@ test('RVN3 THE WILL: from rank 3 a revenant my fight has not broken does not kne
   assert.ok(h.entity._feud.weak > 0);
   pool2.damageFoe(h, 99999, [0, 0, 3], null, { fromPlayer: true });
   assert.ok(h.yielded, 'its weakness struck, it kneels');
-  // rank 2: the will is no matter
-  const r4 = revenantOf(p, 2);
+  // rank 1: the will is no matter (PIN MOVED - UNQUIET, Revenants.md section 46: it was rank 2)
+  const r4 = revenantOf(p, 1);
   const k = await pool2.spawnFoe(2, [2, 0, 0], { feetGiven: true, level: 6, revenant: r4 });
   frame(pool2);
   pool2.damageFoe(k, 99999, [0, 0, 3], null, { fromPlayer: true });
-  assert.ok(k.yielded, 'rank 2 kneels');
+  assert.ok(k.yielded, 'rank 1 kneels');
   // a Disintegrate's kill is a kill
   const r5 = revenantOf(p, 3);
   const z = await pool2.spawnFoe(2, [3, 0, 0], { feetGiven: true, level: 6, revenant: r5 });
@@ -399,6 +400,6 @@ test('RVN3 the page: its weakness as I know it - unknown, its kind, what it is; 
   assert.equal(weaknessWords({ weak: 'silver', weakKnown: 1 }), 'Weakness: A metal.');
   assert.equal(weaknessWords({ weak: 'daylight', weakKnown: 1 }), 'Weakness: The sun.');
   assert.equal(weaknessWords({ weak: 'axe', weakKnown: 2 }), 'Weakness: Axes.');
-  assert.equal(willWords({ rank: 2 }), '');
-  assert.equal(willWords({ rank: 3 }), 'Its will must be broken - strike its weakness, stagger it, or dodge its blow perfectly.');   // PIN MOVED (FEUD BALANCE, OPEN 22)
+  assert.equal(willWords({ rank: 1 }), '');   // PIN MOVED (UNQUIET, Revenants.md section 46): from rank 2
+  assert.equal(willWords({ rank: 2 }), 'Its will must be broken - strike its weakness, stagger it, or dodge its blow perfectly.');   // PIN MOVED (FEUD BALANCE, OPEN 22)
 });

@@ -130,7 +130,7 @@ function rig(p) {
 const frame = (pool, n = 1) => { for (let i = 0; i < n; i++) { T += 0.016; pool.update(0.016, [0, 0, 30], [0, 1.6, 30]); } };
 const settle = async () => { for (let i = 0; i < 6; i++) await new Promise((r) => setTimeout(r, 0)); };
 function orcRecord(p, rank) {
-  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   r.rank = rank;
   if (rank >= F.SIG_RANK) r.sig = F.drawSignature(r.id, r.mobileType);   // as its rank-up draws it (RVN1's pin)
   return r;
@@ -161,7 +161,7 @@ test('RVN6 ON THE REAL STREET POOL: a rank-3 one stands with the first two of it
     assert.equal(g.entity.revenant ?? null, null);
     assert.equal(g.transient, true, 'no save carries it');
     assert.equal(foeTitle(g.entity, 'Orc'), `Orc of ${g.entity.bandName}`);
-    assert.equal(N.revenantCandidate({ ...g.entity, champion: 'mighty' }), false, 'never a revenant, whatever it wears');
+    assert.equal(N.revenantCandidate({ ...g.entity, champion: 'mighty', unquiet: true }), false, 'never a revenant, whatever it wears');
   }
   assert.equal(pool.snapshotWorld().length, 0, 'neither it nor its band in the save');
   for (const [rank, n] of [[2, 1], [4, 3], [1, 0]]) {

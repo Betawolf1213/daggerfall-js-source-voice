@@ -30,6 +30,7 @@ import { enemyDisplayName } from '../../characters/enemy/enemyBasics.js';
 import { DISSOLVE_EMBER, DISSOLVE_ARCANE } from '../dissolve.js';
 import { clearPlayerHarm } from '../harmMark.js';   // AUDIT (2026-10-02): a beaten one's harm is no one's death
 import { willMatters, willBroken, LAST_STAND_RANK, LAST_STAND_ROAR, PHASE_TWO, lastStandHealth, phaseTwo } from './revenantFeud.js';   // RVN3: the will (bible/12-Enhanced-AI/Feud-Arc.md 14.2); RVN4: the last stand (15)
+import { endCraft, DREAD, dreadStandHealth } from './revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): a flight's craft put down; the Dread's two stands
 
 /** How long a beaten revenant kneels before it slips away (ms). */
 export const REVENANT_YIELD_MS = 90000;
@@ -62,7 +63,8 @@ export function ownersWholeKill(whole, { fromPlayer = false, peer = false } = {}
 }
 
 /** RVN4 (bible/12-Enhanced-AI/Feud-Arc.md 15.1): IS ITS LAST STAND DUE - one of my own revenants (never a puppet, a
- *  companion, one held by its fate) of rank LAST_STAND_RANK and up, not stood in this stand yet? */
+ *  companion, one held by its fate) of rank LAST_STAND_RANK and up, not stood in this stand yet? UNQUIET (Revenants.md
+ *  section 46): the Dread stands DREAD.STANDS times (`f._lastStood` set at its last). */
 export function revenantLastStandDue(f) {
   const id = f?.entity?.revenant?.id;
   if (!id || f._lastStood || f.puppet || f.companion != null || fateHeld(f) || !revenantOn()) return false;
@@ -77,16 +79,20 @@ export function revenantLastStandDue(f) {
 export function beginLastStand(player, f, { now = Date.now(), clock = 0, roar = null, rolls = Math.random } = {}) {
   const e = f.entity;
   const r = revenantById(e?.revenant?.id);
-  f._lastStood = true;
+  endCraft(f);   // UNQUIET: risen mid-sink it stands whole
+  f._stands = (f._stands | 0) + 1;   // UNQUIET: the Dread stands twice
+  f._lastStood = !(r?.dread && f._stands < DREAD.STANDS);
   f.fleeing = false;
   if (f.ai) f.ai.fleeLeft = 0;   // FEUD HARNESS: its run over too, as a kneel's - risen mid-flight it ran on untargeted, never cornered nor escaped
-  e.health = Math.max(1, Math.round((e.maxHealth || 1) * lastStandHealth(r?.rank)));
+  e.health = Math.max(1, Math.round((e.maxHealth || 1) * (r?.dread ? dreadStandHealth(f._stands, lastStandHealth(r.rank)) : lastStandHealth(r?.rank))));
   f.roaring = { at: now, until: now + LAST_STAND_ROAR * 1000 };
   // no brain to roar with (the switch off): its motor held and its swing raised for the roar (the pool lets it go)
   if (!(typeof roar === 'function' && roar(LAST_STAND_ROAR)) && f.ai) { f.ai.roarUntil = clock + LAST_STAND_ROAR; f.ai._blowHold = true; f._roarHeld = true; }
-  e.revenant = { ...e.revenant, p2: phaseTwo() };
-  e.damageScale = (Number.isFinite(e.damageScale) && e.damageScale > 0 ? e.damageScale : 1) * PHASE_TWO.BLOWS;
-  if (e.stats) e.stats.speed = (e.stats.speed ?? 0) + PHASE_TWO.SPEED;
+  if (!e.revenant?.p2) {   // UNQUIET: phase two once - the Dread's second stand rises in the fury it already has
+    e.revenant = { ...e.revenant, p2: phaseTwo() };
+    e.damageScale = (Number.isFinite(e.damageScale) && e.damageScale > 0 ? e.damageScale : 1) * PHASE_TWO.BLOWS;
+    if (e.stats) e.stats.speed = (e.stats.speed ?? 0) + PHASE_TWO.SPEED;
+  }
   const rr = revenantLastStand(player, e);
   return rr ? revenantLastStandEvent(rr, player?.name, { archive: f.archive ?? f.mobileArchive ?? null, rolls }) : null;
 }
@@ -106,12 +112,13 @@ export const TEAR_MS = Object.freeze({ delay: 120, ms: 720 });
  *  kneel. */
 export function revenantWillHolds(f) {
   const r = revenantById(f?.entity?.revenant?.id);
-  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);
+  return !!r && !r.dread && willMatters(r.rank) && !willBroken(f.entity._feud);   // UNQUIET: the Dread, at home, has nowhere to tear away to - it kneels
 }
 /** RVN3 (14.2): UNBROKEN, IT TEARS AWAY - held at 1, its fight and its run over, its body ashing out on the ember lane;
  *  the pool's leaving hold (`f.leaving`, `done` the pool's escape - the `fled` deed: it ranks up and learns) takes it
  *  out. Held by its fate (`leaving`) meanwhile: no blow, no spell, nobody's target. */
 export function beginTearAway(f, done, { now = Date.now() } = {}) {
+  endCraft(f);   // UNQUIET: its own ash-out, not a craft's
   f.fleeing = false;
   f._fleeRolled = true;
   if (f.entity) f.entity.health = 1;
@@ -121,6 +128,7 @@ export function beginTearAway(f, done, { now = Date.now() } = {}) {
 }
 /** IT YIELDS: held at 1, its fight and its run over, its trophy rolled; answers the event its plea is said by. */
 export function beginYield(player, f, { now = Date.now(), rolls = Math.random } = {}) {
+  endCraft(f);   // UNQUIET: knelt mid-sink, it kneels whole
   f.yielded = { at: now };
   f.fleeing = false;
   f._fleeRolled = true;

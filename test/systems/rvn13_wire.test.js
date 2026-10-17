@@ -81,7 +81,7 @@ test('RVN13 A FOLLOWER\'S NAME: its master\'s given name and its kind\'s word - 
 
 test('RVN13 A PEER\'S BLOW OF ITS WEAKNESS: revealed to me as my own would be; nothing on a body that is no revenant (mutants: the reveal unwired)', () => {
   const p = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-rvn13', level: 8, items: [] };
-  const e = { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' };
+  const e = { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' };
   const r = N.revenantDeed(p, e, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   r.weakKnown = 0;
   L.feudRevealWeak(e);

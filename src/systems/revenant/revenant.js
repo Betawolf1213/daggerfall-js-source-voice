@@ -83,6 +83,8 @@ import { ADAPT_HOW, DESERT, deserterSplit, LOYALTY, movedLoyalty, ROUT, FESTER, 
 import { sanitizeGear, gearItems } from './revenantGear.js';   // RVN-GEAR: a sworn one's kit - its record's, read back; inventory as its pack is
 import { sanitizeErrand } from './revenantErrands.js';   // RVN-ERRAND: one abroad, read back
 import { rvnHeldStars, rvnLevelOf, rvnStarPoints, rvnLoyaltyMove, rvnXpOf } from './revenantStars.js';   // RVN-STARS: its sky and its level, read back; its loyalty's losses as its oath bears them
+import { setUnquietGate, isUnquiet } from './unquietMark.js';   // UNQUIET (section 46): the mark - who may rise
+import { BLOOD_DEEDS, deedRanks, sanitizeBlood, revenantCraft, craftPace, beginCraft, craftStep, woundOf, withWound, sanitizeWounds, woundEffects, woundedEdge, ambitionOf, AMBITION, masteryFestersOn, plunderGold, DREAD, mayAscend, craftFleeWords, woundWords, ambitionRumor } from './revenantUnquiet.js';   // UNQUIET: born of flight, its craft, its wounds, its ambition, the Dread
 import { t } from '../textManager.js';   // AUDIT RVN D7: the new cards' kickers in the player's language
 import { tagHit, HIT_TAGS } from '../../ui/hitNumbers.js';   // RVN3: the "Weakness" word on my blow's number
 import { SOUND } from '../soundClips.js';   // RVN3: the hiss of a weakness found
@@ -99,15 +101,20 @@ export const REVENANT_MIN_LEVEL = 3;
  *  offline "Unchanged offline"): online, a character's revenants wait for this Renown (revenantHeld) - an evening's play
  *  past the elites' 5 (eliteFoes.js ELITE_FOE_MIN_RENOWN), so a returning elite always finds elites standing. */
 export const REVENANT_MIN_RENOWN = 10;
-/** How many living revenants a character keeps; a new one past it replaces the weakest, oldest. */
-export const REVENANT_MAX = 5;
+/** How many living revenants a character keeps. UNQUIET (section 46; the owner: "rarer"): three - and while three hunt the
+ *  player none other rises (no foe is marked - systems/revenant/unquietMark.js - and a marked one is no candidate); it was
+ *  five, a sixth replacing the weakest, oldest. A deserter or a betrayer past it still buries the weakest, oldest. */
+export const REVENANT_MAX = 3;
 /** The highest rank a revenant climbs to. */
 export const REVENANT_MAX_RANK = 5;
-/** Under this share of its health a special foe may run - once, the first time it falls under. */
+/** Under this share of its health a revenant past its will's rank may run - once, the first time it falls under. */
 export const REVENANT_FLEE_HEALTH = 0.2;
-/** ...and runs on this roll: a "very small chance" for an elite or a champion, a better one for a revenant already. */
-export const REVENANT_FLEE_CHANCE = 0.05;
-export const REVENANT_FLEE_CHANCE_REVENANT = 0.15;
+/** ...and runs on this roll. UNQUIET (section 46; the owner: "revenants need more of a chance to flee instead of relying on
+ *  player death"): a MARKED foe not yet a revenant breaks at the young line (REVENANT_FLEE_HEALTH_YOUNG) on
+ *  REVENANT_FLEE_CHANCE - it was an elite's or a champion's "very small chance", 5% at a fifth, so nearly every revenant
+ *  was born of the player's death; a revenant past its will's rank on REVENANT_FLEE_CHANCE_REVENANT (it was 15%). */
+export const REVENANT_FLEE_CHANCE = 0.75;
+export const REVENANT_FLEE_CHANCE_REVENANT = 0.35;
 /** FLIGHT-FIRST (2026-10-07, Mac: "Player death shouldnt be the common way of revenant growth, it should be more common
  *  for revenants to flee instead of being easily captured"): a revenant UNDER ITS WILL'S RANK (revenantFeud.js
  *  WILL_RANK) has no will to tear away on at the killing blow - its flight is how it lives. It breaks at this share of
@@ -130,18 +137,20 @@ export const REVENANT_ESCAPE_NEAR = 12;
 export const REVENANT_FALLEN_MAX = 12;
 /** How many tombstones are kept - each one id and a revision, so an older save never raises what was put down. */
 export const REVENANT_TOMBS_MAX = 200;
-/** It comes back between one and three days later, on the character's own clock. */
-export const REVENANT_RETURN_MIN_MINUTES = 1440;
-export const REVENANT_RETURN_MAX_MINUTES = 4320;
+/** It comes back between two and four days later, on the character's own clock. UNQUIET (section 46; "rarer"): it was
+ *  one to three; a revenant of VENGEANCE comes in one to two (revenantUnquiet.js AMBITION.VENGEANCE_DUE). */
+export const REVENANT_RETURN_MIN_MINUTES = 2880;
+export const REVENANT_RETURN_MAX_MINUTES = 5760;
 /** A due revenant takes an open-world encounter roll this often. RENOWN-GATE (the owner: "slighty reduce the spawn rate
  *  of revnants"; asked, "Return chance 50% → 40%"): two rolls in five - it was one in two. */
 export const REVENANT_RETURN_CHANCE = 0.4;
 /** Out in the world and gone unfought (outrun, a load, a sweep), it waits this long and comes again. */
 export const REVENANT_LOST_MINUTES = 360;
-/** Its rank over what it was: health and blows per rank, and a class foe's level per rank. */
-export const REVENANT_HEALTH_PER_RANK = 0.25;
-export const REVENANT_DAMAGE_PER_RANK = 0.1;
-export const REVENANT_LEVEL_PER_RANK = 2;
+/** Its rank over what it was: health and blows per rank, and a class foe's level per rank. UNQUIET (section 46; "harder"):
+ *  0.4, 0.15 and 3 - they were 0.25, 0.1 and 2 (tools/tellDuel.mjs measures the rank's weight). */
+export const REVENANT_HEALTH_PER_RANK = 0.4;
+export const REVENANT_DAMAGE_PER_RANK = 0.15;
+export const REVENANT_LEVEL_PER_RANK = 3;
 /** In sight and this near (metres), a returning revenant taunts - once a return. */
 export const REVENANT_TAUNT_DISTANCE = 25;
 /** Its drop on its death - over its kind's own loot. */
@@ -175,15 +184,17 @@ export const REVENANT_EPITHETS = Object.freeze({
   deserted: Object.freeze(['the Oathbreaker']),
   // RVN11c (22.3): it turned on me
   betrayed: Object.freeze(['the Betrayer']),
-  // from rank 3, whatever the deed
-  risen: Object.freeze(['the Thrice-Risen', 'the Undying', 'the Dread', 'Revenant of {p}', 'the Relentless', '{p}\'s Shadow']),
+  // from rank 3, whatever the deed (UNQUIET: "the Dread" is the ascended's alone now)
+  risen: Object.freeze(['the Thrice-Risen', 'the Undying', 'the Unquiet', 'Revenant of {p}', 'the Relentless', '{p}\'s Shadow']),
+  // UNQUIET (section 46): a rank-5 revenant that got away once more - gone to ground in its lair for good
+  dread: Object.freeze(['the Dread']),
 });
 // REVENANT-VOICE: what each says, in its own personality's voice, is systems/revenant/revenantPersonality.js's.
 
 // ── the store ───────────────────────────────────────────────────────
 /** RVN1 (section 26): the deeds FEUD adds - felled (RVN10), routed (RVN10), festered (RVN9), deserted and betrayed
- *  (RVN11), laststand (RVN4).
- *  @typedef {{ deed: 'slew'|'fled'|'returned'|'fell'|'yielded'|'executed'|'spared'|'released'|'felled'|'routed'|'festered'|'deserted'|'betrayed'|'laststand', at: number }} RevenantDeed */
+ *  (RVN11), laststand (RVN4); UNQUIET (section 46): ascended (the Dread).
+ *  @typedef {{ deed: 'slew'|'fled'|'returned'|'fell'|'yielded'|'executed'|'spared'|'released'|'felled'|'routed'|'festered'|'deserted'|'betrayed'|'laststand'|'ascended', at: number }} RevenantDeed */
 /** REVENANT-COMPANION: a sworn one's place - walking with the player, sent away (called back at will), or resting after
  *  a fall (`until` the character's minute it is fit again) - its health carried between places, and its pack. RVN1:
  *  its `loyalty` (0-100, RVN11's - its personality's start when sworn); RVN11: `rested` (fit after a rest, not yet called)
@@ -198,7 +209,9 @@ export const REVENANT_EPITHETS = Object.freeze({
  *   fate: 'executed'|'sworn'|'released'|null, sworn: boolean, swornAt: number|null, companion: RevenantCompanion|null,
  *   scars: {k: string, at: number}[], learned: string[], weak: string, weakKnown: 0|1|2, sig: string|null, kin: number[],
  *   lair: {px: number, py: number, name: string, region: number}|null, lairKnown: boolean, took: any[], wrath: number,
- *   fights: number, gone?: boolean }} RevenantRecord */
+ *   fights: number, wounds: string[], blood: number, dread: boolean, gone?: boolean }} RevenantRecord */
+// UNQUIET (section 46): `wounds` what the player left on it (revenantUnquiet.js WOUNDS), `blood` its kills and fellings
+// since its last rank (BLOOD_RANK ranks it), `dread` ascended - gone to ground in its lair for good
 // RVN1 (section 26): every field after `companion` is FEUD's, its law and an older record's value systems/revenant/revenantFeud.js
 // feudFields; the signature's name, the band's name and the epithets are derived from them, never stored
 
@@ -242,7 +255,7 @@ export const revenantPerson = (r) => (isU32(r?.person) ? r.person : hashStr(`${r
 /** RVN2: what a standing revenant carries of its record - its name and rank (FOE-TITLE, TELL's tier), what it learned and
  *  its weakness, and `edge`, what they do (systems/revenant/revenantFeud.js adaptEdge: the brain, the motor, the doors and the
  *  formulas read it there). */
-const revenantStamp = (r) => ({ id: r.id, name: r.name, rank: r.rank, learned: [...(r.learned ?? [])], weak: r.weak ?? null, edge: adaptEdge(r.learned, r.weak), sigBlow: signatureStamp(r), person: revenantPerson(r) });   // RVN5: its signature (rank 2 and up); FB1012d ALLY-RACE: its person, every stand
+const revenantStamp = (r) => ({ id: r.id, name: r.name, rank: r.rank, learned: [...(r.learned ?? [])], weak: r.weak ?? null, edge: woundedEdge(adaptEdge(r.learned, r.weak), r.wounds), sigBlow: signatureStamp(r), person: revenantPerson(r), dread: r.dread === true });   // UNQUIET: its wounds in its edge (its poise, its saving throws); the Dread   // RVN5: its signature (rank 2 and up); FB1012d ALLY-RACE: its person, every stand
 
 /** A REVENANT'S GIVEN NAME: DFU's own banks - a monster's from Monster1/Monster2, a class foe's (a person) a first
  *  name from one of the eight races' banks - drawn on a stream SEEDED by the revenant's id, the shared DFRandom put
@@ -342,6 +355,8 @@ function sanitize(r) {
     companion: r.sworn && !r.defeated ? sanitizeCompanion(r.companion, personality, rank) : null,
     history: Array.isArray(r.history) ? r.history.filter((d) => d && isStr(d.deed) && isNum(d.at)).slice(-HISTORY_MAX).map(historyOf) : [],
     ...feudFields(r, { id: r.id, mobileType: r.mobileType, rank }),   // RVN1 (section 26): FEUD's fields, each by its law
+    // UNQUIET (section 46): its wounds, its blood since its last rank, and the Dread (rank 5, never sworn)
+    wounds: sanitizeWounds(r.wounds), blood: sanitizeBlood(r.blood), dread: r.dread === true && !r.sworn && rank >= REVENANT_MAX_RANK,
   };
 }
 /** Two lists as one: per id, the higher revision. */
@@ -427,12 +442,17 @@ function prune() {
 function trimLiving(keep) {
   const living = livingRevenants();
   if (living.length > REVENANT_MAX) {
-    const drop = living.filter((x) => x !== keep && !x.out && !x.took?.length).sort((x, y) => x.rank - y.rank || x.born - y.born)[0];   // RVN8: never one holding a piece of mine   // AUDIT (2026-10-02): never one standing in the world
+    const drop = living.filter((x) => x !== keep && !x.out && !x.took?.length && !x.dread).sort((x, y) => x.rank - y.rank || x.born - y.born)[0];   // RVN8: never one holding a piece of mine   // AUDIT (2026-10-02): never one standing in the world   // UNQUIET: never the Dread
     if (drop) bury(drop);
   }
 }
 const deed = (r, d, at, extra = null) => { r.history.push({ deed: d, at, ...(extra ?? {}) }); if (r.history.length > HISTORY_MAX) r.history.splice(0, r.history.length - HISTORY_MAX); };   // RVN10: a felling names its companion
-const dueFrom = (now, rolls) => now + REVENANT_RETURN_MIN_MINUTES + Math.floor(rolls() * (REVENANT_RETURN_MAX_MINUTES - REVENANT_RETURN_MIN_MINUTES + 1));
+/** When it is due again - two to four days on, a revenant of VENGEANCE one to two (UNQUIET: its ambition, by `r`'s
+ *  personality). */
+const dueFrom = (now, rolls, r = null) => {
+  const [lo, hi] = r && ambitionOf(r.personality) === 'vengeance' ? AMBITION.VENGEANCE_DUE : [REVENANT_RETURN_MIN_MINUTES, REVENANT_RETURN_MAX_MINUTES];
+  return now + lo + Math.floor(rolls() * (hi - lo + 1));
+};
 
 // ── who may become one ──────────────────────────────────────────────
 /** A foe that may become (or stay) a revenant: special (an elite, a champion, a revenant already), of the floor's level,
@@ -445,11 +465,19 @@ export function revenantCandidate(entity, rec = null) {
   if (entity.bout) return false;   // AUDIT ARENA-LADDER 2: a fighter on the sand is its bout's - an elite champion never flees it as a revenant, nor becomes one
   const special = !!entity.revenant || !!entity.eliteFoe || (typeof entity.champion === 'string' && !!entity.champion);
   if (!special) return false;
+  // UNQUIET (section 46): a foe not yet a revenant rises only with THE MARK (unquietMark.js), and only while fewer than
+  // REVENANT_MAX hunt the player - every other elite and champion dies where it falls, whatever it does
+  if (!entity.revenant && (!isUnquiet(entity) || livingRevenants().length >= REVENANT_MAX)) return false;
   if ((entity.level | 0) < REVENANT_MIN_LEVEL) return false;
   if (entity.mobileType === KNIGHT_CITY_WATCH || entity.team === 'PlayerAlly' || entity.mobileTeam === 'PlayerAlly') return false;
   if (rec && (rec.questBehaviour || rec.allied || rec.questMarker)) return false;
   return true;
 }
+// UNQUIET (section 46): THE MARK's gate (systems/revenant/unquietMark.js) - drawn only with the arc on, not held, room for
+// another (fewer than REVENANT_MAX living), and on a foe that could ever rise (revenantCandidate's own exclusions)
+setUnquietGate((entity) => revenantOn() && !revenantHeld() && livingRevenants().length < REVENANT_MAX
+  && !!entity && !entity.revenant && entity.retinueOf == null && !entity.wildFoe && !entity.wildGiant && !entity.bout
+  && (entity.level | 0) >= REVENANT_MIN_LEVEL && entity.mobileType !== KNIGHT_CITY_WATCH && entity.team !== 'PlayerAlly' && entity.mobileTeam !== 'PlayerAlly');
 
 // ── the deeds ───────────────────────────────────────────────────────
 /** Make `entity` a revenant for what it just did (`deed` 'slew' or 'fled'), or rank up the one it already is. Answers
@@ -467,10 +495,14 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
   // after it knelt raised it again, under its own id); and a forgotten one's id is never worn again
   if (r && (r.defeated || r.sworn)) return null;
   if (!r && entity.revenant?.id) entity.revenant = null;
+  // UNQUIET (section 46): RANKED BY SURVIVING - an existing revenant climbs at every getting-away (revenantUnquiet.js
+  // SURVIVING_DEEDS) and at every BLOOD_RANK-th kill of me or companion felled (`blood`, since its last rank); it was
+  // every deed after the first
+  let rankUp = false;
+  const born = !r;
   if (r) {
-    r.rank = Math.min(REVENANT_MAX_RANK, r.rank + 1);
-    r.epithet = revenantEpithet(deedName, r.rank, pName, rolls, r.epithet, allyName(ally) ?? '');
-    if (r.rank >= SIG_RANK && !r.sig) r.sig = drawSignature(r.id, r.mobileType);   // RVN1 (RVN5's field): its signature, drawn on its id at rank 2
+    if (BLOOD_DEEDS.includes(deedName)) r.blood = (r.blood | 0) + 1;
+    rankUp = deedRanks(deedName, r.blood);
   } else {
     const id = voiceIdOf(entity);   // REVENANT-VOICE: the id its voice was drawn from while it fled, if it spoke before it was one
     const given = revenantGivenName(id, mobileType, gender);
@@ -484,14 +516,38 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
       fate: null, sworn: false, swornAt: null, companion: null,   // REVENANT-FATE: not judged yet
       person: rec ? foeSeed(rec) : revenantPerson({ id }),   // FB1012d ALLY-RACE: the body it did the deed in is the person it stays
       ...newFeudFields(id, mobileType, 1, entity.career ?? null),   // RVN1 (section 26): its draws (the weakness never what its career shrugs off), and nothing yet learned
+      wounds: [], blood: 0, dread: false,   // UNQUIET: nothing left on it yet, no blood since a rank, not the Dread
     };
     _state.list.push(r);
     trimLiving(r);
   }
+  // RVN7 (18.1): ITS LAIR - where the deed was done says where it goes to ground (the host's door: its map pixel and the
+  // dungeons in reach, or the dungeon it is in); a lair moved is a lair the player has not heard of. UNQUIET: asked before
+  // its rank - the Dread goes to ground in it
+  const lair = lairAfter(r, playerDoor()?.lairHere?.() ?? null);
+  if (!sameLair(lair, r.lair)) { r.lair = lair; r.lairKnown = false; }
+  let ascended = false;
+  if (!born && rankUp) {
+    r.blood = 0;
+    if (r.rank < REVENANT_MAX_RANK) {
+      r.rank += 1;
+      r.epithet = revenantEpithet(deedName, r.rank, pName, rolls, r.epithet, allyName(ally) ?? '');
+      if (r.rank >= SIG_RANK && !r.sig) r.sig = drawSignature(r.id, r.mobileType);   // RVN1 (RVN5's field): its signature, drawn on its id at rank 2
+    } else if (deedName === 'fled' && mayAscend(r, REVENANT_MAX_RANK)) {
+      // UNQUIET: THE DREAD - a rank-5 revenant that got away once more goes to ground in its lair for good, and every town
+      // knows where (revenantToReturn never stands it on the road again; revenantForLair always finds it at home)
+      r.dread = true; r.lairKnown = true; r.wrath = 0;
+      r.epithet = REVENANT_EPITHETS.dread[0];
+      ascended = true;
+    }
+  }
   r.name = joinName(r.given, r.epithet);
   if (deedName === 'slew') { r.kills++; r.notice = 'slew'; _lastSlew = { id: r.id, at: Date.now() }; } else if (deedName === 'fled') { r.escapes++; r.notice = null; }   // RVN8: this death's killer, for the respawn   // RVN10: a felling or a rout is no escape of its own (AUDIT FEUD: nor clears the card a kill left waiting)
-  r.dueAt = dueFrom(now, rolls);
+  r.dueAt = dueFrom(now, rolls, r);   // UNQUIET: a revenant of vengeance sooner
   deed(r, deedName, now, deedName === 'felled' && allyName(ally) ? { ally: allyName(ally) } : deedName === 'fled' && unbroken ? { unbroken: true } : null);
+  if (ascended) deed(r, 'ascended', now);
+  // UNQUIET: A WOUND - every getting-away keeps one by the blow that broke it (its ledger's last), the oldest healing
+  if (deedName === 'fled') { const w = woundOf(ledger?.last); if (w) { r.wounds = withWound(r.wounds, w); _newWounds.set(r.id, w); } }
   // RVN1 (section 12): the fight folded into its SCARS - its leading source, its lessons, the deed - and counted
   const kinds = feudScars(ledger, deedName);
   r.scars = withScars(r.scars, kinds, now);
@@ -499,10 +555,6 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
   // RVN2 (13.1): and one lesson LEARNED of it - at most its rank's adaptations, the oldest forgotten
   const lesson = lessonOf(kinds, r.learned, r.mobileType, entity.career ?? null);
   if (lesson) r.learned = withLesson(r.learned, lesson, r.rank);
-  // RVN7 (18.1): ITS LAIR - where the deed was done says where it goes to ground (the host's door: its map pixel and the
-  // dungeons in reach, or the dungeon it is in); a lair moved is a lair the player has not heard of
-  const lair = lairAfter(r, playerDoor()?.lairHere?.() ?? null);
-  if (!sameLair(lair, r.lair)) { r.lair = lair; r.lairKnown = false; }
   // the foe that did it wears its name at once - while it still stands (a killer over my body), it IS the revenant
   const p2 = entity.revenant?.p2 ?? null;   // AUDIT FEUD 2: a felling in its last stand keeps the stand's phase two
   const blows = entity.revenant?.blows ?? null;   // FEUD WIRE: and the stand's blows it still strikes with
@@ -518,6 +570,8 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
   return r;
 }
 
+/** UNQUIET: the wound an escape just left, for its card (this session's; a reload's card says less). */
+const _newWounds = new Map();
 /** THE KILL. A killing BLOW names its foe (the struck seam's attacker, systems/sigil/sigilSetPowers.js's landed blow); a
  *  death no blow names - a spell's burn, a lingering effect's round, a poison's tick (REVENANT-HARM) - goes to the foe
  *  whose harm last reached the player (systems/harmMark.js). Either is confirmed once the hurt is done (a microtask
@@ -619,13 +673,15 @@ registerSilverDoubleVeto('revenant', (target) => target?.revenant?.edge?.silverS
 
 /** FLIGHT-FIRST: a revenant under its will's rank - its flight its one way out (the line and the roll below). */
 const youngRevenant = (entity) => !!entity?.revenant && !willMatters(entity.revenant.rank);
-/** THE FLEE ROLL: does this special foe, under its line for the first time, run? */
+/** THE FLEE ROLL: does this special foe, under its line for the first time, run? UNQUIET (section 46): a marked foe on
+ *  REVENANT_FLEE_CHANCE (the only one not yet a revenant that may - revenantCandidate); the Dread never - it is at home. */
 export function rollRevenantFlee(entity, rolls = Math.random) {
-  if (!revenantCandidate(entity)) return false;
+  if (!revenantCandidate(entity) || entity.revenant?.dread) return false;
   return rolls() < (!entity.revenant ? REVENANT_FLEE_CHANCE : youngRevenant(entity) ? REVENANT_FLEE_CHANCE_YOUNG : REVENANT_FLEE_CHANCE_REVENANT);
 }
-/** Under the line? (a foe's own share of its health - a young revenant's higher, FLIGHT-FIRST; a dead one never) */
-export const revenantFleeHealth = (entity) => !!entity && entity.health > 0 && entity.health < (entity.maxHealth || 1) * (youngRevenant(entity) ? REVENANT_FLEE_HEALTH_YOUNG : REVENANT_FLEE_HEALTH);
+/** Under the line? (a foe's own share of its health - a young revenant's and, UNQUIET, a marked foe's higher,
+ *  FLIGHT-FIRST's; a dead one never) */
+export const revenantFleeHealth = (entity) => !!entity && entity.health > 0 && entity.health < (entity.maxHealth || 1) * (!entity.revenant || youngRevenant(entity) ? REVENANT_FLEE_HEALTH_YOUNG : REVENANT_FLEE_HEALTH);
 
 /**
  * THE FLEE, ONE LAW FOR EVERY POOL (scenes/exteriorFoes.js, scenes/dungeonContext.js): one frame of a foe record
@@ -638,9 +694,18 @@ export const revenantFleeHealth = (entity) => !!entity && entity.health > 0 && e
  *   null       - nothing: it fights on as ever
  * `onMe()` - whether it fights the player (asked only when it might run); `mayRun` - the host's word that the foe is the
  * player's alone (a room's shared foe never runs: vanishing on one client would leave it standing on the rest).
+ * UNQUIET (section 46): from revenantUnquiet.js CRAFT.RANK a revenant breaks away in its own way (`f._craft`) - a bolt
+ * at its craft's pace, smoke about it, a blink or a sink through to 'escape' when its body is gone, a sink struck
+ * 'cornered'; the distance's verdicts wait while a blink fades or a sink goes under. `now` ms.
  */
-export function revenantFleeStep(f, feet, { onMe = () => true, mayRun = true, rolls = Math.random } = {}) {
+export function revenantFleeStep(f, feet, { onMe = () => true, mayRun = true, rolls = Math.random, now = Date.now() } = {}) {
   if (f.fleeing) {
+    if (f._craft) {
+      const v = craftStep(f, now);
+      if (v === 'gone') { if (f.ai) f.ai.fleeLeft = 0; return 'escape'; }
+      if (v === 'broken') { f.fleeing = false; if (f.ai) f.ai.fleeLeft = 0; return 'cornered'; }
+      if (f._craft.kind === 'sink' || (f._craft.kind === 'blink' && f._craft.fired)) return 'run';
+    }
     const d = Math.hypot(feet[0] - f.ai.feet[0], feet[2] - f.ai.feet[2]);
     if (d > REVENANT_ESCAPE_DISTANCE) return 'escape';
     if (f.ai.fleeLeft > 0) return 'run';
@@ -652,7 +717,9 @@ export function revenantFleeStep(f, feet, { onMe = () => true, mayRun = true, ro
   f._fleeRolled = true;
   if (!rollRevenantFlee(f.entity, rolls)) return null;
   f.fleeing = true;
-  f.ai.flee(feet, REVENANT_FLEE_SECONDS, REVENANT_FLEE_PACE);   // FLIGHT-FIRST: running for its life
+  const craft = f.entity.revenant ? revenantCraft(f.entity.mobileType ?? f.mobileType, f.entity.revenant.rank) : null;   // UNQUIET: its flight craft, from CRAFT.RANK
+  f.ai.flee(feet, REVENANT_FLEE_SECONDS, craftPace(craft, REVENANT_FLEE_PACE));   // FLIGHT-FIRST: running for its life (UNQUIET: a bolt faster, a sink standing to go under)
+  if (craft) beginCraft(f, craft, { now });
   return 'start';
 }
 
@@ -693,6 +760,7 @@ export function revenantSpared(player, entity, { now = nowMinutes(), state = 'wi
   const r = entity?.revenant?.id ? (ensureMirror(player), revenantById(entity.revenant.id)) : null;
   if (!r || r.defeated || r.sworn) return null;
   r.sworn = true; r.fate = 'sworn'; r.swornAt = now; r.out = false; r.notice = null;
+  r.dread = false;   // UNQUIET: sworn, the Dread is home no longer - it walks with me
   r.companion = sanitizeCompanion({ state, health, maxHealth }, r.personality, r.rank);   // RVN1: sworn at its personality's loyalty - RVN-STARS: and its rank's stars to set
   deed(r, 'spared', now);
   touch(r);
@@ -729,8 +797,8 @@ export function revenantToReturn(player, { now = nowMinutes(), rolls = Math.rand
   const living = livingRevenants();
   if (living.some((r) => r.out)) return null;
   const night = skyIsNight();
-  const due = living.filter((r) => r.dueAt <= now && (night || !(r.learned ?? []).includes('nightStalker'))).sort((a, b) => b.rank - a.rank || a.dueAt - b.dueAt);   // RVN2: a Night-stalker comes only by night
-  if (!due.length || rolls() >= REVENANT_RETURN_CHANCE) return null;
+  const due = living.filter((r) => !r.dread && r.dueAt <= now && (night || !(r.learned ?? []).includes('nightStalker'))).sort((a, b) => b.rank - a.rank || a.dueAt - b.dueAt);   // RVN2: a Night-stalker comes only by night   // UNQUIET: the Dread never comes on the road - it waits in its lair
+  if (!due.length || rolls() >= (ambitionOf(due[0].personality) === 'vengeance' ? AMBITION.VENGEANCE_RETURN : REVENANT_RETURN_CHANCE)) return null;   // UNQUIET: a revenant of vengeance takes more of the rolls
   // CLAIMED from here: its stand crosses awaits (the career's bytes, the sprite) and the next roll must not stand it twice
   due[0].out = true;
   due[0].outAt = Date.now();
@@ -804,7 +872,7 @@ export function revenantForLair(player, here, { now = nowMinutes(), dueOnly = fa
   if (revenantHeld()) return null;   // RENOWN-GATE: held - none is at home, and none is claimed
   if (!revenantOn() || wildHere() || !here || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;   // PVPDUNGEONS: no lair in the open zone
   ensureMirror(player);
-  const r = livingRevenants().filter((x) => !x.out && x.lair && x.lair.px === here.px && x.lair.py === here.py && (x.dueAt <= now || (!dueOnly && x.lairKnown)))
+  const r = livingRevenants().filter((x) => !x.out && x.lair && x.lair.px === here.px && x.lair.py === here.py && (x.dread || x.dueAt <= now || (!dueOnly && x.lairKnown)))   // UNQUIET: the Dread is always at home
     .sort((a, b) => b.rank - a.rank || a.dueAt - b.dueAt)[0] ?? null;
   if (!r) return null;
   r.out = true;
@@ -840,6 +908,20 @@ export function applyRevenant(entity, r, { now = nowMinutes(), turned = false } 
     entity.damageScale *= 1 + FESTER.BLOWS * wrath;
   }
   r.wrath = 0;
+  // UNQUIET (section 46): WHAT THE PLAYER LEFT ON IT (its wounds - revenantUnquiet.js woundEffects: its health, its blows,
+  // its Speed; its poise and its saving throws are its edge's, revenantStamp), the Dread's own strength, and its HOARD -
+  // the Dread's, and a plunderer's days on the road past its due day (grantRevenantLoot's gold)
+  const wnd = woundEffects(r.wounds);
+  const hm = wnd.health * (r.dread ? DREAD.HEALTH : 1);
+  if (hm !== 1) {
+    entity.maxHealth = Math.max(1, Math.round(entity.maxHealth * hm));
+    entity.health = entity.maxHealth;
+    entity.healthMult *= hm;
+  }
+  if (wnd.blows !== 1) entity.damageScale *= wnd.blows;
+  if (wnd.speed && entity.stats) entity.stats.speed = Math.max(0, (entity.stats.speed ?? 0) + wnd.speed);
+  const daysPast = Math.floor((now - (Number.isFinite(r.dueAt) ? r.dueAt : now)) / MINUTES_PER_DAY);
+  entity.revenant.hoard = (r.dread ? DREAD.GOLD : 1) * (ambitionOf(r.personality) === 'plunder' ? plunderGold(daysPast) : 1);
   // RVN2 (13.2): a Relentless one's Speed (on its stats, at the stand); a Night-stalker's blows (it comes only by night -
   // revenantToReturn); an elemental one's saving throw (the fold, folded now - a stand has had no magic round yet)
   const edge = entity.revenant.edge;
@@ -875,24 +957,27 @@ export function revenantPresence(foes, { now = nowMinutes(), wall = Date.now() }
 }
 
 // ── its drop ────────────────────────────────────────────────────────
-/** A revenant's drop, over its kind's: gold by level and rank, and gear on chances that grow with the rank. */
-export function revenantLoot(level = 1, rank = 1, rolls = Math.random, goldMult = 1) {
+/** A revenant's drop, over its kind's: gold by level and rank, and gear on chances that grow with the rank. UNQUIET
+ *  (section 46): `legendary` - the Dread's, a Legendary always. */
+export function revenantLoot(level = 1, rank = 1, rolls = Math.random, goldMult = 1, { legendary = false } = {}) {
   const lv = Math.max(1, level | 0), rk = Math.max(1, Math.min(REVENANT_MAX_RANK, rank | 0));
   const out = [];
   const L = REVENANT_LOOT;
   if (rolls() < L.magicChance) { const it = tieredGear(lv, 'magic', rolls); if (it) out.push(it); }
   if (rk >= L.rareFromRank || rolls() < L.rareChance + L.rarePerRank * rk) { const it = tieredGear(lv, 'rare', rolls); if (it) out.push(it); }
-  if (rolls() < L.legendaryChance + L.legendaryPerRank * rk) { const it = tieredGear(lv, 'legendary', rolls); if (it) out.push(it); }
+  if (rolls() < L.legendaryChance + L.legendaryPerRank * rk || legendary) { const it = tieredGear(lv, 'legendary', rolls); if (it) out.push(it); }   // UNQUIET: the Dread's always (its roll drawn all the same - no die moved)
   const [lo, hi] = L.goldPerLevel;
   out.push(goldStack(Math.round(lv * rk * (lo + rolls() * (hi - lo)) * (goldMult > 0 ? goldMult : 1))));   // RVN7d: found in its lair, x LAIR_GOLD
   return out;
 }
-/** Give a returned revenant its drop (once) - RVN7d: its gold x `goldMult` (LAIR_GOLD, found in its lair). */
+/** Give a returned revenant its drop (once) - RVN7d: its gold x `goldMult` (LAIR_GOLD, found in its lair); UNQUIET: and x
+ *  its hoard (applyRevenant - the Dread's, a plunderer's), a Legendary always from the Dread. */
 export function grantRevenantLoot(entity, level, rolls = Math.random, { goldMult = 1 } = {}) {
   if (!entity?.revenant || entity._revenantLoot) return;
   entity._revenantLoot = true;
   entity.items = entity.items ?? [];
-  entity.items.push(...revenantLoot(level ?? entity.level, entity.revenant.rank ?? 1, rolls, goldMult));
+  const hoard = Number.isFinite(entity.revenant.hoard) && entity.revenant.hoard > 0 ? entity.revenant.hoard : 1;
+  entity.items.push(...revenantLoot(level ?? entity.level, entity.revenant.rank ?? 1, rolls, goldMult * hoard, { legendary: entity.revenant.dread === true }));
   carryTaken(entity);   // RVN8: what it took of mine, in its pack at every stand
 }
 /** RVN8 (bible/12-Enhanced-AI/Feud-Arc.md 19): what it took of mine rides in a standing body's pack - marked, so its
@@ -1011,6 +1096,8 @@ const KICKERS = Object.freeze({
   betrayed: 'Betrayed', stole: 'It took',
   // RVN-ERRAND: a sworn one sets out and comes back; RVN-ARTS: its art, called out (AUDIT RVN D7: in the player's language)
   get errand() { return t('rvn.kicker.errand', 'Mission'); }, get errand_back() { return t('rvn.kicker.errandBack', 'Returned'); }, get art() { return t('rvn.kicker.art', 'Art'); },
+  // UNQUIET (section 46): a rank-5 revenant gone to ground for good
+  get ascended() { return t('rvn.kicker.ascended', 'The Dread'); },
 });
 /** @typedef {{ kind: string, kicker: string, id: string|null, name: string, rank: number, sub: string, mood: string|null,
  *   portrait: { archive: number, record: number } | null, speech: string|null, body: string|null, line: string }} RevenantEvent */
@@ -1047,6 +1134,9 @@ export function revenantTauntEvent(r, playerName, { rolls = Math.random, archive
 export function revenantFleeEvent(entity, base, { gender = 'male', archive = null, rolls = Math.random, playerName = '' } = {}) {
   const src = liveSource(entity, base, gender);
   const v = voiceParts(src, 'flee', src.id ? playerName : '', rolls);   // a revenant knows the player's name; a stranger does not
+  // UNQUIET (section 46): its flight craft, in the narrator's words - what it does, and its answer
+  const craft = entity?._craft ? craftFleeWords(entity._craft, src.given ?? src.name) : null;
+  if (craft) return revenantEvent('flee', src, { speech: v.speech, body: craft, line: v.speech ? `${craft} "${v.speech}"` : craft, archive });
   return revenantEvent('flee', src, { speech: v.speech, body: v.speech ? null : v.body, line: v.speech ? `${src.name} breaks and runs! "${v.speech}"` : v.line, archive });
 }
 /** Run down before it got away: it turns and fights. */
@@ -1060,10 +1150,21 @@ export function revenantCorneredEvent(entity, base, { gender = 'male', archive =
 }
 /** Out of reach - a revenant now, or a stronger one. */
 export function revenantEscapeEvent(r, playerName, { rolls = Math.random, archive = null } = {}) {
+  const speech = voiceParts(r, 'escape', playerName, rolls).speech;
+  // UNQUIET (section 46): ascended - the Dread, gone to ground for good
+  if (r.dread && r.history?.at(-1)?.deed === 'ascended') {
+    const body = t('rvn.unq.ascended', '{given} will run no more. It has gone to ground in {lair} - the Dread now - and waits for you there.', { given: r.given, lair: r.lair?.name ?? '' });
+    _newWounds.delete(r.id);
+    return revenantEvent('ascended', r, { speech, body, line: body, archive });
+  }
+  // UNQUIET: and the wound it got away with
+  const w = woundWords(_newWounds.get(r.id));
+  _newWounds.delete(r.id);
+  const marked = w ? ` ${t('rvn.unq.escapeWound', 'It bears your mark: {wound}.', { wound: w.name })}` : '';
   return revenantEvent('escape', r, {
-    speech: voiceParts(r, 'escape', playerName, rolls).speech,
-    body: `Got away. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.`,
-    line: revenantEscapeLine(r), archive,
+    speech,
+    body: `Got away. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.${marked}`,
+    line: `${revenantEscapeLine(r)}${marked}`, archive,
   });
 }
 /** RVN3 (14.1): its weakness - found (my blow of it: what it is) or hinted (its flinch: the narrator's line). */
@@ -1096,14 +1197,17 @@ export function revenantRumor(here, session, { rolls = Math.random } = {}) {
   if (!revenantOn() || !here || !session || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;
   if (!((session.numAnswersGivenTellMeAboutOrRumors | 0) < MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS || session.isSpyMaster)) return null;
   const inRegion = (r) => Number.isInteger(here.region) && here.region >= 0 && r.lair.region === here.region;
-  const near = livingRevenants().filter((r) => r.lair && (inRegion(r) || Math.hypot(r.lair.px - here.px, r.lair.py - here.py) <= RUMOR_PX));
+  const near = livingRevenants().filter((r) => r.lair && (r.dread || inRegion(r) || Math.hypot(r.lair.px - here.px, r.lair.py - here.py) <= RUMOR_PX));   // UNQUIET: the Dread is known in every town
   if (!near.length || !(rolls() < RUMOR_CHANCE)) return null;
   const r = near[Math.min(near.length - 1, Math.floor(rolls() * near.length))];
   const dx = r.lair.px - here.px, dy = r.lair.py - here.py, d = Math.max(Math.abs(dx), Math.abs(dy));
   const kind = String(enemyDisplayName(r.mobileType) ?? 'creature').toLowerCase();
   const what = r.scars?.length ? `a scarred ${kind}` : `${/^[aeiou]/.test(kind) ? 'an' : 'a'} ${kind}`;
   const where = d === 0 ? `in ${r.lair.name}, close by` : `near ${r.lair.name}, ${distanceWord(d)} to the ${compassWord(dx, dy)}`;
-  let words = `They say ${what} called ${r.name} has been seen ${where}.`;
+  // UNQUIET (section 46): the Dread's word is everywhere it is heard; another's says what it does while it waits
+  let words = r.dread
+    ? t('rvn.unq.rumor.dread', 'They say {name} has gone to ground in {lair}, and that nobody who goes in comes out.', { name: r.name, lair: r.lair.name })
+    : `They say ${what} called ${r.name} has been seen ${where}. ${ambitionRumor(ambitionOf(r.personality))}`.trim();
   if (r.weak && rolls() < RUMOR_WEAK) {
     const named = rolls() < RUMOR_NAMED;
     r.weakKnown = /** @type {0|1|2} */ (Math.max(r.weakKnown | 0, named ? 2 : 1));
@@ -1133,7 +1237,8 @@ export function revenantHuntEntries(here = null) {
     const dx = Number.isInteger(here?.px) ? r.lair.px - here.px : 0, dy = Number.isInteger(here?.py) ? r.lair.py - here.py : 0;
     const way = dx || dy ? `, ${distanceWord(Math.max(Math.abs(dx), Math.abs(dy)))} to the ${compassWord(dx, dy)}` : '';
     const kind = enemyDisplayName(r.mobileType) ?? 'Revenant';
-    const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way} - marked on your map with a red circle.`, 'Find it there before it finds you.'];
+    const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way} - marked on your map with a red circle.`,
+      r.dread ? t('rvn.unq.hunt.dread', 'The Dread will not come to you again. Go to it.') : 'Find it there before it finds you.'];   // UNQUIET: the Dread waits
     return { id: `${HUNT_QUEST_PREFIX}${r.id}`, name: `Hunt: ${r.name}`, questName: 'HUNT', hunt: true, clockSeconds: null, messages: [lines.map(line)] };
   });
 }
@@ -1166,7 +1271,9 @@ export function revenantFester(player, { now = nowMinutes(), rolls = Math.random
   const held = revenantHeld();
   for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {
     for (const r of held ? [] : livingRevenants()) {
-      if (r.out || !festersOn(Math.floor((r.dueAt ?? 0) / MINUTES_PER_DAY), d)) continue;
+      if (r.out || r.dread) continue;   // UNQUIET: the Dread festers no more - it waits
+      const dueDay = Math.floor((r.dueAt ?? 0) / MINUTES_PER_DAY);
+      if (!(ambitionOf(r.personality) === 'mastery' ? masteryFestersOn(dueDay, d) : festersOn(dueDay, d))) continue;   // UNQUIET: a revenant of mastery trains - it festers twice as fast
       if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }
       r.wrath = (r.wrath | 0) + 1;
       if (r.wrath >= WRATH_MAX) {
@@ -1281,7 +1388,7 @@ export function revenantDesertEvent(r, { archive = null, playerName = '' } = {})
 }
 /** RVN9 (20): its rank-up, told - "Grushnak grows bolder - it has waited too long." */
 export function revenantFesterEvent(r, { archive = null } = {}) {
-  const body = `${r.given} grows bolder - it has waited too long.`;
+  const body = ambitionOf(r.personality) === 'mastery' ? t('rvn.unq.fester.mastery', '{given} grows bolder - it has been training.', { given: r.given }) : `${r.given} grows bolder - it has waited too long.`;   // UNQUIET: a revenant of mastery trained
   return revenantEvent('festered', r, { body, line: body, archive });
 }
 /** RVN7d (18.4): a rest in its own lair, answered - "You wake to Grushnak standing over you." */

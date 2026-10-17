@@ -38,7 +38,7 @@ beforeEach(() => {
   setWorldMinutes(DAY * 10);
 });
 function sworn(state = 'away', { loyalty = 10, mobileType = M.Orc } = {}) {
-  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
   const s = N.revenantSpared(me, { revenant: { id: r.id } }, { state });
   s.companion.loyalty = loyalty;
   return s;
@@ -131,7 +131,7 @@ test('RVN11b THE CAP: a deserter living again past REVENANT_MAX forgets the weak
   N.revenantById(r.id).rank = 1;
   const weak = [];
   for (let i = 0; i < N.REVENANT_MAX; i++) {
-    const x = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0, now: 100 + i });
+    const x = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0, now: 100 + i });
     x.rank = 2; weak.push(x);
   }
   N.revenantFester(me, at(10, () => 0));

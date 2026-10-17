@@ -21,6 +21,8 @@
 //   sfx(id, at)     RVN3 (optional): a sound where a foe stands
 //   lairHere()      RVN7 (optional): where a revenant's deed is done, for its lair - { px, py, dungeons } in the open
 //                   world (its map pixel and the named dungeons in reach), { underground } in a dungeon, or null
+//   fx(recipe, at)  UNQUIET (optional): one of the magic engine's techniques where something stands (a revenant's
+//                   flight craft - its 'vanish' puff, render/spellImpactFx.js)
 // }
 
 /** @type {null | { foes: () => any[], feet: () => number[]|null, hurtFoe: (f: any, n: number) => void, castOnPlayer: (b: any, o?: { power?: boolean }) => void, player?: () => any, clear?: (a: number[], b: number[]) => boolean, say?: (line: string) => void, sfx?: (id: number, at: number[]) => void, lairHere?: () => any, isPuppet?: (f: any) => boolean }} */

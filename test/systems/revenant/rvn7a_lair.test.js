@@ -114,7 +114,7 @@ test('RVN7a THE DEED through the door: a deed in the open world picks its lair a
   const p = me();
   let here = { px: 100, py: 100, dungeons: [D(106, 100, 'East Keep', 3), D(94, 100, 'West Crypt', 3), D(100, 94, 'North Barrow', 3), D(100, 106, 'South Mine', 3)] };
   setPlayerDoor({ foes: () => [], feet: () => [0, 0, 0], hurtFoe: () => {}, castOnPlayer: () => {}, lairHere: () => here });
-  const foe = { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' };
+  const foe = { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' };
   const r = N.revenantDeed(p, foe, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   assert.ok(r.lair, 'a lair');
   assert.deepEqual(r.lair, F.pickLair(r.id, 100, 100, here.dungeons));
@@ -136,7 +136,7 @@ test('RVN7a THE DEED through the door: a deed in the open world picks its lair a
   assert.deepEqual(F.feudFields({ ...r }, { id: r.id, mobileType: r.mobileType, rank: r.rank }).lair, D(40, 41, 'The Pit', 5));
   // with no door, or none in reach, it roams
   setPlayerDoor(null);
-  const lone = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  const lone = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   assert.notEqual(lone, r, 'a new one');
   assert.equal(lone.lair, null);
 });

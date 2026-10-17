@@ -34,8 +34,10 @@ beforeEach(() => {
 });
 
 function made(p, { dueDay = 10, rank = 1 } = {}) {
-  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0, now: DAY * dueDay - 600 });
+  for (const x of N.livingRevenants().slice(0, Math.max(0, N.livingRevenants().length - N.REVENANT_MAX + 1))) N.revenantSlain(p, { revenant: { id: x.id } });   // UNQUIET (Revenants.md section 46): none rises while three hunt me - room made
+  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0, now: DAY * dueDay - 600 });
   r.dueAt = DAY * dueDay + 300; r.rank = rank; r.wrath = 0; r.out = false; r.notice = null;
+  r.personality = 'brutal';   // UNQUIET (Revenants.md section 46): no revenant of mastery here - it festers twice as fast (unquiet.test.js pins it)
   return r;
 }
 const at = (day) => ({ now: DAY * day + 60, rolls: () => 0 });

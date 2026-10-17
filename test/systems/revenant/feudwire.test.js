@@ -72,7 +72,7 @@ const me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-feudwire
 beforeEach(() => { _resetForTests(); setPref('lootRarity', true); setPref('enhancedAI', true); N._resetRevenantForTests(); _store.clear(); resetTactics(); resetBlows(); T = 10; });
 /** A rank-`rank` revenant in `wrath` stood on a real entity (its kind's scale `prior` before it). */
 function stood(rank = 3, wrath = 0, prior = undefined) {
-  const r = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   r.rank = rank; r.wrath = wrath;
   const entity = { mobileType: M.Orc, level: 6, health: 60, maxHealth: 60, team: 'Monster', items: [], ...(prior ? { damageScale: prior } : {}) };
   N.applyRevenant(entity, r);
@@ -96,12 +96,13 @@ test('FEUD WIRE THE LAW: `rb` a whole per mille from x1 to x4 (the writer\'s bou
 
 test('FEUD WIRE THE OWNER\'S STAND: its blows over its kind\'s - its rank\'s and its wrath\'s, never its elite\'s - kept on its stamp, and kept through a deed that stamps it again (mutants: the stand unrecorded; the elite\'s counted; the restamp drops it)', () => {
   const { entity } = stood(3, 2, 2);
-  assert.ok(near(entity.revenant.blows, (1 + 0.1 * 3) * (1 + 0.05 * 2)), 'x1.3 its rank, x1.1 its wrath');
+  const rk = (n) => 1 + N.REVENANT_DAMAGE_PER_RANK * n;   // UNQUIET (Revenants.md section 46): its rank's blows by the law's number (0.15 a rank)
+  assert.ok(near(entity.revenant.blows, rk(3) * (1 + 0.05 * 2)), 'its rank, x1.1 its wrath');
   assert.ok(near(entity.damageScale, 2 * entity.revenant.blows), 'its elite\'s x2 under it - its own');
-  assert.ok(near(stood(1).entity.revenant.blows, 1.1));
+  assert.ok(near(stood(1).entity.revenant.blows, rk(1)));
   N.revenantDeed(me, entity, 'slew', { mobileType: M.Orc, rolls: () => 0 });
-  assert.ok(near(entity.revenant.blows, 1.43), 'a killer over my body still strikes with its stand');
-  assert.equal(entity.revenant.rank, 4, 'stamped again');
+  assert.ok(near(entity.revenant.blows, rk(3) * 1.1), 'a killer over my body still strikes with its stand');
+  assert.equal(entity.revenant.rank, 3, 'stamped again - its rank kept: a kill ranks it every second time (UNQUIET)');
 });
 
 test('FEUD WIRE THE WRITER AND THE HEIR: `rb` out of the stamp (none at x1; clamped to the law), read back onto a puppet\'s stamp and written again the same by an heir (mutants: rb unwritten; the clamp; the heir\'s copy dropped)', () => {
@@ -111,7 +112,7 @@ test('FEUD WIRE THE WRITER AND THE HEIR: `rb` out of the stamp (none at x1; clam
   assert.deepEqual(F.feudWire({ learned: [], weak: null, blows: 9 }), { rb: 4000 }, 'never past the law (a record refused whole would lose its foe)');
   const { entity } = stood(5, 3);
   const wire = F.feudWire(entity.revenant);
-  assert.equal(wire.rb, Math.round(1.5 * 1.15 * 1000));
+  assert.equal(wire.rb, Math.round((1 + N.REVENANT_DAMAGE_PER_RANK * 5) * 1.15 * 1000));
   assert.ok(Wire.validFoeRecord({ i: 1, ...wire }), 'its rank-5 wrath on the wire');
   const rev = F.feudFromWire({ id: null, name: entity.revenant.name, rank: 0 }, wire);
   assert.equal(rev.blows, wire.rb / 1000);

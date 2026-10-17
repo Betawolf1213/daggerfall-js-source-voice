@@ -30,7 +30,7 @@ const { modSaveRecords, restoreModSaveRecords } = await import('../../../src/sys
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-rvn12b', level: 8, items: [] };
 beforeEach(() => { _resetForTests(); setPref('lootRarity', true); N._resetRevenantForTests(); _store.clear(); });
-const made = (deedName = 'fled', opts = {}) => N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, deedName, { mobileType: M.Orc, rolls: () => 0, ...opts });
+const made = (deedName = 'fled', opts = {}) => N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, deedName, { mobileType: M.Orc, rolls: () => 0, ...opts });
 function draw() {
   const nodes = [];
   const el = (tag, cls = '', text = '') => {

@@ -33,7 +33,7 @@ const player = (id = 'char-audit') => ({
   isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, items: [], goldPieces: 0, activeEffects: [], health: 100, maxHealth: 100,
   stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 },
 });
-const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', ...over });
+const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', unquiet: true, ...over });
 function fresh() {
   _resetForTests(); setPref('lootRarity', true);
   N._resetRevenantForTests(); RC._resetRetinueForTests(); S._resetCompanionSlotsForTests(); H._resetHarmMarkForTests(); _store.clear(); setPlayerDoor(null);

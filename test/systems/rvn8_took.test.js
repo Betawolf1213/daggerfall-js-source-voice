@@ -54,7 +54,7 @@ function me(id = 'char-rvn8') {
   equipItem(p, w);
   return p;
 }
-const killer = () => ({ mobileType: M.Orc, level: 6, champion: 'mighty', health: 50, maxHealth: 50, team: 'Monster' });
+const killer = () => ({ mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 50, maxHealth: 50, team: 'Monster' });
 function slain(p, e = killer()) { return N.revenantDeed(p, e, 'slew', { mobileType: M.Orc, rolls: () => 0 }); }
 
 test('RVN8 THE LAW: at most three held; never a quest item, a summoned piece, the Materials Bag, gold or a locked piece (mutants: the cap moved; any exclusion dropped)', () => {

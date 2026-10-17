@@ -39,7 +39,7 @@ const player = (id = 'char-1') => ({
   isPlayer: true, name: 'Ayla Stormwind', characterId: id, items: [], stats: stats(), skills: new Array(35).fill(30), level: 5,
   career: {}, activeEffects: [], health: 100, maxHealth: 100, magicka: 0, maxMagicka: 1000, armorValues: new Array(7).fill(100),
 });
-const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', ...over });
+const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', unquiet: true, ...over });
 const seq = (...vals) => { let i = 0; return () => vals[Math.min(i++, vals.length - 1)]; };
 const tick = () => new Promise((r) => setTimeout(r, 0));
 function fresh() {
@@ -118,24 +118,27 @@ test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through
   assert.equal(N.livingRevenants().length, 1);
 });
 
-test('REVENANT DEEDS AND RANKS: killing me again ranks it up with a new epithet; an escape ranks it up too; the rank stops at five and the epithet rises from three; past five revenants the weakest, oldest is forgotten (mutants: no rank-up; the same epithet kept; no cap)', () => {
+test('REVENANT DEEDS AND RANKS: UNQUIET (Revenants.md section 46) - a kill of me ranks it up only every second time (its `blood`), an escape every time, each rank a new epithet; the rank stops at five and the epithet rises from three; no birth past three living (mutants: no rank-up; every kill a rank; the same epithet kept; no cap)', () => {
   fresh();
   const me = player();
   const e = orc();
   const r = N.revenantDeed(me, e, 'slew', { now: 1000, rolls: () => 0 });
   const ep1 = r.epithet;
+  N.revenantDeed(me, e, 'slew', { now: 1500, rolls: () => 0 });
+  assert.deepEqual([r.rank, r.kills, r.blood, r.epithet], [1, 2, 1, ep1], 'one kill since its birth: blood, no rank, its name kept');
   N.revenantDeed(me, e, 'slew', { now: 2000, rolls: () => 0 });
-  assert.equal(r.rank, 2); assert.equal(r.kills, 2); assert.notEqual(r.epithet, ep1, 'a new name for a new deed');
+  assert.equal(r.rank, 2); assert.equal(r.kills, 3); assert.equal(r.blood, 0, 'spent on the rank'); assert.notEqual(r.epithet, ep1, 'a new name for a new rank');
   N.revenantDeed(me, e, 'fled', { now: 3000, rolls: () => 0 });
   assert.equal(r.rank, 3); assert.equal(r.escapes, 1); assert.equal(r.out, false, 'an escape is gone');
   assert.ok(N.REVENANT_EPITHETS.risen.map((x) => x.replace('{p}', 'Ayla')).includes(r.epithet), 'risen from rank three');
-  for (let i = 0; i < 5; i++) N.revenantDeed(me, e, 'slew', { now: 4000 + i, rolls: () => 0.3 });
+  for (let i = 0; i < 5; i++) N.revenantDeed(me, e, 'fled', { now: 4000 + i, rolls: () => 0.3 });
   assert.equal(r.rank, N.REVENANT_MAX_RANK, 'five and no more');
   assert.equal(r.history.length <= 12, true);
-  // the cap
+  // the cap: none rises past it - the marked foe that would is no candidate
   for (let i = 0; i < 5; i++) N.revenantDeed(me, orc({ champion: 'swift' }), 'fled', { now: 9000 + i, rolls: () => 0.5 });
-  assert.equal(N.livingRevenants().length, N.REVENANT_MAX, 'five living at most');
+  assert.equal(N.livingRevenants().length, N.REVENANT_MAX, 'three living at most');
   assert.ok(N.revenantById(r.id), 'the strongest is kept');
+  assert.equal(N.revenantCandidate(orc({ champion: 'swift' })), false, 'and a fourth is no candidate');
 });
 
 test('REVENANT THE RETURN: not before it is due; then on the roll, the highest rank first, one at a time; it stands with its rank\'s health and blows, its name, a class foe higher; gone unfought it is due again; slain it never comes back (mutants: early; two out at once; no scaling; lost forgotten; the slain returned)', () => {

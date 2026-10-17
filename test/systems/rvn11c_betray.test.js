@@ -47,8 +47,11 @@ function sworn(state = 'with', { loyalty = 5, personality = 'brutal', rank = 1 }
   // RVN-ARTS (AUDIT RVN): never a Mender - its art heals the very hurt this moment reads (a sworn one's Mending answers a
   // hurt that leaves me low, Revenants.md section 41), and its id - the art's draw - is the deed's own random one
   let r;
-  do r = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
-  while (artOf(r) === 'mending');
+  for (;;) {
+    r = N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+    if (artOf(r) !== 'mending') break;
+    N.revenantSlain(me, { revenant: { id: r.id } });   // UNQUIET (Revenants.md section 46): a Mender put down - none rises while three hunt me
+  }
   r.rank = rank;
   const s = N.revenantSpared(me, { revenant: { id: r.id } }, { state });
   s.companion.loyalty = loyalty;

@@ -36,7 +36,7 @@ beforeEach(() => {
 
 const LAIR = Object.freeze({ px: 106, py: 100, name: 'Tomb of Vaness', region: 3 });
 function made(p, { mobileType = M.Orc, scars = true, weak = 'fire', lair = LAIR } = {}) {
-  const r = N.revenantDeed(p, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(p, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
   r.lair = lair ? { ...lair } : null; r.lairKnown = false; r.weak = weak; r.weakKnown = 0;
   r.scars = scars ? [{ k: 'blade', at: 0 }] : [];
   return r;
@@ -115,7 +115,7 @@ test('RVN7b THE GATES: a person with no answer left has none (a spymaster always
 test('RVN7b THE PICK AND THE WEAKNESS: of several in reach, the roll\'s; one in two carries its weakness - hinted by its kind, one in three named - and what the player knows of it never goes back (mutants: the first always; the weakness always or never; named always; the known forgotten)', () => {
   const p = me();
   const a = made(p, { lair: { ...LAIR, name: 'A Den' } });
-  N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   const b = N.revenantsFor(p).find((x) => x !== a);
   b.lair = { ...LAIR, name: 'B Den' }; b.weak = 'silver'; b.weakKnown = 0;
   assert.match(N.revenantRumor(HERE, fresh(), { rolls: seq(0, 0, 0.9) }), /A Den/);
