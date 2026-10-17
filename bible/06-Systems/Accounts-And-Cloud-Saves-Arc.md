@@ -4515,8 +4515,8 @@ title they hold: upgraded, downgraded and lapsed by Patreon's own webhook, with 
   deploy. Unset is a legal state: the card offers nothing and the webhook answers `patreon-closed`.
 - **Mac's tiers** (2026-10-01: "some titles dont have titles/glyphs ingame. Heriophant is custom and Herald doesnt
   exist ingame yet. Supporter doesnt recieve a title/glyph"): `PATREON_TIERS = "29666211:disciple,29666234:herald"` -
-  Disciple, and Herald since HERALD (below) gave it its title in the game. Supporter (29701293) holds none and
-  Hierophant (29666221) is custom, granted by name. Apostle has no tier now.
+  Disciple, and Herald since HERALD (below) gave it its title in the game. Supporter (29701293) holds none. Apostle has
+  no tier now. Hierophant (29666221) is mapped since HIEROPHANT-TIER (below).
 - **The handle lists stand.** A list still grants on its own, for the titles Mac grants by name (a comp, a patron who
   will not link); the two never hold one title twice.
 
@@ -4539,7 +4539,7 @@ title they hold: upgraded, downgraded and lapsed by Patreon's own webhook, with 
   TITLE-N's), so no relay deploy.
 - Pins: `test/server/patreon_link.test.js` (17) - the law, the MD5 and the signature, the sealed state and ticket, Patreon's
   shapes, the Worker end to end with Patreon's two OAuth endpoints stood in for (the yes's own read among them), the
-  card and its flow, the config and the deploy. `tools/mutants/patreonlink.json` (47, all dead). `test/server/accountworker.test.js` holds the four columns; the
+  card and its flow, the config and the deploy. `tools/mutants/patreonlink.json` (48, all dead - HIEROPHANT-TIER's one among them). `test/server/accountworker.test.js` holds the four columns; the
   version pins moved to acct45 (and `gatekeys.json`'s record with them).
 
 ## HERALD — the Patreon tier between Disciple and Hierophant (2026-10-01, world138, acct45)
@@ -5741,3 +5741,27 @@ runs - the title and the wings are a grant checked now, worn once the player equ
 (the list; the handle in any case holds the title, the glyph, the wings and the moderating; four near names refused);
 `tools/mutants/titlen.json` DEV6-roderic-not-granted (the handle left off the list - dead), and DEV3's, DEV4's and
 DEV5's records re-aimed by content.
+
+## HIEROPHANT-TIER — the $50 tier holds the Hierophant (2026-10-17)
+
+Mac: "The $50 patreon tier doesnt have a title/glyph ingame. The Heirophant". PATREON-LINK left it out of the map on
+Mac's word of 2026-10-01 ("Heriophant is custom"), so a $50 pledge linked and held nothing. TITLE-N gave the Hierophant
+its title and glyph on 2026-09-24: the word "Hierophant" in rose (#e873bf), the crown beside the name, stroked in the
+same rose, and `!` on the classic face. So the fix is one line, `server-account/wrangler.toml`: `PATREON_TIERS =
+"29666211:disciple,29666234:herald,29666221:hierophant"`. A $50 pledge now grants that title and glyph, as the Disciple
+and Herald pledges grant theirs.
+
+- **Nobody relinks.** The row already stores the tier ids Patreon sent (`patreon_tiers`, migration 0045). The title is
+  read from those ids against the map at every token, so a $50 patron who already linked holds the Hierophant on their
+  next token once the account worker deploys. The card reads "Linked - Hierophant".
+- **The relay is untouched.** `hierophant` has been in the token's vocabulary since TITLE-N, so there is no relay
+  version and no account version. Nothing is written and no migration runs.
+- **A patron's own title still comes by name.** The titles made for single patrons (Shadow Fang, Penitent, Aegis,
+  Primarch, Crystal Fist) stay on their own handle lists. A patron who holds one of them and pledges $50 holds both,
+  and wears whichever one they pick. HIEROPHANT_HANDLES stays empty, for a Hierophant Mac grants by name.
+- **Supporter (29701293) still holds nothing.** Apostle still has no tier.
+- Pins: `test/server/patreon_link.test.js`, the config test (the exact map with the Hierophant's tier; a pledge at it
+  holds `hierophant` and wears the crown; Supporter maps to nothing). `test/net/herald.test.js`: the Hierophant's tier
+  now holds the Hierophant and still no Herald. `tools/mutants/patreonlink.json` PL-the-hierophant-tier-unmapped
+  (dead). PL-a-tier-mapped-mac-did-not-name was the Hierophant's mapping until now; it is re-aimed to Supporter mapped
+  to the Disciple (dead). PL-secret-as-var and `herald.json` HERALD-the-tier-unmapped are re-aimed by content (dead).
