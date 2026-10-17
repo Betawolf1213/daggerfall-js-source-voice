@@ -46,7 +46,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and SHIP-COLOURS' FLAG ART (`flagArt.js`: a ship's flag drawn in the heraldry's hand, an SVG for the Fleet page's Colours and a canvas for the cloth at her masthead; `03-World/Naval-Refit.md` SHIP-COLOURS)
 - and CAPTAIN-TREE's STARS (`captainTreeWindow.js`: the captain's sky in the Firmament's own dress - its sheet, its two palettes, its stars' sizes - a way set by a press, a star taken back with those joined only through it, accepted into the captain's ledger; opened from the Captain page through the sea's window door; `03-World/Naval-Refit.md` CAPTAIN-TREE)
 - and DECK-PROPS' PLAN (`deckPlanWindow.js`: her open deck from above, bow up, her fittings on it - one chosen and set with a click where it is deck and room, taken up, dragged, turned a sixteenth at a time, taken away - and Fit her out through the Fleet's act; opened from the Fleet page's Deck through the sea's window door; `03-World/Naval-Refit.md` DECK-PROPS)
-381 modules
+- and LOOT-BULK's TAKE ALL AND STASH ALL (`storeBulk.js`: the one walk over the shown rows that moves them in a single batch, a container's or the pack's, as far as the side that takes them has room; `UI-Arc.md` LOOT-BULK)
+382 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.
