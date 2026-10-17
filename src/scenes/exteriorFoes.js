@@ -144,10 +144,11 @@ export const PEER_PUPPETS_TOTAL_MAX = CELL_FRAME_RECORDS_MAX;
  *  its plain kind. */
 export const PEER_ELITE_PUPPETS_MAX = 8;
 /** FOE-FORGE: the most of one owner's foes a reader stands as REVENANTS (the record's `nm`, and the blows its `rb` and
- *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, five) and the
- *  ones sworn to it (revenantCompanions.js REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds
- *  the sum). Past it a record's revenant fields are not believed. */
-export const PEER_REVENANT_PUPPETS_MAX = 11;
+ *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, three - UNQUIET,
+ *  bible/06-Systems/Revenants.md section 46; it was five) and the ones sworn to it (revenantCompanions.js
+ *  REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds the sum). Past it a record's revenant
+ *  fields are not believed. */
+export const PEER_REVENANT_PUPPETS_MAX = 9;
 const QUEST_WORD_RE = /^[A-Za-z0-9_.$-]{1,64}$/;   // AUDIT (pre-merge) Q6: `$` too - the cure quests are $CUREVAM and $CUREWER, and every reader refused their tag
 /** QUEST-PARTY: a frame's `qf` - [number, quest name, foe symbol] for each record that is a shared quest's foe; a
  *  malformed entry names nothing. QUEST-PARTY phase 3: and a fourth, its flags when any - 1 the foe a quest MARKER stood
