@@ -245,6 +245,7 @@ on:
       - "src/systems/deepWater/deepWatersFishRows.js"
       - "src/systems/effectBroker.js"
       - "src/systems/effects.js"
+      - "src/systems/eliteGates/weirKeyRow.js"
       - "src/systems/enchanting.js"
       - "src/systems/enchantmentCatalogue.js"
       - "src/systems/enchantments.js"

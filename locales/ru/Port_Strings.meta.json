@@ -529,6 +529,11 @@
   "tr": "bfa40975c8c1",
   "by": "claude-in-session"
  },
+ "account.glyph.wikimaid": {
+  "en": "28aa6cf63e1f",
+  "tr": "28aa6cf63e1f",
+  "by": "claude-in-session"
+ },
  "account.local.codeEmpty": {
   "en": "e98c67419698",
   "tr": "600014d9af1a",
@@ -8452,6 +8457,41 @@
  "instance.door.unavailable": {
   "en": "7ef00096d28e",
   "tr": "377b72bae111",
+  "by": "claude-in-session"
+ },
+ "inventory.store.anyMaterial": {
+  "en": "8177dd78731e",
+  "tr": "f1ffd82ab930",
+  "by": "claude-in-session"
+ },
+ "inventory.store.anyRarity": {
+  "en": "cc8474c6626b",
+  "tr": "826aeb9d7cbf",
+  "by": "claude-in-session"
+ },
+ "inventory.store.containerFull": {
+  "en": "25e48df7aefe",
+  "tr": "abf67303809c",
+  "by": "claude-in-session"
+ },
+ "inventory.store.materialIn": {
+  "en": "030f080652b6",
+  "tr": "ca511bd9e593",
+  "by": "claude-in-session"
+ },
+ "inventory.store.rarityIn": {
+  "en": "4edd5e0b523a",
+  "tr": "6bb7016d7dca",
+  "by": "claude-in-session"
+ },
+ "inventory.store.stashAll": {
+  "en": "2490f5ae2af4",
+  "tr": "373e35e1ca08",
+  "by": "claude-in-session"
+ },
+ "inventory.store.takeAll": {
+  "en": "d3b3b1b348b9",
+  "tr": "f90dfd393bea",
   "by": "claude-in-session"
  },
  "knight.seatHouse": {

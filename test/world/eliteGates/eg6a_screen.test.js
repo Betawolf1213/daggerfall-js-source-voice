@@ -7,7 +7,7 @@
 import test, { beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createEgSpan, EG_FLOOR_KEY, EG_GUST_REACH_M } from '../../../src/scenes/eliteGates/egSpan.js';
+import { createEgSpan, EG_FLOOR_KEY, EG_GUST_REACH_M, EG_GUST_STOREY_M, egGustStorey } from '../../../src/scenes/eliteGates/egSpan.js';
 import { egGustSections } from '../../../src/world/eliteGates/egLook.js';
 import { egCircleSpecs, egHallOf } from '../../../src/net/eliteGates/egLaw.js';
 import { egCourseOf } from '../../../src/net/eliteGates/egSpanLaw.js';
@@ -92,4 +92,14 @@ test('EG6a THE GHOSTS DRAWN ONCE A FRAME: the dungeon host\'s door (egSpanDraw) 
   assert.match(C, /egSpanDraw\?\.\(proj, view, fog\)/, 'the breach client\'s pass draws them');
   const fight = W.split('\n').find((l) => l.includes('drawEgFight: ({ proj, view, eye }) =>'));
   assert.ok(fight && fight.includes('egClient?.drawPass(') && !fight.includes('egSpanDraw'), 'the world host\'s pass, no second draw');
+});
+
+test('EG6a A GUST PUSHES ITS OWN STOREY (THE ASCENT; the relay deploy\'s 500-seed sweep, band 3 seed 210 - a bridge 21 m over a Gust\'s floor, pushed off it): a law 9 section pushes from EG_GUST_STOREY_M.under under its lowest step to .over over its highest; the laws before stack no storeys and push at every height (mutant: the section matched in plan alone)', () => {
+  const g = { spec: { law: 9 }, y: 0, y1: 1.2 };
+  assert.equal(egGustStorey(g, 0.5), true, 'on the course');
+  assert.equal(egGustStorey(g, 1.2 + EG_GUST_STOREY_M.over), true, 'a jump over its top step');
+  assert.equal(egGustStorey(g, 21), false, 'a bridge a storey over it');
+  assert.equal(egGustStorey(g, -EG_GUST_STOREY_M.under - 0.1), false, 'a floor under it');
+  assert.equal(egGustStorey({ spec: { law: 8 }, y: 0, y1: 1.2 }, 21), true, 'the laws before: every height');
+  assert.equal(egGustSections(egCircleSpecs(210, 16, 0)).every((s) => s.y1 >= s.y), true, 'every section knows its top');
 });
