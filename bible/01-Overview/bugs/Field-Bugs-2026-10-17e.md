@@ -1,4 +1,7 @@
-# FIELD BUGS 2026-10-17c - Disintegrate and your own revenant
+# FIELD BUGS 2026-10-17e - Disintegrate and your own revenant
+
+> Renumbered from 17c at the merge of main: #996's ORRERY-HEIGHT took `Field-Bugs-2026-10-17c.md` and #992's
+> CURSE-CARRY `Field-Bugs-2026-10-17d.md` first; the test and the mutant record were renamed with it (`fb1017e_`).
 
 One report from the Discord's #general, handed over as a screenshot, read on the code as it stands at main's `cb4b88484`.
 Revenants are the port's own (Daggerfall Unity has none); DFU's Disintegrate (`Disintegrate.cs:44-53`,
@@ -51,12 +54,12 @@ WIRED, its own door's yield gate edited in place (one line for one, no code line
 exterior.js - the same door, no `fates`, FLAGGED as in Feud-Arc 32 and `Field-Bugs-2026-10-16b.md` (its revenants die to
 any killing blow; no net, so no peer's blow reaches it).
 
-Pinned by `test/systems/revenant/fb1017c_rvnownkneel.test.js` (4): the report on the real street pool (the real
+Pinned by `test/systems/revenant/fb1017e_rvnownkneel.test.js` (4): the report on the real street pool (the real
 Disintegrate through the host's sink kneels it, Kill and Spare offered, Spare swears it); rank 3 with its will unbroken
 (no stand, no tear-away, the kneel, then Kill's execution, the record executed, the trophy in the pile); a host with no
 fates (it dies as before); and the dungeon's door mounted from its source over the real law (the owner's whole kneels at
 rank 1, at rank 3 and once stood with its will unbroken; a party member's still stands and tears away; a room's shared
-foe online and a door with no fates let it die). `tools/mutants/fb1017c_rvnownkneel.json` (6).
+foe online and a door with no fates let it die). `tools/mutants/fb1017e_rvnownkneel.json` (6).
 
 PINS MOVED (each marked PIN MOVED where it stands): `fb1016b_rvnownerschoice.test.js` (the owner's own Disintegrate on
 the street, rank 1 and 3, and underground), `revenant_fate.test.js` (no door, no yield; the dungeon's gate as written),

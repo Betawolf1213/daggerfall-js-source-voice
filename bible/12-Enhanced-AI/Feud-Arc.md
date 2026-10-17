@@ -638,7 +638,7 @@ holds passes the lesson to the next of the fight's scars - `revenantFeud.lessonO
 - Disintegrate's whole kill still kills (`_whole`) - the owner's own alone since RVN-OWNERS-CHOICE (FIELD BUGS
   2026-10-16, `06-Systems/Revenants.md` section 15): a party member's, a foe's or a drained stat's whole blow is a
   killing blow like any, and the will asks of it (`revenantFate.js ownersWholeKill`). A departure from this line as
-  written. RVN-OWN-KNEEL (FIELD BUGS 2026-10-17c): the owner's own passes the will and KNEELS it - the kill-or-spare is
+  written. RVN-OWN-KNEEL (FIELD BUGS 2026-10-17e): the owner's own passes the will and KNEELS it - the kill-or-spare is
   never skipped - a second departure.
 - With the Enhanced AI switch off there is no stagger, so its weakness alone breaks it (2.1).
 - The page tells the player the rule (24.1). OPEN 11.
@@ -653,7 +653,7 @@ before the yield in both damage doors (`exteriorFoes.js damageFoe`, `dungeonCont
 2026-10-16, `06-Systems/Revenants.md` section 15): a whole blow passes over it only as the owner's own
 (`revenantFate.js ownersWholeKill`) - a party member's Disintegrate brings it, as any killing blow does; the RVN4
 record's "never against a Disintegrate's whole" is the owner's Disintegrate alone. RVN-OWN-KNEEL (FIELD BUGS
-2026-10-17c): past the stand, the owner's Disintegrate kneels it, never kills it.
+2026-10-17e): past the stand, the owner's Disintegrate kneels it, never kills it.
 
 ### 15.2 What
 

@@ -324,7 +324,7 @@
     "tests": [
       "test/systems/rvn3_weak.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17c RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
+    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
   },
   {
     "name": "RVN3-the-street-tear-touchable",
@@ -379,7 +379,7 @@
     "tests": [
       "test/systems/rvn3_weak.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17c RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
+    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
   },
   {
     "name": "RVN3-the-dungeon-tear-touchable",

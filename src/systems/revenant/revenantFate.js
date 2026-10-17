@@ -56,7 +56,7 @@ export function revenantMayYield(f) {
  *  peer's, at the door that holds the record - a revenant is never handed over (REVENANT-HEIR), so that door is its
  *  owner's. Anyone else's - a party member's kill forwarded as `z`, their strike spell landed here, a foe's spell, a
  *  companion's, a round that names nobody - is a killing blow like any other: it stands, tears away or kneels, and
- *  the choice is the owner's (bible/06-Systems/Revenants.md section 15). RVN-OWN-KNEEL (FIELD BUGS 2026-10-17c;
+ *  the choice is the owner's (bible/06-Systems/Revenants.md section 15). RVN-OWN-KNEEL (FIELD BUGS 2026-10-17e;
  *  Discord: "Disintegrate just outright kills your rev with no option to hire"): the owner's own kneels it too - past
  *  the stand and the will, never past the kill-or-spare; a host with no fates (`exterior.js`) lets it die as before. */
 export function ownersWholeKill(whole, { fromPlayer = false, peer = false } = {}) {
