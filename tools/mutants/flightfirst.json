@@ -11,7 +11,7 @@
   {
     "name": "FLIGHT-FIRST-young-line-the-old-ones",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(youngRevenant(entity) ? REVENANT_FLEE_HEALTH_YOUNG : REVENANT_FLEE_HEALTH)",
+    "old": "(!entity.revenant || youngRevenant(entity) ? REVENANT_FLEE_HEALTH_YOUNG : REVENANT_FLEE_HEALTH)",
     "new": "REVENANT_FLEE_HEALTH",
     "tests": [
       "test/systems/revenant/flightfirst.test.js"

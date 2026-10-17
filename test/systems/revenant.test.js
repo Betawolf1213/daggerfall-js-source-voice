@@ -32,6 +32,7 @@ const { getSeed, setSeed } = await import('../../src/formats/dfRandom.js');
 const { modSaveRecords, restoreModSaveRecords } = await import('../../src/systems/modSaveData.js');
 const { KNIGHT_CITY_WATCH, MOBILE_TYPES } = await import('../../src/characters/mobile/mobileTypes.js');
 const { foeTitle } = await import('../../src/systems/foeTitle.js');
+const { ambitionOf, AMBITION } = await import('../../src/systems/revenant/revenantUnquiet.js');
 
 const read = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const stats = () => ({ strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });
@@ -79,7 +80,7 @@ test('REVENANT THE NAME: DFU\'s banks seeded by the id - one id, one name, the s
   assert.notEqual(N.revenantEpithet('slew', 1, 'Ayla', () => 0, 'the Butcher'), 'the Butcher', 'never the one it wears');
 });
 
-test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through the real door - named at once where it stands, due in one to three days, the player told once alive; a death a Stendarr\'s mercy undoes makes nobody one (mutants: no confirm; the mercy ignored; the name not stood)', async () => {
+test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through the real door - named at once where it stands, due in its ambition\'s days (two to four, vengeance one to two), the player told once alive; a death a Stendarr\'s mercy undoes makes nobody one (mutants: no confirm; the mercy ignored; the name not stood)', async () => {
   fresh();
   const me = player();
   const killer = orc({ health: 60 });
@@ -102,7 +103,8 @@ test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through
   const [r] = N.livingRevenants();
   assert.ok(r, 'the killer is a revenant');
   assert.equal(r.rank, 1); assert.equal(r.kills, 1); assert.equal(r.trait, 'mighty'); assert.equal(r.mobileType, MOBILE_TYPES.Orc);
-  assert.ok(r.dueAt >= r.born + N.REVENANT_RETURN_MIN_MINUTES && r.dueAt <= r.born + N.REVENANT_RETURN_MAX_MINUTES, 'due in one to three days');
+  const [lo, hi] = ambitionOf(r.personality) === 'vengeance' ? AMBITION.VENGEANCE_DUE : [N.REVENANT_RETURN_MIN_MINUTES, N.REVENANT_RETURN_MAX_MINUTES];   // UNQUIET (Revenants.md section 46): vengeance comes sooner
+  assert.ok(r.dueAt >= r.born + lo && r.dueAt <= r.born + hi, 'due in its ambition\'s days');
   assert.equal(killer.revenant.id, r.id, 'the foe over my body wears its name at once');
   assert.equal(foeTitle(killer, 'Orc'), r.name, '...on every surface');
   assert.ok(r.out, 'and stands out in the world');

@@ -48,7 +48,7 @@ beforeEach(() => {
   RC.setRetinuePlayer(me);
   setWorldMinutes(DAY * 10);
 });
-const orc = (o = {}) => ({ mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster', unquiet: true, ...o });
+const orc = (o = {}) => ({ mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster', ...o });
 const made = (deedName = 'fled', o = {}) => N.revenantDeed(me, orc(), deedName, { mobileType: M.Orc, rolls: () => 0, ...o });
 function sworn(state = 'with', { loyalty = 5, personality = 'brutal' } = {}) {
   const r = made();

@@ -22,6 +22,7 @@ globalThis.localStorage = {
 };
 
 const N = await import('../../src/systems/revenant/revenant.js');
+const { feudOf } = await import('../../src/systems/feudLedger.js');
 const F = await import('../../src/systems/revenant/revenantFeud.js');
 const RC = await import('../../src/systems/revenant/revenantCompanions.js');
 const S = await import('../../src/systems/companionSlots.js');
@@ -135,6 +136,7 @@ function orcRecord(p, rank) {
   if (rank >= F.SIG_RANK) r.sig = F.drawSignature(r.id, r.mobileType);   // as its rank-up draws it (RVN1's pin)
   return r;
 }
+const breakWill = (f) => { const l = feudOf(f.entity); assert.ok(l, 'its ledger open'); l.staggers = 1; };
 async function stood(p, rank, { pool = rig(p), fill = 0 } = {}) {
   for (let i = 0; i < fill; i++) await pool.spawnFoe(M.Rat, [20 + i * 2, 0, 20], { feetGiven: true });
   const r = orcRecord(p, rank);
@@ -201,6 +203,7 @@ test('RVN6 THE SCATTER: its master kneels - each follower runs from it (DFU\'s f
   const p = me();
   const { pool, f, band } = await stood(p, 2);
   assert.equal(band.length, 1);
+  breakWill(f);   // UNQUIET (Revenants.md section 46): a rank-2 one's will must be broken (WILL_RANK 2) - or it tears away
   pool.damageFoe(f, 99999, [0, 0, 3], null, { fromPlayer: true });
   assert.ok(f.yielded, 'it kneels');
   const g = band[0];
@@ -219,6 +222,7 @@ test('RVN6 THE SCATTER: its master kneels - each follower runs from it (DFU\'s f
   // a death (a Disintegrate's whole - no kneel) scatters its band too
   N._resetRevenantForTests(); said = [];
   const d = await stood(p, 2);
+  breakWill(d.f);
   d.pool.damageFoe(d.f, 99999, [0, 0, 3], null, { fromPlayer: true, whole: true });
   assert.equal(d.f.dead, true);
   assert.equal(d.band[0].scattering, true);

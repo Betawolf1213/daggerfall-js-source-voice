@@ -36,6 +36,13 @@
 // one answers as the switch's off does, while what is remembered stays on the page and the sworn keep their days.
 // Offline nothing is held. And a due one takes two encounter rolls in five, not one in two (REVENANT_RETURN_CHANCE).
 //
+// UNQUIET (2026-10-17, bible/06-Systems/Revenants.md section 46 - the owner: "harder, rarer, revenants need more of a
+// chance to flee instead of relying on player death"): the paragraphs above are the law as it began. Now only a special
+// foe carrying THE MARK (systems/revenant/unquietMark.js, one in four) rises, and none while REVENANT_MAX (3) hunt the
+// player; a marked foe breaks at the young line on three rolls in four; a revenant ranks up at every getting-away and at
+// every second kill (revenantUnquiet.js BLOOD_RANK); it comes back in two to four days, its ranks weigh more, and
+// revenantUnquiet.js keeps the rest - its flight craft, its wounds, its ambition and the Dread.
+//
 // ONLINE: a revenant is its character's own memory; a returning one is my own foe, streamed as any - its kind, health,
 // trait, glow and (REVENANT-WIRE) its NAME, the foe record's `nm`, so every puppet is called what its owner calls it.
 //
@@ -1135,7 +1142,7 @@ export function revenantFleeEvent(entity, base, { gender = 'male', archive = nul
   const src = liveSource(entity, base, gender);
   const v = voiceParts(src, 'flee', src.id ? playerName : '', rolls);   // a revenant knows the player's name; a stranger does not
   // UNQUIET (section 46): its flight craft, in the narrator's words - what it does, and its answer
-  const craft = entity?._craft ? craftFleeWords(entity._craft, src.given ?? src.name) : null;
+  const craft = entity?._craft ? craftFleeWords(entity._craft, /** @type {any} */ (src).given ?? src.name) : null;
   if (craft) return revenantEvent('flee', src, { speech: v.speech, body: craft, line: v.speech ? `${craft} "${v.speech}"` : craft, archive });
   return revenantEvent('flee', src, { speech: v.speech, body: v.speech ? null : v.body, line: v.speech ? `${src.name} breaks and runs! "${v.speech}"` : v.line, archive });
 }
@@ -1324,7 +1331,7 @@ export function revenantDeserts(player, r, { now = nowMinutes(), rolls = Math.ra
   r.sworn = false; r.fate = null; r.companion = null; r.out = false;
   r.epithet = REVENANT_EPITHETS.deserted[0];
   r.name = joinName(r.given, r.epithet);
-  r.dueAt = dueFrom(now, rolls);
+  r.dueAt = dueFrom(now, rolls, r);   // UNQUIET: by its ambition
   r.notice = 'deserted';
   deed(r, 'deserted', now);
   trimLiving(r);   // a living one again: the cap holds
@@ -1363,7 +1370,7 @@ export function revenantBetrays(player, r, { now = nowMinutes(), rolls = Math.ra
   if (r.rank >= SIG_RANK && !r.sig) r.sig = drawSignature(r.id, r.mobileType);
   r.epithet = REVENANT_EPITHETS.betrayed[0];
   r.name = joinName(r.given, r.epithet);
-  r.dueAt = dueFrom(now, rolls);   // should it get away
+  r.dueAt = dueFrom(now, rolls, r);   // should it get away (UNQUIET: by its ambition)
   r.notice = null;
   deed(r, 'betrayed', now);
   trimLiving(r);
@@ -1562,13 +1569,13 @@ export function killerOf(characterId, ownAt) {
 }
 /** LEGACY6: a fallen kinsman's killer HUNTS THE HEIR - its record handed to `player` (their list and their mirror, so a
  *  new game's reset or a load's merge keeps it): not out, its pack and companionship the fallen's own (never the
- *  heir's), due one to three days on the heir's clock. A record the heir already holds (a later one, or its tombstone)
+ *  heir's), due two to four days on the heir's clock (UNQUIET: a revenant of vengeance one to two). A record the heir already holds (a later one, or its tombstone)
  *  stands as it is. Answers whether it was handed. */
 export function inheritRevenant(player, rec, { now = nowMinutes(), rolls = Math.random } = {}) {
   const r = /** @type {any} */ (sanitize(rec));
   const id = player ? characterIdOf(player) : null;
   if (!r || r.gone || r.defeated || r.sworn || !id) return false;
-  Object.assign(r, { out: false, outAt: 0, took: [], companion: null, notice: null, dueAt: dueFrom(now, rolls) });
+  Object.assign(r, { out: false, outAt: 0, took: [], companion: null, notice: null, dueAt: dueFrom(now, rolls, r) });
   let kept = [], keptDay = null;
   try { const raw = appStorage()?.getItem(storeKey(id)); if (raw) { const m = JSON.parse(raw); kept = m?.list ?? []; keptDay = sanitizeDay(m?.lastDay); } } catch { /* a bad mirror is no mirror */ }
   if (kept.some((x) => x?.id === r.id) || (_state.mirrorId === id && _state.list.some((x) => x.id === r.id))) return false;

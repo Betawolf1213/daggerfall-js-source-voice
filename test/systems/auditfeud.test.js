@@ -47,7 +47,7 @@ beforeEach(() => {
   RC.setRetinuePlayer(me);
   setWorldMinutes(DAY * 10);
 });
-const orc = (o = {}) => ({ mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster', unquiet: true, ...o });
+const orc = (o = {}) => ({ mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster', ...o });
 const made = (deedName = 'fled', o = {}) => N.revenantDeed(me, orc(), deedName, { mobileType: M.Orc, rolls: () => 0, ...o });
 function sworn(state = 'with', { loyalty = 5, personality = 'brutal' } = {}) {
   const r = made();
@@ -198,6 +198,7 @@ test('AUDIT FEUD R3: A FORGOTTEN ONE THE SAVE HELD SWORN WITH A PACK comes back 
 test('AUDIT FEUD R4: NO DAY COUNTED TWICE - a reload of an older save replays no festering and no loyalty day the mirror counted (mutants: a clock behind it counted again)', () => {
   const r = made('fled', { now: DAY * 8 });
   r.dueAt = DAY * 9;
+  r.personality = 'brutal';   // UNQUIET (Revenants.md section 46): not one of mastery - it festers twice as fast (unquiet.test.js pins it)
   const s = sworn('with', { loyalty: 50, personality: 'honourable' });
   const at = (d) => ({ now: DAY * d + 30, rolls: () => 0.99 });
   N.revenantFester(me, at(10));

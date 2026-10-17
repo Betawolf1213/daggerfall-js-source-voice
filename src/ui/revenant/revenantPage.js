@@ -109,6 +109,7 @@ const DEED_WORDS = Object.freeze({
   slew: 'killed you', fled: 'escaped', returned: 'came back', fell: 'fell', yielded: 'yielded', executed: 'executed', spared: 'spared', released: 'released',
   // RVN1 (bible/12-Enhanced-AI/Feud-Arc.md section 26): the deeds FEUD adds, worded with the union
   felled: 'felled your companion', routed: 'routed you', festered: 'grew bolder', deserted: 'deserted you', betrayed: 'betrayed you', laststand: 'made its last stand',
+  ascended: 'became the Dread',   // UNQUIET (Revenants.md section 46)
 });
 /** A deed in words - RVN10 (bible/12-Enhanced-AI/Feud-Arc.md 21.1): a felling by the companion's name it keeps. */
 export const historyWords = (d) => (d?.deed === 'felled' && typeof d.ally === 'string' && d.ally ? `felled ${d.ally}` : d?.deed === 'fled' && d.unbroken === true ? 'escaped unbroken' : DEED_WORDS[d?.deed] ?? String(d?.deed ?? ''));   // RVN12b (24.1): an escape unbroken

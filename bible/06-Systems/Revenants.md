@@ -21,6 +21,8 @@ A **special** foe: an elite (`systems/eliteFoes.js`), a LOOT7 champion (`systems
 It must be level 3 or more (LOOT7's floor), and never the city watch, an ally, or a quest's foe
 (`revenantCandidate`). With the **Loot rarity** row off nothing here happens: no revenant is made, flees or returns.
 Online, under **Renown 10**, a character's revenants are held (RENOWN-GATE, section 39): none is made, flees or returns.
+**UNQUIET** (section 46): only a special foe carrying **the mark** (one in four - "Unquiet Elite Orc") rises, none while
+three hunt the player, and a marked foe breaks at 35% on three rolls in four. The table below is the law as it began.
 
 Two deeds make one:
 
@@ -179,22 +181,23 @@ Every number is a named constant at the top of `systems/revenant/revenant.js`:
 |---|---|
 | `REVENANT_MIN_LEVEL` | 3 |
 | `REVENANT_MIN_RENOWN` | 10 (online - RENOWN-GATE, section 39) |
-| `REVENANT_MAX` | 5 |
+| `REVENANT_MAX` | 3 (UNQUIET, section 46: none rises while three hunt the player; it was 5) |
 | `REVENANT_MAX_RANK` | 5 |
-| `REVENANT_FLEE_HEALTH` / `_YOUNG` | 0.2 / 0.35 (FLIGHT-FIRST: ranks 1-2) |
-| `REVENANT_FLEE_CHANCE` / `_YOUNG` / `_REVENANT` | 0.05 / 0.8 (ranks 1-2) / 0.15 (rank 3 and up) |
+| `REVENANT_FLEE_HEALTH` / `_YOUNG` | 0.2 / 0.35 (FLIGHT-FIRST: under the will's rank; UNQUIET: a marked foe too) |
+| `REVENANT_FLEE_CHANCE` / `_YOUNG` / `_REVENANT` | 0.75 (a marked foe - UNQUIET; it was 0.05) / 0.8 (rank 1) / 0.35 (rank 2 and up - the will's rank, UNQUIET; it was 0.15 from rank 3) |
 | `REVENANT_FLEE_SECONDS` | 8 |
 | `REVENANT_FLEE_PACE` | 2 (its run, a share of its walk - FLIGHT-FIRST) |
 | `REVENANT_ESCAPE_NEAR` | 12 (20 until FLIGHT-FIRST) |
 | `REVENANT_ESCAPE_DISTANCE` | 45 |
-| `REVENANT_RETURN_MIN/MAX_MINUTES` | 1440 / 4320 |
+| `REVENANT_RETURN_MIN/MAX_MINUTES` | 2880 / 5760 (UNQUIET; it was 1440 / 4320 - vengeance 1440 / 2880, section 46) |
 | `REVENANT_RETURN_CHANCE` | 0.4 (0.5 until RENOWN-GATE) |
 | `REVENANT_LOST_MINUTES` | 360 |
-| `REVENANT_HEALTH_PER_RANK` | 0.25 |
-| `REVENANT_DAMAGE_PER_RANK` | 0.1 |
-| `REVENANT_LEVEL_PER_RANK` | 2 |
+| `REVENANT_HEALTH_PER_RANK` | 0.4 (UNQUIET; it was 0.25 - a sworn one keeps 0.25) |
+| `REVENANT_DAMAGE_PER_RANK` | 0.15 (UNQUIET; it was 0.1 - a sworn one keeps 0.1) |
+| `REVENANT_LEVEL_PER_RANK` | 3 (UNQUIET; it was 2) |
 | `REVENANT_TAUNT_DISTANCE` | 25 |
 | `REVENANT_LOOT` | see section 4 |
+| UNQUIET's own | `revenantUnquiet.js` and `unquietMark.js` - section 46 |
 
 ## 9. Every host
 
@@ -1229,3 +1232,166 @@ lines this audit moved and were re-aimed by content, each still dead - 25 of sec
 lists, with `captaintree.json`, 419 dead, 0 survived. One record, RVN-STARS-hard-rest-whole, survived the first sweep: S27's clamp in the same wake cut a whole
 rest to the starred one, so the pin read the clamp, not the return - the return's rest is now pinned on `returnFromErrand`
 itself.
+
+## 46. The Unquiet (UNQUIET, 2026-10-17)
+
+The owner: "With revenants becoming a full fledge game loop. They need to become harder, rarer, revenants need more of a
+chance to flee instead of relying on player death, we need to go deeper on the experience and make it something insanely
+deep."
+
+Revenants are the port's own system; Daggerfall and DFU have none. The DFU members this section reads are named where it
+reads them, and each departure is named there too. The law is `src/systems/revenant/revenantUnquiet.js` (every number in
+one place) and `src/systems/revenant/unquietMark.js` (the mark, a leaf). `revenant.js` keeps the record, its deeds and
+its doors.
+
+### 46.1 Rarer - the mark, the cap of three, the days
+
+- **THE MARK.** One special foe in four (`UNQUIET_MARK`, 0.25) is **Unquiet**, and only a marked foe can rise. A
+  revenant already is no newcomer and needs no mark. Every other elite and champion dies where it falls, whatever it
+  does. The mark is drawn on the foe's voice id (`_voiceId`, `characterId.js mintCharacterId` - the id its name and its
+  voice are drawn on) by an FNV hash, so no die moves. It is drawn once, as the foe is made its own (`promoteEliteFoe`
+  and `applyChampion` with `own`; never a puppet, whose owner's word stands), and it is kept on the body. Its title says
+  so: "Unquiet Elite Orc", "Unquiet Mighty Orc" (`foeTitle.js`).
+- **THE GATE.** The mark is drawn only with the arc on and not held (the Loot rarity row, RENOWN-GATE), only while fewer
+  than three hunt the player, and only on a foe that could ever rise: never the watch, an ally, a band's follower, a
+  zone foe, a bout's fighter, one under level 3, or a revenant. A closed gate stores nothing.
+- **THREE AT MOST.** `REVENANT_MAX` is 3 (it was 5). While three hunt the player **none rises** (`revenantCandidate`).
+  It used to bury the weakest, oldest to make room; now none is buried and no nemesis is lost to a newcomer. A deserter
+  or a betrayer coming back past the cap still buries the weakest, oldest, as before - never one standing, one holding a
+  piece of mine, or the Dread.
+- **THE DAYS.** It comes back in **two to four days** (`REVENANT_RETURN_MIN/MAX_MINUTES`, 2880 / 5760; it was one to
+  three). A revenant of vengeance comes sooner (46.5).
+
+### 46.2 Born of flight, ranked by surviving
+
+- **A MARKED FOE BREAKS.** A marked foe breaks at the young line, **35%** of its health, on **three rolls in four**
+  (`REVENANT_FLEE_CHANCE` 0.75). It was 5% at a fifth, so nearly every revenant was born of the player's death. An
+  unmarked one never runs.
+- **THE WILL FROM RANK II.** `revenantFeud.js WILL_RANK` is 2 (it was 3). A rank-I revenant runs as FLIGHT-FIRST made
+  it (35% on 80%). From rank II its will takes over: it tears away at the killing blow unless its will is broken
+  (section 19), and it runs at a fifth on **35%** (`REVENANT_FLEE_CHANCE_REVENANT`; it was 15%).
+- **RANKED BY SURVIVING.** A revenant ranks up at **every getting-away**: an escape, the will's tear-away, a slip from
+  the choice (the `fled` deed), and the player's own flight (`routed`). A kill of the player or a companion felled
+  ranks it only **every second time** (`BLOOD_RANK` 2): its `blood` counts those deeds since its last rank, rides the
+  save, and any rank-up spends it. It used to be every deed after the first. The page says when one more kill will rank
+  it.
+
+### 46.3 Harder
+
+Each rank weighs more. Health is **+40%** a rank, blows **+15%**, and a class foe's level **+3** a rank
+(`REVENANT_HEALTH_PER_RANK` / `_DAMAGE_` / `_LEVEL_`; they were 0.25, 0.1 and 2). A sworn one keeps the old weight
+(`revenantCompanions.js SWORN_HEALTH_PER_RANK` 0.25, `SWORN_DAMAGE_PER_RANK` 0.1): the oath is the player's reward,
+already weighed by RVN-STARS (section 44), and the new weight is a foe's alone. With the will from rank II and a flight
+that gets away (46.4), a revenant is hard to bring down in more ways than its health.
+
+### 46.4 Its flight craft
+
+From rank II (`CRAFT.RANK`) a revenant breaks away **in its own way**, chosen by its kind (`fleeCraftOf`). The page
+says which, and how to answer it.
+
+| Craft | Who | What it does | The answer |
+|---|---|---|---|
+| **Smoke** | any other person (a class foe) | DFU's Chameleon (`chameleonNormal`) on it for two magic rounds (`SMOKE_ROUNDS` - its first round runs as it lands, AssignBundle's), the door's `vanish` puff where it stood, and it runs | each blow that lands shows it for a moment (`combatVisuals.js`'s reveal) |
+| **Blink** | a caster, a spirit, a lich, an imp, a nymph, an orc shaman, every daedra and atronach | it runs, and **0.8 s** on (`BLINK_DELAY`) a rift opens: its body dissolves in the arcane violet over **600 ms** (`BLINK_MS`), and it is gone - an escape however near | silence it or hold it before the rift opens and it only runs this flight; a blow as it fades closes the rift and it runs on |
+| **Sink** | the walking dead (skeleton, zombie, mummy, vampire) and the spriggan | it stands (`SINK_PACE` 0.05 - the motor's flee takes no pace of none) and goes into the ground over **200 + 1,400 ms** in the earth's tint - an escape however near | a blow as it sinks breaks it: it rises **cornered** and fights to the end |
+| **Bolt** | everything else (beasts, monsters) | it runs at **2.5 times its walk** (`BOLT_PACE`; every other run is FLIGHT-FIRST's 2) | bring it down from range, or be very fast: only a Speed-and-Running-100 runner corners it, measured below |
+
+- **WHERE IT RUNS.** The craft lives inside the one flee law, `revenant.js revenantFleeStep`, which both pools ask
+  each frame. `beginCraft` starts it with `start`. `craftStep` answers `gone` (the pool's escape), `broken` (cornered)
+  or nothing. While a blink fades or a sink goes under, the distance's verdicts wait. A last stand, a kneel or a
+  tear-away mid-flight puts the craft down (`endCraft`, in `revenantFate.js`). The look is the pools' own dissolve
+  (`f.portalFx`, as the tear-away's), and the puff is the scene's door (`playerDoor.js fx`, `hostMagic.js` - the magic
+  engine's `vanish` technique).
+- **DFU.** The Chameleon is DFU's own effect and kind, run as an AssignBundle runs a bundle. A Normal concealment ends
+  at its bearer's own blow (EntityEffectManager.BreakNormalPowerConcealmentEffects, `systems/concealment.js`), and a
+  runner strikes none. DEPARTURE: DFU's EnemyMotor flee is a walk away and nothing more. The blink, the sink and the
+  bolt are the port's own, on the port's flee (FLIGHT-FIRST).
+- **MEASURED** (the flight probe: a rank-3 Orc bolting from 4 m, a chaser holding its line at the player's run speed,
+  31 flights each): a runner at Speed and Running 50 (8.1 m/s) lets every flight get away; at 90/90 (10.94 m/s), every
+  flight; at 100/100 (11.71 m/s), 28 of 31 are cornered. At 2.6 nobody could catch one, and at 2.3 a 90/90 runner
+  cornered most, so 2.5 holds.
+
+### 46.5 Its wounds
+
+The blow that broke it leaves **a wound** on its record (`woundOf`). The class is the ledger's `last`
+(`feudLedger.js noteFeudHarm` - the class of the last harm that reached it). A wound is taken at every escape (the
+`fled` deed) - never by a kill or by the player's flight, since it was never broken then. It keeps **three**
+(`WOUND.MAX`): the oldest heals, and a wound taken again is the newest. The escape's card says it: "It bears your
+mark: Lamed."
+
+| Wound | From | At its stand |
+|---|---|---|
+| Bled | a blade | 90% health |
+| Cracked | a blunt weapon or a fist | 70% poise (it staggers easier - its edge's `poise`) |
+| Maimed | an axe | 90% blows |
+| Lamed | an arrow | Speed -15 |
+| Burned, Frostbitten, Stormstruck, Blighted, Hexed | fire, frost, shock, poison, magic | -15 on its saving throw against that element (its edge's `resist`, over a learned resistance) |
+
+The player's blows make its weaknesses: the next fight with it is shaped by how the last one ended.
+
+### 46.6 Its ambition
+
+What it does while it is away follows who it is (`ambitionOf`, by REVENANT-VOICE's personality - derived, never
+stored):
+
+| Ambition | Who | While it waits |
+|---|---|---|
+| **Vengeance** | brutal, zealous, unhinged | due in **one to two days** (`AMBITION.VENGEANCE_DUE`), and it takes **55%** of the encounter rolls (`VENGEANCE_RETURN`; another takes `REVENANT_RETURN_CHANCE`'s 40%) |
+| **Mastery** | honourable, arrogant, cold | it trains: a wrath **two** days past its due day and every **two** more (`FESTER_DAYS` / `FESTER_EVERY`; RVN9's three and three), so it grows bolder twice as fast - "Grushnak grows bolder - it has been training." |
+| **Plunder** | witty, humorous, craven, weary | it raids the roads: its hoard is **+25%** gold for each whole day past its due day, at most **3x** (`PLUNDER_PER_DAY`, `PLUNDER_MOST`) - the longer you leave it, the richer it is |
+
+A town's rumour of it ends with what it does ("Word is it asks after you by name.").
+
+### 46.7 The Dread
+
+A rank-V revenant that **gets away once more**, with a lair to go to, **ascends** (`mayAscend`). It takes the epithet
+"the Dread" (now the ascended's alone - "the Unquiet" took its place among the risen epithets), the `ascended` deed and
+its card ("Grushnak will run no more. It has gone to ground in the Tomb of Vaness - the Dread now - and waits for you
+there."), and its lair is known.
+
+- **AT HOME.** It never comes on the road again (`revenantToReturn`). It is always at home in its lair, known or due or
+  not (`revenantForLair`). It festers no more. Every town knows where it is, however far ("They say Grushnak the Dread
+  has gone to ground in the Tomb of Vaness, and that nobody who goes in comes out."). Its hunt in the log says: "The
+  Dread will not come to you again. Go to it."
+- **ITS STAND.** It has half again its health (`DREAD.HEALTH` 1.5) and **two last stands**: its rank's, then a quarter
+  of its health (`STANDS`, `SECOND_STAND`). Phase two comes once - the second stand rises in the fury it already has.
+  It **never runs** and its **will never holds**: at home it has nowhere to tear away to, so it kneels at the end, and
+  the player chooses. It drops a **Legendary always** (`revenantLoot`'s `legendary`; its roll is drawn all the same, so
+  no die moves) and **three times** the gold (`DREAD.GOLD`, with a plunderer's hoard over it).
+- **KEPT.** It counts among the three that hunt the player until it falls, and the cap never buries it. Read back,
+  only a rank-V, unsworn record is the Dread. Sworn, it is home no longer.
+
+The way to stop it is the will: a rank-V revenant whose will is broken kneels, and one whose will holds tears away at
+the killing blow - an escape, and it becomes the Dread.
+
+### 46.8 What was not built
+
+- **Trails.** An escape leaving a trail to a refuge, catchable for a while, needs a world position stood by a host.
+  That is host wiring HOST-SPLIT keeps out of this slice. It stays an option for a slice with a module of its own.
+- **No hierarchy.** Revenants do not rank among themselves, lead one another, or fight over places. Each is the player's
+  own memory, alone. A warband (RVN6) is its master's kin, not other revenants.
+
+### 46.9 Words, hosts, pins
+
+**The words.** Every new line goes through `t()` (`rvn.unq.*`, `rvn.kicker.ascended`), drafted in the 13 drafting
+languages. The page (`revenantPage.js`) adds four lines to a living one's row - its flight, the wounds you left, its
+ambition, its blood - and for the Dread its home, its two stands and no will line. The empty page says who rises ("An
+elite or a champion marked Unquiet that kills you - or, far likelier, breaks, runs and gets away"). The card gains the
+`ascended` kind (`revenantCard.js`, a deep red edge).
+
+THE FOUR HOSTS (rule 17e): the craft runs inside `revenantFleeStep`, the flee law both pools ask - `scenes/exteriorFoes.js`
+(the pool `scenes/world.js`, `scenes/worldModes.js`'s buildings and `scenes/exterior.js` each create) WIRED, and
+`scenes/dungeonContext.js` WIRED for a foe of the player's alone (REVENANT-DUNGEON's gate). The mark rides the pools'
+own promotion and champion draw: the street pool hands a puppet's champion `own: false`. The puff is the scene's door
+(`hostMagic.js`, which every host's magic engine sets). No host function grew (`hostceiling.test.js`).
+
+PIN MOVED: about forty revenant test files mark their fixture foes `unquiet: true` (the mark is drawn on a random id) and
+make room for the cap of three. `test/systems/revenant.test.js` (DEEDS AND RANKS - the blood rule, the cap; the due days
+by ambition), `flightfirst.test.js` (the roll and the line: 0.75, WILL_RANK 2), `rvn3_weak.test.js` and
+`feudbalance.test.js` (the will at rank II), `rvn4_stand.test.js` and `rvn6_band.test.js` (a rank-II master's will),
+`rvn7b_rumor.test.js` (the ambition's sentence), `rvn9_fester.test.js` and `auditfeud.test.js` (no revenant of mastery),
+`rvn10_deeds.test.js` (the third felling ranks it), `rvn11c_betray.test.js` (a brutal betrayer due by vengeance's days),
+`rvn2_adapt.test.js` (its wounds on its edge), `feudwire.test.js`, `feudharness.test.js` (only a 100/100 runner corners a
+bolt), `renowngate.test.js` (the return's share by ambition; the page's words), `loot7_champions.test.js` (`own`).
+
+Pinned: `test/systems/revenant/unquiet.test.js` (25); `tools/mutants/unquiet.json` (137).

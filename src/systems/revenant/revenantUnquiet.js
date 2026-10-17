@@ -10,7 +10,7 @@
 //  - BORN OF FLIGHT, RANKED BY SURVIVING: a marked foe breaks and runs far oftener than a plain special foe ever did
 //    (revenant.js's flee numbers), and a revenant climbs by getting away from the player - an escape, the will's
 //    tear-away, a slip from the choice, the player's own flight - every time; a kill (or a companion felled) ranks it
-//    only every BLOOD_RANK times (`bloodRanks`).
+//    only every BLOOD_RANK times (`deedRanks`).
 //  - FLIGHT CRAFT: from CRAFT.RANK it breaks away in its own way (`fleeCraftOf`): a person throws down SMOKE (DFU's
 //    Chameleon on it), a caster, a spirit or a daedra BLINKS out (a rift, gone - unless silenced, held or struck as it
 //    fades), the dead SINK into the ground (a blow in the sinking breaks it, and it rises to fight to the end), and
@@ -84,8 +84,9 @@ export const craftPace = (craft, pace) => (craft === 'bolt' ? CRAFT.BOLT_PACE : 
 
 /**
  * THE CRAFT BEGUN, as it breaks (revenant.js revenantFleeStep's 'start'): its body's `_craft` (what its flee card says),
- * and on the foe record `f` what its run must follow (`f._craft`): SMOKE - the Chameleon on it now (a blow breaks the
- * Normal kind, effects.js) and the door's puff; BLINK - its moment; SINK - its sinking begun (its dissolve, and the health
+ * and on the foe record `f` what its run must follow (`f._craft`): SMOKE - the Chameleon on it now (DFU's Normal kind:
+ * its own blow would end it - systems/concealment.js - and a runner strikes none; a blow on it shows it for a moment,
+ * systems/combatVisuals.js) and the door's puff; BLINK - its moment; SINK - its sinking begun (its dissolve, and the health
  * a blow would take from it). `now` ms.
  */
 export function beginCraft(f, craft, { now = Date.now() } = {}) {
@@ -234,7 +235,7 @@ export const dreadStandHealth = (n, first) => (n >= 2 ? DREAD.SECOND_STAND : fir
 /** A craft's name and what it does, as the page says them. */
 export function craftWords(craft) {
   switch (craft) {
-    case 'smoke': return { name: t('rvn.unq.craft.smoke', 'Smoke'), effect: t('rvn.unq.craft.smokeDo', 'it throws down smoke and all but vanishes as it runs - strike it and it is seen again') };
+    case 'smoke': return { name: t('rvn.unq.craft.smoke', 'Smoke'), effect: t('rvn.unq.craft.smokeDo', 'it throws down smoke and all but vanishes as it runs - each blow that lands shows it for a moment') };
     case 'blink': return { name: t('rvn.unq.craft.blink', 'Blink'), effect: t('rvn.unq.craft.blinkDo', 'it tears open a rift and is gone - silence it, hold it, or strike it as it fades') };
     case 'sink': return { name: t('rvn.unq.craft.sink', 'Sink'), effect: t('rvn.unq.craft.sinkDo', 'it sinks into the earth - strike it before it is under, and it rises to fight to the end') };
     case 'bolt': return { name: t('rvn.unq.craft.bolt', 'Bolt'), effect: t('rvn.unq.craft.boltDo', 'it runs faster than anything you have chased - bring it down from range') };
@@ -278,9 +279,9 @@ export function ambitionWords(a) {
 /** What the towns say of what it does while it waits - a rumour's last sentence. */
 export function ambitionRumor(a) {
   switch (a) {
-    case 'vengeance': return t('rvn.unq.rumor.vengeance', 'They say it asks after you by name.');
-    case 'mastery': return t('rvn.unq.rumor.mastery', 'They say it trains day and night for the day it meets you again.');
-    case 'plunder': return t('rvn.unq.rumor.plunder', 'They say it has been raiding the roads.');
+    case 'vengeance': return t('rvn.unq.rumor.vengeance', 'Word is it asks after you by name.');
+    case 'mastery': return t('rvn.unq.rumor.mastery', 'Word is it trains day and night for the day it meets you again.');
+    case 'plunder': return t('rvn.unq.rumor.plunder', 'Word is it has been raiding the roads.');
     default: return '';
   }
 }

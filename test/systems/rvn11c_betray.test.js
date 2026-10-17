@@ -19,6 +19,7 @@ globalThis.localStorage = {
 const N = await import('../../src/systems/revenant/revenant.js');
 const F = await import('../../src/systems/revenant/revenantFeud.js');
 const RC = await import('../../src/systems/revenant/revenantCompanions.js');
+const { AMBITION } = await import('../../src/systems/revenant/revenantUnquiet.js');
 const S = await import('../../src/systems/companionSlots.js');
 const { setPref, _resetForTests } = await import('../../src/systems/uiPrefs.js');
 const { setWorldMinutes } = await import('../../src/systems/worldTick.js');
@@ -100,7 +101,7 @@ test('RVN11c THE TURN: not sworn, its rank up (never past 5; its signature at 2)
   assert.ok(F.SIGNATURES.includes(x.sig), 'its signature drawn at rank 2');
   assert.equal(x.name, `${x.given} the Betrayer`);
   assert.deepEqual(x.history.at(-1), { deed: 'betrayed', at: DAY * 10 + 5 });
-  assert.equal(x.dueAt, DAY * 10 + 5 + N.REVENANT_RETURN_MIN_MINUTES);
+  assert.equal(x.dueAt, DAY * 10 + 5 + AMBITION.VENGEANCE_DUE[0]);   // PIN MOVED (UNQUIET, Revenants.md section 46): a brutal betrayer wants vengeance - due by its ambition's days
   assert.equal(party.party.some((y) => y.name === r.id), false);
   N.revenantSpared(me, { revenant: { id: r.id } }, { state: 'with' });
   assert.notEqual(party.party.find((y) => y.name === r.id), m, 'its member forgotten');
