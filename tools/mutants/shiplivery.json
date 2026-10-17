@@ -276,8 +276,8 @@
   {
     "name": "SLP-join-host-over",
     "file": "src/scenes/comeSailAway/shipLiveryPaint.js",
-    "old": "if (!j) { j = new Map([...base, ...own]); by.set(own, j); }",
-    "new": "if (!j) { j = new Map([...own, ...base]); by.set(own, j); }",
+    "old": "if (!j) { j = new Map([...base, ...own]); by.set(own, j); ownOf.set(j, own); }",
+    "new": "if (!j) { j = new Map([...own, ...base]); by.set(own, j); ownOf.set(j, own); }",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -285,8 +285,8 @@
   {
     "name": "SLP-join-uncached",
     "file": "src/scenes/comeSailAway/shipLiveryPaint.js",
-    "old": "if (!j) { j = new Map([...base, ...own]); by.set(own, j); }",
-    "new": "if (!j) { j = new Map([...base, ...own]); }",
+    "old": "if (!j) { j = new Map([...base, ...own]); by.set(own, j); ownOf.set(j, own); }",
+    "new": "if (!j) { j = new Map([...base, ...own]); ownOf.set(j, own); }",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -537,8 +537,8 @@
   {
     "name": "DFH-never-loaded",
     "file": "src/scenes/comeSailAway/deckFittingsHost.js",
-    "old": "    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++; else load(f.m);\n",
-    "new": "    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++;\n",
+    "old": "    for (const f of list) { load(f.m); if (ctx.modelBounds?.(f.m)) loaded++; }",
+    "new": "    for (const f of list) { if (ctx.modelBounds?.(f.m)) loaded++; }",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -807,8 +807,8 @@
   {
     "name": "WIRE-key-paint-blind",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "rec.f ?? null, rec.l ?? null, rec.d ?? null]",
-    "new": "rec.f ?? null, rec.d ?? null]",
+    "old": "rec.f ?? null, rec.l ?? null, rec.d ?? null, rec.p ?? null]",
+    "new": "rec.f ?? null, rec.d ?? null, rec.p ?? null]",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -816,8 +816,8 @@
   {
     "name": "WIRE-key-fittings-blind",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "rec.f ?? null, rec.l ?? null, rec.d ?? null]",
-    "new": "rec.f ?? null, rec.l ?? null]",
+    "old": "rec.f ?? null, rec.l ?? null, rec.d ?? null, rec.p ?? null]",
+    "new": "rec.f ?? null, rec.l ?? null, rec.p ?? null]",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -897,7 +897,7 @@
   {
     "name": "CABIN-visit-unstained",
     "file": "src/scenes/sailingCabin.js",
-    "old": "restyle: cabinRestyle(fleetShip(cabin.uid)?.cabin ?? 0) };",
+    "old": "restyle: cabinRestyle(guest ? 0 : fleetShip(cabin.uid)?.cabin ?? 0) };",
     "new": "restyle: null };",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
@@ -951,8 +951,8 @@
   {
     "name": "DPW-turn-unwrapped",
     "file": "src/ui/deckPlanWindow.js",
-    "old": "list[picked] = { ...f, yaw: (f.yaw + d + YAW_STEPS) % YAW_STEPS };",
-    "new": "list[picked] = { ...f, yaw: Math.max(0, f.yaw + d) };",
+    "old": "const f = list[picked], yaw = (f.yaw + d + YAW_STEPS) % YAW_STEPS;",
+    "new": "const f = list[picked], yaw = Math.max(0, f.yaw + d);",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]
@@ -1057,10 +1057,10 @@
     ]
   },
   {
-    "name": "DPD-loaded-asked",
+    "name": "DPD-loaded-unasked",
     "file": "src/scenes/deckPlanDoor.js",
-    "old": "for (const [m] of DECK_FITTINGS) if (!deps.pipeline?.cpuModels?.get(m)) Promise",
-    "new": "for (const [m] of DECK_FITTINGS) Promise",
+    "old": "for (const [m] of DECK_FITTINGS) Promise",
+    "new": "for (const [m] of DECK_FITTINGS) if (!deps.pipeline?.cpuModels?.get(m)) Promise",
     "tests": [
       "test/systems/naval/shiplivery.test.js"
     ]

@@ -39,11 +39,14 @@
 import { cargoLootTarget } from '../systems/comeSailAway/comeSailAwayItems.js';
 import { CARGO_CONTAINER_IMAGE, packedHullWeight } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { t } from '../systems/textManager.js';
-import { fleetShips } from '../systems/fleet.js';
+import { fleetShips, titleOf as titleDeedOf } from '../systems/fleet.js';
 
 /** The hulls that carry a hold (a cargo box): every one but the Rowboat (comeSailAwayBoat.js HULL_NAMES' order). */
 export const HULL_HOLDS = Object.freeze([false, true, true, true, true]);
 export const holdsCargo = (hull) => !!HULL_HOLDS[hull];
+/** AUDIT 2: whether a hull's hold opens - one with a box, or a Rowboat with something aboard (Come Sail Away gives every
+ *  boat her Cargo, and the sea fills it - a cask's goods rowed through, a strand's salvage - with no box to open it by). */
+const opens = (hull, items) => holdsCargo(hull) || (Array.isArray(items) && items.length > 0);
 
 /**
  * @param {any} deps
@@ -72,7 +75,7 @@ export function createHoldDoor(deps) {
   /** A standing boat's hold opened. */
   function openBoat(boat) {
     if (!boat?.Cargo) return said(false, t('naval.hold.none', 'There is no hold here to open.'));
-    if (!holdsCargo(boat.hull)) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
+    if (!opens(boat.hull, boat.Cargo.Items)) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
     return !!deps.openHold?.({ ...cargoLootTarget(boat.Cargo), title: titleOf(boat.uid) });
   }
 
@@ -82,14 +85,24 @@ export function createHoldDoor(deps) {
     if (boat) return openBoat(boat);
     const rec = ships().find((s) => String(s.uid) === String(uid)) ?? null;
     if (!rec) return said(false, t('naval.hold.notYours', 'No such ship of yours.'));
-    if (!holdsCargo(rec.hull)) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
     const r = csa();
+    if (!holdsCargo(rec.hull) && !r?.laidUpHold?.(uid)?.length) return said(false, t('naval.hold.rowboat', 'A rowboat carries no hold.'));
     if (!r?.laidUpHold) return said(false, t('naval.hold.noSea', 'Come Sail Away is not running.'));
     const items = r.laidUpHold(uid);
     const parts = deps.partsOf?.(uid) ?? null;
-    // packed: her parts weigh her hold as well as her timbers (PackBoat) - weighed again as the window shuts
-    const onClose = parts ? () => { parts.weightInKg = Math.fround(packedHullWeight(rec.hull) + Math.fround(deps.weigh?.(items) ?? 0)); } : null;
-    return !!deps.openHold?.({ ...cargoLootTarget({ Items: items, ContainerImage: CARGO_CONTAINER_IMAGE, playerOwned: true }), title: titleOf(uid), ...(onClose ? { onClose } : {}) });
+    // packed: her parts weigh her hold as well as her timbers (PackBoat) - weighed again as the window shuts. AUDIT 2: and
+    // weigh her timbers alone while it is open - what is taken out of her was counted twice (her parts carried it still,
+    // so a take that would fit was refused); and her parts stored in her own hold come back to the pack (none of her
+    // left to the Fleet - no parts, no title - and her hold with no door)
+    const onClose = parts ? () => {
+      const at = items.indexOf(parts);
+      if (at >= 0) { items.splice(at, 1); deps.toPack?.(parts); }
+      parts.weightInKg = Math.fround(packedHullWeight(rec.hull) + Math.fround(deps.weigh?.(items) ?? 0));
+    } : null;
+    if (parts) parts.weightInKg = Math.fround(packedHullWeight(rec.hull));
+    const opened = !!deps.openHold?.({ ...cargoLootTarget({ Items: items, ContainerImage: CARGO_CONTAINER_IMAGE, playerOwned: true }), title: titleOf(uid), ...(onClose ? { onClose } : {}) });
+    if (!opened) onClose?.();
+    return opened;
   }
 
   return {
@@ -97,8 +110,11 @@ export function createHoldDoor(deps) {
     /** THE HOLD'S KEY: the ship at hand's hold, else my last helm's, else the first of my fleet's - or why none. */
     press() {
       const here = atHand();
-      if (here) return openBoat(here);
-      const mine = ships().filter((s) => holdsCargo(s.hull));
+      // AUDIT 2: a boat at hand whose hold will not open (a Rowboat with nothing aboard) is none to open - the last helm's is
+      if (here && (!here.Cargo || opens(here.hull, here.Cargo.Items))) return openBoat(here);
+      // AUDIT 2: never one with no door to her - not standing, her parts not in the pack, no title in the book (the Fleet's
+      // `lost`: her parts in a chest, her hold none of mine to reach)
+      const mine = ships().filter((s) => holdsCargo(s.hull) && (afloat(s.uid) || deps.partsOf?.(s.uid) || titleDeedOf(s.uid)));
       const pick = (lastHelm != null && mine.find((s) => String(s.uid) === String(lastHelm))) || mine[0] || null;
       if (!pick) return said(false, t('naval.hold.noShip', 'You have no ship with a hold.'));
       return openShip(pick.uid);

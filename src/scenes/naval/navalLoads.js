@@ -18,7 +18,8 @@ import { nextShot } from '../../systems/naval/shotKinds.js';
 import { LOAD_GROUPS, loadGroupOf } from '../../systems/naval/navalGunnery.js';
 import { batteryOf } from '../../systems/naval/navalShips.js';
 
-/** The least time between two steps of the wheel (s): a trackpad's stream of small deltas steps once, not twenty times. */
+/** The quiet the wheel keeps before it steps again (s): a trackpad's stream of small deltas steps once, not twenty times
+ *  (AUDIT 2: the quiet since its last notch, not its last step). */
 export const SHOT_WHEEL_S = 0.18;
 
 const SHOT_WORDS = Object.freeze({
@@ -68,12 +69,15 @@ export function createNavalLoads(deps) {
   }
   return {
     cycle,
-    /** The wheel while the guns are laid: a step a notch, no faster than SHOT_WHEEL_S. True: the wheel is the guns'
-     *  (even a notch inside that time - the camera's zoom never takes it while they are laid). */
+    /** The wheel while the guns are laid: a step a turn of it - one after SHOT_WHEEL_S of quiet. True: the wheel is the
+     *  guns' (even a notch inside that time - the camera's zoom never takes it while they are laid). AUDIT 2: the quiet is
+     *  from the LAST notch (a debounce): timed from the last step, a trackpad's inertial stream stepped every SHOT_WHEEL_S
+     *  of it, five loads in one swipe, each drawing the laid battery. */
     wheel(deltaY) {
       if (!deps.aiming() || !deltaY || !deps.boat()) return false;
-      const now = deps.now();
-      if (now - wheelAt >= SHOT_WHEEL_S) { wheelAt = now; cycle(deltaY > 0 ? 1 : -1); }
+      const now = deps.now(), quiet = now - wheelAt >= SHOT_WHEEL_S;
+      wheelAt = now;
+      if (quiet) cycle(deltaY > 0 ? 1 : -1);
       return true;
     },
     /** The helm button's label - "Broadsides: Grapeshot" - for the group at hand; null with no guns to load. */

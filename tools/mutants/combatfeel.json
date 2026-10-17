@@ -173,8 +173,8 @@
   {
     "name": "CF-pass-twice",
     "file": "src/systems/naval/navalShots.js",
-    "old": "      (b.passed ??= new Set()).add(t.id);\n      emit({ type: 'pass'",
-    "new": "      emit({ type: 'pass'",
+    "old": "    (b.passed ??= new Set()).add(id);\n    emit({ type: 'pass'",
+    "new": "    emit({ type: 'pass'",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -182,8 +182,8 @@
   {
     "name": "CF-pass-on-strike",
     "file": "src/systems/naval/navalShots.js",
-    "old": " || (ship && ship.t.id === t.id && ship.e.t === firstT)) continue;",
-    "new": ") continue;",
+    "old": "      if (ship && ship.t.id === t.id && ship.e.t === firstT) { b.near?.delete(t.id); continue; }\n",
+    "new": "",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -191,8 +191,8 @@
   {
     "name": "CF-pass-reach",
     "file": "src/systems/naval/navalShots.js",
-    "old": "      if (near.gap > NEAR_MISS_M) continue;",
-    "new": "      if (near.gap > NEAR_MISS_M * 2) continue;",
+    "old": "      if (near.gap <= NEAR_MISS_M && (!was",
+    "new": "      if (near.gap <= NEAR_MISS_M * 2 && (!was",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -281,7 +281,7 @@
   {
     "name": "CF-drench-no-jar",
     "file": "src/scenes/naval/navalFeel.js",
-    "old": "    deps.shake?.(NEAR_SHAKE * (0.4 + 0.6 * k));\n    return true;",
+    "old": "    if (feet && boxGap(best.h.box, feet) <= DRENCH_FEET_M) deps.shake?.(NEAR_SHAKE * (0.4 + 0.6 * k));\n    return true;",
     "new": "    return true;",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
@@ -326,8 +326,8 @@
   {
     "name": "CF-host-unfelt",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "      feel.struck(quatRotate(boatPose(boat).rotation, [0, 0, 1]), e.dir);",
-    "new": "      feel.struck([0, 0, 1], e.dir);",
+    "old": "feel.struck(quatRotate(boatPose(boat).rotation, [0, 0, 1]), e.dir);",
+    "new": "feel.struck([0, 0, 1], e.dir);",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
@@ -533,7 +533,7 @@
   {
     "name": "CF-men-model",
     "file": "src/scenes/naval/navalTally.js",
-    "old": "rig: last.rig, men: last.men } : null;",
+    "old": "rig: last.rig, men: Math.round(last.men) } : null;",
     "new": "rig: last.rig } : null;",
     "tests": [
       "test/systems/naval/combatfeel.test.js"

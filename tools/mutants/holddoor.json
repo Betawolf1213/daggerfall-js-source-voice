@@ -83,8 +83,8 @@
   {
     "name": "HOLD-rowboat-picked",
     "file": "src/scenes/holdDoor.js",
-    "old": "const mine = ships().filter((s) => holdsCargo(s.hull));",
-    "new": "const mine = ships();",
+    "old": "const mine = ships().filter((s) => holdsCargo(s.hull) && (afloat(s.uid)",
+    "new": "const mine = ships().filter((s) => (afloat(s.uid)",
     "tests": [
       "test/scenes/holddoor.test.js"
     ]

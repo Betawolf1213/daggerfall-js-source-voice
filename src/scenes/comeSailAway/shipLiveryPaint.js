@@ -117,8 +117,27 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
     let by = joined.get(base);
     if (!by) { by = new Map(); joined.set(base, by); }
     let j = by.get(own);
-    if (!j) { j = new Map([...base, ...own]); by.set(own, j); }
+    if (!j) { j = new Map([...base, ...own]); by.set(own, j); ownOf.set(j, own); }
     return j;
   }
-  return { remapOf, mapsOf, _records: records };
+  /** AUDIT 2: a joined remap -> the paint's own keys in it. */
+  const ownOf = new WeakMap();
+  /** AUDIT 2: mesh -> (own map -> whether any of its sub-meshes' pictures is one the paint repaints). */
+  const touched = new WeakMap();
+  /**
+   * AUDIT 2: the remap `mesh` is drawn by - her paint's (`remap`) only where it repaints one of its pictures, else the
+   * host's `base`. The renderer caches each sub-mesh's picture by its remap's identity, and Daggerfall's models are
+   * shared by every boat that hangs them: two boats of one hull in two paints (SEA-COLOURS: most of a sea) missed that
+   * cache on every sub-mesh of every shared model every frame, and made its key's string again each time.
+   */
+  function remapFor(mesh, remap, base) {
+    if (remap === base || !remap || !mesh?.subMeshes) return remap;
+    const own = ownOf.get(remap) ?? remap;
+    let by = touched.get(mesh);
+    if (!by) { by = new WeakMap(); touched.set(mesh, by); }
+    let v = by.get(own);
+    if (v === undefined) { v = mesh.subMeshes.some((sm) => own.has(`${sm.textureArchive}_${sm.textureRecord}`)); by.set(own, v); }
+    return v ? remap : base;
+  }
+  return { remapOf, remapFor, mapsOf, _records: records };
 }

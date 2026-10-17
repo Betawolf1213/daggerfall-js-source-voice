@@ -28,6 +28,7 @@ import { fittingsOf } from './naval/deckFittings.js';   // DECK-PROPS: her fitti
 import { plateMetal } from './armorMaterials.js';   // REFIT-ORES: a piece of plate's metal
 import { isLocked } from './item/itemLock.js';   // REFIT-ORES: a locked piece is never melted down
 import { isBound } from './item/itemBound.js';   // REFIT-ORES: nor a bound one
+import { isSummoned } from './inventory.js';   // AUDIT 2: nor a conjured one
 import { WEAPONS } from '../characters/weapons.js';
 import { t } from './textManager.js';   // REFIT-ORES: a metal's hint in the player's language
 
@@ -94,9 +95,10 @@ export function refitMetalOf(item) {
  *  unasked (takeMaterials, after the ingots): never one worn, locked (item/itemLock.js), bound (item/itemBound.js), a
  *  quest's, an artifact, a sigil's (systems/aetheric.js) or a player's make (`provenance`, a minted piece's mark); never
  *  enchanted, DFU's way or the item maker's (inventory.js isEnchanted); never graded past Common - a rolled tier, its
- *  affixes, a Legendary's record, DFU's magic mark (loot/lootRarity.js rarityEligible's own list) - nor socketed. */
+ *  affixes, a Legendary's record, DFU's magic mark (loot/lootRarity.js rarityEligible's own list) - nor socketed. AUDIT 2:
+ *  nor conjured (Create Item's, inventory.js isSummoned): a cast's steel paid a Steel tier from magicka. */
 const listed = (v) => Array.isArray(v) && v.length > 0;
-export const meltable = (item) => !!item && item.equipSlot == null && !isLocked(item) && !isBound(item) && !item.questItem
+export const meltable = (item) => !!item && item.equipSlot == null && !isLocked(item) && !isBound(item) && !isSummoned(item) && !item.questItem
   && !item.artifact && !item.sigil && typeof item.provenance !== 'string'
   && !listed(item.enchantments) && !listed(item.customEnchantments)
   && !item.magic && (item.rarity == null || item.rarity === 'common') && !listed(item.affixes) && !item.legendary
@@ -181,20 +183,46 @@ export function meltCount(lists, kind, n) {
   for (const list of lists) for (const it of list ?? []) if (it && m.templates.includes(it.templateIndex)) ingots += Math.max(1, it.stackCount | 0 || 1);
   return Math.max(0, Math.min(n, materialCount(lists, kind)) - ingots);
 }
-/** Whether every one of `mats` (`{ kind, n }`, in their order) can be taken out of `lists` together - a thing taken for
- *  one is not there for the next (REFIT-ORES: a steel ingot is Steel's and Iron's both). Pure: tried on copies. */
+/** AUDIT 2: whether `tpl`, one of `kind`'s templates, is another store's too (a steel ingot: Iron's and Steel's). */
+const lentTemplate = (kind, tpl) => Object.keys(MATERIALS).some((k) => k !== kind && MATERIALS[k].templates.includes(tpl));
+/** AUDIT 2: the order a tier's stores are taken in - a store no piece is melted for first (Iron, Timber, Pitch: its ingots
+ *  and bundles alone), then a metal's, which melts down what the ingots leave it. A steel ingot is Iron's last (its
+ *  templates' order) and Steel's first, so Iron takes one only when no iron is to hand, and Steel melts a blade for what
+ *  it lent: taken ore first, 10 steel ingots and 4 steel swords failed a Small Ship's Guns Steel (4 Steel, 10 Iron) the
+ *  stores could pay. Stable: the stores of a kind keep their order. */
+const takeOrder = (mats) => [...mats].sort((a, b) => Number(MATERIALS[a.kind]?.metal != null) - Number(MATERIALS[b.kind]?.metal != null));
+/** Whether every one of `mats` (`{ kind, n }`) can be taken out of `lists` together - a thing taken for one is not there
+ *  for the next (REFIT-ORES: a steel ingot is Steel's and Iron's both), taken in `takeOrder`. Pure: tried on copies. */
 export function materialsFor(lists, mats) {
   const copy = lists.map((l) => (l ?? []).map((it) => (it ? { ...it } : it)));
-  return mats.every((m) => takeMaterials(copy, m.kind, m.n));
+  return takeOrder(mats).every((m) => takeMaterials(copy, m.kind, m.n));
+}
+/** AUDIT 2: every one of `mats` taken out of `lists` as `materialsFor` tried them (`takeOrder`) - all or none. Answers
+ *  whether they were taken. */
+export function takeAllMaterials(lists, mats) {
+  if (!materialsFor(lists, mats)) return false;
+  for (const m of takeOrder(mats)) takeMaterials(lists, m.kind, m.n);
+  return true;
+}
+/** AUDIT 2: of each of `mats`, taken together (`takeOrder`), how many would be pieces melted down - in `mats`' own order
+ *  (meltCount's, after the stores before it have taken their share: the steel ingots Iron takes are not Steel's). Pure. */
+export function meltCounts(lists, mats) {
+  const copy = lists.map((l) => (l ?? []).map((it) => (it ? { ...it } : it)));
+  const melt = new Map();
+  for (const m of takeOrder(mats)) { melt.set(m, meltCount(copy, m.kind, m.n)); takeMaterials(copy, m.kind, m.n); }
+  return mats.map((m) => melt.get(m) ?? 0);
 }
 /** `n` of `kind` taken out of `lists`, the first list first (a stack thinned, an item gone at its last) - all or none.
  *  Answers whether they were taken. */
 export function takeMaterials(lists, kind, n) {
   if (materialCount(lists, kind) < n) return false;
-  const t = MATERIALS[kind].templates;
   let left = n;
-  // REFIT-ORES: the ingots first, every list over, and only then a piece melted down
-  for (const take of [(it) => !!it && t.includes(it.templateIndex), (it) => isOf(it, kind)]) for (const list of lists) {
+  // REFIT-ORES: the ingots first, every list over, and only then a piece melted down. AUDIT 2: a store's OWN ingots before
+  // one another store counts too (a steel ingot, Iron's and Steel's both) - Iron took the pack's first, and a Steel tier's
+  // ingots went to an Iron store with iron ingots to hand
+  const t = MATERIALS[kind].templates, lent = t.filter((tpl) => lentTemplate(kind, tpl)), own = t.filter((tpl) => !lent.includes(tpl));
+  const ingots = [own, lent].filter((ts) => ts.length).map((ts) => (it) => !!it && ts.includes(it.templateIndex));
+  for (const take of [...ingots, (it) => isOf(it, kind)]) for (const list of lists) {
     for (let i = 0; list && i < list.length && left > 0;) {
       const it = list[i];
       if (!take(it)) { i++; continue; }

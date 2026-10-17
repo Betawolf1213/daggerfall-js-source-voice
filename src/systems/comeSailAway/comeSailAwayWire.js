@@ -180,4 +180,4 @@ function shipNameOf(n, count, i) {
 
 /** A change key, so a frame carries the record only when the word moved (the full frame always does). CSA-K: the way
  *  is in it, so a boat brought up short is said at once (its readers stop leading it). */
-export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n || rec.f || rec.l || rec.d ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once; SHIP-COLOURS: and a new flag; SHIP-LIVERY: and a new paint
+export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n || rec.f || rec.l || rec.d || rec.p ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null, rec.p ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once; SHIP-COLOURS: and a new flag; SHIP-LIVERY: and a new paint; AUDIT 2: and her name board shown or taken down (SHIP-PLAQUE's `p`)

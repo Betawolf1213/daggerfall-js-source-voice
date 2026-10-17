@@ -336,8 +336,8 @@
   {
     "name": "NAV1G-gone-unsaid",
     "file": "src/systems/naval/navalShots.js",
-    "old": "      if (age > BALL_LIFE) { emit({ type: 'gone', volley: b.volley, shooter: b.shooter, gun: b.gun }); continue; }",
-    "new": "      if (age > BALL_LIFE) continue;",
+    "old": "passTold(b, id); emit({ type: 'gone', volley: b.volley, shooter: b.shooter, gun: b.gun }); continue; }",
+    "new": "passTold(b, id); continue; }",
     "tests": [
       "test/systems/naval/navaudit_guns.test.js",
       "test/systems/naval/nav_a_guns.test.js"

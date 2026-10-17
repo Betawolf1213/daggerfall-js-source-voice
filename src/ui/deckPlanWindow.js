@@ -10,6 +10,7 @@
 // them (scenes/fleetHost.js `deck`), and every player who sights her sees them, stood in her own tree. Close leaves her
 // as she was.
 import { t } from '../systems/textManager.js';
+import { boxesMeet } from '../systems/naval/shipLife.js';   // AUDIT 2: two turned boxes' overlap - the berths' own law (QUAY-CROSSING)
 import { DECK_FITTINGS, DECK_FITTINGS_MAX, FITTING_GAP, YAW_STEPS, fittingsOf, fittingKind } from '../systems/naval/deckFittings.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedStyle.js';
 
@@ -44,11 +45,30 @@ export function fittingName(m) {
   const n = DECK_FITTINGS.filter(([, k]) => k === kind).findIndex(([id]) => id === m) + 1;
   return kind === 'chest' ? t('naval.deck.chest', 'Chest {n}', { n }) : t('naval.deck.crate', 'Crate {n}', { n });
 }
+/** AUDIT 2: a fitting's box on her deck - centred on (x, z), `fp` [width, depth], turned `yaw` steps (a step turns its
+ *  front, +z, toward her starboard, +x) - its four corners in her frame, drawn in by FIT_INSET. Pure. */
+export function fittingCorners(x, z, yaw, fp) {
+  const a = ((Number(yaw) || 0) / YAW_STEPS) * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
+  const hw = Math.max(0, fp[0] / 2 - FIT_INSET), hd = Math.max(0, fp[1] / 2 - FIT_INSET);
+  return [[-hw, -hd], [hw, -hd], [hw, hd], [-hw, hd]].map(([lx, lz]) => [x + lx * c + lz * s, z - lx * s + lz * c]);
+}
+/** AUDIT 2: how far a box's corners are drawn in before they are read (m) - a crate flush with her rail stands. */
+export const FIT_INSET = 0.05;
 /** Why `at` (her frame's x, z) cannot take a fitting - null where it can: her deck there, room from every other
- *  (`others`, the fitting being moved left out by the caller). Pure. */
-export function placeRefusal(deck, at, others) {
+ *  (`others`, the fitting being moved left out by the caller). AUDIT 2: with `me` (`{ m, yaw }` and `footprint(m)`, a
+ *  model's box), its whole box - every corner on her deck (a crate hung over her rail stood there) and clear of every
+ *  other's (two set into each other did); the centres FITTING_GAP apart still, for a model whose box is not in. Pure.
+ * @param {any} deck @param {number[]} at @param {any[]} others @param {{ m: number, yaw: number } | null} [me]
+ * @param {(m: number) => number[] | null} [footprint]
+ */
+export function placeRefusal(deck, at, others, me = null, footprint = () => null) {
   if (!deck?.walkable?.(at[0], at[1])) return t('naval.deck.offDeck', 'That is no deck of hers - set it on her open deck.');
   if (others.some((f) => Math.hypot(f.x - at[0], f.z - at[1]) < FITTING_GAP)) return t('naval.deck.crowded', 'Too near another fitting.');
+  const fp = me ? footprint(me.m) : null;
+  if (!fp) return null;
+  const box = fittingCorners(at[0], at[1], me.yaw, fp);
+  if (!box.every(([x, z]) => deck.walkable(x, z))) return t('naval.deck.offDeck', 'That is no deck of hers - set it on her open deck.');
+  if (others.some((f) => { const o = footprint(f.m); return !!o && boxesMeet(box, fittingCorners(f.x, f.z, f.yaw, o)); })) return t('naval.deck.crowded', 'Too near another fitting.');
   return null;
 }
 
@@ -195,7 +215,7 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
     if (i >= 0) { picked = i; dragging = true; if (pointerId != null) canvas.setPointerCapture?.(pointerId); tell(t('naval.deck.taken', '{what} taken up - drag it, turn it, or take it away.', { what: fittingName(list[i].m) })); return; }
     const [x, z] = toDeck(sx, sy).map(snap);
     if (list.length >= DECK_FITTINGS_MAX) { tell(t('naval.deck.full', 'Her deck carries {max} fittings at the most.', { max: DECK_FITTINGS_MAX }), true); return; }
-    const why = placeRefusal(deck, [x, z], list);
+    const why = placeRefusal(deck, [x, z], list, { m: Number(chosen), yaw: 0 }, footprint);   // AUDIT 2: its whole box
     if (why) { tell(why, true); return; }
     list.push({ m: chosen, x, z, yaw: 0 });
     picked = list.length - 1;
@@ -206,12 +226,20 @@ export function mountDeckPlanWindow(host, { name, deck, fittings, footprint = ()
     if (!dragging || picked < 0) return;
     const [x, z] = toDeck(...local(e)).map(snap);
     const others = list.filter((_, i) => i !== picked);
-    if (!placeRefusal(deck, [x, z], others)) { list[picked] = { ...list[picked], x, z }; draw(); }
+    if (!placeRefusal(deck, [x, z], others, list[picked], footprint)) { list[picked] = { ...list[picked], x, z }; draw(); }
   });
   const drop = () => { dragging = false; };
   canvas.addEventListener('pointerup', drop);
   canvas.addEventListener('pointercancel', drop);
-  function turn(d) { if (picked < 0) return; const f = list[picked]; list[picked] = { ...f, yaw: (f.yaw + d + YAW_STEPS) % YAW_STEPS }; draw(); }
+  function turn(d) {
+    if (picked < 0) return;
+    const f = list[picked], yaw = (f.yaw + d + YAW_STEPS) % YAW_STEPS;
+    // AUDIT 2: turned as it is set - never round into another, nor over her rail
+    const why = placeRefusal(deck, [f.x, f.z], list.filter((_, i) => i !== picked), { m: f.m, yaw }, footprint);
+    if (why) { tell(why, true); return; }
+    list[picked] = { ...f, yaw };
+    draw();
+  }
   function takeAway() { if (picked < 0) return; list.splice(picked, 1); picked = -1; tell(t('naval.deck.removed', 'The fitting is taken away.')); }
   function keep() {
     const r = save(fittingsOf(list));

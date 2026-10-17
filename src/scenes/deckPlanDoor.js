@@ -22,7 +22,7 @@ export function createDeckPlanDoor(deps) {
     const rec = fleetShip(uid);
     const deck = rec ? deps.pool?.deckOf?.(rec.hull) ?? null : null;
     if (!rec || !deck?.count) { deps.say?.(t('naval.deck.unknown', 'Her deck is not known yet - stand her in the world first.')); return false; }
-    for (const [m] of DECK_FITTINGS) if (!deps.pipeline?.cpuModels?.get(m)) Promise.resolve(deps.pipeline?.getGpuMesh?.(m)).catch(() => {});
+    for (const [m] of DECK_FITTINGS) Promise.resolve(deps.pipeline?.getGpuMesh?.(m)).catch(() => {});   // AUDIT 2: each asked, loaded or not - the ask pins it (a house's own hold freed it under the plan)
     const w = (deps.overlay ?? createDeckPlanOverlay)({ name: shipLabel(rec), deck, fittings: rec.deck ?? [], footprint, save: (list) => deps.act(uid, 'deck', list) });
     if (w) deps.show(w);
     return !!w;

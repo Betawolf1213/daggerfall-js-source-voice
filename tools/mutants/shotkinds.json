@@ -191,8 +191,8 @@
   {
     "name": "SHOT-ball-sweep-bore",
     "file": "src/systems/naval/navalShots.js",
-    "old": "    const radius = shotGun(b.gun, GUNS[b.gun], b.shot)?.radius ?? 0.1;",
-    "new": "    const radius = GUNS[b.gun]?.radius ?? 0.1;",
+    "old": "    const radius = (b.radius ??= shotGun(b.gun, GUNS[b.gun], b.shot)?.radius ?? 0.1);",
+    "new": "    const radius = (b.radius ??= GUNS[b.gun]?.radius ?? 0.1);",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]
@@ -344,7 +344,7 @@
   {
     "name": "SHOT-loads-wheel-unlatched",
     "file": "src/scenes/naval/navalLoads.js",
-    "old": "      if (now - wheelAt >= SHOT_WHEEL_S) { wheelAt = now; cycle(deltaY > 0 ? 1 : -1); }",
+    "old": "      if (quiet) cycle(deltaY > 0 ? 1 : -1);",
     "new": "      cycle(deltaY > 0 ? 1 : -1);",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
@@ -362,8 +362,8 @@
   {
     "name": "SHOT-loads-wheel-one-way",
     "file": "src/scenes/naval/navalLoads.js",
-    "old": "cycle(deltaY > 0 ? 1 : -1); }",
-    "new": "cycle(1); }",
+    "old": "if (quiet) cycle(deltaY > 0 ? 1 : -1);",
+    "new": "if (quiet) cycle(1);",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]

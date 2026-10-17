@@ -23,8 +23,8 @@
 
 import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
-  shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
-  REFIT_NUMERALS, meltCount, materialsFor, refitShare, setShipLivery, setShipCabin, setShipFittings, setShipPlaque,
+  shipLabel, upgradeCost, materialCount, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
+  REFIT_NUMERALS, meltCounts, materialsFor, takeAllMaterials, refitShare, setShipLivery, setShipCabin, setShipFittings, setShipPlaque,
 } from '../systems/fleet.js';
 import { captainRefit } from '../systems/naval/captainTree.js';   // CAPTAIN-TREE: her captain's stars over her refits
 import { flagSizeOf } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: the hulls that fly a flag
@@ -207,7 +207,8 @@ export function createFleetHost(deps) {
       const tier = Math.max(0, Math.min(UPGRADE_TIERS, rec.upgrades[l.id] | 0));
       const cost = upgradeCost(rec.hull, l.id, tier);
       // REFIT-ORES: a metal's count says how much of it a piece of plate or a blade melted down would give (`melt`)
-      const mats = cost ? cost.mats.map((m) => ({ kind: m.kind, label: MATERIALS[m.kind].label, hint: MATERIALS[m.kind].hint, n: m.n, have: materialCount(lists, m.kind), melt: meltCount(lists, m.kind, m.n) })) : [];
+      const melts = cost ? meltCounts(lists, cost.mats) : [];   // AUDIT 2: the stores taken together, as the act takes them
+      const mats = cost ? cost.mats.map((m, i) => ({ kind: m.kind, label: MATERIALS[m.kind].label, hint: MATERIALS[m.kind].hint, n: m.n, have: materialCount(lists, m.kind), melt: melts[i] })) : [];
       const locked = !!cost && cost.level > level;   // REFIT-ORES: a metal tier asks her captain's level
       const afford = !!cost && !locked && gold >= cost.gold && materialsFor(lists, cost.mats);
       return {
@@ -341,7 +342,7 @@ export function createFleetHost(deps) {
       const lists = [pack(), at.boat?.Cargo?.Items ?? []];
       for (const m of row.next.mats) if (materialCount(lists, m.kind) < m.n) return said(false, `The shipwright needs ${m.n} ${m.label} (you have ${m.have}).`);
       if (!materialsFor(lists, row.next.mats)) return said(false, t('naval.refit.short', 'The shipwright needs more - one store will not serve for two.'));   // REFIT-ORES: a steel ingot counted for Steel and Iron both
-      for (const m of row.next.mats) takeMaterials(lists, m.kind, m.n);
+      takeAllMaterials(lists, row.next.mats);   // AUDIT 2: as materialsFor tried them
       deps.pay?.(row.next.gold);
       addRefit(uid, row.id);
       n?.refitBoat?.(at.boat);
@@ -360,11 +361,14 @@ export function createFleetHost(deps) {
     const rec = fleetShip(boat.uid);
     return rec ? captainRefit(refitOf(rec), deps.captain?.()?.stats?.() ?? null) : refitOf(null);
   };
-  /** CAPTAIN-TREE: every boat of mine standing read again on her captain's stars, once a sky is accepted - the sea fight's
-   *  state built on her new whole (her hurts the share of it they were, `refitBoat`), the helm's hold weighed again. */
+  /** CAPTAIN-TREE: every ship of mine read again on her captain's stars, once a sky is accepted - the sea fight's state
+   *  built on her new whole (her hurts the share of it they were, `refitBoat`), the helm's hold weighed again. AUDIT 2: a
+   *  laid-up or packed ship's too - her state is kept by her number from the page's first read of her (fleetStatus), and
+   *  a summons stands her on it: she sailed out on the stars given back. */
   function restat() {
     const n = naval(), r = csa();
-    for (const b of placed()) n?.refitBoat?.(b);
+    const standing = new Map(placed().map((b) => [b.uid, b]));
+    for (const rec of fleetShips()) n?.refitBoat?.(standing.get(rec.uid) ?? { uid: rec.uid, hull: rec.hull });
     if (r?.state?.CurrentBoat) r.UpdateBoatCargoMod?.(r.state.CurrentBoat);
   }
   /** Her name, or '' (the boats' word, the hover's line). */

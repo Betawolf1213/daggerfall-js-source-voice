@@ -42,6 +42,10 @@ export const LIVERY_ART = Object.freeze({
 
 const _art = new Map();   // archive -> [record, picture][] - painted once
 const artOf = (archive) => { if (!_art.has(archive)) _art.set(archive, LIVERY_ART[archive].art()); return _art.get(archive); };
+/** AUDIT 2: every port ship's base pictures painted for the livery painter now - the pool's preload asks, while the world
+ *  loads (AUDIT GN2-PF3's law): the first livery of a port hull painted them inside the pool's draw, 50 ms the first time
+ *  she was seen painted (SEA-COLOURS paints the sea's from its first sail). */
+export function warmLiveryArt() { for (const archive of Object.keys(LIVERY_ART)) artOf(Number(archive)); }
 
 /**
  * A livery over one port ship's pictures: each record it changes, `{ record, picture, glow, night }` - its picture

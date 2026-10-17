@@ -38,6 +38,7 @@
 
 import { loadComeSailAwayModels, rendererModel, rendererModelKey, bundleSlots, PORT_SHIPS } from '../../systems/comeSailAway/comeSailAwayModels.js';
 import { createLiveryPaint } from './shipLiveryPaint.js';   // SHIP-LIVERY: a boat's paint, painted once and drawn by a remap
+import { warmLiveryArt } from '../../world/ships/shipLiveryArt.js';   // AUDIT 2: the painter's base pictures, while the world loads
 import { fitBoats } from './deckFittingsHost.js';   // DECK-PROPS: her fittings, stood in her tree
 import { liveryCode } from '../../systems/naval/shipLivery.js';
 import { spawnBoat, boatAssetNeeds, DUNGEON_LIGHT_HANDLER, HULL_NAMES, setBoatVariant, Boat, FIRST_HULL_MODEL_ID, meshLocalBounds, worldBounds } from '../../systems/comeSailAway/comeSailAwayBoat.js';
@@ -431,6 +432,10 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
         catch (e) { warnOnce(`tex:${art.archive}`, `[come-sail-away] TEXTURE.${art.archive} will not load - the boats' faces in it draw nothing`, e); }
       }
       for (let hull = 0; hull < HULL_NAMES.length; hull++) deckOf(hull, 0);   // DECK-WALK: baked while the world loads (10-50 ms a hull), never mid-voyage (AUDIT NAV2 F57: every rig's deck, one a hull)
+      // AUDIT 2: and, the same way, each hull's planking and bows read for her name boards (SHIP-PLAQUE: 10-50 ms a hull, the
+      // pool's draw's the first time a named ship of it was seen) and the livery painter's base pictures
+      for (let hull = 0; hull < HULL_NAMES.length; hull++) plaques.prime(hull);
+      try { warmLiveryArt(); } catch { /* painted as she is first seen painted - the paint shop's own ask says what failed */ }
       preloaded = true;
       return true;
     })();
@@ -781,6 +786,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     const pxPerM = cull && eye ? r._proj[5] * (r.gl?.drawingBufferHeight ?? 0) / 2 : 0;   // a metre's pixels a metre off
     let n = 0;
     const one = (gpu, m, texRemap = drawRemap) => {
+      if (texRemap !== drawRemap) texRemap = paints.remapFor(gpu, texRemap, drawRemap);   // AUDIT 2: her paint only on a mesh it repaints - the renderer's picture cache keys on the remap
       if (cull && gpu.bounds && gpu.bounds[3] > 0) {
         const sp = transformSphere(m, gpu.bounds, _cullSphere);
         if (pxPerM > 0 && 2 * sp[3] * pxPerM < CULL_DETAIL_PX * Math.hypot(sp[0] - eye[0], sp[1] - eye[1], sp[2] - eye[2])) return;   // under a pixel
@@ -827,7 +833,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       const frame = hullRec ? made(hullRec) : null;   // PERF-SAILS2: made as it is read
       if (batch && frame) one(batch.mesh, frame, paint);
       for (const c of still) if (!batch || !frame || !batch.nodes.has(c.node)) one(c.gpu, made(c.rec), paint);
-      const shown = boat.MeshObject ? plaqueNameOf(boat) : null;   // SHIP-PLAQUE: her name boards, in her hull's frame
+      const shown = boat.GameObject?.activeSelf && boat.MeshObject?.activeSelf ? plaqueNameOf(boat) : null;   // SHIP-PLAQUE: her name boards, in her hull's frame - AUDIT 2: only where she is drawn (a hidden peer's boat - her look 'hidden' - sailed two boards with her name across the water; mine, off while I am indoors, hung them in the room)
       if (shown) for (const mesh of plaques.meshesFor(boat, shown)) one(mesh, frame ?? worldOf(boat.MeshObject), paint);
       if (fade < 1) r.setDissolve?.(1);
     }

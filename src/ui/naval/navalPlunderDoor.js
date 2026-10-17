@@ -81,6 +81,22 @@ function shut(slot) {
  * @param {NavalWindowSlot} slot
  * @param {any} deps - the window's own, less `onExit` (the door's close is its way out), plus `onClose(reason)`
  */
+/**
+ * AUDIT 2: THE QUICKDIAL KEY'S CLOSE of a door's window (enhancedOverlays.js closeTopOverlay pops it, then calls this): a
+ * window that asks before it lets a change go (the captain's sky's `tryClose`: a change not accepted said once, as its
+ * Close and Escape say it - the Firmament's own overlayClose, AUDIT UICALM-FIRM1 L4) is asked; refused, the closer
+ * stands again on the stack (`again`), and let go, the window's own close comes back through the door's `onExit`. Any
+ * other window, and one not mounted yet, is closed. The key had closed the sky at once, its stars thrown away unasked.
+ * @param {() => any} viewOf @param {() => boolean} firedOf @param {(why: string) => void} close @param {(closer: () => void) => void} again
+ */
+export function dialCloser(viewOf, firedOf, close, again) {
+  return function closer() {
+    const view = viewOf();
+    if (typeof view?.tryClose !== 'function') { close('close'); return; }
+    if (view.tryClose() === false && !firedOf()) again(closer);
+  };
+}
+
 function openNavalWindow(slot, deps) {
   // ETHER-CHART (AUDIT CAPTAIN'S SEA, at the merge of SHIPYARDS): the chart of the Eltheric Ocean is neither a sea fight's
   // window nor a yard's, and pops no page - the branch's arm read it as the sea fight's, main's as the yard's
@@ -107,7 +123,7 @@ function openNavalWindow(slot, deps) {
     if (slot.open === overlay) slot.open = null;
     deps.onClose?.(why);
   };
-  unregister = registerOverlay(() => close('close'));
+  unregister = registerOverlay(dialCloser(() => view, () => fired, close, (closer) => { unregister = registerOverlay(closer); }));   // AUDIT 2: the QuickDial key asks a window that asks
   const overlay = {
     isChoiceWindow: true,
     get done() { return fired; },

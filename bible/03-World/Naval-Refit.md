@@ -20,7 +20,9 @@ And: *"No band aids, I want you to be as detailed as possible."*
 
 The owner, later the same day, to the queue: *"I also want the ability to have a name plaque on the ship itself for those
 who want to show off their ship name. Additionally, enemies and merchants should have their own unique liveries, flags
-hosted, etc"* - two slices more, SHIP-PLAQUE (12) and SEA-COLOURS (13).
+hosted, etc"* - two slices more, SHIP-PLAQUE (12) and SEA-COLOURS (13). And after them: *"Please once more audit
+everything and ensure perfection. Also fix a pre existing issue where AI can actually use the overworld as time
+dilation"* - AUDIT 2 and TIME-DILATION (14).
 
 The owner, the same day, to the queue: *"A firmament styled captain skill tree along with making improvements to the
 ship upgrade system"* - and a player's ask beside it: a skill tree for the ship *"integrated with leveling"*, levels that
@@ -51,6 +53,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 | SHIP-PLAQUE | 12 | her name on her bows, where her captain shows it: a board of dark wood with her name cut in gilt in Daggerfall's own lettering, laid on each bow's planking below her rail and read the right way from alongside, seen by every player | `scenes/comeSailAway/shipPlaque.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`hullSurface`, `plaqueNameOf`, the draw's boards), `systems/fleet.js` (`plaque`, `setShipPlaque`), `scenes/fleetHost.js` (`plaque`), `ui/fleetPage.js` (Show her name), `systems/comeSailAway/comeSailAwayWire.js` (`p`), `scenes/comeSailAway/comeSailAwayPeers.js` (`plaqueName`), `world/eliteGates/pseudoArchives.js` (PLAQUE_ARCHIVE), `scenes/world.js` (the pool's `plaqueOf`, `plaqueFont`; the word's `plaque`) |
 | SEA-COLOURS | 13 | every ship of the sea in her own paint and under her own flag of cloth - a navy's crown, a merchant house, a pirate crew, a legend's own; a pirate under false colours painted and flagged as the house she passes for; her colours down once struck - the same on every screen, off who she is | `systems/naval/seaColours.js`, `scenes/naval/navalHost.js` (`seaWho`, `buildOne`'s paint, `seaFlags`), `scenes/shipFlagHost.js` (`seaFlags`), `render/shipFlagPass.js` (FLAGS_MAX), `scenes/world.js` (the flag host's `seaFlags`) |
+| TIME-DILATION | 14 | the sea's AI never on the Overworld's clock against a traveller who cannot answer it: a journey held at x1 inside a hostile ship's reach (NAV-H's law, the helm's already), the Overworld brought down for her, and online a sea another player shares kept at real time | `systems/travel/travelThreat.js` (`foeRate`, `threatCap`'s `held`), `systems/naval/seaClock.js`, `scenes/naval/navalHost.js` (`threats`' `holds`, `frame`'s seconds), `scenes/world.js` (the governor's two paths, the view's `danger`, `tvJourneyUp`, `travelViewCanGo`) |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
 
@@ -132,8 +135,13 @@ CHANGED:
   bucket), the one whose cabin I am in (`modes.sailingCabin`); any ship of mine BY HER NUMBER (`openShip`) - afloat
   here or anywhere (her boat's hold), laid up (Come Sail Away's PackedCargoes under her number - `laidUpHold`, the very
   list her placing takes back aboard), or packed in the pack (the same list - and her parts carry her hold's weight, as
-  PackBoat sums it, so they are weighed again as the window shuts: `packedHullWeight` and the hold's own kg). A Rowboat
-  carries no hold - the mod gives her no cargo box (`HULL_HOLDS`) - and is said so.
+  PackBoat sums it, so they are weighed again as the window shuts: `packedHullWeight` and the hold's own kg - AUDIT 2:
+  and weighed as her timbers alone while it is open, so what is taken out of her is not counted twice; her parts stored
+  in her own hold come back to the pack as it shuts). A Rowboat carries no hold of her own - the mod gives her no cargo
+  box (`HULL_HOLDS`) - and is said so; AUDIT 2: unless the sea has put something aboard her (Come Sail Away gives every
+  boat her Cargo, and a cask rowed through or a strand's salvage fills it), when hers opens as any hold does. The key
+  passes over a Rowboat with nothing aboard, and over a ship with no door to her (not standing, her parts not in the
+  pack, no title in the book).
 - **Three ways in, every skin, every mode, in a fight too**: THE HOLD'S KEY (`ShipHold`, Come Sail Away's group,
   "Cargo", on F4 - the letters are spent and F1 and F3 are the browser's: `ui/input.js BROWSER_STEALS`) opens the ship at
   hand's hold, else the last whose helm I took (`frame` remembers it), else the first of my fleet with a hold, wherever
@@ -247,8 +255,8 @@ CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and 
 - **The ball keeps it** (`navalShots.js`): swept with its load's radius, every event saying it, a hit its time aloft;
   the host strikes with the loaded gun (`captainTree.js struckGun` - grapeshot's men by its time aloft) and heated shot's fire.
 - **The helm's choice** (`scenes/naval/navalLoads.js`): the group the guns are laid with, else the one the look bears on,
-  else her first with guns. THE WHEEL while the guns are laid steps it on or back (one step a SHOT_WHEEL_S - a
-  trackpad's stream steps once; the camera's zoom waits); the helm panel's Shot button ("Broadsides: Grapeshot"); the
+  else her first with guns. THE WHEEL while the guns are laid steps it on or back (one step a turn of it - again only
+  after SHOT_WHEEL_S of quiet, on the real clock, so a trackpad's stream steps once; the camera's zoom waits); the helm panel's Shot button ("Broadsides: Grapeshot"); the
   ShotCycle key - appended to the actions, in Combat, unbound (the letters are spent; a mod's group would ship it a key,
   KB1 law 3) - and a pad button chosen for it. Each change is said: "Broadsides: Grapeshot - loading".
 - **The HUD**: each battery's load under its count (the chasers named as the bore, "2 chasers", now chain is a load),
@@ -489,7 +497,9 @@ CHANGED (`systems/naval/shipLivery.js`, the law and the painter; pure):
   whose paint is still being made is drawn as built; one whose paint failed is drawn as built for good and said once.
 - **Drawn wherever she is drawn** (`comeSailAwayPool.js draw`, `liveryCodeOf`): the one draw every host's boats go
   through, so a painted ship is painted on the street, on a dungeon's water and in a peer's sight alike - mine by my
-  Fleet ledger's record, a peer's by her owner's word, a sea ship (pirates, navies, merchantmen) as built.
+  Fleet ledger's record, a peer's by her owner's word, a sea ship by who she is (SEA-COLOURS, below). AUDIT 2: her paint
+  is handed only to the meshes it repaints (`shipLiveryPaint.js remapFor`) - Daggerfall's models are shared by every boat
+  that hangs them, and the renderer keeps each one's pictures by its remap.
 - **Her captain chooses** (the Fleet page's Paint, `ui/fleetPage.js paintPanel`): her picture in the paint chosen
   (`paintSvg`), a row of swatches for each part her hull takes and, where she has a cabin, her cabin's wood
   (CABIN-LOOK); Paint her (`scenes/fleetHost.js livery` - her record's `livery`, `systems/fleet.js setShipLivery`,
@@ -686,6 +696,90 @@ sailed for. Her colours were said in words alone (`shipKnowledge.js coloursWords
 DEPARTURE from nothing: Daggerfall has no sea, nor Daggerfall Unity. The mod's pennant stays for a ship whose cloth is not
 drawn (a dungeon's water, past the reach).
 
+## TIME-DILATION - the sea's AI never on the Overworld's clock (14)
+
+FOUND (the owner's report, *"AI can actually use the overworld as time dilation"*, traced with the real modules). The
+Overworld's journeys and its keys run the world's clock at a time scale - x60 off the road, x100 on it (RATE-LAW,
+`systems/timeScale.js`) - and the sea fight is stepped on that clock (`world.js navalFrame`: `dt * worldTimeScale()`,
+AUDIT NAV1's "the sea keeps the world's time"). Land foes are not: they run at their own pace (TO1's departure, the foes'
+`foeDt`), so on land the clock is the traveller's alone. At sea it was the AI's too:
+
+- **A won avoid roll carried a journey past a pirate at x5 to x60.** A cautious traveller's journey stops at a hostile
+  ship's HOSTILE_NEAR_M (700 m, NAV-H's enemy nearby) and rolls to slip by; a won roll passes encounters for fifteen
+  seconds (TravelOptionsMod.cs AttemptAvoidEncounter), and the governor eased the clock down toward her under OW6's cap -
+  floored at the near-enemy pace (ENEMY-PACE, the 'foe' dial: x5 by default, x60 at its top). Under the Overworld the
+  guns cannot be fired (the view's own input, TV_WORLD_ACTIONS). Measured on the real naval host: a bold pirate brig
+  wrecked a boat in four real seconds at the dial's top, and in fifteen at x20 from inside her ring; at x1 she fired twice.
+- **The Overworld came up over a pirate and stayed.** Its `danger` (the view's fall), `tvJourneyUp` (its rise) and
+  `travelViewCanGo` (its click) read the land's foes and a duel - never a ship, though NAV-H makes a hostile ship an enemy
+  nearby wherever the game asks it outdoors.
+- **Online my clock ran the AI against another player.** The sea is stood by one player for everyone within
+  NAVAL_SHARE_RADIUS (the lowest id afloat, `launchesTraffic`), and its ships take on a peer's boat as well as mine;
+  nothing of mine (my journey's threats, my helm's keys) asks about a ship hostile to them alone. Measured with two real
+  hosts over the room's relay: a navy cutter hunting the peer fired 46 broadsides in twenty real seconds while her
+  stander ran at x30, against 1 at x1.
+
+FIXED:
+
+- **x1 inside a hostile ship's hold** (`systems/travel/travelThreat.js foeRate`): each hostile ship's threat says the ring
+  she holds the clock in (`navalHost.js threats`' `holds`, HOSTILE_NEAR_M); `threatCap` answers `held` while the traveller
+  stands inside one, and both of the governor's paths (`world.js travelViewGovern` - the classic skin's journey on the
+  ground and the Overworld's) run the clock at x1 there - outside it OW6's cap and ENEMY-PACE's floor as before, and a land
+  foe holds no ring (TO1: it keeps its own pace). NAV-H's own law - Come Sail Away's helm keys already kept it
+  (`comeSailAway.js`, the time scale reset with an enemy near).
+- **The Overworld comes down for her**: the view's `danger`, its rise over a journey and its click each ask
+  `navalHostileNear()` beside the land's foes - brought down, AUDIT OW4 J5's walking pace holds the Overworld's journey.
+- **A shared sea keeps real time** (`systems/naval/seaClock.js`): online, a sea a peer shares (`sharedSea` - one within
+  NAVAL_SHARE_RADIUS, on the water's plane) is stepped at real time whatever my clock (`seaSeconds`, the naval host's
+  frame); alone - offline, or no peer near - it keeps the world's, as AUDIT NAV1 laid down. A captain's leagues are her
+  own clock's still (CAPT-LOG's `sailed`).
+
+Recorded, not changed: a band's chase measures its patience on the real clock while it closes at the world's (OW6's
+bands, BAND_GIVE_UP_MS) - the leash bounds it and the chase is the chased traveller's own, so the band gains nothing a
+traveller does not; the threat cap's pace at sea is the walking motor's, the boat's way a later refinement.
+
+DEPARTURE from nothing: Daggerfall has no sea; Travel Options' own law (AreEnemiesNearby stops a journey) is kept.
+
+## AUDIT 2 - the refit audited again (2026-10-17)
+
+The owner, at the slices' end: *"Please once more audit everything and ensure perfection."* Four lenses over the whole
+branch (the sea fight; the Fleet, the refits and the captain; how a ship looks; the hold, the raid, the way and the
+docs) found thirty-one things, and the work a thirty-second (a ball into a moored boat of mine jarred my eye); each was
+traced to a real caller and fixed, or is recorded below as why not:
+
+- **The Fleet**: an accepted sky read the standing boats alone, and a laid-up ship sailed out on the stars given back
+  (`fleetHost.js restat`: every ship of the Fleet, a laid-up one by her number); Create Item's steel paid a Steel tier
+  (`meltable`: never conjured); a keystone's price under 1 was dropped by the sea fight (`refitBuild`, `gunsRefit`: any
+  share but 1); an Iron store took the steel ingots ahead of iron ones, and a tier the stores could pay was refused
+  (`takeMaterials`: a store's own ingots first; `takeOrder`, `takeAllMaterials`, `meltCounts`: the ingots-only stores
+  first, the melt said the joint take's); the QuickDial key threw away the sky's unaccepted stars unasked
+  (`navalPlunderDoor.js dialCloser`, the Firmament's own law); a cheap good at the tree's most was bought back at what it
+  sold for (`exchangeOf`: buying under selling).
+- **The sea fight**: a ball's fractional men were cut on the word, so chain shot took none of a peer-stood ship's crew
+  (rounded on the ball's own roll); the wheel throttled where it should debounce, and on the sea clock (a turn of it a
+  step, on the real clock); a near miss was told where it first came within NEAR_MISS_M (told where it passed nearest -
+  kept on the ball while the gap falls); my tally counted a gun's men, not her stander's (her toughness's share, rounded
+  once); a moored boat of mine struck flashed my plate's rose and jarred my eye, and a fall beside her shook me (the boat
+  in play's alone); a copy first seen going down was heard going, her powder up again (never a fresh copy's); a ram
+  said "board her" over a ship it sent down (her blow first); a ball's row was made each frame of its flight (once).
+- **How she looks**: a hidden peer's boat sailed her name boards across the water (only where she is drawn); a fitting's
+  model freed by a house's own hold took the crate and its collider from her deck (every model asked - the ask pins it);
+  a boat past the flags' cap flew neither cloth nor pennant (the cap at the take), and a fading ship's cloth stood whole
+  (SHIP-FADE's dissolve on the cloth); a painted ship's remap on a shared model missed the renderer's picture cache every
+  frame (her paint only on the meshes it repaints); the name board's word waited for the full frame (`csaRecordKey`
+  keys `p`); another's cabin wore my ledger's stain (as built); a crate could hang over her rail or stand in another
+  (its turned box, every corner on her deck, none overlapping); the first named ship of a hull read her planking in the
+  pool's draw (a grid of the planking's triangles, and every hull read in the preload) and the painter's base pictures
+  the same (warmed in the preload).
+- **The hold and the way**: a packed hold's take was weighed twice and refused (her timbers alone while it is open); her
+  parts stored in her own hold lost her (back to the pack); a Rowboat's plunder had no door (it opens); the hold key fell
+  back to a ship with no door (never); the peace bonus held while a ship that had sighted me gave chase from past
+  HOSTILE_NEAR_M (a chase is a fight); a pad had no hold button (its row).
+- **The docs**: the four hosts named for CARGO-ANYWHERE, RAM-BOARD and SHOT-KINDS (below); the Tests section's counts
+  made true; SHIP-LIVERY's sea ships "as built", the wheel's law and the Rowboat's hold said as they are.
+
+Recorded, not changed: a fitting's corners are read drawn in by FIT_INSET (5 cm), so a crate flush with her rail stands.
+
 ## THE FOUR HOSTS RULE
 
 
@@ -718,6 +812,17 @@ drawn (a dungeon's water, past the reach).
   paint is drawn by the boats' one pool wherever they stand, and their cloth by the exterior's flag pass (the world host's
   `seaFlags`). `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED: no sea ship sails there;
   `exterior.js` (the bench) - FLAGGED: no naval host.
+- TIME-DILATION: the journey's governor, the Overworld and the sea fight are the world host's exterior frame's alone
+  (`travelViewGovern`, the view's deps, `navalFrame`); `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's
+  water) - FLAGGED: no journey runs and no Overworld rises indoors or below ground (AUDIT DEEP X-1 cuts the view at the
+  door), and their water is sailed by the world host's one runtime at the world's clock; `exterior.js` (the bench) -
+  FLAGGED: no naval host, no Overworld.
+- CARGO-ANYWHERE: the hold's key, the helm's Hold and the Fleet page's are the world host's, read above the modal
+  return, so `worldModes.js` (interiors - the sailing cabin's room, a dungeon's water) and `dungeonContext.js` (a dungeon's
+  water) open the same hold by the same door; `exterior.js` (the bench) - FLAGGED: no Come Sail Away runtime, no Fleet.
+- RAM-BOARD and SHOT-KINDS: the naval host's, stood and stepped in the world host's exterior frame alone (as COMBAT-FEEL);
+  `worldModes.js` and `dungeonContext.js` - FLAGGED: no sea fight is fought there; `exterior.js` (the bench) - FLAGGED: no
+  naval host.
 - RAID-ASHORE's withdraw reads the world host's two pools - the street's and, through `worldModes.js`'s `interiorPool`,
   the sailing cabin's room; `dungeonContext.js` - FLAGGED: no voyage's raid is fought below ground.
 
@@ -726,12 +831,12 @@ drawn (a dungeon's water, past the reach).
 - `test/systems/naval/isletrade.test.js` (5) and `tools/mutants/isletrade.json` (8, all dead); `capttrade.test.js`'s
   two isle pins and `etherchart2.test.js`'s card pin moved (PIN MOVED), and `tools/mutants/capttrade.json`'s two isle
   records re-aimed at the lines they name now (42, all dead).
-- `test/systems/comeSailAway/peaceway.test.js` (5) on Come Sail Away's real runtime, and `tools/mutants/peaceway.json`
-  (12, all dead).
+- `test/systems/comeSailAway/peaceway.test.js` (6) on Come Sail Away's real runtime, and `tools/mutants/peaceway.json`
+  (15, all dead).
 - `test/scenes/holddoor.test.js` (6) over Come Sail Away's real runtime and the Fleet's ledger and host, and
   `tools/mutants/holddoor.json` (16, all dead); the action list's pins moved for `ShipHold` (`inputactions`, `qs2_inputs`,
   `classicpages`, `viewtoggle`, `uicalm`) and the helm panel's (`shipcrew`, `auditnav2_helm`, `fb1011c_seatown`).
-- `test/systems/naval/ramboard.test.js` (6) on the real naval host and pool, and `tools/mutants/ramboard.json` (17, all
+- `test/systems/naval/ramboard.test.js` (7) on the real naval host and pool, and `tools/mutants/ramboard.json` (29, all
   dead).
 - `test/systems/naval/shipcolours.test.js` (9) on the law, the art, the cloth's vertex law run in JS (`test/glsl.mjs`), the
   host over Come Sail Away's real runtime, the ledger and its save, the Fleet's act and page, the wire and the world's
@@ -752,7 +857,7 @@ drawn (a dungeon's water, past the reach).
   ledger and its save, the ore ladder, a piece melted down and the joint count, the refit's words, the window over a
   document of its own and the Captain page; `fleet.test.js`'s REFIT-ORES test on the Fleet's real host (the level's gate,
   the stores counted once, a blade melted, the stars on a ship of mine and never a stranger's), and
-  `tools/mutants/captaintree.json` (76, all dead); the window also seen drawn in headless Chromium in both dresses and at a
+  `tools/mutants/captaintree.json` (88, all dead); the window also seen drawn in headless Chromium in both dresses and at a
   phone's width. The pins it moved: the ledger's new save (`captlog`), the Fleet's three tiers (`fleet`: twelve now), the
   crew's worth (`captcrew`), the Captain page's wiring (`captlog`); the records re-aimed by content in `auditcaptsea`,
   `captcrew`, `csa_sailing`, `holdings`, `navaudit_guns`, `navaudit_helm`, `peaceway`, `ramboard` and `shotkinds`.
@@ -761,7 +866,7 @@ drawn (a dungeon's water, past the reach).
   own once her code is set; fittings stood in
   her tree, drawn and in her colliders), the fitting-out, the fittings' law and word, the ledger and its save, the
   Fleet's acts and its Paint panel, the plan's door, the cabin's stain and its wiring, the deck plan's window and the
-  paint's picture, and `tools/mutants/shiplivery.json` (132: 130 dead, 2 equivalent as recorded - a zero code's guard,
+  paint's picture, and `tools/mutants/shiplivery.json` (135: 133 dead, 2 equivalent as recorded - a zero code's guard,
   and the painted pictures' list, which no livery of the 224 on any port ship reaches past today); the paint's texture
   sheets and the deck plan (wide and at a phone's width) also seen in headless Chromium. The pins it moved: the
   ledger's record (`fleet`: `livery`, `cabin`, `deck`), the
@@ -772,7 +877,7 @@ drawn (a dungeon's water, past the reach).
   `perfsails1` and `shipcolours` (all dead).
 - `test/systems/naval/combatfeel.test.js` (7) on the effects' law, the near miss in the shot field, the feel's module and
   the real naval host over the real pool (a pirate's ball by my side, its fall beside her, one into her starboard; her
-  plate drawn; my volley into a merchant carrack and its men), and `tools/mutants/combatfeel.json` (65, all dead); the
+  plate drawn; my volley into a merchant carrack and its men), and `tools/mutants/combatfeel.json` (68, all dead); the
   whistle's clip measured (its level swelling to the pass, its pitch falling through it). The pins it moved: the
   founder's foam (`nav_b_picture`: its boil's drops beside it), the clips' count (`nav_e_sounds`: ten), the provenance
   list (`doctrine`), the card's model (`nav_f_ui`: her `crew`, and her hull bar's bite flashing it), the HUD's class holes
@@ -793,6 +898,24 @@ drawn (a dungeon's water, past the reach).
   ledger's record (`fleet`: `plaque`), the world's pool line (`shiplivery`: `plaqueOf` follows it), the pseudo-archives'
   free number (`eglook_registry`: 38193 taken), the hard-coded strings' map (`l10n4`: the pool's fallback line, the
   registry's row); the record re-aimed by content in `shiplivery` (the word's `d`, all dead).
+- TIME-DILATION: `test/systems/naval/timedilation.test.js` (3: the law - x1 inside a hold whatever the dial, the floor
+  outside it, a land foe none; the real naval host's threats each her hold and a pirate at 160 m holding the journey at
+  x1, the world's wiring of both paths and the view's three refusals; the shared sea at real time and alone at the
+  world's, on the real host) and `tools/mutants/timedilation.json` (16, all dead). The pins and the mounted governors it
+  moved: `ow6_slowdown`, `ow_loadowed`, `ow_toggle`, `tv_wasd`, `fb0929d_toroads` (each mounts `foeRate` beside
+  `foePaced`), `tv2_click_to_move`, `enemy_pace`, `tv1_travel_view`, `wildalert` (the governor's lines, the view's
+  danger), `fb0929_overworld_mouse`, `fb1007b_climbtravel` (`navalHostileNear` in the mounted view), `nav_r_raiders` (the
+  threats' hold); the records re-aimed by content in `nav_r`, `ow6s`, `tv1`, `tv2` and `navaudit_captains`.
+- AUDIT 2: `test/systems/naval/auditrefit2.test.js` (16, on the real modules - the Fleet's restat and the laid-up
+  state, the stores and conjured steel, the QuickDial's ask, the exchange; the word's men on a peer-stood ship, the
+  wheel, the near miss's nearest and a pass told as its ball goes, the boat in play's blow and jar, a fresh copy going
+  down, the ram's order; the flags' cap and fade, the paint's meshes, the board's word, the guest's cabin, the hidden
+  boat, a fitting's box and its pin; the packed hold, a Rowboat's plunder, the key's fallback, the chase's peace, the pad)
+  and `tools/mutants/auditrefit2.json` (51: 49 dead, 2 equivalent as recorded - the planking's grid and the preload's
+  priming, each the same answer sooner). The pins it moved: `shiplivery` (the fittings asked, the
+  cabin's guest), `peaceway` (the chase), `tougherships` (the word's men), `captlog` (the leagues' own clock); the records
+  re-aimed by content in `auditcaptsea`, `auditrefit`, `captaintree`, `captlog`, `combatfeel`, `csa_together`,
+  `holddoor`, `holdings`, `navaudit_guns`, `shipcolours`, `shiplivery`, `shotkinds` and `tougherships` (38, all dead).
 - AUDIT (2026-10-17): `test/systems/naval/auditrefit.test.js` (4: the near miss's sphere, a peer's magazine and her
   going down heard, the flag's cloth, the rammer's foul sent; 5 with the one classic read) and
   `tools/mutants/auditrefit.json` (16: 15 dead, 1 equivalent as recorded - the reject's clamp, which only tightens it);

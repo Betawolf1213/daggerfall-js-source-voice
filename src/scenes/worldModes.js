@@ -8549,7 +8549,7 @@ export function createWorldModes(host) {
   }
   async function enterSailingCabin(saved, pos = null, visit = null) {
     if (mode !== 'exterior' || !host.sailingCabin) return false;
-    const entry = sailingCabinEntry(blocks, saved, host.sailingCabin.fromNative);
+    const entry = sailingCabinEntry(blocks, saved, host.sailingCabin.fromNative, typeof visit?.cabinOwner === 'string');   // AUDIT 2: another's cabin is as built - her stain is her captain's ledger's
     if (!entry) return false;
     return enterInteriorCore(entry.hit, entry.entries, { building: entry.building, pos, ...visit });
   }

@@ -71,7 +71,10 @@ export function fitBoats(boats, fittingsOf, { ctx, deckOf, load }) {
     boat._fitList = list; boat._fitKey = key;
     if (boat._fitted === key) continue;
     let loaded = 0;
-    for (const f of list) if (ctx.modelBounds?.(f.m)) loaded++; else load(f.m);
+    // AUDIT 2: asked for EVERY fitting, loaded or not - the ask is what pins its model (dataPipeline.js pinnedGpuMesh; `load`
+    // asks once a model); a crate a house had loaded under its own hold was freed by the place cache four rooms on, and
+    // her fitting went from the deck and its collider with it
+    for (const f of list) { load(f.m); if (ctx.modelBounds?.(f.m)) loaded++; }
     const stage = `${key}#${loaded}`;
     if (boat._fitStage === stage) continue;   // nothing more loaded since she was last stood
     const deck = list.length ? deckOf(boat.hull) : null;

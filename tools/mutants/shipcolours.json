@@ -209,8 +209,8 @@
   {
     "name": "SC-host-masthead",
     "file": "src/scenes/shipFlagHost.js",
-    "old": "      list.push({ key: flagKey(flag), flag, top, fly: flyOf(node.forward), size, phase: flagPhaseOf(phase) });",
-    "new": "      list.push({ key: flagKey(flag), flag, top: boat.GameObject.position, fly: flyOf(node.forward), size, phase: flagPhaseOf(phase) });",
+    "old": "list.push({ key: flagKey(flag), flag, top, fly:",
+    "new": "list.push({ key: flagKey(flag), flag, top: boat.GameObject.position, fly:",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]
@@ -326,8 +326,8 @@
   {
     "name": "SC-wire-key-blind",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null]",
-    "new": "rec.n ?? null, rec.l ?? null, rec.d ?? null]",
+    "old": "rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null, rec.p ?? null]",
+    "new": "rec.n ?? null, rec.l ?? null, rec.d ?? null, rec.p ?? null]",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]

@@ -16,6 +16,7 @@
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
 import { bannerClock, BANNER_TEXTURE_IDLE_S } from './bannerPass.js';
+import { BAYER_GLSL, DISSOLVE_GLSL } from './orderedDither.js';   // AUDIT 2: SHIP-FADE's dissolve, her cloth with her hull
 
 /** The quads along the fly and down the hoist. */
 export const FLAG_COLS = 12;
@@ -90,9 +91,12 @@ uniform vec2 uFogRange;
 uniform vec3 uCamPos;
 out vec4 o;
 ${FOG_FACTOR_GLSL}
+${BAYER_GLSL}
+${DISSOLVE_GLSL}
 void main() {
   vec4 t = texture(uTex, vUV);
   if (t.a < 0.5) discard;   // the shape's cut
+  dissolveCut();   // AUDIT 2: SHIP-FADE - a ship sailing into the world or out of it keeps her share of her cloth as of her hull
   t.rgb /= t.a;   // uploaded premultiplied (the banners' law)
   float face = abs(dot(normalize(vNormal), normalize(uSunDir)));
   float moon = abs(dot(normalize(vNormal), normalize(uMoonDir)));
@@ -142,7 +146,7 @@ export class ShipFlagRenderer {
     this.program = prog;
     this.u = {};
     for (const n of ['uVP', 'uTop', 'uFly', 'uSize', 'uTime', 'uWind', 'uPhase', 'uTex', 'uSunDir', 'uAmb', 'uSunCol', 'uSunScale', 'uMoonDir', 'uMoonCol', 'uMoonScale',
-      'uFogColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uFocus']) this.u[n] = gl.getUniformLocation(prog, n);
+      'uFogColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uFocus', 'uDissolveCut']) this.u[n] = gl.getUniformLocation(prog, n);
     const verts = flagVertices();
     this.count = verts.length / 2;
     this.vao = gl.createVertexArray();
@@ -190,7 +194,8 @@ export class ShipFlagRenderer {
   }
 
   /**
-   * Draw the flags: `flags` [{ key, flag, top: [x, y, z] in the scene, fly: [x, 0, z] unit, size: [fly, hoist], phase }]
+   * Draw the flags: `flags` [{ key, flag, top: [x, y, z] in the scene, fly: [x, 0, z] unit, size: [fly, hoist], phase, fade }]
+   * (`fade` AUDIT 2: her SHIP-FADE share, 1 or none whole)
    * (at most FLAGS_MAX), `seconds` any clock, `light` the frame's, `wind` 0..1, `fog` the frame's. Answers whether it
    * drew anything (the host marks the foreign pass on it).
    */
@@ -232,6 +237,7 @@ export class ShipFlagRenderer {
       gl.uniform3f(U.uFly, fly[0], fly[1], fly[2]);
       gl.uniform2f(U.uSize, f.size[0], f.size[1]);
       gl.uniform1f(U.uPhase, Number(f.phase) || 0);
+      if (U.uDissolveCut) gl.uniform1f(U.uDissolveCut, 1 - Math.max(0, Math.min(1, Number.isFinite(f.fade) ? f.fade : 1)));   // AUDIT 2: her fade's share CUT (nought whole)
       gl.drawArrays(gl.TRIANGLES, 0, this.count);
       this.drawn++;
     }

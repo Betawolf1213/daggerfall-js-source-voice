@@ -42,14 +42,14 @@ export function createShipFlagHost(deps) {
     list = [];
     if (deps.shown && !deps.shown()) return;
     const take = (boat, flag, phase = boat?.uid ?? list.length) => {
-      if (!boat || !flag) return;
+      if (!boat || !flag || list.length >= FLAGS_MAX) return;   // AUDIT 2: one past the pass's cap flies her pennant - it was left out for cloth never drawn
       const size = flagSizeOf(boat.hull);
       const node = boat.FlagObject;
       if (!size || !node || boat.GameObject?.activeSelf === false || (boat.fade ?? 1) <= 0) return;
       const top = node.position;
       if (!Array.isArray(top) || !top.every(Number.isFinite)) return;
       flown.set(boat, flag);   // flown where it is drawn - her pennant's cubes left out for it
-      list.push({ key: flagKey(flag), flag, top, fly: flyOf(node.forward), size, phase: flagPhaseOf(phase) });
+      list.push({ key: flagKey(flag), flag, top, fly: flyOf(node.forward), size, phase: flagPhaseOf(phase), fade: boat.fade ?? 1 });   // AUDIT 2: her fade, the cloth dissolving with her hull
     };
     for (const boat of deps.myBoats() ?? []) take(boat, mineOf(boat));
     for (const p of deps.peerFlags?.() ?? []) take(p.boat, p.flag);

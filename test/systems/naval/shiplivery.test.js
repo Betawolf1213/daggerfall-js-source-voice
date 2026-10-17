@@ -247,7 +247,7 @@ test('DECK-PROPS standing: a fitting whose model is not loaded waits - its model
   const list = fittingsOf([{ m: 41812, x: 0, z: 0 }, { m: 41813, x: 3, z: 0, yaw: 8 }, { m: 41815, x: 9, z: 0 }]);
   const node = () => frame.children.filter((c) => c.name === DECK_FITTINGS_NODE);
   fitBoats([boat], () => list, o);
-  assert.deepEqual(asked, [41813, 41815], 'the models not loaded asked');
+  assert.deepEqual(asked, [41812, 41813, 41815], 'PIN MOVED (AUDIT 2): every fitting\'s model asked, loaded or not - the ask pins it (the pool asks a model once)');
   assert.equal(boat._fitted, undefined, 'not fitted while one loads');
   assert.deepEqual(node()[0].children.map((c) => c.name), ['Fitting-41812'], 'the loaded one stands meanwhile');
   const waiting = node()[0];
@@ -418,7 +418,7 @@ test('SHIP-LIVERY, CABIN-LOOK and DECK-PROPS on the Fleet: each card says the pa
   _resetFleetForTests();
 });
 
-test('DECK-PROPS the plan\'s door: her hull\'s deck from the pool, each fitting\'s model not loaded asked, the plan made over the sea\'s window door and shown - her name, her fittings on it, each one\'s box its model\'s, kept through the Fleet\'s act; a ship of none, or whose deck is not baked, says so (mutants: the deck, the save, the footprint)', () => {
+test('DECK-PROPS the plan\'s door: her hull\'s deck from the pool, each fitting\'s model asked (AUDIT 2: loaded or not - the ask pins it), the plan made over the sea\'s window door and shown - her name, her fittings on it, each one\'s box its model\'s, kept through the Fleet\'s act; a ship of none, or whose deck is not baked, says so (mutants: the deck, the save, the footprint)', () => {
   _resetFleetForTests();
   titleDeed(mintDeed(2, 0, 51, 1));
   setShipFittings(51, [{ m: 41812, x: 1, z: 1 }]);
@@ -440,8 +440,8 @@ test('DECK-PROPS the plan\'s door: her hull\'s deck from the pool, each fitting\
   assert.deepEqual([made.name, made.deck, made.fittings], [shipLabel(fleetShip(51)), deck, [{ m: 41812, x: 1, z: 1, yaw: 0 }]]);
   assert.deepEqual(made.footprint(41812).map((v) => Math.round(v * 1e6) / 1e6), [1, 0.6], 'its box its model\'s');
   assert.equal(made.footprint(41815), null, 'one loading: none yet');
-  assert.equal(asked.length, DECK_FITTINGS.length - 1, 'each fitting\'s model not loaded asked');
-  assert.ok(!asked.includes(41812));
+  assert.equal(asked.length, DECK_FITTINGS.length, 'PIN MOVED (AUDIT 2): each fitting\'s model asked, the loaded one too - the ask pins it');
+  assert.ok(asked.includes(41812), 'the loaded one asked too - pinned');
   assert.deepEqual([made.save([{ m: 41815, x: 0, z: 0, yaw: 2 }]), acts], [{ ok: true, text: 'kept' }, [[51, 'deck', [{ m: 41815, x: 0, z: 0, yaw: 2 }]]]], 'kept through the Fleet\'s act');
   _resetFleetForTests();
 });
@@ -494,7 +494,7 @@ test('CABIN-LOOK her cabin stained: none as built; each picture her room wears (
   assert.match(rd('src/scenes/interiorContext.js'), /if \(typeof opts\.restyle === 'function'\) await opts\.restyle\(texRemap, \[\.\.\.pending\.keys\(\)\]\.map\(\(id\) => cpuModels\.get\(id\)\?\.subMeshes \?\? \[\]\), \{ renderer, getTexture, palette \}\);/);
   const ic = rd('src/scenes/interiorContext.js');
   assert.ok(ic.indexOf('await opts.restyle(') < ic.indexOf('const drawList = [];'), 'before the room\'s batch is made');
-  assert.match(rd('src/scenes/sailingCabin.js'), /sailingCabin: cabin, restyle: cabinRestyle\(fleetShip\(cabin\.uid\)\?\.cabin \?\? 0\) \};/);
+  assert.match(rd('src/scenes/sailingCabin.js'), /sailingCabin: cabin, restyle: cabinRestyle\(guest \? 0 : fleetShip\(cabin\.uid\)\?\.cabin \?\? 0\) \};/);   // PIN MOVED (AUDIT 2: another's cabin as built)
   assert.match(rd('src/scenes/worldModes.js'), /restyle: hit\.restyle \?\? null,/);
 });
 

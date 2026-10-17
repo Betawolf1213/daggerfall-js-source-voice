@@ -135,11 +135,38 @@ export function paintPlaque(name, letters) {
 }
 
 // ── the board on her bow ──────────────────────────────────────────────────────────────────────────────────────────
-/** A ray's first hit on one mesh `{ positions, indices }` - `{ t, n }` (the triangle's unit normal), or null. */
+/** AUDIT 2: the planking's triangles by where they stand across her side - a GRID_M grid over (y, z), each cell the
+ *  triangles whose box crosses it - so a ray cast in along x tests its cell's alone. The fit cast thousands of rays over
+ *  every triangle of a hull: 60 to 110 ms inside the pool's draw the first time a named ship was seen. The same hits:
+ *  a triangle a ray at (y, z) meets has its box about (y, z), and so stands in that cell. */
+export const PLAQUE_GRID_M = 0.25;
+const _grids = new WeakMap();
+const gridKey = (y, z) => Math.floor(y / PLAQUE_GRID_M) * 65536 + Math.floor(z / PLAQUE_GRID_M);
+function gridOf(m) {
+  let g = _grids.get(m);
+  if (g) return g;
+  g = new Map();
+  const p = m.positions, ix = m.indices;
+  for (let i = 0; i < ix.length; i += 3) {
+    const a = ix[i] * 3, b = ix[i + 1] * 3, c = ix[i + 2] * 3;
+    const y0 = Math.floor(Math.min(p[a + 1], p[b + 1], p[c + 1]) / PLAQUE_GRID_M), y1 = Math.floor(Math.max(p[a + 1], p[b + 1], p[c + 1]) / PLAQUE_GRID_M);
+    const z0 = Math.floor(Math.min(p[a + 2], p[b + 2], p[c + 2]) / PLAQUE_GRID_M), z1 = Math.floor(Math.max(p[a + 2], p[b + 2], p[c + 2]) / PLAQUE_GRID_M);
+    for (let y = y0; y <= y1; y++) for (let z = z0; z <= z1; z++) { const k = y * 65536 + z; const cell = g.get(k); if (cell) cell.push(i); else g.set(k, [i]); }
+  }
+  _grids.set(m, g);
+  return g;
+}
+const NO_TRIANGLES = Object.freeze([]);
+/** A ray's first hit on one mesh `{ positions, indices }` - `{ t, n }` (the triangle's unit normal), or null. A ray along
+ *  x (every one the fit casts) is tested against its grid cell's triangles alone (`gridOf`). */
 function rayHit(m, o, d) {
   const p = m.positions, ix = m.indices;
+  const along = d[1] === 0 && d[2] === 0;
+  const tris = along ? gridOf(m).get(gridKey(o[1], o[2])) ?? NO_TRIANGLES : null;
+  const n = along ? tris.length : ix.length / 3;
   let best = null;
-  for (let i = 0; i < ix.length; i += 3) {
+  for (let q = 0; q < n; q++) {
+    const i = along ? tris[q] : q * 3;
     const a = ix[i] * 3, b = ix[i + 1] * 3, c = ix[i + 2] * 3;
     const e1x = p[b] - p[a], e1y = p[b + 1] - p[a + 1], e1z = p[b + 2] - p[a + 2];
     const e2x = p[c] - p[a], e2y = p[c + 1] - p[a + 1], e2z = p[c + 2] - p[a + 2];
@@ -303,7 +330,13 @@ export function createShipPlaques(deps) {
     records.set(name, r);
     return r;
   }
+  /** AUDIT 2: a hull's planking and both bows' stations read now (the pool's preload: never inside its draw). */
+  function prime(hull) {
+    const m = plankOf(hull), build = deps.buildOf(hull);
+    for (const side of [1, -1]) { const sk = `${hull}|${side}`; if (!stations.has(sk)) stations.set(sk, m && build ? bowStation(m, build, side) : null); }
+  }
   return {
+    prime,
     /** Her boards' meshes for `name` (none: none to draw). */
     meshesFor(boat, name) {
       if (!name || !deps.renderer?.createMesh || !deps.renderer?.uploadTexture) return [];

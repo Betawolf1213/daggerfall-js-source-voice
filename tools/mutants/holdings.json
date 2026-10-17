@@ -230,7 +230,7 @@
   {
     "name": "FLEET-hull-refit-unread",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    return Number.isFinite(k) && k > 1 ? { ...b, hullHp: Math.round(b.hullHp * k), sailHp: Math.round(b.sailHp * k) } : b;",
+    "old": "    return Number.isFinite(k) && k > 0 && k !== 1 ? { ...b, hullHp: Math.round(b.hullHp * k), sailHp: Math.round(b.sailHp * k) } : b;",
     "new": "    return b;",
     "tests": [
       "test/systems/naval/fleet.test.js"

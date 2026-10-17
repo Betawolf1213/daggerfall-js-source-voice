@@ -59,6 +59,9 @@ export const PLUS_BIND_ROWS = Object.freeze([
   { id: 'spyglass', label: 'Spyglass (aboard)', sec: 'Spyglass' },
   // SHOT-KINDS (bible/03-World/Naval-Refit.md): the guns' load stepped on at the helm - no pad button ships on it
   { id: 'shot', label: 'Shot (aboard)', sec: 'ShotCycle' },
+  // CARGO-ANYWHERE (AUDIT 2): the ship's hold from anywhere - no pad button ships on it; a pad player had the helm's Hold
+  // and the Fleet page's alone
+  { id: 'hold', label: 'Ship\'s hold', sec: 'ShipHold' },
 ]);
 
 /** The pad button a row is on, or null. */

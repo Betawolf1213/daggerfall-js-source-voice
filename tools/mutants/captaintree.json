@@ -398,7 +398,7 @@
   {
     "name": "CT-fleet-restat-none",
     "file": "src/scenes/fleetHost.js",
-    "old": "    for (const b of placed()) n?.refitBoat?.(b);",
+    "old": "    for (const rec of fleetShips()) n?.refitBoat?.(standing.get(rec.uid) ?? { uid: rec.uid, hull: rec.hull });",
     "new": "",
     "tests": [
       "test/systems/naval/fleet.test.js"
@@ -443,7 +443,7 @@
   {
     "name": "RO-fleet-melt-unsaid",
     "file": "src/scenes/fleetHost.js",
-    "old": "melt: meltCount(lists, m.kind, m.n) }",
+    "old": "melt: melts[i] }",
     "new": "melt: 0 }",
     "tests": [
       "test/systems/naval/fleet.test.js"
@@ -506,7 +506,7 @@
   {
     "name": "RO-ingots-not-first",
     "file": "src/systems/fleet.js",
-    "old": "for (const take of [(it) => !!it && t.includes(it.templateIndex), (it) => isOf(it, kind)]) for (const list of lists) {",
+    "old": "for (const take of [...ingots, (it) => isOf(it, kind)]) for (const list of lists) {",
     "new": "for (const take of [(it) => isOf(it, kind)]) for (const list of lists) {",
     "tests": [
       "test/systems/naval/captaintree.test.js"
@@ -524,8 +524,8 @@
   {
     "name": "RO-joint-on-originals",
     "file": "src/systems/fleet.js",
-    "old": "  const copy = lists.map((l) => (l ?? []).map((it) => (it ? { ...it } : it)));",
-    "new": "  const copy = lists;",
+    "old": "  const copy = lists.map((l) => (l ?? []).map((it) => (it ? { ...it } : it)));\n  return takeOrder(mats).every",
+    "new": "  const copy = lists;\n  return takeOrder(mats).every",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -706,8 +706,8 @@
   {
     "name": "RO-melt-bound",
     "file": "src/systems/fleet.js",
-    "old": "!isLocked(item) && !isBound(item) && !item.questItem",
-    "new": "!isLocked(item) && !item.questItem",
+    "old": "!isLocked(item) && !isBound(item) && !isSummoned(item) && !item.questItem",
+    "new": "!isLocked(item) && !isSummoned(item) && !item.questItem",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]

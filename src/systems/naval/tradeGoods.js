@@ -173,8 +173,11 @@ export function exchangeOf(port, day, dealt = {}, edge = 0) {
     const p = priceOf(port, g.id, day);
     const stock = DAY_STOCK[stand];
     const exotic = other && stand !== 'makes';   // ISLE-TRADE: an isle's own good of the Bay is its own, sold as made
+    // AUDIT 2: never buying at what it sells - a cheap good's two prices, the spread closed by the captain's stars, rounded
+    // to one number (made grain at the tree's most: 7 and 7), and the round trip was free and paid the log's `traded`
+    const sell = Math.max(2, Math.round(p.mid * (1 + k)));
     rows.push({
-      id: g.id, name: g.name, unit: g.unit, units: g.units, kg: g.kg, stand, sell: Math.max(1, Math.round(p.mid * (1 + k))), buy: Math.max(1, Math.round(p.mid * (1 - k))), exotic,   // AUDIT CAPTAIN'S SEA B16: the other sea's - never sold here
+      id: g.id, name: g.name, unit: g.unit, units: g.units, kg: g.kg, stand, sell, buy: Math.max(1, Math.min(sell - 1, Math.round(p.mid * (1 - k)))), exotic,   // AUDIT CAPTAIN'S SEA B16: the other sea's - never sold here
       sells: exotic ? 0 : Math.max(0, stock.sell - (dealt.bought?.[g.id] | 0)), buys: Math.max(0, stock.buy - (dealt.sold?.[g.id] | 0)),
     });
   }

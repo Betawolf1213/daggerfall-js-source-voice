@@ -26,6 +26,8 @@ import { quatRotate } from '../../world/quat.js';
 export const NEAR_SPLASH_M = 6;
 /** DRENCH: the jar of a fall alongside (the camera's kick; a ball striking her is 1.6, a barrel's blast more). */
 export const NEAR_SHAKE = 0.7;
+/** AUDIT 2: how near her hull my feet must be for her deck's jar to be mine (m) - on her, or at her rail. */
+export const DRENCH_FEET_M = 2;
 /** HULL-BLOW: how long the side a blow came from is shown (s). */
 export const BLOW_S = 1.4;
 /** MAGAZINE: the share of ships going down afire whose magazine goes up, and when (s into her going down, from and to). */
@@ -92,7 +94,8 @@ export function createNavalFeel(deps) {
     const k = Math.max(0, 1 - (Number(e.gap) || 0) / NEAR_MISS_M);
     deps.sound(NAVAL_SFX.whistle, e.point, 0.55 + 0.45 * k);
   }
-  /** DRENCH: a ball into the sea at `point` - over the rail of a boat of mine within NEAR_SPLASH_M. */
+  /** DRENCH: a ball into the sea at `point` - over the rail of a boat of mine within NEAR_SPLASH_M; the deck rocked under
+   *  me only where I stand on her (AUDIT 2: within DRENCH_FEET_M of her hull - one moored across the water shook my eye). */
   function splashed(point) {
     let best = null;
     for (const h of deps.myHulls()) {
@@ -102,7 +105,8 @@ export function createNavalFeel(deps) {
     if (!best) return false;
     const k = 1 - best.gap / NEAR_SPLASH_M;
     deps.effects.drench(point, best.h.box.c, k);
-    deps.shake?.(NEAR_SHAKE * (0.4 + 0.6 * k));
+    const feet = deps.feet?.();
+    if (feet && boxGap(best.h.box, feet) <= DRENCH_FEET_M) deps.shake?.(NEAR_SHAKE * (0.4 + 0.6 * k));
     return true;
   }
   /** HULL-BLOW: a ball travelling `dir` struck a boat of mine heading `fwd`. */

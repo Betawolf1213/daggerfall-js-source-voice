@@ -137,12 +137,20 @@ export function createShotField(deps) {
     return null;
   }
 
+  /** AUDIT 2: a ball's nearest pass by ship `id`, kept while its gap fell, told now - once a ball and a ship. */
+  function passTold(b, id) {
+    const n = b.near?.get(id);
+    if (!n) return;
+    b.near.delete(id);
+    (b.passed ??= new Set()).add(id);
+    emit({ type: 'pass', volley: b.volley, shooter: b.shooter, owner: b.owner, target: id, gun: b.gun, shot: b.shot, point: n.point, gap: n.gap, dir: n.dir });
+  }
   /**
    * One piece of a ball's flight, `a` to `next` (its flight's `t1` there): the canvas it tears on the way, then whatever
    * stops it - a hull, the land or the sea. True when the ball is done.
    */
   function flyPiece(b, a, next, targets, seaY, t1 = b.t) {
-    const radius = shotGun(b.gun, GUNS[b.gun], b.shot)?.radius ?? 0.1;
+    const radius = (b.radius ??= shotGun(b.gun, GUNS[b.gun], b.shot)?.radius ?? 0.1);   // AUDIT 2: read once a ball (shotGun makes its row)
     const flight = (k) => b.t + (t1 - b.t) * k;   // SHOT-KINDS: its time aloft where it meets her
     const ship = nearestHit(targets, a, next, radius, b.shooter);
     const sea = segmentCrossesDown(a, next, seaY);
@@ -154,15 +162,19 @@ export function createShotField(deps) {
       (b.rigged ??= new Set()).add(r.t.id);
       emit({ type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: r.t.id, gun: b.gun, shot: b.shot, t: flight(r.e.t), weight: b.weight, point: r.e.point, zone: 'rig', dir, resolve: b.resolve });
     }
-    // NEAR-MISS: the ships that hear it, passed close (to where it stops) and not struck in this piece
+    // NEAR-MISS: the ships that hear it, passed close (to where it stops) and not struck in this piece. AUDIT 2: TOLD WHERE
+    // IT PASSED NEAREST - a piece is a frame's flight (a metre or so), and the first piece within NEAR_MISS_M told it 7 m off
+    // whatever it truly passed at (the whistle as loud for half a metre as for four, and astern of her): the nearest is kept
+    // on the ball (`near`) while the gap still falls, and told in the piece it turns (its nearest inside the piece), or
+    // where the ball stops; a ball that strikes her is no pass
     for (const t of targets) {
-      if (!t.ear || t.id === b.shooter || b.passed?.has(t.id) || (ship && ship.t.id === t.id && ship.e.t === firstT)) continue;
+      if (!t.ear || t.id === b.shooter || b.passed?.has(t.id)) continue;
+      if (ship && ship.t.id === t.id && ship.e.t === firstT) { b.near?.delete(t.id); continue; }
       const upTo = firstT === Infinity ? 1 : firstT;
-      if (segmentPointGap(a, next, t.box.c, upTo) > Math.hypot(t.box.h[0], t.box.h[1], t.box.h[2]) + NEAR_MISS_M) continue;   // AUDIT 2026-10-17: past her bounding sphere - no search
-      const near = segmentNearBox(a, next, t.box, upTo);
-      if (near.gap > NEAR_MISS_M) continue;
-      (b.passed ??= new Set()).add(t.id);
-      emit({ type: 'pass', volley: b.volley, shooter: b.shooter, owner: b.owner, target: t.id, gun: b.gun, shot: b.shot, point: near.point, gap: near.gap, dir });
+      if (segmentPointGap(a, next, t.box.c, upTo) > Math.hypot(t.box.h[0], t.box.h[1], t.box.h[2]) + NEAR_MISS_M) continue;   // AUDIT 2026-10-17: past her bounding sphere - no search (none kept: a piece that begins within NEAR_MISS_M of her begins inside it)
+      const near = segmentNearBox(a, next, t.box, upTo), was = b.near?.get(t.id);
+      if (near.gap <= NEAR_MISS_M && (!was || near.gap < was.gap)) (b.near ??= new Map()).set(t.id, { point: near.point, gap: near.gap, dir });
+      if (near.u < upTo - 1e-3 || firstT !== Infinity) passTold(b, t.id);
     }
     if (firstT === Infinity) return false;
     const at = (k) => [a[0] + (next[0] - a[0]) * k, a[1] + (next[1] - a[1]) * k, a[2] + (next[2] - a[2]) * k];
@@ -189,7 +201,7 @@ export function createShotField(deps) {
         b.shown = true;
         emit({ type: 'muzzle', volley: b.volley, shooter: b.shooter, owner: b.owner, side: b.side, gun: b.gun, shot: b.shot, index: b.index, count: b.count, pos: [...b.p0], dir: [...b.v0], resolve: b.resolve });
       }
-      if (age > BALL_LIFE) { emit({ type: 'gone', volley: b.volley, shooter: b.shooter, gun: b.gun }); continue; }
+      if (age > BALL_LIFE) { for (const id of [...(b.near?.keys() ?? [])]) passTold(b, id); emit({ type: 'gone', volley: b.volley, shooter: b.shooter, gun: b.gun }); continue; }   // AUDIT 2: a pass still kept, told as it goes
       // its flight since the last step, BALL_STEP_S at a time - one piece in an ordinary frame
       let ended = false;
       while (!ended && b.t < age) {

@@ -36,9 +36,9 @@ export function createVolleyTally(deps) {
     men(e, n) {
       if (!(n > 0) || e.volley == null) return;
       const t = open.get(String(e.volley)) ?? (last?.volley === String(e.volley) ? last : null);
-      if (t) t.men += Math.round(n);
+      if (t) t.men += n;   // AUDIT 2: summed whole, rounded once as it is shown - a ball's share of a man is no man
     },
     /** The last volley down while it is shown - `span` s after it came down at `now` - for the readout, or null. */
-    shown(now, span) { return last && now - last.at <= span ? { balls: last.balls, hits: last.hits, holed: last.holed, rig: last.rig, men: last.men } : null; },
+    shown(now, span) { return last && now - last.at <= span ? { balls: last.balls, hits: last.hits, holed: last.holed, rig: last.rig, men: Math.round(last.men) } : null; },
   };
 }
