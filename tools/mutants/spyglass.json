@@ -440,7 +440,7 @@
   {
     "name": "SPY-H-seen-through-unsaid",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "deps.mid?.(`False colours! ${s.names?.name ?? 'The ship'} is a pirate.`, 4);",
+    "old": "deps.mid?.(`False colours! ${s.names?.name ?? 'It'} is a pirate.`, 4);",
     "new": "void 0;",
     "tests": [
       "test/systems/naval/spyglass.test.js"

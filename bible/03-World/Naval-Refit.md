@@ -798,6 +798,9 @@ says it in plain words - about 300 strings, this branch's and the older sea's al
   the sky's notes say what a star costs and what a level opens.
 - **The crew's chatter** keeps its sailors' voice without the pronoun: `Steady as we go.`, `Coming about!`,
   `It'll hold, give it time.`
+- **An unnamed ship** (a fallback the sea's named ships never reach) is `it`, one word, so the hard-coded English
+  ratchet (`test/systems/l10n4_hardcoded.test.js`, which reads "the ship" as prose and "her" not) rises nowhere; the
+  counts that fell are written down.
 
 Kept: a woman is still "her" (a crew member paid off or knocked senseless, Ysolde and the other captains, the songs, the
 NPCs of the Bay); Come Sail Away's own words (`You cannot pack a boat you are driving!`) stand as the mod has them; the

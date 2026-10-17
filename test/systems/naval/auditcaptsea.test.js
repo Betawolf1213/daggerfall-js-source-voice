@@ -398,8 +398,8 @@ test('AUDIT CAPTAIN\'S SEA S19: the glass holds her by her extent as she lies to
 
 test('AUDIT CAPTAIN\'S SEA S21: the black flag said as she is known to me - the trader\'s name only while her colours held, her own once seen through; "is a pirate" said only where she is seen (mutants: the colours\' arm, the studied arm, the sight gate)', () => {
   const src = rd('src/scenes/naval/navalHost.js');
-  assert.match(src, /deps\.say\?\.\(was === KNOW\.colours \? `False colours! \$\{disguiseOf\(e\)\?\.name \?\? 'The merchantman'\} runs up the black flag!` : was >= KNOW\.studied \? `\$\{s\.names\?\.name \?\? 'The ship'\} runs up the black flag!` : `\$\{withArticle\(hullWord\(s\.hull\)\)\} runs up the black flag!`, 4\);/);
-  assert.match(src, /if \(held > 0 \|\| dist <= Math\.max\(reach\.eye, reach\.lookout\)\) deps\.mid\?\.\(`False colours! \$\{s\.names\?\.name \?\? 'The ship'\} is a pirate\.`, 4\);/);
+  assert.match(src, /deps\.say\?\.\(was === KNOW\.colours \? `False colours! \$\{disguiseOf\(e\)\?\.name \?\? 'The merchantman'\} runs up the black flag!` : was >= KNOW\.studied \? `\$\{s\.names\?\.name \?\? 'It'\} runs up the black flag!` : `\$\{withArticle\(hullWord\(s\.hull\)\)\} runs up the black flag!`, 4\);/);
+  assert.match(src, /if \(held > 0 \|\| dist <= Math\.max\(reach\.eye, reach\.lookout\)\) deps\.mid\?\.\(`False colours! \$\{s\.names\?\.name \?\? 'It'\} is a pirate\.`, 4\);/);
 });
 
 test('AUDIT CAPTAIN\'S SEA S24: an unknown hull\'s hurts are no more read than her colours - GLASS-SPOT (PIN MOVED): she gives no card at all, where her card carried no bars; made out, her bar as her tag\'s (mutants: the HUD\'s)', async () => {

@@ -289,7 +289,7 @@ export function contractLine(c, now) {
   const progress = c.kind === 'hunt' ? `${c.done | 0} of ${c.need} ended`
     : c.kind === 'survey' ? `${c.done | 0} of ${c.need} studied`
       : c.kind === 'salvage' ? `${c.done | 0} of ${c.need} casks raised`
-        : c.kind === 'delivery' ? `In your hold, for ${c.to?.name ?? 'the destination'}`
+        : c.kind === 'delivery' ? `In your hold, for ${c.to?.name ?? 'delivery'}`
           : c.kind === 'bounty' ? `Last seen ${c.where ?? 'off the coast'}` : '';
   return { title: c.title, words: c.words, progress, left: term, pay: gold(c.pay) };
 }

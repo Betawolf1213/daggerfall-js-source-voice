@@ -2505,8 +2505,8 @@
   {
     "name": "ACS-S21-studied-arm",
     "file": "src/scenes/naval/navalHost.js",
-    "old": ": was >= KNOW.studied ? `${s.names?.name ?? 'The ship'} runs up the black flag!`",
-    "new": ": false ? `${s.names?.name ?? 'The ship'} runs up the black flag!`",
+    "old": ": was >= KNOW.studied ? `${s.names?.name ?? 'It'} runs up the black flag!`",
+    "new": ": false ? `${s.names?.name ?? 'It'} runs up the black flag!`",
     "tests": [
       "test/systems/naval/auditcaptsea.test.js"
     ]

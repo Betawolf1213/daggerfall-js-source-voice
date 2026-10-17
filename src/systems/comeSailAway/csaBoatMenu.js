@@ -37,7 +37,7 @@ export const BOAT_MENU_TEXT = Object.freeze({
 });
 /** Why a row is refused - short, for the plaque's "(why)". */
 export const BOAT_MENU_WHY = Object.freeze({
-  driving: 'at the helm', passengers: 'passengers aboard', moored: 'a deed ship stays afloat', sailing: 'not at the helm',
+  driving: 'driving', passengers: 'passengers aboard', moored: 'a deed ship stays afloat', sailing: 'not at the helm',
   noDeed: 'the deed is not in your pack',   // SHIP-PACK: a ship is picked up with her deed (comeSailAway.js PackBoat)
   tooHeavy: 'the hold is too heavy',   // HOLD-WEIGHT: parts no take could lift again (comeSailAway.js partsTooHeavy)
 });

@@ -3526,7 +3526,7 @@
  },
  "captain.sky.sumHead": {
   "en": "b30dfd85f333",
-  "tr": "bc04cf0511b9",
+  "tr": "07f2983010c5",
   "by": "claude-in-session"
  },
  "captain.sky.summary": {
@@ -14216,7 +14216,7 @@
  },
  "naval.flag.guildOn": {
   "en": "e5388cd808d6",
-  "tr": "bda8074e284f",
+  "tr": "307664a55e88",
   "by": "claude-in-session"
  },
  "naval.flag.hoist": {
@@ -14341,7 +14341,7 @@
  },
  "naval.hold.noShip": {
   "en": "68b3079dcef6",
-  "tr": "14d083de70c0",
+  "tr": "4c0df02f12fe",
   "by": "claude-in-session"
  },
  "naval.hold.none": {
@@ -21046,7 +21046,7 @@
  },
  "sea.chart.canvas": {
   "en": "cf030c984df1",
-  "tr": "c7696f65fc62",
+  "tr": "5500d7278f06",
   "by": "claude-in-session"
  },
  "sea.chart.cardLine": {
@@ -21066,7 +21066,7 @@
  },
  "sea.chart.findShip": {
   "en": "517c4b94b37d",
-  "tr": "dfbaeae66e5d",
+  "tr": "5d7d07cf3e79",
   "by": "claude-in-session"
  },
  "sea.chart.haunt": {
@@ -21091,7 +21091,7 @@
  },
  "sea.chart.hint": {
   "en": "791c41fe9e1e",
-  "tr": "31c57d1d7487",
+  "tr": "923624b202a2",
   "by": "claude-in-session"
  },
  "sea.chart.isleLine": {
@@ -21121,7 +21121,7 @@
  },
  "sea.chart.key.ship": {
   "en": "5a8a074d275c",
-  "tr": "a600d0c3884c",
+  "tr": "f30518222233",
   "by": "claude-in-session"
  },
  "sea.chart.key.sunk": {
@@ -21176,7 +21176,7 @@
  },
  "sea.chart.shipWay": {
   "en": "3d9a03152aea",
-  "tr": "0c9be3e165d9",
+  "tr": "790e2812673f",
   "by": "claude-in-session"
  },
  "sea.chart.stats": {
