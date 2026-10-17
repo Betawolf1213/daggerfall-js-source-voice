@@ -8,7 +8,8 @@ you want". Read against the code, then: "I want to do everything and do it prope
 **Status: lane 1 (the economy, INT1-INT6) BUILT and AUDITED (2026-10-09, section 4b: five reviews, every fix pinned) and
 merged (#730); lane 2 (PvP refereed everywhere, INT7-INT10) BUILT and AUDITED the same day (section 5, 5b) and merged
 (#737); lane 3 (boss fights, INT11-INT15) BUILT and AUDITED 2026-10-10 on its branch (section 6, 6b), measuring first.** Lane 4 is the
-plan below, its own pull request (Mac: "A PR per lane").
+plan below, its own pull request (Mac: "A PR per lane"). **FOE-FORGE (section 8) BUILT 2026-10-17**: a peer's
+foes held to what an honest owner streams.
 
 ## 1. What the report found, read against the code
 
@@ -862,7 +863,89 @@ Renown XP, Marks from finds and harvests, bounty camps, seat influence, professi
 seated realm character whose trade is not held, each cap per hour of PLAY the service measured rather than per hour of
 the clock, and the legacy record held to its own law.
 
+## 8. FOE-FORGE - a peer's foes held to what an honest owner streams (2026-10-17)
+
+A screenshot from the Discord's #dev-chat (Starempire42, a moderator: "it seems there is a cheater in the server. I
+don't believe I can do anything right now"): one player in a hamlet among about forty **Elite Daedroths**, other players
+beside them. Nothing honest stands that: a town raid is at most 25 raiders and 8 defenders, all knights, bandits or orcs
+(`systems/raidingParties.js`); no foe rolls elite on a town's ground (`exteriorFoes.js` spawnFoe's `!inLocation()`); the
+gate's Daedroths stand only in the gate's own room. The owner, asked: "Close the foe holes" (moderator bans are not
+this slice - see below).
+
+### What a modified client could do
+
+A cell's foes are their owner's word: each socket streams the foes it owns, and the relay reads none of the records
+(`server/src/index.js`, the `foes` and `own` arms). Every reader stood them through `exteriorFoes.js` applyFoes, whose
+law had four holes:
+
+- **Each allowance was its own.** The encounter's (ENCOUNTER_PUPPETS_MAX, 32), the watch's, the camps', the deep's, a
+  raid's and a shared quest's each counted apart, and a frame's tags (`dz`, `rz`, `st`) are only shape-checked. So one
+  forged sender stood about a hundred hostile foes of any species at every reader near it.
+- **A takeover minted without end.** A record naming the reader its heir (`e`, PDEATH-FOES) is taken over: the foe
+  becomes the reader's own, driven by the reader's AI. A foe taken over left its owner's count, so the same sender could
+  stand fresh records and name the reader heir again, round after round. The surrounded player may be the victim:
+  their console reads `[foes] took over N foe(s) from a fallen player`, and their client then streams the horde to
+  everyone near as its own.
+- **`z` stood any foe as an elite** (five times the health, three times the blows), every record believed.
+- **`gg` and `nm` did the same at four times the blows**: a Greater Giant's multiplier (WILD_GIANT_DAMAGE_MULT) on a
+  foe of any kind, and a revenant's blows (`rb` up to 4000 per mille, `p2` on top) on any record naming one.
+
+### What the reader holds now (`src/scenes/exteriorFoes.js`)
+
+The reader's law alone. The wire, the relay and RELAY_VERSION are untouched, so no player is dropped, and every player
+has it on their next update.
+
+- **`PEER_PUPPETS_TOTAL_MAX` (= wire.js CELL_FRAME_RECORDS_MAX, 64)**: the most of one owner's foes a reader holds at
+  once, every allowance together, with **the foes of theirs it took over that still live counted among them**
+  (`heldOf`). An honest owner's live foes all ride one frame (the sender's own trim), so honest play does not meet it.
+  The takeover loop is closed by the same count: a taken foe moves from the owner's puppets to the owner's taken, and
+  the total does not move.
+- **`PEER_ELITE_PUPPETS_MAX` (8)**: a record's `z` is believed for at most eight of one owner's foes, a taken elite
+  among them. An owner rolls its own one in twenty, outside a town, so even a full frame of honest foes holds three or
+  so. Past it the foe stands as its plain kind.
+- **`PEER_REVENANT_PUPPETS_MAX` (11)**: the revenants a character keeps (revenant.js REVENANT_MAX, five) and swears
+  (revenantCompanions.js REVENANT_RETINUE_MAX, six). Past it the record's revenant fields, its blows among them, are not
+  believed.
+- **A Greater Giant is a giant, and one of each to an owner**: `gg` is believed only on WILD_GIANT, and only for the
+  first of an owner's foes to name that index.
+
+THE FOUR HOSTS: `world.js` (the streamed exterior) WIRED - it hands a peer's frame to this pool. `worldModes.js` WIRED -
+an interior's pool is `createExteriorFoes` (`interiorFoes`). `dungeonContext.js` needs nothing here: its own lane
+carries only a party's quest foes and the room's loose stands, under their allowances, and its takeover already had
+its bound (AUDIT pre-merge D8, `adoptOwn`); its records stand no elite and no Greater Giant. The dungeon host's layout
+stream is held to the layout every client built, and its revenants' blows ride as the host says - FLAGGED below.
+`exterior.js` (the fixed city) streams nothing and reads no peer.
+
+### What it leaves open
+
+- **Sixty-four plain foes per forged sender.** The reader cannot tell a forged Daedroth from an honest one: the species
+  a peer stands is its word, and so is its place. A sender's total is one frame, and every sender is counted apart, so
+  a cheater on several guest sessions stands that many times sixty-four. A room-wide count would desync honest crowds
+  (DESYNC-ZERO); it is left for a measure.
+- **A champion's trait (`cp`, x1.25 to x1.875)** rides as its owner says. One foe in fourteen of every honest roll is
+  a champion, so no count holds it that honest play cannot reach.
+- **A class foe's level (`l`, to 100) and its weapon (`w`)** are the owner's word, as the record's law has always had
+  them.
+- **The dungeon host's revenant blows** (FLAGGED): a seated host's layout foes carry `rb` and `p2` as the host says,
+  bounded by the layout's count.
+- **Moderation.** The screenshot's other half was a moderator with only `/mute` (MOD1). The owner's call for when bans
+  are built (asked 2026-10-17, "Mods timed, devs permanent"): moderators `/kick`, and ban for up to thirty days;
+  developers may also ban for good; nobody bans a moderator or a developer, as nobody mutes one. No ban is built here.
+
+Pins: `test/scenes/foeforge.test.js` (8) - two real pools, the forged frames a modified client's and the honest ones the
+producer's own (`foesFrame`, `handOverFrame`); `tools/mutants/foeforge.json` (16, all dead). Pins moved (each marked
+PIN MOVED where it stands): `revenant_card` (the puppet's name, inside the revenants' bound) and `wild2_rings` (the
+Greater Giant's word, a giant's alone); `revenant.json`'s REVENANT-WIRE-the-puppet-unnamed re-aimed by content, and the
+six records on the lines this slice touched run again, all dead.
+
 ## Progress
+
+- **FOE-FORGE (2026-10-17, a cheater's horde of Elite Daedroths on the Discord; the owner: "Close the foe holes"): a
+  peer's foes held to what an honest owner streams.** Section 8. One owner's foes at a reader are at most one frame's
+  worth, the foes taken over from it still counted (a takeover no longer mints without end); at most eight of them are
+  believed elites, eleven revenants, and a Greater Giant is a giant, one of each index. The reader's law alone - no
+  relay deploy, nobody dropped. `test/scenes/foeforge.test.js` (8); `tools/mutants/foeforge.json` (16, all dead); pins
+  moved in `revenant_card` and `wild2_rings`.
 
 - **AUTO-HOLD (2026-10-16, Mac: "We need to figure out a better system for trade banning. I dont want to have to manually
   review"): no hold waits on a person - and its audit (Mac: "Audit this. Ensure perfection").** Section 4, AUTO-HOLD. A
