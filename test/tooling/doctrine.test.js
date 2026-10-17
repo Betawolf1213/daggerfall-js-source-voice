@@ -20,6 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { studioListing, STUDIO_TREE } from '../../scripts/studioArtIndex.mjs';   // STUDIO1
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const tracked = (dir) => execFileSync('git', ['ls-files', dir], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })   // RRI1: 13,000 tracked sprites outgrew the 1 MB default (ENOBUFS)
@@ -31,6 +32,10 @@ const tracked = (dir) => execFileSync('git', ['ls-files', dir], { cwd: root, enc
  *  that keeps the original silhouette answers yes. */
 const PUBLIC_ALLOWLIST = new Map([
   ['public/README.md', 'documentation'],
+  // STUDIO1 (2026-10-17): the studio's guide and its roster - text, the port's own. Its pictures answer to the roster
+  // (studioArt below), not to rows here.
+  ['public/art/studio/README.md', "STUDIO1: the studio's guide for the game's artists - documentation"],
+  ['public/art/studio/artists.json', "STUDIO1: the studio's roster - each artist's folder, name and the word that approved them"],
   // TI2 (2026-09-11): THE HOME-SCREEN APP. The manifest is text; the
   // three icons are drawn by scripts/makeIcons.mjs from the enhanced
   // skin's own colour tokens (a block-letter D over a seeded star
@@ -724,7 +729,7 @@ test('doctrine: nothing ships out of public/ or src/assets/ that is not provably
   // so bundled art has the same ownership check as public/". The
   // reverse read did; this one did not, so a NEW file bundled out of
   // src/assets needed no row at all and nobody would have noticed.
-  const unexplained = [...tracked('public'), ...tracked('src/assets')].filter((f) => !PUBLIC_ALLOWLIST.has(f) && !bundleArt(f));   // DW2: a vendored bundle's art under public/ answers to its manifest (BUNDLE_ART below)
+  const unexplained = [...tracked('public'), ...tracked('src/assets')].filter((f) => !PUBLIC_ALLOWLIST.has(f) && !bundleArt(f) && !studioArt(f));   // DW2: a vendored bundle's art under public/ answers to its manifest (BUNDLE_ART below); STUDIO1: an artist's to the roster (studioArt)
   assert.deepEqual(unexplained, [],
     'these files are tracked under public/ or src/assets/, which Vite copies into dist/ and\n'
     + 'deploy.yml uploads to GitHub Pages. Every one of them is PUBLISHED. If the pixels\n'
@@ -755,7 +760,7 @@ test('doctrine: no raster of game data is tracked anywhere in the repo', () => {
   const RASTER = /\.(png|jpg|jpeg|gif|bmp|webp|tga|ico)$/i;
   const rasters = tracked('.').filter((f) => RASTER.test(f));
   const allowed = new Set([...PUBLIC_ALLOWLIST.keys()]);
-  const unexplained = rasters.filter((f) => !allowed.has(f) && !bundleArt(f));
+  const unexplained = rasters.filter((f) => !allowed.has(f) && !bundleArt(f) && !studioArt(f));
   assert.deepEqual(unexplained, [],
     `tracked raster images outside the doctrine allow-list:\n${unexplained.join('\n')}`);
 });
@@ -922,6 +927,20 @@ const bundleNames = (dir) => {
   return _bundleNames.get(dir);
 };
 /** Is this tracked raster a vendored bundle's own art? */
+// ── STUDIO1: THE GAME'S OWN ARTISTS' PICTURES ANSWER TO THE STUDIO'S ROSTER ──
+//
+// public/art/studio/ (bible/07-Rendering/Studio-Art.md) is where the game's artists paint. It is no vendored bundle - no
+// manifest names its pictures, and it grows as they paint, with nobody keeping a list (that is its point) - so its
+// membership is the studio's own rule, the one the build serves by (scripts/studioArtIndex.mjs studioListing): a PNG
+// under the folder of an artist the roster (artists.json) names, named for what it replaces, within the studio's limits.
+// The roster's row is the doctrine decision - who may paint here, approved by whom - and an artist's committing a picture
+// to their folder is their word that it is their own drawing, no pixel of ARENA2's (the roster and the guide say so).
+// A picture the listing refuses - an artist not on the roster, a file that is no picture of the game's - is not ours by
+// this rule and stays unexplained.
+const STUDIO_WORN = new Set(studioListing(root).files.map((f) => `${STUDIO_TREE}/${f}`));
+/** Is this tracked file a picture the studio wears? */
+const studioArt = (f) => STUDIO_WORN.has(f);
+
 function bundleArt(f) {
   for (const dir of BUNDLE_ART.keys()) {
     if (f.startsWith(dir)) return bundleNames(dir).has(f.split('/').pop().toLowerCase());

@@ -1,0 +1,299 @@
+[
+  {
+    "name": "STUDIO1-a-later-stand-in-takes-the-key",
+    "file": "src/systems/textureReplacement.js",
+    "old": "    if (prev?.studio && e.studio !== true) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-stand-in-mark-not-taken",
+    "file": "src/systems/textureReplacement.js",
+    "old": "      if (e.standIn === true) prev.standIn = true;\n",
+    "new": "",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-offset-not-taken",
+    "file": "src/systems/textureReplacement.js",
+    "old": "      prev.offset ??= e.offset ?? null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-displaced-stand-in-forgotten",
+    "file": "src/systems/textureReplacement.js",
+    "old": "standIn: e.standIn === true || (e.studio === true && prev?.standIn === true)",
+    "new": "standIn: e.standIn === true",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-displaced-offset-forgotten",
+    "file": "src/systems/textureReplacement.js",
+    "old": "offset: e.offset ?? (e.studio === true ? prev?.offset : null) ?? null",
+    "new": "offset: e.offset ?? null",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-name-with-no-folder",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "  if (parts.length < 2 || parts.some",
+    "new": "  if (parts.length < 1 || parts.some",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-label-swallowed",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "/^(.+?)(?:--(.+))?\\.png$/i",
+    "new": "/^(.+)(?:--(.+))?\\.png$/i",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-last-path-keeps-a-key",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "    if (e && !byKey.has(e.key)) byKey.set(e.key, e);",
+    "new": "    if (e) byKey.set(e.key, e);",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-own-archives-left-undecoded",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "    await Promise.all(_worn.filter((e) => e.archive > CLASSIC_TEXTURE_LAST)",
+    "new": "    await Promise.all(_worn.filter((e) => e.archive > Infinity)",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-daggerfall-decoded-at-install",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "    await Promise.all(_worn.filter((e) => e.archive > CLASSIC_TEXTURE_LAST)",
+    "new": "    await Promise.all(_worn.filter((e) => e.archive >= 0)",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-studio-never-late",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "  if (_install && !_landed) _install.then(",
+    "new": "  if (false) _install.then(",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-rows-swapped",
+    "file": "src/systems/studioArt/studioArt.js",
+    "old": "  if (!topDown) return decodedTexture(archive, record);",
+    "new": "  if (topDown) return decodedTexture(archive, record);",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-stranger-worn",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "    if (!folders.has(artist)) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-any-file-worn",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "    if (!/\\.png$/i.test(path)) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-slot-painted-twice",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "    if (keys.has(e.key)) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-no-side-limit",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "size.width > STUDIO_MAX_SIDE ||",
+    "new": "size.width > STUDIO_MAX_SIDE * 2 ||",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-no-byte-limit",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "    if (bytes > STUDIO_MAX_BYTES) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-stray-file-unsaid",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "      if (path !== STUDIO_ROSTER && path !== STUDIO_README) problems.push(",
+    "new": "      if (false) problems.push(",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-listing-not-built",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "      this.emitFile({ type: 'asset', fileName: `${STUDIO_DIR}/${STUDIO_INDEX}`, source: studioIndexJson(listing) });",
+    "new": "",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-dev-listing-cached",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "        res.setHeader('Cache-Control', 'no-store');",
+    "new": "",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-an-artist-twice-by-case",
+    "file": "scripts/studioArtIndex.mjs",
+    "old": "x.folder.toLowerCase() === a.folder.toLowerCase()",
+    "new": "x.folder === a.folder",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-check-decodes-nothing",
+    "file": "tools/studioArt.mjs",
+    "old": "    try { png = PNG.sync.read(readFileSync(join(at, STUDIO_TREE, e.path))); } catch (err) {",
+    "new": "    try { png = { width: 1, height: 1 }; void PNG; void readFileSync; } catch (err) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-stretched-picture-unsaid",
+    "file": "tools/studioArt.mjs",
+    "old": "Math.abs(png.width / png.height - p.width / p.height) > 0.01",
+    "new": "false",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-paint-not-a-slot",
+    "file": "src/systems/studioArt/studioSlots.js",
+    "old": "    for (let i = 1; i < choices.length; i++) {",
+    "new": "    for (let i = 1; i < choices.length - 1; i++) {",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-a-label-unreadable",
+    "file": "src/systems/studioArt/studioSlots.js",
+    "old": ".replace(/[^a-z0-9]+/g, '-')",
+    "new": ".replace(/[^a-z0-9]+/g, '--')",
+    "tests": [
+      "test/systems/studioArt/studio1_folder.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-wagon-held-painted",
+    "file": "src/scenes/horseCartPool.js",
+    "old": "      if (late) renderer.releaseTexture?.(WAGON_ARCHIVE, rec);\n",
+    "new": "",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-yards-rows-flipped",
+    "file": "src/scenes/merchantYardsHost.js",
+    "old": "renderer.uploadTexture?.(YARD_ARCHIVE, rec, pic); }, { topDown: true });",
+    "new": "renderer.uploadTexture?.(YARD_ARCHIVE, rec, pic); });",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-monument-rows-flipped",
+    "file": "src/scenes/lefayMonumentHost.js",
+    "old": "renderer.uploadTexture?.(LEFAY_ARCHIVE, rec, pic); }, { topDown: true });",
+    "new": "renderer.uploadTexture?.(LEFAY_ARCHIVE, rec, pic); });",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-port-rows-flipped",
+    "file": "src/scenes/portHost.js",
+    "old": "      }, { topDown: true });",
+    "new": "      });",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-beacon-glows-painted",
+    "file": "src/scenes/portHost.js",
+    "old": "replaced ? art : pic, OWN_LIGHT",
+    "new": "pic, OWN_LIGHT",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-room-wears-its-built-record",
+    "file": "src/scenes/caravanRoom.js",
+    "old": "painted?.has(rec) ? lookRecord(rec, i) : rec]);",
+    "new": "rec]);",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-the-icon-painted",
+    "file": "src/world/wagonModels.js",
+    "old": "paintedReplacement(WAGON_ARCHIVE, rec) ?? toColor32",
+    "new": "toColor32",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  },
+  {
+    "name": "STUDIO1-never-installed",
+    "file": "src/scenes/shared.js",
+    "old": "  const studio = installStudioArt().catch(() => 0);",
+    "new": "  const studio = 0; void installStudioArt;",
+    "tests": [
+      "test/systems/studioArt/studio1_door.test.js"
+    ]
+  }
+]

@@ -199,7 +199,17 @@ export function addVendorTextures(entries) {
     if (!Number.isFinite(e?.archive) || !Number.isFinite(e?.record) || (typeof e.load !== 'function' && typeof e.build !== 'function')) continue;
     const map = e.map ?? 'Albedo';   // RRI1: a mod's helmet mask registers under TextureMap.Mask
     const key = textureKey(e.archive, e.record, e.frame ?? 0, map, e.dye ?? null);
-    _vendor.set(key, { archive: Number(e.archive), record: Number(e.record), frame: Number(e.frame ?? 0), map, dye: e.dye ?? null, gate: typeof e.gate === 'function' ? e.gate : null, lazy: e.lazy === true, fileName: e.fileName ?? key, load: e.load ?? null, build: typeof e.build === 'function' ? e.build : null, standIn: e.standIn === true, yields: e.yields === true, offset: e.offset ?? null });   // WD2: `build(ctx)` - a picture DERIVED from the player's own classic records (formats/derivedTexture.js), never a file   // FIELD-GUN4: a WORN stand-in needs a place on the doll, which only its registration knows; AUDIT-DW F1: `lazy` - decoded per record when asked, never by the archive's preload
+    // STUDIO1 (bible/07-Rendering/Studio-Art.md): THE STUDIO'S PICTURE HOLDS ITS KEY, whichever registers first. Art
+    // registered after it (a ship's painted stand-in, a mod's icon) adds only what the archive IS - a stand-in, a place
+    // on the doll - never its picture; and a studio picture registered over art takes those from what it displaces.
+    const prev = _vendor.get(key);
+    if (prev?.studio && e.studio !== true) {
+      if (e.standIn === true) prev.standIn = true;
+      prev.offset ??= e.offset ?? null;
+      n++;
+      continue;
+    }
+    _vendor.set(key, { archive: Number(e.archive), record: Number(e.record), frame: Number(e.frame ?? 0), map, dye: e.dye ?? null, gate: typeof e.gate === 'function' ? e.gate : null, lazy: e.lazy === true, fileName: e.fileName ?? key, load: e.load ?? null, build: typeof e.build === 'function' ? e.build : null, standIn: e.standIn === true || (e.studio === true && prev?.standIn === true), yields: e.yields === true, offset: e.offset ?? (e.studio === true ? prev?.offset : null) ?? null, studio: e.studio === true });   // WD2: `build(ctx)` - a picture DERIVED from the player's own classic records (formats/derivedTexture.js), never a file   // FIELD-GUN4: a WORN stand-in needs a place on the doll, which only its registration knows; AUDIT-DW F1: `lazy` - decoded per record when asked, never by the archive's preload
     n++;
   }
   if (n) tierChanged();   // AUDIT VE R1: a scene's archives are asked again
