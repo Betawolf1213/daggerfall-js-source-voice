@@ -48,7 +48,7 @@ import {
   GEM_GRADE_TEMPLATES,   // GEM2
 } from '../loot/lootRarity.js';
 import { ROLLED_TIERS } from '../rarityTier.js';
-import { validSetMarks, aethericById, AETHERIC_WORTH } from '../aetheric.js';
+import { validSetMarks, aethericById, AETHERIC_WORTH, REGALIA, RAID_SET_PIECES } from '../aetheric.js';
 import { validGildedMarks, GILDED_WORTH } from '../gilded.js';
 import { SIGIL_BANDS, sigilFloor, validSigil } from '../sigil/sigil.js';
 import { setPieceKind, setById, WORLD_SET_IDS } from '../sigil/sigilSets.js';
@@ -94,8 +94,9 @@ import '../naval/treasureCharts.js';   // CAPT-CHARTS: the treasure chart
  *  the arcane three (lootRarity.js ARCANE_LEGENDARIES) are lawful from it on. HACKED-GOLD moved it to 4: a letter of
  *  credit's worth and a coin pile's count past one count (GOLD_INT_MAX, below) are findings from it on. GILDED2 moved it to
  *  5: the Gilded rung's two new records (systems/gilded.js - the Dragonfire Oath, the Sunken Sovereign) are lawful from it
- *  on, so a finding a law of 4 made against one is a finding to ask again. */
-export const ITEM_LAW_VERSION = 5;
+ *  on, so a finding a law of 4 made against one is a finding to ask again. MAKER-KEPT moved it to 6: an Aetheric piece of a
+ *  record the item maker took before AETHERIC-MAKER keeps the maker's rows laid on it then (MAKER_ERA_AETHERIC). */
+export const ITEM_LAW_VERSION = 6;
 
 const T = ENCHANTMENT_TYPES;
 const TYPE_KEY = Object.freeze(Object.fromEntries(Object.entries(T).map(([k, v]) => [v, k])));
@@ -374,10 +375,22 @@ function tierFindings(/** @type {any} */ item) {
 /** The item's first enchantment row that no maker laid (the rolled flavour, the record's own). */
 const firstOwnRow = (/** @type {any} */ item) => (Array.isArray(item.enchantments) ? item.enchantments : []).find((e) => !isMakerRow(e)) ?? null;
 
-/** An Aetheric piece: its record, minted whole (aetheric.js validSetMarks), and none of a roll's marks. */
+/** MAKER-KEPT (FIELD BUGS 2026-10-16c; Flylighter, "Grandfathered Items triggering trade lock": "Enchanted a few pieces
+ *  of Ruhn's set back before the change that disallowed enchanting them. Now, I'm getting a trade lock notice on account
+ *  of my gear!"): THE RECORDS THE ITEM MAKER TOOK BEFORE AETHERIC-MAKER (d10bd32b81, 2026-10-03 - enchanting.js
+ *  itemMakerRefuses), whose record promised "A piece enchanted before keeps its rows" (Field-Bugs-2026-10-03b). INT1's
+ *  law held every Aetheric piece to no rows at all, so those pieces read as forged and held their owners' trade. Ruhn's
+ *  Regalia and the raiding parties' three sets stood then; the Serpent's and Numidium's sets came after the refusal,
+ *  and no maker ever laid a row on one. The Gilded rung was refused from its first day (GILDED1). Frozen by its pin
+ *  (test/systems/item/fb1016c_makerkept.test.js): a record added to either list later is no record the maker took. */
+const MAKER_ERA_AETHERIC = new Set([...REGALIA, ...RAID_SET_PIECES].map((r) => r.id));
+/** An Aetheric piece: its record, minted whole (aetheric.js validSetMarks), and none of a roll's marks - its rows none,
+ *  or (MAKER-KEPT) the item maker's alone on a record it took before AETHERIC-MAKER, held to its law (makerFindings). */
 function aethericFindings(/** @type {any} */ item) {
   if (!validSetMarks(copyOf(item))) return ['aetheric'];
-  if (TIER_MARKS.some((k) => has(item, k)) || (Array.isArray(item.enchantments) && item.enchantments.length)) return ['aetheric'];
+  const rows = Array.isArray(item.enchantments) ? item.enchantments : [];
+  const kept = MAKER_ERA_AETHERIC.has(item.aetheric) && rows.every(isMakerRow);
+  if (TIER_MARKS.some((k) => has(item, k)) || (rows.length && !kept)) return ['aetheric'];
   return [];
 }
 
@@ -511,7 +524,7 @@ function enchantmentFindings(/** @type {any} */ item) {
  *  catalogue's, never the cost a row says of itself - within the item's power. */
 function makerFindings(/** @type {any} */ item, /** @type {any[]} */ rows, /** @type {any[]} */ maker) {
   if (!MAKER_GROUPS.includes(item.group) || (item.group === 'Weapons' && item.templateIndex === ARROW_TEMPLATE)) return ['enchantments'];   // the window lists every weapon but the Arrow (itemMakerFilter)
-  if (item.rarity === 'aetheric' || item.rarity === 'gilded') return ['enchantments'];
+  if (item.rarity === 'gilded' || (item.rarity === 'aetheric' && !MAKER_ERA_AETHERIC.has(item.aetheric))) return ['enchantments'];   // MAKER-KEPT: the maker's era's records keep its rows
   /** @type {any[]} */
   const chosen = [];
   /** @type {Map<string, any[]>} */
