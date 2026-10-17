@@ -233,6 +233,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/net/peer/` | Other players: their bodies, riders, effects and pace - online - the law both ends run. |
 | `src/net/raid/` | Town raids - online - the law both ends run. |
 | `src/net/realm/` | The realm's gold, trade and save codec - online - the law both ends run. |
+| `src/net/safety/` | The chat's safety: the relay's stamp on a line, its feed to the reviewer, a report's law and the code of conduct (`11-Multiplayer/Chat-Safety-Arc.md`) - online - the law both ends run. |
 | `src/net/serpent/` | The sea serpent, the sea's world boss (`11-Multiplayer/Sea-Serpent.md`) - online - the law both ends run. |
 | `src/net/siege/` | Sieges of a seat - online - the law both ends run. |
 | `src/net/superDungeon/` | The Abyss Dungeon, the super dungeons (`11-Multiplayer/Super-Dungeons-Look.md`) - online - the law both ends run. |

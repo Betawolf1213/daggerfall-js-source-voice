@@ -84,6 +84,8 @@ import { isLayered, LAYERS_MAX } from './wire.js';   // SCALE5d: a crowded place
 import { instanceRoomOf, relaySupportsInstances } from './instanceRoom.js';   // INSTANCES: a place's instance room (bible/11-Multiplayer/Instances.md)
 import { layoutRoomKey } from '../world/interior/interiorShared.js';   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
 import { tabStorage } from '../systems/appStorage.js';   // the tab's own storage - the seam, never the browser's own (a PIN)
+import { STAMP_RE } from './safety/chatStamp.js';   // SAFE2: a line's stamp, carried as the relay said it
+import { MUTE_HZ_MAX, CHAT_HZ_MAX, CHAT_MAX, relaySupportsBan } from './wire.js';   // AUDIT SAFE RELAY-2: the order meter and my own lines' pace, the relay's word on my chat's own bucket; RELAY-3: the ban frame's relay
 import { REALM_CHARACTER_RE } from './identityToken.js';   // AUDIT LEGACY III O1: a wed frame's stamped realm character, by the token's own shape
 import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
 
@@ -229,8 +231,22 @@ export const WILD_ZONE_KEEP_MS = 15_000;
  *  (ONLINE-MVFLICKER1) and a longer one stands the body still. */
 export const SHOWN_MOVE_HOLD_MS = 250;
 /** SCALE2: a hello refused for its missing token is asked again - unless it had none because this device holds no
- *  sign-in ('no-session') or the service refused the one it holds ('auth'): signing in is the way back from those. */
-export const tokenRetryable = (/** @type {string|null|undefined} */ why) => typeof why === 'string' && why !== 'no-session' && why !== 'auth';
+ *  sign-in ('no-session') or the service refused the one it holds ('auth'): signing in is the way back from those.
+ *  AUDIT SAFE CLIENT-2: nor because the account is banned ('banned') - the service will mint it nothing until the ban
+ *  ends, and asking again every few seconds was a refused mint and a refused hello a room, for the ban's length. */
+export const tokenRetryable = (/** @type {string|null|undefined} */ why) => typeof why === 'string' && why !== 'no-session' && why !== 'auth' && why !== 'banned';
+/** AUDIT SAFE RELAY-2 (2026-10-17): THE RELAY'S WORD ON MY OWN CHAT, a second - `law`, `banned`, `muted` and `slowed`, on a
+ *  bucket of their own. They rode the chat lines' inbound bucket (CHAT-G's), so a channel running at its budget dropped
+ *  the very frame that said I was muted or banned, or carried the order to my other rooms. Derived, never a literal: an
+ *  order a second at the relay's meter (MUTE_HZ_MAX) is two frames (its `law` and its word - `banned` or `muted`), and the
+ *  rest answer my own lines, which leave at CHAT_HZ_MAX at most. */
+export const LAW_IN_HZ_MAX = 2 * MUTE_HZ_MAX + CHAT_HZ_MAX;
+/** AUDIT SAFE RELAY-2: and its depth - the burst it takes at once: a welcome's word and an order's two frames together, and
+ *  a moment's answers to my lines, never cut. */
+export const LAW_IN_BURST = 2 * LAW_IN_HZ_MAX;
+/** AUDIT SAFE CLIENT-7: the frames one peer addresses to me that ASK something of me (`_directedIn`) - what a block holds
+ *  back, as it holds back the account's lines, friend requests and party invites. */
+export const BLOCKED_KINDS = Object.freeze(['trade', 'card', 'page', 'duel', 'wed']);
 /** Reconnect backoff bounds, ms. */
 export const BACKOFF_MIN_MS = 1000;
 export const BACKOFF_MAX_MS = 8000;
@@ -635,6 +651,23 @@ export class OnlineSession {
     this.eventOk = false;         // EVENT1: the relay that welcomed this socket knows the `stage` frame (relaySupportsEvent) - an older one CLOSES the socket on it
     this.eventV = null;           // SUNBABY1: the version that welcomed it - which event WORDS it knows (relayKnowsLiveEvent): a word it does not know CLOSES the socket too
     this.liveEvent = null;        // EVENT1: the hub's live event as last said - {kind, at} or null
+    this.onLaw = null;            // SAFE4: ({order}) => void - a mute or ban order the hub handed me to carry to every room I hold
+    this.onBanned = null;         // SAFE4: ({until}) => void - the relay says my account is banned until then (epoch seconds), or 0: lifted
+    this.onSlowed = null;         // SAFE6: ({ms}) => void - my public line was too soon for a new voice; the next may go in `ms`
+    this.onWelcomed = null;       // AUDIT SAFE CLIENT-8: () => void - my room's socket was welcomed (a reconnect's too): what the page reads of the account at a start is read again
+    this.banOk = false;           // AUDIT SAFE RELAY-3: the relay that welcomed this socket knows the `ban` frame (relaySupportsBan) - an older one CLOSES the socket on it
+    /** AUDIT SAFE CLIENT-2 (2026-10-17): MY ACCOUNT IS BANNED - STICKY, as `superseded` is: no join, rejoin or retry until
+     *  `unbar()` (the relay's word that the ban was lifted) or a reload. The page latches every room it holds
+     *  (scenes/chatSafetyHost.js) when the relay says `banned`; a socket the relay closes 1008 'banned' latches its own. */
+    this.barred = false;
+    /** AUDIT SAFE CLIENT-7 (2026-10-17): whether the player hears an account - (sub) => boolean, the host's from the block
+     *  list (scenes/chatSafetyHost.js); null hears everyone. A trade, a duel, a wedding, a card or a page asked of me by an
+     *  account I blocked never lands, as its chat line never does (net/chat.js ChatLog.hears). */
+    this.hears = null;
+    /** AUDIT SAFE CLIENT-13 (2026-10-17): whether a chat line may go - (line) => boolean, the host's code of conduct's gate
+     *  (scenes/chatSafetyHost.js); null lets every line go. The panel asks before a typed line ever reaches here; this is
+     *  the gate for every other door a line has (CHAT-POST's item, posted from the pack, went straight to sendChat). */
+    this.mayChat = null;
     this.onMuted = null;          // MOD1: ({until}) => void - the relay says I am muted until then (epoch seconds), or 0: lifted
     this.onFoes = null;           // WORLD2: (id, data) => void - the host's live foes in (a non-host's, from the room's host alone)
     this.onOwnFoes = null;        // OWN1: (id, data) => void - a peer's OWN foes in my world room (a building's, a dungeon's shared quest's)
@@ -828,6 +861,7 @@ export class OnlineSession {
     this._inPartyChat = null;  // CHAT-CHAN: the party lines' own gate coming in (partyChatInGate) - the hub's, one room
     this._inGuildChat = null;  // GUILD1c: and the guild lines' (guildChatInGate) - the hub's own guild budget
     this._inChatSaid = false;  // the console says it ONCE - a flood must not become its own flood
+    this._inLaw = new Map();   // AUDIT SAFE RELAY-2: the relay's word on my own chat, its own bucket per room (LAW_IN_HZ_MAX)
     // AUDIT SOC B3: the same law for the hub's frames - the picture's (state, presence, party, invite) on one bucket per
     // room, the LINES (a note, an error - each a chat line nobody sent) on a tighter one, the other members' poses on a
     // third; an honest hub at full tilt passes whole (net/wire.js SOCIAL_IN_HZ_MAX, NOTE_IN_HZ_MAX, PARTY_IN_HZ_MAX)
@@ -874,6 +908,7 @@ export class OnlineSession {
    *  they stood in was shared or merely peopled. */
   join(room, pose = null) {
     if (this.superseded) return;   // ONE-SEAT: the seat is another tab's - nothing joins until the player says Play online here (resume)
+    if (this.barred) return;   // AUDIT SAFE CLIENT-2: banned - nothing joins until the ban is lifted or the page reloads
     if (room === this.room && this._ws) return;
     this._threwKinds.clear();   // AUDIT ONCRASH1 A5: a new room says its own throws out loud - the first `world` throw of a session silenced the console for every later dungeon's
     this._who.clear();   // AUDIT WORLD6b-iii(e) B4: a crossing forgets who was asked - an answer lost in the last cell (its socket died, the peer's leave raced the ask) held the stranger unseen for WHO_RETRY_MS in this one
@@ -945,6 +980,23 @@ export class OnlineSession {
     this.terminal = false; this.terminalAt = null;
     this.status = 'closed'; this.error = null;
     this.claim = !!claim;
+  }
+
+  /** AUDIT SAFE CLIENT-2 (2026-10-17): MY ACCOUNT IS BANNED - every room left, and nothing joins, rejoins or retries until
+   *  `unbar()` or a reload (`barred`). ONE-SEAT's `supersede` shape: the page's latch, said once on every room it holds. */
+  bar() {
+    this.leave();
+    this.barred = true;
+    this.terminal = true; this.terminalAt = this._now();
+    this.status = 'error'; this.error = t('net.online.banned', 'this account is banned');
+  }
+
+  /** AUDIT SAFE CLIENT-2: the ban lifted (the relay's `banned` with until 0) - the session may join again. */
+  unbar() {
+    if (!this.barred) return;
+    this.barred = false;
+    this.terminal = false; this.terminalAt = null;
+    this.status = 'closed'; this.error = null;
   }
 
   /** Leave the room: the socket closes, the peers go - and every halo's with it (WORLD6b-iii(b)). */
@@ -1158,6 +1210,7 @@ export class OnlineSession {
     if (room === this.room) this.roomCount = null;   // AUDIT SCALE5a (lens C, pre-existing): a room let go takes its count with it - a superseded World tab said 'Online - 600' over an empty list
     if (room === this.room) this._forgetHubLists();   // AUDIT SCALE II C-6: and its lists of everyone online - a terminal close (the seat taken, a refusal) lets the room go here
     this._inChat.delete(room);   // CHAT-G: a room let go takes its bucket with it, or a long session accumulates one per cell it ever walked through
+    this._inLaw.delete(room);   // AUDIT SAFE RELAY-2: and the relay's word's
     this._inSocial.delete(room); this._inNote.delete(room); this._inParty.delete(room);   // AUDIT SOC B3: and the hub's three
     for (const k of [...this._inQuest.keys()]) if (k.startsWith(`${room}|`)) this._inQuest.delete(k);   // AUDIT DROPS C2: keyed room|acct
     this._inQuestRoom.delete(room);   // AUDIT 68 S14-quest-inbound-ungated
@@ -2076,6 +2129,7 @@ export class OnlineSession {
         // AUDIT WORLD6b-iii(b) A2: a terminal verdict is REMEMBERED (ws null, no retry) - the entry deleted, setHalo
         // re-opened the room the next frame, and a refused hello became connect-hello-refuse at the wire's rate
         const noToken = code === CLOSE_POLICY && tokenRetryable(this._tokenless.get(ws));   // SCALE2: refused for a token the service did not give in time - asked again
+        if (code === CLOSE_POLICY && ev?.reason === 'banned') { this._halo.delete(room); this.bar(); return; }   // AUDIT SAFE CLIENT-2: the relay's own word - my account is banned, and every room I hold goes with this one
         this._tokenUnread(ws, room, ev);   // SCALE5a: a busy refusal before the token was read leaves it this room's to carry again
         if (code === CLOSE_REPLACED || (code === CLOSE_POLICY && !noToken)) { h.ws = null; h.status = 'terminal'; h.retryAt = null; return; }
         const wasOpen = h.status === 'open';
@@ -2101,6 +2155,9 @@ export class OnlineSession {
       // them ON PURPOSE: through a one-second blip the crowd stays drawn where it was rather than vanishing and
       // re-standing, and the reconnect's welcome merges over it (AUDIT ONLINE B13).
       if (code === CLOSE_REPLACED) { this.superseded = true; this.terminal = true; this.terminalAt = this._now(); this.status = 'error'; this.error = seatText(); this._endHalo(); this._forgetRoom(this.room); this._deliver('superseded', () => this.onSuperseded?.()); return; }   // ONE-SEAT: sticky - another tab or window has the seat (the hub's word), or this tab's own id (a duplicated tab)   // AUDIT WORLD6b-iii(b) A4
+      // AUDIT SAFE CLIENT-2: CLOSED 1008 'banned' - the relay's word that a ban holds in this room (an order taken, or a hello
+      // while one stands). It stays closed: no retry, and no rejoin on CHAT_REJOIN_MS's clock (`barred`)
+      if (code === CLOSE_POLICY && ev?.reason === 'banned') { this.bar(); return; }
       // SCALE2: A HELLO REFUSED FOR ITS MISSING TOKEN, WHILE THIS DEVICE IS SIGNED IN, IS ASKED AGAIN. The account service
       // was slow (a relay deploy reconnects every player at once, and every socket asks it for a token) or had a bad
       // minute: the relay refused the tokenless hello and this close was terminal - the player offline until they
@@ -2280,6 +2337,7 @@ export class OnlineSession {
   sendChat(text, { ch = null, me = false } = {}) {
     const line = sanitizeChat(text);
     if (!line) return false;
+    if (this.mayChat && !this.mayChat(line)) return false;   // AUDIT SAFE CLIENT-13: the code of conduct's gate, whatever door the line came by
     // CHAT-CHAN: a line for a channel inside the room (the party's, on the hub link) goes only to a relay that routes
     // it - an older one projects `{t:'chat', text}` and would fan the party's line to everyone online
     if (ch != null && (!CHAT_LINE_CHANNELS.includes(ch) || !(ch === 'guild' ? this.guildOk : this.chanOk))) return false;   // GUILD1c: a guild's line only to a relay that routes it - an older one refuses the channel and closes nothing, but says nothing either
@@ -2637,6 +2695,20 @@ export class OnlineSession {
     return true;
   }
 
+  /** SAFE4: carry a ban order the account service signed into this room - MOD1's carrier, on the mute order's meter (the
+   *  relay spends one bucket for both). False when nothing went. */
+  sendBanOrder(order) {
+    if (typeof order !== 'string' || !order || order.length > 1024) return false;
+    // AUDIT SAFE RELAY-3: only to a relay that knows the frame (world215, BAN_RELAY_MIN) - an older one CLOSES the socket on
+    // a frame type it does not know (CLOSE_POLICY, terminal here): a moderator's ban took the channel down with it
+    if (!this.banOk) return false;
+    const gate = muteGate(this._mbucket, this._now());
+    if (!gate.pass) return false;
+    if (!this._send({ t: 'ban', order })) return false;
+    this._mbucket = gate.bucket;
+    return true;
+  }
+
   /** SCALE5b: a relay setting (net/relayCfg.js) to the hub - its answer comes back through `onRelayCfg`. False when this
    *  session is not the hub's, its relay takes none, or the setting is not one. */
   sendRelayCfg(frame) {
@@ -2812,6 +2884,7 @@ export class OnlineSession {
    *  the session is fine or the wait is not up. */
   rejoin(room, afterMs) {
     if (this.superseded) return false;   // ONE-SEAT: a superseded session waits for its player, never for a clock
+    if (this.barred) return false;   // AUDIT SAFE CLIENT-2: a banned one waits for the ban's lifting, never for a clock (CHAT_REJOIN_MS brought every channel back)
     if (this.room && !this.terminal) return false;
     // SCALE2: THE WAIT IS JITTERED, once a terminal close - anywhere in [afterMs/2, 3afterMs/2). It was the same thirty
     // seconds for everyone, so a relay that closed every channel at once had every tab's channels back in one second.
@@ -2902,6 +2975,15 @@ export class OnlineSession {
     return false;
   }
 
+  /** AUDIT SAFE RELAY-2: the relay's word on my own chat (`law`, `banned`, `muted`, `slowed`) through its own bucket per room
+   *  (LAW_IN_HZ_MAX) - an honest relay's at full tilt passes whole, whatever its channel's lines are doing. */
+  _lawIn(room, now) {
+    const g = tokenGate(this._inLaw.get(room) ?? null, now, LAW_IN_HZ_MAX, LAW_IN_BURST);
+    this._inLaw.set(room, g.bucket);
+    if (!g.pass) this.stats.chatsDropped++;
+    return g.pass;
+  }
+
   /** A frame one peer addressed to ME (a trade, a cast, a card, a page): never my own back, gated coming in PER SENDER
    *  (AUDIT DROPS B3 - one bucket for every sender together let two flooders crowd out my partner's trade commit, whose
    *  goods were already gone; the map forgets every sender past TRADE_IN_SENDERS_MAX), said once a kind on the console,
@@ -2916,6 +2998,10 @@ export class OnlineSession {
       if (!this._inDirectedSaid.has(kind)) { this._inDirectedSaid.add(kind); console.warn(`[online] ${kind} frames are arriving faster than ${hz}/s - frames are being dropped.`); }
       return;
     }
+    // AUDIT SAFE CLIENT-7: a request from an account I blocked never lands - a trade, a card, a page, a duel, a wedding (the
+    // sender's account as the relay verified it). A cast and the open zone's blows are a fight's, never a request: a
+    // block that dropped them would let the blocked strike unanswered
+    if (this.hears && BLOCKED_KINDS.includes(kind)) { const sub = subOf(m); if (sub && !this.hears(sub)) return; }
     const d = valid(m.data);
     if (d && d.to === this.id) this._deliver(kind, () => deliver(m.id, d));
   }
@@ -3001,6 +3087,8 @@ export class OnlineSession {
       if (primary) this.iliacOk = relaySupportsIliac(relayV);   // CARDS10: and deals the second game   // CARDS5; AUDIT CARDS-3 B1: a new welcome is a new socket - the relay stood the old one up
       if (primary) this.emoteOk = relaySupportsEmote(relayV);   // EMOTE1
       if (primary) this.dmOk = relaySupportsDm(relayV);   // TITLE-N
+      if (primary) this.banOk = relaySupportsBan(relayV);   // AUDIT SAFE RELAY-3: the ban frame's relay
+      if (primary) this._deliver('welcome', () => this.onWelcomed?.());   // AUDIT SAFE CLIENT-8
       if (primary) this.cardOk = relaySupportsCard(relayV);   // INSPECT1
       if (primary) this.pageOk = relaySupportsPage(relayV);   // JOURNAL1
       if (primary) this.bossOk = relaySupportsBossRef(relayV);   // INT11: a relay that COUNTS a boss fight's bodies - before it, a body's word is junk to it
@@ -3416,7 +3504,13 @@ export class OnlineSession {
       // CHAT-CHAN: `ch` is the channel the relay says the line was said in (a party's, on the hub link) - a word the
       // relay composed from its own routing, one of the wire's own, or none
       // EMOTE1: `me` - the relay says the line is an ACTION, and only `true` is one
-      this._deliver('chat', () => this.onChat?.({ id: m.id, name: sanitizeName(m.name), text, at: Number.isFinite(m.at) ? m.at : now, mine: m.id === this.id, sub: subOf(m), ch, ...(m.me === true ? { me: true } : {}) }));
+      // SAFE2: and `sg`, the relay's stamp on the line - carried, never read here: a report hands it to the account service
+      // AUDIT SAFE CLIENT-6 (2026-10-17): and on a stamped line, `raw` - the words EXACTLY as the relay signed them. They are
+      // sanitizeChat's already (the relay runs it, wire.js parseClient), and it is not idempotent: "n fuck-i-g" is signed
+      // "n ****-i-g" and a second pass here reads "* ****-*-*", so the report carried words the stamp never covered and
+      // the service refused it whole (report-unwitnessed). The log draws `text`; a report carries `raw` (net/chat.js) - never
+      // longer than a line the relay could have signed (CHAT_MAX: the relay is the player's choice, and the log keeps it)
+      this._deliver('chat', () => this.onChat?.({ id: m.id, name: sanitizeName(m.name), text, at: Number.isFinite(m.at) ? m.at : now, mine: m.id === this.id, sub: subOf(m), ch, ...(m.me === true ? { me: true } : {}), ...(typeof m.sg === 'string' && STAMP_RE.test(m.sg) ? { sg: m.sg, ...(m.text.length <= CHAT_MAX ? { raw: m.text } : {}) } : {}) }));
     } else if (m.t === 'holdem') {
       // CARDS5: THE RELAY'S CARD TABLE - the room's events and the table as it stands, my own hole cards, or my turn;
       // checked by the table's own law, from the room the player stands in only
@@ -3490,8 +3584,17 @@ export class OnlineSession {
       // log, and the relay is the player's own choice.
       const until = mutedUntilOf(m);
       if (until === null) return;
-      if (!this._lineIn(room, null, now)) return;
+      if (!this._lawIn(room, now)) return;   // AUDIT SAFE RELAY-2: on the relay's word's own bucket, never a busy channel's
       this._deliver('chat', () => this.onMuted?.({ until }));
+    } else if (m.t === 'law' || m.t === 'banned' || m.t === 'slowed') {
+      // SAFE4 + SAFE6: THE RELAY'S WORD ON MY OWN CHAT - an order the service pushed, handed to me to carry to my other
+      // rooms (`law`); a ban (`banned`, epoch seconds - 0 lifted); a new voice's line refused for its pace (`slowed`, ms).
+      // Each a line in the log at most - AUDIT SAFE RELAY-2: on a bucket of their own (LAW_IN_HZ_MAX), never the chat lines':
+      // a channel at its budget dropped the order and the ban with the lines
+      if (!this._lawIn(room, now)) return;
+      if (m.t === 'law' && typeof m.order === 'string' && m.order.length > 0 && m.order.length <= 1024) this._deliver('chat', () => this.onLaw?.({ order: m.order }));
+      else if (m.t === 'banned' && Number.isSafeInteger(m.until) && m.until >= 0) this._deliver('chat', () => this.onBanned?.({ until: m.until }));
+      else if (m.t === 'slowed' && Number.isSafeInteger(m.ms) && m.ms > 0 && m.ms <= 60_000) this._deliver('chat', () => this.onSlowed?.({ ms: m.ms }));
     } else if (m.t === 'social') {
       // AUDIT SOC B3: GATED COMING IN, as a chat line is (CHAT-G) - a note or an error becomes a chat line (net/chat.js
       // keeps CHAT_KEEP of them, so an ungated stream is a player's history deleted) and the rest a repaint; the
