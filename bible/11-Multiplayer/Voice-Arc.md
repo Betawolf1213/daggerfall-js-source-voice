@@ -2,7 +2,7 @@
 
 The record of the voice arc: players heard by the players near them (proximity) and by their party wherever it
 stands (party), over a media server of our own. Built by Betawolf1213 (VOICE1 and VOICE2, 2026-10-09 to 10-13 - pull
-request #871; VOICE-RELAY-DOOR, 2026-10-16 - #967), taken over and brought onto main at world213 (2026-10-17).
+request #871; VOICE-RELAY-DOOR, 2026-10-16 - #967), taken over and brought onto main at world214 (2026-10-17; world181 on #967's branch, then world213, renumbered past main's and Elite Gates' at the merges).
 
 Daggerfall has no voice; DFU has none either. Nothing here departs from a DFU member - it is the online game's own.
 
@@ -119,7 +119,7 @@ not reopen (VOICE2's notes):
 
 Before these doors a proximity ask's `room` was trusted on the client's word: two strangers naming the same key heard
 each other wherever they stood. And the party check called `RELAY_URL/party/<acct>`, which the relay never routed,
-so party voice checked nothing. `server/src/voiceDoor.js` answers both (world213):
+so party voice checked nothing. `server/src/voiceDoor.js` answers both (world214):
 
 - **The secret.** `POST /internal/voice/presence` and `/internal/voice/party-of` are the public Worker's, called by
   another Worker over the internet, so each is gated by the Worker SECRET `VOICE_RELAY_SECRET` (`npx wrangler secret
@@ -143,7 +143,7 @@ so party voice checked nothing. `server/src/voiceDoor.js` answers both (world213
 
 - The wiring slice (section 1), with the HUD's and the settings' mounts.
 - Deploy: the voice Worker or the node service with the stack, `VOICE_RELAY_SECRET` on both sides, the relay at
-  world213.
+  world214.
 - A Durable Object for the policy before a multi-isolate Worker deploy (section 4).
 - Spatial shards: a crowded voice room splits by arrival, so two players side by side can land in different shards
   (`roomSharder.js`'s own note); a layer already splits the game's crowd the same way the voice rooms do.
