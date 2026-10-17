@@ -39,7 +39,7 @@
   {
     "name": "AUDIT0929-S3-rr-weight-unread",
     "file": "src/systems/roleplayRealism/rrInstall.js",
-    "old": "    const weight = readSwing(ctx)?.weight ?? 0;",
+    "old": "    const weight = w?.weight ?? 0;",
     "new": "    const weight = 0;",
     "tests": [
       "test/systems/rr1_realism.test.js"

@@ -474,8 +474,11 @@ export function pcaaoBonusOrPenaltyByEnemyType(attacker, target, rolls) {
  *  min..max, adds the modifier and the mod's STRENGTH term; a monster's
  *  `damageModifier` IS its summed attack damage. BAL6-GAUNTLETS: the
  *  beast's claws add its gauntlets' metal where a weapon's material
- *  modifier stands (after Strength, before the floor - combat/clawMetal.js). */
-export function pcaaoHandToHandAttackDamage(attacker, target, damageModifier, player, rolls) {
+ *  modifier stands (after Strength, before the floor - combat/clawMetal.js).
+ *  BAL10 (bible/05-Combat/Balance-Arc.md section 16): AND THE PORT'S BLOW MODIFIERS for a player's fists - where the
+ *  weapon arm reads them (pcaaoWeaponAttackDamage: after the enemy-type term), never the beast's claws. `info` the host's
+ *  word, the weapon arm's own. */
+export function pcaaoHandToHandAttackDamage(attacker, target, damageModifier, player, rolls, info = undefined) {
   let damage = 0;
   if (player) {
     const h2h = skill(attacker, SKILLS.HandToHand);
@@ -488,6 +491,7 @@ export function pcaaoHandToHandAttackDamage(attacker, target, damageModifier, pl
   }
   if (damage < 1) damage = 0;
   if (damage >= 1) damage += pcaaoBonusOrPenaltyByEnemyType(attacker, target, rolls);
+  if (player && !attacker.isInBeastForm) damage = weaponBlowMods(null, damage, attacker, target, info);   // BAL10: the fists' blow modifiers
   return damage;
 }
 
@@ -1109,7 +1113,7 @@ export function pcaaoAttackDamage(attacker, target, {
     if (isPlayer(attacker) || isClassEnemy(AIAttacker)) {
       if (pcaaoSuccessfulHit(attacker, target, chanceToHitMod, struckBodyPart, rolls, modules, notes)) {
         if (notes) notes.hit = true;
-        damage = pcaaoHandToHandAttackDamage(attacker, target, damageModifiers, isPlayer(attacker), rolls);
+        damage = pcaaoHandToHandAttackDamage(attacker, target, damageModifiers, isPlayer(attacker), rolls, { unaware: !!unaware });   // BAL10: the host's word, for the fists' blow modifiers
         const before = damage;
         damage = pcaaoBackstabDamage(damage, backstab, rolls, say);
         backstabbed(before, damage);

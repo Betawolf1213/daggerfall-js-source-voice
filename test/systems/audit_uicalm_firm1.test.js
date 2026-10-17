@@ -166,7 +166,7 @@ test('AUDIT UICALM-FIRM1 L1 M1: a mastered skill\'s share is held by the same bu
 test('AUDIT UICALM-FIRM1 L1 M2: THE GAINS ARE CAPPED, THEN THE PRICE IS PAID - per channel and at the blow\'s group; only a keystone carries a price', () => {
   for (const n of FIRM_NODES.values()) for (const [k, v] of Object.entries(n.stats)) if (isPrice(k, v)) assert.equal(n.kind, 'keystone', `${n.key} ${k}`);
   // the mage past the spell's cap pays Martyr's Vow's -4
-  const mage = walk('mg.start', 'mg.k', named('Searing Will'), named('Sundering Word'), named("Battlemage's Focus"), named('Glamoured Blade'));
+  const mage = walk('mg.start', 'mg.k', named('Searing Will'), named('Sundering Word'), named("Templar's Mace"), named('Glamoured Blade'));   // PIN MOVED (BAL10): Battlemage's Focus is the Ritual's Templar's Mace - its spellPower 4 the same
   const vow = { start: mage.start, keys: [...mage.keys, ...pathTo(mage, 'rt.k')] };
   assert.ok(treeParts(mage).gains.spellPower > statDef('spellPower').max, 'the mage stands past the cap');
   assert.equal(treeStats(mage).spellPower, statDef('spellPower').max);

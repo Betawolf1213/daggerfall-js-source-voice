@@ -160,7 +160,11 @@ function damageModel(ctx, swing, foe) {
   }
   const one = (roll) => {
     let d = roll + dmgMods + strMod + matMod;
-    if (!weapon) { if (core.overhaul && d < 1) d = 0; return d + bonusOrPenaltyByEnemyType(entity, foe); }
+    if (!weapon) {
+      if (core.overhaul && d < 1) d = 0;
+      d += bonusOrPenaltyByEnemyType(entity, foe);
+      return entity.isInBeastForm ? d : weaponBlowMods(null, d, entity, foe, { unaware: false });   // BAL10: both cores read the fists' blow modifiers now - never the beast's claws
+    }
     if (d < 1) d = 0;
     d += bonusOrPenaltyByEnemyType(entity, foe);
     d = weaponBlowMods(weapon, d, entity, foe, { unaware: false });

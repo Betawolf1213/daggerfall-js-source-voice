@@ -13,11 +13,15 @@ import { EQUIP_SLOTS } from '../systems/equip.js';
 import { getItemHands, ITEM_HANDS } from '../characters/equipTable.js';
 import { templateByIndex } from '../systems/item/itemTemplates.js';
 import { liveStat } from '../systems/statMods.js';
+import { techniqueFamily } from './technique/techniqueRoster.js';   // BAL10, MARTIAL2: the family a swing is made with (its skill's, an RRI class's own)
 
 /**
  * What the swing law reads of a swing's wielder, or null without one.
  * @param {{entity?: any, weaponType?: number, usingRightHand?: boolean}|null} ctx
- * @returns {{weaponType: number, weight: number, strength: number, twoHanded: boolean}|null}
+ * BAL10 / MARTIAL2: and the FAMILY the swing is made with (combat/technique/techniqueRoster.js techniqueFamily - the
+ * skill it swings with; 'handToHand' bare, null for the beast's claws), and whether that is a short blade (the dagger's
+ * handling, characters/weaponStates.js SWING_SHORT_BLADE).
+ * @returns {{weaponType: number, weight: number, strength: number, twoHanded: boolean, family: string|null, shortBlade: boolean}|null}
  */
 export function readSwing(ctx) {
   const entity = ctx?.entity;
@@ -29,11 +33,14 @@ export function readSwing(ctx) {
   const slots = entity.equip?.slots;
   const item = slots?.[ctx.usingRightHand === false ? EQUIP_SLOTS.LeftHand : EQUIP_SLOTS.RightHand] ?? null;
   const bare = !item || weaponType === WEAPON_TYPES.Melee || weaponType === WEAPON_TYPES.Werecreature;
+  const family = weaponType === WEAPON_TYPES.Werecreature ? null : bare ? 'handToHand' : techniqueFamily(item);
   return {
     weaponType,
     weight: bare ? 0 : (templateByIndex(item.templateIndex)?.baseWeight ?? 0),
     strength: liveStat(entity, 'strength'),
     twoHanded: !bare && getItemHands(item) === ITEM_HANDS.Both,
+    family,
+    shortBlade: family === 'shortBlade',
   };
 }
 

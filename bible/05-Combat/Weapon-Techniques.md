@@ -141,6 +141,12 @@ side buttons is stopped by every host that reads them (`world.js`, `exterior.js`
 unbound). The phone has a **Tech** hold button among the touch corner's choices (`ui/touch/touchButtons.js`); a pad has it among
 the d-pad's choices (`ui/plus/plusPad.js`) and Enhanced Plus's bind rows (`ui/plus/plusPadBinds.js`).
 
+**MARTIAL3 (2026-10-17, `05-Combat/Martial-Specialisations.md` section 6): the key's second answer.** With no line on the
+weapon in hand (or, bare-handed, on the gauntlets), the key answers a martial path's SIGNATURE TECHNIQUE when the weapon
+is one of the path's two families - a form of the roster's own mechanics, outside the roster (no door draws one, no line
+names one), needing no loot ladder, one cooldown a path. A line on the weapon always wins (the owner: "Technique key,
+when free"). Law 4 stands for every LINE: a found technique is never chosen; a path's signature is the path's.
+
 **A press, a hold, a release.** A technique that aims (Volley, Piercing Shot, Leap Strike, Shadowstep, Lunge, Flying
 Kick) shows its mark while the key is held and goes on the release; a tap goes at once at what the look holds. One that
 does not aim goes on the press. The interact key (ActivateCenterObject - a drawn bow's own un-draw) sets an aim aside,

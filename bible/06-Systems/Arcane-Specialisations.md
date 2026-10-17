@@ -26,6 +26,9 @@ Measured first (section 2), then four questions put to the owner, and the owner 
 - **Below 100:** *as it is* - identity comes from what is mastered and specialised; reaching 100 everywhere stays.
 - **Scope:** *everything at once* - all fifteen and all six in one pull request.
 
+Its sibling for the weapons is `05-Combat/Martial-Specialisations.md` (MARTIAL, 2026-10-17): fifteen martial paths from the
+six weapon skills, held beside an arcane path (the owner: "Yes, one of each").
+
 Six schools make fifteen pairs (6 choose 2), not twenty-one; with the six schools' own perks past 100 the count is the
 post's twenty-one, and that is how this page reads it.
 

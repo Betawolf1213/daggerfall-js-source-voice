@@ -30,7 +30,8 @@
 // pass, shake(k) - the one shaker, sound(clip, volume, pitch) - the audio bus }.
 // A host that hands none still swings its techniques; it cannot leap, dash or shoot one (said so).
 
-import { techniqueById, techniqueMult, TECHNIQUE_MAX_SPEED, TECHNIQUES, TECHNIQUE_ACTION } from './technique/techniqueRoster.js';
+import { techniqueById, techniqueMult, techniqueFamily, TECHNIQUE_MAX_SPEED, TECHNIQUES, TECHNIQUE_ACTION } from './technique/techniqueRoster.js';
+import { signatureFor, signatureById, SIGNATURE_IDS, SIGNATURE_TECHNIQUES } from '../systems/martialPaths.js';   // MARTIAL3: a martial path's signature - the key's answer when the weapon carries no line
 import { techniqueLineOf, lootRarityOn, rarityKnown } from '../systems/loot/lootRarity.js';
 import { EQUIP_SLOTS } from '../systems/equip.js';
 import { sigilDueling } from '../systems/sigil/sigil.js';
@@ -80,9 +81,15 @@ export const readyAgainText = (name) => `${name} is ready again.`;
 
 // ── the state: the player's, one ───────────────────────────────────
 /** AUDIT TECH-FX: the roster's ids in order - the cooldowns' index (a number a technique, written in place: a Map's
- *  iterator, its entries and its boxed numbers made 96 bytes a frame for the 8-16 s after every use). */
-const TECH_IDS = Object.freeze(Object.keys(TECHNIQUES));
-const TECH_INDEX = Object.freeze(Object.fromEntries(TECH_IDS.map((id, i) => [id, i])));
+ *  iterator, its entries and its boxed numbers made 96 bytes a frame for the 8-16 s after every use). MARTIAL3: and a slot
+ *  a martial path's signature after them (`sig:<path>`), which its forms share - a Ranger's shot and pounce are one
+ *  cooldown, whichever weapon is in hand. */
+const SIGNATURE_PATHS = Object.freeze([...new Set(SIGNATURE_IDS.map((id) => SIGNATURE_TECHNIQUES[id].path))]);
+const TECH_IDS = Object.freeze([...Object.keys(TECHNIQUES), ...SIGNATURE_PATHS.map((p) => `sig:${p}`)]);
+const TECH_INDEX = Object.freeze(Object.fromEntries([...TECH_IDS.map((id, i) => [id, i]),
+  ...SIGNATURE_IDS.map((id) => [id, TECH_IDS.indexOf(`sig:${SIGNATURE_TECHNIQUES[id].path}`)])]));
+/** A technique by id - the roster's, or (MARTIAL3) a signature's form. */
+const techOf = (id) => techniqueById(id) ?? signatureById(id);
 const fresh = () => ({
   /** seconds of play left on each technique's cooldown, by TECH_INDEX */
   wait: new Float64Array(TECH_IDS.length),
@@ -117,15 +124,32 @@ export function techniqueItem(entity, pw) {
  *  it every frame, so the last answer is kept while nothing it was read from has moved (the piece, its line, the line's
  *  technique and value, whether it is known) - a snapshot no caller writes, so one is as good as another. */
 let _handMemo = null;
+let _sigMemo = null;
 export function techniqueInHand(entity, pw) {
   const item = techniqueItem(entity, pw);
   const line = techniqueLineOf(item);
   const tech = line ? techniqueById(line.param) : null;
-  if (!tech) return null;
+  if (!tech) return signatureInHand(entity, pw, item);
   const known = rarityKnown(item), h = _handMemo;
   if (h && h.item === item && h.line === line && h.id === line.param && h.value === line.value && h.known === known) return h.hand;
   const hand = { id: line.param, value: line.value, tech, item, known };
   _handMemo = { item, line, id: line.param, value: line.value, known, hand };
+  return hand;
+}
+/** MARTIAL3 (bible/05-Combat/Martial-Specialisations.md section 6): THE SIGNATURE IN HAND - with no line on the piece, my
+ *  held martial path's signature, when the weapon in hand is one of its pair's families (the bare hand Hand-to-Hand's,
+ *  whatever gloves are worn; the beast's claws none - "the beast knows no technique"). The owner: "Technique key, when
+ *  free" - a line on the weapon wins. Its `value` is none (a signature is its base, as a line's power is its own),
+ *  `known` always, `signature` its path. Kept while nothing it was read from moves, as the line's hand is. */
+function signatureInHand(entity, pw, item) {
+  const held = pw?.restingWeapon ?? pw?.weapon ?? null;
+  const family = held ? (held.werecreatureClaws ? null : techniqueFamily(held)) : 'handToHand';
+  const tech = family ? signatureFor(entity, family) : null;
+  if (!tech) return null;
+  const h = _sigMemo;
+  if (h && h.item === item && h.tech === tech) return h.hand;
+  const hand = { id: tech.id, value: 0, tech, item, known: true, signature: tech.path };
+  _sigMemo = { item, tech, hand };
   return hand;
 }
 /** The name a technique is said by: its own once its piece is known, else UNKNOWN_TECHNIQUE (AUDIT TECH1). */
@@ -150,10 +174,10 @@ const vec3 = (v) => v != null && v.length >= 3 && Number.isFinite(v[0]) && Numbe
  *  Volley's arrow where it lands. null: no burst for this moment. A sweep spins the way its strike travels (AUDIT
  *  TECH-FX: a StrikeLeft - the Whirlwind's - carries the blade to the left: combat/weapon/weaponWidget.js leanFor, bloodDecals.js
  *  SWING_PUSH), and an arc spans the technique's own half-angle (techniqueRoster.js `arc`). */
-function fxPlace(id, moment, ctx, extra = null) {
+function fxPlace(id, moment, ctx, extra = null, tech = techOf(id)) {
   const burst = TECH_FX[id]?.[moment]?.burst, f = ctx.cam?.feet;
   if (!burst || !vec3(f)) return null;
-  const yaw = ctx.cam.yaw ?? 0, fw = flatOf(yaw), tech = techniqueById(id);
+  const yaw = ctx.cam.yaw ?? 0, fw = flatOf(yaw);
   switch (burst) {
     case 'star': case 'chop': case 'punch':
       return { at: [f[0] + fw[0] * 1.2, f[1] + 1.1, f[2] + fw[2] * 1.2], ground: f[1], yaw, dir: [-fw[0], 0, -fw[2]] };
@@ -170,7 +194,10 @@ function fxPlace(id, moment, ctx, extra = null) {
   }
 }
 /** TECH-FX: a moment cued - the springs, the shake, the burst and the sound (combat/technique/techniqueFx.js techniqueCue). */
-const cue = (hand, moment, ctx, extra = null) => techniqueCue(hand.id, moment, ctx.door, fxPlace(hand.id, moment, ctx, extra));
+const cue = (hand, moment, ctx, extra = null) => {
+  const fx = hand.tech?.fx ?? hand.id;   // MARTIAL3: a signature wears a roster technique's feel (martialPaths.js `fx`), its own arc and strike
+  return techniqueCue(fx, moment, ctx.door, fxPlace(fx, moment, ctx, extra, hand.tech));
+};
 const at = (o, d, s) => [o[0] + d[0] * s, o[1] + d[1] * s, o[2] + d[2] * s];
 const flatDist = (a, b) => Math.hypot(b[0] - a[0], b[2] - a[2]);
 
@@ -304,7 +331,7 @@ export function volleyPoints(centre, radius, n, turn = 0) {
 
 /** THE BLOW a technique's swing carries (combat/technique/techniqueBlow.js), at its line's power, from the feet and look now. */
 export function swingBlow(id, value, cam, extra = {}) {
-  const t = techniqueById(id);
+  const t = techOf(id);
   if (!t) return null;
   return {
     id, mult: techniqueMult(t.base, value), wounded: t.wounded ?? 0, toHit: t.toHit ?? 0,
@@ -446,7 +473,7 @@ export function stepTechnique(dt, ctx) {
     if (next > 0) { W[i] = next; continue; }
     W[i] = 0;
     const hand = techniqueInHand(ctx.entity, ctx.pw);
-    if (hand?.id === TECH_IDS[i]) say(readyAgainText(techniqueName(hand)));   // the classic HUD has no chips: the line says it
+    if (hand && TECH_INDEX[hand.id] === i) say(readyAgainText(techniqueName(hand)));   // the classic HUD has no chips: the line says it (MARTIAL3: a signature's forms share their slot)
   }
   const held = !!ctx.held, pressed = held && !_s.prev, released = !held && _s.prev;
   _s.prev = held;
@@ -478,7 +505,7 @@ export function refusal(hand, ctx) {
   const pw = ctx.pw;
   if (pw?.weapon?.werecreatureClaws) return BEAST_TEXT;
   if (!hand) return pw?.weapon && techniqueLineOf(ctx.entity?.equip?.slots?.[EQUIP_SLOTS.Gloves]) ? GAUNTLETS_TEXT : NO_TECHNIQUE_TEXT;   // AUDIT TECH1: the gauntlets' line sleeps while a weapon is drawn - say so
-  if (!lootRarityOn()) return LADDER_OFF_TEXT;   // Loot-II law 6: off is DFU exactly - a found line sleeps
+  if (!hand.signature && !lootRarityOn()) return LADDER_OFF_TEXT;   // Loot-II law 6: off is DFU exactly - a found line sleeps (MARTIAL3: a path's signature is no found line)
   if (sigilDueling()) return DUEL_TEXT;   // TECH law 3: never at a player - every power that sleeps in a duel, or a bout between players, sleeps
   if (pw.sheathed) return SHEATHED_TEXT;
   if (_s.act) return true;   // one at a time
@@ -517,8 +544,9 @@ function pay(hand, ctx) {
 /** RELEASE: the technique goes - its price paid as it leaves. */
 function execute(hand, ctx, target) {
   const t = hand.tech, pw = ctx.pw;
+  const use = { id: hand.id };   // MARTIAL3: ONE PRESS - the token its every blow and shaft carries (techniqueBlow.js tellTechniqueLanded)
   if (t.mech === 'swing') {
-    const blow = swingBlow(hand.id, hand.value, ctx.cam);
+    const blow = swingBlow(hand.id, hand.value, ctx.cam, { use });
     pw.techniqueBlow = blow;
     if (!ctx.startSwing?.(t.strike)) { pw.techniqueBlow = null; return; }
     pay(hand, ctx);
@@ -530,7 +558,7 @@ function execute(hand, ctx, target) {
     pw.techniqueBlow = null;
     if (!ctx.startSwing?.('StrikeDown')) return;
     pay(hand, ctx);
-    _s.act = { kind: 'shot', hand, target, pw, t: 0, loosed: false, weapon: pw.weapon };
+    _s.act = { kind: 'shot', hand, target, pw, t: 0, loosed: false, weapon: pw.weapon, use };
     cue(hand, 'release', ctx);   // TECH-FX
     return;
   }
@@ -544,7 +572,7 @@ function execute(hand, ctx, target) {
   pay(hand, ctx);
   const lane = t.aim === 'lane' && target.lane ? { from: target.lane.from, dir: target.lane.dir, len: target.lane.len, halfW: target.lane.halfW } : null;
   // TECH-FX: `from` - where the leap or the dash began (a Lunge's trail runs from it)
-  _s.act = { kind: 'flight', hand, target, pw, t: 0, time: fl.time, struck: false, lane, foe: target.foe ?? null, from: [from[0], from[1], from[2]] };
+  _s.act = { kind: 'flight', hand, target, pw, t: 0, time: fl.time, struck: false, lane, foe: target.foe ?? null, from: [from[0], from[1], from[2]], use };
   cue(hand, 'release', ctx);   // TECH-FX
 }
 
@@ -575,7 +603,7 @@ function stepAct(dt, ctx) {
     if (a.lands && a.li === a.lands.length && !a.closed) { a.closed = true; cue(a.hand, 'close', ctx, { at: a.point, r: a.hand.tech.radius }); }
     while (a.queue.length && a.queue[0].at <= a.t) {
       const q = a.queue.shift();
-      ctx.door?.fireArrow?.(q.from, q.dir, { sky: true, weapon: a.weapon, technique: { id: a.hand.id, mult: a.mult, pierce: 1 }, summoned: q.summoned });   // AUDIT TECH1: the bow that loosed it, whatever is in hand now
+      ctx.door?.fireArrow?.(q.from, q.dir, { sky: true, weapon: a.weapon, technique: { id: a.hand.id, mult: a.mult, pierce: 1, use: a.use }, summoned: q.summoned });   // AUDIT TECH1: the bow that loosed it, whatever is in hand now
     }
     if (!a.queue.length && a.t >= a.until) _s.act = null;
     return;
@@ -593,8 +621,8 @@ function stepAct(dt, ctx) {
       // Shadowstep: turn on the foe - FROM WHERE YOU LAND (AUDIT TECH1: turned from mid-dash, the view looked on along the
       // dash and the body landed behind the foe facing away from it)
       if (a.foe && a.hand.tech.mech === 'dash' && !a.lane) ctx.door?.face?.(a.foe.ai?.feet ?? null, a.target?.point ?? null);
-      const blow = swingBlow(a.hand.id, a.hand.value, ctx.cam, a.lane ? { lane: a.lane, arc: 'all', reach: a.lane.len }
-        : a.hand.tech.mech === 'dash' && a.foe ? { target: a.foe } : {});
+      const blow = swingBlow(a.hand.id, a.hand.value, ctx.cam, a.lane ? { lane: a.lane, arc: 'all', reach: a.lane.len, use: a.use }
+        : a.hand.tech.mech === 'dash' && a.foe ? { target: a.foe, use: a.use } : { use: a.use });
       pw.techniqueBlow = blow;
       // TECH-FX: the landing's strike knows where the body left (`from` - a Lunge's trail runs from it)
       if (ctx.startSwing?.(a.hand.tech.strike)) _s.act = { kind: 'swing', hand: a.hand, blow, pw, t: 0, from: a.from };
@@ -642,7 +670,7 @@ function loose(a, ctx) {
     if (!spendAmmoFor(items, weapon, shot)) { _s.act = null; return; }
     tallySwingSkills(ctx.entity, weapon);
     const look = lookOf(ctx.cam);
-    ctx.door?.fireArrow?.(ctx.cam.pos, look, { sky: false, weapon, technique: { id: hand.id, mult, pierce: t.through }, speedScale: t.speed, summoned: shot.summoned });
+    ctx.door?.fireArrow?.(ctx.cam.pos, look, { sky: false, weapon, technique: { id: hand.id, mult, pierce: t.through, use: a.use }, speedScale: t.speed, summoned: shot.summoned });
     ctx.noteShot?.(weapon);
     // TECH-FX: the shot's kick, its flare and its tracer - laid down the look the shaft flies, to the first thing it meets
     // there (AUDIT TECH-FX: the aim's lane was the release's, flat, and the player may turn before the string goes)
@@ -673,7 +701,7 @@ function loose(a, ctx) {
     const d = [p[0] - from[0], p[1] - from[1], p[2] - from[2]], l = Math.hypot(d[0], d[1], d[2]) || 1;
     return { at: t.delay + (n > 1 ? (t.spread * i) / (n - 1) : 0), from, dir: [d[0] / l, d[1] / l, d[2] / l], to: p, summoned: !!conjured[i] };
   });
-  _s.act = { kind: 'rain', hand, point: c, t: 0, queue, mult, until: t.delay + t.spread + h / MISSILE_SPEED + 0.2, weapon };
+  _s.act = { kind: 'rain', hand, point: c, t: 0, queue, mult, until: t.delay + t.spread + h / MISSILE_SPEED + 0.2, weapon, use: a.use };
   // TECH-FX: where and when each shaft meets what is under it - its own line cast as the lane will fly it (AUDIT
   // TECH-FX: the disc's points all stand at its centre's height, so on a slope or a step the puff hung in the air or
   // sank; a line that meets nothing within its aim ends at its aim), its loose plus its flight at MISSILE_SPEED, in
@@ -731,7 +759,7 @@ let _chipSecs = -1, _chipSecsText = '';
  *  @param {any} entity @param {any} pw @param {string | (() => string)} [keyName] */
 export function techniqueHudChips(entity, pw, keyName = '') {
   const hand = techniqueInHand(entity, pw);
-  if (!hand || !lootRarityOn()) return NONE;   // TECH-FX: no technique in hand - the frozen empty list, never a new one a frame
+  if (!hand || (!hand.signature && !lootRarityOn())) return NONE;   // TECH-FX: no technique in hand - the frozen empty list, never a new one a frame (MARTIAL3: a signature needs no ladder)
   if (sigilDueling()) return NONE;   // FINAL AUDIT: nor while a duel sleeps the key (law 3) - the set powers' chips' law, none while they sleep; the card's block says why
   const left = techniqueWait(hand.id);
   _chip.name = techniqueName(hand);
@@ -771,4 +799,4 @@ export function techniqueState() {
   return { aiming: !!_s.aim, aim: _s.aim?.target ?? null, act: _s.act?.kind ?? null, wait };
 }
 /** Tests only: everything fresh. */
-export function _resetTechniquesForTests() { _s = fresh(); resetTechniqueFx(); }
+export function _resetTechniquesForTests() { _s = fresh(); resetTechniqueFx(); _handMemo = null; _sigMemo = null; }
