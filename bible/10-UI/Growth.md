@@ -61,7 +61,7 @@ more: a rail of pages on the left, the page on the right.
 
 - **The rail's marks** (`growthDue`): Level `!` while a level is owed; Specialisations the paths open to choose (both
   families); Captain's Stars the points not yet set. The Stats page's **Growth door** stands where Ascend and Firmament
-  stood and carries their sum - `Growth (2)` - primary while anything waits (`enhancedMenu.js:"const g = el('button', n ? 'act primary' : 'act'"`).
+  stood and carries their sum - `Growth (2)` - primary while anything waits (`ui/enhanced/enhancedMenu.js:"const g = el('button', n ? 'act primary' : 'act'"`).
 - **Landings** (`at`, the window's one way in by name): `growth`, a page's id (`level`, `specs`, `firmament`,
   `captain`), or a family's guide (`specs:arcane`, `specs:martial`). The names live in a leaf of their own,
   `ui/growth/growthPages.js`, because the boot doors read them (`pauseDoor.js`) and the tab's guide reads the
@@ -129,7 +129,7 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   and an Open door, and the face opens over the whole screen - kept as it was between two opens, until the page, the
   tab or the window is left.
 - **One Escape, one owner.** The window's back stack asks the tab first while a face stands
-  (`enhancedMenu.js:"if (!growthBack()) onAction('resume');"`): the face's own back (a confirm shut; unaccepted stars
+  (`ui/enhanced/enhancedMenu.js:"if (!growthBack()) onAction('resume');"`): the face's own back (a confirm shut; unaccepted stars
   asked about once - "Press Escape again to discard them"), then full screen left, then the window resumes.
 - **The three windows' `embed` mode** (`firmamentWindow.js`, `captainTreeWindow.js`, `enhancedLevelUp.js`): absolute in
   the stage at its size (a ResizeObserver refits the view the first time it has a true size), no overlay registered (the
