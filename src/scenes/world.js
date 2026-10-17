@@ -745,7 +745,7 @@ import { bodySayer } from '../net/bossBody.js';   // INT15: my body, said to a b
 import { SOUND } from '../systems/soundClips.js';
 import { createWeaponRig, autoBuildArms, armIdentityOf, armBuiltFor, armsReady, sheetHolderOf, buildArmsFor, prebuildArmsForSave } from '../combat/weapon/weaponRig.js';   // MWA1: the arms at boot; MWA3: the identity the arm should stand for, beside the one it does; MW-EARLY: and before the world is read
 import { weaponPoseOf, applyWeaponPose, mergeWeaponPose, playerMeleeCanHit, registerPlayerSwingListener, WEAPON_REACH } from '../combat/playerWeapon.js';   // HARD2c: the sheath+hand pair as ONE law, and SL-2's per-field merge with the mode host's live rig
-import { ArrowFlight, playerArrowHitFoe } from '../combat/arrowFlight.js';   // C13: visible exterior arrows; AUDIT 39 (#64): and the shaft that LANDS
+import { ArrowFlight, playerArrowHitFoe, shaftOnRelayBody } from '../combat/arrowFlight.js';   // C13: visible exterior arrows; AUDIT 39 (#64): and the shaft that LANDS
 import { addItem, addGoldPieces, isGoldPieces, spendAmmoFor, carriedWeight } from '../systems/inventory.js';
 import { guildCardRoll, guildNameOfFaction } from '../systems/card/cardSources.js';   // CARDS9: a guild quest's card
 import { mintIliacCard, iliacCardName } from '../systems/iliac/iliacItems.js';   // CARDS9: the card minted, and named as it is said
@@ -2052,7 +2052,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ? createWritBook({ door: accountWrits({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
       character: () => characterIdOf(playerEntity), now: () => Date.now() + _sharedOffsetMs, marks: marksBook,
       stores: { apply: (st) => profBook?.applyStore(st) },
-      market: marketBook,   // AUDIT 31 B5: the market's book told each balance, its reads begun before a writ act let go
+      market: marketBook, realm: marketBook?.realm ?? null,   // AUDIT 31 B5: the market's book told each balance, its reads begun before a writ act let go; INT19: and its realm act, a commission's piece out of the record
       holds: (pv) => !!marketBook?.holdsPiece(pv) })   // AUDIT 31 H1: a piece the market's book keeps a listing of is no fill
     : null;
   // BAG1 (bible/06-Systems/Materials-Bag.md): A GUILD WRIT'S DELIVERY is the Stores', as a Court writ's is - what the
@@ -7644,9 +7644,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
     return _serpentStandIn;
   };
-  /** SERPENT4: a shaft of mine in its hide (arrowFlight.js boxTargets) - WeaponManager's own damage of it, to the host. */
+  /** SERPENT4: a shaft of mine in its hide (arrowFlight.js boxTargets) - WeaponManager's own damage of it, to the host (AUDIT MARTIAL L2 F5: a technique's weighed and told, what the blow owes it carried - shaftOnRelayBody). */
   function serpentArrowOn(m, target) {
-    const dmg = calculateAttackDamage(playerEntity, serpentStandIn(), { weapon: m.weapon ?? null, rolls: Math.random });
+    const dmg = shaftOnRelayBody(m, serpentStandIn(), calculateAttackDamage(playerEntity, serpentStandIn(), { weapon: m.weapon ?? null, rolls: Math.random }));
     if (dmg > 0) serpentHost?.handStruck?.(target, dmg);
   }
   /** SERPENT4: a harmful missile of mine on its hide (hostMagic.js boxMarks) - its harmful families landed on the stand-in

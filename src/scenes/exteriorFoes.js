@@ -130,6 +130,24 @@ export const QUEST_PUPPETS_MAX = 24;
  *  Greater Giant's call (ten) plus the encounter it joined, so the foes past it never stood at the reader - the party member
  *  saw its friend strike the air. A reader-side allowance only: the relay never reads it (wire.js and RELAY_VERSION untouched). */
 export const ENCOUNTER_PUPPETS_MAX = Math.max(32, CELL_PUPPETS_MAX);
+/** FOE-FORGE (2026-10-17; a horde of forty Elite Daedroths round one player in a hamlet, reported on the Discord;
+ *  bible/06-Systems/Integrity-Arc.md section 8): THE MOST OF ONE OWNER'S FOES A READER HOLDS AT ONCE, every allowance
+ *  together - its encounter's, its watch's, its camps', the deep's, a raid's and a shared quest's - with the foes of
+ *  theirs it took over (a handover named it heir) that still live counted among them. Each allowance was its own, so a
+ *  forged frame filled every one, about a hundred hostile foes of any kind; and a foe taken over left its owner's count,
+ *  so records naming the reader heir stood foes without end. An honest owner's live foes all ride one frame (the
+ *  sender's trim, wire.js CELL_FRAME_RECORDS_MAX), so honest play does not meet it. */
+export const PEER_PUPPETS_TOTAL_MAX = CELL_FRAME_RECORDS_MAX;
+/** FOE-FORGE: the most of one owner's foes a reader stands as ELITES (the record's `z`: five times the health, three times
+ *  the blows - systems/eliteFoes.js). An owner rolls its own elites one in twenty, outside a town (ELITE_FOE_OVERWORLD_CHANCE),
+ *  so even a full frame of honest foes holds three or so; past this a record's `z` is not believed, and its foe stands as
+ *  its plain kind. */
+export const PEER_ELITE_PUPPETS_MAX = 8;
+/** FOE-FORGE: the most of one owner's foes a reader stands as REVENANTS (the record's `nm`, and the blows its `rb` and
+ *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, five) and the
+ *  ones sworn to it (revenantCompanions.js REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds
+ *  the sum). Past it a record's revenant fields are not believed. */
+export const PEER_REVENANT_PUPPETS_MAX = 11;
 const QUEST_WORD_RE = /^[A-Za-z0-9_.$-]{1,64}$/;   // AUDIT (pre-merge) Q6: `$` too - the cure quests are $CUREVAM and $CUREWER, and every reader refused their tag
 /** QUEST-PARTY: a frame's `qf` - [number, quest name, foe symbol] for each record that is a shared quest's foe; a
  *  malformed entry names nothing. QUEST-PARTY phase 3: and a fourth, its flags when any - 1 the foe a quest MARKER stood
@@ -2562,6 +2580,27 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     for (const [k, r] of _pupPending) if (k.startsWith(from + ':') && kind(r.t, r._site, r._deep, r._quest, r._raid) === want) n++;
     return n;
   }
+  /** FOE-FORGE: a foe of `from`'s I took over (adopt) that still lives - counted against its owner's total and marks. */
+  const tookLive = (from, k, f) => !f.dead && !f._gone && k.startsWith(from + ':');
+  const isElitePuppet = (f) => !!f.entity?.eliteFoe;
+  const isRevenantPuppet = (f) => !!f.entity?.revenant;
+  /** FOE-FORGE: everything of one owner's this reader holds - its puppets standing or building, of every allowance, and
+   *  the foes of theirs I took that still live: PEER_PUPPETS_TOTAL_MAX's count. */
+  function heldOf(from) {
+    let n = 0;
+    for (const f of _pupIndex.values()) if (f.puppet === from && !f.dead) n++;
+    for (const k of _pupPending.keys()) if (k.startsWith(from + ':')) n++;
+    for (const [k, f] of _adopted) if (tookLive(from, k, f)) n++;
+    return n;
+  }
+  /** FOE-FORGE: how many of one owner's foes here are `marked` (an elite, a revenant, a Greater Giant) - its puppets, and
+   *  the foes of theirs I took that still live (a taken elite stays one). The foe being asked about is never yet marked. */
+  function markedOf(from, marked) {
+    let n = 0;
+    for (const f of _pupIndex.values()) if (f.puppet === from && !f.dead && marked(f)) n++;
+    for (const [k, f] of _adopted) if (tookLive(from, k, f) && marked(f)) n++;
+    return n;
+  }
   /** DEEP-SHARE: the live deep foes OTHER players stand within `radius` of `feet` - what the deep's spawner here counts
    *  against its cap (scenes/deepWater/deepWatersHost.js deepWatersEnemySettingsNear). */
   function deepPuppetsNear(feet, radius) {
@@ -2645,6 +2684,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (took) { _adopted.delete(key); if (r.d !== 1 && !took.dead && !took._gone) letGo(took); }
       if (_pupPending.has(key)) { _pupPending.set(key, { ...r, ls: r.ls ?? _pupPending.get(key).ls, lw: r.lw ?? _pupPending.get(key).lw, t: _pupPending.get(key).t, _site: _pupPending.get(key)._site, _deep: _pupPending.get(key)._deep, _quest: _pupPending.get(key)._quest, _raid: _pupPending.get(key)._raid, _camp: campTags.get(r.i) ?? _pupPending.get(key)._camp }); continue; }   // AUDIT ALL A1: a pending build's SPECIES is fixed at the build - a later word without `t` (or with another) neither moves it out of its class's count (an unbounded stand: a peer re-worded a pending watch as no species and stood ten more) nor lands a record of the wrong species on the build   OW6: and its camp, the newest word
       if (r.d === 1 || r.t === undefined || !ENEMY_BASICS[r.t] || !r.f) continue;
+      if (heldOf(from) >= PEER_PUPPETS_TOTAL_MAX) { if (site) refused.add(site); continue; }   // FOE-FORGE: every allowance together, and what I took of theirs
       if (site && livePuppetsOf(from, false, true) >= WOD_CAMP_PUPPETS_MAX) { refused.add(site); continue; }   // WOD7: a shared camp's foes under their own allowance
       const deep = deepIds.has(r.i);
       const raidKey = raidTags.get(r.i) ?? null;   // RAID2: a raid's raider stands under the raid's allowance
@@ -2748,18 +2788,19 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     if (r.y !== undefined) p.yaw = r.y;
     if (r.m !== undefined) p.moving = r.m === 1;
     if (r.h !== undefined && f._pupQuest && !f._qHurt && p.h != null && r.h < p.h) { f._qHurt = true; _questShare?.onPuppetHurt?.(f._pupQuest, f.puppet); }   // QUEST-PARTY: the first blow I see land is the injury my copy of the quest reads (QuestResourceBehaviour's own check)
-    if (r.z === 1 && !f.entity.eliteFoe && !f.entity.champion) promoteEliteFoe(f.entity, { own: false });   // ELITE FOES: its owner's elite - the blows, the size, the glow (its maximum is `k`)
+    if (r.z === 1 && !f.entity.eliteFoe && !f.entity.champion && markedOf(f.puppet, isElitePuppet) < PEER_ELITE_PUPPETS_MAX) promoteEliteFoe(f.entity, { own: false });   // ELITE FOES: its owner's elite - the blows, the size, the glow (its maximum is `k`); FOE-FORGE: no more of them than an owner rolls
     f._pupYield = r.yd === 1;   // REVENANT-FATE: its owner's revenant kneels...
     f._pupExec = r.ex === 1 ? (f._pupExec ?? Date.now()) : null;   // ...or burns away, from the record that said so
     f._pupSpare = r.sp === 1 ? (f._pupSpare ?? Date.now()) : null;   // AUDIT (2026-10-02): ...or rises sworn into its portal
-    if (typeof r.nm === 'string' && r.nm && f.entity.revenant?.name !== r.nm) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }   // REVENANT-WIRE: called what its owner calls it
+    const rev = typeof r.nm === 'string' && r.nm && (!!f.entity.revenant || markedOf(f.puppet, isRevenantPuppet) < PEER_REVENANT_PUPPETS_MAX);   // FOE-FORGE: no more of them than a character keeps and swears
+    if (rev && f.entity.revenant?.name !== r.nm) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }   // REVENANT-WIRE: called what its owner calls it
     // RVN13 (bible/12-Enhanced-AI/Feud-Arc.md 25): its owner's adaptations, weakness and second phase - stood again only when they change;
     // FEUD WIRE: and its blows (its stand's and phase two's on its own - so its owner's revenant strikes me as hard as it strikes its owner)
-    if (typeof r.nm === 'string' && r.nm) { const fw = `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}`; if (f._feudWire !== fw) { f._feudWire = fw; f.entity.revenant = feudFromWire(f.entity.revenant, r); puppetRevenantBlows(f.entity, r); } }
+    if (rev) { const fw = `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}`; if (f._feudWire !== fw) { f._feudWire = fw; f.entity.revenant = feudFromWire(f.entity.revenant, r); puppetRevenantBlows(f.entity, r); } }
     if (r.rt !== undefined && f.puppet) { const m = _pupIndex.get(pupKey(f.puppet, r.rt)); const name = m ? puppetBandName(m.entity?.revenant?.name, m.mobileType) : null; if (name) f.entity.bandName = name; }   // RVN13: a follower named for its master's band
     if (r.k !== undefined) f.entity.maxHealth = r.k;   // AUDIT SETS M1: the owner's maximum - "under half" is its word
     if (r.h !== undefined) { if (p.h != null && r.h < p.h) p.hurt = true; p.h = r.h; f.entity.health = r.h; }
-    if (Number.isInteger(r.gg) && f.entity.zoneGiant !== r.gg) {
+    if (Number.isInteger(r.gg) && f.entity.zoneGiant !== r.gg && f.mobileType === WILD_GIANT && !markedOf(f.puppet, (x) => x.entity?.zoneGiant === r.gg)) {   // FOE-FORGE: a Greater Giant is a giant, and one of each to an owner
       f.entity.wildGiant = true; f.entity.zoneGiant = r.gg;
       // GIANT-BLOWS (2026-10-12, a player: the Greater Giant "does less damage than normal mobs in the zone"): its blows at me
       // are judged here, on my copy (ai/puppetBlows.js - each client its own feet), and my copy is a puppet, which never
