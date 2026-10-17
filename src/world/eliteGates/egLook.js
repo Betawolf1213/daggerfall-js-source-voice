@@ -102,8 +102,8 @@ export function egGustSections(specs) {
     for (const q of spec.steps ?? []) {
       if ((q.road ?? 0) !== road) continue;
       if (q.kind !== 'gust') { run = null; continue; }
-      if (!run) { run = { spec, road, x: q.x, y: q.y, z0: q.z - q.d / 2 - 4, z1: 0 }; out.push(run); }
-      run.y = Math.min(run.y, q.y); run.z1 = q.z + q.d / 2 + 4;
+      if (!run) { run = { spec, road, x: q.x, y: q.y, y1: q.y, z0: q.z - q.d / 2 - 4, z1: 0 }; out.push(run); }
+      run.y = Math.min(run.y, q.y); run.y1 = Math.max(run.y1, q.y); run.z1 = q.z + q.d / 2 + 4;   // y1: its top (THE ASCENT's storey, scenes/eliteGates/egSpan.js egGustStorey)
     }
   }
   return out;
