@@ -740,6 +740,7 @@ test('AUDIT LANDFORMS II F4: an anchor set in a dungeon keeps its feet in the du
     let anchor = null;
     mount(`${fnOf('setRecallAnchor')}\nreturn setRecallAnchor;`, {
       modes: { gateArenaDay: () => null, anchorContext: () => ({ worldContext, local: [1, 2, 3], buildingKey: 0, interior: null }) },
+      madeRuleHere: () => null,   // PIN MOVED (EG-H2, Elite-Gates.md section 24): the made level's law - no made level stands here
       WORLD_CONTEXT: { Nothing: 'Nothing', Exterior: 'Exterior', Interior: 'Interior', Dungeon: 'Dungeon' },
       walkMode: true, playerSpawned: true, player: { pos: [123.5, 40, 77.25] }, cam: { pos: [0, 0, 0], yaw: 0.5, pitch: 0.1 },
       state: { current: { x: 5, y: 6 }, compensation: [0, 10, 0], worldCoords: (p) => ({ x: p[0] + 1000, z: p[2] + 2000 }) },
