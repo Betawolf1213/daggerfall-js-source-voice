@@ -2612,7 +2612,7 @@ export class OnlineSession {
    *  relay spends one bucket for both). False when nothing went. */
   sendBanOrder(order) {
     if (typeof order !== 'string' || !order || order.length > 1024) return false;
-    // AUDIT SAFE RELAY-3: only to a relay that knows the frame (world214, BAN_RELAY_MIN) - an older one CLOSES the socket on
+    // AUDIT SAFE RELAY-3: only to a relay that knows the frame (world215, BAN_RELAY_MIN) - an older one CLOSES the socket on
     // a frame type it does not know (CLOSE_POLICY, terminal here): a moderator's ban took the channel down with it
     if (!this.banOk) return false;
     const gate = muteGate(this._mbucket, this._now());

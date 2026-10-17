@@ -472,7 +472,7 @@
   },
   {
     "name": "AUDIT-SAFE-S9-guest-index-dropped",
-    "file": "server-account/migrations/0125_chat_safety.sql",
+    "file": "server-account/migrations/0126_chat_safety.sql",
     "old": "CREATE INDEX IF NOT EXISTS players_guest_name ON players (guest_name) WHERE handle IS NULL;\n",
     "new": "",
     "tests": [

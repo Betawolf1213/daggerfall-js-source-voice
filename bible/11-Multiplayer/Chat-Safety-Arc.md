@@ -23,7 +23,9 @@ The slices, one arc and one deploy of each end:
 | SAFE7 | The code of conduct | `src/net/safety/conduct.js`, `src/ui/conductCard.js`, `privacy/index.html`, `terms/index.html` |
 | SAFE8 | The moderators' queue in Discord | `server-account/src/discord.js`, `tools/discordModCommands.mjs` |
 
-The relay is `world214`, the account service `acct150`, migration `0125_chat_safety.sql`.
+The relay is `world215`, the account service `acct152`, migration `0126_chat_safety.sql` - `world214`, `acct150` and `0125` on
+its branch, renumbered past main's WIKIMAID (`world214`, `acct150`) and KEY-LAW (`acct151`, `0125`) at the merge. The ban
+frame is the relay's from `world215` (`BAN_RELAY_MIN`).
 
 **AUDIT SAFE** (the same day, the owner: *"Lets audit everything and ensure perfection"*): six lanes read the arc cold -
 the relay, the service, the reviewer, Discord, the client, the record - and every finding was fixed or decided; the
@@ -47,7 +49,7 @@ is never unwritten, and **a new voice's pace** in public channels (SAFE6), so a 
 
 ## 2. SAFE1 - the block list
 
-An account's own list of accounts it no longer hears: `blocks` (migration 0125), at most `BLOCKS_MAX` (200), read and
+An account's own list of accounts it no longer hears: `blocks` (migration 0126), at most `BLOCKS_MAX` (200), read and
 written through `POST /v1/safety/blocks | block | unblock`. Kept by the service so it follows the player to every device;
 applied by the client, because the relay fans a line to everyone and what one hearer hides is that hearer's business.
 
@@ -380,7 +382,7 @@ reports, and the record of acts on it (CASCADE) - no route deletes an account to
   Worker's `lawDoor` (`lawKindOf`, `lawSeen`, `bodyCapped`); its `ACCOUNTS` binding in `server/wrangler.toml`.
 - The service: `server-account/src/safety.js` (and the moderators' `modCases`, `modCase`, `modDismiss`),
   `server-account/src/sanctions.js`, `server-account/src/modAi.js`, `server-account/src/discord.js`,
-  `server-account/src/safetyClock.js`, `letters.js`'s block, migration `0125_chat_safety.sql`; its `RELAY` binding in
+  `server-account/src/safetyClock.js`, `letters.js`'s block, migration `0126_chat_safety.sql`; its `RELAY` binding in
   `server-account/wrangler.toml`.
 - The client: `src/scenes/chatSafetyHost.js` (what `bootWorld` wires), `src/ui/conductCard.js`, the line menu in
   `src/ui/chatPanel.js`, `src/net/chat.js`, `src/net/social.js`, `src/net/online.js`, `src/net/accountClient.js`.

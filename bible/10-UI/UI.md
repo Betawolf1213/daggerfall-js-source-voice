@@ -44,7 +44,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and CRAFT-FIRST-SHOWN's CRAFT XP WORDS (`craftXpWords.js`: what a craft and its first pay, said in a station's box and in the craft's word - or that the Weavers' cloth earns no first-time bonus; `06-Systems/Professions-Arc.md` 41.9)
 - and SAFE7's CODE OF CONDUCT CARD (`conductCard.js`: the rules a player agrees to before their first chat line, I agree and Not now; `11-Multiplayer/Chat-Safety-Arc.md` section 8)
 - and VIRT's LONG LISTS (`virtualRows.js`: a list past 120 rows draws the rows on screen and two spacers for the rest, measured off its own layout - the pack's dock and its side window; `UI-Arc.md` VIRT)
-379 modules
+- and LOOT-BULK's TAKE ALL AND STASH ALL (`storeBulk.js`: the one walk over the shown rows that moves them in a single batch, a container's or the pack's, as far as the side that takes them has room; `UI-Arc.md` LOOT-BULK)
+380 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

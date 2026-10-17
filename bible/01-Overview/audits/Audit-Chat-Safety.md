@@ -183,8 +183,9 @@ equivalent), the feed's privacy twice over.
 - Mutants: `tools/mutants/safe_audit_service.json` (67), `safe_audit_relay.json` (32), `safe_audit_client.json` (47);
   `safe.json` 30 (four retired for the relay's re-aimed), and six records elsewhere re-aimed by content (`scale2`,
   `nameas`, `auditscale2_acct`) - run with every mutant file whose tests the audit moved, 41 files and 1,433 records: 1,411 dead, 0 survived, 20 equivalent as recorded (two of the service's own survived the first run - a closed case's claim the dismissal's other guard hid, and the claim race the test never raced - and each was pinned and run again dead).
-- The relay stays `world214` (unreleased), its LAW re-pinned; the service `acct150`; migration 0125 grown in place
-  (unapplied anywhere).
+- The relay `world215`, its LAW pinned; the service `acct152`; migration 0126 grown in place (unapplied anywhere) - the
+  arc's `world214`, `acct150` and `0125`, renumbered past main's WIKIMAID and KEY-LAW at the merge after the audit, the
+  ban frame's `BAN_RELAY_MIN` with them (WIKIMAID's `world214` does not know the frame).
 - Not verified here: Cloudflare's error 1042 for a Worker fetching another's workers.dev address (the bindings make the
   question moot); a live Discord application and a live Messages API call (both stubbed, both shapes checked against
   their documentation); the deploy's secret step; Haiku 5.5's real refusal rate and confidence calibration on moderation
