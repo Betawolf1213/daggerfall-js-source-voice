@@ -30,6 +30,7 @@ import { MARKER_PREFERENCE, SITE_TYPES } from './place.js';
 import { SMALLER_DUNGEONS_STATE, portSize } from '../../world/smallerDungeons.js';   // AUDIT DELVE E1 / INSTANCES: the size a quest's markers know online (the whole dungeon's); MEDIUM-DISTINCT: the two stamps whose builds are medium
 import { isOnlinePage } from '../online/onlineLane.js';   // MEDIUM-DISTINCT's audit: offline a dungeon no link holds is built by the settings
 import { isShelved } from './quest.js';   // QUEST-SHELF's audit: the repair mends no quest set aside
+import { t } from '../textManager.js';   // QUEST-ELSEWHERE: its line in the player's language
 
 const PLACEMENTS = Object.freeze({ PlaceNpc: 'npcSymbol', PlaceItem: 'itemSymbol', PlaceFoe: 'foeSymbol' });
 
@@ -318,7 +319,7 @@ const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
  *  Repair'"): online, a dungeon's public room is laid smaller for most dungeons, and a quest's things stand in the dungeon
  *  laid whole - the player's instance (systems/instancePlaces.js questMountsHere). The repair found nothing missing, and
  *  said only that. */
-export const QUEST_ELSEWHERE_LINE = "Your quest's business in this dungeon is in your instance - the shared dungeon is laid smaller and holds none of it. Leave and enter again, choosing Your instance.";
+export const questElsewhereLine = () => t('quest.repair.elsewhere', "Your quest's business in this dungeon is in your instance - the shared dungeon is laid smaller and holds none of it. Leave and enter again, choosing Your instance.");
 
 /** The line the player reads after a repair - QUEST-ELSEWHERE: where its things are, never "nothing was missing", when
  *  the room the player stands in holds none of them. */
@@ -331,7 +332,7 @@ export function questRepairText(r) {
   if (r.revealed) parts.push(`marked ${plural(r.revealed, 'location', 'locations')} on your map`);
   if (r.topics) parts.push(`restored what people know about ${plural(r.topics, 'quest', 'quests')}`);
   const head = parts.length ? `Quests repaired: ${parts.join('; ')}.`
-    : r.elsewhere ? QUEST_ELSEWHERE_LINE : `Nothing was missing from ${r.quests === 1 ? 'your active quest' : `your ${r.quests} active quests`}.`;
-  const said = parts.length && r.elsewhere ? `${head} ${QUEST_ELSEWHERE_LINE}` : head;
+    : r.elsewhere ? questElsewhereLine() : `Nothing was missing from ${r.quests === 1 ? 'your active quest' : `your ${r.quests} active quests`}.`;
+  const said = parts.length && r.elsewhere ? `${head} ${questElsewhereLine()}` : head;
   return r.failed ? `${said} ${plural(r.failed, 'part', 'parts')} could not be checked.` : said;
 }

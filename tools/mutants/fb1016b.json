@@ -255,8 +255,8 @@
   {
     "name": "QUEST-ELSEWHERE-repair-mute",
     "file": "src/systems/quest/questRepair.js",
-    "old": "    : r.elsewhere ? QUEST_ELSEWHERE_LINE : `Nothing was missing",
-    "new": "    : false ? QUEST_ELSEWHERE_LINE : `Nothing was missing",
+    "old": "    : r.elsewhere ? questElsewhereLine() : `Nothing was missing",
+    "new": "    : false ? questElsewhereLine() : `Nothing was missing",
     "tests": [
       "test/systems/quest/instances3_door.test.js"
     ],

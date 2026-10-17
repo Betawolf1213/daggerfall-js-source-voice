@@ -95,7 +95,7 @@ SKIN-PLAQUE rows.
 ## QUEST-ELSEWHERE: said before the choice, and by the repair
 
 `src/scenes/instanceDoor.js` dungeonSite, choose, INSTANCE_TEXT.questPublic; `src/scenes/worldModes.js`
-mountQuestResources; `src/systems/quest/questRepair.js` repairActiveQuests, questRepairText, QUEST_ELSEWHERE_LINE.
+mountQuestResources; `src/systems/quest/questRepair.js` repairActiveQuests, questRepairText, questElsewhereLine.
 
 FOUND. As designed (`11-Multiplayer/Instances.md` 4 and 9): online a quest's markers are the dungeon whole's, and a
 public room the world lays smaller (`world/smallerDungeons.js` onlineDungeonSize - small or medium for three dungeons in
