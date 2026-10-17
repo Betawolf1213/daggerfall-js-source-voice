@@ -34,6 +34,7 @@ import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../pla
 import { SOUND, hitSoundFor, ENEMY_HIT_VOLUME } from '../systems/soundClips.js';   // CH3: the FallDamage clip; WORLD6b: a peer's blow rung at the owner
 import { EnemyCaster, castEnemySpell, hasMagickaToCast, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../characters/enemy/enemyCasting.js';   // X3: the shared decision + the ONE cast executor
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';   // X3
+import { revenantArtFrame } from '../systems/revenant/revenantArts.js';   // RVN-ARTS: a revenant's art
 import { applySpell, isSoulTrapEffect, maxFatigue, entityIsParalyzed, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits } from '../systems/effects.js';   // X3: self-casts land through the effect spine   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
 import { calculateCastCost } from '../systems/spellcost.js';   // X3: costs priced off the player (magic-15 note)
 import { silenceBlocksCast, attemptSoulTrap, SOUL_TRAP_TEXT, fillEmptyTrap, peerSoulTrapOf } from '../systems/mysticism.js';   // X3: the enemy silence gate; X5: the soul trap's kill intercept; STRIKE-SHARED: a peer's trap is its caster's
@@ -1274,6 +1275,16 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       }
     }
   }
+  /** RVN-ARTS (bible/06-Systems/Revenants.md section 41): ITS ART - a channel about its feet or a mark at mine, landed
+   *  through the host's own spell door (my saving throw answers it), its band rallied by its cry, its words its card. */
+  function artFrame(f, playerFeet) {
+    revenantArtFrame(f, {
+      feet: playerFeet, onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting,
+      strike: (sp) => magicHooks?.strikePlayer?.(sp, f.entity.level ?? 1, f), say: (ev) => revenantSay(ev, say),
+      sfx: (el, at) => audio?.play3dId?.(SPELL_CAST_SOUND[el] ?? SPELL_CAST_SOUND[4], [at[0], at[1], at[2]], 1, { maxDistance: 16 }),
+      foes: () => foes, rolls,
+    });
+  }
   /** RVN4 (Feud-Arc.md 15.2): ITS LAST STAND - back on its feet, roaring (no blow reaches it; the brain's iron ring, or
    *  its motor held), then phase two - its bark low, the camera's kick, its card. */
   function lastStand(f) {
@@ -1586,6 +1597,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       }
       if (f.roaring) roarStep(f);   // RVN4: its roar spent - blows reach it again
       if (f.ai._sigCall || f.ai._blowPyre) signatureFrame(f);   // RVN5: its signature called, its pyre's blast
+      if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art
       // RVN3 (Feud-Arc.md 14.1): under half its health, its weakness unknown, it shies from it - once a stand
       if (f.entity.revenant?.id && !f._flinched) { const ev = revenantFlinch(f, { archive: f.archive }); if (ev) revenantSay(ev, say); }
       // MT-ii: the foe now aims at whatever it SELECTED - the player
