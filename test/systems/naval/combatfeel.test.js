@@ -308,7 +308,7 @@ test('COMBAT-FEEL over the real naval host: a pirate\'s ball by my side whistles
   assert.equal(t.men, men - prey.ship.damage.crew, 'the men my volley took');
   assert.ok(t.men > 0);
   near(g.host.hudModel().target.crew, prey.ship.damage.crewShare(), 1e-9);
-  assert.match(navalHudText(g.host.hudModel()).tally.rest, new RegExp(` - ${t.men} of her men down`));
+  assert.match(navalHudText(g.host.hudModel()).tally.rest, new RegExp(` - ${t.men} crew down`));
   const cardMen = navalHudText(g.host.hudModel()).card.crew;
   assert.ok(typeof cardMen === 'number' && cardMen < 100, `her card's men thinned: ${cardMen}`);
 });
