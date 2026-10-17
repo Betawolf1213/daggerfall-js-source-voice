@@ -164,7 +164,8 @@ test('HERALD grant: a Herald pledge holds the title and its glyph by PATREON_TIE
   assert.equal(titleWorn({ ...pledged, title: 'herald' }, ENV), 'herald');
   assert.equal(titleWorn({ ...pledged, title: 'herald', patreon_status: 'former_patron' }, ENV), undefined, 'a pledge that ended stops being worn');
   assert.deepEqual(titlesHeld({ ...pledged, patreon_tiers: '29666211' }, ENV), ['disciple'], 'the Disciple tier is the Disciple\'s');
-  for (const tier of ['29701293', '29666221']) assert.deepEqual(titlesHeld({ ...pledged, patreon_tiers: tier }, ENV), [], `tier ${tier} holds no Herald`);
+  assert.deepEqual(titlesHeld({ ...pledged, patreon_tiers: '29701293' }, ENV), [], 'the Supporter tier holds none');
+  assert.deepEqual(titlesHeld({ ...pledged, patreon_tiers: '29666221' }, ENV), ['hierophant'], 'the Hierophant tier is the Hierophant\'s (HIEROPHANT-TIER), never a Herald');
   assert.deepEqual(titlesHeld({ ...pledged, handle: null }, ENV), [], 'a guest holds none');
   const named = { ...ENV, HERALD_HANDLES: 'Crier' };
   for (const h of ['Crier', 'crier', 'CRIER']) {
