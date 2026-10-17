@@ -315,7 +315,7 @@ export function takeSwornGear(id, key) {
 /** Why its sky may not change now - abroad (its sky is set at my side, as its kit is), or no longer sworn - or null. */
 export function swornStarsRefusal(r) {
   if (!r?.sworn) return t('rvn.sworn.gone', 'It is no longer sworn to you.');
-  if (stateOf(r) === 'errand') return t('rvn.stars.no.abroad', 'It is abroad - set its stars when it is back.');
+  if (stateOf(r) === 'errand') return t('rvn.stars.no.abroad', 'It\'s away on a mission. Set its stars when it returns.');
   return null;
 }
 /** SET: its sky as `ids` (through the law: the Oath, each star joined, its points) - its blows and its health at once.
@@ -470,7 +470,7 @@ export function swornFightWon(id) {
 function levelWords(r, was) {
   const s = r ? rvnStarsOf(revenantRecord(_player, r.id)) : null;
   if (!s || s.level <= was) return null;
-  return t('rvn.stars.levelUp', '{given} reaches level {level} - {n, plural, one {a star} other {# stars}} to set on the Companions page.', { given: r.given, level: s.level, n: Math.max(1, s.points - s.set) });
+  return t('rvn.stars.levelUp', '{given} reaches level {level} - {n, plural, one {a star} other {# stars}} to set on the Growth tab.', { given: r.given, level: s.level, n: Math.max(1, s.points - s.set) });
 }
 
 /** ONE OF ITS OWN KIND EXECUTED IN ITS SIGHT (systems/revenant/revenantFate.js finishExecution - `mobileType` the executed's): each

@@ -909,7 +909,7 @@ export class CharSheet {
     if (this._growth('specs:martial')) return;   // GROWTH4: the guide, where it opens
     const e = this.entity;
     const chosen = martialPathOf(e);
-    if (chosen) { this.page = 0; this.child = new YesNoBoxWindow({ okOnly: true, rows: [...martialAboutRows(chosen), '', t('martial.sheet.key', 'Its signature technique answers your technique key with its weapons when the weapon has no technique of its own.')] }); return; }
+    if (chosen) { this.page = 0; this.child = new YesNoBoxWindow({ okOnly: true, rows: [...martialAboutRows(chosen), '', t('martial.sheet.key', 'Use your Weapon Technique key while holding one of its weapons. A weapon with its own technique uses that instead.')] }); return; }
     const pool = martialChoices(e);
     if (!pool.length) return;
     const p = pool[(this._martialPick = ((this._martialPick ?? -1) + 1)) % pool.length];

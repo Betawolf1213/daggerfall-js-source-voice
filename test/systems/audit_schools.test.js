@@ -814,7 +814,7 @@ test('AUDIT SCHOOLS L5 H3: THE ENHANCED PAUSE WINDOW, DRIVEN - its Master Skills
       host2.querySelectorAll('button').find((b) => String(b.className).includes('px-qrow') && b.textContent.includes('Specialisations')).onclick();
       const head = () => host2.querySelectorAll('div').find((d) => String(d.className).includes('gr-headline'))?.textContent ?? '';
       host2.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Arcane')).onclick();
-      assert.match(head(), /Your class cannot master two schools of magic/, 'no arcane path for a class with no two schools');
+      assert.match(head(), /Your class can't master two schools of magic/, 'no arcane path for a class with no two schools');
       host2.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Martial')).onclick();
       assert.doesNotMatch(head(), /cannot/, 'the Brute\'s weapons meet the martial');
     } finally { menu2.unmount(); }

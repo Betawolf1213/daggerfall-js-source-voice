@@ -4999,7 +4999,7 @@ function statsMaster(detail, m) {
   // tab's guide - every path, what opens it and what it does; one line and its door stand here
   if (ms.on) {
     const card = el('section', 'px-mgroup px-spec');
-    card.append(el('div', 'px-master-about', t('pause.master.specMoved', 'Master two schools of magic or two weapon skills and a specialisation opens. Every path, and what opens it, is on the Growth tab.')));
+    card.append(el('div', 'px-master-about', t('pause.master.specMoved', 'Master two schools of magic or two weapon skills to unlock a specialisation. See every path and what it needs on the Growth tab.')));
     const go = acts([{ label: t('pause.master.specGo', 'Specialisations'), onClick: () => { setGrowthSection('specs'); pauseTab = 'growth'; render(); } }]);
     card.append(go);
     detail.append(card);

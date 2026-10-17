@@ -41,8 +41,8 @@ export function skillStandText(s) {
     case 'mastered': return t('growth.spec.skill.mastered', '{skill}: mastered ({value})', { skill: s.name, value: s.value });
     case 'ready': return t('growth.spec.skill.ready', '{skill}: {value} - ready to master in Master Skills', { skill: s.name, value: s.value });
     case 'climb': return t('growth.spec.skill.climb', '{skill}: {value} of 100, then master it', { skill: s.name, value: s.value });
-    case 'full': return t('growth.spec.skill.full', '{skill}: your {group} masteries are all chosen', { skill: s.name, group: groupWord(s.group) });
-    default: return t('growth.spec.skill.misc', '{skill}: not one of your class\'s skills, so it cannot be mastered', { skill: s.name });
+    case 'full': return t('growth.spec.skill.full', '{skill}: no {group} mastery slots left', { skill: s.name, group: groupWord(s.group) });
+    default: return t('growth.spec.skill.misc', '{skill}: not one of your class skills, so it can\'t be mastered', { skill: s.name });
   }
 }
 const groupWord = (g) => (g === 'primary' ? t('growth.spec.group.primary', 'primary') : g === 'major' ? t('growth.spec.group.major', 'major') : t('growth.spec.group.minor', 'minor'));
@@ -72,7 +72,7 @@ export function techniqueLines(path) {
     const f = signatureById(formId);
     if (!f) continue;
     const skill = Number(Object.keys(MARTIAL_FAMILY).find((k) => MARTIAL_FAMILY[k] === family));
-    out.push(t('growth.spec.form', 'With {weapon}: ready again after {seconds} seconds, costs {fatigue} fatigue.', { weapon: SKILL_NAMES[skill], seconds: f.cooldown, fatigue: f.fatigue }));
+    out.push(t('growth.spec.form', 'With {weapon}: {seconds}-second cooldown, {fatigue} fatigue.', { weapon: SKILL_NAMES[skill], seconds: f.cooldown, fatigue: f.fatigue }));
   }
   return out;
 }
@@ -136,8 +136,8 @@ export function specGuideModel(entity) {
 export function stateTag(state) {
   return ({
     chosen: t('growth.spec.state.chosen', 'Chosen'),
-    open: t('growth.spec.state.open', 'Open to you'),
-    ready: t('growth.spec.state.ready', 'Master its skills'),
+    open: t('growth.spec.state.open', 'Available'),
+    ready: t('growth.spec.state.ready', 'Needs mastering'),
     reach: t('growth.spec.state.reach', 'Within reach'),
     closed: t('growth.spec.state.closed', 'Closed'),
     never: t('growth.spec.state.never', 'Not for your class'),
@@ -147,12 +147,12 @@ export function stateTag(state) {
 /** What a path's state means, under its name in the detail. */
 function stateLine(fam, p) {
   switch (p.state) {
-    case 'chosen': return t('growth.spec.why.chosen', 'Your specialisation. It acts while both its skills stay mastered.');
-    case 'open': return t('growth.spec.why.open', 'Both its skills are mastered: you can choose it now. The choice is permanent.');
-    case 'ready': return t('growth.spec.why.ready', 'Both its skills have reached 100. Master them on the Master Skills page and this path opens.');
-    case 'reach': return t('growth.spec.why.reach', 'Raise both its skills to 100 and master them, and this path opens.');
-    case 'closed': return t('growth.spec.why.closed', 'You chose {name}. A character holds one path of each family, for good.', { name: fam.held?.name ?? '' });
-    default: return t('growth.spec.why.never', 'Your class cannot master both of its skills, so this path is not open to you.');
+    case 'chosen': return t('growth.spec.why.chosen', 'Your specialisation. It works while both its skills stay mastered.');
+    case 'open': return t('growth.spec.why.open', 'Both skills are mastered. You can choose it now - the choice is permanent.');
+    case 'ready': return t('growth.spec.why.ready', 'Both skills are at 100. Master them on the Master Skills page to unlock this path.');
+    case 'reach': return t('growth.spec.why.reach', 'Raise both skills to 100 and master them to unlock this path.');
+    case 'closed': return t('growth.spec.why.closed', 'You already chose {name}. You can have only one path of each kind.', { name: fam.held?.name ?? '' });
+    default: return t('growth.spec.why.never', 'Your class can\'t master both of these skills.');
   }
 }
 
@@ -175,10 +175,10 @@ export function resetSpecGuide(fam = null) { _fam = fam === 'arcane' || fam === 
 export function drawSpecGuide(detail, rerender, { el, divider, skillMeter = null, askCard, entity, openMaster = null }) {
   const m = specGuideModel(entity);
   detail.append(divider(t('growth.spec.title', 'Specialisations')));
-  detail.append(el('p', 'gr-lead', t('growth.spec.lead', 'Master two skills of a family and a specialisation opens: a path named for the pair, with a passive power and a signature spell or technique. There are fifteen arcane paths, one for each pair of the six schools of magic, and fifteen martial paths, one for each pair of the six weapon skills. You may hold one of each. A choice is permanent.')));
+  detail.append(el('p', 'gr-lead', t('growth.spec.lead', 'Master two schools of magic or two weapon skills to unlock a specialisation: a passive bonus plus a signature spell or technique. You can have one arcane and one martial specialisation. Choices are permanent.')));
   if (!m.masterOn) {
     const off = el('div', 'gr-warn');
-    off.append(el('span', null, m.switchable ? t('growth.spec.masterOff', 'Master Skills is off, so no skill can be mastered and no path opens. Turn it on in Master Skills.') : t('growth.spec.masterOffLocked', 'Master Skills is off.')));
+    off.append(el('span', null, m.switchable ? t('growth.spec.masterOff', 'Master Skills is turned off, so no specialisation can be unlocked. Turn it on in Master Skills.') : t('growth.spec.masterOffLocked', 'Master Skills is off.')));
     detail.append(off);
   }
   if (_note) detail.append(el('div', 'px-master-note', _note));
@@ -201,8 +201,8 @@ export function drawSpecGuide(detail, rerender, { el, divider, skillMeter = null
   const head = el('section', 'px-mgroup gr-head');
   head.append(el('div', 'gr-headline', fam.held ? t('growth.spec.heldLine', 'Your {family} specialisation: {name}.', { family: famWord(fam.id), name: fam.held.name })
     : fam.open ? t('growth.spec.openLine', '{n, plural, one {# path is open to you. Choose it below.} other {# paths are open to you. Choose one below.}}', { n: fam.open })
-      : !fam.possible ? (fam.id === 'arcane' ? t('growth.spec.arcaneNever', 'Your class cannot master two schools of magic, so no arcane path can open for you.') : t('growth.spec.martialNever', 'Your class cannot master two weapon skills, so no martial path can open for you.'))
-        : fam.id === 'arcane' ? t('growth.spec.arcaneHow', 'Master two schools of magic to open the path their pair names.') : t('growth.spec.martialHow', 'Master two weapon skills to open the path their pair names.')));
+      : !fam.possible ? (fam.id === 'arcane' ? t('growth.spec.arcaneNever', 'Your class can\'t master two schools of magic, so no arcane path is available.') : t('growth.spec.martialNever', 'Your class can\'t master two weapon skills, so no martial path is available.'))
+        : fam.id === 'arcane' ? t('growth.spec.arcaneHow', 'Master any two schools of magic to unlock the path for that pair.') : t('growth.spec.martialHow', 'Master any two weapon skills to unlock the path for that pair.')));
   const grid = el('div', 'gr-skills');
   for (const s of fam.skills) {
     const cell = el('div', 'gr-skill');
@@ -245,7 +245,7 @@ export function drawSpecGuide(detail, rerender, { el, divider, skillMeter = null
   }
   detail.append(list);
   if (reachable.length < fam.paths.length) {
-    const more = el('button', 'act gr-more', _all ? t('growth.spec.showReach', 'Show only the paths your class can reach') : t('growth.spec.showAll', 'Show all fifteen paths'));
+    const more = el('button', 'act gr-more', _all ? t('growth.spec.showReach', 'Show only paths your class can get') : t('growth.spec.showAll', 'Show all fifteen paths'));
     more.onclick = () => { _all = !_all; rerender(); };
     detail.append(more);
   }
@@ -258,7 +258,7 @@ function skillWord(s) {
     mastered: t('growth.spec.cell.mastered', 'Mastered'),
     ready: t('growth.spec.cell.ready', 'Ready to master'),
     climb: t('growth.spec.cell.climb', '{n} to 100', { n: 100 - s.value }),
-    full: t('growth.spec.cell.full', 'No {group} mastery left', { group: groupWord(s.group) }),
+    full: t('growth.spec.cell.full', 'No {group} slots left', { group: groupWord(s.group) }),
     misc: t('growth.spec.cell.misc', 'Cannot be mastered'),
   })[s.state] ?? '';
 }
@@ -270,7 +270,7 @@ function pathDetail(el, fam, p, rerender, askCard) {
   why.classList.add(`is-${p.state}`);
   box.append(why);
   if (p.state !== 'chosen' && p.state !== 'closed') {
-    box.append(el('div', 'gr-sub', t('growth.spec.opens', 'What opens it')));
+    box.append(el('div', 'gr-sub', t('growth.spec.opens', 'Requirements')));
     const ul = el('ul', 'gr-steps');
     for (const s of p.pair) ul.append(el('li', `is-${s.state}`, skillStandText(s)));
     box.append(ul);
@@ -283,7 +283,7 @@ function pathDetail(el, fam, p, rerender, askCard) {
   for (const line of sig.lines) box.append(el('p', 'gr-fine', line));
   box.append(el('p', 'gr-fine gr-use', sig.kind === 'spell'
     ? t('growth.spec.useSpell', 'Once chosen, buy it at the Mages Guild and cast it like any other spell.')
-    : t('growth.spec.useTechnique', 'Once chosen, press your Weapon Technique key with one of its two weapons in hand. A weapon with a technique of its own keeps it; the signature answers when the weapon has none.')));
+    : t('growth.spec.useTechnique', 'Once chosen, use your Weapon Technique key while holding one of its two weapons. A weapon with its own technique uses that instead.')));
   if (p.state === 'open') {
     const acts = el('div', 'gr-acts');
     const b = el('button', 'act primary', t('growth.spec.choose', 'Choose {name}', { name: p.name }));

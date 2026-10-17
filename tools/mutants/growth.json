@@ -332,7 +332,7 @@
   {
     "name": "GROWTH-detail-what-opens-it",
     "file": "src/ui/growth/specGuide.js",
-    "old": "box.append(el('div', 'gr-sub', t('growth.spec.opens', 'What opens it')));",
+    "old": "box.append(el('div', 'gr-sub', t('growth.spec.opens', 'Requirements')));",
     "new": "",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
@@ -342,7 +342,7 @@
   {
     "name": "GROWTH-detail-how-used",
     "file": "src/ui/growth/specGuide.js",
-    "old": "Once chosen, press your Weapon Technique key with one of its two weapons in hand.",
+    "old": "Once chosen, use your Weapon Technique key while holding one of its two weapons.",
     "new": "Once chosen, use it.",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"

@@ -64,7 +64,7 @@ for (const [w, h, tag] of [[1280, 720, 'wide'], [360, 740, 'phone']]) {
     const { page, errors } = await open('specs:martial', { w, h });
     await page.locator('.gr-pathbar').first().click();
     const detail = await page.locator('.gr-detail').first().innerText().catch(() => '');
-    check(`${tag}: the guide opens a path - what opens it, its passive, its signature, how it is used`, /What opens it/i.test(detail) && /Passive/i.test(detail) && /Signature technique/i.test(detail) && /Weapon Technique key/.test(detail), detail.slice(0, 80));
+    check(`${tag}: the guide opens a path - what opens it, its passive, its signature, how it is used`, /Requirements/i.test(detail) && /Passive/i.test(detail) && /Signature technique/i.test(detail) && /Weapon Technique key/.test(detail), detail.slice(0, 80));
     check(`${tag}: the guide - no sideways scroll`, (await overflowOf(page)) <= 0);
     check(`${tag}: the guide - no page error`, !errors.length, errors.join(' | '));
     await shot(page, `${tag}-specs`);

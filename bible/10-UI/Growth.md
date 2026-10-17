@@ -100,13 +100,14 @@ The Ascension (`ui/enhanced/enhancedLevelUp.js`) drawn in the pane, through its 
 `ui/growth/specGuide.js`: both families, every path, read off the laws (`FAMILY_LAW` - the arcane law's schools and
 spell, the martial law's weapons and technique, one shape). Pure model (`specGuideModel`), then the page.
 
-- **A path's state, on THIS character** (`SPEC_STATES`): **Chosen**; **Open to you** (both mastered - Choose stands);
-  **Master its skills** (both at 100, a Master Skills press away); **Within reach** (both still masterable); **Closed**
+- **A path's state, on THIS character** (`SPEC_STATES`): **Chosen**; **Available** (both mastered - Choose stands);
+  **Needs mastering** (both at 100, a Master Skills press away); **Within reach** (both still masterable); **Closed**
   (the family's other path held - one of each, for good); **Not for your class** (a skill the career cannot master, or
   whose group's masteries are spent). In that order, and within a state the nearest first - the points its pair still
   owes 100 - then the laws' order.
-- **What opens it:** each skill of the pair in its own words (`skillStandText`) - mastered, ready to master in Master
-  Skills, its climb ("76 of 100, then master it"), its group's masteries all chosen, or no skill of the class.
+- **What opens it** (the detail's Requirements): each skill of the pair in its own words (`skillStandText`) - mastered,
+  ready to master in Master Skills, its climb ("76 of 100, then master it"), no mastery slots left in its group, or not
+  a class skill.
 - **What it does:** the passive (its name and the law's own sentence); the signature - a spell read as the spellbook
   reads it (`spellLines`: its target and element, each effect's line from `effectWords`, the maker's empty slots
   skipped), or a technique by each of its weapons (`techniqueLines`: cooldown and fatigue, the forms' own numbers) with
@@ -182,9 +183,20 @@ the Companions page; here it is the Growth tab's fifth page (`growthTab.js` reve
   several-open box name the Growth tab ("You can choose a specialisation later on the Growth tab of the pause menu" -
   `pathDeclinedGrowthText`, `martialDeclinedGrowthText`, `pathsOpenRows(.., { growth })`); on the classic skin, the
   skill screen, whose rows open the same guide.
-- **Every word through the text core** - 81 new strings (`growth.*`, `pause.door.growth*`, `pause.master.spec*`,
-  `schools.*Growth`, `martial.*Growth`, the sheet's guide rows, `captain.sky.unacceptedEsc`), drafted in-session into
-  the thirteen whole languages (`tools/l10nInSession.mjs`).
+- **Every word through the text core**, drafted in-session into the thirteen whole languages
+  (`tools/l10nInSession.mjs`).
+- **TEXT (2026-10-17, the owner: "Comprehensive pass on explanations and text to ensure no AI like text, over
+  explanations, or weird descriptions exist")** - every line the tab shows, read again and said plainly: the tab's own
+  (its leads cut to what a player needs - "You have a level up waiting. Spend your points, then press Ascend."), the
+  thirty paths' passives, signatures and riders the guide surfaces ("strike 20% harder", "boils again for as much",
+  "lands nothing", "your casting hands move faster" became "deal 20% more damage", "takes the same damage again", "misses
+  you", "you cast spells faster"), and the revenant sky's few odd lines ("A hard road brings back nothing" became "Brings
+  nothing back from a mission it returns hurt from" - the errand's own word for that outcome; its level-up line named
+  the Companions page, where its stars are no longer set). Precision kept where the law is narrow: a martial power
+  that answers only a foe's blow (`pendingPlayerBlow` - no spell, fall or poison) says "enemy blows", one that pays
+  only weapon hits says "blows and arrows" (AUDIT MARTIAL L1 N3's word), and a power on any hurt says "damage". The
+  same words everywhere they stand (the classic sheet's rows and boxes read the same table). 121 strings redrafted;
+  the pins that held the old words moved with them, and the records aimed at them were re-aimed by content.
 
 ## 9. The four hosts
 

@@ -190,8 +190,8 @@ test('MARTIAL1 THE CHOICE: two weapon skills mastered open their path; the choic
   const rows = MP.martialChoiceRows(fighter([LB, AR]), 'ranger');
   assert.equal(rows[0], 'Martial specialisation: Ranger?'); assert.equal(rows[1], 'Long Blade and Archery');   // PIN MOVED (AUDIT MARTIAL L4 L4): never the arcane ask's words
   assert.ok(rows.includes('This decision cannot be undone.'));
-  assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.vanguard).join(' '), /10% lighter.*Judgement \(signature technique\).*8 metres.*2\.5 metres.*4% of your health.*3 foes/);
-  assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.berserker).join(' '), /Below 50%.*20% harder.*10%.*Savage Whirl.*3 metres.*8 seconds, 10%/);
+  assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.vanguard).join(' '), /10% less damage.*Judgement \(signature technique\).*8 metres.*2\.5 metres.*4% of your health.*3 enemies/);
+  assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.berserker).join(' '), /Below 50%.*20% more damage.*10%.*Savage Whirl.*3 metres.*8 seconds.*10%/);
   assert.match(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger, MP.MARTIAL_BY_ID.vanguard]).join(' '), /2 martial specialisations are open to you: Ranger, Vanguard/);
 });
 

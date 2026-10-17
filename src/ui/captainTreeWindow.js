@@ -145,7 +145,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
       const c = captain(), left = c.points - (pending.length - 1);
       const level = el('span', 'fmt-purse');
       level.replaceChildren(el('span', null, t('captain.sky.level', 'Level')), el('b', null, String(c.level)),
-        el('span', 'of', c.next == null ? t('captain.sky.top', 'the highest') : t('captain.sky.xp', '{xp} of {next} XP', { xp: formatNumber(c.xp), next: formatNumber(c.next) })));   // AUDIT RVN-STARS S25: the player's own grouping
+        el('span', 'of', c.next == null ? t('captain.sky.top', 'max') : t('captain.sky.xp', '{xp} of {next} XP', { xp: formatNumber(c.xp), next: formatNumber(c.next) })));   // AUDIT RVN-STARS S25: the player's own grouping
       level.title = t('captain.sky.levelTip', 'Captain XP comes from sinking and capturing ships, beating off boarders, claiming prizes, finishing contracts, distance sailed, treasure charts, charting isles and selling goods at the exchange.');
       const pts = el('span', 'fmt-purse life');
       pts.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('captain.sky.of', 'of {n}', { n: c.points })));

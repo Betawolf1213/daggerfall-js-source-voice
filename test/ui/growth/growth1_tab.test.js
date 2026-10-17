@@ -130,9 +130,9 @@ test('GROWTH2 WHAT OPENS IT: each skill of a pair in its own words - mastered, r
   assert.equal(skillStandText(s(LB)), 'Long Blade: mastered (100)');
   assert.equal(skillStandText(s(RES)), 'Restoration: 100 - ready to master in Master Skills');
   assert.equal(skillStandText(s(ALT)), 'Alteration: 76 of 100, then master it');
-  assert.equal(skillStandText(s(DES)), 'Destruction: your primary masteries are all chosen');
-  assert.equal(skillStandText(s(SB)), 'Short Blade: not one of your class\'s skills, so it cannot be mastered');
-  assert.deepEqual(['open', 'ready', 'reach', 'closed', 'never', 'chosen'].map(stateTag), ['Open to you', 'Master its skills', 'Within reach', 'Closed', 'Not for your class', 'Chosen']);
+  assert.equal(skillStandText(s(DES)), 'Destruction: no primary mastery slots left');
+  assert.equal(skillStandText(s(SB)), 'Short Blade: not one of your class skills, so it can\'t be mastered');
+  assert.deepEqual(['open', 'ready', 'reach', 'closed', 'never', 'chosen'].map(stateTag), ['Available', 'Needs mastering', 'Within reach', 'Closed', 'Not for your class', 'Chosen']);
 });
 
 test('GROWTH2 WHAT IT DOES: the passive and the signature in the laws\' own words; a signature spell read as the spellbook reads it (its target, its element, each effect - no empty slot), a signature technique by each of its weapons (its cooldown, its fatigue) (mutants: an empty slot read; the forms\' numbers not the law\'s)', () => {
@@ -145,8 +145,8 @@ test('GROWTH2 WHAT IT DOES: the passive and the signature in the laws\' own word
   assert.equal(ranger.signature.text, `${MP.MARTIAL_BY_ID.ranger.technique.text} ${MP.MARTIAL_BY_ID.ranger.rider}`);
   const forms = MP.MARTIAL_BY_ID.ranger.forms;
   assert.deepEqual(techniqueLines(MP.MARTIAL_BY_ID.ranger), [
-    `With Long Blade: ready again after ${MP.signatureById(forms.longBlade).cooldown} seconds, costs ${MP.signatureById(forms.longBlade).fatigue} fatigue.`,
-    `With Archery: ready again after ${MP.signatureById(forms.archery).cooldown} seconds, costs ${MP.signatureById(forms.archery).fatigue} fatigue.`,
+    `With Long Blade: ${MP.signatureById(forms.longBlade).cooldown}-second cooldown, ${MP.signatureById(forms.longBlade).fatigue} fatigue.`,
+    `With Archery: ${MP.signatureById(forms.archery).cooldown}-second cooldown, ${MP.signatureById(forms.archery).fatigue} fatigue.`,
   ].sort((a, b) => techniqueLines(MP.MARTIAL_BY_ID.ranger).indexOf(a) - techniqueLines(MP.MARTIAL_BY_ID.ranger).indexOf(b)));
   const blood = family(m, 'arcane').paths.find((p) => p.id === 'bloodmage');
   assert.deepEqual([blood.signature.kind, blood.signature.name, blood.signature.text], ['spell', AP.PATH_BY_ID.bloodmage.spell.name, AP.PATH_BY_ID.bloodmage.rider]);
@@ -324,7 +324,7 @@ test('GROWTH THE WINDOW, DRIVEN: the Stats page\'s Growth door (its count) lands
       const bar = host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.startsWith('Ranger'));
       bar.onclick();
       const detail = host.querySelectorAll('div').find((d) => String(d.className).includes('gr-detail'))?.textContent ?? '';
-      for (const part of ['What opens it', 'Long Blade: mastered', 'Passive: Hunter\'s Instinct', 'Signature technique: Mark of the Hunt', 'With Archery: ready again after', 'Weapon Technique key']) assert.ok(detail.includes(part), part);
+      for (const part of ['Requirements', 'Long Blade: mastered', 'Passive: Hunter\'s Instinct', 'Signature technique: Mark of the Hunt', 'With Archery: 12-second cooldown', 'Weapon Technique key']) assert.ok(detail.includes(part), part);
       btn('Choose Ranger').onclick();
       const ask = globalThis.document.body.querySelectorAll('div').find((d) => String(d.className).includes('px-master-ask'));
       assert.match(ask.textContent, /Martial specialisation: Ranger\?/);
@@ -374,7 +374,7 @@ test('GROWTH5 THE REVENANT STARS PAGE: its rail row marks the stars to set; a pi
     body.querySelectorAll('button').find((b) => b.textContent.startsWith('Hrolf')).onclick();
     body = draw();
     assert.equal(keyed(), 'rvn:c');
-    assert.ok(text(body, 'gr-stagelead').some((x) => /^Hrolf is away\./.test(x)), 'away: it says so');
+    assert.ok(text(body, 'gr-stagelead').some((x) => /^Hrolf is away on a mission\./.test(x)), 'away: it says so');
     setGrowthRevenant('b');
     draw();
     assert.equal(keyed(), 'rvn:b', 'the Companions page\'s Stars choose it');

@@ -134,12 +134,12 @@ function levelPage(detail, ctx) {
   // (or nothing owed) draws the view of the stars - the lazy chunk's own (levelUp/levelUpView.js viewOnlyScreen)
   const open = typeof hooks?.ascendScreen === 'function' ? hooks.ascendScreen : null;
   const owed = !!entity?.readyToLevelUp && !!open;
-  if (!entity) { dropStage(); detail.append(divider(t('growth.level.title', 'Level')), el('p', 'px-note', t('growth.level.none', 'Your level is kept in the world.'))); return; }
+  if (!entity) { dropStage(); detail.append(divider(t('growth.level.title', 'Level')), el('p', 'px-note', t('growth.level.none', 'Your level isn\'t available here.'))); return; }
   drawStage(detail, `level:${owed ? 'owed' : 'view'}:${entity.level ?? 0}`, (host) => import('../enhanced/enhancedLevelUp.js').then(({ mountEnhancedLevelUp, viewOnlyScreen }) =>
     mountEnhancedLevelUp(host, { screen: (owed && open()) || viewOnlyScreen(entity, usesVirtueLeveling(entity)), entity, embed: true, onExit: () => { dropStage(); ctx.render(); } })), {
     el, ...stageWords(),
-    lead: owed ? t('growth.level.owed', 'A level is waiting: spend its points and press Ascend. Leave and come back as you like - the points stay yours until they are spent.')
-      : t('growth.level.view', 'Your stars: your attributes, your skills and how far the next level lies. A new level\'s points are spent here.'),
+    lead: owed ? t('growth.level.owed', 'You have a level up waiting. Spend your points, then press Ascend. You can leave and come back - your points will wait.')
+      : t('growth.level.view', 'Your attributes, skills and progress to the next level. When you level up, you spend your points here.'),
   });
 }
 
@@ -156,11 +156,11 @@ function firmamentPage(detail, ctx) {
   const { el, divider } = ctx;
   if (!firmamentBook()) {
     dropStage();
-    detail.append(divider(t('growth.firm.title', 'Firmament')), el('p', 'gr-lead', t('growth.firm.offline', 'The Firmament is the sky of passive powers you grow online: choose a birthsign among the seven great stars, then spend the stars your Renown earns on the paths out from it, in combat and in life. It opens only when you play online.')));
+    detail.append(divider(t('growth.firm.title', 'Firmament')), el('p', 'gr-lead', t('growth.firm.offline', 'The Firmament is a tree of passive bonuses for online play. Choose a birthsign, then spend the stars you earn from Renown. It is only available online.')));
     return;
   }
   drawStage(detail, 'firmament', (host) => import('../firmamentWindow.js').then(({ mountFirmamentWindow }) =>
-    mountFirmamentWindow(host, { embed: true })), { el, ...stageWords(), lead: t('growth.firm.lead', 'The sky of passive powers your Renown buys. Press Accept to keep your changes.') });
+    mountFirmamentWindow(host, { embed: true })), { el, ...stageWords(), lead: t('growth.firm.lead', 'Passive bonuses for online play, bought with the stars you earn. Press Accept to keep your changes.') });
 }
 
 // ── Captain's Stars ─────────────────────────────────────────────────
@@ -168,11 +168,11 @@ function firmamentPage(detail, ctx) {
 function captainPage(detail, ctx) {
   const { el, divider, captain } = ctx;
   const deps = captain?.stars?.() ?? null;
-  if (!deps?.ledger) { dropStage(); detail.append(divider(t('growth.captain.title', 'Captain\'s Stars')), el('p', 'px-note', t('growth.captain.none', 'Your captain\'s stars are kept in the world.'))); return; }
+  if (!deps?.ledger) { dropStage(); detail.append(divider(t('growth.captain.title', 'Captain\'s Stars')), el('p', 'px-note', t('growth.captain.none', 'Your captain\'s stars aren\'t available here.'))); return; }
   drawStage(detail, 'captain', (host) => import('../captainTreeWindow.js').then(({ mountCaptainTreeWindow }) =>
     mountCaptainTreeWindow(host, { ledger: deps.ledger, changed: deps.changed, embed: true })), {
     el, ...stageWords(),
-    lead: t('growth.captain.lead', 'Master stars make your ships faster, steadier and richer in trade; Commander stars make their guns, shot, boarding and ramming hit harder.'),
+    lead: t('growth.captain.lead', 'Master stars improve sailing, cargo and trade. Commander stars improve guns, boarding and ramming.'),
   });
 }
 
@@ -202,8 +202,8 @@ function revenantsPage(detail, ctx) {
   drawStage(detail, `rvn:${pick.id}`, (host) => import('../revenantStarsWindow.js').then(({ mountRevenantStarsWindow }) =>
     mountRevenantStarsWindow(host, { id: pick.id, embed: true })), {
     el, ...stageWords(),
-    lead: pick.abroad ? t('growth.rvn.leadAway', '{name} is away. Its stars can be changed when it returns.', { name: pick.name })
-      : t('growth.rvn.lead', 'Each sworn revenant has its own stars. It gets a point for each level after the first and for each rank above the first.'),
+    lead: pick.abroad ? t('growth.rvn.leadAway', '{name} is away on a mission. You can change its stars when it returns.', { name: pick.name })
+      : t('growth.rvn.lead', 'Each sworn revenant has its own stars. It gets one point per level after the first, and one per rank past the first.'),
   });
 }
 

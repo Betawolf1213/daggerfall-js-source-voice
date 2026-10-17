@@ -272,7 +272,7 @@ test('AUDIT MARTIAL L1 N1, L1 N3, L4 N3: a follow-up owed a body the relay runs 
   assert.match(W('blademaster').passive, /blow or arrow/); assert.match(W('cutthroat').passive, /blows and arrows/);
   assert.match(W('berserker').passive, /blows and arrows/); assert.match(W('warblade').rider, /blows and arrows/);
   assert.equal(MP.MARTIAL_NUMBERS.blackjack.times, 2, 'the word "twice" is this number');
-  assert.equal(W('cutthroat').rider, 'A foe that had not noticed you takes the blow twice.');
+  assert.equal(W('cutthroat').rider, 'An enemy that hadn\'t noticed you takes the blow twice.');
   assert.match(W('crusader').techniqueText, /\+25 to hit\.$/);
 }));
 
@@ -819,7 +819,7 @@ test('AUDIT MARTIAL L5 H2: THE CLASSIC SHEET\'S W ROW, DRIVEN - drawn under the 
   sheet.page = 1;
   sheet._drawSkillPage(renderer, font, { s: 1, ox: 0, oy: 0 });
   sheet.input('KeyW');
-  assert.deepEqual([sheet.child.okOnly, sheet.child.rows[0], sheet.child.rows.at(-1)], [true, 'Blademaster - Long Blade and Short Blade', 'Its signature technique answers your technique key with its weapons when the weapon has no technique of its own.']);
+  assert.deepEqual([sheet.child.okOnly, sheet.child.rows[0], sheet.child.rows.at(-1)], [true, 'Blademaster - Long Blade and Short Blade', 'Use your Weapon Technique key while holding one of its weapons. A weapon with its own technique uses that instead.']);
 }));
 
 // PIN MOVED (GROWTH2, bible/10-UI/Growth.md section 5): the enhanced model is the Growth tab's guide (ui/growth/specGuide.js)
