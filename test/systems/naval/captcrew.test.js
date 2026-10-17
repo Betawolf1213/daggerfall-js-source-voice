@@ -126,7 +126,7 @@ test('CAPT-CREW at sea: the host reads her posts aboard each frame - her Bosun\'
   assert.equal(s.host.postsWay(s.boat), 1, 'a boat with no crew has no Bosun');
   const host = rd('src/scenes/naval/navalHost.js');
   assert.match(host, /reloadScale: \(\) => \(boat\.crewed && st\.crew \? reloadScaleOf\(st\.crew\.morale, st\.crew\.order\) \* st\.worth\.reload : 1\)/, 'the Gunner on the reload');
-  assert.match(host, /s\.worth = b\.crewed \? crewWorth\(c\.hands, ashoreNames\(b\)\) : NO_WORTH;/, 'her posts aboard, a hand ashore working none (AUDIT CAPTAIN\'S SEA C1: none ashore while I sail)');
+  assert.match(host, /s\.worth = captainWorth\(b\.crewed \? crewWorth\(c\.hands, ashoreNames\(b\)\) : NO_WORTH, deps\.captain\?\.stats\?\.\(\)\);/, 'her posts aboard, a hand ashore working none (AUDIT CAPTAIN\'S SEA C1: none ashore while I sail)');
   assert.match(host, /c\.tick\(d, \{ inPort: [^\n]*wear: s\.worth\.wear \}\);/, 'the Cook on the sea\'s clock');
   assert.match(host, /const scale = \(b\.crewed \? mendScaleOf\(s\.crew\.morale\) \* \(s\.worth\?\.mend \?\? 1\) : 1\) \* \(underFire/, 'the Carpenter on the repairs');
   assert.match(host, /scale: b\.crewed \? mendScaleOf\(s\.crew\.morale\) \* \(s\.worth\?\.mend \?\? 1\) : 1 \}\);/, 'and on the free mending');

@@ -162,7 +162,8 @@ one fighting. Her First Mate answers by name.
 
 ## 5. Refits
 
-Four lines, three tiers each, bought from a shipwright at a port for gold and materials from the pack and her hold (all
+Four lines, three tiers each of the shipwright's own - and REFIT-ORES (2026-10-17, `03-World/Naval-Refit.md`), nine of
+metal past them, twelve in all - bought from a shipwright at a port for gold and materials from the pack and her hold (all
 or none):
 
 | Line | Betters | A tier | Built of |
@@ -181,6 +182,26 @@ things of the world (Mac: *"can utilize foraging items"*):
 | Timber | Wood Bundle (1604) - Foraging's Wood-Axe | planks (645-651), logs (635-641) |
 | Iron | Iron (71) - an alchemist's | Iron Ingot (620), Steel Ingot (621) |
 | Pitch | Pine Branch (14) - an alchemist's, the Sickle's quests | Resin (653) |
+
+**THE METALS** (REFIT-ORES): past the third tier each is a metal of DFU's ladder, asking a captain's level (CAPTAIN-TREE's,
+earned at sea) and bettering her by half a shipwright's tier:
+
+| Tier | Metal | Captain's level | Gold (a Small Ship) | Metal | and |
+|---|---|---|---|---|---|
+| IV | Steel | 3 | 6,000 | 4 | her line's first store, 10 |
+| V | Silver | 5 | 9,000 | 4 | 10 |
+| VI | Elven (Moonstone) | 8 | 13,000 | 5 | 10 |
+| VII | Dwarven | 11 | 18,000 | 5 | 10 |
+| VIII | Mithril | 14 | 24,000 | 6 | 10 |
+| IX | Adamantium | 17 | 32,000 | 6 | 10 |
+| X | Ebony (and Warforged Steel) | 20 | 42,000 | 7 | 10 |
+| XI | Orcish (Orichalcum) | 24 | 55,000 | 7 | 10 |
+| XII | Daedric | 28 | 70,000 | 8 | 10 |
+
+A metal is the forge's ingot of it (621-630), or a weapon or a piece of plate of it melted down - never one worn, a
+quest's, an artifact, a sigil's or enchanted; the ingots go first. A store is counted once for a refit's two (a steel
+ingot is Steel's and Iron's both). Her CAPTAIN'S STARS (CAPTAIN-TREE) better her refits again where they are read: her
+hold, her way, her hull and her guns' harm, with her oars and her helm.
 
 The refits are read WHERE THE RATES ARE READ (`deps.refit`, the ledger by her number), never written into the prefab's
 modifiers a variant's change walks again. A refit never heals her nor hurts her: her state is built again on her new

@@ -24,8 +24,8 @@ import { injectEnhancedStyle, injectEnhancedFonts } from './enhanced/enhancedSty
 import { injectNavalKit } from './naval/navalHud.js';
 import { injectNavalWindowStyle } from './naval/navalPlunderWindow.js';
 import { yardText, yardNote } from './naval/navalYardWindow.js';
-import { whereWords, refitLine } from './fleetPage.js';
-import { SHIP_NAME_MAX } from '../systems/fleet.js';
+import { whereWords, refitLine, refitRowWords } from './fleetPage.js';
+import { SHIP_NAME_MAX, REFIT_NUMERALS } from '../systems/fleet.js';
 import { CREW_ROLES } from '../systems/naval/shipCrew.js';
 
 export const SHIPYARD_STYLE_ID = 'dagger-shipyard-style';
@@ -95,7 +95,6 @@ export const SHIPYARD_CSS = `
 `;
 
 const gold = (n) => `${Math.round(n).toLocaleString('en-US')} gold`;
-const NUMERALS = Object.freeze(['-', 'I', 'II', 'III']);
 
 /** A ship for sale's card words. Pure - the pins' reading. */
 export function shipCardText(s) {
@@ -348,11 +347,12 @@ export function mountShipyardWindow(host, deps) {
     for (const r of o.rows) {
       const row = el('div', 'dfyard-row');
       row.setAttribute('data-line', r.id);
+      const w = refitRowWords(r);   // REFIT-ORES: the Fleet page's words - a metal's melt and its captain's level said
       const left = el('div');
-      left.append(el('b', null, r.tier ? `${r.label} ${NUMERALS[r.tier]}` : r.label), el('br'), el('span', null, `${r.what}: +${Math.round(r.per * 100)}% a refit`));
-      const mid = el('span', null, r.next ? `Next: ${gold(r.next.gold)}, ${r.next.mats.map((x) => `${x.n} ${x.label} (you hold ${x.have})`).join(', ')}.` : 'Every refit of this line is done.');
+      left.append(el('b', null, w.name), el('br'), el('span', null, w.gain));
+      const mid = el('span', null, r.next ? [w.asks, w.melt, w.lock].filter(Boolean).join(' ') : 'Every refit of this line is done.');
       const acts = el('div', 'dfyard-acts');
-      acts.append(button(r.next ? `Refit - ${NUMERALS[r.tier + 1]}` : 'Done', 'dfnaval-btn', () => press('refit', m.uid, r.id), !!r.next && r.afford && !o.why, o.why));
+      acts.append(button(r.next ? `Refit - ${REFIT_NUMERALS[r.tier + 1]}` : 'Done', 'dfnaval-btn', () => press('refit', m.uid, r.id), !!r.next && r.afford && !o.why, o.why ?? w.lock));
       row.append(left, mid, acts);
       sec.append(row);
     }

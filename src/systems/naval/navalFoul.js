@@ -25,10 +25,11 @@ export const FOUL_WAY = 1.2;
 /** How fast her way comes off once fouled (m/s^2): a hull caught by another's stem stops short. */
 export const FOUL_DECEL = 4;
 
-/** `ship` fouled by `by` (a player's id) at `now`: her bow caught until FOUL_S on. A fresh ram renews it. */
-export function foul(ship, by, now) {
+/** `ship` fouled by `by` (a player's id) at `now`: her bow caught until FOUL_S on - and `more` seconds besides (CAPTAIN-TREE:
+ *  the ram's captain's grapnels, captainTree.js `foul`). A fresh ram renews it. */
+export function foul(ship, by, now, more = 0) {
   if (!ship) return;
-  ship.fouled = { by, until: now + FOUL_S };
+  ship.fouled = { by, until: now + FOUL_S + Math.max(0, Number(more) || 0) };
 }
 /** Whether `ship` is fouled at `now` (by anyone). */
 export const isFouled = (ship, now) => !!ship?.fouled && now < ship.fouled.until;

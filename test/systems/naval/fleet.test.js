@@ -39,6 +39,7 @@ import { checkName } from '../../../src/net/nameFilter.js';
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const AT = [100, 34, 200], DIR = [0, 0, 1];
 const item = (templateIndex, n = 1) => ({ templateIndex, stackCount: n, UID: Math.floor(Math.random() * 1e9) });
+const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ~ ${b}`);
 
 // ── the ledger's law ─────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -64,23 +65,23 @@ test('FLEET a name: printable ASCII, its runs of spaces closed, trimmed, SHIP_NA
   assert.equal(shipLabel({ hull: 2, variant: 0, name: 'Gull' }), 'Gull');
 });
 
-test('FLEET the refits: four lines (Hold, Rigging, Hull, Guns), three tiers each; a tier\'s gold and each material\'s count a Small Ship\'s times her hull\'s share; refitOf her multiples (mutants: per tier, a cost\'s scale, a material\'s count)', () => {
+test('FLEET the refits: four lines (Hold, Rigging, Hull, Guns), the shipwright\'s three tiers each (REFIT-ORES: nine of metal past them - captaintree.test.js); a tier\'s gold and each material\'s count a Small Ship\'s times her hull\'s share; refitOf her multiples (mutants: per tier, a cost\'s scale, a material\'s count)', () => {
   assert.deepEqual(UPGRADE_LINES.map((l) => [l.id, l.per, l.effect, [...l.mats], l.guns]), [
     ['hold', 0.2, 'cargo', ['timber', 'iron'], false], ['rigging', 0.04, 'speed', ['timber', 'pitch'], false],
     ['hull', 0.1, 'hull', ['timber', 'pitch', 'iron'], false], ['guns', 0.08, 'guns', ['iron', 'pitch'], true],
   ]);
-  assert.equal(UPGRADE_TIERS, 3);
+  assert.equal(UPGRADE_TIERS, 12, 'REFIT-ORES: three of the shipwright\'s, nine of metal');
   assert.deepEqual([...TIER_GOLD], [600, 1500, 3500]);
   assert.deepEqual([...TIER_MATS], [3, 6, 10]);
   assert.deepEqual([...HULL_UPGRADE_SCALE], [0.5, 0.75, 1, 1.75, 2.5]);
-  assert.deepEqual(upgradeCost(2, 'hull', 0), { gold: 600, mats: [{ kind: 'timber', n: 3 }, { kind: 'pitch', n: 3 }, { kind: 'iron', n: 3 }] });
-  assert.deepEqual(upgradeCost(4, 'guns', 2), { gold: 8750, mats: [{ kind: 'iron', n: 25 }, { kind: 'pitch', n: 25 }] });
-  assert.deepEqual(upgradeCost(0, 'hold', 1), { gold: 750, mats: [{ kind: 'timber', n: 3 }, { kind: 'iron', n: 3 }] });
-  assert.equal(upgradeCost(2, 'hold', 3), null, 'past the last');
+  assert.deepEqual(upgradeCost(2, 'hull', 0), { gold: 600, mats: [{ kind: 'timber', n: 3 }, { kind: 'pitch', n: 3 }, { kind: 'iron', n: 3 }], level: 1 });
+  assert.deepEqual(upgradeCost(4, 'guns', 2), { gold: 8750, mats: [{ kind: 'iron', n: 25 }, { kind: 'pitch', n: 25 }], level: 1 });
+  assert.deepEqual(upgradeCost(0, 'hold', 1), { gold: 750, mats: [{ kind: 'timber', n: 3 }, { kind: 'iron', n: 3 }], level: 1 });
+  assert.equal(upgradeCost(2, 'hold', 12), null, 'past the last');
   assert.equal(upgradeCost(2, 'sails', 0), null);
   assert.deepEqual(refitOf({ upgrades: { hold: 2, rigging: 1, hull: 3, guns: 0 } }), { cargo: 1.4, speed: 1.04, hull: 1.3, guns: 1 });
   assert.deepEqual(refitOf(null), { cargo: 1, speed: 1, hull: 1, guns: 1 });
-  assert.deepEqual(refitOf({ upgrades: { hold: 9 } }).cargo, 1 + 0.2 * 3, 'a tier past the last is the last');
+  assert.deepEqual(refitOf({ upgrades: { hold: 99 } }).cargo, 1 + 0.2 * 3 + 0.2 * 9 * 0.5, 'a tier past the last is the last - REFIT-ORES: a metal\'s tier half a shipwright\'s');
 });
 
 test('FLEET the materials: what in the world each is - the Wood-Axe\'s Wood Bundle, DFU\'s Iron and Pine Branch, the Stores\' planks, logs, ingots and resin withdrawn online; counted over the pack and her hold, stacks and all; taken all or none, the first list first', () => {
@@ -159,8 +160,8 @@ test('FLEET the save: her record round-trips whole, her title by a flag; an olde
   assert.deepEqual(JSON.parse(JSON.stringify(fleetSaveData())), saved);
   assert.equal(titleOf(901)?.message, 40);
   // PIN MOVED (AUDIT HOLDINGS F4): a claim is her region's - its due date no longer read, a claim with none kept
-  restoreFleetSaveData({ ships: [{ uid: 5, hull: 9 }, { uid: 6, hull: 2, name: 'Admin', upgrades: { hull: 7 }, credit: { region: 1 } }, { uid: -1, hull: 2 }, { uid: 7, hull: 2, credit: { due: 5 } }] });
-  assert.deepEqual(fleetShips().map((r) => [r.uid, r.name, r.upgrades.hull, r.credit]), [[6, '', 3, { region: 1, due: 0 }], [7, '', 0, null]]);
+  restoreFleetSaveData({ ships: [{ uid: 5, hull: 9 }, { uid: 6, hull: 2, name: 'Admin', upgrades: { hull: 17 }, credit: { region: 1 } }, { uid: -1, hull: 2 }, { uid: 7, hull: 2, credit: { due: 5 } }] });
+  assert.deepEqual(fleetShips().map((r) => [r.uid, r.name, r.upgrades.hull, r.credit]), [[6, '', 12, { region: 1, due: 0 }], [7, '', 0, null]]);
   // AUDIT HOLDINGS F7: a hostile save
   restoreFleetSaveData({ ships: [
     { uid: 20, hull: 2, title: true, value: -50 }, { uid: 20, hull: 2, title: true, value: 9 },   // one number twice
@@ -408,6 +409,7 @@ function fleetWorld(opts = {}) {
     csa: () => s.rt, naval: () => naval, pack: () => s.pack, gold: () => w.gold, pay: (n) => { w.gold -= n; w.paid.push(n); }, accounts: () => w.accounts,
     regionName: (i) => ['Alik\'r', 'Anticlere'][i] ?? `Region ${i}`, where: () => ({ inside: w.inside, pixel: w.pixel, feet: w.feet }),
     nearPort: () => w.nearPort, nearestPort: () => ({ name: 'Daggerfall', way: 'north' }), terrainAt: () => s.terrains[0], changed: () => {},
+    captain: opts.captain,   // CAPTAIN-TREE / REFIT-ORES: her captain's ledger (none: level 1, no stars)
   });
   return { s, w, host, states };
 }
@@ -545,9 +547,52 @@ test('FLEET Refit: at a port, her loan paid; the shipwright\'s gold from the pur
   assert.equal(host.act(1, 'refit', 'hull').text, 'The shipwright asks 1500 gold.');
   addRefit(1, 'hull'); addRefit(1, 'hull');
   w.gold = 1e9;
+  assert.equal(host.act(1, 'refit', 'hull').text, 'The shipwright will not work Steel for a captain under level 3.', 'REFIT-ORES: the metals past the third ask a captain\'s level');
+  for (let i = 0; i < 9; i++) addRefit(1, 'hull');
   assert.equal(host.act(1, 'refit', 'hull').text, 'She has every refit of that kind.');
   titleDeed(mintDeed(0, 0, 9, 1));
   assert.deepEqual(host.offer(9).rows.map((r) => r.id), ['hold', 'rigging', 'hull'], 'a Rowboat carries no guns to refit');
+});
+
+test('REFIT-ORES at the Fleet: a metal tier refused under her captain\'s level, on its row and pressed; bought at it with its metal - a blade melted down where the ingots run short - and her line\'s first store; a steel ingot counted for Steel and Iron both is refused, never half taken; CAPTAIN-TREE: her refits read with her captain\'s stars, a ship of mine\'s alone (mutants: the gate, the joint count, the stars on a stranger)', () => {
+  let level = 1, stats = null;
+  const { s, w, host } = fleetWorld({ gold: 1e6, captain: () => ({ captain: () => ({ level }), stats: () => stats }) });
+  titleDeed(mintDeed(2, 0, 1, 1));
+  for (let i = 0; i < 3; i++) addRefit(1, 'guns');
+  let row = host.offer(1).rows.find((r) => r.id === 'guns');
+  assert.deepEqual([row.tier, row.max, row.next.level, row.next.locked, row.afford, host.offer(1).level], [3, 12, 3, true, false, 1]);
+  near(row.share, 0.24);
+  near(row.next.share, 0.28);
+  assert.equal(host.act(1, 'refit', 'guns').text, 'The shipwright will not work Steel for a captain under level 3.');
+  level = 3;
+  s.pack.push(item(621, 4), item(620, 6));
+  row = host.offer(1).rows.find((r) => r.id === 'guns');
+  assert.deepEqual(row.next.mats.map((m) => [m.kind, m.n, m.have, m.melt]), [['steel', 4, 4, 0], ['iron', 10, 10, 0]], 'the steel ingots counted as Iron too');
+  assert.equal(row.afford, false);
+  assert.equal(host.act(1, 'refit', 'guns').text, 'The shipwright needs more - one store will not serve for two.');
+  assert.equal(materialCount([s.pack], 'steel'), 4, 'nothing taken');
+  assert.deepEqual(w.paid, [], 'nothing paid');
+  s.pack.length = 0;
+  const sword = { group: 'Weapons', templateIndex: 120, material: 1, stackCount: 1 };
+  s.pack.push(item(621, 3), sword, item(620, 10));
+  row = host.offer(1).rows.find((r) => r.id === 'guns');
+  assert.deepEqual(row.next.mats.map((m) => [m.kind, m.have, m.melt]), [['steel', 4, 1], ['iron', 13, 0]]);
+  assert.equal(row.afford, true);
+  assert.deepEqual(host.act(1, 'refit', 'guns'), { ok: true, text: "Small Ship 'I''s guns is refitted (IV)." });
+  assert.deepEqual([fleetShip(1).upgrades.guns, w.paid.at(-1), s.pack.includes(sword), materialCount([s.pack], 'iron')], [4, 6000, false, 0]);
+  // CAPTAIN-TREE: her refits as the sea reads them, her captain's stars over them
+  near(host.refit({ uid: 1 }).guns, 1 + 0.08 * 3 + 0.08 * 0.5);
+  stats = { harm: 0.1, cargo: 0.12, oars: 0.05 };
+  near(host.refit({ uid: 1 }).guns, (1 + 0.08 * 3 + 0.08 * 0.5) * 1.1);
+  near(host.refit({ uid: 1 }).cargo, 1.12);
+  near(host.refit({ uid: 1 }).oars, 1.05);
+  assert.deepEqual(host.refit({ uid: 99 }), { cargo: 1, speed: 1, hull: 1, guns: 1 }, 'a number the Fleet does not know reads her build\'s own - no stars of mine');
+  assert.equal(host.refit({}), null);
+  // a sky accepted: every boat of mine standing read again on it (the sea fight's state built on her new whole)
+  const here = s.rt.SummonBoat(1, titleOf(1), fleetBook(), [100, 34, 220], DIR, s.terrains[0]);
+  w.refitted = null;
+  host.restat();
+  assert.equal(w.refitted, here);
 });
 
 test('FLEET Rename: the ledger\'s law, said on her card; refused names say why', () => {
@@ -606,7 +651,7 @@ test('FLEET the page: a card a ship - her name, hull, worth, the bank\'s claim, 
   d = draw();
   assert.match(d.textContent, /pay Alik'r's 5000 gold first/);
   assert.match(d.textContent, /You hold 0 Timber, 0 Iron, 0 Pitch \(your pack and her hold\), and 100,000 gold\./);
-  assert.match(d.textContent, /Hull0 of 3Her hull and canvas: \+10% a refit\.Next: 600 gold, 3 Timber, 3 Pitch, 3 Iron\./);
+  assert.match(d.textContent, /Hull0 of 12Her hull and canvas: \+0% now, \+10% with the next refit\.Next: 600 gold, 3 Timber \(you hold 0\), 3 Pitch \(you hold 0\), 3 Iron \(you hold 0\)\./);
   assert.equal((d.textContent.match(/Timber: Wood Bundles - a Wood-Axe gathers them - or planks and logs\./g) ?? []).length, 1, 'each short material\'s hint once');
   assert.equal(buttons(d, 'Refit').every((b) => b.attrs['aria-disabled'] === 'true'), true, 'every refit refused while the loan stands');
   buttons(d, 'Summon')[0].onclick();

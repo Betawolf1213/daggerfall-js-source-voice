@@ -74,8 +74,8 @@
   {
     "name": "SHOT-heated-cold",
     "file": "src/systems/naval/shotKinds.js",
-    "old": "export const shotFireChance = (shot, fireChance) => (shot == null ? fireChance : SHOT[shotId(shot)].fire ?? fireChance);",
-    "new": "export const shotFireChance = (shot, fireChance) => fireChance;",
+    "old": "  const c = shot == null ? fireChance : SHOT[shotId(shot)].fire ?? fireChance;",
+    "new": "  const c = fireChance;",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]

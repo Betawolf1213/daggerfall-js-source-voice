@@ -110,6 +110,7 @@ import { dockFor, madeFast, warpStep, quaySide, landwardOf, quayFrame, quayToSce
 import { foul, fouledBy, boardableState } from '../../systems/naval/navalFoul.js';   // RAM-BOARD: a ram fouls her, and a fouled ship is boarded as she stands
 import { t } from '../../systems/textManager.js';   // RAM-BOARD: its words in the player's language
 import { shotGun, shotReach, shotFireChance, shotRigFire, naturalShot } from '../../systems/naval/shotKinds.js';   // SHOT-KINDS: what a battery is loaded with
+import { captainWorth, captainShot, statScale } from '../../systems/naval/captainTree.js';   // CAPTAIN-TREE: what her captain's stars do at sea
 import { createNavalLoads } from './navalLoads.js';   // SHOT-KINDS: the captain's choice of load, at the helm
 
 /** The record's name in the save's per-mod slot (systems/modSaveData.js) - the port's own, as the Sigil Broker's is. */
@@ -1046,7 +1047,7 @@ export function createNavalHost(deps) {
     // AUDIT NAV1 (the guns): a fire is a barrel's, or FIRE_CHANCE of a hull hit above the waterline - never the canvas
     // a ball passed through, nor a hole the sea comes in by; SHOT-KINDS: heated shot's own chance, and its pass through
     // her canvas sets that alight too (shotKinds.js shotRigFire)
-    const fire = e.type === 'blast' ? 'barrel' : (zone === 'hull' || (zone === 'rig' && shotRigFire(e.shot))) && random() < shotFireChance(e.shot, FIRE_CHANCE);
+    const fire = e.type === 'blast' ? 'barrel' : (zone === 'hull' || (zone === 'rig' && shotRigFire(e.shot))) && random() < shotFireChance(e.shot, FIRE_CHANCE, gun.fireK);
     if (isMine(e.target)) {
       // MY boat: the victim's own client takes what strikes it - but never another player's ball (no fight between
       // players at sea), nor one of mine, only a ship's of the sea
@@ -1093,7 +1094,7 @@ export function createNavalHost(deps) {
   /** SHOT-KINDS: the gun a ball struck with - its bore as its load fires it (shotKinds.js shotGun), grapeshot's men by its
    *  time aloft (shotReach); a ball that says no load its bore's own. */
   function loadedGun(e) {
-    const g = shotGun(e.gun, GUNS[e.gun], e.shot ?? null);
+    const g = captainShot(e.gun, shotGun(e.gun, GUNS[e.gun], e.shot ?? null), e.shot ?? null, isMine(e.shooter) ? deps.captain?.stats?.() : null);   // CAPTAIN-TREE: my shot locker's stars
     if (!g) return null;
     const reach = shotReach(e.shot, e.t);
     return reach < 1 ? { ...g, crew: g.crew * reach } : g;
@@ -2773,7 +2774,7 @@ export function createNavalHost(deps) {
       }
       s.mustered = true;
     }
-    s.worth = b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH;   // CAPT-CREW: her posts aboard, by their holders' service
+    s.worth = captainWorth(b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH, deps.captain?.stats?.());   // CAPT-CREW: her posts aboard, by their holders' service - CAPTAIN-TREE: and her captain's drill
     if (b === boatInPlay()) {
       const v = boatPose(b).velocity;
       c.tick(d, { inPort: !!where().nearPort && Math.hypot(v[0], v[2]) <= YARD_SPEED && !hostile, atSea: !where().nearPort, wear: s.worth.wear });
@@ -3051,7 +3052,7 @@ export function createNavalHost(deps) {
   }
 
   /** My gun crews' skill for a volley: PLAYER_SKILL at a full crew (or none to thin), less as they thin. */
-  const crewSkill = (boat, st) => (boat.crewed ? PLAYER_SKILL_THIN + (PLAYER_SKILL - PLAYER_SKILL_THIN) * st.damage.crewShare() : PLAYER_SKILL);
+  const crewSkill = (boat, st) => Math.min(1, (boat.crewed ? PLAYER_SKILL_THIN + (PLAYER_SKILL - PLAYER_SKILL_THIN) * st.damage.crewShare() : PLAYER_SKILL) * statScale(deps.captain?.stats?.(), 'aim'));   // CAPTAIN-TREE: her captain's aim
 
   // ── a fire on my own deck (AUDIT NAV1, the helm): seen and heard as a sea ship's is - it read as a chip alone ────
   const myFires = new Map();   // boat -> { fires: [{ at, handle }], loop }
@@ -4056,7 +4057,7 @@ export function createNavalHost(deps) {
       e.ramAt = clock;
       wayIn = [];   // the way spent on her
       const galley = build.ram;
-      const dealt = Math.round(speed * RAM_DAMAGE * (galley ? GALLEY_RAM : 1));
+      const dealt = Math.round(speed * RAM_DAMAGE * (galley ? GALLEY_RAM : 1) * statScale(deps.captain?.stats?.(), 'ram'));   // CAPTAIN-TREE: her captain's ram
       effects.hit(stem, fwd, true);
       sound(NAVAL_SFX.hit, stem, 1);
       deps.shake?.(3);
@@ -4064,7 +4065,7 @@ export function createNavalHost(deps) {
       chargePlayer('fire', e);
       e.myBlowAt = clock;
       // RAM-BOARD (systems/naval/navalFoul.js): her bow fouled in my stem - boarded as she stands while it holds
-      if (e.ship.damage.state === SHIP_STATES.afloat && !e.ship.boarded) { foul(e.ship, myId(), clock); deps.say?.(t('naval.foul.rammed', 'Her bow is fouled in yours - board her before she breaks free!'), 3); }
+      if (e.ship.damage.state === SHIP_STATES.afloat && !e.ship.boarded) { foul(e.ship, myId(), clock, deps.captain?.stats?.().foul); deps.say?.(t('naval.foul.rammed', 'Her bow is fouled in yours - board her before she breaks free!'), 3); }
       if (e.owner) deps.sendHit?.(navalHitData(e.owner, { n: e.n, hull: Math.min(400, dealt), crew: ramMenSaid(dealt), zone: 'holed' }));
       else strike(e, { hull: dealt, sail: 0, crew: ramMen(dealt, random()) }, myId());
       const st = myBoatState(boat);

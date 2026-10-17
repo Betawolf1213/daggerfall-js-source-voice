@@ -14,7 +14,7 @@
 // Holdings provider (ui/holdingsPages.js setHoldingsProvider); dressed by the kit's roles as the Stable's cards are.
 
 import { holdingsProvider, ensureHoldingsStyle, holdingArt, holdingMeter, farWords } from './holdingsPages.js';
-import { SHIP_NAME_MAX, UPGRADE_LINES } from '../systems/fleet.js';
+import { SHIP_NAME_MAX, UPGRADE_LINES, REFIT_NUMERALS } from '../systems/fleet.js';
 import { CREW_ROLES, veteranOf, postsOf, postWords } from '../systems/naval/shipCrew.js';   // CAPT-CREW: a hand's rank, his post's worth
 import { HERALDRY_COLOURS, HERALDRY_DEVICES, HERALDRY_DIVISIONS, HERALDRY_DIVISION_NAMES, heraldryDeviceName, heraldryOf } from '../net/heraldryLaw.js';   // SHIP-COLOURS
 import { FLAG_SHAPES, FLAG_DEFAULT, fitFlag, flownFlag } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: her flag's law
@@ -25,7 +25,6 @@ export const FLEET_PAGE_SECTIONS = Object.freeze([Object.freeze(['fleet', 'Fleet
 /** Come Sail Away's two items' pictures: a deed's (209/5) for a ship whose title is held, her parts' (212/11) packed. */
 export const DEED_ART = Object.freeze({ archive: 209, record: 5 });
 export const PARTS_ART = Object.freeze({ archive: 212, record: 11 });
-const NUMERALS = Object.freeze(['-', 'I', 'II', 'III']);
 /** The page stands while the host gives the fleet (Come Sail Away running in the world host). */
 export const fleetPageShown = () => !!holdingsProvider()?.fleet;
 
@@ -54,8 +53,28 @@ export function whereWords(s) {
 const goldWords = (n) => `${Math.round(n).toLocaleString('en-US')} gold`;
 /** Her refits as a line ("Hold II - Rigging I"), or null with none. */
 export function refitLine(upgrades) {
-  const parts = UPGRADE_LINES.filter((l) => (upgrades?.[l.id] | 0) > 0).map((l) => `${l.label} ${NUMERALS[upgrades[l.id]] ?? upgrades[l.id]}`);
+  const parts = UPGRADE_LINES.filter((l) => (upgrades?.[l.id] | 0) > 0).map((l) => `${l.label} ${REFIT_NUMERALS[upgrades[l.id]] ?? upgrades[l.id]}`);
   return parts.length ? parts.join(' · ') : null;
+}
+/**
+ * REFIT-ORES: a refit row's words (scenes/fleetHost.js offer's), the Fleet page's and the shipyard's alike - `name` the line
+ * at her tier, `gain` what it betters her by now and with the next, `asks` the next's gold and stores (what the player
+ * holds of each), `melt` the pieces of arms and plate the next would melt down for their metal, `lock` the captain's level
+ * a metal tier asks while hers is under it. Pure.
+ */
+export function refitRowWords(r) {
+  const pc = (x) => Math.round((Number(x) || 0) * 100);
+  const name = r.tier ? `${r.label} ${REFIT_NUMERALS[r.tier] ?? r.tier}` : r.label;
+  if (!r.next) return { name, gain: t('naval.refit.gainDone', '{what}: +{now}%.', { what: r.what, now: pc(r.share) }), asks: null, melt: null, lock: null };
+  const mats = r.next.mats.map((m) => t('naval.refit.mat', '{n} {label} (you hold {have})', { n: m.n, label: m.label, have: m.have })).join(', ');
+  const melted = r.next.mats.filter((m) => m.melt > 0);
+  return {
+    name,
+    gain: t('naval.refit.gain', '{what}: +{now}% now, +{next}% with the next refit.', { what: r.what, now: pc(r.share), next: pc(r.next.share) }),
+    asks: t('naval.refit.asks', 'Next: {gold}, {mats}.', { gold: goldWords(r.next.gold), mats }),
+    melt: melted.length ? t('naval.refit.melt', 'The shipwright melts down {pieces} of the arms and plate you carry for it - never a piece worn, enchanted or a quest\'s.', { pieces: melted.map((m) => `${m.melt} ${m.label}`).join(', ') }) : null,
+    lock: r.next.locked ? t('naval.refit.locked', 'Needs a captain of level {level} - earned at sea.', { level: r.next.level }) : null,
+  };
 }
 
 function button(el, label, why, onClick, cls = 'act') {
@@ -77,18 +96,23 @@ function refitPanel(el, s, rerender, act) {
     box.append(el('span', 'hld-sub', `You hold ${[...kinds.values()].map((m) => `${m.have} ${m.label}`).join(', ')} (your pack and her hold), and ${goldWords(o.gold)}.`));
     for (const m of kinds.values()) if (m.have < Math.min(...o.rows.flatMap((r) => (r.next?.mats ?? []).filter((x) => x.kind === m.kind).map((x) => x.n)))) box.append(el('span', 'hld-why', `${m.label}: ${m.hint}.`));
   }
+  // REFIT-ORES: past the shipwright's third refit each tier is a metal, and asks her captain's level
+  if (o.rows.some((r) => r.next && r.next.level > 1)) box.append(el('span', 'hld-sub', t('naval.refit.captain', 'Your captain is level {level}. Past the third refit each tier is a metal - Steel to Daedric - and asks a captain\'s level, earned at sea.', { level: o.level ?? 1 })));
   for (const r of o.rows) {
-    const t = el('div', 'hld-refit');
+    const w = refitRowWords(r);
+    const card = el('div', 'hld-refit');
     const head = el('div', 'hld-head');
-    head.append(el('span', 'hld-name', r.tier ? `${r.label} ${NUMERALS[r.tier]}` : r.label), el('span', 'hld-state', r.tier >= r.max ? 'Done' : `${r.tier} of ${r.max}`));
-    t.append(head, el('span', 'hld-sub', `${r.what}: +${Math.round(r.per * 100)}% a refit${r.tier ? ` (+${Math.round(r.per * r.tier * 100)}% now)` : ''}.`));
+    head.append(el('span', 'hld-name', w.name), el('span', 'hld-state', r.tier >= r.max ? 'Done' : `${r.tier} of ${r.max}`));
+    card.append(head, el('span', 'hld-sub', w.gain));
     if (r.next) {
-      t.append(el('span', 'hld-sub', `Next: ${goldWords(r.next.gold)}, ${r.next.mats.map((m) => `${m.n} ${m.label}`).join(', ')}.`));
+      card.append(el('span', 'hld-sub', w.asks));
+      if (w.melt) card.append(el('span', 'hld-sub', w.melt));
+      if (w.lock) card.append(el('span', 'hld-why', w.lock));
       const acts = el('div', 'hld-acts');
-      acts.append(button(el, 'Refit', o.why ?? (r.afford ? null : 'You lack what the shipwright asks'), () => act('refit', r.id), 'act primary'));
-      t.append(acts);
+      acts.append(button(el, 'Refit', o.why ?? w.lock ?? (r.afford ? null : 'You lack what the shipwright asks'), () => act('refit', r.id), 'act primary'));
+      card.append(acts);
     }
-    box.append(t);
+    box.append(card);
   }
   return box;
 }

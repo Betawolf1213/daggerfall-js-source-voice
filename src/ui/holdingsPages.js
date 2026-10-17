@@ -50,7 +50,7 @@ export function _setHoldingsIconForTests(fn) { _icon = fn ?? ((p, box, onReady) 
  * @property {() => StableModel} [stable]   the horse and the wagon
  * @property {(verb: 'summon'|'away'|'rename'|'paint'|'coat'|'pattern'|'legs'|'feed'|'treat'|'ride'|'kit', arg?: any) => { ok: boolean, text: string }} [stableAct]
  * @property {any} [fleet]   the fleet's model and acts (ui/fleetPage.js)
- * @property {{ model: () => any }} [captain]   CAPT-LOG: the captain's standing, letter, contracts and log (ui/captainPage.js)
+ * @property {{ model: () => any, openStars?: () => boolean }} [captain]   CAPT-LOG: the captain's standing, letter, contracts and log (ui/captainPage.js) - CAPTAIN-TREE: `openStars` the stars' window
  */
 let _provider = /** @type {HoldingsProvider|null} */ (null);
 /** The host's provider, or null to take the pages down. */

@@ -44,7 +44,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and CRAFT-FIRST-SHOWN's CRAFT XP WORDS (`craftXpWords.js`: what a craft and its first pay, said in a station's box and in the craft's word - or that the Weavers' cloth earns no first-time bonus; `06-Systems/Professions-Arc.md` 41.9)
 - and VIRT's LONG LISTS (`virtualRows.js`: a list past 120 rows draws the rows on screen and two spacers for the rest, measured off its own layout - the pack's dock and its side window; `UI-Arc.md` VIRT)
 - and SHIP-COLOURS' FLAG ART (`flagArt.js`: a ship's flag drawn in the heraldry's hand, an SVG for the Fleet page's Colours and a canvas for the cloth at her masthead; `03-World/Naval-Refit.md` SHIP-COLOURS)
-379 modules
+- and CAPTAIN-TREE's STARS (`captainTreeWindow.js`: the captain's sky in the Firmament's own dress - its sheet, its two palettes, its stars' sizes - a way set by a press, a star taken back with those joined only through it, accepted into the captain's ledger; opened from the Captain page through the sea's window door; `03-World/Naval-Refit.md` CAPTAIN-TREE)
+380 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

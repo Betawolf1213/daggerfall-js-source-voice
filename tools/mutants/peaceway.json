@@ -11,8 +11,8 @@
   {
     "name": "PEACE-WAY-oars-unscaled",
     "file": "src/systems/comeSailAway/comeSailAway.js",
-    "old": "f(b.modifierMoveSpeedOar)) * hurt) * peace());",
-    "new": "f(b.modifierMoveSpeedOar)) * hurt));",
+    "old": "* rigOf(b, 'oars')) * peace());   // CAPTAIN-TREE: her captain's oars",
+    "new": "* rigOf(b, 'oars')));   // CAPTAIN-TREE: her captain's oars",
     "tests": [
       "test/systems/comeSailAway/peaceway.test.js"
     ]

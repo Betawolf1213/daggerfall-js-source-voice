@@ -23,6 +23,9 @@ import { mintDeed, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from './comeSailAwa
 import { HULL_NAMES, HULL_PRICES, VARIANT_NAMES, HULL_VARIANT_COUNTS } from './comeSailAway/comeSailAwayBoat.js';
 import { checkName, textCaught } from '../net/nameFilter.js';
 import { shipFlagOf } from './naval/shipFlag.js';   // SHIP-COLOURS: her flag, through its door
+import { plateMetal } from './armorMaterials.js';   // REFIT-ORES: a piece of plate's metal
+import { WEAPONS } from '../characters/weapons.js';
+import { t } from './textManager.js';   // REFIT-ORES: a metal's hint in the player's language
 
 export const FLEET_SAVE_VENDOR = 'Fleet';
 export const FLEET_SAVE_VERSION = 1;
@@ -55,11 +58,40 @@ export const shipLabel = (rec) => (rec?.name ? rec.name : `${HULL_NAMES[rec?.hul
 /** The materials a refit takes, and what in the world each is: a Foraging find (the Wood-Axe's Wood Bundle), an
  *  alchemist's shelf (Iron, a Pine Branch - DFU's own ingredients, the Sickle's quests' finds), or online a Stores
  *  good withdrawn to the pack (a plank or a log, an ingot, resin - net/professionLaw.js). Each item counts one. */
+/** REFIT-ORES: a metal's store - its label, its metal (`metal`), its ingots' templates, and its hint in the player's language. */
+const metalStore = (label, metal, templates, hint) => Object.freeze({ label, templates: Object.freeze(templates), metal, get hint() { return hint(); } });
 export const MATERIALS = Object.freeze({
   timber: Object.freeze({ label: 'Timber', hint: 'Wood Bundles - a Wood-Axe gathers them - or planks and logs', templates: Object.freeze([1604, 645, 646, 647, 648, 649, 650, 651, 635, 636, 637, 638, 639, 640, 641]) }),
   iron: Object.freeze({ label: 'Iron', hint: 'Iron from an alchemist, or iron and steel ingots', templates: Object.freeze([71, 620, 621]) }),
   pitch: Object.freeze({ label: 'Pitch', hint: 'Pine Branches for their resin, or Resin itself', templates: Object.freeze([14, 653]) }),
+  // REFIT-ORES (2026-10-17, bible/03-World/Naval-Refit.md REFIT-ORES): the metals of DFU's ladder past iron - each its
+  // forge's ingot (net/professionLaw.js 621-629; the Warforged Steel ingot, 630, counts as Ebony), or a weapon or a piece
+  // of plate of that metal melted down (`metal`: DFU's WeaponMaterialTypes, and ArmorMaterialTypes' plate over it) - never
+  // one worn, a quest's, or enchanted (`meltable`)
+  steel: metalStore('Steel', 1, [621], () => t('naval.ore.steel', 'Steel ingots, or a steel weapon or plate melted down')),
+  silver: metalStore('Silver', 2, [622], () => t('naval.ore.silver', 'Silver ingots, or a silver weapon or plate melted down')),
+  elven: metalStore('Elven', 3, [623], () => t('naval.ore.elven', 'Moonstone ingots, or an elven weapon or plate melted down')),
+  dwarven: metalStore('Dwarven', 4, [624], () => t('naval.ore.dwarven', 'Dwarven ingots, or a dwarven weapon or plate melted down')),
+  mithril: metalStore('Mithril', 5, [625], () => t('naval.ore.mithril', 'Mithril ingots, or a mithril weapon or plate melted down')),
+  adamantium: metalStore('Adamantium', 6, [626], () => t('naval.ore.adamantium', 'Adamantium ingots, or an adamantium weapon or plate melted down')),
+  ebony: metalStore('Ebony', 7, [627, 630], () => t('naval.ore.ebony', 'Ebony or Warforged Steel ingots, or an ebony weapon or plate melted down')),
+  orcish: metalStore('Orcish', 8, [628], () => t('naval.ore.orcish', 'Orichalcum ingots, or an orcish weapon or plate melted down')),
+  daedric: metalStore('Daedric', 9, [629], () => t('naval.ore.daedric', 'Daedric ingots, or a daedric weapon or plate melted down')),
 });
+/** REFIT-ORES: an item's metal (DFU's WeaponMaterialTypes, 0 iron to 9 Daedric) - a weapon's, or a piece of plate's
+ *  (armorMaterials.js plateMetal) - or null for anything else (leather, chain, cloth, an ingot, an arrow). */
+export function metalOf(item) {
+  const m = item?.material;
+  if (!Number.isInteger(m)) return null;
+  if (item.group === 'Weapons') return item.templateIndex !== WEAPONS.Arrow && m >= 0 && m <= 9 ? m : null;
+  return item.group === 'Armor' ? plateMetal(m) : null;
+}
+/** REFIT-ORES: whether a piece may be melted down for its metal - never one worn, a quest's, an artifact, a sigil's
+ *  (systems/aetheric.js), or enchanted. */
+export const meltable = (item) => !!item && item.equipSlot == null && !item.questItem && !item.artifact && !item.sigil
+  && !(Array.isArray(item.enchantments) && item.enchantments.length);
+/** Whether `item` is one of `kind`: its template, or (an ore) a meltable piece of its metal. */
+const isOf = (item, kind) => { const m = MATERIALS[kind]; return !!m && !!item && (m.templates.includes(item.templateIndex) || (m.metal != null && metalOf(item) === m.metal && meltable(item))); };
 /** The four refits, each UPGRADE_TIERS deep: what it betters, by how much a tier, and what it is built of. Guns only on
  *  a hull that carries them. */
 export const UPGRADE_LINES = Object.freeze([
@@ -68,34 +100,81 @@ export const UPGRADE_LINES = Object.freeze([
   Object.freeze({ id: 'hull', label: 'Hull', what: 'Her hull and canvas', per: 0.1, effect: 'hull', mats: Object.freeze(['timber', 'pitch', 'iron']), guns: false }),
   Object.freeze({ id: 'guns', label: 'Guns', what: 'The weight of her broadsides', per: 0.08, effect: 'guns', mats: Object.freeze(['iron', 'pitch']), guns: true }),
 ]);
-export const UPGRADE_TIERS = 3;
+/** The shipwright's own three tiers - timber, iron and pitch. */
+export const BASE_TIERS = 3;
+/**
+ * REFIT-ORES (2026-10-17, the owner: "making improvements to the ship upgrade system" - a player's ask: "levels unlock
+ * upgrading with ores from steel to Ebony and beyond"; bible/03-World/Naval-Refit.md REFIT-ORES): PAST THE THIRD TIER, A
+ * TIER A METAL - DFU's ladder from Steel to Daedric, each a captain's level to reach (systems/naval/captainTree.js levelOf:
+ * earned at sea), its gold for a Small Ship, its metal's count; each also asks her line's first material at the third
+ * tier's count. An ore tier betters her by ORE_PER of a shipwright's tier.
+ */
+export const ORE_TIERS = Object.freeze([
+  Object.freeze({ ore: 'steel', level: 3, gold: 6000, n: 4 }),
+  Object.freeze({ ore: 'silver', level: 5, gold: 9000, n: 4 }),
+  Object.freeze({ ore: 'elven', level: 8, gold: 13000, n: 5 }),
+  Object.freeze({ ore: 'dwarven', level: 11, gold: 18000, n: 5 }),
+  Object.freeze({ ore: 'mithril', level: 14, gold: 24000, n: 6 }),
+  Object.freeze({ ore: 'adamantium', level: 17, gold: 32000, n: 6 }),
+  Object.freeze({ ore: 'ebony', level: 20, gold: 42000, n: 7 }),
+  Object.freeze({ ore: 'orcish', level: 24, gold: 55000, n: 7 }),
+  Object.freeze({ ore: 'daedric', level: 28, gold: 70000, n: 8 }),
+]);
+export const ORE_PER = 0.5;
+export const UPGRADE_TIERS = BASE_TIERS + ORE_TIERS.length;
+/** A tier's numeral, I to XII (0 none). */
+export const REFIT_NUMERALS = Object.freeze(['-', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']);
 /** A tier's gold and each material's count, for a Small Ship - times her hull's share (HULL_UPGRADE_SCALE). */
 export const TIER_GOLD = Object.freeze([600, 1500, 3500]);
 export const TIER_MATS = Object.freeze([3, 6, 10]);
 export const HULL_UPGRADE_SCALE = Object.freeze([0.5, 0.75, 1, 1.75, 2.5]);
 const lineOf = (id) => UPGRADE_LINES.find((l) => l.id === id) ?? null;
 const tierOf = (rec, id) => Math.max(0, Math.min(UPGRADE_TIERS, rec?.upgrades?.[id] | 0));
-/** What her next tier of `line` costs: `{ gold, mats: [{ kind, n }] }`, or null past the last. Pure. */
+/** What her next tier of `line` costs: `{ gold, mats: [{ kind, n }], level }` - `level` the captain's level it asks (1:
+ *  none; REFIT-ORES' metal tiers) - or null past the last. Pure. */
 export function upgradeCost(hull, id, tier) {
   const line = lineOf(id);
   if (!line || !(tier >= 0 && tier < UPGRADE_TIERS)) return null;
   const k = HULL_UPGRADE_SCALE[hull] ?? 1;
-  return { gold: Math.round((TIER_GOLD[tier] * k) / 10) * 10, mats: line.mats.map((kind) => ({ kind, n: Math.max(1, Math.round(TIER_MATS[tier] * k)) })) };
+  const n = (c) => Math.max(1, Math.round(c * k));
+  if (tier < BASE_TIERS) return { gold: Math.round((TIER_GOLD[tier] * k) / 10) * 10, mats: line.mats.map((kind) => ({ kind, n: n(TIER_MATS[tier]) })), level: 1 };
+  const ore = ORE_TIERS[tier - BASE_TIERS];
+  return { gold: Math.round((ore.gold * k) / 10) * 10, mats: [{ kind: ore.ore, n: n(ore.n) }, { kind: line.mats[0], n: n(TIER_MATS[BASE_TIERS - 1]) }], level: ore.level };
+}
+/** What a line betters her by at `tier` (0.4: +40%) - its `per` a shipwright's tier, REFIT-ORES: ORE_PER of it a metal's. */
+export function refitShare(id, tier) {
+  const t = Math.max(0, Math.min(UPGRADE_TIERS, tier | 0)), per = lineOf(id)?.per ?? 0;
+  return Math.min(t, BASE_TIERS) * per + Math.max(0, t - BASE_TIERS) * per * ORE_PER;
 }
 /** Her refits as the sea and the helm read them - each a multiple of her build's own: `cargo` her hold's threshold,
  *  `speed` her way and its coming on, `hull` her hull's and canvas's whole, `guns` her shot's harm. Pure. */
 export function refitOf(rec) {
-  const at = (id) => Math.round((1 + tierOf(rec, id) * (lineOf(id)?.per ?? 0)) * 10000) / 10000;
+  const at = (id) => Math.round((1 + refitShare(id, tierOf(rec, id))) * 10000) / 10000;
   return { cargo: at('hold'), speed: at('rigging'), hull: at('hull'), guns: at('guns') };
 }
 /** The words for a line at a tier ("Cargo +40%"). */
-export const refitWords = (id, tier) => { const l = lineOf(id); return l ? `${l.label} ${['-', 'I', 'II', 'III'][tier] ?? tier}` : ''; };
+export const refitWords = (id, tier) => { const l = lineOf(id); return l ? `${l.label} ${REFIT_NUMERALS[tier] ?? tier}` : ''; };
 /** How many of `kind` stand in `lists` (each item a template of the kind, its stack counted). Pure. */
 export function materialCount(lists, kind) {
-  const t = MATERIALS[kind]?.templates ?? [];
   let n = 0;
-  for (const list of lists) for (const it of list ?? []) if (it && t.includes(it.templateIndex)) n += Math.max(1, it.stackCount | 0 || 1);
+  for (const list of lists) for (const it of list ?? []) if (isOf(it, kind)) n += Math.max(1, it.stackCount | 0 || 1);
   return n;
+}
+/** REFIT-ORES: of `n` of `kind` out of `lists`, how many would be pieces melted down - takeMaterials takes every ingot
+ *  first, so only what the ingots leave short (0 for a material no piece is melted for). A piece is one measure of its
+ *  metal, a blade or a helm alike. Pure. */
+export function meltCount(lists, kind, n) {
+  const m = MATERIALS[kind];
+  if (!m || m.metal == null) return 0;
+  let ingots = 0;
+  for (const list of lists) for (const it of list ?? []) if (it && m.templates.includes(it.templateIndex)) ingots += Math.max(1, it.stackCount | 0 || 1);
+  return Math.max(0, Math.min(n, materialCount(lists, kind)) - ingots);
+}
+/** Whether every one of `mats` (`{ kind, n }`, in their order) can be taken out of `lists` together - a thing taken for
+ *  one is not there for the next (REFIT-ORES: a steel ingot is Steel's and Iron's both). Pure: tried on copies. */
+export function materialsFor(lists, mats) {
+  const copy = lists.map((l) => (l ?? []).map((it) => (it ? { ...it } : it)));
+  return mats.every((m) => takeMaterials(copy, m.kind, m.n));
 }
 /** `n` of `kind` taken out of `lists`, the first list first (a stack thinned, an item gone at its last) - all or none.
  *  Answers whether they were taken. */
@@ -103,10 +182,11 @@ export function takeMaterials(lists, kind, n) {
   if (materialCount(lists, kind) < n) return false;
   const t = MATERIALS[kind].templates;
   let left = n;
-  for (const list of lists) {
+  // REFIT-ORES: the ingots first, every list over, and only then a piece melted down
+  for (const take of [(it) => !!it && t.includes(it.templateIndex), (it) => isOf(it, kind)]) for (const list of lists) {
     for (let i = 0; list && i < list.length && left > 0;) {
       const it = list[i];
-      if (!it || !t.includes(it.templateIndex)) { i++; continue; }
+      if (!take(it)) { i++; continue; }
       const have = Math.max(1, it.stackCount | 0 || 1);
       if (have > left) { it.stackCount = have - left; left = 0; break; }
       left -= have;

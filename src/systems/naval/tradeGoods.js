@@ -83,6 +83,9 @@ export const WANT_K = 1.55;
 export const PRICE_DRIFT = 0.12;
 /** The exchange sells over the price by this share and buys under it by this. */
 export const SPREAD = 0.08;
+/** CAPTAIN-TREE: the most of SPREAD a captain's dealing closes (exchangeOf `edge`) - never the whole, so no good is bought
+ *  and sold again at the one exchange for nothing. */
+export const TRADE_MOST = 0.75;
 /** The Eltheric Ocean's goods in a port of the Bay, and the Bay's in an Eltheric isle's exchange: wanted at this. */
 export const EXOTIC_K = 1.4;
 /** What each crown's ports make and want. */
@@ -155,10 +158,13 @@ export function priceOf(port, id, day) {
  * THE EXCHANGE'S BOARD at a port on a day: each good it deals in - every good of its sea, and the other sea's it wants or,
  * ISLE-TRADE, makes (an isle's own good of the Bay: sold there, at its made price and stock, never 'not sold here') -
  * its price, its stand, and how many more it sells (`sells`) and buys (`buys`) today - `dealt` the captain's dealing
- * here today: `{ bought: { id: n } }` from the exchange, `{ sold: { id: n } }` to it.
- * @param {{ key: string, crown?: string|null, ether?: boolean }} port @param {number} day @param {{ sold?: any, bought?: any }} [dealt]
+ * here today: `{ bought: { id: n } }` from the exchange, `{ sold: { id: n } }` to it. CAPTAIN-TREE: `edge` the share of the
+ * SPREAD the captain's dealing closes (systems/naval/captainTree.js `trade`, to TRADE_MOST): each price nearer the
+ * good's middle, the exchange still buying under what it sells.
+ * @param {{ key: string, crown?: string|null, ether?: boolean }} port @param {number} day @param {{ sold?: any, bought?: any }} [dealt] @param {number} [edge]
  */
-export function exchangeOf(port, day, dealt = {}) {
+export function exchangeOf(port, day, dealt = {}, edge = 0) {
+  const k = SPREAD * (1 - Math.max(0, Math.min(TRADE_MOST, Number(edge) || 0)));
   const rows = [];
   for (const g of GOODS) {
     const stand = standOf(port, g.id);
@@ -168,7 +174,7 @@ export function exchangeOf(port, day, dealt = {}) {
     const stock = DAY_STOCK[stand];
     const exotic = other && stand !== 'makes';   // ISLE-TRADE: an isle's own good of the Bay is its own, sold as made
     rows.push({
-      id: g.id, name: g.name, unit: g.unit, units: g.units, kg: g.kg, stand, sell: p.sell, buy: p.buy, exotic,   // AUDIT CAPTAIN'S SEA B16: the other sea's - never sold here
+      id: g.id, name: g.name, unit: g.unit, units: g.units, kg: g.kg, stand, sell: Math.max(1, Math.round(p.mid * (1 + k))), buy: Math.max(1, Math.round(p.mid * (1 - k))), exotic,   // AUDIT CAPTAIN'S SEA B16: the other sea's - never sold here
       sells: exotic ? 0 : Math.max(0, stock.sell - (dealt.bought?.[g.id] | 0)), buys: Math.max(0, stock.buy - (dealt.sold?.[g.id] | 0)),
     });
   }

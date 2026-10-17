@@ -2,7 +2,7 @@
   {
     "name": "RAMB-foul-never-set",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "{ foul(e.ship, myId(), clock); deps.say?.",
+    "old": "{ foul(e.ship, myId(), clock, deps.captain?.stats?.().foul); deps.say?.",
     "new": "{ deps.say?.",
     "tests": [
       "test/systems/naval/ramboard.test.js"

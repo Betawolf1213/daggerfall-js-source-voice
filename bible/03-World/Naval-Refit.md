@@ -18,6 +18,12 @@ The owner, 2026-10-17: *"This will be a naval improvement session."* - nine item
 
 And: *"No band aids, I want you to be as detailed as possible."*
 
+The owner, the same day, to the queue: *"A firmament styled captain skill tree along with making improvements to the
+ship upgrade system"* - and a player's ask beside it: a skill tree for the ship *"integrated with leveling"*, levels that
+*"unlock upgrading with ores from steel to Ebony and beyond"*, the Firmament's *"Master and commander sections"*, and
+*"connect current stats to ship behaviour"* - taken as two slices more, CAPTAIN-TREE (10) and REFIT-ORES (11). The
+player's dwemer submarines were out of this session's scope (said to the owner).
+
 **THE PORT'S OWN**, as the sea fight is (`03-World/Naval-Combat.md`): Daggerfall has no sea and Daggerfall Unity none
 either. Where a slice leaves a vendored mod's own law (Come Sail Away's, `03-World/Come-Sail-Away.md`) it says so here
 and in `01-Overview/Port-Ledger.md` section A.
@@ -32,6 +38,8 @@ and in `01-Overview/Port-Ledger.md` section A.
 | RAM-BOARD | 5 | a ram fouls her: for FOUL_S her way is held and she is boarded as she stands, her whole crew against me | `systems/naval/navalFoul.js`, `scenes/naval/navalHost.js` (`checkRams`, `boardingGap`, `footReach`, `stepHeaveTo`, `crewShips`, `word`, `targetCardOf`), `systems/naval/navalAI.js` (`stepCaptain`), `ui/naval/navalHud.js` (`cardState`) |
 | RAID-ASHORE | 2 | a voyage's raid fought where the player stands ends there: its crew and last raiders withdrawn, the quest ended; one raid at a time on the fast travel | `scenes/raidAshore.js`, `systems/warmAshesShips.js` (`LeaveShip`, `onPreFastTravel`), `scenes/world.js` (`raidAshore`, Warm Ashes' host, the quest's end) |
 | SHIP-COLOURS | 9 | a ship flies a flag of her captain's design - its shape, its field and division, its border, its device and that device's colour, or the captain's guild's arms - as cloth at her masthead, in her pennant's place, seen by every player | `systems/naval/shipFlag.js`, `ui/flagArt.js`, `render/shipFlagPass.js`, `scenes/shipFlagHost.js`, `systems/fleet.js` (`colours`, `setShipColours`), `scenes/fleetHost.js` (`colours`), `ui/fleetPage.js` (`coloursPanel`), `systems/comeSailAway/comeSailAwayWire.js` (`f`), `scenes/comeSailAway/comeSailAwayPeers.js` (`flagged`), `ui/heraldryArt.js` (its device painter shared), `scenes/world.js` |
+| CAPTAIN-TREE | 10 | a captain's level, earned at sea off the captain's log, buys a point a level for a sky of stars in the Firmament's dress - the Master's seamanship to the left, the Commander's war to the right - each star a share of a ship's own number read where that number is read: her way, oars, helm, hold, hull, repairs, trade, guns' harm, reload and aim, the shot locker's grape, chain and heated shot, her boarders, her ram and its foul | `systems/naval/captainTree.js`, `systems/naval/captainLedger.js` (`captain`, `tree`, `setTree`, `stats`, the save's `tree`), `ui/captainTreeWindow.js`, `ui/captainPage.js` (the stars' card), `ui/naval/navalPlunderDoor.js` (`createCaptainStarsOverlay`), `ui/enhanced/enhancedMenu.js` (the Captain page's door), `scenes/fleetHost.js` (`refit`), `systems/comeSailAway/comeSailAway.js` (`rigOf`'s `oars`, `turn`), `scenes/naval/navalHost.js` (`crewStep`'s worth, `crewSkill`, `loadedGun`, `landHit`, `checkRams`), `systems/naval/shotKinds.js` (`shotFireChance`'s `k`), `systems/naval/navalFoul.js` (`foul`'s `more`), `systems/naval/tradeGoods.js` (`exchangeOf`'s `edge`), `scenes/harbourOffice.js`, `scenes/world.js` |
+| REFIT-ORES | 11 | past the shipwright's three tiers, nine of metal - Steel to Daedric, DFU's own ladder - each asking a captain's level, its metal (ingots, or a weapon or a piece of plate of it melted down) and her line's first store | `systems/fleet.js` (`ORE_TIERS`, `MATERIALS`' metals, `metalOf`, `meltable`, `materialCount`, `takeMaterials`, `meltCount`, `materialsFor`, `upgradeCost`, `refitShare`, `REFIT_NUMERALS`), `scenes/fleetHost.js` (`offer`, `act`'s refit), `ui/fleetPage.js` (`refitRowWords`, the refit panel), `ui/shipyardWindow.js` (its Refits tab) |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -283,6 +291,92 @@ CHANGED (`systems/naval/shipFlag.js`, the law; the art, the cloth and the host e
   through the flag's door (`flagOfCode`), one it refuses her pennant, never the boats dropped; an older build ignores it.
   The peers' boats fly it (`comeSailAwayPeers.js flagged`).
 
+## CAPTAIN-TREE - the captain's stars (item 10)
+
+FOUND. A captain's deeds at sea were written in the captain's log (`systems/naval/captainLedger.js newLog`: ships sunk and
+taken by their trade, boarders thrown back, prizes, contracts, leagues, charts, isles) and read back as words on the
+Captain page alone; the crowns' ranks (CAPT-LOG) were a standing with each crown, not a captain's own growth. Nothing a
+captain learned at sea bettered a ship, and the ship's own numbers - her way, her helm, her guns - were her build's,
+her refits' and her crew's posts' (CAPT-CREW) alone. The Firmament (`06-Systems/Firmament.md`) is a character's sky,
+bought with Renown, online.
+
+CHANGED (`systems/naval/captainTree.js`, the law; pure):
+- **The level** is never stored: read off the log as it stands (`captainXpOf` - CAPTAIN_XP's weight a deed: a pirate
+  sunk 40 and taken 60, a navy's 50 and 75, an Eltheric ship's 60 and 90, a legend's 300 and 400, a merchantman's 25 and
+  40; a boarding thrown back 30, a prize claimed 20, a contract 50, a league 12, a chart raised 40, an isle charted 25, a
+  band deeper 15, and an XP for every TRADED_GOLD (40) sold at the exchange - a merchant captain rises too), up
+  100 x (L - 1)^1.6 (`xpForLevel`: level 2 at 100, 10 at 3,363, 20 at 11,117, 30 at 21,869) to CAPTAIN_LEVEL_MAX (30).
+  A point a level past the first (`pointsOf`: 29 at the top). The log is the save's, so the level follows the character.
+- **The sky** (`CAPTAIN_STARS`, 38 stars, `CAPTAIN_EDGES`): the Firmament's shape made a sky of its own - THE HELM in the
+  middle, held by every captain; THE MASTER's four paths to the left (her canvas to Master of the Wind; her oars and helm
+  to Quick in Stays; her hold and trade to Merchant Prince; her shipwright's care to Ironsides), THE COMMANDER's four to
+  the right (the guns' drill to Ship of the Line; their aim to Long Shot; the shot locker forking to Canister and Grape,
+  Bar and Chain, and past grape the Hot Shot Furnace; the boarders and the ram to Boarders Away). Small stars run to a
+  notable and on to a keystone that gives much and costs a little (Master of the Wind: +12% way under sail, -12% under
+  oars). Neighbouring paths' notables are joined across (`CAPTAIN_CROSS`). 37 stars past the Helm and 29 points at the
+  top: a captain chooses.
+- **Holding stars** (`heldOf`, the door every sky comes in by): the Helm, known stars once each, each joined to the Helm
+  through held stars, no more than the points - in an order a captain could have set them, whatever order asked (a fixed
+  point: a sky with a star taken out of its middle keeps every star still joined round another way). A star is taken
+  beside one held with a point left (`takeable`); the way to one further is its shortest (`wayTo`); a star given back
+  takes with it every star joined to the Helm only through it (`takesBack`). Giving back is FREE, at any time - a
+  captain's sky is relearned on the deck. DEPARTURE from the Firmament: no silver or gold, nothing online - the sky is the
+  character's save's (`captainLedger.js` `tree`), so it stands offline as the sea does.
+- **What the stars do** (`treeStats`, CAPTAIN_STATS - each a share) is read WHERE THE SHIP'S OWN NUMBER IS READ, never
+  written into her record, a peer's or the sea's ships reading none:
+  - her refits (`scenes/fleetHost.js refit`, Come Sail Away's and the sea fight's one seam; a ship of mine's alone - a
+    number the Fleet does not know reads her build's own): `cargo` her hold, `way` her way under sail and its coming on,
+    `hull` her hull and canvas, `harm` her balls' harm, and `oars` and `turn` besides (`captainRefit`) - Come Sail Away
+    reads them where it reads her Rigging (`comeSailAway.js rigOf(b, key)`: `oarSpeed`, and `turnSpeed` under oars and
+    under sail);
+  - her crew's worth (`captainWorth` over `shipCrew.js crewWorth`, the sea fight's `crewStep`): `reload` off the guns'
+    reload (never under RELOAD_LEAST, a half), `repair` on her hands' mending, `boarders` more hands over the rail (the
+    First Mate's seam, `myHands` - as many as her crew has men for, CAPT-CREW's own cap);
+  - her guns' aim (`crewSkill` times `aim`, to 1 at the most);
+  - the shot locker (`captainShot`, a ball of mine in `loadedGun`): `grape` grapeshot's men, `chain` chain shot's canvas
+    (a bow chaser's own chain too), `heated` heated shot's chance of fire (`shotFireChance`'s `k`, to FIRE_MOST, 0.9);
+  - her ram (`checkRams`): `ram` its harm, `foul` seconds more she holds a ship fouled (`navalFoul.js foul`'s `more`);
+  - the exchange (`harbourOffice.js`, `tradeGoods.js exchangeOf`'s `edge`): `trade` the share of the SPREAD her dealing
+    closes, to TRADE_MOST (0.75) - each price nearer the good's middle, the exchange still buying under what it sells.
+- **The window** (`ui/captainTreeWindow.js`), in the Firmament's own dress (`ui/firmamentWindow.js` - its sheet, its two
+  palettes, its stars' sizes): the sky over the whole screen, the Master in the life ring's verdigris and the Commander in
+  the battle ring's brass, the Helm drawn as a ship's wheel; a star hovered reads its name, its half and kind, its stats
+  and what a press would do; pressed, the whole way to it is set while the points pay (refused, it says why); right-pressed
+  (or held), it is taken back with those joined only through it; Accept gives the ledger the sky (`setTree`, through the
+  law again) and tells the save. Every change is pending until then, and a close with one unaccepted asks once. Names are
+  laid out where they cover no star and no other name. Opened from the Captain page's card through the sea's window door
+  (`createCaptainStarsOverlay`, the pause put down first as the Fleet's doors do).
+- **The Captain page** (`ui/captainPage.js`): a card above the crowns - her level, a meter of her XP from this level's
+  floor to the next's, the stars set of her points, what the two halves better, and the door.
+
+## REFIT-ORES - the metals past the shipwright's third refit (item 11)
+
+FOUND. Four refit lines (Hold, Rigging, Hull, Guns), three tiers each, of timber, iron and pitch - every ship at her last
+tier within a few voyages, and nothing a captain's growth or the world's ores could add. DFU's material ladder (Iron,
+Steel, Silver, Elven, Dwarven, Mithril, Adamantium, Ebony, Orcish, Daedric - ItemEnums' WeaponMaterialTypes, plate's
+ArmorMaterialTypes over it) and the forges' ingots (`net/professionLaw.js`, 620-630) stood beside it unused.
+
+CHANGED (`systems/fleet.js`):
+- **Nine tiers of metal** past the shipwright's three (`ORE_TIERS`; UPGRADE_TIERS 12, REFIT_NUMERALS to XII): Steel at a
+  captain's level 3, Silver 5, Elven 8, Dwarven 11, Mithril 14, Adamantium 17, Ebony 20, Orcish 24, Daedric 28 - a
+  captain's level is CAPTAIN-TREE's, earned at sea. A tier costs a Small Ship 6,000 to 70,000 gold and 4 to 8 of its
+  metal, with her line's first store (timber, or a gun's iron) at the third tier's count, all times her hull's share. A
+  metal tier betters her by ORE_PER (a half) of a shipwright's (`refitShare`): a Hold at XII carries 1 + 0.6 + 0.9 of
+  her build's load.
+- **A metal is its ingots, or a piece melted down** (`MATERIALS`' metals, `metalOf`, `meltable`): the forge's ingot of it
+  (Moonstone for Elven, Orichalcum for Orcish; the Warforged Steel ingot counts as Ebony), or a weapon or a piece of plate
+  of that metal (an arrow, chain and leather never) - never one worn, a quest's, an artifact, a sigil's or enchanted. The
+  shipwright takes every ingot first, in the pack and her hold, and only then melts a piece (`takeMaterials`); the refit
+  says how many pieces it would melt (`meltCount`).
+- **One store serves once** (`materialsFor`): a steel ingot is Steel and Iron both (the Iron store's own law), so a
+  refit's stores are tried together on copies before anything is taken - a Guns tier of Steel no longer reads affordable
+  on the same ingots twice, and never takes half its stores.
+- **The refit's offer** (`scenes/fleetHost.js offer`): each row its share now and next, the level its next asks and
+  whether her captain's is short (`locked` - refused pressed: *"The shipwright will not work Steel for a captain under
+  level 3."*), each store's count held and melted; the Fleet page's refit panel and the shipyard's Refits tab say the same
+  words (`ui/fleetPage.js refitRowWords`) - the line at its numeral, +now% and +next%, the stores with what the player
+  holds, the pieces melted, the level asked - and the page says the captain's level once above them.
+
 ## THE FOUR HOSTS RULE
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
@@ -292,6 +386,11 @@ CHANGED (`systems/naval/shipFlag.js`, the law; the art, the cloth and the host e
   (`modes.insideFoes`), so PEACE-WAY holds below ground by the same word; no isle's exchange stands indoors - FLAGGED.
 - `scenes/exterior.js` (the fixed-city bench) - FLAGGED: no Come Sail Away runtime and no Eltheric Ocean; no linked
   ship and no voyage, so no raid ashore.
+- CAPTAIN-TREE and REFIT-ORES: the captain's ledger, the Fleet and the sea fight are the world host's alone (one ledger
+  a world host, CAPT-LOG); its two seams are wired there (the Fleet's `captain`, the sea fight's `captain.stats`) and the
+  Captain page's door with them. `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) read the same
+  runtime's refit seam, so a ship's stars sail below ground too; `exterior.js` (the bench) - FLAGGED: no Fleet, no
+  ledger.
 - RAID-ASHORE's withdraw reads the world host's two pools - the street's and, through `worldModes.js`'s `interiorPool`,
   the sailing cabin's room; `dungeonContext.js` - FLAGGED: no voyage's raid is fought below ground.
 
@@ -322,6 +421,14 @@ CHANGED (`systems/naval/shipFlag.js`, the law; the art, the cloth and the host e
   (`inputactions`, `qs2_inputs`, `classicpages`, `viewtoggle`, `uicalm`, `tech1_hosts`, `modewheel`); the records re-aimed
   by content in `crewhold`, `holdings`, `navaudit_captains`, `navaudit_guns`, `navaudit_helm`, `navaudit_presentation`,
   `shipcrew` and `spyglass` (all dead).
+- `test/systems/naval/captaintree.test.js` (14) on the law, the seams (pure and pinned where the hosts read them), the
+  ledger and its save, the ore ladder, a piece melted down and the joint count, the refit's words, the window over a
+  document of its own and the Captain page; `fleet.test.js`'s REFIT-ORES test on the Fleet's real host (the level's gate,
+  the stores counted once, a blade melted, the stars on a ship of mine and never a stranger's), and
+  `tools/mutants/captaintree.json` (76, all dead); the window also seen drawn in headless Chromium in both dresses and at a
+  phone's width. The pins it moved: the ledger's new save (`captlog`), the Fleet's three tiers (`fleet`: twelve now), the
+  crew's worth (`captcrew`), the Captain page's wiring (`captlog`); the records re-aimed by content in `auditcaptsea`,
+  `captcrew`, `csa_sailing`, `holdings`, `navaudit_guns`, `navaudit_helm`, `peaceway`, `ramboard` and `shotkinds`.
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

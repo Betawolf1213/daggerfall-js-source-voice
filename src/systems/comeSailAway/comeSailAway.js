@@ -691,13 +691,14 @@ export function createComeSailAwayRuntime(deps) {
    *  the host's word; the mod has none) - none handed is the mod to the letter. */
   const peace = () => f(peaceShare(deps.peaceWay?.() ?? 1));
   /** moveSpeed's two arms - AUDIT SHIPS A4: each asked of her whichever she makes way by now (sailWayOf, oarWayOf). */
-  const oarSpeed = (b, hurt) => f(f(f(f(f(HANDLING.moveSpeedOar * handlingMod('OarMoveSpeed')) * state.boatCargoMod) * f(b.modifierMoveSpeedOar)) * hurt) * peace());
+  const oarSpeed = (b, hurt) => f(f(f(f(f(f(HANDLING.moveSpeedOar * handlingMod('OarMoveSpeed')) * state.boatCargoMod) * f(b.modifierMoveSpeedOar)) * hurt) * rigOf(b, 'oars')) * peace());   // CAPTAIN-TREE: her captain's oars
   const sailSpeed = (b, hurt) => f(f(f(f(f(f(HANDLING.moveSpeedSail * handlingMod('SailMoveSpeed')) * state.boatCargoMod) * f(b.modifierMoveSpeedSail)) * hurt) * rigOf(b)) * peace());
   /** HOLDINGS (the port's own - bible/03-World/Holdings.md): her Rigging refit, her way under sail and its coming on
    *  (`deps.refit`, the Fleet's; the mod has none) - read where the rates are read, never written into the prefab's
-   *  modifiers a variant's change walks again. Oars are her hands', never her rig's. */
+   *  modifiers a variant's change walks again. Oars are her hands', never her rig's - CAPTAIN-TREE: her captain's drill of
+   *  them (`oars`) and of her helm (`turn`) the same seam's (systems/naval/captainTree.js captainRefit). */
   const refitOf = (b) => (b ? deps.refit?.(b) ?? null : null);
-  const rigOf = (b) => { const k = Number(refitOf(b)?.speed); return Number.isFinite(k) && k > 0 ? f(k) : 1; };
+  const rigOf = (b, key = 'speed') => { const k = Number(refitOf(b)?.[key]); return Number.isFinite(k) && k > 0 ? f(k) : 1; };
   /** HELM-WAY: the responsive helm is the host's to hand (`deps.handling`); none handed is the mod to the letter. */
   const handed = () => !!deps.handling && isResponsive(deps.handling());
   // AUDIT NAV2 F14: the hand is taken ONCE A HELM SESSION - at StartSailing, let go when she stops sailing (off a helm it
@@ -747,8 +748,8 @@ export function createComeSailAwayRuntime(deps) {
   /** turnSpeed (553-564). */
   function turnSpeed() {
     const b = cur();
-    if (state.sailPosition === 0) return f(f(f(HANDLING.turnSpeedOar * handlingMod('OarTurnSpeed')) * state.boatCargoMod) * f(b.modifierTurnSpeedOar));
-    return f(f(f(f(HANDLING.turnSpeedSail * handlingMod('SailTurnSpeed')) * state.boatCargoMod) * f(b.modifierTurnSpeedSail)) * galeTurn());   // SERPENT4: a gale's helm
+    if (state.sailPosition === 0) return f(f(f(f(HANDLING.turnSpeedOar * handlingMod('OarTurnSpeed')) * state.boatCargoMod) * f(b.modifierTurnSpeedOar)) * rigOf(b, 'turn'));   // CAPTAIN-TREE: her captain's helm
+    return f(f(f(f(f(HANDLING.turnSpeedSail * handlingMod('SailTurnSpeed')) * state.boatCargoMod) * f(b.modifierTurnSpeedSail)) * galeTurn()) * rigOf(b, 'turn'));   // SERPENT4: a gale's helm
   }
   /** SERPENT4 (the port's, DECLARED; 2026-10-11, the players: "make the wind go crazy where the serpent stands so we can
    *  sail faster an turn faster aswell"): A GALE ABOUT HER (`state.gale` - deps.gale, the sea serpent's waters): the wind

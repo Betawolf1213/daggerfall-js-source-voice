@@ -717,7 +717,7 @@ const HARDCODED = {
   'src/ui/settings/settingsCopy.js': 185,
   'src/ui/settings/settingsLaw.js': 19,
   'src/ui/settings/settingsMap.js': 24,
-  'src/ui/shipyardWindow.js': 47,
+  'src/ui/shipyardWindow.js': 46,
   'src/ui/shotsPane.js': 21,
   'src/ui/siegeHud.js': 1,
   'src/ui/sigilCard.js': 19,

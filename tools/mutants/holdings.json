@@ -101,8 +101,8 @@
   {
     "name": "FLEET-refit-one-tier",
     "file": "src/systems/fleet.js",
-    "old": "  const at = (id) => Math.round((1 + tierOf(rec, id) * (lineOf(id)?.per ?? 0)) * 10000) / 10000;",
-    "new": "  const at = (id) => Math.round((1 + Math.min(1, tierOf(rec, id)) * (lineOf(id)?.per ?? 0)) * 10000) / 10000;",
+    "old": "  return Math.min(t, BASE_TIERS) * per + Math.max(0, t - BASE_TIERS) * per * ORE_PER;",
+    "new": "  return Math.min(t, 1) * per + Math.max(0, t - BASE_TIERS) * per * ORE_PER;",
     "tests": [
       "test/systems/naval/fleet.test.js"
     ]

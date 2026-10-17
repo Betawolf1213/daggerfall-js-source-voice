@@ -57,8 +57,8 @@
   {
     "name": "ACS-B16-exotic",
     "file": "src/systems/naval/tradeGoods.js",
-    "old": "sell: p.sell, buy: p.buy, exotic,",
-    "new": "sell: p.sell, buy: p.buy, exotic: false,",
+    "old": "buy: Math.max(1, Math.round(p.mid * (1 - k))), exotic,",
+    "new": "buy: Math.max(1, Math.round(p.mid * (1 - k))), exotic: false,",
     "tests": [
       "test/systems/naval/auditcaptsea.test.js"
     ]
@@ -351,8 +351,8 @@
   {
     "name": "ACS-C1-worth-set",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "s.worth = b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH;",
-    "new": "s.worth = b.crewed ? crewWorth(c.hands, b.uid ? companions.awayOf(b.uid) : null) : NO_WORTH;",
+    "old": "s.worth = captainWorth(b.crewed ? crewWorth(c.hands, ashoreNames(b)) : NO_WORTH, deps.captain?.stats?.());",
+    "new": "s.worth = captainWorth(b.crewed ? crewWorth(c.hands, b.uid ? companions.awayOf(b.uid) : null) : NO_WORTH, deps.captain?.stats?.());",
     "tests": [
       "test/systems/naval/auditcaptsea.test.js"
     ]
@@ -1928,8 +1928,8 @@
   {
     "name": "ACS-L15-page",
     "file": "src/scenes/world.js",
-    "old": "captain: fleetHost ? { model: () => captainModel() } : null,",
-    "new": "captain: fleetHost && csaOn() ? { model: () => captainModel() } : null,",
+    "old": "captain: fleetHost ? { model: () => captainModel(), openStars:",
+    "new": "captain: fleetHost && csaOn() ? { model: () => captainModel(), openStars:",
     "tests": [
       "test/systems/naval/auditcaptsea.test.js",
       "test/systems/naval/captlog.test.js"
@@ -2998,7 +2998,7 @@
   {
     "name": "ACS-V8-the-chart-pops-a-page",
     "file": "src/ui/naval/navalPlunderDoor.js",
-    "old": "  if (slot !== ETHER_CHART) noteFirstUse(slot === PLUNDER",
+    "old": "  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS) noteFirstUse(slot === PLUNDER",
     "new": "  noteFirstUse(slot === PLUNDER",
     "tests": [
       "test/systems/shipyards1_found.test.js"

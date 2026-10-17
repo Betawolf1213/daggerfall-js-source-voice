@@ -418,8 +418,8 @@
   {
     "name": "NAV1G-fire-on-every-zone",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    const fire = e.type === 'blast' ? 'barrel' : (zone === 'hull' || (zone === 'rig' && shotRigFire(e.shot))) && random() < shotFireChance(e.shot, FIRE_CHANCE);",
-    "new": "    const fire = e.type === 'blast' ? 'barrel' : random() < shotFireChance(e.shot, FIRE_CHANCE);",
+    "old": "    const fire = e.type === 'blast' ? 'barrel' : (zone === 'hull' || (zone === 'rig' && shotRigFire(e.shot))) && random() < shotFireChance(e.shot, FIRE_CHANCE, gun.fireK);",
+    "new": "    const fire = e.type === 'blast' ? 'barrel' : random() < shotFireChance(e.shot, FIRE_CHANCE, gun.fireK);",
     "tests": [
       "test/systems/naval/navaudit_guns.test.js"
     ]

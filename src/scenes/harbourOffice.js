@@ -45,7 +45,7 @@ const movedWords = (c) => (c.kind === 'hunt' ? `${c.done} of ${c.need} pirate sh
 
 /** @param {any} deps */
 export function createHarbourOffice(deps) {
-  const L = deps.ledger;
+  const L = deps.ledger;   // CAPTAIN-TREE: and her stars - `trade` the exchange's spread her dealing closes (tradeGoods.js exchangeOf)
   const now = () => Math.floor(Number(deps.now?.()) || 0);
   /** A crown's favours for the captain now - none while its navy hunts them. */
   const perksAt = (crown) => (crown ? perksOf(L.rank(crown).rank, deps.notorietyOf?.(crown) ?? 0) : perksOf(0));
@@ -156,7 +156,7 @@ export function createHarbourOffice(deps) {
   /** `n` of a good bought into `hold` - as many as the exchange sells today, the purse pays for and her room takes. */
   function buyGood(port, day, hold, id, n, room = null) {
     if (!hold) return { ok: false, text: 'Goods go in a ship\'s hold - deal at the exchange from her helm.' };
-    const r = exchangeOf(port, day, L.dealtAt(port.key, day)).find((x) => x.id === id);
+    const r = exchangeOf(port, day, L.dealtAt(port.key, day), L.stats?.().trade).find((x) => x.id === id);
     if (!r || r.sells <= 0) return { ok: false, text: r?.exotic ? `${r.name} is not sold here.` : `The exchange sells no more ${goodById(id)?.name ?? 'of that'} today.` };
     const fit = roomFor(room?.(), r.kg);
     if (fit <= 0) return { ok: false, text: 'She can carry no more - laden deeper, she would lie dead in the water.' };
@@ -170,7 +170,7 @@ export function createHarbourOffice(deps) {
   /** `n` of a good sold out of `hold` - as many as she carries and the exchange buys today. */
   function sellGood(port, day, hold, id, n) {
     if (!hold) return { ok: false, text: 'Goods are sold out of a ship\'s hold - deal at the exchange from her helm.' };
-    const r = exchangeOf(port, day, L.dealtAt(port.key, day)).find((x) => x.id === id);
+    const r = exchangeOf(port, day, L.dealtAt(port.key, day), L.stats?.().trade).find((x) => x.id === id);
     const have = goodIn(hold, id);
     if (!r || have <= 0) return { ok: false, text: `You carry no ${goodById(id)?.name ?? 'such goods'}.` };
     if (r.buys <= 0) return { ok: false, text: `The exchange will take no more ${r.name} today.` };
@@ -192,7 +192,7 @@ export function createHarbourOffice(deps) {
     if (!port) return null;
     const day = deps.day?.() ?? 0, hold = boat?.cargo ?? null, room = typeof boat?.room === 'function' ? boat.room : null;
     const others = deps.etherGoods?.() !== false;
-    const rows = exchangeOf(port, day, L.dealtAt(port.key, day)).map((r) => ({ ...r, have: goodIn(hold, r.id) })).filter((r) => others || !r.exotic || r.have > 0);
+    const rows = exchangeOf(port, day, L.dealtAt(port.key, day), L.stats?.().trade).map((r) => ({ ...r, have: goodIn(hold, r.id) })).filter((r) => others || !r.exotic || r.have > 0);
     const rm = room?.();
     return {
       port: port.name, ether: !!port.ether, gold: deps.gold?.() ?? 0, weight: hold ? goodsWeight(hold) : null, rows,

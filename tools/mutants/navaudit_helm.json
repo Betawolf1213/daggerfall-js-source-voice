@@ -535,8 +535,8 @@
   {
     "name": "NAV1H-the-galley-no-ram",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "      const dealt = Math.round(speed * RAM_DAMAGE * (galley ? GALLEY_RAM : 1));\n      effects.hit(stem,",
-    "new": "      const dealt = Math.round(speed * RAM_DAMAGE);\n      effects.hit(stem,",
+    "old": "      const dealt = Math.round(speed * RAM_DAMAGE * (galley ? GALLEY_RAM : 1) * statScale(deps.captain?.stats?.(), 'ram'));   // CAPTAIN-TREE: her captain's ram\n      effects.hit(stem,",
+    "new": "      const dealt = Math.round(speed * RAM_DAMAGE * statScale(deps.captain?.stats?.(), 'ram'));   // CAPTAIN-TREE: her captain's ram\n      effects.hit(stem,",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
     ]
@@ -616,8 +616,8 @@
   {
     "name": "NAV1H-the-share-unread-oars",
     "file": "src/systems/comeSailAway/comeSailAway.js",
-    "old": "f(b.modifierMoveSpeedOar)) * hurt) * peace());",
-    "new": "f(b.modifierMoveSpeedOar))) * peace());",
+    "old": "f(b.modifierMoveSpeedOar)) * hurt) * rigOf(b, 'oars')) * peace());",
+    "new": "f(b.modifierMoveSpeedOar))) * rigOf(b, 'oars')) * peace());",
     "tests": [
       "test/systems/comeSailAway/csa_wind.test.js"
     ]
@@ -1181,8 +1181,8 @@
   {
     "name": "NAV1H-the-crews-skill-fixed",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "  const crewSkill = (boat, st) => (boat.crewed ? PLAYER_SKILL_THIN + (PLAYER_SKILL - PLAYER_SKILL_THIN) * st.damage.crewShare() : PLAYER_SKILL);",
-    "new": "  const crewSkill = () => PLAYER_SKILL;",
+    "old": "  const crewSkill = (boat, st) => Math.min(1, (boat.crewed ? PLAYER_SKILL_THIN + (PLAYER_SKILL - PLAYER_SKILL_THIN) * st.damage.crewShare() : PLAYER_SKILL) * statScale(deps.captain?.stats?.(), 'aim'));",
+    "new": "  const crewSkill = () => Math.min(1, PLAYER_SKILL * statScale(deps.captain?.stats?.(), 'aim'));",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
     ]

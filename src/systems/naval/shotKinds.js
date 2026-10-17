@@ -80,9 +80,15 @@ export function shotGun(gunKind, gun, shot) {
   });
 }
 
+/** CAPTAIN-TREE: the most a hull hit's chance of fire comes to under a captain's heated shot (captainTree.js captainShot). */
+export const FIRE_MOST = 0.9;
 /** The chance a hull hit of `shot` sets her alight: heated shot's own, else the gun's (`fireChance`, navalDamage.js) -
- *  a ball that says no load is its bore's own (never heated). */
-export const shotFireChance = (shot, fireChance) => (shot == null ? fireChance : SHOT[shotId(shot)].fire ?? fireChance);
+ *  a ball that says no load is its bore's own (never heated) - CAPTAIN-TREE: times `k`, her captain's stars' (the gun's
+ *  `fireK`), to FIRE_MOST at the most. */
+export function shotFireChance(shot, fireChance, k = 1) {
+  const c = shot == null ? fireChance : SHOT[shotId(shot)].fire ?? fireChance;
+  return k === 1 ? c : Math.min(FIRE_MOST, c * k);
+}
 /** Whether a pass through her rig with `shot` sets her canvas burning (heated shot). */
 export const shotRigFire = (shot) => shot != null && SHOT[shotId(shot)].rigFire;
 /** Grapeshot's men by its flight `t` (s): whole to GRAPE_FULL_S, falling to half by GRAPE_SPENT_S; every other load 1. */

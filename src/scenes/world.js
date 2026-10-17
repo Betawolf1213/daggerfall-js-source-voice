@@ -662,7 +662,7 @@ import { sparedByPlayer, isShipmate } from '../combat/friendlyFire.js';   // SHI
 import { padFamily } from '../ui/padGlyphs.js';   // AUDIT NAV1 (the presentation): the pad in hand's family - the readout names its buttons
 import { hdGlyphName } from '../ui/padGlyphsHD.js';   // NAV-F: the helm's readout; AUDIT NAV1: its Brace under a finger
 import { glassPadWords } from './glassPad.js';   // AUDIT CAPTAIN'S SEA S3's helper, moved out (HOST-SPLIT: AUDIT WORLD-REWARDS's merge of main)
-import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard } from '../ui/naval/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
+import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard, createCaptainStarsOverlay } from '../ui/naval/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
 import { installNavalSounds } from '../systems/naval/navalSounds.js';   // NAV-E: the guns' own sounds
 import { navalRecordKey } from '../systems/naval/navalWire.js';   // NAV-G: my sea's word, said when it changed
 import { CROWNS as NAVAL_CROWNS, crownOf as navalCrownOf } from '../systems/naval/navalShips.js';   // NAV-C: the three crowns, whose capitals name the waters; AUDIT NAV1 (B2): a raid at sea parsed in theirs
@@ -9535,6 +9535,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     deed: (act, cls, o) => { const r = captainLedger.deed(act, cls, o); captainSay(); return r; },
     regard: (crown, n) => { const r = captainLedger.regard(crown, n); captainSay(); return r; },
     note: (field, n) => captainLedger.note(field, n),
+    stats: () => captainLedger.stats(),   // CAPTAIN-TREE: what her captain's stars do at sea
     sailed: (m) => captainLedger.sailed(m),
     prize: (name, worth) => captainLedger.prize(name, worth),
     marque: () => captainLedger.marque(Math.floor(playerTicker.ownMinutes)),
@@ -9698,6 +9699,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     changed: () => surfacePlayer(),
     openHold: (uid) => holdDoor.openShip(uid),   // CARGO-ANYWHERE: her hold, from the Fleet page, wherever she lies
     guildArms: () => guildBook?.guild?.heraldry ?? null,   // SHIP-COLOURS: "fly my guild's arms"
+    captain: () => captainLedger,   // CAPTAIN-TREE / REFIT-ORES: her captain's level and stars
   }) : null;
   // SHIP-COLOURS: the flags flown (scenes/shipFlagHost.js) - my boats' by their colours in the ledger (my guild's arms
   // where a flag is the guild's), and every other player's by their word
@@ -9763,7 +9765,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasTransport(TRANSPORT_HORSE), hasCart: () => hasTransport(TRANSPORT_SMALL_CART), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [], onPainted: () => { _hccDirty = true; },
       upkeep, pass: upkeepPass }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it; STEED1/WAGONS4: and keeps them (a kit's hour a skip, as a camp meal's)
     fleet: fleetHost ? { model: () => fleetHost.model(), offer: (uid) => fleetHost.offer(uid), act: (uid, verb, arg) => fleetHost.act(uid, verb, arg) } : null,
-    captain: fleetHost ? { model: () => captainModel() } : null,   // CAPT-LOG: the Captain page - the crowns' regard, the letter, the contracts, the log - AUDIT CAPTAIN'S SEA L15: beside the Fleet's, wherever there are ships to captain
+    captain: fleetHost ? { model: () => captainModel(), openStars: () => { const w = createCaptainStarsOverlay({ ledger: captainLedger, changed: () => { fleetHost.restat(); surfacePlayer(); } }); if (w) townTalk.showOverlay(w); return !!w; } } : null,   // CAPTAIN-TREE: the stars' door - CAPT-LOG: the Captain page - the crowns' regard, the letter, the contracts, the log - AUDIT CAPTAIN'S SEA L15: beside the Fleet's, wherever there are ships to captain
   });
   /** CAPT-LOG: the Captain page's model - each crown's standing, rank and favours (none while it hunts me), the letter of
    *  marque held and its days, the contracts under way (CAPT-BOARD), and the log in words. */
@@ -9777,6 +9779,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       contracts: harbourOffice.pageContracts(),   // CAPT-BOARD: the contracts held
       charts: harbourOffice.pageCharts(),   // CAPT-CHARTS: the caches marked
       log: logLines(captainLedger.log),
+      stars: { ...captainLedger.captain(), set: captainLedger.tree().length - 1 },   // CAPTAIN-TREE: her level, and the stars set of her points
     };
   }
   /** The sea emptied: a transition, a teleport, the arc switched off - its window with it. */
@@ -34160,9 +34163,12 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // AUDIT CAPTAIN'S SEA G14: and the third, Masser's key, leaned as the sun's (it lit land, sea and hulls past the Veil in
     // the Bay's colour) - the moon as it is under no lean, nothing made
     renderer.setMoonlight(moonNow && etherAirW ? { scale: moonNow.scale, dir: moonNow.dir, color: etherLight(moonNow.color, etherAirW, ETHER_KEY_TINT) } : moonNow);
+    const frameLighting = () => {   // PERF-V8
     renderer.setLighting(
       etherLight(sdBrassLight(sunbabyLight(dreadLight(withMoonAmbient(exteriorAmbient(minute, getFloat('Enhancements', 'NightAmbientLightScale', 0, 1), wxNow.sun), moonNow), skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), etherAirW), sunScale(minute) * wxNow.sun * flash * sky.sunFactor() * (1 - DREAD_KEY_DIM * skyDreadW),   // EVENT1: the land under the dread's light; SUNBABY1: lifted toward noon's under the sun baby (SUNBABY2: reddened under its wrath)   // ES1d: the cloud in front of the sun takes the KEY light (never the ambient - the sky still lights the ground); WX2: the scale is the front's
       etherLight(sdBrassLight(sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), etherAirW, ETHER_KEY_TINT));   // SUNBABY2: the key reddened under the wrath; SD19: brass near a Hollow
+    };
+    frameLighting();
     // DW-C: the distance fog's own "under" (UnderwaterDistanceFog.TryGetUnderwaterPresentation) - the surfaces'
     // _DeepWatersUnderwater and UnderwaterPresentationEffects' light suppression read it too, so it is taken
     // here, before the lights, from this frame's camera and capsule
@@ -35224,15 +35230,18 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
       })) renderer.markForeignPass();
     }
-    // SHIP-COLOURS: and the ships' flags, cloth as the banners are (render/shipFlagPass.js), on the same light and wind
-    const flags = shipFlagPass ? shipFlags.draws() : [];
-    if (flags.length && shipFlagPass.draw(flags, proj, view, new Float32Array(mwv.eye), now / 1000, {
+    };
+    frameBanners();
+    const frameShipFlags = () => {   // PERF-V8
+    // SHIP-COLOURS: and the ships' flags, cloth as the banners are (render/shipFlagPass.js), on the same light and wind - a
+    // foreign seam of its own (the banners' program left bound under it)
+    if (shipFlagPass && shipFlags.draws().length && shipFlagPass.draw(shipFlags.draws(), proj, view, new Float32Array(mwv.eye), now / 1000, {
       light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },
       wind: Math.min(1, wd.strength01 * wd.gust),
       fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
     })) renderer.markForeignPass();
     };
-    frameBanners();
+    frameShipFlags();
     // HAZE1: HEAT HAZE - the mod's GrabPass at Transparent-100: the opaque world whole (the ground, the models, the flats,
     // the grass and the banners), what falls and every translucent thing still to come. Not under the travel view's
     // camera: the ring stands round the player's feet, and that eye is hundreds of metres over them.

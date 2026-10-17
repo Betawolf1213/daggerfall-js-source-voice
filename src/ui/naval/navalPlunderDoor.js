@@ -15,7 +15,8 @@
 // AUDIT NAV1 (the helm): THE SHIPWRIGHT'S WINDOW (ui/naval/navalYardWindow.js) opens through the same door - one shape for the
 // sea fight's two windows (`openNavalWindow`), each its own host, chunk and slot. ETHER-CHART: and the chart of the
 // Eltheric Ocean (ui/etherChartWindow.js), the travel map's door past the Veil. SHIPYARDS (2026-10-11): and a port's
-// shipmaster's (ui/shipyardWindow.js) - a slot of its own, the same shape.
+// shipmaster's (ui/shipyardWindow.js) - a slot of its own, the same shape. CAPTAIN-TREE (2026-10-17): and the captain's stars
+// (ui/captainTreeWindow.js), the Captain page's door.
 import { mountEnhancedChunk } from '../enhanced/enhancedChunk.js';
 import { registerOverlay } from '../enhanced/enhancedOverlays.js';
 import { noteFirstUse } from '../../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
@@ -51,6 +52,13 @@ const SHIPYARD = {
   load: () => import('../shipyardWindow.js'),
   mount: ({ mountShipyardWindow }, host, deps) => mountShipyardWindow(host, deps),
 };
+/** CAPTAIN-TREE (2026-10-17): the captain's stars (ui/captainTreeWindow.js) - the Captain page's door, the same shape. */
+/** @type {NavalWindowSlot} */
+const CAPTAIN_STARS = {
+  id: 'captain-stars-host', label: 'captain-stars', open: null,
+  load: () => import('../captainTreeWindow.js'),
+  mount: ({ mountCaptainTreeWindow }, host, deps) => mountCaptainTreeWindow(host, deps),
+};
 /** @param {NavalWindowSlot} slot */
 const isOpen = (slot) => !!slot.open && !slot.open.done;
 /** @param {NavalWindowSlot} slot */
@@ -69,7 +77,7 @@ function shut(slot) {
 function openNavalWindow(slot, deps) {
   // ETHER-CHART (AUDIT CAPTAIN'S SEA, at the merge of SHIPYARDS): the chart of the Eltheric Ocean is neither a sea fight's
   // window nor a yard's, and pops no page - the branch's arm read it as the sea fight's, main's as the yard's
-  if (slot !== ETHER_CHART) noteFirstUse(slot === PLUNDER ? 'naval-combat' : 'shipyard');   // TUT1: a beaten ship's hold, or the shipwright's yard and a port's shipyard (SHIPYARDS) - one page
+  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS) noteFirstUse(slot === PLUNDER ? 'naval-combat' : 'shipyard');   // CAPTAIN-TREE: the captain's sky pops none either   // TUT1: a beaten ship's hold, or the shipwright's yard and a port's shipyard (SHIPYARDS) - one page
   if (typeof document === 'undefined') return null;
   slot.open?.dispose();
   let fired = false;
@@ -149,3 +157,11 @@ export const closeShipyard = () => shut(SHIPYARD);
 /** The shipmaster's window (ui/shipyardWindow.js), as an overlay for the host's slot; `deps` as that window's, plus
  *  `onClose(reason)`. */
 export const createShipyardOverlay = (deps) => openNavalWindow(SHIPYARD, deps);
+
+/** CAPTAIN-TREE: are the captain's stars up. */
+export const captainStarsOpen = () => isOpen(CAPTAIN_STARS);
+/** CAPTAIN-TREE: shut them, if they are up - and say whether they were. */
+export const closeCaptainStars = () => shut(CAPTAIN_STARS);
+/** CAPTAIN-TREE: the captain's stars (ui/captainTreeWindow.js), as an overlay for the host's slot; `deps` as that window's
+ *  (`ledger`, `changed`), plus `onClose(reason)`. */
+export const createCaptainStarsOverlay = (deps) => openNavalWindow(CAPTAIN_STARS, deps);

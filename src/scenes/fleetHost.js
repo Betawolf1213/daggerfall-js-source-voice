@@ -16,12 +16,16 @@
 //     changed() -> the word a rename or a refit owes (the boats' record said again)
 //     openHold(uid) -> bool  CARGO-ANYWHERE: her hold's window, wherever she lies (scenes/holdDoor.js openShip)
 //     guildArms() -> the player's guild's heraldry, or null   SHIP-COLOURS: "fly my guild's arms"
+//     captain() -> the captain's ledger (systems/naval/captainLedger.js) | null   CAPTAIN-TREE / REFIT-ORES: her captain's
+//                  level (the metal tiers' gate) and stars (her refits as the sea reads them)
 //   }
 
 import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
   shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
+  REFIT_NUMERALS, meltCount, materialsFor, refitShare,
 } from '../systems/fleet.js';
+import { captainRefit } from '../systems/naval/captainTree.js';   // CAPTAIN-TREE: her captain's stars over her refits
 import { flagSizeOf } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: the hulls that fly a flag
 import { HULL_NAMES, HULL_PRICES } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { mintDeed } from '../systems/comeSailAway/comeSailAwayItems.js';
@@ -190,15 +194,23 @@ export function createFleetHost(deps) {
     const why = refusals(rec, at).refit;
     const lists = [pack(), at.boat?.Cargo?.Items ?? []];
     const gold = deps.gold?.() ?? 0;
+    const level = captainLevel();
     const rows = UPGRADE_LINES.filter((l) => !l.guns || hasGuns(rec.hull)).map((l) => {
       const tier = Math.max(0, Math.min(UPGRADE_TIERS, rec.upgrades[l.id] | 0));
       const cost = upgradeCost(rec.hull, l.id, tier);
-      const mats = cost ? cost.mats.map((m) => ({ kind: m.kind, label: MATERIALS[m.kind].label, hint: MATERIALS[m.kind].hint, n: m.n, have: materialCount(lists, m.kind) })) : [];
-      const afford = !!cost && gold >= cost.gold && mats.every((m) => m.have >= m.n);
-      return { id: l.id, label: l.label, what: l.what, per: l.per, tier, max: UPGRADE_TIERS, next: cost ? { gold: cost.gold, mats } : null, afford };
+      // REFIT-ORES: a metal's count says how much of it a piece of plate or a blade melted down would give (`melt`)
+      const mats = cost ? cost.mats.map((m) => ({ kind: m.kind, label: MATERIALS[m.kind].label, hint: MATERIALS[m.kind].hint, n: m.n, have: materialCount(lists, m.kind), melt: meltCount(lists, m.kind, m.n) })) : [];
+      const locked = !!cost && cost.level > level;   // REFIT-ORES: a metal tier asks her captain's level
+      const afford = !!cost && !locked && gold >= cost.gold && materialsFor(lists, cost.mats);
+      return {
+        id: l.id, label: l.label, what: l.what, per: l.per, tier, max: UPGRADE_TIERS, share: refitShare(l.id, tier),   // REFIT-ORES: what she has of it now
+        next: cost ? { gold: cost.gold, mats, level: cost.level, locked, share: refitShare(l.id, tier + 1) } : null, afford,
+      };
     });
-    return { why, rows, gold };
+    return { why, rows, gold, level };
   }
+  /** REFIT-ORES: her captain's level (captainTree.js levelOf off the log) - 1 with no ledger. */
+  const captainLevel = () => deps.captain?.()?.captain?.().level ?? 1;
 
   /** A word for her, and the act's answer. */
   const said = (ok, text, door = null) => ({ ok, text, ...(door ? { door } : {}) });
@@ -288,24 +300,39 @@ export function createFleetHost(deps) {
       const o = offer(uid);
       const row = o?.rows.find((x) => x.id === arg);
       if (!row || !row.next) return said(false, 'She has every refit of that kind.');
+      if (row.next.locked) return said(false, t('naval.refit.level', 'The shipwright will not work {metal} for a captain under level {level}.', { metal: row.next.mats[0].label, level: row.next.level }));
       if ((deps.gold?.() ?? 0) < row.next.gold) return said(false, `The shipwright asks ${row.next.gold} gold.`);
       const lists = [pack(), at.boat?.Cargo?.Items ?? []];
       for (const m of row.next.mats) if (materialCount(lists, m.kind) < m.n) return said(false, `The shipwright needs ${m.n} ${m.label} (you have ${m.have}).`);
+      if (!materialsFor(lists, row.next.mats)) return said(false, t('naval.refit.short', 'The shipwright needs more - one store will not serve for two.'));   // REFIT-ORES: a steel ingot counted for Steel and Iron both
       for (const m of row.next.mats) takeMaterials(lists, m.kind, m.n);
       deps.pay?.(row.next.gold);
       addRefit(uid, row.id);
       n?.refitBoat?.(at.boat);
       if (at.boat && r?.state?.CurrentBoat === at.boat) r.UpdateBoatCargoMod?.(at.boat);
       deps.changed?.();
-      return said(true, `${name}'s ${row.label.toLowerCase()} is refitted (${['', 'I', 'II', 'III'][row.tier + 1]}).`);
+      return said(true, `${name}'s ${row.label.toLowerCase()} is refitted (${REFIT_NUMERALS[row.tier + 1]}).`);
     }
     return said(false, 'Not here.');
   }
 
-  /** Her refits as Come Sail Away and the sea fight read them (systems/fleet.js refitOf), by her number. */
-  const refit = (boat) => (boat?.uid ? refitOf(fleetShip(boat.uid)) : null);
+  /** Her refits as Come Sail Away and the sea fight read them (systems/fleet.js refitOf), by her number - CAPTAIN-TREE:
+   *  and her captain's stars over them (captainTree.js captainRefit), a ship of mine's alone: a number the Fleet does not
+   *  know (a peer's boat, a stranger's) reads her build's own. */
+  const refit = (boat) => {
+    if (!boat?.uid) return null;
+    const rec = fleetShip(boat.uid);
+    return rec ? captainRefit(refitOf(rec), deps.captain?.()?.stats?.() ?? null) : refitOf(null);
+  };
+  /** CAPTAIN-TREE: every boat of mine standing read again on her captain's stars, once a sky is accepted - the sea fight's
+   *  state built on her new whole (her hurts the share of it they were, `refitBoat`), the helm's hold weighed again. */
+  function restat() {
+    const n = naval(), r = csa();
+    for (const b of placed()) n?.refitBoat?.(b);
+    if (r?.state?.CurrentBoat) r.UpdateBoatCargoMod?.(r.state.CurrentBoat);
+  }
   /** Her name, or '' (the boats' word, the hover's line). */
   const nameOf = (boat) => (boat?.uid ? fleetShip(boat.uid)?.name ?? '' : '');
 
-  return { model, offer, act, sweep, refit, nameOf, whereIs };
+  return { model, offer, act, sweep, refit, restat, nameOf, whereIs };
 }
