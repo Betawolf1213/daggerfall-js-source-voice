@@ -504,3 +504,11 @@ test('THE ASCENT - THE ROOMS: THE LAB\'S MAP AND ROOMS (section 8 - src/tools/sp
   assert.equal(V.length, 2 * specs.reduce((a, q) => a + q.rooms.length, 0));
   assert.equal(egFirstHallOf(C_C), 1);
 });
+
+test('THE ASCENT - A STAIR OVER A HERO IS THE HALL\'S (the relay deploy\'s 500-seed sweep, seeds 172, 211, 301, 320, 359, 360, 375 and 435): a hero\'s box holds a ramp at its own height alone - a room\'s stair stacked over it is built in the hall\'s mesh and collider, never skipped as the hero\'s (mutant: the box asked in plan alone)', () => {
+  const hero = { box: [-5, 0, -5, 5, 12.92, 5] };
+  assert.equal(egInHeroBox({ heroes: [hero] }, 0, 0, 6), true, 'inside the box, at its height: the hero\'s own stair');
+  assert.equal(egInHeroBox({ heroes: [hero] }, 0, 0, 22.5), false, 'over the box (seed 320\'s ramp, 21 to 24 m over a 12.92 m Clan Pit): the hall\'s');
+  assert.equal(egInHeroBox({ heroes: [hero] }, 0, 0), true, 'asked in plan (a spout, an alcove): its box in plan, as before');
+  assert.equal(egInHeroBox({ heroes: [hero] }, 9, 0, 6), false, 'beside it: never');
+});

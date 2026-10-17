@@ -722,7 +722,7 @@
   {
     "name": "EGHL-stair-drawn-twice",
     "file": "src/world/eliteGates/egHall.js",
-    "old": "    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quadTo(",
+    "old": "    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2, (q.y0 + q.y1) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quadTo(",
     "new": "    for (const q of spec.ramps ?? []) { const [a, b, c, e] = rampCorners(spec, q); quadTo(",
     "tests": [
       "test/net/eliteGates/eghero_lay.test.js"
@@ -731,7 +731,7 @@
   {
     "name": "EGHL-stair-collided-twice",
     "file": "src/world/eliteGates/egHall.js",
-    "old": "    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quad(a, b, c, e); }",
+    "old": "    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2, (q.y0 + q.y1) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quad(a, b, c, e); }",
     "new": "    for (const q of spec.ramps ?? []) { const [a, b, c, e] = rampCorners(spec, q); quad(a, b, c, e); }",
     "tests": [
       "test/net/eliteGates/eghero_lay.test.js"
