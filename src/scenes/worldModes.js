@@ -11645,8 +11645,8 @@ export function createWorldModes(host) {
 
   // Shot-mode hooks for everything modal (parity with the pre-P7 world
   // probes; __doors reads the host's live door registry).
-  window.__anim = (m) => { _charAnimMode = ['idle','walk','off'].includes(m) ? m : _charAnimMode; return _charAnimMode; };
   function installShotProbes() {
+    window.__anim = (m) => { _charAnimMode = ['idle','walk','off'].includes(m) ? m : _charAnimMode; return _charAnimMode; };   // AUDIT ANTICHEAT A2: inside the installer, not above it on every boot
     window.__doors = () => doorTargets().map((e, i) => (
       { i, pos: doorWorldPosition(e.door), normal: doorWorldNormal(e.door), record: e.recordIndex, block: e.dfBlock.name, type: e.door.doorType }));
     window.__enter = () => tryEnter();
