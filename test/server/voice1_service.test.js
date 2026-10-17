@@ -69,6 +69,11 @@ test('VOICE1 authorizer: the identity is the token\'s verified subject; a bad si
   const hubMuted = async (mu) => (await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true, standingOf: () => ({ party: null, mu }) })).canPublish;
   assert.deepEqual([await hubMuted(NOW_S + 1), await hubMuted(NOW_S), await hubMuted(0)], [false, true, true], 'the hub\'s mute, until its second');
   assert.equal((await authorizeVoice(partyAsk, { publicKey: k.pub, subtle, nowS: NOW_S, standingOf: () => ({ party: 'q1abc2def3', mu: NOW_S + 600 }) })).canPublish, false, 'a party seat muted alike');
+  // VOICE-BAN: a banned account is refused either channel - until the ban's second, not after
+  const banned = { publicKey: k.pub, subtle, nowS: NOW_S, presenceOf: () => true, standingOf: () => ({ party: 'q1abc2def3', mu: 0, bn: NOW_S + 1 }) };
+  assert.deepEqual(await authorizeVoice(partyAsk, banned), { ok: false, why: 'banned', status: 403 });
+  assert.deepEqual(await authorizeVoice({ token: tok, channel: 'proximity', room: 'cell:1.2', party: null }, banned), { ok: false, why: 'banned', status: 403 });
+  assert.equal((await authorizeVoice(partyAsk, { ...banned, standingOf: () => ({ party: 'q1abc2def3', mu: 0, bn: NOW_S }) })).ok, true, 'a ban that ended');
 });
 
 // ─── THE PROXIMITY POLICY ───────────────────────────────────────────────────────────────────────────────────────────

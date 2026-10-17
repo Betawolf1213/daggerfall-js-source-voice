@@ -5,14 +5,15 @@
 // party channel needs standingOf(acct) - the hub's word on its party and its mute - to confirm membership; a proximity
 // channel needs presenceOf(acct, room, ly) to confirm the relay has this identity hello'd into the room - and the layer
 // of it - it claims; a muted account may listen but not publish, muted by its token's `mu` or by the hub's (a mute
-// order the hub heard after the token was minted - MOD1). A lookup that did not answer (null) refuses: fail closed.
+// order the hub heard after the token was minted - MOD1); a banned account (SAFE4's ban, the hub's `bn`) is refused
+// either channel. A lookup that did not answer (null) refuses: fail closed.
 
 import { verifyToken } from '../../src/net/identityToken.js';
 import { voiceRoomName, VOICE_TOKEN_TTL_S } from '../../src/net/voice/voiceWire.js';
 
 /**
  * @typedef {{ c: 'x', k: string, l: number } | { c: 'p', k: string, l: 0 }} Seat  what a credential is for - its channel (`x` proximity, `p` party), the game's key or the party, the layer - carried in it as LiveKit participant metadata for the sweep (revoker.js)
- * @typedef {{ party: string|null, mu: number }} Standing
+ * @typedef {{ party: string|null, mu: number, bn?: number }} Standing
  * @typedef {{ ok: true, identity: string, name: string, room: string, seat: Seat, canPublish: boolean, ttl: number, claims: any }} Admitted
  * @typedef {{ ok: false, why: string, status: number }} Refused
  */
@@ -29,6 +30,7 @@ export async function authorizeVoice(ask, { publicKey, subtle, nowS, standingOf,
   const c = v.claims;
   const identity = String(c.s);
   const standing = typeof standingOf === 'function' ? await standingOf(identity) : null;
+  if ((Number(standing?.bn) || 0) > nowS) return { ok: false, why: 'banned', status: 403 };
   let room, seat;
   if (ask.channel === 'party') {
     if (!standing?.party || standing.party !== ask.party) return { ok: false, why: 'not-in-party', status: 403 };

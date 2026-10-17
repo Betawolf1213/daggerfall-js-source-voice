@@ -10178,20 +10178,24 @@ export class Room {
   /** VOICE-RELAY-DOOR: where `acct` stands with the hub's bus (SOCIAL_ROOM) - the party it sits in now, read as every
    *  hub reading does (`_myParty`: a lapsed seat walked out first, the record's stale pointer cleared), and the mute it
    *  is under: `mu` off its sockets here, which every mute order the bus hears rewrites (MOD1 - the newest order wins
-   *  over a token minted before it), else the bus's own order for an account with no socket. A voice credential and the
-   *  service's sweep read both, so neither a party left nor a mute laid on ends at a token's say-so. */
+   *  over a token minted before it), else the bus's own order for an account with no socket - and the ban it is under
+   *  (`bn`, SAFE4's `_bans`: the hub takes every ban the account service pushes, kept in storage). A voice credential and
+   *  the service's sweep read all three, so neither a party left nor a mute or a ban laid on ends at a token's say-so. */
   async _voicePartyOfInternal(request) {
     let body = null;
     try { body = await request.json(); } catch { body = null; }
     const acct = typeof body?.acct === 'string' ? body.acct : null;
-    if (!acct || acct.length > 128) return json({ party: null, mu: 0 }, 400);
+    if (!acct || acct.length > 128) return json({ party: null, mu: 0, bn: 0 }, 400);
     const rec = await this._acct(acct);
     const [party] = rec ? await this._myParty(acct, rec, Date.now()) : [null];
     const socks = this._bySub().get(acct);
     let mu = 0;
     if (socks?.size) for (const ws of socks) mu = Math.max(mu, Number(this._attach(ws)?.mu) || 0);
     else mu = Number(this._orders.get(acct)?.mu) || 0;
-    return json({ party: party?.id ?? null, mu });
+    const nowS = Math.floor(Date.now() / 1000);
+    await this._loadBans(nowS);
+    const bn = Number(this._bans.get(acct)?.bn) || 0;
+    return json({ party: party?.id ?? null, mu, bn: bn > nowS ? bn : 0 });
   }
   /** The party an account sits in, as it stands - or null, the record's stale pointer cleared (a lapse, a drain, a kick
    *  while it was away). Returns [party, rec] with `rec` written when it changed. */

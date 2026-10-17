@@ -62,6 +62,8 @@ test('VOICE-REVOKE the verdict: a seat is kept while the relay says it may, remo
   assert.equal(await judge(room, near, { here: true, standing: { party: null, mu: nowS } }), 'keep', 'a mute that ended');
   assert.equal(await judge(room, seat('peer_aaaa', { c: 'x', k: 'world:12,34', l: 0 }, { publish: false }), { standing: { party: null, mu: nowS + 60 } }), 'keep', 'already shut: nothing to do');
   assert.equal(await judge(room, near, { standing: null }), 'keep', 'the hub silent: no mute known');
+  assert.equal(await judge(room, near, { standing: { party: null, mu: 0, bn: nowS + 60 } }), 'remove', 'VOICE-BAN: banned, whatever the room says');
+  assert.equal(await judge(room, near, { standing: { party: null, mu: 0, bn: nowS } }), 'keep', 'a ban that ended');
   // a seat in a room its credential does not name: another layer, another key, a lookalike of an instance
   assert.equal(await judge(layer, near), 'remove');
   assert.equal(await judge(await vx('world:12,35'), near), 'remove');
@@ -77,6 +79,7 @@ test('VOICE-REVOKE the verdict: a seat is kept while the relay says it may, remo
   assert.equal(await judge(proom, mate, { standing: { party: 'q9other999', mu: 0 } }), 'remove', 'in another party now');
   assert.equal(await judge(proom, mate, { standing: null }), 'keep', 'the hub silent: next sweep');
   assert.equal(await judge(proom, mate, { standing: { party: 'q1abc2def3', mu: nowS + 60 } }), 'mute');
+  assert.equal(await judge(proom, mate, { standing: { party: 'q1abc2def3', mu: 0, bn: nowS + 60 } }), 'remove', 'VOICE-BAN: banned, though still in the party');
   assert.equal(await judge(proom, mate, { here: false, standing: { party: 'q1abc2def3', mu: 0 } }), 'keep', 'a party seat is not asked where it stands');
 });
 
@@ -135,7 +138,7 @@ test('VOICE-REVOKE the budget: VOICE_SWEEP_ROOMS_MAX rooms a sweep, inside a Wor
 test('VOICE-REVOKE end to end: the service\'s sweep asks the relay\'s doors behind the secret, removes the member the hub no longer seats and shuts the microphone the hub muted, keeps every seat while the relay is silent; the Worker\'s cron runs it', async () => {
   _resetForTests();
   const room = await vx('world:12,34'), proom = await voiceRoomName('party', 'q1abc2def3');
-  const rooms = { [room]: [seat('peer_near', { c: 'x', k: 'world:12,34', l: 0 }), seat('peer_left', { c: 'x', k: 'world:12,34', l: 0 })], [proom]: [seat('peer_kick', { c: 'p', k: 'q1abc2def3', l: 0 }), seat('peer_hush', { c: 'p', k: 'q1abc2def3', l: 0 })] };
+  const rooms = { [room]: [seat('peer_near', { c: 'x', k: 'world:12,34', l: 0 }), seat('peer_left', { c: 'x', k: 'world:12,34', l: 0 })], [proom]: [seat('peer_kick', { c: 'p', k: 'q1abc2def3', l: 0 }), seat('peer_hush', { c: 'p', k: 'q1abc2def3', l: 0 }), seat('peer_exile', { c: 'p', k: 'q1abc2def3', l: 0 })] };
   const sfu = fakeSfu(rooms);
   const asked = [];
   let up = true;
@@ -144,7 +147,7 @@ test('VOICE-REVOKE end to end: the service\'s sweep asks the relay\'s doors behi
     asked.push([new URL(url).pathname, init.headers['x-voice-relay-secret'], body]);
     if (!up) return { ok: false, status: 503, json: async () => ({ error: 'unavailable' }) };
     if (url.endsWith('/presence')) return { ok: true, json: async () => ({ here: body.acct === 'peer_near' }) };
-    return { ok: true, json: async () => ({ party: body.acct === 'peer_kick' ? null : 'q1abc2def3', mu: body.acct === 'peer_hush' ? NOW_S + 600 : 0 }) };
+    return { ok: true, json: async () => ({ party: body.acct === 'peer_kick' ? null : 'q1abc2def3', mu: body.acct === 'peer_hush' ? NOW_S + 600 : 0, bn: body.acct === 'peer_exile' ? NOW_S + 3600 : 0 }) };
   };
   const fetchImpl = (url, init) => (String(url).startsWith('https://sfu.test/') ? sfu.fetchImpl(url, init) : relay(url, init));
   const env = { ...ENV, RELAY_URL: 'https://relay.test', VOICE_RELAY_SECRET: 's3cret' };
@@ -155,7 +158,7 @@ test('VOICE-REVOKE end to end: the service\'s sweep asks the relay\'s doors behi
   assert.ok(asked.length > 0 && asked.every(([, secret]) => secret === 's3cret'));
   up = true;
   const out = await sweep(env, { now: () => NOW_S * 1000 + 10_000, fetch: fetchImpl, subtle });
-  assert.deepEqual(out.removed.sort(), [`${proom}/peer_kick`, `${room}/peer_left`].sort());
+  assert.deepEqual(out.removed.sort(), [`${proom}/peer_exile`, `${proom}/peer_kick`, `${room}/peer_left`].sort(), 'VOICE-BAN: the banned member too, still in the party');
   assert.deepEqual(out.muted, [`${proom}/peer_hush`]);
   assert.deepEqual(asked.filter(([p, , b]) => p === '/internal/voice/presence' && b.acct === 'peer_near').at(-1)[2], { acct: 'peer_near', room: 'world:12,34', ly: 0 }, 'the room and layer its seat names');
   // the Worker: a cron event runs the same sweep under waitUntil

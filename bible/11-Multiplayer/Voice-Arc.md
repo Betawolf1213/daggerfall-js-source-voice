@@ -109,8 +109,9 @@ voice service on one host.
   as participant metadata a client cannot change (`canUpdateOwnMetadata: false`), and `revoker.js` sweeps: every SFU
   room this service names (`ListRooms`, then `ListParticipants`), every seat judged against the relay's word now -
   removed (`RemoveParticipant`) when the room or the party no longer holds it, or it sits in a room its seat does not
-  name, or it carries no seat of ours; its microphone shut (`UpdateParticipant`, `can_publish` off - LiveKit
-  unpublishes the track) while the hub mutes it; every seat kept while the relay is silent (an outage must not drop
+  name, or it carries no seat of ours, or its account is banned (VOICE-BAN: SAFE4's ban, which also refuses the mint
+  either channel); its microphone shut (`UpdateParticipant`, `can_publish` off - LiveKit unpublishes the track) while
+  the hub mutes it; every seat kept while the relay is silent (an outage must not drop
   every call at once - and the mint refuses on the same silence). The Worker sweeps on its cron, each minute
   (`wrangler.toml [triggers]`); the node service every `VOICE_SWEEP_MS` (20 s). One sweep reads at most
   `VOICE_SWEEP_ROOMS_MAX` (16) rooms - a Worker invocation's 1,000 subrequests at full rooms - and the next starts where
@@ -172,7 +173,8 @@ so party voice checked nothing. `server/src/voiceDoor.js` answers both (world216
   reading is (`Room._voicePartyOfInternal` -> `_myParty`: a lapsed seat walked out first, a stale pointer cleared).
   It says the account's mute beside its party (`{ party, mu }`, VOICE-REVOKE): `mu` off its sockets on the bus (each
   shard's player is a virtual socket there), which every signed mute order the bus hears rewrites - the newest order
-  over a token minted before it - else the bus's own order for an account with no socket.
+  over a token minted before it - else the bus's own order for an account with no socket; and the ban it is under
+  (`bn`, SAFE4's `_bans` - the hub takes every ban the account service's law door pushes), `{ party, mu, bn }`.
 - **Never an exception, never a no.** A room reset or slow is `unavailable` (503), never an error out of the Worker
   (DO-ASK's law) - and never `here: false` / `party: null`, which the service's sweep would read as "gone" and drop
   every call on at once. The service's mint refuses on it, and its sweep leaves every seat be.

@@ -4,7 +4,8 @@
 // connected client's token on its own - so a credential's short life bounds nothing once it is used: a member kicked
 // from the party, a player gone from the room, an account muted by a moderator would each keep their seat for as long
 // as their own client chose. The sweep asks the SFU who sits where and the relay whether each still may, and takes the
-// seat back (RemoveParticipant) or the voice (UpdateParticipant, canPublish off - LiveKit unpublishes the tracks).
+// seat back (RemoveParticipant) or the voice (UpdateParticipant, canPublish off - LiveKit unpublishes the tracks). A
+// banned account (SAFE4) loses every seat it holds.
 //
 // What each seat is for rides in its own credential - the participant metadata this service mints and a client cannot
 // change (livekitToken.js: canUpdateOwnMetadata false) - so the sweep needs no memory of its own. A relay that did not
@@ -39,11 +40,11 @@ export function readSeatMeta(s) {
 }
 
 /**
- * One seat's verdict: 'keep', 'remove' (no longer in the party, or the room - or no seat of ours, or a seat in a room
- * not its own) or 'mute' (still in, but muted and still able to publish).
+ * One seat's verdict: 'keep', 'remove' (no longer in the party, or the room, or banned - or no seat of ours, or a seat
+ * in a room not its own) or 'mute' (still in, but muted and still able to publish).
  * @param {string} room  the SFU room the participant sits in
  * @param {any} p  a ListParticipants row
- * @param {{ nowS: number, subtle: SubtleCrypto, presenceOf: (acct: string, room: string, ly: number) => Promise<boolean|null>, standingOf: (acct: string) => Promise<{ party: string|null, mu: number }|null> }} o
+ * @param {{ nowS: number, subtle: SubtleCrypto, presenceOf: (acct: string, room: string, ly: number) => Promise<boolean|null>, standingOf: (acct: string) => Promise<{ party: string|null, mu: number, bn?: number }|null> }} o
  */
 export async function seatVerdict(room, p, { nowS, subtle, presenceOf, standingOf }) {
   const identity = typeof p?.identity === 'string' ? p.identity : '';
@@ -53,6 +54,7 @@ export async function seatVerdict(room, p, { nowS, subtle, presenceOf, standingO
   const name = seat.c === 'p' ? await voiceRoomName('party', seat.k, 0, subtle) : await voiceRoomName('proximity', seat.k, seat.l, subtle);
   if (name !== base) return 'remove';   // a credential minted for another room - no seat we gave
   const standing = await standingOf(identity);
+  if ((Number(standing?.bn) || 0) > nowS) return 'remove';   // banned: no seat anywhere
   if (seat.c === 'p') {
     if (standing === null) return 'keep';   // the relay did not answer: next sweep
     if (standing.party !== seat.k) return 'remove';

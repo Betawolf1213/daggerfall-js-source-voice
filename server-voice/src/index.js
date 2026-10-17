@@ -77,14 +77,16 @@ async function askRelay(env, fetchImpl, path, body) {
   } catch { return null; }
 }
 
-/** `standingOf(acct)` - the hub's word on the party `acct` sits in and the mute it is under (`{ party, mu }`), or null.
+/** `standingOf(acct)` - the hub's word on the party `acct` sits in and the mute and the ban it is under (`{ party, mu,
+ *  bn }`), or null.
  *  The old party URL here (`RELAY_URL/party/<acct>`) was never routed by the relay, so party voice checked nothing. */
 async function standingVia(env, fetchImpl) {
   return async (/** @type {string} */ acct) => {
     if (typeof env.standingOf === 'function') return env.standingOf(acct);   // a test's
-    if (typeof env.partyOf === 'function') return { party: (await env.partyOf(acct)) ?? null, mu: 0 };   // node.js's stub, a test's
+    if (typeof env.partyOf === 'function') return { party: (await env.partyOf(acct)) ?? null, mu: 0, bn: 0 };   // node.js's stub, a test's
     const a = await askRelay(env, fetchImpl, VOICE_PARTY_OF_PATH, { acct });
-    return a ? { party: typeof a.party === 'string' ? a.party : null, mu: Number.isSafeInteger(a.mu) && a.mu > 0 ? a.mu : 0 } : null;
+    const at = (v) => (Number.isSafeInteger(v) && v > 0 ? v : 0);
+    return a ? { party: typeof a.party === 'string' ? a.party : null, mu: at(a.mu), bn: at(a.bn) } : null;
   };
 }
 

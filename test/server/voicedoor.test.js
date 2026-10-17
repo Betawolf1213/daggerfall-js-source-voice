@@ -9,7 +9,7 @@ import { fakeRoom, fakeRooms } from '../fakeRoom.mjs';
 import { routeVoiceDoor, isVoiceDoor, ctEqualStrings, voicePresenceObject } from '../../server/src/voiceDoor.js';
 import { VOICE_PRESENCE_PATH, VOICE_PARTY_OF_PATH, VOICE_RELAY_SECRET_HEADER } from '../../src/net/voice/voiceWire.js';
 import { SOCIAL_ROOM, PARTY_OFFLINE_MS, layerName } from '../../src/net/wire.js';
-import { mintOrder } from '../../src/net/identityToken.js';
+import { mintOrder, mintBanOrder } from '../../src/net/identityToken.js';
 
 const SECRET = 's3cret-voice';
 const ask = (path, body, { secret = SECRET, method = 'POST' } = {}) => new Request(`https://relay.test${path}`, {
@@ -99,7 +99,7 @@ test('VOICE-RELAY-DOOR party-of: the hub\'s bus answers, as every hub reading do
   assert.deepEqual([...world.made.keys()], [SOCIAL_ROOM], 'the bus alone was asked');
 });
 
-test('VOICE-REVOKE party-of says the mute too: off the account\'s sockets on the bus, which every mute order rewrites (the newest order over a token minted before it), else the bus\'s own order for an account with no socket', async () => {
+test('VOICE-REVOKE party-of says the mute too: off the account\'s sockets on the bus, which every mute order rewrites (the newest order over a token minted before it), else the bus\'s own order for an account with no socket - and the ban the hub holds (VOICE-BAN)', async () => {
   const world = fakeRooms();
   const env = { ROOMS: world.ROOMS, VOICE_RELAY_SECRET: SECRET };
   const hub = world.room(SOCIAL_ROOM);
@@ -107,8 +107,8 @@ test('VOICE-REVOKE party-of says the mute too: off the account\'s sockets on the
   const standing = async (acct) => (await door(env, VOICE_PARTY_OF_PATH, { acct })).body;
   await hub.hello(hub.connect(), 'erin', null, { tokenSub: 'acct-erin', mu: nowS + 600 });
   await hub.hello(hub.connect(), 'erin2', null, { tokenSub: 'acct-erin' });
-  assert.deepEqual(await standing('acct-erin'), { party: null, mu: nowS + 600 }, 'the token\'s mute, the latest of its tabs');
-  assert.deepEqual(await standing('acct-carol'), { party: null, mu: 0 }, 'no socket, no order: no mute');
+  assert.deepEqual(await standing('acct-erin'), { party: null, mu: nowS + 600, bn: 0 }, 'the token\'s mute, the latest of its tabs');
+  assert.deepEqual(await standing('acct-carol'), { party: null, mu: 0, bn: 0 }, 'no socket, no order: no mute');
   // a moderator's signed order, carried in: it rewrites a socket's mute, and the bus keeps it for an account away
   const mod = hub.connect(); await hub.hello(mod, 'kestrel', null, { tokenSub: 'acct-kestrel' });
   const kp = await hub.signer();
@@ -117,6 +117,13 @@ test('VOICE-REVOKE party-of says the mute too: off the account\'s sockets on the
   assert.equal((await standing('acct-erin')).mu, 0, 'lifted: the order over the token');
   const mod2 = hub.connect(); await hub.hello(mod2, 'merlin', null, { tokenSub: 'acct-merlin' });   // a carrier's own MUTE_HZ_MAX
   await hub.raw(mod2, JSON.stringify({ t: 'mute', order: await order('acct-gone', nowS + 900, nowS) }));
-  assert.deepEqual(await standing('acct-gone'), { party: null, mu: nowS + 900 }, 'away, the order alone');
+  assert.deepEqual(await standing('acct-gone'), { party: null, mu: nowS + 900, bn: 0 }, 'away, the order alone');
+  // VOICE-BAN: a ban the hub took (SAFE4's `_bans`) - a carrier's signed order, as the law door's would be - and one that ended
+  const mod3 = hub.connect(); await hub.hello(mod3, 'osprey', null, { tokenSub: 'acct-osprey' });
+  await hub.raw(mod3, JSON.stringify({ t: 'ban', order: await mintBanOrder({ s: 'acct-exile', bn: nowS + 3600 }, kp.privateKey, { subtle: globalThis.crypto.subtle, nowS }) }));
+  assert.deepEqual(await standing('acct-exile'), { party: null, mu: 0, bn: nowS + 3600 }, 'banned: the hub\'s word, beside the party and the mute');
+  const mod4 = hub.connect(); await hub.hello(mod4, 'harrier', null, { tokenSub: 'acct-harrier' });
+  await hub.raw(mod4, JSON.stringify({ t: 'ban', order: await mintBanOrder({ s: 'acct-pardon', bn: 0 }, kp.privateKey, { subtle: globalThis.crypto.subtle, nowS }) }));
+  assert.equal((await standing('acct-pardon')).bn, 0, 'a ban lifted is none');
   assert.deepEqual(await door(env, VOICE_PARTY_OF_PATH, { acct: 'a'.repeat(129) }), { status: 400, body: { error: 'bad ask' } });
 });
