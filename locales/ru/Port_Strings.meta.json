@@ -13924,6 +13924,141 @@
   "tr": "f5465572c3f4",
   "by": "claude-in-session"
  },
+ "naval.deck.bad": {
+  "en": "15a19f1310ea",
+  "tr": "3e707cc4b4e2",
+  "by": "claude-in-session"
+ },
+ "naval.deck.bow": {
+  "en": "fa5bd38090c7",
+  "tr": "8032e32d60ae",
+  "by": "claude-in-session"
+ },
+ "naval.deck.chest": {
+  "en": "334f811613f3",
+  "tr": "2c2924da0255",
+  "by": "claude-in-session"
+ },
+ "naval.deck.choose": {
+  "en": "dc1d74a0502c",
+  "tr": "da6de6e67c99",
+  "by": "claude-in-session"
+ },
+ "naval.deck.clear": {
+  "en": "22820ce329f7",
+  "tr": "bdcfab2cbb4d",
+  "by": "claude-in-session"
+ },
+ "naval.deck.clearAll": {
+  "en": "100dbd8890c3",
+  "tr": "235535e76a10",
+  "by": "claude-in-session"
+ },
+ "naval.deck.cleared": {
+  "en": "83eb87690073",
+  "tr": "86d758357a32",
+  "by": "claude-in-session"
+ },
+ "naval.deck.count": {
+  "en": "c1373a7a49ce",
+  "tr": "518d91116b81",
+  "by": "claude-in-session"
+ },
+ "naval.deck.crate": {
+  "en": "6a37d56576ac",
+  "tr": "c0d55d4b165f",
+  "by": "claude-in-session"
+ },
+ "naval.deck.crowded": {
+  "en": "1c74888091bd",
+  "tr": "2f620814ea22",
+  "by": "claude-in-session"
+ },
+ "naval.deck.full": {
+  "en": "9f460bdb9de3",
+  "tr": "170d23da839e",
+  "by": "claude-in-session"
+ },
+ "naval.deck.hint": {
+  "en": "6ba5c5aa6e61",
+  "tr": "c88d360cad24",
+  "by": "claude-in-session"
+ },
+ "naval.deck.offDeck": {
+  "en": "66fe72d49aeb",
+  "tr": "6eac537330be",
+  "by": "claude-in-session"
+ },
+ "naval.deck.open": {
+  "en": "168e4932a695",
+  "tr": "431a84b22839",
+  "by": "claude-in-session"
+ },
+ "naval.deck.openN": {
+  "en": "c5fef65c7575",
+  "tr": "3936fd249149",
+  "by": "claude-in-session"
+ },
+ "naval.deck.opened": {
+  "en": "a0c0a5bb30de",
+  "tr": "8eb2cb4c8549",
+  "by": "claude-in-session"
+ },
+ "naval.deck.planAria": {
+  "en": "08e1c462ec68",
+  "tr": "c99a59ac3ca0",
+  "by": "claude-in-session"
+ },
+ "naval.deck.remove": {
+  "en": "f7a962bc289a",
+  "tr": "54abc9af55f7",
+  "by": "claude-in-session"
+ },
+ "naval.deck.removed": {
+  "en": "2222e1c6d49b",
+  "tr": "fa5ded5c9757",
+  "by": "claude-in-session"
+ },
+ "naval.deck.save": {
+  "en": "73f4527642b5",
+  "tr": "fb4c8be4d86b",
+  "by": "claude-in-session"
+ },
+ "naval.deck.set": {
+  "en": "5f79c2d4959e",
+  "tr": "760edc8e46e2",
+  "by": "claude-in-session"
+ },
+ "naval.deck.set1": {
+  "en": "5514eab95113",
+  "tr": "a0eab9d04a27",
+  "by": "claude-in-session"
+ },
+ "naval.deck.taken": {
+  "en": "5d2163539ac7",
+  "tr": "f9c0dd2b6ec5",
+  "by": "claude-in-session"
+ },
+ "naval.deck.title": {
+  "en": "4f4e62ab3b5c",
+  "tr": "b8270cf245a7",
+  "by": "claude-in-session"
+ },
+ "naval.deck.turnLeft": {
+  "en": "525c65b51791",
+  "tr": "86592e4061be",
+  "by": "claude-in-session"
+ },
+ "naval.deck.turnRight": {
+  "en": "99699c0817b7",
+  "tr": "00913894701b",
+  "by": "claude-in-session"
+ },
+ "naval.deck.unknown": {
+  "en": "d5a308efdb9f",
+  "tr": "357053b50036",
+  "by": "claude-in-session"
+ },
  "naval.flag.bad": {
   "en": "229c0f1c20cb",
   "tr": "92cd67bc1494",
@@ -14172,6 +14307,156 @@
  "naval.ore.steel": {
   "en": "31a4f977f212",
   "tr": "23d04d471fc9",
+  "by": "claude-in-session"
+ },
+ "naval.paint.apply": {
+  "en": "1c40cd2d895b",
+  "tr": "cd60d8c16933",
+  "by": "claude-in-session"
+ },
+ "naval.paint.asBuilt": {
+  "en": "765a0566a010",
+  "tr": "2fb3d1e1a744",
+  "by": "claude-in-session"
+ },
+ "naval.paint.bad": {
+  "en": "0884e5da0800",
+  "tr": "c79d8686f6a8",
+  "by": "claude-in-session"
+ },
+ "naval.paint.bare": {
+  "en": "7cb540361f53",
+  "tr": "db428f602f48",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.bay": {
+  "en": "1b894739b90d",
+  "tr": "74178c76181f",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.black": {
+  "en": "23891284a266",
+  "tr": "7950149c9761",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.crimson": {
+  "en": "b3f39ab486dc",
+  "tr": "5b9218088d8b",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.forest": {
+  "en": "8eb0003aa276",
+  "tr": "506ac44dbbb2",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.gold": {
+  "en": "21c449e0aab8",
+  "tr": "a9642c899495",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.grey": {
+  "en": "a2b23be1ec38",
+  "tr": "046fa97a9858",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.navy": {
+  "en": "0229e960cf4c",
+  "tr": "052ca0905830",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.ochre": {
+  "en": "a2c692bdd893",
+  "tr": "93154b39ad6c",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.oxblood": {
+  "en": "2683ad135a60",
+  "tr": "676a7de4afa8",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.purple": {
+  "en": "3815c166d979",
+  "tr": "99a765c25d1d",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.sea": {
+  "en": "8f411d71cf98",
+  "tr": "d685033b1e17",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.tan": {
+  "en": "133552ebfbcc",
+  "tr": "c67cc45aaedc",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.teal": {
+  "en": "df0ad373b7ff",
+  "tr": "9ee6c289ba74",
+  "by": "claude-in-session"
+ },
+ "naval.paint.c.white": {
+  "en": "eb397bc572c5",
+  "tr": "0fa7477bd6d7",
+  "by": "claude-in-session"
+ },
+ "naval.paint.cabinNote": {
+  "en": "bee2106cdfa4",
+  "tr": "de1fd3926c03",
+  "by": "claude-in-session"
+ },
+ "naval.paint.done": {
+  "en": "2ca515f0c9e7",
+  "tr": "f5ff7509c450",
+  "by": "claude-in-session"
+ },
+ "naval.paint.none": {
+  "en": "1f4ae936baee",
+  "tr": "464e1ee0b040",
+  "by": "claude-in-session"
+ },
+ "naval.paint.note": {
+  "en": "de30efc574af",
+  "tr": "0e1117e6238c",
+  "by": "claude-in-session"
+ },
+ "naval.paint.open": {
+  "en": "56d7f824c816",
+  "tr": "bf80bd962074",
+  "by": "claude-in-session"
+ },
+ "naval.paint.p.accent": {
+  "en": "0c4d2addee02",
+  "tr": "0f964b9867a9",
+  "by": "claude-in-session"
+ },
+ "naval.paint.p.cabin": {
+  "en": "7e4c64387f3b",
+  "tr": "df27e8c68cfa",
+  "by": "claude-in-session"
+ },
+ "naval.paint.p.sail": {
+  "en": "67db8bce1d92",
+  "tr": "52a97e3c6f68",
+  "by": "claude-in-session"
+ },
+ "naval.paint.p.stain": {
+  "en": "16d6f2316312",
+  "tr": "6821b9b9224f",
+  "by": "claude-in-session"
+ },
+ "naval.paint.p.strake": {
+  "en": "378a02a1149d",
+  "tr": "ed1e76d8193c",
+  "by": "claude-in-session"
+ },
+ "naval.paint.preview": {
+  "en": "4dfc5f220448",
+  "tr": "8a4dfd6f6f4f",
+  "by": "claude-in-session"
+ },
+ "naval.paint.strip": {
+  "en": "aeeb95646124",
+  "tr": "17a15ee01a90",
   "by": "claude-in-session"
  },
  "naval.refit.asks": {

@@ -36,7 +36,10 @@
 // deps = { renderer, pipeline: scenes/dataPipeline.js's { getTexture, uploadRecord, getGpuMesh, gpuMeshes, cpuModels,
 //          textureFiles, markClassicArt, isClassicArt }, fetchFn (the vendored files' fetch), log }
 
-import { loadComeSailAwayModels, rendererModel, rendererModelKey, bundleSlots } from '../../systems/comeSailAway/comeSailAwayModels.js';
+import { loadComeSailAwayModels, rendererModel, rendererModelKey, bundleSlots, PORT_SHIPS } from '../../systems/comeSailAway/comeSailAwayModels.js';
+import { createLiveryPaint } from './shipLiveryPaint.js';   // SHIP-LIVERY: a boat's paint, painted once and drawn by a remap
+import { fitBoats } from './deckFittingsHost.js';   // DECK-PROPS: her fittings, stood in her tree
+import { liveryCode } from '../../systems/naval/shipLivery.js';
 import { spawnBoat, boatAssetNeeds, DUNGEON_LIGHT_HANDLER, HULL_NAMES, setBoatVariant, Boat, FIRST_HULL_MODEL_ID, meshLocalBounds, worldBounds } from '../../systems/comeSailAway/comeSailAwayBoat.js';
 import { resolveNodePointer, instantiatePrefab, prefabShapeStamp } from '../../world/prefabNode.js';
 import { StaticBatchBuilder } from '../../render/staticBatch.js';   // AUDIT NAV1 (#13): a boat's still parts merged as a town's statics are
@@ -156,7 +159,13 @@ export const STILL_FRAMES = 20;
  *  of her rope's radius. */
 export const RIG_STILL_M = 0.001;
 
-export function createComeSailAwayPool({ renderer = null, pipeline = null, fetchFn = null, log = console } = {}) {
+/**
+ * @param {{ renderer?: any, pipeline?: any, fetchFn?: any, log?: any, liveryOf?: ((boat: any) => any) | null, fittingsOf?: ((boat: any) => any[]) | null }} [o]
+ *   SHIP-LIVERY: `liveryOf(boat)` a boat of mine's livery (the Fleet's ledger, by her number); a peer's boat says its own
+ *   (`boat.livery`, its owner's word), a sea ship wears none. DECK-PROPS: `fittingsOf(boat)` a boat of mine's deck
+ *   fittings, the same way (a peer's `boat.fittings`)
+ */
+export function createComeSailAwayPool({ renderer = null, pipeline = null, fetchFn = null, log = console, liveryOf = null, fittingsOf = null } = {}) {
   /** @type {any} */ let models = null;
   let modelsLoading = null, modelsFailed = false;
   /** @type {any[]} */ const boats = [];
@@ -169,6 +178,11 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
    *  poses them, and stands the near ones in the world's collider itself. */
   /** @type {any[]} */ const seaBoats = [];
   const drawn = () => (peerBoats.length || seaBoats.length ? boats.concat(peerBoats, seaBoats) : boats);
+  // SHIP-LIVERY (scenes/comeSailAway/shipLiveryPaint.js): the paint shop, and which boats are mine (my ledger says their paint)
+  const mineBoats = new WeakSet();
+  const paints = createLiveryPaint({ renderer, pipeline, log, portArchiveOf: (hull) => { const s = PORT_SHIPS.find((x) => x.hull === hull); return s && models?.[s.key] ? PORT_ART[s.key].archive : null; } });
+  /** A boat's paint as the word's number (0 as built): mine by my ledger, a peer's by its owner's word, a sea ship's none. */
+  const liveryCodeOf = (boat) => (mineBoats.has(boat) ? liveryCode(liveryOf?.(boat) ?? null) : boat.livery | 0);
   const _cullOn = !cullDisabled();   // AUDIT NAV1 (#13): ?cull=off, read once, as the world reads it
   const _cullPv = new Float32Array(16), _cullPlanes = new Float32Array(24), _cullSphere = new Float32Array(4), _cullBox = new Float32Array(6);
   const meshes = new Map();      // rendererModelKey -> gpu mesh | null
@@ -343,6 +357,15 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     return [s.w, s.h];
   };
   const modelBoundsOf = (id) => vertexBox(pipeline?.cpuModels?.get(id)?.positions);
+  /** A classic model the pipeline will not load, said once (a hull's ModelHelper, DECK-PROPS a fitting). */
+  const modelWontLoad = (id, e) => warnOnce(`model:${id}`, `[come-sail-away] model ${id} will not load`, e);
+  /** DECK-PROPS: what the fitting-out reads - the spawn's context, her hull's deck, and a fitting's model asked once. */
+  const _fitLoads = new Set();
+  const fitDeps = () => ({
+    ctx: { models, player: () => ({ position: [0, 0, 0], rotation: [0, 0, 0, 1] }), billboardSize: billboardSizeOf, modelBounds: modelBoundsOf },
+    deckOf: (hull) => deckOf(hull),
+    load: (m) => { if (_fitLoads.has(m) || !pipeline?.getGpuMesh) return; _fitLoads.add(m); Promise.resolve(pipeline.getGpuMesh(m)).catch((e) => modelWontLoad(m, e)); },
+  });
 
   /** The ARENA2 a hull reads before it is built: its flats' archives and records, its classic models. */
   async function prepare(hull) {
@@ -352,7 +375,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       catch (e) { warnOnce(`flat:${a}`, `[come-sail-away] TEXTURE.${a} will not load - the boats' flats of it stand invisible`, e); }
     }
     for (const id of need.models) {
-      try { await pipeline.getGpuMesh(id); } catch (e) { warnOnce(`model:${id}`, `[come-sail-away] model ${id} will not load`, e); }
+      try { await pipeline.getGpuMesh(id); } catch (e) { modelWontLoad(id, e); }
     }
   }
 
@@ -390,7 +413,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   /** CSA-C: SpawnBoat as the C# runs it - at once, on what `preload` brought in; null before that. */
   function spawnNow(boat, player) {
     if (!models) return null;
-    boats.push(boat);   // CSA-J (the audit): in the scene before it is built - a SpawnBoat that throws half way (a variant past the hull's) leaves its half-built hull standing, as the C#'s GameObject does
+    boats.push(boat); mineBoats.add(boat);   // CSA-J (the audit): in the scene before it is built - a SpawnBoat that throws half way (a variant past the hull's) leaves its half-built hull standing, as the C#'s GameObject does
     spawnBoat(boat, { models, player: () => player, billboardSize: billboardSizeOf, modelBounds: modelBoundsOf });
     return boat;
   }
@@ -651,6 +674,8 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     walkStamp++;   // AUDIT PRE-MERGE 0928 R5: this frame's one walk, read below and by the draw
     const lit = _lanternFrame;
     lit.dt = gameDt; lit.cityLightsOn = !!world.cityLightsOn; lit.playerPosition = playerPosition;
+    // DECK-PROPS (scenes/comeSailAway/deckFittingsHost.js): mine by my ledger, a peer's by its owner's word - before her walk
+    if (models) { const fit = fitDeps(); fitBoats(boats, (b) => fittingsOf?.(b) ?? [], fit); fitBoats(peerBoats, (b) => b.fittings ?? [], fit); }
     for (const boat of drawn()) {
       const holders = planOf(boat, walkBoat(boat, walkStamp)).holders;   // PERF-SAILS3: her holders, in the walk's order
       for (let k = 0; k < holders.length; k += 2) lateUpdateHolder(holders[k], holders[k + 1], gameDt);
@@ -723,12 +748,13 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   function draw(r = renderer, texRemap = null) {
     if (!models || !r?.drawMesh) return 0;
     if (cityLights) texRemap = nightRemapOf(texRemap);   // THE STERN WINDOWS LIT: her glass whole and glowing
+    const drawRemap = texRemap;
     const cull = _cullOn && !!r._proj && !!r._view;
     if (cull) spherePlanes(multiply(r._proj, r._view, _cullPv), _cullPlanes);
     const eye = r._camPos ?? null;
     const pxPerM = cull && eye ? r._proj[5] * (r.gl?.drawingBufferHeight ?? 0) / 2 : 0;   // a metre's pixels a metre off
     let n = 0;
-    const one = (gpu, m) => {
+    const one = (gpu, m, texRemap = drawRemap) => {
       if (cull && gpu.bounds && gpu.bounds[3] > 0) {
         const sp = transformSphere(m, gpu.bounds, _cullSphere);
         if (pxPerM > 0 && 2 * sp[3] * pxPerM < CULL_DETAIL_PX * Math.hypot(sp[0] - eye[0], sp[1] - eye[1], sp[2] - eye[2])) return;   // under a pixel
@@ -747,6 +773,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
       const fade = Math.max(0, Math.min(1, boat.fade ?? 1));
       if (fade <= 0) continue;
       if (fade < 1) r.setDissolve?.(fade);
+      const paint = paints.remapOf(boat.hull, liveryCodeOf(boat), cityLights, drawRemap);   // SHIP-LIVERY: her paint over the host's remap
       const walk = walkOf(boat);   // AUDIT PRE-MERGE 0928 R5
       const recs = walk.recs, parts = planOf(boat, walk).parts;   // PERF-SAILS3: her renderers, found once
       const still = [];   // AUDIT NAV1 (#13): this frame's parts that hang in her hull's frame
@@ -767,13 +794,13 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
         if (key && boat.MeshObject && e.chain === undefined) e.chain = stillChain(boat, node);   // PERF-SAILS3: asked once a plan (its own cache keys on the shape and the frame, as the plan does)
         const chain = key && boat.MeshObject ? e.chain : null;
         if (chain) { e.gpu = gpu; e.rec = rec; still.push(e); continue; }   // PERF-SAILS3: the part's own record is the still list's entry
-        one(gpu, made(rec));
+        one(gpu, made(rec), paint);
       }
       const batch = stillBatch(boat, still);
       const hullRec = batch ? boat.MeshObject?._walkRec ?? null : null;   // PERF-SAILS1: the record's matrix
       const frame = hullRec ? made(hullRec) : null;   // PERF-SAILS2: made as it is read
-      if (batch && frame) one(batch.mesh, frame);
-      for (const c of still) if (!batch || !frame || !batch.nodes.has(c.node)) one(c.gpu, made(c.rec));
+      if (batch && frame) one(batch.mesh, frame, paint);
+      for (const c of still) if (!batch || !frame || !batch.nodes.has(c.node)) one(c.gpu, made(c.rec), paint);
       if (fade < 1) r.setDissolve?.(1);
     }
     return n;

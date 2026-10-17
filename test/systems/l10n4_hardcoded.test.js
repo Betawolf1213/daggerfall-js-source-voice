@@ -240,6 +240,7 @@ const HARDCODED = {
   'src/scenes/caravanHost.js': 13,
   'src/scenes/comeSailAway/comeSailAwayPeers.js': 1,
   'src/scenes/comeSailAway/comeSailAwayPool.js': 6,
+  'src/scenes/comeSailAway/shipLiveryPaint.js': 1,
   'src/scenes/corpseMarker.js': 3,
   'src/scenes/dataSource.js': 29,
   'src/scenes/decor/decorTool.js': 45,

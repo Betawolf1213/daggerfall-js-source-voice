@@ -236,8 +236,8 @@
   {
     "name": "SC-ledger-unsaved",
     "file": "src/systems/fleet.js",
-    "old": ", ...(r.colours ? { colours: { ...r.colours } } : {}) })),",
-    "new": " })),",
+    "old": ", ...(r.colours ? { colours: { ...r.colours } } : {}), ...(r.livery",
+    "new": ", ...(r.livery",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]
@@ -308,8 +308,8 @@
   {
     "name": "SC-wire-always",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "...(flagged ? { f } : {}) };",
-    "new": "...{ f } };",
+    "old": "...(flagged ? { f } : {}), ...(painted",
+    "new": "...{ f }, ...(painted",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]
@@ -326,8 +326,8 @@
   {
     "name": "SC-wire-key-blind",
     "file": "src/systems/comeSailAway/comeSailAwayWire.js",
-    "old": "rec.u || rec.cabin || rec.n || rec.f ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null]",
-    "new": "rec.u || rec.cabin || rec.n || rec.f ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null]",
+    "old": "rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null]",
+    "new": "rec.n ?? null, rec.l ?? null, rec.d ?? null]",
     "tests": [
       "test/systems/naval/shipcolours.test.js"
     ]

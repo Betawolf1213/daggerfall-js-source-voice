@@ -23,6 +23,8 @@ import { mintDeed, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from './comeSailAwa
 import { HULL_NAMES, HULL_PRICES, VARIANT_NAMES, HULL_VARIANT_COUNTS } from './comeSailAway/comeSailAwayBoat.js';
 import { checkName, textCaught } from '../net/nameFilter.js';
 import { shipFlagOf } from './naval/shipFlag.js';   // SHIP-COLOURS: her flag, through its door
+import { liveryOf, LIVERY_PARTS, isPaint } from './naval/shipLivery.js';   // SHIP-LIVERY: her paint, through its door
+import { fittingsOf } from './naval/deckFittings.js';   // DECK-PROPS: her fittings, through their door
 import { plateMetal } from './armorMaterials.js';   // REFIT-ORES: a piece of plate's metal
 import { WEAPONS } from '../characters/weapons.js';
 import { t } from './textManager.js';   // REFIT-ORES: a metal's hint in the player's language
@@ -276,7 +278,7 @@ const variantOfItem = (it) => (it?.message | 0) % 10;
 function recordFor(uid, hull, variant, value) {
   let r = _ships.get(uid);
   if (!r) {
-    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null, colours: null };   // SHIP-COLOURS: `colours` her flag (null: the mod's pennant)
+    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null, colours: null, livery: null, cabin: 0, deck: [] };   // DECK-PROPS: `deck` her fittings   // SHIP-COLOURS: `colours` her flag (null: the mod's pennant); SHIP-LIVERY: `livery` her paint (null: as built), `cabin` her cabin's stain (0: as built)
     _ships.set(uid, r);
   }
   return r;
@@ -346,6 +348,32 @@ export function setShipColours(uid, raw) {
   r.colours = f;
   return true;
 }
+/** SHIP-LIVERY (bible/03-World/Naval-Refit.md): her paint set - systems/naval/shipLivery.js liveryOf's, the parts her hull
+ *  does not take made none - or null (as built). Answers whether she has it now. */
+export function setShipLivery(uid, raw) {
+  const r = _ships.get(uid);
+  if (!r || (raw != null && typeof raw !== 'object')) return false;
+  const l = raw == null ? null : liveryOf(raw, r.hull);
+  if (raw != null && !l && !LIVERY_PARTS.every((p) => !raw[p])) return false;   // a paint that is none at all is as built; one the door refuses is refused
+  r.livery = l;
+  return true;
+}
+/** SHIP-LIVERY (CABIN-LOOK): her cabin's stain - a paint's index (systems/naval/shipLivery.js PAINTS), 0 as built.
+ *  Answers whether she has it now. */
+export function setShipCabin(uid, paint) {
+  const r = _ships.get(uid);
+  if (!r || !isPaint(paint)) return false;
+  r.cabin = paint;
+  return true;
+}
+/** DECK-PROPS (bible/03-World/Naval-Refit.md): her deck's fittings set - systems/naval/deckFittings.js fittingsOf's (a
+ *  fitting it refuses left out). Answers whether she has them now. */
+export function setShipFittings(uid, raw) {
+  const r = _ships.get(uid);
+  if (!r || !Array.isArray(raw)) return false;
+  r.deck = fittingsOf(raw);
+  return true;
+}
 /** A refit's tier added (the caller has paid). */
 export function addRefit(uid, id) {
   const r = _ships.get(uid);
@@ -370,7 +398,7 @@ export function fleetSaveData() {
   return {
     v: FLEET_SAVE_VERSION,
     ships: [..._ships.values()].map((r) => ({ uid: r.uid, hull: r.hull, variant: r.variant, value: r.value, name: r.name, upgrades: { ...r.upgrades },
-      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid), ...(r.colours ? { colours: { ...r.colours } } : {}) })),   // SHIP-COLOURS
+      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid), ...(r.colours ? { colours: { ...r.colours } } : {}), ...(r.livery ? { livery: { ...r.livery } } : {}), ...(r.cabin ? { cabin: r.cabin } : {}), ...(r.deck?.length ? { deck: r.deck.map((f) => ({ ...f })) } : {}) })),   // SHIP-COLOURS; SHIP-LIVERY; DECK-PROPS
     crossed: [..._crossed],   // AUDIT SHIPYARDS L1-2: the numbers that came through customs
   };
 }
@@ -395,6 +423,9 @@ export function restoreFleetSaveData(data) {
     const port = typeof s.port?.name === 'string' ? printable(s.port.name).slice(0, 64) : '';
     r.port = s.port && typeof s.port.name === 'string' ? { name: port, ...(s.port.ether === true ? { ether: true } : {}) } : null;   // AUDIT CAPTAIN'S SEA P5: her side of the Veil kept
     r.colours = shipFlagOf(s.colours);   // SHIP-COLOURS: her flag, as it may be (none, or one the door refuses: her pennant)
+    r.livery = liveryOf(s.livery, r.hull);   // SHIP-LIVERY: her paint, as it may be (none, or one the door refuses: as built)
+    r.cabin = isPaint(s.cabin) ? s.cabin : 0;   // CABIN-LOOK: her cabin's stain
+    r.deck = fittingsOf(s.deck);   // DECK-PROPS: her fittings, as the door takes them
     if (s.title) _book.push(mintDeed(r.hull, r.variant, r.uid, r.value));
   }
 }

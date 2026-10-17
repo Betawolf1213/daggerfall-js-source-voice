@@ -634,7 +634,9 @@ import { createHoldDoor, holdsCargo } from './holdDoor.js';   // CARGO-ANYWHERE:
 import { createShipFlagHost } from './shipFlagHost.js';   // SHIP-COLOURS: the flags my ships and the others' fly
 import { ShipFlagRenderer, FLAG_TEX_W } from '../render/shipFlagPass.js';   // SHIP-COLOURS: ...as cloth at the masthead
 import { drawFlag } from '../ui/flagArt.js';   // SHIP-COLOURS: ...each painted in the heraldry's hand
-import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
+import { createCaptainLedger, CAPTAIN_SAVE_VENDOR } from '../systems/naval/captainLedger.js';
+import { createCaptainPageHost } from './captainPageHost.js';   // CAPT-LOG / CAPTAIN-TREE: the Captain page's host half
+import { createDeckPlanDoor } from './deckPlanDoor.js';   // DECK-PROPS: the plan of her deck
 import { createHarbourOffice } from './harbourOffice.js';
 import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Eltheric Ocean's waters, charts, strands and legends
 import { createCrossingGate, crossingWayAt, crossingTarget, crossingRows, crossingWords, CROSS_DAYS, CROSS_CHECK_S, CROSS_REFUSED, CROSS_STALE, CROSS_FAILED } from '../systems/naval/etherCrossing.js';   // ETHER-CROSSING: the voyage across
@@ -662,7 +664,7 @@ import { sparedByPlayer, isShipmate } from '../combat/friendlyFire.js';   // SHI
 import { padFamily } from '../ui/padGlyphs.js';   // AUDIT NAV1 (the presentation): the pad in hand's family - the readout names its buttons
 import { hdGlyphName } from '../ui/padGlyphsHD.js';   // NAV-F: the helm's readout; AUDIT NAV1: its Brace under a finger
 import { glassPadWords } from './glassPad.js';   // AUDIT CAPTAIN'S SEA S3's helper, moved out (HOST-SPLIT: AUDIT WORLD-REWARDS's merge of main)
-import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard, createCaptainStarsOverlay } from '../ui/naval/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
+import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard } from '../ui/naval/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
 import { installNavalSounds } from '../systems/naval/navalSounds.js';   // NAV-E: the guns' own sounds
 import { navalRecordKey } from '../systems/naval/navalWire.js';   // NAV-G: my sea's word, said when it changed
 import { CROWNS as NAVAL_CROWNS, crownOf as navalCrownOf } from '../systems/naval/navalShips.js';   // NAV-C: the three crowns, whose capitals name the waters; AUDIT NAV1 (B2): a raid at sea parsed in theirs
@@ -7634,7 +7636,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // the colliders and the rays never did, so a mod switched off mid-game left an invisible deck standing
   const _csaOnAtLoad = latchModLoaded('come-sail-away', (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })());   // AUDIT PRE-MERGE 0928 S4: and the mod's other doors (the shelf's rows, its keys, its effect's restore) read this answer too
   const csaOn = () => _csaOnAtLoad;
-  const csa = createComeSailAwayPool({ renderer, pipeline, log: console });
+  const csa = createComeSailAwayPool({ renderer, pipeline, log: console, liveryOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.livery ?? null : null), fittingsOf: (boat) => (boat.uid ? fleetShip(boat.uid)?.deck ?? [] : []) });   // SHIP-LIVERY: a boat of mine's paint, the Fleet's; DECK-PROPS: and her fittings
   /** MENU-ORDER: the shipmaster's cards' pictures - each hull's portrait boat, drawn after the frame's own pass (below) */
   const shipPortraits = createShipPortraits({ renderer, canvas, doc: typeof document !== 'undefined' ? document : null, portrait: (hull) => (csaOn() ? csa.portrait(hull) : null) });
   /** NAV-H: the naval host (made below, with Come Sail Away's runtime) - declared here, beside the pool whose sea list
@@ -8994,6 +8996,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       ...(way && way.boat === b ? { velocity: way.velocity.map((v) => v * scale), turn: way.turn * scale } : null),
       name: fleetHost?.nameOf(b) ?? '',   // HOLDINGS: her name, for every other player to read over her
       flag: shipFlags.wireFlag(b),   // SHIP-COLOURS: and the flag she flies
+      livery: b.uid ? fleetShip(b.uid)?.livery ?? null : null, fittings: b.uid ? fleetShip(b.uid)?.deck ?? [] : [],   // SHIP-LIVERY: and her paint; DECK-PROPS: her fittings
     }));
     const rec = csaWireRecord(view, campToWire);
     if (rec && modes?.sailingCabin) rec.cabin = 1;
@@ -9700,7 +9703,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     openHold: (uid) => holdDoor.openShip(uid),   // CARGO-ANYWHERE: her hold, from the Fleet page, wherever she lies
     guildArms: () => guildBook?.guild?.heraldry ?? null,   // SHIP-COLOURS: "fly my guild's arms"
     captain: () => captainLedger,   // CAPTAIN-TREE / REFIT-ORES: her captain's level and stars
+    openDeck: (uid) => deckPlan(uid),   // DECK-PROPS: the plan of her deck
   }) : null;
+  const deckPlan = createDeckPlanDoor({ pool: csa, pipeline, act: (uid, verb, arg) => fleetHost.act(uid, verb, arg), show: (w) => townTalk.showOverlay(w), say: (l) => townTalk.say(l) });   // DECK-PROPS (scenes/deckPlanDoor.js)
   // SHIP-COLOURS: the flags flown (scenes/shipFlagHost.js) - my boats' by their colours in the ledger (my guild's arms
   // where a flag is the guild's), and every other player's by their word
   const shipFlags = createShipFlagHost({
@@ -9761,27 +9766,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     townTalk.showOverlay(win, () => { const fn = door; door = null; if (fn && fn() === false) openShipyard(site, 'fleet'); });
     return true;
   }
+  // CAPT-LOG / CAPTAIN-TREE: the Captain page's host half (scenes/captainPageHost.js)
+  const captainPage = createCaptainPageHost({ ledger: captainLedger, naval: () => naval, office: () => harbourOffice, minutes: () => playerTicker.ownMinutes,
+    show: (w) => townTalk.showOverlay(w), changed: () => { fleetHost?.restat(); surfacePlayer(); } });
   setHoldingsProvider({
     ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasTransport(TRANSPORT_HORSE), hasCart: () => hasTransport(TRANSPORT_SMALL_CART), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [], onPainted: () => { _hccDirty = true; },
       upkeep, pass: upkeepPass }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it; STEED1/WAGONS4: and keeps them (a kit's hour a skip, as a camp meal's)
     fleet: fleetHost ? { model: () => fleetHost.model(), offer: (uid) => fleetHost.offer(uid), act: (uid, verb, arg) => fleetHost.act(uid, verb, arg) } : null,
-    captain: fleetHost ? { model: () => captainModel(), openStars: () => { const w = createCaptainStarsOverlay({ ledger: captainLedger, changed: () => { fleetHost.restat(); surfacePlayer(); } }); if (w) townTalk.showOverlay(w); return !!w; } } : null,   // CAPTAIN-TREE: the stars' door - CAPT-LOG: the Captain page - the crowns' regard, the letter, the contracts, the log - AUDIT CAPTAIN'S SEA L15: beside the Fleet's, wherever there are ships to captain
+    captain: fleetHost ? { model: () => captainPage.model(), openStars: () => captainPage.openStars() } : null,   // CAPTAIN-TREE: the stars' door - CAPT-LOG: the Captain page - the crowns' regard, the letter, the contracts, the log - AUDIT CAPTAIN'S SEA L15: beside the Fleet's, wherever there are ships to captain
   });
-  /** CAPT-LOG: the Captain page's model - each crown's standing, rank and favours (none while it hunts me), the letter of
-   *  marque held and its days, the contracts under way (CAPT-BOARD), and the log in words. */
-  function captainModel() {
-    const at = Math.floor(playerTicker.ownMinutes);   // the captain's own clock, the letter's
-    const mq = captainLedger.marque(at);
-    return {
-      crowns: captainLedger.crowns().map((c) => { const n = naval?.notorietyOf?.(c.crown) ?? 0; return { ...c, notoriety: n, perks: perksOf(c.rank.rank, n) }; }),
-      refusedAt: PERKS_REFUSED_AT,
-      marque: mq ? { crown: mq.crown, days: Math.max(1, Math.ceil((mq.until - at) / 1440)) } : null,
-      contracts: harbourOffice.pageContracts(),   // CAPT-BOARD: the contracts held
-      charts: harbourOffice.pageCharts(),   // CAPT-CHARTS: the caches marked
-      log: logLines(captainLedger.log),
-      stars: { ...captainLedger.captain(), set: captainLedger.tree().length - 1 },   // CAPTAIN-TREE: her level, and the stars set of her points
-    };
-  }
   /** The sea emptied: a transition, a teleport, the arc switched off - its window with it. */
   const navalClear = () => { naval?.clear(); navalFlames.clear(); navalCrew.clear(); closeNavalPlunder(); closeShipyard(); closeNavalYard(); closeEtherChart(); drawNavalHud(null); drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); lowerGlass(); };   // AUDIT CAPTAIN'S SEA S1: and the glass; X15: and the Ether; SHIPYARDS: and the shipmaster's window
   const navalTransition = () => { harbourBook.clear(); navalClear(); withdrawCrossing(); };   // HARBOUR-BOOK: the harbours forgotten with the sea, found again where the world is next; AUDIT CAPTAIN'S SEA X2: and the crossing's question taken back

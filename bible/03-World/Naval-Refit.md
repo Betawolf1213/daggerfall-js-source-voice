@@ -40,6 +40,9 @@ and in `01-Overview/Port-Ledger.md` section A.
 | SHIP-COLOURS | 9 | a ship flies a flag of her captain's design - its shape, its field and division, its border, its device and that device's colour, or the captain's guild's arms - as cloth at her masthead, in her pennant's place, seen by every player | `systems/naval/shipFlag.js`, `ui/flagArt.js`, `render/shipFlagPass.js`, `scenes/shipFlagHost.js`, `systems/fleet.js` (`colours`, `setShipColours`), `scenes/fleetHost.js` (`colours`), `ui/fleetPage.js` (`coloursPanel`), `systems/comeSailAway/comeSailAwayWire.js` (`f`), `scenes/comeSailAway/comeSailAwayPeers.js` (`flagged`), `ui/heraldryArt.js` (its device painter shared), `scenes/world.js` |
 | CAPTAIN-TREE | 10 | a captain's level, earned at sea off the captain's log, buys a point a level for a sky of stars in the Firmament's dress - the Master's seamanship to the left, the Commander's war to the right - each star a share of a ship's own number read where that number is read: her way, oars, helm, hold, hull, repairs, trade, guns' harm, reload and aim, the shot locker's grape, chain and heated shot, her boarders, her ram and its foul | `systems/naval/captainTree.js`, `systems/naval/captainLedger.js` (`captain`, `tree`, `setTree`, `stats`, the save's `tree`), `ui/captainTreeWindow.js`, `ui/captainPage.js` (the stars' card), `ui/naval/navalPlunderDoor.js` (`createCaptainStarsOverlay`), `ui/enhanced/enhancedMenu.js` (the Captain page's door), `scenes/fleetHost.js` (`refit`), `systems/comeSailAway/comeSailAway.js` (`rigOf`'s `oars`, `turn`), `scenes/naval/navalHost.js` (`crewStep`'s worth, `crewSkill`, `loadedGun`, `landHit`, `checkRams`), `systems/naval/shotKinds.js` (`shotFireChance`'s `k`), `systems/naval/navalFoul.js` (`foul`'s `more`), `systems/naval/tradeGoods.js` (`exchangeOf`'s `edge`), `scenes/harbourOffice.js`, `scenes/world.js` |
 | REFIT-ORES | 11 | past the shipwright's three tiers, nine of metal - Steel to Daedric, DFU's own ladder - each asking a captain's level, its metal (ingots, or a weapon or a piece of plate of it melted down) and her line's first store | `systems/fleet.js` (`ORE_TIERS`, `MATERIALS`' metals, `metalOf`, `meltable`, `materialCount`, `takeMaterials`, `meltCount`, `materialsFor`, `upgradeCost`, `refitShare`, `REFIT_NUMERALS`), `scenes/fleetHost.js` (`offer`, `act`'s refit), `ui/fleetPage.js` (`refitRowWords`, the refit panel), `ui/shipyardWindow.js` (its Refits tab) |
+| SHIP-LIVERY | 8 | a ship painted by her captain - a port-built hull's strakes, trim and canvas, a classic-planked hull's wood stained and its sails tinted, each of fourteen paints or as built - drawn so wherever she is drawn, seen by every player | `systems/naval/shipLivery.js`, `world/ships/shipLiveryArt.js`, `scenes/comeSailAway/shipLiveryPaint.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`liveryCodeOf`, the draw's remap), `systems/fleet.js` (`livery`, `setShipLivery`), `scenes/fleetHost.js` (`livery`), `ui/fleetPage.js` (`paintPanel`, `paintSvg`), `systems/comeSailAway/comeSailAwayWire.js` (`l`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
+| CABIN-LOOK | 8 | her cabin below stained one wood, her windows lit as built | `scenes/cabinLook.js`, `scenes/interiorContext.js` (`restyle`), `scenes/sailingCabin.js` (the visit's `restyle`), `scenes/worldModes.js`, `systems/fleet.js` (`cabin`, `setShipCabin`), `scenes/fleetHost.js` (`livery`'s `cabin`) |
+| DECK-PROPS | 8 | Daggerfall's crates and chests stood on her open deck by a plan of it from above - drawn with her, rocking with her, standing in her colliders, seen by every player | `systems/naval/deckFittings.js`, `scenes/comeSailAway/deckFittingsHost.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`fitBoats`, `fitDeps`), `ui/deckPlanWindow.js`, `scenes/deckPlanDoor.js`, `ui/naval/navalPlunderDoor.js` (`createDeckPlanOverlay`), `systems/fleet.js` (`deck`, `setShipFittings`), `scenes/fleetHost.js` (`deck`, `deckPlan`), `ui/fleetPage.js` (Deck), `systems/comeSailAway/comeSailAwayWire.js` (`d`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -377,6 +380,112 @@ CHANGED (`systems/fleet.js`):
   words (`ui/fleetPage.js refitRowWords`) - the line at its numeral, +now% and +next%, the stores with what the player
   holds, the pieces melted, the level asked - and the page says the captain's level once above them.
 
+## SHIP-LIVERY - her paint (item 8, her outside)
+
+FOUND. Every ship of a hull wore the same pictures. The port's three ships (the Large Boat, the Small Ship, the Carrack -
+`world/ships/galleonArt.js`, `carrackArt.js`, `largeBoatArt.js`, PORT_SHIPS) are painted by the port's own painters
+from a palette (the galleon's oxblood strake and gilt, the carrack's Bay blue and ochre, the large boat's sea green and
+ochre, the fleet's one canvas) under their pseudo-archives; Come Sail Away's own hulls (the Rowboat, the Large Galley,
+and a port hull's small things) wear Daggerfall's planks (TEXTURE.067) and its sailcloth (TEXTURE.050 record 7) as the
+mod's ApplyGameTextures gives them. A captain could change nothing of it; the wagons' paint (WAGONS2, `systems/
+wagonLooks.js`, drawn by `scenes/horseCartPool.js lookRemap`) was the port's one paint shop. Daggerfall Unity has no
+ships to paint.
+
+CHANGED (`systems/naval/shipLivery.js`, the law and the painter; pure):
+- **A livery** (`liveryOf`, its door): four parts, each one of PAINTS' fourteen - Oxblood, Crimson, Tar black, Navy, Bay
+  blue, Teal, Sea green, Forest green, Ochre, Gold leaf, White lead, Slate grey, Tyrian purple, Tan, Daggerfall's own
+  earths and dyes - or none (0, as built). Which a hull takes (`liveryPartsOf`): a port-built hull her STRAKE (her
+  painted strakes, castles, galleries and lids), her ACCENT (their trim and gilding) and her SAIL; the Large Galley a
+  STAIN (her planks) and her sail; the Rowboat a stain alone. A part her hull does not take is none; a field that is no
+  paint refuses the whole livery, as the flag's door does.
+- **A port ship repainted by her families** (`world/ships/shipLiveryArt.js liveryArtOf`, `paintFamilies`): each texel of
+  her PAINTED pictures (her sides, castles, galleries, transoms, houses, rails, roof, lids, trim, gilt and doors -
+  never her deck, spars, rigging, iron or bottom) read as the palette colour nearest it, and one of the strake's or the
+  accent's family takes that part's paint at its own lightness against the family's base - her seams, her grain and her
+  light kept, her oak, tar, wales and glass as built. Her canvas is shaded whole (`shadeCloth`: every texel the paint at
+  its lightness against the cloth's own), its seams and dirt kept. Each picture then takes Daggerfall's look as her
+  stand-ins do (`world/dfLook.js`, its own record's grain). A see-through picture is painted twice - by day its glass cut
+  out, at night whole with its glow (the pool's own NIGHT_REMAP law) - so a painted gallery is see-through by day and
+  lit at night.
+- **A classic hull stained and tinted** (`stainPicture`, `tintPicture`): every plank record of TEXTURE.067 takes the
+  stain at its lightness against the picture's mean, laid over the wood at STAIN_STRENGTH (0.62) - the plank still
+  reads as a plank; her sailcloth the sail's paint at SAIL_TINT (0.85).
+- **The paint shop** (`scenes/comeSailAway/shipLiveryPaint.js`): a livery's pictures painted and uploaded under
+  LIVERY_ARCHIVE (38191) the first time a hull wears it, and the remap she is drawn by - her paint's keys over the host's
+  (the night's twins already in it while the lanterns are lit), one Map a pair so the renderer's cache holds. A boat
+  whose paint is still being made is drawn as built; one whose paint failed is drawn as built for good and said once.
+- **Drawn wherever she is drawn** (`comeSailAwayPool.js draw`, `liveryCodeOf`): the one draw every host's boats go
+  through, so a painted ship is painted on the street, on a dungeon's water and in a peer's sight alike - mine by my
+  Fleet ledger's record, a peer's by her owner's word, a sea ship (pirates, navies, merchantmen) as built.
+- **Her captain chooses** (the Fleet page's Paint, `ui/fleetPage.js paintPanel`): her picture in the paint chosen
+  (`paintSvg`), a row of swatches for each part her hull takes and, where she has a cabin, her cabin's wood
+  (CABIN-LOOK); Paint her (`scenes/fleetHost.js livery` - her record's `livery`, `systems/fleet.js setShipLivery`,
+  through the door with her hull, kept in the save), Strip her paint (as built), Close. The shipwright paints her
+  wherever she lies, for nothing. A paint refused is refused whole: her hull's and her cabin's are read before either
+  is set.
+- **Every player sees it** (`comeSailAwayWire.js` `l`): a livery's one number beside each boat of the owner's word (four
+  nibbles, `liveryCode`; 0 as built), only while one is painted; a reader takes each through the door (`liveryOfCode`),
+  one it refuses as built, never the boats dropped; an older build ignores it. The peers' boats wear it
+  (`comeSailAwayPeers.js`, at build and on every word).
+
+## CABIN-LOOK - her cabin's wood (item 8, her inside)
+
+FOUND. A ship's cabin below (SAILING-CABINS, `scenes/sailingCabin.js`) is the bank ship's interior (WA_SHIP_BLOCKS, a
+Small or a Large), built by the interior builder (`scenes/interiorContext.js`) under the climate's texture swaps (DFU's
+ClimateSwaps, as every interior's). Every cabin of a size was the same wood. INSIDE was enabled already for the rest:
+the decorator furnishes her cabin as it does a house (DECOR1, `scenes/worldModes.js decorRoomHere`'s `ship`).
+
+CHANGED (`scenes/cabinLook.js`):
+- **The room's restyle** (`interiorContext.js`'s `restyle`, asked after the climate's remap and before the room's batch
+  is made): each picture the room's models wear, its key as the climate resolves it, given a stained twin under
+  CABIN_ARCHIVE (38192) - `tintPicture` at CABIN_STAIN (0.55), Daggerfall's look over it - and set in the room's remap in
+  its place, once each. Her walls, floor, beams and built furniture are one wood, its grain kept. A picture that is
+  glass (a window's mask, the renderer's own) is left as built, so her windows light as they did.
+- **Her record's** (`systems/fleet.js` `cabin`, `setShipCabin`): one of the fourteen paints or none, chosen in the Paint
+  panel beside her hull's paint and set by the same act (`scenes/fleetHost.js livery`, a hull without a cabin asked
+  none); the visit below (`sailingCabin.js`) hands the room her stain, so it is made the next time her captain goes
+  below.
+
+## DECK-PROPS - fittings on her deck (item 8, prop placement)
+
+FOUND. On her open deck nothing could stand: Come Sail Away's hulls carry the mod's own fittings alone (its ModelHelpers
+- classic models hung in the prefab, SetupModelHelper's alignment), and the port's decorator places in rooms (DECOR1),
+never on a boat in the world.
+
+CHANGED (`systems/naval/deckFittings.js`, the law; pure):
+- **A fitting** is `{ m, x, z, yaw }`: one of the classic models Daggerfall stands in its houses as containers
+  (DECK_FITTINGS - World Tooltips' Crate group, 41815-41834, and its Chest group, 41811-41813, `systems/
+  worldTooltips.js CONTAINER_NAME_GROUPS`), at a place of her deck in her MeshObject's frame (metres, to the decimetre)
+  and turned a sixteenth of a turn at a step (YAW_STEPS). Its door (`fittingsOf`) keeps only known models at finite
+  places within FITTING_REACH (40 m) of her middle, none nearer one before it than FITTING_GAP (0.6 m), at most
+  DECK_FITTINGS_MAX (24).
+- **Stood in her own tree** (`scenes/comeSailAway/deckFittingsHost.js standFittings`): under one node of hers,
+  DECK_FITTINGS_NODE, under her MeshObject - the frame her deck is baked in (`systems/naval/navalDeck.js`) and the one
+  the swell rolls - each fitting a classic model hung as the mod's ModelHelpers hang theirs (`comeSailAwayBoat.js
+  createDaggerfallMeshGameObject`: a MeshRenderer and a MeshCollider over it), its foot on her deck's own height under
+  its place and its middle over the place (the model's box, SetupModelHelper's centring), turned about up. So it is
+  drawn with her (the pool's draw reads her tree), stands in her colliders (one walks round a crate and climbs onto a
+  chest; the world's collider and the aboard ray read her tree's), and rocks and sails with her. A fitting whose place is
+  no deck of hers (her deck baked otherwise since it was set) stands nowhere; one whose model is not loaded yet waits,
+  its model asked of the pipeline once, and the boat is fitted again when it is.
+- **The fitting-out** (`fitBoats`, a frame, `comeSailAwayPool.js frame`): each boat whose fittings are not the ones she
+  stands with is fitted again - mine by my Fleet ledger's record, a peer's by her owner's word - and marked by her
+  list's key (`fittingsKey`), so a frame does nothing while nothing changed; her deck is baked only for a boat that has
+  fittings.
+- **The plan of her deck** (`ui/deckPlanWindow.js`, from the Fleet page's Deck through `scenes/deckPlanDoor.js` and the
+  sea's window door): her open deck seen from above - bow up, or laid bow to the right where that draws her larger (a
+  long hull on a wide screen) - each cell by its height (her pool's baked deck, `comeSailAwayPool.js deckOf`), her
+  fittings on it as their models' boxes, each turned as it will stand (a step clockwise from above, her bow toward
+  starboard, as `quatAngleAxis` turns it); the fittings named as the decorator names the same pieces (Crate 1-20,
+  Chest 1-3, in id order); a fitting chosen from the list and set with
+  a click - refused off her deck, too near another or past the most, with why - one clicked taken up, dragged, turned
+  (Q and E) and taken away (Delete); Clear her deck; Fit her out (`scenes/fleetHost.js deck` - her record's `deck`,
+  `systems/fleet.js setShipFittings` through the door, kept in the save); Close leaves her as she was. A ship whose deck
+  is not known yet (never stood in the world this session) says so.
+- **Every player sees them** (`comeSailAwayWire.js` `d`): her fittings as four numbers each beside each boat of the
+  owner's word (the model's place in DECK_FITTINGS, x and z in decimetres, its turn), only while one is fitted; a reader
+  takes each list through the door (`fittingsOfCode`), one it refuses read as none; the peers' boats stand them.
+
 ## THE FOUR HOSTS RULE
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
@@ -391,6 +500,11 @@ CHANGED (`systems/fleet.js`):
   Captain page's door with them. `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) read the same
   runtime's refit seam, so a ship's stars sail below ground too; `exterior.js` (the bench) - FLAGGED: no Fleet, no
   ledger.
+- SHIP-LIVERY, CABIN-LOOK and DECK-PROPS: the Fleet ledger and its page are the world host's (the pool's `liveryOf` and
+  `fittingsOf`, the boats' word and the plan's door are wired there). The paint and the fittings are drawn and stood by
+  the boats' one pool, so `worldModes.js` (interiors - a dungeon's water, and the sailing cabin's room, whose restyle it
+  passes on from the visit) and `dungeonContext.js` (a dungeon's water) show them as the street does; `exterior.js` (the
+  bench) - FLAGGED: no Come Sail Away runtime, no Fleet.
 - RAID-ASHORE's withdraw reads the world host's two pools - the street's and, through `worldModes.js`'s `interiorPool`,
   the sailing cabin's room; `dungeonContext.js` - FLAGGED: no voyage's raid is fought below ground.
 
@@ -429,6 +543,18 @@ CHANGED (`systems/fleet.js`):
   phone's width. The pins it moved: the ledger's new save (`captlog`), the Fleet's three tiers (`fleet`: twelve now), the
   crew's worth (`captcrew`), the Captain page's wiring (`captlog`); the records re-aimed by content in `auditcaptsea`,
   `captcrew`, `csa_sailing`, `holdings`, `navaudit_guns`, `navaudit_helm`, `peaceway`, `ramboard` and `shotkinds`.
+- `test/systems/naval/shiplivery.test.js` (14) on the livery's law and word, the painter, a port ship's pictures repainted,
+  the paint shop, the real pool (mine painted by my ledger, a peer's by her word, a sea ship as built; fittings stood in
+  her tree, drawn and in her colliders), the fitting-out, the fittings' law and word, the ledger and its save, the
+  Fleet's acts and its Paint panel, the plan's door, the cabin's stain and its wiring, the deck plan's window and the
+  paint's picture, and `tools/mutants/shiplivery.json` (132: 130 dead, 2 equivalent as recorded - a zero code's guard,
+  and the painted pictures' list, which no livery of the 224 on any port ship reaches past today); the paint's texture
+  sheets and the deck plan (wide and at a phone's width) also seen in headless Chromium. The pins it moved: the
+  ledger's record (`fleet`: `livery`, `cabin`, `deck`), the
+  sailing cabin's lifted scope (`sailingcabins`: `fleetShip`), the hard-coded strings' map (`l10n4`), the Captain page's
+  wiring (`captlog`, `captaintree`: its model moved out of the world host into `scenes/captainPageHost.js`, HOST-SPLIT);
+  the records re-aimed by content in `auditcaptsea`, `csa_close`, `csa_together`, `livingcrew`, `navaudit_frame`,
+  `perfsails1` and `shipcolours` (all dead).
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

@@ -33,10 +33,19 @@
 // `n` is - a flag's seven numbers for each of `b`'s (systems/naval/shipFlag.js flagCode), 0 for one that flies the mod's
 // pennant - and only while one of them flies a flag. Its reader takes each through the flag's own door (flagOfCode); one
 // it refuses reads as the pennant, never a reason to drop the boats, and an older reader ignores the key.
+//
+// SHIP-LIVERY (2026-10-17, bible/03-World/Naval-Refit.md): A PAINTED BOAT SAYS HER PAINT. `l`, beside `b` as `f` is - a
+// livery's one number for each of `b`'s (systems/naval/shipLivery.js liveryCode), 0 for one as built - and only while
+// one of them is painted. Its reader takes each through the livery's door (liveryOfCode); one it refuses reads as built.
+// DECK-PROPS (2026-10-17): A FITTED BOAT SAYS HER FITTINGS. `d`, beside `b` - each boat's fittings as four numbers each
+// (systems/naval/deckFittings.js fittingsCode), [] for none - only while one of them is fitted; a reader takes each list
+// through the fittings' door (fittingsOfCode), one it refuses read as none.
 import { POSE_BOUND, POSE_Y_BOUND } from '../../net/wire.js';
 import { HULL_NAMES, HULL_VARIANT_COUNTS } from './comeSailAwayBoat.js';
 import { shipNameVerdict, SHIP_NAME_MAX } from '../fleet.js';
 import { flagCode, flagOfCode } from '../naval/shipFlag.js';
+import { liveryCode, liveryOfCode } from '../naval/shipLivery.js';   // SHIP-LIVERY: her paint
+import { fittingsCode, fittingsOfCode } from '../naval/deckFittings.js';   // DECK-PROPS: her fittings
 
 /** The boats one word carries - a player's shore holds few, and a frame's size is the room's. */
 export const CSA_WIRE_BOATS_MAX = 8;
@@ -70,8 +79,8 @@ const int = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
  */
 export function csaWireRecord(view, toWire = (p) => p) {
   if (!Array.isArray(view)) return null;
-  const b = [], m = [], n = [], u = [], f = [];
-  let underWay = false, named = false, flagged = false;
+  const b = [], m = [], n = [], u = [], f = [], l = [], d = [];
+  let underWay = false, named = false, flagged = false, painted = false, fitted = false;
   for (const v of view) {
     if (b.length >= CSA_WIRE_BOATS_MAX) break;
     if (!v || !int(v.hull, 0, HULL_NAMES.length - 1) || !finite3(v.position) || !Array.isArray(v.rotation) || v.rotation.length !== 4) continue;
@@ -95,9 +104,15 @@ export function csaWireRecord(view, toWire = (p) => p) {
     const code = flagCode(v.flag);   // SHIP-COLOURS: her flag, or 0 - her pennant
     f.push(code);
     if (code) flagged = true;
+    const paint = liveryCode(v.livery);   // SHIP-LIVERY: her paint, or 0 - as built
+    l.push(paint);
+    if (paint) painted = true;
+    const fit = fittingsCode(v.fittings);   // DECK-PROPS: her fittings, or none
+    d.push(fit);
+    if (fit.length) fitted = true;
   }
   if (!b.length) return null;
-  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}), ...(flagged ? { f } : {}) };   // HOLDINGS: `n` only while one is named; SHIP-COLOURS: `f` while one flies a flag
+  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}), ...(flagged ? { f } : {}), ...(painted ? { l } : {}), ...(fitted ? { d } : {}) };   // HOLDINGS: `n` only while one is named; SHIP-COLOURS: `f` while one flies a flag; SHIP-LIVERY: `l` while one is painted
 }
 
 /**
@@ -137,6 +152,10 @@ export function validCsaRecord(raw) {
     if (raw.u?.[boats.length]) boat.uid = raw.u[boats.length];
     const flag = Array.isArray(raw.f) && raw.f.length === raw.b.length ? flagOfCode(raw.f[boats.length]) : null;   // SHIP-COLOURS: hers, where she flies one
     if (flag) boat.flag = flag;
+    const paint = Array.isArray(raw.l) && raw.l.length === raw.b.length ? liveryOfCode(raw.l[boats.length]) : null;   // SHIP-LIVERY: hers, where she is painted
+    if (paint) boat.livery = paint;
+    const fits = Array.isArray(raw.d) && raw.d.length === raw.b.length ? fittingsOfCode(raw.d[boats.length]) : [];   // DECK-PROPS: hers, where she is fitted
+    if (fits.length) boat.fittings = fits;
     boats.push(boat);
   }
   // A cabin keeps its owner's fleet on the exterior stream; only the player is below deck.
@@ -156,4 +175,4 @@ function shipNameOf(n, count, i) {
 
 /** A change key, so a frame carries the record only when the word moved (the full frame always does). CSA-K: the way
  *  is in it, so a boat brought up short is said at once (its readers stop leading it). */
-export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n || rec.f ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once; SHIP-COLOURS: and a new flag
+export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n || rec.f || rec.l || rec.d ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null, rec.l ?? null, rec.d ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once; SHIP-COLOURS: and a new flag; SHIP-LIVERY: and a new paint

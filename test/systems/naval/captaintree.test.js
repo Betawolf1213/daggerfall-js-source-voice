@@ -398,5 +398,6 @@ test('CAPTAIN-TREE the Captain page: her level, her XP\'s meter to the next, the
     globalThis.document = saved;
     setHoldingsProvider(null);
   }
-  assert.match(rd('src/scenes/world.js'), /openStars: \(\) => \{ const w = createCaptainStarsOverlay\(\{ ledger: captainLedger, changed: \(\) => \{ fleetHost\.restat\(\); surfacePlayer\(\); \} \}\); if \(w\) townTalk\.showOverlay\(w\); return !!w; \}/);
+  assert.match(rd('src/scenes/world.js'), /show: \(w\) => townTalk\.showOverlay\(w\), changed: \(\) => \{ fleetHost\?\.restat\(\); surfacePlayer\(\); \} \}\);/);
+  assert.match(rd('src/scenes/captainPageHost.js'), /const w = createCaptainStarsOverlay\(\{ ledger: deps\.ledger, changed: deps\.changed \}\);\n\s+if \(w\) deps\.show\(w\);/);
 });

@@ -19,6 +19,7 @@ import { CREW_ROLES, veteranOf, postsOf, postWords } from '../systems/naval/ship
 import { HERALDRY_COLOURS, HERALDRY_DEVICES, HERALDRY_DIVISIONS, HERALDRY_DIVISION_NAMES, heraldryDeviceName, heraldryOf } from '../net/heraldryLaw.js';   // SHIP-COLOURS
 import { FLAG_SHAPES, FLAG_DEFAULT, fitFlag, flownFlag } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: her flag's law
 import { flagSvg } from './flagArt.js';   // SHIP-COLOURS: and its picture
+import { PAINTS, LIVERY_PARTS, liveryOf } from '../systems/naval/shipLivery.js';   // SHIP-LIVERY: her paint's law
 import { t } from '../systems/textManager.js';   // SHIP-COLOURS: the designer's words in the player's language
 
 export const FLEET_PAGE_SECTIONS = Object.freeze([Object.freeze(['fleet', 'Fleet'])]);
@@ -33,6 +34,7 @@ let _said = null;   // { uid, ok, text } - the last act's word, under its card
 let _open = null;   // { uid, panel: 'refit'|'rename'|'crew' } - the one panel open
 let _draft = '';
 let _flag = null;   // SHIP-COLOURS: the colours panel's design, while it is open
+let _paint = null;   // SHIP-LIVERY: the paint panel's livery, while it is open
 
 /** Where she is, as a chip's word and a line. Pure. */
 /** QUAYS: a port's quay in words - "Wayrest's quay", or "a quay" for one with no name. */
@@ -254,6 +256,91 @@ function coloursPanel(el, s, rerender, act, arms) {
   return box;
 }
 
+// ── SHIP-LIVERY: THE PAINT PANEL ────────────────────────────────────────────────────────────────────────────────────
+/** Each paint's name. */
+const PAINT_WORDS = Object.freeze({
+  oxblood: () => t('naval.paint.c.oxblood', 'Oxblood'), crimson: () => t('naval.paint.c.crimson', 'Crimson'), black: () => t('naval.paint.c.black', 'Tar black'),
+  navy: () => t('naval.paint.c.navy', 'Navy'), bay: () => t('naval.paint.c.bay', 'Bay blue'), teal: () => t('naval.paint.c.teal', 'Teal'),
+  sea: () => t('naval.paint.c.sea', 'Sea green'), forest: () => t('naval.paint.c.forest', 'Forest green'), ochre: () => t('naval.paint.c.ochre', 'Ochre'),
+  gold: () => t('naval.paint.c.gold', 'Gold leaf'), white: () => t('naval.paint.c.white', 'White lead'), grey: () => t('naval.paint.c.grey', 'Slate grey'),
+  purple: () => t('naval.paint.c.purple', 'Tyrian purple'), tan: () => t('naval.paint.c.tan', 'Tan'),
+});
+/** Each part's word. */
+const PART_WORDS = Object.freeze({
+  strake: () => t('naval.paint.p.strake', 'Hull strakes'), accent: () => t('naval.paint.p.accent', 'Trim and gilding'),
+  sail: () => t('naval.paint.p.sail', 'Sails'), stain: () => t('naval.paint.p.stain', 'Wood stain'),
+});
+export const paintName = (i) => (i ? PAINT_WORDS[PAINTS[i]?.id]?.() ?? '' : t('naval.paint.asBuilt', 'As built'));
+const hexOf = (rgb) => `#${rgb.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
+/** Her colours as built, for the picture: each hull's strake and trim (world/ships/*Art.js), the fleet's canvas and oak. */
+const BUILT = Object.freeze({ 1: [[58, 92, 70], [176, 128, 48]], 2: [[118, 34, 27], [196, 152, 62]], 4: [[46, 66, 94], [176, 128, 48]] });
+/**
+ * SHIP-LIVERY: her paint as a picture - a hull in profile, her strake and her trim, a mast and her sail, in the colours
+ * her livery gives each (her own as built where it gives none; a stained hull's wood stained). Pure SVG.
+ */
+export function paintSvg(hull, livery, { width = 150 } = {}) {
+  const l = liveryOf(livery, hull) ?? { strake: 0, accent: 0, sail: 0, stain: 0 };
+  const rgbOf = (i, built) => PAINTS[i]?.rgb ?? built;
+  const oak = [104, 72, 44], stainOf = PAINTS[l.stain]?.rgb;
+  const wood = stainOf ? oak.map((v, k) => Math.round(v * 0.38 + stainOf[k] * 0.62 * 0.9)) : oak;
+  const built = BUILT[hull];
+  const strake = built ? rgbOf(l.strake, built[0]) : wood, trim = built ? rgbOf(l.accent, built[1]) : [196, 152, 62];
+  const sail = rgbOf(l.sail, [214, 205, 180]), sails = hull !== 0;
+  const h = Math.round(width * 2 / 3);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100" width="${width}" height="${h}" role="img">`
+    + `<rect x="0" y="78" width="150" height="22" fill="#2b4a5c"/>`
+    + (sails ? `<rect x="73" y="10" width="4" height="62" fill="#5c3f26"/><path d="M78 14 L118 20 L114 62 L78 64 Z" fill="${hexOf(sail)}" stroke="#3a2a1a" stroke-width="1"/>` : '')
+    + `<path d="M12 60 L138 60 L124 84 L28 84 Z" fill="${hexOf(wood)}" stroke="#2a1a10" stroke-width="1.2"/>`
+    + `<path d="M15 62 L135 62 L131 70 L19 70 Z" fill="${hexOf(strake)}"/>`
+    + (built ? `<rect x="17" y="60" width="118" height="2" fill="${hexOf(trim)}"/><rect x="20" y="70" width="111" height="1.5" fill="${hexOf(trim)}"/>` : '')
+    + `</svg>`;
+}
+/** A row of the paints (and As built), the one chosen ringed and named - the colours panel's selector. */
+function paintSwatches(el, word, current, choose) {
+  const row = el('div', 'hld-pick');
+  row.append(el('span', 'hld-picklabel', word));
+  const set = el('div', 'hld-swatches');
+  set.setAttribute('role', 'radiogroup');
+  set.setAttribute('aria-label', word);
+  for (let i = 0; i < PAINTS.length; i++) {
+    const b = el('button', `hld-swatch${i === current ? ' on' : ''}${i === 0 ? ' hld-swatch-none' : ''}`);
+    b.setAttribute('role', 'radio');
+    b.setAttribute('aria-checked', i === current ? 'true' : 'false');
+    b.setAttribute('aria-label', paintName(i));
+    b.title = paintName(i);
+    if (i && b.style) b.style.setProperty?.('--sw', hexOf(PAINTS[i].rgb));
+    b.onclick = () => choose(i);
+    set.append(b);
+  }
+  row.append(set, el('span', 'hld-pickname', paintName(current)));
+  return row;
+}
+/** HER PAINT: her picture in the paint chosen, a row of paints for each part her hull takes, and Paint her, Strip her
+ *  paint (back as built) or Close. Every player who sights her sees it. */
+function paintPanel(el, s, rerender, act) {
+  const box = el('div', 'hld-text hld-colours');
+  const d = { strake: 0, accent: 0, sail: 0, stain: 0, ...(s.livery ?? {}), cabin: s.cabin ?? 0, ...(_paint ?? {}) };
+  const set = (k, v) => { _paint = { ...d, [k]: v }; rerender(); };
+  const pic = el('div', 'hld-flag');
+  pic.setAttribute('aria-label', t('naval.paint.preview', 'Her paint, as she will wear it'));
+  pic.innerHTML = paintSvg(s.hull, d, { width: 150 });
+  box.append(pic);
+  for (const part of s.paints ?? []) box.append(paintSwatches(el, PART_WORDS[part](), d[part] ?? 0, (v) => set(part, v)));
+  // CABIN-LOOK: her cabin's wood, below decks - made at her next visit there
+  if (s.cabin != null) {
+    box.append(paintSwatches(el, t('naval.paint.p.cabin', 'Cabin wood'), d.cabin, (v) => set('cabin', v)));
+    box.append(el('span', 'hld-sub', t('naval.paint.cabinNote', 'Her cabin is stained the next time you go below.')));
+  }
+  box.append(el('span', 'hld-sub', t('naval.paint.note', 'The shipwright paints her wherever she lies, for nothing - every player who sights her sees it.')));
+  const acts = el('div', 'hld-acts');
+  const chosen = { ...Object.fromEntries(LIVERY_PARTS.map((p) => [p, d[p] ?? 0])), cabin: d.cabin ?? 0 };
+  acts.append(button(el, t('naval.paint.apply', 'Paint her'), null, () => { _open = null; _paint = null; act('livery', chosen); }, 'act primary'));
+  if (s.livery || s.cabin) acts.append(button(el, t('naval.paint.strip', 'Strip her paint'), null, () => { _open = null; _paint = null; act('livery', null); }));
+  acts.append(button(el, t('naval.flag.close', 'Close'), null, () => { _open = null; _paint = null; rerender(); }));
+  box.append(acts);
+  return box;
+}
+
 function shipCard(el, s, { rerender, meter, door, arms = null }) {
   const item = el('div', 'hld-row');
   item.append(holdingArt(el, s.where === 'packed' ? PARTS_ART : DEED_ART, '⚓', rerender));
@@ -293,8 +380,11 @@ function shipCard(el, s, { rerender, meter, door, arms = null }) {
   if (s.crewed && s.where !== 'packed') acts.append(button(el, _open?.uid === s.uid && _open.panel === 'crew' ? 'Close crew' : 'Crew', null, () => { _open = _open?.uid === s.uid && _open.panel === 'crew' ? null : { uid: s.uid, panel: 'crew' }; rerender(); }));
   // SHIP-COLOURS: her flag - every hull with a masthead
   if (s.flag) acts.append(button(el, t('naval.flag.open', 'Colours'), null, () => { const open = _open?.uid === s.uid && _open.panel === 'colours'; _open = open ? null : { uid: s.uid, panel: 'colours' }; _flag = open ? null : s.colours ?? null; _said = null; rerender(); }));
+  // SHIP-LIVERY: her paint - every hull that takes one
+  acts.append(button(el, s.fittings ? t('naval.deck.openN', 'Deck ({n})', { n: s.fittings }) : t('naval.deck.open', 'Deck'), null, () => act('deckPlan')));   // DECK-PROPS: the plan of her deck, her fittings on it
+  if (s.paints?.length || s.cabin != null) acts.append(button(el, t('naval.paint.open', 'Paint'), null, () => { const open = _open?.uid === s.uid && _open.panel === 'paint'; _open = open ? null : { uid: s.uid, panel: 'paint' }; _paint = null; _said = null; rerender(); }));
   text.append(acts);
-  if (_open?.uid === s.uid) text.append(_open.panel === 'refit' ? refitPanel(el, s, rerender, act) : _open.panel === 'crew' ? crewPanel(el, s, act) : _open.panel === 'colours' ? coloursPanel(el, s, rerender, act, arms) : renamePanel(el, s, rerender, act));
+  if (_open?.uid === s.uid) text.append(_open.panel === 'refit' ? refitPanel(el, s, rerender, act) : _open.panel === 'crew' ? crewPanel(el, s, act) : _open.panel === 'colours' ? coloursPanel(el, s, rerender, act, arms) : _open.panel === 'paint' ? paintPanel(el, s, rerender, act) : renamePanel(el, s, rerender, act));
   item.append(text);
   return item;
 }

@@ -1928,8 +1928,8 @@
   {
     "name": "ACS-L15-page",
     "file": "src/scenes/world.js",
-    "old": "captain: fleetHost ? { model: () => captainModel(), openStars:",
-    "new": "captain: fleetHost && csaOn() ? { model: () => captainModel(), openStars:",
+    "old": "captain: fleetHost ? { model: () => captainPage.model(),",
+    "new": "captain: fleetHost && csaOn() ? { model: () => captainPage.model(),",
     "tests": [
       "test/systems/naval/auditcaptsea.test.js",
       "test/systems/naval/captlog.test.js"
@@ -2998,7 +2998,7 @@
   {
     "name": "ACS-V8-the-chart-pops-a-page",
     "file": "src/ui/naval/navalPlunderDoor.js",
-    "old": "  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS) noteFirstUse(slot === PLUNDER",
+    "old": "  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS && slot !== DECK_PLAN) noteFirstUse(slot === PLUNDER",
     "new": "  noteFirstUse(slot === PLUNDER",
     "tests": [
       "test/systems/shipyards1_found.test.js"

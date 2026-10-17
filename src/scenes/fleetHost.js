@@ -18,15 +18,19 @@
 //     guildArms() -> the player's guild's heraldry, or null   SHIP-COLOURS: "fly my guild's arms"
 //     captain() -> the captain's ledger (systems/naval/captainLedger.js) | null   CAPTAIN-TREE / REFIT-ORES: her captain's
 //                  level (the metal tiers' gate) and stars (her refits as the sea reads them)
+//     openDeck(uid) -> bool   DECK-PROPS: the plan of her deck, her fittings set on it (scenes/deckPlanDoor.js)
 //   }
 
 import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
   shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
-  REFIT_NUMERALS, meltCount, materialsFor, refitShare,
+  REFIT_NUMERALS, meltCount, materialsFor, refitShare, setShipLivery, setShipCabin, setShipFittings,
 } from '../systems/fleet.js';
 import { captainRefit } from '../systems/naval/captainTree.js';   // CAPTAIN-TREE: her captain's stars over her refits
 import { flagSizeOf } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: the hulls that fly a flag
+import { liveryPartsOf, isPaint } from '../systems/naval/shipLivery.js';   // SHIP-LIVERY: the paints a hull takes
+import { cabinShipType } from '../systems/sailingCabin.js';   // CABIN-LOOK: the hulls with a cabin below
+import { SHIP_TYPES } from '../systems/banking.js';
 import { HULL_NAMES, HULL_PRICES } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { mintDeed } from '../systems/comeSailAway/comeSailAwayItems.js';
 import { TERRAIN_EDGE } from '../systems/comeSailAway/comeSailAway.js';
@@ -178,6 +182,9 @@ export function createFleetHost(deps) {
         hands: CREWED_HULLS.includes(rec.hull) && at.boat ? handsOf(at.boat) : [],
         hold: holdsCargo(rec.hull),   // CARGO-ANYWHERE: her Hold button - every hull but the Rowboat's
         flag: !!flagSizeOf(rec.hull), colours: rec.colours ?? null,   // SHIP-COLOURS: whether she flies a flag, and the one she flies
+        paints: liveryPartsOf(rec.hull), livery: rec.livery ?? null,   // SHIP-LIVERY: the parts her paint takes, and her paint
+        cabin: cabinShipType(rec.hull) !== SHIP_TYPES.None ? rec.cabin ?? 0 : null,   // CABIN-LOOK: her cabin's stain (null: she has no cabin)
+        fittings: rec.deck?.length ?? 0,   // DECK-PROPS: how many fittings stand on her deck
         can: { summon: why.summon, away: why.away, repair: why.repair, yard: why.yard, refit: why.refit },
       });
     }
@@ -235,6 +242,27 @@ export function createFleetHost(deps) {
       if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'Those colours cannot be flown.'));
       deps.changed?.();
       return said(true, arg ? t('naval.flag.hoisted', 'Her new colours are hoisted.') : t('naval.flag.struck', 'Her flag is struck - she flies her pennant.'));
+    }
+    if (verb === 'livery') {
+      // SHIP-LIVERY: her paint (systems/naval/shipLivery.js's), or as built (null) - wherever she lies; her word said again
+      if (!liveryPartsOf(rec.hull).length) return said(false, t('naval.paint.none', 'She takes no paint.'));
+      // CABIN-LOOK: and her cabin's stain with it, where she has a cabin (made at her next visit below) - both read before
+      // either is set, so a paint refused leaves her as she was
+      const below = cabinShipType(rec.hull) !== SHIP_TYPES.None, cabin = arg?.cabin ?? 0;
+      if ((below && !isPaint(cabin)) || !setShipLivery(uid, arg ?? null)) return said(false, t('naval.paint.bad', 'The shipwright has no such paint.'));
+      if (below) setShipCabin(uid, cabin);
+      deps.changed?.();
+      return said(true, rec.livery || rec.cabin ? t('naval.paint.done', 'She is painted - every ship that sights her sees it.') : t('naval.paint.bare', 'Her paint is stripped - she is as she was built.'));
+    }
+    if (verb === 'deck') {
+      // DECK-PROPS: her fittings set (systems/naval/deckFittings.js's door) - wherever she lies; her word said again
+      if (!setShipFittings(uid, arg ?? [])) return said(false, t('naval.deck.bad', 'Those fittings cannot stand on her.'));   // none clears her deck; a thing that is no list is refused
+      deps.changed?.();
+      return said(true, rec.deck.length ? t('naval.deck.set', 'Her deck is fitted out: {n, plural, one {# fitting} other {# fittings}}.', { n: rec.deck.length }) : t('naval.deck.clear', 'Her deck is cleared.'));
+    }
+    if (verb === 'deckPlan') {
+      if (!deps.openDeck) return said(false, t('naval.hold.noSea', 'Come Sail Away is not running.'));
+      return said(true, t('naval.deck.opened', 'The plan of her deck is opened.'), () => !!deps.openDeck(uid));
     }
     if (verb === 'role') {
       // HOLDINGS: a hand of hers given a post (shipCrew.js assign) - wherever she lies; her First Mate answers for her

@@ -59,6 +59,13 @@ const CAPTAIN_STARS = {
   load: () => import('../captainTreeWindow.js'),
   mount: ({ mountCaptainTreeWindow }, host, deps) => mountCaptainTreeWindow(host, deps),
 };
+/** DECK-PROPS (2026-10-17): the plan of her deck (ui/deckPlanWindow.js) - the Fleet page's Deck, the same shape. */
+/** @type {NavalWindowSlot} */
+const DECK_PLAN = {
+  id: 'deck-plan-host', label: 'deck-plan', open: null,
+  load: () => import('../deckPlanWindow.js'),
+  mount: ({ mountDeckPlanWindow }, host, deps) => mountDeckPlanWindow(host, deps),
+};
 /** @param {NavalWindowSlot} slot */
 const isOpen = (slot) => !!slot.open && !slot.open.done;
 /** @param {NavalWindowSlot} slot */
@@ -77,7 +84,7 @@ function shut(slot) {
 function openNavalWindow(slot, deps) {
   // ETHER-CHART (AUDIT CAPTAIN'S SEA, at the merge of SHIPYARDS): the chart of the Eltheric Ocean is neither a sea fight's
   // window nor a yard's, and pops no page - the branch's arm read it as the sea fight's, main's as the yard's
-  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS) noteFirstUse(slot === PLUNDER ? 'naval-combat' : 'shipyard');   // CAPTAIN-TREE: the captain's sky pops none either   // TUT1: a beaten ship's hold, or the shipwright's yard and a port's shipyard (SHIPYARDS) - one page
+  if (slot !== ETHER_CHART && slot !== CAPTAIN_STARS && slot !== DECK_PLAN) noteFirstUse(slot === PLUNDER ? 'naval-combat' : 'shipyard');   // CAPTAIN-TREE: the captain's sky pops none either, DECK-PROPS her deck's plan none   // TUT1: a beaten ship's hold, or the shipwright's yard and a port's shipyard (SHIPYARDS) - one page
   if (typeof document === 'undefined') return null;
   slot.open?.dispose();
   let fired = false;
@@ -165,3 +172,11 @@ export const closeCaptainStars = () => shut(CAPTAIN_STARS);
 /** CAPTAIN-TREE: the captain's stars (ui/captainTreeWindow.js), as an overlay for the host's slot; `deps` as that window's
  *  (`ledger`, `changed`), plus `onClose(reason)`. */
 export const createCaptainStarsOverlay = (deps) => openNavalWindow(CAPTAIN_STARS, deps);
+
+/** DECK-PROPS: is the plan of her deck up. */
+export const deckPlanOpen = () => isOpen(DECK_PLAN);
+/** DECK-PROPS: shut it, if it is up - and say whether it was. */
+export const closeDeckPlan = () => shut(DECK_PLAN);
+/** DECK-PROPS: the plan of her deck (ui/deckPlanWindow.js), as an overlay for the host's slot; `deps` as that window's,
+ *  plus `onClose(reason)`. */
+export const createDeckPlanOverlay = (deps) => openNavalWindow(DECK_PLAN, deps);
