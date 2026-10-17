@@ -844,6 +844,7 @@ import { enhancedHudScale, setHudSetChips, enhancedHudBottom, enhancedHudQuick }
 import { makeHitPend } from '../net/hitPend.js';   // AUDIT FOES FOE2: a blow the wire refused waits and goes
 import { PeerBodies, peerIsWolf, BODY_BUILD_GATE, playerBuildOpts } from '../net/peer/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf; MW-HEADS2: a player's build
 import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs and their lines
+import { createChatSafetyHost } from './chatSafetyHost.js';   // SAFE1-SAFE7: blocks, reports, the relay's word on my chat, the code of conduct
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
 import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-LANG: /lang's list and refusal
@@ -20269,6 +20270,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _walkStopWhy = null;   // AUDIT OW4 P4: why Travel Options last stopped my journey (its update's `stopped`), until the walk's step reads it
   let bountyHost = null;   // BOUNTY1: made below, beside the party's marks; read late by the maps, the pose and the boards
   let social = null, _partyComposedAt = -Infinity, _partyPose = null;   // PARTY8-B: the last pose composed, for the party HUD's own "where am I"
+  const chatSafety = createChatSafetyHost({ log: () => chatLog, links: () => [...(chatLinks?.values?.() ?? []), online].filter(Boolean), social: () => social });   // SAFE1-SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md)
   /** CONCEAL-MATE: a peer in my party - the test player/socialPick.js openPeers is handed, so a concealed mate stays
    *  open to the F key, the Nearby list, a page and a gift. A declaration: the street's pick reads it from above. */
   function isPartyMate(id) { return !!social?.party && social.isPartyPeer(id); }
@@ -20632,6 +20634,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     renownXpAdopt(who?.xp);   // RENOWN4: the total, before the level - so no frame draws the new level over the old total
     who = { ...who, level: renownAdopt(who?.level) };   // RENOWN1: the highest level this page has known, never a stale token's lower one
     _staffGlyphs = Array.isArray(who?.glyphs) ? who.glyphs : [];   // STAFF1: the service's own word on my glyphs, each issue
+    chatSafety.adopt(who);   // SAFE7: and on whether I have agreed to the code of conduct
     if (!isStaffT(_staffGlyphs)) setStaffPowers({ god: false, fly: false });   // ...and a title taken away takes its switches with it
     // GLYPH-WEAR: my own name wears what the room is shown - less the glyphs I took off - while the staff rights above
     // read every glyph that is true (hiding one is paint alone)
@@ -21533,6 +21536,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // ONE notice, not one each.
     online.onRelay = onRelayVersion;
     online.onGuildGone = guildGone;   // GUILD1c
+    void chatSafety.start();   // SAFE1-SAFE7: the log hears through my block list; every room's word on my own chat
     noteFirstUse('online');   // TUT1: the first time this device plays online
     chatPanel = createChatPanel({
       log: chatLog,
@@ -21696,6 +21700,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
             .then(say, () => say(accountRefusalText('server')));
           return true;
         }
+        { const safe = chatSafety.onSend(tabId, text); if (safe != null) return safe; }   // SAFE1-SAFE7: /block, /report, /ban and the rest; the code of conduct before a first line
         // PARTY-REST2 (2026-09-20, per-request: "a party member confirmation
         // like 4/5 party member agree to rest... if not all party members
         // are ready the leader can't rest"): `/ready` toggles this tab's own
@@ -21816,6 +21821,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // wears the friend colour, which is the list's own mark carried into the conversation
       nameColor: (id) => social?.cssColorOf(id) ?? null,   // SOC7 integration: the picture answers (net/social.js cssColorOf - party green, friend blue, a stranger none); the host names no colour, which SOC4's pin holds it to
       rowActions: (peerId) => socialRowActions(peerId),
+      lineActions: (line) => chatSafety.lineActions(line),   // SAFE1 + SAFE3: a line's own Report and Block
       badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,
       // CHAT-TRADE (Mac: "There must be a better way to handle the new channels instead of a text command"): the + beside
       // the tabs - the channels joined by choice, each with its mark; a click is optSet, /join's own door
@@ -21836,6 +21842,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return;
     }
     social = new SocialState({ acct: [storedSession(appStorage())?.id, link.acct].filter(Boolean) });   // FRIENDS-SYNC: the hub keys the picture by the signed-in player (the token's subject), the profile id before it
+    chatSafety.adoptSocial();   // SAFE1: and a blocked account's requests and invites never land
     link.onSocial = (f) => { social.apply(f); };
     link.onParty = (acct, p) => {
       social.applyParty(acct, p);

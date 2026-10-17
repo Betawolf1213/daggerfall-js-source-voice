@@ -42,6 +42,7 @@ import { HANDLE_RE } from './handleShape.js';
 import { AURAS } from './identityToken.js';   // WB9g: the auras that exist - a stored one is one of them, or none
 import { NAME_MAX } from './wire.js';   // NAME-AS: the wire's bound on a name, in the sentence that says a character's is past it
 import { LETTER_SUBJECT_MAX, LETTER_BODY_MAX, LETTER_LINES_MAX, LETTERS_SENT_MAX, LETTERS_PAIR_MAX } from './letterLaw.js';   // MAIL1: the letter's bounds, in the refusals' own sentences
+import { banRangeText } from './safety/safetyLaw.js';   // SAFE4: a ban's bound in its refusal's sentence, from its home
 import { muteRangeText } from './moderation.js';   // AUDIT 68 S14-mute-range-text-duplicated: the mute's bound in the refusal's sentence, from its home (L10N4: its reader)
 import { HOME_CAP, RENT_ROOMS_MAX, RENT_HELD_MAX, RENT_DAYS_MAX } from './homeLaw.js';   // HOME1: the cap a refusal names; HOME-RENT: and the rooms'
 import { DECOR_CAP, DECOR_YARD_CAP, DECOR_YARD_HIGH_WHY } from './decorLaw.js';   // DECOR1: the cap its refusal names; HOME-YARD: a yard's
@@ -768,6 +769,19 @@ const REFUSAL_WORDS = {
   'firm-respec-empty': () => t('account.refusal.firmRespecEmpty', 'Nothing is learned yet.'),
   'repair-no-faction': () => t('account.refusal.repairNoFaction', 'That character\'s record holds no such faction, so nothing was repaired.'),   // SUMMON-REPAIR: the review's repair (tools/realmReview.mjs)
   'repair-not-set': () => t('account.refusal.repairNotSet', 'That faction does not carry that flag on this character, so nothing was repaired - is it the right character?'),   // SUMMON-REPAIR: a repair aimed at the wrong character mends nothing
+  // SAFE1-SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md): the chat's safety - a block, a report, the code of conduct, a ban
+  'block-self': () => t('account.refusal.blockSelf', 'You cannot block yourself.'),
+  'blocks-full': () => t('account.refusal.blocksFull', 'Your block list is full. Unblock someone first.'),
+  'conduct-stale': () => t('account.refusal.conductStale', 'The Code of Conduct has changed. Read it again.'),
+  'report-self': () => t('account.refusal.reportSelf', 'You cannot report yourself.'),
+  'report-closed': () => t('account.refusal.reportClosed', 'Reports are not open on this server yet.'),
+  'report-unwitnessed': () => t('account.refusal.reportUnwitnessed', 'Those lines could not be checked against what the server relayed, so nothing was sent.'),
+  'report-shape': () => t('account.refusal.reportShape', 'That report could not be read.'),
+  'report-reason': () => t('account.refusal.reportReason', 'Choose why you are reporting them.'),
+  'report-stale': () => t('account.refusal.reportStale', 'Those lines are too old to report.'),
+  'report-no-line': () => t('account.refusal.reportNoLine', 'Nothing they said here can be reported - only lines the server relayed while you were online.'),
+  'bad-days': banRangeText,
+  banned: () => t('account.refusal.banned', 'This account is banned.'),
 };
 export const REFUSALS = /** @type {Readonly<Record<string, string>>} */ (localizedTable(REFUSAL_WORDS));
 
@@ -1078,6 +1092,22 @@ export const beatPlay = (io) => call(io, '/v1/account/played', {});
  *  the mute lands now rather than on the target's next reconnect.
  *  `{ ok, target, name, until, order }`. */
 export const muteAccount = (io, target, minutes) => call(io, '/v1/mod/mute', { target, minutes });
+
+/** SAFE1 (bible/11-Multiplayer/Chat-Safety-Arc.md): MY BLOCK LIST - `{ ok, blocks: [{ sub, name, at }] }`, and the same
+ *  answered by a block or an unblock. */
+export const safetyBlocks = (io) => call(io, '/v1/safety/blocks', {});
+export const safetyBlock = (io, target) => call(io, '/v1/safety/block', { target });
+export const safetyUnblock = (io, target) => call(io, '/v1/safety/unblock', { target });
+/** SAFE3: A REPORT - the account, a reason, a note and the stamped lines as heard (net/chat.js reportLines).
+ *  `{ ok, case, repeat?, muted?, order? }` - an `order` the caller carries to every room it holds (MOD1's carrier). */
+export const safetyReport = (io, { target, reason, note = '', lines }) => call(io, '/v1/safety/report', { target, reason, note, lines });
+/** SAFE7: THE CODE OF CONDUCT AGREED - the version the player read. `{ ok, conduct }`. */
+export const safetyConduct = (io, v) => call(io, '/v1/safety/conduct', { v });
+/** SAFE4: A MODERATOR'S BAN (`days` 0 for good), UNBAN AND LOOK - by `{ target }` (an account) or `{ name }`. A ban's and
+ *  an unban's answer carries an `order` to carry to every room, as a mute's does. */
+export const modBan = (io, who, days) => call(io, '/v1/mod/ban', { ...who, days });
+export const modUnban = (io, who) => call(io, '/v1/mod/unban', { ...who });
+export const modStrikes = (io, who) => call(io, '/v1/mod/strikes', { ...who });
 
 /** ACC1d: A SIGNED WORD THE RELAY CAN CHECK, for one connection.
  *  `{ token, name, kind, expiresAt }`. The service signs the name it

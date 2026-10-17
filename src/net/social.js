@@ -119,6 +119,9 @@ export class SocialState {
     this.onChange = null;
     /** The last refusal, for a panel that shows it beside the button; null once anything else happens. */
     this.lastError = null;
+    /** SAFE1 (bible/11-Multiplayer/Chat-Safety-Arc.md): whether the player hears an account - (acct) => boolean, the host's
+     *  from the block list; null hears everyone. A blocked account's friend request, party invite and notes never land. */
+    this.hears = null;
     this._now = now;
     this._offset = 0;
   }
@@ -139,9 +142,9 @@ export class SocialState {
         const got = this.now();
         this.acct = f.acct; this.name = f.name; this.peers = Array.isArray(f.peers) ? f.peers.slice() : [];   // a frame from before AUDIT SOC names none
         this.friends = new Map(f.friends.map((r) => [r.acct, r]));
-        this.in = f.in.slice(); this.out = f.out.slice();
+        this.in = f.in.filter((r) => this._hears(r.acct)); this.out = f.out.slice();   // SAFE1: a blocked account's request is not shown
         this.party = f.party;
-        this.invites = new Map(f.invites.slice(0, PENDING_MAX).map((i) => [i.party, { ...i, got }]));
+        this.invites = new Map(f.invites.filter((i) => this._hears(i.from?.acct)).slice(0, PENDING_MAX).map((i) => [i.party, { ...i, got }]));   // SAFE1: nor its invite
         this.lastError = null;
         this._changed('state');
         return 'state';
@@ -176,6 +179,7 @@ export class SocialState {
       case 'invite': {
         const { t, k, ...invite } = f;
         if (this.party && this.party.id === invite.party) return null;   // an invite to the party I sit in is nothing
+        if (!this._hears(invite.from?.acct)) return null;   // SAFE1: nor one from an account I blocked - its sender is never told
         // AUDIT SOC B1/B2: the door bounds a STATE frame's invites at PENDING_MAX; this arm is one invite at a time, so it
         // is bounded here - the oldest goes when the map is full - and every invite is stamped on ARRIVAL (`got`), on
         // this clock, because `at` and `expires` are the relay's word and a relay that stamps the future hands out an
@@ -197,6 +201,7 @@ export class SocialState {
         let swept = false;
         if (f.code === 'party.lapsed') for (const [id, inv] of [...this.invites]) if (inv.from.acct === f.acct) { this.invites.delete(id); swept = true; }
         if (swept) this._changed('note');   // AUDIT SOC B16: a note that changed nothing repaints nothing - the chat line is the whole of it
+        if (!this._hears(f.acct)) return 'note';   // SAFE1: a blocked account's notes are no line of mine
         this.onNote?.(note, noteText(note, this.acct));
         return 'note';
       }
@@ -209,6 +214,9 @@ export class SocialState {
       default: return null;
     }
   }
+
+  /** SAFE1: whether an account is heard (the host's block list) - an account named by nobody always is. */
+  _hears(acct) { return typeof acct !== 'string' || !acct || !this.hears || this.hears(acct); }
 
   /** A party member's pose in (net/online.js onParty) - onto the seat, if the account holds one. */
   applyParty(acct, p) {

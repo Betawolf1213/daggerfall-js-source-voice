@@ -106,6 +106,18 @@ SERPENT_DISCORD_ROLE = ""
 # role (GATE_DISCORD_ROLE); name one here to give the Abyss Dungeon
 # its own.
 SD_DISCORD_ROLE = ""
+# ═══ SAFE5: THE REVIEWER'S FEED ═════════════════════════════════════
+#
+# Where the public channels' lines are posted for the account service's
+# reviewer to read (src/net/safety/chatFeed.js; bible/11-Multiplayer/
+# Chat-Safety-Arc.md section 6) - World, Region, a language, Trade and
+# LFG, never a party's, a guild's or a place's talk. Each batch is
+# signed with GATE_SIGNING_KEY, the key the receipts are signed with, so
+# nobody but the relay can feed it. Never awaited by a line, never
+# retried: a batch the service does not take is dropped. EMPTY IS A
+# LEGAL STATE: nothing is kept and nothing is posted. The service drops
+# what it is fed while its reviewer is off (MOD_AI, or no key).
+MOD_FEED_URL = "https://daggerfall-accounts.mackcothran.workers.dev/v1/mod/feed"
 # ═══ INT11-INT14: THE LINE THE BOSS FIGHTS' COUNT RUNS BY ════════════
 #
 # The relay counts each fighter's body in a gate, an Abyss Dungeon and

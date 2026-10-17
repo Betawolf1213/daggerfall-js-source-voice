@@ -479,6 +479,9 @@ ${Object.entries(CHANNEL_COLOURS).map(([ch, c]) => `.dfchat[data-colours="on"] .
    grow the name. */
 .dfchat-who-row.dfchat-act { cursor: pointer; }
 .dfchat-rowmenu { display: flex; flex-direction: column; gap: 2px; padding: 3px 0 4px; }
+/* SAFE1 + SAFE3: a spoken line's own menu - Report and Block - under the line whose speaker's name was pressed */
+.dfchat-name.dfchat-act { cursor: pointer; }
+.dfchat-rowmenu.dfchat-linemenu { flex-direction: row; flex-wrap: wrap; padding: 3px 0 2px; }
 .dfchat-rowbtn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; background: var(--iron, #2b323b); color: var(--bone, #e9e4d9); border: 0; border-radius: 3px; font: inherit;
   font-size: 11px; text-align: left; padding: 3px 6px; cursor: pointer; }
 /* THE LABEL AND ITS REASON WRAP (tools/font1Probe.mjs's touch spill, older than the community arc): a row button is one
@@ -561,7 +564,7 @@ export function isOpenKey(e, { canOpen = () => true, overlay = overlayOpen, acti
  * key - and when it does handle one it calls stopImmediatePropagation,
  * so neither a sibling surface nor the host's pause door sees it.
  */
-export function createChatPanel({ log, onSend, roster = null, canOpen = () => true, onOpen = null, onClose = null, above = () => false, action = actionOfKey, overlay = overlayOpen, doc = document, win = globalThis, touch = isTouchDevice(), social = null, nameColor = null, rowActions = null, badgeOf = null, channels = null } = {}) {
+export function createChatPanel({ log, onSend, roster = null, canOpen = () => true, onOpen = null, onClose = null, above = () => false, action = actionOfKey, overlay = overlayOpen, doc = document, win = globalThis, touch = isTouchDevice(), social = null, nameColor = null, rowActions = null, badgeOf = null, channels = null, lineActions = null } = {}) {
   injectChatStyle(doc);
   const el = (tag, cls, text) => { const n = doc.createElement(tag); n.className = cls; if (text != null) n.textContent = text; return n; };
   const root = el('div', `dfchat${touch ? ' touch' : ''}`);
@@ -915,6 +918,32 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     if (at < text.length) out.push(plain(text.slice(at)));
     return out;
   };
+  /** SAFE1 + SAFE3 (bible/11-Multiplayer/Chat-Safety-Arc.md): A SPOKEN LINE'S OWN MENU - the host's `lineActions(line)`
+   *  (Report, with its reasons; Block or Unblock), opened by pressing the speaker's name under the line and closed by
+   *  pressing it again, by a choice, or by opening another line's. Never on my own line, nor on one nobody spoke. */
+  let lineMenu = null;
+  const armLineMenu = (n, nameEl, line) => {
+    nameEl.className += ' dfchat-act';
+    nameEl.addEventListener('click', (e) => {
+      e.stopPropagation?.();
+      const was = lineMenu;
+      lineMenu?.menu.remove?.();
+      lineMenu = null;
+      if (was?.line === n) return;
+      const acts = lineActions(line) ?? [];
+      if (!acts.length) return;
+      const menu = el('div', 'dfchat-rowmenu dfchat-linemenu');
+      for (const a of acts) {
+        const b = el('button', 'dfchat-rowbtn', String(a.label ?? ''));
+        b.type = 'button';
+        if (a.enabled === false) b.disabled = true;
+        else b.addEventListener('click', (ev) => { ev.stopPropagation?.(); menu.remove?.(); lineMenu = null; a.run?.(); });
+        menu.append(b);
+      }
+      n.append(menu);
+      lineMenu = { line: n, menu };
+    });
+  };
   const lineNode = (line, withTime, withChan = false, hit = '') => {
     const n = el('div', `dfchat-line${line.mine ? ' mine' : ''}${line.system ? ' system' : ''}${line.red ? ' red' : ''}${line.dm ? ' dm' : ''}${line.kind === 'ooc' ? ' ooc' : ''}${line.kind === 'roll' ? ' roll' : ''}${line.kind === 'me' ? ' me' : ''}${line.kind === 'rp' ? ' rp' : ''}${line.ping ? ' ping' : ''}`);
     if (line.tab) n.dataset.ch = line.tab;   // CHAT-COLOURS: the channel it was said on - its colour is the sheet's
@@ -937,6 +966,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
       if (hit.startsWith('#') && playerFound(line.name, line.id, hit)) tag.replaceChildren(el('mark', 'dfchat-hit', tag.textContent));
     }
     n.append(nameEl, tag, text);
+    if (lineActions && !line.mine) armLineMenu(n, nameEl, line);   // SAFE1 + SAFE3
     return { node: n, chan, time, nameEl, tag, text };
   };
   /** One drawn row of the two line lists: the node, its parts, and the record the colour and badge passes walk.

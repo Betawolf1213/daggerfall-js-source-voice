@@ -233,6 +233,9 @@ export class ChatLog {
     this.self = '';
     /** PING1: the newest pinging line's seq - the host's alert sounds when it moves (0: none yet). */
     this.pingSeq = 0;
+    /** SAFE1: whether the player hears an account - (sub) => boolean, set by the host from the block list; null hears
+     *  everyone. A line from an account it does not hear is never kept, so no tab, peek, bubble or search shows it. */
+    this.hears = null;
     this.active = this.tabs.find((t) => t.shown)?.id ?? null;
     this.open = false;        // the panel's state, as the log counts unread by it
     this.version = 0;         // bumps on every change the panel would show; the panel repaints on a new number, never per frame
@@ -271,6 +274,7 @@ export class ChatLog {
    *  the player opens the chat, not a badge asking them to. */
   push(tabId, fields = {}, { quiet = false } = {}) {
     const tab = this.tab(tabId);
+    if (!fields.mine && typeof fields.sub === 'string' && fields.sub && this.hears && !this.hears(fields.sub)) return null;   // SAFE1: a blocked speaker
     const line = tab ? this._line(fields, tab.id) : null;
     if (!line) return null;
     this._keepOn(tab, line);
@@ -302,7 +306,7 @@ export class ChatLog {
   /** The line's record, or null for nothing to say. DICE1: `roll` is a roll the RELAY made (the host hands it from the
    *  frame type, `onRoll`, never from a chat line) - kept only when the dice's law holds, and then the line's words are
    *  the dice's (rollText), its kind 'roll'. */
-  _line({ id = '', name = '', text = '', at = null, mine = false, system = false, red = false, dm = false, roll = null, me = false } = {}, tabId) {
+  _line({ id = '', name = '', text = '', at = null, mine = false, system = false, red = false, dm = false, roll = null, me = false, sub = null, sg = null } = {}, tabId) {
     const rolled = roll && validRoll(roll) ? { n: roll.n, m: roll.m, k: roll.k, dice: [...roll.dice], total: roll.total } : null;
     if (roll && !rolled) return null;
     if (rolled) text = rollText(rolled);
@@ -329,7 +333,45 @@ export class ChatLog {
     const sys = !!system || !!red || !!dm;
     // CHAT-RP: 'rp', a line of roleplay - the speaker's own *mark*, as OOC's is theirs
     const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';
-    return { seq: ++this._seq, id: String(id), name: String(name), text, at: Number.isFinite(at) ? at : now, t: now, mine: !!mine, system: sys, red: !!red, ...(dm ? { dm: true } : {}), kind, tab: tabId, ...(rolled ? { roll: rolled } : {}) };
+    // SAFE1 + SAFE2: `sub` the speaker's verified account and `sg` the relay's stamp, where the relay said them - what a
+    // block names and what a report carries; absent from a line the game said, and from one nobody stamped
+    const said = !sys && typeof sub === 'string' && sub ? { sub, ...(typeof sg === 'string' && sg ? { sg } : {}) } : {};
+    return { seq: ++this._seq, id: String(id), name: String(name), text, at: Number.isFinite(at) ? at : now, t: now, mine: !!mine, system: sys, red: !!red, ...(dm ? { dm: true } : {}), kind, tab: tabId, ...(rolled ? { roll: rolled } : {}), ...said };
+  }
+
+  /** SAFE1: AN ACCOUNT'S LINES TAKEN BACK - every line `sub` said, off every tab, the moment it is blocked: a block hides
+   *  what was said as well as what will be. Answers how many went. */
+  forgetSpeaker(sub) {
+    if (typeof sub !== 'string' || !sub) return 0;
+    let gone = 0;
+    for (const tab of this.tabs) {
+      const kept = tab.messages.filter((l) => l.sub !== sub || l.mine);
+      gone += tab.messages.length - kept.length;
+      tab.messages = kept;
+    }
+    if (gone) this.version++;
+    return gone;
+  }
+
+  /** SAFE3: WHAT A REPORT OF `sub` CARRIES - their stamped lines heard on any tab, newest last, and the stamped lines just
+   *  before each on its tab for context, up to `max` in all (net/safety/safetyLaw.js REPORT_LINES_MAX). `seq` narrows it
+   *  to one line and the lines before it (a line's own Report). Lines the relay did not stamp cannot be carried. */
+  reportLines(sub, { seq = null, max = 16, before = 3 } = {}) {
+    const picked = new Map();
+    for (const tab of this.tabs) {
+      const lines = tab.messages;
+      for (let i = 0; i < lines.length; i++) {
+        const l = lines[i];
+        if (l.sub !== sub || !l.sg || (seq !== null && l.seq !== seq)) continue;
+        for (let j = Math.max(0, i - before); j <= i; j++) if (lines[j].sg && lines[j].sub) picked.set(lines[j].seq, lines[j]);
+      }
+    }
+    const out = [...picked.values()].sort((a, b) => a.seq - b.seq);
+    const own = out.filter((l) => l.sub === sub);
+    // past the bound, the reported account's own lines are kept first (the newest of them), the context after
+    const keep = new Set(own.slice(-max).map((l) => l.seq));
+    for (const l of out.slice().reverse()) { if (keep.size >= max) break; keep.add(l.seq); }
+    return out.filter((l) => keep.has(l.seq)).map((l) => ({ tab: l.tab, sub: l.sub, name: l.name, at: l.at, text: l.text, sg: l.sg }));
   }
 
   /** A line onto a tab, the oldest dropped past the cap. */

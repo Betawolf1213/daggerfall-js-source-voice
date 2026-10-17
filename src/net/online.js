@@ -84,6 +84,7 @@ import { isLayered, LAYERS_MAX } from './wire.js';   // SCALE5d: a crowded place
 import { instanceRoomOf, relaySupportsInstances } from './instanceRoom.js';   // INSTANCES: a place's instance room (bible/11-Multiplayer/Instances.md)
 import { layoutRoomKey } from '../world/interior/interiorShared.js';   // WD3 (AUDIT WD3 B3): an interior's room is its layout's
 import { tabStorage } from '../systems/appStorage.js';   // the tab's own storage - the seam, never the browser's own (a PIN)
+import { STAMP_RE } from './safety/chatStamp.js';   // SAFE2: a line's stamp, carried as the relay said it
 import { REALM_CHARACTER_RE } from './identityToken.js';   // AUDIT LEGACY III O1: a wed frame's stamped realm character, by the token's own shape
 import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
 
@@ -620,6 +621,9 @@ export class OnlineSession {
     this.eventOk = false;         // EVENT1: the relay that welcomed this socket knows the `stage` frame (relaySupportsEvent) - an older one CLOSES the socket on it
     this.eventV = null;           // SUNBABY1: the version that welcomed it - which event WORDS it knows (relayKnowsLiveEvent): a word it does not know CLOSES the socket too
     this.liveEvent = null;        // EVENT1: the hub's live event as last said - {kind, at} or null
+    this.onLaw = null;            // SAFE4: ({order}) => void - a mute or ban order the hub handed me to carry to every room I hold
+    this.onBanned = null;         // SAFE4: ({until}) => void - the relay says my account is banned until then (epoch seconds), or 0: lifted
+    this.onSlowed = null;         // SAFE6: ({ms}) => void - my public line was too soon for a new voice; the next may go in `ms`
     this.onMuted = null;          // MOD1: ({until}) => void - the relay says I am muted until then (epoch seconds), or 0: lifted
     this.onFoes = null;           // WORLD2: (id, data) => void - the host's live foes in (a non-host's, from the room's host alone)
     this.onOwnFoes = null;        // OWN1: (id, data) => void - a peer's OWN foes in my world room (a building's, a dungeon's shared quest's)
@@ -2550,6 +2554,17 @@ export class OnlineSession {
     return true;
   }
 
+  /** SAFE4: carry a ban order the account service signed into this room - MOD1's carrier, on the mute order's meter (the
+   *  relay spends one bucket for both). False when nothing went. */
+  sendBanOrder(order) {
+    if (typeof order !== 'string' || !order || order.length > 1024) return false;
+    const gate = muteGate(this._mbucket, this._now());
+    if (!gate.pass) return false;
+    if (!this._send({ t: 'ban', order })) return false;
+    this._mbucket = gate.bucket;
+    return true;
+  }
+
   /** SCALE5b: a relay setting (net/relayCfg.js) to the hub - its answer comes back through `onRelayCfg`. False when this
    *  session is not the hub's, its relay takes none, or the setting is not one. */
   sendRelayCfg(frame) {
@@ -3343,7 +3358,8 @@ export class OnlineSession {
       // CHAT-CHAN: `ch` is the channel the relay says the line was said in (a party's, on the hub link) - a word the
       // relay composed from its own routing, one of the wire's own, or none
       // EMOTE1: `me` - the relay says the line is an ACTION, and only `true` is one
-      this._deliver('chat', () => this.onChat?.({ id: m.id, name: sanitizeName(m.name), text, at: Number.isFinite(m.at) ? m.at : now, mine: m.id === this.id, sub: subOf(m), ch, ...(m.me === true ? { me: true } : {}) }));
+      // SAFE2: and `sg`, the relay's stamp on the line - carried, never read here: a report hands it to the account service
+      this._deliver('chat', () => this.onChat?.({ id: m.id, name: sanitizeName(m.name), text, at: Number.isFinite(m.at) ? m.at : now, mine: m.id === this.id, sub: subOf(m), ch, ...(m.me === true ? { me: true } : {}), ...(typeof m.sg === 'string' && STAMP_RE.test(m.sg) ? { sg: m.sg } : {}) }));
     } else if (m.t === 'holdem') {
       // CARDS5: THE RELAY'S CARD TABLE - the room's events and the table as it stands, my own hole cards, or my turn;
       // checked by the table's own law, from the room the player stands in only
@@ -3419,6 +3435,14 @@ export class OnlineSession {
       if (until === null) return;
       if (!this._lineIn(room, null, now)) return;
       this._deliver('chat', () => this.onMuted?.({ until }));
+    } else if (m.t === 'law' || m.t === 'banned' || m.t === 'slowed') {
+      // SAFE4 + SAFE6: THE RELAY'S WORD ON MY OWN CHAT - an order the service pushed, handed to me to carry to my other
+      // rooms (`law`); a ban (`banned`, epoch seconds - 0 lifted); a new voice's line refused for its pace (`slowed`, ms).
+      // Each a line in the log at most, so on the chat line's inbound bucket (CHAT-G).
+      if (!this._lineIn(room, null, now)) return;
+      if (m.t === 'law' && typeof m.order === 'string' && m.order.length > 0 && m.order.length <= 1024) this._deliver('chat', () => this.onLaw?.({ order: m.order }));
+      else if (m.t === 'banned' && Number.isSafeInteger(m.until) && m.until >= 0) this._deliver('chat', () => this.onBanned?.({ until: m.until }));
+      else if (m.t === 'slowed' && Number.isSafeInteger(m.ms) && m.ms > 0 && m.ms <= 60_000) this._deliver('chat', () => this.onSlowed?.({ ms: m.ms }));
     } else if (m.t === 'social') {
       // AUDIT SOC B3: GATED COMING IN, as a chat line is (CHAT-G) - a note or an error becomes a chat line (net/chat.js
       // keeps CHAT_KEEP of them, so an ungated stream is a player's history deleted) and the rest a repaint; the

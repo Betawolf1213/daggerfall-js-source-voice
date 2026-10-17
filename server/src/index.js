@@ -192,6 +192,8 @@ import { verifyToken, verifyOrder, verifyStakeOrderAnyAge, importPublicKeyB64, M
 const SPENT_MAX = 4096;
 /** MOD1: the most accounts whose latest mute order one room remembers. */
 const ORDERS_MAX = 1024;
+/** SAFE4: the door between the Worker and the hub for an order the account service pushed (SAFE_LAW_PATH). */
+const SAFE_INTERNAL_LAW = '/internal/safe/law';
 /** INT9 (AUDIT): how long a place room keeps the hub's silence on a pair's kinship (kin, while it lasts) before asking again. */
 const WDUN_KIN_SILENT_MS = 5_000;
 /** GUILD1c: the most removals and disbandings one room remembers (`_guildOuts`). */
@@ -287,6 +289,9 @@ import { owIdInCell, owRowInCell, owRowSane, owFoldSpent, owFoldRows, owRowsBehi
 
 import { serpentGate, validSerpentOut, SERPENT_INTERNAL_FELL, SERPENT_TELL_RETRY_MS, SERPENT_FIGHT_KEY, SERPENT_FIGHTS_KEY, SERPENT_SITES_MAX, serpentFightId, SERPENT_FELLS_KEY, SERPENT_FELLS_MAX, SERPENT_RC_PREFIX } from './relay.js';   // SERPENT1: the serpent's frame and its doors (the wire's, through relay.js - walked last, as ever)
 import { roomOf, parseClient, inRange, inRangeOf, poseGate, chatGate, redGate, dmGate, muteGate, tokenGate, rosterFor, badged, isChatRoom, isWorldRoom, isCellRoom, streamsFoes, hitOwnerOf, worldFrameMaxFor, CELL_FRAME_RECORDS_MAX, HELLO_HZ_MAX, CHAT_HELLO_HZ_MAX, CHAT_ROOM_HZ_MAX, SOCKETS_MAX, CHAT_SOCKETS_MAX, DROP_STRIKES_MAX, CHAT_STRIKES_MAX, WORLD_MIN_MS, WORLD_CHUNK, worldTtlMsFor, WORLD_PREFIX, FOES_PREFIX, OWN_PREFIX, foesGate, byteGate, FOES_ROOM_BYTES_PER_S, HIT_ROOM_HZ_MAX, ACT_ROOM_HZ_MAX, ACT_ROOM_BYTES_PER_S, actGate, MAX_FRAME_BYTES, CLOSE_REPLACED, CLOSE_POLICY, CLOSE_BUSY, HIT_ROOM_BYTES_PER_S, whoGate, whoIdOf, WHO_ROOM_HZ_MAX, poseFan, poseChanged, RELAY_VERSION, KEEPALIVE_FAN_MS, ACT_SENDER_BYTES_PER_S, CHAT_ROSTER_MAX, isSocialRoom, socialGate, partyGate, SOCIAL_ROOM_HZ_MAX, FRIENDS_MAX, PENDING_MAX, PARTY_MAX, PARTY_INVITES_MAX, INVITE_TTL_MS, PARTY_OFFLINE_MS, ACCOUNT_TABS_MAX, mintPartyId, SOCIAL_REPEAT_MS, ACCOUNT_IDLE_MS, ACCOUNT_SWEEP_MS, SWEEP_STEP_MS, SWEEP_PAGE, questShareGate, amapShareGate, AMAP_ROOM_HZ_MAX, QUEST_ROOM_HZ_MAX, QUEST_ROOM_BYTES_PER_S, QUEST_PREFIX, QUEST_FRAME_MAX, tradeGate, TRADE_ROOM_HZ_MAX, TRADE_ROOM_BYTES_PER_S, castGate, CAST_HZ_MAX, CAST_DEST_SENDERS_MAX, parkGate, parkKey, parkKeyOf, PARK_KEY_RE, CARAVAN_DECOR_KEY, parkRegistryRoom, cellRoomOfWire, PARK_INTERNAL_REG, PARK_INTERNAL_DROP, PARK_CELL_MAX, PARK_ACCOUNT_MAX, PARK_TTL_MS, PARK_REFRESH_MS, CARAVAN_DOC_MIN_MS, PARTY_CHAT_ROOM_HZ_MAX, rollGate, rollDice, cardGate, pageGate, duelGate, DUEL_HZ_MAX, wedGate, WED_HZ_MAX, renownGate, renownRoomGate, lookGate, eventGate, EVENT_KEY, validLiveEvent, gateGate, siegeGate, SIEGE_IN_MS, GATE_INTERNAL_FELL, SOCIAL_ROOM, validGateOut, HELLO_WAIT_MS, GATE_TELL_RETRY_MS, gateReceiptKey, GATE_BRAIN_MIN, GATE_HERE_HOLD_MS, guildGate, homeGate, validHomeWord, HOME_WORDS_KEY, HOME_WORDS_KEEP_MS, HOME_WORDS_MAX, guildRoomGate, GUILD_CHAT_ROOM_HZ_MAX, SEAT_ELSEWHERE, raidGate, RAID_INTERNAL_CLEAN, RAID_INTERNAL_DAY, RAID_DAY_ASK_MS, raidTownsGate, RAID_TELL_RETRY_MS, RAID_CLEANS_MAX, RAID_LEDGER_PREFIX, raidLedgerKey, RAID_RC_PREFIX, raidReceiptKeyOf, RAID_RC_KEEP, RAID_RC_KEEP_MS, mapPixelOfWire, validRaidOut, worldRoom, sharedClassicMinutes, wallMsForClassicMinutes, isRegionRoom, travHubGate, travRoomGate, TRAV_STALE_MS, TRAV_WELCOME_MAX, owGate, owRoomGate, owGraveGate, OW_LEDGER_KEY, REALM_DOOR_WORD, riteRelayGate, validRiteOut, sanitizeName, RITE_INTERNAL_BROKEN, RITE_INTERNAL_DAY, RITE_TELL_RETRY_MS, RITE_KEY, RITE_BY_MAX, RITE_CIRCLES_MAX, RITE_HUB_CIRCLES_MAX, RITE_ASK_EVERY_MS, RITE_ASK_TIMEOUT_MS, arenaGate, bodyWordRelayGate, BUSY_TOKEN_UNREAD, POSE_BATCH_MS, ROSTER_BATCH_MS, WIRE2_BATCH_MAX, slimPose, wire2Batch, isLayered, layerOf, layerName, LAYER_HEADER, LAYER_FULL_HEADER, validPose, wardenVerdicts, wardenDue, parkSameSpot, parkSpotOf, WARDEN_RETRY_MS } from './relay.js';   // AUDIT INT15: bodyWordRelayGate - a body's word on a bucket of its own
+import { NEW_VOICE_GAP_MS, SAFE_LAW_PATH } from './relay.js';   // SAFE6: a new voice's pace; SAFE4: the service's door in
+import { mintStamp, stampTabOf, PUBLIC_TABS } from '../../src/net/safety/chatStamp.js';   // SAFE2: the relay's stamp on every line it relays
+import { sealFeed, FEED_SIG_HEADER, FEED_BATCH, FEED_WAIT_MS, FEED_LINES_MAX, FEED_POST_MS } from '../../src/net/safety/chatFeed.js';   // SAFE5: the reviewer's feed
 import { holdemGate, holdemSitRoomGate } from './relay.js';   // CARDS5: the card table's gate; AUDIT CARDS-3 A4: the room's sits
 import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand, actAt as holdemAct, tick as holdemTick, nextAt as holdemNextAt, emptyTable as holdemEmpty, tableLook as holdemLook, stateDelta as holdemDelta, holdemGoldTable } from '../../src/net/holdemTable.js';   // CARDS5: THE RELAY DEALS - the room's card tables (holdemTable.js imports only cardLaw.js, which imports only dice.js)
 // WILD1 (2026-10-07, the owner: "Wrothgarian mountains need to be turned into a open pvp zone"): ONE FILE JOINS THE
@@ -492,11 +497,49 @@ async function egLiveRead(rooms) {
   } catch (e) { console.warn('[eg] live', e?.message ?? e); return null; }
 }
 
+/** SAFE4 (2026-10-17, bible/11-Multiplayer/Chat-Safety-Arc.md section 5): THE SERVICE'S DOOR IN. A moderator's mute or
+ *  ban from Discord, or the reviewer's, has no moderator's client to carry its order to the rooms (MOD1's carrier), so the
+ *  account service posts it here: `{ order }`, a mute or ban order it signed. The Worker checks the signature with the
+ *  key every room checks a token with BEFORE the hub is woken - a stranger's post costs one verify and wakes nothing -
+ *  and hands it to the hub, which applies it to its sockets and hands it to its target's own client to carry on
+ *  (`_takeOrder`). The door believes the signature and nothing else, as every order's arm does. */
+async function lawDoor(request, env) {
+  if (request.method !== 'POST') return json({ error: 'method' }, 405);
+  const rooms = env.ROOMS;
+  if (!rooms?.idFromName || !rooms?.get) return json({ error: 'unavailable' }, 503);
+  let body = null;
+  try { body = await request.json(); } catch { body = null; }
+  const order = body?.order;
+  if (typeof order !== 'string' || !order || order.length > 1024) return json({ error: 'bad law' }, 400);
+  const key = await lawKeyOf(env);
+  if (!key) return json({ error: 'unavailable' }, 503);
+  const nowS = Math.floor(Date.now() / 1000);
+  const ask = (kind) => verifyOrder(order, key, { subtle: crypto.subtle, nowS, kind });
+  if (!(await ask('ban')).ok && !(await ask('mute')).ok) return json({ error: 'bad law' }, 403);
+  try {
+    const res = await rooms.get(rooms.idFromName(SOCIAL_ROOM)).fetch(new Request(`https://relay.internal${SAFE_INTERNAL_LAW}`, { method: 'POST', body: JSON.stringify({ order }), signal: AbortSignal.timeout(ROOM_CALL_MS * 4) }));
+    return res?.ok ? json({ ok: true }) : json({ error: 'unavailable' }, 503);
+  } catch (e) { console.warn('[law] the hub', e?.message ?? e); return json({ error: 'unavailable' }, 503); }
+}
+/** SAFE4: the door's verifying key, imported once an isolate (by the config's text, so a test's new key is a new import). */
+let lawKeyHeld = { raw: '', key: /** @type {CryptoKey|null} */ (null) };
+async function lawKeyOf(env) {
+  const raw = env?.IDENTITY_PUBLIC_KEY;
+  if (typeof raw !== 'string' || !raw) return null;
+  if (lawKeyHeld.raw !== raw) {
+    let key = null;
+    try { key = await importPublicKeyB64(raw, { subtle: crypto.subtle }); } catch { key = null; }
+    lawKeyHeld = { raw, key };
+  }
+  return lawKeyHeld.key;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/health') return json({ ok: true, service: 'daggerfall-online', version: RELAY_VERSION, t: Date.now() });
     if (url.pathname === EG_LIVE_PATH) return egLiveAsk(env.ROOMS);   // EG-H2: the Spire's live breaches, for the deploy's hold and drain
+    if (url.pathname === SAFE_LAW_PATH) return lawDoor(request, env);   // SAFE4: a mute or ban the account service pushed, for the hub
     const key = roomOf(url.pathname);
     if (!key || (key.startsWith('chat:') && !isChatRoom(key))) return json({ error: 'no such room' }, 404);   // AUDIT CHAT A1: no object is minted for a channel the port does not run
     if (key.startsWith('owned:') && !privateInteriorOf(key)) return json({ error: 'no such private room' }, 404);
@@ -885,6 +928,7 @@ export class Room {
     if (path === EG_INTERNAL_CALLED) return this._egCalledInternal(request);   // EG-ZA: the hub telling a breach's room its call went out
     if (path === EG_INTERNAL_RCPT) return this._egRcInternal(request);   // EG-ZA: a breach's room telling the hub the receipts it minted
     if (path === HOLDEM_INTERNAL_VOID) return this._holdemVoidInternal(request);   // AUDIT SCALE II R3-3 (c): a layer's void, spent by its place
+    if (path === SAFE_INTERNAL_LAW) return this._lawInternal(request);   // SAFE4: an order the account service pushed through the Worker's door
     const key = roomOf(new URL(request.url).pathname);
     if (!key || (key.startsWith('owned:') && !privateInteriorOf(key))) return json({ error: 'no such private room' }, 404);
     // AUDIT WB A1: A SEAT IS A HELLO'S. A socket that opened and never said hello kept its seat for as long as it stood
@@ -2375,6 +2419,10 @@ export class Room {
    *  party's is its seats. EVERY OTHER LINE is the room's: its budget, over which a line is dropped and nobody is
    *  struck, and its fan - everyone in a channel, those in range in a place. */
   async _sayLine(ws, a, ch, frame, now) {
+    if (frame.t === 'chat') {
+      if (!this._newVoiceSpends(ws, a, ch, now)) return;   // SAFE6: a new voice's public line, at its own pace
+      frame = await this._stamped(a, ch, frame);   // SAFE2: the relay's stamp on what it relays
+    }
     if (ch === 'guild') {
       // GUILD1c: A GUILD'S LINE, said on the hub link and heard by every socket there wearing the sender's guild - the
       // verified token's, or a signed guild order's since, never the sender's word. The hub is the one room every
@@ -2412,12 +2460,119 @@ export class Room {
     if (!room.pass) return;
     const out = JSON.stringify(frame);
     const chat = isChatRoom(a.key);
+    if (chat && !S && frame.t === 'chat') this._feedLine(a, ch, frame);   // SAFE5: a public line, for the reviewer's feed
     // SCALE5c: the bus's line to everyone - one entry a shard (`_vsendAll`), and its own sockets walked, never its shards'
     if (chat && !S && this._vper.size) { this._vsendAll(out); for (const [other, b] of this._reals()) if (b.id) this._send(other, out); return; }
     for (const [other, b] of this._all()) {   // SCALE5a: in place, as the join's
       if (!b.id || (S && !S.members[b.sub])) continue;
       if (other === ws || chat || inRange(a.key ?? '', a.pose, b.pose)) this._send(other, out);   // the sender hears its own line back: that is the receipt
     }
+  }
+
+  /** SAFE6 (bible/11-Multiplayer/Chat-Safety-Arc.md section 7): A NEW VOICE'S PACE - whether this socket may say a
+   *  public line now. A socket whose verified token wears the sprout (a guest or an account younger than SPROUT_S) says
+   *  one line in a channel every NEW_VOICE_GAP_MS, measured on its own meter; party and guild lines, and a place's talk,
+   *  are never slowed. A line too soon is refused to its speaker alone, with how long to wait - never struck. */
+  _newVoiceSpends(ws, a, ch, now) {
+    if (ch === 'party' || ch === 'guild' || !isChatRoom(a.key) || !Array.isArray(a.glyphs) || !a.glyphs.includes('sprout')) return true;
+    const meter = this._meterOf(ws);
+    const wait = (Number.isFinite(meter.nwAt) ? meter.nwAt : -Infinity) + NEW_VOICE_GAP_MS - now;
+    if (wait > 0) { this._send(ws, JSON.stringify({ t: 'slowed', ms: Math.ceil(wait) })); return false; }
+    meter.nwAt = now;
+    return true;
+  }
+  /** SAFE2 (bible/11-Multiplayer/Chat-Safety-Arc.md section 3): A LINE, STAMPED - the relay's signature over the line it
+   *  is about to relay and the tab it is heard on (net/safety/chatStamp.js), which a report carries to the account
+   *  service as the proof that this was said, by this account, then. A relay with no key, or a socket with no verified
+   *  account, relays the line as it was: unstamped, and so unreportable. */
+  async _stamped(a, ch, frame) {
+    if (!a.sub) return frame;
+    const key = await this._receiptKeyOf();
+    if (!key) return frame;
+    const sg = await mintStamp({ tab: stampTabOf(a.key, ch), sub: a.sub, name: frame.name, at: frame.at, text: frame.text }, key, { subtle: crypto.subtle });
+    return sg ? { ...frame, sg } : frame;
+  }
+  /** SAFE5 (bible/11-Multiplayer/Chat-Safety-Arc.md section 6): A PUBLIC LINE, KEPT FOR THE REVIEWER'S FEED - only while
+   *  MOD_FEED_URL is set, only a public tab's (chatStamp.js PUBLIC_TABS), never awaited by the line. The room posts a
+   *  batch once FEED_BATCH lines wait or the first has waited FEED_WAIT_MS; past FEED_LINES_MAX the oldest goes. Memory,
+   *  bounded by FEED_LINES_MAX: a room that sleeps before its post loses the batch, which a player can still report. */
+  _feedLine(a, ch, frame) {
+    const url = this.env?.MOD_FEED_URL;
+    if (typeof url !== 'string' || !url.startsWith('https://') || !a.sub) return;
+    const tab = stampTabOf(a.key, ch);
+    if (!PUBLIC_TABS.includes(tab)) return;
+    const q = this._feedQ ?? (this._feedQ = { lines: [], timer: null });
+    if (!q.lines.length) q.timer = setTimeout(() => { void this._feedFlush(); }, FEED_WAIT_MS);
+    q.lines.push({ tab, sub: a.sub, name: frame.name, at: frame.at, text: frame.text });
+    if (q.lines.length > FEED_LINES_MAX) q.lines.shift();
+    if (q.lines.length >= FEED_BATCH) void this._feedFlush();
+  }
+  /** SAFE5: the waiting batch, signed with the relay's receipt key and posted to MOD_FEED_URL - answered or not, it is
+   *  gone (the feed is an assistant's, and the relay never retries a post nor waits on one). Answers whether it went. */
+  async _feedFlush() {
+    const q = this._feedQ;
+    if (!q?.lines.length) return false;
+    if (q.timer) { clearTimeout(q.timer); q.timer = null; }
+    const lines = q.lines.splice(0);
+    try {
+      const id = [...crypto.getRandomValues(new Uint8Array(8))].map((x) => x.toString(16).padStart(2, '0')).join('');
+      const sealed = await sealFeed({ id, at: Date.now(), lines }, await this._receiptKeyOf(), { subtle: crypto.subtle });
+      if (!sealed) return false;
+      const res = await fetch(this.env.MOD_FEED_URL, { method: 'POST', headers: { 'content-type': 'application/json', [FEED_SIG_HEADER]: sealed.sig }, body: sealed.body, signal: AbortSignal.timeout(FEED_POST_MS) });
+      if (!res.ok) console.warn('[feed] the service said', res.status);
+      return res.ok;
+    } catch (e) { console.warn('[feed] post failed', e?.message ?? e); return false; }
+  }
+  /** SAFE4: a ban order carried in - a moderator's, or the banned player's own client handing on the hub's `law` - on
+   *  the mute order's meter. */
+  async _banFrame(ws, m) {
+    const now = Date.now();
+    if (!this._spend(ws, now, muteGate, 'mbucket', 'mdrops', 'too many mute orders')) return;
+    await this._takeOrder(m.order, now, ['ban'], false);
+  }
+  /** SAFE4: the Worker's door - an order the account service pushed, for this hub to apply and hand on. */
+  async _lawInternal(request) {
+    let body = null;
+    try { body = await request.json(); } catch { body = null; }
+    return json({ ok: await this._takeOrder(body?.order, Date.now(), ['ban', 'mute'], true) });
+  }
+  /** SAFE4: A MUTE OR BAN ORDER TAKEN - MOD1's arm's law, for every door an order now comes in by. The signature is the
+   *  whole of the authority; the newest order for an account wins and the same one twice is one (`_orders`, MOD1's). A
+   *  mute sets the account's sockets here to `mu`; a ban silences them until it ends (a ban lifted lifts that silence -
+   *  a mute of its own comes back on the next token, which carries it) and tells them `banned` - the client leaves on
+   *  that word, and the service mints the account no token to come back on. `hand`: the hub's door - each of the account's sockets is also handed the order itself (`law`), so its
+   *  own client carries it to every room it holds, as a moderator's client carries a mute. Answers whether it was an
+   *  order this room believes. */
+  async _takeOrder(order, now, kinds, hand) {
+    if (typeof order !== 'string' || !order || order.length > 1024) return false;
+    await this._loadKey();
+    if (!this._verifyKey) return false;
+    const nowS = Math.floor(now / 1000);
+    let r = null;
+    for (const kind of kinds) {
+      r = await verifyOrder(order, this._verifyKey, { subtle: crypto.subtle, nowS, kind });
+      if (r.ok) break;
+    }
+    if (!r?.ok) return false;
+    const c = r.claims;
+    const ban = c.o === 'ban';
+    const sig = order.slice(order.lastIndexOf('.') + 1);
+    const held = this._orders.get(c.s);
+    if (held && (c.i < held.i || held.sig === sig)) return true;
+    const lifted = ban && !(c.bn > nowS);
+    const mu = ban ? (lifted ? 0 : c.bn) : c.mu;
+    this._orders.delete(c.s);
+    if (this._orders.size >= ORDERS_MAX) this._orders.delete(this._orders.keys().next().value);
+    this._orders.set(c.s, { i: c.i, mu, sig });
+    const told = JSON.stringify(ban ? { t: 'banned', until: lifted ? 0 : c.bn } : { t: 'muted', until: mu });
+    const law = hand ? JSON.stringify({ t: 'law', order }) : null;
+    for (const [other, b] of [...this._all()]) {
+      if (b.sub !== c.s) continue;
+      this._setAttach(other, { ...b, mu });
+      this._send(other, told);
+      if (law) this._send(other, law);
+    }
+    return true;
   }
 
   /** AUDIT WORLD A3: a world room's memory is forgotten WORLD_TTL_MS after the room last drained - armed on the
@@ -4204,6 +4359,7 @@ export class Room {
         this._send(other, told);   // the player hears it at once - muted until, or 0 for lifted
       }
     }
+    if (m.t === 'ban') return this._banFrame(ws, m);   // SAFE4: a ban order carried in, a method of its own
     if (m.t === 'renown') {
       // ═══ RENOWN1 — A LEVEL THAT ROSE, CARRIED IN ══════════════════════
       //

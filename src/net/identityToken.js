@@ -572,7 +572,7 @@ async function openSealed(token, publicKey, { subtle, nowS, skewS, valid }) {
  *  second: 'renown', a character's Renown that ROSE while its player was
  *  already in a room, carried in by that player's own client (the token
  *  that let them in said the Renown they had then). */
-export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains', 'home', 'egopen', 'egadmit']);   // EG-PLAY: an Elite Breach's open and a member's admission   // QUEST-HOME: a town's homes moved, the service's word for every page online   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
+export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains', 'home', 'egopen', 'egadmit', 'ban']);   // SAFE4: a ban - its end, the service's word that the account may no longer play   // EG-PLAY: an Elite Breach's open and a member's admission   // QUEST-HOME: a town's homes moved, the service's word for every page online   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
 /** An order lives a minute - long enough to be carried to every room
  *  the moderator holds, short enough that a leaked one is stale before
  *  anyone could use it for anything but what it already said. */
@@ -620,6 +620,9 @@ export function orderValid(c) {
   const isEg = c.o === 'egopen' || c.o === 'egadmit';
   if (!isEg && !noEg) return false;
   if (isEg && (!egOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake || !noRemains)) return false;
+  // SAFE4: a ban carries its end (`bn`, epoch seconds - 0 lifted) and no other kind's fields; no other kind carries a ban's
+  if (c.o !== 'ban' && c.bn !== undefined) return false;
+  if (c.o === 'ban' && (!Number.isSafeInteger(c.bn) || c.bn < 0 || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake || !noRemains || !noHome || !noEg)) return false;
   if (!Number.isSafeInteger(c.i) || !Number.isSafeInteger(c.e)) return false;
   if (c.e <= c.i || c.e - c.i > ORDER_TTL_S) return false;
   return true;
@@ -881,6 +884,17 @@ export async function mintOrder({ s, mu }, privateKey, { subtle, nowS, ttlS = OR
   if (!Number.isSafeInteger(nowS)) throw new TypeError('mintOrder needs an integer epoch-seconds clock');
   const claims = { o: 'mute', s, mu, i: nowS, e: nowS + ttlS };
   if (!orderValid(claims)) throw new TypeError('mintOrder refused an order it could not verify');
+  return sealClaims(claims, privateKey, subtle);
+}
+
+/** SAFE4 (2026-10-17, bible/11-Multiplayer/Chat-Safety-Arc.md section 5): MINT A BAN ORDER - account `s` is banned
+ *  until `bn` (epoch seconds; 0 lifted), signed by the service that wrote the ban. Any socket may carry it, as a mute's:
+ *  a room that checks it silences the account's sockets there and tells them (server/src/index.js `_takeOrder`). `bn`,
+ *  never `bu`: that word is the home order's (HOME_ORDER_FIELDS). */
+export async function mintBanOrder({ s, bn }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+  if (!Number.isSafeInteger(nowS)) throw new TypeError('mintBanOrder needs an integer epoch-seconds clock');
+  const claims = { o: 'ban', s, bn, i: nowS, e: nowS + ttlS };
+  if (!orderValid(claims)) throw new TypeError('mintBanOrder refused an order it could not verify');
   return sealClaims(claims, privateKey, subtle);
 }
 

@@ -53,7 +53,18 @@
 // ACC4, time played. A beat carries no number - this clock measures:
 //   POST /v1/account/played {}            -> { playedS }
 // MOD1, moderation. The caller must be a moderator or a developer:
-//   POST /v1/mod/mute { target, minutes } -> { ok, target, name, until, order }
+//   POST /v1/mod/mute { target, minutes } -> { ok, target, name, until, order }   (SAFE4: and its act in the record, the order pushed to the relay's door)
+// SAFE1-SAFE8 (bible/11-Multiplayer/Chat-Safety-Arc.md), THE CHAT'S SAFETY:
+//   POST /v1/safety/blocks {}                        -> { ok, blocks: [{ sub, name, at }] }   (SAFE1: my block list)
+//   POST /v1/safety/block { target }                 -> { ok, blocks }   /v1/safety/unblock { target } the same
+//   POST /v1/safety/report { target, reason, note?, lines: [{ tab, sub, name, at, text, sg }] } -> { ok, case, repeat?, muted?, order? }   (SAFE3: every line's stamp checked)
+//   POST /v1/safety/conduct { v }                    -> { ok, conduct }   (SAFE7: the code of conduct agreed)
+//   POST /v1/mod/ban { target?, name?, days, reason? } -> { ok, target, name, until, reason, order }   (SAFE4: a moderator's; days 0 for good)
+//   POST /v1/mod/unban { target?, name? }            -> { ok, target, name, until: 0, order }
+//   POST /v1/mod/strikes { target?, name? }          -> { ok, target, name, strikes, next, mutedUntil, bannedUntil, banReason, history }
+//   POST /v1/mod/feed  <batch>                       -> { ok, read }   (SAFE5: the relay's public lines, signed - x-relay-feed-sig)
+//   POST /v1/discord/interactions <interaction>      -> Discord's answer   (SAFE8: signed - x-signature-ed25519, x-signature-timestamp)
+// A BANNED ACCOUNT is answered 403 { error: 'banned', until, reason } on every door behind a session but signing out.
 // CUSTOMS-PASS, a developer alone - one character of one account through customs (tools/customsPass.mjs):
 //   POST /v1/mod/customs-pass { name | account, revoke? } -> { ok, target, name, open, changed }
 //   POST /v1/mod/realm-holds | realm-findings { id } | realm-clear { id, note? } | realm-hold { id, note? }
@@ -207,7 +218,7 @@ import {
   ACCOUNT_MAX, ACCOUNT_WINDOW_S,
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, mintHomeOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
-import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, SAFE_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
 import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, poiHeldVersion, poiFeedTag, listShelf, shelfEntry, shelve, unshelve, POI_ASSET_MAX, POI_DRAFT_BODY_MAX, POI_LIVE_ASSET_MAX_AGE_S } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live; POI-4b: the library's shelf
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
@@ -290,6 +301,10 @@ import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   /
 import { listLineages, putLineage, realmDie, realmRaise, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone; REZ-BLOODLINE AUDIT R1: a Resurrect inside its hold
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
+import { blocksOf, blockAccount, unblockAccount, fileReport, agreeConduct, conductAgreed, takeFeed, bannedAnswer, REPORT_BODY_MAX } from './safety.js';   // SAFE1-SAFE7: the chat's safety
+import { banAccount, unbanAccount, strikesLook, isBanned, actionStatement, lawOrder, pushLaw } from './sanctions.js';   // SAFE4: the record, the ladder and the ban
+import { discordSigned, discordInteraction, DISCORD_BODY_MAX } from './discord.js';   // SAFE8: the moderators' queue in Discord
+import { FEED_MAX_BYTES, FEED_SIG_HEADER } from '../../src/net/safety/chatFeed.js';   // SAFE5: the relay's feed of public lines
 import { heartbeat } from './heartbeat.js';   // SCALE4c: one request for a tab's three clocks
 import { ADMIT_ROUTES, admitWait } from './admit.js';   // ADMIT-LINE: the sign-in line
 export { AdmitGate } from './admit.js';   // ADMIT-LINE: the line's Durable Object (wrangler.toml binds it from this module)
@@ -473,6 +488,8 @@ const MARKS_STATUS = Object.freeze({
 });
 /** NOTICE1: each board refusal's status - not this account's (a guest, the switch, a mute, a moderator's or a
  *  developer's act) 403, no such note 404, the author's notes full 409, the hour's acts spent 429, a bad shape 400. */
+/** SAFE1, SAFE3, SAFE7: the chat safety's refusals by status - the rest 400. */
+const SAFETY_STATUS = Object.freeze({ 'no-player': 404, 'report-unwitnessed': 403, 'report-closed': 503, 'conduct-stale': 409, 'blocks-full': 409, rate: 429 });
 const BOARD_STATUS = Object.freeze({
   'board-need-account': 403, 'board-closed': 403, 'muted': 403, 'not-moderator': 403, 'not-developer': 403, 'own-note': 403,
   'guild-rank': 403, 'guilds-need-account': 403,
@@ -815,6 +832,23 @@ const service = {
         return patreonHtml(patreonLinkedPage({ handle: row?.handle ?? '', titles: pledgeTitles(who.tiers, who.status, env) }));
       }
 
+      // SAFE5 + SAFE8: THE TWO DOORS THE CHAT'S SAFETY OPENS TO A STRANGER - the relay's feed and Discord's interactions.
+      // Neither is JSON a session carries; each is proven by a signature over its exact bytes, checked before a byte is read.
+      if (SAFE_OPEN_ROUTES.has(path)) {
+        if (request.method !== 'POST') return no('method', 405, origin);
+        const bytes = await readCapped(request, path === '/v1/mod/feed' ? FEED_MAX_BYTES : DISCORD_BODY_MAX);
+        if (!bytes) return no('too-large', 413, origin);
+        if (path === '/v1/mod/feed') {
+          const r = await takeFeed(ctx, env, new Uint8Array(bytes), request.headers.get(FEED_SIG_HEADER));
+          return 'error' in r ? no(r.error, r.error === 'feed-signature' ? 401 : 400, origin) : json(r, 202, origin);
+        }
+        if (!(await discordSigned(env, new Uint8Array(bytes), request.headers.get('x-signature-ed25519'), request.headers.get('x-signature-timestamp'), { subtle, nowS }))) return no('signature', 401, origin);
+        let interaction = null;
+        try { interaction = JSON.parse(new TextDecoder().decode(bytes)); } catch { interaction = null; }
+        if (!interaction || typeof interaction !== 'object') return no('body', 400, origin);
+        return json(await discordInteraction(ctx, env, interaction), 200, origin);
+      }
+
       if (OPEN_ROUTES.has(path)) {
         if (request.method !== 'POST') return no('method', 405, origin);
         const body = await readBody(request);
@@ -856,7 +890,7 @@ const service = {
       // III O2/P1: and a line's record, to its own bound (legacy.js LINEAGE_BODY_MAX) - read at 4 KiB, a played founder's
       // first save was refused, and the realm held the founding copy for good
       const body = request.method === 'POST'
-        ? await readBody(request, path === '/v1/realm/lineage' ? LINEAGE_BODY_MAX : path === '/v1/realm/trade' ? REALM_TRADE_BODY_MAX : MAX_BODY_BYTES) : {};
+        ? await readBody(request, path === '/v1/realm/lineage' ? LINEAGE_BODY_MAX : path === '/v1/realm/trade' ? REALM_TRADE_BODY_MAX : path === '/v1/safety/report' ? REPORT_BODY_MAX : MAX_BODY_BYTES) : {};   // SAFE3: a report's stamped lines
       if (body === undefined && path === '/v1/realm/lineage') return no('lineage-too-large', 413, origin);
       if (!body) return no('body', 400, origin);
       // YARD-SHED (2026-10-06, the service down - "D1 DB is overloaded. Requests queued for too long."): A TOWN'S YARDS NEED
@@ -910,6 +944,9 @@ const service = {
       const secret = bearer ?? (request.method === 'POST' ? body.secret : null);
       const who = await resolveSession(ctx, secret);
       if (!who) return no('auth', 401, origin);
+      // SAFE4: A BANNED ACCOUNT ACTS IN NOTHING - no token (so no room), no save, no trade - and is told until when, and why,
+      // on every door; it may still sign out
+      if (isBanned(who.player, nowS) && path !== '/v1/auth/logout') return json(bannedAnswer(who.player), 403, origin);
 
       // AUDIT LEGACY III O12: A TOMBSTONE ACTS IN NOTHING. Every act a character does names it as the body's
       // `character` - the professions, the Stores, the writs, the market, Renown, the guilds - and a fallen Bloodline
@@ -1072,6 +1109,7 @@ const service = {
           glyphs: wardrobe.g,
           ...(wardrobe.gx ? { glyphsOff: wardrobe.gx } : {}),   // GLYPH-WEAR: the ones my own name leaves out, absent for none
           mutedUntil: mu ?? 0,
+          conduct: conductAgreed(who.player),   // SAFE7: whether the code of conduct as it stands is agreed - the client asks before a first line when not
           level: lv ?? null,
           xp: track ? track.xp : null,
           guild: guild ? guild.gt : null,   // GUILD1c: the tag my own name wears, beside the token as the level is
@@ -1860,7 +1898,40 @@ const service = {
         }
         const key = await signingKey(env, subtle);
         const order = key ? await mintOrder({ s: r.target, mu: r.until }, key, { subtle, nowS }) : null;
+        // SAFE4: the act kept in the record for good, and the order pushed to the relay's door - the hub hands it to the
+        // target's own client, which reaches the rooms the moderator's does not hold
+        await actionStatement(db, { target: r.target, kind: r.until ? 'mute' : 'unmute', until: r.until || null, actor: who.player.id, actorName: displayName(who.player), at: nowS }).run();
+        await pushLaw(env, (u, i) => globalThis.fetch(u, i), order);
         return json({ ...r, order }, 200, origin);
+      }
+
+      // SAFE4 (bible/11-Multiplayer/Chat-Safety-Arc.md section 5): A MODERATOR'S BAN, UNBAN AND LOOK - sanctions.js. A ban's
+      // order goes back to the moderator's client to carry to its rooms (MOD1's carrier) and to the relay's door.
+      if ((path === '/v1/mod/ban' || path === '/v1/mod/unban' || path === '/v1/mod/strikes') && request.method === 'POST') {
+        const who2 = { target: body.target, name: body.name };
+        const r = path === '/v1/mod/strikes' ? await strikesLook(ctx, who.player, env, who2)
+          : path === '/v1/mod/ban' ? await banAccount(ctx, who.player, env, { ...who2, days: body.days, reason: body.reason })
+            : await unbanAccount(ctx, who.player, env, who2);
+        if ('error' in r) return no(r.error, r.error === 'not-moderator' || r.error === 'protected' ? 403 : r.error === 'no-player' ? 404 : r.error === 'ambiguous' ? 409 : 400, origin);
+        if (path === '/v1/mod/strikes') return json(r, 200, origin);
+        const order = await lawOrder(env, subtle, nowS, { s: r.target, bn: r.until });
+        await pushLaw(env, (u, i) => globalThis.fetch(u, i), order);
+        return json({ ...r, order }, 200, origin);
+      }
+
+      // SAFE1, SAFE3, SAFE7 (bible/11-Multiplayer/Chat-Safety-Arc.md): A PLAYER'S BLOCK LIST, A REPORT, THE CODE AGREED - safety.js
+      if (path.startsWith('/v1/safety/')) {
+        if (request.method !== 'POST') return no('method', 405, origin);
+        const act = {
+          '/v1/safety/blocks': () => blocksOf(ctx, who.player),
+          '/v1/safety/block': () => blockAccount(ctx, who.player, { target: body.target }),
+          '/v1/safety/unblock': () => unblockAccount(ctx, who.player, { target: body.target }),
+          '/v1/safety/report': () => fileReport(ctx, who.player, env, body),
+          '/v1/safety/conduct': () => agreeConduct(ctx, who.player, { v: body.v }),
+        }[path];
+        if (!act) return no('not-found', 404, origin);
+        const r = await act();
+        return 'error' in r ? no(r.error, SAFETY_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
       // INT6 (bible/06-Systems/Integrity-Arc.md): THE REVIEW - a developer's read of the judge's verdicts and the acts on
