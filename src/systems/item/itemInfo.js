@@ -324,7 +324,7 @@ const MATERIAL_TEXT = localizedTable({
 });
 const materialText = (item) => MATERIAL_TEXT[materialName(item)] ?? '';
 /** MAT-FILTER: a material's English identity (materialName's answer) as a window prints it. */
-export const materialLabel = (id) => MATERIAL_TEXT[id] ?? id;
+export const metalLabel = (id) => MATERIAL_TEXT[id] ?? id;
 
 /** The panel's macro pass. Everything the port can compute is filled,
  *  and the three that once could not - %po, %bt, %ba - have all landed

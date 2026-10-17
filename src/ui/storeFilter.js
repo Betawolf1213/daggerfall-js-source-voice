@@ -28,7 +28,7 @@
 import { PACK_PAGES, pageOf } from './packPages.js';
 import { isMaterialItem } from '../systems/materialsBag.js';
 import { RARITIES, RARITY_ORDER, rarityOf } from '../systems/loot/lootRarity.js';
-import { materialName, materialLabel, itemSaysMaterial } from '../systems/item/itemInfo.js';   // MAT-FILTER: the metal the card already says
+import { materialName, metalLabel, itemSaysMaterial } from '../systems/item/itemInfo.js';   // MAT-FILTER: the metal the card already says
 import { t } from '../systems/textManager.js';
 
 /** The remote kinds (enhancedInventory.js remoteModel) that carry the bar: the player's own stores, and a container. */
@@ -131,7 +131,7 @@ export function storeMaterialOptions(items, chosen = 'all') {
   const out = [{ id: 'all', label: t('inventory.store.anyMaterial', 'Any Material'), count: items.length }];
   for (const id of MATERIAL_ORDER) {
     const count = counts.get(id) ?? 0;
-    if (count > 0 || id === chosen) out.push({ id, label: materialLabel(id), count });
+    if (count > 0 || id === chosen) out.push({ id, label: metalLabel(id), count });
   }
   return out;
 }
