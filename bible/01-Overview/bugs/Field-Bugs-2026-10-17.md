@@ -45,7 +45,10 @@ Daedroth stands in that pool with INDOOR-WATCH's navmesh as without it. Nothing 
 FIXED. THE PORT'S PATCHES OVER DFU'S OWN QUESTS. The vendored quests stay verbatim (`vendor/dfu-quests/README.md`); a
 patch is an exact old text and how many times it must occur, applied as the browser's pack reads the quest
 (`questData.js`) - FORAGE-FIX's law (`06-Systems/Foraging.md`), which is `applyTextPatches` now, one home for both
-tables (applyForageFix calls it). A patch that no longer finds its text warns and the quest loads as shipped.
+tables (applyForageFix calls it). A patch that no longer finds its text warns and the quest loads as shipped. The account
+Worker bundles `foragingLaw.js`, so `questPatches.js` joins its bundle and its deploy's path filter
+(`.github/workflows/account-deploy.yml`, held by `test/server/accountdeploy.test.js` ACC1-CI); the Worker's behaviour is
+unchanged.
 
 C0B00Y02's: the reveal files 1027 at step 4 (the script's messages end at 1026; its steps are 0-3 and 6), after its own
 actions -
