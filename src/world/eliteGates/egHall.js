@@ -356,9 +356,12 @@ const heroMeshes = () => _heroMeshes ?? EG_HERO_FRAG_MESHES;
 export const EG_HERO_GROUND_HAND_M = 0.2;
 /** The heights (m, from hero `q`'s origin - net/eliteGates/egLaw.js `heroes`) its law lays ground at: its floors' and its stairs' corners'. */
 export const egHeroGroundYs = (q) => [...new Set([...q.floors.map((g) => g.y - q.y), ...q.ramps.flatMap((r) => r.poly.map((p) => p[1] - q.y))])];
-/** Does a hall's hero's box (net/eliteGates/egLaw.js `heroes` - the hall's frame) hold (x, z) in plan? Pure. THE ASCENT: never a room's
- *  (spec law 9's heroes with a `room`) - a room has no mesh of its own: its stairs, its alcoves, its spouts are the hall's. */
-export const egInHeroBox = (spec, x, z) => (spec?.heroes ?? []).some((q) => !q.room && x >= q.box[0] && x <= q.box[3] && z >= q.box[2] && z <= q.box[5]);
+/** Does a hall's hero's box (net/eliteGates/egLaw.js `heroes` - the hall's frame) hold (x, z) in plan - and, given `y`, at that height
+ *  too? Pure. THE ASCENT: never a room's (spec law 9's heroes with a `room`) - a room has no mesh of its own: its stairs, its alcoves,
+ *  its spouts are the hall's. A stair is asked at its height: a room's stair over a hero's box (the sweep, seed 320's Clan Pit with
+ *  a stair 8 m over its rim) is the hall's, never the hero's mesh's. */
+export const egInHeroBox = (spec, x, z, y = null) => (spec?.heroes ?? []).some((q) => !q.room && x >= q.box[0] && x <= q.box[3] && z >= q.box[2] && z <= q.box[5]
+  && (y == null || (y >= q.box[1] && y <= q.box[4])));
 /** The side (m) of the cells a hero's rock is cut into, a record's in each an occluder of its own (EG-ZN - a camera's ray
  *  dithers the rock it crosses, never the whole fragment, and a piece dithering costs its one record two draws more). */
 export const EG_HERO_ROCK_CELL_M = 6;
@@ -436,7 +439,7 @@ export function buildEgCircleModel(seed, c, geo = 0) {
     nicheModel(f, spec, occ);
     for (const v of spec.vignettes ?? []) occ(() => vignetteModel(f, spec, v));
     for (const d of spec.deco ?? []) if (d.t === 'arch') egChokeArch(spec, d, band, archParts(spec, d), (build) => occ(() => egKitInto(f, build)));   // EG-LOOK: its arms dressed in the law's boxes, a voussoir arch over the gap
-    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quadTo(f, SD_REALM_FLOOR_RECORD, a, b, c, e, [0, 1, 0]); quadTo(f, SD_REALM_ROOT_RECORD, a, b, [b[0], b[1] - 0.6, b[2]], [a[0], a[1] - 0.6, a[2]], [0, -1, 0]); }   // EG-HERO-LAY: a hero's stairs are its own mesh's
+    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2, (q.y0 + q.y1) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quadTo(f, SD_REALM_FLOOR_RECORD, a, b, c, e, [0, 1, 0]); quadTo(f, SD_REALM_ROOT_RECORD, a, b, [b[0], b[1] - 0.6, b[2]], [a[0], a[1] - 0.6, a[2]], [0, -1, 0]); }   // EG-HERO-LAY: a hero's stairs are its own mesh's
     heroModel(f, spec, occ);   // EG-HERO-LAY: the hall's hero, at its origin
     // THE ASCENT (spec law 9): the hall's rooms, plain - their floors, ceilings, walls, balustrades and climb faces
     egRoomModelInto(f, spec, { floor: SD_REALM_FLOOR_RECORD, root: SD_REALM_ROOT_RECORD, wall: SD_REALM_PILLAR_RECORD, rail: SD_REALM_BRASS_RECORD }, occ);
@@ -563,7 +566,7 @@ export function egCircleColliderTris(seed, c, geo = 0) {
       quad([xb, y0, z0], [xb, y0, z1], [xb, y1, z1], [xb, y1, z0]);
     }
     for (const d of spec.deco ?? []) if (d.t === 'arch') for (const [x0, y0, z0, x1, y1, z1] of archParts(spec, d)) box(x0, y0, z0, x1, y1, z1);
-    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quad(a, b, c, e); }   // EG-HERO-LAY: a hero's stairs are its proxy's
+    for (const q of spec.ramps ?? []) { if (egInHeroBox(spec, (q.ax + q.bx) / 2, (q.az + q.bz) / 2, (q.y0 + q.y1) / 2)) continue; const [a, b, c, e] = rampCorners(spec, q); quad(a, b, c, e); }   // EG-HERO-LAY: a hero's stairs are its proxy's
     for (const v of spec.vignettes ?? []) { const a = egToDungeon(spec, v.x - 0.4, v.y, v.z - 1.0), e = egToDungeon(spec, v.x + 0.4, v.y + 1.4, v.z + 1.0); box(Math.min(a[0], e[0]), a[1], Math.min(a[2], e[2]), Math.max(a[0], e[0]), e[1], Math.max(a[2], e[2])); }
     // EG-HERO-LAY: the hall's hero's proxy (section 11.6 - never its drawn mesh), at its origin
     for (const q of spec.heroes ?? []) { const M = heroMeshes(); if (!q.room && M[q.id]) for (const v of egHeroFragCollider(q.id, egToDungeon(spec, q.x, q.y, q.z), M)) out.push(v); }
