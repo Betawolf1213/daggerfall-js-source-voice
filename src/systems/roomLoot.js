@@ -40,6 +40,9 @@
 import { groupReferenceLevel } from './mentorMode.js';
 import { RENOWN_LOOT_QUARTERS } from './renownLoot.js';
 import { validLootList, LOOT_LIST_MAX, LOOT_STACK_MAX } from './loot/loot.js';
+import { addGoldPieces, addItem, isGoldPieces, stacksWith } from './inventory.js';   // OUTDOOR-LOOT: the player's hands (liftPiece, givePiece) - none of the three imports this file
+import { isEquipped, unequipItem } from './equip.js';
+import { notCarried } from './peerWord.js';
 import { registerModSaveData } from './modSaveData.js';
 import { healingSupplyChances, mintHealingPotion, mintMagickaPotion } from './healingSupply.js';
 import { restLootChances, restItemsAvailable, createRestItem, REST_PILE_CHANCES, REST_FOE_CHANCES } from './rest/restItems.js';
@@ -418,6 +421,69 @@ export const claimWord = (/** @type {string} */ k, /** @type {any} */ state, /**
 });
 /** The latest verdicts a host's word carries. */
 export const recentAnswers = (/** @type {any} */ state) => [...state.answers].slice(-ROOM_ANSWERS_KEPT);
+
+// ---- the player's hands: a claim's lift and its give ----------------------------------------------------------------
+// OUTDOOR-LOOT (2026-10-17): roomLootHost.js's roomLift and roomGive, parameterised by the ENTITY whose hands they are - the
+// dungeon's block holds the module's one player, the street's pool its own (a test's, a second pool's) - so the street's
+// bodies and a building's cupboards claim by the dungeon's own law. A take of a shared piece is read out of the pack and
+// held as a claim until its verdict: lifted now, given on the grant.
+
+/** `n` of a piece back out of `entity`'s hands - the very record, or the stack it merged into, in the pack or the bag; a coin
+ *  out of the purse. Answers how many it found (a piece used straight off the container is found nowhere, and a claim
+ *  that lifts nothing still goes). */
+export function liftPiece(/** @type {any} */ entity, /** @type {any} */ item, /** @type {number} */ n) {
+  if (isGoldPieces(item)) { const had = entity.goldPieces ?? 0, t = Math.min(had, n); entity.goldPieces = had - t; return t; }
+  let left = n;
+  const off = (/** @type {any[]} */ list, /** @type {number} */ at) => {
+    const held = list[at], have = pieceCount(held);
+    if (have <= left) { if (isEquipped(held)) unequipItem(entity, held); list.splice(at, 1); left -= have; }
+    else { held.stackCount = have - left; left = 0; }
+  };
+  for (const list of [entity.items, entity.bagItems]) {
+    if (!Array.isArray(list) || left <= 0) continue;
+    const at = list.indexOf(item);
+    if (at >= 0) off(list, at);
+    for (let i = list.length - 1; i >= 0 && left > 0; i--) if (list[i] !== item && stacksWith(list[i], item)) off(list, i);
+  }
+  return n - left;
+}
+/** `n` of a piece into `entity`'s hands: coin to the purse, the rest to the pack (it stacks). Never a piece the entity
+ *  carries already (AUDIT AUTO-HOLD: a second of it is a copy, its own locked with it - systems/peerWord.js). */
+export function givePiece(/** @type {any} */ entity, /** @type {any} */ item, /** @type {number} */ n) {
+  if (n <= 0) return;
+  if (!notCarried([item])?.length) return;
+  if (isGoldPieces(item)) { addGoldPieces(entity, n); return; }
+  addItem((entity.items ??= []), Number.isInteger(item?.stackCount) ? { ...item, stackCount: n } : item);
+}
+
+/**
+ * THE SETTLE'S DIFF: what a container's list shows since it was last composed, read by IDENTITY (never a row - a filtered
+ * window's row 0 is not the container's place 0) against the shared pieces it held then. `seen` is `composeRoomView`'s
+ * map, piece -> `{ p | sp, n }`; `skip` names the pieces that were never the room's (the player's own bonus, the owner's
+ * pieces that never ride). Answers the three things a list can show:
+ *   takes: a shared piece gone or fallen in count - `{ obj, info, k }`, `k` the count taken (a stack split by the
+ *          window mutates the piece's own count, so a partial take reads as a fall);
+ *   grows: a shared stack that grew - something laid onto it - `{ obj, info, by }`;
+ *   puts:  a piece in the list `seen` never held - a piece laid in.
+ * `seen` is moved to what the list holds now, a piece gone forgotten and a count updated, so a second call reads only what
+ * changed after the first; the PUTS are the caller's to enter into `seen` (it names them). roomLootHost.js roomSettle's
+ * two loops as one law.
+ */
+export function listMovesSince(/** @type {Map<any, any>} */ seen, /** @type {any[]} */ list, /** @type {(it: any) => boolean} */ skip = () => false) {
+  const here = new Set(list);
+  const takes = [], grows = [], puts = [];
+  for (const [obj, info] of [...seen]) {
+    const cur = here.has(obj) ? pieceCount(obj) : 0;
+    if (cur === info.n) continue;
+    if (cur > info.n) { grows.push({ obj, info, by: cur - info.n }); info.n = cur; continue; }
+    const k = info.n - cur;
+    info.n = cur;
+    if (!cur) seen.delete(obj);
+    takes.push({ obj, info, k });
+  }
+  for (const obj of list) if (obj && !seen.has(obj) && !skip(obj)) puts.push(obj);
+  return { takes, grows, puts };
+}
 
 /** Whether a container holds nothing of the room's: every base piece gone and nothing stored (WORLD8's "emptied"). */
 export const roomEmptied = (/** @type {any} */ state, /** @type {number} */ baseLength) => state.stored.length === 0 && state.taken.size >= baseLength;
