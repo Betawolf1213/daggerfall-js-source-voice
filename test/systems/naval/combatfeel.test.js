@@ -20,6 +20,7 @@ import { HULL } from '../../../src/systems/naval/navalShips.js';
 import { navalHudText, drawNavalHud } from '../../../src/ui/naval/navalHud.js';
 import { sea, knowAll } from '../../navalSea.mjs';
 import { hullBoxOf } from '../../../src/scenes/naval/navalHost.js';
+import { quatAngleAxis } from '../../../src/world/quat.js';
 
 const seeded = (seed = 1) => { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = Math.imul(a ^ (a >>> 15), a | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 const near = (a, b, eps, msg) => assert.ok(Math.abs(a - b) <= eps, `${msg ?? ''} ${a} ~ ${b}`);
@@ -254,6 +255,18 @@ test('COMBAT-FEEL over the real naval host: a pirate\'s ball by my side whistles
   const m = h.host.hudModel();
   assert.equal(m.ship.blow, 'starboard');
   assert.equal(navalHudText(m).plate.blow, 'starboard');
+  // her heading read: turned east, her starboard is to the south
+  h.run(BLOW_S + 0.2);
+  assert.equal(h.host.hudModel().ship.blow, null);
+  h.boat.GameObject.rotation = quatAngleAxis(90, [0, 1, 0]);
+  h.run(0.1);
+  const turned = hullBoxOf(h.boat, h.pool.models);
+  const south = turned.c[2] - (Math.abs(turned.ax[2]) * turned.h[0] + Math.abs(turned.ay[2]) * turned.h[1] + Math.abs(turned.az[2]) * turned.h[2]);
+  const shakes = h.log.shake.length;
+  fire([turned.c[0], 1, south - 30], [0, 0, 220]);
+  h.run(0.3);
+  assert.ok(h.log.shake.slice(shakes).some((k) => k >= 1.6), `it struck her: ${h.log.shake.slice(shakes)}`);
+  assert.equal(h.host.hudModel().ship.blow, 'starboard', 'from the south, heading east: her starboard');
   assert.ok(m.batteries.every((b) => Number.isFinite(b.left)), 'each battery\'s seconds');
   const text = navalHudText({ ...m, batteries: m.batteries.map((b) => ({ ...b, ready: false, loaded: false, left: 4.2 })) });
   assert.deepEqual(text.plate.batteries.map((b) => b.secs), m.batteries.map((b) => (b.gun === 'barrel' ? '' : '5s')), 'a gun\'s whole seconds - a barrel none');
