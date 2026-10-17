@@ -7,6 +7,7 @@ import { VoiceTransport } from './voiceTransport.js';
 import { VoiceSpatialAudio } from './voiceSpatialAudio.js';
 import { proximitySet, subscriptionDiff, voiceGainAt, panFor, feetDistance, VOICE_PLACE_MS } from './voiceProximity.js';
 import { validTokenAnswer, voiceUrlOk, VOICE_REMINT_AHEAD_S } from './voiceWire.js';
+import { jittered } from '../net/backoff.js';
 
 /** The default voice service - beside the relay (online.js DEFAULT_SERVER); a `?voice=` or the pref overrides it. */
 export const DEFAULT_VOICE_SERVICE = 'https://daggerfall-voice.mackcothran.workers.dev';
@@ -35,17 +36,18 @@ export class VoiceClient {
    *   destination?: any,
    *   transport?: VoiceTransport|null,   // a test's
    *   now?: () => number,
+   *   rand?: () => number,   // Math.random's shape - the retry's jitter, injectable for a deterministic test
    *   setTimeout?: typeof setTimeout, clearTimeout?: typeof clearTimeout,
    *   makeElement?: (() => any)|null,   // an <audio> for each remote track (Chromium decodes a remote track only through one)
    * }} o
    */
-  constructor({ service = DEFAULT_VOICE_SERVICE, mintToken = null, fetch: fetchImpl = globalThis.fetch, audioContext = null, destination = null, transport = null, now = () => Date.now(), setTimeout: st = globalThis.setTimeout, clearTimeout: ct = globalThis.clearTimeout, makeElement = null }) {
+  constructor({ service = DEFAULT_VOICE_SERVICE, mintToken = null, fetch: fetchImpl = globalThis.fetch, audioContext = null, destination = null, transport = null, now = () => Date.now(), rand = Math.random, setTimeout: st = globalThis.setTimeout, clearTimeout: ct = globalThis.clearTimeout, makeElement = null }) {
     this.service = String(service || DEFAULT_VOICE_SERVICE).replace(/\/+$/, '');
     this.mintToken = mintToken;
     this._fetch = fetchImpl;
     this._audioContext = audioContext;
     this._destination = destination;
-    this._now = now; this._setTimeout = st; this._clearTimeout = ct;
+    this._now = now; this._rand = rand; this._setTimeout = st; this._clearTimeout = ct;
     this._makeElement = makeElement;
     this.state = new VoiceState({ now });
     /** @type {VoiceTransport} */
@@ -196,7 +198,8 @@ export class VoiceClient {
     this.stats.failures++;
     this.state.setStatus(kind === 'denied' ? 'denied' : 'error', text);
     this._session = null;
-    this._retryAt = this._now() + this._retryMs;
+    // Jittered, not a lockstep doubling - a relay deploy or SFU outage must not have every client ask again at once.
+    this._retryAt = this._now() + jittered(this._retryMs, this._rand);
     this._retryMs = Math.min(VOICE_RETRY_MAX_MS, this._retryMs * 2);
     this.transport.disconnect().catch(() => {});
     this.state.clearConnection();

@@ -182,6 +182,8 @@ import { routeStaffTeleport } from './staffTeleport.js';
 import { privateInteriorOf, privateInteriorAdmits } from '../../src/net/privateInterior.js';
 import { isStaff } from '../../src/net/staffCommands.js';
 import { verifyToken, verifyOrder, verifyStakeOrderAnyAge, importPublicKeyB64, MAX_TTL_S, ORDER_TTL_S, renownIssuable } from '../../src/net/identityToken.js';   // MOD1: and the mute order, checked with the same key
+// VOICE-RELAY-DOOR: shares src/voice/voiceWire.js with server-voice/the client (zero-dep, costs RELAY_GRAPH nothing but its own constants).
+import { VOICE_PRESENCE_PATH, VOICE_PARTY_OF_PATH, VOICE_PRESENCE_INTERNAL, VOICE_PARTY_OF_INTERNAL, VOICE_RELAY_SECRET_HEADER } from '../../src/voice/voiceWire.js';
 /** ACC1d/F8: the most spent signatures one room remembers. Every entry
  *  expires within MAX_TTL_S and the hello gate bounds how fast they can
  *  arrive, so honest traffic never comes near this; it is here so a
@@ -302,6 +304,35 @@ const SERPENT_KEEP_MS = 2 * 60 * 60 * 1000;
 /** SERPENT1: where a cell keeps a fight (its id `day@site` - wire.js serpentFightId; the ids under SERPENT_FIGHTS_KEY). */
 const serpentStoreKey = (id) => `${SERPENT_FIGHT_KEY}:${id}`;
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
+/** CONSTANT-TIME STRING EQUALITY, duplicated rather than imported from server-account's password.js: that's a different Worker's bundle, and SLAM8 hashes this one's raw bytes. */
+function ctEqualStrings(a, b) {
+  const x = new TextEncoder().encode(a), y = new TextEncoder().encode(b);
+  let diff = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) diff |= (x[i] ?? 0) ^ (y[i] ?? 0);
+  return diff === 0;
+}
+/** VOICE-RELAY-DOOR: checks the shared secret (constant-time), then asks the NAMED room's own object for the live answer; a missing or wrong secret fails closed, never guesses. */
+async function voicePresenceDoor(request, env, pathname) {
+  if (request.method !== 'POST') return json({ error: 'method' }, 405);
+  const want = env.VOICE_RELAY_SECRET;
+  const got = request.headers.get(VOICE_RELAY_SECRET_HEADER);
+  if (!want || !got || !ctEqualStrings(String(want), String(got))) return json({ error: 'no door' }, 403);
+  let body = null;
+  try { body = await request.json(); } catch { body = null; }
+  const acct = typeof body?.acct === 'string' ? body.acct : null;
+  if (!acct || acct.length > 128) return json({ error: 'bad ask' }, 400);
+  if (pathname === VOICE_PARTY_OF_PATH) {
+    const id = env.ROOMS.idFromName(SOCIAL_ROOM);
+    const res = await env.ROOMS.get(id).fetch(new Request(`https://relay.internal${VOICE_PARTY_OF_INTERNAL}`, { method: 'POST', body: JSON.stringify({ acct }), signal: AbortSignal.timeout(ROOM_CALL_MS) }));
+    return json(res.ok ? await res.json() : { party: null });
+  }
+  // presence: the room a client NAMED in its voice request, the exact claim the voice service must not just trust
+  const room = typeof body?.room === 'string' ? body.room : null;
+  if (!room) return json({ error: 'bad ask' }, 400);
+  const id = env.ROOMS.idFromName(room);
+  const res = await env.ROOMS.get(id).fetch(new Request(`https://relay.internal${VOICE_PRESENCE_INTERNAL}`, { method: 'POST', body: JSON.stringify({ acct }), signal: AbortSignal.timeout(ROOM_CALL_MS) }));
+  return json(res.ok ? await res.json() : { here: false });
+}
 /** WB12d: the names of those who broke a circle's rite, in the order they were said. */
 const riteNames = (c) => Object.values(c?.h ?? {}).filter((n) => typeof n === 'string' && n);
 /** WB12d: the hub's word of a broken rite - its day, its circle, when, the first names of those who broke it and (AUDIT
@@ -370,6 +401,8 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === '/health') return json({ ok: true, service: 'daggerfall-online', version: RELAY_VERSION, t: Date.now() });
+    // server-voice's presence/party cross-checks against this relay's own truth; secret-gated since this crosses Workers.
+    if (url.pathname === VOICE_PRESENCE_PATH || url.pathname === VOICE_PARTY_OF_PATH) return voicePresenceDoor(request, env, url.pathname);
     const key = roomOf(url.pathname);
     if (!key || (key.startsWith('chat:') && !isChatRoom(key))) return json({ error: 'no such room' }, 404);   // AUDIT CHAT A1: no object is minted for a channel the port does not run
     if (key.startsWith('owned:') && !privateInteriorOf(key)) return json({ error: 'no such private room' }, 404);
@@ -626,6 +659,8 @@ export class Room {
     if (path === SD_INTERNAL_FOUND) return this._sdFoundInternal(request);   // SD3: a cell telling the hub a Hollow found
     if (path === SD_INTERNAL_LIVE) return this._sdLiveInternal();   // SD3: the Worker or a realm asking the hub its record
     if (path === SD_INTERNAL_FELL) return this._sdFellInternal(request);   // SD8b: a realm telling the hub its Remnant fell
+    if (path === VOICE_PRESENCE_INTERNAL) return this._voicePresenceInternal(request);   // VOICE-RELAY-DOOR: this room's own word on who is hello'd into it
+    if (path === VOICE_PARTY_OF_INTERNAL) return this._voicePartyOfInternal(request);   // VOICE-RELAY-DOOR: the hub's word on an account's party
     const key = roomOf(new URL(request.url).pathname);
     if (!key || (key.startsWith('owned:') && !privateInteriorOf(key))) return json({ error: 'no such private room' }, 404);
     // AUDIT WB A1: A SEAT IS A HELLO'S. A socket that opened and never said hello kept its seat for as long as it stood
@@ -6401,6 +6436,26 @@ export class Room {
     for (const id of lapsed) { if (!party) break; const rec = await this._acct(id); party = await this._partyOut(id, party, now, 'party.lapsed', rec?.name ?? null, { leaderNote: false }); }
     if (party && party.leader !== leaderBefore) { const lrec = await this._acct(party.leader); for (const m of party.members) this._sayNote(m, 'party.leader', party.leader, lrec?.name ?? null); }
     return party;
+  }
+  /** VOICE-RELAY-DOOR: is `acct` hello'd into THIS room right now - off the verified token's own subject on each attachment, never a client-typed body. Any room object may answer this, not only the hub. */
+  async _voicePresenceInternal(request) {
+    let body = null;
+    try { body = await request.json(); } catch { body = null; }
+    const acct = typeof body?.acct === 'string' ? body.acct : null;
+    if (!acct) return json({ here: false }, 400);
+    for (const [, b] of this._all()) if (b.id && b.sub === acct) return json({ here: true });
+    return json({ here: false });
+  }
+  /** VOICE-RELAY-DOOR: which party `acct` is in now, off its account record - only the hub (SOCIAL_ROOM) holds party state, so this always routes there regardless of the room the voice request itself named. */
+  async _voicePartyOfInternal(request) {
+    let body = null;
+    try { body = await request.json(); } catch { body = null; }
+    const acct = typeof body?.acct === 'string' ? body.acct : null;
+    if (!acct) return json({ party: null }, 400);
+    const rec = await this._acct(acct);
+    if (!rec?.party) return json({ party: null });
+    const party = await this._livingParty(rec.party, Date.now());
+    return json({ party: party && party.members.includes(acct) ? party.id : null });
   }
   /** The party an account sits in, as it stands - or null, the record's stale pointer cleared (a lapse, a drain, a kick
    *  while it was away). Returns [party, rec] with `rec` written when it changed. */

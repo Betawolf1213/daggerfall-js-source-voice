@@ -109,6 +109,22 @@ SERPENT_DISCORD_ROLE = ""
 # the spoils: the receipts go out unsigned, the players' loot rolls the
 # same, and the account service declines to record the kill.
 
+# ═══ VOICE-RELAY-DOOR: THE VOICE SERVICE'S SHARED SECRET ════════════
+#
+# VOICE_RELAY_SECRET is a Worker SECRET, never a var: a plain shared
+# string server-voice sends on every presence/party-of ask (header
+# x-voice-relay-secret, src/voice/voiceWire.js VOICE_RELAY_SECRET_HEADER),
+# checked constant-time against this relay's own copy. Fixes 7.3 (room-
+# claim spoofing): before this door existed, a proximity voice request's
+# `room` field was trusted on the client's word alone, so two strangers
+# could name the same made-up room key and hear each other regardless of
+# real position. `npx wrangler secret put VOICE_RELAY_SECRET` here, and
+# the SAME value as server-voice's VOICE_RELAY_SECRET env var - set in
+# only one place and the two sides silently never agree. NOT in RELAY_GRAPH
+# (voicePresenceDoor and the Room's two handlers live outside
+# identityToken.js's graph), so this secret's own rotation does not bump
+# RELAY_VERSION or drop a connected player.
+
 # AUDIT ONLINE A17: an uncaught error in the object is logged, not lost
 [observability]
 enabled = true

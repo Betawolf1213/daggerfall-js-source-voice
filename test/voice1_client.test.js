@@ -280,9 +280,9 @@ function fakeService({ answer = null, status = 200 } = {}) {
 const tick = () => new Promise((r) => setTimeout(r, 0));
 async function settle(c) { for (let i = 0; i < 10; i++) { await tick(); if (!c._connecting) break; await c._connecting?.catch(() => {}); } }
 
-function makeClient({ svc, sdk = fakeSdk(), mintToken = async () => 'v1.body.sig', clock = { t: 100_000 }, ctx = fakeContext() } = {}) {
+function makeClient({ svc, sdk = fakeSdk(), mintToken = async () => 'v1.body.sig', clock = { t: 100_000 }, ctx = fakeContext(), rand = () => 0.5 } = {}) {
   const transport = new VoiceTransport({ sdk });
-  const c = new VoiceClient({ service: 'https://voice.test/', mintToken, fetch: svc.fetchImpl, transport, now: () => clock.t, audioContext: () => ctx, setTimeout: () => 0, clearTimeout: () => {} });
+  const c = new VoiceClient({ service: 'https://voice.test/', mintToken, fetch: svc.fetchImpl, transport, now: () => clock.t, rand, audioContext: () => ctx, setTimeout: () => 0, clearTimeout: () => {} });
   return { c, sdk, transport, clock, ctx };
 }
 
@@ -416,6 +416,26 @@ test('VOICE1 client: a voice failure never stops the game - the service away, a 
   clock.t += VOICE_RETRY_MIN_MS; c.frame([0, 0, 0], 0, []); await settle(c); assert.equal(c.state.status, 'open', 'back');
   // a reconnecting transport is said, and open again when it lands
   c.transport.room.emit('rc'); assert.equal(c.state.status, 'reconnecting'); c.transport.room.emit('rd'); assert.equal(c.state.status, 'open');
+});
+
+test('VOICE1 client: a failed retry is jittered, not a lockstep doubling - a relay deploy or SFU outage must not have every client ask again in the same instant', async () => {
+  // rand() pinned low (0) and high (0.999...) brackets jittered()'s own [ms/2, 3ms/2) law onto the client's real wait
+  const svc = fakeService({ status: 503 });
+  const low = makeClient({ svc, rand: () => 0 });
+  low.c.setEnabled(true); low.c.setRoom('cell:1'); low.c.frame([0, 0, 0], 0, []); await settle(low.c);
+  assert.equal(low.c._retryAt, low.clock.t + VOICE_RETRY_MIN_MS / 2, 'rand=0: the floor of the jitter window');
+  const high = makeClient({ svc, rand: () => 0.999999 });
+  high.c.setEnabled(true); high.c.setRoom('cell:1'); high.c.frame([0, 0, 0], 0, []); await settle(high.c);
+  assert.ok(high.c._retryAt > high.clock.t + VOICE_RETRY_MIN_MS, 'rand near 1: close to the ceiling of the jitter window, strictly past the unjittered wait');
+  // two clients failing at the same instant under the SAME doubling schedule land on DIFFERENT retry times - the
+  // thundering herd this fixes is every client asking again at once; distinct rand draws must give distinct _retryAt
+  const a = makeClient({ svc, rand: () => 0.1 });
+  a.c.setEnabled(true); a.c.setRoom('cell:1'); a.c.frame([0, 0, 0], 0, []); await settle(a.c);
+  const b = makeClient({ svc, clock: a.clock, rand: () => 0.9 });
+  b.c.setEnabled(true); b.c.setRoom('cell:1'); b.c.frame([0, 0, 0], 0, []); await settle(b.c);
+  assert.notEqual(a.c._retryAt, b.c._retryAt, 'the same failure at the same instant retries at different times');
+  // the doubling itself is still exact - only the applied wait is jittered, never the stored exponential base
+  assert.equal(a.c._retryMs, VOICE_RETRY_MIN_MS * 2); assert.equal(b.c._retryMs, VOICE_RETRY_MIN_MS * 2);
 });
 
 test('VOICE1 client: the credential is re-minted before its end', async () => {
