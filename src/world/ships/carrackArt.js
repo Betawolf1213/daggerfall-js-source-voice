@@ -69,7 +69,7 @@ export const CARRACK_TILE = Object.freeze({
 });
 
 /** Her palette: the galleon's earths and her own three - Bay blue, ochre, white lead. */
-export const K = Object.freeze({
+const K = Object.freeze({
   blue: [46, 66, 94], blueLit: [66, 90, 124], blueDark: [30, 44, 64],
   ochre: [176, 128, 48], ochreLit: [214, 166, 78], ochreDark: [118, 82, 30],
   whiteLead: [198, 192, 172], black: [24, 22, 21], blackLit: [58, 54, 50],
@@ -286,3 +286,6 @@ export function registerCarrackArt(addVendorTextures) {
 }
 /** Test seam: unregistered, her glow uncut. */
 export function _resetCarrackArt() { _registered = false; _glow = null; }
+
+/** SHIP-LIVERY: her palette, for the painter that repaints her by its families (world/ships/shipLiveryArt.js). */
+export const CARRACK_PALETTE = K;

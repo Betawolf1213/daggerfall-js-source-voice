@@ -65,8 +65,8 @@
   {
     "name": "CT-points-a-level",
     "file": "src/systems/naval/captainTree.js",
-    "old": "export const pointsOf = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0) - 1);",
-    "new": "export const pointsOf = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0));",
+    "old": "export const starPoints = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0) - 1);",
+    "new": "export const starPoints = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0));",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -607,8 +607,8 @@
   {
     "name": "CT-win-way-one",
     "file": "src/ui/captainTreeWindow.js",
-    "old": "    pending = heldOf([...pending, ...w], captain().points);",
-    "new": "    pending = heldOf([...pending, id], captain().points);",
+    "old": "    pending = heldStars([...pending, ...w], captain().points);",
+    "new": "    pending = heldStars([...pending, id], captain().points);",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -634,8 +634,8 @@
   {
     "name": "CT-win-accept-unkept",
     "file": "src/ui/captainTreeWindow.js",
-    "old": "    committed = heldOf(ledger.setTree(pending));",
-    "new": "    committed = heldOf(pending);",
+    "old": "    committed = heldStars(ledger.setTree(pending));",
+    "new": "    committed = heldStars(pending);",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -670,8 +670,8 @@
   {
     "name": "CT-ledger-restore-uncapped",
     "file": "src/systems/naval/captainLedger.js",
-    "old": "      tree = heldOf(r.tree, captainOf(log).points);",
-    "new": "      tree = heldOf(r.tree);",
+    "old": "      tree = heldStars(r.tree, captainOf(log).points);",
+    "new": "      tree = heldStars(r.tree);",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -679,8 +679,8 @@
   {
     "name": "CT-ledger-set-uncapped",
     "file": "src/systems/naval/captainLedger.js",
-    "old": "    setTree(ids) { tree = heldOf(ids, captainOf(log).points); stats = treeStats(tree); return tree.slice(); },",
-    "new": "    setTree(ids) { tree = heldOf(ids); stats = treeStats(tree); return tree.slice(); },",
+    "old": "    setTree(ids) { tree = heldStars(ids, captainOf(log).points); stats = starStats(tree); return tree.slice(); },",
+    "new": "    setTree(ids) { tree = heldStars(ids); stats = starStats(tree); return tree.slice(); },",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]
@@ -688,8 +688,8 @@
   {
     "name": "CT-ledger-stats-stale",
     "file": "src/systems/naval/captainLedger.js",
-    "old": "    setTree(ids) { tree = heldOf(ids, captainOf(log).points); stats = treeStats(tree); return tree.slice(); },",
-    "new": "    setTree(ids) { tree = heldOf(ids, captainOf(log).points); return tree.slice(); },",
+    "old": "    setTree(ids) { tree = heldStars(ids, captainOf(log).points); stats = starStats(tree); return tree.slice(); },",
+    "new": "    setTree(ids) { tree = heldStars(ids, captainOf(log).points); return tree.slice(); },",
     "tests": [
       "test/systems/naval/captaintree.test.js"
     ]

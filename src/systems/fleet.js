@@ -82,7 +82,7 @@ export const MATERIALS = Object.freeze({
 });
 /** REFIT-ORES: an item's metal (DFU's WeaponMaterialTypes, 0 iron to 9 Daedric) - a weapon's, or a piece of plate's
  *  (armorMaterials.js plateMetal) - or null for anything else (leather, chain, cloth, an ingot, an arrow). */
-export function metalOf(item) {
+export function refitMetalOf(item) {
   const m = item?.material;
   if (!Number.isInteger(m)) return null;
   if (item.group === 'Weapons') return item.templateIndex !== WEAPONS.Arrow && m >= 0 && m <= 9 ? m : null;
@@ -93,7 +93,7 @@ export function metalOf(item) {
 export const meltable = (item) => !!item && item.equipSlot == null && !item.questItem && !item.artifact && !item.sigil
   && !(Array.isArray(item.enchantments) && item.enchantments.length);
 /** Whether `item` is one of `kind`: its template, or (an ore) a meltable piece of its metal. */
-const isOf = (item, kind) => { const m = MATERIALS[kind]; return !!m && !!item && (m.templates.includes(item.templateIndex) || (m.metal != null && metalOf(item) === m.metal && meltable(item))); };
+const isOf = (item, kind) => { const m = MATERIALS[kind]; return !!m && !!item && (m.templates.includes(item.templateIndex) || (m.metal != null && refitMetalOf(item) === m.metal && meltable(item))); };
 /** The four refits, each UPGRADE_TIERS deep: what it betters, by how much a tier, and what it is built of. Guns only on
  *  a hull that carries them. */
 export const UPGRADE_LINES = Object.freeze([
@@ -358,7 +358,7 @@ export function setShipLivery(uid, raw) {
   r.livery = l;
   return true;
 }
-/** SHIP-LIVERY (CABIN-LOOK): her cabin's stain - a paint's index (systems/naval/shipLivery.js PAINTS), 0 as built.
+/** SHIP-LIVERY (CABIN-LOOK): her cabin's stain - a paint's index (systems/naval/shipLivery.js SHIP_PAINTS), 0 as built.
  *  Answers whether she has it now. */
 export function setShipCabin(uid, paint) {
   const r = _ships.get(uid);

@@ -19,7 +19,7 @@ import { CREW_ROLES, veteranOf, postsOf, postWords } from '../systems/naval/ship
 import { HERALDRY_COLOURS, HERALDRY_DEVICES, HERALDRY_DIVISIONS, HERALDRY_DIVISION_NAMES, heraldryDeviceName, heraldryOf } from '../net/heraldryLaw.js';   // SHIP-COLOURS
 import { FLAG_SHAPES, FLAG_DEFAULT, fitFlag, flownFlag } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: her flag's law
 import { flagSvg } from './flagArt.js';   // SHIP-COLOURS: and its picture
-import { PAINTS, LIVERY_PARTS, liveryOf } from '../systems/naval/shipLivery.js';   // SHIP-LIVERY: her paint's law
+import { SHIP_PAINTS, LIVERY_PARTS, liveryOf } from '../systems/naval/shipLivery.js';   // SHIP-LIVERY: her paint's law
 import { t } from '../systems/textManager.js';   // SHIP-COLOURS: the designer's words in the player's language
 
 export const FLEET_PAGE_SECTIONS = Object.freeze([Object.freeze(['fleet', 'Fleet'])]);
@@ -270,7 +270,7 @@ const PART_WORDS = Object.freeze({
   strake: () => t('naval.paint.p.strake', 'Hull strakes'), accent: () => t('naval.paint.p.accent', 'Trim and gilding'),
   sail: () => t('naval.paint.p.sail', 'Sails'), stain: () => t('naval.paint.p.stain', 'Wood stain'),
 });
-export const paintName = (i) => (i ? PAINT_WORDS[PAINTS[i]?.id]?.() ?? '' : t('naval.paint.asBuilt', 'As built'));
+export const paintName = (i) => (i ? PAINT_WORDS[SHIP_PAINTS[i]?.id]?.() ?? '' : t('naval.paint.asBuilt', 'As built'));
 const hexOf = (rgb) => `#${rgb.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 /** Her colours as built, for the picture: each hull's strake and trim (world/ships/*Art.js), the fleet's canvas and oak. */
 const BUILT = Object.freeze({ 1: [[58, 92, 70], [176, 128, 48]], 2: [[118, 34, 27], [196, 152, 62]], 4: [[46, 66, 94], [176, 128, 48]] });
@@ -280,8 +280,8 @@ const BUILT = Object.freeze({ 1: [[58, 92, 70], [176, 128, 48]], 2: [[118, 34, 2
  */
 export function paintSvg(hull, livery, { width = 150 } = {}) {
   const l = liveryOf(livery, hull) ?? { strake: 0, accent: 0, sail: 0, stain: 0 };
-  const rgbOf = (i, built) => PAINTS[i]?.rgb ?? built;
-  const oak = [104, 72, 44], stainOf = PAINTS[l.stain]?.rgb;
+  const rgbOf = (i, built) => SHIP_PAINTS[i]?.rgb ?? built;
+  const oak = [104, 72, 44], stainOf = SHIP_PAINTS[l.stain]?.rgb;
   const wood = stainOf ? oak.map((v, k) => Math.round(v * 0.38 + stainOf[k] * 0.62 * 0.9)) : oak;
   const built = BUILT[hull];
   const strake = built ? rgbOf(l.strake, built[0]) : wood, trim = built ? rgbOf(l.accent, built[1]) : [196, 152, 62];
@@ -302,13 +302,13 @@ function paintSwatches(el, word, current, choose) {
   const set = el('div', 'hld-swatches');
   set.setAttribute('role', 'radiogroup');
   set.setAttribute('aria-label', word);
-  for (let i = 0; i < PAINTS.length; i++) {
+  for (let i = 0; i < SHIP_PAINTS.length; i++) {
     const b = el('button', `hld-swatch${i === current ? ' on' : ''}${i === 0 ? ' hld-swatch-none' : ''}`);
     b.setAttribute('role', 'radio');
     b.setAttribute('aria-checked', i === current ? 'true' : 'false');
     b.setAttribute('aria-label', paintName(i));
     b.title = paintName(i);
-    if (i && b.style) b.style.setProperty?.('--sw', hexOf(PAINTS[i].rgb));
+    if (i && b.style) b.style.setProperty?.('--sw', hexOf(SHIP_PAINTS[i].rgb));
     b.onclick = () => choose(i);
     set.append(b);
   }

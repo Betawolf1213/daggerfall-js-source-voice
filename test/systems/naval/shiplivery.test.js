@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
-  PAINTS, PAINT_MAX, LIVERY_PARTS, LIVERY_ARCHIVE, STAIN_STRENGTH, liveryPartsOf, liveryOf, liveryCode, liveryOfCode, paintFamilies, tintPicture, stainPicture, meanLum, lumOf,
+  SHIP_PAINTS, PAINT_MAX, LIVERY_PARTS, LIVERY_ARCHIVE, STAIN_STRENGTH, liveryPartsOf, liveryOf, liveryCode, liveryOfCode, paintFamilies, tintPicture, stainPicture, meanLum, lumOf,
 } from '../../../src/systems/naval/shipLivery.js';
 import { liveryArtOf, LIVERY_ART, shadeCloth } from '../../../src/world/ships/shipLiveryArt.js';
 import { GALLEON_ARCHIVE, TEX as GTEX, C } from '../../../src/world/ships/galleonArt.js';
@@ -50,9 +50,9 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 // ── the law ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 test('SHIP-LIVERY the law: fourteen paints and none; the port-built hulls take strake, accent and sail, the galley stain and sail, the rowboat stain; a livery through its door - a part the hull does not take none, a field that is no paint refusing the whole, none at all null; one number on the word, four nibbles (mutants: the parts, the door, the code)', () => {
-  assert.equal(PAINTS[0], null);
+  assert.equal(SHIP_PAINTS[0], null);
   assert.equal(PAINT_MAX, 14);
-  assert.deepEqual(PAINTS.slice(1).map((p) => p.id), ['oxblood', 'crimson', 'black', 'navy', 'bay', 'teal', 'sea', 'forest', 'ochre', 'gold', 'white', 'grey', 'purple', 'tan']);
+  assert.deepEqual(SHIP_PAINTS.slice(1).map((p) => p.id), ['oxblood', 'crimson', 'black', 'navy', 'bay', 'teal', 'sea', 'forest', 'ochre', 'gold', 'white', 'grey', 'purple', 'tan']);
   assert.deepEqual([0, 1, 2, 3, 4, 9].map(liveryPartsOf), [['stain'], ['strake', 'accent', 'sail'], ['strake', 'accent', 'sail'], ['stain', 'sail'], ['strake', 'accent', 'sail'], []]);
   assert.deepEqual(LIVERY_PARTS, ['strake', 'accent', 'sail', 'stain']);
   assert.deepEqual(liveryOf({ strake: 4, sail: 3 }), { strake: 4, accent: 0, sail: 3, stain: 0 });
@@ -101,7 +101,7 @@ test('SHIP-LIVERY a port ship repainted: her painted pictures alone - sides, cas
   assert.ok(gallery.glow && gallery.night === GTEX.sternWindows0 + 100, 'her glass and her night twin');
   const sail = g.find((r) => r.record === GTEX.canvas);
   const built = new Map(LIVERY_ART[GALLEON_ARCHIVE].art()).get(GTEX.canvas);
-  assert.deepEqual(sail.picture.data, shadeCloth(built, PAINTS[3].rgb).data);
+  assert.deepEqual(sail.picture.data, shadeCloth(built, SHIP_PAINTS[3].rgb).data);
   for (let i = 0; i < sail.picture.data.length; i += 4) assert.ok(sail.picture.data[i] < 60, 'black sails, every texel');
   assert.deepEqual(px(shadeCloth(pic(1, 1, () => C.canvas), [10, 20, 30]), 0), [10, 20, 30, 255], 'the cloth itself the paint as it is');
   assert.ok(!liveryArtOf(GALLEON_ARCHIVE, { strake: 4, accent: 0, sail: 0, stain: 0 }).some((r) => r.record === GTEX.gilt), 'a picture the paint does not change is not made again');
@@ -569,7 +569,7 @@ test('DECK-PROPS the plan of her deck: a click sets the fitting chosen where it 
 test('SHIP-LIVERY the paint\'s picture and words: a hull in her strake, her trim and her sail - her own colours where none is chosen, a stained hull\'s wood stained, a rowboat no sail; each paint named, none "As built" (mutants: each colour read)', () => {
   const hex = (rgb) => `#${rgb.map((v) => v.toString(16).padStart(2, '0')).join('')}`;
   const svg = paintSvg(2, { strake: 4, accent: 11, sail: 3 });
-  for (const i of [4, 11, 3]) assert.ok(svg.includes(hex(PAINTS[i].rgb)), PAINTS[i].id);
+  for (const i of [4, 11, 3]) assert.ok(svg.includes(hex(SHIP_PAINTS[i].rgb)), SHIP_PAINTS[i].id);
   assert.ok(paintSvg(2, null).includes(hex(C.oxblood)), 'her own strake as built');
   assert.ok(!paintSvg(0, { stain: 3 }).includes('<path d="M78 14'), 'a rowboat carries no sail');
   assert.notEqual(paintSvg(3, { stain: 3 }), paintSvg(3, null), 'a stain colours her wood');

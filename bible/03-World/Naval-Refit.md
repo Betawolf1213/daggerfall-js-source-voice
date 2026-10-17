@@ -39,7 +39,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | RAID-ASHORE | 2 | a voyage's raid fought where the player stands ends there: its crew and last raiders withdrawn, the quest ended; one raid at a time on the fast travel | `scenes/raidAshore.js`, `systems/warmAshesShips.js` (`LeaveShip`, `onPreFastTravel`), `scenes/world.js` (`raidAshore`, Warm Ashes' host, the quest's end) |
 | SHIP-COLOURS | 9 | a ship flies a flag of her captain's design - its shape, its field and division, its border, its device and that device's colour, or the captain's guild's arms - as cloth at her masthead, in her pennant's place, seen by every player | `systems/naval/shipFlag.js`, `ui/flagArt.js`, `render/shipFlagPass.js`, `scenes/shipFlagHost.js`, `systems/fleet.js` (`colours`, `setShipColours`), `scenes/fleetHost.js` (`colours`), `ui/fleetPage.js` (`coloursPanel`), `systems/comeSailAway/comeSailAwayWire.js` (`f`), `scenes/comeSailAway/comeSailAwayPeers.js` (`flagged`), `ui/heraldryArt.js` (its device painter shared), `scenes/world.js` |
 | CAPTAIN-TREE | 10 | a captain's level, earned at sea off the captain's log, buys a point a level for a sky of stars in the Firmament's dress - the Master's seamanship to the left, the Commander's war to the right - each star a share of a ship's own number read where that number is read: her way, oars, helm, hold, hull, repairs, trade, guns' harm, reload and aim, the shot locker's grape, chain and heated shot, her boarders, her ram and its foul | `systems/naval/captainTree.js`, `systems/naval/captainLedger.js` (`captain`, `tree`, `setTree`, `stats`, the save's `tree`), `ui/captainTreeWindow.js`, `ui/captainPage.js` (the stars' card), `ui/naval/navalPlunderDoor.js` (`createCaptainStarsOverlay`), `ui/enhanced/enhancedMenu.js` (the Captain page's door), `scenes/fleetHost.js` (`refit`), `systems/comeSailAway/comeSailAway.js` (`rigOf`'s `oars`, `turn`), `scenes/naval/navalHost.js` (`crewStep`'s worth, `crewSkill`, `loadedGun`, `landHit`, `checkRams`), `systems/naval/shotKinds.js` (`shotFireChance`'s `k`), `systems/naval/navalFoul.js` (`foul`'s `more`), `systems/naval/tradeGoods.js` (`exchangeOf`'s `edge`), `scenes/harbourOffice.js`, `scenes/world.js` |
-| REFIT-ORES | 11 | past the shipwright's three tiers, nine of metal - Steel to Daedric, DFU's own ladder - each asking a captain's level, its metal (ingots, or a weapon or a piece of plate of it melted down) and her line's first store | `systems/fleet.js` (`ORE_TIERS`, `MATERIALS`' metals, `metalOf`, `meltable`, `materialCount`, `takeMaterials`, `meltCount`, `materialsFor`, `upgradeCost`, `refitShare`, `REFIT_NUMERALS`), `scenes/fleetHost.js` (`offer`, `act`'s refit), `ui/fleetPage.js` (`refitRowWords`, the refit panel), `ui/shipyardWindow.js` (its Refits tab) |
+| REFIT-ORES | 11 | past the shipwright's three tiers, nine of metal - Steel to Daedric, DFU's own ladder - each asking a captain's level, its metal (ingots, or a weapon or a piece of plate of it melted down) and her line's first store | `systems/fleet.js` (`ORE_TIERS`, `MATERIALS`' metals, `refitMetalOf`, `meltable`, `materialCount`, `takeMaterials`, `meltCount`, `materialsFor`, `upgradeCost`, `refitShare`, `REFIT_NUMERALS`), `scenes/fleetHost.js` (`offer`, `act`'s refit), `ui/fleetPage.js` (`refitRowWords`, the refit panel), `ui/shipyardWindow.js` (its Refits tab) |
 | SHIP-LIVERY | 8 | a ship painted by her captain - a port-built hull's strakes, trim and canvas, a classic-planked hull's wood stained and its sails tinted, each of fourteen paints or as built - drawn so wherever she is drawn, seen by every player | `systems/naval/shipLivery.js`, `world/ships/shipLiveryArt.js`, `scenes/comeSailAway/shipLiveryPaint.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`liveryCodeOf`, the draw's remap), `systems/fleet.js` (`livery`, `setShipLivery`), `scenes/fleetHost.js` (`livery`), `ui/fleetPage.js` (`paintPanel`, `paintSvg`), `systems/comeSailAway/comeSailAwayWire.js` (`l`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
 | CABIN-LOOK | 8 | her cabin below stained one wood, her windows lit as built | `scenes/cabinLook.js`, `scenes/interiorContext.js` (`restyle`), `scenes/sailingCabin.js` (the visit's `restyle`), `scenes/worldModes.js`, `systems/fleet.js` (`cabin`, `setShipCabin`), `scenes/fleetHost.js` (`livery`'s `cabin`) |
 | DECK-PROPS | 8 | Daggerfall's crates and chests stood on her open deck by a plan of it from above - drawn with her, rocking with her, standing in her colliders, seen by every player | `systems/naval/deckFittings.js`, `scenes/comeSailAway/deckFittingsHost.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`fitBoats`, `fitDeps`), `ui/deckPlanWindow.js`, `scenes/deckPlanDoor.js`, `ui/naval/navalPlunderDoor.js` (`createDeckPlanOverlay`), `systems/fleet.js` (`deck`, `setShipFittings`), `scenes/fleetHost.js` (`deck`, `deckPlan`), `ui/fleetPage.js` (Deck), `systems/comeSailAway/comeSailAwayWire.js` (`d`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
@@ -309,7 +309,7 @@ CHANGED (`systems/naval/captainTree.js`, the law; pure):
   40; a boarding thrown back 30, a prize claimed 20, a contract 50, a league 12, a chart raised 40, an isle charted 25, a
   band deeper 15, and an XP for every TRADED_GOLD (40) sold at the exchange - a merchant captain rises too), up
   100 x (L - 1)^1.6 (`xpForLevel`: level 2 at 100, 10 at 3,363, 20 at 11,117, 30 at 21,869) to CAPTAIN_LEVEL_MAX (30).
-  A point a level past the first (`pointsOf`: 29 at the top). The log is the save's, so the level follows the character.
+  A point a level past the first (`starPoints`: 29 at the top). The log is the save's, so the level follows the character.
 - **The sky** (`CAPTAIN_STARS`, 38 stars, `CAPTAIN_EDGES`): the Firmament's shape made a sky of its own - THE HELM in the
   middle, held by every captain; THE MASTER's four paths to the left (her canvas to Master of the Wind; her oars and helm
   to Quick in Stays; her hold and trade to Merchant Prince; her shipwright's care to Ironsides), THE COMMANDER's four to
@@ -318,14 +318,14 @@ CHANGED (`systems/naval/captainTree.js`, the law; pure):
   notable and on to a keystone that gives much and costs a little (Master of the Wind: +12% way under sail, -12% under
   oars). Neighbouring paths' notables are joined across (`CAPTAIN_CROSS`). 37 stars past the Helm and 29 points at the
   top: a captain chooses.
-- **Holding stars** (`heldOf`, the door every sky comes in by): the Helm, known stars once each, each joined to the Helm
+- **Holding stars** (`heldStars`, the door every sky comes in by): the Helm, known stars once each, each joined to the Helm
   through held stars, no more than the points - in an order a captain could have set them, whatever order asked (a fixed
   point: a sky with a star taken out of its middle keeps every star still joined round another way). A star is taken
   beside one held with a point left (`takeable`); the way to one further is its shortest (`wayTo`); a star given back
   takes with it every star joined to the Helm only through it (`takesBack`). Giving back is FREE, at any time - a
   captain's sky is relearned on the deck. DEPARTURE from the Firmament: no silver or gold, nothing online - the sky is the
   character's save's (`captainLedger.js` `tree`), so it stands offline as the sea does.
-- **What the stars do** (`treeStats`, CAPTAIN_STATS - each a share) is read WHERE THE SHIP'S OWN NUMBER IS READ, never
+- **What the stars do** (`starStats`, CAPTAIN_STATS - each a share) is read WHERE THE SHIP'S OWN NUMBER IS READ, never
   written into her record, a peer's or the sea's ships reading none:
   - her refits (`scenes/fleetHost.js refit`, Come Sail Away's and the sea fight's one seam; a ship of mine's alone - a
     number the Fleet does not know reads her build's own): `cargo` her hold, `way` her way under sail and its coming on,
@@ -366,7 +366,7 @@ CHANGED (`systems/fleet.js`):
   metal, with her line's first store (timber, or a gun's iron) at the third tier's count, all times her hull's share. A
   metal tier betters her by ORE_PER (a half) of a shipwright's (`refitShare`): a Hold at XII carries 1 + 0.6 + 0.9 of
   her build's load.
-- **A metal is its ingots, or a piece melted down** (`MATERIALS`' metals, `metalOf`, `meltable`): the forge's ingot of it
+- **A metal is its ingots, or a piece melted down** (`MATERIALS`' metals, `refitMetalOf`, `meltable`): the forge's ingot of it
   (Moonstone for Elven, Orichalcum for Orcish; the Warforged Steel ingot counts as Ebony), or a weapon or a piece of plate
   of that metal (an arrow, chain and leather never) - never one worn, a quest's, an artifact, a sigil's or enchanted. The
   shipwright takes every ingot first, in the pack and her hold, and only then melts a piece (`takeMaterials`); the refit
@@ -392,7 +392,7 @@ wagonLooks.js`, drawn by `scenes/horseCartPool.js lookRemap`) was the port's one
 ships to paint.
 
 CHANGED (`systems/naval/shipLivery.js`, the law and the painter; pure):
-- **A livery** (`liveryOf`, its door): four parts, each one of PAINTS' fourteen - Oxblood, Crimson, Tar black, Navy, Bay
+- **A livery** (`liveryOf`, its door): four parts, each one of SHIP_PAINTS' fourteen - Oxblood, Crimson, Tar black, Navy, Bay
   blue, Teal, Sea green, Forest green, Ochre, Gold leaf, White lead, Slate grey, Tyrian purple, Tan, Daggerfall's own
   earths and dyes - or none (0, as built). Which a hull takes (`liveryPartsOf`): a port-built hull her STRAKE (her
   painted strakes, castles, galleries and lids), her ACCENT (their trim and gilding) and her SAIL; the Large Galley a

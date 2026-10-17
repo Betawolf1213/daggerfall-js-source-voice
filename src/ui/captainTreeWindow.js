@@ -18,7 +18,7 @@
 
 import { t } from '../systems/textManager.js';
 import {
-  CAPTAIN_STARS, CAPTAIN_EDGES, CAPTAIN_STATS, starOf, heldOf, wayTo, takesBack, treeStats, captainOf,
+  CAPTAIN_STARS, CAPTAIN_EDGES, CAPTAIN_STATS, starOf, heldStars, wayTo, takesBack, starStats, captainOf,
 } from '../systems/naval/captainTree.js';
 import { PLUS_SKY, GRIM_SKY, NODE_R, FIRM_CSS, FIRM_STYLE_ID } from './firmamentWindow.js';
 import { GRIM_TONES, GRIMOIRE_STACK } from './grimoireDress.js';
@@ -79,7 +79,7 @@ const LABELS = Object.freeze({
   ram: () => t('captain.stat.ram', 'Her ram\'s harm'), foul: () => t('captain.stat.foul', 'A rammed ship held fouled'),
 });
 /** A stat's line: "Way under sail +6%" - hands a count, the foul seconds, the reload quicker (a share off it). */
-export function statWords(key, v) {
+export function starStatWords(key, v) {
   const sign = v > 0 ? '+' : v < 0 ? '-' : '';
   const a = Math.abs(v);
   const n = key === 'boarders' ? `${sign}${Math.round(a)}` : key === 'foul' ? `${sign}${Math.round(a)} s` : `${sign}${Math.round(a * 100)}%`;
@@ -87,16 +87,16 @@ export function statWords(key, v) {
   return `${LABELS[key]?.() ?? key} ${n}`;
 }
 /** A star's lines: its stats in words, a price (a stat under 0) marked. */
-export const starLines = (star) => Object.entries(star?.stats ?? {}).map(([k, v]) => ({ text: statWords(k, v), neg: v < 0 }));
+export const starLines = (star) => Object.entries(star?.stats ?? {}).map(([k, v]) => ({ text: starStatWords(k, v), neg: v < 0 }));
 /** The sky's sums as the side panel says them, in CAPTAIN_STATS' order: `[{ key, text, neg }]`. */
 export function skySummary(held) {
-  const s = treeStats(held);
-  return CAPTAIN_STATS.filter((k) => s[k]).map((k) => ({ key: k, text: statWords(k, s[k]), neg: s[k] < 0 }));
+  const s = starStats(held);
+  return CAPTAIN_STATS.filter((k) => s[k]).map((k) => ({ key: k, text: starStatWords(k, s[k]), neg: s[k] < 0 }));
 }
 /** Why `id` cannot be set now, in words - null when it can (the law's way to it, the points left). Pure. */
-export function refusalOf(held, id, points) {
+export function starRefusal(held, id, points) {
   if (!starOf(id)) return t('captain.no.unknown', 'That star is not in the captain\'s sky.');
-  const h = heldOf(held);
+  const h = heldStars(held);
   if (h.includes(id)) return null;
   const way = wayTo(h, id);
   if (!way?.length) return t('captain.no.way', 'No way leads there from your stars.');
@@ -143,7 +143,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
 
   // ── the captain and the sky ──
   const captain = () => ledger.captain?.() ?? captainOf(null);
-  let committed = heldOf(ledger.tree?.() ?? ['helm']);
+  let committed = heldStars(ledger.tree?.() ?? ['helm']);
   let pending = committed.slice();
 
   // ── the frame: the Firmament's own roles ──
@@ -286,7 +286,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
       const n = takesBack(pending, id).length;
       foot = n > 1 ? t('captain.tip.backMany', 'Right-click to take it back, with the {n} stars set beyond it.', { n: n - 1 }) : t('captain.tip.back', 'Right-click to take it back.');
     } else {
-      const why = refusalOf(pending, id, captain().points);
+      const why = starRefusal(pending, id, captain().points);
       if (why) { foot = why; no = true; } else {
         const n = wayTo(pending, id)?.length ?? 0;
         foot = t('captain.tip.take', 'Click to set the way to it: {n} {n, plural, one {point} other {points}}.', { n });
@@ -307,10 +307,10 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
   const click = () => { try { if (audio.enabled) audio.playOneShot(SOUND.ButtonClick, 1); } catch { /* a sound is not the sky's problem */ } };
   function take(id) {
     if (!starOf(id) || heldSet().has(id)) return;
-    const why = refusalOf(pending, id, captain().points);
+    const why = starRefusal(pending, id, captain().points);
     if (why) { say(why, true); return; }
     const w = wayTo(pending, id) ?? [];
-    pending = heldOf([...pending, ...w], captain().points);
+    pending = heldStars([...pending, ...w], captain().points);
     for (const k of w) burst(k);
     refresh();
   }
@@ -324,7 +324,7 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
   function accept() {
     if (!unaccepted()) return;
     const added = pending.filter((id) => !committed.includes(id));
-    committed = heldOf(ledger.setTree(pending));
+    committed = heldStars(ledger.setTree(pending));
     pending = committed.slice();
     for (const k of added) burst(k);
     try { changed(); } catch { /* the save's word is the host's */ }

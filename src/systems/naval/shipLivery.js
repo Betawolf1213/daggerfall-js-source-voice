@@ -2,7 +2,7 @@
 // SHIP-LIVERY (2026-10-17, the owner: "Letting players customize the exterior and interior textures of the ship";
 // bible/03-World/Naval-Refit.md SHIP-LIVERY) - A SHIP'S PAINT: the law, and the painter. The port's own; pure.
 //
-// A LIVERY is four choices, each a paint of PAINTS or none (0 - as she was built):
+// A LIVERY is four choices, each a paint of SHIP_PAINTS or none (0 - as she was built):
 //   strake - the painted strakes of a port-built hull (world/ships/galleonArt.js and its kin: the galleon's oxblood, the
 //            carrack's Bay blue, the large boat's sea green) - her gunport strake, her castles, her lids;
 //   accent - their trim's colour (the galleon's gilt, the carrack's and the large boat's ochre);
@@ -23,7 +23,7 @@
 // comeSailAwayWire.js `l`) - a reader takes it through the door (`liveryOfCode`), one it refuses as built.
 
 /** The paints, index 1 up (0 is none - as she was built): each in Daggerfall's own earths and dyes. */
-export const PAINTS = Object.freeze([
+export const SHIP_PAINTS = Object.freeze([
   null,
   Object.freeze({ id: 'oxblood', rgb: Object.freeze([118, 34, 27]) }),
   Object.freeze({ id: 'crimson', rgb: Object.freeze([152, 32, 30]) }),
@@ -41,7 +41,7 @@ export const PAINTS = Object.freeze([
   Object.freeze({ id: 'tan', rgb: Object.freeze([150, 112, 72]) }),
 ]);
 /** The most a paint's index is. */
-export const PAINT_MAX = PAINTS.length - 1;
+export const PAINT_MAX = SHIP_PAINTS.length - 1;
 export const LIVERY_PARTS = Object.freeze(['strake', 'accent', 'sail', 'stain']);
 /** The pseudo-archive a livery's pictures go up under (a painted picture a session's own, never a file). */
 export const LIVERY_ARCHIVE = 38191;

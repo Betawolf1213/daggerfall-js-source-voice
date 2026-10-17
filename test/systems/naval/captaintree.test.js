@@ -13,8 +13,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   CAPTAIN_XP, TRADED_GOLD, CAPTAIN_LEVEL_MAX, CAPTAIN_STATS, CAPTAIN_STARS, CAPTAIN_EDGES, CAPTAIN_CROSS, RELOAD_LEAST,
-  captainXpOf, xpForLevel, levelOf, pointsOf, captainOf, starOf, neighboursOf, heldOf, takeable, takesBack, refundable, wayTo,
-  treeStats, statScale, captainRefit, captainWorth, captainShot,
+  captainXpOf, xpForLevel, levelOf, starPoints, captainOf, starOf, neighboursOf, heldStars, takeable, takesBack, refundable, wayTo,
+  starStats, statScale, captainRefit, captainWorth, captainShot,
 } from '../../../src/systems/naval/captainTree.js';
 import { createCaptainLedger } from '../../../src/systems/naval/captainLedger.js';
 import { NO_WORTH } from '../../../src/systems/naval/shipCrew.js';
@@ -25,14 +25,14 @@ import { foul, FOUL_S } from '../../../src/systems/naval/navalFoul.js';
 import { exchangeOf, priceOf, TRADE_MOST, SPREAD } from '../../../src/systems/naval/tradeGoods.js';
 import { LEAGUE_M } from '../../../src/world/ethericSea.js';
 import {
-  MATERIALS, ORE_TIERS, BASE_TIERS, ORE_PER, UPGRADE_TIERS, REFIT_NUMERALS, upgradeCost, refitOf, refitShare, refitWords, metalOf, meltable,
+  MATERIALS, ORE_TIERS, BASE_TIERS, ORE_PER, UPGRADE_TIERS, REFIT_NUMERALS, upgradeCost, refitOf, refitShare, refitWords, refitMetalOf, meltable,
   materialCount, takeMaterials, meltCount, materialsFor,
 } from '../../../src/systems/fleet.js';
 import { WEAPONS } from '../../../src/characters/weapons.js';
 import { refitRowWords } from '../../../src/ui/fleetPage.js';
 import { levelMeter, drawCaptainPage } from '../../../src/ui/captainPage.js';
 import { setHoldingsProvider } from '../../../src/ui/holdingsPages.js';
-import { starName, starKindWords, statWords, starLines, skySummary, refusalOf, mountCaptainTreeWindow } from '../../../src/ui/captainTreeWindow.js';
+import { starName, starKindWords, starStatWords, starLines, skySummary, starRefusal, mountCaptainTreeWindow } from '../../../src/ui/captainTreeWindow.js';
 
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const near = (a, b, msg) => assert.ok(Math.abs(a - b) < 1e-9, `${msg ?? ''} ${a} ~ ${b}`);
@@ -54,7 +54,7 @@ test('CAPTAIN-TREE the level: earned off the log as CAPTAIN_XP weighs each deed 
   assert.deepEqual([1, 2, 10, 20, 30].map(xpForLevel), [0, 100, 3363, 11117, 21869]);
   assert.deepEqual([0, 99, 100, 3362, 3363, 1e9].map(levelOf), [1, 1, 2, 9, 10, 30]);
   assert.equal(CAPTAIN_LEVEL_MAX, 30);
-  assert.deepEqual([1, 2, 30, 99].map(pointsOf), [0, 1, 29, 29]);
+  assert.deepEqual([1, 2, 30, 99].map(starPoints), [0, 1, 29, 29]);
   assert.deepEqual(captainOf({ sunk: { pirate: 3 } }), { xp: 120, level: 2, points: 1, next: xpForLevel(3) });
   assert.equal(captainOf({ sunk: { legend: 1000 } }).next, null, 'the top: no next level');
 });
@@ -73,7 +73,7 @@ test('CAPTAIN-TREE the sky: the Helm in the middle, the Master\'s paths to the l
     assert.ok(wayTo(['helm'], s.id), `${s.id} reached from the Helm`);
   }
   assert.deepEqual(CAPTAIN_STARS.filter((s) => s.kind === 'keystone').map((s) => s.id), ['m_wind', 'm_prince', 'm_iron', 'c_line', 'c_creed']);
-  assert.ok(CAPTAIN_STARS.length - 1 > pointsOf(CAPTAIN_LEVEL_MAX), 'a captain chooses: never every star');
+  assert.ok(CAPTAIN_STARS.length - 1 > starPoints(CAPTAIN_LEVEL_MAX), 'a captain chooses: never every star');
   assert.equal(CAPTAIN_EDGES.length, CAPTAIN_STARS.reduce((n, s) => n + s.links.length, 0) + CAPTAIN_CROSS.length);
   assert.ok(neighboursOf('c_drill').includes('c_long') && neighboursOf('c_long').includes('c_drill'), 'a cross line both ways');
   // every keystone carries a price
@@ -81,10 +81,10 @@ test('CAPTAIN-TREE the sky: the Helm in the middle, the Master\'s paths to the l
 });
 
 test('CAPTAIN-TREE holding stars: through the door only known stars joined to the Helm, once, no more than the points - in an order a captain could have set them, whatever order asked; a star is taken beside one held with a point left; given back with every star joined only through it; the way to a star its shortest (mutants: the join, the cap, the cascade, the way)', () => {
-  assert.deepEqual(heldOf(['m_way2', 'm_way1', 'zzz', 'm_way1', 5, 'c_rel1', 'helm']), ['helm', 'm_way1', 'c_rel1', 'm_way2'], 'm_way2 joined once m_way1 is');
-  assert.deepEqual(heldOf(['m_way1', 'm_way2', 'c_rel1'], 2), ['helm', 'm_way1', 'm_way2'], 'the earliest asked first');
-  assert.deepEqual(heldOf(['m_way2']), ['helm'], 'a star joined to nothing held');
-  assert.deepEqual(heldOf(null), ['helm']);
+  assert.deepEqual(heldStars(['m_way2', 'm_way1', 'zzz', 'm_way1', 5, 'c_rel1', 'helm']), ['helm', 'm_way1', 'c_rel1', 'm_way2'], 'm_way2 joined once m_way1 is');
+  assert.deepEqual(heldStars(['m_way1', 'm_way2', 'c_rel1'], 2), ['helm', 'm_way1', 'm_way2'], 'the earliest asked first');
+  assert.deepEqual(heldStars(['m_way2']), ['helm'], 'a star joined to nothing held');
+  assert.deepEqual(heldStars(null), ['helm']);
   assert.equal(takeable(['helm'], 'm_way1', 1), true);
   assert.equal(takeable(['helm'], 'm_way1', 0), false, 'no point left');
   assert.equal(takeable(['helm'], 'm_way2', 9), false, 'not beside a star held');
@@ -99,7 +99,7 @@ test('CAPTAIN-TREE holding stars: through the door only known stars joined to th
   // a sky with a star taken out of its middle keeps every star still joined, in any order
   const ring = ['helm', 'c_rel1', 'c_rel2', 'c_drill', 'c_long', 'c_aim1', 'c_aim2'];
   assert.deepEqual(takesBack(ring, 'c_rel1'), ['c_rel1'], 'the rest are joined round by the aim path');
-  assert.deepEqual(heldOf(ring.filter((id) => id !== 'c_rel1')).length, ring.length - 1);
+  assert.deepEqual(heldStars(ring.filter((id) => id !== 'c_rel1')).length, ring.length - 1);
   assert.deepEqual(wayTo(['helm'], 'm_wind'), ['m_way1', 'm_way2', 'm_clean', 'm_way3', 'm_wind']);
   assert.deepEqual(wayTo(['helm', 'c_rel1', 'c_rel2', 'c_drill'], 'c_long'), ['c_long'], 'across from the drill\'s notable');
   assert.deepEqual(wayTo(['helm', 'm_way1'], 'm_way1'), []);
@@ -107,12 +107,12 @@ test('CAPTAIN-TREE holding stars: through the door only known stars joined to th
 });
 
 test('CAPTAIN-TREE what the stars do: each stat summed over the stars held, a keystone\'s price with it; a stat\'s multiple 1 + its share, never under 0.1 (mutants: the sum, the floor)', () => {
-  const s = treeStats(['helm', 'c_rel1', 'c_rel2', 'c_drill']);
+  const s = starStats(['helm', 'c_rel1', 'c_rel2', 'c_drill']);
   near(s.reload, 0.12);
   assert.equal(s.harm, 0);
   assert.equal(Object.isFrozen(s), true);
   assert.deepEqual(Object.keys(s), [...CAPTAIN_STATS]);
-  const wind = treeStats(['m_way1', 'm_way2', 'm_clean', 'm_way3', 'm_wind']);
+  const wind = starStats(['m_way1', 'm_way2', 'm_clean', 'm_way3', 'm_wind']);
   near(wind.way, 0.27);
   near(wind.oars, -0.12);
   near(statScale(wind, 'way'), 1.27);
@@ -245,13 +245,13 @@ test('REFIT-ORES the ladder: past the shipwright\'s three tiers, nine of metal -
 const piece = (group, material, extra = {}) => ({ group, templateIndex: group === 'Weapons' ? WEAPONS.Longsword : 105, material, stackCount: 1, ...extra });
 
 test('REFIT-ORES a piece melted down: a weapon\'s metal, or a piece of plate\'s - never chain, leather, an arrow; never one worn, a quest\'s, an artifact, a sigil\'s or enchanted; counted beside the ingots, the ingots taken first in every list before a piece is melted; what a refit would melt, said; stores counted for two kinds taken for one alone (mutants: the plate\'s metal, each guard, the ingots first, the joint count)', () => {
-  assert.equal(metalOf(piece('Weapons', 7)), 7);
-  assert.equal(metalOf(piece('Armor', 0x205)), 5, 'mithril plate');
-  assert.equal(metalOf(piece('Armor', 0x100)), null, 'chain');
-  assert.equal(metalOf(piece('Armor', 0)), null, 'leather');
-  assert.equal(metalOf({ group: 'Weapons', templateIndex: WEAPONS.Arrow, material: 1 }), null, 'an arrow');
-  assert.equal(metalOf({ group: 'UselessItems2', templateIndex: 621 }), null, 'an ingot is counted by its template');
-  assert.equal(metalOf(piece('Weapons', 12)), null);
+  assert.equal(refitMetalOf(piece('Weapons', 7)), 7);
+  assert.equal(refitMetalOf(piece('Armor', 0x205)), 5, 'mithril plate');
+  assert.equal(refitMetalOf(piece('Armor', 0x100)), null, 'chain');
+  assert.equal(refitMetalOf(piece('Armor', 0)), null, 'leather');
+  assert.equal(refitMetalOf({ group: 'Weapons', templateIndex: WEAPONS.Arrow, material: 1 }), null, 'an arrow');
+  assert.equal(refitMetalOf({ group: 'UselessItems2', templateIndex: 621 }), null, 'an ingot is counted by its template');
+  assert.equal(refitMetalOf(piece('Weapons', 12)), null);
   assert.equal(meltable(piece('Weapons', 1)), true);
   for (const guard of [{ equipSlot: 3 }, { questItem: true }, { artifact: true }, { sigil: { set: 'x' } }, { enchantments: [{ type: 1 }] }]) assert.equal(meltable(piece('Weapons', 1, guard)), false, JSON.stringify(guard));
   assert.equal(meltable(null), false);
@@ -293,15 +293,15 @@ test('CAPTAIN-TREE the window\'s words: every star named, its half and kind; a s
   assert.equal(new Set(CAPTAIN_STARS.map((s) => starName(s.id))).size, CAPTAIN_STARS.length, 'no two alike');
   assert.equal(starKindWords(starOf('c_line')), 'The Commander · keystone');
   assert.equal(starKindWords(starOf('m_quick')), 'The Master · notable');
-  assert.deepEqual([statWords('way', 0.06), statWords('oars', -0.12), statWords('boarders', 2), statWords('foul', 8), statWords('reload', 0.03), statWords('reload', -0.1)],
+  assert.deepEqual([starStatWords('way', 0.06), starStatWords('oars', -0.12), starStatWords('boarders', 2), starStatWords('foul', 8), starStatWords('reload', 0.03), starStatWords('reload', -0.1)],
     ['Way under sail +6%', 'Way under oars -12%', 'Hands over the rail +2', 'A rammed ship held fouled +8 s', 'Her guns\' reload 3% quicker', 'Her guns\' reload 10% slower']);
   assert.deepEqual(starLines(starOf('m_wind')), [{ text: 'Way under sail +12%', neg: false }, { text: 'Way under oars -12%', neg: true }]);
   assert.deepEqual(skySummary(['helm', 'c_rel1', 'm_hold1']).map((l) => l.key), ['cargo', 'reload'], 'CAPTAIN_STATS\' order');
-  assert.equal(refusalOf(['helm'], 'm_way1', 1), null);
-  assert.equal(refusalOf(['helm'], 'm_wind', 3), 'The way there takes 5 points and you have 3 left. A captain earns a point a level, at sea.');
-  assert.equal(refusalOf(['helm'], 'm_way1', 0), 'The way there takes 1 point and you have 0 left. A captain earns a point a level, at sea.');
-  assert.equal(refusalOf(['helm'], 'nope', 9), 'That star is not in the captain\'s sky.');
-  assert.equal(refusalOf(['helm', 'm_way1'], 'm_way1', 0), null, 'held');
+  assert.equal(starRefusal(['helm'], 'm_way1', 1), null);
+  assert.equal(starRefusal(['helm'], 'm_wind', 3), 'The way there takes 5 points and you have 3 left. A captain earns a point a level, at sea.');
+  assert.equal(starRefusal(['helm'], 'm_way1', 0), 'The way there takes 1 point and you have 0 left. A captain earns a point a level, at sea.');
+  assert.equal(starRefusal(['helm'], 'nope', 9), 'That star is not in the captain\'s sky.');
+  assert.equal(starRefusal(['helm', 'm_way1'], 'm_way1', 0), null, 'held');
 });
 
 /** A document enough for the window: elements that keep children, classes and handlers; a canvas that draws nothing. */

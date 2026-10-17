@@ -13,7 +13,7 @@
 //   - a hull of the mod's own planks (TEXTURE.067 - the Rowboat, the Large Galley, and a port hull's small things) -
 //     every plank record stained (systems/naval/shipLivery.js stainPicture);
 //   - classic sailcloth (TEXTURE.050 record 7, the mod's sails) - tinted (SAIL_TINT).
-import { LIVERY_ARCHIVE, PAINTS, stainPicture, tintPicture, SAIL_TINT, liveryOfCode } from '../../systems/naval/shipLivery.js';
+import { LIVERY_ARCHIVE, SHIP_PAINTS, stainPicture, tintPicture, SAIL_TINT, liveryOfCode } from '../../systems/naval/shipLivery.js';
 import { liveryArtOf } from '../../world/ships/shipLiveryArt.js';
 import { cutGlass } from '../../world/ships/galleonArt.js';
 import { dfLook, lookSeed } from '../../world/dfLook.js';
@@ -75,7 +75,7 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
         }
       }
     }
-    const stain = PAINTS[lv.stain]?.rgb;
+    const stain = SHIP_PAINTS[lv.stain]?.rgb;
     if (stain) {
       const t = await pipeline.getTexture(PLANK_ARCHIVE);
       const n = t && !t.vendor ? t.recordCount ?? 0 : 0;
@@ -86,7 +86,7 @@ export function createLiveryPaint({ renderer, pipeline, portArchiveOf, log = con
         day.set(`${PLANK_ARCHIVE}_${r}`, key); night.set(`${PLANK_ARCHIVE}_${r}`, key);
       }
     }
-    const sail = PAINTS[lv.sail]?.rgb;
+    const sail = SHIP_PAINTS[lv.sail]?.rgb;
     if (sail) {
       const pic = await classic(CLASSIC_SAIL[0], CLASSIC_SAIL[1]);
       if (pic) {

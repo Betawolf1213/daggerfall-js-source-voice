@@ -10,9 +10,9 @@
 // grain a stray texel near a paint's family would mark; her canvas (`canvas`) is a sail whole, every texel of it
 // shaded by the paint against the cloth's own (`shadeCloth`), its seams and its dirt kept.
 import { C, galleonArt, GALLEON_ARCHIVE, GALLEON_NIGHT, galleonGlow, TEX as GALLEON_TEX } from './galleonArt.js';
-import { K as CARRACK_K, carrackArt, CARRACK_ARCHIVE, CARRACK_NIGHT, carrackGlow, TEX as CARRACK_TEX } from './carrackArt.js';
-import { K as LARGE_BOAT_K, largeBoatArt, LARGE_BOAT_ARCHIVE, TEX as LARGE_BOAT_TEX } from './largeBoatArt.js';
-import { PAINTS, paintFamilies, lumOf } from '../../systems/naval/shipLivery.js';
+import { CARRACK_PALETTE as CARRACK_K, carrackArt, CARRACK_ARCHIVE, CARRACK_NIGHT, carrackGlow, TEX as CARRACK_TEX } from './carrackArt.js';
+import { LARGE_BOAT_PALETTE as LARGE_BOAT_K, largeBoatArt, LARGE_BOAT_ARCHIVE, TEX as LARGE_BOAT_TEX } from './largeBoatArt.js';
+import { SHIP_PAINTS, paintFamilies, lumOf } from '../../systems/naval/shipLivery.js';
 
 const GILT = [C.gilt, C.giltDark, C.giltLit];
 /** The galleon's strake: her oxblood, its light, and the seams and trenails its planks and lids are painted with. */
@@ -53,7 +53,7 @@ const artOf = (archive) => { if (!_art.has(archive)) _art.set(archive, LIVERY_AR
 export function liveryArtOf(archive, livery) {
   const a = LIVERY_ART[archive];
   if (!a || !livery) return [];
-  const paint = (i) => PAINTS[i]?.rgb ?? null;
+  const paint = (i) => SHIP_PAINTS[i]?.rgb ?? null;
   const families = [
     { members: a.strake, base: a.strakeBase, paint: paint(livery.strake) },
     { members: a.accent, base: a.accentBase, paint: paint(livery.accent) },

@@ -47,7 +47,7 @@ export const BANDS = Object.freeze({
 export const LARGE_BOAT_TILE = Object.freeze({ ...GALLEON_TILE, hullSide: [2.4, 0], transom: [2.4, 0] });
 
 /** Her palette's own: the sheer strake's sea green, the boot line's white, her name board's ochre. */
-export const K = Object.freeze({
+const K = Object.freeze({
   green: [58, 92, 70], greenLit: [80, 120, 92], greenDark: [34, 58, 44],
   white: [206, 200, 182], ochre: [176, 128, 48], ochreDark: [118, 82, 30], black: [24, 22, 21], blackLit: [60, 56, 50],
 });
@@ -125,3 +125,6 @@ export function registerLargeBoatArt(addVendorTextures) {
 }
 /** Test seam: unregistered. */
 export function _resetLargeBoatArt() { _registered = false; }
+
+/** SHIP-LIVERY: her palette, for the painter that repaints her by its families (world/ships/shipLiveryArt.js). */
+export const LARGE_BOAT_PALETTE = K;

@@ -19,7 +19,7 @@
 // A STAR TAKEN BACK takes with it every star joined to the Helm only through it (`takesBack`; `refundable` - one that takes
 // none else) - free, at any time: a captain's sky is relearned on the deck, not bought back.
 //
-// WHAT THE STARS DO is one sum of stats (`treeStats`, each a share: +0.06 way is 6% more), read where the ship's own
+// WHAT THE STARS DO is one sum of stats (`starStats`, each a share: +0.06 way is 6% more), read where the ship's own
 // numbers are read: her way under sail, under oars and her helm, her hold, her hull (Come Sail Away's and the sea fight's
 // refit seam - scenes/fleetHost.js refit), her guns' harm, reload and aim, each load's own edge, her boarders, her ram and
 // how long it fouls a ship, her repairs, her trade at the exchange (CAPTAIN_STATS).
@@ -61,11 +61,11 @@ export function levelOf(xp) {
   return L;
 }
 /** The points a level gives: one a level past the first. */
-export const pointsOf = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0) - 1);
+export const starPoints = (level) => Math.max(0, Math.min(CAPTAIN_LEVEL_MAX, level | 0) - 1);
 /** A captain's whole reading: `{ xp, level, points, next }` - `next` the XP the next level begins at (null at the top). */
 export function captainOf(log) {
   const xp = captainXpOf(log), level = levelOf(xp);
-  return { xp, level, points: pointsOf(level), next: level < CAPTAIN_LEVEL_MAX ? xpForLevel(level + 1) : null };
+  return { xp, level, points: starPoints(level), next: level < CAPTAIN_LEVEL_MAX ? xpForLevel(level + 1) : null };
 }
 
 /**
@@ -123,7 +123,7 @@ export const neighboursOf = (id) => [...(NEIGHBOURS.get(id) ?? [])];
  *  no more than `points` past the Helm, the earliest asked first. Its order is one a captain could have set them in (each
  *  beside one before it), whatever order they were asked in - a sky with a star taken back out of its middle keeps every
  *  star still joined. Pure. */
-export function heldOf(ids, points = Infinity) {
+export function heldStars(ids, points = Infinity) {
   const want = [];
   for (const id of Array.isArray(ids) ? ids : []) if (typeof id === 'string' && id !== 'helm' && BY_ID.has(id) && !want.includes(id)) want.push(id);
   const out = ['helm'];
@@ -140,13 +140,13 @@ export function heldOf(ids, points = Infinity) {
 }
 /** Whether `id` can be taken now: a known star not held, beside one held, with a point left. */
 export function takeable(held, id, points) {
-  const h = new Set(heldOf(held));
+  const h = new Set(heldStars(held));
   return BY_ID.has(id) && !h.has(id) && neighboursOf(id).some((n) => h.has(n)) && h.size - 1 < points;
 }
 /** The stars a star given back takes with it: itself first, then every held star joined to the Helm only through it - [] for
  *  the Helm, or a star not held. Pure. */
 export function takesBack(held, id) {
-  const h = new Set(heldOf(held));
+  const h = new Set(heldStars(held));
   if (id === 'helm' || !h.has(id)) return [];
   h.delete(id);
   const reach = new Set(['helm']);
@@ -158,7 +158,7 @@ export function takesBack(held, id) {
 export const refundable = (held, id) => takesBack(held, id).length === 1;
 /** The shortest way from the held sky to `id` (the stars to take, nearest first) - [] when held, null where none. */
 export function wayTo(held, id) {
-  const h = new Set(heldOf(held));
+  const h = new Set(heldStars(held));
   if (!BY_ID.has(id)) return null;
   if (h.has(id)) return [];
   const from = new Map();
@@ -176,9 +176,9 @@ export function wayTo(held, id) {
   return null;
 }
 /** THE STATS of a held sky - each of CAPTAIN_STATS summed over its stars (0 where none carry it). */
-export function treeStats(held) {
+export function starStats(held) {
   const out = Object.fromEntries(CAPTAIN_STATS.map((k) => [k, 0]));
-  for (const id of heldOf(held)) for (const [k, v] of Object.entries(starOf(id).stats)) out[k] = Math.round((out[k] + v) * 10000) / 10000;
+  for (const id of heldStars(held)) for (const [k, v] of Object.entries(starOf(id).stats)) out[k] = Math.round((out[k] + v) * 10000) / 10000;
   return Object.freeze(out);
 }
 /** A stat's multiple of the ship's own number (1 + its share, never under 0.1) - what the seams multiply by. */

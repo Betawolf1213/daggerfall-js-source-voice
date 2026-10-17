@@ -5,7 +5,7 @@
 // at CABIN_STAIN), drawn by the room's own remap over the climate's (scenes/interiorContext.js `restyle`) - her walls,
 // floor, beams and built furniture one wood, its grain kept. A picture that is glass (a window's mask) is left as built,
 // so her windows light as they did. The stain is her Fleet record's (`cabin`), made at the visit below.
-import { PAINTS, tintPicture } from '../systems/naval/shipLivery.js';
+import { SHIP_PAINTS, tintPicture } from '../systems/naval/shipLivery.js';
 import { classicRecordRgba } from '../formats/derivedTexture.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { dfLook, lookSeed } from '../world/dfLook.js';
@@ -25,7 +25,7 @@ let _next = 0;
  * @param {number} paint - a paint's index (0 none)
  */
 export function cabinRestyle(paint) {
-  const rgb = PAINTS[paint]?.rgb;
+  const rgb = SHIP_PAINTS[paint]?.rgb;
   if (!rgb) return null;
   return async (texRemap, lists, { renderer, getTexture, palette }) => {
     if (!renderer?.uploadTexture) return;
