@@ -10,6 +10,7 @@
 //
 // The studio page (studio.html, on the dev server and the site) shows and hands out the same templates in a browser.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
@@ -25,12 +26,26 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 /** Every picture the studio holds, by the key it paints. */
 const studioByKey = (listing) => new Map(studioEntries(listing.files).map((e) => [e.key, e]));
 
+/** AUDIT STUDIO1 C4: the pictures git would never commit - a folder named as one .gitignore passes over - each with the
+ *  pattern that ignores it. Nothing outside a git checkout (a tree of a test's own). */
+function ignoredByGit(at, files) {
+  if (!files.length) return [];
+  const r = spawnSync('git', ['check-ignore', '-v', '--no-index', '--stdin'], { cwd: at, input: files.map((f) => `${STUDIO_TREE}/${f}`).join('\n'), encoding: 'utf8' });
+  if (r.status !== 0 || !r.stdout) return [];
+  return r.stdout.split('\n').filter(Boolean).map((line) => {
+    const [why, path] = line.split('\t');
+    return { path: path.slice(STUDIO_TREE.length + 1), pattern: why.split(':').slice(2).join(':') };
+  });
+}
+
 /**
- * THE CHECK: the folder's rules, then every picture decoded whole (a header can say PNG over bytes that will not
- * decode) - `problems`, which fail - and `notes`, said: a picture of a painted slot whose shape is not the slot's (its
- * face would stretch it), clear texels on a slot the game draws solid (they come out black), and a name that is a
- * texture's but no slot's of a painted model (a digit dropped, the frame mistyped). Daggerfall's own archives' names
- * cannot be checked here: they are the player's data. Exported for the suite (test/systems/studioArt/studio1_folder.test.js).
+ * THE CHECK: the folder's rules, then - `problems`, which fail - every picture decoded whole (a header can say PNG over
+ * bytes that will not decode), a picture git would never commit (C4), and a name of a painted model's archive that is
+ * none of its slots (no door asks for it: a digit dropped, the frame mistyped); and `notes`, said: a picture whose shape
+ * is not its slot's (its face would stretch it), clear texels on a slot the game draws solid (they come out black), and
+ * an archive past TEXTURE.511 that is no painted model's (a mod's, or a number to check). Daggerfall's own archives'
+ * names cannot be checked here: they are the player's data. Exported for the suite
+ * (test/systems/studioArt/studio1_folder.test.js, auditstudio1.test.js).
  */
 export async function checkStudio(at = root) {
   const listing = studioListing(at);
@@ -38,6 +53,7 @@ export async function checkStudio(at = root) {
   const slots = new Map();
   for (const set of STUDIO_SETS) for (const s of studioSlots(set)) slots.set(s.key, s);
   const sets = new Map(STUDIO_SETS.map((s) => [s.archive, s]));
+  for (const { path, pattern } of ignoredByGit(at, listing.files)) problems.push(`${path}: git ignores it (.gitignore's \`${pattern}\`), so it would never be committed - rename the folder`);
   for (const e of studioEntries(listing.files)) {
     let png;
     try { png = PNG.sync.read(readFileSync(join(at, STUDIO_TREE, e.path))); } catch (err) {
@@ -50,7 +66,7 @@ export async function checkStudio(at = root) {
       if (p && Math.abs(png.width / png.height - p.width / p.height) > 0.01) notes.push(`${e.path}: ${png.width} x ${png.height}, and ${slot.name} is ${p.width} x ${p.height} - it is stretched to the slot's shape`);
       if (!slot.cutout && png.data.some((v, i) => (i & 3) === 3 && v < 128)) notes.push(`${e.path}: clear texels, and ${slot.name} is drawn solid - they come out black; paint them`);
     } else if (e.map === 'Albedo' && sets.has(e.archive)) {
-      notes.push(`${e.path}: ${sets.get(e.archive).title} has no picture ${e.key} - the templates' names are its slots (a digit dropped, the frame mistyped?)`);
+      problems.push(`${e.path}: ${sets.get(e.archive).title} has no picture ${e.key} - the templates' names are its slots (a digit dropped, the frame mistyped?)`);
     } else if (e.map === 'Albedo' && e.archive > LAST_CLASSIC_TEXTURE_ARCHIVE) {
       notes.push(`${e.path}: archive ${e.archive} is none of the painted models' - it is worn only where a mod's own picture of that name stands (check the number)`);
     }
@@ -72,14 +88,14 @@ async function list() {
     }
   }
   if (own.size) {
-    console.log("\nDaggerfall's own textures, replaced by the studio:");
+    console.log("\nPictures of no painted model (Daggerfall's own textures, a mod's, or a name to check - see `check`):");
     for (const e of own.values()) console.log(`  ${e.key.padEnd(12)} ${e.path}`);
   }
   console.log(`\nThe studio: ${listing.files.length} picture(s) worn, ${listing.problems.length} problem(s) - node tools/studioArt.mjs check says which.`);
 }
 
-async function templates(dir = 'studio-templates') {
-  const out = resolve(root, dir);
+async function templates(dir = null) {
+  const out = dir ? resolve(dir) : join(root, 'studio-templates');   // a folder named is the caller's; the default is the checkout's (ignored)
   let n = 0;
   for (const set of STUDIO_SETS) {
     mkdirSync(join(out, set.id), { recursive: true });

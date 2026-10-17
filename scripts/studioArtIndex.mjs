@@ -31,20 +31,29 @@ export const STUDIO_README = 'README.md';
 export const STUDIO_MAX_SIDE = 2048;
 /** The largest file, bytes: every picture is published with the site and the desktop app. */
 export const STUDIO_MAX_BYTES = 4 * 1024 * 1024;
-/** What an artist's folder may be called: a handle, as the roster spells it. */
-export const STUDIO_FOLDER = /^[A-Za-z0-9][A-Za-z0-9_.-]*$/;
+/** What every name in the studio may be - an artist's folder, a folder in it, a picture's file: letters, digits and
+ *  `_ . -`, a letter or digit at each end (AUDIT STUDIO1 C6). The game asks for a picture by its name over the web, where
+ *  `#`, `?` and `+` are not a file's (a dev server answers the page instead), git lists an accented name quoted (the
+ *  doctrine's sweep could not find it), and the desktop release is checked out on Windows (no `:` or `*`, no name ending
+ *  in a dot). */
+export const STUDIO_NAME = /^[A-Za-z0-9](?:[A-Za-z0-9_.-]*[A-Za-z0-9])?$/;
+/** The names Windows keeps for itself, with or without an extension - a folder so named would not check out there. */
+export const STUDIO_RESERVED = /^(con|prn|aux|nul|com\d|lpt\d)(\.|$)/i;
+/** What an artist's computer leaves in a folder and git never commits (.gitignore's): passed over, never said. */
+export const STUDIO_LITTER = /^(\.DS_Store|Thumbs\.db|desktop\.ini|\._.*)$/;
 
-/** Every file under `dir`, as paths under it, sorted. */
+/** Every file under `dir`, as paths under it, sorted - each with whether it is a link (`link`). */
 function walk(dir, base = '') {
   let names;
   try { names = readdirSync(join(dir, base), { withFileTypes: true }); } catch { return []; }
   const out = [];
   for (const d of names) {
+    if (STUDIO_LITTER.test(d.name)) continue;
     const rel = base ? `${base}/${d.name}` : d.name;
     if (d.isDirectory()) out.push(...walk(dir, rel));
-    else out.push(rel);
+    else out.push({ path: rel, link: d.isSymbolicLink() });
   }
-  return out.sort();
+  return out.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
 }
 
 /** A PNG's size off its header (the signature, then IHDR's width and height), or null when the bytes are no PNG. */
@@ -64,7 +73,7 @@ export function readStudioRoster(root = process.cwd(), problems = []) {
   }
   const artists = [];
   for (const a of Array.isArray(doc?.artists) ? doc.artists : []) {
-    if (!STUDIO_FOLDER.test(a?.folder ?? '') || typeof a.name !== 'string' || !a.name || typeof a.approved !== 'string' || !a.approved) {
+    if (!STUDIO_NAME.test(a?.folder ?? '') || STUDIO_RESERVED.test(a.folder) || typeof a.name !== 'string' || !a.name || typeof a.approved !== 'string' || !a.approved) {
       problems.push(`${STUDIO_ROSTER}: ${JSON.stringify(a)} - an artist needs a folder (letters, digits, _ . -), a name, and the word that approved them`);
       continue;
     }
@@ -91,20 +100,23 @@ export function studioListing(root = process.cwd()) {
   const folders = new Set(roster.map((a) => a.folder));
   const files = [];
   const keys = new Map();
-  for (const path of walk(dir)) {
+  for (const { path, link } of walk(dir)) {
     if (!path.includes('/')) {
       if (path !== STUDIO_ROSTER && path !== STUDIO_README) problems.push(`${path}: the studio's own folder holds only ${STUDIO_README} and ${STUDIO_ROSTER} - a picture goes in its artist's folder`);
       continue;
     }
     const artist = path.split('/')[0];
+    if (path.split('/').some((n) => !STUDIO_NAME.test(n) || STUDIO_RESERVED.test(n))) { problems.push(`${path}: a name here is letters, digits and _ . - only, a letter or digit at each end (no spaces, accents, # or ? - the game asks for the picture by its name over the web)`); continue; }
     if (!folders.has(artist)) { problems.push(`${path}: "${artist}" is not on the roster (${STUDIO_ROSTER}) - an artist is added there before their folder is worn`); continue; }
     if (!/\.png$/i.test(path)) { problems.push(`${path}: only PNG pictures go in the studio (keep working files - .psd, .aseprite, .kra - outside public/; everything here is published)`); continue; }
     const e = studioFile(path);
     if (!e) { problems.push(`${path}: the name says nothing the game wears - name it <archive>_<record>-<frame>.png (a dye after it as the game asks it: _Iron, never _iron or _Silver), a label after "${STUDIO_LABEL}" if you like (38181_1-0${STUDIO_LABEL}cart-side.png)`); continue; }
+    if (link) { problems.push(`${path}: a link, not a picture - the picture itself goes here (what a link points at is not in the commit)`); continue; }
     const full = join(dir, path);
-    const bytes = statSync(full).size;
+    let bytes, first;
+    try { bytes = statSync(full).size; first = head(full); } catch (err) { problems.push(`${path}: will not read (${err?.code ?? err?.message ?? err})`); continue; }
     if (bytes > STUDIO_MAX_BYTES) { problems.push(`${path}: ${(bytes / 1048576).toFixed(1)} MB - a picture may be ${STUDIO_MAX_BYTES / 1048576} MB at most`); continue; }
-    const size = pngSize(head(full));
+    const size = pngSize(first);
     if (!size) { problems.push(`${path}: not a PNG inside (re-export it as PNG)`); continue; }
     if (!size.width || !size.height || size.width > STUDIO_MAX_SIDE || size.height > STUDIO_MAX_SIDE) { problems.push(`${path}: ${size.width} x ${size.height} - a side may be ${STUDIO_MAX_SIDE} at most`); continue; }
     if (keys.has(e.key)) { problems.push(`${path}: ${keys.get(e.key)} already paints ${e.key} - one picture a slot`); continue; }

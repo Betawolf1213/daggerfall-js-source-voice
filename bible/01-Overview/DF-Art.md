@@ -62,8 +62,9 @@ A painted picture goes up in **Daggerfall's look**: `dfLook(picture, lookSeed(ar
 
 STUDIO1 (2026-10-17, `07-Rendering/Studio-Art.md`): every one of these models now wears an artist's picture from the
 studio (`public/art/studio/`) in place of its painted one, where an artist has drawn one. The ships' and the hangings'
-through the vendor tier the studio outranks; the other four through `wearPainted`, which asks before it paints. A
-studio picture goes up as drawn: the look is laid on painted pictures only.
+through the vendor tier the studio outranks; the other four through `wearPainted`, which asks before it paints (the
+wagon's icon asks `paintedReplacement` once the studio has landed). A studio picture goes up as drawn: the look is laid
+on painted pictures only.
 
 ## The windows (DF-ART II and III, kept)
 

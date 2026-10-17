@@ -17,14 +17,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { studioListing, STUDIO_TREE } from '../../scripts/studioArtIndex.mjs';   // STUDIO1
+import { writePng } from '../../tools/pngIO.mjs';   // AUDIT STUDIO1 C12: the studio arm's own pictures
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const tracked = (dir) => execFileSync('git', ['ls-files', dir], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })   // RRI1: 13,000 tracked sprites outgrew the 1 MB default (ENOBUFS)
-  .split('\n').filter(Boolean);
+const tracked = (dir) => execFileSync('git', ['ls-files', '-z', dir], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })   // RRI1: 13,000 tracked sprites outgrew the 1 MB default (ENOBUFS)
+  .split('\0').filter(Boolean);   // AUDIT STUDIO1 C5: -z - git quotes a path with a byte past ASCII in its lines, and the sweep could not find it
 
 /** Everything the port may ship out of public/, and WHY it is ours.
  *  Adding a row here is a doctrine decision, not a chore - the question to
@@ -937,7 +939,9 @@ const bundleNames = (dir) => {
 // to their folder is their word that it is their own drawing, no pixel of ARENA2's (the roster and the guide say so).
 // A picture the listing refuses - an artist not on the roster, a file that is no picture of the game's - is not ours by
 // this rule and stays unexplained.
-const STUDIO_WORN = new Set(studioListing(root).files.map((f) => `${STUDIO_TREE}/${f}`));
+/** The studio's members under a tree: the pictures its listing serves, by their paths in the repository. */
+const studioMembers = (at) => new Set(studioListing(at).files.map((f) => `${STUDIO_TREE}/${f}`));
+const STUDIO_WORN = studioMembers(root);
 /** Is this tracked file a picture the studio wears? */
 const studioArt = (f) => STUDIO_WORN.has(f);
 
@@ -1015,6 +1019,21 @@ test('doctrine VE4: a derived row stands inside the exception Port-Doctrine reco
   // and inside it nothing passes as the port's own: every row there says what it is
   for (const [dir, r] of BUNDLE_ART) if (dirs.some((d) => dir.startsWith(d))) assert.equal(r.derived, markFor(dir), `${dir} sits in the exception and does not say so - in its own approval's words`);
   for (const f of PUBLIC_ALLOWLIST.keys()) assert.ok(!dirs.some((d) => f.startsWith(d)), `${f}: an allow-list row inside the exception`);
+});
+
+test('doctrine STUDIO1: a picture is the studio\'s own by its roster and its listing alone - a stranger\'s, a file that is no picture and a link are not (AUDIT STUDIO1 C12: the arm is not vacuous)', () => {
+  const at = mkdtempSync(join(tmpdir(), 'doctrine-studio-'));
+  try {
+    const dir = join(at, STUDIO_TREE);
+    for (const f of ['Redclaw', 'stranger']) mkdirSync(join(dir, f), { recursive: true });
+    writeFileSync(join(dir, 'artists.json'), JSON.stringify({ artists: [{ folder: 'Redclaw', name: 'Redclaw', approved: 'the test' }] }));
+    const png = writePng({ width: 1, height: 1, data: new Uint8Array(4).fill(200) });
+    writeFileSync(join(dir, 'Redclaw', '38181_1-0.png'), png);
+    writeFileSync(join(dir, 'stranger', '38181_2-0.png'), png);
+    writeFileSync(join(dir, 'Redclaw', '38181_4-0.psd'), 'layers');
+    symlinkSync(join(dir, 'Redclaw', '38181_1-0.png'), join(dir, 'Redclaw', '38181_3-0.png'));
+    assert.deepEqual([...studioMembers(at)], [`${STUDIO_TREE}/Redclaw/38181_1-0.png`]);
+  } finally { rmSync(at, { recursive: true, force: true }); }
 });
 
 test('doctrine VE4: the bound is not vacuous - a derived row outside the named directory reddens, and with no approval every one does', () => {

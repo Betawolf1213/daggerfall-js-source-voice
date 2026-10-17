@@ -22,7 +22,8 @@
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -324,8 +325,8 @@ test('AUDIT STUDIO1 S9: the check\'s notes - clear texels on a slot drawn solid,
     put('3818_1-0--typo.png', picture(64, 64, [9, 9, 9]));   // a digit dropped
     put('38181_1-1--frame.png', picture(64, 64, [9, 9, 9]));   // the frame mistyped
     const { problems, notes } = await checkStudio(dir);
-    assert.deepEqual(problems, []);
-    const said = (f) => notes.filter((n) => n.startsWith(`a/${f}:`));
+    const said = (f) => [...problems, ...notes].filter((n) => n.startsWith(`a/${f}:`));
+    assert.deepEqual(problems.map((p) => p.split(':')[0]), ['a/38181_1-1--frame.png'], 'a painted model\'s record that is no slot is a problem: no door asks for it (AUDIT STUDIO1 C10)');
     assert.match(said('38181_1-0--holes.png')[0], /clear texels, and cart side boards - Weathered oak is drawn solid - they come out black/);
     assert.deepEqual(said('38181_11-0--glass.png'), [], 'a cut-out slot\'s clear texels are its holes');
     assert.match(said('3818_1-0--typo.png')[0], /archive 3818 is none of the painted models'/);
@@ -337,4 +338,47 @@ test('AUDIT STUDIO1 S9: the check\'s notes - clear texels on a slot drawn solid,
   assert.equal(cut.length, 29);
   assert.ok(['38181_11-0', '38131_6-0', '38131_21-0', '38141_6-0', '38141_21-0', '38231_28-0'].every((k) => cut.includes(k)), 'the caravan\'s glass, the ships\' stern windows by day, the beacon\'s flame');
   assert.ok(!cut.includes(`38131_${GALLEON_NIGHT[GALLEON_TEX.sternWindows0]}-0`), 'a night twin is whole');
+});
+
+test('AUDIT STUDIO1 S10: the folder\'s plumbing - a folder git ignores is refused (nothing in it would be committed), a name the web or Windows cannot carry is refused, what an artist\'s computer leaves is passed over, a link is refused and a dangling one costs no crash; the templates go where they are told', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'auditstudio1-'));
+  try {
+    execFileSync('git', ['init', '-q'], { cwd: dir });
+    writeFileSync(join(dir, '.gitignore'), 'scratch/\n');
+    const tree = join(dir, STUDIO_TREE);
+    for (const f of ['a/scratch', 'a/x']) mkdirSync(join(tree, f), { recursive: true });
+    writeFileSync(join(tree, 'artists.json'), JSON.stringify({ artists: [{ folder: 'a', name: 'a', approved: 'the test' }] }));
+    const put = (name, bytes) => writeFileSync(join(tree, 'a', name), bytes);
+    put('scratch/38181_2-0.png', picture(64, 64, [9, 9, 9]));   // C4: in a folder .gitignore passes over
+    put('38181_3-0--my cart #1.png', picture(64, 64, [9, 9, 9]));   // C6: the web reads `#` as no file's
+    put('38181_4-0--caf\u00e9.png', picture(64, 64, [9, 9, 9]));   // C5/C6: git quotes it
+    mkdirSync(join(tree, 'a', 'CON'), { recursive: true });
+    writeFileSync(join(tree, 'a', 'CON', '38181_5-0.png'), picture(64, 64, [9, 9, 9]));   // C6: Windows keeps the name
+    put('.DS_Store', 'finder');   // C7: passed over
+    put('._38181_6-0.png', 'appledouble');
+    put('38181_7-0.png', picture(64, 64, [9, 9, 9]));
+    symlinkSync(join(tree, 'a', '38181_7-0.png'), join(tree, 'a', '38181_8-0.png'));   // C8: a link
+    symlinkSync(join(tree, 'a', 'gone.png'), join(tree, 'a', '38181_9-0.png'));   // C8: a dangling link
+    const { listing, problems } = await checkStudio(dir);
+    assert.deepEqual(listing.files, ['a/38181_7-0.png', 'a/scratch/38181_2-0.png']);
+    const said = (f) => problems.find((p) => p.startsWith(`${f}:`)) ?? '';
+    assert.match(said('a/scratch/38181_2-0.png'), /git ignores it \(\.gitignore's `scratch\/`\), so it would never be committed/);
+    assert.match(said('a/38181_3-0--my cart #1.png'), /letters, digits and _ \. - only/);
+    assert.match(said('a/38181_4-0--caf\u00e9.png'), /letters, digits and _ \. - only/);
+    assert.match(said('a/CON/38181_5-0.png'), /letters, digits and _ \. - only/);
+    assert.match(said('a/38181_8-0.png'), /a link, not a picture/);
+    assert.match(said('a/38181_9-0.png'), /a link, not a picture/);
+    assert.ok(!problems.some((p) => p.startsWith('a/.DS_Store') || p.startsWith('a/._')), 'litter passed over, never said');
+    assert.equal(problems.length, 6);
+    // a dangling file the walk finds but cannot read is said, not thrown
+    assert.doesNotThrow(() => studioListing(dir));
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+  // C4: the checkout's own pattern is anchored - an artist's folder of that name is committed
+  assert.match(readFileSync(new URL('../../../.gitignore', import.meta.url), 'utf8'), /^\/studio-templates\/$/m);
+  // C11: a templates folder named is the caller's, relative to where they stand
+  const out = mkdtempSync(join(tmpdir(), 'auditstudio1-tpl-'));
+  try {
+    execFileSync(process.execPath, [fileURLToPath(new URL('../../../tools/studioArt.mjs', import.meta.url)), 'templates', 'mine'], { cwd: out });
+    assert.ok(existsSync(join(out, 'mine', 'wagons', '38181_1-0--cart-side-boards-weathered-oak.png')));
+  } finally { rmSync(out, { recursive: true, force: true }); }
 });
