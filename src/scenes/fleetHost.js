@@ -15,12 +15,14 @@
 //     veilApart(rec, boat) -> whether she lies on the other side of the Veil from the player (AUDIT CAPTAIN'S SEA P5)
 //     changed() -> the word a rename or a refit owes (the boats' record said again)
 //     openHold(uid) -> bool  CARGO-ANYWHERE: her hold's window, wherever she lies (scenes/holdDoor.js openShip)
+//     guildArms() -> the player's guild's heraldry, or null   SHIP-COLOURS: "fly my guild's arms"
 //   }
 
 import {
   fleetShip, fleetShips, fleetBook, titleOf, titleDeedsIn, knowShip, renameShip, addRefit, setShipPort, retitle, refitOf, loanOwed, settleCredit,
-  shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE,
+  shipLabel, upgradeCost, materialCount, takeMaterials, UPGRADE_LINES, UPGRADE_TIERS, MATERIALS, BOAT_PARTS_TEMPLATE, setShipColours,
 } from '../systems/fleet.js';
+import { flagSizeOf } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: the hulls that fly a flag
 import { HULL_NAMES, HULL_PRICES } from '../systems/comeSailAway/comeSailAwayBoat.js';
 import { mintDeed } from '../systems/comeSailAway/comeSailAwayItems.js';
 import { TERRAIN_EDGE } from '../systems/comeSailAway/comeSailAway.js';
@@ -171,11 +173,12 @@ export function createFleetHost(deps) {
         // HOLDINGS: her named hands and their posts (a laid-up ship's signed on here), a Bard's calling his to keep
         hands: CREWED_HULLS.includes(rec.hull) && at.boat ? handsOf(at.boat) : [],
         hold: holdsCargo(rec.hull),   // CARGO-ANYWHERE: her Hold button - every hull but the Rowboat's
+        flag: !!flagSizeOf(rec.hull), colours: rec.colours ?? null,   // SHIP-COLOURS: whether she flies a flag, and the one she flies
         can: { summon: why.summon, away: why.away, repair: why.repair, yard: why.yard, refit: why.refit },
       });
     }
     rows.sort((a, b) => order[a.where] - order[b.where] || a.label.localeCompare(b.label));
-    return { ships: rows, gold: deps.gold?.() ?? 0, atPort: !!deps.nearPort?.() };
+    return { ships: rows, gold: deps.gold?.() ?? 0, atPort: !!deps.nearPort?.(), guildArms: deps.guildArms?.() ?? null };   // SHIP-COLOURS: the arms her flag may fly
   }
 
   /** HER REFITS' OFFER: each line's tier, what the next costs and what the player holds of each (the pack and her hold
@@ -213,6 +216,13 @@ export function createFleetHost(deps) {
       if (!v.ok) return said(false, v.reason);
       deps.changed?.();
       return said(true, v.name ? `She is the ${v.name} now.` : `She is called by her hull again: ${shipLabel(rec)}.`);
+    }
+    if (verb === 'colours') {
+      // SHIP-COLOURS: her flag hoisted (systems/naval/shipFlag.js's), or struck for the mod's pennant (null) - wherever she lies
+      if (!flagSizeOf(rec.hull)) return said(false, t('naval.flag.noMast', 'She has no masthead to fly a flag from.'));
+      if (!setShipColours(uid, arg ?? null)) return said(false, t('naval.flag.bad', 'Those colours cannot be flown.'));
+      deps.changed?.();
+      return said(true, arg ? t('naval.flag.hoisted', 'Her new colours are hoisted.') : t('naval.flag.struck', 'Her flag is struck - she flies her pennant.'));
     }
     if (verb === 'role') {
       // HOLDINGS: a hand of hers given a post (shipCrew.js assign) - wherever she lies; her First Mate answers for her

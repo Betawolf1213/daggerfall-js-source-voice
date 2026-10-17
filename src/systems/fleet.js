@@ -22,6 +22,7 @@
 import { mintDeed, BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE } from './comeSailAway/comeSailAwayItems.js';
 import { HULL_NAMES, HULL_PRICES, VARIANT_NAMES, HULL_VARIANT_COUNTS } from './comeSailAway/comeSailAwayBoat.js';
 import { checkName, textCaught } from '../net/nameFilter.js';
+import { shipFlagOf } from './naval/shipFlag.js';   // SHIP-COLOURS: her flag, through its door
 
 export const FLEET_SAVE_VENDOR = 'Fleet';
 export const FLEET_SAVE_VERSION = 1;
@@ -195,7 +196,7 @@ const variantOfItem = (it) => (it?.message | 0) % 10;
 function recordFor(uid, hull, variant, value) {
   let r = _ships.get(uid);
   if (!r) {
-    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null };
+    r = { uid, hull, variant, value: Number.isFinite(value) ? value : HULL_PRICES[hull] ?? 0, name: '', upgrades: upgradesBlank(), credit: null, port: null, colours: null };   // SHIP-COLOURS: `colours` her flag (null: the mod's pennant)
     _ships.set(uid, r);
   }
   return r;
@@ -255,6 +256,16 @@ export function renameShip(uid, raw) {
   if (v.ok) r.name = v.name;
   return v;
 }
+/** SHIP-COLOURS (bible/03-World/Naval-Refit.md): her flag set - systems/naval/shipFlag.js shipFlagOf's, or null (none:
+ *  she flies the mod's pennant). Answers whether she has it now. */
+export function setShipColours(uid, raw) {
+  const r = _ships.get(uid);
+  if (!r) return false;
+  const f = raw == null ? null : shipFlagOf(raw);
+  if (raw != null && !f) return false;
+  r.colours = f;
+  return true;
+}
 /** A refit's tier added (the caller has paid). */
 export function addRefit(uid, id) {
   const r = _ships.get(uid);
@@ -279,7 +290,7 @@ export function fleetSaveData() {
   return {
     v: FLEET_SAVE_VERSION,
     ships: [..._ships.values()].map((r) => ({ uid: r.uid, hull: r.hull, variant: r.variant, value: r.value, name: r.name, upgrades: { ...r.upgrades },
-      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid) })),
+      credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid), ...(r.colours ? { colours: { ...r.colours } } : {}) })),   // SHIP-COLOURS
     crossed: [..._crossed],   // AUDIT SHIPYARDS L1-2: the numbers that came through customs
   };
 }
@@ -303,6 +314,7 @@ export function restoreFleetSaveData(data) {
     r.credit = s.credit && Number.isInteger(s.credit.region) && s.credit.region >= 0 ? { region: s.credit.region, due: Number.isFinite(s.credit.due) ? s.credit.due : 0 } : null;
     const port = typeof s.port?.name === 'string' ? printable(s.port.name).slice(0, 64) : '';
     r.port = s.port && typeof s.port.name === 'string' ? { name: port, ...(s.port.ether === true ? { ether: true } : {}) } : null;   // AUDIT CAPTAIN'S SEA P5: her side of the Veil kept
+    r.colours = shipFlagOf(s.colours);   // SHIP-COLOURS: her flag, as it may be (none, or one the door refuses: her pennant)
     if (s.title) _book.push(mintDeed(r.hull, r.variant, r.uid, r.value));
   }
 }

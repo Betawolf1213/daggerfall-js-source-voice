@@ -13044,6 +13044,146 @@
   "tr": "8f957103f9f6",
   "by": "claude-in-session"
  },
+ "naval.flag.bad": {
+  "en": "229c0f1c20cb",
+  "tr": "d288e3c1a84d",
+  "by": "claude-in-session"
+ },
+ "naval.flag.border": {
+  "en": "5d10d3f42121",
+  "tr": "677720373b5a",
+  "by": "claude-in-session"
+ },
+ "naval.flag.charge": {
+  "en": "6d356125ea42",
+  "tr": "389e19d4589b",
+  "by": "claude-in-session"
+ },
+ "naval.flag.close": {
+  "en": "bbfa773e5a63",
+  "tr": "7b2006fd7af8",
+  "by": "claude-in-session"
+ },
+ "naval.flag.device": {
+  "en": "a5a74a6df092",
+  "tr": "9e215f0748cd",
+  "by": "claude-in-session"
+ },
+ "naval.flag.division": {
+  "en": "bbbec4441626",
+  "tr": "d921a8c57806",
+  "by": "claude-in-session"
+ },
+ "naval.flag.field": {
+  "en": "c326a4660b67",
+  "tr": "9c034704bcab",
+  "by": "claude-in-session"
+ },
+ "naval.flag.field2": {
+  "en": "1cdeab4b9312",
+  "tr": "d277964d3ba8",
+  "by": "claude-in-session"
+ },
+ "naval.flag.guildNote": {
+  "en": "ce1aefbd129c",
+  "tr": "3c54f0ffb428",
+  "by": "claude-in-session"
+ },
+ "naval.flag.guildOff": {
+  "en": "6b3fc2faf2bd",
+  "tr": "f85983b013cb",
+  "by": "claude-in-session"
+ },
+ "naval.flag.guildOn": {
+  "en": "e5388cd808d6",
+  "tr": "f6d42ff1067a",
+  "by": "claude-in-session"
+ },
+ "naval.flag.hoist": {
+  "en": "10bfeeaffc5d",
+  "tr": "0b1d993c8712",
+  "by": "claude-in-session"
+ },
+ "naval.flag.hoisted": {
+  "en": "1211b11ce5cd",
+  "tr": "dca277dd8da7",
+  "by": "claude-in-session"
+ },
+ "naval.flag.next": {
+  "en": "edee9402d198",
+  "tr": "4059fcbdc2cf",
+  "by": "claude-in-session"
+ },
+ "naval.flag.noArms": {
+  "en": "4bd43767d31f",
+  "tr": "482503fb4459",
+  "by": "claude-in-session"
+ },
+ "naval.flag.noMast": {
+  "en": "4e6831bd68f8",
+  "tr": "1c6a59a177bf",
+  "by": "claude-in-session"
+ },
+ "naval.flag.none.colour": {
+  "en": "6eef6648406c",
+  "tr": "761716310a91",
+  "by": "claude-in-session"
+ },
+ "naval.flag.none.device": {
+  "en": "6eef6648406c",
+  "tr": "761716310a91",
+  "by": "claude-in-session"
+ },
+ "naval.flag.open": {
+  "en": "eb4e9125510f",
+  "tr": "8c42d3b17f2e",
+  "by": "claude-in-session"
+ },
+ "naval.flag.preview": {
+  "en": "aea2874da1b6",
+  "tr": "06b678ef8e2c",
+  "by": "claude-in-session"
+ },
+ "naval.flag.previous": {
+  "en": "355f28f2c0c3",
+  "tr": "d863b2e34e4a",
+  "by": "claude-in-session"
+ },
+ "naval.flag.shape": {
+  "en": "ea5c1a20b7cf",
+  "tr": "d0f2807cb2ff",
+  "by": "claude-in-session"
+ },
+ "naval.flag.shape.burgee": {
+  "en": "fff5d355d41f",
+  "tr": "9ea75645ef12",
+  "by": "claude-in-session"
+ },
+ "naval.flag.shape.flag": {
+  "en": "a774409a00c2",
+  "tr": "bc81beca69af",
+  "by": "claude-in-session"
+ },
+ "naval.flag.shape.pennant": {
+  "en": "9935e0d45e39",
+  "tr": "4a14a1df734a",
+  "by": "claude-in-session"
+ },
+ "naval.flag.shape.swallowtail": {
+  "en": "9d75a27d9598",
+  "tr": "30f94cb1974b",
+  "by": "claude-in-session"
+ },
+ "naval.flag.strike": {
+  "en": "1d7650fe53b4",
+  "tr": "81ca047ed460",
+  "by": "claude-in-session"
+ },
+ "naval.flag.struck": {
+  "en": "ea494a442eec",
+  "tr": "9a2eba814810",
+  "by": "claude-in-session"
+ },
  "naval.foul.board": {
   "en": "13f72c852c87",
   "tr": "f904de24b8b7",

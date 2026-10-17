@@ -144,6 +144,7 @@ card.
 | Repair | her hands, wherever she lies (below); the boat underfoot, her captain's order Make repairs | no crew, packed, no hands aboard, nothing to mend, her hands fighting her |
 | Shipwright | a door to the yard's window (`navalYardWindow.js`) for a ship laid up or lying here, at a port | away from a port; she elsewhere; fighting |
 | Hold | CARGO-ANYWHERE (2026-10-17, `03-World/Naval-Refit.md`): her hold's window, wherever she lies - here, away, laid up (PackedCargoes, live) or packed (her parts weighed again as it shuts) - a door handed to the menu (`scenes/holdDoor.js openShip`) | a Rowboat (no hold) |
+| Colours | SHIP-COLOURS (2026-10-17, `03-World/Naval-Refit.md`): her flag - its shape, its field and division, its border, its device and that device's colour, or her captain's guild's arms - drawn as she will fly it; Hoist sets it on her record (`systems/fleet.js setShipColours`, kept in the save), Strike gives her the mod's pennant again; her word said again (`changed`) | a Rowboat (no masthead), a flag the door refuses |
 | Refit | the panel below | below |
 | Rename | the field below | - |
 

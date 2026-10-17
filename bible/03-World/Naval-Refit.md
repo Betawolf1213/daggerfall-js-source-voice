@@ -31,6 +31,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | CARGO-ANYWHERE | 1 | a ship's hold opened from anywhere - the hold's key (F4), the helm's Hold, the Fleet page's Hold - at hand, last helmed or the fleet's first, wherever she lies; the hold two-way on the Enhanced skins | `scenes/holdDoor.js`, `systems/comeSailAway/comeSailAwayItems.js` (`cargoLootTarget`), `ui/enhanced/enhancedInventory.js` (`remoteModel`), `scenes/fleetHost.js` (`hold`), `ui/fleetPage.js`, `ui/enhanced/enhancedHelm.js` (`helmButtons`), `systems/inputActions.js` (`ShipHold`), `scenes/world.js` |
 | RAM-BOARD | 5 | a ram fouls her: for FOUL_S her way is held and she is boarded as she stands, her whole crew against me | `systems/naval/navalFoul.js`, `scenes/naval/navalHost.js` (`checkRams`, `boardingGap`, `footReach`, `stepHeaveTo`, `crewShips`, `word`, `targetCardOf`), `systems/naval/navalAI.js` (`stepCaptain`), `ui/naval/navalHud.js` (`cardState`) |
 | RAID-ASHORE | 2 | a voyage's raid fought where the player stands ends there: its crew and last raiders withdrawn, the quest ended; one raid at a time on the fast travel | `scenes/raidAshore.js`, `systems/warmAshesShips.js` (`LeaveShip`, `onPreFastTravel`), `scenes/world.js` (`raidAshore`, Warm Ashes' host, the quest's end) |
+| SHIP-COLOURS | 9 | a ship flies a flag of her captain's design - its shape, its field and division, its border, its device and that device's colour, or the captain's guild's arms - as cloth at her masthead, in her pennant's place, seen by every player | `systems/naval/shipFlag.js`, `ui/flagArt.js`, `render/shipFlagPass.js`, `scenes/shipFlagHost.js`, `systems/fleet.js` (`colours`, `setShipColours`), `scenes/fleetHost.js` (`colours`), `ui/fleetPage.js` (`coloursPanel`), `systems/comeSailAway/comeSailAwayWire.js` (`f`), `scenes/comeSailAway/comeSailAwayPeers.js` (`flagged`), `ui/heraldryArt.js` (its device painter shared), `scenes/world.js` |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -247,6 +248,41 @@ CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and 
   that; her lay, lead and reach are her load's (`gunnery`, `batteryReach`). The dead zones (LAY_MIN) are sounded with
   the bores' own loads.
 
+## SHIP-COLOURS - a flag of her captain's own, or the guild's arms (item 9)
+
+FOUND. Come Sail Away's boats fly a PENNANT: her FlagObject's particle system streams small cubes downwind off her
+masthead (the prefab's FlagEmitter; the mod aims the FlagObject down her wind, ComeSailAway.cs's flag rotation), drawn by
+the world host's particle pass (`scenes/world.js csaParticleLists`, a sea ship's tinted her faction's). A captain could
+neither choose it nor fly anything else; a guild's arms (`net/heraldryLaw.js`, GUILD1d/GUILD2c) flew on its hall's
+banners alone.
+
+CHANGED (`systems/naval/shipFlag.js`, the law; the art, the cloth and the host each a module of its own):
+- **The flag** (`shipFlagOf`, its door): a SHAPE (flag, swallowtail, pennant, burgee), a FIELD of the heraldry's sixteen
+  colours, divided or not by one of its eight divisions into a second colour, a BORDER of a colour or none, a DEVICE of
+  the heraldry's forty or none and the colour it is painted in - a colour on neither part of the field. And FLY MY
+  GUILD'S ARMS (`guild`): while the captain's guild has heraldry, the flag flies it - its field, division, border and
+  device in its ink - in the flag's own shape, following the guild's arms when they change (`flownFlag`); a guild with
+  none, or no guild, flies the flag's own colours.
+- **Its designer** (the Fleet page's Colours, `ui/fleetPage.js coloursPanel`): the flag drawn as she will fly it (the
+  guild's arms where they fly), and its choices - a stepper for the shape, the division and the device, a row of swatches
+  for each colour (UI-CALM's selector) - each change made a flag at once (`fitFlag`: a choice that clashes with one made
+  before it put right); Hoist (her record's `colours`, `systems/fleet.js setShipColours`, kept in the save with her),
+  Strike (the mod's pennant again), Close. Every hull with a masthead (a Rowboat has none).
+- **Its art** (`ui/flagArt.js`): the guild banner's own hand (`ui/heraldryArt.js` - its divisions, its device painter and
+  each hole's two colours, now shared), on a 150 x 100 cloth: an SVG for the designer and a canvas for the cloth's
+  texture - one picture.
+- **The cloth** (`render/shipFlagPass.js`): FLAG_COLS by FLAG_ROWS quads, the hoist nailed at her FlagObject and the fly
+  down its forward (her wind); a wave runs from the hoist to the fly, its throw growing to the free edge and with the
+  wind; in a light air the sheet bends down toward the staff as a whole (an arc of its own length, FLAG_SLACK_BEND at a
+  dead calm); its normal the wave's slope, so the folds catch the sun; lit and fogged as the banners are. Her hull's size
+  (`flagSizeOf`: a Large Boat's 1.2 x 0.8 m to a Carrack's 3 x 2). Drawn after the banners on the weather's own wind.
+- **Her pennant** (`scenes/shipFlagHost.js`, the world host's `csaParticleLists`): a boat flying a flag of cloth draws no
+  cubes - where the cloth is drawn (the exterior's pass); on a dungeon's water she flies her pennant.
+- **Every player sees it** (`comeSailAwayWire.js` `f`): a flag's seven numbers beside each boat of the owner's word (0
+  her pennant), only while one flies a flag - the colours FLOWN (a guild's arms as their colours); a reader takes each
+  through the flag's door (`flagOfCode`), one it refuses her pennant, never the boats dropped; an older build ignores it.
+  The peers' boats fly it (`comeSailAwayPeers.js flagged`).
+
 ## THE FOUR HOSTS RULE
 
 - `scenes/world.js` - the one host that streams the sea and stands Come Sail Away's runtime: PEACE-WAY's seam is wired
@@ -271,6 +307,13 @@ CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and 
   `classicpages`, `viewtoggle`, `uicalm`) and the helm panel's (`shipcrew`, `auditnav2_helm`, `fb1011c_seatown`).
 - `test/systems/naval/ramboard.test.js` (6) on the real naval host and pool, and `tools/mutants/ramboard.json` (17, all
   dead).
+- `test/systems/naval/shipcolours.test.js` (9) on the law, the art, the cloth's vertex law run in JS (`test/glsl.mjs`), the
+  host over Come Sail Away's real runtime, the ledger and its save, the Fleet's act and page, the wire and the world's
+  wiring, and `tools/mutants/shipcolours.json` (42, all dead); the cloth also seen drawn in headless Chromium in a fair
+  wind and a calm. The pins it moved: the ledger's record (`fleet`), the banners' wind (`auditguild1d`: the banners' own
+  line); the records re-aimed by content in `csa_together`, `holdings` and `auditguild1d` (all dead). THE FOUR HOSTS
+  RULE: the cloth is drawn in the world host's exterior pass alone - `worldModes.js` (interiors) and `dungeonContext.js`
+  (a dungeon's water) draw the mod's pennant, as before; `exterior.js` (the bench) - FLAGGED: no Come Sail Away runtime.
 - `test/systems/naval/shotkinds.test.js` (10) on the law, the gunnery, the shots, the real naval host and pool, the wire,
   the helm, the captains, the HUD, the picture and the world's wiring, and `tools/mutants/shotkinds.json` (66, all
   dead); the pins it moved: the muzzle event's (`nav_a_guns`), the chasers' count (`nav_f_ui`), the hull hit's spy

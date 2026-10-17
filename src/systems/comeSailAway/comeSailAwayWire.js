@@ -28,9 +28,15 @@
 // to the letter. A reader takes each name through the ledger's own law (systems/fleet.js shipNameVerdict: printable,
 // SHIP_NAME_MAX, the name filter every player's name passes); a name it refuses reads as none. A bad `n` never drops the
 // boats - a name is a thing to read, not a thing to stand on - and an older reader ignores the key.
+//
+// SHIP-COLOURS (2026-10-17, bible/03-World/Naval-Refit.md): A BOAT FLYING HER CAPTAIN'S FLAG SAYS IT. `f`, beside `b` as
+// `n` is - a flag's seven numbers for each of `b`'s (systems/naval/shipFlag.js flagCode), 0 for one that flies the mod's
+// pennant - and only while one of them flies a flag. Its reader takes each through the flag's own door (flagOfCode); one
+// it refuses reads as the pennant, never a reason to drop the boats, and an older reader ignores the key.
 import { POSE_BOUND, POSE_Y_BOUND } from '../../net/wire.js';
 import { HULL_NAMES, HULL_VARIANT_COUNTS } from './comeSailAwayBoat.js';
 import { shipNameVerdict, SHIP_NAME_MAX } from '../fleet.js';
+import { flagCode, flagOfCode } from '../naval/shipFlag.js';
 
 /** The boats one word carries - a player's shore holds few, and a frame's size is the room's. */
 export const CSA_WIRE_BOATS_MAX = 8;
@@ -58,13 +64,14 @@ const int = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
  * My word: the boats as they stand, in scene units - `[{ hull, variant, position, rotation, sails, helm, light,
  * velocity?, turn? }]` (sails a bit per raised sail in the boat's own order; CSA-K: the velocity in scene units and the
  * turn in degrees, each a real second's) - and `toWire` converting a scene point to the wire frame.
- * @returns {{ b: number[][], m?: number[][], u?: number[], n?: string[] } | null} null when none stands (the reader drops mine);
- *   `m` only while a boat is under way; `u` only while one carries her number; HOLDINGS: `n` only while one is named
+ * @returns {{ b: number[][], m?: number[][], u?: number[], n?: string[], f?: (number|number[])[] } | null} null when none stands (the
+ *   reader drops mine); `m` only while a boat is under way; `u` only while one carries her number; HOLDINGS: `n` only while
+ *   one is named; SHIP-COLOURS: `f` only while one flies a flag (each view's `flag`)
  */
 export function csaWireRecord(view, toWire = (p) => p) {
   if (!Array.isArray(view)) return null;
-  const b = [], m = [], n = [], u = [];
-  let underWay = false, named = false;
+  const b = [], m = [], n = [], u = [], f = [];
+  let underWay = false, named = false, flagged = false;
   for (const v of view) {
     if (b.length >= CSA_WIRE_BOATS_MAX) break;
     if (!v || !int(v.hull, 0, HULL_NAMES.length - 1) || !finite3(v.position) || !Array.isArray(v.rotation) || v.rotation.length !== 4) continue;
@@ -85,9 +92,12 @@ export function csaWireRecord(view, toWire = (p) => p) {
     n.push(name?.ok ? name.name : '');
     if (name?.ok && name.name) named = true;
     u.push(Number.isSafeInteger(v.uid) && v.uid > 0 ? v.uid : 0);
+    const code = flagCode(v.flag);   // SHIP-COLOURS: her flag, or 0 - her pennant
+    f.push(code);
+    if (code) flagged = true;
   }
   if (!b.length) return null;
-  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}) };   // HOLDINGS: `n` only while one is named
+  return { b, ...(underWay ? { m } : {}), ...(u.some(Boolean) ? { u } : {}), ...(named ? { n } : {}), ...(flagged ? { f } : {}) };   // HOLDINGS: `n` only while one is named; SHIP-COLOURS: `f` while one flies a flag
 }
 
 /**
@@ -125,6 +135,8 @@ export function validCsaRecord(raw) {
     const name = shipNameOf(raw.n, raw.b.length, boats.length);   // HOLDINGS: hers, where she has one - an unnamed boat's shape the older one
     if (name) boat.name = name;
     if (raw.u?.[boats.length]) boat.uid = raw.u[boats.length];
+    const flag = Array.isArray(raw.f) && raw.f.length === raw.b.length ? flagOfCode(raw.f[boats.length]) : null;   // SHIP-COLOURS: hers, where she flies one
+    if (flag) boat.flag = flag;
     boats.push(boat);
   }
   // A cabin keeps its owner's fleet on the exterior stream; only the player is below deck.
@@ -144,4 +156,4 @@ function shipNameOf(n, count, i) {
 
 /** A change key, so a frame carries the record only when the word moved (the full frame always does). CSA-K: the way
  *  is in it, so a boat brought up short is said at once (its readers stop leading it). */
-export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once
+export const csaRecordKey = (rec) => (rec ? JSON.stringify(rec.u || rec.cabin || rec.n || rec.f ? [rec.b, rec.m ?? null, rec.u ?? null, rec.cabin ?? null, rec.n ?? null, rec.f ?? null] : rec.m ? [rec.b, rec.m] : rec.b) : '');   // HOLDINGS: a renamed boat is said at once; SHIP-COLOURS: and a new flag

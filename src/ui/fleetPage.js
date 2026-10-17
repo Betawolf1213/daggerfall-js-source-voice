@@ -7,14 +7,19 @@
 //  - her hull, her canvas and her crew against their whole, a wreck, a fire, her carpenter's stores;
 //  - her refits, and the acts: SUMMON (brought round to a port's quay), SEND AWAY (she sails for a port and is laid
 //    up), REPAIR (her hands, wherever she lies - with stores aboard), SHIPWRIGHT (the yard's window, at a port), REFIT
-//    (her four lines, timber, iron and pitch and gold - none while her loan stands) and RENAME (the name every other
-//    player reads over her).
+//    (her four lines, timber, iron and pitch and gold - none while her loan stands), RENAME (the name every other
+//    player reads over her) and COLOURS (SHIP-COLOURS: the flag she flies - its shape, its field and division, its
+//    border, its device and that device's colour, or her captain's guild's arms - bible/03-World/Naval-Refit.md).
 // Each act's word is said under her card. The model and the acts are the host's (scenes/fleetHost.js), through the
 // Holdings provider (ui/holdingsPages.js setHoldingsProvider); dressed by the kit's roles as the Stable's cards are.
 
 import { holdingsProvider, ensureHoldingsStyle, holdingArt, holdingMeter, farWords } from './holdingsPages.js';
 import { SHIP_NAME_MAX, UPGRADE_LINES } from '../systems/fleet.js';
 import { CREW_ROLES, veteranOf, postsOf, postWords } from '../systems/naval/shipCrew.js';   // CAPT-CREW: a hand's rank, his post's worth
+import { HERALDRY_COLOURS, HERALDRY_DEVICES, HERALDRY_DIVISIONS, HERALDRY_DIVISION_NAMES, heraldryDeviceName, heraldryOf } from '../net/heraldryLaw.js';   // SHIP-COLOURS
+import { FLAG_SHAPES, FLAG_DEFAULT, fitFlag, flownFlag } from '../systems/naval/shipFlag.js';   // SHIP-COLOURS: her flag's law
+import { flagSvg } from './flagArt.js';   // SHIP-COLOURS: and its picture
+import { t } from '../systems/textManager.js';   // SHIP-COLOURS: the designer's words in the player's language
 
 export const FLEET_PAGE_SECTIONS = Object.freeze([Object.freeze(['fleet', 'Fleet'])]);
 /** Come Sail Away's two items' pictures: a deed's (209/5) for a ship whose title is held, her parts' (212/11) packed. */
@@ -28,6 +33,7 @@ const fleet = () => holdingsProvider()?.fleet ?? null;
 let _said = null;   // { uid, ok, text } - the last act's word, under its card
 let _open = null;   // { uid, panel: 'refit'|'rename'|'crew' } - the one panel open
 let _draft = '';
+let _flag = null;   // SHIP-COLOURS: the colours panel's design, while it is open
 
 /** Where she is, as a chip's word and a line. Pure. */
 /** QUAYS: a port's quay in words - "Wayrest's quay", or "a quay" for one with no name. */
@@ -146,7 +152,85 @@ function renamePanel(el, s, rerender, act) {
   return box;
 }
 
-function shipCard(el, s, { rerender, meter, door }) {
+// ── SHIP-COLOURS: THE COLOURS PANEL ─────────────────────────────────────────────────────────────────────────────────
+const SHAPE_WORDS = Object.freeze({
+  flag: () => t('naval.flag.shape.flag', 'Flag'), swallowtail: () => t('naval.flag.shape.swallowtail', 'Swallowtail'),
+  pennant: () => t('naval.flag.shape.pennant', 'Pennant'), burgee: () => t('naval.flag.shape.burgee', 'Burgee'),
+});
+const colourName = (k) => HERALDRY_COLOURS.find((c) => c.key === k)?.name ?? '';
+/** A row of the heraldry's sixteen colours (and None where `none`), the one chosen ringed and named - UI-CALM's selector. */
+function flagSwatches(el, word, current, choose, { none = false, not = [] } = {}) {
+  const row = el('div', 'hld-pick');
+  row.append(el('span', 'hld-picklabel', word));
+  const set = el('div', 'hld-swatches');
+  set.setAttribute('role', 'radiogroup');
+  set.setAttribute('aria-label', word);
+  const swatch = (key, hex, name) => {
+    const b = el('button', `hld-swatch${key === current ? ' on' : ''}${key == null ? ' hld-swatch-none' : ''}`);
+    b.setAttribute('role', 'radio');
+    b.setAttribute('aria-checked', key === current ? 'true' : 'false');
+    b.setAttribute('aria-label', name);
+    b.title = name;
+    if (hex && b.style) b.style.setProperty?.('--sw', hex);
+    b.onclick = () => choose(key);
+    set.append(b);
+  };
+  if (none) swatch(null, null, t('naval.flag.none.colour', 'None'));
+  for (const c of HERALDRY_COLOURS) if (!not.includes(c.key)) swatch(c.key, c.hex, c.name);
+  row.append(set, el('span', 'hld-pickname', current == null ? t('naval.flag.none.colour', 'None') : colourName(current)));
+  return row;
+}
+/** A stepper over `list` (‹ the one chosen ›) - a shape, a division, a device. */
+function flagStepper(el, word, list, current, nameOf, choose) {
+  const row = el('div', 'hld-pick');
+  row.append(el('span', 'hld-picklabel', word));
+  const i = Math.max(0, list.indexOf(current)), n = list.length;
+  const step = (d, glyph, aria) => {
+    const b = el('button', 'hld-step', glyph);
+    b.setAttribute('aria-label', aria);
+    b.onclick = () => choose(list[((i + d) % n + n) % n]);
+    return b;
+  };
+  row.append(step(-1, '\u2039', `${word}: ${t('naval.flag.previous', 'previous')}`), el('span', 'hld-pickname hld-stepname', nameOf(current)), step(1, '\u203a', `${word}: ${t('naval.flag.next', 'next')}`));
+  return row;
+}
+/**
+ * HER COLOURS: the flag she will fly, drawn as it flies (ui/flagArt.js), and its choices - each change made a flag at once
+ * (systems/naval/shipFlag.js fitFlag: a choice that clashes with one made before it put right). FLY MY GUILD'S ARMS while
+ * the guild has arms (`arms`): the flag flies them in its shape, its own colours set aside. Hoist, strike or close.
+ */
+function coloursPanel(el, s, rerender, act, arms) {
+  const box = el('div', 'hld-text hld-colours');
+  const d = fitFlag(_flag ?? s.colours ?? FLAG_DEFAULT);
+  const set = (k, v) => { _flag = { ...d, [k]: v }; rerender(); };   // made a flag as it is drawn (`d`)
+  const pic = el('div', 'hld-flag');
+  pic.setAttribute('aria-label', t('naval.flag.preview', 'Her flag, as she will fly it'));
+  pic.innerHTML = flagSvg(flownFlag(d, arms), { width: 150 });
+  box.append(pic);
+  const armed = !!heraldryOf(arms);
+  box.append(flagStepper(el, t('naval.flag.shape', 'Shape'), FLAG_SHAPES, d.shape, (k) => SHAPE_WORDS[k](), (v) => set('shape', v)));
+  const guild = el('div', 'hld-acts');
+  guild.append(button(el, d.guild && armed ? t('naval.flag.guildOn', 'Flying your guild\'s arms') : t('naval.flag.guildOff', 'Fly my guild\'s arms'),
+    armed ? null : t('naval.flag.noArms', 'Your guild has no arms to fly - or you are of no guild.'), () => { if (armed) set('guild', !d.guild); }, d.guild && armed ? 'act primary' : 'act'));
+  box.append(guild);
+  if (d.guild && armed) box.append(el('span', 'hld-sub', t('naval.flag.guildNote', 'She flies your guild\'s arms in this shape, and follows them when they change.')));
+  else {
+    box.append(flagSwatches(el, t('naval.flag.field', 'Field'), d.field, (v) => set('field', v)));
+    box.append(flagStepper(el, t('naval.flag.division', 'Division'), HERALDRY_DIVISIONS, d.division, (k) => HERALDRY_DIVISION_NAMES[k] ?? k, (v) => set('division', v)));
+    if (d.division !== 'plain') box.append(flagSwatches(el, t('naval.flag.field2', 'Second colour'), d.field2, (v) => set('field2', v), { not: [d.field] }));
+    box.append(flagSwatches(el, t('naval.flag.border', 'Border'), d.border, (v) => set('border', v), { none: true, not: [d.field] }));
+    box.append(flagStepper(el, t('naval.flag.device', 'Device'), [null, ...HERALDRY_DEVICES], d.device, (k) => (k ? heraldryDeviceName(k) : t('naval.flag.none.device', 'None')), (v) => set('device', v)));
+    if (d.device) box.append(flagSwatches(el, t('naval.flag.charge', 'Device colour'), d.charge, (v) => set('charge', v), { not: [d.field, d.field2].filter(Boolean) }));
+  }
+  const acts = el('div', 'hld-acts');
+  acts.append(button(el, t('naval.flag.hoist', 'Hoist her colours'), null, () => { _open = null; _flag = null; act('colours', d); }, 'act primary'));
+  if (s.colours) acts.append(button(el, t('naval.flag.strike', 'Strike her flag'), null, () => { _open = null; _flag = null; act('colours', null); }));
+  acts.append(button(el, t('naval.flag.close', 'Close'), null, () => { _open = null; _flag = null; rerender(); }));
+  box.append(acts);
+  return box;
+}
+
+function shipCard(el, s, { rerender, meter, door, arms = null }) {
   const item = el('div', 'hld-row');
   item.append(holdingArt(el, s.where === 'packed' ? PARTS_ART : DEED_ART, '⚓', rerender));
   const text = el('div', 'hld-text');
@@ -183,8 +267,10 @@ function shipCard(el, s, { rerender, meter, door }) {
   acts.append(button(el, _open?.uid === s.uid && _open.panel === 'refit' ? 'Close refits' : 'Refit', null, () => { _open = _open?.uid === s.uid && _open.panel === 'refit' ? null : { uid: s.uid, panel: 'refit' }; rerender(); }));
   acts.append(button(el, 'Rename', null, () => { _open = { uid: s.uid, panel: 'rename' }; _draft = s.name ?? ''; _said = null; rerender(); }));
   if (s.crewed && s.where !== 'packed') acts.append(button(el, _open?.uid === s.uid && _open.panel === 'crew' ? 'Close crew' : 'Crew', null, () => { _open = _open?.uid === s.uid && _open.panel === 'crew' ? null : { uid: s.uid, panel: 'crew' }; rerender(); }));
+  // SHIP-COLOURS: her flag - every hull with a masthead
+  if (s.flag) acts.append(button(el, t('naval.flag.open', 'Colours'), null, () => { const open = _open?.uid === s.uid && _open.panel === 'colours'; _open = open ? null : { uid: s.uid, panel: 'colours' }; _flag = open ? null : s.colours ?? null; _said = null; rerender(); }));
   text.append(acts);
-  if (_open?.uid === s.uid) text.append(_open.panel === 'refit' ? refitPanel(el, s, rerender, act) : _open.panel === 'crew' ? crewPanel(el, s, act) : renamePanel(el, s, rerender, act));
+  if (_open?.uid === s.uid) text.append(_open.panel === 'refit' ? refitPanel(el, s, rerender, act) : _open.panel === 'crew' ? crewPanel(el, s, act) : _open.panel === 'colours' ? coloursPanel(el, s, rerender, act, arms) : renamePanel(el, s, rerender, act));
   item.append(text);
   return item;
 }
@@ -202,7 +288,7 @@ export function drawFleetPage(detail, rerender, { el, divider, meter = null, doo
     return;
   }
   const list = el('div', 'hld-list');
-  for (const s of m.ships) list.append(shipCard(el, s, { rerender, meter, door }));
+  for (const s of m.ships) list.append(shipCard(el, s, { rerender, meter, door, arms: m.guildArms ?? null }));
   detail.append(list);
   detail.append(el('p', 'hld-foot', m.atPort
     ? 'You are at a port: a ship summoned is brought round to its quay, and its shipwright repairs and refits.'
@@ -210,4 +296,4 @@ export function drawFleetPage(detail, rerender, { el, divider, meter = null, doo
 }
 
 /** A visit's words forgotten (an act's answer, an open panel) - the pause menu's every mount. */
-export function resetFleetPage() { _said = null; _open = null; _draft = ''; }
+export function resetFleetPage() { _said = null; _open = null; _draft = ''; _flag = null; }

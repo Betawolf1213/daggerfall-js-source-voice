@@ -607,6 +607,9 @@ import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_
 import { peaceWayOf } from '../systems/comeSailAway/peaceWay.js';   // PEACE-WAY: her way out of a fight
 import { createRaidAshore } from './raidAshore.js';   // RAID-ASHORE: a voyage's raid thrown back where I stand
 import { createHoldDoor, holdsCargo } from './holdDoor.js';   // CARGO-ANYWHERE: a ship's hold from anywhere
+import { createShipFlagHost } from './shipFlagHost.js';   // SHIP-COLOURS: the flags my ships and the others' fly
+import { ShipFlagRenderer, FLAG_TEX_W } from '../render/shipFlagPass.js';   // SHIP-COLOURS: ...as cloth at the masthead
+import { drawFlag } from '../ui/flagArt.js';   // SHIP-COLOURS: ...each painted in the heraldry's hand
 import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
 import { createHarbourOffice } from './harbourOffice.js';
 import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Eltheric Ocean's waters, charts, strands and legends
@@ -2815,6 +2818,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         paint: (h) => { const c = document.createElement('canvas'); c.width = BANNER_TEX_W; c.height = BANNER_TEX_W * 3; const g = c.getContext('2d'); if (!g) return null; drawBanner(g, h, BANNER_TEX_W); return c; },
       });
     } catch (e) { console.warn('[guild] the banners could not be built', e); return null; }
+  })();
+  // SHIP-COLOURS: a ship's flag at her masthead - in EVERY skin, as the banners; a shader that will not build costs the
+  // flags (her pennant flies), never the game
+  const shipFlagPass = (() => {
+    try {
+      return new ShipFlagRenderer(renderer.gl, {
+        paint: (f) => { const c = document.createElement('canvas'); c.width = FLAG_TEX_W; c.height = Math.round((FLAG_TEX_W * 2) / 3); const g = c.getContext('2d'); return g && drawFlag(g, f, FLAG_TEX_W) ? c : null; },
+      });
+    } catch (e) { console.warn('[sea] the ship flags could not be built', e); return null; }
   })();
   // TV4: the curtains from above - the enhanced lane's (the clouds and their cells are), built once, drawn only under the travel view
   const rainCurtains = isEnhanced() ? (() => { try { return new RainCurtainsRenderer(renderer.gl); } catch (e) { console.warn('[tv] the curtains could not be built', e); return null; } })() : null;
@@ -8743,6 +8755,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         const list = mode === CSA_RENDER_MODE.Mesh ? lists.flags : material === 'Default-Particle' ? lists.drops : material === 'WakeMaterial' ? lists.wake : null;
         if (!list) continue;
         const maxSize = ps.renderer.m_MaxParticleSize ?? 0.5;
+        if (list === lists.flags && shipFlags.flies(boat)) continue;   // SHIP-COLOURS: her captain's flag flies in her pennant's place
         for (const q of ps.renderList()) list.push(list === lists.flags && boat.flagColor ? { ...q, maxSize, color: boat.flagColor } : { ...q, maxSize });   // NAV-B: a sea ship flies her faction's colours
       }
     }
@@ -8954,6 +8967,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       helm: csaRuntime.isSailing() && b === csaRuntime.state.CurrentBoat, light: !!b.LightOn,
       ...(way && way.boat === b ? { velocity: way.velocity.map((v) => v * scale), turn: way.turn * scale } : null),
       name: fleetHost?.nameOf(b) ?? '',   // HOLDINGS: her name, for every other player to read over her
+      flag: shipFlags.wireFlag(b),   // SHIP-COLOURS: and the flag she flies
     }));
     const rec = csaWireRecord(view, campToWire);
     if (rec && modes?.sailingCabin) rec.cabin = 1;
@@ -9657,7 +9671,17 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     veilApart: (rec, boat) => { const p = playerTravelPixel(); const hers = boat?.MapPixel ? inEther(boat.MapPixel.X, boat.MapPixel.Y) : !!rec?.port?.ether; return etherSea && inEther(p.x, p.y) !== hers; },
     changed: () => surfacePlayer(),
     openHold: (uid) => holdDoor.openShip(uid),   // CARGO-ANYWHERE: her hold, from the Fleet page, wherever she lies
+    guildArms: () => guildBook?.guild?.heraldry ?? null,   // SHIP-COLOURS: "fly my guild's arms"
   }) : null;
+  // SHIP-COLOURS: the flags flown (scenes/shipFlagHost.js) - my boats' by their colours in the ledger (my guild's arms
+  // where a flag is the guild's), and every other player's by their word
+  const shipFlags = createShipFlagHost({
+    myBoats: () => (shipFlagPass && csaRuntime && csaOn() ? csaRuntime.AllBoats : []),
+    coloursOf: (uid) => fleetShip(uid)?.colours ?? null,
+    guildArms: () => guildBook?.guild?.heraldry ?? null,
+    peerFlags: () => (shipFlagPass ? csaPeers?.flagged?.() ?? [] : []),
+    shown: () => !!shipFlagPass && _mode() === 'exterior',   // the exterior's pass draws the cloth - elsewhere her pennant flies
+  });
   // SHIPYARDS (2026-10-11, Mac: "A new highly detailed shipmaster vendor and crew recruitment station within it. All
   // detailed functions including ship upgrading should be present here, along with ship buying"): THE SHIPMASTER'S
   // WINDOW'S HOST HALF (scenes/shipyardHost.js) - over the Fleet's host, the sea fight's, Come Sail Away's runtime and the
@@ -32288,6 +32312,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     holdDoor.frame();   // CARGO-ANYWHERE: the helm I hold, remembered - and the hold's key, in every mode (the cabin's too)
     if (csaRuntime && walkMode && playerSpawned && !modes?.transitioning && !travelView?.active && hccActionPressed('ShipHold')) holdDoor.press();
     if (navalOn() && hccActionPressed('ShotCycle')) naval?.cycleShot?.(1);   // SHOT-KINDS: the guns' load, from its key (at a helm with guns - the host's own test)
+    shipFlags.frame();   // SHIP-COLOURS: the flags flown this frame, and the pennants they replace
     saddleDrawPanel();   // STEED-UI: the saddle panel, as the helm's below - every mode, so a door takes it down
     csaDrawHelmPanel();   // CSA-L: the helm panel, once a frame in every mode
     spoilsRecoverFrame();   // WB5: a boss's spoils no save holds, back to their character as it stands up - before it can save, online or not
@@ -34884,6 +34909,13 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
       })) renderer.markForeignPass();
     }
+    // SHIP-COLOURS: and the ships' flags, cloth as the banners are (render/shipFlagPass.js), on the same light and wind
+    const flags = shipFlagPass ? shipFlags.draws() : [];
+    if (flags.length && shipFlagPass.draw(flags, proj, view, new Float32Array(mwv.eye), now / 1000, {
+      light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },
+      wind: Math.min(1, wd.strength01 * wd.gust),
+      fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
+    })) renderer.markForeignPass();
     };
     frameBanners();
     // HAZE1: HEAT HAZE - the mod's GrabPass at Transparent-100: the opaque world whole (the ground, the models, the flats,

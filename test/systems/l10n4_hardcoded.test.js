@@ -189,6 +189,7 @@ const HARDCODED = {
   'src/render/renderer.js': 17,
   'src/render/retroPass.js': 1,
   'src/render/riteSmoke.js': 1,
+  'src/render/shipFlagPass.js': 1,
   'src/render/superDungeon/sdArenaGlow.js': 1,
   'src/render/superDungeon/sdBeam.js': 1,
   'src/render/superDungeon/sdHalo.js': 2,
@@ -587,6 +588,7 @@ const HARDCODED = {
   // PIN MOVED (AUDIT UICALM-FIRM1 L4 H1, M4, L3-L4): the window's finger hint, its overlay guard and its respec's lost
   // answer - the Firmament's words are English OPEN, its translation pass the owner's (Audit-UICalm-Firm1.md L5 M1)
   'src/ui/firmamentWindow.js': 93,
+  'src/ui/flagArt.js': 1,
   'src/ui/fleetPage.js': 30,
   'src/ui/fpsCounter.js': 3,
   'src/ui/gate/gateBossBar.js': 5,

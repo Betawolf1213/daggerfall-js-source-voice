@@ -124,7 +124,7 @@ test('FLEET the book: a deed entered is out of the pack and in the book, her rec
   _resetFleetForTests();
   const pack = [item(50), mintDeed(3, 0, 801, 200000), mintDeed(2, 0, 802, 25000)];
   const r = titleDeed(pack[1], { from: pack, credit: { region: 4, due: 77 }, port: { name: 'Sentinel' } });
-  assert.deepEqual({ ...r }, { uid: 801, hull: 3, variant: 0, value: 200000, name: '', upgrades: { hold: 0, rigging: 0, hull: 0, guns: 0 }, credit: null, port: { name: 'Sentinel' } });
+  assert.deepEqual({ ...r }, { uid: 801, hull: 3, variant: 0, value: 200000, name: '', upgrades: { hold: 0, rigging: 0, hull: 0, guns: 0 }, credit: null, port: { name: 'Sentinel' }, colours: null });   // PIN MOVED (SHIP-COLOURS: her flag - none, the mod's pennant)
   assert.equal(pack.length, 2);
   assert.equal(titleOf(801)?.templateIndex, BOAT_DEED_TEMPLATE);
   titleDeed(titleOf(801));
