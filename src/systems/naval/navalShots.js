@@ -27,12 +27,18 @@
 // null its bore's own) - its sweep the loaded gun's (shotKinds.js shotGun: a bag of grape and a tumbling chain sweep wider
 // than a ball), and every event it raises says it, a hit with its flight `t` (grapeshot's men fall off with it -
 // shotKinds.js shotReach).
+// NEAR-MISS (COMBAT-FEEL, bible/03-World/Naval-Refit.md): a ball that goes by a ship that HEARS it (a target marked
+// `ear` - the player's own boats) within NEAR_MISS_M without striking her in that piece of its flight is a 'pass' - once
+// a ball a ship, told at its nearest (`point`, `gap`): the host's whistle and the near splash's drench read it. A ball
+// that comes on to strike her a piece later is heard coming, then strikes.
 
 import { shotPosition, shotVelocity, segmentBoxEntry, segmentCrossesDown, toBoxLocal } from './navalBallistics.js';
 import { hitZone } from './navalDamage.js';
 import { GUNS, BARREL, SHIP_TOUGHNESS } from './navalShips.js';
 import { shotGun } from './shotKinds.js';
 
+/** NEAR-MISS: how near a ball passes a ship that hears it to be heard going by (m, from her hull's box). */
+export const NEAR_MISS_M = 8;
 /** A ball's longest flight (s). */
 export const BALL_LIFE = 9;
 /** AUDIT NAV1 (online #15): the longest piece of a ball's flight tested at once (s) - a flight the step came late to (a
@@ -51,10 +57,11 @@ const GROUND_STEP = 4;
 
 /**
  * @typedef {{ id: string, box: { c: number[], ax: number[], ay: number[], az: number[], h: number[] }, rig?: any[], alive?: boolean,
- *   hitBy?: (shooter: any) => boolean }} ShotTarget
+ *   hitBy?: (shooter: any) => boolean, ear?: boolean }} ShotTarget
  *   a ship as the shots see it: its hull box this frame (navalBallistics.js orientedBox) and its rig's boxes; `alive`
  *   false for a ship that no longer takes hits (sunk); `hitBy` false for a shooter whose balls and barrels never meet
- *   her (AUDIT NAV1, online: another player's boat, met by a ship's shot alone)
+ *   her (AUDIT NAV1, online: another player's boat, met by a ship's shot alone); `ear` (NEAR-MISS) a ship whose
+ *   near misses are told ('pass')
  */
 
 /**
@@ -147,6 +154,14 @@ export function createShotField(deps) {
       (b.rigged ??= new Set()).add(r.t.id);
       emit({ type: 'hit', volley: b.volley, shooter: b.shooter, owner: b.owner, target: r.t.id, gun: b.gun, shot: b.shot, t: flight(r.e.t), weight: b.weight, point: r.e.point, zone: 'rig', dir, resolve: b.resolve });
     }
+    // NEAR-MISS: the ships that hear it, passed close (to where it stops) and not struck in this piece
+    for (const t of targets) {
+      if (!t.ear || t.id === b.shooter || b.passed?.has(t.id) || (ship && ship.t.id === t.id && ship.e.t === firstT)) continue;
+      const near = segmentNearBox(a, next, t.box, firstT === Infinity ? 1 : firstT);
+      if (near.gap > NEAR_MISS_M) continue;
+      (b.passed ??= new Set()).add(t.id);
+      emit({ type: 'pass', volley: b.volley, shooter: b.shooter, owner: b.owner, target: t.id, gun: b.gun, shot: b.shot, point: near.point, gap: near.gap, dir });
+    }
     if (firstT === Infinity) return false;
     const at = (k) => [a[0] + (next[0] - a[0]) * k, a[1] + (next[1] - a[1]) * k, a[2] + (next[2] - a[2]) * k];
     if (ship && ship.e.t === firstT) {
@@ -229,6 +244,23 @@ export function createShotField(deps) {
   };
 }
 
+/** NEAR-MISS: how far a point is from a box (0 inside it). */
+export function boxGap(box, p) {
+  const l = toBoxLocal(box, p);
+  return Math.hypot(Math.max(0, Math.abs(l[0]) - box.h[0]), Math.max(0, Math.abs(l[1]) - box.h[1]), Math.max(0, Math.abs(l[2]) - box.h[2]));
+}
+/** NEAR-MISS: a segment's nearest to a box over its first `upTo` share - `{ u, gap, point }`. The gap is convex along a
+ *  line (a box is convex), so its least is found by thirds. */
+export function segmentNearBox(a, b, box, upTo = 1) {
+  const at = (u) => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u];
+  let lo = 0, hi = Math.max(0, Math.min(1, upTo));
+  for (let i = 0; i < 40; i++) {
+    const m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3;
+    if (boxGap(box, at(m1)) <= boxGap(box, at(m2))) hi = m2; else lo = m1;
+  }
+  const u = (lo + hi) / 2, point = at(u);
+  return { u, gap: boxGap(box, point), point };
+}
 /** Whether a point lies inside a box grown by `r` on every axis. */
 export function insideGrown(box, p, r) {
   const l = toBoxLocal(box, p);

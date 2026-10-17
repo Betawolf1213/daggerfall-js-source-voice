@@ -290,8 +290,8 @@
   {
     "name": "SHOT-host-hud-unsaid",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "barrels: b.gun === 'barrel' ? st.guns.barrels : null, shot: st.guns.load(side) };",
-    "new": "barrels: b.gun === 'barrel' ? st.guns.barrels : null, shot: null };",
+    "old": "barrels: b.gun === 'barrel' ? st.guns.barrels : null, shot: st.guns.load(side), left:",
+    "new": "barrels: b.gun === 'barrel' ? st.guns.barrels : null, shot: null, left:",
     "tests": [
       "test/systems/naval/shotkinds.test.js"
     ]

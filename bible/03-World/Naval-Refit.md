@@ -43,6 +43,7 @@ and in `01-Overview/Port-Ledger.md` section A.
 | SHIP-LIVERY | 8 | a ship painted by her captain - a port-built hull's strakes, trim and canvas, a classic-planked hull's wood stained and its sails tinted, each of fourteen paints or as built - drawn so wherever she is drawn, seen by every player | `systems/naval/shipLivery.js`, `world/ships/shipLiveryArt.js`, `scenes/comeSailAway/shipLiveryPaint.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`liveryCodeOf`, the draw's remap), `systems/fleet.js` (`livery`, `setShipLivery`), `scenes/fleetHost.js` (`livery`), `ui/fleetPage.js` (`paintPanel`, `paintSvg`), `systems/comeSailAway/comeSailAwayWire.js` (`l`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
 | CABIN-LOOK | 8 | her cabin below stained one wood, her windows lit as built | `scenes/cabinLook.js`, `scenes/interiorContext.js` (`restyle`), `scenes/sailingCabin.js` (the visit's `restyle`), `scenes/worldModes.js`, `systems/fleet.js` (`cabin`, `setShipCabin`), `scenes/fleetHost.js` (`livery`'s `cabin`) |
 | DECK-PROPS | 8 | Daggerfall's crates and chests stood on her open deck by a plan of it from above - drawn with her, rocking with her, standing in her colliders, seen by every player | `systems/naval/deckFittings.js`, `scenes/comeSailAway/deckFittingsHost.js`, `scenes/comeSailAway/comeSailAwayPool.js` (`fitBoats`, `fitDeps`), `ui/deckPlanWindow.js`, `scenes/deckPlanDoor.js`, `ui/naval/navalPlunderDoor.js` (`createDeckPlanOverlay`), `systems/fleet.js` (`deck`, `setShipFittings`), `scenes/fleetHost.js` (`deck`, `deckPlan`), `ui/fleetPage.js` (Deck), `systems/comeSailAway/comeSailAwayWire.js` (`d`), `scenes/comeSailAway/comeSailAwayPeers.js`, `scenes/world.js` |
+| COMBAT-FEEL | 4 | the fight felt at my rail: gun smoke carried by the air and hanging, a ball's fall a spout grown for the eye far off, a near pass whistling and a near fall drenching her, the side a blow came from and her hull bar's loss on her plate, a burning ship's magazine going up as she founders and the air boiling up off her, my battered boat smoking in a fight, her card's men and my volley's count of them, each battery's seconds to load | `systems/naval/navalEffects.js` (`step`'s air, `smoke`'s `hang`, `splash`'s `scale`, `spout`, `drench`, `founder`), `systems/naval/navalShots.js` (`pass`, `boxGap`, `segmentNearBox`), `scenes/naval/navalFeel.js`, `systems/naval/navalSounds.js` (`whistle`), `tools/navalSfx.mjs` (`naval-whistle`), `scenes/naval/navalHost.js` (the feel's wiring, `tallyMen`, the card's `crew`, the batteries' `left`), `ui/naval/navalHud.js` (`plateLoss`, the rose's blow, the batteries' seconds, the card's crew bar, the tally's men) |
 | SHOT-KINDS | 3, 4 | four loads - round, grape, chain, heated - a battery group's own choice, each its own ball, blow, picture and word; pirates board with grape | `systems/naval/shotKinds.js`, `systems/naval/navalGunnery.js` (`aimSolution`, `volleyLaunches`, `reloadSeconds`, `createGunDeck` `setLoad`), `systems/naval/navalShots.js`, `scenes/naval/navalLoads.js`, `scenes/naval/navalHost.js` (`fire`, `fireFromWord`, `landHit`, `loadedGun`, `lookOnShip`, `aimStrikes`, `gunsRecord`, `hudModel`), `systems/naval/navalWire.js` (`o`), `systems/naval/navalAI.js` (`captainLoads`, `boarderBroadsides`, `gunnery`), `systems/naval/navalEffects.js`, `render/navalRender.js` (`ballPictures`), `ui/naval/navalHud.js`, `ui/enhanced/enhancedHelm.js`, `systems/inputActions.js` (`ShotCycle`), `scenes/world.js` |
 
 ## ISLE-TRADE - a living past the Veil (item 7)
@@ -259,6 +260,60 @@ CHANGED (`systems/naval/shotKinds.js`, the law; the deck keeps it, the host and 
   that; her lay, lead and reach are her load's (`gunnery`, `batteryReach`). The dead zones (LAY_MIN) are sounded with
   the bores' own loads.
 
+## COMBAT-FEEL - the fight at my rail (item 4)
+
+FOUND (the gap survey of the sea fight, against Black Flag's picture the sea fight was built to): a broadside's smoke
+DRAGGED TO STANDING STILL and was nudged by the wind at a third of Come Sail Away's wind STRENGTH - a number of 1 to 2,
+not metres a second - so a fight's smoke hung where it was fired under half a metre a second and was gone in 4 to 8 s;
+a ball's fall was a column the same size at 300 m as at 30 (only a hull hit's burst was grown for the eye far off); a
+ball going by my rail was silent and one falling beside her threw nothing aboard; a hit on my own ship was a camera's
+kick and her plate's bar sliding (the target's card read its loss, broke a piece off and flashed - mine did not), with no
+word of where it came from; a ship going down afire only foamed; my own boat, battered, showed her fires and no smoke;
+the target card read her hull and canvas, never her men - grape's whole point - and my volley's tally counted hits, holes
+and rigging, never men; and a battery's seconds to load were said only for the side laid.
+
+CHANGED:
+- **SMOKE-WIND** (`systems/naval/navalEffects.js`): smoke's drag is toward the AIR's way - the wind at WIND_MPS (4 m/s) a
+  unit of Come Sail Away's strength (a fair day's 1-2 a gentle to a moderate breeze, a storm's up to 16 m/s) - so a
+  broadside's smoke leaves the muzzles along the shot, slows to the wind's speed and goes downwind as a bank, and a
+  burning or battered hull's smoke leans away down the wind. A broadside's own smoke hangs GUN_SMOKE_LIFE (9-14 s) and
+  swells to GUN_SMOKE_SWELL (6-10 m a unit of the gun's size); a hit's puff stays as it was. Nothing else rides the wind
+  (a plank afloat drifts as the shot field's floaters do).
+- **SPLASH-SPOUT**: a ball's fall throws a SPOUT out of its column's middle - a few drops nearly straight up at SPOUT_UP
+  (a heavy ball's to about ten metres, a light one's five), the white post a fall of shot is read by at range; grape's bag
+  of small balls throws its spatter and no spout. The whole splash grows for the eye far off as a hull hit's burst does
+  (the host's `burstScale`, HIT_BURST_M): its drops larger, thrown higher, a few more of them, its ring wider.
+- **NEAR-MISS** (`systems/naval/navalShots.js`): a ball going by a ship that HEARS it - a target marked `ear`, the
+  player's own boats - within NEAR_MISS_M (8 m) of her hull's box, not striking her in that piece of its flight, is a
+  'pass': once a ball a ship, told at its nearest (the gap's least along the piece, found by thirds - a box is convex).
+  The host whistles it (`scenes/naval/navalFeel.js passed`): a new clip, `naval-whistle` (`tools/navalSfx.mjs`, the
+  tenth: noise through a narrow band that FALLS as the ball passes - its Doppler - swelling to its nearest, a faint tone
+  riding it), at the place it passed, louder the nearer, heard over NAVAL_SOUND_RANGE's 8 to 90 m. A ball of mine or of
+  another player's never whistles at me: no fight between players at sea.
+- **DRENCH** (`navalFeel.js splashed`): a ball falling into the sea within NEAR_SPLASH_M (6 m) of my boat's hull throws a
+  sheet of its water over her rail (`effects.drench`, DRENCH_N drops toward her middle, half at the edge) and jars her
+  (NEAR_SHAKE, harder alongside) - whoever's ball it was: the sea is the sea.
+- **HULL-BLOW** (`navalFeel.js struck`, `ui/naval/navalHud.js`): a ball striking my boat is felt from a SIDE - her bow,
+  her stern or a beam - read off the ball's way against her heading (`blowSide`): her plate's rose shows it for BLOW_S
+  (1.4 s), that side of her little ship and its battery's frame red. Her own hull bar reads its loss as the card's does
+  (`plateLoss`, ui/barLoss.js - the ghost where it was, a piece breaking off, the bar's flash).
+- **MAGAZINE** (`navalFeel.js sinking`, `frame`): a ship going down while she burns may blow her magazine - MAGAZINE_CHANCE
+  (0.55), decided by HER OWN SEED (`magazineOf`), so every player who sees her sees the same - once, 1.5 to 4.5 s into
+  her going down, at her middle: a barrel's blast and its sound, and a jar for a boat of mine within MAGAZINE_SHAKE_M.
+  A ship gone before it went up is forgotten.
+- **FOUNDER-BOIL** (`effects.founder`): the air leaving a ship going down boils up where she is - small drops popping off
+  the sea, BOIL_RATE (14) a second, each with its own little ring among her foam.
+- **MY-SMOKE** (`navalFeel.js frame`): my own boat smokes along her deck as a sea ship does under SMOKE_FROM (0.6) of her
+  hull - while a hostile ship is near her (`navalHost.js hostileNearBoat`: the fight's smoke, not a mooring's).
+- **CARD-CREW**: the target card reads her MEN (`crew`, a third bar under her canvas) once she is made out; my volley's
+  tally counts the men it took (`tallyMen` - her crew before and after each ball of it, or a peer's ship's as her
+  stander will reckon them, shotMen) - "N of her men down", grape's work said.
+- **RELOAD-SECS**: each battery says the whole seconds it still loads beside its load ("Grape 5s"); a loaded side and a
+  barrel none (on a short screen the load's line is hidden, and the aim's line says it, as before).
+
+DEPARTURE from nothing: Daggerfall has no sea, and Daggerfall Unity none; the screen's red damage flash (DFU's
+ShowPlayerDamage) stays the player's own body's - a hit on her hull is her plate's, not the player's blood.
+
 ## SHIP-COLOURS - a flag of her captain's own, or the guild's arms (item 9)
 
 FOUND. Come Sail Away's boats fly a PENNANT: her FlagObject's particle system streams small cubes downwind off her
@@ -411,7 +466,7 @@ CHANGED (`systems/naval/shipLivery.js`, the law and the painter; pure):
   stain at its lightness against the picture's mean, laid over the wood at STAIN_STRENGTH (0.62) - the plank still
   reads as a plank; her sailcloth the sail's paint at SAIL_TINT (0.85).
 - **The paint shop** (`scenes/comeSailAway/shipLiveryPaint.js`): a livery's pictures painted and uploaded under
-  LIVERY_ARCHIVE (38191) the first time a hull wears it, and the remap she is drawn by - her paint's keys over the host's
+  LIVERY_ARCHIVE (38191, registered in `world/eliteGates/pseudoArchives.js`) the first time a hull wears it, and the remap she is drawn by - her paint's keys over the host's
   (the night's twins already in it while the lanterns are lit), one Map a pair so the renderer's cache holds. A boat
   whose paint is still being made is drawn as built; one whose paint failed is drawn as built for good and said once.
 - **Drawn wherever she is drawn** (`comeSailAwayPool.js draw`, `liveryCodeOf`): the one draw every host's boats go
@@ -438,7 +493,7 @@ the decorator furnishes her cabin as it does a house (DECOR1, `scenes/worldModes
 CHANGED (`scenes/cabinLook.js`):
 - **The room's restyle** (`interiorContext.js`'s `restyle`, asked after the climate's remap and before the room's batch
   is made): each picture the room's models wear, its key as the climate resolves it, given a stained twin under
-  CABIN_ARCHIVE (38192) - `tintPicture` at CABIN_STAIN (0.55), Daggerfall's look over it - and set in the room's remap in
+  CABIN_ARCHIVE (38192, registered beside it) - `tintPicture` at CABIN_STAIN (0.55), Daggerfall's look over it - and set in the room's remap in
   its place, once each. Her walls, floor, beams and built furniture are one wood, its grain kept. A picture that is
   glass (a window's mask, the renderer's own) is left as built, so her windows light as they did.
 - **Her record's** (`systems/fleet.js` `cabin`, `setShipCabin`): one of the fourteen paints or none, chosen in the Paint
@@ -505,6 +560,10 @@ CHANGED (`systems/naval/deckFittings.js`, the law; pure):
   the boats' one pool, so `worldModes.js` (interiors - a dungeon's water, and the sailing cabin's room, whose restyle it
   passes on from the visit) and `dungeonContext.js` (a dungeon's water) show them as the street does; `exterior.js` (the
   bench) - FLAGGED: no Come Sail Away runtime, no Fleet.
+- COMBAT-FEEL: the sea fight is the naval host's (`scenes/naval/navalHost.js`), stood and stepped by the world host in its
+  exterior frame alone (`world.js navalFrame`, after the modes' frame has returned for a room or a dungeon) - its effects,
+  its shot field and its HUD with it. `worldModes.js` (interiors) and `dungeonContext.js` (a dungeon's water) - FLAGGED:
+  no sea fight is fought indoors or below ground; `exterior.js` (the bench) - FLAGGED: no naval host.
 - RAID-ASHORE's withdraw reads the world host's two pools - the street's and, through `worldModes.js`'s `interiorPool`,
   the sailing cabin's room; `dungeonContext.js` - FLAGGED: no voyage's raid is fought below ground.
 
@@ -551,10 +610,17 @@ CHANGED (`systems/naval/deckFittings.js`, the law; pure):
   and the painted pictures' list, which no livery of the 224 on any port ship reaches past today); the paint's texture
   sheets and the deck plan (wide and at a phone's width) also seen in headless Chromium. The pins it moved: the
   ledger's record (`fleet`: `livery`, `cabin`, `deck`), the
-  sailing cabin's lifted scope (`sailingcabins`: `fleetShip`), the hard-coded strings' map (`l10n4`), the Captain page's
+  sailing cabin's lifted scope (`sailingcabins`: `fleetShip`), the hard-coded strings' map (`l10n4`), the pseudo-archives'
+  free number (`eglook_registry`: 38191 and 38192 taken), the Captain page's
   wiring (`captlog`, `captaintree`: its model moved out of the world host into `scenes/captainPageHost.js`, HOST-SPLIT);
   the records re-aimed by content in `auditcaptsea`, `csa_close`, `csa_together`, `livingcrew`, `navaudit_frame`,
   `perfsails1` and `shipcolours` (all dead).
+- `test/systems/naval/combatfeel.test.js` (7) on the effects' law, the near miss in the shot field, the feel's module and
+  the real naval host over the real pool (a pirate's ball by my side, its fall beside her, one into her starboard; her
+  plate drawn; my volley into a merchant carrack and its men), and `tools/mutants/combatfeel.json` (65 records); the
+  whistle's clip measured (its level swelling to the pass, its pitch falling through it). The pins it moved: the
+  founder's foam (`nav_b_picture`: its boil's drops beside it), the clips' count (`nav_e_sounds`: ten), the provenance
+  list (`doctrine`); the record re-aimed by content in `nav_b` (the wind's line).
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

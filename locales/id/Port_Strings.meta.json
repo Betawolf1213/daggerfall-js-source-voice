@@ -14224,6 +14224,11 @@
   "tr": "352d200d9279",
   "by": "claude-in-session"
  },
+ "naval.gun.secs": {
+  "en": "55220b204cad",
+  "tr": "6625ee9345b1",
+  "by": "claude-in-session"
+ },
  "naval.hold.noSea": {
   "en": "4f93ca143fe3",
   "tr": "5bd921ace30e",
@@ -14587,6 +14592,11 @@
  "naval.shot.round": {
   "en": "c103d674e037",
   "tr": "420eb15cc64c",
+  "by": "claude-in-session"
+ },
+ "naval.tally.men": {
+  "en": "fb9ca01b08bb",
+  "tr": "edbc1e26237e",
   "by": "claude-in-session"
  },
  "naval.yard.grogDrunk": {

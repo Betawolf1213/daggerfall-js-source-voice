@@ -472,8 +472,8 @@
   {
     "name": "NAVP-card-no-piece",
     "file": "src/ui/naval/navalHud.js",
-    "old": "  if (prev.pct - g.pct >= CARD_CHUNK_MIN_LOSS) {",
-    "new": "  if (prev.pct - g.pct > 100) {",
+    "old": "  width('cardg', parts.cardGhost, Math.round(g.at * 10) / 10);\n  if (prev.pct - g.pct >= CARD_CHUNK_MIN_LOSS) {",
+    "new": "  width('cardg', parts.cardGhost, Math.round(g.at * 10) / 10);\n  if (prev.pct - g.pct > 100) {",
     "tests": [
       "test/systems/naval/navaudit_presentation.test.js"
     ]
@@ -499,8 +499,8 @@
   {
     "name": "NAVP-card-pieces-replayed",
     "file": "src/ui/naval/navalHud.js",
-    "old": "touchBrace = false; for (const c of parts.cardChunks) stowChunk(c); loss = null; return; }",
-    "new": "touchBrace = false; return; }",
+    "old": "touchBrace = false; for (const c of parts.cardChunks) stowChunk(c); loss = null; for (const c of parts.plateChunks)",
+    "new": "touchBrace = false; for (const c of parts.plateChunks)",
     "tests": [
       "test/systems/naval/navaudit_presentation.test.js"
     ]

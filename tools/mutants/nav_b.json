@@ -29,8 +29,8 @@
   {
     "name": "NAV-B-the-wind-ignored",
     "file": "src/systems/naval/navalEffects.js",
-    "old": "      if (p.kind === 'smoke') { p.vel[0] += (w[0] ?? 0) * 0.35 * t; p.vel[2] += (w[2] ?? 0) * 0.35 * t; }",
-    "new": "",
+    "old": "    const ax = (w[0] ?? 0) * WIND_MPS, az = (w[2] ?? 0) * WIND_MPS;",
+    "new": "    const ax = 0, az = 0;",
     "tests": [
       "test/systems/naval/nav_b_picture.test.js"
     ]

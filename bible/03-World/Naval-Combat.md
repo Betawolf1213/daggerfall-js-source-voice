@@ -840,6 +840,12 @@ sea's ships on the compass (#14's second) and the aim's reasons (#5's readout); 
 | a ship's hurts unseen (#15) | her hurts showed nowhere but the card - no smoke, no list, no canvas lost, no wreckage; a gurgle at her founder was all, then silence for the rest of her going | HER HURTS SEEN (The picture, above): smoke along her deck under SMOKE_FROM, a list under DAMAGE_LIST_FROM taken on as she fills and taken on in turn by the sinking's (her last pose unchanged), her canvas down with her sail share from the top, planks off a holed hull; SHE GROANS AS SHE GOES DOWN - the ninth clip, a loop at NAVAL_SINK_LOOP from her founder until she is gone (asked again each frame until the bus has it), a peer's ship too | a Small Ship at a fifth of her hull lists 4 degrees and smokes along 26.5 m of her deck; a carrack at 40% of her canvas shows her two lowest sails; two planks a ball, three a heavy one |
 | the far ships' cost (#17) | five war galleys 650-1,900 m off cost 5.7 ms of a frame on the CPU: their rigging stepped as a near one's, each ship's tree walked for her animators every frame (0.44 ms a galley), and each of a galley's 224 particle systems (one live) asked whether it was active before doing nothing (0.45 ms) | an idle system (stopped, nothing alive) returns before any question; a ship's animators found once; past NEAR_LIFE_M her rigging stepped every FAR_LIFE_EVERY frames with the time it missed, each ship on her own frame of the stride | 0.9 ms for the five far galleys (five galleons 0.67; five galleys alongside, stepped every frame, 2.1) |
 
+COMBAT-FEEL (2026-10-17, `03-World/Naval-Refit.md` COMBAT-FEEL) went on from here: a broadside's smoke carried by the
+air and hanging (it had been dragged to standing still at a third of the wind's strength), a ball's fall a spout grown
+for the eye far off, a near pass whistling and a near fall drenching her rail, the side a blow came from and her own
+hull bar's loss on her plate, a burning ship's magazine as she founders and her air boiling up, my battered boat's smoke
+in a fight, her men on the card and in my volley's tally, and each battery's seconds to load.
+
 ### Online (the shared sea)
 
 The online audit ran two and three real hosts over a stand-in relay carrying each player's word at the world's cadence
