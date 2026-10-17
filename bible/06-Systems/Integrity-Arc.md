@@ -54,6 +54,13 @@ nothing. A copy given a fresh id is a new piece to the ledger, and a new piece i
 
 ### INT1 - the item law (`src/systems/item/itemLaw.js`)
 
+KEY-LAW (2026-10-17, law 7, `acct150`; `01-Overview/bugs/Field-Bugs-2026-10-17.md`; slick: "flagged by the new key
+thing"): the Weir Key's row (`src/systems/eliteGates/weirKeyRow.js`, a leaf) is read beside the registry, as the rest's,
+Deep Waters' fish and the two mods' are - this service loads none of the key's home, so law 6 found every Weir Key a
+template no honest client mints, and held its owner's trade with a strike, the hour the Elite Breach went live. The
+producer sweep's template check now runs the law in a process of its own, as the service's judge loads it. Migration
+0125 lifted the holds, timed holds and strikes that finding alone had laid, written as a staff act.
+
 MAKER-KEPT (2026-10-16, law 6, `acct148`; `01-Overview/bugs/Field-Bugs-2026-10-16c.md`; Flylighter: "Grandfathered Items
 triggering trade lock"): an Aetheric piece of a record the item maker took before AETHERIC-MAKER (MAKER_ERA_AETHERIC -
 Ruhn's Regalia and the raiding parties' three sets) keeps the maker's rows, held to the maker's own law; law 5 held every
