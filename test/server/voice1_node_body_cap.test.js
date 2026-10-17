@@ -2,8 +2,8 @@
 // actually starting the real server and sending real oversized bodies over a real socket, not a mocked handle().
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { startVoiceService } from '../server-voice/src/node.js';
-import { VOICE_BODY_MAX_BYTES } from '../src/voice/voiceWire.js';
+import { startVoiceService } from '../../server-voice/src/node.js';
+import { VOICE_BODY_MAX_BYTES } from '../../src/net/voice/voiceWire.js';
 
 test('VOICE1 node door: a body over VOICE_BODY_MAX_BYTES is refused with 413 - with Content-Length stated, and without it', async () => {
   const { port, close } = await startVoiceService({ port: 0, env: {} });

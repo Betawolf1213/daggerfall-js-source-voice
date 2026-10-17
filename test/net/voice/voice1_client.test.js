@@ -7,18 +7,18 @@ import { readFileSync, readdirSync } from 'node:fs';
 import {
   VOICE_FULL_RANGE, VOICE_SILENT_RANGE, VOICE_RESUB_RANGE, VOICE_SUBS_MAX, VOICE_PLACE_MS,
   voiceGainAt, feetDistance, panFor, proximitySet, subscriptionDiff,
-} from '../src/voice/voiceProximity.js';
-import { VoiceState, VOICE_STATUS } from '../src/voice/voiceState.js';
-import { VOICE_DEFAULTS, VOICE_PREF_KEY, projectVoiceSettings, loadVoiceSettings, saveVoiceSetting } from '../src/voice/voiceSettings.js';
-import { PREF_DEFAULTS, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
-import { VOICE_V, VOICE_CHANNELS, VOICE_TOKEN_TTL_S, VOICE_REMINT_AHEAD_S, voiceRoomName, validTokenAsk, validPlaceAsk, validTokenAnswer, voiceUrlOk, VOICE_PLACE_MAX } from '../src/voice/voiceWire.js';
-import { VoiceSpatialAudio, VOICE_RAMP_S } from '../src/voice/voiceSpatialAudio.js';
-import { VoiceTransport, _setVoiceSdkForTests } from '../src/voice/voiceTransport.js';
-import { VoiceClient, VOICE_TEXT, VOICE_RETRY_MIN_MS, DEFAULT_VOICE_SERVICE } from '../src/voice/voiceClient.js';
-import { CHAT_SAY_RANGE } from '../src/net/chat.js';
-import { DEFAULT_BINDINGS } from '../src/systems/inputActions.js';
+} from '../../../src/net/voice/voiceProximity.js';
+import { VoiceState, VOICE_STATUS } from '../../../src/net/voice/voiceState.js';
+import { VOICE_DEFAULTS, VOICE_PREF_KEY, projectVoiceSettings, loadVoiceSettings, saveVoiceSetting } from '../../../src/net/voice/voiceSettings.js';
+import { PREF_DEFAULTS, _resetForTests as resetPrefs } from '../../../src/systems/uiPrefs.js';
+import { VOICE_V, VOICE_CHANNELS, VOICE_TOKEN_TTL_S, VOICE_REMINT_AHEAD_S, voiceRoomName, validTokenAsk, validPlaceAsk, validTokenAnswer, voiceUrlOk, VOICE_PLACE_MAX, voiceRoomKeyOk, voiceLayerOf } from '../../../src/net/voice/voiceWire.js';
+import { VoiceSpatialAudio, VOICE_RAMP_S } from '../../../src/net/voice/voiceSpatialAudio.js';
+import { VoiceTransport, _setVoiceSdkForTests } from '../../../src/net/voice/voiceTransport.js';
+import { VoiceClient, VOICE_TEXT, VOICE_RETRY_MIN_MS, DEFAULT_VOICE_SERVICE } from '../../../src/net/voice/voiceClient.js';
+import { CHAT_SAY_RANGE } from '../../../src/net/chat.js';
+import { DEFAULT_BINDINGS } from '../../../src/systems/inputActions.js';
 
-const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const rd = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
 
 // ─── THE PROXIMITY LAW ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -143,13 +143,13 @@ test('VOICE1 wire: the room\'s name is derived, never taken; the asks are projec
   assert.equal(voiceRoomName('proximity', '../etc'), null);
   assert.equal(voiceRoomName('guild', 'x'), null);
   const t = 'v1.abc.def';
-  assert.deepEqual(validTokenAsk({ token: t, room: 'cell:1.2', channel: 'proximity' }), { token: t, channel: 'proximity', room: 'cell:1.2', party: null });
+  assert.deepEqual(validTokenAsk({ token: t, room: 'cell:1.2', channel: 'proximity' }), { token: t, channel: 'proximity', room: 'cell:1.2', party: null, ly: 0 });
   assert.equal(validTokenAsk({ token: t, room: 'cell:1.2', channel: 'proximity', party: 'q1abc2def3' }), null, 'a party on a proximity ask is a wrong shape');
-  assert.deepEqual(validTokenAsk({ token: t, channel: 'party', party: 'q1abc2def3' }), { token: t, channel: 'party', party: 'q1abc2def3', room: null });
+  assert.deepEqual(validTokenAsk({ token: t, channel: 'party', party: 'q1abc2def3' }), { token: t, channel: 'party', party: 'q1abc2def3', room: null, ly: 0 });
   assert.equal(validTokenAsk({ token: t, channel: 'party' }), null);
   assert.equal(validTokenAsk({ token: '', room: 'cell:1', channel: 'proximity' }), null);
   assert.equal(validTokenAsk({ token: t, room: 'cell:1', channel: 'proximity', playerId: 'x' })?.playerId, undefined, 'a playerId is not read');
-  assert.deepEqual(validPlaceAsk({ token: t, room: 'cell:1', near: ['abcd', 'abcd', 'efgh'] }), { token: t, room: 'cell:1', near: ['abcd', 'efgh'] });
+  assert.deepEqual(validPlaceAsk({ token: t, room: 'cell:1', near: ['abcd', 'abcd', 'efgh'] }), { token: t, room: 'cell:1', ly: 0, near: ['abcd', 'efgh'] });
   assert.equal(validPlaceAsk({ token: t, room: 'cell:1', near: ['a'] }), null, 'a short id refuses the frame');
   assert.equal(validPlaceAsk({ token: t, room: 'cell:1', near: Array(VOICE_PLACE_MAX + 1).fill('abcd') }), null);
   const good = { ok: true, v: 1, url: 'wss://voice.example', token: 'jwt', identity: 'me', room: 'vx_x', ttl: 120 };
@@ -157,6 +157,25 @@ test('VOICE1 wire: the room\'s name is derived, never taken; the asks are projec
   for (const bad of [{ ...good, v: 2 }, { ...good, ok: false }, { ...good, ttl: 0 }, { ...good, ttl: 4000 }, { ...good, url: 'http://x' }, { ...good, token: '' }]) assert.equal(validTokenAnswer(bad), null);
   assert.ok(voiceUrlOk('wss://a.b') && voiceUrlOk('ws://localhost:7880') && voiceUrlOk('ws://127.0.0.1:7880'));
   assert.ok(!voiceUrlOk('ws://evil.example') && !voiceUrlOk('https://a.b') && !voiceUrlOk('nope'));
+});
+
+test('VOICE-RELAY-DOOR wire: a room is a key the relay routes (net/wire.js roomOf) - the open world\'s `world:<x>,<y>` first among them - and a crowded place\'s layer is its own voice room', () => {
+  // the keys online.js roomKeyFor mints, each admitted: the open world's cell (a comma - the shape the first wire refused),
+  // a dungeon re-laid small, a building in its town, an instance
+  for (const key of ['world:12,34', 'world:-3,-1', 'dungeon:m187853213.s', 'interior:m206728581.131590', 'dungeon:m187853213.i0123456789abcdef.89abcdef']) assert.equal(voiceRoomKeyOk(key), true, key);
+  for (const key of ['../etc', 'world', 'World:1,2', 'world:1,2/x', `world:${'1'.repeat(75)}`, 12, null, undefined]) assert.equal(voiceRoomKeyOk(key), false, String(key));
+  assert.equal(voiceRoomName('proximity', 'world:12,34'), 'vx_world_12_34');
+  assert.equal(voiceRoomName('proximity', 'world:12,34', 2), 'vx_world_12_34_l2', 'a layer is its own crowd');
+  assert.equal(voiceRoomName('proximity', 'world:12,34', 8), null, 'past LAYERS_MAX');
+  // the layer: absent is the place; an integer 0..7; anything else refuses the ask
+  assert.deepEqual([undefined, 0, 1, 7].map(voiceLayerOf), [0, 0, 1, 7]);
+  for (const bad of [8, -1, 1.5, '2', null, NaN]) assert.equal(voiceLayerOf(bad), null, String(bad));
+  const t = 'v1.abc.def';
+  assert.deepEqual(validTokenAsk({ token: t, room: 'world:12,34', ly: 3, channel: 'proximity' }), { token: t, channel: 'proximity', room: 'world:12,34', party: null, ly: 3 });
+  assert.equal(validTokenAsk({ token: t, room: 'world:12,34', ly: 8, channel: 'proximity' }), null);
+  assert.equal(validTokenAsk({ token: t, channel: 'party', party: 'q1abc2def3', ly: 1 }), null, 'a party has no layer');
+  assert.deepEqual(validPlaceAsk({ token: t, room: 'world:12,34', ly: 3, near: [] }), { token: t, room: 'world:12,34', ly: 3, near: [] });
+  assert.equal(validPlaceAsk({ token: t, room: 'world:12,34', ly: -1, near: [] }), null);
 });
 
 // ─── THE SPATIAL GRAPH ──────────────────────────────────────────────────────────────────────────────────────────────
@@ -438,6 +457,24 @@ test('VOICE1 client: a failed retry is jittered, not a lockstep doubling - a rel
   assert.equal(a.c._retryMs, VOICE_RETRY_MIN_MS * 2); assert.equal(b.c._retryMs, VOICE_RETRY_MIN_MS * 2);
 });
 
+test('VOICE-RELAY-DOOR client: the layer the room\'s welcome said rides the mint and the place frame; a move to another layer of the same place re-mints, as a move of room does', async () => {
+  const svc = fakeService();
+  const { c } = makeClient({ svc });
+  c.setEnabled(true); c.setRoom('world:12,34');
+  c.frame([0, 0, 0], 0, []); await settle(c);
+  assert.deepEqual(svc.calls[0], ['/v1/voice/token', { token: 'v1.body.sig', room: 'world:12,34', channel: 'proximity' }], 'the place itself names no layer');
+  c.setRoom('world:12,34', 2);
+  c.frame([0, 0, 0], 0, []); await settle(c);
+  assert.equal(c.stats.mints, 2, 'another layer, another crowd');
+  assert.deepEqual(svc.calls.at(-1), ['/v1/voice/token', { token: 'v1.body.sig', room: 'world:12,34', ly: 2, channel: 'proximity' }]);
+  c.frame([0, 0, 0], 0, [{ id: 'peer_b', feet: [1, 0, 0] }]); await settle(c);
+  assert.deepEqual(svc.calls.at(-1), ['/v1/voice/place', { token: 'v1.body.sig', room: 'world:12,34', ly: 2, near: ['peer_b'] }]);
+  c.setRoom('world:12,34', 2); c.frame([0, 0, 0], 0, [{ id: 'peer_b', feet: [1, 0, 0] }]); await settle(c);
+  assert.equal(c.stats.mints, 2, 'the same layer said again is no move');
+  c.setRoom('world:12,34', 1.5); c.frame([0, 0, 0], 0, []); await settle(c);
+  assert.equal(c._session?.ly, 0, 'a layer that is not one is the place');
+});
+
 test('VOICE1 client: the credential is re-minted before its end', async () => {
   const svc = fakeService();
   const { c, clock } = makeClient({ svc });
@@ -451,10 +488,10 @@ test('VOICE1 client: the credential is re-minted before its end', async () => {
 // ─── BY SOURCE ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
 test('VOICE1 by source: livekit-client is named in the transport\'s lazy import alone; every voice module opts into the type seam; the package is a dev dependency and nothing of src/ imports it statically', () => {
-  const files = readdirSync(new URL('../src/voice/', import.meta.url)).filter((f) => f.endsWith('.js')).sort();
-  assert.deepEqual(files, ['voiceClient.js', 'voiceProximity.js', 'voiceSettings.js', 'voiceSpatialAudio.js', 'voiceState.js', 'voiceTransport.js', 'voiceWire.js']);
+  const files = readdirSync(new URL('../../../src/net/voice/', import.meta.url)).filter((f) => f.endsWith('.js')).sort();
+  assert.deepEqual(files, ['voiceClient.js', 'voiceNet.js', 'voiceProximity.js', 'voiceSettings.js', 'voiceSpatialAudio.js', 'voiceState.js', 'voiceTransport.js', 'voiceWire.js']);
   for (const f of files) {
-    const s = rd(`src/voice/${f}`);
+    const s = rd(`src/net/voice/${f}`);
     assert.ok(s.startsWith('// @ts-check'), `${f} opts in`);
     const names = (s.match(/livekit-client/g) ?? []).length;
     if (f === 'voiceTransport.js') { assert.equal(names, 1, 'the lazy import alone'); assert.match(s, /import\('livekit-client'\)/, 'lazy'); assert.doesNotMatch(s, /^import .* from 'livekit-client'/m); } else assert.equal(names, 0, `${f} does not know the SDK`);

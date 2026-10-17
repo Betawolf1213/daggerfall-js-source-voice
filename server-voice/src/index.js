@@ -16,7 +16,7 @@
 //   env.CORS_ORIGIN           (optional) the one origin answered, default *
 
 import { importPublicKeyB64 } from '../../src/net/identityToken.js';
-import { validTokenAsk, validPlaceAsk, VOICE_V, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceUrlOk, VOICE_PRESENCE_PATH, VOICE_PARTY_OF_PATH, VOICE_RELAY_SECRET_HEADER } from '../../src/voice/voiceWire.js';
+import { validTokenAsk, validPlaceAsk, VOICE_V, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceUrlOk, VOICE_PRESENCE_PATH, VOICE_PARTY_OF_PATH, VOICE_RELAY_SECRET_HEADER } from '../../src/net/voice/voiceWire.js';
 import { authorizeVoice } from './roomAuthorizer.js';
 import { ProximityPolicy, VOICE_ROOM_IDLE_MS } from './proximityPolicy.js';
 import { RoomSharder, shardRoomName } from './roomSharder.js';
@@ -44,11 +44,11 @@ export function _peekSharderForTests() { return _state?.sharder ?? null; }
 const PRESENCE_CACHE_MS = 5000;
 const PRESENCE_CACHE_MAX = 4096;
 function cachedPresenceOf(state, presenceOf, now) {
-  return async (acct, room) => {
-    const key = `${acct}|${room}`;
+  return async (acct, room, ly) => {
+    const key = `${acct}|${room}|${ly}`;
     const had = state.presence.get(key);
     if (had && now() - had.at < PRESENCE_CACHE_MS) return had.here;
-    const here = await presenceOf(acct, room);
+    const here = await presenceOf(acct, room, ly);
     state.presence.delete(key);
     if (state.presence.size >= PRESENCE_CACHE_MAX) state.presence.delete(state.presence.keys().next().value);
     state.presence.set(key, { here, at: now() });
@@ -78,13 +78,13 @@ async function partyOfVia(env, fetchImpl) {
   };
 }
 
-/** `presenceOf(acct, room)` - the relay's real word on whether `acct` is hello'd into `room` right now, instead of trusting the client's claim; no relay configured reads as a refusal, same fail-closed shape as `partyOf`. */
+/** `presenceOf(acct, room, ly)` - the relay's real word on whether `acct` is hello'd into `room` (its layer `ly`) right now, instead of trusting the client's claim; no relay configured reads as a refusal, same fail-closed shape as `partyOf`. */
 async function presenceOfVia(env, fetchImpl) {
-  return async (/** @type {string} */ acct, /** @type {string} */ room) => {
-    if (typeof env.presenceOf === 'function') return env.presenceOf(acct, room);   // a test's, or node.js's stub
+  return async (/** @type {string} */ acct, /** @type {string} */ room, /** @type {number} */ ly) => {
+    if (typeof env.presenceOf === 'function') return env.presenceOf(acct, room, ly);   // a test's, or node.js's stub
     if (!env.RELAY_URL || !env.VOICE_RELAY_SECRET) return false;
     try {
-      const res = await fetchImpl(`${String(env.RELAY_URL).replace(/\/+$/, '')}${VOICE_PRESENCE_PATH}`, { method: 'POST', headers: { 'content-type': 'application/json', [VOICE_RELAY_SECRET_HEADER]: env.VOICE_RELAY_SECRET }, body: JSON.stringify({ acct, room }), signal: AbortSignal.timeout(3000) });
+      const res = await fetchImpl(`${String(env.RELAY_URL).replace(/\/+$/, '')}${VOICE_PRESENCE_PATH}`, { method: 'POST', headers: { 'content-type': 'application/json', [VOICE_RELAY_SECRET_HEADER]: env.VOICE_RELAY_SECRET }, body: JSON.stringify({ acct, room, ly }), signal: AbortSignal.timeout(3000) });
       if (!res.ok) return false;
       const a = await res.json();
       return a?.here === true;
@@ -156,7 +156,7 @@ export async function handle(request, env, { now = () => Date.now(), fetch: fetc
   if (url.pathname === '/v1/voice/place') {
     const ask = validPlaceAsk(body);
     if (!ask) return json({ ok: false, error: 'shape' }, 400, origin);
-    const a = await authorizeVoice({ token: ask.token, channel: 'proximity', room: ask.room, party: null }, { publicKey: st.key, subtle, nowS, partyOf, presenceOf });
+    const a = await authorizeVoice({ token: ask.token, channel: 'proximity', room: ask.room, ly: ask.ly, party: null }, { publicKey: st.key, subtle, nowS, partyOf, presenceOf });
     if (!a.ok) return json({ ok: false, error: a.why }, a.status, origin);
     if (!admit(st.places, a.identity, VOICE_PLACE_HZ_MAX, 1000, now())) return json({ ok: false, error: 'rate' }, 429, origin);
     // the policy is keyed by the PHYSICAL (sharded) room - two shards of one base room are two separate worlds

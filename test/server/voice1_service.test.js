@@ -5,16 +5,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { mintToken, MAX_TTL_S, _b64url } from '../src/net/identityToken.js';
-import { VOICE_V, VOICE_TOKEN_TTL_S, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceRoomName, VOICE_ROOM_MAX } from '../src/voice/voiceWire.js';
-import { VOICE_PLACE_MS } from '../src/voice/voiceProximity.js';
-import { authorizeVoice } from '../server-voice/src/roomAuthorizer.js';
-import { ProximityPolicy, VOICE_PLACE_STALE_MS, VOICE_ROOM_IDLE_MS } from '../server-voice/src/proximityPolicy.js';
-import { RoomSharder, VOICE_SHARD_IDLE_MS, shardRoomName } from '../server-voice/src/roomSharder.js';
-import { mintLiveKitToken, mintLiveKitAdminToken, readJwtClaims } from '../server-voice/src/livekitToken.js';
-import { handle, _resetForTests, _peekPolicyForTests, _peekSharderForTests, VOICE_SERVICE_VERSION } from '../server-voice/src/index.js';
+import { mintToken, MAX_TTL_S, _b64url } from '../../src/net/identityToken.js';
+import { VOICE_V, VOICE_TOKEN_TTL_S, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceRoomName, VOICE_ROOM_MAX } from '../../src/net/voice/voiceWire.js';
+import { VOICE_PLACE_MS } from '../../src/net/voice/voiceProximity.js';
+import { authorizeVoice } from '../../server-voice/src/roomAuthorizer.js';
+import { ProximityPolicy, VOICE_PLACE_STALE_MS, VOICE_ROOM_IDLE_MS } from '../../server-voice/src/proximityPolicy.js';
+import { RoomSharder, VOICE_SHARD_IDLE_MS, shardRoomName } from '../../server-voice/src/roomSharder.js';
+import { mintLiveKitToken, mintLiveKitAdminToken, readJwtClaims } from '../../server-voice/src/livekitToken.js';
+import { handle, _resetForTests, _peekPolicyForTests, _peekSharderForTests, VOICE_SERVICE_VERSION } from '../../server-voice/src/index.js';
 
-const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 const { subtle } = globalThis.crypto;
 const NOW_S = 1_760_000_000;
 
@@ -225,6 +225,34 @@ test('VOICE1 doors: /health; the token door mints for a verified holder and refu
   assert.deepEqual(r.allow, []);
   assert.equal((await handle(post('/v1/voice/place', { token: tok, room: 'cell:1.2', near: ['x'] }), e, io())).status, 400);
   assert.equal((await handle(post('/v1/voice/place', { token: forged, room: 'cell:1.2', near: [] }), e, io())).status, 401);
+});
+
+test('VOICE-RELAY-DOOR the service asks the relay itself: the room and the layer the client named, behind the shared secret; the answer kept PRESENCE_CACHE_MS per layer; the relay\'s no, or no relay at all, refuses', async () => {
+  _resetForTests();
+  const k = await keys();
+  const asked = [];
+  let here = true;
+  const fetchImpl = async (url, init) => {
+    asked.push([url, init.headers['x-voice-relay-secret'], JSON.parse(init.body)]);
+    return { ok: true, json: async () => ({ here }) };
+  };
+  const e = env(k, { presenceOf: undefined, RELAY_URL: 'https://relay.test/', VOICE_RELAY_SECRET: 's3cret' });
+  const tok = await mintToken(who('peer_aaaa'), k.priv, { subtle, nowS: NOW_S });
+  const mint = async (body, t = NOW_S * 1000) => handle(post('/v1/voice/token', { token: tok, channel: 'proximity', ...body }), e, { ...io(t), fetch: fetchImpl });
+  const res = await mint({ room: 'world:12,34', ly: 2 });
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).room, 'vx_world_12_34_l2', 'the layer\'s own voice room');
+  assert.deepEqual(asked, [['https://relay.test/internal/voice/presence', 's3cret', { acct: 'peer_aaaa', room: 'world:12,34', ly: 2 }]]);
+  await mint({ room: 'world:12,34', ly: 2 }, NOW_S * 1000 + 4000);
+  assert.equal(asked.length, 1, 'kept inside the cache\'s life');
+  await mint({ room: 'world:12,34' }, NOW_S * 1000 + 4000);
+  assert.deepEqual(asked.at(-1)[2], { acct: 'peer_aaaa', room: 'world:12,34', ly: 0 }, 'another layer is another question');
+  here = false;
+  const no = await mint({ room: 'world:56,78' });
+  assert.equal(no.status, 403); assert.equal((await no.json()).error, 'not-in-room');
+  _resetForTests();
+  const none = await handle(post('/v1/voice/token', { token: tok, channel: 'proximity', room: 'world:12,34' }), env(k, { presenceOf: undefined }), { ...io(), fetch: fetchImpl });
+  assert.equal(none.status, 403, 'no relay configured: fail closed');
 });
 
 test('VOICE1 doors: a token mint creates the SFU room first when an admin door is set - auto_create:false would else refuse the first join', async () => {

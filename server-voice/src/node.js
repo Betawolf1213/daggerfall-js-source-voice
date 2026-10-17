@@ -9,7 +9,7 @@
 
 import { createServer } from 'node:http';
 import { handle } from './index.js';
-import { VOICE_BODY_MAX_BYTES } from '../../src/voice/voiceWire.js';
+import { VOICE_BODY_MAX_BYTES } from '../../src/net/voice/voiceWire.js';
 
 export function startVoiceService({ port = Number(process.env.PORT ?? 7890), env = process.env, host = '127.0.0.1' } = {}) {
   const stub = env.VOICE_PARTY_STUB ? JSON.parse(String(env.VOICE_PARTY_STUB)) : null;

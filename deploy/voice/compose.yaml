@@ -1,4 +1,4 @@
-# Self-hosted voice stack: LiveKit SFU + the voice service, on one host (see docs/voice-livekit-setup.md).
+# Self-hosted voice stack: LiveKit SFU + the voice service, on one host (bible/11-Multiplayer/Voice-Arc.md section 3).
 #
 #   podman compose -f deploy/voice/compose.yaml up -d      (or docker compose)
 #

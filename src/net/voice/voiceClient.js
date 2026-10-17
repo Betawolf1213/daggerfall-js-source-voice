@@ -7,7 +7,7 @@ import { VoiceTransport } from './voiceTransport.js';
 import { VoiceSpatialAudio } from './voiceSpatialAudio.js';
 import { proximitySet, subscriptionDiff, voiceGainAt, panFor, feetDistance, VOICE_PLACE_MS } from './voiceProximity.js';
 import { validTokenAnswer, voiceUrlOk, VOICE_REMINT_AHEAD_S } from './voiceWire.js';
-import { jittered } from '../net/backoff.js';
+import { jittered } from '../backoff.js';
 
 /** The default voice service - beside the relay (online.js DEFAULT_SERVER); a `?voice=` or the pref overrides it. */
 export const DEFAULT_VOICE_SERVICE = 'https://daggerfall-voice.mackcothran.workers.dev';
@@ -61,9 +61,11 @@ export class VoiceClient {
     this.spatial = null;
     /** @type {string|null} the game room joined for proximity */
     this.room = null;
+    /** the layer of that room the player stands in (net/wire.js SCALE5d) - its own crowd, so its own voice room */
+    this.layer = 0;
     /** @type {string|null} the party joined for party voice */
     this.party = null;
-    /** @type {{ channel: 'proximity'|'party', room: string, party: string|null }|null} what the SFU session was minted for */
+    /** @type {{ channel: 'proximity'|'party', room: string, ly: number, party: string|null }|null} what the SFU session was minted for */
     this._session = null;
     this._connecting = null;
     this._retryAt = -Infinity; this._retryMs = VOICE_RETRY_MIN_MS;
@@ -95,16 +97,16 @@ export class VoiceClient {
   _applyMute() { this.transport.setMicMuted(!this.state.transmitting).catch(() => {}); }
 
   // ─── the room and the party ──────────────────────────────────────────────────────────────────────────────────
-  /** The game room the player stands in (online.js's `room`), or null between rooms. A change re-mints. */
-  setRoom(room) { room = room || null; if (this.room !== room) { this.room = room; this._placed = []; if (this._session?.channel === 'proximity') { if (room) this._session = null; else this.disconnect(); } } }
+  /** The game room the player stands in (online.js's `room`) and its layer (online.js's `layer`), or null between rooms. A change of either re-mints. */
+  setRoom(room, layer = 0) { room = room || null; layer = room && Number.isInteger(layer) && layer > 0 ? layer : 0; if (this.room !== room || this.layer !== layer) { this.room = room; this.layer = layer; this._placed = []; if (this._session?.channel === 'proximity') { if (room) this._session = null; else this.disconnect(); } } }
   /** The party the player sits in (social.party?.id), or null. Leaving the party ends the party channel at once. */
   setParty(party) { party = party || null; if (this.party !== party) { this.party = party; if (this._session?.channel === 'party') { if (party) this._session = null; else this.disconnect(); } } }
 
   /** What the session should be for now, or null when there is nothing to join. */
   _want() {
     if (!this.state.enabled) return null;
-    if (this.state.channel === 'party') return this.party ? { channel: 'party', party: this.party, room: this.room } : null;
-    return this.room ? { channel: 'proximity', room: this.room, party: null } : null;
+    if (this.state.channel === 'party') return this.party ? { channel: 'party', party: this.party, room: this.room, ly: 0 } : null;
+    return this.room ? { channel: 'proximity', room: this.room, ly: this.layer, party: null } : null;
   }
 
   // ─── the frame ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -120,7 +122,7 @@ export class VoiceClient {
     const want = this._want();
     const now = this._now();
     if (!want) { if (this._session) this.disconnect(); return; }
-    const same = this._session && this._session.channel === want.channel && this._session.room === want.room && this._session.party === want.party;
+    const same = this._session && this._session.channel === want.channel && this._session.room === want.room && this._session.ly === want.ly && this._session.party === want.party;
     if (!same || (now / 1000 > this._tokenEndsAt - VOICE_REMINT_AHEAD_S && this.state.status === 'open')) {
       if (!this._connecting && now >= this._retryAt) this._connecting = this._connect(want).finally(() => { this._connecting = null; });
     }
@@ -170,7 +172,7 @@ export class VoiceClient {
       if (!relayToken) return this._fail('noToken', VOICE_TEXT.noToken);
       this._placeToken = relayToken;
       this.stats.mints++;
-      const raw = await this._post('/v1/voice/token', { token: relayToken, room: want.room ?? undefined, channel: want.channel, ...(want.channel === 'party' ? { party: want.party } : {}) }).catch(() => null);
+      const raw = await this._post('/v1/voice/token', { token: relayToken, room: want.room ?? undefined, channel: want.channel, ...(want.channel === 'party' ? { party: want.party } : want.ly > 0 ? { ly: want.ly } : {}) }).catch(() => null);
       if (!raw) return this._fail('noService', VOICE_TEXT.noService);
       const ans = validTokenAnswer(raw);
       if (!ans || !voiceUrlOk(ans.url)) return this._fail('badAnswer', VOICE_TEXT.badAnswer);
@@ -209,7 +211,7 @@ export class VoiceClient {
   async _place(ids) {
     if (!this._session || this._session.channel !== 'proximity' || !this._placeToken) return;
     this.stats.places++;
-    await this._post('/v1/voice/place', { token: this._placeToken, room: this._session.room, near: ids });
+    await this._post('/v1/voice/place', { token: this._placeToken, room: this._session.room, ...(this._session.ly > 0 ? { ly: this._session.ly } : {}), near: ids });
   }
 
   _ensureSpatial() {

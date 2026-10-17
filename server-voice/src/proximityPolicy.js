@@ -2,7 +2,7 @@
 // Decides who may HEAR whom - never a client's own volume knob. A publisher is heard only by listeners who named
 // it back within the stale window (mutual), so lying about position can only widen your own hearing, never others'.
 
-import { VOICE_PLACE_MS } from '../../src/voice/voiceProximity.js';
+import { VOICE_PLACE_MS } from '../../src/net/voice/voiceProximity.js';
 
 /** A listener's place frame older than this says nothing - its holder is heard by nobody and hears nobody. */
 export const VOICE_PLACE_STALE_MS = 6 * VOICE_PLACE_MS;

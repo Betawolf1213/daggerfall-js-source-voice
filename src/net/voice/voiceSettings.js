@@ -1,7 +1,7 @@
 // @ts-check
 // Keeps the player's voice choices under one pref key so uiPrefs.js's defaults table grows one row, not nine.
 
-import { getPref, setPref } from '../systems/uiPrefs.js';
+import { getPref, setPref } from '../../systems/uiPrefs.js';
 
 /** The choices and their defaults: opt-in, push-to-talk, no recording by default. */
 export const VOICE_DEFAULTS = Object.freeze({

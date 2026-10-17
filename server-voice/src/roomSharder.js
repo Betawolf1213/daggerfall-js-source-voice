@@ -10,7 +10,7 @@
 // room can land in different shards and be unable to hear each other. True spatial sharding would need position
 // at mint time and a consistent spatial key instead of first-fit; this is simple overflow capacity, not that.
 
-import { VOICE_ROOM_MAX } from '../../src/voice/voiceWire.js';
+import { VOICE_ROOM_MAX } from '../../src/net/voice/voiceWire.js';
 
 /** Shards per base room - 16 * VOICE_ROOM_MAX seats, enough headroom for "a few hundred" with the hard cap intact. */
 export const VOICE_ROOM_SHARDS_MAX = 16;

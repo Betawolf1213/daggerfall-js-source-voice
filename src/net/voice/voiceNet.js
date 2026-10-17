@@ -1,9 +1,9 @@
 // @ts-check
 // VOICE2: the game loop's one door to voice - owns the VoiceClient singleton so no second one can exist per session.
 
-import { VoiceClient, DEFAULT_VOICE_SERVICE } from '../voice/voiceClient.js';
-import { loadVoiceSettings, projectVoiceSettings, VOICE_PREF_KEY } from '../voice/voiceSettings.js';
-import { setPref } from '../systems/uiPrefs.js';
+import { VoiceClient, DEFAULT_VOICE_SERVICE } from './voiceClient.js';
+import { loadVoiceSettings, projectVoiceSettings, VOICE_PREF_KEY } from './voiceSettings.js';
+import { setPref } from '../../systems/uiPrefs.js';
 
 /** The singleton voice client, created once per session. */
 let voiceNet = null;
@@ -38,12 +38,13 @@ export function getVoiceNet() {
 
 /**
  * Call every frame from the world host. Drives proximity updates, token refresh, and reconnect logic.
- * @param {{ room: string|null, party: string|null, position: [number, number, number], facing: number, peers: Array<{id: string, feet: [number, number, number]}>|null }} o
+ * @param {{ room: string|null, layer?: number, party: string|null, position: [number, number, number], facing: number, peers: Array<{id: string, feet: [number, number, number]}>|null }} o
+ *   `layer` - online.js's `layer`, the copy of a crowded place its room's welcome said (net/wire.js SCALE5d); 0 or absent for the place itself
  */
 export function frameVoiceNet(o) {
   if (!voiceNet) return;
   try {
-    voiceNet.setRoom(o.room);
+    voiceNet.setRoom(o.room, o.layer ?? 0);
     voiceNet.setParty(o.party);
     voiceNet.frame(o.position, o.facing, o.peers ?? []);
   } catch (e) {

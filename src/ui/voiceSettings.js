@@ -1,7 +1,7 @@
 // VOICE2: the voice settings panel - opt-in, push-to-talk, volume; mounts in the enhanced menu's Voice category.
 
-import { getVoiceNet } from '../net/voiceNet.js';
-import { saveVoiceSetting } from '../voice/voiceSettings.js';
+import { getVoiceNet } from '../net/voice/voiceNet.js';
+import { saveVoiceSetting } from '../net/voice/voiceSettings.js';
 
 /**
  * @param {{ doc?: Document }} o injectable document for tests, mirrors chatPanel.js's own convention

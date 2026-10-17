@@ -1,11 +1,13 @@
 // @ts-check
 // The wire shapes both the game and server-voice/ import, so one file is the single source of truth for them.
 //
-//   POST /v1/voice/token   { token, room, channel, party? }   ->  { ok, url, token, identity, room, ttl }
-//   POST /v1/voice/place   { token, room, near: [id...] }     ->  { ok }
+//   POST /v1/voice/token   { token, room, ly?, channel, party? }   ->  { ok, url, token, identity, room, ttl }
+//   POST /v1/voice/place   { token, room, ly?, near: [id...] }     ->  { ok }
 //   GET  /health                                              ->  { ok, service, version }
 //
 // SFU room names are derived here alone so a forged `room` can never land a client in another game's session.
+
+import { roomOf, LAYERS_MAX } from '../wire.js';   // the relay's own key and layer law - the voice service bundles wire.js already (identityToken.js imports it)
 
 /** The voice service's protocol version, said in every answer; a client that reads another refuses it in words. */
 export const VOICE_V = 1;
@@ -19,8 +21,13 @@ export const VOICE_REMINT_AHEAD_S = 30;
 export const VOICE_PARTY_MAX = 8;
 /** The most participants a proximity room seats - the design's eight players plus the ones passing through a town. */
 export const VOICE_ROOM_MAX = 16;
-/** A game room key's shape as the service admits it (online.js roomKeyFor: `cell:...`, `dun:...`, `int:...`). */
-export const VOICE_ROOM_RE = /^[a-z]+:[A-Za-z0-9_.:-]{1,120}$/;
+/** A game room key as the service admits it: a `kind:` key the relay itself routes (net/wire.js roomOf) - online.js
+ *  roomKeyFor mints `world:<x>,<y>`, `dungeon:m<id>...`, `interior:m<id>.<key>...`, `town:...`; the relay's presence
+ *  door is what says the asker stands in it. */
+export const voiceRoomKeyOk = (key) => typeof key === 'string' && /^[a-z]+:/.test(key) && roomOf(`/room/${key}`) === key;
+/** The layer a proximity ask names (net/wire.js SCALE5d: a crowded place's copies, `key#n`) - 0, the place itself, when
+ *  it names none; null for anything but an integer under LAYERS_MAX. A layer is its own crowd, so its own voice room. */
+export const voiceLayerOf = (v) => (v === undefined ? 0 : Number.isInteger(v) && v >= 0 && v < LAYERS_MAX ? v : null);
 /** A party id's shape (wire.js mintPartyId: 'q' + base36 time + 8 base36). */
 export const VOICE_PARTY_RE = /^q[0-9a-z]{6,20}$/;
 /** A peer id's shape, the relay's (identityToken.js ID_RE). */
@@ -44,38 +51,40 @@ export const VOICE_PARTY_OF_INTERNAL = '/internal/voice/party-of/of';
 /** The header both ends check VOICE_RELAY_SECRET against. Lower-case: Workers lower-case incoming header names. */
 export const VOICE_RELAY_SECRET_HEADER = 'x-voice-relay-secret';
 
-/** THE SFU ROOM'S NAME, from the channel and the game's key - one law, both ends. */
-export function voiceRoomName(channel, key) {
+/** THE SFU ROOM'S NAME, from the channel and the game's key (and, for proximity, its layer) - one law, both ends. */
+export function voiceRoomName(channel, key, ly = 0) {
   if (channel === 'party') return VOICE_PARTY_RE.test(String(key)) ? `vp_${key}` : null;
-  if (channel === 'proximity') return VOICE_ROOM_RE.test(String(key)) ? `vx_${String(key).replace(/[^A-Za-z0-9_-]+/g, '_').slice(0, 96)}` : null;
+  if (channel === 'proximity') return voiceRoomKeyOk(key) && voiceLayerOf(ly) !== null ? `vx_${String(key).replace(/[^A-Za-z0-9_-]+/g, '_').slice(0, 96)}${ly > 0 ? `_l${ly}` : ''}` : null;
   return null;
 }
 
 /** A token request, projected: the fields the service reads and nothing else, or null when its shape is wrong. */
 export function validTokenAsk(body) {
   if (!body || typeof body !== 'object') return null;
-  const { token, room, channel, party } = /** @type {any} */ (body);
+  const { token, room, channel, party, ly } = /** @type {any} */ (body);
   if (typeof token !== 'string' || !token || token.length > 1024) return null;
   if (!VOICE_CHANNELS.includes(channel)) return null;
   if (channel === 'party') {
-    if (!VOICE_PARTY_RE.test(String(party ?? ''))) return null;
-    return { token, channel: /** @type {'party'} */ ('party'), party: String(party), room: VOICE_ROOM_RE.test(String(room ?? '')) ? String(room) : null };
+    if (!VOICE_PARTY_RE.test(String(party ?? '')) || ly !== undefined) return null;
+    return { token, channel: /** @type {'party'} */ ('party'), party: String(party), room: voiceRoomKeyOk(room) ? String(room) : null, ly: 0 };
   }
   if (party !== undefined) return null;
-  if (!VOICE_ROOM_RE.test(String(room ?? ''))) return null;
-  return { token, channel: /** @type {'proximity'} */ ('proximity'), room: String(room), party: null };
+  const layer = voiceLayerOf(ly);
+  if (!voiceRoomKeyOk(room) || layer === null) return null;
+  return { token, channel: /** @type {'proximity'} */ ('proximity'), room: String(room), party: null, ly: layer };
 }
 
 /** A place frame, projected: the room and up to VOICE_PLACE_MAX well-shaped ids, de-duplicated, or null. */
 export function validPlaceAsk(body) {
   if (!body || typeof body !== 'object') return null;
-  const { token, room, near } = /** @type {any} */ (body);
+  const { token, room, near, ly } = /** @type {any} */ (body);
   if (typeof token !== 'string' || !token || token.length > 1024) return null;
-  if (!VOICE_ROOM_RE.test(String(room ?? ''))) return null;
+  const layer = voiceLayerOf(ly);
+  if (!voiceRoomKeyOk(room) || layer === null) return null;
   if (!Array.isArray(near) || near.length > VOICE_PLACE_MAX) return null;
   const ids = [];
   for (const id of near) { if (!VOICE_ID_RE.test(String(id))) return null; if (!ids.includes(id)) ids.push(String(id)); }
-  return { token, room: String(room), near: ids };
+  return { token, room: String(room), ly: layer, near: ids };
 }
 
 /** The service's answer to a mint, as the client reads it: null unless every field it will use is there and sound. */

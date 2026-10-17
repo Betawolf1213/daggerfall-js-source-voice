@@ -1,10 +1,10 @@
 // VOICE2 integration tests: verify the game-facing seams (voiceNet, HUD, settings) work correctly.
 import test from 'node:test';
 import assert from 'node:assert';
-import { initVoiceNet, getVoiceNet, frameVoiceNet, destroyVoiceNet, saveVoiceSettings } from '../src/net/voiceNet.js';
-import { buildVoiceHud } from '../src/ui/voiceHud.js';
-import { voiceSettingsRows } from '../src/ui/voiceSettings.js';
-import { _resetForTests as _resetPrefsForTests } from '../src/systems/uiPrefs.js';
+import { initVoiceNet, getVoiceNet, frameVoiceNet, destroyVoiceNet, saveVoiceSettings } from '../../src/net/voice/voiceNet.js';
+import { buildVoiceHud } from '../../src/ui/voiceHud.js';
+import { voiceSettingsRows } from '../../src/ui/voiceSettings.js';
+import { _resetForTests as _resetPrefsForTests } from '../../src/systems/uiPrefs.js';
 
 test('voiceNet: init and singleton', () => {
   const vc = initVoiceNet({
