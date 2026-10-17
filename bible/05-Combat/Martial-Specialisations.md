@@ -216,8 +216,8 @@ the evasion through the real `hurtPlayer`); every rider through the landing door
 
 Mutants: `tools/mutants/martial.json` (119 - the arc's and BAL10's), every one dead but one recorded equivalent (a
 fall's evasion: the damage door asks an evasion only of a foe's blow, so the check is belt-and-braces, as the arcane
-Foresight's is). PIN MOVED: `swinglaw` (the reader names the swing's `family` and `shortBlade`; both mods' arms hand
-the short blade's handling on), `audit_schools` L5 H3 (the arcane card found by its title - its Brute's five weapon
+Foresight's is). PIN MOVED: `swinglaw` and `audit0929_swing` (the reader names the swing's `family` and `shortBlade`; both
+mods' arms hand the short blade's handling on), `audit_schools` L5 H3 (the arcane card found by its title - its Brute's five weapon
 skills now meet the martial card beside it), `audit_uicalm_firm1` (the Templar's Mace, Battlemage's Focus's spellPower
 4 the same). Re-aimed by content, every one still dead: `audit0929_swing`'s RR weight, three of `audit_schools`'
 (the door's count, Choose, the card for no schools - now `specCard`'s), `auditclaws`' card metal, four of `swinglaw`'s
