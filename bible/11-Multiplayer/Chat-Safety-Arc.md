@@ -335,9 +335,17 @@ player's words are drawn in a code block, so no line is markdown.
    safety's secrets") and names, in its summary, the Interactions Endpoint URL to give the application.
 3. In `server-account/wrangler.toml`: `DISCORD_MOD_CHANNEL` (the channel's id), `DISCORD_PUBLIC_KEY` (the application's
    public key) and `DISCORD_MODERATORS` (`<discord id>:<handle>` for each moderator).
-4. Set the application's Interactions Endpoint URL to `<account service>/v1/discord/interactions` - Discord sends a signed
-   ping, which the service answers.
-5. Register `/mod` once: `DISCORD_APP_ID=... DISCORD_BOT_TOKEN=... DISCORD_GUILD_ID=... node tools/discordModCommands.mjs`.
+4. Nothing more: the account deploy's last step (DISCORD-SETUP, 2026-10-17, Mac: "Can you set the discord end up for
+   me"; `account-deploy.yml`, "Point Discord at the service") does the Discord end with the bot's token alone, on every
+   deploy. `tools/discordModCommands.mjs --setup` reads the application's id and public key from Discord
+   (`GET /applications/@me`), refuses a `DISCORD_PUBLIC_KEY` that is not the application's (naming the right one), reads
+   the server off the moderators' channel, sets the Interactions Endpoint URL to `<account service>/v1/discord/interactions`
+   only when it differs (Discord signs a ping to it, which the service answers; offered four times, ten seconds apart,
+   while an old instance may still answer), and writes `/mod` over whatever was registered there. A refusal turns the
+   deploy red and says which step Discord refused; an unset token, channel or key skips it, said. By hand, the same:
+   `DISCORD_BOT_TOKEN=... DISCORD_MOD_CHANNEL=... DISCORD_PUBLIC_KEY=... DISCORD_INTERACTIONS_URL=... node
+   tools/discordModCommands.mjs --setup` (pinned: `test/server/discord_setup.test.js`; mutants
+   `tools/mutants/discord_setup.json`).
 
 With none of it set, the cases still gather, the reviewer still reads (with its key), and the game's `/cases`, `/case`,
 `/dismiss`, `/mute`, `/ban` and `/strikes` still answer - the queue is simply not posted to Discord.

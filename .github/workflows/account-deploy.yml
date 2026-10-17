@@ -1271,3 +1271,31 @@ jobs:
             exit 1
           fi
           echo "and the relay's configured copy matches it"
+
+      # DISCORD-SETUP (bible/11-Multiplayer/Chat-Safety-Arc.md section 9): THE DISCORD END, SET BY THE DEPLOY - the
+      # application's Interactions Endpoint URL pointed at this deploy's door, and /mod registered in the server the
+      # moderators' channel is in, from the bot's token alone (tools/discordModCommands.mjs --setup: the application's id
+      # and public key are Discord's answer, the server the channel's). Every deploy, because both are idempotent and a
+      # changed /mod or a moved Worker then reaches Discord on the next push. LAST, so a refusal hides no check above it;
+      # and red when Discord refuses, because a service that deployed but cannot be pressed is the failure the setup
+      # exists for. Skipped, said, when the token, the channel or the public key is not set. The token is an env var
+      # here and in the tool, never an argument and never echoed.
+      - name: Point Discord at the service, where the repository has the bot's token
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          set -euo pipefail
+          toml=server-account/wrangler.toml
+          channel=$(grep -oP '^DISCORD_MOD_CHANNEL\s*=\s*"\K[^"]*' "$toml" || true)
+          key=$(grep -oP '^DISCORD_PUBLIC_KEY\s*=\s*"\K[^"]*' "$toml" || true)
+          if [ -z "${DISCORD_BOT_TOKEN}" ] || [ -z "$channel" ] || [ -z "$key" ]; then
+            echo "the bot's token, DISCORD_MOD_CHANNEL or DISCORD_PUBLIC_KEY is not set - Discord is left as it is"
+            exit 0
+          fi
+          if out=$(DISCORD_MOD_CHANNEL="$channel" DISCORD_PUBLIC_KEY="$key" DISCORD_INTERACTIONS_URL="${{ steps.deploy.outputs.base }}/v1/discord/interactions" node tools/discordModCommands.mjs --setup); then
+            echo "$out"
+            { echo ""; echo "### Discord"; echo ""; echo "$out"; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::Discord was not pointed at the service - its refusal is above"
+            exit 1
+          fi
