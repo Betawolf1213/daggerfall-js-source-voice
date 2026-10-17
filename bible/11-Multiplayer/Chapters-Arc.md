@@ -229,6 +229,10 @@ the day's room does not take is OWED (`npc_roll.owed`) and paid at the same pace
 claim, never past 100 - and a loss is taken from what is owed first. The day counts its NET rise, so a loss gives its
 room back (a crime and its penance on one day). A lie is paid no faster than an honest claim, and an honest reward
 arrives whole. The ceiling's line says so: "... rises no further today. The rest will follow in the days to come."
+OWED-PACE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16c.md`): the hall's row read "Reputation -35 of 10 (21 more
+to come)", and a player read the owed as what they still NEEDED - and saw it grow as the same day's quests went to it. It
+says now that the owed is earned and its pace: "(21 more already earned - it arrives at most 15 a real day)". And REP6's
+review never expels over what is owed (`06-Systems/Standing-Arc.md` REP6).
 RECORDED (D5): the pace falls on the twenty-two alone, so a temple's templar order (a child faction, the save's) can
 stand above its divine on the Roll until the owed is paid; no DFU law reads the two together for a decision.
 

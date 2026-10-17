@@ -30462,7 +30462,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       });
     };
   }
-  window.__readyRanged = () => { const sp = rangedDamageSpells(spellsByIndex).map((x) => [calculateCastCost(x, playerEntity).sp, x]).sort((a, b) => a[0] - b[0])[0]?.[1]; magic.setReadied(sp); return sp ? `${sp.name}:${calculateCastCost(sp, playerEntity).sp}` : null; };   // M5: no classic starting set carries a missile spell - ready the cheapest flier for the flight leg
+  if (shotMode) window.__readyRanged = () => { const sp = rangedDamageSpells(spellsByIndex).map((x) => [calculateCastCost(x, playerEntity).sp, x]).sort((a, b) => a[0] - b[0])[0]?.[1]; magic.setReadied(sp); return sp ? `${sp.name}:${calculateCastCost(sp, playerEntity).sp}` : null; };   // M5: no classic starting set carries a missile spell - ready the cheapest flier for the flight leg (tools/castProbe.mjs); AUDIT ANTICHEAT A2: behind the shot gate, as exterior.js's twin always was
 
   const ambience = new AmbientEffects(EXTERIOR_AMBIENT_WAITS);   // A3
   // DS1: AmbientEffectsPlayer.OnPlayEffect -> Dynamic Skies'

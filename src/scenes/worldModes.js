@@ -3205,7 +3205,7 @@ export function createWorldModes(host) {
       // INSTANCES: a re-laid public room online stands none of a quest's things - its markers are the dungeon whole's
       // (systems/instancePlaces.js questMountsHere); it says once where they are, and moves nothing (QUEST-VOID's re-lay
       // would carry them into this room's blocks)
-      if (!questMountsHere({ online: !!host.dungeonOnline?.(), builtSize: builtDungeonSize(dungeonLoc) })) { host.instanceDoor?.questElsewhere?.(dungeonLoc); return; }
+      if (!questMountsHere({ online: !!host.dungeonOnline?.(), builtSize: builtDungeonSize(dungeonLoc) })) { host.instanceDoor?.questElsewhere?.(dungeonLoc); return 'elsewhere'; }   // QUEST-ELSEWHERE: a repair says so
       // QUEST-VOID (questRepair.js relayBuiltDungeon): a quest target on a marker this build has not - its foe in the
       // void, its item in rock - is laid again on the dungeon as built before anything stands.
       relayingBuilt = true;
@@ -11712,8 +11712,8 @@ export function createWorldModes(host) {
 
   // Shot-mode hooks for everything modal (parity with the pre-P7 world
   // probes; __doors reads the host's live door registry).
-  window.__anim = (m) => { _charAnimMode = ['idle','walk','off'].includes(m) ? m : _charAnimMode; return _charAnimMode; };
   function installShotProbes() {
+    window.__anim = (m) => { _charAnimMode = ['idle','walk','off'].includes(m) ? m : _charAnimMode; return _charAnimMode; };   // AUDIT ANTICHEAT A2: inside the installer, not above it on every boot
     window.__doors = () => doorTargets().map((e, i) => (
       { i, pos: doorWorldPosition(e.door), normal: doorWorldNormal(e.door), record: e.recordIndex, block: e.dfBlock.name, type: e.door.doorType }));
     window.__enter = () => tryEnter();

@@ -3409,8 +3409,8 @@ own draw and its Wager's decrees (`eg_runs.nonce`, `wgs`) and the Reliquaries a 
 game that does not know it is told to reload. Each that moves the service bumps `ACCOUNT_VERSION`
 (`server-account/src/service.js`). The arc ships under one of each, EG-PLAY's, re-hashed in place by every later slice
 while unshipped: `world213` (`world195` on its branch, then `world206`, `world211` and `world212`, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
-ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, SERPENT5, ONE-BODY, INSTANCES, WEAPON-GLOW1, HUB-PULL + DO-ASK, TIDY2 and REZ-BLOODLINE + GRAVE-PARTY at the merges) and `acct148` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127`, `acct133`, `acct134`, `acct135`, `acct136`, `acct137`, `acct141` and `acct146` after
-earlier merges, renumbered past main's slices to REZ-BLOODLINE AUDIT R1's `acct147` at the merges), its migration `0123_elite_breach.sql` (0119 until main's SERPENT5 took it, 0120 until main's AUTO-HOLD took that, 0121 until FIELD BUGS 2026-10-16b took 0121 and 0122). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
+ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, SERPENT5, ONE-BODY, INSTANCES, WEAPON-GLOW1, HUB-PULL + DO-ASK, TIDY2 and REZ-BLOODLINE + GRAVE-PARTY at the merges) and `acct149` (`acct116` to `acct122` on its branch, `acct124`, `acct126`, `acct127`, `acct133`, `acct134`, `acct135`, `acct136`, `acct137`, `acct141`, `acct146` and `acct148` after
+earlier merges, renumbered past main's slices to MAKER-KEPT's `acct148` at the merges), its migration `0124_elite_breach.sql` (0119 until main's SERPENT5 took it, 0120 until main's AUTO-HOLD took that, 0121 until FIELD BUGS 2026-10-16b took 0121 and 0122, 0123 until MAKER-KEPT took that). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
 A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 213, `src/net/wire.js` - AUDIT EG
 V: it read 197, its branch's first, and main's world197 to world212 carry no breach).
 
@@ -3978,8 +3978,8 @@ of main past the host split). **A record
 names another record's departure by its number when it closed**: a list renumbered later keeps the pointer to the
 departure as it then stood, so read such a pointer against the record's own date. **Versions** are
 named as they stood too: the arc ships under one relay version, one account version and one migration (section 23's
-Versions), so a record's `world195`-`world205`, `acct116`-`acct136` and migrations 0111 to 0121 are `world213`, `acct148` and
-0123 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
+Versions), so a record's `world195`-`world205`, `acct116`-`acct136` and migrations 0111 to 0123 are `world213`, `acct149` and
+0124 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
 built.
 
 **EG-L10N, owed**: the arc's own words reach a player in English, whatever language they chose - its record, below the
