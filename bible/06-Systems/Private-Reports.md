@@ -95,7 +95,8 @@ no report form, as it has no `/mail`.
 The Privacy Policy (`privacy/index.html`, PRIVACY_VERSION 2026-09-28) already covers what a report is: it lists
 "Support requests and communications with project staff" and "Error, crash, and diagnostic information" among what is
 collected, and "Detect cheating, exploits, abuse" among its uses. No new version, and no account asked to tick again.
-Reports are kept until the account that sent them is deleted.
+Reports are kept: the service deletes no account today, and a player's row removed by hand (a deletion request) takes
+its reports with it (`CASCADE`).
 
 ## Translations
 

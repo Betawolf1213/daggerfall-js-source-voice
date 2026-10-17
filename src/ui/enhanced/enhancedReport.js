@@ -102,8 +102,7 @@ function composePane(k, key) {
   const body = /** @type {any} */ (keyed(el('textarea', null), 'body'));
   body.rows = 7; body.maxLength = REPORT_BODY_MAX; body.value = desk.draft.body;
   body.placeholder = t('report.bodyHint', 'What happens, where, and the steps that make it happen again.');
-  const count = el('span', 'pr-count');
-  count.setAttribute('aria-live', 'polite');
+  const count = el('span', 'pr-count');   // read where it stands, never announced - a live region would speak every keystroke
   const counted = () => { count.textContent = `${body.value.length} / ${REPORT_BODY_MAX}`; };
   body.addEventListener('input', () => { desk.setDraft({ body: body.value }); counted(); });
   counted();
