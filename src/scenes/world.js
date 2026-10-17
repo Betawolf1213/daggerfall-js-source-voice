@@ -770,7 +770,7 @@ import { poiMe } from '../poi/poiService.js';   // POI-3: the store's word on wh
 import { createDataPipeline } from './dataPipeline.js';
 import { createWorldModes } from './worldModes.js';
 import { setAmbientTextHost, tickAmbientText } from '../systems/ambientText.js';   // AT2: Ambient Text's one component - this host claims it and feeds it the frame
-import { OnlineSession, roomKeyFor, DEFAULT_SERVER, WORLD_PUBLISH_MS, WORLD_REPUBLISH_MS, FOES_MS, FOES_FULL_MS, FOES_STALE_MS, SHOWN_MOVE_HOLD_MS } from '../net/online.js';   // ONLINE1: the session; WORLD1: the room's memory; AUDIT 637 D7: the move hold, one law both ends
+import { OnlineSession, steadyNow, roomKeyFor, DEFAULT_SERVER, WORLD_PUBLISH_MS, WORLD_REPUBLISH_MS, FOES_MS, FOES_FULL_MS, FOES_STALE_MS, SHOWN_MOVE_HOLD_MS } from '../net/online.js';   // ONLINE1: the session; WORLD1: the room's memory; AUDIT 637 D7: the move hold, one law both ends
 import { pageWave } from '../net/reconnectWave.js';   // SCALE2c: a relay deploy's reconnect, spread by the hub's count
 import { quietFoesGate } from '../net/foesQuiet.js';   // SCALE2c: a full foes frame that says nothing, said once
 import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../net/oneSeat.js';   // ONE-SEAT: one tab of a player online - the browser's arm, beside the hub's
@@ -20916,7 +20916,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     hudFade.smashHUDToBlack();   // teleportTo's arrival lifts it (the Teleport window's own order, ui/teleportPopUp.js)
     teleportTo(pick).catch((e) => { console.error('[staff] /tp failed:', e); hudFade.clearFade(); say('The teleport failed.'); });
   }
-  const identityMinter = accountTokenMinter({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage(), onIssued: adoptIssued,
+  // AUDIT ONLINE 3 (the second read) B-F2-1: the minter on the sessions' clock - on Date.now a clock set back held a dead token fresh
+  // (every new room's hello refused 'token expired', terminal) or a failed mint's hold for the length of the step
+  const identityMinter = accountTokenMinter({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage(), onIssued: adoptIssued, now: steadyNow,
     character: () => (onlineOn ? realmSession?.id ?? null : null) });   // RENOWN1: the character coming online, whose level the token carries (RENOWN-CHAR: its own again). REALM-DOOR: it is the realm character this tab JOINED (online is never without one), which the service signs as the realm's and the relay's door reads - never an id the save carries or characterIdOf mints
   // RENOWN1: WHAT THIS CHARACTER EARNS (RENOWN-CHAR: its own track again) - online only (the tracker is never built offline, and earns only while a session
   // exists). A foe pays when it dies within RENOWN_ASSIST_MS of my own blow, whoever struck last (net/renownTracker.js - the one rule every kill door agrees
@@ -21247,8 +21249,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onCaravan = (room, doc) => modes?.applyCaravanDecor?.(room, doc);   // WAGONS2-VISIT: what the caravan I visit holds, from its room
     online.onParks = (room, list) => hcc.replaceKept(room, list, campToScene, performance.now());   // HCC-PARK: and a cell's whole memory, after its welcome   // HCC-ONLINE: a peer's horse and wagon, the same frame, the same room test, through validHccRecord; and the peers' teams go wherever the pool's puppets go (a room change, a leave)
     online.onTrade = (id, data) => { tradeMgr.onFrame(id, data); };
-    online.onPeerDeath = (peer, pose, room) => {
-      remotePlayers?.addCorpse({ ...peer, acct: social?.accountOfPeer?.(peer.id) ?? null }, pose, room);   // PCORPSE3: the account, so the party-told copy never doubles it
+    online.onPeerDeath = (peer, pose, room, how) => {
+      // PCORPSE3: the account, so the party-told copy never doubles it; AUDIT ONLINE 3 F5: a death heard in an introduction (a body already lying when I came) is laid without its cry - and (the second read, A1/A2) only where none of theirs lies (net/remotePlayers.js peerDeath)
+      remotePlayers?.peerDeath({ ...peer, acct: social?.accountOfPeer?.(peer.id) ?? null }, pose, room, how);
       // PDEATH-FOES: the fallen player's foes come to me on its own handover frame (exteriorFoes.applyFoes, AUDIT CONTRIB P1)
     };   // PCORPSE1: another player fell - their class's body for a minute, and their cry   // TRADE1: a peer's trade frame, already projected and addressed to me (net/online.js)
     // ALLY-CAST: a party mate's spell at ME. THE RECEIVER DECIDES: a cast from anyone outside my party is dropped
@@ -28288,7 +28291,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const out = [];
     for (const p of online.peers.values()) {
       if (!presenceOnly && !modes?.sailingCabin && csaPeers.isBelowDeck(p.id)) continue;
-      if (!online.visible(p)) continue;   // AUDIT PSCALE1 NET-2: on the session's OWN clock (Date.now) - performance.now() against its stamps never timed a silent peer out
+      if (!online.visible(p)) continue;   // AUDIT PSCALE1 NET-2: on the session's OWN clock (steadyNow, AUDIT ONLINE 3 F2) - performance.now() against its stamps never timed a silent peer out
       const h = peerBodies?.heightOf(p.id) || 0;
       if (h > 0) _peerHeights.set(p.id, h);
       out.push({ id: p.id, feet: onlineToScene(p.shown), height: _peerHeights.get(p.id), cv: p.shown?.cv | 0 });   // INVIS-NET: and the peer's concealment, for the foes' senses
