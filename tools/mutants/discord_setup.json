@@ -102,11 +102,151 @@
   {
     "name": "DSET-refusal-green",
     "file": ".github/workflows/account-deploy.yml",
-    "old": "            echo \"::error::Discord was not pointed at the service - its refusal is above\"\n            exit 1",
-    "new": "            echo \"::error::Discord was not pointed at the service - its refusal is above\"\n            exit 0",
+    "old": "            echo \"::error::Discord's setup did not finish - $(head -c 300 \"$err\")\"\n            exit 1",
+    "new": "            echo \"::error::Discord's setup did not finish - $(head -c 300 \"$err\")\"\n            exit 0",
     "tests": [
       "test/server/discord_setup.test.js"
     ],
     "note": "A deploy whose Discord end failed would read green."
+  },
+  {
+    "name": "DCODE-first-command-only",
+    "file": "tools/discordModCommands.mjs",
+    "old": "got(await call('registering the commands', `/applications/${app.id}/guilds/${chan.guild_id}/commands`, 'PUT', commands));",
+    "new": "got(await call('registering the commands', `/applications/${app.id}/guilds/${chan.guild_id}/commands`, 'PUT', commands.slice(0, 1)));",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A command added to the list would never reach Discord."
+  },
+  {
+    "name": "DCODE-no-admin-bypass",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  if ((p & ADMINISTRATOR) === ADMINISTRATOR) return ALL;\n",
+    "new": "",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "An administrator bot the channel denies would be reported lacking."
+  },
+  {
+    "name": "DCODE-everyone-overwrite-skipped",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  if (everyone) apply(BigInt(everyone.allow), BigInt(everyone.deny));",
+    "new": "  if (false) apply(BigInt(everyone.allow), BigInt(everyone.deny));",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A channel closed to @everyone would read as open."
+  },
+  {
+    "name": "DCODE-role-overwrites-any-role",
+    "file": "tools/discordModCommands.mjs",
+    "old": "if (o.type === 0 && o.id !== guildId && memberRoles.includes(o.id))",
+    "new": "if (o.type === 0 && o.id !== guildId)",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A role the bot does not hold would grant or deny it."
+  },
+  {
+    "name": "DCODE-allow-before-deny",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  const apply = (allow, deny) => { p &= ~deny; p |= allow; };",
+    "new": "  const apply = (allow, deny) => { p |= allow; p &= ~deny; };",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "Discord denies before it allows; reversed, a role overwrite allowing what @everyone is denied would not restore it."
+  },
+  {
+    "name": "DCODE-member-overwrite-skipped",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  if (own) apply(BigInt(own.allow), BigInt(own.deny));",
+    "new": "",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A channel denying the bot itself would read as open."
+  },
+  {
+    "name": "DCODE-member-overwrite-any-type",
+    "file": "tools/discordModCommands.mjs",
+    "old": "overwrites.find((o) => o.type === 1 && o.id === userId)",
+    "new": "overwrites.find((o) => o.id === userId)",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A role overwrite would be read as the bot's own."
+  },
+  {
+    "name": "DCODE-missing-never-said",
+    "file": "tools/discordModCommands.mjs",
+    "old": "const missing = MOD_CHANNEL_NEEDS.filter(([, bit]) => (have & bit) !== bit).map(([name]) => name);",
+    "new": "const missing = [];",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A bot that cannot post cards would deploy green."
+  },
+  {
+    "name": "DCODE-report-green-anyway",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  if (!done.missing.length) return { lines: [...lines, '- the bot\\'s permissions in the moderators\\' channel: everything the cards need'], error: null };",
+    "new": "  return { lines: [...lines, '- the bot\\'s permissions in the moderators\\' channel: everything the cards need'], error: null };",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "Missing permissions would be said as everything the cards need."
+  },
+  {
+    "name": "DCODE-needs-no-embed",
+    "file": "server-account/src/discord.js",
+    "old": "['Send Messages', 1n << 11n], ['Embed Links', 1n << 14n]]",
+    "new": "['Send Messages', 1n << 11n]]",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A card is an embed; without Embed Links it never draws."
+  },
+  {
+    "name": "DCODE-usage-typed-again",
+    "file": "server-account/src/discord.js",
+    "old": "default: return say(usageOf('mod'));",
+    "new": "default: return say('Use /mod lookup, mute or unmute.');",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A usage text typed by hand drifts from the declared subcommands."
+  },
+  {
+    "name": "DCODE-usage-forgets-the-last",
+    "file": "server-account/src/discordCommands.js",
+    "old": "`Use /${name} ${subs.slice(0, -1).join(', ')} or ${subs.at(-1)}.`",
+    "new": "`Use /${name} ${subs.slice(0, -1).join(', ')}.`",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "The usage would leave out the last subcommand."
+  },
+  {
+    "name": "DCODE-tool-not-deployed",
+    "file": ".github/workflows/account-deploy.yml",
+    "old": "      - \"tools/discordModCommands.mjs\"\n",
+    "new": "",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "A change to the tool alone would not deploy, so would not reach Discord."
+  },
+  {
+    "name": "DCODE-404-unexplained",
+    "file": "tools/discordModCommands.mjs",
+    "old": "  if (read.status === 404) throw new Error(",
+    "new": "  if (false) throw new Error(",
+    "tests": [
+      "test/server/discord_setup.test.js"
+    ],
+    "note": "The first live run's refusal would again say only \"Unknown Channel\", not that the id is another thing's."
   }
 ]
