@@ -63,6 +63,7 @@ import { billboardSize } from '../world/rmbFlats.js';   // PCORPSE1: a corpse st
 import { raceGenderPain3Sound, CLASSIC_PLAYER_DEATH_SOUND } from '../systems/playerDeath.js';   // PCORPSE1: the fallen player's own cry
 import { SEAT_HIP_DROP } from '../player/seatPose.js';   // CARDS2c: a seated sprite sinks by the seat's own drop
 import { RACES } from '../systems/races.js'; import { PeerClimbSounds, peerBodyYaw, peerMoving } from './peer/peerClimb.js';   // CLIMB5: a peer on the wall faces it, takes no stride, and is heard climbing
+import { peerHeard } from './peer/peerFx.js';   // EG-ZH: every peer sound through the place's scope (Elite-Gates.md section 26)
 import { PeerGatherSounds, peerGatherSwing, peerKneeling } from './peer/peerGather.js';   // PEER-ACTS: a peer gathering is seen at it and heard
 
 // ── PCORPSE1: THE FALLEN ──────────────────────────────────────────
@@ -490,8 +491,10 @@ export const PEER_SOUND_PROFILE = Object.freeze({ refDistance: 6, maxDistance: 3
 /** Past the far edge nothing is made at all (a panner and a source per step for a peer nobody can hear). */
 export const peerInEarshot = (f, eye) => !(eye && eye.length === 3) || Math.hypot(f[0] - eye[0], f[1] - eye[1], f[2] - eye[2]) < PEER_SOUND_PROFILE.maxDistance;
 function peerSound(audio, clip, at, volume) {
-  if (audio.play3d) audio.play3d(clip, at, volume, PEER_SOUND_PROFILE);
-  else audio.playOneShot?.(clip, volume);
+  peerHeard(() => {   // EG-ZH: a peer's sound, as the place hears it (net/peer/peerFx.js - 4 dB down in the Spire)
+    if (audio.play3d) audio.play3d(clip, at, volume, PEER_SOUND_PROFILE);
+    else audio.playOneShot?.(clip, volume);
+  });
 }
 export const ridingLoopName = (id) => `peerRide:${id}`;
 /** AUDIT DISC7 B3: a mounted peer whose newest pose is older than this is standing still for the riding loop - a
@@ -565,7 +568,7 @@ export class RemotePlayers {
         const d = Math.hypot(f[0] - eye[0], f[1] - eye[1], f[2] - eye[2]);
         falloff = d <= 8 ? 1 : d >= 45 ? 0 : 1 - (d - 8) / 37;
       }
-      if (falloff > 0) audio.playOneShot(peerDeathSound(peer?.look), falloff);
+      if (falloff > 0) peerHeard(() => audio.playOneShot(peerDeathSound(peer?.look), falloff));   // EG-ZH: as the place hears it
     }
   }
 
@@ -879,7 +882,7 @@ export class RemotePlayers {
       const veil = conceal(peer.id) ?? null;
       // MWBODY1: a peer standing in a Morrowind body (net/peer/peerBodies.js) draws no doll/mobile; its name still rides this pass, at the body's own head
       const bodyH = bodyHeight(peer.id);
-      if (bodyH > 0) { if (!veil) this._shown.push({ peer, height: bodyH }); continue; }
+      if (bodyH > 0) { if (!veil || /** @type {any} */ (veil).named) this._shown.push({ peer, height: bodyH }); continue; }   // AUDIT EG V (h): a veil that keeps the name (an ally drawn at 60% on the Spire's traversal ground - scenes/eliteGates/egClient.js allyVeil)
       live.add(peer.id);
       // 2026-09-17: a peer whose class maps onto a class-enemy sprite (classMobileType) is drawn as that sprite,
       // animated off their synced pose (_syncMobilePeer) - the same billboard a hostile Warrior/Mage/etc. already
@@ -1138,7 +1141,7 @@ export class RemotePlayers {
     entry.peer = peer;
     const g = this._growAt(f);
     if (entry.g !== g) { entry.g = g; this._sizeBatch(entry.batch, { w: entry.doll.w * g, h: entry.doll.h * g }, g); }   // OW-PEERS
-    if (!veil) this._shown.push({ peer, height: entry.doll.h * g - sink });
+    if (!veil || veil.named) this._shown.push({ peer, height: entry.doll.h * g - sink });
   }
 
   /** The class-enemy billboard path: `bundle.mobileUnit.update` is fed simple flags off the peer's OWN synced pose
@@ -1208,7 +1211,7 @@ export class RemotePlayers {
     const sink = seatedSink(shown);   // CARDS2c: seated, sunk by the seat's drop
     entry.batch.origin[0] = f[0]; entry.batch.origin[1] = f[1] - sink; entry.batch.origin[2] = f[2];
     entry.batch.conceal = veil;   // INVIS-LOOK
-    if (!veil) this._shown.push({ peer, height: entry.height - sink });
+    if (!veil || veil.named) this._shown.push({ peer, height: entry.height - sink });
   }
 
   /** OW-PEERS: the Overworld's grow at a peer's feet (1 off the view). */

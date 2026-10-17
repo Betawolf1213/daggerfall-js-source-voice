@@ -466,7 +466,9 @@ function sweep({ seeds, run, skip }) {
       for (const s of seedsOf()) {
         const rolls = seeded(s);
         for (const it of [AETH.rollRegalia(rolls), AETH.rollRaidSetPiece(s % 3, rolls), AETH.rollSerpentSetPiece(rolls), AETH.rollNumidiumPiece(rolls)]) one(it);
+        one(AETH.mintPanoplyPiece(rolls));   // EG15: the Battlemage's Panoply's pick (a Redoubt's spoils decide whether)
       }
+      for (const id of AETH.PANOPLY_SET_PIECES.map((r) => r.id)) one(AETH.panoplyPieceById(id));   // EG15: and the Broker's weekly sink, by id
     });
     run('gilded.mintGilded / mintHourlock', (one) => {
       for (const r of GILD.GILDED_RECORDS) one(GILD.mintGilded(r));

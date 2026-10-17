@@ -339,6 +339,19 @@ import { createSdHost } from './superDungeon/sdHost.js';   // SD2b: the Hollow i
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
 import { SdOmenPassRenderer } from '../render/superDungeon/sdOmenPass.js';   // SD2c: the Hollow's omen, the gate's beacon in brass
 import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/superDungeon/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
+import { egRoomKey, EG_TEXT } from '../net/eliteGates/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
+import { createEgClient } from './eliteGates/egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
+import { createEgArchPool, egArchPlace, egArchSite, EG_ARCH_GATE_NEAR_M } from './eliteGates/egArch.js';   // EG-F: the Elite Breach's arch - its pool, its place, its site; a Dagon's Breach near
+import { createEgCallPortal, createEgCallPrompt } from './eliteGates/egCall.js';   // EG-F: the call's portal at my feet, and its prompt
+import { openEgStartWindow, egStartAsk } from '../ui/eliteGates/egStartWindow.js';   // EG-F: the start window, over DFU's list picker; AUDIT EG III (lane4 #12): its question's door
+import { gateClearSet } from '../world/gate/gateClearance.js';   // EG-F: the gate's clearing and every standing arch's, one set
+import { EG_LAST_WORD_MIN } from '../net/eliteGates/egLaw.js';   // EG-F: a quest falling due inside a breach's last word
+import { createEgFight } from './eliteGates/egFight.js';   // EG-PLAY: a hall's fight
+import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/eliteGates/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
+import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
+import { registerPlayerDeathSave } from '../characters/playerEntity.js';   // EG-FULL: the fall's death save (the witness's damage mod rides main's import of registerPlayerDamageMod, below) (EG-H2: the Spire's Levitate ward is the one ward's, by the made level's law)
+import { registerMadeLevelHere, madeRuleHere, madeSaysHere } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every per-level door below asks the one law
+import { registerJumpForgiveness } from '../player/motor.js';   // EG-H2 (section 10.8): THE FORGIVENESS - the Spire's jump buffer and late press, the made level's law's
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/superDungeon/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
 import { SdSkyRenderer, SD_SKY_STEPS } from '../render/superDungeon/sdSky.js';   // SD5b: the Hour's sky
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/superDungeon/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
@@ -359,7 +372,14 @@ import { sdCities, sdTemplates } from '../systems/superDungeon/sdSite.js';   // 
 import { RANDOM_TREASURE_ARCHIVE } from '../systems/loot/lootDataTables.js';   // WB12d: the casket's pile, undrawn
 import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil Broker - her body, her box and name, her press; BROKER-CAGE: caged at the faithful's circle
 import { createBrokerOverlay, closeBrokerDoor } from '../ui/brokerDoor.js';   // SET7: her window, a lazy chunk behind its door
-import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText } from '../systems/sigil/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
+import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: the Broker's Panoply sink - its nine rows and their names
+import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
+import { EG_SINK_EMBERS } from '../net/eliteGates/egPay.js';   // EG-E1: the sink's price
+import { openEgBoard, createEgBoardDoor } from '../ui/eliteGates/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
+import { egRecapsKept } from '../ui/eliteGates/egHud.js';   // AUDIT EG V (c, L7-19): the last runs this device kept, on the boards' own tab
+import { registerEgFind, egFindThrow } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find
+import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigil/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
+import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText, panoplySale } from '../systems/sigil/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
 import { drawGateBanner } from '../ui/gate/gateBanner.js';
 import { drawGateGround } from '../ui/gate/gateGroundView.js';   // WB9d: his ground's rim and warning - hidden with a held frame (the court draws it); SD15: and the Hour's
 import { drawGateDamageChart } from '../ui/gate/gateDamageChart.js';   // GATE-UX: the kill's damage chart (the court draws it - scenes/gate/gateCourt.js); a held frame hides it with the rest
@@ -399,6 +419,8 @@ import { createSdClaims } from '../net/superDungeon/sdClaims.js';   // SD9b: the
 import { announceHonour } from '../ui/lootBanner.js';   // HONOUR-BANNER: a title or an aura granted, as a loot banner
 import { readSdReceipt } from '../net/superDungeon/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/superDungeon/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
+import { egSpoilsDay, egSpoilsList, egSpoilsSeedOf, EG_SPOILS_TEXT } from '../systems/eliteGates/egSpoils.js';   // EG-E: a Redoubt's spoils; AUDIT EG V: on the claim's seed
+import { egReliquaryGrant } from '../systems/eliteGates/egSpoils.js';   // AUDIT EG III (Elite-Gates.md section 16.3): an end's Reliquaries opened
 import { createSdSpoils, clearOfPillars } from './superDungeon/sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpent/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gate/gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
@@ -407,6 +429,8 @@ import { createDeadlandsAir } from './deadlandsAir.js';   // WB6b: and their air
 import { createGateVeil } from '../ui/gate/gateVeil.js';   // WB6c: the step through the gate - a vortex of fire in and out
 import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../systems/gate/gateScore.js';   // WB7: the Warden's score - the court's own music
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/superDungeon/sdScore.js';   // SD13: the Hour's own score
+import { createSpireScoreHost } from '../systems/eliteGates/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
+import { egHallFog } from '../world/eliteGates/egHall.js';   // EG-G2: the Spire's haze, its sky's gain (EG-LOOK: its band's own)
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
 import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
@@ -832,7 +856,8 @@ import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-
 import { OPT_CHANNELS, tradeChanOldText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, alreadyJoinedText } from '../net/chat.js';   // CHAT-TRADE: the Trade and LFG tabs' words
 import { badJoinText } from '../net/chatCommands.js';   // CHAT-TRADE: /join's and /leave's refusal
 import { oocText, localLineHeard, nextRegionRoom, regionJoinedText, CHAN_OLD_RELAY_TEXT, ROLL_OLD_RELAY_TEXT, EMOTE_OLD_RELAY_TEXT, GUILD_OLD_RELAY_TEXT, NO_GUILD_TEXT, partyNoteTab } from '../net/chat.js';   // CHAT-CHAN: the channels' own laws (a second chat import: CHAT1's pin holds the first as it stands)
-import { parseChatLine, HELP_LINES, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
+import { breachCommandOf, helpLines } from '../net/chatCommands.js';   // AUDIT EG V (c, L7-1, L7-21): the Elite Breach's door, its words whole; /help's lines with its own
+import { parseChatLine, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
 import { partyRosterSource, localRosterSource, guildRosterSource } from '../net/roster.js';   // CHAT-CHAN: the Party and Local tabs' composed lists
 import { partyCompassPoints } from '../ui/partyMapMarks.js';   // COMPASS-PARTY: the party's points on the compass
 import { SocialState, accountId, accountSecret } from '../net/social.js';   // SOC2: the friends and the party, as the hub says them; the account the hub's hello carries; SOC3: and the two colours a name wears in the DOM - my party's green, a friend's blue
@@ -1264,6 +1289,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // whatever record carries the ID 433 or 107 (AUDIT 58: the two are unrelated), or nothing
     else if (name === 'gear') audio.playOneShot(SD_HALL_SOUNDS.clunk, 1);   // SD9d: Gearward - the gear catching the blow (the Orrery's own clunk)
     else if (name === 'hour') audio.playOneShot(SD_HALL_SOUNDS.toll, 1);   // SD9d: The Hour Turns - the Hour's bell, turned back
+    else if (name === 'reprieve') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // EG15: Battlemage's Reprieve - a Shield spell's own cast (its element, Magic)
   } });
   // A1: THE TEXTURE SEASON IS THE CALENDAR'S, NOT A URL PARAM.
   // Every production site in the reference reads the world clock -
@@ -10389,8 +10415,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  same way - lifted as the player steps through the Rift, stood behind them again out of the Hour. */
   function companionPlace({ crew = true } = {}) {   // REVENANT-COMPANION: the sworn's layer asks it without the naval arc's gate
     if ((crew && !navalOn()) || !walkMode || !playerSpawned || _loading || modes?.transitioning || travelView?.active || csaRuntime?.isSailing?.()) return null;
-    if (modes?.gateArenaDay?.() != null) return null;   // GATE-ALONE: they wait outside the gate
-    if (modes?.sdRealmSlot?.() != null) return null;   // SD-ALONE: nor through the Rift - they wait outside the Hour
+    if (madeRuleHere('companions') === 'out') return null;   // GATE-ALONE: they wait outside the gate; SD-ALONE: nor through the Rift; EG-PLAY: nor into the Spire - EG-H2: the made level's law
     const spotOf = (col) => (from, dx, dz) => { const p = [from[0], from[1], from[2]]; try { col?.move(p, dx, 0, dz, 1.8); } catch { /* the leader's own spot */ } return [p[0], p[1], p[2]]; };   // AUDIT CC-A3: the swept spot's own height (a slope's, a stair's)
     const mode = _mode();
     const standIn = (pool) => (mobile, feet, o) => pool.spawnFoe(mobile, feet, { yaw: o.yaw, gender: o.gender, allied: true, loose: true, transient: true });
@@ -10518,8 +10543,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  name, role and effects, his health off his body where one stands here (else as the party carries it, a share of
    *  his whole); none with the arc off. */
   function partyCompanions() {
-    if (modes?.gateArenaDay?.() != null) return [];   // GATE-ALONE: none in a gate's court - they wait outside it
-    if (modes?.sdRealmSlot?.() != null) return [];   // SD-ALONE: and none in the Shattered Hour
+    if (madeRuleHere('companions') === 'out') return [];   // GATE-ALONE: none in a gate's court - they wait outside it; SD-ALONE: nor in the Hour; EG-PLAY: nor in the Spire - EG-H2: the made level's law
     // AUDIT WK-U5: none while I sail - the party is lifted aboard (it stood its cards over the ship's plate on a phone)
     const party = navalOn() && !csaRuntime?.isSailing?.() ? naval?.companions?.party ?? [] : [];
     const sworn = swornCards?.() ?? [];   // REVENANT-COMPANION: the sworn's cards after the crew's
@@ -10551,6 +10575,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function makePartyPanel(social) {
     partyPanel = createPartyPanel({ social, art: { fetchBytes, palette }, here: () => _partyPose });
     partyPanel.setCompanions(partyCompanions);   // COMPANION-KIT
+    partyPanel.setSpire(() => egClient?.partyRows() ?? null, (acct) => egClient?.watchMember(acct));   // AUDIT EG V (c, L7-7): a witness's tap on a row watches that member   // EG-G1 (Elite-Gates.md section 27.4): the company's state on the party rows in a breach
     return partyPanel;
   }
   function companionPanelFrame() {
@@ -14183,11 +14208,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // teleport, the interior re-entry the quickload uses, the dungeon
   // mount the quest respawner uses), and none of them exist in the
   // mounted modes.
+  /** EG-H2 (Elite-Gates.md section 24): a made level's refusal, said in its own voice (systems/madeLevel.js `says`) -
+   *  the Hour's (sdSay), else the mid-screen line - in its own words. */
+  function madeSay(rule) { const t = madeSaysHere(rule); if (madeRuleHere('says') === 'hour') sdSay(t); else setMidScreenText(t); }
   /** SetAnchor (:100-117): the outer host's world half, the mounted
    *  mode's inside half, one record. */
   function setRecallAnchor() {
-    if (modes?.gateArenaDay?.() != null) { setMidScreenText(COURT_TEXT.noMark); return; }   // WB3b: a mark in a place that ends with the day
-    if (modes?.sdRealmSlot?.() != null) { sdSay(SD_REALM_TEXT.noMark); return; }   // SD5a: nor in the Shattered Hour
+    if (madeRuleHere('mark') === 'refused') { madeSay('mark'); return; }   // WB3b: a mark in a place that ends with the day; SD5a: nor in the Hour; EG-PLAY: nor in the Spire - EG-H2: the made level's law, each in its own words
     if (modes?.dungeonLocation?.superTier) { sdSay(SD_NO_MARK); return; }   // AUDIT SD IV (F2): nor in a Hollow - a later one may stand on its pixel
     const inside = modes?.anchorContext?.() ?? { worldContext: WORLD_CONTEXT.Exterior, local: null, buildingKey: 0, interior: null };
     const pf = walkMode && playerSpawned ? player.pos : cam.pos;
@@ -14257,7 +14284,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT ARENA-LADDER A5: NO RECALL OFF THE SAND - my bout holds me as its doors do (the duel's law: no door, no rest, no
     // travel). Recall tore the floor down under a losing bout, which went unsaid: no loss, no run lost, the climb untouched.
     if (arenaBouts.holds()) { townTalk.say(ARENA_TEXT.refuse.travel); return; }
-    if (modes?.sdRealmSlot?.() != null) { sdSay(SD_REALM_TEXT.noRecall); return; }   // SD5a (Super-Dungeons.md section 7): nothing answers a Recall in the Hour - its ways are the Rift's
+    if (madeRuleHere('recall') === 'refused') { madeSay('recall'); return; }   // SD5a (Super-Dungeons.md section 7): nothing answers a Recall in the Hour - its ways are the Rift's; EG-PLAY: the Spire holds you - EG-H2: the made level's law (the court refuses the Mark alone)
     const anchor = playerEntity.anchorPosition;
     const plan = teleportPlan(anchor, {
       ...(modes?.insideContext?.() ?? { insideBuilding: false, insideDungeon: false, buildingKey: 0 }),
@@ -14795,7 +14822,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     reviveForPlay(playerEntity, { force: true });
     surfacePlayer();
     player.stopAutorun();   // SEA-RISE: a player raised from death does not come up running - the latch walked them back into the sea
-    const goldLost = wildRise ? 0 : applyDeathPenalty(playerEntity);   // WILD GOLD: the zone takes half into the remains instead of the usual penalty
+    const goldLost = wildRise || madeRuleHere('deathPenalty') === 'none' ? 0 : applyDeathPenalty(playerEntity);   // WILD GOLD: the zone takes half into the remains instead of the usual penalty   // EG-H2 (Elite-Gates.md section 24): DEATH-PENALTY exempted in the Spire - its death is a fall's
     // DEATH-PENALTY: once per death - the _respawning guard above is what makes it once
     // AUDIT REP, Mac's call ("What do you think? I trust you"): A DEATH ENDS THE CHASE. The respawn is handled as the
     // journey it most resembles (HCC H2, below) and the travel map's arrival clears the crime (PostFastTravel), but the
@@ -14808,7 +14835,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _deathWasOnline = null;   // armed fresh for the NEXT death
     const mode = modes?.mode ?? 'exterior';
     const wasInDungeon = mode === 'dungeon';
-    const diedInHour = modes?.sdRealmSlot?.() != null;   // AUDIT SD II (L6 F4): a death in the Shattered Hour is the Hour's - its veil and its words, read while the Hour stands
+    const diedInHour = madeRuleHere('death') === 'final';   // AUDIT SD II (L6 F4): a death in the Shattered Hour is the Hour's - its veil and its words, read while the Hour stands (EG-H2: the made level's law - final for the Hollow)
+    const diedInSpire = madeRuleHere('death') === 'fall';   // EG-PLAY: a death in an Elite Breach is the member's fall - it wakes where it answered from (EG-H2: the made level's law)
+    const spireBack = diedInSpire ? modes?.egHallReturn?.() ?? null : null;
     // AUDIT OH-F B5: a death in the drowned dungeon wakes at ITS door - the pit (the dungeon's own pixel is the borrowed
     // template's, perhaps across the map), stood on the entrance as the way up stands it. Read before the exit clears it.
     const ohReturn = wasInDungeon ? ohAbyss?.returnPoint() ?? null : null;
@@ -14823,6 +14852,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (courtGate) {
         modes?.forceExitToExterior();
         if (landBeforeGate(courtGate)) { gateVeil?.flash(); townTalk.showOverlay(new ActionTextBox([COURT_TEXT.castOut])); return; }   // WB6c: cast out through the fire
+      }
+      if (diedInSpire) {   // EG-PLAY: out of the Spire to where I answered from, in its veil and its words
+        modes?.forceExitToExterior();
+        if (spireBack && egLandAt(spireBack)) { gateVeil?.flash('hourCast'); townTalk.showOverlay(new ActionTextBox([EG_TEXT.fallen, deathPenaltyText(goldLost), took?.line].filter((t) => !!t))); return; }
       }
       // Any mode but the open world is left FIRST - the cemetery
       // transfer's own order - and forceExitToExterior clears the
@@ -16255,7 +16288,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** Why a portal may not open where I stand, or null: the open world's alone, the holds, the water, a boat's deck (a
    *  portal stands in the world's frame and would be sailed away from), and one of mine at a time. */
   const portalDoorRefusal = () => {
-    if (_mode() !== 'exterior') return PORTAL_TEXT.notHere;
+    if (_mode() !== 'exterior' || madeRuleHere('portalStone') === 'refused') return PORTAL_TEXT.notHere;   // EG-H2: and never in a made level (the made level's law - each is a dungeon too)
     const hold = portalHoldNow();
     if (hold) return PORTAL_HOLD_TEXT[hold];
     if (player.isPlayerSwimming) return PORTAL_TEXT.water;
@@ -16854,6 +16887,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       raids: () => (raidingPartiesOn() ? raidMapMarks(raidState().raids, worldMinutes(), { regionName: (r) => REGION_NAMES[r] ?? '', localTime: sharedClockOn() ? eventLocalTime : null, relay: raidRelayState }) : []),   // TIME1: online the withdrawal in local time
       serpent: () => serpentOmen?.mapMark() ?? null,   // SERPENT1: the sea serpent's ring, in the sea's colours - the held map alone draws it
       sd: () => sdHost?.mapMark() ?? null,   // SD2c: a found Super dungeon's ring, in its omen's brass - the held map alone draws it
+      arch: () => egClient?.archMapMark() ?? null,   // EG-F: my company's Elite arch while it stands, in its gold - the held map alone draws it
       // GUIDE5: WHERE THE QUESTS POINT - every active quest's place the player's map holds, the followed one filled
       // (ui/quest/questMarks.js); a function for the gate's reason (a step logged while the map stands open). The enhanced
       // map alone draws them: a player who chose DFU's own maps chose DFU's look.
@@ -17210,6 +17244,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         serpent: { place: serpentOmen?.current?.()?.site?.near ?? null, fellAt: (day) => { const site = serpentOmen?.current?.()?.site; return site && site.day === day ? serpentLink?.fellAt?.(day, site) ?? null : null; } },
         // SD2c: the Super dungeon - the hub's record, its name and its city (the row's own law asks the phase: a row once found)
         sd: sdHost ? { rec: sdHost.record(), name: sdHost.hollow()?.loc?.name ?? null, place: sdHost.hollow()?.site?.cityName ?? null } : null,
+        elite: egClient?.timers() ?? null,   // EG-F: my company's Elite Breach - its opening, its window, its hall and count
+        doors: egClient ? { board: () => egBoardDoor() } : null,   // EG-ZM (Elite-Gates.md section 20): the boards' door on the Elite rows
         seatsOpen: seatBook?.open === true,   // AUDIT TIMERS1 D5: the seat week's rows are for an account the seats are open to
         seats: seatBook?.open === true ? (seatBook.data?.seats ?? null) : null,
         zero: seatBook?.open === true ? seatBook.zero : null,
@@ -17563,6 +17599,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // (the chat, the friends panel, the F-menu: they pause nothing, and take keys). The keys are its from there: a key
     // shared by two windows' doors opens the first, not both stacked, and nothing after a door is done behind it.
     if (!_worldKeysLive) return;   // KEY-BOOT: the ladder's arms read bindings the boot has not reached yet
+    if (!e.repeat && !gamePaused() && egClient?.key(e)) { e.preventDefault(); return; }   // EG-FULL: the Spire's panel (a Vestige's card, the company's word) and the witness's Q and E - no window up
     const windowUp = () => gamePaused() || (modes?.modalWindowUp?.() ?? false) || pointerSurfaces.size > 0;
     const upBefore = windowUp();
     const pass = acts.length ? acts : [null];
@@ -18199,6 +18236,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch/touch.js)
     board: { up: () => !!modes?.gambitBoardUp?.() },   // AUDIT KG II C4: at a King's Gambit battle the pad's d-pad is the board's cursor (ui/gamepadInput.js)
   };
+  // EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 27.8): THE SPIRE'S D-PAD - while its panel, a witness's eye or its
+  // recap stands, the pad's d-pad is theirs through the helm's own door (ui/gamepadInput.js HELM_DPAD), the helm's otherwise
+  { const helm = inputHooks.helm, eg = () => { try { return !!egClient?.padUp(); } catch { return false; } }; inputHooks.helm = { up: () => eg() || helm.up(), gesture: (dir, kind) => (eg() ? egClient.padGesture(dir, kind) : helm.gesture(dir, kind)), prompts: () => (eg() ? egClient.padPrompts() : helm.prompts()) }; }
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API
 
@@ -21261,6 +21301,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // take no blow), and my copy of the quest counts the injury and the kill it sees on a partner's foe
     exteriorFoes.setOnRaids((from, rk, at) => raidPeerWord(from, rk, at));   // RAID2: a peer's word on the raids it fought, past the pool's room test
     exteriorFoes.setQuestShare(partyOnlyQuestShare(questShareSeam));   // QUEST-PARTY: the party's law, one home (questShareSeam); QUEST-OWNER: a quest's foe its owner's party's alone, out here too
+    exteriorFoes.setOnEgArch((from, r) => { const p = online?.peers?.get(from); egClient?.archHeard(from, r, p?.shown ? onlineToScene(p.shown) : null); });   // EG-F: a peer's Elite arch - believed only near the peer's own feet, and when the hub's signature verifies
     exteriorFoes.setOnPortals((from, r) => { const p = online?.peers?.get(from); portalGates.applyOwner(from, r, p?.shown ? onlineToScene(p.shown) : null); });   // PORTAL1: a peer's portal - believed only near the peer's own feet (AUDIT PORTAL1 O1), kept to its own time
     exteriorFoes.setOnDuel((from, r, at) => { const rec = r === null ? null : validRingRecord(r); if (rec) _duelRings.set(from, { rec, at }); else _duelRings.delete(from); }, () => _duelRings.clear());   // DUEL1: a peer's ring, for the wall
     online.onPark = (room, e) => { wagonWarden?.keptWord(room, e); hcc.applyKept(room, e, campToScene, performance.now()); };   // HCC-PARK: a cell's word about a parked team (mine or a halo's cell), its owner here or not; WARDEN1: a throw it had not said played from where the team stood, before the pool moves it to the landing
@@ -21301,10 +21342,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const targetLine = allyCastTargetLine(who, spell.name);
       if (loud && (!mate || _mateGiftGate(targetLine))) townTalk.say(targetLine);   // GIFT-QUIET: a mate's, once a window
       const before = playerEntity.health;
-      magic.applySpellToPlayer(spell, d.level, null, { allyCast: true, strangerCast: !mate });   // AUDIT SPELL-GIFT B6: a stranger's Cure leaves an infection be
+      magic.applySpellToPlayer(spell, d.level, null, { allyCast: true, strangerCast: !mate }); egClient?.menderGrace?.(id, playerEntity.health - before);   // AUDIT SPELL-GIFT B6: a stranger's Cure leaves an infection be; EG-ZR (Elite-Gates.md section 15): in a breach, the caster's Mender's Grace heals me its share more
       const healed = Math.max(0, Math.trunc(playerEntity.health - before));
       if (healed > 0 && loud) townTalk.say(`You are healed ${healed} points.`);
       if (healed > 0) gateCourt?.healedBy?.(id, healed);   // GATE-HEAL: in a gate's court, the caster's healing (the round-up's)
+      if (healed > 0) egClient?.healedBy?.(id, healed);   // EG-ZF (Elite-Gates.md section 27.6): in a breach, a companion's healing said to the room - the chart's Healed column and the recap's
       surfacePlayer();
     };
     // INSPECT1: A CARD FRAME AT ME. An ASK is answered with my card - what my own sheet shows and what I wear now
@@ -21346,6 +21388,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onSdHall = (w) => sdHallHeard(w);   // SD6c: the realm's word on the Orrery's hall - the stones, the fray, the Concord; the snap's lash
     online.onSdFight = (w) => sdFightHeard(w);   // SD8c: the realm's word on the Last Moment's fight
     online.onSdReceipt = (r, room) => { sdClaims?.add(r); sdSpoilsReceipt(r, room); };   // SD9b: my Hour receipt (my realm's at the fall, the hub's at a hello) - to the account service, kept until it is counted; SD9e: and its spoils
+    online.onEg = (w, room) => egClient?.word(w, room);   // EG-PLAY: my breach room's word - its state, its fights, my receipts
     online.onSerpent = (w) => { if (w?.k === 'bd') serpentHost?.wrecked?.(w); else serpentLink?.word(w); };   // SERPENT1: the sea serpent's cell's word (on my cell's socket or a halo's) - its fight, its swim, its blows, my receipt
     online.onRaid = (f, room) => raidRelayWord(f, room);   // RAID3: a town cell's word about its raid - the ledger, the cleanse, my receipt
     online.onRite = (w) => riteHost?.onBroken(w);   // WB12d: the hub's broken rite
@@ -21509,6 +21552,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         link.onStaffTeleport = (m) => client.receive(m);
       }
       if (tab.room === SOCIAL_ROOM) link.onGate = (g) => gateLink?.word(g);   // WB3b: the hub's word of a kill, and a fighter's receipt outside the court
+      if (tab.room === SOCIAL_ROOM) link.onEg = (w, room) => egClient?.word(w, room);   // EG-PLAY: the hub's call to my company, and its refusal of an open
       if (tab.room === SOCIAL_ROOM) link.onSerpent = (w) => serpentLink?.word(w);   // SERPENT1: the hub's word of a sea serpent's kill, Bay-wide, and the day's at my hello
       if (tab.room === SOCIAL_ROOM) link.onRite = (w) => riteHost?.onBroken(w);   // WB12d: the hub's word of a broken rite, and at my hello
       if (tab.room === SOCIAL_ROOM) link.onSd = (w) => sdHost?.heard(w);   // SD2b: the hub's record of the Super dungeon - at my hello and at every move
@@ -21571,18 +21615,25 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           if (!modes?.openPauseAt?.('mailbox')) hudCtx.togglePause({ at: 'mailbox' });
           return true;
         }
+        // EG-PLAY: `/breach` - answer an Elite Breach's call; `/breach rehearse` - the day's Rehearsal; `/breach home` - a
+        // Redoubt's way home. Local, never sent as chat. AUDIT EG V (c, L7-1): its words WHOLE (net/chatCommands.js
+        // breachCommandOf) - `/breach pick 2`, `vote yes`, `buy tonic` - where a one-word door read each as no command
+        { const arg = breachCommandOf(text); if (arg != null) { if (!egClient) chatLog.push(tabId, { text: 'Elite Breaches are online - connect and sign in first.', system: true }); else egClient.command(arg); return true; } }
         if (/^\/unstuck(\s+cancel)?$/i.test(text.trim())) {
           // PVPUNSTUCK: outside the zone at once (30 min cooldown); in the zone after a five-minute wait with a bar that can
           // be cancelled (a second /unstuck or "/unstuck cancel" cancels too), and a 60 minute cooldown - overworld and dungeons
           const say = (t) => chatLog.push(tabId, { text: t, system: true });
           if (/cancel/i.test(text) || _unstuckWait) { if (_unstuckWait) { unstuckCancel('You stay where you are.'); } else say('Nothing to cancel.'); return true; }
+          // EG-H2 (Elite-Gates.md section 24): a made level's /unstuck is the made level's law's -
           // AUDIT SD III (H10): in the Shattered Hour, the Hour's own way out - under its veil, in its words, as every other
           // way out of it is; refused there (the dead's is the death's), nothing more said
-          if (modes?.sdRealmSlot?.() != null) { if (sdWayHome()) say('You find your way back outside.'); return true; }
-          // AUDIT GATE-FBX C2: and in a gate's Burning Court, none - its ways out are the portal where he fell, a death and
-          // the Wrath (a court gone silent casts its fighters out itself: gateCourt.silent); /unstuck walked out mid-fight
-          // with no veil, no toll and no cooldown spent on a death
-          if (modes?.gateArenaDay?.() != null) { say(COURT_TEXT.noUnstuck); return true; }
+          // EG-PLAY: the Spire holds you - its way out is a Redoubt's, a death or the end; AUDIT GATE-FBX C2: and in a gate's
+          // Burning Court, none - its ways out are the portal where he fell, a death and the Wrath (a court gone silent casts
+          // its fighters out itself: gateCourt.silent); /unstuck walked out mid-fight with no veil, no toll and no cooldown
+          // spent on a death
+          const madeUnstuck = madeRuleHere('unstuck');
+          if (madeUnstuck === 'wayHome') { if (sdWayHome()) say('You find your way back outside.'); return true; }
+          if (madeUnstuck === 'refused') { say(madeSaysHere('unstuck')); return true; }
           const inZone = wildHere() && !(TEST_GODMODE && staffPowers().god);   // TESTBUILD: god mode - /unstuck at once, no cooldown
           const _godU = TEST_GODMODE && staffPowers().god;
           if (inZone && (modes?.mode ?? 'exterior') === 'exterior') { say('/unstuck does not work outdoors in the mountains.'); return true; }   // PVPDUNGEONS
@@ -21760,7 +21811,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // wear them too
         const cmd = parseChatLine(expandShortcodes(text));
         const note = (line) => chatLog.push(tabId, { text: line, system: true });
-        if (cmd.kind === 'help') { for (const line of HELP_LINES) note(line); return 'read'; }
+        if (cmd.kind === 'help') { for (const line of helpLines()) note(line); return 'read'; }   // AUDIT EG V (c, L7-21): /breach among them
         if (cmd.kind === 'emotes') { for (const line of EMOTE_LINES) note(line); return 'read'; }
         // CHAT-LANG: /lang alone lists the channels, /lang off leaves the one held, /lang <code> joins one - the choice is
         // kept (`chatLang`) and the frame moves the tab; the Language tab comes to the front with it
@@ -22465,7 +22516,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const inSiegeRoom = () => !!online?.room && online.room === siegeSession?.room();
   /** AUDIT-SEATS G5: the cast engine's word on a spell here (hostMagic.js spellRefusal) - a siege's wards. */
   const battleSpellRefusal = (sp) => (inSiegeRoom() && siegeSpellBarred(sp) ? SIEGE_SPELL_BARRED_TEXT : null);
-  registerLevitateWard(() => inSiegeRoom() || modes?.sdRealmSlot?.() != null);   // AUDIT-SEATS G5: a Levitate already running lifts nothing in a siege's room; SD7b: nor in the Shattered Hour - its Steps are walked, not flown
+  registerLevitateWard(() => inSiegeRoom() || madeRuleHere('levitate') === 'banned');   // AUDIT-SEATS G5: a Levitate already running lifts nothing in a siege's room; SD7b: nor in the Shattered Hour - its Steps are walked, not flown; EG-PLAY: nor in an Elite Breach - its spans are walked, its void is real (EG-H2: the made level's law, OR'd into the ONE ward - Elite-Gates.md section 10.7)
   /** AUDIT-SEATS G4 (Seats-Arc 6.6, 19: "a free camera (WASD, the mouse, the pad's sticks); nothing they do reaches the
    *  fight"): whether I watch a battle - a siege or a Royal Tourney, on a spectator's pass - from its own room. */
   const spectatingHere = () => {
@@ -23738,6 +23789,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   /** CHAP2b (Chapters-Arc 3.3, 4): a receipt the service credited to the character's chapters moved its Roll on the
    *  service - the tab asks the Roll's word at once (npcRollTracker.js refresh) and the guilds' memory is said. */
+  /** EG-PLAY: a claim's answer that rolled for a Weir Key (`weir` - server-account/src/eg.js rollWeirKey): the pack restacked to
+   *  the account's balance, a find said. */
+  const weirHeard = (/** @type {any} */ a) => {
+    const w = a?.ok ? a.data?.weir : null;
+    if (w && Number.isSafeInteger(w.keys)) {
+      egClient?.restack(w.keys);
+      if (w.found) { chatNotice("You find a Weir Key - one of the Spire's portal keys. Use it to open an Elite Breach."); egClient?.beat('key'); }   // EG-G1: the Rare chime (section 27.5)
+    }
+    return a;
+  };
   const rollHeard = (/** @type {any} */ a) => {
     const c = a?.ok ? a.data?.chapters : null;
     if (c?.counted) {
@@ -23747,6 +23808,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const line = hallRememberLine((c.credited ?? []).map((x) => x.f), merit);
       if (line) chatNotice(line);
     }
+    weirHeard(a);   // EG-PLAY: and the Weir Key a gate's claim rolled
     return a;
   };
   /** AUDIT CHAP3 C3: a kept receipt's claim, offered as the page comes up, waits for the gate's scan - its region is the
@@ -23885,7 +23947,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  online alone; offline the host hands none, and the lamp says the title is an account's. */
   const _accountLamp = params.has('online') ? accountLamp({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
   const sdClaims = params.has('online') ? createSdClaims({
-    claim: _accountSds.claim,
+    claim: (r) => _accountSds.claim(r).then(weirHeard),   // EG-PLAY: and the Weir Key the claim rolled
     me: _accountSds.me,
     nowS: relayNowS,
     store: _spoilsStore,
@@ -24093,8 +24155,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  are one moment on every screen in the court. AUDIT WB D7: ANCHORED ON THE WALL CLOCK - the page's clock is carried
    *  from an anchor on Date.now() and the relay's offset, taken again when the two part by more than a second (a sleep
    *  stops the page's clock and not the wall's, and timeOrigin + now() drifted from every other screen after one; an
-   *  offset that moved). Between anchors it runs on the page's clock alone, so it never steps back. */
-  const deadlandsSeconds = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + _sharedOffsetMs });
+   *  offset that moved). Between anchors it runs on the page's clock alone, so it never steps back.
+   *  EG-ZD (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 10.8, EG-H1's host flag): IN A BREACH, THE CORRECTED CLOCK -
+   *  the spans move on it (the dungeon arm's `sdClock` reads this), so every member sees every platform where the relay
+   *  has it: the breach's client's anchored seconds (scenes/eliteGates/egClient.js spanSeconds - the clock its fight already runs
+   *  on), the welcome's offset everywhere else and before the room has answered a ping. */
+  const deadlandsShared = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + _sharedOffsetMs });
+  const deadlandsSeconds = () => egClient?.spanSeconds() ?? deadlandsShared();
   /** WB6b: the court's air (scenes/deadlandsAir.js) - the wind, the fire, the thunder, the beasts; the braziers' fire
    *  beds in the dungeon's frame, where their loops burn. */
   const deadlandsAir = createDeadlandsAir(audio);
@@ -24161,6 +24228,198 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     yaw: () => cam.yaw,   // WB13a: the way out of a blow on me, turned as the screen is
     shake: (amount) => betterAmbience.weaponKick(amount),   // WB13d: his landings near me felt, under the player's own maxShake
   }) : null;
+  // EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH ON THIS SCREEN (scenes/eliteGates/egClient.js) -
+  // the Weir Key's use and the open, the hub's call and `/breach`, the step into a circle, the halls (the pull, the door,
+  // a new circle), the fight (scenes/eliteGates/egFight.js - the gate's own pieces about the hall), the Redoubt, the way out, the
+  // tracker and the receipts. Online only.
+  const _accountEg = accountEg({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  const egNow = () => egClient?.breachNow() ?? Date.now() + _sharedOffsetMs;   // EG-ZD (section 10.8): in a breach the corrected clock (scenes/eliteGates/egClient.js breachNow), the welcome's offset elsewhere
+  /** A line on the screen for its length (the court's), and a saving throw against a blow's element (the gate's). */
+  const egMid = (text) => setMidScreenText(text, courtSaySeconds(text));
+  const egSave = (e, el = 'fire') => { const w = GATE_SAVES[el] ?? GATE_SAVES.fire; return savingThrow(w[0], w[1], e); };
+  /** Where the member answers from: the climate and region of the pixel underfoot (the circle's sky and its name). */
+  const egSiteNow = () => {
+    const px = playerTravelPixel(), ci = maps.getClimateIndex(px.x, px.y), climateType = getWorldClimateSettings(ci).climateType;
+    return { climateBase: climateType, season: INTERIOR_SEASON, climate: { worldClimate: ci, climateType }, regionIndex: _questRegionIndex(), regionName: '' };
+  };
+  /** The open's site on the wire (net/wire.js egSite): the pixel, the feet, the facing. */
+  const egWireNow = () => {
+    const px = playerTravelPixel(), p = player.feetAt(), yaw = Math.atan2(Math.sin(cam.yaw), Math.cos(cam.yaw));
+    return Number.isSafeInteger(px?.x) && Number.isSafeInteger(px?.y) ? { px: px.x, py: px.y, x: p[0], y: p[1], z: p[2], yaw } : null;
+  };
+  /** Stood outside where a circle was entered from (the mode machine's own landing - exitDungeonNow's). */
+  function egLandAt(l) {
+    if (!l?.pos || !l?.normal) return false;
+    player.spawn(l.pos[0], repositionFeetY(player.collider.heightAt(l.pos[0], l.pos[2]), l.pos[1]), l.pos[2]);
+    cam.yaw = Math.atan2(l.normal[0], l.normal[2]); cam.pitch = 0;
+    cam.pos = player.eyeAt();
+    return true;
+  }
+  // ── EG-F (bible/11-Multiplayer/Elite-Gates.md sections 5, 6.3 and 6.4): THE ARCH AND THE CALL ────────────────────────
+  // the arch pool (scenes/eliteGates/egArch.js - drawn through the gate's pool below), the call's portal and its prompt
+  // (scenes/eliteGates/egCall.js), the key's facts for its refusals, and the start window (ui/eliteGates/egStartWindow.js - DFU's list picker,
+  // the boat variant picker's way, and DFU's YesNo box). Online alone, as the breach is.
+  const egFeet = () => (walkMode && playerSpawned && (modes?.mode ?? 'exterior') === 'exterior' ? player.feetAt() : null);
+  const egProbes = () => ({ ground: (o, d, m) => collider.surfaceHit(o, d, m)?.dist, wall: (o, d, m) => collider.raycastHit(o, d, m)?.dist });
+  const egArchPool = params.has('online') ? createEgArchPool({
+    renderer, collider: () => collider, pixelTranslation: (px, py) => state.pixelTranslation(px, py), heightAt: (x, z) => heightAt(x, z), now: egNow,
+    feet: egFeet, me: () => _accountEg.me(), say: (text) => setMidScreenText(text), onStep: (b) => egClient?.archStep(b), landAt: (l) => egLandAt(l),
+    verifyKey: () => egClient?.relayKey() ?? Promise.resolve(null),
+  }) : null;
+  const _egCallPortal = params.has('online') ? createEgCallPortal({
+    renderer, audio, toScene: (p) => campToScene(p), toWire: (p) => campToWire(p), hold: () => portalHoldNow(),
+    groundAt: (s) => { const d = collider.surfaceHit([s[0], s[1] + PORTAL_REGROUND, s[2]], [0, -1, 0], PORTAL_REGROUND * 2)?.dist; return Number.isFinite(d) ? s[1] + PORTAL_REGROUND - d : null; },
+    onEnter: () => egClient?.portalEntered(), onRefused: (hold) => townTalk.say(PORTAL_HOLD_TEXT[hold]),
+  }) : null;
+  if (_egCallPortal) portalGates.drawAlso(() => _egCallPortal.batches());   // EG-F: the call's portal drawn with the Portal Stone's, on the flats' axis
+  const egCallPrompt = params.has('online') ? createEgCallPrompt({ onAnswer: () => egClient?.command(''), touch: isTouchDevice(), doc: document }) : null;
+  /** The key's facts (scenes/eliteGates/egArch.js egKeyRefusal): the Portal Stone's holds, the water, a boat, a location's footprint,
+   *  a Dagon's Breach near, and the arch's site where it would stand (null: no room - egArchPlace). */
+  const egKeyFacts = () => {
+    const f = egFeet(), px = playerTravelPixel(), g = gatePool?.place?.() ?? null;
+    const at = f ? egArchPlace(f, cam.yaw, egProbes()) : { refused: 'room' };
+    return {
+      hold: portalHoldNow(), water: !!player.isPlayerSwimming, aboard: !!(csaBoatUnderMe() || isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, px)),
+      within: _wasInLocationRect ? (_musicLoc?.name || 'this place') : null,
+      nearGate: !!(g && f && Math.hypot(g.origin[0] - f[0], g.origin[2] - f[2]) <= EG_ARCH_GATE_NEAR_M),
+      site: at.at && Number.isSafeInteger(px?.x) ? egArchSite(at.at, at.yaw, px.x, px.y, state.pixelTranslation(px.x, px.y)) : null,
+    };
+  };
+  /** EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW): THE BOARDS' ONE DOOR (ui/eliteGates/egBoardWindow.js createEgBoardDoor) -
+   *  `/breach board`, the Timers row's Elite entries and the start window all open the boards here, in the skin worn (the
+   *  enhanced panel, or the classic skin's DFU pickers on the mode's window slot), one at a time. */
+  const egBoardDoor = createEgBoardDoor({
+    open: (o) => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), listPickerReady: listPickerArtLoaded, runs: () => egRecapsKept(appStorage()), ...o }),   // AUDIT EG V (c, L7-19): and the last runs
+    slot: { top: () => modes?.topWindow?.() ?? null, mount: (w) => modes?.mountWindow?.(w), close: (w) => modes?.closeWindow?.(w) },
+  });
+  /** THE START WINDOW's three doors: DFU's list picker on the mode machine's window slot (the boat's variant picker's own
+   *  way - csaOpenListPicker), and DFU's YesNo box on the overlay. EG-ZM: and the boards' door (egBoardDoor). */
+  const egStartWindow = (o) => openEgStartWindow({
+    ...o,
+    board: (onClosed) => egBoardDoor(onClosed),
+    openList: (labels, onPick, onCancel) => {
+      if (!listPickerArtLoaded()) { Promise.resolve().then(onCancel); return null; }   // no list to ask with: nothing staked
+      const win = new ListPickerWindow({ items: labels, backdrop: 'none', onPick: (i) => onPick(i), onCancel: () => onCancel() });
+      if (modes?.mountWindow?.(win)) return win;
+      Promise.resolve().then(onCancel);
+      return null;
+    },
+    closeList: (win) => { if (win) modes?.closeWindow?.(win); },
+    ask: egStartAsk((w) => townTalk.showOverlay(w), (o) => new YesNoBoxWindow(o)),   // AUDIT EG III (lane4 #12): a box put out of its slot unanswered ends the window
+  });
+  const egClient = params.has('online') ? createEgClient({
+    modes: () => modes, online: () => online, hub: () => socialLink(), account: { ..._accountEg, claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }, now: egNow, entity: playerEntity, player, cam,   // EG-E1: a claim carries the claiming character (its guild's deed) and its Weir Key restacks
+    keyFacts: egKeyFacts, startWindow: egStartWindow, arches: egArchPool, callPortal: _egCallPortal, prompt: egCallPrompt, feet: egFeet, probes: egProbes,   // EG-F
+    party: () => (social?.party?.members ?? []).map((m) => ({ sub: m.acct, name: m.name, h: m.p?.h, hm: m.p?.hm })), windowUp: () => gamePaused(),   // EG-F: the start window's ticks; the prompt under a window; AUDIT EG V (c, L7-7): a witness's watched member's health, the party's pose
+    questDue: () => questTracker.views.some((v) => Number.isFinite(v.clockSeconds) && v.clockSeconds < EG_LAST_WORD_MIN * 60),   // EG-F: a quest falls due inside the last word
+    say: (text) => chatNotice(text), mid: (text) => egMid(text), veil: () => gateVeil,
+    site: egSiteNow, wire: egWireNow, landAt: egLandAt,
+    hurt: (n) => { if (playerEntity.health > 0) { hurtPlayer(playerEntity, n, { bypassShield: true, spare: () => {} }); flashPlayerDamage(n); } },   // the void is a setback, never a death
+    store: appStorage(), saved: () => saveSoon.changed(), hudHidden: () => gamePaused() || !!townTalk.hudHidden, renderer, audio,
+    fight: (link) => createEgFight({
+      renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, music, link, now: () => (egClient ? egClient.sharedNow() : egNow()), cam: () => cam.pos,   // EG-H1: the fight on the breach's corrected clock; EG-G2: the music for THE SPIRE MIX's duck
+      feet: () => (playerSpawned && modes?.egHallBreach?.() != null ? player.feetAt() : null), player: () => playerEntity,
+      save: (e, el) => egSave(e, el),   // the throw against a blow's element, the gate's
+      strike: (d, how) => modes?.dungeonCtx?.strikePlayer?.(d, how), say: (text) => egMid(text),
+      hudHidden: () => gamePaused() || !!townTalk.hudHidden,
+      sendHit: (h) => !!online?.sendEg?.('hit', h),
+      me: () => _accountEg.me(),   // EG-FULL: whose marks and tethers are mine
+      push: (dx, dz, m) => egClient?.push(dx, dz, m), hold: (ms) => egClient?.hold(ms), ring: (x, z, r, inside) => egClient?.ring(x, z, r, inside),   // EG-FULL: a blow's push, a cage, a challenge's ring
+      castBack: () => egClient?.castBack(),   // EG-FULL: a void zone's cost
+      peerAt: (sub) => egPeers().find((q) => q.sub === sub)?.pos ?? null,   // EG-FULL: a tether's far end on a companion
+    }),
+    peers: () => egPeers(),   // EG-FULL: the witness's eye follows a living companion
+    paid: (c, d) => egSpoilsPaid(c, d),   // EG-E: what a Redoubt paid - its spoils, its Marks and deed
+    redoubt: () => spireRedoubtTaken(),   // EG15: a Redoubt taken - every death save held to it recovers (Elite-Gates.md section 15)
+    board: () => egBoardDoor(),   // EG-E2: `/breach board` - EG-ZM: through the boards' one door
+    accountOf: (id) => social?.accountOfPeer?.(id) ?? null,   // EG-ZP (Elite-Gates.md section 15): a heal word's healer by account - its Lifeline (the company is my party, as egPeers reads it)
+  }) : null;
+  /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
+   *  accountOfPeer: the company is my party). */
+  function egPeers() {
+    const out = [];
+    for (const [id, p] of online?.peers ?? []) {
+      const sub = social?.accountOfPeer?.(id) ?? null;
+      if (sub && p?.shown && Number.isFinite(p.shown.x)) out.push({ sub, pos: onlineToScene(p.shown) });
+    }
+    return out;
+  }
+  registerPlayerDeathSave('eg-fall', () => !!egClient?.fallSave());   // EG-FULL (section 16.5): a death in the Spire is a fall - the witness, not the death screen
+  registerMadeLevelHere(() => modes?.madeLevel?.() ?? null, () => !!egClient?.onTraverse?.());   // EG-H2 (Elite-Gates.md section 24): where the player stands, for the made level's doors with no host in reach (an item, a technique, the motor) - and the Spire's traversal ground (section 10.7)
+  registerJumpForgiveness(() => madeRuleHere('jumpBuffer'), () => madeRuleHere('latePress'));   // EG-H2 (section 10.8): THE FORGIVENESS - the Spire's jump buffer and late press; elsewhere none, DFU's motor
+  registerPlayerDamageMod('eg-witness', (e, d) => (egClient?.witnessing() ? 0 : d));   // EG-FULL: no blow reaches a witness
+  registerSpirePotionLaw(egClient ? { allowed: () => egClient.potionAllowed(), used: () => egClient.potionUsed() } : null);   // EG-FULL: THE POTION LAW's count
+  registerSpireFooting(egClient ? () => egClient.footing() : null);   // EG-FULL LAYER TWO: Iron Footing against the spans' Gust and Pendulum
+  registerSpireWake(egClient ? () => { const E = egClient.state(); return { h: E.h | 0, hw: E.hw || 0 }; } : null);   // EG-FULL LAYER TWO: a Falling Wall falls from its hall's wake
+  registerSpireObjs(egClient ? () => egClient.objs() : null);   // EG-FULL LAYER THREE: Grath's islands fall, the false walls stand, as the relay says
+  registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
+  // EG15 (Elite-Gates.md sections 15 and 19, THE BATTLEMAGE'S PANOPLY): the Reprieve's half for the party mates within its
+  // reach (each a Shield at ALLY-CAST's door - the receiver's own client applies it), and THE SPIRE'S RECOVERY - a death
+  // save spent in a breach held to that breach's next Redoubt (scenes/eliteGates/egClient.js `redoubt`)
+  setSetPowersAllies({
+    near: (m) => { const f = player.feetAt(); return (allyMarksNear() ?? []).filter((p) => p.mate && p.feet && Math.hypot(p.feet[0] - f[0], p.feet[1] - f[1], p.feet[2] - f[2]) <= m); },
+    shield: (a, sp) => castAtAllyDoor(a.id, allyCastFrame(sp, effectiveLevel(playerEntity), a.id)),
+  });
+  setSpireRecovery(() => modes?.egHallBreach?.() ?? null);
+  // EG-E3 (Elite-Gates.md section 5, THE DUNGEON'S FIND): an elite foe's death in a dungeon online asks the account service
+  // for a Weir Key - the owner for its own kill, the striking joiner for its (scenes/dungeonContext.js egFindStruck); a yes
+  // throws the key from the body and restacks the pack (systems/eliteGates/egFind.js)
+  if (params.has('online')) registerEgFind({
+    ask: (t) => _accountEg.find(t), selfId: () => online?.id ?? null, online: () => !!online && online.status === 'open', say: (l) => chatNotice(l),
+    tierNow: () => (_mode() === 'dungeon' && modes?.dungeonLocation ? dungeonTier(modes?.dungeonLocation) : null),
+    throwKey: (e, n) => { egFindThrow(e, playerEntity.items ?? (playerEntity.items = []), n); saveSoon.changed(); },
+  });
+  egClient?.claimKeys();   // the Weir Key's use is this screen's open
+  let _egSpoilsIn = false;
+  const egFrame = () => {
+    try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); }
+    // EG-E: a Redoubt's spoils in the Hour's pool (egSpoilsPaid) - flying in the Spire; what the floor still holds gathered
+    // as I leave it, the Hour's own way (sdSpoilsBurst.leave)
+    const inSpire = modes?.egHallBreach?.() != null;
+    try { if (inSpire) sdSpoilsPool?.frame(); else if (_egSpoilsIn) { sdSpoilsPool?.gather(); saveSoon.changed(); } } catch (e) { console.warn('[eg] spoils', e?.message ?? e); }
+    _egSpoilsIn = inSpire;
+  };
+  /** EG-E (Elite-Gates.md section 19): WHAT A REDOUBT PAID - the account service's word on my Redoubt receipt (scenes/
+   *  egClient.js `paid`): its Marks and the guild's deed as a haul card; its spoils (systems/eliteGates/egSpoils.js - rolled on the
+   *  seed the claim answered - AUDIT EG V: the receipt's mixed with the service's own draw - at the level the breach
+   *  admitted, the lord's arm and card by its key, the Panoply's pity as the service forced it, and the Deadlands Embers it
+   *  paid), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
+   *  Hour's pool (the Spire is a dungeon's frame as the Hour is, and the two are never stood in at once), once a receipt
+   *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too.
+   *  AUDIT EG III (section 16.3): an END's claim (`q` 'x') opens its Reliquaries - those the service answered (`rl`), each a
+   *  roll at its Redoubt's depth off the seed the end's claim answered (systems/eliteGates/egSpoils.js egReliquaryGrant), straight into the pack
+   *  through the same pool, once an end and account. */
+  function egSpoilsPaid(c, d) {
+    if (c?.q === 'x') {
+      const g = egReliquaryGrant(c, d, spoilsLevel(playerEntity.level ?? 1, c.l));
+      if (g) spoilsLock(() => sdSpoilsPool.grant({ day: g.day, acct: c.s, roll: g.roll, text: g.text })).catch((e) => console.warn('[eg] reliquaries', e?.message ?? e));
+      return;
+    }
+    if (!c || !Number.isSafeInteger(c.c) || !Number.isSafeInteger(c.w)) return;
+    if (d?.marks || d?.deed) { showHaul(claimHauls(d, 'eg')); for (const line of marksBook?.claimLines(d, 'eg') ?? []) chatNotice(line); }
+    const guest = d?.why === 'guest', goldOnly = guest || d?.paid === false;
+    const level = spoilsLevel(playerEntity.level ?? 1, c.l);
+    // AUDIT EG V (lane8 L8-2, L8-5; section 19): the embers the claim paid in the spoils, and the seed the claim answered
+    const o = { lord: typeof c.lk === 'string' ? c.lk : '', pity: Array.isArray(d?.pity) ? d.pity.filter((p) => p === 0 || p === 1) : [], goldOnly, embers: Number.isSafeInteger(d?.embers) ? d.embers : 0 };
+    const seed = egSpoilsSeedOf(c, d), day = egSpoilsDay(c.b, c.w), roll = () => egSpoilsList(seed, level, c.w, o);
+    const text = guest ? EG_SPOILS_TEXT.guest : goldOnly ? EG_SPOILS_TEXT.goldOnly(c.w) : EG_SPOILS_TEXT.granted(c.w);
+    const at = egClient?.beaconAt?.(c.h) ?? null;
+    if (at) {
+      const f = player.feetAt(), bearing = Math.atan2(f[0] - at.at[0], f[2] - at.at[2]);
+      if (sdSpoilsPool.spew({ day, seed, level, at: at.at, bearing, acct: c.s, keep: at.keep, roll })) chatNotice(goldOnly ? text : EG_SPOILS_TEXT.spilled);
+      return;
+    }
+    spoilsLock(() => sdSpoilsPool.grant({ day, acct: c.s, roll, text })).catch((e) => console.warn('[eg] spoils', e?.message ?? e));
+  }
+  /** The host frame's breach lines, out of it (PERF-V8): with no online frame the breach's fight and tracker put away (EG-H2:
+   *  the court's law in a breach is the made level's - the frame's one setCourtRules). */
+  const egCourtFrame = () => {
+    if (!(onlineOn && playerSpawned)) egClient?.away();
+  };
+  /** The witness's eye (section 16.5), behind a living companion - the host frame's view, moved when it is. */
+  const egWitnessEye = (/** @type {{ eye: any }} */ v, dt = 0, cast = null) => { if (egClient?.witnessing()) { const c = { pos: v.eye }; if (egClient.witnessEye(c, cam.yaw, { dt, cast })) v.eye = c.pos; } };   // AUDIT EG III (lane6 #1): the frame's dt and the host's sphere cast - damped and colliding (section 16.5)
+  /** AUDIT EG III (lane4 #10): the Spire's lights a frame - one list, refilled. */
+  const _egLightList = [], NO_EG_LIGHTS = Object.freeze([]);
   let _omenClockAt = null;   // AUDIT WB C4: when the relay's clock was first read this session (the omen's fallback wait)
   const gateOmen = params.has('online') ? createGateOmen({
     now: () => Date.now() + _sharedOffsetMs,
@@ -24185,6 +24444,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  the relay's clock as the omen reads it, the last offset kept through a reconnect. DISCORD-GATES: the site kept
    *  beside it, for the hub's word below. */
   let _gateClearOf = { day: null, site: null, clear: null };
+  let _gateClearSetOf = { g: null, a: null, s: null };   // EG-F: the set last made, and what it was made of
   if (gateOmen) _gateClearNow = () => {
     if (!_gateScan) return null;
     const day = gateAt(Date.now() + _sharedOffsetMs).day;
@@ -24193,7 +24453,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       try { site = findGateSite(day, _gateScan); } catch (e) { console.warn('[gate] no clearing', e?.message ?? e); }
       _gateClearOf = { day, site, clear: gateClearFor(site) };
     }
-    return _gateClearOf.clear;
+    // EG-F: the gate's clearing and every standing arch's, one set (world/gate/gateClearance.js gateClearSet) - made again only when either moves
+    const ac = egClient?.archClears() ?? null;
+    if (_gateClearOf.clear !== _gateClearSetOf.g || ac !== _gateClearSetOf.a) _gateClearSetOf = { g: _gateClearOf.clear, a: ac, s: gateClearSet(_gateClearOf.clear, ac ?? []) };
+    return _gateClearSetOf.s;
   };
   /** DISCORD-GATES: THIS GAME'S WORD OF WHERE THE GATE STANDS, to the hub (net/online.js sendGateSite, once a socket and
    *  day): the clearing's own site - the gate the clock is about, from its scan's end on, ~85 real minutes before its
@@ -24413,12 +24676,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  death); where I stand held a few metres past each change (A10, sdScorePlace's `was`). */
   let _hourScoreHeld = false, _hourScoreMade = false, _hourPlace = null;
   const _hourScore = createHourScore();
+  const _spireScore = createSpireScoreHost({ music, now: () => Date.now() + _sharedOffsetMs });   // EG-G2: the Spire's score holds the music before the Hour's (systems/eliteGates/egScore.js)
   const sdScoreWhere = () => {
     if ((modes?.mode ?? 'exterior') !== 'dungeon') return (_hourPlace = null);
     if (modes?.sdRealmSlot?.() != null) { const [x, , z] = sdDungeonToRealm(player.pos[0], player.pos[1], player.pos[2]); return (_hourPlace = sdScorePlace(x, z, _hourPlace)); }
     return (_hourPlace = modes?.dungeonLocation?.superTier ? 'hollow' : null);
   };
   const hourScoreFrame = () => {
+    if (_spireScore.frame(egClient?.scoreView?.() ?? null)) return true;   // EG-G2: in an Elite Breach the Spire's score is the music
     const place = sdScoreWhere();
     if (place == null) {
       if (_hourScoreHeld && (modes?.stepping || modes?.transitioning)) return true;   // A1: the world moving under the veil
@@ -24497,6 +24762,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ready: () => !!online?.gateOk,   // WB3b: a relay that runs a gate's boss room (net/wire.js relaySupportsGate)
     landBefore: (g) => landBeforeGate(g),   // AUDIT WBX W1: a player sealed in the stone as it stands whole, set down before the gate
     enter: (g) => { modes?.enterGateArena?.(g); },   // WB3b: into the Burning Court (scenes/worldModes.js)
+    arches: egArchPool,   // EG-F: the Elite Breaches' arches, stood, drawn and pressed beside the gate
   }) : null;
   /** WB12d: THE FAITHFUL'S RITE (scenes/riteHost.js) - online alone, as the gate is: each breach's circle from the omen to
    *  its collapse, its smoke until the breach opens, its faithful shared by the World of Daggerfall camps' law (one site,
@@ -24959,7 +25225,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   }) : null;
   /** SD9e: the floor a press, a plaque and the ray ask of - the Hour's pool in the Hour, the court's anywhere else (the two
    *  are never stood in at once). */
-  const floorPool = () => (modes?.sdRealmSlot?.() != null ? sdSpoilsPool : spoilsPool);
+  const floorPool = () => (modes?.sdRealmSlot?.() != null || modes?.egHallBreach?.() != null ? sdSpoilsPool : spoilsPool);   // EG-E: the Spire's Redoubts throw into the Hour's pool
   /** INT11/INT12: THE RELAY'S COUNT HAS FALLEN ME (`bd` - a gate's court's or the Hour's word, once its BOSS_BODY line
    *  enforces; net/bossBody.js): a death, the relay's word, whatever this machine's health says - the zone referee's own
    *  door (forcePlayerDeath: no death save, no AvoidDeath). Heard in the fight it came from alone (`inFight`). */
@@ -25209,8 +25475,36 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       bought: () => brokerBought(brokerDay(_brokerNow())), buy: brokerBuy,
       wearer: playerEntity, nameOf: (item) => itemLongName(item),
       insignia: insigniaRows, insigniaLoad, buyInsignia: insigniaBuy, wearInsignia: insigniaWear, insigniaBusy: () => _insignia.busy,   // WB9g
+      panoply: _accountEg ? panoplyDeps : null,   // EG-E1: THE BATTLEMAGE'S PANOPLY, once a week (online)
     });
     if (win) townTalk.showOverlay(win);
+  };
+  // EG-E1 (Elite-Gates.md section 19, THE SINK): THE BATTLEMAGE'S PANOPLY AT THE BROKER - one piece of the buyer's choosing,
+  // once an account an arena week, for EG_SINK_EMBERS embers out of the insignia's purse (server-account/src/egEconomy.js
+  // egSink): the pack's embers held first and given back on a refusal, a lost answer asked after through the week's sale
+  // (`/v1/eg/keys`' `sink`), the piece minted by its id (systems/aetheric.js panoplyPieceById) - never `stonesPaid`, never
+  // the day's stock (systems/sigil/sigilBroker.js panoplySale).
+  let _panoplySink = null;
+  const panoplyDeps = {
+    rows: () => panoplyRows(_panoplySink),
+    load: async () => { try { const a = await _accountEg.keys(); if (a?.ok) _panoplySink = a.data?.sink ?? null; } catch { /* the window says what it held */ } },
+    busy: () => _insignia.busy,
+    buy: async (id) => {
+      if (_insignia.busy) return { ok: false, text: 'The Broker is busy.' };
+      _insignia.busy = true;
+      try {
+        playerEntity.items = playerEntity.items || [];
+        const r = await panoplySale(id, {
+          items: playerEntity.items, buy: (p) => _accountEg.sink(p), mint: (p) => panoplyPieceById(p), save: () => saveSoon.changed(),
+          held: async (p) => { const a = await _accountEg.keys(); return a?.ok && a.data?.sink?.piece === p ? a.data.sink : null; },
+        });
+        if (!r.ok) return { ok: false, text: r.error === 'stones' ? `You need ${stonesText(EG_SINK_EMBERS)}.` : accountRefusalText(r.error) };
+        _panoplySink = { week: r.data?.week ?? _panoplySink?.week ?? null, piece: id };
+        audio.playOneShot(SOUND.GoldPieces, 1);
+        surfacePlayer();
+        return { ok: true, text: `Bought: ${PANOPLY_NAMES[id] ?? id}, for ${stonesText(EG_SINK_EMBERS)}.` };
+      } catch { return { ok: false, text: accountRefusalText('offline') }; } finally { _insignia.busy = false; }
+    },
   };
   const sigilBroker = gateOmen ? createSigilBroker({
     renderer, getTexture, uploadRecordFrame, collider: () => collider,
@@ -25653,6 +25947,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!full) return;
     const pg = portalGates.wireRecord(walkMode && playerSpawned ? player.feetAt() : cam.pos);   // the scene's metres (AUDIT PORTAL1 O3: the wire's units made 256 a reach of 6.4 m)
     if (pg) frame.pg = pg;
+    const ea = egClient?.archWord(walkMode && playerSpawned ? player.feetAt() : cam.pos);   // EG-F (section 23): my Elite arch for my cell - the hub's signed call's arch fields, while I stand near it
+    if (ea) frame.ea = ea;
   };
   /** DUEL1: THE RING I DUEL IN, FOR THE ONLOOKERS, on my foes frame (validRingRecord's shape): on every FULL frame while it
    *  stands (a joiner learns it within FOES_FULL_MS) and once more, as null, when it comes down; a frame without it leaves
@@ -28566,6 +28862,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     gateFrame();   // WB1: the Oblivion Gate's omen - its line when a new moment comes, before the dead return (the omen speaks to the dead too)
     serpentFrame();   // SERPENT1: the sea serpent's sighting (to the dead too), and on the street its fight and its bar
     sdFrame();   // SD2b: the Hollow stood or taken down, its find, its lines - SD2d: in every mode, so its end reaches a player inside it
+    egFrame();   // EG-PLAY: an Elite Breach - its call, its halls, its fight, its tracker, its receipts - in every mode
     renownTracker?.tick();   // RENOWN1: what this character earned, to the account service when a report is due
     rollTracker?.tick();   // CHAP1: this character's standing with the guilds - read once, then what moved claimed when due
     peerMenuFrame();   // PEERMENU1: the bind's hold timer
@@ -28615,7 +28912,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // caster's pose) as new, and rose the instant it fell
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
-        const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`); REZ-BLOODLINE AUDIT R1: or the call the realm let go, the caster's pose done carrying it
+        const rez = social?.acct && madeRuleHere('resurrect') !== 'refused' ? rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;   // SD-ONELIFE: no Resurrect in the Hour - one life; EG-H2: nor in the Spire (the made level's law) (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`); REZ-BLOODLINE AUDIT R1: or the call the realm let go, the caster's pose done carrying it
         if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16b): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise); AUDIT R1: the realm asked first - down until it answers
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
@@ -28632,6 +28929,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (overworld) key = siegeSession?.room() ?? royalSession?.room() ?? roomKeyFor({ host: 'world', mode: 'exterior', mapPixel: mp });   // SEAT2a part four: a battle entered stands in its own room (CROWN1 part two: a Royal Tourney too)
     else if (modes?.roomIdentity?.()?.kind === 'gate') key = gateRoomKey(modes?.roomIdentity?.()?.day);   // WB3b: the court's room is its gate's own
     else if (modes?.roomIdentity?.()?.kind === 'sd') key = sdRoomKey(modes?.roomIdentity?.()?.s);   // SD5a: the Hour's room is the relay's realm (SD3's _sdAdmit asks the Rift's law of its hello)
+    else if (modes?.roomIdentity?.()?.kind === 'eg') key = egRoomKey(modes?.roomIdentity?.()?.b);   // EG-PLAY: an Elite Breach's room is the relay's breach (its hello asks the company's law)
     else if (modes?.roomIdentity?.()?.kind === 'arena') key = arenaFloorRoomOf(modes?.roomIdentity?.()?.o);   // ARENA4: a relay's bout's floor is its room (ARENA4b: the hour's exhibition's, `x<hour>`, its own)
     else {
       const ident = modes?.roomIdentity?.();
@@ -28832,7 +29130,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     for (const d of visiblePeers) {
       const look = peerDraw(d.shown?.cv | 0, veilOn, _veilT, d.id);
       if (look.kind === 'hidden') { _hiddenPeers.add(d.id); continue; }   // INVIS-NET: the classic lane - the concealed stand nowhere here
-      if (look.kind === 'conceal') _veils.set(d.id, look.visual);
+      const veil = look.kind === 'conceal' ? look.visual : egClient?.allyVeil(social?.accountOfPeer?.(d.id), d.shown, onlineToScene) ?? null; if (veil) _veils.set(d.id, veil);   // AUDIT EG V (h; Elite-Gates.md section 8.2): an ally on the Spire's traversal ground at 60% (scenes/eliteGates/egClient.js allyVeil)
       seen.push(d);
     }
     peerCandlesFrame(seen, dt);   // PEERLIGHT2: the others' Light spells - candle and light, in the live mode's engine; INVIS-NET x PEERLIGHT2 (the merge): hung only before a player drawn here, so the classic lane's concealed carry no candle to give them away
@@ -28928,6 +29226,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function auraFrame(seen) {
     _auraWearers.length = 0;
     if (!online || travelView?.active) return;
+    if (egClient?.quiet?.()) return;   // EG-E2 (Elite-Gates.md section 25.4, THE QUIET COMPANY): no cosmetic aura during a Spire's trial
     const t = performance.now() / 1000;
     const mine = ownAura(); if (_auraHeard !== undefined && mine !== _auraHeard && online.rehello?.()) _auraHeard = mine;   // the service's last word on my own - a mint's, a wear's from any door; AURA-LIVE: one the room's token did not say (a wear since) is said again, so the room sees it now
     if (mine && playerSpawned) {
@@ -29389,6 +29688,21 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     sdSay: (t, rank) => sdSay(t, rank),   // AUDIT SD II (SD11d): the Hour's voice, for the hall and the Rift
     sdHallWord: () => sdHallWord(),   // SD6c: the realm's latest word on the hall, for the hall's set
     sdCastBack: () => sdCastBack(),   // SD7b: the Unmoored Steps' void - stood back on the checkpoint, what it costs
+    egBoss: () => egClient?.fight()?.target() ?? null,   // EG-PLAY: a hall's champion or lord as a body my blows meet (the mode machine routes the gate's seam here in a hall)
+    egBossHit: (hit) => !!egClient?.fight()?.hit(hit),
+    egRifts: () => egClient?.fight()?.riftTargets() ?? null,   // EG-PLAY: a Rift-Yard's rifts
+    egRiftHit: (hit) => !!egClient?.fight()?.riftHit(hit),
+    egHost: () => egClient?.fight()?.hostTargets() ?? null,   // EG-PLAY: the legion
+    egHostHit: (hit) => !!egClient?.fight()?.hostHit(hit),
+    egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
+    egLights: () => { _egLightList.length = 0; for (const L of egClient?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); for (const L of sdSpoilsPool?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); return _egLightList; },   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils' - AUDIT EG III (lane4 #10): one list refilled a frame
+    drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
+    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, egHallFog(modes?.egHallCircle?.()).color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/eliteGates/egSkyPass.js) - the band's void, the Spire's underside
+    egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
+    egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
+    egWitness: () => !!egClient?.witnessing(),   // AUDIT EG III (lane4 #1, lane6 #1): a witness's body, held under the hall - the spans never cast it back, the dither pass tries nothing for it
+    egWitnessEye: (v, dt, cast) => egWitnessEye(v, dt, cast),   // AUDIT EG III (lane6 #1): THE WITNESS VIEW's eye and THE FALL's sink in the dungeon arm - the Spire's frame - damped and colliding (section 16.5)
+    egGateOpen: (h) => !!egClient?.gateOpen(h),   // EG-PLAY: a Rampart's portcullis, stood or sunk
     sdFight: () => sdFightLink,   // SD8c: the Last Moment's fight as the page holds it, for the arena's set
     sdFightIn: () => !!online?.sendSdIn?.(playerEntity.level),   // SD8c: my `in` - my level, my game's brain
     sdBlow: (k, f) => !!online?.sendSdBlow?.(k, f),   // SD8c: a blow of mine on the Remnant, an Echo or a Heart, out to the realm
@@ -30210,7 +30524,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       });
     };
   }
-  window.__readyRanged = () => { const sp = rangedDamageSpells(spellsByIndex).map((x) => [calculateCastCost(x, playerEntity).sp, x]).sort((a, b) => a[0] - b[0])[0]?.[1]; magic.setReadied(sp); return sp ? `${sp.name}:${calculateCastCost(sp, playerEntity).sp}` : null; };   // M5: no classic starting set carries a missile spell - ready the cheapest flier for the flight leg
+  if (shotMode) window.__readyRanged = () => { const sp = rangedDamageSpells(spellsByIndex).map((x) => [calculateCastCost(x, playerEntity).sp, x]).sort((a, b) => a[0] - b[0])[0]?.[1]; magic.setReadied(sp); return sp ? `${sp.name}:${calculateCastCost(sp, playerEntity).sp}` : null; };   // M5: no classic starting set carries a missile spell - ready the cheapest flier for the flight leg (tools/castProbe.mjs); AUDIT ANTICHEAT A2: behind the shot gate, as exterior.js's twin always was
 
   const ambience = new AmbientEffects(EXTERIOR_AMBIENT_WAITS);   // A3
   // DS1: AmbientEffectsPlayer.OnPlayEffect -> Dynamic Skies'
@@ -32321,8 +32635,8 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     sdAirFrame();   // SD14b: and the Hour's, the same way
     if (onlineOn && playerSpawned && (seatOut() || townTalk.overlay instanceof DeathScreen || modes?.deathUp?.())) { siegeHud?.hide(); siegeNpcs?.leave(); }   // AUDIT SEATS-2 C4: the dead and a tab out of the seat draw no battle - the online frame returns before its tick
     arenaFrame(dt);   // ARENA2: the bout on the city's floor or the instance's - before the modal return, so the instance's runs too
-    setCourtRules(modes?.gateArenaDay?.() != null);
-    if (modes?.sdRealmSlot?.() != null) setCourtRules(true);   // SD5a: nor in the Shattered Hour - the court's law (Super-Dungeons.md section 7)   // WBX6: the Deadlands keep no regeneration - set before any magic round of this frame, cleared the frame the court is gone
+    setCourtRules(madeRuleHere('regen') === 'off');   // SD5a: nor in the Shattered Hour - the court's law (Super-Dungeons.md section 7); EG-H2: nor in the Spire - one law, systems/madeLevel.js   // WBX6: the Deadlands keep no regeneration - set before any magic round of this frame, cleared the frame the court is gone
+    egCourtFrame();   // EG-PLAY: no online frame - the breach's fight and tracker put away; in an Elite Breach, the court's law (Elite-Gates.md section 16)
     // LOAD1: THE LOADING SCREEN STANDS WHILE THE WORLD IS MOVED - AUDIT 68 S22's one question (every mover's latch, the
     // teleport core's window, the abyss) and a door's build in this host's modes. Above the mode's return, so every
     // drawn frame asks; below the video's wait (AUDIT 39 #160's head, and AUDIT 28 W7's tick on the frame's dt) - a
@@ -33633,6 +33947,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     });
     if (yards?.flying()) { const c = { pos: mwv0.eye }; yards.cameraOverride(c); mwv0.eye = c.pos; }
     if (poiEditor?.active()) mwv0.eye = [cam.pos[0], cam.pos[1], cam.pos[2]];   // POI-3: the editor's eye is the frame's, never the body's   // HOME-YARD: the decorator's free eye, while a piece is placed outside (no travel view is up then)
+    egWitnessEye(mwv0);   // EG-FULL: the witness's eye, behind a living companion
     // TV1: THE TRAVEL VIEW'S EYE, when it is up - risen out of the body's own camera (`ownEye`, the one the frame would
     // draw) and blended back into it on the way down. Every reader below that asks where the picture is taken from
     // reads `mwv.eye`; the fog and the sun's cascades measure from the traveller's head (renderer.setFocus - a frame's:
@@ -35295,6 +35610,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           hudHidden: townTalk.hudHidden,   // MAP-FIELD2: the held map takes the vitals and the status icons with it, on both skins
           detected: _detected, playerXZ: [enchantFeet()[0], enchantFeet()[2]],
           gate: gateCompassMark(),   // WB1: the Oblivion Gate on the compass, while the player stands in its ring
+          arch: egClient?.archCompass() ?? null,   // EG-F: my company's Elite arch on the compass, while it stands
           serpent: serpentCompassMark(),   // SERPENT1: the sea serpent on the compass, while the player sails in its ring
           sd: sdCompassMark(),   // SD2c: a found Super dungeon on the compass, while the player stands within SD_COMPASS_M of it
           quest: vendorCompassMark() ?? townQuestCompassMark() ?? questCompassMark(),   // GUIDE5: the tracker's quest's place on the compass, on the street; HOME-VENDOR: a trader's waypoint first, while it is set; GUIDE8: the Town tier's building, in its town
