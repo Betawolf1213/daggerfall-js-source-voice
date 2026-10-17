@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, T0 } from '../accountDb.mjs';
+import { holdPieces } from '../realmSeat.mjs';   // INT19: a crafted piece lists out of its seller's realm record
 import { MARKET_LISTING_S, MARKET_KEEP_DAYS, saleTax, courierFee, roadPixels, courierSeconds } from '../../src/net/marketLaw.js';
 import { MARKS_MAX } from '../../src/net/marksLaw.js';
 import { xpForRank } from '../../src/net/professionLaw.js';
@@ -40,9 +41,14 @@ async function stand(extra = {}) {
   const fund = (who, marks) => raw.prepare('INSERT INTO marks (account, balance) VALUES (?, ?) ON CONFLICT (account) DO UPDATE SET balance = excluded.balance').run(who.id, marks);
   const line = (actor, r) => raw.prepare('SELECT kind, src_kind, dst_kind, amount FROM marks_ledger WHERE actor = ? AND rid = ?').get(actor, r);
   const burnt = (kind) => Number(raw.prepare('SELECT COALESCE(SUM(amount), 0) AS s FROM marks_ledger WHERE kind = ?').get(kind).s);
-  const piece = (who, provenance, recipe = 'longsword:mithril', { template = 120, material = 5, quality = 2 } = {}) => raw.prepare(`INSERT INTO products
-    (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at) VALUES (?, ?, ?, 'Silverthorn', ?, ?, ?, ?, 4242, 'p1.x', ?)`)
-    .run(provenance, who.id, who.character, recipe, template, material, quality, _now);
+  /** PIN MOVED (INT19, Integrity-Arc section 7): a crafted piece lists out of its seller's realm record - a realm
+   *  character's stands there too. */
+  const piece = (who, provenance, recipe = 'longsword:mithril', { template = 120, material = 5, quality = 2 } = {}) => {
+    raw.prepare(`INSERT INTO products
+      (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at) VALUES (?, ?, ?, 'Silverthorn', ?, ?, ?, ?, 4242, 'p1.x', ?)`)
+      .run(provenance, who.id, who.character, recipe, template, material, quality, _now);
+    if (who.at) holdPieces(s.env, who.character, [{ provenance, templateIndex: template, material, quality, wear: 900 }]);
+  };
   const owner = (p) => raw.prepare('SELECT owner, listed FROM products WHERE provenance = ?').get(p);
   const read = (who, view, extra = {}) => s.call('/v1/market/read', { character: who.character, region: DF, view, hubs: HUBS, ...extra }, who.secret);
   /** The order escrow the rows hold, against the ledger's escrow end (in less out) - one number, however the Marks moved. */
@@ -145,7 +151,7 @@ test('AUDIT 30 L6: the tax is taken on a listing\'s running total - two buys of 
 
 test('AUDIT 30 S5: a piece whose delivery waits is not listed; a delivery is collected only by the piece\'s owner - one id is never handed out twice', async () => {
   const s = await stand();
-  const mac = await s.registered('Mac'), ann = await s.registered('Ann'), bob = await s.registered('Bob');
+  const mac = await s.seated('Mac'), ann = await s.seated('Ann'), bob = await s.registered('Bob');   // PIN MOVED (INT19): the sellers realm characters
   for (const w of [mac, ann, bob]) s.fund(w, 100_000);
   const P = '0123456789abcdef';
   s.piece(mac, P);
@@ -214,7 +220,7 @@ test('AUDIT 30 S7: a settle reaches past the rows that cannot settle - twenty re
 
 test('AUDIT 30 S9 + L7 + L8: a listing binds only its kind\'s fields; an order for a material nothing yields is refused; a listing worth more than any balance is a bad price', async () => {
   const s = await stand();
-  const mac = await s.registered('Mac');
+  const mac = await s.seated('Mac');   // PIN MOVED (INT19): a realm character - its crafted piece lists out of its record
   s.fund(mac, MARKS_MAX);
   s.give(mac, 'ore:mithril', 'own', 100);
   const w = await s.call('/v1/market/list', list(mac, { wear: 500 }), mac.secret);

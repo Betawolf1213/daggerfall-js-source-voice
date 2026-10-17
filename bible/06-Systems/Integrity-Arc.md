@@ -10,7 +10,9 @@ merged (#730); lane 2 (PvP refereed everywhere, INT7-INT10) BUILT and AUDITED th
 (#737); lane 3 (boss fights, INT11-INT15) BUILT and AUDITED 2026-10-10 on its branch (section 6, 6b), measuring first.** **Lane 4
 (progression claims, INT16-INT18) BUILT 2026-10-17** (section 7): the seat from day one, the play-hour line measuring
 first, the legacy record held to its own law - on FOE-FORGE's pull request (the owner, asked: "Add to #987"; Mac's "A PR per
-lane" set aside for it). **FOE-FORGE (section 8) BUILT 2026-10-17**: a peer's foes held to what an honest owner streams.
+lane" set aside for it). **INT19 (section 4, lane 1's open item) BUILT 2026-10-17** on the same pull request: a crafted
+piece listed, auctioned or filled to a commission leaves its seller's realm record. **FOE-FORGE (section 8) BUILT
+2026-10-17**: a peer's foes held to what an honest owner streams.
 
 ## 1. What the report found, read against the code
 
@@ -184,7 +186,10 @@ realm trade refuses a side that gives with its own word. The routes that hand on
 its record untouched - a crafted piece listed, auctioned, filled to a commission or disenchanted, its Stores' units
 listed, sold into an order, deposited in a guild's Stores or supplied to a guild's writ - ask the same hold (`realm.js`
 realmHoldOf; the audit: a held character listed its craft for 900,000 gold), and a crafted piece's the hold of the realm
-character that MADE it, whatever character the act names (`realm.js` craftHoldOf, CRAFT-HOLD below). A held character with
+character that MADE it, whatever character the act names (`realm.js` craftHoldOf, CRAFT-HOLD below). INT19 (below) took
+the piece route out of that list: a listing, an auction and a commission's fill take the piece out of the acting realm
+record (`prepareRealmRecord`, outbound), so the record's own hold is the one asked, and craftHoldOf stands for a
+disenchant by a character with no record alone. A held character with
 pieces of its make at the account is not deleted (its row is where the hold lives). A piece listed or
 vaulted before the law read listings is read as it is bought or taken, and goes to nobody if the law refuses it.
 `test/server/int2_judge.test.js` sweeps the service's source: no `prepareRealmRecord` that takes goods or gold out without
@@ -432,10 +437,51 @@ start the deploy would refuse: the hull table moved to `systems/comeSailAway/com
 `test/server/accountdeploy.test.js` bundles the Worker with `import.meta.url` undefined and loads it); an O(n^2) walk on every
 route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own records re-aimed.
 
+### INT19 - a crafted piece handed on leaves its seller's record (2026-10-17, `server-account/src/craftedPiece.js`, migration 0127)
+
+Lane 1's open item (below, as it was written), built to its plan on lane 4's pull request (the owner: "Take care of the
+integrity arc"). The piece route decided on the `products` row alone and the client took the piece out of its pack only
+locally, so a tab that had lost its seat to a second device listed a piece the live record still held. Now each crafted
+act - a listing (`market.js` marketList `kind: 'piece'`), an auction (marketAuction) and a commission's fill (`writs.js`
+fulfilCommission) - asks where the record stands before any other word (`realmActFirst`; a character with no realm
+record lists, auctions and fills nothing: `realm-needed`), takes the piece out of it by its provenance in the act's own
+batch (`craftedPiece.js` takeCraftedPiece: loose in the pack, never worn or bound, as the trade's own law moves it, or
+among the home's furnishings; `prepareRealmRecord(..., { outbound: true })`, GUARDED by `mustChange` after the
+decision), and the listing's wear is the record's, never the tab's word. The words a piece another act holds is given
+(listed, on the road, standing in a home) are asked before the record moves, so they stay the ones AUDIT 31 H1 drops a
+save's copy on.
+
+- **Listed or auctioned, the market holds the piece's record** (`piece_escrow`, one row a provenance) and the ledger
+  holds it the market's (`escrow: true`, INT4). **Cancelled, expired, unsold or removed**, it comes back as that very
+  record - an `item` delivery its seller's record collects (`collectGood`), never minted at the pack (`pieceBackSteps`;
+  a cancel answers the delivery, no `piece`). A piece on its way back names no provenance of its own, so every "a
+  delivery of it waits" guard asks `pieceComingBack` too (the seller's deliveries alone). A piece listed before INT19
+  holds no row and comes back as it always did.
+- **Sold or won**, the buyer's piece is the craft's record's, minted at the pack as ever; the market's record of it and
+  the ledger's escrow row go with the sale (`pieceSoldSteps` - a piece the service hands out is no row, and a copy that
+  claims it is settled by the craft's record, as every crafted claim is).
+- **Filled to a commission**, it leaves the crafter's record handed on (no escrow - the fill is the sale), whole by the
+  record's own word (`commission-worn`).
+- **The client** hands the piece on through the realm act (`net/marketBook.js` realmPieceAct, `postGood`'s shape): the
+  save checkpointed and held, the piece out of the pack only inside the hold as the service is first asked, put back on
+  a refusal (never on one that says it is elsewhere), nothing kept on silence - the record is the truth, and a join reads
+  it. The writs' book is handed the market book's realm act (`scenes/world.js`, on its existing line). The lists and
+  fills a tab from before INT19 kept are still asked again by the settles with their own ids.
+- **CRAFT-HOLD's cost retired**: the acting record proves the piece its own, so a piece back with its account in another
+  character's record lists while its maker is held; craftHoldOf stands for a disenchant with no record alone.
+- **Left open:** a piece listed from the home's furnishings comes back into the pack (collectGood gives every record
+  back to the pack), and the decision guards the early words now answer first (its owner aside, which a staged pin
+  holds) are recorded equivalent in their mutant files - nothing can change them between the word and the decision
+  without moving the record, whose own step then fails the act whole.
+
+`test/server/int19_crafted_record.test.js` (8); `tools/mutants/int19.json`; the crafted-piece pins across the market's and
+the writs' files moved (PIN MOVED: sellers seated, the piece in the record first - `test/realmSeat.mjs` holdPieces - and
+the pins' own call naming the record for a crafted act, `test/accountDb.mjs`, as the client's realm act does).
+
 ### What lane 1 leaves open
 
-- **A crafted piece lists, auctions and fills a commission without its record (the exploit audit, 2026-10-11 - OPEN,
-  its plan below).** The piece route (`server-account/src/market.js` marketList `kind: 'piece'`, marketAuction,
+- ~~**A crafted piece lists, auctions and fills a commission without its record (the exploit audit, 2026-10-11 - OPEN,
+  its plan below).**~~ **CLOSED by INT19 (above, 2026-10-17), to this plan.** The piece route (`server-account/src/market.js` marketList `kind: 'piece'`, marketAuction,
   `writs.js` fulfilCommission) decides on the `products` row alone - never the seller's lease, its record or the ledger -
   and the client takes the piece out of its pack only locally (`net/marketBook.js` postPiece). So a tab that lost its
   seat to a second device (it sends no checkpoint, so it never hears `lease`) lists a piece the live record still holds:
@@ -1058,6 +1104,13 @@ six records on the lines this slice touched run again, all dead.
 
 ## Progress
 
+- **INT19 (2026-10-17, the owner: "Take care of the integrity arc"; on #987 with lane 4): lane 1's open item closed - a
+  crafted piece handed on leaves its seller's realm record.** Section 4, INT19. A listing, an auction and a commission's
+  fill ask the record first and take the piece out of it by provenance in their own batch (`server-account/src/
+  craftedPiece.js`); a listed or auctioned piece's record is held by the market (`piece_escrow`, migration 0127) and
+  comes back as itself, collected into the record; a sold one's goes with the sale. The client hands it on through the
+  realm act (`net/marketBook.js` realmPieceAct). CRAFT-HOLD's cost retired. `test/server/int19_crafted_record.test.js`
+  (8); `tools/mutants/int19.json`; the market's and the writs' crafted-piece pins moved.
 - **INT16-INT18 (2026-10-17, the owner: "Take care of the integrity arc"; asked, "Measure first" and "Add to #987"): lane 4,
   progression claims - built.** Section 7. Every progression claim (Renown, a raid's cleanse, a bounty or orc camp, the
   Watch, a silver find, a profession's XP) asked of the account's seated, unheld realm character before its route reads a

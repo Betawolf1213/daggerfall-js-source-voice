@@ -544,6 +544,7 @@ const PROF_STATUS = Object.freeze({
   'writ-gone': 409, 'writ-elsewhere': 409, 'writ-short': 409, 'writ-moved': 409, 'writ-budget': 409, 'guild-marks-short': 409,
   'guild-writs-max': 409, 'guild-stores-full': 409, 'guild-stores-short': 409, 'commissions-max': 409, 'commissions-crafter-max': 409,
   'commission-self': 409, 'commission-piece': 409, 'commission-not-made': 409, 'commission-worn': 409, 'market-listed': 409,
+  'market-piece-gone': 409,   // INT19: a crafted piece the crafter's record does not hold
   'market-standing': 409,
   'writ-own-guild': 403, 'guild-stores-mine': 403, 'market-uncollected': 409, 'commission-unyielded': 409, 'market-no-record': 409,   // AUDIT 31
   'commission-elsewhere': 409, 'market-unyielded': 409,
@@ -574,6 +575,7 @@ const MARKET_STATUS = Object.freeze({
   'stores-gold': 409, 'realm-gold': 409, lease: 409, 'realm-needed': 400, 'no-realm-character': 404, 'no-data': 404, 'no-storage': 503,
   // MARKET-ANY: a piece from the pack - the record's own piece, a crafted piece's own way
   'market-not-good': 409, 'market-good-gone': 409, 'market-piece-route': 409, 'market-goods-gold': 409,
+  'market-piece-gone': 409,   // INT19: a crafted piece its seller's record does not hold
   'market-rate': 429,
   // HOME-VENDOR: a trader's refusals
   'bad-vendor': 400, 'vendor-only': 409, 'vendor-not-here': 409, 'vendor-gone': 404, 'vendor-not-yours': 403, 'vendor-full': 409,   // MARKET-AUDIT
@@ -1756,7 +1758,7 @@ const service = {
           '/v1/writs/contract': () => postContract(ctx, who.player, env, body),   // SILVER-WAYS: a guild contract
           '/v1/writs/contract-withdraw': () => withdrawContract(ctx, who.player, env, body),
           '/v1/writs/commission': () => postCommission(ctx, who.player, env, body),   // PROF6: a commission
-          '/v1/writs/fulfil': () => fulfilCommission(ctx, who.player, env, body),
+          '/v1/writs/fulfil': () => fulfilCommission({ ...ctx, bucket: env.SAVES }, who.player, env, body),   // INT19: the piece out of the crafter's realm record, in R2
           '/v1/writs/cancel': () => cancelCommission(ctx, who.player, env, body),
           '/v1/writs/decline': () => declineCommission(ctx, who.player, env, body),
           '/v1/stores/guild': () => guildStores(ctx, who.player, env, body),   // PROF6: the guild Stores
@@ -1816,7 +1818,7 @@ const service = {
           '/v1/market/collect': () => marketCollect(mctx, who.player, env, body),   // MARKET-ANY: ...and its collector's
           '/v1/market/report': () => marketReport(ctx, who.player, env, body),
           '/v1/market/remove': () => marketRemove(ctx, who.player, env, body),
-          '/v1/market/auction': () => marketAuction(ctx, who.player, env, body),   // PROF5b
+          '/v1/market/auction': () => marketAuction(mctx, who.player, env, body),   // PROF5b; INT19: the Masterwork out of its seller's record
           '/v1/market/bid': () => marketBid(ctx, who.player, env, body),
           '/v1/market/gold': () => marketGoldCollect(mctx, who.player, env, body),   // GOLD-MARKET
           '/v1/market/vendor': () => marketVendor(ctx, who.player, env, body),   // HOME-VENDOR: a home's trader's stock

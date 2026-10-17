@@ -15,6 +15,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { webcrypto } from 'node:crypto';
 
 import { standService, T0 } from '../accountDb.mjs';
+import { holdPieces } from '../realmSeat.mjs';   // INT19: a crafted piece in its seller's realm record
 import { MARKS_MAX } from '../../src/net/marksLaw.js';
 import { saleTax, AUCTION_S, AUCTION_GRACE_S, MARKET_KEEP_DAYS } from '../../src/net/marketLaw.js';
 import { seatReportText } from '../../src/net/townSeatLaw.js';
@@ -75,7 +76,7 @@ async function tithedMarket() {
   const gid = raw.prepare('SELECT guild_id FROM guild_members WHERE player = ?').get(gm.id).guild_id;
   raw.prepare(`INSERT INTO town_seat_holds (key, guild_id, region, tier, since_week, standing, truce_week, at, tithe, owed) VALUES (?, ?, ?, ?, 0, 50, NULL, ?, 8, 0)`)
     .run(ANTICLERE.key, gid, ANTICLERE.region, ANTICLERE.tier, T0 - 7 * DAY);
-  const seller = await svc.registered('Seller', { renown: 10 });
+  const seller = await svc.seated('Seller', { renown: 10 });   // PIN MOVED (INT19): a realm character - its auction's piece leaves its record
   const buyer = await svc.registered('Buyer', { renown: 10 });
   svc.seedMarks(seller, 100_000, 's'); svc.seedMarks(buyer, 100_000, 'b');
   return { svc, raw, seller, buyer, HUBS: { 21: [402, 151] } };
@@ -86,6 +87,7 @@ test('AUDIT SCALE A1: an auction won under a seat\'s Tithe, its seller within th
   let rid = 0;
   raw.prepare(`INSERT INTO products (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at)
     VALUES ('00000000000000a1', ?, ?, 'Silverthorn', 'longsword:mithril', 120, 5, 4, 4242, 'p1.x', ?)`).run(seller.id, seller.character, T0);
+  holdPieces(svc.env, seller.character, [{ provenance: '00000000000000a1', quality: 4, wear: 900 }]);
   const posted = await svc.call('/v1/market/auction', { character: seller.character, region: 21, provenance: '00000000000000a1', wear: 900, opening: 1000, hubs: HUBS, board: [405, 150], rid: `audit-${String(++rid).padStart(6, '0')}` }, seller.secret);
   assert.equal(posted.status, 200, JSON.stringify(posted.body));
   const a = posted.body.auction;

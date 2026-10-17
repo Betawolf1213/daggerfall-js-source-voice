@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Складът на купувача не по�
 account.refusal.marketOrdersMax,"Вече имате {max} поръчки за покупка. Първо оттеглете една."
 account.refusal.marketOtherCharacter,"Това пътува към друг ваш персонаж."
 account.refusal.marketOwn,"Това е ваше. Отменете го от „Моите обяви“."
+account.refusal.marketPieceGone,"Светът не държи този изработен предмет свободен в багажа или в дома ви. Нищо не е сменило собственика си."
 account.refusal.marketPieceRoute,"Записът за майстора на този предмет е ваш: обявете го като изработен предмет."
 account.refusal.marketPriceMoved,"Пазарът се промени, откакто погледнахте. Погледнете отново."
 account.refusal.marketRate,"Свършихте много на пазара този час. Опитайте по-късно."

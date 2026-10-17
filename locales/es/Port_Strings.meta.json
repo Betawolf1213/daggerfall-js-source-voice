@@ -1914,6 +1914,11 @@
   "tr": "589b73f8d6c1",
   "by": "claude-in-session"
  },
+ "account.refusal.marketPieceGone": {
+  "en": "a07603c526de",
+  "tr": "37896a557b35",
+  "by": "claude-in-session"
+ },
  "account.refusal.marketPieceRoute": {
   "en": "3c8dd0668ed4",
   "tr": "cac14264dad7",

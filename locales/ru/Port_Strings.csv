@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Хранилище покупателя бол�
 account.refusal.marketOrdersMax,"У вас уже {max} заказов на покупку. Сначала отзовите один."
 account.refusal.marketOtherCharacter,"Это уже в пути к другому вашему персонажу."
 account.refusal.marketOwn,"Это ваше. Снимите его в разделе «Мои лоты»."
+account.refusal.marketPieceGone,"У мира нет этого изделия ремесла свободно в вашем инвентаре или в вашем доме. Ничто не сменило владельца."
 account.refusal.marketPieceRoute,"В записи о мастере этого предмета указаны вы: выставьте его как изделие ремесла."
 account.refusal.marketPriceMoved,"Рынок изменился с тех пор, как вы смотрели. Посмотрите ещё раз."
 account.refusal.marketRate,"Вы очень много сделали на рынке за этот час. Попробуйте позже."

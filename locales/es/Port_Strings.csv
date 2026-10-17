@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"El Almacén del comprador no admite tantas unid
 account.refusal.marketOrdersMax,"Ya tienes {max} órdenes de compra publicadas. Retira una primero."
 account.refusal.marketOtherCharacter,"Eso va de camino a otro de tus personajes."
 account.refusal.marketOwn,"Eso es tuyo. Cancélalo desde Mis ofertas."
+account.refusal.marketPieceGone,"El reino no tiene esa pieza fabricada suelta en tu mochila ni en tu hogar. Nada ha cambiado de manos."
 account.refusal.marketPieceRoute,"El registro del artesano de esa pieza es tuyo: ponla a la venta como pieza fabricada."
 account.refusal.marketPriceMoved,"El mercado ha cambiado desde que miraste. Vuelve a mirar."
 account.refusal.marketRate,"Has hecho muchísimo en el mercado esta hora. Inténtalo más tarde."

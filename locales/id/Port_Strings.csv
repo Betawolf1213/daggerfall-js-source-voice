@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Gudang pembeli tidak bisa menampung sebanyak it
 account.refusal.marketOrdersMax,"Kamu sudah punya {max} pesanan beli. Tarik satu dulu."
 account.refusal.marketOtherCharacter,"Itu sedang dalam perjalanan ke karaktermu yang lain."
 account.refusal.marketOwn,"Itu milikmu sendiri. Batalkan dari Daftar jualku saja."
+account.refusal.marketPieceGone,"Ranah tidak menyimpan benda buatan itu lepas di ranselmu atau di rumahmu. Tidak ada yang berpindah tangan."
 account.refusal.marketPieceRoute,"Catatan pembuat benda itu adalah milikmu: pasang sebagai benda buatan."
 account.refusal.marketPriceMoved,"Pasar sudah bergerak sejak kamu melihatnya. Lihat lagi."
 account.refusal.marketRate,"Kamu sudah banyak berurusan di pasar jam ini. Coba lagi nanti."

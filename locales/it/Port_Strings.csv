@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Il Magazzino dell’acquirente non può contene
 account.refusal.marketOrdersMax,"Hai già {max} ordini di acquisto attivi. Ritirane prima uno."
 account.refusal.marketOtherCharacter,"È in viaggio verso un altro dei tuoi personaggi."
 account.refusal.marketOwn,"È tuo. Annullalo invece da Le mie inserzioni."
+account.refusal.marketPieceGone,"Il reame non ha quel pezzo creato libero nel tuo zaino né nella tua casa. Nulla è passato di mano."
 account.refusal.marketPieceRoute,"Il registro dell’artefice di quel pezzo è tuo: mettilo in vendita come pezzo creato."
 account.refusal.marketPriceMoved,"Il mercato è cambiato da quando hai guardato. Guarda di nuovo."
 account.refusal.marketRate,"Hai fatto moltissimo al mercato in quest’ora. Riprova più tardi."

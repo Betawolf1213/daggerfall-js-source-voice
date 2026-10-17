@@ -543,6 +543,7 @@ const REFUSAL_WORDS = {
   // MARKET-ANY: a piece from the pack
   'market-not-good': () => t('account.refusal.marketNotGood', 'That piece cannot be sold on the market.'),
   'market-good-gone': () => t('account.refusal.marketGoodGone', 'The realm does not hold that piece where your pack had it. Nothing was listed.'),
+  'market-piece-gone': () => t('account.refusal.marketPieceGone', 'The realm does not hold that crafted piece loose in your pack or your home. Nothing changed hands.'),   // INT19
   'market-piece-route': () => t('account.refusal.marketPieceRoute', 'That piece\'s maker\'s record is yours: list it as a crafted piece.'),
   'market-goods-gold': () => t('account.refusal.marketGoodsGold', 'A piece from your pack sells for gold alone.'),
   // WRIT-WALL (FIELD BUGS 2026-10-13e): it sent the reader to withdraw it - and withdrawn it stays gold's, which no writ,

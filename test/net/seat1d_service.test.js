@@ -8,6 +8,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0 } from '../accountDb.mjs';
+import { holdPieces } from '../realmSeat.mjs';   // INT19: a crafted piece in its seller's realm record
 import { utcDay, MARKS_MAX } from '../../src/net/marksLaw.js';
 import { sharedClassicMinutes } from '../../src/net/wire.js';
 import { gameDayAt, gateTimes } from '../../src/net/gate/gateLaw.js';
@@ -221,6 +222,7 @@ test('SEAT1d THE TITHE: an Officer sets it, once a week, within its tier\'s cap;
   // AN AUCTION posted at Anticlere's board pays its Tithe at the close, out of the winning bid's escrow
   raw.prepare(`INSERT INTO products (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at)
     VALUES ('00000000000000a1', ?, ?, 'Silverthorn', 'longsword:mithril', 120, 5, 4, 4242, 'p1.x', ?)`).run(seller.id, seller.character, now);
+  holdPieces(svc.env, seller.character, [{ provenance: '00000000000000a1', quality: 4, wear: 900 }]);   // PIN MOVED (INT19): the auction takes it out of the seller's record
   const a = (await svc.call('/v1/market/auction', { character: seller.character, region: 21, provenance: '00000000000000a1', wear: 900, opening: 1000, hubs: HUBS, board: [405, 150], rid: rid() }, seller.secret)).body.auction;
   assert.equal((await svc.call('/v1/market/bid', { character: buyer.character, region: 21, auction: a.id, amount: 1000, hubs: HUBS, rid: rid() }, buyer.secret)).status, 200);
   now += AUCTION_S + 1;

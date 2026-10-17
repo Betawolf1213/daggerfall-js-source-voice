@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Køberens Forråd kan ikke rumme så mange fler
 account.refusal.marketOrdersMax,"Du har allerede {max} købsordrer oppe. Træk en tilbage først."
 account.refusal.marketOtherCharacter,"Det er på vej til en anden af dine karakterer."
 account.refusal.marketOwn,"Det er dit eget. Annuller det fra Mine salgsopslag i stedet."
+account.refusal.marketPieceGone,"Riget har ikke den håndlavede genstand løst i din oppakning eller i dit hjem. Intet skiftede hænder."
 account.refusal.marketPieceRoute,"Den genstands mesteroptegnelse er din: sæt den til salg som en håndlavet genstand."
 account.refusal.marketPriceMoved,"Markedet har ændret sig, siden du kiggede. Se igen."
 account.refusal.marketRate,"Du har gjort meget på markedet denne time. Prøv igen senere."

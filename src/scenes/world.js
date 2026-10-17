@@ -2051,7 +2051,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ? createWritBook({ door: accountWrits({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
       character: () => characterIdOf(playerEntity), now: () => Date.now() + _sharedOffsetMs, marks: marksBook,
       stores: { apply: (st) => profBook?.applyStore(st) },
-      market: marketBook,   // AUDIT 31 B5: the market's book told each balance, its reads begun before a writ act let go
+      market: marketBook, realm: marketBook?.realm ?? null,   // AUDIT 31 B5: the market's book told each balance, its reads begun before a writ act let go; INT19: and its realm act, a commission's piece out of the record
       holds: (pv) => !!marketBook?.holdsPiece(pv) })   // AUDIT 31 H1: a piece the market's book keeps a listing of is no fill
     : null;
   // BAG1 (bible/06-Systems/Materials-Bag.md): A GUILD WRIT'S DELIVERY is the Stores', as a Court writ's is - what the

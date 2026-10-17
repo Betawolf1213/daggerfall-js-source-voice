@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Les Réserves de l’acheteur ne peuvent pas en
 account.refusal.marketOrdersMax,"Vous avez déjà {max} ordres d’achat. Retirez-en un d’abord."
 account.refusal.marketOtherCharacter,"C’est en route vers un autre de vos personnages."
 account.refusal.marketOwn,"C’est le vôtre. Annulez-le plutôt depuis Mes annonces."
+account.refusal.marketPieceGone,"Le royaume ne détient pas cet objet fabriqué libre dans votre sac ni dans votre demeure. Rien n’a changé de mains."
 account.refusal.marketPieceRoute,"Le registre d’artisan de cet objet est le vôtre : mettez-le en vente comme objet fabriqué."
 account.refusal.marketPriceMoved,"Le marché a bougé depuis que vous avez regardé. Regardez à nouveau."
 account.refusal.marketRate,"Vous avez beaucoup agi au marché cette heure-ci. Réessayez plus tard."

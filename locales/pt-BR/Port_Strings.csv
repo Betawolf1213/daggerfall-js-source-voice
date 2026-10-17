@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Os Estoques do comprador não comportam tantos 
 account.refusal.marketOrdersMax,"Você já tem {max} ordens de compra abertas. Retire uma primeiro."
 account.refusal.marketOtherCharacter,"Isso está a caminho de outro dos seus personagens."
 account.refusal.marketOwn,"Isso é seu. Cancele em Meus anúncios."
+account.refusal.marketPieceGone,"O reino não tem essa peça artesanal solta na sua mochila nem no seu lar. Nada mudou de mãos."
 account.refusal.marketPieceRoute,"O registro de quem fez essa peça é seu: anuncie-a como peça artesanal."
 account.refusal.marketPriceMoved,"O mercado mudou desde que você olhou. Olhe de novo."
 account.refusal.marketRate,"Você fez muita coisa no mercado nesta hora. Tente de novo mais tarde."

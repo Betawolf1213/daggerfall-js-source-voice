@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { standService, T0 } from '../accountDb.mjs';
+import { holdPieces } from '../realmSeat.mjs';   // INT19: a crafted piece lists out of its seller's realm record
 import { bodyKey } from '../../src/net/nodeLaw.js';
 import { xpForRank, harvestXp, HIGH_HIDES_PER_DAY } from '../../src/net/professionLaw.js';
 import { craftXp } from '../../src/net/recipeLaw.js';
@@ -229,6 +230,7 @@ test('PROF7 service: the market carries a garment\'s dye - a dyed shirt listed i
   const g = await s.call('/v1/prof/craft', craft(mac, 'garment-165:linen', { dye: 8 }), mac.secret);
   assert.equal(g.status, 200, JSON.stringify(g.body));
   const provenance = g.body.pieces[0].provenance;
+  holdPieces(s.env, mac.character, [{ provenance }]);   // PIN MOVED (INT19): the piece the pack took, in the record the listing takes it out of
   s.fund(mac, 100);   // the listing's fee
   const l = await s.call('/v1/market/list', { character: mac.character, region: DF, kind: 'piece', provenance, wear: 1000, price: 5, hubs: HUBS, rid: rid() }, mac.secret);
   assert.equal(l.status, 200, JSON.stringify(l.body));

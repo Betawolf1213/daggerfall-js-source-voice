@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Depozitul cumpărătorului nu mai poate cuprind
 account.refusal.marketOrdersMax,"Ai deja {max} ordine de cumpărare. Retrage mai întâi unul."
 account.refusal.marketOtherCharacter,"Asta este pe drum spre alt personaj de-al tău."
 account.refusal.marketOwn,"Este al tău. Anulează-l în schimb din Anunțurile mele."
+account.refusal.marketPieceGone,"Tărâmul nu are piesa lucrată aceea liberă în desaga ta sau în casa ta. Nimic nu și-a schimbat stăpânul."
 account.refusal.marketPieceRoute,"Registrul meșterului acelei piese este al tău: pune-o în vânzare ca piesă lucrată."
 account.refusal.marketPriceMoved,"Piața s-a schimbat de când ai privit. Privește din nou."
 account.refusal.marketRate,"Ai făcut foarte multe la piață în ora aceasta. Încearcă din nou mai târziu."

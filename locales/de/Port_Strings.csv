@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Das Lager des Käufers kann nicht mehr so viele
 account.refusal.marketOrdersMax,"Du hast bereits {max} Kaufgesuche eingestellt. Zieh zuerst eines zurück."
 account.refusal.marketOtherCharacter,"Das ist auf dem Weg zu einem anderen deiner Charaktere."
 account.refusal.marketOwn,"Das ist dein eigenes. Zieh es stattdessen unter „Meine Angebote“ zurück."
+account.refusal.marketPieceGone,"Das Reich führt dieses gefertigte Stück weder lose in deinem Gepäck noch in deinem Zuhause. Nichts hat den Besitzer gewechselt."
 account.refusal.marketPieceRoute,"Der Herstellernachweis dieses Stücks nennt dich: Biete es als gefertigtes Stück an."
 account.refusal.marketPriceMoved,"Der Markt hat sich verändert, seit du nachgesehen hast. Sieh noch einmal nach."
 account.refusal.marketRate,"Du hast in dieser Stunde sehr viel auf dem Markt getan. Versuch es später noch einmal."

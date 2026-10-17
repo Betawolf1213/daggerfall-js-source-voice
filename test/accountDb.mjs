@@ -85,6 +85,8 @@ export const d1Position = (db) => `${Number(db._raw.prepare('SELECT total_change
 
 /** A UTC day's middle. */
 export const T0 = 1_800_000_000;
+/** INT19: the routes that take a crafted piece out of its realm record (the pins' `call` names the record for them). */
+const CRAFTED_ACTS = new Set(['/v1/market/list', '/v1/market/auction', '/v1/writs/fulfil']);
 
 /** The Worker on a fresh database, with the gate's key pair - `env` extended by `extra`. */
 export async function standService(extra = {}) {
@@ -99,6 +101,15 @@ export async function standService(extra = {}) {
   const gatePub = Buffer.from(new Uint8Array(await subtle.exportKey('raw', gk.publicKey))).toString('base64url');
   const env = { DB: d1(), SAVES: r2(), IDENTITY_PRIVATE_KEY: pkcs8, ACCOUNT_VERSION: 'test1', ALLOWED_ORIGIN: '*', GATE_PUBLIC_KEY: gatePub, ...extra };   // MERGE 2: SAVES, the realm's records (R2)
   const call = async (path, body, bearer = null) => {
+    // INT19 (bible/06-Systems/Integrity-Arc.md section 7): A CRAFTED ACT NAMES WHERE ITS RECORD STANDS - a listing's, an
+    // auction's or a commission fill's piece leaves the realm record (server-account/src/craftedPiece.js), and the client's
+    // realm act names the record as it asks (net/marketBook.js realmPieceAct). A pin's act for a realm character that names
+    // none is named it here, off the row as it stands; `realm: null` asks with none (the route's own refusal).
+    if (CRAFTED_ACTS.has(path) && body && typeof body === 'object' && !('realm' in body) && typeof body.character === 'string'
+      && /^r[0-9a-f]{20}$/.test(body.character) && (path !== '/v1/market/list' || body.kind === 'piece')) {
+      const row = env.DB._raw.prepare('SELECT lease, seq FROM realm_characters WHERE id = ?').get(body.character);
+      if (row) body = { ...body, realm: { id: body.character, lease: row.lease, seq: row.seq } };
+    }
     const res = await worker.fetch(new Request(`https://accounts.invalid${path}`, {
       method: 'POST',
       headers: { ...(body !== undefined ? { 'content-type': 'application/json' } : {}), ...(bearer ? { authorization: `Bearer ${bearer}` } : {}) },

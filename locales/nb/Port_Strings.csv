@@ -382,6 +382,7 @@ account.refusal.marketOrderFull,"Kjøperens Lager kan ikke romme så mange flere
 account.refusal.marketOrdersMax,"Du har allerede {max} kjøpsordrer ute. Trekk tilbake én først."
 account.refusal.marketOtherCharacter,"Det er på vei til en annen av karakterene dine."
 account.refusal.marketOwn,"Det er ditt eget. Avbryt det fra Mine oppføringer i stedet."
+account.refusal.marketPieceGone,"Riket har ikke den håndlagde gjenstanden løst i sekken din eller i hjemmet ditt. Ingenting skiftet hender."
 account.refusal.marketPieceRoute,"Håndverkermerket på den gjenstanden er ditt: legg den ut som en håndlaget gjenstand."
 account.refusal.marketPriceMoved,"Markedet har endret seg siden du så. Se igjen."
 account.refusal.marketRate,"Du har gjort svært mye på markedet denne timen. Prøv igjen senere."
