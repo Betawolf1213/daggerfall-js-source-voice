@@ -64,7 +64,7 @@ the service never registers; and the sweep minted no Weir Key.
 
 DFU has no Weir Key and no realm; this is our own law, and no DFU member or ledger row moves.
 
-FIXED. The key's row, but its picture, is a leaf that imports nothing (WEIR_KEY_LAW_ROW); `weirKey.js` lays its name and
+FIXED. The key's row, but its name and its picture, is a leaf that imports nothing (WEIR_KEY_LAW_ROW); `weirKey.js` lays its name and
 picture over it and registers it as before, and the law reads it beside the registry, as it reads the rest's rows - item
 law 7 (`acct150`; tech1_roster's LAW_SERVICE names it). Migration 0125 lifts, as MAKER-KEPT's 0123 did, every character
 not staff's whose law findings were only `template` on 575: the hold, a timed end, the strikes and the timed holds
@@ -74,7 +74,7 @@ path list names the leaf (`test/server/accountdeploy.test.js` walks the Worker's
 
 `test/systems/item/int1_itemlaw.test.js`: the sweep mints the Weir Key (87 producers), and its template check now runs
 `lawTemplate` in a child process that imports the service's judge and nothing else - every custom template the sweep
-mints known there - and pins the leaf to the registered row and the key's name. `test/server/fb1017_keylaw_lift.test.js`
+mints known there - and pins the leaf to the registered row. `test/server/fb1017_keylaw_lift.test.js`
 (2): a checkpoint carrying keys through the real Worker holds nothing; migration 0125 executed over a timed hold, a law
 hold, a strike with the keys gone, and the five rows it must not touch. Both fail on main. `tools/mutants/fb1017.json`:
 6 mutants, all dead (the row unread, the law unmoved, the lift's code, its template, its count guard, staff's).

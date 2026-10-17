@@ -156,10 +156,10 @@ test('INT1: the templates the law knows - every custom index a producer mints in
   const headless = `await import(${JSON.stringify(judge)}); const { lawTemplate } = await import(${JSON.stringify(law)});`
     + ` process.stdout.write(JSON.stringify(${JSON.stringify(custom)}.filter((i) => !lawTemplate(i))));`;
   assert.deepEqual(JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', headless], { encoding: 'utf8' })), [], 'every custom template the sweep mints, known to the service\'s law');
-  // the leaf is the row the game registers, but its picture, and the key's own name
-  const { worldTextureArchive, worldTextureRecord, ...keyRow } = WEIR_KEY_ROW;
+  // the leaf is the row the game registers, but its name and its picture
+  const { name, worldTextureArchive, worldTextureRecord, ...keyRow } = WEIR_KEY_ROW;
   assert.deepEqual(keyRow, { ...WEIR_KEY_LAW_ROW });
-  assert.equal(WEIR_KEY_LAW_ROW.name, EG_TEXT.keyName);
+  assert.equal(name, EG_TEXT.keyName);
   assert.ok(Number.isInteger(worldTextureArchive) && Number.isInteger(worldTextureRecord));
   assert.deepEqual(Object.keys(CUSTOM_TEMPLATE_GROUPS), ['Weapons', 'Armor', 'Gems', 'Jewellery', 'Furniture']);
   const dagger = honest((it) => it.group === 'Weapons' && it.templateIndex === 113 && !it.rarity && !it.magic, 'a dagger');
