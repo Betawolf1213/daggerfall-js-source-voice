@@ -30,7 +30,7 @@ import * as BK from '../../../src/systems/arena/arenaBook.js';
 import { moveArenaHomes } from '../../../src/systems/online/onlineHomes.js';
 import { HOME_ARENA_MAP_ID } from '../../../src/net/homeLaw.js';
 import * as acorn from 'acorn';
-import { SEAT_NOTICE } from '../src/net/oneSeat.js';   // ARENA-WAIT AUDIT A4: a seat given up shuts the lane's doors in its words
+import { SEAT_NOTICE } from '../../../src/net/oneSeat.js';   // ARENA-WAIT AUDIT A4: a seat given up shuts the lane's doors in its words
 
 const { subtle } = globalThis.crypto;
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');

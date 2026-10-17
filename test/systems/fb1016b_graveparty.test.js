@@ -51,6 +51,8 @@ import { ActionTextBox } from '../../src/ui/actionText.js';
 import { pickActivatableHit, answersPress, rayAabb, RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE, CORPSE_ACTIVATION_DISTANCE } from '../../src/player/activate.js';
 import { CAPSULE_HEIGHT } from '../../src/player/motor.js';
 import { peerHanded } from '../../src/systems/peerWord.js';
+import { withoutCarried } from '../../src/world/interior/interiorShared.js';   // AUDIT AUTO-HOLD (main): the room's word never lands a piece I carry - applyLoot reads it
+import { carriedPieces } from '../../src/systems/item/itemIds.js';
 import { validLootList, LOOT_LIST_MAX, LOOT_NEWER_TEXT } from '../../src/systems/loot/loot.js';
 import { effectiveLevel } from '../../src/systems/mentorMode.js';
 import { liveStat } from '../../src/systems/statMods.js';
@@ -393,7 +395,7 @@ function tombPlayer(net, acct, party, me = PLAYERS[acct]) {
     presentNpcInfoText: (s) => s, LOOT_NEWER_TEXT, LOOT_LIST_MAX,
     searchKey, searchCooldownLeft, markSearched, isPicked, searchedText, searchName, rollSearchOutcome, mintSearchFind, searchMessage, SEARCH_KINDS, pickSearchUndead, pickRosterFoe, rollSearchElite,
     effectiveLevel, liveStat, dungeonRarityTier, dungeonFamily, worldMinutes, sharedClockOn, sharedClassicMinutes, wallMsForClassicMinutes,
-    peerHanded, validLootList, respawnDue, createSearchRoom, ActionTextBox, enemyDisplayName,
+    peerHanded, validLootList, respawnDue, createSearchRoom, ActionTextBox, enemyDisplayName, withoutCarried, carriedPieces,
     searchFoeCount: () => 2, searchFoeSpots: () => [], spawnLooseFoe: () => {},
   };
   P.state = state;
@@ -561,7 +563,7 @@ test('GRAVE-PARTY + AUDIT G2: a PARTY-LOOT pile whose room word this build canno
     _authority: false, _deepCleared: new Set(), _deepFoeCleared: new Set(), _wildDungeon: false, _wildRing: null, wildPileMore: () => {},
     opts: { selfId: () => 'b0b0-0002', onActions: (data) => frames.push(data), onLootClaimed: () => {}, partyLevels: () => [], roomHost: () => 'a0a0-0001' },
     _foesFrom: 'a0a0-0001', _sharedStamp: 'st1', _roomClaimN: 0, _roomMintHold: 0, _roomNowMs: 0,
-    lootKey: 'N', onlineRoom: () => true, _wallNow: () => clock.t, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT,
+    lootKey: 'N', onlineRoom: () => true, _wallNow: () => clock.t, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT, withoutCarried, carriedPieces,
     eliteLootOpts: () => ({}), _sharedFoe: () => false, fightN: () => 1, rollPileItems: () => own.map((it) => ({ ...it })), settleLootFlat: (i) => settled.push(i), searchHeard: () => {}, searchRoom: { ours: () => true, fields: () => ({}) },
     createRoomLoot, RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE, CORPSE_ACTIVATION_DISTANCE, searchReachFor, lastPlayerFeet: null, lastPlayerHeight: CAPSULE_HEIGHT,
     droppedLoot: { lootTargets: () => [], physical: { owns: () => false }, pileFor: () => null, contents: () => null }, droppedTorches: { targets: () => [], activate: () => false }, camps: { targets: () => [], activate: () => false }, sdEnd: null, sdHall: null, plaqueActionFor: () => null,
