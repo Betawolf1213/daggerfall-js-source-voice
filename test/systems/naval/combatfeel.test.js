@@ -272,6 +272,7 @@ test('COMBAT-FEEL over the real naval host: a pirate\'s ball by my side whistles
   assert.deepEqual(text.plate.batteries.map((b) => b.secs), m.batteries.map((b) => (b.gun === 'barrel' ? '' : '5s')), 'a gun\'s whole seconds - a barrel none');
   assert.ok(m.batteries.some((b) => b.gun !== 'barrel'));
   assert.equal(navalHudText({ ...m, batteries: m.batteries.map((b) => ({ ...b, ready: true, loaded: true, left: 0 })) }).plate.batteries[0].secs, '');
+  assert.deepEqual(navalHudText({ ...m, batteries: m.batteries.map((b) => ({ ...b, ready: true, loaded: true, left: 3 })) }).plate.batteries.map((b) => b.secs), m.batteries.map(() => ''), 'a loaded side says none, whatever its clock');
   // her plate drawn: the side, her bar's loss
   const doc = fakeDoc();
   drawNavalHud(m, { doc, dt: 0.016 });
@@ -299,7 +300,8 @@ test('COMBAT-FEEL over the real naval host: a pirate\'s ball by my side whistles
   assert.ok(t.men > 0);
   near(g.host.hudModel().target.crew, prey.ship.damage.crewShare(), 1e-9);
   assert.match(navalHudText(g.host.hudModel()).tally.rest, new RegExp(` - ${t.men} of her men down`));
-  assert.ok(navalHudText(g.host.hudModel()).card.crew < 100, 'her card\'s men thinned');
+  const cardMen = navalHudText(g.host.hudModel()).card.crew;
+  assert.ok(typeof cardMen === 'number' && cardMen < 100, `her card's men thinned: ${cardMen}`);
 });
 
 test('COMBAT-FEEL the wiring: the host hears a pass, drenches on a splash, scales the fall, feels the blow, counts the men, lights the magazine, and steps the feel each frame (mutants: each line)', () => {

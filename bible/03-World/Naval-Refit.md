@@ -617,10 +617,12 @@ CHANGED (`systems/naval/deckFittings.js`, the law; pure):
   `perfsails1` and `shipcolours` (all dead).
 - `test/systems/naval/combatfeel.test.js` (7) on the effects' law, the near miss in the shot field, the feel's module and
   the real naval host over the real pool (a pirate's ball by my side, its fall beside her, one into her starboard; her
-  plate drawn; my volley into a merchant carrack and its men), and `tools/mutants/combatfeel.json` (65 records); the
+  plate drawn; my volley into a merchant carrack and its men), and `tools/mutants/combatfeel.json` (65, all dead); the
   whistle's clip measured (its level swelling to the pass, its pitch falling through it). The pins it moved: the
   founder's foam (`nav_b_picture`: its boil's drops beside it), the clips' count (`nav_e_sounds`: ten), the provenance
-  list (`doctrine`); the record re-aimed by content in `nav_b` (the wind's line).
+  list (`doctrine`), the card's model (`nav_f_ui`: her `crew`, and her hull bar's bite flashing it), the HUD's class holes
+  (`hudclass_sheets`: `plateLoss`'s frames), the registry's English (`l10n4`: its two new rows); the records re-aimed by
+  content in `nav_b` (the wind's line), `nav_h`, `navaudit_helm`, `navaudit_presentation`, `shipstance` and `shotkinds`.
 - `test/systems/quest/raidashore.test.js` (6) over the author's own quest and the real machine, and
   `tools/mutants/raidashore.json` (13, all dead); `wa1_warmAshesShips.test.js`'s Leave Ship pin moved (PIN MOVED: off
   the sea it now ends the raid).

@@ -778,7 +778,7 @@ const HARDCODED = {
   'src/world/oceanHoles.js': 9,
   'src/world/outdoors.js': 2,
   'src/world/passiveFish.js': 5,
-  'src/world/eliteGates/pseudoArchives.js': 40,
+  'src/world/eliteGates/pseudoArchives.js': 42,   // NAVAL-REFIT: +2, the ship's paint's and her cabin's rows (LIVERY_ARCHIVE, CABIN_ARCHIVE) - the registry's own words for a developer, never a player's
   'src/world/superDungeon/sdDungeon.js': 6,
   'src/world/superDungeon/sdRealm.js': 10,
   'src/world/spawnedDungeons.js': 3,

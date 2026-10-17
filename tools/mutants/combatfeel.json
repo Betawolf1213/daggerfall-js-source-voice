@@ -389,8 +389,8 @@
   {
     "name": "CF-mag-gone-kept",
     "file": "src/scenes/naval/navalFeel.js",
-    "old": "      if (!p) continue;\n      deps.effects.blast(p);",
-    "new": "      if (!p) { magazines.set(entry, at); continue; }\n      deps.effects.blast(p);",
+    "old": "      magazines.delete(entry);\n      const p = posOf(entry);\n      if (!p) continue;",
+    "new": "      const p = posOf(entry);\n      if (!p) continue;\n      magazines.delete(entry);",
     "tests": [
       "test/systems/naval/combatfeel.test.js"
     ]
