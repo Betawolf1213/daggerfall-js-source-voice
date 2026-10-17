@@ -108,7 +108,7 @@ crons = ["* * * * *", "41 * * * *"]
 [vars]
 # Answered by /health so a deploy that did not happen cannot look like
 # one that did. Kept in step with ACCOUNT_VERSION in src/service.js.
-ACCOUNT_VERSION = "acct148"
+ACCOUNT_VERSION = "acct149"
 # WB5b: THE RELAY'S PUBLIC HALF, GATE_PUBLIC_KEY - the key an Oblivion
 # Gate's kill receipts verify with (src/net/gate/gateReceipt.js) - is NOT a
 # var here. GATE-KEYS (2026-09-26): the account deploy mints the pair
@@ -193,6 +193,13 @@ FOUNDER_HANDLES = ""
 # First Hour (titles.js isHoursFirst). Comma-separated handles,
 # case-insensitive, the same as the lines above; held while listed.
 HOURS_FIRST_HANDLES = "aether,ArtemisGodfrey,CycleD0se,Duck,Kobakk,MackyWackyDeeJew,mayaamano,Nirnroot,ofrizz,rosalina,ShikiX3,Temegast,Terra"
+# EG-E2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19, THE
+# HONOURS): FIRST OF THE SPIRE - the first company ever to take Redoubt 10
+# of the Elite Breach, by name, granted as Hour's First is. The title First
+# of the Spire and its aura, Firstlight (titles.js isSpireFirst). EMPTY until
+# that company comes: its Redoubt 10 receipts' accounts go here (and the
+# mailbox, as Hour's First's did). Comma-separated handles, case-insensitive.
+EG_FIRST_HANDLES = ""
 # TITLE-N (2026-09-24, Mac): the Dungeon Master - the orange title, the
 # die beside the name, and /dm's orange line (the relay reads the right
 # off the `dm` glyph in the signed token, as /red reads `dev`). "This
