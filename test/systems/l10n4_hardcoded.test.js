@@ -473,6 +473,7 @@ const HARDCODED = {
   'src/systems/startDungeon.js': 1,
   'src/systems/statusReadout.js': 2,
   'src/systems/steedCare.js': 16,
+  'src/systems/studioArt/studioSlots.js': 9,   // STUDIO1: the painted models' titles the studio page and tools/studioArt.mjs show the game's artists - no player reads them
   'src/systems/survival/camp.js': 42,
   'src/systems/survival/food.js': 4,
   'src/systems/survival/items.js': 26,
@@ -525,6 +526,7 @@ const HARDCODED = {
   'src/tools/gunLab.js': 7,
   'src/tools/mwViewer.js': 9,
   'src/tools/paperdoll/paperdollViewer.js': 18,
+  'src/tools/studioLab.js': 3,   // STUDIO1: the studio page's own words to the game's artists (studio.html) - no player reads them
   'src/ui/accountFlow.js': 2,
   'src/ui/arena/arenaWindow.js': 4,
   'src/ui/armourCard.js': 5,

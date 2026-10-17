@@ -14,6 +14,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
 import { writePng } from './pngIO.mjs';
+import { isMain } from './lib/isMain.mjs';
 import { studioListing, STUDIO_TREE } from '../scripts/studioArtIndex.mjs';
 import { studioEntries } from '../src/systems/studioArt/studioArt.js';
 import { STUDIO_SETS, studioSlots } from '../src/systems/studioArt/studioSlots.js';
@@ -90,7 +91,7 @@ async function check() {
   if (problems.length) process.exitCode = 1;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   const [cmd = 'list', arg] = process.argv.slice(2);
   const run = { list, templates: () => templates(arg), check }[cmd];
   if (!run) { console.error('usage: node tools/studioArt.mjs [list | templates [dir] | check]'); process.exitCode = 2; } else await run();

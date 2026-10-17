@@ -97,6 +97,10 @@ function filter() {
   }
   for (const s of document.querySelectorAll('section.set')) s.classList.toggle('hidden', !shown.has(s));
 }
-$('find').addEventListener('input', filter);
-$('mine').addEventListener('change', filter);
-draw().catch((e) => { $('status').textContent = `the studio would not draw: ${e?.message ?? e}`; });
+// The page's own boot. A module the suite imports (test/tree/moduleload_smoke.test.js) has no document, and its body still
+// runs - the slots' painters and the listing's reader with it.
+if (globalThis.document) {
+  $('find').addEventListener('input', filter);
+  $('mine').addEventListener('change', filter);
+  draw().catch((e) => { $('status').textContent = `the studio would not draw: ${e?.message ?? e}`; });
+}
