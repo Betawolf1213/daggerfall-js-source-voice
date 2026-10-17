@@ -22,6 +22,8 @@ import { damageShieldPool, playerBlowCameToNothing } from '../characters/playerE
 import { lycanthropeAttackVoice } from '../systems/lycanthropy.js';   // V4: the beast's attack voice
 import { copyEffectEntry } from '../systems/save/save.js';   // AUDIT 26 F216: the caster-stripping effect copy, one home
 import { EnemyAI, isBackFacing, withinYaw, MELEE_DISTANCE, foeFrameDt } from '../characters/enemy/enemyMotor.js';   // AUDIT WORLD6b-iii(a) B4: the puppet's cast is read against the owner's own bands
+import { EnhancedEnemyAI } from '../ai/enhancedMotor.js';   // FIELD BUGS 2026-10-16b INDOOR-WATCH: the routes, where the host hands a mesh (`nav`)
+import { getPref } from '../systems/uiPrefs.js';   // INDOOR-WATCH: the Enhanced AI switch, as the dungeon's construction sites read it
 import { spaceFoes, freeLodgedFeet } from '../characters/foeSpacing.js';   // FOE-SPACING: the pack keeps apart; FIELD BUGS 2026-10-04d CRATE-FREE: and no foe stands in a crate
 import { blowConnects, blowScaled } from '../ai/foeBlows.js';   // TACT4
 import { foeGlint, tacticsNow, beginRoar } from '../ai/tactics.js';   // TELL2: a wind-up's glint (bible/12-Enhanced-AI/Feud-Arc.md section 4.2); TELL8: the record's wind-up on the foes' clock; RVN4: a last stand's roar
@@ -97,7 +99,7 @@ import { combatVisualsOn, foeDraw, markConcealedHit } from '../systems/combatVis
 import { foeHitFlash, setBatchHitFlash, puppetHurtStep, setBatchGlint, prefersReducedMotion } from '../systems/hitFlash.js';   // TELL2: a wind-up's glint
 import { isOnlinePage } from '../systems/online/onlineLane.js';   // ELITE FOES: online play only
 import { revenantRoutable, revenantRouted, revenantRoutedEvent, revenantFleeStep, revenantUnbrokenEvent, revenantFlinch, revenantSignatureEvent, revenantFleeHealth, revenantDeed, revenantSlain, applyRevenant, grantRevenantLoot, revenantById, revenantSay, revenantTauntEvent, revenantFleeEvent, revenantCorneredEvent, revenantEscapeEvent, revenantSlainEvent, REVENANT_TAUNT_DISTANCE } from '../systems/revenant/revenant.js';   // REVENANT: the foes that kill you or run, and come back
-import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep } from '../systems/revenant/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it
+import { revenantMayYield, beginYield, yieldStep, slipEvent, kneelPose, beginExecution, executionStep, finishExecution, beginSpare, spareDone, fateDissolve, fateModel, dropFateHeld, revenantWillHolds, beginTearAway, revenantLastStandDue, beginLastStand, roarStep, ownersWholeKill } from '../systems/revenant/revenantFate.js';   // REVENANT-FATE: beaten, it yields - kill it or spare it; RVN-OWNERS-CHOICE: a whole blow closes it only as its owner's
 import { setBatchDissolve } from '../systems/dissolve.js';   // DISSOLVE: burnt away, or gathered through a portal
 import { createPortalSet } from './portalFx.js';   // COMPANION-PORTAL
 import { QUARRY_BLOW } from '../systems/livingWorld/quarry.js';
@@ -283,7 +285,11 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   fates = false, dropLoot = null, shake = null,
   // HALT-ONE: the living watch's lane (cityGuards.js `oneVoice`) - a peer's watchman riding my stream (WATCH1) calls
   // on his owner's client, where he is after the player he hunts: here he is silent, and his tells a person's
-  oneVoice = () => false }) {
+  oneVoice = () => false,
+  // FIELD BUGS 2026-10-16b INDOOR-WATCH (ENHANCED AI 5's interior half, scenes/interiorNav.js): the room's mesh -
+  // `{ chf, world, goal }` - where the host has one (the mode machine's building, makeInteriorFoes); with the Enhanced AI switch
+  // on a foe walks the routes (EnhancedEnemyAI), as a dungeon's does. The street's pools hand none: the classic motor.
+  nav = null }) {
   const foes = [];        // { mobile, ai, attack, entity, batch, tex, archive, mobileType, dead, _encounter: true }
   const corpseBatches = [];
   // AUDIT 39 / THE FOUR HOSTS RULE: an IN-FLIGHT spawn's feet. spawnFoe
@@ -507,7 +513,9 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       } else if (behaviour === 'Flying' && !feetGiven) pending.feet[1] -= idleH / 2 + 0.1;
       // FIELD BUGS 2026-10-04d CRATE-FREE: a stand inside a model - a building's quest marker in a house's crate, a save that kept a foe in one - is set beside it on its floor (characters/foeSpacing.js); a puppet is its owner's
       if (!puppet) freeLodgedFeet(collider, pending.feet, { height: enemyControllerHeight(idleH, behaviour), airborne: behaviour === 'Flying' });
-      const ai = new EnemyAI(collider, pending.feet, yaw ?? rolls() * Math.PI * 2, {
+      const facing = yaw ?? rolls() * Math.PI * 2;
+      const ai = new (nav && getPref('enhancedAI') ? EnhancedEnemyAI : EnemyAI)(collider, pending.feet, facing, {   // INDOOR-WATCH: the switch chooses the motor where the room has a mesh; the bake is read per step
+        nav: nav?.chf, navWorld: nav?.world, navGoal: nav?.goal, navSeed: (facing * 1000) | 0,   // the dungeon's three, its seed off the spawn's facing as its own; the room's goal for a player off its mesh (AUDIT W1)
         liveSpeed: () => liveStat(entity, 'speed'),   // AUDIT 39: EnemyMotor.cs:432 re-reads LiveSpeed per FixedUpdate
         seesThroughInvisibility: basics.seesThroughInvisibility ?? false,
         behaviour, mobileId: mobileType,
@@ -958,12 +966,13 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // body down is nobody's felling) - the layer hands it on, a felling's striker
       if (f.companion != null) { f.entity.health = 1; if (!f._knockedOut) f._knockedBy = striker; f._knockedOut = true; return; }
       // REVENANT-FATE: one of the player's revenants beaten is never killed outright - it YIELDS (whoever struck: the
-      // revenant is the player's own), its fate the player's; a kill (a Disintegrate's whole) is a kill
+      // revenant is the player's own), its fate the player's; a kill (a Disintegrate's whole) is a kill - MY kill alone
+      // (RVN-OWNERS-CHOICE: anyone else's whole blow is a killing blow like any - revenantFate.js ownersWholeKill)
       // RVN4 (Feud-Arc.md 15.1): one of rank 3 and up, once a stand, comes back instead - its last stand (before the
       // trap: no soul taken by that blow); a kill is a kill
-      if (!_whole && f.entity?.revenant?.id && revenantLastStandDue(f)) { lastStand(f); return; }
+      if (f.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantLastStandDue(f)) { lastStand(f); return; }
       // RVN3 (Feud-Arc.md 14.2): one of rank 3 and up whose will this fight has not broken does not kneel - it tears away
-      if (fates && !_whole && revenantMayYield(f)) { if (revenantWillHolds(f)) tearAway(f); else yieldFoe(f); return; }
+      if (fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantMayYield(f)) { if (revenantWillHolds(f)) tearAway(f); else yieldFoe(f); return; }
       // X5: the SOUL TRAP intercept, where EnemyEntity.SetHealth's
       // override sits (:157-177) - before the death, every source alike.
       // AUDIT WORLD6b B2 (AUDIT WORLD2 B9's law, the dungeon's): a PEER's killing blow reads no gem of mine and fills

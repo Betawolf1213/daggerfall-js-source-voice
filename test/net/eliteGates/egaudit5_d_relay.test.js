@@ -9,7 +9,7 @@
 //          round trip is still never counted; the drains read a held body;
 //   L4-2   A RIDE ONLY WHERE THE POSE STANDS: `pl` naming a piece the pose's own feet are not on is no ride (egRideHolds);
 //   L4-7   THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (egHeal), Lifeline with it;
-//   L4-8   EG_RELAY_MIN the arc's own relay (world212), never a main relay that carries no breach;
+//   L4-8   EG_RELAY_MIN the arc's own relay (world213), never a main relay that carries no breach;
 //   L4-9   THE HOLD'S FINDING KEPT IN THE RECORD: a room woken twice inside its hold gives the gap back to what the hold
 //          found, never to a word its company stamped meanwhile;
 //   L4-10  A ROOM WOKEN MID-TRIAL HOLDS THE BODY of a member whose socket is gone, from the pose its record kept;
@@ -278,10 +278,10 @@ test('AUDIT EG V L4-7 THE COUNT MENDED ONLY BY A HEAL A CAST BACKS (sections 16.
 });
 
 // ── L4-8 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world212 - so a client meeting main\'s world197 to world211 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
-  assert.equal(RELAY_VERSION, 'world212', 'the arc ships under world212 (unshipped; PIN MOVED: world211 until the merge of main past TIDY2\'s world211; world206 until the merge of main past SERPENT5\'s world206 to HUB-PULL + DO-ASK\'s world210; world201 until the merge of main past CHAT-TRADE world201 and FIVE-ASKS world202, world203 until the merge past KG-SET world203 and KG5 world204, world205 until the merge past PVP-LOOT + QUEST-HOME world205)');
+test('AUDIT EG V L4-8 THE FIRST RELAY THAT OPENS A BREACH IS THE ARC\'S OWN (section 23, "Versions"): EG_RELAY_MIN is RELAY_VERSION\'s number - world213 - so a client meeting main\'s world197 to world212 (no breach in them) never sends one an `eg` (mutant: the branch\'s old 197)', () => {
+  assert.equal(RELAY_VERSION, 'world213', 'the arc ships under world213 (unshipped; PIN MOVED: world212 until the merge of main past REZ-BLOODLINE + GRAVE-PARTY\'s world212; world211 until the merge of main past TIDY2\'s world211; world206 until the merge of main past SERPENT5\'s world206 to HUB-PULL + DO-ASK\'s world210; world201 until the merge of main past CHAT-TRADE world201 and FIVE-ASKS world202, world203 until the merge past KG-SET world203 and KG5 world204, world205 until the merge past PVP-LOOT + QUEST-HOME world205)');
   assert.equal(EG_RELAY_MIN, Number(/^world(\d+)$/.exec(RELAY_VERSION)[1]));
-  for (const v of ['world197', 'world198', 'world199', 'world200', 'world201', 'world202', 'world203', 'world204', 'world205', 'world206', 'world207', 'world208', 'world209', 'world210', 'world211']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
+  for (const v of ['world197', 'world198', 'world199', 'world200', 'world201', 'world202', 'world203', 'world204', 'world205', 'world206', 'world207', 'world208', 'world209', 'world210', 'world211', 'world212']) assert.equal(relaySupportsEg(v), false, `${v} carries no breach`);
   assert.equal(relaySupportsEg(RELAY_VERSION), true);
 });
 

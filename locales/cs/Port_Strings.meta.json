@@ -2239,6 +2239,11 @@
   "tr": "bc5c1e876421",
   "by": "claude-in-session"
  },
+ "account.refusal.notDead": {
+  "en": "7ec337b612c7",
+  "tr": "1366e002174a",
+  "by": "claude-in-session"
+ },
  "account.refusal.notDeveloper": {
   "en": "c7c70b6e50ef",
   "tr": "8f889469c356",
@@ -2692,6 +2697,16 @@
  "account.refusal.queue": {
   "en": "e47dae0b7d71",
   "tr": "1ad3bee294a2",
+  "by": "claude-in-session"
+ },
+ "account.refusal.raiseLate": {
+  "en": "ae77d9b3ac34",
+  "tr": "836bcba86a2a",
+  "by": "claude-in-session"
+ },
+ "account.refusal.raiseNoLine": {
+  "en": "98c0bce174d7",
+  "tr": "314d82fcc9f5",
   "by": "claude-in-session"
  },
  "account.refusal.rankedNeedsAccount": {
@@ -8537,6 +8552,16 @@
  "legacy.court.cooled": {
   "en": "01ad0d23411e",
   "tr": "c1d3765d0693",
+  "by": "claude-in-session"
+ },
+ "legacy.rez.refused": {
+  "en": "90cc6dc5ad37",
+  "tr": "ad76a3f51713",
+  "by": "claude-in-session"
+ },
+ "legacy.rez.unheard": {
+  "en": "9a86cc2b125e",
+  "tr": "b5f0ad5695bd",
   "by": "claude-in-session"
  },
  "level.renown.risen": {
@@ -18644,6 +18669,16 @@
   "tr": "bc11ee53db1f",
   "by": "claude-in-session"
  },
+ "resurrect.companion": {
+  "en": "d601a60c609f",
+  "tr": "d6a312198d05",
+  "by": "claude-in-session"
+ },
+ "resurrect.forGood": {
+  "en": "9d59f4cf9126",
+  "tr": "9acd31c62898",
+  "by": "claude-in-session"
+ },
  "saddle.hello.key": {
   "en": "030a9c848901",
   "tr": "2e0cf5b8e3cd",
@@ -19354,6 +19389,16 @@
   "tr": "bda4fce394c5",
   "by": "claude-in-session"
  },
+ "search.searchedBy": {
+  "en": "e585f232c88f",
+  "tr": "558bc909c246",
+  "by": "claude-in-session"
+ },
+ "search.yourParty": {
+  "en": "157a6a9b14df",
+  "tr": "258caada4050",
+  "by": "claude-in-session"
+ },
  "serpent.honour.aura": {
   "en": "55dc3cb1ee75",
   "tr": "e77852ab021b",
@@ -19772,6 +19817,16 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "44b2ce79cc52",
+  "by": "claude-in-session"
+ },
+ "stolen.card": {
+  "en": "f7ee1f5cc455",
+  "tr": "2b908b1c6e87",
+  "by": "claude-in-session"
+ },
+ "stolen.taken": {
+  "en": "47f05fb5e818",
+  "tr": "ab58ed3547d1",
   "by": "claude-in-session"
  },
  "summon.noQuest": {

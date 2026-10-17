@@ -819,7 +819,7 @@
   },
   {
     "name": "SILVER-FINDS-grave-unasked",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/searchPartyHost.js",
     "old": "        silverFindAt('search', items);",
     "new": "",
     "why": "a headstone's find never holds silver",

@@ -287,7 +287,7 @@ import { reviewAct } from './review.js';   // INT6: the review of the judge's ve
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realm/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
 import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record; MAC (2026-10-14): its killer's piece in escrow - collected, taken back, listed
-import { listLineages, putLineage, realmDie, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone
+import { listLineages, putLineage, realmDie, realmRaise, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone; REZ-BLOODLINE AUDIT R1: a Resurrect inside its hold
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
 import { heartbeat } from './heartbeat.js';   // SCALE4c: one request for a tab's three clocks
@@ -396,6 +396,7 @@ const REALM_STATUS = Object.freeze({
   dead: 410, 'no-lineage': 404, 'lineage-person': 409, 'lineage-played': 409, 'lineage-model': 409, 'too-many-lineages': 409,
   'wed-no-line': 409, 'wed-already': 409, 'wed-partner': 409, 'wed-spent': 409,   // LEGACY7 part three: a wedding the realm cannot make
   'lineage-too-large': 413,   // AUDIT LEGACY III O2/P1: a line's record past its bound - its own word, never a malformed body's
+  'not-dead': 409, 'raise-late': 409, 'raise-no-line': 409,   // REZ-BLOODLINE AUDIT R1: a Resurrect the realm will not take
 });
 /** CUSTOMS-PASS: a pass's refusals - a bad shape 400 (the default), a caller who is no developer 403, no such account
  *  404, a guest's name two accounts wear 409. */
@@ -2198,7 +2199,8 @@ const service = {
           if (r.error === 'lineage-stale') return json(r, 409, origin);
           return answer(r);
         }
-        if (path === '/v1/realm/die') return answer(await realmDie(rctx, me, { id: body.id, lease: body.lease, why: body.why }));   // LEGACY7 part three: 'retired' keeps a union
+        if (path === '/v1/realm/die') return answer(await realmDie(rctx, me, { id: body.id, lease: body.lease, why: body.why, hold: body.hold ?? false }));   // LEGACY7 part three: 'retired' keeps a union; REZ-BLOODLINE AUDIT R1: `hold`, the death door's fall a Resurrect may take back
+        if (path === '/v1/realm/raise') return answer(await realmRaise(rctx, me, { id: body.id, lease: body.lease, diedAt: body.diedAt }));   // REZ-BLOODLINE AUDIT R1: a party's Resurrect inside the hold, under the lease that fell
         // LEGACY7 part three: a half of one wedding, and the account's unions
         // AUDIT LEGACY III O1/O3: the other's character as the relay stamped it, and a half taken back
         if (path === '/v1/realm/wed') return answer(await realmWed(rctx, me, { id: body.id, lease: body.lease, sid: body.sid, partner: body.partner, partnerChar: body.partnerChar, withdraw: body.withdraw === true }));

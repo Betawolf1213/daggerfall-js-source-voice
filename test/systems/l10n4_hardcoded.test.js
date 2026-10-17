@@ -309,7 +309,7 @@ const HARDCODED = {
   'src/systems/allyCast.js': 5,
   'src/systems/answerPipeline.js': 1,
   'src/systems/arena/arenaLadder.js': 8,
-  'src/systems/arena/arenaText.js': 424,
+  'src/systems/arena/arenaText.js': 426,   // ARENA-WAIT AUDIT (FIELD BUGS 2026-10-16b A1/A3): a tier not yet loaded and the server gone - written as the table's other words are
   'src/systems/automap/automap.js': 10,
   'src/systems/automap/automapModel.js': 1,
   'src/systems/ayleidStones.js': 9,

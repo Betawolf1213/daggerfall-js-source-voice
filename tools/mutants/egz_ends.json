@@ -657,7 +657,7 @@
   },
   {
     "name": "EGZM-index-unmade",
-    "file": "server-account/migrations/0121_elite_breach.sql",
+    "file": "server-account/migrations/0123_elite_breach.sql",
     "old": "CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (state, until);",
     "new": "CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (account);",
     "tests": [

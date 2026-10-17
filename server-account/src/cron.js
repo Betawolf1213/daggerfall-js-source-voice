@@ -18,6 +18,9 @@
 //   and the day's Motherlodes (motherlodes.js motherlodesOf). EVERY ONE OF THEM STILL RUNS ON ITS READ TOO, exactly as before - a read must never answer from a
 //   world the clock has not caught up with - but the clock has nearly always been first, so the read's own pass finds
 //   nothing due and writes nothing. Each was written for a race (two readers at once), so the clock is one more racer.
+//   REZ-BLOODLINE AUDIT R1 (2026-10-16): and the falls held for a party's Resurrect whose window closed with no tab to
+//   close it (legacy.js settleHolds) - the one with no read of its own: the tab that fell closes its own (realmDie),
+//   and a tab killed under its death screen has nobody else to.
 //
 //   EVERY HOUR (CRON_HOUR) - the sweeps the reads no longer run (the board's, the guild boards', the harvests', the
 //   market's history, each its module's own law, exported beside its table) and the retention the tables never had:
@@ -68,6 +71,7 @@ import { utcDay } from '../../src/net/marksLaw.js';
 import { arenaSeasonOf } from '../../src/net/arena/arenaLaw.js';
 import { REALM_FINDINGS_KEEP_S, REALM_WEALTH_KEEP_S } from './review.js';   // INT2/INT5: the judge's record's keeping
 import { WILD_FALLS_KEEP_S } from './wild.js';   // INT9: a death's drop's keeping
+import { settleHolds, REZ_SETTLE_MAX } from './legacy.js';   // REZ-BLOODLINE AUDIT R1: a held fall's window closed
 import { spendLapsedStakes } from './eg.js';   // EG-ZM: the Weir Key's stake's clock
 
 /** The two schedules - wrangler.toml's [triggers] crons name exactly these (test/server/scale4b.test.js holds the two to
@@ -149,6 +153,10 @@ export const MINUTE_JOBS = Object.freeze([
   ['iliac-champion', async (ctx) => iliacChampionClock(ctx)],
   // KG6: The King's Gambit's season #1 - its GRANDMASTER (gambit.js gambitChampionClock), Iliac Hand's law
   ['gambit-champion', async (ctx) => gambitChampionClock(ctx)],
+  // REZ-BLOODLINE AUDIT R1 (legacy.js settleHolds): a fall the death door held for a party's Resurrect whose window closed
+  // with no tab to close it - a page killed under its death screen - takes what a tombstone takes with it (its union, its
+  // guild seat, its pieces). The window is the realm's own (REZ_HOLD_S), so the minute is the read that catches it
+  ['rez-holds', (ctx) => rounds(() => settleHolds(ctx), REZ_SETTLE_MAX, ctx.budget)],
   ['motherlodes', async (ctx, env) => {
     const day = utcDay(ctx.nowS);
     if (profSwitchOf(env?.PROFESSIONS_OPEN) !== 'on' || lodesPicked === day) return 0;

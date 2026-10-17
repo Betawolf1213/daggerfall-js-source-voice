@@ -9,7 +9,7 @@ recorded in `Elite-Gates.md` section 31 (THE ASCENT) and that record wins where 
 `Elite-Gates-Look.md` (EG-LOOK) dressed the halls without touching the law. This page changes the law: the hall
 generator (`net/eliteGates/egLaw.js` layHall), its proofs (`net/eliteGates/egSpanLaw.js`), the relay's judging of where a body stands, and
 the client's clamp. Laws 4-8 stay byte for byte (`net/eliteGates/egDurable.js` EG_LAWS - a breach opened under a law keeps it);
-LAW 9 is new. The relay version for the arc (`world212` since the sixth merge of main) is not yet deployed, so it carries LAW 9 with it.
+LAW 9 is new. The relay version for the arc (`world213` since the seventh merge of main) is not yet deployed, so it carries LAW 9 with it.
 
 ## What was wrong (measured over 600 halls of law 8, 2026-10-16)
 

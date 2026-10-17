@@ -276,7 +276,7 @@ test('EG-H2 THE SWEEP (section 24, THE ONE CONSTRUCTION SEAM): every rule\'s doo
     ['W', 'registerLevitateWard(() =>', '\n', ['levitate']],
     ['W', 'registerJumpForgiveness(', '\n', ['jumpBuffer', 'latePress']],
     ['W', 'arenaFrame(dt);   // ARENA2', 'egCourtFrame();', ['regen']],
-    ['W', 'if (!_rezSeen) _rezSeen =', 'if (rez) {', ['resurrect']],
+    ['W', 'if (!_rezSeen) _rezSeen =', 'if (rez && legacyHost', ['resurrect']],   // PIN MOVED (REZ-BLOODLINE, at the seventh merge of main): the rise asks Project Legacy first
     ['W', 'const portalDoorRefusal = () => {', 'const hold = portalHoldNow();', ['portalStone']],
     ['K', 'export function spirePotionRefusal(item) {', 'try {', ['potions']],
     ['K', 'export function spirePotionDrunk(item) {', 'try {', ['potions']],

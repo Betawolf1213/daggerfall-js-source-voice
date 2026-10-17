@@ -7,7 +7,7 @@
     "tests": [
       "test/scenes/hostceiling.test.js"
     ],
-    "note": "AUDIT EG V (the merge of main into PR #800): re-aimed by content - bootWorld's ceiling raised by the Elite Gates arc's own lines (+226)"
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out)."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

@@ -26,7 +26,7 @@ import { WOD_LOOT_LOCATION_INDEX, WOD_LOOT_ALIGN } from '../world/worldOfDaggerf
 import { wodSiteId, yieldsTo } from '../world/worldOfDaggerfall/wodShared.js';   // WOD7: a camp's marker, shared online
 import { alignBillboardToGround, alignControllerToGround } from '../world/groundAlign.js';   // WOD3: SpawnLoot's drop; CSA-D: BoardBoat's AlignControllerToGround
 import { rollHoldFoes } from '../world/worldOfDaggerfall/wodPrivateersHold.js';   // WOD4: the camp at Privateer's Hold
-import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons } from '../systems/loot/lootRarity.js';   // WOD3: LR1 over the camps' piles; SIGIL1: their weapons' sigils
+import { rollLootRarity, pileSource, dungeonRarityTier, stampWonWeapons } from '../systems/loot/lootRarity.js';   // WOD3: LR1 over the camps' piles; SIGIL1: their weapons' sigils
 import { revenantToReturn, revenantSpawnOptions, revenantPresence, takeRevenantNotice, revenantSay, releaseRevenantStand, revenantRecord, revenantMomentEvent, revenantRumor, revenantMapMarks, revenantHuntEntries, revenantTakes, revenantFelled, revenantFelledEvent, revenantRoutSweep, revenantRoutedEvent, revenantWarnEvent, revenantBetrayEvent, forgetLastSlew, killerOf as revenantKillerOf, inheritRevenant } from '../systems/revenant/revenant.js';   // REVENANT: who comes back, and what the player is told
 import { endPlayerFights, playerHarmMark } from '../systems/harmMark.js';   // RVN10 (bible/12-Enhanced-AI/Feud-Arc.md 21.2): a respawn's jump is no flight
 import { DEVOTED } from '../systems/revenant/revenantFeud.js';   // RVN11 (Feud-Arc.md 22.1): a Devoted one's wait between warnings
@@ -170,7 +170,7 @@ import { createBloodMarks } from '../combat/blood/bloodMarks.js';   // BLOOD1a: 
 import { preloadRestArt } from '../ui/restWindow.js';   // S40: rest above ground   // D3: REST00I0/01I0/02I0
 import { createRestWindow } from '../ui/restDoor.js';   // the enhanced/native fork, same law as ui/tradeDoor.js
 import { ActionTextBox } from '../ui/actionText.js';   // AUDIT 23 (C5)
-import { searchKey, searchCooldownLeft, markSearched, SEARCHED_TEXT, rollSearchOutcome, pickSearchUndead, rollSearchElite, searchMessage, mintSearchFind, setSearchClock, SEARCH_FOES_PER_PLAYER, SEARCH_FOE_SPACING } from '../systems/searchables.js';   // SEARCH1: a graveyard's headstones
+import { setSearchClock } from '../systems/searchables.js';   // SEARCH1: a graveyard's headstones
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
 import { statusReadoutTakesAction } from '../systems/statusReadout.js';   // STATUS-LIVE: ...and the yield this host's own key ladder owes, which never reaches routeAction
 import { maxFatigue, FATIGUE_MULTIPLIER, liveStat, STAT_KEYS_ORDER, clampFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5); AUDIT SOC B5: the party pose's fatigue in the digits a sheet shows
@@ -1038,6 +1038,7 @@ import { LookFilter, swingSuppressesLook } from '../player/lookFilter.js';   // 
 import { controllerLook } from '../player/lookFilter.js';   // AUDIT NAV1 (the presentation): a pad in hand - the sea fight's readout names its buttons (MAC-O2's seam line above kept as it is pinned)
 import { MoveAxes } from '../player/moveAxes.js';   // AUDIT 28 W8: MovementAcceleration
 import { CameraRecoiler } from '../player/cameraRecoiler.js';   // AUDIT 28 W9: CameraRecoilStrength
+import { createDoorToken } from './doorTokenHost.js';   // DOOR-TOKEN (FIELD BUGS 2026-10-16b): the next room's identity token, minted at the door
 import { HeadBobber } from '../player/headBobber.js';   // AUDIT 28 W10: HeadBobbing
 import { createClimbFeelHost } from '../player/climb/climbFeel.js';   // CLIMB4: the climb's camera
 import { lastHealthLost, lastHealthLostPercent } from '../ui/hud/hudVitals.js';   // AUDIT 28 W9: the detector's loss
@@ -1120,6 +1121,7 @@ import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIE
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
 import { createTravelViewMarks } from './travelViewMarks.js';   // HOST-SPLIT
+import { createSearchParty } from './searchPartyHost.js';   // HOST-SPLIT
 import { createPixelBuild } from './pixelBuild.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
@@ -3782,7 +3784,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     openTrade: (o) => !!modes?.openRoadTrade?.(o, o.mode ?? 'Buy'),
     openLoot: ({ items }) => {
       if (!inventoryDoorReady()) { townTalk.say('Inventory is still loading. Please try again.'); return false; }
-      const w = makeInventoryWindow({ loot: { items: () => items, containerImage: () => CONTAINER_IMAGES.Chest, playerOwned: false } });
+      const w = makeInventoryWindow({ loot: { items: () => items, containerImage: () => CONTAINER_IMAGES.Chest, playerOwned: false, stolenFrom: new Set(items) } });   // STOLEN-GOODS AUDIT S4: a robbed caravan's goods are its people's - the hold-up is a Theft, each of theirs taken marked as it lands
       if (!w) return false;
       townTalk.showOverlay(w);
       return true;
@@ -6302,7 +6304,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const cam = { pos: [TERRAIN_SIZE / 2, playerPixel.centerHeight + 40, TERRAIN_SIZE / 2], yaw: Math.PI, pitch: -0.1 };
   const lookFilter = new LookFilter();   // AUDIT 28 W7: one filter per camera
   const moveAxes = new MoveAxes();   // AUDIT 28 W8: MovementAcceleration
-  const cameraRecoiler = new CameraRecoiler();   // AUDIT 28 W9: CameraRecoilStrength
+  const cameraRecoiler = new CameraRecoiler(); const doorToken = createDoorToken({ minter: () => identityMinter, session: () => online, modes: () => modes, player: () => player });   // AUDIT 28 W9: CameraRecoilStrength   // DOOR-TOKEN: declared beside the recoiler `_teleportToPixel` resets, so no jump reads it before it stands (its seams are read lazily, any not yet standing answering none)
   const headBobber = new HeadBobber();   // AUDIT 28 W10: HeadBobbing
   // CLIMB4: THE FEEL - the climb's camera, one per body as the bobber is: framed after the motor moved (its turn owed to
   // the look filter), its view half laid on the view in first person, its kick and pitch on every lens of the frame
@@ -11036,7 +11038,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const ex = exhibitionFor(worldMinutes());
       // ARENA4b: ONLINE THE HOUR'S BOUT IS THE RELAY'S - its room watched from the city's sand (scenes/arena/arenaOnline.js
       // watchCity), every screen the one bout; offline, or on a relay before it, this screen's own seeded bout as ever
-      if (arenaOnline?.exhibitions?.()) arenaOnline.watchCity(ex);
+      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) arenaOnline.watchCity(ex);   // FIELD BUGS 2026-10-16b ARENA-WAIT: the online lane before the relay's word stands nothing of its own
       else if (ex?.open && ex.hour !== _arenaHourRun) { _arenaHourRun = ex.hour; arenaBouts.ask({ where: 'city', kind: 'exhibition', ex }); }
     }
     if (!stg) { arenaBouts.frame(dt, {}); if (!arenaBouts.bout()) arenaSound.stop(); return; }
@@ -11065,7 +11067,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (a === 'watch') {
       const ex = exhibitionFor(worldMinutes());
       if (!ex) return;
-      if (arenaOnline?.exhibitions?.()) { arenaBouts.dismiss(); arenaOnline.watchExhibition(ex); return; }   // ARENA4b: the relay's bout, from the stands of its room
+      if (arenaOnline?.exhibitions?.() || arenaOnline?.waiting?.()) { arenaBouts.dismiss(); arenaOnline.watchExhibition(ex); return; }   // ARENA4b: the relay's bout, from the stands of its room; ARENA-WAIT: waited for
       const no = arenaGate.watchRefusal(ex.hour); if (no) { townTalk.say(no); return; }   // AUDIT PRE-MERGE 1003 B3: an hour seen here is never fought again from its call
       _arenaHourRun = ex.hour;
       arenaBouts.dismiss();
@@ -11073,7 +11075,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       modes?.enterArenaFloor?.('watch');
     } else if (a === 'fight') {
       // ARENA4: ONLINE THE LADDER IS THE ACCOUNT'S - its next bout fought on the relay (scenes/arena/arenaOnline.js)
-      if (arenaOnline?.live()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }
+      if (arenaOnline?.live() || arenaOnline?.waiting()) { const r = arenaOnline.fightLadder(); if (!r.ok && r.text) townTalk.say(r.text); return; }   // FIELD BUGS 2026-10-16b ARENA-WAIT: never the save's ladder on the online lane
       const next = nextLadderBout(arenaLadderRestore(playerEntity.arenaLadder));
       if (!next) return;
       arenaBouts.ask({ where: 'floor', kind: 'ladder', next });
@@ -13652,7 +13654,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT CAPTAIN'S SEA G2/P7: a pixel this game does not stream lands where the world stands - before the helm's word
     const unstreamed = _streamedLanding(px, py);
     if (unstreamed) { px = unstreamed.px; py = unstreamed.py; localPos = null; resolveArrival = null; }
-    dwTeleported(performance.now() / 1000);   // DW-D: OnTeleportToCoordinates' grace
+    dwTeleported(performance.now() / 1000); doorToken.jumping();   // DW-D: OnTeleportToCoordinates' grace   // DOOR-TOKEN: a jump - the next room's token minted while the destination streams
     if (modEvent !== 'load') navalStow();   // KEEP-PLUNDER: a jump's sea stowed first - never a load's
     // HELM-JUMP (FIELD BUGS 2026-10-11): the helm let go before the jump, so the landing below is the last word on where
     // the player stands. A load's start (OnStartLoad) and a fast travel (OnPreFastTravel) let it go themselves, and a
@@ -17978,7 +17980,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // DOORS, below the duel's). AUDIT REALM2 C2: the lease given up as the page GOES (pagehide, the unload guard answered) - the leave alone, with
     // keepalive (the browser finishes it; a save that large it cannot, so the two-minute checkpoints bound what a close
     // costs) - and taken again when a page the back-forward cache kept is shown
-    whenPageGoes(globalThis, () => { realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });
+    whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });   // REZ-BLOODLINE: a death held for a Resurrect decided first - its tombstone takes the lease, the leave then sends nothing
   }
   /** REALM P1.3: A CHARACTER BORN ONLINE - made at the service once chargen is done, its first save the service's
    *  checkpoint at sequence 1, and then the one online boot there is, from the service. Any refusal goes to the door. */
@@ -18816,50 +18818,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // ── SEARCH1 (systems/searchables.js): A GRAVEYARD'S HEADSTONE, searched ─────────────────────────────────────────
   // Two in three find nothing; the last third is a find or the dead, half each. The box is clicked away first: the
   // foe stands, or the find opens, only from its onClose (ui/actionText.js). Info mode reads the stone instead (GRAVE1).
+  // GRAVE-PARTY (FIELD BUGS 2026-10-16b): the search is the PARTY's - said to the cell, heard from it, the party lens
+  // registered for the dungeon's searchables too (scenes/searchPartyHost.js).
   setSearchClock(() => worldMinutes());
-  function activateGrave(g, mode = 'grab') {
-    if (!g) return false;
-    if (mode === 'info') { townTalk.say(randomEpitaph()); return true; }
-    const key = searchKey(g.loc, g.key);
-    const now = worldMinutes();
-    if (searchCooldownLeft(key, now) > 0) { setMidScreenText(SEARCHED_TEXT); return true; }
-    markSearched(key, now);
-    const outcome = rollSearchOutcome({ graveyard: true });
-    const level = effectiveLevel(playerEntity);
-    let rows, onClose = null;
-    if (outcome === 'foe') {
-      const type = pickSearchUndead(level);
-      const elite = rollSearchElite();
-      const count = SEARCH_FOES_PER_PLAYER * (1 + partyNear().length);   // SEARCH1-PARTY: two for every player of the party here
-      rows = searchMessage('tombstone', 'foe', { foeName: enemyDisplayName(type) ?? 'creature', elite, count });
-      onClose = () => {
-        // a ring about the stone, opening toward the player (a graveyard is open ground - no room to run out of)
-        const feet = player.pos;
-        const c = [(g.min[0] + g.max[0]) / 2, Math.min(g.min[1], feet[1]), (g.min[2] + g.max[2]) / 2];
-        const half = Math.max(g.max[0] - g.min[0], g.max[2] - g.min[2]) / 2;
-        const toward = Math.atan2(feet[0] - c[0], feet[2] - c[2]);
-        for (let n = 0; n < count; n++) {
-          const a = toward + (n % 2 ? 1 : -1) * Math.ceil(n / 2) * (Math.PI / 5);
-          const r = half + 0.7 + Math.floor(n / 10) * SEARCH_FOE_SPACING;
-          const at = [c[0] + Math.sin(a) * r, c[1] + 0.05, c[2] + Math.cos(a) * r];
-          exteriorFoes.spawnFoe(type, at, { yaw: Math.atan2(-(feet[0] - at[0]), -(feet[2] - at[2])), feetGiven: true, loose: true, eliteFoe: elite && n === 0 })
-            .catch((e) => console.warn('[search] a grave\'s foe would not stand', e));
-        }
-      };
-    } else if (outcome === 'loot') {
-      const items = mintSearchFind('tombstone', { level, gender: playerEntity.gender, tier: dungeonRarityTier(18), family: dungeonFamily(18), luck: liveStat(playerEntity, 'luck') });   // a Cemetery's tier and family (DFRegion.DungeonTypes 18)
-      rows = searchMessage('tombstone', 'loot');
-      onClose = () => {
-        const pile = droppedLoot.dropPile(items, dropFeet(), `${playerTravelPixel().x},${playerTravelPixel().y}`);
-        if (!pile) return;
-        silverFindAt('search', items);   // SILVER-FINDS: this search's find rolls its silver once (the stone searched again after its hours, again)
-        const w = makeInventoryWindow({ onClose: () => droppedLoot.releaseEmptied(), loot: droppedLootHooks(pile) });
-        if (w) townTalk.showOverlay(w);   // a refused pack is null - the find stays on the ground
-      };
-    } else rows = searchMessage('tombstone', 'nothing');
-    townTalk.showOverlay(new ActionTextBox(rows, { onClose }));
-    return true;
-  }
+  const { activateGrave, frame: searchPartyFrame, heard: searchPartyHeard } = createSearchParty({   // HOST-SPLIT: src/scenes/searchPartyHost.js
+    dropFeet, droppedLoot, exteriorFoes, makeInventoryWindow, player, playerTravelPixel, townTalk,
+    get partyNear() { return partyNear; }, get online() { return online; }, get social() { return social; },
+  });
   /** RW1 / FORAGE4: a quest's reward, given - its pile minted on the ground the player stands on now and opened, or,
    *  while a quest box is being read, opened when that box closes (GivePc's OnClose). */
   const giveReward = (dfItem) => {
@@ -21421,7 +21386,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     onlineArrival(); empireJoin({ entity: playerEntity, nowMinutes: ownMinutes(), say: (l, d) => townTalk.say(l, d) });   // REALM P0.3: the Empire calls in the debt it would not have lent - the loans run on the character's own clock (LIVED1)
     alignSurvival(playerEntity, Math.floor(ownMinutes()), Math.floor(ownMinutes()));   // SURV7: a record ahead of the character's own clock starts fresh; the absence itself is save.js's load arm
     online.onClock = (offsetMs) => { const was = _sharedOffsetMs; _sharedOffsetMs = offsetMs; _sharedClockHeard = true; if (Math.abs(offsetMs - was) > 1000) onlineArrival(); hearSharedClock(); };   // WORLD5: the relay's clock corrects this machine's; AUDIT LIVED1b P4: and the load's absence is paid on it
-    online.onOverworld = (msg) => overworldLedgerHeard(msg);   // OW6L: my cell's (and a halo's) overworld ledger - its welcome, and each change
+    online.onOverworld = (msg) => (msg?.k === 'gr' ? searchPartyHeard(msg) : overworldLedgerHeard(msg));   // OW6L: my cell's (and a halo's) overworld ledger - its welcome, and each change; GRAVE-PARTY: its graves searched, to the search party's own door (scenes/searchPartyHost.js)
     remotePlayers = new RemotePlayers({ renderer, deps: { fetchBytes, palette, getTexture, uploadRecordFrame, audio } });   // 2026-09-17: uploadRecordFrame added for the class-enemy billboard path (net/remotePlayers.js _buildMobile/_syncMobilePeer) - the doll path never touches it
     // MWBODY1: the enhanced skin with Morrowind data attached puts every peer in a body of its own; otherwise the doll
     const enhanced = isEnhanced();   // the skin cannot change without a reload (switchSkin), so it is read once, not per frame
@@ -23807,7 +23772,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // relay's bout on the floor's instance (its room the presence session's), the boards and the receipts. ═══════════════
   arenaOnline = createArenaOnline({
     now: () => performance.now(),
-    session: () => online,
+    session: () => online, lane: () => onlineOn, nowS: () => relayNowS() ?? Date.now() / 1000,   // FIELD BUGS 2026-10-16b ARENA-WAIT: a realm character waits for the relay's word; the realm's season by the clock
     // the hall's socket: a presence-less session of my own id, minting its token as every link does
     makeHall: () => {
       if (!online?.url) return null;
@@ -26068,7 +26033,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // unconditionally, like restEnemyAt/restCancelAt above.
       restStartedAt: Number.isFinite(_partyRestJustStartedAt) ? _partyRestJustStartedAt : null,
       ...(_rezOut && performance.now() < _rezOut.until ? { rz: { to: _rezOut.to, at: _rezOut.at } } : {}),
-      ...(_deadMark ? { dd: _deadMark } : {}),   // PCORPSE3: my body, for a party member who missed the death   // RESURRECT1: my Resurrect's call, held a few sends
+      ...(_deadMark ? { dd: _deadMark } : {}), ...(legacyHost?.raisable() === false ? { fg: 1 } : {}),   // PCORPSE3: my body, for a party member who missed the death   // RESURRECT1: my Resurrect's call, held a few sends   // REZ-BLOODLINE: fallen for good - no Resurrect raises me (net/wire.js validPartyPose `fg`)
       // PARTY-TRAVEL (2026-09-25, Mac: "...the option for party members to ready up and travel together"): the party's
       // journey (net/wire.js validPartyPose, systems/party/partyTravelLaw.js), each field omitted when there is none - my
       // proposal while I lead one (`tv`, the round's stamp and, once we set out, `go`), my answer to the leader's round
@@ -27479,7 +27444,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     killerOf: (cid, ownAt) => revenantKillerOf(cid, ownAt), inheritFoe: (rec) => inheritRevenant(playerEntity, rec),
     // LEGACY7: online, the realm's copy of the line follows each write, and a fall is the realm's tombstone
     stored: (f) => { legacyRealmLine?.push(f); },
-    tombstone: (why) => (realmSession ? realmSession.die(why) : false),   // LEGACY7 part three: 'retired' keeps a union with another player's character
+    tombstone: (why, o) => (realmSession ? realmSession.die(why, o) : false), raiseDeath: (at) => (realmSession ? realmSession.raise(at) : { ok: true }),   // LEGACY7 part three: 'retired' keeps a union with another player's character; REZ-BLOODLINE: `o.keepalive` as the page goes; AUDIT R1: `o.hold` the death door's fall, and a party's Resurrect asked of the realm under the lease that fell (no realm, nothing held there)
     realmId: () => realmSession?.id ?? null,   // LEGACY7 part three: the realm character this tab plays (two players wed)
     look: () => composeLook(playerEntity),   // LEGACY7 part four: what the one played wears - how the world draws them while another is played
     houseHere: () => { const b = (modes?.mode ?? 'exterior') === 'interior' ? modes?.interiorBuilding : null; return b?.buildingKey > 0 && b.townMapId ? { mapId: b.townMapId >>> 0, buildingKey: b.buildingKey } : null; },
@@ -28424,10 +28389,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const out = [];
     for (const c of remotePlayers.corpseMarks(onlineToScene)) {
       const cAcct = c.acct ?? (c.id ? social.accountOfPeer(c.id) : null);   // PCORPSE3: a party-told body carries its account
-      if (!cAcct || !social.others().some((m) => m.acct === cAcct)) continue;
+      const mate = cAcct ? social.others().find((m) => m.acct === cAcct) : null; if (!mate) continue;
       if (Math.hypot(c.feet[0] - at[0], c.feet[1] - at[1], c.feet[2] - at[2]) > reach + 1) continue;
       const acct = cAcct;
-      out.push({ id: c.id, acct, feet: c.feet, name: (c.id && peerName(c.id)) || social.party.members.find((m) => m.acct === acct)?.name || null });
+      out.push({ id: c.id, acct, feet: c.feet, name: (c.id && peerName(c.id)) || social.party.members.find((m) => m.acct === acct)?.name || null, gone: mate.p?.fg === 1 });   // REZ-BLOODLINE: fallen for good, their own pose says (composePartyPose `fg`) - the cast refuses before a point is spent
     }
     return out;
   };
@@ -28885,8 +28850,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // caster's pose) as new, and rose the instant it fell
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
-        const rez = social?.acct && madeRuleHere('resurrect') !== 'refused' ? rezFor(social.others(), social.acct, _rezSeen) : null;   // SD-ONELIFE: no Resurrect in the Hour - one life; EG-H2: nor in the Spire (the made level's law) (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`)
-        if (rez) { resurrectInPlace(rez); return; }
+        const rez = social?.acct && madeRuleHere('resurrect') !== 'refused' ? rezFor(social.others(), social.acct, _rezSeen) ?? legacyHost?.raised() ?? null : null;   // SD-ONELIFE: no Resurrect in the Hour - one life; EG-H2: nor in the Spire (the made level's law) (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`); REZ-BLOODLINE AUDIT R1: or the call the realm let go, the caster's pose done carrying it
+        if (rez && legacyHost?.raise(rez) !== false) { resurrectInPlace(rez); return; }   // REZ-BLOODLINE (FIELD BUGS 2026-10-16b): a Bloodline death held for it is let go; one decided for good stays down (legacyHost.js raise); AUDIT R1: the realm asked first - down until it answers
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen
@@ -29063,8 +29028,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     actFlush();        // AUDIT WORLD3 A3: an act the wire refused, re-read and re-sent
     hitFlush(now);     // AUDIT FOES FOE2: and a BLOW the wire refused - a joiner applies none locally, so a lost frame is a lost blow
     modes?.setDungeonAuthority?.(dungeonAuthority(now));   // AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
-    hccParkTick(now);   // HCC-PARK: my parked team's word to the cell it stands in, when it changed
-    overworldLedgerFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them
+    hccParkTick(now); doorToken.frame();   // HCC-PARK: my parked team's word to the cell it stands in, when it changed   // DOOR-TOKEN: the way out approached - its token minted on the walk to the door
+    overworldLedgerFrame(now); searchPartyFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them; GRAVE-PARTY: and the stones I searched
     caravanDecorTick(now);   // WAGONS2-VISIT: what I placed in my caravan, to its room, when it changed
     caravanVisitLink.tick(key ? online : null, modes?.caravanVisit ?? null);   // WAGONS2-VISIT: the visited caravan's cell, heard from inside it (after my primary's own join and tick)
     if (isCellRoom(online.room)) { const ids = ownerIds(); if (ids) camps.sweepOwners(ids, now, FOES_STALE_MS); }   // PERF11: the same list   // SURV3: a peer's camps go as their puppets do - the same liveness, the same answer-gate   // AUDIT WORLD6b-iii(b) C3/B5: no answer (the socket not open) is not "nobody" - it pruned every owner while the halos kept feeding frames, a spawn-and-discard loop per frame   // AUDIT WORLD6b-ii C2: ONE liveness for the owner - the peers the hunt reads (visible: a pose, in range, inside the timeout) are the peers whose puppets stand
@@ -29590,7 +29555,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     wildHallEpoch: () => { const h = wildHallHere(); return h ? (_wdunEpoch.get(h.key) ?? 0) : 0; },   // PVPDUNGEONS: its reset's epoch
     wildNoBank: () => { if (!wildHere()) return false; townTalk.say('There are no banks in the mountains.'); return true; },
     wildNoHouse: () => { if (!wildHere()) return false; townTalk.say('No house is for sale in the Wrothgarian Mountains.'); return true; },   // PVPDUNGEONS   // PVPDUNGEONS: no banks, so no houses either
-    onDungeonLeave: () => { if (_wdunInside) wdunLeft(false); const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} quest foe(s) at the dungeon's door`); gatherHost?.leaveDungeon(); worldPublish(performance.now(), true); },   // WORLD1: the room's memory goes out while the dungeon still stands; QUEST-PARTY phase 3c: my shared quest's foes to the party who stay
+    onDungeonLeave: () => { if (_wdunInside) wdunLeft(false); const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} quest foe(s) at the dungeon's door`); doorToken.leaving(); gatherHost?.leaveDungeon(); worldPublish(performance.now(), true); },   // WORLD1: the room's memory goes out while the dungeon still stands; QUEST-PARTY phase 3c: my shared quest's foes to the party who stay   // DOOR-TOKEN: the cell outside's token, if the walk to the door did not mint it
     // OH-D: the four DFU events There's a Hole in the Bottom of the Ocean subscribes to (its Install), raised by the doors
     onSetDungeon: (ctx) => ohAbyss?.onDungeonSet(ohDungeonOf(ctx)),   // DaggerfallDungeon.OnSetDungeon
     onTransitionDungeonInterior: (ctx) => { navalStow(); ohAbyss?.onDungeonEntered(ohDungeonOf(ctx)); csaOnTransition(); dungeonTierSay(); navalTransition(); },   // PlayerEnterExit.OnTransitionDungeonInterior (CSA-C: Come Sail Away's OnTransition after OceanHoles' - the mods' load order); TIER1: the tier said, online
@@ -29605,7 +29570,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const p = ohAbyss.presentation({ fogColor: [...fog.color].slice(0, 3).concat(1), dungeonAmbient: [...DUNGEON_AMBIENT, 1] }, getFloat('Enhancements', 'DungeonAmbientLightScale', 0, 1));
       return p ? { ...p, fogColor: p.fogColor.slice(0, 3) } : null;
     },
-    onInteriorLeave: () => { const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the building's door`); worldPublish(performance.now(), true); },   // WORLD6a: and a building's while the building still stands; QUEST-PARTY phase 3b: my foes there to the players who stay
+    onInteriorLeave: () => { const n = handOverRoomFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the building's door`); doorToken.leaving(); worldPublish(performance.now(), true); },   // WORLD6a: and a building's while the building still stands; QUEST-PARTY phase 3b: my foes there to the players who stay   // DOOR-TOKEN: and the street's token
     // QUEST-PARTY phase 3b: the building pool's net - the room's own lane (OWN1): my foes out, a peer's in as puppets, a
     // blow on a peer's foe to its owner (marked `own`); the frame is the room's, as a pose's is (the interior rides the
     // exterior's frame, P8 - its height sheds the origin's vertical shift, AUDIT ONLINE D7). Null offline.
@@ -30023,7 +29988,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // owns the motor, the animator and the mount's art together.
     setTransportMode: (mode) => setTransportModeHere(mode),
     horseCart: hccRuntimeOn,   // HCC: the runtime's transition handlers and storage-access word, when the mod is on
-    onPreTransition: () => { const n = handOverFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the door`); },   // AUDIT PSCALE1 NET-3: a door out of the open country hands my foes to the players outside
+    onPreTransition: () => { const n = handOverFoes(); if (n) console.info(`[foes] handed ${n} foe(s) at the door`); doorToken.entering(); },   // AUDIT PSCALE1 NET-3: a door out of the open country hands my foes to the players outside   // DOOR-TOKEN: and the room behind it has its token minted while the place builds
     horseCartSave: () => hccRuntime.getSaveData(),   // AUDIT HCC H3: the record a dungeon save carries (DFU's per-mod slot, whatever the switch says)
     deepCleared: (loc, stops, entry) => livingDeepCleared(loc, stops, entry),   // LW14: the stops a company left, at a dungeon's build
     openLivingDiver: (rec) => (livingWorldOn() && rec?.living ? !!livingDivers?.offers(rec, () => modes?.dungeonCtx?.hudSay?.(`${firstNameOf(rec.living.res?.name ?? '')}: "Keep your blade up down here."`)) : false),   // LW14: a company below, pressed
