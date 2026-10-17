@@ -180,6 +180,9 @@ import { hudLocked, setHudLocked, resetHudLayout, hudBarsSplit, setHudBarsSplit 
 import { enhancedHudScale as hudScaleNow, HUD_SCALE_MIN, HUD_SCALE_MAX } from './enhancedHud.js';   // PX30c
 import { mapScaleLabel, nextMapScale } from '../map/mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the Maps row
 import { standingGroups } from '../../systems/faction/factionStanding.js';   // FIELD BUGS 2026-10-09e EVERY-STANDING: every organization's reputation
+import { wayBackQuestLine } from '../../systems/guild/guildServiceFlow.js';   // WAY-BACK: the way into a guild, under its row
+import { activeMemberships, guildOfFaction } from '../../systems/guild/guilds.js';   // WAY-BACK: the book the join reads, and GetGuild(factionId)
+import { resolveVariantGuild } from '../../systems/guild/guildVariants.js';   // WAY-BACK: ...a temple's or an order's
 import { playerEntity } from '../../characters/playerEntity.js';
 // PX6: the Stats page's skill labels - the one home (systems/skills.js).
 import { SKILLS, SKILL_NAMES } from '../../systems/skills.js';
@@ -5174,6 +5177,10 @@ export function statsEveryStanding(detail, entity) {
       const row = el('div', 'px-stat px-org');
       row.append(el('span', 'k', r.name), signedRep(r.rep));
       detail.append(row);
+      // WAY-BACK (FIELD BUGS 2026-10-16d): under a guild that will not take this standing, its quests' way in - the hall's
+      // own line (the rest is said at the hall, and on the classic skin's refusal of the join)
+      const way = wayBackQuestLine(guildOfFaction(r.factionId, resolveVariantGuild(entity.factionRep?.dict)), activeMemberships(entity), entity.factionRep);
+      if (way) detail.append(el('p', 'px-note', way));
     }
   }
 }
