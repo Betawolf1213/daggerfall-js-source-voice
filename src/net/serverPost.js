@@ -13,6 +13,8 @@
 import { call, forgetSession } from './accountClient.js';
 import { postHead, postWhole, unclaimedOf, POST_POLL_MS, POST_BOX_MAX } from './postLaw.js';
 import { validLootItem } from '../systems/loot/loot.js';
+import { ReportDesk } from './privateReport.js';   // PRIVATE-REPORT: the report form's desk, kept on the box for the sitting
+import { t } from '../systems/textManager.js';
 
 /** The box: `{ post: [head...], unread, unclaimed, max }`, newest first. */
 export const postBoxCall = (io) => call(io, '/v1/post/box');
@@ -32,6 +34,9 @@ export function postNoticeText(event) {
   // so their first word of it is a sitting's first look - which said only "1 message waiting")
   const one = (p) => `Post from ${p.from}: "${p.subject}"${p.item && !p.claimed ? ` - ${p.item.name} is waiting for you` : ''}. ${where}`;
   if (event?.kind === 'new') return ps.length === 1 ? one(ps[0]) : `${ps.length} new messages in your mailbox. ${where}`;
+  // PRIVATE-REPORT: a reader's private reports - said apart from the post, and never what they say (the world tab is read
+  // over a shoulder, on a stream)
+  if (event?.kind === 'reports') return t('report.notice', '{n, plural, one {# private report is waiting to be read.} other {# private reports are waiting to be read.}} Type /report, or open the mailbox beside the hourglass.', { n: event.unread });
   const n = event?.count ?? 0;
   if (n === 1 && ps.length === 1) return one(ps[0]);
   return `You have ${n} message${n === 1 ? '' : 's'} waiting in your mailbox. ${where}`;
@@ -77,17 +82,22 @@ export class PostBox {
      *  that set out before one answers the box as it stood before it, and is not taken (a claim's "Waiting" brought back). */
     this._acts = 0;
     this._lookActs = 0;
+    /** PRIVATE-REPORT: the report form's desk (net/privateReport.js), for the sitting; and, for a reader of the private
+     *  reports alone, the service's count of them (`{ unread, open }`) - null for everyone else. */
+    this.desk = new ReportDesk({ ioOf: () => this.ioOf?.() ?? null });
+    /** @type {{ unread: number, open: number } | null} */ this.reports = null;
   }
 
-  /** What the mailbox's mark counts: a piece unread, or holding an item not yet claimed - each once. */
-  get waiting() { return this.post.filter((p) => !p.read || (p.item && !p.claimed)).length; }
+  /** What the mailbox's mark counts: a piece unread, or holding an item not yet claimed - each once. PRIVATE-REPORT: and,
+   *  for a reader, the private reports nobody has opened. */
+  get waiting() { return this.post.filter((p) => !p.read || (p.item && !p.claimed)).length + (this.reports?.unread ?? 0); }
 
   _changed() { this.version++; }
 
   _io() {
     const io = this.ioOf?.() ?? null;
     if (!io?.secret) {
-      if (this.state !== 'signed-out') { this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.opened.clear(); this._known = null; this._changed(); }
+      if (this.state !== 'signed-out') { this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this._changed(); }
       return null;
     }
     return io;
@@ -95,8 +105,8 @@ export class PostBox {
 
   /** A refusal the whole box answers to: `auth` forgets the session, a guest is a guest. True when it was one. */
   _boxRefusal(io, error) {
-    if (error === 'auth') { forgetSession(io?.storage); this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.opened.clear(); this._known = null; this.error = error; this._changed(); return true; }
-    if (error === 'post-needs-account') { this.state = 'guest'; this.post = []; this.unread = 0; this.unclaimed = 0; this.error = error; this._changed(); return true; }
+    if (error === 'auth') { forgetSession(io?.storage); this.state = 'signed-out'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.opened.clear(); this._known = null; this.error = error; this._changed(); return true; }
+    if (error === 'post-needs-account') { this.state = 'guest'; this.post = []; this.unread = 0; this.unclaimed = 0; this.reports = null; this.error = error; this._changed(); return true; }
     return false;
   }
 
@@ -128,7 +138,13 @@ export class PostBox {
     const fresh = first ? [] : post.filter((p) => !p.read && !this._known.has(p.id));
     const waits = post.filter((p) => !p.read || (p.item && !p.claimed));
     this._known = new Set(post.map((p) => p.id));
-    const was = JSON.stringify([this.state, this.post, this.error]);
+    const was = JSON.stringify([this.state, this.post, this.error, this.reports]);
+    // PRIVATE-REPORT: a reader's count, said on the world tab when it rises (and on a sitting's first look, when any wait)
+    const rr = r.data?.reports;
+    const reports = rr && Number.isSafeInteger(rr.unread) && Number.isSafeInteger(rr.open) && rr.unread >= 0 && rr.open >= 0 ? { unread: rr.unread, open: rr.open } : null;
+    const reportsRose = reports && reports.unread > 0 && (first ? true : reports.unread > (this.reports?.unread ?? 0));
+    this.reports = reports;
+    if (reports) this.desk.counts = { ...reports };
     this.post = post;
     this.unread = post.filter((p) => !p.read).length;
     this.unclaimed = unclaimedOf(post);
@@ -136,9 +152,10 @@ export class PostBox {
     this.state = 'ready';
     this.error = null;
     for (const id of [...this.opened.keys()]) if (!this._known.has(id)) this.opened.delete(id);
-    if (JSON.stringify([this.state, this.post, this.error]) !== was) this._changed();
+    if (JSON.stringify([this.state, this.post, this.error, this.reports]) !== was) this._changed();
     if (fresh.length) this.onPost?.({ kind: 'new', post: fresh });
     else if (first && waits.length) this.onPost?.({ kind: 'waiting', count: waits.length, post: waits });
+    if (reportsRose) this.onPost?.({ kind: 'reports', unread: reports.unread });
     return { ok: true, fresh };
   }
 

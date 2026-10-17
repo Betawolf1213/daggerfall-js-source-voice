@@ -1,0 +1,292 @@
+[
+  {
+    "name": "PRIVREP-a-route-open",
+    "file": "server-account/src/service.js",
+    "old": "export const OPEN_ROUTES = new Set(['/v1/health',",
+    "new": "export const OPEN_ROUTES = new Set(['/v1/report/mine', '/v1/health',",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A stranger with no session would reach a report route."
+  },
+  {
+    "name": "PRIVREP-the-guest-let-in",
+    "file": "server-account/src/index.js",
+    "old": "        if (accountKind(who.player) !== 'linked') return no('report-needs-account', 403, origin);",
+    "new": "        if (false) return no('report-needs-account', 403, origin);",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A guest - a device one storage clear from gone - would send reports nobody can follow up."
+  },
+  {
+    "name": "PRIVREP-a-word-with-no-sentence",
+    "file": "src/net/accountClient.js",
+    "old": "  'report-full': () => t('account.refusal.reportFull',",
+    "new": "  'report-full-gone': () => t('account.refusal.reportFull',",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A player refused for a full queue would read the service's raw word."
+  },
+  {
+    "name": "PRIVREP-the-rid-asked-after-the-rate",
+    "file": "server-account/src/reports.js",
+    "old": "  if (prior) return { ok: true, repeat: true, id: prior.id, sentAt: prior.sent_at };",
+    "new": "  if (false) return { ok: true, repeat: true, id: prior.id, sentAt: prior.sent_at };",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A lost answer asked again would be counted against the hour, and refused as a new report past it."
+  },
+  {
+    "name": "PRIVREP-the-context-stored-raw",
+    "file": "server-account/src/reports.js",
+    "old": "ctxOf ? JSON.stringify(ctxOf) : null",
+    "new": "context ? JSON.stringify(context) : null",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Whatever a client put beside the words would be kept - an agent string, a location - not the three fields the form says it sends."
+  },
+  {
+    "name": "PRIVREP-the-words-uncleaned",
+    "file": "src/net/reportLaw.js",
+    "old": "const cleanBody = (/** @type {string} */ s) => s.replace(/\\r\\n?/g, '\\n').replace(CONTROL_RE, '').trim();",
+    "new": "const cleanBody = (/** @type {string} */ s) => s.trim();",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Control characters and Windows line ends would be stored and drawn in the reader's window."
+  },
+  {
+    "name": "PRIVREP-the-send-read-at-4KiB",
+    "file": "server-account/src/index.js",
+    "old": "path === '/v1/report/send' ? REPORT_BODY_BYTES : ",
+    "new": "",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A report of 3,000 characters in any script past ASCII would be refused as a malformed body."
+  },
+  {
+    "name": "PRIVREP-the-rate-unasked",
+    "file": "server-account/src/reports.js",
+    "old": "  if (await overRate({ db, nowS }, `report:${reporter.id}`, REPORT_SEND_MAX, REPORT_WINDOW_S)) return { error: 'report-rate' };\n",
+    "new": "",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "One account could send reports as fast as it could press Send."
+  },
+  {
+    "name": "PRIVREP-the-open-bound-uncounted",
+    "file": "server-account/src/reports.js",
+    "old": "WHERE from_id = ?2 AND state = 'open') < ?9`)",
+    "new": "WHERE from_id = ?2 AND state = 'open') < ?9 + 1000`)",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "One account could fill the readers' queue."
+  },
+  {
+    "name": "PRIVREP-the-open-bound-counting-closed",
+    "file": "server-account/src/reports.js",
+    "old": "WHERE from_id = ?2 AND state = 'open') < ?9`)",
+    "new": "WHERE from_id = ?2) < ?9`)",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A reporter whose reports were fixed would be refused for good - their record held against them."
+  },
+  {
+    "name": "PRIVREP-the-list-unscoped",
+    "file": "server-account/src/reports.js",
+    "old": "    WHERE from_id = ? ORDER BY sent_at DESC, id DESC LIMIT ?`)",
+    "new": "    WHERE from_id != '' OR from_id = ? ORDER BY sent_at DESC, id DESC LIMIT ?`)",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Every player's list would show every report's title - an exploit's name in public."
+  },
+  {
+    "name": "PRIVREP-the-rows-answered-raw",
+    "file": "server-account/src/reports.js",
+    "old": "  return { reports: results.map(headOf), max: REPORT_MINE_MAX };",
+    "new": "  return { reports: results, max: REPORT_MINE_MAX };",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "The list would answer the table's columns, not the head the client reads."
+  },
+  {
+    "name": "PRIVREP-the-reader-check-gone",
+    "file": "server-account/src/reports.js",
+    "old": "  && handleList(env?.REPORT_READER_HANDLES).has(player.handle.toLowerCase());",
+    "new": "  ;",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Every registered player would read every report."
+  },
+  {
+    "name": "PRIVREP-a-missing-list-read-as-everyones",
+    "file": "server-account/src/reports.js",
+    "old": "  && handleList(env?.REPORT_READER_HANDLES).has(player.handle.toLowerCase());",
+    "new": "  && (!env?.REPORT_READER_HANDLES || handleList(env?.REPORT_READER_HANDLES).has(player.handle.toLowerCase()));",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "An empty or unset list would open the inbox to everyone, not to nobody."
+  },
+  {
+    "name": "PRIVREP-read-never-stamped",
+    "file": "server-account/src/reports.js",
+    "old": "  if (row.read_at == null) await db.prepare('UPDATE private_reports SET read_at = ?, read_by = ? WHERE id = ? AND read_at IS NULL').bind(nowS, reader.id, id).run();\n",
+    "new": "",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A report opened would stay unread - the reader's count and the reporter's list would never move."
+  },
+  {
+    "name": "PRIVREP-the-close-unscoped",
+    "file": "server-account/src/reports.js",
+    "old": "read_by = COALESCE(read_by, ?5) WHERE id = ?6`)",
+    "new": "read_by = COALESCE(read_by, ?5) WHERE id = ?6 OR 1`)",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Closing one report would close every report."
+  },
+  {
+    "name": "PRIVREP-the-counts-for-everyone",
+    "file": "server-account/src/post.js",
+    "old": "    ...(isReportReader(reader, env) ? { reports: await reportCountsOf(db) } : {}),",
+    "new": "    reports: await reportCountsOf(db),",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "Every player's box would say how many exploits wait - and cost every heartbeat a statement."
+  },
+  {
+    "name": "PRIVREP-the-heartbeat-without-the-config",
+    "file": "server-account/src/heartbeat.js",
+    "old": "postBoxOf(ctx, player, env)",
+    "new": "postBoxOf(ctx, player)",
+    "tests": [
+      "test/server/private_reports_service.test.js"
+    ],
+    "note": "A reader's envelope would never light for a report: the heartbeat is how the box is looked at in play."
+  },
+  {
+    "name": "PRIVREP-the-rid-minted-each-send",
+    "file": "src/net/privateReport.js",
+    "old": "    this._rid ??= this.rid();",
+    "new": "    this._rid = this.rid();",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A lost answer asked again would be a second report of the same words."
+  },
+  {
+    "name": "PRIVREP-the-rid-kept-past-a-changed-draft",
+    "file": "src/net/privateReport.js",
+    "old": "    if (next.kind !== this.draft.kind || next.subject !== this.draft.subject || next.body !== this.draft.body) this._rid = null;\n",
+    "new": "",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "Words changed after a failed send would be answered with the old words' report - the new ones never sent."
+  },
+  {
+    "name": "PRIVREP-the-draft-kept-after-a-send",
+    "file": "src/net/privateReport.js",
+    "old": "      this.draft = { kind: null, subject: '', body: '' };\n      this.loadMine()",
+    "new": "      this.loadMine()",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A report sent would sit in the form, one press from being sent again."
+  },
+  {
+    "name": "PRIVREP-the-envelope-blind-to-reports",
+    "file": "src/net/serverPost.js",
+    "old": " + (this.reports?.unread ?? 0); }",
+    "new": "; }",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A reader's envelope would never light for a report waiting."
+  },
+  {
+    "name": "PRIVREP-the-rise-never-said",
+    "file": "src/net/serverPost.js",
+    "old": "    if (reportsRose) this.onPost?.({ kind: 'reports', unread: reports.unread });\n",
+    "new": "",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A report would come in and nobody would be told on the world tab."
+  },
+  {
+    "name": "PRIVREP-the-form-rebuilt-on-every-draw",
+    "file": "src/ui/enhanced/enhancedPost.js",
+    "old": "    if (paned && pane && pane.key === reportPaneKey(keep, b)) {",
+    "new": "    if (false) {",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "Every heartbeat while a player typed would rebuild the form under them - the caret lost, the focus thrown."
+  },
+  {
+    "name": "PRIVREP-the-doors-gone",
+    "file": "src/ui/enhanced/enhancedPost.js",
+    "old": "    else { drawList(b); reportDoors(b); }",
+    "new": "    else drawList(b);",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "No player could find the report form from the mailbox."
+  },
+  {
+    "name": "PRIVREP-the-inbox-door-for-everyone",
+    "file": "src/ui/enhanced/enhancedPost.js",
+    "old": "    if (b.reports) doors.append(",
+    "new": "    if (true) doors.append(",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A reporter's mailbox would draw a door to an inbox that is not theirs (and throw on its missing count)."
+  },
+  {
+    "name": "PRIVREP-the-close-never-asked",
+    "file": "src/net/privateReport.js",
+    "old": "    const r = await reportCloseCall(io, id, state);",
+    "new": "    const r = { ok: true };",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "A reader's Fixed would close nothing: the reporter would never hear it was fixed."
+  },
+  {
+    "name": "PRIVREP-report-read-as-the-mailbox",
+    "file": "src/net/chatCommands.js",
+    "old": "m[1].toLowerCase() === 'report' ? 'report' : 'mailbox'",
+    "new": "'mailbox'",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "`/report` would open the mailbox and leave the player to find the form."
+  },
+  {
+    "name": "PRIVREP-the-classic-skin-without-a-way-in",
+    "file": "src/ui/pauseDoor.js",
+    "old": "(hooks.at === 'mailbox' || hooks.at === 'report')",
+    "new": "hooks.at === 'mailbox'",
+    "tests": [
+      "test/net/private_reports_client.test.js"
+    ],
+    "note": "`/report` on the classic skin would open a pause window with no mailbox in it."
+  }
+]
