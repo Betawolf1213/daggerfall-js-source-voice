@@ -1,6 +1,6 @@
 # AUDIT WAY-BACK (2026-10-17) - the way back into a guild, read cold
 
-Mac, of WAY-BACK (`01-Overview/bugs/Field-Bugs-2026-10-16b.md`, pull request #965 at d059595c): **"Audit this"**. This
+Mac, of WAY-BACK (`01-Overview/bugs/Field-Bugs-2026-10-16c.md`, pull request #965 at d059595c): **"Audit this"**. This
 page is the audit: the law the words state, the three places they are said, every word in English and the thirteen
 whole languages, the tests, the mutants and the records. Each finding has its verdict here. What it changed is written
 into the pages it touched, marked `AUDIT WAY-BACK` with the finding's id, and in the code beside the fix.
@@ -67,7 +67,7 @@ by rendering the refusal through `noticeFrame`; L3's grammar by rendering each r
 
 ## After
 
-`test/systems/guild/fb1016b_wayback.test.js`: 7 (6 before). `tools/mutants/fb1016b_wayback.json`: 24 records, 24 dead
+`test/systems/guild/fb1016c_wayback.test.js`: 7 (6 before). `tools/mutants/fb1016c_wayback.json`: 24 records, 24 dead
 (13 before - the records whose lines moved re-aimed, eleven new, among them the five gaps L4 found). Six port strings
 (two new: `.skills`, `.shut`), all six redrafted in the thirteen whole languages, each row rendered through the game's
 formatter across its plural classes before it was merged.

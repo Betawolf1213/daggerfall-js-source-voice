@@ -1,7 +1,8 @@
-# FIELD BUGS 2026-10-16b - the way back into a guild
+# FIELD BUGS 2026-10-16c - the way back into a guild
 
 One Discord message in #general, handed over by Mac as a screenshot ("Glade's comment"). Read on the code as it stands at
-main's `0ce25a8e`. Then Mac: "Audit this" - AUDIT WAY-BACK (`01-Overview/audits/Audit-Way-Back.md`) read the slice cold,
+main's `0ce25a8e` (main took `Field-Bugs-2026-10-16b.md` for the Discord's reports of 2026-10-15 meanwhile, so this
+record is `-16c` and its pins `fb1016c_*`). Then Mac: "Audit this" - AUDIT WAY-BACK (`01-Overview/audits/Audit-Way-Back.md`) read the slice cold,
 and what it changed is written in below, marked with its finding's id.
 
 | | Report | What it was | Done |
@@ -95,8 +96,8 @@ Neither is built. The probation's words (STANDING-WORDS) still say the stakes an
 the same +5, which the hall's line could say before the review that expels.
 
 Six port strings (`guild.wayBack.standing`, `.skills`, `.quests`, `.shut`, `.drift`, `.paced`), drafted in-session in
-the thirteen whole languages. `test/systems/guild/fb1016b_wayback.test.js` (7) - the words and their gates, the skills
+the thirteen whole languages. `test/systems/guild/fb1016c_wayback.test.js` (7) - the words and their gates, the skills
 and the shut hall, the stranger's pool through the vendored lists, the real offer flow and the bridge's own guild
 surface for all four walk-in guild kinds, the hall's well, the host's wiring, the Standing page (its book, its owed, a
-kingdom's row). `tools/mutants/fb1016b_wayback.json` (24, 24 dead). Ledger A: THE WAY BACK INTO A GUILD, SAID. Not seen in
+kingdom's row). `tools/mutants/fb1016c_wayback.json` (24, 24 dead). Ledger A: THE WAY BACK INTO A GUILD, SAID. Not seen in
 play here (this container has no ARENA2); the pins drive the real law, lists and windows.

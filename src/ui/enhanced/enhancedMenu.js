@@ -5185,7 +5185,7 @@ export function statsEveryStanding(detail, entity) {
       const row = el('div', 'px-stat px-org');
       row.append(el('span', 'k', r.name), signedRep(r.rep));
       detail.append(row);
-      // WAY-BACK (FIELD BUGS 2026-10-16b): under a guild that will not take this standing, its quests' way in - the hall's
+      // WAY-BACK (FIELD BUGS 2026-10-16c): under a guild that will not take this standing, its quests' way in - the hall's
       // own line (the rest is said at the hall, and on the classic skin's refusal of the join)
       const way = wayBackQuestLine(guildOfFaction(r.factionId, resolveVariantGuild(entity.factionRep?.dict)), activeMemberships(entity), entity.factionRep);
       if (way) detail.append(el('p', 'px-note', way));
