@@ -1,48 +1,52 @@
-# FIELD BUGS 2026-10-17c - the Dark Brotherhood lost to the curse
+# FIELD BUGS 2026-10-17c - The Orrery no one could turn
 
-One report, 2026-10-17, read on the code as it stands at main's `70a5c3443`. (Main took `Field-Bugs-2026-10-17.md` for
-the day's two Discord reports and `-17b` for SHAM-TRAIL, so this record is `-17c`, its pins `fb1017c_*`.)
+One post from the Discord's #general, handed over as a screenshot on 2026-10-17 with the words "In regards to the Elite
+breaches". Read on the code at main's `6e01e4eae`.
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | "I'd like to know if there's any fix for the issue where you lose access to the Dark Brotherhood after becoming a vampire, since I lost access to the guild after transforming." | DFU's guild-book swap, ported whole: a vampire reads an empty book, and the Brotherhood - joined only by an invitation the game sends once - had no way back in for as long as the curse held | fixed (CURSE-CARRY) - a named departure, `Port-Ledger.md` section A |
+| 1 | Boar, in #general: "Is this room bugged?", with a screenshot of an Elite Breach's Athenaeum. The HUD says "Turn the Orrery true. Stones true: 0 of 6 - fray 0", and the floor shows six gold rings with nothing standing on them. Lanxus/Leximus answered: "Yeah, i just kill my run there" | THE ASCENT (spec law 9) stands the Athenaeum's court 15-24 m off the 0 floor. The activation ray's handles for the six stones stayed at 1 m over 0 whatever the court's height, out of every reach, so no stone could be turned. The door opens only on a true Orrery, and Harriers rise every 15 s until it does | fixed (ORRERY-HEIGHT) |
 
-## CURSE-CARRY: the guilds nobody can ask to join ride the curse
+## ORRERY-HEIGHT: a stone's handles over its own floor
 
-`src/systems/guild/guilds.js` carryInvitationOnly, activeMemberships; `src/net/npcRollTracker.js` rollEntityDoors.
+`src/scenes/eliteGates/egSpan.js` (the circle's stand: the targets the activation ray is offered).
 
-FOUND. Not a slip but DFU's law, which V2e ported whole (`06-Systems/Systems-Arc.md`, V2e). GuildManager.Memberships
-(GuildManager.cs:109-112) answers `HasVampirism() ? vampMemberships : memberships`, and `activeMemberships` is that
-getter: the turn hands the player an empty book and the mortal one waits, dormant, for a cure. For four of the six guild
-groups that costs a walk to the hall and a second application. For the Thieves Guild and the Dark Brotherhood it is a
-lock. Both are INVITATION_ONLY - DFU throws from TokensIneligible and TokensEligible for both (ThievesGuild.cs:180-187,
-DarkBrotherhood.cs:189-196), so there is no application - and the one door in is the initiation quest
-`handleStartingCrimeGuildQuests` (PlayerEntity.HandleStartingCrimeGuildQuests, :1503-1522) starts once, parking the
-tally at InviteSent (100) for good. A member who turned could never be invited again, and every Brotherhood hall read
-them as a non-member until `$CUREVAM`. DFU does the same: read against Interkarma/daggerfall-unity at `2343305`,
-nothing in GuildManager or VampirismEffect carries either guild across.
+FOUND. An Athenaeum is the Orrery hall (`11-Multiplayer/Elite-Gates.md` section 8.4). The relay raises six `stone`
+objects on its court, and the client draws each as a gold disc on the floor (`scenes/eliteGates/egFight.js` drawGround:
+the screenshot's rings). Each stone is turned through two handles that EG-FULL's layer three gave the activation ray
+(`Elite-Gates.md`, "the Athenaeum could not be solved"): boxes 0.7 m on a side, 0.9 m to each side of the stone and
+1 m up. A press on one sends `pz`, and the relay judges the turn within 3.5 m of the stone in plan
+(`net/eliteGates/egBrain.js`, case `pz`).
 
-FIXED - A DEPARTURE, NAMED (`Port-Ledger.md` section A, CURSE-CARRY).
-`systems/guild/guilds.js:"export function carryInvitationOnly(store, vampire) {"` runs on every `activeMemberships` read. Where the
-active book lacks the Thieves Guild's slot or the Brotherhood's and the other book holds it, the record MOVES to the
-active book. One record, never two: a rank earned as a vampire is the rank the cured player reads, and a save carries it
-where it stands. Where both books hold one (a classic import can carry both), each keeps its own, as DFU's do. The other
-four groups - the Fighters and Mages Guilds, the temples and the knightly orders - still swap: those can be joined
-again, so the curse's cost there stays DFU's. The move happens on the read, like the book pick beside it, so the curse
-and the book cannot disagree. The online Roll's door carries before it reads
-(`npcRollTracker.js:"carryInvitationOnly(entity?.guildMemberships, rollVampireOf(entity));"`), so a vampire's claim
-never marks the carried guild dormant (`11-Multiplayer/Chapters-Arc.md`, AUDIT CHAP4 D1) in the window before anything
-else has read the books since the turn.
+The handles' height was the literal `1.0`, measured from the realm's 0. Under laws 4-8 that was right, because those laws
+lay the Athenaeum's court at 0 and its spots carry no height. THE ASCENT (spec law 9, 2026-10-16, the build's law since
+EG_SPEC 9) lays a hall as a way that climbs and falls. The Athenaeum's court stands where the way has climbed to, and the
+law says each spot's height in centimetres (`net/eliteGates/egLaw.js`: "a spot's `y` stays in centimetres"). The relay
+reads it (`spotY`), so the stones and their rings stood on the court. `egSpan.js` is the only client code that reads a
+hall's spots, and it never did. Measured over the first ten law 9 Athenaeums `egCirclePlan` finds in circles 2, 3, 5, 8 and 12 of
+seeds 1-9: seven courts stand 16-23.6 m over 0, two stand 15.5 and 18.6 m under it, and one stands at 0. On a court at 23.6 m every handle stood 22.6 m under the player's feet, against a
+reach of 3.2 m (`player/activate.js` DEFAULT_ACTIVATION_DISTANCE). The crosshair never named a stone, no press was sent, and
+the lock stayed at 0 of 6. The hall's door opens only when the Orrery is true (`egBrain.js`, the Athenaeum's arm of the
+hall's tick), and until then `ceil(n/4)` Harriers rise every 15 s. So the run could not go on.
 
-What a player sees: a Brotherhood or Thieves Guild member who turns keeps the guild, its rank, its title and its hall.
-The halls stay revealed on the map as they already did (`guildHallReveal.js` follows either book, AUDIT CHAP2 D4). A
-vampire the old swap already locked out gets the guild back the first time the game reads their memberships after the
-update: the mortal book's record moves to the vampire's.
+Why no test saw it: `test/net/eliteGates/egfrag_client.test.js` counted each Athenaeum's handles and pressed one by its
+key. It never asked where a handle stood.
 
-Pins: `test/systems/guild/fb1017c_cursecarry.test.js` (4). The old pin moved with the law: `test/systems/guildswap.test.js`
-held the Thieves Guild hidden under the curse in its legacy-book pin, and holds the Fighters Guild there now. AUDIT
-CHAP4 D1's source pin (`test/net/audit_chap4.test.js`) and its two mutant records (`audit_chap1.json`
-ACHAP-T5-MEMBERS, `audit_chap4.json` AUDIT-CHAP4-D1-TRACKER) are re-aimed at the door's new read, with the same
-mutations. Mutants: `tools/mutants/fb1017c.json`, 7, all dead - no carry; copied, not moved; every guild carried; the
-Thieves Guild left behind; the active book's own record overwritten; carried into the curse and never home at the cure;
-the Roll's door carry dropped.
+DFU has no Spire, no Athenaeum and no Orrery. This is our own hall's code, so no DFU member or ledger row moves.
+
+FIXED. Each handle stands a metre over its own stone's floor: the spot's centimetres in metres, or 0 where a law lays no
+height. Laws 4-8 therefore stand their handles where they stood before. No law file changed. The relay's bundle, its
+version and the wire are untouched, and so are the four hosts: `scenes/world.js`, `scenes/worldModes.js`,
+`scenes/dungeonContext.js` (which reads `egSpan.targets()` as before) and `scenes/exterior.js` (offline, no breach).
+
+Not changed: the stones are still a disc on the floor with their handles unseen until the crosshair names one ("Orrery
+stone 3 - Turn it forward an hour"), as EG-FULL stood them. A drawn stone is a question for the hall's look, not this fix.
+
+`test/scenes/eliteGates/fb1017c_orreryheight.test.js` (2): a law 9 Athenaeum off the 0 floor (seed 1, circle 11, its court at
+23.2 m). The circle's collider holds a floor under every stone at the spot's height. The circle's span is stood, and each
+stone's two handles have their boxes about the point a metre over that floor. The real pick
+(`pickActivatableHit`, over the circle's own collider) finds each one from the eye of a body standing at its stone, inside
+its reach. The same holds for a law 8 Athenaeum, handed over as a breach opened under law 8 hands over its halls, with its
+handles a metre over 0.
+The first test fails on main: the ray from the court finds no handle. `tools/mutants/fb1017c.json`: 3 mutants, all dead
+(the handles back at 1 m over 0, the centimetres read as metres, and a spot with no height read as no number).

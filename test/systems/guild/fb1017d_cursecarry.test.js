@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-17c (CURSE-CARRY) - "I lost access to the guild after transforming": a Dark Brotherhood member who
+// FIELD BUGS 2026-10-17d (CURSE-CARRY) - "I lost access to the guild after transforming": a Dark Brotherhood member who
 // became a vampire was shut out of the Brotherhood. GuildManager.Memberships (:109-112) hands a vampire an EMPTY book,
 // and the Brotherhood and the Thieves Guild are the two a player cannot ask to join - the one invitation each sends parks
 // its tally at InviteSent - so the swap locked them out for the whole curse. The two now ride the swap: the record MOVES

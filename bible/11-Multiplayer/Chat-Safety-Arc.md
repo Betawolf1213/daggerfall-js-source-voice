@@ -21,7 +21,7 @@ The slices, one arc and one deploy of each end:
 | SAFE5 | The reviewer: the relay's feed and an AI model's verdicts | `src/net/safety/chatFeed.js`, `server-account/src/modAi.js`, `server-account/src/safetyClock.js` |
 | SAFE6 | A new voice's pace | `src/net/wire.js`, `server/src/index.js` |
 | SAFE7 | The code of conduct | `src/net/safety/conduct.js`, `src/ui/conductCard.js`, `privacy/index.html`, `terms/index.html` |
-| SAFE8 | The moderators' queue in Discord | `server-account/src/discord.js`, `tools/discordModCommands.mjs` |
+| SAFE8 | The moderators' queue in Discord | `server-account/src/discord.js`, `server-account/src/discordCommands.js`, `tools/discordModCommands.mjs` |
 
 The relay is `world215`, the account service `acct152`, migration `0126_chat_safety.sql` - `world214`, `acct150` and `0125` on
 its branch, renumbered past main's WIKIMAID (`world214`, `acct150`) and KEY-LAW (`acct151`, `0125`) at the merge. The ban
@@ -335,9 +335,43 @@ player's words are drawn in a code block, so no line is markdown.
    safety's secrets") and names, in its summary, the Interactions Endpoint URL to give the application.
 3. In `server-account/wrangler.toml`: `DISCORD_MOD_CHANNEL` (the channel's id), `DISCORD_PUBLIC_KEY` (the application's
    public key) and `DISCORD_MODERATORS` (`<discord id>:<handle>` for each moderator).
-4. Set the application's Interactions Endpoint URL to `<account service>/v1/discord/interactions` - Discord sends a signed
-   ping, which the service answers.
-5. Register `/mod` once: `DISCORD_APP_ID=... DISCORD_BOT_TOKEN=... DISCORD_GUILD_ID=... node tools/discordModCommands.mjs`.
+4. Nothing more: the account deploy's last step (DISCORD-SETUP, 2026-10-17, Mac: "Can you set the discord end up for
+   me"; `account-deploy.yml`, "Point Discord at the service") does the Discord end with the bot's token alone, on every
+   deploy. `tools/discordModCommands.mjs --setup` reads the application's id and public key from Discord
+   (`GET /applications/@me`), refuses a `DISCORD_PUBLIC_KEY` that is not the application's (naming the right one), reads
+   the server off the moderators' channel, sets the Interactions Endpoint URL to `<account service>/v1/discord/interactions`
+   only when it differs (Discord signs a ping to it, which the service answers; offered four times, ten seconds apart,
+   while an old instance may still answer), and writes `/mod` over whatever was registered there. A refusal turns the
+   deploy red and says which step Discord refused; an unset token, channel or key skips it, said. By hand, the same:
+   `DISCORD_BOT_TOKEN=... DISCORD_MOD_CHANNEL=... DISCORD_PUBLIC_KEY=... DISCORD_INTERACTIONS_URL=... node
+   tools/discordModCommands.mjs --setup` (pinned: `test/server/discord_setup.test.js`; mutants
+   `tools/mutants/discord_setup.json`).
+
+**Discord is code** (DISCORD-CODE, 2026-10-17, Mac: "Is there a way we can set up something where you can handle all
+future discord integrations and changes yourself?", then "Do it"; the rule is in `CLAUDE.md`). Every Discord change is a
+change to the repository, merged, that the account deploy applies:
+
+- **The commands are declared once**, beside the service that answers them: `DISCORD_COMMANDS` in
+  `server-account/src/discordCommands.js`. The deploy writes the WHOLE list (Discord's bulk overwrite), so a command
+  added there appears in the server, one taken out is gone, and one made by hand in the Developer Portal is written
+  over. `discord.js` builds its usage text from the declared subcommands, so the declaration and its handler ship in
+  one Worker; the test drives every declared command and subcommand through the service and holds each to a handler.
+- **A change to any of it deploys.** The commands live under `server-account/`, and the deploy's path filter lists the
+  setup tool's own import graph (`tools/discordModCommands.mjs`, `tools/lib/isMain.mjs`), held to it by the test - a
+  change to `/mod` alone used to deploy nothing, so reached Discord only with some later change to the service.
+- **The bot's hands are checked.** After the URL and the commands, the deploy reads the server's roles and the bot's,
+  computes its permissions in the moderators' channel the way Discord does (its Permissions page: `@everyone` and the
+  bot's roles, Administrator for everything, then the channel's overwrites - `@everyone`'s, its roles' together, its
+  own - each denying before it allows; `channelPermissions`), and turns red naming what the cards need and it lacks
+  (`MOD_CHANNEL_NEEDS`: View Channel, Send Messages, Embed Links). Before, a card simply never came.
+- **What stopped it is said where it is read.** What the step did and what stopped it both go to the deploy's summary.
+  The first live run (2026-10-17, after #993) was refused at the channel: `DISCORD_MOD_CHANNEL` was answered 404 Unknown
+  Channel - no channel at all, where one the bot cannot see answers 403 - so the id copied was another thing's (a
+  server's, a user's and the application's ids look the same). A 404 there now says so, and how to copy the channel's.
+
+What stays a person's: making the application and its bot, inviting the bot to the server (an administrator's consent),
+granting it roles and channel permissions, rotating its token (the `DISCORD_BOT_TOKEN` secret), and naming the
+moderators (`DISCORD_MODERATORS`, which a pull request then writes).
 
 With none of it set, the cases still gather, the reviewer still reads (with its key), and the game's `/cases`, `/case`,
 `/dismiss`, `/mute`, `/ban` and `/strikes` still answer - the queue is simply not posted to Discord.

@@ -1,72 +1,32 @@
 [
   {
-    "name": "CURSE-CARRY-no-carry",
-    "file": "src/systems/guild/guilds.js",
-    "old": "  carryInvitationOnly(entity.guildMemberships, vamp);   // CURSE-CARRY: the two that cannot be asked ride the swap\n",
-    "new": "",
+    "name": "ORRERY-HEIGHT-handles-over-zero",
+    "file": "src/scenes/eliteGates/egSpan.js",
+    "old": "(Number.isFinite(q.y) ? q.y / 100 : 0) + 1.0, q.z);",
+    "new": "1.0, q.z);",
     "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
+      "test/scenes/eliteGates/fb1017c_orreryheight.test.js"
     ],
-    "why": "the report: the Brotherhood member who turns opens an empty book"
+    "why": "the report: every Orrery stone's handles a metre over 0 under a court 15-24 m off it - no stone in any reach, the lock never opened"
   },
   {
-    "name": "CURSE-CARRY-copied",
-    "file": "src/systems/guild/guilds.js",
-    "old": "    delete from[key];\n",
-    "new": "",
+    "name": "ORRERY-HEIGHT-centimetres-as-metres",
+    "file": "src/scenes/eliteGates/egSpan.js",
+    "old": "? q.y / 100 : 0) + 1.0",
+    "new": "? q.y : 0) + 1.0",
     "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
+      "test/scenes/eliteGates/fb1017c_orreryheight.test.js"
     ],
-    "why": "copied, not moved: two records, and the rank earned on one side never reaches the other"
+    "why": "a spot's height is the law's centimetres: read as metres, the handles stand a hundred times too high"
   },
   {
-    "name": "CURSE-CARRY-every-guild",
-    "file": "src/systems/guild/guilds.js",
-    "old": "  for (const name of INVITATION_ONLY) {\n    const key = membershipKey(GUILDS[name]);",
-    "new": "  for (const name of Object.keys(GUILDS)) {\n    const key = membershipKey(GUILDS[name]);",
+    "name": "ORRERY-HEIGHT-no-height-not-zero",
+    "file": "src/scenes/eliteGates/egSpan.js",
+    "old": "q.y / 100 : 0) + 1.0",
+    "new": "q.y / 100 : NaN) + 1.0",
     "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
+      "test/scenes/eliteGates/fb1017c_orreryheight.test.js"
     ],
-    "why": "a guild that can be asked again carried across the swap too"
-  },
-  {
-    "name": "CURSE-CARRY-one-guild",
-    "file": "src/systems/guild/guilds.js",
-    "old": "  for (const name of INVITATION_ONLY) {\n    const key = membershipKey(GUILDS[name]);",
-    "new": "  for (const name of ['DarkBrotherhood']) {\n    const key = membershipKey(GUILDS[name]);",
-    "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
-    ],
-    "why": "the Thieves Guild left behind"
-  },
-  {
-    "name": "CURSE-CARRY-overwrite",
-    "file": "src/systems/guild/guilds.js",
-    "old": "    if (Object.hasOwn(to, key) || !Object.hasOwn(from, key)) continue;",
-    "new": "    if (!Object.hasOwn(from, key)) continue;",
-    "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
-    ],
-    "why": "the active book's own record overwritten by the other's"
-  },
-  {
-    "name": "CURSE-CARRY-one-way",
-    "file": "src/systems/guild/guilds.js",
-    "old": "  if (!isMembershipStore(store) || !store.mortal || !store.vampire) return;",
-    "new": "  if (!isMembershipStore(store) || !store.mortal || !store.vampire || !vampire) return;",
-    "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
-    ],
-    "why": "carried into the curse and never home at the cure"
-  },
-  {
-    "name": "CURSE-CARRY-door-dropped",
-    "file": "src/net/npcRollTracker.js",
-    "old": "      carryInvitationOnly(entity?.guildMemberships, rollVampireOf(entity));",
-    "new": "",
-    "tests": [
-      "test/systems/guild/fb1017c_cursecarry.test.js"
-    ],
-    "why": "the Roll claims the carried guild dormant until something else reads the books"
+    "why": "the laws before THE ASCENT lay no spot height: their handles lost, where they stood a metre over the 0 court"
   }
 ]
