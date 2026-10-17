@@ -207,7 +207,7 @@ Dark Brotherhood's own penalties, for nothing (A-1, C-1).
 
 ## WAY-BACK - the way back into a guild, said
 
-`guild/guildServiceFlow.js wayBackLines` (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16c.md`; Glade on Discord:
+`guild/guildServiceFlow.js wayBackLines` (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16d.md`; Glade on Discord:
 "they kicked me out so I can't do any quests to recover ... remake my character or wait IRL weeks"). REP6 expels below
 -10, and nothing told the expelled member how to get back in. The roads were already open. A stranger may ask the
 hall's quest-giver for work, and each quest done pays the guild +5. Below 0, a standing comes back a point a week of the
@@ -238,7 +238,7 @@ faction's charges, Vagrancy's resting law, Roleplay Realism's squads.
 ## Pins
 
 `test/systems/rep1_watchstop.test.js` (7), `test/scenes/rep2_sentences.test.js` (8), `test/systems/rep3_banishment.test.js` (5),
-`test/systems/rep4_recovery.test.js` (5), `test/systems/rep5_notices.test.js` (4), `test/systems/guild/rep6_probation.test.js` (3); WAY-BACK's `test/systems/guild/fb1016c_wayback.test.js` (7), `tools/mutants/fb1016c_wayback.json` 24/24 dead (AUDIT WAY-BACK).
+`test/systems/rep4_recovery.test.js` (5), `test/systems/rep5_notices.test.js` (4), `test/systems/guild/rep6_probation.test.js` (3); WAY-BACK's `test/systems/guild/fb1016d_wayback.test.js` (7), `tools/mutants/fb1016d_wayback.json` 24/24 dead (AUDIT WAY-BACK).
 `tools/mutants/rep{1..6}_*.json`: 64 records, 64 dead. AUDIT REP (`01-Overview/audits/Audit-REP.md`, 2026-09-30):
 `test/systems/auditrep.test.js` (8), `tools/mutants/auditrep.json` 19/19 dead; two pins moved (REP3's short purse, F4;
 audit39_guildstravel's F99, the court's banishment on the trusted calendar, F2). Fifteen older pin files moved with the law (each marked PIN

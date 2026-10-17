@@ -47,7 +47,7 @@ const guild = {
   view(w) {
     const member = !!w.hooks.member?.();
     const press = (r) => at(w, r, GUILD_X, GUILD_Y);
-    // PROMO-NOW: what the next rank asks, online; WAY-BACK (FIELD BUGS 2026-10-16c): a stranger below the join, the way in
+    // PROMO-NOW: what the next rank asks, online; WAY-BACK (FIELD BUGS 2026-10-16d): a stranger below the join, the way in
     const needs = member ? (w.hooks.rankNeeds?.() ?? null) : (w.hooks.wayBack?.() ?? null);
     return {
       title: w.hooks.title?.() ?? 'Guild Hall', sub: member ? 'Member' : 'Not a member', size: 'narrow',

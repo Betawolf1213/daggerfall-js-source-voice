@@ -1,4 +1,4 @@
-// WAY-BACK (FIELD BUGS 2026-10-16c; Glade on Discord: "I failed a quest for the Mages Guild yesterday that put me down
+// WAY-BACK (FIELD BUGS 2026-10-16d; Glade on Discord: "I failed a quest for the Mages Guild yesterday that put me down
 // to -55 rep, now I'm at -53 rep, but they kicked me out so I can't do any quests to recover. It's unclear to me whether
 // I'll have to remake my character or wait IRL weeks just to get back to 0"). Both roads back were open and nothing
 // said either: a stranger may ask a hall's quest-giver for work, each quest done pays the guild DFU's +5, and a standing

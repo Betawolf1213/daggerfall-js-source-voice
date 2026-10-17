@@ -378,7 +378,7 @@ export function rankNeedsLines(entity, guild, memberships, store, ctx = null) {
   return [...warnings, next, ...lines];
 }
 
-/** WAY-BACK (FIELD BUGS 2026-10-16c; Glade on Discord: "they kicked me out so I can't do any quests to recover. It's
+/** WAY-BACK (FIELD BUGS 2026-10-16d; Glade on Discord: "they kicked me out so I can't do any quests to recover. It's
  *  unclear to me whether I'll have to remake my character or wait IRL weeks just to get back to 0"): what the way back
  *  in costs, said to a stranger the guild will not take on their standing - an expelled member, or one who never joined.
  *  Both roads were always open and nothing said either. A stranger may ask the hall's quest-giver for work
