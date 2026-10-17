@@ -202,9 +202,10 @@ MOD_AI_DAILY_MAX = ""
 # /mute, /ban and /strikes still answer. The setup: bible/11-Multiplayer/Chat-Safety-Arc.md section 9.
 DISCORD_MOD_CHANNEL = "1560996671440293908"
 DISCORD_PUBLIC_KEY = "36e74945022f94ec7955a84ccccb270e63780100e558d30777742337b62de3e0"
-# 2026-10-17 (Mac): the queue's channel and the application's public key set; the moderators' Discord ids to come -
-# until then the cards post and every press or /mod answers that only the game's moderators may act
-DISCORD_MODERATORS = ""
+# 2026-10-17 (Mac): the queue's channel and the application's public key set. The moderators' Discord ids, each
+# `<discord user id>:<in-game handle>` - the handle must also stand in MODERATOR_HANDLES or DEVELOPER_HANDLES, which
+# every press and /mod re-checks (discord.js actorOf); anyone not here is answered that only the game's moderators may act
+DISCORD_MODERATORS = "128705730965536768:Lattymoy"
 # FOUNDER5 (2026-10-07, Mac: "Can we grant every account before sept 25th
 # the founder title"): THE FOUNDERS BY NAME. Founder is held by every
 # registered account that first played by the end of 24 September on any
