@@ -103,6 +103,7 @@ on:
       - "src/systems/quest/tables.js"
       - "src/systems/quest/table.js"
       - "src/systems/quest/parseUtils.js"
+      - "src/systems/quest/questPatches.js"
       - "src/systems/item/itemTemplatesData.js"
       - "src/net/raid/raidLaw.js"
       - "src/net/gate/gateReceipt.js"
