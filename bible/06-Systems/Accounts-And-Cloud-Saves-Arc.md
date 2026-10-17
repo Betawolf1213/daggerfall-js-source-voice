@@ -3937,7 +3937,11 @@ notifications whenever players have a message. First use is to utilize it for pl
 
 A piece of the server's post is the developers' to ONE registered account: a subject, a body, and at most one item. It
 is not a letter (MAIL1, 0007): a letter is a player's and carries words alone; nothing a player can do writes a piece -
-the operator's workflow is its only sender.
+the operator's workflow is its sender, and (EG-ZF, 2026-10-12) a list in the operator's config sends one letter of fixed
+words: First of the Spire's, once to each account `EG_FIRST_HANDLES` names (`server-account/src/egHonours.js` egFirstPost,
+`bible/11-Multiplayer/Elite-Gates.md` section 31, EG-ZF). EG-ZM (2026-10-12): and the service's own hourly clock one more, of
+fixed words, to the opener of a Weir Key's stake it spent with no receipt ever naming it, one a stake (`server-account/src/eg.js`
+spendLapsedStakes, its batch `spire-stake-<order id>`; Elite-Gates.md section 31, EG-ZM).
 
 - **The table** (0093, `server_post`): one row a piece - `to_id` (CASCADE with the account), `batch` (the operator's name
   for the send; UNIQUE with `to_id`, so a send run twice sends once), `sender`, `subject`, `body`, `item` (the record as
@@ -4019,6 +4023,62 @@ unique different version of the aura, a title named Hour's First, and each the g
 - Pins: `test/net/hoursfirst.test.js` (4), and the first send in `test/tooling/serverpost_send.test.js`. `tools/mutants/hoursfirst.json`
   has 11 mutants, all dead.
 
+
+## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct137, migration 0119)
+
+The Elite Breach's account half, each piece recorded in `bible/11-Multiplayer/Elite-Gates.md` section 31 (sections 19
+and 20 for EG-E1 to EG-E3) and listed here so this arc's page names every route it holds. The arc ships under one
+account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct137` since the merges of main (past BAL9, NAME-AS,
+HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRAFT-PROCS, SCHOOLS5, RECOVERY-SET, REVIVE, LAMP-KEEPER II, KG6, POI-1's `acct135` and SUMMON-REPAIR + PVP-ESCROW + QUEST-HOME's `acct136`), and one migration, `0119_elite_breach.sql` (0111, 0112, 0113, 0114, 0116 then 0117 on its branch, past NAME-AS's 0111, SEAT-FACTS' 0112, LAMP-KEEPER II's 0113, FIRMAMENT-ON's 0114, KG6's 0115, POI-1's 0116, SUMMON-REPAIR's 0117 and PVP-ESCROW's 0118).
+
+- **EG-PLAY** (`server-account/src/eg.js`): the Weir Keys (`players.eg_keys`, the rolls at gate and Hour claims, the
+  launch gift), `/v1/eg/keys`, `/v1/eg/open` (a stake, idempotent on its request id; one live breach an account; the
+  day's Rehearsal), `/v1/eg/admit` and `/v1/eg/claim` (a Redoubt's `w`, an end's `x`, a void's `v`; the first breach's
+  mercy).
+- **EG-E1** (`server-account/src/egEconomy.js`): what a Redoubt pays - the week's pay, the embers, the pity, the
+  Valkynaz's key, the Broker's Panoply sink (`/v1/eg/sink`).
+- **EG-E2**: the feats, the Annals, the honours and the boards (below, and `/v1/eg/board`).
+- **EG-E3**: the herald's posts and the dungeon's find (`/v1/eg/find`, `eg_finds`).
+- **EG-F** (`server-account/src/egStarts.js`): where a breach may start (`/v1/eg/starts`), the Wager on the stake.
+- **EG-ZA**: a key is never lost - voids for an order no call answered, the receipts' fields counted.
+- **EG-ZF**: the first-time lines kept on the account (`players.eg_first`, `/v1/eg/first`), First of the Spire's letter.
+- **EG-ZM**: the stake's clock on the hourly cron (`spendLapsedStakes`, 14 days past a stake's `until`).
+- **AUDIT EG III**: a void after a Redoubt returns the key, a voided Rehearsal gives the day's back, the first breach's
+  mercy judged at the end, an admission's `eg_live` ending at its stake's `until`.
+- **AUDIT EG IV** (the net group, `01-Overview/audits/Audit-EG-IV.md`):
+  - an open whose answer was lost is asked again by its request id (`/v1/eg/open`'s `again`). The service answers with
+    the stake it took, for its void, or with `none` (404) where it took none;
+  - the launch gift's letter is sent by migration 0119 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
+  - a stake the first breach's mercy held is spent by the clock with its own letter (`EG_STAKE_POST_HELD`);
+  - a gate kill's Weir Key is rolled in its claim's own batch (`egGateWeir`);
+  - the opener's `'empty'` end clears their `eg_live`;
+  - Spire Champion is kept only once a season's late ends are claimed;
+  - the routes' comment names what the open reads and what it and the admission refuse.
+- **AUDIT EG V** (fix group D, `01-Overview/audits/Audit-EG-V.md`), in migration 0119:
+  - a stake's open order re-signed for a later open carries the stake's own issue, never a fresh one (L4-5);
+  - a Redoubt's spoils seed mixes the receipt's seed with the service's own 8-byte draw kept on the row
+    (`eg_redoubts.nonce`, `eg_runs.nonce`), answered by the claim, so a player holding several receipts cannot choose
+    which the week pays (L8-5);
+  - a circle's Reliquaries open once per account per arena week (`eg_reliqs`, `egReliquariesOf`) (L8-4);
+  - an end keeps its Wager's decrees (`eg_runs.wgs`), and the Depths board names them (L8-9).
+
+## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct137 since the merges; world197 then, world206 since)
+
+The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
+of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -
+`world197`, unshipped, rehashed; `world198` since the merge past BAL8), the branches in `titles.js` `titlesHeld`/`aurasHeld`, the words and colours in
+`ui/playerBadge.js` (`SPIRE_*`), a look each in `render/auraRing.js`. No glyph (the widest token stays inside the hello).
+- **Titles** (13): `spirewalker` Spirewalker, `beaconlighter` Beacon-Lighter, `kynbane` Kynbane, `unfallen` The Unfallen,
+  `lonebeacon` The Lone Beacon, `battlemage` Battlemage of the Spire, `wellheadwalker` Wellhead-Walker, `mastergallery`
+  Master of the Galleries, `mastercairn` Master of the Cairn, `mastershade` Master of the Shade, `masterwellhead` Master
+  of the Wellhead - the first eleven bits on `players.eg_honours` (`server-account/src/egHonours.js` `EG_HONOUR`), written
+  at a recorded Redoubt and held for good; `spirechampion` Spire Champion, read onto the row (`eg`) from `eg_champions`
+  through the season after a Descent bracket's top ten; `spirefirst` First of the Spire, by name (`EG_FIRST_HANDLES`,
+  empty until the first company takes Redoubt 10 - Hour's First's law).
+- **Auras** (3): `beaconlight` Beaconlight (Kynbane's: gold-white motes), `burningstair` The Burning Stair
+  (Wellhead-Walker's: falling embers), `firstlight` Firstlight (First of the Spire's: a dawn-white ring) - each with its
+  title, in its title's paint (`AURA_PAINT`), never sold.
+- Pins: `test/net/eliteGates/egeco_honours.test.js`; every pinned list of the titles and auras moved (PIN MOVED).
 
 ## RAID4 — the towns defended (2026-09-28, acct17)
 

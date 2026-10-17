@@ -162,6 +162,22 @@ const REFUSAL_WORDS = {
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
   'no-signing-key': () => t('account.refusal.noSigningKey', 'The account service cannot vouch for accounts right now.'),
+  // EG-PLAY: an Elite Breach's refusals (server-account/src/eg.js)
+  rq: () => t('account.refusal.rq', 'The Spire could not read that request. Try again.'),
+  unproven: () => t('account.refusal.unproven', 'Close a Dagon\'s Breach first - the Spire opens to those who have.'),
+  live: () => t('account.refusal.live', 'You hold a breach already.'),
+  rehearsed: () => t('account.refusal.rehearsed', 'You have rehearsed the Spire today. A Weir Key opens it again.'),
+  spent: () => t('account.refusal.spent', 'That breach is spent.'),
+  breach: () => t('account.refusal.breach', 'That breach is not one the Spire knows.'),
+  none: () => t('account.refusal.none', 'The Spire took no key for that.'),   // AUDIT EG IV (lane3 #1): an open asked again (`again`) whose ask never reached it
+  // EG-E3: a dungeon elite's find (server-account/src/eg.js findEg)
+  tier: () => t('account.refusal.tier', 'That is no dungeon the Spire knows.'),
+  capped: () => t('account.refusal.capped', 'The dungeons have given all they will today.'),
+  bits: () => t('account.refusal.bits', 'The Spire could not read those lines.'),   // EG-ZF: the first-time lines' bits (server-account/src/eg.js egFirstSay)
+  // EG-F: the start window's refusals (server-account/src/eg.js, egStarts.js)
+  start: () => t('account.refusal.start', 'You may not start a breach that deep this season.'),
+  wager: () => t('account.refusal.wager', 'The Spire could not read that Wager.'),
+  subs: () => t('account.refusal.subs', 'The Spire could not read that company.'),
   body: () => t('account.refusal.body', 'The account service could not read that request.'),
   method: () => t('account.refusal.method', 'The account service refused that request.'),
   // The two the ROUTER refuses with, before any account is looked at.
@@ -194,6 +210,8 @@ const REFUSAL_WORDS = {
   'no-name-as': () => t('account.refusal.noNameAs', 'The account service does not know that choice of name. The game may need updating.'),   // NAME-AS
   'no-insignia': () => t('account.refusal.noInsignia', 'The Broker does not sell that any more. The game may need updating.'),
   owned: () => t('account.refusal.owned', 'Your account already owns that.'),
+  bought: () => t('account.refusal.bought', 'You have bought from the Panoply this week. Come back next week.'),   // EG-E1: the Broker's Panoply sink, once a week (server-account/src/egEconomy.js egSink)
+  piece: () => t('account.refusal.piece', 'The Broker does not sell that piece. The game may need updating.'),
   short: () => t('account.refusal.short', 'Your account has too few embers for that.'),   // WB12a; WB13b: the card says the rule; AUDIT WB12d (A4): a rite's ember counts, and is no breach closed
   guest: () => t('account.refusal.guest', 'Insignia need a registered account. Add a username and password first.'),
   // ARENA4, the banners (server-account/src/arena.js arenaTeam)
@@ -1604,6 +1622,36 @@ export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     // AUDIT FIVE-ASKS D3: a secret the service stopped honouring is not a session (forgetSession's law)
     claim: async () => { const r = await post('/v1/lamp/claim', {}); if (r?.error === 'auth') forgetSession(storage); return r; },
     account: () => storedSession(storage)?.id ?? null,   // AUDIT FIVE-ASKS D2: whose the lamp's answer is
+  };
+}
+
+/**
+ * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
+ * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no
+ * key), a member's admission (`admit`) and a receipt the relay signed (`claim` - EG-E1: with the claiming character, its
+ * guild's deed). EG-E1: the Broker's Panoply piece (`sink` - one of EG_PANOPLY_IDS, once an account an arena week; the
+ * week's sale rides `keys`' `sink`); EG-E2: the three boards (`board` - the Descent's brackets, the Depths, the Deepest
+ * Redoubts: ui/eliteGates/egBoardWindow.js reads it). Every answer is `call`'s shape, waited for ACCOUNT_ACT_WAIT_MS at most; no session
+ * is `no-session`, never a throw. `me()` the signed-in account's id - the receipts this device may offer are its alone
+ * (AUDIT WB A9's law); `guest()` whether it is a guest's.
+ */
+export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    keys: () => post('/v1/eg/keys', {}),
+    // EG-F: the open carries the start window's choice - its start Redoubt `ew` and its Wager `wg` (none: Hall 1, no Wager)
+    // AUDIT EG IV (lane3 #1): `again` - an open whose answer was lost, asked by its own request id for the stake it took alone
+    open: (rq, rh = false, { ew = 0, wg = [], again = false } = {}) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}), ...(ew > 0 ? { ew } : {}), ...(wg?.length ? { wg: [...wg] } : {}), ...(again ? { again: 1 } : {}) }),
+    /** EG-F: the start window's preflight - which starts each member of my party (`subs`) may make. */
+    starts: (subs) => post('/v1/eg/starts', { subs: [...subs] }),
+    admit: (b) => post('/v1/eg/admit', { b }),
+    board: () => post('/v1/eg/board', {}),   // EG-E2: the three boards (server-account/src/egHonours.js egBoardOf)
+    claim: (receipt, character = null) => post('/v1/eg/claim', { receipt, ...(typeof character === 'string' && character ? { character } : {}) }),   // EG-E1: the claiming character - its guild's deed
+    sink: (piece) => post('/v1/eg/sink', { piece }),   // EG-E1: the Broker's Panoply piece, once a week
+    find: (tier) => post('/v1/eg/find', { tier }),   // EG-E3: a dungeon elite's find (section 5) - `{ found, keys, asks }`
+    first: (bits) => post('/v1/eg/first', { bits }),   // EG-ZF: the first-time lines shown, kept once an account (section 27.7) - `{ first }`
+    me: () => storedSession(storage)?.id ?? null,
+    guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };
 }
 
