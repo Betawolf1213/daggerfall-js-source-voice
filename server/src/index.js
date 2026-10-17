@@ -334,7 +334,7 @@ function ctEqualStrings(a, b) {
   for (let i = 0; i < Math.max(x.length, y.length); i++) diff |= (x[i] ?? 0) ^ (y[i] ?? 0);
   return diff === 0;
 }
-/** VOICE-RELAY-DOOR: checks the shared secret (constant-time), then asks the NAMED room's own object for the live answer; a missing or wrong secret fails closed, never guesses. */
+/** checks the shared secret (constant-time), then asks the NAMED room's own object for the live answer; a missing or wrong secret fails closed, never guesses. */
 async function voicePresenceDoor(request, env, pathname) {
   if (request.method !== 'POST') return json({ error: 'method' }, 405);
   const want = env.VOICE_RELAY_SECRET;
@@ -8969,7 +8969,7 @@ export class Room {
     if (party && party.leader !== leaderBefore) { const lrec = await this._acct(party.leader); for (const m of party.members) this._sayNote(m, 'party.leader', party.leader, lrec?.name ?? null); }
     return party;
   }
-  /** VOICE-RELAY-DOOR: is `acct` hello'd into THIS room right now - off the verified token's own subject on each attachment, never a client-typed body. Any room object may answer this, not only the hub. */
+  /** is `acct` hello'd into THIS room right now - off the verified token's own subject on each attachment, never a client-typed body. Any room object may answer this, not only the hub. */
   async _voicePresenceInternal(request) {
     let body = null;
     try { body = await request.json(); } catch { body = null; }
@@ -8978,7 +8978,7 @@ export class Room {
     for (const [, b] of this._all()) if (b.id && b.sub === acct) return json({ here: true });
     return json({ here: false });
   }
-  /** VOICE-RELAY-DOOR: which party `acct` is in now, off its account record - only the hub (SOCIAL_ROOM) holds party state, so this always routes there regardless of the room the voice request itself named. */
+  /** which party `acct` is in now, off its account record - only the hub (SOCIAL_ROOM) holds party state, so this always routes there regardless of the room the voice request itself named. */
   async _voicePartyOfInternal(request) {
     let body = null;
     try { body = await request.json(); } catch { body = null; }
