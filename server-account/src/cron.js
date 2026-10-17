@@ -200,6 +200,9 @@ export const HOUR_JOBS = Object.freeze([
     'DELETE FROM realm_findings WHERE id IN (SELECT id FROM realm_findings WHERE at < ?1 LIMIT ?2)', ctx.nowS - REALM_FINDINGS_KEEP_S), SWEEP_ROWS)],
   ['realm-wealth-hours', (ctx) => rounds(() => deleted(ctx.db,
     'DELETE FROM realm_wealth_hours WHERE rowid IN (SELECT rowid FROM realm_wealth_hours WHERE hour < ?1 LIMIT ?2)', ctx.nowS - REALM_WEALTH_KEEP_S), SWEEP_ROWS)],
+  // INT17: the progression claims' hours, kept as the wealth's are - the window staff set the line from (progress.js)
+  ['progress-hours', (ctx) => rounds(() => deleted(ctx.db,
+    'DELETE FROM progress_hours WHERE rowid IN (SELECT rowid FROM progress_hours WHERE hour < ?1 LIMIT ?2)', ctx.nowS - REALM_WEALTH_KEEP_S), SWEEP_ROWS)],
   // INT9: a death in the zone's drop, kept past its receipt's hour (wild.js - a second asking is answered the first's)
   ['wild-falls', (ctx) => rounds(() => deleted(ctx.db,
     'DELETE FROM wild_falls WHERE r IN (SELECT r FROM wild_falls WHERE at < ?1 LIMIT ?2)', ctx.nowS - WILD_FALLS_KEEP_S), SWEEP_ROWS)],
