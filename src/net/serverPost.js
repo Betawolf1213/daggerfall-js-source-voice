@@ -36,7 +36,7 @@ export function postNoticeText(event) {
   if (event?.kind === 'new') return ps.length === 1 ? one(ps[0]) : `${ps.length} new messages in your mailbox. ${where}`;
   // PRIVATE-REPORT: a reader's private reports - said apart from the post, and never what they say (the world tab is read
   // over a shoulder, on a stream)
-  if (event?.kind === 'reports') return t('report.notice', '{n, plural, one {# private report is waiting to be read.} other {# private reports are waiting to be read.}} Type /report, or open the mailbox beside the hourglass.', { n: event.unread });
+  if (event?.kind === 'reports') return t('report.notice', '{n, plural, one {# private report is waiting to be read.} other {# private reports are waiting to be read.}} Type /bug, or open the mailbox beside the hourglass.', { n: event.unread });
   const n = event?.count ?? 0;
   if (n === 1 && ps.length === 1) return one(ps[0]);
   return `You have ${n} message${n === 1 ? '' : 's'} waiting in your mailbox. ${where}`;

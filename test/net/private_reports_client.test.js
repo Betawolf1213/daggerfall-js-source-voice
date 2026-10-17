@@ -1,6 +1,6 @@
 // PRIVATE-REPORT (2026-10-17, Mac: "Can we add a private disclosure method for exploits/bugs with the client"): THE
 // CLIENT'S SIDE - net/privateReport.js ReportDesk over the real service (a send, its rid, my list, a reader's inbox), the
-// PostBox's reader count and its notice, ui/enhanced/enhancedReport.js's panes in the mailbox's window, and `/report`.
+// PostBox's reader count and its notice, ui/enhanced/enhancedReport.js's panes in the mailbox's window, and `/bug`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -75,7 +75,7 @@ test('PRIVATE-REPORT A READER\'S BOX: the service\'s count rides the box and the
   assert.deepEqual([box.reports, box.waiting], [{ unread: 1, open: 1 }, 1], 'the envelope counts it');
   assert.deepEqual(said, [{ kind: 'reports', unread: 1 }]);
   const line = postNoticeText(said[0]);
-  assert.equal(line, '1 private report is waiting to be read. Type /report, or open the mailbox beside the hourglass.');
+  assert.equal(line, '1 private report is waiting to be read. Type /bug, or open the mailbox beside the hourglass.');
   assert.ok(!line.includes('secret dupe'), 'never its words');
   await box.refresh();
   assert.equal(said.length, 1, 'a count that did not rise says nothing');
@@ -89,7 +89,7 @@ test('PRIVATE-REPORT A READER\'S BOX: the service\'s count rides the box and the
   const annBox = new PostBox({ ioOf: ioFor(svc, ann), onPost: (e) => said.push(e) });
   await annBox.refresh();
   assert.equal(annBox.reports, null, 'a reporter is no reader');
-  assert.equal(postNoticeText({ kind: 'reports', unread: 3 }), '3 private reports are waiting to be read. Type /report, or open the mailbox beside the hourglass.');
+  assert.equal(postNoticeText({ kind: 'reports', unread: 3 }), '3 private reports are waiting to be read. Type /bug, or open the mailbox beside the hourglass.');
 });
 
 // ── the window ───────────────────────────────────────────────────────
@@ -217,16 +217,19 @@ test('PRIVATE-REPORT THE READER\'S INBOX IN THE MAILBOX: a door that counts the 
   assert.equal(myReportStateText(annDesk.mine[0]), 'Fixed', 'the reporter sees it fixed');
 });
 
-test('PRIVATE-REPORT the doors: `/report` the form and `/mail` the mailbox, on either skin and wherever the player stands - the host asks chatCommands.js, the pause door opens the enhanced face at `report`, the menu lands on the form; /help says it; the sheet styles the form (mutants: /report read as the mailbox; the classic skin without a way in)', () => {
-  assert.equal(mailboxCommandOf('/report'), 'report');
-  assert.equal(mailboxCommandOf(' /REPORT '), 'report');
+test('PRIVATE-REPORT the doors: `/bug` the form and `/mail` the mailbox, on either skin and wherever the player stands - the host asks chatCommands.js, the pause door opens the enhanced face at `report`, the menu lands on the form; /help says it; the sheet styles the form (mutants: /bug read as the mailbox; the classic skin without a way in)', () => {
+  assert.equal(mailboxCommandOf('/bug'), 'report');
+  assert.equal(mailboxCommandOf(' /BUG '), 'report');
   assert.equal(mailboxCommandOf('/mail'), 'mailbox');
   assert.equal(mailboxCommandOf('/mailbox'), 'mailbox');
-  assert.equal(mailboxCommandOf('/report x'), null);
-  assert.equal(mailboxCommandOf('/reports'), null);
-  assert.ok(HOST_COMMANDS.includes('report'));
-  assert.deepEqual(parseChatLine('/report'), { kind: 'host', name: 'report' }, 'never said to the room');
-  assert.ok(HELP_LINES.some((l) => l.startsWith('/report - ')), '/help says it');
+  assert.equal(mailboxCommandOf('/bug x'), null);
+  assert.equal(mailboxCommandOf('/bugs'), null);
+  // `/report` is CHAT SAFETY's (SAFE3: a player's lines to the moderators) - never this form's, bare or with a name
+  assert.equal(mailboxCommandOf('/report'), null);
+  assert.equal(mailboxCommandOf('/report Bob harassment'), null);
+  assert.ok(HOST_COMMANDS.includes('bug'));
+  assert.deepEqual(parseChatLine('/bug'), { kind: 'host', name: 'bug' }, 'never said to the room');
+  assert.ok(HELP_LINES.some((l) => l.startsWith('/bug - ')), '/help says it');
   const world = src('src/scenes/world.js');
   assert.match(world, /import \{ breachCommandOf, helpLines, mailboxCommandOf \} from '\.\.\/net\/chatCommands\.js';/);
   assert.match(world, /\{ const at = mailboxCommandOf\(text\); if \(at\) \{/);

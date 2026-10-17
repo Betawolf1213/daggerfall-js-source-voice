@@ -59,6 +59,10 @@ on:
       - "src/net/nameFilter.js"
       - "src/net/houseLaw.js"
       - "src/net/moderation.js"
+      - "src/net/safety/chatStamp.js"
+      - "src/net/safety/chatFeed.js"
+      - "src/net/safety/safetyLaw.js"
+      - "src/net/safety/conduct.js"
       - "src/net/playClock.js"
       - "src/net/renown.js"
       - "src/net/npcChapterLaw.js"
@@ -865,6 +869,34 @@ jobs:
             echo "- webhook secret: $([ -n "${PATREON_WEBHOOK_SECRET}" ] && echo put || echo 'not set - pledges are not followed')"
             echo "- the Patreon client's redirect URI: \`$base/v1/patreon/callback\`"
             echo "- the Patreon webhook's URL: \`$base/v1/patreon/webhook\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # SAFE5 + SAFE8 (bible/11-Multiplayer/Chat-Safety-Arc.md): THE CHAT'S SAFETY HAS TWO SECRETS - the reviewer's
+      # ANTHROPIC_API_KEY (server-account/src/modAi.js) and the Discord bot's DISCORD_BOT_TOKEN (discord.js), each put
+      # on the Worker here on EVERY deploy from the repository's own secrets, so a key changed there reaches the service
+      # on the next push. An unset one is not an error: the reviewer reads nothing (MOD_AI is a switch over a key), and
+      # no card is posted - the cases still gather. One put for both, fed through jq as the Patreon pair is: neither
+      # value is ever echoed, written to a file, or an argument. The summary names the door Discord's application is
+      # given (its Interactions Endpoint URL), read off this deploy - never typed.
+      - name: Put the chat safety's secrets, where the repository has them
+        working-directory: server-account
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: |
+          set -euo pipefail
+          base="${{ steps.deploy.outputs.base }}"
+          if [ -z "${ANTHROPIC_API_KEY}" ] && [ -z "${DISCORD_BOT_TOKEN}" ]; then
+            echo "neither ANTHROPIC_API_KEY nor DISCORD_BOT_TOKEN is set for this repository - the reviewer and the Discord queue stay off"
+          else
+            jq -n 'env | {ANTHROPIC_API_KEY, DISCORD_BOT_TOKEN} | with_entries(select(.value != null and .value != ""))' | $WRANGLER secret bulk
+          fi
+          {
+            echo "### Chat safety"
+            echo ""
+            echo "- the reviewer's key: $([ -n "${ANTHROPIC_API_KEY}" ] && echo put || echo 'not among the repository secrets - the Worker keeps any key put before (AUDIT SAFE DISCORD-12)')"
+            echo "- the Discord bot's token: $([ -n "${DISCORD_BOT_TOKEN}" ] && echo put || echo 'not among the repository secrets - the Worker keeps any token put before')"
+            echo "- the Discord application's Interactions Endpoint URL: \`$base/v1/discord/interactions\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
       # ...AND PROVE IT LANDED, BY CONTENT. The client's deploy has been

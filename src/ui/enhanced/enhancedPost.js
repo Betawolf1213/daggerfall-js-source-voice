@@ -111,7 +111,7 @@ export function anchorPost(mark, glass, profile, host, gap = 10) {
  * that renders it (a quest's clock lapsing, the cloud's answer), and the window rebuilt with it reopens where it stood.
  * Answers { root, stop, draw }: the caller stops the tick when the window goes (a render, an unmount). PRIVATE-REPORT:
  * `keep.view` 'report', 'inbox' or 'reading' shows a report pane in place of the post (`keep.which` the inbox's list,
- * `keep.reportId` the report open) - the pause face opened at 'report' (`/report`) lands on the form.
+ * `keep.reportId` the report open) - the pause face opened at 'report' (`/bug`) lands on the form.
  * @param {Document} doc
  * @param {{ box: () => any, onClose: () => void, every?: number, keep?: { openId?: string|null, said?: string, ok?: boolean, view?: string|null, which?: string, reportId?: string } }} o
  */
@@ -330,7 +330,7 @@ export function postWindow(doc, { box, onClose, every = POST_TICK_MS, keep = {} 
   let tick = null;
   const step = () => { if (win.isConnected === false && tick) { clearInterval(tick); tick = null; return; } draw(); };
   tick = setInterval(step, every);
-  // PRIVATE-REPORT: opened on the form (`/report`), the focus on its first choice
+  // PRIVATE-REPORT: opened on the form (`/bug`), the focus on its first choice
   if (!openId) globalThis.requestAnimationFrame?.(() => (keep.view === 'report' ? focusKey('kind-exploit') : close.focus?.()));
   return { root: win, stop: () => { if (tick) clearInterval(tick); tick = null; }, draw, close, openOne };
 }

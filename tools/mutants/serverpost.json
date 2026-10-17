@@ -313,7 +313,7 @@
   {
     "name": "SERVERPOST-the-classic-skin-without-a-way-in",
     "file": "src/ui/pauseDoor.js",
-    "old": "  if ((hooks.at === 'mailbox' || hooks.at === 'report') && typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);   // PRIVATE-REPORT: `/report`, its form",
+    "old": "  if ((hooks.at === 'mailbox' || hooks.at === 'report') && typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);   // PRIVATE-REPORT: `/bug`, its form",
     "new": "",
     "tests": [
       "test/net/serverpost_client.test.js"

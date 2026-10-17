@@ -21,9 +21,13 @@ own session.
 ## The player's side
 
 - **The door.** The mailbox window has two buttons under the post: **Report a bug or exploit** for every player, and
-  **Private reports** for a reader (`ui/enhanced/enhancedPost.js`, `reportDoors`). `/report` opens the mailbox window
+  **Private reports** for a reader (`ui/enhanced/enhancedPost.js`, `reportDoors`). `/bug` opens the mailbox window
   on its form directly, on either skin and wherever the player stands. It is `/mail`'s own door:
   `net/chatCommands.js` `mailboxCommandOf`, `ui/pauseDoor.js`, `ui/enhanced/enhancedMenu.js` at `'report'`.
+  It is `/bug` and not `/report`, because `/report <name>` is CHAT SAFETY's (SAFE3, `11-Multiplayer/Chat-Safety-Arc.md`):
+  a player's chat lines sent to the moderators. The two never meet. A private report is about the game and goes to its
+  readers; a SAFE3 report is about a player and goes to the moderators' queue. This slice was written as `/report` and
+  renamed at the merge that brought SAFE3 in.
 - **The form** (`ui/enhanced/enhancedReport.js`). It asks what the report is about (an exploit, a bug, or account or
   server security, each with a line of what it means), a short title, and what happens and how to make it happen
   (a counter shows the characters left). Before anything is sent, the form says what goes with the report: the
@@ -62,7 +66,7 @@ own session.
 
 ## The service
 
-- **Table.** `private_reports`, migration 0126 (`server-account/migrations/0126_private_reports.sql`). One report per
+- **Table.** `private_reports`, migration 0127 (`server-account/migrations/0127_private_reports.sql`). One report per
   send per account (`UNIQUE (from_id, rid)`). An account that is deleted takes its reports with it (`CASCADE`), as it
   takes its letters. The table's CHECKs hold the law's bounds, so a row the client could not read is never written.
 - **Routes.** Five POSTs, each needing a session, with every id in the body: `/v1/report/send`, `/v1/report/mine`,
@@ -78,13 +82,13 @@ own session.
   3,000 characters of any script past ASCII are past 4 KiB as UTF-8.
 - **Context** is kept in its shape and nothing else (`reportContextOf`): an update number, a build hash, and
   `desktop` or `browser`. Anything else a client sends beside the words is dropped, never stored.
-- **Version.** `ACCOUNT_VERSION` acct152. It deploys with migration 0126 through `account-deploy.yml` on the merge to
+- **Version.** `ACCOUNT_VERSION` acct153 (acct152 and migration 0126 on its branch, renumbered past SAFE's at the merge). It deploys with migration 0127 through `account-deploy.yml` on the merge to
   main. The site's form against a service not yet deployed is answered `not-found`, and the form says the service's
   sentence for a failure. Nothing is lost, because the draft stays in the form.
 
 ## The four hosts
 
-`/report` is read where `/mail` is. `scenes/world.js` (the streaming host's chat) asks `mailboxCommandOf`; that line
+`/bug` is read where `/mail` is. `scenes/world.js` (the streaming host's chat) asks `mailboxCommandOf`; that line
 was rewritten in place, and `bootWorld` did not grow (`test/scenes/hostceiling.test.js`). `scenes/worldModes.js`
 (interiors) and `scenes/dungeonContext.js` (dungeons) open their own pause at the name they are handed
 (`openPauseAt`, unchanged). `scenes/exterior.js` (the fixed-city bench) runs no online lane, so it has no mailbox and
@@ -92,9 +96,10 @@ no report form, as it has no `/mail`.
 
 ## Privacy
 
-The Privacy Policy (`privacy/index.html`, PRIVACY_VERSION 2026-09-28) already covers what a report is: it lists
-"Support requests and communications with project staff" and "Error, crash, and diagnostic information" among what is
-collected, and "Detect cheating, exploits, abuse" among its uses. No new version, and no account asked to tick again.
+The Privacy Policy (`privacy/index.html`, PRIVACY_VERSION 2026-10-17, SAFE's revision) already covers what a report
+is: it lists "Support requests and communications with project staff" and "Error, crash, and diagnostic information"
+among what is collected, and "Detect cheating, exploits, abuse, or unauthorized access" among its uses. This slice
+writes no new version, and asks no account to tick again.
 Reports are kept: the service deletes no account today, and a player's row removed by hand (a deletion request) takes
 its reports with it (`CASCADE`).
 
@@ -106,7 +111,7 @@ drafting owe them with the rest of their catalog.
 
 ## SECURITY.md
 
-`SECURITY.md` at the root is the public policy that GitHub shows on the Security tab. It names both channels: `/report`
+`SECURITY.md` at the root is the public policy that GitHub shows on the Security tab. It names both channels: `/bug`
 in the game, and GitHub's private vulnerability reporting for holes in the code or the servers that need no game
 account. It also says what to include, what counts, how to act in good faith under the Terms, and what happens next.
 GitHub's **Report a vulnerability** button exists only once private vulnerability reporting is switched on in the

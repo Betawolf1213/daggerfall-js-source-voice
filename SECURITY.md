@@ -6,7 +6,7 @@ posted publicly it spreads before it can be fixed, and every player pays for it.
 
 ## How to report
 
-**In the game (the quickest way, and best for exploits and bugs).** Type `/report` in chat, or open the pause menu,
+**In the game (the quickest way, and best for exploits and bugs).** Type `/bug` in chat, or open the pause menu,
 press the mailbox beside the hourglass, then press **Report a bug or exploit**. Choose what it is, give it a title, and
 describe what happens and how to make it happen. The report goes only to the developers who read reports. Moderators
 and other players cannot see it. Your username and the game's build are sent with it. Your reports are listed under
@@ -20,6 +20,9 @@ account.
 
 Please don't open a public issue, pull request, chat message or Discord post about an exploit or a vulnerability
 until it has been fixed.
+
+To report another player's behaviour in chat (harassment, hate, threats, spam), use `/report <name>` or press their name
+in the chat instead. That goes to the moderators.
 
 ## What to include
 
@@ -38,7 +41,7 @@ the code in this repository. For example:
 - taking down or slowing the servers for other players;
 - a secret, key or token exposed in the code, a build or a response.
 
-Ordinary bugs are welcome too: in the game with `/report`, or as a GitHub issue if nothing in them could be abused.
+Ordinary bugs are welcome too: in the game with `/bug`, or as a GitHub issue if nothing in them could be abused.
 Problems in third-party services (Cloudflare, Patreon, Discord, GitHub) go to those services. Daggerfall's own game
 data is not part of this project.
 

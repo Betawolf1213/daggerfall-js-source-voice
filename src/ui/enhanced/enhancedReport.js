@@ -2,7 +2,7 @@
 // PRIVATE-REPORT (2026-10-17, Mac: "Can we add a private disclosure method for exploits/bugs with the client").
 //
 // THE REPORT FORM AND THE READERS' INBOX, drawn in the mailbox's window (ui/enhanced/enhancedPost.js postWindow) - the
-// door every player already has on either skin (`/mail`, and `/report` straight to the form). Three panes over the box's
+// door every player already has on either skin (`/mail`, and `/bug` straight to the form). Three panes over the box's
 // desk (net/privateReport.js ReportDesk):
 //   report   - the form: what it is, a title, what happens and how; what is sent with it, said before it is sent; and
 //              the player's own reports under it, each with whether a developer has read it and how it was closed.

@@ -1,5 +1,5 @@
 // PRIVATE-REPORT (2026-10-17, Mac: "Can we add a private disclosure method for exploits/bugs with the client"): THE
-// SERVICE'S SIDE - migration 0126 (private_reports), server-account/src/reports.js and its five routes, the reader's
+// SERVICE'S SIDE - migration 0127 (private_reports), server-account/src/reports.js and its five routes, the reader's
 // count on the post box and the heartbeat's post part. A report is a registered player's to the readers
 // REPORT_READER_HANDLES names, and nobody else lists or opens one.
 import { test } from 'node:test';
@@ -28,8 +28,8 @@ const lay = (svc, who, n, state = 'open') => {
   }
 };
 
-test('PRIVATE-REPORT the table and the doors: 0126 lays private_reports - one report a send an account; five POST routes behind a session, none open; a guest refused every one (report-needs-account, 403); every word the routes answer has a sentence; the readers a list in config (mutants: a route open; the guest let in; a word with no sentence)', async () => {
-  const mig = src('server-account/migrations/0126_private_reports.sql');
+test('PRIVATE-REPORT the table and the doors: 0127 lays private_reports - one report a send an account; five POST routes behind a session, none open; a guest refused every one (report-needs-account, 403); every word the routes answer has a sentence; the readers a list in config (mutants: a route open; the guest let in; a word with no sentence)', async () => {
+  const mig = src('server-account/migrations/0127_private_reports.sql');
   assert.match(mig, /CREATE TABLE IF NOT EXISTS private_reports \(/);
   assert.match(mig, /CREATE UNIQUE INDEX IF NOT EXISTS ux_private_reports_rid ON private_reports \(from_id, rid\);/);
   assert.match(mig, /FOREIGN KEY \(from_id\) REFERENCES players\(id\) ON DELETE CASCADE/);
