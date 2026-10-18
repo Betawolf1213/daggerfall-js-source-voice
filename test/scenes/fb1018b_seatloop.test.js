@@ -201,9 +201,14 @@ function page(r, id) {
   };
 }
 
+/** ONE INSTANT for the Room, the doors and the bodies - a body's base is seeded by its name and its death's stamp
+ *  (systems/roomLoot.js), so a wall-clock start rolled a different castle every run, and one in twenty stood a Map on a
+ *  guard: quick loot reads a map where it lies and never moves it (systems/quickLoot.js takeOneItem), so that body could
+ *  never be emptied and the pin failed by its dice (test/net/partyloot_wire.test.js starts its rooms at a T0 the same way). */
+const T0 = Date.UTC(2026, 9, 18, 12, 0, 0);
 async function onClock(fn) {
   const real = Date.now;
-  const clock = { t: real() };
+  const clock = { t: T0 };
   Date.now = () => clock.t;
   try { return await fn(clock); } finally { Date.now = real; }
 }
