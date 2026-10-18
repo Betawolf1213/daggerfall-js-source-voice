@@ -33,6 +33,9 @@ const FAST = runSpeed(90, 90);
 /** UNQUIET (Revenants.md section 46): the fastest runner there is - from rank 2 an Orc BOLTS (revenantUnquiet.js CRAFT.BOLT_PACE)
  *  and outruns FAST; only a runner at Speed and Running 100 keeps up with it. */
 const FASTEST = runSpeed(100, 100);
+/** A chaser faster than any player (a test device, not a build): it reaches a bolting Orc and strikes it as it runs, so its
+ *  last stand mid-run and its band's rally mid-scatter are still read. */
+const HOUND = FASTEST * 1.4;
 
 test('FEUD HARNESS THE FAULT: risen in its last stand as it runs, its run is over - the motor no longer flees, and the flee law asks nothing more of it (mutants: the run left running)', () => {
   const was = getPref('lootRarity');
@@ -97,8 +100,11 @@ test('FEUD HARNESS ITS FLIGHT: under a fifth of its health it may run - striking
   assert.ok(got <= Math.ceil(ran.length * 0.2), `run down, most of them (${got} of ${ran.length} got away)`);
   assert.ok(ran.filter((x) => x.end !== 'fled').every((x) => x.end === 'knelt' || x.end === 'tore'), 'the rest knelt or tore away');
   // PIN MOVED (UNQUIET, Revenants.md section 46): a rank-3 Orc BOLTS, and even the fastest runner only keeps pace - none is
-  // struck as it runs, so none rises in its last stand mid-run here; FEUD HARNESS THE FAULT (above) pins that stand's law
+  // struck as it runs, so none rises in its last stand mid-run here; a chaser faster than any player still finds it
   assert.ok(ran.every((x) => !x.stoodInFlight), 'never struck down as it bolts');
+  const hounded = fights({ rank: 3, mode: 'trade', runner: HOUND }, SEEDS(40)).filter((x) => x.flight);
+  assert.ok(hounded.some((x) => x.stoodInFlight), 'struck as it runs, some rise in their last stand mid-run - and fight on to their end');
+  assert.ok(hounded.every((x) => x.end === 'knelt' || x.end === 'tore'), 'the hound runs every one down');
   assert.ok(ran.some((x) => x.cornered), 'some are run down and cornered');   // PIN MOVED (FLIGHT-FIRST): a fast runner at a rank-3's heels finds its last stand first, never its kneel mid-run (`caught` - test/systems/revenant/flightfirst.test.js, rank 1)
   const long = ran.filter((x) => x.t - x.flightAt > F.BAND_SCATTER_S + 0.5);
   assert.ok(long.length > 0 && long.every((x) => x.bandGone === x.band), 'its scattered band gone when its run is spent');
@@ -109,12 +115,15 @@ test('FEUD HARNESS ITS FLIGHT: under a fifth of its health it may run - striking
 });
 
 test('FEUD HARNESS RANK 5\'S RALLY: at its stand its band\'s survivors to it; its band scattered by its flight, RALLY_KIN of its kin through a portal (mutants: the rally unasked; the portal unopened; the count moved)', () => {
-  const rows = fights({ rank: 5, mode: 'trade', runner: FASTEST }, SEEDS(40));   // UNQUIET: its bolt run down only by the fastest
+  const rows = fights({ rank: 5, mode: 'trade', runner: HOUND }, SEEDS(40));   // UNQUIET: its bolt struck mid-run only by a chaser past any player's run - its stand while its band still scatters
   const stood = rows.filter((x) => x.stood);
   assert.ok(stood.some((x) => x.rallied === x.band && x.portal === 0), 'its band standing: to it');
   const portal = stood.filter((x) => x.portal > 0);
   assert.ok(portal.length > 0, 'a portal');
   assert.ok(portal.every((x) => x.portal === F.RALLY_KIN && x.rallied === 0 && x.scattered === x.band), 'none standing - its kin through a portal');
+  const midFlight = stood.filter((x) => x.stoodInFlight && x.scattered === x.band);
+  assert.ok(midFlight.length > 0, 'a stand mid-flight, its band still scattering from it');
+  assert.ok(midFlight.every((x) => x.rallied === 0), 'a kin scattering is no survivor to rally - its kin through a portal');
   assert.ok(fights({ rank: 3, mode: 'trade' }, SEEDS(10)).every((x) => x.rallied === 0 && x.portal === 0), 'rank 3: no rally');
 });
 
