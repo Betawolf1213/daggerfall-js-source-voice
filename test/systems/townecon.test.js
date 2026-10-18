@@ -18,6 +18,13 @@ import { tradeCost, getTradePrice } from '../../src/systems/tradeModes.js';
 import { createRestItem, REST_ITEM } from '../../src/systems/rest/restItems.js';
 import { createTownEcon } from '../../src/systems/town/townEcon.js';
 import { readTip, TOWN_TIP_LINES_MAX, TIP_LINES_MAX, SEAT_TIP_TEXT_MAX } from '../../src/ui/eventMapMarks.js';
+import { markCounterBought, buyItemPrice } from '../../src/systems/tradeModes.js';
+import { COUNTER_PAID_MARK, PATRON_COUNTER_MARK } from '../../src/net/patronLaw.js';
+import { addItem, splitStack } from '../../src/systems/inventory.js';
+import { lawfulItem } from '../../src/systems/item/itemLaw.js';
+import { validLootList, createPotion } from '../../src/systems/loot/loot.js';
+import { potionRecipeKeys } from '../../src/systems/potions.js';
+import { createWeapon } from '../../src/combat/enemyEquipment.js';
 
 // TOWN-ECON TE1 (2026-10-16, bible/06-Systems/Town-Economy-Arc.md; Mac: "give every city and village a dynamic economy
 // system, where even players can affect the influence. Allowing players to hover over towns and see an economy tooltip
@@ -118,8 +125,16 @@ test('TOWN-ECON the price (TE0 decision 4, Mac: "Wider swings, ±25%+"): a count
   assert.equal(townShopFactor(100, 'Buy', 0.9), 0.7, '0.75 x 0.9 = 0.675, held at the floor');
   assert.equal(townShopFactor(50, 'Buy', 0.9), 0.9, 'a Steady town leaves the seat\'s');
   assert.equal(townShopFactor(0, 'Repair', 1), 1.25);
-  assert.equal(townShopFactor(25, 'Sell', 0.7), 0.875, 'a sale is the town\'s paying factor alone - a seat moves no sale');
-  assert.equal(townShopFactor(90, 'Sell', 0.7), 0.8);
+  assert.equal(townShopFactor(25, 'Sell'), 0.875, 'a sale is the town\'s paying factor where no seat lowers the ask');
+  assert.equal(townShopFactor(90, 'Sell'), 0.8);
+  // SEAT-LOOP (Town-Economy-Arc 7.5): what a counter pays falls with what it asks THIS player - a seat's discount lowers both
+  assert.equal(townShopFactor(25, 'Sell', 0.7), townShopFactor(25, 'Buy', 0.7), '1.125 x 0.7: the ask, under the town\'s 0.875');
+  assert.equal(townShopFactor(90, 'Sell', 0.7), 0.7, 'the floor\'s ask, under the town\'s 0.8');
+  assert.equal(townShopFactor(50, 'SellMagic', 0.9), 0.9, 'Market Day\'s ask at a Steady town: its pay too');
+  assert.equal(townShopFactor(40, 'Sell', 1), townSaleFactor(40), 'no seat: the town\'s own V');
+  for (const s of [1, 0.9, 0.85, 0.75, deepest]) for (let p = 0; p <= 100; p++) {
+    assert.ok(townShopFactor(p, 'Sell', s) <= townShopFactor(p, 'Buy', s), `Sell p ${p} seat ${s}: never above the ask`);
+  }
   assert.equal(townShopFactor(100, 'Identify', 0.8), 1, 'a mode that is not a counter\'s trade');
   // within one counter's region and quality, no town's discount makes a buy-here-sell-there profit the online sale share
   // (REALM P0.4) did not already allow - an essential's half (ESSENTIALS-HALF) asked too
@@ -142,6 +157,37 @@ test('TOWN-ECON AUDIT LAW-1: AN ESSENTIAL BOUGHT AND SOLD BACK AT ONE TOWN COUNT
       const sl = tradeCost('Sell', [it], { quality: q, priceAdjustment: adjOf(adj, 'Sell', p) });
       const buy = getTradePrice('Buy', bl.cost, q, best, bl.pieces), sell = getTradePrice('Sell', sl.cost, q, best);
       if (sell > buy) paid.push(`P${p} q${q} index ${adj}: buy ${buy}, sell ${sell}`);
+    }
+    assert.deepEqual(paid.slice(0, 5), [], `${paid.length} counters pay for a round trip`);
+  } finally { globalThis.location = was; }
+});
+
+test('TOWN-ECON SEAT-LOOP (Town-Economy-Arc 7.5, Mac: "Close it"): AN ESSENTIAL BOUGHT AND SOLD BACK AT A SEAT TOWN\'S COUNTER NEVER PAYS - a member\'s discount, a crown\'s, a loved Standing\'s and Market Day\'s, through the real trade walk online with the best haggler, at every Prosperity, quality and region index, and where the seat\'s place has no economy; before, five firewood at a quality-10 counter at the region\'s index cost 13 and sold for 15 on Market Day (mutants: TOWNECON-SEATLOOP-law-unbounded, TOWNECON-SEATLOOP-fallback-unbounded)', () => {
+  const was = globalThis.location;
+  globalThis.location = { search: '?online=1' };
+  try {
+    const adjOf = (adj, f) => (f === 1 ? adj : Math.round(adj * f));   // worldModes.js shopAdjustment's own two lines
+    const best = { mercantile: 100, personality: 100 };
+    const held = (tier, standing, edict) => ({ tier, holder: { guild: SH, standing, edict } });
+    const seats = [held('palace', 50, 'market-day'), held('palace', 50, null), held('crown', 50, null), held('palace', 80, 'market-day'), held('crown', 100, 'market-day')];
+    const factors = [...new Set([...seats.map((s) => seatShopFactor(s, SH.id)), seatShopFactor(seats[0], 'g9')])];
+    assert.deepEqual(factors.map((f) => f.toFixed(2)), ['0.80', '0.90', '0.85', '0.75', '0.70'], 'Market Day, a member, a crown\'s member, loved, the deepest - and Market Day for anyone');
+    const econ = createTownEcon({ online: () => true, townOf: () => null, seatAt: () => null, seats: () => null, raidedAt: () => false });
+    const walk = (q, adj, buyF, sellF) => {
+      const it = createRestItem(REST_ITEM.Firewood, { stackCount: 5 });
+      const bl = tradeCost('Buy', [it], { quality: q, priceAdjustment: adjOf(adj, buyF) });
+      const sl = tradeCost('Sell', [it], { quality: q, priceAdjustment: adjOf(adj, sellF) });
+      return [getTradePrice('Buy', bl.cost, q, best, bl.pieces), getTradePrice('Sell', sl.cost, q, best)];
+    };
+    assert.deepEqual(walk(10, 1000, 0.9, 1), [13, 15], 'the hole as the audit measured it: Market Day\'s ask, the region\'s pay');
+    const paid = [];
+    for (const f of factors) for (let q = 1; q <= 20; q++) for (const adj of [500, 1000, 1500, 2500]) {
+      for (let p = 0; p <= 100; p += 2) {
+        const [buy, sell] = walk(q, adj, townShopFactor(p, 'Buy', f), townShopFactor(p, 'Sell', f));
+        if (sell > buy) paid.push(`seat ${f} P${p} q${q} index ${adj}: buy ${buy}, sell ${sell}`);
+      }
+      const [buy, sell] = walk(q, adj, econ.shopFactor({ townMapId: 5 }, 'Buy', f), econ.shopFactor({ townMapId: 5 }, 'Sell', f));
+      if (sell > buy) paid.push(`seat ${f}, no economy, q${q} index ${adj}: buy ${buy}, sell ${sell}`);
     }
     assert.deepEqual(paid.slice(0, 5), [], `${paid.length} counters pay for a round trip`);
   } finally { globalThis.location = was; }
@@ -243,9 +289,12 @@ test('TOWN-ECON the client\'s reading (systems/town/townEcon.js): online only - 
   assert.equal(econ.prosperityOf(14), townProsperity({ key: townKeyOf(220, 150), type: 1, day: DAY, seat: anticlere }));
   assert.notEqual(econ.prosperityOf(14), townProsperity({ key: townKeyOf(220, 150), type: 1, day: DAY }), 'the seat moved it');
   assert.equal(econ.shopFactor({ townMapId: 11 }, 'Buy', 0.9), townShopFactor(61, 'Buy', 0.9));
-  assert.equal(econ.shopFactor({ townMapId: 11 }, 'SellMagic', 0.9), townShopFactor(61, 'Sell'));
+  assert.equal(econ.shopFactor({ townMapId: 11 }, 'SellMagic', 0.9), townShopFactor(61, 'Sell', 0.9));
+  assert.ok(econ.shopFactor({ townMapId: 11 }, 'Sell', 0.9) < townShopFactor(61, 'Sell'), 'SEAT-LOOP: the seat\'s ask bounds the pay');
   assert.equal(econ.shopFactor({ townMapId: 12 }, 'Buy', 0.9), 0.9, 'no economy: the seat\'s alone on what it asks');
-  assert.equal(econ.shopFactor({ townMapId: 12 }, 'SellMagic', 0.9), 1, 'AUDIT CLI-3: and never on what it pays');
+  assert.equal(econ.shopFactor({ townMapId: 12 }, 'SellMagic', 0.9), 0.9, 'SEAT-LOOP: and what it pays never above it');
+  assert.equal(econ.shopFactor({ townMapId: 12 }, 'Sell', 1), 1);
+  assert.equal(econ.shopFactor({ townMapId: 12 }, 'Identify', 0.9), 1, 'AUDIT CLI-3: a mode that is no trade keeps no seat\'s factor');
   assert.equal(econ.shopFactor(null, 'Sell', 1), 1);
   // the area: Anticlere, the nearer seat of Ripmarket's own region - never Elsewhere, nearer but in another region
   assert.deepEqual(econ.tipAt(11).lines, ['Economy: Steady (61/100). ' + (townTrendWord(61, townProsperity({ key: KEY, type: 0, day: DAY - 1 })) === 'rising' ? 'Market rising.' : townTrendWord(61, townProsperity({ key: KEY, type: 0, day: DAY - 1 })) === 'falling' ? 'Market falling.' : 'Market flat.'),
@@ -270,6 +319,7 @@ test('TOWN-ECON the client\'s reading (systems/town/townEcon.js): online only - 
   assert.equal(econ.prosperityOf(11), null);
   assert.equal(econ.shopFactor({ townMapId: 11 }, 'Buy', 0.9), 0.9, 'offline the counter is DFU\'s, and the seat\'s');
   assert.equal(econ.shopFactor({ townMapId: 11 }, 'Sell', 1), 1);
+  assert.equal(econ.shopFactor({ townMapId: 11 }, 'Sell', 0.9), 0.9, 'SEAT-LOOP: offline too, a seat\'s ask bounds the pay');
   assert.equal(econ.tipAt(11), null);
   assert.equal(econ.tipFnAt(11), null);
   assert.equal(econ.tipAt(13), null);
@@ -296,4 +346,117 @@ test('TOWN-ECON the wiring: the counter\'s factor in worldModes.js\'s shopAdjust
   assert.match(h, /const card = this\.deps\.townTipAt\?\.\(m\.summary\) \?\? \(m\.seat \? seatTipOf\(m\.seat\) : null\);/);
   assert.match(h, /if \(gateMoved\) this\._refreshTip\(\);\n(\s*\/\/[^\n]*\n)*\s*if \(!gateMoved && this\._tipKey && this\._hoverAt\) this\._refreshTip\(\);/, 'AUDIT UI-6: a card showing is asked again at the poll');
   assert.match(rd('src/ui/travel/travelViewHud.js'), /readTip\(typeof tip === 'function' \? tip\(\) : tip, \{ textMax: SEAT_TIP_TEXT_MAX, linesMax: TOWN_TIP_LINES_MAX \}\)/);
+});
+
+/** LAW-3's walks run online (tradeModes.js reads the page's own flag). */
+const online = (fn) => { const was = globalThis.location; globalThis.location = { search: '?online=1' }; try { return fn(); } finally { globalThis.location = was; } };
+const BEST = Object.freeze({ mercantile: 100, personality: 100 });
+const seeded = (n) => { let x = n >>> 0; return () => ((x = (Math.imul(x, 1664525) + 1013904223) >>> 0) / 4294967296); };
+
+test('TOWN-ECON LAW-3 (Town-Economy-Arc 7.4): WHAT THE COUNTER WAS PAID - online a counter\'s Buy marks each piece with its share of the lot\'s price (each piece\'s own ask at one counter, the essentials\' half among them), floored a piece and never more than the lot; offline nothing, no price no number; the item law and the wire carry it, a merge keeps the lower of two and a split keeps it (mutants: TOWNECON-LAW3-paid-unwritten, TOWNECON-LAW3-share-even, TOWNECON-LAW3-merge-higher, TOWNECON-LAW3-split-lost)', () => {
+  assert.equal(COUNTER_PAID_MARK, 'counterPaid');
+  online(() => {
+    const blade = createWeapon(113, 1, seeded(3));
+    assert.equal(markCounterBought([blade], { price: 641 }), 1);
+    assert.deepEqual([blade[PATRON_COUNTER_MARK], blade[COUNTER_PAID_MARK]], [true, 641]);
+    // a lot: each piece its own ask's share - the firewood's half counted as the counter counts it
+    const sword = createWeapon(113, 3, seeded(5)), wood = createRestItem(REST_ITEM.Firewood, { stackCount: 5 });
+    const asks = [buyItemPrice(sword, { quality: 10 }), buyItemPrice(wood, { quality: 10 })];
+    const price = 1000;
+    markCounterBought([sword, wood], { price });
+    assert.equal(sword[COUNTER_PAID_MARK], Math.floor((price * asks[0]) / (asks[0] + asks[1])));
+    assert.equal(wood[COUNTER_PAID_MARK], Math.floor((price * asks[1]) / (asks[0] + asks[1]) / 5), 'a piece of the stack');
+    assert.ok(sword[COUNTER_PAID_MARK] + 5 * wood[COUNTER_PAID_MARK] <= price, 'never more than the lot');
+    assert.ok(wood[COUNTER_PAID_MARK] < sword[COUNTER_PAID_MARK] / 5, 'not an even share');
+    const unpriced = createWeapon(113, 1, seeded(3));
+    markCounterBought([unpriced]);
+    assert.deepEqual([unpriced[PATRON_COUNTER_MARK], unpriced[COUNTER_PAID_MARK]], [true, undefined], 'no price, no number');
+    // the item law and the wire
+    assert.ok(lawfulItem(blade));
+    assert.equal(lawfulItem({ ...blade, [COUNTER_PAID_MARK]: -1 }), false);
+    assert.equal(lawfulItem({ ...blade, [COUNTER_PAID_MARK]: 2.5 }), false);
+    assert.equal(validLootList([blade])?.[0]?.[COUNTER_PAID_MARK], 641, 'the wire carries it');
+    // a stack: the lower of two, and a split keeps it
+    const a = createRestItem(REST_ITEM.Firewood, { stackCount: 2 }), b = createRestItem(REST_ITEM.Firewood, { stackCount: 3 });
+    markCounterBought([a], { price: 20 }); markCounterBought([b], { price: 9 });
+    const pack = [a];
+    assert.equal(addItem(pack, b), a);
+    assert.deepEqual([a.stackCount, a[COUNTER_PAID_MARK]], [5, 3], 'the lower of 10 and 3 a piece');
+    const found = createRestItem(REST_ITEM.Firewood, { stackCount: 1 });
+    const pack2 = [found];
+    addItem(pack2, a);
+    assert.equal(found[COUNTER_PAID_MARK], 3, 'a found stack joined by a bought one is held to its price');
+    const higher = createRestItem(REST_ITEM.Firewood, { stackCount: 1 });
+    markCounterBought([higher], { price: 50 });
+    addItem(pack2, higher);
+    assert.equal(found[COUNTER_PAID_MARK], 3, 'a dearer piece merged in lifts nothing');
+    const picked = splitStack(pack2, found, 2);
+    assert.deepEqual([picked[COUNTER_PAID_MARK], found[COUNTER_PAID_MARK]], [3, 3], 'a split keeps it on both halves');
+  });
+  const off = createWeapon(113, 1, seeded(3));
+  assert.equal(markCounterBought([off], { price: 641, online: false }), 0);
+  assert.equal(off[COUNTER_PAID_MARK], undefined, 'offline nothing is written');
+});
+
+test('TOWN-ECON LAW-3: A COUNTER NEVER PAYS MORE FOR A COUNTER\'S PIECE THAN WAS PAID FOR IT - the lot\'s marked pieces fetch at most their price, the rest of the lot haggled on its own and the whole lot\'s price never passed; where the cap does not bind the price is the uncapped one exactly; a sale of magic too; offline no tally (mutants: TOWNECON-LAW3-cap-off, TOWNECON-LAW3-tally-offline, TOWNECON-LAW3-sellmagic-untallied)', () => {
+  online(() => {
+    for (const cost of [1, 7, 80, 999, 5000, 40000]) for (const q of [1, 10, 20]) {
+      const whole = getTradePrice('Sell', cost, q, BEST);
+      assert.equal(getTradePrice('Sell', cost, q, BEST, 0, { cost, paid: whole }), whole, 'the cap at the price: unchanged');
+      assert.equal(getTradePrice('Sell', cost, q, BEST, 0, { cost, paid: whole + 50 }), whole);
+      assert.equal(getTradePrice('Sell', cost, q, BEST, 0, null), whole);
+      if (whole > 1) assert.equal(getTradePrice('Sell', cost, q, BEST, 0, { cost, paid: 1 }), 1, 'held to what it cost');
+      assert.ok(getTradePrice('Sell', cost * 2, q, BEST, 0, { cost, paid: 0 }) <= getTradePrice('Sell', cost * 2, q, BEST), 'never past the whole lot');
+    }
+    const blade = createWeapon(113, 3, seeded(9));
+    markCounterBought([blade], { price: 3 });
+    const lot = tradeCost('Sell', [blade], { quality: 10, priceAdjustment: 2500 });
+    assert.deepEqual(lot.resale, { cost: lot.cost, paid: 3 });
+    assert.equal(getTradePrice('Sell', lot.cost, 10, BEST, lot.pieces, lot.resale), 3);
+    const magic = tradeCost('SellMagic', [blade], { quality: 10, priceAdjustment: 2500 });
+    assert.deepEqual(magic.resale, { cost: magic.cost, paid: 3 }, 'a sale of magic is a sale');
+    const plainOne = createWeapon(113, 3, seeded(9));
+    assert.equal(tradeCost('Sell', [plainOne], { quality: 10, priceAdjustment: 2500 }).resale, undefined, 'a found piece is the counter\'s to price');
+  });
+  const blade = createWeapon(113, 3, seeded(9));
+  online(() => markCounterBought([blade], { price: 3 }));
+  assert.equal(tradeCost('Sell', [blade], { quality: 10, priceAdjustment: 2500, online: false }).resale, undefined, 'offline the save is the player\'s own');
+});
+
+test('TOWN-ECON LAW-3: THE CARRY BETWEEN REGIONS NEVER PAYS - a blade, a Daedric dai-katana, five firewood and a potion bought at the cheapest counter (the region\'s index at 500, a Booming town at 100, every shop quality) and sold at the dearest (2,500, a Steady town, every quality), the best haggler, through the real trade walk and the counter\'s own mark; without the cap the same walks paid (mutants: TOWNECON-LAW3-paid-unwritten, TOWNECON-LAW3-cap-off)', () => {
+  online(() => {
+    const pieces = () => [createWeapon(113, 1, seeded(1)), createWeapon(123, 9, seeded(4)), createRestItem(REST_ITEM.Firewood, { stackCount: 5 }), createPotion(potionRecipeKeys()[0])];
+    const buyAdj = Math.round(500 * townShopFactor(100, 'Buy')), sellAdj = 2500;
+    const paid = [], uncapped = [];
+    for (let k = 0; k < 4; k++) for (let qb = 1; qb <= 20; qb++) {
+      const it = pieces()[k];
+      const bl = tradeCost('Buy', [it], { quality: qb, priceAdjustment: buyAdj });
+      const buy = getTradePrice('Buy', bl.cost, qb, BEST, bl.pieces);
+      markCounterBought([it], { price: buy });
+      for (let qs = 1; qs <= 20; qs++) {
+        const sl = tradeCost('Sell', [it], { quality: qs, priceAdjustment: sellAdj });
+        const sell = getTradePrice('Sell', sl.cost, qs, BEST, sl.pieces, sl.resale);
+        if (sell > buy) paid.push(`${it.name ?? it.templateIndex} q${qb}->q${qs}: ${buy} -> ${sell}`);
+        if (getTradePrice('Sell', sl.cost, qs, BEST, sl.pieces) > buy) uncapped.push(k);
+      }
+    }
+    assert.deepEqual(paid.slice(0, 5), [], `${paid.length} carries pay`);
+    assert.ok(uncapped.length > 0, 'the hole: without the cap the carry paid');
+    assert.ok(uncapped.includes(2) || uncapped.includes(3), 'an essential\'s half carried too');
+  });
+});
+
+test('TOWN-ECON LAW-3 the wiring: both doors of a counter\'s Buy hand the mark the lot\'s price, and every sale price the windows and the keyed shelf quote and pay hands the resale tally on (mutants: TOWNECON-LAW3-native-unpassed, TOWNECON-LAW3-enhanced-unpassed, TOWNECON-LAW3-quote-unpassed, TOWNECON-LAW3-keyed-unpassed)', () => {
+  const wm = rd('src/scenes/worldModes.js');
+  assert.match(wm, /markCounterBought\(staged, \{ price \}\);/);
+  assert.match(wm, /markCounterBought\(\[it\], \{ price \}\);/);
+  assert.match(wm, /const lot = tradeCost\('Sell', \[it\], \{ quality: b\.quality, priceAdjustment: shopAdjustment\(b, 'Sell'\) \}\);\n\s+return getTradePrice\('Sell', lot\.cost, b\.quality, \{\n[^\n]*\n[^\n]*\n\s+\}, lot\.pieces, lot\.resale\);/);
+  const nt = rd('src/ui/native/nativeTrade.js');
+  assert.match(nt, /const \{ cost, modeActionEnabled, pieces, resale \} = this\.cost\(\);/);
+  assert.match(nt, /getTradePrice\(this\.mode, cost, ctx\.quality \?\? 0, ctx\.skills \?\? \{\}, pieces, resale\);/);
+  const et = rd('src/ui/enhanced/enhancedTrade.js');
+  assert.match(et, /return getTradePrice\(m, lot\.cost, quality, skills, lot\.pieces, lot\.resale\);/);
+  assert.match(et, /const \{ cost: c, pieces, resale \} = tradeCost\('Sell', \[item\], ctx\);\n\s+const price = getTradePrice\('Sell', c, ctx\.quality \?\? 0, ctx\.skills \?\? \{\}, pieces, resale\);/);
+  assert.match(et, /const price = getTradePrice\(mode, c, ctx\.quality \?\? 0, ctx\.skills \?\? \{\}, pieces, resale\);/);
+  for (const src of [nt, et, wm]) assert.equal((src.match(/getTradePrice\('Sell'|getTradePrice\(this\.mode|getTradePrice\(mode|getTradePrice\(m,/g) ?? []).length, (src.match(/getTradePrice\([^\n]*resale\)|\}, lot\.pieces, lot\.resale\)/g) ?? []).length, 'every sale\'s price');
 });

@@ -119,13 +119,17 @@ export const TOWN_SALE_MODES = Object.freeze(['Sell', 'SellMagic']);
 /**
  * A COUNTER'S FACTOR in the town, for `mode` (the trade window's: Buy, Repair, Sell, SellMagic) - what it asks, the
  * town's asking factor times the seat's (`seatFactor`, townSeatLaw.js seatShopFactor, 1 for none), never below
- * TOWN_FACTOR_FLOOR; what it pays, the town's paying factor alone (a seat moves no sale); any other mode 1.
+ * TOWN_FACTOR_FLOOR; what it pays, the town's paying factor, never above what it asks THIS player; any other mode 1.
+ * SEAT-LOOP (Town-Economy-Arc 7.5, Mac: "Close it"): a seat's discount - its holder's members', Market Day's - lowered
+ * what a counter asked while what it paid stood, so an essential (half its price online) bought and sold back paid
+ * (five firewood, 13 in and 15 out on Market Day); what it pays falls with what it asks.
  * @param {number} p @param {string} mode @param {number} [seatFactor]
  */
 export function townShopFactor(p, mode, seatFactor = 1) {
-  if (TOWN_SALE_MODES.includes(mode)) return townSaleFactor(p);
+  const ask = Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);
+  if (TOWN_SALE_MODES.includes(mode)) return Math.min(townSaleFactor(p), ask);
   if (mode !== 'Buy' && mode !== 'Repair') return 1;
-  return Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);
+  return ask;
 }
 
 /** What a town card's trend is, yesterday to today - its id; the card says it in the player's language (TREND_WORDS).

@@ -167,6 +167,9 @@ export const ITEM_FIELDS = Object.freeze({
   // town's patron takes it (net/patronLaw.js patronTakes, PATRON_COUNTER_MARK). Never a receiver's mark: it rides the wire
   // and the market's listing with the piece
   counterBought: bool(),
+  // LAW-3 (Town-Economy-Arc 7.4): what the counter was paid for it, gold a piece (net/patronLaw.js COUNTER_PAID_MARK) -
+  // online no counter pays more for it. Never a receiver's mark, as the counter's mark is not
+  counterPaid: int({ min: 0 }),
   // STOLEN-GOODS (FIELD BUGS 2026-10-16b): a piece taken from someone else's keeping (systems/stolenGoods.js) - true, or
   // absent: a counter's sale is rid of it, never shelved, and a guilty verdict takes it (court.js confiscateStolen).
   // Never a receiver's mark: it rides the wire and a realm trade with the piece, so a hand-off launders nothing

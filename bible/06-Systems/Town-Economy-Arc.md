@@ -15,8 +15,9 @@ Asked four things, Mac answered:
 
 **Status: TE1 BUILT 2026-10-16** (the baseline, the card, the price), **AUDITED 2026-10-16** (Mac: "Lets audit
 everything we have so far" - `01-Overview/audits/Audit-Town-Econ.md`: every finding, and below each fix marked AUDIT TOWN-ECON
-and its id). TE2 (the players' share, the account service) and TE3 (the living world reads it) are designed below and
-not built. Every constant marked "proposed" is a starting number and Mac's to set (section 7).
+and its id). **SEAT-LOOP and LAW-3 BUILT 2026-10-18** - Mac's five calls decided (section 7): the seat's essentials
+round trip and the carry between regions closed. TE2 (the players' share, the account service) and TE3 (the living
+world reads it) are designed below and not built. The constants are kept as section 2 has them (section 7.1).
 
 ## 0. What stands, read against the code (2026-10-16)
 
@@ -67,13 +68,17 @@ Taken at the design. Each is Mac's to overrule.
    saturates (section 2).
 4. **THE PRICE MOVES - AN EXCEPTION TO ECONOMY LAW 5, BOUNDED** (Mac: "Wider swings, ±25%+"). Online, a town's
    Prosperity moves what its counters ask, by up to TOWN_PRICE_SWING (0.25) each way: a Booming town asks a quarter
-   less, a Destitute one a quarter more. Three bounds keep "the system will fail" contained:
+   less, a Destitute one a quarter more. Four bounds keep "the system will fail" contained:
    - **A counter never pays more, nor more than it asks.** What a counter pays for a sale (and the Mages Guild for a
      magic piece - AUDIT TOWN-ECON LAW-5) falls by the same share either side of the middle: a Struggling town has less
      coin, a Booming one is stocked. Its factor never rises above 1, and never above the town's asking factor - AUDIT
      TOWN-ECON LAW-1: as built, a Booming counter's ask fell while its pay stood, and the essentials' half turned a
      round trip of firewood into gold at 134 of 140 counters at Prosperity 51. (The factor, not every sale: MERC-SLOPE's
-     own rounding can pay a gold more on a smaller cost - LAW-4 - never a loop.)
+     own rounding can pay a gold more on a smaller cost - LAW-4 - never a loop.) SEAT-LOOP (2026-10-18, section 7.5):
+     and never above what it asks THIS player - a seat's discount (its members', Market Day's) lowers both.
+   - **A counter's piece never fetches more than it cost** (LAW-3, 2026-10-18, section 7.4). Online, a piece an NPC
+     counter sold carries what was paid for it, and no counter pays more for it - so neither a town's discount nor the
+     regions' walk pays a carrier.
    - **The deepest price stays the seats'.** A town's discount and a seat's (members, Market Day) multiply, and the
      product never goes below 0.70, the deepest a seat already gives (TOWN_FACTOR_FLOOR).
    - **Never through `regionPriceAdjustment`.** The factor multiplies the counter's own adjustment
@@ -118,8 +123,9 @@ than PLAYERS_MAX. Proposed: FOOT_W 1, TRADE_W 4, RAID_W 20, PLAYERS_MAX 30, A_HA
 **The price.** For a Prosperity P:
 - what a counter ASKS (Buy, Repair): x (1 - TOWN_PRICE_SWING x (P - 50) / 50), 0.75 to 1.25;
 - what a counter PAYS (Sell, SellMagic): x (1 - TOWN_PRICE_SWING x |P - 50| / 50), 0.75 to 1 - never above 1, never
-  above what it asks (AUDIT TOWN-ECON LAW-1);
-- with a seat's factor on what it asks: their product, never below TOWN_FACTOR_FLOOR (0.70).
+  above what it asks this player (AUDIT TOWN-ECON LAW-1; SEAT-LOOP: the seat's factor in that ask);
+- with a seat's factor on what it asks: their product, never below TOWN_FACTOR_FLOOR (0.70);
+- and for a piece a counter sold online, never more than was paid for it (LAW-3).
 
 ## 3. TE1 - the baseline, the card and the price (BUILT 2026-10-16)
 
@@ -203,25 +209,42 @@ the card's guild lines (`net/chapterSheet.js chapterOf`).
 - SEAT-TIP's own lines (`townSeatLaw.js seatTipOf`), worded in English for every language, as they were.
 - The Overworld shows no card on a tap without movement (`travelViewHud.js` reads the pointer on a move alone) - as
   before TE1, for every card on it; the Held Map's tap shows the town's (AUDIT TOWN-ECON UI-10, not this slice's).
-- **Mac's calls, below:** the carry between regions TE1 widens (AUDIT TOWN-ECON LAW-3), and the essentials' round
-  trip a seat's own discount already opened (found by the audit, SEAT1d's).
+- A counter's shelf: Prosperity moves prices, never stock (section 7.2).
 
-## 7. Mac's calls (open)
+## 7. Mac's calls (decided 2026-10-18)
 
-1. The numbers in section 2: the swing (0.25; at 0.30 a Booming town alone reaches the floor, so that is its most),
-   the sizes, the cycle's waves, the seat and raid terms, and TE2's weights, caps and saturation.
-2. Whether a Booming town's counters should also widen their shelves (stock), not only ask less.
-3. TE2 and TE3: build them, in that order.
-4. **THE CARRY BETWEEN REGIONS** (AUDIT TOWN-ECON LAW-3). REALM P0.4 closed the gold a carrier made from the regions'
-   walk; a town's discount widens it again. Measured (the best haggler, a value-1,000 blade, quality 10): a carry from
-   the cheapest region's town to the dearest's paid on 136 of 4,000 world days before TE1 and on 1,752 after, its
-   average gain from 16 gold to 28; it pays once the dearest region asks 2.0 times the cheapest before TE1, 1.8 times
-   from a city at its ceiling, 1.5 from a town at 100. Keep it - a merchant's trade the dynamic economy invites, bounded
-   by a pack, a journey and the walk - or narrow the asking swing, or cap what a piece a counter sold online fetches
-   (its `counterBought` mark carrying its price).
-5. **THE ESSENTIALS' ROUND TRIP AT A SEAT TOWN** (found by the audit; SEAT1d's, live before TE1). A seat's discount
-   lowers what its counters ask its holder's members, and Market Day what they ask everyone, while what they pay stands -
-   so an essential (half price online) bought and sold back pays: five firewood at a quality-10 counter at the region's
-   index, 13 to buy and 15 to sell on Market Day. TE1 neither opens nor widens it. Close it - what a counter pays
-   bounded by what it asks this player (members' and Market Day sales falling with their asks), or the essentials'
-   sale bounded by their own half at the asking factor - or keep it.
+Mac, 2026-10-18, asked the five: build "Everything"; the carry, "Whatever is the best option"; the seat's round trip,
+"Close it"; the numbers and the shelves, "Whatever is the best decision".
+
+1. **THE NUMBERS** - kept as section 2 has them: the swing 0.25 (Mac's "±25%+"; at 0.30 a Booming town alone reaches
+   the floor), the sizes, the cycle's waves, the seat and raid terms, and TE2's weights, caps and saturation. Each is
+   one constant in `net/townEconLaw.js`, pinned there.
+2. **THE SHELVES** - not widened. A counter's stock is DFU's, rolled by its building's quality (`shopStock.js`); a
+   Booming town's shelf grown by Prosperity would let TE2's players' share, which players move, farm a town's rare
+   stock. Prosperity moves prices alone.
+3. **TE2 and TE3** - built, in that order (sections 4 and 5).
+4. **THE CARRY BETWEEN REGIONS** (AUDIT TOWN-ECON LAW-3) - CLOSED: a counter's piece never fetches more than it cost
+   (LAW-3). Of the three answers it is the one that holds whatever the numbers become: TE2's share lifts towns toward
+   Booming, and a Booming town's ask is what the carry bought at, so a narrower swing would have been narrowed again
+   by the players. Measured before (the best haggler, a value-1,000 blade, quality 10): a carry from the cheapest
+   region's town to the dearest's paid on 136 of 4,000 world days before TE1 and on 1,752 after, its average gain from
+   16 gold to 28 - and an essential (half its price online, ESSENTIALS-HALF) paid wherever the dearest region asked
+   more at all. Online, a counter's Buy marks each piece with its share of the lot's price (`systems/tradeModes.js`
+   markCounterBought: each piece's own ask at one counter, floored a piece - `counterPaid`, `net/patronLaw.js`
+   COUNTER_PAID_MARK, beside AUDIT LW-II-2's `counterBought`), kept through the save, the item law, the wire and a
+   stack's merge (the lower of two) and split; a sale's walk tallies those pieces (`tradeCost`'s `resale`) and
+   `getTradePrice` pays them at most what was paid, the rest of the lot haggled on its own and the whole lot's price
+   never passed. Every sale price hands the tally on: the classic window's offer, the enhanced window's quote, offer
+   and quick sale, the keyed shelf (`worldModes.js` sellPrice). A piece found, crafted, rewarded or bought before this
+   carries no price and sells as it did. Pinned through the real trade walk: a blade, a Daedric dai-katana, five
+   firewood and a potion bought at index 500 in a Booming town and sold at 2,500 in a Steady one, every shop quality
+   both ends, never pay (they did without the cap).
+5. **THE ESSENTIALS' ROUND TRIP AT A SEAT TOWN** (found by the audit; SEAT1d's, live before TE1) - CLOSED (SEAT-LOOP):
+   what a counter pays falls with what it asks this player (`townEconLaw.js` townShopFactor: the sale's factor never
+   above the ask's, the seat's folded in; `systems/town/townEcon.js` shopFactor: where the seat's place has no economy,
+   or offline, the seat's factor bounds the sale too). Before, a seat's discount lowered what its counters asked its
+   holder's members, and Market Day what they asked everyone, while what they paid stood: five firewood at a
+   quality-10 counter at the region's index cost 13 and sold for 15 on Market Day. Pinned through the real trade walk at
+   every seat factor (Market Day's 0.90 for anyone, a member's 0.90 and 0.80 on Market Day, a crown's member 0.85, a
+   loved member on Market Day 0.75, the deepest 0.70), Prosperity,
+   quality and region index.

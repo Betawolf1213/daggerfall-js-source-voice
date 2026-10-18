@@ -74,6 +74,11 @@ export const patronCap = (worth) => Math.floor(Math.max(0, worth) * PATRON_PAY_S
  *  markCounterBought, the counter's Buy: every shop's shelf, a guild's, a caravan's), kept through the save, the item law
  *  (itemFields.js declares it), the market's listing, a stack's merge and split (inventory.js addItem, splitStack). */
 export const PATRON_COUNTER_MARK = 'counterBought';
+/** LAW-3 (Town-Economy-Arc 7.4): WHAT THE COUNTER WAS PAID - a whole number of gold a piece, written beside the counter's
+ *  mark (systems/tradeModes.js markCounterBought: the lot's price shared by each piece's own ask), kept through the save,
+ *  the item law, the market's listing and a stack's merge (the lower of two) and split. Online, what a counter pays for
+ *  such a piece never passes it (tradeModes.js getTradePrice). */
+export const COUNTER_PAID_MARK = 'counterPaid';
 /** Whether a patron would take the piece at all: never a quest's, never a keepsake - and AUDIT LW-II-2 S1, never a piece
  *  an NPC counter sold online (PATRON_COUNTER_MARK): a patron paid more than an online counter asks for the same piece
  *  (a book three times its file price; a quality-1 counter's weapon a fifth over its ask), so a player bought at the

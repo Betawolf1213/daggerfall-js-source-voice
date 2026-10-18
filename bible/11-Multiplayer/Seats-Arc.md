@@ -615,7 +615,10 @@ accounts whose last play beat fell in the week) and Overreach, paid at the Turni
   more; applied on the member's own client as **a multiplier of its own where the shop's `calculateCost` is called**
   (the trade and repair windows in `scenes/worldModes.js`), for that town only - never through `regionPriceAdjustment`
   (`shopStock.js`, ECON1), a region-wide index that also sets quest gold. Their own gold, nothing to cheat but
-  themselves.
+  themselves. SEAT-LOOP (2026-10-18, `06-Systems/Town-Economy-Arc.md` 7.5, Mac: "Close it"): what the shop PAYS this
+  player falls with what it asks them (`net/townEconLaw.js` townShopFactor, `systems/town/townEcon.js` shopFactor) -
+  the discount and Market Day's lowered the ask alone, and an essential (half its price online) bought and sold back
+  paid: five firewood, 13 in and 15 out on Market Day.
 - **The hall** - DECIDED (Mac, the Holdings plan): the palace interior is the holder's guild hall. The court stays
   where DFU stands it. The holder gains: the **Charter Room** - the palace's largest room, decorated by Officers
   with DECOR's catalogue (at most **100** pieces, DECOR's gold a placement); the guild's roster board; the guild

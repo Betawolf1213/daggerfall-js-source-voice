@@ -152,8 +152,8 @@
   {
     "name": "TOWNECON-floor-lost",
     "file": "src/net/townEconLaw.js",
-    "old": "  return Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);",
-    "new": "  return townBuyFactor(p) * seatFactor;",
+    "old": "  const ask = Math.max(TOWN_FACTOR_FLOOR, townBuyFactor(p) * seatFactor);",
+    "new": "  const ask = townBuyFactor(p) * seatFactor;",
     "tests": [
       "test/systems/townecon.test.js"
     ],
@@ -172,12 +172,12 @@
   {
     "name": "TOWNECON-seat-on-sale",
     "file": "src/net/townEconLaw.js",
-    "old": "  if (TOWN_SALE_MODES.includes(mode)) return townSaleFactor(p);",
-    "new": "  if (TOWN_SALE_MODES.includes(mode)) return townSaleFactor(p) * seatFactor;",
+    "old": "  if (TOWN_SALE_MODES.includes(mode)) return Math.min(townSaleFactor(p), ask);",
+    "new": "  if (TOWN_SALE_MODES.includes(mode)) return Math.min(townSaleFactor(p), ask) * seatFactor;",
     "tests": [
       "test/systems/townecon.test.js"
     ],
-    "note": "a seat's discount taken off a sale"
+    "note": "a seat's discount taken off a sale twice (SEAT-LOOP re-aimed it: the pay falls with the ask, once)"
   },
   {
     "name": "TOWNECON-mode-open",
@@ -538,5 +538,135 @@
       "test/systems/townecon.test.js"
     ],
     "note": "a Standing not read counted"
+  },
+  {
+    "name": "TOWNECON-SEATLOOP-law-unbounded",
+    "file": "src/net/townEconLaw.js",
+    "old": "  if (TOWN_SALE_MODES.includes(mode)) return Math.min(townSaleFactor(p), ask);",
+    "new": "  if (TOWN_SALE_MODES.includes(mode)) return townSaleFactor(p);",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "SEAT-LOOP: a seat's discount lowers the ask and the pay stands - the essentials' round trip pays"
+  },
+  {
+    "name": "TOWNECON-SEATLOOP-fallback-unbounded",
+    "file": "src/systems/town/townEcon.js",
+    "old": "      if (TOWN_SALE_MODES.includes(mode)) return Math.min(1, seatFactor);",
+    "new": "      if (TOWN_SALE_MODES.includes(mode)) return 1;",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "SEAT-LOOP: where the seat's place has no economy, the round trip pays"
+  },
+  {
+    "name": "TOWNECON-LAW3-paid-unwritten",
+    "file": "src/systems/tradeModes.js",
+    "old": "    if (paid) it[COUNTER_PAID_MARK] = Math.floor((/** @type {number} */ (price) * asks[i]) / total / stackOf(it));",
+    "new": "",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the counter's Buy writes no price - the carry pays"
+  },
+  {
+    "name": "TOWNECON-LAW3-share-even",
+    "file": "src/systems/tradeModes.js",
+    "old": "  const asks = lot.map((it) => Math.max(buyItemPrice(it, { quality: 10, online }), stackOf(it)));",
+    "new": "  const asks = lot.map((it) => stackOf(it));",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the lot's price shared by pieces, not by their asks"
+  },
+  {
+    "name": "TOWNECON-LAW3-cap-off",
+    "file": "src/systems/tradeModes.js",
+    "old": "      if (!(resale?.cost > 0) || calculateTradePrice(resale.cost, quality, skills, true) <= resale.paid) return whole;",
+    "new": "      return whole;",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the cap read by no sale"
+  },
+  {
+    "name": "TOWNECON-LAW3-tally-offline",
+    "file": "src/systems/tradeModes.js",
+    "old": "    if (!live || item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;",
+    "new": "    if (item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: offline the tally is kept"
+  },
+  {
+    "name": "TOWNECON-LAW3-sellmagic-untallied",
+    "file": "src/systems/tradeModes.js",
+    "old": "        sold(item, c, stack);   // LAW-3: the stack it hands over cost what it cost",
+    "new": "",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: a sale of magic passes the cap"
+  },
+  {
+    "name": "TOWNECON-LAW3-merge-higher",
+    "file": "src/systems/inventory.js",
+    "old": "Math.min(held[COUNTER_PAID_MARK], item[COUNTER_PAID_MARK])",
+    "new": "Math.max(held[COUNTER_PAID_MARK], item[COUNTER_PAID_MARK])",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: a dearer piece merged in lifts the stack's cap"
+  },
+  {
+    "name": "TOWNECON-LAW3-split-lost",
+    "file": "src/systems/inventory.js",
+    "old": "  if (Number.isInteger(stack[COUNTER_PAID_MARK])) picked[COUNTER_PAID_MARK] = stack[COUNTER_PAID_MARK];   // LAW-3: and what the counter was paid a piece",
+    "new": "",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: a split is a way out of the cap"
+  },
+  {
+    "name": "TOWNECON-LAW3-native-unpassed",
+    "file": "src/ui/native/nativeTrade.js",
+    "old": "ctx.skills ?? {}, pieces, resale);",
+    "new": "ctx.skills ?? {}, pieces);",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the classic window's sale passes the cap"
+  },
+  {
+    "name": "TOWNECON-LAW3-enhanced-unpassed",
+    "file": "src/ui/enhanced/enhancedTrade.js",
+    "old": "  const price = getTradePrice(mode, c, ctx.quality ?? 0, ctx.skills ?? {}, pieces, resale);",
+    "new": "  const price = getTradePrice(mode, c, ctx.quality ?? 0, ctx.skills ?? {}, pieces);",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the enhanced window's sale passes the cap"
+  },
+  {
+    "name": "TOWNECON-LAW3-quote-unpassed",
+    "file": "src/ui/enhanced/enhancedTrade.js",
+    "old": "return getTradePrice(m, lot.cost, quality, skills, lot.pieces, lot.resale);",
+    "new": "return getTradePrice(m, lot.cost, quality, skills, lot.pieces);",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the quote shows a price the sale will not pay"
+  },
+  {
+    "name": "TOWNECON-LAW3-keyed-unpassed",
+    "file": "src/scenes/worldModes.js",
+    "old": "    }, lot.pieces, lot.resale);   // LAW-3: a counter's piece never fetches more than it cost",
+    "new": "    }, lot.pieces);",
+    "tests": [
+      "test/systems/townecon.test.js"
+    ],
+    "note": "LAW-3: the keyed shelf's sale passes the cap"
   }
 ]
