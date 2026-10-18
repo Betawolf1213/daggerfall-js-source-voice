@@ -85,7 +85,8 @@ CHANGED:
 - The death screen says it (`wildZone.js:"deathBurnt: (n) =>"`): "3 things you carried were lost where you fell - this
   character's trading is frozen, so nothing is left for anyone to take." A fall that found the fallen risen says the
   held case its own way (`burntLate`). The three lines go through the text core (L10N4: `wild.death.burnt`,
-  `wild.death.letters`, `wild.death.burntLate`).
+  `wild.death.letters`, `wild.death.burntLate`), in the English catalog (`tools/l10nExtract.mjs`) and drafted in-session for
+  the thirteen languages that cover it whole (`tools/l10nInSession.mjs`, recorded as the machine's).
 - Every death in the zone names the letters of credit it took, by their worth (`wildZone.js:"deathLetters: (n, gold) =>"`):
   "2 letters of credit worth 1,350,000 gold left your wallet." A letter's loss was "a thing you carried", whatever it
   stood for.
