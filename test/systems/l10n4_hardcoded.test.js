@@ -252,7 +252,7 @@ const HARDCODED = {
   'src/scenes/eliteGates/egCall.js': 1,
   'src/scenes/eliteGates/egClient.js': 58,   // AUDIT EG V (c): the usage, the refusals' copies and the Annals' line routed or gone
   'src/scenes/eliteGates/egFight.js': 63,   // AUDIT EG IV (the lords' group): +1, the Rampart's `gateheld` beat (EG_SAY - the march holds the gate)
-  'src/scenes/eliteGates/egSpan.js': 5,
+  'src/scenes/eliteGates/egSpan.js': 4,
   'src/scenes/etherHost.js': 9,
   'src/scenes/exterior.js': 15,
   'src/scenes/exteriorFoes.js': 1,
