@@ -16,9 +16,12 @@ import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { resetQuickLoot } from '../../src/systems/quickLoot.js';
 import { setSharedClock } from '../../src/systems/worldTick.js';
+import { baseSignature } from '../../src/systems/roomLoot.js';
+import { isStolen } from '../../src/systems/stolenGoods.js';
+import { CLAIM_KEEP_MS } from '../../src/systems/loot/claimLedger.js';
 import {
   REAL_RANDOM, TODAY, clock, items, names, mk, peekNames, packHas, have, windowOf, frame, elapse, quiesce, rolled, firstOpen, pressYes,
-  relay, player, plaque,
+  relay, player, plaque, KEY, ROOM, clone, older,
 } from './containerLootHarness.mjs';
 
 afterEach(() => { Math.random = REAL_RANDOM; resetQuickLoot(); setSharedClock(null); });
@@ -188,4 +191,113 @@ test('a birth no seat ever answers (an older build holds the seat, or its socket
   const births = s.net.words(s.B).filter((r) => Array.isArray(r.b)).length;
   assert.ok(births >= 10 && births <= 41, `B said its birth ${births} times in two minutes - again every ${1500} ms, and then no more`);
   assert.deepEqual(names(items(s.B)), ['Dagger', 'Mace'], 'and B\'s own window shows its roll');
+});
+
+// ═══ AUDIT OUTDOOR-LOOT (2026-10-18, PR #1019's audit) - WHAT A LOST TIE-BREAK AND A LEAVE MAY TOUCH ════════════════════════════
+// C1: a lost tie-break lifted back out of the seat's pack every piece it had taken from the cupboard that visit - and a same-day birth
+// with an earlier `tm` is a lost tie-break whenever it comes, so one forged word, minutes later, took a seat's Katana (and, after a
+// take put back, the seat's own honest arrows that stack with it). What a lost roll gives back is bounded to the window an honest
+// earlier birth can still arrive in (its minter's BIRTH_SAYS_MAX re-says). C3: a put the seat stored on its own roll was in no list
+// once that roll lost - it goes home now, as a claimer's refused put does. C2: under a seat that judges nothing (an older build),
+// a put was in its putter's list alone and went with him at his leave - it goes home now.
+const forgedBirth = (base) => ({ k: KEY, g: TODAY, lv: 1, n: 1, tm: 0, h: baseSignature(base), b: clone(base), s: [], si: [], d: TODAY });
+
+test('AUDIT OUTDOOR-LOOT C1: a forged early birth ten minutes after the cupboard was born lifts NOTHING out of the seat\'s pack - the Katana it took stays', () => {
+  const s = rolled(3, [[mk('Dagger'), mk('Mace'), mk('Katana')]]);
+  const wa = firstOpen(s.A);
+  wa.takeNamed('Katana'); frame(s.A);
+  wa.close(); frame(s.A); s.net.flush(); quiesce(s);
+  assert.equal(packHas(s.A, 'Katana'), 1, 'the seat took the Katana (guard)');
+  clock.t += 600_000;
+  s.net.say('hostile-0099', { k: ROOM, l: [forgedBirth([mk('Staff')])] });
+  s.net.flush(); quiesce(s);
+  assert.equal(packHas(s.A, 'Katana'), 1, 'C1: the seat keeps the Katana it took ten minutes ago');
+});
+
+test('AUDIT OUTDOOR-LOOT C1: a take put back, then a forged early birth - the seat\'s OWN honest arrows stay in its pack', () => {
+  const s = rolled(3, [[mk('Dagger'), mk('Arrow', 'Weapons', { stackCount: 10 })]]);
+  s.A.entity.items.push(mk('Arrow', 'Weapons', { stackCount: 5 }));
+  const wa = firstOpen(s.A);
+  wa.takeNamed('Arrow'); frame(s.A);
+  wa.put(s.A.entity.items.find((it) => it.name === 'Arrow' && isStolen(it))); frame(s.A);
+  wa.close(); frame(s.A); s.net.flush(); quiesce(s);
+  clock.t += 600_000;
+  s.net.say('hostile-0099', { k: ROOM, l: [forgedBirth([mk('Staff')])] });
+  s.net.flush(); quiesce(s);
+  assert.deepEqual(s.A.entity.items.filter((it) => it.name === 'Arrow').map((it) => [it.stackCount, isStolen(it)]), [[5, false]], 'C1: the five honest arrows the seat brought in');
+});
+
+test('AUDIT OUTDOOR-LOOT C3: the SEAT\'s put on its own roll, made before it heard the earlier mint, comes home when its roll loses - one Flail, in the seat\'s pack', () => {
+  const s = rolled(3, [[mk('Katana'), mk('Staff')], [mk('Dagger'), mk('Mace')]]);   // A (the seat) rolls the loser, B the winner
+  const wb = firstOpen(s.B);   // B mints first by the shared clock
+  clock.t += 5;
+  s.A.entity.items.push(mk('Flail'));
+  const wa = firstOpen(s.A);   // A mints later, before it hears B's birth
+  wa.put(s.A.entity.items.find((it) => it.name === 'Flail'));
+  frame(s.A);   // the seat lands its own put on its own roll
+  s.net.flush();   // the births cross
+  wa.close(); wb.close();
+  quiesce(s);
+  assert.equal(packHas(s.A, 'Flail'), 1, 'C3: the Flail is back in the seat\'s pack');
+  for (const p of s.ps) assert.equal(have(items(p), 'Flail'), 0, `${p.id}'s list holds no Flail - the roll that won never had it`);
+});
+
+test('AUDIT OUTDOOR-LOOT C2: under an OLDER seat a new build\'s put never lands - it goes home with its putter at his leave, not with him into nothing', () => {
+  const net = relay();
+  const O = older(net, 'oooo-0001', { list: [mk('Dagger'), mk('Mace')] });   // the seat: the longest socket, an older build
+  const B = player(net, 'bbbb-0002', { seed: 28 });
+  const s = { net, ps: [O, B] };
+  O.say(); net.flush();
+  B.entity.items.push(mk('Flail'));
+  const wb = windowOf(B);
+  assert.ok(pressYes(B, wb), 'B opens the cupboard (guard)');
+  wb.put(B.entity.items.find((it) => it.name === 'Flail')); frame(B); wb.close(); frame(B); net.flush();
+  elapse(s, 10_000);
+  assert.equal(have(O.ctx.containers[0].items, 'Flail'), 0, 'the older seat never landed it (guard)');
+  B.as(() => B.h.leave()); B.here = false; net.flush();
+  assert.equal(packHas(B, 'Flail'), 1, 'C2: the Flail is back in B\'s pack');
+});
+
+test('AUDIT OUTDOOR-LOOT C2 (the bound): a put whose putter walks out the same instant is NOT handed back as well - the seat lands it, and the Flail is the cupboard\'s once', () => {
+  const s = born(3);
+  s.B.entity.items.push(mk('Flail'));
+  const wb = windowOf(s.B);
+  assert.ok(pressYes(s.B, wb), 'B opens the cupboard (guard)');
+  wb.put(s.B.entity.items.find((it) => it.name === 'Flail')); frame(s.B);   // the settle says the put
+  wb.close(); s.B.as(() => s.B.h.leave()); s.B.here = false;   // and B walks out before any verdict comes
+  s.net.flush(); quiesce(s);
+  assert.equal(packHas(s.B, 'Flail'), 0, 'C2: the Flail did not come home as well');
+  assert.equal(have(items(s.C), 'Flail'), 1, 'the seat landed it: the cupboard holds it once');
+});
+
+test('AUDIT OUTDOOR-LOOT D5 (cupboards): a claim its claimer GAVE UP is not granted by a third client that heard it and takes the seat later - the Katana stays in the cupboard, in nobody\'s pack', () => {
+  const s = born(3);
+  const wb = windowOf(s.B);
+  assert.ok(pressYes(s.B, wb), 'B opens the cupboard (guard)');
+  s.net.dead.add(s.A.id);   // the seat's socket is gone, and the relay has not said so
+  wb.takeNamed('Katana'); frame(s.B); s.net.flush(); wb.close(); frame(s.B); s.net.flush();
+  elapse(s, CLAIM_KEEP_MS + 10_000, { step: 1000, skip: [s.A] });   // B says it again and again, then lets it go; C heard it
+  assert.equal(packHas(s.B, 'Katana'), 0, 'B gave the claim up (guard)');
+  s.net.seatId = s.C.id;   // C - who heard B's claim - takes the seat (the relay's handover)
+  quiesce(s, { skip: [s.A] });
+  assert.equal(have(items(s.C), 'Katana'), 1, 'D5: C, the seat now, still lists the Katana - it granted nobody a claim its claimer had let go');
+  for (const p of [s.B, s.C]) assert.equal(packHas(p, 'Katana'), 0, `${p.id} holds no Katana`);
+});
+
+test('AUDIT OUTDOOR-LOOT C3 (what still stood): the seat\'s put on a roll that later loses, TAKEN by another player in the meantime, is that taker\'s - it does not come home to the seat as well', () => {
+  const s = rolled(3, [[mk('Katana'), mk('Staff')], [mk('Dagger')], [mk('Mace'), mk('Saber')]]);   // A (the seat) rolls the loser; C the winner
+  s.net.hold(`${s.C.id}>${s.A.id}`); s.net.hold(`${s.C.id}>${s.B.id}`);   // C's earlier birth is slow to reach the others
+  const wc = firstOpen(s.C);   // C mints first by the shared clock
+  clock.t += 5;
+  s.A.entity.items.push(mk('Flail'));
+  const wa = firstOpen(s.A);   // A, the seat, mints later - before it hears C
+  wa.put(s.A.entity.items.find((it) => it.name === 'Flail')); frame(s.A);   // the seat lands its own put on its own roll
+  wa.close(); frame(s.A); s.net.flush();
+  const wb = windowOf(s.B);
+  assert.ok(pressYes(s.B, wb), 'B opens the cupboard on the seat\'s roll (guard)');
+  wb.takeNamed('Flail'); frame(s.B); s.net.flush(); wb.close(); frame(s.B); s.net.flush();
+  assert.equal(packHas(s.B, 'Flail'), 1, 'the seat granted B the Flail (guard)');
+  s.net.release(`${s.C.id}>${s.A.id}`); s.net.release(`${s.C.id}>${s.B.id}`);   // now C's earlier birth lands: the seat's roll loses
+  s.net.flush(); wc.close(); quiesce(s);
+  assert.equal(packHas(s.A, 'Flail') + packHas(s.B, 'Flail') + packHas(s.C, 'Flail'), 1, `C3: one Flail in all (A ${packHas(s.A, 'Flail')}, B ${packHas(s.B, 'Flail')})`);
 });

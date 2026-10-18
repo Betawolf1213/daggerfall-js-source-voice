@@ -142,8 +142,8 @@ const MINT = (() => {
 })();
 /** THE BUILDING'S TEARDOWN, as far as the room goes: every place the host drops the bag (`_intShared = null`) - exitInteriorNow
  *  is the door out, forceExitToExterior the teleport's and the load's - with the statements that read the bag AHEAD of it. A
- *  claimer's own teardown is where a claim in flight and not lapsed is kept (DESIGN-REVIEW D-1/D-1a); today the host tells
- *  the room nothing there, so the list is empty and a leave is the bare drop. */
+ *  claimer's own teardown is where a claim in flight and not lapsed is kept (DESIGN-REVIEW D-1/D-1a): the host tells the room
+ *  there (`interiorLootLeave`), ahead of the drop. */
 const LEAVE_SITES = (() => {
   const sites = [];
   for (const name of ['exitInteriorNow', 'forceExitToExterior']) {
@@ -169,9 +169,6 @@ export { LEAVE_SITES };
 const SHELF = `${fnOf('openShelf')}\n${fnOf('shelfLootSpawned')}`;
 
 const CLIENT = `
-  ${fnOf('interiorPublishLoot')}
-  ${fnOf('interiorLootOpened')}
-  ${fnOf('interiorLootSettle')}
   ${SHELF}
   ${declOf('ownsThisInterior')}
   ${declOf('interiorPeek')}

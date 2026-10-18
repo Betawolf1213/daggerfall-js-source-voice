@@ -42,9 +42,9 @@
 import {
   baseSignature, claimOf, claimWord, composeRoomView, isRoomWord, judgeRoomClaim, legacyCounts, legacyDelta, legacySig, liftPiece, givePiece,
   listMovesSince, mergeRoomWord, pieceCount, roomClaimId, roomClaimOrder, roomState, roomWord, roomTermsBeat, sameRoomTerms, validRoomWord,
-  ROOM_ANSWERS_KEPT, ROOM_CLAIMS_MAX, ROOM_PUT_RESAY_MS, ROOM_TAKEN_TEXT,
+  ROOM_ANSWERS_KEPT, ROOM_CLAIM_TIMEOUT_MS, ROOM_CLAIMS_MAX, ROOM_PUT_RESAY_MS, ROOM_TAKEN_TEXT,
 } from '../../systems/roomLoot.js';
-import { createClaimLedger } from '../../systems/loot/claimLedger.js';
+import { createClaimLedger, CLAIM_KEEP_MS } from '../../systems/loot/claimLedger.js';
 import { validLootList, LOOT_LIST_MAX } from '../../systems/loot/loot.js';
 import { neverPeerHanded, peerHanded } from '../../systems/peerWord.js';
 import { clearStolen, STOLEN_MARK } from '../../systems/stolenGoods.js';
@@ -54,6 +54,11 @@ const clone = (v) => JSON.parse(JSON.stringify(v));
  *  answer - an older build holds it - is not flooded for as long as its minter stands in the building. A claim has its own
  *  bound (systems/loot/claimLedger.js CLAIM_KEEP_MS), a put is the dungeon's (said until answered). */
 const BIRTH_SAYS_MAX = 40;
+/** AUDIT OUTDOOR-LOOT C1: how long an honest earlier birth can still reach a seat after its own mint - its minter says it again
+ *  every ROOM_PUT_RESAY_MS, BIRTH_SAYS_MAX times. A lost tie-break gives back what the seat took from, and laid in, the roll
+ *  that lost only inside it: past it the birth is a late or a forged one, and the seat's pack is never its to rewrite. Read at
+ *  use: roomLoot.js's constants are not yet bound while the import cycle through it loads this module. */
+const birthCrossMs = () => BIRTH_SAYS_MAX * ROOM_PUT_RESAY_MS;
 /** A piece no peer may be handed (a bound piece, a letter of credit - systems/peerWord.js) never lands as a put. */
 const admit = (it) => !neverPeerHanded(it);
 /** A mint's identity: its day, level, count and the base's signature - the base of a carried container is one client's roll. */
@@ -69,7 +74,7 @@ const mintOf = (st) => `${st.terms.g}|${st.terms.lv}|${st.terms.n ?? 1}|${st.ter
  * @param {any} bag  WORLD6a's bag (interiorShared.js mintInteriorShared): the key, the stamp, the said-once sets
  */
 export function createInteriorRoomLoot(net, bag) {
-  /** canon -> { canon, st, roll, composed, win, birthAt, birthSays, legacy, took, local, spoke } */
+  /** canon -> { canon, st, roll, composed, win, keeping, birthAt, birthSays, legacy, took, gave, local, spoke } */
   const cups = new Map();
   /** put id -> { canon, mint, put, item, saidAt, refused } - this player's puts the seat has not answered, and the refused ones waiting to go home */
   const puts = new Map();
@@ -90,7 +95,7 @@ export function createInteriorRoomLoot(net, bag) {
   const targetOf = (ctx, canon) => (ctx?.containers ?? [])[Number(canon.split(':')[1])] ?? null;
   const cupOf = (canon) => {
     let c = cups.get(canon);
-    if (!c) { c = { canon, st: null, roll: null, composed: null, win: null, keeping: null, birthAt: null, birthSays: 0, legacy: new Map(), took: [], local: false, spoke: false }; cups.set(canon, c); }
+    if (!c) { c = { canon, st: null, roll: null, composed: null, win: null, keeping: null, birthAt: null, birthSays: 0, legacy: new Map(), took: [], gave: [], local: false, spoke: false }; cups.set(canon, c); }
     return c;
   };
 
@@ -183,7 +188,7 @@ export function createInteriorRoomLoot(net, bag) {
    *  put waits to go home (never from under an open window). */
   function resolveMine(id, g) {
     const p = puts.get(id);
-    if (p) { if (g) puts.delete(id); else p.refused = true; return; }
+    if (p) { if (g) { puts.delete(id); const cup = cups.get(p.canon); if (cup) gaveIn(cup, p.item, p.mint, id); } else p.refused = true; return; }
     ledger.resolve(id, g);
   }
   /** THE SEAT GRANTS: every claim and put the state holds unanswered, in the order they reached it (or, at a seat's change,
@@ -193,7 +198,8 @@ export function createInteriorRoomLoot(net, bag) {
     const st = cup.st;
     const claims = [...st.claims.values()];
     if (order) claims.sort(order);
-    const verdicts = claims.map((cl) => [cl.id, judgeRoomClaim(st, st.base.items.length, st.base.full, cl, admit)]);
+    const now = wall();
+    const verdicts = claims.map((cl) => [cl.id, judgeRoomClaim(st, st.base.items.length, st.base.full, !('it' in cl) && Number.isFinite(cl.tm) && now - cl.tm >= CLAIM_KEEP_MS / 2 ? { ...cl, stale: true } : cl, admit)]);   // AUDIT OUTDOOR-LOOT D5: a take claim old enough that its claimer may have given it up (CLAIM_KEEP_MS) is refused - granted, its piece left the room for nobody
     for (const id of reanswer) if (st.answers.has(id) && !verdicts.some(([v]) => v === id)) verdicts.push([id, /** @type {number} */ (st.answers.get(id))]);
     for (const [id, g] of verdicts) resolveMine(id, g);
     compose(ctx, cup);
@@ -208,16 +214,19 @@ export function createInteriorRoomLoot(net, bag) {
    *  are refused (the piece lifted stays out) and so are the seat's own takes from it, lifted back out of its pack (a piece of a
    *  roll that never was the room's). Else a NEW DAY's stock replaced it (a restock): what was taken stays taken, and a claim in
    *  flight at the turn of the day is let go quietly. A put on the old mint goes home with the next compose either way. */
-  function dropOld(cup, lost) {
+  function dropOld(cup, lost, was = null) {
     const mint = mintOf(cup.st);
     for (const c of ledger.open(cup.canon)) if (c.meta.mint !== mint) ledger.resolve(c.id, 0, { withdrawn: !lost });
     for (const p of puts.values()) if (p.canon === cup.canon && p.mint !== mint) p.refused = true;
     if (lost) {
       let said = false;
-      for (const t of cup.took) if (t.mint !== mint) { liftPiece(entity, t.obj, t.k); said = true; }
+      const now = net.now(), cross = birthCrossMs();
+      for (const t of cup.took) if (t.mint !== mint && now - t.at <= cross) { liftPiece(entity, t.obj, t.k); said = true; }
+      for (const g of cup.gave) if (g.mint !== mint && now - g.at <= cross && was?.ids?.includes(g.id)) givePiece(entity, g.item, pieceCount(g.item));   // AUDIT OUTDOOR-LOOT C3: a put the losing roll still stored goes home - the roll that won never held it (one another took from it meanwhile is that taker's)
       if (said) net.say(ROOM_TAKEN_TEXT);
     }
     cup.took = cup.took.filter((t) => t.mint === mint);
+    cup.gave = cup.gave.filter((g) => g.mint === mint);
     cup.birthAt = null;   // the birth this client was saying is not the room's
   }
 
@@ -254,7 +263,7 @@ export function createInteriorRoomLoot(net, bag) {
     const { state, answered } = mergeRoomWord(before, w);
     const adopted = state !== before;
     cup.st = state;
-    if (adopted) { cup.local = false; dropOld(cup, before?.terms.g === state.terms.g); }
+    if (adopted) { cup.local = false; dropOld(cup, before?.terms.g === state.terms.g, before); }
     if (!adopted && before && !(sameRoomTerms(w, state.terms) && w.h === state.terms.h)) {
       // another mint that loses: its claims are on a base that is gone (heard as stale); the seat refuses them now - and a
       // competing BIRTH is answered with the base that won, so its minter (who may have missed the seat's) converges on it
@@ -348,11 +357,17 @@ export function createInteriorRoomLoot(net, bag) {
     if (isSeat()) {
       const g = judgeRoomClaim(st, st.base.items.length, st.base.full, { id: roomClaimId(net.selfId() ?? 'self', bag.stamp, ++claimN), ...ref, n: k, tm: wall() }, admit);
       if (g < k) { liftPiece(entity, obj, k - g); if (!g) net.say(ROOM_TAKEN_TEXT); }
-      if (g > 0) { cup.took.push({ obj, k: g, mint: mintOf(st) }); if (cup.took.length > LOOT_LIST_MAX) cup.took.shift(); }
+      if (g > 0) { cup.took.push({ obj, k: g, mint: mintOf(st), at: net.now() }); if (cup.took.length > LOOT_LIST_MAX) cup.took.shift(); }
       return;
     }
     const c = ledger.take(cup.canon, ref, obj, k, { mint: mintOf(st), tm: wall() }, net.now());
     st.claims.set(c.id, { id: c.id, ...ref, n: k, tm: c.meta.tm });   // heard here too: a seat that comes to this client judges it with the rest
+  }
+  /** AUDIT OUTDOOR-LOOT C3: a put the room stored on this mint (the seat's own, or one it granted this client) - given home if the mint
+   *  loses its tie-break (dropOld), as `took` is lifted. */
+  function gaveIn(cup, item, mint, id) {
+    cup.gave.push({ item, mint, id, at: net.now() });
+    if (cup.gave.length > LOOT_LIST_MAX) cup.gave.shift();
   }
   /** A piece laid in the container (`n` of it): the seat lands it where it stands, anyone else says it to the seat, again until answered. */
   function putOne(cup, obj, n, laid) {
@@ -360,12 +375,13 @@ export function createInteriorRoomLoot(net, bag) {
     const piece = n === pieceCount(obj) ? obj : { ...obj, stackCount: n };
     const put = { id: roomClaimId(net.selfId() ?? 'self', bag.stamp, ++claimN), it: clearStolen(clone(piece)), tm: wall() };
     if (laid) cup.composed.seen.set(obj, { sp: put.id, n: pieceCount(obj) });   // the piece is the container's now, and a take of it is read as one
-    if (cup.composed.base !== st.base || !admit(obj)) { puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), refused: true }); return; }   // a mint that is gone, a piece no peer may be handed: back to the pack
+    if (cup.composed.base !== st.base || !admit(obj)) { puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), at: net.now(), refused: true }); return; }   // a mint that is gone, a piece no peer may be handed: back to the pack
     if (isSeat()) {
-      if (!judgeRoomClaim(st, st.base.items.length, st.base.full, { ...put, it: put.it }, admit)) puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), refused: true });
+      if (!judgeRoomClaim(st, st.base.items.length, st.base.full, { ...put, it: put.it }, admit)) puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), at: net.now(), refused: true });
+      else gaveIn(cup, piece, mintOf(st), put.id);
       return;
     }
-    puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), refused: false });
+    puts.set(put.id, { canon: cup.canon, mint: mintOf(st), put, item: piece, saidAt: net.now(), at: net.now(), refused: false });
     st.claims.set(put.id, put);
   }
 
@@ -468,7 +484,11 @@ export function createInteriorRoomLoot(net, bag) {
     leave(ctx) {
       if (!live()) return;
       for (const cup of cups.values()) if (cup.st?.base && settle(ctx, cup)) say(cup);
-      ledger.keep(() => true, net.now());
+      const now = net.now();
+      ledger.keep(() => true, now);
+      // AUDIT OUTDOOR-LOOT C2: a put the seat refused, or never answered in ROOM_CLAIM_TIMEOUT_MS of saying it again (an older seat
+      // judges nothing; a dead one before the relay's handover), goes home with its putter - it was in no list but the putter's
+      for (const [id, p] of [...puts]) if (p.refused || now - p.at >= ROOM_CLAIM_TIMEOUT_MS) { puts.delete(id); givePiece(entity, p.item, pieceCount(p.item)); }
     },
     /** Tests only. */
     cups, puts, ledger,

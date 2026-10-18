@@ -434,9 +434,11 @@ began by taking WORLD6a's loot block out.
   their kin) and the cupboards' room law is a module of its own, `src/world/interior/interiorRoomLoot.js`, which the bag mints (`bag.room`). The container
   arm and the shelf arm only changed their callees; `host.roomHost` and `host.selfId` were in the host's bag already.
 - THE CEILING came down with the code: `createWorldModes` 7,155 -> 7,134 code lines with the cupboards' wiring in, its
-  ceiling 7,159 -> 7,138 (the length plus the 4 it stood over - not the standard 250, which would have raised it).
+  ceiling 7,159 -> 7,138 (the length plus the 4 it stood over - not the standard 250, which would have raised it). After
+  main's merges it measures 7,136 (2026-10-18, AUDIT OUTDOOR-LOOT): two under the ceiling.
   `createExteriorFoes` went the other way for a smaller reason: the body block is `src/scenes/bodyLootHost.js`
-  (`createBodyLoot(pool)`), and the pool went from 1,755 to 1,706 code lines under KNOT's 2,000.
+  (`createBodyLoot(pool)`), and the pool went from 1,755 to 1,706 code lines under KNOT's 2,000 (1,793 -> 1,744 on main's tree
+  after its merges, re-measured 2026-10-18).
 - THE PINS that read the moved block read the host WHOLE (`hostText`) and spell the live names through the handle
   (`h.interiorWindows`, `h.interiorCtx`, `h._intShared`): `auditworld6a`, `world6`, `home1`, `auditsetsonline`, `autohold`,
   `fb1016b_stolengoods`, `forage3_loot`, `roada2_itemseconomy`, `audit26_discovery`, `housecontainers`, `worldhover`, `sailingcabins`,

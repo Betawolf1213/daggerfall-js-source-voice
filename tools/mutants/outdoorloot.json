@@ -257,8 +257,8 @@
   {
     "name": "OUTDOOR-LOOT-cupboard-claim-dropped-at-the-door",
     "file": "src/world/interior/interiorRoomLoot.js",
-    "old": "      ledger.keep(() => true, net.now());\n    },",
-    "new": "    },",
+    "old": "      ledger.keep(() => true, now);\n",
+    "new": "",
     "tests": [
       "test/net/containerloot_protocol.test.js"
     ]
@@ -348,7 +348,9 @@
     "tests": [
       "test/systems/searchfindloot.test.js",
       "test/systems/partyloot.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "Belt-and-braces since AUDIT OUTDOOR-LOOT D1: a find this player does not see never enters the room's state here - landRoomWord returns before it, and the seat judges a stranger's find in a state of its own (judgeStrangerFind) - so no composed state can name a find unseen."
   },
   {
     "name": "OUTDOOR-LOOT-strangers-find-landed-on-the-party",

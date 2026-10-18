@@ -237,7 +237,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     function tick(dt) {
       ${DRAW_TICK}
     }
-    return { api, damageFoe, foesFrame, applyFoes, applyActions, actionRecords, tick };
+    return { api, damageFoe, foesFrame, applyFoes, applyActions, actionRecords, tick, lootBuiltOf: typeof lootBuiltOf === 'function' ? lootBuiltOf : null };   // AUDIT OUTDOOR-LOOT L3: the build's own record of what each body rolled (partyloot.test.js's mount returns it too)
   `, state);
   // THE BUILD, as dungeonContext builds it: buildFoeAt's chain on THIS player's dice (test/systems/partyloot.test.js's)
   as(() => {
@@ -249,7 +249,6 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
       state.foes.push(f);
     }
   });
-  if (state.lootBuiltOf) for (const f of state.foes) f._lootBuilt ??= state.lootBuiltOf(f.entity);
   return { id, h, state, player, as, said, told, windows, foes: state.foes };
 }
 

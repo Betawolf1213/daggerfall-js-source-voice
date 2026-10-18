@@ -91,31 +91,37 @@ test('AC4: no blind grab - a party member\'s press on another player\'s foe\'s b
 test('AC2 (guard - passes today): the owner\'s answer on time - once every timeout has passed, each piece of the body is in exactly one place (the owner\'s body, the owner\'s pack or the taker\'s pack)', async () => {
   const s = await lateCase('street');
   assert.deepEqual(misplaced(s), [], 'every piece in exactly one place');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the owner\'s answer is 3.5 s late (the e2e\'s arm: a grant held 3.5 s destroyed a Wakazashi)', async () => {
   const s = await lateCase('street', { answerLate: 3500 });
   assert.deepEqual(misplaced(s), [], 'AC2: an answer 3.5 s late - the taker refuses a grant past TAKE_WINDOW_MS and says nothing back (exteriorFoes.js applyHit `if (!asked) return false;`), and the owner already took the pieces off the body: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the owner\'s answer is 10 s late', async () => {
   const s = await lateCase('street', { answerLate: 10_000 });
   assert.deepEqual(misplaced(s), [], 'AC2: an answer 10 s late - refused past TAKE_WINDOW_MS, never returned (GRANT_BACK_MS passed with no `back`): destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the owner\'s answer is 30 s late', async () => {
   const s = await lateCase('street', { answerLate: 30_000 });
   assert.deepEqual(misplaced(s), [], 'AC2: an answer 30 s late - refused past TAKE_WINDOW_MS, never returned: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the taker\'s ask reaches the owner 10 s late (the owner answers an ask the taker has stopped waiting for)', async () => {
   const s = await lateCase('street', { askLate: 10_000 });
   assert.deepEqual(misplaced(s), [], 'AC2: an ask 10 s late - the owner grants on arrival, the taker\'s ask latch (TAKE_WINDOW_MS from the send) has lapsed and refuses the grant: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the TAKER crosses into the next cell mid-claim (the owner\'s answer in flight, his cell still held as a halo, the taker\'s puppets of it swept) - the answer lands, and each piece is in exactly one place', async () => {
   const s = await midClaim('street', (x) => cross(x.mac));
   assert.deepEqual(misplaced(s), [], 'AC2: the taker crossed a seam with the owner\'s grant in flight - the grant arrives through the halo, but the grant arm needs the puppet (`_pupIndex.get(pupKey(from, data.i | 0))`), which the crossing swept: refused, and the owner already took the pieces off the body: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2 (D-1): the TAKER leaves the cell before the owner\'s answer can leave him (the owner\'s wire held) - its claim was in flight and not lapsed at the leave, so it KEEPS the piece (PARTY-LOOT\'s own rule, DESIGN-REVIEW D-1); the owner\'s verdict ages out in his queue, un-voided: the Greaves is in exactly one place, the taker\'s pack', async () => {
@@ -141,11 +147,13 @@ test('AC2/AC3 (R1, D-1): the TAKER vanishes from the relay the moment the owner\
 test('AC2: nothing is destroyed when the TAKER\'s socket drops mid-claim and comes back - once every timeout has passed, each piece is in exactly one place', async () => {
   const s = await midClaim('street', (x) => drop(x.net, x.mac, 8000));
   assert.deepEqual(misplaced(s), [], 'AC2: the taker dropped off the socket mid-claim - the grant is lost on the wire and the owner never puts the pieces back: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2: nothing is destroyed when the OWNER leaves the cell mid-claim (his answer in flight) - once every timeout has passed, each piece is in exactly one place', async () => {
   const s = await midClaim('street', (x) => leave(x.bob));
   assert.deepEqual(misplaced(s), [], 'AC2: the owner left with his grant in flight - the taker prunes the owner\'s puppets, refuses the grant for a body it no longer stands, and the pieces are on no body and in no pack: destroyed');
+  assert.deepEqual(census(s).get(GREAVES), [[`${s.mac.id}'s pack`, 1]], 'AUDIT OUTDOOR-LOOT L1: and the taker has it - nothing misplaced is no proof anything was taken');
 });
 
 test('AC2 (guard - passes today): the OWNER leaves the cell before the ask reaches him - his body keeps every piece, and the taker holds none', async () => {

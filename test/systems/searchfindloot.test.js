@@ -99,7 +99,10 @@ const PLAYER = `
   ${fnSrc('activateSearchable')}
   ${fnSrc('openInventory')}
   const api = { takeLoot: ${memberSrc('takeLoot')} };
-  return { api, applyActions, roomClaimTick: typeof roomClaimTick === 'function' ? roomClaimTick : () => {} };
+  let _respawnSweptAt = -Infinity;
+  const RESPAWN_BURST = 4;
+  ${fnSrc('respawnSweep')}
+  return { api, applyActions, respawnSweep, roomClaimTick: typeof roomClaimTick === 'function' ? roomClaimTick : () => {} };
 `;
 /** Every name the mounted doors read that either file imports, bound to the real module's export. */
 const BOUND = await (async () => {
@@ -193,7 +196,7 @@ function player(net, acct, { party = PARTY, host = false } = {}) {
     createInventoryWindow: (deps) => P.window?.open(deps) ?? null,
     surfacePlayer: () => {}, hudText: { add: () => {} }, renderer: { textures: new Map() }, packDoors: {}, useHooks: {}, weaponRig: { playerWeapon: {} },
     silverFindKey: () => null, silverFindAt: () => {}, showPickups: null, lootPile: () => null,
-    searchFoeCount: () => 2, searchFoeSpots: () => [], spawnLooseFoe: () => {},
+    searchFoeCount: () => 2, respawnFoe: () => false, wildPileMore: () => {}, searchFoeSpots: () => [], spawnLooseFoe: () => {},
   };
   P.state = state;
   P.h = P.as(() => mount(PLAYER, state));
@@ -569,4 +572,107 @@ test('D-2.1 (a re-asked claim, guard): Bob\'s claim on the find is said again af
   s.net.flush();
   assert.equal(holds(s.bob, X), want, 'still once');
   for (const p of s.all) assert.equal(find(p).some((it) => it.name === X.name), false, `${p.id}: gone from the find`);
+});
+
+// ═══ AUDIT OUTDOOR-LOOT (2026-10-18, PR #1019's audit) - TWO PARTIES, A SECOND SEARCH, WORLD8 ═════════════════════════════
+// D1: the seat judged every find in the room's ONE state an object, so a stranger's find of the coffin the seat's party had searched
+// was dropped whole (her take lifted and lapsed for good), and a stranger's search first hid the seat's party's own find from the
+// seat. A stranger's find is judged in a state of its own now (roomLootHost.js judgeStrangerFind). D2: only the FIRST word of a
+// find ever started a partymate's five hours - a search after the five hours left the party unlocked, and a partymate's search then
+// wrote its roll over the room's find. D3: WORLD8's sweep let a find go twenty minutes after its last word - inside its five hours -
+// and its list stood unshared on every machine: two partymates each took the same piece.
+const oneOf = (X) => (X.group === 'Currency' ? X.stackCount : 1);
+test('AUDIT OUTDOOR-LOOT D1: a STRANGER searches the coffin the seat\'s party already searched - she takes from her own find, and the party\'s find is untouched', () => {
+  const s = found();
+  const eve = player(s.net, 'acct-eve', { party: null });
+  const we = windowOf(eve);
+  assert.ok(search(eve, 0, we), 'Eve searches coffin 0 for herself and finds');
+  const X = we.take((it) => it.name === aPiece(find(eve)).name);
+  we.close();
+  s.net.flush();
+  for (let k = 0; k < 10; k++) { clock.t += 2000; s.net.flush(); for (const p of [...s.all, eve]) p.as(() => p.h.roomClaimTick(clock.t)); s.net.flush(); }
+  assert.equal(holds(eve, X), oneOf(X), 'D1: Eve holds the piece she took from her own find - the seat judged her claim');
+  for (const p of s.all) assert.deepEqual(findDesc(p), s.theFind.map(desc), `${p.id}: the party's find stands as it was`);
+});
+test('AUDIT OUTDOOR-LOOT D1: a STRANGER searched first - Bob (the seat\'s party, not the seat) takes from his own find, and the seat shows the party Bob\'s', () => {
+  const s = crypt();
+  const eve = player(s.net, 'acct-eve', { party: null });
+  const we = windowOf(eve);
+  assert.ok(search(eve, 0, we), 'Eve searches first (guard)'); we.close(); s.net.flush();
+  clock.t += 5000;
+  const wb = windowOf(s.bob);
+  assert.ok(search(s.bob, 0, wb), 'Bob searches the same coffin and finds');
+  const bobFind = findDesc(s.bob);
+  const X = wb.take((it) => it.name === aPiece(find(s.bob)).name);
+  wb.close();
+  s.net.flush();
+  for (let k = 0; k < 5; k++) { clock.t += 2000; s.net.flush(); for (const p of [...s.all, eve]) p.as(() => p.h.roomClaimTick(clock.t)); s.net.flush(); }
+  assert.equal(holds(s.bob, X), oneOf(X), 'D1: Bob holds the piece he took - the seat judged it on his find, not on the stranger\'s');
+  const left = bobFind.filter((d, i) => i !== bobFind.indexOf(desc(X)));
+  for (const p of s.all) assert.deepEqual(findDesc(p), left, `${p.id} sees Bob's find, less what he took`);
+});
+test('AUDIT OUTDOOR-LOOT D2: a SECOND search after the five hours starts every partymate\'s five hours again - Bob is told, and the party\'s new find stands whole', () => {
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  alignPeriod();
+  const s = found();
+  clock.t += 26 * 60_000;   // past the five hours (25 real minutes)
+  assert.equal(hoursLeft(s.bob), 0, 'Bob may search again (guard)');
+  const wa = windowOf(s.ann);
+  assert.ok(search(s.ann, 0, wa), 'Ann searches again and finds'); wa.close(); s.net.flush();
+  const second = findDesc(s.ann);
+  for (const p of [s.bob, s.dan]) assert.ok(hoursLeft(p) > 0, `D2: ${p.id}'s five hours run for Ann's second search (${hoursLeft(p)} left)`);
+  for (const p of s.all) assert.deepEqual(findDesc(p), second, `${p.id} sees Ann's second find`);
+});
+test('AUDIT OUTDOOR-LOOT D3: WORLD8\'s sweep twenty minutes after the find\'s last word leaves a find that still holds pieces the room\'s - two partymates never take the same piece', () => {
+  const s = found();
+  clock.t += 21 * 60_000;
+  for (const p of s.all) p.as(() => p.h.respawnSweep(clock.t / 1000));
+  s.net.flush();
+  const X = aPiece(s.theFind);
+  const wb = windowOf(s.bob), wd = windowOf(s.dan);
+  assert.ok(openFind(s.bob, 0, wb), 'Bob opens the find');
+  wb.take((it) => it.name === X.name); wb.close(); s.net.flush();
+  assert.ok(openFind(s.dan, 0, wd), 'Dan opens the find');
+  if (wd.list().some((it) => it.name === X.name)) wd.take((it) => it.name === X.name);
+  wd.close(); s.net.flush();
+  for (let k = 0; k < 4; k++) { clock.t += 2000; s.net.flush(); for (const p of s.all) p.as(() => p.h.roomClaimTick(clock.t)); s.net.flush(); }
+  assert.equal(holds(s.bob, X) + holds(s.dan, X), oneOf(X), 'D3: one piece, one holder');
+});
+test('AUDIT OUTDOOR-LOOT (T30, a second older peer): an older build\'s FIRST word about a find the room already holds is a baseline - its list as it stands adds nothing (read as a diff from nothing, every piece of it was a put: the find twice over)', () => {
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  const net = actRoom();
+  const bob = player(net, 'acct-bob', { host: true });
+  const dan = player(net, 'acct-dan');
+  const t = ITEM_TEMPLATES;
+  const mk = (name) => { const x = t.find((q) => q.name === name); return { group: 'Weapons', templateIndex: x.index, name, material: 0, value: 40, currentCondition: x.hitPoints ?? 50, maxCondition: x.hitPoints ?? 50 }; };
+  const coin = { group: 'Currency', templateIndex: 276, name: 'Gold Pieces', value: 1, stackCount: 80 };
+  const OLD = [coin, mk('Mace'), mk('Dagger')];
+  const old = (list) => ({ k: 'srch:0', r: list.map((it) => ({ ...it })), t: clock.t, by: 'acct-ann', bn: 'Ann' });
+  net.send('a0a0-0001', { k: ROOM, l: [old(OLD)] }); net.flush();   // Ann's search on an older build: the find's birth
+  for (const p of [bob, dan]) assert.deepEqual(find(p).map((it) => it.name), ['Gold Pieces', 'Mace', 'Dagger'], `${p.id}: the older build's search is the party's find (guard)`);
+  net.send('a0a0-0009', { k: ROOM, l: [old(OLD)] }); net.flush();   // Ann's second tab, an older build too: its FIRST word, the list as it stands
+  for (const p of [bob, dan]) assert.deepEqual(find(p).map((it) => it.name), ['Gold Pieces', 'Mace', 'Dagger'], `${p.id}: the second peer's first word added nothing`);
+});
+test('AUDIT OUTDOOR-LOOT D3 (the other half): an EMPTIED find is let go at its hour - WORLD8\'s sweep forgets it, as an emptied pile', () => {
+  const s = found();
+  const wb = windowOf(s.bob);
+  assert.ok(openFind(s.bob, 0, wb), 'Bob opens the find (guard)');
+  for (const it of [...wb.list()]) wb.take((x) => x === it);
+  wb.close(); s.net.flush();
+  for (let k = 0; k < 3; k++) { clock.t += 2000; s.net.flush(); for (const p of s.all) p.as(() => p.h.roomClaimTick(clock.t)); s.net.flush(); }
+  for (const p of s.all) assert.equal(find(p).length, 0, `${p.id}: the find is emptied (guard)`);
+  clock.t += 21 * 60_000;
+  for (const p of s.all) p.as(() => p.h.respawnSweep(clock.t / 1000));
+  for (const p of s.all) assert.equal(p.state._lootSeen.has('srch:0'), false, `${p.id}: the emptied find is let go`);
+});
+test('AUDIT OUTDOOR-LOOT D2 (a search that keeps the room\'s mint): a partymate who searches in the same period as the find the room holds sees the room\'s find - his roll written in place never stands over it, and no piece of it leaves for nobody', () => {
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  alignPeriod();
+  const s = found();
+  s.bob.ledger = { rows: [] };   // Bob's five hours forgotten (a ledger his machine lost): he may search the coffin again in the same period
+  clock.t += 30_000;
+  const wb = windowOf(s.bob);
+  assert.ok(search(s.bob, 0, wb), 'Bob searches again (guard)'); wb.close(); s.net.flush();
+  for (let k = 0; k < 3; k++) { clock.t += 2000; s.net.flush(); for (const p of s.all) p.as(() => p.h.roomClaimTick(clock.t)); s.net.flush(); }
+  for (const p of s.all) assert.deepEqual(findDesc(p), s.theFind.map(desc), `D2: ${p.id}: the room's find stands whole`);
 });

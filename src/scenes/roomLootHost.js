@@ -4,7 +4,7 @@
 // use as `host.<name>` - as the code read them where it was.
 import { addGoldPieces, addItem, isGoldPieces, stacksWith } from '../systems/inventory.js';
 import { asTheRoom } from '../systems/online/onlineLane.js';
-import { baseSignature, bonusSpent, carriedBase, claimOf, claimWord, composeRoomView, isPersonalLoot, isRoomBaseKind, isRoomWord, judgeRoomClaim, legacyCounts, legacyDelta, legacySig, markPersonal, mergeRoomWord, pieceCount, recentAnswers, ROOM_ANSWERS_KEPT, ROOM_BASE_FIND, ROOM_BASE_LUCK, ROOM_BASE_MAX, ROOM_BASE_QUARTERS, ROOM_CLAIM_TIMEOUT_MS, ROOM_CLAIMS_MAX, ROOM_PUT_RESAY_MS, ROOM_TAKEN_TEXT, roomBaseGender, roomBaseLevel, roomClaimId, roomClaimOrder, roomContainerName, roomRoller, roomState, roomTermsBeat, roomWord, sameRoomTerms, seededRolls, settleBonusSpent, validRoomWord } from '../systems/roomLoot.js';
+import { baseSignature, bonusSpent, carriedBase, claimOf, claimWord, composeRoomView, isPersonalLoot, isRoomBaseKind, isRoomWord, judgeRoomClaim, legacyCounts, legacyDelta, legacySig, markPersonal, mergeRoomWord, pieceCount, recentAnswers, roomEmptied, ROOM_ANSWERS_KEPT, ROOM_BASE_FIND, ROOM_BASE_LUCK, ROOM_BASE_MAX, ROOM_BASE_QUARTERS, ROOM_CLAIM_TIMEOUT_MS, ROOM_CLAIMS_MAX, ROOM_PUT_RESAY_MS, ROOM_TAKEN_TEXT, roomBaseGender, roomBaseLevel, roomClaimId, roomClaimOrder, roomContainerName, roomRoller, roomState, roomTermsBeat, roomWord, sameRoomTerms, seededRolls, settleBonusSpent, validRoomWord } from '../systems/roomLoot.js';
 import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';
 import { grantEliteLoot } from '../systems/eliteFoes.js';
 import { isDeepPileKey } from '../systems/rest/restItems.js';
@@ -12,6 +12,7 @@ import { isEquipped, unequipItem } from '../systems/equip.js';
 import { CLAIM_KEEP_MS, CLAIMS_KEPT_MAX } from '../systems/loot/claimLedger.js';
 import { LOOT_LIST_MAX, validLootList } from '../systems/loot/loot.js';
 import { SEARCH_COOLDOWN_MINUTES, SEARCH_LOOT_MAX } from '../systems/searchables.js';
+import { SEARCH_FOREIGN_PER_OBJECT } from './searchRoom.js';
 import { sharedClassicMinutes } from '../net/wire.js';
 import { neverPeerHanded, peerHanded, notCarried } from '../systems/peerWord.js';
 import { playerEntity } from '../characters/playerEntity.js';
@@ -290,6 +291,33 @@ export function createRoomLoot(host) {
     }
     return out;
   }
+  /** AUDIT OUTDOOR-LOOT D1: A STRANGER'S FIND, JUDGED. The seat judged every find in the room's one state an object - so a stranger's
+   *  find beside the one it held (another party's search of the same object in the same period) was dropped whole, its takes lifted
+   *  and lapsed for good, and a stranger's held first hid the seat's party's own find from it. A stranger's find is judged in a state
+   *  of its own, one a mint (its period and signature, the newest SEARCH_FOREIGN_PER_OBJECT kept), never shown and never the room's
+   *  memory: its claims first come, its verdicts said in a word of that mint's own terms - its searcher's party lands it (the same
+   *  mint), everyone else keeps it unlanded. A claim word carries the base, so a seat that comes after holds it from the first claim. */
+  const _strangerFinds = new Map();
+  function judgeStrangerFind(canon, w, rec, from) {
+    if (from == null) return 0;
+    const held = _strangerFinds.get(canon) ?? [];
+    let st = held.find((x) => wordIsMint(w, x.terms) && (x.terms.h === w.h)) ?? null;
+    if (!st && !w.b) return 0;   // a claim on a find whose base never reached this seat: nothing to judge it against
+    const q = w.q.filter((cl) => claimOf(cl.id, from)), a = w.a.filter((p) => claimOf(p.id, from));
+    const reask = st ? [...q, ...a].map((c) => c.id).filter((id) => st.answers.has(id)) : [];
+    st = mergeRoomWord(st, { ...w, x: [], c: [], y: [], s: st ? null : (w.s ?? []), si: st ? null : (w.si ?? []), q, a }).state;
+    if (!held.includes(st)) { held.push(st); while (held.length > SEARCH_FOREIGN_PER_OBJECT) held.shift(); _strangerFinds.set(canon, held); }
+    if (!st.base) return 0;
+    const verdicts = [...st.claims.values()].map((cl) => [cl.id, judgeRoomClaim(st, st.base.items.length, st.base.full, tooOldToGrant(cl) ? { ...cl, stale: true } : cl, roomAdmit)]);
+    for (const id of reask) if (!verdicts.some(([v]) => v === id)) verdicts.push([id, /** @type {number} */ (st.answers.get(id))]);
+    if (!verdicts.length) return 1;
+    const kept = st.stored.map((it, i) => [it, st.ids[i]]).filter(([it]) => !neverPeerHanded(it));
+    const searcher = host.searchRoom.fields({ by: rec.by, bn: rec.bn });
+    for (let i = 0; i < verdicts.length; i += ROOM_ANSWERS_KEPT) {
+      opts.onActions?.({ k: host._locationKey, l: [{ ...roomWord(canon, st, st.base.h, { s: kept.map((p) => p[0]), si: kept.map((p) => p[1]) }, host._wallNow(), verdicts.slice(i, i + ROOM_ANSWERS_KEPT)), ...searcher }] });
+    }
+    return 1;
+  }
   /** A room word landed: projected, its base checked against this client's own (the signature), merged into the room's
    *  state and the list recomposed. Answers 1 when it was the room's word about a container here, else 0. */
   function landRoomWord(canon, rec, from = null) {
@@ -307,12 +335,10 @@ export function createRoomLoot(host) {
     const st = _roomState.get(canon);
     const same = !!st && wordIsMint(w, st.terms);
     // A FIND this player does not see: its word is KEPT unlanded (the object reads it again once the party is made), and only the
-    // dungeon's HOST goes on - it judges every find's claims, the searcher's party's or a stranger's, and shows none (GRAVE-PARTY: who SEES, never who JUDGES)
+    // dungeon's HOST goes on - it judges every find's claims, the searcher's party's or a stranger's, and shows none (GRAVE-PARTY: who
+    // SEES, never who JUDGES) - a stranger's in a state of its own (AUDIT OUTDOOR-LOOT D1, judgeStrangerFind), never the room's
     const sees = !h.search || !!who || (same && _roomSees.has(canon));
-    if (!sees) {
-      host.searchRoom.ours(canon, rec, from);
-      if (!host._authority || (st && !same)) return 0;   // another's word is not mine to judge; nor a rival find beside the one this host judges
-    }
+    if (!sees) { host.searchRoom.ours(canon, rec, from); return host._authority ? judgeStrangerFind(canon, w, rec, from) : 0; }
     if (h.search && !w.b && !st) return 0;   // terms with no base: UNBORN here until the base arrives
     // WHO SAYS WHAT (host arbitrates): the room's state - its takes, its stored pieces, its verdicts - is the HOST's word,
     // or the memory's (the host publishes it); a birth is anyone's (the mint's own law, roomTermsBeat); a claim and a put
@@ -345,7 +371,7 @@ export function createRoomLoot(host) {
     { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null && (!Number.isFinite(host._lootAt.get(canon)) || _t > host._lootAt.get(canon))) host._lootAt.set(canon, _t); }   // WORLD8's stamp, never ahead of now (AUDIT WORLD7/8 C2)
     const seer = h.search && sees && !_roomSees.has(canon);
     if (h.search && sees) _roomSees.add(canon);
-    if (seer && who) searchHeard(h.i, host._lootAt.get(canon), who);   // SEARCH1: another's search starts my five hours too - from the room's stamp; GRAVE-PARTY: a partymate's, by name
+    if ((seer || reborn) && who) searchHeard(h.i, host._lootAt.get(canon), who);   // AUDIT OUTDOOR-LOOT D2: and at EVERY new mint of it (a search after the five hours) - not the first heard alone   // SEARCH1: another's search starts my five hours too - from the room's stamp; GRAVE-PARTY: a partymate's, by name
     for (const [id, g] of answered) roomResolve(id, g, canon);   // the host's verdicts on this player's own claims
     const base = rollRoomBase(canon, state.terms);
     if (changed || seer || answered.length || _roomComposed.get(canon)?.base !== base || _roomComposed.get(canon)?.list !== holderList(h)) composeRoomContainer(canon);
@@ -396,7 +422,7 @@ export function createRoomLoot(host) {
     if (!base) return 0;
     const d = legacyDelta(prev, items);
     const { list, seen } = composeRoomView(base.items, base.full, st, [], null);
-    const id = () => roomClaimId(String(from).slice(0, 40), 'old', ++host._roomClaimN);
+    const id = () => roomClaimId(String(from).slice(0, 40), `old${host._sharedStamp}`, ++host._roomClaimN);   // AUDIT OUTDOOR-LOOT D6: this context's stamp - a new seat's count would meet an answer the last seat left (st.answers), and its verdict came back without moving the state
     const tm = host._wallNow() ?? 0;
     for (const t of d.takes) {
       let left = t.n;
@@ -572,7 +598,7 @@ export function createRoomLoot(host) {
   function roomPut(canon, st, base, obj, seen) {
     const put = { id: roomClaimId(opts.selfId?.() ?? 'self', host._sharedStamp, ++host._roomClaimN), it: { ...obj }, tm: host._wallNow() ?? 0 };
     if (host._authority) {
-      const g = judgeRoomClaim(st, base.items.length, base.full, { ...put, it: obj }, roomAdmit);
+      const g = judgeRoomClaim(st, base.items.length, base.full, put, roomAdmit);   // AUDIT OUTDOOR-LOOT D4: the put's own copy is stored, never the window's record - a split of it under the same window took from the judge's record and lost the pieces
       if (g) seen?.at.set(obj, { sp: put.id, n: pieceCount(obj) });
       else { _roomMine.set(put.id, { canon, terms: st.terms, put, item: obj, refused: true }); seen?.at.set(obj, { sp: put.id, n: pieceCount(obj) }); }
       return;
@@ -604,12 +630,16 @@ export function createRoomLoot(host) {
     if (!base || (!st.claims.size && !reask.length)) return false;
     const claims = [...st.claims.values()];
     if (order) claims.sort(order);
-    const verdicts = claims.map((cl) => [cl.id, judgeRoomClaim(st, base.items.length, base.full, cl, roomAdmit)]);
+    const verdicts = claims.map((cl) => [cl.id, judgeRoomClaim(st, base.items.length, base.full, tooOldToGrant(cl) ? { ...cl, stale: true } : cl, roomAdmit)]);
     for (const id of reask) if (st.answers.has(id) && !verdicts.some(([v]) => v === id)) verdicts.push([id, /** @type {number} */ (st.answers.get(id))]);   // OUTDOOR-LOOT D-2.1: a claim asked again is answered again from the ledger
     for (const [id, g] of verdicts) roomResolve(id, g, canon);
     composeRoomContainer(canon);
     return roomSayNow(canon, () => verdictWords(canon, verdicts));   // the verdicts of THESE claims, in words of ROOM_ANSWERS_KEPT: none pushed out by another claimer's
   }
+  /** AUDIT OUTDOOR-LOOT D5: a take claim made more than half of CLAIM_KEEP_MS ago (the shared clock) is refused, never granted - its
+   *  claimer gives a claim up at CLAIM_KEEP_MS, and a grant after that (a seat that heard it long ago and takes the seat, or the
+   *  claimer's last re-say landing late) moves the piece out of the room for nobody. A claimer still waiting is told and may take again. */
+  const tooOldToGrant = (cl) => { const now = host._wallNow(); return !('it' in cl) && now != null && Number.isFinite(cl.tm) && now - cl.tm >= CLAIM_KEEP_MS / 2; };
   /** THE SEAT CHANGES HANDS (setAuthority's handover): what the last host left unanswered is judged here now. */
   function roomTakeSeat() {
     if (!roomLootOn()) return;
@@ -666,7 +696,7 @@ export function createRoomLoot(host) {
     const w = { g: Number.isFinite(minute) ? Math.max(0, Math.floor(minute / SEARCH_COOLDOWN_MINUTES)) : 0, lv: 1, n: 1, tm: host._wallNow() ?? 0, h: baseSignature(records), b: records, x: [], c: [], s: [] };
     const was = _roomState.get(canon) ?? null;
     const { state } = mergeRoomWord(was, w);
-    if (state === was) return true;   // a find of this period that beat this one is the room's (a stranger's rival, judged by the host): this player's roll stays its own, unshared
+    if (state === was) { composeRoomContainer(canon); return true; }   // a find of this period that beat this one is the room's: AUDIT OUTDOOR-LOOT D2 - the room's list is composed back over the roll the search wrote in place (left there, every room piece read as a take granted to nobody)
     _roomState.set(canon, state);
     _roomSearcher.set(canon, host.searchRoom.fields(h.search));
     _roomSees.add(canon);
@@ -687,10 +717,12 @@ export function createRoomLoot(host) {
     if (host._authority && !host._roomMintHold) { mintRoomTerms(canon, Number.isFinite(f._diedAt) ? f._diedAt : 0); return; }
     f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)
   }
-  /** OUTDOOR-LOOT: a search find the room lets go at its hour (WORLD8's sweep) - the object's own list stands, as it did.
-   *  Answers whether `h` (the canon's holder) was a find. */
+  /** OUTDOOR-LOOT: a search find the room lets go at its hour (WORLD8's sweep), once it is emptied. Answers whether `h` (the canon's
+   *  holder) was a find. */
   function letFindGo(canon, h) {
     if (!h?.search) return false;
+    const st = _roomState.get(canon), base = st ? rollRoomBase(canon, st.terms) : null;
+    if (st && base && !roomEmptied(st, base.items.length)) return true;   // AUDIT OUTDOOR-LOOT D3: a find still holding pieces stays the room's - let go, its list stood on every machine unshared and two partymates each took the same piece; a new search's mint is its next life, as an emptied pile's
     host._lootSeen.delete(canon); host._lootAt.delete(canon); forgetRoomContainer(canon);
     return true;
   }

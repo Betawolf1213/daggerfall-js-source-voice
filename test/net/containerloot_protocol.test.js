@@ -494,7 +494,7 @@ test('D-1 AC8: the claimer LEAVES THE BUILDING with its claim in flight and not 
 });
 
 test('D-1a AC8 (by source): every door out of a building that drops the bag (exitInteriorNow, forceExitToExterior - a teleport\'s and a load\'s) first tells the module through a statement that reads it', () => {
-  for (const site of LEAVE_SITES) assert.ok(site.before.length > 0, `D-1a/AC8: ${site.name} drops the building's bag (\`_intShared = null\`) without a statement ahead of it that reads the bag - a claim in flight is kept at the claimer's own teardown, and the host's doors out are where the module can hear of it (today: nothing is said)`);
+  for (const site of LEAVE_SITES) assert.ok(site.before.length > 0, `D-1a/AC8: ${site.name} drops the building's bag (\`_intShared = null\`) without a statement ahead of it that reads the bag - a claim in flight is kept at the claimer's own teardown, and the host's doors out are where the module hears of it (\`interiorLootLeave\`)`);
 });
 
 test('D-1 AC8: a claim that had LAPSED (no verdict inside the timeout, the seat never heard it) is NOT kept at the teardown - the piece is back in the claimer\'s list, not its pack, and the room still holds it: one copy, in the room', () => {

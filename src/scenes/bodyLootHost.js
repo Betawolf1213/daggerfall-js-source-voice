@@ -399,13 +399,16 @@ export function createBodyLoot(h) {
   }
 
   /** The window's takes since the last compose, CLAIMED: every piece gone from the view is lifted out of the pack and claimed of the
-   *  owner by place - one frame per body per settle, a bigger batch in more. What was laid in is the owner's alone to lay: handed back once no window stands. */
-  function settleReader(rb) {
-    if (stateOf(rb) !== 'born') return;
+   *  owner by place - one frame per body per settle, a bigger batch in more. What was laid in is the owner's alone to lay: handed back once no window stands.
+   *  AUDIT OUTDOOR-LOOT B2: in any state - the view and its `seen` are the last BORN compose's and a claim names its place and the
+   *  body's generation, so a body turned unborn or unreadable under an open window still claims what was taken from it (it was
+   *  never claimed: a second taker was granted the same piece). `claim` false: a body no longer there - its takes lifted, never granted. */
+  function settleReader(rb, claim = true) {
     const { takes, grows, puts } = listMovesSince(rb.seen, rb.view, () => false);
     for (const g of grows) { const laid = { ...g.obj, stackCount: g.by }; g.obj.stackCount -= g.by; g.info.n -= g.by; rb.view.push(laid); rb.laid.add(laid); }
     for (const obj of puts) rb.laid.add(obj);
-    if (takes.length) {
+    if (takes.length && !claim) for (const m of takes) liftPiece(playerEntity, m.obj, m.k);
+    else if (takes.length) {
       const now = _now();
       const claims = takes.map(({ obj, info, k }) => ledger.take(containerOf(rb), { p: info.p }, obj, k, { by: rb.owner, owner: rb.owner, seq: rb.seq, k: rb.k, g: rb.digest.g }, now));   // g: the body it is made ON - a re-ask names it still, whatever the view has become
       rb.dirty = true;
@@ -529,7 +532,7 @@ export function createBodyLoot(h) {
       opened: () => { open = rb; },
       closed: () => {
         if (open === rb) open = null;
-        if (readers.get(keyOf(rb.owner, rb.seq)) !== rb) { for (const m of listMovesSince(rb.seen, rb.view).takes) liftPiece(playerEntity, m.obj, m.k); return; }   // a body no longer there: what the window took was never granted
+        if (readers.get(keyOf(rb.owner, rb.seq)) !== rb) { settleReader(rb, false); handBack(rb); return; }   // a body no longer there: what the window took was never granted; AUDIT OUTDOOR-LOOT B1: what it laid in comes home (it was destroyed)
         settleReader(rb);
         handBack(rb);
         if (stateOf(rb) === 'born') composeView(rb);
@@ -594,6 +597,7 @@ export function createBodyLoot(h) {
       const f = h.puppetOf(rb.owner, rb.seq);
       if (!f || !f.corpse) continue;
       const s = stateOf(rb);
+      if (s !== 'born') settleReader(rb);   // AUDIT OUTDOOR-LOOT B2: what a window took from a body that turned unborn or unreadable under it
       if (s === 'unborn') {
         const at = bodyPos(f);
         if (at && playerFeet && dist(playerFeet, at) <= BODY_PEEK_REACH && (rb.peekAt == null || now - rb.peekAt >= PEEK_RETRY_MS)) {
@@ -609,7 +613,7 @@ export function createBodyLoot(h) {
     if (!ledger.size) return;
     const { lapsed, resay } = ledger.due(now);
     for (const c of lapsed) { const rb = readers.get(keyOf(c.meta.owner, c.meta.seq)); if (rb) touch(rb); }   // no verdict in time: the piece reads as back in the body for its taker
-    if (resay.length) sendClaims(resay);   // and every claim with no verdict is said again, the same ids
+    if (resay.length) sendClaims(resay.filter((c) => h.ownerRecord(c.meta.owner) != null));   // and every claim with no verdict is said again, the same ids - AUDIT OUTDOOR-LOOT B3: not to an owner who is not here (the hit queue holds every frame behind a refused one), until his frames come back
   }
 
   // ═══ THE POOL'S DOORS ═══════════════════════════════════════════════════════════════════════════════════════════════

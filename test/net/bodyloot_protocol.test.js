@@ -51,7 +51,7 @@ import { setCarriedFilter } from '../../src/systems/peerWord.js';
 import { planStore, planTake, applyTransfer } from '../../src/systems/item/itemTransfer.js';
 import {
   FOES_FULL_MS, PILE, PILE2, pieceOf, nameOf, GREAVES, SHORTSWORD, GOLD, BROADSWORD, PINE, clock, clone, playerEntity, restoreRandom, scene, lootWindow, choosing, census, misplaced,
-  plaque, saysEmpty, SETTLED_MS, run, runLive, leave, cross, offlineOwner, reloadOwner, settle,
+  plaque, saysEmpty, SETTLED_MS, run, runLive, leave, cross, offlineOwner, reloadOwner, settle, FOES_STALE_MS,
 } from './bodyLootHarness.mjs';
 
 afterEach(restoreRandom);
@@ -1216,3 +1216,135 @@ for (const where of WHERES) {
     assert.equal(heldBy(s.mac, GREAVES), 1, 'and the piece is still in the pack once');
   });
 }
+
+// ═══ AUDIT OUTDOOR-LOOT (2026-10-18, PR #1019's audit) - THE READER'S EDGES ═══════════════════════════════════════════════
+// B1: a piece the taker lays into another player's kill is handed back at the close - but the close's arm for a body no longer
+// there (its owner left, went stale past FOES_STALE_MS, reloaded) lifted the window's takes and RETURNED before the hand-back:
+// what was laid in was destroyed (a Stash all, the whole pack). B2: a body that turns UNBORN or UNREADABLE under an open window
+// (its owner lays a new piece on it) settled nothing from then on - a take made then was never claimed, and a second taker was
+// granted the same piece. B3: re-asks to an owner who has left sat at the head of the taker's hit queue (sendHit refuses a `to`
+// not in the roster) and held every frame behind them.
+const heldOf = (p, piece) => p.entity.items.filter((it) => pieceOf(it) === piece).reduce((n, it) => n + (it.stackCount ?? 1), 0);
+for (const where of WHERES) {
+  test(`AUDIT OUTDOOR-LOOT B1 [${where}]: a piece laid into a peer's body comes home at the close when the owner has LEFT - it was destroyed`, async () => {
+    const s = await scene(where);
+    const mine = { ...PILE2()[1] };   // Mac's own broadsword - not a piece of Bob's body
+    assert.equal(pieceOf(mine), BROADSWORD);
+    s.mac.entity.items.push(mine);
+    const w = lootWindow(s.mac);
+    s.mac.press(s.keyOf(s.mac), w);
+    assert.equal(w.opened.length, 1, 'the window opens (guard)');
+    assert.ok(w.store(mine), 'the store moved (guard)');
+    run(s.net, 100);
+    assert.equal(heldOf(s.mac, BROADSWORD), 0, 'the broadsword is in the window (guard)');
+    leave(s.bob); run(s.net, 400);
+    w.close();
+    run(s.net, SETTLED_MS);
+    assert.equal(heldOf(s.mac, BROADSWORD), 1, `B1: Mac's own Broadsword is back in his pack (${heldOf(s.mac, BROADSWORD)})`);
+  });
+
+  test(`AUDIT OUTDOOR-LOOT B1 [${where}]: a Stash all into a peer's body comes home whole when the owner went STALE under the window`, async () => {
+    const s = await scene(where);
+    const mine = PILE2().slice(1).map((it) => ({ ...it }));   // Mac's own broadsword and pine branch
+    s.mac.entity.items.push(...mine);
+    const had = s.mac.entity.items.map(pieceOf).sort();
+    const w = lootWindow(s.mac);
+    s.mac.press(s.keyOf(s.mac), w);
+    assert.equal(w.opened.length, 1, 'the window opens (guard)');
+    w.stashAll([...s.mac.entity.items]);
+    assert.equal(s.mac.entity.items.length, 0, 'Stash all moved the whole pack into the window (guard)');
+    run(s.net, 100);
+    s.net.dead.add(s.bob.id);   // Bob's tab hidden: no foes frames past FOES_STALE_MS
+    run(s.net, FOES_STALE_MS + 1000);
+    w.close();
+    s.net.dead.delete(s.bob.id);
+    run(s.net, SETTLED_MS);
+    assert.deepEqual(s.mac.entity.items.map(pieceOf).sort(), had, 'B1: Mac\'s pack comes back whole');
+  });
+
+  test(`AUDIT OUTDOOR-LOOT B2 [${where}]: a take from a body that turned UNREADABLE under the open window is still claimed - one Greaves, one holder`, async () => {
+    const newer = (from, to, data) => {
+      if (to === MAC && Array.isArray(data.br)) data.br = data.br.map(([p, r]) => (p >= 3 ? [p, { templateIndex: 999999 }] : [p, r]));   // the new place, from a newer build
+      return data;
+    };
+    const s = await scene(where, [MAC, EVE], { tamper: newer });
+    const w = lootWindow(s.mac);
+    s.mac.press(s.keyOf(s.mac), w);
+    assert.equal(w.opened.length, 1, 'Mac\'s window stands over the born body (guard)');
+    s.rat.entity.items.push({ ...PILE2()[2] });   // Bob lays a piece on his own body: place 3, which Mac cannot read
+    run(s.net, 2000);
+    assert.ok(w.take(choosing(GREAVES)), 'Mac takes the Greaves in his still-open window (guard)');
+    run(s.net, 500);
+    w.close();
+    run(s.net, 1000);
+    assert.ok(claimsBy(s, s.mac).length > 0, 'B2: Mac claimed the Greaves');
+    const we = lootWindow(s.eve);
+    s.eve.press(s.keyOf(s.eve), we);
+    we.take(choosing(GREAVES));
+    we.close();
+    run(s.net, SETTLED_MS);
+    assert.deepEqual(misplaced(s), [], 'B2: every piece in exactly one place');
+  });
+
+  test(`AUDIT OUTDOOR-LOOT B2 [${where}]: a take from a body that turned UNBORN under the window (its one peek answer lost, the taker walked off) is still claimed`, async () => {
+    let lost = 0;
+    const loseOne = (from, to, data) => {
+      if (to === MAC && Array.isArray(data.br) && data.br.some(([p]) => p >= 3) && lost < 1) { lost++; return null; }
+      return data;
+    };
+    const s = await scene(where, [MAC, EVE], { tamper: loseOne });
+    const w = lootWindow(s.mac);
+    s.mac.press(s.keyOf(s.mac), w);
+    assert.equal(w.opened.length, 1, 'the window stands (guard)');
+    s.rat.entity.items.push({ ...PILE2()[2] });   // Bob lays a piece on his own body: place 3
+    run(s.net, 600);
+    assert.equal(lost, 1, 'the one answer was lost (guard)');
+    assert.ok(w.take(choosing(GREAVES)), 'Mac takes the Greaves (guard)');
+    w.close();
+    s.mac.feet[0] += 40;   // out of BODY_PEEK_REACH before the re-peek
+    run(s.net, 3000);
+    const we = lootWindow(s.eve);
+    s.eve.press(s.keyOf(s.eve), we);
+    we.take(choosing(GREAVES));
+    we.close();
+    run(s.net, SETTLED_MS);
+    assert.deepEqual(misplaced(s), [], 'B2: every piece in exactly one place');
+  });
+}
+
+for (const where of WHERES) {
+  test(`AUDIT OUTDOOR-LOOT S1-4 [${where}]: a piece the OWNER lays on his own body becomes a place of it - a peer reads it, takes it, and it is his once`, async () => {
+    const s = await scene(where);
+    s.rat.entity.items.push({ ...PILE2()[2] });   // Bob lays a pine branch on his own body - a piece the body did not hold
+    run(s.net, 2000);   // the digest says a new place; Mac peeks it
+    const w = lootWindow(s.mac);
+    s.mac.press(s.keyOf(s.mac), w);
+    assert.equal(w.opened.length, 1, 'the window opens (guard)');
+    assert.ok(w.take(choosing(PINE)), 'S1-4: Mac\'s window lists the pine Bob laid, and takes it');
+    w.close();
+    run(s.net, SETTLED_MS);
+    assert.equal(heldOf(s.mac, PINE), 1, 'S1-4: the pine is Mac\'s');
+    assert.deepEqual(misplaced(s), [], 'every piece in exactly one place');
+  });
+}
+
+test('AUDIT OUTDOOR-LOOT B3 [street]: re-asks to an owner who LEFT never hold the taker\'s hit queue - a blow to a peer who is here goes at once', async () => {
+  const s = await scene('street', [MAC, EVE]);
+  const w = lootWindow(s.mac);
+  s.mac.press(s.keyOf(s.mac), w);
+  s.net.hold(dir(s.mac.id, s.bob.id));   // Mac's claim is slow on the wire...
+  assert.ok(w.take(choosing(GREAVES)), 'Mac takes the Greaves (guard)');
+  w.close();
+  run(s.net, 100);
+  leave(s.bob);   // ...and Bob leaves before it lands
+  s.net.release(dir(s.mac.id, s.bob.id));
+  run(s.net, 5000);
+  let sent = 0, blocked = 0;
+  for (let t = 0; t < 60_000; t += 50) {
+    if (t % 1000 === 0) s.mac.pend.send({ to: s.eve.id, k: 'world:3,12', i: 999, dmg: 1 }, { sent: () => { sent++; }, dropped: () => {} });
+    run(s.net, 50);
+    if (s.mac.pend.held > 0) blocked++;
+  }
+  assert.equal(sent, 60, 'B3: every blow to Eve went');
+  assert.equal(blocked, 0, `B3: Mac's hit queue was held ${(blocked * 50 / 1000).toFixed(1)} s by re-asks to an owner who is not here`);
+});

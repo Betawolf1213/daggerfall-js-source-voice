@@ -104,8 +104,8 @@ export function createSearchRoom(host) {
   const mine = () => ({ by: searchSelfAcct(), bn: searchSelfName() });
   /** The fields a `srch:` record carries for the searchable holding it: its searcher's account and character's name. */
   const fields = (sb) => ({ ...(typeof sb?.by === 'string' && sb.by ? { by: sb.by } : {}), ...(nameOf(sb) && sb.by ? { bn: sb.bn } : {}) });
-  /** The strangers' words, for the room's memory this client publishes (every one still inside the room's hour) - but the finds this
-   *  client JUDGES (`judged(canon)`: the dungeon's host keeps a state for every find, a stranger's too) ride the memory as that state. */
+  /** The strangers' words, for the room's memory this client publishes (every one still inside the room's hour) - but a find this
+   *  client holds a state for (`judged(canon)`: its own party's) rides the memory as that state, one find an object. */
   function records(/** @type {(canon: string) => boolean} */ judged = () => false) { prune(); return [...foreign.values()].filter((e) => !judged(e.rec.k)).map((e) => ({ ...e.rec })); }
   return { whose, ours, adopt, mine, fields, records };
 }
