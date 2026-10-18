@@ -136,7 +136,7 @@ test('AUDIT WORLD6a by source: the settle asks the stack (A3), the keyed shop fa
   // is incidental - a comment added at the gold gate closed it.
   assert.match(m, /const at = shelf\.items\.indexOf\(it\);\s*if \(at < 0\) return undefined;[\s\S]{0,500}?shelf\.items\.splice\(at, 1\);/, 'A4: a row the shelf no longer holds');
   assert.equal((m.match(/interiorPublishLoot\(key\);   \/\/ WORLD6a: the new day's stock/g) ?? []).length, 0, 'A5: no restock is said at the roll');
-  assert.match(pure, /export function interiorLootOpen\(ctx, key, win, bag, \{ fresh = false \} = \{\}\) \{[\s\S]*?publishWhole\(ctx, canon, bag, \{ claim: !fresh \}\);/, 'A5: said at the window, a fresh roll not a claim');
+  assert.match(pure, /export function interiorLootOpen\(ctx, key, win, bag, \{ fresh = false, keeping = null \} = \{\}\) \{[\s\S]*?publishWhole\(ctx, canon, bag, \{ claim: !fresh \}\);/, 'A5: said at the window, a fresh roll not a claim');
   // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
   assert.match(m, /const owned = !!privateVisitRoom \|\| b\?\.buildingType === BUILDING_TYPES\.Ship \|\| \(!interiorHome && houseOwnedAt\(/, 'B6: any ship');   // HOME1 re-aim: an online home keeps its room (home1.test.js)
   assert.match(m, /_intShared\?\.owned \? \{ private: true, privateRoom: privateVisitRoom \}/, 'A6: private presence only, no shared loot room');
