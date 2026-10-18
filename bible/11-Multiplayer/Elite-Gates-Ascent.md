@@ -211,3 +211,16 @@ middle of the flight alone. LAW 10 (`net/eliteGates/egAscent.js` EG_BROKEN_LAW) 
 
 What it does not do: it turns no moving piece (a Drift, a Rail, a Pendulum keep +z); it changes no lord, no circle's plan
 and no bound; the rooms' own records and the climbs are law 9's.
+
+**The pins under law 10.** Law 10 lays every seed's halls anew, so a pin measured on a law 9 hall now names law 9 - by its
+`law` argument or THE SEAM (`egLawSeam(9)`), a relay rig's breach with it (`B.egv`): the EG-PERFECT halls' repros (the
+Captive's chains, the closing's walk, the Deserter, the Ashfall, the Gauntlet's plates on their stairs, the Casters'
+stands, the toll's rooms, the voids, the hang). A sweep that holds a property over the halls runs over law 10's own: the
+closing's walk over seeds 1-2 read from its trial's own ground (the first course that is no broken bridge, as
+`egTrialEndAt` reads it); the Captive's chains over seeds 1-40 (law 10 hangs every three on its floor: 57 kept, none
+refused - law 9 refused two); the Deserter halls of seeds 1-30; the lamps' budget over seeds 1-2; the Orrery's handles; a
+Fallen Stacks' stands 4 m up. Two matchers read a hall too loosely for law 10 and now read it exactly: the place's-white pin
+matches the tide by its reach (a Deepway's engine marks its chamber's middle, the tide's own centre), and the motes'
+clearance is measured on its one disc alone (law 10's way circles that court at its height). Seed 115's hall 52 lays its
+Eclipse chamber's way 721 m under law 10, past the route's 640, and its next slot's hero stands instead - the law's own
+refusal, the pin moved to seed 111's hall 57.

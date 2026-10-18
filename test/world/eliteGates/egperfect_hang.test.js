@@ -7,12 +7,15 @@
 // producers: the law's own halls, the screen's own spans and models.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egCircleSpecs, egCircleOfHall, egBandOfCircle } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egCircleSpecs, egCircleOfHall, egBandOfCircle, egLawSeam } from '../../../src/net/eliteGates/egLaw.js';
 import { egPieceAt } from '../../../src/net/eliteGates/egSpanLaw.js';
 import { createEgSpan, egHangModel, egHangReach, EG_HANG_TOP, EG_HANG_CABLE_M } from '../../../src/scenes/eliteGates/egSpan.js';
 import { SD_PENDULUM } from '../../../src/world/superDungeon/sdStepsModel.js';
 import { realmToDungeon } from '../../../src/net/superDungeon/sdBrain.js';
 
+// PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the audit's drifts on spec law 9's halls, named through THE SEAM (law 10 lays
+// seed 2's anew)
+egLawSeam(9);
 const near = (a, b, e = 1e-4) => Math.abs(a - b) <= e;
 /** A model's lowest and highest y, and the highest off its middle line (the crane's beam under its cable, 0.1 m thin). */
 function extent(m) {

@@ -7,7 +7,7 @@
 // there. Audited, nothing to change; pinned so a read by height never takes the stair's plate from it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egOnFight, EG_SEALED_MS, EG_SPEC } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egOnFight, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, EG_SILENCE_MS, EG_TOUCH_M } from '../../../src/net/eliteGates/egBrain.js';
 import { egBodyById } from '../../../src/net/eliteGates/egBodies.js';
 import { validEgOut } from '../../../src/net/wire.js';
@@ -15,8 +15,10 @@ import { validEgOut } from '../../../src/net/wire.js';
 const T0 = 1_800_000_000_000;
 
 test('EG-PERFECT THE GAUNTLET\'S PLATES ON THEIR STAIRS (section 8.3): seed 1\'s hall 66 - each plate 5.5 m out, on its side stair at the stair\'s own height there (0.63 m up a 9.5 m stair), off the pillar and off the fight floor; a lone member standing there EG_SILENCE_MS silences that pillar\'s Caster, and one at the walkway\'s edge (3 m short) never does', () => {
-  const spec = egHallOf(1, 66);
-  assert.deepEqual([spec.kind, spec.variant, EG_SPEC], ['rampart', 'gauntlet', 9]);
+  // PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): law 9's Gauntlet, named - from law 10 a plate stands on its pillar's top
+  // (THE BROKEN WAY's fittings - test/net/eliteGates/egperfect_broken.test.js)
+  const LAW = 9, spec = egHallOf(1, 66, 0, LAW);
+  assert.deepEqual([spec.kind, spec.variant, spec.v], ['rampart', 'gauntlet', 9]);
   assert.equal(EG_TOUCH_M, 2.5);
   for (const p of spec.spots.pillar) {
     const s = Math.sign(p.x), ramp = spec.ramps.find((q) => q.az === p.z && Math.sign(q.bx) === s), pil = spec.discs.find((d) => d.role === 'pillar' && d.x === p.x && d.z === p.z);
@@ -29,7 +31,7 @@ test('EG-PERFECT THE GAUNTLET\'S PLATES ON THEIR STAIRS (section 8.3): seed 1\'s
   let seed = 1;
   const rng = () => { seed = (Math.imul(seed, 1103515245) + 12345) >>> 0; return seed / 4294967296; };
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'M0', ew: 0, rh: 0, seed: 1, op: T0, co: [['acct-0', 'M0', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  B.egv = EG_SPEC;
+  B.egv = LAW;
   let now = T0 + EG_SEALED_MS + 100;
   assert.equal(egEnter(B, 'acct-0', 'ordacct-0'.padEnd(20, 'x'), 40, now), null);
   B.h = 66; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;

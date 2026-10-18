@@ -120,8 +120,8 @@ test('EG-PERFECT THE BROKEN WAY (unit) - THE PASSAGES, THE DROP, THE RAILS, THE 
   for (const c of [egFragPassage('forge', sdRng(5), { law: 10 }).course.filter((q) => q.k === 'rail'), egSetPiece('forgeline', sdRng(5), { law: 10 }).course]) assert.ok(c.every((q) => q.period === c[0].period && q.phase === c[0].phase), 'the Forge\'s one belt');
   // travelling neighbours that meet (each on its own period), in metres
   const meet = [0, 1].map((k) => ({ i: k, kind: 'rail', span: 0, x: 0, y: 0, z: 2.6 + 1.5 + k * 5.6, w: 3, d: 3, amp: 1.5, period: 6 + k * 1.3, phase: k * 1.5, beat: 0, gap: 2.6, road: 0, kit: '', after: k ? 3 : 0 }));
-  assert.ok(egSpanProof({ v: 10, steps: meet }).why.some((w) => /meets the next/.test(w)), 'law 10 refuses neighbours that meet');
-  assert.ok(!egSpanProof({ v: 9, steps: meet }).why.some((w) => /meets the next/.test(w)), 'law 9 held the neighbour still');
+  assert.ok(egSpanProof({ v: 10, steps: meet }).why.some((w) => /beside it - travelling/.test(w)), 'law 10 refuses neighbours that meet');
+  assert.ok(!egSpanProof({ v: 9, steps: meet }).why.some((w) => /beside it - travelling/.test(w)), 'law 9 held the neighbour still');
   // a Pendulum's gap: the whole flight asked at law 10, its middle alone at law 9 - some launch the middle lets through
   const pend = { i: 0, kind: 'pend', span: 0, x: 0, y: 0, z: 2.8 + 1.3, w: 3, d: 2.6, amp: 0, period: 4, phase: 0.3, beat: 0, gap: 2.8, road: 0, kit: '', after: 2.6 };
   const [p] = egSpanPairs({ steps: [pend], law: 10 });

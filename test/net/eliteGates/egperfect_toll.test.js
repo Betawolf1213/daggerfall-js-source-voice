@@ -24,7 +24,7 @@ function* floorPoints(spec, q, i = 0) {
 
 test('EG-PERFECT THE TOLL\'S NEW GROUND IS EACH ROOM\'S OWN (section 10.6; spec law 9): seed 1 hall 2 lays two rooms, a Tower and a Stair Hall - a member who stands on the Tower\'s floor and then, five minutes on, on the Stair Hall\'s floor has reached new ground there (`h0:0`, then `h1:0`), so a pull a second later tolls it nothing, and one past the waiver tolls the road still ahead of it - where floor 0 of the second room had been floor 0 of the first, "seen" (mutant: the key by the floor alone)', () => {
   egSpecForget();
-  const spec = egHallOf(1, 2, 0);
+  const spec = egHallOf(1, 2, 0, 9);   // PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): law 9's rooms, named (law 10 lays seed 1's anew)
   assert.equal(spec.law, 9);
   const rooms = spec.heroes.map((q, k) => ({ q, k })).filter(({ q }) => q.room);
   assert.deepEqual(rooms.map(({ q }) => q.id), ['room:tower', 'room:stair']);

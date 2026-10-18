@@ -7,7 +7,7 @@
 // about the chamber's own floor; every hall whose three hang on its floor keeps them.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egOnFight, egCirclePlan, egFirstHallOf, egFightPieceAt, EG_SEALED_MS, EG_SPEC } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egOnFight, egCirclePlan, egFirstHallOf, egFightPieceAt, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egCaptiveSpots, EG_CHAINS } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
 import { egFightView, egGroundAt, egFeetAt } from '../../../src/net/eliteGates/egWalkGraph.js';
@@ -15,7 +15,10 @@ import { validEgOut } from '../../../src/net/wire.js';
 
 const T0 = 1_800_000_000_000;
 /** A breach of `n` members on hall `h` of `seed` (law `law`), stepped to its wake (the closing pin's rig). */
-function at(seed, h, n = 2, law = EG_SPEC) {
+/** PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the hero chambers' repros on spec law 9's halls, named - law 10 hangs a hero
+ *  chamber's three at its hero's own line, on its floor (the sweep below, over the build's law). */
+const LAW = 9;
+function at(seed, h, n = 2, law = LAW) {
   let s = seed;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = Array.from({ length: n }, (_, i) => [`acct-${i}`, `M${i}`, i + 1]);
@@ -41,7 +44,7 @@ const boxOf = (poly) => {
 
 test('EG-PERFECT THE CAPTIVE\'S CHAINS ABOUT A HERO CHAMBER (section 8.7): seed 40\'s hall 66 (a Rift-Yard in the Eclipse Vault) and seed 6\'s hall 22 (a Deepway through the Fallen Stacks) - the law\'s three hang off every fight floor at their own height, and the relay hangs three about the chamber\'s court instead (its box\'s middle, a quarter of its narrower side out, at 0, 120 and 240 degrees - the Deepway\'s the court under its chamber\'s spot, the Rift-Yard\'s its widest), each on the court at its height, where the company breaks them (mutants: the law\'s three taken unread; the widest polygon\'s choice; the quarter)', () => {
   for (const [seed, h, kind] of [[40, 66, 'yard'], [6, 22, 'deepway']]) {
-    const spec = egHallOf(seed, h), law = spec.spots.chain;
+    const spec = egHallOf(seed, h, 0, LAW), law = spec.spots.chain;
     assert.deepEqual([spec.kind, spec.twist, law.length], [kind, 'captive', EG_CHAINS]);
     assert.ok(law.every((q) => !egOnFight(spec, q.x, q.z, 0, lawY(q))), `seed ${seed} hall ${h}: the law's three off every fight floor`);
     assert.ok(law.every((q) => Math.abs(q.x) < 7), 'about the hall\'s origin line');
@@ -81,5 +84,6 @@ test('EG-PERFECT THE CAPTIVE\'S CHAINS, OVER THE HALLS (section 8.7): every Capt
       else { refused++; assert.notDeepEqual(got, law.map((q) => [q.x, q.z])); }
     }
   }
-  assert.deepEqual([halls, kept, refused], [124, 55, 2], 'refused: seed 6\'s hall 22 and seed 40\'s hall 66');
+  // PIN MOVED (EG-PERFECT, spec law 10): none refused - law 9 refused seed 6's hall 22 and seed 40's hall 66 (the repros above)
+  assert.deepEqual([halls, kept, refused], [124, 57, 0], 'law 10 hangs every three on its floor');
 });

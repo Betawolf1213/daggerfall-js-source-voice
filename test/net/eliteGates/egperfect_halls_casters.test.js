@@ -16,8 +16,11 @@ import { EG_BALCONY_OUT_CM, EG_BALCONY_R_CM } from '../../../src/net/eliteGates/
 import { validEgOut } from '../../../src/net/wire.js';
 
 const T0 = 1_800_000_000_000;
+/** PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the stands measured on spec law 9's halls, named (law 10 lays these seeds'
+ *  halls anew - its own stands pinned below, 4 m up and more). */
+const LAW = 9;
 /** A breach of `n` members on hall `h` of `seed` (law `law`), stepped to its wake (the closing pin's rig; poses carry `y`). */
-function at(seed, h, n = 2, law = EG_SPEC) {
+function at(seed, h, n = 2, law = LAW) {
   let s = seed;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = Array.from({ length: n }, (_, i) => [`acct-${i}`, `M${i}`, i + 1]);
@@ -40,20 +43,24 @@ function at(seed, h, n = 2, law = EG_SPEC) {
 test('EG-PERFECT A CHAMBER\'S CASTER STANDS (sections 11.4 and 11.7): seed 1\'s hall 9 - a Wellspring in the Fallen Stacks - stands its two on its balconies 3.6 m over the court (each anchor\'s plan, the balcony\'s height, the court\'s the spot names, and the chamber\'s reach: its court and balconies about it, 1 m under its floor to 5 m over); seed 1\'s hall 14 its two on its hero\'s gallery (the hero\'s own box); seed 1\'s hall 22 none on its passage\'s anchor; a Rampart none (mutants: a stand at the spot\'s own height; a passage\'s anchor stood; the reach\'s pad)', () => {
   const pad = (EG_BALCONY_OUT_CM + EG_BALCONY_R_CM) / 100;
   assert.equal(pad, 7);
-  const yard = egHallOf(1, 9), ch = yard.frags[3], R = (ch.z1 - ch.z0) / 2;
+  const yard = egHallOf(1, 9, 0, LAW), ch = yard.frags[3], R = (ch.z1 - ch.z0) / 2;
   assert.deepEqual([yard.kind, ch.cls, ch.kit, ch.play, R], ['yard', 'chamber', 'stacks', 'balcony', 22]);
   const box = [ch.x - R - pad, ch.y - 1, ch.z0 - pad, ch.x + R + pad, ch.y + 5, ch.z1 + pad];
   assert.deepEqual(egCasterStands(yard), [[111.75, 34.02, -24.1, -27.7, box], [62.75, 34.02, -24.1, -27.7, box]]);
   assert.deepEqual(yard.discs.filter((d) => d.role === 'balcony').map((d) => [d.x, d.z, d.y]), [[111.75, 34.02, -24.1], [62.75, 34.02, -24.1]]);
   // a hero chamber: the gallery its record names (its spot's own height), the hero's box its reach
-  const hero = egHallOf(1, 14), H = hero.heroes.find((q) => q.id === 'egheroStacks');
+  const hero = egHallOf(1, 14, 0, LAW), H = hero.heroes.find((q) => q.id === 'egheroStacks');
   assert.deepEqual(egCasterStands(hero), [[-14.55, 44.03, 23.5, 23.5, [H.box[0], H.box[1] - 1, H.box[2], H.box[3], H.box[4], H.box[5]]], [-51.75, 39.63, 23.5, 23.5, [H.box[0], H.box[1] - 1, H.box[2], H.box[3], H.box[4], H.box[5]]]]);
   assert.ok(hero.fl.some((f) => f.y === 20) && egOnFight(hero, -14.55, 44.03, 0, 23.5), 'the gallery 3.5 m over its court');
   // a passage's anchor: a stand on its own floor, no second one
-  const deep = egHallOf(1, 22);
+  const deep = egHallOf(1, 22, 0, LAW);
   assert.deepEqual(deep.spots.caster.map((q) => deep.frags[q.f].cls), ['chamber', 'chamber', 'passage']);
   assert.equal(egCasterStands(deep).length, 2);
-  assert.deepEqual(egCasterStands(egHallOf(1, 4)), [], 'a Rampart\'s Casters keep their pillars');
+  assert.deepEqual(egCasterStands(egHallOf(1, 4, 0, LAW)), [], 'a Rampart\'s Casters keep their pillars');
+  // spec law 10 (the build's): seed 1's hall 14 a Fallen Stacks' two balconies, its stands on them 4 m and more over its court
+  const k10 = egHallOf(1, 14, 0, EG_SPEC), st10 = egCasterStands(k10);
+  assert.deepEqual(st10.map((q) => q.slice(0, 3)), k10.discs.filter((d) => d.role === 'balcony').map((d) => [d.x, d.z, d.y]), 'law 10: on its balconies');
+  assert.ok(st10.length === 2 && st10.every((q) => q[2] - q[3] >= 4), `law 10: 4 m up and more (${st10.map((q) => (q[2] - q[3]).toFixed(1))})`);
 });
 
 test('EG-PERFECT CASTERS RISE ON THE STANDS (section 11.7): seed 1\'s hall 9 on the relay - three Casters risen at the great rift take the two balconies (the nearest free first), at 3.6 m over the court, pinned, and the third rises at its wave\'s spot; one risen on the arrival plate never takes a stand; a stand its Caster fell from is taken again; THE LEGION\'S CAP holds as it held; with the company at the court\'s heart 24.5 m off, each keeps its balcony (never walks the stair down) and bolts the court below, its Bolt (THE WIDTH RULE\'s r 3) landing on its mark\'s feet at the court\'s height (mutants: a stand outside its chamber taken; not pinned; the Bolt at its Caster\'s height)', () => {

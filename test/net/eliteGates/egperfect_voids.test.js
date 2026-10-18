@@ -10,7 +10,7 @@
 // producers: the law's own hall, the relay's own room, the real motor on the circle's real collider and the screen's own spans.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egCircleOfHall, egSpecForget, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egCircleOfHall, egSpecForget, egLawSeam, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egRouteAlongAt } from '../../../src/net/eliteGates/egRoute.js';
 import { egFairNew, egFairPose, egVoidCrossed, egVoidStep, egStepOffReach, EG_VOID_DROP_M } from '../../../src/net/eliteGates/egFair.js';
 import { EG_SPAN_RUN_MPS, EG_JUMP_G, EG_BODY_R } from '../../../src/net/eliteGates/egSpanLaw.js';
@@ -19,6 +19,9 @@ import { sweepStand, SWEEP_BUILD } from '../../../tools/egSpanSolve.mjs';
 import { PlayerMotor } from '../../../src/player/motor.js';
 import { realmToDungeon, dungeonToRealm } from '../../../src/net/superDungeon/sdBrain.js';
 
+// PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the audit's skip on spec law 9's hall, named through THE SEAM (law 10 lays
+// seed 3's anew), the relay's breach of law 9 with it
+egLawSeam(9);
 const SEED = 3, HALL = 27;
 /** The step off bridge 7's edge (18.3 m up) and where a run off it at THE SPAN BUILD lands, on bridge 13 (7.8 m up) - the
  *  audit's skip (the hall's frame). */
@@ -95,6 +98,7 @@ test('EG-PERFECT THE VOID ZONES IN THE ROOM (section 21\'s census, Elite-Gates-A
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = [['acct-0', 'M0', 1]];
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'M0', ew: 0, rh: 0, seed: SEED, op: T0, co, site: SITE, wg: [] });
+  B.egv = 9;
   let now = T0 + EG_SEALED_MS + 100;
   egEnter(B, 'acct-0', 'ordacct-0'.padEnd(20, 'x'), 40, now);
   const spec = egHallOf(SEED, HALL, 0);

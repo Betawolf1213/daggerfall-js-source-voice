@@ -101,8 +101,8 @@
   {
     "name": "EG6A-the-roads-laid-unsorted",
     "file": "src/net/eliteGates/egSpanLaw.js",
-    "old": "    lay() { return this.courses().flatMap((c) => c.steps).sort((a, b) => a.i - b.i); },",
-    "new": "    lay() { return this.courses().flatMap((c) => c.steps); },",
+    "old": "lay() { return [...this.courses().flatMap((c) => c.steps), ...free.map((q) => ({ ...q }))].sort((a, b) => a.i - b.i); },",
+    "new": "lay() { return [...this.courses().flatMap((c) => c.steps), ...free.map((q) => ({ ...q }))]; },",
     "tests": [
       "test/net/eliteGates/eg6a_span.test.js"
     ]
@@ -533,7 +533,7 @@
   {
     "name": "EG6A-a-gust-launched-into",
     "file": "tools/egSpanSolve.mjs",
-    "old": " && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null) && ",
+    "old": " && (turn || !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null)) && ",
     "new": " && ",
     "tests": [
       "test/tooling/eg6a_sweep.test.js"

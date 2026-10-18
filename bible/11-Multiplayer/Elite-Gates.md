@@ -9604,3 +9604,142 @@ version moved with EG-PERFECT's (the EG-PERFECT record above).
 
 HOSTS: none touched (`scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/exterior.js`). The new
 behaviour lives in the brain's own functions (`egClosingMs`, `egCasterStands`, `egStandFree`), and no Room method changed.
+
+### EG-PERFECT (the ways) - 2026-10-18 - THE WAYS AS PROVEN: THE LEAP, THE TUBE'S CLOCK, THE VOIDS, THE TOLL'S ROOMS, THE VENT, THE PENDULUM, THE HANG
+
+Mac: *"I want to ensure the boss attacks, the design of the halls, and everything is absolutely perfect. Traversing between
+sections should present a challenge, platforming should be detailed"*. The audit that followed walked LAW 9's halls with the
+real motor and the relay's judge side by side and found seven places where what the screen did, what the relay judged and
+what the law proved had come apart. No hall's DRAW moved: spec laws 4-9 lay every hall to the byte they did (the goldens -
+`test/net/eliteGates/egaudit5_f.test.js`, `test/net/eliteGates/law9_rooms.test.js` - green); what changed is how the relay and the
+screens READ them.
+
+Daggerfall Unity is the reference for the motor alone (AcrobatMotor's plain jump); DFU has no running leap, no Spire, no
+relay. The one departure this record names is from our own enhanced climb (CLIMB3), not from DFU: in the made levels whose
+ways are proven gap by gap, the running leap is refused and the press is DFU's plain jump again.
+
+**What shipped, by piece.**
+
+- **THE RUNNING LEAP REFUSED ON THE PROVEN WAYS** (`src/systems/madeLevel.js` `runLeap`; `src/scenes/shared.js` `parkourDeps`'
+  `leap`; `src/player/motor.js:"_pkMayLeap() { return !this.slowFalling && !this.onExteriorWater && this.parkour?.leap?.() !== false; }"`).
+  - The enhanced climb is forced on online (`systems/features.js` `enhanced-climbing`, `scenes/shared.js` `parkourSwitchOn`),
+    so a running Jump within `PARKOUR_RUNLEAP_EDGE` of an edge became CLIMB3's running leap (`_pkRunLeapSpeeds`): ~3.9 m at
+    Jumping 0, ~8.4 m at Jumping 100 - past the platform THE TIMED SOLVER proved THE SPAN BUILD's plain jump lands on. The
+    sweep with the online page's parkour on every frame and the leap allowed: 50 of 308 courses not crossed (11 seeds a
+    band); with it refused: none.
+  - The made level's law gains `runLeap: 'refused'` on the Spire's row and the Hour's (its Unmoored Steps are the Spire's
+    pieces' own record, proven with the same plain jump, and its online page forces the same lane); the court has no course
+    and keeps the leap. The one door is the motor's `_pkMayLeap` - the leap at the edge and its late press
+    (`PARKOUR_COYOTE_S`) both ask it - through the four hosts' one parkour deps
+    (`src/scenes/shared.js:"leap: () => madeRuleHere('runLeap') !== 'refused',"`). Refused, the late press is the made
+    level's own forgiveness (`latePress`, section 10.8): the plain jump. The wall run, the mantle, the vault and the free
+    climb are untouched (a Riser is still run up at Climbing 0).
+  - THE ONE CONSTRUCTION SEAM's sweep (`test/systems/eliteGates/egmade_law.test.js`, THE SWEEP) reads the new door:
+    `parkourDeps` is the rule's reader, and asks no made level itself.
+  - THE SWEEP'S PILOT (`tools/egSpanSolve.mjs` `pilotOf`) now crosses with the online page's parkour on in every frame, as
+    the game does - it had it on for a riser and a climb alone, so it never met the running leap - with the leap refused as
+    the Spire refuses it (`tools/egSpanSolve.mjs:"const parkour = { enabled: () => true, leap: () => madeLevelRule('spire', 'runLeap') !== 'refused',"`).
+    At the branch's head, 3 seeds a band (every fix below in): 20, 19, 23 and 21 courses, every one of 83 crossed.
+- **THE COLLAPSING TUBE'S CLOCK IN A ROUTED HALL** (`src/net/eliteGates/egFair.js:"export function egTubeEdgeIn(spec, hw, tm, tMs) {"`;
+  section 11.3).
+  - Its fall began a fixed `EG_TUBE_START_MS` (18 s) after the hall's wake (`net/eliteGates/egFragLaw.js` `egTubeEdge`) - the
+    slowest fair arrival at a mouth a straight run from the plate (laws 4-8). LAW 9 stands the mouth 34-82 s of THE SPAN
+    BUILD's fastest walking along THE ROUTE: in 13 of the 14 routed tubes of seeds 1-14 the mouth was already gone at the
+    fastest arrival, and the hall could not be finished.
+  - In a routed hall (`egRouted`) the tube now falls from the instant the room records the company at its mouth: the first
+    FAIR pose within `EG_TUBE_MOUTH_M` (3 m, in three dimensions - a floor 6 m over the mouth is not at it) of its first
+    metre (`egTubeAtMouth`; `src/net/eliteGates/egBrain.js:"if (!A.tm && egFairOk(A) && egTubeAtMouth(spec, x, y, z)) {"`), kept
+    with its wake (`B.tm = { hw, at, said }` - a hall woken again starts its tube afresh, nothing to reset) and said ONCE to
+    every screen with the stage (`tubeSaid`, `egStageWord`'s `tm`; `st` carries it to a screen joining late).
+  - **The start, and why**: `EG_TUBE_MOUTH_S = EG_WAIT_MAX + EG_SET_MARGIN x EG_TUBE_MOUTH_M / EG_SPAN_RUN_MPS` = 4 +
+    1.25 x 3 / 5.47 = 4.69 s after that instant. The fall then runs at its fixed 4.0 m/s. A member at the trigger's reach
+    running at THE SPAN BUILD (5.47 m/s) reaches tube metre z at (z + 3) / 5.47 s, the edge at start + z / 4 s; the set
+    piece's margin (`egTubeFair` - the edge no sooner than 1.25 x the runner) holds everywhere once it holds at the mouth,
+    since 1.25 / 5.47 < 1 / 4 - so 0.69 s is the least start. The other 4 s is THE TIMED SOLVER's no-queue law
+    (`EG_WAIT_MAX`, section 10.5): the member right behind may have missed the launch the first took at the gap before and
+    waits at most 4 s for the next - it keeps the same margin from its own arrival. A member who stands about at the mouth
+    is caught and cast forward (section 11.3's own rule), so the fall still chases the company - never a tube fallen before
+    it came, nor one that waits so long nobody sees it go (18 s from the mouth would be past the end of a 60-80 m tube at the
+    run). No hazard or step stands in a tube, so nothing slows the runner inside it.
+  - ONE LAW, READ TWICE: the relay's judge (`bandFallen`, `egFallenAt`, `egSupportAt`, the fair trail's `tm`) and the
+    screen's segments (`src/scenes/eliteGates/egSpan.js` `tubeEdgeOf`, through `systems/eliteGates/spireKit.js` `spireWake`'s new `tm` and
+    `net/eliteGates/egLink.js` `stageOf`) both read `egTubeEdgeIn`. Laws 4-8 keep the wake's clock to the byte.
+  - THE WIRE (`src/net/wire.js` `egStage`): the stage's word keeps `tm` when it is a relay instant, and only then - a word
+    without one is the word it was, and a bad one is no instant, never no stage.
+- **THE VOID ZONES ENFORCED** (`src/net/eliteGates/egFair.js:"export function egVoidCrossed(spec, fromY, a, b) {"`, `egVoidStep`;
+  Elite-Gates-Ascent.md section 2).
+  - LAW 9 lays a void zone "wherever a fall would skip ahead along the route" (`net/eliteGates/egAscent.js` `voidsOf` -
+    `spec.voids`), and nothing read them. In seed 3's hall 27 a run off the 49 m bridge 18.3 m up landed 10.5 m down on bridge
+    13: the route read 315 -> 601 of 622 m, the fair trail credited it, and the screen cast nobody back.
+  - THE LAW (one, for both sides): a stretch going down, by a body whose last ground stood over the zone's foot, that meets
+    the zone's heights over its footprint - tested where the stretch crosses the zone's top and foot, and at its end - passes
+    the zone; once the feet are `EG_VOID_DROP_M` (3 m) under the ground they left with a zone passed, the fall is the void's.
+    The footprint is read widened by the step-off reach, `egStepOffReach(dy)` = 5.47 x sqrt(2 dy / 20) + 0.35 m (THE SPAN
+    BUILD's run over the fall to the zone's foot, the capsule beside): the zone is the lower way's plan under the upper's 3 m
+    about it, and a running step-off from 10 m carries 6 m. Every zone stands over a way at least 5 m under the one it was
+    left from, so a fall through one passes the 3 m mark in the air.
+  - THE SCREEN (`src/scenes/eliteGates/egSpan.js` `intoVoid`, `ride`): judged before the frame's ground can become the cast-back's
+    place, the fall into a void zone is cast back to the last floor stood on at the void's cost (section 8) -
+    `src/scenes/eliteGates/egSpan.js:"if (voided && safe) { play(107, 0.6, 0.6); const p = wallSafe(safe, t); return [p[0], p[1] + 0.2, p[2]]; }"`.
+    A stretch wider in plan than any frame's run (a cast-back, a pull, a recall) is a place given, never a fall; `setSafe`
+    and the circle's clear forget the fall.
+  - THE RELAY (`egFairPose`): the void's fall breaks the fair trail (`why` 'void'), marks the pose (`vz` - the census owes
+    exactly one cast-back, `egPoseIn`), and credits nothing past the ground it left (`vd`): the break holds until the member
+    stands on still ground no further along the route than that (the screen's cast-back stands it there). A body that landed
+    on the way further on - an old screen, a forged one - is still the void's however far it walks on.
+  - Over the sweep's halls (3 seeds a band, 26 of 60 halls laying 95 zones) the real motor walked every road along its route
+    and was never cast back by a zone.
+- **THE TOLL'S NEW GROUND KEYED BY ITS HERO** (`egFair.js` `groundAt`; section 10.6). A hero's floor was keyed by its index
+  within its own hero, `h<i>` - and LAW 9 lays a hero a room, so floor 0 of every room after the first had been "seen"
+  already, and a member who ran on into the next room was tolled as if idle. From spec law 9 the key is `h<hero>:<floor>`
+  (`src/net/eliteGates/egFair.js:"const H = spec?.heroes ?? [], byHero = (spec?.law ?? 0) >= 9;"`); laws 4-8 keep `h<i>`. Seed 1 hall 2: the Tower's
+  floor `h0:0`, then the Stair Hall's `h1:0` - new ground, the waiver its own.
+- **A VENT BITES THROUGH ITS WHOLE FIRE** (`src/scenes/eliteGates/egFight.js` `place`, `ventJudged`; sections 8.3 and 10.3). The
+  eruption was judged on the fire's first frame alone and marked judged whether my feet were in it or not: a body that walked
+  into a span Vent's disc (or a Rampart vent's lane) a beat later stood in the flame unhurt. Now feet in it at any frame of
+  the fire are bitten, once an eruption per member (each screen judges its own feet), again the next; the Rampart's quake
+  cue still sounds once an eruption.
+- **THE PENDULUM'S TOUCH IS ITS DRAWN WEIGHT'S** (`src/net/eliteGates/egSpanLaw.js` `egPendHits`, `EG_PEND_BODY_H`; section 10.3). The
+  judge took feet from 0.6 m under the step to 2.2 m over it while the screen draws the weight from the step's top to
+  2 x `EG_PEND_HALF` (1 m) over it (`egPendModel`): a jump that cleared the drawn block by a metre was cast back, and a head
+  in it from below never was. Now the body's height (its feet to `CAPSULE_HEIGHT`, 1.8 m - `EG_PEND_BODY_H`, pinned equal;
+  the motor's own height where the screen asks, so a crouch passes under) meets the weight's drawn height. THE TIMED SOLVER
+  asks it of a body at the step's own height mid-flight, where the old band and this one agree, so every answer it gives and
+  every course drawn is the one it was; the relay judges no touch.
+- **A DRIFT'S HANG UNDER A FLOOR ABOVE** (`src/scenes/eliteGates/egSpan.js:"export function egHangReach(spec, s, band) {"`,
+  `standTells`, `hangLook`, `egHangModel(band, len, over)`; section 10.3: "hangs on two chains from an anchor 18 m up").
+  LAW 9 stacks its ways, and its drifts' 18 m chains and anchors passed through floors over them (3.1% of the drifts the audit
+  swept, 12.9-17 m up). The screen now hangs the anchor `EG_HANG_TOP` (each band's own anchor height, pinned to its model)
+  under the lowest underside of any floor its chains would pass (about the deck's travel) or its anchor would (its wider
+  reach, where it hangs) - a plate, a passage's floor, a bridge, a stair, a room's floor or whole box, a closed passage's
+  vault - on chains that long (never under 2.4 m), the crane's cable run to the floor; it leans by its own length, so its
+  brackets stay beside the deck the law swings. The deck's swing is the law's (stepAt), untouched; a hang with nothing over
+  it is the 18 m model, byte for byte. Over the 891 drifts of 40 seeds' circles a band, 36 hang shorter (4.0%), 4.05-17.72 m.
+  Each capped hang is its own model in its hall's batch kind - no new kind.
+
+**The pins** (each fails without its fix - the records in `tools/mutants/egperfect.json`, 19 mutants):
+`test/player/egperfect_runleap.test.js` (the leap refused at Jumping 0 and 100, pressed at the edge or short of it; the late
+press the forgiven plain jump; the wall run kept), `test/net/eliteGates/egperfect_tube.test.js` (every routed tube of seeds 1-14:
+the fastest arrival finds it standing, the runner never overtaken with the margin, one launch behind keeps it, a waiter
+caught, laws 4-8's clock to the byte; the room's instant said once, through the wire, the client's state and the spans'
+wake, the census from it), `test/net/eliteGates/egperfect_voids.test.js` (seed 3 hall 27 on the relay's trail, in the relay's own
+room, and on the real motor over the circle's real collider and the screen's own spans), `test/net/eliteGates/egperfect_toll.test.js`
+(seed 1 hall 2; law 8's keys), `test/net/eliteGates/egperfect_vent.test.js` (a span Vent and a Rampart vent entered mid-fire),
+`test/net/eliteGates/egperfect_pend.test.js` (the drawn band, the motor's body), `test/world/eliteGates/egperfect_hang.test.js` (seed 2 hall
+12's drifts under their bridge; the open sky's hang to the byte; the screen's pivot and lean).
+
+**Pins moved**: `test/systems/eliteGates/egmade_law.test.js` (the law's table gains `runLeap`; THE SWEEP reads `parkourDeps`'s door);
+`test/net/eliteGates/egfrag_client.test.js` (a routed hall's Tube falls from `tm`, not the wake). Eighteen mutant records the
+change moved were re-aimed BY CONTENT (`auditclimbarc`, `eg6a`, `eghero_lay`, `egint`, `egmade`, `egspan`, `egz_legion`,
+`egz_rules`, `egz_tells`, `law9_proofs`): each applies again and still dies.
+
+**The relay.** `net/eliteGates/egBrain.js`, `egFair.js`, `egSpanLaw.js` and `net/wire.js` are in the relay's bundle, so this is a relay
+change: the relay's version moved with EG-PERFECT's (`world218` - the EG-PERFECT record above). The wire's change is additive (`tm` on `sg`/`st`, optional): an old screen ignores it and
+keeps the wake's clock for a routed tube - the deploy order is the relay's, then the client's.
+
+**What it does not do, said so.**
+- No hall's draw moved (laws 4-9 - spec law 10 is the EG-PERFECT record's), no proof, no generator: THE TIMED SOLVER's answers are its own. Every read here holds for law 10's routed halls as for law 9's.
+- The running leap is refused in the Spire and the Hour only; the court and the open world keep CLIMB3's leap.
+- The relay does not judge the Pendulum's touch or the Vent's bite (each screen judges its own feet); a void fall's cast-back
+  is the screen's, the relay's part the break, the progress and the census.
+- A capped hang is the screen's alone; the relay never knew a chain.

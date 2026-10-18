@@ -139,7 +139,9 @@ test('EG-LOOK THE TELEGRAPHS KEEP THEIR FLOOR (section 5: "the motes fade within
   }
   assert.ok(halls >= 60);
   // the clearance itself, on one disc
-  const spec = egCircleSpecs(7, 1, 0)[0], d = spec.discs.find((q) => q.role === 'court'), floors = new Float32Array(EG_MOTE_FLOOR.max * 8), n = egMoteFloors(spec, floors);
+  // (that disc alone handed - PIN MOVED, EG-PERFECT: spec law 10's way circles this court at its height, its bridges inside the margin)
+  const hall = egCircleSpecs(7, 1, 0)[0], d = hall.discs.find((q) => q.role === 'court');
+  const spec = { ...hall, discs: [d], bands: [], lanes: [], ramps: [], caves: [], steps: [] }, floors = new Float32Array(EG_MOTE_FLOOR.max * 8), n = egMoteFloors(spec, floors);
   const c = egToDungeon(spec, d.x, d.y ?? 0, d.z), G = law(floors, n);
   assert.equal(G.floorFade([c[0], c[1] + EG_MOTE_FLOOR.clear - 0.01, c[2]]), 0);
   assert.equal(G.floorFade([c[0], c[1] + EG_MOTE_FLOOR.clear + EG_MOTE_FLOOR.ease + 0.01, c[2]]), 1);

@@ -869,8 +869,9 @@ export function egSpanProof(spec, median = true) {
       // THE BROKEN WAY (spec law 10): a travelling neighbour (a Rail, a Drum) is no still ground - the two apart by EG_RAIL_CLEAR
       // through both travels, each at its place on THE LAW'S CLOCK (law 9 held the next at rest: 63 of 71 open-course runs met)
       const moving = law10 && meets && (next.kind === 'rail' || next.kind === 'drum');
-      if (s.amp > Math.min(s.gap ?? 0, moving ? Infinity : after) - EG_RAIL_CLEAR) why.push(`${s.i}: a Rail's travel closes on what stands beside it`);
-      if (moving && railsMeet(s, next, B)) why.push(`${s.i}: a Rail's travel meets the next's`);
+      const closes = `${s.i}: a Rail's travel closes on what stands beside it`;
+      if (s.amp > Math.min(s.gap ?? 0, moving ? Infinity : after) - EG_RAIL_CLEAR) why.push(closes);
+      if (moving && railsMeet(s, next, B)) why.push(`${closes} - travelling`);   // (the next's travel meets its own)
     }
     // EG-ZC: a slag crust is left onto still ground - the ground itself, or a step of its road that keeps no time
     if (s.kind === 'slag') {

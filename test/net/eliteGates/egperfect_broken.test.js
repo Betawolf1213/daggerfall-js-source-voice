@@ -156,9 +156,10 @@ test('EG-PERFECT THE BROKEN WAY - A FIGHT HALL\'S DOOR FOLLOWS ITS TRIAL (the ha
     // the trial's ground: the course holding the fight's heart (a Proving Walk's first)
     const G = R.courses.filter((g) => !g.b), trial = s.kind === 'proving' ? G[0] : G.find((g) => s.fight && s.fight.x >= g.x0 - 1 && s.fight.x <= g.x1 + 1 && s.fight.z >= g.z0 - 1 && s.fight.z <= g.z1 + 1) ?? G[G.length - 1];
     const inT = (p) => p[0] >= trial.x0 - 0.05 && p[0] <= trial.x1 + 0.05 && p[2] >= trial.z0 - 0.05 && p[2] <= trial.z1 + 0.05 && p[1] >= trial.y0 - 0.5 && p[1] <= trial.y1 + 0.5;
-    const firstIn = main.findIndex((i) => inT(R.nodes[i]));
-    assert.ok(firstIn > 0, `${at(s)}: its way reaches its trial`);
     const inRoom = (p) => heroes.some((q) => p[0] >= q.box[0] - 0.05 && p[0] <= q.box[3] + 0.05 && p[2] >= q.box[2] - 0.05 && p[2] <= q.box[5] + 0.05 && p[1] >= q.box[1] - 0.5 && p[1] <= q.box[4] + 0.5);
+    // (its first node on the trial's own ground - a room's mouth may stand inside the course's box, a Proving Walk's tower top)
+    const firstIn = main.findIndex((i) => inT(R.nodes[i]) && !inRoom(R.nodes[i]));
+    assert.ok(firstIn > 0, `${at(s)}: its way reaches its trial`);
     for (const i of main.slice(firstIn)) assert.ok(!inRoom(R.nodes[i]), `${at(s)}: no room on its way past its trial`);
     if (s.kind !== 'proving') {
       // the door's bridge leaves the trial's ground: the main way's last two links the door's (its bridge and its plate)
@@ -230,12 +231,12 @@ test('EG-PERFECT THE BROKEN WAY - RAILS APART, A PENDULUM OVER THE WHOLE FLIGHT 
   // laid in metres and proven: they never meet; two neighbours on their own periods (law 9's) do, and law 10 refuses them
   const m = (q, i) => ({ ...q, i, x: q.x / 100, y: q.y / 100, z: q.z / 100, w: q.w / 100, d: q.d / 100, amp: q.amp / 100, gap: q.gap / 100, period: q.period / 1000, phase: q.phase / 1000, after: 3 });
   const ok = R.map(m);
-  assert.ok(!egSpanProof({ v: 10, steps: ok }).why.some((w) => /meets the next/.test(w)), 'a law 10 run apart');
+  assert.ok(!egSpanProof({ v: 10, steps: ok }).why.some((w) => /beside it - travelling/.test(w)), 'a law 10 run apart');
   const bad = ok.map((q, k) => ({ ...q, amp: 1.5, gap: 2.6, period: 6 + k * 1.3, phase: k * 1.5 }));
   let z = 0;
   for (const q of bad) { z += q.gap + q.d / 2; q.z = z; z += q.d / 2; }
-  assert.ok(egSpanProof({ v: 10, steps: bad }).why.some((w) => /meets the next/.test(w)), 'travelling neighbours that meet are refused');
-  assert.ok(!egSpanProof({ v: 9, steps: bad }).why.some((w) => /meets the next/.test(w)), 'law 9 held the neighbour still');
+  assert.ok(egSpanProof({ v: 10, steps: bad }).why.some((w) => /beside it - travelling/.test(w)), 'travelling neighbours that meet are refused');
+  assert.ok(!egSpanProof({ v: 9, steps: bad }).why.some((w) => /beside it - travelling/.test(w)), 'law 9 held the neighbour still');
   for (const [kit, f] of [['forge', (r) => egFragPassage('forge', r, { law: 10 }).course.filter((q) => q.k === 'rail')], ['forgeline', (r) => egSetPiece('forgeline', r, { law: 10 }).course]]) {
     const c = f(sdRng(5));
     assert.ok(c.length >= 2 && c.every((q) => q.period === c[0].period && q.phase === c[0].phase), `${kit}: one belt`);
@@ -269,7 +270,9 @@ test('EG-PERFECT THE BROKEN WAY - THE HALLS\' FITTINGS WHERE A BODY REACHES THEM
   // laid: the 400 halls' fittings
   let alcoves = 0, ramparts = 0;
   for (const s of all()) {
-    for (const w of (s.deco ?? []).filter((q) => q.t === 'wall' && q.kit)) for (const al of (s.alcoves ?? []).filter((q) => Math.abs(Math.hypot(q.x - w.x, q.z - w.z) - (w.r - 1.5)) < 3)) {
+    // (the chamber's own: a passage's alcove in its wall may stand beside the ring - inside its chamber's length alone)
+    const own = (q, w) => s.frags.some((f) => f.cls === 'chamber' && Math.abs(f.x - w.x) < 0.01 && q.z > f.z0 && q.z < f.z1);
+    for (const w of (s.deco ?? []).filter((q) => q.t === 'wall' && q.kit)) for (const al of (s.alcoves ?? []).filter((q) => Math.abs(Math.hypot(q.x - w.x, q.z - w.z) - (w.r - 1.5)) < 3 && own(q, w))) {
       alcoves++;
       const R0 = w.r - (s.discs.some((q) => q.role === 'balcony' && Math.hypot(q.x - w.x, q.z - w.z) < w.r) ? 9 : 1.5);
       assert.ok(Math.hypot(al.x - w.x, al.z - w.z) - R0 <= EG_ALCOVE_REACH_M - 0.35 + 1e-6, `${at(s)}: an alcove within reach of its court`);

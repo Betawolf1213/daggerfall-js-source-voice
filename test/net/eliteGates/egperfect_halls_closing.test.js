@@ -8,7 +8,7 @@
 // BUILD inside it, never inside 20 s; laws 4-8 and the doors an arrival opens close as they closed.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egCirclePlan, egFirstHallOf, egAtDoor, EG_SEALED_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_SPEC } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egCirclePlan, egFirstHallOf, egAtDoor, EG_SEALED_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egDown, egClosingMs, egClosingWalk, egTrialEndAt, EG_CLOSING_WALK_X } from '../../../src/net/eliteGates/egBrain.js';
 import { egFairNew } from '../../../src/net/eliteGates/egFair.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
@@ -22,13 +22,18 @@ import { validEgOut } from '../../../src/net/wire.js';
 /** THE ESCAPE BUILD on the route's legs (section 10.2: Speed 40, Running 20 - its run; its climb THE SPAN BUILD's own, Climbing
  *  0's, a rest on each ledge and the mantle from the hang's reach - the slower, so the reach proven is the harder). */
 const ESCAPE = Object.freeze({ run: EG_ESCAPE_MPS, climb: EG_CLIMB_MPS, start: EG_CLIMB_START_S, rest: true, down: 1, g: EG_JUMP_G, mantle: (H) => egMantleS(Math.min(H, EG_CLIMB_HANG_M), 0) });
+/** PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the audit's repros measured on spec law 9's halls, named (law 10 lays seed
+ *  1's anew); the sweep over the build's own law. */
+const LAW = 9;
+/** The trial's own ground: the way's first course that is no broken bridge (THE BROKEN WAY's, spec law 10 - its `b`). */
+const trialGround = (spec) => spec.route.courses.find((q) => !q.b);
 /**
  * THE ESCAPE BUILD FROM THE TRIAL'S FAR SIDE TO THE DOOR (s), by this pin's own arithmetic: across the trial's course's ground to
  * where the way leaves it (from its box's farthest corner in plan, at the run), then road 0's legs to the door at the build -
  * each by its kind's law, a climb's spent grip waited back after it, a span leg's timed pairs each at EG_WAIT_MAX.
  */
 function escapeToDoor(spec) {
-  const R = egRouteOf(spec), k0 = egTrialEndAt(spec), e = R.nodes[R.paths[0][k0]], g = spec.route.courses[0];
+  const R = egRouteOf(spec), k0 = egTrialEndAt(spec), e = R.nodes[R.paths[0][k0]], g = trialGround(spec);
   let far = 0;
   for (const x of [g.x0, g.x1]) for (const z of [g.z0, g.z1]) far = Math.max(far, Math.hypot(x - e[0], z - e[2]));
   let t = far / EG_ESCAPE_MPS;
@@ -37,9 +42,9 @@ function escapeToDoor(spec) {
 }
 
 test('EG-PERFECT THE CLOSING\'S WALK (sections 7 and 17.1; Elite-Gates-Ascent.md section 1): the audit\'s repros - seed 1\'s hall 1 (a Rift-Yard, its door 244 m along the way past its court) and hall 4 (a Rampart, 192 m past its gate) - close in EG_CLOSING_FIGHT_MS and their way to the door at THE SPAN BUILD x 1.25, ceiled to the second (76 s, 71 s), and THE ESCAPE BUILD reaches the door inside it from the trial\'s far side, never inside the 20 s they had; seed 1\'s hall 3 (a Proving Walk, its second span crossed in the closing) waits each of its six timed pairs EG_WAIT_MAX (154 s); laws 4-8 close in 20 s, a Proving Walk in 45, every span-like door an arrival opens in 45 (mutants: the closing\'s walk dropped; its spare share 1; the trial\'s end at the first node on its course; a pair\'s wait)', () => {
-  assert.equal(EG_SPEC, 9, 'the law the repros are pinned in');
+  assert.equal(LAW, 9, 'the law the repros are pinned in');
   assert.equal(EG_CLOSING_WALK_X, 1.25);
-  const yard = egHallOf(1, 1), rampart = egHallOf(1, 4);
+  const yard = egHallOf(1, 1, 0, LAW), rampart = egHallOf(1, 4, 0, LAW);
   assert.deepEqual([yard.kind, yard.variant, rampart.kind, rampart.variant], ['yard', 'riftyard', 'rampart', 'siege']);
   // the trial's end: the court's far rim, the walk's end - where the way leaves the course for the door
   assert.deepEqual([egTrialEndAt(yard), egTrialEndAt(rampart)], [46, 1]);
@@ -56,7 +61,7 @@ test('EG-PERFECT THE CLOSING\'S WALK (sections 7 and 17.1; Elite-Gates-Ascent.md
   assert.deepEqual([egClosingMs(yard), egClosingMs(rampart)], [76_000, 71_000]);
   // a Proving Walk's door opens at its champion's fall: its second span is crossed in the closing, each timed pair of it waited
   // at EG_WAIT_MAX - the most THE TIMED SOLVER proves a pair asks (its legs in turn, as egClosingWalk adds them)
-  const prov = egHallOf(1, 3), pl = egRouteSolved(prov, 0).slice(egTrialEndAt(prov));
+  const prov = egHallOf(1, 3, 0, LAW), pl = egRouteSolved(prov, 0).slice(egTrialEndAt(prov));
   assert.equal(prov.kind, 'proving');
   assert.deepEqual([pl.reduce((a, L) => a + L.pairs.length, 0), pl.filter((L) => L.g.kind === 'climb').length, EG_WAIT_MAX], [6, 0, 4]);
   assert.equal(egClosingWalk(prov), pl.reduce((a, L) => a + (L.span + L.pairs.length * EG_WAIT_MAX), 0));
@@ -74,8 +79,8 @@ test('EG-PERFECT THE CLOSING\'S WALK (sections 7 and 17.1; Elite-Gates-Ascent.md
     assert.equal(egClosingMs(s), s.kind === 'yard' || s.kind === 'rampart' ? EG_CLOSING_FIGHT_MS : EG_CLOSING_SPAN_MS, `law ${law} hall ${h} (${s.kind})`);
   }
   // LAW 9: a door an arrival opens (a span, a Deepway, a Brink) - the company stands at it - closes in 45 s
-  assert.equal(egHallOf(1, 2).kind, 'span');
-  assert.equal(egClosingMs(egHallOf(1, 2)), EG_CLOSING_SPAN_MS);
+  assert.equal(egHallOf(1, 2, 0, LAW).kind, 'span');
+  assert.equal(egClosingMs(egHallOf(1, 2, 0, LAW)), EG_CLOSING_SPAN_MS);
 });
 
 test('EG-PERFECT THE CLOSING\'S WALK, OVER THE HALLS (section 7): every hall of seeds 1-2, circles 1-6, whose door its trial\'s end opens - a Rift-Yard, a Rampart, an Athenaeum, a Scriptorium, a Proving Walk\'s champion - closes long enough for THE ESCAPE BUILD to reach its door from the trial\'s far side; the walk is the way past the trial\'s course alone (a Proving Walk\'s second span with it: its door opens at its champion\'s fall); the closing is whole seconds (mutants: the closing\'s walk dropped; the trial\'s end at the first node on its course; the span pairs\' wait)', () => {
@@ -92,7 +97,7 @@ test('EG-PERFECT THE CLOSING\'S WALK, OVER THE HALLS (section 7): every hall of 
       assert.equal(ms % 1000, 0, 'whole seconds');
       assert.ok(t * 1000 <= ms, `seed ${seed} hall ${spec.h} (${spec.kind}): the escape build in ${t.toFixed(1)} s, the closing ${ms / 1000} s`);
       // the trial's end on its course's ground, and nothing of road 0 past it stands on that ground again
-      const R = egRouteOf(spec), k0 = egTrialEndAt(spec), g = spec.route.courses[0], P = R.paths[0];
+      const R = egRouteOf(spec), k0 = egTrialEndAt(spec), g = trialGround(spec), P = R.paths[0];
       const on = (p) => p[0] >= g.x0 - 0.5 && p[0] <= g.x1 + 0.5 && p[2] >= g.z0 - 0.5 && p[2] <= g.z1 + 0.5 && p[1] >= g.y0 - 0.5 && p[1] <= g.y1 + 0.5;
       assert.ok(on(R.nodes[P[k0]]) && P.slice(k0 + 1).every((i) => !on(R.nodes[i])), `seed ${seed} hall ${spec.h}: the trial's end`);
     }
@@ -102,7 +107,7 @@ test('EG-PERFECT THE CLOSING\'S WALK, OVER THE HALLS (section 7): every hall of 
 
 const T0 = 1_800_000_000_000;
 /** A breach of `n` members on hall `h` of `seed` (law `law`), stepped to its wake (egfrag_relay's rig). */
-function at(seed, h, n = 2, law = EG_SPEC) {
+function at(seed, h, n = 2, law = LAW) {
   let s = seed;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = Array.from({ length: n }, (_, i) => [`acct-${i}`, `M${i}`, i + 1]);

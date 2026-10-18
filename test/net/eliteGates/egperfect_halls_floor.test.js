@@ -7,7 +7,7 @@
 // the fight floor under the horn (net/eliteGates/egBrain.js hornStep).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egOnFight, egFightPieceAt, egKeepOnFight, EG_SEALED_MS, EG_SPEC } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egOnFight, egFightPieceAt, egKeepOnFight, egCirclePlan, egFirstHallOf, EG_SEALED_MS, EG_SPEC } from '../../../src/net/eliteGates/egLaw.js';
 import { egFightView, egFeetAt } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { egBreachNew, egEnter, egStep, EG_ASHFALL_EVERY_MS } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
@@ -16,7 +16,10 @@ import { validEgOut } from '../../../src/net/wire.js';
 
 const T0 = 1_800_000_000_000;
 /** A breach of `n` members on hall `h` of `seed` (law `law`), stepped to its wake (the closing pin's rig; poses carry `y`). */
-function at(seed, h, n = 2, law = EG_SPEC) {
+/** PIN MOVED (EG-PERFECT, spec law 10 - 2026-10-18): the repros on spec law 9's halls, named (law 10 lays these seeds' halls anew -
+ *  its own Deserter halls swept below). */
+const LAW = 9;
+function at(seed, h, n = 2, law = LAW) {
   let s = seed;
   const rng = () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; };
   const co = Array.from({ length: n }, (_, i) => [`acct-${i}`, `M${i}`, i + 1]);
@@ -36,7 +39,7 @@ function at(seed, h, n = 2, law = EG_SPEC) {
 }
 
 test('EG-PERFECT THE DESERTER ON THE COURT (section 8.7): in every Deserter hall of seeds 1-60 the spot the relay read - the bounding disc\'s near rim, 3 m in - stands past the court\'s rim, and the Deserter rises on the court 1 m inside its rim at the point nearest it, at the court\'s height, never its gallery; seed 38\'s hall 16 (a hero court and its gallery) and seed 46\'s hall 86 (off every floor) on the relay (mutants: the bounding disc\'s spot again; no inset)', () => {
-  const hero = egHallOf(38, 16), plain = egHallOf(46, 86);
+  const hero = egHallOf(38, 16, 0, LAW), plain = egHallOf(46, 86, 0, LAW);
   assert.deepEqual([hero.twist, hero.kind, plain.twist, plain.kind], ['deserter', 'yard', 'deserter', 'yard']);
   const ys = [...new Set(hero.fl.map((f) => f.y))].sort((a, b) => a - b);
   assert.ok(ys.length >= 2 && ys.at(-1) - ys[0] >= 2.5, `a court and a gallery over it: ${ys}`);
@@ -61,11 +64,22 @@ test('EG-PERFECT THE DESERTER ON THE COURT (section 8.7): in every Deserter hall
   // every Deserter hall of seeds 1-60 (eleven): the spot off the court, the Deserter on it
   const halls = [[1, 24], [16, 31], [22, 16], [31, 46], [36, 41], [38, 16], [46, 86], [47, 79], [52, 9], [54, 44], [60, 39]];
   for (const [seed, h] of halls) {
-    const spec = egHallOf(seed, h), lo = Math.min(...spec.fl.map((f) => f.y)), [x, z] = egKeepOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 1);
+    const spec = egHallOf(seed, h, 0, LAW), lo = Math.min(...spec.fl.map((f) => f.y)), [x, z] = egKeepOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 1);
     assert.equal(spec.twist, 'deserter', `seed ${seed} hall ${h}`);
     assert.equal(egOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 0, lo), false, `seed ${seed} hall ${h}: the spot off the court`);
     assert.ok(egOnFight(spec, x, z, -0.95, lo) && egFeetAt(egFightView(spec), x, z) === lo, `seed ${seed} hall ${h}: kept on the court, at its height`);
   }
+  // spec law 10 (the build's): every Deserter hall of seeds 1-30 keeps its Deserter on the court, at its height
+  let tens = 0;
+  for (let seed = 1; seed <= 30; seed++) for (let c = 1; c <= 20; c++) egCirclePlan(seed, c, EG_SPEC).forEach((p, sl) => {
+    if (p.twist !== 'deserter') return;
+    const spec = egHallOf(seed, egFirstHallOf(c) + sl, 0, EG_SPEC);
+    if (spec.twist !== 'deserter') return;
+    tens++;
+    const lo = Math.min(...spec.fl.map((f) => f.y)), [x, z] = egKeepOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 1);
+    assert.ok(egOnFight(spec, x, z, -0.95, lo) && egFeetAt(egFightView(spec), x, z) === lo, `law 10 seed ${seed} hall ${spec.h}: kept on the court, at its height`);
+  });
+  assert.ok(tens >= 3, `${tens} law 10 Deserter halls`);
 });
 
 test('EG-PERFECT THE ASHFALL IN THE PIT (section 11.2: "the crowd throws fire - Ashfall in the Pit for the rest of the hall"): a foul Honour Horn\'s Ashfall lays its three pools every EG_ASHFALL_EVERY_MS on the fight floor under the horn - a Wellmouth Rift-Yard\'s kit Clan Pit, a Proving Walk\'s hero Clan Pit, a Deepway\'s chamber - never past the Pit\'s rim (the bounding disc threw 23%, 34% and 86% of them off), a disc Pit\'s each whole on it, each at the horn\'s floor (mutants: the bounding disc again, kept or not; a pool not kept)', () => {
