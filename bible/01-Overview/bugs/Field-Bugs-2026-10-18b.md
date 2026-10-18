@@ -10,10 +10,10 @@ record says so and what would prove it. The pins are `fb1018b_*`, the mutants `t
 | 1 | MoonGeneral, "No clue how to start cr[afting]": "for the crafting side of this mechanic i have no clue on how to start it ... when it comes to the crafting skills you no explanation there" | The Professions page explained every gathering profession and two of the crafts. Smithing, Building and Outfitting drew their perk cards with nothing above them, Provisioning never named Cooking, and no tutorial page said where a station stands | written (CRAFT-HOWTO) |
 | 2 | Awesomenout, "Help! Severe and rando[m FPS drops]": "Normally, my game runs at a stable 144 FPS, but sometimes my FPS suddenly drops dramatically, going as low as 30 FPS or even 0 FPS ... I've also tried changing the graphics settings, but it doesn't seem to make any difference" | Not proven. Every main-thread candidate measured stays under a hitch of this size at a realistic size, or keeps a fixed cadence. The counter could not show a hitch past its own second, and read "0 fps" after the page was hidden | counter fixed (HITCH-KEEP); the cause open, below |
 | 3 | Cruor, "Can't use own craft stat[ions]": "shared account homes don't let other characters access their craft benches. Pls fix. I wanna enchant thingies!" | The door asks whether the ACCOUNT owns the home; the stations asked whether THIS CHARACTER does | fixed (HOME-BENCH) |
-| 4 | Boar, "Big bugs of the spires", seven items | 6, the Twins: a Sapper fed a fallen Twin, which stood on the relay un-hittable on every screen. 3 is the record's law, and said. 5's windows are the record's; a key clash found on the way is the owner's call. 1, 2, 4, 4.1 and 7: below | 6 fixed (TWIN-REKINDLE); the rest below |
+| 4 | Boar, "Big bugs of the spires", seven items | 6, the Twins: a Sapper fed a fallen Twin, which stood on the relay un-hittable on every screen. 1, the ring was never drawn; 4, THE ASCENT refused a shaft at the balconies' banners, and the ward was never shown; 7, the plates were never drawn. 2 and 4.1 are the hall's look, not built. 3 is the record's law, and said. 5's windows are the record's; a key clash found on the way is the owner's call | 6, 1, 4 and 7 fixed (TWIN-REKINDLE, DUEL-RING, BANNER-SHAFT, WARD-BAR, WINCH-PLATES; SAYS-PAST-TWELVE found on the way); 2 and 4.1 open, below |
 | 5 | kvassdrit, "L opens chronicles instead of Quest tab": "Function does not match description in keybinding menu" | What L opens is a recorded decision (PX24d, MAC-K2); the Controls row, written later by KB1, kept DFU's word | fixed (KEY-LOGBOOK) |
 | 6 | Warrgrim, "Please Fix Leaping Strike Weapon Techniques. items": "leaping strikes/ any weapon ability that allows you to leap and perform an aoe attack have been completely disabled/broken ... "you cannot leap from here" ... extends to the unarmed versions of this technique as well, such as flying kick" | A piece that casts Slowfalling while held (a Rare armour flavour, The Raven's Wings) refused every leap and dash on flat ground: the gate read the spell, not the air | changed (LEAP-SLOW), a departure, for Mac's review |
-| 7 | FloopZe, "Castle Daggerfall guards loot duping": "the guards aggro automatically and after killing them I am able to able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a few exits ...)" | Not proven for this report; one path that fits every clause reproduced, below | below |
+| 7 | FloopZe, "Castle Daggerfall guards loot duping": "the guards aggro automatically and after killing them I am able to able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a few exits ...)" | Not proven for this report. One path that fits every clause reproduced: a room's host gone silent (a hidden tab) kept the relay's pen while a joiner ran the foes, so the joiner's kills and takes were never kept and every walk back in was welcomed with full bodies - 2280, 4560, 6840 gold | the dupe fixed (SEAT-LIVE, relay world219); the auto-aggro the owner's call, below |
 | 8 | Tibbnak, "Quest: A danngerous wizard, Theodyval laboratory, can complete quest offline but not online" | Not proven. The instance and the offline game stand the quest's Mage on the same marker; public stands nothing, by INSTANCES' law | open: what would find it, below |
 
 ## CRAFT-HOWTO: every crafting profession says where it is worked (1)
@@ -120,6 +120,88 @@ re-aimed (PIN MOVED).
 
 ## Report 4: Boar's spires
 
+### DUEL-RING: the Challenge's ring is drawn (item 1)
+
+`src/scenes/eliteGates/egFight.js` (duelRing), `src/net/eliteGates/egLords.js` (EG_DUEL_OPEN), the locales.
+
+FOUND, on the Armsmaster's court (seed 1, hall 10, two members) through the real director and the client's fold and
+draw plan: the ring reaches every screen as `pg.ring` (`egLords.js:"if (!open) { egPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }"`),
+and the client read it only to hold the player's movement at the rim. Nothing drew it: the line was said, the frame
+had no shape at the ring.
+
+FIXED. `egFight.js:"  function duelRing(R, t) {"` draws a band of fire half a metre either side of the rim, burning
+ground on the floor. And a second false line: at n = 1 the record stands no ring and no braziers, yet the words said
+"The ring of fire rises." and "The ring falls." The relay's `challenge` and `challengeend` carry `t: 'open'`
+(`egLords.js:"export const EG_DUEL_OPEN = 'open';"`), and the screen says "A challenge in the open! Deal him a tenth
+of his health within 15 s." and "The challenge goes unmet." - drafted in every language. A client before it reads the
+ring's words, as ever. Pins: `test/scenes/eliteGates/fb1018b_duelring.test.js` (2). Mutants:
+`tools/mutants/fb1018b_duelring.json` (7, all dead).
+
+### Item 2, the puzzle's stones: the hall's look, recorded and not built
+
+Each Orrery stone stands as a body on the floor (`egBrain.js:"for (const [j, st] of (spec.spots.stone ?? []).entries()) egRaiseObj(F, 'stone',"`)
+and is drawn a gold disc; across ten Athenaeums all six discs reached the draws every time. The handles a player
+turns are hit boxes with no model - "stones that can be clicked but not seen". Both records already say so
+(Field-Bugs-2026-10-17c, ORRERY-HEIGHT: "the stones are still a disc on the floor with their handles unseen until the
+crosshair names one"; 10-17e, ORRERY-SIGHT: "A stone with its dial and hand, and plaques standing in the court, are a
+question for the hall's look"). What closes it: a look slice that stands the Hour's dial and hand at each
+`spots.stone`, its handles drawn where egSpan puts their boxes.
+
+### BANNER-SHAFT, WARD-BAR: a shaft breaks a banner, and the ward is shown (item 4)
+
+`src/net/eliteGates/egBodies.js`, `src/net/eliteGates/egWalkGraph.js` (egStacked), `src/ui/eliteGates/egSpireHud.js`.
+
+FOUND. THE ASCENT refused a member's blow of ANY kind on a body one storey up, and the Rotunda's balconies stand
+exactly 4 m over the court - EG_STACK_M - so each is another storey. On seed 1, hall 25 (the court at -11, a balcony
+at -7), shafts and spells from the court 8 and 12 m from a banner did nothing; from the balcony they did 20. The
+record wants them shot: 13.4 calls the banner "an errand's object, struck", AUDIT EG V lane5 #14 added the stairs
+because the banners "stood out of every melee reach", and 8.3 answers an off-floor errand "with arrows and spells".
+The ward was real (`egLords.js:"const held = banners.length >= 2 && now < (F.mem.bannerWardUntil ?? 0);"`) and no
+lord bar showed it, though 25.2 promises "the cage on the lord's bar is red-bronze and hatched".
+
+FIXED. A swing still reaches its own storey alone; a shaft or a spell is refused only where the two stand stacked
+(`egWalkGraph.js:"export const egStacked = (view, ax, ay, az, bx, by, bz) =>"`), so it flies through the open air
+between a court and its balcony. The lord bar carries `ward`: it reads "... - Warded" over a caged track, and the
+Conquest's line says what the banners do: "Banners claim the floor - it burns, and two standing ward the lord. Break
+them!" The banners standing in every phase is the record's (13.4: the Conquest is her signature). For Mac's eye: the
+same rule lets a shaft reach a lord or an add on an open storey (lords still throw at their own storey and walk the
+stairs, as under law 8); egFloorBetween's stair test is coarse, so a shot from a stair's foot is refused.
+
+FOUND ON THE WAY, SAYS-PAST-TWELVE: the fold keeps a hall's last EG_SAYS_KEPT (12) lines, and the screen counted lines
+to find the new ones, so after twelve the count stood still and nothing more was said that hall (16 folded, 11 said, in
+the probe). It now finds the new lines by the last one said.
+
+Pins: `test/net/eliteGates/fb1018b_bannershaft.test.js` (1), `test/ui/eliteGates/fb1018b_wardbar.test.js` (1),
+`test/scenes/eliteGates/fb1018b_saystwelve.test.js` (1). Mutants: `tools/mutants/fb1018b_bannershaft.json` (4),
+`fb1018b_wardbar.json` (5), `fb1018b_saystwelve.json` (3), all dead; law9_height's 27 still dead.
+`egpres_hud.test.js` re-aimed (PIN MOVED: the bar's `ward: false`).
+
+### Item 4.1, the floor greyed: the law lands, the fall is not built
+
+The Last Charge warns a cone for 5 s, lands a 10% blow, and leaves the third a "floor gone" zone
+(`egLords.js:"zoneOut(F, 'void', shCone(f.x, f.z, yaw, f.r + 1, 118)"`) drawn in the void's grey - Boar's "gray out
+floor". Standing in it costs 10% every 1.5 s (never under 25%); in the probe it fired twice in two seconds. But the
+court's mesh never drops and no body is moved, so to a member who left the third, as the phase card says, nothing
+happens. What closes it: the Rotunda's court cut into thirds with their own buckets and collider, as Grath's isles are,
+the fallen third sunk while its zone stands. Recorded with it: a void zone's cast-back is a cost, not the glossary's
+"returning a member to their last island or plate".
+
+### WINCH-PLATES: the plates are marked (item 7)
+
+`src/scenes/eliteGates/egFight.js` (winchPlates).
+
+FOUND. The plates are spots the relay counts (`egBrain.js:"const plates = spec.spots.winch ?? [], need = Math.min(2, living(B).length);"`),
+laid as plain discs off the fight floor (`egLaw.js:"if (variant === 'winch') for (const s of [-1, 1]) {"`). They are
+no body of the fight, so the stood-on errands' draw never marked them, and `GROUND_COLORS.plate` was unused: in three
+Winch halls the screen drew nothing at either plate.
+
+FIXED. `egFight.js:"  function winchPlates(F, t) {"` draws each plate gold, sized to EG_TOUCH_M (the 2.5 m reach the
+relay counts), on its own surface during the trial. Left: the Gauntlet's plates are unmarked for the same reason, on
+sloped stairs where a flat quad would cut the slope; the Conquest's thirds (3.5 s) and Both Courts Burn (3.0 s) are
+counted ahead on the relay and drawn only as they start. Pins: `test/scenes/eliteGates/fb1018b_winchplates.test.js`
+(1). Mutants: `tools/mutants/fb1018b_winchplates.json` (4, all dead).
+
+
 ### TWIN-REKINDLE: a Sapper burns out against a fallen lord (item 6)
 
 `src/net/eliteGates/egBrain.js` (sapperReach). Relay world219.
@@ -144,7 +226,7 @@ A Sapper that reaches a fallen lord burns out against the body and spends no fee
 of two lords (the Twin Court, the Old Masters, the Clan Feud). With it, the Sapper crumbles at the body and Vael is
 raised at half 20.25 s after his fall, hittable. Elite-Gates.md section 12's Sapper row says so.
 
-THE RELAY. egBrain.js rides the relay's bundle, so the relay is world219. The slice first re-hashed world218 in place,
+THE RELAY. egBrain.js rides the relay's bundle, so the relay is world219, with BANNER-SHAFT, DUEL-RING and SEAT-LIVE. The slice first re-hashed world218 in place,
 reading wire.js's "NOT YET DEPLOYED"; `/health` serves world218 (GRANT2 deployed with #1018's merge), and a re-hash
 would have left the relay deploy reading "already current" with the fix never shipped. world218's row stands as
 recorded; the version's pins moved to world219 and soc1's version mutant was re-aimed by content.
@@ -251,6 +333,53 @@ Pins: `test/combat/fb1018b_leapslow.test.js` (5, every one red on the old code: 
 own launch refused; a jump's descent and a ledge after the landing glide and bill nothing; a flight cut short glides
 again). Mutants: `tools/mutants/fb1018b_leapslow.json` (11, all dead); four KICK-AIR and TECH1 records re-aimed by
 content.
+
+## SEAT-LIVE: a dungeon room's seat is a live socket's (7)
+
+`src/net/seatLive.js` (new, in the relay's bundle), `server/src/index.js` (the Room's `_hostOf`, `_hostWalk`,
+`_leads`, `_seatStale`, `_seatHeard`, `_seatAfter`, `_seatKeep`), `src/net/online.js` (`_askSeat`), `src/net/wire.js`
+(FOES_FULL_MS and FOES_STALE_MS, their one home), `src/scenes/world.js` (the seat clock, wiring). Relay world219.
+
+NOT PROVEN FOR THIS REPORT; ONE PATH FITS EVERY CLAUSE, REPRODUCED. Offline, a dungeon left is destroyed and rebuilt
+(`worldModes.js:"function exitDungeonNow() {"`), never cached, as DFU's: the guards come back alive with a fresh
+roll, never as corpses. Alone online, the farewell is kept and the bodies stay emptied. A live host refuses a re-take.
+But two seats had grown apart. The relay named a room's host as the socket in it longest (WORLD1) and kept the room's
+memory from that socket alone (`server/src/index.js:"if (!isWorldRoom(a.key) || a.id !== this._hostOf()) return;"`);
+the page handed the foes - and PARTY-LOOT's arbitration with them - to a joiner once that host had gone FOES_STALE_MS
+unheard (SEAT-HEAL). A host whose tab was hidden kept the relay's seat while its frame loop said nothing. The joiner
+minted the bodies' terms and granted its own takes, and none of it was kept: every walk back in was welcomed with the
+silent host's last memory, the bodies full and the dead standing, carrying that memory's `hostile`
+(`dungeonContext.js:"if (sf.hostile != null) f.ai.isHostile = !!sf.hostile;"`). Over the dungeon's real doors in Node,
+Knight bodies: 2280, 4560, 6840 gold in three visits. "Fixed itself after a few exits" is the silent socket leaving
+(the joiner becomes the relay's host and its farewell is kept) or the memory's kills passing WORLD8's hour.
+
+FIXED, so the seat and the memory's writer are one. In a dungeon room the relay's host is the eldest socket that has
+said a frame - its hello, a pose, its foes, its own lane, its memory, never a ping - within FOES_STALE_MS of another
+being there to hear it (`seatLive.js:"export function seatOf("`); alone it owes nothing; the change is said to the room
+as a leave's is. A socket back from silence is a joiner: stamped after the seat and told whose it is, its frozen memory
+refused until the relay names it. The page asks for the seat it runs (`_askSeat`: its pose every FOES_FULL_MS while
+the named host is unheard), and its own hidden spell spends none of the named seat's patience (`createSeatClock`), so
+SEAT-HEAL never hands a page the seat on its first frame back while the relay names another. A building's room keeps the
+eldest: its host streams no foes. No DFU member moves (DFU has no rooms).
+
+Left: the window between a host going silent and the relay hearing the joiner (up to FOES_STALE_MS plus FOES_FULL_MS);
+a host coming back to an empty room whose socket died republishes its own frozen foes (kills undone, items taken stay
+taken); a building's silent host keeps the pen; re-stamping a quiet joiner sends a redundant host frame.
+
+THE AUTO-AGGRO, the owner's call. Not a defect by either law that could make it: online, the castle's hostility is the
+room's - one player's trespass, door or blow turns every guard on everyone
+(`hostCombat.js:"export function makeEnemiesHostile(foes) {"`) and the memory keeps it for later visitors while those
+guards live; online or off, DFU's DoorText trespass (a private door tried twice, or a trespass floor like
+Orsinium's, Field-Bugs-2026-09-28f) - Castle Daggerfall's RDB needs ARENA2 to read (`tools/castleProbe.mjs`). Whether a
+castle's anger should be each player's own is Mac's. What would prove the report's path: whether anyone else was in the
+castle (AFK or minimised), or the relay's `world:meta.by` and `.at` for its room.
+
+Pins: `test/net/fb1018b_seatlive.test.js` (5, on the real Room, session and clock: a silent host loses the seat and its
+write is refused, the joiner's kept, the host back a joiner; a live host keeps it, a reconnect, a building, a leave, a
+tie, the ask, the wiring) and `test/scenes/fb1018b_seatloop.test.js` (1: the report's loop through the real doors and
+Room - the bodies stay empty three visits running, the gold flat). Mutants: `tools/mutants/fb1018b_seatlive.json` (19,
+all dead). Re-aimed with PIN MOVED: seatheal, world1, world2, auditworld34, oncrash1, world6biiid, auditworld6a and
+auditworld6b (`seatClock` for `_foesInAt`), and slam11 (the host poses through its hellos).
 
 ## Report 8: Theodyval Laboratory - not proven
 
