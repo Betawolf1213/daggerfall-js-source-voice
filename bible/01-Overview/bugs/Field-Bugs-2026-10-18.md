@@ -91,7 +91,7 @@ owner's to choose (`07-Rendering/Real-Windows.md`, PASS-COUNT).
 Why no test saw it: `test/systems/perf3.test.js` drove the counter with the room's stats alone, and no test asked what
 a frame with a view out counts.
 
-Pins: `test/systems/fb1018_passcount.test.js` (3). Mutants: `tools/mutants/fb1018_passcount.json` (8, all dead).
+Pins: `test/systems/fb1018_passcount.test.js` (3). Mutants: `tools/mutants/fb1018_passcount.json` (9, all dead).
 
 ## Report 3: the slowdown in interiors - two leaks fixed, the cause open
 
