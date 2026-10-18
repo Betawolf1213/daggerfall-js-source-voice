@@ -692,14 +692,17 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const mirror = egHas(L, EG_FL.mirror);
     const frac = L.hp / L.max;
     const want = frac <= PHASE_AT[1] ? 3 : frac <= PHASE_AT[0] ? 2 : 1;
-    // EG-PERFECT (section 13.2, "Each phase adds a mechanic"): ONE TURN A BEAT - a burst past two lines turns the second phase this
-    // beat and the third the next, so the second's own mechanic (a Valkynaz's signature, the Bridges Burn) is never skipped
+    // EG-PERFECT (section 13.2, "Each phase adds a mechanic"): EVERY TURN TAKEN - a burst past two lines turns the second phase and
+    // then the third in one beat, each with its card and its own mechanic (a Valkynaz's signature, the Bridges Burn), never the
+    // second skipped; a signature's hold is set only over a health still above its line (sigHolds)
     if (want > L.ph && !L.champ && !mirror) {
-      L.ph += 1; egSaid(L, L.ph, now);
       ward(F, L, SHIELD_MS, now, out);
-      out.push({ k: 'eph', i: L.i, ph: L.ph });
-      phaseSay(F, L, out);   // AUDIT EG V (lane1 #14): every lord's turn by its name (the card's order on every screen)
-      KITS[L.key]?.phase?.(F, spec, L, L.ph, now, here, rng, out, ctx);
+      for (let ph = L.ph + 1; ph <= want; ph++) {
+        L.ph = ph; egSaid(L, ph, now);
+        out.push({ k: 'eph', i: L.i, ph });
+        phaseSay(F, L, out);   // AUDIT EG V (lane1 #14): every lord's turn by its name (the card's order on every screen)
+        KITS[L.key]?.phase?.(F, spec, L, ph, now, here, rng, out, ctx);
+      }
     }
     if (!mirror) KITS[L.key]?.tick?.(F, spec, L, now, here, rng, out, ctx);
     pairTick(F, L, now, out);

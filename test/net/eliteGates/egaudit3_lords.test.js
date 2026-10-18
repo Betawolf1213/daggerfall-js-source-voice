@@ -149,16 +149,17 @@ test('AUDIT EG III lane1 #2 THE WELLHEAD WYRM (section 13.3): its perch broken i
   // PIN MOVED (AUDIT EG IV, lane1 #26): Burning Perch is the Wyrm's own lord blow (lordBlow), committed EG_TELL_LEAD_MS before its
   // wind-up and said at the first beat its word is due (500 ms on, past the lead), landing its 2000 ms after - before, it was said
   // at once, landing 2000 ms on
-  const k2 = C.frames.length;
+  // EG-PERFECT (PIN MOVED): thrown as the place's (net/eliteGates/egLords.js lordBlow's `place`) - said at once, landing its 2000 ms on,
+  // never held (its r 6 is the perch's whole top)
   C.step(here); C.step(here);
-  out2.push(...C.frames.slice(k2));
-  assert.deepEqual(out2.filter((f) => f.k === 'eb' && f.nm === 'Burning Perch').map((f) => [f.nm, f.o, f.s, f.at - t2, f.wu, f.el]), [['Burning Perch', L.i, [shDisc(p2.x, p2.z, 6)], 500 + 2000, 2000, 'fire']], 'the perch it leaves erupts: r 6, 2.0 s');
-  assert.ok(500 >= EG_TELL_LEAD_MS && 250 < EG_TELL_LEAD_MS, 'its word due past the lead, at the second beat');
+  assert.deepEqual(out2.filter((f) => f.k === 'eb' && f.nm === 'Burning Perch').map((f) => [f.nm, f.o, f.s, f.at - t2, f.wu, f.el]), [['Burning Perch', L.i, [shDisc(p2.x, p2.z, 6)], 2000, 2000, 'fire']], 'the perch it leaves erupts: r 6, 2.0 s');
   assert.deepEqual([egHas(L, EG_FL.grounded), C.said.landed, egLordHitX(F, L, 'acct-0', { x: L.x + 1, z: L.z }, HIT_KINDS.Melee, C.now() + 100)], [true, 2, EG_GROUNDED_HIT_X], 'landed again, x1.3');
   assert.equal(egFeatBits('wyrm', { said: C.said, fellThisHall: 1, lordAt: 0, mem: {} }, { now: C.now() }) & 4, 4, 'Brought to Earth: two landings');
   for (let k = 0; k < 4 * 26; k++) C.step(here);
-  assert.equal(egObjsOf(F, 'pillar').length, 1, 'one pillar left');
-  assert.ok(egHas(L, EG_FL.fly) && L.perch === egObjsOf(F, 'pillar')[0].i, 'and on it');
+  // EG-PERFECT (PIN MOVED): the perch broken in its first phase rose again at its second's turn - two left
+  assert.equal(egObjsOf(F, 'pillar').length, 2, 'two pillars left');
+  assert.ok(egHas(L, EG_FL.fly) && egObjsOf(F, 'pillar').some((p) => p.i === L.perch), 'and on one');
+  for (const p of egObjsOf(F, 'pillar').filter((q) => q.i !== L.perch)) egObjBroken(F, spec, p, 'M0', C.now(), []);
   egObjBroken(F, spec, egBodyById(F, L.perch), 'M0', C.now(), []);
   for (let k = 0; k < 4 * 90; k++) C.step(here);
   assert.deepEqual([egHas(L, EG_FL.grounded), egHas(L, EG_FL.fly), C.said.landed], [true, false, 3], 'no pillar to find: it stays down, its landing said once');

@@ -348,7 +348,7 @@ export function egTellTo(blow, watch, here, say, now) {
 export function egBlowsStep(F, spec, now, here, out, watch = []) {
   F.blows = F.blows.filter((b) => now <= b.at + Math.max(1, b.sp ?? 0) + 1500);
   if (F.pend?.length) {
-    const pend = F.pend;
+    const pend = F.pend.sort((a, b) => (a.b.after ? 1 : 0) - (b.b.after ? 1 : 0));   // EG-PERFECT: a chained shape's word after its first's (egSay)
     F.pend = [];
     for (const p of pend) {
       for (const t of egTellTo(p.b, watch, here, p.say, now)) if (!p.told.includes(t.sub)) { p.told.push(t.sub); out.push({ k: 'tell', to: t.sub, sh: t.lead, ...p.b }); }

@@ -365,7 +365,7 @@ test('AUDIT EG IV lane1 #7 THE LAST LESSON\'S LAST RING (section 13.3: "the cour
   const C = court(1, 10, 'armsmaster', { n: 1 });
   const here = [{ sub: 'acct-0', x: C.f.x + 2, z: C.f.z }];
   C.L.hp = C.L.max * 0.3;
-  C.step(here); C.step(here);   // EG-PERFECT (PIN MOVED): one turn a beat - the second, then the third
+  C.step(here);
   assert.equal(C.L.ph, 3, 'the Last Lesson');
   const burning = () => (C.F.zones ?? []).filter((z) => z.kind === 'burn' && z.s[0] === 'r' && z.from <= C.now() && z.until > C.now()).map((z) => z.s[3]);
   const t0 = C.now(), closes = Math.ceil(C.f.r - 12) * 6000;
@@ -425,7 +425,7 @@ test('AUDIT EG IV lane1 #10 and lane9 #16 GAROTH\'S OLDER SIGNATURE IS HIS (sect
   const M = court(1, 125, 'garoth', { n: 1 }), mh = [{ sub: 'acct-0', x: M.f.x + 4, z: M.f.z + 4 }];
   M.L.hp = M.L.max * 0.3;
   for (let k = 0; k < 4 * 120; k++) M.step(mh);
-  assert.deepEqual(card(M), ['The Mirrorcourt.'], 'its card');
+  assert.deepEqual(card(M), ['The Clan Muster.', 'The Mirrorcourt.'], 'its card - EG-PERFECT (PIN MOVED): a burst past both lines takes every turn, each with its card');
   const mirrors = M.F.bodies.filter((b) => b.role === EG_ROLE.lord && egHas(b, EG_FL.mirror));
   assert.ok(mirrors.length >= 2 && mirrors.every((b) => b.key === 'garoth' && b.k === M.L.k), 'his own mirrors: his key and his look');
   assert.deepEqual([M.frames.filter((f) => f.k === 'eb' && f.nm === 'The Eclipse').length, M.said.eclipse ?? 0, M.F.pg.shafts ?? null], [0, 0, null], 'no Eclipse in the Clan Pit, no moon-shafts');
@@ -437,7 +437,7 @@ test('AUDIT EG IV lane1 #10 and lane9 #16 GAROTH\'S OLDER SIGNATURE IS HIS (sect
   const R = court(1, 100, 'garoth', { n: 4 }), rh = R.subs.map((sub, j) => ({ sub, x: R.f.x + 2 + j, z: R.f.z + 2 }));
   R.L.hp = R.L.max * 0.3;
   for (let k = 0; k < 4 * 30 && !(R.F.mem.chains ?? []).length; k++) R.step(rh);
-  assert.deepEqual(card(R), ['The Chaining.'], 'its card');
+  assert.deepEqual(card(R), ['The Clan Muster.', 'The Chaining.'], 'its card - EG-PERFECT (PIN MOVED): every turn taken, each with its card');
   assert.deepEqual(R.F.mem.chains.map((c) => c.length), [2, 2], 'four members: two pairs');
   const V = court(1, 50, 'morvayn', { n: 3 }), vh = V.subs.map((sub, j) => ({ sub, x: V.f.x + 2 + j, z: V.f.z + 2 }));
   V.L.hp = V.L.max * 0.3;
@@ -448,7 +448,7 @@ test('AUDIT EG IV lane1 #10 and lane9 #16 GAROTH\'S OLDER SIGNATURE IS HIS (sect
   const I = court(1, 150, 'garoth', { n: 1 });
   I.L.hp = I.L.max * 0.3;
   I.step([{ sub: 'acct-0', x: I.f.x + 2, z: I.f.z }]);
-  assert.deepEqual(card(I), ['The Conquest.']);
+  assert.deepEqual(card(I), ['The Clan Muster.', 'The Conquest.'], 'EG-PERFECT (PIN MOVED): every turn taken, each with its card');
 });
 
 // ── lane 1 #20: FURY BESIDE A CHAMPION ───────────────────────────────────────────────────────────────────────────────

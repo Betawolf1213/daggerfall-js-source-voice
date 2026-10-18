@@ -228,13 +228,14 @@ test('AUDIT EG V L1-5 NO GROUND CONCEDED COUNTS HER BANNERS (section 19: "three 
     assert.equal(S.spec.lord, 'ilthys');
     wakeCourt(S);
     const I = egLordsOf(S.B.F)[0];
-    I.hp = I.max * 0.6;   // EG-PERFECT (PIN MOVED): the Conquest is her second phase's - turned at 0.66
+    if (kind === 'banner') I.hp = I.max * 0.6;   // EG-PERFECT (PIN MOVED): the Conquest is her second phase's - turned at 0.66 (the Sparks' run fights her first, no banner stood)
     let broken = 0;
     for (let k = 0; k < 4 * 90 && broken < 3; k++) {
       S.step();
       for (const o of egObjsOf(S.B.F, kind)) { if (broken >= 3) break; o.hp = 1; S.at('acct-0', o.x + 1, o.z); S.blow('acct-0', o.i, 50, HIT_KINDS.Melee, [o.x + 1, o.z], q++, o.y); if (!(o.hp > 0)) broken++; }   // a banner from its balcony
     }
     assert.equal(broken, 3, `three ${kind}s broken`);
+    S.step();   // EG-PERFECT (PIN MOVED): the Conquest's round over at the next beat, her held line freed
     fellLord(S, I); S.step();
     return wFt(S);
   };
@@ -369,6 +370,7 @@ test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a 
   // an odd member chained to a Wraith falls: its link goes with it
   const T = breachAt(7, 50, { n: 3 });
   wakeCourt(T);
+  for (const L of egLordsOf(T.B.F)) L.hp = L.max * 0.6;   // EG-PERFECT (PIN MOVED): the Chaining is her second phase's
   for (let k = 0; k < 4 * 20 && !(T.B.F.mem.chains ?? []).length; k++) T.step();
   const odd = T.subs.find((x) => !T.B.F.mem.chains.flat().includes(x));
   assert.ok(T.B.F.tethers.some((t) => t[2] === 2 && typeof t[0] === 'number' && t[1] === odd), 'the odd member chained to a Wraith');
@@ -399,6 +401,7 @@ test('AUDIT EG V L1-9 THE CHAIN SNAPS COUNTED ON THE PAIR IT NAMES, BY THE CENSU
   S.subs.forEach((s, j) => S.at(s, cr.x - 2 + 2 * j, cr.z));
   for (let k = 0; k < 4 * 20 && !(F.mem.chains ?? []).length; k++) S.step();
   const [pa, pb] = F.mem.chains[0], odd = S.subs.find((s) => s !== pa && s !== pb);
+  F.tethers = F.tethers.filter((t) => t[2] !== 2 || typeof t[0] === 'string');   // EG-PERFECT: the odd member's Wraith chain let go - it snaps on its own member (egperfect_lords #15), never in this pin's census
   S.at(pa, cr.x - 6, cr.z); S.at(pb, cr.x + 6, cr.z); S.at(odd, cr.x, cr.z - 9);
   let snap = null;
   for (let k = 0; k < 12 && !snap; k++) snap = S.step().find((f) => f.k === 'eb' && f.nm === 'The Chain Snaps') ?? null;
