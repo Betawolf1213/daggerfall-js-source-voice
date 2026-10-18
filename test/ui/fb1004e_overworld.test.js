@@ -154,7 +154,7 @@ test('OW-KIN / OW-WHO on the travel map: the rows keep their kin and Renown, a k
   assert.match(W, /if \(!immersiveTravelLoaded\(\) \|\| !Number\.isFinite\(mapId\)\) return false;/, 'no carriages without the mod');
   // PIN MOVED (TOWN-ECON TE1, test/systems/townecon.test.js): the Overworld's card is the town's (systems/town/townEcon.js tipFnAt -
   // made only when its plate is under the pointer, one kept a town); SEAT-TIP's seat card is its guild lines
-  assert.match(W, /const townTipAt = \(mapId\) => townEcon\.tipFnAt\(mapId\);/, 'a town\'s card, made only when its plate is asked');
+  assert.match(W, /townTipAt: \(mapId\) => townEcon\.tipFnAt\(mapId\),/, 'a town\'s card, made only when its plate is asked');
   assert.match(rd('src/scenes/gatherHost.js'), /color: nodeMarkCss\(g\.profession\), dist: d \/ 1000 \} \}\);/, 'a group\'s distance, km');
   assert.match(rd('src/scenes/travelView.js'), /\.\.\.\(m\.kin \? \{ kin: m\.kin \} : \{\}\), \.\.\.\(m\.lv != null \? \{ lv: m\.lv \} : \{\}\), \.\.\.\(Number\.isFinite\(m\.dist\) \? \{ dist: m\.dist \} : \{\}\), \.\.\.\(m\.hub \? \{ hub: true \} : \{\}\), \.\.\.\(m\.tip \? \{ tip: m\.tip \} : \{\}\)/, 'every field the readout reads is carried through the view');
 });

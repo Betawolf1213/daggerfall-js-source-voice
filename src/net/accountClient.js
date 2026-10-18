@@ -1957,6 +1957,23 @@ export function accountRoll({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
 }
 
 /**
+ * TOWN-ECON TE2 (bible/06-Systems/Town-Economy-Arc.md section 4): THE TOWNS' ECONOMY (server-account/src/townEcon.js)
+ * through the one door - every town's players' share read, the town this client stands in witnessed, the Watch's ticks
+ * walked in a town claimed (net/townEconBook.js). Every answer is `call`'s shape; each is waited for ACCOUNT_ACT_WAIT_MS
+ * at most.
+ */
+export function accountTowns({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    econ: () => post('/v1/towns/econ', {}),
+    witness: (town) => post('/v1/towns/witness', { town }),
+    watch: (receipts) => post('/v1/towns/watch', { receipts }),
+    /** the signed-in account - whose ticks are kept */
+    me: () => storedSession(storage)?.id ?? null,
+  };
+}
+
+/**
  * NOTICE1: THE NOTICE BOARD (server-account/src/board.js) through the one door - a town's board read, a note pinned
  * (with its own request id, so a pin asked again is the note it made), taken down and reported; a moderator's remove
  * and restore; a developer's notice. Every answer is `call`'s shape.

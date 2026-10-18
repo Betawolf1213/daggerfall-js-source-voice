@@ -163,6 +163,7 @@ disputed only by 2 who agree on another answer (the one dispute rule above) - in
 | a location | map id | name, region, pixel, kind, whether it is a seat (and its tier), whether it has a Notice Board | the seats (3.1), the bailiwicks (7.2), the boards (PROF0 10.1) |
 | a map pixel | x, y | climate, region | the nodes' tables (PROF0 6) |
 | a gate day | game day | the gate's region and pixel | gate kills (4.2), gate-touched ground (PROF0 4.7) |
+| a town (TOWN-ECON TE2) | map id | its pixel, region and location index | the town economy's footsteps and raids (`06-Systems/Town-Economy-Arc.md` 4) |
 
 A disputed row keeps its confirmed worth until a moderator settles it - so no lone account can zero a rival's seat,
 board or gate day; an unconfirmed row is worth the least its kind allows (PROF0 6). Three colluding accounts can forge one row - which is why each kind's reward is bounded and every
@@ -173,7 +174,10 @@ professions' pixels, dungeons and hubs), keyed by the map id, its report the sea
 (townSeatLaw.js seatReportText); the ignored accounts, the audit and the strike as written above
 (`server-account/src/townSeats.js`). CHAP2a (Chapters-Arc 4): the kind `npchall`, a town's guild halls - the three, the age,
 the first answer and the hour; AUDIT CHAP2 E1 gave it this kind's ignored accounts, audit and strike too
-(`server-account/src/npcHalls.js`). As built: a witness's FIRST answer on a seat stands (the table's INSERT OR IGNORE,
+(`server-account/src/npcHalls.js`). TOWN-ECON TE2 (2026-10-18, `06-Systems/Town-Economy-Arc.md` section 4): the kind
+`town`, a town's pixel, region and location index (townEconLaw.js townReportText) - the three and the age; confirmed into
+its own table (`town_econ_towns`), after which the key takes no more reports, so it has no dispute, no ignored accounts
+and no strike (`server-account/src/townEcon.js`). As built: a witness's FIRST answer on a seat stands (the table's INSERT OR IGNORE,
 as every kind's); a struck key is never witnessed again (the strike's history row says so); "the audit" reads "a seat
 whose confirmation still rests on exactly three witnesses, whom nobody else has joined".
 

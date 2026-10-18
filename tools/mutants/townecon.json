@@ -322,8 +322,8 @@
   {
     "name": "TOWNECON-type-lost",
     "file": "src/scenes/world.js",
-    "old": "region: r, type: loc.mapTableData.locationType });",
-    "new": "region: r });",
+    "old": "region: r, type: loc.mapTableData.locationType, location: l });",
+    "new": "region: r, location: l });",
     "tests": [
       "test/systems/townecon.test.js"
     ],

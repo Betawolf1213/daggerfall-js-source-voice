@@ -16,8 +16,9 @@ Asked four things, Mac answered:
 **Status: TE1 BUILT 2026-10-16** (the baseline, the card, the price), **AUDITED 2026-10-16** (Mac: "Lets audit
 everything we have so far" - `01-Overview/audits/Audit-Town-Econ.md`: every finding, and below each fix marked AUDIT TOWN-ECON
 and its id). **SEAT-LOOP and LAW-3 BUILT 2026-10-18** - Mac's five calls decided (section 7): the seat's essentials
-round trip and the carry between regions closed. TE2 (the players' share, the account service) and TE3 (the living
-world reads it) are designed below and not built. The constants are kept as section 2 has them (section 7.1).
+round trip and the carry between regions closed. **TE2 BUILT 2026-10-18** (section 4: the registry, the four sources,
+the read). TE3 (the living world reads the band) is designed below. The constants are kept as section 2 has them
+(section 7.1).
 
 ## 0. What stands, read against the code (2026-10-16)
 
@@ -170,31 +171,56 @@ not changed (AUDIT TOWN-ECON DOC-7). A counter that opens outside an interior (L
 the shipyards) prices as it did, the yards at their own neutral index on purpose (`merchantYards.js
 YARD_PRICE_INDEX`).
 
-## 4. TE2 - the players' share (designed)
+## 4. TE2 - the players' share (BUILT 2026-10-18)
 
-AUDIT TOWN-ECON DOC-1 and DOC-2: as first written, the tally was keyed by pixel and counted every Watch tick and every
-trader's sale "at its board's pixel" - but the client keeps a Watch receipt only at a seat's pixel (`townSeatBook.js`
-`keepWatch`, `isSeatPixel`), a trader's stall row names its town by map id (`market_listings.vendor_map`) and no pixel,
-and a patron's sale names its map id. Rewritten:
+Mac, 2026-10-18: "Everything". AUDIT TOWN-ECON DOC-1 and DOC-2 rewrote the design before it was built: as first
+written, the tally was keyed by pixel and counted every Watch tick and every trader's sale "at its board's pixel" - but
+the client kept a Watch receipt only at a seat's pixel (`townSeatBook.js` `keepWatch`, `isSeatPixel`), a trader's stall
+row names its town by map id (`market_listings.vendor_map`) and no pixel, and a patron's sale names its map id. As built:
 
-- **The key is the town's unsigned map id** - the seats', the homes', the stalls' and the patrons' own.
-- **The town registry.** The service learns which town stands at a pixel, and which map id a raid's
-  `region:location` names, from the clients' word, agreed: three accounts' agreeing reports confirm a row, as the seats
-  are confirmed (`world_witness`, a kind of its own beside `seat`, Seats-Arc 3.2). An act at a pixel or a raid key the registry has not confirmed counts
-  nothing.
-- **The tally** (migration `town_econ`): `town_econ_days (map, day, src, n)` - a town's acts a day by source - and
-  `town_econ_marks (account, map, day, src, n)`, each account's count, so the cap is asked in the write. Rows older
-  than 14 days go in the hourly sweep.
-- **The sources.**
-  - Footsteps: the client keeps the Watch's receipts at EVERY town's pixel, not a seat's alone (the `keepWatch` change,
-    named here), and claims them as it does; the service counts each verified tick at the registry's town for its
-    pixel, whatever the seat, beside the seat's own count.
-  - Trade: a trader's sale counts at its stall's `vendor_map`; a patron's sale at its `map`.
-  - A raid driven off: the relay's cleanse receipt (`raidReceipt.js`, `w1`) counts at the registry's town for its
-    `region:location`.
-- **The read.** `GET /v1/towns/econ` answers `{ towns: [[map, share], ...] }`, each town with a share of 1 or more,
-  computed by the law and kept TOWN_ECON_KEPT_S (proposed 300 s). The client holds it as the chapter sheet is held
-  (`net/chapterSheet.js`: read once a while, synchronous to its readers, stopped by an account's refusal).
+- **The key is the town's unsigned map id** - the seats', the homes', the stalls' and the patrons' own. The law's lines
+  (`net/townEconLaw.js`: TOWN_ECON_SOURCES, _WEIGHTS, _CAPS, _DECAY, _DAYS, _HALF, `townActivity`, `townPlayersShare`, the
+  report) are read by both ends; the service is `server-account/src/townEcon.js` (acct155, migration 0131).
+- **The town registry** (`POST /v1/towns/witness { town: { map, px, py, region, location } }`). The service learns which
+  town stands at a pixel, and which map id a raid's `region:location` names, from the clients' word, agreed: the kind
+  `town` of `world_witness` (Seats-Arc 3.2), three accounts a week registered giving the same report confirm it
+  (nodeLaw.js witnessedFact) into `town_econ_towns` - one a map id, one a pixel, one a place; the first confirmed stands -
+  after which the key takes no more reports (`why: 'known'`), so a town's rows stay a handful and it has no dispute. A
+  guest is refused, a young account not counted, TOWN_WITNESS_HOUR (48) reports an hour. The client reports the town it
+  walks into once a UTC day, until counted or known (`net/townEconBook.js` witness, at the entry edge beside the halls'
+  witness). An act at a pixel or a raid the registry has not confirmed counts nothing. LIMIT, as every witnessed kind's:
+  three colluding aged accounts confirming a false town first would hold its pixel; the reward is bounded (one town's
+  share) and no strike exists yet.
+- **The tally.** `town_econ_acts (account, map, day, src, n)` - each account's count a town a real (UTC) day by source,
+  the cap asked in the write (`ON CONFLICT ... WHERE n < cap`) - and `town_econ_days (map, day, src, n)`, the town's
+  day, moved only where the account's mark moved (`changes()`), so a capped act counts nothing. (Named `acts`, not the
+  design's `marks`: Marks are the service's currency.) The hourly sweep drops all three tables' rows past TOWN_ECON_DAYS.
+- **The sources**, each counted on its own day:
+  - Footsteps (`POST /v1/towns/watch { receipts }`, TOWN_WATCH_CLAIM_MAX 12 a claim): the client keeps the relay's
+    signed Watch ticks at EVERY town's pixel - a book of its own (`net/townEconBook.js` keepWatch, handed the tick
+    beside the seats' and the Motherlodes' books at `online.onWatch`), so the seats' `keepWatch` is unchanged - and
+    claims a claim's worth, or the oldest after ten minutes. The service verifies each tick, counts it once
+    (`town_econ_seen`) at the registry's town for its pixel on the tick's own UTC day while that day is kept, for the
+    account it names and a week registered.
+  - Trade: a trader's sale (`market.js` marketBuy, both currencies' batches) counts at the listing's `vendor_map` for its
+    buyer, a week registered, by the sale's own row; a patron's purchase (`reckonPatrons`, behind the sale's
+    `mustChange`) at its `map` for the trader's seller, on the hour's own day.
+  - A raid driven off (`raids.js` claimRaid's `econ` hook): the relay's cleanse receipt counts at the registry's town
+    for its `region:location`, by the claim's own row, for an account a week registered.
+- **The read** (`POST /v1/towns/econ {}` - a POST, as the family's chapter sheet and seat list are, not the design's
+  GET): `{ towns: [[map, share], ...] }`, every town whose share is TOWN_ECON_SHARE_LEAST (1) or more, one decimal,
+  computed by the law over the days kept and kept by the isolate TOWN_ECON_KEPT_S (300 s). The client holds it as the
+  chapter sheet is held (read once a keeping, synchronous to its readers, stopped by an account's refusal), and
+  `systems/town/townEcon.js` reads it as the town's `players` by its map id.
+- **The host** (THE FOUR HOSTS RULE): `world.js` wires it - `scenes/townEconHost.js` builds the reading and the book
+  (HOST-SPLIT: the module the host wires - the call grew its `typeAt` line, `townTipAt` folded into its one reader, and
+  the entry's witness line is the one line in: bootWorld 21,185 to 21,186 code lines, at its ceiling). `worldModes.js`
+  prices with the reading as TE1 did; `dungeonContext.js` and `exterior.js` take no tick and walk into no town - none
+  wired, as TE1 flagged them.
+- **Pinned**: `test/server/townecon_service.test.js` (7: the registry, the footsteps, the read, trade, the patrons, the
+  raid, the sweep), `test/net/townecon_client.test.js` (5: the shares, the footsteps, the registry, the host module, the
+  door and the wiring), the law in `test/systems/townecon.test.js`; `node tools/mutate.mjs tools/mutants/townecon2.json`:
+  38 mutants, 38 dead.
 
 ## 5. TE3 - the living world reads it (designed)
 

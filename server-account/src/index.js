@@ -156,6 +156,9 @@
 //   POST /v1/chapters/list {} -> { week, chapters: [{ f, region, strength, band, seats: [{ seat, name }] }] }   (CHAP3b: the chapter sheet, the Turnings due settled first; CHAP5a its seats' holders)
 //   POST /v1/chapters/focus { character, faction, region, focus } -> { ok, focus, week } | { error }   (CHAP4d: a Master's Focus)
 //   POST /v1/chapters/history { region } -> { rows: [{ faction, week, kind, data, name }], zero }   (CHAP4d: a region's Chronicle; AUDIT CHAP4 R10)
+//   POST /v1/towns/econ {} -> { ok, towns: [[map, share], ...] }   (TOWN-ECON TE2: every town's players' share of 1 or more, kept 5 minutes)
+//   POST /v1/towns/witness { town: { map, px, py, region, location } } -> { ok, counted, confirmed?, why? }   (TE2: the town registry, witnessed as a seat is)
+//   POST /v1/towns/watch { receipts } -> { ok, counted, why }   (TE2: the Watch's ticks walked in a confirmed town, capped a town a day)
 //   POST /v1/chapters/back { character, faction, region, side } -> { ok, event, side } | { error }   (CHAP6b: a Schism's side, a Succession's candidate)
 //   POST /v1/chapters/patron { character, faction, region, marks, rid } -> { ok, season, marks, guildMarks } | { error }   (CHAP7a: a guild's bid for a chapter's patronage)
 // ARENA4b, the arena online's second half: a bout's Renown on its claim, and the homes the arena displaced:
@@ -244,6 +247,7 @@ import { reportRenownXp, renownTrackOf, renownTracksOf, renownCharacterOk } from
 import { firmamentState, setFirmament, respecFirmament, FIRM_STATUS } from './firmament.js';   // FIRM1: the Firmament - a character's passive tree
 import { chaptersOpenFor, readRoll, claimRoll } from './npcRoll.js';   // CHAP1: the Roll - a realm character's standing with Daggerfall's guilds
 import { witnessHall, listHalls, strikeHall } from './npcHalls.js';
+import { witnessTown, claimTownWatch, townsEcon, raidActStatements } from './townEcon.js';   // TOWN-ECON TE2: the players' share
 import { creditReceipt } from './npcReceipts.js';   // CHAP2b: a receipt's standing and the chapter's receipt writ
 import { chapterSheet, chapterSeatsOf, chapterTitlesOpenFor, chapterTitlesOfAccount, setChapterFocus, chapterChronicle, backChapter, bidPatron } from './npcChapters.js';   // CHAP3b: the chapter sheet; CHAP4a: a character's seats; CHAP4c: the chapters' titles
 import { contractRegionOfRaid } from '../../src/net/writLaw.js';   // CHAP2b: the region a raid's key names   // CHAP2a: a town's guild halls, witnessed; AUDIT CHAP2 E1: audited and struck
@@ -509,6 +513,9 @@ const BOARD_STATUS = Object.freeze({
   'notes-full': 409,
   'board-rate': 429, 'board-ops-rate': 429,
 });
+/** TOWN-ECON TE2: each town refusal's status - a guest 403, the hour's reports spent 429, no relay key 503, a bad shape 400
+ *  (the default). */
+const TOWN_STATUS = Object.freeze({ 'towns-need-account': 403, 'towns-rate': 429, 'no-gate-key': 503 });
 /** SEAT1a (SEAT1b): each seat refusal's status - not this account's (a guest, the switch, a developer's act) 403, a seat struck
  *  409, the hour's reports spent 429, a bad shape 400 (the default). */
 /** SEAT-LEASE: the seat routes that only read, answered from the state as it stands while another settles the Turning. */
@@ -1295,6 +1302,7 @@ const service = {
           strike: (key, nonce) => raidStrikeStatement(ctx, who.player, env, key, nonce),
           deeds: (key, nonce, character) => deedStatements(ctx, who.player, env, { kind: 'raid', event: deedEvent('raid', key), character, guard: [key, nonce] }),
           contracts: (key, nonce) => contractPayStatements(ctx, who.player, env, { key, nonce }),
+          econ: (key, nonce) => raidActStatements(ctx.db, who.player, nowS, key, nonce),   // TOWN-ECON TE2: the town driven clear of it
         });
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
         if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
@@ -1716,6 +1724,22 @@ const service = {
         if (!act) return no('not-found', 404, origin);
         const r = await act();
         return 'error' in r ? no(r.error, BOARD_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
+      }
+
+      // ═══ TOWN-ECON TE2: THE TOWNS' ECONOMY ════════════════════════════
+      //
+      // bible/06-Systems/Town-Economy-Arc.md section 4 (townEcon.js): every town's players' share, read by any session; a
+      // town witnessed by the client standing in it (the registry); the Watch's ticks walked in a town, claimed.
+      if (path.startsWith('/v1/towns/')) {
+        if (request.method !== 'POST') return no('method', 405, origin);
+        const act = {
+          '/v1/towns/econ': () => townsEcon(ctx),
+          '/v1/towns/witness': () => witnessTown(ctx, who.player, env, body),
+          '/v1/towns/watch': async () => claimTownWatch(ctx, who.player, env, body, await gatePublicKey(env, subtle)),
+        }[path];
+        if (!act) return no('not-found', 404, origin);
+        const r = await act();
+        return 'error' in r ? no(r.error, TOWN_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
       // ═══ SEAT1a: THE SEATS ════════════════════════════════════════════

@@ -18,6 +18,10 @@ import { tradeCost, getTradePrice } from '../../src/systems/tradeModes.js';
 import { createRestItem, REST_ITEM } from '../../src/systems/rest/restItems.js';
 import { createTownEcon } from '../../src/systems/town/townEcon.js';
 import { readTip, TOWN_TIP_LINES_MAX, TIP_LINES_MAX, SEAT_TIP_TEXT_MAX } from '../../src/ui/eventMapMarks.js';
+import {
+  TOWN_ECON_SOURCES, TOWN_ECON_WEIGHTS, TOWN_ECON_CAPS, TOWN_ECON_DECAY, TOWN_ECON_DAYS, TOWN_ECON_HALF, TOWN_ECON_KEPT_S, TOWN_ECON_SHARE_LEAST,
+  TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND, townActivity, townPlayersShare, townShareShown, townReportOf, townReportText, parseTownReport,
+} from '../../src/net/townEconLaw.js';
 import { markCounterBought, buyItemPrice } from '../../src/systems/tradeModes.js';
 import { COUNTER_PAID_MARK, PATRON_COUNTER_MARK } from '../../src/net/patronLaw.js';
 import { addItem, splitStack } from '../../src/systems/inventory.js';
@@ -278,7 +282,7 @@ test('TOWN-ECON the client\'s reading (systems/town/townEcon.js): online only - 
   let online = true, raided = false, players = 0;
   const econ = createTownEcon({
     online: () => online, townOf: (id) => towns.get(id), seatAt: seatOf, seats: () => derived.map((s) => book.dressed(s)),
-    raidedAt: (px, py) => raided && px === 212 && py === 151, nowMs: () => clock, players: (key) => (key === KEY ? players : 0),
+    raidedAt: (px, py) => raided && px === 212 && py === 151, nowMs: () => clock, players: (id) => (id === 11 ? players : 0),   // TE2: the share by the town's map id
   });
   assert.equal(econ.prosperityOf(11), townProsperity({ key: KEY, type: 0, day: DAY }));
   assert.equal(econ.prosperityOf(12), null, 'a dungeon has no economy');
@@ -334,11 +338,11 @@ test('TOWN-ECON the wiring: the counter\'s factor in worldModes.js\'s shopAdjust
   assert.match(wm, /const f = host\.townShopFactor\?\.\(b, mode\) \?\? \(mode === 'Buy' \|\| mode === 'Repair' \? host\.seatShopFactor\?\.\(b\) \?\? 1 : 1\);/);
   const w = rd('src/scenes/world.js');
   assert.match(w, /townShopFactor: \(b, mode\) => townEcon\.shopFactor\(b, mode, seatEdicts\.shopFactor\(b\)\),/);
-  assert.match(w, /const townEcon = createTownEcon\(\{ online: isOnlinePage, townOf: \(mapId\) => _townOfMapId\.get\(mapId\), seatAt: seatHere, nowMs: battleNowMs,[^\n]*\n\s*seats: \(\) => \(seatBook\?\.open === true \? seatBook\.data\?\.seats \?\? null : null\),[^\n]*\n\s*raidedAt: \(px, py\) => raidingPartiesOn\(\) && raidState\(\)\.raids\.some\(\(r\) => r\.px === px && r\.py === py && raidActive\(r, worldMinutes\(\)\)\) \}\);/);
+  assert.match(w, /const townEcon = createTownEconHost\(\{ online: isOnlinePage, townOf: \(mapId\) => _townOfMapId\.get\(mapId\), seatAt: seatHere, nowMs: battleNowMs,[^\n]*\n\s*seats: \(\) => \(seatBook\?\.open === true \? seatBook\.data\?\.seats \?\? null : null\),[^\n]*\n\s*raidedAt: \(px, py\) => raidingPartiesOn\(\) && raidState\(\)\.raids\.some\(\(r\) => r\.px === px && r\.py === py && raidActive\(r, worldMinutes\(\)\)\),\n\s*typeAt: \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\)\?\.mapTableData\?\.locationType \}\);/);   // TE2: built by its host module (scenes/townEconHost.js)
   assert.match(w, /const battleNowMs = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/, 'the relay\'s clock');
   assert.match(w, /townTipAt: \(summary\) => townEcon\.tipAt\(summary\?\.mapID \?\? summary\?\.mapId\),/);
-  assert.match(w, /const townTipAt = \(mapId\) => townEcon\.tipFnAt\(mapId\);/);
-  assert.match(w, /_townOfMapId\.set\(loc\.mapTableData\.mapId >>> 0, \{ name: String\(loc\.name \?\? ''\), px: p\.x, py: p\.y, region: r, type: loc\.mapTableData\.locationType \}\);/);
+  assert.match(w, /townTipAt: \(mapId\) => townEcon\.tipFnAt\(mapId\),/);
+  assert.match(w, /_townOfMapId\.set\(loc\.mapTableData\.mapId >>> 0, \{ name: String\(loc\.name \?\? ''\), px: p\.x, py: p\.y, region: r, type: loc\.mapTableData\.locationType, location: l \}\);/);
   assert.doesNotMatch(w, /seatTipAt/, 'SEAT-TIP\'s seat-only maker is gone: the town\'s card carries its lines');
   const tvm = rd('src/scenes/travelViewMarks.js');
   assert.equal((tvm.match(/tip: townTipAt\((p|f)\.summary\.mapId\) \}\);/g) ?? []).length, 2, 'a near plate and a far one');
@@ -459,4 +463,32 @@ test('TOWN-ECON LAW-3 the wiring: both doors of a counter\'s Buy hand the mark t
   assert.match(et, /const \{ cost: c, pieces, resale \} = tradeCost\('Sell', \[item\], ctx\);\n\s+const price = getTradePrice\('Sell', c, ctx\.quality \?\? 0, ctx\.skills \?\? \{\}, pieces, resale\);/);
   assert.match(et, /const price = getTradePrice\(mode, c, ctx\.quality \?\? 0, ctx\.skills \?\? \{\}, pieces, resale\);/);
   for (const src of [nt, et, wm]) assert.equal((src.match(/getTradePrice\('Sell'|getTradePrice\(this\.mode|getTradePrice\(mode|getTradePrice\(m,/g) ?? []).length, (src.match(/getTradePrice\([^\n]*resale\)|\}, lot\.pieces, lot\.resale\)/g) ?? []).length, 'every sale\'s price');
+});
+
+test('TOWN-ECON TE2 the players\' share\'s law (Town-Economy-Arc section 2): the sources, their weights, an account\'s caps a town a day, the decay, the days kept, the half and the most are TE0\'s; a town\'s activity weighs each day\'s acts by source and by the decay, the days kept alone; the share is PLAYERS_MAX x A / (A + HALF), half the most at the half, never the most; a town\'s report is canonical and read back only as written (mutants: TOWNECON2-weights, TOWNECON2-decay, TOWNECON2-days, TOWNECON2-half, TOWNECON2-share-most, TOWNECON2-report-range, TOWNECON2-report-strict)', () => {
+  assert.deepEqual(TOWN_ECON_SOURCES, ['watch', 'trade', 'raid']);
+  assert.deepEqual(TOWN_ECON_WEIGHTS, { watch: 1, trade: 4, raid: 20 });
+  assert.deepEqual(TOWN_ECON_CAPS, { watch: 30, trade: 10, raid: 1 });
+  assert.deepEqual([TOWN_ECON_DECAY, TOWN_ECON_DAYS, TOWN_ECON_HALF, TOWN_PLAYERS_MAX, TOWN_ECON_KEPT_S, TOWN_ECON_SHARE_LEAST, TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND], [0.8, 14, 150, 30, 300, 1, 12, 'town']);
+  const t = 1000;
+  assert.equal(townActivity([], t), 0);
+  assert.equal(townActivity([{ day: t, src: 'watch', n: 30 }, { day: t, src: 'trade', n: 10 }, { day: t, src: 'raid', n: 1 }], t), 30 + 40 + 20, 'a full day of one account');
+  assert.equal(townActivity([{ day: t - 1, src: 'trade', n: 5 }], t), 5 * 4 * 0.8);
+  assert.ok(Math.abs(townActivity([{ day: t - 13, src: 'raid', n: 1 }], t) - 20 * 0.8 ** 13) < 1e-9, 'the last day kept');
+  assert.equal(townActivity([{ day: t - 14, src: 'raid', n: 1 }, { day: t + 1, src: 'raid', n: 1 }, { day: t, src: 'gold', n: 99 }, { day: t, src: 'watch', n: -3 }], t), 0, 'past the days, a day to come, a source not named, nothing counted');
+  assert.equal(townPlayersShare(0), 0);
+  assert.equal(townPlayersShare(150), 15, 'half the most at the half');
+  assert.ok(townPlayersShare(1e9) < TOWN_PLAYERS_MAX && townPlayersShare(1e9) > 29.99, 'a zerg comes no nearer the top');
+  assert.equal(townPlayersShare(Infinity), TOWN_PLAYERS_MAX);
+  assert.equal(townPlayersShare(NaN), 0);
+  assert.equal(townShareShown(12.345), 12.3);
+  // the report
+  const r = { map: 1001, px: 207, py: 212, region: 17, location: 5 };
+  assert.deepEqual(townReportOf(r), r);
+  assert.equal(townReportText(r), '[1001,207,212,17,5]');
+  assert.deepEqual(parseTownReport('[1001,207,212,17,5]'), r);
+  for (const bad of [{ ...r, map: 0 }, { ...r, map: 2 ** 32 }, { ...r, px: 1000 }, { ...r, py: 500 }, { ...r, region: 62 }, { ...r, location: 10000 }, { ...r, px: 1.5 }, null]) assert.equal(townReportOf(bad), null, JSON.stringify(bad));
+  assert.equal(parseTownReport('[1001, 207, 212, 17, 5]'), null, 'read back only as written');
+  assert.equal(parseTownReport('[1001,207,212,17]'), null);
+  assert.equal(parseTownReport('{'), null);
 });

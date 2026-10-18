@@ -10,8 +10,8 @@
 // no town shows a card. What it reads comes from its host - the town's own
 // row (its pixel, region and type), the seat book's dressed seats, the
 // raids running, the real clock - and nothing here asks the service
-// itself. TE2's players' share is the host's `players`, 0 until it reads
-// one.
+// itself. TE2's players' share is the host's `players` by the town's map
+// id (net/townEconBook.js shareOf), 0 where none is read.
 // ═════════════════════════════════════════════════════════════════════
 import { isEconTown, townKeyOf, townProsperity, townShopFactor, townTipOf, townDayOf, TOWN_SALE_MODES } from '../../net/townEconLaw.js';
 import { bailiwickOf, seatTipOf } from '../../net/townSeatLaw.js';   // TE0 decision 5: the area's seat (the Tithe's own rule); AUDIT TOWN-ECON CLI-3: a seat's own card where its place has no economy
@@ -19,10 +19,10 @@ import { bailiwickOf, seatTipOf } from '../../net/townSeatLaw.js';   // TE0 deci
 /**
  * @param {{ online: () => boolean, townOf: (mapId: number) => ({ name: string, px: number, py: number, region: number, type: number }|null|undefined),
  *   seatAt: (mapId: number) => any, seats: () => (any[]|null), raidedAt: (px: number, py: number) => boolean, nowMs?: () => number,
- *   players?: (key: number) => number }} host
+ *   players?: (mapId: number) => number }} host
  *   `townOf` a town's row by its map id; `seatAt` its own seat, dressed (null where none); `seats` every seat known here,
  *   dressed - null where the seats are not known (closed, unread); `raidedAt` whether a raid runs at a pixel now;
- *   `players` TE2's share at a town's key
+ *   `players` TE2's share at a town by its map id
  */
 export function createTownEcon(host) {
   const nowMs = host.nowMs ?? (() => Date.now());
@@ -35,7 +35,7 @@ export function createTownEcon(host) {
     const key = townKeyOf(town.px, town.py);
     const seat = host.seatAt(id) ?? null;
     const raided = host.raidedAt(town.px, town.py) === true;
-    const players = host.players?.(key) ?? 0;
+    const players = host.players?.(id) ?? 0;   // TE2: the service keys a town by its map id
     const day = townDayOf(nowMs());
     const at = (d) => townProsperity({ key, type: town.type, day: d, seat, raided, players });
     return { id, town, key, seat, raided, players, p: at(day), prevOf: () => at(day - 1) };   // yesterday's for the card alone - a counter asks once an item

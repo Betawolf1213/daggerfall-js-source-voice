@@ -74,6 +74,7 @@ import { REALM_FINDINGS_KEEP_S, REALM_WEALTH_KEEP_S } from './review.js';   // I
 import { WILD_FALLS_KEEP_S } from './wild.js';   // INT9: a death's drop's keeping
 import { settleHolds, REZ_SETTLE_MAX } from './legacy.js';   // REZ-BLOODLINE AUDIT R1: a held fall's window closed
 import { spendLapsedStakes } from './eg.js';   // EG-ZM: the Weir Key's stake's clock
+import { TOWN_ECON_SWEEPS, townEconKeptFrom } from './townEcon.js';   // TOWN-ECON TE2: a town's acts past the days kept
 
 /** The two schedules - wrangler.toml's [triggers] crons name exactly these (test/server/scale4b.test.js holds the two to
  *  each other). The hour's minute is off the hour, where every other Worker's cron lands. */
@@ -183,6 +184,12 @@ export const HOUR_JOBS = Object.freeze([
       n += r.changed;
       if (!r.full || !ctx.budget()) break;
     }
+    return n;
+  }],
+  // TOWN-ECON TE2 (townEcon.js): a town's days, its accounts' acts and the ticks seen, past the days the share weighs
+  ['town-econ', async (ctx) => {
+    let n = 0;
+    for (const sql of TOWN_ECON_SWEEPS) n += await rounds(() => deleted(ctx.db, sql, townEconKeptFrom(ctx.nowS)), SWEEP_ROWS, ctx.budget);
     return n;
   }],
   ['rate-limits', (ctx) => rounds(() => deleted(ctx.db,

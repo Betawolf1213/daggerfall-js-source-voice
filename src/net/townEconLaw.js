@@ -6,11 +6,12 @@
 // counters and its card.
 //
 //  - A TOWN is a MAPS location of type TownCity, TownHamlet or TownVillage (formats/mapsFile.js LOCATION_TYPES 0-2),
-//    keyed by its map pixel (`townKeyOf`: the key the relay's receipts and the market's boards already carry - TE2).
+//    its market cycle phased by its map pixel (`townKeyOf`); TE2's service keys it by its unsigned map id - the seats',
+//    the homes', the stalls' and the patrons' own.
 //  - THE BASELINE IS PURE (TE0 decision 2): the town's size, its own market cycle over real UTC days (a closed form,
 //    phased by its pixel - a player away a month reads what one who stayed reads), its seat's Standing and Edict, and a
-//    raid at its gates. THE PLAYERS' SHARE (TE2, the account service's count of witnessed acts) is an argument, bounded
-//    here to TOWN_PLAYERS_MAX.
+//    raid at its gates. THE PLAYERS' SHARE (TE2, the account service's count of witnessed acts - the law's lines below,
+//    read by both ends) is an argument, bounded here to TOWN_PLAYERS_MAX.
 //  - THE PRICE (TE0 decision 4 - Mac: "Wider swings, ±25%+", an exception to the Economy arc's law 5, bounded): what a
 //    counter ASKS moves by up to TOWN_PRICE_SWING each way; what it PAYS falls by the same share away from the middle,
 //    either way, and never rises - AUDIT TOWN-ECON LAW-1: a Booming town's counter never pays more than it asks, so the
@@ -130,6 +131,78 @@ export function townShopFactor(p, mode, seatFactor = 1) {
   if (TOWN_SALE_MODES.includes(mode)) return Math.min(townSaleFactor(p), ask);
   if (mode !== 'Buy' && mode !== 'Repair') return 1;
   return ask;
+}
+
+// ─── TE2: THE PLAYERS' SHARE (Town-Economy-Arc section 4) ─────────────
+// Witnessed acts at a town - its footsteps (the relay's signed Watch ticks), its players' traders' sales (the market's,
+// and LW15's patrons') and a raid driven from its gates - counted by the account service a town a day by source, each
+// account capped a town a day, and read back by every client as one share. The service and the client both read
+// these lines; nothing a player pays in gold moves a town (TE0 decision 3).
+
+/** The sources of a town's activity. */
+export const TOWN_ECON_SOURCES = Object.freeze(['watch', 'trade', 'raid']);
+/** What one act of each source weighs. */
+export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 4, raid: 20 });
+/** The most of each source one account counts at one town in one real day: an hour's walking, ten sales, a raid. */
+export const TOWN_ECON_CAPS = Object.freeze({ watch: 30, trade: 10, raid: 1 });
+/** A day's acts weigh TOWN_ECON_DECAY less for each day past. */
+export const TOWN_ECON_DECAY = 0.8;
+/** The days a town's acts are kept and weighed - today and the thirteen before. */
+export const TOWN_ECON_DAYS = 14;
+/** The activity at which the share is half its most - a town crowded by one zerg comes no nearer the top than
+ *  TOWN_PLAYERS_MAX. */
+export const TOWN_ECON_HALF = 150;
+/** How long the service keeps the towns' shares it answers, and a client the shares it read, s. */
+export const TOWN_ECON_KEPT_S = 300;
+/** The least share the service answers a town with (TE2: "each town with a share of 1 or more"). */
+export const TOWN_ECON_SHARE_LEAST = 1;
+/** The Watch receipts one claim carries. */
+export const TOWN_WATCH_CLAIM_MAX = 12;
+/** The witness kind of a town's registry row (world_witness), and the reports an account may give an hour. */
+export const TOWN_WITNESS_KIND = 'town';
+export const TOWN_WITNESS_HOUR = 48;
+
+/** A TOWN'S ACTIVITY on `today`: its rows (`{ day, src, n }`, the service's town_econ_days) weighed by source and by
+ *  TOWN_ECON_DECAY a day past - the rows of the TOWN_ECON_DAYS days to `today` alone, a source the table does not name
+ *  nothing. @param {ReadonlyArray<{ day: number, src: string, n: number }>} rows @param {number} today */
+export function townActivity(rows, today) {
+  let a = 0;
+  for (const r of rows ?? []) {
+    const age = today - Number(r?.day);
+    const w = TOWN_ECON_SOURCES.includes(r?.src) ? TOWN_ECON_WEIGHTS[/** @type {keyof typeof TOWN_ECON_WEIGHTS} */ (r.src)] : 0;
+    const n = Number(r?.n);
+    if (!(age >= 0 && age < TOWN_ECON_DAYS) || !w || !(n > 0)) continue;
+    a += w * n * TOWN_ECON_DECAY ** age;
+  }
+  return a;
+}
+/** THE PLAYERS' SHARE of an activity: TOWN_PLAYERS_MAX x A / (A + TOWN_ECON_HALF) - half the most at TOWN_ECON_HALF,
+ *  never the most. @param {number} a */
+export const townPlayersShare = (a) => (a > 0 && Number.isFinite(a) ? (TOWN_PLAYERS_MAX * a) / (a + TOWN_ECON_HALF) : a === Infinity ? TOWN_PLAYERS_MAX : 0);
+/** A share as the service answers it: one decimal. @param {number} share */
+export const townShareShown = (share) => Math.round(share * 10) / 10;
+
+/** A TOWN'S REGISTRY REPORT (TE2, the witnessed town): the town a client stands in, by its map id, its pixel, its region
+ *  and its location's index in the region - canonical, or null. The service learns from three agreeing accounts which
+ *  town stands at a Watch tick's pixel and which a raid's `region:location` names.
+ *  @param {any} raw `{ map, px, py, region, location }` */
+export function townReportOf(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const { map, px, py, region, location } = raw;
+  const ok = (v, max) => Number.isSafeInteger(v) && v >= 0 && v <= max;
+  if (!ok(map, 0xffffffff) || map === 0 || !ok(px, 999) || !ok(py, 499) || !ok(region, 61) || !ok(location, 9999)) return null;
+  return { map, px, py, region, location };
+}
+/** A report as world_witness keeps it. @param {{ map: number, px: number, py: number, region: number, location: number }} t */
+export const townReportText = (t) => JSON.stringify([t.map, t.px, t.py, t.region, t.location]);
+/** A kept report read back, or null. @param {unknown} s */
+export function parseTownReport(s) {
+  if (typeof s !== 'string') return null;
+  let v;
+  try { v = JSON.parse(s); } catch { return null; }
+  if (!Array.isArray(v) || v.length !== 5) return null;
+  const t = townReportOf({ map: v[0], px: v[1], py: v[2], region: v[3], location: v[4] });
+  return t && townReportText(t) === s ? t : null;
 }
 
 /** What a town card's trend is, yesterday to today - its id; the card says it in the player's language (TREND_WORDS).
