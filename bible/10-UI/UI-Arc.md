@@ -15268,7 +15268,9 @@ hosts named (townTalk.frame for world.js and exterior.js, townTalk.hudFrame
 for worldModes.js, dungeonContext.js's own, `ui/hud/hud.js` for the label) -
 and, since AUDIT FONT F3, on the dungeon hosts' overlay branch too, which
 returns above drawHud: `hideHudTextSurfaces` takes both surfaces down
-before that return.
+before that return. (FB1018b DUNGEON-DIGITS: and the enhanced HUD with
+its hotbar, told hidden and paused as drawHud tells it under a window -
+`10-UI/Slots-Hotbar-Status.md`.)
 
 **Pinned** in `test/ui/enhanced/hudtext.test.js` (+6), chat1, soc3, soc4, soc5 (+1
 each) and audit64's F37 pin strengthened (the hide door counted per host);
