@@ -1,7 +1,9 @@
 # SPAWN GRANTS - the relay decides which foes may exist (GRANT0, the design record)
 
-**Status: DESIGN RECORD, PROPOSED (2026-10-17). Nothing is built.** Section 10 holds the questions that wait on the owner.
-Nothing here binds a slice until the owner answers them. Section 7 orders the slices. Each one measures before it
+**Status: DESIGN RECORD, PROPOSED (2026-10-17; revised 2026-10-18 for the relay's cost). Nothing is built.** The relay
+signs a grant when a foe is made and never reads the foe stream; every reader checks the grant. Section 4.11 keeps the
+first draft, in which the relay read every record, as a fallback. Section 10 holds the questions that wait on the owner,
+and nothing here binds a slice until the owner answers them. Section 7 orders the slices. Each one measures before it
 enforces, as the Integrity arc does.
 
 ## The words
@@ -12,7 +14,10 @@ enforces, as the Integrity arc does.
   reducing the amount of elites and etc, but the problem is that modified client has an ability to have an impact to the
   server ... This is bad because it's electron and it's open-source"**.
 - Mac handed that on. Asked to choose between a relay referee for foe frames, making strangers' foes harmless, a plan for
-  spawns the server rolls, and a written reply, Mac chose **"Plan server-rolled spawns"**. This page is that plan.
+  spawns the server rolls, and a written reply, Mac chose **"Plan server-rolled spawns"**.
+- Mac, 2026-10-18, on the first draft, whose relay read every foe record: **"So this would definitely affect
+  performance..."**. Asked whether the relay should sign at spawn time only and leave the checking to each player's
+  game: **"Lets do that"**.
 
 ## How to read this page
 
@@ -81,12 +86,17 @@ holds under a signature. The identity token's `cl` (the judged level) and `lv` (
 (`net/wire.js` sharedClassicMinutes). The owner's map pixel is the relay's own reading of its pose (`net/wire.js`
 mapPixelOfWire).
 
+**A socket's id is safe inside a room.** A client names its own id in its hello (`net/online.js` peerId, one per tab).
+The room keeps the id's secret from the first hello, and a later hello with the same id and another secret is refused
+(`server/src/index.js`: "the id's secret (A3): the first hello mints it, a later one must match", `'id taken'`). The
+relay stamps the sender's id on every frame it fans out. So within one room, no socket streams under another's id.
+
 ## 3. Precedents in this tree (FACT)
 
 - **A relay signature carried on a foes frame and checked by strangers.** Elite Gates: the hub signs an arch's call
   (`net/eliteGates/egCallSig.js` signEgCall), the opener carries it on its foes frame (`ea`), and every stranger checks it
   on their own machine (`scenes/eliteGates/egArch.js`, verifyEgCall, with a verdict cache and a cap per cell). The public
-  half comes from the account service as `rk` (`/v1/eg/keys`). A grant travels the same way.
+  half comes from the account service as `rk` (`/v1/eg/keys`). A grant travels and is checked the same way.
 - **A table built from the map files that the relay may hold.** RAID-ROLL: the client hands over the towns table, and the
   relay keeps it only when its SHA-256 equals the operator's pin (`RAID_TOWNS_SHA256`, `net/raid/raidLaw.js`). The relay
   never holds a map file (Port-Doctrine, Non-negotiables).
@@ -103,10 +113,11 @@ mapPixelOfWire).
 
 ### 4.1 One sentence
 
-**Online, a foe that rides to another player exists only on a grant from the relay. The relay rolls everything about
-the grant that needs no map file and signs it. The owner's client builds the foe from the grant's seed, and every reader
-rebuilds it from the same seed and refuses a record that disagrees.** The simulation stays on the owner's machine
-(Multiplayer.md, decision 2). What changes is who decides that a foe exists, and what it is.
+**Online, a foe that rides to another player exists only on a grant from the relay. The relay rolls what needs no map
+file, signs it when the foe is made, and never reads the foe stream. The owner's client builds the foe from the grant's
+seed. Every reader checks the grant's signature, rebuilds the foe from the same seed, and refuses a record that
+disagrees.** The simulation stays on the owner's machine (Multiplayer.md, decision 2). What changes is who decides that a
+foe exists, and what it is.
 
 ### 4.2 A grant
 
@@ -117,7 +128,9 @@ fields:
 | Field | What |
 |---|---|
 | `g` | the grant's number, the room's own counter |
-| `a` | the owner's account (the token's `s`), so the grant is bound to an account and not to a socket |
+| `o` | the owner's socket id, which readers match to the frame's sender (section 2: the room guards it) |
+| `q` | the room it was minted for, which readers match to the frame's cell |
+| `a` | the owner's account (the token's `s`). Only the relay reads it, on a carry or a handover |
 | `k` | its kind (section 4.9) |
 | `p` | the map pixel the relay read off the owner's pose at the mint |
 | `m` | the world minute at the mint (sharedClassicMinutes): day or night is everyone's |
@@ -125,15 +138,23 @@ fields:
 | `n` | how many foes it stands: an encounter's party, a camp's group |
 | `s` | the seed, `rand32` |
 | `e`, `c` | which members are elite, and each member's champion trait. The relay rolls both from `s`, with pinned copies of `ELITE_FOE_OVERWORLD_CHANCE` and the champions' rate, held equal to `systems/eliteFoes.js` and `systems/champions.js` by a test (the relay cannot import those modules: they reach the loot tables) |
-| `x` | when it expires |
+| `x` | when it expires, about ten minutes on (OPEN: the measure sets it) |
 
-### 4.3 Asking
+### 4.3 The asks
 
-Online only, so solo play does not change. The client's own clock still decides that a spawn is due: the encounter
-tick's catch-up loop, a camp's roll when a chunk loads. At that moment the client asks (`{t:'grant', k, ...}`) and stands
-the group when the answer comes. That costs one round trip, and spawns stand out of view (`SPAWNER_ARMS` 10-20 m, past
-the line of sight; camps at 100-150 m), so the wait is not seen. The relay answers with the grant, or with `no` and a
-reason (over budget, the cell full, a pose it does not hold).
+Online only, so solo play does not change. Every ask is a small frame of its own (`{t:'grant', k: ...}`) that comes
+when a foe is made, renewed, lost or handed on. None of them is on the foe stream.
+
+| Ask | When | What the relay does |
+|---|---|---|
+| `mint` | the client's own clock decides a spawn is due (the encounter tick's catch-up loop, a camp's roll when a chunk loads) | spends the kind's bucket, checks the cell's ceiling, rolls and signs, answers the grant or `no` with a reason |
+| `renew` | before a live grant's `x`, all of an owner's live grants in one ask | signs each again with a new `x` |
+| `free` | a granted foe died or was culled | lowers the counts. Believed only downward: a lie costs only the liar |
+| `carry` | the owner crosses into another cell | the new room checks each grant's signature and that `a` is this socket's account, then signs it again for itself (`q`) |
+| `heir` | the owner hands a foe on (section 4.8) | checks `a` as for a carry, and signs the member again for the heir's id |
+
+A spawn waits one round trip for its `mint`. Spawns stand out of view (`SPAWNER_ARMS` 10-20 m, past the line of sight;
+camps at 100-150 m), so the wait is not seen.
 
 ### 4.4 The dice
 
@@ -145,48 +166,59 @@ and `c`. Movement, targets, blow timing and every other roll stay `Math.random` 
 ### 4.5 Carrying
 
 Each record carries `gr`: the grant's number and the member's index. The signed grant rides in the frame's list `gs`,
-once on the record's first frame and again on every full frame (the cadence the look's `ls` already rides at). A reader
-checks a grant once per owner and keeps the verdict, as egArch does. A grant is about 150 bytes. A full frame of 64 foes
-drawn from 8 to 16 grants carries 1.2 to 2.4 KB more, against `FOES_ROOM_BYTES_PER_S` (4 MiB a second). That figure is
-for the measure to confirm.
+once on the record's first frame and again on every full frame (the cadence the look's `ls` already rides at). A grant is
+about 150 bytes. A full frame of 64 foes drawn from 8 to 16 grants carries 1.2 to 2.4 KB more, against
+`FOES_ROOM_BYTES_PER_S` (4 MiB a second). That figure is for the measure to confirm.
 
 ### 4.6 What the relay holds
 
-For each socket in the room the relay keeps the grants it minted (the budget), which member stands as which record
-(`i`), and which members died. Once enforcing, it strips these records before the fan: a record with no grant; a grant
-that is not this account's; a member index past `n`; a member already standing as another live record; a `z` or `cp`
-that disagrees with `e` or `c`. The fan already serialises the frame again (`fanOut`), so stripping costs no extra
-stringify. The law lives in a Room method of its own, never in `_message` (HOST-SPLIT; `_message` is past V8's
-optimising ceiling).
+**Nothing on the foe stream.** The relay never opens a foe frame, so its busiest path costs what it costs today. That
+path is `_foesFan`, five frames a second from each socket, fanned to a crowd whose cost grows with its square (Scale-Arc
+SCALE5d). Per room, the relay holds:
 
-**Crossing a cell.** The owner's live grants go with it: it hands them to the new cell's room
-(`{t:'grant', k:'carry', gs}`), which checks the signatures (every room holds the key) and binds each one once. A grant
-past its `x` is refused unless the room that holds it live has renewed it. So a spent grant replayed in another room is
-bounded to the honest live count.
+- each account's buckets, one per kind, spent at each mint and sized to the honest envelope the measure reads (section
+  7);
+- the grants not yet expired. The cell's ceiling on live granted hostile foes counts them. A foe that dies early keeps
+  its grant counted until it is freed or expires, so the ceiling errs high, by at most one window.
 
-**The budget is measured first.** Each kind has a bucket per account per room, sized to the honest envelope that the
-measure reads (section 7). There is also a ceiling on live granted hostile foes for the whole cell. FOE-FORGE refused a
-room-wide count because readers would disagree (DESYNC-ZERO). That reason is gone here: the relay decides for every
-reader at once, so every reader is handed the same set.
+Memory is a few numbers per live grant. Nothing goes to storage: the room secret's HMAC re-mints a grant after an
+eviction.
+
+**Why the relay does not strip records.** The first draft had the relay read every record and drop each one without a
+grant. That law is stronger: a forged record never leaves the relay, and the relay's own counts are evidence. But it
+reads every record of every frame in the crowded cells, where the relay is already at its limit (`_message` is past V8's
+optimising ceiling, PERF-RELAY1; SCALE5d). It is kept as section 4.11, to build only if the measure shows the relay can
+afford it.
 
 ### 4.7 What readers check
 
-Readers hold the map files, so they check what the relay cannot:
+Every reader is the law here. It already reads every record (applyFoes, validFoeRecord), and it checks a record's grant
+once per new foe:
 
-- the grant's signature (the key egArch already fetches);
-- the species: chooseRandomEnemy at the grant's pixel, minute and level, drawn from the seed, must equal `t`;
-- the record's first feet, within the kind's reach of the grant's pixel;
-- `l`, `w` and `k` against the seed's draw; `z` and `cp` against `e` and `c`.
+- the grant's signature, with the key egArch already fetches (OPEN: does `/v1/eg/keys` reach a guest?);
+- `o` is the frame's sender, and `q` is the frame's cell (`k`), which applyFoes already holds to the reader's cell or a
+  halo's;
+- the grant is not past `x`;
+- the member index is under `n`, and the member stands as one live record;
+- the species, the first feet within the kind's reach of `p`, and `l`, `w` and `k` all match the seed's draw. `z` and
+  `cp` match `e` and `c`.
 
-A reader cannot see a stranger's account (FACT: no account rides a foes frame). The account binding is therefore the
-relay's job, and the reader trusts the relay for it, as it trusts the relay's stamped id for every other frame.
+A verdict is kept per owner and grant, as egArch keeps its own. Every honest reader runs the same check on the same
+bytes, so every honest reader agrees on what stands. DESYNC-ZERO refused a room-wide count because readers would
+disagree; a deterministic check does not have that problem.
+
+A reader that refuses a record counts it, by kind, reason and sender. It hands the tally to the relay every ten minutes
+(`{t:'grant', k:'tally'}`), which is rare and off the foe stream. The tallies are the measure (section 7) and GRANT7's
+evidence.
+
 FOE-FORGE's caps stay underneath all of it.
 
 ### 4.8 The heir
 
-A handover (`e`) passes the grant with the foe. The relay sees the dying owner's handover frame and binds the member to
-the heir's account, and strips a record that names an heir without carrying a grant. A forged takeover then costs the
-forger a grant of its own. Today, any record naming a player takes a foe over.
+An owner hands its foe on with its grant. In the handover it asks the relay to sign the member again for the heir's id
+(`heir`), and the handover frame carries that grant. A reader takes a foe over only on a grant made out to it. A forged
+takeover then costs the forger one of its own grants. Today, any record naming a player takes a foe over. A foe orphaned
+by a disconnect (QUEST-PARTY's pruneOwners) is taken on a fresh grant from the taker's own bucket.
 
 ### 4.9 Each source's grant
 
@@ -200,7 +232,7 @@ forger a grant of its own. Today, any record naming a player takes a foe over.
 | Raiding parties (RAID1-3) | `raid` | the cell, against the raid ledger it already keeps | chooseRaider from the seed | `MAX_RAID_ENEMIES` 25 and `MAX_RAID_DEFENDERS` 8 |
 | The City Watch | `watch` | the cell | Knight_CityWatch (146) only; readers check a location's ground | `CELL_WATCH_PUPPETS_MAX` (10) |
 | World of Daggerfall sites | `site` | the cell, one per marker spring | the marker's arms from the seed | the marker's own |
-| The rite's faithful (WB12d) | none new | already gateHash of the day, which the relay checks | | |
+| The rite's faithful (WB12d) | none new | already gateHash of the day | | |
 | Deep water | `deep` | the cell | `DEPTH_AQUATIC_TABLE` from the seed | the deep's own cap |
 | The Living World's stands | none new | already lwSeed; their elite moves onto it | | |
 | Greater Giants | `giant` | the hub, which already holds the giants that are down (ZONE-GIANTS) | a giant | one per index, zone-wide; a call of ten as one grant of `n` 10 |
@@ -218,7 +250,16 @@ grants.
 The relay could also hold the climate and location-rect slice of its own cell, handed over by a client and kept under
 an operator-pinned Merkle root (RAID-ROLL's law, one root over every cell's slice). It would then roll the species
 itself, and readers would only confirm. The first enforce does not need this. It is worth building if two honest
-readers ever disagree on a species.
+readers ever disagree on a species. It costs the relay only at a mint.
+
+### 4.11 The fallback: the relay strips records (the first draft)
+
+The relay reads every record of every foes frame, keeps each socket's grants bound to the records standing on them, and
+drops each record that has no grant, has another account's, or disagrees with its `e` or `c`, before the fan (`fanOut`
+already serialises the frame again). It is built only if the measure shows the relay can afford it. That measure is the
+relay's time in `_foesFan` in its fullest cells, read before and after on the same crowd. It would bring two things the
+readers' law cannot: a forged record that never leaves the relay, and counts that are the relay's own rather than the
+readers'.
 
 ## 5. What it does not fix (the honest limit)
 
@@ -227,20 +268,26 @@ readers ever disagree on a species.
   OPEN: a puppet's speed bounded by its species; a foe whose owner ignores every blow stands down at the reader.
 - **At the granted rate, a cheater stands what an honest player stands.** It can still lead those foes to someone, as an
   honest player can.
+- **A modified client still sees its own forged foes.** The readers' law decides what everyone else sees, not what the
+  forger's screen shows.
+- **A player on an old client checks nothing**, and stands what it is sent, as today, until it updates.
 - **Each account has its own budget.** The cell's ceiling bounds the total, and guests are the owner's call
   (section 10).
 - **Fishing.** A client can ask for a grant, dislike the roll and never stand it. Every ask spends the budget, so its
-  elites in an hour are no more than an honest player's. A grant that is never bound is counted in the measure.
+  elites in an hour are no more than an honest player's.
 
 ## 6. What it costs (FACT, then estimates)
 
-- **The relay:** one Ed25519 signature per grant (WebCrypto, which the relay already uses for receipts); one lookup per
-  record per frame, at `FOES_MS` (200 ms) a socket; memory for a socket's live grants. Nothing in storage: the room
-  secret's HMAC re-mints after an eviction.
+- **The relay's foe stream: nothing.** It is not read.
+- **The relay's asks:** one Ed25519 signature (WebCrypto, which the relay already uses for receipts) at each mint, carry
+  and handover, which is a few a minute for each player, and a renewal of all of a player's grants in one ask about every
+  ten minutes. A tally from each reader every ten minutes. Memory: a few numbers for each live grant.
+- **Each player's machine:** one signature check for each new grant, kept, as egArch keeps its verdicts. The dice are
+  re-run once for each new foe, and the puppet's build already rolls the same things. Nothing runs each frame.
 - **The wire:** a new frame type, `grant`. A client asks only of a relay at `GRANT_RELAY_MIN` or later, the
-  relayCfgSupported pattern.
+  relayCfgSupported pattern. The foe frames grow by the grants they carry (section 4.5).
 - **Deploys:** every relay slice bumps `RELAY_VERSION`, and `relay-deploy.yml` then drops every connected player once.
-  The switch from measuring to enforcing goes through relayCfg and needs no deploy.
+  The switch from measuring to enforcing needs no deploy: relayCfg sets it, and the welcome tells each client.
 - **DFU:** online, an encounter's dice come from the relay's seed instead of `Math.random`. That is a departure from
   RandomEncounters.ChooseRandomEnemy's draw, and the slice that ships it adds its bracket to Port-Ledger section A,
   row ONLINE. The tables and the law are unchanged.
@@ -249,19 +296,20 @@ readers ever disagree on a species.
 
 | Slice | What | Ends with |
 |---|---|---|
-| GRANT1 | The law, pure, in a new module (`net/grantLaw.js`, proposed): the grant's shape and check, the dice order, the budget's gate, the pinned rates. Nothing calls it yet. | tests and mutants |
-| GRANT2 | The relay mints grants and **measures**: for each kind, the records with a grant, without one, disagreeing with one, and the grants never bound. It strips nothing. Clients ask for encounters (the largest stream). | a relay deploy |
-| GRANT3 | Readers check grants and count disagreements. They still stand everything FOE-FORGE allows. | |
+| GRANT1 | The law, pure, in a new module (`net/grantLaw.js`, proposed): the grant's shape, its signing and its check, the dice order, the buckets' gate, the pinned rates. Nothing calls it yet. | tests and mutants |
+| GRANT2 | The relay takes the asks (section 4.3) and **measures**: every ask is granted, and the refusals the buckets and the ceiling would make are counted. The welcome says the law's mode, `measure`, from relayCfg. Clients ask for encounters (the largest stream). | a relay deploy |
+| GRANT3 | Readers check grants and tally what they would refuse. They still stand everything FOE-FORGE allows. | |
 | GRANT4 | Every other source takes its grant, one slice per family in section 4.9. | |
-| GRANT5 | The measure is read (`tools/realmReview.mjs grants`), for seven days ("Measure 7 days, then enforce", Integrity-Arc section 3, call 2). The buckets are set from it. | the numbers |
-| GRANT6 | **Enforce**: staff turn it on through relayCfg. The relay strips ungranted records, readers refuse disagreements, and FOE-FORGE's caps stay. | no deploy |
-| GRANT7 | Consequence: once every source is granted, an honest client never sends an ungranted record. A sender the enforcing relay keeps stripping is struck out, and its account is opened as a case in the moderators' queue (Chat-Safety-Arc SAFE8) with the relay's counts as evidence. Never a ban by itself: SAFE5's law. | an account deploy |
+| GRANT5 | The measure is read (`tools/realmReview.mjs grants`) for seven days ("Measure 7 days, then enforce", Integrity-Arc section 3, call 2): the honest asks per kind set the buckets, and any honest reader's refusal is the law's mistake, fixed before enforcing. | the numbers |
+| GRANT6 | **Enforce**: staff set relayCfg to `enforce`, and the welcome tells every client. The relay refuses asks past a bucket or the ceiling, readers refuse what has no grant or disagrees with one, and FOE-FORGE's caps stay. | no deploy |
+| GRANT7 | Consequence: once every source is granted, an honest client sends nothing a reader refuses. When readers on several accounts tally against one sender in a window, its account is opened as a case in the moderators' queue (Chat-Safety-Arc SAFE8), with the tallies as evidence. One reader's tally alone never counts, because a tally can be forged to frame someone. It never bans by itself: SAFE5's law. | an account deploy |
 | GRANT8 | Optional, section 4.10: the relay rolls the species. | |
+| GRANT9 | Fallback, section 4.11: the relay strips records, only if the measure shows it can afford it. | a relay deploy |
 
-THE FOUR HOSTS: `scenes/world.js` (the streamed exterior) asks for grants and carries them. `scenes/worldModes.js` does
-the same for the interior lane. `scenes/dungeonContext.js` does the same for its own lane and its surplus; its layout
-stream needs none. `scenes/exterior.js` (the fixed city) streams nothing and reads no peer, so it needs nothing. The
-asks go into a module the hosts wire, never into the hosts' own functions (HOST-SPLIT).
+THE FOUR HOSTS: `scenes/world.js` (the streamed exterior) asks for grants, carries them and checks them.
+`scenes/worldModes.js` does the same for the interior lane. `scenes/dungeonContext.js` does the same for its own lane and
+its surplus; its layout stream needs none. `scenes/exterior.js` (the fixed city) streams nothing and reads no peer, so it
+needs nothing. The asks and the checks go into a module the hosts wire, never into the hosts' own functions (HOST-SPLIT).
 
 ## 8. Reader fixes that need no grants (PROPOSED, a slice of their own)
 
@@ -287,8 +335,8 @@ owner that is still playing (world.js handOverWalkedAway), so only a grant (sect
 
 1. **Guests.** A guest's grants: the same budget, a smaller one, or no hostile kinds at all? Ban evasion is a new guest
    (Chat-Safety-Arc section 11).
-2. **The consequence (GRANT7).** Open a moderators' case automatically on a stream the enforcing relay keeps stripping?
-   The recommendation is yes: a case, never a ban.
+2. **The consequence (GRANT7).** Open a moderators' case when readers on several accounts tally against one sender? If
+   so, how many accounts, in what window? The recommendation is three accounts in ten minutes: a case, never a ban.
 3. **The measure's window.** Seven days, as the integrity arc's budgets had?
 4. **Section 8's reader fixes.** Build them now, in a pull request of their own, ahead of the grants? The recommendation
    is yes: they are small and drop nobody.

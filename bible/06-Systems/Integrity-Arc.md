@@ -1105,7 +1105,8 @@ stream is held to the layout every client built, and its revenants' blows ride a
 - **The root (GRANT0, 2026-10-17).** KPbICA, on the Discord, read this section against the code: a reader can bound a
   client's word but can never know the truth, because nothing in the system knows it. Mac chose "Plan server-rolled
   spawns": `11-Multiplayer/Spawn-Grants.md` (PROPOSED, nothing built) - online, a foe that rides to another player
-  exists only on a grant the relay rolls and signs, and every reader rebuilds it from the grant's seed. Planning also
+  exists only on a grant the relay rolls and signs when the foe is made, and every reader checks it and rebuilds the foe
+  from the grant's seed (revised 2026-10-18: the relay never reads the foe stream). Planning also
   found the wind-up's signature bit (x2) believed on any foe, at the street's readers and the dungeon's (that page's
   section 1; its section 8 lists the reader fixes that need no grant).
 
