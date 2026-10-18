@@ -198,7 +198,7 @@ the same strike landing with the body. A fall already under way keeps where it b
 top of a jump, the kick's 2.5 m rise is measured from feet already in the air, so it reaches a ledge a jump's height
 higher than a kick from the ground (once in 10 s).
 
-**LEAP-SLOW - the slow fall refuses a flight in the air alone** (FIELD BUGS 2026-10-18b, the coordinator's call, on
+**LEAP-SLOW - the slow fall refuses a flight in the air alone** (FIELD BUGS 2026-10-18b, JUMP-SLOW's law carried to the techniques' leaps, for Mac's review, on
 Warrgrim's "Please Fix Leaping Strike Weapon Techniques. items" - "you cannot leap from here", the legendary weapons and
 the Flying Kick - and the 2026-10-14 kick report's "flat ground ... nothing works"). The gate and the motor's launch
 read the slow fall's flag, which is the SPELL's (`shared.js` `applyMotorEffectFlags`, the dungeon's `playerSlowFalling`)

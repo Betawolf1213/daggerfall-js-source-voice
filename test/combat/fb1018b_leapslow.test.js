@@ -6,7 +6,7 @@
 // (combat/techniques.js refusal, player/motor.js techniqueLaunch) - and a piece that casts Slowfalling while held, a Rare
 // armour flavour or The Raven's Wings (systems/loot/lootRarity.js), is on for as long as it is worn: LEGEND-HELD made the
 // Legendary free to put on, JUMP-SLOW gave the plain jump back under the spell, and the leaps and dashes stayed refused.
-// The coordinator's call: the spell refuses a flight in the air alone; the flight a grounded body launches under it is
+// JUMP-SLOW's law carried to the techniques' leaps: the spell refuses a flight in the air alone; the flight a grounded body launches under it is
 // its own arc (ApplyGravity), landing on its aim on its strike's clock, billing no fall; the glide takes the body again
 // once the flight is over - the ground, a placement, a levitation, a catch and the parkour leap out of it. Driven through
 // the runner's press and release on a REAL PlayerMotor over a real Collider; the spell put on through the real equip door
