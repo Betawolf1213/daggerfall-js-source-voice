@@ -16,6 +16,10 @@
 //   5. MIXED BUILDS (T2, T8, T17): an older owner (no `bw`) is the legacy take: 1, landing at any lateness; an older taker
 //      (a hand-built take: 1 from a roster peer with no pool) gets today's grant shape and races a new taker's claim to ONE copy.
 //   6. THE OWNER (T18) and OFFLINE (T19).
+//   7. THE SLICE 1 CODE REVIEW (DESIGN-REVIEW.md "SLICE 1 CODE REVIEW", written last in this file): S1-1 - a re-ask of a JUDGED
+//      claim is answered wherever its claimer stands (the owner's pose list is not the roster); S1-2 - a body's identity
+//      (owner, seq, g) survives the OWNER's reload: the generation is seeded per pool, a claim frame names it (a top-level `g`),
+//      and a NEW claim is judged only against the body it was made on.
 //
 // MOUNTED, NOT MATCHED, and never a module that does not exist yet: the pools are the real createExteriorFoes (the street's,
 // and the building's as worldModes.js wires it), behind the real hit queue, on the controllable clock of
@@ -25,12 +29,13 @@
 //   foes frame   bw: [[i, g, l, x, c?], ...]            the owner's takes digest, per dead-body record
 //   peek         {to, k, i, bp: [p, ...]}               the reader asks for the records of places it lacks
 //   peek answer  {to, k, i, bw: {g, l, x, c}, br: [[p, record], ...]}
-//   claim        {to, k, i, bq: [{id, p, n}, ...]}      id = <claimer>:<stamp>:<n>, p = the PLACE, never a row
+//   claim        {to, k, i, g, bq: [{id, p, n}, ...]}   id = <claimer>:<stamp>:<n>, p = the PLACE, never a row; g = the body's generation (S1-2)
 //   verdict      {to, k, i, bw: {...}, bv: [[id, g], ...]}   g the count granted, nought refused; final (D-1 withdraws the void)
 // A building's frames also carry `own: 1` (OWN1's lane).
 //
 // Run against the tree at 760784f04d: every red pin fails by its assertion, with a message naming the missing behaviour;
-// the guards (named so) pass and must stay green through the fix.
+// the guards (named so) pass and must stay green through the fix. The slice 1 review's pins (section 7) were run against
+// 91b9c78280 (the block as DESIGN-REVIEW read it, f103d56fad): each red one fails by its assertion, the guards pass.
 import '../modsOff.js';
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -45,8 +50,8 @@ import { setPref } from '../../src/systems/uiPrefs.js';
 import { setCarriedFilter } from '../../src/systems/peerWord.js';
 import { planStore, planTake, applyTransfer } from '../../src/systems/item/itemTransfer.js';
 import {
-  FOES_FULL_MS, PILE, pieceOf, nameOf, GREAVES, SHORTSWORD, GOLD, clock, clone, playerEntity, restoreRandom, scene, lootWindow, choosing, census, misplaced,
-  plaque, saysEmpty, SETTLED_MS, run, runLive, leave, offlineOwner, settle,
+  FOES_FULL_MS, PILE, PILE2, pieceOf, nameOf, GREAVES, SHORTSWORD, GOLD, BROADSWORD, PINE, clock, clone, playerEntity, restoreRandom, scene, lootWindow, choosing, census, misplaced,
+  plaque, saysEmpty, SETTLED_MS, run, runLive, leave, cross, offlineOwner, reloadOwner, settle,
 } from './bodyLootHarness.mjs';
 
 afterEach(restoreRandom);
@@ -651,11 +656,15 @@ test('T14 AC3: a click on a stale COIN row puts no coin in the purse - the purse
 
 // ═══ T16 - OLDER BUILDS REFUSE THE NEW FRAMES (AC6) ══════════════════════════════════════════════════════════════════════
 const NEW_KEYS = ['bw', 'bp', 'br', 'bq', 'bv'];
+/** PIN EXTENDED (SLICE 1 REVIEW, S1-2): the claim frame - `bq` - and no other new frame also names the generation of the body it was
+ *  made on, a top-level `g` beside the routing. OLD_KEYS (what the old arms read) does not name it and the scan below fails on an
+ *  applyHit that reads it, so an older build still falls to its blow arm (no dmg) and refuses. */
+const CLAIM_EXTRA_KEYS = ['g'];
 /** DESIGN.md 3.4: the old hit arms' keys, and the routing every hit frame carries. */
 const OLD_KEYS = ['dmg', 'take', 'back', 'grant', 'slain', 'fb', 'ar', 'al', 'ac', 'sf', 'z', 'wc', 'sp', 'lv', 'pt', 'p', 'd', 'kind', 'nv', 'own', 'to', 'k', 'i', 'n'];
 
-test('T16(a) AC6 (guard - passes today): the new frames\' keys (bw, bp, br, bq, bv) are disjoint from the old applyHit arms\' keys, and applyHit reads no key of `data` the design does not name', () => {
-  assert.deepEqual(NEW_KEYS.filter((k) => OLD_KEYS.includes(k)), [], 'a new frame key collides with an old arm\'s: an older build would take the frame for a blow, a take or a grant');
+test('T16(a) AC6 (guard - passes today): the new frames\' keys (bw, bp, br, bq, bv - and the claim frame\'s g) are disjoint from the old applyHit arms\' keys, and applyHit reads no key of `data` the design does not name', () => {
+  assert.deepEqual([...NEW_KEYS, ...CLAIM_EXTRA_KEYS].filter((k) => OLD_KEYS.includes(k)), [], 'a new frame key collides with an old arm\'s: an older build would take the frame for a blow, a take or a grant');
   const src = readFileSync(new URL('../../src/scenes/exteriorFoes.js', import.meta.url), 'utf8');
   const ast = acorn.parse(src, { ecmaVersion: 'latest', sourceType: 'module' });
   let fn = null;
@@ -678,7 +687,10 @@ for (const where of WHERES) {
     const novel = s.net.log.filter((e) => NEW_KEYS.some((k) => k in e.data));
     for (const k of ['bp', 'br', 'bq', 'bv']) assert.ok(novel.some((e) => k in e.data), `T16(a)/AC6: no \`${k}\` frame crossed the relay - ${LEGACY}`);
     const ALLOWED = new Set(['to', 'k', 'i', 'own', ...NEW_KEYS]);
-    for (const e of novel) assert.deepEqual(Object.keys(e.data).filter((k) => !ALLOWED.has(k)), [], `T16(a)/AC6: a ${e.from}>${e.to} frame carries keys beyond routing and the new protocol's: ${JSON.stringify(e.data)}`);
+    for (const e of novel) {
+      const allowed = 'bq' in e.data ? new Set([...ALLOWED, ...CLAIM_EXTRA_KEYS]) : ALLOWED;   // S1-2: the claim frame alone names the body's generation
+      assert.deepEqual(Object.keys(e.data).filter((k) => !allowed.has(k)), [], `T16(a)/AC6: a ${e.from}>${e.to} frame carries keys beyond routing and the new protocol's: ${JSON.stringify(e.data)}`);
+    }
   });
 
   test(`T16(b) AC6 [${where}] (guard - passes today): each new frame fed to a pool in the wrong role answers false and changes nothing`, async () => {
@@ -961,5 +973,246 @@ for (const where of WHERES) {
     assert.equal(claimsBy(s, s.mac).length >= 1, true, 'the claim was sent (guard)');
     assert.equal(heldBy(s.mac, GREAVES), 0, 'R-2/AC2: a verdict past CLAIM_KEEP_MS landed');
     assert.deepEqual(census(s).get(GREAVES), [], 'R-2/AC2: nothing dupes - the Greaves is on no body and in no pack: the grant the dead link swallowed is the recorded loss, never a second copy');
+  });
+}
+
+// ═══ SLICE 1 CODE REVIEW (DESIGN-REVIEW.md "SLICE 1 CODE REVIEW", on f103d56fad) ═════════════════════════════════════════════
+// Two holes the review found in the block, each pinned red first. Both are about the same recovery: a claim the owner JUDGED
+// whose verdict never arrived is recovered by the claimer's re-ask, answered from the owner's ledger (R-2) - and these are the
+// two ways that re-ask goes unanswered (S1-1) or a stale one is judged against the wrong body (S1-2).
+/** The owner's verdict frames are lost in transit (judged, said, never heard): the claimer is left to re-ask. */
+const loseVerdicts = (from, to, data) => (from === BOB && to === MAC && Array.isArray(data.bv) ? null : data);
+/** The generation (`g`) the owner's stream says of `s`'s body: its digest entry [i, g, l, x], the newest from the relay's foes log index `from` on. */
+const digestG = (s, from = 0) => s.net.foesLog.slice(from).filter((e) => e.from === s.bob.id && Array.isArray(e.frame.bw)).flatMap((e) => e.frame.bw).filter((d) => d[0] === s.rat.seq).at(-1)?.[1] ?? null;
+/** Mac takes the Greaves from his window; the owner judges it ON RECEIPT and his verdict is lost on the wire - the claim a re-ask exists for. */
+function takeAndLose(s, what) {
+  s.net.tamper = loseVerdicts;
+  const w = lootWindow(s.mac);
+  pressOpens(s, s.mac, w, what);
+  assert.ok(w.take(choosing(GREAVES)), 'Mac took the Greaves from the window (guard)');
+  run(s.net, 300);
+  assert.equal(verdictsTo(s, s.mac).length, 1, `${what}: the owner judged and said his verdict (bv), and the wire lost it`);
+  assert.equal(heldBy(s.mac, GREAVES), 0, 'the verdict never reached Mac (guard)');
+  assert.equal(onBody(s).includes(GREAVES), false, 'the owner judged it on receipt: the Greaves is off his body (guard)');
+  return w;
+}
+
+// ── S1-1: a re-ask of a JUDGED claim is gated by the budget alone, never by the owner's pose list ─────────────────────────────
+// `ownerClaims` returned before it read the verdict ledger when `!peerCandidate(from)` - the owner's pose list (`peers()`), which
+// is not the roster. A claimer out of it (a cell crossed, a stale pose, a deck below) but still in the roster re-asks after
+// losing the verdict frame, hears nothing, and the piece the owner already granted is lost. Only a NEW claim needs the pose list
+// and the reach (A1/C7).
+for (const where of WHERES) {
+  test(`S1-1 AC2/AC3 [${where}]: the verdict is lost and the claimer drops out of the owner's pose list (peers()) while the relay's roster still holds it - the re-ask of the JUDGED claim is answered and the piece lands exactly once`, async () => {
+    const s = await scene(where);
+    takeAndLose(s, 'S1-1/AC2');
+    s.net.unseen.add(MAC);   // out of the owner's pose list; in the roster, so a frame to it is accepted
+    s.net.tamper = null;
+    run(s.net, 20_000);
+    assert.ok(verdictsTo(s, s.mac).length >= 2, `S1-1/AC2: the owner said his verdict once (into the loss) and never again - ${verdictsTo(s, s.mac).length} verdict frame(s): the re-ask of a claim he had judged was met with silence (the body block's ownerClaims returns at \`!peerCandidate(from)\` before it reads the verdict ledger - the pose list is not the roster)`);
+    assert.equal(heldBy(s.mac, GREAVES), 1, 'S1-1/AC2: the piece landed exactly once');
+    assert.deepEqual(misplaced(s), [], 'S1-1/AC2: every piece in exactly one place - the Greaves the owner granted is not on his body and not in a pack');
+  });
+
+  test(`S1-1 AC2 [${where}]: the owner's body is gone (off his list) and the claimer is out of his pose list - the re-ask of the judged claim is still answered (the verdict ledger outlives the body) and the piece lands exactly once`, async () => {
+    const s = await scene(where);
+    takeAndLose(s, 'S1-1/AC2');
+    const list = s.bob.pool().foes;
+    list.splice(list.indexOf(s.rat), 1);   // the body decays off the pool's list: ownBody(i) is null
+    s.net.unseen.add(MAC);
+    s.net.tamper = null;
+    run(s.net, 20_000);
+    assert.equal(heldBy(s.mac, GREAVES), 1, 'S1-1/AC2: with the body gone the re-ask of the judged claim was not answered (the pose-list gate stood before the ledger) - the Greaves is on no body and in no pack');
+    assert.deepEqual(misplaced(s), [], 'S1-1/AC2: every piece in exactly one place');
+  });
+
+  test(`S1-1 AC3 [${where}]: the re-asks of a claimer out of the owner's pose list are answered under the owner's answer budget (BODY_ASKS_PER_S) and nothing else - sixteen in one instant are not all answered`, async () => {
+    const s = await scene(where);
+    takeAndLose(s, 'S1-1/AC3');
+    const judged = claimsBy(s, s.mac)[0];
+    s.net.unseen.add(MAC);
+    s.net.tamper = null;
+    const before = verdictsTo(s, s.mac).length;
+    for (let i = 0; i < 16; i++) s.bob.hit(s.mac.id, clone(judged));
+    const answered = verdictsTo(s, s.mac).length - before;
+    assert.ok(answered >= 1, 'S1-1/AC3: a re-ask of a judged claim from a claimer out of the pose list was not answered at all');
+    assert.ok(answered < 16, 'S1-1/AC3: the owner answered all sixteen frames in one instant - the unseen claimer\'s re-asks spend no answer budget (the gate that replaces the pose list is the budget, DESIGN.md 3.8)');
+  });
+
+  test(`S1-1 AC3 [${where}] (guard - passes today; A1/C7): a NEW claim from a claimer out of the owner's pose list is still not heard - the owner is silent and the blade stays on the body`, async () => {
+    const s = await scene(where);
+    const w = lootWindow(s.mac);
+    pressOpens(s, s.mac, w, 'S1-1/A1-C7');
+    s.net.unseen.add(MAC);   // Mac is in the roster, not in the pose list
+    assert.ok(w.take(choosing(SHORTSWORD)), 'Mac takes the blade from his window (guard)');
+    run(s.net, 20_000);
+    assert.equal(claimsBy(s, s.mac).length >= 1, true, 'S1-1/A1-C7: Mac\'s claim reached the owner\'s door (no claim frame (bq) was sent)');
+    assert.deepEqual(verdictsTo(s, s.mac), [], 'S1-1/A1-C7: a NEW claim from a peer the hunt does not see was answered');
+    assert.equal(heldBy(s.mac, SHORTSWORD), 0, 'and the blade is not in the pack');
+    assert.equal(onBody(s).includes(SHORTSWORD), true, 'and the blade is still on the body: nothing was judged');
+  });
+}
+
+test('S1-1 AC2 [street]: the claimer CROSSES into the next cell after the verdict is lost (the owner\'s cell held as a halo, its puppets swept, the owner\'s pose list without it) - the re-ask is answered through the halo and the piece lands exactly once', async () => {
+  const s = await scene('street');
+  takeAndLose(s, 'S1-1/AC2');
+  cross(s.mac);
+  s.net.unseen.add(MAC);
+  s.net.tamper = null;
+  run(s.net, 20_000);
+  assert.ok(verdictsTo(s, s.mac).length >= 2, `S1-1/AC2: the claimer crossed a seam and the owner answered its re-ask never - ${verdictsTo(s, s.mac).length} verdict frame(s)`);
+  assert.equal(heldBy(s.mac, GREAVES), 1, 'S1-1/AC2: the piece landed exactly once, through the halo');
+  assert.deepEqual(misplaced(s), [], 'every piece in exactly one place');
+});
+
+// ── S1-2: a body's identity - (owner, seq, g) - survives the OWNER's reload ─────────────────────────────────────────────────────
+// The peer id outlives a page reload (net/online.js `peerId`, sessionStorage); a new pool restarts the foes' seq at one and the
+// block's generation counter at one, so a body of the new page was the SAME (owner, seq, g) as a body of the old one. The reader
+// then MERGED the new body's digest into the old body's state (the old records shown, claimed and given for the new body), and
+// the owner judged an old body's re-ask as a NEW claim against the new body's place. Each pool now seeds its generation, a claim
+// frame names it (a top-level `g`, the digest's own) and a NEW claim is judged only against the body it names.
+for (const where of WHERES) {
+  test(`S1-2 AC6 [${where}]: a claim frame names the generation of the body it is made on - a top-level g, the digest's own - and its entries stay {id, p, n}`, async () => {
+    const s = await scene(where);
+    const g = digestG(s);
+    assert.ok(Number.isSafeInteger(g) && g >= 0, 'the owner\'s stream names the body\'s generation as a whole number (guard)');
+    const w = lootWindow(s.mac);
+    pressOpens(s, s.mac, w, 'S1-2/AC6');
+    assert.equal(w.takeAll().moved, 3, 'Take all moved all three rows (guard)');
+    run(s.net, 400);
+    const claims = claimsBy(s, s.mac);
+    assert.equal(claims.length, 1, 'S1-2/AC6: Mac sent no claim frame (bq)');
+    assert.equal(claims[0].g, g, `S1-2/AC6: the claim frame names generation ${JSON.stringify(claims[0].g)} where the owner's digest says ${g} - the owner cannot tell which body of this (owner, seq) the claim was made on`);
+    assert.deepEqual(claims[0].bq.map((c) => Object.keys(c).sort()), [['id', 'n', 'p'], ['id', 'n', 'p'], ['id', 'n', 'p']], 'S1-2/AC6: the claim entries keep their shape {id, p, n}');
+    assert.deepEqual(misplaced(s), [], 'every piece in exactly one place');
+  });
+
+  test(`S1-2 AC6 [${where}]: the owner's page reloads (the same peer id, a new pool, the seq from one again) - his new body does not carry the generation the old pool's first body did: (owner, seq, g) names ONE body`, async () => {
+    const s = await scene(where, [MAC]);
+    const oldG = digestG(s);
+    assert.ok(Number.isSafeInteger(oldG), 'the old pool\'s body has a generation (guard)');
+    const r = await reloadOwner(s, PILE2);
+    run(r.net, 3000);
+    assert.equal(r.rat.seq, s.rat.seq, 'the new pool numbers its first foe from one again - the same (owner, seq) as the old body (guard)');
+    const newG = digestG(r, r.since);
+    assert.ok(Number.isSafeInteger(newG), 'the reloaded owner\'s stream names his new body\'s generation (guard)');
+    assert.notEqual(newG, oldG, `S1-2/AC6: the reloaded owner's first body carries generation ${newG}, the old page's first body carried ${oldG} - the block's generation counter starts over at every page load, so (owner, seq, g) names two bodies`);
+  });
+
+  test(`S1-2(a) AC1/AC6 [${where}]: the reader holds the state of the owner's old body when his page reloads - his new body (the same seq) dies and streams: the reader's plaque lists the NEW body's records and none of the old`, async () => {
+    const s = await scene(where, [MAC]);
+    assert.deepEqual(rowsOf(s.mac.holds(s.keyOf(s.mac))), rowsOf(s.rat.entity.items), 'Mac has read the old body (guard)');
+    const r = await reloadOwner(s, PILE2);
+    run(r.net, 3000);
+    const want = rowsOf(r.rat.entity.items);
+    assert.notDeepEqual(want, rowsOf(s.body), 'the new body holds other pieces than the old (guard)');
+    const got = rowsOf(r.mac.holds(r.keyOf(r.mac)));
+    assert.deepEqual(got, want, `S1-2(a)/AC1: Mac's plaque lists ${JSON.stringify(got)} where the reloaded owner's new body holds ${JSON.stringify(want)} - the new body's digest named the same (owner, seq) and the same generation, so hear() MERGED it into the old body's state and the old records are shown`);
+  });
+
+  test(`S1-2(a) AC2/AC3 [${where}]: ... and Take all through that reader's view lands the NEW body's pieces - each of them in exactly one place`, async () => {
+    const s = await scene(where, [MAC]);
+    const r = await reloadOwner(s, PILE2);
+    run(r.net, 3000);
+    const w = lootWindow(r.mac);
+    pressOpens(r, r.mac, w, 'S1-2(a)/AC3');
+    assert.equal(w.takeAll().moved, 3, 'Take all moved all three rows (guard)');
+    run(r.net, 3000);
+    assert.deepEqual(misplaced(r), [], 'S1-2(a)/AC3: the reader claimed the places of the OLD body\'s pieces and was handed those old objects - the new body\'s pieces went to nobody');
+    for (const k of [GOLD, BROADSWORD, PINE]) assert.ok(heldBy(r.mac, k) >= 1, `S1-2(a)/AC3: Mac holds ${k}`);
+    assert.deepEqual(onBody(r), [], 'and the new body is empty of shared pieces');
+  });
+
+  test(`S1-2(b) AC2/AC3 [${where}]: the owner's page reloads with a claim of Mac's judged and its verdict lost - Mac's re-ask, still naming the OLD body's generation, reaches the NEW body of the same seq with Mac in reach: nothing is judged, and the new body keeps every piece`, async () => {
+    const s = await scene(where, [MAC]);
+    takeAndLose(s, 'S1-2(b)/AC2');
+    const id = claimsBy(s, s.mac)[0].bq[0].id;
+    const oldG = digestG(s);
+    const said = verdictsTo(s, s.mac).length;
+    s.net.tamper = null;
+    const r = await reloadOwner(s, PILE2);
+    assert.equal(r.rat.seq, s.rat.seq, 'the new pool numbers its first foe from one again - the same (owner, seq) as the old body (guard)');
+    const reloadedAt = clock.t;
+    run(r.net, 30_000);
+    const reasks = r.net.log.filter((e) => e.from === MAC && e.to === BOB && e.at > reloadedAt && Array.isArray(e.data.bq) && e.data.bq.some((c) => c.id === id));
+    assert.ok(reasks.length >= 1, 'S1-2(b): Mac asked again, with the same id, after the reload and with the new body standing - the claim is kept for CLAIM_KEEP_MS (guard)');
+    assert.equal(verdictsTo(r, r.mac).length, said, 'S1-2(b)/AC3: the reloaded owner JUDGED a re-ask made on his old body - it named no generation, or the old one, and he took it as a new claim on his new body\'s place');
+    assert.deepEqual(r.rat.entity.items.map(pieceOf).sort(), r.body.map(pieceOf).sort(), 'S1-2(b)/AC3: the new body lost a piece to a claim made on the old one - it went to nobody');
+    assert.equal(heldBy(r.mac, GREAVES) + heldBy(r.mac, BROADSWORD) + heldBy(r.mac, PINE), 0, 'S1-2(b)/AC3: Mac was handed a piece for a claim the old page granted (the lifted object the claim gives back)');
+    assert.ok(reasks.every((e) => e.data.g === oldG), `S1-2(b)/AC6: the re-ask names the generation of the body the claim was made on (${oldG}), not the body that stands now: ${JSON.stringify(reasks.map((e) => e.data.g))}`);
+  });
+
+  test(`S1-2(b) AC2/AC3 [${where}]: an OLD claim and a NEW claim come due in one round of re-asks - they are said in frames of their own, each naming the generation of the body it was made on, so the new body judges the new claim and lets the old one be`, async () => {
+    const s = await scene(where, [MAC]);
+    takeAndLose(s, 'S1-2(b)/AC2');
+    const oldId = claimsBy(s, s.mac)[0].bq[0].id;
+    const oldAt = s.net.log.find((e) => e.from === MAC && e.to === BOB && Array.isArray(e.data.bq)).at;   // the old claim is made and said
+    const oldG = digestG(s);
+    let lost = 0;
+    s.net.tamper = (from, to, data) => (from === MAC && Array.isArray(data.bq) && !data.bq.some((c) => c.id === oldId) && lost++ === 0 ? null : data);   // the NEW claim's first saying is lost: its owner first hears it in the round it comes due
+    const reloaded = s.net.log.length;
+    const r = await reloadOwner(s, PILE2);
+    assert.ok(clock.t < oldAt + 4000, 'the reload took less than four seconds of the old claim\'s life (guard)');
+    run(r.net, oldAt + 4500 - clock.t);   // Mac reads the new body: its stream, a peek
+    const w = lootWindow(r.mac);
+    pressOpens(r, r.mac, w, 'S1-2(b)/AC2');
+    run(r.net, oldAt + 5950 - clock.t);
+    assert.ok(w.take(choosing(BROADSWORD)), 'Mac takes the broadsword from the new body\'s window (guard)');
+    run(r.net, 50);   // the new claim is made at oldAt + 6000 and said: that first saying is lost, so it is next said at oldAt + 7000 - when the old claim is said for the third time
+    assert.equal(lost, 1, 'the new claim was said, and the wire lost that first saying (guard)');
+    run(r.net, 3000);
+    const verdicts = r.net.log.slice(reloaded).filter((e) => e.from === BOB && e.to === MAC && Array.isArray(e.data.bv)).flatMap((e) => e.data.bv.map((v) => v[0]));   // what the reloaded owner judged
+    assert.equal(verdicts.includes(oldId), false, 'S1-2(b)/AC3: the reloaded owner judged the old claim (a re-ask of the old page\'s body) against his new body');
+    const asks = (id) => r.net.log.filter((e) => e.from === MAC && e.to === BOB && Array.isArray(e.data.bq) && e.data.bq.some((c) => c.id === id));
+    assert.deepEqual(asks(oldId).map((e) => e.at - oldAt), [0, 1000, 3000, 7000], 'the old claim is said again at 1 s, 3 s and 7 s (CLAIM_RESEND_MS, doubling) - the round this pin aims the new claim\'s second saying at (guard)');
+    const newId = r.net.log.slice(reloaded).find((e) => e.from === MAC && e.to === BOB && Array.isArray(e.data.bq) && !e.data.bq.some((c) => c.id === oldId)).data.bq[0].id;
+    const round = r.net.log.filter((e) => e.from === MAC && e.to === BOB && Array.isArray(e.data.bq) && e.at === oldAt + 7000);
+    assert.equal(round.length, 2, `S1-2(b)/AC6: ${round.length} claim frame(s) in the round both claims come due in - a claim frame names ONE body's generation, so claims of two bodies of one (owner, seq) go in frames of their own`);
+    assert.equal(round.find((e) => e.data.bq.some((c) => c.id === oldId))?.data.g, oldG, 'S1-2(b)/AC6: the old claim\'s frame names the generation of the body it was made on');
+    assert.equal(round.find((e) => e.data.bq.some((c) => c.id === newId))?.data.g, digestG(r, r.since), 'S1-2(b)/AC6: and the new claim\'s frame the generation of the body that stands');
+    assert.ok(verdicts.includes(newId), 'S1-2(b)/AC3: the new owner never judged the new claim');
+    assert.equal(heldBy(r.mac, BROADSWORD), 1, 'the new claim landed the broadsword, once');
+    assert.deepEqual(misplaced(r), [], 'every piece of the new body in exactly one place');
+    assert.equal(heldBy(r.mac, GREAVES), 0, 'and the old claim landed nothing');
+  });
+
+  test(`S1-2(b) AC3 [${where}]: a NEW claim is judged only against the body it names - another generation, or none, is silence and burns no place; the generation the digest says is judged on receipt`, async () => {
+    const s = await scene(where);
+    const g = digestG(s);
+    assert.ok(Number.isSafeInteger(g), 'the owner\'s stream names the body\'s generation (guard)');
+    const caught = [];
+    s.net.tamper = (from, to, data) => { if (from === MAC && Array.isArray(data.bq)) { caught.push(clone(data)); return null; } return data; };   // Mac's claim never reaches the owner by the relay: it is fed by hand
+    const w = lootWindow(s.mac);
+    pressOpens(s, s.mac, w, 'S1-2(b)/AC3');
+    w.take(choosing(GREAVES));
+    run(s.net, 100);
+    s.net.tamper = null;
+    assert.equal(caught.length, 1, 'S1-2(b): Mac sent no claim frame (bq)');
+    const said = verdictsTo(s, s.mac).length;
+    s.bob.hit(s.mac.id, { ...clone(caught[0]), g: g + 1 });   // a claim made on another body of this number
+    const noG = clone(caught[0]); delete noG.g;
+    s.bob.hit(s.mac.id, noG);   // and one that names no body at all
+    assert.equal(verdictsTo(s, s.mac).length, said, 'S1-2(b)/AC3: the owner answered a claim that names another body\'s generation, or none');
+    assert.equal(onBody(s).includes(GREAVES), true, 'S1-2(b)/AC3: the owner judged it - the place is gone, and the piece went to a claim made on another body');
+    s.bob.hit(s.mac.id, { ...clone(caught[0]), g });   // the body's own generation
+    assert.equal(verdictsTo(s, s.mac).length, said + 1, 'S1-2(b)/AC3: the claim that names the body\'s generation is judged on receipt');
+    assert.equal(onBody(s).includes(GREAVES), false, 'and the place is gone');
+  });
+
+  test(`S1-2 AC3 [${where}] (guard - passes today): a re-ask of a claim the owner JUDGED is answered from his verdict ledger whatever generation it names - the ledger is his own word, kept for the claimer`, async () => {
+    const s = await scene(where);
+    const g = digestG(s);
+    const w = lootWindow(s.mac);
+    pressOpens(s, s.mac, w, 'S1-2/AC3');
+    w.take(choosing(GREAVES));
+    run(s.net, 400);
+    assert.equal(heldBy(s.mac, GREAVES), 1, 'the claim was judged and landed (guard)');
+    const judged = claimsBy(s, s.mac)[0];
+    const first = verdictsTo(s, s.mac)[0];
+    const before = verdictsTo(s, s.mac).length;
+    s.bob.hit(s.mac.id, { ...clone(judged), g: g + 1 });
+    assert.equal(verdictsTo(s, s.mac).length, before + 1, 'S1-2/AC3: a re-ask of a judged claim that names another generation was not answered from the ledger');
+    assert.deepEqual(verdictsTo(s, s.mac).at(-1).bv, first.bv, 'and says what the first said');
+    assert.equal(heldBy(s.mac, GREAVES), 1, 'and the piece is still in the pack once');
   });
 }

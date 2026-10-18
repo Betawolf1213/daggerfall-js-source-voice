@@ -56,6 +56,11 @@ export const PILE = () => generateItems('F', { level: 10, gender: 'male' }, lcg(
 export const pieceOf = (it) => `${it.group}:${it.templateIndex}`;
 export const nameOf = (body, piece) => body.find((it) => pieceOf(it) === piece)?.name ?? piece;
 export const GREAVES = 'Armor:104', SHORTSWORD = 'Weapons:116', GOLD = 'Currency:276';
+/** The body a RELOADED owner's foe falls with (SLICE 1 REVIEW, S1-2): the same table's other roll - the same purse of coin at
+ *  place 0, a broadsword and a pine branch where the first body held a shortsword and a greaves. Three places again, so the two
+ *  bodies are told apart by their pieces alone. */
+export const PILE2 = () => generateItems('F', { level: 10, gender: 'male' }, lcg(8)).map((it) => ({ ...it }));
+export const BROADSWORD = 'Weapons:118', PINE = 'PlantIngredients1:14';
 
 // ═══ THE CELL: a clock, a relay stand-in and the players ═══════════════════════════════════════════════════════════
 export const clock = { t: 1_000_000 };
@@ -72,7 +77,9 @@ export const clock = { t: 1_000_000 };
  *  until the relay's dead-socket detection fires): still in every roster, so a frame to it is ACCEPTED and lost, and it
  *  sends and hears nothing; `tamper(from, to, data)` - the frame as it travels (null: lost in transit; the log keeps what
  *  the sender said); `foesFilter(from, frame)` - the foes frame as its readers hear it (an OLDER owner's is the real
- *  owner's with `bw` stripped). */
+ *  owner's with `bw` stripped); `unseen` (SLICE 1 REVIEW, S1-1) - a player the others' pools do NOT read in their pose list
+ *  (`peers()`: a cell crossed, a stale pose, a deck below) while the roster still holds it: a frame to it is still ACCEPTED
+ *  (net/online.js `sendHit` tests the roster, `this.peers.has(owner)`) and a frame from it still arrives. */
 export function relay() {
   const players = new Map();
   const q = [];
@@ -80,11 +87,12 @@ export function relay() {
   const shut = new Set();   // a sender whose wire refuses for now (the rate gate, a socket mid-reconnect): its hit queue holds
   const held = new Set();
   const dead = new Set();
+  const unseen = new Set();   // in the roster, out of the pose list
   const log = [];
   const foesLog = [];
   const events = [];   // [at, fn] - what happens to the cell at a time (a socket back)
   return {
-    players, late, shut, held, dead, log, foesLog, tamper: null, foesFilter: null,
+    players, late, shut, held, dead, unseen, log, foesLog, tamper: null, foesFilter: null,
     at(t, fn) { events.push([t, fn]); },
     due() { for (let i = 0; i < events.length;) { if (events[i][0] <= clock.t) events.splice(i, 1)[0][1](); else i++; } },
     join(p) { players.set(p.id, p); },
@@ -93,7 +101,7 @@ export function relay() {
     here: (id) => players.get(id)?.here === true,
     /** Whether `to` is in `from`'s roster: both in the cell (a player across a seam is reported through its halo). */
     reaches(from, to) { return this.here(to) && players.get(to).id !== from; },
-    peersOf(id) { return [...players.values()].filter((p) => p.id !== id && p.here).map((p) => ({ id: p.id, feet: [...p.feet], height: 1.8 })); },
+    peersOf(id) { return [...players.values()].filter((p) => p.id !== id && p.here && !unseen.has(p.id)).map((p) => ({ id: p.id, feet: [...p.feet], height: 1.8 })); },
     sendHit(from, data) {
       if (!this.here(from) || shut.has(from) || dead.has(from) || !data || typeof data.to !== 'string' || !this.reaches(from, data.to)) return false;
       log.push({ from, to: data.to, data: clone(data), at: clock.t });
@@ -364,6 +372,41 @@ export async function scene(where, takers = ['mac-0001'], { extra = [], ghosts =
     return { where, net, bob, them, mac: them[0], eve: them[1] ?? null, ghosts: olds, old: olds[0] ?? null, rat, body, keyOf, before, roomKey, frame };
   }
 }
+
+/** THE OWNER'S PAGE RELOADS (SLICE 1 REVIEW, S1-2): the SAME peer id (net/online.js `peerId` keeps it in sessionStorage - "survives a
+ *  reload of that tab") under a NEW pool, whose seq, frame counter and generation counter all start over; the old body went with
+ *  the old page. The relay's roster never loses him - the new hello replaces the old socket, no leave in between - so the readers
+ *  keep what they hold of him: his record (applyFoes refuses a frame no newer than the last it took, `data.n <= o.n`), his puppet
+ *  and the state of his body.
+ *
+ *  The new pool stands a foe of its own (seq 1 again) and strikes it, short of death, until its frame counter reaches the last one
+ *  the readers took - a quick fight - so that the first frame a reader takes is the DEAD body's: a body that dies and streams. The
+ *  foe then falls with `pile`. Answers the scene as it stands: `s` with the new owner, his foe, its body, what every pack held
+ *  (so `census` and `misplaced` read the new body) and `since` - where the relay's foes log stood at the reload. */
+export async function reloadOwner(s, pile) {
+  const { net } = s;
+  const lastN = net.foesLog.filter((e) => e.from === s.bob.id).reduce((n, e) => Math.max(n, e.frame.n), 0);
+  const mark = net.foesLog.length;
+  const bob = (s.where === 'building' ? buildingPlayer : streetPlayer)(net, s.bob.id, [...s.bob.feet]);
+  const rat = await bob.pool().spawnFoe(0, [12, 0, 12], { feetGiven: true });
+  assert.ok(rat, 'the reloaded owner\'s foe stands');
+  const framesSent = () => net.foesLog.slice(mark).filter((e) => e.from === bob.id).length;
+  run(net, 100);
+  for (let i = 0; i < 8 && framesSent() < lastN; i++) { bob.pool().damageFoe(rat, 1, [12, 0, 11]); run(net, 250); await settle(); }
+  assert.equal(rat.dead, false, 'the reloaded owner\'s foe is still alive while the readers refuse its frames (guard)');
+  rat.entity.items = pile();
+  bob.pool().damageFoe(rat, 9999, [12, 0, 11]);
+  rat.entity.items = pile();   // the death chain rolls on the dice: the body is the pile this test names (as scene() does)
+  assert.ok(rat.corpse, 'the reloaded owner\'s foe fell and lies a body');
+  run(net, 400);
+  await settle();
+  const before = new Map([bob, ...s.them, ...s.ghosts].map((p) => [p.id, { items: p.entity.items.map(pieceOf), gold: p.entity.goldPieces | 0 }]));
+  return {
+    ...s, bob, rat, body: rat.entity.items.map((it) => ({ ...it })), before, since: mark,
+    frame: (to, fields) => ({ to, k: s.roomKey, i: rat.seq, ...(s.where === 'building' ? { own: 1 } : {}), ...fields }),
+  };
+}
+
 /** THE WINDOW STAND-IN (phase 1): records what the press opens, takes ONE piece `choose` picks from it - once - and shuts
  *  it on the next frame, as a player does. The window's own doors are called as a real one calls them: the loot hooks'
  *  `opened()` once it stands and `closed()` once it shuts (ui/inventoryDoor.js createInventoryWindow and
