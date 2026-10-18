@@ -9,7 +9,7 @@ lands only where the cause is proven; where it is not, the record says so and wh
 |---|---|---|---|
 | 1 | Nauya, "Companions and Open Wagon": "when they dismount from the wagon, they just drop down inside of it, and they get stuck in your wagon unable to help you or move out of it ... the temporary fix is to just respawn your wagon every single time you run into an encounter" | The companions' seat was read by the motor alone, so a seat that went (the wagon parked) left the body where it sat, and it fell through the bed. The parked box, kept from closing round the player's capsule only, then stood round it. Its two-sided faces push no body out | fixed (WAGON-ALIGHT) |
 | 2 | MADMAN0037, "Performance tank in specific area": "The Mouse and Fawn tavern in Sentinel, graphics settings preset ultra, Gpu fans turn into jet turbines" - the counter: 198 fps, 5.1 ms, "draws 67 binds 77", an RTX 5070 at 2560x1391 | The counter counted the room's own pass alone. The view out through the windows (the street, drawn before the room's frame) and the shadow maps' replays were nowhere on it, and nothing said what held 198 fps. VSync is on by default on the desktop, and the frame is GPU-bound. Which pass costs it is not proven | counted (PASS-COUNT); the cost itself open, below |
-| 3 | Anon-e-moose, "Gradual FPS loss then crash": "When in interior cells, and especially in combat, the FPS gradually slows down over 5 mins or so, until it eventually freezes and either never recovers or actually hard crashes" (a video: a dungeon, a Skeletal Warrior, the screen red with damage) | Not proven. Five simulated minutes of the real renderer over a recording GL, the real hit effects and blood, and the real foe motor, attack and tactics against the player all stayed flat. No game data in the container to run the real scene. Two real leaks were found on the way, neither enough alone | two leaks fixed (LOOT-FLATS, HUD-HEAD); the cause open, below |
+| 3 | Anon-e-moose, "Gradual FPS loss then crash": "When in interior cells, and especially in combat, the FPS gradually slows down over 5 mins or so, until it eventually freezes and either never recovers or actually hard crashes" (a video: a dungeon, a Skeletal Warrior, the screen red with damage) | Not proven. Five simulated minutes of the real renderer over a recording GL, the real hit effects and blood, and the real foe motor, attack and tactics against the player all stayed flat. No game data in the container to run the real scene. Two real leaks were found on the way, neither enough alone | two leaks fixed (LOOT-FLATS, HUD-HEAD) and a splash in the wrong pool (PVP-BLOOD); the cause open, below |
 | 4 | Phayezorix, "DFO Client Travel Map": "the travel map being laggy as hell ... removed all mods ... The only thing that 'worked' was completely re-installing DFO + adding mods back. After a few hours (maybe 3-4hrs) the travel map just lags again ... Browser does NOT have the travel map issue" | Not found. The desktop client serves the same files the browser does (`app/main.cjs` handleDagger, one `fileResponse`, every channel file sha256-checked). A reinstall clears only `<userData>/Game`, never the saves or prefs. The map's reads are cached in memory | open: what would find it, below |
 
 ## WAGON-ALIGHT: the companions get down as a rider does
@@ -93,7 +93,7 @@ a frame with a view out counts.
 
 Pins: `test/systems/fb1018_passcount.test.js` (3). Mutants: `tools/mutants/fb1018_passcount.json` (9, all dead).
 
-## Report 3: the slowdown in interiors - two leaks fixed, the cause open
+## Report 3: the slowdown in interiors - two leaks and a stray splash fixed, the cause open
 
 NOT PROVEN. Measured in Node over five simulated minutes of a fight (scripts, not pins):
 - the real `Renderer` over `test/retroGl.mjs`'s recording GL, with hit splashes, a full ring of blood marks, six
@@ -124,10 +124,19 @@ just taken off back on the bar. A head now goes up only while its key is the one
 replaces - or a late answer's own - is released by its name. Pins: `test/ui/hud/fb1018_hudhead.test.js` (2). Mutants:
 `tools/mutants/fb1018_hudhead.json` (4, all dead).
 
-Found and left, each named here: an online PvP blood splash indoors goes to the street's pool, which only the street
-ticks (PvP only, cleared when the player steps out); and a dungeon's targeting asks each armed foe for a fresh
-candidate list every classic tick (O(n²) garbage at 16 Hz with many foes - a cost, not a leak). Neither is proven to
-be this report's cause.
+**PVP-BLOOD** (`src/scenes/world.js` duelHpIn and wildHpIn), found in the first pass and left there, fixed in the
+second. A duel's blow of mine and the open zone's splashed into the street's pool (`hitEffects`). The street's frame is
+the exterior arm of the loop (`world.js:"// is the EXTERIOR arm of the cadence loop"`), so in a room or the zone's
+halls the splash sat frozen and undrawn until the street ran again, and its mark went at once into the street's ring,
+on the street's collider, at the room's coordinates. A peer's blow already took the pool I stand in
+(`worldModes.js:"liveHitEffects() {"`, PEERFX2), and these two now take it too. The only splashes `world.js` still sends
+straight to the street's pool are on the street's own paths: a road traveller struck down (refused off the exterior)
+and a horse's trample. Pins: `test/scenes/fb1018_pvpblood.test.js` (2, source pins: bootWorld does not run in Node).
+Mutants: `tools/mutants/fb1018_pvpblood.json` (3, all dead).
+
+Found and left: a dungeon's targeting asks each armed foe for a fresh candidate list every classic tick (O(n²)
+garbage at 16 Hz with many foes - a cost, not a leak, and not proven to be this report's cause). Its list is built in
+`buildDungeonContext`, which does not grow (HOST-SPLIT), so a fix moves the list into a module of its own.
 
 ## Report 4: the desktop travel map - not found
 

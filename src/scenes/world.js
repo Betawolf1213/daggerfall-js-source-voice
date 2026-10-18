@@ -22562,7 +22562,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const b = duelBody(d.peer);
       if (g.r !== DUEL_REF_KIND.Spell && b) {
         audio.play3d(hitSoundFor(_duelLastWeapon), b.feet, ENEMY_HIT_VOLUME, { maxDistance: 16 });
-        hitEffects.showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _duelLastWeapon }));
+        (modes?.liveHitEffects?.() ?? hitEffects).showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _duelLastWeapon }));   // PVP-BLOOD: the pool I stand in, as a peer's blow
       }
       if (g.r !== DUEL_REF_KIND.Spell && _duelLastWeapon) {
         let amount = Math.trunc((10 * duelWearDamage(g.d, _duelLastWeapon, playerEntity) + 50) / 100);   // AUDIT DUEL1 A2: never past what this weapon could deal
@@ -23137,7 +23137,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const b = duelBody(g.to);
       if (g.r !== DUEL_REF_KIND.Spell && b) {
         audio.play3d(hitSoundFor(_wildLastWeapon), b.feet, ENEMY_HIT_VOLUME, { maxDistance: 16 });
-        hitEffects.showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _wildLastWeapon }));
+        (modes?.liveHitEffects?.() ?? hitEffects).showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _wildLastWeapon }));   // PVP-BLOOD: the pool I stand in, as a peer's blow
       }
       if (g.r !== DUEL_REF_KIND.Spell && _wildLastWeapon) {
         let wear = Math.trunc((10 * duelWearDamage(g.d, _wildLastWeapon, playerEntity) + 50) / 100);
