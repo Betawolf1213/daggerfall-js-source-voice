@@ -29,12 +29,19 @@ function rig(room, welcome = {}) {
   return { s, ws, heard, out, sockets, tick: (ms) => { t += ms; } };
 }
 
-test('GRANT2 THE SESSION: a cell\'s welcome from world218 says its law; an older relay\'s, a place\'s or `off` asks nothing (an older relay closes the socket on one); an ask goes down my cell\'s socket whole, on the relay\'s own bucket; my cell\'s answer is heard, and its `off` stops the asks (mutants: the version unchecked; the bucket not kept)', () => {
+test('GRANT2 THE SESSION: a cell\'s welcome from world218 says its law (GRANT4: a world room\'s too; GRANT6: unsaid until it comes); an older relay\'s, a town\'s or `off` asks nothing (an older relay closes the socket on one); an ask goes down my cell\'s socket whole, on the relay\'s own bucket; my cell\'s answer is heard, and its `off` stops the asks (mutants: the version unchecked; the bucket not kept)', () => {
   const old = rig(CELL, { v: 'world217' });
   assert.equal(old.s.grantMode, 'off');
   assert.equal(old.s.sendGrant({ k: 'mint', id: 1, kind: 'enc', n: 1 }), false);
   assert.equal(old.out().length, 0, 'nothing on the wire of a relay that would close the socket for it');
-  assert.equal(rig('dungeon:m123456').s.grantMode, 'off', 'a cell\'s law alone');
+  assert.equal(rig('dungeon:m123456').s.grantMode, 'measure', 'GRANT4: a world room\'s own lane asks too');
+  assert.equal(rig('town:m123456').s.grantMode, 'off', 'a room whose foes ride nothing asks nothing');
+  const { FakeWS, sockets } = fakeSocketClass();
+  const early = new OnlineSession({ url: 'wss://relay.test', name: 'a', id: 'aaaa-0001', secret: 'secret-of-aaaa-0001', WebSocketImpl: FakeWS, now: () => 1000 });
+  quiet(() => early.join(CELL, { ...ON }));
+  sockets[0].open();
+  assert.equal(early.grantMode, null, 'GRANT6: a socket open, its welcome owed - the law unsaid');
+  assert.equal(early.sendGrant({ k: 'mint', id: 1, kind: 'enc', n: 1 }), false, 'and nothing asked of it');
   assert.equal(rig(CELL, { gm: 'off' }).s.grantMode, 'off');
   assert.equal(rig(CELL, { gm: undefined }).s.grantMode, 'off', 'a welcome that says no law');
   const { s, ws, heard, out, tick } = rig(CELL);

@@ -4,23 +4,38 @@
 // relay's receipt key, to POST /v1/mod/grant-feed - a door proven by that signature, never a session (the chat feed's,
 // safety.js takeFeed). A developer reads them with /v1/mod/realm-grants (review.js; tools/realmReview.mjs grants):
 // per kind, an account's asks an hour - its quantiles and most - what the buckets standing would have refused, and the
-// cells' most live granted members. GRANT5 sets the buckets and the ceiling from it after seven days (the owner, question 3).
+// cells' most live granted members. GRANT5 sets the buckets and the ceiling from it after seven days (the owner, question 3):
+// each kind's rate and the ceiling come back suggested beside the standing ones (grantRateSuggested, grantCeilingSuggested).
+// GRANT7 (section 15): readers' tallies against one sender, from enough accounts at once, open the moderators' case.
 import { openGrantMeasure } from '../../src/net/grantMeasure.js';
-import { GRANT_KINDS, GRANT_CELL_CEILING } from '../../src/net/grantLaw.js';
+import { GRANT_KINDS, GRANT_CELL_CEILING, GRANT_CASE_REASONS } from '../../src/net/grantLaw.js';
 import { gatePublicKey } from './signing.js';
+import { openCaseFor, keepCaseLines, credibleReporter } from './safety.js';
+import { displayName } from './accounts.js';
+import { discordOn } from './discord.js';
 
 /** The door's path - the relay's GRANT_FEED_URL names it (server/wrangler.toml). */
 export const GRANT_FEED_PATH = '/v1/mod/grant-feed';
 /** The shortest window an account's rate is read over, s - a cell that slept a minute after one ask is not sixty an hour. */
 export const GRANT_RATE_SPAN_MIN_S = 600;
+/** GRANT7 (the owner, 2026-10-18, question 2: "3 accounts / 10 min"): how many readers' accounts, each one that counts
+ *  (safety.js credibleReporter: registered, not muted, no sprout), tallying a case's reasons against one sender inside
+ *  GRANT_CASE_WINDOW_S open its moderators' case. */
+export const GRANT_CASE_READERS = 3;
+export const GRANT_CASE_WINDOW_S = 10 * 60;
+/** The most senders one batch's tallies are weighed for (a batch holds GRANT_MEASURE_ROWS rows at most). */
+export const GRANT_CASE_SENDERS_MAX = 32;
+/** The tab a grant case's line is kept under (mod_case_lines.tab; the Discord card prints it). */
+export const GRANT_CASE_TAB = 'grant';
 
 /**
  * A POSTED WINDOW: kept when the relay's signature holds over a batch young enough, once - `{ ok, read }` (`read` false
  * for a batch already kept), or `{ error }` (grant-closed: the service holds no relay key; grant-shape; grant-signature;
  * grant-stale).
- * @param {{ db: any, nowS: number, subtle: SubtleCrypto }} ctx @param {any} env @param {Uint8Array} bytes @param {unknown} sig
+ * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => void }} ctx @param {any} env @param {Uint8Array} bytes @param {unknown} sig
+ * GRANT7: a batch whose tallies name a sender for a case's reason weighs its case (grantCases) - `cases` the ones touched.
  */
-export async function takeGrantMeasure({ db, nowS, subtle }, env, bytes, sig) {
+export async function takeGrantMeasure({ db, nowS, subtle, rand }, env, bytes, sig) {
   const opened = await openGrantMeasure(bytes, sig, await gatePublicKey(env, subtle), { subtle, nowMs: nowS * 1000 });
   if ('error' in opened) return opened;
   const b = opened.batch;
@@ -34,7 +49,51 @@ export async function takeGrantMeasure({ db, nowS, subtle }, env, bytes, sig) {
       .bind(b.id, nowS, t.a, t.b, t.r, t.n)),
   ];
   if (writes.length) await db.batch(writes);
-  return { ok: true, read: true };
+  const senders = [...new Set(b.tl.filter((/** @type {any} */ t) => GRANT_CASE_REASONS.includes(t.r)).map((/** @type {any} */ t) => String(t.b)))];
+  const cases = senders.length ? await grantCases({ db, nowS, rand }, env, senders) : 0;
+  return { ok: true, read: true, ...(cases ? { cases } : {}) };
+}
+
+/**
+ * GRANT7 (Spawn-Grants section 15): THE MODERATORS' CASE, NEVER A BAN. For each sender a batch's tallies name for a case's
+ * reason (net/grantLaw.js GRANT_CASE_REASONS - what only a changed client gives), the readers' accounts that tallied
+ * against it inside GRANT_CASE_WINDOW_S; GRANT_CASE_READERS of them that count (credibleReporter - the reports' own law,
+ * so a ring of fresh guests opens nothing) open its case, or add to the one open: one line under the `grant` tab - how
+ * many players' games refused how many of its foes, and why - once a window. The case is the reviewer's own kind
+ * (`review`): no report is filed, so the reports' automatic mute (REPORT_AUTO_MUTE) is never reached, and the AI reader
+ * (chat's) is not asked; the Discord post is due where it is on. A moderator decides; nothing here sanctions anyone.
+ * Answers how many cases it touched. @param {{ db: any, nowS: number, rand: (b: Uint8Array) => void }} ctx @param {any} env
+ * @param {string[]} senders
+ */
+export async function grantCases(ctx, env, senders) {
+  const { db, nowS } = ctx;
+  const since = nowS - GRANT_CASE_WINDOW_S;
+  const inReasons = GRANT_CASE_REASONS.map((_, k) => `?${k + 3}`).join(', ');
+  let touched = 0;
+  for (const sender of senders.slice(0, GRANT_CASE_SENDERS_MAX)) {
+    const rows = (await db.prepare(`SELECT reader, reason, SUM(n) AS n FROM grant_tallies WHERE sender = ?1 AND at > ?2 AND reason IN (${inReasons}) GROUP BY reader, reason`)
+      .bind(sender, since, ...GRANT_CASE_REASONS).all())?.results ?? [];
+    const readers = [...new Set(rows.map((/** @type {any} */ r) => String(r.reader)))].filter((r) => r !== sender);
+    if (readers.length < GRANT_CASE_READERS) continue;
+    const counted = [];
+    for (const id of readers) {
+      const p = await db.prepare('SELECT * FROM players WHERE id = ?1').bind(id).first();
+      if (p && credibleReporter(p, nowS)) counted.push(id);
+    }
+    if (counted.length < GRANT_CASE_READERS) continue;
+    const target = await db.prepare('SELECT * FROM players WHERE id = ?1').bind(sender).first();
+    if (!target) continue;
+    const caseId = await openCaseFor(ctx, env, sender, 'review');
+    if (await db.prepare('SELECT 1 AS y FROM mod_case_lines WHERE case_id = ?1 AND tab = ?2 AND at > ?3').bind(caseId, GRANT_CASE_TAB, since).first()) continue;   // one line a window
+    const why = new Map();
+    for (const r of rows) if (counted.includes(String(r.reader))) why.set(String(r.reason), (why.get(String(r.reason)) ?? 0) + Number(r.n));
+    const foes = [...why.values()].reduce((a, n) => a + n, 0);
+    const text = `${counted.length} players' games refused ${foes} of this account's foes in ${GRANT_CASE_WINDOW_S / 60} minutes: ${[...why].map(([r, n]) => `${r} ${n}`).join(', ')} (Spawn-Grants GRANT7)`;
+    await keepCaseLines(db, caseId, [{ tab: GRANT_CASE_TAB, sub: sender, name: displayName(target), at: nowS, text }], sender);
+    await db.prepare("UPDATE mod_cases SET updated_at = ?2, discord_state = CASE WHEN ?3 = 1 THEN 'due' ELSE discord_state END WHERE id = ?1").bind(caseId, nowS, discordOn(env) ? 1 : 0).run();
+    touched++;
+  }
+  return touched;
 }
 
 /**
@@ -55,9 +114,21 @@ export async function grantsMeasure(db, nowS, days, ranked) {
     const n = Number(sums?.n ?? 0);
     const at = async (/** @type {number} */ rank) => (await db.prepare(`SELECT ${rate} AS r FROM grant_rows WHERE at >= ?1 AND kind = ?2 ORDER BY r LIMIT 1 OFFSET ?3`).bind(since, kind, rank).first())?.r ?? null;
     const { quantiles, most } = await ranked(n, at);
-    kinds.push({ kind, windows: n, asks: Number(sums?.asks ?? 0), members: Number(sums?.members ?? 0), bucket: Number(sums?.bucket ?? 0), ceiling: Number(sums?.ceiling ?? 0), perHour: { quantiles, most } });
+    const top = quantiles.at(-1)?.[1] ?? null;
+    const standing = GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (kind)];
+    kinds.push({ kind, windows: n, asks: Number(sums?.asks ?? 0), members: Number(sums?.members ?? 0), bucket: Number(sums?.bucket ?? 0), ceiling: Number(sums?.ceiling ?? 0), perHour: { quantiles, most },
+      rate: { standing: standing.rate, suggested: grantRateSuggested(top) } });
   }
   const cellsN = Number((await db.prepare('SELECT COUNT(*) AS n FROM grant_batches WHERE at >= ?1').bind(since).first())?.n ?? 0);
   const live = await ranked(cellsN, async (rank) => (await db.prepare('SELECT live AS r FROM grant_batches WHERE at >= ?1 ORDER BY live LIMIT 1 OFFSET ?2').bind(since, rank).first())?.r ?? null);
-  return { days, kinds, cells: { windows: cellsN, live, ceiling: GRANT_CELL_CEILING } };
+  return { days, kinds, cells: { windows: cellsN, live, ceiling: GRANT_CELL_CEILING, suggested: grantCeilingSuggested(live.most) } };
 }
+
+/** GRANT5: the room a suggestion leaves past what honest play reached - half again. */
+export const GRANT_SUGGEST_ROOM = 1.5;
+/** GRANT5: A KIND'S RATE, SUGGESTED from its 0.999 quantile of an account's asks an hour (null with no measure): asks a
+ *  second, half again past it - what GRANT_KINDS' `rate` would be set to before `/relay grantMode enforce`. Pure. */
+export const grantRateSuggested = (/** @type {number|null} */ perHour) => (Number.isFinite(perHour) && /** @type {number} */ (perHour) > 0 ? (/** @type {number} */ (perHour) * GRANT_SUGGEST_ROOM) / 3600 : null);
+/** GRANT5: THE CELL'S CEILING, SUGGESTED from the most live granted hostile members any cell held - half again past it,
+ *  whole (null with no measure). Pure. */
+export const grantCeilingSuggested = (/** @type {number|null} */ most) => (Number.isFinite(most) && /** @type {number} */ (most) > 0 ? Math.ceil(/** @type {number} */ (most) * GRANT_SUGGEST_ROOM) : null);

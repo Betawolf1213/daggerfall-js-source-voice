@@ -80,6 +80,12 @@ export const GRANT_CHAMPION_TRAITS = 5;
  *    rev     - a revenant standing (its band rides as `band`).
  *    quest   - a shared quest's foe: one a stand.
  *    ally    - a companion, a shipmate, an allied summons (allies fight foes, never the reader): never against the ceiling.
+ *    watch   - the City Watch a crime calls (scenes/cityGuards.js), asked as the pool first streams a watchman:
+ *              CELL_WATCH_PUPPETS_MAX's ten.
+ *    kept    - a stand whose marks are its own caller's (a foe a save brought back, a search party's leader): a save's
+ *              whole field in a few asks, rarely.
+ *    encr    - GRANT8: an encounter whose species its seed rolls - the relay's answer to an `enc` ask while its `grantRoll`
+ *              is on (never asked for by name): enc's own bounds.
  *  enc's and camp's `max` are held equal to their homes by the test; the rest are bounds. */
 export const GRANT_KINDS = Object.freeze({
   enc: Object.freeze({ max: 4, rate: 1 / 60, cap: 6, hostile: true }),
@@ -93,15 +99,26 @@ export const GRANT_KINDS = Object.freeze({
   rev: Object.freeze({ max: 4, rate: 1 / 60, cap: 4, hostile: true }),
   quest: Object.freeze({ max: 1, rate: 1 / 5, cap: 24, hostile: true }),
   ally: Object.freeze({ max: 4, rate: 1 / 30, cap: 6, hostile: false }),
+  watch: Object.freeze({ max: 10, rate: 1 / 30, cap: 6, hostile: true }),
+  kept: Object.freeze({ max: 24, rate: 1 / 600, cap: 2, hostile: true }),
+  encr: Object.freeze({ max: 4, rate: 1 / 60, cap: 6, hostile: true }),
 });
+/** GRANT4: the kinds of the open country alone - a world room (a building's, a dungeon's) refuses them `kind`: its stands
+ *  roll no road's table, carry no bounty and call no Greater Giant. */
+export const GRANT_OPEN_KINDS = Object.freeze(['enc', 'camp', 'bounty', 'giant', 'encr']);
+/** GRANT8 (Spawn-Grants section 16): the kind the relay makes an `enc` ask's grant while `grantRoll` is on - its species
+ *  rolled from its seed (scenes/grantHost.js grantSpecies), so neither its owner nor a forger chooses it. Pure. */
+export const grantKindRolled = (k, roll) => (k === 'enc' && roll ? 'encr' : k);
 /** GRANT4: A STAND'S KIND BY ITS OWN SHAPE (scenes/exteriorFoes.js spawnFoe's options), for a caller that names none - the
- *  first that holds: an ally, a quest's foe, a Greater Giant, a revenant, the deep's or the Living World's, a loose stand
- *  or Wabbajack's change, a marker's or the rite's, else a capped stand (a band's). Pure. @param {any} o */
+ *  first that holds: an ally, a quest's foe, a Greater Giant, a revenant, a stand whose marks its caller decided
+ *  (`kept`), the deep's or the Living World's, a loose stand or Wabbajack's change, a marker's or the rite's, else a capped
+ *  stand (a band's). Pure. @param {any} o */
 export function grantKindOf(o) {
   if (o?.allied) return 'ally';
   if (o?.questBehaviour) return 'quest';
   if (o?.zoneGiant != null) return 'giant';
   if (o?.revenant) return 'rev';
+  if (o?.kept) return 'kept';
   if (o?.managed) return 'managed';
   if (o?.replacing || o?.loose) return 'loose';
   if (o?.site || o?.placed) return 'site';
@@ -163,9 +180,10 @@ export function grantMarks(s, n, r) {
   return { e, c };
 }
 
-/** GRANT4: the kinds whose members roll no marks - a quest's foe, an ally, a revenant (its own record's) - as none of
- *  them rolls an elite or a champion on its owner's street today. */
-export const GRANT_MARKLESS = Object.freeze(['quest', 'ally', 'rev']);
+/** GRANT4: the kinds whose members roll no marks - a quest's foe, an ally, a revenant (its own record's), the watch, a
+ *  stand whose marks its caller decided - as none of them takes an elite or a champion from its owner's street. A reader
+ *  believes such a member's marks (grantMarksAllow): its own law decides them, and its kind's bucket bounds them. */
+export const GRANT_MARKLESS = Object.freeze(['quest', 'ally', 'rev', 'watch', 'kept']);
 /** The marks a grant of kind `k` carries: none for a markless kind, else the seed's (grantMarks). Pure. */
 export const grantMarksFor = (k, s, n, r) => (GRANT_MARKLESS.includes(k) ? { e: 0, c: Array(n).fill(-1) } : grantMarks(s, n, r));
 
@@ -260,9 +278,10 @@ export function grantRefusal(g, { from, cell, nowMs, i }) {
 }
 
 /** Whether a record's elite (`z`) and champion (`cp`) are within member `i`'s grant: an elite only where `e` says, a
- *  trait only `c`'s own - and either left off is always believed (a mark worn below its grant costs only the liar). Pure.
+ *  trait only `c`'s own - and either left off is always believed (a mark worn below its grant costs only the liar). A
+ *  markless kind's are its own law's (GRANT4: GRANT_MARKLESS), believed. Pure.
  *  @param {SpawnGrant} g @param {number} i @param {{ z?: any, cp?: any }} rec */
-export const grantMarksAllow = (g, i, { z, cp }) => (!z || ((g.e >>> i) & 1) === 1) && (cp == null || cp === g.c[i]);
+export const grantMarksAllow = (g, i, { z, cp }) => GRANT_MARKLESS.includes(g.k) || ((!z || ((g.e >>> i) & 1) === 1) && (cp == null || cp === g.c[i]));
 
 // ── GRANT2: THE ASK, THE ANSWER, THE MODE (Spawn-Grants section 12) ─────────────────────────────────────────────────
 /** The first relay that takes the `grant` frame (RELAY_VERSION's number). An older relay refuses a frame it does not
@@ -289,6 +308,16 @@ export const GRANT_TALLY_MS = 10 * 60 * 1000;
 export const GRANT_TALLY_COUNT_MAX = 10_000;
 /** The reasons a READER refuses for (grantRefusal, grantMarksAllow, the signature and the dice) - a tally's words. */
 export const GRANT_READER_REFUSALS = Object.freeze(['unsigned', 'sender', 'cell', 'expired', 'member', 'marks', 'dice', 'twice', 'ungranted']);
+/** GRANT6-GRANT7 (Spawn-Grants section 15): THE REASONS ONLY A CHANGED CLIENT GIVES - a grant no relay signed (once the
+ *  reader has waited for it), another's, a member past it, marks past it, a member standing twice. GRANT7's case counts
+ *  these alone. The rest come of an honest client's timing or settings too - a record that beat its carry (`cell`) or its
+ *  renewal (`expired`), a level risen since its checkpoint (`dice`), a stand whose grant never came (`ungranted`) - and are
+ *  the measure's. */
+export const GRANT_CASE_REASONS = Object.freeze(['unsigned', 'sender', 'member', 'marks', 'twice']);
+/** GRANT6: what an enforcing reader stands down - the case's reasons and a record with no grant (the law's whole point:
+ *  without it a changed client sends none). An honest owner never streams one while the law enforces (scenes/
+ *  exteriorFoes.js spawnFoe drops a stand its grant did not come for). A reader stands nothing down for the rest. */
+export const GRANT_STANDDOWN_REASONS = Object.freeze([...GRANT_CASE_REASONS, 'ungranted']);
 
 const uniqInts = (a, max) => Array.isArray(a) && a.length >= 1 && a.length <= max && a.every((g) => intIn(g, 0, 0x7fffffff)) && new Set(a).size === a.length;
 const signedGrant = (v) => { const g = validGrant(v); return g && typeof g.sg === 'string' ? g : null; };
@@ -305,7 +334,7 @@ const signedGrant = (v) => { const g = validGrant(v); return g && typeof g.sg ==
 export function validGrantAsk(m) {
   if (!m || typeof m !== 'object' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
   if (m.k === 'mint') {
-    if (typeof m.kind !== 'string' || !Object.hasOwn(GRANT_KINDS, m.kind)) return null;
+    if (typeof m.kind !== 'string' || !Object.hasOwn(GRANT_KINDS, m.kind) || m.kind === 'encr') return null;   // GRANT8: `encr` the relay's word, never asked
     if (!intIn(m.n, 1, GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (m.kind)].max)) return null;
     return { k: 'mint', id: m.id, kind: m.kind, n: m.n };
   }

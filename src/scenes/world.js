@@ -29658,9 +29658,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       now: () => performance.now(),
       staleMs: FOES_STALE_MS,
       onPeerHit: (hit, fate) => hitSend({ ...hit, own: 1 }, fate),   // OWN1: routed to its `to`, whoever hosts
+      grants,   // GRANT4: the building's own stands on their grants, as the street's (Spawn-Grants section 14)
       toWire: (feet) => [feet[0], feet[1] - state.compensation[1], feet[2]],
       toScene: (p) => [p[0], p[1] + state.compensation[1], p[2]],
     } : null),
+    grants: () => (online ? grants : null),   // GRANT4: and a dungeon's own lane's (dungeonContext.js grants)
     foesQuestShare: () => partyOnlyQuestShare(questShareSeam),   // QUEST-PARTY phase 3b: the party's law for the building's quest foes; QUEST-OWNER: its owner's party's alone, in a building and underground
     onFoeHit: (hit, fate) => hitSend(hit, fate),   // WORLD2: a blow on a puppet goes to the host; AUDIT FOES FOE2: through the pending set, so a refused blow heals; LOOT-DUP: with the frame's own fate
     // WORLD3: a door moved goes to the room (the session refuses it outside a world room); the peers in my room at

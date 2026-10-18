@@ -476,9 +476,9 @@ Mac: **"Do all slices. And dont return until they are finished"**. Ships with GR
   its marks within its grant's (`marks`), and what a seed bounds without the owner's settings (`dice`): a class foe of an
   encounter, a camp or a band at the owner's signed level or under, an encounter's or a camp's species one its pixel's
   tables hold (grantSpeciesOf: the band's three tables). A hostile record with no grant from an owner that has carried
-  one is `ungranted` (the City Watch aside: section 14). What it would refuse is tallied by sender and reason
+  one is `ungranted` (GRANT4: the City Watch's too, section 14). What it would refuse is tallied by sender and reason
   (GRANT_READER_REFUSALS) and handed to the cell every GRANT_TALLY_MS. While the law measures the foe stands; while it
-  enforces the pool stands it down (GRANT6). A reader that cannot have the key judges nothing, and asks again after
+  enforces the pool stands down a forged grant or none (GRANT6, section 15). A reader that cannot have the key judges nothing, and asks again after
   GRANT_KEY_RETRY_MS.
 
 Departures from section 4, each named:
@@ -494,13 +494,96 @@ dead). Pins moved: `test/net/grant1_law.test.js` (`h`, fifteen fields signed), `
 wired), the relay's law row; mutant records re-aimed where their text moved (`scenes/world.js`'s encounter and camp lines,
 `travel/freePull.js` - the free pull moved out of bootWorld to make its room).
 
-## 14. GRANT4: every source's grant (BUILDING 2026-10-18)
+## 14. GRANT4: every source's grant (BUILT 2026-10-18)
 
-- **The kinds** (GRANT_KINDS, eleven): `enc`, `camp`, `band`, `bounty`, `loose`, `site`, `managed`, `giant`, `rev`,
-  `quest`, `ally`. A stand's kind is its caller's word (`grantKind`: world.js names the encounter's, the revenant's, the
-  camp's, the band's and the bounty's) or its own shape (grantKindOf). A quest's foe, an ally and a revenant roll no
-  marks (GRANT_MARKLESS): their own law decides them.
+- **The kinds** (GRANT_KINDS, fourteen): `enc`, `camp`, `band`, `bounty`, `loose`, `site`, `managed`, `giant`, `rev`,
+  `quest`, `ally`, `watch`, `kept`, and GRANT8's `encr` (section 16). A stand's kind is its caller's word (`grantKind`:
+  world.js names the encounter's, the revenant's, the camp's, the band's and the bounty's) or its own shape (grantKindOf):
+  an ally, a quest's foe, a Greater Giant, a revenant, marks its caller decided (`kept`), a stand its spawner manages,
+  a loose stand, a marker's, else a capped stand (`band`). A quest's foe, an ally, a revenant, the watch and a `kept`
+  stand roll no marks (GRANT_MARKLESS), and a reader believes theirs (grantMarksAllow): their own law decides them, and
+  their kind's bucket bounds them. `kept` is a stand whose elite or champion its caller set - a foe a save brought back, a
+  search party's leader - so a grant's marks never contradict a mark its caller decided.
+- **The building's lane**: world.js hands the grants' host to the building's pool with its net (interiorFoesNet's
+  `grants`), so a building's own stands ask, carry and read as the street's. The relay takes a world room's asks
+  (`_grantHere`: the socket stands in its room; `streamsFoes` everywhere a cell was): its grant names no pixel (`[0, 0]` -
+  its kinds roll no table a pixel decides), the open country's kinds (GRANT_OPEN_KINDS: an encounter, a camp, a bounty, a
+  Greater Giant) are refused `kind`, and a grant is carried cell to cell alone - never into a room, never out of one.
+  A free goes to the room that holds its grant (one left behind counts there to its expiry), and an expired grant is
+  no longer the owner's to renew or free. The welcome says the law in a world room too.
+- **The dungeon's own lane** (`scenes/dungeonContext.js`, wired by worldModes' `grants`): a shared quest's foe and a loose
+  stand ask before they build (spawnLooseFoe - a bout, the arena's instance's own, asks nothing); the own lane's record
+  names its grant and member, its frame carries the grants (`gs`); a party member's game checks a new puppet's grant (the
+  room its session stands in is the cell: the own frame is keyed by the dungeon), stands down what an enforcing law
+  refuses, ties a handed grant to the foe it took, and hands its own on at a death or a door; a member that dies or is
+  given back ends; the clock runs in drawFoes. The own lane's records carry no marks, so a dungeon's grant bounds the
+  count and the rate alone.
+- **The watch**: the City Watch is stood by its own pool (`scenes/cityGuards.js`) and streamed by the street's (WATCH1),
+  so the street's pool asks a watchman's grant as it first streams him (grantHost.js watchReady) and holds his record
+  until it comes (or GRANT_WAIT_MS passes without one); a watchman gone from the list ends his member (watchSweep). A
+  reader holds a `watch` grant to a watchman (`dice` otherwise), and the watch's records are no longer passed over.
+- **The clock** runs every frame (the pool's update, the dungeon's drawFoes), not only on a frame to others: alone, a
+  grant is renewed all the same.
 
-Departures from section 4.9, each named: the roaming bands and sea raiders take `band` and `loose` rather than none new
-(their stand's elite and champion are the grant's, one law for every stand); a naval muster and a raid's party take
-`loose`, the deep's and the Living World's `managed`.
+Departures from section 4.9, each named:
+- The plan's `muster`, `raid` and `deep` are not kinds of their own: a stand takes its shape's - a stand its spawner
+  manages (the deep's, the Living World's) `managed`, a loose stand (a summons, a squad, a muster, a raider) `loose`, any
+  other capped stand `band`. The roaming bands and sea raiders take theirs rather than none new: one law for every stand.
+- **The dungeon's surplus needs no grant**: it is a host's layout foe past a reader's own layout run (DESYNC-ZERO), the
+  layout's by construction. The room's shared rest encounter (REST-SYNC) is the host SEAT's, and the seat passes between
+  sockets while a grant is made out to one: it stands on the layout's law, the host's seat (OPEN).
+- A placed foe with no site never rides (foesFrame, AUDIT BRANCH (WoD) M1), so it asks nothing.
+
+Pins: `test/net/grant4_relay.test.js` (3), `test/scenes/grant4_lanes.test.js` (7); `tools/mutants/grant4.json` (44, all
+dead, with GRANT5-GRANT9's). Pins moved: `grant3_pool`'s kinds, `grant2_client`'s session (a world room's welcome says
+the law; the law unsaid until it comes), `scale5b`'s settings; QP3C's handover mutant re-aimed past the heir's ask.
+
+## 15. GRANT5, GRANT6, GRANT7: the measure read, enforcing, the moderators' case (BUILT 2026-10-18)
+
+- **GRANT5, the measure read.** `node tools/realmReview.mjs grants 7` answers each kind's rate standing and SUGGESTED -
+  half again past its 0.999 quantile of an account's asks an hour, in asks a second (grantRateSuggested) - and the cell's
+  ceiling suggested, half again past the most live granted members any cell held (grantCeilingSuggested). **Reading
+  seven days of the live measure is the staff's, after the deploy** (the owner, question 3): GRANT_KINDS' rates and
+  GRANT_CELL_CEILING are set from it, and any honest reader's tally it shows is the law's mistake, fixed before enforcing.
+- **GRANT6, enforcing.** The relay refuses past a bucket or the ceiling (GRANT2). An owner never stands a stand its
+  grant did not come for (scenes/exteriorFoes.js spawnFoe, the dungeon's spawnLooseFoe), so an honest owner streams none.
+  A stand made while its socket's welcome is owed (net/online.js: the law `null` from the socket's open to its welcome)
+  waits for it, GRANT_WAIT_MS at most, so a crossed cell is never a moment of ungranted stands. A reader stands down only
+  what a changed client gives - GRANT_CASE_REASONS (a grant never signed, another's, a member past it, marks past it, a
+  member twice) - and a record with no grant (GRANT_STANDDOWN_REASONS); a record that beat its carry (`cell`) or its
+  renewal (`expired`), a level since its checkpoint, a species off its tables (`dice`) are the measure's. A reader waits
+  GRANT_VERDICT_WAIT_MS (two full frames) for a grant it came in after before it calls it `unsigned`, and a class foe
+  GRANT_LEVEL_SLACK (two) over its owner's signed level stands: the token's `cl` is the level its last judged checkpoint
+  found. **The flip is the staff's: `/relay grantMode enforce`, after GRANT5** - nothing deploys.
+- **GRANT7, the moderators' case** (`server-account/src/grants.js` grantCases; the owner, question 2: three accounts in
+  ten minutes). A window whose tallies name a sender for a case's reason weighs its case: GRANT_CASE_READERS (three)
+  readers' accounts that count, tallying those reasons against it inside GRANT_CASE_WINDOW_S (ten minutes), open its
+  case - or add to the one open - with one line under the `grant` tab (how many players' games refused how many of its
+  foes, and why), once a window. The case is the reviewer's kind (`review`): no report is filed, so the reports'
+  automatic mute is never reached, and the chat's AI reader is not asked; the Discord post is due where it is on. A
+  moderator decides. Departure: an account counts by the reports' own law (safety.js credibleReporter: registered, not
+  muted, no sprout), so a ring of fresh guests opens nothing.
+
+Pins: `test/server/grant7_case.test.js` (2), `test/scenes/grant4_lanes.test.js`'s GRANT6 three, `grant3_pool`'s reader
+(an enforcing reader stands a species off its tables); `tools/mutants/grant4.json`.
+
+## 16. GRANT8, GRANT9: the seed rolls the species, the relay strips records (BUILT 2026-10-18, OFF)
+
+Both are relay settings, off until a developer sets them (`/relay grantRoll on`, `/relay grantStrip on`; vars GRANT_ROLL
+and GRANT_STRIP), each the plan's condition for its own (sections 4.10 and 4.11).
+
+- **GRANT8** (section 4.10). Departure: **the relay holds no map; the grant's SEED rolls the species.** While
+  `grantRoll` is on the relay answers an encounter's ask with `encr` (grantKindRolled; never asked by name), an
+  encounter's bounds and marks. Its owner stands each member's species as the seed rolls it - chooseRandomEnemy at the
+  grant's pixel's climate (the owner's own CLIMATE.PAK), its world minute's day or night and its owner's signed level, from
+  the member's species die (scenes/grantHost.js grantSpecies) - in place of its own roll; a reader rolls the same from
+  its own map and refuses any other species (`dice`), in a location's rect or out of one (the owner's place, which a
+  reader cannot see). Neither owner nor forger chooses the species, every machine confirms it, and no Merkle root is
+  needed: every honest reader's map is the same file. An encounter alone - a camp's composition is OPEN.
+- **GRANT9** (section 4.11). While `grantStrip` is on, a foes frame (a cell's, or a world room's own lane) loses at the
+  relay each record that names a grant this room does not hold as its sender's, a member past it, or marks past it, and -
+  from a socket that has stood on a grant here - a live record with no grant that is not its ally (`al`, `cw`, `cp`); a
+  body and a standing foe's delta pass (`_grantStripped`, a Room method, on `_foesFan`'s path). Off, the relay reads
+  no foe record (section 4.6). Turn it on only when the measure shows the fan can afford the walk (section 6).
+
+Pins: `test/net/grant4_relay.test.js`'s GRANT8 and GRANT9, `grant4_lanes`' GRANT8; `tools/mutants/grant4.json`.

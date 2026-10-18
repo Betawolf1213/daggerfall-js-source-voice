@@ -307,7 +307,7 @@ import { roomOf, parseClient, GROUND_LAW, GROUND_OLD_REASON, groundRoom, inRange
 import { NEW_VOICE_GAP_MS, SAFE_LAW_PATH } from './relay.js';   // SAFE6: a new voice's pace; SAFE4: the service's door in
 import { mintStamp, stampTabOf, PUBLIC_TABS } from '../../src/net/safety/chatStamp.js';   // SAFE2: the relay's stamp on every line it relays
 import { sealFeed, FEED_SIG_HEADER, FEED_BATCH, FEED_WAIT_MS, FEED_POST_MS } from '../../src/net/safety/chatFeed.js';   // SAFE5: the reviewer's feed
-import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarksFor, signGrant, grantBucketIdle, GRANT_TTL_MS, GRANT_SKEW_MS, GRANT_TALLY_MS, grantRenewed, grantCarried, grantHanded, grantSignedHere } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
+import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarksFor, signGrant, grantBucketIdle, GRANT_TTL_MS, GRANT_SKEW_MS, GRANT_TALLY_MS, grantRenewed, grantCarried, grantHanded, grantSignedHere, GRANT_OPEN_KINDS, grantKindRolled, grantMarksAllow } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
 import { newGrantMeasure, foldGrantAsk, foldGrantTally, grantMeasureBatch, sealGrantMeasure, GRANT_MEASURE_MS, GRANT_MEASURE_SIG_HEADER, GRANT_MEASURE_POST_MS } from '../../src/net/grantMeasure.js';   // GRANT2: and its measure, to the service
 import { holdemGate, holdemSitRoomGate } from './relay.js';   // CARDS5: the card table's gate; AUDIT CARDS-3 A4: the room's sits
 import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand, actAt as holdemAct, tick as holdemTick, nextAt as holdemNextAt, emptyTable as holdemEmpty, tableLook as holdemLook, stateDelta as holdemDelta, holdemGoldTable } from '../../src/net/holdemTable.js';   // CARDS5: THE RELAY DEALS - the room's card tables (holdemTable.js imports only cardLaw.js, which imports only dice.js)
@@ -428,6 +428,8 @@ const relayCfgRefusal = (k, v) => {
   if (k === 'egDrain') return v === 'on' || v === 'off' ? null : 'egDrain is on (the Spire\'s road shut - no new breach) or off';   // EG-H2 (Elite-Gates.md section 22): THE DRAIN
   if (k === 'groundGate') return v === 'on' || v === 'off' ? null : 'groundGate is on (a ground room refuses a build on an older ground) or off';   // GROUND-GATE (Field-Bugs-2026-10-17f)
   if (k === 'grantMode') return GRANT_MODES.includes(v) ? null : `grantMode is ${GRANT_MODES.join(', ')} - the spawn grants measure, enforce, or are off`;   // GRANT2 (Spawn-Grants.md section 12)
+  if (k === 'grantRoll') return v === 'on' || v === 'off' ? null : 'grantRoll is on (an encounter\'s grant rolls its species from its seed) or off';   // GRANT8 (Spawn-Grants.md section 16)
+  if (k === 'grantStrip') return v === 'on' || v === 'off' ? null : 'grantStrip is on (the relay drops a foe record its grant does not stand) or off';   // GRANT9 (Spawn-Grants.md section 16)
   if (k !== 'bossBody') return heraldRole(v) === null ? `${k} is a Discord role's id, 15 to 21 digits - not its name or its mention` : null;
   let o = null;
   try { o = JSON.parse(v); } catch { /* refused below */ }
@@ -2019,6 +2021,7 @@ export class Room {
     const budget = byteGate(bucket, now, per * listeners.length, FOES_ROOM_BYTES_PER_S);
     if (!budget.pass) { this._metrics.c.drops++; return budget.bucket; }
     if (!listeners.length) return budget.bucket;
+    if (this._grants && relayCfgValue(this._relayCfg, this.env, 'grantStrip') === 'on' && (kind === 'own' || isCellRoom(a.key))) data = this._grantStripped(a, data);   // GRANT9: the switch on - a record its grant does not stand goes nowhere
     const out = fanOut(kind, a.id, data, length);   // AUDIT (pre-merge) O3/O4
     if (out == null) { this._junk(ws); return budget.bucket; }
     for (const other of listeners) this._send(other, out);
@@ -3504,7 +3507,7 @@ export class Room {
       // AUDIT WORLD5 C11: stamped as the welcome is BUILT, not as the hello began - four storage awaits sit between the
       // two, and every millisecond of them was an offset the client carried as the relay's clock
       // SRV-N / SLAM13 (AUDIT SLAM A5): the relay's VERSION rides it (`v`, last), so a client can tell a restarted relay from the one it was talking to, and one built against another law can say so
-      const gm = isCellRoom(a.key) ? this._grantWelcome() : '';   // GRANT2: the spawn grants' mode, a cell's
+      const gm = streamsFoes(a.key) ? this._grantWelcome() : '';   // GRANT2: the spawn grants' mode, a cell's (GRANT4: and a world room's)
       const rf = isCellRoom(a.key) && this._refereesPoses() ? ',"rf":1' : '';   // SCALE5b: this cell judges the poses that reach it - a halo's at their full rate
       const welcome = `{"t":"welcome","id":${JSON.stringify(m.id)},"peers":${JSON.stringify(roster)},"host":${JSON.stringify(host)}${ow},"world":${world ?? 'null'},"now":${Date.now()},"v":${JSON.stringify(RELAY_VERSION)}${rf}${gm}${a.ly ? `,"ly":${a.ly}` : ''}}`;   // SCALE5d: and which layer of the place this is
       if (!this._send(ws, welcome)) return;
@@ -10053,6 +10056,28 @@ export class Room {
     else if (now - this._relayCfgAt >= GRANT_CFG_TTL_MS) void this._relayCfgFresh(now);
     return grantModeOf(relayCfgValue(await this._relayCfgOf(), this.env, 'grantMode'));
   }
+  /**
+   * GRANT9 (bible/11-Multiplayer/Spawn-Grants.md sections 4.11 and 16): THE RELAY STRIPS RECORDS - while `grantStrip` is
+   * on, a foes frame (a cell's, or a world room's own lane) loses each record that names a grant this room does not hold
+   * as the sender's, a member past it, or marks past its own (net/grantLaw.js grantMarksAllow), and - from a socket that
+   * has stood on a grant here - a live record with no grant that is not its ally (the frame's allied watchmen, crew and
+   * companions). A body (`d` 1) and a word with no species (a standing foe's delta) pass: what they name was decided
+   * when it first stood. The frame back, the same one when nothing went. Off, never called: the foe stream is not read
+   * (section 4.6).
+   */
+  _grantStripped(a, data) {
+    const G = this._grants;
+    if (!G || !data || !Array.isArray(data.f)) return data;
+    const asker = !!G.askers?.has(a.id);
+    const allies = new Set([data.al, data.cw, data.cp].flatMap((x) => (Array.isArray(x) ? x : [])));
+    const keep = data.f.filter((r) => {
+      if (!r || typeof r !== 'object') return false;
+      if (!Array.isArray(r.gr)) return !asker || r.d === 1 || r.t === undefined || allies.has(r.i);
+      const v = G.live.get(r.gr[0]), i = r.gr[1];
+      return !!v && v.gr.o === a.id && Number.isInteger(i) && i >= 0 && i < v.gr.n && (v.gr.h < 0 || i === v.gr.h) && grantMarksAllow(v.gr, i, r);
+    });
+    return keep.length === data.f.length ? data : { ...data, f: keep };
+  }
   /** GRANT2: the welcome's word of it, a cell's - `,"gm":"<mode>"`; a client asks only while it is not `off`. NEVER THE
    *  HUB'S CALL: a hello asks nothing - the setting this cell last had, or the Worker's var (a staff `off` reaches a
    *  client at its next ask, answered `off`). */
@@ -10074,8 +10099,8 @@ export class Room {
     for (const [id, at] of G.tallied) if (now - at >= GRANT_TALLY_MS) G.tallied.delete(id);
   }
   /**
-   * GRANT2-GRANT3 (bible/11-Multiplayer/Spawn-Grants.md sections 4.3, 12 and 13): A SPAWN GRANT ASKED (`{t:'grant', k, id,
-   * ...}`, net/grantLaw.js validGrantAsk) - on its own bucket (the same strikes), in a cell alone. Off: `off`, and the
+   * GRANT2-GRANT4 (bible/11-Multiplayer/Spawn-Grants.md sections 4.3, 12-14): A SPAWN GRANT ASKED (`{t:'grant', k, id,
+   * ...}`, net/grantLaw.js validGrantAsk) - on its own bucket (the same strikes), in a cell or a world room. Off: `off`, and the
    * client asks no more. Each ask is a method of its own: a mint, a renewal, a free, a carry into this cell, a member
    * handed on, a reader's tally.
    */
@@ -10083,7 +10108,7 @@ export class Room {
     const now = Date.now();
     if (!this._spend(ws, now, grantGate, 'grantBucket', 'grantDrops', 'too many grant asks')) return;
     const ask = validGrantAsk(m);
-    if (!ask || !isCellRoom(a.key) || !a.id) { this._junk(ws); return; }
+    if (!ask || !streamsFoes(a.key) || !a.id) { this._junk(ws); return; }   // GRANT4: a cell's, or a world room's own lane
     const mode = await this._grantMode(now);
     if (mode === 'off') { this._send(ws, JSON.stringify({ t: 'grant', k: 'off', id: ask.id })); return; }
     const G = this._grantState(a.key, now);
@@ -10096,10 +10121,11 @@ export class Room {
     return this._grantTally(a, ask, G, now);
   }
   /** GRANT2: does this socket's pose stand in this cell? A halo's foes are their own cell's, and a pose not yet here is
-   *  told `cell` - the owner's own cell mints, and carries. */
+   *  told `cell` - the owner's own cell mints, and carries. GRANT4: a world room's socket stands in it (a building's or a
+   *  dungeon's pose is its own scene's, no map's). */
   _grantHere(ws, a, id) {
     const p = a.pose;
-    if (p && cellRoomOfWire(p.x, p.z) === a.key) return true;
+    if (isWorldRoom(a.key) || (p && cellRoomOfWire(p.x, p.z) === a.key)) return true;
     this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id, r: 'cell' }));
     return false;
   }
@@ -10110,6 +10136,7 @@ export class Room {
    */
   async _grantMintAsk(ws, a, ask, G, mode, now) {
     if (!this._grantHere(ws, a, ask.id)) return;
+    if (isWorldRoom(a.key) && GRANT_OPEN_KINDS.includes(ask.kind)) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'kind' })); return; }   // GRANT4: the open country's kinds, never a room's
     const who = a.sub || a.id;   // the account's (a guest's token has its own - the same budget, Spawn-Grants section 10)
     const key = `${who}|${ask.kind}`;
     const gate = grantMintGate(ask.kind, ask.n, G.buckets.get(key), G.liveN, now);
@@ -10126,12 +10153,14 @@ export class Room {
   /** GRANT2: THE MINT (Spawn-Grants section 4.2) - the owner's pixel and the world minute as the relay reads them, its
    *  signed level and Renown (0 where its token has none: a guest's - no elite), a fresh seed and the marks it rolls, ten
    *  minutes' life, the relay's signature (none from a relay without a key: the grant goes out unsigned, and no reader
-   *  will believe it). Counted live until its `x`. */
+   *  will believe it). Counted live until its `x`. GRANT4: a world room's names no pixel ([0, 0]) - its kinds roll no
+   *  table a pixel decides. */
   async _grantMint(G, a, ask, now) {
-    const px = mapPixelOfWire(a.pose.x, a.pose.z);
+    const px = isWorldRoom(a.key) ? [0, 0] : mapPixelOfWire(a.pose.x, a.pose.z);
     const l = Number.isSafeInteger(a.cl) ? a.cl : 0, r = renownIssuable(a.lv) ? a.lv : 0;
-    const s = rand32();
-    const gr = { g: this._grantNext(G), o: a.id, q: a.key, a: a.sub ?? '', k: ask.kind, p: [px[0], px[1]], m: Math.floor(sharedClassicMinutes(now)), l, r, n: ask.n, s, ...grantMarksFor(ask.kind, s, ask.n, r), h: -1, x: now + GRANT_TTL_MS };
+    const s = rand32(), k = grantKindRolled(ask.kind, relayCfgValue(this._relayCfg, this.env, 'grantRoll') === 'on');   // GRANT8: an encounter's species its seed's, while `grantRoll` is on
+    (G.askers ??= new Set()).add(a.id);   // GRANT9: a socket that stands on grants here - a record of its with none is stripped
+    const gr = { g: this._grantNext(G), o: a.id, q: a.key, a: a.sub ?? '', k, p: [px[0], px[1]], m: Math.floor(sharedClassicMinutes(now)), l, r, n: ask.n, s, ...grantMarksFor(k, s, ask.n, r), h: -1, x: now + GRANT_TTL_MS };
     return this._grantSign(G, gr, ask.n);
   }
   /** GRANT2-GRANT3: the cell's next grant number. */
@@ -10173,7 +10202,7 @@ export class Room {
     const key = await this._receiptKeyOf(), env = { subtle: crypto.subtle };
     const grs = [];
     for (const gr of ask.grs) {
-      const ok = gr.o === a.id && gr.a === (a.sub ?? '') && gr.q !== a.key && now <= gr.x && await grantSignedHere(gr, key, env);
+      const ok = isCellRoom(a.key) && isCellRoom(gr.q) && gr.o === a.id && gr.a === (a.sub ?? '') && gr.q !== a.key && now <= gr.x && await grantSignedHere(gr, key, env);   // GRANT4: cell to cell - a room's grants stay its own
       grs.push(ok ? await this._grantSign(G, grantCarried(gr, a.key, this._grantNext(G), now), gr.h >= 0 ? 0 : gr.n) : null);
     }
     this._send(ws, JSON.stringify({ t: 'grant', k: 'carry', id: ask.id, grs }));

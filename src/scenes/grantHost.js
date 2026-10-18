@@ -1,8 +1,9 @@
 // @ts-check
 // GRANT2-GRANT4 (2026-10-18, Mac: "Lets build the plan", "Do all slices"; bible/11-Multiplayer/Spawn-Grants.md sections
-// 12-14): THE GRANTS' HOST - a module the host wires (HOST-SPLIT; scenes/fishHost.js is the shape), the owner's half and
-// the reader's of every spawn grant this client holds or hears. The pool (scenes/exteriorFoes.js) asks it; world.js makes
-// one, hands it to the pool's net (`grants`) and its session's answers (`online.onGrant`).
+// 12-16): THE GRANTS' HOST - a module the host wires (HOST-SPLIT; scenes/fishHost.js is the shape), the owner's half and
+// the reader's of every spawn grant this client holds or hears. The pools (scenes/exteriorFoes.js - the street's and a
+// building's - and the dungeon's own lane, scenes/dungeonContext.js) ask it; world.js makes one, hands it to their nets
+// (`grants`) and its session's answers (`online.onGrant`).
 //
 // THE OWNER'S HALF (section 13):
 //   - A STAND ASKS: spawnFoe asks a member for its kind (memberFor); every stand of a kind in one turn is ONE ask of that
@@ -17,23 +18,31 @@
 //     stand ungranted), an expired one is dropped.
 //   - THE FRAME: a record names its grant and member (`gr`), and the frame carries each grant it names on a full frame and
 //     whenever it was signed again (`gs`).
+//   - GRANT4 (section 14): THE WATCH asks as the street's pool first streams a watchman (watchReady); a world room's grants
+//     stay its own (carried cell to cell alone, freed only to the room that holds them). GRANT6 (section 15): a stand made
+//     while its socket's welcome is owed waits on it (`unsaid`). GRANT8 (section 16): an `encr` member's species is its
+//     seed's (grantSpecies).
 // THE READER'S HALF (section 13):
 //   - every grant a frame carries is checked against the relay's public half (/v1/relaykey - a guest's game too), once per
 //     owner, grant and signature; every new foe's grant once: the signature, the sender, the cell, the expiry, the member,
 //     a member standing once, its marks within the grant's, a class foe of an encounter at the owner's signed level or
 //     under, an encounter's or a camp's species one its pixel's tables hold. What it would refuse is TALLIED, by sender
 //     and reason, and handed to the cell every GRANT_TALLY_MS (`tally`) - the measure, and GRANT7's evidence. While the
-//     law measures the foe stands all the same; while it enforces (GRANT6) the pool stands down what the check refuses.
+//     law measures the foe stands all the same; while it enforces (GRANT6) the pool stands down a forged grant or none
+//     (standsDown). A grant a record names that the reader has not heard is waited for (GRANT_VERDICT_WAIT_MS).
 //   - LEFT AS THE OWNER'S WORD, said plainly: a foe's weapon and its health. Each depends on its owner's own settings and
 //     state (the Roleplay & Realism assigner, the monster rows' mods, the wilds' scaling), which a seed cannot rebuild -
 //     FOE-FORGE's caps hold them (FOE_HEALTH_MAX, the weapon's template law).
 import {
   GRANT_ASK_ID_MAX, GRANT_KINDS, GRANT_WAIT_MS, GRANT_RENEW_LEAD_MS, GRANT_RENEW_MAX, GRANT_TALLY_MS, GRANT_TALLY_ROWS_MAX, GRANT_TALLY_COUNT_MAX,
-  GRANT_FRAME_GRANTS_MAX, GRANT_SKEW_MS, validGrant, verifyGrant, grantRefusal, grantMarksAllow, wireGrant,
+  GRANT_FRAME_GRANTS_MAX, GRANT_SKEW_MS, GRANT_STANDDOWN_REASONS, validGrant, verifyGrant, grantRefusal, grantMarksAllow, wireGrant, grantDice,
 } from '../net/grantLaw.js';
+import { isNight } from '../world/worldClock.js';
+import { isCellRoom } from '../net/wire.js';
+import { KNIGHT_CITYWATCH_ID } from '../characters/enemy/enemyEntity.js';
 import { importPublicKeyB64 } from '../net/identityToken.js';
 import { serviceBase } from '../net/accountClient.js';
-import { resolveEncounterTableIndex } from '../systems/encounters.js';
+import { resolveEncounterTableIndex, chooseRandomEnemy } from '../systems/encounters.js';
 import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
 
 /** The reader's bounds: the verdicts it keeps (owner and grant), the members it has seen stand, the puppets it knows the
@@ -44,11 +53,28 @@ export const GRANT_MEMBERS_MAX = 2048;
 export const GRANT_HEIR_WAIT_MS = 10_000;
 /** How soon a reader asks the relay's key again after it could not, ms. */
 export const GRANT_KEY_RETRY_MS = 5 * 60_000;
+/** GRANT6: how long a reader waits for a grant a record names before it calls it `unsigned`, ms - two full frames
+ *  (net/online.js FOES_FULL_MS): a reader that came in after the grant went hears it again on the owner's next. */
+export const GRANT_VERDICT_WAIT_MS = 4_000;
+/** GRANT6: the levels a class foe may stand over its owner's signed one - a character's token says the level its last
+ *  judged checkpoint found (server-account/src/realm.js `cl`), and a player gains a level or two between checkpoints. */
+export const GRANT_LEVEL_SLACK = 2;
+/** GRANT6: how often a stand made while its socket's welcome is owed asks whether the law is said yet, ms. */
+const MODE_POLL_MS = 100;
 
 /** The kinds whose species is an encounter table's (a random encounter's, a camp's) - and whose class foes stand at the
  *  owner's level. */
 const ROLLED_KINDS = new Set(['enc', 'camp']);
-const LEVELLED_KINDS = new Set(['enc', 'camp', 'band']);
+const LEVELLED_KINDS = new Set(['enc', 'camp', 'band', 'encr']);
+
+/** GRANT8 (Spawn-Grants section 16): AN `encr` MEMBER'S SPECIES - its seed's: chooseRandomEnemy (systems/encounters.js,
+ *  RandomEncounters.ChooseRandomEnemy) over climate `climate` (a map pixel's - every machine's own CLIMATE.PAK, the
+ *  relay's never), in a location's rect or out of one, the grant's world minute's day or night and its owner's signed
+ *  level (1 where it signs none), drawn from the member's own species die (net/grantLaw.js grantDice). -1 where the place
+ *  rolls none. Pure. @param {{ s: number, m: number, l: number }} gr @param {number} i @param {number} climate @param {boolean} inRect */
+export function grantSpecies(gr, i, climate, inRect) {
+  return chooseRandomEnemy({ climateIndex: climate, inLocationRect: inRect, isDay: !isNight(gr.m), playerLevel: gr.l > 0 ? gr.l : 1 }, grantDice(gr.s, i).species);
+}
 
 const _speciesOf = new Map();
 /** THE SPECIES A GRANTED ENCOUNTER OR CAMP MAY STAND at climate `c`: every species of its band's three tables - a town's
@@ -76,15 +102,18 @@ const capMap = (m, max) => { while (m.size > max) m.delete(m.keys().next().value
 
 /**
  * @param {{ session: () => any, climateAt?: ((px: number, py: number) => number)|null, now?: () => number,
- *   fetchKey?: (env: { subtle: SubtleCrypto }) => Promise<CryptoKey|null>, subtle?: SubtleCrypto, wait?: number }} deps
+ *   fetchKey?: (env: { subtle: SubtleCrypto }) => Promise<CryptoKey|null>, subtle?: SubtleCrypto, wait?: number, verdictWait?: number }} deps
  *   `session` the online session now (null offline); `climateAt` a map pixel's climate (the reader's species law)
  */
-export function createGrantHost({ session, climateAt = null, now = () => Date.now(), fetchKey = relayKeyOf, subtle = globalThis.crypto?.subtle, wait = GRANT_WAIT_MS }) {
+export function createGrantHost({ session, climateAt = null, now = () => Date.now(), fetchKey = relayKeyOf, subtle = globalThis.crypto?.subtle, wait = GRANT_WAIT_MS, verdictWait = GRANT_VERDICT_WAIT_MS }) {
   // ── the asks ─────────────────────────────────────────────────────────────────────────────────────────────────────
   let askId = 0;
   const pending = new Map();   // ask id -> its answer's resolver
   /** The session while its cell's law is on, else null. */
   const open = () => { const s = session(); return s && s.grantMode && s.grantMode !== 'off' && typeof s.sendGrant === 'function' ? s : null; };
+  /** GRANT6: a socket open whose welcome has not said the law yet (net/online.js: null) - a stand waits on it, so a cell
+   *  crossed is never a moment of ungranted stands. */
+  const unsaid = () => { const s = session(); return !!s && s.status === 'open' && s.grantMode == null && typeof s.sendGrant === 'function'; };
   /** An ask sent, its id - 0 when it did not go. */
   function send(body) {
     const s = open();
@@ -104,9 +133,9 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
   const live = new Set();   // grants with my members standing
   const queue = new Map();   // kind -> the stands waiting on this turn's ask
   /** A MEMBER FOR A STAND of `kind`: a promise of `{ gr, i }`, `{ refused }` (the law enforcing) or null (no grant came) -
-   *  or null at once when no law is on. */
+   *  or null at once when no law is on. GRANT6: while the socket's welcome is owed, the stand waits on it (`wait` at most). */
   function memberFor(kind) {
-    if (!open() || !Object.hasOwn(GRANT_KINDS, kind)) return null;
+    if (!(open() || unsaid()) || !Object.hasOwn(GRANT_KINDS, kind)) return null;
     return new Promise((resolve) => {
       const q = queue.get(kind);
       if (q) { q.push(resolve); return; }
@@ -114,7 +143,8 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
       void Promise.resolve().then(() => flush(kind));   // at this turn's end: every stand of the turn asked
     });
   }
-  function flush(kind) {
+  function flush(kind, polls = 0) {
+    if (!open() && unsaid() && polls * MODE_POLL_MS < wait) { setTimeout(() => flush(kind, polls + 1), MODE_POLL_MS); return; }
     const all = queue.get(kind) ?? [];
     queue.delete(kind);
     const max = GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (kind)].max;
@@ -141,7 +171,7 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
     gr._members = Math.max(0, (gr._members ?? 1) - 1);
     if (gr._members) return;
     live.delete(gr);
-    if (!gr._dead) send({ k: 'free', g: gr.g });
+    if (!gr._dead && gr.q === open()?.room) send({ k: 'free', g: gr.g });   // GRANT4: to the room that holds it - one left behind counts there to its expiry
   }
   /** Foe `f` handed on to socket `to` - its member signed to the heir, then gone from me. */
   function handed(f, to) {
@@ -158,7 +188,7 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
     for (const ng of a.grs) { const g = gs.find((x) => x.g === ng.g); if (g) { g.x = ng.x; g.sg = ng.sg; } }
   }
   async function carry(room) {
-    const gs = [...live].filter((g) => !g._dead && g.q !== room);
+    const gs = [...live].filter((g) => !g._dead && g.q !== room && isCellRoom(g.q));
     if (!gs.length) return;
     carrying = true;
     for (let at = 0; at < gs.length; at += GRANT_RENEW_MAX) {
@@ -172,13 +202,13 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
   function tick() {
     const s = open(), t = now();
     if (s) {
-      if (s.room !== lastRoom) { const from = lastRoom; lastRoom = s.room; if (from && !carrying) void carry(s.room); }
+      if (s.room !== lastRoom) { const from = lastRoom; lastRoom = s.room; if (from && !carrying && isCellRoom(s.room)) void carry(s.room); }   // GRANT4: cell to cell - a world room's grants stay its own (carry: a cell's alone)
       if (!renewing && !carrying) {
         const due = [...live].filter((g) => !g._dead && g.q === s.room && g.x - t <= GRANT_RENEW_LEAD_MS).slice(0, GRANT_RENEW_MAX);
         if (due.length) void renew(due);
       }
     }
-    for (const g of live) if (!g._dead && t > g.x + GRANT_SKEW_MS) g._dead = true;
+    for (const g of live) if (t > g.x + GRANT_SKEW_MS) { g._dead = true; live.delete(g); }   // GRANT4: an expired grant is no longer mine to renew or free (a room left keeps none)
     if (t - tallyAt >= GRANT_TALLY_MS) { tallyAt = t; flushTally(); }
     for (const [k, w] of heirWaits) {
       if (t - w.at < GRANT_HEIR_WAIT_MS) continue;
@@ -210,9 +240,10 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
     if (w) { heirWaits.delete(k); if (!w.f.dead && !w.f.puppet && !w.f._grant) stood({ ...gr, _members: 0 }, gr.h, w.f); return; }
     heirGrants.set(k, { gr, at: now() });
   }
-  /** I took foe `f` of `from` (its puppet's number still its owner's): its member's handed grant, now or when it comes. */
-  function adopted(from, f) {
-    const m = pups.get(`${from}|${f.seq}`);
+  /** I took foe `f` of `from` (its puppet's number still its owner's - `seq`, a dungeon's own lane's `_ownI`): its member's
+   *  handed grant, now or when it comes. */
+  function adopted(from, f, seq = f.seq) {
+    const m = pups.get(`${from}|${seq}`);
     if (!m) return;
     const k = `${m.s}:${m.i}`;
     const h = heirGrants.get(k);
@@ -233,6 +264,7 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
   const pups = new Map();       // `${owner}|${record}` -> { s, i, k }: what a puppet's grant was
   const tallies = new Map();    // `${owner}|${reason}` -> how many
   const capable = new Set();    // owners that have carried a grant: a hostile record of theirs with none is `ungranted`
+  const waiters = new Map();    // `${owner}|${grant}` -> the checks waiting to hear it (GRANT6)
   /** A frame's grants heard from `from`: each read whole and its signature checked, once per owner, grant and signature. */
   function heard(from, gs) {
     if (!Array.isArray(gs) || !gs.length) return;
@@ -245,33 +277,52 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
       if (verdicts.get(k)?.sg === gr.sg) continue;
       verdicts.set(k, { gr, sg: gr.sg, ok: key().then((pk) => (pk ? verifyGrant(gr, pk, { subtle }) : null)) });
       capMap(verdicts, GRANT_VERDICTS_MAX);
+      const w = waiters.get(k);
+      if (w) { waiters.delete(k); for (const res of w) res(verdicts.get(k)); }
     }
   }
+  /** GRANT6: a grant a record names that this reader has not heard yet - its verdict once a frame carries it, or null
+   *  after GRANT_VERDICT_WAIT_MS. */
+  function heardOf(k) {
+    return new Promise((resolve) => {
+      const w = waiters.get(k) ?? [];
+      if (!w.length) { waiters.set(k, w); capMap(waiters, GRANT_VERDICTS_MAX); }
+      w.push(resolve);
+      setTimeout(() => { const at = w.indexOf(resolve); if (at >= 0) { w.splice(at, 1); if (!w.length && waiters.get(k) === w) waiters.delete(k); resolve(null); } }, verdictWait);
+    });
+  }
   /**
-   * A NEW FOE'S CHECK - record `r` from `from` in cell `cell`: a promise of the reason it would be refused, tallied, or
+   * A NEW FOE'S CHECK - record `r` from `from` in cell `cell` (null: the room my session stands in - GRANT4, a dungeon's
+   * own lane keys its frames by the dungeon, not the room): a promise of the reason it would be refused, tallied, or
    * null. Null too while the relay's key cannot be had (judged by nobody, refused for nothing).
    * @param {string} from @param {string|null} cell @param {any} r
    */
   async function check(from, cell, r) {
-    if (!r?.gr) return capable.has(from) && r?.t !== 146 ? note(from, 'ungranted') : null;   // the City Watch takes its grant with its own pool (Spawn-Grants section 14, OPEN)
+    if (!r?.gr) return capable.has(from) ? note(from, 'ungranted') : null;   // GRANT4: the City Watch's too (watchReady)
     const [g, i] = r.gr;
-    const v = verdicts.get(`${from}|${g}`);
+    const v = verdicts.get(`${from}|${g}`) ?? await heardOf(`${from}|${g}`);
     if (!v) return note(from, 'unsigned');
     const ok = await v.ok;
     if (ok === null) return null;
     if (!ok) return note(from, 'unsigned');
     pups.set(`${from}|${r.i}`, { s: v.gr.s, i, k: v.gr.k });
     capMap(pups, GRANT_MEMBERS_MAX);
-    const why = grantRefusal(v.gr, { from, cell: cell ?? '', nowMs: now(), i })
+    const why = grantRefusal(v.gr, { from, cell: cell ?? session()?.room ?? '', nowMs: now(), i })
       ?? (!grantMarksAllow(v.gr, i, r) ? 'marks' : null)
       ?? diceRefusal(v.gr, r)
       ?? twice(from, g, i, r.i);
     return why ? note(from, why) : null;
   }
   /** What a seed cannot rebuild left aside, what it bounds: a rolled kind's species from its pixel's tables, a levelled
-   *  kind's class foe at the owner's signed level or under (a guest's 0 says none). */
+   *  kind's class foe at the owner's signed level or under, GRANT_LEVEL_SLACK aside (a guest's 0 says none), the watch's
+   *  a watchman. */
   function diceRefusal(gr, r) {
-    if (LEVELLED_KINDS.has(gr.k) && r.t >= 128 && gr.l > 0 && Number.isInteger(r.l) && r.l > gr.l) return 'dice';
+    if (gr.k === 'watch' && r.t !== KNIGHT_CITYWATCH_ID) return 'dice';   // GRANT4: the watch's grant stands the watch alone
+    if (gr.k === 'encr' && climateAt) {   // GRANT8: its seed's species exactly - out of a location's rect or in one (its owner's place, which a reader cannot see)
+      const c = climateAt(gr.p[0], gr.p[1]), i = r.gr[1];
+      if (r.t !== grantSpecies(gr, i, c, false) && r.t !== grantSpecies(gr, i, c, true)) return 'dice';
+    }
+    if (LEVELLED_KINDS.has(gr.k) && r.t >= 128 && gr.l > 0 && Number.isInteger(r.l) && r.l > gr.l + GRANT_LEVEL_SLACK) return 'dice';
     if (ROLLED_KINDS.has(gr.k) && climateAt) {
       const set = grantSpeciesOf(climateAt(gr.p[0], gr.p[1]));
       if (set && !set.has(r.t)) return 'dice';
@@ -303,8 +354,36 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
     const res = pending.get(a.id);
     if (res) { pending.delete(a.id); res(a); }
   }
+  /** GRANT8: my `encr` member's species - its seed's at its pixel's climate (-1: none, or no map to read). */
+  const speciesOf = (gr, i, inRect) => (gr?.k === 'encr' && climateAt ? grantSpecies(gr, i, climateAt(gr.p[0], gr.p[1]), !!inRect) : -1);
   /** Is the law enforcing in my cell (GRANT6: the pool stands down what the check refuses)? */
   const enforcing = () => open()?.grantMode === 'enforce';
+  /** GRANT6: does an enforcing reader stand down a foe its check refused for `why` (GRANT_STANDDOWN_REASONS)? */
+  const standsDown = (why) => !!why && enforcing() && GRANT_STANDDOWN_REASONS.includes(why);
 
-  return { memberFor, stood, ended, handed, tick, frameGrants, adopted, heard, check, answer, enforcing, tallied: () => new Map(tallies), live: () => [...live] };
+  // ── the watch's ──────────────────────────────────────────────────────────────────────────────────────────────────
+  const watchmen = new Set();   // my watchmen standing on a grant
+  /** GRANT4: A WATCHMAN'S GRANT, asked as the pool first streams him (his own pool, scenes/cityGuards.js, stands him, and
+   *  only the pool that streams him knows he rides): whether his record may go now - his grant come, or his ask answered
+   *  or `wait` past without one (while the law enforces, never without one), or no law to ask. */
+  function watchReady(g) {
+    if (!g || g._grant) return true;
+    if (g._grantAt === undefined) {
+      const m = memberFor('watch');
+      if (!m) return true;
+      g._grantAt = now();
+      void m.then((a) => { g._grantDone = true; if (a && 'gr' in a && !g._grant && !g._gone) { stood(a.gr, a.i, g); watchmen.add(g); } });
+      return false;
+    }
+    if (!g._grantDone && now() - g._grantAt < wait) return false;
+    return !enforcing();
+  }
+  /** GRANT4: the watchmen gone from the list his pool streams - each one's member ended (`list` the pool's watch now). */
+  function watchSweep(list) {
+    if (!watchmen.size) return;
+    const here = new Set(list);
+    for (const g of watchmen) if (!here.has(g) || g._gone) { watchmen.delete(g); ended(g); }
+  }
+
+  return { memberFor, stood, ended, handed, tick, frameGrants, adopted, heard, check, answer, enforcing, standsDown, watchReady, watchSweep, speciesOf, tallied: () => new Map(tallies), live: () => [...live] };
 }

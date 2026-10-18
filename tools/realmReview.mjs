@@ -35,7 +35,8 @@
 // quantile with room (and its `cap` a few hours' worth), and `progress-set` with `enforce: true` and every stream named.
 // GRANT2 (bible/11-Multiplayer/Spawn-Grants.md section 12; the owner: seven days): read `grants 7` after a week, set each
 // kind's bucket in net/grantLaw.js GRANT_KINDS past its 0.999 quantile with room and GRANT_CELL_CEILING past the cells'
-// most live, then GRANT6: `/relay grantMode enforce`.
+// most live - GRANT5: each kind's `rate.suggested` and the cells' `suggested` say both, half again past the measure - then
+// GRANT6: `/relay grantMode enforce` (Spawn-Grants section 15).
 // INT14 (Mac, 2026-10-10: "Measure, then enforce"): read `bodies 7` after a week; the boss fights' line is the RELAY'S - set
 // its BOSS_BODY var (server/wrangler.toml, net/bossBody.js bodyConfig) to `{"enforce": true, "body": {"depth", "perS"},
 // "hull": {"depth", "perS"}}`, `perS` past the 0.999 quantile's rate (a minute's, in thousandths: / 60000) with room.

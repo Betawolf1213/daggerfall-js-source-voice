@@ -2,8 +2,8 @@
   {
     "name": "GRANT2-pose-cell-unchecked",
     "file": "server/src/index.js",
-    "old": "    if (p && cellRoomOfWire(p.x, p.z) === a.key) return true;",
-    "new": "    if (p) return true;",
+    "old": "    if (isWorldRoom(a.key) || (p && cellRoomOfWire(p.x, p.z) === a.key)) return true;",
+    "new": "    if (isWorldRoom(a.key) || p) return true;",
     "why": "a halo's pose minted a grant for a cell it does not stand in",
     "tests": [
       "test/net/grant2_relay.test.js"
@@ -152,8 +152,8 @@
   {
     "name": "GRANT2-client-version-unchecked",
     "file": "src/net/online.js",
-    "old": "if (primary) this.grantMode = relaySupportsGrant(relayV) && isCellRoom(room)",
-    "new": "if (primary) this.grantMode = isCellRoom(room)",
+    "old": "if (primary) this.grantMode = relaySupportsGrant(relayV) && streamsFoes(room)",
+    "new": "if (primary) this.grantMode = streamsFoes(room)",
     "why": "an older relay asked - and the socket closed",
     "tests": [
       "test/net/grant2_client.test.js"

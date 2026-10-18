@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { WILD_GIANT } from '../../src/systems/wild/wildZone.js';
 import { createExteriorFoes } from '../../src/scenes/exteriorFoes.js';
 import { createGrantHost, grantSpeciesOf } from '../../src/scenes/grantHost.js';
-import { signGrant, grantMarksFor, grantKindOf, validGrant, GRANT_TTL_MS, GRANT_TALLY_MS, GRANT_RENEW_LEAD_MS, GRANT_KINDS, GRANT_MARKLESS } from '../../src/net/grantLaw.js';
+import { signGrant, grantMarksFor, grantMarksAllow, grantKindOf, validGrant, GRANT_TTL_MS, GRANT_TALLY_MS, GRANT_RENEW_LEAD_MS, GRANT_KINDS, GRANT_MARKLESS } from '../../src/net/grantLaw.js';
 
 const { subtle } = globalThis.crypto;
 function craftCfg({ hpPerLevel = 4, speed = 90, str = 40, agi = 85, luck = 55, atkFlags = 0x08 } = {}) {
@@ -90,14 +90,17 @@ async function player(R, id, { mode, climate = () => 231 } = {}) {
   return { ...g, pool: pool(id, g) };
 }
 
-test('GRANT4 THE KINDS: a stand\'s kind is its caller\'s word or its own shape - an ally, a quest\'s foe, a Greater Giant, a revenant, the deep\'s or the Living World\'s, a loose stand or Wabbajack\'s change, a marker\'s, else a capped stand\'s; no kind stands more than 24 a grant; a quest\'s foe, an ally and a revenant roll no marks (mutants: an ally granted marks; the shape\'s order)', () => {
-  assert.deepEqual(Object.keys(GRANT_KINDS), ['enc', 'camp', 'band', 'bounty', 'loose', 'site', 'managed', 'giant', 'rev', 'quest', 'ally']);
+test('GRANT4 THE KINDS: a stand\'s kind is its caller\'s word or its own shape - an ally, a quest\'s foe, a Greater Giant, a revenant, marks its caller decided, the deep\'s or the Living World\'s, a loose stand or Wabbajack\'s change, a marker\'s, else a capped stand\'s; no kind stands more than 24 a grant; a quest\'s foe, an ally, a revenant, the watch and a kept stand roll no marks, and a reader believes theirs (mutants: an ally granted marks; the shape\'s order; a markless kind\'s marks judged)', () => {
+  assert.deepEqual(Object.keys(GRANT_KINDS), ['enc', 'camp', 'band', 'bounty', 'loose', 'site', 'managed', 'giant', 'rev', 'quest', 'ally', 'watch', 'kept', 'encr']);
   assert.ok(Object.values(GRANT_KINDS).every((k) => k.max >= 1 && k.max <= 24));
   assert.equal(GRANT_KINDS.ally.hostile, false);
-  assert.deepEqual([{ allied: true, questBehaviour: 1 }, { questBehaviour: 1, revenant: {} }, { zoneGiant: 3 }, { revenant: {} }, { revenant: {}, managed: true }, { managed: true, loose: true }, { loose: true }, { replacing: true }, { site: 's', placed: true }, { placed: true }, {}].map(grantKindOf),
-    ['ally', 'quest', 'giant', 'rev', 'rev', 'managed', 'loose', 'loose', 'site', 'site', 'band']);
-  assert.deepEqual(GRANT_MARKLESS, ['quest', 'ally', 'rev']);
+  assert.deepEqual([{ allied: true, questBehaviour: 1 }, { questBehaviour: 1, revenant: {} }, { zoneGiant: 3 }, { revenant: {} }, { revenant: {}, managed: true }, { kept: true, managed: true }, { revenant: {}, kept: true }, { managed: true, loose: true }, { loose: true }, { replacing: true }, { site: 's', placed: true }, { placed: true }, {}].map(grantKindOf),
+    ['ally', 'quest', 'giant', 'rev', 'rev', 'kept', 'rev', 'managed', 'loose', 'loose', 'site', 'site', 'band']);
+  assert.deepEqual(GRANT_MARKLESS, ['quest', 'ally', 'rev', 'watch', 'kept']);
   for (const k of GRANT_MARKLESS) assert.deepEqual(grantMarksFor(k, 58, 4, 7), { e: 0, c: [-1, -1, -1, -1] });
+  const g = { k: 'kept', e: 0, c: [-1, -1] };
+  assert.ok(grantMarksAllow(g, 0, { z: 1 }) && grantMarksAllow({ ...g, k: 'rev' }, 1, { cp: 3 }), 'a markless kind\'s marks its own law\'s');
+  assert.ok(!grantMarksAllow({ ...g, k: 'enc' }, 0, { z: 1 }) && !grantMarksAllow({ ...g, k: 'loose' }, 1, { cp: 3 }), 'any other\'s only as its grant\'s');
   assert.notDeepEqual(grantMarksFor('enc', 58, 4, 7), { e: 0, c: [-1, -1, -1, -1] }, 'seed 58 rolls an elite and a champion for an encounter');
   assert.ok(grantSpeciesOf(231).has(0) && !grantSpeciesOf(232).has(0), 'a rat in 231\'s tables, none in 232\'s');
   assert.equal(grantSpeciesOf(-5), null);
@@ -154,7 +157,7 @@ test('GRANT3 THE OWNER: a turn\'s stands of a kind are one ask; each stands as i
   assert.deepEqual(marked.map((f) => f.entity.champion), ['thorned', 'thorned']);
 });
 
-test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite, a species its pixel\'s tables do not hold, a class foe over the owner\'s level, a member standing twice, a grant under another\'s name, a record with none from an owner that carries them - each tallied by sender and reason, and handed to the cell; while the law enforces the refused stand down (mutants: the marks unchecked; the species unchecked; the sender unchecked; the tally never handed on)', async () => {
+test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite, a species its pixel\'s tables do not hold, a class foe over the owner\'s level, a member standing twice, a grant under another\'s name, a record with none from an owner that carries them - each tallied by sender and reason, and handed to the cell; while the law enforces a forged grant or none stands down, and a species off its tables stands (mutants: the marks unchecked; the species unchecked; the sender unchecked; the tally never handed on; every refusal stood down)', async () => {
   const R = await relay();
   const O = await player(R, OWNER);
   const foes = await Promise.all([0, 1].map((k) => O.pool.spawnFoe(0, [100 + k, 0, 100], { grantKind: 'enc' })));
@@ -195,11 +198,17 @@ test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite
   const tally = D.session.asks.filter((a) => a.k === 'tally');
   assert.equal(tally.length, 1);
   assert.deepEqual(new Set(tally[0].rows.map((r) => `${r.o}|${r.r}`)), new Set([...t.keys()]));
-  // enforcing: the refused stand down
+  // GRANT6, enforcing: a forged grant or none stands down; what an honest client's timing or tables can give stands
   const E = await player(R, 'eee-0005', { mode: 'enforce', climate: () => 232 });
   E.pool.applyFoes(OWNER, JSON.parse(JSON.stringify(honest)));
   await settle(16);
-  assert.equal(E.pool.foes.filter((f) => f.puppet === OWNER && !f.dead).length, 0, 'what the check refuses never stands');
+  assert.equal(E.pool.foes.filter((f) => f.puppet === OWNER && !f.dead).length, 2, '`dice` is the measure\'s: both stand');
+  E.pool.applyFoes(OWNER, forged([{ ...honest.f[plainMember], i: 900, gr: [gr.g, plainMember], z: 1 }], honest.gs, 60));
+  await settle(16);
+  E.pool.applyFoes(OWNER, forged([{ ...bare, i: 903 }], undefined, 63));
+  await settle(16);
+  assert.deepEqual([900, 903].map((i) => E.pool.foes.some((f) => f.puppet === OWNER && f.seq === i && !f.dead)), [false, false], 'a forged elite and a record with no grant never stand');
+  assert.equal(E.pool.foes.filter((f) => f.puppet === OWNER && !f.dead).length, 2);
 });
 
 test('GRANT3 THE HEIR: a foe handed on at a death or a door asks the relay to sign its member to the heir, and the heir\'s game ties the grant to the foe it took - before or after the foe lands; the owner\'s member ends with it (mutants: the heir ask never sent; the heir\'s grant never tied)', async () => {
