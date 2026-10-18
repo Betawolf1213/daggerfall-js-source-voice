@@ -274,7 +274,7 @@
   {
     "name": "RVN3-the-will-unread",
     "file": "src/systems/revenant/revenantFate.js",
-    "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
+    "old": "  return !!r && !r.dread && willMatters(r.rank) && !willBroken(f.entity._feud);",
     "new": "  return false;",
     "tests": [
       "test/systems/rvn3_weak.test.js"
@@ -283,8 +283,8 @@
   {
     "name": "RVN3-the-will-ignores-the-fight",
     "file": "src/systems/revenant/revenantFate.js",
-    "old": "  return !!r && willMatters(r.rank) && !willBroken(f.entity._feud);",
-    "new": "  return !!r && willMatters(r.rank);",
+    "old": "  return !!r && !r.dread && willMatters(r.rank) && !willBroken(f.entity._feud);",
+    "new": "  return !!r && !r.dread && willMatters(r.rank);",
     "tests": [
       "test/systems/rvn3_weak.test.js"
     ]

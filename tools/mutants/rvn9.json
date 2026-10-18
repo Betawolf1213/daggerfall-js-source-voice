@@ -111,8 +111,8 @@
   {
     "name": "RVN9-out-festers",
     "file": "src/systems/revenant/revenant.js",
-    "old": "      if (r.out || !festersOn(",
-    "new": "      if (!festersOn(",
+    "old": "      if (r.out || r.dread) continue;",
+    "new": "      if (r.dread) continue;",
     "tests": [
       "test/systems/rvn9_fester.test.js"
     ]
@@ -210,8 +210,8 @@
   {
     "name": "RVN9-card-words",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  const body = `${r.given} grows bolder - it has waited too long.`;",
-    "new": "  const body = `${r.given} grows bolder.`;",
+    "old": ": `${r.given} grows bolder - it has waited too long.`;",
+    "new": ": `${r.given} grows bolder.`;",
     "tests": [
       "test/systems/rvn9_fester.test.js"
     ]

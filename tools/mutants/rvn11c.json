@@ -182,7 +182,7 @@
   {
     "name": "RVN11c-due-unset",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  r.dueAt = dueFrom(now, rolls);   // should it get away\n",
+    "old": "  r.dueAt = dueFrom(now, rolls, r);   // should it get away (UNQUIET: by its ambition)\n",
     "new": "",
     "tests": [
       "test/systems/rvn11c_betray.test.js"
