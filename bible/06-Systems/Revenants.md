@@ -1479,3 +1479,65 @@ my flight). `unquiet.test.js`'s escape card carries the trail after the wound.
 
 Pinned: `test/systems/revenant/unquiet2_hunt.test.js` (8); `tools/mutants/unquiet2.json` (29, all dead). The neighbouring
 lists were re-swept on it (`rvn7a`, `rvn7c`, `rvn9`, `rvn12b`, `revenantfate`, `unquiet`, `rvn1`, `revenant`): 418 dead.
+
+## 48. Training, healing, the nearest den (UNQUIET III, 2026-10-18)
+
+The owner: "Do it", of the three next steps section 47 named. The first gives a revenant of mastery a counter to the
+player's own habit. The second puts a cost on leaving a revenant unhunted: its wounds heal. The third makes a flight's
+den the nearest one, so the hunt starts close by. The law is `src/systems/revenant/revenantUnquiet.js` (`trainLesson`,
+`trainedHow`, `WOUND.HEAL_DAYS`, `healsOn`, `daysToHeal`, `nearestLair`). Its record, its deeds and its day loop are
+`revenant.js`'s.
+
+### 48.1 It trains against you
+
+- **WHEN.** A revenant of **mastery** (section 46.6) trains on its training days, the same days its festering counts
+  (two days past its due day and every two more).
+- **WHAT.** It learns the adaptation (RVN2's, `revenantFeud.js lessonOf`) answering the habit its scars name most - its
+  scars are the record of how the player has fought it (RVN1). Among equals, the latest counts. My running and the
+  night teach no training: they are lessons a fight teaches (RVN10, RVN2), not ones a dummy does.
+- **ROOM.** It trains only into a lesson's room - fewer than its rank's lessons, ADAPT_MAX at most - so training never
+  trades a lesson away. One it already holds passes the lesson to the next habit.
+- **THE CARD.** "Grushnak has been training - it has learned to answer your blade." The kicker is **Trained**, with an
+  old-gold edge. A rank's card waiting on the same day is said first (mastery's festering card already says "it has
+  been training"). The habit's word is its own key in the text core, so it reads in the player's language.
+- **NEVER** a revenant of vengeance or plunder. Their days are spent hunting or on the roads.
+
+### 48.2 Its wounds heal
+
+- **LEFT ALONE.** A revenant's oldest wound heals every **three days** (`WOUND.HEAL_DAYS`), counted from the day it took
+  its last (`woundDay`, saved; a new wound starts the count again). Healing runs in the character's own day loop
+  (RVN9's), caught up as festering is.
+- **NEVER** for one out in the world, nor the Dread: it keeps what it has, as it keeps its home.
+- **THE PAGE** says when: "Wounds you left: Lamed (a lamed leg - it runs slower). The oldest heals in 2 days unless you
+  find it first."
+
+The hunt (section 47) is now a choice with a cost on both sides: follow its trail at once and find it wounded, or leave
+it, and it heals - and, if it trains, learns.
+
+### 48.3 The nearest den
+
+A revenant that gets away **in the open** goes to ground in the **nearest dungeon in reach** of where it fled (the door's
+map pixel and its dungeons - RVN7a's `lairHere`; the boards' measure, the longer side; the earlier listed among equals).
+Its trail (section 47) leads there, so the hunt starts close by. A kill, my flight and a betrayal keep the lair's own law
+(RVN7a's pick by its id's bearing). Underground there is no map pixel, so its lair is that dungeon, as before. A
+rank-V revenant that ascends from an escape goes to ground for good in the den nearest its last flight.
+
+### 48.4 Hosts and pins
+
+THE FOUR HOSTS (rule 17e): no host line. Training and healing ride `revenantFester`, the notice step's own day count,
+which `scenes/world.js` and `scenes/exterior.js` ask (`scenes/worldModes.js` and `scenes/dungeonContext.js` FLAGGED, as
+section 47). The nearest den reads the door's `lairHere` (`scenes/world.js` names the dungeons in reach), and
+`scenes/dungeonContext.js`'s names itself underground - both already WIRED (RVN7a).
+
+PIN MOVED: `rvn7a_lair.test.js`'s source pin reads the nearest den before the lair's own law. `unquiet.test.js`
+gains the wound's healing days.
+
+Pinned: `test/systems/revenant/unquiet3_train.test.js` (6); `tools/mutants/unquiet3.json` (28, all dead). Five mutants
+lived on the first sweep:
+
+- Two named code that changed nothing. The underground check is redundant, because `nearestLair` answers none without a
+  map pixel, so it was dropped. A habit missing its own key fell back to the same English word, so the fallback is now
+  none.
+- Three wanted sharper cases: a wound day unknown, an unnamed dungeon nearest, and a den farther on one side.
+
+The neighbouring lists were re-swept (`rvn7a`, `rvn9`, `rvn2`, `rvn11b`, `rvn12b`, `unquiet`, `unquiet2`): 335 dead.

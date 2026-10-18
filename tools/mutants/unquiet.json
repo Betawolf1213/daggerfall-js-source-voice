@@ -588,8 +588,8 @@
   {
     "name": "UNQUIET-wound-max",
     "file": "src/systems/revenant/revenantUnquiet.js",
-    "old": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -15 });",
-    "new": "export const WOUND = Object.freeze({ MAX: 4, RESIST: -15 });",
+    "old": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -15, HEAL_DAYS: 3 });",
+    "new": "export const WOUND = Object.freeze({ MAX: 4, RESIST: -15, HEAL_DAYS: 3 });",
     "tests": [
       "test/systems/revenant/unquiet.test.js"
     ]
@@ -597,8 +597,8 @@
   {
     "name": "UNQUIET-wound-resist",
     "file": "src/systems/revenant/revenantUnquiet.js",
-    "old": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -15 });",
-    "new": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -10 });",
+    "old": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -15, HEAL_DAYS: 3 });",
+    "new": "export const WOUND = Object.freeze({ MAX: 3, RESIST: -10, HEAL_DAYS: 3 });",
     "tests": [
       "test/systems/revenant/unquiet.test.js"
     ]
@@ -1210,8 +1210,8 @@
   {
     "name": "UNQUIET-page-lines-dropped",
     "file": "src/ui/revenant/revenantPage.js",
-    "old": "[craftLine(r), woundLine(r), ambitionLine(r), bloodLine(r)]",
-    "new": "[craftLine(r), woundLine(r)]",
+    "old": "[craftLine(r), woundLine(r, now), ambitionLine(r), bloodLine(r)]",
+    "new": "[craftLine(r), woundLine(r, now)]",
     "tests": [
       "test/systems/revenant/unquiet.test.js"
     ]

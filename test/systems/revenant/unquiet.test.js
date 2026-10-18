@@ -351,7 +351,7 @@ test('UNQUIET THE CRAFT PUT DOWN: a last stand, a kneel or a tear-away mid-fligh
 // ── wounds ──────────────────────────────────────────────────────────
 
 test('UNQUIET WOUNDS: the blow that broke it leaves its wound - a blade bleeds it, a hammer or a fist cracks it, an axe maims it, an arrow lames it, an element sears it; three kept, the oldest healing; a wound taken again the newest (mutants: a class moved; the cap; the order)', () => {
-  assert.deepEqual({ ...U.WOUND }, { MAX: 3, RESIST: -15 });
+  assert.deepEqual({ ...U.WOUND }, { MAX: 3, RESIST: -15, HEAL_DAYS: 3 });
   assert.deepEqual(['blade', 'blunt', 'h2h', 'axe', 'arrow', 'fire', 'frost', 'shock', 'poison', 'magic', 'silver', null].map(U.woundOf),
     ['bled', 'cracked', 'cracked', 'maimed', 'lamed', 'burned', 'frostbitten', 'stormstruck', 'blighted', 'hexed', null, null]);
   assert.deepEqual(U.withWound(['bled', 'lamed', 'burned'], 'hexed'), ['lamed', 'burned', 'hexed']);
@@ -625,7 +625,7 @@ test('UNQUIET THE PAGE: how it gets away (its craft, from rank II), the wounds I
   assert.equal(PG.dreadStandLine({ dread: true, rank: 5 }), `Last stands: twice a fight it rises again - at ${Math.round(F.lastStandHealth(5) * 100)}% and at 25% of its health.`);
   assert.equal(PG.comeWords({ dread: true, lair: { name: 'Tomb of Vaness' }, dueAt: 0 }, 0, false).tag, 'The Dread');
   const src = read('src/ui/revenant/revenantPage.js');
-  assert.match(src, /for \(const line of fallen \? \[\] : \[craftLine\(r\), woundLine\(r\), ambitionLine\(r\), bloodLine\(r\)\]\) if \(line\)/);
+  assert.match(src, /for \(const line of fallen \? \[\] : \[craftLine\(r\), woundLine\(r, now\), ambitionLine\(r\), bloodLine\(r\)\]\) if \(line\)/);
   assert.match(src, /const will = fallen \|\| r\.dread \? '' : willWords\(r\);/);
   assert.match(src, /'An elite or a champion marked Unquiet that kills you - or, far likelier, breaks, runs and gets away - will remember you, and come back for you\.'/);
 });

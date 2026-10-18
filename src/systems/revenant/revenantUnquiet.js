@@ -23,6 +23,9 @@
 //  - THE TRAIL (UNQUIET II, section 47): an escape with a lair leaves a warm trail to it - its lair known at once (the
 //    map's red circle), and found there before the trail cools (HUNT.MINUTES) it stands still wounded (HUNT.HEALTH).
 //  - OMENS (section 47): the day it is due, the player is warned, in its ambition's words.
+//  - UNQUIET III (section 48): a revenant of MASTERY trains against what the player has hurt it with most (`trainLesson`
+//    - an adaptation, in a free lesson's room); a WOUND HEALS every WOUND.HEAL_DAYS days left alone, the oldest first;
+//    and a revenant that gets away in the open goes to ground in the NEAREST DEN in reach (`nearestLair`).
 //  - THE DREAD: a rank-5 revenant that gets away once more ASCENDS - it goes to ground in its lair for good, every town
 //    knows where, and it waits there: stronger, two last stands, never fleeing, a Legendary and a hoard when it falls.
 //
@@ -34,6 +37,7 @@ import { assignModBundle, isSilencedEffect, entityIsParalyzed } from '../effects
 import { DISSOLVE_ARCANE } from '../dissolve.js';
 import { playerDoor } from '../playerDoor.js';
 import { t } from '../textManager.js';   // L10N4: UNQUIET's words through the text core
+import { lessonOf, ADAPT_MAX } from './revenantFeud.js';   // UNQUIET III: what a revenant of mastery trains against
 
 // ── born of flight, ranked by surviving ─────────────────────────────
 /** A revenant's kill of the player (or a companion it fells) ranks it up only every this many times - an escape ranks
@@ -149,7 +153,12 @@ export function endCraft(f) {
 
 // ── wounds ──────────────────────────────────────────────────────────
 /** WOUND: at most MAX kept (the oldest heals); an element's wound RESIST on its saving throw against that element. */
-export const WOUND = Object.freeze({ MAX: 3, RESIST: -15 });
+export const WOUND = Object.freeze({ MAX: 3, RESIST: -15, HEAL_DAYS: 3 });
+/** UNQUIET III (section 48): does `day` heal its oldest wound - a whole multiple of WOUND.HEAL_DAYS after `woundDay`, the
+ *  day it took its last? (a new wound starts the count again) */
+export const healsOn = (woundDay, day) => { const n = day - woundDay; return Number.isInteger(woundDay) && woundDay >= 0 && n > 0 && n % WOUND.HEAL_DAYS === 0; };
+/** The whole days until its oldest wound heals on `day` (0: none to heal). */
+export const daysToHeal = (woundDay, day, wounds) => (Array.isArray(wounds) && wounds.length && Number.isInteger(woundDay) && woundDay >= 0 ? WOUND.HEAL_DAYS - (Math.max(0, day - woundDay) % WOUND.HEAL_DAYS) : 0);
 /** What each wound does (a share of its health or its blows, a share of its poise, its Speed, an element's saving
  *  throw) and the blow that leaves it (the ledger's class - systems/feudLedger.js FEUD_CLASSES). */
 export const WOUNDS = Object.freeze({
@@ -234,6 +243,58 @@ export const mayAscend = (r, max) => !!r && !r.dread && (r.rank | 0) >= max && !
 /** Its last stand's share at its `n`th stand (1-based) - its rank's first (`first`), the Dread's second SECOND_STAND. */
 export const dreadStandHealth = (n, first) => (n >= 2 ? DREAD.SECOND_STAND : first);
 
+// ── training (UNQUIET III, section 48) ──────────────────────────────
+/** WHAT IT TRAINS AGAINST - a revenant of mastery's lesson at a day it trains (a wrath's day): the adaptation (RVN2's,
+ *  revenantFeud.js lessonOf) answering the habit its scars name most (the latest first among equals), while it holds
+ *  fewer than its rank's lessons (ADAPT_MAX at most) - training fills a lesson's room, never trades one away. Null for
+ *  none. */
+export function trainLesson(r) {
+  if (!r || ambitionOf(r.personality) !== 'mastery') return null;
+  const learned = Array.isArray(r.learned) ? r.learned : [];
+  if (learned.length >= Math.min(r.rank | 0, ADAPT_MAX)) return null;
+  const count = new Map(), last = new Map();
+  (Array.isArray(r.scars) ? r.scars : []).forEach((s, i) => { if (s?.k) { count.set(s.k, (count.get(s.k) ?? 0) + 1); last.set(s.k, i); } });
+  const kinds = [...count.keys()].sort((a, b) => count.get(b) - count.get(a) || last.get(b) - last.get(a));
+  return lessonOf(kinds.filter((k) => k !== 'routed' && k !== 'night'), learned, r.mobileType, null);
+}
+/** The habit of the player's a lesson answers - RVN12a's words (revenantFeud.js `ADAPT_HOW` - "blade", "arrows"), through the text core
+ *  (each its own key: a word put into a sentence of another language takes that language's own). Null for none. */
+export function trainedHow(a) {
+  switch (a) {
+    case 'mailed': return t('rvn.unq.how.mailed', 'blade');
+    case 'braced': return t('rvn.unq.how.braced', 'hammer');
+    case 'hewnHard': return t('rvn.unq.how.hewnHard', 'axe');
+    case 'unflinching': return t('rvn.unq.how.unflinching', 'fists');
+    case 'arrowWise': return t('rvn.unq.how.arrowWise', 'arrows');
+    case 'fireproof': return t('rvn.unq.how.fireproof', 'fire');
+    case 'rimebound': return t('rvn.unq.how.rimebound', 'frost');
+    case 'grounded': return t('rvn.unq.how.grounded', 'lightning');
+    case 'venomBlooded': return t('rvn.unq.how.venomBlooded', 'poison');
+    case 'spellScarred': return t('rvn.unq.how.spellScarred', 'magic');
+    case 'silverScarred': return t('rvn.unq.how.silverScarred', 'silver');
+    case 'steadfast': return t('rvn.unq.how.steadfast', 'heavy blows');
+    case 'patient': return t('rvn.unq.how.patient', 'footwork');
+    case 'watchful': return t('rvn.unq.how.watchful', 'tricks from behind');
+    case 'relentless': return t('rvn.unq.how.relentless', 'running');
+    case 'nightStalker': return t('rvn.unq.how.nightStalker', 'night raids');
+    default: return null;
+  }
+}
+
+// ── the nearest den (UNQUIET III, section 48) ────────────────────────
+/** WHERE IT GOES TO GROUND - the dungeon in reach nearest the place it got away (`px`, `py` - the door's map pixel; its
+ *  longer side, as the boards measure; the earlier listed among equals). Null with none. */
+export function nearestLair(px, py, dungeons) {
+  if (!Number.isInteger(px) || !Number.isInteger(py)) return null;
+  let best = null, bestD = Infinity;
+  for (const d of Array.isArray(dungeons) ? dungeons : []) {
+    if (!d || !Number.isInteger(d.px) || !Number.isInteger(d.py) || typeof d.name !== 'string' || !d.name) continue;
+    const dist = Math.max(Math.abs(d.px - px), Math.abs(d.py - py));
+    if (dist < bestD) { best = d; bestD = dist; }
+  }
+  return best ? { px: best.px, py: best.py, name: best.name.slice(0, 80), region: Number.isInteger(best.region) ? best.region : -1 } : null;   // revenantFeud.js sanitizeLair's shape
+}
+
 // ── the trail (UNQUIET II, section 47) ──────────────────────────────
 /** THE TRAIL: an escape with a lair to go to leaves it warm for MINUTES (character minutes) - its lair known at once -
  *  and found there before it cools, it stands at HEALTH of its health: it went to ground to heal, and has not. */
@@ -290,6 +351,10 @@ export function ambitionWords(a) {
     default: return null;
   }
 }
+/** UNQUIET III (section 48): a revenant of mastery's training, told - its card's body. */
+export const trainedWords = (given, how) => t('rvn.unq.trained', '{given} has been training - it has learned to answer your {how}.', { given, how });
+/** UNQUIET III: when its oldest wound heals, as the page says it. */
+export const healWords = (days) => t('rvn.unq.page.heals', 'The oldest heals in {days, plural, one {# day} other {# days}} unless you find it first.', { days });
 /** THE TRAIL, as its escape's card ends: where it went to ground. */
 export const trailWords = (lair) => t('rvn.unq.trail', 'Its trail leads to {lair}. It has gone to ground there to heal - catch it before it does.', { lair });
 /** AN OMEN - the day it is due, in its ambition's words (its card's body). */

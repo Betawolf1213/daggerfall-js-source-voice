@@ -16,7 +16,7 @@ import { PERSONALITIES } from '../../systems/revenant/revenantPersonality.js';  
 import { WEAK_NAMES, WEAK_HINTS, weaknessKind, willMatters, LAST_STAND_RANK, lastStandHealth, signatureStamp, bandMembers, bandName, WRATH_MAX, loyaltyLabel } from '../../systems/revenant/revenantFeud.js';   // RVN3: its weakness, its will; RVN4: its last stand; RVN5: its signature; RVN6: its band
 import { tacticsSwitchOn } from '../../ai/tactics.js';   // RVN5: a signature is a telegraph - the Enhanced AI switch's
 import { artWords } from '../../systems/revenant/revenantArts.js';   // RVN-ARTS: its art, as it would use it on me - or for me, sworn
-import { ambitionOf, ambitionWords, woundWords, craftWords, revenantCraft, CRAFT, DREAD, sanitizeWounds, trailWarm, trailHours } from '../../systems/revenant/revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): its craft, its wounds, its ambition, the Dread
+import { ambitionOf, ambitionWords, woundWords, craftWords, revenantCraft, CRAFT, DREAD, sanitizeWounds, trailWarm, trailHours, daysToHeal, healWords } from '../../systems/revenant/revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): its craft, its wounds, its ambition, the Dread
 import { t } from '../../systems/textManager.js';   // L10N4: UNQUIET's words through the text core
 
 export const REVENANT_PAGE_SECTIONS = Object.freeze([['revenants', 'Revenants']]);
@@ -209,9 +209,12 @@ export function lairWords(r, held = revenantHeld()) {
   return r.lairKnown ? `Lair: ${r.lair.name} - on your map.` : 'Lair: unknown - the towns about it may have heard.';   // RVN7c: and marked
 }
 /** UNQUIET (Revenants.md section 46): the wounds the player left on it, each with what it does. */
-export function woundLine(r) {
+export function woundLine(r, now = null) {
   const ws = sanitizeWounds(r?.wounds).map((w) => woundWords(w)).filter(Boolean);
-  return ws.length ? t('rvn.unq.page.wounds', 'Wounds you left: {list}.', { list: ws.map((w) => `${w.name} (${w.effect})`).join(', ') }) : '';
+  if (!ws.length) return '';
+  const line = t('rvn.unq.page.wounds', 'Wounds you left: {list}.', { list: ws.map((w) => `${w.name} (${w.effect})`).join(', ') });
+  const days = Number.isFinite(now) ? daysToHeal(r?.woundDay, Math.floor(now / 1440), r?.wounds) : 0;   // UNQUIET III (section 48): left alone, they heal
+  return days ? `${line} ${healWords(days)}` : line;
 }
 /** UNQUIET: how it gets away - its craft from rank II, a plain run before; the Dread never runs. */
 export function craftLine(r) {
@@ -305,7 +308,7 @@ function row(el, r, now, kindName) {
   const stand = fallen ? '' : r.dread ? dreadStandLine(r) : lastStandWords(r);   // RVN4; UNQUIET: the Dread's two
   if (stand) text.append(el('span', 'rvn-will', stand));
   // UNQUIET (Revenants.md section 46): how it gets away, the wounds I left on it, what it does while it waits, its blood
-  for (const line of fallen ? [] : [craftLine(r), woundLine(r), ambitionLine(r), bloodLine(r)]) if (line) text.append(el('span', 'rvn-will', line));
+  for (const line of fallen ? [] : [craftLine(r), woundLine(r, now), ambitionLine(r), bloodLine(r)]) if (line) text.append(el('span', 'rvn-will', line));
   const sig = fallen ? '' : signatureWords(r);   // RVN5
   if (sig) text.append(el('span', 'rvn-will', sig));
   const art = fallen ? '' : artWords(r);   // RVN-ARTS (Revenants.md section 41)

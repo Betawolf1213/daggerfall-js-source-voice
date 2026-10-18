@@ -218,8 +218,8 @@
   {
     "name": "RVN11b-card-missing",
     "file": "src/systems/revenant/revenant.js",
-    "old": " : r.notice === 'deserted' ? revenantDesertEvent(r, { playerName: player.name }) : null;",
-    "new": " : null;",
+    "old": " : r.notice === 'deserted' ? revenantDesertEvent(r, { playerName: player.name }) : r.notice === 'trained'",
+    "new": " : r.notice === 'deserted' ? null : r.notice === 'trained'",
     "tests": [
       "test/systems/rvn11b_desert.test.js"
     ]
