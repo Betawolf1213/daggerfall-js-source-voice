@@ -42,6 +42,7 @@ import { isCellRoom } from '../net/wire.js';
 import { KNIGHT_CITYWATCH_ID } from '../characters/enemy/enemyEntity.js';
 import { importPublicKeyB64 } from '../net/identityToken.js';
 import { serviceBase } from '../net/accountClient.js';
+import { appStorage } from '../systems/appStorage.js';
 import { resolveEncounterTableIndex, chooseRandomEnemy } from '../systems/encounters.js';
 import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
 
@@ -92,7 +93,7 @@ export function grantSpeciesOf(c) {
 
 /** The relay's public half, from the account service's open route - null when it cannot be had. */
 async function relayKeyOf({ subtle }) {
-  const res = await fetch(`${serviceBase(globalThis.localStorage)}/v1/relaykey`);
+  const res = await fetch(`${serviceBase(appStorage())}/v1/relaykey`);   // the storage seam, never the browser's own (a PIN)
   if (!res.ok) return null;
   const j = await res.json().catch(() => null);
   return typeof j?.rk === 'string' ? importPublicKeyB64(j.rk, { subtle }) : null;
