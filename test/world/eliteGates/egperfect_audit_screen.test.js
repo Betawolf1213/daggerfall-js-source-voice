@@ -4,7 +4,7 @@
 // egLaneOpenEnds), the hang's reach read in the hall's own frame, a turned piece's column clear of its leap.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egRingSideWalls, egRingSideOpen, EG_RING_DOOR, EG_RING_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
+import { egRingSideWalls, egRingSideOpen, EG_RING_DOOR, EG_RING_WALL_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { egLaneOpenEnds, egFragKeep } from '../../../src/world/eliteGates/egHall.js';
 import { egHangReach, egHangModel, EG_HANG_CABLE_M, EG_HANG_HALF, EG_HANG_TOP } from '../../../src/scenes/eliteGates/egSpan.js';
 import { egPiecePlan } from '../../../src/world/eliteGates/egPlatformModel.js';
@@ -19,19 +19,19 @@ const chamber = (alcoves) => ({ law: 10, frags: [{ kit: 'caverns', cls: 'chamber
 
 test('EG-PERFECT AUDIT S1 AN ALCOVE\'S DOORWAY THROUGH ITS RING, ITS WIDTH ALONE (spec law 10; every reader of a ring wall): the side an alcove of the ring\'s own chamber opens keeps its wall either side of a doorway EG_RING_DOOR wide about the alcove (the whole side, 3.4-5.4 m, stood open about a 2 m niche); a passage\'s alcove beside the ring opens none of it; law 9 opens none; the clamp lets a body through the doorway alone (mutants: the whole side open; a passage\'s alcove opening the ring; the clamp open across the side)', () => {
   const R = 17.5, z = -16 / 3, x = Math.sqrt(16 * 16 - z * z) + 1.2, spec = chamber([{ x, z, y: 0, side: 1 }]), d = spec.deco[0];
-  const opened = [...Array(EG_RING_SIDES).keys()].filter((k) => egRingSideWalls(spec, d, k).length !== 0 && egRingSideOpen(spec, d, k));
+  const opened = [...Array(EG_RING_WALL_SIDES).keys()].filter((k) => egRingSideWalls(spec, d, k).length !== 0 && egRingSideOpen(spec, d, k));
   assert.ok(opened.length >= 1 && opened.length <= 2, `${opened.length} sides hold its doorway`);
   let door = 0;
   for (const k of opened) {
-    const walls = egRingSideWalls(spec, d, k), L = 2 * R * Math.sin(Math.PI / EG_RING_SIDES);
+    const walls = egRingSideWalls(spec, d, k), L = 2 * R * Math.sin(Math.PI / EG_RING_WALL_SIDES);
     assert.ok(walls.length >= 1, `side ${k} keeps wall beside its doorway`);
     door += (1 - walls.reduce((t, [a, b]) => t + (b - a), 0)) * L;
   }
   assert.ok(Math.abs(door - EG_RING_DOOR.w) < 0.05, `its doorway ${door.toFixed(2)} m`);
   // a passage's alcove beside the ring (z -17.5, outside the chamber's frame): no side of the ring opens for it
   const P = chamber([{ x: 4.7, z: -17.4, y: 0, side: 1 }]);
-  assert.ok([...Array(EG_RING_SIDES).keys()].every((k) => !egRingSideOpen(P, P.deco[0], k) || egRingSideWalls(P, P.deco[0], k).length === 0), 'a passage\'s alcove opens nothing');
-  assert.ok([...Array(EG_RING_SIDES).keys()].every((k) => egRingSideWalls({ ...spec, law: 9 }, d, k).length !== 1 || egRingSideWalls({ ...spec, law: 9 }, d, k)[0][1] === 1), 'law 9: whole');
+  assert.ok([...Array(EG_RING_WALL_SIDES).keys()].every((k) => !egRingSideOpen(P, P.deco[0], k) || egRingSideWalls(P, P.deco[0], k).length === 0), 'a passage\'s alcove opens nothing');
+  assert.ok([...Array(EG_RING_WALL_SIDES).keys()].every((k) => egRingSideWalls({ ...spec, law: 9 }, d, k).length !== 1 || egRingSideWalls({ ...spec, law: 9 }, d, k)[0][1] === 1), 'law 9: whole');
   // the clamp: a body at the rim through the doorway passes; a metre and a half beside it, held
   const q = { t: 'chamber', x: 0, z: 0, r: R, y: 0 }, ux = x / Math.hypot(x, z), uz = z / Math.hypot(x, z), r = 0.35;
   assert.equal(egFragKeep(q, ux * (R + 0.1), uz * (R + 0.1), r, spec), null, 'through its doorway');

@@ -10,7 +10,7 @@ import { egRouteLegs } from '../../../src/net/eliteGates/egRouteProof.js';
 import { egFragPassage, egFragChamber, egSetPiece, EG_ALCOVE_REACH_M } from '../../../src/net/eliteGates/egFragLaw.js';
 import { egBreachNew, egEnter, egStep, egTrialAwaits, egClosingMs } from '../../../src/net/eliteGates/egBrain.js';
 import { egBodiesOf, EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
-import { egRingSideOpen, EG_RING_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
+import { egRingSideOpen, EG_RING_WALL_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { sdRng } from '../../../src/net/superDungeon/sdBrain.js';
 
 const T0 = 1_800_000_000_000;
@@ -140,7 +140,7 @@ test('EG-PERFECT THE BROKEN WAY (unit) - THE FITTINGS: a law-10 chamber\'s alcov
   assert.ok(Math.hypot(Q9.alcoves[0].x, Q9.alcoves[0].z) - 2400 > EG_ALCOVE_REACH_M * 100, 'law 9\'s out of reach');
   assert.ok(Q.floors.every((f) => f.y >= 400) && Q9.floors.every((f) => f.y < 400), 'a balcony 4 m up');
   const d = { x: 0, z: 0, r: 25.5, y: 0 }, al = [{ x: a.x / 100, z: a.z / 100, y: 0 }];
-  const open = (sp) => Array.from({ length: EG_RING_SIDES }, (_, k) => egRingSideOpen(sp, d, k)).filter(Boolean).length;
+  const open = (sp) => Array.from({ length: EG_RING_WALL_SIDES }, (_, k) => egRingSideOpen(sp, d, k)).filter(Boolean).length;
   assert.ok(open({ law: 10, alcoves: al }) > open({ v: 9, alcoves: al }), 'its ring open at it');
   const s = L10(77, 11), s9 = egHallOf(77, 11, 0, 9);
   const over = (q) => { const B = q.discs.filter((x) => x.role === 'bastion'); return q.discs.filter((x) => x.role === 'pillar').filter((p) => B.some((b) => Math.hypot(b.x - p.x, b.z - p.z) < b.r + p.r)).length; };

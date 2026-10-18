@@ -16,7 +16,7 @@ import { egRouteLegs, egRouteSpanSteps } from '../../../src/net/eliteGates/egRou
 import { egFragPassage, egFragChamber, egSetPiece, EG_FRAG_BROKEN_LAW, EG_ALCOVE_REACH_M } from '../../../src/net/eliteGates/egFragLaw.js';
 import { EG_LAWS, egLawKnown } from '../../../src/net/eliteGates/egDurable.js';
 import { egBreachNew, egTrialAwaits, EG_AWAIT_CLOCKS } from '../../../src/net/eliteGates/egBrain.js';
-import { egRingSideOpen, EG_RING_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
+import { egRingSideOpen, EG_RING_WALL_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { sweepStand, sweepCourse } from '../../../tools/egSpanSolve.mjs';
 import { egRouteRoads } from '../../../src/net/eliteGates/egRouteProof.js';
 import { sdRng } from '../../../src/net/superDungeon/sdBrain.js';
@@ -268,7 +268,7 @@ test('EG-PERFECT THE BROKEN WAY - THE HALLS\' FITTINGS WHERE A BODY REACHES THEM
   for (const q of Q.ramps) assert.ok(Math.abs(q.y1 - q.y0) * 5 <= Math.hypot(q.bx - q.ax, q.bz - q.az) * 3 + 1, 'its stair no steeper than three in five');
   // the ring open at the alcove (law 10), shut there before
   const d = { x: 0, z: 0, r: 25.5, y: 0 }, spec10 = { law: 10, alcoves: [{ x: a.x / 100, z: a.z / 100, y: 0 }] }, spec9 = { v: 9, alcoves: spec10.alcoves };
-  const open = (sp) => Array.from({ length: EG_RING_SIDES }, (_, k) => egRingSideOpen(sp, d, k)).filter(Boolean).length;
+  const open = (sp) => Array.from({ length: EG_RING_WALL_SIDES }, (_, k) => egRingSideOpen(sp, d, k)).filter(Boolean).length;
   assert.ok(open(spec10) > open(spec9), 'the ring opens at its alcove');
   // laid: the 400 halls' fittings
   let alcoves = 0, ramparts = 0;

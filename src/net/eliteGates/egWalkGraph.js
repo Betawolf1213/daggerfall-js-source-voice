@@ -45,7 +45,7 @@
 import { segDist, egPolyIn, egPolyDist, egPolyKeep } from './egShape.js';
 
 /** A chamber's ring wall's sides (world/eliteGates/egHall.js's collider, world/eliteGates/egGround.js's arcade - one count). */
-export const EG_RING_SIDES = 32;
+export const EG_RING_WALL_SIDES = 32;
 /** EG-PERFECT - SPEC LAW 10 (THE BROKEN WAY): the spec law from which a chamber's alcove opens at its court's rim through its
  *  ring (net/eliteGates/egFragLaw.js EG_FRAG_BROKEN_LAW - pinned equal; this module reads, never draws). */
 const RING_ALCOVE_LAW = 10;
@@ -56,7 +56,7 @@ const RING_ALCOVE_LAW = 10;
  * there in the ring's place (law 10 lays a chamber's alcove at its court's rim - net/eliteGates/egFragLaw.js egFragChamber). Pure.
  * @param {any} spec @param {any} d @param {number} k @param {number} [n]
  */
-export function egRingSideOpen(spec, d, k, n = EG_RING_SIDES) {
+export function egRingSideOpen(spec, d, k, n = EG_RING_WALL_SIDES) {
   const w = egRingSideWalls(spec, d, k, n);
   return !(w.length === 1 && w[0][0] === 0 && w[0][1] === 1);
 }
@@ -71,7 +71,7 @@ export const EG_RING_DOOR = Object.freeze({ w: 2.2, h: 2.8 });
  * @param {any} spec @param {any} d @param {number} k @param {number} [n]
  * @returns {number[][]}
  */
-export function egRingSideWalls(spec, d, k, n = EG_RING_SIDES) {
+export function egRingSideWalls(spec, d, k, n = EG_RING_WALL_SIDES) {
   const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2, mid = (a0 + a1) / 2;
   if (Math.abs(Math.sin(mid)) < 0.2) return [];
   let walls = [[0, 1]];
@@ -614,8 +614,8 @@ export function egAirOf(spec) {
     } else if (d.t === 'wall') {
       // the ring as drawn (world/eliteGates/egHall.js): 32 faces, but those where the course comes in (-z) and goes on (+z) - and
       // (spec law 10) where an alcove opens through it (egRingSideOpen)
-      for (let k = 0; k < EG_RING_SIDES; k++) {
-        const a0 = (k / EG_RING_SIDES) * Math.PI * 2, a1 = ((k + 1) / EG_RING_SIDES) * Math.PI * 2;
+      for (let k = 0; k < EG_RING_WALL_SIDES; k++) {
+        const a0 = (k / EG_RING_WALL_SIDES) * Math.PI * 2, a1 = ((k + 1) / EG_RING_WALL_SIDES) * Math.PI * 2;
         const x0 = d.x + Math.sin(a0) * d.r, z0 = d.z + Math.cos(a0) * d.r, x1 = d.x + Math.sin(a1) * d.r, z1 = d.z + Math.cos(a1) * d.r;
         for (const [t0, t1] of egRingSideWalls(spec, d, k)) wall([x0 + (x1 - x0) * t0, z0 + (z1 - z0) * t0, x0 + (x1 - x0) * t1, z0 + (z1 - z0) * t1], d.y ?? 0, (d.y ?? 0) + (d.h ?? 0));   // (THE AUDIT: what stands of it)
       }
