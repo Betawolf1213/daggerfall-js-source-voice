@@ -7,16 +7,19 @@ have left is this"* over the Bank of the Empire's window. Online. Read on the co
 
 The wallet (`06-Systems/Wallet.md`, WALLET1) holds nothing of its own: it shows the letters of credit in the pack
 (`entity.items`, template 275), so a letter "vanishing from the wallet" is a letter that left the pack. Every door that
-takes one out was read. One takes letters the player never chose to give and is a bug (LETTERS-HOME, below). The others
-are the player's own acts or a law the owner chose. Which of them took this player's letters is not proven: the report
+takes one out was read, the client's and the account service's. One takes letters the player never chose to give and is
+a bug (LETTERS-HOME, below). One takes them by a law the owner chose but SAID NOTHING (BURNT-SAID, below). The others are
+the player's own acts or a law the owner chose, said where they happen. Which of them took this player's letters is not proven: the report
 names no death and no deposit. What would prove it is under "What would prove it" below.
 
 | | Door | What it does to a letter | Verdict |
 |---|---|---|---|
 | 1 | A revenant's kill (RVN8, `revenant.js revenantTakes`) | took one of the pack's five most valuable pieces - and a letter, worth its face, is the most valuable piece a pack holds | **BUG - LETTERS-HOME, fixed** |
-| 2 | A death in the open zone (WILD1, `wildDropLaw.js wildCanLose`) | every letter drops into the remains, most valuable first, takeable by anyone for ten minutes after the respawn's wait | the owner's law (LETTERS-DROP, 2026-10-09: "letter of credits should be dropped") - unchanged |
+| 2 | A death in the open zone (WILD1, `wildDropLaw.js wildCanLose`) | every letter drops into the remains, most valuable first, takeable by anyone for ten minutes after the respawn's wait | the owner's law (LETTERS-DROP, 2026-10-09: "letter of credits should be dropped") - unchanged; the letters now named on the death screen (BURNT-SAID) |
+| 2b | The same death, the record HELD (`server-account/src/wild.js`, Lane 1's freeze: `burnt`) | every letter taken off the record and laid nowhere - and the death screen said nothing | the freeze is the arc's law, unchanged; **the silence a bug - BURNT-SAID, fixed** |
 | 3 | The bank's Deposit LOC (`banking.js depositAllLetters`) | every letter at face into the Empire's account; a defaulted loan garnishes it | DFU's DepositAll_LOC - the gold is in the account |
-| 4 | A payment the coins cannot cover (`court.js deductGold`) | the letters pay first, then the coins (DFU's DeductGoldAmount) | DFU's order; every caller gates on coins plus letters |
+| 4 | A payment the coins cannot cover (`court.js deductGold`; the service's `realmGoldLaw.js payFromSave`, pinned equal) | the letters pay first, then the coins (DFU's DeductGoldAmount); what the service pays back (a card table's cash-out, a home sold, rent) goes to the bank | DFU's order; every caller gates on coins plus letters |
+| 5 | A staff rollback or repair (`server-account/src/review.js`) | the record goes back to its last clean checkpoint | staff's act, recorded in `realm_findings` |
 
 ## LETTERS-HOME: a revenant never takes a letter of credit
 
@@ -60,16 +63,55 @@ the pack's letters whole); the deserter's letter back; and the load (a living an
 from before; both come home from the save's copy, the sword stays the revenant's, and a second load brings none
 twice). `tools/mutants/fb1018b_letters.json` (3, all dead).
 
+## BURNT-SAID: a held record's drop is said, and every zone death names its letters
+
+FOUND (the service read, lane 2's freeze). A record the judge holds (`realm.js holdRefusal`: a law finding, the budget
+once enforced, staff, or a record never judged) still loses its drop at a death in the zone, and the room is given none
+of it (`server-account/src/wild.js`, `burnt`, no order - Integrity-Arc, Lane 1's freeze). The service's answer said
+`burnt: true`; the fallen's game read no such word. It took the drop out of the pack (`wildTakeTook`) and set the death
+screen's count to the order's (`dropped: d.order ? n : 0`), and the screen prints no line for none. So a held
+character's letters - every one, most valuable first - left the wallet with nothing said at all. Holds were reported
+the day before this report (KEY-LAW, `Field-Bugs-2026-10-17.md`: new characters held over their Weir Key), and a run of
+sales worth ~2,000,000 is the gain the wealth budget is built to notice. Reproduced through the real service: a held
+record dying to a foe with two letters (650,000 and 700,000) answered `burnt`, no order; both left the pack, and the
+death screen's lines were the two-minute wait alone.
+
+CHANGED:
+- The death screen says it (`wildZone.js:"deathBurnt: (n) =>"`): "3 things you carried were lost where you fell - this
+  character's trading is frozen, so nothing is left for anyone to take." A fall that found the fallen risen says the
+  held case its own way (`burntLate`). The three lines go through the text core (L10N4: `wild.death.burnt`,
+  `wild.death.letters`, `wild.death.burntLate`).
+- Every death in the zone names the letters of credit it took, by their worth (`wildZone.js:"deathLetters: (n, gold) =>"`):
+  "2 letters of credit worth 1,350,000 gold left your wallet." A letter's loss was "a thing you carried", whatever it
+  stood for.
+- The host hands both on in its one line, in place (`world.js:"if (dd) setWildDeath({ killer: dd.killer, dropped: d.order ? n : 0, claimed, held, burnt: d.burnt ? n : 0, letters: out });"`) - no line added: the host does not grow.
+- Not changed, PUT TO THE OWNER: whether a held record's drop should burn at all. The freeze's reason holds (a held
+  character hands no value to another player), but a hold can be the law's mistake (INT2: "the player loses nothing
+  they played, because a finding can be the law's mistake"), and the burn is a loss no later clean checkpoint gives back.
+  Keeping the drop on the fallen would honour both; it is the arc's call, not this fix's.
+
+THE FOUR HOSTS: world.js WIRED (the answer's one reader). dungeonContext.js (the zone's halls) dies through world.js's
+`wildDropTaken` and reads the same death screen. worldModes.js has no fight in the zone (the zone word is 0 indoors).
+exterior.js is offline, and the zone is online alone, NOT WIRED on purpose (Wild-Zone.md).
+
+Pinned by `test/systems/fb1018b_burntsaid.test.js` (3): the held death and the clean one through the real service and
+the fallen's own take-out, and the words, the host's line and the risen line. `tools/mutants/fb1018b_burntsaid.json`
+(4, all dead). PIN MOVED: `fb1014_pvpescrow.test.js` (the host's death-screen line, its new fields beside the escrow's).
+
 ## What would prove which door it was
 
 - A death in the open zone is recorded by the account service: `wild_falls` keeps each fall's records
-  (`server-account/src/wild.js`, its `items` column). A row for the reporter's character carrying template 275 says the
-  zone took them, and when.
+  (`server-account/src/wild.js`, its `items` column) and whether they burnt (`burnt` 1 - a held record's: laid nowhere).
+  A row for the reporter's character carrying template 275 says the zone took them, and when. `realm_characters.held`
+  says whether the character is held now.
 - A revenant's theft is in the character's own record: the realm save's `modData.Revenant.list[].took`. A letter there
   comes home at the reporter's next load with this change.
 - A deposit is in the account: the Empire's account (`bankAccounts[17]`) holds the gold.
+- A card table's stake is `card_stakes` (status `held` until its cash-out is claimed); a staff rollback is a
+  `realm_findings` row with act `rollback`.
 
 What the reporter is owed: a revenant that killed you could take a letter of credit, which the game's own rule ("never
 gold") was meant to forbid - that is fixed, and a letter one is still holding comes back to your wallet when you next
-load. If your letters went at a death in the open zone, that drop is the zone's law, and the service's record of that
-fall will say so.
+load. If your letters went at a death in the open zone, that drop is the zone's law - and if your character was under a
+trading freeze then, they were lost outright with no word on screen, which was a bug: the death screen says so now and
+names the letters it took. The service's record of that fall will say which it was.
