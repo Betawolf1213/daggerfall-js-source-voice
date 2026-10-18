@@ -3413,7 +3413,7 @@ ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, 
 earlier merges, renumbered past main's slices to MAKER-KEPT's `acct148` at the merges), its migration `0124_elite_breach.sql` (0119 until main's SERPENT5 took it, 0120 until main's AUTO-HOLD took that, 0121 until FIELD BUGS 2026-10-16b took 0121 and 0122, 0123 until MAKER-KEPT took that). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
 A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 213, `src/net/wire.js` - AUDIT EG
 V: it read 197, its branch's first, and main's world197 to world212 carry no breach).
-Shipped, the arc's later slices each move the relay on as any slice does: EG-PERFECT's `world218` (section 31's EG-PERFECT
+Shipped, the arc's later slices each move the relay on as any slice does: EG-PERFECT's `world219` (section 31's EG-PERFECT
 record, "The relay").
 
 ## 24. The made level's rules
@@ -9519,7 +9519,8 @@ PIN MOVED note. Under law 10 the suite's pins measured on law 9's halls name law
 again at one site and still dies.
 
 **The relay.** `net/eliteGates/egLords.js`, `egBodies.js`, `egBrain.js`, `egLaw.js`, `egAscent.js`, `egSpanLaw.js` and `net/wire.js`
-are in the relay's bundle: `RELAY_VERSION` moves to `world218` (its `LAW` row in `test/net/relayversion.test.js`, re-hashed in place
+are in the relay's bundle: `RELAY_VERSION` moves to `world219` (`world218` on its branch, renumbered past GRANT2's `world218` at the
+merge; its `LAW` row in `test/net/relayversion.test.js`, re-hashed in place
 while unshipped). The wire's additions are optional and bounded: `ecut` carries the instant its feint was cut at (`at`), the
 stage's say set gains `perches` (the Wyrm's perches risen at its second phase), `sg`/`st` carry a routed tube's `tm` (the ways
 record below) - an old screen ignores each. A breach records its law (`egv`) and draws its own: a law 9 breach open at the
@@ -9752,7 +9753,7 @@ change moved were re-aimed BY CONTENT (`auditclimbarc`, `eg6a`, `eghero_lay`, `e
 `egz_rules`, `egz_tells`, `law9_proofs`): each applies again and still dies.
 
 **The relay.** `net/eliteGates/egBrain.js`, `egFair.js`, `egSpanLaw.js` and `net/wire.js` are in the relay's bundle, so this is a relay
-change: the relay's version moved with EG-PERFECT's (`world218` - the EG-PERFECT record above). The wire's change is additive (`tm` on `sg`/`st`, optional): an old screen ignores it and
+change: the relay's version moved with EG-PERFECT's (`world219` - the EG-PERFECT record above). The wire's change is additive (`tm` on `sg`/`st`, optional): an old screen ignores it and
 keeps the wake's clock for a routed tube - the deploy order is the relay's, then the client's.
 
 **The four hosts.** `scenes/world.js` carries one line changed, none added (`test/scenes/hostceiling.test.js` holds its ceiling):
@@ -9849,7 +9850,7 @@ Daggerfall Unity has no Elite Breach, no Spire and no relay: every fix here is t
   pass's boxes laid again - `SdStepsPass` `ghosts`). A circle within its slots is drawn as it was.
 
 **THE RECORDS.** The lords record's figures are re-measured at this head (its **Measured**); its relay paragraph names
-`world218`, its pins and the forty-four re-aimed records; the ways record names its one `scenes/world.js` line; the
+`world219`, its pins and the forty-four re-aimed records; the ways record names its one `scenes/world.js` line; the
 Port-Ledger's ELITE-GATES row names law 10; Testing.md's rows say law 10's counts (the Captive's chains: 56 kept, none
 refused); sixteen relay pins carry their PIN MOVED note; stale comments said so (`egAscent.js` breakLeg's heading,
 `egSpanLaw.js` the flight's instants, `egSpan.js` EG_GHOSTS_MAX's measure).
@@ -9877,7 +9878,7 @@ parts this Deepway's floors is 9), `egaudit5_b` (the mirrors over a minute - the
 touching a floor's edge meets none, as `egRimMists` reads it), `egz_telegraph` (`egRimOf`'s `lord`), each with its note.
 
 **The relay.** `net/eliteGates/egLords.js`, `egBodies.js`, `egBrain.js`, `egFair.js`, `egLaw.js`, `egAscent.js`, `egSpanLaw.js`, `egRouteProof.js`
-and `egWalkGraph.js` are in the relay's bundle: `world218` is unshipped, so its `LAW` row in `test/net/relayversion.test.js` is
+and `egWalkGraph.js` are in the relay's bundle: `world219` (`world218` until GRANT2 took it on main) is unshipped, so its `LAW` row in `test/net/relayversion.test.js` is
 re-hashed in place. The wire is unchanged (a chained shape simply omits `ol` where it had sent 0, which every screen
 already refused).
 
