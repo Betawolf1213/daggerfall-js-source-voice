@@ -5,7 +5,7 @@
 // be insanely detailed and not hurt performance. No band aids") - THE JUNGLE'S TREES, READ. bible/03-World/
 // Bantha-Jungle.md is the design and the record.
 //
-// The owner's five trees (src/assets/jungle/source/, his Blender 5.2 exports as he handed them over: an OBJ, its MTL and
+// The owner's five trees (src/assets/jungle/source/, their Blender 5.2 exports as they handed them over: an OBJ, its MTL and
 // one 252x164 picture each, cut out by its alpha) read into the shape Low Poly Trees' pipeline already draws
 // (world/lowPolyTrees.js readLowPolyTrees's answer): every mesh in one vertex run of f32 x 8 a vertex - position,
 // normal, uv - and one run of u16 indices, a prototype a tree with its one material, and its standing size. So the
@@ -20,7 +20,7 @@
 // mirrors it, so the tree stands as the owner drew it and its picture never reads backwards; its faces are drawn on
 // both sides (each tree is crossed cards and a shell, cut by the picture's alpha - its own back is its own front).
 // Each tree stood somewhere in the owner's Blender scene (one 34 m off the origin): it is moved so its ROOT - the middle
-// of what it stands on, its lowest 2.5 m - is the origin, its ground (y 0, his ground plane) kept: the roots he sank
+// of what it stands on, its lowest 2.5 m - is the origin, its ground (y 0, their ground plane) kept: the roots they sank
 // below it stay sunk.
 // ═══════════════════════════════════════════════════════════════════
 

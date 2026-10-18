@@ -2,7 +2,7 @@
 // recieve a biome expansion. Using the attached file, populate the area in a dense jungle like format. When traveling
 // inside the area there should be a fog-like haze that reduces visability. This needs to be insanely detailed and not
 // hurt performance. No band aids"): THE JUNGLE OF BANTHA - bible/03-World/Bantha-Jungle.md is the design and the record.
-// The owner's trees read and measured off his own files, the field the layout and the haze share, the layout's laws, the
+// The owner's trees read and measured off their own files, the field the layout and the haze share, the layout's laws, the
 // haze's law and its shader twin, the bound the cull reads, the hosts, the renderer's second tree slot and the door.
 // Mutants: tools/mutants/bantha1.json.
 import { test } from 'node:test';
@@ -113,7 +113,7 @@ test('BANTHA1 each tree as it stands, MEASURED off what it draws - its foot, its
   assert.deepEqual([crown.r, crown.h, crown.lift], [m.crown * 1.2, (m.height - m.crownFrom) * 1.2, m.crownFrom * 1.2]);
 });
 
-test('BANTHA1 a jungle tree\'s far picture is LPT1\'s own (renderImpostor): the owner\'s tree drawn from the side at LPT_IMPOSTOR_PER_M texels a metre, its trunk standing on the middle of its bottom row - the root moved to the origin - and its picture cut as his', () => {
+test('BANTHA1 a jungle tree\'s far picture is LPT1\'s own (renderImpostor): the owner\'s tree drawn from the side at LPT_IMPOSTOR_PER_M texels a metre, its trunk standing on the middle of its bottom row - the root moved to the origin - and its picture cut as the owner\'s picture is', () => {
   for (const [key, p] of TREES.protos) {
     const pic = renderImpostor(TREES, p, (n) => picture(TREES.atlases[n].picture));
     assert.equal(Math.round(pic.height / pic.shareH), Math.round(Math.min(256, p.size.h * LPT_IMPOSTOR_PER_M)), key);

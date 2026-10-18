@@ -14,7 +14,7 @@ the World tab's Land section), on by default; forced on online.
 
 ## The owner's trees
 
-`src/assets/jungle/source/` holds the zip as he handed it over, byte for byte (`test/tooling/doctrine.test.js`'s
+`src/assets/jungle/source/` holds the zip as they handed it over, byte for byte (`test/tooling/doctrine.test.js`'s
 SUPPLIED rows): five Blender 5.2 OBJs, their MTLs and one 252x164 RGBA picture each, cut by its alpha (every texel 0 or
 255, a stray 1 in one). Nothing is baked: the game fetches the fifteen files the first time a pixel stands a jungle tree
 (~0.24 MB) and reads them (`world/jungle/jungleModels.js`, `systems/jungleTreesAssets.js`).
@@ -29,8 +29,8 @@ SUPPLIED rows): five Blender 5.2 OBJs, their MTLs and one 252x164 RGBA picture e
 
 **Read.** Each polygon fanned into triangles, each distinct corner one vertex (f32 x 8: position, normal, uv - Low Poly
 Trees' own layout). An OBJ is right-handed and the port's meshes are Unity's, so each tree is **mirrored in x** as Unity's
-OBJ importer mirrors it - the tree stands as he drew it, never backwards - and **moved so its root** (the middle of its
-lowest 2.5 m) **is the origin**: one tree stood 34 m off the origin in his scene. His ground (y 0) is kept, so the roots he
+OBJ importer mirrors it - the tree stands as they drew it, never backwards - and **moved so its root** (the middle of its
+lowest 2.5 m) **is the origin**: one tree stood 34 m off the origin in their scene. Their ground (y 0) is kept, so the roots they
 sank stay sunk. Each face is **wound as its normals say** (the mirror reverses a fan; the kapok's export had turned its
 faces and its normals apart, 99 of its 103 triangles - read so, its light and its faces agree again). Every material is
 drawn on both faces and cut at a half.
@@ -194,8 +194,8 @@ its shader twin run in `test/glsl.mjs`, every template in `src/` that calls the 
 renderer's two slots and the haze's arming, the door end to end over the real files, the hosts' wiring, the switch.
 `tools/mutants/bantha1.json` (42, all killed). LPT1's and the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and ten more).
 
-**Open.** RECORD OPEN: that no pixel of the owner's five pictures came from ARENA2 is his word to record (the doctrine's
-rows say so; the pictures match no classic record and carry 32 to 7,706 colours). Not eyeballed in the running game:
+**Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
+no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Open.** Not eyeballed in the running game:
 this slice was built in a container with no ARENA2 (the trees' far pictures, the layout over synthetic ground and the
 haze over a synthetic scene were rendered and looked at; Bantha's own land, its real extent on the map and the frame time
 on a GPU are the owner's to see - `HEADED=1 SCENES=city npm run perf` near Bantha, and `?jungle=off` against it).
