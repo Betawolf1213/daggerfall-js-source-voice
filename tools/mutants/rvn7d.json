@@ -92,8 +92,8 @@
   {
     "name": "RVN7d-grant-unpassed",
     "file": "src/systems/revenant/revenant.js",
-    "old": "rolls, goldMult * hoard, { legendary",
-    "new": "rolls, hoard, { legendary",
+    "old": "rolls, goldMult * hoard));",
+    "new": "rolls, hoard));",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
     ]

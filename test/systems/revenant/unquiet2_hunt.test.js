@@ -89,13 +89,14 @@ test('UNQUIET II THE ESCAPE\'S CARD: where its trail leads, after its wound; a c
   setWorldMinutes(DAY * 10);
   const r = made(p, { now: DAY * 10 });
   const ev = N.revenantEscapeEvent(r, 'Ayla', { rolls: () => 0 });
-  assert.ok(ev.body.endsWith(' Its trail leads to Tomb of Vaness. It has gone to ground there to heal - catch it before it does.'), ev.body);
-  assert.ok(ev.line.endsWith('catch it before it does.'), 'the line too');
+  // PIN MOVED (AUDIT UNQUIET, section 49): it recovers - "heal" is its wounds' word, on their own law
+  assert.ok(ev.body.endsWith(' Its trail leads to Tomb of Vaness. It has gone to ground there to recover - catch it before it is whole again.'), ev.body);
+  assert.ok(ev.line.endsWith('catch it before it is whole again.'), 'the line too');
   setWorldMinutes(DAY * 10 + U.HUNT.MINUTES);
   assert.ok(!N.revenantEscapeEvent(r, 'Ayla', { rolls: () => 0 }).body.includes('trail'), 'cold');
 });
 
-test('UNQUIET II FOUND ON ITS TRAIL: entering its lair while the trail is warm it is there, at 60% of its health and marked wounded - the trail followed whatever comes of it; cold, it stands whole (mutants: the health unread; the trail kept; cold stood wounded)', () => {
+test('UNQUIET II FOUND ON ITS TRAIL: entering its lair while the trail is warm it is there, at 60% of its health - the trail followed whatever comes of it; cold, it stands whole (mutants: the health unread; the trail kept; cold stood wounded)', () => {
   const p = me();
   door();
   const r = made(p, { now: DAY * 10 });
@@ -105,30 +106,30 @@ test('UNQUIET II FOUND ON ITS TRAIL: entering its lair while the trail is warm i
   const e = { mobileType: M.Orc, level: 6, health: 100, maxHealth: 100 };
   N.applyRevenant(e, r, { now: DAY * 10 + 60 });
   assert.equal(e.health, Math.round(e.maxHealth * U.HUNT.HEALTH), 'not yet healed');
-  assert.equal(e.revenant.wounded, true);
+  assert.equal(e.revenant.wounded, undefined, 'PIN MOVED (AUDIT UNQUIET): no flag nothing read - its health says it');
   assert.equal(r.trail, 0, 'the trail followed');
   // cold: whole
   const q = made(p, { now: DAY * 11 });
   const g = { mobileType: M.Orc, level: 6, health: 100, maxHealth: 100 };
   N.applyRevenant(g, q, { now: DAY * 11 + U.HUNT.MINUTES });
   assert.equal(g.health, g.maxHealth, 'healed');
-  assert.equal(g.revenant.wounded, undefined);
   assert.equal(q.trail, 0);
 });
 
-test('UNQUIET II THE HUNT AND THE PAGE: while the trail is warm its hunt says so with the hours left, and the page says "Wounded" - gone to ground, and where; cold, neither; held, the page says held (mutants: the hunt\'s line unsaid; the page\'s; held overridden)', () => {
+test('UNQUIET II THE HUNT AND THE PAGE: while the trail is warm its hunt says so with the hours left, and the page says "Weakened" - gone to ground, and where; cold, neither; held, the page says held (mutants: the hunt\'s line unsaid; the page\'s; held overridden)', () => {
   const p = me();
   door();
   const r = made(p, { now: DAY * 10 });
   r.dueAt = DAY * 30;
   const hunt = (now) => N.revenantHuntEntries({ px: 100, py: 100 }, { now }).find((h) => h.id.endsWith(r.id));
   const lines = (now) => hunt(now).messages[0].map((l) => l.text);
-  assert.ok(lines(DAY * 10).includes('Wounded - it went to ground here to heal. 12 hours before it has.'));
-  assert.ok(lines(DAY * 10 + 690).includes('Wounded - it went to ground here to heal. 1 hour before it has.'));
-  assert.ok(!lines(DAY * 10 + U.HUNT.MINUTES).some((l) => l.startsWith('Wounded')), 'cold');
+  // PIN MOVED (AUDIT UNQUIET, section 49): "Weakened", recovering - its wounds are the player's, healing on their own law
+  assert.ok(lines(DAY * 10).includes('Weakened - it went to ground here to recover. 12 hours before it is whole again.'));
+  assert.ok(lines(DAY * 10 + 690).includes('Weakened - it went to ground here to recover. 1 hour before it is whole again.'));
+  assert.ok(!lines(DAY * 10 + U.HUNT.MINUTES).some((l) => l.startsWith('Weakened')), 'cold');
   const w = PG.comeWords(r, DAY * 10 + 60, false);
-  assert.deepEqual(w, { tag: 'Wounded', cls: '', line: 'Gone to ground in Tomb of Vaness to heal - 11 hours before it has. Find it there.' });
-  assert.notEqual(PG.comeWords(r, DAY * 10 + U.HUNT.MINUTES, false).tag, 'Wounded', 'cold');
+  assert.deepEqual(w, { tag: 'Weakened', cls: '', line: 'Gone to ground in Tomb of Vaness to recover - 11 hours before it is whole again. Find it there.' });
+  assert.notEqual(PG.comeWords(r, DAY * 10 + U.HUNT.MINUTES, false).tag, 'Weakened', 'cold');
   assert.equal(PG.comeWords(r, DAY * 10 + 60, true).tag, 'Held', 'held: none found in its lair either');
 });
 

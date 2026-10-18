@@ -236,8 +236,8 @@
   {
     "name": "RVN8-cap-buries",
     "file": "src/systems/revenant/revenant.js",
-    "old": "!x.out && !x.took?.length && !x.dread).sort(",
-    "new": "!x.out && !x.dread).sort(",
+    "old": "!x.out && !x.took?.length).sort(",
+    "new": "!x.out).sort(",
     "tests": [
       "test/systems/rvn8_took.test.js"
     ]

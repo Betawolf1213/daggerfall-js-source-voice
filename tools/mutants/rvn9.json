@@ -83,7 +83,7 @@
   {
     "name": "RVN9-day-twice",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (day <= _state.lastDay) return [];   // the encounter tick's every ask: nothing new. AUDIT FEUD: nor a clock behind it (a reload of an older save) - the mirror counted those days; none counts twice\n",
+    "old": "  if (day <= _state.lastDay) { if (clamped) persist(); return []; }   // the encounter tick's every ask: nothing new. AUDIT FEUD: nor a clock behind it (a reload of an older save) - the mirror counted those days; none counts twice\n",
     "new": "",
     "tests": [
       "test/systems/rvn9_fester.test.js",

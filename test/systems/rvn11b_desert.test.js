@@ -87,6 +87,7 @@ test('RVN11b THE DAY\'S ROLL: after the day\'s loyalty move, under 20 a roll und
 test('RVN11b THE DESERTER: no longer sworn - a living revenant, its rank kept, "the Oathbreaker" whatever its rank, the deed at that day, due in its ambition\'s days, its notice and card (mutants: still sworn; the rank moved; a risen epithet; due at once; the card missing)', () => {
   const r = sworn('away', { loyalty: 3 });
   r.rank = 4;
+  r.personality = 'brutal';   // AUDIT UNQUIET (Revenants.md section 49): one ambition, every run - vengeance's days
   N.revenantFester(me, at(10, () => 0));
   N.revenantFester(me, at(11, () => 0));
   const x = N.revenantById(r.id);
@@ -95,7 +96,8 @@ test('RVN11b THE DESERTER: no longer sworn - a living revenant, its rank kept, "
   assert.equal(x.name, `${x.given} the Oathbreaker`);
   assert.deepEqual(x.history.at(-1), { deed: 'deserted', at: DAY * 11 });
   // PIN MOVED (UNQUIET, Revenants.md section 46): due by its ambition's days - vengeance one to two, any other two to four
-  const [lo, hi] = ambitionOf(x.personality) === 'vengeance' ? AMBITION.VENGEANCE_DUE : [N.REVENANT_RETURN_MIN_MINUTES, N.REVENANT_RETURN_MAX_MINUTES];
+  assert.equal(ambitionOf(x.personality), 'vengeance');
+  const [lo, hi] = AMBITION.VENGEANCE_DUE;
   assert.ok(x.dueAt >= DAY * 11 + lo && x.dueAt <= DAY * 11 + hi);
   assert.ok(N.livingRevenants().includes(x));
   const ev = N.takeRevenantNotice(me, at(11, () => 0));

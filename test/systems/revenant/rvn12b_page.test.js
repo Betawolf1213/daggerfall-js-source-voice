@@ -74,7 +74,7 @@ test('RVN12b AN ESCAPE UNBROKEN: the deed remembers it (through the save), the p
   assert.equal(PG.historyWords({ deed: 'fled', at: 1 }), 'escaped');
   assert.equal(made('fled', { now: 70 }).history.at(-1).unbroken, undefined);
   for (const [file, arch] of [['src/scenes/exteriorFoes.js', 'f.archive'], ['src/scenes/dungeonContext.js', 'f.mobileArchive']]) {
-    assert.ok(read(file).includes(`revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: ${arch}, unbroken });`), file);
+    assert.ok(read(file).includes(`revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: ${arch}, unbroken, slip });`), file);   // PIN MOVED (AUDIT UNQUIET, Revenants.md section 49): and a slip, which never ascends
   }
 });
 

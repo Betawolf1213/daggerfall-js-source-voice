@@ -1267,7 +1267,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     f.escaped = true;
     f.yielded = null;
     if (f.ai?.detected) setEnemyAlert(playerEntity, false);
-    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken });   // RVN12b: an unbroken one's escape, so remembered
+    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken, slip });   // RVN12b: an unbroken one's escape, so remembered; AUDIT UNQUIET: a slip never ascends
     if (r) revenantSay(slip ? slipEvent(playerEntity, r, { archive: f.archive }) : unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.archive }) : revenantEscapeEvent(r, playerEntity?.name, { archive: f.archive }), say);   // REVENANT-FATE: a slip says the hesitation; RVN3: the unbroken its own
   }
   /** RVN10 (Feud-Arc.md 21.2): ROUTED - I ran from it: gone as the cull takes a foe (no corpse, no kill, its batch freed;
@@ -1604,7 +1604,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // of its health for the first time, may RUN - and running it strikes and casts nothing, its walk still drawn (and no
       // cull); out of reach it has ESCAPED (no corpse, no kill, a revenant made of it); run down, it is CORNERED and turns
       // to fight to the end
-      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame
+      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting, dt: foeFrameDt(dt) }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame; AUDIT UNQUIET: its craft on the foe's own frame
       if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art - AUDIT RVN B4: before a run's or a scatter's own frame, so a running one's ward and cry run out and its marks are cut
       if (_flee === 'escape') { escapeFoe(f); continue; }
       if (_flee === 'start') scatterBand(f);   // RVN6: it runs - its band breaks

@@ -196,12 +196,14 @@ test('RENOWN-GATE HELD, NONE IS MADE OR RUNS: under Renown 10 online no special 
 test('RENOWN-GATE HELD, NONE RETURNS: a due revenant takes no roll and is never claimed under Renown 10; from 10 on two rolls in five (mutants: the return\'s gate dropped; the chance moved either way)', () => {
   const p = me();
   const r = made(p, { dueAt: 0 });
+  r.personality = 'cold';   // AUDIT UNQUIET (Revenants.md section 49): one ambition, every run - not vengeance, its share REVENANT_RETURN_CHANCE
   const now = DAY * 9;
   online(9);
   assert.equal(N.revenantToReturn(p, { now, rolls: () => 0 }), null, 'held');
   assert.equal(r.out, false, 'and not claimed');
   online(10);
-  const chance = ambitionOf(r.personality) === 'vengeance' ? AMBITION.VENGEANCE_RETURN : N.REVENANT_RETURN_CHANCE;   // UNQUIET (Revenants.md section 46): a revenant of vengeance takes more of the rolls
+  assert.notEqual(ambitionOf(r.personality), 'vengeance');
+  const chance = N.REVENANT_RETURN_CHANCE;   // UNQUIET (Revenants.md section 46): a revenant of vengeance takes more of the rolls (AMBITION.VENGEANCE_RETURN - unquiet.test.js)
   assert.equal(N.revenantToReturn(p, { now, rolls: () => chance }), null, 'the roll at its share passes it by');
   assert.equal(r.out, false);
   assert.equal(N.revenantToReturn(p, { now, rolls: () => chance - 0.01 }), r, 'under it, it comes');

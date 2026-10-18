@@ -29,15 +29,16 @@ const rev = (rank, over = {}) => orc({ champion: undefined, revenant: { id: `ff-
 const SEEDS = (n) => Array.from({ length: n }, (_, i) => 1 + i);
 const fights = (opts, n) => SEEDS(n).map((seed) => H.revenantFight({ weapon: 'Longsword', mode: 'trade', ...opts, seed }));
 
-test('FLIGHT-FIRST THE ROLL AND THE LINE (UNQUIET, Revenants.md section 46): a marked elite or champion runs at 35% on 75% - an unmarked one never; a revenant under its will\'s rank (rank 1) at 35% on 80%; from its will\'s rank (2) at a fifth on 35% (mutants: the young roll the old one\'s; the young line the old one\'s; the will\'s rank read as young)', () => {
+test('FLIGHT-FIRST THE ROLL AND THE LINE (UNQUIET, Revenants.md section 46): a marked elite or champion runs at 35% on 50% - an unmarked one never; a revenant under its will\'s rank (rank 1) at 35% on 80%; from its will\'s rank (2) at a fifth on 35% (mutants: the young roll the old one\'s; the young line the old one\'s; the will\'s rank read as young)', () => {
   assert.deepEqual([N.REVENANT_FLEE_HEALTH, N.REVENANT_FLEE_HEALTH_YOUNG], [0.2, 0.35]);
   // PIN MOVED (UNQUIET, Revenants.md section 46 - the owner: "more of a chance to flee instead of relying on player
   // death"): a MARKED foe runs at the young line on 75% (it was 5% at a fifth); the will from rank 2 (it was 3), and a
-  // revenant past it on 35% (it was 15%)
-  assert.deepEqual([N.REVENANT_FLEE_CHANCE, N.REVENANT_FLEE_CHANCE_YOUNG, N.REVENANT_FLEE_CHANCE_REVENANT], [0.75, 0.8, 0.35]);
+  // revenant past it on 35% (it was 15%). PIN MOVED again (AUDIT UNQUIET, section 49): a marked foe on 50%, at a bolt's
+  // pace - at 75% and the old pace births were the chaser's Speed, not the roll's
+  assert.deepEqual([N.REVENANT_FLEE_CHANCE, N.REVENANT_FLEE_CHANCE_YOUNG, N.REVENANT_FLEE_CHANCE_REVENANT], [0.5, 0.8, 0.35]);
   assert.equal(F.WILL_RANK, 2);
   const runs = (e, roll) => N.rollRevenantFlee(e, () => roll);
-  assert.deepEqual([runs(orc(), 0.749), runs(orc(), 0.751)], [true, false], 'a marked champion: three in four');
+  assert.deepEqual([runs(orc(), 0.499), runs(orc(), 0.501)], [true, false], 'a marked champion: one in two');
   assert.equal(runs(orc({ unquiet: false }), 0), false, 'an unmarked one never');
   for (const rank of [1]) assert.deepEqual([runs(rev(rank), 0.79), runs(rev(rank), 0.81)], [true, false], `rank ${rank}: its flight is its way out`);
   for (const rank of [2, 3, 4, 5]) assert.deepEqual([runs(rev(rank), 0.349), runs(rev(rank), 0.351)], [true, false], `rank ${rank}: its will is`);

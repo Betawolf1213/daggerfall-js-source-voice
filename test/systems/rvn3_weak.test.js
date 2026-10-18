@@ -342,12 +342,12 @@ test('RVN3 THE WILL: from rank 3 a revenant my fight has not broken does not kne
   frame(pool);
   assert.equal(f.dead, true); assert.equal(f.escaped, true);
   const rec = N.revenantById(r.id);
-  assert.equal(rec.rank, 4, 'ranked up');
+  assert.deepEqual([rec.rank, rec.tears], [3, 1], 'PIN MOVED (AUDIT UNQUIET, Revenants.md section 49): a tear-away counts - every second ranks it up (TEAR_RANK)');
   assert.equal(rec.history.at(-1).deed, 'fled');
   assert.equal(rec.defeated, false);
   const ev = shown.find((e) => e.kind === 'unbroken');
   assert.ok(ev, 'its words');
-  assert.equal(ev.body, `${rec.given} staggers into the smoke, unbroken.`);
+  assert.ok(ev.body.startsWith(`${rec.given} staggers into the smoke, unbroken.`), ev.body);   // AUDIT UNQUIET: and the wound it got away with, after
   assert.equal(ev.kicker, 'Unbroken');
   // broken by its staggers: it kneels
   N._resetRevenantForTests();

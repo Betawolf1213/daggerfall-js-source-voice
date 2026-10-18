@@ -22700,8 +22700,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.amb.masteryDo": {
-  "en": "053af0c6acc6",
-  "tr": "dd3e8cb77523",
+  "en": "1b8a6004eb12",
+  "tr": "0ef3a742e5e8",
   "by": "claude-in-session"
  },
  "rvn.unq.amb.plunder": {
@@ -22745,8 +22745,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.craft.boltDo": {
-  "en": "cba070035776",
-  "tr": "ba5bc857a112",
+  "en": "0df89cef1066",
+  "tr": "83fdece21b26",
   "by": "claude-in-session"
  },
  "rvn.unq.craft.sink": {
@@ -22755,8 +22755,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.craft.sinkDo": {
-  "en": "7e2f110090c0",
-  "tr": "bce9038464bb",
+  "en": "5b3504db6762",
+  "tr": "431986a12080",
   "by": "claude-in-session"
  },
  "rvn.unq.craft.smoke": {
@@ -22765,13 +22765,28 @@
   "by": "claude-in-session"
  },
  "rvn.unq.craft.smokeDo": {
-  "en": "67a3efe40f4b",
-  "tr": "e49473c0f666",
+  "en": "374c78aac323",
+  "tr": "eb187b0693ad",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.escape": {
+  "en": "5c2140fe001a",
+  "tr": "7a20120c7052",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.escapeLine": {
+  "en": "8867a2d3a142",
+  "tr": "b0119c36ecfe",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.escapeRank": {
+  "en": "d4338a4e77b4",
+  "tr": "12db6f4a1dfe",
   "by": "claude-in-session"
  },
  "rvn.unq.escapeWound": {
-  "en": "8a4bbd1d997a",
-  "tr": "aea269e507f9",
+  "en": "fa2132f63225",
+  "tr": "5a28ce42849a",
   "by": "claude-in-session"
  },
  "rvn.unq.fester.mastery": {
@@ -22795,8 +22810,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.flee.smoke": {
-  "en": "433c85feb9c3",
-  "tr": "7e0847aa70de",
+  "en": "2d1b11286d20",
+  "tr": "fd74595902bf",
   "by": "claude-in-session"
  },
  "rvn.unq.how.arrowWise": {
@@ -22885,8 +22900,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.hunt.trail": {
-  "en": "9c738ed6f24a",
-  "tr": "5329ad5ae8ec",
+  "en": "ef867837c411",
+  "tr": "f95ae7a43232",
   "by": "claude-in-session"
  },
  "rvn.unq.omen.mastery": {
@@ -22910,8 +22925,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.page.blood": {
-  "en": "e3dc743f4ce6",
-  "tr": "85600337f18b",
+  "en": "64347ddd6683",
+  "tr": "ceeec2f855a4",
   "by": "claude-in-session"
  },
  "rvn.unq.page.craft": {
@@ -22931,7 +22946,7 @@
  },
  "rvn.unq.page.dreadStand": {
   "en": "9b13e14c7e1a",
-  "tr": "590421a0a51a",
+  "tr": "6b3a898724d2",
   "by": "claude-in-session"
  },
  "rvn.unq.page.dreadTag": {
@@ -22969,14 +22984,19 @@
   "tr": "a10a60950008",
   "by": "claude-in-session"
  },
+ "rvn.unq.page.tears": {
+  "en": "3d905db635a1",
+  "tr": "73620c4648bd",
+  "by": "claude-in-session"
+ },
  "rvn.unq.page.woundedCome": {
-  "en": "7dc1f43efcb6",
-  "tr": "6eb82b4340b9",
+  "en": "1b07249fce80",
+  "tr": "7df29ae3e6d7",
   "by": "claude-in-session"
  },
  "rvn.unq.page.woundedTag": {
-  "en": "e9496d8086e9",
-  "tr": "501fb80283f1",
+  "en": "5d46ba8e088d",
+  "tr": "569056d6e5f2",
   "by": "claude-in-session"
  },
  "rvn.unq.page.wounds": {
@@ -23004,14 +23024,24 @@
   "tr": "aae6e935dbb3",
   "by": "claude-in-session"
  },
+ "rvn.unq.slip": {
+  "en": "d7a217fb1c51",
+  "tr": "7ca3c0840d7b",
+  "by": "claude-in-session"
+ },
  "rvn.unq.trail": {
-  "en": "54d0984b2a68",
-  "tr": "ae0d3de87666",
+  "en": "2ad204ed9a84",
+  "tr": "c8fa2e453cc0",
   "by": "claude-in-session"
  },
  "rvn.unq.trained": {
   "en": "defa17a4b89b",
   "tr": "ef8b1cd41130",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.unbroken": {
+  "en": "674ce4fdf0cc",
+  "tr": "3e577ead8b52",
   "by": "claude-in-session"
  },
  "rvn.unq.wound.bled": {
@@ -23020,8 +23050,8 @@
   "by": "claude-in-session"
  },
  "rvn.unq.wound.bledDo": {
-  "en": "2b9e52f7dcbc",
-  "tr": "079de5eb36d8",
+  "en": "d8bc89abca3c",
+  "tr": "8c11f901a2a1",
   "by": "claude-in-session"
  },
  "rvn.unq.wound.blighted": {
@@ -23050,7 +23080,7 @@
   "by": "claude-in-session"
  },
  "rvn.unq.wound.crackedDo": {
-  "en": "f028a2a7a1fe",
+  "en": "e856a712f8d1",
   "tr": "f10ef8369c38",
   "by": "claude-in-session"
  },

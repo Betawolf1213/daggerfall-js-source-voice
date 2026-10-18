@@ -84,6 +84,7 @@ test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through
   fresh();
   const me = player();
   const killer = orc({ health: 60 });
+  killer._voiceId = 'rvn-killer-1';   // AUDIT UNQUIET (Revenants.md section 49): its id - so its personality, and its days - one every run
   const rec = { entity: killer, mobileType: MOBILE_TYPES.Orc, gender: 'male', dead: false };
   setPlayerDoor({ foes: () => [rec], feet: () => [0, 0, 0], hurtFoe: () => {}, castOnPlayer: () => {}, player: () => me });
   // a blow that does not kill: nothing
@@ -103,6 +104,7 @@ test('REVENANT THE KILL: the blow that kills me makes its foe a revenant through
   const [r] = N.livingRevenants();
   assert.ok(r, 'the killer is a revenant');
   assert.equal(r.rank, 1); assert.equal(r.kills, 1); assert.equal(r.trait, 'mighty'); assert.equal(r.mobileType, MOBILE_TYPES.Orc);
+  assert.equal(r.id, 'rvn-killer-1');
   const [lo, hi] = ambitionOf(r.personality) === 'vengeance' ? AMBITION.VENGEANCE_DUE : [N.REVENANT_RETURN_MIN_MINUTES, N.REVENANT_RETURN_MAX_MINUTES];   // UNQUIET (Revenants.md section 46): vengeance comes sooner
   assert.ok(r.dueAt >= r.born + lo && r.dueAt <= r.born + hi, 'due in its ambition\'s days');
   assert.equal(killer.revenant.id, r.id, 'the foe over my body wears its name at once');
@@ -231,7 +233,8 @@ test('REVENANT ITS KEEPING: the save slot carries the records (never as out); th
 
 test('REVENANT THE HOSTS: the open world\'s pool rolls the flee once under a fifth, runs and escapes without a corpse, taunts once in sight, closes a slain one; the spawn stands its trait or glow, then its rank, before its loot; the world\'s roll stands a due one, whoever rolls the group\'s wanderers, and reads its presence and its notice', () => {
   const x = read('src/scenes/exteriorFoes.js');
-  assert.match(x, /const _flee = f\.fleeing \|\| \(!f\._fleeRolled && revenantFleeHealth\(f\.entity\)\) \? revenantFleeStep\(f, playerFeet, \{ onMe: \(\) => isLocalPlayerTarget\(f\.ai\.target\) \|\| !f\.ai\._armedTargeting \}\) : null;/, 'the one flee law, asked only of a foe running or under the line');
+  // PIN MOVED (AUDIT UNQUIET, Revenants.md section 49): and its craft on the foe's own frame (`dt`)
+  assert.match(x, /const _flee = f\.fleeing \|\| \(!f\._fleeRolled && revenantFleeHealth\(f\.entity\)\) \? revenantFleeStep\(f, playerFeet, \{ onMe: \(\) => isLocalPlayerTarget\(f\.ai\.target\) \|\| !f\.ai\._armedTargeting, dt: foeFrameDt\(dt\) \}\) : null;/, 'the one flee law, asked only of a foe running or under the line');
   assert.match(x, /if \(_flee === 'escape'\) \{ escapeFoe\(f\); continue; \}/, 'out of reach: escaped');
   assert.match(x, /if \(_flee === 'start' \|\| _flee === 'run'\) \{ fleeWalk\(f, dt, eye\); continue; \}/, 'running: its walk and nothing else');
   assert.match(x, /function fleeWalk\(f, dt, eye\) \{\s*\n\s*f\._mout = f\.mobile\.update\(dt, \{ moving: f\.ai\.moving, striking: false, rangedStriking: false, hurting: f\.ai\.hurtKnock, casting: false \}/, 'no blow and no cast in it');

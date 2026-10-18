@@ -38,8 +38,8 @@
   {
     "name": "UNQUIET2-trail-hours-down",
     "file": "src/systems/revenant/revenantUnquiet.js",
-    "old": "Math.ceil((r.trail - now) / 60)",
-    "new": "Math.floor((r.trail - now) / 60)",
+    "old": "Math.ceil(Math.min(HUNT.MINUTES, r.trail - now) / 60)",
+    "new": "Math.floor(Math.min(HUNT.MINUTES, r.trail - now) / 60)",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
     ]
@@ -56,7 +56,7 @@
   {
     "name": "UNQUIET2-omen-unsaved",
     "file": "src/systems/revenant/revenant.js",
-    "old": "omen: sanitizeTrail(r.omen),",
+    "old": "omen: sanitizeTrail(r.omen === undefined ? r.dueAt : r.omen),",
     "new": "omen: 0,",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -65,7 +65,7 @@
   {
     "name": "UNQUIET2-trail-unset",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (deedName === 'fled' && r.lair && !r.dread) { r.trail = now + HUNT.MINUTES; r.lairKnown = true; }\n",
+    "old": "  if (den && !r.dread) { r.trail = now + HUNT.MINUTES; r.lairKnown = true; }\n",
     "new": "",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -83,7 +83,7 @@
   {
     "name": "UNQUIET2-trail-on-a-kill",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (deedName === 'fled' && r.lair && !r.dread) {",
+    "old": "  if (den && !r.dread) {",
     "new": "  if (deedName !== 'returned' && r.lair && !r.dread) {",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -92,7 +92,7 @@
   {
     "name": "UNQUIET2-trail-no-lair",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (deedName === 'fled' && r.lair && !r.dread) {",
+    "old": "  if (den && !r.dread) {",
     "new": "  if (deedName === 'fled' && !r.dread) {",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -101,8 +101,8 @@
   {
     "name": "UNQUIET2-trail-dread",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (deedName === 'fled' && r.lair && !r.dread) {",
-    "new": "  if (deedName === 'fled' && r.lair) {",
+    "old": "  if (den && !r.dread) {",
+    "new": "  if (den) {",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
     ]
@@ -110,7 +110,7 @@
   {
     "name": "UNQUIET2-stand-health-unread",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (trailWarm(r, now)) { entity.health = Math.max(1, Math.round(entity.maxHealth * HUNT.HEALTH)); entity.revenant.wounded = true; }\n",
+    "old": "  if (trailWarm(r, now)) entity.health = Math.max(1, Math.round(entity.maxHealth * HUNT.HEALTH));\n",
     "new": "",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -128,7 +128,7 @@
   {
     "name": "UNQUIET2-card-trail-unsaid",
     "file": "src/systems/revenant/revenant.js",
-    "old": "const trail = r.history?.at(-1)?.deed === 'fled' && trailWarm(r, nowMinutes()) && r.lair ?",
+    "old": "const trail = r?.history?.at(-1)?.deed === 'fled' && trailWarm(r, nowMinutes()) && r.lair ?",
     "new": "const trail = false ?",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
@@ -164,8 +164,8 @@
   {
     "name": "UNQUIET2-omen-every-tick",
     "file": "src/systems/revenant/revenant.js",
-    "old": "&& x.dueAt <= now && x.omen !== x.dueAt);",
-    "new": "&& x.dueAt <= now);",
+    "old": "&& x.dueAt <= now && x.omen !== x.dueAt && (night",
+    "new": "&& x.dueAt <= now && (night",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
     ]
@@ -173,8 +173,8 @@
   {
     "name": "UNQUIET2-omen-not-due",
     "file": "src/systems/revenant/revenant.js",
-    "old": "&& x.dueAt <= now && x.omen !== x.dueAt);",
-    "new": "&& x.omen !== x.dueAt);",
+    "old": "&& x.dueAt <= now && x.omen !== x.dueAt && (night",
+    "new": "&& x.omen !== x.dueAt && (night",
     "tests": [
       "test/systems/revenant/unquiet2_hunt.test.js"
     ]
@@ -200,10 +200,11 @@
   {
     "name": "UNQUIET2-omen-held",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (!revenantOn() || revenantHeld()) return null;\n  const r = livingRevenants().find((x) => !x.out && !x.dread",
-    "new": "  const r = livingRevenants().find((x) => !x.out && !x.dread",
+    "old": "  if (!revenantOn() || revenantHeld()) return null;\n  const night = skyIsNight();",
+    "new": "  if (!revenantOn()) return null;\n  const night = skyIsNight();",
     "tests": [
-      "test/systems/revenant/unquiet2_hunt.test.js"
+      "test/systems/revenant/unquiet2_hunt.test.js",
+      "test/systems/revenant/auditunquiet.test.js"
     ]
   },
   {

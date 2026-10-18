@@ -2,8 +2,8 @@
   {
     "name": "UNQUIET3-heal-days",
     "file": "src/systems/revenant/revenantUnquiet.js",
-    "old": "MAX: 3, RESIST: -15, HEAL_DAYS: 3 });",
-    "new": "MAX: 3, RESIST: -15, HEAL_DAYS: 2 });",
+    "old": "MAX: 3, RESIST: -15, HEAL_DAYS: 5 });",
+    "new": "MAX: 3, RESIST: -15, HEAL_DAYS: 4 });",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "UNQUIET3-page-heal-now-unread",
     "file": "src/ui/revenant/revenantPage.js",
-    "old": "[craftLine(r), woundLine(r, now), ambitionLine(r), bloodLine(r)]",
-    "new": "[craftLine(r), woundLine(r), ambitionLine(r), bloodLine(r)]",
+    "old": "[craftLine(r), woundLine(r, now), ambitionLine(r), bloodLine(r), tearLine(r)]",
+    "new": "[craftLine(r), woundLine(r), ambitionLine(r), bloodLine(r), tearLine(r)]",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js",
       "test/systems/revenant/unquiet.test.js"
@@ -138,8 +138,8 @@
   {
     "name": "UNQUIET3-train-never",
     "file": "src/systems/revenant/revenant.js",
-    "old": "      if (lesson) { r.learned = withLesson(r.learned, lesson, r.rank); if (!r.notice) r.notice = 'trained'; touch(r); }",
-    "new": "      if (false) { r.learned = withLesson(r.learned, lesson, r.rank); if (!r.notice) r.notice = 'trained'; touch(r); }",
+    "old": "      if (lesson) { r.learned = withLesson(r.learned, lesson, r.rank); if (!r.notice) r.notice = 'trained'; trained.add(r.id); touch(r); }",
+    "new": "      if (false) { r.learned = withLesson(r.learned, lesson, r.rank); if (!r.notice) r.notice = 'trained'; trained.add(r.id); touch(r); }",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js"
     ]
@@ -147,8 +147,8 @@
   {
     "name": "UNQUIET3-train-no-notice",
     "file": "src/systems/revenant/revenant.js",
-    "old": "if (!r.notice) r.notice = 'trained'; touch(r); }",
-    "new": "touch(r); }",
+    "old": "if (!r.notice) r.notice = 'trained'; trained.add(r.id); touch(r); }",
+    "new": "trained.add(r.id); touch(r); }",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js"
     ]
@@ -156,8 +156,8 @@
   {
     "name": "UNQUIET3-train-any-day",
     "file": "src/systems/revenant/revenant.js",
-    "old": "      if (!(ambitionOf(r.personality) === 'mastery' ? masteryFestersOn(dueDay, d) : festersOn(dueDay, d))) continue;   // UNQUIET: a revenant of mastery trains - it festers twice as fast\n      // UNQUIET III",
-    "new": "      const lessonEarly = trainLesson(r); if (lessonEarly) { r.learned = withLesson(r.learned, lessonEarly, r.rank); }\n      if (!(ambitionOf(r.personality) === 'mastery' ? masteryFestersOn(dueDay, d) : festersOn(dueDay, d))) continue;   // UNQUIET: a revenant of mastery trains - it festers twice as fast\n      // UNQUIET III",
+    "old": "      if (!(ambitionOf(r.personality) === 'mastery' ? masteryFestersOn(dueDay, d) : festersOn(dueDay, d))) continue;   // UNQUIET: a revenant of mastery trains - it festers every two days, not three\n      // UNQUIET III",
+    "new": "      const lessonEarly = trainLesson(r); if (lessonEarly) { r.learned = withLesson(r.learned, lessonEarly, r.rank); }\n      if (!(ambitionOf(r.personality) === 'mastery' ? masteryFestersOn(dueDay, d) : festersOn(dueDay, d))) continue;   // UNQUIET: a revenant of mastery trains - it festers every two days, not three\n      // UNQUIET III",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js"
     ]
@@ -201,8 +201,8 @@
   {
     "name": "UNQUIET3-den-never",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(deedName === 'fled' && !r.dread && here ? nearestLair(here.px, here.py, here.dungeons) : null) ?? lairAfter(r, here);",
-    "new": "lairAfter(r, here);",
+    "old": "  const den = deedName === 'fled' && !r.dread && here ? nearestLair(here.px, here.py, here.dungeons) : null;",
+    "new": "  const den = null;",
     "tests": [
       "test/systems/revenant/unquiet3_train.test.js"
     ]
@@ -210,10 +210,11 @@
   {
     "name": "UNQUIET3-den-on-a-kill",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(deedName === 'fled' && !r.dread && here ?",
-    "new": "(!r.dread && here ?",
+    "old": "const den = deedName === 'fled' && !r.dread && here ?",
+    "new": "const den = !r.dread && here ?",
     "tests": [
-      "test/systems/revenant/unquiet3_train.test.js"
+      "test/systems/revenant/unquiet3_train.test.js",
+      "test/systems/revenant/unquiet2_hunt.test.js"
     ]
   },
   {

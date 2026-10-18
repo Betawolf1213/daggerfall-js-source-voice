@@ -110,8 +110,8 @@
   {
     "name": "RVN11b-still-sworn",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  r.sworn = false; r.fate = null; r.companion = null; r.out = false;\n  r.epithet = REVENANT_EPITHETS.deserted[0];",
-    "new": "  r.fate = null; r.out = false;\n  r.epithet = REVENANT_EPITHETS.deserted[0];",
+    "old": "  r.sworn = false; r.fate = null; r.companion = null; r.out = false;\n  if (r.wounds?.length) r.woundDay",
+    "new": "  r.fate = null; r.out = false;\n  if (r.wounds?.length) r.woundDay",
     "tests": [
       "test/systems/rvn11b_desert.test.js"
     ]

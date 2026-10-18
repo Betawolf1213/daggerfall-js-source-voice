@@ -21,7 +21,7 @@
 //
 // PURE but for the clock and the records it is handed - the pools (scenes/exteriorFoes.js, scenes/dungeonContext.js)
 // call in, and draw what it answers.
-import { takenName, revenantHandBack, revenantById, revenantOn, revenantYielded, revenantExecuted, revenantSpared, revenantMomentEvent, revenantPortrait, revenantRankNumeral, revenantLastStand, revenantLastStandEvent } from './revenant.js';
+import { takenName, revenantHandBack, revenantById, revenantOn, revenantYielded, revenantExecuted, revenantSpared, revenantMomentEvent, revenantPortrait, revenantRankNumeral, revenantLastStand, revenantLastStandEvent, revenantEscapeTail } from './revenant.js';
 import { revenantTrophy, trophyKindWords } from './revenantTrophy.js';
 import { PERSONALITIES } from './revenantPersonality.js';
 import { retinueHasRoom, swornPlace, REVENANT_RETINUE_MAX, setRetinuePlayer, holdSworn, swornWitness } from './revenantCompanions.js';
@@ -31,6 +31,7 @@ import { DISSOLVE_EMBER, DISSOLVE_ARCANE } from '../dissolve.js';
 import { clearPlayerHarm } from '../harmMark.js';   // AUDIT (2026-10-02): a beaten one's harm is no one's death
 import { willMatters, willBroken, LAST_STAND_RANK, LAST_STAND_ROAR, PHASE_TWO, lastStandHealth, phaseTwo } from './revenantFeud.js';   // RVN3: the will (bible/12-Enhanced-AI/Feud-Arc.md 14.2); RVN4: the last stand (15)
 import { endCraft, DREAD, dreadStandHealth } from './revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): a flight's craft put down; the Dread's two stands
+import { t } from '../textManager.js';   // AUDIT UNQUIET: the slip's words through the text core
 
 /** How long a beaten revenant kneels before it slips away (ms). */
 export const REVENANT_YIELD_MS = 90000;
@@ -156,9 +157,10 @@ export function yieldStep(f, feet, dtMs = 0) {
   if (feet && f.ai?.feet && Math.hypot(feet[0] - f.ai.feet[0], feet[2] - f.ai.feet[2]) > REVENANT_YIELD_REACH) return 'slip';
   return null;
 }
-/** Its words as it slips away (the escape the pool makes of it). */
+/** Its words as it slips away (the escape the pool makes of it). AUDIT UNQUIET (Revenants.md section 49): ended as every
+ *  getting-away's card is - the wound it got away with, where its trail leads (revenant.js revenantEscapeTail). */
 export function slipEvent(player, r, { archive = null, rolls = Math.random } = {}) {
-  return revenantMomentEvent('slip', r, player?.name, { body: `You hesitated. ${r.given} got away - and it will remember.`, archive, rolls });
+  return revenantMomentEvent('slip', r, player?.name, { body: `${t('rvn.unq.slip', 'You hesitated. {given} got away - and it will remember.', { given: r.given })}${revenantEscapeTail(r)}`, archive, rolls });
 }
 /** THE KNEEL: its hurt's last frame held (a breath every so often - the frame before it), facing the eye as ever. */
 export function kneelPose(f, eye, now = Date.now()) {

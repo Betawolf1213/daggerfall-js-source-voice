@@ -1,7 +1,7 @@
 // UNQUIET III (bible/06-Systems/Revenants.md section 48; the owner, 2026-10-18: "Do it", of UNQUIET II's next three: a
 // revenant of mastery trains a counter to the player's most-used weapon; wounds heal over time, so leaving it unhunted has
 // a cost; and the trail picks its den from the nearest dungeon). Pinned: the numbers; a wound healing through the real
-// day loop (every three days left alone, the oldest first; a new wound counting again; never one out or the Dread),
+// day loop (every five days left alone - AUDIT UNQUIET, it was three - the oldest first; a new wound counting again; never one out or the Dread),
 // saved, and said on the page; training through the real day loop (its scars' most-used habit, in a lesson's room, on its
 // training days alone, never one of another ambition), its card through the notice step; the nearest den through the real
 // deed (an escape in the open, the nearest; a kill or underground, the lair's own law).
@@ -44,51 +44,52 @@ function made(p, { personality = 'brutal', now = DAY * 10, deedName = 'fled' } =
 }
 const at = (d) => ({ now: DAY * d + 60, rolls: () => 0.99 });   // 0.99: no deserter among the sworn
 
-test('UNQUIET III THE NUMBERS: a wound heals every three days left alone - counted from the day of its last; the days to the next (mutants: the days; a day before counted; the count from the wrong day)', () => {
-  assert.deepEqual({ ...U.WOUND }, { MAX: 3, RESIST: -15, HEAL_DAYS: 3 });
-  assert.deepEqual([10, 11, 12, 13, 14, 16, 19].map((d) => U.healsOn(10, d)), [false, false, false, true, false, true, true]);
-  assert.deepEqual([U.healsOn(-1, 2), U.healsOn(-1, 3), U.healsOn(undefined, 3), U.healsOn(0, 3)], [false, false, false, true], 'no wound day, none');
-  assert.deepEqual([10, 11, 12, 13].map((d) => U.daysToHeal(10, d, ['bled'])), [3, 2, 1, 3]);
+test('UNQUIET III THE NUMBERS: a wound heals every five days left alone - counted from the day of its last; the days to the next (mutants: the days; a day before counted; the count from the wrong day)', () => {
+  // PIN MOVED (AUDIT UNQUIET, section 49): five days - at three a wound healed before most returns found it
+  assert.deepEqual({ ...U.WOUND }, { MAX: 3, RESIST: -15, HEAL_DAYS: 5 });
+  assert.deepEqual([10, 11, 14, 15, 16, 20, 25].map((d) => U.healsOn(10, d)), [false, false, false, true, false, true, true]);
+  assert.deepEqual([U.healsOn(-1, 4), U.healsOn(-1, 5), U.healsOn(undefined, 5), U.healsOn(0, 5)], [false, false, false, true], 'no wound day, none');
+  assert.deepEqual([10, 11, 12, 14, 15].map((d) => U.daysToHeal(10, d, ['bled'])), [5, 4, 3, 1, 5]);
   assert.deepEqual([U.daysToHeal(10, 11, []), U.daysToHeal(-1, 11, ['bled'])], [0, 0]);
 });
 
-test('UNQUIET III A WOUND HEALS: left alone, its oldest wound heals every three days through the real day loop; a new wound counts from its own day; never one out in the world, nor the Dread; its day rides the save (mutants: never heals; the newest healed; the count unreset; one out healing; unsaved)', () => {
+test('UNQUIET III A WOUND HEALS: left alone, its oldest wound heals every five days through the real day loop; a new wound counts from its own day; never one out in the world, nor the Dread; its day rides the save (mutants: never heals; the newest healed; the count unreset; one out healing; unsaved)', () => {
   const p = me();
   const r = made(p);
   r.dueAt = DAY * 99;   // far off: no festering in the way
   r.wounds = ['bled', 'lamed']; r.woundDay = 10;
   N.revenantFester(p, at(10));   // the first count: from here
-  N.revenantFester(p, at(12));
-  assert.deepEqual(r.wounds, ['bled', 'lamed'], 'two days: none yet');
-  N.revenantFester(p, at(13));
-  assert.deepEqual(r.wounds, ['lamed'], 'three days: the oldest heals');
+  N.revenantFester(p, at(14));
+  assert.deepEqual(r.wounds, ['bled', 'lamed'], 'four days: none yet');
+  N.revenantFester(p, at(15));
+  assert.deepEqual(r.wounds, ['lamed'], 'five days: the oldest heals');
   restoreModSaveRecords(modSaveRecords());
   const q = N.revenantsFor(p).find((x) => x.id === r.id);
   assert.equal(q.woundDay, 10, 'its day saved');
-  N.revenantFester(p, at(16));
-  assert.deepEqual(q.wounds, [], 'six: the next');
+  N.revenantFester(p, at(20));
+  assert.deepEqual(q.wounds, [], 'ten: the next');
   // a new wound through the real deed counts from its own day
   const e = foe({ revenant: { id: q.id } });
   feudOf(e).last = 'arrow';
-  N.revenantDeed(p, e, 'fled', { mobileType: M.Orc, rolls: () => 0, now: DAY * 17 + 5 });
-  assert.deepEqual([q.wounds, q.woundDay], [['lamed'], 17]);
+  N.revenantDeed(p, e, 'fled', { mobileType: M.Orc, rolls: () => 0, now: DAY * 21 + 5 });
+  assert.deepEqual([q.wounds, q.woundDay], [['lamed'], 21]);
   q.dueAt = DAY * 99; q.out = false;
-  N.revenantFester(p, at(19));
-  assert.deepEqual(q.wounds, ['lamed'], 'two days after its own day: none');
-  N.revenantFester(p, at(20));
-  assert.deepEqual(q.wounds, [], 'three');
+  N.revenantFester(p, at(25));
+  assert.deepEqual(q.wounds, ['lamed'], 'four days after its own day: none');
+  N.revenantFester(p, at(26));
+  assert.deepEqual(q.wounds, [], 'five');
   // never one out, nor the Dread
-  q.wounds = ['bled']; q.woundDay = 20; q.out = true;
-  N.revenantFester(p, at(23));
+  q.wounds = ['bled']; q.woundDay = 26; q.out = true;
+  N.revenantFester(p, at(31));
   assert.deepEqual(q.wounds, ['bled'], 'out in the world');
   q.out = false; q.dread = true; q.rank = 5;
-  N.revenantFester(p, at(26));
+  N.revenantFester(p, at(36));
   assert.deepEqual(q.wounds, ['bled'], 'the Dread keeps what it has');
 });
 
 test('UNQUIET III THE PAGE: its wounds and when the oldest heals - "unless you find it first"; with no day known, the wounds alone (mutants: unsaid; the days wrong)', () => {
-  assert.equal(PG.woundLine({ wounds: ['lamed'], woundDay: 10 }, DAY * 11 + 60), 'Wounds you left: Lamed (a lamed leg - it runs slower). The oldest heals in 2 days unless you find it first.');
-  assert.ok(PG.woundLine({ wounds: ['lamed'], woundDay: 10 }, DAY * 12).endsWith('heals in 1 day unless you find it first.'));
+  assert.equal(PG.woundLine({ wounds: ['lamed'], woundDay: 10 }, DAY * 11 + 60), 'Wounds you left: Lamed (a lamed leg - it runs slower). The oldest heals in 4 days unless you find it first.');
+  assert.ok(PG.woundLine({ wounds: ['lamed'], woundDay: 10 }, DAY * 14).endsWith('heals in 1 day unless you find it first.'));
   assert.equal(PG.woundLine({ wounds: ['lamed'] }), 'Wounds you left: Lamed (a lamed leg - it runs slower).');
   assert.equal(PG.woundLine({ wounds: [], woundDay: 10 }, DAY * 11), '');
 });

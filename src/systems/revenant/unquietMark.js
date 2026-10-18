@@ -12,9 +12,12 @@
 // again - the mark is its stand's, as its voice is.
 //
 // THE GATE. systems/revenant/revenant.js hands in when a mark may be drawn at all (`setUnquietGate`): the arc on (the Loot
-// rarity row), the page's revenants not held (RENOWN-GATE), and room for another (fewer than REVENANT_MAX living - the
-// Unquiet are few: while three hunt the player, no other rises, and no foe wears a mark it could not keep). With the gate
-// shut, or before revenant.js has loaded, nothing is marked.
+// rarity row), the page's revenants not held (RENOWN-GATE), and room for another (fewer than REVENANT_MAX hunting - the
+// Unquiet are few: while three hunt the player, no other is marked, and none rises). A mark drawn before the third rose
+// stays on its foe - it is what the foe is - and that foe rises only if one of the three is gone by then (revenant.js
+// revenantCandidate asks the cap again). With the gate shut, or before revenant.js has loaded, nothing is marked.
+// AUDIT UNQUIET (section 49): a foe of the open zone or the sand never wears it (`isUnquiet`) - it is tagged after its
+// promotion drew the mark, and could never rise.
 //
 // A LEAF but for the id's mint: the elites' and the champions' laws import it, and neither may bring the revenant system.
 import { mintCharacterId } from '../characterId.js';
@@ -49,8 +52,8 @@ export function markUnquiet(entity) {
   entity.unquiet = _force ?? unquietId(entity._voiceId);
   return entity.unquiet;
 }
-/** Does this foe carry the mark? */
-export const isUnquiet = (entity) => entity?.unquiet === true;
+/** Does this foe carry the mark? Never one of the open zone's (`wildFoe`, `wildGiant`) or the sand's (`bout`). */
+export const isUnquiet = (entity) => entity?.unquiet === true && !entity.wildFoe && !entity.wildGiant && !entity.bout;
 /** Tests only: every draw answers `v` (true, false), or the id's own again (null) - a real pool's foe marked at will. */
 let _force = null;
 export function _forceUnquietForTests(v = null) { _force = v == null ? null : !!v; }

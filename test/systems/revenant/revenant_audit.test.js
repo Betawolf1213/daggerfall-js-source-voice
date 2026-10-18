@@ -73,7 +73,8 @@ test('AUDIT A1/A6: a judged revenant does no deed - executed, released or sworn,
   N.revenantDeserts(me, N.revenantById(s.id), { now: 200 });
   assert.ok(N.livingRevenants().some((x) => x.id === out.id), 'the one standing is never buried');
   assert.equal(N.livingRevenants().length, N.REVENANT_MAX, 'the cap holds');
-  // a tombstone's id is never worn again
+  // a tombstone's id is never worn again (AUDIT UNQUIET, Revenants.md section 49: past the cap no birth at all - room made)
+  N.revenantSlain(me, { revenant: { id: out.id } });
   const e3 = orc({ revenant: { id: 'long-gone' } });
   const r3 = N.revenantDeed(me, e3, 'fled', { now: 500, rolls: () => 0 });
   assert.notEqual(r3.id, 'long-gone', 'a forgotten id is not reused');

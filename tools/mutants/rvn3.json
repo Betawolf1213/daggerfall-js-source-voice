@@ -265,8 +265,8 @@
   {
     "name": "RVN3-the-unbroken-words",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  const body = `${r.given} staggers into the smoke, unbroken.`;",
-    "new": "  const body = `${r.given} got away.`;",
+    "old": "t('rvn.unq.unbroken', '{given} staggers into the smoke, unbroken.', { given: r.given })",
+    "new": "t('rvn.unq.unbroken', '{given} got away.', { given: r.given })",
     "tests": [
       "test/systems/rvn3_weak.test.js"
     ]

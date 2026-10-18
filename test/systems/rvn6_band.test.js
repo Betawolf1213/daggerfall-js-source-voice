@@ -167,7 +167,7 @@ test('RVN6 ON THE REAL STREET POOL: a rank-3 one stands with the first two of it
   }
   assert.equal(pool.snapshotWorld().length, 0, 'neither it nor its band in the save');
   for (const [rank, n] of [[2, 1], [4, 3], [1, 0]]) {
-    N._resetRevenantForTests();
+    N._resetRevenantForTests(); _store.clear();   // AUDIT UNQUIET: and the mirror - the deed reads it in before it counts the cap
     const s = await stood(p, rank);
     assert.equal(s.band.length, n, `rank ${rank}`);
   }

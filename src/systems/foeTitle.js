@@ -25,5 +25,5 @@ export function foeTitle(entity, base) {
   const c = entity?.champion;
   const named = typeof c === 'string' && c ? `${c.charAt(0).toUpperCase()}${c.slice(1)} ${base}` : base;
   const special = entity?.eliteFoe ? `Elite ${named}` : named;
-  return entity?.unquiet === true ? `Unquiet ${special}` : special;   // UNQUIET: the mark - it may rise
+  return entity?.unquiet === true && !entity.wildFoe && !entity.wildGiant && !entity.bout ? `Unquiet ${special}` : special;   // UNQUIET: the mark - it may rise (unquietMark.js isUnquiet's own test: AUDIT UNQUIET, never the zone's or the sand's)
 }

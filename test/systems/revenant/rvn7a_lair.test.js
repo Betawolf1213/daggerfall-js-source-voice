@@ -151,7 +151,8 @@ test('RVN7a THE HOSTS: the world host\'s door names my map pixel and the named d
   assert.match(d, /return \{ underground: \{ px: p\.x, py: p\.y, name: String\(dfLocation\.name\), region: dfLocation\.regionIndex \?\? -1 \} \};/);
   assert.match(read('src/scenes/hostMagic.js'), /lairHere: \(\) => \{ try \{ return lairHere\?\.\(\) \?\? null; \} catch \{ return null; \} \},/);
   // PIN MOVED (UNQUIET III, Revenants.md section 48): one that got away in the open goes to ground in the nearest den - else its lair's own law
-  assert.match(read('src/systems/revenant/revenant.js'), /const here = playerDoor\(\)\?\.lairHere\?\.\(\) \?\? null;\n\s*const lair = \(deedName === 'fled' && !r\.dread && here \? nearestLair\(here\.px, here\.py, here\.dungeons\) : null\) \?\? lairAfter\(r, here\);[^\n]*\n\s*if \(!sameLair\(lair, r\.lair\)\) \{ r\.lair = lair; r\.lairKnown = false; \}/);
+  // PIN MOVED again (AUDIT UNQUIET, section 49): the den named apart - its trail leads only there
+  assert.match(read('src/systems/revenant/revenant.js'), /const here = playerDoor\(\)\?\.lairHere\?\.\(\) \?\? null;\n\s*const den = deedName === 'fled' && !r\.dread && here \? nearestLair\(here\.px, here\.py, here\.dungeons\) : null;\n\s*const lair = den \?\? lairAfter\(r, here\);[^\n]*\n\s*if \(!sameLair\(lair, r\.lair\)\) \{ r\.lair = lair; r\.lairKnown = false; \}/);
 });
 
 test('RVN7a the page: its lair as I know it - roaming, unknown, or named (mutants: a lair unknown named)', () => {

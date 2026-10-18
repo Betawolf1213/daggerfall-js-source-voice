@@ -188,11 +188,12 @@
  "Unquiet": "Rastløs",
  "Smoke": "Røyk",
  "Blink": "Glimt",
- "Sink": "Synk",
+ "Sink": "Synking",
  "Bolt": "Spurt",
  "Vengeance": "Hevn",
  "Mastery": "Mesterskap",
  "Plunder": "Plyndring",
  "ambition": "ambisjon",
- "grows bolder": "blir dristigere"
+ "grows bolder": "blir dristigere",
+ "Weakened (gone to ground, recovering)": "Svekket"
 }
