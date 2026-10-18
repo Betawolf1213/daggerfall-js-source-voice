@@ -9,6 +9,8 @@ lands only where the cause is proven; where it is not, the record says so and wh
 |---|---|---|---|
 | 1 | Nauya, "Companions and Open Wagon": "when they dismount from the wagon, they just drop down inside of it, and they get stuck in your wagon unable to help you or move out of it ... the temporary fix is to just respawn your wagon every single time you run into an encounter" | The companions' seat was read by the motor alone, so a seat that went (the wagon parked) left the body where it sat, and it fell through the bed. The parked box, kept from closing round the player's capsule only, then stood round it. Its two-sided faces push no body out | fixed (WAGON-ALIGHT) |
 | 2 | MADMAN0037, "Performance tank in specific area": "The Mouse and Fawn tavern in Sentinel, graphics settings preset ultra, Gpu fans turn into jet turbines" - the counter: 198 fps, 5.1 ms, "draws 67 binds 77", an RTX 5070 at 2560x1391 | The counter counted the room's own pass alone. The view out through the windows (the street, drawn before the room's frame) and the shadow maps' replays were nowhere on it, and nothing said what held 198 fps. VSync is on by default on the desktop, and the frame is GPU-bound. Which pass costs it is not proven | counted (PASS-COUNT); the cost itself open, below |
+| 3 | Anon-e-moose, "Gradual FPS loss then crash": "When in interior cells, and especially in combat, the FPS gradually slows down over 5 mins or so, until it eventually freezes and either never recovers or actually hard crashes" (a video: a dungeon, a Skeletal Warrior, the screen red with damage) | Not proven. Five simulated minutes of the real renderer over a recording GL, the real hit effects and blood, and the real foe motor, attack and tactics against the player all stayed flat. No game data in the container to run the real scene. Two real leaks were found on the way, neither enough alone | two leaks fixed (LOOT-FLATS, HUD-HEAD); the cause open, below |
+| 4 | Phayezorix, "DFO Client Travel Map": "the travel map being laggy as hell ... removed all mods ... The only thing that 'worked' was completely re-installing DFO + adding mods back. After a few hours (maybe 3-4hrs) the travel map just lags again ... Browser does NOT have the travel map issue" | Not found. The desktop client serves the same files the browser does (`app/main.cjs` handleDagger, one `fileResponse`, every channel file sha256-checked). A reinstall clears only `<userData>/Game`, never the saves or prefs. The map's reads are cached in memory | open: what would find it, below |
 
 ## WAGON-ALIGHT: the companions get down as a rider does
 
@@ -90,3 +92,61 @@ Why no test saw it: `test/systems/perf3.test.js` drove the counter with the room
 a frame with a view out counts.
 
 Pins: `test/systems/fb1018_passcount.test.js` (3). Mutants: `tools/mutants/fb1018_passcount.json` (8, all dead).
+
+## Report 3: the slowdown in interiors - two leaks fixed, the cause open
+
+NOT PROVEN. Measured in Node over five simulated minutes of a fight (scripts, not pins):
+- the real `Renderer` over `test/retroGl.mjs`'s recording GL, with hit splashes, a full ring of blood marks, six
+  animating foe batches, the damage flash and the blood lens: live GL objects, `renderer.textures.size` and the GL calls
+  per frame all flat, and the heap flat after a collection;
+- the real hit effects and blood (`createHitEffects`, `createBloodMarks`): splash batches made equal those destroyed,
+  each pool at its cap;
+- the real foe motor, attack, tactics and blows (a Skeletal Warrior at the player for five minutes): its boards, blows
+  and keys flat, and its cost per update falling.
+
+The freeze and crash point at memory (a heap that thrashes, or GPU memory lost with the context) on a path that needs
+the game's data to run: the online room's puppets, Physical Items' bodies, the Morrowind arm and bodies. What would
+name it: the counter (now with PASS-COUNT's `view` and `shadow`), and three heap snapshots with `renderer.textures.size`
+at 0, 2.5 and 5 minutes of the fight, from the player's machine (`?perf` prints the renderer's frame line).
+
+**LOOT-FLATS** (`src/scenes/droppedLoot.js` freeBatch and remintBatch, `src/render/flatAnimation.js` rebind). Five of the
+pool's nine frees of a pile's batch - both restores (every room left and every load) and the sweep of emptied piles -
+destroyed it and left its entry in the flat animator, which ticked the dead batches of every animated pile the pool had
+held for the rest of its life. A pile reminted where it now lies (a recentre, a moved ground) stood still, its entry on
+the batch it replaced. A batch is now freed one way, out of the animator first, and a reminted batch takes over its
+entry and its clock. Pins: `test/scenes/fb1018_lootflats.test.js` (3). Mutants: `tools/mutants/fb1018_lootflats.json`
+(5, all dead).
+
+**HUD-HEAD** (`src/ui/hud/hudLarge.js` swapHudHead). With Morrowind's data attached the large HUD's head is a picture of
+its own (PORTRAIT3D), loaded again whenever the head's key moves - every helm put on or taken off - and the one it
+replaced stayed on the GPU. Two loads in flight landed in the order they finished, so a slow one could put the helm
+just taken off back on the bar. A head now goes up only while its key is the one the bar asks for, and the picture it
+replaces - or a late answer's own - is released by its name. Pins: `test/ui/hud/fb1018_hudhead.test.js` (2). Mutants:
+`tools/mutants/fb1018_hudhead.json` (4, all dead).
+
+Found and left, each named here: an online PvP blood splash indoors goes to the street's pool, which only the street
+ticks (PvP only, cleared when the player steps out); and a dungeon's targeting asks each armed foe for a fresh
+candidate list every classic tick (O(n²) garbage at 16 Hz with many foes - a cost, not a leak). Neither is proven to
+be this report's cause.
+
+## Report 4: the desktop travel map - not found
+
+The clues do not meet the code. What it rules out:
+- **The client serves the browser's game.** The same files through one `fileResponse` (`app/main.cjs` handleDagger),
+  a channel version's files checked by sha256 (`app/lib/gameChannel.cjs` decodeFile). The page has no branch on how
+  it was served.
+- **A reinstall cannot clear the player's data.** `main.cjs` pins `userData` to `Daggerfall JavaScript` under the
+  app-data folder. Saves, prefs, IndexedDB and caches all live there, and the installer does not delete them. What a
+  reinstall does reset is `<userData>/Game` (`app/lib/gameStore.cjs`: a new seed resets the channel's state and deletes
+  every version folder). The installer's own copy then plays until the hourly check brings the next release, which
+  would fit "fine for 3-4 hours". But a channel version runs the same code (above).
+- **The map's per-frame reads are cached.** Waypoints, filters, masks and the static ink are held in memory, and the
+  classic map releases its last textures. The desktop store answers a read from memory (STORE-CACHE). A rescan
+  costs 0.65 ms at ten save slots and nothing calls one per frame. The lag stays with every filter off, so the marks'
+  count is not it.
+
+What would find it, from the player: their VSync and Frame Rate Cap settings (VSync off runs the page uncapped, near a
+thousand frames a second, and the counter now says so), `%APPDATA%\Daggerfall JavaScript\Game\state.json`, whether
+deleting that `Game` folder alone (no reinstall) clears it, and a performance trace while panning the map
+(View > Toggle Developer Tools).
+
