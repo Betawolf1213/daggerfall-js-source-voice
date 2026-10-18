@@ -95,7 +95,7 @@ function stationQuestions() {
     const at = wm.indexOf(`    ${q}() {`);
     assert.ok(at > 0, `worldModes.js asks ${q}`);
     const body = wm.slice(at, wm.indexOf('\n    },', at));
-    out[q] = { types: [...body.matchAll(/BUILDING_TYPES\.(\w+)/g)].map((m) => m[1]), home: /decorOwnerHere\(\) && interiorDecor\.list\(\)\.some/.test(body), body };
+    out[q] = { types: [...body.matchAll(/BUILDING_TYPES\.(\w+)/g)].map((m) => m[1]), home: /stationOwnerHere\(\) && interiorDecor\.list\(\)\.some/.test(body), body };
   }
   return out;
 }
