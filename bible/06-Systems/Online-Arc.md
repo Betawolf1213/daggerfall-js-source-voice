@@ -8390,7 +8390,14 @@ view, "Station: Alchemy >" cycles the craft offered, free, and follows a newly c
 through the guild service's own door (openServiceFlow, no guild), so the maker's own laws stand: the potion maker's
 ingredients, the spell maker's spellbook, and what each charges. A visitor is told whose home it is, as a storage
 piece's visitor is. STATION-DOOR (`01-Overview/bugs/Field-Bugs-2026-10-11f.md`): online, an alchemy or enchanting station
-asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting).
+asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting). FB1018B HOME-BENCH (the
+Discord, Cruor: "shared account homes don't let other characters access their craft benches"): in an online home the
+owner is the owner's ACCOUNT, as at its door - every character of it is served by every station (the press, and the
+Stores page's forge, workbench, loom, mason's and jeweller's benches and alchemy and enchanting stations), where the
+station asked the owning character alone and told the account's other character "This belongs to <its own handle>"
+(`systems/online/onlineHomes.js` homeStationsServe, `scenes/worldModes.js` stationOwnerHere). A station's use spends
+nothing of the home's; its storage stays the owning character's. `test/scenes/fb1018b_homebench.test.js`,
+`tools/mutants/fb1018b_homebench.json`.
 
 **THE SERVICE** (`server-account/src/decor.js` placeJson). The craft is written with the place. ACCOUNT_VERSION
 acct16 (acct15 on its branch; main's FOUNDER3 took acct15 first) - the account Worker deploys from CI on a change to its bundle.
@@ -9452,7 +9459,9 @@ took: three town homes a character, no upkeep.
   (`scenes/world.js`, the location rect's entry, beside HUB1's arrival line) and by any door of it, believed for a
   minute; an unanswered ask keeps what was known and waits ten seconds before the next; a door waits at most 2.5
   seconds for a town it has never heard from and then goes on under Daggerfall's law. `own` is read against the
-  character playing now; the account's other characters may always walk in, but a home is not theirs.
+  character playing now; the account's other characters may always walk in, but a home is not theirs - its storage,
+  its bed, its decorator and its sale stay the owning character's. Its crafting stations serve them (FB1018B HOME-BENCH,
+  under HOME-STATIONS), as its door does.
 - **Where the service's list decides.** Online, a building it names is that player's home; one it does not name -
   or a town not heard from yet - stands under Daggerfall's own law, and that includes this character's own OFFLINE
   house: it is a house the server never hears of, not one taken away, so it keeps its storage and its bed, and anyone
