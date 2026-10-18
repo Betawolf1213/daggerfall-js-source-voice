@@ -3413,6 +3413,8 @@ ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, 
 earlier merges, renumbered past main's slices to MAKER-KEPT's `acct148` at the merges), its migration `0124_elite_breach.sql` (0119 until main's SERPENT5 took it, 0120 until main's AUTO-HOLD took that, 0121 until FIELD BUGS 2026-10-16b took 0121 and 0122, 0123 until MAKER-KEPT took that). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
 A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 213, `src/net/wire.js` - AUDIT EG
 V: it read 197, its branch's first, and main's world197 to world212 carry no breach).
+Shipped, the arc's later slices each move the relay on as any slice does: EG-PERFECT's `world218` (section 31's EG-PERFECT
+record, "The relay").
 
 ## 24. The made level's rules
 
@@ -9505,12 +9507,26 @@ measured, the real motor) and `test/net/eliteGates/egperfect_broken_unit.test.js
 it and on its pieces alone). Mutants: `tools/mutants/egperfect_lords.json` (47) and `tools/mutants/egperfect_broken.json` (30),
 every one dead. PINS MOVED: the law pins of `egaudit3_law`, `egaudit5_f`, `eghero_lay`, `egz_frag` and `egdur_relay` (spec law 10
 the build's, law 9 kept); `law9_rooms` holds law 9 by the seam (`egLawSeam(9)` - its 800 halls hashed as before); `egHallTry`'s
-law unnamed is the seam's, as `egHallOf`'s.
+law unnamed is the seam's, as `egHallOf`'s. The lords' pins moved with their findings: `egaudit3_client_fight`, `egaudit3_lords`,
+`egaudit4_legion`, `egaudit4_lords`, `egaudit4_lords_errands` and `egaudit5_b` (a lord at 0.6 of its health, so a signature fires at
+the second phase; the Clan Muster's cards; Burning Perch said at once; the perches risen; the Last Lesson's tell), each with its
+PIN MOVED note. Under law 10 the suite's pins measured on law 9's halls name law 9 and its sweeps run over law 10's own
+(Elite-Gates-Ascent.md section 11, "The pins under law 10"); forty-four mutant records the change moved were re-aimed BY CONTENT
+(`eg5`, `eg6a`, `egaudit3_law`, `egaudit3_lords`, `egaudit4_lords`, `egaudit5_b`, `egaudit5_f`, `egfrag`, `eghero_lay`, `egint`,
+`egspan`, `egz_frag`, `egz_lords`, `egz_state`, `egz_telegraph`, `law9_height`, `law9_proofs`, `law9_rooms`, `soc1`): each applies
+again at one site and still dies.
 
-**The four hosts.** None touched (HOST-SPLIT): the law in its own modules, the relay's await in the brain's wake and trial, the
-pilot's frame in the tool.
+**The relay.** `net/eliteGates/egLords.js`, `egBodies.js`, `egBrain.js`, `egLaw.js`, `egAscent.js`, `egSpanLaw.js` and `net/wire.js`
+are in the relay's bundle: `RELAY_VERSION` moves to `world218` (its `LAW` row in `test/net/relayversion.test.js`, re-hashed in place
+while unshipped). The wire's additions are optional and bounded: `ecut` carries the instant its feint was cut at (`at`), the
+stage's say set gains `perches` (the Wyrm's perches risen at its second phase), `sg`/`st` carry a routed tube's `tm` (the ways
+record below) - an old screen ignores each. A breach records its law (`egv`) and draws its own: a law 9 breach open at the
+deploy runs law 9's halls to its end. The deploy order is the relay's, then the client's.
 
-**The Ledger.** Section A's ELITE-GATES row's law moves to spec law 10 (EG_LAWS).
+**The four hosts.** None touched by this record (HOST-SPLIT): the law in its own modules, the relay's await in the brain's wake
+and trial, the pilot's frame in the tool (the ways record below names its one line in `scenes/world.js`).
+
+**The Ledger.** Section A's ELITE-GATES row names EG-PERFECT: the lords' blows and spec law 10 (EG_LAWS).
 
 **Departures from this page**: section 8.2's "18 platforms in four sections" and 8.9's Brink of 132-151 m were law 8's (law 9
 and 10's ways run 300-640 m); section 8.6's approach is two of the band's kinds; section 13.4's signatures stand at the second
@@ -9736,6 +9752,11 @@ change moved were re-aimed BY CONTENT (`auditclimbarc`, `eg6a`, `eghero_lay`, `e
 **The relay.** `net/eliteGates/egBrain.js`, `egFair.js`, `egSpanLaw.js` and `net/wire.js` are in the relay's bundle, so this is a relay
 change: the relay's version moved with EG-PERFECT's (`world218` - the EG-PERFECT record above). The wire's change is additive (`tm` on `sg`/`st`, optional): an old screen ignores it and
 keeps the wake's clock for a routed tube - the deploy order is the relay's, then the client's.
+
+**The four hosts.** `scenes/world.js` carries one line changed, none added (`test/scenes/hostceiling.test.js` holds its ceiling):
+bootWorld's Spire wake getter hands the tube's instant beside the hall and its wake
+(`src/scenes/world.js:"registerSpireWake(egClient ? () => { const E = egClient.state(); return { h: E.h | 0, hw: E.hw || 0, tm: E.tm || 0 }; } : null);"`).
+`scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js` are untouched, and no Room method changed.
 
 **What it does not do, said so.**
 - No hall's draw moved (laws 4-9 - spec law 10 is the EG-PERFECT record's), no proof, no generator: THE TIMED SOLVER's answers are its own. Every read here holds for law 10's routed halls as for law 9's.
