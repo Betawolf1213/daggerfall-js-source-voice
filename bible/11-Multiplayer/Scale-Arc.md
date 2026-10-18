@@ -2676,11 +2676,17 @@ account service's (its window law `loadHours` and its drawing `answerTable` are 
 - **kinds** - every room kind (a key's prefix, `roomKindOf`) over the window: its room-windows, its largest room, the
   hellos it took and refused busy, `room full`, the sockets closed with a reason, the frames its budgets dropped, the
   poses in and the sends each cost, the data out and the storage it touched; the most sends first;
-- **windows** - every five minutes, each kind: its sockets across the relay at each room's close (a point is one room's
-  window, so the sum is the kind's - `chat`, the hub's and the regions' shards, is about two a player online), its
-  largest room, busy, full, drops, poses and sends. A gate opens at HH:32:30 UTC every even hour, so its crowd is its
-  rows: `world` for the site's cell, `gate` for the court and its copies;
-- **crowds** - the forty busiest room-windows by their peak: when, which kind, what each held and refused.
+- **windows** - every five minutes of the last 24 hours at most, each of the crowd's kinds (`world`, `gate`, `chat`):
+  its sockets across the relay - an estimate from below, a point being one room's window written after it ends (a room
+  whose window ended in the next bucket, or that slept inside its window, is not in it) - its largest room, busy, full,
+  drops, poses and sends, every row of the span (AUDIT PLAN-1000 A3: a LIMIT of 400 had cut every kind's rows past a
+  few hours without saying so). A gate opens at HH:32:30 UTC every even hour, so its crowd is its rows: `world` for the
+  site's cell, `gate` for the court and its copies. `chat` is every channel object, the buses included - each bus holds
+  every shard's player again as a ShardSocket (`_vhello`), so `chat` is about FOUR sockets a player with a hub link and
+  a region link, and a bus's hellos and sends are counted beside its shards' (AUDIT PLAN-1000 A1: this said two);
+- **crowds** - the forty busiest room-windows by their peak that are not a channel's - when, which kind, what each held
+  and refused (AUDIT PLAN-1000 A4: the hub's bus, above every other room all day, filled all forty, and the site's cell
+  could never show).
 
 Every sum is weighted by `_sample_interval` (Analytics Engine samples under load); a peak is a room's own, unweighted.
 `.github/workflows/relay-load.yml` asks them by hand from the Actions tab ("Relay load", 1 to 168 hours), with the
@@ -2700,13 +2706,15 @@ dead, 1 equivalent as recorded (d1-load.yml's own belt and braces).
 
 **Met live, fixed.** The SQL API refused the kinds question (HTTP 422): an IF's two arms must be one type, and a Double
 beside the Integer `0` is not - `0.0` now, and pinned (RELAYLOAD-if-integer). The fake SQL API of the pins cannot know
-it; only the real one did.
+it; only the real one did. The fixed kinds question and the windows question have not been asked live since (the
+session's token was not to be used again); the first run from the Actions tab asks them.
 
 **The first reading** (2026-10-18, the last 24 hours, the crowds question, run by hand with the owner's token): every one
 of the forty busiest room-windows was `chat`, peaking at 1,074 sockets at 18:50 UTC and 1,054 at 21:24 UTC the day before,
-none refused busy or full, nothing dropped. That room is the hub's bus (`chat:world`): since SCALE5c it holds every
-shard's player as a ShardSocket in its own index (`_vhello`, `_adopt`), so its peak is the players on the hubs - the
-online count, about a thousand. The cap at its door (CHAT_SOCKETS_MAX) counts real sockets only, so the bus refuses
+none refused busy or full, nothing dropped. That room is most likely the hub's bus (`chat:world` - the data names a
+kind, never a room; a region's bus holds its region's players the same way): since SCALE5c it holds every shard's
+player as a ShardSocket in its own index (`_vhello`, `_adopt`), so its peak is the hub links - every tab online, about a
+thousand (AUDIT PLAN-1000 A8). The cap at its door (CHAT_SOCKETS_MAX) counts real sockets only, so the bus refuses
 nobody at 2,048; what it carries is every hub hello, leave and handed-up act of the whole world, one object's work.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
@@ -2823,8 +2831,9 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 
 ### Where things stand, measured
 
-- **Online:** the hub's bus held 1,074 players at 18:50 UTC on 2026-10-18 and 1,054 at 21:24 the evening before
-  (RELAY-LOAD's first reading, above) - no room refused busy or full among the forty busiest, nothing dropped.
+- **Online:** the busiest `chat` room - most likely the hub's bus - held 1,074 hub links at 18:50 UTC on 2026-10-18 and
+  1,054 at 21:24 the evening before (RELAY-LOAD's first reading, above): about a thousand online, no room refused busy or
+  full among the forty busiest, nothing dropped.
 - **The account primary** is the ceiling the field has hit (PRIMARY-TRIPS through SHED-LONG): it tips at some 180-245
   round trips a second and ran about 200 at the evening's peak. The surveys' count (the real Worker over node:sqlite,
   each trip marked primary or replica by D1's session law) puts about half of those in eight places, below.

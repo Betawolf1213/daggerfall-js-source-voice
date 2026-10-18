@@ -46,12 +46,13 @@
  },
  {
   "name": "RELAYLOAD-window-guard",
-  "file": "tools/relayLoad.mjs",
-  "old": "const since = (h) => `timestamp > NOW() - INTERVAL '${loadHours(h)}' HOUR`;",
-  "new": "const since = (h) => `timestamp > NOW() - INTERVAL '${h}' HOUR`;",
+  "file": "tools/d1Load.mjs",
+  "old": "export const since = (h) => `timestamp > NOW() - INTERVAL '${loadHours(h)}' HOUR`;",
+  "new": "export const since = (h) => `timestamp > NOW() - INTERVAL '${h}' HOUR`;",
   "tests": [
    "test/server/relayload.test.js"
-  ]
+  ],
+  "note": "AUDIT PLAN-1000 A9: the window's guard is d1Load.mjs's one `since` now - re-aimed by content."
  },
  {
   "name": "RELAYLOAD-if-integer",
@@ -79,8 +80,7 @@
   "tests": [
    "test/server/relayload.test.js"
   ],
-  "equivalent": true,
-  "why": "Belt and braces, d1-load.yml's D1LOAD-refusal-drawn: an SQL API refusal carries no data array and loadTable throws on it (pinned in the first test), so the step still never draws a refusal; the status check keeps a non-200 body that happens to carry rows out too."
+  "note": "AUDIT PLAN-1000 A7: not equivalent - an HTTP 500 whose body carries rows was drawn; its fixture now kills it."
  },
  {
   "name": "RELAYLOAD-drawing-shared",
@@ -90,5 +90,225 @@
   "tests": [
    "test/server/relayload.test.js"
   ]
+ },
+ {
+  "name": "RELAYLOAD-crowds-double-moved",
+  "file": "tools/relayLoad.mjs",
+  "old": "double13 AS room_full, double14 AS drops, double7 AS poses",
+  "new": "double12 AS room_full, double14 AS drops, double7 AS poses",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-crowds-hellos-moved",
+  "file": "tools/relayLoad.mjs",
+  "old": "double3 AS hellos, double4 AS busy",
+  "new": "double4 AS hellos, double4 AS busy",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-kind-blob2",
+  "file": "tools/relayLoad.mjs",
+  "old": "AS bucket, blob1 AS kind,",
+  "new": "AS bucket, blob2 AS kind,",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-crowds-kind-blob2",
+  "file": "tools/relayLoad.mjs",
+  "old": "SELECT timestamp AS stamp, blob1 AS kind,",
+  "new": "SELECT timestamp AS stamp, blob2 AS kind,",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-peak-sockets",
+  "file": "tools/relayLoad.mjs",
+  "old": "${W.sockets} AS sockets, MAX(double15) AS peak,",
+  "new": "${W.sockets} AS sockets, MAX(double2) AS peak,",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-count-unweighted",
+  "file": "tools/relayLoad.mjs",
+  "old": "  n: 'SUM(_sample_interval)',",
+  "new": "  n: 'COUNT()',",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-column-renamed",
+  "file": "tools/relayLoad.mjs",
+  "old": "${W.mbOut} AS mb_out,",
+  "new": "${W.mbOut} AS mbout,",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-if-guard-moved",
+  "file": "tools/relayLoad.mjs",
+  "old": "IF(${W.poses} > 0, ${W.sends} / ${W.poses}, 0.0)",
+  "new": "IF(${W.poses} >= 0, ${W.sends} / ${W.poses}, 0.0)",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-if-divide-swapped",
+  "file": "tools/relayLoad.mjs",
+  "old": "${W.sends} / ${W.poses}, 0.0)",
+  "new": "${W.poses} / ${W.sends}, 0.0)",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-kinds-limit",
+  "file": "tools/relayLoad.mjs",
+  "old": "GROUP BY kind ORDER BY sends DESC LIMIT 40",
+  "new": "GROUP BY kind ORDER BY sends DESC LIMIT 4",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-crowds-limit",
+  "file": "tools/relayLoad.mjs",
+  "old": "ORDER BY peak DESC LIMIT 40",
+  "new": "ORDER BY peak DESC LIMIT 4",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-cut",
+  "file": "tools/relayLoad.mjs",
+  "old": "LIMIT ${12 * windowHours(h) * WINDOW_KINDS.length + 12 * WINDOW_KINDS.length}",
+  "new": "LIMIT 400",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-order",
+  "file": "tools/relayLoad.mjs",
+  "old": "ORDER BY bucket DESC, kind LIMIT",
+  "new": "ORDER BY bucket DESC, sends DESC LIMIT",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-span-unbounded",
+  "file": "tools/relayLoad.mjs",
+  "old": "const windowHours = (h) => Math.min(loadHours(h), WINDOW_HOURS_MAX);",
+  "new": "const windowHours = (h) => loadHours(h);",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-windows-every-kind",
+  "file": "tools/relayLoad.mjs",
+  "old": " AND blob1 IN (${WINDOW_KINDS.map((k) => `'${k}'`).join(', ')})",
+  "new": "",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-crowds-channels-in",
+  "file": "tools/relayLoad.mjs",
+  "old": " AND blob1 != 'chat' ORDER BY peak DESC",
+  "new": " ORDER BY peak DESC",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-token-the-jobs",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "    env:\n      # The input reaches the scripts",
+  "new": "    env:\n      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}\n      # The input reaches the scripts",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-token-guard-inverted",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "if [ -z \"${CLOUDFLARE_API_TOKEN}\" ]; then",
+  "new": "if [ -n \"${CLOUDFLARE_API_TOKEN}\" ]; then",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-token-step-no-window",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "          node tools/relayLoad.mjs --sql kinds \"$HOURS\" > /dev/null\n",
+  "new": "",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-url-moved",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "\"https://api.cloudflare.com/client/v4/accounts/$acct/analytics_engine/sql\"",
+  "new": "\"https://api.cloudflare.com/client/v4/accounts/$acct/analytics_engine/sql/\"",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-method-moved",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "-w '%{http_code}' -X POST",
+  "new": "-w '%{http_code}' -X GET",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
+ },
+ {
+  "name": "RELAYLOAD-window-said",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "the last $(node tools/relayLoad.mjs --hours \"$HOURS\") hour(s)",
+  "new": "the last ${HOURS:-3} hour(s)",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "note": "AUDIT PLAN-1000 A2: survived the lane's candidate list; pinned."
  }
 ]
