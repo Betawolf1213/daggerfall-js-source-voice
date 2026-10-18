@@ -3653,8 +3653,8 @@ HOURWAR1):
 
 - **One song at a time.** The player plays one song and fades between them, so SPIRECNT REPLACES the song at 2:00,
   except under SPIRVALK and SPIRREDT. The priority table is pinned.
-- **Silence is scored too**: the gather and the closing play the band's ambience alone, and a lord's wake is a 2-bar
-  drum swell before SPIRLRD1 - timed from the lord's own wake (the room's `wake`, as the company steps into its ring),
+- **Silence is scored too**: the gather and the closing play the band's ambience alone (EG-ROAR: THE SPIRE'S AIR,
+  below - until then the dungeon's drips), and a lord's wake is a 2-bar drum swell before SPIRLRD1 - timed from the lord's own wake (the room's `wake`, as the company steps into its ring),
   with the band's ambience while it sleeps (AUDIT EG V). A fall plays SPIREEND on the fallen's own screen for its time,
   then the hall's song again.
 - The songs are measured as the Hour's were, by `egScoreProbe.mjs` (under tools/, `tools/sdScoreProbe.mjs`'s law):
@@ -3669,6 +3669,29 @@ mask the cues that matter. So:
 - a critical bus (stings, WIND and release cues, CHECKs) ducks the score by 6 dB for 300 ms and is never culled;
 - barks capped at four a kind, nearest first; peers' sounds 4 dB down;
 - the reverb is the hall's (section 11.9).
+
+**THE SCORE'S OWN VOICES (EG-ROAR).** Each song carries its own instruments over the FM bank's one pair a note
+(`SPIRE_VOICES`, `SPIRE_KIT` - `systems/song/songPlayer.js` `songVoices`, `songKit`, `08-Audio/Audio.md` EG-ROAR): the
+sections in unison laid either side of their place, a sub under the hit and the spiccato, the taiko, the kick and the toms
+long with their beater's click, the snare a crack over a skin, the hats, the shaker and the woodblocks. Three voices fill
+GM's last channels: the tremolo strings (the shrieks, B5 over C6 - the Kyn's half step high), the reverse cymbal (a swell
+into each phrase) and the voices (the legion's chant on the chord's root and fifth). Every song is written to climb: the
+spiccato under everything in the 3-3-2, a braam at each phrase (the low brass's cluster, E under the Kyn's F - never on
+the brass, whose bars hold the motifs), a swell into each eight; the halls' four eights a variant (the descent, the motif,
+the gathering, the height); the trial's call, drive, break, build and height. The press lets a drum's first 12 ms through
+(ratio 3).
+
+**THE SPIRE'S AIR (EG-ROAR, `scenes/eliteGates/egAir.js`).** Under the score and between its songs, in place of the
+dungeon's drips, doors and birds (DFU's AmbientEffectsPlayer is silent in a circle, as in the court and the Hour). Its beds,
+made at runtime and each a loop that meets itself: THE VOID (a roar swept through a resonant band over a brown rumble,
+breathing); THE SPIRE'S DRONE, each band's chord tuned to the score's E (the Galleries' fifths with the ward's whine, E5
+against F5; the Cairn's sung "oh"; the Shade's glass, B4 against C5; the Wellhead's furnace on E1's harmonics, the bellows
+pulsing); THE BAND'S VOICE from DAGGER.SND's own (the colonnades' wind, the souls' moan, the Shade's howl, the forge's fire
+and grind); THE LORD'S BREATH while a Court's lord sleeps. Its events, far off on the breach's clock, the same on every
+screen of a company (the Hour's law): the legion's horn, drums and roar, the Spire's stone tearing below and its debris
+falling, and each band's own (a cracked bell; wails and a toll; howls and whispers; hammers and a forge's blasts). Its
+mix by the score's place: whole where the score is silent, under the war in a trial, hushed to the breath while the lord
+sleeps, low at a rest, falling away at the end and at a fall - eased over 1.5 s.
 
 ## 27. The HUD, the beats and the first breach
 
@@ -9354,3 +9377,57 @@ one changed in the arc.
     EG-ZA's `sweep:egrc` (PIN MOVED).
 - **The four hosts**: `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and `scenes/exterior.js` were
   not touched for the arc. The merge resolved no conflict in any of them, and 9a862e8d touches no `src/` file.
+
+### EG-ROAR - 2026-10-18 - THE SCORE ROARS, AND THE SPIRE'S AIR
+
+Mac: "I think the music and ambience of the elite breach needs to be insanely better. Its way too tame".
+
+**What was tame, measured.** Two things. THE VOICE: the FM bank plays one oscillator pair a note and one sine or band of
+noise a drum (`systems/gmSynth.js`), so a brass section was one thin player and a taiko a sine blip. THE WRITING: the halls'
+drums were a low tom every other bar under whole-note pads, and `tools/egScoreProbe.mjs` read every second of SPIREGAL at
+the same loudness, -19 dBFS. In a 20 s render of each song the onsets stood at 0.9 to 2.1 a second, the stereo image at
+0.12 to 0.15 (side over mid), nothing over 4 kHz. And there was no ambience at all: the Spire's "band's ambience alone"
+was DFU's dungeon drips and doors (`systems/ambientEffects.js`), a crypt's, over halls hung in the void.
+
+**What shipped.**
+- **A song's own voices** (`systems/song/songPlayer.js`): `songVoices`, `songKit`, `unisonCents`, `VOICE_RANGE`,
+  `KIT_RANGE`, `SONG_FLOOR_HZ`, `SongPlayer._drumLayers` and `_makeFloor` - unison pairs as loud as the one pair, a sub, a
+  spread laid either side of the channel, a drum's click and body, a bend keeping the spread, and THE FLOOR, a 30 Hz
+  high-pass under a voiced song before its press (a 1:1 FM pair's first lower sideband lands on 0 Hz; a quarter of the
+  spiccato's energy stood under 40 Hz, and the press answered it by pressing the whole song). Every song MIDI.BSA holds
+  carries neither and plays as before (`08-Audio/Audio.md` EG-ROAR).
+- **The score rewritten on them** (`systems/eliteGates/egScore.js`): `SPIRE_VOICES`, `SPIRE_KIT`, the channels `trem`,
+  `swell` and `chant` (programs 44, 119 and 53 on channels 13 to 15), the spiccato, the chant, the shrieks, the harp's
+  ripple, the braam, the swell (`SPIRE_SWELL_S`, 1.7 s to its downbeat), THE LEGION'S DRUMS at four drives with hats and a
+  shaker, the count's clock; each song in rising parts (section 26). The names, tempos, lengths, motifs, the priority
+  table and the host are unchanged. The press's attack 12 ms (from 3) and its ratio 3 (from 4); the Valkynaz's `out` 6.3
+  (from 5.9 - its quiet first tier stood 0.3 dB under the second phase in the probe).
+- **The Spire's air** (`scenes/eliteGates/egAir.js`, section 26): `buildSpireVoid`, `buildSpireDrone`, `buildSpireBand`,
+  `buildLordBreath`, `egAirEvents`, `egAirMoment`, `createEgAir`; played by the breach client from the score's own place
+  (`scenes/eliteGates/egClient.js` - `air.frame` in the Spire's frame, `air.stop` on every way out the reverb is and on
+  `away()`). The made sounds are built one a frame (10 to 20 ms each in node), the void and the drones at 11,025 Hz. The
+  Hour's `layBed` is exported for it (`scenes/superDungeon/sdAir.js`, its one home).
+
+**Measured** (`tools/egScoreProbe.mjs`, all four bands, 25/25 each): the war by phase -15.6 / -14.5 / -13.5 dBFS, the
+count -13.6, the Valkynaz -14.4, the halls -19.4 and the hymn -18.1 under them, every peak under the ceiling, the end
+decaying to -48 dBFS inside its time. Over the same 20 s renders (the Galleries): onsets 3.2 to 8.0 a second in every
+song but the end's and the hymn's (from 0.9 to 1.9), the stereo image 0.22 to 0.32 (from 0.12 to 0.15), the spectral
+centroid up 12 to 56% in all but the hymn's. The press still holds the loudness level second by second (a 2 s window
+moves 1 to 2 dB through the trial's break and height); the parts are heard in their density, not their level. The air could be heard here only in part - no DAGGER.SND stands in this tree - so its beds of synthesis and the
+legion's horns were rendered; its DAGGER.SND voices and events are pinned in node and owed an ear in the field.
+
+**Pins.** `test/systems/eliteGates/egroar_score.test.js` (the voices' law and graph, the Spire's songs voiced, the
+writing) and `test/scenes/eliteGates/egroar_air.test.js` (the beds, the events, the moment, the seam, the wiring), with
+`tools/mutants/egroar.json` - 33 dead and one equivalent recorded with its reason (the guard against a note before the
+first bar, which no song reaches). PINS MOVED: `test/world/gate/wb6b_deadlands_life.test.js`'s drip pin takes the Spire
+beside the court and the Hour, and `tools/mutants/wb6b.json`'s record its new line.
+
+**The four hosts.** `scenes/world.js`, `scenes/worldModes.js` and `scenes/exterior.js` untouched; `scenes/dungeonContext.js`
+one condition on its drip line (`&& !_egHall`), no line added (HOST-SPLIT). The air is wired in the breach client, a module.
+
+**The Ledger.** Section A's ELITE-GATES row names `scenes/eliteGates/egAir.js` and the silenced AmbientEffectsPlayer; the
+GM VOICE BANK row names a song's own voices.
+
+**Departures from this page**: none from its law. THE COUNT, the wake and the end are timed as before; the Valkynaz's
+level moved (above).
+
