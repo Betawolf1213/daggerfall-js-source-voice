@@ -8999,6 +8999,11 @@
   "tr": "2ced2f8e1c49",
   "by": "claude-in-session"
  },
+ "growth.spec.arcaneSpent": {
+  "en": "15b6009fefe7",
+  "tr": "a26e9cde97d5",
+  "by": "claude-in-session"
+ },
  "growth.spec.arcaneWord": {
   "en": "e7cbd6b1ecc5",
   "tr": "afe265b03bde",
@@ -9079,6 +9084,11 @@
   "tr": "5a15c54c5cc0",
   "by": "claude-in-session"
  },
+ "growth.spec.martialSpent": {
+  "en": "4a7319580098",
+  "tr": "dfae38e69ba2",
+  "by": "claude-in-session"
+ },
  "growth.spec.martialWord": {
   "en": "e161a7c393da",
   "tr": "eb2df174a847",
@@ -9115,8 +9125,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.showReach": {
-  "en": "36fd93c89865",
-  "tr": "cf0e5880b0a0",
+  "en": "ad395d1deedf",
+  "tr": "c6f7c8e7b282",
   "by": "claude-in-session"
  },
  "growth.spec.skill.climb": {
@@ -9142,6 +9152,11 @@
  "growth.spec.skill.ready": {
   "en": "7cff4c207089",
   "tr": "f766ab8377c6",
+  "by": "claude-in-session"
+ },
+ "growth.spec.skill.shared": {
+  "en": "2768cae89883",
+  "tr": "6e5275f1a3f3",
   "by": "claude-in-session"
  },
  "growth.spec.spell": {
@@ -9179,6 +9194,11 @@
   "tr": "a5d350e4813a",
   "by": "claude-in-session"
  },
+ "growth.spec.state.slots": {
+  "en": "1127874ed7f6",
+  "tr": "1128c4cfd8f5",
+  "by": "claude-in-session"
+ },
  "growth.spec.technique": {
   "en": "1fba486d74df",
   "tr": "4eec5612a361",
@@ -9195,18 +9215,43 @@
   "by": "claude-in-session"
  },
  "growth.spec.useSpell": {
-  "en": "e21d3102d30b",
-  "tr": "f40145651007",
+  "en": "6eefa59b2560",
+  "tr": "f808ebd2cd01",
   "by": "claude-in-session"
  },
  "growth.spec.useTechnique": {
-  "en": "01a199ad5cdd",
-  "tr": "7987fcf46a81",
+  "en": "76a04a8aa31b",
+  "tr": "95e84af7f047",
+  "by": "claude-in-session"
+ },
+ "growth.spec.useTechniqueOwn": {
+  "en": "0bb82f12f4e7",
+  "tr": "3d6affcb7ed9",
   "by": "claude-in-session"
  },
  "growth.spec.why.chosen": {
-  "en": "3c79701c0429",
-  "tr": "cc59f28466ae",
+  "en": "b5705544e5d8",
+  "tr": "b9bf0b62b13b",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.chosenBeast": {
+  "en": "f8aed8bdaecc",
+  "tr": "931954ee1eba",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.chosenDuel": {
+  "en": "b653f3927b97",
+  "tr": "515bcea6421d",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.chosenMentor": {
+  "en": "9b6b6646a9c5",
+  "tr": "1ca09b778799",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.chosenOff": {
+  "en": "d33b60a5a304",
+  "tr": "1db0064c36cc",
   "by": "claude-in-session"
  },
  "growth.spec.why.closed": {
@@ -9219,6 +9264,11 @@
   "tr": "a8acf8ef2213",
   "by": "claude-in-session"
  },
+ "growth.spec.why.off": {
+  "en": "4abafa8a9d08",
+  "tr": "e3b34c14c2a1",
+  "by": "claude-in-session"
+ },
  "growth.spec.why.open": {
   "en": "c09ea3d6390e",
   "tr": "069ebe53a104",
@@ -9229,9 +9279,29 @@
   "tr": "7998c02b28b1",
   "by": "claude-in-session"
  },
+ "growth.spec.why.reachOne": {
+  "en": "ea831142e8b6",
+  "tr": "c7689401ed79",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.reachThen": {
+  "en": "da6968aa37a9",
+  "tr": "27cc6d5bb71b",
+  "by": "claude-in-session"
+ },
  "growth.spec.why.ready": {
   "en": "9881d5e727e3",
   "tr": "5143d94c5062",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.readyOne": {
+  "en": "2ba683bedd2e",
+  "tr": "857fbd538a9a",
+  "by": "claude-in-session"
+ },
+ "growth.spec.why.slots": {
+  "en": "762759e644bb",
+  "tr": "3b6c7a1d9832",
   "by": "claude-in-session"
  },
  "growth.stage.failed": {
@@ -9695,8 +9765,8 @@
   "by": "claude-in-session"
  },
  "martial.berserker.rider": {
-  "en": "26e2f51e6c8b",
-  "tr": "5b05c7b57faf",
+  "en": "f4ce5c91205b",
+  "tr": "e24643b600d4",
   "by": "claude-in-session"
  },
  "martial.berserker.technique": {
@@ -9815,8 +9885,8 @@
   "by": "claude-in-session"
  },
  "martial.brawler.rider": {
-  "en": "4bb5010f0b61",
-  "tr": "23690007b8e9",
+  "en": "b2e40c08ece5",
+  "tr": "c914efc1adb1",
   "by": "claude-in-session"
  },
  "martial.brawler.technique": {
@@ -22545,8 +22615,8 @@
   "by": "claude-in-session"
  },
  "rvn.stars.note": {
-  "en": "23416568f7bb",
-  "tr": "2ef09f1c6895",
+  "en": "91cb0f6640a6",
+  "tr": "29de2ee96257",
   "by": "claude-in-session"
  },
  "rvn.stars.oathAria": {
@@ -22790,8 +22860,8 @@
   "by": "claude-in-session"
  },
  "schools.bloodmage.rider": {
-  "en": "fb0e3393eeab",
-  "tr": "4a9807295220",
+  "en": "51f938caaaea",
+  "tr": "cd18240d5299",
   "by": "claude-in-session"
  },
  "schools.bloodmage.spell": {

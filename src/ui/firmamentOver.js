@@ -19,11 +19,11 @@ import { registerOverlay } from './enhanced/enhancedOverlays.js';   // AUDIT RVN
  * A window laid over a door's page, through the lazy-chunk door: `load` its chunk, `mount(mod, host, arg, onExit)` it;
  * `alive()`, `below()`, `back()` the door's. Answers `{ open(arg), drop, up }`.
  * @param {{ alive: () => boolean, below: () => void, back: () => void, id: string, label: string, load: () => Promise<any>,
- *   mount: (mod: any, host: HTMLElement, arg: any, onExit: () => void) => { destroy?: () => void } }} o
+ *   mount: (mod: any, host: HTMLElement, arg: any, onExit: () => void) => { destroy?: () => void, back?: () => boolean } }} o
  */
 function overPage({ alive, below, back, id, label, load, mount }) {
   let host = /** @type {HTMLElement|null} */ (null);
-  let view = /** @type {{ destroy?: () => void }|null} */ (null);
+  let view = /** @type {{ destroy?: () => void, back?: () => boolean }|null} */ (null);
   function drop() {
     const v = view, h = host;
     view = null;   // the slot is emptied before the occupant is told (THE SLOT IS EMPTIED BEFORE THE OCCUPANT IS TOLD)
@@ -80,7 +80,13 @@ export function revenantStarsOver({ alive, below, back }) {
       return { ...view, destroy: () => { unregister(); view.destroy(); } };
     },
   });
-  return { hook: (id) => { last = id; o.open(id); }, drop: o.drop, up: o.up, /** Test seam: the window standing. */ view: o.view };
+  return {
+    hook: (id) => { last = id; o.open(id); }, drop: o.drop, up: o.up,
+    /** AUDIT GROWTH LANE4-1 (GROWTH5's law, S8's for the sheet's own keys): a press that would drop the sky asks it first -
+     *  unaccepted stars said once (skyWindow.js back()), whether it took the press. */
+    asks: () => { try { return !!o.view()?.back?.(); } catch { return false; } },
+    /** Test seam: the window standing. */ view: o.view,
+  };
 }
 /** The page's Stars button for `id` focused again (the page is mounted now, or a lazy chunk's moment later). */
 function refocus(id) {

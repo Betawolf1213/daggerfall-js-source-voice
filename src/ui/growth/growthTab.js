@@ -15,7 +15,9 @@
 // and the face on the stage (ui/growth/growthStage.js) are this module's; the window resets them on every mount and
 // drops the face when the tab or the window goes.
 
-import { drawSpecGuide, resetSpecGuide, specGuideModel, SPEC_GUIDE_CSS } from './specGuide.js';
+import { drawSpecGuide, resetSpecGuide, SPEC_GUIDE_CSS } from './specGuide.js';
+import { pathChoices } from '../../systems/arcanePaths.js';
+import { martialChoices } from '../../systems/martialPaths.js';
 import { drawStage, dropStage, stageBack, stageAsks, stageLive, STAGE_CSS } from './growthStage.js';
 import { firmamentBook } from '../../net/firmament/firmamentBook.js';
 import { t } from '../../systems/textManager.js';
@@ -58,11 +60,13 @@ export function growthSections(ctx) {
   return GROWTH_PAGE_SECTIONS.filter(([id]) => id !== 'captain' || typeof ctx?.captain?.stars === 'function');
 }
 
-/** What waits on each page - the rail's mark: a level owed, the paths open, the captain's points unspent. Pure. */
+/** What waits on each page - the rail's mark: a level owed, each family with a path to choose (AUDIT GROWTH LANE1-10: a
+ *  choice, as the Master Skills door counted it - three schools mastered open three paths, one choice), the captain's
+ *  points unspent. Pure. */
 export function growthDue(ctx) {
   const e = ctx?.entity;
   const due = { level: e?.readyToLevelUp ? 1 : 0, specs: 0, firmament: 0, captain: 0 };
-  if (e) for (const f of specGuideModel(e).families) due.specs += f.open;
+  if (e) due.specs = (pathChoices(e).length ? 1 : 0) + (martialChoices(e).length ? 1 : 0);
   const s = ctx?.captain?.model?.()?.stars;
   if (s) due.captain = Math.max(0, (s.points ?? 0) - (s.set ?? 0));
   return due;
@@ -108,6 +112,14 @@ const stageWords = () => ({
 
 // ── Level ───────────────────────────────────────────────────────────
 
+/** AUDIT GROWTH LANE2-8: the Ascension's column is laid out for the whole screen (the figure's row is what gives, and the
+ *  Grimoire's book is scaled to the screen), so it is drawn in the pane only where the pane holds it - a Plus window at
+ *  least LEVEL_PANE_MIN_H tall (at 1366x768 the figure flattened to 28 px, the stars on top of each other; Ascend fell
+ *  off a 1024x600 pane). Elsewhere the page is its line and the phone's door: the face full screen, laid out as it is
+ *  over the world. */
+const LEVEL_PANE_MIN_H = 1000;
+const levelDoor = () => (globalThis.innerHeight ?? 720) < LEVEL_PANE_MIN_H || globalThis.document?.documentElement?.getAttribute?.('data-plus-dress') === 'grimoire';
+
 function levelPage(detail, ctx) {
   const { el, divider, entity, hooks } = ctx;
   // a level owed is spent through the door's own rollout (ui/charSheetDoor.js levelUpScreenFor); a door that hands none
@@ -118,7 +130,8 @@ function levelPage(detail, ctx) {
   drawStage(detail, `level:${owed ? 'owed' : 'view'}:${entity.level ?? 0}`, (host) => import('../enhanced/enhancedLevelUp.js').then(({ mountEnhancedLevelUp, viewOnlyScreen }) =>
     mountEnhancedLevelUp(host, { screen: (owed && open()) || viewOnlyScreen(entity, usesVirtueLeveling(entity)), entity, embed: true, onExit: () => { dropStage(); ctx.render(); } })), {
     el, ...stageWords(),
-    lead: owed ? t('growth.level.owed', 'You have a level up waiting. Spend your points, then press Ascend. You can leave and come back - your points will wait.')
+    door: levelDoor(),
+    lead: owed ? t('growth.level.owed', 'You have a level up waiting. Place your points, then press Ascend. If you leave first, the points stay unspent and you place them again.')
       : t('growth.level.view', 'Your attributes, skills and progress to the next level. When you level up, you spend your points here.'),
   });
 }
@@ -136,7 +149,7 @@ function firmamentPage(detail, ctx) {
   const { el, divider } = ctx;
   if (!firmamentBook()) {
     dropStage();
-    detail.append(divider(t('growth.firm.title', 'Firmament')), el('p', 'gr-lead', t('growth.firm.offline', 'The Firmament is a tree of passive bonuses for online play. Choose a birthsign, then spend the stars you earn from Renown. It is only available online.')));
+    detail.append(divider(t('growth.firm.title', 'Firmament')), el('p', 'gr-lead', t('growth.firm.offline', 'The Firmament is a tree of passive bonuses, online only. Choose a birthsign, then spend the stars you earn from Renown.')));
     return;
   }
   drawStage(detail, 'firmament', (host) => import('../firmamentWindow.js').then(({ mountFirmamentWindow }) =>
@@ -170,6 +183,11 @@ const GROWTH_CSS = `
 .gr-faced > .px-qdetail { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; padding: 6px 0 0; }
 .gr-faced > .px-qdetail .gr-stage { flex: 1; height: auto; min-height: 240px; }
 @media (max-width: 480px) { .gr-faced > .px-qrail .px-qrow { font-size: 13px; padding: 4px 8px; min-height: 36px; } }   /* wrapped, never scrolled: the lit page stays in sight */
+/* AUDIT GROWTH LANE2-9: the Grimoire's book (grimoireDress.js - its left page a third of the window, the body let
+   overflow) outranked the strip: the page list stood a book page in the corner and the sky lost a third of its height */
+:root[data-plus-dress="grimoire"] .px-win.px-win-wide > .px-body { overflow: hidden !important; }
+:root[data-plus-dress="grimoire"] .px-journal.gr-faced > .px-qrail { width: auto; min-width: 0; max-width: none; flex: 0 0 auto; display: flex; flex-wrap: wrap; overflow: visible; }
+:root[data-plus-dress="grimoire"] .px-journal.gr-faced > .px-qdetail { flex: 1 1 auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
 ${SPEC_GUIDE_CSS}
 ${STAGE_CSS}
 `;

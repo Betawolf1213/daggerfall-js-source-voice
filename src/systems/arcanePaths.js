@@ -168,7 +168,7 @@ const WORDS = Object.freeze({
     spell: t('schools.bloodmage.spell', BLOOD_BOIL),
     passiveName: t('schools.bloodmage.passive', 'Sanguine Tide'),
     passive: t('schools.bloodmage.passiveText', 'Your damage spells deal 1% more damage for every {per}% of health you are missing, up to {most}%.', { per: N.sanguine.perMissing, most: N.sanguine.most }),
-    rider: t('schools.bloodmage.rider', 'If the target drops below {pct}% health, it takes the same damage again.', { pct: pc(N.bloodBoil.below) }),
+    rider: t('schools.bloodmage.rider', 'If the target is below {pct}% health after the hit, it takes the same damage again.', { pct: pc(N.bloodBoil.below) }),
   }),
   elementalist: () => ({
     name: t('schools.elementalist.name', 'Elementalist'),
@@ -189,7 +189,7 @@ const WORDS = Object.freeze({
     spell: t('schools.lightbringer.spell', DAWNBOLT),
     passiveName: t('schools.lightbringer.passive', 'Dawn\'s Ward'),
     passive: t('schools.lightbringer.passiveText', 'Your damage spells deal {pct}% more damage to undead and daedra.', { pct: N.dawnsWard.pct }),
-    rider: t('schools.lightbringer.rider', 'Heals you for {heal}% of the damage dealt. Undead and daedra take an extra {burn}%.', { heal: pc(N.dawnbolt.heal), burn: pc(N.dawnbolt.burn) }),
+    rider: t('schools.lightbringer.rider', 'Heals you for {heal}% of the damage dealt. Undead and daedra take an extra {burn}% of the damage.', { heal: pc(N.dawnbolt.heal), burn: pc(N.dawnbolt.burn) }),
   }),
   enchanter: () => ({
     name: t('schools.enchanter.name', 'Enchanter'),
@@ -356,7 +356,7 @@ export function pathsOpenRows(open, { growth = false } = {}) {
     t('schools.open.count', '{n, plural, one {# specialisation is open to you:} other {# specialisations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
-    growth ? t('schools.open.whereGrowth', 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.')
+    growth ? t('schools.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.')
       : t('schools.open.where', 'Choose one in your skill screen. The choice cannot be undone.'),
   ];
 }

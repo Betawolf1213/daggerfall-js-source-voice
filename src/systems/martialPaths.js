@@ -270,7 +270,7 @@ const WORDS = Object.freeze({
     passive: t('martial.berserker.passiveText', 'Below {below}% health, your blows and arrows deal {pct}% more damage and you swing {pace}% faster.', { below: pc(N.frenzy.below), pct: N.frenzy.pct, pace: N.frenzy.pace }),
     technique: t('martial.berserker.technique', SAVAGE_WHIRL),
     techniqueText: t('martial.berserker.techniqueText', 'Hit every enemy within {metres} metres.', { metres: FORMS.savageWhirl.reach }),
-    rider: t('martial.berserker.rider', 'For {seconds} seconds, every blow you land heals you for {pct}% of its damage.', { seconds: N.savageWhirl.seconds, pct: N.savageWhirl.leech }),
+    rider: t('martial.berserker.rider', 'For {seconds} seconds, every blow or arrow you land heals you for {pct}% of its damage.', { seconds: N.savageWhirl.seconds, pct: N.savageWhirl.leech }),
   }),
   crusader: () => ({
     name: t('martial.crusader.name', 'Crusader'),
@@ -286,7 +286,7 @@ const WORDS = Object.freeze({
     passive: t('martial.brawler.passiveText', 'Each round, you regain {health}% of your health and {fatigue}% of your fatigue.', { health: N.grit.health, fatigue: N.grit.fatigue }),
     technique: t('martial.brawler.technique', KNOCKOUT),
     techniqueText: t('martial.brawler.techniqueText', 'A heavy blow at the nearest enemy in front of you, +{toHit} to hit.', { toHit: FORMS.knockout.toHit }),
-    rider: t('martial.brawler.rider', 'For {seconds} seconds, the enemy it hits deals {pct}% less damage to you.', { seconds: N.knockout.seconds, pct: N.knockout.lighter }),
+    rider: t('martial.brawler.rider', 'For {seconds} seconds, blows from the enemy it hits deal {pct}% less damage to you.', { seconds: N.knockout.seconds, pct: N.knockout.lighter }),
   }),
   windrunner: () => ({
     name: t('martial.windrunner.name', 'Strider'),
@@ -426,7 +426,7 @@ export function martialOpenRows(open, { growth = false } = {}) {
     t('martial.open.count', '{n, plural, one {# martial specialisation is open to you:} other {# martial specialisations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
-    growth ? t('martial.open.whereGrowth', 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.')
+    growth ? t('martial.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.')
       : t('martial.open.where', 'Choose one in your skill screen. The choice cannot be undone.'),
   ];
 }

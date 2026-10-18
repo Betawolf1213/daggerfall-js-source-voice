@@ -79,7 +79,7 @@ export const NODE_R = Object.freeze({ small: 9, road: 9, notable: 16, keystone: 
 const UNACCEPTED_ESCAPE = 'Your changes are not accepted yet. Press Escape again to discard them.';
 /** GROWTH5: what a press that would leave the sky says in the Growth tab (back(): Escape, another page or tab, the sheet's
  *  or the QuickDial's key) - any of them, so it names none. */
-const unacceptedLeave = () => t('firmament.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or do that again to discard them.');
+const unacceptedLeave = () => t('firmament.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or leave again to discard them.');
 
 export const FIRM_CSS = `
 .fmt-root { position: fixed; inset: 0; z-index: 14; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; }
@@ -376,10 +376,14 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   const heldCommitted = () => new Set([committed.start, ...committed.keys].filter(Boolean));
 
   /** A line over the sky - gone after a moment, or (`stay`) until the next. */
+  /** AUDIT GROWTH LANE2-6: the line under the bar, in the root's own frame - in the tab the root is not at the screen's
+   *  top (it stood 200 px low, or off a short stage), and again whenever the window is resized (a phone's face measured
+   *  while it waited, detached, for its door). */
+  const placeSay = () => { sayBox.style.top = `${Math.round((barFoot() || 66) + 10)}px`; };
   function say(text, refused = false, stay = false) {
     sayBox.textContent = text;
     // always under the bar, however tall it has wrapped
-    sayBox.style.top = `${Math.round((bar.getBoundingClientRect?.().bottom ?? 66) + 10)}px`;
+    placeSay();
     sayBox.classList.add('on');
     sayBox.classList.toggle('no', refused);
     clearTimeout(sayTimer);
@@ -806,15 +810,22 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
 
   // ── the keys: a modal overlay owns its input (U50's law) ──
   let armedClose = false;
+  // AUDIT GROWTH LANE3-8: the ask is for the stars it named - one taken or given back since, and the next leave asks again
+  let armedAt = '';
+  const sig = () => `${pending.start}|${pending.keys.join()}`;
+  const rearm = () => { if (armedClose && armedAt !== sig()) armedClose = false; };
+  const arm = () => { armedClose = true; armedAt = sig(); };
   function onKey(e) {
     if (dead || (embed && !root.isConnected)) return;   // GROWTH3: a stage between two draws of its page hears nothing
+    if (embed && root.closest?.('[inert]')) return;   // AUDIT GROWTH LANE2-1: and nothing while a window over the pause window holds it inert (the account window's fields)
     if (e.target === find || e.target?.classList?.contains?.('fmt-code')) return;   // a field takes its own keys
     let used = true;
     switch (e.key) {
       case 'Escape':
         if (embed) { used = false; break; }   // GROWTH3: the window's back stack asks back() - one Escape, one owner
         if (confirmBox.classList.contains('on')) { confirmBox.classList.remove('on'); break; }
-        if (unaccepted() && !armedClose) { armedClose = true; say(UNACCEPTED_ESCAPE, true); break; }
+        rearm();
+        if (unaccepted() && !armedClose) { arm(); say(UNACCEPTED_ESCAPE, true); break; }
         close();
         break;
       case 'Enter': if (e.target?.tagName === 'BUTTON') { used = false; break; } click(); if (confirmBox.classList.contains('on')) { if (confirming === 'respec') respec(); else if (confirming === 'accept') commit(); } else openConfirm(); break;
@@ -835,8 +846,9 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   /** AUDIT UICALM-FIRM1 L4 M4: the overlays' close (the QuickDial's key, Tab by default) asks first, as Escape does - it
    *  had closed the window and thrown away unaccepted stars. Asked, the window stays up and on the overlays' stack. */
   const overlayClose = () => {
+    rearm();
     if (!dead && unaccepted() && !armedClose) {
-      armedClose = true;
+      arm();
       say('Your changes are not accepted yet. Close again to discard them.', true);
       unregister = registerOverlay(overlayClose);
       return;
@@ -849,7 +861,8 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   function back() {
     if (dead) return false;
     if (confirmBox.classList.contains('on')) { confirmBox.classList.remove('on'); return true; }
-    if (unaccepted() && !armedClose) { armedClose = true; say(unacceptedLeave(), true); return true; }
+    rearm();
+    if (unaccepted() && !armedClose) { arm(); say(unacceptedLeave(), true); return true; }
     return false;
   }
 
@@ -863,6 +876,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     canvas.height = Math.max(1, Math.round(vh() * dpr));
     hold();   // a smaller window cannot leave the view further out than the sky
     dirty = true;
+    placeSay();   // LANE2-6
   }
   resize();
   const onResize = () => resize();

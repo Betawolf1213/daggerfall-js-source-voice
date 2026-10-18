@@ -189,7 +189,8 @@ test('LV2: both rollout screens take the fanfare as an argument, defaulting to D
   // ...and the door is the one caller that ever passes false.
   const door = src('src/ui/charSheetDoor.js');
   // PIN MOVED (GROWTH1): the rollout's one home, levelUpScreenFor - F5's own level-up and the Growth tab's Level page
-  assert.match(door, /const fanfare = levelNotices\.fanfareOwed\(entity\?\.pendingLevel \?\? null\);\n\s*return virtue \? new VirtueLevelUpScreen\(entity, \{ fanfare \}\) : new LevelUpScreen\(entity, undefined, \{ fanfare \}\);/);
+  // PIN MOVED (AUDIT GROWTH LANE1-8): the notice's answer AND this door's own latch - once per level from here too
+  assert.match(door, /const fanfare = levelNotices\.fanfareOwed\(entity\.pendingLevel \?\? null\) && fanfared\.get\(entity\) !== level;\n\s*if \(fanfare\) fanfared\.set\(entity, level\);\n\s*return virtue \? new VirtueLevelUpScreen\(entity, \{ fanfare \}\) : new LevelUpScreen\(entity, undefined, \{ fanfare \}\);/);
 });
 
 // ── THE SEAMS, AND THE FORK THIS SLICE IS ABOUT ──────────────────

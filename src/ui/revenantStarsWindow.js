@@ -3,8 +3,8 @@
 // characters"; bible/06-Systems/Revenants.md section 44) - A SWORN REVENANT'S STARS, DRAWN: its sky
 // (systems/revenant/revenantStars.js) in the one window every sky is drawn in (ui/skyWindow.js - the Firmament's dress, as
 // the captain's stars wear it). Opened from the Companions page (ui/companionRoster.js - a sworn one's Stars) over the pause
-// window, as the Firmament is over the Stats page (ui/firmamentOver.js revenantStarsOver), and the page put back when it
-// closes.
+// window (ui/firmamentOver.js revenantStarsOver - the door the Firmament had before GROWTH3 drew it in the Growth tab),
+// and the page put back when it closes.
 //
 // THE THREE ASPECTS: THE BLADE above, in the Firmament's battle ring's brass; THE GRAVE to the right, in a grave-light
 // violet of its own; THE ROAD to the left, in the life ring's verdigris. THE OATH in the middle, drawn as a bond - a ring
@@ -72,7 +72,7 @@ export function rvnStarStatWords(key, v) {
     case 'art': return t('rvn.stars.stat.art', 'Art strength {n}', { n: `${sign}${pct(a)}` });
     case 'haste': return t('rvn.stars.stat.hasteShorter', 'Its art\'s cooldowns {n} shorter', { n: pct(a) });   // AUDIT RVN-STARS S26: a share of the time, not of the pace
     case 'awaken': return t('rvn.stars.stat.awaken', 'Learns an art of its kind, if it was born without one');
-    case 'bold': return t('rvn.stars.stat.bold', 'Brings nothing back from a mission it returns hurt from');
+    case 'bold': return t('rvn.stars.stat.bold', 'Brings back nothing if it returns hurt');
     case 'odds': return t('rvn.stars.stat.odds', 'Mission odds {n}', { n: `${sign}${pct(a * ERRAND.ODDS.PER)}` });
     case 'haul': return t('rvn.stars.stat.haul', 'Mission gold and materials {n}', { n: `${sign}${pct(a)}` });
     case 'road': return v >= 0 ? t('rvn.stars.stat.roadShort', 'Missions {n} shorter', { n: pct(a) }) : t('rvn.stars.stat.roadLong', 'Missions {n} longer', { n: pct(a) });
@@ -159,7 +159,7 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       const level = el('span', 'fmt-purse');
       level.replaceChildren(el('span', null, t('rvn.stars.level', 'Level')), el('b', null, String(c.level)),
         el('span', 'of', c.next == null ? t('rvn.stars.top', 'max') : t('rvn.stars.xp', '{xp} of {next} XP', { xp: formatNumber(c.xp), next: formatNumber(c.next) })));   // AUDIT RVN-STARS S25: the player's own grouping
-      level.title = t('rvn.stars.levelTip', 'It earns XP from fights won at your side (more for stronger foes) and from missions it comes home from.');
+      level.title = t('rvn.stars.levelTip', 'It earns XP from fights won at your side (more for stronger enemies) and from missions it comes home from.');
       const pts = el('span', 'fmt-purse life');
       pts.replaceChildren(el('span', null, '★'), el('b', null, String(Math.max(0, left))), el('span', 'of', t('rvn.stars.of', 'of {n}', { n: points })));
       pts.title = t('rvn.stars.pointsTip', 'One point per level after the first, and one per rank past the first.');
@@ -178,7 +178,7 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       const art = rvnArtNote(r);
       if (art) parts.push(el('p', 'fmt-note', art));
       parts.push(el('h3', null, ASPECTS.road()), el('p', 'fmt-sign', t('rvn.stars.roadLore', 'Missions and loyalty: mission odds, loot, travel time, loyalty and rest.')));
-      parts.push(el('p', 'fmt-note', t('rvn.stars.note', 'Changing its stars is free, but not while it\'s away. Damage changes at once; health changes the next time it is called.')));
+      parts.push(el('p', 'fmt-note', t('rvn.stars.note', 'Changing its stars is free, but not while it\'s away. Its health and damage change at once.')));
       const why = book.refusal();
       if (why) parts.push(el('p', 'fmt-note', why));
       return parts;
@@ -196,7 +196,8 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       close: t('rvn.stars.close', 'Close'),
       hint: t('rvn.stars.hint', 'Click a star to take it and the stars on the way to it · Right-click to remove · Drag to pan · Scroll to zoom · H: back to the Oath'),
       hintTouch: t('rvn.stars.hintTouch', 'Tap a star to see it, tap again to take it · Hold a star to remove it · Drag to pan · Pinch to zoom'),
-      unaccepted: t('rvn.stars.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'),
+      unaccepted: t('rvn.stars.unaccepted', 'You have unaccepted changes. Press Accept to keep them, or close again to discard them.'),
+      unacceptedEsc: t('rvn.stars.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or leave again to discard them.'),   // AUDIT GROWTH LANE4-1: the sheet's key, not Close
       set: t('rvn.stars.set', 'Stars saved.'),
       startTip: t('rvn.stars.tip.oath', 'Every sworn revenant starts with the Oath. Take a star next to it.'),
       backMany: (n) => t('rvn.stars.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"

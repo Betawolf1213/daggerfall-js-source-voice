@@ -391,6 +391,14 @@ export class CharSheet {
     refreshPaperDoll(entity);     // compose fresh on open, as the inventory does
   }
 
+  /** AUDIT GROWTH LANE3-11: a host that drops the sheet drops what it pushed - the Growth window's DOM and its keys
+   *  with it (the hosts call `outgoing?.dispose?.()`). */
+  dispose() {
+    const c = this.child;
+    this.child = null;
+    try { c?.dispose?.(); } catch { /* already gone */ }
+  }
+
   /** UpdatePlayerValues :369-394, verbatim order: the fanfare, the
    *  pool (30 flat on the Oghma branch, BonusPool() otherwise), the
    *  Level++ and the health roll, the rollout's two stat clones, then
@@ -835,12 +843,14 @@ export class CharSheet {
     // SCHOOLS1: the Specialisation row under it, while Master Skills is in force and a path is chosen or open
     // GROWTH4 (bible/10-UI/Growth.md section 7): where the guide opens (the enhanced pause's Growth tab - a document), the
     // row stands whenever this class can ever meet a path: S reads them all, opened or not
-    const guide = typeof this.hooks?.growth === 'function';
-    const pathText = pathOf(e) ? t('schools.sheet.chosen', '{name}  (S)', { name: pathOf(e).name })
+    // AUDIT GROWTH LANE3-2: never while the rollout stands (_growth); LANE3-12: a chosen path's row only while it is in
+    // force - asleep (Master Skills off), the guide's row says so
+    const guide = typeof this.hooks?.growth === 'function' && !this.leveling;
+    const pathText = pathOf(e) && masterSkillsActive(e) ? t('schools.sheet.chosen', '{name}  (S)', { name: pathOf(e).name })
       : masterSkillsActive(e) && pathChoices(e).length ? t('schools.sheet.choose', 'Specialise  (S)')
-        : guide && pathPossible(e) ? t('schools.sheet.guide', 'Specialisations  (S)') : null;
+        : guide && pathPossible(e) ? t('schools.sheet.guide', 'Arcane paths  (S)') : null;
     // MARTIAL1: and the Martial row under that, the same way - the weapons' specialisation (W)
-    const martialText = martialPathOf(e) ? t('martial.sheet.chosen', '{name}  (W)', { name: martialPathOf(e).name })
+    const martialText = martialPathOf(e) && masterSkillsActive(e) ? t('martial.sheet.chosen', '{name}  (W)', { name: martialPathOf(e).name })
       : masterSkillsActive(e) && martialChoices(e).length ? t('martial.sheet.choose', 'Martial specialisation  (W)')
         : guide && martialPossible(e) ? t('martial.sheet.guide', 'Martial paths  (W)') : null;
     const h = (lines + 1 + (pathText ? 1 : 0) + (martialText ? 1 : 0)) * 9 + 14;   // SOFTCAP3: + the Master Skills row under the skills
@@ -894,9 +904,13 @@ export class CharSheet {
   /** GROWTH4 (bible/10-UI/Growth.md section 7; the owner, asked: the classic skin reaches the Growth tab): THE GUIDE
    *  FROM THE CLASSIC SHEET - the enhanced pause window on its Specialisations page (the family's), pushed as this
    *  sheet's child: it draws over the sheet, and when it goes the sheet is back. A host with no document (node) has no
-   *  hook, and the rows ask in DFU's boxes as before. Answers whether it opened. */
+   *  hook, and the rows ask in DFU's boxes as before. Answers whether it opened.
+   *  AUDIT GROWTH LANE3-2: never while the rollout stands - the level's points live on this sheet until
+   *  CheckIfDoneLeveling writes them home (:437-443), and the window carries the host's whole pause bag (Save would write
+   *  the level with its points gone; the Pack, Spellbook or Chronicle would take the slot and drop them). The rows keep
+   *  DFU's boxes then. */
   _growth(at) {
-    const w = typeof this.hooks?.growth === 'function' ? this.hooks.growth(at) : null;
+    const w = typeof this.hooks?.growth === 'function' && !this.leveling ? this.hooks.growth(at) : null;
     if (!w) return false;
     this.child = w;
     return true;

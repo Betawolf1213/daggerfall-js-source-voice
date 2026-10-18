@@ -1,0 +1,305 @@
+[
+  {
+    "name": "AUDIT-GROWTH-L1-1-pair-counted-alone",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (st.includes('full') || masterableCount(entity, law.pair(p)) < 2) return 'slots';",
+    "new": "if (st.includes('full')) return 'slots';",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "Two minor schools at 100 read ready, one minor slot between them: the guide leads the player to spend a permanent mastery on a path that can never open."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-4-slots-read-as-class",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (st.includes('full') || masterableCount(entity, law.pair(p)) < 2) return 'slots';",
+    "new": "if (st.includes('full') || masterableCount(entity, law.pair(p)) < 2) return 'never';",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A path the player's own masteries closed says \"Not for your class\"."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-1-shared-line-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (p.state === 'slots' && !p.pair.some((s) => s.state === 'full')) {",
+    "new": "if (false) {",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The Requirements list shows two skills ready and nothing saying they cannot both be mastered."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-4-headline-blames-class",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (!fam.possible && !fam.classPossible) return arc",
+    "new": "if (!fam.possible) return arc",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A family the player's masteries closed is said to be beyond the class."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-2-off-says-climb",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (!on && !climb.length) return t('growth.spec.why.off'",
+    "new": "if (false) return t('growth.spec.why.off'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "With Master Skills off, a mastered pair is told to raise both skills to 100."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-2-raw-value",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "const value = Math.max(0, Math.round(masterCappedSkill(entity, entity?.skills?.[id] ?? 0, id)));",
+    "new": "const value = Math.max(0, Math.round(entity?.skills?.[id] ?? 0));",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The guide shows 150 while the game reads 100 with Master Skills off."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-3-off-unread",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (!on) return 'off';\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A chosen path is said to work while Master Skills is off."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-3-mentor-unread",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (entity?._mentor) return 'mentor';\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A chosen path is said to work while its powers rest for mentoring."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-3-duel-unread",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (sigilDueling()) return 'duel';\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A chosen path is said to work in a refereed duel."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-3-beast-for-arcane",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (id === 'martial' && entity?.isInBeastForm) return 'beast';",
+    "new": "if (entity?.isInBeastForm) return 'beast';",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "An arcane path is said to sleep in beast form; only the martial powers do."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-12-one-read-as-both",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "return need.length === 1 ? t('growth.spec.why.reachOne'",
+    "new": "return need.length === 0 ? t('growth.spec.why.reachOne'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "One skill left to climb is told to raise both."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-12-ready-one-as-both",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "case 'ready': return need.length === 1 ?",
+    "new": "case 'ready': return need.length === 0 ?",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "One skill left to master is told to master both."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-12-then-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "if (climb.length < need.length) return t('growth.spec.why.reachThen'",
+    "new": "if (false) return t('growth.spec.why.reachThen'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A skill already at 100 is told to rise to 100."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-9-held-first",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "return m.families.find((f) => f.open)?.id ?? m.families.find((f) => f.held)?.id ??",
+    "new": "return m.families.find((f) => f.held || f.open)?.id ??",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A held arcane path opens the guide on Arcane while martial paths wait."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-10-paths-summed",
+    "file": "src/ui/growth/growthTab.js",
+    "old": "if (e) due.specs = (pathChoices(e).length ? 1 : 0) + (martialChoices(e).length ? 1 : 0);",
+    "new": "if (e) due.specs = pathChoices(e).length + martialChoices(e).length;",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "Three schools mastered count three on the rail for one choice."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-11-ladder-unread",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "return lootRarityOn() ? t('growth.spec.useTechniqueOwn'",
+    "new": "return true ? t('growth.spec.useTechniqueOwn'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A found technique is said to win the key while the ladder is off, where the signature does."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-5-brawler-overclaims",
+    "file": "src/systems/martialPaths.js",
+    "old": "'For {seconds} seconds, blows from the enemy it hits deal {pct}% less damage to you.'",
+    "new": "'For {seconds} seconds, the enemy it hits deals {pct}% less damage to you.'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "Knockout reduces that foe's blows only (martialGuardPct reads pendingPlayerBlow), not its spells."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-6-bloodmage-underclaims",
+    "file": "src/systems/arcanePaths.js",
+    "old": "'If the target is below {pct}% health after the hit, it takes the same damage again.'",
+    "new": "'If the target drops below {pct}% health, it takes the same damage again.'",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A target already under the line boils too (pathLanded reads the share after the landing)."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-7-berserker-no-arrows",
+    "file": "src/systems/martialPaths.js",
+    "old": "every blow or arrow you land heals you",
+    "new": "every blow you land heals you",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The leech runs on the strike listener, which arrows tell too."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-8-latch-unset",
+    "file": "src/ui/charSheetDoor.js",
+    "old": "  if (fanfare) fanfared.set(entity, level);\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js",
+      "test/ui/levelNotice.test.js"
+    ],
+    "note": "A level the strip never announced plays its fanfare on every visit to the Level page."
+  },
+  {
+    "name": "AUDIT-GROWTH-L1-8-latch-unread",
+    "file": "src/ui/charSheetDoor.js",
+    "old": " && fanfared.get(entity) !== level;",
+    "new": ";",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js",
+      "test/ui/levelNotice.test.js"
+    ],
+    "note": "The latch is written and never read."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-1-door-asks-nothing",
+    "file": "src/ui/firmamentOver.js",
+    "old": "asks: () => { try { return !!o.view()?.back?.(); } catch { return false; } },",
+    "new": "asks: () => false,",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "F5 over a sworn one's sky throws its unaccepted stars away unasked."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-1-sheet-key-unasked",
+    "file": "src/ui/charSheetDoor.js",
+    "old": "if (view?.asksFirst?.() || rvnStars.asks()) return;",
+    "new": "if (view?.asksFirst?.()) return;",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js",
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The sheet's key never asks the revenant sky."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-1-close-words",
+    "file": "src/ui/revenantStarsWindow.js",
+    "old": "      unacceptedEsc: t('rvn.stars.unacceptedLeave',",
+    "new": "      unacceptedEscX: t('rvn.stars.unacceptedLeave',",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "The F5 press is told to \"Close again\"."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-2-note-untrue",
+    "file": "src/ui/revenantStarsWindow.js",
+    "old": "Its health and damage change at once.')",
+    "new": "Damage changes at once; health changes the next time it is called.')",
+    "tests": [
+      "test/systems/revenant/rvnstars.test.js"
+    ],
+    "note": "The note says health waits for the next call; S1 rescales it at Accept."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-4-captain-embed-exit-shown",
+    "file": "src/ui/skyWindow.js",
+    "old": "root.setAttribute('aria-modal', 'false'); exitBtn.hidden = true; }   // GROWTH3",
+    "new": "root.setAttribute('aria-modal', 'false'); }   // GROWTH3",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The captain's sky in the tab shows a Close that closes nothing the window knows."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-4-captain-embed-focus-steals",
+    "file": "src/ui/skyWindow.js",
+    "old": "if (!embed) (goBtn.disabled ? homeBtn : goBtn)",
+    "new": "if (true) (goBtn.disabled ? homeBtn : goBtn)",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The embedded sky takes the window's focus."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-4-captain-embed-unwatched",
+    "file": "src/ui/skyWindow.js",
+    "old": "if (embed) try { watch = new globalThis.ResizeObserver",
+    "new": "if (false) try { watch = new globalThis.ResizeObserver",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The stage moves and the sky keeps its old size."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-4-captain-leave-words",
+    "file": "src/ui/skyWindow.js",
+    "old": "say(W.unacceptedEsc ?? W.unaccepted, true);",
+    "new": "say(W.unaccepted, true);",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "A leaving press is told to Close again."
+  },
+  {
+    "name": "AUDIT-GROWTH-L4-4-captain-leave-words-dropped",
+    "file": "src/ui/captainTreeWindow.js",
+    "old": "      unacceptedEsc: t('captain.sky.unacceptedLeave',",
+    "new": "      unacceptedEscX: t('captain.sky.unacceptedLeave',",
+    "tests": [
+      "test/ui/growth/growth1_tab.test.js"
+    ],
+    "note": "The captain's leave words never reach the window."
+  }
+]

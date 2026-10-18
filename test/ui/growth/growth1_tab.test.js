@@ -20,11 +20,16 @@ import { SKILLS } from '../../../src/systems/skills.js';
 import { masterSkill } from '../../../src/systems/masterSkills.js';
 import * as AP from '../../../src/systems/arcanePaths.js';
 import * as MP from '../../../src/systems/martialPaths.js';
-import { specGuideModel, skillStand, skillStandText, spellLines, techniqueLines, stateTag, SPEC_STATES } from '../../../src/ui/growth/specGuide.js';
+import { specGuideModel, skillStand, skillStandText, spellLines, techniqueLines, stateTag, SPEC_STATES, stateLine, pathSteps, familyLine, firstFamily, useLine } from '../../../src/ui/growth/specGuide.js';
 import { GROWTH_PAGE_SECTIONS, growthPageAt, SPEC_LANDINGS } from '../../../src/ui/growth/growthPages.js';
 import { growthSections, growthDue, resetGrowthTab, growthSection, setGrowthSection } from '../../../src/ui/growth/growthTab.js';
 import { drawStage, dropStage, stageBack, stageAsks, stageLive, stageFace } from '../../../src/ui/growth/growthStage.js';
-import { _resetForTests } from '../../../src/systems/uiPrefs.js';
+import { _resetForTests, setPref } from '../../../src/systems/uiPrefs.js';
+import { LOOT_RARITY_KEY } from '../../../src/systems/loot/lootRarity.js';
+import { setSigilDueling } from '../../../src/systems/sigil/sigil.js';
+import { audio } from '../../../src/systems/audio.js';
+import { levelUpScreenFor } from '../../../src/ui/charSheetDoor.js';
+import { destroyLevelNotices } from '../../../src/ui/levelUp/levelNotice.js';
 
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const { LongBlade: LB, ShortBlade: SB, Archery: AR, Axe: AX, Destruction: DES, Restoration: RES, Alteration: ALT, Mysticism: MYS, Illusion: ILL } = SKILLS;
@@ -94,7 +99,7 @@ test('GROWTH2 THE GUIDE: every path of both families, each in its state on THIS 
   assert.equal(st(ma, 'woodsman'), 'reach', 'Axe (major, a slot left) and Archery (mastered)');
   assert.equal(st(ma, 'blademaster'), 'never', 'Short Blade is no skill of this class');
   const ar = family(m, 'arcane');
-  assert.equal(st(ar, 'bloodmage'), 'never', 'Destruction is primary and the primary masteries are spent');
+  assert.equal(st(ar, 'bloodmage'), 'slots', 'Destruction is primary and the primary masteries are spent - by the player, not the class (AUDIT GROWTH LANE1-4)');
   assert.equal(st(ar, 'warden'), 'reach', 'Alteration and Restoration, both major, two major slots');
   // the nearest first: Warden (Restoration at 100, Alteration 76 - 24 owed) before Trickster (Alteration and Illusion - 94)
   const reach = ar.paths.filter((p) => p.state === 'reach').map((p) => p.id);
@@ -127,7 +132,7 @@ test('GROWTH2 WHAT OPENS IT: each skill of a pair in its own words - mastered, r
   assert.equal(skillStandText(s(ALT)), 'Alteration: 76 of 100, then master it');
   assert.equal(skillStandText(s(DES)), 'Destruction: no primary mastery slots left');
   assert.equal(skillStandText(s(SB)), 'Short Blade: not one of your class skills, so it can\'t be mastered');
-  assert.deepEqual(['open', 'ready', 'reach', 'closed', 'never', 'chosen'].map(stateTag), ['Available', 'Needs mastering', 'Within reach', 'Closed', 'Not for your class', 'Chosen']);
+  assert.deepEqual(['open', 'ready', 'reach', 'closed', 'slots', 'never', 'chosen'].map(stateTag), ['Available', 'Needs mastering', 'Not yet', 'Closed', 'No slots left', 'Not for your class', 'Chosen']);
 });
 
 test('GROWTH2 WHAT IT DOES: the passive and the signature in the laws\' own words; a signature spell read as the spellbook reads it (its target, its element, each effect - no empty slot), a signature technique by each of its weapons (its cooldown, its fatigue) (mutants: an empty slot read; the forms\' numbers not the law\'s)', () => {
@@ -140,8 +145,8 @@ test('GROWTH2 WHAT IT DOES: the passive and the signature in the laws\' own word
   assert.equal(ranger.signature.text, `${MP.MARTIAL_BY_ID.ranger.technique.text} ${MP.MARTIAL_BY_ID.ranger.rider}`);
   const forms = MP.MARTIAL_BY_ID.ranger.forms;
   assert.deepEqual(techniqueLines(MP.MARTIAL_BY_ID.ranger), [
-    `With Long Blade: ${MP.signatureById(forms.longBlade).cooldown}-second cooldown, ${MP.signatureById(forms.longBlade).fatigue} fatigue.`,
-    `With Archery: ${MP.signatureById(forms.archery).cooldown}-second cooldown, ${MP.signatureById(forms.archery).fatigue} fatigue.`,
+    `Long blade: ${MP.signatureById(forms.longBlade).cooldown}-second cooldown, ${MP.signatureById(forms.longBlade).fatigue} fatigue.`,
+    `Bow: ${MP.signatureById(forms.archery).cooldown}-second cooldown, ${MP.signatureById(forms.archery).fatigue} fatigue.`,
   ].sort((a, b) => techniqueLines(MP.MARTIAL_BY_ID.ranger).indexOf(a) - techniqueLines(MP.MARTIAL_BY_ID.ranger).indexOf(b)));
   const blood = family(m, 'arcane').paths.find((p) => p.id === 'bloodmage');
   assert.deepEqual([blood.signature.kind, blood.signature.name, blood.signature.text], ['spell', AP.PATH_BY_ID.bloodmage.spell.name, AP.PATH_BY_ID.bloodmage.rider]);
@@ -164,6 +169,144 @@ test('GROWTH2 CHOOSE: an open path\'s Choose asks in the law\'s own box and comm
   assert.deepEqual(warden.choose(), { ok: true, text: 'Specialisation chosen: Warden.' });
   assert.equal(e.arcanePath, 'warden');
   assert.equal(family(specGuideModel(e), 'arcane').paths.find((p) => p.id === 'trickster').choose().ok, false, 'the law refuses a second');
+});
+
+// ── AUDIT GROWTH lane 1: the law and the model (bible/01-Overview/audits/Audit-Growth.md) ──────────────────────────
+
+test('AUDIT GROWTH LANE1-1/4 THE SLOTS: a pair the slots left can never hold is no slot of its own - two minor schools, two majors with one major slot left - and it says so, apart from a skill the class can\'t master (mutants: the pair counted skill by skill; the slots read as the class; the shared line dropped)', () => {
+  // two minor schools at 100, one minor slot: each alone reads ready, the pair never fits (pathPossible's own count)
+  const e = spellsword({ raised: { [ILL]: 100, [MYS]: 100 } });
+  const ar = family(specGuideModel(e), 'arcane');
+  const seer = ar.paths.find((p) => p.id === 'seer');
+  assert.deepEqual(seer.pair.map((s) => s.state), ['ready', 'ready']);
+  assert.equal(seer.state, 'slots');
+  assert.deepEqual(pathSteps(seer).map(([, text]) => text), ['Illusion: 100 - ready to master in Master Skills', 'Mysticism: 100 - ready to master in Master Skills',
+    'Illusion and Mysticism are both minor skills, and you can master only one more minor skill.']);
+  assert.equal(stateLine(ar, seer, true), 'You don\'t have enough mastery slots left to master both of these skills.');
+  assert.equal(stateTag(seer.state), 'No slots left');
+  // two major weapons at 100 with one major slot left (Axe mastered): Blademaster can't open; Warblade (Axe and Long Blade) can
+  const w = hero({ primary: [DES, RES, ALT], major: [LB, SB, AX], minor: [MYS, ILL, SKILLS.Stealth], mastered: [AX], raised: { [LB]: 100, [SB]: 100 } });
+  const ma = family(specGuideModel(w), 'martial');
+  const st = (id) => ma.paths.find((p) => p.id === id).state;
+  assert.deepEqual([st('blademaster'), st('warblade'), st('bloodletter')], ['slots', 'ready', 'ready']);
+  // a group the player's own masteries filled: the skill's own line, no shared one; the class's own refusal is 'never'
+  const s = spellsword({ mastered: [LB, AR] });
+  const sa = family(specGuideModel(s), 'arcane');
+  const blood = sa.paths.find((p) => p.id === 'bloodmage');
+  assert.equal(blood.state, 'slots');
+  assert.deepEqual(pathSteps(blood).map(([state]) => state), ['full', 'climb'], 'Destruction\'s own "no primary mastery slots left" says it - no shared line');
+  const bm = family(specGuideModel(s), 'martial').paths.find((p) => p.id === 'blademaster');
+  assert.equal(bm.state, 'never');
+  assert.equal(stateLine(family(specGuideModel(s), 'martial'), bm, true), 'Your class can\'t master both of these skills.');
+  // neither is shown until asked: the reachable list leaves both out
+  assert.equal(SPEC_STATES.indexOf('slots') > SPEC_STATES.indexOf('closed') && SPEC_STATES.indexOf('slots') < SPEC_STATES.indexOf('never'), true);
+  assert.match(rd('src/ui/growth/specGuide.js'), /const reachable = fam\.paths\.filter\(\(p\) => p\.state !== 'never' && p\.state !== 'slots'\);/);
+});
+
+test('AUDIT GROWTH LANE1-4 THE HEADLINE: no path for the family says whether the class never could or the player\'s masteries spent the slots (mutants: the spent read as the class\'s)', () => {
+  const never = hero({ primary: [LB, AR, DES], major: [AX, SB, SKILLS.BluntWeapon], minor: [SKILLS.Stealth, SKILLS.Running, SKILLS.Swimming] });
+  assert.equal(familyLine(family(specGuideModel(never), 'arcane')), 'Your class can\'t master two schools of magic, so no arcane path is available.');
+  const spent = hero({ primary: [LB, AR, DES], major: [AX, SB, SKILLS.BluntWeapon], minor: [RES, SKILLS.Stealth, SKILLS.Running], mastered: [LB, AR] });
+  const f = family(specGuideModel(spent), 'arcane');
+  assert.deepEqual([f.possible, f.classPossible], [false, true]);
+  assert.equal(familyLine(f), 'Your mastery slots left can\'t hold two schools of magic, so no arcane path is available.');
+  assert.equal(familyLine(family(specGuideModel(spellsword()), 'arcane')), 'Master any two schools of magic to unlock the path for that pair.');
+});
+
+test('AUDIT GROWTH LANE1-2 MASTER SKILLS OFF: a pair with nothing left to climb says to turn it on, and a skill past 100 shows the 100 the game reads (mutants: the climb\'s line; the raw value)', () => {
+  const off = spellsword({ mastered: [LB, AR] });
+  off.skills[LB] = 150;
+  off._online = false; off.masterSkills = false;
+  const ma = family(specGuideModel(off), 'martial');
+  const ranger = ma.paths.find((p) => p.id === 'ranger');
+  assert.equal(ranger.state, 'reach');
+  assert.equal(stateLine(ma, ranger, false), 'Turn Master Skills on to unlock this path.');
+  assert.equal(skillStand(off, LB).value, 100, 'masterCappedSkill: past 100 reads 100 while Master Skills is off');
+  assert.equal(skillStandText(skillStand(off, LB)), 'Long Blade: mastered (100)');
+  off.masterSkills = true;
+  assert.equal(skillStand(off, LB).value, 150);
+});
+
+test('AUDIT GROWTH LANE1-3 THE CHOSEN PATH ASLEEP: Master Skills off, mentoring, a duel, the beast (martial only) - its line says its powers are off (mutants: a gate missed; the beast read for the arcane)', () => {
+  const c = spellsword({ mastered: [LB, AR, RES, ALT] });
+  assert.equal(MP.chooseMartialPath(c, 'ranger').ok, true);
+  assert.equal(AP.choosePath(c, 'warden').ok, true);
+  const line = (id) => { const f = family(specGuideModel(c), id); return stateLine(f, f.paths.find((p) => p.state === 'chosen'), true); };
+  assert.equal(line('martial'), 'Your specialisation.');
+  c._mentor = { level: 5 };
+  assert.equal(line('arcane'), 'Your specialisation. Its powers are off while you mentor a lower-level party.');
+  c._mentor = null;
+  setSigilDueling(true);
+  try { assert.equal(line('martial'), 'Your specialisation. Its powers are off during a duel.'); } finally { setSigilDueling(false); }
+  c.isInBeastForm = true;
+  assert.deepEqual([line('martial'), line('arcane')], ['Your specialisation. Its powers are off in beast form.', 'Your specialisation.']);
+  c.isInBeastForm = false;
+  c._online = false; c.masterSkills = false;
+  assert.equal(line('arcane'), 'Your specialisation. Its powers are off while Master Skills is off.');
+});
+
+test('AUDIT GROWTH LANE1-12 ONE SKILL LEFT: the state line names the skill that still needs it, and "both" only when both do (mutants: the one read as both)', () => {
+  const e = spellsword({ mastered: [AR], raised: { [AX]: 64, [RES]: 100, [ALT]: 76 } });
+  const m = specGuideModel(e);
+  const line = (fid, id) => { const f = family(m, fid); return stateLine(f, f.paths.find((p) => p.id === id), true); };
+  assert.equal(line('martial', 'woodsman'), 'Raise Axe to 100 and master it to unlock this path.');
+  assert.equal(line('arcane', 'warden'), 'Raise Alteration to 100, then master both skills to unlock this path.');
+  assert.equal(line('arcane', 'trickster'), 'Raise both skills to 100 and master them to unlock this path.');
+  const r = spellsword({ mastered: [RES], raised: { [ALT]: 100 } });
+  const ra = family(specGuideModel(r), 'arcane');
+  assert.equal(stateLine(ra, ra.paths.find((p) => p.id === 'warden'), true), 'Master Alteration on the Master Skills page to unlock this path.');
+  const b = spellsword({ raised: { [RES]: 100, [ALT]: 100 } });
+  const ba = family(specGuideModel(b), 'arcane');
+  assert.equal(stateLine(ba, ba.paths.find((p) => p.id === 'warden'), true), 'Both skills are at 100. Master them on the Master Skills page to unlock this path.');
+});
+
+test('AUDIT GROWTH LANE1-9/10 THE FAMILY FIRST AND THE RAIL\'S COUNT: a family with a choice waiting opens before one held; the rail counts a choice per family, not its paths (mutants: the held first; the paths summed)', () => {
+  const c = spellsword({ mastered: [LB, AR, RES, ALT] });
+  assert.equal(AP.choosePath(c, 'warden').ok, true);
+  const m = specGuideModel(c);
+  assert.equal(family(m, 'martial').open, 1);
+  assert.equal(firstFamily(m), 'martial');
+  assert.equal(firstFamily(specGuideModel(spellsword())), 'arcane');
+  // three schools mastered open three paths - one choice
+  const three = spellsword({ mastered: [DES, RES, ALT] });
+  assert.equal(family(specGuideModel(three), 'arcane').open, 3);
+  assert.equal(growthDue({ entity: three }).specs, 1);
+  const both = spellsword({ mastered: [LB, AR, RES, ALT] });
+  assert.equal(growthDue({ entity: both }).specs, 2);
+});
+
+test('AUDIT GROWTH LANE1-11 HOW IT IS USED: the spell from any spell shelf; a found technique wins the key only while the loot ladder is on (mutants: the ladder\'s words always)', () => {
+  assert.equal(useLine('spell'), 'Once chosen, buy it wherever spells are sold and cast it like any other spell.');
+  setPref(LOOT_RARITY_KEY, false);
+  assert.equal(useLine('technique'), 'Once chosen, press your Weapon Technique key while fighting with one of its two skills.');
+  setPref(LOOT_RARITY_KEY, true);
+  try { assert.match(useLine('technique'), / A weapon with a technique of its own uses that instead\.$/); } finally { setPref(LOOT_RARITY_KEY, false); }
+});
+
+test('AUDIT GROWTH LANE1-5/6/7 THE RIDERS SAY WHAT THE POWERS DO: the Brawler\'s answers that foe\'s blows only, the Bloodmage\'s a target below the line after the hit, the Berserker\'s arrows too (mutants: the old overclaim; the old underclaim)', () => {
+  assert.equal(MP.MARTIAL_BY_ID.brawler.rider, `For ${MP.MARTIAL_NUMBERS.knockout.seconds} seconds, blows from the enemy it hits deal ${MP.MARTIAL_NUMBERS.knockout.lighter}% less damage to you.`);
+  assert.match(AP.PATH_BY_ID.bloodmage.rider, /^If the target is below 30% health after the hit, it takes the same damage again\.$/);
+  assert.match(MP.MARTIAL_BY_ID.berserker.rider, /every blow or arrow you land heals you/);
+});
+
+test('AUDIT GROWTH LANE1-8 ONE LEVEL, ONE FANFARE: the Level page builds the screen on every visit; a level the strip never announced (a save\'s, an Oghma level) sounds once, and the next level sounds again (mutants: the latch dropped; set before it is read)', () => {
+  const played = [];
+  const was = audio.playOneShot;
+  audio.playOneShot = (snd) => { played.push(snd); };
+  try {
+    destroyLevelNotices();
+    const e = structuredClone(playerEntity);
+    Object.assign(e, { level: 5, readyToLevelUp: true, pendingLevel: 6, stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 } });
+    for (let visit = 0; visit < 3; visit++) assert.ok(levelUpScreenFor(e));
+    assert.equal(played.length, 1, 'a loaded level: once');
+    e.pendingLevel = 7;
+    levelUpScreenFor(e);
+    assert.equal(played.length, 2, 'the next level sounds');
+    const o = structuredClone(e);
+    Object.assign(o, { oghmaLevelUp: true, pendingLevel: null });
+    for (let visit = 0; visit < 3; visit++) levelUpScreenFor(o);
+    assert.equal(played.length, 3, 'an Oghma level: once');
+  } finally { audio.playOneShot = was; destroyLevelNotices(); }
 });
 
 // ── GROWTH3: the stage (pure: a made host) and the windows' embedding (by source) ───────────────────────────────────
@@ -240,12 +383,22 @@ test('GROWTH3 THE WINDOWS, EMBEDDED (by source; tools/growthProbe.mjs drives the
   assert.match(firm, /if \(dead \|\| \(embed && !root\.isConnected\)\) return;/);
   assert.match(firm, /case 'Escape':\n\s*if \(embed\) \{ used = false; break; \}/);
   assert.match(firm, /let unregister = embed \? \(\) => \{\} : registerOverlay\(overlayClose\);/);
-  assert.match(firm, /if \(unaccepted\(\) && !armedClose\) \{ armedClose = true; say\(unacceptedLeave\(\), true\); return true; \}/);
-  // the captain's and the revenants' skies are one window (ui/skyWindow.js - RVN-STARS), embedded once for both
+  // PIN MOVED (AUDIT GROWTH LANE3-8): the ask is for the stars it named - re-armed when they change
+  assert.match(firm, /rearm\(\);\n\s*if \(unaccepted\(\) && !armedClose\) \{ arm\(\); say\(unacceptedLeave\(\), true\); return true; \}/);
+  assert.match(firm, /const rearm = \(\) => \{ if \(armedClose && armedAt !== sig\(\)\) armedClose = false; \};/);
+  // the captain's and the revenants' skies are one window (ui/skyWindow.js - RVN-STARS); only the captain's is embedded
+  // (AUDIT GROWTH LANE4-4: each piece of its embedding pinned as the Firmament's is - no Close, no focus taken, the stage
+  // watched, the leaving press's words)
   const sky = rd('src/ui/skyWindow.js');
   assert.match(sky, /case 'Escape': if \(embed\) \{ used = false; break; \} tryClose\(\); break;/);
-  assert.match(sky, /if \(dead \|\| !unaccepted\(\) \|\| armedClose\) return false;/);
+  assert.match(sky, /rearm\(\);\n\s*if \(dead \|\| !unaccepted\(\) \|\| armedClose\) return false;\n\s*arm\(\);\n\s*say\(W\.unacceptedEsc \?\? W\.unaccepted, true\);\n\s*return true;/);   // PIN MOVED (LANE3-8)
+  assert.match(sky, /const rearm = \(\) => \{ if \(armedClose && armedAt !== pending\.join\(\)\) armedClose = false; \};/);
   assert.match(sky, /if \(dead \|\| \(embed && !root\.isConnected\)\) return;/);
+  assert.match(sky, /if \(embed\) \{ root\.classList\.add\('fmt-embed'\); root\.setAttribute\('aria-modal', 'false'\); exitBtn\.hidden = true; \}/);
+  assert.match(sky, /if \(embed\) try \{ watch = new globalThis\.ResizeObserver\(\(\) => \{ if \(!dead\) resize\(\); \}\); watch\.observe\(root\); \} catch \{ watch = null; \}/);
+  assert.match(sky, /if \(!embed\) \(goBtn\.disabled \? homeBtn : goBtn\)\.focus\?\.\(\{ preventScroll: true \}\);/);
+  assert.match(rd('src/ui/captainTreeWindow.js'), /unacceptedEsc: t\('captain\.sky\.unacceptedLeave', 'You have unaccepted changes\. Press Accept to keep them, or leave again to discard them\.'\),/);
+  assert.doesNotMatch(rd('src/ui/revenantStarsWindow.js'), /embed/, 'the revenant sky stands over the window, never in it');
   assert.match(rd('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/);
   const lv = rd('src/ui/enhanced/enhancedLevelUp.js');
   assert.match(lv, /if \(embed\) root\.classList\.add\('lv-embed'\);/);
@@ -280,12 +433,13 @@ test('GROWTH5 LEAVING ASKS FIRST: another page, another tab, the sheet\'s key an
   } finally { globalThis.document = was; globalThis.innerWidth = keptW; dropStage(); }
   const sheet = rd('src/ui/charSheetDoor.js');
   assert.match(sheet, /const dialClose = \(\) => \{ if \(view\?\.asksFirst\?\.\(\)\) \{ unregister = registerOverlay\(dialClose\); return; \} close\(\); \};\n\s+unregister = registerOverlay\(dialClose\);/, 'the dial arm asks, and is laid again');
-  assert.match(sheet, /if \(view\?\.asksFirst\?\.\(\)\) return;\s+\/\/ GROWTH5/, 'the sheet\'s key asks');
+  assert.match(sheet, /if \(view\?\.asksFirst\?\.\(\) \|\| rvnStars\.asks\(\)\) return;\s+\/\/ GROWTH5/, 'the sheet\'s key asks (PIN MOVED, AUDIT GROWTH LANE4-1: a sworn one\'s sky too)');
   const menu = rd('src/ui/enhanced/enhancedMenu.js');
   assert.match(menu, /asksFirst: \(\) => mode === 'pause' && pauseTab === 'growth' && growthAsks\(\),/);
   assert.match(menu, /b\.onclick = \(\) => \{ if \(pauseTab === 'growth' && id !== 'growth' && growthAsks\(\)\) return;/, 'another tab asks');
   assert.match(rd('src/ui/growth/growthTab.js'), /b\.onclick = \(\) => \{ if \(sec !== id && stageAsks\(\)\) return;/, 'another page asks');
-  assert.match(rd('src/ui/growth/growthStage.js'), /try \{ return !!me\.face\?\.back\?\.\(\); \} catch \{ return false; \}/);
+  // PIN MOVED (AUDIT GROWTH LANE3-6): the face's own ask - opened full screen when it asks while it stands nowhere
+  assert.match(rd('src/ui/growth/growthStage.js'), /try \{ held = !!me\.face\?\.back\?\.\(\); \} catch \{ return false; \}\n\s*if \(held && !me\.full && !me\.host\.isConnected && me\.words\) setFull\(true, me\.el, me\.words\);/);
 });
 
 // ── GROWTH4: the classic sheet's rows and the one ask's words ───────────────────────────────────────────────────────
@@ -304,18 +458,19 @@ test('GROWTH4 THE CLASSIC SHEET: where a document stands, its S and W rows open 
   sheet.input('KeyW');
   assert.deepEqual(asked, ['specs:arcane', 'specs:martial']);
   const src = rd('src/ui/charsheet.js');
-  assert.match(src, /: guide && pathPossible\(e\) \? t\('schools\.sheet\.guide', 'Specialisations  \(S\)'\) : null;/);
+  assert.match(src, /: guide && pathPossible\(e\) \? t\('schools\.sheet\.guide', 'Arcane paths  \(S\)'\) : null;/);
   assert.match(src, /: guide && martialPossible\(e\) \? t\('martial\.sheet\.guide', 'Martial paths  \(W\)'\) : null;/);
   const door = rd('src/ui/charSheetDoor.js');
-  assert.match(door, /if \(typeof document !== 'undefined'\) hooks\.growth = \(at\) => openPauseFlow\(\(\) => \{\}, \{ \.\.\.\(deps\.pause\?\.\(\) \?\? \{\}\), at, onResume: \(\) => \{\} \}\);/);
+  // PIN MOVED (AUDIT GROWTH LANE3-14): and no relock under the sheet on its Save or Load
+  assert.match(door, /if \(typeof document !== 'undefined'\) hooks\.growth = \(at\) => openPauseFlow\(\(\) => \{\}, \{ \.\.\.\(deps\.pause\?\.\(\) \?\? \{\}\), at, onResume: \(\) => \{\}, relock: \(\) => \{\} \}\);/);
   assert.match(rd('src/ui/pauseDoor.js'), /if \(growthPageAt\(hooks\.at\) && typeof document !== 'undefined'\) return enhancedPauseOverlay\(show, hooks\);/, 'on either skin');
 });
 
 test('GROWTH4 THE ONE ASK\'S WORDS: on the enhanced skin the No and the several-open box name the Growth tab; the classic skin\'s the skill screen, whose rows open the same guide (mutants: the skins\' words swapped)', () => {
   assert.equal(AP.pathDeclinedGrowthText(), 'You can choose a specialisation later on the Growth tab of the pause menu.');
   assert.equal(MP.martialDeclinedGrowthText(), 'You can choose a martial specialisation later on the Growth tab of the pause menu.');
-  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden], { growth: true }).at(-1), 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.');
-  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true }).at(-1), 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.');
+  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden], { growth: true }).at(-1), 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.');
+  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true }).at(-1), 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.');
   assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger]).at(-1), 'Choose one in your skill screen. The choice cannot be undone.');
   const shared = rd('src/scenes/shared.js');
   assert.match(shared, /\(\) => say\(isEnhanced\(\) \? pathDeclinedGrowthText\(\) : pathDeclinedText\(\)\)\);/);
@@ -350,7 +505,7 @@ test('GROWTH THE WINDOW, DRIVEN: the Stats page\'s Growth door (its count) lands
       const bar = host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.startsWith('Ranger'));
       bar.onclick();
       const detail = host.querySelectorAll('div').find((d) => String(d.className).includes('gr-detail'))?.textContent ?? '';
-      for (const part of ['Requirements', 'Long Blade: mastered', 'Passive: Hunter\'s Instinct', 'Signature technique: Mark of the Hunt', 'With Archery: 12-second cooldown', 'Weapon Technique key']) assert.ok(detail.includes(part), part);
+      for (const part of ['Requirements', 'Long Blade: mastered', 'Passive: Hunter\'s Instinct', 'Signature technique: Mark of the Hunt', 'Bow: 12-second cooldown', 'Weapon Technique key']) assert.ok(detail.includes(part), part);
       btn('Choose Ranger').onclick();
       const ask = globalThis.document.body.querySelectorAll('div').find((d) => String(d.className).includes('px-master-ask'));
       assert.match(ask.textContent, /Martial specialisation: Ranger\?/);

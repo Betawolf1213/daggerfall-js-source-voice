@@ -71,6 +71,5 @@ if (q.get('nocaptain') !== '1') {
 
 globalThis.growthFace = stageFace;   // the probe's handles
 globalThis.growthStarIds = CAPTAIN_STARS.map((s) => s.id);
-if (q.get('dress') === 'grimoire') document.documentElement.setAttribute('data-dress', 'grimoire');
 const host = document.getElementById('lab');
 globalThis.growthLab = mountEnhancedMenu(host, { mode: 'pause', hooks: { ascendScreen: () => levelUpScreenFor(playerEntity) }, onAction: (a) => console.log('[growth lab]', a), at: q.get('at') ?? 'growth' });

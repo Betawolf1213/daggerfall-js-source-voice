@@ -9,8 +9,10 @@
 // A face is `{ destroy(), resize?(refit), back?() }` - the windows' own (their `embed` mode). One stands at a time: a
 // new page's drops the last, and leaving the tab or the window drops it (releaseGrowthTab).
 
+import { isChunkLoadError, RELOAD_TEXT } from '../enhanced/enhancedChunk.js';   // MENU1's word for a chunk a deploy took
+
 /** The face standing: `{ key, host, face, full, box }`, or null. */
-let live = /** @type {null | { key: string, host: HTMLElement, face: any, full: boolean, box: HTMLElement|null, sized: boolean }} */ (null);
+let live = /** @type {null | { key: string, host: HTMLElement, face: any, full: boolean, box: HTMLElement|null, sized: boolean, el?: any, words?: { full: string, leave: string }, guard?: any }} */ (null);
 
 /** Is a face up, and is it full screen? */
 export const stageLive = () => (live ? { key: live.key, full: live.full } : null);
@@ -23,17 +25,25 @@ export const stageFace = () => live?.face ?? null;
  * @param {HTMLElement} detail
  * @param {string} key
  * @param {(host: HTMLElement) => any} mount
- * @param {{ el: (t: string, c?: string|null, x?: string|null) => HTMLElement, full: string, leave: string, loading: string, failed: string, lead?: string, open?: string }} o
- *   `lead` the page's one line, on the stage's bar beside the toggle; `open` the narrow screen's door (below)
+ * @param {{ el: (t: string, c?: string|null, x?: string|null) => HTMLElement, full: string, leave: string, loading: string, failed: string, lead?: string, open?: string, door?: boolean }} o
+ *   `lead` the page's one line, on the stage's bar beside the toggle; `open` the narrow screen's door (below); `door`
+ *   that door on any screen - a face the pane cannot hold (AUDIT GROWTH LANE2-8: the Ascension's column)
  */
-export function drawStage(detail, key, mount, { el, full, leave, loading, failed, lead = '', open = full }) {
+export function drawStage(detail, key, mount, { el, full, leave, loading, failed, lead = '', open = full, door = false }) {
   if (live && live.key !== key) dropStage();
   if (!live) {
     const host = el('div', 'gr-stagehost');
     const me = { key, host, face: null, full: false, box: null, sized: false };
     live = me;
     host.append(el('p', 'gr-loading', loading));
-    Promise.resolve().then(() => mount(host)).then((face) => {
+    // AUDIT GROWTH LANE2 N4: a face left before its chunk landed is never built (a dropped Level face drew its pool and
+    // played its fanfare); LANE2-10: MENU1's law (enhancedChunk.js) - a chunk that fails to load is tried once more, and
+    // one a deploy took says a reload fixes it, not "try again"
+    const tryMount = (again) => Promise.resolve().then(() => (live === me ? mount(host) : null)).catch((err) => {
+      if (!again || live !== me || !isChunkLoadError(err)) throw err;
+      return new Promise((r) => setTimeout(r, 400)).then(() => tryMount(false));
+    });
+    tryMount(true).then((face) => {
       if (live !== me) { try { face?.destroy?.(); } catch { /* gone */ } return; }
       host.querySelector?.('.gr-loading')?.remove?.();
       me.face = face;
@@ -41,15 +51,16 @@ export function drawStage(detail, key, mount, { el, full, leave, loading, failed
     }, (err) => {
       if (live !== me) return;
       host.textContent = '';
-      host.append(el('p', 'gr-loading', failed));
+      host.append(el('p', 'gr-loading', isChunkLoadError(err) ? RELOAD_TEXT : failed));
       console.warn(`[growth] ${key} failed: ${err?.message ?? err}`);
     });
   }
   const me = live;
+  me.el = el; me.words = { full, leave };   // LANE3-6: a detached face's ask opens it (asked)
   // A PHONE'S STAGE IS THE SCREEN: under a narrow window a face's own bar alone fills the pane (the sky's purses, its
   // search and its seven presses), so the page is its line and a door, and the face opens over everything - kept as
   // it was (its view, its pending stars) between two opens, until the page, the tab or the window is left.
-  if (narrow()) {
+  if (door || narrow()) {
     const card = el('div', 'gr-stagecard');
     if (lead) card.append(el('p', 'gr-stagelead', lead));
     const b = el('button', 'act primary', open);
@@ -96,7 +107,9 @@ function setFull(on, el, words) {
     box.append(me.host, b);
     document.body.append(box);
     me.box = box;
+    keepFocus(me, true);
   } else {
+    keepFocus(me, false);
     me.box?.remove();
     me.box = null;
     // the page's stage is drawn again by the window's next render; until then the host stands nowhere (a phone's page
@@ -109,11 +122,22 @@ function setFull(on, el, words) {
   fit(me);
 }
 
+/** AUDIT GROWTH LANE2 N2: the focus stays in the full-screen box - a Tab walked under it to the window's own tabs (the
+ *  pause door's tabIn sends it to the first), and an Enter there left the page behind the face. */
+function keepFocus(me, on) {
+  if (typeof document === 'undefined') return;
+  if (me.guard) { document.removeEventListener?.('focusin', me.guard, true); me.guard = null; }
+  if (!on) return;
+  me.guard = (e) => { if (me.box && !me.box.contains?.(/** @type {any} */ (e.target))) /** @type {any} */ (me.box.querySelector?.('.gr-fullleave'))?.focus?.({ preventScroll: true }); };
+  document.addEventListener?.('focusin', me.guard, true);
+}
+
 /** The face taken down (a page left, the tab left, the window gone). */
 export function dropStage() {
   const me = live;
   if (!me) return;
   live = null;
+  keepFocus(me, false);
   me.box?.remove();
   try { me.face?.destroy?.(); } catch { /* already gone */ }
   me.host.remove();
@@ -126,7 +150,7 @@ export function dropStage() {
 export function stageBack() {
   const me = live;
   if (!me) return false;
-  try { if (me.face?.back?.()) return true; } catch { /* the face's */ }
+  if (asked(me)) return true;
   if (me.full) { /** @type {HTMLElement|null} */ (me.box?.querySelector?.('.gr-fullleave') ?? null)?.click?.(); return true; }
   return false;
 }
@@ -138,8 +162,17 @@ export function stageBack() {
  */
 export function stageAsks() {
   const me = live;
-  if (!me) return false;
-  try { return !!me.face?.back?.(); } catch { return false; }
+  return me ? asked(me) : false;
+}
+
+/** The face's own ask - and a face that asks while it stands nowhere (a phone's, its full screen left: the page has no
+ *  stage) is opened full screen again, so the ask is said where it can be read (AUDIT GROWTH LANE3-6: the first press
+ *  looked dead and the second discarded the stars). */
+function asked(me) {
+  let held = false;
+  try { held = !!me.face?.back?.(); } catch { return false; }
+  if (held && !me.full && !me.host.isConnected && me.words) setFull(true, me.el, me.words);
+  return held;
 }
 
 /** The stage's dress: the pane's height, its bar, the full-screen box over the window. */
@@ -151,8 +184,11 @@ export const STAGE_CSS = `
 .gr-stagehost { position: absolute; inset: 0; overflow: hidden; }
 .gr-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 14px; color: #9c937d; }
 .gr-fullbox { position: fixed; inset: 0; z-index: 15; background: #07080b; }
-.gr-fullbox .gr-fullleave { position: absolute; right: 12px; bottom: 52px; z-index: 2; min-height: 36px; padding: 4px 12px; font-size: 14px; }   /* over the faces' own hint lines, never on them */
+/* AUDIT GROWTH LANE2-8 / LANE2 N3: the face stands above a strip of its own and the leave press is in it - laid over the
+   face it sat on the Ascension's Ascend and on the skies' summary panel */
+.gr-fullbox > .gr-stagehost { bottom: 48px; }
+.gr-fullbox .gr-fullleave { position: absolute; right: 12px; bottom: 6px; z-index: 2; min-height: 36px; padding: 4px 12px; font-size: 14px; }
 .px-sys .gr-stagecard { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 10px 0; }
 .px-sys .gr-stagecard .gr-stagelead { flex: none; }
-@media (max-width: 660px) { .gr-fullbox .gr-fullleave { right: 8px; bottom: 48px; } }
+@media (max-width: 660px) { .gr-fullbox .gr-fullleave { right: 8px; } }
 `;

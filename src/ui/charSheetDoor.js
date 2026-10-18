@@ -100,6 +100,8 @@ export function charSheetDoorReady() {
   return isEnhanced() || charSheetArtLoaded();
 }
 
+/** AUDIT GROWTH LANE1-8: entity -> the level whose fanfare a screen built here played. */
+const fanfared = new WeakMap();
 /**
  * GROWTH1 (bible/10-UI/Growth.md section 4): THE LEVEL-UP'S ROLLOUT for `entity`, one home - the screen a level OWED wants
  * (ORL1's Virtue screen for a mod-law character, DFU's own for any other; the fanfare only while the notice still owes
@@ -115,7 +117,11 @@ export function levelUpScreenFor(entity, virtue = !entity?.oghmaLevelUp && usesV
   // playing it again here would announce one event twice. The notice
   // answers for the level it announced and for no other, so a second
   // level earned while the first was unspent still sounds.
-  const fanfare = levelNotices.fanfareOwed(entity?.pendingLevel ?? null);
+  // AUDIT GROWTH LANE1-8: and once per level from here too - the Growth tab's Level page builds this on every visit, and
+  // a level the strip never announced (one loaded from a save, an Oghma level) played it each time
+  const level = `${entity.pendingLevel ?? 'oghma'}:${entity.level ?? 0}`;
+  const fanfare = levelNotices.fanfareOwed(entity.pendingLevel ?? null) && fanfared.get(entity) !== level;
+  if (fanfare) fanfared.set(entity, level);
   return virtue ? new VirtueLevelUpScreen(entity, { fanfare }) : new LevelUpScreen(entity, undefined, { fanfare });
 }
 
@@ -203,7 +209,8 @@ export function createCharSheetWindow(deps = {}) {
   // GROWTH4 (bible/10-UI/Growth.md section 7): the classic sheet's S and W rows open the Growth tab's guide - the enhanced
   // pause window on either skin (pauseDoor.js growthPageAt), pushed as the sheet's own child with this host's pause bag;
   // its Resume comes back to the sheet. No document (node), no hook: the rows keep DFU's boxes.
-  if (typeof document !== 'undefined') hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {} });
+  // AUDIT GROWTH LANE3-14: no relock on its Save or Load - the sheet still stands under it.
+  if (typeof document !== 'undefined') hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {}, relock: () => {} });
   return new CharSheet(deps.entity, hooks);
 }
 
@@ -311,13 +318,13 @@ function enhancedSheetPageOverlay(hooks, entity = null, pause = null) {
     e.stopPropagation();
     if (e.repeat) return;   // AUDIT KB1: a held key's repeat is swallowed, not an open-shut flicker
     const toPack = !acts.includes('CharacterSheet');   // the pack's key crosses over; the sheet's own closes (UXB1-S: a key that is both is the sheet's)
-    if (view?.asksFirst?.()) return;      // GROWTH5: a sky's unaccepted stars asked about once first
+    if (view?.asksFirst?.() || rvnStars.asks()) return;      // GROWTH5: a sky's unaccepted stars asked about once first (AUDIT GROWTH LANE4-1: a sworn one's too)
     if (toPack) pack();                   // the door closes the page FIRST, then the host's arm fills the slot it freed
     else close();
   }
-  /** THE PAGE'S OWN OPTIONS, named once (ASCEND-ANYTIME mounted this
-   *  page a second time after a view of the stars closed over it; since
-   *  GROWTH3 the stars are drawn in the page, and it mounts once). */
+  /** THE PAGE'S OWN OPTIONS, named once: the page mounts again after a
+   *  sworn one's stars closed over it (RVN-STARS - remountPage), on the
+   *  page they were opened from. */
   function pageOpts() {
     // F5-QUESTS (2026-09-26, Mac: "Cant see quest on f5 menu but can on tab menu"): THE HOST'S PAUSE BAG, under the
     // sheet's own doors. This page IS the pause window opened on Stats, and it was handed those doors and nothing

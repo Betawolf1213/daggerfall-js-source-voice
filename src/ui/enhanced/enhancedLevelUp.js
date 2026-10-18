@@ -389,6 +389,8 @@ export function mountEnhancedLevelUp(hostEl, d = {}) {
   const ok = el('button', 'lv-ok', 'Ascend');
   ok.type = 'button';
   ok.onclick = () => confirm();
+  // AUDIT GROWTH LANE3-7: the view in the tab has no Close - the page is its place, and closing it drew it again
+  if (embed && screen?.viewOnly) ok.hidden = true;
   acts.append(ok);
   foot.append(vitals, acts);
   root.append(foot);
@@ -399,7 +401,7 @@ export function mountEnhancedLevelUp(hostEl, d = {}) {
    *  line rather than doing nothing, and the window stays up: there is
    *  no other way out of a level-up, in either lane. */
   function confirm() {
-    if (dead) return false;
+    if (dead || (embed && screen?.viewOnly)) return false;   // LANE3-7: nothing to close in the tab
     if (ascend(screen)) { onExit(); return true; }
     refused = true;
     paint();
@@ -538,6 +540,7 @@ export function mountEnhancedLevelUp(hostEl, d = {}) {
   function onKey(e) {
     if (dead || e.metaKey || e.ctrlKey || e.altKey) return;
     if (embed && !root.isConnected) return;   // GROWTH3: a stage between two draws of its page hears nothing
+    if (embed && root.closest?.('[inert]')) return;   // AUDIT GROWTH LANE2-1: and nothing while a window over the pause window holds it inert (the account window's fields)
     const t = e.target;
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
     const key = focusedKey(screen);
@@ -555,7 +558,9 @@ export function mountEnhancedLevelUp(hostEl, d = {}) {
       case 'ArrowDown': ribbonAt += 1; paint(); centreRibbon(); break;
       case 'Equal': case 'NumpadAdd': if (raiseAt(screen, key)) refused = false; paint(); break;
       case 'Minus': case 'NumpadSubtract': if (lowerAt(screen, key)) refused = false; paint(); break;
-      case 'Enter': case 'NumpadEnter': confirm(); break;
+      // AUDIT GROWTH LANE3-3: in the tab a focused button's Enter is the button's - the window's tabs, its rail and Full
+      // screen stand beside the face (Enter on the Stats tab pressed Ascend), as the Firmament's and the sky's keep it
+      case 'Enter': case 'NumpadEnter': if (embed && t?.tagName === 'BUTTON') { used = false; break; } confirm(); break;
       default: used = false;
     }
     if (!used) {

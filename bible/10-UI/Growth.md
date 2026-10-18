@@ -38,7 +38,7 @@ Measured on the merge base (ce80d92d7):
 | Thing | Where it stood | What it said |
 |---|---|---|
 | The Ascension (LV1, ASCEND-ANYTIME) | the enhanced Stats page's Ascend button, swapped in over the pause window (`pauseDoor.js` and `charSheetDoor.js`, each its own copy) | the stars; a level owed went to the rollout instead |
-| The Firmament (FIRM1) | the Stats page's Firmament button beside Ascend, swapped in over the window (`firmamentOver.js`, DELETED by GROWTH3) | the sky, online alone |
+| The Firmament (FIRM1) | the Stats page's Firmament button beside Ascend, swapped in over the window (`firmamentOver.js` - that door taken out by GROWTH3; the file keeps RVN-STARS' revenant door) | the sky, online alone |
 | The captain's stars (CAPTAIN-TREE) | the Holdings tab's Captain page, "Open the stars" - the pause put down and the sky opened over the world | the captain's sky |
 | The specialisations (SCHOOLS1, MARTIAL1) | two cards on the Stats tab's Master Skills page | each OPEN path's name and its two skills, and Choose - nothing about what a path does, nothing about a path not yet open |
 
@@ -68,8 +68,9 @@ more: a rail of pages on the left, the page on the right.
 | Firmament | the sky in the pane, online; offline, what it is and why it waits | the Stats page's Firmament |
 | Captain's Stars | the captain's sky in the pane - only where the host hands one over (`growthSections`) | the Captain page's door |
 
-- **The rail's marks** (`growthDue`): Level `!` while a level is owed; Specialisations the paths open to choose (both
-  families); Captain's Stars the points not yet set. The Stats page's **Growth door** stands where Ascend and Firmament
+- **The rail's marks** (`growthDue`): Level `!` while a level is owed; Specialisations a choice waiting in each
+  family (1 or 2 - three schools mastered open three paths, one choice: AUDIT GROWTH LANE1-10, as the Master Skills
+  door counted); Captain's Stars the points not yet set. The Stats page's **Growth door** stands where Ascend and Firmament
   stood and carries their sum - `Growth (2)` - primary while anything waits (`ui/enhanced/enhancedMenu.js:"const g = el('button', n ? 'act primary' : 'act'"`).
 - **Landings** (`at`, the window's one way in by name): `growth`, a page's id (`level`, `specs`, `firmament`,
   `captain`), or a family's guide (`specs:arcane`, `specs:martial`). The names live in a leaf of their own,
@@ -89,7 +90,10 @@ The Ascension (`ui/enhanced/enhancedLevelUp.js`) drawn in the pane, through its 
 
 - **A level owed** is spent through the door's own rollout - `charSheetDoor.js` levelUpScreenFor, the one home of the
   screen both the sheet key and the tab build (ORL1's Virtue screen for a mod-law character, DFU's own for any other,
-  LV2's fanfare only while the notice still owes it). A door that hands none, or nothing owed, draws the view
+  LV2's fanfare only while the notice still owes it, and once a level from this door too - the page builds the screen
+  on every visit, and a level the strip never announced, loaded from a save or the Oghma's, played it each time: AUDIT
+  GROWTH LANE1-8; DFU plays it once a level as well - its sheet refuses to close with points unspent,
+  DaggerfallCharacterSheetWindow.cs CheckIfDoneLeveling :437-443, so it is never mounted twice for one level). A door that hands none, or nothing owed, draws the view
   (`levelUpView.js` viewOnlyScreen - ASCEND-ANYTIME's, writing nothing).
 - **Leave and come back as you like.** The bonus pool is drawn once a level and remembered on the character
   (`advancement.js` bonusPoolFor, AUDIT LV2's fix), so leaving the tab mid-spend and returning re-rolls nothing; the
@@ -104,24 +108,35 @@ spell, the martial law's weapons and technique, one shape). Pure model (`specGui
 
 - **A path's state, on THIS character** (`SPEC_STATES`): **Chosen**; **Available** (both mastered - Choose stands);
   **Needs mastering** (both at 100, a Master Skills press away); **Within reach** (both still masterable); **Closed**
-  (the family's other path held - one of each, for good); **Not for your class** (a skill the career cannot master, or
-  whose group's masteries are spent). In that order, and within a state the nearest first - the points its pair still
-  owes 100 - then the laws' order.
+  (the family's other path held - one of each, for good); **No slots left** (the mastery slots left cannot hold the
+  pair: a group the player's own masteries filled, or two skills of one group with one slot left - Master Skills'
+  own count, `masterSkills.js:"export function masterableCount(entity, ids) {"`, as `pathPossible` and `martialPossible`
+  count the family - AUDIT GROWTH LANE1-1, LANE1-4); **Not for your class** (a skill the career cannot master). In that
+  order, and within a state the nearest first - the points its pair still owes 100 - then the laws' order.
+- **The state's line** names the skill when only one still needs it ("Raise Axe to 100 and master it", "Master
+  Alteration on the Master Skills page"), "both" only when both do (LANE1-12); with Master Skills off, a pair with nothing
+  left to climb says to turn it on (LANE1-2). The chosen path says when its powers are off - Master Skills off,
+  mentoring, a refereed duel, the beast for a martial path (`pathAwake`, `martialAwake` and the powers' gates; LANE1-3).
+  A skill past 100 shows the value the game reads (`masterCappedSkill`: 100 while Master Skills is off).
 - **What opens it** (the detail's Requirements): each skill of the pair in its own words (`skillStandText`) - mastered,
   ready to master in Master Skills, its climb ("76 of 100, then master it"), no mastery slots left in its group, or not
-  a class skill.
+  a class skill - and, when one slot is left for two skills of one group, that ("Illusion and Mysticism are both minor
+  skills, and you can master only one more minor skill", `pathSteps`).
 - **What it does:** the passive (its name and the law's own sentence); the signature - a spell read as the spellbook
   reads it (`spellLines`: its target and element, each effect's line from `effectWords`, the maker's empty slots
   skipped), or a technique by each of its weapons (`techniqueLines`: cooldown and fatigue, the forms' own numbers) with
-  the law's rider; and how it is used (bought at the Mages Guild and cast; or the Weapon Technique key with one of its
-  weapons in hand, a weapon's own technique line first).
+  the law's rider; and how it is used (`useLine`: bought wherever spells are sold - every Buy Spells shelf, the guilds'
+  and the temples' - and cast; or the Weapon Technique key while fighting with one of its two skills, a weapon's own
+  technique first only while the loot ladder is on - `combat/techniques.js` techniqueInHand; LANE1-11).
 - **Choose** asks in the law's own box (`pathChoiceRows` / `martialChoiceRows`) and commits through the law
   (`choosePath` / `chooseMartialPath`) - permanent, as before; the page writes nothing itself.
 - **The page:** the two families as a switch, each with its count of open paths (it starts on a landing's family, else
-  the one where a path is held or open, else the one the class can meet); the family's line (the path held, the paths
-  open, how one opens, or why none can) over its six skills, each with the Stats page's skill bar (gold past 100) and
+  the one with a path open, else the one held, else the one the class can meet - `firstFamily`, LANE1-9); the family's
+  line (`familyLine`: the path held, the paths open, how one opens, or why none can - the class, or the slots its
+  masteries spent) over its six skills, each with the Stats page's skill bar (gold past 100) and
   its state in a word, and a door to Master Skills; then every path the class can reach as a bar (its name, its pair,
-  its state's tag) that opens its detail beneath it - "Show all fifteen paths" adds the rest. Master Skills off: the
+  its state's tag) that opens its detail beneath it - "Show all fifteen paths" adds the ones out of reach (no slots, or
+  not for the class). Master Skills off: the
   page says no path can open, and where the switch is (offline, Master Skills).
 
 ## 6. GROWTH3 - the stage: the skies drawn in the tab
@@ -146,6 +161,9 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   they drop it (`stageAsks` - the face's own ask, never full screen's): unaccepted stars said once ("You have unaccepted
   changes. Press Accept to keep them, or do that again to discard them."), the second press goes. Merged, this found
   the hole GROWTH3 had left: the sheet's key, the dial's key and a click elsewhere threw unaccepted stars away unasked.
+  The one sky still laid over the window - a sworn revenant's, from the Companions page - asks the sheet's own keys the
+  same way (`firmamentOver.js` revenantStarsOver's `asks`, through `skyWindow.js` back(); AUDIT GROWTH LANE4-1: F5 and
+  the pack key's crossover dropped its pending stars unasked, #999's own hole).
 - **The windows' `embed` mode** (`firmamentWindow.js`, `skyWindow.js` - the one window the captain's sky draws through
   since RVN-STARS, the revenants' too, unembedded - and `enhancedLevelUp.js`): absolute in
   the stage at its size (a ResizeObserver refits the view the first time it has a true size), no overlay registered (the

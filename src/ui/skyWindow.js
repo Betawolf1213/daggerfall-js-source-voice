@@ -184,11 +184,19 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
   let dirty = true;
   let sayTimer = 0;
   let armedClose = false;
+  // AUDIT GROWTH LANE3-8: the ask is for the stars it named - one taken or given back since, and the next leave asks again
+  let armedAt = '';
+  const rearm = () => { if (armedClose && armedAt !== pending.join()) armedClose = false; };
+  const arm = () => { armedClose = true; armedAt = pending.join(); };
   const heldSet = () => new Set(pending);
 
+  /** AUDIT GROWTH LANE2-6: the line under the bar, in the root's own frame - in the tab the root is not at the screen's
+   *  top (it stood 200 px low, or off a short stage), and again whenever the window is resized (a phone's face measured
+   *  while it waited, detached, for its door). */
+  const placeSay = () => { sayBox.style.top = `${Math.round((barFoot() || 66) + 10)}px`; };
   function say(text, refused = false, stay = false) {
     sayBox.textContent = text;
-    sayBox.style.top = `${Math.round((bar.getBoundingClientRect?.().bottom ?? 66) + 10)}px`;
+    placeSay();
     sayBox.classList.add('on');
     sayBox.classList.toggle('no', refused);
     clearTimeout(sayTimer);
@@ -375,6 +383,7 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
   // ── the keys: a modal window owns its input ──
   function onKey(e) {
     if (dead || (embed && !root.isConnected)) return;   // GROWTH3: a stage between two draws of its page hears nothing
+    if (embed && root.closest?.('[inert]')) return;   // AUDIT GROWTH LANE2-1: and nothing while a window over the pause window holds it inert (the account window's fields)
     let used = true;
     switch (e.key) {
       case 'Escape': if (embed) { used = false; break; } tryClose(); break;   // GROWTH3: the window's back stack asks back()
@@ -395,14 +404,16 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
   globalThis.addEventListener?.('keydown', onKey, true);
   /** GROWTH3: the pause window's back stack, in the tab - unaccepted stars asked about once; whether it took the press. */
   function back() {
+    rearm();
     if (dead || !unaccepted() || armedClose) return false;
-    armedClose = true;
+    arm();
     say(W.unacceptedEsc ?? W.unaccepted, true);
     return true;
   }
   /** Closing with a change not accepted asks first - once; the second close lets it go. */
   function tryClose() {
-    if (unaccepted() && !armedClose) { armedClose = true; say(W.unaccepted, true); return false; }
+    rearm();
+    if (unaccepted() && !armedClose) { arm(); say(W.unaccepted, true); return false; }
     close();
     return true;
   }
@@ -417,6 +428,7 @@ export function mountSkyWindow(host, sky, { changed = () => {}, onExit = () => {
     hold();
     placeSide();
     dirty = true;
+    placeSay();   // LANE2-6
   }
   resize();
   const onResize = () => resize();

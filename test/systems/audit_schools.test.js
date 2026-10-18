@@ -710,7 +710,7 @@ test('AUDIT SCHOOLS L4 M1 / L5 H3: THE ONE ASK (scenes/shared.js raisePlayerSkil
   assert.equal(asks.length, 2);
   // PIN MOVED (GROWTH4, bible/10-UI/Growth.md section 7): the enhanced skin's box sends the player to the Growth tab; the
   // classic skin's to the skill screen, whose S row opens the same guide
-  assert.deepEqual(asks[1].rows, ['Specialisation', '', '3 specialisations are open to you:', 'Riftwalker, Warden, Necromancer', '', 'Read each and choose one on the Growth tab of the pause menu. The choice cannot be undone.']);
+  assert.deepEqual(asks[1].rows, ['Specialisation', '', '3 specialisations are open to you:', 'Riftwalker, Warden, Necromancer', '', 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.']);
   assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden]).at(-1), 'Choose one in your skill screen. The choice cannot be undone.', 'the classic skin\'s');
   assert.deepEqual([asks[1].okOnly, asks[1].onYes, three.arcanePath ?? null, three.pathPrompted], [true, null, null, true], 'named, none chosen');
   // one box a pass: a mastery waiting is asked first, the path on the next quiet pass
@@ -816,7 +816,7 @@ test('AUDIT SCHOOLS L5 H3: THE ENHANCED PAUSE WINDOW, DRIVEN - its Master Skills
       host2.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Arcane')).onclick();
       assert.match(head(), /Your class can't master two schools of magic/, 'no arcane path for a class with no two schools');
       host2.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Martial')).onclick();
-      assert.doesNotMatch(head(), /cannot/, 'the Brute\'s weapons meet the martial');
+      assert.match(head(), /^Master any two weapon skills to unlock the path for that pair\.$/, 'the Brute\'s weapons meet the martial');   // AUDIT GROWTH LANE5-5: the line says can't, never cannot - the old doesNotMatch could not fail
     } finally { menu2.unmount(); }
   } finally { restore(); }
 });

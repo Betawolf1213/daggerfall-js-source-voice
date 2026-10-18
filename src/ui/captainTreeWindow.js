@@ -100,7 +100,7 @@ export function starRefusal(held, id, points) {
   const way = wayTo(h, id);
   if (!way?.length) return t('captain.no.way', 'This star isn\'t connected to any of your stars.');
   const left = points - (h.length - 1);
-  if (way.length > left) return t('captain.no.points', 'Reaching this star costs {need} {need, plural, one {point} other {points}}. You have {left}. You get one point per captain level.', { need: way.length, left: Math.max(0, left) });
+  if (way.length > left) return t('captain.no.points', 'Reaching this star costs {need} {need, plural, one {point} other {points}}. You have {left}. You get one point per captain level after the first.', { need: way.length, left: Math.max(0, left) });
   return null;
 }
 
@@ -175,14 +175,14 @@ export function mountCaptainTreeWindow(host, { ledger, changed = () => {}, onExi
       close: t('captain.sky.close', 'Close'),
       hint: t('captain.sky.hint', 'Click a star to take it and the stars on the way to it · Right-click to remove · Drag to pan · Scroll to zoom · H: back to the Helm'),
       hintTouch: t('captain.sky.hintTouch', 'Tap a star to see it, tap again to take it · Hold a star to remove it · Drag to pan · Pinch to zoom'),
-      unaccepted: t('captain.sky.unaccepted', 'You have changes that aren\'t accepted. Close again to discard them.'),
-      unacceptedEsc: t('captain.sky.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or do that again to discard them.'),   // GROWTH3: in the tab (any press that leaves)
+      unaccepted: t('captain.sky.unaccepted', 'You have unaccepted changes. Press Accept to keep them, or close again to discard them.'),
+      unacceptedEsc: t('captain.sky.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or leave again to discard them.'),   // GROWTH3: in the tab (any press that leaves)
       set: t('captain.sky.set', 'Stars saved. They apply to all of your ships.'),
       startTip: t('captain.tip.helm', 'Everyone starts with the Helm. Take a star next to it.'),
       backMany: (n) => t('captain.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"
       back: t('captain.tip.back', 'Right-click to remove.'),
       take: (n) => t('captain.tip.take', 'Click to take: {n} {n, plural, one {point} other {points}}.', { n }),
-      noPoints: t('captain.sky.noPoints', 'You get one point per captain level. Earn XP at sea: sink or capture a ship, finish a contract, or just sail.'),
+      noPoints: t('captain.sky.noPoints', 'You get one point per captain level after the first. Earn XP at sea: sink or capture a ship, finish a contract, or just sail.'),
     },
   };
   return mountSkyWindow(host, sky, { changed, onExit, doc, embed });

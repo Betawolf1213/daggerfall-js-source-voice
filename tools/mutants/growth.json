@@ -62,8 +62,8 @@
   {
     "name": "GROWTH2-never-misread",
     "file": "src/ui/growth/specGuide.js",
-    "old": "if (st.some((s) => s === 'misc' || s === 'full')) return 'never';",
-    "new": "if (st.some((s) => s === 'misc')) return 'never';",
+    "old": "if (st.includes('misc')) return 'never';",
+    "new": "if (false) return 'never';",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
@@ -237,7 +237,7 @@
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
-    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 7): re-aimed by content - the captain's window draws through the one sky window (RVN-STARS' skyWindow.js), embedded there. The captain's sky closes itself under the window."
+    "note": "GROWTH5 (PIN MOVED, bible/10-UI/Growth.md section 6): re-aimed by content - the captain's window draws through the one sky window (RVN-STARS' skyWindow.js), embedded there. The captain's sky closes itself under the window."
   },
   {
     "name": "GROWTH3-embedded-level-own-escape",
@@ -282,8 +282,8 @@
   {
     "name": "GROWTH4-rows-only-while-open",
     "file": "src/ui/charsheet.js",
-    "old": ": guide && pathPossible(e) ? t('schools.sheet.guide', 'Specialisations  (S)') : null;",
-    "new": ": guide && pathChoices(e).length ? t('schools.sheet.guide', 'Specialisations  (S)') : null;",
+    "old": ": guide && pathPossible(e) ? t('schools.sheet.guide', 'Arcane paths  (S)') : null;",
+    "new": ": guide && pathChoices(e).length ? t('schools.sheet.guide', 'Arcane paths  (S)') : null;",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
@@ -342,8 +342,8 @@
   {
     "name": "GROWTH-detail-how-used",
     "file": "src/ui/growth/specGuide.js",
-    "old": "Once chosen, use your Weapon Technique key while holding one of its two weapons.",
-    "new": "Once chosen, use it.",
+    "old": "'Once chosen, press your Weapon Technique key while fighting with one of its two skills.')",
+    "new": "'Once chosen, use it.')",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
@@ -372,7 +372,7 @@
   {
     "name": "GROWTH5-sheet-key-unasked",
     "file": "src/ui/charSheetDoor.js",
-    "old": "    if (view?.asksFirst?.()) return;      // GROWTH5",
+    "old": "    if (view?.asksFirst?.() || rvnStars.asks()) return;      // GROWTH5",
     "new": "    // GROWTH5",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"

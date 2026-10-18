@@ -361,7 +361,11 @@ let timersFocusBack = false;  // AUDIT TIMERS1 UI-5: a closed window hands the f
 const stopTimers = () => { timersView?.stop(); timersView = null; timersAnchor?.(); timersAnchor = null; };
 /** EG-ZM (Elite-Gates.md section 20): a timers row's door (the Elite rows' Boards) is a handoff, as the sheet's doors are -
  *  the pause face down first, the door's window in the slot it frees, and a door that opened nothing a resume. */
-const timersDoor = (fn) => { onAction('handoff'); if (!fn()) onAction('resume'); };
+// AUDIT GROWTH LANE2-3: a Growth face under it asked first (GROWTH5) - the timers window shut so the ask is seen
+const timersDoor = (fn) => {
+  if (pauseTab === 'growth' && growthAsks()) { timersOpen = false; timersFocusBack = true; render(); return; }
+  onAction('handoff'); if (!fn()) onAction('resume');
+};
 /** SERVER-POST: the mailbox's window over the pause face, its live view, the envelope's count kept live and its placing. */
 let postOpen = false;
 let postView = null;
@@ -4336,7 +4340,7 @@ function renderHome() {
     // scrim - outside the window, the clock and the foot - resumes,
     // the way Escape does; the front door has no scrim and no resume.
     // PROFILE2: the mark is inside too (a press on it opens the window), and with the window open the tap is its.
-    else closeOnOutsideTap(home, '.px-win, .px-clock, .px-foot, .px-profile, .px-timersmark, .px-postmark', () => onAction('resume'));   // SERVER-POST: the envelope inside too
+    else closeOnOutsideTap(home, '.px-win, .px-clock, .px-foot, .px-profile, .px-timersmark, .px-postmark', () => { if (pauseTab === 'growth' && growthAsks()) return; onAction('resume'); });   // SERVER-POST: the envelope inside too - AUDIT GROWTH LANE3-4: a Growth face asked first (GROWTH5)
     // PX4 (Mac): NO FOOT AT PAUSE - no skin toggle, no About plaque;
     // About is a System-tab row instead, and the skin switch stays on
     // the boot face and the settings shell.
@@ -4997,9 +5001,11 @@ function statsMaster(detail, m) {
   if (_masterNote) detail.append(el('div', 'px-master-note', _masterNote));
   // GROWTH2 (bible/10-UI/Growth.md section 5): the two specialisation cards (SCHOOLS1's, MARTIAL1's) moved to the Growth
   // tab's guide - every path, what opens it and what it does; one line and its door stand here
-  if (ms.on) {
+  // AUDIT GROWTH LANE5-6: and only for a character with a family still to reach or one held (AUDIT SCHOOLS L4 8)
+  if (ms.on && (ms.paths?.open || ms.paths?.held)) {
     const card = el('section', 'px-mgroup px-spec');
-    card.append(el('div', 'px-master-about', t('pause.master.specMoved', 'Master two schools of magic or two weapon skills to unlock a specialisation. See every path and what it needs on the Growth tab.')));
+    card.append(el('div', 'px-master-about', ms.paths.open ? t('pause.master.specMoved', 'Master two schools of magic or two weapon skills to unlock a specialisation. See every path and what it needs on the Growth tab.')
+      : t('pause.master.specHeld', '{n, plural, one {Your specialisation is on the Growth tab.} other {Your specialisations are on the Growth tab.}}', { n: ms.paths.held })));
     const go = acts([{ label: t('pause.master.specGo', 'Specialisations'), onClick: () => { setGrowthSection('specs'); pauseTab = 'growth'; render(); } }]);
     card.append(go);
     detail.append(card);
@@ -5045,7 +5051,12 @@ function statsMaster(detail, m) {
 }
 
 /** SOFTCAP3: the enhanced face's own Yes/No card over the pause page (the same card class the skin's YesNo box wears). */
+/** The Yes/No card standing (askCard) - its close, or null. AUDIT GROWTH LANE3-9: the window's keys stand down while it
+ *  stands (its Escape is the card's No - the back stack's release had resumed the game under it), and the window's
+ *  unmount takes it down (the sheet's key left it over the running game, its Y still choosing a permanent path). */
+let askUp = /** @type {null | (() => void)} */ (null);
 function askCard(lines, onYes) {
+  askUp?.();
   const back = el('div', 'px-master-ask');
   const card = el('div', 'inputbox yesnobox');
   card.setAttribute('role', 'alertdialog');
@@ -5060,8 +5071,9 @@ function askCard(lines, onYes) {
     close();
     if (k === 'KeyY') onYes();
   };
-  const close = () => { removeEventListener('keydown', onKey, true); back.remove(); };
+  const close = () => { removeEventListener('keydown', onKey, true); back.remove(); if (askUp === close) askUp = null; };
   addEventListener('keydown', onKey, true);
+  askUp = close;
   const bar = acts([
     { label: t('pause.ask.yes', 'Yes'), onClick: () => { close(); onYes(); } },
     { label: t('pause.ask.no', 'No'), primary: true, onClick: close },
@@ -5832,6 +5844,7 @@ function onKey(e) {
   // picker is exactly that, and Escape over it must close the picker,
   // not walk this screen's back stack out from under it.
   if (assetPickerOpen()) return;
+  if (askUp) return;   // AUDIT GROWTH LANE3-9: and the Yes/No card answers its own keys
   // FIX-F: ...and so does an ARMED REBIND. This handler is on the GLOBAL
   // in capture, so it runs before the Controls pane's own listener and
   // would eat the one key DFU lets through: ReservedKeys is empty in DFU
@@ -6080,6 +6093,7 @@ export function mountEnhancedMenu(host, {
       stopPost();   // SERVER-POST: and the mailbox's ticks
       releaseTutorialsPane();   // TUT1: the next visit opens on the first page
       releaseGrowthTab();   // GROWTH3: a face on the Growth stage goes with the window (full screen too)
+      askUp?.();   // AUDIT GROWTH LANE3-9: and a Yes/No card standing over it
       // FIX-F: and the rebind pane's own capture listener, which is on
       // the DOCUMENT and would outlive this screen exactly as the one
       // above would.

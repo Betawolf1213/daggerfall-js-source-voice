@@ -75,6 +75,8 @@ import { STAT_KEYS_ORDER } from '../../systems/chargen.js';
 import { SKILLS, SKILL_NAMES, skillValue, displaySkillValue, realSkillValue, skillValueText, skillModOf } from '../../systems/skills.js';
 import { mentorStatusText } from '../../systems/mentorMode.js';   // SOFTCAP1
 import { masterSkillsActive, masterSkillsSwitchable, masterSkillsBlockReason, setMasterSkills, MASTER_SKILLS_ABOUT, MASTERY_GROUP_NAMES, masterySlots, masteryCandidates, masteryChoiceRows, masterSkill, isMasteredSkill } from '../../systems/masterSkills.js';   // SOFTCAP3/4
+import { pathOf, pathPossible } from '../../systems/arcanePaths.js';   // AUDIT GROWTH LANE5-6: the specialisations' line
+import { martialPathOf, martialPossible } from '../../systems/martialPaths.js';
 import { liveStat, maxFatigue, FATIGUE_MULTIPLIER } from '../../systems/statMods.js';
 import { entityMaxEncumbrance, handToHandMinDamage, handToHandMaxDamage } from '../../combat/formulas.js';   // AUDIT 26: PlayerEntity.MaxEncumbrance, enchantment allowance and all; AUDIT 63 F34: the H2H damage line
 import { carriedWeight } from '../charsheet.js';
@@ -189,7 +191,13 @@ export function sheetModel(entity) {
       candidates: masteryCandidates(e).map((id) => ({ id, name: SKILL_NAMES[id], rows: masteryChoiceRows(e, id, SKILL_NAMES) })),
       isMastered: (id) => isMasteredSkill(e, id),
       master: (id) => masterSkill(e, id, SKILL_NAMES),
-      // SCHOOLS1/MARTIAL1's specialisations moved to the Growth tab's guide (GROWTH2, ui/growth/specGuide.js specGuideModel)
+      // SCHOOLS1/MARTIAL1's specialisations moved to the Growth tab's guide (GROWTH2, ui/growth/specGuide.js specGuideModel);
+      // AUDIT GROWTH LANE5-6 (AUDIT SCHOOLS L4 8's law again): the families this character can still reach (none held, the
+      // slots left hold a pair) and those it holds - the page's line is drawn from them, never for a class with neither
+      paths: {
+        open: [[pathOf, pathPossible], [martialPathOf, martialPossible]].filter(([held, can]) => !held(e) && can(e)).length,
+        held: (pathOf(e) ? 1 : 0) + (martialPathOf(e) ? 1 : 0),
+      },
       // SOFTCAP6: the Master Skills page - each career group with its slots and every one of its skills: the REAL
       // value, mastered or not, whether it can be mastered now (and the box's rows), and why not in a word
       groups: ['primary', 'major', 'minor'].map((g) => {

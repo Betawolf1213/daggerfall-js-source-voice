@@ -1105,8 +1105,8 @@ further is its shortest (`rvnWayTo`: Awakened Art is four from the Oath). Giving
 CAPTAIN-TREE's law, not the Firmament's silver and gold: the sky is the oath's, kept in the save and the mirror as its
 loyalty is (`sanitizeCompanion` reads it back through the law, its level and its rank - a hand-made sky is cut to what it
 may hold), and a deserter or a betrayer leaves with no oath and no sky. Every reading of its stars - its stats, Awakened Art -
-comes through the same door at its record's points (`rvnStatsOf`, `rvnAwakened`). Set abroad, the oath refuses ("It is
-abroad - set its stars when it is back." - `swornStarsRefusal`), as its kit's acts do (AUDIT RVN F10).
+comes through the same door at its record's points (`rvnStatsOf`, `rvnAwakened`). Set abroad, the oath refuses ("It's away on a
+mission. Set its stars when it returns." - `swornStarsRefusal`), as its kit's acts do (AUDIT RVN F10).
 
 **What the stars do** (`rvnStarStats`, each a share, each sum kept within `RVN_STAR_LEAST`..`RVN_STAR_MOST`) is read where
 the revenant's own numbers are read:
@@ -1163,11 +1163,12 @@ right-pressed (or held), taken back with those joined only through it; Accept gi
 sky stays pending and the window says why. The side panel, under the bar wherever a long name ends it, says what its stars
 do, each aspect, and its art: its own, awakened, or what Awakened Art would teach it. The window takes the focus as it opens
 and gives it back to the Stars button as it closes; while it stands it is on the overlays' stack, so the QuickDial's key
-asks it first, as the Firmament's own window does - an unaccepted sky is never dropped unasked (section 45 S8, S21, S22).
+asks it first, and so do the F5 sheet's own keys (`10-UI/Growth.md` section 6, AUDIT GROWTH LANE4-1) - an unaccepted sky is
+never dropped unasked (section 45 S8, S21, S22).
 
 **The doors**: the Companions page (`ui/companionRoster.js`) says each sworn one's level and the stars it has to set ("Level
 3 · 2 stars to set", gold while any wait) and gives it **Stars** (none abroad). Its sky is laid over the pause window as the
-Firmament was over the Stats page - `ui/firmamentOver.js revenantStarsOver`, the Firmament's own door built once (`overPage`)
+Firmament was over the Stats page - `ui/firmamentOver.js revenantStarsOver`, the door the Firmament had, built once (`overPage`)
 for both (GROWTH3 drew the Firmament in the pause window's Growth tab and its door went; this one stays - the owner, of a
 Growth-tab page for it: "Keep it on the companion page", `10-UI/Growth.md` section 1) - from either door that draws the page (`ui/pauseDoor.js`, `ui/charSheetDoor.js`), and the page is put back on
 Companions when it closes (`enhancedMenu.js` lands on `at: 'companions'`). Offline and online alike: the sky is the save's.
