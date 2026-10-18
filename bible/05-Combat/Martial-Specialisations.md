@@ -62,12 +62,13 @@ nothing a player could see. That is where the identity goes.
 - **Who.** A player with Master Skills in force (online always; offline the switch - SOFTCAP3) and at least two of the
   six weapon skills mastered. A class that can never master two of them never meets a path (`martialPossible`, by
   `masterSkills.js` masterableCount - the ones mastered and as many more as each career group's 2/2/1 slots leave; the
-  enhanced page shows it no Martial card). AUDIT MARTIAL L4 L3: it counted the career's weapon skills alone, so two that
-  were both minor skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same,
-  and both now read the slots.
+  Growth tab's guide says so in its headline, and the Master Skills page draws no specialisation line for it - GROWTH2,
+  AUDIT GROWTH LANE5-6). AUDIT MARTIAL L4 L3: it counted the career's weapon skills alone, so two that were both minor
+  skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same, and both now read
+  the slots - and the guide counts each path's pair the same way (AUDIT GROWTH LANE1-1).
 - **The choice.** Any pair of the player's mastered weapon skills names one path (section 5); with three mastered, the
-  player picks among their pairs. `entity.martialPath` holds the path's id. **PERMANENT** - nothing undoes it, as nothing
-  undoes a mastery. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
+  player picks among their pairs. `entity.martialPath` holds the path's id. **Held until given up for 200,000 gold**
+  (SPEC-RESET, `10-UI/Growth.md` section 10) - nothing else undoes it; a mastery is never undone. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
   raisePlayerSkills - after a mastery's own box and after the arcane path's ask, one box a pass; one path open is asked
   about, several are named and sent to the skill screen - AUDIT SCHOOLS L4 M1's law). The box asks "Martial
   specialisation: {name}?" - never the arcane ask's own "Specialise as {name}?" (AUDIT MARTIAL L4 L4: a spellsword
@@ -77,7 +78,11 @@ nothing a player could see. That is where the identity goes.
   shortened with it). Any time after, on the skill screen:
   classic, the W row under the Specialisation row on each skill page (the sheet takes raw codes; S is the arcane row's);
   enhanced, the Master Skills page's Martial Specialisation card under the arcane one, the door's count beside Master
-  Skills.
+  Skills. GROWTH2 (2026-10-17, `10-UI/Growth.md` section 5) moved both cards to the pause window's Growth tab: a guide
+  to all fifteen paths, open or not - each one's state on this character, what opens it, its passive, its signature
+  technique by each of its weapons (cooldown, fatigue) with its rider, how the technique key wields it, and Choose
+  through this law; the classic sheet's W row stands whenever the class can meet a path and opens the same guide
+  (GROWTH4).
 - **Held and awake.** A path is HELD (`martialHeld`) by my own player entity (never a peer's stand-in) with Master Skills
   in force and both its skills mastered - what answers the technique key with its signature (a technique rides the
   formula, whose skills mentoring already lowers, as a loot line's does). It is AWAKE (`martialAwake`), and its passive
@@ -237,14 +242,15 @@ nothing), read back, already asked, only from a save with no `martialPath` key a
 - `combat/techniques.js` - the signature in hand, the cooldown slots, the ladder's gate, the `use` token, the press told.
 - `combat/technique/techniqueBlow.js` - the landing's and the press's listeners; `combat/arrowFlight.js` shaftOnRelayBody.
 - `characters/weaponStates.js` - the swing pace; `combat/swingLaw.js` - the swing's family.
-- `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhanced/enhancedCharSheet.js` / `ui/enhanced/enhancedMenu.js` -
-  the choice (the arcane card's own function draws both, `specCard`).
+- `scenes/shared.js` - the ask; `ui/charsheet.js` (the classic rows) and `ui/growth/specGuide.js` - the choice (GROWTH2:
+  the Growth tab's guide reads both families; the Master Skills cards and `specCard` are gone - `10-UI/Growth.md`).
 - `systems/save/save.js` - `martialPath` and `martialPrompted`.
 
 ## 9. Departures, and what is recorded rather than built
 
 - **Port-only, all of it.** Daggerfall has no specialisation and no weapon perk past 100; Port-Ledger A records the arc.
-- **No respecialisation** - permanent, as a mastery and an arcane path are.
+- **A respecialisation costs 200,000 gold**, as an arcane path's does (SPEC-RESET, `10-UI/Growth.md` section 10); a
+  mastery is still permanent.
 - **Offline the weapons past 100 stay Daggerfall's** (section 4); the paths themselves work offline with the switch on.
 - **The Short Blade's pace meets the swing law's floor** at the top of Speed: a dagger at Speed 100 swings at 0.107 s a
   frame, and the floor is 0.09 - x1.19 there, x1.4 at Speed 87 and below. The floor is SWING-LAW's ("swing speed is

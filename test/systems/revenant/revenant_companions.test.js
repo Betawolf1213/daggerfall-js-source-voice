@@ -41,7 +41,7 @@ function fresh() {
   RC.setRetinuePlayer(me);
 }
 function sworn(state = 'with', { rank = 2, mobileType = MOBILE_TYPES.Orc } = {}) {
-  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Orcs' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Orcs' }, 'fled', { mobileType, rolls: () => 0 });
   r.rank = rank;
   return N.revenantSpared(me, { revenant: { id: r.id } }, { state });
 }

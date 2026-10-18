@@ -471,9 +471,9 @@ const HARDCODED = {
   'src/systems/rest/restItems.js': 28,
   'src/systems/rest/restWarning.js': 5,
   'src/systems/resurrect.js': 6,
-  'src/systems/revenant/revenant.js': 77,
+  'src/systems/revenant/revenant.js': 73,
   'src/systems/revenant/revenantCompanions.js': 4,
-  'src/systems/revenant/revenantFate.js': 15,
+  'src/systems/revenant/revenantFate.js': 14,
   'src/systems/revenant/revenantFeud.js': 27,
   'src/systems/revenant/revenantPersonality.js': 621,
   'src/systems/revenant/revenantTrophy.js': 16,
@@ -608,7 +608,6 @@ const HARDCODED = {
   'src/ui/enhanced/enhancedHotbar.js': 13,
   'src/ui/enhanced/enhancedHud.js': 6,
   'src/ui/enhanced/enhancedInventory.js': 84,
-  'src/ui/enhanced/enhancedLevelUp.js': 17,
   'src/ui/enhanced/enhancedLevelingChoice.js': 6,
   'src/ui/enhanced/enhancedMenu.js': 62,   // AUDIT EG V (c, L7-10): the Spire's three accessibility rows routed; UI-CALM's doors at the merge of main
   'src/ui/enhanced/enhancedMerchantPanel.js': 1,
@@ -629,9 +628,6 @@ const HARDCODED = {
   'src/ui/eventMapMarks.js': 6,
   'src/ui/exteriorAutomapWindow.js': 6,
   'src/ui/familyPages.js': 111,
-  // PIN MOVED (AUDIT UICALM-FIRM1 L4 H1, M4, L3-L4): the window's finger hint, its overlay guard and its respec's lost
-  // answer - the Firmament's words are English OPEN, its translation pass the owner's (Audit-UICalm-Firm1.md L5 M1)
-  'src/ui/firmamentWindow.js': 93,
   'src/ui/flagArt.js': 1,
   'src/ui/fleetPage.js': 30,
   'src/ui/fpsCounter.js': 3,
@@ -664,7 +660,6 @@ const HARDCODED = {
   'src/ui/legacy/legacyModelChoice.js': 26,
   'src/ui/legacy/legacySuccession.js': 3,
   'src/ui/levelUp/levelNotice.js': 6,   // AUDIT UICALM-FIRM1 L4 M8: the Renown rise routed (level.renown.*)
-  'src/ui/levelUp/levelUpView.js': 23,
   'src/ui/levelingChoice.js': 16,
   'src/ui/loadingScreen.js': 10,
   'src/ui/localeFaces.js': 27,
@@ -708,7 +703,7 @@ const HARDCODED = {
   'src/ui/restWindow.js': 7,
   'src/ui/revenant/revenantCard.js': 5,
   'src/ui/revenant/revenantFateView.js': 3,
-  'src/ui/revenant/revenantPage.js': 48,
+  'src/ui/revenant/revenantPage.js': 45,
   'src/ui/saveTile.js': 1,
   'src/ui/screenshot.js': 5,
   'src/ui/superDungeon/sdMapMark.js': 1,
@@ -753,7 +748,7 @@ const HARDCODED = {
   'src/ui/vendor/vendorMapMark.js': 1,
   'src/ui/vendor/vendorPage.js': 28,
   'src/ui/vendor/vendorTab.js': 28,
-  'src/ui/virtueLevelUp.js': 5,
+  'src/ui/virtueLevelUp.js': 4,   // AUDIT GROWTH LANE5-1: its purse label routed (and enhancedLevelUp.js, levelUpView.js and firmamentWindow.js down to none - the Level and Firmament faces said through t())
   'src/ui/waitWindow.js': 1,
   'src/ui/waypointMenu.js': 11,
   'src/ui/wild/wildMapInk.js': 1,

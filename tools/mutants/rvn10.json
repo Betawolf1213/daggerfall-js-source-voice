@@ -362,7 +362,7 @@
   {
     "name": "RVN10-routable-anyone",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (!revenantCandidate(f.entity, f)) return false;\n  return playerLowSince(harmFightSince(f.entity, now));",
+    "old": "  if (!revenantCandidate(f.entity, f)) return false;   // AUDIT FEUD: a peer's foe is its owner's - my jump routs none of it (AUDIT UNQUIET: revenantCandidate refuses another client's foe)\n  return playerLowSince(harmFightSince(f.entity, now));",
     "new": "  return playerLowSince(harmFightSince(f.entity, now));",
     "tests": [
       "test/systems/rvn10_deeds.test.js"
