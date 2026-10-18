@@ -103,6 +103,7 @@ import { SAP_HEAL, SAP_FEEDS_MAX } from '../gate/gateBrain.js';   // AUDIT EG IV
 import { EG_LORDS } from './egLaw.js';   // AUDIT EG IV (section 18's strata): a lord's band, for the Twin Court's second
 import { egMoltenRim } from './egLaw.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM and its causeways
 import { egFightPieceAt } from './egLaw.js';   // THE ASCENT - HEIGHT: a champion's ring on its own floor
+import { egLawOf, EG_BROKEN_LAW } from './egLaw.js';   // EG-PERFECT - THE BROKEN WAY (spec law 10): a fight hall's trial awaits its company
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/eliteGates/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
 import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M, EG_TS_LAG_MAX_MS } from './egFair.js';
@@ -552,10 +553,20 @@ function wake(B, now, rng, out) {
   for (const [, m] of living(B)) { m.downH = 0; m.dh = 0; m.late = m.hereH === B.h ? 0 : (m.late ?? 0) + 1; }   // EG-ZI (section 7): THE LATE WAKE - a hall woken before its `here` counted, one in time begins the count again
   B.cache = spec.end && spec.kind !== 'brink' ? egCacheDraw(rng, spec.twist === 'mimic') : null;
   B.F = standFight(B, spec, now, rng, out);
+  if (B.F && egTrialAwaits(spec)) B.F.await = now;   // EG-PERFECT (spec law 10): its clocks held until its company stands on its floor
   egTallyWake(B.F, spec.kind);   // EG-ZF: a Court lays its damage chart
   out.push(egStageWord(B, now), egStateOf(B, now));
   if (B.F) out.push(EG_SEAM.stateOf(egLordsFight(B.F, spec, {}, now)));
 }
+/** EG-PERFECT - THE BROKEN WAY (spec law 10, 2026-10-18): A FIGHT HALL'S TRIAL AWAITS ITS COMPANY. From spec law 10 a Rift-Yard's
+ *  and an Athenaeum's rooms all stand before their trial (net/eliteGates/egAscent.js - the way climbs to it, its door after it), and a
+ *  Deepway's chamber may stand past rooms of its own: its rifts poured their waves, its Orrery its locks, its decrees their
+ *  sparks and packs from the wake on the arrival plate - 200 m and more of the way before anyone stood on its floor. Its clocks
+ *  (EG_AWAIT_CLOCKS) are held, each beat, until the first member stands on its fight ground (`here`); every other beat of the
+ *  hall (its Lurkers, Kyn's Vigil at the plate, the fragments' hazards) keeps its own time. */
+export const EG_AWAIT_CLOCKS = Object.freeze(['waveAt', 'packAt', 'wanderAt', 'escortAt', 'ashAt', 'sparkAt', 'ventAt']);
+/** Does hall `spec`'s trial await its company (EG_AWAIT_CLOCKS - spec law 10's Rift-Yard, Athenaeum and Deepway)? Pure. */
+export const egTrialAwaits = (/** @type {any} */ spec) => egLawOf(spec) >= EG_BROKEN_LAW && ['yard', 'athenaeum', 'deepway'].includes(spec?.kind);
 /** AUDIT EG IV (lane2 #3; section 18's strata): THE TWIN COURT's second lords - one of each band, the one drawn never of the
  *  Court's own lord's band; each lord of a pair stands at EG_PAIR_HP of its health. THE MASTERS' GROUND (THE OLD MASTERS with a
  *  master the Court's own lord - both masters standing): the Last Lesson stops at EG_MASTERS_LESSON_R and the Examination's runes
@@ -1424,6 +1435,11 @@ function trial(B, spec, now, inHall, rng, out) {
     if (span) { egBlowsStep(F, view, now, here, out, egWatchOf(B)); fightTail(F, now, out); }
     else egMovesOut(F, out);
     return;
+  }
+  // EG-PERFECT - THE BROKEN WAY (spec law 10): its clocks held, beat by beat, until the first member stands on its fight ground
+  if (F.await != null) {
+    if (here.length) delete F.await;
+    else { const dt = now - F.await; F.await = now; for (const k of EG_AWAIT_CLOCKS) if (F[k] > 0) F[k] += dt; }
   }
   const kind = spec.kind, v = spec.variant;
   if (kind === 'yard' || (kind === 'deepway' && F.chamber === 0)) {

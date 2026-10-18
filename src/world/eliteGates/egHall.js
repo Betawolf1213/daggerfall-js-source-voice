@@ -58,6 +58,7 @@ import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHer
 import { egRoomModelInto, egRoomColliderInto, egClimbZones, egClimbKeep } from './egRoomModel.js';   // THE ASCENT (spec law 9): the rooms built, the climbs' clamp
 import { GATE_PART } from '../gate/gateModel.js';
 import { egPolyIn, segDist } from '../../net/eliteGates/egShape.js';   // EG-HERO-LAY: the hero's clamp
+import { egRingSideOpen } from '../../net/eliteGates/egWalkGraph.js';   // EG-PERFECT (spec law 10): a ring open at an alcove's doorway
 import { lightList, lightListView, packLight, copyLights } from '../../render/lightId.js';   // LIGHT-ID (main's, at the merge into PR #800): the circle's lamps into the frame's list through the one seam (pure - the swap's worker may read it)
 import { egRuinColumns, egDiscLamps, egRuinLampTint } from './egRuin.js';   // EG-LOOK (Elite-Gates-Look.md section 3.3): THE LAMPS ON THE RUIN'S COLUMNS
 
@@ -518,8 +519,8 @@ export function egCircleColliderTris(seed, c, geo = 0) {
       if (d.t === 'wall') {
         const n = 32, y0 = (d.y ?? 0) - 0.5, y1 = (d.y ?? 0) + d.h;
         for (let k = 0; k < n; k++) {
-          const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2, mid = (a0 + a1) / 2;
-          if (Math.abs(Math.sin(mid)) < 0.2) continue;
+          const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2;
+          if (egRingSideOpen(spec, d, k, n)) continue;   // the course's gaps - and (spec law 10) an alcove's doorway
           const p0 = egToDungeon(spec, d.x + Math.sin(a0) * d.r, y0, d.z + Math.cos(a0) * d.r), p1 = egToDungeon(spec, d.x + Math.sin(a1) * d.r, y0, d.z + Math.cos(a1) * d.r);
           quad(p0, p1, [p1[0], p1[1] + (y1 - y0), p1[2]], [p0[0], p0[1] + (y1 - y0), p0[2]]);
         }
@@ -819,6 +820,8 @@ export function egFragKeep(q, x, z, r, spec = null, y = NaN) {
   }
   const dx = x - q.x, dz = z - q.z, d = Math.hypot(dx, dz), lim = q.r - r;
   if (d <= lim || d > q.r + EG_CLAMP_SLACK_M || ringGap(dx, dz)) return null;
+  // EG-PERFECT - SPEC LAW 10: an alcove's doorway at the court's rim (net/eliteGates/egWalkGraph.js egRingSideOpen - the ring open there)
+  if ((spec?.law ?? spec?.v ?? 0) >= 10 && (spec?.alcoves ?? []).some((a) => Math.hypot(a.x - x, a.z - z) <= NICHE.w / 2 + 1.2)) return null;
   return [q.x + (dx / d) * lim, q.z + (dz / d) * lim];
 }
 /**

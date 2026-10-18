@@ -71,6 +71,38 @@ export const EG_ASCENT_STAIR_HW = 200;
 /** How far short of the hall's far bound a course ends (cm): room for the way on from it to go on and turn. */
 export const EG_ASCENT_ROOM_ON_CM = 1600;
 
+// EG-PERFECT - SPEC LAW 10, THE BROKEN WAY (2026-10-18, Mac: "Traversing between sections should present a challenge,
+// platforming should be detailed"; bible/11-Multiplayer/Elite-Gates-Ascent.md section 8): law 9's way walked 48-69% of
+// every hall on bridges, landings and stairs no foe or piece touched (the longest unbroken walk a median 180-390 m). From
+// spec law 10 a bridge the way takes along +z, EG_BROKEN_MIN_CM long or more, is BROKEN where it stands clear: its middle
+// fallen away and crossed on EG_BROKEN_PIECES of its band's pieces at the Steps' own timing (a gap, a Crumble's plank, a
+// Drift, a Beat pair; a Pendulum's weight from the Shade, a Vent from the Deep) - a course of its own (its ground, proven by
+// THE TIMED SOLVER where it stands like every course), its pieces off the planner's die so no course's draws move. THE
+// FORK's Low Road linked by its own spans past its Drop (the Gale's islands never "a bridge 4.5 m up"); a fight hall's rooms
+// all before its trial and its door straight after it (law 9 stood the door 177-243 m past the trial, out of the closing's
+// reach); the plan its own tries before the plainest.
+/** THE BROKEN WAY's law: the spec law from which a +z bridge breaks, a fight hall's door follows its trial and the planner
+ *  has its own tries - the laws before lay as they laid. */
+export const EG_BROKEN_LAW = 10;
+/** A +z bridge at least this long breaks (cm), keeping EG_BROKEN_FOOT_CM of bridge at either end to land on and leave from. */
+export const EG_BROKEN_MIN_CM = 1000;
+export const EG_BROKEN_FOOT_CM = 150;
+/** A broken bridge's pieces: the fewest and the most. */
+export const EG_BROKEN_PIECES = Object.freeze([1, 3]);
+/** The pieces a broken bridge is crossed on, by band - each at the Steps' own timing (egSpanLaw.js egSpanOf's run). A Gust is
+ *  a decree's and a Rail's travel asks room of what stands beside it: neither breaks a bridge. A bridge turned off +z breaks
+ *  only onto pieces that keep still (EG_BROKEN_TURNED - a Drift swings across +z, a Pendulum's weight across its gap). */
+export const EG_BROKEN_KINDS = Object.freeze([
+  Object.freeze(['still', 'crumble', 'drift', 'beat']),
+  Object.freeze(['still', 'crumble', 'drift', 'beat']),
+  Object.freeze(['still', 'crumble', 'drift', 'beat', 'pend']),
+  Object.freeze(['still', 'crumble', 'drift', 'beat', 'pend', 'vent']),
+]);
+export const EG_BROKEN_TURNED = Object.freeze(['still', 'crumble', 'beat', 'vent']);
+/** The fight kinds whose rooms all stand before their trial and whose door follows it (spec law 10). The Rampart's walk keeps
+ *  the plate's height (its march's line), so its rooms stay after it; a Court ends on its lord's ground. */
+const FIGHT_FIRST = Object.freeze(['yard', 'athenaeum', 'scriptorium', 'proving']);
+
 /** Why the last plans did not stand (a tool's and a test's reading - egAscentWhy; the law reads nothing of it). */
 const _why = [];
 const why = (w) => { if (_why.length >= 64) _why.shift(); _why.push(w); return null; };
@@ -136,6 +168,18 @@ export const egPartsMark = (P) => ({ discs: P.discs.length, bands: P.bands.lengt
  * landing): spec law 8's laying of the kind, cut where the way leaves one course for the next. `courses(H)` answers the list
  * of course layers (each a function of H, laid where the plan brings the company).
  */
+/** THE BROKEN WAY (spec law 10): AN APPROACH OF TWO KINDS - `n` pieces in two runs of two of the band's kinds (its whole set,
+ *  a Drop aside; the first circle's a Drift and a Beat - law 9 laid its first circle `still` and every later approach of one
+ *  kind, its first two), an island between them where `isle` asks (the Court from its sixth circle). */
+const APPROACH_NOT = Object.freeze(['drop', 'riser']);
+function mixed(H, n, isle = false) {
+  const { r, between: bt, c, pieces } = H, pool = pieces.filter((k) => !APPROACH_NOT.includes(k));
+  const a = c <= 1 ? 'drift' : pool[bt(r, 0, pool.length - 1)], rest = pool.filter((k) => k !== a), b = c <= 1 ? 'beat' : rest[bt(r, 0, rest.length - 1)];
+  const n1 = Math.max(2, n >> 1);
+  H.run(a, n1);
+  if (isle) H.island();
+  H.run(b, Math.max(2, n - n1));
+}
 const RECIPES = {
   yard: (H) => [() => {
     const { r, between: bt, P } = H, R0 = bt(r, 22, 26) * 100, Hc = H.heroCourtAt(H.get().edge + 400), R = Hc ? Hc.R : R0;
@@ -169,38 +213,51 @@ const RECIPES = {
       H.crumbleTwo(); H.island();
       if (!set && (c <= 2 || r() < 0.5)) { H.cave(); H.island(bt(r, 200, 260)); }
     };
-    if (c >= 2 && !plain && !set) return [first, () => { H.fork(two, extra); H.meet(); }];
+    // (THE BROKEN WAY - spec law 10: the fork's course first, where the hall's bound has room for its length - a deep span's
+    // runs 110-120 m, and law 9 found it no foot past its first course in most of its deep halls - its first run after it)
+    if (c >= 2 && !plain && !set) return H.law >= EG_BROKEN_LAW ? [() => { H.fork(two, extra); H.meet(); }, first] : [first, () => { H.fork(two, extra); H.meet(); }];
     return [first, () => {
       if (set) { H.setPiece(set, extra > 0); H.island(bt(r, 200, 260)); }
       if (!(set && extra > 0)) H.run(two[1], set ? 2 : extra >= 2 ? 2 : extra > 0 ? 3 : c <= 1 ? 5 : bt(r, 3, 4));
       H.decreeSections();
+      // (THE BROKEN WAY - spec law 10: its Reliquary Vault off the course's last island's side, its side span from that island's
+      // rim - law 9 began it on the course's last piece, its lane over a timed step's gap)
+      if (H.twist === 'vault' && H.law >= EG_BROKEN_LAW) { const zi = H.island(), { X, y } = H.get(), vx = X + 900; H.lane(X + H.ISLE_R - 50, zi, vx - 350, zi, H.BRIDGE_HALF, 'side', y); H.disc(vx, zi, 350, 'vault', y); H.spot('vault', vx, zi); return; }
       if (H.twist === 'vault') { const { X, y, edge } = H.get(); const [vx, vz] = [X + 900, edge - 300]; H.lane(X, edge - 300, vx, vz, H.BRIDGE_HALF, 'side', y); H.disc(vx, vz, 350, 'vault', y); H.spot('vault', vx, vz); }
       H.island();
     }];
   },
   proving: (H) => {
     const { r, between: bt, c, pieces } = H, extra = H.gale + H.crumbling;
+    let walled = false;   // THE BROKEN WAY: a chamber's ring about its court (its Vault then stands off the second span's island)
     return [() => {
-      H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], extra >= 2 ? 3 : extra > 0 ? 4 : bt(r, 4, 6));
+      if (H.law >= EG_BROKEN_LAW) mixed(H, extra >= 2 ? 3 : extra > 0 ? 4 : bt(r, 5, 7));   // THE BROKEN WAY: two of its band's kinds
+      else H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], extra >= 2 ? 3 : extra > 0 ? 4 : bt(r, 4, 6));
       if (extra > 0) H.crumbleTwo();
       const g = H.gap(), { edge, y, X } = H.get(), Hc = H.heroCourtAt(edge + g), R = Hc ? Hc.R : 1400, zc = Hc ? Hc.zc : edge + g + R;
       if (!Hc) { H.disc(X, zc, R, 'court', y); H.flD(X, zc, R, y); }
-      if (c >= 2 && r() * 3 < 1) H.chamberAt(zc, R);
+      if (c >= 2 && r() * 3 < 1) { H.chamberAt(zc, R); walled = true; }
       H.P.foe = { x: X, z: zc + 400 };
       for (const deg of [0, 120, 240]) { const [x, z] = H.polar(X, zc, 900, deg + 60); H.spot('standard', x, z); }
       H.set({ edge: Hc ? Hc.z0 + Hc.L : zc + R });
-      if (H.twist === 'vault') { const [vx, vz] = [X - 900, zc]; H.lane(X - R, zc, vx - 350, vz, H.BRIDGE_HALF, 'side', y); H.disc(vx - 700, vz, 350, 'vault', y); H.spot('vault', vx - 700, vz); }
+      // (THE BROKEN WAY - spec law 10: the Proving Walk's Vault a side span's length off the court's rim, taken only by leaving the
+      // fight - law 9 stood it 2 m off the rim behind a lane laid inside the court: taken mid-fight, through a chamber's wall)
+      if (H.twist === 'vault' && H.law >= EG_BROKEN_LAW) { if (!walled && !Hc) { const vx = X - R - 1250; H.lane(X - R + 50, zc, vx + 350, zc, H.BRIDGE_HALF, 'side', y); H.disc(vx, zc, 350, 'vault', y); H.spot('vault', vx, zc); } }
+      else if (H.twist === 'vault') { const [vx, vz] = [X - 900, zc]; H.lane(X - R, zc, vx - 350, vz, H.BRIDGE_HALF, 'side', y); H.disc(vx - 700, vz, 350, 'vault', y); H.spot('vault', vx - 700, vz); }
     }, () => {
       if (extra > 0) H.decreeSections();
+      else if (H.law >= EG_BROKEN_LAW) mixed(H, bt(r, 4, 6));
       else H.run(c <= 1 ? 'drift' : pieces[bt(r, 0, 2)], bt(r, 4, 6));
-      H.island();
+      const zi = H.island();
+      // (a walled court's Vault off the second span's last island, as a fork's stands off its island)
+      if (H.twist === 'vault' && H.law >= EG_BROKEN_LAW && walled) { const { X, y } = H.get(), vx = X - 900; H.lane(X - H.ISLE_R + 50, zi, vx + 350, zi, H.BRIDGE_HALF, 'side', y); H.disc(vx, zi, 350, 'vault', y); H.spot('vault', vx, zi); }
     }];
   },
   rampart: (H) => [() => H.rampart()],
   athenaeum: (H) => {
     const { r, between: bt, c, pieces } = H;
     return [() => {
-      H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], bt(r, 3, 4));
+      if (H.law >= EG_BROKEN_LAW) mixed(H, bt(r, 4, 5)); else H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], bt(r, 3, 4));
       const { edge, y, X } = H.get(), R = 1600, zc = edge + H.gap() + R;
       H.disc(X, zc, R, 'court', y); H.flD(X, zc, R, y);
       H.chamberAt(zc, R, null);
@@ -255,7 +312,7 @@ const RECIPES = {
   }],
   court: (H) => [() => {
     const { r, between: bt, c, pieces } = H;
-    H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], bt(r, 3, 5));
+    if (H.law >= EG_BROKEN_LAW) mixed(H, bt(r, 5, 7), c >= 6); else H.run(c <= 1 ? 'still' : pieces[bt(r, 0, 1)], bt(r, 3, 5));
     H.set({ edge: H.get().edge + H.gap() });
     H.layGround(H.lordGround());
   }],
@@ -282,19 +339,24 @@ export function egAscentLay(H) {
   const { P, rp, kind } = H;
   const W = { nodes: [[0, 0, 0]], links: [], legs: 0, vols: [{ b: floorVol(-500, -500, 500, 500, 0, 0, EG_ASCENT_HANG_CM.disc), leg: 0, y: 0, kind: 'plate' }], climbs: [], wells: [], rooms: [], segs: [], legKind: ['plate'] };
   const courses = RECIPES[kind](H);
-  const [lo, hi] = EG_ASCENT_ROOMS[kind], nRooms = H.plain ? lo : between(rp, lo, hi);
+  const L10 = H.law >= EG_BROKEN_LAW, front = L10 && FIGHT_FIRST.includes(kind);
+  // (THE BROKEN WAY - spec law 10: the plan's own tries past EG_RELAY_MAX `lean` - the kind's fewest rooms, never the deep
+  // profile - its courses whole)
+  const [lo, hi] = EG_ASCENT_ROOMS[kind], nRooms = H.plain || H.lean ? lo : between(rp, lo, hi);
   // the height profile: up to its height and back toward the door's - a hall in three climbs and comes down (one in four
   // goes down first into the deep and up again)
-  const deep = rp() < 0.25 && kind !== 'rampart';
+  const deep = rp() < 0.25 && kind !== 'rampart' && !H.lean;
   const peak = between(rp, 12, 26) * 100 * (deep ? -1 : 1), door = deep ? -between(rp, 0, 6) * 100 : between(rp, 2, 8) * 100;
-  // the stretches: before the first course, between each two, after the last - the rooms spread over them
+  // the stretches: before the first course, between each two, after the last - the rooms spread over them. THE BROKEN WAY
+  // (spec law 10): a fight hall's all before its first course - the way climbs to its trial, and its door follows it
   const stretches = courses.length + 1, share = Array(stretches).fill(0);
-  for (let k = 0; k < nRooms; k++) share[kind === 'rampart' ? stretches - 1 : between(rp, 0, stretches - 1)]++;   // the Rampart's walk stands off the plate (its march's line, x 0 and y 0)
+  for (let k = 0; k < nRooms; k++) share[kind === 'rampart' ? stretches - 1 : front ? 0 : between(rp, 0, stretches - 1)]++;   // the Rampart's walk stands off the plate (its march's line, x 0 and y 0)
   if (NO_DOOR.includes(kind) && share[stretches - 1]) { share[0] += share[stretches - 1]; share[stretches - 1] = 0; }
-  // the target height at each course's foot and the door: the peak reached by the middle of the way
+  // the target height at each course's foot and the door: the peak reached by the middle of the way (THE BROKEN WAY: a fight
+  // hall's trial at its peak, and the way on from it level - its door where its trial ends)
   const targets = [];
   // (the Rampart's walk keeps the plate's height, so its one stretch after climbs to the peak and its door stands there)
-  for (let k = 0; k < stretches; k++) targets.push(k === stretches - 1 ? (kind === 'rampart' ? peak : door) : courses.length === 1 ? peak : Math.trunc((peak * (k + 1)) / courses.length));
+  for (let k = 0; k < stretches; k++) targets.push(front ? (k === 0 ? peak : null) : k === stretches - 1 ? (kind === 'rampart' ? peak : door) : courses.length === 1 ? peak : Math.trunc((peak * (k + 1)) / courses.length));
   let port = { x: 0, y: 0, z: 500, h: 0 }, tail = 0;
   for (let k = 0; k <= courses.length; k++) {
     const last = k === courses.length;
@@ -303,7 +365,10 @@ export function egAscentLay(H) {
     if (!last && !shape) return why(`course ${k}: laid nothing`);
     const need = last ? (NO_DOOR.includes(kind) ? null : doorShape()) : shape;
     if (need) {
-      const plan = stretch(H, W, port, share[k], targets[k] - (shape?.dy0 ?? 0), need, k === 0 && share[k] === 0);
+      let plan = stretch(H, W, port, share[k], (targets[k] ?? port.y) - (shape?.dy0 ?? 0), need, (k === 0 || front) && share[k] === 0);
+      // (THE BROKEN WAY: a stretch whose rooms find no room planned again with one fewer, down to none - the hall keeps its
+      // courses; law 9 laid the whole hall again, and past its tries the plainest)
+      for (let less = share[k] - 1; !plan && L10 && less >= 0; less--) plan = stretch(H, W, port, less, (targets[k] ?? port.y) - (shape?.dy0 ?? 0), need, (k === 0 || front) && less === 0);
       if (!plan) return why(`stretch ${k} (${share[k]} rooms toward ${targets[k]} from ${JSON.stringify(port)}): no program stands - ${W.fails ? Object.entries(W.fails).map(([a, b]) => `${a} ${b}`).join(', ') : ''}`);
       W.part = (W.part ?? 0) + 1;
       for (const leg of plan.legs) commit(H, W, leg);
@@ -380,7 +445,11 @@ function layCourse(H, W, fn, port, shape, fin = false) {
     const fz = fork.z, f = W.nodes.findIndex((q) => q[0] === port.x && Math.abs(q[2] - fz) <= 400);
     const isl1 = H.P.islands.filter((q) => q.road === 1);
     let a = f >= 0 ? f : nearestNode(W, [port.x, fork.y, fz]);
-    for (const q of isl1) a = link(W, a, node(W, [q.x, q.y, q.z]), 'bridge', 1);
+    // (THE BROKEN WAY - spec law 10: its first island across by its bridge, every later one - past its Drop, its passage, a
+    // Gale's islands - by its own span; law 9 named them all bridges, and THE ROUTE'S SANITY refused "a bridge 4.5 m up" on
+    // every Gale-Swept fork: 89-98% of them fell to the plainest)
+    const L10 = H.law >= EG_BROKEN_LAW;
+    for (const [n, q] of isl1.entries()) a = link(W, a, node(W, [q.x, q.y, q.z]), L10 && n > 0 ? 'span' : 'bridge', 1);
     const meet = nearestNode(W, [port.x, fork.yLow, fork.plate]);
     // its courses' last piece onto its bridge's foot (the Low Road's own line), and that bridge to the end plate - where the
     // ground stands (the real motor walks it: tools/egSpanSolve.mjs)
@@ -414,6 +483,9 @@ const nearestNode = (W, p) => { let k = 0, bd = Infinity; W.nodes.forEach((q, i)
  *  turn costs and a cell over or under a leg already laid), and how many feet a stretch weighs, how many programs it draws at
  *  each, how many rooms' candidates it weighs at each room. */
 export const EG_APPROACH = Object.freeze({ cell: 400, run: 3, first: 2, turn: 2, over: 3, rounds: 6, pops: 40000 });
+/** THE BROKEN WAY (spec law 10): the approach comes into a course's foot along +z at least this many cells from its last
+ *  landing - a run long enough to break (EG_BROKEN_MIN_CM and more); law 9's came in two. */
+export const EG_BROKEN_RUN = 5;
 export const EG_ASCENT_FEET = 8;
 export const EG_ASCENT_DRAWS = 6;
 export const EG_ASCENT_ROOM_CANDS = 16;
@@ -430,8 +502,9 @@ function stretch(H, W, port, rooms, toY, need, direct) {
   const rp = H.rp;
   W.fails = {};
   if (direct && rooms === 0 && port.h === 0) {
-    const ahead = need.vols.map((v) => shift(v.b, port.x, port.y, port.z));
-    if (port.z + need.dz + EG_ASCENT_ROOM_ON_CM <= EG_ASCENT_BOUND.z1 && ahead.every((v) => inBound(v) && W.vols.every((q) => q.leg === W.legs || egAscentApart(v, q.b)))) return { legs: [], end: port, cross: 0 };
+    // (THE BROKEN WAY: a fight hall's door straight on from its trial's end, where its bridge and plate stand clear)
+    const ahead = need.door ? doorLeg(port).vols : need.vols.map((v) => shift(v.b, port.x, port.y, port.z));
+    if ((need.door || port.z + need.dz + EG_ASCENT_ROOM_ON_CM <= EG_ASCENT_BOUND.z1) && ahead.every((v) => inBound(v) && W.vols.every((q) => q.leg === W.legs || egAscentApart(v, q.b)))) return { legs: [], end: port, cross: 0 };
   }
   const feet = feetOf(W, need, port, rp, rooms);
   if (!feet.length) { W.fails.feet = 1; return null; }
@@ -504,6 +577,12 @@ function program(H, W, port, rooms, toY, need, foot) {
   const keepOff = (need.door ? doorLeg({ x: 0, y: 0, z: 0, h: 0 }).vols : need.vols.map((v) => v.b)).map((b) => shift(b, foot.x, 0, foot.z));
   keepOff.push([foot.x - 200, 0, foot.z - 3 * EG_APPROACH.cell, foot.x + 200, 0, foot.z]);
   const offFoot = (vols) => vols.every((v) => keepOff.every((b) => v[3] + 300 <= b[0] || b[3] + 300 <= v[0] || v[5] + 300 <= b[2] || b[5] + 300 <= v[2]));
+  // THE BROKEN WAY (spec law 10): a +z bridge broken where its break stands apart from everything but the legs it joins (the
+  // chain before it), else whole
+  const brk = (leg, chainV = [], chainK = [], off = true) => {
+    const b = leg ? breakLeg(H, leg) : null;
+    return b && fitsAll(b.vols, chainV, chainK) && (!off || offFoot(b.vols)) ? b : leg;
+  };
   for (let k = 0; k < rooms; k++) {
     // the room's candidates: a way to it and the room, each drawn - of those that stand, the nearest the foot (the die between)
     let best = null;
@@ -513,7 +592,7 @@ function program(H, W, port, rooms, toY, need, foot) {
       const left = toY - cur.y, pick = rp(), run = between(rp, EG_ASCENT_BRIDGE_CM[0] / 100, EG_ASCENT_BRIDGE_CM[1] / 100) * 100;
       const lead = [];
       if (pick < 0.3 && Math.abs(left) > 250) lead.push(stairLeg(cur, Math.sign(left) * Math.min(Math.abs(left), between(rp, 3, 6) * 100)));
-      else { lead.push(bridgeLeg(cur, run)); if (pick < 0.65) lead.push(turnToward(lead[0].end, foot, rp)); }
+      else { lead.push(brk(bridgeLeg(cur, run))); if (pick < 0.65) lead.push(turnToward(lead[0].end, foot, rp)); }
       let ok = true;
       for (let n = 0; n < lead.length && ok; n++) ok = !!lead[n] && fitsAll(lead[n].vols, lead.slice(0, n).map((q) => q.vols), lead.slice(0, n).map((q) => q.kind)) && offFoot(lead[n].vols);
       if (!ok) continue;
@@ -538,13 +617,22 @@ function program(H, W, port, rooms, toY, need, foot) {
   // the way's legs checked as they would be taken: the first that does not stand (its number), -1 - all stand and the course
   // (or the door) stands clear at their end; -2 - it does not
   const check = (way) => {
-    for (let n = 0; n < way.length; n++) if (!fitsAll(way[n].vols, way.slice(0, n).map((q) => q.vols), way.slice(0, n).map((q) => q.kind))) return n;
+    for (let n = 0; n < way.length; n++) {
+      const cv = way.slice(0, n).map((q) => q.vols), ck = way.slice(0, n).map((q) => q.kind);
+      if (way[n].kind === 'bridge') way[n] = brk(way[n], cv, ck, false);   // THE BROKEN WAY: the way into a course's foot, its +z run broken
+      if (!fitsAll(way[n].vols, cv, ck)) return n;
+    }
     const at = way[way.length - 1].end;
     if (!need.door && at.z + need.dz + EG_ASCENT_ROOM_ON_CM > EG_ASCENT_BOUND.z1) return -2;
     const ahead = need.door ? doorLeg(at).vols : need.vols.map((v) => shift(v.b, at.x, at.y, at.z));
     return fitsAll(ahead, way.map((q) => q.vols), way.map((q) => q.kind)) ? -1 : -2;
   };
-  const way = approach(W, placed, kinds, cur, foot, check, need.door ? doorLeg({ x: 0, y: 0, z: 0, h: 0 }).vols : need.vols.map((v) => v.b));
+  // (THE BROKEN WAY - spec law 10: the long run in first, on a quarter of the search - else law 9's two cells, where any way
+  // reaches the foot at all)
+  const shape = need.door ? doorLeg({ x: 0, y: 0, z: 0, h: 0 }).vols : need.vols.map((v) => v.b);
+  let way = null;
+  if (H.law >= EG_BROKEN_LAW) { way = approach(W, placed, kinds, cur, foot, check, shape, EG_BROKEN_RUN, EG_APPROACH.pops >> 2); if (!way && !W.unreached) way = approach(W, placed, kinds, cur, foot, check, shape); }
+  else way = approach(W, placed, kinds, cur, foot, check, shape);
   if (!way) { fail('approach'); return null; }
   for (const leg of way) if (!take(leg)) return null;
   let cross = 0;
@@ -567,14 +655,16 @@ const _A = { g: new Float64Array(0), prev: new Int32Array(0), seen: new Uint32Ar
  * EG_APPROACH.first of the port); a cell a leg already laid holds at this height (its volume, a landing's half-width and the
  * legs' margin about it) never entered, one over or under a leg a crossing's cost. Answers its legs, or null.
  * @param {any} W @param {any[][]} placed @param {string[]} kinds @param {any} port @param {{ x: number, z: number }} foot
- * @param {(way: any[]) => number} check @param {number[][]} shape
+ * @param {(way: any[]) => number} check @param {number[][]} shape @param {number} [into] the cells run into the foot along +z (THE
+ * BROKEN WAY's EG_BROKEN_RUN) @param {number} [popMax] the search's bound
  */
-function approach(W, placed, kinds, port, foot, check, shape) {
+function approach(W, placed, kinds, port, foot, check, shape, into = 2, popMax = EG_APPROACH.pops) {
+  W.unreached = 0;
   const no = (k) => { W.fails[`approach:${k}`] = (W.fails[`approach:${k}`] ?? 0) + 1; return null; };
   const C = EG_APPROACH.cell, y = port.y, B = EG_ASCENT_BOUND;
   const i0 = -Math.floor((port.x + B.x) / C), i1 = Math.floor((B.x - port.x) / C), j0 = -Math.floor((port.z - B.z0) / C), j1 = Math.floor((B.z1 - port.z) / C);
   const gi = Math.round((foot.x - port.x) / C), gj = Math.round((foot.z - port.z) / C);
-  if (gi < i0 || gi > i1 || gj < j0 || gj > j1 || (gi === 0 && gj === 0)) return no('oob');
+  if (gi < i0 || gi > i1 || gj < j0 || gj > j1 || (gi === 0 && gj === 0)) { W.unreached = 1; return no('oob'); }   // (no way at all: THE BROKEN WAY asks no second search)
   const NI = i1 - i0 + 1, NJ = j1 - j0 + 1, cells = NI * NJ, held = new Uint8Array(cells);
   const at = (i, j) => (i - i0) * NJ + (j - j0);
   // a cell held: 1 - no way through it (a bridge's half-width and the margin from a leg at this height); 3 - no landing on it (a
@@ -601,12 +691,19 @@ function approach(W, placed, kinds, port, foot, check, shape) {
   const was = keep.map((k) => (k >= 0 ? held[k] : 0));
   for (const b of shape) mark(shift(b, fx, y, fz), false);
   keep.forEach((k, n) => { if (k >= 0) held[k] = was[n]; });
-  const R = EG_APPROACH.run, NS = cells * 4 * (R + 1), K = _A;
+  // the run since the last landing counted to R (its turns at EG_APPROACH.run, its foot reached at `into` - THE BROKEN WAY's
+  // longer run in)
+  const RT = EG_APPROACH.run, R = Math.max(RT, into), NS = cells * 4 * (R + 1), K = _A;
   if (K.g.length < NS) { K.g = new Float64Array(NS); K.prev = new Int32Array(NS); K.seen = new Uint32Array(NS); K.shut = new Uint32Array(NS); }
   if (K.fill.length < cells) K.fill = new Int32Array(cells);
   const g = K.g, prev = K.prev, seen = K.seen, shut = K.shut, heap = K.heap;
   const sid = (k, h, r) => (k * 4 + h) * (R + 1) + r;
-  const est = (k) => { const i = Math.floor(k / NJ) + i0, j = (k % NJ) + j0; return Math.abs(i - gi) + Math.abs(j - gj); };
+  // (THE BROKEN WAY's longer run in: a cell off the foot's own line must reach that line at most `into` - 1 cells short of the
+  // foot and run on along it - still never more than the way's true cost; law 9's the plain distance)
+  const jIn = gj - into + 1;
+  const est = into > 2
+    ? (k) => { const i = Math.floor(k / NJ) + i0, j = (k % NJ) + j0; return i === gi && j <= gj ? gj - j : Math.abs(i - gi) + (j <= jIn ? gj - j : j - jIn + gj - jIn); }
+    : (k) => { const i = Math.floor(k / NJ) + i0, j = (k % NJ) + j0; return Math.abs(i - gi) + Math.abs(j - gj); };
   // A* over (cell, heading, run since the last landing 0..R - the port's own run begun EG_APPROACH.first short of a landing's) -
   // again round a leg the exact law refuses (its cells held), a few times at most; a flood first, so a foot no way reaches costs
   // the search nothing
@@ -619,23 +716,24 @@ function approach(W, placed, kinds, port, foot, check, shape) {
       const k = fl[qh++], i = Math.floor(k / NJ) + i0, j = (k % NJ) + j0;
       for (let d = 0; d < 4; d++) { const ni = i + DIR[d][0], nj = j + DIR[d][1]; if (ni < i0 || ni > i1 || nj < j0 || nj > j1) continue; const nk = at(ni, nj); if (seen[nk] === mk || held[nk] === 1) continue; seen[nk] = mk; fl[qt++] = nk; }
     }
-    if (seen[at(gi, gj)] !== mk) return no('unreached');
+    if (seen[at(gi, gj)] !== mk) { W.unreached = 1; return no('unreached'); }
     const gen = ++K.gen;
     heap.length = 0;
     const key = (f, s) => f * NS + s;
     const push = (v) => { heap.push(v); let c = heap.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (heap[p] <= heap[c]) break; const t = heap[p]; heap[p] = heap[c]; heap[c] = t; c = p; } };
     const pop = () => { const top = heap[0], last = heap.pop(); if (heap.length) { heap[0] = last; let c = 0; for (;;) { const l = 2 * c + 1, r2 = l + 1; let m = c; if (l < heap.length && heap[l] < heap[m]) m = l; if (r2 < heap.length && heap[r2] < heap[m]) m = r2; if (m === c) break; const t = heap[m]; heap[m] = heap[c]; heap[c] = t; c = m; } } return top % NS; };
-    const start = sid(at(0, 0), port.h, R - EG_APPROACH.first);
+    const start = sid(at(0, 0), port.h, RT - EG_APPROACH.first);
     g[start] = 0; prev[start] = -1; seen[start] = gen;
     push(key(est(at(0, 0)), start));
     let pops = 0, refused = false;
-    while (heap.length && pops < EG_APPROACH.pops) {
+    const budget = popMax;
+    while (heap.length && pops < budget) {
       const s = pop();
       if (shut[s] === gen) continue;
       shut[s] = gen; pops++;
       const r = s % (R + 1), h = Math.floor(s / (R + 1)) % 4, k = Math.floor(s / (4 * (R + 1)));
       const i = Math.floor(k / NJ) + i0, j = (k % NJ) + j0;
-      if (i === gi && j === gj && h === 0 && r >= 2) {
+      if (i === gi && j === gj && h === 0 && r >= into) {
         const legs = wayLegs(prev, s, port, i0, j0, NJ, R);
         if (!legs) return no('legs');
         const bad = check(legs);
@@ -658,9 +756,9 @@ function approach(W, placed, kinds, port, foot, check, shape) {
         if (seen[ns] !== gen || d < g[ns]) { seen[ns] = gen; g[ns] = d; prev[ns] = s; push(key(d + est(nk), ns)); }
       };
       step(h, Math.min(R, r + 1), 1);
-      if (!(i === 0 && j === 0) && held[k] !== 3 && r >= R) for (const h2 of [(h + 1) % 4, (h + 3) % 4]) step(h2, 1, 1 + EG_APPROACH.turn);
+      if (!(i === 0 && j === 0) && held[k] !== 3 && r >= RT) for (const h2 of [(h + 1) % 4, (h + 3) % 4]) step(h2, 1, 1 + EG_APPROACH.turn);
     }
-    if (!refused) return no(pops >= EG_APPROACH.pops ? 'pops' : 'unreached');
+    if (!refused) return no(pops >= budget ? 'pops' : 'unreached');
   }
   return no('rounds');
 }
@@ -693,6 +791,47 @@ function bridgeLeg(port, len) {
   const [dx, dz] = DIR[port.h], hw = 200, bx = port.x + dx * len, bz = port.z + dz * len;
   return { kind: 'bridge', len, start: port, end: { ...port, x: bx, z: bz }, vols: [floorVol(Math.min(port.x, bx) - (dz ? hw : 0), Math.min(port.z, bz) - (dx ? hw : 0), Math.max(port.x, bx) + (dz ? hw : 0), Math.max(port.z, bz) + (dx ? hw : 0), port.y, port.y, EG_ASCENT_HANG_CM.band)] };
 }
+/**
+ * THE BROKEN WAY (spec law 10): bridge `leg` BROKEN - where it heads +z and runs EG_BROKEN_MIN_CM or more - its middle fallen
+ * away and crossed on EG_BROKEN_PIECES of one of its band's EG_BROKEN_KINDS, all off the planner's die (`H.rp` - no course's
+ * draws move): each piece a gap of THE ENVELOPE past the last edge (EG_GAP_MIN_CM-EG_GAP_MAX_CM - the span generator's own),
+ * at the Steps' own timing (a Drift's swing and period, Beats alternate a half cycle apart, a Pendulum's period, a Vent's
+ * cycle - egSpanLaw.js egSpanOf's run, its numbers), a last gap onto the bridge on, and EG_BROKEN_FOOT_CM of bridge kept at
+ * either end at the least (the slack shared between them). Its volumes: its two feet a bridge's, its break the pieces' (their
+ * swing across, what hangs under a course - EG_ASCENT_HANG_CM.step). Null where it stays whole (too short for a piece).
+ * @param {any} H @param {any} leg
+ */
+function breakLeg(H, leg) {
+  if (!(H.law >= EG_BROKEN_LAW) || leg.kind !== 'bridge' || leg.br || leg.len < EG_BROKEN_MIN_CM) return null;
+  const hd = leg.start.h, band = EG_BROKEN_KINDS[H.bnd] ?? EG_BROKEN_KINDS[0], kinds = hd ? band.filter((q) => EG_BROKEN_TURNED.includes(q)) : band;
+  const rp = H.rp, k = kinds[Math.floor(rp() * kinds.length)], S = H.sizes[k], D = hd % 2 ? S.w : S.d;   // its depth along its heading (a turned piece keeps its top)
+  const room = leg.len - 2 * EG_BROKEN_FOOT_CM, want = between(rp, EG_BROKEN_PIECES[0], EG_BROKEN_PIECES[1]);
+  const pieces = [];
+  let used = 0;
+  for (let q = 0; q < want; q++) {
+    const g = between(rp, H.gapMin, H.gapMax);
+    if (used + g + D + H.gapMin > room) break;
+    const p = { k, gap: g, amp: 0, period: 0, phase: 0, beat: 0 };
+    if (k === 'drift') { p.amp = between(rp, 100, 200); p.period = between(rp, 40, 70) * 100; p.phase = q * 900; }
+    else if (k === 'beat') p.beat = (q % 2) * H.beatHalf;
+    else if (k === 'pend') { p.period = between(rp, 30, 50) * 100; p.phase = q * 700; }
+    else if (k === 'vent') { p.period = between(rp, 40, 60) * 100; p.phase = between(rp, 0, 39) * 100; }
+    pieces.push(p);
+    used += g + D;
+  }
+  if (!pieces.length) return null;
+  const last = Math.min(between(rp, H.gapMin, H.gapMax), room - used);
+  // along its heading from its start: the break begins at `a`, ends at `b` (cm); each piece's middle along it
+  const s = leg.start, [ux, uz] = DIR[hd], a = EG_BROKEN_FOOT_CM + half(room - used - last), b = a + used + last;
+  let e = a;
+  for (const p of pieces) { p.at = e + p.gap + half(D); e += p.gap + D; }
+  const sway = k === 'drift' ? Math.max(...pieces.map((p) => p.amp)) : k === 'pend' ? Math.round((EG_PEND_REACH + EG_PEND_HALF) * 100) : 0;
+  const across = Math.max(200, half(hd % 2 ? S.d : S.w) + sway);   // its half-width across its heading: a bridge's, or its pieces' and their swing
+  const pt = (t) => [s.x + ux * t, s.z + uz * t];
+  const box = (t0, t1, hw, hang) => { const [ax, az] = pt(t0), [bx, bz] = pt(t1); return floorVol(Math.min(ax, bx) - (uz ? hw : 0), Math.min(az, bz) - (ux ? hw : 0), Math.max(ax, bx) + (uz ? hw : 0), Math.max(az, bz) + (ux ? hw : 0), s.y, s.y, hang); };
+  const brk = box(a, b, across, EG_ASCENT_HANG_CM.step);
+  return { ...leg, br: { a, b, hd, D, x0: brk[0], x1: brk[3], z0: brk[2], z1: brk[5], pieces }, vols: [box(0, a, 200, EG_ASCENT_HANG_CM.band), brk, box(b, leg.len, 200, EG_ASCENT_HANG_CM.band)] };
+}
 /** A STAIR (a ramp) from `port` along its heading rising `rise` (negative: down) at the stair's steepest and a little more. */
 function stairLeg(port, rise) {
   if (!rise) return null;
@@ -721,7 +860,9 @@ function turnLeg(H, port, rp, to = -1) {
 function roomLeg(H, port, left, used, rp) {
   const bag = Math.abs(left) < 300 ? BAGS.level : left > 0 ? BAGS.climb : BAGS.fall;
   const fresh = bag.filter((k) => !used.has(k)), pool = fresh.length ? fresh : bag;
-  const k = pool[Math.min(pool.length - 1, Math.floor(rp() * Math.min(pool.length, 4)))];
+  // (THE BROKEN WAY - spec law 10: any of the fresh pool alike - law 9 drew from its first four, and the bag's order stood a tower
+  // in 82% of its halls, two halls running in 66%)
+  const k = H.law >= EG_BROKEN_LAW ? pool[Math.floor(rp() * pool.length)] : pool[Math.min(pool.length - 1, Math.floor(rp() * Math.min(pool.length, 4)))];
   const p = egRoomDraw(k, rp), kit = k === 'corridor' || k === 'switchback' ? EG_PASSAGE_KITS[H.bnd][0] : EG_CHAMBER_KITS[H.bnd][0];
   const R0 = egRoomBuild(k, p, [0], H.bnd, kit);
   const pairs = egRoomPairs(k).map(([i, o]) => ({ i, o, rise: R0.sockets[o].y - R0.sockets[i].y }));
@@ -755,7 +896,21 @@ function commit(H, W, leg) {
     W.vols.push({ b: v, leg: id, y: leg.kind === 'room' ? v[1] + 50 : y, kind: leg.kind, part: W.part });
   }
   const from = W.tail ?? 0;
-  if (leg.kind === 'bridge') {
+  if (leg.kind === 'bridge' && leg.br) {
+    // THE BROKEN WAY (spec law 10): its near foot, its pieces where they stand (a course of the hall's one count, its own ground
+    // - THE TIMED SOLVER proves it where it stands; along +z through the span generator's road, along another heading laid off
+    // every road's line, egSpanPairs reading it along its heading), its far foot; the way a bridge, a span and a bridge
+    const B = leg.br, [ux, uz] = DIR[B.hd], at = (t) => [s.x + ux * t, s.z + uz * t], [ax, az] = at(B.a), [bx, bz] = at(B.b);
+    H.lane(s.x, s.z, ax, az, 200, 'bridge', s.y);
+    if (B.hd === 0) {
+      H.set({ X: s.x, y: s.y, edge: az, road: 0, xRoad: 0 }); H.S.road(0); H.S.floor(s.y);
+      for (const p of B.pieces) H.step(p.k, p.gap, { x: 0, amp: p.amp, period: p.period, phase: p.phase, beat: p.beat });
+    } else B.pieces.forEach((p, q) => { const [px, pz] = at(p.at); H.S.put(p.k, { x: px, y: s.y, z: pz, gap: p.gap, period: p.period, phase: p.phase, beat: p.beat, hd: B.hd, after: q === B.pieces.length - 1 ? B.b - p.at - half(B.D) : 0 }); });
+    H.lane(bx, bz, leg.end.x, leg.end.z, 200, 'bridge', s.y);
+    const a = link(W, from, node(W, [ax, s.y, az]), 'bridge', 0), b = link(W, a, node(W, [bx, s.y, bz]), 'span', 0);
+    W.tail = link(W, b, node(W, [leg.end.x, leg.end.y, leg.end.z]), 'bridge', 0);
+    W.segs.push({ leg: id, x: s.x, y: s.y, z0: B.hd === 0 ? s.z : B.z0, z1: B.hd === 0 ? leg.end.z : B.z1, x0: B.x0, x1: B.x1, y0: s.y, y1: s.y, frags: 0, broken: 1 });
+  } else if (leg.kind === 'bridge') {
     H.lane(s.x, s.z, leg.end.x, leg.end.z, 200, 'bridge', s.y);
     W.tail = link(W, from, node(W, [leg.end.x, leg.end.y, leg.end.z]), 'bridge', 0);
   } else if (leg.kind === 'stair') {

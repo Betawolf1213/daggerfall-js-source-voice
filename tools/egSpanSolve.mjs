@@ -49,7 +49,7 @@
 import { egCircleSpecs, egFirstHallOf } from '../src/net/eliteGates/egLaw.js';
 import { egHallOf, egSpecForget } from '../src/net/eliteGates/egLaw.js';
 import { egSpanPairs, egPairWindows, egSpanProof, egRoadCross, egFastCross, egCrossMin, egCourseOf, egJumpLands, egJumpReach, egPieceAt, egPendHits,
-  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
+  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, egAlongOf, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
 import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_RISE_M } from '../src/net/eliteGates/egRouteProof.js';   // THE ASCENT: the route's legs
 import { egRouteLen } from '../src/net/eliteGates/egRoute.js';
 import { egSynth9Give } from './lib/egLaw9Synth.mjs';   // THE ASCENT: synthetic LAW 9 halls, until THE ROOMS lays them
@@ -176,7 +176,11 @@ function pilotOf(S, spec, road, t0, trace = null) {
   const at = realmToDungeon(X0 + spec.arrive.x, spec.arrive.y ?? 0, spec.arrive.z);
   m.spawn(at[0], at[1] + 0.05, at[2]);
   span.setSafe(null);
-  const me = () => { const p = dungeonToRealm(m.pos[0], m.pos[1], m.pos[2]); return { x: p[0] - X0, y: p[1], z: p[2] }; };
+  /** THE BROKEN WAY (spec law 10): the heading a turned span leg is crossed along (0 +z - the hall's own frame): while it is
+   *  set, where I stand is read in its frame (egAlongOf - x across, z along) and every yaw I steer is turned with it, so the
+   *  planner crosses a turned course's pairs (egSpanPairs' own frame) as it crosses any course */
+  let turn = 0;
+  const me = () => { const p = dungeonToRealm(m.pos[0], m.pos[1], m.pos[2]), x = p[0] - X0; if (!turn) return { x, y: p[1], z: p[2] }; const [a, b] = egAlongOf(turn, x, p[2]); return { x: a, y: p[1], z: b }; };
   /** THE ASCENT (LAW 9): the heights of the way being crossed (`[lo, hi]` - a span link's ends and its course's rise either
    *  side): still ground off them stands on another storey and is none of this way's. Null - every floor (the laws before). */
   let wayYs = /** @type {number[]|null} */ (null);
@@ -185,7 +189,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
   const frame = (input, yaw = 0) => {
     const back = span.ride(t, DT, m, true);
     if (back) return 'fell';
-    m.update(DT, input, yaw, 0);
+    m.update(DT, input, yaw + (turn * Math.PI) / 2, 0);
     t += DT;
     trace?.(t, me(), m.grounded, m.groundKey, input);
     return null;
@@ -312,7 +316,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
   /** a launch of pair `pi` at `u` the pilot takes: it lands held either side, no gust in the flight, a Pendulum clear */
   const takes = (pi, u, lane = -1) => {
     const p = pairs[pi];
-    return lands(p, u) && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);
+    return lands(p, u) && (turn || !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null)) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);   // (a turned course keeps no Gust)
   };
   const launch = (pi, ready, since, depth = 0, lane = -1) => {
     const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p), nx = pairs[pi + 1];
@@ -362,8 +366,8 @@ function pilotOf(S, spec, road, t0, trace = null) {
         if (!up) return fail(a.i, 'the riser was not run up');
         for (let k = 0; k < 8; k++) if (frame(still())) return fail(a.i, 'fell off the riser');
       }
-      // on still ground, over it to the launch's edge first (its gaps leapt)
-      if (!a) { const err = crossGround(b ? b.x : me().x, pair.edge - EDGE_M - RUNUP_M - 0.2); if (err) return fail(at, `${err} on the way to the launch`); }
+      // on still ground, over it to the launch's edge first (its gaps leapt - THE BROKEN WAY: a turned bridge's near foot walked)
+      if (!a) { const err = turn ? walkTo(b ? b.x : me().x, pair.edge - EDGE_M - RUNUP_M - 0.2) : crossGround(b ? b.x : me().x, pair.edge - EDGE_M - RUNUP_M - 0.2); if (err) return fail(at, `${err} on the way to the launch`); }
       // where the launch is: the far edge of what I stand on, wherever it is then - or the ground's edge
       const lane = a?.kind === 'slag' ? standLane : -1, lzAt = (u) => lzOf(pair, u, lane);
       const tau = launch(pi, t + Math.max(0, lzAt(t) - EDGE_M - me().z) / EG_SPAN_RUN_MPS + 0.03, standSince, 0, lane);
@@ -473,7 +477,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
   /** THE ASCENT (LAW 9): the heights the way being crossed stands at - span leg `g`'s ends and its course's rise either side
    *  (null: every floor). */
   const wayOf = (g) => { wayYs = g ? [Math.min(g.from[1], g.to[1]) - EG_ROUTE_COURSE_RISE_M, Math.max(g.from[1], g.to[1]) + EG_ROUTE_COURSE_RISE_M] : null; };
-  return { m, me, frame, walkTo, crossGround, crossPairs, wayTo, climbUp, wayOf, fail, get t() { return t; },
+  return { m, me, frame, walkTo, crossGround, crossPairs, wayTo, climbUp, wayOf, fail, get t() { return t; }, turnTo: (/** @type {number} */ hd) => { turn = hd; },
     done: () => ({ ok: true, seed: S.seed, h, road, step: null, why: '', t: t - t0 }) };
 }
 
@@ -523,7 +527,9 @@ export function sweepRoute(S, spec, road, t0, trace = null) {
     if (g.kind === 'climb') why = P.climbUp(g);
     else if (L.pairs.length) {
       P.wayOf(g);
+      P.turnTo(L.g.steps[0]?.hd ?? 0);   // THE BROKEN WAY: a turned course crossed in its heading's frame
       const crossed = P.crossPairs(L.pairs, true);
+      P.turnTo(0);
       P.wayOf(null);
       if (crossed) return crossed;
       why = P.wayTo(g.to, g);

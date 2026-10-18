@@ -44,6 +44,7 @@ import { createMeshKit } from './meshKit.js';
 import { GATE_PART } from '../gate/gateModel.js';
 import { EG_DRESS, EG_KIT_MAP } from './egBandArt.js';   // the ground's records, and how each kit picture is worn
 import { EG_KIT_RECORD, egKitStyle } from './egKit.js';
+import { egRingSideOpen } from '../../net/eliteGates/egWalkGraph.js';   // EG-PERFECT (spec law 10): the ring open at an alcove's doorway
 
 /** THE GROUND'S RECORDS: the ground's eight and the kit's shaft, moulding, voussoir and inlay - twelve draws at most a circle. */
 export const EG_GROUND_RECORD = Object.freeze({
@@ -1021,6 +1022,9 @@ function mitred(W, half, mA, mB) {
 }
 /** Whether the ring's side k of n is one of its two gaps (the course in at -z, on at +z - world/eliteGates/egHall.js's ring wall). */
 const ringGapSide = (k, n) => Math.abs(Math.sin(((k + 0.5) / n) * TAU)) < 0.2;
+/** EG-PERFECT (spec law 10): whether chamber ring `d`'s side k of n is open - its gaps, or an alcove's doorway (net/eliteGates/
+ *  egWalkGraph.js egRingSideOpen, every reader's one law). */
+const ringOpen = (spec, d, k, n) => egRingSideOpen(spec, d, k, n);
 /**
  * A CHAMBER'S RING WALL AS THE ACADEMY'S ARCADE (Elite-Gates-Look.md section 2): deco `d` (a `wall` ring) of hall `spec`, each
  * of the collider's 32 sides a bay out from its plane - its piers, an open arch of the band's style between them (its
@@ -1032,10 +1036,10 @@ export function egRingArcade(spec, d, band, piece) {
   const A = EG_ARCADE, n = A.sides, y = d.y ?? 0, h = d.h, style = egKitStyle(band).arch, D = A.thick;
   const yb = y - A.base, yE = y + h - A.parapet - A.ent, yP = yE + A.ent, yT = y + h;
   for (let k = 0; k < n; k++) {
-    if (ringGapSide(k, n)) continue;
+    if (ringOpen(spec, d, k, n)) continue;
     const a0 = (k / n) * TAU, a1 = ((k + 1) / n) * TAU, mid = (a0 + a1) / 2;
     const W0 = egWallFrame(spec, d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r, d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r, -Math.sin(mid), -Math.cos(mid));
-    const gA = ringGapSide((k + n - 1) % n, n), gB = ringGapSide((k + 1) % n, n), W = mitred(W0, Math.PI / n, gA ? 0 : 1, gB ? 0 : 1), L = W0.L, pw = A.pier;
+    const gA = ringOpen(spec, d, (k + n - 1) % n, n), gB = ringOpen(spec, d, (k + 1) % n, n), W = mitred(W0, Math.PI / n, gA ? 0 : 1, gB ? 0 : 1), L = W0.L, pw = A.pier;
     const hw = (L - 2 * pw) / 2, crown = yE - 0.35, spring = Math.max(y + 1.5, crown - egGroundArchRise(style, hw)), hole = { tc: L / 2, hw, sill: y, spring, curve: egArchCurve(style, hw, 0, A.m) };
     const open = k % 2 === 0;   // the arcade's rhythm: an open arch, a blind bay, an open arch...
     piece((kit) => {

@@ -44,6 +44,26 @@
 // (ELITE-GATES).
 import { segDist, egPolyIn, egPolyDist, egPolyKeep } from './egShape.js';
 
+/** A chamber's ring wall's sides (world/eliteGates/egHall.js's collider, world/eliteGates/egGround.js's arcade - one count). */
+export const EG_RING_SIDES = 32;
+/** EG-PERFECT - SPEC LAW 10 (THE BROKEN WAY): the spec law from which a chamber's alcove opens at its court's rim through its
+ *  ring (net/eliteGates/egFragLaw.js EG_FRAG_BROKEN_LAW - pinned equal; this module reads, never draws). */
+const RING_ALCOVE_LAW = 10;
+/**
+ * IS SIDE `k` OF CHAMBER RING `d` OPEN (of `n` - every reader of a ring wall, one law): where the course comes in (-z) and goes
+ * on (+z) - its middle's |sin| under 0.2 - and, from spec law 10, where an alcove of the ring's floor opens through it (its
+ * point within the side's half-length and the niche's 1.2 m of the side's middle, in plan): the niche's false wall stands
+ * there in the ring's place (law 10 lays a chamber's alcove at its court's rim - net/eliteGates/egFragLaw.js egFragChamber). Pure.
+ * @param {any} spec @param {any} d @param {number} k @param {number} [n]
+ */
+export function egRingSideOpen(spec, d, k, n = EG_RING_SIDES) {
+  const a0 = (k / n) * Math.PI * 2, a1 = ((k + 1) / n) * Math.PI * 2, mid = (a0 + a1) / 2;
+  if (Math.abs(Math.sin(mid)) < 0.2) return true;
+  if (!((spec?.law ?? spec?.v ?? 0) >= RING_ALCOVE_LAW)) return false;
+  const mx = d.x + Math.sin(mid) * d.r, mz = d.z + Math.cos(mid) * d.r, half = d.r * Math.sin(Math.PI / n);
+  return (spec.alcoves ?? []).some((a) => Math.abs((a.y ?? 0) - (d.y ?? 0)) < 1 && Math.hypot(a.x - mx, a.z - mz) <= half + 1.2);
+}
+
 /** A blow is struck from the fight ground within this of its plan (m - the pose's age and the capsule), and a member is off
  *  it past this (section 11.7's hunt). */
 export const EG_STRIKE_PAD_M = 1.5;
@@ -568,10 +588,11 @@ export function egAirOf(spec) {
       for (const s of [-1, 1]) wall([d.x + s * (d.w / 2), d.z, d.x + s * (d.r + 2), d.z], d.y ?? 0, (d.y ?? 0) + (d.h ?? 0));
       ways.push([d.x, d.z - C], [d.x, d.z + C]);
     } else if (d.t === 'wall') {
-      // the ring as drawn (world/eliteGates/egHall.js): 32 faces, but those where the course comes in (-z) and goes on (+z)
-      for (let k = 0; k < 32; k++) {
-        const a0 = (k / 32) * Math.PI * 2, a1 = ((k + 1) / 32) * Math.PI * 2;
-        if (Math.abs(Math.sin((a0 + a1) / 2)) < 0.2) continue;
+      // the ring as drawn (world/eliteGates/egHall.js): 32 faces, but those where the course comes in (-z) and goes on (+z) - and
+      // (spec law 10) where an alcove opens through it (egRingSideOpen)
+      for (let k = 0; k < EG_RING_SIDES; k++) {
+        const a0 = (k / EG_RING_SIDES) * Math.PI * 2, a1 = ((k + 1) / EG_RING_SIDES) * Math.PI * 2;
+        if (egRingSideOpen(spec, d, k)) continue;
         wall([d.x + Math.sin(a0) * d.r, d.z + Math.cos(a0) * d.r, d.x + Math.sin(a1) * d.r, d.z + Math.cos(a1) * d.r], d.y ?? 0, (d.y ?? 0) + (d.h ?? 0));
       }
       for (const s of [-1, 1]) ways.push([d.x, d.z + s * (d.r - C)], [d.x, d.z + s * (d.r + C)]);
