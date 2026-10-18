@@ -614,7 +614,8 @@ each is fixed here and pinned.
 - **A9, a closed socket's law.** The host read the last welcome's law after the socket closed, and under `enforce`
   stood nothing. A socket not open is no law.
 - **A10, a cold cell's welcome.** The welcome reads the setting the cell last had, and a cold cell had none. A mint's
-  answer says the law the relay read at the ask (`gm`), the client takes it, and the welcome asks the hub when cold.
+  answer says the law the relay read at the ask (`gm`) - a cold cell's ask awaits the hub - and the client takes it. The
+  welcome still asks nothing (a hello is never the hub's call, GROUND-GATE).
 - **A11, a stood-down foe rebuilt.** Under `enforce` a record a reader stood down was built, checked and tallied again on
   every frame. A record's refusal is kept by the grant it names (`downed`), and it is neither built nor tallied again
   on that grant - `unsigned` only until the grant is heard.

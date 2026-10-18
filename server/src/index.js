@@ -10082,7 +10082,6 @@ export class Room {
    *  HUB'S CALL: a hello asks nothing - the setting this cell last had, or the Worker's var (a staff `off` reaches a
    *  client at its next ask, answered `off`). */
   _grantWelcome() {
-    if (this._relayCfgAt === -Infinity) void this._relayCfgFresh(Date.now());   // AUDIT GRANT A10: a cold cell asks the hub now - its first ask's answer says the law in force (`gm`)
     return `,"gm":${JSON.stringify(grantModeOf(relayCfgValue(this._relayCfg, this.env, 'grantMode')))}`;
   }
   /** GRANT2: A CELL'S GRANTS - its counter (begun anywhere in 31 bits, so a re-woken cell does not number its grants from
