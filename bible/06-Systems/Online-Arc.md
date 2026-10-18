@@ -9555,6 +9555,14 @@ red deploy reads as a service that is not there.
   #947's `homes/decor -> 000` - the busiest reads, on a database that sheds load (Scale-Arc PRIMARY-TRIPS) - and
   failed deploys whose Worker had taken and whose every other call answered. A hang that did write is no false pass
   (a second first beat answers `playedS` above 0 and fails); a route that hangs on every ask still fails.
+  SMOKE-LOST (2026-10-18, the owner's screenshot of #1004's account deploy) departs from that "and fails": #1004's
+  first Renown report hung 15 s and was credited, its retry was answered, rightly, as that report again (`credited`
+  0, `repeat`, the track at 1 XP), and the smoke failed a deploy whose Worker had taken. So `ask` leaves
+  `<out>.lost` when a try went unanswered, cleared before its first, and the two calls that write before they are
+  read take, after a lost try, the answer the landed write gives its retry: the first beat a `playedS` no more than
+  seven asks' 140 seconds, the first report a repeat on a track holding its 1 XP. Never without a lost try, and
+  never after a 5xx alone (a batch that failed whole wrote nothing): a repeat on a first answer is still a failure.
+  Pinned and run by `test/server/smoke_lost.test.js` (4); `tools/mutants/smoke_lost.json` (8, all dead).
 
 Pinned: `test/systems/home2.test.js` (4) - the law, the plaque's fold executed, the door by source, the deploy; re-aimed by
 content in `test/server/home1.test.js` (House5, the Info-only offer) and `test/systems/worldhover.test.js` (the door cache).
