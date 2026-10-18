@@ -76,6 +76,7 @@ import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's q
 import { ecotoneGlsl } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours, both terrain programs' one chunk
 import { WATER_BED_GLSL, waterBedMix } from './waterBedGlsl.js';   // WATER-NEXT 2: under the enhanced water the ground is a bed
 import { RING_SEA_GLSL } from './horizonHaze.js';   // FAR-SEA1: the ring's sea and the horizon's haze, the classic ring's own text
+import { RING_HAZE_GLSL } from './hazeGlsl.js';   // BANTHA1: and the jungle's haze over it, the classic ring's own text
 import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM } from './realWindows.js';   // RW1: the real windows, the classic FS's own block on the lane's codec
 import { MESH_ALPHA_GLSL } from './meshAlpha.js';   // POI-2: the lane's mesh FS ends on the same translucency as the classic one
 
@@ -1146,6 +1147,7 @@ uniform vec3 uSeaAmbient;     // AUDIT FAR-SEA1 L1: the frame's light as the hos
 uniform vec3 uSeaSunColor;
 uniform vec3 uSeaMoonColor;
 ${RING_SEA_GLSL}
+${RING_HAZE_GLSL}
 ${EL_GLSL}
 out vec4 outColor;
 void main() {
@@ -1163,7 +1165,7 @@ void main() {
   if (sea > 0.0) shown = mix(shown, ringSea(uSeaAmbient, uSeaSunColor, uSeaMoonColor), sea);
   // EL-DISTANCE: the ring fades into the fog in DISPLAY space, as elFinish and the classic ring do - mixed in linear
   // it reached the fog colour long before the streamed ground beside it (FAR-SEA1: the horizon's one law)
-  vec3 col = mix(shown, uFogColor, horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold));
+  vec3 col = mix(shown, uFogColor, ringHaze(horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold)));   // BANTHA1: and the jungle's haze
   outColor = vec4(col + (bayer4(gl_FragCoord.xy) - ${BAYER_MEAN}) / 255.0, 1.0);   // EL6: the ring's sky gradient, dithered at the byte
 }`;
 

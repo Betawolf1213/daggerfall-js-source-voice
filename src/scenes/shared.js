@@ -421,6 +421,16 @@ export function createSkyController(gl, params) {
       brassW = Math.max(0, Math.min(1, Number(w) || 0));
       for (const r of [sky, enhancedSky, dynamicSky, clouds]) if (r) r.brass = brassW;
     },
+    /** BANTHA1 (bible/03-World/Bantha-Jungle.md): the jungle's haze over the sky this frame - [r, g, b, depth], its colour
+     *  and its optical depth straight up from the eye (world/jungle/jungleHaze.js hazeSkyUniform; render/hazeGlsl.js
+     *  uHazeSky) - every pass that draws the sky closes into it toward the horizon, as the ground does; null or a depth
+     *  of 0 is exactly the sky there was. */
+    setHazeSky(v) {
+      for (const r of [sky, enhancedSky, dynamicSky, clouds]) {
+        if (!r?.hazeSky) continue;
+        if (v) r.hazeSky.set(v); else r.hazeSky[3] = 0;
+      }
+    },
     /** SUNBABY1: the sun baby's weight this frame, 0..1 (world/sunbabySky.js createSunbaby) - its flower sky is drawn over
      *  the sky and its clouds by it, the fog and the water's sky lean to it - and `on`, whether it is staged now: while
      *  it is, the sky's frame (use) stands on the clear day the host shows, without the weather map's storm cells, its
@@ -846,6 +856,20 @@ export function realForestsOn(search) {
   if (pageParam('forests', search) === 'off' && !isOnlinePage(search)) return false;
   const row = onlineForcedPref('realForests', search) ?? getPref('realForests');
   return !!row && (isOnlinePage(search) || isEnhanced(search));
+}
+/** BANTHA1 (bible/03-World/Bantha-Jungle.md): THE JUNGLE'S SWITCH - the Features row (`banthaJungle`) on the enhanced
+ *  skin, and on for everyone online whatever their skin: the jungle's trees are where Logging's trees stand in Bantha,
+ *  and the room agrees on its ground (realForestsOn's shape). `?jungle=off` the kill door, offline. The world host reads
+ *  it once, at its mount (a flip reaches the next world). Off - and on the classic skin - Bantha is DFU's rainforest. */
+export function jungleOn(search) {
+  if (pageParam('jungle', search) === 'off' && !isOnlinePage(search)) return false;
+  const row = onlineForcedPref('banthaJungle', search) ?? getPref('banthaJungle');
+  return !!row && (isOnlinePage(search) || isEnhanced(search));
+}
+/** BANTHA1: THE JUNGLE'S HAZE'S KILL DOOR - `?junglehaze=off` stands the jungle under clear air (a probe's door, and a
+ *  day the haze reads a scene wrong). No row: the haze is the jungle's own air. */
+export function jungleHazeOn(search) {
+  return pageParam('junglehaze', search) !== 'off';
 }
 /** LANDFORM1-3: THE LANDFORMS' SWITCH - the Features row (`landforms`) on the enhanced skin, and on for everyone online
  *  whatever their skin: it is the ground itself, and a room agrees on its ground (realForestsOn's shape). `?landforms=off`

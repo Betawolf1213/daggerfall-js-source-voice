@@ -164,8 +164,8 @@
   {
     "name": "SD20C-V8-the-classic-sky-ungraded",
     "file": "src/render/skyRenderer.js",
-    "old": "  outColor = vec4(brassGrade(dreadGrade(mix(color, uFogColor, uFogMix), uDread), uBrass), 1.0);",
-    "new": "  outColor = vec4(dreadGrade(mix(color, uFogColor, uFogMix), uDread), 1.0);",
+    "old": "  outColor = vec4(brassGrade(dreadGrade(hazeSky(mix(color, uFogColor, uFogMix), dir), uDread), uBrass), 1.0);",
+    "new": "  outColor = vec4(dreadGrade(hazeSky(mix(color, uFogColor, uFogMix), dir), uDread), 1.0);",
     "tests": [
       "test/scenes/superDungeon/sd20c_render.test.js"
     ]

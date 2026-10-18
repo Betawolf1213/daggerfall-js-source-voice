@@ -320,7 +320,7 @@ test('ES1c clouds and dither: two decks lit by the sun, and a triangular dither 
   // hash with interleaved gradient noise; FT3 removed the retro pass, so
   // this is the dome's ONE dither now - what is pinned is that there is
   // one, and where.)
-  assert.match(fs, /vec3 out3 = mix\(clamp\(color, 0\.0, 1\.0\), uFogColor, uFogMix\);/);
+  assert.match(fs, /vec3 out3 = hazeSky\(mix\(clamp\(color, 0\.0, 1\.0\), uFogColor, uFogMix\), dir\);/);   // PIN MOVED (BANTHA1): the fog's mix, then the jungle's haze toward the horizon (render/hazeGlsl.js)
   assert.match(fs, /out3 \+= \(ign - 0\.5\) \/ 255\.0;/, 'a sub-quantisation step, never more');
   assert.match(fs, /outColor = vec4\(brassGrade\(dreadGrade\(out3, uDread\), uBrass\), 1\.0\);/);   // EVENT1: the live event's grade, out3 itself without one; AUDIT SD III (V8, PIN MOVED): the brass air's after it
 });

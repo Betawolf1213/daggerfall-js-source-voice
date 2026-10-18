@@ -1845,6 +1845,13 @@ export class Renderer {
     // (world/deepWater/deepWaterLook.js distanceFogUniforms). A FRAME's, as the cloud
     // deck is: beginFrame clears it and the exterior host sets it after.
     this._dwFog = new Float32Array(20);
+    // BANTHA1: the jungle's haze - render/hazeGlsl.js uHaze, two vec4s (world/jungle/jungleHaze.js hazeUniforms). A
+    // FRAME's, as the travel view's focus is: setJungleHaze arms it, and a beginFrame no setJungleHaze armed clears it - so an
+    // interior, a dungeon or a panel never inherits the jungle's air
+    this._haze = new Float32Array(8);
+    this._hazeArmed = false;
+    /** LPT1 / BANTHA1: the frame's 3D trees, a door's frame a slot - 0 Low Poly Trees', 1 the jungle's (setLowPolyTrees) */
+    this._lptSlots = [null, null];
     this._seaHaze = new Float32Array(2);   // FAR-SEA1: the hold and the sea's height (setSeaHaze)
     this._dwColumn = null;   // DW-F: the water column's frame for the flats (setWaterColumn), a frame's like the fog
     this._snowRise = 0;      // SNOW-TELL: the snow's height over the ground this frame (drawSnow; beginFrame clears it)
@@ -1934,6 +1941,7 @@ export class Renderer {
       camPos: gl.getUniformLocation(this.waterProgram, 'uCamPos'),
       focus: gl.getUniformLocation(this.waterProgram, 'uFocus'),   // TV1
       dwFog: gl.getUniformLocation(this.waterProgram, 'uDwFog'),   // DW-C
+      haze: gl.getUniformLocation(this.waterProgram, 'uHaze'),   // BANTHA1
     };
     this.waterUProj = gl.getUniformLocation(this.waterProgram, 'uProj');
     this.waterUView = gl.getUniformLocation(this.waterProgram, 'uView');
@@ -2324,6 +2332,7 @@ export class Renderer {
       camPos: gl.getUniformLocation(program, 'uCamPos'),
       focus: gl.getUniformLocation(program, 'uFocus'),   // TV1: the travel view's focus (render/fogGlsl.js FOCUS_GLSL)
       dwFog: gl.getUniformLocation(program, 'uDwFog'),   // DW-C: the sea's distance fog - null where a program never calls it
+      haze: gl.getUniformLocation(program, 'uHaze'),   // BANTHA1: the jungle's haze (render/hazeGlsl.js)
     };
   }
 
@@ -4014,9 +4023,10 @@ export class Renderer {
     // keep the deck: they are characters in the world.
     const sp = this._proj, sv = this._view, sf = this._fogMode;
     const sw = this._dwFog[0];   // DW-C: the sea's fog is borrowed off with the rest - the sprite fogs where it composites
+    const sh = this._haze[4];   // BANTHA1: and the jungle's haze
     const sd = lensLocal ? this._cloudShadow : null;
     if (sd) { this._cloudShadow = null; this._csStamp++; }
-    this._proj = proj; this._view = view; this._fogMode = 0; this._dwFog[0] = 0;
+    this._proj = proj; this._view = view; this._fogMode = 0; this._dwFog[0] = 0; this._haze[4] = 0;
     this._spriteDepth++;   // AUDIT-EL F2
     // LA-COST1: the character block this draw uploads is the SPRITE's - its camera, no fog, its light (MAC-P's
     // viewmodel, PX23's studio, both set before this), the contact and the grid off - so the block the world's
@@ -4051,7 +4061,7 @@ export class Renderer {
       this._restoreWorldViewport();
       const cc = this._clearColor;
       gl.clearColor(cc[0], cc[1], cc[2], cc[3]);
-      this._proj = sp; this._view = sv; this._fogMode = sf; this._dwFog[0] = sw;
+      this._proj = sp; this._view = sv; this._fogMode = sf; this._dwFog[0] = sw; this._haze[4] = sh;
       this._spriteDepth--;   // AUDIT-EL F2
       this._cFrameStamp = -1;   // LA-COST1: the sprite's block is no world rig's
       if (sd) { this._cloudShadow = sd; this._csStamp++; }
@@ -4141,8 +4151,8 @@ export class Renderer {
     gl.bindFramebuffer(gl.FRAMEBUFFER, cs.fbo);
     gl.enable(gl.SCISSOR_TEST);
     const sp = this._proj, sv = this._view, sf = this._fogMode;
-    const sw = this._dwFog[0];
-    this._fogMode = 0; this._dwFog[0] = 0;
+    const sw = this._dwFog[0], sh = this._haze[4];   // BANTHA1: the haze borrowed off with the fogs
+    this._fogMode = 0; this._dwFog[0] = 0; this._haze[4] = 0;
     this._spriteDepth++;
     try {
       for (let i = from; i < to; i++) {
@@ -4161,7 +4171,7 @@ export class Renderer {
       gl.disable(gl.SCISSOR_TEST);
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);
       this._restoreWorldViewport();
-      this._proj = sp; this._view = sv; this._fogMode = sf; this._dwFog[0] = sw;
+      this._proj = sp; this._view = sv; this._fogMode = sf; this._dwFog[0] = sw; this._haze[4] = sh;
       this._spriteDepth--;
       this._cFrameStamp = -1;
     }
@@ -4441,6 +4451,7 @@ void main() {
         camPos: gl.getUniformLocation(P, 'uCamPos'),
         focus: gl.getUniformLocation(P, 'uFocus'),   // TV1
         dwFog: gl.getUniformLocation(P, 'uDwFog'),   // DW-C
+        haze: gl.getUniformLocation(P, 'uHaze'),   // BANTHA1
         conceal: gl.getUniformLocation(P, 'uConceal'),   // INVIS-LOOK
         span: gl.getUniformLocation(P, 'uSpan'),   // INVIS-LOOK
         origin: gl.getUniformLocation(P, 'uOrigin'),   // MWNPC2: the tile
@@ -5544,6 +5555,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // VC6c: `_deckOwed` keeps it one moment longer, for an image the air pass still owes this frame (airPass.setCloudShadow); `_beginLane` drops it the instant that resolve is done.
     if (this._cloudShadow) { this._deckOwed = this._cloudShadow; this._cloudShadow = null; this._csStamp++; }
     this._dwFog[0] = 0;   // DW-C: the sea's distance fog is a frame's too - no interior, dungeon or panel inherits it
+    if (!this._hazeArmed && this._haze[4] !== 0) this._haze[4] = 0;   // BANTHA1: and the jungle's haze, unless set since the last beginFrame (setJungleHaze)
+    this._hazeArmed = false;
     this._seaHaze[0] = 0;   // FAR-SEA1: and so is the far ring's haze on the sea - set by the host on a frame it draws the ring
     this._underWater = undefined;   // WATER-NEXT 2: a new copy
     if (!this._focusArmed && this._focus[3] !== 0) this._focus.fill(0);   // AUDIT TV B1: the travel view's focus too, unless set since the last beginFrame (setFocus)
@@ -5686,6 +5699,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       fogRange: [this._fogRange[0], this._fogRange[1]],
       fogColor: this._fogColor,
       dwFog: Float32Array.from(this._dwFog),   // DW-C
+      haze: Float32Array.from(this._haze),   // BANTHA1: the jungle's haze - the panel's own beginFrame clears it
       seaHaze: Float32Array.from(this._seaHaze),   // AUDIT FAR-SEA1 H1: the panel's own beginFrame clears it, and the open sea draws after a decorator's preview
       ambient: this._ambient,
       // AUDIT-AMAP H5: setLighting's fourth argument defaults to null and
@@ -5779,6 +5793,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this.setAutomapWater(s.automapWaterLevel, s.automapWaterColor);
     this.setFog(FOG_MODE_NAMES[s.fogMode] ?? 'off', s.fogDensity, s.fogRange[0], s.fogRange[1], s.fogColor);
     this._dwFog.set(s.dwFog);   // DW-C
+    this._haze.set(s.haze);   // BANTHA1
     this._seaHaze.set(s.seaHaze);   // AUDIT FAR-SEA1 H1
     this.setLighting(s.ambient, s.sunScale, s.sunColor);
     this.setAmbientTrilight(s.ambientTri);   // AUDIT-AMAP H5
@@ -6383,6 +6398,19 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     if (loc) { this._use(this.program); this.gl.uniform4fv(loc, this._dwFog); }
   }
 
+  /** BANTHA1 (bible/03-World/Bantha-Jungle.md): THE JUNGLE'S HAZE for this frame - the eight floats of
+   *  render/hazeGlsl.js uHaze (world/jungle/jungleHaze.js hazeUniforms), or null for none (not the air pass's haze -
+   *  setHaze). Set before or after beginFrame (the exterior host sets it beside the fog, before): it arms the frame's
+   *  haze, which the next beginFrame no setJungleHaze armed clears; the mesh program takes it at once (setWaterFog's seam), the others at their
+   *  next frame block (the stamp moves). */
+  setJungleHaze(u) {
+    if (!u && this._haze[4] === 0) return;   // off and staying off: nothing moves
+    if (u) { this._haze.set(u); this._hazeArmed = true; } else this._haze[4] = 0;
+    this._frameStamp++;   // LA-COST1
+    const loc = this._solidFog?.haze;
+    if (loc) { this._use(this.program); this.gl.uniform4fv(loc, this._haze); this._solidFog._hazeSent = this._haze[4] !== 0; }
+  }
+
   /** FAR-SEA1: the far ring's haze on the sea, for this frame's water - `hold` (render/farRing.js RING_HAZE_HOLD) and
    *  the sea's height in the scene; null for none (the world's fog alone, every water). After beginFrame, which clears
    *  it: the host sets it on a frame it draws the ring. AUDIT FAR-SEA1 P3: no rim - it never reaches the streamed sea
@@ -6409,6 +6437,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.uniform3fv(prog.camPos, this._camPos);
     if (prog.focus) gl.uniform4fv(prog.focus, this._focus);   // TV1: w 0 (no travel view) reads as the camera in the shader
     if (prog.dwFog) gl.uniform4fv(prog.dwFog, this._dwFog);   // DW-C: the sea's distance fog (off is [0].x = 0)
+    if (prog.haze && (this._haze[4] !== 0 || prog._hazeSent)) { gl.uniform4fv(prog.haze, this._haze); prog._hazeSent = this._haze[4] !== 0; }   // BANTHA1: the jungle's haze while it is on, and once as it goes off (off is [1].x = 0, as a linked program's uniforms start) - no frame outside the jungle pays a call
     if (prog.clipY) gl.uniform1f(prog.clipY, this._clipY);   // A1: only the mesh shader carries the slice
     if (prog.amMode) gl.uniform1f(prog.amMode, this._automapMode);   // A2: and the automap presentation
     if (prog.amWaterLevel) gl.uniform1f(prog.amWaterLevel, this._automapWaterLevel);   // c2/S6: with its water tint
@@ -7729,7 +7758,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       swell: u('uSwell'), absorb: u('uAbsorb'), open: u('uOpen'), openColor: u('uOpenColor'),   // WATER-NEXT 2
       sceneOn: u('uSceneOn'), scene: u('uScene'), sceneDepth: u('uSceneDepth'), sceneSize: u('uSceneSize'),
       rippleOn: u('uRippleOn'), ripple: u('uRipple'), rippleRect: u('uRippleRect'),   // WATER-NEXT 4
-      fog: { fogColor: u('uFogColor'), fogMode: u('uFogMode'), fogDensity: u('uFogDensity'), fogRange: u('uFogRange'), camPos: u('uCamPos'), focus: u('uFocus'), dwFog: u('uDwFog') },   // DW-C: and the sea's; TV1: the focus
+      fog: { fogColor: u('uFogColor'), fogMode: u('uFogMode'), fogDensity: u('uFogDensity'), fogRange: u('uFogRange'), camPos: u('uCamPos'), focus: u('uFocus'), dwFog: u('uDwFog'), haze: u('uHaze') },   // DW-C: and the sea's; TV1: the focus; BANTHA1: the jungle's haze
       seaHaze: u('uSeaHaze'),   // FAR-SEA1: the far ring's haze on the sea
       // VC4 recorded that the deck's shadow reached neither the grass nor the water; WATER1 closes the water half
       cloud: [u('uCloudShadowMap'), u('uCloudShadowRect')],
@@ -7954,27 +7983,40 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    * buffers (render/lowPolyTreesRender.js); `runs` one handle's instances each - `drawStart` and `drawCount` its visible
    * ones in the instance buffer, its root `scale`, its `size` (w, h) and `sway`, and its submeshes' `subs` ({ offset in
    * bytes, count, tex, alpha - uMeshAlpha, color - uMeshColor, cull - 2 front faces alone }).
+   * BANTHA1: `slot` - whose trees they are: 0 Low Poly Trees' (systems/lowPolyTreesAssets.js), 1 the jungle's
+   * (systems/jungleTreesAssets.js). Each slot is its own door's frame - its buffers, its runs, its handover - and every
+   * slot's trees are drawn, each far picture giving way to its own slot's.
    * @param {{eye:number[], radius:number, band:number, gpu:any, runs:any[], cut:Set<any>}|null} frame
+   * @param {number} [slot]
    */
-  setLowPolyTrees(frame) { this._lpt = frame && frame.gpu ? frame : null; }
+  setLowPolyTrees(frame, slot = 0) { (this._lptSlots ??= [null, null])[slot] = frame && frame.gpu ? frame : null; }   // ??=: a test's bare prototype has no constructor run
 
-  /** LPT1: the handover's uniform - on (the eye and the radius) or off. */
-  _uploadLptCut(on) {
-    const f = this._lpt, gl = this.gl;
+  /** BANTHA1: the slot's frame that draws the 3D trees a far picture's handle stands for this frame, or null - the
+   *  picture keeps whole. */
+  _lptFrameOf(proto) {
+    const slots = this._lptSlots;
+    if (!slots || !proto) return null;
+    for (let i = 0; i < slots.length; i++) if (slots[i]?.cut.has(proto)) return slots[i];
+    return null;
+  }
+
+  /** LPT1: the handover's uniform - on (a slot's frame: its eye and its radius) or off (null). */
+  _uploadLptCut(f) {
+    const gl = this.gl;
     const L = this.bbLpt ?? NO_LPT_LOCS;   // a set bound before LPT1 (a test's stub) declares none
-    if (on && f) gl.uniform4f(L.uLptCut, f.eye[0], f.eye[1], f.eye[2], f.radius);
+    if (f) gl.uniform4f(L.uLptCut, f.eye[0], f.eye[1], f.eye[2], f.radius);
     else gl.uniform4f(L.uLptCut, 0, 0, 0, 0);
-    if (on && f) gl.uniform1f(L.uLptBand, f.band);
+    if (f) gl.uniform1f(L.uLptBand, f.band);
   }
 
   /** LPT1: the trees' instanced draws - one a prototype's submesh, its visible instances - and the program left in flat
    *  mode. A submesh brings its material: its atlas, its colour, its cut, and its faces (a front-only material culls
    *  its back faces as the world's meshes do - AUDIT LPT A6). */
-  _drawLowPolyTrees() {
+  _drawLowPolyTrees(f) {
     this._close2D();   // PERF-2D: a draw closes the 2D run first (drawBillboards has; this says so of itself)
-    const gl = this.gl, f = this._lpt, L = this.bbLpt ?? NO_LPT_LOCS;
+    const gl = this.gl, L = this.bbLpt ?? NO_LPT_LOCS;
     gl.uniform1f(L.uMesh, 1);
-    this._uploadLptCut(1);
+    this._uploadLptCut(f);   // BANTHA1: this slot's eye, radius and band
     const ld = this._lightDir;   // the sun's direction, toward it (the mesh path's uLightDir); its share by its scale (AUDIT LPT A2)
     const sun = this._clockLit ? Math.min(1, Math.max(0, (this._sunScale ?? 0) / LPT_SUN_FULL)) : 0;
     gl.uniform4f(L.uLptSun, ld?.[0] ?? 0, ld?.[1] ?? 1, ld?.[2] ?? 0, sun);
@@ -8165,7 +8207,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       // LPT1: every flat a flat, and none giving way, until a far picture's batch or the trees say otherwise
       gl.uniform1f((this.bbLpt ?? NO_LPT_LOCS).uMesh, 0);   // LPT1: flat mode, the handover off (a test's stub set declares neither)
       gl.uniform4f((this.bbLpt ?? NO_LPT_LOCS).uLptCut, 0, 0, 0, 0);
-      this._bbLptCutOn = 0;
+      this._bbLptCutOn = null;   // BANTHA1: the slot's frame whose handover is uploaded (null: none)
       if (this._dwColumn && bc.uColumnOn) {
         const dw = this._dwColumn, v = this._view;
         this._dwCamFwd[0] = -v[2]; this._dwCamFwd[1] = -v[6]; this._dwCamFwd[2] = -v[10];   // the camera's forward: minus the view's third row
@@ -8263,7 +8305,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       if (ck || this._bbCrackOn) { gl.uniform2f(this.bbUCrack, ck ? ck[0] : 0, ck ? ck[1] : 0); this._bbCrackOn = !!ck; }
       const tn = b.tint;   // ARENA5: a batch's wash ([r, g, b]); every other batch white - sent when a washed batch comes or goes
       if (tn || this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, tn ? tn[0] : 1, tn ? tn[1] : 1, tn ? tn[2] : 1); gl.uniform1f(this.bbUBatchDye, tn ? b.dye ?? 0 : 0); this._bbTintOn = !!tn; }   // VEIN-HUE: its dye with it
-      const lc = b.lptProto && this._lpt?.cut.has(b.lptProto) ? 1 : 0;   // LPT1: a far picture gives way to its 3D tree near the eye - sent when that changes between batches
+      const lc = b.lptProto ? this._lptFrameOf(b.lptProto) : null;   // LPT1: a far picture gives way to its 3D tree near the eye - sent when that changes between batches; BANTHA1: its own slot's
       if (lc !== this._bbLptCutOn) { this._uploadLptCut(lc); this._bbLptCutOn = lc; }
       this._bindVao(b.vao);
       gl.drawElements(gl.TRIANGLES, b.indexCount, gl.UNSIGNED_INT, b._ibOff | 0);   // PERF-ARENA: a still batch's range of its arena's indices
@@ -8293,7 +8335,10 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // LPT1: THE LOW-POLY TREES, on this program with this frame's light - and the lasts forgotten, since they bind their
     // own atlases and send their own size and origin. Drawn ONCE: the frame's set is spent here, so a later call this
     // frame (a spell, the gibs) or a scene the host leaves for (an interior) draws none and gives no picture way
-    if (this._lpt?.runs.length) {
+    const slots = this._lptSlots;
+    let treesNow = false;
+    if (slots) for (let i = 0; i < slots.length; i++) if (slots[i]?.runs.length) treesNow = true;
+    if (treesNow) {
       // AUDIT LPT A1: the trees take none of the last flat's own state - a struck peer sorted last flashed every tree
       if (lastFlash !== 0) { gl.uniform1f(this.bbUHitFlash, 0); lastFlash = 0; }
       if (lastGlow !== 0) { gl.uniform1f(this.bbUEliteGlow, 0); lastGlow = 0; }
@@ -8302,11 +8347,11 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       if (this._bbCrackOn) { gl.uniform2f(this.bbUCrack, 0, 0); this._bbCrackOn = false; }   // VEIN-CRACKS: the trees take no vein's seams
       if (this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, 1, 1, 1); gl.uniform1f(this.bbUBatchDye, 0); this._bbTintOn = false; }
       if (this._bbColumnOn) { gl.uniform1f(bc.uColumnOn, 0); this._bbColumnOn = 0; }
-      this._drawLowPolyTrees();
+      for (let i = 0; i < slots.length; i++) if (slots[i]?.runs.length) this._drawLowPolyTrees(slots[i]);   // BANTHA1: every slot's trees
       lastKey = null; lastW = NaN; lastH = NaN; lastOx = NaN; lastOy = NaN; lastOz = NaN; lastSway = null;
-      this._bbLptCutOn = -1;
+      this._bbLptCutOn = undefined;   // whatever the next batch's slot, it is sent
     }
-    this._lpt = null;
+    if (slots) slots.fill(null);
     // The BLENDED phase: the spectral batches and (ECV1) the concealed
     // ones together, depth-writes off, drawn BACK TO FRONT by their
     // origin's distance from the camera so a translucent foe behind

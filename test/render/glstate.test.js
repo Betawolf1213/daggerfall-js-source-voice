@@ -324,7 +324,14 @@ test('AUDIT 47: no shader in the tree uses a uniform it did not declare in its o
   const cloudShadowGlsl = (readFileSync('src/render/cloudShadow.js', 'utf8').match(/export const CLOUD_SHADOW_GLSL = `([\s\S]*?)`;/) || [, ''])[1];   // VC6c: and the cloud shadow's, once TWO passes needed it
   const aoGlsl = (readFileSync('src/render/airPass.js', 'utf8').match(/export const AIR_AO_GLSL = `([\s\S]*?)`;/) || [, ''])[1];   // EL3: and the AO's
   const adaptGlsl = (readFileSync('src/render/airPass.js', 'utf8').match(/export const AIR_ADAPT_GLSL = `([\s\S]*?)`;/) || [, ''])[1];   // EL4: and the eye's
-  const fogGlsl = (readFileSync('src/render/fogGlsl.js', 'utf8').match(/export const FOG_GLSL = `([\s\S]*?)`;/) || [, ''])[1];   // AUDIT 68 S17-fog-glsl-dup: and the fog's, which nine programs share
+  // BANTHA1: and the jungle's haze - its law (inside the fog block and the far ring's), the ring's and the skies' halves
+  const hazeGlslSrc = readFileSync('src/render/hazeGlsl.js', 'utf8');
+  const hazeLawGlsl = (hazeGlslSrc.match(/export const HAZE_LAW_GLSL = `([\s\S]*?)`;/) || [, ''])[1];
+  const hazeSkyGlsl = (hazeGlslSrc.match(/export const HAZE_SKY_GLSL = `([\s\S]*?)`;/) || [, ''])[1];
+  const ringHazeGlsl = (hazeGlslSrc.match(/export const RING_HAZE_GLSL = `([\s\S]*?)`;/) || [, ''])[1].replace(/\$\{HAZE_LAW_GLSL\}/g, hazeLawGlsl);
+  assert.match(hazeLawGlsl, /uniform vec4 uHaze\[2\];/, 'the haze law is where the sweep reads it');
+  assert.match(hazeSkyGlsl, /uniform vec4 uHazeSky;/, 'and the skies\' half');
+  const fogGlsl = (readFileSync('src/render/fogGlsl.js', 'utf8').match(/export const FOG_GLSL = `([\s\S]*?)`;/) || [, ''])[1].replace(/\$\{HAZE_LAW_GLSL\}/g, hazeLawGlsl);   // AUDIT 68 S17-fog-glsl-dup: and the fog's, which nine programs share
   // FAR-SEA1: and the horizon's haze and the ring's sea, a leaf the far ring (both lanes) and the water interpolate
   const hazeSrc = readFileSync('src/render/horizonHaze.js', 'utf8');
   const horizonHazeGlsl = (hazeSrc.match(/export const HORIZON_HAZE_GLSL = `([\s\S]*?)`;/) || [, ''])[1];
@@ -371,6 +378,7 @@ test('AUDIT 47: no shader in the tree uses a uniform it did not declare in its o
       // lighting lane composes EL_GLSL + EL_FOG_GLSL + EL_POINT_LIT_GLSL into each of its shaders
       const body = m[2].replace(/\$\{CLOUD_SHADOW_GLSL\}/g, shared).replace(/\$\{CLOUD_FIELD_GLSL\}/g, field).replace(/\$\{SHADOW_GLSL\}/g, shadowGlsl).replace(/\$\{AIR_AO_GLSL\}/g, aoGlsl).replace(/\$\{AIR_ADAPT_GLSL\}/g, adaptGlsl).replace(/\$\{(?:EL_)?FOG_GLSL\}/g, fogGlsl)
         .replace(/\$\{RING_SEA_GLSL\}/g, ringSeaGlsl).replace(/\$\{HORIZON_HAZE_GLSL\}/g, horizonHazeGlsl)   // FAR-SEA1
+        .replace(/\$\{RING_HAZE_GLSL\}/g, ringHazeGlsl).replace(/\$\{HAZE_SKY_GLSL\}/g, hazeSkyGlsl).replace(/\$\{HAZE_LAW_GLSL\}/g, hazeLawGlsl)   // BANTHA1
         .replace(/\$\{([A-Z_]+)\}/g, (all, name) => { const b = s.match(new RegExp(`const ${name} = \`([^\`]*)\``)); return b ? b[1] : all; });
       const declared = new Set([...body.matchAll(/uniform\s+(?:(?:lowp|mediump|highp)\s+)?\w+\s+([^;]+);/g)]
         .flatMap((x) => x[1].split(',').map((v) => v.trim().replace(/\[.*?\]/, '').split('//')[0].trim())));

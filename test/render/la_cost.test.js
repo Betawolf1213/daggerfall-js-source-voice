@@ -238,7 +238,7 @@ test('LA-COST1: THE SECOND CALL IN A FRAME SENDS ONLY ITS OWN - a billboard call
   // must not ride onto the next frame's flats)
   // LPT1 (bible/07-Rendering/Low-Poly-Trees.md): and the low-poly trees' mesh mode and handover, set off (two more - a
   // call the trees drew in leaves the handover on for the flats after it)
-  assert.deepEqual(counts, ['billboards 109 -> 30', 'decals 85 -> 12', 'a character 86 -> 13']);   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): +1 a billboard call's first - the frame block's uCrack, every flat whole until a worked vein's batch says otherwise   // PIN MOVED (VEIN-HUE, FIELD BUGS 2026-10-12b): +1 a billboard call's first - the frame block's uBatchDye, reset with the wash   // PIN MOVED (PERF-ARENA, 2026-10-10): -1 a billboard call - its two still flats share their arena's VAO, one bind where there were two   // PIN MOVED (WINDFALL1, 2026-10-08): +2 a billboard call - Windfall's two vec4s, the call's own as the wind is
+  assert.deepEqual(counts, ['billboards 109 -> 30', 'decals 85 -> 12', 'a character 86 -> 13']);   // BANTHA1 (2026-10-18): the jungle's haze (uHaze) rides the fog's upload only while it is on, or once as it goes off - a frame outside the jungle pays no call   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): +1 a billboard call's first - the frame block's uCrack, every flat whole until a worked vein's batch says otherwise   // PIN MOVED (VEIN-HUE, FIELD BUGS 2026-10-12b): +1 a billboard call's first - the frame block's uBatchDye, reset with the wash   // PIN MOVED (PERF-ARENA, 2026-10-10): -1 a billboard call - its two still flats share their arena's VAO, one bind where there were two   // PIN MOVED (WINDFALL1, 2026-10-08): +2 a billboard call - Windfall's two vec4s, the call's own as the wind is
   // ...and the next frame sends them all again
   r.beginFrame(PROJ, VIEW, new Float32Array([0.3, 0.8, 0.2]), WORLD_FRAME);
   calls.length = 0; r.drawBillboards(bbs, R, UP);
@@ -364,6 +364,7 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
     '_lane', '_exposure', '_air', '_shadows', '_contactWanted', '_volumetricsWanted', '_spriteDepth', '_studioDepth', '_panelSaved',
     '_clustersLive', '_clusterRect', '_clusterZ', '_camFwd', '_clusterTex', '_decalLights',
     '_focus',   // TV1: the point the fog measures from (setFocus stamps)
+    '_haze',   // BANTHA1: the jungle's haze (setJungleHaze stamps; beginFrame clears it unarmed)
     '_dwColumn'];   // merged beside DW-F: the water column's frame (setWaterColumn stamps; beginFrame clears it)
   // NOT INPUTS: the programs' location tables (re-looked-up by _installWorldSet, which forgets the blocks), scratch the
   // block writes before it reads, the memo's own keys (the first test), the gates' stamps, the GL-state shadows - and

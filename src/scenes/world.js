@@ -266,10 +266,10 @@ import { createProfHud } from '../ui/professions/profHud.js';   // PROF1: the pr
 import { createGatherHost } from './gatherHost.js'; // PROF1/PROF2: the gathering professions in the streaming world - the nodes, the target, the act
 import { herbKind } from './herbHost.js';   // PROF1: Herbalism's patches, a kind in it
 import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../ui/nodeMarks.js'; import { createNodeGlowPass } from '../render/nodeGlow.js';   // PROF2: Mining's veins and Quarrying's boulders, a kind in it; NODE-MARKS: every profession's nodes on the compass in its colour, and lit where they stand
-import { treeKind, FOREST_STAMP } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it; LPT1: the felled trees' count, the near 3D trees' regather
-import { createLowPolyTrees } from '../systems/lowPolyTreesAssets.js';   // LPT1: Low Poly Trees - the host's one door
-import { buildTreeSet } from '../world/lowPolyTrees.js'; // LPT1: each tree's own draw, and a near pixel's set; AUDIT 05b A12: which picture a nature flat stands as, every host's one choice
-import { realForestsOn, roadVergesOn, climateBlendOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
+import { treeKind } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it
+import { createTreesHost } from './treesHost.js';   // LPT1 / BANTHA1 (HOST-SPLIT): the near 3D trees - Low Poly Trees' door and the jungle's, and their frame
+import { createJungleHost } from './jungleHost.js';   // BANTHA1: Bantha's jungle - its field, its trees' door, its haze
+import { realForestsOn, roadVergesOn, climateBlendOn, jungleOn, jungleHazeOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
 import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Eltheric Ocean's
 import { preloadTamrielTrace } from '../ui/tamrielTrace.js';   // TAMRIEL3: Daggerfall's own map of Tamriel, off the player's two files
 import { fitBayToPicture } from '../world/tamriel/tamrielLand.js';   // TAMRIEL3: where the Bay stands on it
@@ -724,7 +724,7 @@ import { locationArrivalLanding, locationStartMarkers } from '../world/locationE
 import { preloadPrisonScreenArt, preloadCourtScreenArt } from '../ui/prisonScreen.js';   // PRIS00I0 - the serving-time screen   // ROAD-B B5: CORT01I0 - the courtroom the trial is pushed over
 import { TerrainGenClient } from '../world/terrain/terrainGenClient.js';   // EV7: the pixel kernel, off the main thread (samples/blend/tiles/grid/nature moved whole to terrainGen.js)
 import { getPref, setPref } from '../systems/uiPrefs.js';
-import { createCoverIndex, FELLED } from '../ai/cover.js';   // TACT1: billboards are cover; LPT1: a felled tree stands no 3D tree
+import { createCoverIndex } from '../ai/cover.js';   // TACT1: billboards are cover
 import { techniqueMarksNow, techniqueHudChips, offsetTechniques, TECHNIQUE_ACTION } from '../combat/techniques.js';   // TECH1 (bible/05-Combat/Weapon-Techniques.md): the player's marks on the ground, the HUD's chip, the recentre's shift
 import { setHudTechniqueChips } from '../ui/enhanced/enhancedHud.js';   // TECH1: the technique's chip, beside the set powers'
 import { noteLocalPlayer, tacticsNow, tickTactics, offsetTactics } from '../ai/tactics.js';   // TACT2; TACT4: the brain's clock; AUDIT TACT: its tick, the recentre's shift
@@ -3003,26 +3003,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
 
   const { getTexture, uploadRecord, uploadRecordFrame, getGpuMesh, getWindmillMeshes, cpuModels } = pipeline;
   // LPT1 (bible/07-Rendering/Low-Poly-Trees.md): LOW POLY TREES - the nature flats it has a tree for stand as their 3D
-  // trees within LPT_NEAR_M of the eye and as the same tree's far picture beyond it, out to the land view's whole reach
-  // at a flat's own cost. Seasons of the Iliac Bay's seasonal pictures, while the mod stands a season, paint the trees'
-  // atlases, so they take the season the flats take. The door is the host's for the session (its buffers, as the mills'
-  // parts are); a pixel HOLDS the handles its far pictures stand on and lets them go with it (AUDIT LPT B5).
-  // `?trees=off` the kill door.
-  const lowPolyTrees = modSetting('low-poly-trees', 'Enabled') && params.get('trees') !== 'off' ? createLowPolyTrees({
-    renderer, getTexture,
-    // AUDIT LPT C2/B3: a prototype is painted under the season only when the mod re-skins ITS OWN archive now (its flats
-    // turn, so must it), keyed by the install - and under the classic records while an install is refilling the cache
-    seasonal: seasons ? {
-      key: (a) => (seasonsActive && !seasons.installing && seasons.lookup(a, 1) ? `s${seasons.installedSeason}.${seasons.generation}` : ''),
-      picture: (a, r) => (seasonsActive ? seasons.lookup(a, r)?.texture ?? null : null),
-      generation: () => seasons.generation,
-    } : null,
-    breathe: () => breather.breathe(),   // the stream's own slice clock (PERF7) - a tree's atlases are painted inside the build that first stands it
-  }) : null;
-  const _lptSets = [];   // LPT1: the frame's near pixels' tree sets (a scratch)
-  const _lptSway = new Map();   // LPT1: a prototype's share of the wind's lean, as its far pictures' batch takes it
-  const _lptWindfall = new Map();   // WINDFALL1: ...and its share under Windfall's law
-  const _lptOpts = { skip: (set, i) => FELLED.has(set.centers[i]), swayOf: (proto) => _lptSway.get(proto) ?? 0, windfallOf: (proto) => _lptWindfall.get(proto) ?? 0, stamp: 0, planes: null };   // LPT1: the frame's, made once (a wind that is off is the flats' call's, uFlatWind zero)
+  // trees near the eye and as the same tree's far picture beyond it (`?trees=off` the kill door); BANTHA1
+  // (bible/03-World/Bantha-Jungle.md): and Bantha's jungle - the owner's trees in storeys, under its own haze (`?jungle=off`,
+  // `?junglehaze=off`). Both doors and their frame are the trees' host's (scenes/treesHost.js - HOST-SPLIT), the jungle's
+  // field and air its own host's (scenes/jungleHost.js); a pixel HOLDS the handles its far pictures stand on and lets them go
+  // with it (AUDIT LPT B5). The stream's state, its pixels and its ground are asked of the world, never held
+  const jungle = jungleOn() ? createJungleHost({ renderer, maps, mapWidth: MAP_W, mapHeight: MAP_H, stateOf: () => state, builtOf: () => built, heightAt: (x, z) => heightAt(x, z), breathe: () => breather.breathe(), haze: jungleHazeOn() }) : null;
+  const trees = createTreesHost({ renderer, getTexture, seasons, seasonsActive: () => seasonsActive, lowPolyTreesOn: modSetting('low-poly-trees', 'Enabled') && params.get('trees') !== 'off', jungle, breathe: () => breather.breathe(), yards: () => yards });
+  const { lowPolyTrees, lptSway: _lptSway, lptWindfall: _lptWindfall } = trees;   // LPT1: the door, and the flats' shares of the wind by prototype (the build writes them)
   mwViewAttachHorse(renderer);   // COATS3D: the 3D horse under the Morrowind body
   mwViewAttachWagon({ getGpuMesh, cpuModels }); const EOTB_WAGON_PACK = Object.freeze({ dungeon: Object.freeze({ wagonPrompt: true }) });   // EOTB-IL: SpawnWagon's CreateDaggerfallMeshGameObject(41239) through this host's pipeline; CheckWagon's AllowDungeonWagonAccess() + dfuiOpenInventoryWindow (IL_228b-IL_229f). One line, so the cites below it hold
   let _surfPath = false;   // EOTB-IL: PlayerMotor.OnExteriorPath, as the frame's surface model last answered it (UpdateWagon's wobble reads it)
@@ -5782,7 +5770,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (m.staticBatch) renderer.destroyMesh(m.staticBatch);
       if (m.tilemapTex) renderer.gl.deleteTexture(m.tilemapTex);
       for (const b of m.batches ?? []) renderer.destroyBatch(b);
-      for (const h of m.lptHandles ?? []) lowPolyTrees?.release(h);   // LPT1 (AUDIT LPT B5): the far pictures' handles it held
+      trees.releasedBuild(m);   // LPT1 (AUDIT LPT B5): the far pictures' handles it held; BANTHA1: the jungle's too
       for (const w of m.windmills ?? []) { w.hum?.stop(); w.hum = null; }
       if (m.personBatches) for (const b of m.personBatches.values()) renderer.destroyBatch(b);
       // a gate's bucket goes in a step before its record does, so the one past the last record goes too
@@ -5818,7 +5806,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     halfWidthsOf, heightAt, heightCell, holdPixel, hostBed, labGrass, landform, livingArmOf, livingAshore,
     livingBaseRate, livingCarriedOf, livingChapterOf, livingCrews, livingCycleOf, livingDeadAt, livingFlatOf,
     livingKilled, livingPlaceOf, livingRate, livingSlay, livingTownsIndex, livingTripsOf, loadGroundSet, lookOfHome,
-    lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer, restrideTerrain,
+    jungle, lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer, restrideTerrain,
     seasons, siegeFieldsByTown, snowfall, standPixelNpcs, standWodPile, strideFor, terrainGen, tileSide,
     townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened, wodPathsPoint,
     worldHeight,
@@ -6018,26 +6006,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     }
   }
 
-  /** LPT1: the frame's near 3D trees - the eye's pixel's and its neighbours' sets, each at its translation this frame,
-   *  gathered (when the eye or they moved, or a tree was felled), culled to the view (`planes`, the frame's normalised
-   *  ones - null when culling is off) and handed to the renderer for the flats' call. A set is made as its pixel comes
-   *  into the eye's 3x3 and let go once it is past the 5x5 (AUDIT LPT B10). DECOR-LPT: and the yards' placed trees. */
-  function lowPolyTreesFrame(planes) {
-    _lptSets.length = 0;
-    for (let i = 0; i < _pixelOrder.length; i++) {
-      const p = _pixelOrder[i], set = p.lowPolyTrees;
-      if (!set) continue;
-      if (p._dist2 > 2) { if (p._dist2 > 8 && set.trees) { set.trees = null; set.centers = null; } continue; }   // past the eye's eight neighbours no tree is in reach
-      if (!p._t) continue;
-      if (!set.trees) { const made = buildTreeSet(set.px, set.py, set.groups); set.trees = made.trees; set.centers = made.centers; }
-      set.ox = p._t[0]; set.oy = p._t[1]; set.oz = p._t[2];
-      _lptSets.push(set);
-    }
-    for (const set of yards?.treeSets() ?? []) _lptSets.push(set);   // DECOR-LPT: the yards' placed trees, where their yards stand now
-    _lptOpts.stamp = FOREST_STAMP.n;
-    _lptOpts.planes = planes;
-    lowPolyTrees.frame(_lptSets, cam.pos[0], cam.pos[1], cam.pos[2], _lptOpts);
-  }
 
   /** @param {{collectLoose?:boolean}} [opts] - A1: a season re-skin
    *  tears the pixel down and builds it again, but the reference never
@@ -6055,7 +6023,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     gatherHost?.onDestroyed(p);   // PROF1/PROF2: its nodes' batches are in its list, freed on the next line
     for (const b of p.batches) renderer.destroyBatch(b);
     for (const w of p.windmills ?? []) { w.hum?.stop(); w.hum = null; }   // WM4c: the mill's hum leaves with its pixel
-    if (p.lowPolyTrees) for (const h of p.lowPolyTrees.handles) lowPolyTrees?.release(h);   // LPT1 (AUDIT LPT B5): the far pictures' handles it held
+    trees.released(p);   // LPT1 (AUDIT LPT B5): the far pictures' handles it held; BANTHA1: the jungle's too
     if (deepWaters) deepWaters.destroyed(p);   // DW-B: the seafloor, its walls and the surface leave with the pixel
     if (dwDecor) dwDecor.destroyed(p);   // DW-E2: and its decorations (the terrain's DeepWaters_DecorationBatch child)
     if (oceanHoles) oceanHoles.destroyed(p);   // OH-B: and its pit (the terrain's OceanHole_Pit child)
@@ -12538,7 +12506,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     iconUrl: (a, r) => loadIcon(a, r, { scale: 1 }),
     scanDeps: () => decorScanDeps({ blocks, arch, getTexture }),   // DECOR-DUNGEON: the interior host's own constructor
     seasonal: () => (seasonsActive ? seasons : null),   // DECOR-OUTDOOR: a yard's trees in Seasons of the Iliac Bay's season, as the town's
-    trees: lowPolyTrees ? { door: lowPolyTrees, sway: (proto, share) => _lptSway.set(proto, Math.max(_lptSway.get(proto) ?? 0, share)), windfall: (proto, share) => _lptWindfall.set(proto, Math.max(_lptWindfall.get(proto) ?? 0, share)) } : null,   // DECOR-LPT: a yard's tree as Low Poly Trees' own - its 3D tree in the near set (lowPolyTreesFrame)
+    trees: lowPolyTrees ? { door: lowPolyTrees, sway: (proto, share) => _lptSway.set(proto, Math.max(_lptSway.get(proto) ?? 0, share)), windfall: (proto, share) => _lptWindfall.set(proto, Math.max(_lptWindfall.get(proto) ?? 0, share)) } : null,   // DECOR-LPT: a yard's tree as Low Poly Trees' own - its 3D tree in the near set (scenes/treesHost.js frame)
     character: () => characterIdOf(playerEntity),
     realm: () => (realmSession ? (o) => realmGoldAct({ session: realmSession, checkpoint: () => onlineCheckpoint(), ...o }) : null),
     wallet: (region) => homeYardWallet(playerEntity, region), regionOf: (y) => built.get(`${y.px},${y.py}`)?.homeRegion ?? 0,   // INSTANCES' HOST-SPLIT: the wallet's body in scenes/homeYards.js
@@ -29600,7 +29568,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (banners?.length && bannerPass?.draw(banners, proj, view, new Float32Array(eye), performance.now() / 1000, {
         light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },
         wind: 0,
-        fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
+        fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, haze: renderer._haze, focus: renderer._focus },
       })) renderer.markForeignPass();
     },
     drawVeiledPeerBodies: () => drawVeiledPeerBodies(),   // INVIS-LOOK: and the concealed ones, after the opaque world
@@ -34217,7 +34185,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // DaggerfallSky.SetSkyFogColor (:318-325): anything denser than
     // heavy rain fogs to Color.gray, not to the sky tint.
     const fogNow = wxNow.fog;   // WX2: the row on the front (the table's own row, classic and settled)
-    const fogColor = sky.fogColorFor(fogNow);   // DS1: the mod's own RenderSettings.fogColor while it is the sky; SetSkyFogColor over the horizon otherwise, as before
+    const fogColor = jungle ? jungle.haze({ fogColor: sky.fogColorFor(fogNow), fogRow: fogNow, eye: cam.pos, dt, minute, weather, wind: wd.on ? wd.windV : null, sky }) : sky.fogColorFor(fogNow);   // DS1: the mod's own RenderSettings.fogColor while it is the sky; SetSkyFogColor over the horizon otherwise, as before; BANTHA1: and the jungle's haze over it - its uniforms, the sky's, the colour weighed with it
     renderer.setFog(fogNow.mode,
       fogNow.density, fogNow.start, fogNow.end, fogColor);
     if (dwPlayer) {   // DW-D: ApplyUnderwaterPresentation - DFU's own UnderwaterFog, the mod's range and colour, over the sky's
@@ -34455,7 +34423,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // model and batch against its own build-time box. SIMULATION never
       // gates: the rotor's angle, the mill's hum and the flats' clocks
       // all run for a pixel behind the camera.
-      const pixelVisible = !cullOn || !aabbOutside(_planes, p._box, t[0], t[1], t[2]);
+      const pixelVisible = !cullOn || !(aabbOutside(_planes, p._box, t[0], t[1], t[2]) || jungle?.hides(p._box, t));   // BANTHA1: and a pixel the jungle's haze hides whole
       p._visible = pixelVisible;   // WATER1: the water pass below walks the same verdict
       const pixelCasts = !pixelVisible && renderer.shadowReach(p._box, t[0], t[1], t[2]);   // SHADOW-REACH: off screen, but in a shadow's reach
       if (pixelVisible) {
@@ -34671,7 +34639,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // without it a full-Masser night stepped in brightness at the
         // exact boundary the hole machinery works to hide
         moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonColor: renderer._moonColor,
-        fogColor, fogStart: fogNow.start ?? 0, fogEnd: fogNow.end, exposure: renderer.exposure, adaptTex: renderer.adaptTexture,   // EL1; EL4: the eye
+        fogColor, fogStart: fogNow.start ?? 0, fogEnd: fogNow.end, exposure: renderer.exposure, adaptTex: renderer.adaptTexture, haze: renderer._haze, hazeEye: jungle?.eye,   // EL1; EL4: the eye; BANTHA1: the jungle's haze over the ring
         // E5: the ring draws INTO the world pass's rect, so it takes
         // that pass's aspect - a horizon built on the full-canvas ratio
         // would step against the terrain in front of it under a docked bar.
@@ -34716,7 +34684,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), walkMode && playerSpawned ? player.pos : cam.pos));   // TACT4: a foe's wind-up on the ground, under the bodies
     renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)
     bloodMarks.draw(camRight, UP_Y);   // BLOOD1a: the marks go down BEFORE the billboards, so a body standing in its own blood is over it and not under it. ABOVE setFlatWind for the reason its own neighbour gives: WIND3 pins the wind and the draw as ADJACENT.
-    if (lowPolyTrees) lowPolyTreesFrame(cullOn ? _planes : null);   // LPT1: the near 3D trees, for the flats' call below (AFTER the gibs' call above, which would spend them)
+    trees.frame(_pixelOrder, cam.pos, cullOn ? _planes : null);   // LPT1 / BANTHA1: the near 3D trees, both doors', for the flats' call below (AFTER the gibs' call above, which would spend them)
     renderer.setFlatWind(floraSwayOn() && wd.on ? [wd.windV[0], wd.windV[1], windClock, wd.gust] : null, floraSwayOn() && wd.on ? windfallLaw : null);   // WIND3: the flats lean with the one wind; the flora batches carry their share (sway); WINDFALL1: by the mod's law while it is on
     renderer.drawBillboards(allBatches, camRight, bbUp);
     if (magic.batches().length) renderer.drawBillboards(magic.batches(), camRight, bbUp);   // M2: spell missiles
@@ -35198,7 +35166,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // SCALE is what sets with the sun, and the moon is what is left
         // when it has. The same fields render/renderer.js hands its own
         // programs.
-        { fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog },   // DISC20-A: the fog the ground took this frame, from the view's own eye; DW-C: and the sea's
+        { fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, haze: renderer._haze },   // DISC20-A: the fog the ground took this frame, from the view's own eye; DW-C: and the sea's
           sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor,
           // GRASS-LIT (render/labGrass.js): no weather dim - the ambient and the sun above are weathered already
           // (exteriorAmbient, the sun's scale x wxNow.sun), and the lab's LAB_DIM on top darkened a rainy field a
@@ -35230,7 +35198,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       if (hung.length && bannerPass.draw(hung, proj, view, new Float32Array(mwv.eye), now / 1000, {
         light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },   // AUDIT GUILD1d R9: and the moon, as the grass takes it
         wind: Math.min(1, wd.strength01 * wd.gust),
-        fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
+        fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, haze: renderer._haze, focus: renderer._focus },
       })) renderer.markForeignPass();
     }
     };
@@ -35241,7 +35209,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (shipFlagPass && shipFlagPass.draw(shipFlags.draws(), proj, view, new Float32Array(mwv.eye), now / 1000, {   // none to draw: its idle textures pruned, no pass
       light: { sunDir: renderer._lightDir, amb: renderer._ambient, sunCol: renderer._sunColor, sunScale: renderer._sunScale, moonDir: renderer._moonDir, moonScale: renderer._moonScale, moonCol: renderer._moonColor },
       wind: Math.min(1, wd.strength01 * wd.gust),
-      fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus },
+      fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, haze: renderer._haze, focus: renderer._focus },
     })) renderer.markForeignPass();
     };
     frameShipFlags();
@@ -35279,7 +35247,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       const rings = duelRingsNow(dt);
       if (rings.length) {
         duelWall.draw(rings, proj, view, new Float32Array(mwv.eye), now / 1000,
-          { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, focus: renderer._focus });   // DW-C: the sea's fog with the frame's; AUDIT DEEP R-1: and the travel view's focus
+          { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, dw: renderer._dwFog, haze: renderer._haze, focus: renderer._focus });   // DW-C: the sea's fog with the frame's; AUDIT DEEP R-1: and the travel view's focus
         renderer.markForeignPass();
       }
     }
@@ -35308,7 +35276,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
          focus: cam.pos, eye: mwv.eye, ground: player.feetAt()[1], groundAt: tvGroundAt, reach: renderer._fogMode === 1 ? renderer._fogRange[1] : undefined, memo: _tvFootMemo.map });   // AUDIT TV D3: the foot under the lowest land about the veil
       const lit = (renderer._ambient[0] + renderer._ambient[1] + renderer._ambient[2]) / 3 + 0.6 * renderer._sunScale;
       if (curtains.length && rainCurtains.draw(curtains, proj, view, mwv.eye, now / 1000,
-        { light: lit, fade: Math.min(1, tvf.blend * 1.5), fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, camPos: renderer._camPos, focus: renderer._focus, dw: renderer._dwFog } })) renderer.markForeignPass();
+        { light: lit, fade: Math.min(1, tvf.blend * 1.5), fog: { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, camPos: renderer._camPos, focus: renderer._focus, dw: renderer._dwFog, haze: renderer._haze } })) renderer.markForeignPass();
     }
     };
     frameCurtains();

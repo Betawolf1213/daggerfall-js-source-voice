@@ -64,13 +64,15 @@ import { LivingTown } from '../systems/livingWorld/livingTown.js';
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { LPT_CROWNS } from '../world/lptCrowns.js';
 import { LPT_SCALE_MAX, lptVariety } from '../world/lowPolyTrees.js';
+import { JUNGLE_ARCHIVE, JUNGLE_MEASURES, JUNGLE_SPECIES, jungleCover } from '../world/jungle/jungleModels.js';   // BANTHA1: the jungle's trees, their measures and their cover
+import { JUNGLE_SCALE_MAX } from '../systems/jungleTreesAssets.js';
 import { lptFitCap, natureReach, pathTileMask, vergeClear } from '../world/road/roadVerge.js';
 import { makeBuildingKey } from '../systems/talk/talkTopics.js';
 import { makeCityGate } from '../world/city/cityGate.js';
 import { markRemapLaw, remapSubMeshes } from '../world/texRemap.js';
 import { MobilePerson, PERSON_MOVE_SPEED, walkerRace } from '../characters/mobile/mobilePerson.js';
 import { multiply, trs } from '../world/mat4.js';
-import { naturePicture } from '../world/naturePicture.js';
+import { naturePicture, junglePicture } from '../world/naturePicture.js';
 import { onFloatingFrame } from '../player/collider.js';
 import { inBay as onTheBay } from '../world/tamriel/tamrielFrame.js';
 import { ownMinutes, skyMinutes, trustedWorldMinutes } from '../systems/worldTick.js';
@@ -96,7 +98,7 @@ export function createPixelBuild(host) {
     _livingPatrons, _locationToBuild, _lptSway, _lptWindfall, _reskin, adoptWodCarry, archAabb, blocks, boardSplitOf,
     breather, buildingDoors, built, chapterSheet, climates3x3, collider, cpuModels, deepWaters, destroyPixel,
     dfMeshSize, dwDecor, ecotones, ensurePersonTex, forests, gateClearSweep, getTexture, getWindmillMeshes,
-    halfWidthsOf, heightAt, heightCell, holdPixel, hostBed, labGrass, landform, livingArmOf, livingAshore,
+    halfWidthsOf, heightAt, heightCell, holdPixel, hostBed, jungle, labGrass, landform, livingArmOf, livingAshore,
     livingBaseRate, livingCarriedOf, livingChapterOf, livingCrews, livingCycleOf, livingDeadAt, livingFlatOf,
     livingKilled, livingPlaceOf, livingRate, livingSlay, livingTownsIndex, livingTripsOf, loadGroundSet, lookOfHome,
     lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer, restrideTerrain,
@@ -173,6 +175,9 @@ export function createPixelBuild(host) {
       // FOREST1: the woods' archive (the climate's summer one, which names its Trees) and whether this pixel's place is one they hide
       forests: forests ? { archive: climate.natureArchive, hidden: FOREST_HIDDEN_LOCATION_TYPES.has(dfLocation?.mapTableData?.locationType) } : null,
       ecotone: natureBorder,   // ECOTONE1: null unless a neighbour's nature differs
+      // BANTHA1: the jungle's field about this pixel (scenes/jungleHost.js job - null where it cannot reach), and whether
+      // its location is a place the woods close round
+      jungle: jungle ? jungle.job(px, py, FOREST_HIDDEN_LOCATION_TYPES.has(dfLocation?.mapTableData?.locationType)) : null,
       landform,   // LANDFORM1-3: the shaped ground, cut along the kernel's own network
     });
     // DW-B: HandlePromote's synchronous arm - a pixel beside the player's is
@@ -871,6 +876,10 @@ export function createPixelBuild(host) {
     // PROF4 (bible/06-Systems/Professions-Arc.md 25): THE FOREST'S TREES KEPT - the flats World of Daggerfall's table names
     // a Tree by the climate's summer archive, each its group and its place in it: Logging's trees stand at them
     const pixelTrees = [];
+    // BANTHA1: THE JUNGLE'S TREES - the flats its layout stood as the owner's trees (world/terrain/jungleNature.js: a
+    // species and a scale each), by species: the owner's tree where its door has loaded, else the Tree record it carries
+    const jungleGroups = new Map();
+    const jungleOk = !!jungle && nature.some((f) => f.jungle != null) && !!(await jungle.door.load());
     const wildFlats = new Set();   // LPT1: the terrain's own nature flats (`${group}#${i}`) - DFU's terrain variety is theirs, a location's flat takes none
     const borderNature = new Map();   // ECOTONE1: a neighbour climate's nature archive the border stood here -> its summer archive
     for (const f of nature) {
@@ -882,9 +891,19 @@ export function createPixelBuild(host) {
       if (forests && insideRocks(pixelRocks, f.x, f.z)) continue;
       // ECOTONE1: a border's flat is its own climate's - the summer archive the kernel names, worn in the season's set
       const base = f.archive ?? climate.natureArchive, archive = f.archive == null ? natureArchive : getNatureArchive(f.archive, host.season);
-      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js)
-      if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
+      // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js);
+      // BANTHA1: a jungle tree's its FOOT - its roots, buttresses and the curtains it hangs to the ground - at its own
+      // scale, never its crown: a road is cut through the jungle, and the canopy may close over it
+      const jungleTree = jungleOk && f.jungle != null;
+      if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, jungleTree ? JUNGLE_MEASURES[f.jungle].foot * f.js : natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
       if (archive !== natureArchive) borderNature.set(archive, base);
+      if (jungleTree) {
+        let g = jungleGroups.get(f.jungle);
+        if (!g) jungleGroups.set(f.jungle, (g = { centers: [], own: [] }));
+        g.centers.push([f.x, f.y, f.z]); g.own.push(f.js);
+        pixelTrees.push({ id: pixelTrees.length, group: `J${f.jungle}`, i: g.centers.length - 1, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 1, base, archive });   // a tree of the woods - Logging fells it
+        continue;
+      }
       const i = addFlat(archive, f.record, f.x, f.y, f.z);
       if (lowPolyTrees) wildFlats.add(`${archive}_${f.record}#${i}`);   // LPT1
       if (isTreeRecord(base, f.record)) pixelTrees.push({ id: pixelTrees.length, group: `${archive}_${f.record}`, i, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 0, base, archive });   // FOREST1: how wooded its tile is - Logging's trees stand in the woods; ECOTONE1: and whose climate it is (its stump)
@@ -1019,6 +1038,49 @@ export function createPixelBuild(host) {
       batches.push(batch);
       if (natureSet.has(archive)) forestGroups.set(k, { batch, centers, size });   // PROF4: a felled tree's batch
       if (isCoverFlat(archive, record, size)) for (const c of centers) coverItems.push(...coverProxies(c, size, { tree: natureSet.has(archive) && isTreeRecord(natureBase(archive), record) }));   // AUDIT TACT B2: a tree's trunk and crown
+    }
+    // BANTHA1: THE JUNGLE'S TREES STAND - a species a batch of its far picture (the owner's tree drawn once from the
+    // side, systems/jungleTreesAssets.js), each tree's own scale on its corner, and its 3D tree near the eye (the pixel's
+    // `jungleTrees` set, the jungle door's) - Low Poly Trees' own handover. Each is a Tree of the rainforest: it sways as
+    // the flora do, it is the forest Logging fells in (its group `J<species>`), its cover is its own trunk and crown
+    // (JUNGLE_MEASURES), and the far rings stand it by its own height
+    const jungleHandles = [], jungleSet = [];
+    made.jungleHandles = jungleHandles;   // BUILD-FAIL1
+    for (const [species, g] of jungleGroups) {
+      await breather.breathe();
+      const record = JUNGLE_SPECIES[species].record, gk = `J${species}`;
+      const pic = await junglePicture(jungle.door, species);   // THE ONE CONSTRUCTION SEAM (world/naturePicture.js)
+      if (!pic) {   // its picture would not stand (a decode refused): the species stands as the Tree record it carries
+        const t = await getTexture(JUNGLE_ARCHIVE);
+        if (record >= t.recordCount) continue;
+        uploadRecord(JUNGLE_ARCHIVE, record);
+        const size = billboardSize(t, record);
+        const batch = renderer.createBillboardBatch(JUNGLE_ARCHIVE, record, size, g.centers);
+        batch._box = flatBatchAabb(g.centers, size);
+        batch.sway = floraSwayOf(JUNGLE_ARCHIVE, natureSet, size.h);
+        batch.windfall = windfallResponse(JUNGLE_ARCHIVE, record);
+        unionBox(batch._box);
+        batches.push(batch);
+        forestGroups.set(gk, { batch, centers: g.centers, size });
+        if (isCoverFlat(JUNGLE_ARCHIVE, record, size)) for (const c of g.centers) coverItems.push(...coverProxies(c, size, { tree: true }));
+        continue;
+      }
+      const { proto, far } = pic;
+      jungle.door.acquire(far); jungleHandles.push(far);   // AUDIT LPT B5: held until the pixel goes
+      const own = Float32Array.from(g.own), scales = Float32Array.from(g.own, (v) => v / JUNGLE_SCALE_MAX);
+      jungleSet.push({ h: jungleHandles.length - 1, centers: g.centers, wild: null, own, fit: null });
+      const batch = renderer.createBillboardBatch(JUNGLE_ARCHIVE, far.record, far.size, g.centers, { scales });
+      batch.lptProto = far;
+      batch.farH = proto.size.h;   // MAC1's far rings: the tree's own height - it has no classic flat to stand for
+      batch._box = flatBatchAabb(g.centers, far.size);
+      batch.sway = floraSwayOf(JUNGLE_ARCHIVE, natureSet, proto.size.h);
+      _lptSway.set(proto, Math.max(_lptSway.get(proto) ?? 0, batch.sway));
+      batch.windfall = windfallResponse(JUNGLE_ARCHIVE, record);   // WINDFALL1: its Tree record's mask
+      _lptWindfall.set(proto, Math.max(_lptWindfall.get(proto) ?? 0, batch.windfall));
+      unionBox(batch._box);
+      batches.push(batch);
+      forestGroups.set(gk, { batch, centers: g.centers, size: far.size, scales });   // PROF4: a felled tree's batch - it falls as its far picture
+      g.centers.forEach((c, i) => coverItems.push(...jungleCover(c, species, own[i])));   // TACT1: its own trunk and crown
     }
     // WOD2: the scaled flats - billboardSize times the object's own scale.
     for (const { archive, record, scale, centers } of scaledGroups.values()) {
@@ -1198,6 +1260,7 @@ export function createPixelBuild(host) {
       // them and the archive they are drawn from, and their groups' batches where a felled tree is sunk
       forest: { base: climate.natureArchive, archive: natureArchive, trees: pixelTrees.filter((t) => forestGroups.has(t.group)), groups: forestGroups },
       lowPolyTrees: lptGroups.length ? { px, py, ox: 0, oy: 0, oz: 0, handles: lptHandles, groups: lptGroups, trees: null, centers: null } : null,   // LPT1: its 3D trees (gatherNear's set, made near the eye; the frame writes its translation)
+      jungleTrees: jungleSet.length ? { px, py, ox: 0, oy: 0, oz: 0, handles: jungleHandles, groups: jungleSet, trees: null, centers: null } : null,   // BANTHA1: the jungle's 3D trees, the jungle door's set (scenes/treesHost.js)
       wodSpawners, // WOD2: LoadObject's spawn markers, for WOD3
       privateersHold,   // WOD4: the camp's block origins and its Start's state, null off the Hold
       arena: arenaOrigin,   // ARENA2: the colosseum's block origin, pixel-local - null off Daggerfall's cell (4,3)

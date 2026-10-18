@@ -524,8 +524,10 @@ export const LPT_INSTANCE_FLOATS = 5;
  * null - none: a location's flats). Answers `{ trees, centers }`: LPT_SET_FLOATS a tree and each tree's centre.
  * LPT-FIT: and `fit` - the largest each tree may be drawn (world/road/roadVerge.js lptFitCap; absent, no cap): its variety
  * is drawn under it, so its crown keeps off the roads and streets beside it.
+ * BANTHA1: and `own` - each tree's scale as its layout gave it (world/terrain/jungleNature.js `js`), in place of DFU's
+ * variety: the jungle's storeys are its own. Its turn is still lptVariety's.
  * @param {number} px @param {number} py the pixel
- * @param {{ h: number, centers: number[][], wild: Uint8Array|null, fit?: Float32Array|null }[]} groups
+ * @param {{ h: number, centers: number[][], wild: Uint8Array|null, fit?: Float32Array|null, own?: Float32Array|null }[]} groups
  */
 export function buildTreeSet(px, py, groups) {
   let n = 0;
@@ -535,7 +537,8 @@ export function buildTreeSet(px, py, groups) {
   for (const g of groups) {
     g.centers.forEach((c, i) => {
       const v = lptVariety(px, py, c[0], c[2], !(g.wild && g.wild[i]));
-      trees.set([g.h, c[0], c[1], c[2], g.fit ? Math.min(v.scale, g.fit[i]) : v.scale, v.yaw], k * LPT_SET_FLOATS);   // LPT-FIT
+      const sc = g.own ? g.own[i] : v.scale;   // BANTHA1: the layout's own scale
+      trees.set([g.h, c[0], c[1], c[2], g.fit ? Math.min(sc, g.fit[i]) : sc, v.yaw], k * LPT_SET_FLOATS);   // LPT-FIT
       centers[k++] = c;
     });
   }

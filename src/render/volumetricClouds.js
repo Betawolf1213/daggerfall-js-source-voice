@@ -60,6 +60,7 @@ import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup:
 import { WEATHER_EASE_MINUTES, WEATHER_SKY, WIND_SECONDS_PER_MINUTE, sunSkyDirection, paletteAt } from './enhancedSky.js';   // WEATHER2c: a cell's cover and grey are its weather's row; VC7a: the sun that drives the day's convection
 import { DREAD_GLSL } from '../world/dreadSky.js';   // EVENT1: the live event's grade, the sky's last word
 import { SD_BRASS_GLSL } from '../world/superDungeon/sdBrassSky.js';   // AUDIT SD III (V8): the brass air's grade on the sky as on its haze
+import { HAZE_SKY_GLSL } from './hazeGlsl.js';   // BANTHA1: the jungle's haze over the sky (render/hazeGlsl.js)
 
 /** VC7e: a JS number as a GLSL float literal (airPass.js glslFloat's law: `${1}` is an int to the compiler). */
 const glslF = (v) => (Number.isInteger(v) ? `${v}.0` : String(v));
@@ -1341,6 +1342,7 @@ out vec4 outColor;
 const float PI = 3.14159265;
 ${DREAD_GLSL}
 ${SD_BRASS_GLSL}
+${HAZE_SKY_GLSL}
 // CLOUD-SQUARE (FIELD BUGS 2026-10-01 #3): "Clouds in the distance sometimes look square". A map texel is a third of
 // a degree (two thirds on the low tier) - 6 to 23 screen pixels - and each was marched from its own jittered start,
 // so a far cloud a few texels across, magnified by one bilinear tap, was a cluster of soft squares. A cubic B-spline
@@ -1390,7 +1392,11 @@ void main() {
   // is sky * T + cloud), so the grade reads the cloud's own colour and puts the opacity back; clear sky adds nothing
   float op = 1.0 - c.a;
   vec3 cloud = op > 1e-4 ? brassGrade(dreadGrade(c.rgb / op, uDread), uBrass) * op : c.rgb;   // AUDIT SD III (V8): the brass air's after the dread's
-  outColor = vec4(cloud * (1.0 + uFlash * 2.0 + bolt * 3.0), c.a);
+  // BANTHA1: THE JUNGLE'S HAZE IN FRONT OF THE CLOUD - over a sky this pass blends onto (sky * T + cloud) the dome
+  // already took it (render/hazeGlsl.js hazeSky), so the cloud's own light dims by it and the share of the haze it hides
+  // (its opacity) is laid back: the composite reads mix(cloud over sky, haze, m) exactly
+  float hm = hazeSkyMix(dir.y);
+  outColor = vec4(cloud * (1.0 + uFlash * 2.0 + bolt * 3.0) * (1.0 - hm) + op * hm * uHazeSky.rgb, c.a);
 }`;
 
 /** The lab's shadow-map viewer: the square as a picture. */
@@ -1405,7 +1411,7 @@ void main() { outColor = vec4(texture(uMap, vNdc * 0.5 + 0.5).rrr, 1.0); }`;
 export const FIELD_UNIFORMS = ['uShape', 'uDetail', 'uCover', 'uSoft', 'uBase', 'uTop', 'uDensity', 'uFlat', 'uShear', 'uDark', 'uVary', 'uCellCount', 'uCell', 'uCellA', 'uCellB', 'uCellC', 'uCellK', 'uCellS', 'uCellU', 'uCellKS', 'uCellKU', 'uDrift', 'uShift', 'uCamXZ', 'uEvolve', 'uCoverDrift'];   // WEATHER2c: uDark moved in (a cell has its own), the slab and the cells added; VC6a: uVary
 export const MARCH_UNIFORMS = [...FIELD_UNIFORMS, 'uMapSize', 'uLightDir', 'uLightColor', 'uCloudLit', 'uCloudShade', 'uHorizonColor', 'uSkyTint', 'uDusk', 'uSteps', 'uLightSteps', 'uCellF', 'uCirrus', 'uCirrusLight', 'uCirrusDir'];   // VC6b: uSkyTint, uDusk; VC7c: the falls
 export const SHADOW_UNIFORMS = [...FIELD_UNIFORMS, 'uMapSize', 'uOrigin', 'uExtent', 'uLightDir', 'uSteps'];
-export const COMPOSITE_UNIFORMS = ['uMap', 'uYaw', 'uPitch', 'uTanHalfFov', 'uAspect', 'uFlash', 'uBolt', 'uBoltCos', 'uDread', 'uBrass'];   // EVENT1: the live event's grade   // WEATHER3d: the distant strike
+export const COMPOSITE_UNIFORMS = ['uMap', 'uYaw', 'uPitch', 'uTanHalfFov', 'uAspect', 'uFlash', 'uBolt', 'uBoltCos', 'uDread', 'uBrass', 'uHazeSky'];   // BANTHA1: the jungle's haze   // EVENT1: the live event's grade   // WEATHER3d: the distant strike
 
 export class VolumetricClouds {
   /** `quality` a QUALITY key; `viewport` the caller's rect to restore
@@ -1449,6 +1455,7 @@ export class VolumetricClouds {
     this.dread = 0;
     /** AUDIT SD III (V8): the brass air's grade over them, 0..1 (world/superDungeon/sdBrassSky.js) - the host's. */
     this.brass = 0;
+    this.hazeSky = new Float32Array(4);   // BANTHA1: the jungle's haze in front of the clouds (render/hazeGlsl.js uHazeSky) - the host's, w 0 none
     this.bolt = null;   // WEATHER3d: a distant strike's light, or none
     this.cells = [];          // WEATHER2c: this frame's cells, in the host's world metres, capped at the tier's count
     this.testCellSpec = null; // WEATHER2c: `?cloudcell=` as handed by the controller; resolved against the first camera position seen
@@ -1665,6 +1672,7 @@ export class VolumetricClouds {
     gl.uniform1f(u.uFlash, this.flash);
     gl.uniform1f(u.uDread, this.dread);   // EVENT1
     gl.uniform1f(u.uBrass, this.brass);   // AUDIT SD III (V8)
+    gl.uniform4fv(u.uHazeSky, this.hazeSky);   // BANTHA1
     const b = this.bolt;   // WEATHER3d
     gl.uniform4f(u.uBolt, b ? b.dir[0] : 0, b ? b.dir[1] : 1, b ? b.dir[2] : 0, b ? b.strength : 0); gl.uniform1f(u.uBoltCos, b ? b.cos : 1);
     gl.bindVertexArray(this.vao);

@@ -89,12 +89,12 @@ test('FAR-SEA1: every ring shader - classic, the lane, the classic-shadow lane -
   // AUDIT FAR-SEA1 C1: the whole output line, and the sea's line between the light and it - inverted or dead, it fails
   order(classicFs, ['vec3 lit = vColor * (uAmbient + uSunColor * (uSunScale * diff) + uMoonColor * (uMoonScale * mdiff));',
     'float sea = vSea * uSeaLook;', 'if (sea > 0.0) lit = mix(lit, ringSea(uAmbient, uSunColor, uMoonColor), sea);',
-    'outColor = vec4(mix(lit, uFogColor, horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold)), 1.0);'], 'classic');
+    'outColor = vec4(mix(lit, uFogColor, ringHaze(horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold))), 1.0);'], 'classic');   // BANTHA1: the jungle's haze over the horizon's
   // the lane: its ground through the tonemap into display space, the sea in the water's own space from the light as given
   for (const [name, text] of [['lane', EL_FAR_RING_FS], ['classic shadows', classicShadowLane().farRingFs]]) {
     order(text, ['vec3 shown = elEncode(elTonemapRGB(lit * ex));', 'float sea = vSea * uSeaLook;',
       'if (sea > 0.0) shown = mix(shown, ringSea(uSeaAmbient, uSeaSunColor, uSeaMoonColor), sea);',
-      'vec3 col = mix(shown, uFogColor, horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold));'], name);
+      'vec3 col = mix(shown, uFogColor, ringHaze(horizonHaze(vDist, uFogStart, uFogEnd, uRimStart, uRimEnd, uHazeHold)));'], name);
   }
   for (const text of [classicFs, EL_FAR_RING_FS]) {
     assert.ok(!/uHazeHold \* clamp\(/.test(text), 'the scaled ramp is gone');

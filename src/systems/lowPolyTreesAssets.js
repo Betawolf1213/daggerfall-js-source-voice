@@ -73,14 +73,21 @@ export function topDownOf(color32) {
 export const lptAlphaOf = (sub) => (sub.opaque ? 0 : 0.5 / Math.max(1e-3, sub.cutoff ?? 0.5));
 
 /**
- * @param {{ renderer: any, getTexture: (archive:number) => Promise<any>,
+ * @param {{ renderer: any, getTexture?: (archive:number) => Promise<any>,
  *   seasonal?: { key: (archive:number) => string, picture: (archive:number, record:number) => any, generation?: () => number } | null,
- *   fetchBytes?: (url:string) => Promise<Uint8Array>, breathe?: () => Promise<void>, warn?: (m:string) => void, now?: () => number }} deps
+ *   fetchBytes?: (url:string) => Promise<Uint8Array>, breathe?: () => Promise<void>, warn?: (m:string) => void, now?: () => number,
+ *   treeSet?: { load: () => Promise<any>, picture: (atlas:string) => Promise<{width:number,height:number,data:Uint8Array}|null> } | null,
+ *   slot?: number, scaleMax?: number, label?: string }} deps
  *   `seasonal.key(archive)` - the source a prototype of that archive is painted under ('' the classic records);
  *   `seasonal.picture(archive, record)` - the season's texture for a record it re-skins now (`image` in the port's
- *   order), or null; `seasonal.generation()` - the install, so a paint a new install overtook is never kept
+ *   order), or null; `seasonal.generation()` - the install, so a paint a new install overtook is never kept.
+ *   BANTHA1 (bible/03-World/Bantha-Jungle.md): ONE DOOR, TWO SETS OF TREES. `treeSet` - another set's own: `load()` its trees
+ *   in readLowPolyTrees's shape (world/jungle/jungleModels.js readJungleTrees), `picture(atlas)` an atlas's picture
+ *   top-down (decoded, never painted from the player's records) - absent, Low Poly Trees' vendored mod; `slot` the
+ *   renderer's tree slot its frame is handed to (render/renderer.js setLowPolyTrees); `scaleMax` the largest a tree of it
+ *   is drawn (its far pictures' batch is sized for it - LPT_SCALE_MAX, DFU's, for the mod); `label` its id in a warning (the mod's, `low-poly-trees`; the jungle's feature, `bantha-jungle`).
  */
-export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetchBytes = defaultFetch, breathe = async () => {}, warn = (m) => console.warn(m), now = () => performance.now() }) {
+export function createLowPolyTrees({ renderer, getTexture = async () => null, seasonal = null, fetchBytes = defaultFetch, breathe = async () => {}, warn = (m) => console.warn(m), now = () => performance.now(), treeSet = null, slot = 0, scaleMax = LPT_SCALE_MAX, label = 'low-poly-trees' }) {
   /** @type {ReturnType<typeof readLowPolyTrees>|null} */
   let lpt = null;
   /** @type {Promise<any>|null} */
@@ -135,10 +142,17 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
     return r.value;
   }
 
-  /** The atlas's CPU picture, painted (again, if it was let go). */
+  /** The atlas's CPU picture, painted (again, if it was let go) - BANTHA1: or a set's own picture, decoded. */
   async function paintPic(entry) {
     if (entry.pic) return entry.pic;
     entry.painting ??= (async () => {
+      if (treeSet) {
+        const pic = await treeSet.picture(entry.name);
+        entry.missing = pic ? 0 : 1;
+        entry.pic = pic ? { ...pic, missing: 0 } : null; entry.picAt = now();
+        entry.painting = null;
+        return entry.pic;
+      }
       const spec = lpt.atlases[entry.name];
       const archives = new Set([...spec.blits.map((b) => b[0]), ...(spec.fills ?? []).map((f) => f[1])]);
       const textures = new Map();
@@ -162,7 +176,7 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
       const e = entry;
       e.ready = (async () => {
         const pic = await paintPic(e);
-        if (e.missing) return e;   // a record the player lacks: no tree stands from it (farPicture answers null)
+        if (e.missing || !pic) return e;   // a record the player lacks: no tree stands from it (farPicture answers null)
         const mips = await stepped(atlasMipSteps(pic));
         if (atlases.get(key) !== e) return e;   // given back while it painted: nothing uploaded
         e.tex = await uploadAtlas(mips);
@@ -233,12 +247,16 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
       if (lpt || failed) return Promise.resolve(lpt);
       loading ??= (async () => {
         try {
-          const [j, tb, ab] = await Promise.all([fetchBytes(LPT_TREES_JSON_URL), fetchBytes(LPT_TREES_BIN_URL), fetchBytes(LPT_ATLASES_BIN_URL)]);
-          lpt = readLowPolyTrees(JSON.parse(new TextDecoder().decode(j)), tb, ab);
-          gpu = new LowPolyTreesGpu(renderer.gl, lpt.json, tb);
+          if (treeSet) lpt = await treeSet.load();   // BANTHA1: a set's own trees
+          else {
+            const [j, tb, ab] = await Promise.all([fetchBytes(LPT_TREES_JSON_URL), fetchBytes(LPT_TREES_BIN_URL), fetchBytes(LPT_ATLASES_BIN_URL)]);
+            lpt = readLowPolyTrees(JSON.parse(new TextDecoder().decode(j)), tb, ab);
+          }
+          gpu = new LowPolyTreesGpu(renderer.gl, lpt.json, lpt.treesBin);
         } catch (e) {
           failed = true;
-          warn(`[trees] Low Poly Trees could not load: ${e?.message ?? e}`);
+          lpt = null;
+          warn(`[trees] ${label} could not load: ${e?.message ?? e}`);
         }
         return lpt;
       })();
@@ -252,7 +270,7 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
     /**
      * A PROTOTYPE'S HANDLE under its source now: its atlases painted and its far picture uploaded as the archive's flat -
      * `{ proto, source, archive, record, size, refs }` (`record`/`size` for createBillboardBatch: sized for the tallest
-     * tree, LPT_SCALE_MAX, and the far picture's trimmed share; each tree's own share rides its corner) - or null: a
+     * tree, LPT_SCALE_MAX (BANTHA1: the set's `scaleMax`), and the far picture's trimmed share; each tree's own share rides its corner) - or null: a
      * record the player's data lacks (AUDIT LPT B9), a paint a new season's install overtook. A null leaves the classic
      * flat. The caller holds it (acquire) while a batch of it stands.
      */
@@ -284,7 +302,7 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
           renderer.uploadTexture(proto.archive, record, toColor32(pic));
           e.handle = {
             proto, source, key, archive: proto.archive, record, atlasKeys: protoAtlases, refs: 0, idleAt: now(),
-            size: { w: proto.size.w * pic.shareW * LPT_SCALE_MAX, h: proto.size.h * pic.shareH * LPT_SCALE_MAX },
+            size: { w: proto.size.w * pic.shareW * scaleMax, h: proto.size.h * pic.shareH * scaleMax },   // BANTHA1: the set's own largest
           };
           return e.handle;
         })().catch((err) => { warn(`[trees] ${proto.key}: ${err?.message ?? err}`); return null; })
@@ -308,7 +326,7 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
     frame(sets, ex, ey, ez, { skip = null, swayOf = null, windfallOf = null, stamp = 0, planes = null } = {}) {
       const t = now();
       if (t - lastSweep > 1000) sweep(t);
-      if (!gpu || !lpt) { renderer.setLowPolyTrees(null); return; }
+      if (!gpu || !lpt) { renderer.setLowPolyTrees(null, slot); return; }
       const moved = !lastEye || Math.hypot(ex - lastEye[0], ez - lastEye[2]) > LPT_REGATHER_M;
       if (moved || stamp !== lastStamp || !sameSets(sets) || !gathered) {
         gathered = gatherNear(sets, ex, ez, LPT_NEAR_M, LPT_BAND_M + LPT_REGATHER_M, data, skip);   // the band and the way the eye may go before the next gather: a tree it walks into the band toward is there
@@ -344,12 +362,12 @@ export function createLowPolyTrees({ renderer, getTexture, seasonal = null, fetc
       for (const r of out.runs) { r.drawStart = r.run.drawStart; r.drawCount = r.run.drawCount; }
       out.frame.eye[0] = ex; out.frame.eye[1] = ey; out.frame.eye[2] = ez;
       out.frame.gpu = gpu; out.frame.runs = out.runs; out.frame.cut = out.cut;
-      renderer.setLowPolyTrees(out.runs.length ? out.frame : null);
+      renderer.setLowPolyTrees(out.runs.length ? out.frame : null, slot);
     },
     /** EVERY ALLOCATION HAS AN OWNER: the buffers, every atlas and every far picture. The world holds the door for the
      *  session (as it holds the mills' parts - leaving it reloads the page); destroy is the test host's. */
     destroy() {
-      renderer.setLowPolyTrees(null);
+      renderer.setLowPolyTrees(null, slot);
       gpu?.destroy(); gpu = null;
       for (const [key, entry] of [...handles]) { freeHandle(key, entry); }
       for (const entry of [...atlases.values()]) freeAtlas(entry);

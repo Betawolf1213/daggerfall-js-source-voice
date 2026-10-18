@@ -594,7 +594,7 @@ void main() {
   // the fogs over the water's own light at its share - the air's, then DW-C's sea fog - as a premultiplied colour takes
   // them (an affine fog of x is x * m + c; at a share s, x * m + c * s): the copy's share is left as it was drawn
   vec3 ownShare = uSceneOn == 1 ? vec3(1.0) - trans : vec3(cover);
-  float fw = fogFactorAt(vWorldPos);
+  float fw = weatherFogAt(vWorldPos);   // BANTHA1: the weather's half - the sea's haze below is its law; the jungle's haze multiplies after
   // FAR-SEA1: THE SEA REACHES THE HORIZON. On a frame the far ring is drawn (the host sets uSeaHaze), the water at the
   // sea's own level takes the ring's haze - the world's linear ramp capped at the hold - so it no longer closes into a
   // band of solid fog in front of the ring's sea: the two meet at one haze at the streamed grid's edge. Nearer than the
@@ -606,6 +606,7 @@ void main() {
     float seaW = 1.0 - smoothstep(${(SEA_HAZE_BAND * 0.5).toFixed(2)}, ${SEA_HAZE_BAND.toFixed(2)}, abs(vWorldPos.y - uSeaHaze.y));
     fw = mix(fw, max(fw, 1.0 - uSeaHaze.x), seaW);
   }
+  fw *= hazeAt(vWorldPos, focusOrigin());   // BANTHA1: the jungle's haze closes over the sea's floor too - no sea shows through it
   vec3 fogged = own * fw + uFogColor * (1.0 - fw) * ownShare;
   fogged = dwWaterFogAdd(fogged, vWorldPos) + dwWaterFog(vec3(0.0), vWorldPos) * ownShare;
   outColor = uSceneOn == 1 ? vec4(under * trans + fogged, edge) : vec4(fogged / max(cover, 1e-3), edge * cover);

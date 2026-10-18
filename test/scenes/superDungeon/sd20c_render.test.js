@@ -199,7 +199,7 @@ test('SD20c THE BRASS AIR\'S GRADE ON THE SKY IS ITS HAZE\'S (V8): world/superDu
   }
   assert.ok(SD_BRASS_RAMP.every((st) => SD_BRASS_GLSL.includes(`vec3(${st.color.map((v) => v.toFixed(4)).join(', ')})`)), 'its stops');
   const passes = {
-    'src/render/skyRenderer.js': /outColor = vec4\(brassGrade\(dreadGrade\(mix\(color, uFogColor, uFogMix\), uDread\), uBrass\), 1\.0\);/,
+    'src/render/skyRenderer.js': /outColor = vec4\(brassGrade\(dreadGrade\(hazeSky\(mix\(color, uFogColor, uFogMix\), dir\), uDread\), uBrass\), 1\.0\);/,   // BANTHA1 (PIN MOVED): over the jungle's haze
     'src/render/enhancedSky.js': /outColor = vec4\(brassGrade\(dreadGrade\(out3, uDread\), uBrass\), 1\.0\);/,
     'src/render/dynamicSkiesRenderer.js': /outColor = vec4\(brassGrade\(dreadGrade\(enc, uDread\), uBrass\), 1\.0\);/,
     'src/render/volumetricClouds.js': /vec3 cloud = op > 1e-4 \? brassGrade\(dreadGrade\(c\.rgb \/ op, uDread\), uBrass\) \* op : c\.rgb;/,
