@@ -1704,7 +1704,7 @@ export class Renderer {
     this.maxPointLights = CLASSIC_MAX_LIGHTS;
     this._decA = new Float32Array(3); this._decB = new Float32Array(3); this._decC = new Float32Array(3);   // AUDIT F4: three, because one site decodes the ambient, the moon AND the sun and holds all three   // EL1: the decode scratch (two, for the billboard tint's two terms)
     this._pointColorDec = new Float32Array(CLASSIC_MAX_LIGHTS * 3);
-    this.stats = { draws: 0, programBinds: 0, vaoBinds: 0, texBinds: 0, bbCulled: 0, spriteBinds: 0 };   // PERF-CROWD2: bbCulled, the billboards this frame did NOT submit; MWNPC2: spriteBinds, the body batch's binds of the sprite target; MWNPC1: made before the first world set is built - its character program is bound through _use there
+    this.stats = { draws: 0, programBinds: 0, vaoBinds: 0, texBinds: 0, bbCulled: 0, spriteBinds: 0, viewDraws: 0, shadowDraws: 0 };   // PERF-CROWD2: bbCulled, the billboards this frame did NOT submit; MWNPC2: spriteBinds, the body batch's binds of the sprite target; MWNPC1: made before the first world set is built - its character program is bound through _use there; PASS-COUNT: the view out's and the shadow maps' draws (beginFrame)
     this._skinNrm = new Float32Array(9);   // MWNPC1: drawCharacter's normal-matrix scratch (skinNormalMatrix)
     this._spriteBatch = { items: [], open: false, depth: 0 };   // MWNPC2: the body pass's pictures, queued for one bind (beginCharacterSpriteBatch)
     /** @type {WebGLTexture|null} */ this._skinIdentity = null;    // MWNPC1: the identity palette (_skinIdentityTex) - before the first set is built, which makes it
@@ -3039,6 +3039,7 @@ export class Renderer {
       textures: this.textures, isSpectral: isSpectralArchive, bindVao, everyLight, cut,
       holdSkin: this._holdSkinFn,   // MWNPC16: a body's palette for its replay (the unit's word kept - releaseCharacterSkin puts the identity back over one let go)
     });
+    this.stats.shadowDraws = (sp.stats.sunDraws | 0) + (sp.stats.pointDraws | 0);   // PASS-COUNT: the shadow maps' replays this frame
     if (this._air) {
       const count = this._pointLights.length / 4;
       this._air.prepare({   // EL6: the inputs alone - the images are drawn at the resolve, off the frame's depth
@@ -5531,6 +5532,13 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
     const s = this.stats;
     s.draws = 0; s.programBinds = 0; s.vaoBinds = 0; s.texBinds = 0; s.bbCulled = 0;   // PERF-CROWD2
+    // FIELD BUGS 2026-10-18 PASS-COUNT: THE FRAME'S OTHER PASSES, COUNTED. The view out (outsideViewFrame) draws the street
+    // BEFORE the room's beginFrame, whose reset above lost its draws, and the shadow maps keep their own count - so a
+    // building's overlay read "draws 67" over a frame that drew a city's street through the glass and every lamp's
+    // cube. The room's frame takes the view out's count (its own nested begin, `_rwOutside` set, takes none) and the
+    // lane's shadow render writes its own below.
+    s.viewDraws = this._rwOutside ? 0 : this._rwViewDraws; s.shadowDraws = 0;
+    if (!this._rwOutside) this._rwViewDraws = 0;
     // VC4: the cloud shadow deck is a FRAME's, not the renderer's - a host
     // that wants one sets it after this (the exterior hosts do, per
     // pixel); an interior or a dungeon, which never does, gets none, and
