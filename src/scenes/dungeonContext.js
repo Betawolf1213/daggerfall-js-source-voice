@@ -212,7 +212,7 @@ import { HIT_KINDS } from '../net/gate/gateBrain.js';   // WB4b: a blow on the c
 import { bossReach, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../world/gate/gateBoss.js';   // WB4b: a swing meets the court's boss at his skin; WB8a: and a sway meets his refusal
 import { playerMeleeCanHit } from '../combat/playerWeapon.js';   // PVPDUNGEON
 import { duelSpellOf } from '../combat/duelCombat.js';   // WB4b: the harmful families alone reach the court's boss, as they alone reach a duel opponent
-import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
+import { assignEnemySpells, enemySpellIndices, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
 import { revenantArtFrame } from '../systems/revenant/revenantArts.js';   // RVN-ARTS: a revenant's art - the open world's law (scenes/exteriorFoes.js artFrame)
 import { ARENA_PUPPET_OWNER } from '../net/arena/arenaLaw.js';   // ARENA4: the relay's fighters' puppets - a blow on one is the referee's
 import { calculateCastCost } from '../systems/spellcost.js';
@@ -220,7 +220,7 @@ import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/save/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
 import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './quest/questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
-import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
+import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames, PEER_REVENANT_PUPPETS_MAX } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
 import { placeFoeFreely, PLACE_FOE_DEFAULTS, sceneMarkerMover } from '../systems/quest/sceneMount.js';   // RE1: FoeSpawner.PlaceFoeFreely, the one home; AUDIT III E1: its numbers, a joiner's spot held to them; TOTEM-CAGE: GetDaggerfallMarker's motion
 import { dungeonQuestSpawnSpots } from '../systems/quest/place.js';   // FIELD BUGS 29h (BOUNTY-LAIR)
 import { fieldOfView } from '../ui/viewSettings.js';   // RE1: the ring needs the view cone the LOS arm avoids
@@ -5108,7 +5108,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // miss. The host's word wins.
       if (f._pupTarget != null && f.ai.isHostile === false) f.ai.isHostile = true;
       if (p.cast != null) {
-        const sp = f._pupMine ? (spellsByIndex?.get(p.cast) ?? null) : null;
+        // GRANT0 (bible/11-Multiplayer/Spawn-Grants.md section 8): a spell its kind casts at its owner's level (a copy is
+        // built at MINE), never from a paralysed copy - the record named any spell in SPELLS.STD (the street's AUDIT WORLD6b-iii(a) B1/A4)
+        const sp = f._pupMine && !entityIsParalyzed(f.entity) && enemySpellIndices(f.entity, f.streamedLevel ?? f.entity.level).includes(p.cast) ? (spellsByIndex?.get(p.cast) ?? null) : null;
         if (sp) castEnemySpell(f, sp, true); else f._castPending = true;
         p.cast = null;
       }
@@ -5800,13 +5802,16 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // RVN13 (Feud-Arc.md 25): the host's revenant's adaptations, weakness and second phase on my copy - stood again only when they change;
     // FEUD WIRE: and its blows (its stand's and phase two's on its own - so the host's revenant strikes me as hard as it strikes the host)
     const _fw = r.ad !== undefined || r.wq !== undefined || r.p2 !== undefined || r.rb !== undefined ? `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}` : null;
-    if (_fw !== (f._feudWire ?? null)) { f._feudWire = _fw; f.entity.revenant = _fw ? feudFromWire(f.entity.revenant, r) : (f.entity.revenant?.id ? f.entity.revenant : null); puppetRevenantBlows(f.entity, r); }
+    // GRANT0 (Spawn-Grants.md section 8): no more revenants to an owner (the room's host, or an own lane's sender) than a character keeps and
+    // swears - FOE-FORGE's bound; the rest were believed, rb and p2 four times their kind's blows and more. My own revenant's copy is mine.
+    const _feudOk = _fw == null || f._feudWire != null || !!f.entity.revenant?.id || foes.filter((x) => x !== f && !x.dead && x._feudWire != null && (x._ownFrom ?? null) === (f._ownFrom ?? null)).length < PEER_REVENANT_PUPPETS_MAX;
+    if (_feudOk && _fw !== (f._feudWire ?? null)) { f._feudWire = _fw; f.entity.revenant = _fw ? feudFromWire(f.entity.revenant, r) : (f.entity.revenant?.id ? f.entity.revenant : null); puppetRevenantBlows(f.entity, r); }
     if (r.a != null) { const a = r.a | 0; if (p.a != null && a !== p.a) p.strike = (a & 1) ? 'ranged' : 'melee'; p.a = a; }
     // TELL8 (10.1): the host's wind-up, stagger and overreach - the puppet's synthetic state (ai/puppetBlows.js); at ME by
     // the streamed target (the dungeon's record carries no `b` - its `g` is the blow's, WORLD3's law), judged on my feet
     if (r.d !== 1 && (r.wk !== undefined || r.ws !== undefined || f.ai._tac?.puppet)) {   // a record that says none, on a puppet that holds none: nothing to do
       const _to = p.target === '.' ? (f._ownFrom ?? _foesFrom) : (p.target || null), _me = opts.selfId?.() ?? null;
-      applyBlowRecord(f.ai, r, { origin: r.wo ?? null, me: _to != null && _me != null && _to === _me, entity: f.entity, collider, sig: SIG });
+      applyBlowRecord(f.ai, r, { origin: r.wo ?? null, me: _to != null && _me != null && _to === _me, entity: f.entity, collider, sig: f.entity.revenant ? SIG : null });   // GRANT0: a signature is a revenant's (ai/tactics.js sigBlow) - believed on a copy that stands as one
     }
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead

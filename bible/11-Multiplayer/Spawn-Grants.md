@@ -1,6 +1,7 @@
 # SPAWN GRANTS - the relay decides which foes may exist (GRANT0, the design record)
 
-**Status: DESIGN RECORD, PROPOSED (2026-10-17; revised 2026-10-18 for the relay's cost). Nothing is built.** The relay
+**Status: DESIGN RECORD, PROPOSED (2026-10-17; revised 2026-10-18 for the relay's cost). The grants are not built; section 8's
+reader fixes are (BUILT 2026-10-18, the owner: "Quick fixes first").** The relay
 signs a grant when a foe is made and never reads the foe stream; every reader checks the grant. Section 4.11 keeps the
 first draft, in which the relay read every record, as a fallback. Section 10 holds the questions that wait on the owner,
 and nothing here binds a slice until the owner answers them. Section 7 orders the slices. Each one measures before it
@@ -44,11 +45,11 @@ What a reader does with each field of a stranger's foe record today:
 | `w` weapon | trusts any template up to 1023 and any material | applyPuppetRecord, createWeapon |
 | `h`, `k` health | trusts them, up to 1e5 (`FOE_HEALTH_MAX`); the reader's blows go to the owner | applyPuppetRecord |
 | `z` elite (x3 blows) | believes it for at most 8 of an owner's foes (`PEER_ELITE_PUPPETS_MAX`) | FOE-FORGE |
-| `cp` champion (up to x1.875) | believes it, uncapped | FOE-FORGE's own open list |
+| `cp` champion (up to x1.875) | believed it uncapped; since section 8, for at most 19 of an owner's foes (`PEER_CHAMPION_PUPPETS_MAX`) | FOE-FORGE's own open list; GRANT0 |
 | `gg` Greater Giant (x4) | believes it only on a giant, one per index | FOE-FORGE |
 | `nm` and the feud fields (`rb` up to x4, `p2` x1.2) | believes them for at most 11 of an owner's foes | FOE-FORGE |
 | `n` fighters (up to x1.7 on me) | trusts it, 2 to 8 | partyHit |
-| the wind-up's signature bit (x2) | **believes it on any foe** | below |
+| the wind-up's signature bit (x2) | believed it on any foe; since section 8, on a foe stood as a revenant alone | below |
 | `e` heir | **takes over any foe whose record names me**, with no check that its owner is dying or leaving | applyFoes, adopt |
 
 Found while planning, outside FOE-FORGE's record:
@@ -62,8 +63,11 @@ Found while planning, outside FOE-FORGE's record:
   revenant cap, and each owner is allowed `LOOSE_PUPPETS_MAX` (24) loose stands (DESYNC-ZERO). Integrity-Arc section 8's
   "`dungeonContext.js` needs nothing here" misses this.
 
-What one modified client stands at every honest reader today: 64 foes of any species, 8 of them elites, any champion
-trait, class foes at level 100 holding any weapon, and blows doubled by the signature bit. That is per session. A guest
+Section 8 closed both (2026-10-18).
+
+What one modified client stands at every honest reader today: 64 foes of any species, 8 of them elites and 19
+champions, and class foes at level 100 holding any weapon. Before section 8: any champion trait on every one, and blows
+doubled by the signature bit. That is per session. A guest
 session costs nothing (`server/src/index.js` `_named`: "A GUEST IS NOT SHUT OUT"), and nothing ever happens to the
 sender.
 
@@ -311,15 +315,34 @@ THE FOUR HOSTS: `scenes/world.js` (the streamed exterior) asks for grants, carri
 its surplus; its layout stream needs none. `scenes/exterior.js` (the fixed city) streams nothing and reads no peer, so it
 needs nothing. The asks and the checks go into a module the hosts wire, never into the hosts' own functions (HOST-SPLIT).
 
-## 8. Reader fixes that need no grants (PROPOSED, a slice of their own)
+## 8. Reader fixes that need no grants (BUILT 2026-10-18)
 
-These are section 1's finds. Each is a reader's law alone, so no relay deploy is needed and nobody is dropped:
+The owner, asked what to build first: **"Quick fixes first"**. These are section 1's finds. Each is a reader's law alone:
+no relay deploy, nobody dropped, and every player has them on their next update. They ride this record's pull request.
 
-1. Believe the signature bit only on a foe stood as a revenant, at the street's readers and the dungeon's.
-2. In the dungeon's own lane, check a cast against the foe's own list, its range and a paralysis, as the street does
-   (puppetCastInBand); hold `rb` and `p2` to the revenants' count.
-3. Hold champions (`cp`) to a count per owner, the way `PEER_ELITE_PUPPETS_MAX` holds `z`. Honest play rolls one
-   champion in fourteen capped spawns.
+1. **The signature is a revenant's.** An honest owner sets it only on a revenant's blow (`ai/tactics.js`,
+   `ent?.revenant?.sigBlow`). Both pools now hand the signature's numbers to a puppet's blow only when the puppet stands
+   as a revenant (`sig: f.entity.revenant ? SIG : null`): at the street, inside FOE-FORGE's bound on `nm`; in the
+   dungeon, inside item 2's. Every revenant of rank 1 or more streams `rb` (`REVENANT_DAMAGE_PER_RANK`), and a signature
+   needs rank 2 (`SIG_RANK`), so no honest revenant loses it.
+2. **The dungeon's copies.** A peer's cast is taken only if its kind casts that spell at its owner's level
+   (`systems/enemySpells.js` enemySpellIndices, asked at the record's `l`), and never from a paralysed copy. The level
+   matters: a copy is built at its reader's level, so its own list is the wrong one to ask. Only a caster's decision
+   rides the dungeon's stream (`_castN` counts nothing else), and it draws from that same list, so no honest cast is
+   refused. A revenant's fields (`rb`, `p2`, its adaptations and weakness) are believed for at most
+   `PEER_REVENANT_PUPPETS_MAX` of one owner's copies - the room host's layout foes, or one sender's own lane - and
+   always on the reader's own revenant. **OPEN:** the street's range band (puppetCastInBand) is not added, because a
+   dungeon copy keeps no distance to its reader.
+3. **Champions.** `PEER_CHAMPION_PUPPETS_MAX` is 19: the elites' allowance and the revenants' bound, because a revenant
+   wears its trait as a champion. Past it a record's `cp` is not believed, and its foe stands as its plain kind. A trait
+   is stood inside the build, before the puppet is indexed, so the count includes the builds in flight. Both of a
+   puppet's stands count: applyFoes, and a kept orphan's (standKeptOrphan).
+
+Pins: `test/scenes/grant0_reader.test.js` (4); `tools/mutants/grant0.json` (17, all dead). Pins moved (PIN MOVED where
+each stands): `tell8_online`, `feudwire`, `rvn13_wire`, `world3`, `loot7_champions`. Eight older mutant records were
+re-aimed at the text they name and run again, and seven died. `AD28Q-J2-cell-orphan-unmarked` survives, and survives on
+the file from before this change too: since DESYNC-ZERO an unlinked party member stands the puppet itself, so its test no
+longer reaches the kept-record stand that mutant breaks. That is a finding for QUEST-PARTY's arc, not fixed here.
 
 A forged takeover (`e`) is not on this list. A reader cannot tell it from an honest one: OW6 hands a foe over from an
 owner that is still playing (world.js handOverWalkedAway), so only a grant (section 4.8) can close it.
@@ -338,6 +361,5 @@ owner that is still playing (world.js handOverWalkedAway), so only a grant (sect
 2. **The consequence (GRANT7).** Open a moderators' case when readers on several accounts tally against one sender? If
    so, how many accounts, in what window? The recommendation is three accounts in ten minutes: a case, never a ban.
 3. **The measure's window.** Seven days, as the integrity arc's budgets had?
-4. **Section 8's reader fixes.** Build them now, in a pull request of their own, ahead of the grants? The recommendation
-   is yes: they are small and drop nobody.
+4. **Section 8's reader fixes.** ANSWERED 2026-10-18: "Quick fixes first" - built, section 8.
 5. **The cell's ceiling** on live granted hostile foes, all senders together: on, at the number the measure gives?
