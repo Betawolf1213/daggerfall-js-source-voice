@@ -30,7 +30,7 @@
 // Pure: a record and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from '../gate/gateBrain.js';
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
-import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
+import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX, EG_OUTLINE_MAX_MS } from './egShape.js';
 import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';
 import { egZoneLandings, egFloorLess, egBurnsIn, egHavenCheck } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
@@ -265,7 +265,9 @@ function egSay(F, spec, blow, here, now, out, told) {
       F.held.push({ b: blow, ticks: waits ? 0 : EG_UNION_HOLD_TICKS, at: now });
       return false;
     }
-    blow.ol = Math.max(0, first.at - now); blow.at = first.at + blow.wu;
+    const ol = first.at - now;   // (THE AUDIT: a lead only while its first is still to land - the wire carries none at 0, egBlowOf's own rule)
+    if (ol > 0) blow.ol = Math.min(EG_OUTLINE_MAX_MS, Math.round(ol)); else delete blow.ol;
+    blow.at = first.at + blow.wu;
   }
   blow.at = Math.max(blow.at, now + blow.wu + (blow.ol ?? 0));   // AUDIT EG V (lane1 #18): a chained shape's outline lead kept whole too - its fill from the first's landing, however late their word
   if (egUnionHeld(F, spec, blow, here, now)) {
@@ -313,8 +315,13 @@ export function egUnionHeld(F, spec, blow, here, now) {
     // only the landings, burns and voids of its own floor take cells of it
     const H = byH ? egFeetY(spec, m.y) : NaN, st = Number.isFinite(H) ? egStoreyY(F.view ?? spec, m.x, H, m.z) : NaN;
     if (Number.isFinite(st) && !egOneStorey(st, blow.y)) continue;
+    // EG-PERFECT (the audit): a member THE FINAL EXAMINATION cages (its mark 5 - every screen holds its feet) has no floor but
+    // where it stands until the cage opens: a blow over it there holds
+    const cage = egMarkOf(F, m.sub, 5);
+    if (cage && cage[2] > now && egInBlow(blow, m.x, m.z)) return true;
     const base = egFloorLess(egFloorTest(spec, H), F.zones, now, until, H);
-    const onFloor = duel.includes(m.sub) ? (x, z) => base(x, z) && Math.hypot(x - ring[0], z - ring[1]) <= ring[2] - EG_RING_KEEP_M : base;
+    // (THE AUDIT: and a member outside a duel kept out of its ring - every screen's ringKeep - has none of its inside)
+    const onFloor = duel.includes(m.sub) ? (x, z) => base(x, z) && Math.hypot(x - ring[0], z - ring[1]) <= ring[2] - EG_RING_KEEP_M : duel.length ? (x, z) => base(x, z) && Math.hypot(x - ring[0], z - ring[1]) >= ring[2] + EG_RING_KEEP_M : base;
     const mineHere = Number.isFinite(st) ? pending.filter((b) => egOneStorey(st, b.y)) : pending;
     if (egUnionHolds(mineHere, blow, m.x, m.z, now, onFloor, egBurnsIn(stand, now, until, H), egBurnsIn(mine, now, until, H))) return true;
   }

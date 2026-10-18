@@ -485,8 +485,8 @@
   {
     "name": "AUDIT EG V L1-13: no rim in the dark",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0)",
-    "new": "egRimOf(band, b.fl | 0)",
+    "old": "egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0, lord)",
+    "new": "egRimOf(band, b.fl | 0, lord)",
     "tests": [
       "test/world/eliteGates/egz_telegraph.test.js"
     ]
@@ -494,7 +494,7 @@
   {
     "name": "AUDIT EG V L1-14: no card on the turn",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "      if (card) beat = { kind: 'phase', at: t, until: t + TITLE_HOLD_MS, ...card };",
+    "old": "      if (card && beat?.kind === 'phase' && t < beat.until) beatNext.push({ kind: 'phase', ...card });\n      else if (card) beat = { kind: 'phase', at: t, until: t + TITLE_HOLD_MS, ...card };",
     "new": "      void card;",
     "tests": [
       "test/net/eliteGates/egaudit5_b_client.test.js"

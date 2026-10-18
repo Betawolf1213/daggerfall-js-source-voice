@@ -782,9 +782,12 @@ export const EG_RELAY_MAX = 8;
 function ascentLaid(seed, h, geo, law) {
   let spec = null, at = 0;
   const said = (q) => JSON.stringify(q).length <= EG_SPEC_SAID_MAX, own = law >= EG_BROKEN_LAW ? EG_BROKEN_TRIES : 0;   // THE BROKEN WAY: the plan's own tries
+  // (THE AUDIT - THE BROKEN WAY: a try whose way asks no jump at all is laid again - a Rift-Yard's 284 m and a Rampart's 320 m
+  // walked whole, every bridge too short to break)
+  const leaps = (q) => law < EG_BROKEN_LAW || (q.route?.links ?? []).some((l) => l.kind === 'span');
   for (; at <= EG_RELAY_MAX + own + 1; at++) {
     spec = layHall(seed, h, geo, at, law);
-    if (spec) { const pr = egAscentProof(spec); if (pr.ok && said(spec)) return { spec, at }; egAscentNote(`try ${at}: ${pr.ok ? 'past the wire\'s bound' : pr.why.slice(0, 3).join('; ')}`); }
+    if (spec) { const pr = egAscentProof(spec); if (pr.ok && said(spec) && leaps(spec)) return { spec, at }; egAscentNote(`try ${at}: ${!pr.ok ? pr.why.slice(0, 3).join('; ') : !said(spec) ? 'past the wire\'s bound' : 'jumpless'}`); }
   }
   // past every try: the plainest that stands at all (test/net/eliteGates/law9_rooms.test.js holds that none is wanting)
   for (at = EG_RELAY_MAX + own + 1; at < EG_RELAY_MAX + own + 1 + EG_ASCENT_LAST_TRIES; at++) { spec = layHall(seed, h, geo, at, law); if (spec && egAscentProof(spec).ok && said(spec)) return { spec, at }; }
@@ -1324,11 +1327,14 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC, hero = /** @type {{ n
     if (L8 && twist === 'vault') { lane(X - ISLE_R + 50, zc, X - EG_FORK_VAULT_CM + 350, zc, BRIDGE_HALF, 'side', yF); disc(X - EG_FORK_VAULT_CM, zc, 350, 'vault', yF); spot('vault', X - EG_FORK_VAULT_CM, zc); }
     // THE HIGH ROAD (road 0)
     road = EG_ROAD.high;
-    run(two[1], 3);
+    // (THE AUDIT - THE BROKEN WAY: no Drop of its own before its Drop - law 10 lays a Drop under its road's floor, and the
+    // High Road's own Drop, laid at the fork's height less EG_FORK_DROP_CM, then fell 0-0.3 m, or rose)
+    const hiNot = (k) => law >= EG_BROKEN_LAW && k === 'drop', hiPieces = law >= EG_BROKEN_LAW ? pieces.filter((k) => !hiNot(k)) : pieces;
+    run(hiNot(two[1]) ? hiPieces.find((k) => k !== two[0]) ?? hiPieces[0] : two[1], 3);
     decreeSections();
     const zCache = island();
     spot('hcache', X, zCache);
-    run(pieces[between(r, 0, pieces.length - 1)], extra > 0 ? 2 : 3);
+    run(hiPieces[between(r, 0, hiPieces.length - 1)], extra > 0 ? 2 : 3);
     crumbleTwo();   // LAW 6: Crumbling Halls II's second section, before the High Road's Drop
     y = yF - EG_FORK_DROP_CM;
     step('drop', gap());
@@ -1959,7 +1965,7 @@ export const EG_RIM_WAY_IN_M = 0.5;
  */
 export function egMoltenRim(spec) {
   const rings = [], ways = [], ends = [], byH = egByHeight(spec), ry = [], wy = [];
-  for (const q of spec?.steps ?? []) if ((q.road ?? 0) === 0 && q.after > 0) ends.push([q.x, q.z + q.d / 2 + q.after, q.w / 2, q.ya ?? NaN]);
+  for (const q of spec?.steps ?? []) if ((q.road ?? 0) === 0 && q.after > 0 && !q.hd) ends.push([q.x, q.z + q.d / 2 + q.after, q.w / 2, q.ya ?? NaN]);   // (THE AUDIT: a turned piece's landing is its broken bridge's lane end, pushed below)
   for (const l of spec?.lanes ?? []) ends.push([l.ax, l.az, l.hw, l.y ?? 0], [l.bx, l.bz, l.hw, l.y ?? 0]);
   for (const b of spec?.bands ?? []) ends.push([b.x, b.z0, b.halfW, b.y ?? 0], [b.x, b.z1, b.halfW, b.y ?? 0]);
   for (const q of spec?.ramps ?? []) ends.push([q.ax, q.az, q.hw, q.y0], [q.bx, q.bz, q.hw, q.y1]);

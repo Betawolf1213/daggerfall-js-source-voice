@@ -412,7 +412,7 @@ export function egHangReach(spec, s, band) {
   for (const q of spec.heroes ?? []) {
     for (const f of q.floors ?? []) { let fx0 = Infinity, fz0 = Infinity, fx1 = -Infinity, fz1 = -Infinity; for (const [px, pz] of f.poly) { fx0 = Math.min(fx0, px); fz0 = Math.min(fz0, pz); fx1 = Math.max(fx1, px); fz1 = Math.max(fz1, pz); } over(fx0, fz0, fx1, fz1, f.y ?? 0); }   // a room's floor: its polygon's box
     const B = q.box;
-    if (B) over(q.x + B[0], q.z + B[2], q.x + B[3], q.z + B[5], q.y + B[1] + EG_HANG_SLAB);   // a room over it: its whole box
+    if (B) over(B[0], B[2], B[3], B[5], B[1] + EG_HANG_SLAB);   // a room over it: its whole box (THE AUDIT: the hall's frame already, as its floors - egHeroDoor's, egRuin's)
   }
   for (const c of spec.caves ?? []) if (!c.open && Math.abs(s.x - c.x) <= c.halfW && s.z >= c.z0 && s.z <= c.z1 && s.y >= c.y - 0.5) over(c.x - c.halfW, c.z0, c.x + c.halfW, c.z1, c.y + c.height + EG_HANG_SLAB);   // its vault
   const crane = band === 3;   // its cable runs on over its beam, and shortens first
@@ -482,8 +482,10 @@ export function egHangModel(band, len = SD_PENDULUM.len, over = EG_HANG_CABLE_M)
   }
   return k.pack(egBandArchive(band));   // EG-LOOK: in the band's archive (its metal the band's, its rib the kit's)
 }
-/** THE CIRCLE'S GHOSTS at most (render/superDungeon/sdStepsPass.js - its uniforms' count): the most any circle measured lays is 31 (eight
- *  seeds, forty circles, both grounds); a circle past it draws its first EG_GHOSTS_MAX. */
+/** THE CIRCLE'S GHOSTS at most (render/superDungeon/sdStepsPass.js - its uniforms' count): under laws 4-9 the most any circle measured
+ *  lays is 31 (eight seeds, forty circles, both grounds). EG-PERFECT's audit: spec law 10 lays up to 72 (21 of seeds 1-4's 320
+ *  circles past this), never more than 29 in one hall - so a circle past it ghosts the hall I am in and the halls nearest it
+ *  (createEgSpan's aimGhosts). */
 export const EG_GHOSTS_MAX = 48;
 /** A GHOST SLAB (section 10.8): how long a peer's word holds it lit (s - a few of its frames) and its top's light (a share
  *  of its ghost's). */
@@ -672,10 +674,30 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   /** @type {Map<string, { s: any, map: any }>} THE BEATS: each beat's kind and the picture map its frame wears now */
   const beatKinds = new Map();
   /** THE GHOSTS: the circle's Beats and Crumbles (EG_GHOSTS_MAX at most) - their tops and states (render/superDungeon/sdStepsPass.js's
-   *  two uniform arrays, written in place) and their pass, made the first time it draws and freed at the clear */
-  const ghostSteps = steps.filter((st) => st.s.kind === 'beat' || EG_CRUMBLE_KINDS.includes(st.s.kind)).slice(0, EG_GHOSTS_MAX);
+   *  two uniform arrays, written in place) and their pass, made the first time it draws and freed at the clear. EG-PERFECT's
+   *  audit: a circle of more (spec law 10 breaks its bridges on Beats and Crumbles - 72 in seed 7's circle 5) has its slots
+   *  stand for the hall I am in and the halls nearest it, aimed again as I cross into another (aimGhosts) - the circle's
+   *  first EG_GHOSTS_MAX alone, its later halls drew none */
+  const ghostAll = steps.filter((st) => st.s.kind === 'beat' || EG_CRUMBLE_KINDS.includes(st.s.kind));
+  let ghostSteps = ghostAll.slice(0, EG_GHOSTS_MAX), ghostHall = ghostAll.length > EG_GHOSTS_MAX ? -1 : null;
   ghostSteps.forEach((st, k) => { st.ghost = k; });
   const ghostStep = new Float32Array(EG_GHOSTS_MAX * 4), ghostState = new Float32Array(EG_GHOSTS_MAX * 4);
+  const ghostKinds = () => ghostSteps.map((st) => ({ kind: st.s.kind === 'beat' ? 'beat' : 'crumble' }));
+  /** EG-PERFECT's audit: a circle past the slots - its ghosts the hall nearest realm x `rx` and the halls nearest it, in the
+   *  circle's order within a hall; nothing to do while that hall's are stood (a circle within the slots keeps its own). */
+  function aimGhosts(rx) {
+    if (ghostHall === null) return;
+    let hs = null;
+    for (const q of specs) if (!hs || Math.abs(rx - q.x0) < Math.abs(rx - hs.x0)) hs = q;
+    if (!hs || hs.h === ghostHall) return;
+    ghostHall = hs.h;
+    for (const st of ghostSteps) st.ghost = -1;
+    const off = (st) => Math.abs(st.spec.x0 - hs.x0);
+    ghostSteps = ghostAll.map((st, k) => ({ st, k })).sort((a, b) => off(a.st) - off(b.st) || a.k - b.k).slice(0, EG_GHOSTS_MAX).map((q) => q.st);
+    ghostSteps.forEach((st, k) => { st.ghost = k; });
+    ghostStep.fill(0); ghostState.fill(0);
+    pass?.ghosts(ghostKinds());
+  }
   /** @type {SdStepsPass | null} */
   let pass = null;
   let passTried = false;
@@ -1164,6 +1186,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       const on = key ? byKey.get(key) ?? null : null;
       if (on && live && (EG_CRUMBLE_KINDS.includes(on.s.kind) || on.s.kind === 'sink') && on.touched == null) { on.touched = t; on.wait = SD_CRUMBLE_DELAY + spireCrumbleWait(); if (on.s.kind !== 'sink') play3(SD_STEPS_SOUNDS.grind, [on.T[0], on.T[1], on.T[2]], 1, 1.3); }   // EG-ZL: a Crumble grinds under my foot (the Steps')
       lastT = t; access = egAccessNow();   // EG-ZL: the frame's clock and the screen's settings (the danger palette, reduced motion)
+      if (live && body?.pos) aimGhosts(dungeonToRealm(body.pos[0], body.pos[1], body.pos[2])[0]);   // EG-PERFECT's audit: the ghosts of the halls I am among
       poseLit(t);
       posePlanks(t);   // AUDIT EG III: the Spirebridges the room raised
       for (const st of steps) pose(st, t);
@@ -1243,7 +1266,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
      */
     drawPass(proj, view, fog = null) {
       if (!draws || !renderer?.gl || !ghostSteps.length) return false;
-      if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl, ghostSteps.map((st) => ({ kind: st.s.kind === 'beat' ? 'beat' : 'crumble' })), { max: EG_GHOSTS_MAX, slab: true, fogFloor: EG_FOG_FLOOR }); } catch (e) { console.warn('[eg] the ghosts would not build', e?.message ?? e); pass = null; } }
+      if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl, ghostKinds(), { max: EG_GHOSTS_MAX, slab: true, fogFloor: EG_FOG_FLOOR }); } catch (e) { console.warn('[eg] the ghosts would not build', e?.message ?? e); pass = null; } }
       if (!pass) return false;
       const vp = renderer._worldViewportPx;   // the world image (px) - read, never copied
       return pass.draw(proj, view, ghostStep, ghostState, fog, renderer.lightingLane ? SD_SKY_STEPS.lane : SD_SKY_STEPS.classic, vp?.[2] ?? 0, vp?.[3] ?? 0, egGhostRgb(access?.palette));   // AUDIT EG III (lane4 #5): in the palette's safety

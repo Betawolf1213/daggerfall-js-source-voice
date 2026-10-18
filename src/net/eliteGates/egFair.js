@@ -71,7 +71,7 @@
 //       is `h<hero>:<floor>`; laws 4-8 keep `h<i>`.
 import { poseTsDiff } from '../wire.js';
 import { egPieceAt, egCrossMin, EG_BODY_R, EG_SINK_GONE_M, EG_FAST_RUN_MPS } from './egSpanLaw.js';
-import { EG_SPAN_RUN_MPS, EG_JUMP_G, EG_WAIT_MAX, EG_SET_MARGIN } from './egSpanLaw.js';   // EG-PERFECT: the tube's start, the step-off reach
+import { EG_SPAN_RUN_MPS, EG_JUMP_G, EG_WAIT_MAX, EG_SET_MARGIN, EG_DROP_CM } from './egSpanLaw.js';   // EG-PERFECT: the tube's start, the step-off reach
 import { egRouted } from './egRouteProof.js';   // EG-PERFECT: a hall proven over its route (LAW 9) - its tube falls from its mouth
 import { egBridgeOf, egOnBridge } from './egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, ground while it stands
 import { segDist, egPolyIn } from './egShape.js';   // EG-HERO-LAY: a hero's floors are polygons
@@ -263,8 +263,14 @@ export const EG_TUBE_MOUTH_S = EG_WAIT_MAX + (EG_SET_MARGIN * EG_TUBE_MOUTH_M) /
 /** Is the tube of hall `spec` started from its mouth (a routed hall - LAW 9, net/eliteGates/egRouteProof.js egRouted), rather than from
  *  its wake (laws 4-8)? */
 export const egTubeFromMouth = (spec) => !!spec?.tube && egRouted(spec);
-/** Do feet at (x, y, z) (the hall's frame) stand at a routed hall's tube's mouth - within EG_TUBE_MOUTH_M of its first metre? */
-export const egTubeAtMouth = (spec, x, y, z) => egTubeFromMouth(spec) && Math.hypot(x - spec.tube.x, y - (spec.tube.y ?? 0), z - spec.tube.z0) <= EG_TUBE_MOUTH_M;
+/** Do feet at (x, y, z) (the hall's frame) stand at a routed hall's tube's mouth - within EG_TUBE_MOUTH_M of its first metre, or
+ *  past it down the tube (THE AUDIT: a pose a beat late, already in, starts it too - at the mouth's sphere alone a pose that
+ *  skipped it never did, and the tube stood for good), its floor's height within EG_TUBE_MOUTH_M? */
+export const egTubeAtMouth = (spec, x, y, z) => {
+  const T = spec?.tube;
+  if (!egTubeFromMouth(spec) || Math.abs(y - (T.y ?? 0)) > EG_TUBE_MOUTH_M) return false;
+  return Math.hypot(x - T.x, y - (T.y ?? 0), z - T.z0) <= EG_TUBE_MOUTH_M || (Math.abs(x - T.x) <= T.halfW && z >= T.z0 && z <= T.z1);
+};
 /**
  * THE COLLAPSING TUBE'S FALLEN EDGE (m along the hall, -Infinity before it begins) in hall `spec` at shared ms `tMs`: a routed
  * hall's from `tm`, the instant (relay ms) the room recorded the company at its mouth (0 not yet - it stands), EG_TUBE_MOUTH_S
@@ -290,8 +296,10 @@ const bandFallen = (spec, b, z, hw, tMs, tm = 0) => hw > 0 && ((b.role === 'walk
 /** A fall that passed a void zone is a fall into the void once the feet are this far under the floor they left (m - the fair
  *  trail's own fall, EG_FALL_M): a running jump down a stair at THE SPAN BUILD lands 2.55 m under its tread, and every zone
  *  stands over a way at least 5 m under the one it was left from (net/eliteGates/egAscent.js voidsOf), so a fall through one passes
- *  this mark in the air. */
-export const EG_VOID_DROP_M = 3;
+ *  this mark in the air. THE AUDIT: past the deepest Drop (EG_DROP_CM, a quarter metre more) - spec law 10 lays its Drops 3 to
+ *  4.5 m under their road, and at a Gale-Swept fork a zone about the plate held the Drop past its edge: at 3 m every way down
+ *  onto it was the void's (seed 3's hall 7, both roads). */
+export const EG_VOID_DROP_M = EG_DROP_CM / 100 + 0.25;
 /** THE STEP-OFF REACH: how far out a body run off an edge at THE SPAN BUILD carries while it falls `dy` metres (its run held,
  *  the motor's g - EG_JUMP_G), its capsule beside (m). A void zone's footprint is the lower way's plan under the upper's 3 m
  *  about it (net/eliteGates/egAscent.js voidsOf); a running step-off from 10 m carries 6 m, past it - so it is read widened by this. */

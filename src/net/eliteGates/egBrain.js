@@ -593,9 +593,17 @@ function wake(B, now, rng, out) {
  *  sparks and packs from the wake on the arrival plate - 200 m and more of the way before anyone stood on its floor. Its clocks
  *  (EG_AWAIT_CLOCKS) are held, each beat, until the first member stands on its fight ground (`here`); every other beat of the
  *  hall (its Lurkers, Kyn's Vigil at the plate, the fragments' hazards) keeps its own time. */
-export const EG_AWAIT_CLOCKS = Object.freeze(['waveAt', 'packAt', 'wanderAt', 'escortAt', 'ashAt', 'sparkAt', 'ventAt']);
-/** Does hall `spec`'s trial await its company (EG_AWAIT_CLOCKS - spec law 10's Rift-Yard, Athenaeum and Deepway)? Pure. */
-export const egTrialAwaits = (/** @type {any} */ spec) => egLawOf(spec) >= EG_BROKEN_LAW && ['yard', 'athenaeum', 'deepway'].includes(spec?.kind);
+export const EG_AWAIT_CLOCKS = Object.freeze(['waveAt', 'packAt', 'wanderAt', 'escortAt', 'ashAt', 'sparkAt', 'ventAt', 'quietUntil']);
+/** Does hall `spec`'s trial await its company (EG_AWAIT_CLOCKS - spec law 10's Rift-Yard, Athenaeum and Deepway; THE AUDIT: and
+ *  its Scriptorium, whose quiet ran from the wake while its company still climbed its rooms - pulled before THE SPAN BUILD
+ *  reached its door)? Pure. */
+export const egTrialAwaits = (/** @type {any} */ spec) => egLawOf(spec) >= EG_BROKEN_LAW && ['yard', 'athenaeum', 'deepway', 'scriptorium'].includes(spec?.kind);
+/** Does body `b` (the hall's frame, its feet) stand on hall `spec`'s trial's own ground - its way's first course that is no broken
+ *  bridge (a Scriptorium's, which lays no fight floor)? Pure. */
+export const egOnTrialGround = (/** @type {any} */ spec, /** @type {{x: number, y: number, z: number}} */ b) => {
+  const g = spec?.route?.courses?.find((/** @type {any} */ q) => !q.b);
+  return !!g && b.x >= g.x0 - 1 && b.x <= g.x1 + 1 && b.z >= g.z0 - 1 && b.z <= g.z1 + 1 && (!Number.isFinite(b.y) || (b.y >= g.y0 - 1 && b.y <= g.y1 + 3));   // (feet with no height said: in plan)
+};
 /** AUDIT EG IV (lane2 #3; section 18's strata): THE TWIN COURT's second lords - one of each band, the one drawn never of the
  *  Court's own lord's band; each lord of a pair stands at EG_PAIR_HP of its health. THE MASTERS' GROUND (THE OLD MASTERS with a
  *  master the Court's own lord - both masters standing): the Last Lesson stops at EG_MASTERS_LESSON_R and the Examination's runes
@@ -1556,7 +1564,8 @@ function trial(B, spec, now, inHall, rng, out) {
     sapGoal: (a) => sapperGoal(F, spec, a),
     sapAt: (a) => sapperReach(F, spec, a, now, out),
     ghostHit: (g, t) => { t.hp -= Math.max(1, F.mean * 1.5); if (t.hp <= 0) { egGone(F, [t], EG_GONE.slain, "A Battlemage's Ghost", now, out); egAddSlain(F, spec, t, null, now, here, out, legionCtx); } },
-    deserterGoal: () => { const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward)); return r[0] ? [r[0].x, r[0].z] : null; },
+    deserterGoal: () => { if (F.await != null) return null;   // (THE AUDIT: no rift closed for the company while its trial awaits it)
+      const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward)); return r[0] ? [r[0].x, r[0].z] : null; },
     deserterHit: () => { const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward))[0]; if (r) { r.hp -= F.mean * 2; if (r.hp <= 0) { r.hp = 0; F.desClosed = (F.desClosed ?? 0) + 1; riftClosed(B, F, spec, r, 'The Deserter', now, out); } } },
   };
   // EG-H2 (Elite-Gates.md section 22): the beat's own closures ride the fight unenumerated - a record that carried them
@@ -1579,7 +1588,7 @@ function trial(B, spec, now, inHall, rng, out) {
   }
   // EG-PERFECT - THE BROKEN WAY (spec law 10): its clocks held, beat by beat, until the first member stands on its fight ground
   if (F.await != null) {
-    if (here.length) delete F.await;
+    if ((spec.kind === 'scriptorium' ? inHall.filter((b) => egOnTrialGround(spec, b)) : here).length) delete F.await;
     else { const dt = now - F.await; F.await = now; for (const k of EG_AWAIT_CLOCKS) if (F[k] > 0) F[k] += dt; }
   }
   const kind = spec.kind, v = spec.variant;

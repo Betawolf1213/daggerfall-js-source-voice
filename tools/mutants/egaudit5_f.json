@@ -286,7 +286,7 @@
   {
     "name": "EGA5F-rim-landing-none",
     "file": "src/net/eliteGates/egLaw.js",
-    "old": "if ((q.road ?? 0) === 0 && q.after > 0) ends.push(",
+    "old": "if ((q.road ?? 0) === 0 && q.after > 0 && !q.hd) ends.push(",
     "new": "if (false) ends.push(",
     "tests": [
       "test/net/eliteGates/egaudit5_f_rim.test.js"

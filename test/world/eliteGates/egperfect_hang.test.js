@@ -53,7 +53,7 @@ test('EG-PERFECT A DRIFT\'S HANG UNDER A FLOOR (section 10.3): each band\'s anch
   const gap = (x0, z0, x1, z1, s) => Math.hypot(Math.max(0, x0 - s.x, s.x - x1), Math.max(0, z0 - s.z, s.z - z1));
   const clearOf = (sp, s) => Math.min(Infinity, ...sp.discs.filter((d) => d.y > s.y + 2.4).map((d) => gap(d.x - d.r, d.z - d.r, d.x + d.r, d.z + d.r, s)),
     ...sp.lanes.filter((l) => l.y > s.y + 2.4).map((l) => gap(Math.min(l.ax, l.bx) - l.hw, Math.min(l.az, l.bz) - l.hw, Math.max(l.ax, l.bx) + l.hw, Math.max(l.az, l.bz) + l.hw, s)),
-    ...(sp.heroes ?? []).filter((q) => q.box && q.y + q.box[4] > s.y + 2.4).map((q) => gap(q.x + q.box[0], q.z + q.box[2], q.x + q.box[3], q.z + q.box[5], s)));
+    ...(sp.heroes ?? []).filter((q) => q.box && q.box[4] > s.y + 2.4).map((q) => gap(q.box[0], q.box[2], q.box[3], q.box[5], s)));   // (a room's box in the hall's frame - THE AUDIT)
   let open = null;
   for (let seed = 1; seed <= 6 && !open; seed++) for (const sp of egCircleSpecs(seed, 3, seed % 9)) { const s = sp.steps.find((q) => q.kind === 'drift' && clearOf(sp, q) > 12); if (s) { open = { sp, s }; break; } }
   assert.ok(open, 'a drift under the open sky');

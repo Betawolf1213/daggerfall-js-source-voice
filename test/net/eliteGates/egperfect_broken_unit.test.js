@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, egAscentProof, EG_SPEC, EG_BROKEN_LAW, EG_BROKEN_TRIES, EG_RELAY_MAX, EG_STEP, EG_SEALED_MS, EG_CLOSING_FIGHT_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { EG_BROKEN_KINDS, EG_BROKEN_TURNED } from '../../../src/net/eliteGates/egAscent.js';
-import { egSpanPairs, egSpanProof, egSpanOf, egPairWindows, egSpanBuildOf, EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_RAIL_CLEAR, EG_DROP_CM, EG_DROP_LAW10_CM } from '../../../src/net/eliteGates/egSpanLaw.js';
+import { egSpanPairs, egSpanProof, egSpanOf, egPieceAt, egPairWindows, egSpanBuildOf, EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_RAIL_CLEAR, EG_DROP_CM, EG_DROP_LAW10_CM } from '../../../src/net/eliteGates/egSpanLaw.js';
 import { egRouteLegs } from '../../../src/net/eliteGates/egRouteProof.js';
 import { egFragPassage, egFragChamber, egSetPiece, EG_ALCOVE_REACH_M } from '../../../src/net/eliteGates/egFragLaw.js';
 import { egBreachNew, egEnter, egStep, egTrialAwaits, egClosingMs } from '../../../src/net/eliteGates/egBrain.js';
@@ -36,7 +36,7 @@ test('EG-PERFECT THE BROKEN WAY (unit) - THE LAW AND ITS BRIDGES: spec law 10 is
   assert.ok(turned >= 4 && straight >= 1, `${turned} turned, ${straight} along +z`);
 });
 
-test('EG-PERFECT THE BROKEN WAY (unit) - THE FORK: a Gale-Swept span (77:7 on ground 4) forks, its Low Road linked by its bridge across and its own spans on, never a bridge that climbs; a deep span\'s fork (4:97 on ground 4 - its course 141 m with a trunk under two ranks) laid first and stands forked; a hall the planner refuses on every law-9 try stands on one of its own (77:57 on try 10, its courses whole - never the plainest) (mutants: the Low Road\'s islands bridges; the fork second; a trunk under two ranks; the planner\'s own tries gone)', () => {
+test('EG-PERFECT THE BROKEN WAY (unit) - THE FORK: a Gale-Swept span (77:7 on ground 4) forks, its Low Road linked by its bridge across and its own spans on, never a bridge that climbs; a deep span\'s fork (4:97 on ground 4 - its course 141 m with a trunk under two ranks) laid first and stands forked; a hall the planner refuses on every law-9 try stands on one of its own (77:37 on try 9, its courses whole - never the plainest; PIN MOVED, EG-PERFECT\'s audit: 77:57 lays on law 9\'s eighth try now its long bridges break in parts) (mutants: the Low Road\'s islands bridges; the fork second; a trunk under two ranks; the planner\'s own tries gone)', () => {
   const g = L10(77, 7, 4);
   assert.ok(g.fork && g.geo % 3 > 0, '77:7:4 forks under the Gale');
   for (const l of g.route.links.filter((q) => q.road === 1 && q.kind === 'bridge')) assert.ok(Math.abs(g.route.nodes[l.a][1] - g.route.nodes[l.b][1]) <= 0.6, 'a Low Road bridge level');
@@ -44,8 +44,8 @@ test('EG-PERFECT THE BROKEN WAY (unit) - THE FORK: a Gale-Swept span (77:7 on gr
   const deep = L10(4, 97, 4);
   assert.ok(deep.fork && deep.laid <= EG_RELAY_MAX + EG_BROKEN_TRIES, `4:97:4 forks (laid on try ${deep.laid})`);
   assert.ok(Math.min(...deep.steps.filter((q) => (q.road ?? 0) === 1).map((q) => q.z)) < Math.min(...deep.steps.filter((q) => !q.hd && (q.road ?? 0) === 0 && q.z > deep.fork.plate).map((q) => q.z), Infinity), 'its fork the first course along its way');
-  const lean = L10(77, 57);
-  assert.ok(lean.laid > EG_RELAY_MAX && lean.laid <= EG_RELAY_MAX + EG_BROKEN_TRIES, `77:57 on a try of the plan's own (${lean.laid})`);
+  const lean = L10(77, 37);
+  assert.ok(lean.laid > EG_RELAY_MAX && lean.laid <= EG_RELAY_MAX + EG_BROKEN_TRIES, `77:37 on a try of the plan's own (${lean.laid})`);
   assert.ok(lean.fork, 'its courses whole - its fork among them');
 });
 
@@ -116,7 +116,11 @@ test('EG-PERFECT THE BROKEN WAY (unit) - THE PASSAGES, THE DROP, THE RAILS, THE 
   R.run('rail', 3);
   const rails = R.lay();
   assert.ok(rails.every((q) => q.period === rails[0].period && q.gap === rails[0].gap && q.amp <= Math.floor((q.gap - EG_RAIL_CLEAR * 100) / 2)), 'one gap, one period, travel under half the gap less the clear');
-  assert.deepEqual(rails.map((q) => q.phase), [0, rails[0].period / 2, 0], 'half a cycle apart');
+  // PIN MOVED (THE AUDIT): half a cycle as the travel reads a phase - its angle, π (egPieceAt: sin(2πt/period + phase)); a
+  // period's half in its own units stood 172-258 degrees apart
+  assert.deepEqual(rails.map((q) => q.phase), [0, Math.round(Math.PI * 1000), 0], 'half a cycle apart');
+  const at = (q, t) => egPieceAt({ ...q, period: q.period / 1000, phase: q.phase / 1000 }, t).dz;
+  for (const t of [0, 1.3, 2.9]) assert.ok(Math.abs(at(rails[0], t) + at(rails[1], t) * (rails[0].amp / rails[1].amp)) < 1e-2 * rails[0].amp, `the two neighbours opposed at ${t} s`);
   for (const c of [egFragPassage('forge', sdRng(5), { law: 10 }).course.filter((q) => q.k === 'rail'), egSetPiece('forgeline', sdRng(5), { law: 10 }).course]) assert.ok(c.every((q) => q.period === c[0].period && q.phase === c[0].phase), 'the Forge\'s one belt');
   // travelling neighbours that meet (each on its own period), in metres
   const meet = [0, 1].map((k) => ({ i: k, kind: 'rail', span: 0, x: 0, y: 0, z: 2.6 + 1.5 + k * 5.6, w: 3, d: 3, amp: 1.5, period: 6 + k * 1.3, phase: k * 1.5, beat: 0, gap: 2.6, road: 0, kit: '', after: k ? 3 : 0 }));

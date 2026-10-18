@@ -110,8 +110,8 @@
   {
     "name": "PROOFS-another-road-s-pieces-taken",
     "file": "src/net/eliteGates/egRouteProof.js",
-    "old": "if ((s.road ?? 0) !== road || s.z < z0",
-    "new": "if (s.z < z0",
+    "old": "if ((s.road ?? 0) !== road || s.hd % 2 === 1 || s.z < z0",
+    "new": "if (s.hd % 2 === 1 || s.z < z0",
     "tests": [
       "test/net/eliteGates/law9_proofs.test.js"
     ]

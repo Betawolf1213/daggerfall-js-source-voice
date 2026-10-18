@@ -59,7 +59,7 @@ import { egHitBody, egFightState } from './egBodies.js';   // EG-ZK: the seam's 
 import { egFace } from './egBodies.js';   // AUDIT EG V (lane1 #7): a lord's turn said
 import { egUnionHeld } from './egBodies.js';   // EG-PERFECT (section 13.2): a lord never commits to a blow THE UNION FLOOR would drop
 import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom, egChainGapMs } from './egShape.js';
-import { egBlowOf } from './egShape.js';   // EG-PERFECT: a blow weighed before it is chosen
+import { egBlowOf, egInBlow } from './egShape.js';   // EG-PERFECT: a blow weighed before it is chosen (THE AUDIT: and one over the caged)
 import { EG_LORDS, EG_DECREES, EG_DECREE_BY_KEY, EG_LAW_UNIT, EG_BANDS, egKeepOnFight, egOnFight, egFightProfile, egBandOfCircle } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
 import { egLegionSummon } from './egLegion.js';   // AUDIT EG IV (lane1 #6): a lord's summons held to the room under the legion's cap
@@ -148,9 +148,10 @@ export const EG_LATTICE_W = 4;
 export const EG_LATTICE_STEP_MS = 1400;
 export const EG_CAGE_AGAIN_MS = 40_000;
 /** EG-PERFECT (section 13.4, the Conquest): a banner planted every this long until the round's three stand (ms), each third
- *  told this long before it burns (ms - the longest way off a third, 20.8 m, at the escape build plus EG_REACT_S: 3.49 s). */
+ *  told this long before it burns (ms - THE AUDIT: the longest way off a third where its neighbour already burns, the court's
+ *  whole 24 m radius, at the escape build plus EG_REACT_S: 3.94 s; 3.5 s covered a lone third's 20.8 m alone). */
 export const EG_CONQUEST_EVERY_MS = 8000;
-export const EG_CONQUEST_TELL_MS = 3500;
+export const EG_CONQUEST_TELL_MS = 4000;
 /** EG-PERFECT: the next Conquest after a round's last banner falls (ms), and how long two banners hold her ward at most (ms). */
 export const EG_CONQUEST_AGAIN_MS = 45_000;
 export const EG_BANNER_WARD_MS = 25_000;
@@ -380,7 +381,11 @@ function wouldHold(F, spec, L, stamps, B, here, now, delay = 0) {
   const blow = egBlowOf({ i: 0, o: L.i, s: scaleStamps(law, stamps, false), at: 0, wu: B.wu + delay, p: 0, nm: B.nm, sp: B.sp ?? 0 });
   blow.at = now + EG_TELL_LEAD_MS + blow.wu;
   if (egByHeight(spec) && Number.isFinite(L.y)) blow.y = r2(L.y);
-  return egUnionHeld(F, spec, blow, here, now);
+  // (THE AUDIT: and the ground its pool leaves burning, as the union floor will weigh it said - its number 0 for the weigh, which
+  // no blow takes)
+  const pools = (F.mem.pools ??= {}), had = pools[0];
+  if (B.pool) pools[0] = [B.pool.r, B.pool.ms, 0, 0];
+  try { return egUnionHeld(F, spec, blow, here, now); } finally { if (had === undefined) delete pools[0]; else pools[0] = had; }
 }
 /** EG-PERFECT (section 13.2's targeting; the audit: Moonshatter, Hellfire and the Wyrm's Meteor took `here`'s first, the company's
  *  join order, so its later members were never their marks): `k` members for a blow of several marks - the chosen target first
@@ -768,7 +773,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const blow = made?.stamps ? lordBlow(F, spec, L, made.stamps, { ...B, ...(made.B ?? {}) }, here, now, out, { feint: made.feint, ch: B.ch, delay: made.delay }) : null;
     if (blow) furyChain(F, spec, L, blow, here, now, out);
     if (made?.extra) for (const e of made.extra) { const b2 = lordBlow(F, spec, L, e.stamps, { ...B, ...e.B }, here, now, out, { delay: e.delay ?? 0 }); if (b2 && e.feint) (F.mem.feints ??= []).push([b2.i]); }
-    L.cds[B.nm] = now + (B.cd ?? 0);
+    L.cds[B.nm] = now + Math.max(B.cd ?? 0, made?.cd ?? 0);   // (THE AUDIT: a blow that runs long - the Lattice's sweep - holds its own cooldown past its end)
     L.run = B.nm === L.lastBlow ? L.run + 1 : 1; L.lastBlow = B.nm;
     const wu = (blow?.wu ?? B.wu) + (made?.delay ?? 0), landAt = blow ? blow.at : now + wu;   // EG-H1: the committed blow's own landing (its lead in it)
     let to = made?.to && B.run ? runTo(view, L, made.to) : made?.to ?? null;
@@ -1038,9 +1043,11 @@ const KITS = {
         const f = mainDisc(spec, L), yaw = Math.atan2(t.x - L.x, t.z - L.z) + Math.PI / 2, ux = Math.sin(yaw), uz = Math.cos(yaw), vx = Math.cos(yaw), vz = -Math.sin(yaw);
         // EG-PERFECT: A SWEEP - strips side by side over the whole floor, from the side farthest from its mark across it, each
         // EG_LATTICE_STEP_MS after the last (four strips with fixed gaps before: the gaps were never struck)
-        const W = EG_LATTICE_W, n = Math.max(3, Math.floor((2 * f.r) / W)), side = (t.x - f.x) * vx + (t.z - f.z) * vz >= 0 ? -1 : 1, o0 = side * ((n * W) / 2 - W / 2);
+        // (THE AUDIT: strips enough to cover the floor rim to rim - a floor's count left its edges' metre unstruck - and the next
+        // sweep only once this one's last strip has landed, 2 s on: a 12 s cooldown overlapped a sweep of ten strips or more)
+        const W = EG_LATTICE_W, n = Math.max(3, Math.ceil((2 * f.r) / W)), side = (t.x - f.x) * vx + (t.z - f.z) * vz >= 0 ? -1 : 1, o0 = side * ((n * W) / 2 - W / 2);
         const lanes = Array.from({ length: n }, (_, j) => o0 - side * j * W).map((o) => shLane(f.x + vx * o - ux * f.r, f.z + vz * o - uz * f.r, f.x + vx * o + ux * f.r, f.z + vz * o + uz * f.r, W));
-        return { stamps: [lanes[0]], extra: lanes.slice(1).map((s, j) => ({ stamps: [s], delay: EG_LATTICE_STEP_MS * (j + 1), B: {} })) };
+        return { stamps: [lanes[0]], extra: lanes.slice(1).map((s, j) => ({ stamps: [s], delay: EG_LATTICE_STEP_MS * (j + 1), B: {} })), cd: EG_LATTICE_STEP_MS * (n - 1) + 1400 + 2000 };
       } },
       { nm: 'Arcane Bolt', wu: 1600, rec: 700, p: 0.3, b: 8, el: 'shock', range: 30, w: 3, make: (F, spec, L, t) => ({ stamps: [shDisc(t.x, t.z, 3)] }) },
       { nm: 'Mirror Images', wu: 600, rec: 400, p: 0, b: 0, range: 99, w: 1, cd: 30_000, when: (F, L) => !egHas(L, EG_FL.mirror) && mirrorsOf(F, L).length === 0, make: (F, spec, L, t, here, rng, now, out) => {
@@ -1051,7 +1058,7 @@ const KITS = {
       { nm: 'Blink', wu: 500, rec: 300, p: 0, b: 0, range: 99, minGap: 0, w: 1, cd: 15_000, make: (F, spec, L, t, here, rng, now) => { const f = mainDisc(spec, L), a = Math.atan2(L.x - f.x, L.z - f.z) + Math.PI; return { stamps: null, to: egKeepOnFight(spec, f.x + Math.sin(a) * f.r * 0.7, f.z + Math.cos(a) * f.r * 0.7, 2, L.y) }; } },
     ],
     phase(F, spec, L, ph, now, here, rng, out, ctx) {
-      if (ph === 2) examination(F, spec, L, now, here, rng, out, ctx);
+      if (ph === 2 && L.hp / L.max > PHASE_AT[1]) examination(F, spec, L, now, here, rng, out, ctx);   // (THE AUDIT: a burst past both lines takes the third's cage alone - no runes it could not hold)
       if (ph === 3) finalExam(F, spec, L, now, here, rng, out, ctx);
     },
     tick(F, spec, L, now, here, rng, out, ctx) {
@@ -1488,11 +1495,14 @@ const KITS = {
     phase(F, spec, L, ph, now, here, rng, out) {
       // EG-PERFECT (section 13.3, Burning Perches): the perches broken before its second phase RISE AGAIN, molten, at its turn - so
       // the phase has perches to burn (a company that broke all three in the first had no Burning Perches, no flight and no Meteor)
-      if (ph === 2) {
+      // (THE AUDIT: a burst past both lines turns its third at once - grounded for good, it raises none; and grounded for good
+      // in its first, it takes flight again from the perches risen - its landing's run out at once)
+      if (ph === 2 && L.hp / L.max > PHASE_AT[1]) {
         const have = egObjsOf(F, 'pillar');
         let k = 0;
         for (const [px, pz, y] of spotsOr(spec, L, 'pillar', 3, 18)) if (!have.some((p) => dist(p.x, p.z, px, pz) < 1)) { obj(F, 'pillar', px, pz, egHpTeam(F, 6), now, out, { r: 1.5, y }); k++; }
         if (k) say(out, 'perches');
+        if (k && egHas(L, EG_FL.grounded) && !L.groundedUntil) L.groundedUntil = now;
       }
       if (ph === 3) { egSetFl(F, L, EG_FL.fly, false, out); egSetFl(F, L, EG_FL.grounded, true, out); const f = mainDisc(spec, L); kitPlace(F, L, f.x, f.z, now); }
     },
@@ -1584,8 +1594,9 @@ const sigHolds = (L, hold) => !!hold && L.hp / L.max > PHASE_AT[1];
 /** EG-PERFECT: the soul-chains standing as links `[a, sub]` - each chain's first member and a mate, and each odd member's Wraith
  *  (`a` its body's number) - for Soul Rend's midpoint. */
 const chainLinks = (F) => [...(F.mem.chains ?? []).flatMap((c) => c.slice(1).map((s) => [c[0], s])), ...(F.tethers ?? []).filter((t) => t[2] === 2 && typeof t[0] !== 'string').map((t) => [t[0], t[1]])];
-/** EG-PERFECT: the Wyrm's breath from a perch reaches this far at most (m). */
-export const EG_WYRM_REACH_M = 40;
+/** EG-PERFECT: the Wyrm's breath from a perch reaches this far at most (m). THE AUDIT: a law 10 Wyrm's perch stands 30 m off its
+ *  court's heart, its far rim 52 m off (seed 1's hall 85) - at 40 m a quarter of its court lay past every Breath. */
+export const EG_WYRM_REACH_M = 64;
 /** EG-PERFECT: a Crossing the union floor dropped is tried again this long on (ms). */
 export const EG_CROSS_AGAIN_MS = 10_000;
 /** Grath's island under a body (its object's number), or null. */
@@ -1642,7 +1653,12 @@ function finalExam(F, spec, L, now, here, rng, out, ctx) {
   const seals = n >= 2 ? Math.max(1, Math.min(3, n - 1)) : 3;
   const c = bound ?? here[0] ?? { x: L.x, z: L.z };
   for (let j = 0; j < seals; j++) { const a = (j / seals) * Math.PI * 2; const [x, z, y] = egKeepOnFight(spec, c.x + Math.sin(a) * (n >= 2 ? 9 : 6), c.z + Math.cos(a) * (n >= 2 ? 9 : 6), 1, c.y ?? L.y); obj(F, 'seal', x, z, egHpTeam(F, 2.5, seals), now, out, { r: 0.8, y }); }
-  if (bound) { egMark(F, bound.sub, 5, now + 8000); F.mem.mkDirty = 1; }
+  if (bound) {
+    egMark(F, bound.sub, 5, now + 8000); F.mem.mkDirty = 1;
+    // (THE AUDIT: a blow already said over the bound - aimed before the cage held its feet - is cut as the cage closes; one not
+    // yet said is held by THE UNION FLOOR, the cage its only ground - net/eliteGates/egBodies.js egUnionHeld)
+    for (const b of [...F.blows]) if (!b.ch && b.at > now && egInBlow(b, bound.x, bound.z)) egCut(F, b.i, out, now);
+  }
   F.mem.exam = { kind: 'seals', bound: bound?.sub ?? null, until: now + 8000 };
   say(out, 'cage');
 }

@@ -81,9 +81,11 @@ const row = (o) => Object.freeze(Object.fromEntries(MADE_LEVEL_RULE_KEYS.map((k)
  *  SOLVER) and the Shattered Hour's Unmoored Steps (SD7b) are both proven with THE SPAN BUILD's PLAIN running jump, and the
  *  enhanced climb is forced on online (systems/features.js `enhanced-climbing`, scenes/shared.js parkourSwitchOn): a running
  *  Jump within PARKOUR_RUNLEAP_EDGE of an edge became CLIMB3's leap, ~3.9 m at Jumping 0 and ~8.4 m at Jumping 100 - past the
- *  platform the plain jump lands on (with the leap: 20 of 115 swept roads not crossed; refused: none). The Hour shares the
- *  law (its Steps are the Spire's pieces' own record, and its online page forces the same lane), so both rows refuse it; the
- *  court has no course. The wall run, the mantle, the vault and the free climb stay on. */
+ *  platform the plain jump lands on (the sweep with the online page's parkour on every frame: 50 of 308 courses not crossed with
+ *  the leap, none refused - Elite-Gates.md's EG-PERFECT ways record). The Hour shares the law (its Steps are the Spire's pieces'
+ *  own record, and its online page forces the same lane), so both rows refuse it; the court has no course. The wall run, the
+ *  mantle, the vault and the free climb stay on. THE AUDIT: the Hour gives no late press (DFU's motor's own), so its refused
+ *  late Jump past an edge is nothing at all - as DFU's; the Spire's is its own forgiveness, the plain jump. */
 export const MADE_LEVEL_RULES = Object.freeze({
   court: row({ save: 'refused', rest: 'refused', automap: 'off', mark: 'refused', portalStone: 'refused', companions: 'out', regen: 'off', death: 'castOut', unstuck: 'refused', says: 'mid' }),
   hour: row({ save: 'refused', rest: 'refused', automap: 'off', mark: 'refused', recall: 'refused', portalStone: 'refused', companions: 'out', regen: 'off', levitate: 'banned',

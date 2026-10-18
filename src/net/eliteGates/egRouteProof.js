@@ -168,7 +168,7 @@ export function egRouteSpanSteps(/** @type {any} */ spec, /** @type {number[]} *
     return (spec?.steps ?? []).filter((s) => (s.road ?? 0) === road && s.hd % 2 === 1 && s.x >= x0 && s.x <= x1 && s.y >= y0 && s.y <= y1 && Math.abs(s.z - A[2]) <= EG_ROUTE_COURSE_SIDE_M);
   }
   return (spec?.steps ?? []).filter((s) => {
-    if ((s.road ?? 0) !== road || s.z < z0 || s.z > z1 || s.y < y0 || s.y > y1) return false;
+    if ((s.road ?? 0) !== road || s.hd % 2 === 1 || s.z < z0 || s.z > z1 || s.y < y0 || s.y > y1) return false;   // (THE AUDIT: a link along z takes no piece turned along x)
     const x = dz !== 0 ? A[0] + ((B[0] - A[0]) * (s.z - A[2])) / dz : A[0];
     return Math.abs(s.x - x) <= EG_ROUTE_COURSE_SIDE_M;
   });

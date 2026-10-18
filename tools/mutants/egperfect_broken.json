@@ -56,7 +56,7 @@
   {
     "name": "EGBROKEN-fork-second",
     "file": "src/net/eliteGates/egAscent.js",
-    "old": "return H.law >= EG_BROKEN_LAW ? [() => { H.fork(two, extra); H.meet(); }, first] : [first, () => { H.fork(two, extra); H.meet(); }];",
+    "old": "return H.law >= EG_BROKEN_LAW && !H.lean ? [() => { H.fork(two, extra); H.meet(); }, first] : [first, () => { H.fork(two, extra); H.meet(); }];",
     "new": "return [first, () => { H.fork(two, extra); H.meet(); }];",
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
@@ -110,8 +110,8 @@
   {
     "name": "EGBROKEN-clocks-held-forever",
     "file": "src/net/eliteGates/egBrain.js",
-    "old": "    if (here.length) delete F.await;",
-    "new": "    if (here.length && false) delete F.await;",
+    "old": "    if ((spec.kind === 'scriptorium' ? inHall.filter((b) => egOnTrialGround(spec, b)) : here).length) delete F.await;",
+    "new": "    if (false) delete F.await;",
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
     ]
@@ -164,7 +164,7 @@
   {
     "name": "EGBROKEN-rails-own-periods",
     "file": "src/net/eliteGates/egSpanLaw.js",
-    "old": "        for (let q = 0; q < count; q++) step('rail', g, { x, kit, amp: Math.min(top, egDieBetween(r, 150, 200)), period: P, phase: (q % 2) * (P / 2) });",
+    "old": "        for (let q = 0; q < count; q++) step('rail', g, { x, kit, amp: Math.min(top, egDieBetween(r, 150, 200)), period: P, phase: (q % 2) * Math.round(Math.PI * 1000) });",
     "new": "        for (let q = 0; q < count; q++) step('rail', g, { x, kit, amp: Math.min(top, egDieBetween(r, 150, 200)), period: egDieBetween(r, 60, 90) * 100, phase: q * 1500 });",
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
@@ -200,8 +200,8 @@
   {
     "name": "EGBROKEN-pendulum-at-its-middle",
     "file": "src/net/eliteGates/egSpanLaw.js",
-    "old": "    if (B.flight) { for (let k = 0; k <= 12; k++)",
-    "new": "    if (B.flight && false) { for (let k = 0; k <= 12; k++)",
+    "old": "    if (B.flight) { const v = B.run + EG_JUMP_MPS * EG_JUMP_FWD;",
+    "new": "    if (B.flight && false) { const v = B.run + EG_JUMP_MPS * EG_JUMP_FWD;",
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "EGBROKEN-ring-shut-at-alcove",
     "file": "src/net/eliteGates/egWalkGraph.js",
-    "old": "  if (!((spec?.law ?? spec?.v ?? 0) >= RING_ALCOVE_LAW)) return false;",
-    "new": "  return false;",
+    "old": "  if (!((spec?.law ?? spec?.v ?? 0) >= RING_ALCOVE_LAW)) return walls;",
+    "new": "  return walls;",
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
     ]

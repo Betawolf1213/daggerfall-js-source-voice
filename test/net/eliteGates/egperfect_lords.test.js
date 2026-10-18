@@ -15,13 +15,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egObjsOf, egObjBroken, egLordHit, EG_LESSON_TELL_MS, EG_CONQUEST_EVERY_MS, EG_CONQUEST_TELL_MS,
   EG_ZONE_FIGHT_MS, EG_WYRM_REACH_M, EG_ECLIPSE_NM, EG_SNAP_NM, EG_LATTICE_W, EG_LATTICE_STEP_MS, EG_CAGE_AGAIN_MS } from '../../../src/net/eliteGates/egLords.js';
-import { egFightNew, egFightState, egHas, EG_FL, egBodyById, egBlowsStep, egAim, egUnionHeld, egCut, EG_RING_KEEP_M } from '../../../src/net/eliteGates/egBodies.js';
+import { egFightNew, egFightState, egHas, EG_FL, egBodyById, egBlowsStep, egAim, egUnionHeld, egCut, EG_RING_KEEP_M, EG_TELL_LEAD_MS } from '../../../src/net/eliteGates/egBodies.js';
 import { egUnionHolds, egHavenCheck } from '../../../src/net/eliteGates/egFloor.js';
-import { shDisc, shOut } from '../../../src/net/eliteGates/egShape.js';
+import { shDisc, shOut, egInBlow, egChainGapMs, EG_ESCAPE_MPS, EG_REACT_S } from '../../../src/net/eliteGates/egShape.js';
 import { egFightView } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { foldEg, EG_STATE_EMPTY } from '../../../src/net/eliteGates/egLink.js';
 import { EG_BEAT_TRIAL_MS } from '../../../src/net/eliteGates/egDurable.js';
-import { EG_WIND_GRACE_MS } from '../../../src/scenes/eliteGates/egFight.js';
+import { EG_WIND_GRACE_MS, egWindGraceMs } from '../../../src/scenes/eliteGates/egFight.js';
 import { egRimOf, EG_GUARD_GLINT, EG_SHADE_RIM, egEclipseOfBlows, egEclipseChip } from '../../../src/world/eliteGates/egTelegraph.js';
 import { PHASE_AT } from '../../../src/net/gate/gateBrain.js';
 import { validEgOut, EG_SAY_KEYS } from '../../../src/net/wire.js';
@@ -36,8 +36,9 @@ const wire = (f) => validEgOut(JSON.parse(JSON.stringify(f)));
 
 /** A lord's fight stood and woken as the director stands it, on spec law 8's ground (test/egGive8.mjs); `step(here)` beats it in the
  *  director's order (the lords, then the blows' words), every frame kept. */
-function court(seed, h, key, { n = 2, rng = seeded(seed), law9 = false } = {}) {
-  const spec = law9 ? egHallOf(seed, h, 0) : egGive8Hall(seed, h, 0);   // spec law 8's ground, or the build's own (LAW 9: storeys judged by height)
+function court(seed, h, key, { n = 2, rng = seeded(seed), law9 = false, r = 0 } = {}) {
+  let spec = law9 ? egHallOf(seed, h, 0) : egGive8Hall(seed, h, 0);   // spec law 8's ground, or the build's own (LAW 9: storeys judged by height)
+  if (r) spec = { ...spec, fl: spec.fl.map((q) => (q.t === 'd' ? { ...q, r } : q)) };   // (EG-PERFECT's audit: a lord on a wider floor than its own)
   assert.equal(spec.lord, key, `hall ${h} of seed ${seed} is ${key}'s`);
   const subs = Array.from({ length: n }, (_, i) => `acct-${i}`);
   const F = egFightNew(spec, T0, subs.map(() => 40), subs), frames = [], view = egFightView(spec);
@@ -235,7 +236,12 @@ test('EG-PERFECT #6 THE DUEL\'S RING HOLDS ITS LORD (section 13.3, "a ring of fi
   F.mem.challenge = { by: C.L.i, subs: [duelist], x: ch.x, z: ch.z, r: 6, until: C.now() + 10_000 }; F.pg.ring = [ch.x, ch.z, 6]; F.blows.length = 0;
   const filling = { i: 990, o: C.L.i, s: [shDisc(ch.x, ch.z, 6 - EG_RING_KEEP_M + 0.2)], at: C.now() + 1600, wu: 1600, ch: 0 };
   assert.equal(egUnionHeld(F, C.spec, filling, [{ sub: duelist, x: ch.x, z: ch.z }], C.now()), true, 'a disc filling the ring: held for the duelist');
-  assert.equal(egUnionHeld(F, C.spec, filling, [{ sub: 'acct-x', x: ch.x, z: ch.z }], C.now()), false, 'the same disc on a member outside the duel: the court is theirs');
+  // PIN MOVED (THE AUDIT): a member outside the duel is kept OUT of its ring (every screen's ringKeep) - the court beyond it is
+  // theirs, its inside never: beside the ring under a disc over both, they run out; at its heart (where no screen stands them)
+  // the ring's inside is no ground of theirs
+  const over = { ...filling, i: 991, s: [shDisc(ch.x, ch.z, 8)] };
+  assert.equal(egUnionHeld(F, C.spec, over, [{ sub: 'acct-x', x: ch.x + 6.6, z: ch.z }], C.now()), false, 'the same blow on a member outside the duel, beside its ring: the court is theirs');
+  assert.equal(egUnionHeld(F, C.spec, filling, [{ sub: 'acct-x', x: ch.x, z: ch.z }], C.now()), true, 'the ring\'s inside no ground of theirs');
   // Garoth's ring-filling blows set aside in his duel
   const G = court(1, 100, 'garoth', { n: 2 });
   G.L.hp = G.L.max * 0.6; G.step(on(G));
@@ -454,4 +460,131 @@ test('EG-PERFECT WELLFIRE AIMED (the lords\' audit, Garoth: "aim Wellfire at the
   for (let k = 0; k < 800 && !wf; k++) { C.step([me]); wf = C.frames.find((f) => f.k === 'eb' && f.nm === 'Wellfire'); }
   assert.ok(wf, 'Wellfire thrown');
   for (const s of wf.s) assert.ok(Math.hypot((s[1] + s[3]) / 2 - me.x, (s[2] + s[4]) / 2 - me.z) < 0.6, 'each arm\'s middle over its mark');
+});
+
+// ── THE AUDIT (2026-10-18, Mac: "Lets audit this and ensure perfection") ───────────────────────────────────────────────
+test('EG-PERFECT AUDIT A1 THE WYRM FLIES FROM ITS RISEN PERCHES; A BURST PAST BOTH LINES RAISES NONE (section 13.3): a company that broke all three perches in its first phase grounds it for good - at its second phase its perches rise and it takes flight again from one (it stayed grounded, its Meteor and Burning Perches gone); a burst past both lines turns its third at once and raises nothing it would only stand on (mutants: the risen perches never flown to; the burst raising them)', () => {
+  const me = (W) => [{ sub: 'acct-0', x: W.f.x + 3, z: W.f.z + 3 }];
+  const W = court(1, 85, 'wyrm', { n: 1 });
+  for (let k = 0; k < 8; k++) W.step(me(W));
+  for (const p of egObjsOf(W.F, 'pillar')) egObjBroken(W.F, W.spec, p, 'M0', W.now(), []);
+  for (let k = 0; k < 4 * 30; k++) W.step(me(W));
+  assert.ok(egHas(W.L, EG_FL.grounded) && !W.L.groundedUntil, 'grounded for good: its landing ran out with no perch standing');
+  W.L.hp = W.L.max * 0.6;
+  const o = W.step(me(W));
+  assert.ok(o.some((f) => f.k === 'esay' && f.w === 'perches') && egObjsOf(W.F, 'pillar').length === 3, 'its perches risen at its second phase');
+  for (let k = 0; k < 4; k++) W.step(me(W));
+  assert.ok(egHas(W.L, EG_FL.fly) && !egHas(W.L, EG_FL.grounded) && egObjsOf(W.F, 'pillar').some((p) => p.i === W.L.perch), 'in flight again, on a risen perch');
+  const X = court(1, 85, 'wyrm', { n: 1 });
+  for (let k = 0; k < 8; k++) X.step(me(X));
+  for (const p of egObjsOf(X.F, 'pillar')) egObjBroken(X.F, X.spec, p, 'M0', X.now(), []);
+  X.step(me(X));
+  X.L.hp = X.L.max * 0.3;
+  const o2 = X.step(me(X));
+  assert.deepEqual(o2.filter((f) => f.k === 'eph').map((f) => f.ph), [2, 3], 'both turns taken');
+  assert.ok(!o2.some((f) => f.k === 'esay' && f.w === 'perches') && egObjsOf(X.F, 'pillar').length === 0, 'no perches risen for a Wyrm grounded for good');
+});
+
+test('EG-PERFECT AUDIT A2 A BURST PAST BOTH LINES TAKES THE THIRD\'S CAGE ALONE (section 13.4): the Spellmaster burst from her first phase to her third in one beat lays no Examination\'s runes (they stood the rest of the fight under the cage that overwrote them) - her Final Examination\'s seals alone (mutant: the Examination laid on the way through)', () => {
+  const S = court(1, 15, 'spellmaster', { n: 2 });
+  const here = () => S.subs.map((sub, j) => ({ sub, x: S.f.x + 4 + j, z: S.f.z + 4 }));
+  for (let k = 0; k < 12; k++) S.step(here());
+  S.L.hp = S.L.max * 0.3;
+  const o = S.step(here());
+  assert.deepEqual(o.filter((f) => f.k === 'eph').map((f) => f.ph), [2, 3]);
+  assert.equal(S.F.mem.exam?.kind, 'seals', 'the cage');
+  assert.equal(egObjsOf(S.F, 'rune').length, 0, 'no runes laid');
+  assert.ok(!o.some((f) => f.k === 'esay' && f.w === 'examination'));
+});
+
+test('EG-PERFECT AUDIT A3 THE CAGED STANDS WHERE IT IS (section 13.4, the Final Examination; every screen holds a caged member\'s feet): no aimed blow lands on a caged member while the cage holds it - one said before the cage closed is cut as it closes, one not yet said is held by THE UNION FLOOR, the cage its only ground (the cage closes again every EG_CAGE_AGAIN_MS) (mutants: the union floor planning the caged an escape; the told blow not cut)', () => {
+  const C = court(1, 15, 'spellmaster', { n: 2 });
+  const pos = { 'acct-0': [C.f.x + 5, C.f.z + 5], 'acct-1': [C.f.x - 8, C.f.z - 8] };
+  const here = () => Object.entries(pos).map(([sub, [x, z]]) => ({ sub, x, z }));
+  for (let k = 0; k < 12; k++) C.step(here());
+  C.L.hp = C.L.max * 0.6; for (let k = 0; k < 8; k++) C.step(here());
+  for (const r of egObjsOf(C.F, 'rune')) egObjBroken(C.F, C.spec, r, 'x', C.now(), []);
+  C.F.mem.exam = null; C.L.hpFloor = null;
+  C.L.hp = C.L.max * 0.3;
+  let cages = 0, hits = 0, cuts = 0;
+  for (let k = 0; k < 4 * 180; k++) {
+    const caged = C.F.mem.exam?.kind === 'seals' ? C.F.mem.exam.bound : null, a = k / 20;
+    for (const sub of Object.keys(pos)) if (sub !== caged) pos[sub] = sub === 'acct-1' ? [C.f.x + 10 * Math.sin(a), C.f.z + 10 * Math.cos(a)] : [C.f.x + 6 * Math.cos(a), C.f.z - 6 * Math.sin(a)];
+    const o = C.step(here());
+    if (o.some((f) => f.k === 'esay' && f.w === 'cage')) cages++;
+    cuts += o.filter((f) => f.k === 'ecut').length;
+    for (const b of C.F.blows) {
+      if (b._c || C.now() < b.at) continue;
+      b._c = 1;
+      const cs = C.F.mem.exam?.kind === 'seals' ? C.F.mem.exam.bound : caged;
+      if (cs && !b.on && !b.ch && egInBlow(b, pos[cs][0], pos[cs][1])) hits++;
+    }
+  }
+  assert.ok(cages >= 3, `${cages} cages closed`);
+  assert.equal(hits, 0, 'no aimed blow on the caged');
+  assert.ok(cuts >= 1, `${cuts} told blows cut as a cage closed`);
+});
+
+test('EG-PERFECT AUDIT A4 A CHAINED SHAPE CARRIES A LEAD ONLY WHILE ITS FIRST IS TO LAND (section 13.2; net/wire.js): fury\'s chained shape held by THE UNION FLOOR past its first\'s landing is said with no outline lead - it was said with `ol: 0`, which every screen\'s wire refuses (the blow landed undrawn) (mutant: the lead written raw)', () => {
+  const C = court(1, 75, 'seyth', { n: 1 });
+  const { F, spec, L } = C;
+  F.blows.length = 0; F.held.length = 0; F.pend = []; F.zones = [];
+  const fx = C.f.x, fz = C.f.z, t0 = C.now(), wu = 1000, gap = egChainGapMs(wu, [shDisc(fx, fz, 3)]);
+  const first = egAim(F, spec, { o: L.i, s: [shDisc(fx, fz, 3)], at: t0 + wu, wu, p: 0.4, b: 12, nm: 'Lunge' }, [], t0, [], EG_TELL_LEAD_MS);
+  const chain = egAim(F, spec, { o: L.i, s: first.s, at: first.at + gap - EG_TELL_LEAD_MS, wu: gap, ol: first.at - t0 - EG_TELL_LEAD_MS, p: 0.4, b: 12, nm: 'Lunge (fury)' }, [], t0, [], EG_TELL_LEAD_MS);
+  chain.after = first.i;
+  egAim(F, spec, { o: L.i, s: [shOut([[fx, fz, 1]])], at: t0 + 500 + wu + gap + 100, wu: 6000, p: 0.3, b: 0, nm: 'The Eclipse', ch: 1 }, [], t0 - 6000, []);
+  const A = [{ sub: 'acct-0', x: fx + 4, z: fz }];
+  let said = null;
+  for (const dt of [500, 850, 1200, 1550]) { const now = t0 + dt, o = []; egBlowsStep(F, C.view, now, now >= first.at ? [] : A, o); said ??= o.find((f) => f.k === 'eb' && f.nm === 'Lunge (fury)') ?? null; }
+  assert.ok(said, 'the chain said past its first\'s landing');
+  assert.equal(said.ol, undefined, 'no lead');
+  assert.ok(wire(said), 'every screen takes it');
+});
+
+test('EG-PERFECT AUDIT A5 A LORD WEIGHS ITS BLOW\'S OWN BURNING POOL BEFORE IT CHOOSES IT (section 13.2): Dusk\'s Hellfire, whose pool would leave a member no ground before a haven CHECK lands, is never committed - its weighing saw no pool (its number 0) and THE UNION FLOOR then held and dropped it said (mutant: the pool left out of the weighing)', () => {
+  const D = court(1, 70, 'dusk', { n: 1 });
+  const { F, spec, L } = D, me = { sub: 'acct-0', x: D.f.x + 4, z: D.f.z + 4 };
+  for (let k = 0; k < 12; k++) D.step([me]);
+  L.hp = L.max * 0.6; for (let k = 0; k < 4; k++) D.step([me]);
+  L.cds['Dusk Dive'] = 1e15;
+  F.blows.length = 0; F.held.length = 0; F.pend = []; F.zones = [];
+  const now = D.now();
+  egAim(F, spec, { o: L.i, s: [shOut([[me.x, me.z, 1]])], at: now + 250 + 400 + 2000 + 1500, wu: 6000, p: 0.3, b: 0, nm: 'The Eclipse', ch: 1 }, [], now - 6000, []);
+  L.nextAt = 0; L.atk = null;
+  let touched = 0;
+  for (let k = 0; k < 8; k++) { D.step([me]); if ([...F.pend.map((q) => q.b), ...F.held.map((h) => h.b), ...F.blows].some((b) => b?.nm === 'Hellfire')) touched++; }
+  assert.equal(touched, 0, 'Hellfire never committed');
+});
+
+test('EG-PERFECT AUDIT A6 THE GUARD\'S GLINT AND THE WIND\'S GRACE (sections 13.3 and 13.2; scenes/eliteGates/egFight.js): the guard\'s glint is a lord\'s alone - a Binder raising the fallen is lit too, and is to be struck; the WIND waits the beat\'s grace only on a Spellmaster\'s image (whose blows feint) - every other body\'s the way here alone, so a blow under 0.89 s sounds it at all (mutants: a Binder glinting as a guard; every body at the beat\'s grace)', () => {
+  assert.equal(egRimOf(0, EG_FL.lit, true), EG_GUARD_GLINT);
+  assert.notEqual(egRimOf(0, EG_FL.lit, false), EG_GUARD_GLINT, 'a lit Binder no guard');
+  assert.equal(egWindGraceMs(EG_FL.mirror), EG_WIND_GRACE_MS);
+  assert.equal(egWindGraceMs(0), 150);
+  assert.ok(EG_WIND_GRACE_MS > 150);
+  // Riposte (wu 650): its WIND has a window at the honest grace, none at the beat's
+  const wu = 650, win = (g) => wu * (1 - 0.55) - g;
+  assert.ok(win(egWindGraceMs(0)) > 100 && win(egWindGraceMs(EG_FL.mirror)) < 50);
+});
+
+test('EG-PERFECT AUDIT A7 THE PERCHED BREATH REACHES THE COURT\'S FAR RIM, THE LATTICE SWEEPS RIM TO RIM AND NEVER OVER ITSELF, THE CONQUEST TELLS THE WORST WAY OFF (sections 13.3 and 13.4): EG_WYRM_REACH_M covers a law 10 Wyrm\'s court from its perches (30 m off a r 22 court: 52 m); the Lattice\'s strips cover its floor\'s width (its count rounded up) and its next sweep comes only once the last strip has landed; the Conquest\'s tell covers a run the court\'s whole radius (mutants: the reach at 40 m; the strips rounded down; the cooldown the row\'s 12 s; the tell 3.5 s)', () => {
+  assert.ok(EG_WYRM_REACH_M >= 30 + 22, 'the far rim within reach');
+  assert.ok(EG_CONQUEST_TELL_MS >= (24 / EG_ESCAPE_MPS + EG_REACT_S) * 1000, `the Conquest's tell ${EG_CONQUEST_TELL_MS} ms`);
+  // her own court (r 18 - nine strips exactly), and a floor of r 23 (the Old Masters' court stands her on Garoth's ground at
+  // Redoubt 25): 11.5 strips' width - twelve, a sweep of 15.4 s past her 12 s cooldown
+  for (const r of [0, 23]) {
+    const C = court(1, 15, 'spellmaster', { n: 2, r });
+    const here = () => C.subs.map((sub, j) => ({ sub, x: C.f.x + 4 + j, z: C.f.z + 4 }));
+    for (let k = 0; k < 12; k++) C.step(here());
+    const lands = [];
+    for (let k = 0; k < 4 * 150; k++) for (const f of C.step(here())) if (f.k === 'eb' && f.nm === 'Arcane Lattice') lands.push(f.at);
+    lands.sort((x, y) => x - y);
+    // a sweep's strips land EG_LATTICE_STEP_MS apart; two sweeps over each other land between them
+    const sweeps = [];
+    for (const at of lands) { const last = sweeps.at(-1); if (last && at - last.at(-1) <= EG_LATTICE_STEP_MS + 300) last.push(at); else sweeps.push([at]); }
+    assert.ok(sweeps.length >= 2, `r ${C.f.r}: ${sweeps.length} sweeps`);
+    for (let j = 1; j < lands.length; j++) assert.ok(lands[j] - lands[j - 1] >= EG_LATTICE_STEP_MS - 1, `r ${C.f.r}: a sweep only once the last has landed (${lands[j] - lands[j - 1]} ms between strips)`);
+    for (const q of sweeps) assert.ok(q.length * EG_LATTICE_W >= 2 * C.f.r - 1e-6, `${q.length} strips over a ${(2 * C.f.r).toFixed(1)} m floor`);
+  }
 });

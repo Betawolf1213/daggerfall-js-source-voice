@@ -10,7 +10,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, egSpecDigest, egAscentProof, egAscentCourses, EG_SPEC, EG_BROKEN_LAW, EG_BROKEN_TRIES, EG_RELAY_MAX, EG_SPEC_SAID_MAX,
   EG_ASCENT_LAST_TRIES, EG_ASCENT_HERO_TRIES, EG_FORK_COURSE_CM, EG_FORK_THIRD_CM, EG_STEP } from '../../../src/net/eliteGates/egLaw.js';
-import { EG_BROKEN_FOOT_CM, EG_BROKEN_PIECES, EG_BROKEN_KINDS, EG_BROKEN_TURNED, EG_ASCENT_ROOMS, EG_ROUTE_LEN_MAX_M, EG_ROUTE_S_MAX, egRouteLength } from '../../../src/net/eliteGates/egAscent.js';
+import { EG_BROKEN_FOOT_CM, EG_BROKEN_PIECES, EG_BROKEN_MOST, EG_BROKEN_KINDS, EG_BROKEN_TURNED, EG_ASCENT_ROOMS, EG_ROUTE_LEN_MAX_M, EG_ROUTE_S_MAX, egRouteLength } from '../../../src/net/eliteGates/egAscent.js';
 import { egSpanPairs, egSpanProof, egStepLocal, egAlongOf, egSpanOf, egPairWindows, egSpanBuildOf, egRouteCross, EG_SOLVE_FLIGHT_LAW, EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_RAIL_CLEAR, EG_DROP_CM, EG_DROP_LAW10_CM, EG_BEAT_HALF_MS } from '../../../src/net/eliteGates/egSpanLaw.js';
 import { egRouteLegs, egRouteSpanSteps } from '../../../src/net/eliteGates/egRouteProof.js';
 import { egFragPassage, egFragChamber, egSetPiece, EG_FRAG_BROKEN_LAW, EG_ALCOVE_REACH_M } from '../../../src/net/eliteGates/egFragLaw.js';
@@ -48,7 +48,7 @@ test('EG-PERFECT THE BROKEN WAY - THE LAW PIN (section 22): spec law 10 is the l
   for (const s of all()) assert.ok(s.v === 10 && s.law === 10, `${at(s)}: says its law`);
 });
 /** Law 10's 400 halls, hashed whole (the law pin - a change to any of them is a spec law of its own). */
-const LAW10_HASH = 3730652503;
+const LAW10_HASH = 650998388;
 
 test('EG-PERFECT THE BROKEN WAY - EVERY HALL LAYS AND STANDS (Elite-Gates-Ascent.md sections 1, 6, 7 and 8): each of the 400 is laid on a try the law gives (EG_RELAY_MAX, THE BROKEN WAY\'s own EG_BROKEN_TRIES, then the plainest), proven (egAscentProof - every course and every broken bridge by THE TIMED SOLVER where it stands, THE ROUTE\'S SANITY, the whole hall over THE ROUTE), said whole on the wire, inside the bound, its way rising and falling 10-30 m, no longer than EG_ROUTE_LEN_MAX_M nor slower than EG_ROUTE_S_MAX, through no more rooms than its kind draws; the plainest the rare last resort (mutants: the plan\'s own tries gone; a stretch\'s rooms never fewer)', (t) => {
   let worst = 0, plain = 0, last = 0;
@@ -83,7 +83,7 @@ test('EG-PERFECT THE BROKEN WAY - A BRIDGE BREAKS (Elite-Gates-Ascent.md section
     longest.push(longestOf(s));
     for (const { g, steps } of B) {
       n++;
-      assert.ok(steps.length >= EG_BROKEN_PIECES[0] && steps.length <= EG_BROKEN_PIECES[1], `${at(s)}: ${steps.length} pieces on a broken bridge`);
+      assert.ok(steps.length >= EG_BROKEN_PIECES[0] && steps.length <= EG_BROKEN_MOST, `${at(s)}: ${steps.length} pieces on a broken bridge`);   // (PIN MOVED, THE AUDIT: a long bridge's more, to EG_BROKEN_MOST)
       const k = steps[0].kind, hd = steps[0].hd ?? 0;
       assert.ok(steps.every((q) => q.kind === k && (q.hd ?? 0) === hd), `${at(s)}: one kind, one heading`);
       assert.ok((hd ? EG_BROKEN_TURNED.filter((q) => EG_BROKEN_KINDS[s.band].includes(q)) : EG_BROKEN_KINDS[s.band]).includes(k), `${at(s)}: a ${k} breaks a bridge of band ${s.band} heading ${hd}`);
@@ -167,9 +167,10 @@ test('EG-PERFECT THE BROKEN WAY - A FIGHT HALL\'S DOOR FOLLOWS ITS TRIAL (the ha
       assert.ok(main.length - 1 - lastIn <= 1, `${at(s)}: ${main.length - 1 - lastIn} links from its trial's ground to its door`);
     }
   }
-  assert.deepEqual(EG_AWAIT_CLOCKS, ['waveAt', 'packAt', 'wanderAt', 'escortAt', 'ashAt', 'sparkAt', 'ventAt']);
-  for (const k of ['yard', 'athenaeum', 'deepway']) assert.equal(egTrialAwaits({ kind: k, law: 10 }), true, `law 10's ${k} awaits its company`);
-  for (const k of ['span', 'court', 'rampart', 'proving', 'brink', 'scriptorium']) assert.equal(egTrialAwaits({ kind: k, law: 10 }), false, `a ${k} keeps its own time`);
+  assert.deepEqual(EG_AWAIT_CLOCKS, ['waveAt', 'packAt', 'wanderAt', 'escortAt', 'ashAt', 'sparkAt', 'ventAt', 'quietUntil']);   // PIN MOVED (EG-PERFECT's audit): a Scriptorium's quiet held too
+  // PIN MOVED (EG-PERFECT's audit): a Scriptorium's trial awaits its company too - its quiet ran from the wake while its rooms stood first
+  for (const k of ['yard', 'athenaeum', 'deepway', 'scriptorium']) assert.equal(egTrialAwaits({ kind: k, law: 10 }), true, `law 10's ${k} awaits its company`);
+  for (const k of ['span', 'court', 'rampart', 'proving', 'brink']) assert.equal(egTrialAwaits({ kind: k, law: 10 }), false, `a ${k} keeps its own time`);
   assert.equal(egTrialAwaits({ kind: 'yard', law: 9, v: 9 }), false, 'law 9\'s yard keeps the time it kept');
 });
 
@@ -227,7 +228,9 @@ test('EG-PERFECT THE BROKEN WAY - RAILS APART, A PENDULUM OVER THE WHOLE FLIGHT 
   const R = S.lay();
   assert.equal(new Set(R.map((q) => q.gap)).size, 1, 'one gap');
   assert.equal(new Set(R.map((q) => q.period)).size, 1, 'one period');
-  R.forEach((q, k) => { assert.equal(q.phase, (k % 2) * (q.period / 2), 'half a cycle apart'); assert.ok(q.amp <= Math.floor((q.gap - EG_RAIL_CLEAR * 100) / 2), `travel ${q.amp} under half its gap less the clear`); });
+  // PIN MOVED (EG-PERFECT's audit): half a cycle is π - net/eliteGates/egSpanLaw.js egPieceAt reads a Rail's phase (ms / 1000) as its angle,
+  // and half the period read so turned them 172-258 degrees apart
+  R.forEach((q, k) => { assert.equal(q.phase, (k % 2) * Math.round(Math.PI * 1000), 'half a cycle apart'); assert.ok(q.amp <= Math.floor((q.gap - EG_RAIL_CLEAR * 100) / 2), `travel ${q.amp} under half its gap less the clear`); });
   // laid in metres and proven: they never meet; two neighbours on their own periods (law 9's) do, and law 10 refuses them
   const m = (q, i) => ({ ...q, i, x: q.x / 100, y: q.y / 100, z: q.z / 100, w: q.w / 100, d: q.d / 100, amp: q.amp / 100, gap: q.gap / 100, period: q.period / 1000, phase: q.phase / 1000, after: 3 });
   const ok = R.map(m);
@@ -308,4 +311,44 @@ test('EG-PERFECT THE BROKEN WAY - THE REAL MOTOR CROSSES IT (tools/egSpanSolve.m
     assert.ok(turned > 0, `${seed} circle ${c}: a turned bridge crossed`);
     S.span.clear();
   }
+});
+
+test('EG-PERFECT THE AUDIT\'S HALLS (spec law 10; Elite-Gates-Ascent.md section 11, "The audit"): over the law pin\'s 400 law 10 halls - no Gust run laid straight on from a timed piece (THE TIMED SOLVER weighs no gust: the real motor fell where a Crumble went under it); no bridge of 30 m walked whole but one over another floor (an approach\'s long run laid as bridges of 18-25 m, each broken on its own; a break slid along its bridge to where it stands apart); a fork\'s High Road Drop falling its full height; no Drift swinging within a body\'s width of a room; every hall\'s way asking a jump; a lone piece a still slab in few broken bridges; seed 77\'s hall 92 its fork (mutants: a Gust drawn in an approach; the long run one bridge; the break only in the middle; a High Road Drop drawn; a swing tested against no joined leg; a hall of no jump kept; a lone still slab drawn; the fork first on the plan\'s own tries)', () => {
+  let gust = 0, long = 0, hiDrop = 0, near = 0, noJump = 0, broken = 0, oneStill = 0, forks = 0;
+  for (const s of all()) {
+    const st = s.steps;
+    for (let i = 1; i < st.length; i++) {
+      const a = st[i - 1], b = st[i];
+      if (b.kind === 'gust' && (a.road ?? 0) === (b.road ?? 0) && !a.hd && !b.hd && ['crumble', 'bone', 'beat', 'vent', 'sink'].includes(a.kind) && Math.abs(b.z - b.d / 2 - (b.gap ?? 0) - (a.z + a.d / 2)) < 0.01) gust++;
+    }
+    for (const l of s.lanes) {
+      if (l.role !== 'bridge' || Math.hypot(l.bx - l.ax, l.bz - l.az) < 30) continue;
+      const x0 = Math.min(l.ax, l.bx) - l.hw, x1 = Math.max(l.ax, l.bx) + l.hw, z0 = Math.min(l.az, l.bz) - l.hw, z1 = Math.max(l.az, l.bz) + l.hw;
+      const over = [...s.lanes.filter((q) => q !== l).map((q) => [Math.min(q.ax, q.bx) - q.hw, Math.min(q.az, q.bz) - q.hw, Math.max(q.ax, q.bx) + q.hw, Math.max(q.az, q.bz) + q.hw, q.y]), ...s.discs.map((d) => [d.x - d.r, d.z - d.r, d.x + d.r, d.z + d.r, d.y]), ...(s.heroes ?? []).map((q) => [q.box[0], q.box[2], q.box[3], q.box[5], q.box[1]]), ...st.map((q) => [q.x - q.w / 2, q.z - q.d / 2, q.x + q.w / 2, q.z + q.d / 2, q.y])];
+      if (!over.some((b) => b[2] > x0 && b[0] < x1 && b[3] > z0 && b[1] < z1 && Math.abs(b[4] - l.y) > 0.5)) long++;
+    }
+    if (s.fork) {
+      forks++;
+      const hi = st.filter((q) => (q.road ?? 0) === 0), j = hi.findLastIndex((q) => q.kind === 'drop');
+      if (j > 0 && hi[j - 1].y - hi[j].y < EG_DROP_LAW10_CM / 100 - 0.01) hiDrop++;
+    }
+    for (const q of st.filter((p) => p.kind === 'drift')) for (const r of (s.heroes ?? []).filter((h) => h.room)) {
+      const B = r.box;
+      if (q.y + 0.1 < B[1] || q.y - 0.5 > B[4]) continue;
+      if (Math.hypot(Math.max(0, B[0] - (q.x + q.w / 2 + q.amp), q.x - q.w / 2 - q.amp - B[3]), Math.max(0, B[2] - (q.z + q.d / 2), q.z - q.d / 2 - B[5])) < 0.35) near++;
+    }
+    if (!(s.route?.links ?? []).some((l) => l.kind === 'span')) noJump++;
+    for (const g of (s.route?.courses ?? []).filter((q) => q.b)) {
+      const ps = st.filter((q) => q.x >= g.x0 - 0.05 && q.x <= g.x1 + 0.05 && q.z >= g.z0 - 0.05 && q.z <= g.z1 + 0.05 && Math.abs(q.y - g.y0) < 0.6);
+      broken++;
+      if (ps.length === 1 && ps[0].kind === 'still') oneStill++;
+    }
+  }
+  assert.equal(gust, 0, 'no Gust run on from a timed piece');
+  assert.equal(long, 0, 'no bridge of 30 m walked whole over open void');
+  assert.equal(hiDrop, 0, 'every High Road Drop its full fall');
+  assert.equal(near, 0, 'no Drift\'s swing within a body of a room');
+  assert.equal(noJump, 0, 'every way a jump');
+  assert.ok(broken > 1000 && oneStill / broken < 0.08, `${oneStill} of ${broken} broken bridges one still slab`);
+  assert.ok(forks >= 40 && egHallOf(77, 92, 0, 10).fork, `${forks} forks, seed 77's hall 92 among them`);
 });

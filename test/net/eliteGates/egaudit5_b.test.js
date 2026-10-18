@@ -588,7 +588,9 @@ test('AUDIT EG V L1-29 EACH LORD COUNTS ITS OWN MIRRORS (section 18, THE OLD MAS
   // and each its lord's aspect (L1-2): Garoth's mirrors Rime-Wrought, the Spellmaster's images Burning
   assert.ok(mine(G).every((x) => x.asp === G.asp && G.asp === 'rime') && mine(M).every((x) => x.asp === M.asp && M.asp === 'burning'), 'its lord\'s aspect');
   const els = new Set();
-  for (let k = 0; k < 4 * 20; k++) { for (const f of S.step()) if (f.k === 'eb' && f.el && mine(G).some((x) => x.i === f.o)) els.add(f.el); S.subs.forEach((sub, j) => { const L = j ? M : G; S.at(sub, L.x + L.r + 2, L.z); }); }
+  // (PIN MOVED, EG-PERFECT's audit: a minute - their blows are drawn at random beside the Spellmaster's, whose Lattice now holds its
+  // cooldown past its sweep, moving the draws: in 20 s his mirrors drew Cleaves and Slams alone)
+  for (let k = 0; k < 4 * 60; k++) { for (const f of S.step()) if (f.k === 'eb' && f.el && mine(G).some((x) => x.i === f.o)) els.add(f.el); S.subs.forEach((sub, j) => { const L = j ? M : G; S.at(sub, L.x + L.r + 2, L.z); }); }
   assert.ok(els.size && [...els].every((e) => e === 'frost'), `his mirrors throw his frost (${[...els]})`);
 });
 test('AUDIT EG V L1-30 SCORCHED ONLY ON A BRIDGE THAT BURNS (section 13.3: "Leading Grath onto a burning bridge ... leaves him Scorched"): a bridge told and not yet burning scorches no one; burning, it does (mutants: the tell\'s three seconds counted as burning)', () => {

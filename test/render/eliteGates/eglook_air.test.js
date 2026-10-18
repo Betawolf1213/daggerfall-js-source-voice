@@ -246,7 +246,10 @@ test('EG-LOOK THE CAIRN\'S MIST SHEETS (section 5: "the band\'s mist under every
     const o = egToDungeon(spec, 0, 0, 0);
     for (let i = 0; i < out.length; i++) {
       const s = out[i], x0 = s.rect[0] - o[0], z0 = s.rect[1] - o[2], x1 = s.rect[2] - o[0], z1 = s.rect[3] - o[2], y = s.y - o[1];
-      for (const f of floors) if (f[0] < x1 && f[2] > x0 && f[1] < z1 && f[3] > z0) assert.ok(y <= f[4] - EG_RIM_MIST.below + 1e-6, `circle ${c} ${spec.kind}: a sheet at ${y.toFixed(2)} under a floor at ${f[4]}`);
+      // (EG-PERFECT's audit: a footprint that only touches a floor's edge meets none, as egRimMists reads it in the hall's frame - the
+      // scene's frame and back put seed 3's hall 32's sheet 1e-12 m onto a disc's edge)
+      const E = 1e-6;
+      for (const f of floors) if (f[0] < x1 - E && f[2] > x0 + E && f[1] < z1 - E && f[3] > z0 + E) assert.ok(y <= f[4] - EG_RIM_MIST.below + 1e-6, `circle ${c} ${spec.kind}: a sheet at ${y.toFixed(2)} under a floor at ${f[4]}`);
       assert.equal(typeof s.round, 'boolean');
       sheets++;
     }

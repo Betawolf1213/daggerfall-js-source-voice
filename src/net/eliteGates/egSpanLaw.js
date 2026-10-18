@@ -389,7 +389,7 @@ export function egSpanOf(seed, hall, band, { r, sizes, start, checkR, floors = f
         // under half the gap less EG_RAIL_CLEAR - two neighbours' travels never meet (law 9's, each on its own period, met in
         // 63 of 71 open-course runs: a rider's ground swapped onto the other, carried back)
         const g = gap(), P = egDieBetween(r, 60, 90) * 100, top = Math.floor((g - EG_RAIL_CLEAR * 100) / 2);
-        for (let q = 0; q < count; q++) step('rail', g, { x, kit, amp: Math.min(top, egDieBetween(r, 150, 200)), period: P, phase: (q % 2) * (P / 2) });
+        for (let q = 0; q < count; q++) step('rail', g, { x, kit, amp: Math.min(top, egDieBetween(r, 150, 200)), period: P, phase: (q % 2) * Math.round(Math.PI * 1000) });   // (THE AUDIT: half a cycle - pieceAt reads a phase as its angle, π; P / 2 was 172-258 degrees)
       } else if (kind === 'rail') for (let q = 0; q < count; q++) step('rail', gap(), { x, kit, amp: egDieBetween(r, 150, 200), period: egDieBetween(r, 60, 90) * 100, phase: q * 1500 });   // LAYER THREE: its travel under the least gap less EG_RAIL_CLEAR
       else if (kind === 'pend') for (let q = 0; q < count; q++) step('pend', gap(), { x, kit, amp: 0, period: egDieBetween(r, 30, 50) * 100, phase: q * 700 });
       else if (kind === 'vent') for (let q = 0; q < count; q++) step('vent', gap(), { x, kit, period: egDieBetween(r, 40, 60) * 100, phase: egDieBetween(r, 0, 39) * 100 });
@@ -546,6 +546,9 @@ const LAW_FAST_BUILD = Object.freeze({ run: EG_FAST_RUN_MPS, reach: egFastReach,
  *  proven at over the flight's whole line (`flight`) - law 8's took its middle alone, and 18% of the open launches it allowed
  *  flew through the weight under the screen's every-frame judge. */
 export const EG_SOLVE_FLIGHT_LAW = 10;
+/** THE AUDIT: a flight over a Pendulum taken at this many even instants (and its launch) - at twelve, the weight's swing between
+ *  two let 3% of the launches it called clear meet it. */
+export const EG_SOLVE_FLIGHT_N = 24;
 const LAW10_SPAN_BUILD = Object.freeze({ ...LAW_SPAN_BUILD, flight: true }), LAW10_FAST_BUILD = Object.freeze({ ...LAW_FAST_BUILD, flight: true });
 const buildsOf = (v) => ((v ?? 0) >= EG_SOLVE_FLIGHT_LAW ? [LAW10_SPAN_BUILD, LAW10_FAST_BUILD] : (v ?? 0) >= EG_SOLVE_LAW ? [LAW_SPAN_BUILD, LAW_FAST_BUILD] : [SPAN_BUILD, FAST_BUILD]);
 /** THE SPAN BUILD a hall of spec law `v` is proven at (egPairWindows' `B` - for a test and a tool). */
@@ -609,10 +612,12 @@ function jumpLands(pair, t, B = SPAN_BUILD) {
   const dx = Math.max(0, Math.max(nx0, lx0) - Math.min(nx1, lx1));   // the least sideways reach between the two widths
   if (dx * dx + dz * dz > reach * reach) return false;   // AUDIT EG V (lane5 #2): squares - IEEE's own rounding, never Math.hypot's
   // a Pendulum over this gap: the body crosses its middle half-way through the flight - clear of the weight then. THE BROKEN
-  // WAY (spec law 10 - `flight`): clear of it at every twelfth of the flight, from the launch along the reach
+  // WAY (spec law 10 - `flight`): clear of it at every EG_SOLVE_FLIGHT_N-th of the flight, from the launch on the body's own path
   if (b?.kind === 'pend') {
     const xs = Math.max(nx0, Math.min(lx1, b.x)), mid = t + air / 2;
-    if (B.flight) { for (let k = 0; k <= 12; k++) if (B.hits(b, t + (air * k) / 12, xs, b.y, lz + (reach * k) / 12)) return false; }
+    // (THE AUDIT: the body's own path - its run's pace from the launch edge, its middle on the edge and a body's radius past it,
+    // its feet on the jump's arc; the reach's two radii carried it 27% faster than the motor flies, its feet at the landing's height)
+    if (B.flight) { const v = B.run + EG_JUMP_MPS * EG_JUMP_FWD; for (const d0 of [0, EG_BODY_R]) for (let k = 0; k <= EG_SOLVE_FLIGHT_N; k++) { const u = (air * k) / EG_SOLVE_FLIGHT_N; if (B.hits(b, t + u, xs, ay + EG_JUMP_MPS * u - 0.5 * EG_JUMP_G * u * u, lz + d0 + v * u)) return false; } }
     else if (B.hits(b, mid, xs, b.y, B.pend(b, mid).z)) return false;
   }
   return true;
@@ -620,7 +625,7 @@ function jumpLands(pair, t, B = SPAN_BUILD) {
 
 /** EG6a: does THE SPAN BUILD's jump on `pair` launched at shared second `t` land - the solver's own answer, one launch
  *  (tools/egSpanSolve.mjs reads its windows, and the sweep's pilot launches inside them). */
-export const egJumpLands = (pair, t) => jumpLands(pair, t);
+export const egJumpLands = (pair, t, B = SPAN_BUILD) => jumpLands(pair, t, B);   // (THE AUDIT: a build named - egSpanBuildOf)
 
 /**
  * THE TIMED SOLVER on one pair: its windows over EG_SOLVE_HORIZON_S - `{ open, worst12, wait, clearRun }`: the share of

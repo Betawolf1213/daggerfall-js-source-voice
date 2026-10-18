@@ -68,6 +68,8 @@ test('EG-PERFECT THE COLLAPSING TUBE\'S CLOCK (section 11.3): in every routed ha
     assert.equal(egTubeAtMouth(spec, T.x, T.y, T.z0 - EG_TUBE_MOUTH_M + 0.01), true, `${at}: the trigger's reach`);
     assert.equal(egTubeAtMouth(spec, T.x, T.y, T.z0 - EG_TUBE_MOUTH_M - 0.5), false);
     assert.equal(egTubeAtMouth(spec, T.x, T.y + 6, T.z0), false, `${at}: a floor 6 m over the mouth is not at it`);
+    assert.equal(egTubeAtMouth(spec, T.x, T.y, T.z0 + 6), true, `${at}: past its mouth, in the tube (THE AUDIT)`);
+    assert.equal(egTubeAtMouth(spec, T.x + T.halfW + 0.5, T.y, T.z0 + 6), false, `${at}: beside the tube, not in it`);
     for (let ms = 0; ; ms += 50) {
       const t = tm + ms, z = T.z0 - EG_TUBE_MOUTH_M + (EG_SPAN_RUN_MPS * ms) / 1000;
       if (z > T.z1 - 0.5) break;
@@ -123,16 +125,17 @@ test('EG-PERFECT THE TUBE\'S INSTANT FROM THE ROOM TO THE SCREENS (section 11.3)
   const m = B.mem['acct-0'];
   m.roseH = B.h;   // a member a recall stood in the hall (its trail begins where it stands - egPoseIn)
   const sx = (x) => spec.x0 + x, hw = B.hw;
-  // two minutes after the wake (the wake's clock felled the whole tube by 38 s): on its floor 5 m in, then back toward the mouth
+  // two minutes after the wake (the wake's clock felled the whole tube by 38 s): on its floor 5 m in - PIN MOVED (THE AUDIT): a
+  // pose past the mouth, in the tube, starts it as one at the mouth does (a pose that skipped the mouth's 3 m left the tube
+  // standing for good); the poses on, back toward the mouth, keep its first instant
   let t = hw + 120_000;
   S.set(t);
   egPoseIn(B, 'acct-0', { sx: sx(T.x), y: T.y, z: T.z0 + 5 }, t);
-  assert.equal(egTubeMouthOf(B), 0, 'not yet at the mouth');
+  const first = t;
+  assert.equal(egTubeMouthOf(B), first, 'its first fair pose in the tube');
   assert.equal(m.cbOwe ?? 0, 0, 'its floor stands - nobody owes a cast-back');
-  let first = 0;
-  for (let z = T.z0 + 4.5; z >= T.z0 + 2; z -= 0.5) { t += 200; egPoseIn(B, 'acct-0', { sx: sx(T.x), y: T.y, z }, t); if (!first && egTubeMouthOf(B)) first = t; }
-  assert.equal(first, t - 2 * 200, 'the first pose within 3 m of the mouth (z0 + 3)');
-  assert.equal(egTubeMouthOf(B), first);
+  for (let z = T.z0 + 4.5; z >= T.z0 + 2; z -= 0.5) { t += 200; egPoseIn(B, 'acct-0', { sx: sx(T.x), y: T.y, z }, t); }
+  assert.equal(egTubeMouthOf(B), first, 'kept from its first');
   assert.deepEqual(B.tm, { hw, at: first, said: 0 }, 'kept with its wake, not yet said');
   S.set(t);
   const o1 = S.step(), sg = o1.filter((f) => f.k === 'sg');

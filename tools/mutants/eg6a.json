@@ -236,8 +236,8 @@
   {
     "name": "EG6A-another-answer-than-the-windows",
     "file": "src/net/eliteGates/egSpanLaw.js",
-    "old": "export const egJumpLands = (pair, t) => jumpLands(pair, t);",
-    "new": "export const egJumpLands = (pair, t) => jumpLands(pair, t, FAST_BUILD);",
+    "old": "export const egJumpLands = (pair, t, B = SPAN_BUILD) => jumpLands(pair, t, B);",
+    "new": "export const egJumpLands = (pair, t, B = SPAN_BUILD) => jumpLands(pair, t, FAST_BUILD);",
     "tests": [
       "test/net/eliteGates/eg6a_span.test.js"
     ]

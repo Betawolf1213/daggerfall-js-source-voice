@@ -471,7 +471,7 @@ export const EG_GUST_TELL_MS = 1000;
 export const EG_GUST_SOUND = Object.freeze({ rec: 66, vol: 0.9, pitch: 1.1 });
 /** A body's rim light: every foe's in the Shade (never a friend's), the dormant Lurker aside (section 12); null elsewhere.
  *  EG-PERFECT: a guard raised glints over it (EG_GUARD_GLINT), in every band. Pure. */
-export const egRimOf = (band, fl) => ((fl & EG_FL.lit) !== 0 ? EG_GUARD_GLINT : band === EG_SHADE_BAND && (fl & (EG_FL.dormant | EG_FL.friend)) === 0 ? EG_SHADE_RIM : null);
+export const egRimOf = (band, fl, lord = true) => ((fl & EG_FL.lit) !== 0 && lord ? EG_GUARD_GLINT : band === EG_SHADE_BAND && (fl & (EG_FL.dormant | EG_FL.friend)) === 0 ? EG_SHADE_RIM : null);   // (THE AUDIT: `lord` - a Binder's raise is lit too, and no guard)
 
 // ── WEIGHT (section 25.8) ──────────────────────────────────────────────────────────────────────────────────────
 /** THE HEAVY BLOWS' SHAKES: by name (net/eliteGates/egLords.js's Savage, Gore, Whirl and Maul, net/eliteGates/egLegion.js's Smash), the shake at

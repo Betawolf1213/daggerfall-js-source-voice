@@ -481,7 +481,7 @@
   {
     "name": "EGINT-the-wind-at-the-start",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "t < blow.at && t >= blow.at - blow.wu + blow.wu * EG_FEINT_AT + EG_WIND_GRACE_MS) {",
+    "old": "t < blow.at && t >= blow.at - blow.wu + blow.wu * EG_FEINT_AT + egWindGraceMs(b.fl | 0)) {",
     "new": "t < blow.at) {",
     "tests": [
       "test/net/eliteGates/egint_client.test.js"

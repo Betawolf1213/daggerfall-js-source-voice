@@ -85,5 +85,6 @@ test('EG-PERFECT THE CAPTIVE\'S CHAINS, OVER THE HALLS (section 8.7): every Capt
     }
   }
   // PIN MOVED (EG-PERFECT, spec law 10): none refused - law 9 refused seed 6's hall 22 and seed 40's hall 66 (the repros above)
-  assert.deepEqual([halls, kept, refused], [124, 57, 0], 'law 10 hangs every three on its floor');
+  // PIN MOVED (EG-PERFECT's audit: its halls laid again) - 56 the law's three byte for byte (57 before), the rest the relay's own
+  assert.deepEqual([halls, kept, refused], [124, 56, 0], 'law 10 hangs every three on its floor');
 });

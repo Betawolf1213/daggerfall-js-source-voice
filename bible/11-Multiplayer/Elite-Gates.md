@@ -9461,7 +9461,7 @@ relay's and the screens' reads of laws 4-9, no draw moved).
   `EG_CONQUEST_TELL_MS`), each third burning to the fight's end until its banner breaks, again `EG_CONQUEST_AGAIN_MS` after
   a round; the Chaining's pairs, a Wraith's chain snapping on the pair it names (`EG_SNAP_NM`); the Eclipse's mirrors. Garoth's
   third phase borrows the older signature as theirs is called.
-- Blows that read their ground: Hellfire, Moonshatter and the Meteor fall on some of the company, never all; the Wyrm's
+- Blows that read their ground: Hellfire, Moonshatter and the Meteor fall on members drawn from the whole company (its target first, the rest at random - a company no larger than the blow's marks takes one each); the Wyrm's
   perched breath reaches its mark (`EG_WYRM_REACH_M`), its pillars rise again at its second phase (`perches`), its Burning
   Perch the place's own fire (`o.place` - never held); a Scorch stops Grath's hunt and frees its mark; an island's crack voids
   it as it falls; the Last Lesson's rings told `EG_LESSON_TELL_MS` before they burn; the Twins swap only on the Crossing said
@@ -9494,12 +9494,14 @@ balcony 4 m up; a pillar off its bastions, its Gauntlet plate on its top; the wi
 braziers on its ground; a Captive's chains on its hero chamber's line; a Vault off its island's rim or a side span's length
 off its court); rooms from the whole fresh pool.
 
-**Measured.** Over 204 halls (seeds 1-6, every third hall) against law 9 on the same: the longest stretch the main way walks
-unbroken, at its median, a Rift-Yard 400 m to 180 m, a span 181 to 131, a Court 254 to 147, a Proving Walk 192 to 157, a Deepway
-249 to 172, an Athenaeum 263 to 186, a Brink 237 to 148, a Rampart 269 to 189; spans from circle 2 forked 25% to 86% and laid
-plainest 75% to 14%; a fight hall's door 190-215 m past its trial to 10 m. Over the law pin's 800 halls: 7 laid plainest, 731
-break a bridge turned, the longest unbroken walk a median 159 m (p90 248), the worst spec 27,156 characters. The real motor
-crosses seed 77's first circle and seed 3's seventh, turned bridges and all (`tools/egSpanSolve.mjs`).
+**Measured** (at the audit's head - the EG-PERFECT audit record below). Over 204 halls (seeds 1-6, every third hall) against
+law 9 on the same: the longest stretch the main way walks unbroken, at its median, a Rift-Yard 400 m to 173 m, a span 181 to
+124, a Court 254 to 164, a Proving Walk 192 to 177, a Deepway 249 to 142, an Athenaeum 263 to 207, a Brink 237 to 95, a Rampart
+269 to 176; spans from circle 2 forked 25% to 96% and laid plainest 75% to 4%; a fight hall's door 190-215 m past its trial to
+10 m. Over the law pin's 800 halls: none laid plainest, 756 break a bridge turned, the longest unbroken walk a median 164 m
+(p90 232), the worst spec 29,598 characters (a try past EG_SPEC_SAID_MAX, 32,768, is laid again). The real motor crosses
+seed 77's first circle and seed 3's seventh, turned bridges and all (`tools/egSpanSolve.mjs`), and every one of the 692 roads
+of 100 circles (seeds 3, 4, 5 and 77's circles 1-20, and seed 77's on ground 4).
 
 **Pins.** `test/net/eliteGates/egperfect_lords.test.js` (21 - each lord finding and upgrade on fights the real producers stand),
 `test/net/eliteGates/egperfect_broken.test.js` (12 - law 10's pin, its 400 halls of the law pin's seeds 77 and 3 laid, proven and
@@ -9764,3 +9766,127 @@ bootWorld's Spire wake getter hands the tube's instant beside the hall and its w
 - The relay does not judge the Pendulum's touch or the Vent's bite (each screen judges its own feet); a void fall's cast-back
   is the screen's, the relay's part the break, the progress and the census.
 - A capped hang is the screen's alone; the relay never knew a chain.
+
+### EG-PERFECT (the audit) - 2026-10-18 - SIX LANES READ THE PASS, AND WHAT THEY FOUND
+
+Mac: *"Lets audit this and ensure perfection"*. Six read-only lanes read the three EG-PERFECT records above against the code
+at their head - the lords, the halls under spec law 10, the ways' proofs, the relay's judgement, the screen, and the records
+themselves. Each finding was reproduced on the real producers (the law's own halls, the brain's own breach, THE TIMED
+SOLVER's own answer, the real motor on the real collider) before it was fixed; what was weighed and left is said at the end.
+Daggerfall Unity has no Elite Breach, no Spire and no relay: every fix here is to our own law, and none departs from DFU.
+
+**THE LORDS** (`net/eliteGates/egLords.js`, `egBodies.js`; the screens' `scenes/eliteGates/egFight.js`, `world/eliteGates/egTelegraph.js`).
+- The Wyrm grounded for good in its first phase never flew again from the perches its second phase raised: its landing's
+  run now ends at once where they rise (`groundedUntil`). A burst past both lines turns the third at once - it raises no
+  perches, and the Spellmaster lays no Examination's runes she could never hold (they stood the rest of the fight).
+- THE FINAL EXAMINATION's cage holds its member's feet on every screen, yet THE UNION FLOOR planned that member's escape:
+  a caged member's ground is the cage alone (`egUnionHeld` - mark 5), and a blow said over it before the cage closed is cut
+  as it closes.
+- Fury's chained shape held past its first's landing was said with `ol: 0`, which the wire refuses: a shape carries a lead
+  only while its first is still to land.
+- A lord weighed a blow without the pool it leaves (`wouldHold` now weighs it - Dusk's Hellfire left a member no ground
+  before a haven CHECK).
+- A Binder raising the fallen is lit too, and read as a raised guard's glint - the glint and its sound are a lord's alone
+  (`egRimOf`'s `lord`). The WIND's beat-wide grace belonged to a feint's mirror alone (`egWindGraceMs`; every other body
+  EG_WIND_WAY_MS, 150 ms).
+- A law 10 Wyrm's perch stands 30 m off its court's heart and its far rim 52 m off (seed 1's hall 85): EG_WYRM_REACH_M 40 to
+  64. The Arcane Lattice's strips ran a metre short of the rim and its 12 s cooldown overlapped a sweep of ten strips: its
+  strips now cover the floor rim to rim (`Math.ceil`) and its cooldown runs from the last strip's landing. The Conquest's
+  tell covered a lone third's 20.8 m, not the court's whole 24 m with its neighbour burning: EG_CONQUEST_TELL_MS 3500 to 4000.
+  A burst past both lines that skipped the second phase's card shows it before the third's (the screen's beat queue).
+  The record's "fall on some of the company, never all" was untrue of a company no larger than a blow's marks - said so above.
+
+**THE RELAY'S JUDGEMENT** (`net/eliteGates/egFair.js`, `egBrain.js`, `egAscent.js`).
+- A BLOCKER: a law 10 Drop falls 3-4.5 m and a void zone about a Gale fork's plate held the Drop past its edge - at
+  EG_VOID_DROP_M 3 every way down it was the void's, and seed 3's hall 7 (both roads), 12's hall 7 and 12's hall 22's Low
+  Road could not be crossed. EG_VOID_DROP_M is now the deepest Drop and a quarter metre (EG_DROP_CM / 100 + 0.25, 4.75 m).
+- A Scriptorium's quiet ran from the hall's wake while law 10 lays its rooms first: seed 7's hall 8 pulled the company at
+  53 s, before THE SPAN BUILD reached its door (57.8 s). Its trial awaits its company like a Rift-Yard's (`quietUntil` in
+  EG_AWAIT_CLOCKS), released when a member stands on its trial's own ground (`egOnTrialGround`).
+- The Deserter closed rifts unopposed while its trial's clocks were held: it waits with the trial (`deserterGoal`).
+- Law 10 lays a void zone under its arrival plate too (`voidsOf`): in seed 2's hall 3 a step off the plate fell 19.3 m onto
+  the way 166 m along it, credited.
+- A pose already down a routed tube starts its fall as one at its mouth does (`egTubeAtMouth`): a pose that skipped the
+  mouth's 3 m left the tube standing for good.
+
+**THE WAYS' PROOFS** (`net/eliteGates/egSpanLaw.js`, `egRouteProof.js`, `egLaw.js`).
+- THE TIMED SOLVER took a Pendulum over the reach's path - the body 27% faster than the motor flies, its feet at the
+  landing's height: 7% of the launches it called clear met the weight. It now takes the body's own path, its middle on the
+  edge and a body's radius past it at the run's pace, its feet on the jump's arc, at EG_SOLVE_FLIGHT_N (24) instants -
+  under 2% of its clear launches graze it. LAW10_HASH moves (laws 4-9 hash as they did).
+- A run of Rails was set "half a cycle apart" as half the period in ms - `egPieceAt` reads a phase as its angle, so they
+  stood 172-258 degrees apart: π now.
+- A z link took a piece turned along x standing on its line (`egRouteSpanSteps` reads the link's own heading); the
+  Molten Rim's landing and the ruin's air read a turned piece along its own heading (`egMoltenRim`, `world/eliteGates/egRuin.js`).
+- The refused late press in the Shattered Hour does nothing at all, as DFU's motor (it gives no late press); said in
+  `systems/madeLevel.js`, not changed.
+
+**THE HALLS UNDER LAW 10** (`net/eliteGates/egAscent.js`, `egLaw.js`; Elite-Gates-Ascent.md section 11 states each rule).
+- A Gust run laid straight on after a Crumble run: THE TIMED SOLVER reads no gust and the real motor fell on 1.9% of the
+  roads - a Gust is never an approach's kind.
+- Bridges of 30 m and more were walked whole (a centred break that met anything left the bridge whole; a 136 m approach
+  broke once): a break now tries its pieces down to one, at EG_BROKEN_SLIDES along the bridge, more pieces the longer it
+  runs (EG_BROKEN_MOST at most), and an approach's long run is laid as bridges of 18-25 m, each broken on its own.
+- A fork's High Road drew a Drop that barely fell (it draws none); a Drift swung within a centimetre of a room's wall
+  reached through a landing (a break stands EG_BROKEN_CLEAR_CM clear of every leg, the two it joins too); two halls asked
+  no jump at all (a try with no span link is laid again); the fork laid first cost three halls their fork (the plan's own
+  tries lay it second); 15% of the broken bridges stood one still slab (a lone piece is never still).
+
+**THE SCREEN** (`scenes/eliteGates/egSpan.js`, `render/superDungeon/sdStepsPass.js`, `world/eliteGates/egHall.js`, `egLook.js`,
+`egGround.js`, `egPlatformModel.js`, `net/eliteGates/egWalkGraph.js`).
+- A drift's hang read a room's box off its origin a second time, though a spec's hero box is the hall's frame already:
+  14 of 23 capped hangs were phantoms over open sky, and a real room over a drift was missed (`egHangReach`).
+- A broken bridge's ends over the void were drawn open - no end face, no edge line: a lane's end no floor meets is closed
+  (`egLaneOpenEnds` - the lane's model, its edges' segment across it).
+- A turned slab's broken column stood on its jump line (`egPiecePlan` - a z side for a turned piece).
+- A chamber's ring opened a whole 32-gon side, 3.4-5.4 m, about a 2 m niche, and a passage's alcove beside it opened it
+  too: a doorway EG_RING_DOOR wide about the ring's own chamber's alcove, its side's wall kept either side
+  (`egRingSideWalls` - the collider, the arcade, the air and the clamp, `egFragKeep` by the alcove's own floor).
+- Found while re-measuring the records: a circle's ghosts (the gone Beat's and the fallen Crumble's outline where it
+  returns - section 10.8) are EG_GHOSTS_MAX, 48, slots, and law 10 lays up to 72 Beats and Crumbles a circle (21 of seeds
+  1-4's 320 circles past 48; 24 in seed 7's circle 5 drew no ghost). Never more than 29 stood in one hall of them, so a circle past
+  its slots now ghosts the hall I am in and the halls nearest it, aimed again as I cross into another (`aimGhosts`; the
+  pass's boxes laid again - `SdStepsPass` `ghosts`). A circle within its slots is drawn as it was.
+
+**THE RECORDS.** The lords record's figures are re-measured at this head (its **Measured**); its relay paragraph names
+`world218`, its pins and the forty-four re-aimed records; the ways record names its one `scenes/world.js` line; the
+Port-Ledger's ELITE-GATES row names law 10; Testing.md's rows say law 10's counts (the Captive's chains: 56 kept, none
+refused); sixteen relay pins carry their PIN MOVED note; stale comments said so (`egAscent.js` breakLeg's heading,
+`egSpanLaw.js` the flight's instants, `egSpan.js` EG_GHOSTS_MAX's measure).
+
+**Measured** at this head: the figures in the lords record above; the real motor over 100 circles' 692 roads, every one
+crossed (1.9% fell before the Gust fix); the relay's drop walk over 704 zones, no false void; no long skip of the skip scan
+left without its zone; of 1,507 drifts over 40 seeds' first circle of bands 0-3, 35 hang shorter (2.3%, 4.28-17.96 m - the
+ways record's 36 of 891 was law 9's, its phantoms among them).
+
+**The pins** (each fails without its fix - `tools/mutants/egperfect_audit.json`, 42 records, every one dead):
+`test/net/eliteGates/egperfect_lords.test.js` (AUDIT A1-A7; 28 in the file), `test/net/eliteGates/egperfect_audit.test.js` (6 - R1-R4,
+P1-P2: the relay's and the ways' halves), `test/world/eliteGates/egperfect_audit_screen.test.js` (5 - S1-S5: the screen's) and
+`test/net/eliteGates/egperfect_broken.test.js`'s THE AUDIT'S HALLS (13 in the file).
+
+**Pins moved**: `egperfect_broken` (LAW10_HASH 650998388; `quietUntil` among the await's clocks; the Rails at π),
+`egperfect_broken_unit` (the Rails at π; the plan's own try is 77:37's ninth - 77:57 lays on law 9's eighth now its long
+bridges break in parts), `egperfect_lords` (a duel's ring: a member outside it beside it is not held, inside is),
+`egperfect_tube` (a pose in the tube starts it), `egperfect_hang` (the box in the hall's frame), `egperfect_halls_chains`
+(56 kept), `egaudit5_h` (the Scriptorium's member on its trial's ground), `egaudit5_a2_client` (the law before law 10 that
+parts this Deepway's floors is 9), `egaudit5_b` (the mirrors over a minute - the Lattice's cooldown moves the draws),
+`egint_client` (the hall's first Drift - law 10's first piece is a broken bridge's still slab), `eglook_air` (a mist sheet
+touching a floor's edge meets none, as `egRimMists` reads it), `egz_telegraph` (`egRimOf`'s `lord`), each with its note.
+
+**The relay.** `net/eliteGates/egLords.js`, `egBodies.js`, `egBrain.js`, `egFair.js`, `egLaw.js`, `egAscent.js`, `egSpanLaw.js`, `egRouteProof.js`
+and `egWalkGraph.js` are in the relay's bundle: `world218` is unshipped, so its `LAW` row in `test/net/relayversion.test.js` is
+re-hashed in place. The wire is unchanged (a chained shape simply omits `ol` where it had sent 0, which every screen
+already refused).
+
+**The four hosts.** None touched (HOST-SPLIT): `scenes/eliteGates/egSpan.js` is a module the hosts wire, and no Room method
+changed.
+
+**Weighed and left, said so.**
+- The relay reads a lane's end as a capsule and the screen as a box: a body 2.3 m into a turned break's 3.1 m gap is still
+  held on the island by the relay; an alcove's support disc covers a little void beside its niche. Both lean toward the
+  player and are as they were.
+- The Deserter's clamp, the Ashfall's disc and the Casters' stands run under laws 4-8 as well (the halls record's choice).
+- A door plate straddling a balcony's ring (24 of 1,400 halls), a turned Beat's dial at XII along +z (its model's own),
+  a hang's half-down against its rib (1.4 against 1.57 m): left as drawn.
+- A member on a balcony a lord's blows cannot reach finds the lord walking after EG_CHOOSE_TRIES draws - no fallback blow.
+- Rooms: towers stand in 76% of law 10's halls (drawn from the whole fresh pool; law 9's 82%).
