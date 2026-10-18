@@ -376,6 +376,108 @@ test('GROWTH3 THE STAGE: a face is mounted ONCE a visit and its host moved into 
   } finally { globalThis.document = was; globalThis.innerWidth = keptW; dropStage(); }
 });
 
+test('AUDIT GROWTH LANE2/LANE3 THE STAGE\'S EDGES: a face left before its chunk landed is never built; a chunk that fails is tried once more, a stale one says reload; a door on any screen where the pane cannot hold the face; a phone\'s face asking while it stands nowhere is opened to ask (mutants: built after the drop; no retry; the reload words; the door unread; the ask said into a detached face)', async () => {
+  const { mk, body, doc } = fakeDoc();
+  const was = globalThis.document;
+  globalThis.document = doc;
+  const keptW = globalThis.innerWidth;
+  globalThis.innerWidth = 1280;
+  const el = (t, c, x) => { const n = mk(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+  const words = { el, full: 'Full screen', leave: 'Leave full screen', loading: 'Loading...', failed: 'Failed.', open: 'Open' };
+  const text = (n) => (n.textContent ?? '') + (n.children ?? []).map(text).join('');
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const { RELOAD_TEXT } = await import('../../../src/ui/enhanced/enhancedChunk.js');
+  try {
+    // LANE2 N4: left before the chunk landed - never built
+    let built = 0;
+    const d0 = el('div', 'px-qdetail'); body.append(d0);
+    drawStage(d0, 'level', () => { built++; return { destroy() {} }; }, words);
+    dropStage();
+    await wait(5);
+    assert.equal(built, 0, 'a dropped face is never built');
+    // LANE2-10: a chunk that fails to load is tried once more; a stale one says a reload fixes it; a bug is not retried
+    let tries = 0;
+    const face = { destroy() {} };
+    const d1 = el('div', 'px-qdetail'); body.append(d1);
+    drawStage(d1, 'firmament', () => { if (tries++ === 0) throw new Error('Failed to fetch dynamically imported module: /x.js'); return face; }, words);
+    await wait(480);
+    assert.deepEqual([tries, stageFace() === face], [2, true], 'tried again, and up');
+    dropStage();
+    tries = 0;
+    const d2 = el('div', 'px-qdetail'); body.append(d2);
+    drawStage(d2, 'firmament', () => { tries++; throw new Error('Failed to fetch dynamically imported module: /x.js'); }, words);
+    await wait(480);
+    assert.equal(tries, 2);
+    assert.ok(text(d2).includes(RELOAD_TEXT), 'a stale chunk: reload');
+    dropStage();
+    tries = 0;
+    const d3 = el('div', 'px-qdetail'); body.append(d3);
+    drawStage(d3, 'firmament', () => { tries++; throw new Error('boom'); }, words);
+    await wait(20);
+    assert.equal(tries, 1, 'a bug is not tried again');
+    assert.ok(text(d3).includes('Failed.'));
+    dropStage();
+    // LANE2-8: the door on a wide screen, where the page asks for it
+    const d4 = el('div', 'px-qdetail'); body.append(d4);
+    drawStage(d4, 'level', () => ({ destroy() {} }), { ...words, door: true });
+    assert.equal(d4.querySelector('.gr-stage'), null, 'no stage');
+    assert.ok(d4.querySelector('.gr-stagecard'), 'its door');
+    dropStage();
+    for (const d of [d0, d1, d2, d3, d4]) d.remove();   // the window draws its whole tree anew: no older pane stands
+    // LANE3-6: a phone's face, opened then left, asks while it stands nowhere - it is opened again to say it
+    globalThis.innerWidth = 360;
+    let asks = 0;
+    const d5 = el('div', 'px-qdetail'); body.append(d5);
+    drawStage(d5, 'captain', () => ({ destroy() {}, back: () => asks++ === 0 }), words);
+    await wait(5);
+    d5.querySelector('.gr-stagecard').children.find((c) => c.tag === 'button').onclick();
+    assert.equal(stageLive().full, true);
+    body.querySelector('.gr-fullbox').children.find((c) => String(c.className).includes('gr-fullleave')).onclick();
+    assert.equal(stageLive().full, false, 'full screen left: the face waits, detached');
+    assert.equal(stageAsks(), true, 'it asked');
+    assert.equal(stageLive().full, true, 'and was opened to say it');
+    assert.equal(stageAsks(), false, 'the second press goes');
+  } finally { globalThis.document = was; globalThis.innerWidth = keptW; dropStage(); }
+  // the rest by source: deaf under an inert window; the timers door and the scrim ask; the line in the root's frame;
+  // the Grimoire's strip; the focus kept in the box and the leave press in its own strip
+  for (const f of ['src/ui/firmamentWindow.js', 'src/ui/skyWindow.js', 'src/ui/enhanced/enhancedLevelUp.js']) assert.match(rd(f), /if \(embed && root\.closest\?\.\('\[inert\]'\)\) return;/, f);
+  for (const f of ['src/ui/firmamentWindow.js', 'src/ui/skyWindow.js']) assert.match(rd(f), /const placeSay = \(\) => \{ sayBox\.style\.top = `\$\{Math\.round\(\(barFoot\(\) \|\| 66\) \+ 10\)\}px`; \};/, f);
+  const menu = rd('src/ui/enhanced/enhancedMenu.js');
+  assert.match(menu, /if \(pauseTab === 'growth' && growthAsks\(\)\) \{ timersOpen = false; timersFocusBack = true; render\(\); return; \}/, 'the timers door asks');
+  assert.match(menu, /\(\) => \{ if \(pauseTab === 'growth' && growthAsks\(\)\) return; onAction\('resume'\); \}\);/, 'the scrim asks');
+  const tab = rd('src/ui/growth/growthTab.js');
+  assert.match(tab, /:root\[data-plus-dress="grimoire"\] \.px-journal\.gr-faced > \.px-qrail \{ width: auto;/);
+  assert.match(tab, /const levelDoor = \(\) => \(globalThis\.innerHeight \?\? 720\) < LEVEL_PANE_MIN_H \|\| /);
+  assert.match(tab, /door: levelDoor\(\),/);
+  const stage = rd('src/ui/growth/growthStage.js');
+  assert.match(stage, /\.gr-fullbox > \.gr-stagehost \{ bottom: 48px; \}/);
+  assert.match(stage, /me\.guard = \(e\) => \{ if \(me\.box && !me\.box\.contains\?\.\(/);
+});
+
+test('AUDIT GROWTH LANE3 THE CLASSIC SHEET\'S EDGES: no Growth window while the rollout stands (its points live on the sheet - the window\'s Save and doors would lose them); the sheet disposes what it pushed; a chosen path\'s row only while it is in force; Enter on a focused button is the button\'s in the tab; no dead Close in the tab (mutants: the guide over the rollout; dispose dropped; the dormant row; Enter taken; the Close shown)', async () => {
+  const { CharSheet } = await import('../../../src/ui/charsheet.js');
+  const e = spellsword({ mastered: [LB, AR] });
+  e.readyToLevelUp = true; e.pendingLevel = 21;
+  const asked = [];
+  const sheet = new CharSheet(e, { growth: (at) => { asked.push(at); return { done: false, tick() {}, draw() {}, dispose() {} }; } });
+  assert.equal(sheet.leveling, true, 'the rollout stands');
+  assert.equal(sheet._growth('specs:martial'), false, 'no window over it');
+  assert.deepEqual(asked, []);
+  const plain = new CharSheet(spellsword(), { growth: (at) => { asked.push(at); return { done: false, tick() {}, draw() {}, dispose: () => { asked.push('disposed'); } }; } });
+  assert.equal(plain._growth('specs:arcane'), true);
+  plain.child = plain.hooks.growth('specs:arcane');
+  plain.dispose();
+  assert.deepEqual(asked, ['specs:arcane', 'specs:arcane', 'disposed'], 'the host\'s drop reaches the child');
+  assert.equal(plain.child, null);
+  const src = rd('src/ui/charsheet.js');
+  assert.match(src, /const guide = typeof this\.hooks\?\.growth === 'function' && !this\.leveling;/);
+  assert.match(src, /const pathText = pathOf\(e\) && masterSkillsActive\(e\) \? t\('schools\.sheet\.chosen'/);
+  assert.match(src, /const martialText = martialPathOf\(e\) && masterSkillsActive\(e\) \? t\('martial\.sheet\.chosen'/);
+  const lv = rd('src/ui/enhanced/enhancedLevelUp.js');
+  assert.match(lv, /case 'Enter': case 'NumpadEnter': if \(embed && t\w*\?\.tagName === 'BUTTON'\) \{ used = false; break; \} confirm\(\); break;/);
+  assert.match(lv, /if \(embed && screen\?\.viewOnly\) ok\.hidden = true;/);
+});
+
 test('GROWTH3 THE WINDOWS, EMBEDDED (by source; tools/growthProbe.mjs drives them): the Firmament, the captain\'s stars and the Ascension each draw at the stage\'s size with no overlay and no Escape of their own - the window\'s back stack asks back(); unaccepted stars asked about once; a stage between two draws hears no key (mutants: an embedded window\'s own Escape; its overlay registered; the deaf check dropped)', () => {
   const firm = rd('src/ui/firmamentWindow.js');
   assert.match(firm, /\.fmt-root\.fmt-embed \{ position: absolute; z-index: auto; \}/);
@@ -397,7 +499,7 @@ test('GROWTH3 THE WINDOWS, EMBEDDED (by source; tools/growthProbe.mjs drives the
   assert.match(sky, /if \(embed\) \{ root\.classList\.add\('fmt-embed'\); root\.setAttribute\('aria-modal', 'false'\); exitBtn\.hidden = true; \}/);
   assert.match(sky, /if \(embed\) try \{ watch = new globalThis\.ResizeObserver\(\(\) => \{ if \(!dead\) resize\(\); \}\); watch\.observe\(root\); \} catch \{ watch = null; \}/);
   assert.match(sky, /if \(!embed\) \(goBtn\.disabled \? homeBtn : goBtn\)\.focus\?\.\(\{ preventScroll: true \}\);/);
-  assert.match(rd('src/ui/captainTreeWindow.js'), /unacceptedEsc: t\('captain\.sky\.unacceptedLeave', 'You have unaccepted changes\. Press Accept to keep them, or leave again to discard them\.'\),/);
+  assert.match(rd('src/ui/captainTreeWindow.js'), /unacceptedEsc: t\('captain\.sky\.unacceptedLeave', 'You have unaccepted changes\. Press \{accept\} to keep them, or leave again to discard them\.', \{ accept: t\('captain\.sky\.accept', 'Accept'\) \}\),/);
   assert.doesNotMatch(rd('src/ui/revenantStarsWindow.js'), /embed/, 'the revenant sky stands over the window, never in it');
   assert.match(rd('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/);
   const lv = rd('src/ui/enhanced/enhancedLevelUp.js');
@@ -532,4 +634,125 @@ test('GROWTH THE WINDOW, DRIVEN: the Stats page\'s Growth door (its count) lands
       assert.match(on.textContent, /Captain's Stars/, 'the Growth tab\'s Captain\'s Stars');
     } finally { menu2.unmount(); setHoldingsProvider(null); }
   } finally { restore(); dropStage(); }
+});
+
+test('AUDIT GROWTH LANE5-4 THE TAB WITH ITS REAL FACES, DRIVEN: the Firmament and the captain\'s sky mounted on the stage - a star taken, another page, another tab and the window\'s asksFirst each hold the first press and say so, the second goes and drops the face, the stars never set; the Level page with a level owed draws the owed rollout, never the view (mutants: the Firmament\'s back unreturned; the captain\'s; the owed read false; a face mounted unembedded)', async () => {
+  await import('../../chargenDom.mjs');
+  _resetForTests();
+  const { mountEnhancedMenu } = await import('../../../src/ui/enhanced/enhancedMenu.js');
+  const { setHoldingsProvider } = await import('../../../src/ui/holdingsPages.js');
+  const { setFirmamentBook } = await import('../../../src/net/firmament/firmamentBook.js');
+  const { starsFor, craftPointsFor } = await import('../../../src/net/firmament/firmamentLaw.js');
+  const { START_KEYS } = await import('../../../src/net/firmament/firmamentTree.js');
+  const { createCaptainLedger } = await import('../../../src/systems/naval/captainLedger.js');
+  const settle = async (pred) => { for (let i = 0; i < 200 && !pred(); i++) await new Promise((r) => setTimeout(r, 5)); };
+  const kept = { ...playerEntity };
+  const restore = () => { for (const k of Object.keys(playerEntity)) if (!(k in kept)) delete playerEntity[k]; Object.assign(playerEntity, kept); };
+  let tree = { start: null, nodes: [] };
+  const commits = [];
+  setFirmamentBook({
+    state: { open: true, stars: starsFor(30), craft: craftPointsFor(new Array(10).fill(30)), renown: 30, refund: { freeBelow: 10, perStar: 10 } },
+    current: () => tree, read: async () => ({ ok: true }), onChange: () => () => {},
+    commit: async (next) => { commits.push(next); tree = next; return { ok: true }; }, respec: async () => ({ ok: false }), canRespec: () => false,
+  });
+  const ledger = createCaptainLedger();
+  for (let i = 0; i < 40; i++) ledger.sailed(90000);
+  const setBefore = ledger.tree().slice();
+  setHoldingsProvider({ captain: {
+    model: () => ({ crowns: [], refusedAt: 0, marque: null, contracts: [], charts: [], log: [], stars: { ...ledger.captain(), set: ledger.tree().length - 1 } }),
+    openStars: () => false, stars: () => ({ ledger, changed: () => {} }),
+  } });
+  const host = globalThis.document.createElement('div');
+  globalThis.document.body.append(host);   // the window on the page: its faces stand connected, as in the game
+  const raf = globalThis.requestAnimationFrame;
+  globalThis.requestAnimationFrame = () => 1;   // the skies' frame loop asks for the next frame inside this one: none here
+  let menu = null;
+  try {
+    Object.assign(playerEntity, spellsword({ mastered: [LB, AR] }), { readyToLevelUp: true, pendingLevel: 21, isPlayer: true });
+    menu = mountEnhancedMenu(host, { mode: 'pause', hooks: { ascendScreen: () => levelUpScreenFor(playerEntity) }, onAction: () => {}, at: 'firmament' });
+    const rail = (text) => host.querySelectorAll('button').find((b) => String(b.className).includes('px-qrow') && b.textContent.includes(text));
+    const page = () => host.querySelectorAll('button').find((b) => String(b.className).includes('px-qrow') && String(b.className).includes(' on'))?.textContent ?? '';
+    const tab = (text) => host.querySelectorAll('button').find((b) => b.textContent.replace(/\u25c6/g, '') === text);
+    const asked = (re) => assert.match(host.textContent, re);
+    // THE FIRMAMENT: a birthsign taken - another page asks once, then goes (the face dropped, nothing committed)
+    await settle(() => stageFace()?.allocate);
+    const firm = stageFace();
+    assert.equal(typeof firm.back, 'function', 'the Firmament answers the stage\'s ask');
+    assert.equal(host.querySelectorAll('div').some((d) => String(d.className).includes('fmt-embed')), true, 'drawn in the pane, embedded');
+    firm.allocate(START_KEYS[1]);
+    assert.equal(firm.model().changes.startChanged, true);
+    rail('Specialisations').onclick();
+    assert.match(page(), /Firmament/, 'the first press held');
+    asked(/You have unaccepted changes\. Press Accept to keep them, or leave again to discard them\./);
+    assert.equal(menu.asksFirst(), false, 'asked once: the window\'s own ask lets the second go');
+    rail('Specialisations').onclick();
+    assert.match(page(), /Specialisations/, 'the second press went');
+    assert.equal(stageFace(), null, 'the face dropped');
+    assert.deepEqual(commits, [], 'nothing accepted');
+    // THE CAPTAIN'S SKY: a star taken - the window's asksFirst (the sheet's key, the dial's) holds once; another tab after it goes
+    rail('Captain').onclick();
+    await settle(() => stageFace()?.take);
+    const sky = stageFace();
+    assert.equal(typeof sky.back, 'function', 'the captain\'s sky answers the stage\'s ask');
+    const star = (await import('../../../src/systems/naval/captainTree.js')).CAPTAIN_STARS.find((s) => !setBefore.includes(s.id) && s.links?.some?.((l) => setBefore.includes(l)))?.id;
+    if (star) sky.take(star); else sky.take((await import('../../../src/systems/naval/captainTree.js')).CAPTAIN_STARS[1].id);
+    assert.ok(sky.model().changes.added > 0, 'a star pending');
+    assert.equal(menu.asksFirst(), true, 'the sheet\'s or the dial\'s key: asked');
+    asked(/You have unaccepted changes\. Press Accept to keep them, or leave again to discard them\./);
+    tab('Stats').onclick();
+    assert.equal(stageFace(), null, 'another tab, the second press: the face dropped');
+    assert.deepEqual(ledger.tree(), setBefore, 'the captain\'s stars never set');
+    // THE LEVEL PAGE with a level owed: the owed rollout (pool and Ascend), never the view
+    tab('Growth').onclick();
+    rail('Level').onclick();
+    await settle(() => stageFace()?.model);
+    const lv = stageFace().model();
+    assert.equal(lv.crown.viewOnly, false, 'the level owed, not the view of the stars');
+    assert.ok(lv.pool > 0, 'its points to place');
+  } finally { menu?.unmount(); host.remove?.(); setFirmamentBook(null); setHoldingsProvider(null); restore(); dropStage(); globalThis.requestAnimationFrame = raf; }
+});
+
+test('AUDIT GROWTH LANE3-9 / LANE5-6 THE YES/NO CARD AND THE MASTER SKILLS LINE, DRIVEN: Escape over the card is its No and never resumes the game under it; the window\'s unmount takes a standing card down; the Master Skills page draws its specialisation line only for a character with a family to reach or a path held (mutants: the back stack over the card; the card left standing; the line for a class that can never meet a path)', async () => {
+  const dom = await import('../../chargenDom.mjs');
+  _resetForTests();
+  const { mountEnhancedMenu } = await import('../../../src/ui/enhanced/enhancedMenu.js');
+  const kept = { ...playerEntity };
+  const restore = () => { for (const k of Object.keys(playerEntity)) if (!(k in kept)) delete playerEntity[k]; Object.assign(playerEntity, kept); };
+  const card = () => globalThis.document.body.querySelectorAll('div').find((d) => String(d.className).includes('px-master-ask')) ?? null;
+  const esc = { stopImmediatePropagation() { this.stopped = true; } };
+  const acts = [];
+  let menu = null;
+  try {
+    Object.assign(playerEntity, spellsword({ raised: { [RES]: 100 } }));
+    const host = globalThis.document.createElement('div');
+    const open = () => {
+      menu = mountEnhancedMenu(host, { mode: 'pause', hooks: {}, onAction: (a) => acts.push(a), at: 'stats' });
+      host.querySelectorAll('button').find((b) => b.textContent.startsWith('Master Skills'))?.onclick();   // the page keeps its last section
+      assert.ok(host.querySelectorAll('button').some((b) => b.textContent.endsWith('Skills') && b.textContent.startsWith('\u2039')), `on the Master Skills page: ${host.querySelectorAll('button').map((b) => b.textContent).join(' | ')}`);
+    };
+    open();
+    const line = () => host.querySelectorAll('div').find((d) => String(d.className).includes('px-master-about'))?.textContent ?? null;
+    assert.equal(line(), 'Master two schools of magic or two weapon skills to unlock a specialisation. See every path and what it needs on the Growth tab.');
+    host.querySelectorAll('button').find((b) => b.textContent === 'Master').onclick();
+    assert.ok(card(), 'the card asks');
+    dom.keydown('Escape', undefined, esc); dom.keyup('Escape', undefined, esc);
+    assert.equal(card(), null, 'Escape: the card\'s No');
+    assert.deepEqual(acts, [], 'the game never resumed under it');
+    assert.equal(playerEntity.masteredSkills?.includes?.(RES) ?? false, false, 'nothing mastered');
+    host.querySelectorAll('button').find((b) => b.textContent === 'Master').onclick();
+    assert.ok(card());
+    menu.unmount(); menu = null;
+    assert.equal(card(), null, 'the window\'s unmount took the card down');
+    // a class that can never meet a path of either family: no line
+    Object.assign(playerEntity, hero({ primary: [SKILLS.Stealth, SKILLS.Running, SKILLS.Swimming], major: [SKILLS.Climbing, SKILLS.Jumping, SKILLS.Dodging], minor: [SKILLS.Medical, SKILLS.Mercantile, SKILLS.Lockpicking] }));
+    open();
+    assert.equal(line(), null, 'no specialisation line for a class that can never meet a path');
+    menu.unmount(); menu = null;
+    // both held: where they are
+    Object.assign(playerEntity, spellsword({ mastered: [LB, AR, RES, ALT] }));
+    assert.equal(MP.chooseMartialPath(playerEntity, 'ranger').ok, true);
+    assert.equal(AP.choosePath(playerEntity, 'warden').ok, true);
+    open();
+    assert.equal(line(), 'Your specialisations are on the Growth tab.');
+  } finally { menu?.unmount(); restore(); }
 });

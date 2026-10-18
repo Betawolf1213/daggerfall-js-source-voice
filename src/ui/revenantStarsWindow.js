@@ -196,8 +196,8 @@ export function mountRevenantStarsWindow(host, { id, book = swornStarsBook(id), 
       close: t('rvn.stars.close', 'Close'),
       hint: t('rvn.stars.hint', 'Click a star to take it and the stars on the way to it · Right-click to remove · Drag to pan · Scroll to zoom · H: back to the Oath'),
       hintTouch: t('rvn.stars.hintTouch', 'Tap a star to see it, tap again to take it · Hold a star to remove it · Drag to pan · Pinch to zoom'),
-      unaccepted: t('rvn.stars.unaccepted', 'You have unaccepted changes. Press Accept to keep them, or close again to discard them.'),
-      unacceptedEsc: t('rvn.stars.unacceptedLeave', 'You have unaccepted changes. Press Accept to keep them, or leave again to discard them.'),   // AUDIT GROWTH LANE4-1: the sheet's key, not Close
+      unaccepted: t('rvn.stars.unaccepted', 'You have unaccepted changes. Press {accept} to keep them, or close again to discard them.', { accept: t('rvn.stars.accept', 'Accept') }),
+      unacceptedEsc: t('rvn.stars.unacceptedLeave', 'You have unaccepted changes. Press {accept} to keep them, or leave again to discard them.', { accept: t('rvn.stars.accept', 'Accept') }),   // AUDIT GROWTH LANE4-1: the sheet's key, not Close
       set: t('rvn.stars.set', 'Stars saved.'),
       startTip: t('rvn.stars.tip.oath', 'Every sworn revenant starts with the Oath. Take a star next to it.'),
       backMany: (n) => t('rvn.stars.tip.backAfter', 'Right-click to remove it and {n, plural, one {the star} other {the # stars}} after it.', { n }),   // AUDIT RVN-STARS S24: never "the 1 stars"

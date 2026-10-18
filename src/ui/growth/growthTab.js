@@ -131,7 +131,7 @@ function levelPage(detail, ctx) {
     mountEnhancedLevelUp(host, { screen: (owed && open()) || viewOnlyScreen(entity, usesVirtueLeveling(entity)), entity, embed: true, onExit: () => { dropStage(); ctx.render(); } })), {
     el, ...stageWords(),
     door: levelDoor(),
-    lead: owed ? t('growth.level.owed', 'You have a level up waiting. Place your points, then press Ascend. If you leave first, the points stay unspent and you place them again.')
+    lead: owed ? t('growth.level.owed', 'You have a level up waiting. Place your points, then press {ascend}. If you leave first, the points stay unspent and you place them again.', { ascend: t('levelup.ok.ascend', 'Ascend') })   // AUDIT GROWTH LANE5-2: the button's own word, in every language
       : t('growth.level.view', 'Your attributes, skills and progress to the next level. When you level up, you spend your points here.'),
   });
 }
@@ -153,7 +153,7 @@ function firmamentPage(detail, ctx) {
     return;
   }
   drawStage(detail, 'firmament', (host) => import('../firmamentWindow.js').then(({ mountFirmamentWindow }) =>
-    mountFirmamentWindow(host, { embed: true })), { el, ...stageWords(), lead: t('growth.firm.lead', 'Passive bonuses for online play, bought with the stars you earn. Press Accept to keep your changes.') });
+    mountFirmamentWindow(host, { embed: true })), { el, ...stageWords(), lead: t('growth.firm.lead', 'Passive bonuses for online play, bought with the stars you earn. Press {accept} to keep your changes.', { accept: t('firmament.accept', 'Accept') }) });
 }
 
 // ── Captain's Stars ─────────────────────────────────────────────────

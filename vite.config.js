@@ -264,7 +264,7 @@ export default defineConfig({
         // FIRM1: THE FIRMAMENT LAB - the passive tree's window over made-up purses, no service and no ARENA2, in either
         // dress (`?dress=grimoire`), so the sky can be judged and driven by hand
         firmament: 'firmament.html',
-        // GROWTH: THE GROWTH TAB'S LAB - the pause window on its Growth tab over a made-up character, spellbook and
+        // GROWTH: THE GROWTH TAB'S LAB - the pause window on its Growth tab over a made-up character, Firmament book and
         // captain, no ARENA2 and no service, so the guide and the skies drawn in the pane can be driven by hand;
         // tools/growthProbe.mjs drives this page.
         growth: 'growth.html',

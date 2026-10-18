@@ -58,8 +58,9 @@ could see or play. That is where the identity goes.
 
 - **Who.** A player with Master Skills in force (online always; offline the switch - SOFTCAP3) and at least two of
   the six schools mastered. A school can only be mastered as a career skill, so a class whose career holds fewer than
-  two of the six never meets a path - the masteries' own law (`pathPossible`; the enhanced page shows such a class no
-  Specialisation card at all - AUDIT SCHOOLS L4 8). AUDIT MARTIAL L4 L3 (found on the sibling, fixed in both): the
+  two of the six never meets a path - the masteries' own law (`pathPossible`; AUDIT SCHOOLS L4 8: the enhanced page
+  shows such a class nothing to choose - since GROWTH2 the Growth tab's guide says so in its headline and the Master
+  Skills page draws no specialisation line for it, AUDIT GROWTH LANE5-6). AUDIT MARTIAL L4 L3 (found on the sibling, fixed in both): the
   count is of what the 2/2/1 slots can still master (`masterSkills.js` masterableCount) - two schools that were both
   minor skills share one slot, and the card showed for good. And Yes says one short line, "Specialisation chosen:
   {name}." (AUDIT MARTIAL L4 M1: the spell's sentence ran the line past the classic screen's 312 px; where the spell is

@@ -62,9 +62,10 @@ nothing a player could see. That is where the identity goes.
 - **Who.** A player with Master Skills in force (online always; offline the switch - SOFTCAP3) and at least two of the
   six weapon skills mastered. A class that can never master two of them never meets a path (`martialPossible`, by
   `masterSkills.js` masterableCount - the ones mastered and as many more as each career group's 2/2/1 slots leave; the
-  enhanced page shows it no Martial card). AUDIT MARTIAL L4 L3: it counted the career's weapon skills alone, so two that
-  were both minor skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same,
-  and both now read the slots.
+  Growth tab's guide says so in its headline, and the Master Skills page draws no specialisation line for it - GROWTH2,
+  AUDIT GROWTH LANE5-6). AUDIT MARTIAL L4 L3: it counted the career's weapon skills alone, so two that were both minor
+  skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same, and both now read
+  the slots - and the guide counts each path's pair the same way (AUDIT GROWTH LANE1-1).
 - **The choice.** Any pair of the player's mastered weapon skills names one path (section 5); with three mastered, the
   player picks among their pairs. `entity.martialPath` holds the path's id. **PERMANENT** - nothing undoes it, as nothing
   undoes a mastery. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
@@ -241,8 +242,8 @@ nothing), read back, already asked, only from a save with no `martialPath` key a
 - `combat/techniques.js` - the signature in hand, the cooldown slots, the ladder's gate, the `use` token, the press told.
 - `combat/technique/techniqueBlow.js` - the landing's and the press's listeners; `combat/arrowFlight.js` shaftOnRelayBody.
 - `characters/weaponStates.js` - the swing pace; `combat/swingLaw.js` - the swing's family.
-- `scenes/shared.js` - the ask; `ui/charsheet.js` and `ui/enhanced/enhancedCharSheet.js` / `ui/enhanced/enhancedMenu.js` -
-  the choice (the arcane card's own function draws both, `specCard`).
+- `scenes/shared.js` - the ask; `ui/charsheet.js` (the classic rows) and `ui/growth/specGuide.js` - the choice (GROWTH2:
+  the Growth tab's guide reads both families; the Master Skills cards and `specCard` are gone - `10-UI/Growth.md`).
 - `systems/save/save.js` - `martialPath` and `martialPrompted`.
 
 ## 9. Departures, and what is recorded rather than built

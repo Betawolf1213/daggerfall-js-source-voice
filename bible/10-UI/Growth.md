@@ -81,7 +81,8 @@ more: a rail of pages on the left, the page on the right.
   about first (section 6).
 - **The doors in:** the Stats page's Growth door; Master Skills' one line and its Specialisations press (where the two
   cards stood: `pause.master.specMoved`); the Holdings Captain page's "Open the stars" (the Growth tab on Captain's
-  Stars; a menu with no Growth tab still opens them over the world, CAPTAIN-TREE's door); the classic sheet's S and W rows (section 7); the one ask's
+  Stars; the page's kit makes `growth` optional, so a caller without the tab would open them over the world through
+  CAPTAIN-TREE's door - none draws it so today, AUDIT GROWTH LANE5-19); the classic sheet's S and W rows (section 7); the one ask's
   words (section 7).
 
 ## 4. The Level page
@@ -149,7 +150,19 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
 - **The window widens** while a face stands (`px-win-wide`: up to 1440 x 940, 98% of the screen) and the rail becomes a
   strip over the face, wrapped and never scrolled so the lit page stays in sight.
 - **Full screen** moves the same host into a box over everything (on the body, so no ancestor's transform holds it)
-  and back.
+  and back. The face stands above a strip of its own with the leave press in it (laid over the face, it sat on the
+  Ascension's Ascend and the skies' summary panel), and the focus stays in the box (a Tab walked under it to the
+  window's tabs) - AUDIT GROWTH LANE2-8, LANE2 N2/N3.
+- **The Level page's face** is drawn in the pane only where the pane holds it - a Plus window at least 1000 px tall
+  (`growthTab.js:"const LEVEL_PANE_MIN_H = 1000;"`); elsewhere, and always in the Grimoire's dress, the page is its line
+  and the phone's Open door (below), the face full screen. The Ascension is laid out for the whole screen - at 1366x768
+  in the pane its figure flattened to 28 px and its stars stood on each other, Ascend fell off a 1024x600 pane, and the
+  Grimoire's book is scaled to the screen, not the pane (AUDIT GROWTH LANE2-8).
+- **The Grimoire's rail** is a strip over a face as Plus's is (its book's left page outranked it, and the sky lost a
+  third of its height - LANE2-9).
+- **A face is built only while its page stands** (a Level face dropped before its chunk landed drew its pool and played
+  its fanfare - LANE2 N4), and a chunk that fails is tried once more; one a deploy took says a reload fixes it -
+  MENU1's words (`enhancedChunk.js` RELOAD_TEXT), not "try again" (LANE2-10).
 - **A phone's stage is the screen:** at 660 px and under, a face's own bar alone fills the pane, so the page is its line
   and an Open door, and the face opens over the whole screen - kept as it was between two opens, until the page, the
   tab or the window is left.
@@ -157,9 +170,13 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   (`ui/enhanced/enhancedMenu.js:"if (!growthBack()) onAction('resume');"`): the face's own back (a confirm shut; unaccepted stars
   asked about once), then full screen left, then the window resumes.
 - **Leaving asks first** (GROWTH5, AUDIT RVN-STARS S8's law for every face): another rail page, another tab, the
-  sheet's key and the QuickDial's (`charSheetDoor.js` - the menu's `asksFirst`) each ask the face before
-  they drop it (`stageAsks` - the face's own ask, never full screen's): unaccepted stars said once ("You have unaccepted
-  changes. Press Accept to keep them, or do that again to discard them."), the second press goes. Merged, this found
+  sheet's key and the QuickDial's (`charSheetDoor.js` - the menu's `asksFirst`), a tap outside the window and a timers
+  row's door (AUDIT GROWTH LANE3-4, LANE2-3) each ask the face before they drop it (`stageAsks` - the face's own ask,
+  never full screen's): unaccepted stars said once ("You have unaccepted changes. Press Accept to keep them, or leave
+  again to discard them." - LANE5-10: "do that again" read as "press Accept again"), the second press goes. The ask is
+  for the stars it named: a star taken or given back after it, and the next leave asks again (LANE3-8 - it re-armed on
+  a key alone, never the pointer). A phone's face asking while it stands nowhere (its full screen left) is opened full
+  screen first, so the ask is read (LANE3-6). Merged, this found
   the hole GROWTH3 had left: the sheet's key, the dial's key and a click elsewhere threw unaccepted stars away unasked.
   The one sky still laid over the window - a sworn revenant's, from the Companions page - asks the sheet's own keys the
   same way (`firmamentOver.js` revenantStarsOver's `asks`, through `skyWindow.js` back(); AUDIT GROWTH LANE4-1: F5 and
@@ -169,8 +186,15 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   the stage at its size (a ResizeObserver refits the view the first time it has a true size), no overlay registered (the
   pause window is the overlay), no Escape of their own, the Firmament's and the captain's Exit hidden, and **deaf while
   detached** - a stage between two draws, or a phone's face waiting for its door, hears no key
-  (`firmamentWindow.js:"if (dead || (embed && !root.isConnected)) return;"`). A level left mid-spend stays owed: the
-  Ascension's Escape is the window's.
+  (`firmamentWindow.js:"if (dead || (embed && !root.isConnected)) return;"`) - **or while a window over the pause
+  window holds the stage inert** (the account window's fields lost their letters to the skies, and its Enter accepted
+  the captain's stars - LANE2-1). A focused button's Enter is the button's (the Stats tab's Enter pressed Ascend -
+  LANE3-3). Their line under the bar is placed in the root's own frame (it stood 200 px low in the pane, or off a short
+  stage - LANE2-6). The view of the stars in the tab has no Close: the page is its place (LANE3-7). A level left
+  mid-spend stays owed: the Ascension's Escape is the window's; the points placed are placed again, and the page says so.
+- **The guide's Yes/No card** answers its own keys while it stands - its Escape is its No, the window's back stack
+  stands down - and goes with the window (LANE3-9: Escape closed the card and the window; F5 left it over the running
+  game, its Y still choosing a permanent path).
 
 ## 7. GROWTH4 - the classic skin and the words
 
@@ -180,6 +204,17 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   own child with the host's pause bag (`charSheetDoor.js` hooks.growth), its Resume back to the sheet. `pauseDoor.js`
   opens a Growth landing on either skin. No document (node, tests), no hook: the rows keep their boxes. The classic
   skin's own level-up is DFU's sheet rollout, unchanged; its pause window (OPTN00I0) is DFU's, unchanged.
+- **AUDIT GROWTH on the classic sheet** (lane 3): **no Growth window while the rollout stands** - its points live on
+  the sheet until CheckIfDoneLeveling writes them home (DaggerfallCharacterSheetWindow.cs:437-443), and the window
+  carries the host's whole pause bag: its Save wrote the level with the points gone, its Pack, Spellbook or Chronicle
+  took the slot and dropped them (LANE3-2 - the rows keep DFU's boxes then); no relock on the window's Save or Load, the
+  sheet standing under it (LANE3-14); the sheet disposes what it pushed when a host drops it (LANE3-11); a chosen
+  path's row (`{name}  (S)`) only while it is in force - asleep, the row is the guide's, whose chosen line says why
+  (LANE3-12). The S row reads "Arcane paths  (S)" beside "Martial paths  (W)" (LANE5-12).
+- **A departure, named** (LANE3-13): on the classic skin a level owed can be spent on the Growth tab's Level page
+  when another landing (the professions, the family, the mail) reaches the tab before the sheet has opened - in the
+  Ascension's dress, by the same law (`charSheetDoor.js` levelUpScreenFor - DFU's pool, `advancement.js`
+  applyLevelUp); DFU spends it on the sheet alone.
 - **The one ask's words** (`scenes/shared.js`, after a second mastery): on the enhanced skin, the No and the
   several-open box name the Growth tab ("You can choose a specialisation later on the Growth tab of the pause menu" -
   `pathDeclinedGrowthText`, `martialDeclinedGrowthText`, `pathsOpenRows(.., { growth })`); on the classic skin, the
@@ -204,7 +239,9 @@ The tab is the pause window's, which every host opens through the same two doors
 dial; `charSheetDoor.js`: the sheet key) - so `scenes/exterior.js`, `scenes/world.js`, `scenes/worldModes.js` and
 `scenes/dungeonContext.js` all reach it with no line of their own. `scenes/world.js` alone hands a captain's sky over
 (the Holdings provider's `captain.stars`, `scenes/captainPageHost.js` - Come Sail Away on), so the Captain's Stars page
-stands there; the other three hand none, and the rail shows three pages. No host grew (HOST-SPLIT): world.js's line is one entry of the provider object it already built.
+stands there - and in the interiors and dungeons entered from the world, whose window reads the same module-wide
+provider (AUDIT GROWTH LANE3-13); `scenes/exterior.js` and the standalone `?dungeon` page hand none, and the rail
+shows three pages. No host grew (HOST-SPLIT): world.js's line is one entry of the provider object it already built.
 
 ## 9. Pins and proof
 
