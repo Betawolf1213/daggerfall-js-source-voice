@@ -152,10 +152,13 @@ export function frameEnd(now = (typeof performance !== 'undefined' ? performance
 export function frameCpu() {
   if (!samples.length) return null;
   let sum = 0, worst = 0, inFrame = 0, before = 0, stream = 0;
-  for (const [, b, f, w, l] of samples) { sum += b; if (b > worst) worst = b; inFrame += f; before += w; stream += l; }
+  let worstF = 0, worstW = 0, worstL = 0;   // FB1018B HITCH-KEEP: the worst sample's own three parts
+  for (const [, b, f, w, l] of samples) { sum += b; if (b > worst) { worst = b; worstF = f; worstW = w; worstL = l; } inFrame += f; before += w; stream += l; }
   const n = samples.length;
-  // SCRIPT-SPLIT: the mean's three parts beside it - `inFrameMs + beforeMs + streamMs === meanMs`
-  return { meanMs: sum / n, worstMs: worst, frames: n, inFrameMs: inFrame / n, beforeMs: before / n, streamMs: stream / n };
+  // SCRIPT-SPLIT: the mean's three parts beside it - `inFrameMs + beforeMs + streamMs === meanMs`. FB1018B HITCH-KEEP:
+  // and the worst frame's, which sum to `worstMs` - a hitch is one frame, and the mean's parts are a second's
+  return { meanMs: sum / n, worstMs: worst, frames: n, inFrameMs: inFrame / n, beforeMs: before / n, streamMs: stream / n,
+    worstInFrameMs: worstF, worstBeforeMs: worstW, worstStreamMs: worstL };
 }
 
 export function _resetFrameClock() { open = null; openAt = null; samples = []; lent = 0; lastOwn = 0; intervalCount = 0; intervalAt = 0; lastBegin = null; begun = 0; }
