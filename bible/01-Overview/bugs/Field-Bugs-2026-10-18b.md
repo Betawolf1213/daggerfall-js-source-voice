@@ -8,9 +8,12 @@ have left is this"* over the Bank of the Empire's window. Online. Read on the co
 The wallet (`06-Systems/Wallet.md`, WALLET1) holds nothing of its own: it shows the letters of credit in the pack
 (`entity.items`, template 275), so a letter "vanishing from the wallet" is a letter that left the pack. Every door that
 takes one out was read, the client's and the account service's. One takes letters the player never chose to give and is
-a bug (LETTERS-HOME, below). One takes them by a law the owner chose but SAID NOTHING (BURNT-SAID, below). The others are
-the player's own acts or a law the owner chose, said where they happen. Which of them took this player's letters is not proven: the report
-names no death and no deposit. What would prove it is under "What would prove it" below.
+a bug (LETTERS-HOME, below). One takes them by a law the owner chose but SAID NOTHING (BURNT-SAID, below). One spends
+every letter on a price that is no number (NO-NAN-PAY, below). And the counter the reporter sold at could pay a big lot
+of Daedric pieces as millions of gold BELOW nothing (TRADE-WRAP, below) - the sale itself vanishing. The others are the
+player's own acts or a law the owner chose, said where they happen. Which of them took this player's letters is not
+proven: the report names no death, no deposit and no sale's price. What would prove it is under "What would prove which
+door it was", below.
 
 | | Door | What it does to a letter | Verdict |
 |---|---|---|---|
@@ -19,6 +22,8 @@ names no death and no deposit. What would prove it is under "What would prove it
 | 2b | The same death, the record HELD (`server-account/src/wild.js`, Lane 1's freeze: `burnt`) | every letter taken off the record and laid nowhere - and the death screen said nothing | the freeze is the arc's law, unchanged; **the silence a bug - BURNT-SAID, fixed** |
 | 3 | The bank's Deposit LOC (`banking.js depositAllLetters`) | every letter at face into the Empire's account; a defaulted loan garnishes it | DFU's DepositAll_LOC - the gold is in the account |
 | 4 | A payment the coins cannot cover (`court.js deductGold`; the service's `realmGoldLaw.js payFromSave`, pinned equal) | the letters pay first, then the coins (DFU's DeductGoldAmount); what the service pays back (a card table's cash-out, a home sold, rent) goes to the bank | DFU's order; every caller gates on coins plus letters |
+| 4b | The same, given a price that is no number (`court.js deductGold`) | every letter spent, the coins kept, "paid" answered | **BUG - NO-NAN-PAY, fixed** (no producer of such a price was found) |
+| 4c | A counter's sale of a big lot (`shopStock.js calculateTradePrice`) | the price wrapped int32: millions of gold below nothing into the purse, after which every payment draws on the letters | **BUG - TRADE-WRAP, fixed** |
 | 5 | A staff rollback or repair (`server-account/src/review.js`) | the record goes back to its last clean checkpoint | staff's act, recorded in `realm_findings` |
 
 ## LETTERS-HOME: a revenant never takes a letter of credit
@@ -98,6 +103,43 @@ Pinned by `test/systems/fb1018b_burntsaid.test.js` (3): the held death and the c
 the fallen's own take-out, and the words, the host's line and the risen line. `tools/mutants/fb1018b_burntsaid.json`
 (4, all dead). PIN MOVED: `fb1014_pvpescrow.test.js` (the host's death-screen line, its new fields beside the escrow's).
 
+## TRADE-WRAP: a lot's price never wraps
+
+FOUND (the client sweep). CalculateTradePrice (`shopStock.js:"export function calculateTradePrice("`) haggles a lot ONCE,
+as DFU does: the whole basket's cost (`tradeModes.js tradeCost`, CalculateCost summed) times the haggle's factor, then
+`>> 8` - C#'s `int` in DFU, JS's int32 here. Past 2^31 the product wraps. Measured on the real counter: the first wrong
+price comes at a cost of 9.65 million (a quality-1 shop, Mercantile and Personality 100) to 18 million (quality 10,
+skills 40), and it is about -8.4 million gold. A Daedric claymore costs about 92,000 at a quality-10 counter, so 150 of
+them sold there for -7,489,216; the online sale (`ONLINE_SALE_SHARE`, MERC-SLOPE) wrapped with it, its half and its top
+read off the same arithmetic. A negative price is coin (`sellProceeds` weighs it as none), and `addGoldPieces` does not
+clamp, so the purse went millions below nothing while the pieces left the pack. The wallet shows the purse as
+`Math.max(0, ...)` - nothing - and from then on every payment found the coins short and spent the letters first. A
+purchase as large wrapped the same way and paid the buyer.
+
+CHANGED: the last step divides (`Math.floor(product / 256)`), the same number to the gold for every lot that never
+wrapped - for a product under 2^31, `x >> 8` and `Math.floor(x / 256)` agree - and the right one for every lot that did.
+A departure from FormulaHelper.CalculateTradePrice, named in Port-Ledger A: DFU's int wraps the same.
+
+Not changed: a purse already below nothing. A save carries it as it is, and the judge reads a negative purse as a law
+finding (`judge.js purseWord`) - which holds trade, and at a death in the zone burns the drop (BURNT-SAID). A character
+it happened to is a staff repair (`review.js`), not a migration this change can know to be right.
+
+## NO-NAN-PAY: a price that is no number takes nothing
+
+FOUND (the client sweep). deductGold (`court.js:"export function deductGold(player, amount) {"`, PlayerEntity.DeductGoldAmount)
+given NaN or undefined: `amount <= purse` is false, so the letters pay - and NaN is never under a letter's value, so
+EVERY letter is spliced, `owed > 0` is false, and it answers 0, paid. All the letters gone, the coins untouched: the
+report's own shape. A negative amount added coin. The sweep traced every price producer it could find (trade, repair,
+travel, training, the tavern, spells, enchanting, cures) and found none that is NaN today; the guard is there for the
+next one. CHANGED: nothing owed is nothing taken (`if (!(amount > 0)) return 0;`), as the service's `payFromSave` already
+refused both (`realmGoldLaw.js`, `Number.isSafeInteger(amount) && amount >= 0`). A departure from DeductGoldAmount, named
+in Port-Ledger A.
+
+Pinned by `test/systems/fb1018b_tradewrap.test.js` (4): the sale of 250 Daedric claymores past every shop's old wrap,
+online and offline, paid in paper; DFU's price to the gold for every lot that never wrapped, bought or sold, over shops
+and skills; the purchase; and the payment's refusals with DFU's order kept. `tools/mutants/fb1018b_tradewrap.json` (4,
+all dead).
+
 ## What would prove which door it was
 
 - A death in the open zone is recorded by the account service: `wild_falls` keeps each fall's records
@@ -109,9 +151,12 @@ the fallen's own take-out, and the words, the host's line and the risen line. `t
 - A deposit is in the account: the Empire's account (`bankAccounts[17]`) holds the gold.
 - A card table's stake is `card_stakes` (status `held` until its cash-out is claimed); a staff rollback is a
   `realm_findings` row with act `rollback`.
+- A wrapped sale is a purse below nothing in the record (`goldPieces` negative), and a law finding on it.
 
 What the reporter is owed: a revenant that killed you could take a letter of credit, which the game's own rule ("never
 gold") was meant to forbid - that is fixed, and a letter one is still holding comes back to your wallet when you next
 load. If your letters went at a death in the open zone, that drop is the zone's law - and if your character was under a
 trading freeze then, they were lost outright with no word on screen, which was a bug: the death screen says so now and
-names the letters it took. The service's record of that fall will say which it was.
+names the letters it took. The service's record of that fall will say which it was. And if you sold a large batch of
+Daedric gear in one go and got nothing for it, the counter's arithmetic wrapped and paid you millions below nothing -
+that is fixed too, and a purse left below nothing is for staff to repair.
