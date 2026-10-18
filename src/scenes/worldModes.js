@@ -276,7 +276,8 @@ import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExterio
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
 import { BUILDING_KEY_0 } from '../systems/talk/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
 import { carriedPieces } from '../systems/item/itemIds.js';   // AUTO-HOLD: the room's word never lands a piece I carry (world/interior/interiorShared.js)
-import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
+import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootOpen, interiorLootFrame, interiorLootUnborn, interiorLootRoll, interiorLootBirth, interiorLootAside, interiorLootLeave } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
+import { wallMsForClassicMinutes } from '../net/wire.js';   // OUTDOOR-LOOT: the SHARED clock - the relay's wall - a cupboard's first-open instant is read from (R-3)
 import { getHolidayId } from '../systems/holidays.js';
 import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guild/guilds.js';
 // V5: rest above ground. The window and the session have been finished
@@ -439,7 +440,7 @@ import { hasSpellbook } from '../systems/spell/spellMaker.js';   // AUDIT 63 F12
 // M2: the potion maker - the other half of the guild's magic economy.
 import { PotionMakerWindow, preloadPotionArt, potionArtLoaded } from '../ui/potionMakerWindow.js';
 import { ItemMakerWindow, preloadItemMakerArt, itemMakerArtLoaded, ITEM_RECTS, rowLayout as itemMakerRowLayout } from '../ui/item/itemMakerWindow.js';
-import { createPotion, getMagicItemTemplates, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
+import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
@@ -472,7 +473,6 @@ import { chapterHallFactor, chapterHallShelf, chapterHallShut, CHAPTER_HALL_SHUT
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import '../ui/tutorialPopup.js';   // TUT1: the popup's handler, registered by this host (the four hosts' rule)
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a tinted copy of a light is that light (the dungeon's flame tint, the abyss's candle)
-import { createInteriorLootHost } from './interiorLootHost.js';   // HOST-SPLIT
 /** BOUNTY1: the plaque over a town's bounty board. */
 const BOUNTY_BOARD_TEXT = 'Bounty Board';
 const NOTICE_BOARD_TEXT = 'Notice Board';   // ONE-BOARD: a town's Notice Board, while it is open to this account
@@ -1995,12 +1995,6 @@ export function createWorldModes(host) {
   let _intShared = null;
   let privateVisitOwner = null;
   let privateVisitRoom = null;   // staff visiting another character's personal interior
-  const { interiorLootOpened, interiorLootSettle } = createInteriorLootHost({   // HOST-SPLIT: src/scenes/interiorLootHost.js
-    host,
-    get _intShared() { return _intShared; },
-    get interiorCtx() { return interiorCtx; },
-    get interiorWindows() { return interiorWindows; },
-  });
   /**
    * IF - THE INTERIOR FOE POOL. A building interior carries NO STATIC
    * ENEMIES in DFU: DaggerfallInterior's whole marker vocabulary is
@@ -3530,6 +3524,7 @@ export function createWorldModes(host) {
   const interiorPeek = createInteriorPeek({
     containers: () => interiorCtx?.containers, decor: () => interiorDecor, owned: () => ownsThisInterior(),
     shut: () => !!(interiorHome && !interiorHome.own) || !!privateVisitRoom || caravanGuestHere(), hall: () => hallMemberHere(), today: () => stockedToday(),
+    unborn: (key) => interiorLootUnborn(interiorCtx, key, _intShared),   // OUTDOOR-LOOT: a cupboard the room has not spoken about is a name, never a roll that is no one's word
   });
 
   /** BS1: the book reader on a bare id - the bookshelf picks by id,
@@ -3645,7 +3640,7 @@ export function createWorldModes(host) {
           decorDeliverCarried();   // DECOR2b: furniture taken off the shelf is delivered, never carried
         },
       });
-      if (win) { interiorOverlay = win; interiorLootOpened(`shelf:${i}`, win, { fresh }); }   // WORLD6a: the shelf is the room's from the open
+      if (win) { interiorOverlay = win; interiorLootOpen(interiorCtx, `shelf:${i}`, win, _intShared, { fresh }); }   // WORLD6a: the shelf is the room's from the open
       return;
     }
     // U8c: the native trade screen when the art is up (the E2/E3
@@ -3656,7 +3651,7 @@ export function createWorldModes(host) {
       const w = openTradeWindow(shelf, b, 'Buy');
       if (!w) return;   // DISC10-E L3: the counter refused the beast at its door (and said so) - nothing to mount, nothing claimed
       interiorOverlay = w;
-      interiorLootOpened(`shelf:${i}`, interiorOverlay, { fresh });   // WORLD6a: and so from the trade window - its close is the frame's settle
+      interiorLootOpen(interiorCtx, `shelf:${i}`, interiorOverlay, _intShared, { fresh });   // WORLD6a: and so from the trade window - its close is the frame's settle
       return;
     }
     showShelfList(shelf, 0, fresh);   // AUDIT WORLD6a A4: the keyed fallback claims too
@@ -3757,7 +3752,7 @@ export function createWorldModes(host) {
     let win = null;
     win = openTradeWindow(target, b, 'Sell');
     if (!win) return true;   // DISC10-E L3: refused at the trade door, which said so - handled, never the keyed fallback
-    if (shelf) interiorLootOpened('shelf:0', win, { fresh });   // WORLD6a: what is sold lands on the room's shelf
+    if (shelf) interiorLootOpen(interiorCtx, 'shelf:0', win, _intShared, { fresh });   // WORLD6a: what is sold lands on the room's shelf
     // Found wiring X6: neither trade skin calls hooks.onClose - they set
     // `done` and the frame's own sweep frees the slot, so a trade window
     // that needs cleanup on close hangs it off that sweep.
@@ -4946,6 +4941,7 @@ export function createWorldModes(host) {
       if (target) target.stockedDate = c.stockedDate ?? 0;
       if (target && kind === 'container') target.openedOn = c.openedOn ?? 0;   // UXB1-O: a record cached before it carries none - never searched
     }
+    interiorLootAside(interiorCtx, _intShared);   // OUTDOOR-LOOT: the cache has laid a stranger's cupboard the list of an earlier visit - online that is no one's word, the room's is
     if (setDown) say('What a chest here held, where no chest stands now, was set down at your feet.');   // HOLD-KEPT
     interiorCtx.guildShelves = data.guildShelves ?? {};   // GUILD-SHELF: a stale day's shelf is left for guildShelf to replace at the next open
     // #32: through the system's own restore, which settles the matrix
@@ -7112,7 +7108,7 @@ export function createWorldModes(host) {
     // AUDIT WORLD6a A4: the keyed fallback (no trade art) claimed nothing and guarded nothing - the room's word landed
     // under its rows and a purchase was never told; every page of it is an open on the shelf, like the art's windows
     const si = interiorCtx?.shelves?.indexOf(shelf) ?? -1;
-    if (si >= 0) interiorLootOpened(`shelf:${si}`, interiorOverlay, { fresh });
+    if (si >= 0) interiorLootOpen(interiorCtx, `shelf:${si}`, interiorOverlay, _intShared, { fresh });
   }
   function buyItem(shelf, it) {
     const bought = doBuy(shelf, it);
@@ -8775,7 +8771,8 @@ export function createWorldModes(host) {
         // HOME1: an ONLINE home keeps its room - its owner and whoever they let in stand in it together, and its
         // cupboards are never the room's (the owner's are their storage, a visitor's are shut - the container arm).
         const owned = !!privateVisitRoom || b?.buildingType === BUILDING_TYPES.Ship || (!interiorHome && houseOwnedAt(b, b?.buildingKey));
-        _intShared = mintInteriorShared(interiorLocationKey(questSceneCtx?.()?.mapId ?? 0, b?.buildingKey ?? 0, visitLayoutNow()), { owned, home: !!interiorHome });   // WD3 (AUDIT WD3 B3): the room of the building in its layout   // AUDIT WORLD6a A1: the bag from the one mint, its key spelled as the pure half reads it
+        _intShared = mintInteriorShared(interiorLocationKey(questSceneCtx?.()?.mapId ?? 0, b?.buildingKey ?? 0, visitLayoutNow()), { owned, home: !!interiorHome, net: { selfId: () => host.selfId?.() ?? null, seat: () => host.roomHost?.() ?? null, now: () => performance.now(), wallNow: () => (sharedClockOn() ? wallMsForClassicMinutes(worldMinutes()) : null), send: (d) => host.onActions?.(d), say: (t) => setMidScreenText(t), claimed: () => host.onLootClaimed?.(), entity: () => playerEntity, carried: () => carriedPieces(playerEntity) } });   // WD3 (AUDIT WD3 B3): the room of the building in its layout   // AUDIT WORLD6a A1: the bag from the one mint, its key spelled as the pure half reads it   // OUTDOOR-LOOT: and the host's wiring - the act path, the SHARED clock (R-3), the seat, the player's hands - for the cupboards' room law
+        interiorLootAside(ctx, _intShared);   // OUTDOOR-LOOT: a list a stranger's cupboard was built with is no one's word (again after the cache restore below)
         const key = _intShared.locationKey;
         if (key) ctx.actions.onChanged = (recs) => host.onActions?.({ k: key, a: recs });
       }
@@ -9122,6 +9119,7 @@ export function createWorldModes(host) {
           // false, and is never a theft.
           let fresh = false;   // AUDIT WORLD6a A5: this open rolled the new day's stock (said at the window, not at the roll)
           const openLoot = (privateProperty = false) => {
+            if (privateProperty) interiorLootBirth(interiorCtx, key, _intShared);   // OUTDOOR-LOOT: the Yes mints the held roll as the room's and composes it into the cupboard - BEFORE the keeping below is taken, or a first opener's theft marks read an empty one
             const before = privateProperty ? new Set(c.items ?? []) : null;   // STOLEN-GOODS AUDIT S1: the owner's keeping - the mark's and the basket's one Set
             const win = interiorInventory({
               loot: { items: () => c.items, storage: !privateProperty, stolenFrom: before },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way; STOLEN-GOODS: a stranger's is a theft, each take of theirs marked as it lands
@@ -9145,7 +9143,7 @@ export function createWorldModes(host) {
               },
             });
             if (win && privateProperty) c.openedOn = c.stockedDate;   // UXB1-O: this character has seen this stock (shopStock.js stockSearched)
-            if (win) { interiorOverlay = win; if (!owned) interiorLootOpened(key, win, { fresh }); }   // WORLD6a: a stranger's cupboard is the room's from the open
+            if (win) { interiorOverlay = win; if (!owned) interiorLootOpen(interiorCtx, key, win, _intShared, { fresh }); }   // WORLD6a: a stranger's cupboard is the room's from the open
           };
           const owned = ownsThisInterior(b);   // UXB1-N: the one predicate the plaque reads too
           if (owned) {
@@ -9162,16 +9160,18 @@ export function createWorldModes(host) {
             // StockHouseContainer clears and re-mints (:293-294), so a
             // stranger's cupboard refills overnight; the `??=` that
             // stood here stocked it once per interior build.
+            if (_intShared?.unreadable?.has(key)) { setMidScreenText(LOOT_NEWER_TEXT); return true; }   // AUDIT SETS M2: a cupboard the room has spoken about in words this build cannot read is never opened here - not over a roll of its own either (OUTDOOR-LOOT)
             const today = stockedToday();
+            let rolled = null;
             if (needsRestock(c, today)) {
-              c.stockedDate = today;
-              c.items = stockHouseContainer({ buildingType: b?.buildingType, record: containerTextureRecord(c.modelIdNum) }, playerEntity);
+              rolled = stockHouseContainer({ buildingType: b?.buildingType, record: containerTextureRecord(c.modelIdNum) }, playerEntity);
               // FORAGE3: PlayerActivate.OnLootSpawned (:914), raised for a house container as for a shelf - before
               // "If no contents" (:916), so a subscriber's item can fill a cupboard that stocked empty
-              raiseContainerLootSpawned({ containerType: LOOT_CONTAINER_TYPES.HouseContainers, items: c.items, buildingType: b?.buildingType, quality: b?.quality, luck: liveStat(playerEntity, 'luck') });
+              raiseContainerLootSpawned({ containerType: LOOT_CONTAINER_TYPES.HouseContainers, items: rolled, buildingType: b?.buildingType, quality: b?.quality, luck: liveStat(playerEntity, 'luck') });
+              if (!interiorLootRoll(interiorCtx, key, rolled, _intShared, today)) { c.stockedDate = today; c.items = rolled; }   // OUTDOOR-LOOT: online the roll is HELD by the room - never written to the cupboard, so the plaque stays a name and a No claims nothing
               fresh = true;   // AUDIT WORLD6a A5: said at the window's mount, after the prompt - No claims nothing
             }
-            if (c.items.length === 0) return true;   // "If no contents, do nothing"
+            if ((rolled ?? c.items).length === 0) return true;   // "If no contents, do nothing"
             // UXB1-M: DFU's own box (PlayerActivate.cs:916-918: CommonMessageBoxButtons.YesNo, PrivatePropertyId) -
             // Yes and No a mouse presses, on the parchment or the enhanced card; Y, N and Return (No) as DFU's.
             interiorOverlay = new YesNoBoxWindow({
@@ -9221,6 +9221,7 @@ export function createWorldModes(host) {
     // and the action objects are still alive to be read.
     unleveledLootPreTransition();   // UL1: OnPreTransition (TransitionExterior)
     cacheInteriorScene();
+    interiorLootLeave(interiorCtx, _intShared);   // OUTDOOR-LOOT (D-1): a claim in flight and not lapsed goes with its claimer - before the bag is dropped and the memory goes out
     host.onInteriorLeave?.();   // WORLD6a: the room's memory goes out while the building still stands
     teardownQuestFlats();   // Q4-v: OnDestroy for the quest stands, before the batch teardown
     peopleBodies.destroy();   // MWNPC8a: the room's people's bodies with it
@@ -10585,7 +10586,7 @@ export function createWorldModes(host) {
     // QUEST-POPUP-PAUSE (2026-09-26, Mac: "Pause them offline"): the interior pools keep WINFOE1's clock under a
     // window - except, offline, under a quest box on top (the host's own read, world.js _questBoxHoldsFoes).
     const foeDt = host.questBoxHoldsFoes?.() ? 0 : dt;
-    if (mode === 'interior') interiorLootSettle();   // WORLD6a: a container's window gone (the stack reconciled above) is the close's word
+    if (mode === 'interior') interiorLootFrame(interiorCtx, _intShared, { now: performance.now(), open: (w) => interiorWindows.containsWindow(w) });   // WORLD6a: a container's window gone (the stack reconciled above) is the close's word; OUTDOOR-LOOT: and the cupboards' claims, lapse and re-ask
     seatHallsFrame(performance.now());   // AUDIT SEATS-2 C1: the seat halls, known late
     decorTool.frame({ dt, cam, overlayUp: overlayHeld, interior: mode === 'interior' });   // DECOR1d: the button, the panel's scan, the free camera
     if (mode === 'interior') cardGameFrame(performance.now());   // CARDS4: the card table's patrons think and deal on, under any window
@@ -13449,12 +13450,12 @@ export function createWorldModes(host) {
       if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;
       if (mode !== 'interior' || !interiorCtx || !_intShared?.locationKey || !data || data.k !== _intShared.locationKey) return false;
       const n = (Array.isArray(data.a) ? interiorCtx.actions.applyRemote(data.a) : 0)
-        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { seen: _intShared.seen, openKey: _intShared.openKey, today: stockedToday(), unreadable: _intShared.unreadable, carried: carriedPieces(playerEntity) }) : 0);   // HOME1: no word lands on a home's cupboards (world/interior/interiorShared.js); AUTO-HOLD: nor a piece I carry
+        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { ..._intShared, from: id, today: stockedToday(), carried: carriedPieces(playerEntity) }) : 0);   // HOME1: no word lands on a home's cupboards (world/interior/interiorShared.js); AUTO-HOLD: nor a piece I carry; OUTDOOR-LOOT: the sender's, for a cupboard's seat to judge on receipt
       return n > 0;
     },
     placeActionRecords(keys) {
       if (mode === 'dungeon') return dungeonCtx ? (dungeonCtx.actionRecords?.(keys) ?? null) : null;
-      return mode === 'interior' && interiorCtx && _intShared?.locationKey ? interiorActionRecords(interiorCtx, keys, { locationKey: _intShared.locationKey, tooBig: _intShared.tooBig, home: _intShared.home }) : null;
+      return mode === 'interior' && interiorCtx && _intShared?.locationKey ? interiorActionRecords(interiorCtx, keys, { locationKey: _intShared.locationKey, tooBig: _intShared.tooBig, home: _intShared.home, room: _intShared.room }) : null;
     },
     restoreDungeonSave(extras) {
       if (mode !== 'dungeon' || !dungeonCtx) return false;
@@ -13740,6 +13741,7 @@ export function createWorldModes(host) {
         // and DFU's load deregisters the dying scene rather than
         // serializing it (RespawnPlayer :464).
         if (cacheScene) cacheInteriorScene();
+        interiorLootLeave(interiorCtx, _intShared);   // OUTDOOR-LOOT (D-1): a teleport's or a load's leave keeps a claim in flight too
         host.onInteriorLeave?.();   // WORLD6a: a load or a teleport out is a leave too
         _intShared = null;
         // OnPop runs on every window the manager removes

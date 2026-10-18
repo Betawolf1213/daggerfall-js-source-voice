@@ -532,7 +532,7 @@ test('AUTO-HOLD shelf: the room\'s word never lands back a piece its reader carr
   const modes = readFileSync(new URL('../../src/scenes/worldModes.js', import.meta.url), 'utf8');
   assert.equal(modes.match(/carried: carriedPieces\(playerEntity\)/g)?.length, 2, 'both landings');
   assert.match(modes, /applyInteriorShared\(interiorCtx, shared, \{ \.\.\._intShared, today: stockedToday\(\), carried: carriedPieces\(playerEntity\) \}\)/);
-  assert.match(modes, /applyInteriorLoot\(interiorCtx, data\.l, \{ seen: _intShared\.seen, openKey: _intShared\.openKey, today: stockedToday\(\), unreadable: _intShared\.unreadable, carried: carriedPieces\(playerEntity\) \}\)/);
+  assert.match(modes, /applyInteriorLoot\(interiorCtx, data\.l, \{ \.\.\._intShared, from: id, today: stockedToday\(\), carried: carriedPieces\(playerEntity\) \}\)/);   // PIN MOVED (OUTDOOR-LOOT): the bag whole (its set of the unreadable, its room) and the sender, beside the pieces I carry
   // AUDIT: and a dungeon's - a search's find, a pile - with what I carry (never the stowed: a dungeon holds none of mine)
   assert.match(readFileSync(new URL('../../src/scenes/dungeonContext.js', import.meta.url), 'utf8'), /for \(const it of withoutCarried\(items, carriedPieces\(playerEntity\)\)\) held\.push\(it\);/);
   // the pure half never loads the item law: its registration changes what every reader of the wire lands

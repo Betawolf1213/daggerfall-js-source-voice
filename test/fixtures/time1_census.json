@@ -1162,6 +1162,12 @@
   },
   {
    "file": "src/scenes/worldModes.js",
+   "has": "wallNow: () => (sharedClockOn() ? wallMsForClassicMinutes(worldMinutes()) : null)",
+   "clock": "event",
+   "why": "a cupboard's first-open instant - two first-opens in one breath keep the earlier mint by the relay's clock on every client, never a machine's own (OUTDOOR-LOOT R-3)"
+  },
+  {
+   "file": "src/scenes/worldModes.js",
    "has": "const lines = lampLines(Math.floor(worldMinutes() / MINUTES_PER_DAY));",
    "clock": "event",
    "why": "the lamp's words for the day (LAMP-KEEPER II)"
