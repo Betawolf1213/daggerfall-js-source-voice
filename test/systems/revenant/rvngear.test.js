@@ -54,7 +54,7 @@ beforeEach(() => {
 });
 /** A sworn one, as the game makes one: its deed, then spared. */
 function sworn({ mobileType = M.Warrior, rank = 1, state = 'with' } = {}) {
-  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
   r.rank = rank;
   return N.revenantSpared(me, { revenant: { id: r.id } }, { state });
 }
