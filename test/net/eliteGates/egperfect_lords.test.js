@@ -14,7 +14,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egObjsOf, egObjBroken, egLordHit, EG_LESSON_TELL_MS, EG_CONQUEST_EVERY_MS, EG_CONQUEST_TELL_MS,
-  EG_ZONE_FIGHT_MS, EG_WYRM_REACH_M, EG_ECLIPSE_NM, EG_SNAP_NM } from '../../../src/net/eliteGates/egLords.js';
+  EG_ZONE_FIGHT_MS, EG_WYRM_REACH_M, EG_ECLIPSE_NM, EG_SNAP_NM, EG_LATTICE_W, EG_LATTICE_STEP_MS, EG_CAGE_AGAIN_MS } from '../../../src/net/eliteGates/egLords.js';
 import { egFightNew, egFightState, egHas, EG_FL, egBodyById, egBlowsStep, egAim, egUnionHeld, egCut, EG_RING_KEEP_M } from '../../../src/net/eliteGates/egBodies.js';
 import { egUnionHolds, egHavenCheck } from '../../../src/net/eliteGates/egFloor.js';
 import { shDisc, shOut } from '../../../src/net/eliteGates/egShape.js';
@@ -409,4 +409,49 @@ test('EG-PERFECT SEYTH\'S OWN ECLIPSE (sections 13.4 and 25.5): her Eclipse blow
   assert.equal(egEclipseChip(e), 'The Eclipse - 5');
   assert.ok(egEclipseOfBlows([bl], T0 + 6100).live, 'live at its landing');
   assert.equal(egEclipseOfBlows([{ ...bl, nm: 'Slam' }], T0 + 1000), null, 'another blow is none');
+});
+
+// ── THE AUDIT'S UPGRADES: the Lattice a sweep, the cage again, Wellfire aimed ──────────────────────────────────────────
+test('EG-PERFECT THE ARCANE LATTICE A SWEEP (the lords\' audit, the Spellmaster: "the 4 m gaps at 0 and +-8 m are never struck"): its strips EG_LATTICE_W wide side by side over his whole floor - no strip of it untouched - each landing EG_LATTICE_STEP_MS after the last, from the side farthest from its mark across it, so the strip safe is the one just burned (mutants: the four fixed strips; the strips landing at once; the sweep toward its mark\'s side first)', () => {
+  const C = court(1, 15, 'spellmaster', { n: 1, rng: seeded(3) });
+  let lattice = [];
+  for (let k = 0; k < 600 && lattice.length < 2; k++) { C.step([{ sub: 'acct-0', x: C.f.x + 6, z: C.f.z + 2 }]); lattice = C.frames.filter((f) => f.k === 'eb' && f.nm === 'Arcane Lattice'); }
+  assert.ok(lattice.length >= 2, 'the Lattice thrown');
+  // the first throw's strips: every eb of that name within its sweep
+  const t0 = lattice[0].at, sweep = C.frames.filter((f) => f.k === 'eb' && f.nm === 'Arcane Lattice' && f.at >= t0 && f.at <= t0 + EG_LATTICE_STEP_MS * 20).sort((a, b) => a.at - b.at);
+  const n = Math.max(3, Math.floor((2 * C.f.r) / EG_LATTICE_W));
+  assert.equal(sweep.length, n, `${sweep.length} strips over a floor of r ${C.f.r}`);
+  sweep.forEach((b, j) => { if (j) assert.equal(b.at - sweep[j - 1].at, EG_LATTICE_STEP_MS, 'each a step after the last'); assert.equal(b.s[0][5], EG_LATTICE_W); });
+  // side by side: each strip's line a strip's width from the last's, across the floor
+  const mid = (b) => [(b.s[0][1] + b.s[0][3]) / 2, (b.s[0][2] + b.s[0][4]) / 2];
+  for (let j = 1; j < sweep.length; j++) { const [ax, az] = mid(sweep[j - 1]), [bx, bz] = mid(sweep[j]); assert.ok(Math.abs(Math.hypot(bx - ax, bz - az) - EG_LATTICE_W) < 0.02, `strip ${j} a width from the last`); }
+  // from the side farthest from its mark: the first strip farther from the member than the last
+  const me = { x: C.f.x + 6, z: C.f.z + 2 }, d = (b) => Math.hypot(mid(b)[0] - me.x, mid(b)[1] - me.z);
+  assert.ok(d(sweep[0]) > d(sweep[sweep.length - 1]), 'swept toward its mark');
+});
+
+test('EG-PERFECT THE FINAL EXAMINATION AGAIN (the lords\' audit, the Spellmaster: "phase 3\'s cage happens once"): from his third phase the cage closes again EG_CAGE_AGAIN_MS after the last resolved - failed or passed - never while one stands (mutants: once a fight; again at once)', () => {
+  const C = court(1, 15, 'spellmaster', { n: 2, rng: seeded(5) });
+  C.L.hp = C.L.max * (PHASE_AT[1] - 0.05);
+  const here = () => on(C, 4, 4);
+  const cages = () => C.frames.filter((f) => f.k === 'esay' && f.w === 'cage').length;
+  for (let k = 0; k < 40 && cages() < 1; k++) C.step(here());
+  assert.equal(cages(), 1, 'the cage at the third phase');
+  // left to fail (8 s), then nothing until EG_CAGE_AGAIN_MS have passed
+  for (let k = 0; k < 40 && C.F.mem.exam; k++) C.step(here());
+  const failedAt = C.now();
+  assert.ok(!C.F.mem.exam, 'resolved');
+  for (let k = 0; (C.now() - failedAt) < EG_CAGE_AGAIN_MS - 1000; k++) C.step(here());
+  assert.equal(cages(), 1, 'never again before its time');
+  for (let k = 0; k < 20 && cages() < 2; k++) C.step(here());
+  assert.equal(cages(), 2, 'the cage again');
+});
+
+test('EG-PERFECT WELLFIRE AIMED (the lords\' audit, Garoth: "aim Wellfire at the target rather than along the axes"): its two lanes cross over its mark, one along his bearing to it (mutants: the axes\' cross about himself)', () => {
+  const C = court(1, 100, 'garoth', { n: 1, rng: seeded(9) });
+  const me = { sub: 'acct-0', x: C.f.x + 7, z: C.f.z - 5 };
+  let wf = null;
+  for (let k = 0; k < 800 && !wf; k++) { C.step([me]); wf = C.frames.find((f) => f.k === 'eb' && f.nm === 'Wellfire'); }
+  assert.ok(wf, 'Wellfire thrown');
+  for (const s of wf.s) assert.ok(Math.hypot((s[1] + s[3]) / 2 - me.x, (s[2] + s[4]) / 2 - me.z) < 0.6, 'each arm\'s middle over its mark');
 });

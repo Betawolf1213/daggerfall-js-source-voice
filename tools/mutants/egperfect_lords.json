@@ -367,5 +367,59 @@
     "tests": [
       "test/net/eliteGates/egperfect_lords.test.js"
     ]
+  },
+  {
+    "name": "EGPERFECT-lattice-four-strips",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "const W = EG_LATTICE_W, n = Math.max(3, Math.floor((2 * f.r) / W)),",
+    "new": "const W = EG_LATTICE_W, n = 4,",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
+  },
+  {
+    "name": "EGPERFECT-lattice-at-once",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "extra: lanes.slice(1).map((s, j) => ({ stamps: [s], delay: EG_LATTICE_STEP_MS * (j + 1), B: {} }))",
+    "new": "extra: lanes.slice(1).map((s) => ({ stamps: [s], delay: 0, B: {} }))",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
+  },
+  {
+    "name": "EGPERFECT-lattice-from-its-mark",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "side = (t.x - f.x) * vx + (t.z - f.z) * vz >= 0 ? -1 : 1,",
+    "new": "side = (t.x - f.x) * vx + (t.z - f.z) * vz >= 0 ? 1 : -1,",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
+  },
+  {
+    "name": "EGPERFECT-cage-once",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "if (L.ph >= 3 && !F.mem.exam && here.length && now >= (F.mem.cageAt ?? Infinity))",
+    "new": "if (false && L.ph >= 3 && !F.mem.exam && here.length && now >= (F.mem.cageAt ?? Infinity))",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
+  },
+  {
+    "name": "EGPERFECT-cage-again-at-once",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "F.mem.exam = null; F.mem.cageAt = now + EG_CAGE_AGAIN_MS; egGone(F, seals,",
+    "new": "F.mem.exam = null; F.mem.cageAt = now; egGone(F, seals,",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
+  },
+  {
+    "name": "EGPERFECT-wellfire-axes",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "return { stamps: [shLaneAt(t.x - 12 * Math.sin(a), t.z - 12 * Math.cos(a), a, 24, 4), shLaneAt(t.x - 12 * Math.sin(b), t.z - 12 * Math.cos(b), b, 24, 4)] };",
+    "new": "return { stamps: [shLaneAt(L.x - 12, L.z, Math.PI / 2, 24, 4), shLaneAt(L.x, L.z - 12, 0, 24, 4)] };",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
   }
 ]

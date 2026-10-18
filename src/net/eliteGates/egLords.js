@@ -139,6 +139,14 @@ export const EG_CHOOSE_TRIES = 3;
  *  wire's walks stop at 30: net/wire.js `emv`). */
 export const EG_RUN_MS = 400;
 export const EG_RUN_V_MAX = 28;
+/** EG-PERFECT (the lords' audit, the Spellmaster's "the Lattice is trivial: the 4 m gaps at 0 and +-8 m are never struck") - THE
+ *  ARCANE LATTICE A SWEEP: its strips' width (m - THE WIDTH RULE's lane) side by side across his whole floor, each landing
+ *  EG_LATTICE_STEP_MS after the last, from the side farthest from its mark across it: the strip safe is the one just burned, and
+ *  it moves. THE FINAL EXAMINATION AGAIN: from his third phase the cage closes again EG_CAGE_AGAIN_MS after the last resolved
+ *  (it closed once a fight). */
+export const EG_LATTICE_W = 4;
+export const EG_LATTICE_STEP_MS = 1400;
+export const EG_CAGE_AGAIN_MS = 40_000;
 /** EG-PERFECT (section 13.4, the Conquest): a banner planted every this long until the round's three stand (ms), each third
  *  told this long before it burns (ms - the longest way off a third, 20.8 m, at the escape build plus EG_REACT_S: 3.49 s). */
 export const EG_CONQUEST_EVERY_MS = 8000;
@@ -1028,8 +1036,11 @@ const KITS = {
       } },
       { nm: 'Arcane Lattice', wu: 1400, rec: 800, p: 0.35, b: 10, el: 'shock', range: 99, w: 2, cd: 12_000, make: (F, spec, L, t) => {
         const f = mainDisc(spec, L), yaw = Math.atan2(t.x - L.x, t.z - L.z) + Math.PI / 2, ux = Math.sin(yaw), uz = Math.cos(yaw), vx = Math.cos(yaw), vz = -Math.sin(yaw);
-        const lanes = [-12, -4, 4, 12].map((o) => shLane(f.x + vx * o - ux * f.r, f.z + vz * o - uz * f.r, f.x + vx * o + ux * f.r, f.z + vz * o + uz * f.r, 4));
-        return { stamps: [lanes[0]], extra: lanes.slice(1).map((s, j) => ({ stamps: [s], delay: 1400 * (j + 1), B: {} })) };
+        // EG-PERFECT: A SWEEP - strips side by side over the whole floor, from the side farthest from its mark across it, each
+        // EG_LATTICE_STEP_MS after the last (four strips with fixed gaps before: the gaps were never struck)
+        const W = EG_LATTICE_W, n = Math.max(3, Math.floor((2 * f.r) / W)), side = (t.x - f.x) * vx + (t.z - f.z) * vz >= 0 ? -1 : 1, o0 = side * ((n * W) / 2 - W / 2);
+        const lanes = Array.from({ length: n }, (_, j) => o0 - side * j * W).map((o) => shLane(f.x + vx * o - ux * f.r, f.z + vz * o - uz * f.r, f.x + vx * o + ux * f.r, f.z + vz * o + uz * f.r, W));
+        return { stamps: [lanes[0]], extra: lanes.slice(1).map((s, j) => ({ stamps: [s], delay: EG_LATTICE_STEP_MS * (j + 1), B: {} })) };
       } },
       { nm: 'Arcane Bolt', wu: 1600, rec: 700, p: 0.3, b: 8, el: 'shock', range: 30, w: 3, make: (F, spec, L, t) => ({ stamps: [shDisc(t.x, t.z, 3)] }) },
       { nm: 'Mirror Images', wu: 600, rec: 400, p: 0, b: 0, range: 99, w: 1, cd: 30_000, when: (F, L) => !egHas(L, EG_FL.mirror) && mirrorsOf(F, L).length === 0, make: (F, spec, L, t, here, rng, now, out) => {
@@ -1054,6 +1065,8 @@ const KITS = {
       }
       for (const im of mirrorsOf(F, L).filter((x) => x.image && x.atk && now >= x.atk.until)) im.atk = null;
       errandTick(F, spec, L, now, here, rng, out);
+      // EG-PERFECT: THE FINAL EXAMINATION AGAIN - the cage closes EG_CAGE_AGAIN_MS after the last resolved
+      if (L.ph >= 3 && !F.mem.exam && here.length && now >= (F.mem.cageAt ?? Infinity)) { F.mem.cageAt = Infinity; finalExam(F, spec, L, now, here, rng, out, ctx); }
     },
   },
 
@@ -1501,7 +1514,9 @@ const KITS = {
   garoth: {
     blows: [
       ...gateKit(),
-      { nm: 'Wellfire', wu: 1400, rec: 1000, p: 0.4, b: 12, el: 'fire', range: 99, w: 2, make: (F, spec, L) => ({ stamps: [shLaneAt(L.x - 12, L.z, Math.PI / 2, 24, 4), shLaneAt(L.x, L.z - 12, 0, 24, 4)] }) },
+      // EG-PERFECT (the lords' audit: "aim Wellfire at the target rather than along the axes"): its cross laid over its mark, one arm
+      // along his bearing to it - the axes' cross about himself struck a member who had only to stand off them
+      { nm: 'Wellfire', wu: 1400, rec: 1000, p: 0.4, b: 12, el: 'fire', range: 99, w: 2, make: (F, spec, L, t) => { const a = Math.atan2(t.x - L.x, t.z - L.z), b = a + Math.PI / 2; return { stamps: [shLaneAt(t.x - 12 * Math.sin(a), t.z - 12 * Math.cos(a), a, 24, 4), shLaneAt(t.x - 12 * Math.sin(b), t.z - 12 * Math.cos(b), b, 24, 4)] }; } },
       { nm: "The Kyn's Due", wu: 1600, rec: 900, p: 0.5, b: 14, range: 99, w: 2, duelNo: 1, make: (F, spec, L, t, here) => { let top = t, v = -1; for (const m of here) if ((L.threat[m.sub] ?? 0) > v) { v = L.threat[m.sub] ?? 0; top = m; } return { stamps: [shDisc(top.x, top.z, 5)] }; } },
     ],
     wake(F, spec, L, now) { L.duelAt = Infinity; F.mem.garothSig = egGarothSig(F.c); },
@@ -1643,9 +1658,9 @@ function errandTick(F, spec, L, now, here, rng, out) {
     if (now >= E.until) { F.mem.exam = null; L.hpFloor = null; egGone(F, runes, EG_GONE.crumbled, '', now, out); egAim(F, spec, { o: L.i, s: [shAll()], at: now + 2000, wu: 2000, p: 0.6, b: 0, el: elOf(L, 'shock'), nm: 'The Failed Examination', ch: 1 }, [], now, out); say(out, 'failed'); }
   } else {
     const seals = egObjsOf(F, 'seal');
-    if (!seals.length) { F.mem.exam = null; if (E.bound) egUnmark(F, E.bound, 5); F.mem.mkDirty = 1; say(out, 'passed'); return; }
+    if (!seals.length) { F.mem.exam = null; F.mem.cageAt = now + EG_CAGE_AGAIN_MS; if (E.bound) egUnmark(F, E.bound, 5); F.mem.mkDirty = 1; say(out, 'passed'); return; }   // EG-PERFECT: and again
     if (now >= E.until) {
-      F.mem.exam = null; egGone(F, seals, EG_GONE.crumbled, '', now, out);
+      F.mem.exam = null; F.mem.cageAt = now + EG_CAGE_AGAIN_MS; egGone(F, seals, EG_GONE.crumbled, '', now, out);
       const m = E.bound ? here.find((x) => x.sub === E.bound) : here[0];
       if (E.bound) egUnmark(F, E.bound, 5); F.mem.mkDirty = 1;
       if (m) egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 800, wu: 800, p: 0.7, b: 0, el: elOf(L, 'shock'), nm: 'The Cage Closes', ch: 1, on: [m.sub] }, [], now, out);   // AUDIT EG IV (lane1 #5): on the bound, freed from the cage or not

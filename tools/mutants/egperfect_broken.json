@@ -259,5 +259,14 @@
     "tests": [
       "test/net/eliteGates/egperfect_broken_unit.test.js"
     ]
+  },
+  {
+    "name": "EGBROKEN-closing-from-a-broken-bridge",
+    "file": "src/net/eliteGates/egBrain.js",
+    "old": "g = spec?.route?.courses?.find((q) => !q.b), P = R.paths[0], pad = 0.5;",
+    "new": "g = spec?.route?.courses?.[0], P = R.paths[0], pad = 0.5;",
+    "tests": [
+      "test/net/eliteGates/egperfect_broken_unit.test.js"
+    ]
   }
 ]

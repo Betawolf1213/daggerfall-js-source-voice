@@ -1056,14 +1056,14 @@ export const EG_CLOSING_WALK_X = 1.25;
 const ARRIVAL_DOORS = Object.freeze(['span', 'deepway', 'brink']);
 /**
  * EG-PERFECT - THE TRIAL'S END ON THE ROUTE (THE ASCENT, LAW 9): the place on road 0's path (net/eliteGates/egRoute.js egRouteOf's
- * `paths[0]` - its number there) of the last node that stands on the hall's first course's own ground (`route.courses[0]`, 0.5 m
+ * `paths[0]` - its number there) of the last node that stands on the hall's first course's own ground (`route.courses` first - THE BROKEN WAY's broken bridges, `b`, aside - 0.5 m
  * about: a Rift-Yard's court, the Rampart's walk, the Athenaeum's lock, the Scriptorium's court, a Proving Walk's champion's
  * court - where its trial is fought), the way leaving it there for the door; 0, the arrival plate, on a route that names no
  * course. Pure.
  * @param {any} spec
  */
 export function egTrialEndAt(spec) {
-  const R = egRouteOf(spec), g = spec?.route?.courses?.[0], P = R.paths[0], pad = 0.5;
+  const R = egRouteOf(spec), g = spec?.route?.courses?.find((q) => !q.b), P = R.paths[0], pad = 0.5;   // (THE BROKEN WAY - spec law 10: never a broken bridge's ground, `b`)
   let k0 = 0;
   if (g) P.forEach((n, k) => { const p = R.nodes[n]; if (p[0] >= g.x0 - pad && p[0] <= g.x1 + pad && p[2] >= g.z0 - pad && p[2] <= g.z1 + pad && p[1] >= g.y0 - pad && p[1] <= g.y1 + pad) k0 = k; });
   return k0;

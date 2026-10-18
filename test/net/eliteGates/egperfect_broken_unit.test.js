@@ -3,12 +3,12 @@
 // on the law's own pieces alone - fast enough that every mutant of tools/mutants/egperfect_broken.json is run against them.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { egHallOf, egAscentProof, EG_SPEC, EG_BROKEN_LAW, EG_BROKEN_TRIES, EG_RELAY_MAX, EG_STEP, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallOf, egAscentProof, EG_SPEC, EG_BROKEN_LAW, EG_BROKEN_TRIES, EG_RELAY_MAX, EG_STEP, EG_SEALED_MS, EG_CLOSING_FIGHT_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { EG_BROKEN_KINDS, EG_BROKEN_TURNED } from '../../../src/net/eliteGates/egAscent.js';
 import { egSpanPairs, egSpanProof, egSpanOf, egPairWindows, egSpanBuildOf, EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_RAIL_CLEAR, EG_DROP_CM, EG_DROP_LAW10_CM } from '../../../src/net/eliteGates/egSpanLaw.js';
 import { egRouteLegs } from '../../../src/net/eliteGates/egRouteProof.js';
 import { egFragPassage, egFragChamber, egSetPiece, EG_ALCOVE_REACH_M } from '../../../src/net/eliteGates/egFragLaw.js';
-import { egBreachNew, egEnter, egStep, egTrialAwaits } from '../../../src/net/eliteGates/egBrain.js';
+import { egBreachNew, egEnter, egStep, egTrialAwaits, egClosingMs } from '../../../src/net/eliteGates/egBrain.js';
 import { egBodiesOf, EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
 import { egRingSideOpen, EG_RING_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { sdRng } from '../../../src/net/superDungeon/sdBrain.js';
@@ -58,7 +58,12 @@ test('EG-PERFECT THE BROKEN WAY (unit) - A FIGHT HALL\'S DOOR AND ITS CLOCKS: a 
     const first = R.main.findIndex((i) => inT(R.nodes[i])), last = R.main.findLastIndex((i) => inT(R.nodes[i]));
     assert.ok(first > 0 && s.rooms.length >= 1, `77:${h}: its way reaches its trial past rooms`);
     assert.ok(R.main.slice(first).every((i) => !inRoom(R.nodes[i])), `77:${h} (${s.kind}): no room past its trial`);
-    if (s.kind !== 'proving') assert.ok(R.main.length - 1 - last <= 1, `77:${h}: its door straight on from its trial`);
+    if (s.kind !== 'proving') {
+      assert.ok(R.main.length - 1 - last <= 1, `77:${h}: its door straight on from its trial`);
+      // its closing (net/eliteGates/egBrain.js egClosingMs - the walk from its trial's end, a broken bridge's ground never taken for it) a few seconds past the fight's own
+      const ms = egClosingMs(s);
+      assert.ok(ms >= EG_CLOSING_FIGHT_MS && ms <= EG_CLOSING_FIGHT_MS + 6000, `77:${h}: a closing of ${ms} ms`);
+    }
   }
   // the relay: a law-10 Rift-Yard's first wave waits for its company
   const yard = (egv) => {
