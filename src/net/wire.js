@@ -5879,11 +5879,13 @@ function egCompany(co, full) {
   return new Set(out.map((t) => t[0])).size === out.length ? out : null;
 }
 /** A stage's word: the hall, the stage, when it began and ends (0 open-ended), the count (`cl` left, `ca` when it last
- *  began to run - 0 held), the hall's wake and its door (0 none). */
+ *  began to run - 0 held), the hall's wake and its door (0 none). EG-PERFECT (2026-10-18; Elite-Gates.md section 11.3): `tm`
+ *  when the company reached a routed hall's Collapsing Tube (relay ms - net/eliteGates/egBrain.js egTubeMouthOf), kept only
+ *  with it: a word without one is the word it was, and a bad one is no instant, never no stage. */
 function egStage(m) {
   if (!intIn(m.h, 0, EG_HALL_WIRE_MAX) || !EG_STAGES.includes(m.sg) || !egMs(m.sa) || !egMs(m.su)) return null;
   if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
-  return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
+  return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn, ...(gateMs(m.tm) ? { tm: m.tm } : {}) };
 }
 /** EG-ZQ (Elite-Gates.md section 14, Colossal): a body's size on the wire, thousandths of its look's - 0 its look's own, else
  *  within these (Colossal's rank II, the largest the law folds, is 1400: net/eliteGates/egLaw.js EG_DECREES, pinned under it - wire.js

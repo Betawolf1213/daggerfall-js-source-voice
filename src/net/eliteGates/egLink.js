@@ -35,7 +35,7 @@ import { EG_ROLE, EG_FL, egWalkY } from './egBodies.js';   // EG-ZJ: a lord's fa
 export const EG_FIGHT_EMPTY = Object.freeze({ h: 0, wk: 0, bodies: Object.freeze([]), blows: Object.freeze([]), zones: Object.freeze([]), tx: Object.freeze([]), mk: Object.freeze([]), pg: Object.freeze({}), gust: null, dark: 0, rail: 0, says: Object.freeze([]), fells: Object.freeze([]), gone: Object.freeze([]), phases: Object.freeze([]), told: Object.freeze([]) });
 /** The state before anything is heard. */
 export const EG_STATE_EMPTY = Object.freeze({
-  call: null, b: null, seed: 0, egv: 0, op: 0, wk: 0, h: 0, sg: 'wait', sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0,
+  call: null, b: null, seed: 0, egv: 0, op: 0, wk: 0, h: 0, sg: 'wait', sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0, tm: 0,   // EG-PERFECT: `tm` the company at a routed hall's tube (stageOf)
   co: Object.freeze([]), rd: 0, rh: 0, dg: 0, end: null,
   dc: Object.freeze([]), nx: Object.freeze([]), pr: '', wg: Object.freeze([]), td: '', sr: Object.freeze([]), geo: 0, ms: Object.freeze([]), ca2: '', mm: Object.freeze([]), rp: 0, sp: 0, as: Object.freeze([]),
   fight: EG_FIGHT_EMPTY, offer: null, tally: Object.freeze({}), asked: Object.freeze({}), got: Object.freeze([]), rises: Object.freeze([]), pings: Object.freeze([]), heals: Object.freeze([]), pz: null,
@@ -47,7 +47,10 @@ export const EG_STATE_EMPTY = Object.freeze({
 export const EG_FALLS_KEPT = 8;
 export const EG_SAYS_KEPT = 12;
 export const EG_GONE_KEPT = 48;
-const stageOf = (w) => ({ h: w.h, sg: w.sg, sa: w.sa, su: w.su, cl: w.cl, ca: w.ca, hw: w.hw, dn: w.dn });
+/** A stage's word as the state keeps it. EG-PERFECT (2026-10-18; Elite-Gates.md section 11.3): `tm` the instant the company reached
+ *  a routed hall's Collapsing Tube (relay ms, 0 not yet - net/eliteGates/egBrain.js egTubeMouthOf): its fall runs from there on this
+ *  screen as on the relay (scenes/eliteGates/egSpan.js tubeEdgeOf, through systems/eliteGates/spireKit.js spireWake). */
+const stageOf = (w) => ({ h: w.h, sg: w.sg, sa: w.sa, su: w.su, cl: w.cl, ca: w.ca, hw: w.hw, dn: w.dn, tm: w.tm ?? 0 });
 /**
  * A body as the state keeps it, from its wire array `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz, yw]`.
  * EG-ZJ (sections 11.7, 22 and 23): its feet `y` and its walk's end's (`mv.ty`); its state as the room said it - an object's

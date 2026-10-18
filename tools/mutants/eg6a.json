@@ -398,8 +398,8 @@
   {
     "name": "EG6A-a-riser-jumped",
     "file": "tools/egSpanSolve.mjs",
-    "old": "        climbing = true;\n        let up = false;",
-    "new": "        climbing = false;\n        let up = false;",
+    "old": "const parkour = { enabled: () => true, leap:",
+    "new": "const parkour = { enabled: () => false, leap:",
     "tests": [
       "test/tooling/eg6a_sweep.test.js"
     ]

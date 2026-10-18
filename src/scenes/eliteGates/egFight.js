@@ -790,11 +790,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         sh.since = st.st === 'warn' ? (st.k * EG_VENT_WARN_MS) / 1000 : EG_VENT_WARN_MS / 1000; sh.span = EG_VENT_WARN_MS / 1000; sh.after = st.st === 'fire' ? (st.k * EG_VENT_FIRE_MS) / 1000 : -1; sh.court = 0;
         _shapes.push(sh);
         if (st.st === 'warn') _pending.push({ s: [['l', sh.origin[0], sh.origin[1], sh.end[0], sh.end[1], v.d]], at: t + (1 - st.k) * EG_VENT_WARN_MS, wu: EG_VENT_WARN_MS, nm: 'Fire Vent', ch: 0 });   // EG-ZG: the peril arrow's
-        if (st.st === 'fire' && ventJudged.get(`r${i}`) !== st.at) {
-          ventJudged.set(`r${i}`, st.at);
-          play3(BOSS_CUES.quake, toDungeon(v.x, 1, v.z));
-          if (standing && egInVent(v, f[0], f[1])) landShare(EG_VENT_PCT, 0, 'fire', 'Fire Vent');
-        }
+        if (st.st === 'fire' && ventJudged.get(`r${i}`) !== st.at) { ventJudged.set(`r${i}`, st.at); play3(BOSS_CUES.quake, toDungeon(v.x, 1, v.z)); }
+        // EG-PERFECT (2026-10-18): THE BITE THROUGH THE WHOLE FIRE - feet in it at any frame of the eruption, once an eruption (it
+        // was judged on the fire's first frame alone: a body that walked in a beat later stood in the flame unhurt)
+        if (st.st === 'fire' && standing && ventJudged.get(`rb${i}`) !== st.at && egInVent(v, f[0], f[1])) { ventJudged.set(`rb${i}`, st.at); landShare(EG_VENT_PCT, 0, 'fire', 'Fire Vent'); }
       }
     }
     const ts = t / 1000;
@@ -809,10 +808,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         sh.y = s.y;   // EG-ZG (section 11.7): traversal ground - drawn on its own surface, never a fight floor's
         _shapes.push(sh);
         const cycle = `v${s.i}:${Math.floor((ts + s.phase) / s.period)}`;
-        if (st.fire && !ventJudged.has(cycle)) {
+        // EG-PERFECT: judged through the whole fire - feet entering its disc at any frame of the eruption, once an eruption
+        if (st.fire && !ventJudged.has(cycle) && standing && Math.abs(fy - s.y) < 1.5 && egInVentDisc(s, f[0], f[1])) {
           ventJudged.set(cycle, 1);
           if (ventJudged.size > 256) ventJudged.delete(ventJudged.keys().next().value);
-          if (standing && Math.abs(fy - s.y) < 1.5 && egInVentDisc(s, f[0], f[1])) landShare(EG_VENT_PCT, 0, 'fire', 'Vent');
+          landShare(EG_VENT_PCT, 0, 'fire', 'Vent');
         }
       } else if (s.kind === 'pend' && s.period > 0) {
         const w = egPendAt(s, ts), theta = (2 * Math.PI * ts) / s.period + s.phase;

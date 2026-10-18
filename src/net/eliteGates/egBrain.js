@@ -117,6 +117,7 @@ import { egTallyWake, egTallyBlow, egTallyFall, egTallyHeal, egChartOf, egTallie
 import { healRef } from '../gate/gateBrain.js';   // EG-ZF: a heal's share of the count, at the gate's reference health
 import { BRAIN_TICK_MS } from '../gate/gateBrain.js';   // EG-ZI: Lifeline's look back over the beat a count was last seen low
 import { EG_TRAIL_MS } from './egFair.js';   // EG-ZI: a Lifeline window kept while a blow in it may still be judged
+import { egTubeAtMouth } from './egFair.js';   // EG-PERFECT: a routed hall's Collapsing Tube falls from the company's arrival at its mouth
 import { egRouteAlong, egRouteAlongAt, egRouteRoad, egRouteRoadAt, egRouteAhead } from './egRoute.js';   // THE ASCENT (LAW 9): progress along the hall's route
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
@@ -363,8 +364,24 @@ export function egEnter(B, sub, ez, lv, now) {
 /** The count's word: what was left when it last began to run (`cl`, whole ms) and that instant (`ca`; 0 while it holds -
  *  `cl` is then what is left) - every screen counts it down from there (net/eliteGates/egLink.js egCountAt). */
 const countWord = (B, now) => ({ cl: Math.round(B.cnt.at > 0 ? B.cnt.left : egCountLeft(B.cnt, now)), ca: B.cnt.at });
-/** The stage's word (`sg`). */
-export const egStageWord = (B, now) => ({ k: 'sg', h: B.h, sg: B.sg, sa: B.sa, su: B.su, ...countWord(B, now), hw: B.hw, dn: B.dn });
+/**
+ * EG-PERFECT (2026-10-18; Elite-Gates.md section 11.3): THE INSTANT THE COMPANY REACHED A ROUTED HALL'S COLLAPSING TUBE this wake
+ * (relay ms - the first fair pose within net/eliteGates/egFair.js EG_TUBE_MOUTH_M of its mouth, egPoseIn), or 0: its fall runs from
+ * there (net/eliteGates/egFair.js egTubeEdgeIn - LAW 9 stood its mouth 34-82 s of walking from the plate, past the 18 s the wake
+ * gave it). Kept on the record as `tm: { hw, at, said }` - the wake it belongs to, so a hall woken again (a pull, a rest, a
+ * new circle) starts its tube afresh with nothing to reset, and whether the stage has said it.
+ */
+export const egTubeMouthOf = (B) => (B.tm && B.hw > 0 && B.tm.hw === B.hw ? B.tm.at : 0);
+/** The stage's word (`sg`). EG-PERFECT: with `tm`, the instant the company reached a routed hall's tube (egTubeMouthOf),
+ *  once there is one - every screen starts the tube's fall from it, as the relay's judge does. */
+export const egStageWord = (B, now) => { const tm = egTubeMouthOf(B); return { k: 'sg', h: B.h, sg: B.sg, sa: B.sa, su: B.su, ...countWord(B, now), hw: B.hw, dn: B.dn, ...(tm ? { tm } : {}) }; };
+/** EG-PERFECT: the stage says the company's arrival at a routed hall's Collapsing Tube the beat after the room recorded it
+ *  (egPoseIn - `said` 0), once a wake: every screen's tube falls from it (scenes/eliteGates/egSpan.js tubeEdgeOf). */
+function tubeSaid(B, now, out) {
+  if (!B.tm || B.tm.said || !egTubeMouthOf(B)) return;
+  B.tm.said = 1;
+  out.push(egStageWord(B, now));
+}
 /** The company as the room says it: `[sub, name, numeral, alive, home, in, witness, forsaken, falls, recall, here]`. AUDIT EG V
  *  (c, L3-10; section 7 - "a ring fills over the plate, *3 of 6 here*"): `here` 1 once the member has said `here` in the hall
  *  the company stands in (its pose on the arrival plate - `hereH`), so every screen counts the gather the room counts. */
@@ -1273,6 +1290,7 @@ export function egStep(B, now, bodies, rng) {
   if (B.sg === 'trial' || B.sg === 'closing') for (const b of inHall) { const m = B.mem[b.sub]; if (m.hereH !== B.h && m.downH !== B.h && egOnArrive(spec, b.x, b.z, 1.5, b.y)) { m.hereH = B.h; heard = true; } }
   if (B.sg === 'arrive') for (const b of inHall) if (B.mem[b.sub].hereH !== B.h && egOnArrive(spec, b.x, b.z, 1.5, b.y)) { B.mem[b.sub].hereH = B.h; heard = true; }
   if (heard) out.push({ k: 'co', co: egCompanyOf(B) });
+  tubeSaid(B, now, out);   // EG-PERFECT: a routed hall's tube falls from the company's arrival at its mouth, said to every screen
   if (B.sg === 'arrive') {
     const L = living(B);
     const all = B.wk ? L.length > 0 && L.every(([, m]) => m.hereH === B.h) : B.co.every((c) => B.mem[c.sub]?.in && B.mem[c.sub].alive && B.mem[c.sub].hereH === B.h);
@@ -2064,12 +2082,17 @@ export function egPoseIn(B, sub, p, t) {
     // saw - a break, so a member who left the plate in the gather's last seconds holds nothing until it stands on an island
     if (m.fair?.k !== k) { measureFold(m, m.fair); m.fair = { ...egFairNew(B.h, B.hw), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2, y) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }   // EG-ZA: the trail it closes folded into the circle's measures
     const A = m.fair;
+    A.tm = egTubeMouthOf(B);   // EG-PERFECT: a routed hall's Collapsing Tube falls from the company's arrival at its mouth
     egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t, B.sb);   // AUDIT EG III: a standing Spirebridge is ground
+    // EG-PERFECT (section 11.3): the first fair pose at a routed hall's tube's mouth is the company reaching it - the room keeps
+    // the instant with this wake, and egStep says it with the stage (egTubeMouthOf)
+    if (!A.tm && egFairOk(A) && egTubeAtMouth(spec, x, y, z)) { B.tm = { hw: B.hw, at: Math.max(1, Math.round(t)), said: 0 }; A.tm = B.tm.at; }
     if (egRouteRoadAt(spec, x, y, z) === 1) A.road = 1;   // THE ASCENT: the route's road 1 (laws 4-8: past the fork, by x)
     if (egAtDoor(spec, x, z, y)) { egFairCross(A, t, A.road); if (A.cross > 0 && A.cmin == null) A.cmin = egCrossMinMs(spec, A.road); if (egFairOk(A)) A.atEnd = 1; }   // EG-ZA: the crossing's bound kept with it (its hall's spec is this one); EG-ZI: the end reached on a fair trail owes no toll
     // a fall past EG_VOID_Y - EG-ZB (section 21): or feet on a Falling Wall's or the Collapsing Tube's fallen ground, which the
-    // screen casts on to the nearest standing segment at the same cost (net/eliteGates/egFair.js egFallenAt) - owes one cast-back
-    if ((A.sup && y < A.sup[2] + EG_VOID_Y) || egFallenAt(spec, A.hw ?? 0, x, y, z, t)) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
+    // screen casts on to the nearest standing segment at the same cost (net/eliteGates/egFair.js egFallenAt) - owes one cast-back;
+    // EG-PERFECT: and a fall into a void zone (the fair trail's `vz` - Elite-Gates-Ascent.md section 2), cast back as into the void
+    if ((A.sup && y < A.sup[2] + EG_VOID_Y) || A.vz || egFallenAt(spec, A.hw ?? 0, x, y, z, t, A.tm ?? 0)) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
     else if (A.sup && A.sup[0] === t) A.cbHeld = 0;
   }
   return { x, y, z, h: B.h };

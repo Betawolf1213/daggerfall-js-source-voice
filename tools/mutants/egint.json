@@ -65,8 +65,8 @@
   {
     "name": "EGINT-the-island-never-ends-the-window",
     "file": "src/net/eliteGates/egFair.js",
-    "old": "  if (hold === EG_HOLD.island && fair) { A.brk = 0; A.isl = [p.x, p.z]; }",
-    "new": "  if (false) { A.brk = 0; A.isl = [p.x, p.z]; }",
+    "old": "  if (hold === EG_HOLD.island && fair && !(A.vd != null",
+    "new": "  if (false && !(A.vd != null",
     "tests": [
       "test/net/eliteGates/egint_relay.test.js"
     ]
