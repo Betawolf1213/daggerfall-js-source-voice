@@ -1,0 +1,242 @@
+[
+ {
+  "name": "SESSIONSIGN-pass-drops-handle",
+  "file": "server-account/src/sessionPass.js",
+  "old": "handle: c.h ?? null,",
+  "new": "handle: null,",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the handle a pass carries: a developer's switches, an account's kind."
+ },
+ {
+  "name": "SESSIONSIGN-pass-drops-registration",
+  "file": "server-account/src/sessionPass.js",
+  "old": "registered_at: c.r ?? null,",
+  "new": "registered_at: null,",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: when it registered: whether a week can witness."
+ },
+ {
+  "name": "SESSIONSIGN-pass-drops-mute",
+  "file": "server-account/src/sessionPass.js",
+  "old": "muted_until: c.m ?? null,",
+  "new": "muted_until: null,",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the mute: the board's muted and canPin."
+ },
+ {
+  "name": "SESSIONSIGN-pass-drops-ban",
+  "file": "server-account/src/sessionPass.js",
+  "old": "banned_until: c.b ?? null,",
+  "new": "banned_until: null,",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the ban: a banned account acts in nothing, under a pass too."
+ },
+ {
+  "name": "SESSIONSIGN-pass-drops-ban-reason",
+  "file": "server-account/src/sessionPass.js",
+  "old": "ban_reason: c.br ?? null",
+  "new": "ban_reason: null",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the ban's reason, said in its answer."
+ },
+ {
+  "name": "SESSIONSIGN-believed-everywhere",
+  "file": "server-account/src/sessionPass.js",
+  "old": "PASS_PATHS.has(path) || (method === 'PUT' && CHECKPOINT_RE.test(path))",
+  "new": "true",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the hot routes alone: a claim, the mint and every route that changes an account keep the lookup."
+ },
+ {
+  "name": "SESSIONSIGN-checkpoint-not-hot",
+  "file": "server-account/src/sessionPass.js",
+  "old": "PASS_PATHS.has(path) || (method === 'PUT' && CHECKPOINT_RE.test(path))",
+  "new": "PASS_PATHS.has(path)",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the checkpoint, the busiest of them."
+ },
+ {
+  "name": "SESSIONSIGN-secret-out-of-mac",
+  "file": "server-account/src/sessionPass.js",
+  "old": "new TextEncoder().encode(`p1.${body}.${secret}`)",
+  "new": "new TextEncoder().encode(`p1.${body}`)",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: bound to its secret: another account's secret with this pass is the lookup."
+ },
+ {
+  "name": "SESSIONSIGN-mac-unchecked",
+  "file": "server-account/src/sessionPass.js",
+  "old": "if (!(await subtle.verify('HMAC', key, mac, macInput(parts[1], secret)))) return null;",
+  "new": "",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: an altered pass is no pass."
+ },
+ {
+  "name": "SESSIONSIGN-time-unread",
+  "file": "server-account/src/sessionPass.js",
+  "old": "c.x - nowS <= PASS_RENEW_S) return null;",
+  "new": "false) return null;",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: a pass past its time is no pass."
+ },
+ {
+  "name": "SESSIONSIGN-renewal-unread",
+  "file": "server-account/src/sessionPass.js",
+  "old": "c.x - nowS <= PASS_RENEW_S) return null;",
+  "new": "c.x - nowS <= 0) return null;",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: renewed before it ends: the lag under PASS_TTL_S - PASS_RENEW_S."
+ },
+ {
+  "name": "SESSIONSIGN-ttl-longer",
+  "file": "server-account/src/sessionPass.js",
+  "old": "export const PASS_TTL_S = 300;",
+  "new": "export const PASS_TTL_S = 3000;",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: five minutes, the owner's call."
+ },
+ {
+  "name": "SESSIONSIGN-key-without-service-key",
+  "file": "server-account/src/sessionPass.js",
+  "old": "  if (!b64) return Promise.resolve(null);\n",
+  "new": "",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: no service key, no pass key."
+ },
+ {
+  "name": "SESSIONSIGN-never-minted",
+  "file": "server-account/src/index.js",
+  "old": "      if (hot && !('pass' in who)) held.pass = await mintPass(hot, who, secret, nowS, subtle);\n",
+  "new": "",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the lookup on a hot route hands the pass back."
+ },
+ {
+  "name": "SESSIONSIGN-never-believed",
+  "file": "server-account/src/index.js",
+  "old": "const who = (hot && await readPass(hot, request.headers.get(PASS_HEADER), secret, nowS, subtle)) || await resolveSession(ctx, secret);",
+  "new": "const who = await resolveSession(ctx, secret);",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the pass believed: no lookup."
+ },
+ {
+  "name": "SESSIONSIGN-unexposed",
+  "file": "server-account/src/index.js",
+  "old": "if (held.pass) { out.headers.set(PASS_HEADER, held.pass); out.headers.append('access-control-expose-headers', PASS_HEADER); }",
+  "new": "if (held.pass) { out.headers.set(PASS_HEADER, held.pass); }",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: exposed, so the page can read it."
+ },
+ {
+  "name": "SESSIONSIGN-preflight-shut",
+  "file": "server-account/src/index.js",
+  "old": "x-d1-bookmark, if-none-match, x-session-pass'",
+  "new": "x-d1-bookmark, if-none-match'",
+  "tests": [
+   "test/server/sessionsign.test.js"
+  ],
+  "note": "SESSION-SIGN: the preflight lets a page send it."
+ },
+ {
+  "name": "SESSIONSIGN-client-any-secret",
+  "file": "src/net/accountClient.js",
+  "old": "return secret && _pass.secret === secret ? _pass.pass : null;",
+  "new": "return _pass.pass;",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: never with another secret."
+ },
+ {
+  "name": "SESSIONSIGN-client-never-sent",
+  "file": "src/net/accountClient.js",
+  "old": "  if (pass) headers[SESSION_PASS_HEADER] = pass;\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: sent with its secret."
+ },
+ {
+  "name": "SESSIONSIGN-client-kept-offline",
+  "file": "src/net/accountClient.js",
+  "old": "    forgetSessionPass();   // SESSION-SIGN: the same, for the pass's\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: a call that could not be made lets it go."
+ },
+ {
+  "name": "SESSIONSIGN-client-kept-past-auth",
+  "file": "src/net/accountClient.js",
+  "old": "    if (data?.error === 'auth') forgetSessionPass();   // SESSION-SIGN: a session refused is no pass's\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: a refusal of the session lets it go."
+ },
+ {
+  "name": "SESSIONSIGN-client-kept-past-signout",
+  "file": "src/net/accountClient.js",
+  "old": "  forgetSessionPass();   // SESSION-SIGN: the session's pass with it\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: a sign-out lets it go."
+ },
+ {
+  "name": "SESSIONSIGN-realm-sends-none",
+  "file": "src/systems/realmSaves.js",
+  "old": "  if (pass) headers[SESSION_PASS_HEADER] = pass;\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: the checkpoint carries it."
+ },
+ {
+  "name": "SESSIONSIGN-realm-keeps-none",
+  "file": "src/systems/realmSaves.js",
+  "old": "  noteSessionPass(io.secret, res);\n",
+  "new": "",
+  "tests": [
+   "test/net/sessionsign_client.test.js"
+  ],
+  "note": "SESSION-SIGN: and keeps its answer's."
+ }
+]

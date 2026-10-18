@@ -3082,7 +3082,7 @@ The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofin
 
 **The calls.**
 - **4 - SESSION-SIGN: built as recommended** - a signed session of five minutes on the hot routes (its own record
-  below, when built).
+  below: SESSION-SIGN).
 - **5 - both, in order: COURT-WATCH now, COURT-WIDE next.** COURT-WATCH (`World-Bosses.md` section 24, built): the
   257th stays in the court as its watcher - the fight heard and seen, none of a fighter's part - and asks for a seat
   every COURT_WATCH_ASK_MS; the relay's answer to an `in` that seats a fighter says `me`. Rides world218 (re-hashed in
@@ -3095,3 +3095,49 @@ The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofin
   of the periodic checkpoints go - some 9 of the primary's trips a second at the evening's rate (PRIMARY-TRIPS' 7.66
   checkpoints a second, three trips each, most of them the periodic one's). Pinned by `realm0.test.js` REALM P0.5 (PIN
   MOVED) and CHECKPOINT5-two-minutes-again (dead).
+
+### SESSION-SIGN: built (2026-10-18, this branch - acct155, no migration, no drop)
+
+**Counted first.** Every authenticated request asked the account database who its secret is (`accounts.js`
+resolveSession, WHO_SQL: one statement, the session and its player) - some 30-74 of the primary's round trips a second at
+a thousand online (the plan's item 4), on whichever of the primary or a replica the request's session first asked. What
+the hot routes read of the account, followed into every function they hand it to (a survey of the tree): the checkpoint
+its id alone; the heartbeat its id, handle and mute (the board's `muted` and `canPin`); a town's homes its handle and id;
+the pixels and the chapters' sheet its handle; the seats' list its handle, id and when it registered (a witness's
+week); and the door before every route the ban and its reason. The mint reads twenty columns and more, and keeps the
+lookup.
+
+**Built.**
+- **The pass** (`server-account/src/sessionPass.js`): a hot route (passRoute - the checkpoint's PUT, `/v1/heartbeat`,
+  `/v1/homes/town`, `/v1/prof/pixels`, `/v1/chapters/list`, `/v1/seats/list`) that the lookup answered hands back
+  `x-session-pass`: the account's id, its session, handle, registration, mute and ban, good for PASS_TTL_S (300 - the
+  owner's five minutes), MAC'd with HMAC-SHA-256 under a key HKDF draws from IDENTITY_PRIVATE_KEY for passes alone (no
+  new secret; a pass is never a relay token), the secret in the MAC and never in the pass. The next asks believe it
+  there without the lookup. A pass PASS_RENEW_S (60) or less from its end is not believed - the lookup answers and the
+  next pass rides back - so a page asking as often as its heartbeat renews before it lapses. A pass that fails (forged,
+  stretched, another secret's, another service's key, past its time, a service with no key) is no refusal: the lookup
+  answers, as it did. Every other route - the claims, the mint, everything that changes an account - keeps the lookup.
+- **The page** (`net/accountClient.js`): the one door keeps the pass an answer handed it, with its secret, and sends it
+  with that secret's calls alone - and so never to a service from before SESSION-SIGN, whose preflight lets no such
+  header through (it never handed one: the deploys may land in either order). A call that could not be made (a preflight
+  refusing it - a service rolled back), a refusal of the session and a sign-out let it go. The realm's own door
+  (`systems/realmSaves.js` realmAsk) carries it, the checkpoint being a hot route.
+- **The lag is the decision's:** a sign-out, a password change, a recovery, a ban or a mute reaches a hot route at its
+  pass's renewal - under PASS_TTL_S - PASS_RENEW_S (240 s) after it was minted - and every other route at once, the
+  relay's token among them (a ban and a mute are pushed to the relay besides).
+
+**Counted after (an estimate at the evening's rates, CHECKPOINT-5's cadence):** a page's hot asks are some one each
+35 s (a town's homes, 29 a second at a thousand), 145 s (the heartbeat) and 300 s (the checkpoint) - some 40 lookups a
+second at a thousand online. Under passes a page asks one lookup each 240 s at most on them: some 4 a second, so some 36
+of the lookups a second go, of the 30-74 the plan counted on the primary; which share was the primary's depends on the
+replicas' lag at the hour (the checkpoint's always: it writes). A checkpoint is two trips where it was three. A pass costs
+an HMAC to mint and one to check (microseconds, no I/O) and some 300 bytes a request.
+
+**Pins.** `test/server/sessionsign.test.js` (5): the oracle - every hot route answers under a pass exactly as under the
+lookup, for a guest, an account, a developer, a newcomer a week cannot yet witness, a muted one and a banned one, the
+switches on and at `dev`, asking no lookup; the checkpoint two trips; believed on the hot routes alone and in its own
+secret's hands alone (another account's secret, an altered or stretched pass, another key's, one at or past its renewal:
+the lookup); the lag (a ban and a sign-out at the mint at once, at a hot route at the renewal); no key, no pass; the
+preflight. `test/net/sessionsign_client.test.js` (2): the page keeps, sends and lets go of its pass, and the realm's door
+carries it. `tools/mutants/sessionsign.json`: 24, all dead. PIN MOVED: the account version's pins, acct154 to acct155
+(PLAN-1000 - PRIMARY-FOLD's changes to the Worker's law had not moved it), and nine records re-aimed by content, all dead.

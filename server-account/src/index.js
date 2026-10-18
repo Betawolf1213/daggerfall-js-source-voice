@@ -303,7 +303,8 @@ import {
 } from './realm.js';   // REALM P1: the realm's characters; ARENA4b: the level on a realm character's tile, the token's `cl`
 import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill the playing character's budget
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
-import { doorReads } from './door.js';   // PRIMARY-FOLD: the door's reads in one trip
+import { doorReads } from './door.js';
+import { passRoute, passKey, mintPass, readPass, PASS_HEADER } from './sessionPass.js';   // SESSION-SIGN: the hot routes believe a pass   // PRIMARY-FOLD: the door's reads in one trip
 import { PROGRESS_ROUTES, seatRefusalOf, progressConfig, progressRoom, progressSpent } from './progress.js';   // INT16-INT17: a progression claim's seat, and the play that pays for it
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realm/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
@@ -687,17 +688,18 @@ const service = {
    *  read starts no older than everything this one saw and wrote - the routes `route` answers are untouched.
    *  AUDIT SCALE II A-3: `said` is what the route tells the metrics point (metrics.js measured) - a heartbeat's parts. */
   async fetch(request, env, said = { parts: '' }, exec = null) {
-    const held = { session: null, said, exec };
+    const held = { session: null, said, exec, pass: null };
     const res = await service.route(request, env, held);
     let mark = null;
     try { mark = held.session?.getBookmark?.() ?? null; } catch { mark = null; }
-    if (typeof mark !== 'string' || !D1_BOOKMARK_RE.test(mark)) return res;
+    const marked = typeof mark === 'string' && D1_BOOKMARK_RE.test(mark);
+    if (!marked && !held.pass) return res;
     const out = new Response(res.body, res);   // its status and headers, copied - a copy's headers may be set
-    out.headers.set('x-d1-bookmark', mark);
-    out.headers.append('access-control-expose-headers', 'x-d1-bookmark');
+    if (marked) { out.headers.set('x-d1-bookmark', mark); out.headers.append('access-control-expose-headers', 'x-d1-bookmark'); }
+    if (held.pass) { out.headers.set(PASS_HEADER, held.pass); out.headers.append('access-control-expose-headers', PASS_HEADER); }   // SESSION-SIGN: the pass a lookup on a hot route minted
     return out;
   },
-  async route(request, env, held = { session: null, said: { parts: '' } }) {
+  async route(request, env, held = { session: null, said: { parts: '' }, pass: null }) {
     const subtle = crypto.subtle;
     const rand = (b) => crypto.getRandomValues(b);
     const nowS = Math.floor(Date.now() / 1000);
@@ -711,7 +713,7 @@ const service = {
         headers: {
           'access-control-allow-origin': origin,
           'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark, if-none-match',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark; POI-1: the feed version a game holds
+          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark, if-none-match, x-session-pass',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark; POI-1: the feed version a game holds; SESSION-SIGN: the session's pass
           'access-control-max-age': '86400',
         },
       });
@@ -964,8 +966,13 @@ const service = {
       const auth = request.headers.get('authorization') ?? '';
       const bearer = /^Bearer (.+)$/.exec(auth)?.[1];
       const secret = bearer ?? (request.method === 'POST' ? body.secret : null);
-      const who = await resolveSession(ctx, secret);
+      // SESSION-SIGN (sessionPass.js; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000, decision 4): A HOT ROUTE
+      // BELIEVES ITS PASS - who the lookup found, signed for five minutes and bound to this secret - and asks the lookup
+      // only for one it cannot believe, minting the next beside its answer
+      const hot = passRoute(path, request.method) ? await passKey(env, subtle) : null;
+      const who = (hot && await readPass(hot, request.headers.get(PASS_HEADER), secret, nowS, subtle)) || await resolveSession(ctx, secret);
       if (!who) return no('auth', 401, origin);
+      if (hot && !('pass' in who)) held.pass = await mintPass(hot, who, secret, nowS, subtle);
       // SAFE4: A BANNED ACCOUNT ACTS IN NOTHING - no token (so no room), no save, no trade - and is told until when, and why,
       // on every door; it may still sign out
       if (isBanned(who.player, nowS) && path !== '/v1/auth/logout') return json(bannedAnswer(who.player), 403, origin);
