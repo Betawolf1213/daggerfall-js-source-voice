@@ -189,6 +189,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 
 | Folder | What lives there |
 |---|---|
+| `src/characters/bodyMotion/` | The Morrowind body's own motion in third person (`04-Characters/Body-Motion.md`): the body measured, the gait, the carry, the blows, the solve, one per rig. |
 | `src/characters/enemy/` | Enemies: entity, motor, attacks, casting, sounds. |
 | `src/characters/mobile/` | DFU's mobile units: types, persons, factions. |
 | `src/characters/ownModels/` | The port's own 3D models: heads, armour, clothing, weapons. |
