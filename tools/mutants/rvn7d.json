@@ -20,8 +20,8 @@
   {
     "name": "RVN7d-home-any-dungeon",
     "file": "src/systems/revenant/revenant.js",
-    "old": "x.lair && x.lair.px === here.px && x.lair.py === here.py && (x.dueAt",
-    "new": "x.lair && x.lair.px === here.px && (x.dueAt",
+    "old": "x.lair && x.lair.px === here.px && x.lair.py === here.py && (x.dread || x.dueAt",
+    "new": "x.lair && x.lair.px === here.px && (x.dread || x.dueAt",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "RVN7d-home-known-unread",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(x.dueAt <= now || (!dueOnly && x.lairKnown)))",
-    "new": "(x.dueAt <= now))",
+    "old": "(x.dread || x.dueAt <= now || (!dueOnly && x.lairKnown)))",
+    "new": "(x.dread || x.dueAt <= now))",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
     ]
@@ -38,8 +38,8 @@
   {
     "name": "RVN7d-home-rest-known",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(x.dueAt <= now || (!dueOnly && x.lairKnown)))",
-    "new": "(x.dueAt <= now || x.lairKnown))",
+    "old": "(x.dread || x.dueAt <= now || (!dueOnly && x.lairKnown)))",
+    "new": "(x.dread || x.dueAt <= now || x.lairKnown))",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
     ]
@@ -47,7 +47,7 @@
   {
     "name": "RVN7d-home-anyone",
     "file": "src/systems/revenant/revenant.js",
-    "old": "(x.dueAt <= now || (!dueOnly && x.lairKnown)))",
+    "old": "(x.dread || x.dueAt <= now || (!dueOnly && x.lairKnown)))",
     "new": "(true))",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
@@ -92,8 +92,8 @@
   {
     "name": "RVN7d-grant-unpassed",
     "file": "src/systems/revenant/revenant.js",
-    "old": "entity.items.push(...revenantLoot(level ?? entity.level, entity.revenant.rank ?? 1, rolls, goldMult));",
-    "new": "entity.items.push(...revenantLoot(level ?? entity.level, entity.revenant.rank ?? 1, rolls));",
+    "old": "rolls, goldMult * hoard));",
+    "new": "rolls, hoard));",
     "tests": [
       "test/systems/rvn7d_stand.test.js"
     ]

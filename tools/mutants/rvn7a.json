@@ -128,8 +128,8 @@
   {
     "name": "RVN7a-door-unread",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  const lair = lairAfter(r, playerDoor()?.lairHere?.() ?? null);",
-    "new": "  const lair = lairAfter(r, null);",
+    "old": "  const here = playerDoor()?.lairHere?.() ?? null;\n",
+    "new": "  const here = null;\n",
     "tests": [
       "test/systems/revenant/rvn7a_lair.test.js"
     ]
