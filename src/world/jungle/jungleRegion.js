@@ -20,8 +20,10 @@
 // ═══════════════════════════════════════════════════════════════════
 import { ecoNoise, ecoOrigin } from '../ecotone.js';
 
-/** The regions that are jungle - Bantha (MapsFile region 10, POLITIC 138), the first of the continent's biomes. */
-export const JUNGLE_REGIONS = Object.freeze([10]);
+/** The regions that are jungle - Glenpoint (MapsFile region 18, POLITIC 146), due north of Daggerfall city, the first of
+ *  the continent's biomes. The owner's call (2026-10-18): Bantha, the region the owner first named (10), holds no pixel of
+ *  Daggerfall's map and no place - a name it lists and never paints (AUDIT BANTHA1 RISK, tools/jungleExtent.mjs). */
+export const JUNGLE_REGIONS = Object.freeze([18]);
 /** How far (pixels) from the edge the field is exact; past it a pixel reads this much and a half, its side's sign. */
 export const JUNGLE_FIELD_REACH = 6;
 /** A map pixel (m) - terrainSampler.js TERRAIN_SIZE, held here as ecotone.js holds its own. */

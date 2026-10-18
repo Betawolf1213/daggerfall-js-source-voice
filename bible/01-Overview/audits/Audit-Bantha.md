@@ -91,7 +91,7 @@ again on the branch before its fix.
 | LAY-10 NIT | The Cost line was the test's synthetic ground, not "a pixel wholly jungle" | FIXED: re-measured on whole grass - about 13,700 flats, ~11 ms on the worker (Real forests' mean 6,200, DFU's scatter 9,200) |
 | LAY-11 NIT | "68% in a glade" (a glade is a gap: about 60%), "never within 2.2 m" (at the trunk's scale), "the canopy may close over [a road]" (the crowns lean 0.4-3.1 m over its sides) | FIXED in the record |
 | LAY-12 NIT | A canopy tree the main thread drops later (a road's clearance, the gate's) still shapes the young trees about it | ACCEPTED: a few young trees fewer beside a road, under a crown that is gone; the worker cannot know the main thread's clearances without moving them onto it |
-| RISK | Nothing in the tree shows a pixel of region 10: DFU's travel map gives Bantha no page (`10-UI/UI-Arc.md`, with the wildernesses and the coast strips), its race is the Redguards', and the jungle lays the rainforest's law over whatever climate it finds | CONFIRMED (2026-10-18, the freeware's own data - `tools/fetch-data.sh`, then `tools/jungleExtent.mjs`): **region 10 holds no pixel of POLITIC.PAK and no place in MAPS.BSA** - a name in Daggerfall's region list the map never paints. The jungle as built stands NOWHERE. Due north of Daggerfall city (207, 213) the land is Daggerfall's own to y 150, then Glenpoint (region 18: 6,759 pixels, 445 places, Mountain Woods); the owner's call which land the jungle takes |
+| RISK | Nothing in the tree shows a pixel of region 10: DFU's travel map gives Bantha no page (`10-UI/UI-Arc.md`, with the wildernesses and the coast strips), its race is the Redguards', and the jungle lays the rainforest's law over whatever climate it finds | CONFIRMED (2026-10-18, the freeware's own data - `tools/fetch-data.sh`, then `tools/jungleExtent.mjs`): **region 10 holds no pixel of POLITIC.PAK and no place in MAPS.BSA** - a name in Daggerfall's region list the map never paints. The jungle as built stands NOWHERE. Due north of Daggerfall city (207, 213) the land is Daggerfall's own to y 150, then Glenpoint (region 18: 6,759 pixels, 445 places, Mountain Woods); **FIXED, the owner's call (2026-10-18): Glenpoint** - `JUNGLE_REGIONS` is region 18; the player's row and its 25 languages name it |
 
 ### PERF
 
@@ -100,7 +100,7 @@ again on the branch before its fix.
 | PERF-1 HIGH | = TREE-1 | FIXED there |
 | PERF-2 MED | The nature list crossed from the worker as 12,600 plain objects: a 10 ms structured clone on the main thread, out of every breather's reach | FIXED: by column (`world/terrain/natureWire.js`), the buffers transferred - 9-11 ms -> 1.9 ms |
 | PERF-3 MED | The haze culls DRAWING, not building: at noon 100 of 121 pixels hidden, each still streamed, laid and held | DECIDE - the owner's: build a hidden pixel's ground and stand its nature the first frame it shows, and the dawn's thinning stands trees late |
-| PERF-4 MED | Every world shader now runs the haze; on SwiftShader the branch is flattened (+29-74% a fogged shader, on or off) | OPEN: a uniform branch on a real GPU; measured on the owner's (`HEADED=1 SCENES=bantha LOC=<town> npm run perf`, against `JUNGLE=off`) |
+| PERF-4 MED | Every world shader now runs the haze; on SwiftShader the branch is flattened (+29-74% a fogged shader, on or off) | OPEN: a uniform branch on a real GPU; measured on the owner's (`HEADED=1 SCENES=jungle npm run perf`, against `JUNGLE=off`) |
 | PERF-5 MED | From outside Bantha looking in: 170,000 billboards against the rainforest's 103,000 - the young trees, 41% of them, stood the far rings | FIXED: the young their own groups (`J<species>y`), no far ring |
 | PERF-6 MED | The jungle doubled the worker's time a pixel: `Math.hypot` in the clearance, and a whole-jungle pixel laid its ordinary layout only to drop it | FIXED: squared distances; `jungleWhole` lays none - 16.1 -> 10.6 ms |
 | PERF-7 LOW | The record's cost claims | FIXED with LAY-10 and HAZE-9 |
@@ -122,7 +122,7 @@ again on the branch before its fix.
 | DOC-7 MED | The record still said the pictures' provenance was open | FIXED (7c0ce43d0) |
 | DOC-8 MED | The owner's pronouns guessed | FIXED (7c0ce43d0) - none stated, none written |
 | DOC-9 MED | = HOST-1 | FIXED there |
-| DOC-10 MED | The record's GPU check could not reach Bantha: the perf probe had no Bantha scene and no jungle switch | FIXED: `SCENES=bantha LOC=<town>` and `JUNGLE=off` |
+| DOC-10 MED | The record's GPU check could not reach Bantha: the perf probe had no Bantha scene and no jungle switch | FIXED: `SCENES=jungle` (the city of Glenpoint; `LOC=` another) and `JUNGLE=off` |
 | DOC-11 LOW | Port-Status's "sixteen" of the flags added since - seventeen | FIXED |
 | DOC-12 LOW | Active-Arcs' test and mutant counts | FIXED |
 | DOC-13 LOW | "and ten more" re-aimed lists - eleven | FIXED |

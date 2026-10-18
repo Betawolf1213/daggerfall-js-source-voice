@@ -8,7 +8,7 @@
 //
 //   - WHERE. The haze's share is the jungle's own field (world/jungle/jungleRegion.js jungleDepthAt) read at the eye,
 //     across a wider band than the trees' (JUNGLE_HAZE.edge: it drifts out past the last trees and thickens further in), so
-//     walking into Bantha the air closes in over a kilometre, and never at a line.
+//     walking into the jungle the air closes in over a kilometre, and never at a line.
 //   - HOW THICK. Its extinction at the floor is JUNGLE_HAZE.density at full share, by the hour (JUNGLE_HAZE.day - the dawn's mist is
 //     the thickest, the afternoon's the thinnest), by the weather (JUNGLE_HAZE.weather - rain thickens it), and by DRIFTING
 //     BANKS: a slow value noise over the world (JUNGLE_HAZE.drift) blown along by the wind, so the air thins and thickens as
@@ -25,7 +25,7 @@
 //     into the same colour.
 //   - WHAT IT HIDES. A box whose nearest point, at its highest, sends less than JUNGLE_HAZE.cull of its light to the eye is
 //     drawn as nothing but haze colour - so it is not drawn (hazeHides: a bound, never a guess - the optical depth along
-//     any ray into the box is at least the depth to its nearest point at its top height). Inside Bantha the streamed
+//     any ray into the box is at least the depth to its nearest point at its top height). Inside the jungle the streamed
 //     world past a kilometre or so costs nothing: the haze PAYS for the jungle.
 // ═══════════════════════════════════════════════════════════════════
 import { ecoHash } from '../ecotone.js';

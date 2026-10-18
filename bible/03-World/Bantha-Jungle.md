@@ -5,7 +5,8 @@ the continent to recieve a biome expansion. Using the attached file, populate th
 When traveling inside the area there should be a fog-like haze that reduces visability. This needs to be insanely
 detailed and not hurt performance. No band aids."**
 
-Bantha (MapsFile region 10, POLITIC 138) stands as a jungle in four storeys - the owner's five trees closing a canopy
+**Glenpoint** (MapsFile region 18, POLITIC 146 - due north of Daggerfall city; the owner's call once Bantha, the region
+first named, proved to hold no land on Daggerfall's map: AUDIT BANTHA1 RISK) stands as a jungle in four storeys - the owner's five trees closing a canopy
 overhead, emergents above it, young trees and palms in its light gaps, ferns and flowers on its floor - under a humid
 haze that is thickest at dawn and in rain, fog and storms, thins as the player climbs out of it, and drifts. Its edge is no line:
 the trees come in as stands and the air closes over a kilometre. Inside it, the haze hides the streamed world past a
@@ -216,14 +217,17 @@ jungle's wiring in, the host 21,160 code lines (its ceiling lowered to that).
 ## Online, switches
 
 **Forced on online** (`onlineLane.js` via the row's `online: true`): the jungle's trees are where Logging's trees stand in
-Bantha, so a room has one jungle. Offline, the Features row `bantha-jungle` (prefs `banthaJungle`, on by default) on the
-enhanced skin; the classic skin keeps DFU's rainforest. `?jungle=off` the kill door (offline); `?junglehaze=off` stands
+Glenpoint, so a room has one jungle. Offline, the Features row `bantha-jungle` (prefs `banthaJungle`, on by default) on the
+enhanced skin; the classic skin keeps DFU's own woods. `?jungle=off` the kill door (offline); `?junglehaze=off` stands
 the jungle under clear air. Read once, as the world loads.
 
 ## Departures from DFU (Port-Ledger A, THE JUNGLE OF BANTHA)
 
-- `DefaultTerrainNature.LayoutNature` scatters archive 500's 31 records over Bantha as it does anywhere; here Bantha's
-  tiles are laid by the jungle's own law with the owner's trees.
+- `DefaultTerrainNature.LayoutNature` scatters Glenpoint's own climate archive (Mountain Woods) over it as it does
+  anywhere; here Glenpoint's tiles are laid by the jungle's own law - the owner's trees, the rainforest's palms and floor
+  (archive 500).
+- **Glenpoint, not Bantha** (the owner's call, 2026-10-18): Daggerfall lists Bantha (region 10) and paints no pixel of
+  it; the jungle takes the land due north of Daggerfall city.
 - DFU's fog is one `RenderSettings.fog` for the world; here a regional height haze multiplies it (and the sky takes it).
 - DFU draws every streamed terrain the camera sees; here the haze culls what it hides whole.
 - **Winter, as DFU's rainforest** (AUDIT BANTHA1 TREE-4, NAMED): the Rainforest climate is Swamp-based, so in winter its

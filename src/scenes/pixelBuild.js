@@ -1085,7 +1085,7 @@ export function createPixelBuild(host) {
       batch.sunLift = JUNGLE_SUN_LIFT;   // AUDIT BANTHA1 TREE-2: its sun read at its crown, as its 3D tree's
       // MAC1's far rings: the tree's own height - it has no classic flat to stand for; AUDIT BANTHA1 PERF-5: the young
       // trees under the canopy none (the floor's): past ring 1 every eye meets the crowns about them first - from outside
-      // Bantha looking in they were 41% of its trees drawn, 170,000 quads against the rainforest's 103,000
+      // the jungle looking in they were 41% of its trees drawn, 170,000 quads against the rainforest's 103,000
       batch.farH = g.young ? 0 : proto.size.h;
       batch._box = flatBatchAabb(g.centers, far.size);
       batch.sway = floraSwayOf(JUNGLE_ARCHIVE, natureSet, proto.size.h);

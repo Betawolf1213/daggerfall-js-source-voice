@@ -73,7 +73,7 @@ export function createJungleHost({ renderer, maps, mapWidth, mapHeight, stateOf,
   };
   /** AUDIT BANTHA1 HOST-1: NO HAZE - the state let go and the uniforms ZEROED with the renderer's and the sky's, so `hides`
    *  (which reads them) answers nothing: the last eased frame's stood on, and the cull with them over the whole map, for
-   *  the rest of a session that walked out of Bantha. */
+   *  the rest of a session that walked out of the jungle. */
   const off = (fogColor, sky) => {
     hs.share = 0; hs.primed = false; u.fill(0);
     renderer.setJungleHaze(null); sky?.setHazeSky?.(null);

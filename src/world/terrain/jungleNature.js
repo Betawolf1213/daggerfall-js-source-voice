@@ -1,12 +1,12 @@
 // @ts-check
 // ═══════════════════════════════════════════════════════════════════
 // BANTHA1 (bible/03-World/Bantha-Jungle.md; the owner: "populate the area in a dense jungle like format ... insanely
-// detailed and not hurt performance") - THE JUNGLE'S LAYOUT: where Bantha's trees stand, in four storeys.
+// detailed and not hurt performance") - THE JUNGLE'S LAYOUT: where the jungle's trees stand, in four storeys.
 //
 // The pixel's own layout (world/terrain/terrainNature.js layoutNature - DFU's scatter or Real forests, and the
 // ecotone's border) is laid first; then each tile the jungle owns is laid again by the jungle's own law and the
 // pixel's flats on it give way. A tile is the jungle's where the field's share (world/jungle/jungleRegion.js
-// jungleShare - whole inside Bantha, none past its wandering edge) beats the tile's own draw, so the jungle comes in at
+// jungleShare - whole inside the jungle's region, none past its wandering edge) beats the tile's own draw, so the jungle comes in at
 // its edge as stands that grow and join, never a line.
 //
 //   - THE CANOPY. The land is cut into cells JUNGLE.cell tiles square (12.8 m - the owner's trees are 16-22 m tall and

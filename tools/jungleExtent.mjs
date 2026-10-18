@@ -2,7 +2,7 @@
 // owner's own ARENA2, which this repository does not hold. The jungle is the political map's region 10 (Bantha,
 // world/jungle/jungleRegion.js JUNGLE_REGIONS). This says how many map pixels each jungle region holds, its box, the
 // climates it wears (the jungle lays the rainforest's law over whatever they are) and its places (the names
-// `SCENES=bantha LOC=<town> npm run perf` takes), beside Daggerfall's region for scale. Run on the freeware's data
+// `SCENES=jungle LOC=<town> npm run perf` takes), beside Daggerfall's region for scale. Run on the freeware's data
 // (2026-10-18): region 10, Bantha, holds NO pixel and no place - Daggerfall names it and never paints it.
 //
 //   sh tools/fetch-data.sh && ARENA2_PATH=/home/claude/dfdata/arena2 node tools/jungleExtent.mjs
