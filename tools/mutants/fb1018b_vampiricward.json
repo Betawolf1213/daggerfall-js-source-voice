@@ -1,0 +1,23 @@
+[
+  {
+    "name": "VAMPIRIC-WARD-ward-unread",
+    "file": "src/systems/enchantments.js",
+    "old": "      if (param !== 1 || target?.warded) return null;",
+    "new": "      if (param !== 1) return null;",
+    "tests": [
+      "test/systems/fb1018b_vampiricward.test.js",
+      "test/net/eliteGates/fb1018b_turnedblow.test.js"
+    ],
+    "why": "the bug as shipped: a vampiric blade heals the whole claim of a blow a ward turns - the Warden's, the Remnant's, the Spire's"
+  },
+  {
+    "name": "VAMPIRIC-WARD-heals-on-any-blow",
+    "file": "src/systems/enchantments.js",
+    "old": "      if (param !== 1 || target?.warded) return null;",
+    "new": "      if (target?.warded) return null;",
+    "tests": [
+      "test/systems/fb1018b_vampiricward.test.js"
+    ],
+    "why": "the at-range param heals on a strike"
+  }
+]

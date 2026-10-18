@@ -35,6 +35,7 @@ import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from '
 import { egZoneLandings, egFloorLess, egBurnsIn } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 import { egByHeight, egFeetY, egOneStorey, egStoreyY } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a blow on its own storey
+import { egGroundAt, EG_STRIKE_PAD_M } from './egWalkGraph.js';   // FIELD BUGS 2026-10-18b TURNED-BLOW: the fight ground a blow is struck from
 
 /** A body's role. */
 export const EG_ROLE = Object.freeze({ lord: 0, add: 1, obj: 2 });
@@ -357,6 +358,35 @@ export function egFightState(F, now) {
   return { k: 'efs', h: F.h, wk: F.wokeAt, b: F.bodies.slice(0, EG_BODIES_MAX).map((b) => egBodyWire(b, now)), bl: F.blows.filter((b) => b.at + Math.max(1, b.sp ?? 0) + 400 >= now), tx: F.tethers.map((t) => [...t]), mk: F.marks.map((m) => [...m]), pg: { ...F.pg },
     zs: (F.zones ?? []).filter((z) => z.until > now).map((z) => ({ ...z, s: [...z.s] })) };
 }
+
+/**
+ * FIELD BUGS 2026-10-18b TURNED-BLOW (Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": "Imps that follow you around
+ * won't die after hitting several times. Its an exploit for heals if you have a vampiric weapon"): A BLOW STRUCK FROM OFF THE
+ * FIGHT GROUND strikes nothing (EG-ZB, section 11.7 - a span's platform, a step, a ledge: traversal ground), but on an object
+ * standing off it, which is struck from beside it. `view` the hall's fight ground (net/eliteGates/egWalkGraph.js egFightView),
+ * (x, y, z) the striker's feet in the hall's frame. The relay refuses by it (net/eliteGates/egBrain.js egBlow) and every screen
+ * asks it (egStrikeTurned): one law, so a screen never offers a body the relay will take nothing from. Pure.
+ * @param {any} view @param {any} b @param {number} x @param {number} y @param {number} z
+ */
+export function egStruckOff(view, b, x, y, z) {
+  return !egGroundAt(view, x, y, z, EG_STRIKE_PAD_M) && !(b?.role === EG_ROLE.obj && !egGroundAt(view, b.x, egFeetY(view, b.y), b.z, b.r ?? 1));
+}
+/** TURNED-BLOW: the flags a body takes no blow through, whatever the blow claims - a friend's and a vanished lord's
+ *  (egHitBody refuses both) and a ward's (egHitBody lands nothing through it, a lord's with it). */
+export const EG_TURNS_FL = EG_FL.friend | EG_FL.hidden | EG_FL.ward;
+/** TURNED-BLOW: a lord asleep (section 8.6: "a lord asleep takes no blow" - net/eliteGates/egLords.js egLordHitX's `up2`), as a
+ *  screen holds it: no phase said yet (net/eliteGates/egLink.js egBodyOf's `ph`, 0 until its wake's word), never a mirror (stood
+ *  awake). Pure. */
+export const egLordAsleep = (b) => b?.role === EG_ROLE.lord && !egHas(b, EG_FL.mirror) && !(b.ph > 0);
+/**
+ * TURNED-BLOW - A BLOW THE LAW TURNS WHOLE, as a screen holds body `b` (net/eliteGates/egLink.js egBodyOf) struck from feet
+ * (x, y, z) in the hall's frame - whatever its kind, its claim or its striker's purse: from off the fight ground (egStruckOff,
+ * the relay's own rule), on a body its flags turn (EG_TURNS_FL), or on a lord asleep. The screen marks the body's stand-in
+ * warded by it (scenes/eliteGates/egFight.js), so nothing a landed blow answers - a leech, a Vampiric Effect, a set's or a
+ * martial power - answers a blow the relay will refuse, and the blow is never sent. Pure.
+ * @param {any} view @param {any} b @param {number} x @param {number} y @param {number} z
+ */
+export const egStrikeTurned = (view, b, x, y, z) => !b || ((b.fl | 0) & EG_TURNS_FL) !== 0 || egLordAsleep(b) || egStruckOff(view, b, x, y, z);
 
 /**
  * A BLOW ON A BODY from member purse `p` (the gate's: level, blow rate, bucket), standing at `pose` (the hall's frame),
