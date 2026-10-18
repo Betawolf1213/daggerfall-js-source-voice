@@ -17182,7 +17182,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   }
 
   async function pump() {
-    if (building || queue.length === 0) return;
+    if (building || !state.owes(queue)) return;   // QUEUE-OWED: a pixel the stream let go while it waited is never built
     building = true;
     const next = queue.shift();
     _streamSince ??= performance.now();   // PERF-EXT24: a run of streamed builds begins
@@ -17212,7 +17212,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       state.fail(next.px, next.py, performance.now());
     }
     building = false;
-    if (!queue.length) _streamSince = null;   // PERF-EXT24: and ends with the queue
+    if (!state.owes(queue)) _streamSince = null;   // PERF-EXT24: and ends with the queue (QUEUE-OWED: with what it still owes)
   }
 
   /** F5-QUESTS (2026-09-26): THIS HOST'S PAUSE BAG, one arm for both doors that mount the pause window - hudCtx.togglePause
