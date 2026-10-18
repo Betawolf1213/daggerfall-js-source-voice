@@ -121,7 +121,9 @@ function chooseNow(entity, law, id) {
 /** A path's state for this character, and why. Pure. */
 function pathState(entity, law, p, held, open, on) {
   if (held?.id === p.id) return 'chosen';
-  if (held) return 'closed';
+  // AUDIT SPEC-RESET L3-1: closed only where a reset could open it - a pair the class can never master, or whose slots are
+  // spent, says so whatever is held (the masteries are permanent; a reset frees no slot)
+  if (held) { const free = pathState(entity, law, p, null, [], on); return free === 'never' || free === 'slots' ? free : 'closed'; }
   if (open.some((o) => o.id === p.id)) return 'open';
   const st = law.pair(p).map((id) => skillStand(entity, id).state);
   if (st.includes('misc')) return 'never';
@@ -163,8 +165,11 @@ function afterReset(entity, id, law, held, on) {
  *  one was bought (AUDIT SPEC-RESET L1-5: choosing grants none - it is sold to the path's holder). */
 function resetModel(entity, id, law, held, on) {
   const after = afterReset(entity, id, law, held, on);
-  const refusal = specResetRefusal(entity, id) ?? (after.others ? null
-    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));
+  // AUDIT SPEC-RESET L3-1: the reset that can never help says so first - short of the gold too, or the player saves
+  // 200,000 for it
+  const refusal = (after.others ? null
+    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }))
+    ?? specResetRefusal(entity, id);
   const rows = () => [
     t('growth.spec.reset.ask', 'Reset {name} for {gold, number} gold?', { name: held.name, gold: SPEC_RESET_GOLD }),
     '',
@@ -263,9 +268,11 @@ let _fam = /** @type {string|null} */ (null);
 let _open = /** @type {string|null} */ (null);
 let _all = false;
 let _note = /** @type {string|null} */ (null);
+/** The note was just written - the next draw brings it into view (AUDIT SPEC-RESET L3-2). */
+let _noteFresh = false;
 /** A new visit: the page starts on `fam` (a door's - the classic sheet's S or W row), else the family this character
  *  can reach; nothing open. */
-export function resetSpecGuide(fam = null) { _fam = fam === 'arcane' || fam === 'martial' ? fam : null; _open = null; _all = false; _note = null; }
+export function resetSpecGuide(fam = null) { _fam = fam === 'arcane' || fam === 'martial' ? fam : null; _open = null; _all = false; _note = null; _noteFresh = false; }
 
 /**
  * THE PAGE into `detail` (the Growth rail's detail pane). `kit` the menu's makers: `{ el, divider, skillMeter, askCard,
@@ -281,7 +288,18 @@ export function drawSpecGuide(detail, rerender, { el, divider, skillMeter = null
     off.append(el('span', null, m.switchable ? t('growth.spec.masterOff', 'Master Skills is turned off, so no specialisation can be unlocked. Turn it on in Master Skills.') : t('growth.spec.masterOffLocked', 'Master Skills is off.')));
     detail.append(off);
   }
-  if (_note) detail.append(el('div', 'px-master-note', _note));
+  if (_note) {
+    // AUDIT SPEC-RESET L3-2: the answer to a Choose or a Reset - a status line, brought into view and focused once it is
+    // drawn: the pane kept its scroll, and the note stood above it at every size in both dresses
+    const note = el('div', 'px-master-note', _note);
+    note.setAttribute('role', 'status');
+    detail.append(note);
+    if (_noteFresh) {
+      _noteFresh = false;
+      note.tabIndex = -1;
+      Promise.resolve().then(() => { if (!note.isConnected) return; note.scrollIntoView?.({ block: 'nearest' }); note.focus?.({ preventScroll: true }); });
+    }
+  }
   if (!_fam) _fam = firstFamily(m);
   // the families' switch - each with its count of open paths
   const sw = el('div', 'gr-switch');
@@ -419,7 +437,7 @@ function pathDetail(el, fam, p, rerender, askCard, on) {
   if (p.state === 'open') {
     const acts = el('div', 'gr-acts');
     const b = el('button', 'act primary', t('growth.spec.choose', 'Choose {name}', { name: p.name }));
-    b.onclick = () => askCard(p.ask(), () => { _note = p.choose().text; _open = p.id; rerender(); });
+    b.onclick = () => askCard(p.ask(), () => { _note = p.choose().text; _noteFresh = true; _open = p.id; rerender(); });
     acts.append(b);
     box.append(acts);
   }
@@ -428,12 +446,18 @@ function pathDetail(el, fam, p, rerender, askCard, on) {
   if (p.state === 'chosen' && fam.reset) {
     const r = fam.reset;
     const acts = el('div', 'gr-acts');
-    const b = el('button', 'act', t('growth.spec.reset.btn', 'Reset · {gold, number} gold', { gold: SPEC_RESET_GOLD }));
+    // AUDIT SPEC-RESET L3-7: never a line that starts with the "·" - it binds to the word before it, in every language
+    const b = el('button', 'act', t('growth.spec.reset.btn', 'Reset · {gold, number} gold', { gold: SPEC_RESET_GOLD }).replace(/ ·/g, '\u00a0·'));
     b.disabled = !!r.refusal;
-    b.onclick = () => { if (!r.refusal) askCard(r.rows(), () => { _note = r.go().text; _open = null; rerender(); }); };
+    b.onclick = () => { if (!r.refusal) askCard(r.rows(), () => { _note = r.go().text; _noteFresh = true; _open = null; rerender(); }); };
     acts.append(b);
     box.append(acts);
-    if (r.refusal) box.append(el('p', 'gr-fine gr-reset-why', r.refusal));
+    if (r.refusal) {
+      const why = el('p', 'gr-fine gr-reset-why', r.refusal);
+      why.id = `gr-reset-why-${fam.id}`;
+      b.setAttribute('aria-describedby', why.id);   // AUDIT SPEC-RESET L3-5: the disabled press's reason, read with it
+      box.append(why);
+    }
   }
   return box;
 }

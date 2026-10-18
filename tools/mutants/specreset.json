@@ -92,8 +92,8 @@
   {
     "name": "SPEC-RESET-only-guard-dropped",
     "file": "src/ui/growth/specGuide.js",
-    "old": "  const refusal = specResetRefusal(entity, id) ?? (after.others ? null",
-    "new": "  const refusal = specResetRefusal(entity, id) ?? (true ? null",
+    "old": "  const refusal = (after.others ? null\n",
+    "new": "  const refusal = (true ? null\n",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -182,8 +182,8 @@
   {
     "name": "SPEC-RESET-refusal-undrawn",
     "file": "src/ui/growth/specGuide.js",
-    "old": "    if (r.refusal) box.append(el('p', 'gr-fine gr-reset-why', r.refusal));",
-    "new": "",
+    "old": "      box.append(why);\n    }",
+    "new": "    }",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -191,8 +191,8 @@
   {
     "name": "SPEC-RESET-press-unasked",
     "file": "src/ui/growth/specGuide.js",
-    "old": "askCard(r.rows(), () => { _note = r.go().text; _open = null; rerender(); });",
-    "new": "(() => { _note = r.go().text; _open = null; rerender(); })();",
+    "old": "askCard(r.rows(), () => { _note = r.go().text; _noteFresh = true; _open = null; rerender(); });",
+    "new": "(() => { _note = r.go().text; _noteFresh = true; _open = null; rerender(); })();",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -200,8 +200,8 @@
   {
     "name": "SPEC-RESET-note-unsaid",
     "file": "src/ui/growth/specGuide.js",
-    "old": "() => { _note = r.go().text; _open = null; rerender(); }",
-    "new": "() => { r.go(); _open = null; rerender(); }",
+    "old": "() => { _note = r.go().text; _noteFresh = true; _open = null; rerender(); }",
+    "new": "() => { r.go(); _noteFresh = true; _open = null; rerender(); }",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -428,8 +428,8 @@
   {
     "name": "AUDIT-SPEC-RESET-L5-1-martial-only-guard-dropped",
     "file": "src/ui/growth/specGuide.js",
-    "old": "specResetRefusal(entity, id) ?? (after.others ? null",
-    "new": "specResetRefusal(entity, id) ?? (after.others || id === 'martial' ? null",
+    "old": "  const refusal = (after.others ? null\n",
+    "new": "  const refusal = (after.others || id === 'martial' ? null\n",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -471,10 +471,10 @@
     ]
   },
   {
-    "name": "AUDIT-SPEC-RESET-L5-5-refusal-precedence-swapped",
+    "name": "AUDIT-SPEC-RESET-L5-5-L3-1-refusal-order-swapped",
     "file": "src/ui/growth/specGuide.js",
-    "old": "  const refusal = specResetRefusal(entity, id) ?? (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));",
-    "new": "  const refusal = (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name })) ?? specResetRefusal(entity, id);",
+    "old": "  const refusal = (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }))\n    ?? specResetRefusal(entity, id);",
+    "new": "  const refusal = specResetRefusal(entity, id) ?? (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -482,8 +482,8 @@
   {
     "name": "AUDIT-SPEC-RESET-L5-6-resetSpecGuide-keeps-note",
     "file": "src/ui/growth/specGuide.js",
-    "old": "_all = false; _note = null; }",
-    "new": "_all = false; }",
+    "old": "_all = false; _note = null; _noteFresh = false; }",
+    "new": "_all = false; _noteFresh = false; }",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -516,5 +516,153 @@
     ],
     "equivalent": true,
     "why": "AUDIT SPEC-RESET L5-8: with `held` passed as null, pathState reads no path field (skillStand and masterableCount read skills, career and masteries) - the view is kept for the one reader that needs it, law.choices(bare), and so the states read the same entity the list is built on"
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-1-closed-for-every-path",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (held) { const free = pathState(entity, law, p, null, [], on); return free === 'never' || free === 'slots' ? free : 'closed'; }",
+    "new": "  if (held) return 'closed';",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/ui/growth/growth1_tab.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-1-slots-read-closed",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "return free === 'never' || free === 'slots' ? free : 'closed'; }",
+    "new": "return free === 'never' ? free : 'closed'; }",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/ui/growth/growth1_tab.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-2-note-no-status",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    note.setAttribute('role', 'status');\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-2-note-unfocused",
+    "file": "src/ui/growth/specGuide.js",
+    "old": " note.focus?.({ preventScroll: true }); });",
+    "new": " });",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-2-reset-note-stale",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "_note = r.go().text; _noteFresh = true; _open = null;",
+    "new": "_note = r.go().text; _open = null;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-window-not-inert",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "  under?.setAttribute?.('inert', '');\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/ui/growth/growth1_tab.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-inert-left",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "back.remove(); under?.removeAttribute?.('inert');",
+    "new": "back.remove();",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/ui/growth/growth1_tab.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-not-modal",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "  card.setAttribute('aria-modal', 'true');\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-unnamed",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "  card.setAttribute('aria-labelledby', rows.id);\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-focus-left-behind",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "  [...(bar.querySelectorAll?.('button') ?? [])].pop()?.focus?.({ preventScroll: true });",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-3-focus-not-given-back",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "    if (opener?.isConnected) opener.focus?.({ preventScroll: true });\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-4-repeat-answers",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "    if (e.repeat) return;\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-4-answered-twice",
+    "file": "src/ui/enhanced/enhancedMenu.js",
+    "old": "  const answer = (yes) => { if (answered) return; answered = true; close(); if (yes) onYes(); };",
+    "new": "  const answer = (yes) => { answered = true; close(); if (yes) onYes(); };",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-5-reason-unlinked",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "      b.setAttribute('aria-describedby', why.id);",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-6-grimoire-fade-dropped",
+    "file": "src/ui/grimoireDress.js",
+    "old": "${G} .px-sys .gr-acts .act:is(:disabled, [disabled]) { color: rgba(43,26,12,0.35) !important; }",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L3-7-dot-breaks",
+    "file": "src/ui/growth/specGuide.js",
+    "old": ".replace(/ ·/g, '\\u00a0·')",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
   }
 ]

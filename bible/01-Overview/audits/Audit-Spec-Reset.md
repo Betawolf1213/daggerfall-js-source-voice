@@ -42,11 +42,21 @@ The scratch scripts are the session's (`scratchpad/audit/`); none is committed.
 | L4-11 | NOTE | `refuse.none` duplicated `schools.refuse.none`'s English under a key of its own, it and ro translating it differently | FIXED: the reset reads `schools.refuse.none` |
 | L4-13 | NOTE | ru: the ask quoted «{name}» where the family's rows use the colon form | FIXED: "...золота: {name}?" |
 | L4-15 | NOTE | A closed path said one path of each kind and nothing of the way out | FIXED: "...; reset {name} to choose another." |
+| L3-1 | MED | The gold refusal hid the permanent one: a player whose masteries could open no other path read "Resetting costs 200,000 gold. You have 199,999." and learned only at 200,000 that the reset could never help. And while a path was held every other path read Closed - a path the class can never master too, which L4-15's line then told the player to reset for | FIXED: the only-path line first, whatever the gold (L5-5 had pinned the other order; reversed and re-pinned); a path the class can never master, or whose slots are spent, reads Not for your class or No slots left whatever is held - Closed only where a reset could open it |
+| L3-2 | MED | After Yes the note - the reset's only answer - stood above the pane's kept scroll, out of view at every size in both dresses (Choose the same, older), the focus fallen to the body, no live region | FIXED: the note a status line, brought into view and focused once drawn - in view at all eight sizes and dresses, for a Reset and a Choose |
+| L3-3 | LOW | The Yes/No card (GROWTH's) was modal to the pointer alone: Tab and Space walked the window under it - the family switched, the tabs changed - and Y then paid a reset over the Quests tab; unnamed, not modal to a reader | FIXED: named by its rows, `aria-modal`, the window under it inert, the focus on No and given back to its opener |
+| L3-4 | LOW | Three quick presses of Yes answered three times (the law paid once, the note became "no specialisation of this kind"); a Y held down before the card stood answered it by its repeat | FIXED: answered once (YesNoBoxWindow's own `done`), a repeat answers nothing |
+| L3-5 | LOW | The refused press's reason was a line beside it and nothing more | FIXED: `aria-describedby` |
+| L3-6 | LOW | The Grimoire's refused press read nearly as its enabled one (the page press's soft ink) | FIXED: faded as the pack's refused presses are |
+| L3-7 | LOW | On a phone the press broke before its "·" in five languages (a Czech line began "· 200 000") | FIXED: the "·" binds to the word before it, in every language (code-side, so a new language needs nothing) |
+| L3-8 | LOW | (L4-2's) the done note said "choose a new one" with Master Skills off | FIXED with L4-2 |
+| L3-9 | NOTE | The Grimoire's phone layout (the rail in letter columns, a 130 px text column) is older than the reset | KEPT: outside this slice; recorded for the dress's own pass |
+| L3-10 | NOTE | The classic skin reaches the reset through its S and W rows (two presses: the guide lands with the path closed up); with no document its chosen row keeps DFU's OK box | KEPT: GROWTH4's doors, unchanged |
 | L5-1 | MED | The guide's martial half was nearly unpinned: its field drifted to the arcane one, its only-path guard dropped, its "more paths" line dropped - each survived every suite | FIXED: the martial ask pinned whole, its guard pinned on a character whose minor slot went to Mysticism |
 | L5-2 | MED | The only-path guard's 'ready' arm (a skill at 100, a slot left - a Master Skills press away) unpinned: read as out of reach, a reset that could open another path would be refused | FIXED: pinned on a character with Mysticism at 100 and the minor slot free |
 | L5-3 | LOW | (L1-2's) "the one ask is not asked again" held only for a path the ask had chosen | FIXED with L1-2; pinned through the real quiet pass |
 | L5-4 | LOW | The guide's lead could lose its `{gold}` and read "costs undefined gold" - only the catalog's parity read it | FIXED: pinned in the window driven |
-| L5-5 | LOW | The refusals' order (the gold first, then the only-path guard) unpinned | FIXED: pinned |
+| L5-5 | LOW | The refusals' order unpinned | FIXED: pinned - in L3-1's order, the only-path line first |
 | L5-6 | LOW | A new visit's dropping of the last visit's note unpinned | FIXED: pinned over a second mount |
 | L5-7 | NOTE | The refusal line's class and its CSS rule unpinned | FIXED: pinned |
 | L5-8 | NOTE | `pathState(bare, ...)` against `pathState(entity, ...)` is an equivalent mutant: with nothing held passed, the states read no path field | KEPT and recorded `equivalent` (`tools/mutants/specreset.json`) - the view is the one entity the list is built on |
@@ -73,4 +83,14 @@ boot bundle (main.js's closure 82 files before and after; the menu's chunk, whic
 `specReset.js` alone); no host touched; `resetSpec`'s two exits one shape, both pinned; nothing async; one home for the
 price.
 
-Lane L3 is still reading; its findings join this table.
+Checked and found sound (L3): Escape, N and Enter answer No and keep the window; one payment from every key and
+press; the card fits at every size from 568x320 to 1920x1080 in both dresses; no sideways scroll anywhere; the press
+one line in English Plus at every size; the refusal line's contrast (8.5:1 Plus, 5.4:1 Grimoire); after Yes the
+family's paths, the switch's and the rail's counts, the Stats door and Master Skills' line; both families reset one
+after the other; the console clean. Every fix above was driven again in Chromium over the live tree with the lane's own
+probes - the note in view at all eight sizes, the walk under the card stopped, the repeat unanswered, the only-path
+line at every gold, the "·" bound in five languages on a phone.
+
+The pins: `test/ui/growth/specreset.test.js` (10). The mutants: `tools/mutants/specreset.json` (72: 71 dead, judged
+serially, and one equivalent as recorded - L5-8); four older records re-aimed by content and judged dead again (`audit_martial.json`,
+`audit_schools.json`).

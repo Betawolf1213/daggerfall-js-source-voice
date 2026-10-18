@@ -109,7 +109,7 @@ spell, the martial law's weapons and technique, one shape). Pure model (`specGui
 
 - **A path's state, on THIS character** (`SPEC_STATES`): **Chosen**; **Available** (both mastered - Choose stands);
   **Needs mastering** (both at 100, a Master Skills press away); **Within reach** (both still masterable); **Closed**
-  (the family's other path held - one of each; its line points to the held path's Reset, section 10); **No slots left** (the mastery slots left cannot hold the
+  (the family's other path held - one of each; its line points to the held path's Reset - and only where a reset could open it: section 10); **No slots left** (the mastery slots left cannot hold the
   pair: a group the player's own masteries filled, or two skills of one group with one slot left - Master Skills'
   own count, `masterSkills.js:"export function masterableCount(entity, ids) {"`, as `pathPossible` and `martialPossible`
   count the family - AUDIT GROWTH LANE1-1, LANE1-4); **Not for your class** (a skill the career cannot master). In that
@@ -195,7 +195,8 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   mid-spend stays owed: the Ascension's Escape is the window's; the points placed are placed again, and the page says so.
 - **The guide's Yes/No card** answers its own keys while it stands - its Escape is its No, the window's back stack
   stands down - and goes with the window (LANE3-9: Escape closed the card and the window; F5 left it over the running
-  game, its Y still choosing a permanent path).
+  game, its Y still choosing a permanent path). Since AUDIT SPEC-RESET L3-3/L3-4 it is modal to the keys and the reader
+  too (named by its rows, the window under it inert, the focus on No and back to its opener) and answered once.
 
 ## 7. GROWTH4 - the classic skin and the words
 
@@ -322,9 +323,16 @@ Audited the same day: `01-Overview/audits/Audit-Spec-Reset.md` (AUDIT SPEC-RESET
   press stands disabled and its line says why. **A reset that would buy back the same path is refused**: where no other
   path of the family is open or within reach (no other of its skills can still be mastered - not a career skill, or no
   slot left for it), the line says so (`afterReset` - the list's own states, read on a view of the entity with nothing
-  held, never a write). Yes resets and the note says so ("Warden is reset."); with Master Skills on the family's paths
+  held, never a write) - first, whatever the gold (AUDIT SPEC-RESET L3-1: the gold line hid it until the player held
+  200,000). Yes resets and the note says so ("Warden is reset."); with Master Skills on the family's paths
   stand open again and the rail counts the choice waiting, the guide being where it is made. A closed path's line points
-  to the Reset.
+  to the Reset - and only a path a reset could open is Closed: one the class can never master, or whose slots are
+  spent, says so whatever is held (L3-1). The note is a status line brought into view and focused (L3-2: the pane kept
+  its scroll and the answer stood above it, a Choose's too); the refused press's reason is read with it (L3-5) and the
+  Grimoire fades it (L3-6); its "·" never starts a line (L3-7). The window's Yes/No card is modal to the keys and the
+  reader - named by its rows, the window under it inert, the focus on No and given back to its opener - and answered
+  once, a held key's repeat answering nothing (L3-3, L3-4: Space walked the window under it, and Y paid a reset over
+  the Quests tab).
 - **The words** that said a choice could not be undone now name the price: the choice boxes (`schools.choice.reset`,
   `martial.choice.reset`), the several-open boxes - the price a row of its own there (L4-5: in the classic parchment
   box one sentence more wrapped a lone word onto a line in six languages) - and the guide's lead. Every word through
@@ -335,6 +343,6 @@ Audited the same day: `01-Overview/audits/Audit-Spec-Reset.md` (AUDIT SPEC-RESET
 - **Pins:** `test/ui/growth/specreset.test.js` (10): the price and the boxes' words; the law paid in coins, then in a
   letter and coins, the other family, the masteries and the book untouched; the refusals with nothing moved; the save;
   the guide's model (its ask, the paths open after, the only-path guard, Master Skills off); the press driven in the
-  pause window; and the audit's four (the Empire's account, the one ask, the mods, an older build's carry), with L5's gaps closed in them (the martial half whole, the 'ready' arm, the refusals' order, the lead's price, a new visit's note). Mutants:
-  `tools/mutants/specreset.json` (56: 55 dead, judged serially, and one equivalent as recorded - AUDIT SPEC-RESET L5-8). Pins moved to the new words: `growth1_tab`, `schools_arcane`,
+  pause window; and the audit's four (the Empire's account, the one ask, the mods, an older build's carry), with L5's gaps closed in them (the martial half whole, the 'ready' arm, the refusals' order, the lead's price, a new visit's note) and L3's fixes driven (the card modal and answered once, the note's status and focus, the reason read, the Closed states). Mutants:
+  `tools/mutants/specreset.json` (72: 71 dead, judged serially, and one equivalent as recorded - AUDIT SPEC-RESET L5-8). Pins moved to the new words: `growth1_tab`, `schools_arcane`,
   `martial_paths`, `audit_schools`.

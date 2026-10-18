@@ -259,8 +259,19 @@ test('SPEC-RESET THE GUIDE\'S MODEL: a held path\'s Reset - none with nothing he
   const rr = family(specGuideModel(ready), 'arcane').reset;
   assert.equal(rr.refusal, null, 'Mysticism ready to master: another path is within reach');
   assert.deepEqual(rr.rows().slice(-2), ['Open to you after the reset: Warden.', 'More paths unlock as you master more skills.']);
-  // AUDIT SPEC-RESET L5-5: the law's refusal first - short of the gold, whatever the guard would say
-  assert.equal(family(specGuideModel(held(5, { mastered: [LB, AR, RES, ALT, SB] })), 'arcane').reset.refusal, 'Resetting costs 200,000 gold. You have 5.');
+  // AUDIT SPEC-RESET L5-5, then L3-1: the reset that can never help says so first, short of the gold too - else the
+  // player saves 200,000 for it
+  const never = held(5, { mastered: [LB, AR, RES, ALT, SB] });
+  assert.equal(family(specGuideModel(never), 'arcane').reset.refusal, 'No other arcane path can open for you, so a reset would only let you choose Warden again.');
+  assert.equal(family(specGuideModel(held(5)), 'arcane').reset.refusal, 'Resetting costs 200,000 gold. You have 5.', 'a reset that can help: the gold');
+  // AUDIT SPEC-RESET L3-1: a path the class can never master, or whose slots are spent, is never 'closed' - a reset opens
+  // only what its masteries can reach
+  const st = (e, fam, id) => family(specGuideModel(e), fam).paths.find((p) => p.id === id).state;
+  const thaPath = AP.PATHS.find((p) => p.schools.includes(THA) && p.schools.includes(RES)).id;
+  assert.equal(st(never, 'arcane', thaPath), 'never', 'Thaumaturgy: no class skill');
+  const minors = AP.PATHS.find((p) => p.schools.includes(MYS) && p.schools.includes(ILL)).id;
+  assert.equal(st(never, 'arcane', minors), 'slots', 'two minor schools, the minor slot spent');
+  assert.equal(st(held(5), 'arcane', AP.PATHS.find((p) => p.schools.includes(RES) && p.schools.includes(MYS)).id), 'closed', 'within reach after a reset: closed');
   // three schools mastered (every slot spent): the other two paths open at once, and none left to reach
   const three = held(250000, { mastered: [LB, AR, RES, ALT, MYS] });
   assert.equal(family(specGuideModel(three), 'arcane').reset.rows().at(-1), 'Open to you after the reset: Riftwalker, Warden, Necromancer.');
@@ -286,7 +297,7 @@ test('SPEC-RESET THE GUIDE\'S MODEL: a held path\'s Reset - none with nothing he
 });
 
 test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the price; it asks in the window\'s Yes/No card, No keeps the path and the gold, Yes resets and says so, and the family\'s paths stand open again; short of the gold the press stands disabled and says why (mutants: the press drawn for a path not held; no ask; the refusal undrawn)', async () => {
-  await import('../../chargenDom.mjs');
+  const { keydown } = await import('../../chargenDom.mjs');
   _resetForTests();
   const { mountEnhancedMenu } = await import('../../../src/ui/enhanced/enhancedMenu.js');
   const kept = { ...playerEntity };
@@ -294,6 +305,7 @@ test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the pri
   try {
     Object.assign(playerEntity, held(200500));
     const host = globalThis.document.createElement('div');
+    globalThis.document.body.append(host);   // in the document, as the game's window is: the focus is given back to what stands there
     const menu = mountEnhancedMenu(host, { mode: 'pause', hooks: {}, onAction: () => {}, at: 'specs:martial' });
     const btn = (text) => host.querySelectorAll('button').find((b) => b.textContent.startsWith(text));
     const bar = (name) => host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.includes(name));
@@ -301,33 +313,56 @@ test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the pri
     try {
       assert.ok(host.textContent.includes('Resetting one costs 200,000 gold.'), 'the lead names the price (AUDIT SPEC-RESET L5-4)');
       bar('Blademaster').onclick();
-      assert.equal(btn('Reset · 200,000 gold'), undefined, 'a path not held has no Reset');
+      assert.equal(btn('Reset\u00a0· 200,000 gold'), undefined, 'a path not held has no Reset');
       bar('Ranger').onclick();
-      const reset = btn('Reset · 200,000 gold');
+      const reset = btn('Reset\u00a0· 200,000 gold');
       assert.ok(reset, 'the chosen path\'s Reset');
       assert.equal(reset.disabled, false);
+      reset.focus();
       reset.onclick();
       assert.match(ask().textContent, /Reset Ranger for 200,000 gold\?/);
+      // AUDIT SPEC-RESET L3-3: modal - named by its rows, the window under it inert, the focus on No; L3-4: a key held
+      // down before it stood answers nothing by its repeat
+      const card = ask().querySelectorAll('div').find((d) => d.getAttribute?.('role') === 'alertdialog');
+      assert.equal(card.getAttribute('aria-modal'), 'true');
+      assert.ok(card.getAttribute('aria-labelledby'), 'named by its rows');
+      assert.equal(host.hasAttribute('inert'), true, 'the window under the card is out of reach');
+      assert.equal(globalThis.document.activeElement?.textContent, 'No', 'the focus on No, the default');
+      keydown('KeyY', globalThis.document.activeElement, { repeat: true, stopImmediatePropagation() { this.stopped = true; } });
+      assert.ok(ask(), 'a held key\'s repeat answers nothing');
+      assert.deepEqual([playerEntity.martialPath, playerEntity.goldPieces], ['ranger', 200500]);
       ask().querySelectorAll('button').find((b) => b.textContent === 'No').onclick();
+      assert.equal(host.hasAttribute('inert'), false, 'the window back');
+      assert.equal(globalThis.document.activeElement, btn('Reset\u00a0· 200,000 gold'), 'the focus back on its opener');
       assert.deepEqual([playerEntity.martialPath, playerEntity.goldPieces], ['ranger', 200500], 'No keeps both');
-      btn('Reset · 200,000 gold').onclick();
-      ask().querySelectorAll('button').find((b) => b.textContent === 'Yes').onclick();
+      btn('Reset\u00a0· 200,000 gold').onclick();
+      const yes = ask().querySelectorAll('button').find((b) => b.textContent === 'Yes');
+      yes.onclick();
+      yes.onclick();   // L3-4: answered once, however many doors call it
       assert.deepEqual([playerEntity.martialPath, playerEntity.goldPieces], [null, 500]);
-      assert.ok(host.textContent.includes('Ranger is reset.'), 'the note says so');
-      assert.equal(btn('Reset · 200,000 gold'), undefined, 'nothing held: no Reset');
+      assert.ok(host.textContent.includes('Ranger is reset.'), 'the note says so - the reset\'s, never a second answer\'s refusal');
+      // L3-2: a status line, brought into view and focused once drawn
+      const note = host.querySelectorAll('div').find((d) => String(d.className).includes('px-master-note'));
+      assert.equal(note.getAttribute('role'), 'status');
+      await Promise.resolve();
+      assert.equal(globalThis.document.activeElement, note, 'the focus on the answer');
+      assert.equal(btn('Reset\u00a0· 200,000 gold'), undefined, 'nothing held: no Reset');
       bar('Ranger').onclick();
       assert.ok(btn('Choose Ranger'), 'open again');
       // the arcane family's Reset, short of the gold now
       host.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Arcane')).onclick();
       bar('Warden').onclick();
-      assert.equal(btn('Reset · 200,000 gold').disabled, true);
+      assert.equal(btn('Reset\u00a0· 200,000 gold').disabled, true);
       const why = host.querySelectorAll('p').find((el) => el.textContent === 'Resetting costs 200,000 gold. You have 500.');
       assert.ok(why, 'the press says why');
       assert.match(String(why.className), /\bgr-reset-why\b/);
+      assert.equal(btn('Reset\u00a0· 200,000 gold').getAttribute('aria-describedby'), why.id, 'the reason read with the press (L3-5)');
       assert.match(SPEC_GUIDE_CSS, /\.px-sys \.gr-reset-why \{/, 'its own dress (AUDIT SPEC-RESET L5-7)');
-      btn('Reset · 200,000 gold').onclick();
+      // L3-6: the Grimoire fades the guide's refused press as it fades the pack's (by source - the dress is CSS)
+      assert.match(readFileSync(new URL('../../../src/ui/grimoireDress.js', import.meta.url), 'utf8'), /\$\{G\} \.px-sys \.gr-acts \.act:is\(:disabled, \[disabled\]\) \{ color: rgba\(43,26,12,0\.35\) !important; \}/);
+      btn('Reset\u00a0· 200,000 gold').onclick();
       assert.equal(ask(), undefined, 'a refused press asks nothing');
-    } finally { menu.unmount(); }
+    } finally { menu.unmount(); host.remove(); }
     // AUDIT SPEC-RESET L5-6: a new visit drops the last one's note
     const host2 = globalThis.document.createElement('div');
     const menu2 = mountEnhancedMenu(host2, { mode: 'pause', hooks: {}, onAction: () => {}, at: 'specs:martial' });
