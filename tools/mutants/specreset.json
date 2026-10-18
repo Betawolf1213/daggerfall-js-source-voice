@@ -1,0 +1,218 @@
+[
+  {
+    "name": "SPEC-RESET-price-moved",
+    "file": "src/systems/arcanePaths.js",
+    "old": "export const SPEC_RESET_GOLD = 200000;",
+    "new": "export const SPEC_RESET_GOLD = 199999;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-exact-price-refused",
+    "file": "src/systems/specReset.js",
+    "old": "  if (have < SPEC_RESET_GOLD) return",
+    "new": "  if (have <= SPEC_RESET_GOLD) return",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-gold-unasked",
+    "file": "src/systems/specReset.js",
+    "old": "  if (have < SPEC_RESET_GOLD) return",
+    "new": "  if (have < 0) return",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-purse-alone",
+    "file": "src/systems/specReset.js",
+    "old": "  const have = totalGoldAmount(entity);",
+    "new": "  const have = entity.goldPieces ?? 0;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-price-unpaid",
+    "file": "src/systems/specReset.js",
+    "old": "  deductGold(entity, SPEC_RESET_GOLD);\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-wrong-family-cleared",
+    "file": "src/systems/specReset.js",
+    "old": "  entity[LAW[family].field] = null;",
+    "new": "  entity.arcanePath = null;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-path-kept",
+    "file": "src/systems/specReset.js",
+    "old": "  entity[LAW[family].field] = null;",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-nothing-held-unrefused",
+    "file": "src/systems/specReset.js",
+    "old": "  if (!held) return t(",
+    "new": "  if (false) return t(",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-arcane-box-permanent",
+    "file": "src/systems/arcanePaths.js",
+    "old": "    t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
+    "new": "    t('schools.choice.final', 'This decision cannot be undone.'),",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-martial-box-permanent",
+    "file": "src/systems/martialPaths.js",
+    "old": "    t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
+    "new": "    t('martial.choice.final', 'This decision cannot be undone.'),",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-only-guard-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  const refusal = specResetRefusal(entity, id) ?? (after.others ? null",
+    "new": "  const refusal = specResetRefusal(entity, id) ?? (true ? null",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-guard-reads-held",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    others: states.some(([p, st]) => p.id !== held.id && (st === 'open' || reach(st))),",
+    "new": "    others: states.some(([p, st]) => (st === 'open' || reach(st))),",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-model-reads-held",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  bare[law.field] = null;\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-model-writes-entity",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  const bare = Object.create(entity);",
+    "new": "  const bare = entity;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-loss-lines-swapped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    id === 'arcane' ? t('growth.spec.reset.loseSpell'",
+    "new": "    id !== 'arcane' ? t('growth.spec.reset.loseSpell'",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-off-unsaid",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    ...(!on ? [t('growth.spec.reset.off'",
+    "new": "    ...(false ? [t('growth.spec.reset.off'",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-later-unsaid",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "        ...(after.later ? [t('growth.spec.reset.later'",
+    "new": "        ...(false ? [t('growth.spec.reset.later'",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-press-on-any-path",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (p.state === 'chosen' && fam.reset) {",
+    "new": "  if (fam.reset) {",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-press-never-disabled",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    b.disabled = !!r.refusal;",
+    "new": "    b.disabled = false;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-refused-press-asks",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    b.onclick = () => { if (!r.refusal) askCard(",
+    "new": "    b.onclick = () => { if (true) askCard(",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-refusal-undrawn",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "    if (r.refusal) box.append(el('p', 'gr-fine gr-reset-why', r.refusal));",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-press-unasked",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "askCard(r.rows(), () => { _note = r.go().text; _open = null; rerender(); });",
+    "new": "(() => { _note = r.go().text; _open = null; rerender(); })();",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-note-unsaid",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "() => { _note = r.go().text; _open = null; rerender(); }",
+    "new": "() => { r.go(); _open = null; rerender(); }",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "SPEC-RESET-save-null-read-as-missing",
+    "file": "src/systems/save/save.js",
+    "old": "  if (snap.arcanePath === undefined && !entity.arcanePath) {",
+    "new": "  if (snap.arcanePath == null && !entity.arcanePath) {",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  }
+]

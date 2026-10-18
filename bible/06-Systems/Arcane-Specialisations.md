@@ -66,8 +66,8 @@ could see or play. That is where the identity goes.
   {name}." (AUDIT MARTIAL L4 M1: the spell's sentence ran the line past the classic screen's 312 px; where the spell is
   sold is the card's and the OK box's own line, `schools.sheet.sold`).
 - **The choice.** Any pair of the player's mastered schools names one path (section 5); with three or more mastered,
-  the player picks among their pairs. `entity.arcanePath` holds the path's id. **PERMANENT** - nothing undoes it, as
-  nothing undoes a mastery. Asked ONCE on the first quiet pass after the second school is mastered (the mastery box's
+  the player picks among their pairs. `entity.arcanePath` holds the path's id. **PERMANENT** but for SPEC-RESET's paid
+  reset (`10-UI/Growth.md` section 10) - nothing else undoes it, as nothing undoes a mastery. Asked ONCE on the first quiet pass after the second school is mastered (the mastery box's
   own door, `scenes/shared.js` raisePlayerSkills - after the mastery choices, never over them, one box a pass): ONE
   path open is asked about in a Yes/No box; SEVERAL are named in an OK box that sends the player to the skill screen,
   where each is offered (AUDIT SCHOOLS L4 M1 - a permanent Yes on whichever stood first in the table was no choice).
@@ -237,8 +237,9 @@ BUSY-GATE and CRAFT-PROCS at the merge of main).
   the arc.
 - **The masteries are not judged online** (section 7) - recorded, the owner's call: holding a pre-SOFTCAP4 save's
   skills past 100 against a mastery list it never had would freeze honest players' trade.
-- **No respecialisation.** Permanent, as a mastery is (Mac, SOFTCAP4: "this decision can not be undone"). A paid
-  change, as a profession's specialisation has (Professions-Arc 3.3), is the owner's call if players ask for one.
+- **A respecialisation costs 200,000 gold** (SPEC-RESET, 2026-10-18 - the owner's call this page left open:
+  `10-UI/Growth.md` section 10). The path is given up and chosen again among the pairs the masteries open; a mastery
+  is still permanent.
 - **Offline the schools past 100 stay Daggerfall's** (section 4) - the paths themselves work offline with the switch on.
 - **The numbers are a first cut.** Every one is a constant in `arcanePaths.js` (`PATH_NUMBERS`, and the signature
   records' slots in `PATH_ROWS`), named and pinned on both sides of its line (`test/systems/audit_schools.test.js`), so a

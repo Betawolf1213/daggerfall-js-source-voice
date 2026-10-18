@@ -710,8 +710,8 @@ test('AUDIT SCHOOLS L4 M1 / L5 H3: THE ONE ASK (scenes/shared.js raisePlayerSkil
   assert.equal(asks.length, 2);
   // PIN MOVED (GROWTH4, bible/10-UI/Growth.md section 7): the enhanced skin's box sends the player to the Growth tab; the
   // classic skin's to the skill screen, whose S row opens the same guide
-  assert.deepEqual(asks[1].rows, ['Specialisation', '', '3 specialisations are open to you:', 'Riftwalker, Warden, Necromancer', '', 'See them all and choose one on the Growth tab of the pause menu. The choice cannot be undone.']);
-  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden]).at(-1), 'Choose one in your skill screen. The choice cannot be undone.', 'the classic skin\'s');
+  assert.deepEqual(asks[1].rows, ['Specialisation', '', '3 specialisations are open to you:', 'Riftwalker, Warden, Necromancer', '', 'See them all and choose one on the Growth tab of the pause menu. Resetting it later costs 200,000 gold.']);   // PIN MOVED (SPEC-RESET)
+  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden]).at(-1), 'Choose one in your skill screen. Resetting it later costs 200,000 gold.', 'the classic skin\'s');
   assert.deepEqual([asks[1].okOnly, asks[1].onYes, three.arcanePath ?? null, three.pathPrompted], [true, null, null, true], 'named, none chosen');
   // one box a pass: a mastery waiting is asked first, the path on the next quiet pass
   const busy = mage([RES, MYS], 100);

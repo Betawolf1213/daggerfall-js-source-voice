@@ -5,17 +5,20 @@
 // the six schools) and the martial (systems/martialPaths.js, a pair of the six weapon skills) - with what opens it,
 // measured on this character (each skill's value, mastered or not, its career group's slots), what it does (its passive,
 // its signature spell or technique and the rider, every number the law's own words carry), how it is used, and its
-// state: chosen, open (a Choose that asks first: permanent), closed (the family's other path is held), within reach, or
-// out of this class's reach. It replaces the Master Skills page's two cards (SCHOOLS1's specCard, MARTIAL1's).
+// state: chosen, open (a Choose that asks first), closed (the family's other path is held), within reach, or out of this
+// class's reach. It replaces the Master Skills page's two cards (SCHOOLS1's specCard, MARTIAL1's). SPEC-RESET (section
+// 10): the chosen path's detail carries its Reset - the path given up for SPEC_RESET_GOLD (systems/specReset.js), asked
+// first, refused where no other path of the family could ever open.
 //
 // The model is pure (specGuideModel - the laws' tables and this entity, nothing drawn); the page draws it with the menu's
 // kit. The words are the laws' own (their passives, riders and choice boxes) and this page's in growth.spec.*.
 
-import { PATHS, pathOf, pathChoices, pathPossible, pathSchoolsText, choosePath, pathChoiceRows } from '../../systems/arcanePaths.js';
+import { PATHS, pathOf, pathChoices, pathPossible, pathSchoolsText, choosePath, pathChoiceRows, SPEC_RESET_GOLD } from '../../systems/arcanePaths.js';
 import { MARTIAL_PATHS, MARTIAL_SKILLS, MARTIAL_FAMILY, martialPathOf, martialChoices, martialPossible, martialSkillsText, chooseMartialPath, martialChoiceRows, signatureById } from '../../systems/martialPaths.js';
 import { MAGIC_SKILLS, SKILL_NAMES } from '../../systems/skills.js';
 import { masterSkillsActive, masterSkillsSwitchable, isMasteredSkill, careerGroupOf, masterySlots, masterableCount, masterCappedSkill } from '../../systems/masterSkills.js';
 import { signatureSpell } from '../../systems/signatureSpells.js';
+import { specResetRefusal, resetSpec } from '../../systems/specReset.js';   // SPEC-RESET: a held path given up, for gold
 import { sigilDueling } from '../../systems/sigil/sigil.js';
 import { lootRarityOn } from '../../systems/loot/lootRarity.js';
 import { effectWords, spellFrame } from '../enhanced/enhancedSpellbook.js';   // the spellbook's own reading of an effect (SB-FX)
@@ -92,12 +95,12 @@ export function techniqueLines(path) {
 /** One family's law, uniformly: its skills, its paths and its doors. */
 const FAMILY_LAW = Object.freeze({
   arcane: {
-    skills: MAGIC_SKILLS, paths: () => PATHS, held: pathOf, choices: pathChoices, possible: pathPossible,
+    skills: MAGIC_SKILLS, paths: () => PATHS, held: pathOf, field: 'arcanePath', choices: pathChoices, possible: pathPossible,
     pair: (p) => p.schools, pairText: pathSchoolsText, ask: (e, id) => pathChoiceRows(e, id), choose: choosePath,
     signature: (p) => ({ kind: 'spell', name: p.spell.name, text: p.rider, lines: spellLines(p.id) }),
   },
   martial: {
-    skills: MARTIAL_SKILLS, paths: () => MARTIAL_PATHS, held: martialPathOf, choices: martialChoices, possible: martialPossible,
+    skills: MARTIAL_SKILLS, paths: () => MARTIAL_PATHS, held: martialPathOf, field: 'martialPath', choices: martialChoices, possible: martialPossible,
     pair: (p) => p.skills, pairText: martialSkillsText, ask: (e, id) => martialChoiceRows(e, id), choose: chooseMartialPath,
     signature: (p) => ({ kind: 'technique', name: p.technique.name, text: `${p.technique.text} ${p.rider}`, lines: techniqueLines(p) }),
   },
@@ -129,12 +132,50 @@ function pathAsleep(entity, id, on) {
   return null;
 }
 
+/** SPEC-RESET: what giving up the held path would leave, read by the list's own states on the entity with nothing held
+ *  (a view over it, never a write): the paths then open to choose at once (`open`, the held one among them - its pair is
+ *  still mastered), whether more are within reach (`later`), and whether any OTHER path of the family is open or within
+ *  reach (`others`). Pure. */
+function afterReset(entity, law, held, on) {
+  const bare = Object.create(entity);
+  bare[law.field] = null;
+  const open = law.choices(bare);
+  const states = law.paths().map((p) => [p, pathState(bare, law, p, null, open, on)]);
+  const reach = (st) => st === 'ready' || st === 'reach';
+  return {
+    open: open.map((p) => p.name),
+    later: states.some(([, st]) => reach(st)),
+    others: states.some(([p, st]) => p.id !== held.id && (st === 'open' || reach(st))),
+  };
+}
+
+/** SPEC-RESET: a held path's Reset - its refusal (the law's, else no other path could ever open, so a reset would buy
+ *  back the same one), the ask's rows, and the reset itself. */
+function resetModel(entity, id, law, held, on) {
+  const after = afterReset(entity, law, held, on);
+  const refusal = specResetRefusal(entity, id) ?? (after.others ? null
+    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));
+  const rows = () => [
+    t('growth.spec.reset.ask', 'Reset {name} for {gold, number} gold?', { name: held.name, gold: SPEC_RESET_GOLD }),
+    '',
+    id === 'arcane' ? t('growth.spec.reset.loseSpell', 'You lose its passive. Its signature spell stays in your spellbook as an ordinary spell.')
+      : t('growth.spec.reset.loseTechnique', 'You lose its passive and its signature technique.'),
+    t('growth.spec.reset.keep', 'Your mastered skills stay mastered.'),
+    '',
+    ...(!on ? [t('growth.spec.reset.off', 'Master Skills is off. Turn it on to choose a specialisation again.')]
+      : [t('growth.spec.reset.then', 'Then you can choose: {names}.', { names: after.open.join(', ') }),
+        ...(after.later ? [t('growth.spec.reset.later', 'More paths unlock as you master more skills.')] : [])]),
+  ];
+  return { refusal, rows, go: () => resetSpec(entity, id) };
+}
+
 /**
  * THE GUIDE'S MODEL for `entity` - both families, every path. Pure: reads the laws and the entity, writes nothing.
  * `{ masterOn, switchable, families: [{ id, held, asleep, possible, classPossible, skills, open, paths: [{ id, name,
- *  pairText, pair, state, passive, signature, choose, ask }] }] }` - a family's paths in SPEC_STATES order, the nearest
- *  first within a state (the points its pair still owes 100), then the laws' order. `asleep` why the held path does
- *  nothing now (pathAsleep); `classPossible` the family's law on this class with no mastery spent yet.
+ *  pairText, pair, state, passive, signature, choose, ask }], reset }] }` - a family's paths in SPEC_STATES order, the
+ *  nearest first within a state (the points its pair still owes 100), then the laws' order. `asleep` why the held path
+ *  does nothing now (pathAsleep); `classPossible` the family's law on this class with no mastery spent yet; `reset` the
+ *  held path's Reset (resetModel), null with none held.
  */
 export function specGuideModel(entity) {
   const on = masterSkillsActive(entity);
@@ -154,6 +195,7 @@ export function specGuideModel(entity) {
       possible: law.possible(entity), classPossible: law.possible({ career: entity?.career }),
       skills: law.skills.map((s) => skillStand(entity, s)), open: open.length,
       paths: paths.map((p) => ({ ...p, ask: () => law.ask(entity, p.id), choose: () => law.choose(entity, p.id) })),
+      reset: held ? resetModel(entity, id, law, held, on) : null,
     };
   });
   return { masterOn: on, switchable: masterSkillsSwitchable(entity), families };
@@ -222,7 +264,7 @@ export function resetSpecGuide(fam = null) { _fam = fam === 'arcane' || fam === 
 export function drawSpecGuide(detail, rerender, { el, divider, skillMeter = null, askCard, entity, openMaster = null }) {
   const m = specGuideModel(entity);
   detail.append(divider(t('growth.spec.title', 'Specialisations')));
-  detail.append(el('p', 'gr-lead', t('growth.spec.lead', 'Master two schools of magic or two weapon skills to unlock a specialisation: a passive bonus plus a signature spell or technique. You can have one arcane and one martial specialisation. Choices are permanent.')));
+  detail.append(el('p', 'gr-lead', t('growth.spec.lead', 'Master two schools of magic or two weapon skills to unlock a specialisation: a passive bonus plus a signature spell or technique. You can have one arcane and one martial specialisation. Resetting one costs {gold, number} gold.', { gold: SPEC_RESET_GOLD })));
   if (!m.masterOn) {
     const off = el('div', 'gr-warn');
     off.append(el('span', null, m.switchable ? t('growth.spec.masterOff', 'Master Skills is turned off, so no specialisation can be unlocked. Turn it on in Master Skills.') : t('growth.spec.masterOffLocked', 'Master Skills is off.')));
@@ -370,6 +412,18 @@ function pathDetail(el, fam, p, rerender, askCard, on) {
     acts.append(b);
     box.append(acts);
   }
+  // SPEC-RESET: the held path given up, for gold - asked first; refused (the press stands, disabled, and says why) short
+  // of the gold, or where no other path could ever open
+  if (p.state === 'chosen' && fam.reset) {
+    const r = fam.reset;
+    const acts = el('div', 'gr-acts');
+    const b = el('button', 'act', t('growth.spec.reset.btn', 'Reset · {gold, number} gold', { gold: SPEC_RESET_GOLD }));
+    b.disabled = !!r.refusal;
+    b.onclick = () => { if (!r.refusal) askCard(r.rows(), () => { _note = r.go().text; _open = null; rerender(); }); };
+    acts.append(b);
+    box.append(acts);
+    if (r.refusal) box.append(el('p', 'gr-fine gr-reset-why', r.refusal));
+  }
   return box;
 }
 
@@ -416,6 +470,7 @@ export const SPEC_GUIDE_CSS = `
 .px-sys .gr-steps li.is-ready { color: #8fc7a0; }
 .px-sys .gr-steps li.is-full, .px-sys .gr-steps li.is-misc { color: #9c937d; }
 .px-sys .gr-more { margin: 4px 0 8px; }
+.px-sys .gr-reset-why { margin-top: 6px; color: #b8a27a; }
 @media (max-width: 660px) {
   .px-sys .gr-pathbar { grid-template-columns: minmax(0, 1fr) auto; }
   .px-sys .gr-pathpair { grid-column: 1 / -1; grid-row: 2; }

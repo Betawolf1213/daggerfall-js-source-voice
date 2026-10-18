@@ -163,11 +163,11 @@ test('SCHOOLS1 THE CHOICE: two mastered schools open their path, three open thre
   assert.equal(AP.nextPathChoice(ask)?.id, 'necromancer');
   ask.pathPrompted = true;
   assert.equal(AP.nextPathChoice(ask), null, 'asked once - the skill screen keeps it');
-  // the box: what it does, that it is permanent
+  // the box: what it does, and what undoing it costs
   const rows = AP.pathChoiceRows(mage([ALT, RES, MYS]), 'necromancer');
   assert.deepEqual(rows, ['Specialise as Necromancer?', 'Restoration and Mysticism', '',
     'Death\'s Due: Each kill restores 5% of your health and 5% of your magicka.',
-    'Siphon Life (signature spell): Heals you for 50% of the damage dealt.', '', 'This decision cannot be undone.',
+    'Siphon Life (signature spell): Heals you for 50% of the damage dealt.', '', 'Resetting it later costs 200,000 gold.',   // PIN MOVED (SPEC-RESET)
     '2 other specialisations are open to you.']);
   assert.equal(AP.pathChoiceRows(mage([ALT, RES, MYS]), 'necromancer', { others: false }).length, 7);
 });

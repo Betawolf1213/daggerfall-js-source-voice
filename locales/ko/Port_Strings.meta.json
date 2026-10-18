@@ -9670,8 +9670,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.lead": {
-  "en": "a223955ebb63",
-  "tr": "af06e661742f",
+  "en": "f976122d4ce0",
+  "tr": "406fa431835f",
   "by": "claude-in-session"
  },
  "growth.spec.martial": {
@@ -9722,6 +9722,71 @@
  "growth.spec.passive": {
   "en": "499465f47110",
   "tr": "09287cfd5e5f",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.ask": {
+  "en": "215893d3c30f",
+  "tr": "7514f5d04088",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.btn": {
+  "en": "f1ce756d5b65",
+  "tr": "500d3aaea47b",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.done": {
+  "en": "41683c1c1408",
+  "tr": "cad68af189c7",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.keep": {
+  "en": "9477730623f7",
+  "tr": "1aa16ce33228",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.later": {
+  "en": "7c81be84d9e4",
+  "tr": "513ef1e473a7",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.loseSpell": {
+  "en": "0f3fc1a3adab",
+  "tr": "6fad911aa5b5",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.loseTechnique": {
+  "en": "b1ab8bd53d73",
+  "tr": "6c2ebbdc1ef2",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.off": {
+  "en": "2536748c2248",
+  "tr": "7934b29ddbeb",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.only": {
+  "en": "2760b991b085",
+  "tr": "1671bdecffe5",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.refuse.gold": {
+  "en": "a3ca759ee12b",
+  "tr": "43d7d444658f",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.refuse.none": {
+  "en": "c7263f026976",
+  "tr": "5013b9cfc60e",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.refuse.nothing": {
+  "en": "3de83b79bc37",
+  "tr": "bdda6210c4aa",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.then": {
+  "en": "cbb19ea9a188",
+  "tr": "0e84a0beff5a",
   "by": "claude-in-session"
  },
  "growth.spec.showAll": {
@@ -10844,14 +10909,14 @@
   "tr": "47a318d74e67",
   "by": "claude-in-session"
  },
- "martial.choice.final": {
-  "en": "cf1e5fe36908",
-  "tr": "57a02b7d8283",
-  "by": "claude-in-session"
- },
  "martial.choice.others": {
   "en": "f5b2939d8953",
   "tr": "dc1b628a6955",
+  "by": "claude-in-session"
+ },
+ "martial.choice.reset": {
+  "en": "e7dc308759c7",
+  "tr": "8472a7a1f7ce",
   "by": "claude-in-session"
  },
  "martial.choice.skills": {
@@ -10980,13 +11045,13 @@
   "by": "claude-in-session"
  },
  "martial.open.where": {
-  "en": "8bd11a1596b1",
-  "tr": "0938459dc778",
+  "en": "fcc74348bc54",
+  "tr": "1145d52dfe78",
   "by": "claude-in-session"
  },
  "martial.open.whereGrowth": {
-  "en": "6f703819abbb",
-  "tr": "fbcf6893e761",
+  "en": "70cc5dd035d3",
+  "tr": "9023549c9f77",
   "by": "claude-in-session"
  },
  "martial.ranger.name": {
@@ -24569,14 +24634,14 @@
   "tr": "a222218a3e5f",
   "by": "claude-in-session"
  },
- "schools.choice.final": {
-  "en": "cf1e5fe36908",
-  "tr": "57a02b7d8283",
-  "by": "claude-in-session"
- },
  "schools.choice.others": {
   "en": "2301df02f8d1",
   "tr": "ceef671a55a2",
+  "by": "claude-in-session"
+ },
+ "schools.choice.reset": {
+  "en": "e7dc308759c7",
+  "tr": "8472a7a1f7ce",
   "by": "claude-in-session"
  },
  "schools.choice.schools": {
@@ -24740,13 +24805,13 @@
   "by": "claude-in-session"
  },
  "schools.open.where": {
-  "en": "8bd11a1596b1",
-  "tr": "0938459dc778",
+  "en": "fcc74348bc54",
+  "tr": "1145d52dfe78",
   "by": "claude-in-session"
  },
  "schools.open.whereGrowth": {
-  "en": "6f703819abbb",
-  "tr": "fbcf6893e761",
+  "en": "70cc5dd035d3",
+  "tr": "9023549c9f77",
   "by": "claude-in-session"
  },
  "schools.refuse.already": {
