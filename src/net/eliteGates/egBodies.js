@@ -35,6 +35,7 @@ import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from '
 import { egZoneLandings, egFloorLess, egBurnsIn } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 import { egByHeight, egFeetY, egOneStorey, egStoreyY } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a blow on its own storey
+import { egStacked } from './egWalkGraph.js';   // FB1018B BANNER-SHAFT: a shaft or a spell refused another storey's body only through a floor
 
 /** A body's role. */
 export const EG_ROLE = Object.freeze({ lord: 0, add: 1, obj: 2 });
@@ -373,9 +374,12 @@ export function egHitBody(F, spec, p, i, d, r, pose, now, seq = null, mult = 1, 
   const onFloor = egOnFight(spec, pose.x, pose.z, POSE_SLACK + 6, pose.y);   // THE ASCENT: by the member's feet
   if (!onFloor && gap > MELEE_REACH + POSE_SLACK + 4) return { got: 0, b: null };
   // THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, a blow reaches no body a storey over or under
-  // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach)
-  const H = egFeetY(spec, pose.y);
-  if (Number.isFinite(H) && Number.isFinite(b.y) && !egOneStorey(egStoreyY(F.view ?? spec, pose.x, H, pose.z), egStoreyY(F.view ?? spec, bx, b.y, bz))) return { got: 0, b: null };
+  // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach). FB1018B BANNER-SHAFT: a
+  // swing reaches its own storey alone; a shaft or a spell crosses the open air to a body of another storey, and is refused
+  // only where the two stand stacked (egStacked) - so Ilthys's banners on the Rotunda's balconies, 4 m over the court, are
+  // shot from the court as they were before the law judged by height
+  const H = egFeetY(spec, pose.y), V = F.view ?? spec, sm = egStoreyY(V, pose.x, H, pose.z), sb = egStoreyY(V, bx, b.y, bz);
+  if (Number.isFinite(H) && Number.isFinite(b.y) && !egOneStorey(sm, sb) && (r === HIT_KINDS.Melee || egStacked(V, pose.x, sm, pose.z, bx, sb, bz))) return { got: 0, b: null };
   if (r === HIT_KINDS.Melee && gap > MELEE_REACH + POSE_SLACK) return { got: 0, b: null };
   if (egHas(b, EG_FL.ward) || !(mult > 0)) return { got: 0, b };
   const got = spendPurse(p, d * mult, b.hp, now, bucketX);

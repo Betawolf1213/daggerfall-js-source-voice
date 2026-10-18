@@ -1,0 +1,72 @@
+[
+  {
+    "name": "DUEL-RING-never-drawn",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "      if (R) duelRing(R, t);",
+    "new": "",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "the bug: the ring keeps the motor and nothing draws it"
+  },
+  {
+    "name": "DUEL-RING-band-shut",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "Math.max(0, R[2] - EG_DUEL_RING_HALF_M), R[2] + EG_DUEL_RING_HALF_M)",
+    "new": "Math.max(0, R[2] + EG_DUEL_RING_HALF_M), R[2] + EG_DUEL_RING_HALF_M)",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "a ring of no width - nothing on the floor"
+  },
+  {
+    "name": "DUEL-RING-not-on-the-plan",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "    sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;\n    _shapes.push(sh);\n  }\n  /** FB1018B WINCH-PLATES",
+    "new": "    sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0; sh.alpha = 0;\n    _shapes.push(sh);\n  }\n  /** FB1018B WINCH-PLATES",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "a shape the floor plan never draws (no alpha)"
+  },
+  {
+    "name": "DUEL-RING-open-duel-unsaid",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "...(open ? { t: EG_DUEL_OPEN } : {})",
+    "new": "...{}",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "a company of one told a ring of fire rises where none does"
+  },
+  {
+    "name": "DUEL-RING-lines-swapped",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "(w === EG_DUEL_OPEN ? t('eg.say.duelOpen',",
+    "new": "(w !== EG_DUEL_OPEN ? t('eg.say.duelOpen',",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "the ring's line said to the open duel and the open duel's to the ring"
+  },
+  {
+    "name": "DUEL-RING-open-end-unsaid",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": "...(ch.r > 0 ? {} : { t: EG_DUEL_OPEN })",
+    "new": "...{}",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "a company of one told the ring falls where none stood"
+  },
+  {
+    "name": "DUEL-RING-ends-swapped",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "(w === EG_DUEL_OPEN ? t('eg.say.duelUnmet',",
+    "new": "(w !== EG_DUEL_OPEN ? t('eg.say.duelUnmet',",
+    "tests": [
+      "test/scenes/eliteGates/fb1018b_duelring.test.js"
+    ],
+    "why": "the ring's end said to the open duel and the open duel's to the ring"
+  }
+]
