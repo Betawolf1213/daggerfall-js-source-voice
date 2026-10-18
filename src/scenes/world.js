@@ -1941,10 +1941,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // TOWN-ECON TE1 (bible/06-Systems/Town-Economy-Arc.md 3): every town's economy online - its counters' factor, the seat's
   // folded in, and its card on the Held Map and the Overworld (SEAT-TIP's seat card is its guild lines now); TE2 (4): the
   // players' share - the towns' book reads it, keeps the Watch's ticks at a town's pixel and witnesses a town walked into
-  const townEcon = createTownEconHost({ online: isOnlinePage, townOf: (mapId) => _townOfMapId.get(mapId), seatAt: seatHere, nowMs: battleNowMs, chapters: chapterSheet,   // AUDIT TOWN-ECON LAW-2: the relay's clock, as every shared day is; TE3: the chapters' patrons
-    seats: () => (seatBook?.open === true ? seatBook.data?.seats ?? null : null),   // unread: nothing said of the area, never "no guild"
-    raidedAt: (px, py) => raidingPartiesOn() && raidState().raids.some((r) => r.px === px && r.py === py && raidActive(r, worldMinutes())),
-    typeAt: (x, y) => locationIndex.get(`${x},${y}`)?.mapTableData?.locationType });   // TE2: a Watch tick is kept where a town stands
+  const townEcon = createTownEconHost({ online: isOnlinePage, townOf: (mapId) => _townOfMapId.get(mapId), seatAt: seatHere, nowMs: battleNowMs, chapters: chapterSheet, clockHeard: () => _sharedClockHeard,   // AUDIT TOWN-ECON LAW-2: the relay's clock, as every shared day is (AUDIT TOWN-ECON 2 CLI-6: a tick's life the relay's once heard); TE3: the chapters' patrons
+    seats: () => (seatBook?.open === true ? seatBook.data?.seats ?? null : null), seatsHeard: () => !seatBook || seatBook.open != null, onBandsReady: () => _livingTripMemo.clear(),   // unread: nothing said of the area, never "no guild"; AUDIT TOWN-ECON 2 CLI-1: the market's band kept once the shares and the seats have answered, the trips planned before made again
+    raidedAt: (px, py) => raidingPartiesOn() && raidState().raids.some((r) => r.px === px && r.py === py && raidActive(r, worldMinutes())), regionHere: () => { const p = playerTravelPixel(); try { return maps.getRegionIndexAt(p.x, p.y); } catch { return null; } },   // AUDIT TOWN-ECON 2 SVC-1: the `/town audit`'s region
+    locAt: (x, y) => locationIndex.get(`${x},${y}`)?.mapTableData ?? null, portLanes: () => (_lanesReady && mapDict ? laneNet() : null) });   // TE2: a Watch tick is kept where a town stands; SEA-TRADE: a port's town and its lanes (the lanes once they stand - BOOT-TDZ II)
   // SEASON1 part two: a Storm Season's slow sea, on every voyage this client reckons (systems/travel/travel.js) - online alone
   setSeaTide(seatBook ? (end) => (seatBook.tideAt(maps.getRegionIndexAt(end.x, end.y)) === 'storms' ? TIDE_EFFECTS.stormsSea : 1) : null);
   registerEntityFold(FESTIVE_FOLD, (e) => (e === playerEntity && seatEdicts.festive() ? festiveMods(STAT_KEYS_ORDER) : EMPTY_MODS));
@@ -1958,11 +1958,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // words as a withdrawal's always did (profMint's), and every change asks the one checkpoint (saveSoon, below).
   const carryOpts = (key) => ({ slowRot: key === 'food:meat' && profBook?.track('hunting')?.specs?.[100] === 'butcher', noRot: profBook?.track('cooking')?.specs?.[100] === 'provisioner' });
   const carryHands = {
-    held: (key) => bagHeldOf(playerEntity, key),
+    held: (key) => bagHeldOf(playerEntity, key, { counter: false }), heldAll: (key) => bagHeldOf(playerEntity, key),   // AUDIT TOWN-ECON 2 PRICE-2: a counter's pieces no service unit - a station's alone
     room: (key) => bagRoomFor(playerEntity, key),
     mint: (key, n) => { const got = mintCarried(playerEntity, key, n, carryOpts(key)); if (got.bag + got.pack > 0) saveSoon.changed(); if (got.bag > 0) noteFirstUse('materials'); return got; },   // TUT1: the first material bagged
-    take: (key, n, stamp = null, order = null) => {
-      const t = takeCarried(playerEntity, key, n, stamp, order);
+    take: (key, n, stamp = null, order = null, counter = false) => {
+      const t = takeCarried(playerEntity, key, n, stamp, order, { counter });
       if (t.taken > 0) saveSoon.changed();
       return { taken: t.taken, back: () => { t.back(); saveSoon.changed(); } };
     },
@@ -9520,7 +9520,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     waters: () => { const p = playerTravelPixel(); return etherSea && inEther(p.x, p.y) ? null : navalCrownOf(p.x, p.y, navalCapitals(), _questRegionIndex()).name; },   // ETHER-SEA: no crown's waters past the Veil
     carrack: (price, port) => { const deed = mintDeed(4, 0, csaNewItemUid(), price); return !!titleDeed(deed, { port: { name: port.name } }); },
     stow: (hold, item) => addItem(hold, item),   // CAPT-TRADE: goods into her hold
-    etherGoods: () => etherOut,   // AUDIT CAPTAIN'S SEA B16: the other sea's goods listed where the captain may sail for them
+    etherGoods: () => etherOut, town: townEcon,   // AUDIT CAPTAIN'S SEA B16: the other sea's goods listed where the captain may sail for them; SEA-TRADE: the port town's economy
   });
   // ETHER-SEA (bible/03-World/Eltheric-Ocean.md): THE ELTHERIC OCEAN'S HOST - its waters (the naval host's `where`), the isles
   // charted as they are sighted, the wild isles' strands (sites of the naval host's), its legends' coming and their ends,
@@ -11715,7 +11715,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         },
         inTown: () => _storesReached(),
         room: (k) => bagRoomFor(playerEntity, k),
-        carriedHeld: (k) => bagHeldOf(playerEntity, k),
+        carriedHeld: (k) => bagHeldOf(playerEntity, k, { counter: false }),   // AUDIT TOWN-ECON 2 PRICE-2: the Stores page never puts a counter's piece in
         heldKeys: () => bagHeldKeysOf(playerEntity),   // UNCOUNTED: what is held that the Stores will not take, named
         bag: () => ({ has: hasBag(playerEntity.items), kg: bagWeight(playerEntity), max: BAG_KG_LIMIT, count: playerEntity.bagItems?.length ?? 0 }),
         // AUDIT2 BAG1 H1/U2: the bag emptied into the pack, from the Stores page - anywhere, on either skin
@@ -21714,7 +21714,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         }
         // AUDIT CHAP2 E1: `/hall audit` and `/hall strike <map id>` - the halls' audit list for the region this player
         // stands in, and a false town struck. NOT GUARDED HERE (RED1's law): the service asks whether this player may.
-        const hallCmd = parseHallCommand(text);
+        const hallCmd = parseHallCommand(text); if (townEcon.command(text, (line) => chatLog.push(tabId, { text: line, system: true }))) return true;   // AUDIT TOWN-ECON 2 SVC-1: `/town audit`, `/town strike <map id>` - the service asks whether this player may
         if (hallCmd) {
           const say = (line) => chatLog.push(tabId, { text: line, system: true });
           if ('error' in hallCmd) { say(hallCmd.error); return true; }
@@ -29895,7 +29895,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // again, without waiting, when the guild book's look is old), the hall bought and opened through the book, and the
     // hall's chest: the guild Stores on the Guild tab
     seatShopFactor: (b) => seatEdicts.shopFactor(b),   // SEAT1d (Seats-Arc 7.2, 7.6): a seat town's shops - its holder's members, Market Day
-    townShopFactor: (b, mode) => townEcon.shopFactor(b, mode, seatEdicts.shopFactor(b)),   // TOWN-ECON TE1: the town's own, the seat's folded in (the law reads it for what a counter asks alone - AUDIT TOWN-ECON CLI-3)
+    townShopFactor: (b, mode) => townEcon.shopFactor(b, mode, seatEdicts.shopFactor(b)),   // TOWN-ECON TE1: the town's own, the seat's folded in (the law applies it to what a counter asks, and SEAT-LOOP holds what it pays to that ask - AUDIT TOWN-ECON 2 PRICE-7)
     // CHAP7b (Chapters-Arc 8): the playing account's player guild - a chapter's patron's members pay the Thriving prices.
     // AUDIT CHAP5 C1: asked again, without waiting, when the book's look is old (the seats' own guildId's way) - the book
     // looks first at the Guild tab, so a fresh page's member paid the band's price until it was opened

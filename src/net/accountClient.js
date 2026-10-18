@@ -732,6 +732,8 @@ const REFUSAL_WORDS = {
   'towns-need-account': () => t('account.refusal.townsNeedAccount', 'Only a registered account can vouch for a town or count its footsteps.'),
   'bad-town': () => t('account.refusal.badTown', 'That town could not be read.'),
   'towns-rate': () => t('account.refusal.townsRate', 'You have reported a great many towns this hour. Try again later.'),
+  'towns-closed': () => t('account.refusal.townsClosed', 'The towns\' economy is closed for now.'),   // AUDIT TOWN-ECON 2 SVC-7: the service's switch
+  'town-unwalked': () => t('account.refusal.townUnwalked', 'A town is vouched for by walking its streets first.'),   // SVC-1: no tick of yours at its pixel
   'bad-hall': () => t('account.refusal.badHall', 'That town\'s guild halls could not be read. The game may need updating.'),
   'halls-rate': () => t('account.refusal.hallsRate', 'You have vouched for enough towns this hour.'),
   // AUDIT CHAP2: the claims' hour; a town a developer struck
@@ -1970,8 +1972,11 @@ export function accountTowns({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
   return {
     econ: () => post('/v1/towns/econ', {}),
-    witness: (town) => post('/v1/towns/witness', { town }),
-    watch: (receipts) => post('/v1/towns/watch', { receipts }),
+    witness: (town, receipt) => post('/v1/towns/witness', { town, receipt }),   // AUDIT TOWN-ECON 2 SVC-1: a walk's tick
+    strike: (map) => post('/v1/towns/strike', { map }),   // SVC-1: a developer's
+    audit: (region) => post('/v1/towns/audit', { region }),
+    /** SEA-TRADE: `sea` the indices of the receipts that vouch a dealing at a port's exchange (none sent, none) */
+    watch: (receipts, sea = []) => post('/v1/towns/watch', sea.length ? { receipts, sea } : { receipts }),
     /** the signed-in account - whose ticks are kept */
     me: () => storedSession(storage)?.id ?? null,
   };

@@ -2,8 +2,8 @@
   {
     "name": "TOWNECON2-weights",
     "file": "src/net/townEconLaw.js",
-    "old": "export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 4, raid: 20 });",
-    "new": "export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 5, raid: 20 });",
+    "old": "export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 4, raid: 20, sea: 2 });",
+    "new": "export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 5, raid: 20, sea: 2 });",
     "tests": [
       "test/systems/townecon.test.js"
     ],
@@ -92,7 +92,7 @@
   {
     "name": "TOWNECON2-witness-known",
     "file": "server-account/src/townEcon.js",
-    "old": "  if (await db.prepare('SELECT 1 AS y FROM town_econ_towns WHERE map = ?1').bind(t.map).first()) return { ok: true, counted: false, why: 'known' };\n",
+    "old": "  if (known?.known) return { ok: true, counted: false, why: 'known' };\n",
     "new": "",
     "tests": [
       "test/server/townecon_service.test.js"
@@ -122,8 +122,8 @@
   {
     "name": "TOWNECON2-watch-seen",
     "file": "server-account/src/townEcon.js",
-    "old": "INSERT OR IGNORE INTO town_econ_seen (ref, day)",
-    "new": "INSERT OR REPLACE INTO town_econ_seen (ref, day)",
+    "old": "    ticks.push({ at, c, day, ref: `${c.s}:${c.c}:${c.i}` });",
+    "new": "    ticks.push({ at, c, day, ref: `${c.s}:${c.c}:${c.i}:${Math.random()}` });",
     "tests": [
       "test/server/townecon_service.test.js"
     ],
@@ -142,7 +142,7 @@
   {
     "name": "TOWNECON2-watch-young",
     "file": "server-account/src/townEcon.js",
-    "old": "  if (!witnessOf(player, nowS)) return { ok: true, counted: 0, why: { young: receipts.length } };\n",
+    "old": "  if (!witnessOf(player, nowS)) return { ok: true, counted: 0, sea: 0, why: { young: receipts.length }, full: [] };\n",
     "new": "",
     "tests": [
       "test/server/townecon_service.test.js"
@@ -162,7 +162,7 @@
   {
     "name": "TOWNECON2-read-unkept",
     "file": "server-account/src/townEcon.js",
-    "old": "  if (_kept && nowS - _kept.at < TOWN_ECON_KEPT_S) return { ok: true, towns: _kept.towns };\n",
+    "old": "  if (_kept && nowS - _kept.at < TOWN_ECON_ISOLATE_S) return { ok: true, towns: _kept.towns };\n",
     "new": "",
     "tests": [
       "test/server/townecon_service.test.js"
@@ -262,7 +262,7 @@
   {
     "name": "TOWNECON2-book-unstopped",
     "file": "src/net/townEconBook.js",
-    "old": "      } else if (TOWN_ECON_STOPS.includes(r?.error)) { stopped = true; shares = new Map(); }",
+    "old": "      } else if (TOWN_ECON_STOPS.includes(r?.error)) { stopped = true; heard = true; shares = new Map(); }",
     "new": "      }",
     "tests": [
       "test/net/townecon_client.test.js"
@@ -272,7 +272,7 @@
   {
     "name": "TOWNECON2-book-keep-anywhere",
     "file": "src/net/townEconBook.js",
-    "old": " || !isTownPixel(c.x, c.y)",
+    "old": "      if (!isTownPixel(c.x, c.y)) return false;\n",
     "new": "",
     "tests": [
       "test/net/townecon_client.test.js"
@@ -312,8 +312,8 @@
   {
     "name": "TOWNECON2-book-witness-done",
     "file": "src/net/townEconBook.js",
-    "old": "      if (r?.ok && (r.data?.counted === true || r.data?.why === 'known')) {",
-    "new": "      if (r?.ok && r.data?.why === 'never') {",
+    "old": "    const done = r?.ok && (r.data?.confirmed === true || r.data?.why === 'known' || r.data?.why === 'struck' || (r.data?.counted === true && r.data?.why !== 'taken'));",
+    "new": "    const done = r?.ok && r.data?.why === 'never';",
     "tests": [
       "test/net/townecon_client.test.js"
     ],

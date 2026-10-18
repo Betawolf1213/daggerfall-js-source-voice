@@ -2779,6 +2779,16 @@
   "tr": "132005fe68eb",
   "by": "claude-in-session"
  },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "cedba60c285e",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "65c673ad7f76",
+  "by": "claude-in-session"
+ },
  "account.refusal.townsNeedAccount": {
   "en": "9bb358900bd3",
   "tr": "148cf2c17a39",
@@ -4581,7 +4591,7 @@
  },
  "lw.econ.booming.a": {
   "en": "4d71079574bd",
-  "tr": "ef0b87995ea6",
+  "tr": "6d3fd1af57d0",
   "by": "claude-in-session"
  },
  "lw.econ.booming.b": {
@@ -4591,7 +4601,7 @@
  },
  "lw.econ.destitute.a": {
   "en": "037c6a0947fd",
-  "tr": "58687e204692",
+  "tr": "0f19152354a6",
   "by": "claude-in-session"
  },
  "lw.econ.destitute.b": {
@@ -4601,7 +4611,7 @@
  },
  "lw.econ.struggling.a": {
   "en": "7a83adc425a6",
-  "tr": "0a4327d66be3",
+  "tr": "0568bca2e6d3",
   "by": "claude-in-session"
  },
  "lw.econ.struggling.b": {
@@ -4611,12 +4621,12 @@
  },
  "lw.econ.thriving.a": {
   "en": "7d8beddca499",
-  "tr": "f1825221fe05",
+  "tr": "b75d2a6dad46",
   "by": "claude-in-session"
  },
  "lw.econ.thriving.b": {
   "en": "2d8ffddfef34",
-  "tr": "a70eb3f1650f",
+  "tr": "b03b51235ccf",
   "by": "claude-in-session"
  },
  "menu.about.build": {
@@ -10044,6 +10054,11 @@
   "tr": "6de44f623f5a",
   "by": "claude-in-session"
  },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "7fa561170e0b",
+  "by": "claude-in-session"
+ },
  "settings.language.machine": {
   "en": "048283a78ca3",
   "tr": "0e8eb364057d",
@@ -10525,8 +10540,13 @@
   "by": "claude-in-session"
  },
  "town.econ.patrons": {
-  "en": "50c14b5f5c9e",
-  "tr": "b4d58849a570",
+  "en": "8117068de7a1",
+  "tr": "9af4e73027ff",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "b8d9a0051ffc",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {
@@ -10562,6 +10582,11 @@
  "town.econ.reason.festival": {
   "en": "9fbe07c593f3",
   "tr": "8578c7c04e4c",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "2f173d77b786",
   "by": "claude-in-session"
  },
  "town.econ.reason.levy": {

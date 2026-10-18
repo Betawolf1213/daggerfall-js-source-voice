@@ -37,7 +37,9 @@ export const TIP_TEXT_MAX = 80;
 export const SEAT_TIP_TEXT_MAX = 160;
 /** TOWN-ECON (bible/06-Systems/Town-Economy-Arc.md 3): a town's card holds its economy's lines above a held seat's own
  *  four (net/townEconLaw.js townTipOf: the economy, the prices, one reason, then the guild's lines - AUDIT TOWN-ECON UI-1:
- *  a held seat's Charter line left out, its holder line naming the guild), so it is bounded here. */
+ *  a held seat's Charter line left out, its holder line naming the guild), so it is bounded here. TE3's patrons' line
+ *  comes last and only where the card has room for it (townEconLaw.js TOWN_TIP_PATRONS_ROOM - AUDIT TOWN-ECON 2 LIV-3,
+ *  REC-17: it had been an eighth line this bound cut). */
 export const TOWN_TIP_LINES_MAX = 7;
 /** How near the pointer a raided town answers, paper pixels - the location marks' own 16 (_markerAt): the raid's ring
  *  stands on the town's mark, so pointing at either is pointing at the raid. */

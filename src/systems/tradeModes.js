@@ -57,7 +57,7 @@ import { calculateCost, calculateTradePrice, essentialPrice } from './shopStock.
 import { GOLD_PIECE_WEIGHT_KG, isEnchanted } from './inventory.js';
 import { calculateItemRepairCost, repairRefusal } from './repairService.js';
 import { itemValueOf, conditionPercentage } from './item/itemTemplates.js';
-import { craftedRarityWorth } from './loot/lootRarity.js';   // CRAFT-WORTH: a crafted piece's rolled worth, never a counter's
+import { craftedRarityWorth, socketsOf, gemWorthOf } from './loot/lootRarity.js';   // CRAFT-WORTH: a crafted piece's rolled worth, never a counter's
 import { isOnlinePage } from './online/onlineLane.js';   // SELL-AS-FOUND: online, a sale reads a piece as it was found
 import { isCampfireKit } from './survival/items.js';   // AUDIT REST: the Campfire an essential online
 import { isFirewood } from './rest/restItems.js';
@@ -68,7 +68,7 @@ import { isBagItem } from '../net/bagLaw.js';   // BAG1: a loaded Materials Bag 
 import { activeWagonItem } from './wagon/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): the wagon driven, read once for every counter (sellGuardOf)
 import { wagonSoldWhole } from './wagon/wagonUpkeep.js';   // WAGON-TIERS: a wagon's wear prices its sale only on Hard
 import { wagonUpkeepRules } from './upkeep/upkeepSwitch.js';   // WAGON-TIERS: the tier, through wagon upkeep's one accessor
-import { PATRON_COUNTER_MARK, COUNTER_PAID_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1: online, a counter's piece is no patron's; LAW-3: nor sold on for more than it cost
+import { PATRON_COUNTER_MARK, COUNTER_PAID_MARK, COUNTER_VALUE_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1: online, a counter's piece is no patron's; LAW-3: nor sold on for more than it cost
 import { clearStolen } from './stolenGoods.js';   // STOLEN-GOODS AUDIT S3: a piece bought at a counter is the buyer's, honestly
 import {
   cureOfferMessageOffset, TRADE_MESSAGE_BASE_ID, NOT_ENOUGH_GOLD_ID,
@@ -265,18 +265,27 @@ export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) 
  *  LAW-3 (Town-Economy-Arc 7.4, the carry between regions): with the lot's `price`, each piece is marked with what the
  *  counter was paid for it (COUNTER_PAID_MARK) - the price shared by each piece's own ask at one counter (buyItemPrice
  *  at the middle quality and index: the essentials' half among the shares), floored a piece, so no piece is held to
- *  more than it cost. */
-export function markCounterBought(items, { online = isOnlinePage(), price = null } = {}) {
+ *  more than it cost. AUDIT TOWN-ECON 2 PRICE-1: the asks the purchase's own (its `holidayId` and `guildFactionId`) -
+ *  a Warriors Festival's halved weapon shared by its full ask held a piece bought beside it to less than it cost, and
+ *  itself to more; PRICE-5: a lot that paid a gold a piece or more gives every piece one, and the rest by the asks (a
+ *  cheap stack bought beside a dear piece floored to 0, and sold for 0 ever after); PRICE-6: and the value each piece
+ *  was bought at (COUNTER_VALUE_MARK). */
+export function markCounterBought(items, { online = isOnlinePage(), price = null, holidayId = HOLIDAYS.None, guildFactionId = null } = {}) {
   for (const it of items ?? []) clearStolen(it);
   if (!online) return 0;
   const lot = (items ?? []).filter((it) => it && typeof it === 'object');
   const stackOf = (it) => (Number.isInteger(it.stackCount) && it.stackCount > 1 ? it.stackCount : 1);
-  const asks = lot.map((it) => Math.max(buyItemPrice(it, { quality: 10, online }), stackOf(it)));   // a gold a piece at least, as a purchase asks
+  const asks = lot.map((it) => Math.max(buyItemPrice(it, { quality: 10, online, holidayId, guildFactionId }), stackOf(it)));   // a gold a piece at least, as a purchase asks
   const total = asks.reduce((a, b) => a + b, 0);
   const paid = typeof price === 'number' && Number.isFinite(price) && price >= 0 && total > 0;
+  const pieces = lot.reduce((n, it) => n + stackOf(it), 0);
+  const base = paid && /** @type {number} */ (price) >= pieces ? 1 : 0;   // PRICE-5: a gold a piece first, where the lot paid it
+  const rest = paid ? /** @type {number} */ (price) - base * pieces : 0;
   lot.forEach((it, i) => {
     it[PATRON_COUNTER_MARK] = true;
-    if (paid) it[COUNTER_PAID_MARK] = Math.floor((/** @type {number} */ (price) * asks[i]) / total / stackOf(it));
+    if (paid) it[COUNTER_PAID_MARK] = base + Math.floor((rest * asks[i]) / total / stackOf(it));
+    const v = counterValueOf(it);
+    if (Number.isFinite(v) && v >= 0) it[COUNTER_VALUE_MARK] = Math.round(v);   // PRICE-6
   });
   return lot.length;
 }
@@ -321,9 +330,22 @@ export function tradeCost(mode, staged = [], {
   let resale = null;
   const live = online ?? isOnlinePage();
   const sold = (item, c, stack) => {
-    if (!live || item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;
+    if (!live) return;
+    const now = counterValueOf(item);
+    // AUDIT TOWN-ECON 2 PRICE-2: a gem a counter sold, set in the piece - its share of the sale held to what it cost
+    for (const [i, paid] of Array.isArray(item.socketBought) ? item.socketBought : []) {
+      const w = gemWorthOf(socketsOf(item)[i]);
+      if (paid == null || !(w > 0) || !(now > 0)) continue;
+      resale ??= { cost: 0, paid: 0 };
+      resale.cost += Math.round((c * Math.min(w, now)) / now);
+      resale.paid += paid;
+    }
+    if (item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;
     resale ??= { cost: 0, paid: 0 };
-    resale.cost += c;
+    // AUDIT TOWN-ECON 2 PRICE-6: a piece worth more than it was bought at (a gem set, a hone, a reforge) - the cost of the
+    // part the counter sold alone is capped, the rest is the player's own work, haggled on its own
+    const was = item[COUNTER_VALUE_MARK];
+    resale.cost += Number.isInteger(was) && was < now && now > 0 ? Math.round((c * was) / now) : c;
     resale.paid += item[COUNTER_PAID_MARK] * stack;
   };
   for (const item of staged) {

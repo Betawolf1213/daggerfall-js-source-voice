@@ -2779,6 +2779,16 @@
   "tr": "4265031231eb",
   "by": "claude-in-session"
  },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "22a294561dd0",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "f0a9fcd482e4",
+  "by": "claude-in-session"
+ },
  "account.refusal.townsNeedAccount": {
   "en": "9bb358900bd3",
   "tr": "6943d2ddf57b",
@@ -4581,7 +4591,7 @@
  },
  "lw.econ.booming.a": {
   "en": "4d71079574bd",
-  "tr": "ac1ab2a6ac3f",
+  "tr": "6bd1605c4ebf",
   "by": "claude-in-session"
  },
  "lw.econ.booming.b": {
@@ -4591,7 +4601,7 @@
  },
  "lw.econ.destitute.a": {
   "en": "037c6a0947fd",
-  "tr": "82eef6a2ca94",
+  "tr": "2b09042377fd",
   "by": "claude-in-session"
  },
  "lw.econ.destitute.b": {
@@ -4601,7 +4611,7 @@
  },
  "lw.econ.struggling.a": {
   "en": "7a83adc425a6",
-  "tr": "8e530bb070e9",
+  "tr": "6c0f77336b0d",
   "by": "claude-in-session"
  },
  "lw.econ.struggling.b": {
@@ -4611,7 +4621,7 @@
  },
  "lw.econ.thriving.a": {
   "en": "7d8beddca499",
-  "tr": "840306bd4cba",
+  "tr": "fc2cf88cdcba",
   "by": "claude-in-session"
  },
  "lw.econ.thriving.b": {
@@ -11029,6 +11039,11 @@
   "tr": "1acaf1235f38",
   "by": "claude-in-session"
  },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "02573b1331d0",
+  "by": "claude-in-session"
+ },
  "settings.language.machine": {
   "en": "048283a78ca3",
   "tr": "69a64a3cf136",
@@ -11510,8 +11525,13 @@
   "by": "claude-in-session"
  },
  "town.econ.patrons": {
-  "en": "50c14b5f5c9e",
+  "en": "8117068de7a1",
   "tr": "e95ddfa1d3e9",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "0bbd6297006a",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {
@@ -11547,6 +11567,11 @@
  "town.econ.reason.festival": {
   "en": "9fbe07c593f3",
   "tr": "05e48a2097b4",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "8a212228e3f3",
   "by": "claude-in-session"
  },
  "town.econ.reason.levy": {

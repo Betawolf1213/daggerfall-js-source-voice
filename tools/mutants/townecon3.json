@@ -82,8 +82,8 @@
   {
     "name": "TOWNECON3-patrons-hidden",
     "file": "src/net/chapterSheet.js",
-    "old": "&& s.patron && !hallHidden(f) &&",
-    "new": "&& s.patron &&",
+    "old": "          if (!s.patron || hallHidden(f)) continue;",
+    "new": "          if (!s.patron) continue;",
     "tests": [
       "test/systems/livingWorld/townecon_living.test.js"
     ],
@@ -92,8 +92,8 @@
   {
     "name": "TOWNECON3-patrons-unread",
     "file": "src/systems/town/townEcon.js",
-    "old": "patrons: host.patronsIn?.(r.town.region) ?? [] }",
-    "new": "patrons: [] }",
+    "old": "patrons: host.patronsIn?.(r.town.region) ?? [], lanes: r.lanes }",
+    "new": "patrons: [], lanes: r.lanes }",
     "tests": [
       "test/systems/livingWorld/townecon_living.test.js"
     ],
@@ -102,12 +102,12 @@
   {
     "name": "TOWNECON3-patrons-max",
     "file": "src/net/townEconLaw.js",
-    "old": "export const TOWN_TIP_PATRONS_MAX = 3;",
-    "new": "export const TOWN_TIP_PATRONS_MAX = 4;",
+    "old": "export const TOWN_TIP_PATRONS_MAX = 2;",
+    "new": "export const TOWN_TIP_PATRONS_MAX = 3;",
     "tests": [
       "test/systems/livingWorld/townecon_living.test.js"
     ],
-    "note": "four patrons on a phone's card"
+    "note": "three patrons by name on a phone's card"
   },
   {
     "name": "TOWNECON3-market-unfrozen",

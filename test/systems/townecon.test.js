@@ -20,7 +20,7 @@ import { createTownEcon } from '../../src/systems/town/townEcon.js';
 import { readTip, TOWN_TIP_LINES_MAX, TIP_LINES_MAX, SEAT_TIP_TEXT_MAX } from '../../src/ui/eventMapMarks.js';
 import {
   TOWN_ECON_SOURCES, TOWN_ECON_WEIGHTS, TOWN_ECON_CAPS, TOWN_ECON_DECAY, TOWN_ECON_DAYS, TOWN_ECON_HALF, TOWN_ECON_KEPT_S, TOWN_ECON_SHARE_LEAST,
-  TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND, townActivity, townPlayersShare, townShareShown, townReportOf, townReportText, parseTownReport,
+  TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND, TOWN_WITNESS_HOUR, townPixelIdOf, TOWN_TIP_PATRONS_ROOM, townActivity, townPlayersShare, townShareShown, townReportOf, townReportText, parseTownReport,
 } from '../../src/net/townEconLaw.js';
 import { markCounterBought, buyItemPrice } from '../../src/systems/tradeModes.js';
 import { COUNTER_PAID_MARK, PATRON_COUNTER_MARK } from '../../src/net/patronLaw.js';
@@ -106,7 +106,7 @@ test('TOWN-ECON the bands: Destitute, Struggling, Steady, Thriving, Booming at 0
   assert.equal(townBandOf(140), 'Booming');
 });
 
-test('TOWN-ECON the price (TE0 decision 4, Mac: "Wider swings, ±25%+"): a counter asks a quarter less at 100 and a quarter more at 0; what it pays falls by the same share either side of the middle and NEVER rises above 1 nor above what it asks (AUDIT LAW-1); a sale of magic is a sale (AUDIT LAW-5); a town\'s and a seat\'s asking factors together never go below the seats\' own deepest (mutants: TOWNECON-swing, TOWNECON-sale-rises, TOWNECON-AUDIT-LAW1-sale-above-ask, TOWNECON-AUDIT-LAW5-sellmagic, TOWNECON-floor-lost, TOWNECON-floor-number, TOWNECON-seat-on-sale, TOWNECON-mode-open)', () => {
+test('TOWN-ECON the price (TE0 decision 4, Mac: "Wider swings, ±25%+"): a counter asks a quarter less at 100 and a quarter more at 0; what it pays falls by the same share either side of the middle and NEVER rises above 1 nor above what it asks (AUDIT LAW-1); a sale of magic is a sale (AUDIT LAW-5); a town\'s and a seat\'s asking factors together never go below the seats\' own deepest (mutants: TOWNECON-swing, TOWNECON-sale-rises, TOWNECON-AUDIT-LAW1-sale-above-ask, TOWNECON-AUDIT-LAW5-sellmagic, TOWNECON-floor-lost, TOWNECON-floor-number, TOWNECON-seat-on-sale, TOWNECON-mode-open, TOWNECON-AUDIT-LAW1-sale-above-ask, TOWNECON-sale-rises)', () => {
   assert.equal(townBuyFactor(100), 0.75);
   assert.equal(townBuyFactor(0), 1.25);
   assert.equal(townBuyFactor(50), 1);
@@ -148,7 +148,7 @@ test('TOWN-ECON the price (TE0 decision 4, Mac: "Wider swings, ±25%+"): a count
   assert.equal(ONLINE_ESSENTIALS_PRICE_SCALE, ONLINE_SALE_SHARE, 'the essentials\' half breaks even only where a counter\'s two factors are one (AUDIT LAW-1, below)');
 });
 
-test('TOWN-ECON AUDIT LAW-1: AN ESSENTIAL BOUGHT AND SOLD BACK AT ONE TOWN COUNTER NEVER PAYS - five firewood through the real trade walk (tradeCost, getTradePrice) online, the best haggler, every Prosperity, every shop quality, the region\'s index from 500 to 2,500, each factor applied as shopAdjustment applies it; at 51 a Booming town\'s ask fell under its pay and 134 of 140 counters paid (mutants: TOWNECON-AUDIT-LAW1-sale-above-ask, TOWNECON-sale-rises)', () => {
+test('TOWN-ECON AUDIT LAW-1: AN ESSENTIAL BOUGHT AND SOLD BACK AT ONE TOWN COUNTER NEVER PAYS - five firewood through the real trade walk (tradeCost, getTradePrice) online, the best haggler, every Prosperity, every shop quality, the region\'s index from 500 to 2,500, each factor applied as shopAdjustment applies it; at 51 a Booming town\'s ask fell under its pay and 134 of 140 counters paid (AUDIT TOWN-ECON 2 REC-6: since SEAT-LOOP\'s bound the walk no longer tells LAW-1\'s sale factor apart - its two mutants, TOWNECON-AUDIT-LAW1-sale-above-ask and TOWNECON-sale-rises, die in the price test)', () => {
   const was = globalThis.location;
   globalThis.location = { search: '?online=1' };
   try {
@@ -207,11 +207,13 @@ test('TOWN-ECON the card\'s words: the economy out of 100 and the market\'s tren
   assert.equal(townPriceLine(47), 'Shops here ask 2% more and pay 2% less than the region\'s usual prices.', 'AUDIT UI-7: 1.015 and 0.985 one number');
   assert.equal(townPriceLine(49), 'Shops here ask 1% more and pay 1% less than the region\'s usual prices.');
   assert.equal(townPriceLine(51), 'Shops here ask 1% less and pay 1% less than the region\'s usual prices.');
-  // AUDIT UI-4: Market Day is everyone's, so the card's ask carries it; a sale never does
-  assert.equal(townPriceLine(80, 0.9), 'Shops here ask 24% less and pay 15% less than the region\'s usual prices.', '0.85 x 0.9 = 0.765');
-  assert.equal(townPriceLine(50, 0.9), 'Shops here ask 10% less than the region\'s usual prices.');
-  assert.equal(townPriceLine(40, 0.9), 'Shops here ask 6% less and pay 5% less than the region\'s usual prices.', '1.05 x 0.9 = 0.945; 0.95');
-  assert.equal(townPriceLine(44, 0.9), 'Shops here ask 7% less and pay 3% less than the region\'s usual prices.');
+  // AUDIT UI-4: Market Day is everyone's, so the card's ask carries it. PIN MOVED (AUDIT TOWN-ECON 2 PRICE-3, REC-1): and
+  // since SEAT-LOOP its pay - a counter pays this player no more than it asks them (townShopFactor's Sell)
+  assert.equal(townPriceLine(80, 0.9), 'Shops here ask 24% less and pay 24% less than the region\'s usual prices.', '0.85 x 0.9 = 0.765, and the sale held to it');
+  assert.equal(townPriceLine(50, 0.9), 'Shops here ask 10% less and pay 10% less than the region\'s usual prices.');
+  assert.equal(townPriceLine(40, 0.9), 'Shops here ask 6% less and pay 6% less than the region\'s usual prices.', '1.05 x 0.9 = 0.945, under the sale\'s 0.95');
+  assert.equal(townPriceLine(44, 0.9), 'Shops here ask 7% less and pay 7% less than the region\'s usual prices.');
+  for (let q = 0; q <= 100; q++) for (const f of [1, 0.9, 0.8, 0.75, 0.7]) assert.equal(townPriceLine(q, f).includes(`pay ${Math.round((1 - townShopFactor(q, 'Sell', f)) * 100 + 1e-9)}% less`) || Math.round((1 - townShopFactor(q, 'Sell', f)) * 100 + 1e-9) === 0, true, `${q}/${f}: the card's pay is the counter's (mutants: TOWNECON-AUDIT2-PRICE3-pay-unbound)`);
   assert.equal(townPriceLine(28, 0.9), 'Shops here ask the region\'s usual prices and pay 11% less.', 'a markup Market Day cancels to the percent');
   assert.equal(townPriceLine(10, 0.9), 'Shops here ask 8% more and pay 20% less than the region\'s usual prices.', '1.2 x 0.9 = 1.08; 0.8 - each number its own');
   assert.equal(townReasonLine({ raided: true, edict: 'festival', players: 3 }), TOWN_REASONS.raid);
@@ -245,11 +247,15 @@ test('TOWN-ECON a town\'s card (TE0 decisions 5 and 6): its economy, its prices,
   const before = SIEGE_END * 1000 - 60_000;
   const own = seatTipOf(seat, before);
   const card = townTipOf({ name: 'Anticlere', p: 80, prev: 79, seat, area }, before);
-  assert.deepEqual(card.lines, ['Economy: Thriving (80/100). Market rising.', 'Shops here ask 24% less and pay 15% less than the region\'s usual prices.', 'Market Day draws trade.', ...own.lines.slice(1)]);
+  assert.deepEqual(card.lines, ['Economy: Thriving (80/100). Market rising.', 'Shops here ask 24% less and pay 24% less than the region\'s usual prices.', 'Market Day draws trade.', ...own.lines.slice(1)]);   // PIN MOVED (AUDIT TOWN-ECON 2 PRICE-3)
   assert.match(own.lines[0], /^The Charter of Anticlere: held by/, 'the line left out is the Charter\'s');
   assert.ok(card.lines.some((l) => /A siege is called/.test(l)), 'the seat\'s card on the clock it is given');
   assert.ok(!townTipOf({ name: 'Anticlere', p: 80, prev: 79, seat, area }, SIEGE_END * 1000 + 1).lines.some((l) => /A siege is called/.test(l)), 'a siege over is not called');
   assert.ok(card.lines.length <= TOWN_TIP_LINES_MAX, `${card.lines.length} lines`);
+  // AUDIT TOWN-ECON 2 LIV-3: a held seat's full card says no patrons - the line is left where the card has no room for it
+  const withPatrons = townTipOf({ name: 'Anticlere', p: 80, prev: 79, seat, area, patrons: [{ id: 'g0000000001', name: 'Iron Wolves', tag: 'IW' }] }, before);
+  assert.ok(card.lines.length > TOWN_TIP_PATRONS_ROOM, `the fixture's card is full (${card.lines.length})`);
+  assert.deepEqual(withPatrons.lines, card.lines, 'no room, no patrons (mutants: TOWNECON-AUDIT2-LIV3-no-room)');
   assert.ok(card.lines.length > TIP_LINES_MAX, 'more than any other card holds');
   assert.deepEqual(readTip(card, { textMax: SEAT_TIP_TEXT_MAX, linesMax: TOWN_TIP_LINES_MAX }).lines, card.lines, 'read whole');
   assert.equal(TOWN_TIP_LINES_MAX, 7, 'three of the town\'s and a held seat\'s four');
@@ -333,19 +339,22 @@ test('TOWN-ECON the client\'s reading (systems/town/townEcon.js): online only - 
   assert.equal(blind.tipAt(11).lines.length, 2);
 });
 
-test('TOWN-ECON the wiring: the counter\'s factor in worldModes.js\'s shopAdjustment (the town\'s first, the seat\'s alone without it), the world host\'s town economy on the relay\'s clock (AUDIT LAW-2) with the seat\'s factor handed in for the law to apply, its card on the Held Map (refreshed under a still pointer - AUDIT UI-6) and the Overworld, a town\'s type in its row (mutants: TOWNECON-counter-unwired, TOWNECON-seat-dropped, TOWNECON-heldmap-unwired, TOWNECON-overworld-seat-only, TOWNECON-type-lost, TOWNECON-unread-seats-empty, TOWNECON-AUDIT-LAW2-machine-clock, TOWNECON-AUDIT-UI6-stale-card)', () => {
+test('TOWN-ECON the wiring: the counter\'s factor in worldModes.js\'s shopAdjustment (the town\'s first, the seat\'s alone without it), the world host\'s town economy on the relay\'s clock (AUDIT LAW-2) with the seat\'s factor handed in for the law to apply, its card on the Held Map (refreshed under a still pointer - AUDIT UI-6) and the Overworld, a town\'s type in its row (mutants: TOWNECON-counter-unwired, TOWNECON-seat-dropped, TOWNECON-heldmap-unwired, TOWNECON-overworld-seat-only, TOWNECON-type-lost, TOWNECON-unread-seats-empty, TOWNECON-AUDIT-LAW2-machine-clock, TOWNECON-AUDIT-UI6-stale-card, TOWNECON-AUDIT2-PRICE4-fallback-sale)', () => {
   const wm = rd('src/scenes/worldModes.js');
-  assert.match(wm, /const f = host\.townShopFactor\?\.\(b, mode\) \?\? \(mode === 'Buy' \|\| mode === 'Repair' \? host\.seatShopFactor\?\.\(b\) \?\? 1 : 1\);/);
+  // PIN MOVED (AUDIT TOWN-ECON 2 PRICE-4): and with no town law wired, a sale held to the seat's factor - SEAT-LOOP's bound
+  assert.match(wm, /const f = host\.townShopFactor\?\.\(b, mode\) \?\? \(mode === 'Buy' \|\| mode === 'Repair' \? host\.seatShopFactor\?\.\(b\) \?\? 1 : mode === 'Sell' \|\| mode === 'SellMagic' \? Math\.min\(1, host\.seatShopFactor\?\.\(b\) \?\? 1\) : 1\);/);
   const w = rd('src/scenes/world.js');
   assert.match(w, /townShopFactor: \(b, mode\) => townEcon\.shopFactor\(b, mode, seatEdicts\.shopFactor\(b\)\),/);
-  assert.match(w, /const townEcon = createTownEconHost\(\{ online: isOnlinePage, townOf: \(mapId\) => _townOfMapId\.get\(mapId\), seatAt: seatHere, nowMs: battleNowMs,[^\n]*\n\s*seats: \(\) => \(seatBook\?\.open === true \? seatBook\.data\?\.seats \?\? null : null\),[^\n]*\n\s*raidedAt: \(px, py\) => raidingPartiesOn\(\) && raidState\(\)\.raids\.some\(\(r\) => r\.px === px && r\.py === py && raidActive\(r, worldMinutes\(\)\)\),\n\s*typeAt: \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\)\?\.mapTableData\?\.locationType \}\);/);   // TE2: built by its host module (scenes/townEconHost.js)
+  assert.match(w, /const townEcon = createTownEconHost\(\{ online: isOnlinePage, townOf: \(mapId\) => _townOfMapId\.get\(mapId\), seatAt: seatHere, nowMs: battleNowMs,[^\n]*\n\s*seats: \(\) => \(seatBook\?\.open === true \? seatBook\.data\?\.seats \?\? null : null\),[^\n]*\n\s*raidedAt: \(px, py\) => raidingPartiesOn\(\) && raidState\(\)\.raids\.some\(\(r\) => r\.px === px && r\.py === py && raidActive\(r, worldMinutes\(\)\)\),[^\n]*\n\s*locAt: \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\)\?\.mapTableData \?\? null, portLanes: \(\) => \(_lanesReady && mapDict \? laneNet\(\) : null\) \}\);/);   // TE2: built by its host module (scenes/townEconHost.js); PIN MOVED (SEA-TRADE): the MAPS location a pixel, and the lanes
   assert.match(w, /const battleNowMs = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/, 'the relay\'s clock');
   assert.match(w, /townTipAt: \(summary\) => townEcon\.tipAt\(summary\?\.mapID \?\? summary\?\.mapId\),/);
   assert.match(w, /seaRaidPeerChase, townEcon, state, travelViewBands,/, 'the Overworld\'s marks handed the town economy');
   assert.match(w, /_townOfMapId\.set\(loc\.mapTableData\.mapId >>> 0, \{ name: String\(loc\.name \?\? ''\), px: p\.x, py: p\.y, region: r, type: loc\.mapTableData\.locationType, location: l \}\);/);
   assert.doesNotMatch(w, /seatTipAt/, 'SEAT-TIP\'s seat-only maker is gone: the town\'s card carries its lines');
   const tvm = rd('src/scenes/travelViewMarks.js');
-  assert.equal((tvm.match(/tip: townEcon\.tipFnAt\((p|f)\.summary\.mapId\) \}\);/g) ?? []).length, 2, 'a near plate and a far one');
+  // AUDIT TOWN-ECON 2 REC-16: each loop its own plate's - a near plate's `p`, a far one's `f`
+  assert.match(tvm, /label: p\.summary\.name,[^\n]*tip: townEcon\.tipFnAt\(p\.summary\.mapId\) \}\);/, 'a near plate');
+  assert.match(tvm, /label: f\.summary\.name,[^\n]*tip: townEcon\.tipFnAt\(f\.summary\.mapId\) \}\);/, 'a far one');
   const h = rd('src/ui/heldMap.js');
   assert.match(h, /const card = this\.deps\.townTipAt\?\.\(m\.summary\) \?\? \(m\.seat \? seatTipOf\(m\.seat\) : null\);/);
   assert.match(h, /if \(gateMoved\) this\._refreshTip\(\);\n(\s*\/\/[^\n]*\n)*\s*if \(!gateMoved && this\._tipKey && this\._hoverAt\) this\._refreshTip\(\);/, 'AUDIT UI-6: a card showing is asked again at the poll');
@@ -368,8 +377,9 @@ test('TOWN-ECON LAW-3 (Town-Economy-Arc 7.4): WHAT THE COUNTER WAS PAID - online
     const asks = [buyItemPrice(sword, { quality: 10 }), buyItemPrice(wood, { quality: 10 })];
     const price = 1000;
     markCounterBought([sword, wood], { price });
-    assert.equal(sword[COUNTER_PAID_MARK], Math.floor((price * asks[0]) / (asks[0] + asks[1])));
-    assert.equal(wood[COUNTER_PAID_MARK], Math.floor((price * asks[1]) / (asks[0] + asks[1]) / 5), 'a piece of the stack');
+    // PIN MOVED (AUDIT TOWN-ECON 2 PRICE-5): a lot that paid a gold a piece gives each piece one, and the rest by the asks
+    assert.equal(sword[COUNTER_PAID_MARK], 1 + Math.floor(((price - 6) * asks[0]) / (asks[0] + asks[1])));
+    assert.equal(wood[COUNTER_PAID_MARK], 1 + Math.floor(((price - 6) * asks[1]) / (asks[0] + asks[1]) / 5), 'a piece of the stack');
     assert.ok(sword[COUNTER_PAID_MARK] + 5 * wood[COUNTER_PAID_MARK] <= price, 'never more than the lot');
     assert.ok(wood[COUNTER_PAID_MARK] < sword[COUNTER_PAID_MARK] / 5, 'not an even share');
     const unpriced = createWeapon(113, 1, seeded(3));
@@ -452,7 +462,7 @@ test('TOWN-ECON LAW-3: THE CARRY BETWEEN REGIONS NEVER PAYS - a blade, a Daedric
 
 test('TOWN-ECON LAW-3 the wiring: both doors of a counter\'s Buy hand the mark the lot\'s price, and every sale price the windows and the keyed shelf quote and pay hands the resale tally on (mutants: TOWNECON-LAW3-native-unpassed, TOWNECON-LAW3-enhanced-unpassed, TOWNECON-LAW3-quote-unpassed, TOWNECON-LAW3-keyed-unpassed)', () => {
   const wm = rd('src/scenes/worldModes.js');
-  assert.match(wm, /markCounterBought\(staged, \{ price \}\);/);
+  assert.match(wm, /markCounterBought\(staged, \{ price, \.\.\.asked \}\);/);   // PIN MOVED (AUDIT TOWN-ECON 2 PRICE-1): and the purchase's own holiday and guild
   assert.match(wm, /markCounterBought\(\[it\], \{ price \}\);/);
   assert.match(wm, /const lot = tradeCost\('Sell', \[it\], \{ quality: b\.quality, priceAdjustment: shopAdjustment\(b, 'Sell'\) \}\);\n\s+return getTradePrice\('Sell', lot\.cost, b\.quality, \{\n[^\n]*\n[^\n]*\n\s+\}, lot\.pieces, lot\.resale\);/);
   const nt = rd('src/ui/native/nativeTrade.js');
@@ -465,11 +475,11 @@ test('TOWN-ECON LAW-3 the wiring: both doors of a counter\'s Buy hand the mark t
   for (const src of [nt, et, wm]) assert.equal((src.match(/getTradePrice\('Sell'|getTradePrice\(this\.mode|getTradePrice\(mode|getTradePrice\(m,/g) ?? []).length, (src.match(/getTradePrice\([^\n]*resale\)|\}, lot\.pieces, lot\.resale\)/g) ?? []).length, 'every sale\'s price');
 });
 
-test('TOWN-ECON TE2 the players\' share\'s law (Town-Economy-Arc section 2): the sources, their weights, an account\'s caps a town a day, the decay, the days kept, the half and the most are TE0\'s; a town\'s activity weighs each day\'s acts by source and by the decay, the days kept alone; the share is PLAYERS_MAX x A / (A + HALF), half the most at the half, never the most; a town\'s report is canonical and read back only as written (mutants: TOWNECON2-weights, TOWNECON2-decay, TOWNECON2-days, TOWNECON2-half, TOWNECON2-share-most, TOWNECON2-report-range, TOWNECON2-report-strict)', () => {
-  assert.deepEqual(TOWN_ECON_SOURCES, ['watch', 'trade', 'raid']);
-  assert.deepEqual(TOWN_ECON_WEIGHTS, { watch: 1, trade: 4, raid: 20 });
-  assert.deepEqual(TOWN_ECON_CAPS, { watch: 30, trade: 10, raid: 1 });
-  assert.deepEqual([TOWN_ECON_DECAY, TOWN_ECON_DAYS, TOWN_ECON_HALF, TOWN_PLAYERS_MAX, TOWN_ECON_KEPT_S, TOWN_ECON_SHARE_LEAST, TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND], [0.8, 14, 150, 30, 300, 1, 12, 'town']);
+test('TOWN-ECON TE2 the players\' share\'s law (Town-Economy-Arc section 2): the sources, their weights, an account\'s caps a town a day, the decay, the days kept, the half and the most are TE0\'s; a town\'s activity weighs each day\'s acts by source and by the decay, the days kept alone; the share is PLAYERS_MAX x A / (A + HALF), half the most at the half, never the most; a town\'s report is canonical and read back only as written, its map id naming its own pixel (AUDIT TOWN-ECON 2 SVC-1), and an hour\'s reports a walk\'s (mutants: TOWNECON2-weights, TOWNECON2-decay, TOWNECON2-days, TOWNECON2-half, TOWNECON2-share-most, TOWNECON2-report-range, TOWNECON2-report-strict, TOWNECON-AUDIT2-SVC1-pixel-unread, TOWNECON-AUDIT2-SVC1-hour)', () => {
+  assert.deepEqual(TOWN_ECON_SOURCES, ['watch', 'trade', 'raid', 'sea']);   // PIN MOVED (SEA-TRADE): a captain's dealing
+  assert.deepEqual(TOWN_ECON_WEIGHTS, { watch: 1, trade: 4, raid: 20, sea: 2 });
+  assert.deepEqual(TOWN_ECON_CAPS, { watch: 30, trade: 10, raid: 1, sea: 10 });
+  assert.deepEqual([TOWN_ECON_DECAY, TOWN_ECON_DAYS, TOWN_ECON_HALF, TOWN_PLAYERS_MAX, TOWN_ECON_KEPT_S, TOWN_ECON_SHARE_LEAST, TOWN_WATCH_CLAIM_MAX, TOWN_WITNESS_KIND, TOWN_WITNESS_HOUR], [0.8, 14, 150, 30, 300, 1, 12, 'town', 12]);   // PIN MOVED (AUDIT TOWN-ECON 2 SVC-1): a walk's reports an hour, not 48
   const t = 1000;
   assert.equal(townActivity([], t), 0);
   assert.equal(townActivity([{ day: t, src: 'watch', n: 30 }, { day: t, src: 'trade', n: 10 }, { day: t, src: 'raid', n: 1 }], t), 30 + 40 + 20, 'a full day of one account');
@@ -483,12 +493,19 @@ test('TOWN-ECON TE2 the players\' share\'s law (Town-Economy-Arc section 2): the
   assert.equal(townPlayersShare(NaN), 0);
   assert.equal(townShareShown(12.345), 12.3);
   // the report
-  const r = { map: 1001, px: 207, py: 212, region: 17, location: 5 };
+  // PIN MOVED (AUDIT TOWN-ECON 2 SVC-1): a map id whose low 20 bits are its pixel's id (y x 1000 + x), as every MAPS row's are
+  const MAP = (3 << 20) | (212 * 1000 + 207);
+  assert.equal(townPixelIdOf(MAP), 212207);
+  assert.equal(townPixelIdOf(0xfff00000 | 212207), 212207, 'unsigned');
+  const r = { map: MAP, px: 207, py: 212, region: 17, location: 5 };
   assert.deepEqual(townReportOf(r), r);
-  assert.equal(townReportText(r), '[1001,207,212,17,5]');
-  assert.deepEqual(parseTownReport('[1001,207,212,17,5]'), r);
-  for (const bad of [{ ...r, map: 0 }, { ...r, map: 2 ** 32 }, { ...r, px: 1000 }, { ...r, py: 500 }, { ...r, region: 62 }, { ...r, location: 10000 }, { ...r, px: 1.5 }, null]) assert.equal(townReportOf(bad), null, JSON.stringify(bad));
-  assert.equal(parseTownReport('[1001, 207, 212, 17, 5]'), null, 'read back only as written');
-  assert.equal(parseTownReport('[1001,207,212,17]'), null);
+  assert.deepEqual(townReportOf({ ...r, map: 212207 }), { ...r, map: 212207 }, 'the high bits its own');
+  assert.equal(townReportText(r), `[${MAP},207,212,17,5]`);
+  assert.deepEqual(parseTownReport(`[${MAP},207,212,17,5]`), r);
+  for (const bad of [{ ...r, map: 0 }, { ...r, map: 2 ** 32 }, { ...r, px: 1000 }, { ...r, py: 500 }, { ...r, region: 62 }, { ...r, location: 10000 }, { ...r, px: 1.5 }, null,
+    { ...r, px: 208 }, { ...r, py: 211 }, { ...r, map: MAP + 1 }, { ...r, map: 4000000000 },
+    { ...r, px: 1000, map: (3 << 20) | (212 * 1000 + 1000) }]) assert.equal(townReportOf(bad), null, JSON.stringify(bad));   // past the map's edge, whatever its id's bits say
+  assert.equal(parseTownReport(`[${MAP}, 207, 212, 17, 5]`), null, 'read back only as written');
+  assert.equal(parseTownReport(`[${MAP},207,212,17]`), null);
   assert.equal(parseTownReport('{'), null);
 });

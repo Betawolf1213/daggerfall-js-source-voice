@@ -45,6 +45,9 @@ const sheetPatronOf = (/** @type {any} */ p) => { const k = chapterPatronOf(p); 
 export function createChapterSheet({ door, nowMs = () => Date.now() }) {
   /** @type {Map<string, { strength: number, seats: { seat: string, name: string }[], season: ReturnType<typeof chapterSeasonOf>, patron: any }>} */
   let strengths = new Map();
+  /** AUDIT TOWN-ECON 2 CLI-2: the patrons by region, made once for the sheet read they were made of. */
+  /** @type {{ of: Map<string, any> | null, by: Map<number, any[]> }} */
+  let patronIndex = { of: null, by: new Map() };
   let readAt = -Infinity;
   let busy = false;
   let stopped = false;
@@ -82,17 +85,28 @@ export function createChapterSheet({ door, nowMs = () => Date.now() }) {
       return s === undefined ? null : { strength: s.strength, seats: s.seats.map((x) => ({ ...x })), ...s.season, sides: s.season.sides ? [...s.season.sides] : null,
         patron: s.patron ? { ...s.patron } : null };   // CHAP7b: its patron, a copy
     },
-    /** TOWN-ECON TE3: the patrons of a region's chapters as the sheet last said them - each guild once, by name, a hidden
-     *  guild's chapter's never (npcChapterLaw.js hallHidden) - and a stale sheet asked again behind it. @param {unknown} region */
+    /** TOWN-ECON TE3: the patrons of a region's chapters as the sheet last said them - each guild once, a hidden guild's
+     *  chapter's never (npcChapterLaw.js hallHidden) - and a stale sheet asked again behind it. AUDIT TOWN-ECON 2 LIV-11:
+     *  the guild holding the most of the region's chapters first, then by name (by name alone, a guild whose name began
+     *  with A was always the card's); CLI-2: every region's indexed once a sheet read (the Overworld asks the hovered
+     *  card each frame, and each ask walked and split every key of the sheet). @param {unknown} region */
     patronsIn(region) {
       refresh();
-      /** @type {Map<string, any>} */
-      const out = new Map();
-      for (const [k, s] of strengths) {
-        const [f, r] = k.split('|').map(Number);
-        if (r === region && s.patron && !hallHidden(f) && !out.has(s.patron.id)) out.set(s.patron.id, { ...s.patron });
+      if (patronIndex.of !== strengths) {
+        /** @type {Map<number, Map<string, { p: any, n: number }>>} */
+        const by = new Map();
+        for (const [k, s] of strengths) {
+          const [f, r] = k.split('|').map(Number);
+          if (!s.patron || hallHidden(f)) continue;
+          if (!by.has(r)) by.set(r, new Map());
+          const g = /** @type {Map<string, { p: any, n: number }>} */ (by.get(r));
+          const e = g.get(s.patron.id);
+          if (e) e.n += 1; else g.set(s.patron.id, { p: s.patron, n: 1 });
+        }
+        patronIndex = { of: strengths, by: new Map([...by].map(([r, g]) => [r, [...g.values()]
+          .sort((a, b) => b.n - a.n || (a.p.name < b.p.name ? -1 : a.p.name > b.p.name ? 1 : 0)).map((e) => e.p)])) };
       }
-      return [...out.values()].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+      return (patronIndex.by.get(/** @type {number} */ (region)) ?? []).map((p) => ({ ...p }));
     },
     get stopped() { return stopped; },
   };

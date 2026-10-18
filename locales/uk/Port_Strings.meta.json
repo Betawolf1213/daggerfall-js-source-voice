@@ -44,6 +44,16 @@
   "tr": "d46c3aea9cd3",
   "by": "claude-in-session"
  },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "c74daa4d242f",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "5d7079bb6f62",
+  "by": "claude-in-session"
+ },
  "account.refusal.townsNeedAccount": {
   "en": "9bb358900bd3",
   "tr": "18798757c3f0",
@@ -341,7 +351,7 @@
  },
  "lw.econ.booming.a": {
   "en": "4d71079574bd",
-  "tr": "42d858927d0b",
+  "tr": "eb1827a4e535",
   "by": "claude-in-session"
  },
  "lw.econ.booming.b": {
@@ -351,7 +361,7 @@
  },
  "lw.econ.destitute.a": {
   "en": "037c6a0947fd",
-  "tr": "25b77b9a89b7",
+  "tr": "1d7909067046",
   "by": "claude-in-session"
  },
  "lw.econ.destitute.b": {
@@ -361,7 +371,7 @@
  },
  "lw.econ.struggling.a": {
   "en": "7a83adc425a6",
-  "tr": "fa07704fc8b1",
+  "tr": "653fbad1f2f1",
   "by": "claude-in-session"
  },
  "lw.econ.struggling.b": {
@@ -371,7 +381,7 @@
  },
  "lw.econ.thriving.a": {
   "en": "7d8beddca499",
-  "tr": "5913fb9eb964",
+  "tr": "d356ed55368f",
   "by": "claude-in-session"
  },
  "lw.econ.thriving.b": {
@@ -522,6 +532,11 @@
  "saddle.hello.none": {
   "en": "c4f18acb1d78",
   "tr": "deb3c07fba7f",
+  "by": "claude-in-session"
+ },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "a5d580d1e3c2",
   "by": "claude-in-session"
  },
  "settings.language.machine": {
@@ -1005,8 +1020,13 @@
   "by": "claude-in-session"
  },
  "town.econ.patrons": {
-  "en": "50c14b5f5c9e",
-  "tr": "e680d13b40d0",
+  "en": "8117068de7a1",
+  "tr": "d9f92863c03b",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "dc5dfd1cd689",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {
@@ -1042,6 +1062,11 @@
  "town.econ.reason.festival": {
   "en": "9fbe07c593f3",
   "tr": "ea0f7de55193",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "3b310825b111",
   "by": "claude-in-session"
  },
  "town.econ.reason.levy": {

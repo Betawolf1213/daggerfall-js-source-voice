@@ -30,7 +30,7 @@ middle (LAW-1); the town's day was this machine's clock's (LAW-2); a seat town's
 |---|---|---|---|
 | LAW-1 | HIGH | Above the middle a counter's ask fell while its pay stood at 1, and ESSENTIALS-HALF's break-even needs the two equal: five firewood bought and sold back paid at 134 of 140 counters at Prosperity 51 (13 to buy, 15 to sell; at 100, quality 20, index 2,500: 40 and 55), the pieces landing back on the shelf - no cap | FIXED: what a counter pays falls by the same share either side of the middle (`townSaleFactor`, the V), never above what it asks; the lane's sweep after: no counter at any Prosperity pays a round trip. Pinned by the real trade walk over every Prosperity, quality and index (`test/systems/townecon.test.js`); mutants |
 | LAW-2 | MED | The town's day read this machine's raw clock, not the relay's - two clients across midnight read 46 and 41, and a clock set by hand chose any day of the cycle (a Buy factor from 0.885 to 1.045 in a month) | FIXED: `nowMs: battleNowMs` (the relay's offset, as every shared day); pinned; mutant |
-| LAW-3 | MED | TE1 widens the carry between regions REALM P0.4 closed: 136 of 4,000 days paid a carrier before, 1,752 after, the mean gain 16 to 28 gold | LEFT - Mac's call, written with its numbers (`Town-Economy-Arc.md` section 7.4) |
+| LAW-3 | MED | TE1 widens the carry between regions REALM P0.4 closed: 136 of 4,000 days paid a carrier before, 1,752 after, the mean gain 16 to 28 gold | LEFT - Mac's call, written with its numbers (`Town-Economy-Arc.md` section 7.4); decided and CLOSED 2026-10-18 (LAW-3: a counter's piece never sells for more than it cost - section 7.4), and audited again (`Audit-Town-Econ-2.md` PRICE-1, PRICE-2) |
 | LAW-4 | LOW | "Never pays more" is false by one gold: MERC-SLOPE's online sale is not monotone in cost (2,307 of 302,400 sales below the middle paid a gold more); never a loop | LEFT, the claim reworded to the factor (decision 4) |
 | LAW-5 | LOW | The Mages Guild's SellMagic read factor 1, so a Destitute town's guild paid the region's price its shops would not; and with no reading the seat's factor reached it | FIXED: `TOWN_SALE_MODES` (Sell, SellMagic); the fallback asks only on Buy and Repair (CLI-3); pinned; mutants |
 | LAW-6 | NIT | An Edict named after an object property (`toString`) read the prototype's function, the sum became a string and the reading went to the middle; a share of Infinity counted nothing | FIXED: the table's own names alone; NaN alone counts nothing; pinned; mutants |
@@ -91,7 +91,8 @@ placeholder in every language, buy and sell kept apart in every language, no lin
 
 - **The essentials' round trip at a seat town** (SEAT1d's, live before TE1): a seat's discount lowers what its counters
   ask, Market Day for everyone and the members' always, while what they pay stands - five firewood on Market Day, 13 to
-  buy and 15 to sell. TE1 neither opens nor widens it. Mac's call (`Town-Economy-Arc.md` section 7.5).
+  buy and 15 to sell. TE1 neither opens nor widens it. Mac's call (`Town-Economy-Arc.md` section 7.5) - decided and
+  CLOSED 2026-10-18 (SEAT-LOOP), and its bound carried to where the price is made by `Audit-Town-Econ-2.md` PRICE-4.
 - Two mutant records survive their tests on `main` (9ae7e62b) as on the branch - not this slice's, left for their own
   arcs' next pass: `EVENT-TIP-the-ring-answers-with-no-card` (`tools/mutants/eventtip.json`) and
   `HORSEFACE-the-placing-paints-minus-one` (`tools/mutants/fb1004e.json`).

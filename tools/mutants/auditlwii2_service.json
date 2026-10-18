@@ -84,7 +84,7 @@
   {
     "name": "AUDITLWII2-S1-door-counter",
     "file": "src/scenes/worldModes.js",
-    "old": "      markCounterBought(staged, { price });",
+    "old": "      markCounterBought(staged, { price, ...asked });",
     "new": "",
     "tests": [
       "test/systems/auditlwii2_service.test.js"

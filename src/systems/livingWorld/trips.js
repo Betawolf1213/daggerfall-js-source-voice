@@ -394,7 +394,9 @@ export function leaderOf(res, roster) {
 }
 
 /** TOWN-ECON TE3 (bible/06-Systems/Town-Economy-Arc.md 5): a Booming town holds a second market day a week,
- *  MARKET_BOOM_DAY after its own; a Destitute town holds its own one week in MARKET_DESTITUTE_WEEKS. */
+ *  MARKET_BOOM_DAY after its own; a Destitute town holds its own one week in MARKET_DESTITUTE_WEEKS. AUDIT TOWN-ECON 2
+ *  LIV-14: a carter never misses a Destitute town's market because the online window is exactly fourteen sky days
+ *  (paceScale at TimeScale 24) - a longer fortnight, or a shorter window, would leave a cycle without one. */
 export const MARKET_BOOM_DAY = 4;
 export const MARKET_DESTITUTE_WEEKS = 2;
 /** LW9: a market town's market day - one day in seven, by its map id: true on `day`. TOWN-ECON TE3: `band` its economy
@@ -424,7 +426,7 @@ export function marketTrip(res, home, k, world, { start, len, pace, rng }) {
   const leave = Math.floor((5 + rng()) * 60);
   for (const to of near) {
     let day = -1;
-    for (let d = start; d < start + len; d++) if (marketDay(to, d, world.marketBandOf?.(to, d) ?? null)) { day = d; break; }   // TOWN-ECON TE3: its band that day
+    for (let d = start; d < start + len; d++) if (marketDay(to, d, world.marketBandOf?.(to, d) ?? null)) { day = d; break; }   // TOWN-ECON TE3: its band kept for that day (AUDIT TOWN-ECON 2 LIV-9: read at its first asking)
     if (day < 0) continue;
     const plan = world.routeOf(home, to);
     if (plan === undefined) return undefined;

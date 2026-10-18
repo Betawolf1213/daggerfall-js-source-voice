@@ -292,8 +292,8 @@
   {
     "name": "TOWNECON-counter-unwired",
     "file": "src/scenes/worldModes.js",
-    "old": "    const f = host.townShopFactor?.(b, mode) ?? (mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : 1);",
-    "new": "    const f = mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : 1;",
+    "old": "    const f = host.townShopFactor?.(b, mode) ?? (mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : mode === 'Sell' || mode === 'SellMagic' ? Math.min(1, host.seatShopFactor?.(b) ?? 1) : 1);",
+    "new": "    const f = mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : mode === 'Sell' || mode === 'SellMagic' ? Math.min(1, host.seatShopFactor?.(b) ?? 1) : 1;",
     "tests": [
       "test/systems/townecon.test.js"
     ],
@@ -512,8 +512,8 @@
   {
     "name": "TOWNECON-AUDIT-DOC3-players-threshold",
     "file": "src/net/townEconLaw.js",
-    "old": "  return players >= 1 ? TOWN_REASONS.players : null;",
-    "new": "  return players > 1 ? TOWN_REASONS.players : null;",
+    "old": "  if (players >= 1) return TOWN_REASONS.players;",
+    "new": "  if (players > 1) return TOWN_REASONS.players;",
     "tests": [
       "test/systems/townecon.test.js"
     ],
@@ -562,7 +562,7 @@
   {
     "name": "TOWNECON-LAW3-paid-unwritten",
     "file": "src/systems/tradeModes.js",
-    "old": "    if (paid) it[COUNTER_PAID_MARK] = Math.floor((/** @type {number} */ (price) * asks[i]) / total / stackOf(it));",
+    "old": "    if (paid) it[COUNTER_PAID_MARK] = base + Math.floor((rest * asks[i]) / total / stackOf(it));",
     "new": "",
     "tests": [
       "test/systems/townecon.test.js"
@@ -572,7 +572,7 @@
   {
     "name": "TOWNECON-LAW3-share-even",
     "file": "src/systems/tradeModes.js",
-    "old": "  const asks = lot.map((it) => Math.max(buyItemPrice(it, { quality: 10, online }), stackOf(it)));",
+    "old": "  const asks = lot.map((it) => Math.max(buyItemPrice(it, { quality: 10, online, holidayId, guildFactionId }), stackOf(it)));",
     "new": "  const asks = lot.map((it) => stackOf(it));",
     "tests": [
       "test/systems/townecon.test.js"
@@ -592,8 +592,8 @@
   {
     "name": "TOWNECON-LAW3-tally-offline",
     "file": "src/systems/tradeModes.js",
-    "old": "    if (!live || item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;",
-    "new": "    if (item[PATRON_COUNTER_MARK] !== true || !Number.isInteger(item[COUNTER_PAID_MARK])) return;",
+    "old": "    if (!live) return;\n    const now = counterValueOf(item);",
+    "new": "    const now = counterValueOf(item);",
     "tests": [
       "test/systems/townecon.test.js"
     ],

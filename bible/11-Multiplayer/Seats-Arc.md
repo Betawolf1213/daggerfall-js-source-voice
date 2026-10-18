@@ -770,7 +770,7 @@ Edict may be proclaimed two weeks running except Market Day.
 
 | Edict | Tier | Effect | Cost |
 |---|---|---|---|
-| **Market Day** | any | the seat town's shop prices -10% for everyone (client-applied, the discount's seam, 7.2) | - |
+| **Market Day** | any | the seat town's shop prices -10% for everyone (client-applied, the discount's seam, 7.2) - what a shop pays held to it too (SEAT-LOOP, Town-Economy-Arc 7.5; AUDIT TOWN-ECON 2 REC-17) | - |
 | **Bounty** | any | World of Daggerfall camps in the region (WOD7's shared camps, `src/world/worldOfDaggerfall/wodShared.js`) pay double loot; the treasury pays 20 Marks per camp cleared, up to the sum set aside - a transfer, never a mint. **Bounded**: a camp's clearing is validated at the reader, never the relay (`wodShared.js`), so an account is paid for at most **5 camps a UTC day** | the set-aside, escrowed |
 | **Levy** | any | 10% of gathering yields goes to the seat's stockpile, from the nodes of the region nearer this seat than any other seat of the region (the bailiwick's rule, by pixel), so two holders' Levies never share a node | Standing -2 |
 | **Open Gates** | any | homes in the town may not be set private this week | Standing +3 |

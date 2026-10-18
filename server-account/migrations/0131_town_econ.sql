@@ -42,11 +42,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_town_econ_towns_pixel ON town_econ_towns (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_town_econ_towns_place ON town_econ_towns (region, location);
 
 -- AN ACCOUNT'S ACTS at a town a real (UTC) day by source - the cap asked in the write (townEconLaw.js TOWN_ECON_CAPS).
+-- SEA-TRADE (Town-Economy-Arc section 8): `sea`, a captain's dealing at the port's exchange, vouched by a Watch tick.
 CREATE TABLE IF NOT EXISTS town_econ_acts (
   account TEXT NOT NULL,
   map     INTEGER NOT NULL,
   day     INTEGER NOT NULL,
-  src     TEXT NOT NULL CHECK (src IN ('watch', 'trade', 'raid')),
+  src     TEXT NOT NULL CHECK (src IN ('watch', 'trade', 'raid', 'sea')),
   n       INTEGER NOT NULL CHECK (n >= 1),
   PRIMARY KEY (account, map, day, src),
   FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
@@ -57,15 +58,33 @@ CREATE INDEX IF NOT EXISTS idx_town_econ_acts_day ON town_econ_acts (day);
 CREATE TABLE IF NOT EXISTS town_econ_days (
   map INTEGER NOT NULL,
   day INTEGER NOT NULL,
-  src TEXT NOT NULL CHECK (src IN ('watch', 'trade', 'raid')),
+  src TEXT NOT NULL CHECK (src IN ('watch', 'trade', 'raid', 'sea')),
   n   INTEGER NOT NULL CHECK (n >= 1),
   PRIMARY KEY (map, day, src)
 );
 CREATE INDEX IF NOT EXISTS idx_town_econ_days_day ON town_econ_days (day);
 
--- A WATCH TICK COUNTED - once, whatever claims it again. Kept as long as a town's day.
+-- A WATCH TICK COUNTED - once, whatever claims it again. Kept a receipt's life and a day (AUDIT TOWN-ECON 2 SVC-5: a
+-- tick older is refused by its own expiry).
 CREATE TABLE IF NOT EXISTS town_econ_seen (
   ref TEXT PRIMARY KEY,
   day INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_town_econ_seen_day ON town_econ_seen (day);
+
+-- AUDIT TOWN-ECON 2 SVC-1: A MAP ID STRUCK by a developer (`/town strike`) - never witnessed again (the seats' and the
+-- halls' strike: npc_hall_strikes, town_seat_history's 'strike').
+CREATE TABLE IF NOT EXISTS town_econ_struck (
+  map INTEGER PRIMARY KEY,
+  by  TEXT,
+  at  INTEGER NOT NULL
+);
+
+-- AUDIT TOWN-ECON 2 SVC-3: THE TOWNS' SHARES, KEPT ONCE FOR THE WHOLE SERVICE (0112's seat_facts_kept shape). Every
+-- isolate read every town's days of the fourteen kept each keeping, on the primary; the minute's clock (cron.js
+-- `town-shares`) counts them once a keeping and writes them here, and the isolates read this one row. Always id 1.
+CREATE TABLE IF NOT EXISTS town_econ_kept (
+  id    INTEGER PRIMARY KEY CHECK (id = 1),
+  at    INTEGER NOT NULL,
+  towns TEXT NOT NULL
+);

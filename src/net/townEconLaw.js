@@ -48,6 +48,12 @@ export const TOWN_EDICT_TERMS = Object.freeze({ 'market-day': 6, festival: 8, 'o
 export const TOWN_RAID_TERM = -15;
 /** The most the players' share (TE2) adds. */
 export const TOWN_PLAYERS_MAX = 30;
+/** SEA-TRADE (Town-Economy-Arc section 8): a port town's sea lanes (systems/naval/seaLanes.js laneNetwork - the Bay's
+ *  packets between its ports, every client's the same) each add TOWN_SEA_LANE, TOWN_SEA_LANES_MAX of them at most. */
+export const TOWN_SEA_LANE = 2;
+export const TOWN_SEA_LANES_MAX = 3;
+/** The lanes' term of a town: its lanes, a whole number held to TOWN_SEA_LANES_MAX. @param {unknown} lanes */
+export const townSeaTerm = (lanes) => (Number.isSafeInteger(lanes) && /** @type {number} */ (lanes) > 0 ? Math.min(TOWN_SEA_LANES_MAX, /** @type {number} */ (lanes)) * TOWN_SEA_LANE : 0);
 /** The bands, highest first: each its name and its least Prosperity. @type {ReadonlyArray<readonly [string, number]>} */
 export const TOWN_BANDS = Object.freeze([
   /** @type {readonly [string, number]} */ (Object.freeze(['Booming', 85])), /** @type {readonly [string, number]} */ (Object.freeze(['Thriving', 65])),
@@ -98,13 +104,14 @@ export function townSeatTerm(seat) {
 const held = (p) => Math.max(0, Math.min(TOWN_PROSPERITY_MAX, Math.round(Number.isFinite(p) ? p : TOWN_BASE)));
 /**
  * A TOWN'S PROSPERITY on a real day, 0 to 100.
- * @param {{ key: number, type: number, day: number, seat?: any, raided?: boolean, players?: number }} t
- *   `seat` the town's own seat, dressed (null for none); `raided` a raid running at its gates; `players` TE2's share
+ * @param {{ key: number, type: number, day: number, seat?: any, raided?: boolean, players?: number, lanes?: number }} t
+ *   `seat` the town's own seat, dressed (null for none); `raided` a raid running at its gates; `players` TE2's share;
+ *   `lanes` SEA-TRADE: a port town's sea lanes (townSeaTerm)
  */
-export function townProsperity({ key, type, day, seat = null, raided = false, players = 0 }) {
+export function townProsperity({ key, type, day, seat = null, raided = false, players = 0, lanes = 0 }) {
   const n = Number(players);
   const share = Number.isNaN(n) ? 0 : Math.max(0, Math.min(TOWN_PLAYERS_MAX, n));   // AUDIT TOWN-ECON LAW-6: an infinite share is the most, never nothing
-  return held(TOWN_BASE + (TOWN_SIZE[/** @type {0|1|2} */ (type)] ?? 0) + townCycle(key, day) + townSeatTerm(seat) + (raided ? TOWN_RAID_TERM : 0) + share);
+  return held(TOWN_BASE + (TOWN_SIZE[/** @type {0|1|2} */ (type)] ?? 0) + townCycle(key, day) + townSeatTerm(seat) + (raided ? TOWN_RAID_TERM : 0) + share + townSeaTerm(lanes));
 }
 /** A Prosperity's band. @param {number} p */
 export const townBandOf = (p) => (TOWN_BANDS.find(([, least]) => held(p) >= least) ?? TOWN_BANDS[TOWN_BANDS.length - 1])[0];
@@ -114,6 +121,10 @@ export const townBuyFactor = (p) => 1 - (TOWN_PRICE_SWING * (held(p) - TOWN_BASE
  *  a Struggling town has less coin, and a Booming one is stocked and pays no more than it asks (AUDIT TOWN-ECON LAW-1).
  *  @param {number} p */
 export const townSaleFactor = (p) => 1 - (TOWN_PRICE_SWING * Math.abs(held(p) - TOWN_BASE)) / TOWN_BASE;
+/** SEA-TRADE (Town-Economy-Arc section 8): A PORT'S EXCHANGE (systems/naval/tradeGoods.js exchangeOf) by its town's
+ *  economy - what it sells a captain at the town's asking factor, what it pays at its paying factor (never more than it
+ *  asks, so the exchange's own spread only widens). No seat's discount: a seat's is its shops'. @param {number} p */
+export const townExchangeFactors = (p) => Object.freeze({ ask: townBuyFactor(p), pay: townSaleFactor(p) });
 /** The trade window's modes a counter PAYS in - a sale, and the Mages Guild's sale of a magic piece (AUDIT TOWN-ECON
  *  LAW-5: it read 1, so a Destitute town's guild paid the region's price its shops would not). */
 export const TOWN_SALE_MODES = Object.freeze(['Sell', 'SellMagic']);
@@ -139,12 +150,19 @@ export function townShopFactor(p, mode, seatFactor = 1) {
 // account capped a town a day, and read back by every client as one share. The service and the client both read
 // these lines; nothing a player pays in gold moves a town (TE0 decision 3).
 
-/** The sources of a town's activity. */
-export const TOWN_ECON_SOURCES = Object.freeze(['watch', 'trade', 'raid']);
-/** What one act of each source weighs. */
-export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 4, raid: 20 });
-/** The most of each source one account counts at one town in one real day: an hour's walking, ten sales, a raid. */
-export const TOWN_ECON_CAPS = Object.freeze({ watch: 30, trade: 10, raid: 1 });
+/** The sources of a town's activity. SEA-TRADE: `sea`, a captain's dealing at its exchange. */
+export const TOWN_ECON_SOURCES = Object.freeze(['watch', 'trade', 'raid', 'sea']);
+/** What one act of each source weighs. SEA-TRADE: a ship's dealing half a trader's sale - the sale is this service's
+ *  own record, the dealing the client's word that a tick vouches (a pose's worth, as the watch's). */
+export const TOWN_ECON_WEIGHTS = Object.freeze({ watch: 1, trade: 4, raid: 20, sea: 2 });
+/** The most of each source one account counts at one town in one real day: an hour's walking, ten sales, a raid, ten
+ *  dealings at its exchange. */
+export const TOWN_ECON_CAPS = Object.freeze({ watch: 30, trade: 10, raid: 1, sea: 10 });
+/** SEA-TRADE: a captain's dealing is vouched by the relay's Watch tick that stood them at the port - a tick at its pixel
+ *  or one beside it (a ship at its quay, trading from the helm - the harbour office's own reach), no older than
+ *  TOWN_SEA_TICK_S when the deal is made. One tick vouches one dealing. */
+export const TOWN_SEA_REACH_PX = 1;
+export const TOWN_SEA_TICK_S = 600;
 /** A day's acts weigh TOWN_ECON_DECAY less for each day past. */
 export const TOWN_ECON_DECAY = 0.8;
 /** The days a town's acts are kept and weighed - today and the thirteen before. */
@@ -158,9 +176,11 @@ export const TOWN_ECON_KEPT_S = 300;
 export const TOWN_ECON_SHARE_LEAST = 1;
 /** The Watch receipts one claim carries. */
 export const TOWN_WATCH_CLAIM_MAX = 12;
-/** The witness kind of a town's registry row (world_witness), and the reports an account may give an hour. */
+/** The witness kind of a town's registry row (world_witness), and the reports an account may give an hour - AUDIT
+ *  TOWN-ECON 2 SVC-1: a walk's (a report goes with a Watch tick at the town, one each WATCH_TICK_MS), where 48 was three
+ *  accounts' 48 towns an hour of a list typed in. */
 export const TOWN_WITNESS_KIND = 'town';
-export const TOWN_WITNESS_HOUR = 48;
+export const TOWN_WITNESS_HOUR = 12;
 
 /** A TOWN'S ACTIVITY on `today`: its rows (`{ day, src, n }`, the service's town_econ_days) weighed by source and by
  *  TOWN_ECON_DECAY a day past - the rows of the TOWN_ECON_DAYS days to `today` alone, a source the table does not name
@@ -182,15 +202,20 @@ export const townPlayersShare = (a) => (a > 0 && Number.isFinite(a) ? (TOWN_PLAY
 /** A share as the service answers it: one decimal. @param {number} share */
 export const townShareShown = (share) => Math.round(share * 10) / 10;
 
+/** A map id's pixel id - its low 20 bits (DFU's ContentReader keys the map's summaries by them and asks a pixel's,
+ *  MapsFile.GetMapPixelID: y x 1000 + x). @param {number} map */
+export const townPixelIdOf = (map) => (map >>> 0) & 0x000fffff;
 /** A TOWN'S REGISTRY REPORT (TE2, the witnessed town): the town a client stands in, by its map id, its pixel, its region
  *  and its location's index in the region - canonical, or null. The service learns from three agreeing accounts which
- *  town stands at a Watch tick's pixel and which a raid's `region:location` names.
+ *  town stands at a Watch tick's pixel and which a raid's `region:location` names. AUDIT TOWN-ECON 2 SVC-1: the map id
+ *  names its own pixel (townPixelIdOf), so a report of a map id at a pixel that is not its own is none.
  *  @param {any} raw `{ map, px, py, region, location }` */
 export function townReportOf(raw) {
   if (!raw || typeof raw !== 'object') return null;
   const { map, px, py, region, location } = raw;
   const ok = (v, max) => Number.isSafeInteger(v) && v >= 0 && v <= max;
   if (!ok(map, 0xffffffff) || map === 0 || !ok(px, 999) || !ok(py, 499) || !ok(region, 61) || !ok(location, 9999)) return null;
+  if (townPixelIdOf(map) !== py * 1000 + px) return null;
   return { map, px, py, region, location };
 }
 /** A report as world_witness keeps it. @param {{ map: number, px: number, py: number, region: number, location: number }} t */
@@ -235,7 +260,7 @@ const pctOf = (f) => Math.round(Math.abs(1 - f) * 100 + 1e-9);
  *  @param {number} p @param {number} [seatFactor] the seat's factor for a buyer of no guild (townSeatLaw.js seatShopFactor) */
 export function townPriceLine(p, seatFactor = 1) {
   const askF = townShopFactor(p, 'Buy', seatFactor);
-  const ask = pctOf(askF), pay = pctOf(townSaleFactor(p));
+  const ask = pctOf(askF), pay = pctOf(townShopFactor(p, 'Sell', seatFactor));   // AUDIT TOWN-ECON 2 PRICE-3: what a counter pays, SEAT-LOOP's bound and all
   if (ask > 0 && askF > 1) return t('town.econ.price.moreLess', 'Shops here ask {ask}% more and pay {pay}% less than the region\'s usual prices.', { ask, pay });
   if (ask > 0) {
     return pay > 0 ? t('town.econ.price.lessLess', 'Shops here ask {ask}% less and pay {pay}% less than the region\'s usual prices.', { ask, pay })
@@ -253,12 +278,14 @@ export const TOWN_REASONS = Object.freeze({
   get levy() { return t('town.econ.reason.levy', 'The Levy weighs on trade.'); },
   get curfew() { return t('town.econ.reason.curfew', 'The Curfew keeps buyers home.'); },
   get players() { return t('town.econ.reason.players', 'Busy with travellers and traders.'); },
+  get harbour() { return t('town.econ.reason.harbour', 'Its harbour brings trade.'); },   // SEA-TRADE: a port town's lanes
 });
-/** @param {{ raided?: boolean, edict?: string|null, players?: number }} r */
-export function townReasonLine({ raided = false, edict = null, players = 0 }) {
+/** @param {{ raided?: boolean, edict?: string|null, players?: number, lanes?: number }} r */
+export function townReasonLine({ raided = false, edict = null, players = 0, lanes = 0 }) {
   if (raided) return TOWN_REASONS.raid;
   if (edict && Object.prototype.hasOwnProperty.call(TOWN_EDICT_TERMS, edict)) return TOWN_REASONS[/** @type {keyof typeof TOWN_REASONS} */ (edict)];
-  return players >= 1 ? TOWN_REASONS.players : null;
+  if (players >= 1) return TOWN_REASONS.players;
+  return townSeaTerm(lanes) > 0 ? TOWN_REASONS.harbour : null;
 }
 /** The area's line for a town that is not a seat: the seat whose bailiwick it is in and its holder; no seat, nobody's.
  *  AUDIT TOWN-ECON UI-2: the Charter worded in the player's language around the town's (or the crown's kingdom's) name
@@ -278,13 +305,23 @@ export function townAreaLine(area) {
 }
 
 /** TOWN-ECON TE3: the chapters' patrons a card names at most. */
-export const TOWN_TIP_PATRONS_MAX = 3;
-/** TOWN-ECON TE3 (Town-Economy-Arc 5): the card's line of the area's chapters' patrons - the player guilds that hold a
- *  chapter's patronage in the town's region (net/chapterSheet.js patronsIn), TOWN_TIP_PATRONS_MAX at most; null for
- *  none. @param {ReadonlyArray<{ name: string, tag?: string }>} patrons */
+export const TOWN_TIP_PATRONS_MAX = 2;
+/** AUDIT TOWN-ECON 2 LIV-3: the lines a card may hold before the patrons' line and still say it - one short of the card's
+ *  bound (ui/eventMapMarks.js TOWN_TIP_LINES_MAX 7): a held seat's card in a Tourney week made it the seventh, wrapped to
+ *  five rows past a landscape phone's height. */
+export const TOWN_TIP_PATRONS_ROOM = 5;
+/** TOWN-ECON TE3 (Town-Economy-Arc 5): the card's line of the region's chapters' patrons - the player guilds that hold a
+ *  chapter's patronage in the town's region (net/chapterSheet.js patronsIn: the most chapters first), TOWN_TIP_PATRONS_MAX
+ *  by name and the rest a count (AUDIT TOWN-ECON 2 LIV-3, LIV-10: three long names ran the line past SEAT_TIP_TEXT_MAX in
+ *  three languages and cut it mid-tag); null for none. AUDIT TOWN-ECON 2 LIV-11: "the region", as a chapter is its
+ *  region's - the line above says "area" of the seat's bailiwick. @param {ReadonlyArray<{ name: string, tag?: string }>} patrons */
 export function townPatronsLine(patrons) {
-  const list = (patrons ?? []).slice(0, TOWN_TIP_PATRONS_MAX).map((g) => (g.tag ? `${g.name} <${g.tag}>` : g.name)).join(', ');
-  return list ? t('town.econ.patrons', 'Chapter patrons in the area: {list}', { list }) : null;
+  const all = patrons ?? [];
+  const list = all.slice(0, TOWN_TIP_PATRONS_MAX).map((g) => (g.tag ? `${g.name} <${g.tag}>` : g.name)).join(', ');
+  if (!list) return null;
+  const more = all.length - TOWN_TIP_PATRONS_MAX;
+  return more > 0 ? t('town.econ.patronsMore', 'Chapter patrons in the region: {list} and {n} more', { list, n: more })
+    : t('town.econ.patrons', 'Chapter patrons in the region: {list}', { list });
 }
 
 /**
@@ -294,18 +331,18 @@ export function townPatronsLine(patrons) {
  * held seat's card leaves out its first line ("The Charter of X: held by G") - its holder line names the guild again,
  * and the card ran past a landscape phone's height by that much. TOWN-ECON TE3: then the area's chapters' patrons
  * (`patrons`), last - the line a full card leaves off.
- * @param {{ name: string, p: number, prev: number, raided?: boolean, players?: number, seat?: any, area?: any, patrons?: ReadonlyArray<{ name: string, tag?: string }> }} t
+ * @param {{ name: string, p: number, prev: number, raided?: boolean, players?: number, seat?: any, area?: any, patrons?: ReadonlyArray<{ name: string, tag?: string }>, lanes?: number }} t
  * @param {number} [nowMs] the seat card's clock (a called siege)
  */
-export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined, patrons = [] }, nowMs = Date.now()) {
+export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined, patrons = [], lanes = 0 }, nowMs = Date.now()) {
   if (!name) return null;
   const lines = [townEconomyLine(p, prev), townPriceLine(p, seatShopFactor(seat, null))];
-  const reason = townReasonLine({ raided, edict: seat?.holder?.edict ?? null, players });
+  const reason = townReasonLine({ raided, edict: seat?.holder?.edict ?? null, players, lanes });
   if (reason) lines.push(reason);
   const card = seat ? seatTipOf(seat, nowMs) : null;
   if (card) lines.push(...card.lines.slice(seat.holder?.guild ? 1 : 0));
   else if (area !== undefined) lines.push(townAreaLine(area));
   const backers = townPatronsLine(patrons);
-  if (backers) lines.push(backers);
+  if (backers && lines.length <= TOWN_TIP_PATRONS_ROOM) lines.push(backers);   // AUDIT TOWN-ECON 2 LIV-3: where the card has room
   return { title: name, lines };
 }

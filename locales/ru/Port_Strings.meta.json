@@ -3209,6 +3209,16 @@
   "tr": "616cb2ff7b66",
   "by": "claude-in-session"
  },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "438f30749ba8",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "c5403338807c",
+  "by": "claude-in-session"
+ },
  "account.refusal.townsNeedAccount": {
   "en": "9bb358900bd3",
   "tr": "d70e1daac1ae",
@@ -9356,7 +9366,7 @@
  },
  "lw.econ.booming.a": {
   "en": "4d71079574bd",
-  "tr": "9c4df02000ae",
+  "tr": "30579090834a",
   "by": "claude-in-session"
  },
  "lw.econ.booming.b": {
@@ -9366,7 +9376,7 @@
  },
  "lw.econ.destitute.a": {
   "en": "037c6a0947fd",
-  "tr": "da1b5551b1a3",
+  "tr": "120c51de7a0d",
   "by": "claude-in-session"
  },
  "lw.econ.destitute.b": {
@@ -9376,7 +9386,7 @@
  },
  "lw.econ.struggling.a": {
   "en": "7a83adc425a6",
-  "tr": "2777b2beb217",
+  "tr": "6046b8d92836",
   "by": "claude-in-session"
  },
  "lw.econ.struggling.b": {
@@ -9386,7 +9396,7 @@
  },
  "lw.econ.thriving.a": {
   "en": "7d8beddca499",
-  "tr": "315d2dea056b",
+  "tr": "a035125653e4",
   "by": "claude-in-session"
  },
  "lw.econ.thriving.b": {
@@ -23449,6 +23459,11 @@
   "tr": "fea897eb050a",
   "by": "claude-in-session"
  },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "318e7380da90",
+  "by": "claude-in-session"
+ },
  "search.searchedBy": {
   "en": "e585f232c88f",
   "tr": "4bfacc00bb26",
@@ -23950,8 +23965,13 @@
   "by": "claude-in-session"
  },
  "town.econ.patrons": {
-  "en": "50c14b5f5c9e",
-  "tr": "ea8440afca16",
+  "en": "8117068de7a1",
+  "tr": "db19300d6f53",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "b21e05813602",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {
@@ -23987,6 +24007,11 @@
  "town.econ.reason.festival": {
   "en": "9fbe07c593f3",
   "tr": "78272d39647c",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "ea502efd47ed",
   "by": "claude-in-session"
  },
  "town.econ.reason.levy": {

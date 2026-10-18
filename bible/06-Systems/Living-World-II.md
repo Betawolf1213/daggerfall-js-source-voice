@@ -411,7 +411,9 @@ Mac: "caravans ... that can be assaulted, protected or traded with". The law is 
   and `mountServiceWindow`: outdoors on the talk's overlay, never `interiorOverlay`. Its building is the counter's
   (kind, quality, name - "Ada Lark's caravan" - and the region at the party's place). Prices are the counter's own,
   with the region's adjustment.
-  - A friend's counter takes FRIEND_DISCOUNT (10%) off what the player buys (`shopAdjustment`'s `roadDiscount`).
+  - A friend's counter takes FRIEND_DISCOUNT (10%) off what the player buys (`shopAdjustment`'s `roadDiscount`) - and,
+    AUDIT TOWN-ECON 2 PRICE-4 (2026-10-18, `06-Systems/Town-Economy-Arc.md` 7.5), off what it pays: what a counter pays is
+    never above what it asks this player, so its endless Campfire bought and sold back never pays.
   - The window's own steal, caught, is the road's crime (4.3), never the watch: no city guard is called.
 
 ### 4.3 The deeds, reported (Living World II decision 5)

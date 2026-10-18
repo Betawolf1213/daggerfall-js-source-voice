@@ -18,7 +18,7 @@
 // and the day's "Fine day." keep their hours (heard at six in the evening, and by the night watch), and a trade's pool
 // is the trade's once however many share it: a pair of homemakers drew their trade's one script half the time, and
 // "The baker's bread is getting smaller." opened a fifth of the town's talk.
-import { t } from '../textManager.js';   // TOWN-ECON TE3: the town's talk of trade in the player's language (L10N4)
+import { t, textRevision } from '../textManager.js';   // TOWN-ECON TE3: the town's talk of trade in the player's language (L10N4)
 import { seededRng } from '../wind/wind.js';
 import { BUILDING_TYPES } from '../../world/buildingNames.js';
 
@@ -571,8 +571,13 @@ const econRows = () => [
 /** @type {Readonly<Record<string, ReadonlyArray<ReadonlyArray<string>>>> | null} */
 let _econNews = null;
 let _econSig = '';
-/** TOWN-ECON TE3: the town's talk of trade by band, in the player's language now. */
+let _econRev = -1;
+/** TOWN-ECON TE3: the town's talk of trade by band, in the player's language now. AUDIT TOWN-ECON 2 LIV-12: its words
+ *  read again only when the text core's revision moved (textRevision - a locale switched, a table patched): every
+ *  built town's talk asks it each frame, and each ask said its eight lines and joined them to look at its memo. */
 export function townEconNews() {
+  if (_econNews && textRevision() === _econRev) return _econNews;
+  _econRev = textRevision();
   const rows = econRows();
   const sig = rows.flat().join('\u0001');
   if (!_econNews || sig !== _econSig) {

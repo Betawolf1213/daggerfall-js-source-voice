@@ -2779,6 +2779,16 @@
   "tr": "9e8aa6a6f9a0",
   "by": "claude-in-session"
  },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "37e4ad4ec8cf",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "3ed38ba715e9",
+  "by": "claude-in-session"
+ },
  "account.refusal.townsNeedAccount": {
   "en": "9bb358900bd3",
   "tr": "bcc566a00cad",
@@ -8329,6 +8339,11 @@
   "tr": "8db500dd918c",
   "by": "claude-in-session"
  },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "132ac38d9103",
+  "by": "claude-in-session"
+ },
  "settings.language.machine": {
   "en": "048283a78ca3",
   "tr": "cf1d6c9dbd53",
@@ -8810,8 +8825,13 @@
   "by": "claude-in-session"
  },
  "town.econ.patrons": {
-  "en": "50c14b5f5c9e",
-  "tr": "580b53f05d70",
+  "en": "8117068de7a1",
+  "tr": "088d3d5d2476",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "a540edf84843",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {
@@ -8847,6 +8867,11 @@
  "town.econ.reason.festival": {
   "en": "9fbe07c593f3",
   "tr": "6ce935f88287",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "9eac12f50919",
   "by": "claude-in-session"
  },
  "town.econ.reason.levy": {
