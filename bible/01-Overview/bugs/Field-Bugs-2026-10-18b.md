@@ -314,7 +314,7 @@ first: true`.
 - **The crafter's limit** (`06-Systems/Professions-Arc.md` 3.2, DECIDED; Mac kept it at CAP-OFF): two crafts past
   Journeyman, every other stopped at `professionLaw.js:"return past >= CRAFTS_ABOVE_JOURNEYMAN ? xpForRank(JOURNEYMAN_RANK + 1) - 1 : PROF_XP_MAX;"` -
   one XP short of 51, the report's "1xp off". The service credits each act through its own INSERT,
-  `professions.js:"MAX(0, MIN(?10 + f * ?13, ${Number(cap)} - COALESCE("` (the smelt's, temper's, brew's and disenchant's
+  `professions.js:"MAX(0, MIN(?10 + f * ?13, ${cap} - COALESCE("` (the smelt's, temper's, brew's and disenchant's
   alike), so at that ceiling every act pays none, its first's 500 too. With Provisioning at 50 the same craft paid 60
   and 500. Nothing else pays a rank-50 craft none (the Firmament's XP floors at -30%). The player's other two crafts are
   not in the screenshot, but only the limit makes that exact figure.
@@ -332,7 +332,19 @@ enchant rows say "+0". The craft's word says the limit, never a bonus the limit 
 crafter's limit holds it at rank 50", and "A character raises only 2 crafts past Journeyman: yours are Building and
 Provisioning, so your other crafts stop at rank 50. No craft's rank is ever lowered." (before the second: "once 2 of
 yours pass rank 50, the others stop there"). The six new strings in the thirteen whole languages and each glossary.
-The service decides as before: no account version moves.
+AUDIT FB1018b L5-1: the service's limit was not one decision. Each act bound `craftXpCap` of a track read several
+awaits before its batch as a literal, so two acts at once on two tracks at 50, with one other craft past, each read one
+past, each bound Master's ceiling, and both crossed - three past, and every one of the three then held at 26,009 for
+good (reproduced at all five stations on the real Worker). Each decision and its track's write now count the other
+crafts past Journeyman in their own statement (`professions.js:"export function craftCapSql(p, c, profession) {"`; a D1
+batch is one transaction): the anvil, the forge's smelt and works, the temper, the brew and the disenchant. No wire or
+account version moves. L5-2: for a character already there, a craft held past its ceiling is said at its own rank ("holds
+Smithing at rank 60"), never at 50 (`craftLimit` answers the rank it holds). L5-3: a third craft below 50 reads its next
+rank's figure ("1,005 / 1,210 XP"), the ceiling line only at the rank it is held at. L5-4: a Master's craft word is the
+top's, "(+200 Smithing XP - Smithing is at Master)" (`prof.craft.xpTop`, in the thirteen whole languages) - it fell
+through to "with the first-time bonus", and at 99,800 a first the top ate was said as paid. AUDIT FB1018b L6-6: five
+languages named a craft "a made item" in the rule (bg, cs, it, ro, ru) and de "Arbeiten" in the count; each now the
+house's word for a craft.
 
 OPEN, for the owner: whether a craft may be let go back to 50 (as a specialisation is changed). Not built: it changes
 3.2.
@@ -342,15 +354,17 @@ ceiling). `worldModes.js`, `exterior.js` and `dungeonContext.js` build no statio
 temper's and disenchant's words ("(+0 ...)" - their stations say it first; they claim no bonus); the forge, which states
 no figure. Our own feature: no DFU member moves.
 
-Found and left: `tools/mutants/prof12.json`'s `PROF12-book-dis-unapplied` (profBook.js) survives, on main's
-`138604baa` too - older than this slice, not touched by it.
+AUDIT FB1018b L5-5: `tools/mutants/prof12.json`'s `PROF12-book-dis-unapplied` was misaimed, not a gap - its text ran on
+into the reforge's, which `craft4.json` already holds; re-aimed at the disenchant, it dies on `prof12_client`.
 
 Why no test saw it: the limit was pinned on the Worker and the lines on the page, never on one character; five tests
 certified a Master's figures the Worker never pays.
 
-Pins: `test/net/fb1018b_craftlimit.test.js` (6). PIN MOVED: `fb1015f_firstcraft`, `craft1_chain`, `prof9_client`,
-`prof12_client`. Mutants: `tools/mutants/fb1018b_craftlimit.json` (46, all dead); 14 older records re-aimed by content,
-all dead.
+Pins: `test/net/fb1018b_craftlimit.test.js` (13; AUDIT FB1018b L5-6 to L5-8: the Firmament's percent at the fire,
+alchemy, enchanting, the works and the held lines; the "At most" rooms between an act's XP and its first's 500; the rows
+in German and Russian). PIN MOVED: `fb1015f_firstcraft`, `craft1_chain`, `prof9_client`, `prof12_client`;
+`craft3_five`'s two bind pins (L5-1). Mutants: `tools/mutants/fb1018b_craftlimit.json` (79, all dead); 20 older records
+re-aimed by content, all dead.
 
 ## T6's other two: the sea off Tlactrn Manor - WOD-SEA-TEST fixed; Tunmont's docks - not found
 

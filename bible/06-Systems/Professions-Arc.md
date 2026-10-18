@@ -4184,7 +4184,12 @@ time you make this piece at this tier.", and the word "You made a Fine Silver Da
   The line read neither the limit (the report's 0) nor the stars (a Smithing XP star's percent, paid and never said),
   and a Master's stations promised figures a full track never takes (`PROF_XP_MAX - held` is none).
 - **DECIDED: the limit stands (the owner's) and is said where it acts; a station says what the service credits.**
-  Client only - the service decides as it did, and no account version moved.
+  The service decides by the same law; AUDIT FB1018b L5-1 made it one decision: each act's INSERT and its track's write
+  count the other crafts past Journeyman in their own statement (`server-account/src/professions.js` craftCapSql, a
+  D1 batch one transaction) - the ceiling had been `craftXpCap` of a track read before the batch, bound as a literal,
+  so two acts at once could raise a third craft past 50 and freeze all three for good. No wire or account version
+  moved. A craft already held past its ceiling is said at its own rank (L5-2); a third craft below 50 reads its next
+  rank's figure (L5-3); a Master's craft word is the top's, `prof.craft.xpTop` (L5-4).
   - The law (`src/net/professionLaw.js`): `craftLimit(profession, ranks, xp)` - `{ cap, room, by }`: `craftXpCap`'s
     ceiling, what the track can still take, and the crafts past Journeyman that hold it, in the tab's order (a
     gathering track never held, 3.2's "Gathering is unlimited"); `craftLimitOf(tracks, profession)` the same off the
