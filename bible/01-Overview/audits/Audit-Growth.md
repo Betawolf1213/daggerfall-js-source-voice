@@ -1,7 +1,7 @@
 # AUDIT GROWTH (2026-10-18) - the Growth tab, its guide, its stage and its words, audited
 
 The owner, of PR #997 (GROWTH1-GROWTH5, the TEXT pass and RVN-OWN-KNEEL, with RVN-STARS #999 merged in -
-`10-UI/Growth.md`, `01-Overview/bugs/Field-Bugs-2026-10-17f.md`): **"Comprehensive audit over everything to ensure
+`10-UI/Growth.md`, `01-Overview/bugs/Field-Bugs-2026-10-17g.md`): **"Comprehensive audit over everything to ensure
 perfection"**, beside **"Conprehensive pass on explanations and text to ensure no AI like text, over explanations, or
 weird descriptions exist"**. This page is the findings, each with its verdict. What the audit changed is written into
 `10-UI/Growth.md`'s sections as they now stand, each change marked AUDIT GROWTH and its id.

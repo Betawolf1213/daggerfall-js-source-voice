@@ -43,7 +43,7 @@
     "tests": [
       "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
+    "note": "FIELD BUGS 2026-10-17g RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
   },
   {
     "name": "RVN-OWNERS-CHOICE-the-street-peer-unread",
@@ -53,7 +53,7 @@
     "tests": [
       "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. A peer read as the owner passes the will: a party member's stood rank 3 kneels instead of tearing away."
+    "note": "FIELD BUGS 2026-10-17g RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. A peer read as the owner passes the will: a party member's stood rank 3 kneels instead of tearing away."
   },
   {
     "name": "RVN-OWNERS-CHOICE-the-street-stand-any-whole",
@@ -72,7 +72,7 @@
     "tests": [
       "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. My kill's pass at this gate is now the will alone: withheld, my Disintegrate on an unbroken rank 3 tears it away."
+    "note": "FIELD BUGS 2026-10-17g RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. My kill's pass at this gate is now the will alone: withheld, my Disintegrate on an unbroken rank 3 tears it away."
   },
   {
     "name": "RVN-OWNERS-CHOICE-the-street-stand-whole-kill-withheld",
@@ -91,7 +91,7 @@
     "tests": [
       "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
+    "note": "FIELD BUGS 2026-10-17g RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone."
   },
   {
     "name": "RVN-OWNERS-CHOICE-the-dungeon-stand-any-whole",
@@ -110,7 +110,7 @@
     "tests": [
       "test/systems/revenant/fb1016b_rvnownerschoice.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-17e RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. My kill's pass at this gate is now the will alone."
+    "note": "FIELD BUGS 2026-10-17g RVN-OWN-KNEEL (PIN MOVED): re-aimed by content - the owner's own whole blow passes the stand and the will and kneels it; the yield gate asks ownersWholeKill of the will alone. My kill's pass at this gate is now the will alone."
   },
   {
     "name": "RVN-OWNERS-CHOICE-the-dungeon-stand-whole-kill-withheld",

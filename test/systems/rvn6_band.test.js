@@ -216,7 +216,7 @@ test('RVN6 THE SCATTER: its master kneels - each follower runs from it (DFU\'s f
   assert.equal(g.dead, true, 'gone');
   assert.equal(g.escaped, true);
   assert.ok(!g.corpse, 'no body');
-  // a death scatters its band too - PIN MOVED (RVN-OWN-KNEEL, FIELD BUGS 2026-10-17e: my own Disintegrate kneels it now,
+  // a death scatters its band too - PIN MOVED (RVN-OWN-KNEEL, FIELD BUGS 2026-10-17g: my own Disintegrate kneels it now,
   // so the death here is a host's with no fates, exterior.js's)
   N._resetRevenantForTests(); said = [];
   const d = await stood(p, 2, { pool: rig(p, { fates: false }) });
@@ -273,7 +273,7 @@ test('RVN4 RANK 5, built with RVN6: at its last stand its band\'s survivors run 
   c.f.roaring.until -= 5000;
   frame(c.pool);   // its roar spent - blows reach it again
   c.pool.damageFoe(c.f, 99999, [0, 0, 3], null, { fromPlayer: true, whole: true });
-  // PIN MOVED (RVN-OWN-KNEEL, FIELD BUGS 2026-10-17e: my own kill - a Disintegrate's whole - passes the stand and the will and KNEELS it)
+  // PIN MOVED (RVN-OWN-KNEEL, FIELD BUGS 2026-10-17g: my own kill - a Disintegrate's whole - passes the stand and the will and KNEELS it)
   assert.ok(c.f.yielded, 'my kill kneels it - and a kneel scatters as a death does');
   assert.ok(c.pool.foes.filter((g) => g.retinueOf === c.r.id && !g.dead).every((g) => g.scattering));
   assert.equal(said.filter((l) => /scatters/.test(l)).length, 1);

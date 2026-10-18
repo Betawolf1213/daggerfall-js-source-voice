@@ -1,80 +1,137 @@
-# FIELD BUGS 2026-10-17f - Disintegrate and your own revenant
+# FIELD BUGS 2026-10-17f - The key's week, and the peers in the air
 
-> Renumbered at two merges of main: #996's ORRERY-HEIGHT took `Field-Bugs-2026-10-17c.md`, #992's CURSE-CARRY
-> `Field-Bugs-2026-10-17d.md` and ORRERY-SIGHT `Field-Bugs-2026-10-17e.md` first; the test and the mutant record were
-> renamed with it (`fb1017f_`).
-
-One report from the Discord's #general, handed over as a screenshot, read on the code as it stands at main's `cb4b88484`.
-Revenants are the port's own (Daggerfall Unity has none); DFU's Disintegrate (`Disintegrate.cs:44-53`,
-`SetHealth(0)`) is unchanged for every other foe. The fix departs from RVN-OWNERS-CHOICE's own rule
-(`Field-Bugs-2026-10-16b.md`: "Your own Disintegrate still finishes your own").
+Two threads Mac handed over as screenshots on the evening of 2026-10-17: a direct message, and a picture from the
+Oblivion Gate. Read on the code at main's `81710c3a7`. (Main took `-17e` for ORRERY-SIGHT, migration 0129 for PRIVATE-REPORT and
+relay `world216` for PROX-VOICE, reverted with its row kept, so this record is `-17f`, its pins `fb1017f_*`, its
+migration 0130 and its relay `world217`.)
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | Dude7ox: "Disintegrate just outright kills your rev with no option to hire" - the card "REVENANT SLAIN - Skulthor, Psytha's Shadow - Rank 9 - Vampire - Elite ... Has fallen. Your revenant is no more."; the owner: "Hmm thought I fixed this. Ill look into it" | RVN-OWNERS-CHOICE took the delete away from everyone else's Disintegrate and kept it, on purpose, for the owner's own: the player's whole blow passed over the last stand, the will AND the kneel, to the death arm and `revenantSlain` | fixed (RVN-OWN-KNEEL) |
+| 1 | A player, by direct message, the evening after KEY-LAW shipped: "bruhhhh it was that keyyyyy", over the notice "The realm's law has held this character three times. Its trading is frozen until October 24 at 3:21 AM, then opens on its own." - then "like 5 other people in reporting same thing" | Law 6 struck every Weir Key (KEY-LAW), and three keys taken up one after another made AUTO-HOLD's week. Migration 0125 lifted that week only for a character whose every law finding, ever, was the key's. A finding already judged and cleared (0123's Aetheric pieces, which the gate's own farmers wear) or one an older law laid stood in that history, so the week stood | fixed (KEY-LIFT) |
+| 2 | "People floating in mid air for some users", with a screenshot from the Oblivion Gate in the Alik'r before Dagon's Breach opened: the crowd's bodies, names and health bars hanging tens of metres over the sand, scattered up and down, and the reporter's own body on the ground | A pose's height is the sender's own ground's, and nothing kept two builds apart online (`03-World/Landforms.md` C2): a copy on an older ground - a macOS or portable desktop copy never updates itself - drew every peer on the current ground in the air, and was drawn under it | fixed (GROUND-GATE), Mac's call: the relay turns an old build away while `groundGate` is on |
 
-## RVN-OWN-KNEEL: no blow skips the kill-or-spare
+## KEY-LIFT: the key's week, lifted where the key made it
 
-`src/systems/revenant/revenantFate.js` ownersWholeKill (its law unchanged, its word); `src/scenes/exteriorFoes.js`
-damageFoe; `src/scenes/dungeonContext.js` damageFoe.
+`server-account/migrations/0130_key_lift.sql` (new). No Worker, law, relay or client file moves.
 
-THE REPORT. #general, 2026-10-17, Dude7ox: "ight. Fun fact / Disintegrate just outright kills your rev with no option to
-hire", then "feck". The screenshot: the REVENANT SLAIN card for Skulthor, Psytha's Shadow (rank 9, a vampire, Elite),
-its last words "At least... I had the last word... didn't I?", "Has fallen. Your revenant is no more.", and its body,
-"Skulthor, Psytha's Shadow (dead)", open on its loot. "Hire" is SPARE: a spared revenant is sworn to the player as a
-companion (`06-Systems/Revenants.md` section 13).
+FOUND. KEY-LAW (`Field-Bugs-2026-10-17.md`) found that law 6 held every Weir Key as a template no honest client mints. The
+key is account-held and the pack is its face (`systems/eliteGates/weirKey.js` restackWeirKeys): a key spent leaves the
+pack empty and the next checkpoint clean, and the next key rolled is a new hold - a strike (`server-account/src/verdict.js`
+lawCountOf: a strike a hold, from a clean record). Three keys between the Breach going live and KEY-LAW's deploy were the
+third strike, and the third strike is a week's hold whatever the next checkpoint says (AUTO-HOLD, LAW_HOLD_S). The
+notice in the report is that hold with no piece named: law 7 finds nothing on the character now, and the week stands.
 
-FOUND. A Disintegrate is a whole blow (`effects.js:"sinks.hurt(left, { whole: true });"`). RVN-OWNERS-CHOICE
-(2026-10-16) made anyone else's whole blow a killing blow like any, and kept the owner's own as a kill - its record says
-so ("The owner's own Disintegrate and Razor still kill outright"): `ownersWholeKill` answered true for the player's own
-whole blow, and both doors' last-stand gate and yield gate passed it straight to the death arm and `revenantSlain`, the
-card in the screenshot. At rank 9 the fight had a last stand to make and a will to break; the Disintegrate passed both,
-and the kneel with them. Reproduced on `cb4b88484`: the new pins (below) are red on the unfixed doors - the owner's
-Disintegrate on the real street pool closed the record at rank 1 and at rank 3, and the dungeon's door returned `dies`.
+Migration 0125 lifted the week, the strikes and the hold for a character whose law findings were ONLY `template` on 575 -
+every `law` row it had, from the INTEGRITY arc's cutover on. Two kinds of history stood in the way:
 
-CHANGED (the owner: "Hmm thought I fixed this"; the reporter: "no option to hire"):
-- The owner's own whole blow - a Disintegrate, Mehrunes' Razor's whole-health strike - still passes over the last stand
-  and the will, the Disintegrate's recorded edge (`06-Systems/Revenants.md` 19, 20; `12-Enhanced-AI/Feud-Arc.md` 14.2,
-  15.1), and now stops at the kneel: alive at 1, its record open, KILL or SPARE offered. Both doors' yield gate asks
-  `ownersWholeKill` of the will alone (`exteriorFoes.js:"if (fates && revenantMayYield(f)) {"`,
-  `dungeonContext.js:"if (opts.fates && (!onlineRoom() || !isRoomFoe(foe)) && revenantMayYield(foe)) {"`). KILL is the
-  execution, its trophy in the pile and its record closed as executed; SPARE swears it.
-- Unchanged: anyone else's whole blow (a party member's `z`, a foe's, a companion's, a stat drained to zero) is a killing
-  blow like any - the stand, then, unbroken, the tear-away (RVN-OWNERS-CHOICE). A host that cannot open the choice
-  (`exterior.js`, no `fates`) lets a revenant die to any killing blow, the owner's Disintegrate too, as REVENANT-FATE
-  always has: nothing there could judge a kneeling one.
-- DECIDED here, named: the owner's Disintegrate kneels it past the stand and the will, rather than becoming a killing
-  blow like any. As a killing blow like any it would make a rank 3+ revenant with an unbroken will stand, and the next
-  one lose it to the smoke - the Disintegrate the arc wrote as the answer to both (Feud-Arc 14.2, 15.1) would be the one
-  spell that cannot win the fight. This keeps that edge and takes only the delete.
-- Not changed: a revenant already closed by a Disintegrate stays closed. Its record is `defeated` in the save, and
-  nothing tells a Disintegrate's close from any other death there to reopen it.
+- a finding a staff act or a lift migration had already judged wrong and cleared. MAKER-KEPT's 0123 cleared every
+  character held over Ruhn's Regalia enchanted before AETHERIC-MAKER (`Field-Bugs-2026-10-16c.md`), and left the findings
+  in place, as every staff act does. Ruhn's Regalia is the gate boss's set, and its wearers are the players who farm the
+  gate, which drops the keys;
+- a finding an older law laid that a later law no longer makes, where no lift came with the move. It stood as a strike
+  until it faded, so one of those and two keys were a week as well.
 
-THE FOUR HOSTS: world.js and worldModes.js - WIRED through exteriorFoes' one door (no host line); dungeonContext.js -
-WIRED, its own door's yield gate edited in place (one line for one, no code line added: the host does not grow);
-exterior.js - the same door, no `fates`, FLAGGED as in Feud-Arc 32 and `Field-Bugs-2026-10-16b.md` (its revenants die to
-any killing blow; no net, so no peer's blow reaches it).
+The report's timing fits the first: a week from 3:21 AM on 2026-10-17 in any American zone is after the Breach went live
+(`399fe1605`, 03:50 UTC) and before KEY-LAW's account deploy (run 272, 12:49 UTC), so law 6 laid it and 0125 passed over
+it.
 
-Pinned by `test/systems/revenant/fb1017f_rvnownkneel.test.js` (4): the report on the real street pool (the real
-Disintegrate through the host's sink kneels it, Kill and Spare offered, Spare swears it); rank 3 with its will unbroken
-(no stand, no tear-away, the kneel, then Kill's execution, the record executed, the trophy in the pile); a host with no
-fates (it dies as before); and the dungeon's door mounted from its source over the real law (the owner's whole kneels at
-rank 1, at rank 3 and once stood with its will unbroken; a party member's still stands and tears away; a room's shared
-foe online and a door with no fates let it die). `tools/mutants/fb1017f_rvnownkneel.json` (6).
+Why no test saw it: `test/server/fb1017_keylaw_lift.test.js` built every character with no finding before the key's, and
+pinned "a hold with any other finding untouched" as the conservative half - true of a finding that could still be
+holding, not of one already cleared.
 
-PINS MOVED (each marked PIN MOVED where it stands): `fb1016b_rvnownerschoice.test.js` (the owner's own Disintegrate on
-the street, rank 1 and 3, and underground), `revenant_fate.test.js` (no door, no yield; the dungeon's gate as written),
-`rvn4_stand.test.js` (BY RANK's Disintegrate; the dungeon's seam ahead of the will), `rvn3_weak.test.js` (THE WILL's
-Disintegrate; the dungeon's will gate as written), `rvn6_band.test.js` (a death's scatter now a no-fates host's death; at
-rank 5 the owner's Disintegrate kneels it, and the kneel scatters its kin). Mutant records re-aimed by content, because
-the lines they named changed: five in `fb1016b_rvnownerschoice.json` (the two `whole-kill-withheld` now name the will,
-the privilege the owner's kill keeps at the yield gate), `REVENANT-FATE-dies-as-before`, and RVN3's two
-`kneels-unbroken`.
+DFU has no realm, no law and no Weir Key. This is our own service's record, so no DFU member or ledger row moves.
 
-FLAGGED (as `Field-Bugs-2026-10-16b.md` flagged it): `audit24_lifetimes.test.js`'s proximity bound (`health <= 0`
-within 4,200 characters of `releaseFoeBatch(f)`) stands at 4,170 in exteriorFoes' death arm - the door's comment was
-tightened to keep it, not the bound moved.
+FIXED. Migration 0130 reads only what still counts. A character's count was zeroed by its last staff `clear` or
+`rollback` act (review.js), 0123's and 0125's lifts among them, but not by 0120's copies' `clear`, which zeroed no strike.
+Only the law findings since then are read, and an excused finding is not one (it held nothing). A finding is the key's
+when every piece it names is a Weir Key's `template` or an id on another piece (`uid`, never a strike - verdict.js). Every
+other finding is one that could have struck without the key, including a count past its kept list (FINDINGS_KEPT) and an
+unreadable list. Where a key's finding stands among fewer than three of those (judge.js STRIKES_FOR_TIMED), the key made
+the week. The migration then lifts the timed hold and every timed hold served. The strikes kept are the most the other
+findings could have struck (one each, and never more than the character was counted), and their fade counts from the
+last of them. A character whose week an act made since (0120's `timed`) is left as it was, and so are staff's holds. The
+hold lifts only where no other finding holds it (`law_sig` none, or the key's alone). A character still carrying another
+piece stays held until it is gone, with its signature kept, so that checkpoint is no new strike. The key's own signature
+is dropped: law 7 has judged every checkpoint since 0125's deploy and finds no key, so it stood for a clean record, and
+kept it would have made the next real finding no strike. Each lift is written among the character's findings as a staff
+act (`by: 'key-lift'`) with what it lifted and the strikes it kept.
 
-What the reporter is owed: you were right - your own Disintegrate still deleted your own revenant, with no choice. It now
-brings it to its knees - past its last stand and its will, as a Disintegrate always did - and Kill or Spare is yours.
-Skulthor stays fallen: a record the old rule closed is not reopened.
+The migration applies on the account deploy's next run (any change under `server-account/` runs it). It needs no new
+Worker, so `ACCOUNT_VERSION` does not move.
+
+`test/server/fb1017f_keylift.test.js` (3), through the real Worker and the real migrations. First, the report: a character
+cleared by the real 0123, then held a week by three keys. 0125 leaves it held, 0130 lifts it whole, and its next
+checkpoint carrying keys holds nothing. Second, a strike the real verdict laid on a forged piece, then two keys: the week
+is lifted, the one strike is kept with its own finding's fade, and the piece taken up again is the second strike, not a
+week. Third, what counts and what does not, across twelve characters. A person's clear and a rollback end the count, and
+0120's copies' clear does not. An excused finding and an id on another piece strike nothing, and a count past its kept
+list could. A carried piece's hold stands. Three other findings, 0120's week, staff's hold, a week with no key in it and
+a character 0125 already lifted are all untouched. The first test fails on main: 0130 does not exist, and 0125 leaves the
+week standing. `tools/mutants/fb1017f.json`: 15 mutants, all dead (each boundary, each exclusion, the threshold, the cap,
+the kept strikes and their fade, the hold another piece makes, the key's signature, staff's).
+
+## GROUND-GATE: a build on an older ground turned away
+
+`src/net/wire.js` GROUND_LAW, GROUND_LAW_WIRE_MAX, groundRoom, GROUND_OLD_REASON and the hello's `gl`, RELAY_VERSION
+`world217`; `server/src/index.js` `_groundRefusal` and its call in the hello, GROUND_OLD_WORDS, the setting's refusal;
+`src/net/relayCfg.js` `groundGate`; `src/net/online.js` `_helloFrame`; `tools/groundPrint.mjs` and
+`test/fixtures/groundPrint.json` (new).
+
+FOUND. The receiver draws a peer where the sender says its feet are: the overworld's pose carries the feet's height
+less the floating origin (`scenes/world.js`, the pose's `y`), the relay fans it unchanged (SLIM-FRAME rounds it to the
+centimetre), and the bodies stand on it (`net/remotePlayers.js`, `net/peer/peerBodies.js`). No peer layer asks its own
+ground. So a peer floats when the sender's ground stands over the receiver's at that spot. The gate's own clearing is
+the same on every client (World of Daggerfall is forced on online, and the gate's spot is the day's), and strangers'
+Elite Breach arches, whose clearings differ between clients, never stand within 300 m of a Dagon's Breach
+(`scenes/eliteGates/egArch.js` EG_ARCH_GATE_NEAR_M). The landforms are forced on online, so two current builds stand
+one ground. What remains is two builds: AUDIT LANDFORMS C2 had named it and left it to Mac. A deploy reloads no open
+tab, and the macOS and portable desktop copies never update themselves (`01-Overview/Desktop-App.md`, "Which copies").
+Measured on the landforms' synthetic world in a desert climate, at three pixels, the landforms' ground stands 60-83 m,
+243-264 m and -9 to 1 m over the classic ground, about 20 m apart inside each - a crowd high and scattered, as the
+screenshot's (the classic ground is a copy from before the landforms; a copy from between two later ground slices
+parts by less).
+
+Not verified here: the reporters' builds. The record asks the players who see it whether theirs is a macOS or portable
+desktop copy, or a tab open for days.
+
+Mac's call (2026-10-18, of three: the relay turns old builds away; each client stands peers on its own ground; or ask
+the reporters first): "Relay turns old builds away".
+
+DFU has no multiplayer. This is our own relay's law, so no DFU member or ledger row moves.
+
+FIXED. A hello to a ground room (`groundRoom`: a cell, a building's or a dungeon's place, a battle, an owned room - the
+rooms whose peers stand on each client's own ground) says the ground its build stands on, `gl` (GROUND_LAW, 1 for the
+ground at this merge). Any other value is read as none, the `w2` law, never refused at the parse. While the relay
+setting `groundGate` is on, such a room refuses a hello that says less or none before anything is written. The error
+frame carries the relay's words ("This copy of the game is older than the world online. Update it to play online:
+reload the page, or download the latest desktop release."), which every build shows as its own error, and the close
+carries a reason of its own (`old ground`), because a WebSocket close reason is at most 123 bytes. A refused session goes
+terminal and does not loop. The hub and every social room let an old build in, so its friends and chat stand.
+
+A hello on the ground asks nothing. An old one asks the hub's settings at most every RELAY_CFG_TTL_MS, and waits for the
+answer while the room has never had one, so a cold cell's first hello is not the one let through.
+
+THE SWITCH STARTS OFF. The relay deploys first and the site last (the account service waits on the relay, and the site
+on the service), so a gate in force at the relay's deploy would refuse every player, a reload included, until the site
+served this build. Once it does: `/relay groundGate on` (a developer's command). Every copy from before this merge says
+no `gl`, so turning it on turns away every tab not reloaded since and every desktop copy not updated since - the price
+of the choice, paid once.
+
+THE LAW MOVES WITH THE GROUND. `test/net/fb1017f_groundgate.test.js` holds the shaped ground (`generatePixelTerrain`,
+landforms on, over the landforms' synthetic world: a pixel by the network's road and river and one on the mountain's
+flank, in each of CLIMATE.PAK's ten lands, read every 8 samples) to the print recorded under GROUND_LAW
+(`test/fixtures/groundPrint.json`). A move past half a metre anywhere fails until GROUND_LAW moves, RELAY_VERSION with
+it, and the print is recorded again (`node tools/groundPrint.mjs --write`); inside it is a float's noise, which no peer
+is seen to float by. The print does not read the real data: a ground that moves only there (a World of Daggerfall
+site, a location's blend) names its bump in its own slice.
+
+`test/net/fb1017f_groundgate.test.js` (4): the ground is the print recorded under its law; the wire's `gl` and the ground
+rooms; the relay's door through a real Room - off, an old build let in; on at the hub, a cold cell's first old hello
+asked of the hub and refused with the words and the close, nothing written, the current build let in without an ask,
+the hub itself open to an old build, the setting on and off alone, and off again inside a TTL; the client's hello says
+the ground to the room it goes to, a halo cell's included, and a refused session stops. Pins moved: RELAY_VERSION's
+(`world217`, 43 files), the settings' names and vars (`test/net/scale5b.test.js`). `tools/mutants/fb1017f.json`: 13 more
+mutants, all dead (the room's test, the law's, the cold ask unawaited, the setting unread or any value taken, the door
+dropped, the close reason whole, the wire's bound and rooms, the client's room and field, and the print against
+MOUNTAINS-SHARP's peaks halved and the Alik'r's dunes lowered).
+
