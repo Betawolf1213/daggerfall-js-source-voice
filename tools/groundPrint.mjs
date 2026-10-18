@@ -10,7 +10,7 @@
 //
 //   node tools/groundPrint.mjs --write    records the print under GROUND_LAW (test/fixtures/groundPrint.json)
 import { writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { isMain } from './lib/isMain.mjs';
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../src/formats/woodsFile.js';
 import { generatePixelTerrain } from '../src/world/terrain/terrainGen.js';
 import { MAX_TERRAIN_HEIGHT, STREAMING_TERRAIN_SCALE, HEIGHTMAP_DIMENSION } from '../src/world/terrain/terrainSampler.js';
@@ -62,7 +62,7 @@ export function groundMoved(recorded, now) {
   return { most, at };
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isMain(import.meta.url)) {
   if (!process.argv.includes('--write')) { console.log('node tools/groundPrint.mjs --write records the print under GROUND_LAW'); process.exit(0); }
   const print = groundPrint();
   writeFileSync(GROUND_PRINT_FILE, `${JSON.stringify(print)}\n`);
