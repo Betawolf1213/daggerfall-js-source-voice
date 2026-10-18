@@ -780,6 +780,12 @@ const REGISTRY = new Map([
   }],
 ]);
 
+/** HELD-BASE (FIELD BUGS 2026-10-18b): WHETHER A POWER WORKS OFF THE BODY - its row answers the Used payload, the one a
+ *  piece in the pack fires (useItem.js's doItemEnchantmentPayloads(PAYLOAD.Used)). Every other row is read on a worn
+ *  piece (Equipped, Held: computeEnchantmentMods walks equippedEnchantedItems) or on the blow it strikes, so a piece no
+ *  slot takes carries it for nothing (loot.js createRegularMagicItem). */
+export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;
+
 function applyRepMod(entity, param, amount) {
   if (!entity.isPlayer) return;
   // AUDIT 63 F6: the ARRAY is eleven (PlayerEntity.cs:128-129); the

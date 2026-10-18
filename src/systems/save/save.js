@@ -43,6 +43,7 @@ import { BINDER_GIFT, giveBinderGift, cleanBinders } from '../iliac/iliacItems.j
 import '../professions/profTemplates.js';   // PROF2: the ores, ingots and stone a pack may hold, known to every scene a save loads in
 import '../rest/restItems.js';   // REST6: the seven rest supplies (1700-1706), known to every scene a save loads in
 import { repairRarityNames, repairRarityBases } from '../loot/lootRarity.js';   // DISC29-B: a Magic or Rare Roleplay & Realism: Items piece given back its make's word; RARITY-WEAR: a rolled wand worn as an Amulet
+import { repairMagicBases } from '../loot/loot.js';   // HELD-BASE: a MAGIC.DEF piece whose powers need wearing, on a base no slot takes, worn as an Amulet
 import { SOCIAL_GROUPS } from '../../formats/factionFile.js';   // AUDIT 24
 import { travelMapSaveData, restoreTravelMapSaveData } from '../travel/travelMapState.js';   // U41: TravelMapSaveData
 import { getEscortFacesSaveData, restoreEscortFacesSaveData } from '../../ui/hud/hudEscortFaces.js';   // FE1: SaveData_v1.escortingFaces
@@ -747,6 +748,13 @@ export function repairItemLists(repairLists) {
   for (const list of repairLists) {
     const n = repairRarityBases(list);
     if (n) console.info(`[save] RARITY-WEAR: ${n} rolled piece(s) on a base nothing can wear moved to one a slot takes`);
+  }
+  // HELD-BASE (FIELD BUGS 2026-10-18b): a MAGIC.DEF piece minted on a religious item or a Wand with powers read on a worn
+  // piece alone (Enhances Skill, Cast When Held, Absorbs Spells) - never once applied - moved to the Amulet (loot.js
+  // repairMagicBases), every list, as the rolled ones above
+  for (const list of repairLists) {
+    const n = repairMagicBases(list);
+    if (n) console.info(`[save] HELD-BASE: ${n} magic item(s) whose powers need wearing moved to a base a slot takes`);
   }
   // AUDIT CARDS-6 A6: every card worth its tier's worth (iliacItems.js cleanBinders - a card minted before CARDS9 carried
   // a coin's) in every list, not the pack's alone: one in the wagon, the bag or a house chest kept its coin after a load
