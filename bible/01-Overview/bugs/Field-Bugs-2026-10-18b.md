@@ -5,6 +5,9 @@ request #1012), under the same order: "No band aid fixes". Read on main at `1386
 traced by a lane of its own on the real modules; a fix lands only where the cause is proven, and where it is not, the
 record says so and what would prove it. The pins are `fb1018b_*`, the mutants `tools/mutants/fb1018b_*.json`.
 
+AUDIT FB1018b (`01-Overview/audits/Audit-Field-Bugs-2026-10-18b.md`, Mac: "Audit everything first") read the whole
+batch cold; each of its findings is written in below where it lands, marked with its id.
+
 | | Report | What it was | Done |
 |---|---|---|---|
 | T1 | SuperDaddy, "Leaping effect on store bought magic items": "Says it enhances dragonish, but appears on things you can't equip like wands ... Same case with magic items for sale that have the suffix "Venom spitting" but cast levitation" | The two names are crossed: Leaping casts Levitate and Venom Spitting enhances Dragonish (the language skill), both classic's own MAGIC.DEF. The defect is the base: a power that works only worn was drawn onto a base no slot takes | fixed (HELD-BASE); Leaping's and Venom Spitting's powers are the owner's call |
