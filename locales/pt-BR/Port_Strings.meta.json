@@ -9671,7 +9671,7 @@
  },
  "growth.spec.lead": {
   "en": "f976122d4ce0",
-  "tr": "1282fa342164",
+  "tr": "b76bb9c8e57b",
   "by": "claude-in-session"
  },
  "growth.spec.martial": {
@@ -9735,8 +9735,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.done": {
-  "en": "41683c1c1408",
-  "tr": "9a767a0b7f36",
+  "en": "68ca36084fc9",
+  "tr": "80e00d174e7f",
   "by": "claude-in-session"
  },
  "growth.spec.reset.keep": {
@@ -9751,12 +9751,17 @@
  },
  "growth.spec.reset.loseSpell": {
   "en": "0f3fc1a3adab",
-  "tr": "3fa5986adbcd",
+  "tr": "90df9bceea98",
   "by": "claude-in-session"
  },
  "growth.spec.reset.loseTechnique": {
   "en": "b1ab8bd53d73",
-  "tr": "227c8d330574",
+  "tr": "8c89451ad323",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.loseUnbought": {
+  "en": "fdf418b88337",
+  "tr": "9dbb87d0a257",
   "by": "claude-in-session"
  },
  "growth.spec.reset.off": {
@@ -9774,9 +9779,9 @@
   "tr": "5f34088ca455",
   "by": "claude-in-session"
  },
- "growth.spec.reset.refuse.none": {
-  "en": "c7263f026976",
-  "tr": "d4eb62e99a30",
+ "growth.spec.reset.refuse.goldOffline": {
+  "en": "399f9025d743",
+  "tr": "cd9e89e8bdbe",
   "by": "claude-in-session"
  },
  "growth.spec.reset.refuse.nothing": {
@@ -9785,8 +9790,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.then": {
-  "en": "cbb19ea9a188",
-  "tr": "6affce60c172",
+  "en": "4689d68716e4",
+  "tr": "8f4a57e72a3b",
   "by": "claude-in-session"
  },
  "growth.spec.showAll": {
@@ -9955,8 +9960,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.why.closed": {
-  "en": "c7dcc40fb76b",
-  "tr": "380ac22000ca",
+  "en": "34e86a61dfd4",
+  "tr": "83dee6eb6436",
   "by": "claude-in-session"
  },
  "growth.spec.why.never": {
@@ -11045,13 +11050,13 @@
   "by": "claude-in-session"
  },
  "martial.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "eb15e1c1e0ef",
+  "en": "87f8a53b6e60",
+  "tr": "3b266bb79905",
   "by": "claude-in-session"
  },
  "martial.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "c9e8c68c6aba",
+  "en": "aeba9eeb0dc4",
+  "tr": "5e2c64503204",
   "by": "claude-in-session"
  },
  "martial.ranger.name": {
@@ -24805,13 +24810,13 @@
   "by": "claude-in-session"
  },
  "schools.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "eb15e1c1e0ef",
+  "en": "87f8a53b6e60",
+  "tr": "3b266bb79905",
   "by": "claude-in-session"
  },
  "schools.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "c9e8c68c6aba",
+  "en": "aeba9eeb0dc4",
+  "tr": "5e2c64503204",
   "by": "claude-in-session"
  },
  "schools.refuse.already": {

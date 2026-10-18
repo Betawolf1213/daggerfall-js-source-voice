@@ -1,32 +1,39 @@
 // SPEC-RESET (2026-10-18, the owner: "Lets allow players to reset their ingame builds for a high cost"; asked, the owner
 // chose the specialisations and 200k; bible/10-UI/Growth.md section 10). Pinned here:
-//   the law     a family's path given up for SPEC_RESET_GOLD (systems/specReset.js) - paid as every purchase is paid
-//               (court.js deductGold: the coins, else the letters and then the coins), refused short of coins and letters
-//               together or with nothing held; the masteries, the other family and the spellbook untouched
-//   the save    a reset path saves as none and loads as none - no mirror or witness gives it back
+//   the law     a family's path given up for SPEC_RESET_GOLD (systems/specReset.js) - paid as the Firmament's respec is
+//               (court.js payUndoable: the coins, else the letters and then the coins, online the Empire's account after),
+//               refused short of it or with nothing held; the masteries, the other family and the spellbook untouched; its
+//               one ask stays made, and the mods fold at once
+//   the save    a reset path saves as none and loads as none - and stays none across an older build's carry (the arcane
+//               mirror, AUDIT SPEC-RESET L2-1)
 //   the guide   the chosen path's Reset (ui/growth/specGuide.js): its ask, what it leaves, its refusals, driven in the
 //               pause window over the fake document (last: its globals stand for the rest of the file)
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import { playerEntity } from '../../../src/characters/playerEntity.js';
 import { createCharacter } from '../../../src/systems/chargen.js';
 import { SKILLS } from '../../../src/systems/skills.js';
 import { masterSkill } from '../../../src/systems/masterSkills.js';
-import { LETTER_OF_CREDIT_TEMPLATE } from '../../../src/systems/inventory.js';
+import { letterOfCredit } from '../../../src/systems/inventory.js';
 import { totalGoldAmount } from '../../../src/systems/court.js';
+import { createBankAccounts, EMPIRE_ACCOUNT_REGION } from '../../../src/systems/banking.js';
+import { computeEntityMods, entityStatMod } from '../../../src/systems/entityMods.js';
+import '../../../src/systems/arcanePowers.js';   // the passives' folds, registered at import
+import { raisePlayerSkills } from '../../../src/scenes/shared.js';
 import * as AP from '../../../src/systems/arcanePaths.js';
 import * as MP from '../../../src/systems/martialPaths.js';
-import { specResetRefusal, resetSpec, resetHeld } from '../../../src/systems/specReset.js';
+import { specResetRefusal, resetSpec, resetHeld, resetGold } from '../../../src/systems/specReset.js';
 import { signatureSpell } from '../../../src/systems/signatureSpells.js';
 import { snapshotPlayer, restorePlayer } from '../../../src/systems/save/save.js';
-import { specGuideModel } from '../../../src/ui/growth/specGuide.js';
+import { specGuideModel, stateLine } from '../../../src/ui/growth/specGuide.js';
 import { growthDue } from '../../../src/ui/growth/growthTab.js';
 import { dropStage } from '../../../src/ui/growth/growthStage.js';
 import { _resetForTests } from '../../../src/systems/uiPrefs.js';
 
-const { LongBlade: LB, ShortBlade: SB, Archery: AR, Axe: AX, Destruction: DES, Restoration: RES, Alteration: ALT, Mysticism: MYS, Illusion: ILL } = SKILLS;
+const { LongBlade: LB, ShortBlade: SB, Archery: AR, Axe: AX, Destruction: DES, Restoration: RES, Alteration: ALT, Mysticism: MYS, Illusion: ILL, Thaumaturgy: THA, HandToHand: HH, BluntWeapon: BL } = SKILLS;
 
 /** A made character of the given career groups, every skill at 30, `mastered` mastered (growth1_tab's hero). */
 function hero({ primary, major, minor, mastered = [] }) {
@@ -43,7 +50,7 @@ function hero({ primary, major, minor, mastered = [] }) {
  *  and Short Blade minor - so with the two primaries and two majors mastered, the one minor slot left still reaches a
  *  second path of each family (Restoration and Mysticism; Long Blade and Short Blade). */
 const spellsword = (o = {}) => hero({ primary: [LB, AR, DES], major: [RES, ALT, AX], minor: [MYS, ILL, SB], ...o });
-const letter = (value) => ({ group: 'MiscItems', templateIndex: LETTER_OF_CREDIT_TEMPLATE, name: 'Letter of Credit', value, stackCount: 1 });
+const letter = (value) => letterOfCredit(value);   // the game's own maker (inventory.js)
 const family = (m, id) => m.families.find((f) => f.id === id);
 /** A spellsword holding the Warden (Restoration and Alteration) and the Ranger (Long Blade and Archery), `gold` coins. */
 function held(gold, o = {}) {
@@ -65,14 +72,17 @@ test('SPEC-RESET THE PRICE: 200,000 gold a family, one constant both laws\' boxe
   for (const rows of [AP.pathChoiceRows(e, 'warden'), MP.martialChoiceRows(e, 'ranger'), AP.pathsOpenRows([AP.PATH_BY_ID.warden]), MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true })]) {
     assert.ok(!rows.join(' ').includes('cannot be undone'), rows.join(' | '));
   }
+  // AUDIT SPEC-RESET L4-5: the several-open boxes say the price on a row of its own (the classic parchment box is 288 px)
+  assert.deepEqual(AP.pathsOpenRows([AP.PATH_BY_ID.warden]).slice(-2), ['Choose one in your skill screen.', 'Resetting it later costs 200,000 gold.']);
+  assert.deepEqual(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true }).slice(-2), ['See them all and choose one on the Growth tab of the pause menu.', 'Resetting it later costs 200,000 gold.']);
 });
 
-test('SPEC-RESET THE LAW: a held path given up for exactly the price - the coins first, then a letter of credit and the coins after (court.js deductGold); the family\'s path cleared and nothing else: the other family, the masteries and the spellbook stand; the Growth rail counts the choice open again (mutants: the price unpaid; the wrong family cleared; the masteries taken)', () => {
+test('SPEC-RESET THE LAW: a held path given up for exactly the price - the coins first, then a letter of credit and the coins after (court.js deductGold\'s order); the family\'s path cleared and nothing else: the other family, the masteries and the spellbook stand; the Growth rail counts the choice open again (mutants: the price unpaid; the wrong family cleared; the masteries taken)', () => {
   const e = held(200000);
   e.spells = [signatureSpell('warden')];
   const mastered = [...e.masteredSkills];
   assert.equal(specResetRefusal(e, 'arcane'), null);
-  assert.deepEqual(resetSpec(e, 'arcane'), { ok: true, text: 'Warden reset. You can choose a new specialisation.' });
+  assert.deepEqual(resetSpec(e, 'arcane'), { ok: true, text: 'Warden is reset.' });
   assert.equal(e.arcanePath, null);
   assert.equal(e.goldPieces, 0, 'every coin of the price');
   assert.equal(e.martialPath, 'ranger', 'the other family stands');
@@ -104,9 +114,77 @@ test('SPEC-RESET THE REFUSALS: short of the price by one (coins and letters toge
   assert.equal(resetSpec(none, 'martial').text, 'You have no specialisation of this kind to reset.');
   assert.equal(none.goldPieces, 500000);
   assert.equal(resetSpec(none, 'firmament').text, 'No such specialisation.');
+  // offline the refusal says what pays (no bank account stands in the pause window)
+  const away = held(5);
+  away._online = false;
+  assert.equal(specResetRefusal(away, 'arcane'), 'Resetting costs 200,000 gold, paid in coins or letters of credit. You have 5.');
 });
 
-test('SPEC-RESET THE SAVE: a reset path saves as none and loads as none - the martial mirror goes with it, and the old signature spell in the book is no witness to a newer save\'s own null (mutants: the mirror kept; the witness read)', () => {
+test('AUDIT SPEC-RESET L1-1/L2-2 THE BANK, ONLINE: online the Empire\'s account pays what the coins and letters leave, as the Firmament\'s respec does - 200,000 coins weigh 500 kg, no purse carries them; a loan is not gold; offline no account pays (mutants: the account unread; the account read offline; a loan counted; the coins skipped)', () => {
+  const e = held(5000);
+  e.bankAccounts = createBankAccounts();
+  e.bankAccounts[EMPIRE_ACCOUNT_REGION].accountGold = 1000000;
+  assert.equal(resetGold(e), 1005000);
+  assert.equal(specResetRefusal(e, 'arcane'), null);
+  assert.equal(resetSpec(e, 'arcane').ok, true);
+  assert.deepEqual([e.goldPieces, e.bankAccounts[EMPIRE_ACCOUNT_REGION].accountGold], [0, 805000], 'the coins first, the account the rest');
+  // a loan is no gold to pay with
+  const loan = held(150000);
+  loan.bankAccounts = createBankAccounts();
+  loan.bankAccounts[EMPIRE_ACCOUNT_REGION].accountGold = -40000;
+  assert.equal(resetGold(loan), 150000);
+  assert.equal(specResetRefusal(loan, 'arcane'), 'Resetting costs 200,000 gold. You have 150,000.');
+  // offline: the region's account is not reached from the pause window
+  const away = held(5000);
+  away._online = false;
+  away.bankAccounts = createBankAccounts();
+  away.bankAccounts[EMPIRE_ACCOUNT_REGION].accountGold = 1000000;
+  assert.equal(resetGold(away), 5000);
+  assert.equal(resetSpec(away, 'arcane').ok, false);
+  assert.equal(away.bankAccounts[EMPIRE_ACCOUNT_REGION].accountGold, 1000000);
+});
+
+test('AUDIT SPEC-RESET L1-2 THE ONE ASK STAYS MADE: a path chosen on the guide (no ask ever made), then reset - the next quiet pass asks nothing, so it never offers back the path just paid away (mutants: the flag left; the wrong family\'s flag)', () => {
+  const e = spellsword({ mastered: [LB, AR, RES, ALT] });
+  e.masterSkillsInfoSeen = true; e.masteryPrompted = [...e.masteredSkills];
+  assert.equal(AP.choosePath(e, 'warden').ok, true);
+  assert.equal(MP.chooseMartialPath(e, 'ranger').ok, true);
+  assert.equal(e.pathPrompted, undefined, 'the guide\'s Choose makes no ask');
+  e.goldPieces = 400000; e.items = [];
+  assert.equal(resetSpec(e, 'arcane').ok, true);
+  assert.equal(resetSpec(e, 'martial').ok, true);
+  assert.deepEqual([e.pathPrompted, e.martialPrompted], [true, true]);
+  assert.equal(AP.nextPathChoice(e), null);
+  assert.equal(MP.nextMartialChoice(e), null);
+  const asked = [];
+  raisePlayerSkills(e, { ask: (rows) => asked.push(rows), say: () => {} });
+  assert.equal(asked.length, 0, 'no box on the next quiet pass');
+});
+
+test('AUDIT SPEC-RESET L1-3 THE MODS NOW: a passive\'s stats leave with the reset and come with a choice at once, not at the next magic round - the Enchanter\'s Glamour (mutants: no fold on the reset; none on the guide\'s Choose, the one ask\'s Yes or the classic sheet\'s)', () => {
+  const e = hero({ primary: [ILL, THA, LB], major: [DES, SB, AX], minor: [AR, HH, BL], mastered: [ILL, THA, DES] });
+  const enchanter = family(specGuideModel(e), 'arcane').paths.find((p) => p.id === 'enchanter');
+  assert.equal(enchanter.choose().ok, true);
+  const glamour = entityStatMod(e, 'personality');
+  assert.ok(glamour > 0, 'the guide\'s Choose folds at once');
+  e.goldPieces = 200000; e.items = [];
+  assert.equal(resetSpec(e, 'arcane').ok, true);
+  assert.equal(entityStatMod(e, 'personality'), 0, 'the reset folds at once');
+  computeEntityMods(e);
+  assert.equal(entityStatMod(e, 'personality'), 0);
+  // the one ask's Yes (scenes/shared.js raisePlayerSkills) folds at once too
+  const asked = hero({ primary: [ILL, THA, LB], major: [DES, SB, AX], minor: [AR, HH, BL], mastered: [ILL, THA] });
+  asked.masterSkillsInfoSeen = true; asked.masteryPrompted = [...asked.masteredSkills]; asked.martialPrompted = true;
+  raisePlayerSkills(asked, { ask: (rows, onYes) => onYes?.(), say: () => {} });
+  assert.equal(asked.arcanePath, 'enchanter');
+  assert.equal(entityStatMod(asked, 'personality'), glamour, 'the ask\'s Yes folds at once');
+  // and the classic sheet's two Yes boxes (DFU's Yes/No - driven in the classic sheet's own suites), by source
+  const sheet = readFileSync(new URL('../../../src/ui/charsheet.js', import.meta.url), 'utf8');
+  assert.match(sheet, /const r = choosePath\(e, p\.id\); if \(r\.ok\) computeEntityMods\(e\);/);
+  assert.match(sheet, /const r = chooseMartialPath\(e, p\.id\); if \(r\.ok\) computeEntityMods\(e\);/);
+});
+
+test('SPEC-RESET THE SAVE: a reset path saves as none and loads as none - the martial mirror goes with it, the arcane mirror says none, and the old signature spell in the book is no witness to a newer save\'s own null (mutants: the mirror kept; the witness read)', () => {
   const e = held(400000);
   e.spells = [signatureSpell('warden')];
   assert.equal(resetSpec(e, 'arcane').ok, true);
@@ -114,9 +192,37 @@ test('SPEC-RESET THE SAVE: a reset path saves as none and loads as none - the ma
   const snap = JSON.parse(JSON.stringify(snapshotPlayer(e)));
   assert.deepEqual([snap.arcanePath, snap.martialPath, snap.goldPieces], [null, null, 0]);
   assert.equal(snap.career.martialMirror, undefined, 'no mirror of a path given up');
+  assert.deepEqual(snap.career.arcaneMirror, { path: null, prompted: true, of: snap.characterId });
   const back = structuredClone(playerEntity);
   restorePlayer(back, snap);
   assert.deepEqual([back.arcanePath, back.martialPath], [null, null]);
+  assert.equal(back.career.arcaneMirror, undefined, 'the mirror is the save\'s, never the live career\'s');
+});
+
+test('AUDIT SPEC-RESET L2-1 AN OLDER BUILD\'S CARRY: a save that lost its `arcanePath` key is read by the career\'s arcane mirror, never the book - a path given up stays given up, a newer choice stays chosen; a mirror another character wrote, or a path its schools no longer back, is no mirror, and the book is read as before (mutants: the mirror unwritten; unread; read past the book\'s witness; the character\'s id unread)', () => {
+  const carried = (e) => { const s = JSON.parse(JSON.stringify(snapshotPlayer(e))); delete s.arcanePath; delete s.pathPrompted; return s; };
+  const load = (s) => { const b = structuredClone(playerEntity); restorePlayer(b, s); return b; };
+  // reset, carried: none - the 200,000 is not paid for nothing
+  const e = held(450000);
+  e.spells = [signatureSpell('warden')];
+  assert.equal(resetSpec(e, 'arcane').ok, true);
+  const a = load(carried(e));
+  assert.deepEqual([a.arcanePath, a.pathPrompted, a.goldPieces], [null, true, 250000]);
+  // reset, a newer path chosen without its spell, carried: the newer path - never the old one back for free
+  const n = held(250000, { mastered: [LB, AR, RES, ALT, MYS] });
+  n.spells = [signatureSpell('warden')];
+  assert.equal(resetSpec(n, 'arcane').ok, true);
+  assert.equal(AP.choosePath(n, 'necromancer').ok, true);
+  assert.equal(load(carried(n)).arcanePath, 'necromancer');
+  // another character's mirror (an heir's inherited career): the book is read, as AUDIT SCHOOLS L3 F2 reads it
+  const heir = carried(e);
+  heir.career.arcaneMirror.of = 'someone-else';
+  assert.equal(load(heir).arcanePath, 'warden', 'no mirror of its own: the witness');
+  // a mirror whose path its schools no longer back (the judge's pathFindings): no mirror
+  const bare = carried(n);
+  bare.masteredSkills = bare.masteredSkills.filter((s) => s !== MYS);
+  bare.spells = [];
+  assert.equal(load(bare).arcanePath, null);
 });
 
 // ── the guide ───────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -127,13 +233,21 @@ test('SPEC-RESET THE GUIDE\'S MODEL: a held path\'s Reset - none with nothing he
   assert.equal(family(specGuideModel(spellsword({ mastered: [LB, AR] })), 'arcane').reset, null, 'nothing held, no reset');
   const arc = family(m, 'arcane');
   assert.equal(arc.reset.refusal, null);
+  // AUDIT SPEC-RESET L1-5: no signature spell bought - none stays; one bought - it stays, an ordinary spell
   assert.deepEqual(arc.reset.rows(), ['Reset Warden for 200,000 gold?', '',
-    'You lose its passive. Its signature spell stays in your spellbook as an ordinary spell.', 'Your mastered skills stay mastered.', '',
-    'Then you can choose: Warden.', 'More paths unlock as you master more skills.']);
+    'You lose its passive, and its signature spell is no longer sold to you.', 'Your mastered skills stay mastered.', '',
+    'Open to you after the reset: Warden.', 'More paths unlock as you master more skills.']);
+  e.spells = [signatureSpell('warden')];
+  assert.equal(family(specGuideModel(e), 'arcane').reset.rows()[2], 'You lose its passive. Its signature spell stays in your spellbook as an ordinary spell.');
+  e.spells = [signatureSpell('necromancer')];
+  assert.equal(family(specGuideModel(e), 'arcane').reset.rows()[2], 'You lose its passive, and its signature spell is no longer sold to you.', 'another path\'s spell is not this one\'s');
+  // the closed paths point to the Reset
+  const closed = family(m, 'arcane').paths.find((p) => p.state === 'closed');
+  assert.equal(stateLine(family(m, 'arcane'), closed, true), 'You already chose Warden. You can have only one path of each kind; reset Warden to choose another.');
   assert.deepEqual(family(m, 'martial').reset.rows().slice(2, 4), ['You lose its passive and its signature technique.', 'Your mastered skills stay mastered.']);
   // three schools mastered (every slot spent): the other two paths open at once, and none left to reach
   const three = held(250000, { mastered: [LB, AR, RES, ALT, MYS] });
-  assert.equal(family(specGuideModel(three), 'arcane').reset.rows().at(-1), 'Then you can choose: Riftwalker, Warden, Necromancer.');
+  assert.equal(family(specGuideModel(three), 'arcane').reset.rows().at(-1), 'Open to you after the reset: Riftwalker, Warden, Necromancer.');
   assert.equal(three.arcanePath, 'warden', 'the model read it with nothing held, and wrote nothing');
   // the last slot spent on Short Blade: no other school can be mastered, so an arcane reset buys back the same path -
   // refused, and says so; the martial family, its third weapon mastered, may reset
@@ -182,7 +296,7 @@ test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the pri
       btn('Reset · 200,000 gold').onclick();
       ask().querySelectorAll('button').find((b) => b.textContent === 'Yes').onclick();
       assert.deepEqual([playerEntity.martialPath, playerEntity.goldPieces], [null, 500]);
-      assert.ok(host.textContent.includes('Ranger reset. You can choose a new specialisation.'), 'the note says so');
+      assert.ok(host.textContent.includes('Ranger is reset.'), 'the note says so');
       assert.equal(btn('Reset · 200,000 gold'), undefined, 'nothing held: no Reset');
       bar('Ranger').onclick();
       assert.ok(btn('Choose Ranger'), 'open again');

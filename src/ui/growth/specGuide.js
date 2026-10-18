@@ -13,12 +13,13 @@
 // The model is pure (specGuideModel - the laws' tables and this entity, nothing drawn); the page draws it with the menu's
 // kit. The words are the laws' own (their passives, riders and choice boxes) and this page's in growth.spec.*.
 
-import { PATHS, pathOf, pathChoices, pathPossible, pathSchoolsText, choosePath, pathChoiceRows, SPEC_RESET_GOLD } from '../../systems/arcanePaths.js';
+import { PATHS, pathOf, pathChoices, pathPossible, pathSchoolsText, choosePath, pathChoiceRows, isSignatureSpell, SPEC_RESET_GOLD } from '../../systems/arcanePaths.js';
 import { MARTIAL_PATHS, MARTIAL_SKILLS, MARTIAL_FAMILY, martialPathOf, martialChoices, martialPossible, martialSkillsText, chooseMartialPath, martialChoiceRows, signatureById } from '../../systems/martialPaths.js';
 import { MAGIC_SKILLS, SKILL_NAMES } from '../../systems/skills.js';
 import { masterSkillsActive, masterSkillsSwitchable, isMasteredSkill, careerGroupOf, masterySlots, masterableCount, masterCappedSkill } from '../../systems/masterSkills.js';
 import { signatureSpell } from '../../systems/signatureSpells.js';
 import { specResetRefusal, resetSpec } from '../../systems/specReset.js';   // SPEC-RESET: a held path given up, for gold
+import { computeEntityMods } from '../../systems/entityMods.js';   // AUDIT SPEC-RESET L1-3: a chosen path's stats now
 import { sigilDueling } from '../../systems/sigil/sigil.js';
 import { lootRarityOn } from '../../systems/loot/lootRarity.js';
 import { effectWords, spellFrame } from '../enhanced/enhancedSpellbook.js';   // the spellbook's own reading of an effect (SB-FX)
@@ -109,6 +110,14 @@ const FAMILY_LAW = Object.freeze({
 /** How far a path's pair still has to climb - the points under 100 of its skills not yet mastered (the nearest first). */
 const owed = (p) => p.pair.reduce((n, s) => n + (s.mastered ? 0 : Math.max(0, 100 - s.value)), 0);
 
+/** Choose through the law, and fold the entity's mods now - a passive's stats from this moment, not the next round
+ *  (AUDIT SPEC-RESET L1-3; the reset folds its own, specReset.js). */
+function chooseNow(entity, law, id) {
+  const r = law.choose(entity, id);
+  if (r.ok) computeEntityMods(entity);
+  return r;
+}
+
 /** A path's state for this character, and why. Pure. */
 function pathState(entity, law, p, held, open, on) {
   if (held?.id === p.id) return 'chosen';
@@ -150,7 +159,8 @@ function afterReset(entity, law, held, on) {
 }
 
 /** SPEC-RESET: a held path's Reset - its refusal (the law's, else no other path could ever open, so a reset would buy
- *  back the same one), the ask's rows, and the reset itself. */
+ *  back the same one), the ask's rows, and the reset itself. The ask says a signature spell stays in the book only where
+ *  one was bought (AUDIT SPEC-RESET L1-5: choosing grants none - it is sold to the path's holder). */
 function resetModel(entity, id, law, held, on) {
   const after = afterReset(entity, law, held, on);
   const refusal = specResetRefusal(entity, id) ?? (after.others ? null
@@ -158,12 +168,13 @@ function resetModel(entity, id, law, held, on) {
   const rows = () => [
     t('growth.spec.reset.ask', 'Reset {name} for {gold, number} gold?', { name: held.name, gold: SPEC_RESET_GOLD }),
     '',
-    id === 'arcane' ? t('growth.spec.reset.loseSpell', 'You lose its passive. Its signature spell stays in your spellbook as an ordinary spell.')
-      : t('growth.spec.reset.loseTechnique', 'You lose its passive and its signature technique.'),
+    id !== 'arcane' ? t('growth.spec.reset.loseTechnique', 'You lose its passive and its signature technique.')
+      : (entity?.spells ?? []).some((sp) => isSignatureSpell(sp) && sp.path === held.id) ? t('growth.spec.reset.loseSpell', 'You lose its passive. Its signature spell stays in your spellbook as an ordinary spell.')
+        : t('growth.spec.reset.loseUnbought', 'You lose its passive, and its signature spell is no longer sold to you.'),
     t('growth.spec.reset.keep', 'Your mastered skills stay mastered.'),
     '',
     ...(!on ? [t('growth.spec.reset.off', 'Master Skills is off. Turn it on to choose a specialisation again.')]
-      : [t('growth.spec.reset.then', 'Then you can choose: {names}.', { names: after.open.join(', ') }),
+      : [t('growth.spec.reset.then', 'Open to you after the reset: {names}.', { names: after.open.join(', ') }),
         ...(after.later ? [t('growth.spec.reset.later', 'More paths unlock as you master more skills.')] : [])]),
   ];
   return { refusal, rows, go: () => resetSpec(entity, id) };
@@ -194,7 +205,7 @@ export function specGuideModel(entity) {
       id, held: held ? { id: held.id, name: held.name } : null, asleep: held ? pathAsleep(entity, id, on) : null,
       possible: law.possible(entity), classPossible: law.possible({ career: entity?.career }),
       skills: law.skills.map((s) => skillStand(entity, s)), open: open.length,
-      paths: paths.map((p) => ({ ...p, ask: () => law.ask(entity, p.id), choose: () => law.choose(entity, p.id) })),
+      paths: paths.map((p) => ({ ...p, ask: () => law.ask(entity, p.id), choose: () => chooseNow(entity, law, p.id) })),
       reset: held ? resetModel(entity, id, law, held, on) : null,
     };
   });
@@ -229,7 +240,7 @@ export function stateLine(fam, p, on) {
       if (climb.length < need.length) return t('growth.spec.why.reachThen', 'Raise {skill} to 100, then master both skills to unlock this path.', { skill: climb[0].name });
       return need.length === 1 ? t('growth.spec.why.reachOne', 'Raise {skill} to 100 and master it to unlock this path.', { skill: need[0].name })
         : t('growth.spec.why.reach', 'Raise both skills to 100 and master them to unlock this path.');
-    case 'closed': return t('growth.spec.why.closed', 'You already chose {name}. You can have only one path of each kind.', { name: fam.held?.name ?? '' });
+    case 'closed': return t('growth.spec.why.closed', 'You already chose {name}. You can have only one path of each kind; reset {name} to choose another.', { name: fam.held?.name ?? '' });
     case 'slots': return t('growth.spec.why.slots', 'You don\'t have enough mastery slots left to master both of these skills.');
     default: return t('growth.spec.why.never', 'Your class can\'t master both of these skills.');
   }

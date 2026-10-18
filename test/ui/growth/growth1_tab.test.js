@@ -575,10 +575,11 @@ test('GROWTH4 THE ONE ASK\'S WORDS: on the enhanced skin the No and the several-
   assert.equal(AP.pathDeclinedGrowthText(), 'You can choose a specialisation later on the Growth tab of the pause menu.');
   assert.equal(MP.martialDeclinedGrowthText(), 'You can choose a martial specialisation later on the Growth tab of the pause menu.');
   // PIN MOVED (SPEC-RESET, bible/10-UI/Growth.md section 10): the choice is undone only by the paid reset, and the box
-  // names its price
-  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden], { growth: true }).at(-1), 'See them all and choose one on the Growth tab of the pause menu. Resetting it later costs 200,000 gold.');
-  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true }).at(-1), 'See them all and choose one on the Growth tab of the pause menu. Resetting it later costs 200,000 gold.');
-  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger]).at(-1), 'Choose one in your skill screen. Resetting it later costs 200,000 gold.');
+  // names its price - on a row of its own (AUDIT SPEC-RESET L4-5)
+  assert.equal(AP.pathsOpenRows([AP.PATH_BY_ID.warden], { growth: true }).at(-2), 'See them all and choose one on the Growth tab of the pause menu.');
+  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger], { growth: true }).at(-2), 'See them all and choose one on the Growth tab of the pause menu.');
+  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger]).at(-2), 'Choose one in your skill screen.');
+  assert.equal(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger]).at(-1), 'Resetting it later costs 200,000 gold.');
   const shared = rd('src/scenes/shared.js');
   assert.match(shared, /\(\) => say\(isEnhanced\(\) \? pathDeclinedGrowthText\(\) : pathDeclinedText\(\)\)\);/);
   assert.match(shared, /\(\) => say\(isEnhanced\(\) \? martialDeclinedGrowthText\(\) : martialDeclinedText\(\)\)\);/);

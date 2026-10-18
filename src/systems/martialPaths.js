@@ -20,7 +20,7 @@
 //     law reads no line naming one (systems/item/itemLaw.js, systems/loot/lootRarity.js validAffix);
 //   - WHO may choose (`martialChoices`: Master Skills in force, two or more weapon skills mastered, no martial path yet)
 //     and the choice (`chooseMartialPath`: undone only by SPEC-RESET's paid reset, systems/specReset.js - nothing
-//     here undoes it, as nothing undoes a mastery);
+//     here undoes it);
 //   - when a path ACTS (`martialAwake`: my own entity, Master Skills in force, both its skills mastered, not mentoring -
 //     and the powers add the refereed fight's word, sigil.js sigilDueling, the one every loot and set power sleeps on).
 // No judge's finding (the design page, section 7): a path acts only with both its masteries held, read here at every
@@ -428,8 +428,9 @@ export function martialOpenRows(open, { growth = false } = {}) {
     t('martial.open.count', '{n, plural, one {# martial specialisation is open to you:} other {# martial specialisations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
-    growth ? t('martial.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu. Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD })
-      : t('martial.open.where', 'Choose one in your skill screen. Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),
+    growth ? t('martial.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu.')
+      : t('martial.open.where', 'Choose one in your skill screen.'),
+    t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),   // AUDIT SPEC-RESET L4-5: a row of its own
   ];
 }
 

@@ -9735,8 +9735,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.done": {
-  "en": "41683c1c1408",
-  "tr": "b242641331a3",
+  "en": "68ca36084fc9",
+  "tr": "d2d0621c1438",
   "by": "claude-in-session"
  },
  "growth.spec.reset.keep": {
@@ -9751,12 +9751,17 @@
  },
  "growth.spec.reset.loseSpell": {
   "en": "0f3fc1a3adab",
-  "tr": "3566cb818ac0",
+  "tr": "28167c889c58",
   "by": "claude-in-session"
  },
  "growth.spec.reset.loseTechnique": {
   "en": "b1ab8bd53d73",
-  "tr": "7546aff5149a",
+  "tr": "f120f1fa53e8",
+  "by": "claude-in-session"
+ },
+ "growth.spec.reset.loseUnbought": {
+  "en": "fdf418b88337",
+  "tr": "ada959c8d794",
   "by": "claude-in-session"
  },
  "growth.spec.reset.off": {
@@ -9774,9 +9779,9 @@
   "tr": "81aa7dea1f87",
   "by": "claude-in-session"
  },
- "growth.spec.reset.refuse.none": {
-  "en": "c7263f026976",
-  "tr": "af2a039947c9",
+ "growth.spec.reset.refuse.goldOffline": {
+  "en": "399f9025d743",
+  "tr": "79bd79f942f9",
   "by": "claude-in-session"
  },
  "growth.spec.reset.refuse.nothing": {
@@ -9785,8 +9790,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.then": {
-  "en": "cbb19ea9a188",
-  "tr": "fc78dcbd3bc9",
+  "en": "4689d68716e4",
+  "tr": "a57ae796570e",
   "by": "claude-in-session"
  },
  "growth.spec.showAll": {
@@ -9955,8 +9960,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.why.closed": {
-  "en": "c7dcc40fb76b",
-  "tr": "8d76c9c664d3",
+  "en": "34e86a61dfd4",
+  "tr": "c02a211f1900",
   "by": "claude-in-session"
  },
  "growth.spec.why.never": {
@@ -11045,13 +11050,13 @@
   "by": "claude-in-session"
  },
  "martial.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "652f03dd9e82",
+  "en": "87f8a53b6e60",
+  "tr": "4ff8e5ba08ae",
   "by": "claude-in-session"
  },
  "martial.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "051ebd0d4ee9",
+  "en": "aeba9eeb0dc4",
+  "tr": "047b7869abd4",
   "by": "claude-in-session"
  },
  "martial.ranger.name": {
@@ -24805,13 +24810,13 @@
   "by": "claude-in-session"
  },
  "schools.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "652f03dd9e82",
+  "en": "87f8a53b6e60",
+  "tr": "4ff8e5ba08ae",
   "by": "claude-in-session"
  },
  "schools.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "051ebd0d4ee9",
+  "en": "aeba9eeb0dc4",
+  "tr": "047b7869abd4",
   "by": "claude-in-session"
  },
  "schools.refuse.already": {

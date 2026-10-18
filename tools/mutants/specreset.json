@@ -11,8 +11,8 @@
   {
     "name": "SPEC-RESET-exact-price-refused",
     "file": "src/systems/specReset.js",
-    "old": "  if (have < SPEC_RESET_GOLD) return",
-    "new": "  if (have <= SPEC_RESET_GOLD) return",
+    "old": "  if (have >= SPEC_RESET_GOLD) return null;",
+    "new": "  if (have > SPEC_RESET_GOLD) return null;",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -20,8 +20,8 @@
   {
     "name": "SPEC-RESET-gold-unasked",
     "file": "src/systems/specReset.js",
-    "old": "  if (have < SPEC_RESET_GOLD) return",
-    "new": "  if (have < 0) return",
+    "old": "  if (have >= SPEC_RESET_GOLD) return null;",
+    "new": "  if (true) return null;",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "SPEC-RESET-purse-alone",
     "file": "src/systems/specReset.js",
-    "old": "  const have = totalGoldAmount(entity);",
-    "new": "  const have = entity.goldPieces ?? 0;",
+    "old": "  return totalGoldAmount(entity) + Math.max(0, Number(account?.accountGold) || 0);",
+    "new": "  return (Number(entity.goldPieces) || 0) + Math.max(0, Number(account?.accountGold) || 0);",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -38,7 +38,7 @@
   {
     "name": "SPEC-RESET-price-unpaid",
     "file": "src/systems/specReset.js",
-    "old": "  deductGold(entity, SPEC_RESET_GOLD);\n",
+    "old": "  payUndoable(entity, SPEC_RESET_GOLD, resetAccount(entity));\n",
     "new": "",
     "tests": [
       "test/ui/growth/specreset.test.js"
@@ -74,8 +74,8 @@
   {
     "name": "SPEC-RESET-arcane-box-permanent",
     "file": "src/systems/arcanePaths.js",
-    "old": "    t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
-    "new": "    t('schools.choice.final', 'This decision cannot be undone.'),",
+    "old": "    ...pathPowerRows(p),\n    '',\n    t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
+    "new": "    ...pathPowerRows(p),\n    '',\n    t('schools.choice.final', 'This decision cannot be undone.'),",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "SPEC-RESET-martial-box-permanent",
     "file": "src/systems/martialPaths.js",
-    "old": "    t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
-    "new": "    t('martial.choice.final', 'This decision cannot be undone.'),",
+    "old": "    ...martialPowerRows(p),\n    '',\n    t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),",
+    "new": "    ...martialPowerRows(p),\n    '',\n    t('martial.choice.final', 'This decision cannot be undone.'),",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -128,8 +128,8 @@
   {
     "name": "SPEC-RESET-loss-lines-swapped",
     "file": "src/ui/growth/specGuide.js",
-    "old": "    id === 'arcane' ? t('growth.spec.reset.loseSpell'",
-    "new": "    id !== 'arcane' ? t('growth.spec.reset.loseSpell'",
+    "old": "    id !== 'arcane' ? t('growth.spec.reset.loseTechnique'",
+    "new": "    id === 'arcane' ? t('growth.spec.reset.loseTechnique'",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
@@ -207,10 +207,211 @@
     ]
   },
   {
-    "name": "SPEC-RESET-save-null-read-as-missing",
+    "name": "AUDIT-SPEC-RESET-L1-1-account-unread",
+    "file": "src/systems/specReset.js",
+    "old": "  payUndoable(entity, SPEC_RESET_GOLD, resetAccount(entity));",
+    "new": "  payUndoable(entity, SPEC_RESET_GOLD, null);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-1-account-offline",
+    "file": "src/systems/specReset.js",
+    "old": "const resetAccount = (entity) => (entity?._online === true ? accountOfSave(entity, REALM_EMPIRE_ACCOUNT) : null);",
+    "new": "const resetAccount = (entity) => accountOfSave(entity, REALM_EMPIRE_ACCOUNT);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-1-loan-counted",
+    "file": "src/systems/specReset.js",
+    "old": "  return totalGoldAmount(entity) + Math.max(0, Number(account?.accountGold) || 0);",
+    "new": "  return totalGoldAmount(entity) + (Number(account?.accountGold) || 0);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-1-bank-unasked",
+    "file": "src/systems/specReset.js",
+    "old": "  return totalGoldAmount(entity) + Math.max(0, Number(account?.accountGold) || 0);",
+    "new": "  return totalGoldAmount(entity);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-1-offline-words-swapped",
+    "file": "src/systems/specReset.js",
+    "old": "  return entity?._online === true\n",
+    "new": "  return entity?._online !== true\n",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-2-ask-flag-left",
+    "file": "src/systems/specReset.js",
+    "old": "  entity[LAW[family].prompted] = true;\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-2-wrong-family-flag",
+    "file": "src/systems/specReset.js",
+    "old": "  martial: { held: martialPathOf, field: 'martialPath', prompted: 'martialPrompted' },",
+    "new": "  martial: { held: martialPathOf, field: 'martialPath', prompted: 'pathPrompted' },",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-3-reset-unfolded",
+    "file": "src/systems/specReset.js",
+    "old": "  computeEntityMods(entity);\n  return { ok: true",
+    "new": "  return { ok: true",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-3-guide-choose-unfolded",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  if (r.ok) computeEntityMods(entity);\n  return r;",
+    "new": "  return r;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-3-ask-choose-unfolded",
+    "file": "src/scenes/shared.js",
+    "old": "const r = choosePath(entity, path.id); say(r.text); if (r.ok) { computeEntityMods(entity); audio",
+    "new": "const r = choosePath(entity, path.id); say(r.text); if (r.ok) { audio",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-3-classic-choose-unfolded",
+    "file": "src/ui/charsheet.js",
+    "old": "const r = choosePath(e, p.id); if (r.ok) computeEntityMods(e);",
+    "new": "const r = choosePath(e, p.id);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-3-classic-martial-unfolded",
+    "file": "src/ui/charsheet.js",
+    "old": "const r = chooseMartialPath(e, p.id); if (r.ok) computeEntityMods(e);",
+    "new": "const r = chooseMartialPath(e, p.id);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-5-any-signature-spell",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "(entity?.spells ?? []).some((sp) => isSignatureSpell(sp) && sp.path === held.id)",
+    "new": "(entity?.spells ?? []).some((sp) => isSignatureSpell(sp))",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L1-5-spell-always-stays",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "(entity?.spells ?? []).some((sp) => isSignatureSpell(sp) && sp.path === held.id) ? t(",
+    "new": "true ? t(",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-mirror-unwritten",
     "file": "src/systems/save/save.js",
-    "old": "  if (snap.arcanePath === undefined && !entity.arcanePath) {",
-    "new": "  if (snap.arcanePath == null && !entity.arcanePath) {",
+    "old": "    snap.career.arcaneMirror = { path: snap.arcanePath, prompted: snap.pathPrompted, of: snap.characterId };\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-mirror-unread",
+    "file": "src/systems/save/save.js",
+    "old": "  if (arcMirrored) { entity.arcanePath = arcMirror.path;",
+    "new": "  if (false) { entity.arcanePath = arcMirror.path;",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-witness-over-mirror",
+    "file": "src/systems/save/save.js",
+    "old": "  if (snap.arcanePath === undefined && !arcMirrored && !entity.arcanePath) {",
+    "new": "  if (snap.arcanePath === undefined && !entity.arcanePath) {",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-id-unread",
+    "file": "src/systems/save/save.js",
+    "old": "  const arcMirrored = snap.arcanePath === undefined && arcMirror?.of === snap.characterId\n",
+    "new": "  const arcMirrored = snap.arcanePath === undefined && !!arcMirror\n",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-unlawful-mirror",
+    "file": "src/systems/save/save.js",
+    "old": "(isPathId(arcMirror.path) && !pathFindings({ arcanePath: arcMirror.path, masteredSkills: snap.masteredSkills }).length)",
+    "new": "isPathId(arcMirror.path)",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L2-1-live-career-keeps-mirror",
+    "file": "src/systems/save/save.js",
+    "old": "delete entity.career.martialMirror; delete entity.career.arcaneMirror; }",
+    "new": "delete entity.career.martialMirror; }",
+    "tests": [
+      "test/ui/growth/specreset.test.js",
+      "test/systems/audit_schools.test.js",
+      "test/systems/schools_arcane.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L4-5-arcane-price-row-dropped",
+    "file": "src/systems/arcanePaths.js",
+    "old": "    // a lone word onto a line of its own in six languages\n    t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),\n",
+    "new": "    // a lone word onto a line of its own in six languages\n",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L4-5-martial-price-row-dropped",
+    "file": "src/systems/martialPaths.js",
+    "old": "    t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),   // AUDIT SPEC-RESET L4-5: a row of its own\n",
+    "new": "",
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]

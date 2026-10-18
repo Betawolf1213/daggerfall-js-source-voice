@@ -67,8 +67,8 @@ nothing a player could see. That is where the identity goes.
   skills - one minor slot between them - showed the card for good; the arcane `pathPossible` the same, and both now read
   the slots - and the guide counts each path's pair the same way (AUDIT GROWTH LANE1-1).
 - **The choice.** Any pair of the player's mastered weapon skills names one path (section 5); with three mastered, the
-  player picks among their pairs. `entity.martialPath` holds the path's id. **PERMANENT** but for SPEC-RESET's paid
-  reset (`10-UI/Growth.md` section 10) - nothing else undoes it, as nothing undoes a mastery. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
+  player picks among their pairs. `entity.martialPath` holds the path's id. **Held until given up for 200,000 gold**
+  (SPEC-RESET, `10-UI/Growth.md` section 10) - nothing else undoes it; a mastery is never undone. Asked ONCE on the first quiet pass after the second weapon is mastered (`scenes/shared.js`
   raisePlayerSkills - after a mastery's own box and after the arcane path's ask, one box a pass; one path open is asked
   about, several are named and sent to the skill screen - AUDIT SCHOOLS L4 M1's law). The box asks "Martial
   specialisation: {name}?" - never the arcane ask's own "Specialise as {name}?" (AUDIT MARTIAL L4 L4: a spellsword

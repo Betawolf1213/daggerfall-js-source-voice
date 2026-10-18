@@ -9735,8 +9735,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.done": {
-  "en": "41683c1c1408",
-  "tr": "96e637815f91",
+  "en": "68ca36084fc9",
+  "tr": "7e224c0a0482",
   "by": "claude-in-session"
  },
  "growth.spec.reset.keep": {
@@ -9759,6 +9759,11 @@
   "tr": "43bec709ead1",
   "by": "claude-in-session"
  },
+ "growth.spec.reset.loseUnbought": {
+  "en": "fdf418b88337",
+  "tr": "20b9021e6b14",
+  "by": "claude-in-session"
+ },
  "growth.spec.reset.off": {
   "en": "2536748c2248",
   "tr": "4a39a56866a4",
@@ -9774,9 +9779,9 @@
   "tr": "97e16db1117c",
   "by": "claude-in-session"
  },
- "growth.spec.reset.refuse.none": {
-  "en": "c7263f026976",
-  "tr": "2c23d228b7b0",
+ "growth.spec.reset.refuse.goldOffline": {
+  "en": "399f9025d743",
+  "tr": "0b00f2ae8a43",
   "by": "claude-in-session"
  },
  "growth.spec.reset.refuse.nothing": {
@@ -9785,8 +9790,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.reset.then": {
-  "en": "cbb19ea9a188",
-  "tr": "902025a1d652",
+  "en": "4689d68716e4",
+  "tr": "37cbdd829101",
   "by": "claude-in-session"
  },
  "growth.spec.showAll": {
@@ -9955,8 +9960,8 @@
   "by": "claude-in-session"
  },
  "growth.spec.why.closed": {
-  "en": "c7dcc40fb76b",
-  "tr": "d22e64133048",
+  "en": "34e86a61dfd4",
+  "tr": "e742e6dde549",
   "by": "claude-in-session"
  },
  "growth.spec.why.never": {
@@ -11045,13 +11050,13 @@
   "by": "claude-in-session"
  },
  "martial.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "3c98c90c8920",
+  "en": "87f8a53b6e60",
+  "tr": "57ae92211b25",
   "by": "claude-in-session"
  },
  "martial.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "e49e9162b339",
+  "en": "aeba9eeb0dc4",
+  "tr": "5d7c85d57b8e",
   "by": "claude-in-session"
  },
  "martial.ranger.name": {
@@ -24805,13 +24810,13 @@
   "by": "claude-in-session"
  },
  "schools.open.where": {
-  "en": "fcc74348bc54",
-  "tr": "3c98c90c8920",
+  "en": "87f8a53b6e60",
+  "tr": "57ae92211b25",
   "by": "claude-in-session"
  },
  "schools.open.whereGrowth": {
-  "en": "70cc5dd035d3",
-  "tr": "e49e9162b339",
+  "en": "aeba9eeb0dc4",
+  "tr": "5d7c85d57b8e",
   "by": "claude-in-session"
  },
  "schools.refuse.already": {

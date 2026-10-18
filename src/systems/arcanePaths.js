@@ -14,14 +14,14 @@
 //   - every NUMBER a path's passive and rider names (`PATH_NUMBERS`) - the one home the words print and
 //     arcanePowers.js does, so a balance pass moves one number;
 //   - WHO may choose (`pathChoices`: Master Skills in force, two or more schools mastered, no path yet) and the choice
-//     (`choosePath`: undone only by SPEC-RESET's paid reset, systems/specReset.js - nothing here undoes it, as nothing
-//     undoes a mastery);
+//     (`choosePath`: undone only by SPEC-RESET's paid reset, systems/specReset.js - nothing here undoes it);
 //   - when a path ACTS (`pathAwake`: my own entity, Master Skills in force, both its schools mastered, not mentoring -
 //     and the powers add the refereed fight's word, sigil.js sigilDueling, the one every loot and set power sleeps on:
 //     importing it here would hang the price's graph on sigil.js's, which reaches back into spellcost.js);
 //   - THE SCHOOLS A SIGNATURE SPELL IS CAST IN (`pathCastSchool`): its path's two, so a Necromancer's Siphon Life is
 //     priced, taught and strengthened by Restoration and Mysticism, never by a Destruction they did not choose;
-//   - the judge's finding (`pathFindings`): a path whose schools are not both mastered, or another path's spell.
+//   - the judge's finding (`pathFindings`): a path no table holds, or whose schools are not both mastered (no signature
+//     spell is judged - AUDIT SCHOOLS L3 F2).
 //
 // Everything a player reads is `t()`, read when it is read - the signature spell's name too: it is minted into the record
 // in the buyer's language (a record's name is a label, as a made spell's is; a signature spell is known by its `path`
@@ -362,8 +362,11 @@ export function pathsOpenRows(open, { growth = false } = {}) {
     t('schools.open.count', '{n, plural, one {# specialisation is open to you:} other {# specialisations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
-    growth ? t('schools.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu. Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD })
-      : t('schools.open.where', 'Choose one in your skill screen. Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),
+    growth ? t('schools.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu.')
+      : t('schools.open.where', 'Choose one in your skill screen.'),
+    // AUDIT SPEC-RESET L4-5: the price a row of its own - in the classic parchment box (288 px) one sentence more wrapped
+    // a lone word onto a line of its own in six languages
+    t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),
   ];
 }
 
