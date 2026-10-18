@@ -120,7 +120,7 @@ test('FB1012d ALLY-RACE a revenant is the person it was born as: the body that d
   freshFeud(); RC.setRetinuePlayer(me);
   const pool = createExteriorFoes(poolRig());
   const foe = await pool.spawnFoe(MOBILE_TYPES.Warrior, [3, 0, 4], { gender: 'female', feetGiven: true });
-  foe.entity.champion = 'mighty'; foe.entity.level = 6;   // a champion of the floor's level: one that may become a revenant
+  foe.entity.champion = 'mighty'; foe.entity.unquiet = true; foe.entity.level = 6;   // a champion of the floor's level, marked (UNQUIET, Revenants.md section 46): one that may become a revenant
   const born = who(foe), seed = foeSeed(foe);
   const r = N.revenantDeed(me, foe.entity, 'felled', { mobileType: foe.mobileType, gender: foe.gender, rec: foe, ally: 'Aldric', rolls: () => 0 });
   assert.ok(r, 'it felled my companion: a revenant');
@@ -180,5 +180,5 @@ test('FB1012d ALLY-RACE THE ONE SEAM AND THE FOUR HOSTS: every companion body is
   const ext = rd('src/scenes/exterior.js');
   assert.ok(!ext.includes('createCrewAshore'), 'exterior.js (the bench) stands no companion');
   assert.match(ext, /\.\.\.\(hit\.revenant \? revenantSpawnOptions\(hit\.revenant, effectiveLevel\(playerEntity\)\) : \{\}\),/, 'exterior.js: a revenant\'s return through its pool (the stamp applyRevenant writes)');
-  assert.match(rd('src/systems/revenant/revenant.js'), /const revenantStamp = \(r\) => \(\{[^\n]*person: revenantPerson\(r\) \}\);/, 'the stamp carries its person');
+  assert.match(rd('src/systems/revenant/revenant.js'), /const revenantStamp = \(r\) => \(\{[^\n]*person: revenantPerson\(r\)[,}][^\n]*\}\);/, 'the stamp carries its person');   // PIN MOVED (UNQUIET, Revenants.md section 46): the Dread rides the stamp after it
 });

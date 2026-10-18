@@ -32,6 +32,7 @@ import { hurtPlayer } from '../characters/playerEntity.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
 import { enemyDisplayName } from '../characters/enemy/enemyBasics.js';   // LOOT7-CHECK CHAMP-SAID: the name the death line says
 import { popupMessage } from './notify.js';   // LOOT7-CHECK CHAMP-SAID: DaggerfallUI.PopupMessage, the live host's line
+import { markUnquiet } from './revenant/unquietMark.js';   // UNQUIET (Revenants.md section 46): one champion in four carries the mark - its own, never a puppet's
 
 /** Per mille of the foes that may be one that stand as a champion (CHAMP-RATE, 2026-10-03, Mac: "buff champion rates
  *  slightly": 70, was 50 - about one in fourteen, was one in twenty). */
@@ -107,9 +108,10 @@ export function _resetStreetChampionsForTests() { _streetN = 0; }
  * reads the mark): its trait, twice its health (the Stalwart's half again more), its blows a quarter harder (the
  * Mighty's half again more) multiplied onto whatever `damageScale` it has (an elite's double stands under it), the
  * Swift's Speed. Nothing for no trait, a foe under CHAMPION_MIN_LEVEL, the city watch, an ally, or with the switch off.
- * Answers whether it stood as one.
+ * Answers whether it stood as one. UNQUIET: `own` - one of this pool's own (never a puppet, its owner's word): its mark
+ * drawn (systems/revenant/unquietMark.js).
  */
-export function applyChampion(entity, traitIndex) {
+export function applyChampion(entity, traitIndex, { own = true } = {}) {
   if (!entity || !Number.isInteger(traitIndex) || !lootRarityOn()) return false;
   const t = CHAMPION_TRAITS[traitIndex];
   if (!t || (entity.level | 0) < CHAMPION_MIN_LEVEL) return false;
@@ -121,6 +123,7 @@ export function applyChampion(entity, traitIndex) {
   entity.healthMult = (entity.healthMult ?? 1) * hp;   // TELL1: what was stood on the kind's own health (ai/tells.js kindHealth - its poise)
   entity.damageScale = (Number.isFinite(entity.damageScale) ? entity.damageScale : 1) * CHAMPION_DAMAGE * (t.damage ?? 1);
   if (t.speed && entity.stats) entity.stats.speed = Math.min(100, (entity.stats.speed ?? 50) + t.speed);
+  if (own) markUnquiet(entity);   // UNQUIET: the mark that lets it rise
   return true;
 }
 
