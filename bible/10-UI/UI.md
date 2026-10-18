@@ -49,7 +49,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and RVN-STARS' SWORN REVENANT'S STARS (`revenantStarsWindow.js`: a sworn one's sky - the Blade, the Grave and the Road about the Oath - opened from the Companions page's Stars over the pause window, `firmamentOver.js revenantStarsOver`, and the page put back on Companions; `06-Systems/Revenants.md` section 44). Both skies are drawn by ONE window (`skyWindow.js` - the captain's window taken out whole when the second sky came: a sky is a descriptor of its stars, law, purse, words, tones and start's picture)
 - and DECK-PROPS' PLAN (`deckPlanWindow.js`: her open deck from above, bow up, her fittings on it - one chosen and set with a click where it is deck and room, taken up, dragged, turned a sixteenth at a time, taken away - and Fit her out through the Fleet's act; opened from the Fleet page's Deck through the sea's window door; `03-World/Naval-Refit.md` DECK-PROPS)
 - and LOOT-BULK's TAKE ALL AND STASH ALL (`storeBulk.js`: the one walk over the shown rows that moves them in a single batch, a container's or the pack's, as far as the side that takes them has room; `UI-Arc.md` LOOT-BULK)
-385 modules
+- and PRIVATE-REPORT's REPORT FORM AND INBOX (`enhanced/enhancedReport.js`: a player's private report of an exploit, a bug or a security hole, written in the mailbox's window, their own reports under it, and the readers' inbox; `06-Systems/Private-Reports.md`)
+386 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.
