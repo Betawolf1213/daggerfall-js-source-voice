@@ -61,8 +61,11 @@
 //  - THE OVERWORLD (`drawnFrameOf`): a driven rig is grown by world/wagonModels.js rigGrowOf - every kind read as long as
 //    a rider on horseback, not the traveller's grow times its own length - its team, driver and harness with it.
 //  - THE PARKED BOX: never stood round my capsule (`capsuleInBox` - its two-sided faces cannot push a body out, and a
-//    wagon laid where I stood held me in it), and stood again when the wagon's model changes under it.
+//    wagon laid where I stood held me in it), and stood again when the wagon's model changes under it. FIELD BUGS
+//    2026-10-18 WAGON-ALIGHT: nor round any body of mine - my companions' (`bodyCapsules`) too: the law was written for
+//    my capsule alone, and the box a parked wagon stood round the companions in its back held them for the fight.
 // deps (WAGONS3) = { horses() -> how many horses I own; playerCapsule() -> { feet, height, radius } | null;
+//          bodyCapsules() -> [{ feet, height, radius } | null] (WAGON-ALIGHT: my companions' - scenes/crewAshore.js capsules);
 //          renderShift() -> [dx, dy, dz] | null - where the player is DRAWN this frame less where the motor stands them (its
 //          fixed step's interpolation): my driven wagon hangs from the motor's step, and is drawn - with its team, its
 //          harness and its driver's seat, where the camera sits - where the player is drawn, or a display faster than the
@@ -304,6 +307,7 @@ export function createHorseCartPool({
   visit = /** @type {any} */ (null),
   horses = () => 1,   // WAGONS3
   playerCapsule = /** @type {() => ({ feet: number[], height?: number, radius?: number } | null)} */ (() => null),   // WAGONS3
+  bodyCapsules = /** @type {() => Array<{ feet: number[], height?: number, radius?: number } | null>} */ (() => []),   // WAGON-ALIGHT: my companions'
   renderShift = /** @type {() => (number[] | null)} */ (() => null),   // WAGONS3
 } = {}) {
   /** @type {any} */ let runtime = null;
@@ -555,12 +559,18 @@ export function createHorseCartPool({
   }
   /** WAGONS3 (Mac: "Spawning the wagon can trap you under the wagon"): WHETHER MY CAPSULE STANDS IN A BOX OF `parts` AT
    *  MATRIX `m` - the box's faces are two-sided and push no body out, so it is never stood round one: a wagon laid where
-   *  I stand (a summon, a dismount, a door) stands its box once I have stepped clear of it. The capsule's spine sampled
-   *  foot to head, each point's distance to the box in its own frame; in is CAPSULE_BOX_SKIN past touching (AUDIT
-   *  WAGONS3 T1: a body resting against the box is outside it, and the box holds it). */
+   *  I stand (a summon, a dismount, a door) stands its box once I have stepped clear of it. WAGON-ALIGHT: or any of my
+   *  companions' (`bodyCapsules`) - one getting down from the back, one at heel where the wagon is laid. */
   function capsuleInBox(m, parts) {
-    const c = playerCapsule?.();
-    if (!c?.feet || !m || !parts?.bounds) return false;
+    if (!m || !parts?.bounds) return false;
+    if (oneInBox(playerCapsule?.(), m, parts)) return true;
+    for (const c of bodyCapsules?.() ?? []) if (oneInBox(c, m, parts)) return true;
+    return false;
+  }
+  /** One capsule's spine sampled foot to head, each point's distance to the box in its own frame; in is CAPSULE_BOX_SKIN
+   *  past touching (AUDIT WAGONS3 T1: a body resting against the box is outside it, and the box holds it). */
+  function oneInBox(c, m, parts) {
+    if (!c?.feet) return false;
     const b = usableBounds(parts.bounds), r = c.radius ?? 0.35, h = Math.max(2 * r, c.height ?? 1.8), reach = r - CAPSULE_BOX_SKIN;
     for (let i = 0; i <= 4; i++) {
       const y = c.feet[1] + r + ((h - 2 * r) * i) / 4;

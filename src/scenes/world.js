@@ -7522,6 +7522,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     visit: { may: (t) => caravanVisitMay(t), enter: (t) => caravanVisitEnter(t) },   // WAGONS2-VISIT: another's caravan, open to me
     horses: () => horseCountOf(playerEntity.items ?? []),   // WAGONS3: my parked pair keeps its second horse while I own two
     playerCapsule: () => (walkMode && playerSpawned ? { feet: player.pos, height: player.height, radius: CAPSULE_RADIUS } : null),   // WAGONS3: my parked wagon's box never stands round me
+    bodyCapsules: () => [...crewAshore.capsules(), ...revenantAshore.capsules()],   // FIELD BUGS 2026-10-18 WAGON-ALIGHT: nor round my companions (both layers stand below; the pool steps only once frames run)
     renderShift: () => { if (!walkMode || !playerSpawned) return null; const f = player.feetAt(); return [f[0] - player.pos[0], 0, f[2] - player.pos[2]]; },   // WAGONS3: my driven wagon drawn where I am drawn
     peerAnchor: (id) => { const sh = _peerMapPoses.get(id); return sh && (sh.rd | 0) === 2 ? onlineToScene(sh) : null; },   // AUDIT HCC O5: the change key in the wire frame (campToWire is the pose's law, declared with the stream below; read only once frames run); WAGON-HITCH: where another player's cart rider stands as drawn this frame (`rd` 2, the cart - the pose peerRiders stands them on, boat-adjusted; the online frame fills the map before the pool steps), so their trailing wagon hangs from the rider seen here rather than easing apart from it
   });

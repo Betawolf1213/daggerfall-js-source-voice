@@ -1,0 +1,58 @@
+[
+  {
+    "name": "WAGON-ALIGHT-let-go-where-it-sat",
+    "file": "src/scenes/crewAshore.js",
+    "old": "      else if (s.sat) getDown(s, place);",
+    "new": "      else if (false) getDown(s, place);",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "the report itself: the seat goes and the body drops through the bed where it sat, inside the wagon"
+  },
+  {
+    "name": "WAGON-ALIGHT-step-nowhere",
+    "file": "src/scenes/crewAshore.js",
+    "old": "    const at = place?.spot ? place.spot(sat.feet, to[0] - sat.feet[0], to[2] - sat.feet[2]) : to;",
+    "new": "    const at = sat.feet;",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "the body stood afresh on its own seat - still in the box"
+  },
+  {
+    "name": "WAGON-ALIGHT-reach-unread",
+    "file": "src/scenes/crewAshore.js",
+    "old": "    if (!sat || Math.hypot(f[0] - sat.feet[0], f[2] - sat.feet[2]) > GET_DOWN_REACH) return;",
+    "new": "    if (!sat) return;",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "a body a door or a Recall moved off its seat dragged back beside the wagon"
+  },
+  {
+    "name": "WAGON-ALIGHT-box-law-mine-alone",
+    "file": "src/scenes/horseCartPool.js",
+    "old": "    for (const c of bodyCapsules?.() ?? []) if (oneInBox(c, m, parts)) return true;",
+    "new": "",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "WAGONS3's law for my capsule alone: the box stands round the companions in the back and the sweep out of it is held at its inner face"
+  },
+  {
+    "name": "WAGON-ALIGHT-step-sign",
+    "file": "src/systems/wagon/wagonSeats.js",
+    "old": "[seat.feet[0] - Math.sin(seat.yaw) * GET_DOWN_STEP,",
+    "new": "[seat.feet[0] + Math.sin(seat.yaw) * GET_DOWN_STEP,",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "down over the far side's middle - across the bed, still in the box"
+  },
+  {
+    "name": "WAGON-ALIGHT-sworn-unwired",
+    "file": "src/scenes/world.js",
+    "old": "    bodyCapsules: () => [...crewAshore.capsules(), ...revenantAshore.capsules()],",
+    "new": "    bodyCapsules: () => [...crewAshore.capsules()],",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "the sworn revenants' layer left out: a sworn companion boxed in as before"
+  },
+  {
+    "name": "WAGON-ALIGHT-player-own-copy",
+    "file": "src/scenes/wagon/wagonRiders.js",
+    "old": "      deps.unpin?.(near ? getDownPoint(at) : null);",
+    "new": "      deps.unpin?.(near ? [at.feet[0] - Math.sin(at.yaw) * 1.6, at.feet[1], at.feet[2] - Math.cos(at.yaw) * 1.6] : null);",
+    "tests": ["test/scenes/fb1018_wagonalight.test.js"],
+    "why": "two spellings of one get-down point - the drift the law's one export prevents"
+  }
+]
