@@ -19,7 +19,9 @@
 // eased in at the start and out at the end; the first and last are the carry's own (the blow eases in from the stance
 // and back out to it). Every key is the RIGHT hand's; a left-hand blow (a pair's, a left fist) is its mirror.
 
-import { clamp01, lerp, norm, smooth } from './bodyKit.js';
+import { algebra, clamp01, smooth } from './bodyKit.js';
+
+const { lerp, norm } = algebra;
 
 /** The machine's sections on u: the wind-up ends at `windup`, the blade lands at `hit`. */
 export const U = Object.freeze({ windup: 0.3, hit: 0.5 });
@@ -170,7 +172,7 @@ export function blowU(section, progress) {
 }
 
 /** The blow's weight over the carry at u: eased in over its first tenth, out over its last fifth. */
-export const blowWeight = (u) => smooth(u / 0.1) * (1 - smooth((u - 0.8) / 0.2));
+const blowWeight = (u) => smooth(u / 0.1) * (1 - smooth((u - 0.8) / 0.2));
 
 /** Catmull-Rom across non-uniform keys on one number per key (`get`), zero speed at the ends. */
 function spline(keys, u, get) {

@@ -25,9 +25,9 @@
 // Every length is a share of the body's leg (bodyKit.js bodyOf), every pace in metres per second of the world - the
 // race's own height decides how long its leg is in metres, and so how it strides. Pure: one state object, stepped.
 
-import {
-  add, scale, dot, len, norm, lerp, clamp01, clamp, smooth, RAD, wrapAngle, frac, ease, FOOT,
-} from './bodyKit.js';
+import { algebra, clamp01, clamp, smooth, RAD, wrapAngle, frac, ease, FOOT } from './bodyKit.js';
+
+const { add, scale, dot, len, norm, lerp } = algebra;
 
 const G = 9.81;
 
@@ -412,7 +412,7 @@ export function gaitPose(state, input, body, stance = null) {
 const sub2 = (a, b) => [a[0] - b[0], a[1] - b[1], 0];
 const lerpV = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 /** A smooth minimum: min(a, b), rounded over `k` where the two meet. */
-export function smin(a, b, k) {
+function smin(a, b, k) {
   const hh = Math.max(k - Math.abs(a - b), 0) / k;
   return Math.min(a, b) - hh * hh * k * 0.25;
 }

@@ -1207,9 +1207,10 @@ export const FEATURES = Object.freeze([
   Object.freeze({
     id: 'mw-body-motion',
     group: 'combat',
-    title: 'Morrowind Body Motion',
-    note: 'With the Morrowind body in third person: a stride paced to how fast you move, for every race; each weapon carried its own way as you stand, walk and run; and blows thrown with the whole body while your legs keep moving. Off, the body plays Morrowind\u2019s own animations.',
-    effect: 'Takes effect at once.',
+    get title() { return t('features.mwBodyMotion.title', 'Morrowind Body Motion'); },
+    get note() { return t('features.mwBodyMotion.note', 'In third person a Morrowind body strides at the pace you move, for every race, carries each weapon '
+      + 'its own way, and swings with its whole body while its legs keep moving. Off plays Morrowind\u2019s own animations.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'mwBodyMotion', initial: true, online: 'player' }),
   }),

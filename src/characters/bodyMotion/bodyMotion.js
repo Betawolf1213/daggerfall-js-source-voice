@@ -22,13 +22,13 @@
 
 import { MW_WEAPON_TYPE, MW_UNITS_PER_METER } from '../../formats/morrowind/mwFirstPerson.js';
 import { getPref } from '../../systems/uiPrefs.js';
-import {
-  add, scale, sub, norm, len, lerp, lerp3, ease, RAD, bodyOf, bodyKindOf,
-} from './bodyKit.js';
+import { algebra, ease, RAD, bodyOf, bodyKindOf } from './bodyKit.js';
 import { createGaitState, stepGait, gaitPose } from './gait.js';
 import { carryClassOf, carryHands, CARRY, TWO_HAND_GRIP, armByAngles, mirrorRequest, hafHand } from './carry.js';
 import { meleeFamilyOf, blowName, blowU, blowPose, windFor } from './melee.js';
 import { solveBody, gripRequest } from './bodySolve.js';
+
+const { add, scale, sub, norm, len, lerp, lerp3 } = algebra;
 
 /** THE EASES (seconds): the layer on and off (off quicker - a recoil or a death takes the body at once), the arms on and
  *  off (a draw, a cast, a torch lit), and a change of carry class (a weapon drawn, a pair raised). */

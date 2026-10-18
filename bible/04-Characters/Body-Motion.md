@@ -52,6 +52,9 @@ added to it (`climbRig.js` poseArm's curl is relative).
 
 **The switch** is `systems/features.js` 'mw-body-motion' (Morrowind Body Motion, on by default): the viewer's, as the
 Steel Helm is - how this machine draws a body, never the wire. Off, the body is Morrowind's clips exactly as before.
+On ORG2's one Settings screen it stands in Combat > With Morrowind data, beside the Morrowind Spell Effects
+(`ui/settings/settingsMap.js`); its title and note are routed (`features.mwBodyMotion.*`, L10N4), drafted in-session in
+every language that has a table (`tools/l10nInSession.mjs`).
 
 ## The body, measured - `src/characters/bodyMotion/bodyKit.js`
 
@@ -225,3 +228,7 @@ but how a request reads on Morrowind's own bodies is for Mac's eye on his own da
 - PIN MOVED, each with its note: `test/combat/twohands_mw.test.js` and `test/player/climb/climb6.test.js` (the
   `poseAssembly` order: the `motion` slot between the neck and the run). Mutant records whose anchors this slice moved,
   re-aimed by content: `tools/mutants/htwaist.json` HT-WAIST-the-body-never-swings-it and HT-WAIST-the-portrait-swings.
+- The row's own (CI found them on the pull request): the registry's counts and order (`test/systems/features.test.js`
+  FT0 and FT15's note budget, +208; `test/systems/ft18_features.test.js` 106; `test/systems/ft8_combatvisuals.test.js`
+  56) and, PIN MOVED, the Morrowind section's items (`test/formats/morrowind/mwnpc_mainmerge.test.js`), with
+  `tools/mutants/mwnpcmerge.json` MWNPCMERGE-row-off-settings re-aimed by content.

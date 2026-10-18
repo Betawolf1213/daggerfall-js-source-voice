@@ -24,10 +24,10 @@
 
 import { MW_WEAPON_TYPE } from '../../formats/morrowind/mwFirstPerson.js';
 import { rotAxisAngle } from '../../combat/climbRig.js';
-import {
-  sub, add, scale, dot, norm, len, lerp, clamp01, apply, RAD, reflect, inFrame,
-} from './bodyKit.js';
+import { algebra, clamp01, apply, RAD, reflect } from './bodyKit.js';
 import { gripRequest } from './bodySolve.js';
+
+const { sub, add, scale, dot, norm, len, lerp, inFrame } = algebra;
 
 /** The class a hand's weapon is carried as (the module's head). `torch` takes the left arm to the clip.
  *  @param {{ mwType?: number, shown?: boolean, hands?: string, spell?: boolean }} [hand] */

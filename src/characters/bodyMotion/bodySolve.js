@@ -19,10 +19,9 @@
 // Answers a small report, or null when nothing was posed.
 
 import { solveReach, rotFrames, rotFromTo, rotFraction, handFrame, orthonormal, rotationPart } from '../../combat/climbRig.js';
-import {
-  sub, add, scale, dot, cross, norm, len, lerp3, clamp01, transpose, apply, mul, bodyTurn, fromColumns,
-  bodyOf, turnOf, at,
-} from './bodyKit.js';
+import { algebra, clamp01, transpose, apply, mul, bodyTurn, fromColumns, bodyOf, turnOf, at } from './bodyKit.js';
+
+const { sub, add, scale, dot, cross, norm, len, lerp3 } = algebra;
 
 /** How the chest's turn is spread up the trunk: each bone below the chest takes this share of it, counted from the hips
  *  (the chest the whole) - so the spine bends rather than kinks. */

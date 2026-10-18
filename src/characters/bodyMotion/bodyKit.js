@@ -17,15 +17,15 @@ import { wrapAngle } from '../../world/mat4.js';
 
 // ---- the small algebra every law here shares ------------------------------------------------------------------------
 
-export const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-export const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-export const scale = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
-export const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-export const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-export const len = (a) => Math.hypot(a[0], a[1], a[2]);
-export const norm = (a) => { const l = len(a); return l > 1e-12 ? [a[0] / l, a[1] / l, a[2] / l] : [0, 0, 0]; };
-export const lerp = (a, b, t) => a + (b - a) * t;
-export const lerp3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const scale = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const len = (a) => Math.hypot(a[0], a[1], a[2]);
+const norm = (a) => { const l = len(a); return l > 1e-12 ? [a[0] / l, a[1] / l, a[2] / l] : [0, 0, 0]; };
+const lerp = (a, b, t) => a + (b - a) * t;
+const lerp3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 export const clamp01 = (t) => Math.min(1, Math.max(0, t));
 export const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 /** Hermite's smoothstep: 0 at 0, 1 at 1, flat at both ends. */
@@ -44,18 +44,23 @@ export const mul = (a, b) => mat33Mul(a, b);
 export const fromColumns = (x, y, z) => [x[0], y[0], z[0], x[1], y[1], z[1], x[2], y[2], z[2]];
 /** Rotations about the rig's own axes, by the right hand: `rotZ` turns +X toward +Y (a turn to the LEFT, seen from
  *  above), `rotY` turns +Z toward +X (the right side DOWN), `rotX` turns +Y toward +Z (the front UP). */
-export const rotX = (a) => rotAxisAngle([1, 0, 0], a);
-export const rotY = (a) => rotAxisAngle([0, 1, 0], a);
-export const rotZ = (a) => rotAxisAngle([0, 0, 1], a);
+const rotX = (a) => rotAxisAngle([1, 0, 0], a);
+const rotY = (a) => rotAxisAngle([0, 1, 0], a);
+const rotZ = (a) => rotAxisAngle([0, 0, 1], a);
 /** A body-frame turn: `yaw` about up (+ the left), `roll` about forward (+ the right side down), `pitch` about right
  *  (+ the front DOWN - a forward lean, a forward pelvic tilt), applied pitch first, then roll, then yaw. */
 export const bodyTurn = (yaw, roll, pitch) => mul(rotZ(yaw), mul(rotY(roll), rotX(-pitch)));
 /** A vector in the body frame ([right, forward, up] shares) as rig space under the turn `R` (identity: the rig's own). */
-export const inFrame = (R, v) => (R ? apply(R, v) : v);
+const inFrame = (R, v) => (R ? apply(R, v) : v);
 /** Mirror a body-frame vector across the body's middle (right becomes left). */
 export const mirrorX = (v) => [-v[0], v[1], v[2]];
 /** Reflect `v` across the plane through the origin with unit normal `n`. */
 export const reflect = (v, n) => sub(v, scale(n, 2 * dot(v, n)));
+/** The vector algebra above, as ONE export. Its names are the plainest there are and other modules export their own
+ *  under them (world/ships/galleonMesh.js's sub and cross, systems/weather/weatherFront.js's lerp, characters/animate.js's
+ *  2D rotX), so the layer's are one name, unpacked by each module that uses them - one export, one home
+ *  (test/systems/talk/audit24_onehome.test.js). */
+export const algebra = Object.freeze({ sub, add, scale, dot, cross, len, norm, lerp, lerp3, inFrame });
 
 // ---- the body, measured ---------------------------------------------------------------------------------------------
 
