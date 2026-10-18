@@ -20,7 +20,7 @@ import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_T
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
-import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
+import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_DOOR_WAIT_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
 import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gate/gateFx.js';   // WB9e: his blows seen landing
@@ -225,6 +225,7 @@ export const HEAL_SEND_MS = 1000;
  *   link: { state: () => any, receipt?: (day: number) => string|null },
  *   spoils?: any,
  *   now: () => number,
+ *   door?: () => number|null,
  *   cam?: () => number[]|null,
  *   feet?: () => number[]|null,
  *   player?: () => any,
@@ -263,7 +264,7 @@ export const HEAL_SEND_MS = 1000;
  */
 export function createGateCourt({
   renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null,
-  link, spoils = null, now, cam = () => null, feet = () => null, player = () => null, save = () => 100,
+  link, spoils = null, now, door = () => null, cam = () => null, feet = () => null, player = () => null, save = () => 100,
   strike = () => {}, say = () => {}, hudHidden = () => false, veiled = () => false, send = () => false, sendCrystal = () => false, sendHost = () => false, sendHeal = () => false, sendBody = () => false, rng = Math.random,
   portalDoor: layPortalDoor = () => {}, soulTrap = () => {}, me = () => null, yaw = () => null, shake = () => {},
   wantBodies = undefined, makeBodies = null,   // MWNPC10: the body lane's seams (a test's own)
@@ -347,6 +348,7 @@ export function createGateCourt({
    *  fight's last word a frame of mine saw (its `heardAt`) and when, my last frame; and the players seen in the court last
    *  call and this one (stepsIn), and whether the first look has been taken */
   let arrivedAt = null, heardSeen = null, wordAt = null, frameAt = null, peersPrimed = false;
+  let doorSeen = null;   // GATE-DOOR: the court's last busy answer this screen counted
   let _peersWere = new Set(), _peersNow = new Set();
   const ARRIVAL = courtToDungeon(0, 0, ARRIVE_Z);
   /** GATE-FBX: the court's fires this frame - the way home and the way in - one list, refilled (AUDIT WB D10's law) */
@@ -455,6 +457,9 @@ export function createGateCourt({
     if (frameAt !== null && t - frameAt > COURT_FRAME_GAP_MS) wordAt = t;
     frameAt = t;
     if (s && s.day !== null && s.heardAt !== heardSeen) { heardSeen = s.heardAt; wordAt = t; }
+    // GATE-DOOR: a busy answer from the court's door since the last one counted is a word of it, while I am new to it
+    const d = door();
+    if (d != null && d !== doorSeen) { doorSeen = d; if (t - arrivedAt <= COURT_DOOR_WAIT_MS) wordAt = t; }
   }
 
   function sound(cue, s, t, atk, point = null) {

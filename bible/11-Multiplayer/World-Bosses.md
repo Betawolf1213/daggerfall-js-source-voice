@@ -2589,6 +2589,16 @@ fighter back in after his fall). Found and NOT fixed, outside the slice: `AUDWBX
 (`tools/mutants/auditwbx2.json`, `server/src/index.js`) survives on the pushed head as before this change - a relay
 pin for the next relay slice.
 
+## 23. The court's door (GATE-DOOR, 2026-10-18)
+
+From play at a thousand online: "Server is kinda breaking down near oblivion gate cause so many ppl lol". The court
+admitted ten hellos a second, one bucket for its whole crowd, and a player standing in a court that had said nothing for
+COURT_SILENT_MS (section 22, AUDIT GATE-FBX C1) was cast out of it - so at the opening a share of the crowd was thrown out
+of the court it was waiting to enter, and walked back in to queue again. A court and its copies now admit
+GATE_HELLO_HZ_MAX (48) a second, and a court that refuses a player busy counts as an answer for COURT_DOOR_WAIT_MS after
+they step in. The measurements, the model and the pins are `Scale-Arc.md` GATE-DOOR (THE PLAN PAST 1,000). Not a DFU
+member: Daggerfall has no other players.
+
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,

@@ -1,0 +1,74 @@
+[
+ {
+  "name": "GATEDOOR-court-at-cell-rate",
+  "file": "server/src/index.js",
+  "old": "isGateRoom(a.key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX);",
+  "new": "isGateRoom(a.key) ? HELLO_HZ_MAX : HELLO_HZ_MAX);",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-every-room-at-court-rate",
+  "file": "server/src/index.js",
+  "old": "isGateRoom(a.key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX);",
+  "new": "isGateRoom(a.key) ? GATE_HELLO_HZ_MAX : GATE_HELLO_HZ_MAX);",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-rate-shallow",
+  "file": "src/net/wire.js",
+  "old": "export const GATE_HELLO_HZ_MAX = 48;",
+  "new": "export const GATE_HELLO_HZ_MAX = 12;",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-never-stamped",
+  "file": "src/net/online.js",
+  "old": "this._tokenUnread(ws, room, ev); this.busyAt = this._now(); this.status = 'closed';",
+  "new": "this._tokenUnread(ws, room, ev); this.status = 'closed';",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-drop-stamped",
+  "file": "src/net/online.js",
+  "old": "      if (code === CLOSE_BUSY) { this._tokenUnread(ws, room, ev); this.busyAt = this._now();",
+  "new": "      this.busyAt = this._now(); if (code === CLOSE_BUSY) { this._tokenUnread(ws, room, ev);",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-door-unread",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "    const d = door();\n",
+  "new": "    const d = null;\n",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-read-past-the-wait",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "if (t - arrivedAt <= COURT_DOOR_WAIT_MS) wordAt = t;",
+  "new": "wordAt = t;",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ },
+ {
+  "name": "GATEDOOR-host-unwired",
+  "file": "src/scenes/world.js",
+  "old": "_sharedOffsetMs, door: () => online?.busyAt ?? null,",
+  "new": "_sharedOffsetMs, door: () => null,",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ]
+ }
+]

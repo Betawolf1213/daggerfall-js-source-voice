@@ -2814,3 +2814,106 @@ with the site's and the account service's (acct112).)
    of 10,000), their friends and their guild, with a search by name. Today it already names only the oldest 512.
 3. **A full city.** Past what one object can fan, either a city's crowd is split into layers (copies of the same
    place whose players do not see each other, as many MMOs do) or the city refuses `room full` as it does today.
+
+## THE PLAN PAST 1,000 (2026-10-18)
+
+The owner, at about a thousand online every evening: "We really need to future proof even more and improve our server.
+Like really deep." THE PLAN PAST 2,000 (above) still stands - its slices shipped - and this is what the field and two
+read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, each limit grown by adding objects.**
+
+### Where things stand, measured
+
+- **Online:** the hub's bus held 1,074 players at 18:50 UTC on 2026-10-18 and 1,054 at 21:24 the evening before
+  (RELAY-LOAD's first reading, above) - no room refused busy or full among the forty busiest, nothing dropped.
+- **The account primary** is the ceiling the field has hit (PRIMARY-TRIPS through SHED-LONG): it tips at some 180-245
+  round trips a second and ran about 200 at the evening's peak. The surveys' count (the real Worker over node:sqlite,
+  each trip marked primary or replica by D1's session law) puts about half of those in eight places, below.
+- **The relay** has room in its sockets (the hub sixteen shards, each region four, a place eight layers) and is short in
+  its doors and its event rooms, below.
+
+### What breaks, ranked (counted in the code, estimated where it says so)
+
+1. **The gate court's door - at a thousand, now.** A court admits HELLO_HZ_MAX (10) hellos a second, one bucket for
+   everyone, and a player in the court whose fight has said nothing for COURT_SILENT_MS (20 s) is cast out
+   (`gateCourt.js` silent - a socket still retrying counts as silence). Modelled on the client's own retry ladder
+   (hubWaveModel's, at the court's rate): 256 arriving within 5 s are refused busy 636 times, the median player in at
+   11.9 s and the last at 28.4 s; 512 within 10 s, the median at 24.7 s. So at the opening a share of the crowd is
+   thrown out of the court it is waiting to enter, walks back in and queues again - the field's "breaking down near
+   oblivion gate". A hello costs the court some 1.4 ms at 256 (the real Room on the pins' fake, tokens minted apart).
+   **GATE-DOOR, below.**
+2. **The court holds 256 fighters** (`gateBrain.js` GATE_FIGHTERS_MAX); the 257th is told `the court is full` and cast
+   out, and its copies add sockets, never fighters. Past it the brain's census, trails and the kill's `here` are all
+   bound at 256, and the copies hand up every pose uncoalesced. **A game decision first (below), then COURT-WIDE.**
+3. **The site's cell** at the gate's hour: one layer at 256 sends some 5,200 frames and 37.5 MB a second (wire2Bench),
+   and a crowded cell overloaded live (HUB-PULL's reading, `world:30,0`). Its room-wide budgets do not grow with its
+   crowd (HIT_ROOM_HZ_MAX 60, FOES_ROOM_BYTES_PER_S 4 MiB, CHAT_ROOM_HZ_MAX 20, ACT_ROOM_* 30 and 1 MiB), and its door
+   is the court's: the court's crowd comes home at 10 a second a layer. **SITE-LAYERS, once RELAY-LOAD shows the site.**
+4. **The account primary's trips** (the survey's count at the evening's rates; an estimate of trips a second at 1,000):
+   the session's lookup on every request (30-74), the realm checkpoint (~23), the per-request checks INT16/17 added
+   (the tombstone, the progress read and write, the rate window: ~17), the chapters' list (5.5), the token's mint (3.5),
+   the heartbeat (3.3), the seats' list (2.4), a town's homes (~6) - together some 90-130 of the 200. That is one
+   primary for about 2,000-3,000. **PRIMARY-FOLD, then SESSION-SIGN (a decision), below.**
+5. **A relay deploy at 5,000:** some 3.9 sockets a player and a mint a page; the busiest second's mints some 255 at
+   5,000 (hubWaveModel, SPREAD=1), about 1,000 statements on the one primary in that second. **Decision 1 above.**
+6. **The bus** (`chat:world`) **past 2,000:** every shard's player is a ShardSocket in its index, its batching a
+   ceiling near 1,280 internal requests a second (sixteen shards, HUB_BATCH_MS 25), its caches (RECS_MAX 4,096,
+   HUB_KEEP_MAX 8,192) smaller than the player base past some 8,000. **BUS-THIN.**
+7. **The opt-in channels at 10,000:** `chat:lang.en`, `chat:trade` and `chat:lfg` are one object each at
+   CHAT_SOCKETS_MAX (2,048). **CHAN-SHARD, on the region channels' machinery.**
+8. **10,000 writes:** past 3,000 one primary does not carry the hot rows whatever is folded: each account's hot rows
+   sharded by account across databases (the hub's shape), cross-account acts by escrow (`piece_escrow`, `wild_escrow`
+   the precedent). A database split by domain frees little - every route reads `players`, `sessions` and
+   `realm_characters`, and 105 foreign keys cascade from `players`. **ACCOUNT-SHARDS, a design of its own.**
+
+### The slices, in order
+
+1. **RELAY-LOAD** (built, above): the relay's metrics read, so every slice after it is chosen and checked by the field.
+2. **GATE-DOOR - the court's door** (relay and client, one drop at the merge): a court and its copies admit
+   GATE_HELLO_HZ_MAX hellos a second (the token still unread and unspent on a busy refusal, SCALE5a's law), and a court
+   that refuses busy is an answer, not a silence - the player waits at the door instead of being cast out of the court.
+3. **PRIMARY-FOLD - the account's own** (no drop): the per-request checks folded into each act's own batches, the
+   chapters' Turning on the minute's clock and its list off a replica, the mint's #1 off the primary, the seats' list on
+   a SEAT-REPLICA session. Some 30 trips a second at 1,000, no behaviour moved; each measured before and after with the
+   trip counter.
+4. **SESSION-SIGN** (decision 4, below): the session's lookup off every hot route - a short-lived signed session the
+   service mints and the hot routes verify, the lookup kept for the routes that change an account.
+5. **COURT-WIDE** (decision 5): copies that hold fighters of their own and hand the court one batch a beat.
+6. **SITE-LAYERS, BUS-THIN, CHAN-SHARD**, each when RELAY-LOAD's rows say its limit is near.
+7. **ACCOUNT-SHARDS**: designed before 3,000.
+
+Relay slices ride as few drops as possible (the deploy policy above): GATE-DOOR's is the next.
+
+### GATE-DOOR: built (2026-10-18, this branch - relay world218, one drop at the merge)
+
+- **The relay.** A gate's court and its copies admit GATE_HELLO_HZ_MAX (48) hellos a second, burst the same, where every
+  room admitted HELLO_HZ_MAX (10) - its own bucket, still asked before the token is read (`server/src/index.js`, the hello
+  arm's one `tokenGate`), so a busy refusal leaves the token unspent and the retry carries it again (SCALE5a). A cell, a
+  building and a dungeon keep HELLO_HZ_MAX. Measured first (the real Room on the pins' fake, tokens minted apart): a hello
+  costs a court some 1.4 ms of its own at 256 sockets, so the opening's door spends some 70 ms of the court's second while
+  the crowd comes in. Modelled (the client's own retry ladder at the court's rate, twenty seeds): 256 arriving within 5 s
+  are in within their arrival, none refused (636 refusals at 10); 1,024 arriving over 20 s are refused 61 times, the median
+  player in at 10.1 s (9,593 refusals and 50.3 s at 10).
+- **The client.** The session stamps a busy refusal of its room on its own clock (`online.js` `busyAt`), and the court
+  reads it (`gateCourt.js` `door`, handed by the world host): while I am new to a court (COURT_DOOR_WAIT_MS, 60 s from my
+  arrival) each refusal is a word of it, so I wait at its door instead of being cast out by COURT_SILENT_MS. Past the
+  wait a court that only refuses is silent as before - AUDIT GATE-FBX C1's law for a relay that will not answer.
+- **Deploy relay before clients.** A client from before it meets a deeper door and is refused less; nothing else changes.
+
+**Pins.** `test/net/gate/gatedoor.test.js` (3): the court admits GATE_HELLO_HZ_MAX in one instant and refuses the next busy
+with its token unread, which then opens the court once the door refills, while a cell keeps HELLO_HZ_MAX; the session's
+stamp on a busy close and none on a drop; the court's silence with its door answering, before and past the wait, and the
+host's wiring. `tools/mutants/gatedoor.json`: 8, all dead (a ninth - the door read at my arrival - survived, and the line
+it aimed at was redundant, a refusal from before arrival first seen on the arrival's own frame: taken out). PIN MOVED: the
+relay version's 45 pins, world217 to world218 (each pin's history kept).
+
+### Decisions for the owner
+
+4. **How long a signed-out session may still read.** A signed session lives a few minutes (the relay's identity tokens
+   already accept five); a sign-out, a password change or a recovery ends it at its next refresh, not at once. A ban
+   and a mute are already pushed to the relay and checked at the mint. Recommended: five minutes, on the hot routes
+   alone.
+5. **More than 256 fighters at one gate.** Either the court stays 256 and the rest watch (kept in, not cast out), or the
+   copies hold fighters of their own (COURT-WIDE - his health one, the shares and the spoils every copy's).
+6. **The realm checkpoint every five minutes rather than two** (some 9 trips a second): a trade, a craft and every
+   profession act already save at once; what a crash between checkpoints could lose grows from two minutes of walking
+   to five.

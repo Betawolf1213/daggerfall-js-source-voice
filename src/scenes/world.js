@@ -24208,7 +24208,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _realmArenaBridged = realmArena([...SD_REALM_FLOORS, ...SD_HALL_FLOORS, ...SD_STEPS_FLOORS]);   // SD6c: and with the Concord, the bridge and the first step; SD7b: and past it the Steps' band - the void's to take, the cast-back its edge - and the arena
   const gateCourt = gateLink ? createGateCourt({
     renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link: gateLink, spoils: spoilsPool,
-    now: () => Date.now() + _sharedOffsetMs,
+    now: () => Date.now() + _sharedOffsetMs, door: () => online?.busyAt ?? null,   // GATE-DOOR: and the court's door answering busy - a word of it, not a silence
     cam: () => cam.pos,
     feet: () => (playerSpawned && modes?.gateArenaDay?.() != null ? player.feetAt() : null),
     player: () => playerEntity,
