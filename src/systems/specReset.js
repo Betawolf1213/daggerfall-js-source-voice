@@ -36,6 +36,8 @@ const LAW = Object.freeze({
 
 /** The path `family` holds on this entity, or null. */
 export const resetHeld = (entity, family) => (Object.hasOwn(LAW, family) ? LAW[family].held(entity) : null);
+/** The entity field that keeps `family`'s path, or null - the one home the guide reads it from (AUDIT SPEC-RESET L5-9). */
+export const resetField = (family) => (Object.hasOwn(LAW, family) ? LAW[family].field : null);
 
 /** The bank account a reset may draw on: online the Empire's, offline none. */
 const resetAccount = (entity) => (entity?._online === true ? accountOfSave(entity, REALM_EMPIRE_ACCOUNT) : null);

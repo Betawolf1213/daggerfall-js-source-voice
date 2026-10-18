@@ -28,7 +28,7 @@ import * as MP from '../../../src/systems/martialPaths.js';
 import { specResetRefusal, resetSpec, resetHeld, resetGold } from '../../../src/systems/specReset.js';
 import { signatureSpell } from '../../../src/systems/signatureSpells.js';
 import { snapshotPlayer, restorePlayer } from '../../../src/systems/save/save.js';
-import { specGuideModel, stateLine } from '../../../src/ui/growth/specGuide.js';
+import { specGuideModel, stateLine, SPEC_GUIDE_CSS } from '../../../src/ui/growth/specGuide.js';
 import { growthDue } from '../../../src/ui/growth/growthTab.js';
 import { dropStage } from '../../../src/ui/growth/growthStage.js';
 import { _resetForTests } from '../../../src/systems/uiPrefs.js';
@@ -244,7 +244,23 @@ test('SPEC-RESET THE GUIDE\'S MODEL: a held path\'s Reset - none with nothing he
   // the closed paths point to the Reset
   const closed = family(m, 'arcane').paths.find((p) => p.state === 'closed');
   assert.equal(stateLine(family(m, 'arcane'), closed, true), 'You already chose Warden. You can have only one path of each kind; reset Warden to choose another.');
-  assert.deepEqual(family(m, 'martial').reset.rows().slice(2, 4), ['You lose its passive and its signature technique.', 'Your mastered skills stay mastered.']);
+  // AUDIT SPEC-RESET L5-1: the martial half whole
+  assert.deepEqual(family(m, 'martial').reset.rows(), ['Reset Ranger for 200,000 gold?', '',
+    'You lose its passive and its signature technique.', 'Your mastered skills stay mastered.', '',
+    'Open to you after the reset: Ranger.', 'More paths unlock as you master more skills.']);
+  assert.equal(family(m, 'martial').reset.refusal, null);
+  // the minor slot spent on Mysticism: Short Blade can never be mastered, so a martial reset buys back the Ranger
+  assert.equal(family(specGuideModel(held(250000, { mastered: [LB, AR, RES, ALT, MYS] })), 'martial').reset.refusal,
+    'No other martial path can open for you, so a reset would only let you choose Ranger again.');
+  // AUDIT SPEC-RESET L5-2: a skill at 100 with a slot left ('ready', a Master Skills press away) is within reach
+  const ready = hero({ primary: [LB, AR, DES], major: [RES, ALT, AX], minor: [MYS, SB, HH], mastered: [LB, AR, RES, ALT] });
+  assert.equal(AP.choosePath(ready, 'warden').ok, true);
+  ready.skills[MYS] = 100; ready.goldPieces = 250000; ready.items = [];
+  const rr = family(specGuideModel(ready), 'arcane').reset;
+  assert.equal(rr.refusal, null, 'Mysticism ready to master: another path is within reach');
+  assert.deepEqual(rr.rows().slice(-2), ['Open to you after the reset: Warden.', 'More paths unlock as you master more skills.']);
+  // AUDIT SPEC-RESET L5-5: the law's refusal first - short of the gold, whatever the guard would say
+  assert.equal(family(specGuideModel(held(5, { mastered: [LB, AR, RES, ALT, SB] })), 'arcane').reset.refusal, 'Resetting costs 200,000 gold. You have 5.');
   // three schools mastered (every slot spent): the other two paths open at once, and none left to reach
   const three = held(250000, { mastered: [LB, AR, RES, ALT, MYS] });
   assert.equal(family(specGuideModel(three), 'arcane').reset.rows().at(-1), 'Open to you after the reset: Riftwalker, Warden, Necromancer.');
@@ -283,6 +299,7 @@ test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the pri
     const bar = (name) => host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.includes(name));
     const ask = () => globalThis.document.body.querySelectorAll('div').find((d) => String(d.className).includes('px-master-ask'));
     try {
+      assert.ok(host.textContent.includes('Resetting one costs 200,000 gold.'), 'the lead names the price (AUDIT SPEC-RESET L5-4)');
       bar('Blademaster').onclick();
       assert.equal(btn('Reset · 200,000 gold'), undefined, 'a path not held has no Reset');
       bar('Ranger').onclick();
@@ -304,9 +321,16 @@ test('SPEC-RESET THE GUIDE, DRIVEN: the chosen path\'s Reset press names the pri
       host.querySelectorAll('button').find((b) => String(b.className).includes('gr-fam') && b.textContent.startsWith('Arcane')).onclick();
       bar('Warden').onclick();
       assert.equal(btn('Reset · 200,000 gold').disabled, true);
-      assert.ok(host.textContent.includes('Resetting costs 200,000 gold. You have 500.'), 'the press says why');
+      const why = host.querySelectorAll('p').find((el) => el.textContent === 'Resetting costs 200,000 gold. You have 500.');
+      assert.ok(why, 'the press says why');
+      assert.match(String(why.className), /\bgr-reset-why\b/);
+      assert.match(SPEC_GUIDE_CSS, /\.px-sys \.gr-reset-why \{/, 'its own dress (AUDIT SPEC-RESET L5-7)');
       btn('Reset · 200,000 gold').onclick();
       assert.equal(ask(), undefined, 'a refused press asks nothing');
     } finally { menu.unmount(); }
+    // AUDIT SPEC-RESET L5-6: a new visit drops the last one's note
+    const host2 = globalThis.document.createElement('div');
+    const menu2 = mountEnhancedMenu(host2, { mode: 'pause', hooks: {}, onAction: () => {}, at: 'specs:martial' });
+    try { assert.ok(!host2.textContent.includes('Ranger is reset.'), 'the note is the visit\'s'); } finally { menu2.unmount(); }
   } finally { restore(); dropStage(); }
 });

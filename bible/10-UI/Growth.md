@@ -335,6 +335,6 @@ Audited the same day: `01-Overview/audits/Audit-Spec-Reset.md` (AUDIT SPEC-RESET
 - **Pins:** `test/ui/growth/specreset.test.js` (10): the price and the boxes' words; the law paid in coins, then in a
   letter and coins, the other family, the masteries and the book untouched; the refusals with nothing moved; the save;
   the guide's model (its ask, the paths open after, the only-path guard, Master Skills off); the press driven in the
-  pause window; and the audit's four (the Empire's account, the one ask, the mods, an older build's carry). Mutants:
-  `tools/mutants/specreset.json` (45), all dead. Pins moved to the new words: `growth1_tab`, `schools_arcane`,
+  pause window; and the audit's four (the Empire's account, the one ask, the mods, an older build's carry), with L5's gaps closed in them (the martial half whole, the 'ready' arm, the refusals' order, the lead's price, a new visit's note). Mutants:
+  `tools/mutants/specreset.json` (56: 55 dead, judged serially, and one equivalent as recorded - AUDIT SPEC-RESET L5-8). Pins moved to the new words: `growth1_tab`, `schools_arcane`,
   `martial_paths`, `audit_schools`.

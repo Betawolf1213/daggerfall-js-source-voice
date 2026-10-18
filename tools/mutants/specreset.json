@@ -110,7 +110,7 @@
   {
     "name": "SPEC-RESET-model-reads-held",
     "file": "src/ui/growth/specGuide.js",
-    "old": "  bare[law.field] = null;\n",
+    "old": "  bare[resetField(id)] = null;\n",
     "new": "",
     "tests": [
       "test/ui/growth/specreset.test.js"
@@ -415,5 +415,106 @@
     "tests": [
       "test/ui/growth/specreset.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-1-martial-field-drift",
+    "file": "src/systems/specReset.js",
+    "old": "  martial: { held: martialPathOf, field: 'martialPath', prompted: 'martialPrompted' },",
+    "new": "  martial: { held: martialPathOf, field: 'arcanePath', prompted: 'martialPrompted' },",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-1-martial-only-guard-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "specResetRefusal(entity, id) ?? (after.others ? null",
+    "new": "specResetRefusal(entity, id) ?? (after.others || id === 'martial' ? null",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-1-martial-later-unsaid",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "        ...(after.later ? [",
+    "new": "        ...(after.later && id === 'arcane' ? [",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-2-reach-drops-ready",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  const reach = (st) => st === 'ready' || st === 'reach';",
+    "new": "  const reach = (st) => st === 'reach';",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-3-reset-clears-prompted",
+    "file": "src/systems/specReset.js",
+    "old": "  entity[LAW[family].prompted] = true;",
+    "new": "  entity.pathPrompted = false; entity.martialPrompted = false;",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-4-lead-gold-arg-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "Resetting one costs {gold, number} gold.', { gold: SPEC_RESET_GOLD })",
+    "new": "Resetting one costs {gold, number} gold.')",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-5-refusal-precedence-swapped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "  const refusal = specResetRefusal(entity, id) ?? (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));",
+    "new": "  const refusal = (after.others ? null\n    : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name })) ?? specResetRefusal(entity, id);",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-6-resetSpecGuide-keeps-note",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "_all = false; _note = null; }",
+    "new": "_all = false; }",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-7-css-rule-removed",
+    "file": "src/ui/growth/specGuide.js",
+    "old": ".px-sys .gr-reset-why { margin-top: 6px; color: #b8a27a; }\n",
+    "new": "",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-7-why-class-dropped",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "el('p', 'gr-fine gr-reset-why', r.refusal)",
+    "new": "el('p', 'gr-fine', r.refusal)",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-SPEC-RESET-L5-8-afterReset-states-on-entity",
+    "file": "src/ui/growth/specGuide.js",
+    "old": "pathState(bare, law, p, null, open, on)",
+    "new": "pathState(entity, law, p, null, open, on)",
+    "tests": [
+      "test/ui/growth/specreset.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT SPEC-RESET L5-8: with `held` passed as null, pathState reads no path field (skillStand and masterableCount read skills, career and masteries) - the view is kept for the one reader that needs it, law.choices(bare), and so the states read the same entity the list is built on"
   }
 ]

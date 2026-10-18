@@ -18,7 +18,7 @@ import { MARTIAL_PATHS, MARTIAL_SKILLS, MARTIAL_FAMILY, martialPathOf, martialCh
 import { MAGIC_SKILLS, SKILL_NAMES } from '../../systems/skills.js';
 import { masterSkillsActive, masterSkillsSwitchable, isMasteredSkill, careerGroupOf, masterySlots, masterableCount, masterCappedSkill } from '../../systems/masterSkills.js';
 import { signatureSpell } from '../../systems/signatureSpells.js';
-import { specResetRefusal, resetSpec } from '../../systems/specReset.js';   // SPEC-RESET: a held path given up, for gold
+import { specResetRefusal, resetSpec, resetField } from '../../systems/specReset.js';   // SPEC-RESET: a held path given up, for gold
 import { computeEntityMods } from '../../systems/entityMods.js';   // AUDIT SPEC-RESET L1-3: a chosen path's stats now
 import { sigilDueling } from '../../systems/sigil/sigil.js';
 import { lootRarityOn } from '../../systems/loot/lootRarity.js';
@@ -96,12 +96,12 @@ export function techniqueLines(path) {
 /** One family's law, uniformly: its skills, its paths and its doors. */
 const FAMILY_LAW = Object.freeze({
   arcane: {
-    skills: MAGIC_SKILLS, paths: () => PATHS, held: pathOf, field: 'arcanePath', choices: pathChoices, possible: pathPossible,
+    skills: MAGIC_SKILLS, paths: () => PATHS, held: pathOf, choices: pathChoices, possible: pathPossible,
     pair: (p) => p.schools, pairText: pathSchoolsText, ask: (e, id) => pathChoiceRows(e, id), choose: choosePath,
     signature: (p) => ({ kind: 'spell', name: p.spell.name, text: p.rider, lines: spellLines(p.id) }),
   },
   martial: {
-    skills: MARTIAL_SKILLS, paths: () => MARTIAL_PATHS, held: martialPathOf, field: 'martialPath', choices: martialChoices, possible: martialPossible,
+    skills: MARTIAL_SKILLS, paths: () => MARTIAL_PATHS, held: martialPathOf, choices: martialChoices, possible: martialPossible,
     pair: (p) => p.skills, pairText: martialSkillsText, ask: (e, id) => martialChoiceRows(e, id), choose: chooseMartialPath,
     signature: (p) => ({ kind: 'technique', name: p.technique.name, text: `${p.technique.text} ${p.rider}`, lines: techniqueLines(p) }),
   },
@@ -145,9 +145,9 @@ function pathAsleep(entity, id, on) {
  *  (a view over it, never a write): the paths then open to choose at once (`open`, the held one among them - its pair is
  *  still mastered), whether more are within reach (`later`), and whether any OTHER path of the family is open or within
  *  reach (`others`). Pure. */
-function afterReset(entity, law, held, on) {
+function afterReset(entity, id, law, held, on) {
   const bare = Object.create(entity);
-  bare[law.field] = null;
+  bare[resetField(id)] = null;
   const open = law.choices(bare);
   const states = law.paths().map((p) => [p, pathState(bare, law, p, null, open, on)]);
   const reach = (st) => st === 'ready' || st === 'reach';
@@ -162,7 +162,7 @@ function afterReset(entity, law, held, on) {
  *  back the same one), the ask's rows, and the reset itself. The ask says a signature spell stays in the book only where
  *  one was bought (AUDIT SPEC-RESET L1-5: choosing grants none - it is sold to the path's holder). */
 function resetModel(entity, id, law, held, on) {
-  const after = afterReset(entity, law, held, on);
+  const after = afterReset(entity, id, law, held, on);
   const refusal = specResetRefusal(entity, id) ?? (after.others ? null
     : t('growth.spec.reset.only', 'No other {family} path can open for you, so a reset would only let you choose {name} again.', { family: famWord(id), name: held.name }));
   const rows = () => [

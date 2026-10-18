@@ -42,6 +42,20 @@ The scratch scripts are the session's (`scratchpad/audit/`); none is committed.
 | L4-11 | NOTE | `refuse.none` duplicated `schools.refuse.none`'s English under a key of its own, it and ro translating it differently | FIXED: the reset reads `schools.refuse.none` |
 | L4-13 | NOTE | ru: the ask quoted «{name}» where the family's rows use the colon form | FIXED: "...золота: {name}?" |
 | L4-15 | NOTE | A closed path said one path of each kind and nothing of the way out | FIXED: "...; reset {name} to choose another." |
+| L5-1 | MED | The guide's martial half was nearly unpinned: its field drifted to the arcane one, its only-path guard dropped, its "more paths" line dropped - each survived every suite | FIXED: the martial ask pinned whole, its guard pinned on a character whose minor slot went to Mysticism |
+| L5-2 | MED | The only-path guard's 'ready' arm (a skill at 100, a slot left - a Master Skills press away) unpinned: read as out of reach, a reset that could open another path would be refused | FIXED: pinned on a character with Mysticism at 100 and the minor slot free |
+| L5-3 | LOW | (L1-2's) "the one ask is not asked again" held only for a path the ask had chosen | FIXED with L1-2; pinned through the real quiet pass |
+| L5-4 | LOW | The guide's lead could lose its `{gold}` and read "costs undefined gold" - only the catalog's parity read it | FIXED: pinned in the window driven |
+| L5-5 | LOW | The refusals' order (the gold first, then the only-path guard) unpinned | FIXED: pinned |
+| L5-6 | LOW | A new visit's dropping of the last visit's note unpinned | FIXED: pinned over a second mount |
+| L5-7 | NOTE | The refusal line's class and its CSS rule unpinned | FIXED: pinned |
+| L5-8 | NOTE | `pathState(bare, ...)` against `pathState(entity, ...)` is an equivalent mutant: with nothing held passed, the states read no path field | KEPT and recorded `equivalent` (`tools/mutants/specreset.json`) - the view is the one entity the list is built on |
+| L5-9 | LOW | ONE DFU MEMBER, ONE EXPORT: the family's field was written twice, in the law and in the guide | FIXED: `specReset.js` resetField, the guide reads it |
+| L5-10 | LOW | TEST THE SHAPE THE PRODUCER MINTS: the pins hand-built a letter of credit | FIXED: `inventory.js` letterOfCredit |
+| L5-11 / L5-12 | LOW | (L4-7, L4-9's and L2-1's, found again) | FIXED with them |
+| L5-13 | NOTE | A `--jobs` verdict under load can call a survivor dead (one did, with tsc beside it) | Every record here judged SERIALLY before it was counted |
+| L5-14 | NOTE | `specReset.js`'s header ran a line to 135 columns | FIXED (the file rewritten); its long `t()` lines are the neighbours' habit (61 and 93 such lines in the two laws) |
+| L5-15 | NOTE | The patch notes belong in the pull request's description (`## Patch notes:`), and no pull request exists yet | Carried to the pull request |
 | L4-12 | NOTE | The Reset press wraps to two lines on a phone in eight languages (cs widest, 463 px on one line); nothing clips | KEPT: the guide's buttons wrap by design; cs keeps "Zrušit specializaci" ("Zrušit" alone reads as Cancel) |
 | L1-6 | NOTE | Balance: 200,000 is the large ship's price, 80 average gate wins at level 10 and 27 at 30; offline a bank loan covers it five times over at level 20, online not | KEPT: the owner's number; recorded |
 
@@ -53,4 +67,10 @@ realm's checkpoints, leases and acts reverting the reset and its price together 
 second device, seizure and seat taken back; the judge and the progress claims quiet over a reset save, trade unheld;
 the Worker bundle untouched; a modified client given nothing it lacked.
 
-Lanes L3 and L5 are still reading; their findings join this table.
+Checked and found sound (L5): the bible's gates, the l10n suites, the moved suites; `tsc` and the whole tree's eslint;
+every cite resolving; the Worker guard (the arcane law reaching `court.js` fails `accountdeploy` and INT1's loader); the
+boot bundle (main.js's closure 82 files before and after; the menu's chunk, which already held `court.js`, gains
+`specReset.js` alone); no host touched; `resetSpec`'s two exits one shape, both pinned; nothing async; one home for the
+price.
+
+Lane L3 is still reading; its findings join this table.
