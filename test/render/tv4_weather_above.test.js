@@ -205,7 +205,7 @@ test('AUDIT DEEP R-1: EVERY fogged program under the travel view measures its fo
   // NAV-B (2026-09-28) joined the list: the naval pass's smoke, flashes and aim ride Come Sail Away's frame, under the view too
   assert.deepEqual(fogged.filter((f) => !RENDERER_OWNED[f] && !NEVER_UNDER_THE_VIEW[f]).sort(), ['bannerPass.js', 'comeSailAwayRender.js', 'deepWatersRender.js', 'duelWall.js', 'foeTelegraph.js', 'gatePass.js', 'navalRender.js', 'oceanHolesRender.js', 'rainCurtains.js', 'riteSmoke.js', 'serpentRender.js', 'shipFlagPass.js', 'spellImpactFx.js'], 'the passes the view draws, all accounted for (merged beside CSA-F and OH-C: the boats\' parts and waves, the pits; NAV-B: the sea fight\'s; WB12d: the rite\'s smoke; SERPENT1: the sea serpent over the open sea; IMPACTFX: a spell\'s landing - the world pass draws the missiles, and so their bursts, under the view too)');
   // IMPACTFX (2026-10-05) joined the list: the cast engine hands its burst pass the renderer\'s focus
-  assert.match(rd('src/scenes/hostMagic.js'), /fxPass\.draw\([^\n]*camPos: eye, focus: renderer\._focus \}\);/, 'the spell impacts handed it');
+  assert.match(rd('src/scenes/hostMagic.js'), /fxPass\.draw\([^\n]*camPos: eye, focus: renderer\._focus, haze: renderer\._haze \}\);/, 'the spell impacts handed it');
   const w = rd('src/scenes/world.js');
   assert.match(w, /camPos: renderer\._camPos, dw: renderer\._dwFog, haze: renderer\._haze, focus: renderer\._focus \}\);   \/\/ DW-C/, 'the duel wall handed it');
   // R-11: the red storms stand round the traveller, and each peer shows the picture the view's eye sees
@@ -213,7 +213,7 @@ test('AUDIT DEEP R-1: EVERY fogged program under the travel view measures its fo
   assert.match(w, /dreadStorm\.tick\(\{ sharedMs: Date\.now\(\) \+ _sharedOffsetMs, eye: tvStand, weight: dreadW \}\)/);
   assert.match(w, /gateStorm\.tick\(\{ sharedMs: Date\.now\(\) \+ _sharedOffsetMs, eye: tvStand,/);
   assert.match(w, /dt, eye: travelView\?\.eye \?\? player\.pos, poseAgeMs:/);
-  assert.match(w, /camPos: renderer\._camPos, focus: renderer\._focus \}\)\) renderer\.markForeignPass\(\);   \/\/ AUDIT DEEP R-1/, 'the gate handed it');
+  assert.match(w, /camPos: renderer\._camPos, focus: renderer\._focus, haze: renderer\._haze \}\)\) renderer\.markForeignPass\(\);   \/\/ AUDIT DEEP R-1/, 'the gate handed it');
   // the gate's own upload, driven: a fake GL hears the focus it was handed, and w 0 without one
   const { GatePassRenderer } = await import('../../src/render/gate/gatePass.js');
   {
