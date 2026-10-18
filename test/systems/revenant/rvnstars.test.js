@@ -606,6 +606,9 @@ test('RVN-STARS AUDIT GROWTH LANE4-1/2 THE SHEET\'S OWN KEYS ASK THE SKY FIRST: 
     assert.equal(door.up(), true);
     assert.match(f.text(f.doc.body), /You have unaccepted changes\. Press Accept to keep them, or leave again to discard them\./);
     assert.equal(door.asks(), false, 'the second press lets it go');
+    // AUDIT GROWTH LANE3-8: the ask is for the stars it named - one more taken, and the next press asks again
+    door.view().take('b_bl1');
+    assert.equal(door.asks(), true, 'a new star: asked again');
     door.drop();
     assert.deepEqual(rec(r).companion.stars, ['oath'], 'never set');
   });

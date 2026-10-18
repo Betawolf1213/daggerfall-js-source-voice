@@ -358,6 +358,7 @@ test('GROWTH3 THE STAGE: a face is mounted ONCE a visit and its host moved into 
     // the tab's Escape: the face's own first (its back() took it), then full screen left
     assert.equal(stageBack(), true); assert.equal(backs, 1); assert.equal(stageLive().full, true, 'the face took the press');
     assert.equal(stageBack(), true); assert.equal(stageLive().full, false, 'then full screen left');
+    assert.equal(d2.querySelector('.gr-stagehost'), host, 'the same host, back in the stage');
     assert.equal(stageBack(), false, 'nothing of its own: the window goes on (resumes)');
     // another page drops it
     const d3 = el('div', 'px-qdetail'); body.append(d3);
@@ -452,6 +453,7 @@ test('AUDIT GROWTH LANE2/LANE3 THE STAGE\'S EDGES: a face left before its chunk 
   const stage = rd('src/ui/growth/growthStage.js');
   assert.match(stage, /\.gr-fullbox > \.gr-stagehost \{ bottom: 48px; \}/);
   assert.match(stage, /me\.guard = \(e\) => \{ if \(me\.box && !me\.box\.contains\?\.\(/);
+  assert.match(stage, /document\.addEventListener\?\.\('focusin', me\.guard, true\);/);
 });
 
 test('AUDIT GROWTH LANE3 THE CLASSIC SHEET\'S EDGES: no Growth window while the rollout stands (its points live on the sheet - the window\'s Save and doors would lose them); the sheet disposes what it pushed; a chosen path\'s row only while it is in force; Enter on a focused button is the button\'s in the tab; no dead Close in the tab (mutants: the guide over the rollout; dispose dropped; the dormant row; Enter taken; the Close shown)', async () => {
@@ -504,6 +506,7 @@ test('GROWTH3 THE WINDOWS, EMBEDDED (by source; tools/growthProbe.mjs drives the
   assert.match(rd('src/ui/captainTreeWindow.js'), /return mountSkyWindow\(host, sky, \{ changed, onExit, doc, embed \}\);/);
   const lv = rd('src/ui/enhanced/enhancedLevelUp.js');
   assert.match(lv, /if \(embed\) root\.classList\.add\('lv-embed'\);/);
+  assert.match(lv, /if \(embed && !root\.isConnected\) return;/, 'the Ascension deaf while detached, as the skies are');
   assert.match(lv, /if \(!embed\) unregister = registerOverlay\(closeArm\);/);
   assert.match(lv, /if \(embed \|\| overlayAction\(e\) !== 'back'\) return;/, 'Escape is the window\'s: a level left stays owed');
   // the window's back stack asks the face first, on the Growth tab with a face up
@@ -607,6 +610,10 @@ test('GROWTH THE WINDOW, DRIVEN: the Stats page\'s Growth door (its count) lands
       const bar = host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.startsWith('Ranger'));
       bar.onclick();
       const detail = host.querySelectorAll('div').find((d) => String(d.className).includes('gr-detail'))?.textContent ?? '';
+      const woods = host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.startsWith('Woodsman'));
+      woods.onclick();
+      assert.equal(btn('Choose Woodsman'), undefined, 'a path not open has no Choose');
+      host.querySelectorAll('button').find((b) => String(b.className).includes('gr-pathbar') && b.textContent.startsWith('Ranger')).onclick();
       for (const part of ['Requirements', 'Long Blade: mastered', 'Passive: Hunter\'s Instinct', 'Signature technique: Mark of the Hunt', 'Bow: 12-second cooldown', 'Weapon Technique key']) assert.ok(detail.includes(part), part);
       btn('Choose Ranger').onclick();
       const ask = globalThis.document.body.querySelectorAll('div').find((d) => String(d.className).includes('px-master-ask'));
@@ -694,6 +701,7 @@ test('AUDIT GROWTH LANE5-4 THE TAB WITH ITS REAL FACES, DRIVEN: the Firmament an
     await settle(() => stageFace()?.take);
     const sky = stageFace();
     assert.equal(typeof sky.back, 'function', 'the captain\'s sky answers the stage\'s ask');
+    assert.equal(host.querySelectorAll('div').filter((d) => String(d.className).includes('fmt-embed')).length, 1, 'the captain\'s sky in the pane, embedded');
     const star = (await import('../../../src/systems/naval/captainTree.js')).CAPTAIN_STARS.find((s) => !setBefore.includes(s.id) && s.links?.some?.((l) => setBefore.includes(l)))?.id;
     if (star) sky.take(star); else sky.take((await import('../../../src/systems/naval/captainTree.js')).CAPTAIN_STARS[1].id);
     assert.ok(sky.model().changes.added > 0, 'a star pending');
@@ -705,10 +713,15 @@ test('AUDIT GROWTH LANE5-4 THE TAB WITH ITS REAL FACES, DRIVEN: the Firmament an
     // THE LEVEL PAGE with a level owed: the owed rollout (pool and Ascend), never the view
     tab('Growth').onclick();
     rail('Level').onclick();
+    assert.ok(host.querySelectorAll('div').some((d) => String(d.className).includes('gr-stagecard')), 'a 720-high window: the Level page\'s door, the face full screen (AUDIT GROWTH LANE2-8)');
     await settle(() => stageFace()?.model);
     const lv = stageFace().model();
     assert.equal(lv.crown.viewOnly, false, 'the level owed, not the view of the stars');
     assert.ok(lv.pool > 0, 'its points to place');
+    // the window put away takes the face with it (its listeners, its frame loop, a full-screen box)
+    menu.unmount(); menu = null;
+    assert.equal(stageLive(), null, 'the face went with the window');
+    assert.match(rd('src/ui/growth/growthTab.js'), /entity, embed: true, onExit: \(\) => \{ dropStage\(\); ctx\.render\(\); \} \}\)\)/, 'the Ascension ascended: the stage drops it and the page draws again');
   } finally { menu?.unmount(); host.remove?.(); setFirmamentBook(null); setHoldingsProvider(null); restore(); dropStage(); globalThis.requestAnimationFrame = raf; }
 });
 
@@ -755,4 +768,24 @@ test('AUDIT GROWTH LANE3-9 / LANE5-6 THE YES/NO CARD AND THE MASTER SKILLS LINE,
     open();
     assert.equal(line(), 'Your specialisations are on the Growth tab.');
   } finally { menu?.unmount(); restore(); }
+});
+
+test('AUDIT GROWTH LANE5-2 THE BUTTON\'S OWN WORD: in another language the Level page\'s lead names the Ascend button as the button reads, from its own key - never a second translation that can drift (mutants: the lead\'s word written in)', async () => {
+  await import('../../chargenDom.mjs');
+  _resetForTests();
+  const { patchLocaleTable, setLocale } = await import('../../../src/systems/textManager.js');
+  const { mountEnhancedMenu } = await import('../../../src/ui/enhanced/enhancedMenu.js');
+  const kept = { ...playerEntity };
+  const restore = () => { for (const k of Object.keys(playerEntity)) if (!(k in kept)) delete playerEntity[k]; Object.assign(playerEntity, kept); };
+  const raf = globalThis.requestAnimationFrame;
+  globalThis.requestAnimationFrame = () => 1;
+  let menu = null;
+  try {
+    patchLocaleTable('fr', 'Port_Strings', [['levelup.ok.ascend', 'Monter'], ['growth.level.owed', 'Placez vos points, puis appuyez sur {ascend}.']]);
+    setLocale('fr');
+    Object.assign(playerEntity, spellsword(), { readyToLevelUp: true, pendingLevel: 21, isPlayer: true });
+    const host = globalThis.document.createElement('div');
+    menu = mountEnhancedMenu(host, { mode: 'pause', hooks: { ascendScreen: () => levelUpScreenFor(playerEntity) }, onAction: () => {}, at: 'level' });
+    assert.match(host.textContent, /Placez vos points, puis appuyez sur Monter\./);
+  } finally { menu?.unmount(); setLocale('en'); restore(); dropStage(); globalThis.requestAnimationFrame = raf; }
 });

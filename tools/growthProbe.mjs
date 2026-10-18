@@ -44,16 +44,28 @@ async function phoneDoor(page, rootSel, name, shotName) {
 const overflowOf = (page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 const shot = async (page, name) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}.png` }); };
 
+// a tall window: the Ascension drawn in the pane, its figure whole and Ascend in the stage (AUDIT GROWTH LANE2-8)
+{
+  const { page, errors } = await open('level', { w: 1920, h: 1080, extra: '&owed=1' });
+  await page.waitForSelector('.lv-sky.lv-embed', { timeout: 15000 }).catch(() => {});
+  await page.waitForTimeout(400);
+  const m = await page.evaluate(() => {
+    const r = document.querySelector('.lv-sky.lv-embed'), s = document.querySelector('.gr-stage'), f = document.querySelector('.lv-figure'), ok = document.querySelector('.lv-ok');
+    const sr = s?.getBoundingClientRect(), or = ok?.getBoundingClientRect();
+    return { inPane: !!r && !!s && s.contains(r) && getComputedStyle(r).position === 'absolute', fig: Math.round(f?.getBoundingClientRect().height ?? 0), okIn: !!sr && !!or && or.bottom <= sr.bottom && or.top >= sr.top };
+  });
+  check('tall: the Level page draws the Ascension in the pane, its figure whole and Ascend in the stage', m.inPane && m.fig >= 150 && m.okIn, JSON.stringify(m));
+  check('tall: the Level page - no page error', !errors.length, errors.join(' | '));
+  await shot(page, 'tall-level');
+  await page.close();
+}
+
 for (const [w, h, tag] of [[1280, 720, 'wide'], [360, 740, 'phone']]) {
-  // the Level page: a level owed - the Ascension in the pane
+  // the Level page: a level owed - a door to the Ascension full screen where the pane cannot hold it (a window under
+  // 1000 px tall - AUDIT GROWTH LANE2-8: in the pane its figure flattened and Ascend fell off), as a phone's
   {
     const { page, errors } = await open('level', { w, h, extra: '&owed=1' });
-    if (tag === 'phone') await phoneDoor(page, '.lv-sky.lv-embed', `${tag}: the Level page's door opens the Ascension over the screen`, `${tag}-level-open`);
-    else {
-      await page.waitForSelector('.lv-sky.lv-embed', { timeout: 15000 }).catch(() => {});
-      const embedded = await page.evaluate(() => { const r = document.querySelector('.lv-sky.lv-embed'); const s = document.querySelector('.gr-stage'); return !!r && !!s && s.contains(r) && getComputedStyle(r).position === 'absolute'; });
-      check(`${tag}: the Level page draws the Ascension in the pane`, embedded);
-    }
+    await phoneDoor(page, '.lv-sky.lv-embed', `${tag}: the Level page's door opens the Ascension over the screen`, `${tag}-level-open`);
     check(`${tag}: the Level page - no sideways scroll`, (await overflowOf(page)) <= 0);
     check(`${tag}: the Level page - no page error`, !errors.length, errors.join(' | '));
     await shot(page, `${tag}-level`);

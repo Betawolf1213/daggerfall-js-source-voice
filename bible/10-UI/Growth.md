@@ -230,8 +230,20 @@ pane (`drawStage`: the key changes, the last face is dropped; the same key, the 
   nothing back from a mission it returns hurt from" - the errand's own word for that outcome). Precision kept where the law is narrow: a martial power
   that answers only a foe's blow (`pendingPlayerBlow` - no spell, fall or poison) says "enemy blows", one that pays
   only weapon hits says "blows and arrows" (AUDIT MARTIAL L1 N3's word), and a power on any hurt says "damage". The
-  same words everywhere they stand (the classic sheet's rows and boxes read the same table). 121 strings redrafted;
-  the pins that held the old words moved with them, and the records aimed at them were re-aimed by content.
+  same words everywhere they stand (the classic sheet's rows and boxes read the same table). 112 English rows changed
+  (some later withdrawn with the revenant page); the pins that held the old words moved with them, and the records aimed
+  at them were re-aimed by content.
+- **AUDIT GROWTH carried it to the faces** (LANE5-1): the Level page's Ascension and the Firmament window had been
+  skipped - poetic and hard-coded English in every language ("Choose what rises", "Rides every swing", "Warms merchants,
+  judges and anyone else weighing what you are worth", "That star is not in the heavens", "You lack the silver to
+  unlearn those stars"). Both now say each line plainly through `t()` (`levelup.*`, `firmament.*`), checked against the
+  code it describes (an attribute's formula; silver for removing stars, gold for the respec; the stars act in sieges,
+  never adding damage against players). The buttons are translated, and the lines that name a button take the button's
+  own word (`{ascend}`, `{accept}` - LANE5-2). The audit's other words: "No slots left" and "Not yet"; the chosen
+  path's asleep lines; "leave again" / "close again" for the ambiguous "do that again"; "available" for "open"; the
+  technique texts' weapon words in the form lines; "Arcane paths (S)"; the riders exact (Brawler, Bloodmage, Berserker,
+  Lightbringer). 230 rows drafted into the thirteen whole languages. KEPT in English, as AUDIT UICALM-FIRM1 L5 M1 left
+  them: the Firmament's tree (its star names and the signs' lore) and its law's words.
 
 ## 8. The four hosts
 
@@ -245,15 +257,20 @@ shows three pages. No host grew (HOST-SPLIT): world.js's line is one entry of th
 
 ## 9. Pins and proof
 
-- `test/ui/growth/growth1_tab.test.js` (12): the tab, its rail and landings, what waits; the guide's states, order and
+- `test/ui/growth/growth1_tab.test.js` (26): the tab, its rail and landings, what waits; the guide's states, order and
   words, a signature read, Choose through the law; the stage (mounted once, moved, full screen, the phone's door, the
   tab's Escape) and the windows' `embed` modes by source; the classic rows and the ask's words; the pause window driven
   over the fake document (the Growth door's count, a family's landing, a path's detail, Choose, Master Skills' and the
   Captain page's doors); GROWTH5, leaving asks first (the face asked once, full screen left standing, the doors by
-  source). Mutants: `tools/mutants/growth.json` (42, all dead).
+  source). AUDIT GROWTH's (`01-Overview/audits/Audit-Growth.md`): the guide's slots, states, lines, family and count;
+  the riders; the fanfare once a level; the stage's edges; the classic sheet's edges; the tab driven with its real faces
+  (the Firmament and the captain's sky on the stage, a star taken, every leave asked once; the Level page's owed rollout;
+  the face gone with the window); the Yes/No card and the Master Skills line driven; the button's own word in French.
+  Mutants: `tools/mutants/growth.json` (42) and `tools/mutants/audit_growth.json` (67), all dead.
 - Pins moved to what stands: `rvnstars` (THE DOORS: the Firmament's door gone, the captain's window embedded), `ascendanytime` (the Level page; the door's rollout and its remembered pool), `orl1_leveling`,
   `levelNotice`, `f5quests`, `slots1`, `martial_paths`, `audit_martial`, `audit_schools`, `holdings`, `captlog`,
   `auditlegacy`, `auditlegacy3`, `legacy3_familytab`, `auditcards5_ui`, `moduleload_smoke` (the lab's own module).
 - The browser half: `tools/growthProbe.mjs` over its lab (`growth.html`, `src/tools/growthLab.js`) - each page at a wide
   screen and a phone with no page error and no sideways scroll, the faces in the pane at the stage's size, the phone's
-  doors, full screen and back, and the Escape held by unaccepted stars (31 of 31).
+  doors, full screen and back, and the Escape held by unaccepted stars; since AUDIT GROWTH the Level page's door at
+  1280x720 and the Ascension whole in the pane at 1920x1080 (33 of 33).
