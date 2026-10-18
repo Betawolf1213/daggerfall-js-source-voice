@@ -142,13 +142,17 @@ export function validRoomTerms(/** @type {any} */ t) {
 }
 export const sameRoomTerms = (/** @type {any} */ a, /** @type {any} */ b) => !!a && !!b && a.g === b.g && a.lv === b.lv && (a.n ?? 1) === (b.n ?? 1);
 /** Whether terms `a` replace terms `b` for one container: a newer generation always; in one generation the earlier mint,
- *  then the lower level, then the lower count - a total order, so every client that hears both keeps the same. */
+ *  then the lower level, then the lower count - a total order, so every client that hears both keeps the same.
+ *  OUTDOOR-LOOT: a CARRIED base (a cupboard's first roll - below) is one client's roll, not a function of its terms, so two
+ *  mints of one day at one instant, one level and one count are still two bases; the lower signature `h` decides, and the
+ *  order stays total. A computed base's terms carry no `h`, and nothing changes for it. */
 export function roomTermsBeat(/** @type {any} */ a, /** @type {any} */ b) {
   if (!b) return true;
   if (a.g !== b.g) return a.g > b.g;
   if (a.tm !== b.tm) return a.tm < b.tm;
   if (a.lv !== b.lv) return a.lv < b.lv;
-  return (a.n ?? 1) < (b.n ?? 1);
+  if ((a.n ?? 1) !== (b.n ?? 1)) return (a.n ?? 1) < (b.n ?? 1);
+  return typeof a.h === 'string' && typeof b.h === 'string' && a.h < b.h;
 }
 
 // ---- the base's signature -------------------------------------------------------------------------------------------
@@ -198,12 +202,27 @@ export const pieceCount = (/** @type {any} */ it) => (Number.isInteger(it?.stack
  * place, `s:<i>`); `q` the claims (`{ id, p | sp, n, tm }`: a base place or a stored piece's id, a count), `a` the puts
  * (`{ id, it, tm }` - a piece the item law refuses is a put of nothing, refused), `y` the host's verdicts (`[id, count
  * granted]`, nought refused). A word with no `s` says nothing of the stored pieces (a claim, a birth with none).
+ * OUTDOOR-LOOT: `b` a CARRIED base's records (a cupboard's first roll, a find - the birth's, and the host's memory of it):
+ * each through validLootList, at most LOOT_LIST_MAX, and a record this build cannot read (null) or whose place the item
+ * law would take (an empty answer: a place dropped is every later place shifted) makes the word unreadable - AUDIT SETS
+ * M2's refusal, null here - and a base always says its signature `h`.
  */
 export function validRoomWord(/** @type {any} */ rec) {
   if (!isRoomWord(rec)) return null;
   const terms = validRoomTerms(rec);
   if (!terms) return null;
   if (rec.h !== undefined && (typeof rec.h !== 'string' || !/^[0-9a-z]{1,16}$/.test(rec.h))) return null;
+  /** @type {any[] | null} */
+  let b = null;
+  if (rec.b !== undefined) {
+    if (rec.h === undefined || !Array.isArray(rec.b) || rec.b.length > LOOT_LIST_MAX) return null;
+    b = [];
+    for (const r of rec.b) {
+      const one = validLootList([r]);
+      if (!one || one.length !== 1) return null;
+      b.push(one[0]);
+    }
+  }
   const x = [];
   if (rec.x !== undefined) {
     if (!Array.isArray(rec.x) || rec.x.length > ROOM_BASE_MAX) return null;
@@ -269,18 +288,36 @@ export function validRoomWord(/** @type {any} */ rec) {
       y.push([p[0], p[1]]);
     }
   }
-  return { ...terms, ...(rec.h !== undefined ? { h: rec.h } : {}), x, c, s, si, q, a, y };
+  return { ...terms, ...(rec.h !== undefined ? { h: rec.h } : {}), ...(b ? { b } : {}), x, c, s, si, q, a, y };
 }
 
 // ---- the room's state of one container ------------------------------------------------------------------------------
 
 /** A container's state as this client knows the room's word: its terms, the base places gone, the drawn-down counts,
  *  the stored pieces and their ids, the verdicts it has heard (id -> count granted) and the claims and puts it has
- *  heard that no verdict has answered yet (id -> claim). */
+ *  heard that no verdict has answered yet (id -> claim). `base` is a CARRIED base (carriedBase below), null for a
+ *  computed one - every client computes that. */
 export const roomState = (/** @type {any} */ terms) => ({
   terms, taken: new Set(), counts: new Map(), stored: /** @type {any[]} */ ([]), ids: /** @type {string[]} */ ([]),
   answers: /** @type {Map<string, number>} */ (new Map()), claims: /** @type {Map<string, any>} */ (new Map()),
+  base: /** @type {{ items: any[], full: (number|null)[], h: string, records: any[] } | null} */ (null),
 });
+
+/**
+ * OUTDOOR-LOOT: A CARRIED BASE. PARTY-LOOT's base is COMPUTED - every client rolls the same dice off the container's name.
+ * A building's cupboard cannot be: its stock is `stockHouseContainer` for the player who opened it first, and a dungeon's
+ * search find is the searcher's (their level, gender, Luck and dice). So its first roll is MINTED ONCE by whoever rolled it
+ * and its records travel once, in the word `b` that carries the birth (and the host's memory of it); from then on the
+ * room's word about the container is the takes against it, as for any other. The records through validRoomWord, ready:
+ * `items` the live pieces by place (the same objects every compose, so a take holds the piece it took), `full` their counts
+ * as minted, `h` their signature (baseSignature - the word's own `h` must say the same), and `records` the pieces as the
+ * word said them, kept to be said again.
+ */
+export function carriedBase(/** @type {any[]} */ records) {
+  const records0 = JSON.parse(JSON.stringify(records));
+  const items = records0.map((/** @type {any} */ r) => ({ ...r }));
+  return { items, full: items.map((/** @type {any} */ it) => (Number.isInteger(it?.stackCount) ? /** @type {number} */ (it.stackCount) : null)), h: baseSignature(items), records: records0 };
+}
 
 /** A verdict recorded: the claim answered, the oldest verdicts let go past four times what a word carries. */
 export function answerRoomClaim(/** @type {any} */ state, /** @type {string} */ id, /** @type {number} */ g) {
@@ -307,11 +344,16 @@ function hearRoomClaim(/** @type {any} */ state, /** @type {any} */ cl) {
 export function mergeRoomWord(/** @type {any} */ state, /** @type {any} */ w) {
   let st = state;
   let changed = false;
-  if (st && sameRoomTerms(w, st.terms)) {
+  // OUTDOOR-LOOT: a CARRIED base (carriedBase) is part of the mint - its terms say its signature `h` - and the base is the
+  // first heard for its terms, never replaced by a later word's; a word that beats the state's terms with no base to
+  // adopt (a claim, a verdict) is a mint this client cannot hold, and is heard as a loser's
+  const carried = st?.terms.h !== undefined;
+  if (st && sameRoomTerms(w, st.terms) && (!carried || w.h === st.terms.h)) {
     // one base (one name, one level, one count): its takes are takes against the same pieces, whoever minted first
     if ((w.tm ?? 0) < st.terms.tm) st.terms = { ...st.terms, tm: w.tm ?? 0 };
-  } else if (!st || roomTermsBeat(w, st.terms)) {
-    st = roomState({ g: w.g, lv: w.lv, n: w.n ?? 1, tm: w.tm ?? 0 });
+  } else if (!st || (roomTermsBeat(w, st.terms) && (!carried || w.b))) {
+    st = roomState({ g: w.g, lv: w.lv, n: w.n ?? 1, tm: w.tm ?? 0, ...(w.b ? { h: w.h } : {}) });
+    if (w.b) st.base = carriedBase(w.b);
     changed = true;
   } else {
     for (const cl of [...(w.q ?? []), ...(w.a ?? [])]) hearRoomClaim(st, { ...cl, stale: true });
@@ -392,7 +434,7 @@ export function composeRoomView(/** @type {any[]} */ base, /** @type {(number|nu
   const shown = (/** @type {any} */ it, /** @type {string} */ id) => {
     const left = pieceCount(it) - (storedOut.get(id) ?? 0);
     if (left <= 0) return;
-    const piece = left === pieceCount(it) ? it : { ...it, stackCount: left };
+    const piece = { ...it, stackCount: left };   // OUTDOOR-LOOT (DESIGN 6.2): ALWAYS A COPY - a window that splits an undrawn stack mutates the record it was handed, and the state's own record is the judge's: a partial take read the mutated count and spliced the whole piece, destroying the remainder
     list.push(piece);
     seen.set(piece, { sp: id, n: left });
   };
@@ -404,18 +446,21 @@ export function composeRoomView(/** @type {any[]} */ base, /** @type {(number|nu
 
 /** The room's word for a container as its HOST says it: its terms, its base's signature, its takes (`x`, `c`), its
  *  stored pieces and their ids, and its latest verdicts. */
-export const roomWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {{ s: any[], si: string[] }} */ stored, /** @type {number|null} */ t = null, /** @type {[string, number][]} */ y = []) => {
+export const roomWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {{ s: any[], si: string[] }} */ stored, /** @type {number|null} */ t = null, /** @type {[string, number][]} */ y = [], /** @type {any[] | null} */ base = null) => {
   const x = [...state.taken].sort((a, b) => a - b);
   const c = [...state.counts].filter(([i]) => !state.taken.has(i)).sort((a, b) => a[0] - b[0]);
   return {
     k, g: state.terms.g, lv: state.terms.lv, ...(state.terms.n > 1 ? { n: state.terms.n } : {}), tm: state.terms.tm, h,
+    ...(base ? { b: base.map((r) => ({ ...r })) } : {}),   // OUTDOOR-LOOT: a carried base's records - the birth's, and the host's memory of it
     ...(x.length ? { x } : {}), ...(c.length ? { c } : {}), s: stored.s.map((it) => ({ ...it })), si: [...stored.si],
     ...(y.length ? { y } : {}), ...(Number.isFinite(t) ? { t } : {}),
   };
 };
-/** A claimer's word: the container's terms and base, and its claims and puts in flight - never the room's state. */
-export const claimWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {any[]} */ q, /** @type {any[]} */ a, /** @type {number|null} */ t = null) => ({
+/** A claimer's word: the container's terms and base, and its claims and puts in flight - never the room's state. `b`: the
+ *  carried base's records (`base`), when this word is the container's birth. */
+export const claimWord = (/** @type {string} */ k, /** @type {any} */ state, /** @type {string} */ h, /** @type {any[]} */ q, /** @type {any[]} */ a, /** @type {number|null} */ t = null, /** @type {any[] | null} */ base = null) => ({
   k, g: state.terms.g, lv: state.terms.lv, ...(state.terms.n > 1 ? { n: state.terms.n } : {}), tm: state.terms.tm, h,
+  ...(base ? { b: base.map((r) => ({ ...r })) } : {}),
   ...(q.length ? { q: q.map((cl) => ({ ...cl })) } : {}), ...(a.length ? { a: a.map((p) => ({ id: p.id, it: { ...p.it }, tm: p.tm })) } : {}),
   ...(Number.isFinite(t) ? { t } : {}),
 });
@@ -483,6 +528,35 @@ export function listMovesSince(/** @type {Map<any, any>} */ seen, /** @type {any
   }
   for (const obj of list) if (obj && !seen.has(obj) && !skip(obj)) puts.push(obj);
   return { takes, grows, puts };
+}
+
+/**
+ * OUTDOOR-LOOT: AN OLDER BUILD'S WHOLE LIST IS A DIFF, NEVER A LIST TO LAND (DESIGN 4.8). An older build says a cupboard's
+ * (or a find's) list whole - what it holds after its window - and a list landed over the room's is the last-writer-wins
+ * that lost pieces and brought taken ones back. So a peer's list is read against ITS OWN previous one: a piece that fell in
+ * count is that peer's take, one that rose is its put, and a list as it was changes nothing. Pieces are told apart by what
+ * they ARE (their template, material, tier, enchantments and ledger id - a piece's count apart). `legacyCounts` reads a
+ * list as that census, signature -> { n: the pieces of it, it: the first of them }; `legacyDelta` answers what changed
+ * between a census and a list - `takes` { sig, n }, `puts` { sig, n, it } - and the list's own census, the peer's next
+ * baseline.
+ */
+export const legacySig = (/** @type {any} */ it) => [it?.group, it?.templateIndex, it?.material, it?.rarity, Array.isArray(it?.enchantments) ? it.enchantments.length : 0, it?.uid].map((v) => v ?? '').join('.');
+export function legacyCounts(/** @type {any[]} */ list) {
+  /** @type {Map<string, { n: number, it: any }>} */
+  const m = new Map();
+  for (const it of list ?? []) {
+    const k = legacySig(it), e = m.get(k);
+    if (e) e.n += pieceCount(it); else m.set(k, { n: pieceCount(it), it });
+  }
+  return m;
+}
+export function legacyDelta(/** @type {Map<string, { n: number, it: any }> | null} */ prev, /** @type {any[]} */ list) {
+  const counts = legacyCounts(list);
+  /** @type {{ sig: string, n: number }[]} */ const takes = [];
+  /** @type {{ sig: string, n: number, it: any }[]} */ const puts = [];
+  for (const [sig, was] of prev ?? []) { const now = counts.get(sig)?.n ?? 0; if (now < was.n) takes.push({ sig, n: was.n - now }); }
+  for (const [sig, is] of counts) { const was = prev?.get(sig)?.n ?? 0; if (is.n > was) puts.push({ sig, n: is.n - was, it: is.it }); }
+  return { takes, puts, counts };
 }
 
 /** Whether a container holds nothing of the room's: every base piece gone and nothing stored (WORLD8's "emptied"). */
