@@ -1,0 +1,42 @@
+[
+  {
+    "name": "WOD-SEA-TEST-arm-reads-the-location",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
+    "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
+    "new": "ocean: WOD_OCEAN_REGIONS.includes(tile.mapRegionIndex) && tile.worldHeight <= 2,",
+    "tests": [
+      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+    ],
+    "why": "the mod's read again: a location's region, so the arm never fires and the sea stands its sites"
+  },
+  {
+    "name": "WOD-SEA-TEST-arm-unread",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
+    "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
+    "new": "ocean: false,",
+    "tests": [
+      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+    ],
+    "why": "no sea arm at all"
+  },
+  {
+    "name": "WOD-SEA-TEST-height-unread",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
+    "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
+    "new": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1),",
+    "tests": [
+      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+    ],
+    "why": "a coastal region's high ground refused as sea"
+  },
+  {
+    "name": "WOD-SEA-TEST-the-sea-is-no-region",
+    "file": "src/formats/mapsFile.js",
+    "old": "    let result = politicIndex === 64 ? 31 : politicIndex - 128;",
+    "new": "    let result = politicIndex === 64 ? 0 : politicIndex - 128;",
+    "tests": [
+      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+    ],
+    "why": "the sea answers no ocean region, and the arm passes it"
+  }
+]

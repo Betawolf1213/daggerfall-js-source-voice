@@ -12,7 +12,7 @@ record says so and what would prove it. The pins are `fb1018b_*`, the mutants `t
 | T3 | Jigglehimmer, "Night Mothers Embrace Legendary does not function": "Imprint: Sweet Mother's Kiss (of The Night Mother's Embrace) - +50% to foes under 25%" | It works on an ordinary foe and always did. On every body the relay runs (the Warden, an Elite Breach's foes, the Remnant, the serpent) the stand-in's placeholder health read as whole | fixed (RELAY-SHARE); where the player tried it is not known |
 | T4 | Aspidichelon, "Usable items hotkeys do not function in dungeons": "1-9 works outside, but not in dungeons" | The hotbar takes the digits ahead of every window unless the HUD's last frame said paused; underground no frame says so while a window stands | fixed (DUNGEON-DIGITS) |
 | T5 | Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": imps that won't die, a vampiric heal off them; a gate's keeper unseen while its AOE showed | The imps are a span's Harriers, which the relay refuses to be struck from a platform (by design); the screen showed the blow and healed off a stand-in nothing empties | fixed (TURNED-BLOW, VAMPIRIC-WARD); the unseen keeper not proven (UNSEEN-KEEPER) |
-| T6 | æther, "Collection: Broken world objects": the sea north-east of Tlactrn Manor, Tunmont docks, a bush in a house wall at Penwall Derry, a rock in Ipsmoth | Two found in our own code, two not | fixed (HOUSE-BUSH, ROCK-SMEAR); the sea and the docks open |
+| T6 | æther, "Collection: Broken world objects": the sea north-east of Tlactrn Manor, Tunmont docks, a bush in a house wall at Penwall Derry, a rock in Ipsmoth | Two found in our own code; the sea's a mod's dead refusal; the docks not found | fixed (HOUSE-BUSH, ROCK-SMEAR, WOD-SEA-TEST - Mac: "Yes fix WOD"); the docks open |
 | T7 | CC/Astro, "Smithing stuck at 50": "literally 1xp off of levelling up but everything I craft gives me 0xp" | The crafter's limit (Professions-Arc 3.2, Mac's decision): two crafts past Journeyman stop every other one XP short of 51. No word said it, and the station's XP line was another law than the service's credit | the limit said, the line the service's (CRAFT-LIMIT-SAID); letting a craft go back is the owner's call |
 
 ## HELD-BASE: a held power is minted on a piece a slot takes (T1)
@@ -321,16 +321,29 @@ Pins: `test/net/fb1018b_craftlimit.test.js` (6). PIN MOVED: `fb1015f_firstcraft`
 `prof12_client`. Mutants: `tools/mutants/fb1018b_craftlimit.json` (46, all dead); 14 older records re-aimed by content,
 all dead.
 
-## T6's other two: the sea off Tlactrn Manor - not proven; Tunmont's docks - not found
+## T6's other two: the sea off Tlactrn Manor - WOD-SEA-TEST fixed; Tunmont's docks - not found
 
 **The sea north-east of Tlactrn Manor.** Beautiful Villages lays the manor out as 3x3 farm blocks; the blocks to its
 north and east are FARMBA06 (two pack rocks and a hill - ROCK-SMEAR's inside-out stand-ins) and FARMBA13 (crop fields).
-Found beside it and NOT changed (WOD-SEA-TEST): World of Daggerfall's sea refusal (`LocationLoader.cs` 117-121) reads
-`mapRegionIndex`, which DFU's `GetMapPixelData` fills only on a pixel that holds a location - and such a pixel has left
-at step 1 - so the refusal never fires, in DFU or here, and a WoD site stands on any sea pixel its lists name (Mac's
-"world of daggerfall ocean rocks", 2026-10-02). Fixing it moves rock fields the online room shares: the owner's call.
-What would prove which: the reporter's map pixel; there, `wod.picksFor` and its WOODS height (2 or less is sea), and
-whether Deep Waters' surface cells cover the manor's rect.
+Found beside it (WOD-SEA-TEST): World of Daggerfall's sea refusal (`LocationLoader.cs` 117-121) reads `mapRegionIndex`,
+which DFU's `GetMapPixelData` fills only on a pixel that holds a location - and such a pixel has left at step 1 - so the
+refusal never fired, in DFU or here, and a WoD site stood on any sea pixel its lists name (Mac's "world of daggerfall
+ocean rocks", 2026-10-02, whose fix let a ship meet them rightly and left them standing). Which of the two stood off
+Tlactrn Manor is still not proven - the reporter's map pixel would say - but the WoD half is closed.
+
+**WOD-SEA-TEST** (`src/world/worldOfDaggerfall/wodLocationLoader.js` pickState, `src/scenes/pixelBuild.js`; Mac, given the
+choice: "Yes fix WOD"). FIXED, a departure (`01-Overview/Port-Ledger.md` section A): the arm asks the region the PIXEL
+answers (`mapsFile.js` getRegionIndexAt - the sea's politic 64 is region 31, PlayerGPS's own reading), and the streaming
+build hands the pick that region (`pixelBuild.js:"regionIndex: maps.getRegionIndexAt(px, py),"`) in place of
+GetMapPixelData's mapRegionIndex, which nothing else read. So a pixel of the sea, or a low pixel of the four coastal
+regions (3, 29, 28, 30), at a WOODS height of 2 or less, stands none of the mod's sites - and the mod ships only type-2
+instances, the type the arm skips: every one of its 227,938 (rocks 209,436, shrines, camps, ruins, mountains and forts).
+How many of them named a sea pixel was not counted: the WOODS and MAPS data are ARENA2's, not in the tree. Online every
+client builds the same pick, so the room's world moves together with the release; nothing on the relay or the account
+service reads a WoD site. Pins: `test/world/worldOfDaggerfall/fb1018b_wodsea.test.js` (3; one is data evidence and passes
+on either code). PIN MOVED: `test/world/terrain/wod2_loader.test.js`'s sea-arm test ("the sea arm is dead code") and its
+host wiring line; `tools/mutants/wod2.json`'s record that held the host to the location's region is re-aimed as the old
+read. Mutants: `tools/mutants/fb1018b_wodsea.json` (4, all dead).
 
 **Tunmont's docks.** Tunmont's grid has no dock blocks, so the railed pier is our own QUAYS jetty (`quayModel.js` railX).
 The real planQuay and buildQuayModel on made shores of 12, 60 and 195 m face every closed part out, and the jetty and
