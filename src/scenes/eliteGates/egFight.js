@@ -65,6 +65,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../../net/gate/gateBrain.js';
+import { t } from '../../systems/textManager.js';   // FIELD BUGS 2026-10-18b TURNED-BLOW: the ground's word, in the player's language
 import { strikeDamage, savedShare } from '../../net/gate/gateStrike.js';
 import { bossFrame, crystalStandIn, hostStandIn, hostCue, BOSS_CUES, CRYSTAL_CLIPS } from '../../world/gate/gateBoss.js';
 import { wordShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's health's share, the relay's word
@@ -246,8 +247,8 @@ const DROP_STOOD_M = 0.25;
 const SHAKE_MIN = 0.05;
 const GLASS_CUE = Object.freeze({ clip: CRYSTAL_CLIPS.shatter, pitch: 2.2, volume: 0.9, reach: 30 });
 /** FIELD BUGS 2026-10-18b TURNED-BLOW: what a blow from off the fight ground says where its number pops (ui/hitNumbers.js) - the
- *  ground turns it, not a ward (a ward's blow says the ward's own word). */
-export const EG_NO_FOOTING = 'No footing';
+ *  ground turns it, not a ward (a ward's blow says the ward's own word), in the player's language (L10N4). */
+export const egNoFooting = () => t('eg.hit.noFooting', 'No footing');
 /** EG-G2: THE FOG FLOOR as the Spire's stage takes it (world/eliteGates/egLook.js EG_FOG_FLOOR). */
 const EG_FOG_FLOOR_ARR = Object.freeze([EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within, EG_FOG_FLOOR.ease]);
 /** EG-G2: two colours the same (a shape's colour is a table's - read by value, so a copy reads as its table's). */
@@ -527,7 +528,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     const e = t.entity, view = egFightView(spec), at = strikeAt;
     const off = !at || egStruckOff(view, b, at[0], at[1], at[2]);
     e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2]);
-    e.wardText = off && at ? EG_NO_FOOTING : null;   // ui/hitNumbers.js: the ground's word, else the ward's
+    e.wardText = off && at ? egNoFooting() : null;   // ui/hitNumbers.js: the ground's word, else the ward's
   }
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };

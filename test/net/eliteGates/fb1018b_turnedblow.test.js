@@ -21,7 +21,7 @@ import { EG_KIND, egLegionRaise } from '../../../src/net/eliteGates/egLegion.js'
 import { egFightView, egGroundAt, EG_STRIKE_PAD_M } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { foldEg, EG_STATE_EMPTY, egBodyOf } from '../../../src/net/eliteGates/egLink.js';
 import { validEgOut } from '../../../src/net/wire.js';
-import { createEgFight, EG_NO_FOOTING } from '../../../src/scenes/eliteGates/egFight.js';
+import { createEgFight, egNoFooting } from '../../../src/scenes/eliteGates/egFight.js';
 import { egHallCentre } from '../../../src/world/eliteGates/egHall.js';
 import { HIT_KINDS } from '../../../src/net/gate/gateBrain.js';
 import { calculateAttackDamage } from '../../../src/combat/formulas.js';
@@ -92,7 +92,7 @@ test('TURNED-BLOW THE IMPS (Elite-Gates.md sections 8.2 and 11.7): on a span the
     const t = S.target(a.i);
     assert.ok(t, 'offered as a body my swing meets');
     assert.equal(t.entity.warded, true, 'its stand-in warded: the relay will take nothing of a blow from here');
-    assert.equal(t.entity.wardText, EG_NO_FOOTING, 'and the number says why');
+    assert.equal(t.entity.wardText, egNoFooting(), 'and the number says why');
     assert.deepEqual(numberFor({ hit: true, damage: 40, target: t.entity }), { kind: 'warded', text: 'No footing', tag: null }, 'never a number');
     const sent = S.sent.length, hurtAt = S.E().fight.bodies.find((b) => b.i === a.i).hurtAt;
     assert.equal(S.fight.hostHit({ i: a.i, d: 40, r: HIT_KINDS.Melee }), false, 'the blow is not sent');
@@ -173,7 +173,7 @@ test('TURNED-BLOW THE WARDS AND THE SLEEPERS (sections 8.6 and 12): the relay ta
   Y.at(Y.spec.arrive.x, Y.spec.arrive.z, Y.spec.arrive.y ?? 0);
   await Y.step();
   assert.equal(Y.target(rift.i).entity.warded, true, 'a rift struck from the plate: turned');
-  assert.equal(Y.target(rift.i).entity.wardText, EG_NO_FOOTING);
+  assert.equal(Y.target(rift.i).entity.wardText, egNoFooting());
   assert.equal(Y.relayBlow(rift.i), 0, 'the relay: nothing');
   Y.at(rift.x - (rift.x - f.x) * 0.1, rift.z - (rift.z - f.z) * 0.1, f.y ?? 0);
   await Y.step();

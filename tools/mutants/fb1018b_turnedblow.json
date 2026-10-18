@@ -132,7 +132,7 @@
   {
     "name": "TURNED-BLOW-no-word",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    e.wardText = off && at ? EG_NO_FOOTING : null;",
+    "old": "    e.wardText = off && at ? egNoFooting() : null;",
     "new": "    e.wardText = null;",
     "tests": [
       "test/net/eliteGates/fb1018b_turnedblow.test.js"
@@ -142,8 +142,8 @@
   {
     "name": "TURNED-BLOW-ground-word-on-a-ward",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    e.wardText = off && at ? EG_NO_FOOTING : null;",
-    "new": "    e.wardText = EG_NO_FOOTING;",
+    "old": "    e.wardText = off && at ? egNoFooting() : null;",
+    "new": "    e.wardText = egNoFooting();",
     "tests": [
       "test/net/eliteGates/fb1018b_turnedblow.test.js"
     ],
