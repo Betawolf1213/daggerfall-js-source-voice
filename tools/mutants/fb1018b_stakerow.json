@@ -1,0 +1,32 @@
+[
+  {
+    "name": "STAKE-ROW-a-word-row-strands-the-window",
+    "file": "src/ui/eliteGates/egStartWindow.js",
+    "old": "    if (r.kind !== 'start') { shut(); showMain(); return; }",
+    "new": "    if (r.kind !== 'start') return;",
+    "tests": [
+      "test/ui/eliteGates/fb1018b_stakerow.test.js"
+    ],
+    "why": "the report: the stake picked closes DFU's picker and nothing asks again - no window, and the key answers that the Spire already asks"
+  },
+  {
+    "name": "STAKE-ROW-the-list-asked-over-the-dead-one",
+    "file": "src/ui/eliteGates/egStartWindow.js",
+    "old": "    if (r.kind !== 'start') { shut(); showMain(); return; }",
+    "new": "    if (r.kind !== 'start') { showMain(); return; }",
+    "tests": [
+      "test/ui/eliteGates/fb1018b_stakerow.test.js"
+    ],
+    "why": "the slot is emptied before the occupant is told: the picked list still holds the slot, so the new list's mount is refused"
+  },
+  {
+    "name": "STAKE-ROW-the-word-row-cancels",
+    "file": "src/ui/eliteGates/egStartWindow.js",
+    "old": "    if (r.kind !== 'start') { shut(); showMain(); return; }",
+    "new": "    if (r.kind !== 'start') { cancel(); return; }",
+    "tests": [
+      "test/ui/eliteGates/fb1018b_stakerow.test.js"
+    ],
+    "why": "the stake picked ends the window as a cancel - the top row still does nothing the player asked"
+  }
+]

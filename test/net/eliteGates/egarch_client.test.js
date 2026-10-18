@@ -109,9 +109,13 @@ test('EG-F THE START WINDOW: the stake, the warning, Hall 1 and every Redoubt th
   assert.deepEqual(R.log.at(-1), ['choose', { ew: 0, wg: [], rh: true }]);
   R = run();
   pick('Weir Keys: 3 - one will be staked.');
-  assert.equal(R.top().open, true, 'the stake is words, not a choice');
+  // PIN MOVED (FIELD BUGS 2026-10-18b STAKE-ROW): DFU's picker closes itself on any pick, so the stake picked asks the list
+  // again - the old list closed, a new one open (test/ui/eliteGates/fb1018b_stakerow.test.js drives the real picker)
+  assert.equal(R.lists.length, 2, 'the stake is words, not a choice: the list again');
+  assert.equal(R.lists[0].open, false);
+  assert.equal(R.top().open, true);
   R.top().onCancel();
-  assert.deepEqual(R.log, ['close', 'cancel']);
+  assert.deepEqual(R.log, ['close', 'close', 'cancel']);
 });
 
 test('EG-F THE CALL\'S PROMPT, HORN AND PORTAL: "The breach opens in 4:12" while sealed; "Answer the call - 4:12" while open (Enter, the pad\'s A); "Answer from open ground." indoors; gone under a window and back when it closes; gone once answered or the window ends; the horn a war horn made in code; the portal opened ahead of my feet, the first step in my admission (mutants: answerable while sealed; the prompt over a window; the horn never registered; the step taken in a hold)', async () => {
