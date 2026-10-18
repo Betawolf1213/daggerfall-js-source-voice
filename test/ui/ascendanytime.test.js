@@ -105,6 +105,9 @@ test('ASCEND-ANYTIME the door\'s rollout (levelUpScreenFor): none with nothing o
   assert.ok(first instanceof LevelUpScreen, 'DFU\'s own rollout');
   const again = levelUpScreenFor(e, false);
   assert.equal(again.pool, first.pool, 'the bonus pool remembered on the character (advancement.js bonusPoolFor): leaving the tab re-rolls nothing');
+  // AUDIT GROWTH LANE5-18: ...and read off the character, not equal by chance (two draws of 4-6 match one time in three)
+  assert.equal(typeof e.pendingBonusPool, 'number', 'drawn once onto the character');
+  assert.equal(first.pool, e.pendingBonusPool, 'the screen\'s pool is the character\'s');
 });
 
 test('ASCEND-ANYTIME pause door: the level-up window stays a lazy chunk, not a boot import', () => {
