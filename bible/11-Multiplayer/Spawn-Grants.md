@@ -360,9 +360,10 @@ owner that is still playing (world.js handOverWalkedAway), so only a grant (sect
 ## 10. Questions for the owner (ANSWERED 2026-10-18)
 
 1. **Guests.** A guest's grants: the same budget, a smaller one, or no hostile kinds at all? Ban evasion is a new guest
-   (Chat-Safety-Arc section 11). ANSWERED: **the same budget.** A guest has no token, so its grant carries no signed
-   level or Renown (`l` and `r` are 0) and the relay rolls it no elite (`GRANT_ELITE_MIN_RENOWN`), as a guest's own
-   street rolls none today (`systems/sigil/sigil.js` renownOpens).
+   (Chat-Safety-Arc section 11). ANSWERED: **the same budget.** A guest's session mints a token like anyone's (`server/src/index.js`
+   "A GUEST IS NOT SHUT OUT"), so its grants are its own account's, on the same buckets. Its grant's `l` and `r` are what
+   its token carries, 0 where it carries none, and under Renown 5 the relay rolls no elite (`GRANT_ELITE_MIN_RENOWN`), as
+   a guest's own street rolls none today (`systems/sigil/sigil.js` renownOpens).
 2. **The consequence (GRANT7).** Open a moderators' case when readers on several accounts tally against one sender? If
    so, how many accounts, in what window? ANSWERED: **three accounts in ten minutes** - a case, never a ban.
 3. **The measure's window.** ANSWERED: **seven days**, as the integrity arc's budgets had.
@@ -443,5 +444,63 @@ session. Section 4.7's OPEN is answered: no. GRANT3 needs another route for a gu
 
 Pins: `test/net/grant2_relay.test.js` (4), `test/net/grant2_client.test.js` (2), `test/server/grant2_service.test.js` (2);
 `tools/mutants/grant2.json` (19, all dead). Pins moved: RELAY_VERSION and ACCOUNT_VERSION where they stand (PIN MOVED),
-the relay's graph and its law row (`test/net/relayversion.test.js`), `auditpscale1`'s mount of the encounter tick
-(`grants`); PSCALE1's wanderer mutant re-aimed at `const _n`.
+the relay's graph and its law row (`test/net/relayversion.test.js`). GRANT3 replaced the encounter tick's and the camp's
+asks with the pool's own (section 13), so the encounter tick is main's again.
+
+## 13. GRANT3: the owner stands on the grant, the reader checks it (BUILT 2026-10-18)
+
+Mac: **"Do all slices. And dont return until they are finished"**. Ships with GRANT1 and GRANT2 (world218, acct155).
+
+- **The asks** (`net/grantLaw.js` validGrantAsk, validGrantOut; the relay's `_grantRenew`, `_grantFree`, `_grantCarry`,
+  `_grantHeir`, `_grantTally`): `renew` signs my live grants again with a new `x` and passes over another's; `free`
+  takes my grant off the cell's count, never another's; `carry` signs a grant this relay signed, made out to this socket
+  and account, from another cell, again for this cell under its own number; `heir` signs member `i` of my grant to a
+  socket in the cell, answered to THE HEIR (my handover frame goes at once), each member once, counting nothing more
+  against the ceiling; `tally` folds a reader's refusals into the measure under the reader's account and the sender's
+  (`grantMeasure.js` `tl`), one a reader each GRANT_TALLY_MS. The relay checks its own signature by signing the bytes
+  again (Ed25519 is deterministic: grantSignedHere), so it needs no public half.
+- **The grant's `h`**: -1 for a mint's; the member a handed grant stands alone. Signed, so a handed grant cannot be
+  stretched to its other members.
+- **The owner** (`scenes/grantHost.js`, wired by `scenes/world.js` into the pool's net): every own stand of
+  `scenes/exteriorFoes.js` spawnFoe asks a member (memberFor), every stand of a kind in one turn one ask, split at the
+  kind's most. The member stands as the grant says - its elite through the street's own gates (elitesAllowed, the ally,
+  the quest, the building), its champion only a capped stand's - and a stand whose grant does not come in GRANT_WAIT_MS
+  stands as it did. A record names its grant and member (`gr`); a frame carries each grant its records name on a full
+  frame and again when it is signed again (`gs`). A member's end frees its grant at the last; a grant within
+  GRANT_RENEW_LEAD_MS of its end is renewed; one carried out of its cell is signed for the cell its owner stands in.
+- **The heir** (section 4.8): a foe handed on at a death or a door asks `heir`; the heir's game ties the grant to the foe
+  it took, whichever lands first, waiting GRANT_HEIR_WAIT_MS before it asks a fresh grant of its own (the orphan's law).
+- **The reader**: every grant a frame carries is checked once per owner, grant and signature, with the relay's public
+  half from the account service's open route `/v1/relaykey` (section 12's finding: a guest's game reads it too). Every
+  new foe's grant once: the signature, the sender, the cell, the expiry, the member, a member standing once (`twice`),
+  its marks within its grant's (`marks`), and what a seed bounds without the owner's settings (`dice`): a class foe of an
+  encounter, a camp or a band at the owner's signed level or under, an encounter's or a camp's species one its pixel's
+  tables hold (grantSpeciesOf: the band's three tables). A hostile record with no grant from an owner that has carried
+  one is `ungranted` (the City Watch aside: section 14). What it would refuse is tallied by sender and reason
+  (GRANT_READER_REFUSALS) and handed to the cell every GRANT_TALLY_MS. While the law measures the foe stands; while it
+  enforces the pool stands it down (GRANT6). A reader that cannot have the key judges nothing, and asks again after
+  GRANT_KEY_RETRY_MS.
+
+Departures from section 4, each named:
+- **The reader does not re-run every die.** A foe's weapon and its health depend on its owner's own settings (the
+  Roleplay & Realism assigner, the monster rows' mods, the wilds' scaling), which a seed cannot rebuild; the reader
+  bounds what the seed does decide (the marks, the species table, the level) and leaves the rest to FOE-FORGE's caps.
+  The owner's build draws its dice as it did; the seed decides the marks.
+- **One ask per kind per turn**, not per spawn: a camp's members all start in one loop, and one ask spends one token.
+- **Grants live in the pool, not at each source**: every own stand asks by its kind (section 14), so no host grows.
+
+Pins: `test/net/grant3_asks.test.js` (3), `test/scenes/grant3_pool.test.js` (5); `tools/mutants/grant3.json` (23, all
+dead). Pins moved: `test/net/grant1_law.test.js` (`h`, fifteen fields signed), `test/net/grant2_client.test.js` (the host
+wired), the relay's law row; mutant records re-aimed where their text moved (`scenes/world.js`'s encounter and camp lines,
+`travel/freePull.js` - the free pull moved out of bootWorld to make its room).
+
+## 14. GRANT4: every source's grant (BUILDING 2026-10-18)
+
+- **The kinds** (GRANT_KINDS, eleven): `enc`, `camp`, `band`, `bounty`, `loose`, `site`, `managed`, `giant`, `rev`,
+  `quest`, `ally`. A stand's kind is its caller's word (`grantKind`: world.js names the encounter's, the revenant's, the
+  camp's, the band's and the bounty's) or its own shape (grantKindOf). A quest's foe, an ally and a revenant roll no
+  marks (GRANT_MARKLESS): their own law decides them.
+
+Departures from section 4.9, each named: the roaming bands and sea raiders take `band` and `loose` rather than none new
+(their stand's elite and champion are the grant's, one law for every stand); a naval muster and a raid's party take
+`loose`, the deep's and the Living World's `managed`.

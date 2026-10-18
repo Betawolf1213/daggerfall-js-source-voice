@@ -1253,6 +1253,7 @@ export function validFoeRecord(r) {
   // LOOT7 (the Loot arc): `cp` a CHAMPION's trait - its index in systems/champions.js CHAMPION_TRAITS (this file names
   // none of them: the relay reads it), absent for a foe that is none; the reader stands its puppet as the same champion
   if (r.cp !== undefined) { if (!Number.isInteger(r.cp) || r.cp < 0 || r.cp > CHAMPION_TRAIT_MAX) return null; out.cp = r.cp; }
+  if (r.gr !== undefined) { if (!Array.isArray(r.gr) || r.gr.length !== 2 || !Number.isSafeInteger(r.gr[0]) || r.gr[0] < 0 || r.gr[0] > 0x7fffffff || !Number.isInteger(r.gr[1]) || r.gr[1] < 0 || r.gr[1] > 23) return null; out.gr = [r.gr[0], r.gr[1]]; }   // GRANT3 (bible/11-Multiplayer/Spawn-Grants.md section 13): its grant's number and its member - the frame's `gs` holds the grant
   // GREATER-GIANT (2026-10-08, the owner: "everyone in the zone should see the same ... that the big giant is a Greater
   // Giant"): `gg` the zone's Greater Giant this foe is (its index, 0..7 - systems/wild/wildGiants.js), absent for any other -
   // every puppet stands it at its size and its name, and a client that sees one never stands a copy of its own
@@ -2029,6 +2030,8 @@ export function inRangeOf(roomKey, from) {
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/net/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
+/** GRANT2-GRANT3: the fields a grant ask may carry, carried through the parse as they came (net/grantLaw.js validGrantAsk). */
+const GRANT_ASK_FIELDS = Object.freeze(['k', 'id', 'kind', 'n', 'gs', 'g', 'grs', 'gr', 'i', 'to', 'rows']);
 export function parseClient(text, { hasHello = false } = {}) {
   if (typeof text !== 'string') return { error: 'text frames only' };
   // WORLD1/WORLD2: the frames past MAX_FRAME_BYTES are the world frame and the foes frame, told by their prefix
@@ -2168,7 +2171,9 @@ export function parseClient(text, { hasHello = false } = {}) {
   }
   if (m.t === 'grant') {   // GRANT2 (bible/11-Multiplayer/Spawn-Grants.md section 12): a spawn grant asked - its fields carried, the cell's _grantFrame judges them (net/grantLaw.js validGrantAsk: this file is that one's import, so it is read there)
     if (!hasHello) return { error: 'grant before hello' };
-    return { t: 'grant', k: m.k, id: m.id, kind: m.kind, n: m.n };
+    const g = { t: 'grant' };
+    for (const f of GRANT_ASK_FIELDS) if (m[f] !== undefined) g[f] = m[f];   // GRANT3: every ask's fields (validGrantAsk reads the ones its `k` names)
+    return g;
   }
   if (m.t === 'ping') return { t: 'ping' };
   if (m.t === 'hello') {

@@ -14,11 +14,14 @@
 //     service checks it with the public half, and a batch it has seen (`id`) is not read twice.
 //
 // THE BATCH: {"v":"grant-measure1","id":<16 hex>,"at":<ms>,"q":<room>,"from":<ms>,"live":<n>,
-//             "rows":[{"a":<account>,"k":<kind>,"asks","members","bucket","ceiling"}...]}
+//             "rows":[{"a":<account>,"k":<kind>,"asks","members","bucket","ceiling"}...],
+//             "tl":[{"a":<reader's account>,"b":<sender's account>,"r":<reason>,"n"}...]}
+// GRANT3 (section 13): `tl`, the readers' tallies - what each reader's game refused of a sender's foes, by reason, as the
+// cell heard them (net/grantLaw.js GRANT_READER_REFUSALS); GRANT7's evidence once readers on several accounts agree.
 //
 // PURE; the relay (server/src/index.js) and the service (server-account/src/grants.js) import it. Not a DFU member.
 import { _b64url, SIG_BYTES, ID_RE } from './identityToken.js';
-import { GRANT_KINDS } from './grantLaw.js';
+import { GRANT_KINDS, GRANT_READER_REFUSALS } from './grantLaw.js';
 
 /** The only version this file writes or reads - a word of its own, never a receipt's or the chat feed's. */
 export const GRANT_MEASURE_V = 'grant-measure1';
@@ -40,10 +43,13 @@ const ID_HEX_RE = /^[0-9a-f]{16}$/;
 const ROOM_RE = /^[A-Za-z0-9_.,:+-]{1,80}$/;   // net/wire.js roomOf's own
 
 /** @typedef {{ a: string, k: string, asks: number, members: number, bucket: number, ceiling: number }} GrantMeasureRow */
-/** @typedef {{ from: number, live: number, rows: Map<string, GrantMeasureRow> }} GrantMeasure */
+/** @typedef {{ a: string, b: string, r: string, n: number }} GrantTallyRow */
+/** @typedef {{ from: number, live: number, rows: Map<string, GrantMeasureRow>, tallies: Map<string, GrantTallyRow> }} GrantMeasure */
 
 /** A cell's window, begun at `nowMs`. Pure. @param {number} nowMs @returns {GrantMeasure} */
-export const newGrantMeasure = (nowMs) => ({ from: nowMs, live: 0, rows: new Map() });
+export const newGrantMeasure = (nowMs) => ({ from: nowMs, live: 0, rows: new Map(), tallies: new Map() });
+/** Whether a window holds its whole bound - its asks' rows and its tallies together. */
+const full = (w) => w.rows.size + w.tallies.size >= GRANT_MEASURE_ROWS;
 
 const capped = (n) => Math.min(GRANT_MEASURE_COUNT_MAX, n);
 /**
@@ -61,28 +67,43 @@ export function foldGrantAsk(w, a, k, n, refusal, live) {
   if (refusal === 'bucket') row.bucket = capped(row.bucket + 1);
   if (refusal === 'ceiling') row.ceiling = capped(row.ceiling + 1);
   w.live = Math.max(w.live, capped(live));
-  return w.rows.size >= GRANT_MEASURE_ROWS;
+  return full(w);
+}
+/**
+ * GRANT3: ONE READER'S TALLY ROW FOLDED IN - reader `a`'s game refused `n` of sender `b`'s foes for reason `r`. Answers
+ * whether the window is full. In place.
+ * @param {GrantMeasure} w @param {string} a @param {string} b @param {string} r @param {number} n
+ */
+export function foldGrantTally(w, a, b, r, n) {
+  const key = `${a}|${b}|${r}`;
+  const row = w.tallies.get(key);
+  if (row) row.n = capped(row.n + n);
+  else w.tallies.set(key, { a, b, r, n: capped(n) });
+  return full(w);
 }
 
 const count = (n) => Number.isSafeInteger(n) && n >= 0 && n <= GRANT_MEASURE_COUNT_MAX;
-/** Whether a parsed batch is one: its version, a 16-hex id, its clocks, its room, and 1 to GRANT_MEASURE_ROWS rows, each
- *  an account, a kind, and counts in their law (the members within the asks' most). Pure. @param {any} b */
+/** Whether a parsed batch is one: its version, a 16-hex id, its clocks, its room, and 1 to GRANT_MEASURE_ROWS rows and
+ *  tallies together - each row an account, a kind, and counts in their law (the members within the asks' most); each
+ *  tally a reader's account, another's, a reader's reason and a count. Pure. @param {any} b */
 export function grantMeasureValid(b) {
   if (!b || typeof b !== 'object' || Array.isArray(b) || b.v !== GRANT_MEASURE_V) return false;
   if (typeof b.id !== 'string' || !ID_HEX_RE.test(b.id) || !Number.isSafeInteger(b.at) || b.at <= 0) return false;
   if (!Number.isSafeInteger(b.from) || b.from <= 0 || b.from > b.at || typeof b.q !== 'string' || !ROOM_RE.test(b.q) || !count(b.live)) return false;
-  if (!Array.isArray(b.rows) || !b.rows.length || b.rows.length > GRANT_MEASURE_ROWS) return false;
-  return b.rows.every((r) => r && typeof r === 'object' && typeof r.a === 'string' && ID_RE.test(r.a)
+  if (!Array.isArray(b.rows) || !Array.isArray(b.tl) || !(b.rows.length + b.tl.length) || b.rows.length + b.tl.length > GRANT_MEASURE_ROWS) return false;
+  const tallyOk = b.tl.every((t) => t && typeof t === 'object' && typeof t.a === 'string' && ID_RE.test(t.a) && typeof t.b === 'string' && ID_RE.test(t.b)
+    && t.a !== t.b && GRANT_READER_REFUSALS.includes(t.r) && count(t.n) && t.n >= 1);
+  return tallyOk && b.rows.every((r) => r && typeof r === 'object' && typeof r.a === 'string' && ID_RE.test(r.a)
     && typeof r.k === 'string' && Object.hasOwn(GRANT_KINDS, r.k)
     && count(r.asks) && r.asks >= 1 && count(r.members) && r.members <= r.asks * GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (r.k)].max
     && count(r.bucket) && count(r.ceiling) && r.bucket + r.ceiling <= r.asks);
 }
 
-/** A window's batch for room `q`, posted at `nowMs`: null when nothing was asked. Pure.
+/** A window's batch for room `q`, posted at `nowMs`: null when nothing was asked or tallied. Pure.
  *  @param {GrantMeasure} w @param {string} id @param {string} q @param {number} nowMs */
 export function grantMeasureBatch(w, id, q, nowMs) {
-  if (!w.rows.size) return null;
-  return { v: GRANT_MEASURE_V, id, at: nowMs, q, from: w.from, live: w.live, rows: [...w.rows.values()].map((r) => ({ ...r })) };
+  if (!w.rows.size && !w.tallies.size) return null;
+  return { v: GRANT_MEASURE_V, id, at: nowMs, q, from: w.from, live: w.live, rows: [...w.rows.values()].map((r) => ({ ...r })), tl: [...w.tallies.values()].map((t) => ({ ...t })) };
 }
 
 const enc = new TextEncoder();

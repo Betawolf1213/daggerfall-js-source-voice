@@ -68,7 +68,6 @@ function stands(over = {}) {
     playerEntity: { isResting: false, level: over.level ?? 10 }, _musicInLocationRect: () => false, maps: { getClimateIndex: () => 0 }, playerTravelPixel: () => ({ x: 0, y: 0 }),
     SOLITARY_TYPES, partyExtraFoes, partySize: () => 1, effectiveLevel: (e) => e?.level ?? 1,
     _standEncounterFoe: (hit) => out.push(hit.mobileType), playerFeet: [0, 0, 0],
-    askGrant: (session, kind, n) => n,   // PIN MOVED (GRANT2, Spawn-Grants.md section 12): the tick asks its cell for the wanderers' grant
     revenantToReturn: () => null, now: 0, sharedClockOn: () => false, worldMinutes: () => 0, spawns: true,
     wildHere: () => false, WILD_GIANT,   // WILD3/ZONE-GIANTS: not in the open zone here (the slice's own two names - test/systems/auditpscale1.test.js)
     getPref: (k) => (k === 'roadEncounters' ? over.pref : undefined), onTheRoad: () => !!over.road, trivialOnRoad, roadCompany, wandererCount,

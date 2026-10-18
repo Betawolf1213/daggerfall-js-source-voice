@@ -27,8 +27,13 @@ export async function takeGrantMeasure({ db, nowS, subtle }, env, bytes, sig) {
   const span = Math.max(1, Math.round((b.at - b.from) / 1000));
   const kept = await db.prepare('INSERT OR IGNORE INTO grant_batches (id, at, q, span_s, live) VALUES (?1, ?2, ?3, ?4, ?5)').bind(b.id, nowS, b.q, span, b.live).run();
   if (!kept?.meta?.changes) return { ok: true, read: false };
-  await db.batch(b.rows.map((/** @type {any} */ r) => db.prepare('INSERT INTO grant_rows (batch, at, sub, kind, asks, members, bucket, ceiling, span_s) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)')
-    .bind(b.id, nowS, r.a, r.k, r.asks, r.members, r.bucket, r.ceiling, span)));
+  const writes = [
+    ...b.rows.map((/** @type {any} */ r) => db.prepare('INSERT INTO grant_rows (batch, at, sub, kind, asks, members, bucket, ceiling, span_s) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)')
+      .bind(b.id, nowS, r.a, r.k, r.asks, r.members, r.bucket, r.ceiling, span)),
+    ...b.tl.map((/** @type {any} */ t) => db.prepare('INSERT INTO grant_tallies (batch, at, reader, sender, reason, n) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
+      .bind(b.id, nowS, t.a, t.b, t.r, t.n)),
+  ];
+  if (writes.length) await db.batch(writes);
   return { ok: true, read: true };
 }
 

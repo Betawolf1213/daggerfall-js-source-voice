@@ -162,8 +162,8 @@
   {
     "name": "GRANT1-member-off-by-one",
     "file": "src/net/grantLaw.js",
-    "old": "i >= g.n) return",
-    "new": "i > g.n) return",
+    "old": "i >= g.n ||",
+    "new": "i > g.n ||",
     "why": "a member past the grant stands",
     "tests": [
       "test/net/grant1_law.test.js"

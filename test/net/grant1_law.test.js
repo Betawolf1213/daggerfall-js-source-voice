@@ -21,7 +21,7 @@ import { signEgCall } from '../../src/net/eliteGates/egCallSig.js';
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;
 /** A grant as the relay would mint it: an encounter of three for acct-mac's socket in a wilderness cell. */
-const G = Object.freeze({ g: 41, o: 'sock-mac-01', q: 'w:300:200', a: 'acct-mac', k: 'enc', p: [300, 200], m: 2_345_678, l: 12, r: 7, n: 3, s: 0xdeadbeef, e: 0b010, c: [3, -1, -1], x: T0 + GRANT_TTL_MS });
+const G = Object.freeze({ g: 41, o: 'sock-mac-01', q: 'w:300:200', a: 'acct-mac', k: 'enc', p: [300, 200], m: 2_345_678, l: 12, r: 7, n: 3, s: 0xdeadbeef, e: 0b010, c: [3, -1, -1], h: -1, x: T0 + GRANT_TTL_MS });
 
 test('GRANT1 THE PINNED RATES: each copy the relay holds equals its home - the elite\'s chance and Renown, the champion\'s rate and its traits, each kind\'s most members; the seeded stream is eliteRng over eliteHash, the same law (mutants: any rate moved; the stream\'s hash salted otherwise)', () => {
   assert.equal(GRANT_ELITE_CHANCE, ELITE_FOE_OVERWORLD_CHANCE);
@@ -30,7 +30,7 @@ test('GRANT1 THE PINNED RATES: each copy the relay holds equals its home - the e
   assert.equal(GRANT_CHAMPION_TRAITS, CHAMPION_TRAITS.length);
   assert.equal(GRANT_KINDS.enc.max, ROAD_PARTY_MAX, 'an encounter: the road party\'s most, its party\'s extra inside it');
   assert.equal(GRANT_KINDS.camp.max, CAMP_SIZE[1] + PARTY_SCALE_EXTRA_MAX, 'a camp: its own most and the party\'s extra');
-  assert.deepEqual(Object.keys(GRANT_KINDS), ['enc', 'camp'], 'GRANT2\'s first stream; the other sources come with GRANT4');
+  assert.deepEqual(Object.keys(GRANT_KINDS).slice(0, 2), ['enc', 'camp'], 'GRANT2\'s first stream; the other sources\' with GRANT4 (grant3_pool)');   // PIN MOVED (GRANT4): every source's kind
   for (const [s, salt] of [[0, 'marks'], [0xdeadbeef, 'species:2'], [12345, 'health:0']]) {
     const a = grantRng(s, salt), b = eliteRng(eliteHash('grant', s, salt));
     assert.deepEqual(Array.from({ length: 6 }, a), Array.from({ length: 6 }, b), `${s} ${salt}`);
@@ -60,6 +60,7 @@ test('GRANT1 A GRANT READ WHOLE OR NOT AT ALL: every field in its law, a fresh c
     ['a Renown no token carries', { r: 51 }], ['a seed past 32 bits', { s: 2 ** 32 }], ['a negative minute', { m: -1 }],
     ['no expiry', { x: 0 }], ['a socket id of bad shape', { o: 'a b' }], ['an account of bad shape', { a: 'x' }],
     ['a room of bad shape', { q: 'w/300' }], ['a number past 31 bits', { g: 2 ** 31 }], ['a signature of bad shape', { sg: 'short' }],
+    ['GRANT3: a handed member past the grant', { h: 3 }], ['GRANT3: no `h` at all', { h: undefined }],
   ]) assert.equal(validGrant({ ...G, ...bad }), null, why);
   assert.equal(validGrant(null), null);
   assert.equal(validGrant('grant'), null);
@@ -68,12 +69,12 @@ test('GRANT1 A GRANT READ WHOLE OR NOT AT ALL: every field in its law, a fresh c
 test('GRANT1 THE RELAY\'S SIGNATURE: every field signed in one fixed order behind its own version, verified with the public half; any field moved, another key, no signature or no key refused; a grant\'s bytes are no arch call\'s (mutants: a field left out of the bytes; any signature taken)', async () => {
   const kp = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
   const other = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
-  assert.equal(grantBytes(G), `${GRANT_SIG_V}\n41|sock-mac-01|w:300:200|acct-mac|enc|300,200|2345678|12|7|3|3735928559|2|3,-1,-1|${T0 + GRANT_TTL_MS}`);
+  assert.equal(grantBytes(G), `${GRANT_SIG_V}\n41|sock-mac-01|w:300:200|acct-mac|enc|300,200|2345678|12|7|3|3735928559|2|3,-1,-1|-1|${T0 + GRANT_TTL_MS}`);   // GRANT3: `h` signed beside the marks
   assert.ok(grantBytes(G).startsWith('spawn-grant1\n'), 'the version Spawn-Grants section 4.2 names');
   const sg = await signGrant(G, kp.privateKey, { subtle });
   assert.match(sg, /^[A-Za-z0-9_-]{86}$/);
   assert.equal(await verifyGrant({ ...G, sg }, kp.publicKey, { subtle }), true);
-  for (const [f, val] of [['g', 42], ['o', 'sock-ann-01'], ['q', 'w:301:200'], ['a', 'acct-ann'], ['k', 'camp'], ['p', [301, 200]], ['m', 2_345_679], ['l', 13], ['r', 8], ['n', 2], ['s', 1], ['e', 0], ['c', [3, -1, 0]], ['x', T0 + GRANT_TTL_MS + 1]]) {
+  for (const [f, val] of [['g', 42], ['o', 'sock-ann-01'], ['q', 'w:301:200'], ['a', 'acct-ann'], ['k', 'camp'], ['p', [301, 200]], ['m', 2_345_679], ['l', 13], ['r', 8], ['n', 2], ['s', 1], ['e', 0], ['c', [3, -1, 0]], ['h', 2], ['x', T0 + GRANT_TTL_MS + 1]]) {
     const moved = { ...G, [f]: val, sg };
     if (f === 'n') moved.c = [3, -1];
     if (f === 'e') moved.c = [3, -1, -1];
@@ -163,6 +164,8 @@ test('GRANT1 THE READER\'S CHECK: the sender, the cell, the expiry with a minute
   assert.equal(grantRefusal(G, { ...at, i: 3 }), 'member');
   assert.equal(grantRefusal(G, { ...at, i: -1 }), 'member');
   assert.equal(grantRefusal(G, { ...at, i: 1.5 }), 'member');
+  assert.equal(grantRefusal({ ...G, h: 1 }, { ...at, i: 0 }), 'member', 'GRANT3: a handed-on grant stands its one member');
+  assert.equal(grantRefusal({ ...G, h: 1 }, { ...at, i: 1 }), null);
   assert.ok(grantMarksAllow(G, 1, { z: 1 }), 'member 1 is the grant\'s elite');
   assert.ok(!grantMarksAllow(G, 0, { z: 1 }), 'member 0 is not');
   assert.ok(grantMarksAllow(G, 0, { cp: 3 }), 'its own trait');

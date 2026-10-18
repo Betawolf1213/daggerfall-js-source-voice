@@ -1,27 +1,310 @@
 // @ts-check
-// GRANT2 (2026-10-18, Mac: "Lets build the plan"; bible/11-Multiplayer/Spawn-Grants.md section 12): THE OPEN WORLD'S
-// GRANT ASKS - a module the host wires (HOST-SPLIT; scenes/fishHost.js is the shape). While my cell's law is not off (its
-// welcome's `gm`, net/online.js), each wanderer group and each camp I stand asks my cell for its grant, so the relay
-// measures what honest play asks (GRANT5 sets the buckets and the ceiling from it). GRANT2 builds nothing from the answer:
-// the foe stands as it always did - its seed builds the foe and its record carries the grant from GRANT3. Never awaited:
-// a stand never waits on the relay. A cell's `off` the session keeps itself (net/online.js), so the host hears nothing.
+// GRANT2-GRANT4 (2026-10-18, Mac: "Lets build the plan", "Do all slices"; bible/11-Multiplayer/Spawn-Grants.md sections
+// 12-14): THE GRANTS' HOST - a module the host wires (HOST-SPLIT; scenes/fishHost.js is the shape), the owner's half and
+// the reader's of every spawn grant this client holds or hears. The pool (scenes/exteriorFoes.js) asks it; world.js makes
+// one, hands it to the pool's net (`grants`) and its session's answers (`online.onGrant`).
 //
-// THE FOUR HOSTS: scenes/world.js wires it (the streamed exterior's encounters and camps). scenes/worldModes.js (the
-// interior lane) and scenes/dungeonContext.js (its own lane and its surplus) take their sources' grants with GRANT4;
-// scenes/exterior.js (the fixed city) streams nothing and reads no peer.
-import { GRANT_ASK_ID_MAX } from '../net/grantLaw.js';
+// THE OWNER'S HALF (section 13):
+//   - A STAND ASKS: spawnFoe asks a member for its kind (memberFor); every stand of a kind in one turn is ONE ask of that
+//     many (the batch flushes at the turn's end - a camp's members all start in one loop), split at the kind's most. The
+//     answer's grant names the member's elite and champion (the pool stands them as the grant says); a stand whose grant
+//     does not come inside GRANT_WAIT_MS stands as it would have with no law.
+//   - A MEMBER ENDS (dies, is culled, leaves with its owner): the grant's count goes down, and its last member frees it
+//     (`free`, believed only downward). A member HANDED ON at a death or a door asks the relay to sign it to its heir
+//     (`heir`, said to the heir, never awaited - a death waits on no relay).
+//   - THE CLOCK (tick, the pool's frame): a live grant near its expiry is signed again (`renew`), one carried out of the
+//     cell it was minted in is signed for the cell its owner stands in (`carry`; one refused is dropped, and its members
+//     stand ungranted), an expired one is dropped.
+//   - THE FRAME: a record names its grant and member (`gr`), and the frame carries each grant it names on a full frame and
+//     whenever it was signed again (`gs`).
+// THE READER'S HALF (section 13):
+//   - every grant a frame carries is checked against the relay's public half (/v1/relaykey - a guest's game too), once per
+//     owner, grant and signature; every new foe's grant once: the signature, the sender, the cell, the expiry, the member,
+//     a member standing once, its marks within the grant's, a class foe of an encounter at the owner's signed level or
+//     under, an encounter's or a camp's species one its pixel's tables hold. What it would refuse is TALLIED, by sender
+//     and reason, and handed to the cell every GRANT_TALLY_MS (`tally`) - the measure, and GRANT7's evidence. While the
+//     law measures the foe stands all the same; while it enforces (GRANT6) the pool stands down what the check refuses.
+//   - LEFT AS THE OWNER'S WORD, said plainly: a foe's weapon and its health. Each depends on its owner's own settings and
+//     state (the Roleplay & Realism assigner, the monster rows' mods, the wilds' scaling), which a seed cannot rebuild -
+//     FOE-FORGE's caps hold them (FOE_HEALTH_MAX, the weapon's template law).
+import {
+  GRANT_ASK_ID_MAX, GRANT_KINDS, GRANT_WAIT_MS, GRANT_RENEW_LEAD_MS, GRANT_RENEW_MAX, GRANT_TALLY_MS, GRANT_TALLY_ROWS_MAX, GRANT_TALLY_COUNT_MAX,
+  GRANT_FRAME_GRANTS_MAX, GRANT_SKEW_MS, validGrant, verifyGrant, grantRefusal, grantMarksAllow, wireGrant,
+} from '../net/grantLaw.js';
+import { importPublicKeyB64 } from '../net/identityToken.js';
+import { serviceBase } from '../net/accountClient.js';
+import { resolveEncounterTableIndex } from '../systems/encounters.js';
+import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
 
-let askId = 0;
+/** The reader's bounds: the verdicts it keeps (owner and grant), the members it has seen stand, the puppets it knows the
+ *  grant of. */
+export const GRANT_VERDICTS_MAX = 512;
+export const GRANT_MEMBERS_MAX = 2048;
+/** How long an heir's game waits for its handed grant (or its handed foe), ms, before it asks a fresh one of its own. */
+export const GRANT_HEIR_WAIT_MS = 10_000;
+/** How soon a reader asks the relay's key again after it could not, ms. */
+export const GRANT_KEY_RETRY_MS = 5 * 60_000;
+
+/** The kinds whose species is an encounter table's (a random encounter's, a camp's) - and whose class foes stand at the
+ *  owner's level. */
+const ROLLED_KINDS = new Set(['enc', 'camp']);
+const LEVELLED_KINDS = new Set(['enc', 'camp', 'band']);
+
+const _speciesOf = new Map();
+/** THE SPECIES A GRANTED ENCOUNTER OR CAMP MAY STAND at climate `c`: every species of its band's three tables - a town's
+ *  night, the wild's day, the wild's night (systems/encounters.js resolveEncounterTableIndex). A camp's members are its
+ *  seed's faction-mates out of the same table. Null for a climate with no band. Pure. @param {unknown} c */
+export function grantSpeciesOf(c) {
+  if (!Number.isInteger(c)) return null;
+  if (_speciesOf.has(c)) return _speciesOf.get(c);
+  const tables = [{ inLocationRect: true, isDay: false }, { inLocationRect: false, isDay: true }, { inLocationRect: false, isDay: false }]
+    .map((o) => resolveEncounterTableIndex({ climateIndex: c, ...o })).filter((i) => i != null);
+  const set = tables.length ? new Set(tables.flatMap((i) => ENCOUNTER_TABLES[/** @type {number} */ (i)] ?? [])) : null;
+  _speciesOf.set(c, set);
+  return set;
+}
+
+/** The relay's public half, from the account service's open route - null when it cannot be had. */
+async function relayKeyOf({ subtle }) {
+  const res = await fetch(`${serviceBase(globalThis.localStorage)}/v1/relaykey`);
+  if (!res.ok) return null;
+  const j = await res.json().catch(() => null);
+  return typeof j?.rk === 'string' ? importPublicKeyB64(j.rk, { subtle }) : null;
+}
+
+const capMap = (m, max) => { while (m.size > max) m.delete(m.keys().next().value); };
+
 /**
- * ASK MY CELL for a grant of `n` members of `kind` (net/grantLaw.js GRANT_KINDS), down `session` - nothing offline, nothing
- * while its law is off (net/online.js sendGrant). Answers `n`, so a stand's own count is the one asked:
- * `for (let k = 0, n = askGrant(online, 'enc', count); k < n; k++)`.
- * @param {any} session @param {string} kind @param {number} n @returns {number}
+ * @param {{ session: () => any, climateAt?: ((px: number, py: number) => number)|null, now?: () => number,
+ *   fetchKey?: (env: { subtle: SubtleCrypto }) => Promise<CryptoKey|null>, subtle?: SubtleCrypto, wait?: number }} deps
+ *   `session` the online session now (null offline); `climateAt` a map pixel's climate (the reader's species law)
  */
-export function askGrant(session, kind, n) {
-  if (session?.sendGrant) {
+export function createGrantHost({ session, climateAt = null, now = () => Date.now(), fetchKey = relayKeyOf, subtle = globalThis.crypto?.subtle, wait = GRANT_WAIT_MS }) {
+  // ── the asks ─────────────────────────────────────────────────────────────────────────────────────────────────────
+  let askId = 0;
+  const pending = new Map();   // ask id -> its answer's resolver
+  /** The session while its cell's law is on, else null. */
+  const open = () => { const s = session(); return s && s.grantMode && s.grantMode !== 'off' && typeof s.sendGrant === 'function' ? s : null; };
+  /** An ask sent, its id - 0 when it did not go. */
+  function send(body) {
+    const s = open();
+    if (!s) return 0;
     askId = askId >= GRANT_ASK_ID_MAX ? 1 : askId + 1;
-    session.sendGrant({ k: 'mint', id: askId, kind, n });
+    return s.sendGrant({ ...body, id: askId }) ? askId : 0;
   }
-  return n;
+  /** An ask whose answer comes back to me, or null (not sent, or no answer inside `wait`). */
+  const ask = (body) => new Promise((resolve) => {
+    const id = send(body);
+    if (!id) { resolve(null); return; }
+    const t = setTimeout(() => { pending.delete(id); resolve(null); }, wait);
+    pending.set(id, (a) => { clearTimeout(t); resolve(a); });
+  });
+
+  // ── the owner's grants ───────────────────────────────────────────────────────────────────────────────────────────
+  const live = new Set();   // grants with my members standing
+  const queue = new Map();   // kind -> the stands waiting on this turn's ask
+  /** A MEMBER FOR A STAND of `kind`: a promise of `{ gr, i }`, `{ refused }` (the law enforcing) or null (no grant came) -
+   *  or null at once when no law is on. */
+  function memberFor(kind) {
+    if (!open() || !Object.hasOwn(GRANT_KINDS, kind)) return null;
+    return new Promise((resolve) => {
+      const q = queue.get(kind);
+      if (q) { q.push(resolve); return; }
+      queue.set(kind, [resolve]);
+      void Promise.resolve().then(() => flush(kind));   // at this turn's end: every stand of the turn asked
+    });
+  }
+  function flush(kind) {
+    const all = queue.get(kind) ?? [];
+    queue.delete(kind);
+    const max = GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (kind)].max;
+    for (let at = 0; at < all.length; at += max) {
+      const chunk = all.slice(at, at + max);
+      ask({ k: 'mint', kind, n: chunk.length }).then((a) => {
+        if (a?.k === 'ok') { const gr = { ...a.gr, _members: 0 }; chunk.forEach((res, i) => res({ gr, i })); }
+        else chunk.forEach((res) => res(a?.k === 'no' ? { refused: a.r } : null));
+      });
+    }
+  }
+  /** Member `i` of `gr` stands as foe `f`. */
+  function stood(gr, i, f) {
+    if (!gr || !f) return;
+    f._grant = gr; f._grantI = i;
+    gr._members = (gr._members ?? 0) + 1;
+    live.add(gr);
+  }
+  /** Foe `f`'s member is gone from my pool; its grant's last frees it. */
+  function ended(f) {
+    const gr = f?._grant;
+    if (!gr) return;
+    f._grant = null;
+    gr._members = Math.max(0, (gr._members ?? 1) - 1);
+    if (gr._members) return;
+    live.delete(gr);
+    if (!gr._dead) send({ k: 'free', g: gr.g });
+  }
+  /** Foe `f` handed on to socket `to` - its member signed to the heir, then gone from me. */
+  function handed(f, to) {
+    const gr = f?._grant;
+    if (gr && !gr._dead && typeof to === 'string' && to) send({ k: 'heir', gr: wireGrant(gr), i: f._grantI, to });
+    ended(f);
+  }
+  let renewing = false, carrying = false, lastRoom = null, tallyAt = now();
+  async function renew(gs) {
+    renewing = true;
+    const a = await ask({ k: 'renew', gs: gs.map((g) => g.g) });
+    renewing = false;
+    if (a?.k !== 'renew') return;
+    for (const ng of a.grs) { const g = gs.find((x) => x.g === ng.g); if (g) { g.x = ng.x; g.sg = ng.sg; } }
+  }
+  async function carry(room) {
+    const gs = [...live].filter((g) => !g._dead && g.q !== room);
+    if (!gs.length) return;
+    carrying = true;
+    for (let at = 0; at < gs.length; at += GRANT_RENEW_MAX) {
+      const chunk = gs.slice(at, at + GRANT_RENEW_MAX);
+      const a = await ask({ k: 'carry', grs: chunk.map(wireGrant) });
+      chunk.forEach((g, i) => { const ng = a?.k === 'carry' ? a.grs[i] : null; if (ng) Object.assign(g, { g: ng.g, q: ng.q, x: ng.x, sg: ng.sg }); else g._dead = true; });
+    }
+    carrying = false;
+  }
+  /** THE CLOCK, the pool's frame: carry, renew, drop the expired, hand the tally on, the heirs' waits. */
+  function tick() {
+    const s = open(), t = now();
+    if (s) {
+      if (s.room !== lastRoom) { const from = lastRoom; lastRoom = s.room; if (from && !carrying) void carry(s.room); }
+      if (!renewing && !carrying) {
+        const due = [...live].filter((g) => !g._dead && g.q === s.room && g.x - t <= GRANT_RENEW_LEAD_MS).slice(0, GRANT_RENEW_MAX);
+        if (due.length) void renew(due);
+      }
+    }
+    for (const g of live) if (!g._dead && t > g.x + GRANT_SKEW_MS) g._dead = true;
+    if (t - tallyAt >= GRANT_TALLY_MS) { tallyAt = t; flushTally(); }
+    for (const [k, w] of heirWaits) {
+      if (t - w.at < GRANT_HEIR_WAIT_MS) continue;
+      heirWaits.delete(k);
+      const f = w.f;
+      if (!f.dead && !f.puppet && !f._grant) memberFor(w.k)?.then((m) => { if (m && 'gr' in m && !f.dead && !f._grant) stood(m.gr, m.i, f); });
+    }
+    for (const [k, h] of heirGrants) if (t - h.at >= GRANT_HEIR_WAIT_MS) heirGrants.delete(k);
+  }
+  /** THE FRAME'S GRANTS: of the grants its records name, each on a full frame and whenever it was signed again since it
+   *  last went - its wire form. */
+  function frameGrants(grs, full) {
+    const out = [];
+    for (const g of new Set(grs)) {
+      if (!g || g._dead || out.length >= GRANT_FRAME_GRANTS_MAX) continue;
+      if (!full && g._gsSent === g.sg) continue;
+      g._gsSent = g.sg;
+      out.push(wireGrant(g));
+    }
+    return out;
+  }
+
+  // ── the heir's ───────────────────────────────────────────────────────────────────────────────────────────────────
+  const heirGrants = new Map();   // `${seed}:${member}` -> a handed grant come before its foe
+  const heirWaits = new Map();    // `${seed}:${member}` -> a foe I took whose grant has not come
+  function heirArrived(gr) {
+    const k = `${gr.s}:${gr.h}`;
+    const w = heirWaits.get(k);
+    if (w) { heirWaits.delete(k); if (!w.f.dead && !w.f.puppet && !w.f._grant) stood({ ...gr, _members: 0 }, gr.h, w.f); return; }
+    heirGrants.set(k, { gr, at: now() });
+  }
+  /** I took foe `f` of `from` (its puppet's number still its owner's): its member's handed grant, now or when it comes. */
+  function adopted(from, f) {
+    const m = pups.get(`${from}|${f.seq}`);
+    if (!m) return;
+    const k = `${m.s}:${m.i}`;
+    const h = heirGrants.get(k);
+    if (h) { heirGrants.delete(k); stood({ ...h.gr, _members: 0 }, h.gr.h, f); return; }
+    heirWaits.set(k, { f, at: now(), k: m.k });
+  }
+
+  // ── the reader's ─────────────────────────────────────────────────────────────────────────────────────────────────
+  let keyP = /** @type {Promise<CryptoKey|null>|null} */ (null), keyAt = -Infinity, keyHeld = false;
+  function key() {
+    if (keyP && (keyHeld || now() - keyAt < GRANT_KEY_RETRY_MS)) return keyP;
+    keyAt = now();
+    keyP = Promise.resolve().then(() => fetchKey({ subtle })).catch(() => null).then((k) => { keyHeld = !!k; return k; });
+    return keyP;
+  }
+  const verdicts = new Map();   // `${owner}|${grant}` -> { gr, sg, ok }
+  const members = new Map();    // `${owner}|${grant}|${member}` -> the record's number standing on it
+  const pups = new Map();       // `${owner}|${record}` -> { s, i, k }: what a puppet's grant was
+  const tallies = new Map();    // `${owner}|${reason}` -> how many
+  const capable = new Set();    // owners that have carried a grant: a hostile record of theirs with none is `ungranted`
+  /** A frame's grants heard from `from`: each read whole and its signature checked, once per owner, grant and signature. */
+  function heard(from, gs) {
+    if (!Array.isArray(gs) || !gs.length) return;
+    capable.add(from);
+    capMap(capable, GRANT_VERDICTS_MAX);
+    for (const raw of gs.slice(0, GRANT_FRAME_GRANTS_MAX)) {
+      const gr = validGrant(raw);
+      if (!gr || typeof gr.sg !== 'string') { note(from, 'unsigned'); continue; }
+      const k = `${from}|${gr.g}`;
+      if (verdicts.get(k)?.sg === gr.sg) continue;
+      verdicts.set(k, { gr, sg: gr.sg, ok: key().then((pk) => (pk ? verifyGrant(gr, pk, { subtle }) : null)) });
+      capMap(verdicts, GRANT_VERDICTS_MAX);
+    }
+  }
+  /**
+   * A NEW FOE'S CHECK - record `r` from `from` in cell `cell`: a promise of the reason it would be refused, tallied, or
+   * null. Null too while the relay's key cannot be had (judged by nobody, refused for nothing).
+   * @param {string} from @param {string|null} cell @param {any} r
+   */
+  async function check(from, cell, r) {
+    if (!r?.gr) return capable.has(from) && r?.t !== 146 ? note(from, 'ungranted') : null;   // the City Watch takes its grant with its own pool (Spawn-Grants section 14, OPEN)
+    const [g, i] = r.gr;
+    const v = verdicts.get(`${from}|${g}`);
+    if (!v) return note(from, 'unsigned');
+    const ok = await v.ok;
+    if (ok === null) return null;
+    if (!ok) return note(from, 'unsigned');
+    pups.set(`${from}|${r.i}`, { s: v.gr.s, i, k: v.gr.k });
+    capMap(pups, GRANT_MEMBERS_MAX);
+    const why = grantRefusal(v.gr, { from, cell: cell ?? '', nowMs: now(), i })
+      ?? (!grantMarksAllow(v.gr, i, r) ? 'marks' : null)
+      ?? diceRefusal(v.gr, r)
+      ?? twice(from, g, i, r.i);
+    return why ? note(from, why) : null;
+  }
+  /** What a seed cannot rebuild left aside, what it bounds: a rolled kind's species from its pixel's tables, a levelled
+   *  kind's class foe at the owner's signed level or under (a guest's 0 says none). */
+  function diceRefusal(gr, r) {
+    if (LEVELLED_KINDS.has(gr.k) && r.t >= 128 && gr.l > 0 && Number.isInteger(r.l) && r.l > gr.l) return 'dice';
+    if (ROLLED_KINDS.has(gr.k) && climateAt) {
+      const set = grantSpeciesOf(climateAt(gr.p[0], gr.p[1]));
+      if (set && !set.has(r.t)) return 'dice';
+    }
+    return null;
+  }
+  function twice(from, g, i, seq) {
+    const k = `${from}|${g}|${i}`, was = members.get(k);
+    members.set(k, seq);
+    capMap(members, GRANT_MEMBERS_MAX);
+    return was !== undefined && was !== seq ? 'twice' : null;
+  }
+  function note(from, why) {
+    const k = `${from}|${why}`;
+    tallies.set(k, Math.min(GRANT_TALLY_COUNT_MAX, (tallies.get(k) ?? 0) + 1));
+    return why;
+  }
+  function flushTally() {
+    if (!tallies.size) return;
+    const rows = [...tallies].sort((a, b) => b[1] - a[1]).slice(0, GRANT_TALLY_ROWS_MAX).map(([k, n]) => { const at = k.lastIndexOf('|'); return { o: k.slice(0, at), r: k.slice(at + 1), n }; });
+    tallies.clear();
+    send({ k: 'tally', rows });
+  }
+
+  /** My cell's answer (net/online.js onGrant): an heir's grant, or the answer an ask of mine waits on. */
+  function answer(a) {
+    if (!a) return;
+    if (a.k === 'heir') { heirArrived(a.gr); return; }
+    const res = pending.get(a.id);
+    if (res) { pending.delete(a.id); res(a); }
+  }
+  /** Is the law enforcing in my cell (GRANT6: the pool stands down what the check refuses)? */
+  const enforcing = () => open()?.grantMode === 'enforce';
+
+  return { memberFor, stood, ended, handed, tick, frameGrants, adopted, heard, check, answer, enforcing, tallied: () => new Map(tallies), live: () => [...live] };
 }

@@ -307,8 +307,8 @@ import { roomOf, parseClient, GROUND_LAW, GROUND_OLD_REASON, groundRoom, inRange
 import { NEW_VOICE_GAP_MS, SAFE_LAW_PATH } from './relay.js';   // SAFE6: a new voice's pace; SAFE4: the service's door in
 import { mintStamp, stampTabOf, PUBLIC_TABS } from '../../src/net/safety/chatStamp.js';   // SAFE2: the relay's stamp on every line it relays
 import { sealFeed, FEED_SIG_HEADER, FEED_BATCH, FEED_WAIT_MS, FEED_POST_MS } from '../../src/net/safety/chatFeed.js';   // SAFE5: the reviewer's feed
-import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarks, signGrant, grantBucketIdle, GRANT_TTL_MS } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
-import { newGrantMeasure, foldGrantAsk, grantMeasureBatch, sealGrantMeasure, GRANT_MEASURE_MS, GRANT_MEASURE_SIG_HEADER, GRANT_MEASURE_POST_MS } from '../../src/net/grantMeasure.js';   // GRANT2: and its measure, to the service
+import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarksFor, signGrant, grantBucketIdle, GRANT_TTL_MS, GRANT_SKEW_MS, GRANT_TALLY_MS, grantRenewed, grantCarried, grantHanded, grantSignedHere } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
+import { newGrantMeasure, foldGrantAsk, foldGrantTally, grantMeasureBatch, sealGrantMeasure, GRANT_MEASURE_MS, GRANT_MEASURE_SIG_HEADER, GRANT_MEASURE_POST_MS } from '../../src/net/grantMeasure.js';   // GRANT2: and its measure, to the service
 import { holdemGate, holdemSitRoomGate } from './relay.js';   // CARDS5: the card table's gate; AUDIT CARDS-3 A4: the room's sits
 import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand, actAt as holdemAct, tick as holdemTick, nextAt as holdemNextAt, emptyTable as holdemEmpty, tableLook as holdemLook, stateDelta as holdemDelta, holdemGoldTable } from '../../src/net/holdemTable.js';   // CARDS5: THE RELAY DEALS - the room's card tables (holdemTable.js imports only cardLaw.js, which imports only dice.js)
 // WILD1 (2026-10-07, the owner: "Wrothgarian mountains need to be turned into a open pvp zone"): ONE FILE JOINS THE
@@ -10064,20 +10064,20 @@ export class Room {
    *  per kind (`<account>|<kind>`), and the measure's window. In memory alone: an evicted cell forgets them, and its
    *  window with them (a measure is a sample). */
   _grantState(q, now) {
-    return this._grants ??= { q, n: rand32() >>> 1, live: new Map(), liveN: 0, buckets: new Map(), w: newGrantMeasure(now), timer: null };
+    return this._grants ??= { q, n: rand32() >>> 1, live: new Map(), liveN: 0, buckets: new Map(), tallied: new Map(), w: newGrantMeasure(now), timer: null };
   }
   /** GRANT2: the expired forgotten - a live grant past its `x` (the ceiling errs high by at most its window: a granted foe
    *  that died early counts until then), a bucket full again (a first ask's is full). */
   _grantPrune(G, now) {
     for (const [g, v] of G.live) if (v.x <= now) { G.live.delete(g); G.liveN -= v.n; }
     for (const [key, b] of G.buckets) if (grantBucketIdle(key.slice(key.lastIndexOf('|') + 1), b, now)) G.buckets.delete(key);
+    for (const [id, at] of G.tallied) if (now - at >= GRANT_TALLY_MS) G.tallied.delete(id);
   }
   /**
-   * GRANT2: A SPAWN GRANT ASKED (`{t:'grant', k:'mint', id, kind, n}`) - on its own bucket (the same strikes), in a cell
-   * alone, by a socket whose pose stands in it (a halo's foes are their own cell's; a pose not yet here is told `cell`).
-   * The gate (net/grantLaw.js grantMintGate) is asked every time and its refusal counted; while the law MEASURES every
-   * ask is granted, and only while it ENFORCES is a refusal said (`no`). The account's bucket is kept either way, so the
-   * measure counts what enforcing would have refused. Off: `off`, and the client asks no more.
+   * GRANT2-GRANT3 (bible/11-Multiplayer/Spawn-Grants.md sections 4.3, 12 and 13): A SPAWN GRANT ASKED (`{t:'grant', k, id,
+   * ...}`, net/grantLaw.js validGrantAsk) - on its own bucket (the same strikes), in a cell alone. Off: `off`, and the
+   * client asks no more. Each ask is a method of its own: a mint, a renewal, a free, a carry into this cell, a member
+   * handed on, a reader's tally.
    */
   async _grantFrame(ws, a, m) {
     const now = Date.now();
@@ -10086,10 +10086,30 @@ export class Room {
     if (!ask || !isCellRoom(a.key) || !a.id) { this._junk(ws); return; }
     const mode = await this._grantMode(now);
     if (mode === 'off') { this._send(ws, JSON.stringify({ t: 'grant', k: 'off', id: ask.id })); return; }
-    const p = a.pose;
-    if (!p || cellRoomOfWire(p.x, p.z) !== a.key) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'cell' })); return; }
     const G = this._grantState(a.key, now);
     this._grantPrune(G, now);
+    if (ask.k === 'mint') return this._grantMintAsk(ws, a, ask, G, mode, now);
+    if (ask.k === 'renew') return this._grantRenew(ws, a, ask, G, now);
+    if (ask.k === 'free') return this._grantFree(a, ask, G);
+    if (ask.k === 'carry') return this._grantCarry(ws, a, ask, G, now);
+    if (ask.k === 'heir') return this._grantHeir(ws, a, ask, G, now);
+    return this._grantTally(a, ask, G, now);
+  }
+  /** GRANT2: does this socket's pose stand in this cell? A halo's foes are their own cell's, and a pose not yet here is
+   *  told `cell` - the owner's own cell mints, and carries. */
+  _grantHere(ws, a, id) {
+    const p = a.pose;
+    if (p && cellRoomOfWire(p.x, p.z) === a.key) return true;
+    this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id, r: 'cell' }));
+    return false;
+  }
+  /**
+   * GRANT2: A MINT. The gate (net/grantLaw.js grantMintGate) is asked every time and its refusal counted; while the law
+   * MEASURES every ask is granted, and only while it ENFORCES is a refusal said (`no`). The account's bucket is kept
+   * either way, so the measure counts what enforcing would have refused.
+   */
+  async _grantMintAsk(ws, a, ask, G, mode, now) {
+    if (!this._grantHere(ws, a, ask.id)) return;
     const who = a.sub || a.id;   // the account's (a guest's token has its own - the same budget, Spawn-Grants section 10)
     const key = `${who}|${ask.kind}`;
     const gate = grantMintGate(ask.kind, ask.n, G.buckets.get(key), G.liveN, now);
@@ -10111,13 +10131,83 @@ export class Room {
     const px = mapPixelOfWire(a.pose.x, a.pose.z);
     const l = Number.isSafeInteger(a.cl) ? a.cl : 0, r = renownIssuable(a.lv) ? a.lv : 0;
     const s = rand32();
-    G.n = G.n >= 0x7fffffff ? 0 : G.n + 1;
-    const gr = { g: G.n, o: a.id, q: a.key, a: a.sub ?? '', k: ask.kind, p: [px[0], px[1]], m: Math.floor(sharedClassicMinutes(now)), l, r, n: ask.n, s, ...grantMarks(s, ask.n, r), x: now + GRANT_TTL_MS };
+    const gr = { g: this._grantNext(G), o: a.id, q: a.key, a: a.sub ?? '', k: ask.kind, p: [px[0], px[1]], m: Math.floor(sharedClassicMinutes(now)), l, r, n: ask.n, s, ...grantMarksFor(ask.kind, s, ask.n, r), h: -1, x: now + GRANT_TTL_MS };
+    return this._grantSign(G, gr, ask.n);
+  }
+  /** GRANT2-GRANT3: the cell's next grant number. */
+  _grantNext(G) { G.n = G.n >= 0x7fffffff ? 0 : G.n + 1; return G.n; }
+  /** GRANT3: a grant signed and kept live - its body (to sign again), its expiry, and the members it counts against the
+   *  ceiling (`n`; 0 for a member handed on, counted already under its first grant). */
+  async _grantSign(G, gr, n) {
     const sg = await signGrant(gr, await this._receiptKeyOf(), { subtle: crypto.subtle });
-    if (sg) gr.sg = sg;
-    G.live.set(gr.g, { n: ask.n, x: gr.x });
-    G.liveN += ask.n;
-    return gr;
+    const out = sg ? { ...gr, sg } : gr;
+    const was = G.live.get(gr.g);
+    if (was) G.liveN -= was.n;
+    G.live.set(gr.g, { n, x: gr.x, gr });
+    G.liveN += n;
+    return out;
+  }
+  /** GRANT3: A RENEWAL (section 4.3) - each of my live grants this cell still holds, signed again with a new expiry; one
+   *  this cell holds as another socket's, or not at all, is passed over. */
+  async _grantRenew(ws, a, ask, G, now) {
+    const grs = [];
+    for (const g of ask.gs) {
+      const live = G.live.get(g);
+      if (live && live.gr.o === a.id) grs.push(await this._grantSign(G, grantRenewed(live.gr, now), live.n));
+    }
+    this._send(ws, JSON.stringify({ t: 'grant', k: 'renew', id: ask.id, grs }));
+  }
+  /** GRANT3: A FREE - my grant's members are all gone: believed only downward (a lie costs only the liar). Says nothing. */
+  _grantFree(a, ask, G) {
+    const live = G.live.get(ask.g);
+    if (!live || live.gr.o !== a.id) return;
+    G.live.delete(ask.g);
+    G.liveN -= live.n;
+  }
+  /** GRANT3: A CARRY (section 4.3) - I crossed into this cell with my grants from another: each this relay signed (signed
+   *  here again and compared - net/grantLaw.js grantSignedHere), made out to me (this socket and its account), from
+   *  another cell, unexpired, is signed again for this cell under its own number. Counted live here (the cell it left
+   *  forgets it at its expiry); never refused by the ceiling - its foes already stand. One refused is null. */
+  async _grantCarry(ws, a, ask, G, now) {
+    if (!this._grantHere(ws, a, ask.id)) return;
+    const key = await this._receiptKeyOf(), env = { subtle: crypto.subtle };
+    const grs = [];
+    for (const gr of ask.grs) {
+      const ok = gr.o === a.id && gr.a === (a.sub ?? '') && gr.q !== a.key && now <= gr.x && await grantSignedHere(gr, key, env);
+      grs.push(ok ? await this._grantSign(G, grantCarried(gr, a.key, this._grantNext(G), now), gr.h >= 0 ? 0 : gr.n) : null);
+    }
+    this._send(ws, JSON.stringify({ t: 'grant', k: 'carry', id: ask.id, grs }));
+  }
+  /** GRANT3: AN HEIR (section 4.8) - member `i` of my grant handed on to socket `to`, who stands in this cell: the same
+   *  seed and marks, made out to the heir and standing that one member alone (`h`), said to THE HEIR (my handover frame
+   *  goes at once - a death or a door waits on no relay - and the heir's game ties the grant to the foe it took). Each
+   *  member is handed on once from this cell's grant; it counts nothing more against the ceiling. */
+  async _grantHeir(ws, a, ask, G, now) {
+    const gr = ask.gr;
+    const heir = [...this._all()].find(([, b]) => b.id === ask.to)?.[0] ?? null;
+    const live = G.live.get(gr.g);
+    const ok = !!heir && gr.o === a.id && gr.q === a.key && now <= gr.x && !live?.handed?.has(ask.i) && await grantSignedHere(gr, await this._receiptKeyOf(), { subtle: crypto.subtle });
+    if (!ok) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'sender' })); return; }
+    if (live) (live.handed ??= new Set()).add(ask.i);
+    const out = await this._grantSign(G, grantHanded(gr, ask.i, ask.to, this._grantNext(G), now), 0);
+    this._send(heir, JSON.stringify({ t: 'grant', k: 'heir', id: ask.id, gr: out }));
+  }
+  /** GRANT3: A READER'S TALLY (section 4.7) - what my game refused of each sender's foes since my last tally, by reason:
+   *  folded into the measure under my account and the sender's - a socket this cell holds; one gone is passed over (its
+   *  account is not known here). One tally a reader GRANT_TALLY_MS (the socket's own clock), the rest dropped unsaid. */
+  _grantTally(a, ask, G, now) {
+    const last = G.tallied.get(a.id) ?? -Infinity;
+    if (now - last < GRANT_TALLY_MS - GRANT_SKEW_MS) return;
+    G.tallied.set(a.id, now);
+    const reader = a.sub || a.id;
+    const subs = new Map([...this._all()].filter(([, b]) => b.id).map(([, b]) => [b.id, b.sub || b.id]));
+    let full = false;
+    for (const row of ask.rows) {
+      const sender = subs.get(row.o);
+      if (sender && sender !== reader) full = foldGrantTally(G.w, reader, sender, row.r, row.n) || full;
+    }
+    if (full) void this._grantFlush();
+    else if (!G.timer) G.timer = setTimeout(() => { void this._grantFlush(); }, GRANT_MEASURE_MS);
   }
   /** GRANT2: an ask folded into the window (net/grantMeasure.js foldGrantAsk), which posts at its whole bound or once its
    *  first ask has waited GRANT_MEASURE_MS - while GRANT_FEED_URL is set; unset, the window is dropped at its bound. */

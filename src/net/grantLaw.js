@@ -15,8 +15,9 @@
 //     owner's account `a` (its token's `s` - a guest's token has its own; '' for a socket with none), its kind `k`, the map
 //     pixel the relay read off the owner's pose `p`, the world minute `m`, the owner's signed level `l` and Renown `r` (0
 //     where its token says none - a guest's Renown), how many foes it stands
-//     `n`, the seed `s`, which members are elite `e` (a bitmask) and each member's champion trait `c` (-1 none), when it
-//     expires `x`, and the relay's signature `sg`.
+//     `n`, the seed `s`, which members are elite `e` (a bitmask) and each member's champion trait `c` (-1 none), the one
+//     member a handed-on grant stands `h` (-1: every member - GRANT3's heir), when it expires `x`, and the relay's
+//     signature `sg`.
 //   THE SIGNATURE - Ed25519 with the relay's receipt key (GATE_SIGNING_KEY), verified with its public half (`rk`, the
 //     account service's /v1/eg/keys), as the Elite Gates arch call is (net/eliteGates/egCallSig.js). ONE KEY, NEVER
 //     CONFUSED: the signed bytes begin `spawn-grant1\n`, so no receipt (its version and a '.') and no call (`ec1|`)
@@ -59,19 +60,53 @@ export const GRANT_CHAMPION_PER_MILLE = 70;
 /** systems/champions.js CHAMPION_TRAITS.length - `c` holds an index into them. */
 export const GRANT_CHAMPION_TRAITS = 5;
 
-/** THE KINDS (section 4.9), the two of GRANT2's first stream: `max` the most members one grant stands, `rate` and `cap`
- *  the account's bucket - asks a second, and the burst (PROVISIONAL: GRANT5's measure sets both; Spawn-Grants section
- *  10 question 3, seven days), `hostile` whether its members count against the cell's ceiling. The other sources' kinds
- *  come with their own slices (GRANT4).
- *    enc  - a random encounter (systems/encounters.js): systems/roadEncounters.js ROAD_PARTY_MAX, its party's extra
- *           foes inside it (wandererCount).
- *    camp - a camp or a pack (systems/campEncounters.js): CAMP_SIZE's top and the party's extra (systems/party/
- *           partyScale.js PARTY_SCALE_EXTRA_MAX, partyGroupMembers).
- *  Each `max` is held equal to its home by the test. */
+/** THE KINDS (section 4.9): `max` the most members one grant stands (at most 24 - a bigger group asks two grants, and the
+ *  elite mask stays a small integer), `rate` and `cap` the account's bucket - asks a second, and the burst (PROVISIONAL:
+ *  GRANT5's measure sets both; Spawn-Grants section 10 question 3, seven days), `hostile` whether its members count
+ *  against the cell's ceiling. GRANT2's two first; GRANT4 (section 14) every other source - every one of the open world's
+ *  and the interior lane's stands through one pool (scenes/exteriorFoes.js spawnFoe), so a stand's kind is its caller's
+ *  word or its own shape (grantKindOf).
+ *    enc     - a random encounter (systems/encounters.js): systems/roadEncounters.js ROAD_PARTY_MAX, its party's extra
+ *              foes inside it (wandererCount).
+ *    camp    - a camp or a pack (systems/campEncounters.js): CAMP_SIZE's top and the party's extra (systems/party/
+ *              partyScale.js PARTY_SCALE_EXTRA_MAX, partyGroupMembers).
+ *    band    - a roaming band (TV7b) or any other capped stand: bandSizeOf's six, four times in the open zone, and the
+ *              party's extra - a band past 24 asks again.
+ *    bounty  - a bounty's pack (BOUNTY1): BOUNTY_PACK_MAX.
+ *    loose   - a loose stand (a summons, a squad, a naval muster, a raider, Wabbajack's change): MUSTER_MAX's twelve.
+ *    site    - a World of Daggerfall marker's arms, the rite's faithful: the rite's Summoner and its eight.
+ *    managed - the deep's foes and the Living World's (their spawner owns their life): the hideout's eight.
+ *    giant   - a Greater Giant's call: GREATER_GIANT_CALL's ten.
+ *    rev     - a revenant standing (its band rides as `band`).
+ *    quest   - a shared quest's foe: one a stand.
+ *    ally    - a companion, a shipmate, an allied summons (allies fight foes, never the reader): never against the ceiling.
+ *  enc's and camp's `max` are held equal to their homes by the test; the rest are bounds. */
 export const GRANT_KINDS = Object.freeze({
   enc: Object.freeze({ max: 4, rate: 1 / 60, cap: 6, hostile: true }),
   camp: Object.freeze({ max: 8, rate: 1 / 20, cap: 9, hostile: true }),
+  band: Object.freeze({ max: 24, rate: 1 / 30, cap: 6, hostile: true }),
+  bounty: Object.freeze({ max: 8, rate: 1 / 60, cap: 4, hostile: true }),
+  loose: Object.freeze({ max: 12, rate: 1 / 10, cap: 12, hostile: true }),
+  site: Object.freeze({ max: 9, rate: 1 / 20, cap: 8, hostile: true }),
+  managed: Object.freeze({ max: 8, rate: 1 / 5, cap: 16, hostile: true }),
+  giant: Object.freeze({ max: 10, rate: 1 / 120, cap: 2, hostile: true }),
+  rev: Object.freeze({ max: 4, rate: 1 / 60, cap: 4, hostile: true }),
+  quest: Object.freeze({ max: 1, rate: 1 / 5, cap: 24, hostile: true }),
+  ally: Object.freeze({ max: 4, rate: 1 / 30, cap: 6, hostile: false }),
 });
+/** GRANT4: A STAND'S KIND BY ITS OWN SHAPE (scenes/exteriorFoes.js spawnFoe's options), for a caller that names none - the
+ *  first that holds: an ally, a quest's foe, a Greater Giant, a revenant, the deep's or the Living World's, a loose stand
+ *  or Wabbajack's change, a marker's or the rite's, else a capped stand (a band's). Pure. @param {any} o */
+export function grantKindOf(o) {
+  if (o?.allied) return 'ally';
+  if (o?.questBehaviour) return 'quest';
+  if (o?.zoneGiant != null) return 'giant';
+  if (o?.revenant) return 'rev';
+  if (o?.managed) return 'managed';
+  if (o?.replacing || o?.loose) return 'loose';
+  if (o?.site || o?.placed) return 'site';
+  return 'band';
+}
 /** The cell's ceiling on live granted hostile members, every sender together (section 4.6; Mac, 2026-10-18, question
  *  5: on, at the number the measure gives - PROVISIONAL until GRANT5). */
 export const GRANT_CELL_CEILING = 192;
@@ -128,7 +163,13 @@ export function grantMarks(s, n, r) {
   return { e, c };
 }
 
-/** @typedef {{ g: number, o: string, q: string, a: string, k: string, p: [number, number], m: number, l: number, r: number, n: number, s: number, e: number, c: number[], x: number, sg?: string }} SpawnGrant */
+/** GRANT4: the kinds whose members roll no marks - a quest's foe, an ally, a revenant (its own record's) - as none of
+ *  them rolls an elite or a champion on its owner's street today. */
+export const GRANT_MARKLESS = Object.freeze(['quest', 'ally', 'rev']);
+/** The marks a grant of kind `k` carries: none for a markless kind, else the seed's (grantMarks). Pure. */
+export const grantMarksFor = (k, s, n, r) => (GRANT_MARKLESS.includes(k) ? { e: 0, c: Array(n).fill(-1) } : grantMarks(s, n, r));
+
+/** @typedef {{ g: number, o: string, q: string, a: string, k: string, p: [number, number], m: number, l: number, r: number, n: number, s: number, e: number, c: number[], h: number, x: number, sg?: string }} SpawnGrant */
 
 const intIn = (v, lo, hi) => Number.isSafeInteger(v) && v >= lo && v <= hi;
 /**
@@ -152,16 +193,17 @@ export function validGrant(v) {
     if (!intIn(v.c[i], -1, GRANT_CHAMPION_TRAITS - 1)) return null;
     if (((v.e >>> i) & 1) && v.c[i] !== -1) return null;   // an elite is never a champion
   }
+  if (!intIn(v.h, -1, v.n - 1)) return null;   // GRANT3: -1 every member; a handed-on grant's one (grantHanded)
   if (v.sg !== undefined && (typeof v.sg !== 'string' || !EG_CALL_SG_RE.test(v.sg))) return null;
   /** @type {SpawnGrant} */
-  const g = { g: v.g, o: v.o, q: v.q, a: v.a, k: v.k, p: [v.p[0], v.p[1]], m: v.m, l: v.l, r: v.r, n: v.n, s: v.s, e: v.e, c: v.c.slice(), x: v.x };
+  const g = { g: v.g, o: v.o, q: v.q, a: v.a, k: v.k, p: [v.p[0], v.p[1]], m: v.m, l: v.l, r: v.r, n: v.n, s: v.s, e: v.e, c: v.c.slice(), h: v.h, x: v.x };
   if (v.sg !== undefined) g.sg = v.sg;
   return g;
 }
 
 /** THE SIGNED BYTES: every field but `sg`, in one fixed order. Pure. @param {SpawnGrant} g */
 export function grantBytes(g) {
-  return `${GRANT_SIG_V}\n${g.g}|${g.o}|${g.q}|${g.a}|${g.k}|${g.p[0]},${g.p[1]}|${g.m}|${g.l}|${g.r}|${g.n}|${g.s}|${g.e}|${g.c.join(',')}|${g.x}`;
+  return `${GRANT_SIG_V}\n${g.g}|${g.o}|${g.q}|${g.a}|${g.k}|${g.p[0]},${g.p[1]}|${g.m}|${g.l}|${g.r}|${g.n}|${g.s}|${g.e}|${g.c.join(',')}|${g.h}|${g.x}`;
 }
 
 const enc = new TextEncoder();
@@ -213,7 +255,7 @@ export function grantRefusal(g, { from, cell, nowMs, i }) {
   if (g.o !== from) return 'sender';
   if (g.q !== cell) return 'cell';
   if (!(nowMs <= g.x + GRANT_SKEW_MS)) return 'expired';
-  if (!Number.isInteger(i) || i < 0 || i >= g.n) return 'member';
+  if (!Number.isInteger(i) || i < 0 || i >= g.n || (g.h >= 0 && i !== g.h)) return 'member';   // GRANT3: a handed-on grant stands its one member
   return null;
 }
 
@@ -238,31 +280,98 @@ export const grantModeOf = (v) => (v === 'off' || v === 'enforce' ? v : 'measure
 
 /** The most a client's ask number may be - it names the answer that comes back, nothing more. */
 export const GRANT_ASK_ID_MAX = 0x7fffffff;
+/** GRANT3: the most grants one `renew` or `carry` names - an owner's live grants, which its buckets bound well under it. */
+export const GRANT_RENEW_MAX = 32;
+/** GRANT3: a reader's tally - the most senders and reasons one names, how often a reader hands one on (ms), and the most
+ *  refusals one row says. */
+export const GRANT_TALLY_ROWS_MAX = 32;
+export const GRANT_TALLY_MS = 10 * 60 * 1000;
+export const GRANT_TALLY_COUNT_MAX = 10_000;
+/** The reasons a READER refuses for (grantRefusal, grantMarksAllow, the signature and the dice) - a tally's words. */
+export const GRANT_READER_REFUSALS = Object.freeze(['unsigned', 'sender', 'cell', 'expired', 'member', 'marks', 'dice', 'twice', 'ungranted']);
+
+const uniqInts = (a, max) => Array.isArray(a) && a.length >= 1 && a.length <= max && a.every((g) => intIn(g, 0, 0x7fffffff)) && new Set(a).size === a.length;
+const signedGrant = (v) => { const g = validGrant(v); return g && typeof g.sg === 'string' ? g : null; };
 /**
- * An ask as the relay reads it: `{ k: 'mint', id, kind, n }` - `kind` one of GRANT_KINDS, `n` within its most. Null for
- * anything else. Pure.
- * @param {any} m @returns {{ k: 'mint', id: number, kind: string, n: number }|null}
+ * An ask as the relay reads it, or null (GRANT2's mint, GRANT3's others). Pure.
+ *   {k:'mint', id, kind, n}            a grant for `n` members of `kind`
+ *   {k:'renew', id, gs}                my live grants (their numbers) signed again with a new expiry
+ *   {k:'free', id, g}                  my grant's members are all gone - believed only downward
+ *   {k:'carry', id, grs}               I crossed into this cell: my grants from another, signed again for this one
+ *   {k:'heir', id, gr, i, to}          I hand member `i` of my grant on to socket `to` in this cell
+ *   {k:'tally', id, rows}              what I refused, by sender and reason, since my last tally - [{o, r, n}]
+ * @param {any} m @returns {any}
  */
 export function validGrantAsk(m) {
-  if (!m || typeof m !== 'object' || m.k !== 'mint' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
-  if (typeof m.kind !== 'string' || !Object.hasOwn(GRANT_KINDS, m.kind)) return null;
-  if (!intIn(m.n, 1, GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (m.kind)].max)) return null;
-  return { k: 'mint', id: m.id, kind: m.kind, n: m.n };
+  if (!m || typeof m !== 'object' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
+  if (m.k === 'mint') {
+    if (typeof m.kind !== 'string' || !Object.hasOwn(GRANT_KINDS, m.kind)) return null;
+    if (!intIn(m.n, 1, GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (m.kind)].max)) return null;
+    return { k: 'mint', id: m.id, kind: m.kind, n: m.n };
+  }
+  if (m.k === 'renew') return uniqInts(m.gs, GRANT_RENEW_MAX) ? { k: 'renew', id: m.id, gs: m.gs.slice() } : null;
+  if (m.k === 'free') return intIn(m.g, 0, 0x7fffffff) ? { k: 'free', id: m.id, g: m.g } : null;
+  if (m.k === 'carry') {
+    if (!Array.isArray(m.grs) || !m.grs.length || m.grs.length > GRANT_RENEW_MAX) return null;
+    const grs = m.grs.map(signedGrant);
+    return grs.every(Boolean) ? { k: 'carry', id: m.id, grs } : null;
+  }
+  if (m.k === 'heir') {
+    const gr = signedGrant(m.gr);
+    if (!gr || !intIn(m.i, 0, gr.n - 1) || (gr.h >= 0 && gr.h !== m.i) || typeof m.to !== 'string' || !ID_RE.test(m.to)) return null;
+    return { k: 'heir', id: m.id, gr, i: m.i, to: m.to };
+  }
+  if (m.k === 'tally') {
+    if (!Array.isArray(m.rows) || !m.rows.length || m.rows.length > GRANT_TALLY_ROWS_MAX) return null;
+    const ok = m.rows.every((r) => r && typeof r.o === 'string' && ID_RE.test(r.o) && GRANT_READER_REFUSALS.includes(r.r) && intIn(r.n, 1, GRANT_TALLY_COUNT_MAX));
+    return ok ? { k: 'tally', id: m.id, rows: m.rows.map((r) => ({ o: r.o, r: r.r, n: r.n })) } : null;
+  }
+  return null;
 }
 
 /**
- * The relay's answer as a client reads it: `{ k: 'ok', id, gr }` (the grant, read whole), `{ k: 'no', id, r }` (the
- * gate's refusal), `{ k: 'off', id }` (the law is off: ask no more this session). Null for anything else. Pure.
+ * The relay's answer as a client reads it, or null. Pure.
+ *   {k:'ok', id, gr}        a mint's grant, read whole
+ *   {k:'renew', id, grs}    my grants signed again (the ones the cell still held as mine)
+ *   {k:'carry', id, grs}    my carried grants, made out to this cell - null where one was refused
+ *   {k:'heir', id, gr}      the handed-on grant, made out to the heir, for my handover frame
+ *   {k:'no', id, r}         a refusal in the law's words
+ *   {k:'off', id}           the law is off: ask no more
  * @param {any} m
- * @returns {{ k: 'ok', id: number, gr: SpawnGrant }|{ k: 'no', id: number, r: string }|{ k: 'off', id: number }|null}
  */
 export function validGrantOut(m) {
   if (!m || typeof m !== 'object' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
   if (m.k === 'off') return { k: 'off', id: m.id };
   if (m.k === 'no') return typeof m.r === 'string' && GRANT_REFUSALS.includes(m.r) ? { k: 'no', id: m.id, r: m.r } : null;
-  if (m.k !== 'ok') return null;
-  const gr = validGrant(m.gr);
-  return gr ? { k: 'ok', id: m.id, gr } : null;
+  if (m.k === 'ok' || m.k === 'heir') {
+    const gr = validGrant(m.gr);
+    return gr ? { k: m.k, id: m.id, gr } : null;
+  }
+  if (m.k === 'renew' || m.k === 'carry') {
+    if (!Array.isArray(m.grs) || m.grs.length > GRANT_RENEW_MAX) return null;
+    const grs = m.grs.map((g) => (g === null && m.k === 'carry' ? null : validGrant(g)));
+    return grs.every((g, i) => g !== null || m.grs[i] === null) ? { k: m.k, id: m.id, grs } : null;
+  }
+  return null;
+}
+
+// ── GRANT3: THE RELAY'S OWN GRANTS AGAIN (Spawn-Grants sections 4.3 and 4.8) ──────────────────────────────────────────
+const unsigned = (g) => { const { sg, ...rest } = g; void sg; return rest; };
+/** A live grant signed again: the same in every field but its expiry. Pure. @param {SpawnGrant} g @param {number} nowMs */
+export const grantRenewed = (g, nowMs) => ({ ...unsigned(g), c: g.c.slice(), p: [g.p[0], g.p[1]], x: nowMs + GRANT_TTL_MS });
+/** A grant carried into cell `q` under that cell's number `n`: its members, seed and marks as they were. Pure.
+ *  @param {SpawnGrant} g @param {string} q @param {number} n @param {number} nowMs */
+export const grantCarried = (g, q, n, nowMs) => ({ ...grantRenewed(g, nowMs), g: n, q });
+/** Member `i` of a grant handed on to socket `to` under this cell's number `n` - the same seed and marks, so the member
+ *  is the same foe, standing on its own (`h`). Pure. @param {SpawnGrant} g @param {number} i @param {string} to @param {number} n @param {number} nowMs */
+export const grantHanded = (g, i, to, n, nowMs) => ({ ...grantRenewed(g, nowMs), g: n, o: to, h: i });
+/**
+ * THE RELAY'S OWN SIGNATURE, CHECKED WITHOUT ITS PUBLIC HALF: Ed25519 is deterministic (RFC 8032), so the relay signs the
+ * grant's bytes again and compares. Never throws. @param {SpawnGrant} g @param {CryptoKey|null} privateKey @param {{ subtle: SubtleCrypto }} env
+ */
+export async function grantSignedHere(g, privateKey, env) {
+  if (!privateKey || typeof g?.sg !== 'string') return false;
+  try { return (await signGrant(unsigned(g), privateKey, env)) === g.sg; } catch { return false; }
 }
 
 /** Is an account's bucket for kind `k` full again at `nowMs` - one the relay may forget, since a first ask's bucket is
@@ -283,3 +392,16 @@ export const grantGate = (bucket, nowMs) => tokenGate(bucket, nowMs, GRANT_HZ_MA
 /** How often a cell asks the hub for the law's mode again, at an ask, ms: a staff change is in force everywhere inside
  *  it (relayCfg's RELAY_CFG_TTL_MS is a boss room's minute; every cell a player roams asks this one). */
 export const GRANT_CFG_TTL_MS = 5 * 60 * 1000;
+
+// ── GRANT3: THE OWNER'S AND THE READER'S CLOCKS (section 13) ─────────────────────────────────────────────────────────
+/** How long a stand waits on its grant, ms - past it the foe stands as it would have with no law (its own rolls). */
+export const GRANT_WAIT_MS = 1500;
+/** How long before a live grant's expiry its owner asks it signed again, ms. */
+export const GRANT_RENEW_LEAD_MS = 2 * 60 * 1000;
+/** The most grants one foes frame carries (`gs`) - a full frame's every live grant, a delta's new ones. */
+export const GRANT_FRAME_GRANTS_MAX = 32;
+/** A grant as the wire carries it: its fields alone, in a fresh object (a host's bookkeeping on it stays home). Pure.
+ *  @param {any} g */
+export const wireGrant = (g) => ({ g: g.g, o: g.o, q: g.q, a: g.a, k: g.k, p: [g.p[0], g.p[1]], m: g.m, l: g.l, r: g.r, n: g.n, s: g.s, e: g.e, c: g.c.slice(), h: g.h, x: g.x, ...(typeof g.sg === 'string' ? { sg: g.sg } : {}) });
+/** Is member `i` of grant `g` an elite? Pure. */
+export const grantElite = (g, i) => ((g.e >>> i) & 1) === 1;

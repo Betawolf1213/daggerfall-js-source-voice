@@ -29,3 +29,15 @@ CREATE TABLE IF NOT EXISTS grant_rows (
   span_s INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS grant_rows_at ON grant_rows (at, kind);
+
+-- GRANT3 (Spawn-Grants.md section 13): a reader's tally in a window - what its game refused of a sender's foes, by
+-- reason, as the cell heard it. GRANT7's evidence: readers on several accounts against one sender.
+CREATE TABLE IF NOT EXISTS grant_tallies (
+  batch TEXT NOT NULL,
+  at INTEGER NOT NULL,       -- when the service took the batch, s
+  reader TEXT NOT NULL,      -- the reader's account
+  sender TEXT NOT NULL,      -- the sender's account
+  reason TEXT NOT NULL,      -- net/grantLaw.js GRANT_READER_REFUSALS
+  n INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS grant_tallies_sender ON grant_tallies (sender, at);

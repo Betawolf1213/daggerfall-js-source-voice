@@ -749,6 +749,13 @@ const service = {
         ? json({ alg: TOKEN_V, key: pub }, 200, origin)
         : no('no-signing-key', 503, origin);
     }
+    // GRANT3 (bible/11-Multiplayer/Spawn-Grants.md section 13): THE RELAY'S PUBLIC HALF, as openly - every reader checks a
+    // spawn grant's signature with it, a guest's game too (the Elite Gates' `rk` rides /v1/eg/keys, a signed-in route a
+    // guest's client never asks). It verifies the relay's signatures and mints nothing.
+    if (path === '/v1/relaykey') {
+      const rk = String(env.GATE_PUBLIC_KEY ?? '');
+      return rk ? json({ rk }, 200, origin) : no('no-relay-key', 503, origin);
+    }
 
     // RESTORE (2026-09-29, Mac: "I want people to get their stuff back"): HELD FOR MAINTENANCE. The history restore
     // (.github/workflows/realm-restore.yml) rewinds the database for a minute to read what was lost, and puts it back;

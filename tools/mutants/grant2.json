@@ -2,8 +2,8 @@
   {
     "name": "GRANT2-pose-cell-unchecked",
     "file": "server/src/index.js",
-    "old": "    if (!p || cellRoomOfWire(p.x, p.z) !== a.key) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'cell' })); return; }",
-    "new": "    if (!p) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'cell' })); return; }",
+    "old": "    if (p && cellRoomOfWire(p.x, p.z) === a.key) return true;",
+    "new": "    if (p) return true;",
     "why": "a halo's pose minted a grant for a cell it does not stand in",
     "tests": [
       "test/net/grant2_relay.test.js"
@@ -22,8 +22,8 @@
   {
     "name": "GRANT2-grant-unsigned",
     "file": "server/src/index.js",
-    "old": "    if (sg) gr.sg = sg;\n",
-    "new": "",
+    "old": "const out = sg ? { ...gr, sg } : gr;",
+    "new": "const out = gr;",
     "why": "the grant goes out unsigned",
     "tests": [
       "test/net/grant2_relay.test.js"
@@ -52,8 +52,8 @@
   {
     "name": "GRANT2-live-not-counted",
     "file": "server/src/index.js",
-    "old": "    G.liveN += ask.n;\n",
-    "new": "",
+    "old": "    G.liveN += n;\n    return out;",
+    "new": "    return out;",
     "why": "the cell's ceiling never fills",
     "tests": [
       "test/net/grant2_relay.test.js"
@@ -170,21 +170,21 @@
     ]
   },
   {
-    "name": "GRANT2-camp-ask-dropped",
+    "name": "GRANT2-camp-kind-dropped",
     "file": "src/scenes/world.js",
-    "old": "_standCampEncounter(h, player.feetAt()); askGrant(online, 'camp', size);",
-    "new": "_standCampEncounter(h, player.feetAt());",
-    "why": "camps never measured",
+    "old": "grantKind: hit.fixed ? 'bounty' : hit.kind === 'band' ? 'band' : 'camp',",
+    "new": "grantKind: hit.fixed ? 'bounty' : hit.kind === 'band' ? 'band' : 'enc',",
+    "why": "a camp asks an encounter's grant",
     "tests": [
       "test/net/grant2_client.test.js"
     ]
   },
   {
-    "name": "GRANT2-encounter-ask-dropped",
+    "name": "GRANT2-revenant-kind-dropped",
     "file": "src/scenes/world.js",
-    "old": "n = askGrant(online, 'enc', wandererCount(",
-    "new": "n = askGrant(null, 'enc', wandererCount(",
-    "why": "encounters never measured",
+    "old": "grantKind: hit.revenant ? 'rev' : 'enc',",
+    "new": "grantKind: 'enc',",
+    "why": "a revenant asks an encounter's grant",
     "tests": [
       "test/net/grant2_client.test.js"
     ]

@@ -108,6 +108,7 @@ import { QUARRY_BLOW } from '../systems/livingWorld/quarry.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5c: the pool's foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeWireLook, applyWireLook } from '../characters/foeBodies.js';   // WATCH-PROTECTS: a townsperson's one blow
 import { elitesAllowed, promoteEliteFoe, rollOverworldElite, grantEliteLoot, eliteLoot, eliteGlow, setBatchEliteGlow, eliteSize, isEliteCorpse, markEliteCorpseBatch, ELITE_FOE_SIZE } from '../systems/eliteFoes.js';   // ELITE FOES: 5% of the wilds' foes   // HITFLASH1
+import { grantKindOf, grantElite } from '../net/grantLaw.js';   // GRANT3-GRANT4: a stand's grant - its kind, its member's elite (bible/11-Multiplayer/Spawn-Grants.md)
 
 // The port's allocation-owner guards (classic self-limits through the
 // 144-minute cadence; these keep a long session bounded).
@@ -426,7 +427,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   // CENTRE, and `hitDist` what AlignControllerToGround's ray found below
   // it (null: nothing within 3); the drop needs the capsule the sprite
   // sizes, so it lands once the sprite has.
-  async function spawnFoe(mobileType, pos, { gender: forcedGender = null, yaw = null, questBehaviour = null, allied = false, feetGiven = false, replacing = false, puppet = null, seq = null, level = null, placed = false, groundAlign = null, site = null, loose = false, transformY = null, team = null, transient = false, managed = false, questMarker = false, champion = undefined, revenant = null, eliteFoe = undefined, turned = false, band = true, zoneGiant = null } = {}) {   // LOOT7: `champion` - a puppet's owner's word or a save's trait (null none); unsaid, an encounter's own roll
+  async function spawnFoe(mobileType, pos, { gender: forcedGender = null, yaw = null, questBehaviour = null, allied = false, feetGiven = false, replacing = false, puppet = null, seq = null, level = null, placed = false, groundAlign = null, site = null, loose = false, transformY = null, team = null, transient = false, managed = false, questMarker = false, champion = undefined, revenant = null, eliteFoe = undefined, turned = false, band = true, zoneGiant = null, grantKind = null } = {}) {   // LOOT7: `champion` - a puppet's owner's word or a save's trait (null none); unsaid, an encounter's own roll
     // WORLD6b: a puppet is not this cap's. AUDIT 68 review (R-scenes-loose-foe-squad-capped): nor is a `loose` stand -
     // CreateFoeSpawner's (a summoning punishment, RR's expulsion squad, a Rose's Daedroth) stands however many it is
     // told in one loop, and DFU caps none of them; the cap is the encounter rolls'
@@ -434,6 +435,10 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // AUDIT 68 S20-encounter-cap-race: a capped spawn still crossing its awaits holds its slot - a camp's members all
     // start in one synchronous loop, and each saw the count from before any of them landed
     if (capped && activeCount() + spawning.filter((s) => s.capped).length >= encounterCap()) return null;   // PVPDUNGEONS: the zone's packs four times over
+    // GRANT3-GRANT4 (bible/11-Multiplayer/Spawn-Grants.md sections 13 and 14): MY stand of a foe that rides to others asks
+    // its grant - its caller's kind, else its own shape's (net/grantLaw.js grantKindOf); every stand of a kind this turn is
+    // one ask (scenes/grantHost.js memberFor), so it is asked here, before this build's first await
+    const grantAsk = !puppet && !(placed && !site) && _net?.grants ? _net.grants.memberFor(grantKind ?? grantKindOf({ allied, questBehaviour, zoneGiant, revenant, replacing, managed, site, placed, loose })) : null;
     const basics = ENEMY_BASICS[mobileType];
     if (!basics || !basics.maleTexture) return null;
     const pending = { feet: [pos[0], pos[1] + (feetGiven || groundAlign || transformY ? 0 : 0.1), pos[2]] };   // AUDIT 39: shifted by offsetAll until the record lands. REVIEW 2026-09-05: a restore hands back the exact saved feet (SerializableEnemy.cs:196) - a flyer never grounds, so the walker's lift would climb 0.1 per load
@@ -446,6 +451,11 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         ? (() => { const cf = new ClassFile(); return fetchBytes(`CLASS${String(mobileType - 128).padStart(2, '0')}.CFG`).then((b) => { cf.load(b); return cf.career; }); })()
         : loadMonsterCareer(mobileType, fetchBytes);
       const builtLevel = level ?? effectiveLevel(playerEntity);   // SOFTCAP2: a mentor's foes at the group's level
+      // GRANT3: its grant (none inside GRANT_WAIT_MS: it stands as it would have with no law) - the grant's marks in place of
+      // the street's rolls, through the same gates: its elite only where an elite may stand, its trait only a capped stand's
+      const granted = grantAsk ? await grantAsk : null, gm = granted && 'gr' in granted ? granted : null;
+      if (gm && !revenant && eliteFoe === undefined) eliteFoe = grantElite(gm.gr, gm.i) && !allied && !questBehaviour && !replacing && !team && !inLocation() && elitesAllowed({ onlinePage: isOnlinePage(), inRoom: _net != null });
+      if (gm && !revenant && champion === undefined && capped) champion = gm.gr.c[gm.i] >= 0 ? gm.gr.c[gm.i] : null;
       const entity = makeEnemyEntity(mobileType, basics, await career, builtLevel, Math.random, { exactLevel: !!puppet });   // AUDIT WORLD6b-ii B2: a puppet at its OWNER's foe's level, not mine; AUDIT WATCH1 A5: EXACTLY that level (the City Watch bonus is the owner's roll, already in the word)
       // MT-ii: an ALLIED summon (Sanguine Rose / Skull of Corruption).
       // SetupDemoEnemy.cs:85-86 overwrites the MobileEnemy STRUCT COPY
@@ -631,6 +641,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // every record and tore the puppet down and rebuilt it five times a second, for
       // ever. The record's own word is what the record's word is compared to.
       f.builtLevel = builtLevel;
+      if (gm) _net?.grants?.stood(gm.gr, gm.i, f);   // GRANT3: its grant's member, on its record from here
       // AUDIT FOES FOE6: the LAST build to land holds the key, and removePuppet
       // deletes only when the key still names it - so a stale build cannot evict
       // the record that is actually standing.
@@ -783,6 +794,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
 
   /** Free a foe's live billboard batch once nothing will draw it. */
   function releaseFoeBatch(f) {
+    if (!f.puppet && f._grant) _net?.grants?.ended(f);   // GRANT3: its member gone from my pool - the grant's last frees it
     if (!f.batch) return;
     renderer.destroyBillboardBatch(f.batch);
     f.batch = null;
@@ -2479,6 +2491,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
    *  encounter's (`_questLike`). */
   function foesFrame(full = false, force = false, heirOf = null) {
     if (!_net?.toWire) return null;
+    _net.grants?.tick();   // GRANT3: my grants' clock - renewed, carried, the tally handed on
     if (_fullNext) { full = true; _fullNext = false; }   // AUDIT CC-E3
     const out = [];
     // WATCH1: the watch rides behind the foes, in the same record shape - `t` 146 (Knight_CityWatch, whose row every
@@ -2501,6 +2514,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       const r = { i: f.seq, t: f.mobileType, x: f.gender === 'female' ? 1 : 0, f: [q2(w[0]), q2(w[1]), q2(w[2])], y: q3(f.ai.yaw), ...(Number.isFinite(f.entity.health) ? { h: Math.max(0, Math.min(FOE_HEALTH_MAX, f.entity.health)) } : {}), ...(Number.isFinite(f.entity.maxHealth) && f.entity.maxHealth >= 1 ? { k: Math.min(FOE_HEALTH_MAX, f.entity.maxHealth) } : {}), d: f.dead ? 1 : 0, a: f._atkA | 0, b: f._atkB ?? '', m: f.ai.moving ? 1 : 0, g, l: f.entity.level | 0, w: wd, c: f._castN | 0, s: f._castIdx | 0, u: f._castU ?? '', o: onWatch || _questLike(f) ? 0 : (f.corpse ? Math.min(255, peerHanded(f.entity?.items ?? []).length) : 0), ...(f.entity?.eliteFoe ? { z: 1 } : {}), ...(!onWatch && typeof f.entity?.revenant?.name === 'string' && f.entity.revenant.name ? { nm: f.entity.revenant.name.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, REVENANT_NAME_MAX) } : {}), ...(f.yielded ? { yd: 1 } : {}), ...(f.executing ? { ex: 1 } : {}), ...(f.sparing ? { sp: 1 } : {}) };   // REVENANT-FATE: kneeling, burning   // REVENANT-WIRE: its revenant's name rides to every puppet   // ELITE FOES: `z` an elite, so a puppet stands as one   // AUDIT (pre-merge) Q5: nor a quest foe's body - its take arm answers only the owner's own (A5), so a member's press asked again forever   // AUDIT WATCH1 A3: a watch body advertises NO pile - its take arm is its owner's own door (cityGuards.takeLoot), which the wire does not reach, so a peer offered the body clicked it for ever and heard nothing; WORLD6b-iii: the cast count and its spell; AUDIT WORLD6b-iii(a) A3: b/u whom the last blow/cast was at; WORLD6b-iii(c): o the body's pile
       if (!onWatch && Number.isInteger(f.entity?.zoneGiant)) r.gg = f.entity.zoneGiant;   // GREATER-GIANT: which of the zone's Greater Giants it is, to every puppet
       if (!onWatch && f.entity?.champion) r.cp = championIndex(f.entity.champion);   // LOOT7: its trait rides to every puppet, which stands as the same champion
+      if (!onWatch && f._grant && !f._grant._dead) r.gr = [f._grant.g, f._grantI];   // GRANT3: its grant and its member - the frame's `gs` carries the grant
       if (onWatch && typeof f.livingFrom?.id === 'string' && LIVING_ID_RE.test(f.livingFrom.id)) r.lr = f.livingFrom.id;   // WATCH-FIX: the living world's resident he stands for - a reader takes them off its street while he stands
       if (!onWatch && f.entity?.revenant) Object.assign(r, feudWire(f.entity.revenant));   // RVN13 (bible/12-Enhanced-AI/Feud-Arc.md 25): its adaptations, its weakness, its last stand (AUDIT FEUD: an heir's too - the name's own gate)
       if (!onWatch && f.retinueOf != null) { const m = foes.find((x) => !x.dead && !x.puppet && x.entity?.revenant?.id === f.retinueOf); if (m) r.rt = m.seq; }   // RVN13: a follower's master, for its name
@@ -2522,8 +2536,9 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       const lk = foeWireLook(f);
       if (full || f._lkSent !== lk.key) { r.ls = lk.seed; if (lk.worn) r.lw = lk.worn; f._lkPend = lk.key; }
       const key = `${lk.key}|${r.f[0]},${r.f[1]},${r.f[2]},${r.y},${r.h},${r.k},${r.d},${r.a},${r.b},${r.m},${r.g},${r.l},${wd ? wd.join('/') : '-'},${r.c},${r.s},${r.u},${r.o},${r.n},${r.z ?? 0},${r.nm ?? ''},${r.yd ?? 0},${r.ex ?? 0},${r.sp ?? 0},${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rt ?? -1},${r.rb ?? 0}${r.wk !== undefined || r.ws !== undefined ? `,${blowWireKey(r)}` : ''}`;   // TELL8: and the wind-up's (never `wl`)
-      if (!full && f._sentKey === key) continue;
-      f._sentKey = key;
+      const gkey = r.gr ? `${key}|${r.gr[0]}` : key;   // GRANT3: a grant carried into another cell is another number - said again
+      if (!full && f._sentKey === gkey) continue;
+      f._sentKey = gkey;
       out.push(r); src.set(r, f); if (qt) qtOf.set(r, qt);
     }
     if (!out.length && !full && !force) return null;   // HCC-ONLINE: `force` - a rider (the owner's moving horse) asks for a frame with no foe in it
@@ -2565,7 +2580,8 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     const cp = mates.map((r) => r.i);   // AUDIT CC-E1: my companions, by number - a reader marks them so its foes may fight them
     const cn = mates.map((r) => src.get(r)?.entity?.name ?? '');   // AUDIT WK-U3: and their names, in that order   // SHIPMATES: my crew on a deck (combat/friendlyFire.js) - a reader stands them as its allies and its own harm passes them by
     for (const r of out) if (r.ls !== undefined) { const f = src.get(r); if (f) f._lkSent = f._lkPend; }   // AUDIT MW-NPC II K2: what went is said
-    return { n: ++_foesSeq, k: _net.room?.() ?? null, full: full ? 1 : 0, f: out, ...(rz.length ? { rz } : {}), ...(cz.length ? { cz } : {}), ...(al.length ? { al } : {}), ...(cw.length ? { cw } : {}), ...(cp.length ? { cp, cn } : {}), ...(st.length ? { st } : {}), ...(sp.length ? { sp } : {}), ...(dz.length ? { dz } : {}), ...(qf.length ? { qf } : {}) };
+    const gs = _net.grants ? _net.grants.frameGrants(out.filter((r) => r.gr).map((r) => src.get(r)?._grant), full) : [];   // GRANT3: the grants these records name
+    return { n: ++_foesSeq, k: _net.room?.() ?? null, full: full ? 1 : 0, f: out, ...(gs.length ? { gs } : {}), ...(rz.length ? { rz } : {}), ...(cz.length ? { cz } : {}), ...(al.length ? { al } : {}), ...(cw.length ? { cw } : {}), ...(cp.length ? { cp, cn } : {}), ...(st.length ? { st } : {}), ...(sp.length ? { sp } : {}), ...(dz.length ? { dz } : {}), ...(qf.length ? { qf } : {}) };
   }
   /** The owner's record (AUDIT WORLD6b B4/C3), minted on its first frame. */
   function ownerOf(from) { let o = _owners.get(from); if (!o) { o = { n: -1, at: _now(), gen: ++_ownerGen, k: null }; _owners.set(from, o); } return o; }   // WORLD6b-iii(b): k the cell the owner's frames are keyed to - its own
@@ -2656,6 +2672,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     const crew = validAlliedIds(data.cw);   // SHIPMATES: which are the owner's crew on a deck
     const comp = validAlliedIds(data.cp);   // AUDIT CC-E1: and which of them are the owner's companions
     const compNames = companionNames(data.cp, data.cn);   // AUDIT WK-U3: and their names
+    _net.grants?.heard(from, data.gs);   // GRANT3: the grants this frame carries, each checked once
     const stood = new Set(), refused = new Set();   // AUDIT WOD7: a site whose every record the allowance refused is not spent here
     const liveMarks = [];   // QUEST-PARTY phase 3: the owner's live marker foes of a quest the party shares
     let adopted = 0;   // AUDIT CONTRIB P1: the foes this frame hands to me
@@ -2711,6 +2728,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       const feet = _net.toScene(r.f);
       if (!feet) continue;
       const cp = Number.isInteger(r.cp) && championsOf(from) < PEER_CHAMPION_PUPPETS_MAX ? r.cp : null;   // GRANT0: no more champions than an owner rolls and its revenants wear
+      const grantCheck = _net.grants ? _net.grants.check(from, typeof data.k === 'string' ? data.k : null, r) : null;   // GRANT3: its grant, checked once and tallied
       _pupPending.set(key, { ...r, _site: site, _deep: deep, _quest: qt, _raid: raidKey, _camp: campTags.get(r.i) ?? null, _cp: cp != null });
       if (site) stood.add(site);
       const gen = o.gen;
@@ -2718,6 +2736,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       spawnFoe(r.t, feet, { puppet: from, seq: r.i, gender: GENDER_BIT[r.x === 1 ? 1 : 0], feetGiven: true, yaw: r.y ?? null, level: r.l ?? null, site, allied: (r.t === KNIGHT_CITYWATCH_ID && allied.has(r.i)) || shipmate, champion: cp })   // RAID2: a watchman the owner names its ally stands as mine - SHIPMATES: and a crewman
         .then((nf) => {
           if (!nf) return;
+          if (grantCheck && _net.grants?.enforcing()) void grantCheck.then((why) => { if (why) removePuppet(nf); });   // GRANT6: while the law enforces, what the check refuses stands down
           if (shipmate) nf.shipmate = true;
           if (comp.has(r.i)) { nf.companion = `peer:${from}:${r.i}`; nf.companionName = compNames.get(r.i) ?? null; }   // AUDIT CC-E1: another's companion - my foes may fight it; WK-U3: his name
           const owner = _owners.get(from);
@@ -3222,6 +3241,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   function adopt(from, f, items = undefined) {
     if (!f || f.puppet !== from || f.dead || f._gone) return 0;
     const origin = pupKey(from, f.seq);
+    _net?.grants?.adopted(from, f);   // GRANT3: its handed grant - come, or awaited - before its number is mine
     if (items !== undefined) f.entity.items = items;
     if (_pupIndex.get(origin) === f) _pupIndex.delete(origin);
     f.puppet = null; f._pupMine = false; f._pup = null; f.seq = _nextSeq++;   // the owner's streamed state goes with the owner
@@ -3282,6 +3302,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     for (const f of [...foes]) {
       const heir = f._heir; f._heir = null;
       if (!heir || f.puppet || f.dead) continue;
+      _net?.grants?.handed(f, heir);   // GRANT3: its member signed to its heir (scenes/grantHost.js handed)
       letGo(f);
       n++;
     }
