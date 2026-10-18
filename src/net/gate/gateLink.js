@@ -184,6 +184,11 @@ export function bossAt(s, now) {
   return [m.x + ((m.tx - m.x) / len) * along, m.z + ((m.tz - m.z) / len) * along];
 }
 
+/** COURT-WATCH: the words a full court keeps its watcher in (the refusal's own, 'The Burning Court is full.', cast them out). */
+export const COURT_WATCH_TEXT = 'The Burning Court is full - you watch from its edge until a place frees.';
+/** COURT-WATCH: a watcher asks the court for a seat again this often (a fighter gone frees one - net/gate/gateBrain.js freeSeat). */
+export const COURT_WATCH_ASK_MS = 15_000;
+
 /** The gate refusals' words as the player reads them (net/wire.js GATE_NO_WORDS). */
 export const GATE_NO_TEXT = Object.freeze({
   'the gate is closed': 'The gate is closed.',
@@ -215,12 +220,17 @@ export function createGateLink({ now, say = () => {}, onFell = () => {}, onRecei
   let state = GATE_STATE_EMPTY;
   const falls = new Map();     // day -> {at, top, n}
   const receipts = new Map();  // day -> the receipt (net/gate/gateReceipt.js), keyed by the day it names
+  let watching = false;        // COURT-WATCH: the court full when I asked - I watch it
   return {
     /** A word from the court's room or the hub - the hub says a kill (of any day's gate) and a receipt, and the fold
      *  moves the court for a kill of its own day alone. */
     word(g) {
       if (!g) return;
+      // COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): a full court keeps me as its watcher - its fight
+      // heard and seen, never fought - until the answer to an `in` asked again (COURT_WATCH_ASK_MS) gives me a seat
+      if (g.k === 'no' && g.m === 'the court is full') { if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }
       if (g.k === 'no') { say(gateRefusalText(g.m)); onRefused(g.m); return; }   // GATE-RELOAD: in what the word means
+      if (g.k === 'st' && g.me === 1) watching = false;   // COURT-WATCH: my `in` answered - the seat mine
       if (g.k === 'rcpt') { const c = readReceipt(g.r); if (c) { receipts.set(c.d, g.r); onReceipt(g.r); } return; }   // one a day: the receipt says which
       if (g.k === 'fell') {
         const day = g.d ?? state.day;
@@ -234,7 +244,9 @@ export function createGateLink({ now, say = () => {}, onFell = () => {}, onRecei
     fellAt: (day) => falls.get(day)?.at ?? null,
     /** A day's receipt, or null (WB5 rolls the spoils off its seed and carries it to the account service). */
     receipt: (day) => receipts.get(day) ?? null,
+    /** COURT-WATCH: whether I watch this court - it was full when I asked, and no answer has given me a seat since. */
+    watching: () => watching,
     /** Out of the court: its state forgotten (the falls and the receipts are kept - they outlive the court). */
-    leave() { state = GATE_STATE_EMPTY; },
+    leave() { state = GATE_STATE_EMPTY; watching = false; },
   };
 }

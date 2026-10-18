@@ -2984,6 +2984,8 @@ first is the reads now); ACHAP-S6-EVENTS-REPEAT re-aimed by content (dead).
 
 ### Decisions for the owner
 
+The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofing" - each answered below its question.
+
 4. **How long a signed-out session may still read.** A signed session lives a few minutes (the relay's identity tokens
    already accept five); a sign-out, a password change or a recovery ends it at its next refresh, not at once. A ban
    and a mute are already pushed to the relay and checked at the mint. Recommended: five minutes, on the hot routes
@@ -2993,3 +2995,19 @@ first is the reads now); ACHAP-S6-EVENTS-REPEAT re-aimed by content (dead).
 6. **The realm checkpoint every five minutes rather than two** (some 9 trips a second): a trade, a craft and every
    profession act already save at once; what a crash between checkpoints could lose grows from two minutes of walking
    to five.
+
+**The calls.**
+- **4 - SESSION-SIGN: built as recommended** - a signed session of five minutes on the hot routes (its own record
+  below, when built).
+- **5 - both, in order: COURT-WATCH now, COURT-WIDE next.** COURT-WATCH (`World-Bosses.md` section 24, built): the
+  257th stays in the court as its watcher - the fight heard and seen, none of a fighter's part - and asks for a seat
+  every COURT_WATCH_ASK_MS; the relay's answer to an `in` that seats a fighter says `me`. Rides world218 (re-hashed in
+  place, undeployed). COURT-WIDE - copies that hold fighters of their own and hand the court one batch a beat - is the
+  future-proof shape past 256, and waits on its own blockers (the brain's census, trails and `here` bound at 256, the
+  copies' uncoalesced poses, the fight record's 2 MB) before it is built.
+- **6 - CHECKPOINT-5: built.** ONLINE_CHECKPOINT_MS 300,000 (`systems/online/onlineCheckpoint.js`): a page put away
+  already checkpoints as it hides and one closed leaves with its save, and every act the service settles saves at once
+  - the periodic checkpoint guards a crash alone, which now loses at most five minutes of walking and looting. Some 60%
+  of the periodic checkpoints go - some 9 of the primary's trips a second at the evening's rate (PRIMARY-TRIPS' 7.66
+  checkpoints a second, three trips each, most of them the periodic one's). Pinned by `realm0.test.js` REALM P0.5 (PIN
+  MOVED) and CHECKPOINT5-two-minutes-again (dead).

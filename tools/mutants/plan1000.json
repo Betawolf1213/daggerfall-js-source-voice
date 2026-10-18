@@ -1,0 +1,146 @@
+[
+ {
+  "name": "COURTWATCH-seat-unsaid",
+  "file": "server/src/index.js",
+  "old": "...GATE_SEAM.stateOf(f), me: 1 }));",
+  "new": "...GATE_SEAM.stateOf(f) }));",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-wire-drops-seat",
+  "file": "src/net/wire.js",
+  "old": "...(m.me === 1 ? { me: 1 } : {}) };",
+  "new": "};",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-full-a-refusal-again",
+  "file": "src/net/gate/gateLink.js",
+  "old": "      if (g.k === 'no' && g.m === 'the court is full') { if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }\n",
+  "new": "",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-said-every-time",
+  "file": "src/net/gate/gateLink.js",
+  "old": "{ if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }",
+  "new": "{ say(COURT_WATCH_TEXT); watching = true; return; }",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-seat-never-taken",
+  "file": "src/net/gate/gateLink.js",
+  "old": "      if (g.k === 'st' && g.me === 1) watching = false;",
+  "new": "      if (g.k === 'st' && g.me === 2) watching = false;",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-kept-past-the-court",
+  "file": "src/net/gate/gateLink.js",
+  "old": "leave() { state = GATE_STATE_EMPTY; watching = false; },",
+  "new": "leave() { state = GATE_STATE_EMPTY; },",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-watcher-blow-sent",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "      if (watching()) return false;   // COURT-WATCH: a watcher strikes nothing\n",
+  "new": "",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-watcher-struck",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "    if (watching()) return;   // COURT-WATCH: he strikes his fighters, never the court's watchers\n",
+  "new": "",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-ask-never",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "      watchAskedAt = t;\n      return true;",
+  "new": "      watchAskedAt = t;\n      return false;",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-ask-every-frame",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "      if (t - watchAskedAt < COURT_WATCH_ASK_MS) return false;\n",
+  "new": "",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-ask-at-once",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "      if (watchAskedAt === -Infinity) { watchAskedAt = t; return false; }\n",
+  "new": "",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-host-unwired",
+  "file": "src/scenes/world.js",
+  "old": "(online.welcomes !== _gateInFor || gateCourt?.askAgain()) && online.sendGate",
+  "new": "online.welcomes !== _gateInFor && online.sendGate",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "CHECKPOINT5-two-minutes-again",
+  "file": "src/systems/online/onlineCheckpoint.js",
+  "old": "export const ONLINE_CHECKPOINT_MS = 300_000;",
+  "new": "export const ONLINE_CHECKPOINT_MS = 120_000;",
+  "tests": [
+   "test/systems/realm0.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-watcher-heals-sent",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "if (!h.length || watching() || !sendHeal({ h })) return;",
+  "new": "if (!h.length || !sendHeal({ h })) return;",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-watcher-body-said",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "const sayBody = bodySayer((v) => !watching() && sendBody(v));",
+  "new": "const sayBody = bodySayer((v) => sendBody(v));",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ },
+ {
+  "name": "COURTWATCH-watcher-host-blow-sent",
+  "file": "src/scenes/gate/gateCourt.js",
+  "old": "send: (x) => !watching() && sendHost(x),",
+  "new": "send: (x) => sendHost(x),",
+  "tests": [
+   "test/net/gate/courtwatch.test.js"
+  ]
+ }
+]

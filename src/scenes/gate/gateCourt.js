@@ -18,7 +18,8 @@
 // Not a DFU member. Ledger A (WB).
 import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../../net/gate/gateBrain.js';
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
-import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
+import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';
+import { COURT_WATCH_ASK_MS } from '../../net/gate/gateLink.js';   // COURT-WATCH: a watcher's ask for a seat, this often   // GATE-FBX: and when the court comes apart
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
 import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_DOOR_WAIT_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
@@ -222,7 +223,7 @@ export const HEAL_SEND_MS = 1000;
  *   getTexture?: ((archive: number) => Promise<any>)|null,
  *   uploadRecordFrame?: ((archive: number, record: number, frame: number) => void)|null,
  *   audio?: any,
- *   link: { state: () => any, receipt?: (day: number) => string|null },
+ *   link: { state: () => any, receipt?: (day: number) => string|null, watching?: () => boolean },
  *   spoils?: any,
  *   now: () => number,
  *   door?: () => number|null,
@@ -271,6 +272,10 @@ export function createGateCourt({
 }) {
   // MWNPC10 (bible/04-Characters/Morrowind-NPCs.md section 15a): HIM AND HIS HOST IN THEIR MORROWIND BODIES, on a lane of
   // the court's own (drawBodies) - the host's billboard pass draws after it
+  /** COURT-WATCH: whether I watch this court (net/gate/gateLink.js `watching` - it was full when I asked) - its fight
+   *  heard and drawn, mine never: no blow of mine sent, none of his landed on me. */
+  const watching = () => !!link.watching?.();
+  let watchAskedAt = -Infinity;
   const bodiesLane = createPopulationLane({ laneName: 'gate', renderer, ...(wantBodies ? { want: wantBodies } : {}), make: makeBodies });
   const bossRec = {};
   let pass = null;
@@ -278,7 +283,7 @@ export function createGateCourt({
   /** WB11c: HIS HOST (scenes/gate/gateHost.js) - its blows land on me through the door his own do (`land`), each its share,
    *  its base and its element through my saving throw; a Ward-Bearer's Pulse flares the rim in his element's colour */
   const host = createGateHost({
-    renderer, getTexture, uploadRecordFrame, audio, cam, feet, player, say, send: sendHost, blowQ: (who) => blowQ(who),   // AUDIT WB11 W3: my blows' one sequence
+    renderer, getTexture, uploadRecordFrame, audio, cam, feet, player, say, send: (x) => !watching() && sendHost(x), blowQ: (who) => blowQ(who),   // AUDIT WB11 W3: my blows' one sequence; COURT-WATCH: a watcher's none
     land: (B) => { const P = profileOf(link.state()); land(null, P, { pct: B.pct, base: B.base, el: B.el, name: B.name, saved: B.el != null }, B.el ? hostPulseColor(P) : null); },
   });
   /** the sprite: its texture once loaded (or the promise, or a failure), its batch while drawn */
@@ -298,14 +303,14 @@ export function createGateCourt({
   // my last word to the relay, and when that word went. My own spells, potions and items are no one's.
   let healSentAt = -Infinity;
   const healOwed = new Map();
-  const sayBody = bodySayer(sendBody);   // INT15
+  const sayBody = bodySayer((v) => !watching() && sendBody(v));   // INT15; COURT-WATCH: a watcher holds no fighter's body
   const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;
   /** What my mates healed in me, out as the wire's `heal`: whole points (the fractions kept for the next), each caster once. */
   function sendOwed(t) {
     healSentAt = t;
     const h = [];
     for (const [by, n] of healOwed) if (n >= 1 && h.length < GATE_HEAL_ROWS_MAX) h.push([by, Math.min(Math.floor(n), GATE_HEAL_WIRE_MAX)]);
-    if (!h.length || !sendHeal({ h })) return;
+    if (!h.length || watching() || !sendHeal({ h })) return;   // COURT-WATCH: a watcher's mates heal no fighter
     for (const [by, n] of h) { const left = healOwed.get(by) - n; if (left > 0) healOwed.set(by, left); else healOwed.delete(by); }
   }
   function blowQ(who) {
@@ -477,6 +482,7 @@ export function createGateCourt({
    *  Wrath through nothing) - WB8b: all under his profile (his aspect's element and names, Vengeful's weight). WB11c: or
    *  one of his host's blows (`so` - its own, `color` the rim's flare for an element). */
   function land(atk, P, so = blowOf(atk, P), color = null) {
+    if (watching()) return;   // COURT-WATCH: he strikes his fighters, never the court's watchers
     const e = player();
     if (!e || !so || !(e.health > 0)) return;
     let dmg = strikeDamage(so.pct, e.maxHealth, so.base);
@@ -961,6 +967,7 @@ export function createGateCourt({
       if (!fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1): the relay takes no blow from outside the court he fights in
       const dmg = Math.round(d);
       if (!(dmg >= 1)) return false;
+      if (watching()) return false;   // COURT-WATCH: a watcher strikes nothing
       hurtAt = t;
       return !!send({ q: blowQ('b'), d: dmg, r });
     },
@@ -989,6 +996,7 @@ export function createGateCourt({
       if ((rk.landAt !== null && t >= rk.landAt - RECKON_CLOSE_MS) || !fromHisCourt(s, t)) return false;   // AUDIT WB9 (brain F1, F2)
       const dmg = Math.round(d);
       if (!(dmg >= 1)) return false;
+      if (watching()) return false;   // COURT-WATCH: a watcher breaks nothing
       rk.flashAt[c] = t;
       sound(BOSS_CUES.crystalHit, s, t, null, rk.feet[c]);
       return !!sendCrystal({ c, q: blowQ(`x${c}`), d: dmg, r });
@@ -1168,6 +1176,16 @@ export function createGateCourt({
       }
       [_peersWere, _peersNow] = [_peersNow, _peersWere];
       peersPrimed = true;
+    },
+    /** COURT-WATCH: whether a watcher asks the court for a seat again now - once every COURT_WATCH_ASK_MS of watching
+     *  (the host's own `in` door, scenes/world.js, sends it), never while I fight. */
+    askAgain() {
+      const t = now();
+      if (!watching()) { watchAskedAt = -Infinity; return false; }
+      if (watchAskedAt === -Infinity) { watchAskedAt = t; return false; }
+      if (t - watchAskedAt < COURT_WATCH_ASK_MS) return false;
+      watchAskedAt = t;
+      return true;
     },
     /** AUDIT GATE-FBX C1: whether the court has gone silent on this screen - I stand in it, its fight lives (or never said
      *  a word), and my frames have seen no word of it for COURT_SILENT_MS. The host casts me out (scenes/world.js). */

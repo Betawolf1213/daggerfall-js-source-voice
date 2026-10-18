@@ -2599,6 +2599,29 @@ GATE_HELLO_HZ_MAX (48) a second, and a court that refuses a player busy counts a
 they step in. The measurements, the model and the pins are `Scale-Arc.md` GATE-DOOR (THE PLAN PAST 1,000). Not a DFU
 member: Daggerfall has no other players.
 
+## 24. The court's watchers (COURT-WATCH, 2026-10-18)
+
+The owner, of more than GATE_FIGHTERS_MAX (256) at one gate: "Make the best call for future proofing" (`Scale-Arc.md`
+THE PLAN PAST 1,000, decision 5). The fight seats 256 accounts (`net/gate/gateBrain.js` joinFight), and the next one to
+ask was told `the court is full` and cast out before the gate - at a thousand online, a crowd's later arrivals walked in
+to be thrown out. Now a full court keeps them as its **watchers**:
+
+- **The relay** answers a full court's `in` as before (`no`, `the court is full`), and keeps the socket - its beats are
+  the room's, so a watcher hears and sees the fight. The answer to an `in` that seats a fighter says so (`me: 1` on its
+  state, carried by `validGateOut`): a relay's word, never a guess from a beat.
+- **The client** (`net/gate/gateLink.js` `watching`): the full court's `no` is no refusal - said once, *The Burning Court
+  is full - you watch from its edge until a place frees.* - and the court (`scenes/gate/gateCourt.js`) sends none of a
+  fighter's part while it watches: no blow on him, a crystal or his host, no mate's heal owed, no body word; and none of
+  his blows lands on it. Every COURT_WATCH_ASK_MS (15 s) it asks for a seat again, through the host's own `in` door
+  (scenes/world.js, the welcome's one line) - a fighter gone a while frees one (`freeSeat`) - and the answer with `me`
+  seats it.
+- **What it does not do.** A watcher earns no share and no spoils (the relay's receipts are its fighters'); the boss
+  does not know it is there.
+
+The next step - copies that hold fighters of their own, past 256 (COURT-WIDE) - is `Scale-Arc.md`'s, with its blockers.
+Pins: `test/net/gate/courtwatch.test.js` (5); `tools/mutants/plan1000.json` COURTWATCH-* (15, all dead). PIN MOVED:
+`auditwb_court.test.js` AUDIT WB B5 (a sealed gate refuses; a full court keeps). Not a DFU member.
+
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,

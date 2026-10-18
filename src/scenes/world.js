@@ -17992,7 +17992,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         else worldQuickSave(saveName, { quiet: true });
       }
       return names.length > 0;
-    } catch (e) { console.error('[online] checkpoint failed', e); return false; }   // never the frame's end: the next is due in two minutes
+    } catch (e) { console.error('[online] checkpoint failed', e); return false; }   // never the frame's end: the next is due ONLINE_CHECKPOINT_MS on
   };
   /** REALM P1.3: THE REALM'S CHECKPOINT - the character composed by the standing host and handed to the session by the
    *  composer's sink. Refused as the exit save is on the death screen: a dead character is never the realm's save. */
@@ -18027,8 +18027,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (realmSession) {
     // the title exit and the page put away are the checkpoint's: registered with its other doors (THE CHECKPOINT'S
     // DOORS, below the duel's). AUDIT REALM2 C2: the lease given up as the page GOES (pagehide, the unload guard answered) - the leave alone, with
-    // keepalive (the browser finishes it; a save that large it cannot, so the two-minute checkpoints bound what a close
-    // costs) - and taken again when a page the back-forward cache kept is shown
+    // keepalive (the browser finishes it; a save that large it cannot, so the periodic checkpoints - ONLINE_CHECKPOINT_MS -
+    // and the one the page asked as it hid bound what a close costs) - and taken again when a page the back-forward cache kept is shown
     whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });   // REZ-BLOODLINE: a death held for a Resurrect decided first - its tombstone takes the lease, the leave then sends nothing
   }
   /** REALM P1.3: A CHARACTER BORN ONLINE - made at the service once chargen is done, its first save the service's
@@ -25262,7 +25262,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const inRealm = modes?.sdRealmSlot?.() != null;
     if (!inRealm && _sdReceipts.size) sdReceiptsLeft();   // AUDIT SD: a receipt that never burst - its spoils into the pack
     // SD9e: whatever is still on the arena's floor into the pack - and AUDIT SD II (L5 F5): a checkpoint asked at once (the
-    // Hour refuses every save, so what it gave stood on the device alone until the next one, two minutes on)
+    // Hour refuses every save, so what it gave stood on the device alone until the next periodic one)
     if (!inRealm && _sdFightHeld) { sdSpoilsBurst?.leave(); saveSoon.changed(); }
     if (!inRealm && _sdFightHeld) { sdFightLink.leave(); sdBlows?.leave(); sdRemVoice?.leave(); sdFx?.leave(); _sdFightHeld = false; }
     if (!inRealm) sdFx?.away();   // AUDIT SD V (L5): the next arrival exhales, whatever was heard
@@ -29060,7 +29060,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     spectatorFrame();   // AUDIT-SEATS G4: a spectator's free camera begun - or, its watching over, set back where it stood
     // WB3b: THE COURT'S ROOM HEARS MY LEVEL CLAIM once per welcome (net/gate/gateBrain.js - the health I bring into the fight
     // and the bucket I may deal from); a reconnect's welcome says it again, and the relay keeps my first
-    if (gateLink && online.gateOk && isGateRoom(online.room) && online.welcomes !== _gateInFor && online.sendGate({ k: 'in', lv: Math.max(1, playerEntity.level | 0), bv: GATE_BRAIN_V })) _gateInFor = online.welcomes;
+    if (gateLink && online.gateOk && isGateRoom(online.room) && (online.welcomes !== _gateInFor || gateCourt?.askAgain()) && online.sendGate({ k: 'in', lv: Math.max(1, playerEntity.level | 0), bv: GATE_BRAIN_V })) _gateInFor = online.welcomes;
     // PERF11 (2026-09-19, Mac: "Online mode needs further performance
     // improvements"): ONE peersNear() A FRAME. The owner sweeps below -
     // the foes' prune and the camps' - each built the list from scratch
