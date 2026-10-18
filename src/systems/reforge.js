@@ -206,7 +206,8 @@ export const EXTRACT_PRICE = Object.freeze({ chipped: 50, flawed: 100, plain: 20
 const looseGem = (it, gem) => gemKindOf(it) === gem && !it.questItem && !isLocked(it) && !isEquipped(it) && !isEnchanted(it);   // AUDIT GEM: never one the item maker enchanted (its powers would go into the socket and be lost)
 /** The pack's loose gems, by id: `{ ruby: 2, 'flawless-ruby': 1, ... }` - every gem, DFU's and the graded (GEM2). */
 export const gemsHeld = (items) => Object.fromEntries(ALL_GEM_IDS.map((g) => [g, (Array.isArray(items) ? items : []).reduce((n, it) => n + (looseGem(it, g) ? (it.stackCount ?? 1) : 0), 0)]));
-/** Take one loose gem of a kind out of a pack (a stack shrinks, a last one goes). Answers whether it could. AUDIT GEM:
+/** Take one loose gem of a kind out of a pack (a stack shrinks, a last one goes). Answers the record it came from (AUDIT
+ *  TOWN-ECON 2 PRICE-2: its marks read by the setting), or false where there was none. AUDIT GEM:
  *  `prefer` - the record the player pressed (a gem card's "Set in..."), taken first when it is a loose one of the kind. */
 export function takeGem(items, gem, prefer = null) {
   const at = prefer && looseGem(prefer, gem) ? items.indexOf(prefer) : -1;
@@ -217,7 +218,7 @@ export function takeGem(items, gem, prefer = null) {
     if ((it.stackCount ?? 1) > 1) it.stackCount -= 1; else items.splice(i, 1);
     return it;   // AUDIT TOWN-ECON 2 PRICE-2: the stone's record, its marks read by the setting
   }
-  return null;
+  return false;
 }
 /** AUDIT TOWN-ECON 2 PRICE-2: a piece's sockets whose gem a counter sold, socket `i` let go (a gem unset, extracted). */
 const unbought = (/** @type {any} */ item, /** @type {number} */ i) => {

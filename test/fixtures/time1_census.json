@@ -655,6 +655,13 @@
   },
   {
    "file": "src/scenes/worldModes.js",
+   "has": "commitTrade(shelf, m, staged, price, proceeds, identifySpell, { holidayId: getHolidayId(Math.floor(skyMinutes()), b.regionIndex ?? 0), guildFactionId }",
+   "clock": "sky",
+   "why": "the purchase's holiday its LAW-3 share is reckoned by, as its price was (AUDIT TOWN-ECON 2 PRICE-1)",
+   "count": 2
+  },
+  {
+   "file": "src/scenes/worldModes.js",
    "has": "const gameDate = () => dateFromClassicMinutes(interiorTicker.classicMinutes);",
    "clock": "event",
    "why": "the day's stock and shelves"
