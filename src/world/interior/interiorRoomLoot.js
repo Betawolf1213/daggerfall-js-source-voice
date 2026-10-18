@@ -47,7 +47,7 @@ import {
 import { createClaimLedger } from '../../systems/loot/claimLedger.js';
 import { validLootList, LOOT_LIST_MAX } from '../../systems/loot/loot.js';
 import { neverPeerHanded, peerHanded } from '../../systems/peerWord.js';
-import { clearStolen } from '../../systems/stolenGoods.js';
+import { clearStolen, STOLEN_MARK } from '../../systems/stolenGoods.js';
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 /** How many times a minter says its birth again while no seat answers (every ROOM_PUT_RESAY_MS): a room whose seat can never
@@ -90,7 +90,7 @@ export function createInteriorRoomLoot(net, bag) {
   const targetOf = (ctx, canon) => (ctx?.containers ?? [])[Number(canon.split(':')[1])] ?? null;
   const cupOf = (canon) => {
     let c = cups.get(canon);
-    if (!c) { c = { canon, st: null, roll: null, composed: null, win: null, birthAt: null, birthSays: 0, legacy: new Map(), took: [], local: false, spoke: false }; cups.set(canon, c); }
+    if (!c) { c = { canon, st: null, roll: null, composed: null, win: null, keeping: null, birthAt: null, birthSays: 0, legacy: new Map(), took: [], local: false, spoke: false }; cups.set(canon, c); }
     return c;
   };
 
@@ -334,10 +334,15 @@ export function createInteriorRoomLoot(net, bag) {
     for (const obj of laid) putOne(cup, obj, pieceCount(obj), true);
     return takes.length > 0 || grows.length > 0 || laid.length > 0;
   }
+  /** WHAT A TAKE PUT IN THE HANDS, to lift on a refusal and give on a grant: the shown record itself when it moved whole, else
+   *  the half a split minted off it - marked as the window marked it (a stranger's cupboard: stolenGoods.js takenFromKeeping).
+   *  The record left in the cupboard is never marked, and a stolen piece stacks only with stolen kin, so a refused split lifted
+   *  nothing (the taker kept the pieces) or lifted an honest stack of its kind in place of the marked half. */
+  const takenAs = (cup, obj) => (cup.keeping?.has(obj) && ![entity.items, entity.bagItems].some((l) => Array.isArray(l) && l.includes(obj)) ? { ...obj, [STOLEN_MARK]: true } : obj);
   /** `k` of a shared piece taken. A base that is gone (the other mint won) refuses it: lifted back out of the pack and said.
    *  The seat judges its own where it stands; anyone else lifts the piece and claims it, and has it on the grant alone. */
-  function takeOne(cup, { obj, info, k }) {
-    const st = cup.st;
+  function takeOne(cup, { obj: shown, info, k }) {
+    const st = cup.st, obj = takenAs(cup, shown);
     if (cup.composed.base !== st.base) { liftPiece(entity, obj, k); net.say(ROOM_TAKEN_TEXT); return; }
     const ref = info.p !== undefined ? { p: info.p } : { sp: info.sp };
     if (isSeat()) {
@@ -409,7 +414,7 @@ export function createInteriorRoomLoot(net, bag) {
     /** Yes: the held roll is MINTED as the room's. */
     birth(ctx, canon) { const cup = cups.get(canon); return !!cup?.roll && live() && mint(ctx, cup); },
     /** A window stands open on the container: nothing is composed under it, and its takes are claimed as they are made. */
-    open(canon, win) { cupOf(canon).win = win; bag.openKey = canon; bag.openWin = win; },
+    open(canon, win, keeping = null) { const cup = cupOf(canon); cup.win = win; cup.keeping = keeping instanceof Set ? keeping : null; bag.openKey = canon; bag.openWin = win; },   // `keeping`: a stranger's cupboard's theft keeping (stolenGoods.js) - what a take of it marked
     /** A cupboard no word has made the room's here and that holds no list of its own: its plaque is a name. */
     unborn(canon) { return !cups.get(canon)?.st; },
     land: (ctx, rec, { from = null, today = null } = {}) => land(ctx, rec, from, today),
@@ -445,6 +450,7 @@ export function createInteriorRoomLoot(net, bag) {
           if (bag.openWin === cup.win) { bag.openKey = null; bag.openWin = null; }
           cup.win = null;
           if (cup.st?.base) { if (settle(ctx, cup)) due.add(cup); compose(ctx, cup); }
+          cup.keeping = null;   // the window's keeping read its last takes in that settle
         } else if (cup.st?.base && settle(ctx, cup)) due.add(cup);
       }
       const { lapsed, resay, expired } = ledger.due(now);

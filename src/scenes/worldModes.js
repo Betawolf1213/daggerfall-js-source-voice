@@ -9145,7 +9145,7 @@ export function createWorldModes(host) {
               },
             });
             if (win && privateProperty) c.openedOn = c.stockedDate;   // UXB1-O: this character has seen this stock (shopStock.js stockSearched)
-            if (win) { interiorOverlay = win; if (!owned) interiorLootOpen(interiorCtx, key, win, _intShared, { fresh }); }   // WORLD6a: a stranger's cupboard is the room's from the open
+            if (win) { interiorOverlay = win; if (!owned) interiorLootOpen(interiorCtx, key, win, _intShared, { fresh, keeping: before }); }   // WORLD6a: a stranger's cupboard is the room's from the open
           };
           const owned = ownsThisInterior(b);   // UXB1-N: the one predicate the plaque reads too
           if (owned) {

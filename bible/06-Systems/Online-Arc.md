@@ -16315,7 +16315,7 @@ as today. `createExteriorFoes` fell from 1,755 to 1,706 code lines.
   owner's reload (S1-2);
   `test/net/containerloot.test.js` (9) - the cupboard races (a stale close, a stale put, two first-opens), LOOT-BULK's
   Take all and Stash all, and the CONTAINER-PEEK, HOME1 and STOLEN-GOODS guards;
-  `test/net/containerloot_protocol.test.js` (58) - the cupboard's protocol over a relay that logs, holds, cuts and loses
+  `test/net/containerloot_protocol.test.js` (59) - the cupboard's protocol over a relay that logs, holds, cuts and loses
   words: the earlier mint by the shared clock, ten minutes fast or slow (T22, R-3), first come and a Take all of 40 in
   consecutive words, a dropped claim, put, birth or verdict said again, the home gate's heal (T23), the seat answering
   with its frame never run (R-1), the seat's death and handover (T24), the claimer's leave and the recorded limits
@@ -16337,7 +16337,7 @@ as today. `createExteriorFoes` fell from 1,755 to 1,706 code lines.
   `test/systems/graveparty_unlisted.test.js` (3) - the plaque over an unreadable pile and body is the name alone, a
   readable pile still lists;
   `test/systems/revenant_body_loot.test.js` (4) - a revenant's body underground rides no word;
-  and `test/systems/partyloot.test.js` (13, was 10) gained D-2.1: a joiner's Take all of 40 stored pieces, two bulk takes
+  and `test/systems/partyloot.test.js` (14, was 10) gained D-2.1: a joiner's Take all of 40 stored pieces, two bulk takes
   judged together by the new seat, a dropped verdict frame recovered by a re-ask; `test/systems/containerpreview.test.js`
   (6, was 5) the unborn cupboard's null; `test/net/world6biiic.test.js` and `test/scenes/auditworld6biiic.test.js`,
   `test/scenes/mace_corpse_window.test.js`, `test/systems/hackedgold.test.js`, `test/server/autohold.test.js`,
@@ -16346,6 +16346,24 @@ as today. `createExteriorFoes` fell from 1,755 to 1,706 code lines.
   stand-ins. Mutants: `tools/mutants/outdoorloot.json` (46 records: 45 killed, one recorded equivalent - the cupboard module's own `unborn` flag, belt-and-braces over the mount's aside), and the records of the older arcs
   these laws moved (`hackedgold.json`, `autohold.json`, `ss1.json`, `silverfinds.json`, `auditonline2.json`,
   `home1.json`, `partyloot.json` and the others the diff names) re-aimed.
+
+**SPLIT-LIFT, the given-up claim and the seam (2026-10-18, read before the merge - PR #891's review).**
+- **A split off a stranger's stack.** The half a split mints is a new record the window marks stolen (stolenGoods.js
+  `takenFromKeeping`), while the stack left in the cupboard is the owner's and clean - and a stolen piece stacks only with
+  stolen kin. The claim lifted the cupboard's record, which is in no pack: a refused split stayed in the taker's hands (the
+  arrows twice), and a taker who carried honest arrows of the kind lost those in its place while the marked ones stayed. The
+  arm now hands the cupboard module the window's keeping (`interiorLootOpen`'s `keeping`), and a take of a record still in
+  it that did not move whole is lifted, claimed and given back as its marked half (`interiorRoomLoot.js` `takenAs`).
+  Pinned: `containerloot_protocol.test.js` SPLIT-LIFT - a refused four out of the pack with the taker's own five honest
+  arrows standing, and a granted four back in it, marked.
+- **A claim given up** (`CLAIM_KEEP_MS` with no verdict) left `_roomMine` but stayed among the claims the dungeon's client
+  had heard of its own, so that client taking the seat later granted it - to nobody: the piece left the room. It leaves
+  both now, as the cupboard's ledger already did. Pinned: `partyloot.test.js` "a claim GIVEN UP".
+- **The seam.** `roomLootHost.js` read `searchables` and `searchHeard` through the handle while the host handed them over
+  by value (HOST-SPLIT 1's audit, `test/tooling/hostseam.test.js`, red on the branch): both are settled names - a const
+  array, a function declaration - and are destructured at construction now. The find's hour (WORLD8's sweep) moved out of
+  `buildDungeonContext` into `roomLootHost.js` `letFindGo`; the host keeps the wiring alone.
+- Mutants: `tools/mutants/splitlift.json` (4 records, all dead).
 
 ## AUDIT ONLINE 3 - net/online.js read whole (2026-10-16, the user: "audita online.js")
 

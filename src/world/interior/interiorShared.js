@@ -264,10 +264,10 @@ function publishWhole(ctx, canon, bag, { claim = false } = {}) {
  *  and then the word is not a claim but the room's new stock. OUTDOOR-LOOT: a cupboard's window is the room's too - nothing is
  *  composed under it (C1) and its takes are claimed as they are made - but its birth was minted at the Yes, ahead of this
  *  (interiorLootBirth: the keeping the window's theft marks read is taken after it). */
-export function interiorLootOpen(ctx, key, win, bag, { fresh = false } = {}) {
+export function interiorLootOpen(ctx, key, win, bag, { fresh = false, keeping = null } = {}) {
   const canon = interiorLootKeyOf(key);
   if (!bag?.locationKey || !canon || !win) return;
-  if (canon.startsWith('container:') && bag.room?.live()) { bag.room.open(canon, win); return; }
+  if (canon.startsWith('container:') && bag.room?.live()) { bag.room.open(canon, win, keeping); return; }
   if (bag.unreadable?.has(canon)) bag.net?.say?.(LOOT_NEWER_TEXT);   // AUDIT SETS M2: what is shown is this build's own roll, and it is never said to the room
   bag.openKey = canon; bag.openWin = win;
   publishWhole(ctx, canon, bag, { claim: !fresh });

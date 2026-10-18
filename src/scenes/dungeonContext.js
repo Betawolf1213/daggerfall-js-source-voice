@@ -1452,7 +1452,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   let _roomMintHold = 0;            // a restore lands the room's words before anything mints over them
   let _roomClaimN = 0;              // this context's claims, counted (roomClaimId)
   let _roomNowMs = 0;               // the frame's clock as the claims' tick last read it
-  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, searchFound, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
+  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, letFindGo, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, searchFound, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
     _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf,
     lootableBody, opts, respawnDue, rollPileItems, roomLootKey, searchHeard, searchables, settleLootFlat,
     get _authority() { return _authority; },
@@ -6311,8 +6311,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // C4 says - forgetting it would hand a joiner a fresh base the others no longer see. An EMPTIED pile's hour is up:
         // its next life is a new generation (its emptying stamp, past the last), minted as any unborn pile's is
         const h = roomBaseHolder(canon), st = _roomState.get(canon), base = st ? _roomBase.get(canon) : null;
-        if (h?.search) { _lootSeen.delete(canon); _lootAt.delete(canon); forgetRoomContainer(canon); continue; }   // OUTDOOR-LOOT: a find the room let go at its hour (WORLD8) - the object's own list stands, as it did
-        if (!h?.pile || !st || !base || !roomEmptied(st, base.items.length)) continue;
+        if (letFindGo(canon, h) || !h?.pile || !st || !base || !roomEmptied(st, base.items.length)) continue;   // OUTDOOR-LOOT: a find the room lets go at its hour (WORLD8) - roomLootHost.js letFindGo
         const g = Math.max(Math.trunc(_lootAt.get(canon)), st.terms.g + 1);
         _lootSeen.delete(canon); _lootAt.delete(canon); forgetRoomContainer(canon); _roomNextGen.set(canon, g);
         continue;

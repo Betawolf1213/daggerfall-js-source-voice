@@ -551,6 +551,35 @@ test('R-5 AC8 (recorded behaviour): a take the seat REFUSED still enters the the
   assert.deepEqual(basket, ['Katana'], `R-5/AC8: a theft is marked for a take the seat refused - the basket the law read at B's close is the window's own take, the attempt (${JSON.stringify(basket)})`);
 });
 
+// A SPLIT OFF A STRANGER'S STACK is a new record, marked (stolenGoods.js takenFromKeeping), while the stack left in the cupboard
+// is the owner's and clean - and a stolen piece stacks only with stolen kin. The claim lifted the cupboard's record, found
+// nowhere in the pack, and so lifted nothing: a refused split stayed in the taker's hands (two copies of the arrows), and a
+// taker carrying honest arrows of their own lost those in its place while the marked ones stayed.
+test('SPLIT-LIFT AC8: a PARTIAL take off a stranger\'s cupboard the seat REFUSED is lifted back out - the marked half, not an honest stack of its kind the taker already carried; and one it GRANTS comes back marked', () => {
+  const s = born(3, [mk('Dagger'), mk('Arrow', 'Weapons', { stackCount: 10 }), mk('Mace')]);
+  s.B.entity.items.push(mk('Arrow', 'Weapons', { stackCount: 5 }));   // B's own five, honest
+  const wa = windowOf(s.A), wb = windowOf(s.B);
+  assert.ok(pressYes(s.B, wb) && pressYes(s.A, wa), 'B and A open the stranger\'s cupboard');
+  wa.takeAmount('Arrow', 10); wa.close(); frame(s.A); s.net.flush();   // the seat takes the whole stack first
+  wb.takeAmount('Arrow', 4);   // B's window still shows the ten: four split off them
+  assert.equal(s.B.entity.items.filter((it) => it.name === 'Arrow' && isStolen(it)).reduce((n, it) => n + it.stackCount, 0), 4, 'the four landed marked (guard)');
+  frame(s.B); s.net.flush(); wb.close(); frame(s.B); s.net.flush(); quiesce(s);
+  assert.ok(told(s.B), 'B is told');
+  const arrows = s.B.entity.items.filter((it) => it.name === 'Arrow');
+  assert.deepEqual(arrows.map((it) => [it.stackCount, isStolen(it)]), [[5, false]], `SPLIT-LIFT: the refused four are out of B's pack and B's own five stand, honest (${JSON.stringify(arrows.map((it) => [it.stackCount, isStolen(it)]))})`);
+  assert.equal(packHas(s.A, 'Arrow'), 10, 'the seat holds the ten it took');
+  for (const p of s.ps) assert.equal(have(items(p), 'Arrow'), 0, `${p.id}'s list shows no arrows`);
+
+  const g = born(3, [mk('Dagger'), mk('Arrow', 'Weapons', { stackCount: 10 }), mk('Mace')]);
+  const wg = windowOf(g.B);
+  assert.ok(pressYes(g.B, wg), 'B opens the stranger\'s cupboard');
+  wg.takeAmount('Arrow', 4); frame(g.B);
+  assert.equal(packHas(g.B, 'Arrow'), 0, 'SPLIT-LIFT: the four are lifted while the claim is in flight');
+  wg.close(); frame(g.B); g.net.flush(); quiesce(g);
+  assert.deepEqual(g.B.entity.items.filter((it) => it.name === 'Arrow').map((it) => [it.stackCount, isStolen(it)]), [[4, true]], 'SPLIT-LIFT: granted, the four come back to B - marked, as the window marked them');
+  for (const p of g.ps) assert.equal(have(items(p), 'Arrow'), 6, `${p.id}'s list shows the six that were left`);
+});
+
 // ═══ T25 - THE PROTECTIONS THAT STAND (AC8) ═════════════════════════════════════════════════════════════════════════════
 // Phase 1 pinned HOME1's old-shape word and STOLEN-GOODS' Take all. These are the rest of the table (DESIGN 4.6), each read
 // through the new words where the design fixes them, and through the pieces' whereabouts everywhere else.

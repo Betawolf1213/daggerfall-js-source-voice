@@ -26,7 +26,7 @@ import { wildPileMore } from '../systems/wild/wildZone.js';
 export function createRoomLoot(host) {
   const {
     _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf,
-    lootableBody, opts, respawnDue, rollPileItems, roomLootKey, settleLootFlat
+    lootableBody, opts, respawnDue, rollPileItems, roomLootKey, searchHeard, searchables, settleLootFlat
   } = host;
   // ── PARTY-LOOT (2026-10-14, the field: "each of us DO NOT see the same loot"; Mac: "Shared base + personal bonus") ──
   // A ROOM'S CONTAINER IS ONE BASE LIST FOR EVERYONE IN IT (systems/roomLoot.js says the law whole). WORLD4 made a
@@ -78,7 +78,7 @@ export function createRoomLoot(host) {
     const [kind, iStr] = canon.split(':');
     const i = Number(iStr);
     if (kind === 'loot') { const p = host.lootPiles[i]; return p && Array.isArray(p.items) ? { kind, i, pile: p } : null; }
-    if (kind === 'srch') { const sb = host.searchables?.[i]; return sb && Array.isArray(sb.items) ? { kind, i, search: sb } : null; }   // OUTDOOR-LOOT: a searched object's find - the object's own `items` is the container's list
+    if (kind === 'srch') { const sb = searchables[i]; return sb && Array.isArray(sb.items) ? { kind, i, search: sb } : null; }   // OUTDOOR-LOOT: a searched object's find - the object's own `items` is the container's list
     const f = kind === 'enc' ? host._sharedById.get(i) : foes[i];
     return f && f.entity && roomCanonOfFoe(f) === canon ? { kind, i, foe: f } : null;
   }
@@ -345,7 +345,7 @@ export function createRoomLoot(host) {
     { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null && (!Number.isFinite(host._lootAt.get(canon)) || _t > host._lootAt.get(canon))) host._lootAt.set(canon, _t); }   // WORLD8's stamp, never ahead of now (AUDIT WORLD7/8 C2)
     const seer = h.search && sees && !_roomSees.has(canon);
     if (h.search && sees) _roomSees.add(canon);
-    if (seer && who) host.searchHeard(h.i, host._lootAt.get(canon), who);   // SEARCH1: another's search starts my five hours too - from the room's stamp; GRAVE-PARTY: a partymate's, by name
+    if (seer && who) searchHeard(h.i, host._lootAt.get(canon), who);   // SEARCH1: another's search starts my five hours too - from the room's stamp; GRAVE-PARTY: a partymate's, by name
     for (const [id, g] of answered) roomResolve(id, g, canon);   // the host's verdicts on this player's own claims
     const base = rollRoomBase(canon, state.terms);
     if (changed || seer || answered.length || _roomComposed.get(canon)?.base !== base || _roomComposed.get(canon)?.list !== holderList(h)) composeRoomContainer(canon);
@@ -629,7 +629,7 @@ export function createRoomLoot(host) {
       m.saidAt = nowMs; due.add(m.canon);   // OUTDOOR-LOOT D-2.1: a claim with no verdict is said AGAIN, as a put is - a lapsed one too, which the host may still grant (a dropped word lost the piece)
     }
     for (const canon of due) roomSayNow(canon);
-    for (const [id, m] of [..._roomMine]) if (m.claim && nowMs - m.at >= CLAIM_KEEP_MS) _roomMine.delete(id);   // given up: nothing lands after it, and nothing dupes
+    for (const [id, m] of [..._roomMine]) if (m.claim && nowMs - m.at >= CLAIM_KEEP_MS) { _roomMine.delete(id); _roomState.get(m.canon)?.claims.delete(id); }   // given up: nothing lands after it, and nothing dupes - and out of the claims heard here, or this client taking the seat would grant it and the piece leave the room for nobody (interiorRoomLoot.js does the same)
     const lapsed = [..._roomMine].filter(([, m]) => m.lapsed);
     for (const [id] of lapsed.slice(0, Math.max(0, lapsed.length - CLAIMS_KEPT_MAX))) _roomMine.delete(id);
   }
@@ -687,6 +687,13 @@ export function createRoomLoot(host) {
     if (host._authority && !host._roomMintHold) { mintRoomTerms(canon, Number.isFinite(f._diedAt) ? f._diedAt : 0); return; }
     f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)
   }
+  /** OUTDOOR-LOOT: a search find the room lets go at its hour (WORLD8's sweep) - the object's own list stands, as it did.
+   *  Answers whether `h` (the canon's holder) was a find. */
+  function letFindGo(canon, h) {
+    if (!h?.search) return false;
+    host._lootSeen.delete(canon); host._lootAt.delete(canon); forgetRoomContainer(canon);
+    return true;
+  }
   /** The room's bookkeeping for a container forgotten (a body stood up again, a pile's life over). */
   function forgetRoomContainer(canon) {
     _roomState.delete(canon); _roomBase.delete(canon); _roomBonus.delete(canon); _roomComposed.delete(canon);
@@ -716,5 +723,5 @@ export function createRoomLoot(host) {
       if (host._authority || due(canon)) mintRoomTerms(canon, Number.isFinite(f._diedAt) ? f._diedAt : 0);
     }
   }
-  return { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomRecordsOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, searchFound, settleRoomBonus };
+  return { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, letFindGo, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomRecordsOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, searchFound, settleRoomBonus };
 }

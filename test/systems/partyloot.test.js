@@ -507,6 +507,30 @@ test('PARTY-LOOT, HOST ARBITRATES: a host that LEAVES mid-claim neither dupes no
   assert.deepEqual(baseRows(shown(r.B, key)), baseRows(shown(r.C, key)), 'one list under the new seat');
 });
 
+test('OUTDOOR-LOOT (a claim GIVEN UP): a joiner\'s claim no seat answered for CLAIM_KEEP_MS is let go where its claimer heard it too - the claimer taking the seat later does not grant it to nobody: the piece stands in the room and in no pack', () => {
+  setPref('quickLoot', true);
+  const r = room3();
+  fall(r);
+  const key = KEYS.find((k) => baseRows(shown(r.B, k)).length >= 1);
+  assert.ok(key, 'a container with a piece of the room\'s');
+  const [z] = shown(r.B, key).filter((it) => !RL.isPersonalLoot(it));
+  const b0 = holding(r.B, z);
+  const listed = (p) => shown(p, key).some((it) => pieceKey(it) === pieceKey(z) && !RL.isPersonalLoot(it));
+  quickTakePiece(r.B, key, z);
+  r.net.leave(r.A);
+  r.net.flush();   // the claim reaches C, and nobody judges it
+  clock.t += 100;
+  r.B.as(() => r.B.host.roomClaimTick(CLAIM_KEEP_MS + RL.ROOM_CLAIM_TIMEOUT_MS));
+  assert.equal(holding(r.B, z) - b0, 0, 'given up: not in B\'s pack (guard)');
+  assert.ok(listed(r.B), 'and back on B\'s list (guard)');
+  r.seat.id = r.B.id;
+  r.B.as(() => r.B.host.setAuthority(true));
+  r.net.flush();
+  assert.ok(listed(r.B), 'B, now the seat, still lists the piece - it did not grant itself a claim it had given up');
+  assert.ok(listed(r.C), 'and so does C');
+  assert.equal(holding(r.B, z) - b0, 0, 'and it is in nobody\'s pack');
+});
+
 test('PARTY-LOOT, HOST ARBITRATES: the WINDOW\'s takes are claims too, and so is a piece the host takes under its own open window after the room granted it to another (AUDIT WORLD4 C1 - nothing lands under it, so it still showed); a PUT is the host\'s to land, and a stored piece raced for goes to one', () => {
   setPref('quickLoot', true);
   const r = room3();
