@@ -352,8 +352,8 @@ Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane dra
 | `CharacterSheet` | F5 |  | Character sheet |
 | `Inventory` | F6 | `JoystickButton6` | Inventory |
 | `Status` | I |  | Status |
-| `LogBook` | L |  | Quest log |
-| `NoteBook` | N |  | Notebook |
+| `LogBook` | L |  | Chronicle: Quests (Enhanced Plus) / logbook (Classic) |
+| `NoteBook` | N |  | Chronicle: Notes (Enhanced Plus) / notebook (Classic) |
 | `AutoMap` | M |  | Map |
 | `TravelMap` | V |  | Travel map |
 | `QuickDial` | TAB |  | Quick dial |
