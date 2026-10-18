@@ -5,7 +5,7 @@
     "old": "    if (!roomBorn(h)) { _roomPending.set(canon, { rec, from }); return 0; }   // a body that has not fallen here yet: landed when it does",
     "new": "    if (!roomBorn(h)) { return 0; }   // a body that has not fallen here yet: landed when it does",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "    return roomSayNow(canon, () => roomStateWord(canon, false));   // the BIRTH: its terms and its stored pieces, whoever minted (a claimer says no state but this)",
     "new": "    return false;   // the BIRTH: its terms and its stored pieces, whoever minted (a claimer says no state but this)",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -23,16 +23,16 @@
     "old": "    f.entity.items.length = 0;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)",
     "new": "    void f;   // UNBORN holds nothing: this copy's own roll is no reader's (LOOT11's light, Hunting's body key, the save); the sweep counts its wait from here (mintUnbornRoom)",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
     "name": "PARTY-LOOT-WIRE-the-claim-never-said",
     "file": "src/scenes/roomLootHost.js",
-    "old": "      return q.length || a.length ? claimWord(canon, st, base.h, q.slice(-ROOM_CLAIMS_MAX), a.slice(-ROOM_CLAIMS_MAX), host._lootAt.get(canon) ?? null) : null;",
-    "new": "      return false ? claimWord(canon, st, base.h, q.slice(-ROOM_CLAIMS_MAX), a.slice(-ROOM_CLAIMS_MAX), host._lootAt.get(canon) ?? null) : null;",
+    "old": "    for (let i = 0; i < Math.max(q.length, a.length); i += ROOM_CLAIMS_MAX) out.push(decorate(",
+    "new": "    for (let i = 0; i < 0; i += ROOM_CLAIMS_MAX) out.push(decorate(",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -41,7 +41,7 @@
     "old": "      if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) return 0;   // PARTY-LOOT: the room's word for it has not come - nothing of this copy's own is taken",
     "new": "      if ((kind === 'loot' || kind === 'corpse') && roomUnborn(key)) void 0;   // PARTY-LOOT: the room's word for it has not come - nothing of this copy's own is taken",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "old": "      if (isRoomBaseContainer(canon)) { const rec = roomRecordOf(canon); if (rec) out.push(rec); continue; }   // PARTY-LOOT: its terms and takes",
     "new": "      if (isRoomBaseContainer(canon)) continue;   // PARTY-LOOT: its terms and takes",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -59,7 +59,7 @@
     "old": "    if (!online.sendAct(out)) { for (const k of keys) _actPend.add(k); return false; }",
     "new": "    if (!online.sendAct(out)) { return false; }",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -68,16 +68,34 @@
     "old": "    const give = roomLift(obj, k);",
     "new": "    const give = k;",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
     "name": "PARTY-LOOT-WIRE-a-party-member-tells-the-rooms-state",
     "file": "src/scenes/roomLootHost.js",
-    "old": "    if (!host._authority) {",
-    "new": "    if (false) {",
+    "old": "    if (host._authority) { const rec = roomStateWord(canon, true); return rec ? [rec] : []; }",
+    "new": "    if (true) { const rec = roomStateWord(canon, true); return rec ? [rec] : []; }",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "OUTDOOR-LOOT-WIRE-a-lost-claim-is-never-said-again",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "      if (host._authority || m.refused || nowMs - m.saidAt < ROOM_PUT_RESAY_MS) continue;",
+    "new": "      if (host._authority || m.refused || m.claim || nowMs - m.saidAt < ROOM_PUT_RESAY_MS) continue;",
+    "tests": [
+      "test/net/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "OUTDOOR-LOOT-WIRE-an-answered-claim-stays-open-to-be-said-again",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "    _roomMine.delete(id);\n    const key = `${canon}#${m.terms.g}|${m.claim.p ?? m.claim.sp}`;",
+    "new": "    m.saidAt = -Infinity;\n    const key = `${canon}#${m.terms.g}|${m.claim.p ?? m.claim.sp}`;",
+    "tests": [
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -86,7 +104,7 @@
     "old": "    online.onAct = (id, data) => { modes?.applyPlaceActions?.(id, data); };   // WORLD3: another's door, lever or platform; WORLD6a: in a building too",
     "new": "    online.onAct = (id, data) => {};   // WORLD3: another's door, lever or platform; WORLD6a: in a building too",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -95,7 +113,7 @@
     "old": "    const data = modes?.placeActionRecords?.([..._actPend]);",
     "new": "    const data = null;",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -104,7 +122,7 @@
     "old": "      if (mode === 'dungeon') return dungeonCtx ? (dungeonCtx.actionRecords?.(keys) ?? null) : null;",
     "new": "      if (mode === 'dungeon') return dungeonCtx ? null : null;",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -113,7 +131,7 @@
     "old": "      if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;",
     "new": "      if (mode === 'dungeon') return dungeonCtx ? false : false;",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   },
   {
@@ -122,7 +140,7 @@
     "old": "    applyDungeonFoes(id, data) { return mode === 'dungeon' && dungeonCtx ? !!dungeonCtx.applyFoes?.(data, id) : false; },   // AUDIT WORLD2 A1: the streaming host's id rides in - a new host's counter starts over",
     "new": "    applyDungeonFoes(id, data) { return mode === 'dungeon' && dungeonCtx ? false : false; },   // AUDIT WORLD2 A1: the streaming host's id rides in - a new host's counter starts over",
     "tests": [
-      "test/partyloot_wire.test.js"
+      "test/net/partyloot_wire.test.js"
     ]
   }
 ]

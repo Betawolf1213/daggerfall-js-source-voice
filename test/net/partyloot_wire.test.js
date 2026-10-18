@@ -1,70 +1,83 @@
 // PARTY-LOOT OVER THE WIRE - the room's shared base and the host's arbitration (bible/06-Systems/Online-Arc.md
-// PARTY-LOOT), driven through the network path the game runs instead of a queue. test/partyloot.test.js holds the law
+// PARTY-LOOT), driven through the network path the game runs instead of a queue. test/systems/partyloot.test.js holds the law
 // between two mounted peers whose frames a queue hands across; here nothing between the two players stands in:
 //   - each player is the dungeon's REAL loot doors and the PARTY-LOOT block (createRoomLoot, sliced from
-//     src/scenes/roomLootHost.js with the host's construction of it, as test/partyloot.test.js mounts them), over the
+//     src/scenes/roomLootHost.js with the host's construction of it, as test/systems/partyloot.test.js mounts them), over the
 //     REAL producers, AND the dungeon's own death and stream path - damageFoe, spawnCorpse, setFoeDead, applyFoeRecord,
 //     foesFrame and applyFoes - so the joiner's copy of a body falls when the host's foes frame says it fell, never by
 //     a test's call;
 //   - the inventory window is a stand-in holding the window's REAL close (openInventory's onClose), and a take from it
-//     is the window's own transfer (systems/itemTransfer.js);
+//     is the window's own transfer (systems/item/itemTransfer.js);
 //   - the dungeon's frame is drawFoes' two PARTY-LOOT lines, the sweep and the claims' tick, sliced as they stand;
 //   - scenes/world.js: actSend with its pending set and actFlush's heal (AUDIT WORLD3 A3), foesStream, and the
 //     session's onAct and onFoes handlers; scenes/worldModes.js: placeActionRecords, applyPlaceActions,
 //     applyDungeonFoes and dungeonFoesFrame;
 //   - each over a REAL net/online.js OnlineSession - its hello with a token it mints, its act gate (ACT_HZ_MAX) and its
 //     foes gate - into ONE REAL relay Room (server/src/index.js over test/fakeRoom.mjs's Durable Object state), which
-//     meters each socket and fans each frame to the other. The wire is in order and loses nothing, as one socket's
-//     frames are; the sessions, the Room and the doors share one clock (Date.now is that clock here).
+//     meters each socket and fans each frame to the other. The wire is in order and loses nothing (but the one word the fourth test has it lose),
+//     as one socket's frames are; the sessions, the Room and the doors share one clock (Date.now is that clock here).
+// PORTED (OUTDOOR-LOOT, 2026-10-18) from test/partyloot_wire.test.js, written against a main before src/ and test/ went into
+// folders, onto the tree that carries OUTDOOR-LOOT slice 3's law (roomLootHost.js; DESIGN-REVIEW.md D-2.1): a claimer's
+// words are consecutive words of ROOM_CLAIMS_MAX, a claim is SAID AGAIN every ROOM_PUT_RESAY_MS until it is answered, a
+// host's verdicts go out in consecutive words of ROOM_ANSWERS_KEPT, and `srch:` is a carried kind. What that changed here:
+//   - the mount's scope THROWS for a name it lacks (it read it as undefined, and `x >= undefined` is false: a mount
+//     without CLAIM_KEEP_MS would never give a claim up, and no test would have known);
+//   - the third test ends on the new law (an answered claim is never said again), and a fourth plays the claim the wire
+//     LOST: said again, the same claim, granted once. Take all's consecutive words and the dropped verdict frame are
+//     test/systems/partyloot.test.js's (OUTDOOR-LOOT D-2.1) - there is no body here that holds 33 pieces.
 // What is not here: a browser (tools/partyLootProbe.mjs plays the report in two), and buildDungeonContext itself, which
 // nothing in the tree can stand up outside one. Mutants: tools/mutants/partyloot_wire.json.
 import { test, after, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
-import { OnlineSession, FOES_MS, FOES_FULL_MS } from '../src/net/online.js';
-import { isWorldRoom, isCellRoom, actFrameFits, ACT_HZ_MAX, respawnDue, validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX } from '../src/net/wire.js';
-import { quietFoesGate } from '../src/net/foesQuiet.js';
-import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';
-import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';
-import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../src/systems/loot.js';
-import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
-import { peerHanded, neverPeerHanded, notCarried } from '../src/systems/peerWord.js';
-import { addItem, stacksWith, isGoldPieces, addGoldPieces } from '../src/systems/inventory.js';
-import { isEquipped, unequipItem } from '../src/systems/equip.js';
-import { planTake, applyTransfer } from '../src/systems/itemTransfer.js';
-import { spawnEnemyLoot, wildLootAfter, rollRoomBonus } from '../src/scenes/hostCombat.js';
-import { raiseEnemyDeath } from '../src/scenes/corpseMarker.js';
-import { rollCorpseKit, capFoeLoot } from '../src/systems/foeLootCap.js';
-import { makeEnemyEntity } from '../src/characters/enemyEntity.js';
-import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
-import { effectiveLevel } from '../src/systems/mentorMode.js';
-import { liveStat } from '../src/systems/statMods.js';
-import { setSigilOnline, setSigilRenown } from '../src/systems/sigil.js';
-import { setPref } from '../src/systems/uiPrefs.js';
-import { setModSetting } from '../src/systems/modSettings.js';
-import { FORAGING_VENDOR } from '../src/systems/foragingLaw.js';
-import { installForaging } from '../src/systems/foragingInstall.js';
-import { installSmithing } from '../src/systems/smithItems.js';
-import { installHealingSupply } from '../src/systems/healingSupply.js';
-import { installRestItemLoot, isDeepPileKey } from '../src/systems/restItems.js';
-import { installSurvivalLoot } from '../src/systems/survival/loot.js';
-import { grantEliteLoot } from '../src/systems/eliteFoes.js';
-import { wildPileMore } from '../src/systems/wildZone.js';
-import { asTheRoom } from '../src/systems/onlineLane.js';
-import * as RL from '../src/systems/roomLoot.js';
-import { fakeRoom } from './fakeRoom.mjs';
-import '../src/systems/cardSources.js';   // CARDS9's death handler registers at import, as the hosts load it
-import '../src/scenes/physicalItemsLayer.js';   // PI1's
+import { OnlineSession, FOES_MS, FOES_FULL_MS } from '../../src/net/online.js';
+import { isWorldRoom, isCellRoom, actFrameFits, ACT_HZ_MAX, respawnDue, sharedClassicMinutes, validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX } from '../../src/net/wire.js';
+import { quietFoesGate } from '../../src/net/foesQuiet.js';
+import { ARENA_PUPPET_OWNER } from '../../src/net/arena/arenaLaw.js';
+import { foeSeed, applyWireLook } from '../../src/characters/foeBodies.js';
+import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../../src/systems/loot/loot.js';
+import { rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons, LOOT_RARITY_KEY } from '../../src/systems/loot/lootRarity.js';
+import { peerHanded, neverPeerHanded, notCarried } from '../../src/systems/peerWord.js';
+import { addItem, stacksWith, isGoldPieces, addGoldPieces } from '../../src/systems/inventory.js';
+import { isEquipped, unequipItem } from '../../src/systems/equip.js';
+import { planTake, applyTransfer } from '../../src/systems/item/itemTransfer.js';
+import { spawnEnemyLoot, wildLootAfter, rollRoomBonus } from '../../src/scenes/hostCombat.js';
+import { raiseEnemyDeath } from '../../src/scenes/corpseMarker.js';
+import { rollCorpseKit, capFoeLoot } from '../../src/systems/foeLootCap.js';
+import { makeEnemyEntity } from '../../src/characters/enemy/enemyEntity.js';
+import { ENEMY_BASICS } from '../../src/characters/enemy/enemyBasics.js';
+import { effectiveLevel } from '../../src/systems/mentorMode.js';
+import { liveStat } from '../../src/systems/statMods.js';
+import { setSigilOnline, setSigilRenown } from '../../src/systems/sigil/sigil.js';
+import { setPref } from '../../src/systems/uiPrefs.js';
+import { setModSetting } from '../../src/systems/modSettings.js';
+import { FORAGING_VENDOR } from '../../src/systems/foraging/foragingLaw.js';
+import { installForaging } from '../../src/systems/foraging/foragingInstall.js';
+import { installSmithing } from '../../src/systems/smithItems.js';
+import { installHealingSupply } from '../../src/systems/healingSupply.js';
+import { installRestItemLoot, isDeepPileKey } from '../../src/systems/rest/restItems.js';
+import { installSurvivalLoot } from '../../src/systems/survival/loot.js';
+import { grantEliteLoot } from '../../src/systems/eliteFoes.js';
+import { wildPileMore } from '../../src/systems/wild/wildZone.js';
+import { asTheRoom } from '../../src/systems/online/onlineLane.js';
+import { CLAIM_KEEP_MS, CLAIMS_KEPT_MAX } from '../../src/systems/loot/claimLedger.js';
+import { SEARCH_COOLDOWN_MINUTES, SEARCH_LOOT_MAX } from '../../src/systems/searchables.js';
+import * as RL from '../../src/systems/roomLoot.js';
+const { ROOM_PUT_RESAY_MS } = RL;
+import { egFindStruck, egFindKill } from '../../src/systems/eliteGates/egFind.js';   // the dungeon's find asks (a room's body's kill goes here, unregistered: false)
+import { fakeRoom } from '../fakeRoom.mjs';
+import '../../src/systems/card/cardSources.js';   // CARDS9's death handler registers at import, as the hosts load it
+import '../../src/scenes/physicalItemsLayer.js';   // PI1's
 
 installForaging(); installSmithing(); installHealingSupply(); installRestItemLoot(); installSurvivalLoot();   // the hosts' order (scenes/shared.js)
 setPref(LOOT_RARITY_KEY, true);   // the loot ladder - forced on online (OL1)
 setSigilOnline(true);   // an online page: the sigils' and the Renown's door
 
-// ---- THE SOURCE, sliced as test/partyloot.test.js slices it -------------------------------------------------------------
-const SRC = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
+// ---- THE SOURCE, sliced as test/systems/partyloot.test.js slices it -------------------------------------------------------------
+const SRC = readFileSync(new URL('../../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(SRC, { ecmaVersion: 'latest', sourceType: 'module' });
-const MOD = readFileSync(new URL('../src/scenes/roomLootHost.js', import.meta.url), 'utf8');
+const MOD = readFileSync(new URL('../../src/scenes/roomLootHost.js', import.meta.url), 'utf8');
 const MOD_AST = acorn.parse(MOD, { ecmaVersion: 'latest', sourceType: 'module' });
 function find(pred, ast = AST) {
   let hit = null;
@@ -85,7 +98,7 @@ const memberSrc = (name) => {
   return n.method ? `function ${body}` : body;
 };
 /** The PARTY-LOOT block as the dungeon host runs it: the host's counters and its construction of the module, under the
- *  module's own createRoomLoot (test/partyloot.test.js's PARTS, read the same way). */
+ *  module's own createRoomLoot (test/systems/partyloot.test.js's PARTS, read the same way). */
 const BLOCK = (() => {
   const ctor = find((x) => x.type === 'VariableDeclaration' && x.declarations.some((d) => d.init?.type === 'CallExpression' && d.init.callee?.name === 'createRoomLoot'));
   const fn = find((x) => x.type === 'FunctionDeclaration' && x.id?.name === 'createRoomLoot', MOD_AST);
@@ -108,14 +121,22 @@ const DRAW_TICK = (() => {
 })();
 const scoped = (state) => new Proxy(state, {
   has: (t, k) => k !== '__s',
-  get: (t, k) => (k === Symbol.unscopables ? undefined : (k in t ? t[k] : globalThis[k])),
+  // a name the mount lacks THROWS (as the module's own scope would for an import it never had) - never reads as undefined:
+  // OUTDOOR-LOOT's claim ledger reads CLAIM_KEEP_MS in the claims' tick, and `x >= undefined` is false, so a mount without
+  // it would never give a claim up and no test here would know
+  get: (t, k) => {
+    if (k === Symbol.unscopables) return undefined;
+    if (k in t) return t[k];
+    if (!(k in globalThis)) throw new ReferenceError(`${String(k)} is not in the mount's scope`);
+    return globalThis[k];
+  },
   set: (t, k, v) => { t[k] = v; return true; },
 });
 const mount = (body, state) => new Function('__s', `with (__s) { ${body} }`)(scoped(state));
 const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); };
 
 const ROOM = 'dungeon:m7';
-const DUNGEON_TYPE = 12;   // a Natural Cave (test/partyloot.test.js's)
+const DUNGEON_TYPE = 12;   // a Natural Cave (test/systems/partyloot.test.js's)
 const ORC = 7;             // a humanoid foe with a table ('A'), a kit and PLAIN-LOOT's keep
 const POSE = { x: 1, y: 2, z: 3, yaw: 0, pitch: 0, mv: 0 };
 const HOST = 'host-0001', JOINER = 'join-0002';   // a peer id the relay takes (parseClient's bound)
@@ -165,7 +186,8 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     addItem, stacksWith, isGoldPieces, addGoldPieces, isEquipped, unequipItem, neverPeerHanded, notCarried,   // AUDIT AUTO-HOLD: the give asks it (no realm session here: no filter)
     _wallNow: () => clock.t, performance: { now: () => clock.t }, respawnDue, validLootList, peerHanded, LOOT_LIST_MAX, LOOT_NEWER_TEXT, ENEMY_BASICS,
     generateLootItems: generateItems, addPileLootExtras, rollLootRarity, pileSource, dungeonRarityTier, dungeonFamily, stampWonWeapons,
-    spawnEnemyLoot, wildLootAfter, grantEliteLoot, rollCorpseKit, raiseEnemyDeath, capFoeLoot, rollRoomBonus,
+    spawnEnemyLoot, wildLootAfter, grantEliteLoot, rollCorpseKit, raiseEnemyDeath, capFoeLoot, rollRoomBonus, egFindStruck, egFindKill,
+    CLAIM_KEEP_MS, CLAIMS_KEPT_MAX, SEARCH_COOLDOWN_MINUTES, SEARCH_LOOT_MAX, sharedClassicMinutes,   // OUTDOOR-LOOT: the claim ledger's and the search find's constants the room block reads
     wildPileMore, isDeepPileKey, effectiveLevel, liveStat, asTheRoom, ...RL,
     eliteLootOpts: () => ({}), searchHeard: () => {}, settleLootFlat: () => {}, _sharedFoe: () => false, fightN: () => 1,
     spawnCorpseNow: async (f) => { f.corpsePos = [...f.ai.feet]; }, renderer: { destroyBillboardBatch: () => {} }, billboardBatches: [], renownFoeRevived: () => {},
@@ -173,13 +195,13 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     droppedLoot: { physical: { owns: () => false }, pileFor: () => null, lootFinds: () => [], releaseEmptied: () => {} }, lootCrown: (pos) => pos, droppedTorches: { activate: () => false }, plaqueActionFor: () => null,
     activateSearchable: () => 0, setMidScreenText: (t) => said.push(t), activeOverlay: null, silverFindKey: () => null, silverFindAt: () => {},
     quickLootTake: () => false, showPickups: null, lootPile: () => null, pileBody: () => null, RANDOM_TREASURE_ARCHIVE: 216, surfacePlayer: () => {},
-    // the kill door's neighbours (test/loot7check.test.js's killDoor): nothing here reads a loot law
+    // the kill door's neighbours (test/systems/loot7check.test.js's killDoor): nothing here reads a loot law
     feudWeakBlow: () => false, blowClassOf: () => null, lastPlayerFeet: [0, 0, 0], foeDeps: null, audio: {},
     renownFoeStruck: () => {}, renownFoeDied: () => {}, reportPlayerKill: () => {}, takeWholeBlow: () => false, markFoeStruck: () => {}, markConcealedHit: () => {},
     handleAttackFromPlayer: () => {}, damageShieldPool: (e, n) => n, noteFighter: () => {}, PARTY_ME: 'me', partyFoeLoses: (f, n) => n,
     peerSoulTrapOf: () => null, attemptSoulTrap: () => ({ allowDeath: true }), isAzurasStarEquipped: () => false, fillEmptyTrap: () => false,
     hudText: { add: () => {} }, SOUL_TRAP_TEXT: {}, setEnemyAlert: () => {}, sayEnemyDied: () => null, playRareDrop: () => {}, addCorpseFood: () => {},
-    // the joiner's stream doors around the records (test/seatheal.test.js's, test/restsync.test.js's): no surplus, one species
+    // the joiner's stream doors around the records (test/net/seatheal.test.js's, test/net/restsync.test.js's): no surplus, one species
     validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX, ARENA_PUPPET_OWNER, foeSeed, applyWireLook,
     _foesSeq: 0, _foesSeqIn: -1, _foesFrom: null, _keyMismatchSaid: false, _retypeFails: new Map(), RETYPE_TRIES: 3, GENDER_BIT: ['male', 'female'], _retyping: new Set(),
     _surplus: new Map(), _surplusPending: new Map(), hideBeyondHostLayout: () => {}, surplusRecord: () => {}, dropSurplus: () => {},
@@ -217,7 +239,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     }
     return { api, damageFoe, foesFrame, applyFoes, applyActions, actionRecords, tick };
   `, state);
-  // THE BUILD, as dungeonContext builds it: buildFoeAt's chain on THIS player's dice (test/partyloot.test.js's)
+  // THE BUILD, as dungeonContext builds it: buildFoeAt's chain on THIS player's dice (test/systems/partyloot.test.js's)
   as(() => {
     for (let i = 0; i < nFoes; i++) {
       const entity = makeEnemyEntity(ORC, ENEMY_BASICS[ORC], null, effectiveLevel(player), Math.random);
@@ -249,6 +271,7 @@ function wire() {
     constructor(url) {
       assert.ok(url.endsWith(`/room/${ROOM}`), `the session opens this room's socket (${url})`);
       this.url = url;
+      this.lose = 0; this.lost = 0;
       this.readyState = 0;
       const s = r.connect();
       this.server = s;
@@ -257,7 +280,11 @@ function wire() {
       s.close = (code, reason) => { shut(code, reason); post(() => { this.readyState = 3; this.onclose?.({ code, reason }); }); };
       post(() => { this.readyState = 1; this.onopen?.(); });
     }
-    send(frame) { post(() => r.room.webSocketMessage(this.server, frame)); }
+    // OUTDOOR-LOOT (D-2.1): a socket that loses its next `lose` ACT frames - the relay never hears them, as a dropped word
+    send(frame) {
+      if (this.lose > 0 && String(frame).startsWith('{"t":"act"')) { this.lose--; this.lost++; return; }
+      post(() => r.room.webSocketMessage(this.server, frame));
+    }
     close() { this.readyState = 3; post(() => r.drop(this.server)); }
   }
   return { r, WireWS, settle };
@@ -265,7 +292,7 @@ function wire() {
 
 const W = (() => {
   const path = 'src/scenes/world.js';
-  const text = readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+  const text = readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
   const ast = acorn.parse(text, { ecmaVersion: 'latest', sourceType: 'module' });
   const all = (pred) => { const hits = []; (function walk(n) { if (!n || typeof n.type !== 'string') return; if (pred(n)) hits.push(n); for (const k of Object.keys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v.type === 'string') walk(v); } })(ast); return hits; };
   const one = (pred, what) => { const hits = all(pred); assert.equal(hits.length, 1, `${path}: ${what} stands once`); return text.slice(hits[0].start, hits[0].end); };
@@ -276,7 +303,7 @@ const W = (() => {
 })();
 const WM = (() => {
   const path = 'src/scenes/worldModes.js';
-  const text = readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+  const text = readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
   const ast = acorn.parse(text, { ecmaVersion: 'latest', sourceType: 'module' });
   return {
     member: (name) => {
@@ -300,8 +327,10 @@ function player(id, net, o) {
     return { mode, applyPlaceActions: ${WM.member('applyPlaceActions')}, placeActionRecords: ${WM.member('placeActionRecords')},
       applyDungeonFoes: ${WM.member('applyDungeonFoes')}, dungeonFoesFrame: ${WM.member('dungeonFoesFrame')} };
   `, { dungeonCtx, interiorCtx: null, _intShared: null });
+  let sock = null;
+  class MyWS extends net.WireWS { constructor(url) { super(url); sock = this; } }
   online = new OnlineSession({ url: 'wss://relay.test', name: id, id, secret: `secret-of-${id}`, look: net.r.look,
-    mintToken: () => net.r.token(id, { n: id }), WebSocketImpl: net.WireWS, now: () => clock.t });
+    mintToken: () => net.r.token(id, { n: id }), WebSocketImpl: MyWS, now: () => clock.t });
   doors = mount(`
     ${['_actPend', '_actLive', '_actRoom', '_actTooBig', 'actTooBig', 'actSend', 'actFlush', '_foesSentAt', '_foesQuiet', 'foesStream'].map(W.decl).join('\n')}
     online.onAct = ${W.assigned('online.onAct')};
@@ -315,11 +344,13 @@ function player(id, net, o) {
     online[k] = (...a) => d.as(() => { try { return door(...a); } catch (e) { handlerErrors.push(`${id} ${k}: ${e?.message ?? e}`); throw e; } });
   }
   const frame = (dt = FOES_MS / 1000) => d.as(() => { doors.foesStream(clock.t); doors.actFlush(); d.h.tick(dt); });
-  return { ...d, online, doors, frame };
+  /** The wire loses this player's next `n` act frames (the relay never hears them); answers how many it has lost so far. */
+  const loseActs = (n) => { sock.lose = n; return () => sock.lost; };
+  return { ...d, online, doors, frame, loseActs };
 }
 
 /** A room of two in one party: the host (level 30, Luck 70, Ascendant Renown, Foraging on) and a joiner (level 3,
- *  Luck 30, Faint Renown, Foraging OFF) - test/partyloot.test.js's two, each its own roll of every foe. */
+ *  Luck 30, Faint Renown, Foraging OFF) - test/systems/partyloot.test.js's two, each its own roll of every foe. */
 async function party(foes = 1) {
   RL._resetRoomLootForTests();
   clock.t = T0;
@@ -424,7 +455,15 @@ test('PARTY-LOOT OVER THE WIRE: a blast that kills more than the act bucket says
   assert.deepEqual(baseRows(J.windows[0].items), bases[open], 'on the host\'s base');
 });
 
-/** How much of a piece a player holds: its coin in the purse, else its count across the pack (test/partyloot.test.js's). */
+/** Both players' clocks run `ms` on: the one clock (Date.now, the sessions', the Room's) AND each dungeon's own frame clock
+ *  (drawFoes' `_ecvT`, which the claims' tick reads - a claim's resay interval is measured on it, not on Date.now). */
+async function run(net, ms, ...ps) {
+  clock.t += ms;
+  for (const p of ps) p.frame(ms / 1000);
+  await net.settle();
+}
+
+/** How much of a piece a player holds: its coin in the purse, else its count across the pack (test/systems/partyloot.test.js's). */
 const pieceKey = (it) => `${it.group}.${it.templateIndex}.${it.material ?? ''}.${it.name ?? ''}`;
 const holding = (p, it) => (isGoldPieces(it) ? (p.player.goldPieces ?? 0) : p.player.items.filter((x) => pieceKey(x) === pieceKey(it)).reduce((s, x) => s + RL.pieceCount(x), 0));
 
@@ -462,4 +501,55 @@ test('PARTY-LOOT OVER THE WIRE: the party member\'s take is a claim the host gra
   assert.deepEqual(named(J, key), expect, 'and the joiner sees the same list');
   assert.ok(holding(J, piece) > had.J, `the joiner holds the ${piece.name} it was granted`);
   assert.equal(holding(H, piece), had.H, 'and the host does not');
+  // OUTDOOR-LOOT D-2.1 (the law this assertion now meets): a claim is SAID AGAIN every ROOM_PUT_RESAY_MS until it is
+  // answered (roomClaimTick) - and this one was answered, so the close's one word stays the only word however long the
+  // clocks run on: no second claim to dupe the piece, nothing taken twice
+  for (let k = 0; k < 8; k++) { await run(net, ROOM_PUT_RESAY_MS, H, J); }
+  assert.equal(J.told.length, toldBefore + 1, 'an answered claim is never said again - the close\'s word is the only one');
+  assert.deepEqual(named(H, key), expect, 'the host\'s list is as the grant left it, however long the clocks run');
+  assert.deepEqual(named(J, key), expect);
+  assert.equal(holding(J, piece), had.J + RL.pieceCount(piece), 'the piece was granted once');
+});
+
+test('PARTY-LOOT OVER THE WIRE (OUTDOOR-LOOT D-2.1): a claim the wire LOST is said again every ROOM_PUT_RESAY_MS until the host answers - the piece stays out of the pack while it waits, the second word is the same claim, the host grants it once, and nothing is said after the verdict (the claimer said it once; a dropped word lost the piece for good)', async () => {
+  const { net, H, J } = await party(4);
+  const i = lootedKill(H);
+  const key = `corpse:${i}`;
+  clock.t += FOES_MS;
+  H.frame();
+  await net.settle();
+  const base = named(H, key);
+  assert.ok(J.as(() => J.h.api.takeLoot(key)) > 0);
+  const w = J.windows[0];
+  const piece = w.items.find((it) => !RL.isPersonalLoot(it) && !isGoldPieces(it)) ?? w.items.find((it) => !RL.isPersonalLoot(it));
+  assert.ok(piece, 'a base piece to take');
+  const had = holding(J, piece);
+  take(J, w, piece);
+  const lost = J.loseActs(1);   // the claim's word never reaches the relay
+  const toldBefore = J.told.length;
+  w.close();
+  assert.equal(J.told.length, toldBefore + 1, 'the close said one word');
+  const first = JSON.stringify(J.told[toldBefore].l[0].q);
+  await net.settle();
+  assert.equal(lost(), 1, 'and the wire lost it');
+  assert.deepEqual(named(H, key), base, 'the host never heard: its list is whole');
+  assert.equal(holding(J, piece), had, 'the piece is out of the pack while the claim waits');
+  // not yet due: the resay waits its ROOM_PUT_RESAY_MS
+  await run(net, ROOM_PUT_RESAY_MS - FOES_MS, H, J);
+  assert.equal(J.told.length, toldBefore + 1, 'nothing said again before the interval is up');
+  assert.deepEqual(named(H, key), base);
+  // due: the same claim, said again - it reaches the host this time
+  await run(net, 2 * FOES_MS, H, J);
+  assert.equal(J.told.length, toldBefore + 2, 'the claim is said again');
+  assert.equal(JSON.stringify(J.told[toldBefore + 1].l[0].q), first, 'the very same claim - its id is the first word\'s, so the host judges it once');
+  for (let k = 0; k < 3; k++) await run(net, FOES_MS, H, J);
+  const expect = base.slice(); expect.splice(expect.indexOf(sig(piece)), 1);
+  assert.deepEqual(named(H, key), expect, 'the host\'s list lost the one piece and kept every other');
+  assert.deepEqual(named(J, key), expect);
+  assert.equal(holding(J, piece), had + RL.pieceCount(piece), 'the verdict came back and the piece is the joiner\'s');
+  // answered: silence, and no piece twice
+  for (let k = 0; k < 8; k++) { await run(net, ROOM_PUT_RESAY_MS, H, J); }
+  assert.equal(J.told.length, toldBefore + 2, 'an answered claim is never said again');
+  assert.equal(holding(J, piece), had + RL.pieceCount(piece), 'and the piece is not granted twice');
+  assert.deepEqual(named(H, key), expect);
 });

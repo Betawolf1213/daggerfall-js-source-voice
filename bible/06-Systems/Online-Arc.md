@@ -15993,7 +15993,7 @@ claim lost a race or was never heard, and a crash or reload loses a granted piec
   theirs (a joiner's take in its pack at once, two copies of one piece between two joiners, a piece kept by the host
   under its window after the room granted it). `tools/mutants/partyloot.json`
   (30, all killed).
-- **Pinned over the wire** (2026-10-16): `test/partyloot_wire.test.js` (3) - the same law through the path the game
+- **Pinned over the wire** (2026-10-16): `test/net/partyloot_wire.test.js` (4) - the same law through the path the game
   runs, where the queue above stands in for it. Two players, each the dungeon's real loot doors and this block
   (`roomLootHost.js` createRoomLoot, under the host's construction of it) over the real producers WITH the dungeon's own
   death and stream path (damageFoe, spawnCorpse, setFoeDead, applyFoeRecord, foesFrame, applyFoes), so the party
@@ -16007,12 +16007,12 @@ claim lost a race or was never heard, and a crash or reload loses a granted piec
   first stand UNBORN on the party member (no window, nothing said, none of its own roll) until actFlush's heal re-reads
   the host's word through `placeActionRecords` (`lootRecords` -> `roomRecordOf`); a party member's take from the
   window - its close telling one claim and never the room's state, the piece out of the taker's pack until the host's
-  grant comes back over the Room, then one piece off both lists and in the taker's pack. A body's list is compared only
+  grant comes back over the Room, then one piece off both lists and in the taker's pack - and, since OUTDOOR-LOOT's slice 3 (D-2.1), nothing said after the grant (a claim is said AGAIN every `ROOM_PUT_RESAY_MS` until it is answered, so an answered one must stay the one word); a fourth test has the wire LOSE the claim's word, and it is said again, the same claim, granted once. A body's list is compared only
   once its plaque NAMES one (an unborn body's null is never read as an empty base), what the dungeon tells its act door
   is counted before world.js or the session see it, and a throw under the session's handlers - which the session
   swallows, so one bad frame never takes the socket down - fails the test instead of reading as a word that never
-  landed (AUTO-HOLD's `notCarried`, new in the give, was such a name). `tools/mutants/partyloot_wire.json` (14, all killed); eight
-  of them `test/partyloot.test.js` cannot fail - the early birth dropped, the heal re-reading nothing, world.js keeping
+  landed (AUTO-HOLD's `notCarried`, new in the give, was such a name). `tools/mutants/partyloot_wire.json` (16, all killed - the two added are the lost claim never said again and the answered claim left open); eight
+  of them `test/systems/partyloot.test.js` and `searchfindloot.test.js` cannot fail - the early birth dropped, the heal re-reading nothing, world.js keeping
   no refused key, and the five that cut the wire's own doors (world.js's onAct and actFlush's read, worldModes.js's
   three dungeon arms).
 - **Played end to end** (2026-10-16): `tools/partyLootProbe.mjs` - two players in the real game in headless Chromium
@@ -16029,7 +16029,7 @@ claim lost a race or was never heard, and a crash or reload loses a granted piec
   untouched window replaced the host's 12 gold with its own 3 (the report's wipe); in both the joiner's stale close put
   back a piece the host had taken; in the first the joiner's take replaced the host's list with the joiner's leftovers.
   The press on a body before its word - the report's "Empty" window itself - is the wire test's; a probe cannot time it.
-  `test/partyloot_probe.test.js` (2) holds its seams and the doors they read.
+  `test/tooling/partyloot_probe.test.js` (2) holds its seams and the doors they read.
 
 ## OUTDOOR-LOOT (2026-10-17, the field: "I can still click on an "Empty" body and wipe out loot for a party member") - every other shared container is one list for everyone too, and a take of it a claim one authority judges
 

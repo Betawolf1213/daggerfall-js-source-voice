@@ -26,7 +26,7 @@
 //                                                                   PORT / SVC_PORT as tools/onlineFrameProbe.mjs;
 //                                                                   PW_CHANNEL=chromium the full build headless (no
 //                                                                   headless shell installed)
-// Not in the suite (a toolchain and minutes, tools/loadHarness.mjs's reason) - test/partyloot_wire.test.js is the pin.
+// Not in the suite (a toolchain and minutes, tools/loadHarness.mjs's reason) - test/net/partyloot_wire.test.js is the wire pin and test/tooling/partyloot_probe.test.js the pin of its edits and reads.
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
