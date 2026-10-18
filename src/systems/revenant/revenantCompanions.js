@@ -26,7 +26,7 @@
 import { wildHere } from '../wild/wildZone.js';   // PVPDUNGEONS (the owner: "Only 1 revenant allowed to summon in the zone")
 /** PVPDUNGEONS: how many sworn revenants may stand at the player's side in the open zone. */
 export const WILD_REVENANTS_MAX = 1;
-import { swornRevenants, revenantCompanionUpdate, revenantRecord, REVENANT_HEALTH_PER_RANK, REVENANT_DAMAGE_PER_RANK, setSwornLeftListener, revenantBetrays, revenantPerson, revenantMomentEvent, revenantEvent, revenantSay } from './revenant.js';   // FB1012d ALLY-RACE: its person
+import { swornRevenants, revenantCompanionUpdate, revenantRecord, setSwornLeftListener, revenantBetrays, revenantPerson, revenantMomentEvent, revenantEvent, revenantSay } from './revenant.js';   // FB1012d ALLY-RACE: its person
 import { registerCompanionCount, companionsWithYou, COMPANION_SLOTS } from '../companionSlots.js';
 import { addItem, addGoldPieces, isGoldPieces } from '../inventory.js';   // a released one's pack, handed back
 import { LOYALTY, DEVOTED, movedLoyalty, isDevoted, sameKin, BETRAY, mayBetray } from './revenantFeud.js';
@@ -47,6 +47,12 @@ import { equipTableOf } from '../equip.js';   // RVN-GEAR: never a piece the pla
 export const REVENANT_RETINUE_MAX = 6;
 /** How long a sworn one knocked out rests before it can be called again - the character's minutes (8 hours). */
 export const REVENANT_REST_MIN = 8 * 60;
+/** A SWORN ONE'S RANK, over the body its place stands for it: health and blows a rank (applySwornStrength). UNQUIET
+ *  (bible/06-Systems/Revenants.md section 46): its own - a hostile revenant's grew heavier ("harder", revenant.js
+ *  REVENANT_HEALTH_PER_RANK 0.4, REVENANT_DAMAGE_PER_RANK 0.15) and a sworn one's stays as it was, the companions' balance
+ *  (RVN-STARS section 44's measure) untouched. */
+export const SWORN_HEALTH_PER_RANK = 0.25;
+export const SWORN_DAMAGE_PER_RANK = 0.1;
 /** A sworn one's key in the companion layer (crewAshore.js companionKeyOf) - never a boat's. */
 export const revenantCompanionKey = (id) => `rv:${id}`;
 export const isRevenantCompanionKey = (k) => typeof k === 'string' && k.startsWith('rv:');
@@ -374,12 +380,12 @@ export function applySwornStrength(entity, r, { fresh = true } = {}) {
   const rank = Math.max(1, r.rank | 0), stars = rvnStatsOf(r);
   const starHealth = rvnStatScale(stars, 'health');
   if (fresh) {
-    entity.maxHealth = Math.max(1, Math.round((entity.maxHealth || 1) * (1 + REVENANT_HEALTH_PER_RANK * rank) * starHealth));
-    entity.healthMult = (entity.healthMult ?? 1) * (1 + REVENANT_HEALTH_PER_RANK * rank) * starHealth;   // TELL1: what was stood on the kind's own health (its poise)
+    entity.maxHealth = Math.max(1, Math.round((entity.maxHealth || 1) * (1 + SWORN_HEALTH_PER_RANK * rank) * starHealth));
+    entity.healthMult = (entity.healthMult ?? 1) * (1 + SWORN_HEALTH_PER_RANK * rank) * starHealth;   // TELL1: what was stood on the kind's own health (its poise)
     entity.health = entity.maxHealth;
-  } else if (!Number.isFinite(entity._swornWhole)) entity.healthMult = (entity.healthMult ?? 1) * (1 + REVENANT_HEALTH_PER_RANK * rank) * starHealth;   // a carried whole: the poise told what it carries
-  entity._swornWhole = (1 + REVENANT_HEALTH_PER_RANK * rank) * starHealth;
-  entity.damageScale = (1 + REVENANT_DAMAGE_PER_RANK * rank) * (isDevoted(r.companion?.loyalty) ? DEVOTED.BLOWS : 1) * rvnStatScale(stars, 'blows');   // RVN11 (22.1): a Devoted one's blows
+  } else if (!Number.isFinite(entity._swornWhole)) entity.healthMult = (entity.healthMult ?? 1) * (1 + SWORN_HEALTH_PER_RANK * rank) * starHealth;   // a carried whole: the poise told what it carries
+  entity._swornWhole = (1 + SWORN_HEALTH_PER_RANK * rank) * starHealth;
+  entity.damageScale = (1 + SWORN_DAMAGE_PER_RANK * rank) * (isDevoted(r.companion?.loyalty) ? DEVOTED.BLOWS : 1) * rvnStatScale(stars, 'blows');   // RVN11 (22.1): a Devoted one's blows
   entity.revenant = { id: r.id, name: r.name, rank, sworn: true };   // FOE-TITLE: called by its own name everywhere
   applySwornGear(entity, r);   // RVN-GEAR: its kit over the one its stand rolled
 }

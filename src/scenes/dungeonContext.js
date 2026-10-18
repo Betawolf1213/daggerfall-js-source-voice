@@ -213,7 +213,7 @@ import { HIT_KINDS } from '../net/gate/gateBrain.js';   // WB4b: a blow on the c
 import { bossReach, BOSS_SWAY_TEXT, BOSS_SWAY_TELL_MS } from '../world/gate/gateBoss.js';   // WB4b: a swing meets the court's boss at his skin; WB8a: and a sway meets his refusal
 import { playerMeleeCanHit } from '../combat/playerWeapon.js';   // PVPDUNGEON
 import { duelSpellOf } from '../combat/duelCombat.js';   // WB4b: the harmful families alone reach the court's boss, as they alone reach a duel opponent
-import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
+import { assignEnemySpells, enemySpellIndices, SPELL_CAST_SOUND } from '../systems/enemySpells.js';
 import { revenantArtFrame } from '../systems/revenant/revenantArts.js';   // RVN-ARTS: a revenant's art - the open world's law (scenes/exteriorFoes.js artFrame)
 import { ARENA_PUPPET_OWNER } from '../net/arena/arenaLaw.js';   // ARENA4: the relay's fighters' puppets - a blow on one is the referee's
 import { calculateCastCost } from '../systems/spellcost.js';
@@ -221,7 +221,7 @@ import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/save/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
 import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './quest/questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
-import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
+import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames, PEER_REVENANT_PUPPETS_MAX } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
 import { placeFoeFreely, PLACE_FOE_DEFAULTS, sceneMarkerMover } from '../systems/quest/sceneMount.js';   // RE1: FoeSpawner.PlaceFoeFreely, the one home; AUDIT III E1: its numbers, a joiner's spot held to them; TOTEM-CAGE: GetDaggerfallMarker's motion
 import { dungeonQuestSpawnSpots } from '../systems/quest/place.js';   // FIELD BUGS 29h (BOUNTY-LAIR)
 import { fieldOfView } from '../ui/viewSettings.js';   // RE1: the ring needs the view cone the LOS arm avoids
@@ -1529,7 +1529,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const cf = new D.ClassFile();
       cf.load(await D.fetchBytes(`CLASS${String(careerIndex).padStart(2, '0')}.CFG`));
       const entity = D.makeEnemyEntity(e.mobileType, basics, cf.career, e.level ?? (_superTier ? superFoeLevel(effectiveLevel(D.playerEntity)) : effectiveLevel(D.playerEntity)));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's; SD4a: a Super dungeon's class foe at its band
-      applyEliteScaling(entity, e);   // ELITE: double health, double damage
+      applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter (the ladder is a fixed mountain)
       else if (puppet && e.level == null) applyProgressionScalingTo(entity, basics, { puppet: true, ally: !!e.allied });   // AUDIT BAL: a puppet stands at this place too - its blows on me as on its owner (BAL3)
       if (_wildDungeon && !e.allied) applyWildFoe(entity, { ring: _wildRing });   // WILD1: a dungeon of the open zone - four times its health and its blows, over an elite's (every client builds the room's foes alike, so the maximum agrees)
@@ -1622,7 +1622,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const yawDeg = ((e.mobileType * 73 + Math.round(e.x + e.z)) % 8) * 45;   // deterministic facing (Ledger A rule)
       const career = await D.loadMonsterCareer(e.mobileType, D.fetchBytes);
       const entity = D.makeEnemyEntity(e.mobileType, basics, career, e.level ?? effectiveLevel(D.playerEntity));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's
-      applyEliteScaling(entity, e);   // ELITE: double health, double damage
+      applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter
       else if (puppet && e.level == null) applyProgressionScalingTo(entity, basics, { puppet: true, ally: !!e.allied });   // AUDIT BAL: a puppet stands at this place too - its blows on me as on its owner (BAL3)
       if (_wildDungeon && !e.allied) applyWildFoe(entity, { ring: _wildRing });   // WILD1: a dungeon of the open zone - four times its health and its blows, over an elite's (every client builds the room's foes alike, so the maximum agrees)
@@ -1806,7 +1806,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     f.escaped = true;
     f.yielded = null;
     if (f.ai?.detected) setEnemyAlert(playerEntity, false);
-    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.mobileArchive, unbroken });   // RVN12b: an unbroken one's escape, so remembered
+    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.mobileArchive, unbroken, slip });   // RVN12b: an unbroken one's escape, so remembered; AUDIT UNQUIET: a slip never ascends
     if (r) revenantSay(slip ? slipEvent(playerEntity, r, { archive: f.mobileArchive }) : unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.mobileArchive }) : revenantEscapeEvent(r, playerEntity?.name, { archive: f.mobileArchive }), (l) => hudText.add(l));   // REVENANT-FATE: a slip says the hesitation; RVN3: the unbroken its own
   }
   /** RVN5 (Feud-Arc.md 16.1): its signature called once a stand, and a pyre's blast on me - the open world's law
@@ -5113,7 +5113,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // miss. The host's word wins.
       if (f._pupTarget != null && f.ai.isHostile === false) f.ai.isHostile = true;
       if (p.cast != null) {
-        const sp = f._pupMine ? (spellsByIndex?.get(p.cast) ?? null) : null;
+        // GRANT0 (bible/11-Multiplayer/Spawn-Grants.md section 8): a spell its kind casts at its owner's level (a copy is
+        // built at MINE), never from a paralysed copy - the record named any spell in SPELLS.STD (the street's AUDIT WORLD6b-iii(a) B1/A4)
+        const sp = f._pupMine && !entityIsParalyzed(f.entity) && enemySpellIndices(f.entity, f.streamedLevel ?? f.entity.level).includes(p.cast) ? (spellsByIndex?.get(p.cast) ?? null) : null;
         if (sp) castEnemySpell(f, sp, true); else f._castPending = true;
         p.cast = null;
       }
@@ -5805,13 +5807,16 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // RVN13 (Feud-Arc.md 25): the host's revenant's adaptations, weakness and second phase on my copy - stood again only when they change;
     // FEUD WIRE: and its blows (its stand's and phase two's on its own - so the host's revenant strikes me as hard as it strikes the host)
     const _fw = r.ad !== undefined || r.wq !== undefined || r.p2 !== undefined || r.rb !== undefined ? `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}` : null;
-    if (_fw !== (f._feudWire ?? null)) { f._feudWire = _fw; f.entity.revenant = _fw ? feudFromWire(f.entity.revenant, r) : (f.entity.revenant?.id ? f.entity.revenant : null); puppetRevenantBlows(f.entity, r); }
+    // GRANT0 (Spawn-Grants.md section 8): no more revenants to an owner (the room's host, or an own lane's sender) than a character keeps and
+    // swears - FOE-FORGE's bound; the rest were believed, rb and p2 four times their kind's blows and more. My own revenant's copy is mine.
+    const _feudOk = _fw == null || f._feudWire != null || !!f.entity.revenant?.id || foes.filter((x) => x !== f && !x.dead && x._feudWire != null && (x._ownFrom ?? null) === (f._ownFrom ?? null)).length < PEER_REVENANT_PUPPETS_MAX;
+    if (_feudOk && _fw !== (f._feudWire ?? null)) { f._feudWire = _fw; f.entity.revenant = _fw ? feudFromWire(f.entity.revenant, r) : (f.entity.revenant?.id ? f.entity.revenant : null); puppetRevenantBlows(f.entity, r); }
     if (r.a != null) { const a = r.a | 0; if (p.a != null && a !== p.a) p.strike = (a & 1) ? 'ranged' : 'melee'; p.a = a; }
     // TELL8 (10.1): the host's wind-up, stagger and overreach - the puppet's synthetic state (ai/puppetBlows.js); at ME by
     // the streamed target (the dungeon's record carries no `b` - its `g` is the blow's, WORLD3's law), judged on my feet
     if (r.d !== 1 && (r.wk !== undefined || r.ws !== undefined || f.ai._tac?.puppet)) {   // a record that says none, on a puppet that holds none: nothing to do
       const _to = p.target === '.' ? (f._ownFrom ?? _foesFrom) : (p.target || null), _me = opts.selfId?.() ?? null;
-      applyBlowRecord(f.ai, r, { origin: r.wo ?? null, me: _to != null && _me != null && _to === _me, entity: f.entity, collider, sig: SIG });
+      applyBlowRecord(f.ai, r, { origin: r.wo ?? null, me: _to != null && _me != null && _to === _me, entity: f.entity, collider, sig: f.entity.revenant ? SIG : null });   // GRANT0: a signature is a revenant's (ai/tactics.js sigBlow) - believed on a copy that stands as one
     }
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead
@@ -7730,7 +7735,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // or past the room's shared run - a room's layout foe vanishing on one client would leave it standing on the rest)
       // may run; running it aims at nothing (no blow, no cast; the walk below still draws it); out of reach it has
       // ESCAPED - retired through the quest pool's door, no corpse, a revenant made; run down, it is CORNERED and fights on
-      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, _pf, { mayRun: !onlineRoom() || !_roomFoe, onMe: () => !foeDeps || !f.ai._armedTargeting || foeDeps.isLocalPlayerTarget(f.ai.target) }) : null;   // asked only of a foe running or under the line
+      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, _pf, { mayRun: !onlineRoom() || !_roomFoe, onMe: () => !foeDeps || !f.ai._armedTargeting || foeDeps.isLocalPlayerTarget(f.ai.target), dt: foeFrameDt(dt) }) : null;   // asked only of a foe running or under the line; AUDIT UNQUIET: its craft on the foe's own frame
       if (_flee === 'escape') { escapeDungeonFoe(f); continue; }
       if (_flee === 'start') scatterDungeonBand(f);   // AUDIT FEUD (RVN6, Feud-Arc.md 17): it runs - its band breaks (the street's law)
       if (_flee === 'start') revenantSay(revenantFleeEvent(f.entity, foeTitle(f.entity, enemyDisplayName(f.mobileType)), { gender: f.gender, archive: f.mobileArchive, playerName: playerEntity?.name }), (l) => hudText.add(l));

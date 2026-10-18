@@ -78,7 +78,8 @@ function rig(p) {
 }
 const frame = (pool) => { T += 0.016; pool.update(0.016, [0, 0, 3], [0, 1.6, 3]); };
 function revenantOf(p, rank) {
-  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
+  for (const x of N.livingRevenants().slice(0, Math.max(0, N.livingRevenants().length - N.REVENANT_MAX + 1))) N.revenantSlain(p, { revenant: { id: x.id } });   // UNQUIET (Revenants.md section 46): none rises while three hunt me - room made
+  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
   r.rank = rank;
   return r;
 }
@@ -137,7 +138,7 @@ test('RVN4 THE STAND on the REAL street pool: the killing blow brings a rank-3 o
   assert.equal(N.revenantById(r.id).history.filter((d) => d.deed === 'laststand').length, 1);
 });
 
-test('RVN4 BY RANK: 35% at rank 4, 40% at rank 5 (FEUD BALANCE); at rank 2 it kneels; my Disintegrate passes the stand and kneels it (mutants: the rank\'s share moved; a rank-2 stand; the whole kill stood up)', async () => {
+test('RVN4 BY RANK: 35% at rank 4, 40% at rank 5 (FEUD BALANCE); at rank 2 no stand (UNQUIET: its will tears it away); my Disintegrate passes the stand and kneels it (mutants: the rank\'s share moved; a rank-2 stand; the whole kill stood up)', async () => {
   const p = me();
   for (const [rank, share] of [[4, 0.35], [5, 0.4]]) {   // PIN MOVED (FEUD BALANCE, OPEN 23)
     const { pool, f } = await stood(p, rank);
@@ -146,7 +147,7 @@ test('RVN4 BY RANK: 35% at rank 4, 40% at rank 5 (FEUD BALANCE); at rank 2 it kn
   }
   const two = await stood(p, 2);
   two.pool.damageFoe(two.f, 99999, [0, 0, 3], null, { fromPlayer: true });
-  assert.ok(two.f.yielded, 'rank 2 kneels');
+  assert.ok(two.f.leaving && !two.f.yielded, 'rank 2 makes no stand - unbroken, its will tears it away (UNQUIET, Revenants.md section 46: the will from rank 2)');
   assert.equal(two.f.roaring, undefined);
   const z = await stood(p, 3);
   z.pool.damageFoe(z.f, 99999, [0, 0, 3], null, { fromPlayer: true, whole: true });

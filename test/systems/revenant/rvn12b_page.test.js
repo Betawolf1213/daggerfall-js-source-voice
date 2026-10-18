@@ -30,7 +30,7 @@ const { modSaveRecords, restoreModSaveRecords } = await import('../../../src/sys
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const me = { isPlayer: true, name: 'Ayla Stormwind', characterId: 'char-rvn12b', level: 8, items: [] };
 beforeEach(() => { _resetForTests(); setPref('lootRarity', true); N._resetRevenantForTests(); _store.clear(); });
-const made = (deedName = 'fled', opts = {}) => N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, deedName, { mobileType: M.Orc, rolls: () => 0, ...opts });
+const made = (deedName = 'fled', opts = {}) => N.revenantDeed(me, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, deedName, { mobileType: M.Orc, rolls: () => 0, ...opts });
 function draw() {
   const nodes = [];
   const el = (tag, cls = '', text = '') => {
@@ -74,7 +74,7 @@ test('RVN12b AN ESCAPE UNBROKEN: the deed remembers it (through the save), the p
   assert.equal(PG.historyWords({ deed: 'fled', at: 1 }), 'escaped');
   assert.equal(made('fled', { now: 70 }).history.at(-1).unbroken, undefined);
   for (const [file, arch] of [['src/scenes/exteriorFoes.js', 'f.archive'], ['src/scenes/dungeonContext.js', 'f.mobileArchive']]) {
-    assert.ok(read(file).includes(`revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: ${arch}, unbroken });`), file);
+    assert.ok(read(file).includes(`revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: ${arch}, unbroken, slip });`), file);   // PIN MOVED (AUDIT UNQUIET, Revenants.md section 49): and a slip, which never ascends
   }
 });
 
@@ -103,5 +103,5 @@ test('RVN12b THE CARD\'S EDGES: a last stand blood with an ember rim, a signatur
   assert.match(css, /\.rvncard\.is-signature \{ border-left-color: #a8332a; \}/);
   assert.match(css, /\.rvncard\.is-stole \{ border-left-color: #c9822e; \}/);
   assert.match(css, /\.rvncard\.is-betrayed \{ border-left-color: #0b0b0b; \}/);
-  for (const k of ['felled', 'festered', 'lair', 'weakness', 'routed', 'unbroken', 'deserted', 'warn', 'errand', 'errand_back', 'art']) assert.match(css, new RegExp(`\\.rvncard\\.is-${k}[,\\s][^{]*\\{ border-left-color`), k);   // AUDIT RVN D7: RVN-ERRAND's and RVN-ARTS' cards too
+  for (const k of ['felled', 'festered', 'lair', 'weakness', 'routed', 'unbroken', 'deserted', 'warn', 'errand', 'errand_back', 'art', 'ascended']) assert.match(css, new RegExp(`\\.rvncard\\.is-${k}[,\\s][^{]*\\{ border-left-color`), k);   // AUDIT RVN D7: RVN-ERRAND's and RVN-ARTS' cards too; UNQUIET's Dread
 });

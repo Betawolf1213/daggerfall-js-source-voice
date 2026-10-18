@@ -1067,7 +1067,7 @@ gets the value in the last column.
 | `ADAPT_MAX` | 3 (at most the rank) | 13.1 |
 | the adaptations (`revenantFeud.js ADAPT`) | section 13.2's table; an element +25 (RVN2) | 13.2 |
 | the weakness / daylight | x1.5 / x1.25 | 14.1 |
-| `WILL_RANK` / `WILL_STAGGERS` | 3 / 2 (FEUD BALANCE: 1, a perfect dodge counted) | 14.2 |
+| `WILL_RANK` / `WILL_STAGGERS` | 3 (UNQUIET: 2 - `06-Systems/Revenants.md` 46.2) / 2 (FEUD BALANCE: 1, a perfect dodge counted) | 14.2 |
 | `LAST_STAND_HEALTH` rank 3 / 4 / 5 | 0.35 / 0.45 / 0.55 (FEUD BALANCE: 0.30 / 0.35 / 0.40) | 15.2 |
 | `LAST_STAND_ROAR` | 1.2 s | 15.2 |
 | phase two | blows x1.2, +20 Speed, wind-ups x0.85, cooldowns x0.7 | 15.2 |
@@ -1099,7 +1099,7 @@ revenant at each rank; a thousand seeded fights a cell. It prints a table, and t
 | Massive means massive | no single blow of a non-weakness weapon at a giant's front breaks it |
 | Dodging pays | a perfect dodger takes a tenth of the telegraphed blows a trader does or fewer, and is no slower to bring a rank-3 revenant to its end - what dodging buys: the will (below), and the blows not taken (FEUD BALANCE, OPEN 24; it read "kills a rank-3 revenant at least 25% faster than one who trades blows") |
 | The will is learnable | a rank-3 revenant fought with its weakness kneels 90% of the time or more; without it, but dodging, 70% or more; by trading blows alone, 20% or less (measured with the reference longsword - a heavy weapon's poise breaks are its own way to the will) |
-| A rank means something | a rank-5 revenant takes about 2.5 times a rank-1's time to kill |
+| A rank means something | a rank-5 revenant takes about three times a rank-1's time to kill, 2.5 to 3.5 (UNQUIET, `06-Systems/Revenants.md` section 46 - the owner: "harder"; it was about 2.5, 2 to 3) |
 | Fair | no telegraphed blow lands on a player who leaves its shape inside its first 70% |
 
 **Measured (AUDIT TELL, AUDIT FEUD - the records at the foot; `tools/tellDuel.mjs`).** TELL's four hold. Of RVN's, the
@@ -1120,7 +1120,14 @@ weakness 100%, by dodging 93.1%, by trading 11.5%; rank 5 over rank 1, 2.67 trad
 the pools give a revenant - its band and its flight (the FEUD HARNESS record) - and measured again: the will by dodging
 88.0%, by its weakness 100%, by trading 11.4%; a perfect dodger struck by none of a trader's telegraphed blows (0 in a
 thousand fights), in 99.2% of its time; rank 5 over rank 1, 2.69 trading and 2.62 dodging - every target holds. The
-duel alone and never running, measured beside them, is AUDIT FEUD 2's to the fight (12.7% and 94.6%).
+duel alone and never running, measured beside them, is AUDIT FEUD 2's to the fight (12.7% and 94.6%). **UNQUIET**
+(`06-Systems/Revenants.md` section 46 - the owner: "harder") made each rank weigh more (+40% health, +15% blows a rank) and
+moved the will to rank II, and measured again (150 fights a cell): the will by dodging 92.2%, by its weakness 100%, by
+trading 12.6%; a perfect dodger struck by none of a trader's telegraphed blows, in 97.9% of its time; rank 5 over rank 1,
+3.24 trading and 3.22 dodging (rank 1 never running 6.5 s, rank 5 21.0 s - they were 5.9 and 16.1). The rank's band moved
+with it, from 2 to 3 to 2.5 to 3.5 (`tools/tellDuel.mjs FEUD_TARGETS.RANK_RATIO`): a rank-5 revenant now takes about three
+times a rank-1's time, which is the "harder" asked - every other target holds where it held. AUDIT UNQUIET
+(`06-Systems/Revenants.md` section 49) re-ran it on the audited law: every cell the same, to the hundredth.
 
 ## 29. Tests, mutants and probes
 

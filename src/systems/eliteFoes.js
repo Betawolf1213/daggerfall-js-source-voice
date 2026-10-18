@@ -28,6 +28,7 @@ import { isAmmunition } from './item/itemTemplates.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';   // ELITE-FLOOR: the watch is never an elite
 import { ENEMY_BASICS } from '../characters/enemy/enemyBasics.js';   // ELITE-FLOOR: a kind's own level, the same on every client
 import { renownOpens } from './sigil/sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
+import { markUnquiet } from './revenant/unquietMark.js';   // UNQUIET (Revenants.md section 46): one elite in four carries the mark - its own, never a puppet's
 
 /** Health and damage, times the foe's own (rolled, before any Elite Dungeon doubling - an elite is 5x, not 10x). */
 export const ELITE_FOE_HEALTH_MULT = 5;
@@ -116,6 +117,7 @@ export function promoteEliteFoe(entity, { own = true, eliteDungeon = false, supe
   }
   const prior = Number.isFinite(entity.damageScale) && entity.damageScale > 0 ? entity.damageScale : 1;
   entity.damageScale = prior * (superDungeon ? ELITE_FOE_SUPER_DUNGEON_DAMAGE_MULT : eliteDungeon ? ELITE_FOE_ELITE_DUNGEON_DAMAGE_MULT : ELITE_FOE_DAMAGE_MULT);   // SD4a: a Super dungeon's
+  if (own) markUnquiet(entity);   // UNQUIET: the mark that lets it rise, drawn on its own
   return true;
 }
 

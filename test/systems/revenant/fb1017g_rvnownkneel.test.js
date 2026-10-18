@@ -51,7 +51,8 @@ beforeEach(() => {
 
 /** A record as a special foe's flight makes it (revenant_fate.test.js's). */
 function revenantOf(p, rank = 1) {
-  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
+  for (const x of N.livingRevenants().slice(0, Math.max(0, N.livingRevenants().length - N.REVENANT_MAX + 1))) N.revenantSlain(p, { revenant: { id: x.id } });   // UNQUIET (Revenants.md section 46): none rises while three hunt me - room made
+  const r = N.revenantDeed(p, { mobileType: 2, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: 2, rolls: () => 0 });
   r.rank = rank;
   return r;
 }

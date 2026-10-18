@@ -49,7 +49,7 @@ beforeEach(() => {
   registerPresenter({ hudText: (t) => { heard.push(t); return true; } });
 });
 function sworn({ mobileType = M.Orc, rank = 1, state = 'with', loyalty = 60, xp = 0 } = {}) {
-  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
   r.rank = rank;
   const s = N.revenantSpared(me, { revenant: { id: r.id } }, { state });
   N.revenantCompanionUpdate(me, s.id, (c) => { c.loyalty = loyalty; c.xp = xp; });
