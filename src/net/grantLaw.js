@@ -1,11 +1,20 @@
 // @ts-check
 // GRANT1 (2026-10-18, Mac: "Lets build the plan"; bible/11-Multiplayer/Spawn-Grants.md sections 4 and 7): THE SPAWN
 // GRANT'S LAW, PURE - what the relay signs when a foe that rides to another player is made, and what every reader checks.
-// Nothing calls it yet: GRANT2 wires the relay's asks, GRANT3 the readers'.
+// GRANT2 (section 12) wires the asks: the client's (net/online.js sendGrant, scenes/grantHost.js) and the relay's
+// (server/src/index.js _grantFrame), measured (net/grantMeasure.js). The reader's check is GRANT3's.
+//
+//   THE FRAME (GRANT2):  client -> cell  {t:'grant', k:'mint', id, kind, n}   validGrantAsk; on grantGate's bucket
+//                        cell -> client  {t:'grant', k:'ok', id, gr}          the grant, signed (validGrantOut)
+//                                        {t:'grant', k:'no', id, r}           a refusal: the gate's, while enforcing; `cell`
+//                                                                             to a pose not in the cell
+//                                        {t:'grant', k:'off', id}             the law is off: ask no more
+//                        welcome `gm`    the law's mode in a cell (GRANT_MODES), from world218 (GRANT_RELAY_MIN)
 //
 //   A GRANT (section 4.2) - the room's own number `g`, the owner's socket id `o`, the room it was minted for `q`, the
-//     owner's account `a` ('' for a guest), its kind `k`, the map pixel the relay read off the owner's pose `p`, the world
-//     minute `m`, the owner's signed level `l` and Renown `r` (0 for a guest: no token, no word), how many foes it stands
+//     owner's account `a` (its token's `s` - a guest's token has its own; '' for a socket with none), its kind `k`, the map
+//     pixel the relay read off the owner's pose `p`, the world minute `m`, the owner's signed level `l` and Renown `r` (0
+//     where its token says none - a guest's Renown), how many foes it stands
 //     `n`, the seed `s`, which members are elite `e` (a bitmask) and each member's champion trait `c` (-1 none), when it
 //     expires `x`, and the relay's signature `sg`.
 //   THE SIGNATURE - Ed25519 with the relay's receipt key (GATE_SIGNING_KEY), verified with its public half (`rk`, the
@@ -212,3 +221,65 @@ export function grantRefusal(g, { from, cell, nowMs, i }) {
  *  trait only `c`'s own - and either left off is always believed (a mark worn below its grant costs only the liar). Pure.
  *  @param {SpawnGrant} g @param {number} i @param {{ z?: any, cp?: any }} rec */
 export const grantMarksAllow = (g, i, { z, cp }) => (!z || ((g.e >>> i) & 1) === 1) && (cp == null || cp === g.c[i]);
+
+// ── GRANT2: THE ASK, THE ANSWER, THE MODE (Spawn-Grants section 12) ─────────────────────────────────────────────────
+/** The first relay that takes the `grant` frame (RELAY_VERSION's number). An older relay refuses a frame it does not
+ *  know by closing the socket, so a client asks only of a relay at this or later (relayCfgSupported's way). */
+export const GRANT_RELAY_MIN = 218;
+/** Does the relay at version `v` take a grant's ask? */
+export const relaySupportsGrant = (v) => Number(/^world(\d+)$/.exec(String(v ?? ''))?.[1]) >= GRANT_RELAY_MIN;
+
+/** The law's modes (relayCfg `grantMode`, the welcome's `gm`): `off` - no ask is made or answered; `measure` - every ask
+ *  is granted and what the gate would refuse is counted (GRANT2 to GRANT5); `enforce` - the gate refuses (GRANT6). */
+export const GRANT_MODES = Object.freeze(['off', 'measure', 'enforce']);
+/** The mode a setting names: `off` and `enforce` exactly, anything else `measure` - the law measures from its deploy
+ *  (Mac, 2026-10-18: "Measure on deploy"), and a setting nobody wrote is that. Pure. @param {unknown} v */
+export const grantModeOf = (v) => (v === 'off' || v === 'enforce' ? v : 'measure');
+
+/** The most a client's ask number may be - it names the answer that comes back, nothing more. */
+export const GRANT_ASK_ID_MAX = 0x7fffffff;
+/**
+ * An ask as the relay reads it: `{ k: 'mint', id, kind, n }` - `kind` one of GRANT_KINDS, `n` within its most. Null for
+ * anything else. Pure.
+ * @param {any} m @returns {{ k: 'mint', id: number, kind: string, n: number }|null}
+ */
+export function validGrantAsk(m) {
+  if (!m || typeof m !== 'object' || m.k !== 'mint' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
+  if (typeof m.kind !== 'string' || !Object.hasOwn(GRANT_KINDS, m.kind)) return null;
+  if (!intIn(m.n, 1, GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (m.kind)].max)) return null;
+  return { k: 'mint', id: m.id, kind: m.kind, n: m.n };
+}
+
+/**
+ * The relay's answer as a client reads it: `{ k: 'ok', id, gr }` (the grant, read whole), `{ k: 'no', id, r }` (the
+ * gate's refusal), `{ k: 'off', id }` (the law is off: ask no more this session). Null for anything else. Pure.
+ * @param {any} m
+ * @returns {{ k: 'ok', id: number, gr: SpawnGrant }|{ k: 'no', id: number, r: string }|{ k: 'off', id: number }|null}
+ */
+export function validGrantOut(m) {
+  if (!m || typeof m !== 'object' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
+  if (m.k === 'off') return { k: 'off', id: m.id };
+  if (m.k === 'no') return typeof m.r === 'string' && GRANT_REFUSALS.includes(m.r) ? { k: 'no', id: m.id, r: m.r } : null;
+  if (m.k !== 'ok') return null;
+  const gr = validGrant(m.gr);
+  return gr ? { k: 'ok', id: m.id, gr } : null;
+}
+
+/** Is an account's bucket for kind `k` full again at `nowMs` - one the relay may forget, since a first ask's bucket is
+ *  full? Pure. @param {string} k @param {{ tokens: number, at: number }|undefined} b @param {number} nowMs */
+export function grantBucketIdle(k, b, nowMs) {
+  const law = Object.hasOwn(GRANT_KINDS, k) ? GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (k)] : null;
+  if (!law || !b) return true;
+  return b.tokens + ((nowMs - b.at) / 1000) * law.rate >= law.cap;
+}
+
+/** A socket's asks a second at the relay, and its burst - a chunk entered rolls up to three camps at once
+ *  (systems/campEncounters.js CAMP_GROUPS_ON_CHUNK_LOAD), two chunks at a corner. The law's own buckets are the
+ *  account's (grantMintGate); this one guards the room from a flood of frames. */
+export const GRANT_HZ_MAX = 2;
+export const GRANT_BURST_MAX = 8;
+/** The per-socket gate the relay spends an ask on. */
+export const grantGate = (bucket, nowMs) => tokenGate(bucket, nowMs, GRANT_HZ_MAX, GRANT_BURST_MAX);
+/** How often a cell asks the hub for the law's mode again, at an ask, ms: a staff change is in force everywhere inside
+ *  it (relayCfg's RELAY_CFG_TTL_MS is a boss room's minute; every cell a player roams asks this one). */
+export const GRANT_CFG_TTL_MS = 5 * 60 * 1000;

@@ -281,6 +281,7 @@ import { createLandforms, landformLiftField, landformSites, landformClimates, cl
 import { ecotoneOwner } from '../world/ecotone.js'; import { MAP_W, MAP_H } from '../world/road/roadNetwork.js';   // ECOTONE1: a border point's owner, the pixel's lattice origin, the map's edges
 import { forestAt } from '../world/terrain/terrainNature.js';   // FOREST1 (AUDIT F1): a wood's flats keep out of the rock pieces; GRASS-LIT2: the shot hook's woods
 import { huntKind, createBodyStamps, bodiesHere, trackerMarks } from './huntHost.js';   // PROF7: Hunting's bodies - a kind in it, the kills that stamp them, a Tracker's marks; INDOOR-SKIN: the pool by the mode
+import { createGrantHost } from './grantHost.js';   // GRANT2: the spawn grants' asks (bible/11-Multiplayer/Spawn-Grants.md section 12)
 import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and schools - a kind in it
 import { rollNoticeDoors } from './rollNoticeHost.js';   // SEAT-WORDS / STANDING-WORDS: what the Roll's tracker says
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
@@ -11248,7 +11249,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         const _road = getPref('roadEncounters') !== false && onTheRoad();
         if (_road && trivialOnRoad(hit.mobileType, effectiveLevel(playerEntity))) continue;
         const _company = _road ? roadCompany(hit.mobileType, effectiveLevel(playerEntity), Math.random()) : 0;
-        for (let k = 0, n = wandererCount(hit.mobileType, partyExtraFoes(partySize()), _company); k < n; k++) _standEncounterFoe(hit, playerFeet);   // AUDIT PSCALE1 COUNT-2: a Lich, a Dragonling, a Giant is a singular 'uh oh' (mobileFactions.js SOLITARY_TYPES) - never a squad
+        const _n = wandererCount(hit.mobileType, partyExtraFoes(partySize()), _company);   // AUDIT PSCALE1 COUNT-2: a Lich, a Dragonling, a Giant is a singular 'uh oh' (mobileFactions.js SOLITARY_TYPES) - never a squad
+        grants.ask('enc', _n);   // GRANT2 (bible/11-Multiplayer/Spawn-Grants.md section 12): my cell measures what I stand - never awaited
+        for (let k = 0; k < _n; k++) _standEncounterFoe(hit, playerFeet);
         break;
       }
       // CAMP1 - GROUP ENCOUNTERS (camps and packs, systems/campEncounters.js):
@@ -21197,6 +21200,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     },
     sweep: (ids, now) => { csaPeers.sweepOwners(ids, now, FOES_STALE_MS); csaAboard.sweepRiders(ids, now, FOES_STALE_MS); },
   });
+  const grants = createGrantHost({ online: () => online });   // GRANT2 (bible/11-Multiplayer/Spawn-Grants.md section 12): the encounters' and camps' grant asks (scenes/grantHost.js)
   const onlineStart = () => {
     online = new OnlineSession({
       url: params.get('server') || getPref('onlineServer') || DEFAULT_SERVER,
@@ -21397,6 +21401,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onSerpent = (w) => { if (w?.k === 'bd') serpentHost?.wrecked?.(w); else serpentLink?.word(w); };   // SERPENT1: the sea serpent's cell's word (on my cell's socket or a halo's) - its fight, its swim, its blows, my receipt
     online.onRaid = (f, room) => raidRelayWord(f, room);   // RAID3: a town cell's word about its raid - the ledger, the cleanse, my receipt
     online.onRite = (w) => riteHost?.onBroken(w);   // WB12d: the hub's broken rite
+    online.onGrant = (g) => grants.answer(g);   // GRANT2: my cell's answer to a grant ask
     online.onWatch = (r) => { seatBook?.keepWatch(r); motherlodeBook?.watch(r); };   // SEAT1b: the Watch's tick, kept where it stands in a seat's pixel; PROF2b: and where it stands on a Motherlode's
     // SEAT2a part four: A SIEGE'S BATTLE - its words to the session; a step refused or a rise at the camp moves me there
     // (the ground's own height to settle - the motor stands me on it); my receipt carried to the service
@@ -33888,6 +33893,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
             if (size > room) continue;
             room -= size;
             _standCampEncounter(h, player.feetAt());
+            grants.ask('camp', size);   // GRANT2 (Spawn-Grants.md section 12): the group as it stands, measured by my cell
           }
         }
       }
