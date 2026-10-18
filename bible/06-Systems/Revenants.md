@@ -1392,6 +1392,10 @@ by ambition), `flightfirst.test.js` (the roll and the line: 0.75, WILL_RANK 2), 
 `rvn7b_rumor.test.js` (the ambition's sentence), `rvn9_fester.test.js` and `auditfeud.test.js` (no revenant of mastery),
 `rvn10_deeds.test.js` (the third felling ranks it), `rvn11c_betray.test.js` (a brutal betrayer due by vengeance's days),
 `rvn2_adapt.test.js` (its wounds on its edge), `feudwire.test.js`, `feudharness.test.js` (only a 100/100 runner corners a
-bolt), `renowngate.test.js` (the return's share by ambition; the page's words), `loot7_champions.test.js` (`own`).
+bolt), `renowngate.test.js` (the return's share by ambition; the page's words), `loot7_champions.test.js` (`own`),
+`rvn11b_desert.test.js` (a deserter due by its ambition's days), `tell1_poise.test.js` (a rank's 40%; the sworn one's own
+weight), `fb1012d_allyrace.test.js` (the stamp carries the Dread after its person), `foeforge.test.js` (FOE-FORGE's
+`PEER_REVENANT_PUPPETS_MAX` is three kept and six sworn - 9, it was 11), and the arena ladder's, `itemwalk`'s and
+audit544's fixtures, marked. 23 older mutant records named lines this slice moved and were re-aimed by content.
 
 Pinned: `test/systems/revenant/unquiet.test.js` (25); `tools/mutants/unquiet.json` (137).
