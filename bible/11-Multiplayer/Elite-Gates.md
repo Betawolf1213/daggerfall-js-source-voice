@@ -9419,8 +9419,9 @@ legion's horns were rendered; its DAGGER.SND voices and events are pinned in nod
 **Pins.** `test/systems/eliteGates/egroar_score.test.js` (the voices' law and graph, the Spire's songs voiced, the
 writing) and `test/scenes/eliteGates/egroar_air.test.js` (the beds, the events, the moment, the seam, the wiring), with
 `tools/mutants/egroar.json` - 33 dead and one equivalent recorded with its reason (the guard against a note before the
-first bar, which no song reaches). PINS MOVED: `test/world/gate/wb6b_deadlands_life.test.js`'s drip pin takes the Spire
-beside the court and the Hour, and `tools/mutants/wb6b.json`'s record its new line.
+first bar, which no song reaches). PINS MOVED: the drip pins of `test/world/gate/wb6b_deadlands_life.test.js`,
+`test/scenes/arena2_hosts.test.js` and `test/world/superDungeon/sd5a_realm.test.js` take the Spire beside the court and the
+Hour (the last two found by CI's whole gate), and `tools/mutants/wb6b.json`'s record its new line.
 
 **The four hosts.** `scenes/world.js`, `scenes/worldModes.js` and `scenes/exterior.js` untouched; `scenes/dungeonContext.js`
 one condition on its drip line (`&& !_egHall`), no line added (HOST-SPLIT). The air is wired in the breach client, a module.
