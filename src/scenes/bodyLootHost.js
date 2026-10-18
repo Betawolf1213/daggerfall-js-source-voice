@@ -15,7 +15,11 @@
 //     body's list reads the room's one list. Its own takes are read by identity against the last compose (listMovesSince)
 //     and judged where they stand; a peer's claim is judged on RECEIPT inside applyHit (DESIGN-REVIEW R-1) - first come,
 //     the owner's own take first - and answered at once with the verdict and the digest after the judgment. A verdict is
-//     FINAL (D-1): it is kept in a ledger that outlives the body, and a re-ask is answered from it (R-2).
+//     FINAL (D-1): it is kept in a ledger that outlives the body, and a re-ask is answered from it (R-2) - wherever its
+//     claimer stands (S1-1: the owner's pose list is not the roster; a NEW claim still needs the pose list and the reach).
+//     A BODY IS (owner, seq, generation) (S1-2): the peer id outlives a page reload while a new pool numbers its foes from
+//     one again, so each pool seeds the generation counter from a random base, a claim frame names the generation of the body
+//     it was made on, and the owner judges a NEW claim only against the body it names.
 //   - THE READER'S VIEW, per body of a peer: the digest the owner's stream says (`bw`), the records it has fetched by a
 //     peek, and the list composed from both less the claims in flight (AUTO-HOLD: and less the pieces it carries). UNBORN
 //     (a present place has no record yet) it is no target and names nothing; LEGACY (an older owner: no digest) it names
@@ -37,7 +41,7 @@ import { roomState, judgeRoomClaim, composeRoomView, listMovesSince, liftPiece, 
 import { createClaimLedger, LEGACY_ASK_KEEP_MS } from '../systems/loot/claimLedger.js';
 import { tokenGate, mintSharedStamp, CELL_FRAME_RECORDS_MAX } from '../net/wire.js';
 import {
-  BODY_PEEK_REACH, PEEK_RETRY_MS, BODY_ASKS_PER_S, TAKES_PER_S, TAKE_WINDOW_MS, GRANT_BACK_MS, GRANT_FRAME_MAX, BAD, HIDDEN,
+  BODY_PEEK_REACH, PEEK_RETRY_MS, BODY_ASKS_PER_S, TAKES_PER_S, TAKE_WINDOW_MS, GRANT_BACK_MS, GRANT_FRAME_MAX, GENERATION_SPACE, BAD, HIDDEN,
   digestWord, digestEntry, digestKey, validDigest, validDigestEntry, mergeDigest, placeGone, shareableRecord, readRecord, bodyStateOf, placesLacking,
   validPeek, validClaims, validVerdicts, validRecords, pageOfRecords, peekFrame, claimsFrame, answerFrame, verdictFrame, makeVerdictLedger,
 } from '../net/bodyLoot.js';
@@ -48,6 +52,14 @@ const READERS_MAX = 512;
 const VIEW_REFRESH_MS = 500;
 /** A verdict frame still "in flight" this long is taken to be gone (a net that tells no fate): the re-ask is answered. */
 const FLIGHT_STALE_MS = 3000;
+/** S1-2: a fresh base for a pool's generation counter, below GENERATION_SPACE - the CSPRNG's, as the codebase's other minted ids
+ *  are (worldModes.js's card table, egClient.js), so it stirs none of the dice a seeded Math.random hands a test or a replay;
+ *  Math.random's where the runtime has none. */
+function generationBase() {
+  let n;
+  try { n = globalThis.crypto.getRandomValues(new Uint32Array(1))[0] % GENERATION_SPACE; } catch { n = Math.floor(Math.random() * GENERATION_SPACE); }
+  return Number.isSafeInteger(n) && n >= 0 ? n : 0;
+}
 
 /**
  * @param {object} h  the pool's handles
@@ -84,7 +96,7 @@ export function createBodyLoot(h) {
   const readers = new Map();
   /** THE ONE OPEN SLOT: the state a window stands over now (the owner's or a reader's), null when none does. */
   let open = null;
-  let generation = 0, ownN = 0, legacyN = 0;
+  let generation = generationBase(), ownN = 0, legacyN = 0;   // S1-2: a body's generation is its pool's own - never one a reloaded owner's earlier page minted
 
   const online = () => !!net()?.toWire;
   const bodyPos = (f) => f.corpseMarker?.pos ?? f.ai?.feet ?? null;
@@ -204,19 +216,30 @@ export function createBodyLoot(h) {
   }
 
   /** CLAIMS: judged on RECEIPT, in applyHit itself (DESIGN-REVIEW R-1) - never on a frame tick, so a seat whose tab sleeps still
-   *  answers - first come, my own takes first; a claim already judged is answered again from the ledger (R-2), in reach or out. */
+   *  answers - first come, my own takes first. TWO KINDS OF CLAIM, TWO GATES (the slice 1 review):
+   *    - a claim I already JUDGED (its id is in my verdict ledger, and it is its sender's) is a re-ask: the judgment is made, and
+   *      it is answered again from the ledger (R-2) under my answer budget alone - the claimer in reach or out, the body there or
+   *      gone, and in my pose list or not: that list (`peers()`) is not the roster, a claimer who crossed into the next cell is
+   *      still in the roster, and `sendHit` tests the roster before the frame leaves (S1-1);
+   *    - a NEW claim is judged only for a body I hold, from a peer in my pose list within reach (A1/C7), and only for the body
+   *      it NAMES: the frame carries the generation of the body the claim was made on, and a claim of another body that shares
+   *      this one's (owner, seq) - my earlier page's, a pool of mine that was reloaded - is silence (S1-2). */
   function ownerClaims(from, data) {
     const claims = validClaims(data.bq, from);
     if (!claims || !Number.isInteger(data.i)) return false;
     const f = h.ownBody(data.i);
     const body = f && f.corpse && f.entity ? f : null;
     const now = _now();
-    if (!body && !claims.some((c) => verdicts.get(c.id, now)?.to === from)) return false;   // a claim for a body I never had: not my word
-    if (!peerCandidate(from) || !askBudget(from)) return true;
+    const rejudged = claims.some((c) => verdicts.get(c.id, now)?.to === from);
+    if (!body && !rejudged) return false;   // a claim for a body I never had: not my word
+    const asker = peerCandidate(from);
+    if (!asker && !rejudged) return true;   // A1/C7: a NEW claim from a peer I do not see is not heard, and costs me nothing
+    if (!askBudget(from)) return true;
     const st = body ? ownState(body) : null;
     if (st) ownTick(st);   // my own doors first: a take my window already made came first in wall time and wins (AC7)
-    const at = body ? bodyPos(body) : null, asker = peerCandidate(from);
+    const at = body ? bodyPos(body) : null;
     const reach = !!(st && at && asker && dist(asker.feet, at) <= h.takeRange);
+    const named = !!st && data.g === st.bg;   // S1-2: the body this claim was made on is the body I hold
 
     const out = [];
     for (const c of claims) {
@@ -225,7 +248,7 @@ export function createBodyLoot(h) {
         if (known.to === from && !(known.inFlight > 0 && now - known.flightAt < FLIGHT_STALE_MS)) out.push([c.id, known.g]);
         continue;
       }
-      if (!st || !reach) continue;   // a brand-new claim is judged only for a body I hold, from a peer in reach (A1/C7)
+      if (!st || !reach || !named) continue;   // a brand-new claim is judged only for the body I hold and it names, from a peer in reach (A1/C7, S1-2)
       const g = judgeRoomClaim(st.rs, st.base.length, st.full, { id: c.id, p: c.p, n: c.n });
       verdicts.set(c.id, { to: from, i: body.seq, bg: st.bg, p: c.p, g }, now);
       out.push([c.id, g]);
@@ -384,7 +407,7 @@ export function createBodyLoot(h) {
     for (const obj of puts) rb.laid.add(obj);
     if (takes.length) {
       const now = _now();
-      const claims = takes.map(({ obj, info, k }) => ledger.take(containerOf(rb), { p: info.p }, obj, k, { by: rb.owner, owner: rb.owner, seq: rb.seq, k: rb.k }, now));
+      const claims = takes.map(({ obj, info, k }) => ledger.take(containerOf(rb), { p: info.p }, obj, k, { by: rb.owner, owner: rb.owner, seq: rb.seq, k: rb.k, g: rb.digest.g }, now));   // g: the body it is made ON - a re-ask names it still, whatever the view has become
       rb.dirty = true;
       sendClaims(claims);
     }
@@ -410,13 +433,15 @@ export function createBodyLoot(h) {
     if (rb.dirty || _now() - rb.composedAt > VIEW_REFRESH_MS) composeView(rb);
   }
 
-  /** The claims, one frame per body per call (more than ROOM_CLAIMS_MAX in more), to the owner, in the owner's cell. */
+  /** The claims, one frame per body per call (more than ROOM_CLAIMS_MAX in more), to the owner, in the owner's cell. A body is the
+   *  owner, its number AND its generation (S1-2): a re-ask of a claim made on an earlier body of the same number goes in a frame of
+   *  its own, naming that body's generation, never the view's now. */
   function sendClaims(claims) {
     const by = new Map();
-    for (const c of claims) { const key = `${c.meta.owner}|${c.meta.seq}|${c.meta.k}`; (by.get(key) ?? by.set(key, []).get(key)).push(c); }
+    for (const c of claims) { const key = `${c.meta.owner}|${c.meta.seq}|${c.meta.k}|${c.meta.g}`; (by.get(key) ?? by.set(key, []).get(key)).push(c); }
     for (const list of by.values()) {
-      const { owner, seq, k } = list[0].meta;
-      for (let a = 0; a < list.length; a += ROOM_CLAIMS_MAX) hit(claimsFrame(owner, k ?? h.ownerKey(owner), seq, list.slice(a, a + ROOM_CLAIMS_MAX)));
+      const { owner, seq, k, g } = list[0].meta;
+      for (let a = 0; a < list.length; a += ROOM_CLAIMS_MAX) hit(claimsFrame(owner, k ?? h.ownerKey(owner), seq, g, list.slice(a, a + ROOM_CLAIMS_MAX)));
     }
   }
 

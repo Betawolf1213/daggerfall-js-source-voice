@@ -10,7 +10,9 @@
 //     ride a peer's word, in pile order, append-only - how many there are (`l`), which are gone (`x`, a hex bitset, bit p
 //     the place p) and which stack is drawn down (`c`, [place, count] - a count that only falls). It only grows: two words
 //     merge the same in any order (max `l`, OR of `x`, min of `c`). A generation (`g`) tells one body from another under
-//     the same number.
+//     the same number. Each pool seeds its counter from a random base (GENERATION_SPACE), so it tells apart too a body of
+//     the same owner and number minted by an earlier page load of his: the peer id outlives a reload, while the pool's seq
+//     and counters start again (S1-2).
 //   - THE PEEK (`bp`/`br`): a piece's record is its immutable description, said once, fetched by place - directed, budgeted,
 //     in pages under GRANT_FRAME_MAX - by a reader that stands near the body and lacks them. Until it has them the body is
 //     UNBORN to it: no target, no plaque, no press (the dungeon's UNBORN law). An older owner's body (no digest) is
@@ -19,8 +21,11 @@
 //     is a claim by place, in one frame per body per settle; the OWNER judges it first come (systems/roomLoot.js
 //     judgeRoomClaim) the moment it arrives, never on a frame tick, and says its verdict with the digest AFTER the
 //     judgment. The verdict is final (DESIGN-REVIEW D-1): there is no void for a verdict that never left - a claimer that is
-//     still present recovers a lost one by its re-ask, answered from the owner's ledger (R-2), and one that has left kept its
-//     piece (systems/loot/claimLedger.js).
+//     still present recovers a lost one by its re-ask, answered from the owner's ledger (R-2) wherever the claimer stands
+//     (S1-1: the owner's pose list is not the roster), and one that has left kept its piece (systems/loot/claimLedger.js).
+//     The claim frame names the generation of the body it was made on, a top-level `g` beside the routing (S1-2): the owner
+//     judges a NEW claim only against that body - a claim of an earlier page's body, whose (owner, seq) a new pool has
+//     reused, is silence - and answers a claim it already judged from its ledger whatever `g` it names.
 // This file is PURE: the digest (encode, validate, merge), the frames' projection, a record's reading, the owner's verdict
 // ledger and the constants. The block that runs it is scenes/bodyLootHost.js. It reaches NOTHING the relay does and is never
 // imported by anything in the relay's graph (test/importGraph.mjs; net/wire.js is not edited - a digest is a top-level frame
@@ -52,6 +57,10 @@ export const TAKE_WINDOW_MS = 3000;
 export const GRANT_BACK_MS = 2 * TAKE_WINDOW_MS;
 /** The hex characters of a digest's bitset: ROOM_BASE_MAX places, four to a character. */
 export const DIGEST_HEX_MAX = Math.ceil(ROOM_BASE_MAX / 4);
+/** S1-2: a pool seeds its bodies' generation counter from a random base below this (30 bits) - a body is (owner, seq, g), and a
+ *  reloaded owner's new pool numbers its foes from one again under the same peer id, so a counter started at one named two
+ *  bodies. The digest's `g` stays a whole number (validDigest): the base plus the bodies of a page is far inside 2^53. */
+export const GENERATION_SPACE = 2 ** 30;
 
 /** The keys of the frames this file speaks, none of them an old applyHit arm's (an older build falls to its blow arm and refuses: no `dmg`). */
 export const BODY_KEYS = Object.freeze(['bw', 'bp', 'br', 'bq', 'bv']);
@@ -234,7 +243,8 @@ export function pageOfRecords(/** @type {number[]} */ places, /** @type {readonl
   return out;
 }
 export const peekFrame = (/** @type {string} */ to, /** @type {string | null} */ k, /** @type {number} */ i, /** @type {number[]} */ places) => ({ to, k, i, bp: places });
-export const claimsFrame = (/** @type {string} */ to, /** @type {string | null} */ k, /** @type {number} */ i, /** @type {{ id: string, p: number, n: number }[]} */ claims) => ({ to, k, i, bq: claims.map(({ id, p, n }) => ({ id, p, n })) });
+/** A claim frame: `g` the generation of the body the claims were made on (the digest's own - S1-2), the entries `{ id, p, n }` as ever. */
+export const claimsFrame = (/** @type {string} */ to, /** @type {string | null} */ k, /** @type {number} */ i, /** @type {number} */ g, /** @type {{ id: string, p: number, n: number }[]} */ claims) => ({ to, k, i, g, bq: claims.map(({ id, p, n }) => ({ id, p, n })) });
 export const answerFrame = (/** @type {string} */ to, /** @type {string | null} */ k, /** @type {number} */ i, /** @type {DigestWord} */ digest, /** @type {[number, any][]} */ records) => ({ to, k, i, bw: digest, br: records });
 export const verdictFrame = (/** @type {string} */ to, /** @type {string | null} */ k, /** @type {number} */ i, /** @type {DigestWord | null} */ digest, /** @type {[string, number][]} */ verdicts) => ({ to, k, i, ...(digest ? { bw: digest } : {}), bv: verdicts });
 
@@ -243,7 +253,8 @@ export const verdictFrame = (/** @type {string} */ to, /** @type {string | null}
 /**
  * THE OWNER'S VERDICT LEDGER (DESIGN 3.7, R-2): a claim id -> what the owner judged, kept VERDICT_KEEP_MS to VERDICTS_MAX
  * - longer than a claim is kept, so a re-ask is always answered, and OUTLIVING the body (a re-ask after the body is gone
- * is still answered; the judgment was made). `inFlight` counts the verdict frames for the claim still waiting in the owner's
+ * is still answered; the judgment was made) and the claimer's place in the owner's pose list (S1-1: the roster is the one
+ * check left, at the session's `sendHit`). `inFlight` counts the verdict frames for the claim still waiting in the owner's
  * hit queue: at most one at a time.
  * @param {{ keepMs?: number, max?: number }} [o]
  */
