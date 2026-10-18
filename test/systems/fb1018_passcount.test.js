@@ -3,7 +3,8 @@
 // "198 fps ... draws 67 binds 77"). The counter counted the room's own pass alone: a building's view out through its
 // windows (renderer.outsideViewFrame, drawn BEFORE the room's beginFrame, whose reset lost its draws) and the shadow
 // maps' replays (their own stats) were nowhere on it, and nothing said what held the frame rate. The counter EXECUTES
-// against a stub document; the renderer is text-pinned (its constructor needs a real GL), as PERF3's pins are.
+// against a stub document; the renderer EXECUTES over a stub GL (test/render/fb1012g_paneclip.test.js's), its frames
+// counted against the GL draws they really issued (AUDIT FB1018 L2-2: this pin was text alone).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -13,6 +14,10 @@ import { mountFpsCounter, paceLine, drawsLine } from '../../src/ui/fpsCounter.js
 import { _resetFrameClock } from '../../src/systems/frameClock.js';
 import { _resetFrameCap } from '../../src/systems/frameCap.js';
 import { setValue, _resetForTests } from '../../src/systems/settings/settings.js';
+import { Renderer, WORLD_FRAME } from '../../src/render/renderer.js';
+import { EL_LANE } from '../../src/render/enhancedLighting.js';
+import { createViewOut, viewOutFrame } from '../../src/render/realWindows.js';
+import { perspective, lookAt, mirrorProjectionX, identity, trs } from '../../src/world/mat4.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
@@ -50,6 +55,26 @@ test('PASS-COUNT THE COUNTER SHOWS THE PASSES THE DRAW COUNT MISSED: the view ou
     assert.match(c.el.textContent, /\ndraws 300 {2}binds 120$/m, `a new second, its own means: ${JSON.stringify(c.el.textContent)}`);
     c.dispose();
     assert.equal(drawsLine(67, 77, 0.4, 0), '\ndraws 67  binds 77', 'under half a draw a frame is none');
+    assert.equal(drawsLine(67, 77, 0, 0.4), '\ndraws 67  binds 77', 'the shadow maps\' too (AUDIT FB1018 L4-3)');
+    // AUDIT FB1018 L4-3: the probe (window.__fpsStats, tools/perfProbe.mjs) carries both, and a stats object without them
+    // (a host before PASS-COUNT, a stub) reads 0 - never NaN
+    const prevW = globalThis.window;
+    globalThis.window = {};
+    try {
+      const probe = (frame) => {
+        _resetFrameClock();
+        const c = mountFpsCounter({ enabled: () => true, raf: null, stats: frame });
+        let t = 0;
+        for (let k = 0; k <= 61; k++) { c.tick(t); t += 1000 / 60; }
+        const out = globalThis.window.__fpsStats();
+        c.dispose();
+        return out;
+      };
+      const p = probe(() => ({ draws: 67, texBinds: 77, viewDraws: 1210, shadowDraws: 340 }));
+      assert.deepEqual([p.viewDraws, p.shadowDraws], [1210, 340]);
+      const q = probe(() => ({ draws: 1, texBinds: 1 }));
+      assert.deepEqual([q.viewDraws, q.shadowDraws], [0, 0]);
+    } finally { globalThis.window = prevW; }
   } finally { globalThis.document = prev; _resetFrameClock(); }
 });
 
@@ -75,14 +100,91 @@ test('PASS-COUNT THE COUNTER SAYS WHAT HOLDS THE FRAME RATE: "vsync off" where t
   } finally { globalThis.document = prev.d; globalThis.window = prev.w; _resetForTests(); _resetFrameCap(); _resetFrameClock(); }
 });
 
-test('PASS-COUNT THE RENDERER COUNTS THEM: the room\'s beginFrame takes the view out\'s draws (its own nested begin inside the view out takes none, and leaves them for the room) and the lane\'s shadow render writes the maps\' replays - both zeroed for a frame that drew neither (mutants: the view out\'s count reset under the nested begin; the shadow count never written)', () => {
-  const r = read('src/render/renderer.js');
-  assert.match(r, /s\.bbCulled = 0; s\.shadowDraws = 0;   \/\/ PERF-CROWD2; PASS-COUNT/, 'the shadow count zeroed before the lane draws the maps');
-  assert.match(r, /s\.viewDraws = this\._rwOutside \? 0 : this\._rwViewDraws;\n\s+if \(!this\._rwOutside\) this\._rwViewDraws = 0;/);
-  assert.match(r, /this\.stats\.shadowDraws = \(sp\.stats\.sunDraws \| 0\) \+ \(sp\.stats\.pointDraws \| 0\);/);
-  assert.match(r, /this\._rwViewDraws = this\.stats\.draws;\n\s+drew = true;/, 'the view out keeps its own count as it closes');
+/** The real Renderer over a stub GL that logs every call (fb1012g_paneclip's), and the count of draws it issued. */
+function stubRenderer() {
+  let id = 0;
+  const log = [];
+  const stub = new Proxy({}, {
+    get: (o, k) => {
+      if (k === 'getProgramParameter' || k === 'getShaderParameter') return () => true;
+      if (k === 'getUniformLocation') return (p, name) => ({ name, p });
+      if (k === 'getAttribLocation') return () => 0;
+      if (k === 'isVertexArray') return (v) => !!v;
+      if (k === 'checkFramebufferStatus') return () => 0x8CD5;
+      if (k === 'getExtension') return () => ({});
+      if (typeof k === 'string' && k.startsWith('create')) return () => ({ id: ++id, kind: k });
+      if (k === 'getParameter') return () => 4096;
+      if (k === 'drawingBufferWidth') return 640;
+      if (k === 'drawingBufferHeight') return 400;
+      if (typeof k === 'string' && k.toUpperCase() === k) return k;
+      return (...args) => { log.push(k); };
+    },
+  });
+  const r = new Renderer({ getContext: () => stub, clientWidth: 640, clientHeight: 400, width: 640, height: 400 });
+  const glDraws = () => log.filter((k) => k === 'drawElements' || k === 'drawArrays').length;
+  return { r, log, glDraws };
+}
+const px = { width: 1, height: 1, colors: new Uint8ClampedArray([255, 255, 255, 255]) };
+const proj = mirrorProjectionX(perspective(1, 1.6, 0.05, 500));
+const look = (x) => lookAt([0, 1.5, 0], [x, 1.5, -5], [0, 1, 0]);
+
+test('PASS-COUNT THE RENDERER COUNTS THEM: the room\'s frame takes every draw its view out issued - the street and the panes\' depth before it (AUDIT FB1018 L2-3), and what went out before a throw (L2-4) - a cached view out counts none, the view out\'s own begin takes none; the lane\'s shadow render counts the maps\' replays, sun and points, and a frame off the world or the lane none (mutants: the view out uncounted, the panes uncounted, the shadow count never written or never zeroed)', () => {
+  const { r, log, glDraws } = stubRenderer();
+  r.uploadTexture(9, 3, px, { opaque: true }); r.uploadEmissionTexture(9, 3, px, { window: true });
+  r.uploadTexture(9, 5, px); r.uploadGlassMask(9, 5, px);
+  r.uploadTexture(9, 4, px, { opaque: true });
+  const sub = (rec, start, b) => ({ textureArchive: 9, textureRecord: rec, primitiveCount: 2, startIndex: start, _bounds: new Float32Array(b) });
+  const room = { vao: { id: 'roomvao' }, subMeshes: [sub(3, 0, [0, 1.5, -4, 0.5]), sub(5, 6, [1, 1.5, -4, 0.5]), sub(4, 18, [0, 1.5, -6, 3])] };
+  const street = { vao: { id: 'streetvao' }, subMeshes: [{ textureArchive: 9, textureRecord: 4, primitiveCount: 2, startIndex: 0 }] };
+  const N = 40;
+  let throwAt = -1, inside = null;
+  const scene = { draw: (info) => { inside = info.renderer.stats.viewDraws; for (let i = 0; i < N; i++) { info.renderer.drawMesh(street, identity()); if (i === throwAt) throw new Error('mid street'); } } };
+  const vo = createViewOut();
+  let now = 0;
+  const frame = (x) => {
+    now += 16; log.length = 0;
+    const v = viewOutFrame(vo, { renderer: r, mode: 'full', proj, view: look(x), now, scene });
+    const out = glDraws();
+    r.beginFrame(proj, look(x), new Float32Array([0, 1, 0]), WORLD_FRAME);
+    r.setGlassView(v);
+    r.drawMesh(room, trs(0.5, 0, -0.25, 0, 0, 0));
+    return { view: r.stats.viewDraws, out };
+  };
+  assert.deepEqual(frame(0), { view: 0, out: 0 }, 'no glass seen yet: no view out');
+  const drawn = frame(0);
+  assert.ok(drawn.out > N, `the street and the panes went out (${drawn.out})`);
+  assert.equal(drawn.view, drawn.out, 'the room\'s frame counts every draw its view out issued');
+  assert.equal(inside, 0, 'the view out\'s own begin takes none');
+  assert.deepEqual(frame(0), { view: 0, out: 0 }, 'the camera still: the picture kept, nothing drawn, nothing counted');
+  assert.deepEqual(frame(0.01), drawn, 'mouse-look: drawn again, counted again');
+  throwAt = 9;
+  const warn = console.warn; console.warn = () => {};
+  try {
+    const part = frame(0.02);
+    assert.ok(part.out > 0 && part.out < drawn.out);
+    assert.equal(part.view, part.out, 'a throw mid-street: what went out is counted');
+  } finally { console.warn = warn; throwAt = -1; }
+  // the shadow maps: the lane's own render, sun and points, written each world frame
+  const s = stubRenderer().r;
+  s.uploadTexture(9, 4, px, { opaque: true });
+  const mesh = { vao: { id: 'm' }, subMeshes: [{ textureArchive: 9, textureRecord: 4, primitiveCount: 2, startIndex: 0, _bounds: new Float32Array([0, 1, -3, 1]) }], _bounds: new Float32Array([0, 1, -3, 1]) };
+  s.setLightingLane(EL_LANE);
+  s.setLighting(new Float32Array([0.5, 0.5, 0.5]), 0.8, new Float32Array([1, 1, 1]));
+  s.setPointLights(new Float32Array([0, 2, -2, 8, 1, 2, -3, 8]), new Float32Array([1, 1, 1]));
+  const lit = (opts) => { s.beginFrame(proj, look(0), new Float32Array([0.3, 0.8, 0.2]), opts); for (let i = 0; i < 5; i++) s.drawMesh(mesh, identity()); s.resolveFrame?.(); return s.stats.shadowDraws; };
+  console.warn = () => {};
+  try {
+    lit(WORLD_FRAME);   // the first frame records the casters
+    const n = lit(WORLD_FRAME);
+    const sp = s._shadowPass.stats;
+    assert.ok(sp.sunDraws > 0 && sp.pointDraws > 0, 'the sun and the points both replayed');
+    assert.equal(n, sp.sunDraws + sp.pointDraws, 'the maps\' replays, counted');
+    assert.equal(lit(null), 0, 'a frame off the world: none');
+    s.setLightingLane(null);
+    assert.equal(lit(WORLD_FRAME), 0, 'the lane off: none');
+  } finally { console.warn = warn; }
   // the order the count relies on: the interior host asks for the view out before its own beginFrame
   const modes = read('src/scenes/worldModes.js');
-  const out = modes.indexOf('viewOutFrame(');
-  assert.ok(out > 0 && modes.indexOf('renderer.beginFrame(', out) > out, 'the view out is drawn before the room begins its frame');
+  const at = modes.indexOf('viewOutFrame(');
+  assert.ok(at > 0 && modes.indexOf('renderer.beginFrame(', at) > at, 'the view out is drawn before the room begins its frame');
 });

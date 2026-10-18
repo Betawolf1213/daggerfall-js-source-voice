@@ -31,7 +31,7 @@
 // turbines", over a counter that read 198 fps and "draws 67"): THE PASSES THE DRAW COUNT MISSED, AND THE PACE. The
 // renderer's `draws` is the frame's own pass; a building's view out through its windows (the street, drawn first) and
 // the shadow maps' replays were counted nowhere, so the screenshot said 67 draws over a frame that drew a city through
-// the glass. `view` and `shadow` (Renderer.stats viewDraws / shadowDraws) ride the draws line when a second held any.
+// the glass. `view` and `shadow` (Renderer.stats viewDraws / shadowDraws) ride the draws line when a second's mean is half a draw a frame or more.
 // And what holds the frame rate: `vsync off` where the desktop shell lifted the display's wait (daggerShell.framesLifted -
 // the VSync setting off), and the Frame Rate Cap (systems/frameCap.js) - 198 fps is a display's or a cap's or neither's,
 // and the counter now says which (`paceLine` is the pure half). The line stands only when one of them is not the default:

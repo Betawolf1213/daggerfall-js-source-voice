@@ -194,13 +194,21 @@ the box stood again at the new pose.
   something else and stays where it is, the player's own guard.
 - **The box law covers every body of mine.** `src/scenes/horseCartPool.js`
   capsuleInBox reads `bodyCapsules` beside `playerCapsule`. The streaming
-  host hands it both companion layers' capsules (`crewAshore.capsules()`, the
-  sworn's included), so no box stands round a companion getting down or one
-  at heel where a wagon is laid.
+  host hands it both companion layers' capsules (`crewAshore.capsules()` and
+  the sworn's `revenantAshore.capsules()`), so no box stands round a companion
+  getting down or one at heel where a wagon is laid. A wagon summoned where a
+  companion idles at heel inside its footprint stands its box once that
+  companion walks off it - the wagon can be walked through meanwhile (AUDIT
+  FB1018 L1-2, recorded).
 
-Pins: `test/scenes/fb1018_wagonalight.test.js` (4), on the real bake, cart
+Pins: `test/scenes/fb1018_wagonalight.test.js` (7), on the real bake, cart
 runtime, pool, collider, seats, companion layer and motor. Mutants:
-`tools/mutants/fb1018_wagonalight.json` (7, all dead).
+`tools/mutants/fb1018_wagonalight.json` (12, all dead). AUDIT FB1018
+(`01-Overview/audits/Audit-Field-Bugs-2026-10-18.md`) added the seat given on
+the road, the step swept by a wall, who rides, the reach on both axes and the
+host's seat lines, and recorded one edge it did not fix: a floating-origin
+recentre on the very frame the wagon parks leaves a companion standing in the
+bed (L1-1), boxed by nothing, and it walks out at heel.
 
 **Departure (STANDING RIDERS).** Riders and companions ride STANDING in the
 bed. The port's people are billboards and DFU has no seated pose to give

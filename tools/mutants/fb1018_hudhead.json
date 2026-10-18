@@ -38,5 +38,25 @@
       "test/ui/hud/fb1018_hudhead.test.js"
     ],
     "why": "a head that cannot be released by name"
+  },
+  {
+    "name": "HUD-HEAD-by-hand",
+    "file": "src/ui/hud/hudLarge.js",
+    "old": "loadHudLargeHead(deps, entity).then((h) => swapHudHead(_art, key, _headKey, h, (k) => deps.renderer?.releaseTexture?.('img', k)));",
+    "new": "loadHudLargeHead(deps, entity).then((h) => { if (h) _art.head = h; });",
+    "tests": [
+      "test/ui/hud/fb1018_hudhead.test.js"
+    ],
+    "why": "AUDIT FB1018 L3-4: the bar installing a head by hand - the law skipped, the old picture kept, a late answer put up"
+  },
+  {
+    "name": "HUD-HEAD-first-key-late",
+    "file": "src/ui/hud/hudLarge.js",
+    "old": "        _headKey = a ? want : null;",
+    "new": "        _headKey = a ? headKeyFor(entity) : null;",
+    "tests": [
+      "test/ui/hud/fb1018_hudhead.test.js"
+    ],
+    "why": "AUDIT FB1018 L3-3: a helm put on while the first head renders is never asked for"
   }
 ]

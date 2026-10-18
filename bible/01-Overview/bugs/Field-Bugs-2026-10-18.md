@@ -1,9 +1,11 @@
 # FIELD BUGS 2026-10-18 - twelve threads from the bug-reports channel, each read to its root
 
-Twelve threads from the Discord's #bug-reports, handed over as screenshots with "No band aid fixes". Read on the code as
-it stands at main's `d5732cf97` (merged forward to `cd2705d92`). Each was traced on the real modules first, and a fix
-lands only where the cause is proven; where it is not, the record says so and what would prove it. The pins are
-`fb1018_*`, the mutants `tools/mutants/fb1018_*.json`.
+Twelve threads from the Discord's #bug-reports, handed over as screenshots with "No band aid fixes". FOUR ARE RECORDED
+HERE; the other eight are not yet - the first pass's work on two of them never reached the branch, and their
+screenshots are not in the tree (AUDIT FB1018 (`01-Overview/audits/Audit-Field-Bugs-2026-10-18.md`), L4-9). Read on the code as it stands at main's `d5732cf97` (merged
+forward to `cd2705d92`). Each was traced on the real modules first, and a fix lands only where the cause is proven;
+where it is not, the record says so and what would prove it. The pins are `fb1018_*`, the mutants
+`tools/mutants/fb1018_*.json`. AUDIT FB1018 (`01-Overview/audits/Audit-Field-Bugs-2026-10-18.md`) read all of it cold; what it changed is marked here and in the code.
 
 | | Report | What it was | Done |
 |---|---|---|---|
@@ -35,8 +37,10 @@ get-down point clear of it for every seat. Two defects together:
   Respawning the wagon freed it because `standBox` takes the box down and stands it at the new pose.
 
 Every path that empties a seat reaches the same frame: the player getting down (Trailing to Deployed), a following
-team told to wait, a horse lost (both through `commitDeployment`), a player given a companion's seat on the road, the
-wagon dismissed. A door, a fast travel or a load changes the place's key and lifts the bodies, so none of those
+team told to wait, a horse lost (through `commitDeployment`, or set Deployed directly where no following pose is
+live: `horseCart.js:"else { wagonState.Mode = WAGON_MODE.Deployed; wagonState.HorseMode = HORSE_MODE.None;"`), a
+player given a companion's seat on the road (pinned by the audit, L1-4: the last companion gets down beside the wagon
+still moving), the wagon dismissed. A door, a fast travel or a load changes the place's key and lifts the bodies, so none of those
 leave one in a bed.
 
 FIXED.
@@ -58,7 +62,16 @@ capsule, as before). `worldModes.js` and `dungeonContext.js` draw no wagon. Our 
 Why no test saw it: `test/scenes/wagons1_seats.test.js` asserted `companionSeat(0, false)` is null ("parked: they
 walk") - the seat's answer, never where the body then stood, nor the box round it.
 
-Pins: `test/scenes/fb1018_wagonalight.test.js` (4). Mutants: `tools/mutants/fb1018_wagonalight.json` (7, all dead).
+AUDIT FB1018, two edges RECORDED, not fixed: a recentre of the floating origin on the very frame the wagon parks
+leaves a companion standing in the bed - the seat the layer kept is not moved with the world, so the reach guard reads
+the body as moved by something else (L1-1; its fix wires the layer into the host's recentre, and `bootWorld` stands at
+its ceiling). The box stays down round it and it walks out at heel. And a wagon summoned where a companion idles at
+heel inside its footprint stands no box until that companion walks off it (L1-2): the wagon can be walked through
+meanwhile, and nobody is held.
+
+Pins: `test/scenes/fb1018_wagonalight.test.js` (7: the audit's three - the seat given on the road, the step swept by a
+wall, who rides - and the reach on both axes and the host's two seat lines). Mutants:
+`tools/mutants/fb1018_wagonalight.json` (12, all dead).
 
 ## PASS-COUNT: the counter counts the passes it missed
 
@@ -72,30 +85,42 @@ FOUND.
 - **"draws 67" was the room's pass alone.** In a building, `worldModes.js` asks `viewOutFrame(...)` before the room's
   `renderer.beginFrame(...)`. Real Windows "Full" is the Features default and is in the High and Ultra presets. The
   view out's `renderer.outsideViewFrame` runs its own beginFrame and draws the street, and the room's beginFrame then
-  zeroed `renderer.stats`. Its count, `_rwViewDraws`, was read by nothing. The shadow maps keep their own stats
+  zeroed `renderer.stats`. Its count, `_rwViewDraws`, was read only by `tools/realWindowsProbe.mjs` (the audit's
+  L2-1: this record said nothing, and the fix zeroed it under the probe, which now reads `stats.viewDraws`). The
+  shadow maps keep their own stats
   (`shadowPass.js`), and a tavern's lamps all cast (`renderer.everyLightCasts`).
 
 FIXED. The room's beginFrame takes the view out's draws into `stats.viewDraws` (the view out's own nested begin takes
-none), and the lane's shadow render writes `stats.shadowDraws`. The counter prints `view N  shadow M` on its draws
-line when a second held any, and a pace line when the pace is not the default: `vsync off` where the shell lifted the
-display's wait, and the Frame Rate Cap's fps where one is set. At the defaults the counter reads as before.
+none), and the lane's shadow render writes `stats.shadowDraws`. The view out counts as it closes: the street since
+its begin and the panes' depth drawn before it (AUDIT FB1018 L2-3: up to VIEW_PANES_MAX a redraw, zeroed by that
+begin), and what went out before a throw (L2-4). The counter prints `view N  shadow M` on its draws line when a
+figure's mean is at least half a draw a frame (L2-6), and a pace line when the pace is not the default: `vsync off`
+where the shell lifted the display's wait, and the Frame Rate Cap's fps where one is set. At the defaults the counter
+reads as before. Still on no line (L2-5): the shadow cache's copies (`stats.blits`), the bloom pass's own replays of
+the glowing sub-meshes (its `emitDraws`), and the view out's binds (the room's begin zeroes them).
 
 OPEN, for the owner. The street is redrawn whenever any view-matrix entry moves past VIEW_MOVE_EPS (1e-4), which is
 every frame of mouse-look. From inside a city it draws every pixel's whole static batch the crop meets
-(`world.js:"const drawOutsideStreet = (r, planes) => {"`), which in Sentinel is most of the city again behind each pane.
-That this is the tavern's cost is suspected, not measured. The player's counter now says it: Real windows at Rooms
-only, then Enhanced lighting off, each read against the `view` and `shadow` figures. If the view out is the cost, the
+(`world.js:"const drawOutsideStreet = (r, planes) => {"`), which in Sentinel is most of the city again - once a frame,
+over the one rectangle all the glass covers, never once a pane (AUDIT FB1018 L2-6). Standing still it is redrawn every
+VIEW_MAX_AGE_MS (250 ms), so `view` reads about a fiftieth of it at 198 fps, and the whole of it under mouse-look.
+That this is the tavern's cost is suspected, not measured. The player's counter now says it: `view` read while
+turning the mouse, then Real windows at Rooms only, then Enhanced lighting off, each against the `view` and `shadow`
+figures. If the view out is the cost, the
 levers move the picture (a redraw budget, or one wider picture per position sampled by direction) and are the
 owner's to choose (`07-Rendering/Real-Windows.md`, PASS-COUNT).
 
 Why no test saw it: `test/systems/perf3.test.js` drove the counter with the room's stats alone, and no test asked what
 a frame with a view out counts.
 
-Pins: `test/systems/fb1018_passcount.test.js` (3). Mutants: `tools/mutants/fb1018_passcount.json` (9, all dead).
+Pins: `test/systems/fb1018_passcount.test.js` (3; AUDIT FB1018 L2-2: the renderer's pin executes the real Renderer
+over a stub GL - it read its source back before, and the record's one equivalent mutant with it). Mutants:
+`tools/mutants/fb1018_passcount.json` (18, all dead).
 
 ## Report 3: the slowdown in interiors - two leaks and a stray splash fixed, the cause open
 
-NOT PROVEN. Measured in Node over five simulated minutes of a fight (scripts, not pins):
+NOT PROVEN. Measured in Node over five simulated minutes of a fight (scripts, not pins - and not committed, so these
+figures cannot be re-run from the tree: AUDIT FB1018 L4-10):
 - the real `Renderer` over `test/retroGl.mjs`'s recording GL, with hit splashes, a full ring of blood marks, six
   animating foe batches, the damage flash and the blood lens: live GL objects, `renderer.textures.size` and the GL calls
   per frame all flat, and the heap flat after a collection;
@@ -115,24 +140,34 @@ destroyed it and left its entry in the flat animator, which ticked the dead batc
 held for the rest of its life. A pile reminted where it now lies (a recentre, a moved ground) stood still, its entry on
 the batch it replaced. A batch is now freed one way, out of the animator first, and a reminted batch takes over its
 entry and its clock. Pins: `test/scenes/fb1018_lootflats.test.js` (3). Mutants: `tools/mutants/fb1018_lootflats.json`
-(5, all dead).
+(9, all dead; AUDIT FB1018 L3-1, L3-2, L4-4: the sweep's player pile, the dungeon's teardown now the pool's own free, a
+removed pile, two piles reminting, a still one's frame).
 
 **HUD-HEAD** (`src/ui/hud/hudLarge.js` swapHudHead). With Morrowind's data attached the large HUD's head is a picture of
 its own (PORTRAIT3D), loaded again whenever the head's key moves - every helm put on or taken off - and the one it
 replaced stayed on the GPU. Two loads in flight landed in the order they finished, so a slow one could put the helm
 just taken off back on the bar. A head now goes up only while its key is the one the bar asks for, and the picture it
 replaces - or a late answer's own - is released by its name. Pins: `test/ui/hud/fb1018_hudhead.test.js` (2). Mutants:
-`tools/mutants/fb1018_hudhead.json` (4, all dead).
+`tools/mutants/fb1018_hudhead.json` (6, all dead; AUDIT FB1018 L3-3: the bar's first head now carries the key it was loaded
+for - read as the bar landed, a helm put on while it rendered was never asked for).
 
-**PVP-BLOOD** (`src/scenes/world.js` duelHpIn and wildHpIn), found in the first pass and left there, fixed in the
-second. A duel's blow of mine and the open zone's splashed into the street's pool (`hitEffects`). The street's frame is
-the exterior arm of the loop (`world.js:"// is the EXTERIOR arm of the cadence loop"`), so in a room or the zone's
-halls the splash sat frozen and undrawn until the street ran again, and its mark went at once into the street's ring,
-on the street's collider, at the room's coordinates. A peer's blow already took the pool I stand in
-(`worldModes.js:"liveHitEffects() {"`, PEERFX2), and these two now take it too. The only splashes `world.js` still sends
-straight to the street's pool are on the street's own paths: a road traveller struck down (refused off the exterior)
-and a horse's trample. Pins: `test/scenes/fb1018_pvpblood.test.js` (2, source pins: bootWorld does not run in Node).
-Mutants: `tools/mutants/fb1018_pvpblood.json` (3, all dead).
+**PVP-BLOOD** (`src/scenes/world.js` duelHpIn, wildHpIn and wildFair), found in the first pass and left there, fixed in
+the second, and corrected by AUDIT FB1018 (L3-5). A duel's blow of mine and the open zone's splashed into the street's
+pool (`hitEffects`), whose frame is the exterior arm of the loop (`world.js:"// is the EXTERIOR arm of the cadence loop"`);
+off the street the splash would sit frozen and undrawn and its mark go into the street's ring. Both now take the pool
+I stand in (`worldModes.js:"liveHitEffects() {"`), as a peer's blow already did (PEERFX2). WHAT THE FIRST WRITING GOT
+WRONG: neither could bleed off the street. A duel is outdoors only (`world.js:"if ((modes?.mode ?? 'exterior') !== 'exterior') return 'outdoors';"`),
+and the open zone fights outdoors and in its dungeons (PVPDUNGEON) - where EVERY PEER WAS REFUSED: wildFair asked
+whether the peer's pose stands in the zone, and in a dungeon a pose is the dungeon's own frame
+(`world.js:"const nativeFrame = overworld || !!privateInteriorOf(key);"`), which the map reads as its corner pixel.
+No blow, swing, shaft or spell landed between players in the zone's halls. Fixed: in a dungeon the place is the zone
+(wildCan's `wildHere`, the door's pixel) and the room is that place's, so a room's peer is fair by the place
+(`world.js:"return modes?.mode === 'dungeon' || wildAtWire(duelWorldOf(peerId));"`). Now the zone's halls fight, and
+their blood is the dungeon's pool's; the duel's half keeps the one seam for a path that cannot run today. The only
+splashes `world.js` still sends straight to the street's pool are on the street's own paths: a road traveller struck
+down (refused off the exterior) and a horse's trample (asked in the exterior arm alone). Pins:
+`test/scenes/fb1018_pvpblood.test.js` (3; source pins - bootWorld does not run in Node - and the corner pixel
+executed). Mutants: `tools/mutants/fb1018_pvpblood.json` (4, all dead).
 
 Found and left: a dungeon's targeting asks each armed foe for a fresh candidate list every classic tick (O(n²)
 garbage at 16 Hz with many foes - a cost, not a leak, and not proven to be this report's cause). Its list is built in
@@ -142,12 +177,15 @@ garbage at 16 Hz with many foes - a cost, not a leak, and not proven to be this 
 
 The clues do not meet the code. What it rules out:
 - **The client serves the browser's game.** The same files through one `fileResponse` (`app/main.cjs` handleDagger),
-  a channel version's files checked by sha256 (`app/lib/gameChannel.cjs` decodeFile). The page has no branch on how
-  it was served.
+  a channel version's files checked by sha256 (`app/lib/gameChannel.cjs` decodeFile). The files are the same; the
+  page is not quite (AUDIT FB1018 L4-7): under the shell it saves and keeps prefs through the shell's file store
+  (`appStorage.js`), paces frames itself when VSync is off (`frameCap.js`), and reads the shell in `settings.js`,
+  `pointerLock.js` and `dataSource.js`. A client-only cause is not ruled out by the files.
 - **A reinstall cannot clear the player's data.** `main.cjs` pins `userData` to `Daggerfall JavaScript` under the
   app-data folder. Saves, prefs, IndexedDB and caches all live there, and the installer does not delete them. What a
-  reinstall does reset is `<userData>/Game` (`app/lib/gameStore.cjs`: a new seed resets the channel's state and deletes
-  every version folder). The installer's own copy then plays until the hourly check brings the next release, which
+  reinstall does reset is `<userData>/Game`, and only when it brings a new seed version (`app/lib/gameStore.cjs`: a new
+  seed resets the channel's state and deletes every version folder; the same version's reinstall keeps `state.json`
+  and the channel's version - AUDIT FB1018 L4-8). The installer's own copy then plays until the hourly check brings the next release, which
   would fit "fine for 3-4 hours". But a channel version runs the same code (above).
 - **The map's per-frame reads are cached.** Waypoints, filters, masks and the static ink are held in memory, and the
   classic map releases its last textures. The desktop store answers a read from memory (STORE-CACHE). A rescan

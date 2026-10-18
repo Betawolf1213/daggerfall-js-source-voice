@@ -8,10 +8,11 @@ import '../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { worldCoordToMapPixel } from '../../src/world/streamingWorld.js';
 
 const rd = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const LIVE = '(modes?.liveHitEffects?.() ?? hitEffects).showBloodSplash(';
-const BARE = /(?<![\w.)])hitEffects\.showBloodSplash\(/g;
+const BARE = /(?<![\w.)])hitEffects\??\.showBloodSplash\(/g;   // AUDIT FB1018 L3-6: the optional call too
 /** The body of the arrow `head` opens in world.js, to the first line that closes it at its own indent. */
 const body = (src, head) => {
   const at = src.indexOf(head);
@@ -43,4 +44,19 @@ test('PVP-BLOOD THE STREET\'S OWN: the only splashes world.js sends straight to 
   assert.ok(at[0] > src.indexOf('const livingStrikeRoad = (eye, dir) => {') && at[0] < src.indexOf('const livingStrikeRoad = (eye, dir) => {') + road.length);
   assert.ok(src.lastIndexOf('const rrRiding = createRrRidingContacts({', at[1]) > at[0]);
   assert.match(src.slice(at[1] - 40, at[1]), /splashBlood: \(pos, fwd\) => $/);
+  // AUDIT FB1018 L3-6: and the trample runs in the street alone - its one door is called in the exterior arm of the frame
+  assert.equal(src.split('rrRiding.contacts()').length - 1, 1, 'the trample has one door');
+  const calls = [...src.matchAll(/rrRidingContacts\(\);/g)].map((m) => m.index);
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0] > src.indexOf('// is the EXTERIOR arm of the cadence loop'), 'the trample is asked in the street\'s frame');
+});
+
+test('PVP-BLOOD THE ZONE\'S HALLS (AUDIT FB1018 L3-5): in a dungeon a room\'s peer is fair by the place, never by its pose - the pose is the dungeon\'s own frame, which the map reads as its corner pixel, so every peer in the zone\'s halls was refused and no blow landed there', () => {
+  const src = rd('src/scenes/world.js');
+  const fair = body(src, 'const wildFair = (peerId) => {');
+  assert.match(fair, /if \(!peerId \|\| !wildCan\(\)\) return false;/, 'the place is the zone first (wildCan: wildHere, the door\'s pixel)');
+  assert.match(fair, /return modes\?\.mode === 'dungeon' \|\| wildAtWire\(duelWorldOf\(peerId\)\);/);
+  assert.match(src, /const nativeFrame = overworld \|\| !!privateInteriorOf\(key\);/, 'the frames the pose is sent in: a dungeon\'s is its own');
+  // the cause, executed: a dungeon's own coordinates (blocks at 51.2 m, a few either side of its centre) are the map's corner
+  for (const [x, z] of [[0, 0], [307.2, 307.2], [-307.2, -307.2], [100, -300]]) assert.deepEqual({ ...worldCoordToMapPixel(x, z), x: Math.abs(worldCoordToMapPixel(x, z).x) }, { x: 0, y: 499 });
 });

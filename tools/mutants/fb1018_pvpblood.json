@@ -28,5 +28,15 @@
       "test/scenes/fb1018_pvpblood.test.js"
     ],
     "why": "a peer struck indoors bleeds into the street's pool (the seam the fix copies)"
+  },
+  {
+    "name": "PVP-BLOOD-halls-by-pose",
+    "file": "src/scenes/world.js",
+    "old": "    return modes?.mode === 'dungeon' || wildAtWire(duelWorldOf(peerId));",
+    "new": "    return wildAtWire(duelWorldOf(peerId));",
+    "tests": [
+      "test/scenes/fb1018_pvpblood.test.js"
+    ],
+    "why": "AUDIT FB1018 L3-5: every peer in the zone's halls refused - the dungeon-frame pose read as the map's corner"
   }
 ]

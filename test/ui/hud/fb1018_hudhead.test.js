@@ -36,4 +36,7 @@ test('HUD-HEAD THE WIRING: the head names its own picture with the name it uploa
   assert.match(src, /const mwKey = `mwhead#hud#\$\{\+\+_mwHeadSeq\}`; return \{ tex: renderer\.uploadTexture\('img', mwKey, toScreenOrder\(mw\)\), w: mw\.width, h: mw\.height, mwKey \};/);
   assert.match(src, /loadHudLargeHead\(deps, entity\)\.then\(\(h\) => swapHudHead\(_art, key, _headKey, h, \(k\) => deps\.renderer\?\.releaseTexture\?\.\('img', k\)\)\);/);
   assert.doesNotMatch(src, /_art\.head = h/, 'no head put up by hand');
+  // AUDIT FB1018 L3-3: the bar's FIRST head carries the key it was loaded for, read before the load - read as the bar
+  // landed, a helm put on while the first head rendered was taken for the head's own and never asked for
+  assert.match(src, /const want = headKeyFor\(entity\);[^\n]*\n {6}_loading = loadHudLarge\(deps, entity\)\.then\(\(a\) => \{\n {8}_art = a;\n {8}_headKey = a \? want : null;/);
 });

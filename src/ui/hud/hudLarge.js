@@ -708,9 +708,10 @@ export function largeHudOptions(deps, entity) {
   if (!largeHudEnabled()) return null;
   if (!_art) {
     if (!_loading && deps?.renderer && deps?.fetchBytes) {
+      const want = headKeyFor(entity);   // AUDIT FB1018 L3-3: the key the first head is loaded for - read when the bar lands, a helm put on meanwhile was never asked
       _loading = loadHudLarge(deps, entity).then((a) => {
         _art = a;
-        _headKey = a ? headKeyFor(entity) : null;
+        _headKey = a ? want : null;
         _loading = null;
       });
     }
