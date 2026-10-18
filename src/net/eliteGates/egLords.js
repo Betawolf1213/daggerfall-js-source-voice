@@ -135,6 +135,8 @@ export const EG_LORD_BREATH_MS = 700;
 export const EG_LORD_WAKE_MS = 2500;
 /** EG-PERFECT (section 13.2): how many blows a lord weighs before it walks instead, when THE UNION FLOOR would drop each it drew. */
 export const EG_CHOOSE_TRIES = 3;
+/** EG-PERFECT's audit: how long a lord lets be a member every blow it drew for would have held (ms - past a target's 4 s keep). */
+export const EG_SHUN_MS = 6000;
 /** EG-PERFECT: a run's time down its lane where its row names none (ms - the Lunges'), and the fastest a run is carried (m/s - the
  *  wire's walks stop at 30: net/wire.js `emv`). */
 export const EG_RUN_MS = 400;
@@ -737,8 +739,11 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     // Meteor, the Kyn's Due) set aside: the audit found the Armsmaster outside his own ring 44% of a duel, and a Meteor on a
     // duelist at its heart that left no cell
     const duel = F.mem.challenge?.by === L.i && F.mem.challenge.r > 0 ? F.mem.challenge : null, inDuel = duel ? here.filter((m) => duel.subs.includes(m.sub)) : [];
-    const foes = inDuel.length ? inDuel : here;
-    const target = L.key === 'kynreeve' ? (here.reduce((b, m) => ((L.threat[m.sub] ?? 0) > (L.threat[b?.sub] ?? -1) ? m : b), null) ?? nearest(L.x, L.z, here)) : (L.tg && now - (L.tgAt ?? 0) < 4000 ? foes.find((m) => m.sub === L.tg) : null) ?? pickTarget(L, foes, rng, law);
+    // (EG-PERFECT's audit: a member every blow it drew would leave no ground - on a balcony - is let be EG_SHUN_MS while the
+    // company has another: the lord kept it, walking at it, and the Kyn Reeve, always at the top of its threat, never struck again)
+    const shun = L.shun && now < L.shun[1] ? L.shun[0] : null, open = (q) => (shun && q.length > 1 ? q.filter((m) => m.sub !== shun) : q);
+    const foes = open(inDuel.length ? inDuel : here), all = open(here);
+    const target = L.key === 'kynreeve' ? (all.reduce((b, m) => ((L.threat[m.sub] ?? 0) > (L.threat[b?.sub] ?? -1) ? m : b), null) ?? nearest(L.x, L.z, all)) : (L.tg && now - (L.tgAt ?? 0) < 4000 ? foes.find((m) => m.sub === L.tg) : null) ?? pickTarget(L, foes, rng, law);
     if (!target) { egStop(F, L, now); continue; }
     if (L.tg !== target.sub) { L.tg = target.sub; L.tgAt = now; }
     if (now < L.nextAt) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus' && dist(L.x, L.z, target.x, target.z) > L.r + 4) lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); continue; }
@@ -765,7 +770,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
       if (m2?.stamps && wouldHold(F, spec, L, m2.stamps, { ...C, ...(m2.B ?? {}) }, here, now, m2.delay ?? 0)) { tried.add(C.nm); continue; }
       B = C; made = m2 ?? { none: 1 };
     }
-    if (!B) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus') lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); L.nextAt = now + EG_LORD_BREATH_MS; continue; }
+    if (!B) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus') lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); L.nextAt = now + EG_LORD_BREATH_MS; if (tried.size) L.shun = [target.sub, now + EG_SHUN_MS]; continue; }
     egStop(F, L, now);
     egFace(F, L, Math.atan2(target.x - L.x, target.z - L.z), now);   // AUDIT EG V (lane1 #7): turned to its target - said, so every screen draws the facing its Shield-Wall is judged by
     if (!made) made = B.make(F, spec, L, target, here, rng, now, out, ctx);

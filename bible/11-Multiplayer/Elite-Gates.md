@@ -9795,6 +9795,10 @@ Daggerfall Unity has no Elite Breach, no Spire and no relay: every fix here is t
   strips now cover the floor rim to rim (`Math.ceil`) and its cooldown runs from the last strip's landing. The Conquest's
   tell covered a lone third's 20.8 m, not the court's whole 24 m with its neighbour burning: EG_CONQUEST_TELL_MS 3500 to 4000.
   A burst past both lines that skipped the second phase's card shows it before the third's (the screen's beat queue).
+- A lord whose every draw THE UNION FLOOR held against its target only walked at it, its target kept: a member off the
+  floor's rim (as on a balcony) stalled the Kyn Reeve - always at the top of its threat - at one blow a minute. Such a
+  member is now let be for EG_SHUN_MS (6 s, past a target's 4 s keep) while the company has another (`L.shun`); the Kyn
+  Reeve threw 13 blows in that minute. A company of one is still its target.
   The record's "fall on some of the company, never all" was untrue of a company no larger than a blow's marks - said so above.
 
 **THE RELAY'S JUDGEMENT** (`net/eliteGates/egFair.js`, `egBrain.js`, `egAscent.js`).
@@ -9836,7 +9840,9 @@ Daggerfall Unity has no Elite Breach, no Spire and no relay: every fix here is t
 **THE SCREEN** (`scenes/eliteGates/egSpan.js`, `render/superDungeon/sdStepsPass.js`, `world/eliteGates/egHall.js`, `egLook.js`,
 `egGround.js`, `egPlatformModel.js`, `net/eliteGates/egWalkGraph.js`).
 - A drift's hang read a room's box off its origin a second time, though a spec's hero box is the hall's frame already:
-  14 of 23 capped hangs were phantoms over open sky, and a real room over a drift was missed (`egHangReach`).
+  14 of 23 capped hangs were phantoms over open sky, and a real room over a drift was missed (`egHangReach`). Its anchor's
+  reach under the pivot was 1.4 m where the first band's rib hangs 1.57 m: EG_HANG_HALF.down 1.6, pinned to each band's
+  model with its reach across and along.
 - A broken bridge's ends over the void were drawn open - no end face, no edge line: a lane's end no floor meets is closed
   (`egLaneOpenEnds` - the lane's model, its edges' segment across it).
 - A turned slab's broken column stood on its jump line (`egPiecePlan` - a z side for a turned piece).
@@ -9860,8 +9866,8 @@ crossed (1.9% fell before the Gust fix); the relay's drop walk over 704 zones, n
 left without its zone; of 1,507 drifts over 40 seeds' first circle of bands 0-3, 35 hang shorter (2.3%, 4.28-17.96 m - the
 ways record's 36 of 891 was law 9's, its phantoms among them).
 
-**The pins** (each fails without its fix - `tools/mutants/egperfect_audit.json`, 42 records, every one dead):
-`test/net/eliteGates/egperfect_lords.test.js` (AUDIT A1-A7; 28 in the file), `test/net/eliteGates/egperfect_audit.test.js` (6 - R1-R4,
+**The pins** (each fails without its fix - `tools/mutants/egperfect_audit.json`, 44 records, every one dead):
+`test/net/eliteGates/egperfect_lords.test.js` (AUDIT A1-A8; 29 in the file), `test/net/eliteGates/egperfect_audit.test.js` (6 - R1-R4,
 P1-P2: the relay's and the ways' halves), `test/world/eliteGates/egperfect_audit_screen.test.js` (5 - S1-S5: the screen's) and
 `test/net/eliteGates/egperfect_broken.test.js`'s THE AUDIT'S HALLS (13 in the file). The 156 records of the earlier lists that
 stand on a line the fixes moved, or whose pin moved, were run again: every one dead - the duel's setting-aside
@@ -9890,7 +9896,7 @@ changed.
   held on the island by the relay; an alcove's support disc covers a little void beside its niche. Both lean toward the
   player and are as they were.
 - The Deserter's clamp, the Ashfall's disc and the Casters' stands run under laws 4-8 as well (the halls record's choice).
-- A door plate straddling a balcony's ring (24 of 1,400 halls), a turned Beat's dial at XII along +z (its model's own),
-  a hang's half-down against its rib (1.4 against 1.57 m): left as drawn.
-- A member on a balcony a lord's blows cannot reach finds the lord walking after EG_CHOOSE_TRIES draws - no fallback blow.
+- A Rift-Yard's exit plate on its perimeter ring's radius (26 of 1,400 law 10 halls): the ring stands open along the
+  way's axis there, and no standing segment of it (`egRingSideWalls`) comes within the plate's radius - nothing to fix.
+- A turned Beat's dial reads XII along +z, as its model's own does: left as drawn.
 - Rooms: towers stand in 76% of law 10's halls (drawn from the whole fresh pool; law 9's 82%).

@@ -218,8 +218,8 @@
   {
     "name": "EGPERFECT-duel-any-mark",
     "file": "src/net/eliteGates/egLords.js",
-    "old": "    const foes = inDuel.length ? inDuel : here;",
-    "new": "    const foes = here;",
+    "old": "    const foes = open(inDuel.length ? inDuel : here), all = open(here);",
+    "new": "    const foes = open(here), all = open(here);",
     "tests": [
       "test/net/eliteGates/egperfect_lords.test.js"
     ]

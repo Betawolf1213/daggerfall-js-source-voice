@@ -14,7 +14,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egObjsOf, egObjBroken, egLordHit, EG_LESSON_TELL_MS, EG_CONQUEST_EVERY_MS, EG_CONQUEST_TELL_MS,
-  EG_ZONE_FIGHT_MS, EG_WYRM_REACH_M, EG_ECLIPSE_NM, EG_SNAP_NM, EG_LATTICE_W, EG_LATTICE_STEP_MS, EG_CAGE_AGAIN_MS } from '../../../src/net/eliteGates/egLords.js';
+  EG_ZONE_FIGHT_MS, EG_WYRM_REACH_M, EG_ECLIPSE_NM, EG_SNAP_NM, EG_LATTICE_W, EG_LATTICE_STEP_MS, EG_CAGE_AGAIN_MS, EG_SHUN_MS } from '../../../src/net/eliteGates/egLords.js';
 import { egFightNew, egFightState, egHas, EG_FL, egBodyById, egBlowsStep, egAim, egUnionHeld, egCut, EG_RING_KEEP_M, EG_TELL_LEAD_MS } from '../../../src/net/eliteGates/egBodies.js';
 import { egUnionHolds, egHavenCheck } from '../../../src/net/eliteGates/egFloor.js';
 import { shDisc, shOut, egInBlow, egChainGapMs, EG_ESCAPE_MPS, EG_REACT_S } from '../../../src/net/eliteGates/egShape.js';
@@ -592,3 +592,31 @@ test('EG-PERFECT AUDIT A7 THE PERCHED BREATH REACHES THE COURT\'S FAR RIM, THE L
     for (const q of sweeps) assert.ok(q.length * EG_LATTICE_W >= 2 * C.f.r - 1e-6, `${q.length} strips over a ${(2 * C.f.r).toFixed(1)} m floor`);
   }
 });
+
+test('EG-PERFECT AUDIT A8 A LORD LETS BE A MEMBER IT CANNOT FAIRLY STRIKE (section 13.2, THE UNION FLOOR\'s weighing): when every blow a lord draws for its target would leave that member no ground (one off the floor\'s rim, as on a balcony), it turns to the rest of the company for EG_SHUN_MS - the Kyn Reeve, always at the top of its threat, threw one blow in a minute at a court where a member stood so; a company of one is still its target (mutant: the member never let be)', () => {
+  const run = (subs, off) => {
+    const spec = egHallOf(1, 15, 0), F = egFightNew(spec, T0, subs.map(() => 40), subs), view = egFightView(spec), rng = seeded(1), frames = [];
+    egLordsNew(F, spec, 'kynreeve', T0, frames, { decrees: {}, n: subs.length });
+    egLordsWake(F, spec, T0, frames, { n: subs.length });
+    const L = egLordsOf(F)[0], f = spec.fl.find((q) => q.t === 'd');
+    L.threat[subs[0]] = 1e6;
+    const here = () => subs.map((sub, j) => (j === 0 ? { sub, x: f.x + f.r + off, z: f.z, y: f.y ?? 0 } : { sub, x: f.x + 3, z: f.z + 3, y: f.y ?? 0 }));
+    let now = T0, blows = 0, shunned = null;
+    for (let k = 0; k < 4 * 60; k++) {
+      now += 250;
+      const out = [];
+      egLordsStep(F, spec, now, here(), rng, out, { decrees: {}, n: subs.length });
+      egBlowsStep(F, view, now, here(), out);
+      blows += out.filter((q) => q.k === 'eb' && q.o === L.i).length;
+      if (L.shun) shunned = L.shun;
+    }
+    return { blows, shunned };
+  };
+  const two = run(['acct-0', 'acct-1'], 3);
+  assert.equal(two.shunned?.[0], 'acct-0', 'the member off the rim let be');
+  assert.ok(two.shunned[1] - T0 > 0 && EG_SHUN_MS > 4000, 'for longer than a target is kept');
+  assert.ok(two.blows >= 8, `${two.blows} blows in a minute at the rest of the company`);
+  const one = run(['acct-0'], 3);
+  assert.ok(one.blows <= 2, `a company of one: still its target (${one.blows} blows)`);
+});
+

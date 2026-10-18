@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egRingSideWalls, egRingSideOpen, EG_RING_DOOR, EG_RING_SIDES } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { egLaneOpenEnds, egFragKeep } from '../../../src/world/eliteGates/egHall.js';
-import { egHangReach, EG_HANG_CABLE_M } from '../../../src/scenes/eliteGates/egSpan.js';
+import { egHangReach, egHangModel, EG_HANG_CABLE_M, EG_HANG_HALF, EG_HANG_TOP } from '../../../src/scenes/eliteGates/egSpan.js';
 import { egPiecePlan } from '../../../src/world/eliteGates/egPlatformModel.js';
 import { SD_PENDULUM } from '../../../src/world/superDungeon/sdStepsModel.js';
 import { createEgSpan, EG_GHOSTS_MAX } from '../../../src/scenes/eliteGates/egSpan.js';
@@ -47,13 +47,24 @@ test('EG-PERFECT AUDIT S2 A LANE\'S END OVER THE VOID IS CLOSED (spec law 10\'s 
   assert.equal(egLaneOpenEnds({ ...spec, discs: [], steps: [{ x: 0, y: 1, z: 11.2, w: 3, d: 2.6 }] }, l), 3, 'a floor under its end is no floor at it');
 });
 
-test('EG-PERFECT AUDIT S3 A DRIFT\'S HANG READS A ROOM WHERE IT STANDS (scenes/eliteGates/egSpan.js egHangReach; a hall\'s `heroes` box is the hall\'s frame already): a room far from a drift caps nothing - its box read once more off its origin stood a phantom over open sky (14 of 23 capped hangs) - and a room over a drift caps it under its floor (mutant: the box shifted by its origin)', () => {
+test('EG-PERFECT AUDIT S3 A DRIFT\'S HANG READS A ROOM WHERE IT STANDS (scenes/eliteGates/egSpan.js egHangReach; a hall\'s `heroes` box is the hall\'s frame already): a room far from a drift caps nothing - its box read once more off its origin stood a phantom over open sky (14 of 23 capped hangs) - and a room over a drift caps it under its floor; the anchor\'s reach under its pivot is each band\'s model\'s own (mutants: the box shifted by its origin; the reach down 1.4 m)', () => {
   const drift = { kind: 'drift', x: 0, y: 0, z: 0, w: 3, d: 2.6, amp: 1.5 };
   const room = (box, o) => ({ steps: [drift], discs: [], lanes: [], bands: [], ramps: [], heroes: [{ room: 'tower', x: o[0], y: o[1], z: o[2], box, floors: [] }] });
   // a room 40 m off (its floor 6 m up) whose origin, added again, would stand its box over the drift
   assert.deepEqual(egHangReach(room([38, 6, -5, 50, 18, 5], [-40, 0, 0]), drift, 0), { len: SD_PENDULUM.len, over: EG_HANG_CABLE_M }, 'an open sky');
   const capped = egHangReach(room([-6, 10, -5, 6, 20, 5], [0, 0, 0]), drift, 0);
   assert.ok(capped.len < SD_PENDULUM.len, `under the room 10 m up: chains ${capped.len} m`);
+  // the anchor's reach read off each band's own model (its parts that stay put when the chains lengthen, the chains aside): down
+  // under the pivot, across and along - the first band's rib hangs 1.57 m under it, past the 1.4 m read before
+  for (let band = 0; band < 4; band++) {
+    const P = (m) => { const p = m.positions ?? m.subMeshes[0].positions, out = []; for (let i = 0; i < p.length; i += 3) out.push([p[i], p[i + 1], p[i + 2]]); return out; };
+    const key = (q) => q.map((v) => v.toFixed(3)).join(','), other = new Set(P(egHangModel(band, 23)).map(key));
+    const anchor = P(egHangModel(band, 18)).filter((q) => other.has(key(q)) && q[1] > -4 && !(Math.abs(Math.abs(q[0]) - SD_PENDULUM.foot) <= 0.13 && Math.abs(q[2]) <= 0.13));
+    const lo = Math.min(...anchor.map((q) => q[1])), hi = Math.max(...anchor.map((q) => q[1]));
+    assert.ok(-lo <= EG_HANG_HALF.down, `band ${band}: its anchor ${(-lo).toFixed(2)} m under its pivot, within ${EG_HANG_HALF.down}`);
+    assert.ok(anchor.every((q) => Math.abs(q[0]) <= EG_HANG_HALF.x && Math.abs(q[2]) <= EG_HANG_HALF.z), `band ${band}: its anchor within the reach across and along`);
+    if (band !== 3) assert.ok(Math.abs(hi - EG_HANG_TOP[band]) < 0.01, `band ${band}: its top ${hi.toFixed(2)} m`);
+  }
 });
 
 test('EG-PERFECT AUDIT S4 A TURNED PIECE\'S COLUMN CLEAR OF ITS LEAP (world/eliteGates/egPlatformModel.js egPiecePlan; spec law 10\'s `hd`): a still slab turned along x leaps over its +x and -x sides, so its broken column stands on a z side - it stood on the jump line (mutant: a turned piece\'s column on an x side)', () => {

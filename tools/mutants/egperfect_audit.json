@@ -376,5 +376,23 @@
     "tests": [
       "test/world/eliteGates/egperfect_audit_screen.test.js"
     ]
+  },
+  {
+    "name": "EGAUD-hang-reach-down-short",
+    "file": "src/scenes/eliteGates/egSpan.js",
+    "old": "export const EG_HANG_HALF = Object.freeze({ x: 3.5, z: 1.05, down: 1.6,",
+    "new": "export const EG_HANG_HALF = Object.freeze({ x: 3.5, z: 1.05, down: 1.4,",
+    "tests": [
+      "test/world/eliteGates/egperfect_audit_screen.test.js"
+    ]
+  },
+  {
+    "name": "EGAUD-never-let-be",
+    "file": "src/net/eliteGates/egLords.js",
+    "old": " if (tried.size) L.shun = [target.sub, now + EG_SHUN_MS]; continue; }",
+    "new": " continue; }",
+    "tests": [
+      "test/net/eliteGates/egperfect_lords.test.js"
+    ]
   }
 ]

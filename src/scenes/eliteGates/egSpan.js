@@ -376,7 +376,7 @@ export const EG_CHAIN = Object.freeze({ link: 0.9, w: 0.22, bar: 0.05 });
  *  and a link's width) (m). */
 export const EG_HANG_TOP = Object.freeze([1.08, 0.22, 1.74, 0.45]);
 export const EG_HANG_CABLE_M = 6;
-export const EG_HANG_HALF = Object.freeze({ x: 3.5, z: 1.05, down: 1.4, chainX: SD_PENDULUM.foot + 0.25, chainZ: 0.25 });
+export const EG_HANG_HALF = Object.freeze({ x: 3.5, z: 1.05, down: 1.6, chainX: SD_PENDULUM.foot + 0.25, chainZ: 0.25 });   // (EG-PERFECT's audit: down 1.4 left the first band's rib's lowest 0.17 m - 1.57 under its pivot - read at the chains' reach)
 /** A floor's underside under its top (m - its slab and the first course of the ruin's foundation, world/eliteGates/egRuin.js), the
  *  shortest a capped hang's chains run (m), and how high over a deck a floor first stands over it (a body's height and more:
  *  ground nearer is a neighbour beside the course, never a floor over it). */
