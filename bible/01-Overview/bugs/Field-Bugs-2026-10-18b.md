@@ -13,7 +13,7 @@ record says so and what would prove it. The pins are `fb1018b_*`, the mutants `t
 | T4 | Aspidichelon, "Usable items hotkeys do not function in dungeons": "1-9 works outside, but not in dungeons" | The hotbar takes the digits ahead of every window unless the HUD's last frame said paused; underground no frame says so while a window stands | fixed (DUNGEON-DIGITS) |
 | T5 | Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": imps that won't die, a vampiric heal off them; a gate's keeper unseen while its AOE showed | The imps are a span's Harriers, which the relay refuses to be struck from a platform (by design); the screen showed the blow and healed off a stand-in nothing empties | fixed (TURNED-BLOW, VAMPIRIC-WARD); the unseen keeper not proven (UNSEEN-KEEPER) |
 | T6 | æther, "Collection: Broken world objects": the sea north-east of Tlactrn Manor, Tunmont docks, a bush in a house wall at Penwall Derry, a rock in Ipsmoth | Two found in our own code, two not | fixed (HOUSE-BUSH, ROCK-SMEAR); the sea and the docks open |
-| T7 | CC/Astro, "Smithing stuck at 50": "literally 1xp off of levelling up but everything I craft gives me 0xp" | | |
+| T7 | CC/Astro, "Smithing stuck at 50": "literally 1xp off of levelling up but everything I craft gives me 0xp" | The crafter's limit (Professions-Arc 3.2, Mac's decision): two crafts past Journeyman stop every other one XP short of 51. No word said it, and the station's XP line was another law than the service's credit | the limit said, the line the service's (CRAFT-LIMIT-SAID); letting a craft go back is the owner's call |
 
 ## HELD-BASE: a held power is minted on a piece a slot takes (T1)
 
@@ -270,6 +270,56 @@ corners' own area. The collider reads no winding. THE FOUR HOSTS: as HOUSE-BUSH'
 stand-in rows corrected.
 
 Pins: `test/world/fb1018b_rocksmear.test.js` (4). Mutants: `tools/mutants/fb1018b_rocksmear.json` (8, all dead).
+
+## CRAFT-LIMIT-SAID: the crafter's limit said where it acts, and a station's XP the service's own (T7)
+
+`src/net/professionLaw.js` (craftLimit, craftLimitOf, creditedXp), `src/net/profBook.js` (limit), `src/ui/craftXpWords.js`
+(paidXp, capLine, limitRuleLine), `src/ui/professions/profPages.js` (payOf, every station's XP line, the tab),
+`src/scenes/world.js` (one line edited, none added), `locales/*`.
+
+FOUND. Reproduced in Node on the real Worker, book and Stores page: Smithing at 26,009 behind Building 60 and
+Provisioning 55, the anvil's Silver Dagger box read word for word as the screenshot, and the Worker answered `xp: 0,
+first: true`.
+- **The crafter's limit** (`06-Systems/Professions-Arc.md` 3.2, DECIDED; Mac kept it at CAP-OFF): two crafts past
+  Journeyman, every other stopped at `professionLaw.js:"return past >= CRAFTS_ABOVE_JOURNEYMAN ? xpForRank(JOURNEYMAN_RANK + 1) - 1 : PROF_XP_MAX;"` -
+  one XP short of 51, the report's "1xp off". The service credits each act through its own INSERT,
+  `professions.js:"MAX(0, MIN(?10 + f * ?13, ${Number(cap)} - COALESCE("` (the smelt's, temper's, brew's and disenchant's
+  alike), so at that ceiling every act pays none, its first's 500 too. With Provisioning at 50 the same craft paid 60
+  and 500. Nothing else pays a rank-50 craft none (the Firmament's XP floors at -30%). The player's other two crafts are
+  not in the screenshot, but only the limit makes that exact figure.
+- **The line was another law.** `craftXpLine` read `craftXp` alone - not the limit, not the Firmament's percent (FIRM1
+  `scaleXp`), not a Master's full track. The tab read "26,009 / 26,010 XP" and never said what "2 of 2" does; the
+  craft's word said "(+0 Smithing XP, with the first-time bonus)" where the limit ate the bonus.
+- **Nothing unlocks it on that character**: no write lowers a track; only deleting the character removes one.
+
+FIXED. The limit stands and is said; a station's figure is the Worker's credit, one law. Every station (anvil,
+workbench, loom, jeweller's, mason's works and carvings, fire, alchemy, enchanting, temper) reads
+`profPages.js:"export const payOf = (book, id) =>"` and says "No Smithing XP: Building and Provisioning stand above
+Journeyman, and the crafter's limit holds Smithing at rank 50." in place of a line the track cannot take ("At most 9
+..." with a little room; "Smithing is at Master." at the top). The fire drops its pans' XP where none is paid; temper and
+enchant rows say "+0". The craft's word says the limit, never a bonus the limit ate. The tab: "26,009 / 26,009 XP - the
+crafter's limit holds it at rank 50", and "A character raises only 2 crafts past Journeyman: yours are Building and
+Provisioning, so your other crafts stop at rank 50. No craft's rank is ever lowered." (before the second: "once 2 of
+yours pass rank 50, the others stop there"). The six new strings in the thirteen whole languages and each glossary.
+The service decides as before: no account version moves.
+
+OPEN, for the owner: whether a craft may be let go back to 50 (as a specialisation is changed). Not built: it changes
+3.2.
+
+THE FOUR HOSTS: `world.js` wired (`world.js:"profBook.limit(rec?.profession)"`, the line edited, bootWorld at its
+ceiling). `worldModes.js`, `exterior.js` and `dungeonContext.js` build no station or craft word. Left: the brew's,
+temper's and disenchant's words ("(+0 ...)" - their stations say it first; they claim no bonus); the forge, which states
+no figure. Our own feature: no DFU member moves.
+
+Found and left: `tools/mutants/prof12.json`'s `PROF12-book-dis-unapplied` (profBook.js) survives, on main's
+`138604baa` too - older than this slice, not touched by it.
+
+Why no test saw it: the limit was pinned on the Worker and the lines on the page, never on one character; five tests
+certified a Master's figures the Worker never pays.
+
+Pins: `test/net/fb1018b_craftlimit.test.js` (6). PIN MOVED: `fb1015f_firstcraft`, `craft1_chain`, `prof9_client`,
+`prof12_client`. Mutants: `tools/mutants/fb1018b_craftlimit.json` (46, all dead); 14 older records re-aimed by content,
+all dead.
 
 ## T6's other two: the sea off Tlactrn Manor - not proven; Tunmont's docks - not found
 
