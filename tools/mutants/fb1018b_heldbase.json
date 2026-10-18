@@ -1,0 +1,202 @@
+[
+  {
+    "name": "HELD-BASE-no-redraw",
+    "file": "src/systems/loot/loot.js",
+    "old": "  if (powersNeedWearing(enchantments)) {\n    for (let i = 1; i < MAGIC_BASE_DRAWS && !wearableItem(base); i++) base = magicItemBase(magicItem, playerLevel, gender, rolls);\n    if (!wearableItem(base)) base = createRandomArmor(playerLevel, rolls);   // a dead stream: armour, every set's first group, every piece worn\n  }\n",
+    "new": "",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the pre-fix mint: DFU's one draw, a held power on a Holy Tome or a Wand"
+  },
+  {
+    "name": "HELD-BASE-redraw-every-power",
+    "file": "src/systems/loot/loot.js",
+    "old": "  if (powersNeedWearing(enchantments)) {",
+    "new": "  if (enchantments.length > 0) {",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a Used cast drawn again too - the Leaping Wand gone, DFU's draw lost where nothing needed it"
+  },
+  {
+    "name": "HELD-BASE-redraw-on-wearable",
+    "file": "src/systems/loot/loot.js",
+    "old": "for (let i = 1; i < MAGIC_BASE_DRAWS && !wearableItem(base); i++)",
+    "new": "for (let i = 1; i < MAGIC_BASE_DRAWS; i++)",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a wearable draw drawn again - the stream walked sixty-four draws deep for every held power"
+  },
+  {
+    "name": "HELD-BASE-loop-start",
+    "file": "src/systems/loot/loot.js",
+    "old": "for (let i = 1; i < MAGIC_BASE_DRAWS",
+    "new": "for (let i = 0; i < MAGIC_BASE_DRAWS",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the first draw not counted - one draw past the bound"
+  },
+  {
+    "name": "HELD-BASE-bound",
+    "file": "src/systems/loot/loot.js",
+    "old": "export const MAGIC_BASE_DRAWS = 64;",
+    "new": "export const MAGIC_BASE_DRAWS = 65;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the soul trap's bound moved"
+  },
+  {
+    "name": "HELD-BASE-no-fallback",
+    "file": "src/systems/loot/loot.js",
+    "old": "    if (!wearableItem(base)) base = createRandomArmor(playerLevel, rolls);   // a dead stream: armour, every set's first group, every piece worn\n",
+    "new": "",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a dead stream mints the Wand it last drew"
+  },
+  {
+    "name": "HELD-BASE-fallback-unguarded",
+    "file": "src/systems/loot/loot.js",
+    "old": "    if (!wearableItem(base)) base = createRandomArmor(playerLevel, rolls);",
+    "new": "    base = createRandomArmor(playerLevel, rolls);",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "every held power on armour, the redraw's wearable piece thrown away"
+  },
+  {
+    "name": "HELD-BASE-empty-record",
+    "file": "src/systems/loot/loot.js",
+    "old": "export const powersNeedWearing = (rows) => rows.length > 0 && !rows.some(worksUnworn);",
+    "new": "export const powersNeedWearing = (rows) => !rows.some(worksUnworn);",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a record with no power at all read as one that needs a slot"
+  },
+  {
+    "name": "HELD-BASE-predicate-held",
+    "file": "src/systems/enchantments.js",
+    "old": "export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;",
+    "new": "export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Held) !== 0;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the Held payload read as off the body - Enhances Skill kept on the Holy Tome, the casts drawn again"
+  },
+  {
+    "name": "HELD-BASE-predicate-any-power",
+    "file": "src/systems/enchantments.js",
+    "old": "export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;",
+    "new": "export const worksUnworn = (e) => REGISTRY.has(e?.type);",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "every power read as working off the body - nothing drawn again"
+  },
+  {
+    "name": "HELD-BASE-guard-offset",
+    "file": "src/systems/loot/loot.js",
+    "old": "  const magicItem = regular[chosenItem];",
+    "new": "  const magicItem = regular[(chosenItem + 1) % regular.length];",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the report's question: a name and a power from different records (a table offset)"
+  },
+  {
+    "name": "HELD-BASE-repair-unwired",
+    "file": "src/systems/save/save.js",
+    "old": "    const n = repairMagicBases(list);\n",
+    "new": "    const n = 0;\n",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the load never repairs a save's pieces"
+  },
+  {
+    "name": "HELD-BASE-repair-any-piece",
+    "file": "src/systems/loot/loot.js",
+    "old": "it.magic !== true || it.artifact || it.questItem ||",
+    "new": "it.artifact || it.questItem ||",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the player's own Wand from the item maker moved too"
+  },
+  {
+    "name": "HELD-BASE-repair-artifact",
+    "file": "src/systems/loot/loot.js",
+    "old": "it.magic !== true || it.artifact || it.questItem ||",
+    "new": "it.magic !== true || it.questItem ||",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "an artifact moved off its record's template"
+  },
+  {
+    "name": "HELD-BASE-repair-quest",
+    "file": "src/systems/loot/loot.js",
+    "old": "|| it.artifact || it.questItem || !Object.isExtensible(it)) continue;",
+    "new": "|| it.artifact || !Object.isExtensible(it)) continue;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a quest's piece moved under its quest"
+  },
+  {
+    "name": "HELD-BASE-repair-frozen",
+    "file": "src/systems/loot/loot.js",
+    "old": "|| it.questItem || !Object.isExtensible(it)) continue;",
+    "new": "|| it.questItem) continue;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a frozen piece written - the load throws"
+  },
+  {
+    "name": "HELD-BASE-repair-used-cast",
+    "file": "src/systems/loot/loot.js",
+    "old": "    if (!powersNeedWearing(itemEnchantments(it) ?? []) || wearableItem(it)) continue;",
+    "new": "    if (wearableItem(it)) continue;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a Used cast's Wand moved - DFU's own wands are wands"
+  },
+  {
+    "name": "HELD-BASE-repair-worn",
+    "file": "src/systems/loot/loot.js",
+    "old": "    if (!powersNeedWearing(itemEnchantments(it) ?? []) || wearableItem(it)) continue;",
+    "new": "    if (!powersNeedWearing(itemEnchantments(it) ?? [])) continue;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "a held power already worn moved to the Amulet"
+  },
+  {
+    "name": "HELD-BASE-repair-home",
+    "file": "src/systems/loot/loot.js",
+    "old": "    it.templateIndex = RARITY_HOME.Jewellery;",
+    "new": "    it.templateIndex = 134;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the home not the Amulet"
+  },
+  {
+    "name": "HELD-BASE-repair-group",
+    "file": "src/systems/loot/loot.js",
+    "old": "    it.group = 'Jewellery';\n    it.templateIndex = RARITY_HOME.Jewellery;",
+    "new": "    it.templateIndex = RARITY_HOME.Jewellery;",
+    "tests": [
+      "test/systems/loot/fb1018b_heldbase.test.js"
+    ],
+    "why": "the template moved and the group not"
+  }
+]

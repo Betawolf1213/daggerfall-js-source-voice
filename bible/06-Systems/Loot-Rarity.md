@@ -449,3 +449,18 @@ tier read by nothing. Now `systems/equip.js` wearableItem (GetEquipSlot on an em
 grades no piece it refuses (`rarityEligible`), the spoils' base is made again on one, and a save's rolled wands load as
 the Amulet - the same weight and condition (`repairRarityBases`, `RARITY_HOME`). The Jewellery records still name no
 templates: a King's Mark lands on any wearable jewel. `test/systems/fb1001_wand.test.js`.
+
+## HELD-BASE (FIELD BUGS 2026-10-18b) - DFU'S OWN MAGIC, ON A PIECE A SLOT TAKES
+
+RARITY-WEAR's last sentence, "DFU's own wands (MAGIC.DEF's, Use a cast) ... stay wands", was not yet true: DFU's
+CreateRegularMagicItem (ItemBuilder.cs:555-582, `loot.js` createRegularMagicItem) draws a magic item's base off the
+template's group byte and never asks what its power needs. Group 0 holds the religious items and the Jewellery, group 1
+the Jewellery, and no slot takes a religious item or the Wand (`equip.js` wearableItem). MAGIC.DEF's Enhances Skill, Cast
+When Held and Absorbs Spells rows are read on a worn piece alone, so "%it of Venom Spitting" landed on a Holy Tome or a
+Wand one draw in six (9 in 56) and the ten Cast When Held and Absorbs Spells rows on a Wand one in forty - a power that
+never once reached its holder. Now a piece whose powers need wearing (`powersNeedWearing`: live rows, none answering the
+Used payload - `enchantments.js` worksUnworn) has its base drawn again, as DFU draws again over an Arrow, up to
+MAGIC_BASE_DRAWS (64) and then armour; a draw that was wearable is the draw it was, and a Used cast keeps any base (a
+Leaping Wand, a Silent Holy Tome). A save's pieces minted before the fix load as the Amulet, RARITY_HOME's
+(`repairMagicBases`, in `save.js` repairItemLists). Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
+such duds before, none now. A departure (Port-Ledger A, HELD-BASE). `test/systems/loot/fb1018b_heldbase.test.js`.
