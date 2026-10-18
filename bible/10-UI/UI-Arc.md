@@ -9238,13 +9238,18 @@ list and the page scroll each in their own column (the grimoire dress's
 book, worn plain - `.sb-shell .px-body` holds them and scrolls neither), and
 the page names the spell it shows (`data-scroll-key`, the helper's new
 word: domRepaint.js:"const key = n.getAttribute?.('data-scroll-key');"), so
-another spell's page starts at its top. The Chronicle (the same bones) lost
+another spell's page starts at its top - named by the spell's own index,
+never its row (AUDIT FB1018b L2-2: a delete kept the row, and the next spell
+opened at the deleted one's offset). The helper finds a saved pane by its
+own path, walking down its indices (AUDIT FB1018b L2-4: it had mapped the
+whole rebuilt tree, quadratic - one fold in a scrolled Chronicle of 500
+notes ~400 ms, now 69 ms). The Chronicle (the same bones) lost
 its page on every fold, remove, share and abandon, and draws the same way,
 its page named by its section (enhancedChronicle.js:"body.setAttribute('data-scroll-key', section);").
 The Reforge's Salvage page and the pack's Salvage were measured holding
 already (one scroller kept, its rows replaced). Pins:
-test/ui/enhanced/fb1018b_spellscroll.test.js (5); the layout itself is
-driven in Chromium by tools/spellScrollProbe.mjs. 12 mutations, 12 dead
+test/ui/enhanced/fb1018b_spellscroll.test.js (8); the layout itself is
+driven in Chromium by tools/spellScrollProbe.mjs. 22 mutations, 22 dead
 (`tools/mutants/fb1018b_spellscroll.json`).
 
 PX24 (Mac: "with the logbook and history, I want them as one detailed

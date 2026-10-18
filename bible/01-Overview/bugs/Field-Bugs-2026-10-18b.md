@@ -79,7 +79,13 @@ DFU's book never moves on a pick: ListBox.MouseClick (ListBox.cs:465-504) only s
 FIXED. The book draws through the repaint (`enhancedSpellbook.js:"if (host) repaintKeepingScroll(host, paint);"`); the
 list and the page scroll each in their own column (`.sb-shell .px-body` holds them and scrolls neither - the grimoire
 dress's book, worn plain); and a pane names what it shows (`domRepaint.js:"const key = n.getAttribute?.('data-scroll-key');"`),
-so another spell's page starts at its top while the list keeps its place.
+so another spell's page starts at its top while the list keeps its place. AUDIT FB1018b L2-2: the page is named by its
+spell (its `index`, the port's name for a spell, the quickslot's and the hotbar's), not its row - a delete kept the row,
+and the spell after a deleted one opened at the deleted one's offset; a rename keeps the page. L2-1: a key also names
+the panes inside its pane (the grimoire dress's Chronicle scrolls its `.px-qdetail` inside the keyed `.px-body`).
+L2-4: the repaint finds a saved pane by walking down its own path, never by mapping the rebuilt tree - one fold in a
+Chronicle of 500 notes, scrolled, cost ~400 ms in Chromium (1,000 notes ~1.4 s), now 69 ms (121 ms), the unscrolled
+press's own cost.
 
 THE SIBLINGS. The Chronicle (the same bones) lost its page on every fold, remove, share, abandon and run-out deadline
 (measured 900 -> 0); drawn the same way, its page named by its section
@@ -99,7 +105,8 @@ Why no test saw it: nothing mounted the book, scrolled its list and pressed a ro
 "not pinnable here" - but the suite's DOM keeps a node's scrollTop and starts a new node at 0, which is all it needs (the
 mutation of domRepaint that records nothing, a survivor only `tools/enhancedScrollProbe.mjs` killed, now dies in the suite).
 
-Pins: `test/ui/enhanced/fb1018b_spellscroll.test.js` (5). Mutants: `tools/mutants/fb1018b_spellscroll.json` (12, all dead).
+Pins: `test/ui/enhanced/fb1018b_spellscroll.test.js` (8; AUDIT FB1018b L2-3: the book's column rules are the only word on
+them in every sheet). Mutants: `tools/mutants/fb1018b_spellscroll.json` (22, all dead).
 Four tests that build their own node stand-ins gained `querySelectorAll: () => []` (journal1, questreset1, questshelfmain,
 discord5), no assertion changed.
 
@@ -171,14 +178,23 @@ the dungeon's `overlayActive`); the bar's own gate now agrees with it (AUDIT FB1
 game's pause; the dungeon arm's window branch already calls the door (no line added); `dungeon.js` mounts the same
 context. Our own feature: DFU does not Update its HUD under a window (DaggerfallUI.cs:429-433).
 
-Found and left: between a key that opens a window and the next frame the bar holds the last frame's word, in every
-host; and a street-slot window over ?world's dungeon arm (Recall's prompt) leaves the bar its keys - not proven to meet
-a window that reads digits.
+AUDIT FB1018b L2-5, L2-6: the two this section first left are fixed. The bar asked the HUD's last frame, so a digit
+between a key that opens a window and the next frame was the bar's (reproduced: the use-magic-item list put in the
+dungeon's slot, then Digit1 - slot 1's potion drunk, the list never heard it); and a window in the street's slot over
+?world's dungeon arm (Recall's prompt), which no dungeon frame sees, left the bar its digits while the pad's crossbar
+stood down. Now the bar's keys, its mouse slot and the crossbar ask the host's own pause at the press - the hooks object
+every host hands the finger and the pad (`input.js:"export function hostPaused() {"`, noted by `attachTouch` and
+`attachGamepad`), the HUD's last frame only where no host handed one; keyboard and pad agree. Under the dungeon's
+status readout, which pauses nothing, the keys are the player's, as STATUS-LIVE has them in the street. Left: the
+enhanced HUD itself still paints under a street-slot window over ?world's dungeon arm (drawFoes knows only the
+dungeon's own slot; the door it would need adds a host line).
 
 Why no test saw it: the bar's pins drove `drawEnhancedHotbar` with a `paused` they chose, and the hide door's asked
 about the text surfaces alone.
 
-Pins: `test/ui/hud/fb1018b_dungeondigits.test.js` (3). Mutants: `tools/mutants/fb1018b_dungeondigits.json` (11, all dead).
+Pins: `test/ui/hud/fb1018b_dungeondigits.test.js` (5), `test/ui/plus/fb1004e_padarrange.test.js`'s one pause (AUDIT
+FB1018b L2-5/L2-6); `test/systems/auditcontrib.test.js`'s source pin reads the new gate. Mutants:
+`tools/mutants/fb1018b_dungeondigits.json` (19, all dead).
 
 ## TURNED-BLOW: a blow the relay refuses is refused on the screen too (T5)
 
