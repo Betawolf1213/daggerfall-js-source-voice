@@ -237,7 +237,12 @@ function paint() {
 
   const sel = rows[picked];
   const detail = el('div', 'px-qdetail');
-  detail.setAttribute('data-scroll-key', String(picked));   // FB1018b SPELL-SCROLL: another spell's page starts at its top; the list keeps its place
+  // FB1018b SPELL-SCROLL: another spell's page starts at its top; the list keeps its place. AUDIT FB1018b L2-2: THE KEY
+  // IS THE SPELL, NOT ITS ROW - it was `picked`, and a delete keeps `picked` (confirmDelete: the row gone, the next spell
+  // takes its place), so the spell after a deleted one opened at the deleted one's offset. The spell's index is the port's
+  // name for a spell, the one the quickslot and the hotbar key it by (systems/quickslots.js keyedSpell): a rename or an
+  // icon keeps the page (editBookSpell writes a new record under the same index), another spell in the row misses
+  detail.setAttribute('data-scroll-key', `spell ${sel.spell?.index}`);
   const name = el('div', 'px-qname');
   name.append(el('span', 'px-qwing'), el('h3', null, sel.name), el('span', 'px-qwing px-flip'));
   detail.append(name);
