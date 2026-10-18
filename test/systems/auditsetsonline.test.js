@@ -13,6 +13,7 @@ import '../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { hostText } from '../hostText.mjs';   // HOST-SPLIT: the host WHOLE - the building's loot doors left worldModes.js for scenes/interiorLootHost.js
 import {
   setBlow, setStruck, setRound, setHudChips, setSetPowersVoice, markedFoe, heldPlayerBlow, remarkPlayerBlow, BLOW_WINDOW_S,
   _setSetPowersClockForTests, _resetSetPowersForTests,
@@ -205,7 +206,7 @@ test('AUDIT SETS M2: A ROOM\'S WORD THIS BUILD CANNOT READ - a newer game\'s ite
   assert.deepEqual(box.items, [{ name: 'mine' }], 'nothing landed');
   assert.equal(applyInteriorLoot(ctx, [{ k: 'container:0', r: [], d: today }], { seen: s.seen, today, unreadable: s.unreadable }), 1);
   assert.equal(s.unreadable.has('container:0'), false, 'a word it can read again clears it');
-  const wm = read('src/scenes/worldModes.js'), dun = read('src/scenes/dungeonContext.js');
+  const wm = hostText('src/scenes/worldModes.js'), dun = read('src/scenes/dungeonContext.js');   // PIN MOVED (HOST-SPLIT): the building's loot doors stand in scenes/interiorLootHost.js now
   assert.match(wm, /if \(s\.unreadable\?\.has\(canon\)\) return false;   \/\/ AUDIT SETS M2/, 'never claimed or closed over in a building');
   assert.match(wm, /unreadable: _intShared\.unreadable, carried: carriedPieces\(playerEntity\) \}\)/, 'the building\'s set handed to the door');   // PIN MOVED (AUTO-HOLD): and the pieces I carry beside it
   assert.match(dun, /if \(!items\) \{ if \(lootHolder\(canon\) && !respawnDue\(rec\.t, _wallNow\(\)\)\) \{ _lootSeen\.add\(canon\); _lootUnreadable\.add\(canon\); \} continue; \}/, 'a word due back (WORLD8) locks nothing');

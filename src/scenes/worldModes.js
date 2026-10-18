@@ -276,7 +276,7 @@ import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExterio
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
 import { BUILDING_KEY_0 } from '../systems/talk/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
 import { carriedPieces } from '../systems/item/itemIds.js';   // AUTO-HOLD: the room's word never lands a piece I carry (world/interior/interiorShared.js)
-import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootKeyOf, interiorLootRecords } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
+import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
 import { getHolidayId } from '../systems/holidays.js';
 import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guild/guilds.js';
 // V5: rest above ground. The window and the session have been finished
@@ -439,7 +439,7 @@ import { hasSpellbook } from '../systems/spell/spellMaker.js';   // AUDIT 63 F12
 // M2: the potion maker - the other half of the guild's magic economy.
 import { PotionMakerWindow, preloadPotionArt, potionArtLoaded } from '../ui/potionMakerWindow.js';
 import { ItemMakerWindow, preloadItemMakerArt, itemMakerArtLoaded, ITEM_RECTS, rowLayout as itemMakerRowLayout } from '../ui/item/itemMakerWindow.js';
-import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
+import { createPotion, getMagicItemTemplates, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
@@ -472,6 +472,7 @@ import { chapterHallFactor, chapterHallShelf, chapterHallShut, CHAPTER_HALL_SHUT
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import '../ui/tutorialPopup.js';   // TUT1: the popup's handler, registered by this host (the four hosts' rule)
 import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a tinted copy of a light is that light (the dungeon's flame tint, the abyss's candle)
+import { createInteriorLootHost } from './interiorLootHost.js';   // HOST-SPLIT
 /** BOUNTY1: the plaque over a town's bounty board. */
 const BOUNTY_BOARD_TEXT = 'Bounty Board';
 const NOTICE_BOARD_TEXT = 'Notice Board';   // ONE-BOARD: a town's Notice Board, while it is open to this account
@@ -1994,51 +1995,12 @@ export function createWorldModes(host) {
   let _intShared = null;
   let privateVisitOwner = null;
   let privateVisitRoom = null;   // staff visiting another character's personal interior
-  /** WORLD4's law for a building: the container is the room's - said on the OPEN, which CLAIMS it (a claim speaks
-   *  only for a container the room has not spoken about, AUDIT WORLD4 C2/D5), on a RESTOCK (the new day's stock is
-   *  the room's, whoever browsed first), and on the CLOSE (what is left). */
-  function interiorPublishLoot(key, { claim = false } = {}) {
-    const s = _intShared;
-    const canon = interiorLootKeyOf(key);
-    if (!s?.locationKey || !canon || !interiorCtx || s.home) return false;   // HOME1: a home's cupboards are never the room's
-    if (s.unreadable?.has(canon)) return false;   // AUDIT SETS M2: never over a word this build cannot read
-    if (claim && s.seen.has(canon)) return false;
-    const l = interiorLootRecords(interiorCtx, [canon], s.tooBig);
-    if (!l.length) return false;   // never opened, or too large to say - it stays this player's own
-    const first = !s.seen.has(canon);
-    s.seen.add(canon);
-    if (first) host.onLootClaimed?.();   // AUDIT WORLD4 D5: the memory goes out now, not up to fifteen seconds from now
-    return !!host.onActions?.({ k: s.locationKey, l });
-  }
-  /** A window opened on a container: the claim, and the window remembered so its close - through WHICHEVER of the
-   *  slot's drains frees it (a trade window has no close hook of its own, X6) - says what is left.
-   *  AUDIT WORLD6a A5 (WORLD4 C6 again): a RESTOCK is said HERE, at the window's mount, not where the roll was made -
-   *  the container arm rolled a stranger's cupboard before the private-property prompt, so a player who answered No
-   *  (DFU: "No claims nothing") had already told the room the cupboard's whole contents; `fresh` is the arm's word
-   *  that this open rolled the new day's stock, and then the word is not a claim but the room's new stock. */
-  function interiorLootOpened(key, win, { fresh = false } = {}) {
-    const s = _intShared;
-    const canon = interiorLootKeyOf(key);
-    if (!s?.locationKey || !canon || !win) return;
-    if (s.unreadable?.has(canon)) setMidScreenText(LOOT_NEWER_TEXT);   // AUDIT SETS M2: what is shown is this build's own roll, and it is never said to the room
-    s.openKey = canon; s.openWin = win;
-    interiorPublishLoot(canon, { claim: !fresh });
-  }
-  /** Every interior frame: the open container's window is GONE - the close's word.
-   *  AUDIT WORLD6a A3 (CRITICAL): gone means gone from the STACK, not from the slot. `interiorOverlay` mirrors the TOP
-   *  of interiorWindows and mountInterior PUSHES (ROAD-B B1), so a quest popup, an inventory or a text box laid over
-   *  an open shelf made the slot another window while the shelf's stood beneath, still bound to its rows: the close
-   *  went out mid-transaction, `openKey` was cleared, a peer's word then landed under the live window (AUDIT WORLD4
-   *  C1's orphaned rows: an item taken twice), and the two theft comparisons read a shelf the room had moved - a
-   *  peer's purchase made this player a thief. The stack is asked whether the window still exists. */
-  function interiorLootSettle() {
-    const s = _intShared;
-    if (!s?.openWin) return;
-    if (interiorWindows.containsWindow(s.openWin) && !s.openWin.done) return;
-    const k = s.openKey;
-    s.openKey = null; s.openWin = null;
-    interiorPublishLoot(k);
-  }
+  const { interiorLootOpened, interiorLootSettle } = createInteriorLootHost({   // HOST-SPLIT: src/scenes/interiorLootHost.js
+    host,
+    get _intShared() { return _intShared; },
+    get interiorCtx() { return interiorCtx; },
+    get interiorWindows() { return interiorWindows; },
+  });
   /**
    * IF - THE INTERIOR FOE POOL. A building interior carries NO STATIC
    * ENEMIES in DFU: DaggerfallInterior's whole marker vocabulary is

@@ -355,6 +355,7 @@ export function player(net, id, { seed = 1, home = null, skew = 0, roll = null, 
     privatePropertyTheft: (args) => { thefts.push({ basket: [...(args?.basket ?? [])] }); return REAL.privatePropertyTheft(args); },
   };
   const state = { ...BOUND, ...hostScope };
+  state.h = state;   // HOST-SPLIT: a door tools/hostMove.mjs moved out of the host reads the host's live names as `<handle>.<name>` (scenes/interiorLootHost.js's handle is `h`) - here the handle is the scope itself
   p.state = state;
   p.h = mount(CLIENT, state, missing);
   for (const k of ['press', 'frame', 'peek', 'bag', 'leave', 'openShelf']) p.h[k] = guarded(id, missing, p.h[k]);

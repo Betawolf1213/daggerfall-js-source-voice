@@ -20,6 +20,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT: the host WHOLE - the building's loot doors left worldModes.js for scenes/interiorLootHost.js
 import { isWorldRoom, worldFrameMaxFor, WORLD_FRAME_MAX, WORLD_FRAME_MAX_INTERIOR, mintSharedStamp, PIXEL_UNITS } from '../../../src/net/wire.js';
 import * as relay from '../../../server/src/relay.js';
 import { relayVersionAtLeast } from '../../relayVersion.mjs';
@@ -126,8 +127,8 @@ test('AUDIT WORLD6a B7: the memory\'s stamp is twelve base-36 digits and a dash,
 });
 
 test('AUDIT WORLD6a by source: the settle asks the stack (A3), the keyed shop fallback claims and a stale row buys nothing (A4), a restock is said at the window (A5), an owned house or any ship keeps no shared loot room (A6/B6; STAFF-TP adds private presence), the first act in a new building pends (A7), a building\'s foes frame is no dungeon heartbeat (B8)', () => {
-  const m = rd('src/scenes/worldModes.js');
-  assert.match(m, /if \(interiorWindows\.containsWindow\(s\.openWin\) && !s\.openWin\.done\) return;/, 'A3');
+  const m = hostText('src/scenes/worldModes.js');   // PIN MOVED (HOST-SPLIT): the open, the settle and the publish stand in scenes/interiorLootHost.js; a live name reads through its handle, `h.<name>`
+  assert.match(m, /if \(h\.interiorWindows\.containsWindow\(s\.openWin\) && !s\.openWin\.done\) return;/, 'A3');
   assert.match(m, /if \(si >= 0\) interiorLootOpened\(`shelf:\$\{si\}`, interiorOverlay, \{ fresh \}\);/, 'A4: claimed');
   // DAEDRA2 widened the window from 200: the law is that the stale-row
   // GUARD comes before the splice, and how many lines sit between them

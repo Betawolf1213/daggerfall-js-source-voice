@@ -17,6 +17,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { hostText } from '../../hostText.mjs';   // HOST-SPLIT: the host WHOLE - the building's loot doors left worldModes.js for scenes/interiorLootHost.js
 import { isWorldRoom, PIXEL_UNITS } from '../../../src/net/wire.js';
 import * as relay from '../../../server/src/relay.js';
 import { relayVersionAtLeast } from '../../relayVersion.mjs';
@@ -136,7 +137,7 @@ test('WORLD6a: the pure half - the memory is the opened containers the room know
 });
 
 test('WORLD6a: the hosts by source - the interior mode keys and stamps its room at the mount (an owned house or ship keeps none), wires the doors\' seam, claims a container on the open, says a restock and the close through the frame\'s settle, fires the leave before both teardowns, and the mode machine dispatches the PLACE; the world host walks the one path; the pane says it', () => {
-  const m = rd('src/scenes/worldModes.js');
+  const m = hostText('src/scenes/worldModes.js');   // PIN MOVED (HOST-SPLIT): the open, the settle and the publish stand in scenes/interiorLootHost.js; a live name reads through its handle, `h.<name>`
   // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
   assert.match(m, /const owned = !!privateVisitRoom \|\| b\?\.buildingType === BUILDING_TYPES\.Ship \|\| \(!interiorHome && houseOwnedAt\(b, b\?\.buildingKey\)\);\s*_intShared = mintInteriorShared\(interiorLocationKey\(questSceneCtx\?\.\(\)\?\.mapId \?\? 0, b\?\.buildingKey \?\? 0, visitLayoutNow\(\)\), \{ owned, home: !!interiorHome \}\);[^\n]*\n\s*const key = _intShared\.locationKey;\s*if \(key\) ctx\.actions\.onChanged = \(recs\) => host\.onActions\?\.\(\{ k: key, a: recs \}\);/, 'the mount (AUDIT WORLD6a A1: the bag from the one mint; B6: any ship is owned; HOME1 re-aim: an online home keeps its room, loot-free)');
   assert.match(m, /fresh = true;   \/\/ AUDIT WORLD6a A5/, 'a cupboard\'s restock is said at the window');
@@ -149,7 +150,7 @@ test('WORLD6a: the hosts by source - the interior mode keys and stamps its room 
   assert.match(m, /const at = shelf\.items\.indexOf\(it\);\s*if \(at < 0\) return undefined;/, 'a row the shelf no longer holds buys nothing');
   assert.match(m, /if \(shelf\) interiorLootOpened\('shelf:0', win, \{ fresh \}\);/, 'the merchant\'s sell screen');
   assert.match(m, /if \(mode === 'interior'\) interiorLootSettle\(\);/, 'the close is the frame\'s settle');
-  assert.match(m, /function interiorLootSettle\(\) \{\s*const s = _intShared;\s*if \(!s\?\.openWin\) return;\s*if \(interiorWindows\.containsWindow\(s\.openWin\) && !s\.openWin\.done\) return;\s*const k = s\.openKey;\s*s\.openKey = null; s\.openWin = null;\s*interiorPublishLoot\(k\);\s*\}/, 'gone from the STACK, not from the slot (AUDIT WORLD6a A3)');
+  assert.match(m, /function interiorLootSettle\(\) \{\s*const s = h\._intShared;\s*if \(!s\?\.openWin\) return;\s*if \(h\.interiorWindows\.containsWindow\(s\.openWin\) && !s\.openWin\.done\) return;\s*const k = s\.openKey;\s*s\.openKey = null; s\.openWin = null;\s*interiorPublishLoot\(k\);\s*\}/, 'gone from the STACK, not from the slot (AUDIT WORLD6a A3)');
   assert.match(m, /if \(claim && s\.seen\.has\(canon\)\) return false;[\s\S]{0,400}?if \(first\) host\.onLootClaimed\?\.\(\);/, 'a claim speaks once; the memory is due on a first claim');
   assert.equal((m.match(/host\.onInteriorLeave\?\.\(\);/g) ?? []).length, 2, 'the two teardowns, no third');
   assert.match(m, /cacheInteriorScene\(\);\s*host\.onInteriorLeave\?\.\(\);   \/\/ WORLD6a[^\n]*\n\s*teardownQuestFlats\(\);/, 'the exit: after the cache, before the teardown');
