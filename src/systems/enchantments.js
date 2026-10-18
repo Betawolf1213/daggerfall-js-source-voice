@@ -786,9 +786,12 @@ const REGISTRY = new Map([
 ]);
 
 /** HELD-BASE (FIELD BUGS 2026-10-18b): WHETHER A POWER WORKS OFF THE BODY - its row answers the Used payload, the one a
- *  piece in the pack fires (useItem.js's doItemEnchantmentPayloads(PAYLOAD.Used)). Every other row is read on a worn
- *  piece (Equipped, Held: computeEnchantmentMods walks equippedEnchantedItems) or on the blow it strikes, so a piece no
- *  slot takes carries it for nothing (loot.js createRegularMagicItem). */
+ *  piece in the pack fires (useItem.js's doItemEnchantmentPayloads(PAYLOAD.Used)). The rest are read on a worn piece
+ *  (Equipped, Held: computeEnchantmentMods walks equippedEnchantedItems) or on the blow it strikes - save the two that
+ *  weigh the piece itself (Feather Weight, Extra Weight: Enchanted, read wherever it lies), and Health Leech answers
+ *  Used as a cost, not a power (AUDIT FB1018b L1-4: latent - every regular MAGIC.DEF row is one power of six kinds, Cast
+ *  When Used, Held or Strikes, Vampiric, Absorbs Spells, Enhances Skill; how a mixed or weight-only piece should be
+ *  based is the owner's). A piece no slot takes carries a worn power for nothing (loot.js createRegularMagicItem). */
 export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;
 
 function applyRepMod(entity, param, amount) {

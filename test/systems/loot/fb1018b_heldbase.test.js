@@ -10,18 +10,23 @@
 // religious item or the Wand (equip.js wearableItem) - so a power read on a worn piece alone was minted where it could
 // never reach its holder. Driven on the real producer (loot.js createRegularMagicItem over readMagicDef's records), the
 // real guild shelf (shopStock.js stockGuildMagicItems), the real equip table and enchantment fold, the real U window's
-// list and info box, and the save's real repair runner (save.js repairItemLists).
+// list and info box, the save's real repair runner (save.js repairItemLists) and the realm ledger's own step
+// (server-account/src/ledger.js) - AUDIT FB1018b L1-1: a load moves no saved piece's base.
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readMagicDef, MAGIC_ITEM_RECORD_SIZE, ENCHANTMENT_TYPES as T } from '../../../src/formats/magicDef.js';
-import { createRegularMagicItem, createArtifact, createRandomArmor, repairMagicBases, MAGIC_BASE_DRAWS } from '../../../src/systems/loot/loot.js';
+import { createRegularMagicItem, createArtifact, createRandomArmor, createRandomReligiousItem, MAGIC_BASE_DRAWS, powersNeedWearing } from '../../../src/systems/loot/loot.js';
 import { stockGuildMagicItems } from '../../../src/systems/shopStock.js';
 import { wearableItem, equipItem } from '../../../src/systems/equip.js';
-import { computeEnchantmentMods, worksUnworn } from '../../../src/systems/enchantments.js';
+import { computeEnchantmentMods, worksUnworn, legacyEnchantmentValue } from '../../../src/systems/enchantments.js';
 import { usableMagicItems } from '../../../src/ui/useMagicItemWindow.js';
 import { magicPowersLines } from '../../../src/systems/item/itemPowers.js';
-import { repairItemLists } from '../../../src/systems/save/save.js';
+import { repairItemLists, savedItemLists } from '../../../src/systems/save/save.js';
+import { setItemFields, mintCondition } from '../../../src/systems/item/itemTemplates.js';
+import { stampItemIds } from '../../../src/systems/item/itemIds.js';
+import { ledgerPieces } from '../../../server-account/src/judge.js';
+import { ledgerStep } from '../../../server-account/src/ledger.js';
 import { applyEnchantments } from '../../../src/systems/enchanting.js';
 import { enchantmentSettings } from '../../../src/systems/enchantmentCatalogue.js';
 import { DFU_MAGIC_ITEMS } from '../../dfuMagicItems.mjs';
@@ -132,30 +137,36 @@ test('HELD-BASE ONE RECORD, ONE PIECE (the report\'s question - a guard): every 
     [true, false, false, false, false, false]);
 });
 
-test('HELD-BASE THE PIECES A SAVE KEPT: a load moves a MAGIC.DEF piece minted on a Holy Tome or a Wand, its powers all worn ones, to the Amulet - its name, rows, uses and price its own; a Used cast\'s Wand, one already worn, a Wand the item maker enchanted, an artifact, a quest\'s piece and a frozen one stay; a second load moves nothing (mutants: the runner\'s call, each guard, the home)', () => {
-  // the pre-fix mint's own shape: the producer's piece on the base DFU's draw gave it
-  const tome = { ...createRegularMagicItem(TEMPLATES, 1, 'male', seq(0, 0), VENOM), group: 'ReligiousItems', templateIndex: HOLY_TOME, isIdentified: true };
-  const wand = { ...createRegularMagicItem(TEMPLATES, 1, 'male', seq(0, 0), WISE), group: 'Jewellery', templateIndex: WAND };
-  const was = { ...tome };
-  const leaping = createRegularMagicItem(TEMPLATES, 1, 'male', seq(0.9, 0.99), LEAPING);
-  const worn = createRegularMagicItem(TEMPLATES, 1, 'male', seq(0, 0), VENOM);   // armour (group 0's first)
-  const wornAt = worn.templateIndex;
-  assert.equal(worn.group, 'Armor');
-  // the player's own choice at the item maker - DFU's maker takes a Wand and a held power (enchanting.js applyEnchantments)
-  const made = { group: 'Jewellery', templateIndex: WAND, name: 'Wand', value: 10, maxCondition: 800, currentCondition: 800 };
-  applyEnchantments(made, [enchantmentSettings('CastWhenHeld', 83)]);
-  assert.deepEqual(made.enchantments.map((e) => e.type), [T.CastWhenHeld]);
-  const quest = { ...wand, questItem: true };
-  const frozen = Object.freeze({ ...tome });
-  // an artifact whose record names a Wand and a held power (none of DFU's does - its template is its record's, AUDIT INT)
-  const art = createArtifact(readMagicDef(craft([{ name: 'Held Wand', type: 2, group: 25, groupIndex: 7, ench: [[1, 83]], uses: 1500, value: 50000 }])), 0);
-  assert.equal(art.templateIndex, WAND);
-  const list = [tome, wand, leaping, worn, made, quest, frozen, art];
-  repairItemLists([list]);
-  assert.deepEqual([tome.group, tome.templateIndex, wand.group, wand.templateIndex], ['Jewellery', AMULET, 'Jewellery', AMULET]);
-  assert.deepEqual({ ...tome, group: was.group, templateIndex: was.templateIndex }, was, 'nothing else of it moves');
-  assert.ok(wearableItem(tome) && wearableItem(wand));
-  assert.deepEqual([leaping.templateIndex, worn.group, worn.templateIndex, made.templateIndex, quest.templateIndex, frozen.templateIndex, art.templateIndex],
-    [WAND, 'Armor', wornAt, WAND, WAND, HOLY_TOME, WAND]);
-  assert.equal(repairMagicBases(list), 0, 'a second load finds nothing');
+test('HELD-BASE A SAVE\'S PIECES STAY AS THEY WERE (AUDIT FB1018b L1-1): the realm ledger follows a valuable piece by its print (its template and material, judge.js ledgerPrintOf); a load that moved a pre-fix "Holy Tome of Venom Spitting" to the Amulet made the next checkpoint read the honest piece as forged and hold its player - a load moves no base, and the ledger finds nothing (mutant: the old repair wired again)', async () => {
+  // the pre-fix piece in its real shape: DFU's religious draw (no material), the template's name, rows, uses and price
+  const rec = REGULAR[VENOM];
+  const rows = rec.enchantments.filter((e) => e.type !== -1);
+  const tome = mintCondition(setItemFields({ ...createRandomReligiousItem(seq(0.99)), name: rec.name, magic: true, enchantments: rows, value: legacyEnchantmentValue(rows), maxCondition: rec.uses, currentCondition: rec.uses }));
+  assert.equal(tome.templateIndex, HOLY_TOME);
+  assert.equal(wearableItem(tome), false, 'a dud: no slot takes it');
+  stampItemIds({ items: [tome] });
+  const before = ledgerPieces({ items: [structuredClone(tome)], level: 5 });
+  assert.equal(before.length, 1, 'the ledger follows it');
+  const loaded = { items: [structuredClone(tome)], level: 5 };
+  repairItemLists(savedItemLists(loaded));
+  assert.equal(loaded.items[0].templateIndex, HOLY_TOME, 'the load moves no base');
+  const after = ledgerPieces(loaded);
+  assert.deepEqual(after, before, 'its print as the ledger holds it');
+  const stmt = { bind() { return this; }, all: async () => ({ results: [] }), run: async () => ({}) };
+  const row = { uid: before[0].key, char_id: 'c1', state: 'held', fp: before[0].fp, claim_char: null, claim_at: null };
+  const step = await ledgerStep({ prepare: () => stmt }, { player: 'p1', char: 'c1', seq: 2, nowS: 1000 }, after, { mine: { results: [row] }, dupes: { results: [] } });
+  assert.deepEqual(step.forged, [], 'nothing forged at the next checkpoint');
+});
+
+test('HELD-BASE THE REDRAW\'S OWN ARGUMENTS AND THE WHOLE TABLE (AUDIT FB1018b L1-3, L1-4): a redrawn base is minted for the holder\'s gender and level, the dead stream\'s armour at the holder\'s level; of every kind the registry knows only a Used cast, Health Leech (its cost on Use) and an artifact\'s special power count as working off the body', () => {
+  assert.equal(createRegularMagicItem(TEMPLATES, 1, 'female', seq(0.5, 0.99, 0.3, 0, 0, 0), VENOM).group, 'WomensClothing', 'redrawn for her');
+  assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.5, 0.99, 0, 0, 0.99), VENOM).material, createRandomArmor(30, seq(0, 0.99)).material, 'redrawn at the holder\'s level');
+  assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.99), VENOM).material, createRandomArmor(30, seq(0.99)).material, 'the dead stream\'s armour at the holder\'s level');
+  const unworn = Object.entries(T).filter(([, type]) => worksUnworn({ type, param: 0 })).map(([name]) => name).sort();
+  assert.deepEqual(unworn, ['CastWhenUsed', 'HealthLeech', 'SpecialArtifactEffect']);
+  // a piece with a Used cast and a worn power keeps its base - the cast works from the pack (the owner's to change; no
+  // regular MAGIC.DEF row is mixed: one row each)
+  assert.equal(powersNeedWearing([{ type: T.CastWhenUsed, param: 4 }, { type: T.EnhancesSkill, param: 7 }]), false);
+  assert.equal(powersNeedWearing([{ type: T.EnhancesSkill, param: 7 }, { type: T.CastWhenHeld, param: 83 }]), true);
+  assert.equal(REGULAR.every((r) => r.enchantments.filter((e) => e.type !== -1).length === 1), true, 'every regular row one power');
 });

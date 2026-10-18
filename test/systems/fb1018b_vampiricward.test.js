@@ -15,6 +15,7 @@ import { calculateAttackDamage } from '../../src/combat/formulas.js';
 import { bossStandIn, bossLookOf } from '../../src/world/gate/gateBoss.js';
 import { createWeapon } from '../../src/combat/enemyEquipment.js';
 import * as LR from '../../src/systems/loot/lootRarity.js';
+import { ARTIFACTS, SPECIAL_ARTIFACT_HANDLERS, maceState } from '../../src/systems/artifactEffects.js';
 
 const T = ENCHANTMENT_TYPES;
 const lcg = (seed) => () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed >>> 8) / 0x800000; };
@@ -48,4 +49,16 @@ test('VAMPIRIC-WARD GORTWOG\'S CLEAVER ON THE WARDEN: the Legendary as the loot 
   let landed = 0;
   for (let k = 0; k < 20; k++) { const { d, healed } = swing(k); if (d > 0) { landed++; assert.equal(healed, d, `a blow of ${d} heals ${d}`); } }
   assert.ok(landed > 0);
+});
+
+test('VAMPIRIC-WARD THE MACE OF MOLAG BAL (AUDIT FB1018b L1-2): its strike takes the target\'s magicka or Strength as a landed blow\'s gift - a warded target gives nothing (the ward turns the blow whole), an unwarded one as before (artifactEffects.js; mutant: the ward unread)', () => {
+  const mace = SPECIAL_ARTIFACT_HANDLERS.get(ARTIFACTS.MaceOfMolagBal);
+  const wielder = () => ({ isPlayer: true, magicka: 20, maxMagicka: 30, stats: { strength: 50 }, activeEffects: [], level: 10 });
+  const target = (warded) => ({ health: 30, magicka: 10, stats: { strength: 30, willpower: 0, luck: 0 }, level: 1, skills: {}, activeEffects: [], warded });
+  const a = wielder(), t1 = target(true);
+  assert.equal(mace.strikes({ entity: a, target: t1, damage: 6, nowMinutes: 100, rolls: () => 0.99 }), null, 'into the ward: nothing');
+  assert.deepEqual([a.magicka, t1.magicka, maceState(a)], [20, 10, null], 'no magicka moves, no state begins');
+  const b = wielder(), t2 = target(false);
+  assert.deepEqual(mace.strikes({ entity: b, target: t2, damage: 6, nowMinutes: 100, rolls: () => 0.99 }), { durabilityLoss: 6 });
+  assert.deepEqual([b.magicka, t2.magicka], [26, 4], 'a landed blow drains as it did');
 });

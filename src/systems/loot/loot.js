@@ -30,12 +30,12 @@ import { dice100 } from '../../combat/formulas.js';
 import { goldStack } from '../inventory.js';
 import { ITEM_TEMPLATES, mintCondition, GROUP_TEMPLATE_INDICES, templateByIndex, itemBaseValue, setItemFields } from '../item/itemTemplates.js';   // F103: SetItem writes the value with the name; MAC-N1: through the one export
 import { CLOTHING_DYES } from '../../characters/dyes.js';
-import { legacyEnchantmentValue, worksUnworn, itemEnchantments } from '../enchantments.js';   // G4: ItemBuilder's closing value sum; HELD-BASE: a power that works off the body, a piece's live rows
+import { legacyEnchantmentValue, worksUnworn } from '../enchantments.js';   // G4: ItemBuilder's closing value sum; HELD-BASE: a power that works off the body
 import { wearableItem } from '../equip.js';   // HELD-BASE: whether any slot could ever take a piece (RARITY-WEAR's one law)
 import { validItemField, validItemFields, itemFieldsOfKind, ITEM_STR_MAX } from '../item/itemFields.js';   // RF5: the one declaration of every item field's kind (LR4's affix check rides it)
 import { validSetMarks } from '../aetheric.js';   // AUDIT SET D6: the wire's cross-checks of a sigil and an Aetheric piece
 import { validGildedMarks } from '../gilded.js';   // GILDED1: and a Gilded piece's - its record's exactly
-import { validImprint, validCurse, validSocket, RARITY_HOME } from './lootRarity.js';   // LOOT10: and of a Rare's imprint; LOOT16: and of a curse; LOOT20: and of a socket; HELD-BASE: the Wand's wearable home
+import { validImprint, validCurse, validSocket } from './lootRarity.js';   // LOOT10: and of a Rare's imprint; LOOT16: and of a curse; LOOT20: and of a socket
 import { createRandomBook, BOOK_TEMPLATE, bookValue } from '../books.js';   // IM1: CreateRandomBook whole (A2: + its book-file price); AUDIT LW-II-2 S9: the wire's floor of a book
 import { potionRecipeByKey, POTION_DEFAULT_TEXTURE_RECORD } from '../potions.js';   // F103: PotionRecipeKey's price side effect; AUDIT 63 F20: and its texture-record half
 import { RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS, DROP_ICON_ARCHIVES, DROP_ICON_IDXS } from './lootDataTables.js';   // G5: DaggerfallLootDataTables.cs, its own file again
@@ -388,24 +388,6 @@ export function createRegularMagicItem(templates, playerLevel, gender, rolls = M
     maxCondition: magicItem.uses,
     currentCondition: magicItem.uses,
   };
-}
-
-/** HELD-BASE: THE PIECES A SAVE KEPT. A MAGIC.DEF piece minted before the fix on a base no slot takes, every power of
- *  it read on a worn piece alone (a "Holy Tome of Venom Spitting", a "Wand of the Wise"), loads as the Amulet - the
- *  jewel both of the template's group sets hold, the Wand's own wearable home (lootRarity.js RARITY_HOME). Its name,
- *  powers, uses and price are its template's and move with it (the price is the powers' sum, never the base's). An
- *  artifact, a quest's piece and one whose power works off the body stay as they are; a second load finds nothing.
- *  In place, as the save's other repairs are; answers how many moved. */
-export function repairMagicBases(items) {
-  let n = 0;
-  for (const it of Array.isArray(items) ? items : []) {
-    if (!it || typeof it !== 'object' || it.magic !== true || it.artifact || it.questItem || !Object.isExtensible(it)) continue;
-    if (!powersNeedWearing(itemEnchantments(it) ?? []) || wearableItem(it)) continue;
-    it.group = 'Jewellery';
-    it.templateIndex = RARITY_HOME.Jewellery;
-    n++;
-  }
-  return n;
 }
 
 // The ItemGroups NUMBER -> the port's group NAME, in ItemEnums.cs:27-59

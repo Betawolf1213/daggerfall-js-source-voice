@@ -110,93 +110,73 @@
     "why": "the report's question: a name and a power from different records (a table offset)"
   },
   {
-    "name": "HELD-BASE-repair-unwired",
+    "name": "HELD-BASE-repair-again",
     "file": "src/systems/save/save.js",
-    "old": "    const n = repairMagicBases(list);\n",
-    "new": "    const n = 0;\n",
+    "old": "  // HELD-BASE (FIELD BUGS 2026-10-18b) mends the mint alone:",
+    "new": "  for (const list of repairLists) for (const it of list ?? []) if (it?.magic && it.templateIndex === 271) it.templateIndex = 133;\n  // HELD-BASE (FIELD BUGS 2026-10-18b) mends the mint alone:",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "the load never repairs a save's pieces"
+    "why": "AUDIT FB1018b L1-1: a load moves a saved dud's base again - the ledger reads it forged"
   },
   {
-    "name": "HELD-BASE-repair-any-piece",
+    "name": "HELD-BASE-redraw-gender",
     "file": "src/systems/loot/loot.js",
-    "old": "it.magic !== true || it.artifact || it.questItem ||",
-    "new": "it.artifact || it.questItem ||",
+    "old": "i++) base = magicItemBase(magicItem, playerLevel, gender, rolls);",
+    "new": "i++) base = magicItemBase(magicItem, playerLevel, gender === 'female' ? 'male' : 'female', rolls);",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "the player's own Wand from the item maker moved too"
+    "why": "AUDIT FB1018b L1-3: the redraw minted for the other gender"
   },
   {
-    "name": "HELD-BASE-repair-artifact",
+    "name": "HELD-BASE-redraw-level",
     "file": "src/systems/loot/loot.js",
-    "old": "it.magic !== true || it.artifact || it.questItem ||",
-    "new": "it.magic !== true || it.questItem ||",
+    "old": "i++) base = magicItemBase(magicItem, playerLevel, gender, rolls);",
+    "new": "i++) base = magicItemBase(magicItem, 1, gender, rolls);",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "an artifact moved off its record's template"
+    "why": "AUDIT FB1018b L1-3: the redraw minted at level 1"
   },
   {
-    "name": "HELD-BASE-repair-quest",
+    "name": "HELD-BASE-fallback-level",
     "file": "src/systems/loot/loot.js",
-    "old": "|| it.artifact || it.questItem || !Object.isExtensible(it)) continue;",
-    "new": "|| it.artifact || !Object.isExtensible(it)) continue;",
+    "old": "if (!wearableItem(base)) base = createRandomArmor(playerLevel, rolls);",
+    "new": "if (!wearableItem(base)) base = createRandomArmor(1, rolls);",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "a quest's piece moved under its quest"
+    "why": "AUDIT FB1018b L1-3: the dead stream's armour at level 1"
   },
   {
-    "name": "HELD-BASE-repair-frozen",
-    "file": "src/systems/loot/loot.js",
-    "old": "|| it.questItem || !Object.isExtensible(it)) continue;",
-    "new": "|| it.questItem) continue;",
+    "name": "HELD-BASE-enchanted-unworn",
+    "file": "src/systems/enchantments.js",
+    "old": "& PAYLOAD.Used) !== 0;",
+    "new": "& (PAYLOAD.Used | PAYLOAD.Enchanted)) !== 0;",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "a frozen piece written - the load throws"
+    "why": "AUDIT FB1018b L1-4: the table classified another way"
   },
   {
-    "name": "HELD-BASE-repair-used-cast",
-    "file": "src/systems/loot/loot.js",
-    "old": "    if (!powersNeedWearing(itemEnchantments(it) ?? []) || wearableItem(it)) continue;",
-    "new": "    if (wearableItem(it)) continue;",
+    "name": "HELD-BASE-unknown-unworn",
+    "file": "src/systems/enchantments.js",
+    "old": "REGISTRY.get(e?.type)?.flags ?? 0",
+    "new": "REGISTRY.get(e?.type)?.flags ?? PAYLOAD.Used",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "a Used cast's Wand moved - DFU's own wands are wands"
+    "why": "AUDIT FB1018b L1-4: an unknown kind counted as working off the body"
   },
   {
-    "name": "HELD-BASE-repair-worn",
+    "name": "HELD-BASE-some-every",
     "file": "src/systems/loot/loot.js",
-    "old": "    if (!powersNeedWearing(itemEnchantments(it) ?? []) || wearableItem(it)) continue;",
-    "new": "    if (!powersNeedWearing(itemEnchantments(it) ?? [])) continue;",
+    "old": "&& !rows.some(worksUnworn);",
+    "new": "&& !rows.every(worksUnworn);",
     "tests": [
       "test/systems/loot/fb1018b_heldbase.test.js"
     ],
-    "why": "a held power already worn moved to the Amulet"
-  },
-  {
-    "name": "HELD-BASE-repair-home",
-    "file": "src/systems/loot/loot.js",
-    "old": "    it.templateIndex = RARITY_HOME.Jewellery;",
-    "new": "    it.templateIndex = 134;",
-    "tests": [
-      "test/systems/loot/fb1018b_heldbase.test.js"
-    ],
-    "why": "the home not the Amulet"
-  },
-  {
-    "name": "HELD-BASE-repair-group",
-    "file": "src/systems/loot/loot.js",
-    "old": "    it.group = 'Jewellery';\n    it.templateIndex = RARITY_HOME.Jewellery;",
-    "new": "    it.templateIndex = RARITY_HOME.Jewellery;",
-    "tests": [
-      "test/systems/loot/fb1018b_heldbase.test.js"
-    ],
-    "why": "the template moved and the group not"
+    "why": "AUDIT FB1018b L1-4: a piece's rows read as all-or-none the other way"
   }
 ]

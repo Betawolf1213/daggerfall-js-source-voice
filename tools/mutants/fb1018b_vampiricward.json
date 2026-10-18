@@ -19,5 +19,15 @@
       "test/systems/fb1018b_vampiricward.test.js"
     ],
     "why": "the at-range param heals on a strike"
+  },
+  {
+    "name": "VAMPIRIC-WARD-mace-ward-unread",
+    "file": "src/systems/artifactEffects.js",
+    "old": "if (!entity || !target || damage === 0 || target.warded) return null;",
+    "new": "if (!entity || !target || damage === 0) return null;",
+    "tests": [
+      "test/systems/fb1018b_vampiricward.test.js"
+    ],
+    "why": "AUDIT FB1018b L1-2: the Mace of Molag Bal takes magicka and Strength off a warded blow"
   }
 ]
