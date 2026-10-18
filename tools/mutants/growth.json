@@ -172,8 +172,8 @@
   {
     "name": "GROWTH3-escape-past-the-face",
     "file": "src/ui/growth/growthStage.js",
-    "old": "try { if (me.face?.back?.()) return true; } catch { /* the face's */ }",
-    "new": "",
+    "old": "  if (asked(me)) return true;\n  if (me.full)",
+    "new": "  if (me.full)",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
@@ -182,8 +182,8 @@
   {
     "name": "GROWTH3-no-phone-door",
     "file": "src/ui/growth/growthStage.js",
-    "old": "if (narrow()) {",
-    "new": "if (false) {",
+    "old": "if (door || narrow()) {",
+    "new": "if (door) {",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
@@ -222,12 +222,12 @@
   {
     "name": "GROWTH3-unaccepted-not-asked",
     "file": "src/ui/firmamentWindow.js",
-    "old": "if (unaccepted() && !armedClose) { armedClose = true; say(unacceptedLeave(), true); return true; }",
+    "old": "if (unaccepted() && !armedClose) { arm(); say(unacceptedLeave(), true); return true; }",
     "new": "",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
-    "note": "GROWTH5 (PIN MOVED): re-aimed by content - its words now fit any press that leaves. Unaccepted stars dropped on the first Escape without a word."
+    "note": "GROWTH5 (PIN MOVED): re-aimed by content - its words now fit any press that leaves; AUDIT GROWTH LANE5-1 re-aimed it again at LANE3-8's arm(). Unaccepted stars dropped on the first Escape without a word."
   },
   {
     "name": "GROWTH3-embedded-captain-own-escape",
@@ -302,7 +302,7 @@
   {
     "name": "GROWTH4-guide-on-the-host-slot",
     "file": "src/ui/charSheetDoor.js",
-    "old": "hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {} });",
+    "old": "hooks.growth = (at) => openPauseFlow(() => {}, { ...(deps.pause?.() ?? {}), at, onResume: () => {}, relock: () => {} });",
     "new": "hooks.growth = (at) => openPauseFlow(deps.show, { ...(deps.pause?.() ?? {}), at });",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
@@ -412,8 +412,8 @@
   {
     "name": "GROWTH5-asks-full-screen",
     "file": "src/ui/growth/growthStage.js",
-    "old": "try { return !!me.face?.back?.(); } catch { return false; }",
-    "new": "try { if (me.face?.back?.()) return true; } catch { /* the face's */ } return me.full;",
+    "old": "  return me ? asked(me) : false;",
+    "new": "  return me ? (asked(me) || me.full) : false;",
     "tests": [
       "test/ui/growth/growth1_tab.test.js"
     ],
