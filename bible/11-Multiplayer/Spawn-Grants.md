@@ -1,11 +1,11 @@
 # SPAWN GRANTS - the relay decides which foes may exist (GRANT0, the design record)
 
-**Status: DESIGN RECORD, PROPOSED (2026-10-17; revised 2026-10-18 for the relay's cost). The grants are not built; section 8's
-reader fixes are (BUILT 2026-10-18, the owner: "Quick fixes first").** The relay
+**Status: DESIGN RECORD (2026-10-17; revised 2026-10-18 for the relay's cost), BEING BUILT (Mac, 2026-10-18: "Lets
+build the plan"). Section 8's reader fixes are BUILT (2026-10-18, the owner: "Quick fixes first"), and GRANT1, the law,
+is BUILT (section 11). Nothing calls the law yet: the relay's asks are GRANT2.** The relay
 signs a grant when a foe is made and never reads the foe stream; every reader checks the grant. Section 4.11 keeps the
-first draft, in which the relay read every record, as a fallback. Section 10 holds the questions that wait on the owner,
-and nothing here binds a slice until the owner answers them. Section 7 orders the slices. Each one measures before it
-enforces, as the Integrity arc does.
+first draft, in which the relay read every record, as a fallback. Section 10's questions are answered (2026-10-18).
+Section 7 orders the slices. Each one measures before it enforces, as the Integrity arc does.
 
 ## The words
 
@@ -162,9 +162,11 @@ camps at 100-150 m), so the wait is not seen.
 
 ### 4.4 The dice
 
-A granted foe's identity is drawn from `eliteRng(s)` (mulberry32, already in `systems/eliteFoes.js`) in a fixed, pinned
-order, for each member in turn: the species (chooseRandomEnemy at the grant's pixel, minute and level, or the kind's own
-table), the level within its band, the weapon (equipEnemy), and the health dice. Elite and champion are the grant's `e`
+A granted foe's identity is drawn from the grant's seed (`net/grantLaw.js` grantDice: `systems/eliteFoes.js` eliteRng
+over eliteHash, the same law), one stream per die for each member: the species (chooseRandomEnemy at the grant's pixel,
+minute and level, or the kind's own table), the level within its band, the weapon (equipEnemy), and the health dice. One
+stream per die, not one stream in a pinned order (GRANT1): chooseRandomEnemy draws a variable count, and a shared stream
+would shift every die after it. Elite and champion are the grant's `e`
 and `c`. Movement, targets, blow timing and every other roll stay `Math.random` and stay the owner's.
 
 ### 4.5 Carrying
@@ -240,7 +242,7 @@ by a disconnect (QUEST-PARTY's pruneOwners) is taken on a fresh grant from the t
 | Deep water | `deep` | the cell | `DEPTH_AQUATIC_TABLE` from the seed | the deep's own cap |
 | The Living World's stands | none new | already lwSeed; their elite moves onto it | | |
 | Greater Giants | `giant` | the hub, which already holds the giants that are down (ZONE-GIANTS) | a giant | one per index, zone-wide; a call of ten as one grant of `n` 10 |
-| Revenants | `rev` | the cell, keyed by the revenant's id | the revenant's own record | a character's five plus six sworn (OPEN: does the account service hold them?) |
+| Revenants | `rev` | the cell, keyed by the revenant's id | the revenant's own record | a character's three (REVENANT_MAX since UNQUIET) plus six sworn (OPEN: does the account service hold them?) |
 | Loose stands, Wabbajack | `loose` | the cell | the item's own (WABBAJACK_CAREER_IDS from the seed) | a small bucket |
 | Quest foes (QUEST-PARTY) | `quest` | the cell | the quest's script: party members holding the same quest check it | `QUEST_PUPPETS_MAX` (24) |
 | Companions, shipmates | `ally` | the cell | the owner's word: allies fight foes, never the reader | counted |
@@ -354,12 +356,46 @@ owner that is still playing (world.js handOverWalkedAway), so only a grant (sect
   client's word can BUY is decided where the client cannot reach.
 - `11-Multiplayer/Multiplayer.md` decision 2 holds. The relay rolls a foe's identity, not its life.
 
-## 10. Questions for the owner (OPEN)
+## 10. Questions for the owner (ANSWERED 2026-10-18)
 
 1. **Guests.** A guest's grants: the same budget, a smaller one, or no hostile kinds at all? Ban evasion is a new guest
-   (Chat-Safety-Arc section 11).
+   (Chat-Safety-Arc section 11). ANSWERED: **the same budget.** A guest has no token, so its grant carries no signed
+   level or Renown (`l` and `r` are 0) and the relay rolls it no elite (`GRANT_ELITE_MIN_RENOWN`), as a guest's own
+   street rolls none today (`systems/sigil/sigil.js` renownOpens).
 2. **The consequence (GRANT7).** Open a moderators' case when readers on several accounts tally against one sender? If
-   so, how many accounts, in what window? The recommendation is three accounts in ten minutes: a case, never a ban.
-3. **The measure's window.** Seven days, as the integrity arc's budgets had?
+   so, how many accounts, in what window? ANSWERED: **three accounts in ten minutes** - a case, never a ban.
+3. **The measure's window.** ANSWERED: **seven days**, as the integrity arc's budgets had.
 4. **Section 8's reader fixes.** ANSWERED 2026-10-18: "Quick fixes first" - built, section 8.
-5. **The cell's ceiling** on live granted hostile foes, all senders together: on, at the number the measure gives?
+5. **The cell's ceiling** on live granted hostile foes, all senders together. ANSWERED: **on, at the number the measure
+   gives** (`GRANT_CELL_CEILING`, provisional until GRANT5).
+
+## 11. GRANT1: the law (BUILT 2026-10-18)
+
+Mac: **"Lets build the plan"**. `net/grantLaw.js`, pure; the relay and the client import it, and nothing calls it yet.
+
+- **The grant** (section 4.2): validGrant reads one whole or not at all - each field in its law, `n` within its kind's
+  most, `e` within the members, `c` one trait or none a member and none on an elite, `a` an account or '' and `l`, `r` a
+  token's or 0 (a guest). grantBytes is every field but `sg` in one fixed order behind `spawn-grant1\n`; signGrant and
+  verifyGrant are egCallSig's own law (Ed25519, the relay's receipt key, `rk` to verify). An arch call signed with the
+  same key verifies as no grant.
+- **The marks** (grantMarks): `e` and `c` from the seed alone, three draws a member always - so a member's marks are its
+  own whatever `n` - the elite's draw made before the Renown's word, an elite never a champion.
+- **The dice** (grantDice): one stream per GRANT_DICE word and member, `systems/eliteFoes.js` eliteRng over eliteHash
+  (the test holds them equal), a copy because the relay cannot import that module.
+- **The pinned rates**: `GRANT_ELITE_CHANCE`, `GRANT_ELITE_MIN_RENOWN`, `GRANT_CHAMPION_PER_MILLE`,
+  `GRANT_CHAMPION_TRAITS`, each held equal to its home by the test.
+- **The kinds** (GRANT_KINDS): `enc` (most 4, `ROAD_PARTY_MAX`) and `camp` (most 8, `CAMP_SIZE`'s top and
+  `PARTY_SCALE_EXTRA_MAX`), GRANT2's first stream; each other source's kind comes with its own slice (GRANT4). Their
+  buckets and `GRANT_CELL_CEILING` (192) are PROVISIONAL: GRANT5's seven days set them.
+- **The mint's gate** (grantMintGate): an unknown kind, a size past its kind, the cell's ceiling, then the account's
+  bucket - one token an ask, `net/wire.js` tokenGate, the relay's one bucket. The ceiling is asked first, so a full cell
+  spends nothing of the asker's.
+- **The reader's check past the signature** (grantRefusal): the sender, the cell, the expiry (`GRANT_TTL_MS`, with
+  `GRANT_SKEW_MS` for a reader's clock), the member - the first that stands. grantMarksAllow: a record's elite and trait
+  only as its grant's, and either left off always believed. The reasons a tally counts are `GRANT_REFUSALS`.
+
+Departures from section 4, each named: one stream per die (section 4.4); a bucket token is an ask, not a member, since
+section 5's fishing is bounded by asks; a mark worn below its grant is believed (a reader refuses only what a grant does
+not give).
+
+Pins: `test/net/grant1_law.test.js` (7); `tools/mutants/grant1.json` (18, all dead).
