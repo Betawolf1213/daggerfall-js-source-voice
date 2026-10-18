@@ -6,7 +6,7 @@ Gates, `11-Multiplayer/Elite-Gates.md` section 5); the list it is drawn in is DF
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | Mac: "The top option doesnt work when using the weird key", then "Weir key" | The start window's top row is the stake (*Weir Keys: 3 - one will be staked.*), words and not a choice. Picked, DFU's picker had already closed itself, and the window did nothing: no list on the screen, and the flow still asking, so every use of the key after it answered *The Spire already asks where you begin.* until the screen let go | fixed (STAKE-ROW) |
+| 1 | Mac: "The top option doesnt work when using the weird key", then "Weir key"; asked, "It can be tapped" | The start window's top row is the stake (*Weir Keys: 3 - one will be staked.*), words and not a choice. Picked, DFU's picker had already closed itself, and the window did nothing: no list on the screen, and the flow still asking, so every use of the key after it answered *The Spire already asks where you begin.* until the screen let go | fixed (STAKE-ROW) |
 
 ## STAKE-ROW: a word row picked asks the list again
 
@@ -14,7 +14,8 @@ Gates, `11-Multiplayer/Elite-Gates.md` section 5); the list it is drawn in is DF
 
 THE REPORT. The key used, the start window opens on its list: the stake first, the quest warning under it when a quest
 falls due, then the starts, the Wager, the Rehearsal and the boards. The top row is the one DFU's picker opens
-highlighted, so Enter, a double click or `1` on the first press picks it.
+highlighted, so Enter or `1` on the first press picks it; and it can be tapped - the enhanced skin's row press replays
+DFU's double click on the classic row (`ui/enhanced/enhancedPicker.js` pickRow), which picks it the same way.
 
 FOUND. `pickMain` returned on any row that is not a start, the Wager, the Rehearsal or the boards - the stake and the
 quest warning are words. But the picker it answered had already raised `done` on the pick
@@ -36,8 +37,8 @@ THE FOUR HOSTS: world.js - WIRED, its `egStartWindow` doors unchanged (the start
 worldModes.js, dungeonContext.js, exterior.js - no start window (the key's opener is registered by the world host's
 breach client alone, `weirKey.js` setWeirKeyOpener; a host with none answers *The key is cold here.*).
 
-Pinned by `test/ui/eliteGates/fb1018b_stakerow.test.js` (3): the stake picked by Enter on the first highlight, by `1`
-and by Up then Enter leaves a new list in the slot, the window asking, nothing chosen, and Hall 1 picked after it is
+Pinned by `test/ui/eliteGates/fb1018b_stakerow.test.js` (3): the stake picked by a tap (the double click a row press
+replays, at pickRow's point), by Enter on the first highlight, by `1` and by Up then Enter leaves a new list in the slot, the window asking, nothing chosen, and Hall 1 picked after it is
 the choice; the quest warning picked the same, Escape after it the cancel; and world.js's two doors and the picker's
 self-close, the shapes the pin stands in for. `tools/mutants/fb1018b_stakerow.json` (3, all dead).
 

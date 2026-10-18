@@ -10,7 +10,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ListPickerWindow } from '../../../src/ui/listPicker.js';
+import { ListPickerWindow, PICKER_X, PICKER_Y, PICKER_RECTS } from '../../../src/ui/listPicker.js';
 import { openEgStartWindow } from '../../../src/ui/eliteGates/egStartWindow.js';
 import { EG_TEXT } from '../../../src/net/eliteGates/egLaw.js';
 
@@ -23,8 +23,13 @@ function slot() {
     mount(w) { if (held) return false; held = w; return true; },
     close(w) { if (w && held !== w) return false; held = null; return true; },
     input(code) { const w = held; w?.input(code); if (held?.done) held = null; },
+    click(vx, vy) { const w = held; w?.click(vx, vy); if (held?.done) held = null; },
   };
 }
+/** A tap on the list's top row: the enhanced skin's row press replays DFU's double click on the classic row
+ *  (ui/enhanced/enhancedPicker.js pickRow - the same point), and the classic list takes the double click itself. */
+const TOP_ROW = [PICKER_X + PICKER_RECTS.list[0] + 10, PICKER_Y + PICKER_RECTS.list[1] + 3];
+const tap = (s) => { s.click(...TOP_ROW); s.click(...TOP_ROW); };
 /** The start window over the host's doors (world.js egStartWindow), the slot under them. */
 function open(o = {}) {
   const s = slot(), log = [];
@@ -36,14 +41,14 @@ function open(o = {}) {
   return { s, w, log };
 }
 
-test('STAKE-ROW: the stake picked (Enter on the first highlight, a click, its digit) leaves the start window up, its list asked again in the slot - the window still asking, nothing chosen or cancelled; a start picked after it is the choice (mutant: the bare return - no window, the flow left asking)', () => {
-  for (const press of [['Enter'], ['Digit1'], ['ArrowUp', 'Enter']]) {
+test('STAKE-ROW: the stake picked (a tap, Enter on the first highlight, its digit) leaves the start window up, its list asked again in the slot - the window still asking, nothing chosen or cancelled; a start picked after it is the choice (mutant: the bare return - no window, the flow left asking)', () => {
+  for (const press of [['tap'], ['Enter'], ['Digit1'], ['ArrowUp', 'Enter']]) {
     const { s, w, log } = open();
     const first = s.win;
     assert.ok(first instanceof ListPickerWindow, 'the list in the slot');
     assert.equal(first.items[0], EG_TEXT.stake(3), 'the top row is the stake');
     assert.equal(first.selectedIndex, 0, "DFU's picker opens on its first row");
-    for (const code of press) s.input(code);
+    for (const code of press) { if (code === 'tap') tap(s); else s.input(code); }
     assert.equal(first.done, true, 'the picker closed itself on the pick');
     assert.ok(s.win instanceof ListPickerWindow && s.win !== first && !s.win.done, `${press.join('+')}: a list in the slot again`);
     assert.deepEqual(s.win.items, first.items, 'the same rows');
