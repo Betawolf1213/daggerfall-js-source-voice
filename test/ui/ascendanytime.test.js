@@ -9,7 +9,7 @@ import {
   viewOnlyScreen, levelUpFrame, levelUpCrown, levelProgress, rolloutRows, rolloutPool, canAscend,
   raiseAt, lowerAt, ascend,
 } from '../../src/ui/levelUp/levelUpView.js';
-import { crownTitle, ASK_VIEW } from '../../src/ui/enhanced/enhancedLevelUp.js';
+import { crownTitle, askView } from '../../src/ui/enhanced/enhancedLevelUp.js';
 
 // ASCEND-ANYTIME: the Ascension screen opens whenever the player asks. Nothing owed = a VIEW of the stars:
 // a pool of zero, no star moves, Close, and no level / stats / pool is ever written.
@@ -55,7 +55,7 @@ test('ASCEND-ANYTIME: the crown promises no level, and the window says so', () =
   assert.equal(crown.to, crown.from);
   assert.equal(crownTitle(crown), 'Level 7', 'no arrow to a level that is not coming');
   assert.equal(levelUpFrame(e, s).crown.to, 7);
-  assert.equal(ASK_VIEW, 'Your stars');
+  assert.equal(askView(), 'Your attributes');   // PIN MOVED (AUDIT GROWTH LANE5-1): read when drawn, and named plainly
   // A real owed level still reads its arrow.
   e.pendingLevel = 8;
   assert.equal(crownTitle(levelUpCrown(e, { pool: 3, base: e.stats, working: e.stats })), 'Level 7 → 8');
@@ -63,8 +63,9 @@ test('ASCEND-ANYTIME: the crown promises no level, and the window says so', () =
 
 test('ASCEND-ANYTIME: a mod-law character\'s view reads the mod\'s bar, a classic one the skill-sum bar', () => {
   const e = hero();
-  assert.equal(levelProgress(e, viewOnlyScreen(e, false)).label, 'Skill sum toward the next');
-  assert.equal(levelProgress(e, viewOnlyScreen(e, true)).label, 'Toward the next');
+  // PIN MOVED (AUDIT GROWTH LANE5-1): the bar's two labels say what they measure
+  assert.equal(levelProgress(e, viewOnlyScreen(e, false)).label, 'Skill progress to next level');
+  assert.equal(levelProgress(e, viewOnlyScreen(e, true)).label, 'Progress to next level');
 });
 
 // PIN MOVED (GROWTH1, bible/10-UI/Growth.md section 4; the owner: "instead of having ascend in one place and the firmament
