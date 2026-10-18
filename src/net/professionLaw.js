@@ -991,6 +991,30 @@ export function craftXpCap(profession, ranks) {
   const past = Object.entries(ranks ?? {}).filter(([p, r]) => p !== own && BY_ID.get(p)?.kind === 'crafting' && r > JOURNEYMAN_RANK).length;
   return past >= CRAFTS_ABOVE_JOURNEYMAN ? xpForRank(JOURNEYMAN_RANK + 1) - 1 : PROF_XP_MAX;
 }
+/** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b; the Discord, "Smithing stuck at 50": "it is literally 1xp off of levelling
+ *  up but everything I craft gives me 0xp"): THE LIMIT AS IT STANDS OVER ONE CRAFT'S TRACK, for the words that say it -
+ *  `cap` the most it may hold (craftXpCap's, which the service's decisions bind), `room` what the track at `xp` can still
+ *  take under it (none at the cap, as none at Master), and `by` the crafts past Journeyman that hold it there, in the
+ *  Professions tab's order - empty where the limit does not hold it. `ranks` every track's rank, as craftXpCap's. A
+ *  gathering track is never held (3.2: "Gathering is unlimited" - no decision of the service caps one). */
+export function craftLimit(profession, ranks, xp) {
+  const own = trackOf(profession), cap = BY_ID.get(own)?.kind === 'crafting' ? craftXpCap(profession, ranks) : PROF_XP_MAX;
+  const by = cap < PROF_XP_MAX ? PROFESSIONS.filter((p) => p.kind === 'crafting' && p.id !== own && (ranks?.[p.id] ?? 0) > JOURNEYMAN_RANK).map((p) => p.id) : [];
+  return { cap, room: Math.max(0, cap - (Number(xp) || 0)), by };
+}
+/** CRAFT-LIMIT-SAID: craftLimit read off a character's track views as the service answers them (its state's `tracks`,
+ *  an act's `track` - `{ profession, xp }`), each rank the service's own (rankOfXp of its XP) - the client's way to the
+ *  very limit the service's decision binds. A discipline asked is its craft's. */
+export function craftLimitOf(tracks, profession) {
+  const list = [...(tracks ?? [])].filter((v) => v && typeof v.profession === 'string');
+  const own = list.find((v) => v.profession === trackOf(profession));
+  return craftLimit(profession, Object.fromEntries(list.map((v) => [v.profession, rankOfXp(Number(v.xp))])), own?.xp ?? 0);
+}
+/** CRAFT-LIMIT-SAID: WHAT AN ACT CREDITS - the XP it earns, never past the `room` its track has left, never below none:
+ *  the account service's decision, `MAX(0, MIN(earned, cap - held))`, in the craft's, the smelt's, the temper's, the brew's
+ *  and the disenchant's own INSERT (server-account/src/professions.js, alchemy.js), which a station says before the act
+ *  (ui/craftXpWords.js). */
+export const creditedXp = (earned, room) => Math.max(0, Math.min(Number(earned) || 0, room));
 
 // ─── PROF11: THE BUILDER AND THE FORTIFIER - SEAT2b'S TO CALL (PROF0 3.3; SEAT0 7.5) ───
 //

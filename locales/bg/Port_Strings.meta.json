@@ -20079,6 +20079,11 @@
   "tr": "e16a3752657a",
   "by": "claude-in-session"
  },
+ "prof.craft.xpLimit": {
+  "en": "ebd9569af9a3",
+  "tr": "ea7f4c02127c",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "14a37a28c22a",
@@ -20419,9 +20424,19 @@
   "tr": "524e6a9f9af8",
   "by": "claude-in-session"
  },
+ "prof.page.craft.xpLimit": {
+  "en": "0a83e8c8e02b",
+  "tr": "455fa0f53bd4",
+  "by": "claude-in-session"
+ },
  "prof.page.craft.xpShop": {
   "en": "78aff271f890",
   "tr": "f49fa8947ff0",
+  "by": "claude-in-session"
+ },
+ "prof.page.craft.xpTop": {
+  "en": "fb99bb33663b",
+  "tr": "aae68557e104",
   "by": "claude-in-session"
  },
  "prof.page.crafting": {
@@ -20652,6 +20667,11 @@
  "prof.page.fire.pans": {
   "en": "3757cfb14f50",
   "tr": "30736fe350cc",
+  "by": "claude-in-session"
+ },
+ "prof.page.fire.pansOnly": {
+  "en": "3f775f27b64d",
+  "tr": "0eed71581114",
   "by": "claude-in-session"
  },
  "prof.page.fire.quick": {
@@ -20907,6 +20927,11 @@
  "prof.page.limit": {
   "en": "b9efd5663578",
   "tr": "140ee5d87a6f",
+  "by": "claude-in-session"
+ },
+ "prof.page.limit.rule": {
+  "en": "8074c8ae816c",
+  "tr": "9baeed406a0c",
   "by": "claude-in-session"
  },
  "prof.page.loom": {
@@ -21662,6 +21687,11 @@
  "prof.page.xp": {
   "en": "68e1984a6285",
   "tr": "68e1984a6285",
+  "by": "claude-in-session"
+ },
+ "prof.page.xpHeld": {
+  "en": "97f273d26381",
+  "tr": "9958cf72a0ee",
   "by": "claude-in-session"
  },
  "prof.page.xpMaster": {
