@@ -20,7 +20,7 @@
  {
   "name": "COURTWATCH-full-a-refusal-again",
   "file": "src/net/gate/gateLink.js",
-  "old": "      if (g.k === 'no' && g.m === 'the court is full') { if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }\n",
+  "old": "      if (g.k === 'no' && WATCHED_NO[g.m] === true) { if (!watching) say(courtWatchText()); watching = true; return; }\n",
   "new": "",
   "tests": [
    "test/net/gate/courtwatch.test.js"
@@ -29,8 +29,8 @@
  {
   "name": "COURTWATCH-said-every-time",
   "file": "src/net/gate/gateLink.js",
-  "old": "{ if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }",
-  "new": "{ say(COURT_WATCH_TEXT); watching = true; return; }",
+  "old": "{ if (!watching) say(courtWatchText()); watching = true; return; }",
+  "new": "{ say(courtWatchText()); watching = true; return; }",
   "tests": [
    "test/net/gate/courtwatch.test.js"
   ]

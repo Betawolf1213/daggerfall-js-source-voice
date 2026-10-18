@@ -27,7 +27,7 @@ async function onClock(start, fn) {
 }
 const DAY = 200;
 
-test('GATE-DOOR the court\'s door: a court admits GATE_HELLO_HZ_MAX hellos in one instant where a cell admits HELLO_HZ_MAX; the next is refused busy with its token unread, and that same token opens the court once the door refills; the rate a measured one - deep enough for the opening\'s crowd, a hello some 1.4 ms of the court at 256 (mutants: the court at the cell\'s rate; the court\'s rate given every room)', async () => {
+test('GATE-DOOR the court\'s door: a court admits GATE_HELLO_HZ_MAX hellos in one instant where a cell admits HELLO_HZ_MAX; the next is refused busy with its token unread, and that same token opens the court once the door refills; its copies the same door (AUDIT PLAN-1000 B3), and a change of gear spends it at its own rate, never the cell\'s (B2); the rate a measured one - deep enough for the opening\'s crowd (mutants: the court at the cell\'s rate; the court\'s rate given every room; the look at the cell\'s rate)', async () => {
   assert.equal(GATE_HELLO_HZ_MAX, 48);
   assert.ok(GATE_HELLO_HZ_MAX > HELLO_HZ_MAX);
   await onClock(gateTimes(DAY).openAt + 1000, async ({ tick }) => {
@@ -51,10 +51,35 @@ test('GATE-DOOR the court\'s door: a court admits GATE_HELLO_HZ_MAX hellos in on
     await R.hello(over, 'peer-9999', null);
     assert.deepEqual(over.closed, { code: CLOSE_BUSY, reason: BUSY_TOKEN_UNREAD }, 'a cell keeps its own door');
   });
-  assert.match(src('server/src/index.js'), /gate = tokenGate\(this\._hellos, now, chat \? CHAT_HELLO_HZ_MAX : isGateRoom\(a\.key\) \? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX\);/, 'one door, before the token');
+  // AUDIT PLAN-1000 B3: A COPY'S OWN DOOR is the court's rate - its object is another, its key the court's (`ly` its layer)
+  await onClock(gateTimes(DAY).openAt + 1000, async () => {
+    const R = fakeRoom(gateRoomKey(DAY));
+    let opened = 0;
+    for (let i = 0; i < GATE_HELLO_HZ_MAX + 1; i++) {
+      const ws = R.connect();
+      ws.att = { ...ws.att, ly: 1 };   // the Worker's word: this object is the court's first copy
+      await R.hello(ws, `copy-${String(i).padStart(4, '0')}`, null);
+      if (!ws.closed) opened++;
+    }
+    assert.equal(opened, GATE_HELLO_HZ_MAX, 'a copy admits the court\'s rate, and refuses the next');
+  });
+  // AUDIT PLAN-1000 B2: A CHANGE OF GEAR SPENDS THE DOOR AT ITS OWN RATE - a look in the court clamped its bucket to the
+  // cell's ten, and the next crowd met a door of nine
+  await onClock(gateTimes(DAY).openAt + 1000, async ({ tick }) => {
+    const R = fakeRoom(gateRoomKey(DAY));
+    const first = R.connect();
+    await R.hello(first, 'peer-0000', null);
+    tick(10_000);   // the door refilled whole
+    await R.raw(first, JSON.stringify({ t: 'look', look: { race: 'Breton', gender: 'female', faceIndex: 1, items: [] } }));
+    let opened = 0;
+    for (let i = 1; i <= GATE_HELLO_HZ_MAX; i++) { const ws = R.connect(); await R.hello(ws, `peer-${String(i).padStart(4, '0')}`, null); if (!ws.closed) opened++; }
+    assert.equal(opened, GATE_HELLO_HZ_MAX - 1, 'the look spent one token - and the door stayed the court\'s');
+  });
+  assert.match(src('server/src/index.js'), /_helloHz\(key\) \{ return isChatRoom\(key\) \? CHAT_HELLO_HZ_MAX : isGateRoom\(key\) \? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX; \}/, 'one rate a room');
+  assert.equal(src('server/src/index.js').split('tokenGate(this._hellos, now, this._helloHz(a.key))').length - 1, 2, 'the hello\'s door and the look\'s, one rate');
 });
 
-test('GATE-DOOR the session stamps a busy refusal of its room on its own clock (`busyAt`) - a door that answered, which the court reads; any other close stamps nothing (mutants: never stamped; a drop stamped)', async () => {
+test('GATE-DOOR the session stamps a busy refusal of its room on its own clock (`busyAt`) - a door that answered, which the court reads; an open socket\'s drop and a halo\'s refusal stamp nothing, a court\'s upgrade that never opened does (AUDIT PLAN-1000 B1, B4) (mutants: never stamped; a drop stamped; a halo\'s stamped; the never-opened court unstamped)', async () => {
   const run = async (code, reason) => {
     const { FakeWS, sockets } = fakeSocketClass();
     let t = 5_000;
@@ -70,7 +95,37 @@ test('GATE-DOOR the session stamps a busy refusal of its room on its own clock (
     return s.busyAt;
   };
   assert.equal(await run(CLOSE_BUSY, BUSY_TOKEN_UNREAD), 7_250, 'busy: the door answered, then');
-  assert.equal(await run(1006, ''), null, 'a dropped socket is no answer');
+  assert.equal(await run(1006, ''), null, 'an open socket dropped is no answer');
+  // AUDIT PLAN-1000 B1: A COURT'S UPGRADE THE WORKER REFUSED BEFORE IT OPENED (an overloaded object, every copy full) is its
+  // door answering - the browser's 1006 for it says no `busy`; a cell's that never opened is nothing of the court's
+  const never = async (room) => {
+    const { FakeWS, sockets } = fakeSocketClass();
+    let t = 5_000;
+    const s = new OnlineSession({ url: 'wss://relay.test', name: 'Mac', id: 'mac-0001', secret: 'secret-of-mac-0001', WebSocketImpl: FakeWS, now: () => t, presence: false });
+    await quiet(async () => {
+      s.join(room, null);
+      for (let i = 0; i < 10; i++) await Promise.resolve();
+      t = 6_500;
+      sockets[0].onerror?.({});
+      sockets[0].drop(1006, '');
+    });
+    return s.busyAt;
+  };
+  assert.equal(await never(gateRoomKey(DAY)), 6_500, 'a court that never opened: its door answered');
+  assert.equal(await never('world:13,13'), null, 'a cell that never opened: no court\'s answer');
+  // AUDIT PLAN-1000 B4: a halo's busy close is the halo's, never the session's room's
+  {
+    const { FakeWS, sockets } = fakeSocketClass();
+    const s = new OnlineSession({ url: 'wss://relay.test', name: 'Mac', id: 'mac-0001', secret: 'secret-of-mac-0001', WebSocketImpl: FakeWS, now: () => 9_000 });
+    await quiet(async () => {
+      s.join('world:2,12', { x: 0, y: 0, z: 0, yaw: 0, pitch: 0 });
+      s.setHalo(['world:3,12']);
+      sockets[1].open();
+      for (let i = 0; i < 10; i++) await Promise.resolve();
+      sockets[1].drop(CLOSE_BUSY, BUSY_TOKEN_UNREAD);
+    });
+    assert.equal(s.busyAt, null, 'a halo refused busy says nothing of my room\'s door');
+  }
 });
 
 /** The court on a clock of the test's, its door the test's to answer. */

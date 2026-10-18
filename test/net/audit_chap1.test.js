@@ -43,9 +43,12 @@ test('AUDIT CHAP S1: a claim sent twice at once is credited once - the twin that
   await readRoll(s.ctx(T0), s.player, s.body({ seed: { factions: { 40: 10, 41: 0 }, members: [] } }));
   const claim = s.body({ rid: 'twin-000001', deltas: { 40: 5, 41: -20 }, members: [] });
   let twin = null;
-  // the twin lands between this one's read and its write
-  const racing = { prepare: (sql) => s.env.DB.prepare(sql), batch: async (list) => { twin ??= await claimRoll(s.ctx(T0), s.player, claim); return s.env.DB.batch(list); } };
+  // the twin lands between this one's read and its write - PIN MOVED (PRIMARY-FOLD part three, AUDIT PLAN-1000 D1): the
+  // claim's first batch is its reads now, so the twin lands before the second, the one that writes
+  let batches = 0;
+  const racing = { prepare: (sql) => s.env.DB.prepare(sql), batch: async (list) => { if (++batches === 2) twin ??= await claimRoll(s.ctx(T0), s.player, claim); return s.env.DB.batch(list); } };
   const r = await claimRoll(s.ctx(T0, racing), s.player, claim);
+  assert.equal(batches, 2, 'the twin landed at the write');
   assert.equal(twin.credited[40], 5);
   assert.equal(r.repeat, true, 'the loser is the same claim, landed');
   assert.deepEqual([s.rep(40).rep, s.rep(41).rep], [15, -20], 'once, not twice');

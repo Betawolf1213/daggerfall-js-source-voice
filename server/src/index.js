@@ -3282,7 +3282,7 @@ export class Room {
       let gate = null;
       if (!battle && !floor && !realmRoom && !instRoom) {
         // the room's hello gate (A6): a storm is 2N frames a cycle for everyone in a place; a channel's hello costs no roster, so its gate runs deeper - never off (AUDIT CHAT A1)
-        gate = tokenGate(this._hellos, now, chat ? CHAT_HELLO_HZ_MAX : isGateRoom(a.key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX);   // SCALE2b: in memory - see `_hellos`; GATE-DOOR: a court's (and its copies') door is its opening's
+        gate = tokenGate(this._hellos, now, this._helloHz(a.key));   // SCALE2b: in memory - see `_hellos`; GATE-DOOR: a court's (and its copies') door is its opening's
         this._hellos = gate.bucket;
         if (!gate.pass) { this._refuse(ws, 'busy', CLOSE_BUSY, BUSY_TOKEN_UNREAD); return; }   // SCALE5a: asked before the token is read - the close says it is unspent, and the client's retry carries it again
       }
@@ -4107,7 +4107,7 @@ export class Room {
       // bucket there is the stands', and a crowd of spectators draining it would refuse a fighter's change of gear 'busy',
       // its socket closed mid-battle
       const battleGate = isBattleRoom(a.key) ? await this._battleHelloGate(a.sub, a.sd, now) : null;
-      const gate = battleGate ?? tokenGate(this._hellos, now, HELLO_HZ_MAX);   // SCALE2b: the room's hello bucket, in memory
+      const gate = battleGate ?? tokenGate(this._hellos, now, this._helloHz(a.key));   // SCALE2b: the room's hello bucket, in memory - AUDIT PLAN-1000 B2: at the room's own rate
       if (!battleGate) this._hellos = gate.bucket;
       if (!gate.pass) { this._refuse(ws, 'busy', CLOSE_BUSY); return; }
       await this.state.storage.put(lookKey(a.id), m.look); this._looks.set(a.id, m.look);
@@ -6123,6 +6123,11 @@ export class Room {
    * and the stands besides on the room's stored bucket (sixty spectators' hellos bounded together as a room's were); a
    * fighter never waits on the stands. `{ pass, bucket }` - `bucket` the room's, where it was spent.
    */
+  /** AUDIT PLAN-1000 B2: THE ROOM'S HELLO RATE - one answer for every door that spends its bucket (`_hellos`): a channel's
+   *  CHAT_HELLO_HZ_MAX, a gate's court's (and its copies') GATE_HELLO_HZ_MAX, every other room's HELLO_HZ_MAX. A door that
+   *  asked another rate of the same bucket clamped it to its own (tokenGate caps a bucket at the rate asked): one change
+   *  of gear in a court cut its door from 48 to 10. */
+  _helloHz(key) { return isChatRoom(key) ? CHAT_HELLO_HZ_MAX : isGateRoom(key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX; }
   async _battleHelloGate(sub, side, now) {
     const own = tokenGate(this._helloBy.get(sub), now, HELLO_HZ_MAX);
     this._helloBy.delete(sub);

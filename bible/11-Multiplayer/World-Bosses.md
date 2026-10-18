@@ -2596,8 +2596,11 @@ admitted ten hellos a second, one bucket for its whole crowd, and a player stand
 COURT_SILENT_MS (section 22, AUDIT GATE-FBX C1) was cast out of it - so at the opening a share of the crowd was thrown out
 of the court it was waiting to enter, and walked back in to queue again. A court and its copies now admit
 GATE_HELLO_HZ_MAX (48) a second, and a court that refuses a player busy counts as an answer for COURT_DOOR_WAIT_MS after
-they step in. The measurements, the model and the pins are `Scale-Arc.md` GATE-DOOR (THE PLAN PAST 1,000). Not a DFU
-member: Daggerfall has no other players.
+they step in - the room's own busy close, and (AUDIT PLAN-1000 B1) a court socket that failed before it ever opened, the
+Worker's own 503 (`askRoom` overloaded, or every layer full) that the browser closes 1006. A look change in the court
+reads the court's rate, not a cell's (B2). The measurements, the model and the pins are `Scale-Arc.md` GATE-DOOR (THE
+PLAN PAST 1,000), with what the audit left: junk at the door (B7) and a mid-fight deploy's wave. Not a DFU member:
+Daggerfall has no other players.
 
 ## 24. The court's watchers (COURT-WATCH, 2026-10-18)
 
@@ -2620,7 +2623,12 @@ to be thrown out. Now a full court keeps them as its **watchers**:
 
 The next step - copies that hold fighters of their own, past 256 (COURT-WIDE) - is `Scale-Arc.md`'s, with its blockers.
 Pins: `test/net/gate/courtwatch.test.js` (5); `tools/mutants/plan1000.json` COURTWATCH-* (15, all dead). PIN MOVED:
-`auditwb_court.test.js` AUDIT WB B5 (a sealed gate refuses; a full court keeps). Not a DFU member.
+`auditwb_court.test.js` AUDIT WB B5 (a sealed gate refuses; a full court keeps). AUDIT PLAN-1000 (the account and gate
+sets run whole after the slice, the change's own tests having passed it): the watcher's line goes through the text core
+(`net.gate.courtWatch`, `courtWatchText()` - the L10N4 ratchet held `gateLink.js` at 6), drafted in the thirteen
+languages that cover the catalog, and two pins that read the court's words moved with it: `egseam_law.test.js` THE
+GOLDEN FRAMES (the gate's hash - the two answers' `me`, every frame else word for word: taken out, the old hash to the
+byte) and `sd8c_remnant_page.test.js` (`me: 1` said in two answers, the court's beside the Hour's). Not a DFU member.
 
 ## Shipped
 

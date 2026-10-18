@@ -11,7 +11,7 @@ import { fakeRoom } from '../../fakeRoom.mjs';
 import { GATE_BRAIN_V, validGateOut } from '../../../src/net/wire.js';
 import { gateTimes, gateRoomKey } from '../../../src/net/gate/gateLaw.js';
 import { COURT_CENTRE, GATE_FIGHTERS_MAX, HIT_KINDS, ATTACKS, HOST } from '../../../src/net/gate/gateBrain.js';
-import { createGateLink, GATE_STATE_EMPTY, COURT_WATCH_TEXT, COURT_WATCH_ASK_MS, GATE_NO_TEXT } from '../../../src/net/gate/gateLink.js';
+import { createGateLink, GATE_STATE_EMPTY, courtWatchText, COURT_WATCH_ASK_MS, GATE_NO_TEXT } from '../../../src/net/gate/gateLink.js';
 import { createGateCourt } from '../../../src/scenes/gate/gateCourt.js';
 import { courtToDungeon, ARRIVE_Z } from '../../../src/world/gate/gateArena.js';
 
@@ -61,8 +61,8 @@ test('COURT-WATCH the link: the court full keeps me watching - said once in its 
   link.word({ k: 'no', m: 'the court is full' });
   assert.equal(link.watching(), true);
   assert.deepEqual(refused, [], 'no refusal');
-  assert.deepEqual(said, [COURT_WATCH_TEXT], 'said once');
-  assert.notEqual(COURT_WATCH_TEXT, GATE_NO_TEXT['the court is full']);
+  assert.deepEqual(said, [courtWatchText()], 'said once');
+  assert.notEqual(courtWatchText(), GATE_NO_TEXT['the court is full']);
   link.word({ k: 'st', d: 1, b: 'ruhn', ph: 1, h: 5, m: 10, x: 0, z: 0, yw: 0, mv: null, atk: null, sh: 0, wr: 9e12, n: 1, fell: null, wrath: null, md: null, ct: 0, xa: [], cx: null, su: 0, rk: 0, op: 0 });
   assert.equal(link.watching(), true, 'a beat seats nobody');
   link.word({ k: 'st', d: 1, b: 'ruhn', ph: 1, h: 5, m: 10, x: 0, z: 0, yw: 0, mv: null, atk: null, sh: 0, wr: 9e12, n: 1, fell: null, wrath: null, md: null, ct: 0, xa: [], cx: null, su: 0, rk: 0, op: 0, me: 1 });

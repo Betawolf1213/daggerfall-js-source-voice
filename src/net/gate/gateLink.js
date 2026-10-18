@@ -11,6 +11,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { readReceipt } from './gateReceipt.js';
+import { t } from '../../systems/textManager.js';   // COURT-WATCH: the watcher's line in the player's language (L10N4)
 import { ATTACKS, nearestCourt, COURTS, hostAt } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands
 
 /**
@@ -184,8 +185,11 @@ export function bossAt(s, now) {
   return [m.x + ((m.tx - m.x) / len) * along, m.z + ((m.tz - m.z) / len) * along];
 }
 
-/** COURT-WATCH: the words a full court keeps its watcher in (the refusal's own, 'The Burning Court is full.', cast them out). */
-export const COURT_WATCH_TEXT = 'The Burning Court is full - you watch from its edge until a place frees.';
+/** COURT-WATCH: the words a full court keeps its watcher in (the refusal's own, 'The Burning Court is full.', cast them out),
+ *  in the player's language. */
+export const courtWatchText = () => t('net.gate.courtWatch', 'The Burning Court is full - you watch from its edge until a place frees.');
+/** COURT-WATCH: the refusals that keep their player in the court as its watcher (the relay's word, net/wire.js GATE_NO_WORDS). */
+const WATCHED_NO = Object.freeze({ 'the court is full': true });
 /** COURT-WATCH: a watcher asks the court for a seat again this often (a fighter gone frees one - net/gate/gateBrain.js freeSeat). */
 export const COURT_WATCH_ASK_MS = 15_000;
 
@@ -228,7 +232,7 @@ export function createGateLink({ now, say = () => {}, onFell = () => {}, onRecei
       if (!g) return;
       // COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): a full court keeps me as its watcher - its fight
       // heard and seen, never fought - until the answer to an `in` asked again (COURT_WATCH_ASK_MS) gives me a seat
-      if (g.k === 'no' && g.m === 'the court is full') { if (!watching) say(COURT_WATCH_TEXT); watching = true; return; }
+      if (g.k === 'no' && WATCHED_NO[g.m] === true) { if (!watching) say(courtWatchText()); watching = true; return; }
       if (g.k === 'no') { say(gateRefusalText(g.m)); onRefused(g.m); return; }   // GATE-RELOAD: in what the word means
       if (g.k === 'st' && g.me === 1) watching = false;   // COURT-WATCH: my `in` answered - the seat mine
       if (g.k === 'rcpt') { const c = readReceipt(g.r); if (c) { receipts.set(c.d, g.r); onReceipt(g.r); } return; }   // one a day: the receipt says which

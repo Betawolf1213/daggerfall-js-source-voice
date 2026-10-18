@@ -8,6 +8,20 @@
 
 Newest first.
 
+**2026-10-18 - AUDIT PLAN-1000 (RELAY-LOAD, GATE-DOOR, PRIMARY-FOLD parts one to three).** Mac, at a thousand
+online: *"We also need to audit everything so far"*. Four cold lanes on frozen worktrees at `81fdd3b5d` - the relay's
+load reader (A), the court's door (B), the door's reads in one trip (C), a week kept and the batches (D) - and no edit
+until all had reported. The worst two: the fold widened a race that loses a progression debit (two overlapping claims of
+one stream; the spend now steps its bucket inside its own upsert and reads nothing - C1), and a court the Worker refused
+before it opened was still counted silence, its player cast out at 21 s (B1). The rest - the `chat` kind's sockets four
+a player not two, a windows question a LIMIT cut, a look change cutting the court's door to 9, the seat's and the
+tombstone's WHEREs one export each, a claim the rate refuses paying the door's reads, the fold's saving overstated, a
+twin-race pin made vacuous, the kept word's key unpinned, the model's means said as medians - fixed, pinned or recorded,
+each in `11-Multiplayer/Scale-Arc.md` beside the slice it is about (RELAY-LOAD's text, GATE-DOOR's and PRIMARY-FOLD's
+lane blocks). Left with reasons: tokenless junk at 48 a second shuts a court's door (SCALE5a's trade, B7), a mid-fight
+deploy's wave against COURT_SILENT_MS, a D1 Time Travel restore under warm isolates (redeploy after - D6). Mutants:
+relayload 32, gatedoor 13, primaryfold 34 (one equivalent as recorded), all dead; AUDIT CHAP S1's two dead again.
+
 **2026-10-17 - AUDIT RVN-STARS (RVN-STARS - PR #999).** Mac: *"Do a comprehensive audit on this and ensure
 perfection"*. Five cold lanes on the frozen branch - the law and the record, the seams, the window and its doors, the
 words in 13 languages with the docs, the balance measured - and no edit until all had reported. The worst: the Blade's

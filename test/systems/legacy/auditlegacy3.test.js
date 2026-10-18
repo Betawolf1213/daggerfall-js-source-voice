@@ -237,7 +237,7 @@ test('AUDIT LEGACY III O12: A TOMBSTONE ACTS IN NOTHING - its last open item, dr
   assert.equal((await call('/v1/prof/state', { character: fallen.id }, bran)).status, 200, 'no word of whose character is dead');
   // one door, before every route
   const src = rd('server-account/src/index.js');
-  // PIN MOVED (PRIMARY-FOLD, Scale-Arc.md THE PLAN PAST 1,000): the tombstone is the door's one batch's first read (door.js doorReads)
+  // PIN MOVED (PRIMARY-FOLD, Scale-Arc.md THE PLAN PAST 1,000): the tombstone is the door's one statement's first read (door.js doorReads)
   assert.ok(src.indexOf('if (door.dead) return no(\'dead\', 410, origin);') > 0 && src.indexOf('if (door.dead) return no(\'dead\', 410, origin);') < src.indexOf("if (path === '/v1/auth/token' && request.method === 'POST')"), 'asked before the first route');
 });
 

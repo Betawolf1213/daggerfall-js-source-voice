@@ -216,7 +216,7 @@
 import {
   createGuest, openSession, resolveSession, closeSession, closeAllSessions,
   devicesOf, accountView, displayName, accountKind,
-  register, login, recover, changePassword, setEmail, overRate, overAccountRate,
+  register, login, recover, changePassword, setEmail, overRate, overAccountRate, accountRateFull,
   newRecoveryCodes,   // RECOVERY-SET: a new set of codes from the profile
   accountWardrobe, equipTitle, equipAura, equipGlyph, buyInsignia, insigniaPurse, creditPlay, muteAccount, isMuted, mutedUntil,
   duelRecordOf, claimDuel, gateRecordOf, claimGate, legalRefusal,
@@ -981,7 +981,10 @@ const service = {
       // `character`, and a progression claim's seat and its stream's bucket - in one trip (door.js doorReads), answered in
       // the order each was asked on its own
       const progressRoute = request.method === 'POST' ? PROGRESS_ROUTES[/** @type {keyof typeof PROGRESS_ROUTES} */ (path)] : undefined;
-      const door = await doorReads(db, who.player.id, { tomb: path !== '/v1/auth/token' && typeof body.character === 'string' ? body.character : null, stream: progressRoute ? progressRoute[0] : null });
+      // AUDIT PLAN-1000 C4: a claim the account's rate will refuse (asked without counting - the count is the door's below,
+      // after the tombstone, as ever) asks the tombstone alone
+      const claimed = progressRoute && !accountRateFull(who.player.id, nowS, ACCOUNT_MAX, ACCOUNT_WINDOW_S) ? progressRoute[0] : null;
+      const door = await doorReads(db, who.player.id, { tomb: path !== '/v1/auth/token' && typeof body.character === 'string' ? body.character : null, stream: claimed });
       if (door.dead) return no('dead', 410, origin);
 
       // AUDIT-ACC F12: A CREDENTIAL IS NOT A LICENCE TO HAMMER. The
@@ -1303,7 +1306,7 @@ const service = {
         });
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
         if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
-        await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a cleanse, and the Renown it paid
+        await progressSpent(ctx, who.player.id, path, r);   // INT17: a cleanse, and the Renown it paid
         let order = null;
         if (r.renown?.rose) {
           const key = await signingKey(env, subtle);
@@ -1473,7 +1476,7 @@ const service = {
         // SEAT1b (Seats-Arc 4.2: "The Renown report grows `region`"): what this report CREDITED - never what it asked, and
         // nothing for a repeat - kept for the character's war-guild where it pledged in that region
         if (body.region != null && r.credited > 0 && !r.repeat) await creditRenown(ctx, who.player, env, { character: body.character, region: body.region, xp: r.credited });
-        await progressSpent(ctx, who.player.id, path, r, door);   // INT17: what it credited, measured against the play that paid for it
+        await progressSpent(ctx, who.player.id, path, r);   // INT17: what it credited, measured against the play that paid for it
         let order = null;
         if (r.rose || (r.repeat && r.level > 1)) {
           const key = await signingKey(env, subtle);
@@ -1698,7 +1701,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a find
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a find
         return 'error' in r ? no(r.error, MARKS_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1779,7 +1782,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a camp, the Watch's ticks
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a camp, the Watch's ticks
         return 'error' in r ? no(r.error, SEAT_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1828,7 +1831,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a profession's XP, a harvest's silver, a writ's Renown
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a profession's XP, a harvest's silver, a writ's Renown
         // AUDIT PROF-541 B2: a realm record's sequence (a checkpoint's own word) and a refusal's `why` ride with it
         if ('error' in r) return json({ error: r.error, ...(typeof r.why === 'string' ? { why: r.why } : {}), ...(r.error === 'seq' && Number.isSafeInteger(r.seq) ? { seq: r.seq } : {}) }, PROF_STATUS[r.error] ?? 400, origin);
         if (r.renown?.rose) {

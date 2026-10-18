@@ -725,6 +725,12 @@ export function overAccountRate(id, nowS, max = ACCOUNT_MAX, windowS = ACCOUNT_W
   w.count++;
   return w.count > max;
 }
+/** AUDIT PLAN-1000 C4: whether the account's next request in this window is past its rate - overAccountRate's answer,
+ *  asked WITHOUT counting: the door asks a progression claim's reads of no request the rate will refuse (index.js). */
+export function accountRateFull(id, nowS, max = ACCOUNT_MAX, windowS = ACCOUNT_WINDOW_S) {
+  const w = accountWindows.get(id);
+  return !!w && w.start >= Math.floor(nowS / windowS) * windowS && w.count + 1 > max;
+}
 /** The accounts counted in this isolate (the pins' window). */
 export const accountRateKeys = () => accountWindows.size;
 

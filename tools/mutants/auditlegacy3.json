@@ -1561,7 +1561,7 @@
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "PIN MOVED (O12): the guild's own question moved to the service's one door, which every character's act walks through - the guilds' included; removed, a tombstone invites again. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one batch (door.js doorReads)."
+    "note": "PIN MOVED (O12): the guild's own question moved to the service's one door, which every character's act walks through - the guilds' included; removed, a tombstone invites again. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one statement (door.js doorReads)."
   },
   {
     "name": "AUDIT-LEGACY-III-O5-a-tombs-track-holds-a-place",
@@ -1580,7 +1580,7 @@
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "PIN MOVED (O12): the guild's 410 is the service's one door's own now - GUILD_STATUS's `dead` went with the guild's own question; a tombstone is gone (410), never forbidden. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one batch (door.js doorReads)."
+    "note": "PIN MOVED (O12): the guild's 410 is the service's one door's own now - GUILD_STATUS's `dead` went with the guild's own question; a tombstone is gone (410), never forbidden. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one statement (door.js doorReads)."
   },
   {
     "name": "AUDIT-LEGACY-III-O6-a-bloodline-retires",
@@ -1811,22 +1811,22 @@
   {
     "name": "AUDIT-LEGACY-III-O12-the-living-refused",
     "file": "server-account/src/legacy.js",
-    "old": "SELECT 1 FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NOT NULL').bind(character, playerId).first());",
-    "new": "SELECT 1 FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NULL').bind(character, playerId).first());",
+    "old": "export const TOMB_WHERE = 'id = ?2 AND player = ?1 AND dead_at IS NOT NULL';",
+    "new": "export const TOMB_WHERE = 'id = ?2 AND player = ?1 AND dead_at IS NULL';",
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the question turned: the living refused, the dead let act."
+    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the question turned: the living refused, the dead let act. PIN MOVED (AUDIT PLAN-1000 C2/C4): re-aimed by content."
   },
   {
     "name": "AUDIT-LEGACY-III-O12-anyones-tombstone",
     "file": "server-account/src/legacy.js",
-    "old": "SELECT 1 FROM realm_characters WHERE id = ? AND player = ? AND dead_at IS NOT NULL').bind(character, playerId).first());",
-    "new": "SELECT 1 FROM realm_characters WHERE id = ? AND dead_at IS NOT NULL').bind(character).first());",
+    "old": "export const TOMB_WHERE = 'id = ?2 AND player = ?1 AND dead_at IS NOT NULL';",
+    "new": "export const TOMB_WHERE = 'id = ?2 AND ?1 IS NOT NULL AND dead_at IS NOT NULL';",
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): any account's tombstone - another account learns whose character is dead."
+    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): any account's tombstone - another account learns whose character is dead. PIN MOVED (AUDIT PLAN-1000 C2/C4): re-aimed by content."
   },
   {
     "name": "AUDIT-LEGACY-III-O12-the-mint-refused",
@@ -1836,7 +1836,7 @@
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the token mint taken for an act - a page under its death screen mints nothing. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one batch (door.js doorReads)."
+    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the token mint taken for an act - a page under its death screen mints nothing. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one statement (door.js doorReads)."
   },
   {
     "name": "AUDIT-LEGACY-III-O12-the-dead-word",
@@ -1846,6 +1846,6 @@
     "tests": [
       "test/systems/legacy/auditlegacy3.test.js"
     ],
-    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the refusal a malformed body, never the tombstone. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one batch (door.js doorReads)."
+    "note": "AUDIT LEGACY III O12 (its last open item, driven against the real Worker): the refusal a malformed body, never the tombstone. PIN MOVED (PRIMARY-FOLD): re-aimed by content at the door's one statement (door.js doorReads)."
   }
 ]

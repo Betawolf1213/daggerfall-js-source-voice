@@ -7,6 +7,10 @@
 // it settled keeps that word until the week it was read for has passed; the first read past the boundary asks again.
 // Kept by the binding a request's counted Proxy wraps (service.js DB_ROOT), as every word an isolate keeps beside its
 // database is (progress.js's config, townSeats.js's rows).
+// AUDIT PLAN-1000 D6: ONE THING UNSETTLES A WEEK - D1 Time Travel. A restore past a Turning rewinds its rows under every
+// warm isolate, which keeps skipping it (and passing seat acts as on a settled week) until its week ends, up to seven
+// days. realm-restore.yml and realm-revive.yml hold and lift the service by deploys (fresh isolates); a restore by hand
+// is followed by a redeploy of the Worker - the restore lines the workflows print say so.
 import { DB_ROOT } from './service.js';
 
 /** @type {WeakMap<object, Map<string, number>>} */

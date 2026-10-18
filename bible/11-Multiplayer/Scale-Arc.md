@@ -2845,8 +2845,8 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 1. **The gate court's door - at a thousand, now.** A court admits HELLO_HZ_MAX (10) hellos a second, one bucket for
    everyone, and a player in the court whose fight has said nothing for COURT_SILENT_MS (20 s) is cast out
    (`gateCourt.js` silent - a socket still retrying counts as silence). Modelled on the client's own retry ladder
-   (hubWaveModel's, at the court's rate): 256 arriving within 5 s are refused busy 636 times, the median player in at
-   11.9 s and the last at 28.4 s; 512 within 10 s, the median at 24.7 s. So at the opening a share of the crowd is
+   (hubWaveModel's, at the court's rate): 256 arriving within 5 s are refused busy 636 times (the mean of twenty seeds),
+   the median player in at 11.9 s and the last at 28.4 s; 512 within 10 s, the median at 24.7 s. So at the opening a share of the crowd is
    thrown out of the court it is waiting to enter, walks back in and queues again - the field's "breaking down near
    oblivion gate". A hello costs the court some 1.4 ms at 256 (the real Room on the pins' fake, tokens minted apart).
    **GATE-DOOR, below.**
@@ -2899,9 +2899,10 @@ Relay slices ride as few drops as possible (the deploy policy above): GATE-DOOR'
   arm's one `tokenGate`), so a busy refusal leaves the token unspent and the retry carries it again (SCALE5a). A cell, a
   building and a dungeon keep HELLO_HZ_MAX. Measured first (the real Room on the pins' fake, tokens minted apart): a hello
   costs a court some 1.4 ms of its own at 256 sockets, so the opening's door spends some 70 ms of the court's second while
-  the crowd comes in. Modelled (the client's own retry ladder at the court's rate, twenty seeds): 256 arriving within 5 s
-  are in within their arrival, none refused (636 refusals at 10); 1,024 arriving over 20 s are refused 61 times, the median
-  player in at 10.1 s (9,593 refusals and 50.3 s at 10).
+  the crowd comes in. Modelled (the client's own retry ladder at the court's rate, twenty seeds, the refusals their mean:
+  `RATE=48 ARRIVE_S=5 N=256 node tools/hubWaveModel.mjs`): 256 arriving within 5 s are in within their arrival, none
+  refused (636 refusals at 10); 1,024 arriving over 20 s - four courts' crowds through one door, a bound and not a court,
+  which holds 256 - are refused 61 times, the median player in at 10.1 s (9,593 refusals and 50.3 s at 10).
 - **The client.** The session stamps a busy refusal of its room on its own clock (`online.js` `busyAt`), and the court
   reads it (`gateCourt.js` `door`, handed by the world host): while I am new to a court (COURT_DOOR_WAIT_MS, 60 s from my
   arrival) each refusal is a word of it, so I wait at its door instead of being cast out by COURT_SILENT_MS. Past the
@@ -2914,6 +2915,36 @@ stamp on a busy close and none on a drop; the court's silence with its door answ
 host's wiring. `tools/mutants/gatedoor.json`: 8, all dead (a ninth - the door read at my arrival - survived, and the line
 it aimed at was redundant, a refusal from before arrival first seen on the arrival's own frame: taken out). PIN MOVED: the
 relay version's 45 pins, world217 to world218 (each pin's history kept).
+
+**AUDIT PLAN-1000, lane B (a cold read on a frozen tree; fixed after it).**
+- **B1 (MED), fixed: a court the Worker refused before it opened was still a silence.** An overloaded object's 503
+  (`askRoom` `busy`) or every copy full never opens the socket, and the browser closes it 1006 - no CLOSE_BUSY, so no
+  `busyAt`, and the court cast its player out at 21 s where a busy close held them to 81 s (the audit's run: a real
+  session and a real court). The session now stamps `busyAt` for a court socket that failed before it opened
+  (`online.js`, before the CLOSE_BUSY arm): a court that cannot be reached at all - the player's own network down -
+  counts as answering too, inside the same COURT_DOOR_WAIT_MS and no longer.
+- **B2 (LOW), fixed: a change of gear in a court cut its door to 9.** The look arm spent the same bucket at
+  HELLO_HZ_MAX, and tokenGate caps a bucket at the rate asked. Both arms read one rate (`server/src/index.js` `_helloHz`).
+- **B3, B4 (LOW), pinned:** the copies' door (a socket with `ly`) and a halo's busy close stamping nothing were held by
+  no behaviour; `gatedoor.test.js` reaches both.
+- **B5 (LOW), fixed:** the figures were the twenty seeds' means, said as medians, from a model not in the tree; the
+  model is `tools/hubWaveModel.mjs` with RATE and ARRIVE_S, and its run gives the figures above to the decimal.
+  `gateArena.js` COURT_DOOR_WAIT_MS no longer says "a crowd of a thousand is in within this" of one court.
+- **B6 (LOW), recorded: the hello's cost is one machine's.** 1.4 ms here; 1.9-3.0 ms on the audit's loaded four cores,
+  the pins' fake parsing each frame once a recipient. Each hello the door admits also costs the court 2 storage puts and
+  1 get (some 96 puts a second at 48), 255 join frames (~34 KB) and a welcome of ~15 KB: some 2.3 MB/s out at the door's
+  rate, measured on the audit's run.
+- **B7 (LOW), left: 48 tokenless hellos a second shut the door for everyone.** SCALE5a's trade (the bucket spent before
+  the token is read, so a busy refusal mints nothing); AUDIT-SEATS R3's per-subject door is a battle room's, and a hello
+  without a token has no subject to bucket by. Junk is cheap to refuse (0.044 ms tokenless, 0.44 ms a bad signature) and
+  a player at a door shut by it waits up to some 80 s where they were cast out at 20 s.
+- **Left, out of the slice:** a mid-fight drop - this slice's own deploy - is a reconnect wave (`waveSpreadMs`, some 20 s
+  at 1,000 and up to 40 s) the arrival's wait does not cover, so COURT_SILENT_MS can cast those players out of a fight;
+  they walk back in (the court admits a fighter it holds).
+
+Pins after it: `gatedoor.test.js` still 3, widened; `tools/mutants/gatedoor.json` 13, all dead (the copy at the cell's
+rate, the look at the cell's rate, the never-opened court unstamped, the never-opened stamp for any room, a halo's
+stamped).
 
 ### PRIMARY-FOLD part one: built (2026-10-18, this branch - no version, no migration, no drop) - the door's reads in one trip
 
@@ -2928,17 +2959,19 @@ was a round trip, and the primary is capped by its round trips (PRIMARY-TRIPS).
 **Built.** The door asks a claim's three questions as ONE statement (`server-account/src/door.js` doorReads - each
 question a subquery worded as it was asked alone), and answers them in the order each was asked: the tombstone (410
 `dead`), the account's rate (in memory), the seat (`seatRefusalOf`, progressRefusal's own law), the enforced room from
-the door's bucket. The spend takes the door's bucket for the route's own stream (`progressSpent`'s `door`); any other
-stream an answer pays (a cleanse's Renown) reads its own. The play the bucket reads (`players.played_s`) moves only by
-the heartbeat's credit (`accounts.js` creditPlay), never inside a claim, so the door's read is the one the spend would
-ask. One statement, not a batch: eight pins drop every `db.batch` to prove a route answers its own failure (503), and a
+the door's bucket. The spend took the door's bucket for its own stream at first - and AUDIT PLAN-1000 C1 (below) found
+that widened a race that loses a debit, so the spend now reads no bucket at all: it steps the row as it stands, in its
+own batch (`progress.js` spendProgress). One statement, not a batch: eight pins drop every `db.batch` to prove a route answers its own failure (503), and a
 batch at the door would have answered them first; the routes' batches keep every failure they had. A request that names
 a character and claims nothing asks the tombstone alone, as it did.
 
-**Counted after:** a Renown claim 7 trips to 5, with a region 8 to 6, with a name 6 to 4; a harvest 10 to 8; every other
-claim two fewer (the door's two to one, the spend's read gone); nothing else moved. At the evening's measured rates (a
-Renown claim some 1.4 a second, a harvest some 0.5 - PRIMARY-TRIPS' statements a second over each route's statements a
-request) that is some 4-6 of the primary's trips a second of the 90-130 the plan names; the rest of PRIMARY-FOLD below.
+**Counted after:** a Renown claim 7 trips to 5, with a region 8 to 6, with a name 6 to 4; a harvest 10 to 8; nothing else
+moved. A claim saves its door's reads less one, and its spend's read: three when enforced, two when measured, and one for
+a claim that names no character (a silver find posts `{ kind, rid }`: struck 8 to 7) - a claim that spends nothing (an
+unstruck find, 11) saves none, and a repeat saves one (Renown's, 4 to 3) - AUDIT PLAN-1000 C5, where this said "every other
+claim two fewer". At the evening's measured rates (a Renown claim some 1.4 a second, a harvest some 0.5 - PRIMARY-TRIPS'
+statements a second over each route's statements a request) the two named routes are 3.8 of the primary's trips a second
+of the 90-130 the plan names - the floor; the other claims' rates are not in the tree. The rest of PRIMARY-FOLD below.
 
 **Pins.** `test/server/primaryfold.test.js` (3): the oracle - the door answers as the three questions did asked alone,
 over every state they read; the trips - an enforced claim asks the seat and the bucket of nobody else, credited and spent
@@ -2948,6 +2981,29 @@ their first run - the hold read off another row than the seat's, and the door's 
 pins were made to reach them. PIN MOVED: `int16_progress.test.js` (the seat judged off the door's read),
 `auditlegacy3.test.js` (the tombstone the door's first answer); re-aimed by content, all dead: AUDIT-LEGACY-III-O5's two
 and O12's two, INT17-renown-unmeasured.
+
+**AUDIT PLAN-1000, lane C (a cold read on a frozen tree; fixed after it).**
+- **C1 (MED), fixed: the fold widened a race that loses a debit.** The spend wrote an absolute bucket computed from a
+  read, and the read had moved to the door - before the route ran. Two claims of one stream on one account that overlap:
+  the later write overwrote the earlier's debit (the audit's run: 9,900, 9,800, then 9,800 again; 15 of 25 start offsets
+  lost one, 5 of 25 before the fold - the race was there, narrower). The spend now steps the bucket inside its own upsert
+  (`progress.js` spendProgress, BUCKET_STEP_SQL: the row as it stands and the account's play, `RETURNING allowance`) and
+  reads nothing, which closes the narrow race too. Its step is `budget.js` stepBudget's, held to it over 540 states with
+  the hour's measure from the same step; `progressSpent` takes no door. The trips are the fold's counts: the spend was
+  one write, and is one batch.
+- **C2, fixed: two seat pins aimed at a path no route runs, and the seat's WHERE was three literals.** One each now
+  (`legacy.js` TOMB_WHERE, `progress.js` SEAT_WHERE), the door and each question asked alone built from them;
+  INT16-no-lease and INT16-the-dead-seated re-aimed at SEAT_WHERE, dead.
+- **C3, moot:** only Renown's spend was pinned to take the door's bucket; no spend takes it now.
+- **C4 (LOW), fixed: a claim the account's rate refuses paid the door's seat and bucket.** It asks the tombstone alone
+  (`accounts.js` accountRateFull, a peek that counts nothing; a 429'd find 2 trips to 1); a tombstone over its rate still
+  hears 410 first.
+- **C5, corrected above** ("every other claim two fewer"). **C6:** three pins' notes said "the door's one batch"; one
+  statement.
+
+Pins after it: `primaryfold.test.js` 7 (the C1 oracle, its overlap and its no-read; C4); `tools/mutants/primaryfold.json`
+29 - 28 dead, 1 equivalent as recorded (the step's `>=` at a full bucket). The four records of the spend taking the
+door's bucket went with it.
 
 ### PRIMARY-FOLD part two: built (2026-10-18, this branch - no version, no migration, no drop) - a week read settled, kept
 
@@ -2990,6 +3046,25 @@ asked once, a claim credited, an older claim replayed answered a repeat by the b
 ever. `tools/mutants/primaryfold.json` (+2: the rows unread, the head asked again - both dead). PIN MOVED:
 `audit_chap1.test.js` AUDIT CHAP T13 - its race is laid before the claim's second batch, the one that writes (its
 first is the reads now); ACHAP-S6-EVENTS-REPEAT re-aimed by content (dead).
+
+**AUDIT PLAN-1000, lane D (parts two and three, a cold read on a frozen tree; fixed after it).**
+- **D1 (MED), fixed: part three left AUDIT CHAP S1's twin race vacuous.** Its twin ran at the claim's first batch - the
+  reads, now - so the loser was answered `taken` and nothing reached the write's tag guard (ACHAP-S1-TAG-MINT and
+  ACHAP-S1-TWIN-REPEAT survived). PIN MOVED: the twin lands at the second batch, as T13's race does; both dead.
+- **D2, pinned: the kept word's key.** The pins bound no METRICS, so `env.DB` was one object on every request; in
+  production `metrics.js` measured wraps a new Proxy per request, and a keep keyed by it saves nothing (the audit's run:
+  10 `MAX(week)` reads over five warm pairs, 0 keyed by the binding). The week-kept pin stands METRICS as production does.
+- **D3, D4, D5, pinned:** the seats' kept week and the chapters' apart (a list that keeps the seats' week before the
+  chapters' first sheet); a catch-up that settled part of its weeks keeps nothing; the claim's hour asked before its
+  reads (a claim it refuses reads nothing) and a repeat counted toward it - each held by no behaviour before.
+- **D6, recorded: one thing unsettles a week - D1 Time Travel.** A restore past a Turning rewinds its rows under every
+  warm isolate, which keeps skipping it (and passing seat acts as on a settled week) until its week ends, up to seven
+  days. realm-restore.yml and realm-revive.yml hold and lift the service by deploys, fresh isolates; the restore lines
+  the deploy and those two print for a restore by hand now say to redeploy the Worker after it (`weekKept.js` says why).
+
+Pins after it: `primaryfold.test.js` 7, widened; `tools/mutants/primaryfold.json` 34 - 33 dead, 1 equivalent as
+recorded (+5: kept by the Proxy, the chapters reading the seats' word, a partial catch-up kept, the rate after the
+reads, the rate after a repeat's answer).
 
 ### Decisions for the owner
 
