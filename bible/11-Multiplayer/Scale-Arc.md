@@ -80,6 +80,7 @@ Four read-only audits covered the relay (`server/src/index.js`), the account ser
 | BOOKMARK-SPIRAL | The account database's primary overloaded from 13:50 UTC (2026-10-16) and stayed so - every route 5 to 60 s, every deploy's smoke on `/v1/homes/decor` 000, DECOR-BATCH deployed and nothing moved: the page's D1 bookmark is kept only when no call goes between a read and its answer, so a slow primary took the bookmarks away, and every polled display read then started at the primary. The six polled reads with no bookmark start at any instance; a session lookup that misses there asks the primary | No | **Built** (2026-10-16; acct143) |
 | BUSY-HEART | After BOOKMARK-SPIRAL deployed and the primary's own load halved, the overload held: it held only while players were in the world (healthy 20:00-20:04 with the relay's players dropped by its deploy, at more primary statements than when it came back), and the heartbeat and the motherlodes - asked again on their own schedules, twice and three times as often - spent the most of the database's time. Both stand back now | No | **Built** (2026-10-16; acct144) |
 | SHED-LONG | After BUSY-HEART the overload eased (p50 17-45 s to 5-13 s) and held: a request on a D1 session waited 31 s on the database for every 5.6 s one on the binding did - the replica the longer queue. BOOKMARK-SPIRAL rolled back (the six polled reads at the primary first again, its session lookup's fallback kept), and an overload's shed 10 s where it was 2 | No | **Built** (2026-10-16; acct145) |
+| RELAY-LOAD | The relay's own metrics read by the operator - the rooms by kind, every five minutes by kind, the busiest rooms - from the Actions tab, as D1-LOAD reads the account service's | No | **Built** (2026-10-18, this branch - no version, no drop) |
 | SCALE6 | Abuse and backups: Turnstile on guest creation, /64 IPv6 rate keys, bans, report and ignore, `ALLOWED_ORIGIN`, R2 snapshots, a hub export | Some | Alongside |
 
 **Relay deploy policy (SCALE):** relay changes are batched into as few deploys as possible, each in a window announced beforehand. A deploy drops every player, and until SCALE2 every reconnect is a D1 write storm.
@@ -2660,6 +2661,42 @@ lookups a second onto it, while the primary, answering in a fifth of the time, h
   `tools/mutants/bookmark_spiral.json` re-made for the rollback: 6.
 - `test/net/busy_gate.test.js`: BUSY_SHED_MS 10 s.
 - ACCOUNT_VERSION acct145, and every pin and mutant record on acct144 (each pin's PIN MOVED history kept).
+
+## RELAY-LOAD - the relay's metrics, read (2026-10-18, no version, no drop)
+
+From play, at about a thousand online: "Server is kinda breaking down near oblivion gate cause so many ppl lol"; the
+owner: "We really need to future proof even more and improve our server. Like really deep". Principle 4 below says
+every slice is chosen by the field, and the relay's half of the field could not be read: since SCALE2b every room writes
+one Analytics Engine point per busy window (`server/src/relayScale.js` RoomMetrics, dataset `daggerfall_relay`), and
+since SCALE5b its refusals `room full`, its byte budgets' drops and its peak - but nothing in the tree ever asked them
+back. "Which room broke at the gate" was arithmetic from the constants.
+
+**Built.** `tools/relayLoad.mjs` builds three questions over the relay's points, as `tools/d1Load.mjs` does over the
+account service's (its window law `loadHours` and its drawing `answerTable` are d1Load.mjs's, imported - one home):
+- **kinds** - every room kind (a key's prefix, `roomKindOf`) over the window: its room-windows, its largest room, the
+  hellos it took and refused busy, `room full`, the sockets closed with a reason, the frames its budgets dropped, the
+  poses in and the sends each cost, the data out and the storage it touched; the most sends first;
+- **windows** - every five minutes, each kind: its sockets across the relay at each room's close (a point is one room's
+  window, so the sum is the kind's - `chat`, the hub's and the regions' shards, is about two a player online), its
+  largest room, busy, full, drops, poses and sends. A gate opens at HH:32:30 UTC every even hour, so its crowd is its
+  rows: `world` for the site's cell, `gate` for the court and its copies;
+- **crowds** - the forty busiest room-windows by their peak: when, which kind, what each held and refused.
+
+Every sum is weighted by `_sample_interval` (Analytics Engine samples under load); a peak is a room's own, unweighted.
+`.github/workflows/relay-load.yml` asks them by hand from the Actions tab ("Relay load", 1 to 168 hours), with the
+deploy's token (Account Analytics: Read), and draws them into the run's summary; a refusal is a warning, never a stop.
+It reads only, and it is no part of the relay's bundle: no version, no drop.
+
+**Not here: the Worker's own refusals.** A room the runtime called overloaded, or reset, is answered at the Worker's
+door (DO-ASK `askRoom`), before any room counts it; those are Cloudflare's Workers Observability and its GraphQL
+analytics, read by hand as HUB-PULL read them. Counting them as a point would be a relay change (a version, a drop), and
+rides the next relay slice that drops anyway.
+
+**Pins.** `test/server/relayload.test.js` (2): the questions over the relay's dataset (read off `server/wrangler.toml`),
+each double the field a flushed RoomMetrics point carries there, every sum weighted, a peak unweighted, the orders, the
+window refused before the SQL, an answer drawn; the workflow by hand only, its input once as environment, its own
+queue, deploying nothing, its metrics step run under bash over a fake SQL API. `tools/mutants/relayload.json`: 9 - 8
+dead, 1 equivalent as recorded (d1-load.yml's own belt and braces).
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 

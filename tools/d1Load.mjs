@@ -81,6 +81,10 @@ const cell = (v) => {
  */
 export function loadTable(name, answer) {
   const [, title, cols] = questionOf(name);
+  return answerTable(name, title, cols, answer);
+}
+/** RELAY-LOAD: the drawing itself, any question's - tools/relayLoad.mjs draws the relay's answers with it. */
+export function answerTable(name, title, cols, answer) {
   const rows = answer?.data;
   if (!Array.isArray(rows)) throw new Error(`${name}: the answer carries no rows - ${JSON.stringify(answer).slice(0, 300)}`);
   const head = `**${title}**\n\n`;

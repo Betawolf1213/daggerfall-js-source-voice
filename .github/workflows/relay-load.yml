@@ -1,0 +1,73 @@
+name: Relay load
+
+# RELAY-LOAD (2026-10-18, from play: "Server is kinda breaking down near oblivion gate cause so many ppl lol") - WHAT IS
+# FILLING THE RELAY, READ BY THE OPERATOR. Run it by hand from the Actions tab; the run's summary carries the relay's own
+# metrics (server/src/relayScale.js RoomMetrics, one Analytics Engine point per room per five busy minutes): the rooms by
+# kind, every five minutes by kind, and the busiest rooms. The questions are tools/relayLoad.mjs's, tested in
+# test/server/relayload.test.js - not written again here. It READS ONLY. d1-load.yml is the account database's twin.
+
+on:
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "How many hours back to read (1 to 168)."
+        required: false
+        default: "3"
+        type: string
+
+permissions:
+  contents: read
+
+# Its own group, never the deploy's (d1-load.yml's law).
+concurrency:
+  group: relay-load
+  cancel-in-progress: false
+
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # The input reaches the scripts as ENVIRONMENT, never pasted into them (account-recovery.yml's law); the tool
+      # refuses anything but whole hours.
+      HOURS: ${{ inputs.hours }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Refuse to start without a token
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::error::secrets.CLOUDFLARE_API_TOKEN is not set for this repository - nothing else in this job can work"
+            exit 1
+          fi
+          node tools/relayLoad.mjs --sql kinds "$HOURS" > /dev/null
+
+      - name: Read the relay's metrics
+        run: |
+          set -euo pipefail
+          acct=$(grep -oP '^account_id\s*=\s*"\K[^"]+' server/wrangler.toml)
+          echo "**Window: the last ${HOURS:-3} hour(s), to $(date -u +%H:%M) UTC**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          failed=0
+          for q in $(node tools/relayLoad.mjs --names); do
+            node tools/relayLoad.mjs --sql "$q" "$HOURS" > "$RUNNER_TEMP/$q.sql"
+            code=$(curl -sS --max-time 60 -o "$RUNNER_TEMP/$q.json" -w '%{http_code}' -X POST \
+              "https://api.cloudflare.com/client/v4/accounts/$acct/analytics_engine/sql" \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" --data-binary "@$RUNNER_TEMP/$q.sql") || true
+            if [ "${code:-000}" = "200" ] && node tools/relayLoad.mjs --table "$q" "$RUNNER_TEMP/$q.json" >> "$GITHUB_STEP_SUMMARY"; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+            else
+              failed=1
+              echo "::warning::the $q question was refused (HTTP ${code:-000}) - the token needs Account Analytics: Read"
+              head -c 400 "$RUNNER_TEMP/$q.json" || true
+              echo
+            fi
+          done
+          [ "$failed" = "0" ] || echo "::warning::some readings are missing from the summary - see the warnings above"

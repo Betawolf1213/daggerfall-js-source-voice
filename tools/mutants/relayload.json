@@ -1,0 +1,85 @@
+[
+ {
+  "name": "RELAYLOAD-weight",
+  "file": "tools/relayLoad.mjs",
+  "old": "sends: 'SUM(double8 * _sample_interval)',",
+  "new": "sends: 'SUM(double8)',",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-double-moved",
+  "file": "tools/relayLoad.mjs",
+  "old": "full: 'SUM(double13 * _sample_interval)',",
+  "new": "full: 'SUM(double12 * _sample_interval)',",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-peak-weighted",
+  "file": "tools/relayLoad.mjs",
+  "old": "${W.n} AS room_windows, MAX(double15) AS peak,",
+  "new": "${W.n} AS room_windows, SUM(double15) AS peak,",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-kinds-order",
+  "file": "tools/relayLoad.mjs",
+  "old": "GROUP BY kind ORDER BY sends DESC LIMIT 40",
+  "new": "GROUP BY kind ORDER BY hellos DESC LIMIT 40",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-crowds-order",
+  "file": "tools/relayLoad.mjs",
+  "old": "ORDER BY peak DESC LIMIT 40",
+  "new": "ORDER BY sends DESC LIMIT 40",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-window-guard",
+  "file": "tools/relayLoad.mjs",
+  "old": "const since = (h) => `timestamp > NOW() - INTERVAL '${loadHours(h)}' HOUR`;",
+  "new": "const since = (h) => `timestamp > NOW() - INTERVAL '${h}' HOUR`;",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-input-spliced",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "node tools/relayLoad.mjs --sql \"$q\" \"$HOURS\"",
+  "new": "node tools/relayLoad.mjs --sql \"$q\" \"${{ inputs.hours }}\"",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
+  "name": "RELAYLOAD-refusal-drawn",
+  "file": ".github/workflows/relay-load.yml",
+  "old": "if [ \"${code:-000}\" = \"200\" ] && node tools/relayLoad.mjs",
+  "new": "if node tools/relayLoad.mjs",
+  "tests": [
+   "test/server/relayload.test.js"
+  ],
+  "equivalent": true,
+  "why": "Belt and braces, d1-load.yml's D1LOAD-refusal-drawn: an SQL API refusal carries no data array and loadTable throws on it (pinned in the first test), so the step still never draws a refusal; the status check keeps a non-200 body that happens to carry rows out too."
+ },
+ {
+  "name": "RELAYLOAD-drawing-shared",
+  "file": "tools/d1Load.mjs",
+  "old": "if (!rows.length) return `${head}No points in the window.\\n`;",
+  "new": "",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ }
+]
