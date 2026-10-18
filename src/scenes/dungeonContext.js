@@ -1529,7 +1529,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const cf = new D.ClassFile();
       cf.load(await D.fetchBytes(`CLASS${String(careerIndex).padStart(2, '0')}.CFG`));
       const entity = D.makeEnemyEntity(e.mobileType, basics, cf.career, e.level ?? (_superTier ? superFoeLevel(effectiveLevel(D.playerEntity)) : effectiveLevel(D.playerEntity)));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's; SD4a: a Super dungeon's class foe at its band
-      applyEliteScaling(entity, e);   // ELITE: double health, double damage
+      applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter (the ladder is a fixed mountain)
       else if (puppet && e.level == null) applyProgressionScalingTo(entity, basics, { puppet: true, ally: !!e.allied });   // AUDIT BAL: a puppet stands at this place too - its blows on me as on its owner (BAL3)
       if (_wildDungeon && !e.allied) applyWildFoe(entity, { ring: _wildRing });   // WILD1: a dungeon of the open zone - four times its health and its blows, over an elite's (every client builds the room's foes alike, so the maximum agrees)
@@ -1622,7 +1622,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const yawDeg = ((e.mobileType * 73 + Math.round(e.x + e.z)) % 8) * 45;   // deterministic facing (Ledger A rule)
       const career = await D.loadMonsterCareer(e.mobileType, D.fetchBytes);
       const entity = D.makeEnemyEntity(e.mobileType, basics, career, e.level ?? effectiveLevel(D.playerEntity));   // SOFTCAP1: a mentor's dungeon is built at the group's level; ARENA2: a bout fighter at its tier's
-      applyEliteScaling(entity, e);   // ELITE: double health, double damage
+      applyEliteScaling(entity, e); if (puppet) entity.unquiet = false;   // ELITE: double health, double damage; AUDIT UNQUIET: a puppet's mark is its owner's (each client drew its own)
       if (!puppet && e.level == null) applyProgressionScalingTo(entity, basics, { ally: !!e.allied });   // SOFTCAP1: tougher high-tier foes against skills past 100 (a puppet is its owner's build); ARENA2: never a bout fighter
       else if (puppet && e.level == null) applyProgressionScalingTo(entity, basics, { puppet: true, ally: !!e.allied });   // AUDIT BAL: a puppet stands at this place too - its blows on me as on its owner (BAL3)
       if (_wildDungeon && !e.allied) applyWildFoe(entity, { ring: _wildRing });   // WILD1: a dungeon of the open zone - four times its health and its blows, over an elite's (every client builds the room's foes alike, so the maximum agrees)
@@ -1806,7 +1806,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     f.escaped = true;
     f.yielded = null;
     if (f.ai?.detected) setEnemyAlert(playerEntity, false);
-    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.mobileArchive, unbroken });   // RVN12b: an unbroken one's escape, so remembered
+    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.mobileArchive, unbroken, slip });   // RVN12b: an unbroken one's escape, so remembered; AUDIT UNQUIET: a slip never ascends
     if (r) revenantSay(slip ? slipEvent(playerEntity, r, { archive: f.mobileArchive }) : unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.mobileArchive }) : revenantEscapeEvent(r, playerEntity?.name, { archive: f.mobileArchive }), (l) => hudText.add(l));   // REVENANT-FATE: a slip says the hesitation; RVN3: the unbroken its own
   }
   /** RVN5 (Feud-Arc.md 16.1): its signature called once a stand, and a pyre's blast on me - the open world's law
@@ -7734,7 +7734,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // or past the room's shared run - a room's layout foe vanishing on one client would leave it standing on the rest)
       // may run; running it aims at nothing (no blow, no cast; the walk below still draws it); out of reach it has
       // ESCAPED - retired through the quest pool's door, no corpse, a revenant made; run down, it is CORNERED and fights on
-      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, _pf, { mayRun: !onlineRoom() || !_roomFoe, onMe: () => !foeDeps || !f.ai._armedTargeting || foeDeps.isLocalPlayerTarget(f.ai.target) }) : null;   // asked only of a foe running or under the line
+      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, _pf, { mayRun: !onlineRoom() || !_roomFoe, onMe: () => !foeDeps || !f.ai._armedTargeting || foeDeps.isLocalPlayerTarget(f.ai.target), dt: foeFrameDt(dt) }) : null;   // asked only of a foe running or under the line; AUDIT UNQUIET: its craft on the foe's own frame
       if (_flee === 'escape') { escapeDungeonFoe(f); continue; }
       if (_flee === 'start') scatterDungeonBand(f);   // AUDIT FEUD (RVN6, Feud-Arc.md 17): it runs - its band breaks (the street's law)
       if (_flee === 'start') revenantSay(revenantFleeEvent(f.entity, foeTitle(f.entity, enemyDisplayName(f.mobileType)), { gender: f.gender, archive: f.mobileArchive, playerName: playerEntity?.name }), (l) => hudText.add(l));

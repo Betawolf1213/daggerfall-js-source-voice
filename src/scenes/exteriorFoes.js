@@ -145,10 +145,11 @@ export const PEER_PUPPETS_TOTAL_MAX = CELL_FRAME_RECORDS_MAX;
  *  its plain kind. */
 export const PEER_ELITE_PUPPETS_MAX = 8;
 /** FOE-FORGE: the most of one owner's foes a reader stands as REVENANTS (the record's `nm`, and the blows its `rb` and
- *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, five) and the
- *  ones sworn to it (revenantCompanions.js REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds
- *  the sum). Past it a record's revenant fields are not believed. */
-export const PEER_REVENANT_PUPPETS_MAX = 11;
+ *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, three - UNQUIET,
+ *  bible/06-Systems/Revenants.md section 46; it was five) and the ones sworn to it (revenantCompanions.js
+ *  REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds the sum). Past it a record's revenant
+ *  fields are not believed. */
+export const PEER_REVENANT_PUPPETS_MAX = 9;
 /** GRANT0 (2026-10-18, bible/11-Multiplayer/Spawn-Grants.md section 8): the most of one owner's foes a reader stands as
  *  CHAMPIONS (the record's `cp`: x1.25 on its blows, x1.875 a Mighty one's - systems/champions.js). An owner's capped spawns
  *  roll one in fourteen, and a revenant wears its trait as one, so the elites' allowance and the revenants' bound
@@ -475,7 +476,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // DW-E4: SetEnemyTeam - Entity.Team alone (the treasure guards' Undead), the MobileEnemy copy kept
       if (team) entity.team = team;
       entity._feudPlace = playerInside ? 'building' : 'street';   // RVN1 (Feud-Arc.md 12): where a fight with it is fought, for its ledger
-      if (!allied && !entity.eliteFoe) applyChampion(entity, champion !== undefined ? champion : revenant ? (revenant.trait ? championIndex(revenant.trait) : null) : (capped ? rollStreetChampion(pending.feet, mobileType) : null));   // LOOT7: a champion - before its loot, which reads the mark
+      if (!allied && !entity.eliteFoe) applyChampion(entity, champion !== undefined ? champion : revenant ? (revenant.trait ? championIndex(revenant.trait) : null) : (capped ? rollStreetChampion(pending.feet, mobileType) : null), { own: !puppet });   // LOOT7: a champion - before its loot, which reads the mark
       if (revenant && !puppet) applyRevenant(entity, revenant, { turned });   // REVENANT: its name and its rank - over its trait or its glow, before its loot; RVN11c: a betrayer's turning is no return
       // WILD1 (systems/wild/wildZone.js): a foe of the open zone - four times its health and its blows, over its elite's, its
       // champion's or its revenant's (a puppet: its blows alone, its maximum is its owner's word); never an ally
@@ -1272,7 +1273,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     f.escaped = true;
     f.yielded = null;
     if (f.ai?.detected) setEnemyAlert(playerEntity, false);
-    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken });   // RVN12b: an unbroken one's escape, so remembered
+    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken, slip });   // RVN12b: an unbroken one's escape, so remembered; AUDIT UNQUIET: a slip never ascends
     if (r) revenantSay(slip ? slipEvent(playerEntity, r, { archive: f.archive }) : unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.archive }) : revenantEscapeEvent(r, playerEntity?.name, { archive: f.archive }), say);   // REVENANT-FATE: a slip says the hesitation; RVN3: the unbroken its own
   }
   /** RVN10 (Feud-Arc.md 21.2): ROUTED - I ran from it: gone as the cull takes a foe (no corpse, no kill, its batch freed;
@@ -1609,7 +1610,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // of its health for the first time, may RUN - and running it strikes and casts nothing, its walk still drawn (and no
       // cull); out of reach it has ESCAPED (no corpse, no kill, a revenant made of it); run down, it is CORNERED and turns
       // to fight to the end
-      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame
+      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting, dt: foeFrameDt(dt) }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame; AUDIT UNQUIET: its craft on the foe's own frame
       if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art - AUDIT RVN B4: before a run's or a scatter's own frame, so a running one's ward and cry run out and its marks are cut
       if (_flee === 'escape') { escapeFoe(f); continue; }
       if (_flee === 'start') scatterBand(f);   // RVN6: it runs - its band breaks

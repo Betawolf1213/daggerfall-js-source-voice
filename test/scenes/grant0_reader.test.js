@@ -64,7 +64,7 @@ const lootOn = () => { _resetForTests(); setPref('lootRarity', true); };
 
 test('GRANT0: the bounds - a champion\'s trait for the elites\' allowance and the revenants\' bound; what a foe casts is assignEnemySpells\' own list, at any level asked', () => {
   assert.equal(PEER_CHAMPION_PUPPETS_MAX, PEER_ELITE_PUPPETS_MAX + PEER_REVENANT_PUPPETS_MAX, 'an owner\'s capped spawns roll one in fourteen, and each of its revenants may wear its trait');
-  assert.equal(PEER_CHAMPION_PUPPETS_MAX, 19);
+  assert.equal(PEER_CHAMPION_PUPPETS_MAX, 17);   // PIN MOVED (UNQUIET, #1008): the revenants' bound is nine now (REVENANT_MAX three), so eight and nine
   // DFU EnemyEntity.cs's lists, as indices: a monster's its career's; a class caster's EnemyClassSpells[min(6, level / 3)]
   assert.deepEqual(enemySpellIndices({ isClass: false, careerIndex: 27 }), [0x16, 0x17, 0x1F], 'a Daedroth\'s');
   assert.deepEqual(enemySpellIndices({ isClass: false, careerIndex: 0 }), [], 'a rat casts nothing');
@@ -104,7 +104,7 @@ test('GRANT0 executed: the signature at the street - a forged foe\'s wind-up str
   assert.equal(revs.length, PEER_REVENANT_PUPPETS_MAX);
   assert.equal(rest.length, 1);
   assert.ok(revs.every((f) => puppetBlow(f.ai)?.sig === true && puppetBlow(f.ai).mult === SIG.MULT), 'a revenant\'s signature: x2, in its ember');
-  assert.equal(puppetBlow(rest[0].ai).mult, BLOW.slam.mult, 'the twelfth is no revenant here, and its slam no signature');
+  assert.equal(puppetBlow(rest[0].ai).mult, BLOW.slam.mult, 'the tenth is no revenant here, and its slam no signature');
 });
 
 test('GRANT0 executed: champions - an honest owner\'s stand as champions; a forged frame of forty stands PEER_CHAMPION_PUPPETS_MAX of them, the builds in flight counted, the rest their plain kind', async () => {
@@ -122,7 +122,7 @@ test('GRANT0 executed: champions - an honest owner\'s stand as champions; a forg
     await send(r2, FORGER, { f: seqs(0, 40).map((i) => rec(i, { t: WILD_GIANT, cp: 2 })) });   // one frame: every build in flight at once
     const stood = r2.foes.filter((f) => f.puppet === FORGER && !f.dead);
     assert.equal(stood.length, ENCOUNTER_PUPPETS_MAX);
-    assert.equal(stood.filter((f) => f.entity.champion).length, PEER_CHAMPION_PUPPETS_MAX, 'nineteen champions, never thirty-two');
+    assert.equal(stood.filter((f) => f.entity.champion).length, PEER_CHAMPION_PUPPETS_MAX, 'seventeen champions, never thirty-two');
     const plainScale = stood.find((f) => !f.entity.champion).entity.damageScale;
     assert.ok(!(plainScale > 1), 'the rest strike as their plain kind');
     // the champions fall: the next frame's traits are believed again, up to the bound

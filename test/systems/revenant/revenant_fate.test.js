@@ -45,7 +45,7 @@ function fresh() {
 }
 /** A record as a special foe's flight makes it. */
 function revenantOf(me, { mobileType = 2, rank = 1 } = {}) {
-  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
+  const r = N.revenantDeed(me, { mobileType, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType, rolls: () => 0 });
   r.rank = rank;
   return r;
 }
@@ -220,6 +220,7 @@ test('REVENANT-FATE HESITATION: kneeling past its wait (the world\'s own time - 
   assert.equal(f.dead, true); assert.equal(f.escaped, true);
   assert.equal(N.revenantById(r.id).rank, rank + 1, 'its rank up');
   assert.ok(said.some((l) => l.startsWith(r.name)), 'its words');
+  N.revenantById(r.id).rank = 1;   // UNQUIET (Revenants.md section 46): its will is from rank 2 - a rank-1 one kneels whatever the fight
   const g = await pool.spawnFoe(2, [0, 0, 0], { feetGiven: true, level: 6, revenant: N.revenantById(r.id) });
   pool.damageFoe(g, 99999, [0, 0, 3], null, { fromPlayer: true });
   pool.update(0.016, [0, 0, F.REVENANT_YIELD_REACH + 5], [0, 1.6, 3]);

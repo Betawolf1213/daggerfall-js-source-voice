@@ -1074,9 +1074,9 @@ has it on their next update.
 - **`PEER_ELITE_PUPPETS_MAX` (8)**: a record's `z` is believed for at most eight of one owner's foes, a taken elite
   among them. An owner rolls its own one in twenty, outside a town, so even a full frame of honest foes holds three or
   so. Past it the foe stands as its plain kind.
-- **`PEER_REVENANT_PUPPETS_MAX` (11)**: the revenants a character keeps (revenant.js REVENANT_MAX, five) and swears
-  (revenantCompanions.js REVENANT_RETINUE_MAX, six). Past it the record's revenant fields, its blows among them, are not
-  believed.
+- **`PEER_REVENANT_PUPPETS_MAX` (9)**: the revenants a character keeps (revenant.js REVENANT_MAX, three since UNQUIET)
+  and swears (revenantCompanions.js REVENANT_RETINUE_MAX, six). Past it the record's revenant fields, its blows among
+  them, are not believed.
 - **A Greater Giant is a giant, and one of each to an owner**: `gg` is believed only on WILD_GIANT, and only for the
   first of an owner's foes to name that index.
 
@@ -1095,7 +1095,7 @@ stream is held to the layout every client built, and its revenants' blows ride a
   a peer stands is its word, and so is its place. A sender's total is one frame, and every sender is counted apart, so
   a cheater on several guest sessions stands that many times sixty-four. A room-wide count would desync honest crowds
   (DESYNC-ZERO); it is left for a measure.
-- **A champion's trait (`cp`, x1.25 to x1.875)** rides as its owner says, for at most `PEER_CHAMPION_PUPPETS_MAX` (19)
+- **A champion's trait (`cp`, x1.25 to x1.875)** rides as its owner says, for at most `PEER_CHAMPION_PUPPETS_MAX` (17)
   of an owner's foes since GRANT0 (2026-10-18, `11-Multiplayer/Spawn-Grants.md` section 8): the elites' allowance and
   the revenants' bound, which honest play does not reach. Under it, which foe is a champion is still the owner's word.
 - **A class foe's level (`l`, to 100) and its weapon (`w`)** are the owner's word, as the record's law has always had

@@ -45,9 +45,9 @@ What a reader does with each field of a stranger's foe record today:
 | `w` weapon | trusts any template up to 1023 and any material | applyPuppetRecord, createWeapon |
 | `h`, `k` health | trusts them, up to 1e5 (`FOE_HEALTH_MAX`); the reader's blows go to the owner | applyPuppetRecord |
 | `z` elite (x3 blows) | believes it for at most 8 of an owner's foes (`PEER_ELITE_PUPPETS_MAX`) | FOE-FORGE |
-| `cp` champion (up to x1.875) | believed it uncapped; since section 8, for at most 19 of an owner's foes (`PEER_CHAMPION_PUPPETS_MAX`) | FOE-FORGE's own open list; GRANT0 |
+| `cp` champion (up to x1.875) | believed it uncapped; since section 8, for at most 17 of an owner's foes (`PEER_CHAMPION_PUPPETS_MAX`) | FOE-FORGE's own open list; GRANT0 |
 | `gg` Greater Giant (x4) | believes it only on a giant, one per index | FOE-FORGE |
-| `nm` and the feud fields (`rb` up to x4, `p2` x1.2) | believes them for at most 11 of an owner's foes | FOE-FORGE |
+| `nm` and the feud fields (`rb` up to x4, `p2` x1.2) | believes them for at most 9 of an owner's foes | FOE-FORGE |
 | `n` fighters (up to x1.7 on me) | trusts it, 2 to 8 | partyHit |
 | the wind-up's signature bit (x2) | believed it on any foe; since section 8, on a foe stood as a revenant alone | below |
 | `e` heir | **takes over any foe whose record names me**, with no check that its owner is dying or leaving | applyFoes, adopt |
@@ -65,7 +65,7 @@ Found while planning, outside FOE-FORGE's record:
 
 Section 8 closed both (2026-10-18).
 
-What one modified client stands at every honest reader today: 64 foes of any species, 8 of them elites and 19
+What one modified client stands at every honest reader today: 64 foes of any species, 8 of them elites and 17
 champions, and class foes at level 100 holding any weapon. Before section 8: any champion trait on every one, and blows
 doubled by the signature bit. That is per session. A guest
 session costs nothing (`server/src/index.js` `_named`: "A GUEST IS NOT SHUT OUT"), and nothing ever happens to the
@@ -333,7 +333,7 @@ no relay deploy, nobody dropped, and every player has them on their next update.
    `PEER_REVENANT_PUPPETS_MAX` of one owner's copies - the room host's layout foes, or one sender's own lane - and
    always on the reader's own revenant. **OPEN:** the street's range band (puppetCastInBand) is not added, because a
    dungeon copy keeps no distance to its reader.
-3. **Champions.** `PEER_CHAMPION_PUPPETS_MAX` is 19: the elites' allowance and the revenants' bound, because a revenant
+3. **Champions.** `PEER_CHAMPION_PUPPETS_MAX` is 17: the elites' allowance and the revenants' bound, because a revenant
    wears its trait as a champion. Past it a record's `cp` is not believed, and its foe stands as its plain kind. A trait
    is stood inside the build, before the puppet is indexed, so the count includes the builds in flight. Both of a
    puppet's stands count: applyFoes, and a kept orphan's (standKeptOrphan).
