@@ -277,16 +277,27 @@ export function townAreaLine(area) {
     : t('town.econ.area.unheld', 'Under the Charter of {town}: unheld', { town: area.name });
 }
 
+/** TOWN-ECON TE3: the chapters' patrons a card names at most. */
+export const TOWN_TIP_PATRONS_MAX = 3;
+/** TOWN-ECON TE3 (Town-Economy-Arc 5): the card's line of the area's chapters' patrons - the player guilds that hold a
+ *  chapter's patronage in the town's region (net/chapterSheet.js patronsIn), TOWN_TIP_PATRONS_MAX at most; null for
+ *  none. @param {ReadonlyArray<{ name: string, tag?: string }>} patrons */
+export function townPatronsLine(patrons) {
+  const list = (patrons ?? []).slice(0, TOWN_TIP_PATRONS_MAX).map((g) => (g.tag ? `${g.name} <${g.tag}>` : g.name)).join(', ');
+  return list ? t('town.econ.patrons', 'Chapter patrons in the area: {list}', { list }) : null;
+}
+
 /**
  * A TOWN'S CARD for a map's hover (`{ title, lines }`, the EVENT-TIP card - ui/eventMapMarks.js readTip): its economy
  * and its market, its prices, the strongest reason, then its guild control - a seat town's own SEAT-TIP lines, or the
  * area's holder (`area` undefined where the seats are not known here: the line is left out). AUDIT TOWN-ECON UI-1: a
  * held seat's card leaves out its first line ("The Charter of X: held by G") - its holder line names the guild again,
- * and the card ran past a landscape phone's height by that much.
- * @param {{ name: string, p: number, prev: number, raided?: boolean, players?: number, seat?: any, area?: any }} t
+ * and the card ran past a landscape phone's height by that much. TOWN-ECON TE3: then the area's chapters' patrons
+ * (`patrons`), last - the line a full card leaves off.
+ * @param {{ name: string, p: number, prev: number, raided?: boolean, players?: number, seat?: any, area?: any, patrons?: ReadonlyArray<{ name: string, tag?: string }> }} t
  * @param {number} [nowMs] the seat card's clock (a called siege)
  */
-export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined }, nowMs = Date.now()) {
+export function townTipOf({ name, p, prev, raided = false, players = 0, seat = null, area = undefined, patrons = [] }, nowMs = Date.now()) {
   if (!name) return null;
   const lines = [townEconomyLine(p, prev), townPriceLine(p, seatShopFactor(seat, null))];
   const reason = townReasonLine({ raided, edict: seat?.holder?.edict ?? null, players });
@@ -294,5 +305,7 @@ export function townTipOf({ name, p, prev, raided = false, players = 0, seat = n
   const card = seat ? seatTipOf(seat, nowMs) : null;
   if (card) lines.push(...card.lines.slice(seat.holder?.guild ? 1 : 0));
   else if (area !== undefined) lines.push(townAreaLine(area));
+  const backers = townPatronsLine(patrons);
+  if (backers) lines.push(backers);
   return { title: name, lines };
 }

@@ -899,6 +899,11 @@
   "tr": "e486d0080593",
   "by": "claude-in-session"
  },
+ "account.refusal.badTown": {
+  "en": "42bfe2c04ab8",
+  "tr": "34ef8850ee6a",
+  "by": "claude-in-session"
+ },
  "account.refusal.badTribute": {
   "en": "1b50f4f7b7fc",
   "tr": "969eb395a595",
@@ -3202,6 +3207,16 @@
  "account.refusal.tooManySaves": {
   "en": "bfd57533eb6d",
   "tr": "65e9c46c9fce",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsNeedAccount": {
+  "en": "9bb358900bd3",
+  "tr": "1d15924772f4",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsRate": {
+  "en": "60938ad327a0",
+  "tr": "25ecb01ca96e",
   "by": "claude-in-session"
  },
  "account.refusal.tradeHeld": {
@@ -9337,6 +9352,46 @@
  "lootBanner.honour.wear": {
   "en": "3b735704a781",
   "tr": "9498e0db0af7",
+  "by": "claude-in-session"
+ },
+ "lw.econ.booming.a": {
+  "en": "4d71079574bd",
+  "tr": "c2625b4f6fd7",
+  "by": "claude-in-session"
+ },
+ "lw.econ.booming.b": {
+  "en": "63b2b0fe50b3",
+  "tr": "fcc36920467d",
+  "by": "claude-in-session"
+ },
+ "lw.econ.destitute.a": {
+  "en": "037c6a0947fd",
+  "tr": "efffe063b5cf",
+  "by": "claude-in-session"
+ },
+ "lw.econ.destitute.b": {
+  "en": "b5918851767c",
+  "tr": "2e5178c49b24",
+  "by": "claude-in-session"
+ },
+ "lw.econ.struggling.a": {
+  "en": "7a83adc425a6",
+  "tr": "6729fad2f347",
+  "by": "claude-in-session"
+ },
+ "lw.econ.struggling.b": {
+  "en": "403614126f6f",
+  "tr": "224f567e1379",
+  "by": "claude-in-session"
+ },
+ "lw.econ.thriving.a": {
+  "en": "7d8beddca499",
+  "tr": "aefa1401163b",
+  "by": "claude-in-session"
+ },
+ "lw.econ.thriving.b": {
+  "en": "2d8ffddfef34",
+  "tr": "3802232c4af1",
   "by": "claude-in-session"
  },
  "martial.about.title": {
@@ -23892,6 +23947,11 @@
  "town.econ.line": {
   "en": "2ceac3e8e2a7",
   "tr": "623ca06fc550",
+  "by": "claude-in-session"
+ },
+ "town.econ.patrons": {
+  "en": "50c14b5f5c9e",
+  "tr": "352145e77933",
   "by": "claude-in-session"
  },
  "town.econ.price.askLess": {

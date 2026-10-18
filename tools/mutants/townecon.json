@@ -312,7 +312,7 @@
   {
     "name": "TOWNECON-overworld-seat-only",
     "file": "src/scenes/travelViewMarks.js",
-    "old": "tip: townTipAt(p.summary.mapId) });",
+    "old": "tip: townEcon.tipFnAt(p.summary.mapId) });",
     "new": "tip: null });",
     "tests": [
       "test/systems/townecon.test.js"

@@ -728,6 +728,10 @@ const REFUSAL_WORDS = {
   'roll-busy': () => t('account.refusal.rollBusy', 'Your standing with the guilds was being written. It will try again.'),
   // CHAP2a: a town's guild halls, witnessed (server-account/src/npcHalls.js) - asked quietly, said only if ever shown
   'halls-need-account': () => t('account.refusal.hallsNeedAccount', 'Only a registered account can vouch for a town\'s guild halls.'),
+  // TOWN-ECON TE2 (server-account/src/townEcon.js): the towns' registry and their footsteps
+  'towns-need-account': () => t('account.refusal.townsNeedAccount', 'Only a registered account can vouch for a town or count its footsteps.'),
+  'bad-town': () => t('account.refusal.badTown', 'That town could not be read.'),
+  'towns-rate': () => t('account.refusal.townsRate', 'You have reported a great many towns this hour. Try again later.'),
   'bad-hall': () => t('account.refusal.badHall', 'That town\'s guild halls could not be read. The game may need updating.'),
   'halls-rate': () => t('account.refusal.hallsRate', 'You have vouched for enough towns this hour.'),
   // AUDIT CHAP2: the claims' hour; a town a developer struck

@@ -341,11 +341,11 @@ test('TOWN-ECON the wiring: the counter\'s factor in worldModes.js\'s shopAdjust
   assert.match(w, /const townEcon = createTownEconHost\(\{ online: isOnlinePage, townOf: \(mapId\) => _townOfMapId\.get\(mapId\), seatAt: seatHere, nowMs: battleNowMs,[^\n]*\n\s*seats: \(\) => \(seatBook\?\.open === true \? seatBook\.data\?\.seats \?\? null : null\),[^\n]*\n\s*raidedAt: \(px, py\) => raidingPartiesOn\(\) && raidState\(\)\.raids\.some\(\(r\) => r\.px === px && r\.py === py && raidActive\(r, worldMinutes\(\)\)\),\n\s*typeAt: \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\)\?\.mapTableData\?\.locationType \}\);/);   // TE2: built by its host module (scenes/townEconHost.js)
   assert.match(w, /const battleNowMs = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/, 'the relay\'s clock');
   assert.match(w, /townTipAt: \(summary\) => townEcon\.tipAt\(summary\?\.mapID \?\? summary\?\.mapId\),/);
-  assert.match(w, /townTipAt: \(mapId\) => townEcon\.tipFnAt\(mapId\),/);
+  assert.match(w, /seaRaidPeerChase, townEcon, state, travelViewBands,/, 'the Overworld\'s marks handed the town economy');
   assert.match(w, /_townOfMapId\.set\(loc\.mapTableData\.mapId >>> 0, \{ name: String\(loc\.name \?\? ''\), px: p\.x, py: p\.y, region: r, type: loc\.mapTableData\.locationType, location: l \}\);/);
   assert.doesNotMatch(w, /seatTipAt/, 'SEAT-TIP\'s seat-only maker is gone: the town\'s card carries its lines');
   const tvm = rd('src/scenes/travelViewMarks.js');
-  assert.equal((tvm.match(/tip: townTipAt\((p|f)\.summary\.mapId\) \}\);/g) ?? []).length, 2, 'a near plate and a far one');
+  assert.equal((tvm.match(/tip: townEcon\.tipFnAt\((p|f)\.summary\.mapId\) \}\);/g) ?? []).length, 2, 'a near plate and a far one');
   const h = rd('src/ui/heldMap.js');
   assert.match(h, /const card = this\.deps\.townTipAt\?\.\(m\.summary\) \?\? \(m\.seat \? seatTipOf\(m\.seat\) : null\);/);
   assert.match(h, /if \(gateMoved\) this\._refreshTip\(\);\n(\s*\/\/[^\n]*\n)*\s*if \(!gateMoved && this\._tipKey && this\._hoverAt\) this\._refreshTip\(\);/, 'AUDIT UI-6: a card showing is asked again at the poll');

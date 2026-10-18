@@ -17,7 +17,7 @@ Asked four things, Mac answered:
 everything we have so far" - `01-Overview/audits/Audit-Town-Econ.md`: every finding, and below each fix marked AUDIT TOWN-ECON
 and its id). **SEAT-LOOP and LAW-3 BUILT 2026-10-18** - Mac's five calls decided (section 7): the seat's essentials
 round trip and the carry between regions closed. **TE2 BUILT 2026-10-18** (section 4: the registry, the four sources,
-the read). TE3 (the living world reads the band) is designed below. The constants are kept as section 2 has them
+the read); **TE3 BUILT 2026-10-18** (section 5: the talk of trade, the market days, the chapters' patrons). The constants are kept as section 2 has them
 (section 7.1).
 
 ## 0. What stands, read against the code (2026-10-16)
@@ -59,9 +59,9 @@ Taken at the design. Each is Mac's to overrule.
    for everyone, read every five to fifteen minutes (`townSeatBook.js` SEAT_LIST_CACHE_MS, SEAT_RED_READ_MS) and only
    where the seats are open to the account - so two players can read a Standing or an Edict a few minutes apart, as
    SEAT1d's own Market Day already is (AUDIT TOWN-ECON CLI-4, DOC-12). What players do to a town is counted by the
-   account service and read by every client (TE2), as LW15's patrons are. TE1 and TE2 move no resident; when TE3 lets
-   the living world read the band, that narrows LW0 decision 2 by one input, as CHAP5b's chapter sheet did, and TE3
-   writes it there.
+   account service and read by every client (TE2), as LW15's patrons are. TE1 and TE2 move no resident; TE3 lets the
+   living world read the band, which narrows LW0 decision 2 by one input, as CHAP5b's chapter sheet did - written there
+   (`06-Systems/Living-World.md`).
 3. **WITNESSED ACTS ONLY** (Mac). A player raises a town by what the service saw happen there - their footsteps in it
    (the relay's signed Watch ticks), trade at its players' traders (the market's sales and LW15's patron sales), and a
    raid driven from its gates. Never by gold: "Assume infinite wealth" (`06-Systems/Economy-Arc.md`) would let one
@@ -94,7 +94,7 @@ Taken at the design. Each is Mac's to overrule.
    its Charter's own lines. The classic travel map (TRAV0I00) keeps DFU's label and no card (the native-window rule;
    EVENT-TIP's own reason).
 7. **THE LIVING WORLD READS THE BAND** (TE3): the townsfolk's talk of trade and the market days follow the town's band.
-   Designed, not built.
+   Built 2026-10-18 (section 5).
 
 ## 2. The model
 
@@ -222,11 +222,36 @@ row names its town by map id (`market_listings.vendor_map`) and no pixel, and a 
   door and the wiring), the law in `test/systems/townecon.test.js`; `node tools/mutate.mjs tools/mutants/townecon2.json`:
   38 mutants, 38 dead.
 
-## 5. TE3 - the living world reads it (designed)
+## 5. TE3 - the living world reads it (BUILT 2026-10-18)
 
-The townsfolk's talk of prices and trade follows the town's band (`livingWorld/lines.js`); a Booming town holds its
-market day more often and a Destitute one less (`trips.js marketDay`); the chapters' patrons of the town's halls join
-the card's guild lines (`net/chapterSheet.js chapterOf`).
+Mac, 2026-10-18: "Everything". LW0 decision 2 narrowed by one input, written there (`06-Systems/Living-World.md`): online,
+a town's economy band (`net/townEconLaw.js` townBandOf over its Prosperity - TE1's terms and TE2's share, as the card
+reads it). Offline there is no band and the living world is LW0's and LW9's.
+
+- **The talk of trade** (`livingWorld/lines.js` townEconNews, `livingTown.js` econNews): a town not Steady tells its
+  band's news on TOWN_ECON_NEWS_DAYS (3) of the week, its own drawn on the seed by the town (the chapters' offsets,
+  `dayPlan.js` GUILD_DAY_OFFSETS) - "Trade has never been better in {town}." / "Every stall sold out by noon." (Booming)
+  to "Half the shops in {town} have shut." / "Hard times. Hard times." (Destitute) - told beside the town's other news
+  (`lineCtx`), read live off the band (`pixelBuild.js` econBandOf, the reading's `bandOf`). Through the text core
+  (L10N4: the ratchet holds `lines.js`'s 823), drafted in-session for every machine language; each pool kept while
+  the language holds, so a script is its pool's own.
+- **The market days** (`trips.js` marketDay, LW9's): a Booming town holds a second market day a week, MARKET_BOOM_DAY
+  (4) after its own; a Destitute one keeps its own day one week in MARKET_DESTITUTE_WEEKS (2); every other band, and no
+  band, LW9's one in seven. A carter asks the market town's band of the trips' world (`marketBandOf`), which the town
+  economy's host keeps a town a day (`scenes/townEconHost.js`: read once, so a day's market and the plans made round it
+  never change under it).
+- **The chapters' patrons on the card** (`net/chapterSheet.js` patronsIn; `townEconLaw.js` townPatronsLine): the player
+  guilds that hold the patronage of a chapter in the town's REGION - a hidden guild's chapter's never - each once by
+  name, TOWN_TIP_PATRONS_MAX (3), last on the card (the line a full card leaves off). A departure from the design's "the
+  town's halls": a chapter is its region's (Chapters-Arc), and a far town's halls are known to no client until it is
+  built.
+- **The hosts**: `world.js` hands the trips' world the market band and the town economy the chapter sheet (a property
+  and an argument on lines that stood - bootWorld 21,186, at its ceiling); `pixelBuild.js` (the module bootWorld wires)
+  hands the living town its band; travelViewMarks reads the town economy's own card maker (the HOST-SPLIT seam: a
+  binding its host declares). `worldModes.js`, `dungeonContext.js` and `exterior.js` hold no living town and no trip -
+  none wired.
+- **Pinned**: `test/systems/livingWorld/townecon_living.test.js` (5); `node tools/mutate.mjs
+  tools/mutants/townecon3.json`: 14 mutants, 14 dead.
 
 ## 6. Not changed
 

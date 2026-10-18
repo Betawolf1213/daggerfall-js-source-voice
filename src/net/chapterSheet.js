@@ -25,7 +25,7 @@
 // members' prices.
 // ═══════════════════════════════════════════════════════════════════
 
-import { chapterRollSeatsOf, chapterSeasonOf, chapterPatronOf } from './npcChapterLaw.js';   // CHAP5a: the seats as the roll reads them; CHAP6c: the Season's event; CHAP7b: its patron
+import { chapterRollSeatsOf, chapterSeasonOf, chapterPatronOf, hallHidden } from './npcChapterLaw.js';   // CHAP5a: the seats as the roll reads them; CHAP6c: the Season's event; CHAP7b: its patron
 import { heraldryOf } from './heraldryLaw.js';   // CHAP7b: a patron's arms, as every face draws them
 
 /** How long a read of the sheet stands before the next is asked (the seats' list's own beat). */
@@ -81,6 +81,18 @@ export function createChapterSheet({ door, nowMs = () => Date.now() }) {
       const s = strengths.get(`${faction}|${region}`);
       return s === undefined ? null : { strength: s.strength, seats: s.seats.map((x) => ({ ...x })), ...s.season, sides: s.season.sides ? [...s.season.sides] : null,
         patron: s.patron ? { ...s.patron } : null };   // CHAP7b: its patron, a copy
+    },
+    /** TOWN-ECON TE3: the patrons of a region's chapters as the sheet last said them - each guild once, by name, a hidden
+     *  guild's chapter's never (npcChapterLaw.js hallHidden) - and a stale sheet asked again behind it. @param {unknown} region */
+    patronsIn(region) {
+      refresh();
+      /** @type {Map<string, any>} */
+      const out = new Map();
+      for (const [k, s] of strengths) {
+        const [f, r] = k.split('|').map(Number);
+        if (r === region && s.patron && !hallHidden(f) && !out.has(s.patron.id)) out.set(s.patron.id, { ...s.patron });
+      }
+      return [...out.values()].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
     },
     get stopped() { return stopped; },
   };
