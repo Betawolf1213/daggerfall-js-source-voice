@@ -68,5 +68,17 @@
       "test/systems/flow2_fast_tests.test.js"
     ],
     "why": "AUDIT FB1018b L4-3: the verbatim scan's sea arm dropped - the walk is no longer its equal on the sea"
+  },
+  {
+    "name": "WOD-SEA-TEST-no-default",
+    "file": "src/world/worldOfDaggerfall/wodLocationLoader.js",
+    "old": "WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1)",
+    "new": "WOD_OCEAN_REGIONS.includes(tile.regionIndex)",
+    "tests": [
+      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js",
+      "test/systems/flow2_fast_tests.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: includes(undefined) is false over the five regions as -1 is; the default says that a tile with no region is no sea"
   }
 ]

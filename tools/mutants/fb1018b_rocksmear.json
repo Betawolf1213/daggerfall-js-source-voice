@@ -98,5 +98,38 @@
       "test/world/fb1018b_rocksmear.test.js"
     ],
     "why": "AUDIT FB1018b L4-6: half the shoelace - the winding right for the docks' corners, wrong for a prism in another quadrant"
+  },
+  {
+    "name": "ROCK-SMEAR-tie-flips",
+    "file": "src/world/townStandIns.js",
+    "old": "n[0] * g[0] + n[1] * g[1] + n[2] * g[2] < 0 ? -1 : 1",
+    "new": "n[0] * g[0] + n[1] * g[1] + n[2] * g[2] <= 0 ? -1 : 1",
+    "tests": [
+      "test/world/fb1018b_rocksmear.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: a boulder face's centre never lies in its own plane through the axis (the rings are pushed round it), so no face meets the tie"
+  },
+  {
+    "name": "ROCK-SMEAR-uv-of-raw-normal",
+    "file": "src/world/townStandIns.js",
+    "old": "boulderUv(a, nn), boulderUv(b, nn), boulderUv(c, nn)",
+    "new": "boulderUv(a, n), boulderUv(b, n), boulderUv(c, n)",
+    "tests": [
+      "test/world/fb1018b_rocksmear.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: boulderUv reads only which of the normal's absolute components is largest, which scaling and the sign leave as they are"
+  },
+  {
+    "name": "ROCK-SMEAR-prism-reverse-in-place",
+    "file": "src/world/townStandIns.js",
+    "old": "const pts = area < 0 ? [...corners].reverse() : corners;",
+    "new": "const pts = area < 0 ? corners.reverse() : corners;",
+    "tests": [
+      "test/world/fb1018b_rocksmear.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: both callers hand prismZ a list made for the call and never read it after; the copy keeps a caller's list its own"
   }
 ]

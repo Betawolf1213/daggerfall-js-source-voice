@@ -262,7 +262,7 @@ authors planted that open ground; the first sweep built its blocks with no subre
 cells it takes was not measured (no ARENA2 here). THE FOUR HOSTS: `world.js` and `exterior.js` get it through
 collectBlockFlats; `worldModes.js` and `dungeonContext.js` lay out no town block.
 
-Pins: `test/world/fb1018b_housebush.test.js` (5). Mutants: `tools/mutants/fb1018b_housebush.json` (14, all dead).
+Pins: `test/world/fb1018b_housebush.test.js` (5). Mutants: `tools/mutants/fb1018b_housebush.json` (16: 14 dead, 2 equivalent as recorded - AUDIT FB1018b L4-7).
 
 ## ROCK-SMEAR: the pack's rocks drawn outside in, their texture box-mapped (T6)
 
@@ -284,7 +284,7 @@ boulder off its origin and a prism in each winding and quadrant are pinned too. 
 data evidence, read off the pack. The collider reads no winding. THE FOUR HOSTS: as HOUSE-BUSH's. `03-World/Beautiful-Towns.md`'s two
 stand-in rows corrected.
 
-Pins: `test/world/fb1018b_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018b_rocksmear.json` (10, all dead).
+Pins: `test/world/fb1018b_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018b_rocksmear.json` (13: 10 dead, 3 equivalent as recorded).
 
 ## CRAFT-LIMIT-SAID: the crafter's limit said where it acts, and a station's XP the service's own (T7)
 
@@ -366,7 +366,7 @@ on either code). PIN MOVED: `test/world/terrain/wod2_loader.test.js`'s sea-arm t
 host wiring line; `tools/mutants/wod2.json`'s record that held the host to the location's region is re-aimed as the old
 read; AUDIT FB1018b L4-3: `test/systems/flow2_fast_tests.test.js`'s sea tiles named the dead field, so the pixel walk's
 sea arm was never compared with the scan's - they name the pixel's region now. Mutants:
-`tools/mutants/fb1018b_wodsea.json` (7, all dead).
+`tools/mutants/fb1018b_wodsea.json` (8: 7 dead, 1 equivalent as recorded).
 
 **Tunmont's docks.** Tunmont's grid has no dock blocks, so the railed pier is our own QUAYS jetty (`quayModel.js` railX).
 The real planQuay and buildQuayModel on made shores of 12, 60 and 195 m face every closed part out, and the jetty and

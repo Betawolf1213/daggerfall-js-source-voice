@@ -138,5 +138,27 @@
       "test/world/fb1018b_housebush.test.js"
     ],
     "why": "AUDIT FB1018b L4-1: with no word of the block's buildings, the law still asked"
+  },
+  {
+    "name": "HOUSE-BUSH-north-rim-unguarded",
+    "file": "src/world/rmbFlats.js",
+    "old": "if (col < 1 || row < 1 ||",
+    "new": "if (col < 1 ||",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: at row 0 the north pair reads a negative index, undefined, which quarterOf answers null - the foot is refused either way. The guard is kept: it says the rim law rather than leaning on an out-of-range read"
+  },
+  {
+    "name": "HOUSE-BUSH-far-rims-unguarded",
+    "file": "src/world/rmbFlats.js",
+    "old": " || col >= AUTOMAP_SIDE || row >= AUTOMAP_SIDE) return false;",
+    "new": ") return false;",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "equivalent": true,
+    "why": "AUDIT FB1018b L4-7: the walk's 16 x 16 cells put a foot at column and row 60 at most, so the far rims are never reached from collectBlockFlats; kept for a caller that asks past them"
   }
 ]
