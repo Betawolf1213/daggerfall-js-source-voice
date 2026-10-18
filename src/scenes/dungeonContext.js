@@ -8567,7 +8567,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (key.startsWith('corpse:')) {
       const f = foes[Number(key.split(':')[1])];
       // .cs:526 - the entity's name and "(dead)".
-      return lootableBody(f) ? { title: corpseName(championName(f.entity, corpseEntityName(f.mobileType))) } : null;   // AUDIT 68 S19-removed-foe-lootable; LOOT7: a champion's body by its name; L10N3e: loot.entityName (GameObjectHelper.cs:701), as the other pools' plaques read it
+      return lootableBody(f) ? { title: corpseName(championName(f.entity, corpseEntityName(f.mobileType))), ...(_lootUnreadable.has(roomLootKey(key)) ? { unlisted: true } : {}) } : null;   // OUTDOOR-LOOT D-2.2: a body whose room word this build cannot read names itself alone - the plaque never says "Empty" over a list it cannot read (worldHover.js `unlisted`);  AUDIT 68 S19-removed-foe-lootable; LOOT7: a champion's body by its name; L10N3e: loot.entityName (GameObjectHelper.cs:701), as the other pools' plaques read it
     }
     if (key.startsWith('search:')) {   // SEARCH1: what it is, and whether its lock still holds
       const sb = searchables[Number(key.slice(7))];
@@ -8576,7 +8576,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (key.startsWith('loot:') || key.startsWith('droppedLoot:')) {
       // .cs:534-548 - a pile of ONE is named by that one item; the
       // port lists the rest UNDER this title rather than stopping here.
-      return { title: (key.startsWith('droppedLoot:') ? droppedLoot.labelFor?.(key) : null) ?? lootPileName(api.lootContents(key)) };   // WILD1: a body's remains by its own name
+      return { title: (key.startsWith('droppedLoot:') ? droppedLoot.labelFor?.(key) : null) ?? lootPileName(api.lootContents(key)), ...(_lootUnreadable.has(roomLootKey(key)) ? { unlisted: true } : {}) };   // WILD1: a body's remains by its own name;  OUTDOOR-LOOT D-2.2: a pile whose room word this build cannot read - its name alone, never "Empty"
     }
     if (!modOn) return null;
     // .cs:304-312 - a LIVE entity is `Entity.Name`, and only when its
