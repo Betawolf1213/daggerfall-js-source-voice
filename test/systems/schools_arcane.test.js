@@ -146,7 +146,7 @@ test('SCHOOLS1 THE CHOICE: two mastered schools open their path, three open thre
   assert.equal(AP.choosePath(three, 'seer').ok, false);
   assert.equal(AP.pathRefusal(three, 'nobody'), 'No such specialisation.');
   const r = AP.choosePath(three, 'warden');
-  assert.deepEqual(r, { ok: true, text: 'Specialisation chosen: Warden. Living Aegis is sold to you at the Mages Guild.' });
+  assert.deepEqual(r, { ok: true, text: 'Specialisation chosen: Warden.' });   // PIN MOVED (AUDIT MARTIAL L4 M1): one line the screen holds - where it is sold is the card's
   assert.equal(three.arcanePath, 'warden');
   assert.deepEqual(AP.pathChoices(three), [], 'chosen: nothing more open');
   assert.deepEqual(AP.choosePath(three, 'necromancer'), { ok: false, text: 'Your specialisation is already chosen: Warden.' });
@@ -166,8 +166,8 @@ test('SCHOOLS1 THE CHOICE: two mastered schools open their path, three open thre
   // the box: what it does, that it is permanent
   const rows = AP.pathChoiceRows(mage([ALT, RES, MYS]), 'necromancer');
   assert.deepEqual(rows, ['Specialise as Necromancer?', 'Restoration and Mysticism', '',
-    'Death\'s Due: Each foe you kill returns 5% of your health and 5% of your magicka.',
-    'Siphon Life (signature spell): 50% of what it lands heals you.', '', 'This decision cannot be undone.',
+    'Death\'s Due: Each kill restores 5% of your health and 5% of your magicka.',
+    'Siphon Life (signature spell): Heals you for 50% of the damage dealt.', '', 'This decision cannot be undone.',
     '2 other specialisations are open to you.']);
   assert.equal(AP.pathChoiceRows(mage([ALT, RES, MYS]), 'necromancer', { others: false }).length, 7);
 });

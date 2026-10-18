@@ -46,7 +46,8 @@ import { expandRowValues } from '../systems/quest/questMacros.js';   // MACRO-3:
 // nothing about the old skin is decided in a UI module.
 import { announceSkillRaise, announceMastery, announceSkillMilestone } from '../ui/levelUp/levelNotice.js';
 import { masterSkillsBoxDue, setMasterSkills, MASTER_SKILLS_OFFER_ROWS, MASTER_SKILLS_INFO_ROWS, MASTER_SKILLS_DECLINED_TEXT, MASTER_SKILLS_INTRO_ROWS, nextMasteryChoice, masteryChoiceRows, masterSkill } from '../systems/masterSkills.js';   // SOFTCAP3/4
-import { nextPathChoice, pathChoices, pathChoiceRows, pathsOpenRows, choosePath, pathDeclinedText } from '../systems/arcanePaths.js';   // SCHOOLS1: the specialisation's one ask
+import { nextPathChoice, pathChoices, pathChoiceRows, pathsOpenRows, choosePath, pathDeclinedText, pathDeclinedGrowthText } from '../systems/arcanePaths.js';   // SCHOOLS1: the specialisation's one ask - GROWTH4: its words, the Growth tab's where it stands
+import { nextMartialChoice, martialChoices, martialChoiceRows, martialOpenRows, chooseMartialPath, martialDeclinedText, martialDeclinedGrowthText } from '../systems/martialPaths.js';   // MARTIAL1: the martial specialisation's one ask
 import { DOOR_SPELL_TEXT, castBySkeletonKey } from '../systems/mysticism.js';   // X1: the door-spell alert lines; D9: Open.CheckCastByItem
 import { raiseSkills } from '../systems/advancement.js';   // AUDIT 23 (entity-1): the rest-end raise
 import { tickPlayerMinutes, runMagicRoundsFor, worldMinutes, skyMinutes, setWorldMinutes, ownMinutes, advanceOwnMinutes, tickInFlight, MINUTES_PER_DAY, CLASSIC_MINUTES_PER_SECOND, sharedClockOn } from '../systems/worldTick.js';
@@ -84,6 +85,7 @@ import { setSoundReplacements } from '../systems/soundReplacer.js';   // SNDREP1
 import { installDiverseWeaponsIcons } from '../combat/diverseWeapons/diverseWeaponsIcons.js';
 import { installRoleplayRealismItems } from '../systems/roleplayRealismItems/rriInstall.js';
 import { installDetailedShipsArt } from '../systems/detailedShips.js';   // DS1: Detailed Ships' pictures and xml scales
+import { installStudioArt } from '../systems/studioArt/studioArt.js';   // STUDIO1: the game's artists' own pictures
 import { installWarmAshesShips } from '../systems/warmAshesShips.js';   // WA1: Warm Ashes - Ships' quest list and save slot
 import { installRestItemLoot, litCandle, meditate, snuffCandle, draughtTaken, spendDraught, DRAUGHT_SPENT_MINUTES } from '../systems/rest/restItems.js';   // REST6: the seven that fill the gaps
 import { installForaging } from '../systems/foraging/foragingInstall.js';   // FORAGE1: Foraging's quest list, tools, foods, pictures and console command
@@ -1375,6 +1377,10 @@ export function ensureAudio(fetch = fetchBytes) {
   // (DFMOD1/DFMOD2), the shipped mods first (VE4), before the first archive loads (the hosts await it), warmed. This
   // seam kept a copy of it with a `?nomods` rule of its own; the rule is the door's now (dfmodTextures.js noModsPage).
   const textures = registerTextureStore().catch(() => 0);
+  // STUDIO1: the studio's pictures (public/art/studio/) on the texture door's vendor tier - this answers at their
+  // registration; an archive's first load waits for it (a bounded while), and the port's own decode after it, a picture
+  // that lands after its host painted handed in late (systems/studioArt/studioArt.js wearPainted).
+  const studio = installStudioArt().catch(() => 0);
   installRaidingParties();   // RAID1: the mod's save record, in every host - a save made in a dungeon carries the day's raids too
   installSmithing();   // PROF3: the Repair Kit's use on the item-use door, in every host (a kit is the pack's, offline too)
   installHealingSupply();   // POTION-COMMON: Potions of Healing in the loot - after the smithing install, its field kit's roll first
@@ -1383,7 +1389,7 @@ export function ensureAudio(fetch = fetchBytes) {
   // MW-IMPORT: same seam, same never-traps rule - no data means the
   // opt-in layer stays inert, which is its resting state anyway.
   const morrowind = registerMorrowindData().catch(() => 0);
-  return Promise.all([sound, songs, replacements, textures, morrowind]);
+  return Promise.all([sound, songs, replacements, textures, studio, morrowind]);
 }
 
 // --- The outdoor fog COLOUR (DaggerfallSky.SetSkyFogColor) -----------
@@ -1543,11 +1549,26 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
     if (path) {
       entity.pathPrompted = true;
       const open = pathChoices(entity);
-      if (open.length > 1) ask(pathsOpenRows(open), null, null, { okOnly: true });
+      if (open.length > 1) ask(pathsOpenRows(open, { growth: isEnhanced() }), null, null, { okOnly: true });   // GROWTH4: the enhanced skin's guide is the Growth tab's
       else {
         ask(pathChoiceRows(entity, path.id),
           () => { const r = choosePath(entity, path.id); say(r.text); if (r.ok) audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
-          () => say(pathDeclinedText()));
+          () => say(isEnhanced() ? pathDeclinedGrowthText() : pathDeclinedText()));
+      }
+    } else {
+      // MARTIAL1 (bible/05-Combat/Martial-Specialisations.md section 3): THE MARTIAL SPECIALISATION - two weapon skills
+      // mastered and none chosen, the arcane path's own law on a pass that put no other box up: ONE open asked about,
+      // SEVERAL named and sent to the skill screen
+      const martial = ask && !windowed ? nextMartialChoice(entity) : null;
+      if (martial) {
+        entity.martialPrompted = true;
+        const open = martialChoices(entity);
+        if (open.length > 1) ask(martialOpenRows(open, { growth: isEnhanced() }), null, null, { okOnly: true });
+        else {
+          ask(martialChoiceRows(entity, martial.id),
+            () => { const r = chooseMartialPath(entity, martial.id); say(r.text); if (r.ok) audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
+            () => say(isEnhanced() ? martialDeclinedGrowthText() : martialDeclinedText()));
+        }
       }
     }
   }

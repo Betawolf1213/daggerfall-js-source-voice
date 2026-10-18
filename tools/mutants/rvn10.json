@@ -92,8 +92,8 @@
   {
     "name": "RVN10-end-keeps-low",
     "file": "src/systems/harmMark.js",
-    "old": "export function endPlayerFights() { _fights = new WeakMap(); _lowAt = null; }",
-    "new": "export function endPlayerFights() { _fights = new WeakMap(); }",
+    "old": "export function endPlayerFights() { _fights = new WeakMap(); _lowAt = null; _harmAt = null; }",
+    "new": "export function endPlayerFights() { _fights = new WeakMap(); _harmAt = null; }",
     "tests": [
       "test/systems/rvn10_deeds.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "RVN10-end-keeps-fights",
     "file": "src/systems/harmMark.js",
-    "old": "export function endPlayerFights() { _fights = new WeakMap(); _lowAt = null; }",
-    "new": "export function endPlayerFights() { _lowAt = null; }",
+    "old": "export function endPlayerFights() { _fights = new WeakMap(); _lowAt = null; _harmAt = null; }",
+    "new": "export function endPlayerFights() { _lowAt = null; _harmAt = null; }",
     "tests": [
       "test/systems/rvn10_deeds.test.js"
     ]
@@ -362,7 +362,7 @@
   {
     "name": "RVN10-routable-anyone",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (!revenantCandidate(f.entity, f)) return false;\n  return playerLowSince(harmFightSince(f.entity, now));",
+    "old": "  if (!revenantCandidate(f.entity, f)) return false;   // AUDIT FEUD: a peer's foe is its owner's - my jump routs none of it (AUDIT UNQUIET: revenantCandidate refuses another client's foe)\n  return playerLowSince(harmFightSince(f.entity, now));",
     "new": "  return playerLowSince(harmFightSince(f.entity, now));",
     "tests": [
       "test/systems/rvn10_deeds.test.js"

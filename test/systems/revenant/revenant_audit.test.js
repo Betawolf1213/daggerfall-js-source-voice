@@ -33,7 +33,7 @@ const player = (id = 'char-audit') => ({
   isPlayer: true, name: 'Ayla Stormwind', characterId: id, level: 10, items: [], goldPieces: 0, activeEffects: [], health: 100, maxHealth: 100,
   stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 },
 });
-const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', ...over });
+const orc = (over = {}) => ({ mobileType: MOBILE_TYPES.Orc, level: 6, health: 60, maxHealth: 60, team: 'Orcs', champion: 'mighty', unquiet: true, ...over });
 function fresh() {
   _resetForTests(); setPref('lootRarity', true);
   N._resetRevenantForTests(); RC._resetRetinueForTests(); S._resetCompanionSlotsForTests(); H._resetHarmMarkForTests(); _store.clear(); setPlayerDoor(null);
@@ -59,14 +59,22 @@ test('AUDIT A1/A6: a judged revenant does no deed - executed, released or sworn,
   assert.equal(N.revenantDeed(me, e2, 'slew', { now: 40, rolls: () => 0 }), null, 'executed: no deed');
   assert.equal(N.allRevenants().length, before, 'and no second record under its id');
   assert.equal(N.revenantById(r2.id).fate, 'executed');
-  // the cap: five living and one out in the world - a sixth buries the weakest that is NOT out
+  // the cap: the living full, one of them out in the world - a deserter coming back past it buries the weakest that is
+  // NOT out (PIN MOVED, UNQUIET - Revenants.md section 46: none rises past the cap, so the cap buries only for one turned
+  // back from the sworn)
   fresh();
-  const out = N.revenantDeed(me, orc(), 'slew', { now: 0, rolls: () => 0 });   // a kill: it stands over the body (out)
+  RC.setRetinuePlayer(me);
+  const s = N.revenantDeed(me, orc({ champion: 'swift' }), 'fled', { now: -10, rolls: () => 0 });
+  N.revenantSpared(me, { revenant: { id: s.id } }, { state: 'away' });
+  const out = N.revenantDeed(me, orc(), 'slew', { now: 0, rolls: () => 0 });   // a kill: it stands over the body (out) - the weakest, the oldest
   assert.equal(out.out, true);
-  for (let i = 0; i < N.REVENANT_MAX; i++) N.revenantDeed(me, orc({ champion: 'stalwart' }), 'fled', { now: 100 + i, rolls: () => 0.4 });
-  assert.ok(N.revenantById(out.id), 'the one standing is never buried');
+  for (let i = 0; i < N.REVENANT_MAX - 1; i++) N.revenantDeed(me, orc({ champion: 'stalwart' }), 'fled', { now: 100 + i, rolls: () => 0.4 });
   assert.equal(N.livingRevenants().length, N.REVENANT_MAX);
-  // a tombstone's id is never worn again
+  N.revenantDeserts(me, N.revenantById(s.id), { now: 200 });
+  assert.ok(N.livingRevenants().some((x) => x.id === out.id), 'the one standing is never buried');
+  assert.equal(N.livingRevenants().length, N.REVENANT_MAX, 'the cap holds');
+  // a tombstone's id is never worn again (AUDIT UNQUIET, Revenants.md section 49: past the cap no birth at all - room made)
+  N.revenantSlain(me, { revenant: { id: out.id } });
   const e3 = orc({ revenant: { id: 'long-gone' } });
   const r3 = N.revenantDeed(me, e3, 'fled', { now: 500, rolls: () => 0 });
   assert.notEqual(r3.id, 'long-gone', 'a forgotten id is not reused');
@@ -126,7 +134,7 @@ test('AUDIT A4/A5: A SWORN ONE\'S PACK IS THE SAVE\'S - a load lays the save\'s 
   RC.releaseRevenant(r.id);
   assert.equal(me.items.length, items0 + 1, 'the sword into the pack');
   assert.equal(me.goldPieces, 40, 'the gold into the purse, never a row');
-  assert.match(read('src/ui/companionRoster.js'), /hands you back its pack/, 'the confirm says so');
+  assert.match(read('src/ui/companionRoster.js'), /hands you back what it carries/, 'the confirm says so (AUDIT RVN G6: its pack and its kit)');
 });
 
 test('AUDIT A7-A15: its words - the tally taunt only with kills to count, a revenant\'s flight knows the player\'s name, a beast\'s moment keeps what it says, a skeleton is never a wit, a $ in a name is a letter, three risen taunts each, one possessive for every title, the cornered say their words (mutants: the tally for a runner; a stranger to its own revenant; the body dropped; a mute kind talking temperaments)', () => {

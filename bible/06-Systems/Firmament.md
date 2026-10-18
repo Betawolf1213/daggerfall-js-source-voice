@@ -3,7 +3,7 @@
 > Design page and record (2026-10-13). One pull request, five parts: the sky and the law (`src/net/firmament/firmamentTree.js`,
 > `src/net/firmament/firmamentLaw.js`), the account service (`server-account/src/firmament.js`, migration 0114), the client's book
 > and powers (`src/net/firmament/firmamentBook.js`, `src/systems/firmamentLive.js`, `src/systems/firmamentPowers.js`), the window
-> (`src/ui/firmamentWindow.js`, `src/ui/firmamentOver.js`) and the lab (`firmament.html`). Where this page and the code
+> (`src/ui/firmamentWindow.js`; its door in `firmamentOver.js` taken out by GROWTH3, `10-UI/Growth.md` - the file keeps RVN-STARS' revenant door) and the lab (`firmament.html`). Where this page and the code
 > disagree, the code's own headers and the pins are what runs.
 
 ## 1. What was asked
@@ -107,6 +107,8 @@ Path of Exile's shape, one for one, laid on Tamriel's sky. **518 stars, 589 line
 
 - **FIRM2 (2026-10-15) - every star counts, and the sky may lift a stat past 100** (the lead dev: "lower the values"): the caps stay; the stars came down. Summed over one sign's whole sky (`tools/firmamentRebalance.mjs` prints the check), 43 channels passed their cap, 29 of them still once the small stars went one for one - a path star at +6% and a chain at +4% meant a Mage's `pct.intelligence` stood at 36 against a 15 cap, so a third of its stars bought nothing. Small stars' attribute and skill shares are now one for one - a star's authored points as a percent, where they had been doubled (+1% to +4% a star) - and the notables, keystones and life stars were scaled down in whole numbers until no channel of any sign sums past its cap (`test/net/firmament/firm2_balance.test.js` holds it). And the sky's attribute bonus lifts the attribute ceiling by what it adds - FIRM-MAX's `statMax` (4.1 below): a 100 Strength with the sky's whole +15 reads 115 (`test/systems/audit_uicalm_firm1.test.js`), and Ascend's points alone stop at 100.
 
+- **BAL10 (2026-10-17) - every weapon family two notables of its own** (`05-Combat/Balance-Arc.md` section 16; the owner chose "Firmament weapon keystones" of the martial pass, `05-Combat/Martial-Specialisations.md`): Blade Dancer, Iron Knuckles, Headsman and Bonebreaker each raise their family's skill beside every stat they had (AUDIT MARTIAL L2 F9: the first cut traded a stat for the skill line), Carnage turns to the axe, and the Ritual's Battlemage's Focus is its Templar's Mace (the Ritual stands in PoE's Templar's place - and the Elite Gates' Vestige keeps the old name its own). Stats moved, never a key nor a star: the layout, the keys' hash and every build code stand, FIRM2's caps hold. And the fist channel acts at last: no blow modifier had reached a bare-handed blow, so Pankration's and Iron Knuckles' fist damage did nothing until BAL10 made both cores read them.
+
 ### 4.1 The budget - why PvE stays where it is
 
 1. **Every channel is capped** for the whole sky, however it is spent (`STAT_DEFS`), a key star's raw points and a small
@@ -201,9 +203,11 @@ edge (`skillSoftcap.js combatEdge`), the loot's and the sets' caps.
 
 ## 7. The window (`ui/firmamentWindow.js`)
 
-The whole sky over the whole screen, swapped in over the pause window from the **Stats page's Firmament button** beside
-Ascend (both doors: Escape and Tab's dial, `pauseDoor.js`; the sheet key, `charSheetDoor.js`; one construction seam,
-`firmamentOver.js`). Online alone - offline there is no button.
+The whole sky, drawn in the pause window's **Growth tab** on its Firmament page (GROWTH3, 2026-10-17, the owner: "give
+the firmament, level up page, and specializations its own tab within the pause menu"; `10-UI/Growth.md` section 6) - the
+window widened to nearly the screen's, a press to full screen, and on a phone a door that opens it over everything. It
+was the Stats page's Firmament button beside Ascend, swapped in over the window (`firmamentOver.js`, that door taken out). Online
+alone - offline the page says what the sky is and why it waits.
 
 - Choose a sign (the seven great stars breathe until one is chosen); hover a star to read it and see the way to it lit;
   press to allocate the way; right-press (or long-press on a phone) to take a star back with everything beyond it; drag

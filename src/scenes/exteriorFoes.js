@@ -34,6 +34,7 @@ import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../pla
 import { SOUND, hitSoundFor, ENEMY_HIT_VOLUME } from '../systems/soundClips.js';   // CH3: the FallDamage clip; WORLD6b: a peer's blow rung at the owner
 import { EnemyCaster, castEnemySpell, hasMagickaToCast, MIN_RANGED_DISTANCE, MAX_RANGED_DISTANCE } from '../characters/enemy/enemyCasting.js';   // X3: the shared decision + the ONE cast executor
 import { assignEnemySpells, SPELL_CAST_SOUND } from '../systems/enemySpells.js';   // X3
+import { revenantArtFrame } from '../systems/revenant/revenantArts.js';   // RVN-ARTS: a revenant's art
 import { applySpell, isSoulTrapEffect, maxFatigue, entityIsParalyzed, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits } from '../systems/effects.js';   // X3: self-casts land through the effect spine   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
 import { calculateCastCost } from '../systems/spellcost.js';   // X3: costs priced off the player (magic-15 note)
 import { silenceBlocksCast, attemptSoulTrap, SOUL_TRAP_TEXT, fillEmptyTrap, peerSoulTrapOf } from '../systems/mysticism.js';   // X3: the enemy silence gate; X5: the soul trap's kill intercept; STRIKE-SHARED: a peer's trap is its caster's
@@ -41,6 +42,7 @@ import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffect
 import { EnemyAttack } from '../characters/enemy/enemyAttack.js';
 import { makeEnemyEntity, loadMonsterCareer, KNIGHT_CITYWATCH_ID, applyProgressionScaling } from '../characters/enemy/enemyEntity.js';
 import { combatStanding, foeShare, progressionScaling, wildernessShare, placeVeteran, wildernessThreat } from '../systems/skillSoftcap.js';   // SOFTCAP5: tougher foes in the wilds; BAL3: the wilds' own threat
+import { heroThreatOf } from '../systems/heroThreat.js';   // BAL11: the hero's threat
 import { isNight } from '../world/worldClock.js';   // SOFTCAP5: the wilds' night share   // AUDIT WATCH1 A1: the watch's own puppet allowance
 import { MobileUnit, MOBILE_DAEDRA_SEDUCER, SeducerTransformBehaviour } from '../characters/mobile/mobileUnit.js';   // A5: the Seducer transform pair + its trigger
 import { ClassFile } from '../formats/classFile.js';
@@ -130,6 +132,31 @@ export const QUEST_PUPPETS_MAX = 24;
  *  Greater Giant's call (ten) plus the encounter it joined, so the foes past it never stood at the reader - the party member
  *  saw its friend strike the air. A reader-side allowance only: the relay never reads it (wire.js and RELAY_VERSION untouched). */
 export const ENCOUNTER_PUPPETS_MAX = Math.max(32, CELL_PUPPETS_MAX);
+/** FOE-FORGE (2026-10-17; a horde of forty Elite Daedroths round one player in a hamlet, reported on the Discord;
+ *  bible/06-Systems/Integrity-Arc.md section 8): THE MOST OF ONE OWNER'S FOES A READER HOLDS AT ONCE, every allowance
+ *  together - its encounter's, its watch's, its camps', the deep's, a raid's and a shared quest's - with the foes of
+ *  theirs it took over (a handover named it heir) that still live counted among them. Each allowance was its own, so a
+ *  forged frame filled every one, about a hundred hostile foes of any kind; and a foe taken over left its owner's count,
+ *  so records naming the reader heir stood foes without end. An honest owner's live foes all ride one frame (the
+ *  sender's trim, wire.js CELL_FRAME_RECORDS_MAX), so honest play does not meet it. */
+export const PEER_PUPPETS_TOTAL_MAX = CELL_FRAME_RECORDS_MAX;
+/** FOE-FORGE: the most of one owner's foes a reader stands as ELITES (the record's `z`: five times the health, three times
+ *  the blows - systems/eliteFoes.js). An owner rolls its own elites one in twenty, outside a town (ELITE_FOE_OVERWORLD_CHANCE),
+ *  so even a full frame of honest foes holds three or so; past this a record's `z` is not believed, and its foe stands as
+ *  its plain kind. */
+export const PEER_ELITE_PUPPETS_MAX = 8;
+/** FOE-FORGE: the most of one owner's foes a reader stands as REVENANTS (the record's `nm`, and the blows its `rb` and
+ *  `p2` carry - up to four times its kind's): the revenants a character keeps (revenant.js REVENANT_MAX, three - UNQUIET,
+ *  bible/06-Systems/Revenants.md section 46; it was five) and the ones sworn to it (revenantCompanions.js
+ *  REVENANT_RETINUE_MAX, six - a module this pool does not import; the test holds the sum). Past it a record's revenant
+ *  fields are not believed. */
+export const PEER_REVENANT_PUPPETS_MAX = 9;
+/** GRANT0 (2026-10-18, bible/11-Multiplayer/Spawn-Grants.md section 8): the most of one owner's foes a reader stands as
+ *  CHAMPIONS (the record's `cp`: x1.25 on its blows, x1.875 a Mighty one's - systems/champions.js). An owner's capped spawns
+ *  roll one in fourteen, and a revenant wears its trait as one, so the elites' allowance and the revenants' bound
+ *  together; past it a record's `cp` is not believed, and its foe stands as its plain kind. Counted at the record, with
+ *  the builds in flight: a trait is stood inside the build, before the puppet is indexed. */
+export const PEER_CHAMPION_PUPPETS_MAX = PEER_ELITE_PUPPETS_MAX + PEER_REVENANT_PUPPETS_MAX;
 const QUEST_WORD_RE = /^[A-Za-z0-9_.$-]{1,64}$/;   // AUDIT (pre-merge) Q6: `$` too - the cure quests are $CUREVAM and $CUREWER, and every reader refused their tag
 /** QUEST-PARTY: a frame's `qf` - [number, quest name, foe symbol] for each record that is a shared quest's foe; a
  *  malformed entry names nothing. QUEST-PARTY phase 3: and a fourth, its flags when any - 1 the foe a quest MARKER stood
@@ -432,12 +459,16 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         let night = false;
         try { night = isNight((skyMinute ?? currentMinute)()); } catch { /* no clock: day */ }   // TIME1: the sky's night
         // BAL3 (bible/05-Combat/Balance-Arc.md section 5): and the wilds' own threat - tier 5 by day, a harpy nest's 7 at night - while the ladder stands
-        applyProgressionScaling(entity, progressionScaling(combatStanding(playerEntity), wildernessShare(night), foeShare(basics?.level ?? entity.level, isClass), lootRarityOn() ? placeVeteran(wildernessThreat(night)) : 0));
+        // BAL11 (section 17): and the hero's threat - my level past 10 and my Renown past 15, every kind alike
+        applyProgressionScaling(entity, progressionScaling(combatStanding(playerEntity), wildernessShare(night), foeShare(basics?.level ?? entity.level, isClass), lootRarityOn() ? placeVeteran(wildernessThreat(night)) : 0, heroThreatOf(playerEntity)));
+      } else if (puppet && !allied && !inLocation()) {
+        // BAL11: a peer's foe strikes ME at MY threat - its blows alone; its maximum is its owner's word (the record's `k`)
+        applyProgressionScaling(entity, progressionScaling(null, 0, 0, 0, heroThreatOf(playerEntity, { puppet: true })));
       }
       // DW-E4: SetEnemyTeam - Entity.Team alone (the treasure guards' Undead), the MobileEnemy copy kept
       if (team) entity.team = team;
       entity._feudPlace = playerInside ? 'building' : 'street';   // RVN1 (Feud-Arc.md 12): where a fight with it is fought, for its ledger
-      if (!allied && !entity.eliteFoe) applyChampion(entity, champion !== undefined ? champion : revenant ? (revenant.trait ? championIndex(revenant.trait) : null) : (capped ? rollStreetChampion(pending.feet, mobileType) : null));   // LOOT7: a champion - before its loot, which reads the mark
+      if (!allied && !entity.eliteFoe) applyChampion(entity, champion !== undefined ? champion : revenant ? (revenant.trait ? championIndex(revenant.trait) : null) : (capped ? rollStreetChampion(pending.feet, mobileType) : null), { own: !puppet });   // LOOT7: a champion - before its loot, which reads the mark
       if (revenant && !puppet) applyRevenant(entity, revenant, { turned });   // REVENANT: its name and its rank - over its trait or its glow, before its loot; RVN11c: a betrayer's turning is no return
       // WILD1 (systems/wild/wildZone.js): a foe of the open zone - four times its health and its blows, over its elite's, its
       // champion's or its revenant's (a puppet: its blows alone, its maximum is its owner's word); never an ally
@@ -958,13 +989,13 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // body down is nobody's felling) - the layer hands it on, a felling's striker
       if (f.companion != null) { f.entity.health = 1; if (!f._knockedOut) f._knockedBy = striker; f._knockedOut = true; return; }
       // REVENANT-FATE: one of the player's revenants beaten is never killed outright - it YIELDS (whoever struck: the
-      // revenant is the player's own), its fate the player's; a kill (a Disintegrate's whole) is a kill - MY kill alone
-      // (RVN-OWNERS-CHOICE: anyone else's whole blow is a killing blow like any - revenantFate.js ownersWholeKill)
+      // revenant is the player's own), its fate the player's; MY kill (a Disintegrate's whole) passes its stand and will
+      // and still kneels it (RVN-OWNERS-CHOICE, RVN-OWN-KNEEL: anyone else's is a killing blow like any - ownersWholeKill)
       // RVN4 (Feud-Arc.md 15.1): one of rank 3 and up, once a stand, comes back instead - its last stand (before the
-      // trap: no soul taken by that blow); a kill is a kill
+      // trap: no soul taken by that blow); my kill passes it
       if (f.entity?.revenant?.id && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantLastStandDue(f)) { lastStand(f); return; }
       // RVN3 (Feud-Arc.md 14.2): one of rank 3 and up whose will this fight has not broken does not kneel - it tears away
-      if (fates && !ownersWholeKill(_whole, { fromPlayer, peer }) && revenantMayYield(f)) { if (revenantWillHolds(f)) tearAway(f); else yieldFoe(f); return; }
+      if (fates && revenantMayYield(f)) { if (!ownersWholeKill(_whole, { fromPlayer, peer }) && revenantWillHolds(f)) tearAway(f); else yieldFoe(f); return; }
       // X5: the SOUL TRAP intercept, where EnemyEntity.SetHealth's
       // override sits (:157-177) - before the death, every source alike.
       // AUDIT WORLD6b B2 (AUDIT WORLD2 B9's law, the dungeon's): a PEER's killing blow reads no gem of mine and fills
@@ -1234,7 +1265,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     f.escaped = true;
     f.yielded = null;
     if (f.ai?.detected) setEnemyAlert(playerEntity, false);
-    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken });   // RVN12b: an unbroken one's escape, so remembered
+    const r = revenantDeed(playerEntity, f.entity, 'fled', { mobileType: f.mobileType, gender: f.gender, rec: f, archive: f.archive, unbroken, slip });   // RVN12b: an unbroken one's escape, so remembered; AUDIT UNQUIET: a slip never ascends
     if (r) revenantSay(slip ? slipEvent(playerEntity, r, { archive: f.archive }) : unbroken ? revenantUnbrokenEvent(r, playerEntity?.name, { archive: f.archive }) : revenantEscapeEvent(r, playerEntity?.name, { archive: f.archive }), say);   // REVENANT-FATE: a slip says the hesitation; RVN3: the unbroken its own
   }
   /** RVN10 (Feud-Arc.md 21.2): ROUTED - I ran from it: gone as the cull takes a foe (no corpse, no kill, its batch freed;
@@ -1265,6 +1296,18 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         magicHooks?.strikePlayer?.(pyreSpell(sb.name, sb.element, p.mult), f.entity.level ?? 1, f);
       }
     }
+  }
+  /** RVN-ARTS (bible/06-Systems/Revenants.md section 41): ITS ART - a channel about its feet or a mark at mine, landed
+   *  through the host's own spell door (my saving throw answers it; the health it took, a siphon's draught), its band
+   *  rallied by its cry, its words its card. AUDIT RVN B12: its door made once a stand, on its record. */
+  function artFrame(f, playerFeet) {
+    revenantArtFrame(f, playerFeet, f._artDoor ??= {
+      onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting,
+      strike: (sp) => { const h = playerEntity?.health ?? 0; magicHooks?.strikePlayer?.(sp, f.entity.level ?? 1, f); return Math.max(0, h - (playerEntity?.health ?? h)); },
+      say: (ev) => revenantSay(ev, say),
+      sfx: (el, at) => audio?.play3dId?.(SPELL_CAST_SOUND[el] ?? SPELL_CAST_SOUND[4], [at[0], at[1], at[2]], 1, { maxDistance: 16 }),
+      foes: () => foes, rolls,
+    });
   }
   /** RVN4 (Feud-Arc.md 15.2): ITS LAST STAND - back on its feet, roaring (no blow reaches it; the brain's iron ring, or
    *  its motor held), then phase two - its bark low, the camera's kick, its card. */
@@ -1559,7 +1602,8 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // of its health for the first time, may RUN - and running it strikes and casts nothing, its walk still drawn (and no
       // cull); out of reach it has ESCAPED (no corpse, no kill, a revenant made of it); run down, it is CORNERED and turns
       // to fight to the end
-      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame
+      const _flee = f.fleeing || (!f._fleeRolled && revenantFleeHealth(f.entity)) ? revenantFleeStep(f, playerFeet, { onMe: () => isLocalPlayerTarget(f.ai.target) || !f.ai._armedTargeting, dt: foeFrameDt(dt) }) : null;   // asked only of a foe running or under the line - nothing made per foe per frame; AUDIT UNQUIET: its craft on the foe's own frame
+      if (f.entity.revenant?.id) artFrame(f, playerFeet);   // RVN-ARTS: its art - AUDIT RVN B4: before a run's or a scatter's own frame, so a running one's ward and cry run out and its marks are cut
       if (_flee === 'escape') { escapeFoe(f); continue; }
       if (_flee === 'start') scatterBand(f);   // RVN6: it runs - its band breaks
       if (_flee === 'start') revenantSay(revenantFleeEvent(f.entity, foeTitle(f.entity, enemyDisplayName(f.mobileType)), { gender: f.gender, archive: f.archive, playerName: playerEntity?.name }), say);   // REVENANT-CARD: the card on the enhanced skin, the line on the classic
@@ -2502,6 +2546,34 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     for (const [k, r] of _pupPending) if (k.startsWith(from + ':') && kind(r.t, r._site, r._deep, r._quest, r._raid) === want) n++;
     return n;
   }
+  /** FOE-FORGE: a foe of `from`'s I took over (adopt) that still lives - counted against its owner's total and marks. */
+  const tookLive = (from, k, f) => !f.dead && !f._gone && k.startsWith(from + ':');
+  const isElitePuppet = (f) => !!f.entity?.eliteFoe;
+  const isRevenantPuppet = (f) => !!f.entity?.revenant;
+  const isChampionPuppet = (f) => !!f.entity?.champion;
+  /** GRANT0: an owner's champions here - its puppets and the foes of theirs I took (markedOf), and the builds in flight whose trait was believed. */
+  function championsOf(from) {
+    let n = markedOf(from, isChampionPuppet);
+    for (const [k, r] of _pupPending) if (r._cp && k.startsWith(from + ':')) n++;
+    return n;
+  }
+  /** FOE-FORGE: everything of one owner's this reader holds - its puppets standing or building, of every allowance, and
+   *  the foes of theirs I took that still live: PEER_PUPPETS_TOTAL_MAX's count. */
+  function heldOf(from) {
+    let n = 0;
+    for (const f of _pupIndex.values()) if (f.puppet === from && !f.dead) n++;
+    for (const k of _pupPending.keys()) if (k.startsWith(from + ':')) n++;
+    for (const [k, f] of _adopted) if (tookLive(from, k, f)) n++;
+    return n;
+  }
+  /** FOE-FORGE: how many of one owner's foes here are `marked` (an elite, a revenant, a Greater Giant) - its puppets, and
+   *  the foes of theirs I took that still live (a taken elite stays one). The foe being asked about is never yet marked. */
+  function markedOf(from, marked) {
+    let n = 0;
+    for (const f of _pupIndex.values()) if (f.puppet === from && !f.dead && marked(f)) n++;
+    for (const [k, f] of _adopted) if (tookLive(from, k, f) && marked(f)) n++;
+    return n;
+  }
   /** DEEP-SHARE: the live deep foes OTHER players stand within `radius` of `feet` - what the deep's spawner here counts
    *  against its cap (scenes/deepWater/deepWatersHost.js deepWatersEnemySettingsNear). */
   function deepPuppetsNear(feet, radius) {
@@ -2584,19 +2656,21 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // same id, a tab that woke) - theirs again: mine goes, and their record stands it here as their puppet
       const took = _adopted.get(key);
       if (took) { _adopted.delete(key); if (r.d !== 1 && !took.dead && !took._gone) letGo(took); }
-      if (_pupPending.has(key)) { _pupPending.set(key, { ...r, ls: r.ls ?? _pupPending.get(key).ls, lw: r.lw ?? _pupPending.get(key).lw, t: _pupPending.get(key).t, _site: _pupPending.get(key)._site, _deep: _pupPending.get(key)._deep, _quest: _pupPending.get(key)._quest, _raid: _pupPending.get(key)._raid, _camp: campTags.get(r.i) ?? _pupPending.get(key)._camp }); continue; }   // AUDIT ALL A1: a pending build's SPECIES is fixed at the build - a later word without `t` (or with another) neither moves it out of its class's count (an unbounded stand: a peer re-worded a pending watch as no species and stood ten more) nor lands a record of the wrong species on the build   OW6: and its camp, the newest word
+      if (_pupPending.has(key)) { _pupPending.set(key, { ...r, ls: r.ls ?? _pupPending.get(key).ls, lw: r.lw ?? _pupPending.get(key).lw, t: _pupPending.get(key).t, _site: _pupPending.get(key)._site, _deep: _pupPending.get(key)._deep, _quest: _pupPending.get(key)._quest, _raid: _pupPending.get(key)._raid, _camp: campTags.get(r.i) ?? _pupPending.get(key)._camp, _cp: _pupPending.get(key)._cp }); continue; }   // AUDIT ALL A1: a pending build's SPECIES is fixed at the build - a later word without `t` (or with another) neither moves it out of its class's count (an unbounded stand: a peer re-worded a pending watch as no species and stood ten more) nor lands a record of the wrong species on the build   OW6: and its camp, the newest word
       if (r.d === 1 || r.t === undefined || !ENEMY_BASICS[r.t] || !r.f) continue;
+      if (heldOf(from) >= PEER_PUPPETS_TOTAL_MAX) { if (site) refused.add(site); continue; }   // FOE-FORGE: every allowance together, and what I took of theirs
       if (site && livePuppetsOf(from, false, true) >= WOD_CAMP_PUPPETS_MAX) { refused.add(site); continue; }   // WOD7: a shared camp's foes under their own allowance
       const deep = deepIds.has(r.i);
       const raidKey = raidTags.get(r.i) ?? null;   // RAID2: a raid's raider stands under the raid's allowance
       if (!site && (qt ? livePuppetsOf(from, false, false, false, true) >= QUEST_PUPPETS_MAX : deep ? livePuppetsOf(from, false, false, true) >= DEEP_PUPPETS_MAX : r.t === KNIGHT_CITYWATCH_ID ? livePuppetsOf(from, true) >= CELL_WATCH_PUPPETS_MAX : raidKey ? livePuppetsOf(from, false, false, false, false, true) >= RAID_PUPPETS_MAX : livePuppetsOf(from) >= ENCOUNTER_PUPPETS_MAX)) continue;   // DEEP-SHARE: the deep's, its own   // AUDIT WATCH1 A1: the watch has its own allowance - under one cap the foes spent it first and no watchman ever stood; WOD7: a camp's, its own
       const feet = _net.toScene(r.f);
       if (!feet) continue;
-      _pupPending.set(key, { ...r, _site: site, _deep: deep, _quest: qt, _raid: raidKey, _camp: campTags.get(r.i) ?? null });
+      const cp = Number.isInteger(r.cp) && championsOf(from) < PEER_CHAMPION_PUPPETS_MAX ? r.cp : null;   // GRANT0: no more champions than an owner rolls and its revenants wear
+      _pupPending.set(key, { ...r, _site: site, _deep: deep, _quest: qt, _raid: raidKey, _camp: campTags.get(r.i) ?? null, _cp: cp != null });
       if (site) stood.add(site);
       const gen = o.gen;
       const shipmate = crew.has(r.i);
-      spawnFoe(r.t, feet, { puppet: from, seq: r.i, gender: GENDER_BIT[r.x === 1 ? 1 : 0], feetGiven: true, yaw: r.y ?? null, level: r.l ?? null, site, allied: (r.t === KNIGHT_CITYWATCH_ID && allied.has(r.i)) || shipmate, champion: r.cp ?? null })   // RAID2: a watchman the owner names its ally stands as mine - SHIPMATES: and a crewman
+      spawnFoe(r.t, feet, { puppet: from, seq: r.i, gender: GENDER_BIT[r.x === 1 ? 1 : 0], feetGiven: true, yaw: r.y ?? null, level: r.l ?? null, site, allied: (r.t === KNIGHT_CITYWATCH_ID && allied.has(r.i)) || shipmate, champion: cp })   // RAID2: a watchman the owner names its ally stands as mine - SHIPMATES: and a crewman
         .then((nf) => {
           if (!nf) return;
           if (shipmate) nf.shipmate = true;
@@ -2689,18 +2763,19 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     if (r.y !== undefined) p.yaw = r.y;
     if (r.m !== undefined) p.moving = r.m === 1;
     if (r.h !== undefined && f._pupQuest && !f._qHurt && p.h != null && r.h < p.h) { f._qHurt = true; _questShare?.onPuppetHurt?.(f._pupQuest, f.puppet); }   // QUEST-PARTY: the first blow I see land is the injury my copy of the quest reads (QuestResourceBehaviour's own check)
-    if (r.z === 1 && !f.entity.eliteFoe && !f.entity.champion) promoteEliteFoe(f.entity, { own: false });   // ELITE FOES: its owner's elite - the blows, the size, the glow (its maximum is `k`)
+    if (r.z === 1 && !f.entity.eliteFoe && !f.entity.champion && markedOf(f.puppet, isElitePuppet) < PEER_ELITE_PUPPETS_MAX) promoteEliteFoe(f.entity, { own: false });   // ELITE FOES: its owner's elite - the blows, the size, the glow (its maximum is `k`); FOE-FORGE: no more of them than an owner rolls
     f._pupYield = r.yd === 1;   // REVENANT-FATE: its owner's revenant kneels...
     f._pupExec = r.ex === 1 ? (f._pupExec ?? Date.now()) : null;   // ...or burns away, from the record that said so
     f._pupSpare = r.sp === 1 ? (f._pupSpare ?? Date.now()) : null;   // AUDIT (2026-10-02): ...or rises sworn into its portal
-    if (typeof r.nm === 'string' && r.nm && f.entity.revenant?.name !== r.nm) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }   // REVENANT-WIRE: called what its owner calls it
+    const rev = typeof r.nm === 'string' && r.nm && (!!f.entity.revenant || markedOf(f.puppet, isRevenantPuppet) < PEER_REVENANT_PUPPETS_MAX);   // FOE-FORGE: no more of them than a character keeps and swears
+    if (rev && f.entity.revenant?.name !== r.nm) { f.entity.revenant = { id: null, name: r.nm, rank: 0 }; f._feudWire = null; }   // REVENANT-WIRE: called what its owner calls it
     // RVN13 (bible/12-Enhanced-AI/Feud-Arc.md 25): its owner's adaptations, weakness and second phase - stood again only when they change;
     // FEUD WIRE: and its blows (its stand's and phase two's on its own - so its owner's revenant strikes me as hard as it strikes its owner)
-    if (typeof r.nm === 'string' && r.nm) { const fw = `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}`; if (f._feudWire !== fw) { f._feudWire = fw; f.entity.revenant = feudFromWire(f.entity.revenant, r); puppetRevenantBlows(f.entity, r); } }
+    if (rev) { const fw = `${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}`; if (f._feudWire !== fw) { f._feudWire = fw; f.entity.revenant = feudFromWire(f.entity.revenant, r); puppetRevenantBlows(f.entity, r); } }
     if (r.rt !== undefined && f.puppet) { const m = _pupIndex.get(pupKey(f.puppet, r.rt)); const name = m ? puppetBandName(m.entity?.revenant?.name, m.mobileType) : null; if (name) f.entity.bandName = name; }   // RVN13: a follower named for its master's band
     if (r.k !== undefined) f.entity.maxHealth = r.k;   // AUDIT SETS M1: the owner's maximum - "under half" is its word
     if (r.h !== undefined) { if (p.h != null && r.h < p.h) p.hurt = true; p.h = r.h; f.entity.health = r.h; }
-    if (Number.isInteger(r.gg) && f.entity.zoneGiant !== r.gg) {
+    if (Number.isInteger(r.gg) && f.entity.zoneGiant !== r.gg && f.mobileType === WILD_GIANT && !markedOf(f.puppet, (x) => x.entity?.zoneGiant === r.gg)) {   // FOE-FORGE: a Greater Giant is a giant, and one of each to an owner
       f.entity.wildGiant = true; f.entity.zoneGiant = r.gg;
       // GIANT-BLOWS (2026-10-12, a player: the Greater Giant "does less damage than normal mobs in the zone"): its blows at me
       // are judged here, on my copy (ai/puppetBlows.js - each client its own feet), and my copy is a puppet, which never
@@ -2715,7 +2790,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     if (r.c !== undefined) { if (p.c != null && r.c !== p.c && Number.isInteger(r.s)) p.cast = { s: r.s, at: r.u ?? r.g ?? p.target }; p.c = r.c; }
     // TELL8 (10.1): its owner's wind-up, stagger and overreach - the puppet's synthetic state (ai/puppetBlows.js); at ME by
     // the blow's own recipient, judged on my feet at the landing (10.3)
-    if (r.d !== 1 && (r.wk !== undefined || r.ws !== undefined || f.ai._tac?.puppet)) applyBlowRecord(f.ai, r, { origin: r.wo ? _net.toScene(r.wo) : null, me: recipientIsMe(f, r.b ?? r.g ?? p.target), entity: f.entity, collider, sig: SIG });
+    if (r.d !== 1 && (r.wk !== undefined || r.ws !== undefined || f.ai._tac?.puppet)) applyBlowRecord(f.ai, r, { origin: r.wo ? _net.toScene(r.wo) : null, me: recipientIsMe(f, r.b ?? r.g ?? p.target), entity: f.entity, collider, sig: f.entity.revenant ? SIG : null });   // GRANT0 (Spawn-Grants.md section 8): a signature is a revenant's (ai/tactics.js sigBlow) - believed on a puppet that stands as one, inside FOE-FORGE's bound
     if (r.d === 1 && !f.dead) {
       if (r.j !== undefined) casterSoulTrap(f, r);
       const t = p.wire ? _net.toScene(p.wire) : null; if (t) { f.ai.feet[0] = t[0]; f.ai.feet[1] = t[1]; f.ai.feet[2] = t[2]; } puppetDie(f);
@@ -2977,8 +3052,9 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
    *  owner's own word) overtook the build. */
   function standKeptOrphan(from, key, r, qt, feet) {
     if (r.t === undefined || !ENEMY_BASICS[r.t] || _pupPending.has(key) || _pupIndex.has(key)) return;
-    _pupPending.set(key, { ...r, _quest: qt, _orphanMine: true });
-    spawnFoe(r.t, feet, { puppet: from, seq: r.i, gender: GENDER_BIT[r.x === 1 ? 1 : 0], feetGiven: true, yaw: r.y ?? null, level: r.l ?? null, champion: r.cp ?? null })
+    const cp = Number.isInteger(r.cp) && championsOf(from) < PEER_CHAMPION_PUPPETS_MAX ? r.cp : null;   // GRANT0: the stand's own law (applyFoes)
+    _pupPending.set(key, { ...r, _quest: qt, _orphanMine: true, _cp: cp != null });
+    spawnFoe(r.t, feet, { puppet: from, seq: r.i, gender: GENDER_BIT[r.x === 1 ? 1 : 0], feetGiven: true, yaw: r.y ?? null, level: r.l ?? null, champion: cp })
       .then((nf) => {
         if (!nf) return;
         const last = _pupPending.get(key) ?? null;

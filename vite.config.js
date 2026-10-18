@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { createReadStream, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { landingHtml, readBuildSha } from './scripts/landingHtml.mjs';
+import { studioArtIndex } from './scripts/studioArtIndex.mjs';   // STUDIO1: the studio's listing, served and built from the folder
 
 // Dev-only: serve ARENA2 game data at /arena2/*. The data is freeware but
 // never committed or bundled (Port-Doctrine); builds contain no game files.
@@ -263,13 +264,20 @@ export default defineConfig({
         // FIRM1: THE FIRMAMENT LAB - the passive tree's window over made-up purses, no service and no ARENA2, in either
         // dress (`?dress=grimoire`), so the sky can be judged and driven by hand
         firmament: 'firmament.html',
+        // GROWTH: THE GROWTH TAB'S LAB - the pause window on its Growth tab over a made-up character, Firmament book and
+        // captain, no ARENA2 and no service, so the guide and the skies drawn in the pane can be driven by hand;
+        // tools/growthProbe.mjs drives this page.
+        growth: 'growth.html',
         // The texture-archive contact sheet: every record of one
         // TEXTURE.nnn laid out and numbered, to read off which record
         // an item template points at. The player's own ARENA2 through
         // a picker, like mw-inspect - nothing baked in.
         archiveSheet: 'archive-sheet.html',
+        // STUDIO1: THE STUDIO - every picture the port paints itself, as worn, each with its template to download, and the
+        // artists' own pictures beside them (src/tools/studioLab.js; public/art/studio/README.md). No game data.
+        studio: 'studio.html',
       },
     },
   },
-  plugins: [arena2DevServer(), buildTagMeta(), landingHtml()],
+  plugins: [arena2DevServer(), buildTagMeta(), landingHtml(), studioArtIndex()],
 });

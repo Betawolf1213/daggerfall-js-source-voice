@@ -173,8 +173,8 @@
   {
     "name": "AF-R4-clock-behind",
     "file": "src/systems/revenant/revenant.js",
-    "old": "  if (day <= _state.lastDay) return [];",
-    "new": "  if (day === _state.lastDay) return [];",
+    "old": "  if (day <= _state.lastDay) { if (clamped) persist(); return []; }",
+    "new": "  if (day === _state.lastDay) { if (clamped) persist(); return []; }",
     "tests": [
       "test/systems/auditfeud.test.js",
       "test/systems/rvn9_fester.test.js"
@@ -307,19 +307,10 @@
     ]
   },
   {
-    "name": "AF-D2-rout-puppet",
-    "file": "src/systems/revenant/revenant.js",
-    "old": "  if (f.puppet) return false;",
-    "new": "  if (false) return false;",
-    "tests": [
-      "test/systems/auditfeud.test.js"
-    ]
-  },
-  {
     "name": "AF-D3-dead-a-win",
     "file": "src/systems/revenant/revenantCompanions.js",
-    "old": "  return !(last.entity?.health > 0);",
-    "new": "  return !!(last.dead || !(last.entity?.health > 0));",
+    "old": "  const won = !(last.entity?.health > 0);",
+    "new": "  const won = !!(last.dead || !(last.entity?.health > 0));",
     "tests": [
       "test/systems/auditfeud.test.js"
     ]
