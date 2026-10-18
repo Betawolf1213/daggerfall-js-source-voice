@@ -91,7 +91,7 @@ again on the branch before its fix.
 | LAY-10 NIT | The Cost line was the test's synthetic ground, not "a pixel wholly jungle" | FIXED: re-measured on whole grass - about 13,700 flats, ~11 ms on the worker (Real forests' mean 6,200, DFU's scatter 9,200) |
 | LAY-11 NIT | "68% in a glade" (a glade is a gap: about 60%), "never within 2.2 m" (at the trunk's scale), "the canopy may close over [a road]" (the crowns lean 0.4-3.1 m over its sides) | FIXED in the record |
 | LAY-12 NIT | A canopy tree the main thread drops later (a road's clearance, the gate's) still shapes the young trees about it | ACCEPTED: a few young trees fewer beside a road, under a crown that is gone; the worker cannot know the main thread's clearances without moving them onto it |
-| RISK | Nothing in the tree shows a pixel of region 10: DFU's travel map gives Bantha no page (`10-UI/UI-Arc.md`, with the wildernesses and the coast strips), its race is the Redguards', and the jungle lays the rainforest's law over whatever climate it finds | OPEN, the owner's: `ARENA2_PATH=... node tools/jungleExtent.mjs` says its pixels, its box, its climates and its places |
+| RISK | Nothing in the tree shows a pixel of region 10: DFU's travel map gives Bantha no page (`10-UI/UI-Arc.md`, with the wildernesses and the coast strips), its race is the Redguards', and the jungle lays the rainforest's law over whatever climate it finds | CONFIRMED (2026-10-18, the freeware's own data - `tools/fetch-data.sh`, then `tools/jungleExtent.mjs`): **region 10 holds no pixel of POLITIC.PAK and no place in MAPS.BSA** - a name in Daggerfall's region list the map never paints. The jungle as built stands NOWHERE. Due north of Daggerfall city (207, 213) the land is Daggerfall's own to y 150, then Glenpoint (region 18: 6,759 pixels, 445 places, Mountain Woods); the owner's call which land the jungle takes |
 
 ### PERF
 
@@ -151,5 +151,6 @@ haze's uniform renamed through 20 render modules; `renderer.js` (the program's o
 seven glow passes; `ai/cover.js` (the wide grid); `jungleHost.js` (the world's frame, off, under, scratch);
 `jungleNature.js` (the stands, the slopes, the fields, neighbour trunks, the groves); `natureWire.js` new;
 `pixelBuild.js` (the sliced cover, the young's groups, the sun's lift); `world.js` with no line added (`bootWorld` at
-its ceiling); `tools/perfProbe.mjs` and `tools/jungleExtent.mjs` for the owner. Not checked here: a live game (no ARENA2
-in the container), Bantha's real extent, and the frame time on a GPU.
+its ceiling); `tools/perfProbe.mjs` and `tools/jungleExtent.mjs` for the owner. The lanes ran without ARENA2 - the
+freeware fetch (`tools/fetch-data.sh`) was not run until the owner asked (2026-10-18: "Why not install the freeware. Im
+tired of having to ask you to do this"); run then, it confirmed the RISK above. Not checked here: the frame time on a GPU.

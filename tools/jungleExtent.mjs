@@ -1,12 +1,11 @@
 // AUDIT BANTHA1 (RISK, bible/01-Overview/audits/Audit-Bantha.md): WHERE THE JUNGLE STANDS ON THE MAP - read off the
 // owner's own ARENA2, which this repository does not hold. The jungle is the political map's region 10 (Bantha,
-// world/jungle/jungleRegion.js JUNGLE_REGIONS); nothing in the tree shows a pixel of it, DFU's travel map gives it no
-// page (bible/10-UI/UI-Arc.md: with the wildernesses and the coast strips), and its race is the Redguards' - so before
-// anyone walks it, this says how many
-// map pixels it holds, its box, the climates it wears (the jungle lays the rainforest's law over whatever they are) and
-// its places (the names `SCENES=bantha LOC=<town> npm run perf` takes), beside Daggerfall's region for scale.
+// world/jungle/jungleRegion.js JUNGLE_REGIONS). This says how many map pixels each jungle region holds, its box, the
+// climates it wears (the jungle lays the rainforest's law over whatever they are) and its places (the names
+// `SCENES=bantha LOC=<town> npm run perf` takes), beside Daggerfall's region for scale. Run on the freeware's data
+// (2026-10-18): region 10, Bantha, holds NO pixel and no place - Daggerfall names it and never paints it.
 //
-//   ARENA2_PATH=/path/to/ARENA2 node tools/jungleExtent.mjs
+//   sh tools/fetch-data.sh && ARENA2_PATH=/home/claude/dfdata/arena2 node tools/jungleExtent.mjs
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { MapsFile } from '../src/formats/mapsFile.js';

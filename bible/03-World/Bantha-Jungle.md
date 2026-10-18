@@ -248,7 +248,11 @@ the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and eleven m
 audit, sd20c's put back as it was with its pins).
 
 **Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
-no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Open.** Not eyeballed in the running game:
+no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **OPEN - THE JUNGLE
+STANDS NOWHERE.** On the freeware's own data (`tools/fetch-data.sh`, `tools/jungleExtent.mjs`, 2026-10-18) region 10,
+Bantha, holds no pixel of POLITIC.PAK and no place: Daggerfall names it and never paints it. Due north of Daggerfall city
+the land is Glenpoint (region 18). Which land the jungle takes is the owner's call (`JUNGLE_REGIONS`,
+`world/jungle/jungleRegion.js`). **Open.** Not eyeballed in the running game:
 this slice was built in a container with no ARENA2 (the trees' far pictures, the layout over synthetic ground and the
 haze over a synthetic scene were rendered and looked at; Bantha's own land, its real extent on the map and the frame time
 on a GPU are the owner's to see - `HEADED=1 SCENES=bantha LOC=<a town of Bantha's> npm run perf`, then again with
