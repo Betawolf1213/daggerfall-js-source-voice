@@ -444,7 +444,7 @@ test('T30 / GRAVE-PARTY: a find heard before the party was formed is KEPT unland
   s.net.flush();
   assert.deepEqual(find(late), [], 'a stranger lands nothing');
   assert.equal(hoursLeft(late), 0, 'and starts no hours');
-  picture(late.social, 'acct-eve', ['acct-ann', 'acct-eve']);   // Ann's party takes Eve in
+  for (const p of [...s.all, late]) picture(p.social, p.acct, [...PARTY, 'acct-eve']);   // Ann's party takes Eve in: every member's hub picture says so
   const we = windowOf(late);
   assert.ok(openFind(late, 0, we), 'the press reads the kept word again: the find opens');
   assert.deepEqual(findDesc(late), findDesc(s.ann), 'the same find as the party\'s');
@@ -513,4 +513,60 @@ test('T30 / mixed builds: an OLDER build\'s whole-list word is a BIRTH when the 
   sayOld([coin, mk('Mace'), mk('Flail')]);   // and a Flail laid in
   for (const p of [bob, dan]) assert.equal(find(p).filter((it) => it.name === 'Flail').length, 1, `${p.id}: the Flail it put in is the find's, once`);
   assert.equal(find(bob).some((it) => it.name === 'Mace'), false, 'and the Mace is still not back, though the older build\'s every word says it');
+});
+
+// ═══ SLICE 3, THE EDGES OF THE LAW (green with the fix; the first two are guards on what the law keeps) ════════════════════
+
+test('T29 (the loser\'s window): Bob\'s window stands open on his own find when Ann\'s EARLIER search of the coffin reaches him - what his window took of a roll that never was the room\'s is lifted back out of his pack and told, what it laid in comes home, and the list is the party\'s one find', () => {
+  const s = crypt();
+  alignPeriod();
+  const wa = windowOf(s.ann), wb = windowOf(s.bob);
+  assert.ok(search(s.ann, 1, wa), 'Ann searches and finds');
+  const annFind = findDesc(s.ann, 1);
+  clock.t += 700;
+  assert.ok(search(s.bob, 1, wb), 'Bob searches 0.7 s later, before he has heard her');
+  const mine = find(s.bob, 1).map((it) => ({ ...it }));
+  const t = ITEM_TEMPLATES.find((x) => x.name === 'Mace');
+  const Y = { name: t.name, templateIndex: t.index, group: 'Weapons', stackCount: 1, currentCondition: t.hitPoints ?? 50, maxCondition: t.hitPoints ?? 50 };
+  s.bob.entity.items.push(Y);
+  const X = wb.take((it) => it.group !== 'Currency');   // a piece of HIS roll, taken in his window
+  wb.put(Y);
+  s.net.flush();   // Ann's earlier birth reaches Bob while his window stands open on the find
+  s.bob.said.length = 0;
+  wb.close();
+  s.net.flush();
+  assert.equal(holds(s.bob, X), 0, `${X.name}, a piece of the roll that lost, is out of Bob's pack again`);
+  assert.equal(s.bob.entity.items.some((it) => alike(it, Y)), true, 'and the Mace he laid in is home in his pack');
+  assert.ok(s.bob.said.includes(RL.ROOM_TAKEN_TEXT), 'he is told');
+  for (const p of s.all) assert.deepEqual(findDesc(p, 1), annFind, `${p.id}: the party's one find, Ann's`);
+  assert.notDeepEqual(mine.map(desc), annFind, 'two rolls (guard)');
+});
+
+test('T29 (a stranger\'s claim, guard): a stranger in the crypt who knows the find\'s base says a claim on it - the party\'s host, who shows the find, does not hear it', () => {
+  const s = found();
+  const eve = player(s.net, 'acct-eve', { party: null });
+  const birth = s.net.sent.flatMap((f) => f.data.l ?? []).find((w) => w.k === 'srch:0' && Array.isArray(w.b));
+  assert.ok(birth, 'the base travelled with the birth');
+  const claim = { k: 'srch:0', g: birth.g, lv: birth.lv, tm: birth.tm, h: birth.h, b: birth.b, by: birth.by, bn: birth.bn, t: birth.t, q: [{ id: `${eve.id}:st:1`, p: 0, n: 1, tm: clock.t }] };
+  s.net.send(eve.id, { k: ROOM, l: [clone(claim)] });
+  s.net.flush();
+  for (const p of s.all) assert.deepEqual(findDesc(p), s.theFind.map(desc), `${p.id}: nothing taken from the party's find by a stranger's claim`);
+  assert.equal(holds(eve, s.theFind[0]), 0, 'and she holds none of it');
+});
+
+test('D-2.1 (a re-asked claim, guard): Bob\'s claim on the find is said again after the host answered it - the host answers it from its ledger, never judges it twice, and the piece lands once', () => {
+  const s = found();
+  const wb = windowOf(s.bob);
+  assert.ok(openFind(s.bob, 0, wb), 'Bob opens the find');
+  const X = wb.take((it) => it.name === aPiece(s.theFind).name);
+  wb.close();
+  s.net.flush();
+  const want = X.group === 'Currency' ? X.stackCount : 1;
+  assert.equal(holds(s.bob, X), want, 'granted');
+  const claimed = s.net.sent.flatMap((f) => f.data.l ?? []).find((w) => w.k === 'srch:0' && Array.isArray(w.q) && w.q.length);
+  assert.ok(claimed, 'Bob said his claim');
+  s.net.send(s.bob.id, { k: ROOM, l: [clone(claimed)] });   // the same claim again (his verdict frame was lost)
+  s.net.flush();
+  assert.equal(holds(s.bob, X), want, 'still once');
+  for (const p of s.all) assert.equal(find(p).some((it) => it.name === X.name), false, `${p.id}: gone from the find`);
 });

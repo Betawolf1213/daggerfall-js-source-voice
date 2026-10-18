@@ -321,6 +321,7 @@ export function createRoomLoot(host) {
     if (!roomHostSaid(from)) { w.x = []; w.c = []; w.y = []; if (!birth) { w.s = null; w.si = null; } }
     w.q = from == null ? [] : w.q.filter((cl) => claimOf(cl.id, from));
     w.a = from == null ? [] : w.a.filter((p) => claimOf(p.id, from));
+    if (h.search && sees && host._authority && !host.searchRoom.whose({}, from)) { w.q = []; w.a = []; }   // a find this host shows is its party's: a stranger's claim on it is not heard (a stranger never lands a find it was not told of)
     const reask = host._authority && same ? [...w.q, ...w.a].map((c) => c.id).filter((id) => st.answers.has(id)) : [];   // a claim already answered, asked AGAIN (its verdict was lost): answered from the ledger, never judged twice
     if (st && !same && !birth) {   // another mint, which loses to the one here
       if (host._authority && (w.q.length || w.a.length)) { mergeRoomWord(st, w); roomJudge(canon, st); }   // its claims are on a base that is gone: refused

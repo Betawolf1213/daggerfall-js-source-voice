@@ -1973,7 +1973,7 @@ test('AUDIT-WH M5/M6/M7/M10: every family the press acts on has a word, and the 
   assert.match(read('src/scenes/worldModes.js'),
     /if \(key\.startsWith\('droppedLoot:'\)\) return \{ title: (?:interiorDropped\.labelFor\?\.\(key\) \?\? )?lootPileName\(interiorDropped\.contents\?\.\(key\) \?\? null\) \};/,
     'the interior names a pile from its contents too');
-  assert.match(read('src/scenes/dungeonContext.js'), /return \{ title: (?:\(key\.startsWith\('droppedLoot:'\) \? droppedLoot\.labelFor\?\.\(key\) : null\) \?\? )?lootPileName\(api\.lootContents\(key\)\) \};/,   // WILD1: a pile's own label first
+  assert.match(read('src/scenes/dungeonContext.js'), /return \{ title: (?:\(key\.startsWith\('droppedLoot:'\) \? droppedLoot\.labelFor\?\.\(key\) : null\) \?\? )?lootPileName\(api\.lootContents\(key\)\)(?:, \.\.\.\(_lootUnreadable\.has\(roomLootKey\(key\)\) \? \{ unlisted: true \} : \{\}\))? \};/,   // WILD1: a pile's own label first
     'and the dungeon, which is where the word came from');
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) {
     assert.doesNotMatch(read(f).replace(/^\s*(?:\/\/|\*).*$/gm, ''), /title: 'Loot'/,
