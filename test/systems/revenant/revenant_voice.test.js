@@ -67,7 +67,7 @@ test('REVENANT-VOICE the record: a new revenant draws its personality from its i
   _resetForTests(); setPref('lootRarity', true);
   N._resetRevenantForTests();
   const me = { name: 'Ayla Stormwind', isPlayer: true, characterId: 'char-voice' };
-  const foe = { level: 8, mobileType: MOBILE_TYPES.Orc, eliteFoe: true, health: 5, maxHealth: 100 };
+  const foe = { level: 8, mobileType: MOBILE_TYPES.Orc, eliteFoe: true, unquiet: true, health: 5, maxHealth: 100 };
   const fleeLine = N.revenantFleeEvent(foe, 'Elite Orc', { rolls: () => 0 });
   assert.ok(foe._voiceId, 'its voice id minted as it speaks');
   const r = N.revenantDeed(me, foe, 'fled', { mobileType: MOBILE_TYPES.Orc, rolls: () => 0 });

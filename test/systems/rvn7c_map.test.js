@@ -39,7 +39,7 @@ beforeEach(() => {
 
 const LAIR = Object.freeze({ px: 106, py: 100, name: 'Tomb of Vaness', region: 3 });
 function made(p, { lair = LAIR, known = true } = {}) {
-  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  const r = N.revenantDeed(p, { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' }, 'fled', { mobileType: M.Orc, rolls: () => 0 });
   r.lair = lair ? { ...lair } : null; r.lairKnown = known;
   return r;
 }

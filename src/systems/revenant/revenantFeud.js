@@ -49,8 +49,10 @@ export const ADAPT = Object.freeze({
   NIGHT_BLOWS: 1.15,            // a Night-stalker's blows (it comes only by night)
 });
 /** RVN3: from this rank its will must be broken; this many staggers break it - FEUD BALANCE (Feud-Arc.md OPEN 22, Mac,
- *  2026-10-05): one, and a perfect dodge of its blow counts as one (the duel harness: two came one rank-3 fight in nine). */
-export const WILL_RANK = 3;
+ *  2026-10-05): one, and a perfect dodge of its blow counts as one (the duel harness: two came one rank-3 fight in nine).
+ *  UNQUIET (bible/06-Systems/Revenants.md section 46; the owner: "harder"): from rank 2 - it was 3; a rank-1 revenant's
+ *  flight (FLIGHT-FIRST's young line) is the only one left without a will. */
+export const WILL_RANK = 2;
 export const WILL_STAGGERS = 1;
 /** RVN3 (14.1): a blow of its weakness (a weapon class or a metal) x1.5; a daylight weakness x1.25 on every blow while
  *  the sky reads day; an element's on the saving throw (the fold); its poise weight x2 is TELL's (`POISE_WEAK`). */
