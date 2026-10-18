@@ -67,6 +67,7 @@
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../../net/gate/gateBrain.js';
 import { strikeDamage, savedShare } from '../../net/gate/gateStrike.js';
 import { bossFrame, crystalStandIn, hostStandIn, hostCue, BOSS_CUES, CRYSTAL_CLIPS } from '../../world/gate/gateBoss.js';
+import { wordShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's health's share, the relay's word
 import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN, TELEGRAPH_POOL_SPIRE } from '../../render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer } from '../../render/courtCrystals.js';
 import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../../ui/gate/gateTitleCard.js';
@@ -666,9 +667,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     // bodyR - the reach the law judges), its HEIGHT the drawn sprite's (the relay judges no height: a blow or a bolt at the head
     // you see meets him, never passes through it); it stands where the sprite's feet are drawn
     if (!b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0) {
-      d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i), mobile: look.mobile, name: look.name, m: b.max };
+      // FIELD BUGS 2026-10-18b RELAY-SHARE: its stand-in reads its health as the relay says it - `hp` of its whole, refilled below
+      d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i, () => wordShare(d.target?.hp, d.target?.m)), mobile: look.mobile, name: look.name, m: b.max, hp: b.hp };
       d.target.feet[0] = d.at[0]; d.target.feet[1] = centre[1] + y; d.target.feet[2] = d.at[2];
-      d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.drawn / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
+      d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.drawn / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max; d.target.hp = b.hp;
       _targets.push(d.target);
     }
     // EG-H1: the WIND once the wind-up is past FEINT_AT and the blow still stands - a feint's cut comes first, so it never glints
@@ -686,7 +688,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     c.grow = (b.fl & EG_FL.ward) !== 0 ? 0.6 : 1;
     _crystals.push(c);
     if (!b.goneAt && (b.fl & EG_FL.ward) === 0) {
-      c.target ??= { i: b.i, feet: [0, 0, 0], height: CRYSTAL_H, radius: CRYSTAL_R, entity: crystalStandIn({ mobile: 31, scale: 1 }, b.i), mobile: 31, name: key, m: b.max };
+      c.target ??= { i: b.i, feet: [0, 0, 0], height: CRYSTAL_H, radius: CRYSTAL_R, entity: crystalStandIn({ mobile: 31, scale: 1 }, b.i, () => c.hp), mobile: 31, name: key, m: b.max };   // FIELD BUGS 2026-10-18b RELAY-SHARE: its health as the relay says it (`c.hp`, the share it is drawn at)
       c.target.feet[0] = c.at[0]; c.target.feet[1] = c.at[1]; c.target.feet[2] = c.at[2]; c.target.m = b.max;
       _targets.push(c.target);
     }

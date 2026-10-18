@@ -48,6 +48,7 @@ import { playerDoor } from './playerDoor.js';
 import { isMagicallyConcealed } from './effects.js';
 import { near, foeGroup, elementShare } from './loot/lootPowers.js';   // AUDIT SCHOOLS (L1 H1-H2, L3 F1): the one reach law, the one foe group, the one element share
 import { KNIGHT_CITY_WATCH } from '../characters/mobile/mobileTypes.js';
+import { healthShare } from '../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's share of its health, the one law
 import { hudText } from './notify.js';
 import { t } from './textManager.js';
 
@@ -79,7 +80,7 @@ export function awakePathId(entity) {
   return pathAwake(entity)?.id ?? null;
 }
 const me = () => playerDoor()?.player?.() ?? playerEntity;
-const share = (e) => (Number.isFinite(e?.health) && e.maxHealth > 0 ? e.health / e.maxHealth : 1);
+const share = (e) => healthShare(e) ?? 1;   // FIELD BUGS 2026-10-18b RELAY-SHARE: the one law (combat/healthShare.js)
 /** AUDIT SCHOOLS L1 H2: through the loot's one foe group (lootPowers.js foeGroup) - a class foe's careerIndex is its
  *  class's, and read as a monster's it named a Barbarian, a Knight and the City Watch undead. */
 const undeadOrDaedra = (t) => { const g = foeGroup(t); return g === 'undead' || g === 'daedra'; };
