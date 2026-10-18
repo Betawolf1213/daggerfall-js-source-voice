@@ -792,7 +792,7 @@ function ascentLaid(seed, h, geo, law) {
 }
 /** A hall laid on one try, unproven and unkept (spec law 9: null where its plan finds no way) - for a tool and a test asking
  *  why a try did not stand. */
-export const egHallTry = (seed, h, geo = 0, at = 0, law = EG_SPEC) => layHall(seed >>> 0, h, geo | 0, at, law);
+export const egHallTry = (seed, h, geo = 0, at = 0, law = _lawUnnamed) => layHall(seed >>> 0, h, geo | 0, at, law);   // (EG-PERFECT: the law unnamed - the seam's, as egHallOf's)
 /** How many plainest tries a spec law 9 hall is given past EG_RELAY_MAX before the law says it has none (never met: pinned). */
 export const EG_ASCENT_LAST_TRIES = 24;
 /** THE BROKEN WAY (spec law 10): the plan's own tries - a hall whose way the planner (not THE TIMED SOLVER) refused is laid
@@ -1758,7 +1758,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC, hero = /** @type {{ n
         nodes: asc.nodes.map((q) => [m(q[0]), m(q[1]), m(q[2])]),
         links: asc.links.map((l) => ({ a: l.a, b: l.b, kind: l.kind, road: l.road, len: m(l.len), ...(l.one ? { one: 1 } : {}), ...(l.climb != null ? { climb: l.climb } : {}) })),
         main: asc.main,
-        courses: asc.segs.map((g) => ({ x0: m(g.x0), x1: m(g.x1), z0: m(g.z0), z1: m(g.z1), y0: m(g.y0), y1: m(g.y1) })),
+        courses: asc.segs.map((g) => ({ x0: m(g.x0), x1: m(g.x1), z0: m(g.z0), z1: m(g.z1), y0: m(g.y0), y1: m(g.y1), ...(g.broken ? { b: 1 } : {}) })),   // (THE BROKEN WAY: a broken bridge's ground marked)
       },
       climbs: asc.climbs.map((q) => ({ x0: m(q.x0), z0: m(q.z0), x1: m(q.x1), z1: m(q.z1), y0: m(q.y0), y1: m(q.y1), ledges: q.ledges.map(m), face: q.face, d: m(q.d), road: q.road })),
       voids: asc.voids.map((q) => ({ poly: q.poly.map((p) => [m(p[0]), m(p[1])]), y0: m(q.y0), y1: m(q.y1) })),
