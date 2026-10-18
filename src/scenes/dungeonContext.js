@@ -1446,9 +1446,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   let _roomMintHold = 0;            // a restore lands the room's words before anything mints over them
   let _roomClaimN = 0;              // this context's claims, counted (roomClaimId)
   let _roomNowMs = 0;               // the frame's clock as the claims' tick last read it
-  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
+  const { _roomBase, _roomMine, _roomNextGen, _roomState, composeRoomContainer, forgetRoomContainer, holderList, isRoomBaseContainer, landRoomWord, lootBuiltOf, mintUnbornRoom, roomBaseHolder, roomBodyBorn, roomCanonOfFoe, roomClaimTick, roomGive, roomLootOn, roomRecordOf, roomSayNow, roomSettle, roomTakeSeat, roomUnborn, searchFound, settleRoomBonus } = createRoomLoot({   // HOST-SPLIT: src/scenes/roomLootHost.js
     _deepCleared, _deepFoeCleared, _sharedFoe, _wildDungeon, _wildRing, eliteLootOpts, fightN, foes, lootKeyOf,
-    lootableBody, opts, respawnDue, rollPileItems, roomLootKey, settleLootFlat,
+    lootableBody, opts, respawnDue, rollPileItems, roomLootKey, searchHeard, searchables, settleLootFlat,
     get _authority() { return _authority; },
     get _foesFrom() { return _foesFrom; },
     get _layoutFoes() { return _layoutFoes; },
@@ -1467,6 +1467,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     get lootKey() { return lootKey; },
     get lootPiles() { return lootPiles; },
     get onlineRoom() { return onlineRoom; },
+    get searchRoom() { return searchRoom; },   // OUTDOOR-LOOT: whose a find's word is (const below)
   });
   async function buildFoeAt(e, fallbackFlat = true, { at = -1, puppet = false, feetGiven = false } = {}) {   // DISC28-H: `feetGiven` - the position is already a motor's FEET (a streamed puppet), not a marker's sprite centre
     const basics = ENEMY_BASICS[e.mobileType];
@@ -6299,6 +6300,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         // C4 says - forgetting it would hand a joiner a fresh base the others no longer see. An EMPTIED pile's hour is up:
         // its next life is a new generation (its emptying stamp, past the last), minted as any unborn pile's is
         const h = roomBaseHolder(canon), st = _roomState.get(canon), base = st ? _roomBase.get(canon) : null;
+        if (h?.search) { _lootSeen.delete(canon); _lootAt.delete(canon); forgetRoomContainer(canon); continue; }   // OUTDOOR-LOOT: a find the room let go at its hour (WORLD8) - the object's own list stands, as it did
         if (!h?.pile || !st || !base || !roomEmptied(st, base.items.length)) continue;
         const g = Math.max(Math.trunc(_lootAt.get(canon)), st.terms.g + 1);
         _lootSeen.delete(canon); _lootAt.delete(canon); forgetRoomContainer(canon); _roomNextGen.set(canon, g);
@@ -8471,7 +8473,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     }
     sb.items.length = 0;
     sb.items.push(...find); Object.assign(sb, searchRoom.mine());   // in place: the room's holder; GRAVE-PARTY: and the search mine - AUDIT G5: my account and my character's name
-    publishLoot(`srch:${i}`);   // the room hears it now - its five hours, and the find's list
+    if (!searchFound(i, find, now)) publishLoot(`srch:${i}`);   // the room hears it now - its five hours, and the find's list; OUTDOOR-LOOT: online the find is MINTED (roomLootHost.js searchFound) and the room's word is takes against it
     let rows, onClose = null;
     if (outcome === 'foe') {
       const roster = enemies.filter((e) => e && !e.allied && e.reaction !== 'passive').map((e) => e.mobileType);
@@ -9763,7 +9765,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // validSharedFoe) has no field for it, and one there is a relay deploy. Every client destroys the same flame
       // foes on its own build (PrepareAbyssDungeon), and the hour's respawn refuses a destroyed foe on each.
       for (const f of w.foes) delete f.abyssDestroyed;
-      w.loot = [...lootRecords([..._lootSeen]), ...searchRoom.records()];
+      w.loot = [...lootRecords([..._lootSeen]), ...searchRoom.records((c) => _roomState.has(c))];
       for (const f of w.foes) delete f.noBody;   // REVENANT-FATE: the room's door has no field for it either
       for (const f of w.foes) delete f.eliteFoe;   // AUDIT BAL: the save's word on an elite is the save's alone - every client's pick is the room's (applyWorld)
       // AUDIT WORLD34 C2: the memory's action records are the SHARED half, as an act's are (AUDIT WORLD3 B1) - the

@@ -90,8 +90,9 @@ export const signatureOf = (/** @type {string} */ s) => { const h = hashStream(S
 // ---- the container and its terms ------------------------------------------------------------------------------------
 
 /** The kinds of key whose container has a shared base (takeLoot's vocabulary): a layout pile, a layout body, a rest
- *  encounter's body. A searched object's find (`srch:`) is rolled once at its search and said at once - WORLD4's word. */
-export const ROOM_BASE_KINDS = Object.freeze(['loot', 'corpse', 'enc']);
+ *  encounter's body - and (OUTDOOR-LOOT slice 3) a searched object's find (`srch:`), whose base is CARRIED: the searcher's roll,
+ *  minted once at the search (carriedBase below), not computed. */
+export const ROOM_BASE_KINDS = Object.freeze(['loot', 'corpse', 'enc', 'srch']);
 export const isRoomBaseKind = (/** @type {string} */ canon) => typeof canon === 'string' && ROOM_BASE_KINDS.includes(canon.split(':')[0]);
 
 /** THE CONTAINER'S NAME, which its dice are seeded by: the room (its key - every client in it the same), the container's

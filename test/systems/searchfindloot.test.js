@@ -218,6 +218,8 @@ function search(P, i, win, roll = 0.5) {
 function openFind(P, i, win) { P.window = win; P.as(() => P.h.api.takeLoot(`search:${i}`, 'grab')); return win.cur; }
 const find = (P, i = 0) => P.state.searchables[i].items;
 const sig = (it) => JSON.stringify(it);
+/** The same piece, whoever's copy: a searcher's roll and the party's copies of it (each through the wire's projection) differ in form, never in what they are. */
+const alike = (a, b) => a.group === b.group && a.templateIndex === b.templateIndex && a.name === b.name && (a.stackCount ?? 1) === (b.stackCount ?? 1);
 const names = (list) => (list ?? []).map((it) => it.name);
 /** THE WINDOW STAND-IN over the deps the host's openInventory hands createInventoryWindow (`loot.items()`, `onClose`). */
 function windowOf(P) {
@@ -264,7 +266,7 @@ function found() {
   return { ...s, theFind };
 }
 const gold = (P) => P.entity.goldPieces | 0;
-const holds = (P, it) => (it.group === 'Currency' ? gold(P) : P.entity.items.filter((x) => sig(x) === sig(it)).length);
+const holds = (P, it) => (it.group === 'Currency' ? gold(P) : P.entity.items.filter((x) => alike(x, it)).length);
 
 // ═══ AC9 (a) - A STALE CLOSE NEVER BRINGS BACK A TAKEN PIECE ═══════════════════════════════════════════════════════
 
@@ -277,7 +279,7 @@ test('AC9 (a): two partymates have Ann\'s find open; Ann takes a piece and close
   const had = holds(s.ann, X);
   wa.close(); s.net.flush();
   wb.close(); s.net.flush();
-  const back = s.all.filter((p) => find(p).some((it) => sig(it) === sig(X))).map((p) => p.id);
+  const back = s.all.filter((p) => find(p).some((it) => alike(it, X))).map((p) => p.id);
   assert.deepEqual(back, [], `AC9 (a): ${X.name}, taken by Ann, is back in the find for ${back.join(', ')} - Bob's untouched close said its stale whole list (publishLoot -> lootRecords) and dungeonContext.js applyLoot landed it over the find (srch: is not a room base container): a dupe`);
   assert.equal(holds(s.ann, X), had, 'and Ann holds it, once');
 });
@@ -295,9 +297,9 @@ test('AC9 (b): Ann\'s window stands open on the find; Bob opens it, puts a piece
   wb.put(Y);
   wb.close(); s.net.flush();
   wa.close(); s.net.flush();
-  const lost = s.all.filter((p) => find(p).filter((it) => sig(it) === sig(Y)).length !== 1).map((p) => p.id);
+  const lost = s.all.filter((p) => find(p).filter((it) => alike(it, Y)).length !== 1).map((p) => p.id);
   assert.deepEqual(lost, [], `AC9 (b): the Mace Bob put in is not in the find, once, for ${lost.join(', ')} - Ann's untouched close of a window opened before the put said her stale whole list over the party's: the put is ERASED`);
-  assert.equal(s.bob.entity.items.some((it) => sig(it) === sig(Y)), false, 'and Bob holds it no more');
+  assert.equal(s.bob.entity.items.some((it) => alike(it, Y)), false, 'and Bob holds it no more');
 });
 
 // ═══ AC9 (c) - TWO SEARCHES IN ONE BREATH CONVERGE ═════════════════════════════════════════════════════════════════
