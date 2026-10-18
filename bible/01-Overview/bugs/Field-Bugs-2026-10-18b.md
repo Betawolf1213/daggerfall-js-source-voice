@@ -214,7 +214,7 @@ Court lord asleep in its ring.
 
 FIXED. One law: the relay's strike rule is `egBodies.js:"export function egStruckOff(view, b, x, y, z) {"`, called by
 `egBrain.js:"if (egStruckOff(view, body, p.x, p.y, p.z)) return out;"`, and the screen asks the same rule plus the
-flags the relay takes nothing through and a lord asleep (`egBodies.js:"export const egStrikeTurned = (view, b, x, y, z) =>"`).
+flags the relay takes nothing through and a lord asleep (`egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0) {"`).
 Each frame `egFight.js:"function turnStandIn(t, b) {"` marks a target's stand-in `warded` when the relay would refuse a
 blow from my feet; every heal and power already refuses a warded target, and Vampiric Effect now does too
 (VAMPIRIC-WARD). Nothing is sent, nothing bleeds, the swing and the shaft ring off as off the Warden's ward, and the hit
