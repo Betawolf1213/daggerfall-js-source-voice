@@ -22024,6 +22024,11 @@
   "tr": "1e1c9184ac04",
   "by": "claude-in-session"
  },
+ "rvn.kicker.omen": {
+  "en": "88d04bb57708",
+  "tr": "75c7885d1836",
+  "by": "claude-in-session"
+ },
  "rvn.roster.abroadHead": {
   "en": "e8aceea96a26",
   "tr": "3331c7a9de77",
@@ -22794,6 +22799,26 @@
   "tr": "f3f96fa0c99e",
   "by": "claude-in-session"
  },
+ "rvn.unq.hunt.trail": {
+  "en": "9c738ed6f24a",
+  "tr": "9bdf411e76dd",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.omen.mastery": {
+  "en": "b6bc19edb157",
+  "tr": "7607bb3c5217",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.omen.plunder": {
+  "en": "4483b23bd7e2",
+  "tr": "170ec8ac0f62",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.omen.vengeance": {
+  "en": "7782f3f98667",
+  "tr": "a85e60c23d7f",
+  "by": "claude-in-session"
+ },
  "rvn.unq.page.ambition": {
   "en": "1b239348d8d3",
   "tr": "5295326a1e62",
@@ -22854,6 +22879,16 @@
   "tr": "4b70527fe96c",
   "by": "claude-in-session"
  },
+ "rvn.unq.page.woundedCome": {
+  "en": "7dc1f43efcb6",
+  "tr": "b17bd26609ba",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.page.woundedTag": {
+  "en": "e9496d8086e9",
+  "tr": "a2b20593c70d",
+  "by": "claude-in-session"
+ },
  "rvn.unq.page.wounds": {
   "en": "fcf909f2faec",
   "tr": "b4ae3c70f67a",
@@ -22877,6 +22912,11 @@
  "rvn.unq.rumor.vengeance": {
   "en": "1e6c7b93e47f",
   "tr": "23fa79b49809",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.trail": {
+  "en": "54d0984b2a68",
+  "tr": "6ff80e36c63b",
   "by": "claude-in-session"
  },
  "rvn.unq.wound.bled": {

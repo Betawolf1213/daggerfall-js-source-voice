@@ -91,7 +91,7 @@ import { sanitizeGear, gearItems } from './revenantGear.js';   // RVN-GEAR: a sw
 import { sanitizeErrand } from './revenantErrands.js';   // RVN-ERRAND: one abroad, read back
 import { rvnHeldStars, rvnLevelOf, rvnStarPoints, rvnLoyaltyMove, rvnXpOf } from './revenantStars.js';   // RVN-STARS: its sky and its level, read back; its loyalty's losses as its oath bears them
 import { setUnquietGate, isUnquiet } from './unquietMark.js';   // UNQUIET (section 46): the mark - who may rise
-import { BLOOD_DEEDS, deedRanks, sanitizeBlood, revenantCraft, craftPace, beginCraft, craftStep, woundOf, withWound, sanitizeWounds, woundEffects, woundedEdge, ambitionOf, AMBITION, masteryFestersOn, plunderGold, DREAD, mayAscend, craftFleeWords, woundWords, ambitionRumor } from './revenantUnquiet.js';   // UNQUIET: born of flight, its craft, its wounds, its ambition, the Dread
+import { BLOOD_DEEDS, deedRanks, sanitizeBlood, revenantCraft, craftPace, beginCraft, craftStep, woundOf, withWound, sanitizeWounds, woundEffects, woundedEdge, ambitionOf, AMBITION, masteryFestersOn, plunderGold, DREAD, mayAscend, craftFleeWords, woundWords, ambitionRumor, HUNT, trailWarm, trailHours, sanitizeTrail, trailWords, omenWords } from './revenantUnquiet.js';   // UNQUIET: born of flight, its craft, its wounds, its ambition, the Dread
 import { t } from '../textManager.js';   // AUDIT RVN D7: the new cards' kickers in the player's language
 import { tagHit, HIT_TAGS } from '../../ui/hitNumbers.js';   // RVN3: the "Weakness" word on my blow's number
 import { SOUND } from '../soundClips.js';   // RVN3: the hiss of a weakness found
@@ -216,9 +216,10 @@ export const REVENANT_EPITHETS = Object.freeze({
  *   fate: 'executed'|'sworn'|'released'|null, sworn: boolean, swornAt: number|null, companion: RevenantCompanion|null,
  *   scars: {k: string, at: number}[], learned: string[], weak: string, weakKnown: 0|1|2, sig: string|null, kin: number[],
  *   lair: {px: number, py: number, name: string, region: number}|null, lairKnown: boolean, took: any[], wrath: number,
- *   fights: number, wounds: string[], blood: number, dread: boolean, gone?: boolean }} RevenantRecord */
+ *   fights: number, wounds: string[], blood: number, dread: boolean, trail: number, omen: number, gone?: boolean }} RevenantRecord */
 // UNQUIET (section 46): `wounds` what the player left on it (revenantUnquiet.js WOUNDS), `blood` its kills and fellings
-// since its last rank (BLOOD_RANK ranks it), `dread` ascended - gone to ground in its lair for good
+// since its last rank (BLOOD_RANK ranks it), `dread` ascended - gone to ground in its lair for good; UNQUIET II (section
+// 47): `trail` the minute its escape's trail cools (0 - none), `omen` the due minute its coming was foretold for
 // RVN1 (section 26): every field after `companion` is FEUD's, its law and an older record's value systems/revenant/revenantFeud.js
 // feudFields; the signature's name, the band's name and the epithets are derived from them, never stored
 
@@ -364,6 +365,7 @@ function sanitize(r) {
     ...feudFields(r, { id: r.id, mobileType: r.mobileType, rank }),   // RVN1 (section 26): FEUD's fields, each by its law
     // UNQUIET (section 46): its wounds, its blood since its last rank, and the Dread (rank 5, never sworn)
     wounds: sanitizeWounds(r.wounds), blood: sanitizeBlood(r.blood), dread: r.dread === true && !r.sworn && rank >= REVENANT_MAX_RANK,
+    trail: sanitizeTrail(r.trail), omen: sanitizeTrail(r.omen),   // UNQUIET II: its trail's cooling, its omen's due minute
   };
 }
 /** Two lists as one: per id, the higher revision. */
@@ -523,7 +525,7 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
       fate: null, sworn: false, swornAt: null, companion: null,   // REVENANT-FATE: not judged yet
       person: rec ? foeSeed(rec) : revenantPerson({ id }),   // FB1012d ALLY-RACE: the body it did the deed in is the person it stays
       ...newFeudFields(id, mobileType, 1, entity.career ?? null),   // RVN1 (section 26): its draws (the weakness never what its career shrugs off), and nothing yet learned
-      wounds: [], blood: 0, dread: false,   // UNQUIET: nothing left on it yet, no blood since a rank, not the Dread
+      wounds: [], blood: 0, dread: false, trail: 0, omen: 0,   // UNQUIET: nothing left on it yet, no blood since a rank, not the Dread; no trail, no omen
     };
     _state.list.push(r);
     trimLiving(r);
@@ -555,6 +557,9 @@ export function revenantDeed(player, entity, deedName, { mobileType = entity?.mo
   if (ascended) deed(r, 'ascended', now);
   // UNQUIET: A WOUND - every getting-away keeps one by the blow that broke it (its ledger's last), the oldest healing
   if (deedName === 'fled') { const w = woundOf(ledger?.last); if (w) { r.wounds = withWound(r.wounds, w); _newWounds.set(r.id, w); } }
+  // UNQUIET II (section 47): THE TRAIL - a getting-away with a lair to go to leaves it warm: its lair known at once, and
+  // found there before HUNT.MINUTES it is still wounded (applyRevenant). Never the Dread's - it is at home for good
+  if (deedName === 'fled' && r.lair && !r.dread) { r.trail = now + HUNT.MINUTES; r.lairKnown = true; }
   // RVN1 (section 12): the fight folded into its SCARS - its leading source, its lessons, the deed - and counted
   const kinds = feudScars(ledger, deedName);
   r.scars = withScars(r.scars, kinds, now);
@@ -936,6 +941,10 @@ export function applyRevenant(entity, r, { now = nowMinutes(), turned = false } 
   if (edge.nightStalker && skyIsNight()) entity.damageScale *= ADAPT.NIGHT_BLOWS;
   entity.revenant.blows = entity.damageScale / prior;   // FEUD WIRE (Feud-Arc.md 25): its stand's blows over its kind's, for its puppets (revenantFeud.js feudWire `rb`)
   computeEntityMods(entity);
+  // UNQUIET II (section 47): FOUND ON ITS TRAIL - stood while its escape's trail is warm (in its den, not yet healed), at
+  // HUNT.HEALTH of its health; whatever comes of it, the trail is followed
+  if (trailWarm(r, now)) { entity.health = Math.max(1, Math.round(entity.maxHealth * HUNT.HEALTH)); entity.revenant.wounded = true; }
+  r.trail = 0;
   r.out = true; r.outAt = Date.now();
   r.fights = (r.fights | 0) + 1;   // RVN1: a return is a fight (an older record's count is kills + escapes + returns)
   if (!turned) { r.returns++; deed(r, 'returned', now); }   // RVN11c: a turning is its own deed (`betrayed`)
@@ -1105,6 +1114,8 @@ const KICKERS = Object.freeze({
   get errand() { return t('rvn.kicker.errand', 'Mission'); }, get errand_back() { return t('rvn.kicker.errandBack', 'Returned'); }, get art() { return t('rvn.kicker.art', 'Art'); },
   // UNQUIET (section 46): a rank-5 revenant gone to ground for good
   get ascended() { return t('rvn.kicker.ascended', 'The Dread'); },
+  // UNQUIET II (section 47): its coming, foretold
+  get omen() { return t('rvn.kicker.omen', 'An omen'); },
 });
 /** @typedef {{ kind: string, kicker: string, id: string|null, name: string, rank: number, sub: string, mood: string|null,
  *   portrait: { archive: number, record: number } | null, speech: string|null, body: string|null, line: string }} RevenantEvent */
@@ -1168,10 +1179,12 @@ export function revenantEscapeEvent(r, playerName, { rolls = Math.random, archiv
   const w = woundWords(_newWounds.get(r.id));
   _newWounds.delete(r.id);
   const marked = w ? ` ${t('rvn.unq.escapeWound', 'It bears your mark: {wound}.', { wound: w.name })}` : '';
+  // UNQUIET II (section 47): and where its trail leads
+  const trail = r.history?.at(-1)?.deed === 'fled' && trailWarm(r, nowMinutes()) && r.lair ? ` ${trailWords(r.lair.name)}` : '';
   return revenantEvent('escape', r, {
     speech,
-    body: `Got away. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.${marked}`,
-    line: `${revenantEscapeLine(r)}${marked}`, archive,
+    body: `Got away. ${r.rank > 1 ? `Now rank ${revenantRankNumeral(r.rank)} - it` : 'It'} will remember this.${marked}${trail}`,
+    line: `${revenantEscapeLine(r)}${marked}${trail}`, archive,
   });
 }
 /** RVN3 (14.1): its weakness - found (my blow of it: what it is) or hinted (its flinch: the narrator's line). */
@@ -1236,7 +1249,7 @@ export function revenantMapMarks() {
 /** RVN7c (18.3): THE HUNTS, IN THE QUEST LOG - each lair heard of as an active side quest (scenes/quest/questBridge.js
  *  questLog's shape, BOUNTY1's precedent): "Hunt: Grushnak the Butcher", the way there from `here` (my map pixel), no
  *  clock. Its Abandon (systems/huntJournal.js) forgets the lair. */
-export function revenantHuntEntries(here = null) {
+export function revenantHuntEntries(here = null, { now = nowMinutes() } = {}) {
   if (revenantHeld()) return [];   // RENOWN-GATE: held - no hunt in the log for a lair none waits in
   if (!revenantOn()) return [];
   const line = (text) => ({ formatting: 'text', text });
@@ -1246,6 +1259,8 @@ export function revenantHuntEntries(here = null) {
     const kind = enemyDisplayName(r.mobileType) ?? 'Revenant';
     const lines = [`${kind}, rank ${revenantRankNumeral(r.rank)}.`, `Its lair: ${r.lair.name}${way} - marked on your map with a red circle.`,
       r.dread ? t('rvn.unq.hunt.dread', 'The Dread will not come to you again. Go to it.') : 'Find it there before it finds you.'];   // UNQUIET: the Dread waits
+    // UNQUIET II (section 47): its trail warm - wounded in its den, for a while
+    if (trailWarm(r, now)) lines.push(t('rvn.unq.hunt.trail', 'Wounded - it went to ground here to heal. {hours, plural, one {# hour} other {# hours}} before it has.', { hours: trailHours(r, now) }));
     return { id: `${HUNT_QUEST_PREFIX}${r.id}`, name: `Hunt: ${r.name}`, questName: 'HUNT', hunt: true, clockSeconds: null, messages: [lines.map(line)] };
   });
 }
@@ -1398,6 +1413,11 @@ export function revenantFesterEvent(r, { archive = null } = {}) {
   const body = ambitionOf(r.personality) === 'mastery' ? t('rvn.unq.fester.mastery', '{given} grows bolder - it has been training.', { given: r.given }) : `${r.given} grows bolder - it has waited too long.`;   // UNQUIET: a revenant of mastery trained
   return revenantEvent('festered', r, { body, line: body, archive });
 }
+/** UNQUIET II (section 47): AN OMEN - the day it is due, the player warned in its ambition's words. */
+export function revenantOmenEvent(r, { archive = null } = {}) {
+  const body = omenWords(ambitionOf(r.personality), r.given);
+  return revenantEvent('omen', r, { body, line: body, archive });
+}
 /** RVN7d (18.4): a rest in its own lair, answered - "You wake to Grushnak standing over you." */
 export function revenantWakeEvent(r, { archive = null } = {}) {
   const body = `You wake to ${r.given} standing over you.`;
@@ -1534,12 +1554,23 @@ export function takeRevenantNotice(player, { now = nowMinutes(), rolls = Math.ra
   ensureMirror(player);
   revenantFester(player, { now, rolls });   // RVN9: the days it waited, caught up first - a rank-up is its own notice
   const r = _state.list.find((x) => x.notice && !x.defeated);
-  if (!r) return null;
+  if (!r) return revenantOmen(now);   // UNQUIET II: nothing else to say - perhaps its coming
   const ev = r.notice === 'slew' ? revenantRiseEvent(r, player.name) : r.notice === 'festered' ? revenantFesterEvent(r) : r.notice === 'deserted' ? revenantDesertEvent(r, { playerName: player.name }) : null;   // RVN11b: a deserter's card
   r.notice = null;
   touch(r);
   persist();
   return ev;
+}
+/** UNQUIET II (section 47): AN OMEN, once a due day - the first living, unsworn revenant not out, not the Dread, due at
+ *  `now` and not yet foretold for this due day (`omen`, its due minute): its card. Held or off, none. */
+function revenantOmen(now) {
+  if (!revenantOn() || revenantHeld()) return null;
+  const r = livingRevenants().find((x) => !x.out && !x.dread && x.dueAt <= now && x.omen !== x.dueAt);
+  if (!r) return null;
+  r.omen = r.dueAt;
+  touch(r);
+  persist();
+  return revenantOmenEvent(r);
 }
 
 // ── the save ────────────────────────────────────────────────────────

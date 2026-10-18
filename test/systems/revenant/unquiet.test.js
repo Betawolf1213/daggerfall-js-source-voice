@@ -364,7 +364,7 @@ test('UNQUIET WOUNDS: the blow that broke it leaves its wound - a blade bleeds i
   again(p, r, 'fled', { last: 'arrow' });
   assert.deepEqual(r.wounds, ['lamed'], 'an escape keeps one');
   const ev = N.revenantEscapeEvent(r, 'Ayla', { rolls: () => 0 });
-  assert.ok(ev.body.endsWith(' It bears your mark: Lamed.'), ev.body);
+  assert.ok(ev.body.includes(' It bears your mark: Lamed.'), ev.body);
   assert.ok(!N.revenantEscapeEvent(r, 'Ayla', { rolls: () => 0 }).body.includes('your mark'), 'said once');
   again(p, r, 'slew', { last: 'blade' });
   assert.deepEqual(r.wounds, ['lamed'], 'a kill leaves none - it was never broken');

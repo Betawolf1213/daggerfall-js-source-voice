@@ -1418,3 +1418,64 @@ sink close enough to have been cornered anyway. Vengeance's days read at the rol
 the law now (re-aimed at 3). FEUD HARNESS's stand mid-run and its rally mid-scatter were never reached by a runner a bolt
 outruns; a chaser past any player's run now reads them. Each pin was rewritten, and all nine now die - 1,731 dead, the two
 equivalents as recorded.
+
+## 47. The hunt (UNQUIET II, 2026-10-18)
+
+The owner: "Keep building" - UNQUIET (section 46) asked "we need to go deeper on the experience". Section 46 made a
+revenant live by getting away. This section makes the getting away the start of a hunt, warns of its coming, and pays
+for the Dread. Every piece runs through doors the hosts already have, so no host grew. The law is
+`src/systems/revenant/revenantUnquiet.js` (`HUNT`, `trailWarm`, `trailHours`, `trailWords`, `omenWords`); the record,
+its deeds and its doors are `revenant.js`'s.
+
+### 47.1 The trail
+
+- **AN ESCAPE LEAVES ONE.** Every getting-away with a lair to go to leaves a **trail**: an escape, the will's tear-away,
+  or a slip from the choice (the `fled` deed). Its lair is **known at once** - the map's red circle and the hunt in the
+  quest log. The trail stays warm for **twelve hours** of the character's clock (`HUNT.MINUTES` 720, the record's `trail`,
+  saved).
+- **NO TRAIL.** A kill, the player's flight, or a getting-away with no lair (none in reach) leaves none. Neither does
+  the Dread, nor its ascent: it is at home for good.
+- **THE ESCAPE'S CARD** ends with where it leads: "Its trail leads to the Tomb of Vaness. It has gone to ground there to
+  heal - catch it before it does."
+- **FOUND ON IT.** Entering its lair finds it there, since a known lair is enough (RVN7d's `revenantForLair`). Found
+  while the trail is warm, it stands at **60%** of its health (`HUNT.HEALTH`) and is marked wounded on its stamp: it went
+  to ground to heal, and has not. Whatever comes of the fight, the trail is followed (`trail` 0). Found after it cools,
+  it stands whole.
+- **THE HUNT AND THE PAGE.** While the trail is warm, the hunt in the quest log adds "Wounded - it went to ground here to
+  heal. 11 hours before it has." The Revenants page tags it **Wounded** - "Gone to ground in the Tomb of Vaness to heal -
+  11 hours before it has. Find it there." Held (RENOWN-GATE) it says held, since no lair stands one then.
+
+So a flight is no longer only a loss of the fight. The player who follows it at once meets it wounded, in a place of the
+game's choosing - the loop the owner asked for: harder, rarer, and fled from rather than killed by.
+
+### 47.2 Omens
+
+- **ITS COMING, FORETOLD.** The day a revenant falls due, the notice step - the encounter tick's own question - answers
+  with an **omen** card ("An omen", a dusk-blue edge) in its ambition's words:
+  - vengeance: "You feel eyes on your back. Grushnak is hunting you again."
+  - mastery: "Word reaches you that Grushnak is ready to face you again."
+  - plunder: "Travellers speak of Grushnak on the roads again. It is coming for you."
+- **ONCE A DUE DAY.** The record's `omen` holds the due minute it was foretold for, and it rides the save. A card already
+  waiting (a kill's, a festering's, a deserter's) is said first, the omen at the next tick.
+- **NEVER** for one out in the world, the Dread (at home), the sworn, the held, or with the switch off.
+
+### 47.3 The Dread's trophy
+
+Destroying the Dread (REVENANT-FATE's kill) drops its trophy as a **Legendary** always (`revenantTrophy.js`): its
+tier's roll is drawn first all the same, and its name and kind are still its own. The Dread's drop already carried a
+Legendary (section 46.7); now the weapon named for it is one too.
+
+### 47.4 Hosts and pins
+
+THE FOUR HOSTS (rule 17e): no host line. The trail is the deed's (`revenantDeed`, which every pool's doors call), and its
+stand is the lair's: `scenes/dungeonContext.js`'s `standLairRevenant`, already WIRED (RVN7d), through `revenantForLair`
+and `applyRevenant`. The omen rides `takeRevenantNotice`, which the encounter tick of `scenes/world.js` (`runEncounterTick`)
+and `scenes/exterior.js` already asks. `scenes/worldModes.js` and `scenes/dungeonContext.js` ask no notice of their own -
+FLAGGED, unchanged: an omen waits for the open world's next tick. The page, the card and the trophy are the UI's and the
+fate's.
+
+PIN MOVED: `test/systems/revenant/rvn7a_lair.test.js` reads the lair's own law through deeds that leave no trail (a kill,
+my flight). `unquiet.test.js`'s escape card carries the trail after the wound.
+
+Pinned: `test/systems/revenant/unquiet2_hunt.test.js` (8); `tools/mutants/unquiet2.json` (29, all dead). The neighbouring
+lists were re-swept on it (`rvn7a`, `rvn7c`, `rvn9`, `rvn12b`, `revenantfate`, `unquiet`, `rvn1`, `revenant`): 418 dead.

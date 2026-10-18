@@ -16,7 +16,7 @@ import { PERSONALITIES } from '../../systems/revenant/revenantPersonality.js';  
 import { WEAK_NAMES, WEAK_HINTS, weaknessKind, willMatters, LAST_STAND_RANK, lastStandHealth, signatureStamp, bandMembers, bandName, WRATH_MAX, loyaltyLabel } from '../../systems/revenant/revenantFeud.js';   // RVN3: its weakness, its will; RVN4: its last stand; RVN5: its signature; RVN6: its band
 import { tacticsSwitchOn } from '../../ai/tactics.js';   // RVN5: a signature is a telegraph - the Enhanced AI switch's
 import { artWords } from '../../systems/revenant/revenantArts.js';   // RVN-ARTS: its art, as it would use it on me - or for me, sworn
-import { ambitionOf, ambitionWords, woundWords, craftWords, revenantCraft, CRAFT, DREAD, sanitizeWounds } from '../../systems/revenant/revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): its craft, its wounds, its ambition, the Dread
+import { ambitionOf, ambitionWords, woundWords, craftWords, revenantCraft, CRAFT, DREAD, sanitizeWounds, trailWarm, trailHours } from '../../systems/revenant/revenantUnquiet.js';   // UNQUIET (Revenants.md section 46): its craft, its wounds, its ambition, the Dread
 import { t } from '../../systems/textManager.js';   // L10N4: UNQUIET's words through the text core
 
 export const REVENANT_PAGE_SECTIONS = Object.freeze([['revenants', 'Revenants']]);
@@ -90,6 +90,8 @@ export function comeWords(r, now, held = revenantHeld()) {
   if (r.dread) return { tag: t('rvn.unq.page.dreadTag', 'The Dread'), cls: 'is-out', line: t('rvn.unq.page.dreadCome', 'It waits for you in {lair}. It will not come to you again - go to it.', { lair: r.lair?.name ?? '' }) };
   if (r.out) return { tag: 'Abroad', cls: 'is-out', line: 'Out in the world, looking for you.' };
   if (held) return { tag: 'Held', cls: 'is-waiting', line: `It will not come for you before Renown ${REVENANT_MIN_RENOWN}.` };
+  // UNQUIET II (section 47): its trail warm - gone to ground to heal, and findable there
+  if (trailWarm(r, now)) return { tag: t('rvn.unq.page.woundedTag', 'Wounded'), cls: '', line: t('rvn.unq.page.woundedCome', 'Gone to ground in {lair} to heal - {hours, plural, one {# hour} other {# hours}} before it has. Find it there.', { lair: r.lair?.name ?? '', hours: trailHours(r, now) }) };
   const left = r.dueAt - now;
   if (left <= 0) return { tag: 'Hunting', cls: '', line: 'Hunting you - it may come on any road.' };
   const days = Math.round(left / 1440);

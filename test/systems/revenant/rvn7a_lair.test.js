@@ -115,21 +115,23 @@ test('RVN7a THE DEED through the door: a deed in the open world picks its lair a
   let here = { px: 100, py: 100, dungeons: [D(106, 100, 'East Keep', 3), D(94, 100, 'West Crypt', 3), D(100, 94, 'North Barrow', 3), D(100, 106, 'South Mine', 3)] };
   setPlayerDoor({ foes: () => [], feet: () => [0, 0, 0], hurtFoe: () => {}, castOnPlayer: () => {}, lairHere: () => here });
   const foe = { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 5, maxHealth: 50, team: 'Monster' };
-  const r = N.revenantDeed(p, foe, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  // PIN MOVED (UNQUIET II, Revenants.md section 47): an escape's trail makes its lair known - the lair's own law is read
+  // here through deeds that leave none (a kill, my flight); unquiet.test.js pins the trail
+  const r = N.revenantDeed(p, foe, 'slew', { mobileType: M.Orc, rolls: () => 0 });
   assert.ok(r.lair, 'a lair');
   assert.deepEqual(r.lair, F.pickLair(r.id, 100, 100, here.dungeons));
   assert.equal(r.lairKnown, false);
   const first = r.lair;
   r.lairKnown = true;
   here = { px: 300, py: 300, dungeons: [D(306, 300, 'Elsewhere', 9)] };
-  N.revenantDeed(p, foe, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  N.revenantDeed(p, foe, 'routed', { mobileType: M.Orc, rolls: () => 0 });
   assert.deepEqual(r.lair, first, 'kept');
   assert.equal(r.lairKnown, true, 'and still known');
   here = { underground: D(first.px, first.py, first.name, first.region) };
-  N.revenantDeed(p, foe, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  N.revenantDeed(p, foe, 'routed', { mobileType: M.Orc, rolls: () => 0 });
   assert.equal(r.lairKnown, true, 'a deed in its own lair: still known');
   here = { underground: D(40, 41, 'The Pit', 5) };
-  N.revenantDeed(p, foe, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+  N.revenantDeed(p, foe, 'routed', { mobileType: M.Orc, rolls: () => 0 });
   assert.deepEqual(r.lair, D(40, 41, 'The Pit', 5), 'moved underground');
   assert.equal(r.lairKnown, false, 'a lair moved is unheard of');
   // the record saves it

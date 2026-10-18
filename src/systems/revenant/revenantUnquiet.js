@@ -20,6 +20,9 @@
 //    stays (WOUND.MAX, the oldest healing) and weakens it - its health, its blows, its poise, its Speed, its saving throw.
 //  - AMBITION: what it does while it is away, by who it is (`ambitionOf`): VENGEANCE comes sooner and oftener, MASTERY
 //    trains (it festers - grows - twice as fast), PLUNDER raids the roads (its gold grows each day it is left alone).
+//  - THE TRAIL (UNQUIET II, section 47): an escape with a lair leaves a warm trail to it - its lair known at once (the
+//    map's red circle), and found there before the trail cools (HUNT.MINUTES) it stands still wounded (HUNT.HEALTH).
+//  - OMENS (section 47): the day it is due, the player is warned, in its ambition's words.
 //  - THE DREAD: a rank-5 revenant that gets away once more ASCENDS - it goes to ground in its lair for good, every town
 //    knows where, and it waits there: stronger, two last stands, never fleeing, a Legendary and a hoard when it falls.
 //
@@ -231,6 +234,17 @@ export const mayAscend = (r, max) => !!r && !r.dread && (r.rank | 0) >= max && !
 /** Its last stand's share at its `n`th stand (1-based) - its rank's first (`first`), the Dread's second SECOND_STAND. */
 export const dreadStandHealth = (n, first) => (n >= 2 ? DREAD.SECOND_STAND : first);
 
+// ── the trail (UNQUIET II, section 47) ──────────────────────────────
+/** THE TRAIL: an escape with a lair to go to leaves it warm for MINUTES (character minutes) - its lair known at once -
+ *  and found there before it cools, it stands at HEALTH of its health: it went to ground to heal, and has not. */
+export const HUNT = Object.freeze({ MINUTES: 720, HEALTH: 0.6 });
+/** Is `r`'s trail warm at `now` (character minutes)? Never the Dread's - it is at home for good. */
+export const trailWarm = (r, now) => !!r && !r.dread && Number.isFinite(r.trail) && r.trail > 0 && r.trail > now;
+/** The whole hours left on a warm trail (rounded up), 0 when it is cold. */
+export const trailHours = (r, now) => (trailWarm(r, now) ? Math.ceil((r.trail - now) / 60) : 0);
+/** A record's trail read back: the character minute it cools at, or 0. */
+export const sanitizeTrail = (v) => (Number.isFinite(v) && v > 0 ? Math.floor(v) : 0);
+
 // ── its words (L10N4: every one through the text core) ───────────────
 /** A craft's name and what it does, as the page says them. */
 export function craftWords(craft) {
@@ -274,6 +288,16 @@ export function ambitionWords(a) {
     case 'mastery': return { name: t('rvn.unq.amb.mastery', 'Mastery'), effect: t('rvn.unq.amb.masteryDo', 'it trains while it waits, and grows bolder twice as fast') };
     case 'plunder': return { name: t('rvn.unq.amb.plunder', 'Plunder'), effect: t('rvn.unq.amb.plunderDo', 'it raids the roads while it waits - the longer you leave it, the richer it is') };
     default: return null;
+  }
+}
+/** THE TRAIL, as its escape's card ends: where it went to ground. */
+export const trailWords = (lair) => t('rvn.unq.trail', 'Its trail leads to {lair}. It has gone to ground there to heal - catch it before it does.', { lair });
+/** AN OMEN - the day it is due, in its ambition's words (its card's body). */
+export function omenWords(a, given) {
+  switch (a) {
+    case 'mastery': return t('rvn.unq.omen.mastery', 'Word reaches you that {given} is ready to face you again.', { given });
+    case 'plunder': return t('rvn.unq.omen.plunder', 'Travellers speak of {given} on the roads again. It is coming for you.', { given });
+    default: return t('rvn.unq.omen.vengeance', 'You feel eyes on your back. {given} is hunting you again.', { given });
   }
 }
 /** What the towns say of what it does while it waits - a rumour's last sentence. */
