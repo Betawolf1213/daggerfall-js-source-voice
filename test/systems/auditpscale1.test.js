@@ -263,7 +263,7 @@ function stands(over = {}) {
     SOLITARY_TYPES, partyExtraFoes, partySize: () => 1, effectiveLevel: (e) => e?.level ?? 1,   // SOFTCAP2: mentor mode's level, a leaf read
     getPref: () => undefined, onTheRoad: () => false, trivialOnRoad, roadCompany, wandererCount,   // WILD-ROAD: off the road - DFU's wanderer, the party's count
     _standEncounterFoe: (hit) => out.push(hit.mobileType), playerFeet: [0, 0, 0],
-    grants: { ask: () => true },   // PIN MOVED (GRANT2, Spawn-Grants.md section 12): the tick asks its cell for the wanderers' grant
+    askGrant: (session, kind, n) => n,   // PIN MOVED (GRANT2, Spawn-Grants.md section 12): the tick asks its cell for the wanderers' grant
     wildHere: () => false, WILD_GIANT_CHANCE: 0.15, WILD_GIANT: 16,   // WILD3: not in the open zone here
     revenantToReturn: () => null, now: 0,   // REVENANT: none due here (the tick's minute, above this slice)
     sharedClockOn: () => false, worldMinutes: () => 0,   // LIVED1: the spawn roll's sky (the world's clock online)

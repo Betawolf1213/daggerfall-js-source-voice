@@ -1410,6 +1410,9 @@ Developer's alone - a token whose glyphs say `dev`), and `/relay <setting> -` ha
   ground room refuses a hello from a build on an older ground (net/wire.js GROUND_LAW). A cell reads it at a hello that
   says an older ground or none, never at one on the ground: it asks the hub then at most every RELAY_CFG_TTL_MS, and
   waits for the answer while the room has never had one, so a cold cell's first hello is not the one let through.
+- GRANT2 (`11-Multiplayer/Spawn-Grants.md` section 12): `grantMode` (var GRANT_MODE) `measure` (and unset), `enforce` or
+  `off` - the spawn grants' law. A cell reads it at an ask, never at a hello: waited on at its first ask, asked again at
+  most every five minutes (GRANT_CFG_TTL_MS), since every cell a player roams asks.
 
 **A halo told when its cell judges poses** (`server/src/index.js` _refereesPoses, `_rfSay`). SCALE2c moved a halo's
 pose rate here because the relay judges fights off the poses that reach each cell, a halo's copies too:

@@ -1,8 +1,9 @@
 # SPAWN GRANTS - the relay decides which foes may exist (GRANT0, the design record)
 
 **Status: DESIGN RECORD (2026-10-17; revised 2026-10-18 for the relay's cost), BEING BUILT (Mac, 2026-10-18: "Lets
-build the plan"). Section 8's reader fixes are BUILT (2026-10-18, the owner: "Quick fixes first"), and GRANT1, the law,
-is BUILT (section 11). Nothing calls the law yet: the relay's asks are GRANT2.** The relay
+build the plan"). Section 8's reader fixes are BUILT (2026-10-18, the owner: "Quick fixes first"); GRANT1, the law, is
+BUILT (section 11); GRANT2, the relay's asks MEASURED from its deploy, is BUILT (section 12; relay world218, account
+service acct155). Next: GRANT3, the readers' check.** The relay
 signs a grant when a foe is made and never reads the foe stream; every reader checks the grant. Section 4.11 keeps the
 first draft, in which the relay read every record, as a fallback. Section 10's questions are answered (2026-10-18).
 Section 7 orders the slices. Each one measures before it enforces, as the Integrity arc does.
@@ -399,3 +400,48 @@ section 5's fishing is bounded by asks; a mark worn below its grant is believed 
 not give).
 
 Pins: `test/net/grant1_law.test.js` (7); `tools/mutants/grant1.json` (18, all dead).
+
+## 12. GRANT2: the relay takes the asks and measures (BUILT 2026-10-18)
+
+The owner: GRANT1 ships with it, and the law **measures from its deploy**. Relay world218, account service acct155.
+
+- **The frame** (`net/grantLaw.js` header): a client asks its own cell `{t:'grant', k:'mint', id, kind, n}`
+  (validGrantAsk: a kind of GRANT_KINDS, within its most); the cell answers `ok` with the grant, `no` with a refusal, or
+  `off`. A cell's welcome says the mode (`gm`); a client asks only a relay at world218 or later (GRANT_RELAY_MIN), because
+  an older one closes the socket on a frame it does not know. The relay's own per-socket bucket (grantGate) is kept at
+  home too, so an honest ask is never the one it drops.
+- **The mint** (`server/src/index.js` `_grantFrame`, `_grantMint` - Room methods of their own, one dispatch line in
+  `_message`): only from a socket whose pose stands in the cell (a halo's pose is told `cell`); the grant made out to its
+  socket, cell and account, the pixel and world minute the relay reads, the token's level and Renown (0 where it says
+  none), a seed from `crypto.getRandomValues`, grantMarks, ten minutes' life, signed with GATE_SIGNING_KEY. A cell's
+  counter begins anywhere in 31 bits, so a re-woken cell does not repeat its last life's numbers.
+- **The gate** (grantMintGate) is asked on every ask: an account's bucket per kind, the cell's ceiling on live granted
+  members. While the law **measures** every ask is granted and the refusal is only counted; while it **enforces**
+  (GRANT6) the refusal is said. The bucket is kept either way, so the measure counts what enforcing would refuse.
+- **The mode** is the relay setting `grantMode` (`net/relayCfg.js`, var GRANT_MODE): `measure` (and unset - grantModeOf),
+  `enforce`, `off`. A hello never calls the hub for it: the welcome says the setting the cell last had, or the var. An ask
+  reads it, waiting on the hub only at a cell's first ask and asking again at most every GRANT_CFG_TTL_MS (five minutes),
+  since every cell a player roams asks and the hub is every tab's. A staff `off` reaches a client at its next ask (`off`).
+- **The measure** (`net/grantMeasure.js`): each cell folds its asks per account and kind - asks, members, the bucket's and
+  the ceiling's refusals - and the most live members it held, and posts the window every GRANT_MEASURE_MS (ten minutes)
+  or at GRANT_MEASURE_ROWS rows, signed over `grant-measure1\n` with the relay's key, to GRANT_FEED_URL (the chat feed's
+  door: never awaited, never retried, through the ACCOUNTS binding). The account service keeps a window once
+  (`server-account/src/grants.js`, POST /v1/mod/grant-feed, migration 0131_grant_measure) and a developer reads it:
+  `node tools/realmReview.mjs grants [days]` - per kind, an account's asks an hour (quantiles, most), what the buckets and
+  the ceiling would have refused, and the cells' most live beside GRANT_CELL_CEILING. GRANT5 reads it after seven days.
+- **The client** (`scenes/grantHost.js`, wired by `scenes/world.js`): each wanderer group the encounter tick stands and
+  each camp a chunk entered stands asks its grant, never awaited. **Nothing is built from the grant yet**: the foe stands
+  as it always did. Its seed builds the foe, and its record carries the grant, from GRANT3.
+
+THE FOUR HOSTS: `scenes/world.js` wires it, at the encounter tick and the chunk's camps. `scenes/worldModes.js` (the
+interior lane) and `scenes/dungeonContext.js` (its own lane and its surplus) take their sources' grants with GRANT4.
+`scenes/exterior.js` streams nothing and reads no peer.
+
+**Found while building, for GRANT3:** a guest never fetches the relay's public key - `scenes/eliteGates/egClient.js`
+asks `/v1/eg/keys` only for a signed-in account (`account?.guest?.()` returns first), though the service answers any
+session. Section 4.7's OPEN is answered: no. GRANT3 needs another route for a guest's key (the welcome, or a public read).
+
+Pins: `test/net/grant2_relay.test.js` (4), `test/net/grant2_client.test.js` (2), `test/server/grant2_service.test.js` (2);
+`tools/mutants/grant2.json` (19, all dead). Pins moved: RELAY_VERSION and ACCOUNT_VERSION where they stand (PIN MOVED),
+the relay's graph and its law row (`test/net/relayversion.test.js`), `auditpscale1`'s mount of the encounter tick
+(`grants`); PSCALE1's wanderer mutant re-aimed at `const _n`.

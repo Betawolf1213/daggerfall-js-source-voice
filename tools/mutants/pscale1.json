@@ -302,8 +302,8 @@
   {
     "name": "PSCALE1-no-foes-more-a-wanderer",
     "file": "src/scenes/world.js",
-    "old": "const _n = wandererCount(hit.mobileType, partyExtraFoes(partySize()), _company);",
-    "new": "const _n = 1;",
+    "old": "askGrant(online, 'enc', wandererCount(hit.mobileType, partyExtraFoes(partySize()), _company))",
+    "new": "askGrant(online, 'enc', 1)",
     "note": "re-aimed BY CONTENT (FIELD BUGS 2026-10-04e WILD-ROAD): the count asked of roadEncounters.js wandererCount",
     "tests": [
       "test/systems/party/pscale1.test.js",

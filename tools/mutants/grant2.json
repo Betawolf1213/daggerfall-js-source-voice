@@ -172,19 +172,19 @@
   {
     "name": "GRANT2-camp-ask-dropped",
     "file": "src/scenes/world.js",
-    "old": "            grants.ask('camp', size);",
-    "new": "            void size;",
+    "old": "_standCampEncounter(h, player.feetAt()); askGrant(online, 'camp', size);",
+    "new": "_standCampEncounter(h, player.feetAt());",
     "why": "camps never measured",
     "tests": [
       "test/net/grant2_client.test.js"
     ]
   },
   {
-    "name": "GRANT2-encounter-count-not-stood",
+    "name": "GRANT2-encounter-ask-dropped",
     "file": "src/scenes/world.js",
-    "old": "grants.ask('enc', _n);",
-    "new": "grants.ask('enc', 1);",
-    "why": "a party's wanderers measured as one",
+    "old": "n = askGrant(online, 'enc', wandererCount(",
+    "new": "n = askGrant(null, 'enc', wandererCount(",
+    "why": "encounters never measured",
     "tests": [
       "test/net/grant2_client.test.js"
     ]
