@@ -228,6 +228,7 @@ test('AUDIT EG V L1-5 NO GROUND CONCEDED COUNTS HER BANNERS (section 19: "three 
     assert.equal(S.spec.lord, 'ilthys');
     wakeCourt(S);
     const I = egLordsOf(S.B.F)[0];
+    I.hp = I.max * 0.6;   // EG-PERFECT (PIN MOVED): the Conquest is her second phase's - turned at 0.66
     let broken = 0;
     for (let k = 0; k < 4 * 90 && broken < 3; k++) {
       S.step();
@@ -331,6 +332,7 @@ test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a 
   wakeCourt(S);
   const F = S.B.F, M = egLordsOf(F)[0];
   assert.equal(M.key, 'morvayn');
+  M.hp = M.max * 0.6;   // EG-PERFECT (PIN MOVED): the Chaining is her second phase's - turned at 0.66
   for (let k = 0; k < 4 * 20 && !(F.mem.chains ?? []).length; k++) S.step();
   assert.equal(F.mem.chains.length, 2, 'two pairs');
   const [[a, b], [c, d]] = F.mem.chains;
@@ -375,6 +377,7 @@ test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a 
 });
 test('AUDIT EG V L1-15 EACH LINK ITS OWN SNAP (section 13.4: "A pair stretched past 8 m both take 30% (a CHECK)"): two pairs held 12 m apart for 6 s - each snaps every 3 s on its own clock, neither keeping the other from its CHECK (mutants: one clock for every chain)', () => {
   const C = court(7, 50, 'morvayn', { n: 4 });
+  C.L.hp = C.L.max * 0.6;   // EG-PERFECT (PIN MOVED): the Chaining is her second phase's - turned at 0.66
   const here = C.subs.map((sub, j) => ({ sub, x: C.f.x + (j % 2 ? 6 : -6), z: C.f.z + (j < 2 ? 4 : -4) }));
   for (let k = 0; k < 4 * 20 && !(C.F.mem.chains ?? []).length; k++) C.step(here);
   const chains = C.F.mem.chains;
@@ -392,6 +395,7 @@ test('AUDIT EG V L1-9 THE CHAIN SNAPS COUNTED ON THE PAIR IT NAMES, BY THE CENSU
   const S = breachAt(7, 50, { n: 3 });
   wakeCourt(S);
   const F = S.B.F, cr = S.spec.fl.find((f) => f.t === 'd');
+  for (const M of egLordsOf(F)) M.hp = M.max * 0.6;   // EG-PERFECT (PIN MOVED): the Chaining is her second phase's - turned at 0.66
   S.subs.forEach((s, j) => S.at(s, cr.x - 2 + 2 * j, cr.z));
   for (let k = 0; k < 4 * 20 && !(F.mem.chains ?? []).length; k++) S.step();
   const [pa, pb] = F.mem.chains[0], odd = S.subs.find((s) => s !== pa && s !== pb);

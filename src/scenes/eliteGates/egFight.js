@@ -74,8 +74,8 @@ import { setBatchHitFlash, setBatchGlint } from '../../systems/hitFlash.js';
 import { groundViewModel, drawGateGround } from '../../ui/gate/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
 import { screenBearing } from '../gate/gateCourt.js';   // EG-ZG: the way out as the screen turns it
 import { PHASE_NUMERALS } from '../gate/gateCourt.js';   // AUDIT EG V (lane1 #14): the gate's phase card's numerals
-import { egFightFloors, egFloorPlan, egFloorPlanKeep, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
-  EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../../world/eliteGates/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
+import { egFightFloors, egFloorPlan, egFloorPlanKeep, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egEclipseOfBlows, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
+  EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER, EG_GUARD_SOUND, EG_GUST_TELL_MS, EG_GUST_SOUND } from '../../world/eliteGates/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
 import { EG_SHADE_BAND } from '../../world/eliteGates/egTelegraph.js';   // AUDIT EG V (lane1 #13): in the dark every foe keeps the Shade's rim light
 import { drawEgSigils } from '../../ui/eliteGates/egSpireHud.js';   // EG-ZG: the marks over heads
 import { spireStoneWords } from '../../systems/eliteGates/spireOrrery.js';   // FIELD BUGS 2026-10-17e (ORRERY-SIGHT): a stone's name and hour, over it
@@ -97,6 +97,8 @@ import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S }
 import { egBodyPlace, egBodyHeight } from '../../net/eliteGates/egLink.js';   // EG-ZJ: a body's feet
 import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../../net/eliteGates/egShape.js';
 import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../../net/eliteGates/egBodies.js';
+import { EG_BEAT_TRIAL_MS } from '../../net/eliteGates/egDurable.js';   // EG-PERFECT: the relay's beat, which a feint's cut can pass FEINT_AT by
+import { t } from '../../systems/textManager.js';   // EG-PERFECT: the words this pass adds, in the player's language
 import { egKindLook, EG_LEGION_KINDS } from '../../net/eliteGates/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../../net/eliteGates/egLords.js';
 import { EG_MARK_FIRE, EG_MARK_FROST, EG_TOUCH_X } from '../../net/eliteGates/egLords.js';   // AUDIT EG III (lane1 #4): the Touched marks and their weight - the lords' one home
@@ -152,8 +154,11 @@ const HAZ_SOUL = Object.freeze([0.6, 0.35, 0.9]);
 const WISP_TICK_MS = 1000;
 const WISP_AGAIN_MS = 6000;
 /** EG-H1 (section 13.2): a blow's WIND sounds once it is past EG_FEINT_AT of its wind-up and still uncut, this long more
- *  for the cut's way here (ms) - a feint, cut at FEINT_AT on the relay, never glints in the ear (no frame flags it early). */
-export const EG_WIND_GRACE_MS = 150;
+ *  for the cut's way here (ms) - a feint, cut at FEINT_AT on the relay, never glints in the ear (no frame flags it early).
+ *  EG-PERFECT: the relay cuts on its beat (net/eliteGates/egDurable.js EG_BEAT_TRIAL_MS), so a cut leaves it up to a beat past
+ *  FEINT_AT - the grace is the beat and the way here (150 ms) together: at 150 ms alone every feint's WIND sounded on every honest
+ *  screen 25 ms before its cut came (the audit's 114 image feints, each cut at 0.667 of its wind-up). */
+export const EG_WIND_GRACE_MS = EG_BEAT_TRIAL_MS + 150;
 /** EG-H1 (section 15): Watchfire's early outline - a PULSING solid red line (a dashed line is a feint's), its pulse (ms). */
 const TOLD_PULSE_MS = 180;
 /** AUDIT EG V (lane1 #18): a chained shape's dim outline before its fill (its alpha). */
@@ -191,7 +196,7 @@ export const EG_SAY = Object.freeze({
   twinfell: (n) => `${n} falls - fell the other within fifteen seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
   chaining: () => 'Soul-chains bind you. Stay close!', grounded: () => 'The Mother of Dusk is dragged down!', anchors: () => 'The anchors rise again.', vanish: () => 'The Night-Stalker vanishes.',
   tether: () => 'Blood Tether! Stand apart.', tetherbroken: () => 'The tether snaps.', eclipse: () => 'The Eclipse comes - stand in the light!', mirrors: () => 'Mirror lords rise. Only the true lord casts a mark.',
-  relit: () => 'A heart relights!', landed: () => 'The Wyrm lands!', broken: (n, t) => `${n || 'Someone'} breaks a ${t || 'ward'}.`, stirs: () => 'Something stirs.', raised: () => 'A Binder raises the fallen.',
+  relit: () => 'A heart relights!', landed: () => 'The Wyrm lands!', perches: () => t('eg.say.perches', 'The perches rise again, molten!'), broken: (n, t) => `${n || 'Someone'} breaks a ${t || 'ward'}.`, stirs: () => 'Something stirs.', raised: () => 'A Binder raises the fallen.',
   raisebroken: () => 'The raising is broken.', door: () => 'The way down opens.', recalled: (n) => `${n} is called back.`, home: (n) => `${n} walks home.`, goldrun: () => 'Gold run. +1:00',
   mimic: () => 'The cache breathes - a Kyn Mimic!', memento: (n, t) => `${n} carries ${t}'s Memento.`, relicbroken: () => 'The relic breaks! The hold falls back.', silenced: () => 'A caster is silenced.',
   orrerytrue: () => 'The Orrery turns true. A Vestige waits.', chamberdone: () => 'The chamber is cleared. Find the way down.', freed: () => 'The Battlemage is freed - a Cantrip for each of you.',
@@ -472,7 +477,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const fireBatches = new Map();
   let stageNow = 'wait';
   const textures = new Map(), drawn = new Map();
-  const judged = new Set(), cued = new Set(), landedSet = new Set();
+  const judged = new Set(), cued = new Set(), landedSet = new Set(), guardHeard = new Set();   // EG-PERFECT: a guard's ring heard once a rising
   const zoneTick = new Map();
   let drainAt = 0, voidAt = 0;
   const _batches = [], _lights = [], _targets = [], _crystals = [], _shapes = [], _slots = [];
@@ -592,6 +597,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   function reset(E) {
     for (const d of drawn.values()) destroy(d);
     drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear(); stung.clear();
+    guardHeard.clear();   // EG-PERFECT
     toldHeard.clear(); dropFire();   // EG-ZH
     mom = { i: -1, n: 0, q: -1 }; echo = { q: -1, on: false };   // EG-ZR: a new hall's bodies build no stacks of the last's
     hall = E.h; respec(E);
@@ -657,7 +663,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     }
     d.top = d.at[1] + h;
     setBatchHitFlash(d.batch, egBodyFlash(b, t));   // EG-ZG (section 25.8): my blows flash it fully, anyone else's at 0.4
-    setBatchGlint(d.batch, b.fellAt ? null : egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0));   // EG-ZG (section 25.6): THE SHADE'S RIM LIGHT - AUDIT EG V (lane1 #13): every foe's in the place's dark
+    setBatchGlint(d.batch, b.fellAt ? null : egRimOf(darkNow > 0 ? EG_SHADE_BAND : band, b.fl | 0));   // EG-ZG (section 25.6): THE SHADE'S RIM LIGHT - AUDIT EG V (lane1 #13): every foe's in the place's dark; EG-PERFECT: a raised guard's glint
+    if ((b.fl & EG_FL.lit) !== 0) { if (!guardHeard.has(b.i)) { guardHeard.add(b.i); playOne(EG_GUARD_SOUND); } } else guardHeard.delete(b.i);   // EG-PERFECT: and its ring, once a rising
     d.batch.record = rkey; d.batch.size = { w: fr.flip ? -w : w, h };
     if (d.batch.bounds) d.batch.bounds[3] = Math.hypot(w, h) * 0.5;
     d.batch.origin[0] = d.at[0]; d.batch.origin[1] = d.at[1]; d.batch.origin[2] = d.at[2];
@@ -695,6 +702,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     _lights.push(L);
   }
   /** A stood-on object on the floor: its disc in its colour (a rune lit, a gem's souls). */
+  /** EG-PERFECT (section 13.3, Wingbeat "told 1 s"): a gust's tell on my feet - the lane it will push me along, as far as it
+   *  pushes, filling to its landing and pulsing in its last half; its wind heard once a gust. */
+  function gustTell(g, f, t) {
+    const sh = (_slots[_shapes.length] ??= slot()), len = Math.max(1, (g.v ?? 3) * ((g.ms ?? 1000) / 1000)), k = Math.max(0, Math.min(1, 1 - (g.at - t) / EG_GUST_TELL_MS));
+    sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = f[0]; sh.origin[1] = f[1]; sh.end[0] = f[0] + g.dx * len; sh.end[1] = f[1] + g.dz * len; sh.halfW = 0.6; sh.r = 0;
+    sh.t = k; sh.flash = k > 0.5 ? 0.5 + 0.5 * Math.sin(t / 70) : 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.weight;
+    sh.since = (k * EG_GUST_TELL_MS) / 1000; sh.span = EG_GUST_TELL_MS / 1000; sh.after = -1; sh.court = 0;
+    _shapes.push(sh);
+    if (!cued.has(`g${g.at}`)) { cued.add(`g${g.at}`); playOne(EG_GUST_SOUND); }
+  }
   function drawGround(b, t, key) {
     const sh = (_slots[_shapes.length] ??= slot());
     sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = b.x; sh.origin[1] = b.z; sh.r = key === 'isle' ? 0 : Math.max(1, b.r ?? 1.5);
@@ -912,8 +929,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** EG-ZG - THE ECLIPSE (section 25.5): the floor darkened over its last 2 s, every moon-shaft kept (the telegraph pass's
    *  dark pool over every fight floor); a wind rising from 3 s out and a toll at the strike, each once a cycle. The bar's
    *  chip is the HUD's (ui/eliteGates/egSpireHud.js). */
-  function eclipseLook(hz, ts, t) {
-    const e = egEclipseAt(spec, ts);
+  function eclipseLook(hz, ts, t, e = egEclipseAt(spec, ts)) {   // EG-PERFECT: or a lord's own Eclipse (`e` given - egEclipseOfBlows)
     if (!e) return;
     const dark = egEclipseDark(e);
     if (dark > 0) {
@@ -1165,6 +1181,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const R = F.pg.ring;
       if (R && f) ring(R[0], R[1], R[2], challenged);
       if (caged) hold(250);
+      if (!spec?.hazards?.some((h) => h.kind === 'eclipse')) eclipseLook(null, 0, t, egEclipseOfBlows(F.blows, t));   // EG-PERFECT: a lord's own Eclipse - its dark, its wind and its toll
+      // EG-PERFECT: THE GUST TOLD its second before (EG_GUST_TELL_MS - the lane it pushes me along, the wind rising)
+      if (F.gust && f && t >= F.gust.at - EG_GUST_TELL_MS && t < F.gust.at) gustTell(F.gust, f, t);
       // THE PLACE - a gust's push
       if (F.gust && F.gust.at !== gustSeen && t >= F.gust.at) { gustSeen = F.gust.at; if (standing) push(F.gust.dx, F.gust.dz, F.gust.v * (F.gust.ms / 1000)); }
       groundFrame(t, standing ? f : null, fy, chained);   // EG-ZG: the peril arrow, the chain's words

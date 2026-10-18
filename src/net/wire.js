@@ -5798,7 +5798,9 @@ export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantr
   // AUDIT EG III (Elite-Gates.md section 27.5): Bladestorm and Deadeye struck - said to their striker (`s`), its screen's beat
   'storm', 'deadeye',
   // AUDIT EG IV (Elite-Gates.md section 8.3): a Rampart's march holding its gate - its Ward-Bearers warded
-  'gateheld']);
+  'gateheld',
+  // EG-PERFECT (Elite-Gates.md section 13.3): the Wyrm's broken perches rising again, molten, at its second phase's turn
+  'perches']);
 /** The gifts a member is told of (`egot`'s `w`). */
 export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep', 'page']);   // LAYER THREE: 'page' - a page of the Annals (`p`)
 /** The zones' kinds (`ez`). */
@@ -6089,7 +6091,7 @@ export function validEgOut(m) {
     case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
     case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;
     case 'eb': { const b = egBlowW(m); return b ? { k: 'eb', ...b } : null; }
-    case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i } : null;
+    case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i, ...(Number.isSafeInteger(m.at) && m.at >= 0 ? { at: m.at } : {}) } : null;   // EG-PERFECT: the instant it was cut at (its FEINT_AT - net/eliteGates/egBodies.js egCut)
     case 'tell': { const b = egBlowW(m); return b && intIn(m.sh, 1, 400) ? { k: 'tell', ...b, sh: m.sh } : null; }   // EG-H1: Watchfire's early outline, its lead shown (ms)
     case 'untell': return intIn(m.i, 1, 1e9) ? { k: 'untell', i: m.i } : null;
     case 'etx': { const t = egList(m.t, egTether); return t ? { k: 'etx', t } : null; }

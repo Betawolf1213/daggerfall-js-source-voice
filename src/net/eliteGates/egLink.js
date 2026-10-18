@@ -110,7 +110,7 @@ function foldFight(f, w, now) {
     case 'eb': return { ...f, blows: [...f.blows.filter((b) => b.i !== w.i && now <= b.at + Math.max(1, b.sp) + 1500), { ...w, heard: now }].slice(-40), told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow said - its early outline gone
     case 'tell': return { ...f, told: [...(f.told ?? []).filter((b) => b.i !== w.i && now <= b.at + 1500), { ...w, heard: now }].slice(-16) };   // EG-H1: Watchfire's early outline
     case 'untell': return { ...f, told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow the union floor held - no ghost on the floor
-    case 'ecut': return { ...f, blows: f.blows.map((b) => (b.i === w.i ? { ...b, cut: now } : b)) };
+    case 'ecut': return { ...f, blows: f.blows.map((b) => (b.i === w.i ? { ...b, cut: Number.isFinite(w.at) ? Math.min(now, w.at) : now } : b)) };   // EG-PERFECT: frozen at the instant the relay cut it (its FEINT_AT), never the beat's
     case 'etx': return { ...f, tx: w.t };
     case 'emk': return { ...f, mk: w.m };
     case 'eph': return { ...f, bodies: f.bodies.map((b) => (b.i === w.i ? { ...b, ph: w.ph } : b)), phases: keepLast(f.phases, { i: w.i, ph: w.ph, at: now }, 6) };

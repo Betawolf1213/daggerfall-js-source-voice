@@ -287,6 +287,7 @@ test('AUDIT EG III lane1 #12 THE CHAINING\'S SHARED BLOW (section 13.4, Morvayn)
   assert.equal(S.spec.lord, 'morvayn');
   wakeCourt(S);
   const F = S.B.F, M = egLordsOf(F).find((L) => L.key === 'morvayn');
+  M.hp = M.max * 0.6;   // EG-PERFECT (PIN MOVED): the Chaining is her second phase's - turned at 0.66
   const cr = S.spec.fl.find((q) => q.t === 'd'), spots = { 'acct-0': [cr.x + 3, cr.z], 'acct-1': [cr.x + 3, cr.z + 4], 'acct-2': [cr.x - 5, cr.z] };   // in a crypt, on its floor
   for (const [sub, [x, z]] of Object.entries(spots)) S.at(sub, x, z);
   for (let k = 0; k < 4 * 20 && !(F.mem.chains ?? []).length; k++) S.step();
