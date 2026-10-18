@@ -461,6 +461,9 @@ Wand one draw in six (9 in 56) and the ten Cast When Held and Absorbs Spells row
 never once reached its holder. Now a piece whose powers need wearing (`powersNeedWearing`: live rows, none answering the
 Used payload - `enchantments.js` worksUnworn) has its base drawn again, as DFU draws again over an Arrow, up to
 MAGIC_BASE_DRAWS (64) and then armour; a draw that was wearable is the draw it was, and a Used cast keeps any base (a
-Leaping Wand, a Silent Holy Tome). A save's pieces minted before the fix load as the Amulet, RARITY_HOME's
-(`repairMagicBases`, in `save.js` repairItemLists). Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
+Leaping Wand, a Silent Holy Tome). A piece already held keeps its base: a load that moved it would move its print
+(`templateIndex:material`, `server-account/src/judge.js` ledgerPrintOf), which the realm ledger reads as forged
+(`ledger.js` ledgerStep) - AUDIT FB1018b L1-1 took out the save repair this first carried, and mending such pieces is the
+owner's call (it needs the ledger to take a base move). RARITY-WEAR's own 140-to-133 repair above moves the print the
+same way for a piece held since the ledger went live - found and left, the owner's. Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
 such duds before, none now. A departure (Port-Ledger A, HELD-BASE). `test/systems/loot/fb1018b_heldbase.test.js`.

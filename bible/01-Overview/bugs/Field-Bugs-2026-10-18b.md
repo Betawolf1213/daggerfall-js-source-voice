@@ -17,8 +17,8 @@ record says so and what would prove it. The pins are `fb1018b_*`, the mutants `t
 
 ## HELD-BASE: a held power is minted on a piece a slot takes (T1)
 
-`src/systems/loot/loot.js` (createRegularMagicItem's redraw, magicItemBase, powersNeedWearing, MAGIC_BASE_DRAWS,
-repairMagicBases), `src/systems/enchantments.js` (worksUnworn), `src/systems/save/save.js` (repairItemLists).
+`src/systems/loot/loot.js` (createRegularMagicItem's redraw, magicItemBase, powersNeedWearing, MAGIC_BASE_DRAWS),
+`src/systems/enchantments.js` (worksUnworn).
 
 FOUND, on the real producer over DFU's table (`test/dfuMagicItems.mjs` through readMagicDef) and the real guild shelf.
 - **The report's two names are crossed.** A store's magic item takes its name, group byte, rows and uses from ONE
@@ -38,12 +38,16 @@ FOUND, on the real producer over DFU's table (`test/dfuMagicItems.mjs` through r
 FIXED. A piece whose powers need wearing (`powersNeedWearing`: live rows, none answering the Used payload,
 `enchantments.js` worksUnworn) has its base drawn again in DFU's order, as DFU draws again over an Arrow, up to
 MAGIC_BASE_DRAWS (64), then armour. A wearable first draw is the draw it was, and a Used cast keeps any base (a Leaping
-Wand, a Silent Holy Tome). A save's such piece loads as the Amulet (`repairMagicBases` in `save.js` repairItemLists,
-RARITY-WEAR's home); its name, rows, uses and price stay its own. An artifact, a quest's piece, a made Wand and a frozen
-record stay as they are. A departure (`01-Overview/Port-Ledger.md` section A, HELD-BASE), the owner's to review. THE
+Wand, a Silent Holy Tome). An artifact, a quest's piece, a made Wand and a frozen record stay as they are, and so does
+a piece already held: AUDIT FB1018b L1-1 took out the load's repair this fix first carried (a save's such piece moved to
+the Amulet), because a held piece's print is its `templateIndex:material` (`server-account/src/judge.js` ledgerPrintOf)
+and the realm ledger reads a print that moved as forged (`server-account/src/ledger.js` ledgerStep) - a law hold on
+every character that held one. The mint alone is mended. A departure (`01-Overview/Port-Ledger.md` section A, HELD-BASE), the owner's to review. THE
 FOUR HOSTS: none touched; every host mints through createRegularMagicItem.
 
-OPEN, for the owner. Leaping's Levitate (4 -> 38 would be Jumping) and Venom Spitting's Dragonish are classic's data, and
+OPEN, for the owner. The pieces already held keep their Wand or tome: mending them needs the realm ledger to take
+a base move as no forgery, an anti-cheat change. Found and left with it: RARITY-WEAR's own save repair (a 140 base to
+133, in `save.js` repairItemLists) moves the print the same way for a piece held since the ledger went live. Leaping's Levitate (4 -> 38 would be Jumping) and Venom Spitting's Dragonish are classic's data, and
 changing either is a design call; no spell in SPELLS.STD spits venom. The item maker still lets a player put a held power
 on a Wand, as DFU's does. The "Holy Tome of Venom Spitting" in a usable list (T4's screenshot) did not reproduce: the U
 window lists only a Cast When Used piece. What would prove it: that window and the piece's "Item powers:" line or saved
@@ -52,7 +56,8 @@ window lists only a Cast When Used piece. What would prove it: that window and t
 Why no test saw it: `magicitems.test.js` pinned the group routing verbatim, and RARITY-WEAR's pins took "DFU's own
 wands, Use a cast" on trust.
 
-Pins: `test/systems/loot/fb1018b_heldbase.test.js` (6). Mutants: `tools/mutants/fb1018b_heldbase.json` (20, all dead).
+Pins: `test/systems/loot/fb1018b_heldbase.test.js` (7; one pins the ledger's word on a load). Mutants:
+`tools/mutants/fb1018b_heldbase.json` (18, all dead).
 
 ## SPELL-SCROLL: a pick keeps the book's list where it was, and the list scrolls in its own column (T2)
 
@@ -160,8 +165,9 @@ game.
 
 FIXED. The hide door both branches already call (`dungeonContext.js:"hideHudText: () => hideHudTextSurfaces(hudText),"`)
 now tells the enhanced HUD what drawHud tells it under a window (`enhancedHud.js:"export function hideEnhancedHud() {"`),
-so the HUD and its bar hide and the keys - the pad's crossbar's too - belong to the window; the next frame of play gives
-them back. THE FOUR HOSTS: `world.js`, `exterior.js` and worldModes' building arm draw the HUD every frame with the
+so the HUD and its bar hide and the keys belong to the window; the next frame of play gives them back. The pad's
+crossbar already stood down under every dungeon window (`gamepadInput.js:"    const xbOn = !overlay && crossbarInForce();"`,
+the dungeon's `overlayActive`); the bar's own gate now agrees with it (AUDIT FB1018b L2-7). THE FOUR HOSTS: `world.js`, `exterior.js` and worldModes' building arm draw the HUD every frame with the
 game's pause; the dungeon arm's window branch already calls the door (no line added); `dungeon.js` mounts the same
 context. Our own feature: DFU does not Update its HUD under a window (DaggerfallUI.cs:429-433).
 
@@ -199,6 +205,9 @@ blow from my feet; every heal and power already refuses a warded target, and Vam
 number says "No footing" or "Warded". THE FOUR HOSTS: `dungeonContext.js` (the one door a blow on a Spire body leaves
 through); `world.js`, `exterior.js` and `worldModes.js` unchanged.
 
+Found and left (AUDIT FB1018b L6-8): `tools/mutants/egz_legion.json`'s EGZ-the-divers-dont-wait survives, on main's
+2c98d9554a too - the span AI these imps belong to, older than this slice.
+
 RECORDED, not fixed: the heal is still the claim's wherever the relay lands only part of a blow (the purse clips it, a
 Shield-Wall or Shielded front turns it, a flier is out of reach) - closing that needs the relay to tell each striker
 what landed, per blow.
@@ -213,8 +222,9 @@ and one call site in `test/net/eliteGates/law9_height.test.js`.
 healed the whole claim of blows into the Warden's ward and into the Brass Remnant while shut; Gortwog's Cleaver, as the
 loot maker mints it, healed every point of 20 blows into the Warden's ward. FIXED
 (`enchantments.js:"if (param !== 1 || target?.warded) return null;"`): VampiricEffect.cs's own law told what the blow
-dealt, not a departure. Pins: `test/systems/fb1018b_vampiricward.test.js` (2). Mutants:
-`tools/mutants/fb1018b_vampiricward.json` (2, all dead).
+dealt, not a departure. AUDIT FB1018b L1: the Mace of Molag Bal's drain had the same hole and gives nothing off a ward
+or a blow of none (`artifactEffects.js:"if (!entity || !target || damage === 0 || target.warded) return null;"`). Pins:
+`test/systems/fb1018b_vampiricward.test.js` (3). Mutants: `tools/mutants/fb1018b_vampiricward.json` (3, all dead).
 
 ## UNSEEN-KEEPER: the gate keeper drawn nowhere - not proven (T5)
 
@@ -239,17 +249,20 @@ FOUND. All four of æther's places are rebuilt by the town mods online forces on
 `location-44-27`. Penwall Derry's east gate is the composite WALLAA09.TVRNAS01 (the city wall on its west side, a tavern
 block outside the gate). Its ground scenery is written whole, and cell (row 4, column 15), record 4, stands where all
 four automap cells round its foot are a House2's footprint. DFU's `RMBLayout.AddNatureFlats` reads no building, so DFU
-stands the bush there too, and the port did, verbatim. Across the blocks the two packs carry whole there are 26 such
-cells (10 in Cities, 16 in Villages). The author removed the same class by hand elsewhere: TVRNAL01's edit sets cells
-165 and 214 to -1, both on a House2.
+stands the bush there too, and the port did, verbatim. Across the blocks the two packs carry whole there are 18 such
+cells (10 in Cities, 8 in Villages). The author removed the same class by hand elsewhere: TVRNAL01's edit sets cells
+165 and 214 to -1, both on a House2 - data evidence, read off the pack, which passes on either code.
 
 FIXED, a departure (`01-Overview/Port-Ledger.md` section A, HOUSE-BUSH): a scenery cell whose four automap cells are all
-buildings by the town map's own ladder (`townQuarters.js` quarterOf) is not stood; a cell on a footprint's edge or
-corner, or on the block's rim, stands as authored. Classic blocks fall under the same law; how many of BLOCKS.BSA's
+buildings by the town map's own ladder (`townQuarters.js` quarterOf), in a footprint a building of the block stands on
+(heldFootprints: a subrecord's origin, automap column xPos / 64 and row zPos / 64, falls in it), is not stood; a cell on
+a footprint's edge or corner, or on the block's rim, stands as authored. AUDIT FB1018b L4-1: the automap alone took 26,
+and 8 of them were Beautiful Villages' TEMPBSE0 and TEMPBSC0, whose automaps draw houses the blocks do not have - their
+authors planted that open ground; the first sweep built its blocks with no subrecords, so it could not see one (L4-2). Classic blocks fall under the same law; how many of BLOCKS.BSA's
 cells it takes was not measured (no ARENA2 here). THE FOUR HOSTS: `world.js` and `exterior.js` get it through
 collectBlockFlats; `worldModes.js` and `dungeonContext.js` lay out no town block.
 
-Pins: `test/world/fb1018b_housebush.test.js` (4). Mutants: `tools/mutants/fb1018b_housebush.json` (8, all dead).
+Pins: `test/world/fb1018b_housebush.test.js` (5). Mutants: `tools/mutants/fb1018b_housebush.json` (14, all dead).
 
 ## ROCK-SMEAR: the pack's rocks drawn outside in, their texture box-mapped (T6)
 
@@ -266,10 +279,12 @@ one, "the flat grey smear".
 FIXED. Every face looks out of the boulder and is box-mapped (no face stretches past 1 : 1/√3, the rows level on the
 sides). Found beside it: prismZ took its corners as counter-clockwise on trust, and both its callers hand it clockwise
 lists, so the dock ramp (53143) and the steps' stringers (53144) were drawn inside out too; prismZ now winds by the
-corners' own area. The collider reads no winding. THE FOUR HOSTS: as HOUSE-BUSH's. `03-World/Beautiful-Towns.md`'s two
+corners' own area. AUDIT FB1018b L4-6: the pack's rocks stand near their origins and its prisms wind one way, so a
+boulder off its origin and a prism in each winding and quadrant are pinned too. Ipsmoth's count (16 rocks, nine wet) is
+data evidence, read off the pack. The collider reads no winding. THE FOUR HOSTS: as HOUSE-BUSH's. `03-World/Beautiful-Towns.md`'s two
 stand-in rows corrected.
 
-Pins: `test/world/fb1018b_rocksmear.test.js` (4). Mutants: `tools/mutants/fb1018b_rocksmear.json` (8, all dead).
+Pins: `test/world/fb1018b_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018b_rocksmear.json` (10, all dead).
 
 ## CRAFT-LIMIT-SAID: the crafter's limit said where it acts, and a station's XP the service's own (T7)
 
@@ -329,7 +344,9 @@ Found beside it (WOD-SEA-TEST): World of Daggerfall's sea refusal (`LocationLoad
 which DFU's `GetMapPixelData` fills only on a pixel that holds a location - and such a pixel has left at step 1 - so the
 refusal never fired, in DFU or here, and a WoD site stood on any sea pixel its lists name (Mac's "world of daggerfall
 ocean rocks", 2026-10-02, whose fix let a ship meet them rightly and left them standing). Which of the two stood off
-Tlactrn Manor is still not proven - the reporter's map pixel would say - but the WoD half is closed.
+Tlactrn Manor is still not proven - the reporter's map pixel would say. The WoD half is closed for the low sea (a WOODS
+height of 2 or less); a sea pixel at 3 to 5, which the port's water still reads as sea (its line is 5, the sea floor 3.4),
+keeps its sites as the mod's own test does - not measured here (WOODS is ARENA2's).
 
 **WOD-SEA-TEST** (`src/world/worldOfDaggerfall/wodLocationLoader.js` pickState, `src/scenes/pixelBuild.js`; Mac, given the
 choice: "Yes fix WOD"). FIXED, a departure (`01-Overview/Port-Ledger.md` section A): the arm asks the region the PIXEL
@@ -339,11 +356,17 @@ GetMapPixelData's mapRegionIndex, which nothing else read. So a pixel of the sea
 regions (3, 29, 28, 30), at a WOODS height of 2 or less, stands none of the mod's sites - and the mod ships only type-2
 instances, the type the arm skips: every one of its 227,938 (rocks 209,436, shrines, camps, ruins, mountains and forts).
 How many of them named a sea pixel was not counted: the WOODS and MAPS data are ARENA2's, not in the tree. Online every
-client builds the same pick, so the room's world moves together with the release; nothing on the relay or the account
-service reads a WoD site. Pins: `test/world/worldOfDaggerfall/fb1018b_wodsea.test.js` (3; one is data evidence and passes
+client builds the same pick, so the room's world moves together with the release. The account service's camp claims
+(`seatHolding.js` claimBounty, `seatInfluence.js` claimOrcCamp) take a WoD camp's site id and read only its form and
+pixel (AUDIT FB1018b L4-4) - they list no site, so a camp the pick no longer stands is one no client clears, and a
+modified client's claim is bounded as before. THE FOUR HOSTS: `world.js` through its streaming build (`pixelBuild.js`,
+no bootWorld line); `exterior.js` stands only Privateer's Hold's camp, no pick; `worldModes.js` and `dungeonContext.js`
+build no WoD site. `03-World/World-Of-Daggerfall.md` step 2 names the departure. Pins: `test/world/worldOfDaggerfall/fb1018b_wodsea.test.js` (3; one is data evidence and passes
 on either code). PIN MOVED: `test/world/terrain/wod2_loader.test.js`'s sea-arm test ("the sea arm is dead code") and its
 host wiring line; `tools/mutants/wod2.json`'s record that held the host to the location's region is re-aimed as the old
-read. Mutants: `tools/mutants/fb1018b_wodsea.json` (4, all dead).
+read; AUDIT FB1018b L4-3: `test/systems/flow2_fast_tests.test.js`'s sea tiles named the dead field, so the pixel walk's
+sea arm was never compared with the scan's - they name the pixel's region now. Mutants:
+`tools/mutants/fb1018b_wodsea.json` (7, all dead).
 
 **Tunmont's docks.** Tunmont's grid has no dock blocks, so the railed pier is our own QUAYS jetty (`quayModel.js` railX).
 The real planQuay and buildQuayModel on made shores of 12, 60 and 195 m face every closed part out, and the jetty and
