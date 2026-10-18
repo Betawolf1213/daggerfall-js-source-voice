@@ -1410,4 +1410,11 @@ weight), `fb1012d_allyrace.test.js` (the stamp carries the Dread after its perso
 `PEER_REVENANT_PUPPETS_MAX` is three kept and six sworn - 9, it was 11), and the arena ladder's, `itemwalk`'s and
 audit544's fixtures, marked. 23 older mutant records named lines this slice moved and were re-aimed by content.
 
-Pinned: `test/systems/revenant/unquiet.test.js` (25); `tools/mutants/unquiet.json` (137).
+Pinned: `test/systems/revenant/unquiet.test.js` (25); `tools/mutants/unquiet.json` (137, all dead). Every revenant list was
+swept again on the slice (44 lists, 1,731 records): nine mutants lived where the cap of three, the will at rank II and the
+bolt had taken their pins' ground. The burials A6 and RVN8 guard, and REVENANT-no-cap, never happened now that none rises
+past the cap; they are pinned through a deserter coming back past it. RVN9's one out was the one slain to make room. A
+sink close enough to have been cornered anyway. Vengeance's days read at the roll's bottom. RVN3's will mutant was rank 2,
+the law now (re-aimed at 3). FEUD HARNESS's stand mid-run and its rally mid-scatter were never reached by a runner a bolt
+outruns; a chaser past any player's run now reads them. Each pin was rewritten, and all nine now die - 1,731 dead, the two
+equivalents as recorded.
