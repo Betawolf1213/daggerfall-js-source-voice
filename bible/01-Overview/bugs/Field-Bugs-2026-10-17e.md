@@ -6,6 +6,7 @@ Oblivion Gate. Read on the code at main's `81710c3a7`.
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | A player, by direct message, the evening after KEY-LAW shipped: "bruhhhh it was that keyyyyy", over the notice "The realm's law has held this character three times. Its trading is frozen until October 24 at 3:21 AM, then opens on its own." - then "like 5 other people in reporting same thing" | Law 6 struck every Weir Key (KEY-LAW), and three keys taken up one after another made AUTO-HOLD's week. Migration 0125 lifted that week only for a character whose every law finding, ever, was the key's. A finding already judged and cleared (0123's Aetheric pieces, which the gate's own farmers wear) or one an older law laid stood in that history, so the week stood | fixed (KEY-LIFT) |
+| 2 | "People floating in mid air for some users", with a screenshot from the Oblivion Gate in the Alik'r before Dagon's Breach opened: the crowd's bodies, names and health bars hanging tens of metres over the sand, scattered up and down, and the reporter's own body on the ground | A pose's height is the sender's own ground's, and nothing kept two builds apart online (`03-World/Landforms.md` C2): a copy on an older ground - a macOS or portable desktop copy never updates itself - drew every peer on the current ground in the air, and was drawn under it | fixed (GROUND-GATE), Mac's call: the relay turns an old build away while `groundGate` is on |
 
 ## KEY-LIFT: the key's week, lifted where the key made it
 
@@ -66,3 +67,69 @@ list could. A carried piece's hold stands. Three other findings, 0120's week, st
 a character 0125 already lifted are all untouched. The first test fails on main: 0129 does not exist, and 0125 leaves the
 week standing. `tools/mutants/fb1017e.json`: 15 mutants, all dead (each boundary, each exclusion, the threshold, the cap,
 the kept strikes and their fade, the hold another piece makes, the key's signature, staff's).
+
+## GROUND-GATE: a build on an older ground turned away
+
+`src/net/wire.js` GROUND_LAW, GROUND_LAW_WIRE_MAX, groundRoom, GROUND_OLD_REASON and the hello's `gl`, RELAY_VERSION
+`world216`; `server/src/index.js` `_groundRefusal` and its call in the hello, GROUND_OLD_WORDS, the setting's refusal;
+`src/net/relayCfg.js` `groundGate`; `src/net/online.js` `_helloFrame`; `tools/groundPrint.mjs` and
+`test/fixtures/groundPrint.json` (new).
+
+FOUND. The receiver draws a peer where the sender says its feet are: the overworld's pose carries the feet's height
+less the floating origin (`scenes/world.js`, the pose's `y`), the relay fans it unchanged (SLIM-FRAME rounds it to the
+centimetre), and the bodies stand on it (`net/remotePlayers.js`, `net/peer/peerBodies.js`). No peer layer asks its own
+ground. So a peer floats when the sender's ground stands over the receiver's at that spot. The gate's own clearing is
+the same on every client (World of Daggerfall is forced on online, and the gate's spot is the day's), and strangers'
+Elite Breach arches, whose clearings differ between clients, never stand within 300 m of a Dagon's Breach
+(`scenes/eliteGates/egArch.js` EG_ARCH_GATE_NEAR_M). The landforms are forced on online, so two current builds stand
+one ground. What remains is two builds: AUDIT LANDFORMS C2 had named it and left it to Mac. A deploy reloads no open
+tab, and the macOS and portable desktop copies never update themselves (`01-Overview/Desktop-App.md`, "Which copies").
+Measured on the landforms' synthetic world in a desert climate, at three pixels, the landforms' ground stands 60-83 m,
+243-264 m and -9 to 1 m over the classic ground, about 20 m apart inside each - a crowd high and scattered, as the
+screenshot's (the classic ground is a copy from before the landforms; a copy from between two later ground slices
+parts by less).
+
+Not verified here: the reporters' builds. The record asks the players who see it whether theirs is a macOS or portable
+desktop copy, or a tab open for days.
+
+Mac's call (2026-10-18, of three: the relay turns old builds away; each client stands peers on its own ground; or ask
+the reporters first): "Relay turns old builds away".
+
+DFU has no multiplayer. This is our own relay's law, so no DFU member or ledger row moves.
+
+FIXED. A hello to a ground room (`groundRoom`: a cell, a building's or a dungeon's place, a battle, an owned room - the
+rooms whose peers stand on each client's own ground) says the ground its build stands on, `gl` (GROUND_LAW, 1 for the
+ground at this merge). Any other value is read as none, the `w2` law, never refused at the parse. While the relay
+setting `groundGate` is on, such a room refuses a hello that says less or none before anything is written. The error
+frame carries the relay's words ("This copy of the game is older than the world online. Update it to play online:
+reload the page, or download the latest desktop release."), which every build shows as its own error, and the close
+carries a reason of its own (`old ground`), because a WebSocket close reason is at most 123 bytes. A refused session goes
+terminal and does not loop. The hub and every social room let an old build in, so its friends and chat stand.
+
+A hello on the ground asks nothing. An old one asks the hub's settings at most every RELAY_CFG_TTL_MS, and waits for the
+answer while the room has never had one, so a cold cell's first hello is not the one let through.
+
+THE SWITCH STARTS OFF. The relay deploys first and the site last (the account service waits on the relay, and the site
+on the service), so a gate in force at the relay's deploy would refuse every player, a reload included, until the site
+served this build. Once it does: `/relay groundGate on` (a developer's command). Every copy from before this merge says
+no `gl`, so turning it on turns away every tab not reloaded since and every desktop copy not updated since - the price
+of the choice, paid once.
+
+THE LAW MOVES WITH THE GROUND. `test/net/fb1017e_groundgate.test.js` holds the shaped ground (`generatePixelTerrain`,
+landforms on, over the landforms' synthetic world: a pixel by the network's road and river and one on the mountain's
+flank, in each of CLIMATE.PAK's ten lands, read every 8 samples) to the print recorded under GROUND_LAW
+(`test/fixtures/groundPrint.json`). A move past half a metre anywhere fails until GROUND_LAW moves, RELAY_VERSION with
+it, and the print is recorded again (`node tools/groundPrint.mjs --write`); inside it is a float's noise, which no peer
+is seen to float by. The print does not read the real data: a ground that moves only there (a World of Daggerfall
+site, a location's blend) names its bump in its own slice.
+
+`test/net/fb1017e_groundgate.test.js` (4): the ground is the print recorded under its law; the wire's `gl` and the ground
+rooms; the relay's door through a real Room - off, an old build let in; on at the hub, a cold cell's first old hello
+asked of the hub and refused with the words and the close, nothing written, the current build let in without an ask,
+the hub itself open to an old build, the setting on and off alone, and off again inside a TTL; the client's hello says
+the ground to the room it goes to, a halo cell's included, and a refused session stops. Pins moved: RELAY_VERSION's
+(`world216`, 43 files), the settings' names and vars (`test/net/scale5b.test.js`). `tools/mutants/fb1017e.json`: 13 more
+mutants, all dead (the room's test, the law's, the cold ask unawaited, the setting unread or any value taken, the door
+dropped, the close reason whole, the wire's bound and rooms, the client's room and field, and the print against
+MOUNTAINS-SHARP's peaks halved and the Alik'r's dunes lowered).
+
