@@ -29,7 +29,7 @@ import * as POW from '../../../src/systems/martialPowers.js';
 import { healthShare, wordShare } from '../../../src/combat/healthShare.js';
 import { weaponAttackDamage } from '../../../src/combat/formulas.js';
 import { createWeapon } from '../../../src/combat/enemyEquipment.js';
-import { tellTechniqueLanded } from '../../../src/combat/technique/techniqueBlow.js';
+import { tellTechniqueLanded, blowMult } from '../../../src/combat/technique/techniqueBlow.js';   // AUDIT FB1018b L3-5: Headsman's Chop
 import { _resetTechniquesForTests } from '../../../src/combat/techniques.js';
 import { makeEnemyEntity } from '../../../src/characters/enemy/enemyEntity.js';
 import { ENEMY_BASICS } from '../../../src/characters/enemy/enemyBasics.js';
@@ -62,7 +62,7 @@ import { destroyGateGround } from '../../../src/ui/gate/gateGroundView.js';
 import { createEgFight } from '../../../src/scenes/eliteGates/egFight.js';
 import { egHallOf } from '../../../src/net/eliteGates/egLaw.js';
 import { egHallCentre } from '../../../src/world/eliteGates/egHall.js';
-import { egFightView, egGroundAt } from '../../../src/net/eliteGates/egWalkGraph.js';
+import { egFightView, egGroundAt, egFeetAt } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { EG_BOSS_KEYS, EG_OBJ } from '../../../src/net/eliteGates/egLords.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
 import { EG_KIND } from '../../../src/net/eliteGates/egLegion.js';
@@ -74,6 +74,8 @@ import { createSerpentHost } from '../../../src/scenes/serpentHost.js';
 import { createSerpentLink } from '../../../src/net/serpent/serpentLink.js';
 import { newSerpentFight, joinSerpentFight, serpentStateOf } from '../../../src/net/serpent/serpentBrain.js';
 import { validSerpentOut } from '../../../src/net/wire.js';
+import { numberFor } from '../../../src/ui/hitNumbers.js';   // AUDIT FB1018b L6-7: a turned blow's word
+import { HIT_KINDS } from '../../../src/net/gate/gateBrain.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -122,20 +124,23 @@ const fight = (over = {}) => ({ ...GATE_STATE_EMPTY, day: 700, boss: 'ruhn', hp:
 
 /** An Elite Breach's fight over a recording renderer (test/net/eliteGates/eglook_lords.test.js's own rig). */
 const T0 = 1_800_000_000_000;
-const lordRow = (i, key, hp, max, { x = 0, z = 30 } = {}) => egBodyOf([i, EG_ROLE.lord, EG_BOSS_KEYS.indexOf(key), 0, x, z, hp, max, 0, x, z, 0, 0, 0, 0, 1, 0, 0, Math.PI], T0);
-const addRow = (i, k, hp, max, { x = 6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.add, k, 0, x, z, hp, max, 0, x, z, 0, 0, 0, 0, 0, 0, 0, Math.PI], T0);
-const objRow = (i, k, hp, max, { x = -6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.obj, k, 0, x, z, hp, max, 0, x, z, 0, 0, 0, 0, 0, 0, 0, Math.PI], T0);
-function breach(bodies) {
+// AUDIT FB1018b L3-6: each stands on the fight ground under it, as the relay stands every body (net/eliteGates/egBodies.js egBodyNew -
+// egFeetAt): the hall's first disc is 18 m up, and a lord drawn at 0 under it is a storey below my feet there, turned
+const feetAt = (x, z) => egFeetAt(egFightView(egHallOf(12345, 5, 0)), x, z);
+const lordRow = (i, key, hp, max, { x = 0, z = 30 } = {}) => egBodyOf([i, EG_ROLE.lord, EG_BOSS_KEYS.indexOf(key), 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 1, 0, 0, Math.PI], T0);
+const addRow = (i, k, hp, max, { x = 6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.add, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
+const objRow = (i, k, hp, max, { x = -6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.obj, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
+function breach(bodies, { feet: withFeet = true } = {}) {   // AUDIT FB1018b L6-7: `feet` false - this screen holds none of mine
   const E = { ...EG_STATE_EMPTY, b: '0123456789abcdef', h: 5, sg: 'trial', seed: 12345, geo: 0, end: null, hw: T0 - 5000, co: [['acct-0', 'Mac', 1]], fight: { ...EG_STATE_EMPTY.fight, h: 5, wk: T0, bodies, pg: {} } };
   assert.ok(egHallOf(12345, 5, 0), 'a hall to fight in');
   const renderer = { textures: new Set(), createBillboardBatch: (archive, record, size, centres) => ({ archive, record, size: { ...size }, centres, origin: null, bounds: [0, 0, 0, 1] }), destroyBillboardBatch: () => {} };
   const getTexture = async (archive) => ({ archive, getSize: () => ({ width: 40, height: 80 }), getScale: () => ({ width: 0, height: 0 }), getFrameCount: () => 1 });
   const clock = { t: T0 + 1000 };
   // TURNED-BLOW (the same record): a blow is struck from my feet on the fight ground beside the first body - with no feet
-  // the screen turns it as the relay would, and no power answers it
+  // the screen turns it as the relay would, and no power answers it (STANDING NOWHERE TURNS EVERY BLOW, below)
   const spec = egHallOf(12345, 5, 0), centre = egHallCentre(spec), b0 = bodies[0];
   const g = egGroundAt(egFightView(spec), b0.x + 1.5, NaN, b0.z);
-  const feet = g ? [centre[0] + b0.x + 1.5, centre[1] + (g.y ?? 0), centre[2] + b0.z] : null;
+  const feet = withFeet && g ? [centre[0] + b0.x + 1.5, centre[1] + (g.y ?? 0), centre[2] + b0.z] : null;
   const fightOf = createEgFight({ renderer, getTexture, uploadRecordFrame: () => {}, audio: { play3d: () => {}, play3dId: () => {}, playOneShot: () => {} },
     link: { state: () => E }, now: () => clock.t, feet: () => feet, player: () => ({ health: 100, maxHealth: 100 }), me: () => 'acct-0' });
   return { E, fight: fightOf, clock };
@@ -300,11 +305,11 @@ test('RELAY-SHARE THE FAMILY on a body the relay runs: Serpent\'s Kiss doubles u
   setPlayerDoor(null);
 });
 
-test('RELAY-SHARE ONE LAW, FIVE READERS: the loot\'s powers, the masteries, the martial and arcane paths and the sets read a body\'s share through combat/healthShare.js alone - none keeps a `health / maxHealth` of its own - and the stand-ins carry the reader they are handed (mutants: a reader\'s copy put back; the stand-in\'s reader unkept)', () => {
-  for (const p of ['src/systems/loot/lootPowers.js', 'src/systems/weaponMastery.js', 'src/systems/martialPowers.js', 'src/systems/arcanePowers.js', 'src/systems/sigil/sigilSetPowers.js']) {
+test('RELAY-SHARE ONE LAW, SIX READERS: the loot\'s powers, the masteries, the martial and arcane paths, the sets and the techniques\' Headsman\'s Chop (AUDIT FB1018b L3-5) read a body\'s share through combat/healthShare.js alone - none keeps a `health / maxHealth` of its own - and the stand-ins carry the reader they are handed (mutants: a reader\'s copy put back; the stand-in\'s reader unkept)', () => {
+  for (const p of ['src/systems/loot/lootPowers.js', 'src/systems/weaponMastery.js', 'src/systems/martialPowers.js', 'src/systems/arcanePowers.js', 'src/systems/sigil/sigilSetPowers.js', 'src/combat/technique/techniqueBlow.js']) {
     const s = strip(read(p));
-    assert.match(s, /import \{ healthShare \} from '(?:\.\.\/)+combat\/healthShare\.js';/, `${p} reads the one law`);
-    assert.doesNotMatch(s, /\.health \/ e\.maxHealth|e\.health < e\.maxHealth \/ 2/, `${p} keeps no share law of its own`);
+    assert.match(s, /import \{ healthShare \} from '(?:\.\.\/)+(?:combat\/)?healthShare\.js';/, `${p} reads the one law`);
+    assert.doesNotMatch(s, /\.health \/ e\.maxHealth|e\.health < e\.maxHealth \/ 2|e\.health : max\) \/ max/, `${p} keeps no share law of its own`);
   }
   const law = strip(read('src/combat/healthShare.js'));
   assert.match(law, /if \(e\?\.relayHealth\) \{/);
@@ -313,4 +318,72 @@ test('RELAY-SHARE ONE LAW, FIVE READERS: the loot\'s powers, the masteries, the 
   assert.equal(crystalStandIn(bossLookOf('ruhn'), 1, fn).relayShare, fn);
   assert.equal(hostStandIn({ mobile: 1, name: 'Imp' }, 2, fn).relayShare, fn);
   assert.equal(bossStandIn({ mobile: 31 }, 'x', 0.5).relayShare, null, 'a reader, or none');
+});
+
+// ── AUDIT FB1018b lanes L3 and L6 ────────────────────────────────────────────────────────────────────────────────
+
+test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018b L6-7, and lane L3\'s survivor; TURNED-BLOW\'s own law): on a screen that holds no feet of mine in the hall, a lord under a quarter of its word is turned - its stand-in warded in the ward\'s word (never the ground\'s: I stand on no ground it could name), Sweet Mother\'s Kiss gives nothing on it (the plain blow), and the door sends nothing; a struck object the same (mutants: standing nowhere turns nothing; the ground\'s word with no feet)', async () => {
+  fresh();
+  const me = imprinted();
+  const plain = weaponAttackDamage(me, bossStandIn({ mobile: 31 }, 'unread'), 0, sword(), ROLL);
+  const B = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 }), objRow(3, EG_OBJ.rift, 90, 120, { x: -50, z: 53 })], { feet: false });
+  B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
+  const low = B.fight.hostTargets().find((q) => q.i === 1), rift = B.fight.hostTargets().find((q) => q.i === 3);
+  assert.ok(low && rift, 'both still drawn, bodies a swing could meet');
+  for (const t of [low, rift]) {
+    assert.equal(t.entity.warded, true, `${t.i}: standing nowhere, turned`);
+    assert.equal(t.entity.wardText, null, `${t.i}: in the ward's word`);
+    assert.equal(numberFor({ hit: true, damage: 9, target: t.entity }).text, 'Warded');
+    assert.equal(B.fight.hostHit({ i: t.i, d: 40, r: HIT_KINDS.Melee }), false, `${t.i}: never sent`);
+  }
+  assert.equal(healthShare(low.entity), 0.2, 'its word is under a quarter');
+  assert.equal(weaponAttackDamage(me, low.entity, 0, sword(), ROLL), plain, 'and the Kiss gives nothing on a turned blow - the plain blow');
+  // the same lord with my feet beside it: whole, the Kiss's +50%, the blow sent
+  const H = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 })]);
+  H.fight.frame(); await new Promise((r) => setTimeout(r, 0)); H.fight.frame();
+  const whole = H.fight.hostTargets().find((q) => q.i === 1);
+  assert.equal(whole.entity.warded, false);
+  assert.equal(weaponAttackDamage(me, whole.entity, 0, sword(), ROLL), plain + Math.floor(plain / 2), 'beside it: +50%');
+});
+
+test('RELAY-SHARE A STRUCK OBJECT READS ITS WORD AS IT FALLS (lane L3\'s survivor): an Elite Breach\'s rift at three quarters of its word, then a fifth - its stand-in\'s share each frame\'s, never the share it was first drawn at (mutants: the object\'s reader frozen at its first sight)', async () => {
+  fresh();
+  const B = breach([objRow(3, EG_OBJ.rift, 90, 120, { x: -53, z: 53 })]);
+  B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
+  const share = () => healthShare(B.fight.hostTargets().find((q) => q.i === 3).entity);
+  assert.equal(share(), 0.75);
+  B.E.fight.bodies = [objRow(3, EG_OBJ.rift, 24, 120, { x: -53, z: 53 })];
+  B.fight.frame();
+  assert.equal(share(), 0.2, 'its word now');
+});
+
+test('RELAY-SHARE THE SERPENT\'S WORD IS THE FIGHT I STAND IN (lane L3\'s survivors): the host reads its link\'s word only while that word is of the serpent the omen swims for me - a day moved on with the link still holding the last day\'s fight, no word (mutants: any fight\'s word read; any day\'s)', () => {
+  let now = 50_000_000;
+  const sw = { day: 363, site: { sx: 0, sz: 0 }, phase: 'hunt', t: { soundAt: now + 25 * 60_000 } };
+  const link = createSerpentLink({ now: () => now, site: () => ({ day: 363, sx: 0, sz: 0 }) });
+  const sh = createSerpentHost({ now: () => now, link, omen: { swimming: () => sw }, online: { ready: () => false, send: () => true, acct: () => 'acct-0001' },
+    toScene: (sx, sz, x, z) => [x, z], toSite: (sx, sz, x, z) => [x, z], seaY: () => 0, feet: () => [60, 1, 0], level: () => 20, boat: () => null,
+    strike: () => {}, maxHealth: () => 100, hurt: () => {}, say: () => {}, mid: () => {}, sound: () => {}, fx: () => {} });
+  sh.frame();
+  const f = newSerpentFight(363, now, now + 25 * 60_000, 'sethrakul', 0, 0, 0);
+  joinSerpentFight(f, 'acct-0001', 'Ama', 20, 4, now, true);
+  f.hp = f.max * 0.2;
+  link.word(validSerpentOut(serpentStateOf(f)));
+  now += 10; sh.frame();
+  assert.ok(Math.abs(sh.healthShare() - 0.2) < 1e-9, 'its word');
+  sw.day = 364;   // the omen swims another day's serpent; the link still holds 363's fight
+  now += 10; sh.frame();
+  assert.equal(link.state().day, 363, 'the link still holds the old fight');
+  assert.equal(sh.healthShare(), null, 'another day\'s: no word');
+});
+
+test('RELAY-SHARE HEADSMAN\'S CHOP (AUDIT FB1018b L3-5; combat/technique/techniqueBlow.js blowMult): its weight on what a foe has lost reads the one law - an orc at a fifth of its health (as it did), and a body the relay runs at a fifth of the relay\'s word (its stand-in\'s 1e9 placeholder read whole before, so the Chop gave nothing on any of them); no word heard, whole (mutants: the Chop\'s own copy of the share again)', () => {
+  const chop = { mult: 1.2, wounded: 1.0 };
+  const orc = makeEnemyEntity(7, ENEMY_BASICS[7], null, 1, ROLL);
+  orc.health = Math.floor(orc.maxHealth * 0.2);
+  assert.ok(Math.abs(blowMult(chop, { entity: orc }) - (1.2 + (1 - orc.health / orc.maxHealth))) < 1e-9, 'an orc: its own share, as before');
+  assert.ok(Math.abs(blowMult(chop, { entity: relayBody(0.2) }) - 2.0) < 1e-9, 'a relay body at a fifth of its word: +0.8');
+  assert.equal(blowMult(chop, { entity: relayBody(null) }), 1.2, 'no word: whole, nothing more');
+  assert.equal(blowMult(chop, { entity: relayBody(1) }), 1.2);
+  assert.equal(blowMult({ mult: 1.2 }, { entity: relayBody(0.2) }), 1.2, 'no Chop, no weight');
 });

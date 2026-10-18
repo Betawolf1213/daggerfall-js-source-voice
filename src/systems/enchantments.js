@@ -500,7 +500,10 @@ const REGISTRY = new Map([
   [T.CastWhenStrikes, {
     flags: PAYLOAD.Strikes,
     strikes({ param, entity, target, damage, ctx }) {
-      if (!target || damage === 0) return null;
+      // AUDIT FB1018b L3-2: a blow its referee turns whole (a stand-in `warded` - the Warden's ward, the Remnant shut, the
+      // Spire's turned blows) DEALT nothing, and the class's own sourceDamage == 0 guard casts nothing and wears nothing for
+      // it (VAMPIRIC-WARD's reading, below) - its spell met the same turned body and landed nothing either
+      if (!target || damage === 0 || target.warded) return null;
       const record = ctx?.spellsByIndex?.()?.get?.(param);
       if (record) ctx?.applySpellToTarget?.(record, entity, target);
       return { durabilityLoss: DURABILITY_LOSS_ON_STRIKE };

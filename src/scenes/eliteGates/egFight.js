@@ -527,7 +527,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   function turnStandIn(t, b) {
     const e = t.entity, view = egFightView(spec), at = strikeAt;
     const off = !at || egStruckOff(view, b, at[0], at[1], at[2]);
-    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2]);
+    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now());   // AUDIT FB1018b L3-6: the body where it stands now (its storey)
     e.wardText = off && at ? egNoFooting() : null;   // ui/hitNumbers.js: the ground's word, else the ward's
   }
 

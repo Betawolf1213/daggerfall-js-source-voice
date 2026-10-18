@@ -238,5 +238,45 @@
     "new": "const belowHalf = (e) => (healthShare(e) ?? 0) < 0.5;",
     "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
     "why": "Run Them Down on every body whose word is unheard"
+  },
+  {
+    "name": "RELAY-SHARE-the-breach-object-reader-stale",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "() => c.hp)",
+    "new": "((s0) => () => s0)(b.max > 0 ? b.hp / b.max : 0))",
+    "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
+    "why": "lane L3's survivor (L3-breach-object-reader-stale): a struck object's stand-in reads the share it was first drawn at, never its word as it falls"
+  },
+  {
+    "name": "RELAY-SHARE-the-serpent-reads-any-fight",
+    "file": "src/scenes/serpentHost.js",
+    "old": "return live && s.day === live.day ? wordShare(s.hp, s.max) : null;",
+    "new": "return wordShare(s?.hp, s?.max);",
+    "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
+    "why": "lane L3's survivor (L3-serpent-reader-any-fight): the serpent's host reads whatever fight its link holds"
+  },
+  {
+    "name": "RELAY-SHARE-the-serpent-reads-any-day",
+    "file": "src/scenes/serpentHost.js",
+    "old": "return live && s.day === live.day ? wordShare(s.hp, s.max) : null;",
+    "new": "return live ? wordShare(s.hp, s.max) : null;",
+    "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
+    "why": "lane L3's survivor (L3-serpent-reader-any-day): another day's serpent read for today's"
+  },
+  {
+    "name": "RELAY-SHARE-the-Chop-keeps-its-own-copy",
+    "file": "src/combat/technique/techniqueBlow.js",
+    "old": "  if (blow?.wounded > 0) m += blow.wounded * Math.max(0, Math.min(1, 1 - (healthShare(foe?.entity) ?? 1)));",
+    "new": "  if (blow?.wounded > 0) { const e = foe?.entity, max = e?.maxHealth; if (max > 0) m += blow.wounded * Math.max(0, Math.min(1, 1 - (Number.isFinite(e.health) ? e.health : max) / max)); }",
+    "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
+    "why": "AUDIT FB1018b L3-5: Headsman's Chop's own share again - a relay body's 1e9 placeholder read whole, the Chop nothing on any of them"
+  },
+  {
+    "name": "RELAY-SHARE-the-Chop-reads-no-word-as-under",
+    "file": "src/combat/technique/techniqueBlow.js",
+    "old": "(healthShare(foe?.entity) ?? 1)",
+    "new": "(healthShare(foe?.entity) ?? 0)",
+    "tests": ["test/systems/loot/fb1018b_relayshare.test.js"],
+    "why": "AUDIT FB1018b L3-5: a body with no word heard read as at nothing - the Chop's whole weight on it"
   }
 ]

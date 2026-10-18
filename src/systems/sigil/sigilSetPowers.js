@@ -257,7 +257,7 @@ export function setBlow(weapon, damage, attacker, target, info) {
  *  modifiers, the share was of a number PCAAO then reduced for the struck foe's armour alone, so its neighbour could take
  *  more than it did. SERPENT-SET: and Constrict's coil tightens - a bow's blow too (the tier says a weapon blow). */
 export function setStrike(attacker, target, damage, weapon, info = null) {
-  if (!(damage > 0) || !weapon) return;
+  if (!(damage > 0) || !weapon || target?.warded) return;   // AUDIT FB1018b L3-3: a blow its referee turns whole landed nothing - no Discipline's return, no coil, no Cleave off it (setBlow's own AUDIT SETS L4)
   if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)
   if (info?.blow !== false) returned(attacker);   // EG15: the Discipline's return - a bow's blow too (a weapon blow); TWO-HANDS (AUDIT 2): a per-blow charge, so a blow that counts whole alone
   if (ranged(weapon)) return;

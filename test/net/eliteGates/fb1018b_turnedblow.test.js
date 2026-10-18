@@ -17,6 +17,8 @@ import { readFileSync } from 'node:fs';
 import { egHallOf, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE, EG_FL, egBodiesOf, egBodyWire, egStruckOff, egStrikeTurned, egLordAsleep, EG_TURNS_FL } from '../../../src/net/eliteGates/egBodies.js';
+import { egStoreyApart, egRisen, egRadiusWire, egFightState } from '../../../src/net/eliteGates/egBodies.js';   // AUDIT FB1018b L3-4, L3-6
+import { EG_OBJ } from '../../../src/net/eliteGates/egLords.js';
 import { EG_KIND, egLegionRaise } from '../../../src/net/eliteGates/egLegion.js';
 import { egFightView, egGroundAt, EG_STRIKE_PAD_M } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { foldEg, EG_STATE_EMPTY, egBodyOf } from '../../../src/net/eliteGates/egLink.js';
@@ -53,7 +55,8 @@ async function spire(seed, h, { wake = true } = {}) {
   const arrive = { x: spec.arrive.x, z: spec.arrive.z, y: spec.arrive.y ?? 0 };
   const pos = { [ME]: { sx: spec.x0 + arrive.x, z: arrive.z, y: arrive.y }, 'acct-1': { sx: spec.x0 + arrive.x + 0.5, z: arrive.z, y: arrive.y } };
   let E = { ...EG_STATE_EMPTY, b: B.b, seed: B.seed, geo: 0 };   // the breach this screen stands in (its call's word), its stage and fight the room's
-  const tell = (w) => { if (!w || (w.to && w.to !== ME)) return; const v = validEgOut(JSON.parse(JSON.stringify(w))); if (v) E = foldEg(E, v, now); };
+  const words = [];   // AUDIT FB1018b L3-1: every word the screen heard, in order
+  const tell = (w) => { if (!w || (w.to && w.to !== ME)) return; const v = validEgOut(JSON.parse(JSON.stringify(w))); if (v) { words.push(v); E = foldEg(E, v, now); } };
   const centre = egHallCentre(spec), feet = [centre[0] + arrive.x, centre[1] + arrive.y, centre[2] + arrive.z], sent = [];
   const fight = createEgFight({ renderer: { textures: { has: () => true }, createBillboardBatch: (archive, record, size) => ({ archive, record, size, origin: [0, 0, 0], bounds: [0, 0, 0, 1] }), destroyBillboardBatch: NOOP },
     link: { state: () => E }, now: () => now, feet: () => feet, cam: () => [feet[0], feet[1] + 1.6, feet[2] - 6], player: () => ({ health: 100, maxHealth: 100 }), me: () => ME,
@@ -72,7 +75,7 @@ async function spire(seed, h, { wake = true } = {}) {
   /** A blow of 40 from where I stand on the relay - what it landed on body `i`. */
   let q = 1;
   const relayBlow = (i, r = HIT_KINDS.Melee) => { const b = B.F.bodies.find((x) => x.i === i), hp = b.hp; egBlow(B, ME, { k: 'hit', i, q: q++, d: 40, r }, pos[ME], now + 600 * q); return hp - b.hp; };
-  return { B, spec, fight, at, step, target, relayBlow, sent, E: () => E, now: () => now, tell };
+  return { B, spec, fight, at, step, target, relayBlow, sent, E: () => E, now: () => now, tell, words };
 }
 /** The first hall of `kind` in seed's first circles, the law as it stands. */
 const hallOf = (seed, kind) => { for (let h = 1; h <= 15; h++) if (egHallOf(seed, h, 0).kind === kind) return h; return 0; };
@@ -208,6 +211,129 @@ test('TURNED-BLOW THE HOST\'S SWING AND SHAFT (scenes/dungeonContext.js - buildD
   const dc = rd('src/scenes/dungeonContext.js');
   const swing = dc.slice(dc.indexOf('  function swingOnHost(hb, damage, lookDir) {'), dc.indexOf('  function spellOnHost('));
   assert.match(swing, /^ {2}function swingOnHost\(hb, damage, lookDir\) \{\n {4}if \(hb\.entity\.warded\) wardTurns\(hb\);[^\n]*\n {4}else if \(damage <= 0\) \{/, 'the swing: the ward\'s ring first, then a zero blow\'s parry, else the blood and the number out');
-  assert.match(dc, /\n {12}if \(hb\.entity\.warded\) wardTurns\(hb\);[^\n]*\n {12}else playerArrowHitFoe\(m, hb, \{[^\n]*landOnHost\(hb, d, HIT_KINDS\.Shaft\)[^\n]*\n {12}if \(!hb\.entity\.warded && techniquePierces\(m, hb\)\) continue;/, 'the shaft: the ward\'s ring, else the one player-arrow law');
+  // PIN MOVED (AUDIT FB1018b L3-7): the turned shaft says its word beside the ring (THE TURNED BLOW SAYS ITS WORD, below)
+  assert.match(dc, /\n {12}if \(hb\.entity\.warded\) \{ wardTurns\(hb\); [^\n]*\}[^\n]*\n {12}else playerArrowHitFoe\(m, hb, \{[^\n]*landOnHost\(hb, d, HIT_KINDS\.Shaft\)[^\n]*\n {12}if \(!hb\.entity\.warded && techniquePierces\(m, hb\)\) continue;/, 'the shaft: the ward\'s ring, else the one player-arrow law');
   assert.match(dc, /function wardTurns\(boss\) \{ audio\.play3d\(SOUND\.Parry6, bossChest\(boss\)/, 'the ring is the ward\'s own, at the body\'s chest');
+});
+
+// ── AUDIT FB1018b lane L3 ─────────────────────────────────────────────────────────────────────────────────────────
+
+test('TURNED-BLOW THE WAKE SAID AT ONCE (AUDIT FB1018b L3-1; section 8.6): a Court\'s lord woken by its wake ring says its first phase in the beat that wakes it (`eph` - the screen holds a lord asleep until it hears a phase, and the whole fight\'s word came up to two seconds later), so on the next frame the screen holds it awake and offers it whole, the blow sent and landed; that first phase turns no card (mutants: the wake\'s phase unsaid; the wake folded as a phase turn)', async () => {
+  const C = await spire(12345, hallOf(12345, 'court'));
+  const L = C.B.F.bodies.find((b) => b.role === EG_ROLE.lord), ring = C.spec.ring;
+  assert.ok(L && !L.up2, 'the lord stands asleep');
+  C.at(ring.x, ring.z, ring.y ?? 0); C.at(ring.x + 1, ring.z, ring.y ?? 0, 'acct-1');
+  let from = C.words.length;
+  for (let k = 0; k < 120 && !L.up2; k++) { from = C.words.length; await C.step(100); }
+  assert.ok(L.up2, 'the wake ring woke it');
+  const heard = C.words.slice(from);
+  assert.ok(!heard.some((w) => w.k === 'efs'), 'no whole fight in the beat that woke it - its phase came by its own word');
+  assert.deepEqual(heard.filter((w) => w.k === 'eph').map((w) => [w.i, w.ph]), [[L.i, 1]], 'its first phase, said at its wake');
+  const seen = C.E().fight.bodies.find((b) => b.i === L.i);
+  assert.equal(seen.ph, 1);
+  assert.equal(egLordAsleep(seen), false, 'the screen holds it awake');
+  assert.deepEqual(C.E().fight.phases.filter((p) => p.i === L.i), [], 'a wake turns no phase - no card, no growl');
+  // beside it, the next frame - no beat of the relay between, so no other word could have woken it here
+  C.at(L.x + 1.5, L.z, L.y ?? 0);
+  C.fight.frame(); await tick(); C.fight.frame();
+  const t = C.target(L.i);
+  assert.equal(t.entity.warded, false, 'offered whole');
+  assert.equal(C.fight.hostHit({ i: L.i, d: 40, r: HIT_KINDS.Melee }), true, 'and the blow sent');
+  assert.ok(C.relayBlow(L.i) > 0, 'which the relay lands');
+});
+
+test('TURNED-BLOW THE STOREY (AUDIT FB1018b L3-6; Elite-Gates-Ascent.md section 2): on a span of THE ASCENT\'s law, a Harrier on an island 14 m over mine is turned on the screen (its stand-in warded, the ward\'s word, never sent) as the relay refuses it (five shafts land nothing); one on my own island whole on both - the one storey law (egStoreyApart) the relay\'s egHitBody and the screen\'s egStrikeTurned both call, and the screen asks it where the body stands now (mutants: the screen blind to the storey; the body\'s height read at its word, not where its walk has carried it; the relay\'s storey unasked)', async () => {
+  const S = await spire(12345, 7), view = egFightView(S.spec);
+  assert.equal(S.spec.kind, 'span');
+  const isl = S.spec.islands.filter((i) => egGroundAt(view, i.x, i.y ?? 0, i.z, 0));
+  let best = null;
+  for (const a of isl) for (const b of isl) { const dy = (b.y ?? 0) - (a.y ?? 0); if (dy < 4.5) continue; const d = Math.hypot(a.x - b.x, a.z - b.z); if (!best || d < best.d) best = { a, b, d }; }
+  assert.ok(best, 'two islands a storey apart');
+  const { a: lo, b: hi } = best;
+  S.at(lo.x, lo.z, lo.y ?? 0); S.at(hi.x, hi.z, hi.y ?? 0, 'acct-1');
+  for (let k = 0; k < 100; k++) await S.step();
+  const near = (p) => egBodiesOf(S.B.F, EG_ROLE.add).filter((x) => x.k === EG_KIND.harrier && Math.abs((x.y ?? 0) - (p.y ?? 0)) < 2).sort((u, v) => Math.hypot(u.x - p.x, u.z - p.z) - Math.hypot(v.x - p.x, v.z - p.z))[0];
+  const up = near(hi), mine = near(lo);
+  assert.ok(up && mine, 'a Harrier shadows each of us, on each island');
+  assert.equal(egStoreyApart(view, lo.x, lo.y ?? 0, lo.z, up.x, up.y, up.z), true, 'the law: a storey over me');
+  const t = S.target(up.i);
+  assert.ok(t, 'the screen still draws it, a body my swing could meet');
+  assert.equal(t.entity.warded, true, 'turned');
+  assert.equal(t.entity.wardText, null, 'in the ward\'s word - I stand on the fight ground');
+  assert.equal(numberFor({ hit: true, damage: 40, target: t.entity }).text, 'Warded');
+  const n = S.sent.length;
+  assert.equal(S.fight.hostHit({ i: up.i, d: 40, r: HIT_KINDS.Shaft }), false, 'never sent');
+  assert.equal(S.sent.length, n);
+  let landed = 0;
+  for (let k = 0; k < 5; k++) landed += S.relayBlow(up.i, HIT_KINDS.Shaft);
+  assert.equal(landed, 0, 'the relay: five shafts from my island land nothing');
+  assert.equal(S.target(mine.i).entity.warded, false, 'on my own storey: whole');
+  assert.ok(S.relayBlow(mine.i, HIT_KINDS.Shaft) > 0, 'and the relay lands it');
+  // where the body stands NOW: one walking up from my island to the high one, asked once its walk has carried it there
+  const walker = { i: 99, role: EG_ROLE.add, k: EG_KIND.harrier, x: lo.x, z: lo.z, y: lo.y ?? 0, fl: 0, mv: { x: lo.x, z: lo.z, y: lo.y ?? 0, tx: hi.x, tz: hi.z, ty: hi.y ?? 0, v: 5, at: 0 } };
+  assert.equal(egStrikeTurned(view, walker, lo.x, lo.y ?? 0, lo.z, 0), false, 'at its word: on my island');
+  assert.equal(egStrikeTurned(view, walker, lo.x, lo.y ?? 0, lo.z, 60_000), true, 'carried up: a storey over me');
+  assert.equal(egStrikeTurned(view, walker, hi.x, hi.y ?? 0, hi.z, 60_000), false, 'and on the high island\'s with it');
+  // one law: both sides call it, and no copy of the storey rule stands in egHitBody
+  const src = rd('src/net/eliteGates/egBodies.js');
+  assert.match(src, /if \(egStoreyApart\(F\.view \?\? spec, pose\.x, pose\.y, pose\.z, bx, b\.y, bz\)\) return \{ got: 0, b: null \};/, 'the relay asks the law');
+  assert.equal((src.match(/!egOneStorey\(egStoreyY\(/g) ?? []).length, 1, 'the rule written once');
+});
+
+test('TURNED-BLOW THE OBJECT\'S RADIUS (AUDIT FB1018b L3-4): an errand\'s object is struck from beside it off the floor by its own radius (egStruckOff) - a spark\'s 0.6, a chain\'s 0.8, an anchor\'s 0.9, a false wall\'s 1, a rift\'s 1.3, a Wellspring\'s spring 2.2 (a rift too: no kind says it) - and the screen now hears that radius, said beside each body\'s row of nineteen (`ead` and `efs`, through the real wire and link): at every gap off a floor\'s edge the screen judges a blow as the relay does; a word that says none (a relay before it) still folds, a malformed list is refused (mutants: the radius unsaid in a risen word or the whole fight; dropped by the wire; unfolded by the link; halved; a short or a negative list kept; one radius for every body)', () => {
+  const spec = egHallOf(12345, 1, 0), view = egFightView(spec), d = view.fl.find((f) => f.t === 'd');
+  const at = [d.x + d.r + EG_STRIKE_PAD_M + 3, d.y ?? 0, d.z];   // off the fight ground, at the floor's height
+  const heard = (w) => { const v = validEgOut(JSON.parse(JSON.stringify(w))); assert.ok(v, `${w.k} valid`); return foldEg({ ...EG_STATE_EMPTY }, v, T0).fight.bodies; };
+  let differs = 0;
+  for (const [t, r] of [['spark', 0.6], ['chain', 0.8], ['anchor', 0.9], ['fwall', 1.0], ['rift', 1.3], ['rift', 2.2]]) {
+    for (const gap of [r - 0.05, r + 0.05, 0.95, 1.05]) {
+      const o = { i: 9, role: EG_ROLE.obj, k: EG_OBJ[t], pt: 0, x: d.x + d.r + gap, z: d.z, y: d.y ?? 0, mv: null, hp: 50, max: 50, r, fl: 0, ws: 0, wsAt: 0 };
+      const F = { h: 1, wokeAt: T0, bodies: [o], blows: [], tethers: [], marks: [], pg: {}, zones: [] };
+      const relay = egStruckOff(view, o, ...at);
+      for (const [w, b] of [['risen', heard(egRisen([o], T0))[0]], ['whole', heard(egFightState(F, T0))[0]]]) {
+        assert.equal(b.r, r, `${t} ${r}: its radius heard (${w})`);
+        assert.equal(egStruckOff(view, b, ...at), relay, `${t} ${r} at ${gap.toFixed(2)} m off the edge: the screen as the relay (${w})`);
+      }
+      if (egStruckOff(view, { ...o, r: undefined }, ...at) !== relay) differs++;
+    }
+  }
+  assert.ok(differs >= 4, `the radius decides the blow off a floor's edge (${differs} of the cases)`);
+  // the row is the row a build before this reads; the radius rides beside it
+  const o = { i: 9, role: EG_ROLE.obj, k: EG_OBJ.rift, pt: 0, x: 0, z: 0, y: 0, mv: null, hp: 50, max: 50, r: 2.2, fl: 0 };
+  const w = egRisen([o], T0);
+  assert.equal(w.a[0].length, 19, 'nineteen in the row');
+  assert.deepEqual(w.r, [egRadiusWire(o)]);
+  assert.deepEqual([egRadiusWire({ r: 1.234 }), egRadiusWire({})], [1.23, 0.6], 'hundredths; a body with none, the relay\'s own 0.6');
+  const old = heard({ k: 'ead', a: w.a, at: T0 })[0];
+  assert.equal(old.r, undefined, 'a relay before it: no radius, the word kept');
+  for (const bad of [[2.2, 1], [-1], ['2.2'], [NaN], 2.2]) assert.equal(validEgOut({ k: 'ead', a: w.a, r: bad, at: T0 }), null, `a radius list of ${JSON.stringify(bad)} refused`);
+  assert.equal(validEgOut({ ...egFightState({ h: 1, wokeAt: T0, bodies: [o], blows: [], tethers: [], marks: [], pg: {}, zones: [] }, T0), r: [] }), null, 'the whole fight\'s too');
+});
+
+test('TURNED-BLOW AN OBJECT TURNED IS NEVER SENT (AUDIT FB1018b lane L3\'s survivor): an errand\'s rift struck from the arrival plate - the screen\'s door refuses it by the object\'s own stand-in, as it refuses a lord\'s or an add\'s, nothing sent and nothing flashed (mutants: the door\'s guard blind to the struck objects)', async () => {
+  const Y = await spire(12345, hallOf(12345, 'yard'));
+  const rift = Y.B.F.bodies.find((b) => b.role === EG_ROLE.obj && b.hp > 0 && !(b.fl & EG_FL.ward));
+  assert.ok(rift, 'a rift to strike');
+  Y.at(Y.spec.arrive.x, Y.spec.arrive.z, Y.spec.arrive.y ?? 0);
+  await Y.step();
+  assert.equal(Y.target(rift.i).entity.warded, true, 'turned from the plate');
+  const n = Y.sent.length, hurtAt = Y.E().fight.bodies.find((b) => b.i === rift.i).hurtAt;
+  assert.equal(Y.fight.hostHit({ i: rift.i, d: 40, r: HIT_KINDS.Melee }), false, 'not sent');
+  assert.equal(Y.sent.length, n);
+  assert.equal(Y.E().fight.bodies.find((b) => b.i === rift.i).hurtAt, hurtAt, 'nor flashed');
+});
+
+test('TURNED-BLOW THE TURNED BLOW SAYS ITS WORD AT EVERY DOOR (AUDIT FB1018b L3-2, L3-7; scenes/dungeonContext.js by its text - buildDungeonContext does not run in Node): a spell on a body of the court\'s or the Spire\'s pops its number by the stand-in it met, so a turned one says "No footing" or "Warded" (ui/hitNumbers.js numberFor), never the claim; a shaft a ward or the ground turns says its word beside the ring, as a swing\'s formula does on the same stand-in - one of his host\'s and the Warden\'s (mutants: each spell door\'s number blind to its body; each turned shaft silent)', () => {
+  const dc = rd('src/scenes/dungeonContext.js');
+  const door = (fn, next) => dc.slice(dc.indexOf(`  function ${fn}(`), dc.indexOf(next));
+  for (const [fn, next, body] of [['spellOnCrystal', '  function gateHostBodies(', 'cr'], ['spellOnHost', '  function arenaRivalBody(', 'hb'], ['spellOnBoss', '  function spellOnStandIn(', 'boss']]) {
+    assert.match(door(fn, next), new RegExp(`\\n {4}tellStandIn\\(sp, ${body}\\.entity, r, dealt, caster\\);\\n {4}reportPlayerAttack\\(\\{ hit: true, damage: Math\\.round\\(dealt\\), target: ${body}\\.entity \\}\\);`), `${fn}: its number by the body it met`);
+  }
+  assert.match(dc, /\n {12}if \(hb\.entity\.warded\) \{ wardTurns\(hb\); reportPlayerAttack\(\{ hit: true, damage: 0, target: hb\.entity \}\); \}/, 'a shaft on one of the host, turned: its word');
+  assert.match(dc, /\n {12}if \(boss\.warded\) \{ wardTurns\(boss\); reportPlayerAttack\(\{ hit: true, damage: 0, target: boss\.entity \}\); \}/, 'a shaft into his ward: its word');
+  assert.match(dc, /b\.entity\.warded = !!b\.warded;/, 'his stand-in carries his ward, the word\'s source');
+  // the word as the HUD shows it: the ground's, else the ward's; a body that takes it, its number
+  assert.equal(numberFor({ hit: true, damage: 0, target: { warded: true, wardText: egNoFooting() } }).text, 'No footing');
+  assert.equal(numberFor({ hit: true, damage: 0, target: { warded: true, wardText: null } }).text, 'Warded');
+  assert.equal(numberFor({ hit: true, damage: 31, target: { warded: false } }).text, '31');
 });

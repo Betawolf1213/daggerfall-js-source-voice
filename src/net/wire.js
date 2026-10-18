@@ -5909,6 +5909,10 @@ function egBody(t) {
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
+/** AUDIT FB1018b L3-4: each body's radius beside its row (net/eliteGates/egBodies.js egRadiusWire - metres, hundredths; one a row,
+ *  in its order) - or none, a relay's before it (the screen then judges as it did). Beside the rows, not in them: a build before it
+ *  drops the field and keeps the word. Answers the list (a copy), undefined for none, null for a malformed one. */
+const egRadii = (r, n) => (r === undefined ? undefined : Array.isArray(r) && r.length === n && r.every((v) => finite(v) && v >= 0 && v <= EG_XZ_MAX) ? [...r] : null);
 /** A blow (net/eliteGates/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
  *  push, span. THE ASCENT (LAW 9; Elite-Gates-Ascent.md section 2): `y`, the height it lands at (a hall that judges by height
  *  says it - net/eliteGates/egBodies.js egAim; a coordinate's bound), so every screen draws and judges it on its own storey; none
@@ -6081,9 +6085,10 @@ export function validEgOut(m) {
     // ── the fight ──
     case 'efs': {
       const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW), zs = egList(m.zs ?? [], egZone);   // EG-ZJ: the live zones (section 22 - a joiner's)
-      return b && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg), zs } : null;
+      const r = b ? egRadii(m.r, b.length) : null;   // AUDIT FB1018b L3-4: the bodies' radii beside them
+      return b && r !== null && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, ...(r ? { r } : {}), bl, tx, mk, pg: egProgress(m.pg), zs } : null;
     }
-    case 'ead': { const a = egBodies(m.a, 24); return a && gateMs(m.at) ? { k: 'ead', a, at: m.at } : null; }
+    case 'ead': { const a = egBodies(m.a, 24), r = a ? egRadii(m.r, a.length) : null; return a && r !== null && gateMs(m.at) ? { k: 'ead', a, ...(r ? { r } : {}), at: m.at } : null; }   // AUDIT FB1018b L3-4: and their radii
     case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 10 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) && egXZ(t[7]) && egXZ(t[8]) && egYaw(t[9]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }   // EG-ZJ: each walk's height and its end's; AUDIT EG V (lane1 #7): its facing
     case 'ehp': { const h = egList(m.h, (t) => (Array.isArray(t) && t.length === 2 && intIn(t[0], 1, 1e9) && intIn(t[1], 0, EG_HP_MAX) ? [...t] : null), EG_WIRE_BODIES_MAX); return h ? { k: 'ehp', h } : null; }
     case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
