@@ -163,7 +163,7 @@ test('RVN-OWNERS-CHOICE THE REPORT, on the real street pools: a party member\'s 
 });
 
 // PIN MOVED (RVN-OWN-KNEEL, FIELD BUGS 2026-10-17e - "Disintegrate just outright kills your rev with no option to hire"):
-// my own Disintegrate passes the stand and the will and KNEELS it; it no longer closes the record (fb1017e_rvnownkneel).
+// my own Disintegrate passes the stand and the will and KNEELS it; it no longer closes the record (fb1017f_rvnownkneel).
 test('RVN-OWNERS-CHOICE MY OWN Disintegrate (the same spell, my own door) kneels my revenant - its record open, past the last stand at rank 3; a stat drained to zero (a round\'s, nobody\'s) kneels it too (mutants: my whole kill withheld; nobody\'s whole kills)', async () => {
   const ann = client(player('char-ann', 'Ann'), 'ann-0001');
   const r = revenantOf(ann.me, 1);

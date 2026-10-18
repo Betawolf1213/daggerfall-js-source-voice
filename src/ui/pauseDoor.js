@@ -60,6 +60,7 @@ import { profPagesShown, PROF_PAGE_SECTIONS } from './professions/profPages.js';
 import { FAMILY_PAGE_SECTIONS } from './familyPages.js';   // LEGACY3: Project Legacy's Family tab, on either skin
 import { hudText } from '../systems/notify.js';
 import { t } from '../systems/textManager.js';   // L10N4: the professions' closed line in the player's language
+import { isTextEntryTarget } from './input.js';   // AUDIT PRIVATE-REPORT UI-10: a field's held key is the field's
 import {
   openClassicPauseFlow as openClassicPauseWindow,
   pauseArtLoaded,
@@ -225,7 +226,7 @@ function openPauseFlowNow(show, hooks) {
   if (familyPageAt(hooks.at) && typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);
   // SERVER-POST: the mailbox (`/mail`, ui/enhanced/enhancedPost.js) is the enhanced face's - the classic pause window has no envelope - so
   // its door opens the enhanced pause on either skin, as the family's pages do
-  if (hooks.at === 'mailbox' && typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);
+  if ((hooks.at === 'mailbox' || hooks.at === 'report') && typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);   // PRIVATE-REPORT: `/bug`, its form
   // GROWTH4: the Growth tab (the classic sheet's specialisation rows, a door to the level or the skies) - the classic pause
   // has no tabs, so its pages open the enhanced pause on either skin, as the family's do (the owner, asked: the classic skin
   // reaches it)
@@ -309,7 +310,8 @@ function enhancedPauseOverlay(show, base) {
   // arm-then-confirm acts keep the focus on the armed button (AUDIT LEGACY II U6): "Play as" and "Pass the mantle"
   // armed and fired on one held press. Every other ask-twice act of this window is covered by the same line.
   host.addEventListener?.('keydown', (e) => {
-    if (e.repeat && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); }
+    // PRIVATE-REPORT (AUDIT PRIVATE-REPORT UI-10): never in a field - a held Space or Enter types, as every other key does
+    if (e.repeat && (e.key === 'Enter' || e.key === ' ') && !isTextEntryTarget(e.target)) { e.preventDefault(); e.stopPropagation(); }
   }, true);
   // AUDIT LEGACY III U2: THE KEYBOARD COMES INTO THE WINDOW. Opened, the focus stood on the page's body, where every Tab
   // was the game's (AUDIT LEGACY II U3's walk asks the focus to be inside already): a Tab from outside lands on the

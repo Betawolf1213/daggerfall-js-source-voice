@@ -352,14 +352,14 @@ Disintegrate and my own Razor still kill outright, as sections 19 and 20 say (un
 DEPARTURE from sections 11, 19 and 20 as written ("a Disintegrate kills it outright" - whosever it was): the rule they
 recorded is the owner's alone now. Pinned by `test/systems/revenant/fb1016b_rvnownerschoice.test.js`.
 
-**RVN-OWN-KNEEL** (FIELD BUGS 2026-10-17e; Discord #general, Dude7ox: "Disintegrate just outright kills your rev with no
+**RVN-OWN-KNEEL** (FIELD BUGS 2026-10-17f; Discord #general, Dude7ox: "Disintegrate just outright kills your rev with no
 option to hire"; the owner: "Hmm thought I fixed this"): **no blow skips the kill-or-spare.** The owner's own whole blow
 - a Disintegrate, the Razor's whole-health strike - still passes over the last stand and the will, the Disintegrate's
 edge (sections 19, 20), and then kneels it like any killing blow: alive at 1, its record open, Kill or Spare offered
 (both doors' yield gate asks `revenantFate.js ownersWholeKill` of the will alone). A host that cannot open the choice
 (`exterior.js`, no `fates`) lets it die as before. DEPARTURE from RVN-OWNERS-CHOICE's "my own Disintegrate and my own
 Razor still kill outright" and from sections 19 and 20 as written. Pinned by
-`test/systems/revenant/fb1017e_rvnownkneel.test.js`; the record, `01-Overview/bugs/Field-Bugs-2026-10-17e.md`.
+`test/systems/revenant/fb1017f_rvnownkneel.test.js`; the record, `01-Overview/bugs/Field-Bugs-2026-10-17f.md`.
 
 ## 16. The audit (2026-10-02, Mac: "Audit everything and ensure perfection")
 
