@@ -60,8 +60,8 @@ export function parseObj(text) {
   const positions = [], uvs = [], normals = [], faces = [];
   let material = null, mtllib = null;
   for (const raw of text.split(/\r?\n/)) {
-    const line = raw.trim();
-    if (!line || line[0] === '#') continue;
+    const line = raw.replace(/#.*/, '').trim();   // AUDIT BANTHA1 TREE-7: a comment ends any line - a face's too
+    if (!line) continue;
     const p = line.split(/\s+/);
     switch (p[0]) {
       case 'v': positions.push(+p[1], +p[2], +p[3]); break;
@@ -93,6 +93,13 @@ export function parseObj(text) {
  * @param {string} text
  * @returns {Map<string, { mapKd: string|null, mapD: string|null }>}
  */
+/** A map statement's file: what follows its options (`-o 0 0 0`, `-clamp on`, `-bm 1` ...), spaces and all (AUDIT
+ *  BANTHA1 TREE-7: the last word alone cut "bark tree.png" to "tree.png"). */
+function mapName(words) {
+  let i = 0;
+  while (i < words.length && words[i][0] === '-') { i++; while (i < words.length && /^(?:-?[\d.]+|on|off)$/.test(words[i])) i++; }
+  return i < words.length ? words.slice(i).join(' ') : null;
+}
 export function parseMtl(text) {
   const out = new Map();
   let cur = null;
@@ -100,8 +107,8 @@ export function parseMtl(text) {
     const line = raw.trim();
     if (!line || line[0] === '#') continue;
     const [k, ...rest] = line.split(/\s+/);
-    if (k === 'newmtl') { cur = { mapKd: null, mapD: null }; out.set(rest.join(' '), cur); } else if (cur && k === 'map_Kd') cur.mapKd = rest[rest.length - 1] ?? null;
-    else if (cur && k === 'map_d') cur.mapD = rest[rest.length - 1] ?? null;
+    if (k === 'newmtl') { cur = { mapKd: null, mapD: null }; out.set(rest.join(' '), cur); } else if (cur && k === 'map_Kd') cur.mapKd = mapName(rest);
+    else if (cur && k === 'map_d') cur.mapD = mapName(rest);
   }
   return out;
 }
@@ -114,6 +121,8 @@ export function parseMtl(text) {
  * @param {ReturnType<typeof parseObj>} obj
  */
 export function jungleMesh(obj) {
+  const materials = new Set(obj.faces.map((f) => f.material));
+  if (materials.size > 1) throw new Error(`jungle: a tree is one picture - this one names ${materials.size} materials`);   // AUDIT BANTHA1 TREE-7: never its first face's picture on all of them
   const P = obj.positions;
   let minY = Infinity;
   for (let i = 1; i < P.length; i += 3) minY = Math.min(minY, P[i]);
@@ -215,14 +224,20 @@ export function measureTree(mesh, pic, step = 0.1) {
   }
   let crownFrom = top;
   for (let k = Math.ceil(FOOT_TOP / 0.5); k < bands.length; k++) if (bands[k] >= crown * 0.5) { crownFrom = k * 0.5; break; }
+  // the trunk: what is drawn between the foot and the crown - or, where the crown begins at the foot's top (a banyan's
+  // roots, a flame tree's curtains hang from it), the TRUNK_BAND above the foot (AUDIT BANTHA1 TREE-5: an empty window
+  // read a default, half the banyan's drawn girth)
+  const trunkTo = crownFrom > FOOT_TOP ? crownFrom : FOOT_TOP + TRUNK_BAND;
   const trunkRadii = [];
-  for (let i = 0; i < samples.length; i += 2) if (samples[i] >= FOOT_TOP && samples[i] < crownFrom) trunkRadii.push(samples[i + 1]);
+  for (let i = 0; i < samples.length; i += 2) if (samples[i] >= FOOT_TOP && samples[i] < trunkTo) trunkRadii.push(samples[i + 1]);
   trunkRadii.sort((p, q) => p - q);
   const trunk = trunkRadii.length ? trunkRadii[Math.floor(trunkRadii.length * TRUNK_QUANTILE)] : 0.5;
   return { foot, crown, crownFrom, trunk: Math.min(TRUNK_MAX, Math.max(TRUNK_MIN, trunk)), height: top };
 }
 /** The height (m) below which a tree's drawn parts are its foot. */
 export const FOOT_TOP = 3;
+/** Where a crown begins at the foot's top, the band (m) above it the trunk is read in. */
+export const TRUNK_BAND = 3;
 /** The quantile of the drawn radii under the crown read as the trunk's girth, and its bounds (m). */
 export const TRUNK_QUANTILE = 0.3;
 export const TRUNK_MIN = 0.35;
@@ -236,26 +251,31 @@ export const TRUNK_MAX = 1.6;
  * picture decoded: a jungle tree is stood, and taken as cover, before its door has loaded.
  */
 export const JUNGLE_MEASURES = Object.freeze([
-  Object.freeze({ foot: 8.3, crown: 8.73, crownFrom: 3, trunk: 0.5, height: 22.54 }),   // banyan - its aerial roots reach the ground at its crown's rim
+  Object.freeze({ foot: 8.3, crown: 8.73, crownFrom: 3, trunk: 1.44, height: 22.54 }),   // banyan - its aerial roots reach the ground at its crown's rim
   Object.freeze({ foot: 8.53, crown: 9.63, crownFrom: 9, trunk: 0.99, height: 21.41 }),   // kapok - its buttresses
   Object.freeze({ foot: 7.58, crown: 9.42, crownFrom: 8, trunk: 1.1, height: 22.53 }),   // fig
-  Object.freeze({ foot: 5.6, crown: 7.8, crownFrom: 3, trunk: 0.5, height: 16.23 }),   // flame - its moss curtains hang to the ground
+  Object.freeze({ foot: 5.6, crown: 7.8, crownFrom: 3, trunk: 0.43, height: 16.23 }),   // flame - its moss curtains hang to the ground
   Object.freeze({ foot: 6.37, crown: 9.48, crownFrom: 8, trunk: 1.33, height: 22.54 }),   // mahogany
 ]);
 
 /**
  * A JUNGLE TREE AS COVER (TACT1, ai/cover.js coverProxies' shape - AUDIT TACT B2's trunk and crown): its trunk's girth
  * up to where its crown begins, its crown's reach from there to its top - each at the tree's own scale. A jungle trunk is
- * a metre or two thick, and a body behind it is hidden; its crown is a crown.
+ * a metre or two thick, and a body behind it is hidden; its crown is a crown, at TACT1's own share of it
+ * (JUNGLE_CROWN_COVER - AUDIT BANTHA1 LAY-6: the crown's whole reach was 1.43x the rule every other tree keeps).
  * @param {number[]} base the flat's base, by reference (FELLED keys on it) @param {number} species @param {number} scale
  */
 export function jungleCover(base, species, scale) {
   const m = JUNGLE_MEASURES[species];
   return [
     { c: base, r: m.trunk * scale, h: m.crownFrom * scale, lift: 0 },
-    { c: base, r: m.crown * scale, h: (m.height - m.crownFrom) * scale, lift: m.crownFrom * scale },
+    { c: base, r: m.crown * JUNGLE_CROWN_COVER * scale, h: (m.height - m.crownFrom) * scale, lift: m.crownFrom * scale },
   ];
 }
+/** A crown's cover radius as a share of its reach - ai/cover.js COVER_RADIUS_FRAC of its whole width (0.35 x 2): a
+ *  crown's edges are mostly air, as a flat's are (held equal by test/world/bantha1_jungle.test.js; ai/cover.js is not
+ *  imported here - this module is the terrain worker's too). */
+export const JUNGLE_CROWN_COVER = 0.7;
 
 /**
  * THE JUNGLE IN LOW POLY TREES' SHAPE - what readLowPolyTrees answers for the mod, made from the five trees: `json`

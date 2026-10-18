@@ -25,7 +25,7 @@ import { generateSamples, ghostSampler, HEIGHTMAP_DIMENSION } from './terrainSam
 import { buildTerrainGrid, convertTilemap } from './terrainSurface.js';
 import { assignTiles, blendLocationTerrain, calcAvgMaxHeight, generateTileData } from './terrainTiles.js';
 import { layoutNature } from './terrainNature.js';
-import { withJungle } from './jungleNature.js';   // BANTHA1: the jungle over the pixel's own layout
+import { withJungle, jungleWhole } from './jungleNature.js';   // BANTHA1: the jungle over the pixel's own layout
 import { paintRoads, smoothRoadHeights, pathCorners } from '../road/roadPainter.js';
 import { MAP_W } from '../road/roadNetwork.js';
 import { applyPicks } from '../worldOfDaggerfall/wodLocationLoader.js';   // WOD2: World of Daggerfall's smoothing arms
@@ -167,8 +167,9 @@ export function generatePixelTerrain({ woods, px, py, stride = 1, tilemap, locat
     beach: classic,
   };
   // BANTHA1: the jungle over the pixel's own layout - its tiles laid again by the jungle's law, its clearings FOREST1's
-  // places, its trees off the tracks as a forest's are
-  const nature = withJungle(layoutNature(samples, tilemap, natureOpts), samples, tilemap,
+  // places, its trees off the tracks as a forest's are; AUDIT BANTHA1 PERF-6: a pixel the jungle owns whole lays no
+  // layout of its own - every flat of it would be dropped
+  const nature = withJungle(jungle && jungleWhole(jungle.nine) ? [] : layoutNature(samples, tilemap, natureOpts), samples, tilemap,
     { ...natureOpts, jungle: jungle ? { nine: jungle.nine, pois: placesFor(jungle.hidden), paths } : null });
   return { samples, tilemap, positions: grid.positions, normals: grid.normals, bed: grid.bed, tilemapBytes, avg, nature,
     paths,   // GRASS-PATH1: null when no network was present, as `withRoads` says

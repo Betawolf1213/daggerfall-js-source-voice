@@ -191,7 +191,7 @@
   {
     "name": "BANTHA1-the-clear-start-ignored-on-the-gpu",
     "file": "src/render/hazeGlsl.js",
-    "old": "  float run = length(worldPos - origin) - uHaze[0].w;",
+    "old": "  float run = length(worldPos - origin) - uJungleHaze[0].w;",
     "new": "  float run = length(worldPos - origin);",
     "tests": [
       "test/world/bantha1_jungle.test.js"
@@ -211,15 +211,6 @@
     "file": "src/world/jungle/jungleHaze.js",
     "old": "(box[4] + t[1] - u[1]) * u[2]));",
     "new": "(box[1] + t[1] - u[1]) * u[2]));",
-    "tests": [
-      "test/world/bantha1_jungle.test.js"
-    ]
-  },
-  {
-    "name": "BANTHA1-the-weathers-fog-ignored",
-    "file": "src/world/jungle/jungleHaze.js",
-    "old": "  if (weather) T *= weather(d);\n",
-    "new": "  \n",
     "tests": [
       "test/world/bantha1_jungle.test.js"
     ]

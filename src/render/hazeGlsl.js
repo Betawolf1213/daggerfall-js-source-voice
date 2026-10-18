@@ -5,10 +5,10 @@
 // program takes it inside the fog block (FOG_GLSL), the far ring takes it beside its horizon's haze, and the skies take
 // its sky half - so the ground, the trees, the water, the ring and the sky close into one haze at one rate.
 //
-// THE LAW. A layer of humid air lies on the land: its extinction is whole (uHaze[0].x, per metre) up to a FLOOR
-// (uHaze[0].y - the canopy's height over the ground the eye stands on, the host's) and falls off above it by e every
-// 1/uHaze[0].z metres. A ray from the eye to a point crosses it for its length less a clear start about the eye
-// (uHaze[0].w); its optical depth is that run times the layer's MEAN density along it - exact for a straight ray
+// THE LAW. A layer of humid air lies on the land: its extinction is whole (uJungleHaze[0].x, per metre) up to a FLOOR
+// (uJungleHaze[0].y - the canopy's height over the ground the eye stands on, the host's) and falls off above it by e every
+// 1/uJungleHaze[0].z metres. A ray from the eye to a point crosses it for its length less a clear start about the eye
+// (uJungleHaze[0].w); its optical depth is that run times the layer's MEAN density along it - exact for a straight ray
 // through an exponential layer clamped at its floor (hazeMean, below) - and what reaches the eye is exp(-depth). So a
 // valley under the floor is the layer's thickest, a ridge above it clears, and looking down from a summit the haze
 // below is a sea. world/jungle/jungleHaze.js hazeTransmittance is this function's CPU twin, term for term (the host's
@@ -21,9 +21,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 /** hazeAt(worldPos, origin): 1 clear, 0 all haze - the share of a point's light that reaches `origin` (the eye, or the
- *  travel view's focus) through the layer. uHaze[1].x is 0 when there is no haze at all (every program's default). */
+ *  travel view's focus) through the layer. uJungleHaze[1].x is 0 when there is no haze at all (every program's default). */
 export const HAZE_LAW_GLSL = `
-uniform vec4 uHaze[2];   // BANTHA1: [0] the floor's extinction (1/m), the floor's height, 1 / the falloff (1/m), the clear start (m) | [1].x on
+uniform vec4 uJungleHaze[2];   // BANTHA1: [0] the floor's extinction (1/m), the floor's height, 1 / the falloff (1/m), the clear start (m) | [1].x on
 float hazeMean(float a, float b) {   // the mean density over a ray from height a to b (in falloffs over the floor), the floor's 1
   float lo = min(a, b), hi = max(a, b);
   if (hi <= 0.0) return 1.0;
@@ -33,11 +33,11 @@ float hazeMean(float a, float b) {   // the mean density over a ray from height 
   return ((lo0 - lo) + (exp(-lo0) - exp(-hi))) / span;
 }
 float hazeAt(vec3 worldPos, vec3 origin) {
-  if (uHaze[1].x < 0.5) return 1.0;
-  float run = length(worldPos - origin) - uHaze[0].w;
+  if (uJungleHaze[1].x < 0.5) return 1.0;
+  float run = length(worldPos - origin) - uJungleHaze[0].w;
   if (run <= 0.0) return 1.0;
-  float k = uHaze[0].z;
-  return exp(-uHaze[0].x * run * hazeMean((origin.y - uHaze[0].y) * k, (worldPos.y - uHaze[0].y) * k));
+  float k = uJungleHaze[0].z;
+  return exp(-uJungleHaze[0].x * run * hazeMean((origin.y - uJungleHaze[0].y) * k, (worldPos.y - uJungleHaze[0].y) * k));
 }`;
 
 /** hazeSkyMix(y): how much of the haze's colour a sky ray of height-per-metre `y` (its direction's y) shows - 1 at and

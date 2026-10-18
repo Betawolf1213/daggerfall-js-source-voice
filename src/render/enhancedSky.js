@@ -668,7 +668,7 @@ void main() {
   // error a triangular distribution, which is the shape that fully
   // decorrelates it from the signal - a flat one left a third of the
   // rows still identical to the row above.
-  vec3 out3 = hazeSky(mix(clamp(color, 0.0, 1.0), uFogColor, uFogMix), dir);   // BANTHA1: the jungle's haze toward the horizon
+  vec3 out3 = mix(clamp(color, 0.0, 1.0), uFogColor, uFogMix);
   // The SMOOTH pass's dither. Interleaved gradient noise, not a hash:
   // the hash of ES1c measured well (46% of identical rows to 25%) but
   // it is STRUCTURED at integer coordinates - a visible weave under
@@ -677,6 +677,7 @@ void main() {
   float ign = fract(52.9829189 * fract(0.06711056 * gl_FragCoord.x + 0.00583715 * gl_FragCoord.y));
   out3 += (ign - 0.5) / 255.0;
   outColor = vec4(brassGrade(dreadGrade(out3, uDread), uBrass), 1.0);   // EVENT1; AUDIT SD III (V8): the brass air's after it
+  outColor.rgb = hazeSky(outColor.rgb, dir);   // BANTHA1: the jungle's haze toward the horizon - AUDIT BANTHA1 HAZE-8: after the grades, its colour the frame's fog colour, graded once already (shared.js fogColorFor)
 }`;
 
 /** The pass. Same contract as SkyRenderer: draw(yaw, pitch, fovY, aspect)

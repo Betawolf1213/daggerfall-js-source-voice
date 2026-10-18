@@ -138,17 +138,18 @@ export function createHazeState() {
  */
 export function stepHaze(s, { dt, eye, share, density, floor }) {
   const jumped = !s.primed || !s.eye || Math.hypot(eye[0] - s.eye[0], eye[2] - s.eye[2]) > JUNGLE_HAZE.jump;
-  const ease = (from, to, lag) => (jumped ? to : from + (to - from) * (1 - Math.exp(-Math.max(0, dt) / lag)));
-  s.share = ease(s.share, share, JUNGLE_HAZE.lag.share);
-  s.density = ease(s.density, density, JUNGLE_HAZE.lag.density);
-  s.floor = ease(s.floor, floor, JUNGLE_HAZE.lag.floor);
-  s.eye = [eye[0], eye[1], eye[2]];
+  s.share = eased(jumped, s.share, share, dt, JUNGLE_HAZE.lag.share);
+  s.density = eased(jumped, s.density, density, dt, JUNGLE_HAZE.lag.density);
+  s.floor = eased(jumped, s.floor, floor, dt, JUNGLE_HAZE.lag.floor);
+  const e = (s.eye ??= [0, 0, 0]);   // AUDIT BANTHA1 HOST-8: the state's own, never a frame's allocation
+  e[0] = eye[0]; e[1] = eye[1]; e[2] = eye[2];
   s.primed = true;
   return s;
 }
+const eased = (jumped, from, to, dt, lag) => (jumped ? to : from + (to - from) * (1 - Math.exp(-Math.max(0, dt) / lag)));
 
 /**
- * THE EIGHT UNIFORMS (render/hazeGlsl.js uHaze): [extinction at the floor, the floor's height, 1 / falloff, the clear
+ * THE EIGHT UNIFORMS (render/hazeGlsl.js uJungleHaze): [extinction at the floor, the floor's height, 1 / falloff, the clear
  * start, on, 0, 0, 0] - `out` written when handed. Off (on 0) where the share has gone.
  * @param {ReturnType<typeof createHazeState>} s @param {Float32Array} [out]
  */
@@ -184,12 +185,13 @@ export function hazeColorOf(fog, out = new Float32Array(3)) {
  * @param {ArrayLike<number>} fogColor @param {any} fogRow @param {ArrayLike<number>} u hazeUniforms's @param {number} eyeY
  * @param {Float32Array} [out]
  */
+const _hazeColour = new Float32Array(3);   // HOST-8: fogColorWith's scratch
 export function fogColorWith(fogColor, fogRow, u, eyeY, out = new Float32Array(3)) {
   const th = hazeDensityAt(u, eyeY) * Math.max(0, JUNGLE_HAZE.weighAt - (u[3] ?? 0));
   if (!(th > 0)) { out[0] = fogColor[0]; out[1] = fogColor[1]; out[2] = fogColor[2]; return out; }
   const fw = fogRow ? fogFactor(fogRow, JUNGLE_HAZE.weighAt) : 1;
   const tw = -Math.log(Math.max(1e-4, Math.min(1, fw)));
-  const h = hazeColorOf(fogColor), w = th / (th + tw);
+  const h = hazeColorOf(fogColor, _hazeColour), w = th / (th + tw);
   for (let c = 0; c < 3; c++) out[c] = fogColor[c] + (h[c] - fogColor[c]) * w;
   return out;
 }
@@ -201,14 +203,17 @@ export function hazeSkyUniform(color, u, eyeY, out = new Float32Array(4)) {
 }
 
 /**
- * WHETHER THE HAZE HIDES A BOX - every point of it sending less than JUNGLE_HAZE.cull of its light to the eye. A bound: the
- * run to the box's nearest point, at the box's highest (where the layer is thinnest - hazeMean falls as the far end
- * rises), is the least any ray into it can cross; `weather(d)` - the weather fog's own factor at a distance, which
- * falls with distance - multiplies in when handed. `box` [x0, y0, z0, x1, y1, z1] moved by `t` ([x, y, z]).
+ * WHETHER THE HAZE HIDES A BOX - every point of it sending less than JUNGLE_HAZE.cull of its light to the eye THROUGH THE
+ * HAZE. A bound: the run to the box's nearest point, at the box's highest (where the layer is thinnest - hazeMean falls
+ * as the far end rises), is the least any ray into it can cross. `box` [x0, y0, z0, x1, y1, z1] moved by `t` ([x, y, z]).
+ * AUDIT BANTHA1 HOST-4: the haze ALONE - what a hidden box leaves is the sky (or the far ring) behind it, and the sky's
+ * haze along that ray is the whole column past the box (hazeSkyMix: depth / rise), at least the box's own depth, so the
+ * sky shown there is the fog colour the box would have drawn. The weather's fog multiplied in hid land the haze barely
+ * touched (past 2.4 km at the haze's fringe) and showed a sky the weather never fogs (`excludeSky`) in its place.
  * @param {ArrayLike<number>} u @param {ArrayLike<number>} eye @param {ArrayLike<number>} box @param {ArrayLike<number>} [t]
- * @param {((d: number) => number)|null} [weather]
  */
-export function hazeHides(u, eye, box, t = [0, 0, 0], weather = null) {
+const ZERO3 = Object.freeze([0, 0, 0]);
+export function hazeHides(u, eye, box, t = ZERO3) {
   if (!(u[4] >= 0.5)) return false;
   const nx = Math.max(box[0] + t[0] - eye[0], 0, eye[0] - (box[3] + t[0]));
   const ny = Math.max(box[1] + t[1] - eye[1], 0, eye[1] - (box[4] + t[1]));
@@ -216,7 +221,5 @@ export function hazeHides(u, eye, box, t = [0, 0, 0], weather = null) {
   const d = Math.hypot(nx, ny, nz);
   const run = d - u[3];
   if (run <= 0) return false;
-  let T = Math.exp(-u[0] * run * hazeMean((eye[1] - u[1]) * u[2], (box[4] + t[1] - u[1]) * u[2]));
-  if (weather) T *= weather(d);
-  return T < JUNGLE_HAZE.cull;
+  return Math.exp(-u[0] * run * hazeMean((eye[1] - u[1]) * u[2], (box[4] + t[1] - u[1]) * u[2])) < JUNGLE_HAZE.cull;
 }

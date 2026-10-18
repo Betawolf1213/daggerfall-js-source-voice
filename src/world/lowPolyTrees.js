@@ -535,12 +535,17 @@ export function buildTreeSet(px, py, groups) {
   const trees = new Float32Array(n * LPT_SET_FLOATS), centers = new Array(n);
   let k = 0;
   for (const g of groups) {
-    g.centers.forEach((c, i) => {
+    for (let i = 0; i < g.centers.length; i++) {
+      const c = g.centers[i];
       const v = lptVariety(px, py, c[0], c[2], !(g.wild && g.wild[i]));
       const sc = g.own ? g.own[i] : v.scale;   // BANTHA1: the layout's own scale
-      trees.set([g.h, c[0], c[1], c[2], g.fit ? Math.min(sc, g.fit[i]) : sc, v.yaw], k * LPT_SET_FLOATS);   // LPT-FIT
+      // AUDIT BANTHA1 PERF-8: the six floats written in place - a jungle set's 5,000 trees allocated an array each
+      const o = k * LPT_SET_FLOATS;
+      trees[o] = g.h; trees[o + 1] = c[0]; trees[o + 2] = c[1]; trees[o + 3] = c[2];
+      trees[o + 4] = g.fit ? Math.min(sc, g.fit[i]) : sc;   // LPT-FIT
+      trees[o + 5] = v.yaw;
       centers[k++] = c;
-    });
+    }
   }
   return { trees, centers };
 }

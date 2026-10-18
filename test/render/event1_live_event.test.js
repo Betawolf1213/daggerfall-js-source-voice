@@ -298,7 +298,7 @@ test('EVENT1 grade: the GLSL twin is made from the same stops, dim and weights, 
   const enhanced = rd('src/render/enhancedSky.js'), classic = rd('src/render/skyRenderer.js');
   assert.match(enhanced, /outColor = vec4\(brassGrade\(dreadGrade\(out3, uDread\), uBrass\), 1\.0\);/);   // AUDIT SD III (V8, PIN MOVED): the brass air's grade after the dread's
   assert.match(enhanced, /gl\.uniform1f\(u\.uDread, this\.dread\);/);
-  assert.match(classic, /outColor = vec4\(brassGrade\(dreadGrade\(hazeSky\(mix\(color, uFogColor, uFogMix\), dir\), uDread\), uBrass\), 1\.0\);/);   // AUDIT SD III (V8, PIN MOVED): the brass air's grade after the dread's; BANTHA1 (PIN MOVED): over the jungle's haze
+  assert.match(classic, /outColor = vec4\(brassGrade\(dreadGrade\(mix\(color, uFogColor, uFogMix\), uDread\), uBrass\), 1\.0\);/);   // AUDIT SD III (V8, PIN MOVED): the brass air's grade after the dread's
   assert.match(classic, /gl\.uniform1f\(this\.uDread, this\.dread\);/);
 });
 

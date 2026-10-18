@@ -751,10 +751,12 @@ export const EL_BB_VS_EXT = Object.freeze({
 precision mediump int;   // LA-COST3: the fragment stage's default, so the uniforms both stages declare agree
 uniform vec3 uCamPos;
 uniform vec3 uBBSun;
+uniform float uSunLift;   // AUDIT BANTHA1 TREE-2: the share of the drawn height the sun is read at - 0 the root's half unit (every flat, every Low Poly Tree); a jungle tree's crown
 flat out float vBBSunVis;   // LA-COST3: the sun map's word at the flat's base, one value for the whole quad
 ${SHADOW_GLSL}`,
   main: `
-  vBBSunVis = dot(uBBSun, uBBSun) > 0.0 ? (uMesh > 0.5 ? sunShadowAt(vBBBase + vec3(0.0, 0.5, 0.0), vec3(0.0, 1.0, 0.0)) : sunShadowSoftAt(vBBBase + vec3(0.0, 0.5, 0.0), vec3(0.0, 1.0, 0.0), uSize.y)) : 1.0;   // LA-COST3: EL2's point, TREES1's kernel, PERF-SUN2's gate; AUDIT FLICKER S1: its height, off its own card; AUDIT LPT B4: a low-poly tree's every VERTEX runs this, so one tap at its root`,
+  vec3 sunAt = vBBBase + vec3(0.0, max(0.5, uSunLift * uSize.y * (uMesh > 0.5 ? aScale : abs(aCorner.x) * 2.0)), 0.0);   // AUDIT BANTHA1 TREE-2: a jungle tree reads its sun at its crown, near and far alike - at its root under a closed canopy every crown, an emergent's in full sun, stood in its neighbours' shade
+  vBBSunVis = dot(uBBSun, uBBSun) > 0.0 ? (uMesh > 0.5 ? sunShadowAt(sunAt, vec3(0.0, 1.0, 0.0)) : sunShadowSoftAt(sunAt, vec3(0.0, 1.0, 0.0), uSize.y)) : 1.0;   // LA-COST3: EL2's point, TREES1's kernel, PERF-SUN2's gate; AUDIT FLICKER S1: its height, off its own card; AUDIT LPT B4: a low-poly tree's every VERTEX runs this, so one tap at its root`,
 });
 
 /** MAC-BUG W6 (2026-09-20, Mac: "super dark coloring instead of red") -

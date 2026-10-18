@@ -70,8 +70,14 @@ export const JUNGLE = Object.freeze({
   coverClear: 2.2,
   /** the ground's share of every chance, by DFU's tile record (1 dirt, 2 grass, 3 stone); anything else grows nothing */
   ground: Object.freeze({ 1: 0.7, 2: 1, 3: 0.2 }),
-  /** no jungle tree stands steeper than this (degrees) - DFU's own 50 for everything else */
+  /** no jungle TREE (the canopy, the young) stands steeper than this (degrees); the palms and the floor stand to DFU's
+   *  own 50 (terrainNature.js MAX_STEEPNESS - AUDIT BANTHA1 LAY-2: a 40-degree hillside of the jungle's was bare) */
   maxSteep: 34,
+  floorSteep: 50,
+  /** THE BORDER'S STANDS (AUDIT BANTHA1 LAY-9): across the line a tile is the jungle's where its share beats this patch
+   *  noise - ECOTONE1's own law (two octaves, a cell in tiles dividing 128 and a weight each, stretched about a half) -
+   *  so the jungle comes in by stands that grow and join, never a tile's white noise */
+  stands: Object.freeze({ octaves: Object.freeze([Object.freeze({ cell: 8, weight: 0.65 }), Object.freeze({ cell: 2, weight: 0.35 })]), stretch: 2, salt: 541 }),
   /** where in its cell a canopy tree may stand, a fraction of the cell each way */
   inset: Object.freeze([0.2, 0.8]),
   /** where in its tile an understorey tree, a palm or a plant may stand */
@@ -79,7 +85,7 @@ export const JUNGLE = Object.freeze({
   /** the species' base weights, and their groves: a value noise a species (cells of `cell` tiles), the weight times
    *  floor + gain * noise */
   base: Object.freeze([1.0, 0.75, 1.0, 0.45, 0.95]),
-  grove: Object.freeze({ cell: 24, floor: 0.25, gain: 1.5, salt: 523 }),
+  grove: Object.freeze({ cell: 32, floor: 0.25, gain: 1.5, salt: 523 }),   // AUDIT BANTHA1 LAY-1: a cell dividing 128, so the world's lattice - 24 restarted every pixel's groves at its edge
   /** the ground's height above the beach (m): `low` and under is wet lowland, `high` and over is upland - each a
    *  species' weight multiplied by its row's own at full */
   low: 25,
@@ -98,8 +104,26 @@ export const JUNGLE = Object.freeze({
 export const JUNGLE_PALMS = TREE_RECORDS[JUNGLE_ARCHIVE];
 export const JUNGLE_COVER = Object.freeze(Array.from({ length: 31 }, (_, i) => i + 1).filter((r) => !isTreeRecord(JUNGLE_ARCHIVE, r)));
 
-/** tan(JUNGLE.maxSteep) squared - the steepness test on the gradient itself. */
+/** tan(JUNGLE.maxSteep) and tan(JUNGLE.floorSteep) squared - the steepness tests on the gradient itself. */
 const TAN_MAX_SQ = Math.tan(JUNGLE.maxSteep * Math.PI / 180) ** 2;
+const TAN_FLOOR_SQ = Math.tan(JUNGLE.floorSteep * Math.PI / 180) ** 2;
+
+/** A tile's stand noise in [0, 1] (JUNGLE.stands), pixel-local tiles - the world's lattice, so continuous across edges. */
+export function jungleStandNoise(origin, tx, tz) {
+  const S = JUNGLE.stands;
+  let n = 0;
+  for (let k = 0; k < S.octaves.length; k++) n += S.octaves[k].weight * ecoNoise(origin, tx, tz, S.octaves[k].cell, S.salt + k);
+  return Math.min(1, Math.max(0, (n - 0.5) * S.stretch + 0.5));
+}
+
+/** PERF-6 (AUDIT BANTHA1): whether the jungle owns every tile of a pixel whose 3x3 is `nine` - its own layout is then
+ *  never read (the kernel lays none). */
+export function jungleWhole(nine) {
+  if (!nine) return false;
+  let lo = Infinity;
+  for (let k = 0; k < 9; k++) lo = Math.min(lo, nine[k]);
+  return lo * TERRAIN_SIZE - JUNGLE_WANDER_MAX >= JUNGLE_EDGE.in;
+}
 /** The beach line in the ground's metres (natureStandsAt asks it of the raw sample; groundAt answers metres). */
 const BEACH_M = SCALED_BEACH_ELEVATION * STREAMING_TERRAIN_SCALE;
 
@@ -171,10 +195,10 @@ export function gladeField(px, py) {
 export function withJungle(own, heightmapData, tilemapData, opts) {
   const jg = opts.jungle;
   if (!jg?.nine) return own;
-  let hi = -Infinity, lo = Infinity;
-  for (let k = 0; k < 9; k++) { hi = Math.max(hi, jg.nine[k]); lo = Math.min(lo, jg.nine[k]); }
+  let hi = -Infinity;
+  for (let k = 0; k < 9; k++) hi = Math.max(hi, jg.nine[k]);
   if (hi * TERRAIN_SIZE + JUNGLE_WANDER_MAX <= -JUNGLE_EDGE.out) return own;   // the line, wander and all, cannot reach a tile
-  const whole = lo * TERRAIN_SIZE - JUNGLE_WANDER_MAX >= JUNGLE_EDGE.in;   // ...nor leave one: every tile the jungle's
+  const whole = jungleWhole(jg.nine);   // ...nor leave one: every tile the jungle's
   const tDim = WORLD_MAP_TILE_DIM, hDim = HEIGHTMAP_DIMENSION, scale = TERRAIN_SIZE / tDim;
   const px = opts.mapPixelX, py = opts.mapPixelY;
   const ox = px * tDim, oz = -py * tDim;   // the pixel's first world tile (FOREST1's frame: z north)
@@ -188,7 +212,7 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const j = whole ? 1 : jungleShare(jungleDepthAt(px, py, jg.nine, (x + 0.5) * scale, (y + 0.5) * scale));
       if (j <= 0) continue;
       share[y * tDim + x] = j;
-      if (j >= 1 || tileDraw(ox + x, oz + y, 6) < j) { mine[y * tDim + x] = 1; any = true; }
+      if (j >= 1 || jungleStandNoise(origin, x + 0.5, y + 0.5) < j) { mine[y * tDim + x] = 1; any = true; }   // LAY-9: by stands
     }
   }
   if (!any) return own;
@@ -202,9 +226,12 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
   const pois = jg.pois ?? [];
   const paths = jg.paths ?? null;
   // EACH TILE'S STANDING, once: the ground's share of every chance (0 - nothing of the jungle's stands there: not its
-  // tile, not a ground that grows, a track, a clearing, too steep, under the beach line), its gradient squared, and its
-  // light - how open the sky is over it, 1 in a glade and 0 under closed canopy (the glade field less the places' pull)
+  // tile, not a ground that grows, a track, a clearing, steeper than DFU's 50, under the beach line), its gradient
+  // squared, and its light - how open the sky is over it, 1 in a glade and 0 under closed canopy (the glade field less
+  // the places' pull) - its glade's light alone (AUDIT BANTHA1 LAY-3), and how far it lies in a place's fields (`openOf`:
+  // a town's ring is open ground - no canopy, no young trees, no palms - never the jungle's thickest light gap)
   const groundOf = new Float32Array(tDim * tDim), g2Of = new Float32Array(tDim * tDim), lightOf = new Float32Array(tDim * tDim);
+  const gladeOf = new Float32Array(tDim * tDim), openOf = new Float32Array(tDim * tDim);
   const glade = gladeField(px, py);
   for (let y = 0; y < tDim; y++) {
     for (let x = 0; x < tDim; x++) {
@@ -217,13 +244,16 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const hd = at(x, Math.max(0, y - 1)), hu = at(x, Math.min(hDim - 1, y + 1));
       const gx = (hr - hl) / (2 * cell), gz = (hu - hd) / (2 * cell);
       const g2 = gx * gx + gz * gz;
-      if (g2 > TAN_MAX_SQ) continue;
+      if (g2 > TAN_FLOOR_SQ) continue;   // LAY-2: DFU's own 50 - the trees' 34 is theirs alone (below)
       const hx = Math.min(hDim - 1, Math.max(0, Math.trunc(hDim * (x / tDim))));
       const hy = Math.min(hDim - 1, Math.max(0, Math.trunc(hDim * (y / tDim))));
       if (sampleHeight((opts.beach ?? heightmapData)[hy + hx * hDim]) < SCALED_BEACH_ELEVATION) continue;   // the beach line, as every flat's
       groundOf[ti] = ground;
       g2Of[ti] = g2;
-      lightOf[ti] = 1 - Math.min(1, Math.max(0, smoothstep(JUNGLE.glade.edge[0], JUNGLE.glade.edge[1], glade(x, y)) + placesPull(pois, x, y)));
+      const closed = smoothstep(JUNGLE.glade.edge[0], JUNGLE.glade.edge[1], glade(x, y)), pull = placesPull(pois, x, y);
+      lightOf[ti] = 1 - Math.min(1, Math.max(0, closed + pull));
+      gladeOf[ti] = 1 - closed;
+      openOf[ti] = Math.min(1, Math.max(0, -pull));
     }
   }
   const placeAt = (mx, mz, g2) => groundAt(heightmapData, mx, mz) - Math.atan(Math.sqrt(g2)) * (180 / Math.PI) / SLOPE_SINK_RATIO;
@@ -241,7 +271,7 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const tx = cx * C + C * (in0 + (in1 - in0) * tileDraw(wx, wz, 20));
       const tz = cy * C + C * (in0 + (in1 - in0) * tileDraw(wx, wz, 21));
       const ti = Math.floor(tz) * tDim + Math.floor(tx);
-      if (!groundOf[ti]) continue;
+      if (!groundOf[ti] || g2Of[ti] > TAN_MAX_SQ) continue;   // LAY-2: no canopy tree up a slope past 34
       const light = lightOf[ti];
       if (tileDraw(wx, wz, 22) >= JUNGLE.canopy * share[ti] * (1 - light) * groundOf[ti]) continue;
       const mx = tx * scale, mz = tz * scale;
@@ -256,12 +286,32 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
     }
   }
 
-  /** whether (mx, mz) stands within `clear` (m, at each tree's own scale) of a canopy trunk - its cell's or a neighbour's */
+  /** a cell's canopy trunk into `t` ([x, z] m pixel-local, scale): this pixel's where it stands (false where none); a
+   *  NEIGHBOUR pixel's cell (AUDIT BANTHA1 LAY-7) by its pure tile hashes - where it would stand, held as standing, so
+   *  nothing under it crowds a trunk across the edge */
+  const _t = [0, 0, 0];
+  const trunkAt = (i, j, t) => {
+    if (i >= 0 && i < cells && j >= 0 && j < cells) {
+      const k = (j * cells + i) * 3;
+      if (Number.isNaN(trunks[k])) return false;
+      t[0] = trunks[k]; t[1] = trunks[k + 1]; t[2] = trunks[k + 2];
+      return true;
+    }
+    const wx = ox + i * C, wz = oz + j * C;
+    t[0] = (i * C + C * (in0 + (in1 - in0) * tileDraw(wx, wz, 20))) * scale;
+    t[1] = (j * C + C * (in0 + (in1 - in0) * tileDraw(wx, wz, 21))) * scale;
+    const [s0, s1] = tileDraw(wx, wz, 23) < JUNGLE.emergent ? JUNGLE.emergentScale : JUNGLE.canopyScale;
+    t[2] = s0 + (s1 - s0) * tileDraw(wx, wz, 25);
+    return true;
+  };
+  /** whether (mx, mz) stands within `clear` (m, at each tree's own scale) of a canopy trunk - its cell's or a neighbour's,
+   *  across the pixel's edge too (PERF-6: squared distances) */
   const crowded = (mx, mz, cx, cy, clear) => {
-    for (let j = Math.max(0, cy - 1); j <= Math.min(cells - 1, cy + 1); j++) {
-      for (let i = Math.max(0, cx - 1); i <= Math.min(cells - 1, cx + 1); i++) {
-        const k = (j * cells + i) * 3;
-        if (!Number.isNaN(trunks[k]) && Math.hypot(mx - trunks[k], mz - trunks[k + 1]) < clear * trunks[k + 2]) return true;
+    for (let j = cy - 1; j <= cy + 1; j++) {
+      for (let i = cx - 1; i <= cx + 1; i++) {
+        if (!trunkAt(i, j, _t)) continue;
+        const dx = mx - _t[0], dz = mz - _t[1], r = clear * _t[2];
+        if (dx * dx + dz * dz < r * r) return true;
       }
     }
     return false;
@@ -276,12 +326,12 @@ export function withJungle(own, heightmapData, tilemapData, opts) {
       const wx = ox + x, wz = oz + y, j = share[ti], g2 = g2Of[ti];
       const cx = Math.floor(x / C), cy = Math.floor(y / C);
       const gap = Number.isNaN(trunks[(cy * cells + cx) * 3]);   // a light gap: the cell stands no canopy tree
-      const light = lightOf[ti];
       const mx = (x + t0 + (t1 - t0) * tileDraw(wx, wz, 30)) * scale, mz = (y + t0 + (t1 - t0) * tileDraw(wx, wz, 31)) * scale;
       const roll = tileDraw(wx, wz, 32);
-      const under = (gap ? JUNGLE.gapUnder : JUNGLE.under) * j * ground;
-      const palm = JUNGLE.palm * j * ground;
-      const cover = lerp(JUNGLE.cover, JUNGLE.gladeCover, light) * j * ground;
+      const fields = 1 - openOf[ti];   // LAY-3: a place's fields stand no young tree and no palm
+      const under = g2 > TAN_MAX_SQ ? 0 : (gap ? JUNGLE.gapUnder : JUNGLE.under) * j * ground * fields;   // LAY-2: no young tree past 34
+      const palm = JUNGLE.palm * j * ground * fields;
+      const cover = lerp(JUNGLE.cover, JUNGLE.gladeCover, gladeOf[ti]) * j * ground;   // LAY-3: the floor by the glade's light, never a place's
       if (roll < under) {
         if (crowded(mx, mz, cx, cy, JUNGLE.underClear)) continue;
         const species = fromPool(JUNGLE.young, tileDraw(wx, wz, 33));

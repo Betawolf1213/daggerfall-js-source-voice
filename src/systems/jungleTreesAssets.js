@@ -17,6 +17,9 @@ import { JUNGLE } from '../world/terrain/jungleNature.js';
 
 /** The largest a jungle tree is drawn, a share of the owner's (the emergents' top). */
 export const JUNGLE_SCALE_MAX = JUNGLE.emergentScale[1];
+/** AUDIT BANTHA1 TREE-2: a jungle tree reads its sun this far up its own height - its crown, near and far - never at its
+ *  root, which a closed canopy shades for every tree in it. */
+export const JUNGLE_SUN_LIFT = 0.6;
 
 /** The owner's files, by name - each species' OBJ and MTL, and the pictures its MTL names (src/assets/jungle/source/). */
 export const JUNGLE_URLS = Object.freeze({
@@ -69,7 +72,7 @@ export function createJungleTrees({ renderer, breathe, fetchBytes = defaultFetch
     return fetchBytes(url);
   };
   const door = createLowPolyTrees({
-    renderer, breathe, warn, now, slot: 1, scaleMax: JUNGLE_SCALE_MAX, label: 'bantha-jungle',
+    renderer, breathe, warn, now, slot: 1, scaleMax: JUNGLE_SCALE_MAX, label: 'bantha-jungle', sunLift: JUNGLE_SUN_LIFT,
     treeSet: {
       async load() {
         const sources = await Promise.all(JUNGLE_SPECIES.map(async (s) => {

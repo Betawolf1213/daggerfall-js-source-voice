@@ -329,7 +329,7 @@ test('AUDIT 47: no shader in the tree uses a uniform it did not declare in its o
   const hazeLawGlsl = (hazeGlslSrc.match(/export const HAZE_LAW_GLSL = `([\s\S]*?)`;/) || [, ''])[1];
   const hazeSkyGlsl = (hazeGlslSrc.match(/export const HAZE_SKY_GLSL = `([\s\S]*?)`;/) || [, ''])[1];
   const ringHazeGlsl = (hazeGlslSrc.match(/export const RING_HAZE_GLSL = `([\s\S]*?)`;/) || [, ''])[1].replace(/\$\{HAZE_LAW_GLSL\}/g, hazeLawGlsl);
-  assert.match(hazeLawGlsl, /uniform vec4 uHaze\[2\];/, 'the haze law is where the sweep reads it');
+  assert.match(hazeLawGlsl, /uniform vec4 uJungleHaze\[2\];/, 'the haze law is where the sweep reads it');
   assert.match(hazeSkyGlsl, /uniform vec4 uHazeSky;/, 'and the skies\' half');
   const fogGlsl = (readFileSync('src/render/fogGlsl.js', 'utf8').match(/export const FOG_GLSL = `([\s\S]*?)`;/) || [, ''])[1].replace(/\$\{HAZE_LAW_GLSL\}/g, hazeLawGlsl);   // AUDIT 68 S17-fog-glsl-dup: and the fog's, which nine programs share
   // FAR-SEA1: and the horizon's haze and the ring's sea, a leaf the far ring (both lanes) and the water interpolate

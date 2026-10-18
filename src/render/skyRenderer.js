@@ -192,7 +192,8 @@ void main() {
   float u = fract(azimuth / 6.28318530718);
   float v = elevation / uVSpan;
   vec3 color = v > 1.0 ? uClear : texture(uSky, vec2(u, clamp(v, 0.0, 1.0))).rgb;  // uClear = fillColor
-  outColor = vec4(brassGrade(dreadGrade(hazeSky(mix(color, uFogColor, uFogMix), dir), uDread), uBrass), 1.0);   // BANTHA1: the jungle's haze toward the horizon
+  outColor = vec4(brassGrade(dreadGrade(mix(color, uFogColor, uFogMix), uDread), uBrass), 1.0);
+  outColor.rgb = hazeSky(outColor.rgb, dir);   // BANTHA1: the jungle's haze toward the horizon - AUDIT BANTHA1 HAZE-8: after the grades, its colour the frame's fog colour, graded once already (shared.js fogColorFor)
 }`;
 
 export class SkyRenderer {

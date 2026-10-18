@@ -39,7 +39,7 @@ export const FX_MAX_INSTANCES = 2400;
 export const FX_MAX_PARTS = 1500;
 /** The narrowest a spark may stand on the screen, as an angle of the eye's view - a burst across a hall still reads. */
 export const FX_MIN_RAD = 0.0016;
-const NO_HAZE = new Float32Array(8);   // BANTHA1: uHaze off ([1].x 0)
+const NO_HAZE = new Float32Array(8);   // BANTHA1: uJungleHaze off ([1].x 0)
 
 /** The colours: white-hot at birth, the element's colour, what it cools to; and the light it throws (colour x level).
  *  ART-COLOUR: for the five elements these are only the FIRST GUESS - each is replaced by its own missile art's colour
@@ -862,7 +862,7 @@ export class SpellImpactPass {
     this.gl = gl;
     this.prog = buildProgram(gl, SPELL_FX_VS, SPELL_FX_FS, 'spell impact');
     this.u = {};
-    for (const n of ['uVP', 'uEye', 'uRight', 'uUp', 'uMinRad', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uHaze']) this.u[n] = gl.getUniformLocation(this.prog, n);
+    for (const n of ['uVP', 'uEye', 'uRight', 'uUp', 'uMinRad', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze']) this.u[n] = gl.getUniformLocation(this.prog, n);
     this.vao = gl.createVertexArray();
     gl.bindVertexArray(this.vao);
     this.quad = gl.createBuffer();
@@ -906,7 +906,7 @@ export class SpellImpactPass {
     gl.uniform2fv(u.uFogRange, fog?.range ?? [0, 1]);
     gl.uniform3fv(u.uCamPos, fog?.camPos ?? eye);
     if (u.uFocus) gl.uniform4fv(u.uFocus, fog?.focus ?? [0, 0, 0, 0]);
-    if (u.uHaze) gl.uniform4fv(u.uHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze)
+    if (u.uJungleHaze) gl.uniform4fv(u.uJungleHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze)
     gl.bindVertexArray(this.vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.inst);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, buf, 0, count * FX_FLOATS);

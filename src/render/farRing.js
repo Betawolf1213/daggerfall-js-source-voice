@@ -371,7 +371,7 @@ const NO_SKY = new Float32Array(3);   // FAR-SEA1: a frame with no sky to reflec
  *  mark forgets the renderer's texture shadows after it (PERF-TEX), beside the lane's eye on 11. */
 export const RING_SEA_UNIT = 12;
 const FLAT_WHITE = new Float32Array([1, 1, 1]);
-const NO_HAZE = new Float32Array(8);   // BANTHA1: uHaze off ([1].x 0)
+const NO_HAZE = new Float32Array(8);   // BANTHA1: uJungleHaze off ([1].x 0)
 
 /** ?ring=off - the escape hatch, read once at scene build. */
 export function ringDisabled(search = globalThis.location?.search) {
@@ -395,7 +395,7 @@ export class FarRingRenderer {
       'uFogColor', 'uFogStart', 'uFogEnd', 'uRimStart', 'uRimEnd', 'uHazeHold',
       'uSkyZenith', 'uSkyHorizon', 'uSeaF0', 'uSeaLook',   // FAR-SEA1: the sea's sky, its Fresnel, and whether it has one
       'uEye', 'uSeaTiles', 'uSeaTint', 'uSeaAmbient', 'uSeaSunColor', 'uSeaMoonColor',   // AUDIT FAR-SEA1 L1: the water's body, its light (the lane's in the water's own space)
-      'uELExposure', 'uAdapt', 'uHaze', 'uHazeEye']) {   // BANTHA1: the jungle's haze and the eye it is measured from
+      'uELExposure', 'uAdapt', 'uJungleHaze', 'uHazeEye']) {   // BANTHA1: the jungle's haze and the eye it is measured from
       this.u[name] = gl.getUniformLocation(p, name);
     }
     this.vao = null;
@@ -533,7 +533,7 @@ export class FarRingRenderer {
     gl.uniform1f(this.u.uRimStart, RING_RIM_START);
     gl.uniform1f(this.u.uRimEnd, RING_RIM_END);
     gl.uniform1f(this.u.uHazeHold, RING_HAZE_HOLD);
-    gl.uniform4fv(this.u.uHaze, haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze) - off ([1].x 0) when none is handed
+    gl.uniform4fv(this.u.uJungleHaze, haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze) - off ([1].x 0) when none is handed
     gl.uniform3fv(this.u.uHazeEye, hazeEye ?? eye ?? FLAT_UP);
     // FAR-SEA1: the sky the water reflects this frame and the water's own Fresnel - and without a sky (the classic
     // panorama publishes none: sky.waterSky() is null; AUDIT FAR-SEA1 H2: nor does the host with the Enhanced water off)

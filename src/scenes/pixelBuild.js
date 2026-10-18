@@ -64,8 +64,11 @@ import { LivingTown } from '../systems/livingWorld/livingTown.js';
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { LPT_CROWNS } from '../world/lptCrowns.js';
 import { LPT_SCALE_MAX, lptVariety } from '../world/lowPolyTrees.js';
-import { JUNGLE_ARCHIVE, JUNGLE_MEASURES, JUNGLE_SPECIES, jungleCover } from '../world/jungle/jungleModels.js';   // BANTHA1: the jungle's trees, their measures and their cover
-import { JUNGLE_SCALE_MAX } from '../systems/jungleTreesAssets.js';
+import { JUNGLE_ARCHIVE, JUNGLE_MEASURES, JUNGLE_SPECIES, jungleCover } from '../world/jungle/jungleModels.js';
+import { JUNGLE } from '../world/terrain/jungleNature.js';   // AUDIT BANTHA1 PERF-5: the storeys' scales   // BANTHA1: the jungle's trees, their measures and their cover
+import { JUNGLE_SCALE_MAX, JUNGLE_SUN_LIFT } from '../systems/jungleTreesAssets.js';
+/** AUDIT BANTHA1 TREE-1: a pixel's cover stood this many proxies at a time, the stream breathing between. */
+const COVER_SLICE = 2048;
 import { lptFitCap, natureReach, pathTileMask, vergeClear } from '../world/road/roadVerge.js';
 import { makeBuildingKey } from '../systems/talk/talkTopics.js';
 import { makeCityGate } from '../world/city/cityGate.js';
@@ -171,7 +174,7 @@ export function createPixelBuild(host) {
       bed: waterOn,   // AUDIT WATER-NEXT P1: the bed under the water, carved on the worker with the grid
       // WOD2: the smoothing arms run in the kernel; FOREST1: and whether each pick is a SITE the woods close round (a camp, a
       // fort, a ruin - not a rock field or a mountain, AUDIT FOREST1 F1) and its whole footprint (its objects, F7)
-      wod: wodPicks ? { picks: wodPicks.map((p) => ({ flatten: p.flatten, rect: p.rect, hide: !wodPiecewise(p.prefabName), bounds: forests ? wodSiteFootprint(p.prefab, p.rect) : null })) } : null,
+      wod: wodPicks ? { picks: wodPicks.map((p) => ({ flatten: p.flatten, rect: p.rect, hide: !wodPiecewise(p.prefabName), bounds: forests || jungle ? wodSiteFootprint(p.prefab, p.rect) : null })) } : null,   // AUDIT BANTHA1 LAY-4: the jungle keeps a site's own pieces' ground as the woods do
       // FOREST1: the woods' archive (the climate's summer one, which names its Trees) and whether this pixel's place is one they hide
       forests: forests ? { archive: climate.natureArchive, hidden: FOREST_HIDDEN_LOCATION_TYPES.has(dfLocation?.mapTableData?.locationType) } : null,
       ecotone: natureBorder,   // ECOTONE1: null unless a neighbour's nature differs
@@ -888,20 +891,25 @@ export function createPixelBuild(host) {
       // pixel again when the gate's day turns). FOREST1 (F1): and a wood's flats keep out of the rock pieces it grows
       // round - DFU's own scatter, with the switch off, is left as DFU lays it
       if (pointNearGate(gateClear, px, py, f.x, f.z, WOD_FLAT_GATE_CLEAR_M)) continue;
-      if (forests && insideRocks(pixelRocks, f.x, f.z)) continue;
+      if ((forests || (jungle && f.archive === JUNGLE_ARCHIVE)) && insideRocks(pixelRocks, f.x, f.z)) continue;   // AUDIT BANTHA1 LAY-4: and the jungle's, whatever the woods' switch
       // ECOTONE1: a border's flat is its own climate's - the summer archive the kernel names, worn in the season's set
       const base = f.archive ?? climate.natureArchive, archive = f.archive == null ? natureArchive : getNatureArchive(f.archive, host.season);
       // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js);
       // BANTHA1: a jungle tree's its FOOT - its roots, buttresses and the curtains it hangs to the ground - at its own
       // scale, never its crown: a road is cut through the jungle, and the canopy may close over it
+      // AUDIT BANTHA1 LAY-5/HOST-6: the foot whether or not the owner's files loaded (the measures are a table), so the
+      // trees a road keeps are the layout's alone - every peer's the same
       const jungleTree = jungleOk && f.jungle != null;
-      if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, jungleTree ? JUNGLE_MEASURES[f.jungle].foot * f.js : natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
+      if (vergeNet && !vergeClear(vergeNet, px, py, f.x, f.z, f.jungle != null ? JUNGLE_MEASURES[f.jungle].foot * f.js : natureReach(vergeHalf.get(base)[f.record] ?? 0, base, f.record, px, py, f.x, f.z))) { vergeOff++; continue; }
       if (archive !== natureArchive) borderNature.set(archive, base);
       if (jungleTree) {
-        let g = jungleGroups.get(f.jungle);
-        if (!g) jungleGroups.set(f.jungle, (g = { centers: [], own: [] }));
+        // AUDIT BANTHA1 PERF-5: a species' young trees a group of their own (`J<species>y`) - the understorey, which the far
+        // rings stand as they stand the floor (below)
+        const young = f.js <= JUNGLE.underScale[1], gk = young ? `J${f.jungle}y` : `J${f.jungle}`;
+        let g = jungleGroups.get(gk);
+        if (!g) jungleGroups.set(gk, (g = { species: f.jungle, young, centers: [], own: [] }));
         g.centers.push([f.x, f.y, f.z]); g.own.push(f.js);
-        pixelTrees.push({ id: pixelTrees.length, group: `J${f.jungle}`, i: g.centers.length - 1, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 1, base, archive });   // a tree of the woods - Logging fells it
+        pixelTrees.push({ id: pixelTrees.length, group: gk, i: g.centers.length - 1, x: f.x, y: f.y, z: f.z, wood: f.wood ?? 1, base, archive, jungle: f.jungle, js: f.js });   // a tree of the woods - Logging fells it; AUDIT BANTHA1 TREE-3: its species and scale its mark's
         continue;
       }
       const i = addFlat(archive, f.record, f.x, f.y, f.z);
@@ -1046,10 +1054,12 @@ export function createPixelBuild(host) {
     // (JUNGLE_MEASURES), and the far rings stand it by its own height
     const jungleHandles = [], jungleSet = [];
     made.jungleHandles = jungleHandles;   // BUILD-FAIL1
-    for (const [species, g] of jungleGroups) {
+    const junglePics = new Map();   // a species' picture and its handle's index, asked and held once for its storeys
+    for (const [gk, g] of jungleGroups) {
       await breather.breathe();
-      const record = JUNGLE_SPECIES[species].record, gk = `J${species}`;
-      const pic = await junglePicture(jungle.door, species);   // THE ONE CONSTRUCTION SEAM (world/naturePicture.js)
+      const species = g.species, record = JUNGLE_SPECIES[species].record;
+      if (!junglePics.has(species)) junglePics.set(species, await junglePicture(jungle.door, species));   // THE ONE CONSTRUCTION SEAM (world/naturePicture.js)
+      const pic = junglePics.get(species);
       if (!pic) {   // its picture would not stand (a decode refused): the species stands as the Tree record it carries
         const t = await getTexture(JUNGLE_ARCHIVE);
         if (record >= t.recordCount) continue;
@@ -1059,6 +1069,7 @@ export function createPixelBuild(host) {
         batch._box = flatBatchAabb(g.centers, size);
         batch.sway = floraSwayOf(JUNGLE_ARCHIVE, natureSet, size.h);
         batch.windfall = windfallResponse(JUNGLE_ARCHIVE, record);
+        if (g.young) batch.farH = 0;   // PERF-5: the understorey as the floor, past ring 1
         unionBox(batch._box);
         batches.push(batch);
         forestGroups.set(gk, { batch, centers: g.centers, size });
@@ -1066,12 +1077,16 @@ export function createPixelBuild(host) {
         continue;
       }
       const { proto, far } = pic;
-      jungle.door.acquire(far); jungleHandles.push(far);   // AUDIT LPT B5: held until the pixel goes
+      if (pic.h == null) { jungle.door.acquire(far); jungleHandles.push(far); pic.h = jungleHandles.length - 1; }   // AUDIT LPT B5: held until the pixel goes - once a species
       const own = Float32Array.from(g.own), scales = Float32Array.from(g.own, (v) => v / JUNGLE_SCALE_MAX);
-      jungleSet.push({ h: jungleHandles.length - 1, centers: g.centers, wild: null, own, fit: null });
+      jungleSet.push({ h: pic.h, centers: g.centers, wild: null, own, fit: null });
       const batch = renderer.createBillboardBatch(JUNGLE_ARCHIVE, far.record, far.size, g.centers, { scales });
       batch.lptProto = far;
-      batch.farH = proto.size.h;   // MAC1's far rings: the tree's own height - it has no classic flat to stand for
+      batch.sunLift = JUNGLE_SUN_LIFT;   // AUDIT BANTHA1 TREE-2: its sun read at its crown, as its 3D tree's
+      // MAC1's far rings: the tree's own height - it has no classic flat to stand for; AUDIT BANTHA1 PERF-5: the young
+      // trees under the canopy none (the floor's): past ring 1 every eye meets the crowns about them first - from outside
+      // Bantha looking in they were 41% of its trees drawn, 170,000 quads against the rainforest's 103,000
+      batch.farH = g.young ? 0 : proto.size.h;
       batch._box = flatBatchAabb(g.centers, far.size);
       batch.sway = floraSwayOf(JUNGLE_ARCHIVE, natureSet, proto.size.h);
       _lptSway.set(proto, Math.max(_lptSway.get(proto) ?? 0, batch.sway));
@@ -1119,7 +1134,12 @@ export function createPixelBuild(host) {
     }
     // TACT1: under the pixel's own bucket key - it leaves with the pixel (Collider.removeBucket) - and a rebuild stands it anew
     collider.cover.remove(key);
-    if (coverItems.length) collider.cover.add(key, coverItems, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0]));
+    // AUDIT BANTHA1 TREE-1: in slices on the stream's own clock - a jungle pixel stands 10,000 proxies
+    const coverT = ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0]);
+    for (let i = 0; i < coverItems.length; i += COVER_SLICE) {
+      if (i) await breather.breathe();
+      collider.cover.add(key, coverItems.slice(i, i + COVER_SLICE), coverT);
+    }
 
     // AUDIT 26 (F019): the pixel's street StaticNPCs - identity inputs
     // + the billboard extent the activation ray needs, resolved the

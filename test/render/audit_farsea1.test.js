@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { glslFunctions } from '../glsl.mjs';
 import { RING_SEA_GLSL } from '../../src/render/horizonHaze.js';
-import { RING_HAZE_GLSL } from '../../src/render/hazeGlsl.js';   // BANTHA1: the jungle's haze over the ring (off here: uHaze[1].x 0)
+import { RING_HAZE_GLSL } from '../../src/render/hazeGlsl.js';   // BANTHA1: the jungle's haze over the ring (off here: uJungleHaze[1].x 0)
 import {
   buildFarRingGrid, buildSeaFillIndices, seaFillCount, ringHeight,
   RING_HAZE_HOLD, RING_RIM_START, RING_RIM_END,

@@ -83,7 +83,8 @@ export function jungleField({ width, height, regionAt, regions = JUNGLE_REGIONS,
         for (let k = -r; k <= r; k++) { best = toOther(me, x, y, k, -r, best); best = toOther(me, x, y, k, r, best); }
         for (let k = -r + 1; k <= r - 1; k++) { best = toOther(me, x, y, -r, k, best); best = toOther(me, x, y, r, k, best); }
       }
-      return (dist[i] = me ? best : -best);
+      dist[i] = me ? best : -best;
+      return dist[i];   // AUDIT BANTHA1 LAY-8: the first read the float32 every later read is - never the float64 it came from
     },
   };
 }
@@ -104,12 +105,12 @@ export function jungleFieldOf(maps, width, height) {
  * A PIXEL'S 3x3 OF DISTANCES - indexed (dz + 1) * 3 + (dx + 1), dx east and dz north (the map row py - dz), as the
  * ecotone's 3x3 of climates is - or null when the jungle is nowhere near (every one of the nine at the field's far
  * outside: no share can reach this pixel).
- * @param {ReturnType<typeof jungleField>} field @param {number} px @param {number} py
+ * `out` the nine's array (AUDIT BANTHA1 HOST-8: a frame's own scratch; a terrain job's a new one).
+ * @param {ReturnType<typeof jungleField>} field @param {number} px @param {number} py @param {any[]} [out]
  */
-export function jungleNine(field, px, py) {
+export function jungleNine(field, px, py, out = new Array(9)) {
   if (!field) return null;
   const far = -(field.reach + 0.5);
-  const out = new Array(9);
   let any = false;
   for (let dz = -1; dz <= 1; dz++) {
     for (let dx = -1; dx <= 1; dx++) {

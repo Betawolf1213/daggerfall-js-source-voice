@@ -21,25 +21,30 @@ SUPPLIED rows): five Blender 5.2 OBJs, their MTLs and one 252x164 RGBA picture e
 
 | Species | File | Tree record (archive 500) | Triangles | Height | Crown reach | Foot | Crown from | Trunk |
 |---|---|---|---|---|---|---|---|---|
-| banyan - aerial roots hung from a wide dome | `jungle_tree` | 12 | 132 | 22.54 m | 8.73 m | 8.30 m | 3.00 m | 0.50 m |
+| banyan - aerial roots hung from a wide dome | `jungle_tree` | 12 | 132 | 22.54 m | 8.73 m | 8.30 m | 3.00 m | 1.44 m |
 | kapok - a buttressed column under layered parasols | `jungle_tree2` | 13 | 103 | 21.41 m | 9.63 m | 8.53 m | 9.00 m | 0.99 m |
 | fig - a strangler's braided trunk, a round crown, vines | `jungle_tree3` | 14 | 156 | 22.53 m | 9.42 m | 7.58 m | 8.00 m | 1.10 m |
-| flame - palmate leaves, red blooms, moss curtains | `jungle_tree4` | 15 | 156 | 16.23 m | 7.80 m | 5.60 m | 3.00 m | 0.50 m |
+| flame - palmate leaves, red blooms, moss curtains | `jungle_tree4` | 15 | 156 | 16.23 m | 7.80 m | 5.60 m | 3.00 m | 0.43 m |
 | mahogany - a twisted trunk under a tall, dense crown | `jungle_tree5` | 16 | 261 | 22.54 m | 9.48 m | 6.37 m | 8.00 m | 1.33 m |
 
 **Read.** Each polygon fanned into triangles, each distinct corner one vertex (f32 x 8: position, normal, uv - Low Poly
 Trees' own layout). An OBJ is right-handed and the port's meshes are Unity's, so each tree is **mirrored in x** as Unity's
 OBJ importer mirrors it - the tree stands as they drew it, never backwards - and **moved so its root** (the middle of its
-lowest 2.5 m) **is the origin**: one tree stood 34 m off the origin in their scene. Their ground (y 0) is kept, so the roots they
-sank stay sunk. Each face is **wound as its normals say** (the mirror reverses a fan; the kapok's export had turned its
-faces and its normals apart, 99 of its 103 triangles - read so, its light and its faces agree again). Every material is
-drawn on both faces and cut at a half.
+lowest 2.5 m) **is the origin**: in their scene the five stood 7 to 53 m off it (AUDIT BANTHA1 TREE-8). Their ground
+(y 0) is kept, so the roots they sank stay sunk. Each face is **wound as its normals say** (the mirror reverses a fan;
+the kapok's export had turned its faces and its normals apart, 99 of its 103 triangles). Every material is drawn on both
+faces and cut at a half, and no tree program reads which face it sees - so the winding changes nothing drawn today; it is
+kept so a face cull or a facing read would agree with the light (TREE-8). A file the reader takes is one material (a
+second `usemtl` throws - a tree is one picture), and a comment after a face or a map's options are read past (TREE-7).
 
 **Measured.** A tree's foot, crown, crown's start and trunk are read off what it DRAWS - its picture's opaque texels
 carried onto its faces in 3D (`measureTree`, every 0.1 m of every triangle), never its cards' corners, which reach far
 past the leaves cut into them. The table above is `JUNGLE_MEASURES`, the stream's own (no picture is decoded to stand a
 tree); the test measures the files again and holds the table to them to the centimetre. The foot is what a road keeps
-clear of; the trunk and the crown are the tree's cover.
+clear of; the trunk and the crown are the tree's cover. The trunk is the 30th percentile of the drawn radii between the
+foot's top (3 m) and the crown - and where the crown begins at the foot's top (the banyan's roots and the flame tree's
+curtains hang from it), of the 3 m above it (`TRUNK_BAND`; AUDIT BANTHA1 TREE-5: that window was empty, and a default
+0.5 m stood in for the banyan's 1.44 and the flame tree's 0.43).
 
 ## Where the jungle is
 
@@ -57,38 +62,50 @@ haze's (`JUNGLE_HAZE.edge`: none 320 m outside, whole 760 m inside - the air dri
 ## The layout - four storeys
 
 `world/terrain/jungleNature.js` `withJungle`, run by the terrain kernel (`world/terrain/terrainGen.js`) over the pixel's
-own layout (DFU's scatter or Real forests, and the ecotone's border). A tile is the jungle's where the share beats the
-tile's own draw - so the jungle comes in at its edge as stands that grow and join - and the pixel's own flats on it give
-way. Every draw is a hash of a WORLD tile or cell (FOREST1's `tileDraw`): a tree stands where it stands whatever was laid
+own layout (DFU's scatter or Real forests, and the ecotone's border) - none where the 3x3 shows the pixel whole jungle
+(`jungleWhole`: the kernel lays no layout only to drop it, AUDIT BANTHA1 PERF-6). A tile is the jungle's where the share
+beats its **stand noise** (`jungleStandNoise`: ECOTONE1's own patch law, two octaves of 8 and 2 tiles on the world's
+lattice, stretched) - so the jungle comes in at its edge as stands that grow and join (LAY-9: it was each tile's own
+draw, white noise) - and the pixel's own flats on it give way. Every draw is a hash of a WORLD tile or cell (FOREST1's `tileDraw`): a tree stands where it stands whatever was laid
 before it, on every client and on the worker, so Logging's trees stand where the room sees them.
 
 | Storey | Law | Numbers (`JUNGLE`) |
 |---|---|---|
 | Canopy | a cell of 2 x 2 tiles (12.8 m) stands one tree somewhere in its middle 60%, unless a glade or a place's clearing opens it | 90% of whole cells; scale 0.80-1.18 |
 | Emergents | of the canopy, the kapok's parasols and the mahogany's dome alone stand above the rest | 8%; scale 1.28-1.55 |
-| Understorey | young trees on a tile's own dice, thicker in a light gap (a cell with no canopy tree) than under a crown; never within 4.5 m (at the trunk's scale) of a canopy trunk in its cell or a neighbour's | 10% a tile, 38% in a gap; scale 0.36-0.62; flame 50%, fig 25%, banyan 15%, mahogany 10% |
-| Mid storey | one of the rainforest's own Trees - World of Daggerfall's Tree records of archive 500, its palms (Low Poly Trees' 3D palms where that mod is on) | 2.5% a tile |
-| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers - denser in a glade's light; never within 2.2 m of a canopy trunk | 50% a tile, 68% in a glade |
+| Understorey | young trees on a tile's own dice, thicker in a light gap (a cell with no canopy tree) than under a crown; never within 4.5 m (at the trunk's scale) of a canopy trunk in its cell or a neighbour's - a neighbour PIXEL's too, where its tile hashes stand it (LAY-7); none in a place's fields (LAY-3) | 10% a tile, 38% in a gap; scale 0.36-0.62; flame 50%, fig 25%, banyan 15%, mahogany 10% |
+| Mid storey | one of the rainforest's own Trees - World of Daggerfall's Tree records of archive 500, its palms (Low Poly Trees' 3D palms where that mod is on); none in a place's fields | 2.5% a tile |
+| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers - denser in a glade's light (the glade's alone, never a place's pull); never within 2.2 m of a canopy trunk at that trunk's scale (1.8-3.4 m) | 50% a tile, 68% in a glade - one roll a tile under the young trees' and the palms', so a glade (always a gap) stands about 60% (LAY-11) |
 
 **Species.** A canopy tree's species is drawn from weights (`canopySpecies`): a base (`JUNGLE.base`), a **grove** - each
-species' own value noise over 24-tile cells, so a slope of figs gives way to a stand of mahoganies - its **ground's
+species' own value noise over 32-tile cells (a cell dividing 128, so the world's lattice - AUDIT BANTHA1 LAY-1: at 24
+the groves restarted at every pixel's edge), so a slope of figs gives way to a stand of mahoganies - its **ground's
 height above the beach** (banyans and figs crowd the wet lowland under 25 m, kapoks and mahoganies the uplands over
 120 m), and **light** (the flame tree takes a glade's edge, its weight times 1 + 3 x light).
 
 **Glades and clearings.** The forests' own field read 4096 tiles away (`gladeField` - its lattice the world's, every
 fourth tile, 1,089 samples a pixel) opens about a tenth of the land; FOREST1's places pull the canopy back into fields
-round a town, a farm or a tavern and close it round a dungeon, a ruin or a shrine; the location's rect and every place's
-footprint, widened by DFU's clearance, stand nothing.
+round a town, a farm or a tavern and close it round a dungeon, a ruin or a shrine - a town's fields are open ground, no
+canopy, young tree or palm, never the jungle's thickest light gap (LAY-3: the pull read as light, and a town stood in a
+sapling thicket); the location's rect and every place's footprint, widened by DFU's clearance, stand nothing - with Real
+forests off as on (LAY-4: World of Daggerfall's site footprint and its rock pieces were Real forests' alone, and jungle
+trees stood in the rocks).
 
-**What it never stands on.** A track or a river the road painter laid (its `paths`), a slope over 34 degrees (DFU's 50
-for everything else - a 20 m tree on a cliff reads wrong), any ground but dirt, grass or stone (their shares 0.7, 1 and
-0.2), under the beach line. Beside a road (VERGE1's clear roadsides) a jungle tree keeps its **foot** off it - its roots,
-buttresses and the curtains it hangs to the ground, at its own scale - never its crown: a road is cut through the
-jungle, and the canopy may close over it.
+**What it never stands on.** A track or a river the road painter laid (its `paths`), a slope over DFU's 50 degrees -
+and no TREE, canopy or young, over 34 (a 20 m tree on a cliff reads wrong; the palms and the floor stand to 50 - LAY-2:
+a hillside between 34 and 50 was bare), any ground but dirt, grass or stone (their shares 0.7, 1 and 0.2), under the
+beach line. Beside a road (VERGE1's clear roadsides) a jungle tree keeps its **foot** off it - its roots, buttresses and
+the curtains it hangs to the ground, at its own scale - never its crown: a road is cut through the jungle, and the crowns
+lean over its sides (0.4 m for the banyan to 3.1 m for the mahogany at scale 1 - LAY-11: not "close over" it). The foot
+is the measure whether or not the owner's files loaded (LAY-5/HOST-6: a client on Tree records cleared by the record's
+reach, and its Logging trees stood elsewhere than its room's).
 
-**Cost.** A pixel wholly jungle stands about 3,100 canopy trees, 1,500 young trees, 140 palms and 6,500 plants - about
-11,300 flats against Real forests' wooded ~10,000 - laid on the terrain worker in 13-35 ms warm (the kernel's own nature
-is ~25 ms), never on the frame's thread.
+**Cost.** A pixel of whole grass wholly jungle stands about 3,000 canopy trees (240 of them emergents), 2,400 young
+trees and 8,300 palms and plants - about 13,700 flats, against Real forests' mean of about 6,200 (and DFU's scatter's
+9,200) on the same ground - laid on the terrain worker in about 11 ms warm (AUDIT BANTHA1 LAY-10, PERF-6: it was 16;
+the ordinary layout is about 3), never on the frame's thread. The list crosses to the main thread BY COLUMN
+(`world/terrain/natureWire.js`: a float64 column a field, the buffers transferred, the objects made again - 2 ms
+against the 10 ms structured clone it was, PERF-2).
 
 ## The trees in the game
 
@@ -107,12 +124,21 @@ slot 1 the jungle's; each slot's trees are drawn with its own buffers, and a far
 at that slot's radius and band; both are spent in the call.
 
 **What the flat is** (`scenes/pixelBuild.js`). A jungle tree is a flat of the rainforest's archive with one of its Tree
-records, in a group of its own (`J<species>`): it is **Logging's** (the pixel's forest - `scenes/treeHost.js standTrees`
-stands the day's trees at it; felled, it sinks and falls as its far picture), **cover** at its own trunk and crown
-(`jungleCover`, TACT1's trunk-and-crown shape), **flora** that sways, and the far rings (MAC1) stand it by its own
-height. A pixel HOLDS its far pictures' handles (`jungleTrees`'s, and BUILD-FAIL1's ledger `jungleHandles`) and lets them
+records, in a group of its own (`J<species>`, and `J<species>y` for the young): it is **Logging's** (the pixel's forest -
+`scenes/treeHost.js standTrees` stands the day's trees at it; felled, it sinks and falls as its far picture; its node's
+glow stands out of its trunk or its hung curtains toward the eye, `jungleTreeMark` - AUDIT BANTHA1 TREE-3: the 0.6 m
+pull of an ordinary tree left it inside the banyan), **cover** at its own trunk and crown (`jungleCover`, TACT1's
+trunk-and-crown shape, the crown at TACT1's 0.7 of its reach - LAY-6), **flora** that sways, and the far rings (MAC1)
+stand a canopy tree by its own height - a young tree's group stands no far ring (PERF-5: 41% of the trees, under the
+canopy, drew to the horizon). **Its cover's cost** (TREE-1, PERF-1): a crown 7-15 m across was filed in every 4 m cell it
+touched - 134,000 entries, 10 MB and 40-80 ms a pixel; a proxy wider than a cell is now filed once in a 32 m grid of its
+own (`ai/cover.js` `COVER_WIDE`), the add sliced through the build's breather (`COVER_SLICE`) - 9 ms a pixel, the same
+answers. A pixel HOLDS its far pictures' handles (`jungleTrees`'s, and BUILD-FAIL1's ledger `jungleHandles`) and lets them
 go with it (`scenes/treesHost.js` `released`, `releasedBuild`). Should the owner's files not load, every jungle tree
-stands as the Tree record it carries - never an empty jungle, never a Logging node at an invisible tree.
+stands as the Tree record it carries - never an empty jungle, never a Logging node at an invisible tree - and the door
+asks again on BUILD-RETRY's backoff (`BUILD_RETRY_MS`; TREE-6: one failed fetch was the session's). A 3D tree takes its
+sun at its crown (`uSunLift`, `JUNGLE_SUN_LIFT` 0.6 of its height - TREE-2: one shadow tap at the root lit or darkened a
+whole 22 m tree by its foot's shade), and the door uploads nothing on a frame with no tree near (TREE-9).
 
 ## The haze
 
@@ -133,17 +159,31 @@ linearly round the clock), by the weather (`JUNGLE_HAZE.weather`: rain 1.3, thun
 thins and thickens as the player walks and waits.
 
 **Eased.** Share, density and floor each follow their target by their own lag (1.4 s, 2.5 s, 3.5 s); a step across the
-line, up a cliff or into a bank is a fade. A jump (an eye 250 m from the last frame's: a teleport, a load) snaps.
+line, up a cliff or into a bank is a fade. A jump (an eye 250 m from the last frame's: a teleport, a load) snaps. The
+state is kept in the WORLD's frame (pixel and metres, the origin's height taken off), never the scene's, so a floating
+origin's recentre is no move and a teleport's re-based scene is the jump it is (AUDIT BANTHA1 HOST-2, HOST-3: the
+vertical recentre thickened the haze for seconds, and a teleport faded). Off the jungle the state lets go and its
+uniforms are ZEROED (HOST-1: the last eased frame's stood on, and its cull with it, for the rest of the session), and
+under the sea the air's haze is off (HAZE-7: it stacked on the water's own fog).
 
 **Everywhere it should be.** Every world program fogs by `fogFactorAt`, and `fogFactorAt` is now the weather's fog
 (`weatherFogAt`) times the haze - the ground, the flats and both doors' trees, the meshes, the characters, the decals,
 the water (whose sea floor - FAR-SEA1's hold - is the weather's half alone: no sea shows through the haze), the grass,
 the rain curtains, the banners and flags, the duel wall, the spell sparks, the ships, the serpents, the sea's own fog
-passes - each uploads `uHaze` beside its fog (the renderer's `_uploadFog` and every pass's own; the renderer's programs
-only while it is on, and once as it goes off - a frame outside the jungle pays no call). The far ring of both lanes takes
+passes, and the exterior's glows (Logging's node glow, the aura ring, the spoils, the gate, the rite's smoke, the
+Abyss's omen, a foe's telegraph - AUDIT BANTHA1 HAZE-3: they glowed through the haze) - each uploads `uJungleHaze`
+beside its fog, and every fog a host hands a pass carries it (`haze: renderer._haze`). The sixteen passes drawn only in
+a mode's frame (the Burning Court's, the Abyss's realm, the Elite Breach's halls - each named in the test) never stand
+in the jungle, and their beginFrame clears it. The uniform is the jungle's own name (HAZE-1: as `uHaze` it redeclared
+the Deadlands' own and the Burning Court would not build). The renderer's own programs upload it only while it is on,
+and once as it goes off - kept by the GL program, not its location table, which a world set's install rebuilds (HAZE-2:
+a program whose table was rebuilt kept the jungle's air); the passes, the far ring and the sky send theirs with each draw
+- a call a pass, cheap, but not none (HAZE-9). A window's view out keeps the street's haze with its fog (HAZE-6). The far ring of both lanes takes
 it beside its horizon (`RING_HAZE_GLSL`'s `ringHaze` - `render/horizonHaze.js` stays a leaf). The sky - all four of its passes: the classic panorama, the port's dome, Dynamic Skies'
 skybox and the volumetric clouds' composite - takes its sky half (`HAZE_SKY_GLSL`): a ray that never meets the ground
 crosses the column above the eye over its rise, so the horizon is the haze's whole colour and the zenith keeps its blue.
+Each dome mixes it AFTER its grades (the live event's dread, the Hollow's brass), whose colour it already wears (HAZE-8:
+it was graded twice).
 The renderer's haze is a FRAME's: `setJungleHaze` arms it, and a beginFrame no exterior frame armed clears it, so an
 interior, a dungeon or a panel never inherits the jungle's air; a sprite drawn off the world borrows it off with the fogs.
 
@@ -153,12 +193,14 @@ weighed by their optical depths at 300 m (`fogColorWith`): each medium scatters 
 it takes out. The ground, the sky's horizon and the far ring close into that one colour, so no skyline steps.
 
 **What it hides - the performance it buys.** A pixel whose every point sends less than 1/512 of its light through the
-haze and the weather's fog together is not drawn (`hazeHides`, asked at the world host's pixel gate - terrain, models and
-flats with it). A **bound**, never a guess: the run to the box's nearest point, at the box's top (where the layer is
+haze ALONE is not drawn (`hazeHides`, asked at the world host's pixel gate - terrain, models and flats with it; AUDIT
+BANTHA1 HOST-4, HAZE-4: with the weather's fog multiplied in, a linear fog's end at 2.4 km hid the land at the haze's
+thin fringe, where the sky then showed, and sea the water still drew). A **bound**, never a guess: the run to the box's nearest point, at the box's top (where the layer is
 thinnest - the mean density falls as a ray's far end rises), is the least any ray into it can cross; the test samples
 hidden boxes and holds every point of them past the cull. At noon the haze hides the low ground past ~1.4 km, at dawn
 past ~0.7 km - the 3x3 or the 5x5 of the 121 pixels the default land view streams - while a peak standing out of the haze
-still stands. The shadow pass never culls by it.
+still stands. The shadow pass never culls by it. It culls DRAWING, not building: a hidden pixel is still streamed,
+laid and held (PERF-3 - the owner's call, below).
 
 ## The four hosts
 
@@ -184,6 +226,10 @@ the jungle under clear air. Read once, as the world loads.
   tiles are laid by the jungle's own law with the owner's trees.
 - DFU's fog is one `RenderSettings.fog` for the world; here a regional height haze multiplies it (and the sky takes it).
 - DFU draws every streamed terrain the camera sees; here the haze culls what it hides whole.
+- **Winter, as DFU's rainforest** (AUDIT BANTHA1 TREE-4, NAMED): the Rainforest climate is Swamp-based, so in winter its
+  ground goes to 403 and wears snow, and the jungle stands on it unchanged - as DFU's palms do. Vanilla Enhanced's
+  "Snowless Swamps and Jungles" (SNOWLESS1, `world/climateSwaps.js` `setSnowlessGround`) is the door that takes the snow
+  off; a winter law of the jungle's own (or snowless jungle tiles by its share) is the owner's call.
 
 ## Verification
 

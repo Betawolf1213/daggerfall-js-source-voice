@@ -769,8 +769,8 @@ void main() {
   // apply it to.
   vec3 lin = clamp(col.rgb, 0.0, 1.0);
   vec3 enc = vec3(linearToSrgb(lin.r), linearToSrgb(lin.g), linearToSrgb(lin.b));
-  enc = hazeSky(enc, dir);   // BANTHA1: the jungle's haze toward the horizon - the port's ground haze, in front of the mod's skybox (it takes no fog of its own)
   outColor = vec4(brassGrade(dreadGrade(enc, uDread), uBrass), 1.0);   // EVENT1: graded where the port's own dome grades - on the colour shown; AUDIT SD III (V8): the brass air's after it
+  outColor.rgb = hazeSky(outColor.rgb, dir);   // BANTHA1: the jungle's haze toward the horizon - the port's ground haze, in front of the mod's skybox (it takes no fog of its own); AUDIT BANTHA1 HAZE-8: after the grades
 }`;
 
 /** The pass. Textures arrive through `setTexture(name, image)` as the

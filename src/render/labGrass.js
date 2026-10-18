@@ -255,7 +255,7 @@ const UP = new Float32Array([0, 1, 0]);
 const WHITE = new Float32Array([1, 1, 1]);
 const NO_FOG_RANGE = new Float32Array([0, 1]);   // DISC20-A: a range for the unfogged draw (mode 0 never reads it)
 const NO_WATER_FOG = new Float32Array(20);   // DW-C: uDwFog off ([0].x 0)
-const NO_HAZE = new Float32Array(8);   // BANTHA1: uHaze off ([1].x 0)
+const NO_HAZE = new Float32Array(8);   // BANTHA1: uJungleHaze off ([1].x 0)
 const NO_DECK = new Float32Array(4);   // GRASS-LIT: a vec4 of zeros - no deck, no sun map, no player's light
 const NO_CASTERS = new Int32Array(SHADOW_CASTER_TABLE).fill(-1);   // AUDIT GRASS-LIT2 A2: every light without a map
 const NO_CASTER_PARAMS = new Float32Array(SHADOW_POINT_CASTERS * 4);   // AUDIT GRASS-LIT2 A2: and every slot off (far 0)
@@ -1786,7 +1786,7 @@ export class LabGrassRenderer {
     for (const n of ['uVP', 'uTime', 'uWind', 'uRange', 'uEye', 'uSunDir', 'uWindDir', 'uSnowFull', 'uSlotN', 'uCellFrame', 'uBladeScale', 'uCellSize', 'uGField', 'uGFieldOrigin', 'uGFieldM', 'uSnowGlobal', 'uWindV', 'uAmb', 'uSunCol', 'uDim', 'uSunScale', 'uMoonDir', 'uMoonScale', 'uMoonCol',
       'uPixel', 'uPxVariants', 'uPxSteps', 'uPxTintBands', 'uPxSheet',   // GRASS-PX: the pixel style's five (GRASS-PX3 took the sway's two)
       'uArt', 'uArtGround',   // MEADOW1: the meadow's switch and the ground its art was drawn for
-      'uFogColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uHaze',   // DISC20-A: the terrain's fog; DW-C: and the sea's; BANTHA1: and the jungle's haze
+      'uFogColor', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uJungleHaze',   // DISC20-A: the terrain's fog; DW-C: and the sea's; BANTHA1: and the jungle's haze
       'uLane', 'uELExposure', 'uAdapt', 'uIndirect', 'uIndirectColor', 'uCloudShadowMap', 'uCloudShadowRect', 'uGrassTone',   // GRASS-LIT: the lane, the eye, the player's light, the deck
       'uPointCount', 'uPointLights', 'uPointColors', 'uPointIdx']) this.u[n] = gl.getUniformLocation(prog, n);   // GRASS-LIT2: the lanterns; AUDIT A1: a cell's
     // GRASS-LIT: the sun map's block, by the names ShadowPass.upload binds (the receiver the terrain takes)
@@ -2216,7 +2216,7 @@ export class LabGrassRenderer {
     gl.uniform3fv(u.uFogColor, fog?.color ?? WHITE);
     gl.uniform3fv(u.uCamPos, fog?.camPos ?? eye);
     if (u.uDwFog) gl.uniform4fv(u.uDwFog, fog?.dw ?? NO_WATER_FOG);   // DW-C: the frame's (renderer.setWaterFog); none handed, off
-    if (u.uHaze) gl.uniform4fv(u.uHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the frame's (renderer.setJungleHaze); none handed, off
+    if (u.uJungleHaze) gl.uniform4fv(u.uJungleHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the frame's (renderer.setJungleHaze); none handed, off
     gl.bindVertexArray(this.vao);
     const pv = this._pv;
     if (pv) pv.provokingVertexWEBGL(pv.FIRST_VERTEX_CONVENTION_WEBGL);   // GRASS-ON: the native convention for the field's draws (the constructor says why)

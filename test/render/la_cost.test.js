@@ -238,7 +238,7 @@ test('LA-COST1: THE SECOND CALL IN A FRAME SENDS ONLY ITS OWN - a billboard call
   // must not ride onto the next frame's flats)
   // LPT1 (bible/07-Rendering/Low-Poly-Trees.md): and the low-poly trees' mesh mode and handover, set off (two more - a
   // call the trees drew in leaves the handover on for the flats after it)
-  assert.deepEqual(counts, ['billboards 109 -> 30', 'decals 85 -> 12', 'a character 86 -> 13']);   // BANTHA1 (2026-10-18): the jungle's haze (uHaze) rides the fog's upload only while it is on, or once as it goes off - a frame outside the jungle pays no call   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): +1 a billboard call's first - the frame block's uCrack, every flat whole until a worked vein's batch says otherwise   // PIN MOVED (VEIN-HUE, FIELD BUGS 2026-10-12b): +1 a billboard call's first - the frame block's uBatchDye, reset with the wash   // PIN MOVED (PERF-ARENA, 2026-10-10): -1 a billboard call - its two still flats share their arena's VAO, one bind where there were two   // PIN MOVED (WINDFALL1, 2026-10-08): +2 a billboard call - Windfall's two vec4s, the call's own as the wind is
+  assert.deepEqual(counts, ['billboards 110 -> 30', 'decals 85 -> 12', 'a character 86 -> 13']);   // PIN MOVED (AUDIT BANTHA1 TREE-2, 2026-10-18): +1 a billboard call's first - the lane's uSunLift reset, every flat's sun at its root until a jungle batch says otherwise; BANTHA1 (2026-10-18): the jungle's haze (uJungleHaze) rides the fog's upload only while it is on, or once as it goes off - a frame outside the jungle pays no call   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): +1 a billboard call's first - the frame block's uCrack, every flat whole until a worked vein's batch says otherwise   // PIN MOVED (VEIN-HUE, FIELD BUGS 2026-10-12b): +1 a billboard call's first - the frame block's uBatchDye, reset with the wash   // PIN MOVED (PERF-ARENA, 2026-10-10): -1 a billboard call - its two still flats share their arena's VAO, one bind where there were two   // PIN MOVED (WINDFALL1, 2026-10-08): +2 a billboard call - Windfall's two vec4s, the call's own as the wind is
   // ...and the next frame sends them all again
   r.beginFrame(PROJ, VIEW, new Float32Array([0.3, 0.8, 0.2]), WORLD_FRAME);
   calls.length = 0; r.drawBillboards(bbs, R, UP);
@@ -378,6 +378,8 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
     '_bbTipOn',   // PROF4: the felled tree's tip, the same kind of GL-state shadow
     '_bbDissolveOn',   // DISSOLVE: the burn's switch, the same kind of GL-state shadow
     '_bbCrackOn',   // VEIN-CRACKS: a worked vein's seams, the same kind of GL-state shadow
+    '_bbSunLiftOn',   // AUDIT BANTHA1 TREE-2: the sun lift's GL-state shadow
+    '_lastProgram', '_hazeOn',   // AUDIT BANTHA1 HAZE-2: the bound program and which programs hold the jungle's haze on - GL-state shadows, never an input
     '_bbTintOn',   // ARENA5: a batch's wash (the arena crowd's half in a banner's colours), the same kind of GL-state shadow
     '_bbGlintOn',   // TELL2: a wind-up's glint, the same kind of GL-state shadow
     '_bbLptCutOn'];   // LPT1: a far picture's handover to its 3D tree, the same kind of GL-state shadow

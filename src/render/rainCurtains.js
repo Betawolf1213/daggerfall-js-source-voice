@@ -245,7 +245,7 @@ function mat4Multiply(out, a, b) {
 
 const NO_FOG_RANGE = new Float32Array([0, 1]);
 const NO_WATER_FOG = new Float32Array(20);
-const NO_HAZE = new Float32Array(8);   // BANTHA1: uHaze off ([1].x 0)
+const NO_HAZE = new Float32Array(8);   // BANTHA1: uJungleHaze off ([1].x 0)
 const NO_FOCUS = new Float32Array(4);
 const CIRCLE = packShape(null);
 
@@ -255,7 +255,7 @@ export class RainCurtainsRenderer {
     const prog = buildProgram(gl, CURTAIN_VS, CURTAIN_FS);
     this.program = prog;
     this.u = {};
-    for (const n of ['uVP', 'uCentre', 'uRadius', 'uHeight', 'uEye', 'uDepth', 'uAlpha', 'uTime', 'uColor', 'uLight', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uHaze', 'uFocus', 'uShapeA', 'uShapeB', 'uClip', 'uClipA', 'uClipB']) this.u[n] = gl.getUniformLocation(prog, n);
+    for (const n of ['uVP', 'uCentre', 'uRadius', 'uHeight', 'uEye', 'uDepth', 'uAlpha', 'uTime', 'uColor', 'uLight', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uDwFog', 'uJungleHaze', 'uFocus', 'uShapeA', 'uShapeB', 'uClip', 'uClipA', 'uClipB']) this.u[n] = gl.getUniformLocation(prog, n);
     const verts = ringVertices(CURTAIN_SEGMENTS);
     this.count = verts.length / 2;
     const vao = gl.createVertexArray();
@@ -294,7 +294,7 @@ export class RainCurtainsRenderer {
     gl.uniform3fv(U.uCamPos, fog?.camPos ?? eye);
     if (U.uFocus) gl.uniform4fv(U.uFocus, fog?.focus ?? NO_FOCUS);   // TV1's focus: the fog is the traveller's
     if (U.uDwFog) gl.uniform4fv(U.uDwFog, fog?.dw ?? NO_WATER_FOG);
-    if (U.uHaze) gl.uniform4fv(U.uHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze); none handed, off
+    if (U.uJungleHaze) gl.uniform4fv(U.uJungleHaze, fog?.haze ?? NO_HAZE);   // BANTHA1: the jungle's haze (renderer.setJungleHaze); none handed, off
     gl.bindVertexArray(this.vao);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);

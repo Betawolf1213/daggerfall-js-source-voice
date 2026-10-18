@@ -20,6 +20,7 @@ import { readLowPolyTrees, lptProto, paintAtlas, atlasMipSteps, impostorSteps, g
 import { toColor32 } from '../formats/color32Order.js';
 import { classicRecordRgba } from '../formats/derivedTexture.js';
 import { LowPolyTreesGpu } from '../render/lowPolyTreesRender.js';
+import { BUILD_RETRY_MS } from '../world/streamingWorld.js';   // AUDIT BANTHA1 TREE-6: a failed load's re-asks
 
 export const LPT_TREES_JSON_URL = new URL('../../vendor/low-poly-trees/Trees/trees.json', import.meta.url).href;
 export const LPT_TREES_BIN_URL = new URL('../../vendor/low-poly-trees/Trees/trees.bin', import.meta.url).href;
@@ -77,7 +78,7 @@ export const lptAlphaOf = (sub) => (sub.opaque ? 0 : 0.5 / Math.max(1e-3, sub.cu
  *   seasonal?: { key: (archive:number) => string, picture: (archive:number, record:number) => any, generation?: () => number } | null,
  *   fetchBytes?: (url:string) => Promise<Uint8Array>, breathe?: () => Promise<void>, warn?: (m:string) => void, now?: () => number,
  *   treeSet?: { load: () => Promise<any>, picture: (atlas:string) => Promise<{width:number,height:number,data:Uint8Array}|null> } | null,
- *   slot?: number, scaleMax?: number, label?: string }} deps
+ *   slot?: number, scaleMax?: number, label?: string, sunLift?: number }} deps
  *   `seasonal.key(archive)` - the source a prototype of that archive is painted under ('' the classic records);
  *   `seasonal.picture(archive, record)` - the season's texture for a record it re-skins now (`image` in the port's
  *   order), or null; `seasonal.generation()` - the install, so a paint a new install overtook is never kept.
@@ -85,14 +86,19 @@ export const lptAlphaOf = (sub) => (sub.opaque ? 0 : 0.5 / Math.max(1e-3, sub.cu
  *   in readLowPolyTrees's shape (world/jungle/jungleModels.js readJungleTrees), `picture(atlas)` an atlas's picture
  *   top-down (decoded, never painted from the player's records) - absent, Low Poly Trees' vendored mod; `slot` the
  *   renderer's tree slot its frame is handed to (render/renderer.js setLowPolyTrees); `scaleMax` the largest a tree of it
- *   is drawn (its far pictures' batch is sized for it - LPT_SCALE_MAX, DFU's, for the mod); `label` its id in a warning (the mod's, `low-poly-trees`; the jungle's feature, `bantha-jungle`).
+ *   is drawn (its far pictures' batch is sized for it - LPT_SCALE_MAX, DFU's, for the mod); `label` its id in a warning (the mod's, `low-poly-trees`; the jungle's feature, `bantha-jungle`); `sunLift` the share of a tree's
+ *   height its sun is read at (render/enhancedLighting.js EL_BB_VS_EXT uSunLift - 0 its root's half unit, the mod's).
  */
-export function createLowPolyTrees({ renderer, getTexture = async () => null, seasonal = null, fetchBytes = defaultFetch, breathe = async () => {}, warn = (m) => console.warn(m), now = () => performance.now(), treeSet = null, slot = 0, scaleMax = LPT_SCALE_MAX, label = 'low-poly-trees' }) {
+export function createLowPolyTrees({ renderer, getTexture = async () => null, seasonal = null, fetchBytes = defaultFetch, breathe = async () => {}, warn = (m) => console.warn(m), now = () => performance.now(), treeSet = null, slot = 0, scaleMax = LPT_SCALE_MAX, label = 'low-poly-trees', sunLift = 0 }) {
   /** @type {ReturnType<typeof readLowPolyTrees>|null} */
   let lpt = null;
   /** @type {Promise<any>|null} */
   let loading = null;
-  let failed = false;
+  let shown = 0;   // TREE-9: the instances the last frame uploaded
+  // AUDIT BANTHA1 TREE-6: a load that failed is asked again on BUILD-RETRY's clock (world/streamingWorld.js BUILD_RETRY_MS:
+  // five, doubling from two seconds), never latched for the session - one dropped fetch at the first pixel no longer
+  // stood every tree of the session as its flat
+  let failedUntil = 0, tries = 0;
   /** @type {LowPolyTreesGpu|null} */
   let gpu = null;
   /** `${atlas}|${source}` -> { key, name, source, ready: Promise, tex, pic, picAt, lastLive, missing, painting } */
@@ -116,7 +122,7 @@ export function createLowPolyTrees({ renderer, getTexture = async () => null, se
     return true;
   };
   /** THE FRAME'S HAND-OFF, one object for the session: the runs made for `from` (a gather) at `readyGen` */
-  const out = { from: null, readyGen: -1, runs: [], cut: new Set(), frame: { eye: [0, 0, 0], radius: LPT_NEAR_M, band: LPT_BAND_M, gpu: null, runs: [], cut: new Set() } };
+  const out = { from: null, readyGen: -1, runs: [], cut: new Set(), frame: { eye: [0, 0, 0], radius: LPT_NEAR_M, band: LPT_BAND_M, gpu: null, runs: [], cut: new Set(), sunLift } };   // AUDIT BANTHA1 TREE-2: where its trees read their sun
   let bandScratch = new Uint8Array(0);
 
   const sourceOf = (proto) => seasonal?.key?.(proto.archive) ?? '';
@@ -244,7 +250,7 @@ export function createLowPolyTrees({ renderer, getTexture = async () => null, se
   return {
     /** Fetched and read once; null when the data cannot be had (the trees stay flats). */
     load() {
-      if (lpt || failed) return Promise.resolve(lpt);
+      if (lpt || now() < failedUntil || tries >= BUILD_RETRY_MS.length + 1) return Promise.resolve(lpt);
       loading ??= (async () => {
         try {
           if (treeSet) lpt = await treeSet.load();   // BANTHA1: a set's own trees
@@ -254,12 +260,14 @@ export function createLowPolyTrees({ renderer, getTexture = async () => null, se
           }
           gpu = new LowPolyTreesGpu(renderer.gl, lpt.json, lpt.treesBin);
         } catch (e) {
-          failed = true;
           lpt = null;
+          failedUntil = now() + (BUILD_RETRY_MS[tries] ?? Infinity);
+          tries++;
           warn(`[trees] ${label} could not load: ${e?.message ?? e}`);
         }
         return lpt;
       })();
+      loading.then((v) => { if (!v) loading = null; });   // a failed load is asked afresh past its wait
       return loading;
     },
     get loaded() { return !!lpt; },
@@ -358,7 +366,8 @@ export function createLowPolyTrees({ renderer, getTexture = async () => null, se
       }
       const visible = cullNear(gathered, planes, vis);
       vis = visible.data;
-      gpu.setInstances(vis, visible.count);
+      if (visible.count || shown) gpu.setInstances(vis, visible.count);   // AUDIT BANTHA1 TREE-9/PERF-10: none to show, none shown - no upload
+      shown = visible.count;
       for (const r of out.runs) { r.drawStart = r.run.drawStart; r.drawCount = r.run.drawCount; }
       out.frame.eye[0] = ex; out.frame.eye[1] = ey; out.frame.eye[2] = ez;
       out.frame.gpu = gpu; out.frame.runs = out.runs; out.frame.cut = out.cut;
