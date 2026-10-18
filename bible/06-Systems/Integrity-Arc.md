@@ -1076,7 +1076,9 @@ has it on their next update.
 THE FOUR HOSTS: `world.js` (the streamed exterior) WIRED - it hands a peer's frame to this pool. `worldModes.js` WIRED -
 an interior's pool is `createExteriorFoes` (`interiorFoes`). `dungeonContext.js` needs nothing here: its own lane
 carries only a party's quest foes and the room's loose stands, under their allowances, and its takeover already had
-its bound (AUDIT pre-merge D8, `adoptOwn`); its records stand no elite and no Greater Giant. The dungeon host's layout
+its bound (AUDIT pre-merge D8, `adoptOwn`); its records stand no elite and no Greater Giant (GRANT0, 2026-10-17: but a
+room member's records there cast any spell in the table, and their `rb`, `p2` and wind-up signature bit are believed
+uncapped - `11-Multiplayer/Spawn-Grants.md` sections 1 and 8). The dungeon host's layout
 stream is held to the layout every client built, and its revenants' blows ride as the host says - FLAGGED below.
 `exterior.js` (the fixed city) streams nothing and reads no peer.
 
@@ -1100,6 +1102,12 @@ stream is held to the layout every client built, and its revenants' blows ride a
   (`server-account/src/sanctions.js` banAccount), and no moderator or developer is banned. Where it parts from the call
   above - a moderator's ban past thirty days, and for good - is the owner's to settle with that arc; nothing here
   changes it.
+- **The root (GRANT0, 2026-10-17).** KPbICA, on the Discord, read this section against the code: a reader can bound a
+  client's word but can never know the truth, because nothing in the system knows it. Mac chose "Plan server-rolled
+  spawns": `11-Multiplayer/Spawn-Grants.md` (PROPOSED, nothing built) - online, a foe that rides to another player
+  exists only on a grant the relay rolls and signs, and every reader rebuilds it from the grant's seed. Planning also
+  found the wind-up's signature bit (x2) believed on any foe, at the street's readers and the dungeon's (that page's
+  section 1; its section 8 lists the reader fixes that need no grant).
 
 Pins: `test/scenes/foeforge.test.js` (8) - two real pools, the forged frames a modified client's and the honest ones the
 producer's own (`foesFrame`, `handOverFrame`); `tools/mutants/foeforge.json` (16, all dead). Pins moved (each marked
