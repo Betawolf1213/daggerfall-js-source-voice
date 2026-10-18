@@ -96,6 +96,7 @@ import { weaponSkillUsed } from '../../characters/weapons.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
 import { careerTolerance, EFFECT_FLAGS } from '../spellcast.js';
 import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
+import { healthShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's share of its health, the one law
 import {
   wornSets, setsAwake, RAMPAGE_SECONDS, RAMPAGE_STACKS, CLEAVE_METRES, WRATH_BELOW, NOVA_METRES, WRATH_SECONDS,
   RIPOSTE_SECONDS, MARK_METRES, MARK_SECONDS, BLOOD_SECONDS, BLOOD_STACKS, COIL_STACKS, COIL_SECONDS, SHED_BELOW,
@@ -199,7 +200,7 @@ export const coilStacksAt = (foe, now = _now()) => {
 /** The foe my last landed blow coiled, while its coil holds, and its stacks (the states' - a card's, the pins'). */
 export const coiledFoe = (now = _now()) => (coilStacksAt(_s.coilFoe, now) ? _s.coilFoe : null);
 export const coilStacks = (now = _now()) => coilStacksAt(_s.coilFoe, now);
-const belowHalf = (e) => Number.isFinite(e?.health) && e.maxHealth > 0 && e.health < e.maxHealth / 2;
+const belowHalf = (e) => (healthShare(e) ?? 1) < 0.5;   // FIELD BUGS 2026-10-18b RELAY-SHARE: the one law - a body the relay runs reads its word (Run Them Down there too)
 const ranged = (w) => weaponSkillUsed(w?.templateIndex) === SKILLS.Archery;
 /** @type {WeakMap<object, number>} */
 let _carry = new WeakMap();
