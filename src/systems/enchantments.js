@@ -555,8 +555,13 @@ const REGISTRY = new Map([
         entity.health = Math.min(entity.maxHealth, entity.health + 1);
       }
     },
-    strikes({ param, entity, damage }) {
-      if (param !== 1) return null;
+    strikes({ param, entity, damage, target }) {
+      // FIELD BUGS 2026-10-18b VAMPIRIC-WARD (Low_Poly_Gaming: "an exploit for heals if you have a vampiric weapon"): the damage
+      // DEALT - a blow a referee's ward turns whole (a stand-in `warded`: the Warden's ward, the Remnant shut, the Spire's turned
+      // blows - scenes/eliteGates/egFight.js turnStandIn) dealt nothing, and heals nothing, as the leech's own rule says
+      // (systems/loot/lootPowers.js lootStrike, AUDIT WORLD-REWARDS B3). DFU never meets one - its target is always the entity
+      // whose health the blow then takes - so this is VampiricEffect.cs's own law told what the blow dealt, no departure.
+      if (param !== 1 || target?.warded) return null;
       entity.health = Math.min(entity.maxHealth, entity.health + damage);
       return null;
     },

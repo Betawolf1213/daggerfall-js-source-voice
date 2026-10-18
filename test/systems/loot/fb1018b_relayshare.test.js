@@ -61,6 +61,8 @@ import { destroyGateMarksCard } from '../../../src/ui/gate/gateMarksView.js';
 import { destroyGateGround } from '../../../src/ui/gate/gateGroundView.js';
 import { createEgFight } from '../../../src/scenes/eliteGates/egFight.js';
 import { egHallOf } from '../../../src/net/eliteGates/egLaw.js';
+import { egHallCentre } from '../../../src/world/eliteGates/egHall.js';
+import { egFightView, egGroundAt } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { EG_BOSS_KEYS, EG_OBJ } from '../../../src/net/eliteGates/egLords.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
 import { EG_KIND } from '../../../src/net/eliteGates/egLegion.js';
@@ -129,8 +131,13 @@ function breach(bodies) {
   const renderer = { textures: new Set(), createBillboardBatch: (archive, record, size, centres) => ({ archive, record, size: { ...size }, centres, origin: null, bounds: [0, 0, 0, 1] }), destroyBillboardBatch: () => {} };
   const getTexture = async (archive) => ({ archive, getSize: () => ({ width: 40, height: 80 }), getScale: () => ({ width: 0, height: 0 }), getFrameCount: () => 1 });
   const clock = { t: T0 + 1000 };
+  // TURNED-BLOW (the same record): a blow is struck from my feet on the fight ground beside the first body - with no feet
+  // the screen turns it as the relay would, and no power answers it
+  const spec = egHallOf(12345, 5, 0), centre = egHallCentre(spec), b0 = bodies[0];
+  const g = egGroundAt(egFightView(spec), b0.x + 1.5, NaN, b0.z);
+  const feet = g ? [centre[0] + b0.x + 1.5, centre[1] + (g.y ?? 0), centre[2] + b0.z] : null;
   const fightOf = createEgFight({ renderer, getTexture, uploadRecordFrame: () => {}, audio: { play3d: () => {}, play3dId: () => {}, playOneShot: () => {} },
-    link: { state: () => E }, now: () => clock.t, feet: () => null, player: () => ({ health: 100, maxHealth: 100 }), me: () => 'acct-0' });
+    link: { state: () => E }, now: () => clock.t, feet: () => feet, player: () => ({ health: 100, maxHealth: 100 }), me: () => 'acct-0' });
   return { E, fight: fightOf, clock };
 }
 
@@ -175,7 +182,9 @@ test('RELAY-SHARE THE REPORT: a Rare imprinted at the Reforge with Sweet Mother\
   h.link.st = fight({ hp: 249, max: 1000 });
   assert.equal(weaponAttackDamage(me, warden, 0, sword(), ROLL), plain + Math.floor(plain / 2), 'the word read at the blow, not at his first sight');
   // an Elite Breach: every foe there is the relay's - a Court's lord at a fifth of the word
-  const B = breach([lordRow(1, 'hound', 200, 1000), lordRow(2, 'garoth', 900, 1000, { x: -12 })]);
+  // both on the hall's first fight piece (a disc at -53.17, 53.34, r 11), struck from beside the first - off the fight
+  // ground the relay lands nothing and the screen turns the blow (TURNED-BLOW), so no power answers there
+  const B = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 }), lordRow(2, 'garoth', 900, 1000, { x: -47, z: 53 })]);
   B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
   const lords = B.fight.hostTargets();
   const low = lords.find((q) => q.i === 1).entity, high = lords.find((q) => q.i === 2).entity;
