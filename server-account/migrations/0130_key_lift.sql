@@ -1,6 +1,6 @@
--- KEY-LIFT (FIELD BUGS 2026-10-17e; the Discord, the evening after KEY-LAW: "bruhhhh it was that keyyyyy", over "The
+-- KEY-LIFT (FIELD BUGS 2026-10-17f; the Discord, the evening after KEY-LAW: "bruhhhh it was that keyyyyy", over "The
 -- realm's law has held this character three times. Its trading is frozen until October 24 at 3:21 AM, then opens on its
--- own.", and "like 5 other people reporting same thing"; bible/01-Overview/bugs/Field-Bugs-2026-10-17e.md).
+-- own.", and "like 5 other people reporting same thing"; bible/01-Overview/bugs/Field-Bugs-2026-10-17f.md).
 --
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --

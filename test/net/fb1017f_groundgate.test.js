@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-17e (GROUND-GATE) - "People floating in mid air for some users", a screenshot from the Oblivion Gate
+// FIELD BUGS 2026-10-17f (GROUND-GATE) - "People floating in mid air for some users", a screenshot from the Oblivion Gate
 // in the Alik'r: the crowd drawn tens of metres over the sand. A pose's height is its sender's own ground's, so a copy on
 // an older ground (a macOS or portable desktop copy never updates itself - bible/03-World/Landforms.md C2) drew every
 // peer in the air. Mac's call: the relay turns such a build away. A ground room's hello says the ground it stands on

@@ -65,9 +65,9 @@ template no honest client mints, and held its owner's trade with a strike, the h
 producer sweep's template check now runs the law in a process of its own, as the service's judge loads it. Migration
 0125 lifted the holds, timed holds and strikes that finding alone had laid, written as a staff act.
 
-KEY-LIFT (2026-10-17, migration 0129, no Worker; `01-Overview/bugs/Field-Bugs-2026-10-17e.md`; "bruhhhh it was that
+KEY-LIFT (2026-10-17, migration 0130, no Worker; `01-Overview/bugs/Field-Bugs-2026-10-17f.md`; "bruhhhh it was that
 keyyyyy", "like 5 other people reporting same thing"): 0125 read every law finding a character ever had, so one already
-cleared (0123's Aetheric pieces) or one an older law laid kept the key's week standing. 0129 reads the findings since the
+cleared (0123's Aetheric pieces) or one an older law laid kept the key's week standing. 0130 reads the findings since the
 character's last act that zeroed its count (a staff `clear` or `rollback`, a lift's - never 0120's copies' `clear`), and
 where the key's stand among fewer than STRIKES_FOR_TIMED others it lifts the timed hold, keeps the strikes the others
 could have struck, keeps a hold another carried piece makes, and drops the key's own signature.

@@ -861,7 +861,7 @@ Roads network, in scratch, with the slice's own functions:
   lift scales that gap and opens none. The extremes widen with the relief
   (726 -> 1,174 m), which is the ring's own law at taller heights.
 - TWO BUILDS IN ONE ROOM (AUDIT LANDFORMS C2; GROUND-GATE, 2026-10-17,
-  `01-Overview/bugs/Field-Bugs-2026-10-17e.md` - Mac's call: "Relay turns old
+  `01-Overview/bugs/Field-Bugs-2026-10-17f.md` - Mac's call: "Relay turns old
   builds away"). Each client draws a peer at the sender's height on its own
   ground (interiors ride the exterior frame), so two grounds in one room part
   by the difference: in a town by the town's lift, at the location pixels
@@ -875,7 +875,7 @@ Roads network, in scratch, with the slice's own functions:
   the relay setting `groundGate` is on (`/relay groundGate on`), the relay
   refuses one that says less or none, telling the player to update. The
   ground is held to a print recorded under that law
-  (`test/net/fb1017e_groundgate.test.js`, `tools/groundPrint.mjs`), so a
+  (`test/net/fb1017f_groundgate.test.js`, `tools/groundPrint.mjs`), so a
   slice that moves the ground moves GROUND_LAW and RELAY_VERSION with it. The
   print reads the kernel's shaped ground over the synthetic world; a ground
   that moves only on the real data (a World of Daggerfall site, a location's

@@ -1,11 +1,11 @@
 // @ts-check
-// GROUND-GATE (FIELD BUGS 2026-10-17e; bible/01-Overview/bugs/Field-Bugs-2026-10-17e.md): THE GROUND'S PRINT. The relay
+// GROUND-GATE (FIELD BUGS 2026-10-17f; bible/01-Overview/bugs/Field-Bugs-2026-10-17f.md): THE GROUND'S PRINT. The relay
 // refuses a ground room's hello from a build on an older ground (net/wire.js GROUND_LAW), so the law has to move every
 // time the ground does - and a number beside a comment asking politely is forgotten (SLAM8's lesson, RELAY_VERSION's).
 // The print is the shaped ground as online stands it (world/terrain/terrainGen.js generatePixelTerrain, landforms on)
 // over the landforms' synthetic world (test/landformWorld.mjs - no game data): a pixel by the network's road and river
 // and one on the mountain's flank, in each of CLIMATE.PAK's lands, read every GROUND_PRINT_STEP samples in decimetres.
-// test/net/fb1017e_groundgate.test.js holds the ground to the print recorded under the law this tree names: a move past
+// test/net/fb1017f_groundgate.test.js holds the ground to the print recorded under the law this tree names: a move past
 // GROUND_PRINT_TOLERANCE_M anywhere is a new ground, and the law moves with it. Inside it is a float's noise.
 //
 //   node tools/groundPrint.mjs --write    records the print under GROUND_LAW (test/fixtures/groundPrint.json)

@@ -1406,7 +1406,7 @@ Developer's alone - a token whose glyphs say `dev`), and `/relay <setting> -` ha
   RELAY_CFG_TTL_MS (a minute), and a hub that does not answer leaves the last answer standing (AUDIT SCALE II R1-2:
   asked, never awaited - the answer is the next beat's; a slow hub froze a fight up to 5 s a minute);
 - the var is the setting while the hub holds none.
-- GROUND-GATE (`01-Overview/bugs/Field-Bugs-2026-10-17e.md`): `groundGate` (var GROUND_GATE) on or off - while on, a
+- GROUND-GATE (`01-Overview/bugs/Field-Bugs-2026-10-17f.md`): `groundGate` (var GROUND_GATE) on or off - while on, a
   ground room refuses a hello from a build on an older ground (net/wire.js GROUND_LAW). A cell reads it at a hello that
   says an older ground or none, never at one on the ground: it asks the hub then at most every RELAY_CFG_TTL_MS, and
   waits for the answer while the room has never had one, so a cold cell's first hello is not the one let through.

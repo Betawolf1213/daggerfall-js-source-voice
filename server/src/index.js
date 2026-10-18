@@ -419,12 +419,12 @@ const riteRecordOk = (v) => !!v && typeof v === 'object' && Number.isSafeInteger
  *  is one it reads (a misspelt `enforce` it would ignore), and that it reads as a line rather than as its default.
  *  The words go back in the hub's answer (`error`), which /relay shows its developer. */
 const BODY_KEYS = ['enforce', 'body', 'hull'], BODY_LINE_KEYS = ['depth', 'perS'];
-/** GROUND-GATE (Field-Bugs-2026-10-17e): the words a build on an older ground is refused with - the error frame's, which
+/** GROUND-GATE (Field-Bugs-2026-10-17f): the words a build on an older ground is refused with - the error frame's, which
  *  every build shows as its own (net/online.js), so the copy that cannot know why is told what to do. */
 const GROUND_OLD_WORDS = 'This copy of the game is older than the world online. Update it to play online: reload the page, or download the latest desktop release.';
 const relayCfgRefusal = (k, v) => {
   if (k === 'egDrain') return v === 'on' || v === 'off' ? null : 'egDrain is on (the Spire\'s road shut - no new breach) or off';   // EG-H2 (Elite-Gates.md section 22): THE DRAIN
-  if (k === 'groundGate') return v === 'on' || v === 'off' ? null : 'groundGate is on (a ground room refuses a build on an older ground) or off';   // GROUND-GATE (Field-Bugs-2026-10-17e)
+  if (k === 'groundGate') return v === 'on' || v === 'off' ? null : 'groundGate is on (a ground room refuses a build on an older ground) or off';   // GROUND-GATE (Field-Bugs-2026-10-17f)
   if (k !== 'bossBody') return heraldRole(v) === null ? `${k} is a Discord role's id, 15 to 21 digits - not its name or its mention` : null;
   let o = null;
   try { o = JSON.parse(v); } catch { /* refused below */ }
@@ -6677,7 +6677,7 @@ export class Room {
     } catch (e) { console.warn('[cfg] the hub did not answer', e?.message ?? e); }
   }
   /**
-   * GROUND-GATE (FIELD BUGS 2026-10-17e; Mac's call on bible/03-World/Landforms.md C2): A GROUND ROOM'S DOOR. A hello in
+   * GROUND-GATE (FIELD BUGS 2026-10-17f; Mac's call on bible/03-World/Landforms.md C2): A GROUND ROOM'S DOOR. A hello in
    * a room whose peers stand on each client's own ground (net/wire.js groundRoom) from a build on an older ground than
    * this relay's law - its `gl` less than GROUND_LAW, or none - is refused while the setting `groundGate` is on
    * (net/relayCfg.js), so no copy draws the room's peers in the air nor is drawn under the sand. A hello on the ground

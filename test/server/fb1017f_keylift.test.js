@@ -1,8 +1,8 @@
-// FIELD BUGS 2026-10-17e (KEY-LIFT) - the Discord, the evening after KEY-LAW: "bruhhhh it was that keyyyyy", over "The
+// FIELD BUGS 2026-10-17f (KEY-LIFT) - the Discord, the evening after KEY-LAW: "bruhhhh it was that keyyyyy", over "The
 // realm's law has held this character three times. Its trading is frozen until October 24 at 3:21 AM, then opens on its
 // own.", and "like 5 other people reporting same thing". Migration 0125 lifted law 6's Weir Key holds only where every
 // law finding a character ever had was the key's, so a finding already cleared (0123's) or one an older law laid kept
-// the key's week standing. Migration 0129 reads the findings since the character's last act that zeroed its count, and
+// the key's week standing. Migration 0130 reads the findings since the character's last act that zeroed its count, and
 // lifts the timed hold the key made - the strikes another finding could have struck kept, a hold another finding makes
 // kept, written as a staff act.
 import '../modsOff.js';
@@ -60,7 +60,7 @@ const TIMED = { held: 'law', until: T0 + LAW_HOLD_S, served: 1, at: T0 + LAW_HOL
 const LIFTED = (rev) => [null, null, null, 0, 0, null, rev + 1];
 const state = (r) => [r.held, r.held_at, r.held_until, r.strikes, r.law_holds, r.law_at, r.judge_rev];
 
-test('KEY-LIFT, the report: a character whose Aetheric pieces 0123 cleared, then held a week by the key\'s three strikes - 0125 leaves it held, 0129 lifts it, written as a staff act; its next checkpoint carrying keys holds nothing (mutant: the last clear unread)', async () => {
+test('KEY-LIFT, the report: a character whose Aetheric pieces 0123 cleared, then held a week by the key\'s three strikes - 0125 leaves it held, 0130 lifts it, written as a staff act; its next checkpoint carrying keys holds nothing (mutant: the last clear unread)', async () => {
   const s = await stand();
   try {
     const A = await s.seat('flylit');
@@ -75,7 +75,7 @@ test('KEY-LIFT, the report: a character whose Aetheric pieces 0123 cleared, then
     const rev = s.row(A.R.id).judge_rev;
     s.raw.exec(migration('0125_key_law.sql'));
     assert.deepEqual([s.row(A.R.id).held, s.row(A.R.id).held_until], ['law', T0 + LAW_HOLD_S], 'the gap: 0125 read the cleared finding and left the week standing');
-    s.raw.exec(migration('0129_key_lift.sql'));
+    s.raw.exec(migration('0130_key_lift.sql'));
     assert.deepEqual(state(s.row(A.R.id)), LIFTED(rev), 'lifted whole - nothing since the last clear but the key');
     assert.equal(s.row(A.R.id).law_sig, null, 'the key\'s signature dropped - law 7 finds no key');
     assert.deepEqual(s.findings(A.R.id, 'staff').at(-1), { act: 'clear', by: 'key-lift', was: 'law', until: T0 + LAW_HOLD_S, strikes: 0, served: 1, kept: 0 });
@@ -97,7 +97,7 @@ test('KEY-LIFT: a strike an older law\'s finding laid, then two of the key\'s - 
     for (const at of [T0 + 100, T0 + 200]) s.find(A, KEY(), at);
     s.set(A, TIMED);
     const rev = s.row(A.R.id).judge_rev;
-    s.raw.exec(migration('0129_key_lift.sql'));
+    s.raw.exec(migration('0130_key_lift.sql'));
     assert.deepEqual(state(s.row(A.R.id)), [null, null, null, 1, 0, otherAt, rev + 1]);
     assert.equal(s.findings(A.R.id, 'staff').at(-1).kept, 1);
     // its count goes on from there: the forged piece taken up again is the second strike, no week
@@ -139,7 +139,7 @@ test('KEY-LIFT: what counts and what does not - a staff clear and a rollback end
     // already lifted by 0125: nothing of the key's since
     s.find(seats.done, KEY()); s.act(seats.done, { act: 'clear', by: 'key-law', was: 'law', until: null, strikes: 1, served: 0 }); s.set(seats.done, { sig: SIG });
     const revs = Object.fromEntries(Object.entries(seats).map(([h, c]) => [h, s.row(c.R.id).judge_rev]));
-    s.raw.exec(migration('0129_key_lift.sql'));
+    s.raw.exec(migration('0130_key_lift.sql'));
     for (const h of ['staffclear', 'rollback', 'excused', 'uid']) assert.deepEqual(state(s.row(seats[h].R.id)), LIFTED(revs[h]), `${h}: lifted whole`);
     assert.deepEqual(state(s.row(seats.cut.R.id)), [null, null, null, 1, 0, T0 - 3600, revs.cut + 1], 'cut: the week lifted, one strike kept');
     assert.deepEqual(state(s.row(seats.carrying.R.id)), ['law', 777, null, 1, 0, T0 - 3600, revs.carrying + 1], 'carrying: the week lifted, the piece\'s hold standing');

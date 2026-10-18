@@ -17,7 +17,7 @@ export const RELAY_CFG_VARS = Object.freeze({
   serpentRole: 'SERPENT_DISCORD_ROLE',
   sdRole: 'SD_DISCORD_ROLE',
   egDrain: 'EG_DRAIN',   // EG-H2 (bible/11-Multiplayer/Elite-Gates.md section 22): THE DRAIN - 'on' shuts the Spire's road (no new breach) while a deploy drains it
-  groundGate: 'GROUND_GATE',   // GROUND-GATE (bible/01-Overview/bugs/Field-Bugs-2026-10-17e.md): 'on' refuses a ground room's hello from a build on an older ground (net/wire.js GROUND_LAW) - off until the site serves the build that says it, since the relay deploys first
+  groundGate: 'GROUND_GATE',   // GROUND-GATE (bible/01-Overview/bugs/Field-Bugs-2026-10-17f.md): 'on' refuses a ground room's hello from a build on an older ground (net/wire.js GROUND_LAW) - off until the site serves the build that says it, since the relay deploys first
 });
 /** The settings a developer may set. */
 export const RELAY_CFG_KEYS = Object.freeze(Object.keys(RELAY_CFG_VARS));
