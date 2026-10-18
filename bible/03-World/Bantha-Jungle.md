@@ -252,13 +252,12 @@ the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and eleven m
 audit, sd20c's put back as it was with its pins).
 
 **Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
-no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **OPEN - THE JUNGLE
-STANDS NOWHERE.** On the freeware's own data (`tools/fetch-data.sh`, `tools/jungleExtent.mjs`, 2026-10-18) region 10,
-Bantha, holds no pixel of POLITIC.PAK and no place: Daggerfall names it and never paints it. Due north of Daggerfall city
-the land is Glenpoint (region 18). Which land the jungle takes is the owner's call (`JUNGLE_REGIONS`,
-`world/jungle/jungleRegion.js`). **Open.** Not eyeballed in the running game:
-this slice was built in a container with no ARENA2 (the trees' far pictures, the layout over synthetic ground and the
-haze over a synthetic scene were rendered and looked at; Bantha's own land, its real extent on the map and the frame time
-on a GPU are the owner's to see - `HEADED=1 SCENES=bantha LOC=<a town of Bantha's> npm run perf`, then again with
-`JUNGLE=off` (AUDIT BANTHA1 DOC-10: the probe had no Bantha scene and no jungle switch; the town is the owner's map's to
-name - this container holds none)).
+no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Where it stands.** On the freeware's own data (`tools/fetch-data.sh`, `tools/jungleExtent.mjs`, 2026-10-18) region
+10, Bantha, holds no pixel of POLITIC.PAK and no place - Daggerfall names it and never paints it - so the jungle stood
+nowhere; the owner chose Glenpoint (`JUNGLE_REGIONS`, `world/jungle/jungleRegion.js`), due north of Daggerfall city.
+**Seen in the running game** (2026-10-18, the freeware's data, headless Chromium on SwiftShader, the land view at 1):
+Hearthsly Court, 25 map pixels inside Glenpoint, summer - at 11:00 the manor's fields open ground under the haze and,
+every other way, a closed canopy of the owner's trees with the kapok's parasols standing over it and palms in its gaps,
+fading into grey-green air within a few hundred metres; at 06:30 the manor all but gone in the dawn's mist; with
+`?jungle=off` DFU's conifers under a clear sky. **Open.** The frame time on a GPU (SwiftShader drew a jungle frame in
+4-11 s, which says nothing of a GPU's) - `HEADED=1 SCENES=jungle npm run perf`, then again with `JUNGLE=off`.
