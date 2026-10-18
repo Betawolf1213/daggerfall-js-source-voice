@@ -59,13 +59,20 @@ test('AUDIT A1/A6: a judged revenant does no deed - executed, released or sworn,
   assert.equal(N.revenantDeed(me, e2, 'slew', { now: 40, rolls: () => 0 }), null, 'executed: no deed');
   assert.equal(N.allRevenants().length, before, 'and no second record under its id');
   assert.equal(N.revenantById(r2.id).fate, 'executed');
-  // the cap: five living and one out in the world - a sixth buries the weakest that is NOT out
+  // the cap: the living full, one of them out in the world - a deserter coming back past it buries the weakest that is
+  // NOT out (PIN MOVED, UNQUIET - Revenants.md section 46: none rises past the cap, so the cap buries only for one turned
+  // back from the sworn)
   fresh();
-  const out = N.revenantDeed(me, orc(), 'slew', { now: 0, rolls: () => 0 });   // a kill: it stands over the body (out)
+  RC.setRetinuePlayer(me);
+  const s = N.revenantDeed(me, orc({ champion: 'swift' }), 'fled', { now: -10, rolls: () => 0 });
+  N.revenantSpared(me, { revenant: { id: s.id } }, { state: 'away' });
+  const out = N.revenantDeed(me, orc(), 'slew', { now: 0, rolls: () => 0 });   // a kill: it stands over the body (out) - the weakest, the oldest
   assert.equal(out.out, true);
-  for (let i = 0; i < N.REVENANT_MAX; i++) N.revenantDeed(me, orc({ champion: 'stalwart' }), 'fled', { now: 100 + i, rolls: () => 0.4 });
-  assert.ok(N.revenantById(out.id), 'the one standing is never buried');
+  for (let i = 0; i < N.REVENANT_MAX - 1; i++) N.revenantDeed(me, orc({ champion: 'stalwart' }), 'fled', { now: 100 + i, rolls: () => 0.4 });
   assert.equal(N.livingRevenants().length, N.REVENANT_MAX);
+  N.revenantDeserts(me, N.revenantById(s.id), { now: 200 });
+  assert.ok(N.livingRevenants().some((x) => x.id === out.id), 'the one standing is never buried');
+  assert.equal(N.livingRevenants().length, N.REVENANT_MAX, 'the cap holds');
   // a tombstone's id is never worn again
   const e3 = orc({ revenant: { id: 'long-gone' } });
   const r3 = N.revenantDeed(me, e3, 'fled', { now: 500, rolls: () => 0 });

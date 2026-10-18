@@ -107,11 +107,11 @@ test('RVN9 THE CATCH-UP: a long absence counts seven days at most; a clock wound
 
 test('RVN9 WHO FESTERS: the living, unsworn, not out - never one standing, sworn or fallen; at rank 5 its wrath stops at three and it never ranks past it (mutants: one out festering; the sworn; past rank 5)', () => {
   const p = me();
+  const sworn = made(p); sworn.sworn = true;   // UNQUIET (Revenants.md section 46): the sworn and the fallen first - none of the four slain to make room under the cap
+  const fallen = made(p); fallen.defeated = true;
   const out = made(p);
-  const sworn = made(p);
-  const fallen = made(p);
   const top = made(p, { rank: 5 });
-  out.out = true; sworn.sworn = true; fallen.defeated = true;
+  out.out = true;
   N.revenantFester(p, at(10));
   for (let d = 11; d <= 40; d++) N.revenantFester(p, at(d));
   assert.equal(out.wrath, 0, 'standing');

@@ -36,10 +36,10 @@
     ]
   },
   {
-    "name": "RVN3-the-will-at-rank-2",
+    "name": "RVN3-the-will-at-rank-3",
     "file": "src/systems/revenant/revenantFeud.js",
     "old": "export const willMatters = (rank) => (rank | 0) >= WILL_RANK;",
-    "new": "export const willMatters = (rank) => (rank | 0) >= 2;",
+    "new": "export const willMatters = (rank) => (rank | 0) >= 3;",
     "tests": [
       "test/systems/rvn3_weak.test.js"
     ]

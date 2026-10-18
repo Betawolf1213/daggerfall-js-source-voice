@@ -60,10 +60,10 @@ function made(p, { deedName = 'fled', personality = 'brutal', mobileType = M.Orc
   return r;
 }
 /** Its next deed, as the pools do it (its body wearing its name; `last` the class of the last blow that reached it). */
-function again(p, r, deedName, { now = DAY * 11, last = null } = {}) {
+function again(p, r, deedName, { now = DAY * 11, last = null, rolls = () => 0 } = {}) {
   const e = foe({ mobileType: r.mobileType, revenant: { id: r.id } });
   if (last) { const l = feudOf(e); assert.ok(l, 'its ledger opens'); l.last = last; }
-  return N.revenantDeed(p, e, deedName, { mobileType: r.mobileType, rolls: () => 0, now });
+  return N.revenantDeed(p, e, deedName, { mobileType: r.mobileType, rolls, now });
 }
 
 // ── the mark ────────────────────────────────────────────────────────
@@ -320,7 +320,7 @@ test('UNQUIET SINK: the dead stand and go into the ground - 200 ms then 1400 ms 
   assert.equal(N.revenantFleeStep(f, [0, 0, 0], { rolls: () => 0, now: 0 }), 'start');
   assert.equal(asked[0][2], U.CRAFT.SINK_PACE, 'it stands');
   assert.deepEqual({ dir: f.portalFx.dir, delay: f.portalFx.delay, ms: f.portalFx.ms, tint: [...f.portalFx.tint] }, { dir: 'out', delay: 200, ms: 1400, tint: [0.5, 0.36, 0.2] });
-  assert.equal(N.revenantFleeStep(f, [0, 0, 40], { now: 1599 }), 'run', 'sinking - however far I am');
+  assert.equal(N.revenantFleeStep(f, [0, 0, N.REVENANT_ESCAPE_DISTANCE + 1], { now: 1599 }), 'run', 'sinking - however far I am (a plain run there is an escape)');
   assert.equal(N.revenantFleeStep(f, [0, 0, 1], { now: 1600 }), 'escape', 'under');
   const b = standing(p, M.Zombie, 2).f;
   N.revenantFleeStep(b, [0, 0, 0], { rolls: () => 0, now: 0 });
@@ -423,8 +423,8 @@ test('UNQUIET VENGEANCE: due in one to two days, and it takes 55% of the return 
   const p = me();
   const v = made(p, { personality: 'brutal' });
   const m = made(p, { personality: 'cold' });
-  again(p, v, 'fled', { now: DAY * 20 });
-  assert.ok(v.dueAt >= DAY * 20 + 1440 && v.dueAt <= DAY * 20 + 2880, `vengeance: ${v.dueAt - DAY * 20}`);
+  again(p, v, 'fled', { now: DAY * 20, rolls: () => 0.999 });
+  assert.ok(v.dueAt >= DAY * 20 + 1440 && v.dueAt <= DAY * 20 + 2880, `vengeance, the roll's top: ${v.dueAt - DAY * 20}`);
   v.dueAt = DAY * 21; m.dueAt = DAY * 30;
   assert.equal(N.revenantToReturn(p, { now: DAY * 22, rolls: () => 0.549 })?.id, v.id, 'under 55%');
   N.releaseRevenantStand(v);

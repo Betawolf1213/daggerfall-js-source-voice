@@ -59,7 +59,9 @@
     "old": "  if (living.length > REVENANT_MAX) {",
     "new": "  if (living.length > REVENANT_MAX * 10) {",
     "tests": [
-      "test/systems/revenant.test.js"
+      "test/systems/revenant.test.js",
+      "test/systems/revenant/unquiet.test.js",
+      "test/systems/revenant/revenant_audit.test.js"
     ]
   },
   {
