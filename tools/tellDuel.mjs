@@ -289,8 +289,9 @@ const { releaseTactics } = await import('../src/ai/tactics.js');
 
 /** Section 28's RVN targets: the telegraphed blows a perfect dodger takes, at most this share of a trader's, its time to
  *  the end no longer (FEUD BALANCE, OPEN 24 - it was its time, at most 0.75 of the trader's); the will's kneels; a rank-5's
- *  time over a rank-1's in this band ("about 2.5 times"). */
-export const FEUD_TARGETS = Object.freeze({ DODGE_SPARES: 0.1, KNEEL_WEAK: 0.9, KNEEL_DODGE: 0.7, KNEEL_TRADE_MAX: 0.2, RANK_RATIO: Object.freeze([2, 3]) });
+ *  time over a rank-1's in this band ("about 2.5 times"; UNQUIET, Revenants.md section 46 - the owner: "harder" - about
+ *  three: each rank weighs more, so a rank-5's fight is the longer for it, 3.2 times measured). */
+export const FEUD_TARGETS = Object.freeze({ DODGE_SPARES: 0.1, KNEEL_WEAK: 0.9, KNEEL_DODGE: 0.7, KNEEL_TRADE_MAX: 0.2, RANK_RATIO: Object.freeze([2.5, 3.5]) });
 const WALK = walkSpeed(50);   // player/motor.js: DFU's walk at Speed 50 (4.43 m/s)
 const RUN = runSpeed(50, 50);   // FEUD HARNESS: ...and its run at Running 50 (8.10 m/s) - the chase of a fleeing one
 const CLOSE = 0.25;           // the dodger and the trader close to this inside their reach

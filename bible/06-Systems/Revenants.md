@@ -1284,6 +1284,18 @@ Each rank weighs more. Health is **+40%** a rank, blows **+15%**, and a class fo
 already weighed by RVN-STARS (section 44), and the new weight is a foe's alone. With the will from rank II and a flight
 that gets away (46.4), a revenant is hard to bring down in more ways than its health.
 
+**Measured** (`tools/tellDuel.mjs --feud`, 150 fights a cell, a Longsword):
+
+- A rank-1 revenant fought never running takes 6.5 s to its end, up from 5.9 s. A rank-5 one takes 21.0 s, up from 16.1 s.
+- Rank 5 over rank 1 is **3.24** trading and **3.22** dodging (it was 2.73 / 2.69). The rank's target band moved with the
+  ask, from 2-3 to 2.5-3.5 ("about three times" - `12-Enhanced-AI/Feud-Arc.md` section 28).
+- The will's targets hold. By its weakness 100%, by dodging 92.2%, by trading 12.6%. A perfect dodger is struck by none
+  of a trader's telegraphed blows, in 97.9% of its time.
+- From rank III, about a third of the fights now end in a real flight: 47, 45 and 57 of 150 at ranks III-V (they were
+  29, 24 and 24).
+- At rank II, a trader's fight ends in a kneel 16% of the time (it was 37%). The rest end in a tear-away or a flight:
+  its will holds from rank II.
+
 ### 46.4 Its flight craft
 
 From rank II (`CRAFT.RANK`) a revenant breaks away **in its own way**, chosen by its kind (`fleeCraftOf`). The page

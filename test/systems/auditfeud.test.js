@@ -331,7 +331,7 @@ test('AUDIT FEUD (section 28): THE REVENANT\'S DUEL - an Orc revenant fought to 
   const { revenantFight: fightIn, FEUD_TARGETS } = await import('../../tools/tellDuel.mjs');
   // PIN MOVED (FEUD HARNESS: the duel's laws on its seeds, alone and never running - its band's draws would move each seed's stream)
   const revenantFight = (o) => fightIn({ band: false, flight: false, ...o });
-  assert.deepEqual(JSON.parse(JSON.stringify(FEUD_TARGETS)), { DODGE_SPARES: 0.1, KNEEL_WEAK: 0.9, KNEEL_DODGE: 0.7, KNEEL_TRADE_MAX: 0.2, RANK_RATIO: [2, 3] });
+  assert.deepEqual(JSON.parse(JSON.stringify(FEUD_TARGETS)), { DODGE_SPARES: 0.1, KNEEL_WEAK: 0.9, KNEEL_DODGE: 0.7, KNEEL_TRADE_MAX: 0.2, RANK_RATIO: [2.5, 3.5] });   // PIN MOVED (UNQUIET, Revenants.md section 46: a rank weighs more - about three times)
   const weak = revenantFight({ rank: 3, weak: true, seed: 1 });
   assert.deepEqual([weak.end, weak.stood, weak.weak > 0], ['knelt', true, true]);
   const tore = revenantFight({ rank: 3, seed: 2 });
