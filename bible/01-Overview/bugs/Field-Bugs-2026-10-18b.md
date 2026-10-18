@@ -115,8 +115,10 @@ discord5), no assertion changed.
 `src/combat/healthShare.js` (new: healthShare, wordShare - the one share law), `src/world/gate/gateBoss.js` (the three
 stand-ins take their owner's reader), `src/scenes/gate/gateCourt.js`, `src/scenes/gate/gateHost.js`,
 `src/scenes/eliteGates/egFight.js`, `src/scenes/superDungeon/sdRemnant.js`, `src/scenes/serpentHost.js`,
-`src/scenes/world.js` (the serpent's stand-in: one line changed, none added). The five readers: `lootPowers.js`,
-`weaponMastery.js`, `martialPowers.js`, `arcanePowers.js`, `sigil/sigilSetPowers.js`.
+`src/scenes/world.js` (the serpent's stand-in: one line changed, none added). The six readers: `lootPowers.js`,
+`weaponMastery.js`, `martialPowers.js`, `arcanePowers.js`, `sigil/sigilSetPowers.js`, and (AUDIT FB1018b L3-5)
+`combat/technique/techniqueBlow.js` - Headsman's Chop kept its own share and read the placeholder (a lord at a fifth
+got x1.20 for x2.00).
 
 FOUND, on a body the relay runs. On every other foe the power works and always did.
 - **What the power is.** The Night Mother's Embrace (a Cuirass) carries Sweet Mother's Kiss: `kind: 'execute', below:
@@ -135,7 +137,7 @@ FOUND, on a body the relay runs. On every other foe the power works and always d
   unread" - it was never unreadable, only never handed over). The Firmament keystone of the same name reads no health.
 
 FIXED. `healthShare` answers an entity's own share, and for a stand-in its owner's reader of the relay's word, clamped,
-or null where none is heard (a body unheard reads whole, as before). The five readers read it and keep no copy (swept).
+or null where none is heard (a body unheard reads whole, as before). The six readers read it and keep no copy (swept).
 Every owner hands its stand-ins the word: the court (his `hp` of `max`, at the blow; each crystal its Reckoning's
 share), his host, an Elite Breach (each body's `hp` of `max`, refilled each frame; a struck object the share it is drawn
 at), the Remnant, its Echoes and Hearts, and the serpent. RECORDED: Blood Boil's second burn has no record to land on at
@@ -147,8 +149,10 @@ THE FOUR HOSTS: `world.js` (the serpent's line, none added). `dungeonContext.js`
 struck, hands the formula the owner's target, which now carries its reader. `worldModes.js` and `exterior.js` stand no
 relay body.
 
-Pins: `test/systems/loot/fb1018b_relayshare.test.js` (5). Mutants: `tools/mutants/fb1018b_relayshare.json` (30, all
-dead); three older records whose anchors moved were re-aimed by content (`audit_martial.json` L3F2, `audit_wb11.json`
+Pins: `test/systems/loot/fb1018b_relayshare.test.js` (9; AUDIT FB1018b: the Chop, a struck object's word read as it
+falls, the serpent's word the fight I stand in - L3-9 - and standing nowhere turns every blow, L6-7; the breach fixture's
+bodies stand on the fight ground under them, as the relay stands them - L3-6 turned the ones it had left at y 0 under an
+18 m disc). Mutants: `tools/mutants/fb1018b_relayshare.json` (35, all dead); three older records whose anchors moved were re-aimed by content (`audit_martial.json` L3F2, `audit_wb11.json`
 W1, `set3.json`'s half line).
 
 ## DUNGEON-DIGITS: a dungeon window gets its digits (T4)
@@ -221,6 +225,29 @@ blow from my feet; every heal and power already refuses a warded target, and Vam
 number says "No footing" or "Warded". THE FOUR HOSTS: `dungeonContext.js` (the one door a blow on a Spire body leaves
 through); `world.js`, `exterior.js` and `worldModes.js` unchanged.
 
+AUDIT FB1018b L3 found the screen and the relay still apart, and closed each:
+- **A woken lord** (L3-1): the screen held a Court lord asleep until the fight's next whole word, up to 2 s after its
+  wake, and turned every blow the relay landed meanwhile. The wake now says its first phase in the beat that wakes it
+  (`eph`, `egLords.js` egLordsWake), which the link takes as a wake, no phase turn.
+- **The storey** (L3-6): the relay lands nothing on a body a storey over or under me (`egOneStorey`), and the screen did
+  not ask - a Harrier on an island 14 m up was offered, and a leech healed the claim. One law now,
+  `egBodies.js:"export function egStoreyApart(view, x, y, z, bx, by, bz) {"`, which egHitBody and
+  `egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0) {"` both call, the screen judging the body
+  where its walk has carried it.
+- **An object's radius** (L3-4): the screen judged a struck object at 1 m; the relay's are their own (a spark 0.6, a
+  rift 1.3, the Wellspring's spring - a rift - 2.2). Each body's radius now rides beside its row (`ead` and `efs` `r`,
+  egRadiusWire; wire.js egRadii), outside the row, so a build before it drops the field and keeps the word.
+- **What still answered a turned blow** (L3-2, L3-3): a spell (arcanePowers.js pathLanded: Siphon Life healed 380 of ten
+  casts on a turned Harrier, Conflux stacked), Cast When Strikes, and the sets' strike (Battlemage's Panoply returned
+  200 magicka, Coilscale built its coil). Each refuses a warded target now, and the spell doors pop their number by the
+  body met. **Every door says its word** (L3-7): a turned shaft rang silently; it says "No footing" or "Warded" too, and
+  so does a shaft into the Warden's ward.
+- **Pose lag** (L3-8, RECORDED): the screen judges this frame's feet, the relay the socket's last pose (up to a tenth of a
+  second old, POSE_HZ 10, and the transit) - at a platform's edge, for about 100 ms, the two can differ. The 1.5 m pad
+  narrows it; only the relay's word of each blow would close it.
+The relay is at `world219` (`test/net/relayversion.test.js`): TURNED-BLOW's rule and these moved its bundle. Either end
+may deploy first.
+
 Found and left (AUDIT FB1018b L6-8): `tools/mutants/egz_legion.json`'s EGZ-the-divers-dont-wait survives, on main's
 2c98d9554a too - the span AI these imps belong to, older than this slice.
 
@@ -228,7 +255,7 @@ RECORDED, not fixed: the heal is still the claim's wherever the relay lands only
 Shield-Wall or Shielded front turns it, a flier is out of reach) - closing that needs the relay to tell each striker
 what landed, per blow.
 
-Pins: `test/net/eliteGates/fb1018b_turnedblow.test.js` (4). Mutants: `tools/mutants/fb1018b_turnedblow.json` (18, all
+Pins: `test/net/eliteGates/fb1018b_turnedblow.test.js` (9). Mutants: `tools/mutants/fb1018b_turnedblow.json` (44, all
 dead). Moved with the strike rule: two records in `tools/mutants/egz_legion.json`, one in `tools/mutants/wb13d.json`,
 and one call site in `test/net/eliteGates/law9_height.test.js`.
 
@@ -239,8 +266,9 @@ healed the whole claim of blows into the Warden's ward and into the Brass Remnan
 loot maker mints it, healed every point of 20 blows into the Warden's ward. FIXED
 (`enchantments.js:"if (param !== 1 || target?.warded) return null;"`): VampiricEffect.cs's own law told what the blow
 dealt, not a departure. AUDIT FB1018b L1: the Mace of Molag Bal's drain had the same hole and gives nothing off a ward
-or a blow of none (`artifactEffects.js:"if (!entity || !target || damage === 0 || target.warded) return null;"`). Pins:
-`test/systems/fb1018b_vampiricward.test.js` (3). Mutants: `tools/mutants/fb1018b_vampiricward.json` (3, all dead).
+or a blow of none (`artifactEffects.js:"if (!entity || !target || damage === 0 || target.warded) return null;"`). AUDIT FB1018b L3-2,
+L3-3: a spell into a ward, Cast When Strikes and the sets' strike refuse it too (TURNED-BLOW). Pins:
+`test/systems/fb1018b_vampiricward.test.js` (6). Mutants: `tools/mutants/fb1018b_vampiricward.json` (6, all dead).
 
 ## UNSEEN-KEEPER: the gate keeper drawn nowhere - not proven (T5)
 

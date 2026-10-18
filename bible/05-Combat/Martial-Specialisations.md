@@ -120,7 +120,8 @@ RELAY-SHARE: each stand-in carries its owner's reader of the relay's word of tha
 draws - and the one share law (`combat/healthShare.js` healthShare) reads it, so each half pays its own there too; the
 halves' mean, x1.4, the sword's own, stands only where no word is heard. Gutting Lunge reads the same law, as the
 loot's execute does, and its second blow there is owed to the blow's claim (AUDIT MARTIAL had kept it "never fires on a
-body the relay runs"). The arcane Blood Boil reads it too, but its second burn has no record to land on at a stand-in
+body the relay runs"). Headsman's Chop reads it too (AUDIT FB1018b L3-5: `combat/technique/techniqueBlow.js` kept a
+share of its own and read the placeholder as whole - x1.20 on a lord at a fifth, for its x2.00). The arcane Blood Boil reads it too, but its second burn has no record to land on at a stand-in
 (the dungeon context's `tellStandIn` tells the riders no foe), so it burns nothing there.
 
 **THE SWING PACE** (`characters/weaponStates.js` registerSwingPaceMod) - named modifiers `fn(ctx, w) -> percent`, as
