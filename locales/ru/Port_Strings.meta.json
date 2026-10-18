@@ -22029,6 +22029,11 @@
   "tr": "f4dd95b5f207",
   "by": "claude-in-session"
  },
+ "rvn.kicker.trained": {
+  "en": "1ae68e137593",
+  "tr": "cb8b541ef75e",
+  "by": "claude-in-session"
+ },
  "rvn.roster.abroadHead": {
   "en": "e8aceea96a26",
   "tr": "166e46eafef0",
@@ -22794,6 +22799,86 @@
   "tr": "5755b2134efd",
   "by": "claude-in-session"
  },
+ "rvn.unq.how.arrowWise": {
+  "en": "7c49f713a0fb",
+  "tr": "5b4729a9a067",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.braced": {
+  "en": "7cc918f95930",
+  "tr": "3a594b7f9e03",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.fireproof": {
+  "en": "1da840244989",
+  "tr": "5f4b6aea258f",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.grounded": {
+  "en": "71f497789120",
+  "tr": "c3cd0339680d",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.hewnHard": {
+  "en": "237b5017397b",
+  "tr": "1816ee5b2fc6",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.mailed": {
+  "en": "067cb2b4d11b",
+  "tr": "b28feaa3bb0e",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.nightStalker": {
+  "en": "0799b055e323",
+  "tr": "b82117e555ad",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.patient": {
+  "en": "0baf5c276039",
+  "tr": "227e46fe1b80",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.relentless": {
+  "en": "3c49d9cc3c0c",
+  "tr": "46ac3d3b2209",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.rimebound": {
+  "en": "7784005a1a06",
+  "tr": "792de12e2abc",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.silverScarred": {
+  "en": "f8248e127277",
+  "tr": "c04efaa1f344",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.spellScarred": {
+  "en": "b40981aab759",
+  "tr": "87c0395a1c39",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.steadfast": {
+  "en": "4c88e88e7a13",
+  "tr": "2bd119d72e06",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.unflinching": {
+  "en": "34fecf4b1d8a",
+  "tr": "55893f03d1b0",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.venomBlooded": {
+  "en": "e6aa09fd40ce",
+  "tr": "1083fe806c3f",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.how.watchful": {
+  "en": "3060a0b21f99",
+  "tr": "15862dda9cb4",
+  "by": "claude-in-session"
+ },
  "rvn.unq.hunt.dread": {
   "en": "692eb8914663",
   "tr": "3b1beca974ea",
@@ -22859,6 +22944,11 @@
   "tr": "8508c2807408",
   "by": "claude-in-session"
  },
+ "rvn.unq.page.heals": {
+  "en": "34ce508a8980",
+  "tr": "fe6497774d65",
+  "by": "claude-in-session"
+ },
  "rvn.unq.page.how": {
   "en": "1b15fbb5c3b3",
   "tr": "29b55ac28df6",
@@ -22917,6 +23007,11 @@
  "rvn.unq.trail": {
   "en": "54d0984b2a68",
   "tr": "25cf910bb24e",
+  "by": "claude-in-session"
+ },
+ "rvn.unq.trained": {
+  "en": "defa17a4b89b",
+  "tr": "8b8f65d37051",
   "by": "claude-in-session"
  },
  "rvn.unq.wound.bled": {
