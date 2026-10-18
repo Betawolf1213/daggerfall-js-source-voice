@@ -10780,8 +10780,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       // dead FIRST - the documented removal protocol (droppedLoot.js
       // mount reads it) - so a pile dropped at the exit whose texture
       // is still warming cannot mint onto the orphan.
-      for (const p of droppedLoot._piles) { p.dead = true; if (p.batch) renderer.destroyBillboardBatch(p.batch); }
-      droppedLoot._piles.length = 0;
+      droppedLoot.restorePiles(null);   // AUDIT FB1018 L3-2: the pool's own free (LOOT-FLATS' one way) - each pile dead, then out of the animator, then its batch
       droppedLoot.physical.destroy();   // PI1: and the items standing as themselves - their batches and their pictures
       for (const m of _roomMine.values()) if (m.claim && !m.lapsed) roomGive(m.item, m.give);   // PARTY-LOOT: a claim still in flight leaves with its claimer - no verdict reaches a dungeon that is gone
       _roomMine.clear();

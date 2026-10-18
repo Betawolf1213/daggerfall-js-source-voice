@@ -617,7 +617,6 @@ import { hasSailingCabin, savedCabinBoat, cabinSceneName } from '../systems/sail
 import { createSailingCabinAccess } from './sailingCabin.js';
 import { createCaravanAccess, parkedCaravanAt } from './caravanRoom.js';   // WAGONS1: the caravan's room
 import { createWagonRiders, GO_LEAD_MS } from './wagon/wagonRiders.js';   // WAGONS1: the seats in the back
-import { HCC_WIRE_KIND } from '../systems/horse/horseCartWire.js';   // WAGONS1: which way my wagon goes (my companions ride while it goes with me)
 import { RIDE_TEXT, RIDE_ASK_TTL_MS } from '../systems/wagon/wagonSeats.js';
 import { createSailingCabinLink } from '../net/sailingCabinLink.js';
 import { capsuleFits } from '../player/parkour.js';
@@ -7522,6 +7521,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     visit: { may: (t) => caravanVisitMay(t), enter: (t) => caravanVisitEnter(t) },   // WAGONS2-VISIT: another's caravan, open to me
     horses: () => horseCountOf(playerEntity.items ?? []),   // WAGONS3: my parked pair keeps its second horse while I own two
     playerCapsule: () => (walkMode && playerSpawned ? { feet: player.pos, height: player.height, radius: CAPSULE_RADIUS } : null),   // WAGONS3: my parked wagon's box never stands round me
+    bodyCapsules: () => [...crewAshore.capsules(), ...revenantAshore.capsules()],   // FIELD BUGS 2026-10-18 WAGON-ALIGHT: nor round my companions (both layers stand below; the pool steps only once frames run)
     renderShift: () => { if (!walkMode || !playerSpawned) return null; const f = player.feetAt(); return [f[0] - player.pos[0], 0, f[2] - player.pos[2]]; },   // WAGONS3: my driven wagon drawn where I am drawn
     peerAnchor: (id) => { const sh = _peerMapPoses.get(id); return sh && (sh.rd | 0) === 2 ? onlineToScene(sh) : null; },   // AUDIT HCC O5: the change key in the wire frame (campToWire is the pose's law, declared with the stream below; read only once frames run); WAGON-HITCH: where another player's cart rider stands as drawn this frame (`rd` 2, the cart - the pose peerRiders stands them on, boat-adjusted; the online frame fills the map before the pool steps), so their trailing wagon hangs from the rider seen here rather than easing apart from it
   });
@@ -10448,9 +10448,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const r = by ? revenantFelled(playerEntity, by, ally) : null;
     if (r) revenantSay(revenantFelledEvent(r, ally, { archive: by.archive ?? by.mobileArchive ?? null }), (l) => townTalk.say(l));
   };
-  /** WAGONS1: whether my wagon goes with me now - trailing my cart, or my team following me: my companions ride in its
-   *  back (systems/wagon/wagonSeats.js companionSeats); parked, they get down and walk at heel. */
-  const wagonCarriesCompanions = () => { const k = hcc.shown()?.wagon?.kind; return k === HCC_WIRE_KIND.Trailing || k === HCC_WIRE_KIND.Following; };
   const crewCount = () => (navalOn() ? naval?.companions?.party?.length ?? 0 : 0);
   const crewAshore = createCrewAshore({
     party: () => (navalOn() ? naval?.companions ?? null : null),
@@ -10458,8 +10455,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     leader: () => (playerSpawned ? { feet: [player.pos[0], player.pos[1], player.pos[2]], yaw: cam.yaw, grounded: !!player.grounded && !player.levitating && !player.swimming } : null),   // AUDIT CC-A3: on a floor or not
     now: () => Math.floor(playerTicker.ownMinutes),
     onKnocked: (c, by) => { naval?.companionKnocked?.(c); felledBy(by, c.name); },   // RVN10: a special foe's blow fells him - a deed on it
-    seat: (i) => wagonRiders?.companionSeat(i, wagonCarriesCompanions()) ?? null,   // WAGONS1: the crew's hands take the seats in my wagon's back first
-    seatDraw: (i) => wagonRiders?.companionSeatDrawn(i, wagonCarriesCompanions()) ?? null,   // WAGONS2: and drawn there as the wagon is drawn (grown under the Overworld)
+    seat: (i) => wagonRiders?.companionSeat(i, hcc.carriesCompanions()) ?? null,   // WAGONS1: the crew's hands take the seats in my wagon's back first
+    seatDraw: (i) => wagonRiders?.companionSeatDrawn(i, hcc.carriesCompanions()) ?? null,   // WAGONS2: and drawn there as the wagon is drawn (grown under the Overworld)
   });
   // COMPANION-SLOTS: the crew's hands ashore take the player's side's slots with the sworn
   registerCompanionCount('crew', () => (navalOn() ? naval?.companions?.party?.length ?? 0 : 0));
@@ -10492,8 +10489,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       rec.revenantCompanion = c.name;
       if (_revenantArrivals.delete(c.name)) revenantCompanionSay('arrive', c.name);
     },
-    seat: (i) => wagonRiders?.companionSeat(crewCount() + i, wagonCarriesCompanions()) ?? null,   // WAGONS1: the sworn take the seats after the crew's
-    seatDraw: (i) => wagonRiders?.companionSeatDrawn(crewCount() + i, wagonCarriesCompanions()) ?? null,   // WAGONS2
+    seat: (i) => wagonRiders?.companionSeat(crewCount() + i, hcc.carriesCompanions()) ?? null,   // WAGONS1: the sworn take the seats after the crew's
+    seatDraw: (i) => wagonRiders?.companionSeatDrawn(crewCount() + i, hcc.carriesCompanions()) ?? null,   // WAGONS2
   });
   /** REVENANT-COMPANION: a sworn one called to the player's side - it says so as it steps through. */
   const noteRevenantArrival = (id) => _revenantArrivals.add(id);
@@ -22565,7 +22562,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const b = duelBody(d.peer);
       if (g.r !== DUEL_REF_KIND.Spell && b) {
         audio.play3d(hitSoundFor(_duelLastWeapon), b.feet, ENEMY_HIT_VOLUME, { maxDistance: 16 });
-        hitEffects.showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _duelLastWeapon }));
+        (modes?.liveHitEffects?.() ?? hitEffects).showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _duelLastWeapon }));   // PVP-BLOOD: the pool I stand in, as a peer's blow
       }
       if (g.r !== DUEL_REF_KIND.Spell && _duelLastWeapon) {
         let amount = Math.trunc((10 * duelWearDamage(g.d, _duelLastWeapon, playerEntity) + 50) / 100);   // AUDIT DUEL1 A2: never past what this weapon could deal
@@ -23035,7 +23032,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const wildFair = (peerId) => {
     if (!peerId || !wildCan()) return false;
     if (wildKin({ party: !!social?.isPartyPeer(peerId) || _wildTruce.holds(peerId, Date.now()), duel: duelMgr.live && duelMgr.opponent === peerId, guilds: [myGuildTag(), online?.guildTagOf?.(peerId) ?? null] })) return false;
-    return wildAtWire(duelWorldOf(peerId));
+    return modes?.mode === 'dungeon' || wildAtWire(duelWorldOf(peerId));   // AUDIT FB1018 L3-5: in a dungeon a peer's pose is the dungeon's own frame - the place is the zone (wildCan's wildHere, the door's pixel), and the room is that place's
   };
   /** PARTY-TRUCE: the row a party's walk asks with when it ends in the zone or at its edge - the walk is the one door
    *  into it no journey's gate asks (wildJourney: "The Overworld map's journeys are walked, never asked"). */
@@ -23140,7 +23137,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const b = duelBody(g.to);
       if (g.r !== DUEL_REF_KIND.Spell && b) {
         audio.play3d(hitSoundFor(_wildLastWeapon), b.feet, ENEMY_HIT_VOLUME, { maxDistance: 16 });
-        hitEffects.showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _wildLastWeapon }));
+        (modes?.liveHitEffects?.() ?? hitEffects).showBloodSplash(0, [b.feet[0], b.feet[1] + (b.height ?? CAPSULE_HEIGHT) / 2, b.feet[2]], null, bloodHit(g.d, { maxHealth: theirs?.[2] ?? 1 }, { fromPlayer: true, weapon: _wildLastWeapon }));   // PVP-BLOOD: the pool I stand in, as a peer's blow
       }
       if (g.r !== DUEL_REF_KIND.Spell && _wildLastWeapon) {
         let wear = Math.trunc((10 * duelWearDamage(g.d, _wildLastWeapon, playerEntity) + 50) / 100);
