@@ -13,6 +13,8 @@
 //                 (software GL) and its numbers are only relative.
 //   SECONDS=8     how long each scene is sampled after it settles
 //   SCENES=city,road,dungeon   which to run
+//   SCENES=bantha LOC=<town>   BANTHA1 (AUDIT BANTHA1 DOC-10): a town of Bantha's, in the jungle and its haze -
+//                 named by the machine's own map (the probe knows none); JUNGLE=off its kill door, to A/B the jungle
 //   OUT=perf.json where to append the rows (default: print only)
 //
 // The scene is settled when the world says so (`window.__shotReady`:
@@ -36,11 +38,15 @@ const GROUND = process.env.GROUND ? `&ground=${encodeURIComponent(process.env.GR
 // LPT1: TREES=off runs every scene with Low Poly Trees' kill door (`?trees=off`), so the trees' cost is an A/B on a real
 // GPU: HEADED=1 SCENES=road TREES=off npm run perf, then again without it, and compare frameMs, draws and scriptMs.
 const TREES = process.env.TREES === 'off' ? '&trees=off' : '';
+// BANTHA1 (AUDIT BANTHA1 DOC-10): JUNGLE=off runs every scene with the jungle's kill door (`?jungle=off`) - HEADED=1
+// SCENES=bantha LOC=<town> npm run perf, then again with JUNGLE=off, and compare frameMs, draws and scriptMs.
+const JUNGLE = process.env.JUNGLE === 'off' ? '&jungle=off' : '';
 
 const SCENES = {
   city: `/play/?world&region=Daggerfall&loc=Daggerfall&class=1&novideo&shot&fps`,
   road: `/play/?world&spawn=random&class=1&novideo&shot&fps`,
   dungeon: `/play/?shot&class=0&fps`,
+  bantha: process.env.LOC ? `/play/?world&region=Bantha&loc=${encodeURIComponent(process.env.LOC)}&class=1&novideo&shot&fps` : null,
 };
 
 const server = await createServer({ root: ROOT, server: { port: PORT, strictPort: true, hmr: false, watch: null }, logLevel: 'error' });
@@ -54,8 +60,8 @@ page.on('pageerror', (e) => errors.push(e.message));
 
 const rows = [];
 for (const name of WANT) {
-  const url = SCENES[name] && `${SCENES[name]}${TREES}`;   // LPT1: the trees' door on every scene the TREES switch names
-  if (!url) { console.warn(`perf: no scene "${name}"`); continue; }
+  const url = SCENES[name] && `${SCENES[name]}${TREES}${JUNGLE}`;   // LPT1: the trees' door on every scene the TREES switch names; BANTHA1: the jungle's
+  if (!url) { console.warn(name === 'bantha' ? 'perf: SCENES=bantha needs LOC=<a town of Bantha\'s>' : `perf: no scene "${name}"`); continue; }
   await page.goto(`http://localhost:${PORT}${url}${GROUND}`);
   await page.waitForFunction(() => window.__shotReady === true, null, { timeout: 300000 });
   await page.waitForTimeout(1000);   // the first second after settling is the stream's tail, not the scene

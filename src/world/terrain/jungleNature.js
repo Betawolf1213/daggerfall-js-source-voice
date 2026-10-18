@@ -17,8 +17,9 @@
 //   - THE EMERGENTS. JUNGLE.emergent of the canopy trees stand above the rest (JUNGLE.emergentScale), and only the two
 //     whose crowns are made to be seen from above: the kapok's parasols and the mahogany's tall dome.
 //   - THE UNDERSTOREY. Young trees (JUNGLE.underScale) on a tile's own dice - thicker where a cell's canopy tree is
-//     missing (a light gap: JUNGLE.gapUnder) than under a crown (JUNGLE.under) - never within JUNGLE.underClear of the
-//     canopy trunk beside them. Mostly the low flame tree; some young figs, banyans and mahoganies.
+//     missing (a light gap: JUNGLE.gapUnder) than under a crown (JUNGLE.under) - never within JUNGLE.underClear (at the
+//     trunk's scale) of a canopy trunk, its cell's or a neighbour's, a neighbour pixel's too. Mostly the low flame
+//     tree; some young figs, banyans and mahoganies.
 //   - THE MID STOREY AND THE FLOOR. Now and then one of the rainforest's own Trees (JUNGLE.palm - World of
 //     Daggerfall's Tree records of archive 500: its palms, which Low Poly Trees stands in 3D), and on most tiles the
 //     rainforest's own cover - its ferns, shrubs and flowers (archive 500's other records): denser in a glade's light.
@@ -55,8 +56,8 @@ export const JUNGLE = Object.freeze({
   emergent: 0.08,
   emergentScale: Object.freeze([1.28, 1.55]),
   canopyScale: Object.freeze([0.8, 1.18]),
-  /** the understorey: a tile's chance under a crown and in a light gap, its scale, and how far (m) it keeps from the
-   *  canopy trunk in its cell */
+  /** the understorey: a tile's chance under a crown and in a light gap, its scale, and how far (m, times the trunk's
+   *  own scale) it keeps from every canopy trunk about it - its cell's, a neighbour's, a neighbour pixel's (DOC-20) */
   under: 0.1,
   gapUnder: 0.38,
   underScale: Object.freeze([0.36, 0.62]),
@@ -166,7 +167,7 @@ export const GLADE_LATTICE = 4;
 /**
  * A PIXEL'S GLADE FIELD: the forests' field (forestCover) read JUNGLE.glade.off away, sampled on the world's
  * GLADE_LATTICE lattice over the pixel and its far edge and read bilinearly between - FOREST1's forestField's way, so a
- * pixel samples it 1,089 times and not 20,480, and two pixels read their shared edge alike. `(x, y) => cover`, tiles.
+ * pixel samples it 1,089 times and not a tile's 16,384, and two pixels read their shared edge alike. `(x, y) => cover`, tiles.
  * @param {number} px @param {number} py
  */
 export function gladeField(px, py) {

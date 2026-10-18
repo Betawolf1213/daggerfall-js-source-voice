@@ -14,7 +14,7 @@
 //     world tile lattices, the same on every engine and in the worker) move the line by up to JUNGLE_WANDER's
 //     amplitudes, so the jungle's edge bends through the land and never runs along a pixel's edge.
 //   - TWO SHARES OF IT. The layout's (jungleShare: none JUNGLE_EDGE.out outside the line, whole JUNGLE_EDGE.in inside)
-//     and the haze's (world/jungle/jungleHaze.js HAZE_EDGE: the haze drifts out past the trees and thickens further
+//     and the haze's (world/jungle/jungleHaze.js JUNGLE_HAZE.edge: the haze drifts out past the trees and thickens further
 //     in) - each a smoothstep of the one depth.
 // A job to the terrain worker carries the pixel's 3x3 of distances (jungleNine) - nine numbers, nothing else crosses.
 // ═══════════════════════════════════════════════════════════════════

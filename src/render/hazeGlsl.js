@@ -11,8 +11,9 @@
 // (uJungleHaze[0].w); its optical depth is that run times the layer's MEAN density along it - exact for a straight ray
 // through an exponential layer clamped at its floor (hazeMean, below) - and what reaches the eye is exp(-depth). So a
 // valley under the floor is the layer's thickest, a ridge above it clears, and looking down from a summit the haze
-// below is a sea. world/jungle/jungleHaze.js hazeTransmittance is this function's CPU twin, term for term (the host's
-// cull and the fog colour's weighting read it; test/world/bantha1_jungle.test.js runs both and holds them together).
+// below is a sea. world/jungle/jungleHaze.js hazeTransmittance is this function's CPU twin, term for term
+// (test/world/bantha1_jungle.test.js runs both and holds them together; the host's cull is its bound, hazeHides -
+// AUDIT BANTHA1 DOC-17).
 //
 // THE SKY. A ray that never meets the ground leaves the layer: its depth is the depth straight up from the eye
 // (uHazeSky.w - the host's: the floor's share and the falloff's above it) over the ray's height per metre - so the

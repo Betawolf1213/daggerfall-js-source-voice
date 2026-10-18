@@ -7,7 +7,7 @@ detailed and not hurt performance. No band aids."**
 
 Bantha (MapsFile region 10, POLITIC 138) stands as a jungle in four storeys - the owner's five trees closing a canopy
 overhead, emergents above it, young trees and palms in its light gaps, ferns and flowers on its floor - under a humid
-haze that is thickest at dawn and in the rain, thins as the player climbs out of it, and drifts. Its edge is no line:
+haze that is thickest at dawn and in rain, fog and storms, thins as the player climbs out of it, and drifts. Its edge is no line:
 the trees come in as stands and the air closes over a kilometre. Inside it, the haze hides the streamed world past a
 kilometre or so - and what it hides is not drawn, so the jungle pays for itself. Its own Features row (`bantha-jungle`,
 the World tab's Land section), on by default; forced on online.
@@ -83,7 +83,7 @@ the groves restarted at every pixel's edge), so a slope of figs gives way to a s
 height above the beach** (banyans and figs crowd the wet lowland under 25 m, kapoks and mahoganies the uplands over
 120 m), and **light** (the flame tree takes a glade's edge, its weight times 1 + 3 x light).
 
-**Glades and clearings.** The forests' own field read 4096 tiles away (`gladeField` - its lattice the world's, every
+**Glades and clearings.** The forests' own field read some 4,600 tiles away (4096.5 east and 2048.5 south - `gladeField` - its lattice the world's, every
 fourth tile, 1,089 samples a pixel) opens about a tenth of the land; FOREST1's places pull the canopy back into fields
 round a town, a farm or a tavern and close it round a dungeon, a ruin or a shrine - a town's fields are open ground, no
 canopy, young tree or palm, never the jungle's thickest light gap (LAY-3: the pull read as light, and a town stood in a
@@ -197,8 +197,8 @@ haze ALONE is not drawn (`hazeHides`, asked at the world host's pixel gate - ter
 BANTHA1 HOST-4, HAZE-4: with the weather's fog multiplied in, a linear fog's end at 2.4 km hid the land at the haze's
 thin fringe, where the sky then showed, and sea the water still drew). A **bound**, never a guess: the run to the box's nearest point, at the box's top (where the layer is
 thinnest - the mean density falls as a ray's far end rises), is the least any ray into it can cross; the test samples
-hidden boxes and holds every point of them past the cull. At noon the haze hides the low ground past ~1.4 km, at dawn
-past ~0.7 km - the 3x3 or the 5x5 of the 121 pixels the default land view streams - while a peak standing out of the haze
+hidden boxes and holds every point of them past the cull. At noon the haze hides the low ground past ~1.3 km (~1.4 km at one, its thinnest hour),
+at dawn past ~0.7 km - the 3x3 or the 5x5 of the 121 pixels the default land view streams - while a peak standing out of the haze
 still stands. The shadow pass never culls by it. It culls DRAWING, not building: a hidden pixel is still streamed,
 laid and held (PERF-3 - the owner's call, below).
 
@@ -233,15 +233,24 @@ the jungle under clear air. Read once, as the world loads.
 
 ## Verification
 
-`test/world/bantha1_jungle.test.js` (18): the owner's files read (the fan, the mirror, the root, the winding, the bin), the
+`test/world/bantha1_jungle.test.js` (33): the owner's files read (the fan, the mirror, the root, the winding, the bin), the
 measures held to the files, every far picture standing on its root, the field and its continuity, the layout's four
 storeys and where nothing stands, its own dice and its border, the species' ecology, the haze's law against a fine sum and
 its shader twin run in `test/glsl.mjs`, every template in `src/` that calls the haze carrying its block, the cull's bound sampled, the easing, the colour and the sky, the host, the
-renderer's two slots and the haze's arming, the door end to end over the real files, the hosts' wiring, the switch.
-`tools/mutants/bantha1.json` (42, all killed). LPT1's and the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and ten more).
+renderer's two slots and the haze's arming, the door end to end over the real files, the hosts' wiring, the switch - and
+AUDIT BANTHA1's (`01-Overview/audits/Audit-Bantha.md`): every program under `src/render` compiled whole, every fogged
+pass's haze, the program's own sent state, the walk out, the recentre and the teleport, the cover index's wide grid,
+the crown's sun, the node's glow, the groves and the stands across every edge, the neighbour's trunks, the wire by
+column, the storeys on a pixel with glades (every canopy tree's species recomputed), the border tile by tile, the trees'
+host over a fake door, the ring's haze in the GLSL reader, the sky's controller, the panel, the view out, the domes'
+order. `tools/mutants/bantha1.json` (104: 103 dead and one recorded equivalent - the reach test's shortcut). LPT1's and
+the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and eleven more at the slice; eight lists more at the
+audit, sd20c's put back as it was with its pins).
 
 **Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
 no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Open.** Not eyeballed in the running game:
 this slice was built in a container with no ARENA2 (the trees' far pictures, the layout over synthetic ground and the
 haze over a synthetic scene were rendered and looked at; Bantha's own land, its real extent on the map and the frame time
-on a GPU are the owner's to see - `HEADED=1 SCENES=city npm run perf` near Bantha, and `?jungle=off` against it).
+on a GPU are the owner's to see - `HEADED=1 SCENES=bantha LOC=<a town of Bantha's> npm run perf`, then again with
+`JUNGLE=off` (AUDIT BANTHA1 DOC-10: the probe had no Bantha scene and no jungle switch; the town is the owner's map's to
+name - this container holds none)).
