@@ -8,7 +8,7 @@ record says so and what would prove it. The pins are `fb1018b_*`, the mutants `t
 | | Report | What it was | Done |
 |---|---|---|---|
 | T1 | SuperDaddy, "Leaping effect on store bought magic items": "Says it enhances dragonish, but appears on things you can't equip like wands ... Same case with magic items for sale that have the suffix "Venom spitting" but cast levitation" | The two names are crossed: Leaping casts Levitate and Venom Spitting enhances Dragonish (the language skill), both classic's own MAGIC.DEF. The defect is the base: a power that works only worn was drawn onto a base no slot takes | fixed (HELD-BASE); Leaping's and Venom Spitting's powers are the owner's call |
-| T2 | cmagoun, "Minor: Spellbook -- Clicking a spell returns you to the top of a spell list" (BioGud: "same with magic items salvaging") | | |
+| T2 | cmagoun, "Minor: Spellbook -- Clicking a spell returns you to the top of a spell list" (BioGud: "same with magic items salvaging") | The enhanced book drew every press from nothing, past the house's one repaint, and its list and page shared one scroll; the Chronicle the same. Every salvage window checked keeps its place | fixed (SPELL-SCROLL); the salvage case not reproduced |
 | T3 | Jigglehimmer, "Night Mothers Embrace Legendary does not function": "Imprint: Sweet Mother's Kiss (of The Night Mother's Embrace) - +50% to foes under 25%" | It works on an ordinary foe and always did. On every body the relay runs (the Warden, an Elite Breach's foes, the Remnant, the serpent) the stand-in's placeholder health read as whole | fixed (RELAY-SHARE); where the player tried it is not known |
 | T4 | Aspidichelon, "Usable items hotkeys do not function in dungeons": "1-9 works outside, but not in dungeons" | The hotbar takes the digits ahead of every window unless the HUD's last frame said paused; underground no frame says so while a window stands | fixed (DUNGEON-DIGITS) |
 | T5 | Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": imps that won't die, a vampiric heal off them; a gate's keeper unseen while its AOE showed | The imps are a span's Harriers, which the relay refuses to be struck from a platform (by design); the screen showed the blow and healed off a stand-in nothing empties | fixed (TURNED-BLOW, VAMPIRIC-WARD); the unseen keeper not proven (UNSEEN-KEEPER) |
@@ -53,6 +53,50 @@ Why no test saw it: `magicitems.test.js` pinned the group routing verbatim, and 
 wands, Use a cast" on trust.
 
 Pins: `test/systems/loot/fb1018b_heldbase.test.js` (6). Mutants: `tools/mutants/fb1018b_heldbase.json` (20, all dead).
+
+## SPELL-SCROLL: a pick keeps the book's list where it was, and the list scrolls in its own column (T2)
+
+`src/ui/enhanced/enhancedSpellbook.js` (drawn through the repaint; the page names its spell), `src/ui/enhanced/enhancedStyle.js`
+(the book's two columns), `src/ui/domRepaint.js` (`data-scroll-key`), `src/ui/enhanced/enhancedChronicle.js` (the same).
+
+FOUND. Reproduced in Chromium on the real modules and sheets (`tools/spellScrollProbe.mjs`): forty Spell Maker spells, the
+list at 600 px, a mouse click on Spell 15 - the list at 0, Spell 01 lit under the pointer. Two defects together:
+- **The book wrote its repaint straight.** Every press drew the window from nothing (`host.innerHTML = ''`), past
+  `ui/domRepaint.js`, the house's one repaint ("A REPAINT MUST NOT MOVE THE PAGE UNDER THE PLAYER"), so every pane stood
+  at its top.
+- **The list and the spell's page were one scroll.** The journal grows with its rows (`.px-journal`'s min-height: 100%),
+  so the window's body scrolled; kept by the repaint alone (measured) the list stays at 600 and the picked spell's page
+  and Ready stand out of view, desktop and phone (on a phone the page stood 1,991 px down, under every row).
+DFU's book never moves on a pick: ListBox.MouseClick (ListBox.cs:465-504) only selects, and UpdateSelection
+(DaggerfallSpellBookWindow.cs:507-512) reads the list's own ScrollIndex. The classic book keeps that
+(`spellbookWindow.js:"this.selectedIndex = index;          // MouseClick"`); the fault was the enhanced skin's.
+
+FIXED. The book draws through the repaint (`enhancedSpellbook.js:"if (host) repaintKeepingScroll(host, paint);"`); the
+list and the page scroll each in their own column (`.sb-shell .px-body` holds them and scrolls neither - the grimoire
+dress's book, worn plain); and a pane names what it shows (`domRepaint.js:"const key = n.getAttribute?.('data-scroll-key');"`),
+so another spell's page starts at its top while the list keeps its place.
+
+THE SIBLINGS. The Chronicle (the same bones) lost its page on every fold, remove, share, abandon and run-out deadline
+(measured 900 -> 0); drawn the same way, its page named by its section
+(`enhancedChronicle.js:"body.setAttribute('data-scroll-key', section);"`). BioGud's "same with magic items salvaging" is NOT
+REPRODUCED: the Reforge's Salvage page keeps one scroller and replaces only its rows (measured 900 -> 900 through Salvage
+and Break it), the pack's Salvage repaints through domRepaint with PX22's memo (measured holding), the Stores page's
+Disenchant draws in the pause window (domRepaint). What would find it: which window (its title, a screenshot), the skin
+and dress, phone or desktop.
+
+THE FOUR HOSTS: none touched - both windows are one door's (`spellbookDoor.js`, `chronicleDoor.js`) for all four.
+
+Found and left: the arrow keys move the pick past the list's visible rows without bringing it into view (DFU's
+SelectNext nudges a row, ListBox.cs:709-741); before this the same keys threw the list to the top. The pause window's
+journal pages share one scroll for rail and page, the book's old shape, for a long rail.
+
+Why no test saw it: nothing mounted the book, scrolled its list and pressed a row, and domRepaint's behaviour was held
+"not pinnable here" - but the suite's DOM keeps a node's scrollTop and starts a new node at 0, which is all it needs (the
+mutation of domRepaint that records nothing, a survivor only `tools/enhancedScrollProbe.mjs` killed, now dies in the suite).
+
+Pins: `test/ui/enhanced/fb1018b_spellscroll.test.js` (5). Mutants: `tools/mutants/fb1018b_spellscroll.json` (12, all dead).
+Four tests that build their own node stand-ins gained `querySelectorAll: () => []` (journal1, questreset1, questshelfmain,
+discord5), no assertion changed.
 
 ## RELAY-SHARE: Sweet Mother's Kiss reads the relay's word of a boss's health (T3)
 
