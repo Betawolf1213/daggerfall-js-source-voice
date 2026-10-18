@@ -20830,8 +20830,18 @@
   "by": "claude-in-session"
  },
  "prof.page.how.alchemy": {
-  "en": "1df3a4158e86",
-  "tr": "0b15cdc63bf6",
+  "en": "010b4180e9a8",
+  "tr": "07604eaabecb",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.building": {
+  "en": "81a899fc68aa",
+  "tr": "7685727903b0",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.cooking": {
+  "en": "c132c8088fba",
+  "tr": "013f0fc5a5c7",
   "by": "claude-in-session"
  },
  "prof.page.how.enchanting": {
@@ -20872,6 +20882,16 @@
  "prof.page.how.miningSurveyor": {
   "en": "8ea3b3f58e32",
   "tr": "369fc40ec6a4",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.outfitting": {
+  "en": "833d2e70dbed",
+  "tr": "b57662a68ad8",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.smithing": {
+  "en": "3cb5f680ad26",
+  "tr": "f745cc7b5643",
   "by": "claude-in-session"
  },
  "prof.page.jewel": {
@@ -25757,6 +25777,36 @@
  "tutorials.chapters.trigger": {
   "en": "365aec48fe12",
   "tr": "b41b12d39ea5",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.body": {
+  "en": "b13d7c5d018a",
+  "tr": "a234d4c3c5d8",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.more": {
+  "en": "7c91bad9f667",
+  "tr": "25b2dbf43e26",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops1": {
+  "en": "c0fa00345614",
+  "tr": "8381d26e16d1",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops2": {
+  "en": "b6ae4490b103",
+  "tr": "3748df9821a3",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.title": {
+  "en": "ea78b34da11f",
+  "tr": "c045fdd50294",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.trigger": {
+  "en": "3c9c8044cdbd",
+  "tr": "968d29120c61",
   "by": "claude-in-session"
  },
  "tutorials.guilds.body1": {
