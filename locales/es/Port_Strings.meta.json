@@ -8019,6 +8019,16 @@
   "tr": "faf4b4325825",
   "by": "claude-in-session"
  },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "5e7ca0d1e00a",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "3b5e5be8a1be",
+  "by": "claude-in-session"
+ },
  "eg.touch.ping": {
   "en": "6b68e9797399",
   "tr": "c61180093dc1",

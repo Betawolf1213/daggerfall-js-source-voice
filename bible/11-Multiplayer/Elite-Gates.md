@@ -842,7 +842,7 @@ first written 90-160 m long, 3-4.5 m wide for a company of up to four and 5-6 m 
 |---|---|---|
 | **the Siege-Walk** | the Galleries | as above |
 | **the Falling Wall** | the Galleries | 20 s after the wake, the walkway falls behind the company, segment by segment, at a fixed 1.5 m/s. A member caught is cast to the nearest standing segment ahead, at the cast-back's cost |
-| **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march - *n* the living company as it stands, so a pair that loses one raises it alone (AUDIT EG V) |
+| **the Winch** | the Cairn | the portcullis rises only while `min(2, n)` members stand on its winch plates, over 60 s, under the march - *n* the living company as it stands, so a pair that loses one raises it alone (AUDIT EG V). Each plate stands gold on every screen through the trial, the room's reach (`EG_TOUCH_M`) about it, as a stood-on errand does (`scenes/eliteGates/egFight.js` `winchPlates`; FIELD BUGS 2026-10-18b WINCH-PLATES - the objective named them and nothing marked them) |
 | **the Gauntlet** | the Shade | no march: `2 + ceil(n/2)` caster pillars, each silenced by standing 3 s on its side span's plate |
 | **the Forge Bridge** | the Wellhead | the walkway is a conveyor running toward the arrival plate at a fixed 1.0 m/s, under the march and the vents |
 
@@ -1917,12 +1917,17 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
    - *A fight about reading.*
 3. **The Last Armsmaster** (`armsmaster`; Skeletal Warrior 15, x2.6): the Spire's master of arms, raised.
    - **The Challenge**: he marks a member, and a ring of fire (r 6) rises around the two. This is the duel's own ring
-     law (DUEL1's `_keepInArena`, `clampToRing`).
+     law (DUEL1's `_keepInArena`, `clampToRing`). Every screen draws it where the room stands it (`pg.ring`): a band of
+     fire 0.5 m either side of its rim, burning ground's pool on the floor under it (`scenes/eliteGates/egFight.js`
+     `duelRing`; FIELD BUGS 2026-10-18b DUEL-RING - before it the rim kept the motor and nothing drew it).
      - The challenged must last 15 s or deal a tenth of his health inside it.
      - Outside, the company breaks the ring's `clamp(n - challenged, 1, 3)` braziers (each 4 s of the company's
        reference damage) to open it early, while the legion presses.
      - *n* = 1: no ring and no braziers: the Challenge is that duel in the open, with his whole kit - the member marked,
-       met by a tenth of his health dealt within its 15 s, so his signature is a company of one's too.
+       met by a tenth of his health dealt within its 15 s, so his signature is a company of one's too. Its words say so
+       (*A challenge in the open! Deal him a tenth of his health within 15 s.*, and lasted unmet *The challenge goes
+       unmet.* - the `challenge` and `challengeend` words' `t`, `EG_DUEL_OPEN`), never the ring's *The ring of fire rises.*
+       and *The ring falls.* (FIELD BUGS 2026-10-18b).
    - **Riposte**: a cone (5 m, 90°) that answers a blow landed in the 0.6 s after his guard rises, 0.9 s (floor
      0.80 s). The tell: his blade raised, glinting.
    - **Lunge**: a lane 4 m wide and 10 m long, 1.0 s (floor 0.79 s). **Whirl**: a disc of r 4, 1.3 s (floor 1.08 s).
@@ -2034,7 +2039,7 @@ fight of the game again.
 
 | Valkynaz | Redoubt | aspect (`GATE_ASPECTS`) | ground | its own blows | signature | phase 3 |
 |---|---|---|---|---|---|---|
-| **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each (from spec law 8, either side of each balcony's middle - AUDIT EG V, lane5 #14: law 7 laid none, and the banners on them stood out of every melee reach) | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: she plants a banner (an errand's object, struck) on each balcony that claims a third of the floor. Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold her ward (25 s at most) | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
+| **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each (from spec law 8, either side of each balcony's middle - AUDIT EG V, lane5 #14: law 7 laid none, and the banners on them stood out of every melee reach) | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: she plants a banner (an errand's object, struck) on each balcony that claims a third of the floor - struck on its balcony by a blade, and from the court by a shaft or a spell (FIELD BUGS 2026-10-18b BANNER-SHAFT). Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold her ward (25 s at most) - her bar caged and *Warded* while it stands (section 25.2), and the Conquest's word says both | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
 | **Morvayn of the Cairn** | 10 | Venom-Blooded | **the Soul-Bridge**: two Ossuary crypts (r 14) joined by a rib bridge 30 m long | **Venom Lash** (a cone 8 m, 90°, 1.3 s); **Soul Rend** (a disc of r 4 on a chained pair's midpoint, 1.5 s) | **the Chaining**: pairs of members are bound by soul-chains for 20 s (the stay-close grammar). A pair stretched past 8 m both take 30% (a CHECK), and a blow on one is shared with the other: divided between the chain, a pair's halves (a three's thirds). An odd member, or a member alone, is chained to a Wraith; kill it to break the chain | **the Last Rites**: Wraiths rise at both crypts every 20 s, and chains bind threes |
 | **Seyth of the Shade** | 15 | Rime-Wrought | **the Eclipse Vault** (section 11.2), the Eclipse running | **Frost Lance** (a lane 4 m x 18 m, 1.2 s); **Moonshatter** (three discs of r 2.5 at members' feet, 1.4 s) | **the Mirrorcourt**: two mirror lords fight beside her and throw real blows at half share. Only the true lord casts her ground mark and her bar's pip; the mirrors shimmer (a 2 Hz dither line) and crack audibly when struck. A mirror shatters after 8 s of the company's reference damage and returns 20 s later | **the Long Night**: Gutterdark over the whole vault, to the fight's end (`EG_ZONE_FIGHT_MS`), while the moon-shafts walk at a fixed 1.5 m/s, kept lit in it |
 | **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn, in `GATE_ASPECTS`' order: Burning at Redoubt 20, Rime-Wrought at 25, Storm-Crowned at 30, Venom-Blooded at 35 | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1), at the turn, inside its ward, holding the next threshold until it ends - at the third turn, his fall; his own duel, which no other lord's kit ends (another's ring standing at his turn, his waits for it under his ward) | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears - his own, its card naming it (*The Conquest.*, *The Chaining.*, *The Mirrorcourt.*): the Mirrorcourt's mirrors in his likeness, the Chaining in pairs (chains of three are Morvayn's Last Rites), and never the Eclipse, the Vault's |
@@ -3500,7 +3505,8 @@ Wellhead's emissive orange would vanish. Spire pools take the band's ramp, darke
 
 - **wards are red, not gold.** A Ward-Bearer's tether and glow are the gate's `WARD_COLOR` gold today, and the lord's
   ward cage is gold: an enemy shield would read as safe. In the Spire both are Dagon-red dashes flowing to what they
-  guard, and the cage on the lord's bar is red-bronze and hatched;
+  guard, and the cage on the lord's bar is red-bronze and hatched, *Warded* after its name (`ui/eliteGates/egSpireHud.js`,
+  FIELD BUGS 2026-10-18b WARD-BAR - before it no Spire bar said a ward at all);
 - **blue is never danger.** Rime-Wrought's ice-blue fills and pools (`ASPECT_COLORS.rime`, its pool [0.28, 0.6, 1.0])
   become a pale cyan-grey with the frost's grain and the dashed danger rim, the misread WB13a T8 fixed for edges only;
 - **moonlight that holds is gold-rimmed.** The Shade's moon-silver is near-white, and there moonlight means solid.
