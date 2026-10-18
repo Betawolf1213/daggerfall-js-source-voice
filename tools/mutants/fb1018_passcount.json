@@ -4,7 +4,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "sumView += st.viewDraws ?? 0; ",
     "new": "",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "the view out counted nowhere on the screen - the report's draws 67 over a city drawn through the glass"
   },
   {
@@ -12,7 +14,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "sumShadow += st.shadowDraws ?? 0; ",
     "new": "",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "the shadow maps' replays left off"
   },
   {
@@ -20,7 +24,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "      sumView = 0; sumShadow = 0;   // PASS-COUNT",
     "new": "",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "a second's means carried into the next - the count grows with play"
   },
   {
@@ -28,7 +34,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "paceLine(!!globalThis.window?.daggerShell?.framesLifted, frameCapFps())",
     "new": "paceLine(false, frameCapFps())",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "VSync off never said - a 1000 fps frame read as a display's"
   },
   {
@@ -36,7 +44,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "paceLine(!!globalThis.window?.daggerShell?.framesLifted, frameCapFps())",
     "new": "paceLine(!!globalThis.window?.daggerShell?.framesLifted, 0)",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "the cap never said"
   },
   {
@@ -44,7 +54,9 @@
     "file": "src/ui/fpsCounter.js",
     "old": "  if (!lifted && !(cap > 0)) return '';",
     "new": "",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "a pace line at the defaults - noise on every counter, and every older pin of its last line broken"
   },
   {
@@ -52,7 +64,9 @@
     "file": "src/render/renderer.js",
     "old": "    if (!this._rwOutside) this._rwViewDraws = 0;",
     "new": "    this._rwViewDraws = 0;",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "the view out's own begin zeroes the count it is about to keep - harmless here, but the room's read then depends on the order alone"
   },
   {
@@ -60,7 +74,19 @@
     "file": "src/render/renderer.js",
     "old": "    this.stats.shadowDraws = (sp.stats.sunDraws | 0) + (sp.stats.pointDraws | 0);",
     "new": "",
-    "tests": ["test/systems/fb1018_passcount.test.js"],
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
     "why": "the maps' replays counted nowhere"
+  },
+  {
+    "name": "PASS-COUNT-shadow-not-zeroed",
+    "file": "src/render/renderer.js",
+    "old": "s.bbCulled = 0; s.shadowDraws = 0;   // PERF-CROWD2; PASS-COUNT",
+    "new": "s.bbCulled = 0;   // PERF-CROWD2; PASS-COUNT",
+    "tests": [
+      "test/systems/fb1018_passcount.test.js"
+    ],
+    "why": "a frame with no shadow render carries the last one's count"
   }
 ]

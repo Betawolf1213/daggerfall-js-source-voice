@@ -77,7 +77,8 @@ test('PASS-COUNT THE COUNTER SAYS WHAT HOLDS THE FRAME RATE: "vsync off" where t
 
 test('PASS-COUNT THE RENDERER COUNTS THEM: the room\'s beginFrame takes the view out\'s draws (its own nested begin inside the view out takes none, and leaves them for the room) and the lane\'s shadow render writes the maps\' replays - both zeroed for a frame that drew neither (mutants: the view out\'s count reset under the nested begin; the shadow count never written)', () => {
   const r = read('src/render/renderer.js');
-  assert.match(r, /s\.viewDraws = this\._rwOutside \? 0 : this\._rwViewDraws; s\.shadowDraws = 0;\n\s+if \(!this\._rwOutside\) this\._rwViewDraws = 0;/);
+  assert.match(r, /s\.bbCulled = 0; s\.shadowDraws = 0;   \/\/ PERF-CROWD2; PASS-COUNT/, 'the shadow count zeroed before the lane draws the maps');
+  assert.match(r, /s\.viewDraws = this\._rwOutside \? 0 : this\._rwViewDraws;\n\s+if \(!this\._rwOutside\) this\._rwViewDraws = 0;/);
   assert.match(r, /this\.stats\.shadowDraws = \(sp\.stats\.sunDraws \| 0\) \+ \(sp\.stats\.pointDraws \| 0\);/);
   assert.match(r, /this\._rwViewDraws = this\.stats\.draws;\n\s+drew = true;/, 'the view out keeps its own count as it closes');
   // the order the count relies on: the interior host asks for the view out before its own beginFrame

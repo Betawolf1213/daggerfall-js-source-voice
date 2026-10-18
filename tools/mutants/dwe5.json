@@ -389,8 +389,8 @@
   {
     "name": "DW-E5-remove-keeps",
     "file": "src/scenes/droppedLoot.js",
-    "old": "    freeBatch(pile);\n    piles.splice(i, 1);",
-    "new": "    freeBatch(pile);",
+    "old": "    pile.batch = null;\n    piles.splice(i, 1);",
+    "new": "    pile.batch = null;",
     "tests": [
       "test/scenes/dwe_loot.test.js"
     ]

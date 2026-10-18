@@ -98,7 +98,6 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
     if (!p.batch) return;
     flatAnims.remove(p.batch);
     renderer.destroyBillboardBatch(p.batch);
-    p.batch = null;
   }
   /** LOOT-FLATS: a pile's batch reminted where the pile now lies (a recentre, a moved ground) - its animator entry follows
    *  it (the animator kept the old batch, and an animated pile stood still from its first recentre on). */
@@ -223,6 +222,7 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
     if (i < 0) return;
     pile.dead = true;   // AUDIT 24: an in-flight mount must not publish onto this
     freeBatch(pile);
+    pile.batch = null;
     piles.splice(i, 1);
   }
 
@@ -355,6 +355,7 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
   function deactivate(pile) {
     pile.inactive = true;
     freeBatch(pile);
+    pile.batch = null;
   }
 
   // emptied piles vanish (the verbatim removal) - both reads filter
