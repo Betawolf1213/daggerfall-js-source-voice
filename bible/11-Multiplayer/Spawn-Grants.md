@@ -587,3 +587,46 @@ and GRANT_STRIP), each the plan's condition for its own (sections 4.10 and 4.11)
   no foe record (section 4.6). Turn it on only when the measure shows the fan can afford the walk (section 6).
 
 Pins: `test/net/grant4_relay.test.js`'s GRANT8 and GRANT9, `grant4_lanes`' GRANT8; `tools/mutants/grant4.json`.
+
+## 17. AUDIT GRANT: the audit's fifteen, fixed (2026-10-18)
+
+Mac: **"Audit this real quick"**, then **"Yes fix them"**. A cold read of GRANT1-GRANT9 before its merge found fifteen;
+each is fixed here and pinned.
+
+- **A1, a world room's answers.** The session took a grant's answer in a cell alone, so a building's and a dungeon's own
+  lane asked and never heard (net/online.js): it hears every room whose foes ride (`streamsFoes`).
+- **A2, a late reader.** A full frame carried the same first GRANT_FRAME_GRANTS_MAX grants every time, so a reader that
+  came in late never heard the rest and tallied `unsigned` - a case's reason - against an honest owner. A full frame
+  carries the grants longest unsaid first (grantHost.js frameGrants), and a reader waits three full frames
+  (GRANT_VERDICT_WAIT_MS, six seconds) for a grant it has not heard.
+- **A3, the watch across pools.** The street's pool and a building's share one grants' host, and a building's frame
+  swept the street's watchmen off it. Each pool sweeps its own (`watchSweep(list, pool)`).
+- **A4, a window overfilled.** A reader's tally folded whole could push a window past GRANT_MEASURE_ROWS, and the relay
+  dropped the batch. It is posted at its bound mid-tally, and the rest begin the next window.
+- **A5, idle hours as asking time.** A window began at the last post. It begins at its first fold (`_grantFrom`), so
+  GRANT5's rates are asks an hour of asking.
+- **A6, the machine's clock.** A grant's expiry is the relay's; the host reads it on the relay's clock (the session's
+  `clockOffsetMs`).
+- **A7, one bucket for every ask.** A cull's or a death's frees and heirs spent the socket's bucket a grant each, ahead
+  of the next camp's mint. A turn's frees are one ask (`gs`) and its heirs one (`hs`), the heirs first.
+- **A8, a relay that forgot.** A renewal named numbers, and a relay deployed or evicted held none of them. A renewal
+  carries its grants whole, and the relay signs again one that is mine, this cell's, alive and its own signature.
+- **A9, a closed socket's law.** The host read the last welcome's law after the socket closed, and under `enforce`
+  stood nothing. A socket not open is no law.
+- **A10, a cold cell's welcome.** The welcome reads the setting the cell last had, and a cold cell had none. A mint's
+  answer says the law the relay read at the ask (`gm`), the client takes it, and the welcome asks the hub when cold.
+- **A11, a stood-down foe rebuilt.** Under `enforce` a record a reader stood down was built, checked and tallied again on
+  every frame. A record's refusal is kept by the grant it names (`downed`), and it is neither built nor tallied again
+  on that grant - `unsigned` only until the grant is heard.
+- **A12, a watchman refused for good.** He is asked again at the watch's pace (GRANT_WATCH_REASK_MS).
+- **A13, a crossing during a carry.** A carry answered by nobody (a timeout, an answer gone to a socket now a halo's)
+  gave every grant up, and a second crossing while one was out was never carried. The crossing is carried when the
+  last lands, and an unanswered carry is asked again GRANT_CARRY_TRIES times before its grants are given up.
+- **A14, an `encr` heir's fallback** asked `encr`, which is never asked; it asks `enc`.
+- **A15, a member handed twice.** The relay forgot what it had handed on at a renewal, and handed on from a grant
+  freed. Its handed members survive a renewal, and only a grant held live as mine hands one on.
+
+Pins: `test/net/grantaudit_relay.test.js` (2), `test/scenes/grantaudit_host.test.js` (6), and in `grant3_asks` (the
+batched asks, a forgotten grant renewed, a member handed once across a renewal and never from a grant freed) and
+`grant3_pool` (a stood-down record never rebuilt); `tools/mutants/grantaudit.json` (19, all dead). Records re-aimed
+where the asks moved: `grant3.json`, `grant4.json`.

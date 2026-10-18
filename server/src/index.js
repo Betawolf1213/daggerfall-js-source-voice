@@ -10082,6 +10082,7 @@ export class Room {
    *  HUB'S CALL: a hello asks nothing - the setting this cell last had, or the Worker's var (a staff `off` reaches a
    *  client at its next ask, answered `off`). */
   _grantWelcome() {
+    if (this._relayCfgAt === -Infinity) void this._relayCfgFresh(Date.now());   // AUDIT GRANT A10: a cold cell asks the hub now - its first ask's answer says the law in force (`gm`)
     return `,"gm":${JSON.stringify(grantModeOf(relayCfgValue(this._relayCfg, this.env, 'grantMode')))}`;
   }
   /** GRANT2: A CELL'S GRANTS - its counter (begun anywhere in 31 bits, so a re-woken cell does not number its grants from
@@ -10142,13 +10143,13 @@ export class Room {
     const gate = grantMintGate(ask.kind, ask.n, G.buckets.get(key), G.liveN, now);
     if (gate.bucket) G.buckets.set(key, gate.bucket);
     if (gate.refusal && mode === 'enforce') {
-      this._grantFold(G, who, ask, gate.refusal);
-      this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: gate.refusal }));
+      this._grantFold(G, who, ask, gate.refusal, now);
+      this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: gate.refusal, gm: mode }));
       return;
     }
     const gr = await this._grantMint(G, a, ask, now);
-    this._grantFold(G, who, ask, gate.refusal);
-    this._send(ws, JSON.stringify({ t: 'grant', k: 'ok', id: ask.id, gr }));
+    this._grantFold(G, who, ask, gate.refusal, now);
+    this._send(ws, JSON.stringify({ t: 'grant', k: 'ok', id: ask.id, gr, gm: mode }));   // AUDIT GRANT A10: the law in force, as this ask read it
   }
   /** GRANT2: THE MINT (Spawn-Grants section 4.2) - the owner's pixel and the world minute as the relay reads them, its
    *  signed level and Renown (0 where its token has none: a guest's - no elite), a fresh seed and the marks it rolls, ten
@@ -10172,7 +10173,7 @@ export class Room {
     const out = sg ? { ...gr, sg } : gr;
     const was = G.live.get(gr.g);
     if (was) G.liveN -= was.n;
-    G.live.set(gr.g, { n, x: gr.x, gr });
+    G.live.set(gr.g, { n, x: gr.x, gr, ...(was?.handed ? { handed: was.handed } : {}) });   // AUDIT GRANT A15: a renewal forgets no member it handed on
     G.liveN += n;
     return out;
   }
@@ -10180,18 +10181,26 @@ export class Room {
    *  this cell holds as another socket's, or not at all, is passed over. */
   async _grantRenew(ws, a, ask, G, now) {
     const grs = [];
-    for (const g of ask.gs) {
-      const live = G.live.get(g);
-      if (live && live.gr.o === a.id) grs.push(await this._grantSign(G, grantRenewed(live.gr, now), live.n));
+    let key;
+    for (const gr of ask.grs) {
+      const live = G.live.get(gr.g);
+      if (live) { if (live.gr.o === a.id) grs.push(await this._grantSign(G, grantRenewed(live.gr, now), live.n)); continue; }
+      // AUDIT GRANT A8: one this cell has forgotten (a relay deployed, the object evicted) - mine, this cell's, alive,
+      // and this relay's own signature: signed again and counted live, so its foes do not lose their grant
+      key ??= await this._receiptKeyOf();
+      if (gr.o === a.id && gr.a === (a.sub ?? '') && gr.q === a.key && now <= gr.x && await grantSignedHere(gr, key, { subtle: crypto.subtle })) grs.push(await this._grantSign(G, grantRenewed(gr, now), gr.h >= 0 ? 0 : gr.n));
     }
     this._send(ws, JSON.stringify({ t: 'grant', k: 'renew', id: ask.id, grs }));
   }
-  /** GRANT3: A FREE - my grant's members are all gone: believed only downward (a lie costs only the liar). Says nothing. */
+  /** GRANT3: A FREE - my grants' members are all gone (AUDIT GRANT A7: a turn's in one ask): believed only downward (a lie
+   *  costs only the liar). Says nothing. */
   _grantFree(a, ask, G) {
-    const live = G.live.get(ask.g);
-    if (!live || live.gr.o !== a.id) return;
-    G.live.delete(ask.g);
-    G.liveN -= live.n;
+    for (const g of ask.gs) {
+      const live = G.live.get(g);
+      if (!live || live.gr.o !== a.id) continue;
+      G.live.delete(g);
+      G.liveN -= live.n;
+    }
   }
   /** GRANT3: A CARRY (section 4.3) - I crossed into this cell with my grants from another: each this relay signed (signed
    *  here again and compared - net/grantLaw.js grantSignedHere), made out to me (this socket and its account), from
@@ -10210,16 +10219,22 @@ export class Room {
   /** GRANT3: AN HEIR (section 4.8) - member `i` of my grant handed on to socket `to`, who stands in this cell: the same
    *  seed and marks, made out to the heir and standing that one member alone (`h`), said to THE HEIR (my handover frame
    *  goes at once - a death or a door waits on no relay - and the heir's game ties the grant to the foe it took). Each
-   *  member is handed on once from this cell's grant; it counts nothing more against the ceiling. */
+   *  member is handed on once from this cell's grant; it counts nothing more against the ceiling. AUDIT GRANT A7: a
+   *  handover's members in one ask. AUDIT GRANT A15: only from a grant this cell holds live as mine (one freed or
+   *  forgotten hands nothing on), its handed members kept across its renewals (_grantSign). Any refused: one `no`. */
   async _grantHeir(ws, a, ask, G, now) {
-    const gr = ask.gr;
-    const heir = [...this._all()].find(([, b]) => b.id === ask.to)?.[0] ?? null;
-    const live = G.live.get(gr.g);
-    const ok = !!heir && gr.o === a.id && gr.q === a.key && now <= gr.x && !live?.handed?.has(ask.i) && await grantSignedHere(gr, await this._receiptKeyOf(), { subtle: crypto.subtle });
-    if (!ok) { this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'sender' })); return; }
-    if (live) (live.handed ??= new Set()).add(ask.i);
-    const out = await this._grantSign(G, grantHanded(gr, ask.i, ask.to, this._grantNext(G), now), 0);
-    this._send(heir, JSON.stringify({ t: 'grant', k: 'heir', id: ask.id, gr: out }));
+    const key = await this._receiptKeyOf(), env = { subtle: crypto.subtle };
+    let refused = false;
+    for (const { gr, i, to } of ask.hs) {
+      const heir = [...this._all()].find(([, b]) => b.id === to)?.[0] ?? null;
+      const live = G.live.get(gr.g);
+      const ok = !!heir && !!live && live.gr.o === a.id && gr.o === a.id && gr.q === a.key && now <= gr.x && !live.handed?.has(i) && await grantSignedHere(gr, key, env);
+      if (!ok) { refused = true; continue; }
+      (live.handed ??= new Set()).add(i);
+      const out = await this._grantSign(G, grantHanded(gr, i, to, this._grantNext(G), now), 0);
+      this._send(heir, JSON.stringify({ t: 'grant', k: 'heir', id: ask.id, gr: out }));
+    }
+    if (refused) this._send(ws, JSON.stringify({ t: 'grant', k: 'no', id: ask.id, r: 'sender' }));
   }
   /** GRANT3: A READER'S TALLY (section 4.7) - what my game refused of each sender's foes since my last tally, by reason:
    *  folded into the measure under my account and the sender's - a socket this cell holds; one gone is passed over (its
@@ -10230,21 +10245,27 @@ export class Room {
     G.tallied.set(a.id, now);
     const reader = a.sub || a.id;
     const subs = new Map([...this._all()].filter(([, b]) => b.id).map(([, b]) => [b.id, b.sub || b.id]));
-    let full = false;
+    let folded = false;
     for (const row of ask.rows) {
       const sender = subs.get(row.o);
-      if (sender && sender !== reader) full = foldGrantTally(G.w, reader, sender, row.r, row.n) || full;
+      if (!sender || sender === reader) continue;
+      this._grantFrom(G, now);
+      folded = true;
+      if (foldGrantTally(G.w, reader, sender, row.r, row.n)) { void this._grantFlush(); folded = false; }   // AUDIT GRANT A4: posted at its whole bound - the rest begin the next window (_grantFlush swaps it before its first await)
     }
-    if (full) void this._grantFlush();
-    else if (!G.timer) G.timer = setTimeout(() => { void this._grantFlush(); }, GRANT_MEASURE_MS);
+    if (folded && !G.timer) G.timer = setTimeout(() => { void this._grantFlush(); }, GRANT_MEASURE_MS);
   }
   /** GRANT2: an ask folded into the window (net/grantMeasure.js foldGrantAsk), which posts at its whole bound or once its
    *  first ask has waited GRANT_MEASURE_MS - while GRANT_FEED_URL is set; unset, the window is dropped at its bound. */
-  _grantFold(G, who, ask, refusal) {
+  _grantFold(G, who, ask, refusal, now) {
+    this._grantFrom(G, now);
     const full = foldGrantAsk(G.w, who, ask.kind, ask.n, refusal, G.liveN);
     if (full) void this._grantFlush();
     else if (!G.timer) G.timer = setTimeout(() => { void this._grantFlush(); }, GRANT_MEASURE_MS);
   }
+  /** AUDIT GRANT A5: a window begins at its first fold, never at the last post - an idle cell's hours are no asking time
+   *  (grantsMeasure reads asks an hour over the window's length). */
+  _grantFrom(G, now) { if (!G.w.rows.size && !G.w.tallies.size) G.w.from = now; }
   /** GRANT2: THE WINDOW POSTED - signed with the relay's receipt key, to GRANT_FEED_URL through the ACCOUNTS binding where
    *  the Worker has it (the chat feed's door, _feedFlush); answered or not it is gone, and a new window begins. Answers
    *  whether it went. */

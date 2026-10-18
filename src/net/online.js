@@ -3368,8 +3368,9 @@ export class OnlineSession {
     } else if (m.t === 'grant') {
       // GRANT2 (Spawn-Grants.md section 12): my own cell's answer to my ask - a grant read whole, a refusal, or `off`
       // (the law turned off since my welcome: I ask no more until the next one says otherwise)
-      const g = primary && isCellRoom(room) ? validGrantOut(m) : null;
+      const g = primary && streamsFoes(room) ? validGrantOut(m) : null;   // AUDIT GRANT A1: a world room's own lane hears its answers too
       if (g?.k === 'off') this.grantMode = 'off';
+      else if (g && 'gm' in g && g.gm) this.grantMode = g.gm;   // AUDIT GRANT A10: the law in force as the relay read it at my ask - a cold cell's welcome may have said another
       if (g) this._deliver('grant', () => this.onGrant?.(g));
     } else if (m.t === 'ow') {
       // OW6L: a cell's word on its overworld ledger - the ids it took, the rows it moved, or my own rows' answer - on ANY

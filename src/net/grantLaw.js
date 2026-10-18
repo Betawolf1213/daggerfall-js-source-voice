@@ -324,10 +324,11 @@ const signedGrant = (v) => { const g = validGrant(v); return g && typeof g.sg ==
 /**
  * An ask as the relay reads it, or null (GRANT2's mint, GRANT3's others). Pure.
  *   {k:'mint', id, kind, n}            a grant for `n` members of `kind`
- *   {k:'renew', id, gs}                my live grants (their numbers) signed again with a new expiry
- *   {k:'free', id, g}                  my grant's members are all gone - believed only downward
+ *   {k:'renew', id, grs}               my grants signed again with a new expiry - whole (AUDIT GRANT A8: a relay that
+ *                                      forgot them signs its own again)
+ *   {k:'free', id, gs}                 my grants' members are all gone - believed only downward (AUDIT GRANT A7: a turn's)
  *   {k:'carry', id, grs}               I crossed into this cell: my grants from another, signed again for this one
- *   {k:'heir', id, gr, i, to}          I hand member `i` of my grant on to socket `to` in this cell
+ *   {k:'heir', id, hs: [{gr, i, to}]}  I hand member `i` of each grant on to socket `to` in this cell (A7: a turn's)
  *   {k:'tally', id, rows}              what I refused, by sender and reason, since my last tally - [{o, r, n}]
  * @param {any} m @returns {any}
  */
@@ -338,17 +339,20 @@ export function validGrantAsk(m) {
     if (!intIn(m.n, 1, GRANT_KINDS[/** @type {keyof typeof GRANT_KINDS} */ (m.kind)].max)) return null;
     return { k: 'mint', id: m.id, kind: m.kind, n: m.n };
   }
-  if (m.k === 'renew') return uniqInts(m.gs, GRANT_RENEW_MAX) ? { k: 'renew', id: m.id, gs: m.gs.slice() } : null;
-  if (m.k === 'free') return intIn(m.g, 0, 0x7fffffff) ? { k: 'free', id: m.id, g: m.g } : null;
-  if (m.k === 'carry') {
+  if (m.k === 'free') return uniqInts(m.gs, GRANT_RENEW_MAX) ? { k: 'free', id: m.id, gs: m.gs.slice() } : null;   // AUDIT GRANT A7: a turn's frees in one ask
+  if (m.k === 'renew' || m.k === 'carry') {   // AUDIT GRANT A8: a renewal carries its grants whole, so a relay that forgot them signs them again
     if (!Array.isArray(m.grs) || !m.grs.length || m.grs.length > GRANT_RENEW_MAX) return null;
     const grs = m.grs.map(signedGrant);
-    return grs.every(Boolean) ? { k: 'carry', id: m.id, grs } : null;
+    return grs.every(Boolean) ? { k: m.k, id: m.id, grs } : null;
   }
-  if (m.k === 'heir') {
-    const gr = signedGrant(m.gr);
-    if (!gr || !intIn(m.i, 0, gr.n - 1) || (gr.h >= 0 && gr.h !== m.i) || typeof m.to !== 'string' || !ID_RE.test(m.to)) return null;
-    return { k: 'heir', id: m.id, gr, i: m.i, to: m.to };
+  if (m.k === 'heir') {   // AUDIT GRANT A7: a handover's members in one ask
+    if (!Array.isArray(m.hs) || !m.hs.length || m.hs.length > GRANT_RENEW_MAX) return null;
+    const hs = m.hs.map((x) => {
+      const gr = signedGrant(x?.gr);
+      if (!gr || !intIn(x.i, 0, gr.n - 1) || (gr.h >= 0 && gr.h !== x.i) || typeof x.to !== 'string' || !ID_RE.test(x.to)) return null;
+      return { gr, i: x.i, to: x.to };
+    });
+    return hs.every(Boolean) ? { k: 'heir', id: m.id, hs } : null;
   }
   if (m.k === 'tally') {
     if (!Array.isArray(m.rows) || !m.rows.length || m.rows.length > GRANT_TALLY_ROWS_MAX) return null;
@@ -359,9 +363,10 @@ export function validGrantAsk(m) {
 }
 
 /**
- * The relay's answer as a client reads it, or null. Pure.
- *   {k:'ok', id, gr}        a mint's grant, read whole
- *   {k:'renew', id, grs}    my grants signed again (the ones the cell still held as mine)
+ * The relay's answer as a client reads it, or null. Pure. AUDIT GRANT A10: a mint's answer (`ok`, `no`) says the law in
+ * force (`gm`, GRANT_MODES) - the setting the relay read at the ask, which a welcome from a cold cell may not have.
+ *   {k:'ok', id, gr, gm?}   a mint's grant, read whole
+ *   {k:'renew', id, grs}    my grants signed again (the ones the cell still held as mine, or signed here)
  *   {k:'carry', id, grs}    my carried grants, made out to this cell - null where one was refused
  *   {k:'heir', id, gr}      the handed-on grant, made out to the heir, for my handover frame
  *   {k:'no', id, r}         a refusal in the law's words
@@ -371,10 +376,11 @@ export function validGrantAsk(m) {
 export function validGrantOut(m) {
   if (!m || typeof m !== 'object' || !intIn(m.id, 0, GRANT_ASK_ID_MAX)) return null;
   if (m.k === 'off') return { k: 'off', id: m.id };
-  if (m.k === 'no') return typeof m.r === 'string' && GRANT_REFUSALS.includes(m.r) ? { k: 'no', id: m.id, r: m.r } : null;
+  const gm = GRANT_MODES.includes(m.gm) ? { gm: m.gm } : {};
+  if (m.k === 'no') return typeof m.r === 'string' && GRANT_REFUSALS.includes(m.r) ? { k: 'no', id: m.id, r: m.r, ...gm } : null;
   if (m.k === 'ok' || m.k === 'heir') {
     const gr = validGrant(m.gr);
-    return gr ? { k: m.k, id: m.id, gr } : null;
+    return gr ? { k: m.k, id: m.id, gr, ...(m.k === 'ok' ? gm : {}) } : null;
   }
   if (m.k === 'renew' || m.k === 'carry') {
     if (!Array.isArray(m.grs) || m.grs.length > GRANT_RENEW_MAX) return null;

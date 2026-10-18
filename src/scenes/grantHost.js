@@ -54,14 +54,21 @@ export const GRANT_MEMBERS_MAX = 2048;
 export const GRANT_HEIR_WAIT_MS = 10_000;
 /** How soon a reader asks the relay's key again after it could not, ms. */
 export const GRANT_KEY_RETRY_MS = 5 * 60_000;
-/** GRANT6: how long a reader waits for a grant a record names before it calls it `unsigned`, ms - two full frames
- *  (net/online.js FOES_FULL_MS): a reader that came in after the grant went hears it again on the owner's next. */
-export const GRANT_VERDICT_WAIT_MS = 4_000;
+/** GRANT6: how long a reader waits for a grant a record names before it calls it `unsigned`, ms - three full frames
+ *  (net/online.js FOES_FULL_MS): a reader that came in after the grant went hears it again on the owner's next, and
+ *  AUDIT GRANT A2: a full frame carries the grants longest unsaid first, so CELL_FRAME_RECORDS_MAX's sixty-four grants
+ *  ride within two of them. */
+export const GRANT_VERDICT_WAIT_MS = 6_000;
 /** GRANT6: the levels a class foe may stand over its owner's signed one - a character's token says the level its last
  *  judged checkpoint found (server-account/src/realm.js `cl`), and a player gains a level or two between checkpoints. */
 export const GRANT_LEVEL_SLACK = 2;
 /** GRANT6: how often a stand made while its socket's welcome is owed asks whether the law is said yet, ms. */
 const MODE_POLL_MS = 100;
+/** AUDIT GRANT A12: how soon a watchman whose grant was refused or never came asks again, ms - the watch's bucket's own
+ *  pace (net/grantLaw.js GRANT_KINDS.watch: one a 30 s). */
+export const GRANT_WATCH_REASK_MS = 30_000;
+/** AUDIT GRANT A13: how many times a carry that went unanswered is asked again before its grants are given up. */
+export const GRANT_CARRY_TRIES = 3;
 
 /** The kinds whose species is an encounter table's (a random encounter's, a camp's) - and whose class foes stand at the
  *  owner's level. */
@@ -104,14 +111,17 @@ const capMap = (m, max) => { while (m.size > max) m.delete(m.keys().next().value
 /**
  * @param {{ session: () => any, climateAt?: ((px: number, py: number) => number)|null, now?: () => number,
  *   fetchKey?: (env: { subtle: SubtleCrypto }) => Promise<CryptoKey|null>, subtle?: SubtleCrypto, wait?: number, verdictWait?: number }} deps
- *   `session` the online session now (null offline); `climateAt` a map pixel's climate (the reader's species law)
+ *   `session` the online session now (null offline); `climateAt` a map pixel's climate (the reader's species law); `now` the
+ *   relay's clock
  */
-export function createGrantHost({ session, climateAt = null, now = () => Date.now(), fetchKey = relayKeyOf, subtle = globalThis.crypto?.subtle, wait = GRANT_WAIT_MS, verdictWait = GRANT_VERDICT_WAIT_MS }) {
+export function createGrantHost({ session, climateAt = null, now = () => Date.now() + (Number(session()?.clockOffsetMs) || 0), fetchKey = relayKeyOf, subtle = globalThis.crypto?.subtle, wait = GRANT_WAIT_MS, verdictWait = GRANT_VERDICT_WAIT_MS }) {
+  // AUDIT GRANT A6: `now` the RELAY's clock (net/online.js clockOffsetMs, from the welcome) - a grant's expiry is the relay's
   // ── the asks ─────────────────────────────────────────────────────────────────────────────────────────────────────
   let askId = 0;
   const pending = new Map();   // ask id -> its answer's resolver
-  /** The session while its cell's law is on, else null. */
-  const open = () => { const s = session(); return s && s.grantMode && s.grantMode !== 'off' && typeof s.sendGrant === 'function' ? s : null; };
+  /** The session while its cell's law is on, else null - AUDIT GRANT A2: and its socket open (a closed one's last law is no
+   *  law: nothing can be asked of it, and nothing is refused for it). */
+  const open = () => { const s = session(); return s && s.status === 'open' && s.grantMode && s.grantMode !== 'off' && typeof s.sendGrant === 'function' ? s : null; };
   /** GRANT6: a socket open whose welcome has not said the law yet (net/online.js: null) - a stand waits on it, so a cell
    *  crossed is never a moment of ungranted stands. */
   const unsaid = () => { const s = session(); return !!s && s.status === 'open' && s.grantMode == null && typeof s.sendGrant === 'function'; };
@@ -172,38 +182,64 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
     gr._members = Math.max(0, (gr._members ?? 1) - 1);
     if (gr._members) return;
     live.delete(gr);
-    if (!gr._dead && gr.q === open()?.room) send({ k: 'free', g: gr.g });   // GRANT4: to the room that holds it - one left behind counts there to its expiry
+    if (!gr._dead && gr.q === open()?.room) post('free', gr.g);   // GRANT4: to the room that holds it - one left behind counts there to its expiry
   }
   /** Foe `f` handed on to socket `to` - its member signed to the heir, then gone from me. */
   function handed(f, to) {
     const gr = f?._grant;
-    if (gr && !gr._dead && typeof to === 'string' && to) send({ k: 'heir', gr: wireGrant(gr), i: f._grantI, to });
+    if (gr && !gr._dead && typeof to === 'string' && to) post('heir', { gr: wireGrant(gr), i: f._grantI, to });
     ended(f);
   }
-  let renewing = false, carrying = false, lastRoom = null, tallyAt = now();
+  /** AUDIT GRANT A7: A TURN'S FREES AND HEIRS, ONE ASK EACH - a cull or a death ends a dozen grants at once, and every ask
+   *  spends the socket's one bucket (net/grantLaw.js grantGate), which a camp's mint needs next. The heirs go first: the
+   *  relay hands a member on only from a grant it still holds live. */
+  const outbox = { heir: [], free: [] };
+  let outboxDue = false;
+  function post(k, item) {
+    outbox[k].push(item);
+    if (!outboxDue) { outboxDue = true; void Promise.resolve().then(flushOutbox); }
+  }
+  function flushOutbox() {
+    outboxDue = false;
+    const hs = outbox.heir, gs = [...new Set(outbox.free)];
+    outbox.heir = []; outbox.free = [];
+    for (let at = 0; at < hs.length; at += GRANT_RENEW_MAX) send({ k: 'heir', hs: hs.slice(at, at + GRANT_RENEW_MAX) });
+    for (let at = 0; at < gs.length; at += GRANT_RENEW_MAX) send({ k: 'free', gs: gs.slice(at, at + GRANT_RENEW_MAX) });
+  }
+  let renewing = false, carrying = false, lastRoom = null, carryTo = null, carryTries = 0, tallyAt = now();
   async function renew(gs) {
     renewing = true;
-    const a = await ask({ k: 'renew', gs: gs.map((g) => g.g) });
+    const a = await ask({ k: 'renew', grs: gs.map(wireGrant) });   // AUDIT GRANT A8: whole, so a relay that forgot them signs them again
     renewing = false;
     if (a?.k !== 'renew') return;
     for (const ng of a.grs) { const g = gs.find((x) => x.g === ng.g); if (g) { g.x = ng.x; g.sg = ng.sg; } }
   }
+  /** AUDIT GRANT A13: a carry's answer is the cell's word on each grant - one it refused (null) is given up; one never
+   *  answered (a timeout, an answer gone to a socket that is now a halo's) is carried again while I stand in a cell,
+   *  GRANT_CARRY_TRIES times, then given up. */
   async function carry(room) {
     const gs = [...live].filter((g) => !g._dead && g.q !== room && isCellRoom(g.q));
     if (!gs.length) return;
     carrying = true;
+    let unanswered = false;
     for (let at = 0; at < gs.length; at += GRANT_RENEW_MAX) {
       const chunk = gs.slice(at, at + GRANT_RENEW_MAX);
       const a = await ask({ k: 'carry', grs: chunk.map(wireGrant) });
-      chunk.forEach((g, i) => { const ng = a?.k === 'carry' ? a.grs[i] : null; if (ng) Object.assign(g, { g: ng.g, q: ng.q, x: ng.x, sg: ng.sg }); else g._dead = true; });
+      if (a?.k !== 'carry') { unanswered = true; continue; }
+      chunk.forEach((g, i) => { const ng = a.grs[i]; if (ng) Object.assign(g, { g: ng.g, q: ng.q, x: ng.x, sg: ng.sg }); else g._dead = true; });
     }
     carrying = false;
+    if (!unanswered) { carryTries = 0; return; }
+    if (++carryTries < GRANT_CARRY_TRIES) { if (!carryTo && isCellRoom(open()?.room)) carryTo = open().room; return; }
+    carryTries = 0;
+    for (const g of gs) if (g.q !== open()?.room) g._dead = true;
   }
   /** THE CLOCK, the pool's frame: carry, renew, drop the expired, hand the tally on, the heirs' waits. */
   function tick() {
     const s = open(), t = now();
     if (s) {
-      if (s.room !== lastRoom) { const from = lastRoom; lastRoom = s.room; if (from && !carrying && isCellRoom(s.room)) void carry(s.room); }   // GRANT4: cell to cell - a world room's grants stay its own (carry: a cell's alone)
+      if (s.room !== lastRoom) { const from = lastRoom; lastRoom = s.room; carryTo = from && isCellRoom(s.room) ? s.room : null; carryTries = 0; }   // GRANT4: cell to cell - a world room's grants stay its own (carry: a cell's alone)
+      if (carryTo && !carrying) { const to = carryTo; carryTo = null; if (to === s.room) void carry(to); }   // AUDIT GRANT A13: a crossing made while a carry was out is carried when it lands
       if (!renewing && !carrying) {
         const due = [...live].filter((g) => !g._dead && g.q === s.room && g.x - t <= GRANT_RENEW_LEAD_MS).slice(0, GRANT_RENEW_MAX);
         if (due.length) void renew(due);
@@ -215,21 +251,25 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
       if (t - w.at < GRANT_HEIR_WAIT_MS) continue;
       heirWaits.delete(k);
       const f = w.f;
-      if (!f.dead && !f.puppet && !f._grant) memberFor(w.k)?.then((m) => { if (m && 'gr' in m && !f.dead && !f._grant) stood(m.gr, m.i, f); });
+      if (!f.dead && !f.puppet && !f._grant) memberFor(w.k === 'encr' ? 'enc' : w.k)?.then((m) => { if (m && 'gr' in m && !f.dead && !f._grant) stood(m.gr, m.i, f); });   // AUDIT GRANT A14: `encr` the relay's answer, never an ask
     }
     for (const [k, h] of heirGrants) if (t - h.at >= GRANT_HEIR_WAIT_MS) heirGrants.delete(k);
   }
-  /** THE FRAME'S GRANTS: of the grants its records name, each on a full frame and whenever it was signed again since it
-   *  last went - its wire form. */
+  /** THE FRAME'S GRANTS: of the grants its records name, each signed since it last went, and on a full frame the rest -
+   *  AUDIT GRANT A2: the longest unsaid first, GRANT_FRAME_GRANTS_MAX a frame, so a reader that came in late hears every
+   *  grant within a few full frames, never the same first ones again and again - its wire form. */
+  let fullSeq = 0;
   function frameGrants(grs, full) {
-    const out = [];
+    const fresh = [], rest = [];
     for (const g of new Set(grs)) {
-      if (!g || g._dead || out.length >= GRANT_FRAME_GRANTS_MAX) continue;
-      if (!full && g._gsSent === g.sg) continue;
-      g._gsSent = g.sg;
-      out.push(wireGrant(g));
+      if (!g || g._dead) continue;
+      if (g._gsSent !== g.sg) fresh.push(g);
+      else if (full) rest.push(g);
     }
-    return out;
+    if (full) { fullSeq++; rest.sort((a, b) => (a._gsFull ?? 0) - (b._gsFull ?? 0)); }
+    const out = [...fresh, ...rest].slice(0, GRANT_FRAME_GRANTS_MAX);
+    for (const g of out) { g._gsSent = g.sg; if (full) g._gsFull = fullSeq; }
+    return out.map(wireGrant);
   }
 
   // ── the heir's ───────────────────────────────────────────────────────────────────────────────────────────────────
@@ -266,6 +306,7 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
   const tallies = new Map();    // `${owner}|${reason}` -> how many
   const capable = new Set();    // owners that have carried a grant: a hostile record of theirs with none is `ungranted`
   const waiters = new Map();    // `${owner}|${grant}` -> the checks waiting to hear it (GRANT6)
+  const verdictOf = new Map();  // `${owner}|${record}` -> { k, why }: a record's refusal, by the grant it named (AUDIT GRANT A11)
   /** A frame's grants heard from `from`: each read whole and its signature checked, once per owner, grant and signature. */
   function heard(from, gs) {
     if (!Array.isArray(gs) || !gs.length) return;
@@ -299,6 +340,26 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
    * @param {string} from @param {string|null} cell @param {any} r
    */
   async function check(from, cell, r) {
+    const memo = judged(from, r);
+    if (memo) return memo.why;   // AUDIT GRANT A11: a record judged once is never tallied twice
+    const why = await judge(from, cell, r);
+    if (why) { verdictOf.set(`${from}|${r?.i}`, { k: grKey(r), why }); capMap(verdictOf, GRANT_MEMBERS_MAX); }
+    return why;
+  }
+  /** AUDIT GRANT A11: a record's grant, as a memo's key. */
+  const grKey = (r) => (Array.isArray(r?.gr) ? r.gr.join(':') : '-');
+  /** AUDIT GRANT A11: the refusal this record was judged with, while it still names the same grant - `unsigned` only until
+   *  the grant is heard (a reader that came in late judges it again then). */
+  function judged(from, r) {
+    const v = verdictOf.get(`${from}|${r?.i}`);
+    if (!v || v.k !== grKey(r)) return null;
+    if (v.why === 'unsigned' && r?.gr && verdicts.has(`${from}|${r.gr[0]}`)) return null;
+    return v;
+  }
+  /** AUDIT GRANT A11: would an enforcing reader stand this record down on its last verdict? The pools ask it before they
+   *  build a puppet again, so a foe stood down is not rebuilt, checked and tallied on every frame. */
+  const downed = (from, r) => { const v = judged(from, r); return !!v && standsDown(v.why); };
+  async function judge(from, cell, r) {
     if (!r?.gr) return capable.has(from) ? note(from, 'ungranted') : null;   // GRANT4: the City Watch's too (watchReady)
     const [g, i] = r.gr;
     const v = verdicts.get(`${from}|${g}`) ?? await heardOf(`${from}|${g}`);
@@ -363,28 +424,30 @@ export function createGrantHost({ session, climateAt = null, now = () => Date.no
   const standsDown = (why) => !!why && enforcing() && GRANT_STANDDOWN_REASONS.includes(why);
 
   // ── the watch's ──────────────────────────────────────────────────────────────────────────────────────────────────
-  const watchmen = new Set();   // my watchmen standing on a grant
+  const watchmen = new Map();   // my watchmen standing on a grant -> the pool that streams them (AUDIT GRANT A3)
   /** GRANT4: A WATCHMAN'S GRANT, asked as the pool first streams him (his own pool, scenes/cityGuards.js, stands him, and
    *  only the pool that streams him knows he rides): whether his record may go now - his grant come, or his ask answered
    *  or `wait` past without one (while the law enforces, never without one), or no law to ask. */
-  function watchReady(g) {
+  function watchReady(g, pool = null) {
     if (!g || g._grant) return true;
+    if (g._grantDone && now() - g._grantAt >= GRANT_WATCH_REASK_MS) { g._grantAt = undefined; g._grantDone = false; }   // AUDIT GRANT A12: refused or never come - asked again at the watch's pace
     if (g._grantAt === undefined) {
       const m = memberFor('watch');
       if (!m) return true;
       g._grantAt = now();
-      void m.then((a) => { g._grantDone = true; if (a && 'gr' in a && !g._grant && !g._gone) { stood(a.gr, a.i, g); watchmen.add(g); } });
+      void m.then((a) => { g._grantDone = true; if (a && 'gr' in a && !g._grant && !g._gone) { stood(a.gr, a.i, g); watchmen.set(g, pool); } });
       return false;
     }
     if (!g._grantDone && now() - g._grantAt < wait) return false;
     return !enforcing();
   }
-  /** GRANT4: the watchmen gone from the list his pool streams - each one's member ended (`list` the pool's watch now). */
-  function watchSweep(list) {
+  /** GRANT4: the watchmen gone from the list his pool streams - each one's member ended (`list` the pool's watch now).
+   *  AUDIT GRANT A3: the street's pool and a building's share this host, so each sweeps its own watchmen alone (`pool`). */
+  function watchSweep(list, pool = null) {
     if (!watchmen.size) return;
     const here = new Set(list);
-    for (const g of watchmen) if (!here.has(g) || g._gone) { watchmen.delete(g); ended(g); }
+    for (const [g, p] of watchmen) if (p === pool && (!here.has(g) || g._gone)) { watchmen.delete(g); ended(g); }
   }
 
-  return { memberFor, stood, ended, handed, tick, frameGrants, adopted, heard, check, answer, enforcing, standsDown, watchReady, watchSweep, speciesOf, tallied: () => new Map(tallies), live: () => [...live] };
+  return { memberFor, stood, ended, handed, tick, frameGrants, adopted, heard, check, downed, answer, enforcing, standsDown, watchReady, watchSweep, speciesOf, tallied: () => new Map(tallies), live: () => [...live] };
 }

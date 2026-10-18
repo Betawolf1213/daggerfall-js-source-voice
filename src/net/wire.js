@@ -2031,7 +2031,7 @@ export function inRangeOf(roomKey, from) {
  *  (test/net/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
 /** GRANT2-GRANT3: the fields a grant ask may carry, carried through the parse as they came (net/grantLaw.js validGrantAsk). */
-const GRANT_ASK_FIELDS = Object.freeze(['k', 'id', 'kind', 'n', 'gs', 'g', 'grs', 'gr', 'i', 'to', 'rows']);
+const GRANT_ASK_FIELDS = Object.freeze(['k', 'id', 'kind', 'n', 'gs', 'grs', 'hs', 'rows']);   // AUDIT GRANT A7/A8: frees and heirs batched, a renewal whole
 export function parseClient(text, { hasHello = false } = {}) {
   if (typeof text !== 'string') return { error: 'text frames only' };
   // WORLD1/WORLD2: the frames past MAX_FRAME_BYTES are the world frame and the foes frame, told by their prefix

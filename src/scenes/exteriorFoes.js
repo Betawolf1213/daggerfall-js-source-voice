@@ -2456,6 +2456,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
    *  watchman world.js's cross-pool remover ended rides no more; a swept full frame takes them down at the readers).
    *  Absent net or pool: none. */
   const watchList = () => (_net?.watch?.list?.() ?? []);
+  const _grantPool = {};   // AUDIT GRANT A3: this pool, to the grants' host it shares with the other (scenes/grantHost.js watchSweep)
   /** WATCH1: the watchman a peer's blow names - by the number he rode under (applyHit's own dead gate refuses a body). */
   const watchOf = (i) => watchList().find((g) => g.seq === i) ?? null;
   /** SURV3: the host's door for a peer's camps (scenes/camps.js applyOwner) - beside the net, not in its bag. */
@@ -2499,7 +2500,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   function foesFrame(full = false, force = false, heirOf = null) {
     if (!_net?.toWire) return null;
     _net.grants?.tick();   // GRANT3: my grants' clock - renewed, carried, the tally handed on (update's too: alone, nothing frames)
-    _net.grants?.watchSweep(watchList());   // GRANT4: a watchman gone ends his member
+    _net.grants?.watchSweep(watchList(), _grantPool);   // GRANT4: a watchman gone ends his member (AUDIT GRANT A3: this pool's own)
     if (_fullNext) { full = true; _fullNext = false; }   // AUDIT CC-E3
     const out = [];
     // WATCH1: the watch rides behind the foes, in the same record shape - `t` 146 (Knight_CityWatch, whose row every
@@ -2511,7 +2512,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     for (const [f, onWatch] of [...foes.map((f) => [f, false]), ...watchList().map((g) => [g, true])]) {
       const qt = _questLike(f) ? _qTag(f) : null;   // QUEST-PARTY: a quest shared with the party rides to it; every other quest's foe stays its quest's own (AUDIT pre-merge Q3: a kept word rides as the quest's)
       if (f.puppet || (_questLike(f) && !qt) || (f.placed && !f.site) || (f.dead && !f.corpse)) continue;   // WOD7: a placed foe with a SITE is a shared camp's, and rides   // (a removed watchman - dead, no body - rides no more, as a culled foe does; AUDIT BRANCH (WoD) M1: a placed foe never rides)
-      if (onWatch && _net.grants && !_net.grants.watchReady(f)) continue;   // GRANT4: a watchman rides once his grant is asked and come (or given up)
+      if (onWatch && _net.grants && !_net.grants.watchReady(f, _grantPool)) continue;   // GRANT4: a watchman rides once his grant is asked and come (or given up)
       if (f.seq == null) f.seq = _nextSeq++;   // WATCH1: a watchman is numbered the first time he rides, off the foes' own counter
       if (f.dead && f.corpse && f._diedAt == null) f._diedAt = _now();   // AUDIT WATCH1 A6: a watch body is stamped when it first rides, on this pool's own clock, so the trim below keeps the newest bodies of BOTH pools
       const w = _net.toWire(f.ai.feet);
@@ -2737,6 +2738,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       const feet = _net.toScene(r.f);
       if (!feet) continue;
       const cp = Number.isInteger(r.cp) && championsOf(from) < PEER_CHAMPION_PUPPETS_MAX ? r.cp : null;   // GRANT0: no more champions than an owner rolls and its revenants wear
+      if (_net.grants?.downed(from, r)) continue;   // AUDIT GRANT A11: stood down once on this grant - never rebuilt, checked and tallied again
       const grantCheck = _net.grants ? _net.grants.check(from, typeof data.k === 'string' ? data.k : null, r) : null;   // GRANT3: its grant, checked once and tallied
       _pupPending.set(key, { ...r, _site: site, _deep: deep, _quest: qt, _raid: raidKey, _camp: campTags.get(r.i) ?? null, _cp: cp != null });
       if (site) stood.add(site);

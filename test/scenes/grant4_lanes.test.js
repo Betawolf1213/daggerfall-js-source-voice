@@ -121,7 +121,7 @@ test('GRANT6 THE OWNER WHILE THE LAW ENFORCES: a stand the relay refuses, or who
 
 test('GRANT6 THE READER WAITS FOR A GRANT IT HAS NOT HEARD, AND A LEVEL OR TWO: a record naming a grant this reader came in after is judged once a frame carries it; one never carried is `unsigned` after GRANT_VERDICT_WAIT_MS; a class foe GRANT_LEVEL_SLACK over its owner\'s signed level stands, one more is `dice` (mutants: the wait skipped; the slack dropped)', async () => {
   const R = await relay();
-  assert.equal(GRANT_VERDICT_WAIT_MS, 4000);
+  assert.equal(GRANT_VERDICT_WAIT_MS, 6000, 'three full frames (AUDIT GRANT A2)');
   assert.equal(GRANT_LEVEL_SLACK, 2);
   const host = createGrantHost({ session: () => null, climateAt: () => 231, now: () => R.now, fetchKey: async () => R.kp.publicKey, verdictWait: 200 });
   const gr = await R.sign({ g: 7, o: OWNER, q: CELL, a: 'acct-x', k: 'enc', p: [3, 12], m: 9, l: 9, r: 7, n: 4, s: 5, e: 0, c: [-1, -1, -1, -1], h: -1, x: R.now + GRANT_TTL_MS });
@@ -147,7 +147,8 @@ test('GRANT4 THE WATCH RIDES ON ITS GRANT: a watchman\'s record waits for his gr
   assert.deepEqual([gr.k, gr.e, gr.c], ['watch', 0, [-1, -1]], 'a watch grant rolls no marks');
   guards.length = 0;
   O.pool.foesFrame(false);
-  assert.deepEqual(O.session.asks.filter((a) => a.k === 'free').map((a) => a.g), [gr.g], 'both gone: freed');
+  await settle(1);
+  assert.deepEqual(O.session.asks.filter((a) => a.k === 'free').map((a) => a.gs), [[gr.g]], 'both gone: freed');
   const D = await player(R, READER);
   D.host.heard(OWNER, full.gs);
   assert.equal(await D.host.check(OWNER, CELL, { ...full.f[0] }), null);
@@ -171,6 +172,7 @@ test('GRANT4 MARKS A CALLER DECIDED ASK `kept`; A ROOM\'S GRANTS STAY ITS OWN: a
   await settle();
   assert.equal(O.session.asks.filter((a) => a.k === 'carry').length, 0, 'a cell\'s grant never goes into a room');
   O.pool.removeFoe(kept);
+  await settle(1);   // a turn's frees go at its end (AUDIT GRANT A7)
   assert.equal(O.session.asks.filter((a) => a.k === 'free').length, 0, 'freed only to the cell that holds it');
   const live = await O.pool.spawnFoe(0, [101, 0, 100], { grantKind: 'loose' });
   await settle();

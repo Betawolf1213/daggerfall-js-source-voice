@@ -46,7 +46,7 @@ async function relay() {
   const ctl = { hold: false, held: [] };   // the heirs' answers held back while `hold`
   const sign = async (g) => ({ ...g, sg: await signGrant(g, kp.privateKey, { subtle }) });
   const session = (id, { mode = 'measure' } = {}) => {
-    const s = { id, room: CELL, grantMode: mode, asks: [], host: null, sendGrant(ask) { s.asks.push(ask); void reply(s, ask); return true; } };
+    const s = { id, room: CELL, status: 'open', grantMode: mode, asks: [], host: null, sendGrant(ask) { s.asks.push(ask); void reply(s, ask); return true; } };
     sessions.set(id, s);
     return s;
   };
@@ -55,12 +55,14 @@ async function relay() {
     if (ask.k === 'mint') {
       const seed = (n * 2654435761) >>> 0, gr = { g: ++n, o: s.id, q: s.room, a: `acct-${s.id}`, k: ask.kind, p: [3, 12], m: 9, l: 9, r: 7, n: ask.n, s: seed, ...(s.marks ?? grantMarksFor(ask.kind, seed, ask.n, 7)), h: -1, x: clock + GRANT_TTL_MS };
       out = { k: 'ok', id: ask.id, gr: await sign(gr) };
-    } else if (ask.k === 'renew') out = { k: 'renew', id: ask.id, grs: await Promise.all(s.live.filter((g) => ask.gs.includes(g.g)).map((g) => sign({ ...strip(g), x: clock + GRANT_TTL_MS }))) };
+    } else if (ask.k === 'renew') out = { k: 'renew', id: ask.id, grs: await Promise.all(ask.grs.filter((g) => s.live.some((x) => x.g === g.g)).map((g) => sign({ ...strip(g), x: clock + GRANT_TTL_MS }))) };
     else if (ask.k === 'carry') out = { k: 'carry', id: ask.id, grs: await Promise.all(ask.grs.map((g) => sign({ ...strip(g), g: ++n, q: s.room, x: clock + GRANT_TTL_MS }))) };
     else if (ask.k === 'heir') {
-      const h = sessions.get(ask.to), go = async () => h?.host?.answer({ k: 'heir', id: ask.id, gr: await sign({ ...strip(ask.gr), g: ++n, o: ask.to, h: ask.i, x: clock + GRANT_TTL_MS }) });
-      if (ctl.hold) ctl.held.push(go);
-      else { await settle(1); await go(); }
+      for (const x of ask.hs) {
+        const h = sessions.get(x.to), go = async () => h?.host?.answer({ k: 'heir', id: ask.id, gr: await sign({ ...strip(x.gr), g: ++n, o: x.to, h: x.i, x: clock + GRANT_TTL_MS }) });
+        if (ctl.hold) ctl.held.push(go);
+        else { await settle(1); await go(); }
+      }
       return;
     }
     if (out) { await settle(1); s.host?.answer(out); }
@@ -133,7 +135,9 @@ test('GRANT3 THE OWNER: a turn\'s stands of a kind are one ask; each stands as i
   R.tick(GRANT_TTL_MS - GRANT_RENEW_LEAD_MS + 1);
   O.pool.foesFrame(false);
   await settle();
-  assert.deepEqual(O.session.asks.filter((a) => a.k === 'renew').map((a) => a.gs), [[gr.g]]);
+  const renewSg = O.session.asks.find((a) => a.k === 'renew')?.grs?.[0]?.sg;
+  assert.deepEqual(O.session.asks.filter((a) => a.k === 'renew').map((a) => a.grs.map((g) => g.g)), [[gr.g]]);
+  assert.ok(typeof renewSg === 'string' && renewSg !== gr.sg, 'renewed whole, its old signature with it (AUDIT GRANT A8) - and signed anew');
   assert.equal(gr.x, R.now + GRANT_TTL_MS, 'its expiry moved in place');
   foes[1].ai.feet[0] += 1;
   assert.equal(O.pool.foesFrame(false)?.gs?.[0]?.sg, gr.sg, 'signed again: said again');
@@ -149,7 +153,8 @@ test('GRANT3 THE OWNER: a turn\'s stands of a kind are one ask; each stands as i
   for (const f of foes.slice(0, 2)) O.pool.removeFoe(f);
   assert.equal(O.session.asks.filter((a) => a.k === 'free').length, 0, 'two of three gone: still mine');
   O.pool.removeFoe(foes[2]);
-  assert.deepEqual(O.session.asks.filter((a) => a.k === 'free').map((a) => a.g), [gr.g]);
+  await settle(1);   // AUDIT GRANT A7: a turn's frees, one ask at its end
+  assert.deepEqual(O.session.asks.filter((a) => a.k === 'free').map((a) => a.gs), [[gr.g]]);
   // a grant naming its champions: each member stands as its grant says, never as the street's own roll would
   O.session.marks = { e: 0, c: [4, 4] };
   const marked = await Promise.all([0, 1].map((k) => O.pool.spawnFoe(WILD_GIANT, [140 + k, 0, 100], { grantKind: 'enc' })));
@@ -157,7 +162,7 @@ test('GRANT3 THE OWNER: a turn\'s stands of a kind are one ask; each stands as i
   assert.deepEqual(marked.map((f) => f.entity.champion), ['thorned', 'thorned']);
 });
 
-test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite, a species its pixel\'s tables do not hold, a class foe over the owner\'s level, a member standing twice, a grant under another\'s name, a record with none from an owner that carries them - each tallied by sender and reason, and handed to the cell; while the law enforces a forged grant or none stands down, and a species off its tables stands (mutants: the marks unchecked; the species unchecked; the sender unchecked; the tally never handed on; every refusal stood down)', async () => {
+test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite, a species its pixel\'s tables do not hold, a class foe over the owner\'s level, a member standing twice, a grant under another\'s name, a record with none from an owner that carries them - each tallied by sender and reason, and handed to the cell; while the law enforces a forged grant or none stands down, never to be rebuilt on that grant, and a species off its tables stands (mutants: the marks unchecked; the species unchecked; the sender unchecked; the tally never handed on; every refusal stood down; a stood-down record rebuilt)', async () => {
   const R = await relay();
   const O = await player(R, OWNER);
   const foes = await Promise.all([0, 1].map((k) => O.pool.spawnFoe(0, [100 + k, 0, 100], { grantKind: 'enc' })));
@@ -209,6 +214,14 @@ test('GRANT3 THE READER: an honest owner\'s foes stand untallied; a forged elite
   await settle(16);
   assert.deepEqual([900, 903].map((i) => E.pool.foes.some((f) => f.puppet === OWNER && f.seq === i && !f.dead)), [false, false], 'a forged elite and a record with no grant never stand');
   assert.equal(E.pool.foes.filter((f) => f.puppet === OWNER && !f.dead).length, 2);
+  // AUDIT GRANT A11: the same record again - never rebuilt, checked or tallied a second time
+  const built = E.pool.foes.length, marks = E.host.tallied().get(`${OWNER}|marks`), check = E.host.check;
+  let checks = 0;
+  E.host.check = (...a) => { checks++; return check(...a); };
+  E.pool.applyFoes(OWNER, forged([{ ...honest.f[plainMember], i: 900, gr: [gr.g, plainMember], z: 1 }], honest.gs, 64));
+  await settle(16);
+  E.host.check = check;
+  assert.deepEqual([checks, E.pool.foes.length, E.host.tallied().get(`${OWNER}|marks`)], [0, built, marks], 'stood down once, on this grant: never built or checked again');
 });
 
 test('GRANT3 THE HEIR: a foe handed on at a death or a door asks the relay to sign its member to the heir, and the heir\'s game ties the grant to the foe it took - before or after the foe lands; the owner\'s member ends with it (mutants: the heir ask never sent; the heir\'s grant never tied)', async () => {
@@ -223,8 +236,9 @@ test('GRANT3 THE HEIR: a foe handed on at a death or a door asks the relay to si
   let handed = null;
   O.pool.handOver(() => HEIR, (batch) => { handed = batch; return true; });
   await settle(12);
-  const heirAsk = O.session.asks.find((a) => a.k === 'heir');
+  const heirAsk = O.session.asks.find((a) => a.k === 'heir')?.hs?.[0];
   assert.deepEqual([heirAsk?.to, heirAsk?.i, heirAsk?.gr.g], [HEIR, 0, gr.g]);
+  assert.ok(O.session.asks.findIndex((a) => a.k === 'heir') < O.session.asks.findIndex((a) => a.k === 'free'), 'AUDIT GRANT A7: the heir asked before its grant is freed');
   assert.equal(gr._members, 0, 'the owner\'s member is gone');
   H.pool.applyFoes(OWNER, JSON.parse(JSON.stringify(handed)));
   await settle(12);

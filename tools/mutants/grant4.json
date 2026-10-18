@@ -142,8 +142,8 @@
   {
     "name": "GRANT4-watch-unasked",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "      if (onWatch && _net.grants && !_net.grants.watchReady(f)) continue;",
-    "new": "",
+    "old": "      if (onWatch && _net.grants && !_net.grants.watchReady(f, _grantPool)) continue;",
+    "new": "      void _grantPool;",
     "why": "the watch never asks a grant",
     "tests": [
       "test/scenes/grant4_lanes.test.js"
@@ -193,8 +193,8 @@
   {
     "name": "GRANT4-carry-into-room-client",
     "file": "src/scenes/grantHost.js",
-    "old": "if (from && !carrying && isCellRoom(s.room)) void carry(s.room);",
-    "new": "if (from && !carrying) void carry(s.room);",
+    "old": "carryTo = from && isCellRoom(s.room) ? s.room : null;",
+    "new": "carryTo = from ? s.room : null;",
     "why": "a cell's grants carried into a room",
     "tests": [
       "test/scenes/grant4_lanes.test.js"
@@ -213,8 +213,8 @@
   {
     "name": "GRANT4-free-elsewhere",
     "file": "src/scenes/grantHost.js",
-    "old": "if (!gr._dead && gr.q === open()?.room) send({ k: 'free', g: gr.g });",
-    "new": "if (!gr._dead) send({ k: 'free', g: gr.g });",
+    "old": "if (!gr._dead && gr.q === open()?.room) post('free', gr.g);",
+    "new": "if (!gr._dead) post('free', gr.g);",
     "why": "a free sent to a room that does not hold it",
     "tests": [
       "test/scenes/grant4_lanes.test.js"

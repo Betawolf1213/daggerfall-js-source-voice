@@ -2,8 +2,8 @@
   {
     "name": "GRANT3-heir-past-handed-member",
     "file": "src/net/grantLaw.js",
-    "old": "!intIn(m.i, 0, gr.n - 1) || (gr.h >= 0 && gr.h !== m.i) ||",
-    "new": "!intIn(m.i, 0, gr.n - 1) ||",
+    "old": "if (!gr || !intIn(x.i, 0, gr.n - 1) || (gr.h >= 0 && gr.h !== x.i) || typeof x.to",
+    "new": "if (!gr || !intIn(x.i, 0, gr.n - 1) || typeof x.to",
     "why": "a handed grant's heir asked for a member it does not stand",
     "tests": [
       "test/net/grant3_asks.test.js"
@@ -32,8 +32,8 @@
   {
     "name": "GRANT3-member-handed-twice",
     "file": "server/src/index.js",
-    "old": " && !live?.handed?.has(ask.i) && await grantSignedHere(",
-    "new": " && await grantSignedHere(",
+    "old": " && now <= gr.x && !live.handed?.has(i) && await grantSignedHere(",
+    "new": " && now <= gr.x && await grantSignedHere(",
     "why": "one member handed on to two heirs",
     "tests": [
       "test/net/grant3_asks.test.js"
@@ -42,8 +42,8 @@
   {
     "name": "GRANT3-renew-anothers",
     "file": "server/src/index.js",
-    "old": "if (live && live.gr.o === a.id) grs.push(",
-    "new": "if (live) grs.push(",
+    "old": "      if (live) { if (live.gr.o === a.id) grs.push(",
+    "new": "      if (live) { if (live) grs.push(",
     "why": "a socket renews another's grant",
     "tests": [
       "test/net/grant3_asks.test.js"
@@ -52,8 +52,8 @@
   {
     "name": "GRANT3-free-anothers",
     "file": "server/src/index.js",
-    "old": "    if (!live || live.gr.o !== a.id) return;\n    G.live.delete(ask.g);",
-    "new": "    if (!live) return;\n    G.live.delete(ask.g);",
+    "old": "      if (!live || live.gr.o !== a.id) continue;\n      G.live.delete(g);",
+    "new": "      if (!live) continue;\n      G.live.delete(g);",
     "why": "a socket frees another's grant off the cell's count",
     "tests": [
       "test/net/grant3_asks.test.js"
@@ -132,8 +132,8 @@
   {
     "name": "GRANT3-free-never-asked",
     "file": "src/scenes/grantHost.js",
-    "old": "    if (!gr._dead && gr.q === open()?.room) send({ k: 'free', g: gr.g });",
-    "new": "    void open;",
+    "old": "    if (!gr._dead && gr.q === open()?.room) post('free', gr.g);",
+    "new": "    void post;",
     "why": "a grant's last member gone and the cell still counts it",
     "tests": [
       "test/scenes/grant3_pool.test.js"
@@ -182,7 +182,7 @@
   {
     "name": "GRANT3-heir-never-asked",
     "file": "src/scenes/grantHost.js",
-    "old": "send({ k: 'heir', gr: wireGrant(gr), i: f._grantI, to });",
+    "old": "post('heir', { gr: wireGrant(gr), i: f._grantI, to });",
     "new": "void 0;",
     "why": "a foe handed on without asking its member for its heir",
     "tests": [
