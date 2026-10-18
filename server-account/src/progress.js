@@ -118,8 +118,14 @@ export const forgetProgressConfig = (/** @type {any} */ db) => { const key = key
  * character (`character`); a route that names none asks the seat alone.
  * @param {any} db @param {string} playerId @param {{ named: boolean, character?: unknown }} claim
  */
-export async function progressRefusal(db, playerId, { named, character }) {
-  const row = await db.prepare('SELECT id, held FROM realm_characters WHERE player = ?1 AND lease IS NOT NULL AND dead_at IS NULL').bind(playerId).first();
+export async function progressRefusal(db, playerId, claim) {
+  return seatRefusalOf(await seatRead(db, playerId).first(), claim);
+}
+/** PRIMARY-FOLD: the seat's question, and its row's answer - progressRefusal's, whichever way the row was read (the door
+ *  asks it beside its other questions, door.js doorReads). */
+const seatRead = (/** @type {any} */ db, /** @type {string} */ playerId) =>
+  db.prepare('SELECT id, held FROM realm_characters WHERE player = ?1 AND lease IS NOT NULL AND dead_at IS NULL').bind(playerId);
+export function seatRefusalOf(/** @type {any} */ row, /** @type {{ named: boolean, character?: unknown }} */ { named, character }) {
   if (!row || (named && character !== row.id)) return { error: 'progress-seat' };
   if (row.held) return { error: 'trade-held', held: row.held };
   return null;
@@ -127,8 +133,15 @@ export async function progressRefusal(db, playerId, { named, character }) {
 
 /** A stream's bucket and the account's play, as one read: `{ now, allowance, playedAt }`, or null for no account row. */
 async function bucketOf(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {string} */ stream) {
-  const row = await db.prepare('SELECT p.played_s AS now, b.allowance, b.played_at FROM players p LEFT JOIN progress_play b ON b.player = p.id AND b.stream = ?2 WHERE p.id = ?1')
-    .bind(playerId, stream).first();
+  return bucketFrom(await bucketRead(db, playerId, stream).first());
+}
+/** PRIMARY-FOLD: the bucket's question, and its row read as bucketOf answers (the door asks it for the route's own
+ *  stream, door.js doorReads). The play it reads (`players.played_s`) moves only by the heartbeat's credit (accounts.js
+ *  creditPlay), never inside a progress route, so the door's read is the one the route's spend would ask. */
+const bucketRead = (/** @type {any} */ db, /** @type {string} */ playerId, /** @type {string} */ stream) =>
+  db.prepare('SELECT p.played_s AS now, b.allowance, b.played_at FROM players p LEFT JOIN progress_play b ON b.player = p.id AND b.stream = ?2 WHERE p.id = ?1')
+    .bind(playerId, stream);
+export function bucketFrom(/** @type {any} */ row) {
   if (!row) return null;
   return { now: Number(row.now) || 0, allowance: row.allowance == null ? null : Number(row.allowance), playedAt: row.played_at == null ? null : Number(row.played_at) };
 }
@@ -136,8 +149,8 @@ async function bucketOf(/** @type {any} */ db, /** @type {string} */ playerId, /
 const playedSince = (/** @type {{ now: number, playedAt: number | null }} */ b) => (b.playedAt == null ? 0 : Math.max(0, b.now - b.playedAt));
 
 /** What a stream's bucket holds now - what an enforced line lets the next claim take. */
-export async function progressRoom(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {string} */ stream, /** @type {any} */ config) {
-  const b = await bucketOf(db, playerId, stream);
+export async function progressRoom(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {string} */ stream, /** @type {any} */ config, /** @type {any} */ bucket = undefined) {
+  const b = bucket !== undefined ? bucket : await bucketOf(db, playerId, stream);   // PRIMARY-FOLD: the door's read, when it asked it
   if (!b) return 0;
   return stepBudget({ allowance: b.allowance, played: playedSince(b), gain: 0, band: config.streams[stream] }).allowance;
 }
@@ -146,12 +159,14 @@ export async function progressRoom(/** @type {any} */ db, /** @type {string} */ 
  * A CLAIM'S SPEND: the bucket filled by the play since it last moved and spent by `amount`, and the hour's measure - the
  * amount, the play it came in, and what it took past the bucket (`over`) - in one batch. Answers the step
  * (`{ allowance, over }`), or null for nothing spent.
- * @param {any} db @param {string} playerId @param {string} stream @param {number} amount @param {number} nowS @param {any} config
+ * PRIMARY-FOLD: `bucket` the door's read of this stream's bucket (door.js doorReads), when it asked it - the read here
+ * is then asked of nobody.
+ * @param {any} db @param {string} playerId @param {string} stream @param {number} amount @param {number} nowS @param {any} config @param {any} [bucket]
  */
-export async function spendProgress(db, playerId, stream, amount, nowS, config) {
+export async function spendProgress(db, playerId, stream, amount, nowS, config, bucket = undefined) {
   const line = config.streams[stream];
   if (!line || !Number.isFinite(amount) || amount <= 0) return null;
-  const b = await bucketOf(db, playerId, stream);
+  const b = bucket !== undefined ? bucket : await bucketOf(db, playerId, stream);   // PRIMARY-FOLD: the door's read of it
   if (!b) return null;
   const played = playedSince(b);
   const step = stepBudget({ allowance: b.allowance, played, gain: Math.trunc(amount), band: line, enforce: config.enforce });
@@ -197,10 +212,17 @@ export function progressSpentOf(path, a) {
   return out;
 }
 
-/** A route's answer, spent: every stream it took from (progressSpentOf), each its own bucket. */
-export async function progressSpent(/** @type {any} */ ctx, /** @type {string} */ playerId, /** @type {string} */ path, /** @type {any} */ answer) {
+/** A route's answer, spent: every stream it took from (progressSpentOf), each its own bucket. PRIMARY-FOLD: `door` the
+ *  door's read of the route's own stream (`{ stream, bucket }`, door.js doorReads) - that stream's first spend reads none
+ *  of its own; any other stream, and a second spend of it, reads its bucket as it always did. */
+export async function progressSpent(/** @type {any} */ ctx, /** @type {string} */ playerId, /** @type {string} */ path, /** @type {any} */ answer, /** @type {any} */ door = null) {
   const spent = progressSpentOf(path, answer);
   if (!spent.length) return;
   const config = await progressConfig(ctx.db);
-  for (const [stream, amount] of spent) await spendProgress(ctx.db, playerId, stream, amount, ctx.nowS, config);
+  let held = door && door.bucket !== undefined ? door : null;
+  for (const [stream, amount] of spent) {
+    const bucket = held && held.stream === stream ? held.bucket : undefined;
+    if (bucket !== undefined) held = null;
+    await spendProgress(ctx.db, playerId, stream, amount, ctx.nowS, config, bucket);
+  }
 }

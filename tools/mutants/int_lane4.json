@@ -66,7 +66,7 @@
   {
     "name": "INT17-renown-unmeasured",
     "file": "server-account/src/index.js",
-    "old": "        await progressSpent(ctx, who.player.id, path, r);   // INT17: what it credited, measured against the play that paid for it",
+    "old": "        await progressSpent(ctx, who.player.id, path, r, door);   // INT17: what it credited, measured against the play that paid for it",
     "new": "",
     "why": "a Renown report spends no bucket and keeps no hour - the measure staff set the line from is empty",
     "tests": ["test/server/int16_progress.test.js"]

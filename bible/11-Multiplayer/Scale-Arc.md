@@ -2906,6 +2906,40 @@ host's wiring. `tools/mutants/gatedoor.json`: 8, all dead (a ninth - the door re
 it aimed at was redundant, a refusal from before arrival first seen on the arrival's own frame: taken out). PIN MOVED: the
 relay version's 45 pins, world217 to world218 (each pin's history kept).
 
+### PRIMARY-FOLD part one: built (2026-10-18, this branch - no version, no migration, no drop) - the door's reads in one trip
+
+**Counted first** (the survey's trip counter: the real Worker over node:sqlite, every round trip marked primary or replica
+by D1's session law - the session's first statement the primary's under `first-primary`, every write and all after it
+the primary's). A progression claim (`progress.js` PROGRESS_ROUTES: Renown, a raid's cleanse, a camp, the Watch, a silver
+find, a profession's act) asked the primary four reads of its own besides its route's: the tombstone of the body's
+`character` (`legacy.js` isTombstone, every request naming one), the account's seat (`progressRefusal`), its stream's
+bucket while the line is enforced (`progressRoom`), and the bucket again at its spend (`spendProgress`'s bucketOf). Each
+was a round trip, and the primary is capped by its round trips (PRIMARY-TRIPS).
+
+**Built.** The door asks a claim's three questions as ONE statement (`server-account/src/door.js` doorReads - each
+question a subquery worded as it was asked alone), and answers them in the order each was asked: the tombstone (410
+`dead`), the account's rate (in memory), the seat (`seatRefusalOf`, progressRefusal's own law), the enforced room from
+the door's bucket. The spend takes the door's bucket for the route's own stream (`progressSpent`'s `door`); any other
+stream an answer pays (a cleanse's Renown) reads its own. The play the bucket reads (`players.played_s`) moves only by
+the heartbeat's credit (`accounts.js` creditPlay), never inside a claim, so the door's read is the one the spend would
+ask. One statement, not a batch: eight pins drop every `db.batch` to prove a route answers its own failure (503), and a
+batch at the door would have answered them first; the routes' batches keep every failure they had. A request that names
+a character and claims nothing asks the tombstone alone, as it did.
+
+**Counted after:** a Renown claim 7 trips to 5, with a region 8 to 6, with a name 6 to 4; a harvest 10 to 8; every other
+claim two fewer (the door's two to one, the spend's read gone); nothing else moved. At the evening's measured rates (a
+Renown claim some 1.4 a second, a harvest some 0.5 - PRIMARY-TRIPS' statements a second over each route's statements a
+request) that is some 4-6 of the primary's trips a second of the 90-130 the plan names; the rest of PRIMARY-FOLD below.
+
+**Pins.** `test/server/primaryfold.test.js` (3): the oracle - the door answers as the three questions did asked alone,
+over every state they read; the trips - an enforced claim asks the seat and the bucket of nobody else, credited and spent
+from the door's read; the spend - the door's bucket to its own stream alone. `tools/mutants/primaryfold.json`: 10 - 9
+dead, 1 equivalent as recorded (the door's bucket offered once: no answer spends a stream twice today). Two survived
+their first run - the hold read off another row than the seat's, and the door's bucket handed to every stream - and the
+pins were made to reach them. PIN MOVED: `int16_progress.test.js` (the seat judged off the door's read),
+`auditlegacy3.test.js` (the tombstone the door's first answer); re-aimed by content, all dead: AUDIT-LEGACY-III-O5's two
+and O12's two, INT17-renown-unmeasured.
+
 ### Decisions for the owner
 
 4. **How long a signed-out session may still read.** A signed session lives a few minutes (the relay's identity tokens

@@ -303,11 +303,12 @@ import {
 } from './realm.js';   // REALM P1: the realm's characters; ARENA4b: the level on a realm character's tile, the token's `cl`
 import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill the playing character's budget
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
-import { PROGRESS_ROUTES, progressRefusal, progressConfig, progressRoom, progressSpent } from './progress.js';   // INT16-INT17: a progression claim's seat, and the play that pays for it
+import { doorReads } from './door.js';   // PRIMARY-FOLD: the door's reads in one trip
+import { PROGRESS_ROUTES, seatRefusalOf, progressConfig, progressRoom, progressSpent } from './progress.js';   // INT16-INT17: a progression claim's seat, and the play that pays for it
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realm/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
 import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record; MAC (2026-10-14): its killer's piece in escrow - collected, taken back, listed
-import { listLineages, putLineage, realmDie, realmRaise, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone; REZ-BLOODLINE AUDIT R1: a Resurrect inside its hold
+import { listLineages, putLineage, realmDie, realmRaise, realmWed, listUnions, LINEAGE_BODY_MAX } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone; REZ-BLOODLINE AUDIT R1: a Resurrect inside its hold
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
 import { blocksOf, blockAccount, unblockAccount, fileReport, agreeConduct, conductAgreed, takeFeed, bannedAnswer, resolveCase, modCases, modCase, modDismiss, REPORT_BODY_MAX } from './safety.js';   // SAFE1-SAFE7: the chat's safety
@@ -976,7 +977,12 @@ const service = {
       // death. Asked here, once, before any route - but the token's mint, which is no act: it vouches for the account,
       // and mints a tombstone no realm character (REALM-DOOR's `rc` 0, no house, no `ci`), which the relay's door refuses;
       // a page under its death screen still mints for the hub it stands in.
-      if (path !== '/v1/auth/token' && typeof body.character === 'string' && (await isTombstone(db, who.player.id, body.character))) return no('dead', 410, origin);
+      // PRIMARY-FOLD (bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000): the door's reads - the tombstone of a body's
+      // `character`, and a progression claim's seat and its stream's bucket - in one trip (door.js doorReads), answered in
+      // the order each was asked on its own
+      const progressRoute = request.method === 'POST' ? PROGRESS_ROUTES[/** @type {keyof typeof PROGRESS_ROUTES} */ (path)] : undefined;
+      const door = await doorReads(db, who.player.id, { tomb: path !== '/v1/auth/token' && typeof body.character === 'string' ? body.character : null, stream: progressRoute ? progressRoute[0] : null });
+      if (door.dead) return no('dead', 410, origin);
 
       // AUDIT-ACC F12: A CREDENTIAL IS NOT A LICENCE TO HAMMER. The
       // open routes were bounded per address and everything behind a
@@ -997,14 +1003,13 @@ const service = {
       // camp, the Watch, a silver find, a profession's XP (progress.js PROGRESS_ROUTES) asked of the account's realm character
       // holding its lease, never one the judge holds, before any route reads a word of it. INT17: and once staff enforce the
       // line, a stream whose bucket play has not refilled is refused, and a Renown report asks no more than the bucket holds.
-      const progressRoute = request.method === 'POST' ? PROGRESS_ROUTES[/** @type {keyof typeof PROGRESS_ROUTES} */ (path)] : undefined;
       if (progressRoute) {
         const [stream, named] = progressRoute;
-        const seat = await progressRefusal(db, who.player.id, { named, character: body.character });
+        const seat = seatRefusalOf(door.seat, { named, character: body.character });   // PRIMARY-FOLD: the door's read of the seat
         if (seat) return json(seat, 403, origin);
         const line = await progressConfig(db);
         if (line.enforce) {
-          const room = await progressRoom(db, who.player.id, stream, line);
+          const room = await progressRoom(db, who.player.id, stream, line, door.bucket);   // PRIMARY-FOLD: and of the bucket
           if (room < 1) return no('progress-play', 429, origin);
           if (stream === 'renown' && Number.isSafeInteger(body.xp)) body.xp = Math.min(body.xp, room);
         }
@@ -1298,7 +1303,7 @@ const service = {
         });
         if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
         if (r.recorded === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
-        await progressSpent(ctx, who.player.id, path, r);   // INT17: a cleanse, and the Renown it paid
+        await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a cleanse, and the Renown it paid
         let order = null;
         if (r.renown?.rose) {
           const key = await signingKey(env, subtle);
@@ -1468,7 +1473,7 @@ const service = {
         // SEAT1b (Seats-Arc 4.2: "The Renown report grows `region`"): what this report CREDITED - never what it asked, and
         // nothing for a repeat - kept for the character's war-guild where it pledged in that region
         if (body.region != null && r.credited > 0 && !r.repeat) await creditRenown(ctx, who.player, env, { character: body.character, region: body.region, xp: r.credited });
-        await progressSpent(ctx, who.player.id, path, r);   // INT17: what it credited, measured against the play that paid for it
+        await progressSpent(ctx, who.player.id, path, r, door);   // INT17: what it credited, measured against the play that paid for it
         let order = null;
         if (r.rose || (r.repeat && r.level > 1)) {
           const key = await signingKey(env, subtle);
@@ -1693,7 +1698,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a find
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a find
         return 'error' in r ? no(r.error, MARKS_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1774,7 +1779,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a camp, the Watch's ticks
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a camp, the Watch's ticks
         return 'error' in r ? no(r.error, SEAT_STATUS[r.error] ?? 400, origin) : json(r, 200, origin);
       }
 
@@ -1823,7 +1828,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if (progressRoute) await progressSpent(ctx, who.player.id, path, r);   // INT17: a profession's XP, a harvest's silver, a writ's Renown
+        if (progressRoute) await progressSpent(ctx, who.player.id, path, r, door);   // INT17: a profession's XP, a harvest's silver, a writ's Renown
         // AUDIT PROF-541 B2: a realm record's sequence (a checkpoint's own word) and a refusal's `why` ride with it
         if ('error' in r) return json({ error: r.error, ...(typeof r.why === 'string' ? { why: r.why } : {}), ...(r.error === 'seq' && Number.isSafeInteger(r.seq) ? { seq: r.seq } : {}) }, PROF_STATUS[r.error] ?? 400, origin);
         if (r.renown?.rose) {

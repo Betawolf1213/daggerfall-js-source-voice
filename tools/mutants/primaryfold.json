@@ -1,0 +1,95 @@
+[
+ {
+  "name": "PRIMARYFOLD-seat-always-found",
+  "file": "server-account/src/door.js",
+  "old": "out.seat = r?.seat_id != null ? { id: r.seat_id, held: r.seat_held } : null;",
+  "new": "out.seat = { id: r?.seat_id, held: r?.seat_held };",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-bucket-of-no-account",
+  "file": "server-account/src/door.js",
+  "old": "out.bucket = r?.player ? bucketFrom(",
+  "new": "out.bucket = r ? bucketFrom(",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-tombstone-of-nothing",
+  "file": "server-account/src/door.js",
+  "old": "    if (tomb != null) out.dead = await isTombstone(db, playerId, tomb);\n",
+  "new": "    out.dead = await isTombstone(db, playerId, tomb ?? '');\n    out.dead = true;\n",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-seat-hold-of-another-row",
+  "file": "server-account/src/door.js",
+  "old": "(SELECT held FROM realm_characters WHERE player = ?1 AND lease IS NOT NULL AND dead_at IS NULL) AS seat_held,",
+  "new": "(SELECT held FROM realm_characters WHERE player = ?1 AND dead_at IS NULL) AS seat_held,",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-room-asks-again",
+  "file": "server-account/src/index.js",
+  "old": "const room = await progressRoom(db, who.player.id, stream, line, door.bucket);",
+  "new": "const room = await progressRoom(db, who.player.id, stream, line);",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-spend-asks-again",
+  "file": "server-account/src/index.js",
+  "old": "await progressSpent(ctx, who.player.id, path, r, door);   // INT17: what it credited",
+  "new": "await progressSpent(ctx, who.player.id, path, r);   // INT17: what it credited",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-door-asks-no-stream",
+  "file": "server-account/src/index.js",
+  "old": "stream: progressRoute ? progressRoute[0] : null });",
+  "new": "stream: null });",
+  "tests": [
+   "test/server/primaryfold.test.js",
+   "test/server/int16_progress.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-door-bucket-every-stream",
+  "file": "server-account/src/progress.js",
+  "old": "const bucket = held && held.stream === stream ? held.bucket : undefined;",
+  "new": "const bucket = held ? held.bucket : undefined;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-door-bucket-unread",
+  "file": "server-account/src/progress.js",
+  "old": "const b = bucket !== undefined ? bucket : await bucketOf(db, playerId, stream);   // PRIMARY-FOLD: the door's read of it",
+  "new": "const b = await bucketOf(db, playerId, stream);   // PRIMARY-FOLD: the door's read of it",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-door-bucket-once",
+  "file": "server-account/src/progress.js",
+  "old": "    if (bucket !== undefined) held = null;\n",
+  "new": "",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "equivalent": true,
+  "why": "No route's answer spends one stream twice today (progressSpentOf names each stream once), so the door's bucket is never offered a second time; the line keeps a future answer that did from spending a bucket the first spend already moved."
+ }
+]
