@@ -96,7 +96,7 @@ export function beginCraft(f, craft, { now = Date.now() } = {}) {
   f._craft = { kind: craft, at: now, hp: e.health, fired: 0 };
   const at = f.ai?.feet ?? null;
   if (craft === 'smoke') {
-    try { assignModBundle(e, { name: 'Unquiet smoke', kind: 'chameleonNormal', rounds: CRAFT.SMOKE_ROUNDS }); } catch { /* no effects: it runs plain */ }
+    try { assignModBundle(e, { name: t('rvn.unq.craft.smoke', 'Smoke'), kind: 'chameleonNormal', rounds: CRAFT.SMOKE_ROUNDS }); } catch { /* no effects: it runs plain */ }
     puff(at);
   } else if (craft === 'sink') {
     f.portalFx = { dir: 'out', at: now, delay: CRAFT.SINK_DELAY, ms: CRAFT.SINK_MS, tint: CRAFT_TINT.sink };

@@ -191,8 +191,8 @@ export const REVENANT_EPITHETS = Object.freeze({
   deserted: Object.freeze(['the Oathbreaker']),
   // RVN11c (22.3): it turned on me
   betrayed: Object.freeze(['the Betrayer']),
-  // from rank 3, whatever the deed (UNQUIET: "the Dread" is the ascended's alone now)
-  risen: Object.freeze(['the Thrice-Risen', 'the Undying', 'the Unquiet', 'Revenant of {p}', 'the Relentless', '{p}\'s Shadow']),
+  // from rank 3, whatever the deed (UNQUIET: "the Dread" is the ascended's alone now - `dread` below)
+  risen: Object.freeze(['the Thrice-Risen', 'the Undying', 'Revenant of {p}', 'the Relentless', '{p}\'s Shadow']),
   // UNQUIET (section 46): a rank-5 revenant that got away once more - gone to ground in its lair for good
   dread: Object.freeze(['the Dread']),
 });

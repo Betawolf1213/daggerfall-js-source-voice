@@ -706,7 +706,7 @@ const HARDCODED = {
   'src/ui/restWindow.js': 7,
   'src/ui/revenant/revenantCard.js': 5,
   'src/ui/revenant/revenantFateView.js': 3,
-  'src/ui/revenant/revenantPage.js': 48,
+  'src/ui/revenant/revenantPage.js': 45,
   'src/ui/saveTile.js': 1,
   'src/ui/screenshot.js': 5,
   'src/ui/superDungeon/sdMapMark.js': 1,

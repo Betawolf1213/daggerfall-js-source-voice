@@ -480,7 +480,7 @@
   {
     "name": "UNQUIET-smoke-no-chameleon",
     "file": "src/systems/revenant/revenantUnquiet.js",
-    "old": "    try { assignModBundle(e, { name: 'Unquiet smoke', kind: 'chameleonNormal', rounds: CRAFT.SMOKE_ROUNDS }); } catch { /* no effects: it runs plain */ }\n",
+    "old": "    try { assignModBundle(e, { name: t('rvn.unq.craft.smoke', 'Smoke'), kind: 'chameleonNormal', rounds: CRAFT.SMOKE_ROUNDS }); } catch { /* no effects: it runs plain */ }\n",
     "new": "",
     "tests": [
       "test/systems/revenant/unquiet.test.js"

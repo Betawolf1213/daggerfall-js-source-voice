@@ -1345,7 +1345,7 @@ A town's rumour of it ends with what it does ("Word is it asks after you by name
 ### 46.7 The Dread
 
 A rank-V revenant that **gets away once more**, with a lair to go to, **ascends** (`mayAscend`). It takes the epithet
-"the Dread" (now the ascended's alone - "the Unquiet" took its place among the risen epithets), the `ascended` deed and
+"the Dread" (now the ascended's alone - the risen epithets no longer carry it), the `ascended` deed and
 its card ("Grushnak will run no more. It has gone to ground in the Tomb of Vaness - the Dread now - and waits for you
 there."), and its lair is known.
 
