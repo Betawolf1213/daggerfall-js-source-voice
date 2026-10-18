@@ -38,6 +38,7 @@ test('RELAY-LOAD the questions: each over the relay\'s own dataset and window, e
   assert.match(kinds, /SUM\(\(double10 \+ double11\) \* _sample_interval\) AS storage/);
   assert.match(kinds, /MAX\(double15\) AS peak/, 'a room\'s peak, unweighted');
   assert.match(kinds, /blob1 AS kind/);
+  assert.match(kinds, /, 0\.0\) AS sends_per_pose/, 'both arms of the IF a Double: the SQL API refuses a Double beside an Integer (HTTP 422, met live on 2026-10-18)');
   assert.match(kinds, /GROUP BY kind ORDER BY sends DESC/);
   const windows = loadSql('windows', 1);
   assert.match(windows, /toStartOfInterval\(timestamp, INTERVAL '5' MINUTE\) AS bucket/);

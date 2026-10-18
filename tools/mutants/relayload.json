@@ -54,6 +54,15 @@
   ]
  },
  {
+  "name": "RELAYLOAD-if-integer",
+  "file": "tools/relayLoad.mjs",
+  "old": "${W.sends} / ${W.poses}, 0.0) AS sends_per_pose",
+  "new": "${W.sends} / ${W.poses}, 0) AS sends_per_pose",
+  "tests": [
+   "test/server/relayload.test.js"
+  ]
+ },
+ {
   "name": "RELAYLOAD-input-spliced",
   "file": ".github/workflows/relay-load.yml",
   "old": "node tools/relayLoad.mjs --sql \"$q\" \"$HOURS\"",

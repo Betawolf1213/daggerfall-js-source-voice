@@ -2695,8 +2695,19 @@ rides the next relay slice that drops anyway.
 **Pins.** `test/server/relayload.test.js` (2): the questions over the relay's dataset (read off `server/wrangler.toml`),
 each double the field a flushed RoomMetrics point carries there, every sum weighted, a peak unweighted, the orders, the
 window refused before the SQL, an answer drawn; the workflow by hand only, its input once as environment, its own
-queue, deploying nothing, its metrics step run under bash over a fake SQL API. `tools/mutants/relayload.json`: 9 - 8
+queue, deploying nothing, its metrics step run under bash over a fake SQL API. `tools/mutants/relayload.json`: 10 - 9
 dead, 1 equivalent as recorded (d1-load.yml's own belt and braces).
+
+**Met live, fixed.** The SQL API refused the kinds question (HTTP 422): an IF's two arms must be one type, and a Double
+beside the Integer `0` is not - `0.0` now, and pinned (RELAYLOAD-if-integer). The fake SQL API of the pins cannot know
+it; only the real one did.
+
+**The first reading** (2026-10-18, the last 24 hours, the crowds question, run by hand with the owner's token): every one
+of the forty busiest room-windows was `chat`, peaking at 1,074 sockets at 18:50 UTC and 1,054 at 21:24 UTC the day before,
+none refused busy or full, nothing dropped. That room is the hub's bus (`chat:world`): since SCALE5c it holds every
+shard's player as a ShardSocket in its own index (`_vhello`, `_adopt`), so its peak is the players on the hubs - the
+online count, about a thousand. The cap at its door (CHAT_SOCKETS_MAX) counts real sockets only, so the bus refuses
+nobody at 2,048; what it carries is every hub hello, leave and handed-up act of the whole world, one object's work.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
