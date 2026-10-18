@@ -448,7 +448,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     const p = purse();
     // the caps (firmamentLaw.js STAT_DEFS, BLOW_CAP, BLOW_TOTAL_CAP) and where the sky sleeps (firmamentPowers.js firmamentAwake: offline,
     // a duel or an arena bout, mentoring; never a blow or a spell at a player - a siege and the Wrothgarian zone included)
-    parts.push(el('p', 'fmt-note', `${t('firmament.side.caps', 'Limits for all stars together: +30% weapon damage (up to +50% against unaware foes or below half Health), +30% spell damage, 15% less damage taken.')} ${t('firmament.side.where', 'Stars work only online, and not while you mentor. Combat stars do nothing in duels or Arena fights, and never add damage against other players.')}`));
+    parts.push(el('p', 'fmt-note', `${t('firmament.side.caps', 'Limits for all stars together: +30% weapon damage (up to +50% against unaware foes, or while you are below half Health), +30% spell damage, 15% less damage taken.')} ${t('firmament.side.where', 'Stars work only online, and not while you mentor. Combat stars do nothing in duels or Arena fights, and never add damage against other players.')}`));
     parts.push(el('p', 'fmt-note', `${p.renown < p.refund.freeBelow
       ? t('firmament.side.refundFree', 'Removing stars is free until Renown {renown}.', { renown: p.refund.freeBelow })
       : t('firmament.side.refundCost', 'Removing an accepted star costs {silver} silver.', { silver: p.refund.perStar })} ${t('firmament.side.respec', 'A respec removes all your stars and your birthsign for {gold, number} gold.', GOLD)}`));
@@ -610,8 +610,8 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     focusSign();
     const c = changes();
     say(!(c.added || c.removed) ? t('firmament.build.same', 'You already have that build.')
-      : c.silver ? t('firmament.build.loadedCost', 'Build loaded. Press Accept to keep it. Removing the stars it leaves out costs {silver} silver.', { silver: c.silver })
-        : t('firmament.build.loaded', 'Build loaded. Press Accept to keep it.'));
+      : c.silver ? t('firmament.build.loadedCost', 'Build loaded. Press {accept} to keep it. Removing the stars it leaves out costs {silver} silver.', { silver: c.silver, accept: t('firmament.accept', 'Accept') })
+        : t('firmament.build.loaded', 'Build loaded. Press {accept} to keep it.', { accept: t('firmament.accept', 'Accept') }));
     return true;
   }
   /** THE RESPEC, asked first: every star and the birthsign back, for the gold. */
