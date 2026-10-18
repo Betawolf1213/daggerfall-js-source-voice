@@ -64,6 +64,13 @@
 // trail's road (onLowRoad, egPoseIn - the road of the route's nearest way, by height too), the leading member, the Divers'
 // island ahead and the Harriers' rise ahead of their member (spanLegion) - never z. Laws 4-8: the route's measure is their
 // z, their road the fork's by x, every number the number it was.
+// EG-PERFECT (2026-10-18, the owner: "I want to ensure ... the design of the halls, and everything is absolutely perfect"):
+// THE HALLS AS THE RELAY READS THEM, no hall drawn otherwise - a door its trial's end opens closes, in a hall laid as a way
+// (LAW 9), in EG_CLOSING_FIGHT_MS and its way from the trial's end to the door at THE SPAN BUILD with a quarter to spare
+// (egClosingMs: the door stood a median 180-240 m on and the closing was 20 s, so its cache was lost and the pull came first);
+// the Deserter raised and the Pit's Ashfall kept on the fight floor, never on the fight's bounding disc (`spec.fight`);
+// the Captive's chains the law laid off every fight floor (a hero chamber's under LAW 9) hung about the chamber's floor
+// (egCaptiveSpots); and a chamber's Casters on its raised anchors (egCasterStands, section 11.7).
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_REST_MS,
@@ -92,6 +99,7 @@ import { shDisc, shLane, egInShape } from './egShape.js';
 import { egBlowNear } from './egFloor.js';   // AUDIT EG III: Counterstroke's reach from a lord's blow
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)
 import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
+import { EG_BALCONY_OUT_CM, EG_BALCONY_R_CM } from './egFragLaw.js';   // EG-PERFECT: a kit chamber's balconies about its court - its Casters' reach
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from '../arena/arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
@@ -119,6 +127,10 @@ import { healRef } from '../gate/gateBrain.js';   // EG-ZF: a heal's share of th
 import { BRAIN_TICK_MS } from '../gate/gateBrain.js';   // EG-ZI: Lifeline's look back over the beat a count was last seen low
 import { EG_TRAIL_MS } from './egFair.js';   // EG-ZI: a Lifeline window kept while a blow in it may still be judged
 import { egRouteAlong, egRouteAlongAt, egRouteRoad, egRouteRoadAt, egRouteAhead } from './egRoute.js';   // THE ASCENT (LAW 9): progress along the hall's route
+import { egRouteOf } from './egRoute.js';   // EG-PERFECT: the route's paths, the trial's end on them
+import { egRouteSolved, EG_WAIT_MAX } from './egSpanLaw.js';   // EG-PERFECT: the way to the door at THE SPAN BUILD, a pair's proven wait
+import { egRouted } from './egRouteProof.js';   // EG-PERFECT: a hall laid as a way (LAW 9)
+import { egFeetAt, EG_GROUND_UNDER_M } from './egWalkGraph.js';   // EG-PERFECT: a caster anchor's raised floor; the hero box it stands in, by its feet
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
  *  rift and each anchor; a Rampart's gate's Ward-Bearers; a Muster's standard; a captive's chains; a Holdfast's hold. */
@@ -610,6 +622,42 @@ function ringSpots(spec, x, z, r, k, rng, y = NaN) {
   for (let i = 0; i < k; i++) { const a = (i / Math.max(1, k)) * Math.PI * 2 + rng(); out.push(egKeepOnFight(spec, x + Math.sin(a) * r, z + Math.cos(a) * r, 1, y)); }
   return out;
 }
+/**
+ * EG-PERFECT - A CHAMBER'S CASTER STANDS (section 11.4: "a second fight floor 3-4 m up, on two stairs, where Casters stand";
+ * section 11.7: "Casters stand at `anchors.caster` (raised where the chamber has a second floor)" - net/eliteGates/egFragLaw.js lays
+ * a kit chamber's on its balconies, a hero's records name theirs on its galleries, and the relay read none): `[x, z, y, ov, box]`
+ * for each caster anchor the law laid on a chamber (`spots.caster` whose fragment is one - a passage's stand on its own floor, no
+ * second one) - its raised floor's height (net/eliteGates/egWalkGraph.js egFeetAt: the floor in the band of the height its spot
+ * names, else the lowest under it - a kit chamber's spot names its chamber's floor and its balcony stands 2.5-4 m over it), the
+ * height its spot names (`ov` - the floor a kit balcony overlooks; NaN in a hall that judges in plan alone), and its chamber's
+ * reach (`box`, `[x0, y0, z0, x1, y1, z1]` - a hero's own box, else the kit chamber's court and its balconies about it, 1 m
+ * under its floor to 5 m over): a Caster takes the stand only when it rises in that chamber (net/eliteGates/egLegion.js
+ * egStandFree), never one a Vigil raises on the arrival plate. The same bodies the waves raise. Pure.
+ * @param {any} spec
+ */
+export function egCasterStands(spec) {
+  const view = egFightView(spec), out = [], pad = (EG_BALCONY_OUT_CM + EG_BALCONY_R_CM) / 100;
+  for (const q of spec?.spots?.caster ?? []) {
+    const f = spec.frags?.[q.f];
+    if (f?.cls !== 'chamber') continue;
+    const ov = spotY(spec, q), y = egFeetAt(view, q.x, q.z, ov), R = (f.z1 - f.z0) / 2, fy = f.y ?? 0;
+    const H = (spec.heroes ?? []).find((g) => q.x >= g.box[0] && q.x <= g.box[3] && q.z >= g.box[2] && q.z <= g.box[5] && y >= g.box[1] - EG_GROUND_UNDER_M && y <= g.box[4]);
+    const box = H ? [H.box[0], H.box[1] - 1, H.box[2], H.box[3], H.box[4], H.box[5]] : [f.x - R - pad, fy - 1, f.z0 - pad, f.x + R + pad, fy + 5, f.z1 + pad];
+    out.push([q.x, q.z, y, ov, box]);
+  }
+  return out;
+}
+/** EG-PERFECT: a fight piece's heart and reach - a disc's own; a polygon's box's middle and half its narrower side; a lane's
+ *  middle and half its width. */
+const pieceDisc = (f) => {
+  if (f.t === 'd') return { x: f.x, z: f.z, r: f.r };
+  if (f.t === 'l') return { x: (f.ax + f.bx) / 2, z: (f.az + f.bz) / 2, r: f.hw };
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
+  for (const [px, pz] of f.poly) { x0 = Math.min(x0, px); x1 = Math.max(x1, px); z0 = Math.min(z0, pz); z1 = Math.max(z1, pz); }
+  return { x: (x0 + x1) / 2, z: (z0 + z1) / 2, r: Math.min(x1 - x0, z1 - z0) / 2 };
+};
+/** EG-PERFECT: a polygon piece's box's area (m^2) - the widest of a hero chamber's fight floors is its court. */
+const boxArea = (f) => { const xs = f.poly.map((p) => p[0]), zs = f.poly.map((p) => p[1]); return (Math.max(...xs) - Math.min(...xs)) * (Math.max(...zs) - Math.min(...zs)); };
 /** THE ASCENT (section 2): a law spot's floor height (its `y`, the law's centimetres) where hall `spec` judges by height; else
  *  not known (NaN - a body stood there stands on the fight ground under it, as before). */
 const spotY = (spec, q) => (egByHeight(spec) && Number.isFinite(q?.y) ? q.y / 100 : NaN);
@@ -640,6 +688,7 @@ function standFight(B, spec, now, rng, out) {
   const n = F.n, P = F.pg;
   F.waveAt = now + 4000 + still;
   F.still = still;
+  F.stands = egCasterStands(spec);   // EG-PERFECT (section 11.7): a chamber's Casters on its raised anchors
   const v = spec.variant;
   if (spec.kind === 'yard') {
     if (v === 'wellspring') {
@@ -667,7 +716,7 @@ function standFight(B, spec, now, rng, out) {
       if (v === 'wellmouth') { F.wander = 1; F.wanderAt = now + 20_000; }
       P.obj = 'rifts';
     }
-    if (spec.twist === 'deserter') { egLegionRaise(F, [EG_KIND.deserter], [[spec.fight.x, spec.fight.z - spec.fight.r + 3]], now, out); F.desClosed = 0; F.coClosed = 0; }
+    if (spec.twist === 'deserter') { egLegionRaise(F, [EG_KIND.deserter], [egKeepOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 1)], now, out); F.desClosed = 0; F.coClosed = 0; }   // EG-PERFECT: on the court, a metre in - `r` the bounding disc's, half its box's diagonal, and its spot 7-14 m past the court's rim
     // AUDIT EG V (L3-4; section 8.7 - a Kynval Squad "in place of a wave", on a Rift-Yard or a Rampart): its four elites about the
     // yard's heart on its floor, the rifts' first wave held as the Rampart's march is
     if (spec.twist === 'squad') squadTwist(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, still, out);
@@ -882,7 +931,16 @@ function engineLands(B, F, spec, h, now, out) {
  */
 function hornStep(B, F, spec, now, inHall, rng, out) {
   const H = F.horn, at = spec.spots.horn[0];
-  if (H.ash && now >= H.ashAt) { H.ashAt = now + EG_ASHFALL_EVERY_MS; const c = spec.fight ?? at; for (let k = 0; k < 3; k++) { const a = rng() * Math.PI * 2, r = rng() * Math.max(2, (c.r ?? 12) - 3); zoneOut(F, 'burn', shDisc(c.x + Math.sin(a) * r, c.z + Math.cos(a) * r, 3), now + 1500, now + 7500, out, { y: spotY(spec, at), p: 0.06, b: 2, el: 'fire' }); } }
+  if (H.ash && now >= H.ashAt) {
+    H.ashAt = now + EG_ASHFALL_EVERY_MS;
+    // EG-PERFECT: "Ashfall in the Pit" - about the fight floor under its horn, each pool kept on it (the fight's bounding disc,
+    // `r` half its box's diagonal, threw 15-34% of them past a Pit's rim, and a Deepway's - over its whole hall - four in five)
+    const pit = egFightPieceAt(spec, at.x, at.z, 0, spotY(spec, at)), c = pit ? pieceDisc(pit) : spec.fight ?? at;
+    for (let k = 0; k < 3; k++) {
+      const a = rng() * Math.PI * 2, r = rng() * Math.max(2, (c.r ?? 12) - 3), [x, z] = pit ? egKeepOnFight({ fl: [pit] }, c.x + Math.sin(a) * r, c.z + Math.cos(a) * r, 1) : [c.x + Math.sin(a) * r, c.z + Math.cos(a) * r];
+      zoneOut(F, 'burn', shDisc(x, z, 3), now + 1500, now + 7500, out, { y: spotY(spec, at), p: 0.06, b: 2, el: 'fire' });
+    }
+  }
   if (!H.kv) {
     if (now < H.at || !inHall.length) return;
     const callee = inHall[Math.floor(rng() * inHall.length)];
@@ -922,13 +980,20 @@ export const EG_CHAINS = 3;
  * lays three (about a disc that is its first fight floor - a court, a chamber's); else the director's - a span's (or a Brink's)
  * on its islands spread along the course (its plates where it has fewer); a Deepway's about its chamber's floor, as the law
  * lays a court's; else along the hall's first lane (a Rampart's walkway) at its quarters. The law lays one chain where its
- * first floor is a lane, so a Rampart and most Deepways hung one and a span's hung in the air. `[x, z]` each. Pure.
+ * first floor is a lane, so a Rampart and most Deepways hung one and a span's hung in the air. EG-PERFECT (2026-10-18): the
+ * law's three where each hangs on a fight floor - LAW 9 laid a hero chamber's about the hall's origin line, off every floor
+ * where its way turned the chamber aside (seed 40's hall 66, seed 6's hall 22, seed 60's hall 99 - 3 of the 210 Captive halls
+ * of seeds 1-60); refused, about the chamber's own floor (a disc's as the law lays them, a hero's fight polygon's a quarter of
+ * its narrower side out, each kept on it). `[x, z]` each. Pure.
  * @param {any} spec
  * @returns {Array<[number, number]>}
  */
 export function egCaptiveSpots(spec) {
-  const law = spec.spots?.chain ?? [];
-  if (law.length >= EG_CHAINS) return law.slice(0, EG_CHAINS).map((q) => [q.x, q.z]);
+  const law = spec.spots?.chain ?? [], three = law.slice(0, EG_CHAINS);
+  // EG-PERFECT: the law's three only where each hangs on a fight floor (by its height, where the hall judges so) - LAW 9 lays a
+  // hero chamber's about the hall's origin line (x 0, the plan's X taken back), off its floor; refused, about the chamber's own
+  // floor (below). Every hall whose three hang on its floor keeps them
+  if (law.length >= EG_CHAINS && three.every((q) => egOnFight(spec, q.x, q.z, 0, spotY(spec, q)))) return three.map((q) => [q.x, q.z]);
   const about = (d) => [0, 120, 240].map((deg) => /** @type {[number, number]} */ ([d.x + Math.sin((deg * Math.PI) / 180) * (d.r / 2), d.z + Math.cos((deg * Math.PI) / 180) * (d.r / 2)]));
   if (spec.kind === 'span' || spec.kind === 'brink') {
     const fl = egFightView(spec).fl, by = (a, b) => egRouteAlong(spec, a) - egRouteAlong(spec, b);   // THE ASCENT: along the route
@@ -939,6 +1004,13 @@ export function egCaptiveSpots(spec) {
   }
   const ch = spec.spots?.chamber?.[0], disc = ch ? (spec.fl ?? []).find((f) => f.t === 'd' && Math.hypot(f.x - ch.x, f.z - ch.z) <= f.r) : null;
   if (disc) return about(disc);
+  // EG-PERFECT: the law's three refused - about a hero chamber's floor: the fight polygon under its chamber's spot (a Deepway's),
+  // else the hall's widest (a Rift-Yard's, a Proving Walk's court), each kept on it
+  if (law.length >= EG_CHAINS) {
+    const polys = (spec.fl ?? []).filter((f) => f.t === 'p'), under = ch ? egFightPieceAt(spec, ch.x, ch.z, 0, spotY(spec, ch)) : null;
+    const poly = under?.t === 'p' ? under : polys.reduce((a, f) => (!a || boxArea(f) > boxArea(a) ? f : a), null);
+    if (poly) return about(pieceDisc(poly)).map(([x, z]) => /** @type {[number, number]} */ (egKeepOnFight({ fl: [poly] }, x, z, 1)));
+  }
   const lane = (spec.fl ?? []).find((f) => f.t === 'l');
   if (lane) return [0.25, 0.5, 0.75].map((t) => [lane.ax + (lane.bx - lane.ax) * t, lane.az + (lane.bz - lane.az) * t]);
   return law.map((q) => [q.x, q.z]);
@@ -976,6 +1048,58 @@ function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
   return b;
 }
 
+// ── EG-PERFECT (2026-10-18): THE CLOSING'S WALK ─────────────────────────────────────────────────────────────────────────────
+/** EG-PERFECT - the share a closing's walk is given past THE SPAN BUILD's own crossing of it (egClosingMs): a quarter to spare,
+ *  for the turn a body takes at a landing and the member who stops for the hall's cache. */
+export const EG_CLOSING_WALK_X = 1.25;
+/** The kinds whose door opens on an arrival at it (a fair trail's first at the end plate - section 21): the company is at the door. */
+const ARRIVAL_DOORS = Object.freeze(['span', 'deepway', 'brink']);
+/**
+ * EG-PERFECT - THE TRIAL'S END ON THE ROUTE (THE ASCENT, LAW 9): the place on road 0's path (net/eliteGates/egRoute.js egRouteOf's
+ * `paths[0]` - its number there) of the last node that stands on the hall's first course's own ground (`route.courses[0]`, 0.5 m
+ * about: a Rift-Yard's court, the Rampart's walk, the Athenaeum's lock, the Scriptorium's court, a Proving Walk's champion's
+ * court - where its trial is fought), the way leaving it there for the door; 0, the arrival plate, on a route that names no
+ * course. Pure.
+ * @param {any} spec
+ */
+export function egTrialEndAt(spec) {
+  const R = egRouteOf(spec), g = spec?.route?.courses?.[0], P = R.paths[0], pad = 0.5;
+  let k0 = 0;
+  if (g) P.forEach((n, k) => { const p = R.nodes[n]; if (p[0] >= g.x0 - pad && p[0] <= g.x1 + pad && p[2] >= g.z0 - pad && p[2] <= g.z1 + pad && p[1] >= g.y0 - pad && p[1] <= g.y1 + pad) k0 = k; });
+  return k0;
+}
+/**
+ * EG-PERFECT - THE CLOSING'S WALK of a hall laid as a way (s): road 0's legs from the trial's end (egTrialEndAt) to the door at
+ * THE SPAN BUILD (net/eliteGates/egSpanLaw.js egRouteSolved - each by its kind's law; before a climb, the grip the last one spent
+ * waited back, as egRouteCross waits it; a span leg's timed pairs each at most EG_WAIT_MAX, the wait THE TIMED SOLVER proves).
+ * Transcendental-free (+, -, x, / and the square root - one answer on every engine, the relay's and the pins'). Pure.
+ * @param {any} spec
+ */
+export function egClosingWalk(spec) {
+  let t = 0, owed = 0, since = 0;
+  for (const L of egRouteSolved(spec, 0).slice(egTrialEndAt(spec))) {
+    if (L.g.kind === 'climb' && owed - (t - since) > 0) t += owed - (t - since);
+    t += L.span + L.pairs.length * EG_WAIT_MAX;
+    if (L.g.kind === 'climb') { owed = L.owed; since = t; }
+  }
+  return t;
+}
+/**
+ * EG-PERFECT - A DOOR'S CLOSING (section 7's stage, ms): EG_CLOSING_SPAN_MS after a door an arrival opened (a span, a Brink, the
+ * Deepway - the company stands at it); after a door its trial's end opens (a Rift-Yard's last rift, a Rampart's gate, an
+ * Athenaeum's Orrery, a Scriptorium's quiet, a Proving Walk's champion) EG_CLOSING_FIGHT_MS - a Proving Walk's
+ * EG_CLOSING_SPAN_MS, its second span crossed in it - and in a hall laid as a way (LAW 9, net/eliteGates/egRouteProof.js egRouted)
+ * EG_CLOSING_FIGHT_MS and its way to the door (egClosingWalk) at THE SPAN BUILD x EG_CLOSING_WALK_X, ceiled to the second: THE
+ * ASCENT lays a fight hall's door a median 180-240 m past its trial's end (500 halls, 2026-10-18) and the closing was 20 s, so
+ * the door stood out of reach in 76-100% of them (a Proving Walk's in 88%, its 45 s), its cache was lost (taken only in the
+ * closing - cacheStep) and the pull came first. Laws 4-8: the closings they had. Pure.
+ * @param {any} spec
+ */
+export function egClosingMs(spec) {
+  if (ARRIVAL_DOORS.includes(spec?.kind)) return EG_CLOSING_SPAN_MS;
+  if (!egRouted(spec)) return spec?.kind === 'proving' ? EG_CLOSING_SPAN_MS : EG_CLOSING_FIGHT_MS;
+  return EG_CLOSING_FIGHT_MS + Math.ceil(egClosingWalk(spec) * EG_CLOSING_WALK_X) * 1000;
+}
 /** The door opens (section 7): the closing begins - a Rally's heal said, the cache's plaque, the legion crumbles. AUDIT EG V
  *  (h; section 8.2, THE TRAIL): a crossing's door names the member whose fair arrival opened it (`by` - its word's `s`), whose
  *  route every other screen then draws as the first across's. */
@@ -984,8 +1108,7 @@ function door(B, spec, now, out, inHall = [], by = '') {
   if (B.F) { egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out); egGone(B.F, egObjsOf(B.F, 'spark'), EG_GONE.crumbled, '', now, out); }
   if (B.F?.marks?.some((q) => q[1] === 7)) { B.F.marks = B.F.marks.filter((q) => q[1] !== 7); egMarksOut(B.F, out); }   // EG-ZB: the hunt is over with the trial
   B.sg = 'closing'; B.sa = now; B.dn = now;
-  const span = spec.kind === 'span' || spec.kind === 'deepway' || spec.kind === 'brink' || spec.kind === 'proving';
-  B.su = now + (span ? EG_CLOSING_SPAN_MS : EG_CLOSING_FIGHT_MS);
+  B.su = now + egClosingMs(spec);   // EG-PERFECT: a way's door its closing's walk too - said with the stage (its `su`), every screen's count
   // THE FORK (section 11.4): the Low Road's closing waits on either road - EG-ZC (forkClosing)
   if (spec.fork) { B.lw = 0; forkClosing(B, spec, inHall, now); }
   // Rally (and the Rallying Cry): the company heals when a hall's door opens - the strongest holder's
