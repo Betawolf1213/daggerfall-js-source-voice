@@ -189,3 +189,34 @@ test('PRIMARY-FOLD the chapters\' sheet reads its halls, its chapters, their sea
     assert.equal(c.trips.length, 3, 'the session, the tombstone and the batch');
   } finally { w.done(); }
 });
+
+test('PRIMARY-FOLD a chapter claim reads its head, its Roll\'s rows and the record\'s word of its id in ONE batch, each asked as it was alone - before the batch that writes; credited, a repeat a repeat, an unseeded Roll unseeded (mutants: the rows unread; the head asked again; the record unread - audit_chap1.json ACHAP-S6-EVENTS-REPEAT)', async () => {
+  const realNow = Date.now;
+  Date.now = () => T0 * 1000;
+  try {
+    const s = await standService({ CHAPTERS_OPEN: 'on' });
+    const who = await s.registered('Audra');
+    const R = await seatRealm(s.env, who.secret, 'Audra');
+    const body = (extra) => ({ character: R.id, lease: R.lease, ...extra });
+    const fresh = await s.call('/v1/chapters/claim', body({ rid: 'fold-000000', deltas: { 40: 1 }, members: [] }), who.secret);
+    assert.equal(fresh.body.error, 'roll-unseeded', 'no Roll yet: unseeded, as ever');
+    await s.call('/v1/chapters/roll', body({ seed: { factions: { 40: 10 }, members: [] } }), who.secret);
+    const c = counted(s.env);
+    const r = await s.call('/v1/chapters/claim', body({ rid: 'fold-000001', deltas: { 40: 1 }, members: [] }), who.secret);
+    c.off();
+    assert.equal(r.status, 200);
+    assert.equal(r.body.credited[40], 1, 'credited');
+    assert.equal(r.body.roll.factions[40], 11);
+    const reads = c.trips.find((t) => t.length === 3 && /FROM npc_roll_heads/.test(t[0]));
+    assert.ok(reads, 'one batch of three reads');
+    assert.match(reads[1], /FROM npc_roll WHERE char_id = \?$/);
+    assert.match(reads[2], /FROM npc_rep_events WHERE char_id = \? AND rid = \? LIMIT 1/);
+    assert.ok(c.trips.indexOf(reads) < c.trips.findIndex((t) => t.some((q) => /^UPDATE npc_roll_heads/.test(q.trim()))), 'before the batch that writes');
+    assert.equal(c.trips.flat().filter((q) => /FROM npc_roll_heads WHERE char_id = \? AND player = \?/.test(q)).length, 1, 'the head asked once');
+    // an older claim replayed after a newer one: the record's word, from the batch
+    await s.call('/v1/chapters/claim', body({ rid: 'fold-000002', deltas: { 40: 1 }, members: [] }), who.secret);
+    const again = await s.call('/v1/chapters/claim', body({ rid: 'fold-000001', deltas: { 40: 1 }, members: [] }), who.secret);
+    assert.equal(again.body.repeat, true, 'a repeat, by the record the batch read');
+    assert.equal(again.body.roll.factions[40], 12, 'and the Roll as the batch read it');
+  } finally { Date.now = realNow; }
+});

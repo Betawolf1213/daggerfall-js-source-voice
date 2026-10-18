@@ -131,7 +131,10 @@ test('AUDIT CHAP T13: the route - a GET is 405, a lost race is 409, a tombstone 
   assert.equal(get.status, 405);
   await s.call('/v1/chapters/roll', s.body({ seed: { factions: {}, members: [] } }), s.who.secret);
   const real = s.env.DB.batch.bind(s.env.DB);
-  s.env.DB.batch = async (list) => { s.env.DB.batch = real; s.raw.prepare('UPDATE npc_roll_heads SET seq = seq + 1 WHERE char_id = ?').run(s.R.id); return real(list); };
+  // PIN MOVED (PRIMARY-FOLD, Scale-Arc.md THE PLAN PAST 1,000): the claim reads its head, rows and record in a batch of
+  // their own first - the race is laid between those reads and the batch that writes, the claim's second
+  let batches = 0;
+  s.env.DB.batch = async (list) => { if (++batches < 2) return real(list); s.env.DB.batch = real; s.raw.prepare('UPDATE npc_roll_heads SET seq = seq + 1 WHERE char_id = ?').run(s.R.id); return real(list); };
   const busy = await s.call('/v1/chapters/claim', s.body({ rid: 'route-00001', deltas: { 40: 1 }, members: [] }), s.who.secret);
   assert.deepEqual([busy.status, busy.body.error], [409, 'roll-busy']);
   s.raw.prepare('UPDATE realm_characters SET dead_at = ? WHERE id = ?').run(T0, s.R.id);

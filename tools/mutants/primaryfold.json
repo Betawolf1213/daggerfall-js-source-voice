@@ -164,5 +164,23 @@
    "test/server/primaryfold.test.js",
    "test/net/chap7a_patrons.test.js"
   ]
+ },
+ {
+  "name": "PRIMARYFOLD-claim-rows-unread",
+  "file": "server-account/src/npcRoll.js",
+  "old": "  const rows = rowsFrom(rowsQ?.results ?? []);",
+  "new": "  const rows = rowsFrom([]);",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-claim-head-asked-again",
+  "file": "server-account/src/npcRoll.js",
+  "old": "  const head = headQ?.results?.[0] ?? null;",
+  "new": "  const head = headQ?.results?.[0] ? await db.prepare('SELECT seq, kseq, last_rid FROM npc_roll_heads WHERE char_id = ? AND player = ?').bind(who.character, player.id).first() : null;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
  }
 ]

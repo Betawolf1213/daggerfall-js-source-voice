@@ -2968,6 +2968,20 @@ equivalent as recorded); one survived its first run - the settler's word unkept 
 Re-aimed by content, all dead: A3-S2-SHEET-OPEN, A3-T1-SHEET-ZERO, AUDIT-CHAP4-S2-OFF-RETURN and -OFF-NEVER-SETTLED,
 AUDIT-CHAP5-S5-PATRONS-SPLIT, CHAP3B-SHEET-HIDDEN and -SHEET-SETTLE, CHAP7A-PATRONS-SEASON, SEATLEASE-nothing-due.
 
+### PRIMARY-FOLD part three: built (2026-10-18, this branch - no version, no migration, no drop) - a chapter claim's reads in one batch
+
+A chapter claim (`npcRoll.js` claimRoll, 10.9 statements a second at the evening's peak - PRIMARY-TRIPS) read its head,
+its Roll's rows and the record's word of its id one trip each between its rate's window and its write. They are read in
+one batch now, each worded as it was asked alone; the rate's window is asked first as before (a claim it refuses reads
+nothing), and the head guards the write by the sequence it read, so a race between the reads and the write is the
+409 it was. **Counted:** a claim 9 trips to 7 - some 2.4 of the primary's trips a second at that rate.
+
+**Pins.** `test/server/primaryfold.test.js` (+1): the one batch of three reads before the batch that writes, the head
+asked once, a claim credited, an older claim replayed answered a repeat by the batch's record, an unseeded Roll as
+ever. `tools/mutants/primaryfold.json` (+2: the rows unread, the head asked again - both dead). PIN MOVED:
+`audit_chap1.test.js` AUDIT CHAP T13 - its race is laid before the claim's second batch, the one that writes (its
+first is the reads now); ACHAP-S6-EVENTS-REPEAT re-aimed by content (dead).
+
 ### Decisions for the owner
 
 4. **How long a signed-out session may still read.** A signed session lives a few minutes (the relay's identity tokens
