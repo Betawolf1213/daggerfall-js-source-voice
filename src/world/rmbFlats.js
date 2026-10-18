@@ -14,7 +14,9 @@
 //     flagged in World-Arc.md.
 //   - Ground scenery reads GroundScenery[x][15 - y], skips records < 1
 //     (0 is a marker), places at (x*256, natureFlatsOffsetY, y*256+256)*scale
-//     with the climate nature archive.
+//     with the climate nature archive. HOUSE-BUSH (FIELD BUGS 2026-10-18b, a
+//     departure from AddNatureFlats): a cell whose foot the block's own
+//     automap draws inside a building is not stood (sceneryUnderRoof).
 //   - Editor flats (archive 199) are two DIFFERENT laws. A SUBRECORD
 //     exterior flat is never spawned at all (RMBLayout.cs:409-410's
 //     `continue`). A MISC block flat IS spawned - AddMiscBlockFlats
@@ -39,6 +41,7 @@ import { applyBillboardXml } from './billboardXml.js';   // MM1: the xml scale r
 import { textureReplacementEnabled, hasTextureReplacement } from '../systems/textureReplacement.js';   // AUDIT MM1: DFU's two gates on the xml scale
 import { flatFieldFor, sowField } from './flatFields.js';   // WD3: a scene model that is a field of flats (the town mods' crops)
 import { PROPS_OFFSET_Y } from './rmbLayout.js';   // FIELD BUGS 2026-10-04d CROPS: a field's batch stands where its misc model does
+import { quarterOf } from '../ui/town/townQuarters.js';   // HOUSE-BUSH: an automap byte's building, by the town map's own ladder
 
 /** RMBLayout's blockFlatsOffsetY: a block's flats stand this far (native units) below their records - and their lights
  *  do not (AddLight hangs at the record's -YPos plus the picture's height - world/city/cityLights.js). AUDIT YARD-LIGHT: so a
@@ -56,6 +59,36 @@ export const isNatureArchive = (archive) => archive >= NATURE_ARCHIVE_MIN && arc
 /** TREES-SEATED: where a nature flat stands on the location's plane - AddNatureFlats' `natureFlatsOffsetY`, scaled
  *  (the ground scenery's y below). */
 export const NATURE_FLATS_Y = NATURE_FLATS_OFFSET_Y * GLOBAL_SCALE;
+
+/** HOUSE-BUSH: an RMB block's automap is AUTOMAP_SIDE pixels a side, AUTOMAP_SIDE / 16 to a ground tile. */
+const AUTOMAP_SIDE = 64, AUTOMAP_PER_TILE = AUTOMAP_SIDE / 16;
+/**
+ * HOUSE-BUSH (FIELD BUGS 2026-10-18b, æther on the Discord: "Small bush in a house wall, near east gate of Penwall
+ * Derry"). WHETHER A GROUND-SCENERY CELL'S FOOT STANDS INSIDE A BUILDING, as the block's own automap draws it.
+ *
+ * AddNatureFlats (RMBLayout.cs, the walk below) stands every scenery record a block names and reads no building, so a
+ * cell its author left under a house stands in the house - a billboard through its wall. Beautiful Cities' composite
+ * blocks were made so: Penwall Derry's east gate (WALLAA09.TVRNAS01) stands its record 4 inside a House2, and the two
+ * town packs between them hold 26 such cells. The author took the same class out by hand elsewhere (TVRNAL01's edit
+ * sets two classic cells to -1, both on a House2). DFU stands them as written; the port does not (Port-Ledger A).
+ *
+ * The automap (FLD header, AUTOMAP_SIDE x AUTOMAP_SIDE, row 0 the block's north edge, a byte BuildingType + 1 where a
+ * building's footprint covers it) is what the town map draws a building from, and its rows and columns are the
+ * scenery's own: cell (x, y) of the walk stands its foot at (256x, 256y + 256) units, the corner of automap columns
+ * 4x - 1 and 4x and rows 59 - 4y and 60 - 4y. INSIDE is all four of them architecture by the town map's ladder
+ * (ui/town/townQuarters.js quarterOf - not street, a ground flat's mark, a ship or a special); a foot on a footprint's
+ * edge or corner is left as authored, and so is one on the block's rim, whose far cells are the next block's.
+ * @param {?ArrayLike<number>} autoMap the block's fldHeader.autoMapData
+ * @param {number} x the walk's tile column (0 west)
+ * @param {number} y the walk's tile row (0 south)
+ */
+export function sceneryUnderRoof(autoMap, x, y) {
+  if (!autoMap || autoMap.length < AUTOMAP_SIDE * AUTOMAP_SIDE) return false;
+  const col = AUTOMAP_PER_TILE * x, row = AUTOMAP_SIDE - AUTOMAP_PER_TILE * (y + 1);
+  if (col < 1 || row < 1 || col >= AUTOMAP_SIDE || row >= AUTOMAP_SIDE) return false;
+  for (const r of [row - 1, row]) for (const c of [col - 1, col]) if (quarterOf(autoMap[r * AUTOMAP_SIDE + c]) === null) return false;
+  return true;
+}
 
 /**
  * World-unit billboard size for a texture record, verbatim
@@ -256,10 +289,12 @@ export function collectBlockFlats(dfBlock, natureArchive, { climateIndex = null,
 
   // Ground scenery -> climate nature flats.
   const scenery = rmb.fldHeader.groundData.groundScenery;
+  const autoMap = rmb.fldHeader.autoMapData;   // HOUSE-BUSH
   for (let y = 0; y < 16; y++) {
     for (let x = 0; x < 16; x++) {
       const item = scenery[x][15 - y];
       if (item.textureRecord < 1) continue;
+      if (sceneryUnderRoof(autoMap, x, y)) continue;   // HOUSE-BUSH: a cell its author left under a house
       flats.push({
         archive: natureArchive,
         record: item.textureRecord,
