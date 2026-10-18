@@ -9432,3 +9432,175 @@ GM VOICE BANK row names a song's own voices.
 **Departures from this page**: none from its law. THE COUNT, the wake and the end are timed as before; the Valkynaz's
 level moved (above).
 
+
+### EG-PERFECT - 2026-10-18 - THE LORDS' BLOWS FAIR AND WHOLE, AND SPEC LAW 10: THE BROKEN WAY
+
+Mac: "On top of this work lets do a detailed pass on the Elite Breaches. I want to ensure the boss attacks, the design of
+the halls, and everything is absolutely perfect. Traversing between sections should present a challenge, platforming should
+be detailed". Four read-only audits came first (the boss attacks, the hall design, the spans and the traversal between
+sections - 20,000 halls laid, the real motor on the real collider), then the fixes in three parts: this record (the lords,
+and the halls' draw as spec law 10), THE HALLS AS THE RELAY READS THEM and THE WAYS AS PROVEN (the two records after it - the
+relay's and the screens' reads of laws 4-9, no draw moved).
+
+**THE LORDS** (`net/eliteGates/egLords.js`, `egBodies.js`, `egFloor.js`; the screens' `scenes/eliteGates/egFight.js`,
+`world/eliteGates/egTelegraph.js`, `ui/eliteGates/egSpireHud.js`). Each finding of the boss audit, fixed where it stood:
+- THE UNION FLOOR (section 13.2) sees what it missed: a haven CHECK is a landing of the set (`egHavenCheck` - a member in the
+  only near haven is never thrown a blow that takes it before the CHECK lands); the pool a pending blow leaves and a blow live
+  past its landing (`sp`) burn at every later landing (`egUnionHeld` - `F.mem.pools`, a new blow's own pool its `nextBurns`);
+  a duelist's floor is its ring (`EG_RING_KEEP_M` inside it). A lord weighs a blow as its word will be weighed before it
+  chooses it (`wouldHold`, up to `EG_CHOOSE_TRIES` draws, then it walks) - Ilthys had thrown eight Meteors at a member on a
+  balcony, each held and dropped.
+- A feint's cut says its own instant (`ecut`'s `at` - `egCut`; the screens close it there) and never glints; fury's chained
+  blow is said only with its first (`after` - held while its first waits).
+- Every phase a burst of damage crosses is turned in that beat, each turn's card and kit call in order (a burst past two lines
+  turned one a beat before, its second skipped); a held line is set only while the health stands above it.
+- THE VALKYNAZ' SIGNATURES at their second phase (section 13.4 - the page's "at the phase turn"), the line held until the
+  signature's first round resolves (`sigHolds`): the Conquest's banners planted in turn (`EG_CONQUEST_EVERY_MS`, each told
+  `EG_CONQUEST_TELL_MS`), each third burning to the fight's end until its banner breaks, again `EG_CONQUEST_AGAIN_MS` after
+  a round; the Chaining's pairs, a Wraith's chain snapping on the pair it names (`EG_SNAP_NM`); the Eclipse's mirrors. Garoth's
+  third phase borrows the older signature as theirs is called.
+- Blows that read their ground: Hellfire, Moonshatter and the Meteor fall on some of the company, never all; the Wyrm's
+  perched breath reaches its mark (`EG_WYRM_REACH_M`), its pillars rise again at its second phase (`perches`), its Burning
+  Perch the place's own fire (`o.place` - never held); a Scorch stops Grath's hunt and frees its mark; an island's crack voids
+  it as it falls; the Last Lesson's rings told `EG_LESSON_TELL_MS` before they burn; the Twins swap only on the Crossing said
+  (`EG_CROSS_AGAIN_MS`); a vanish ends the Stalker's swing; every kit's place drops a stale run (`kitPlace`); a run carried
+  from its landing at its lane's pace (`EG_RUN_MS`, under `EG_RUN_V_MAX` - the wire's walks stop at 30 m/s); a duel's blows
+  aimed at its duelists (`duelNo` - the gate's Slam, the Meteor and Kyn's Due stand aside); Grath's Gore alone at melee
+  (`minGap1`).
+- The screens: the wind-up's grace a trial beat and more (`EG_WIND_GRACE_MS`); the Armsmaster's guard glints once a rising
+  (`EG_GUARD_GLINT`, `EG_GUARD_SOUND`); the Wingbeat's lane told 1 s (`EG_GUST_TELL_MS`, `EG_GUST_SOUND`); Seyth's own Eclipse
+  dark, chipped and tolled as a hall's is (`egEclipseOfBlows`, `EG_ECLIPSE_BLOW_LIVE_MS`).
+- The audit's upgrades taken: the Arcane Lattice a SWEEP (`EG_LATTICE_W` strips side by side over the whole floor, each
+  `EG_LATTICE_STEP_MS` after the last, from the side farthest from its mark - the four fixed strips left 4 m gaps never
+  struck); THE FINAL EXAMINATION again `EG_CAGE_AGAIN_MS` after the last resolved (it closed once a fight); Garoth's Wellfire
+  laid over its mark, one arm along his bearing (the axes' cross about himself struck only who stood on the axes). Left for a
+  later slice: a feint-Lunge, Grath's burning trail at two members and under, the Colossus's flank stamps, a champion's
+  escalation by rank.
+
+**SPEC LAW 10 - THE BROKEN WAY** (`bible/11-Multiplayer/Elite-Gates-Ascent.md` section 11, which states the law; `net/eliteGates/
+egAscent.js` EG_BROKEN_LAW, `egLaw.js`, `egSpanLaw.js`, `egFragLaw.js`; `egDurable.js` EG_LAWS from 2026-10-18 - law 4's seventh
+day, so laws 4-9 stay kept). A bridge the way takes breaks onto its band's pieces in every heading (a turned course read in
+its heading's own frame - `egStepLocal`, `egAlongOf`, `egRouteSpanSteps` along x, the sweep's pilot turned with it); THE FORK's
+Low Road linked by its own spans and its course laid first and bounded (`EG_FORK_COURSE_CM`); the plan's own tries
+(`EG_BROKEN_TRIES`, `lean`) and a stretch's rooms fewer before a hall is laid again; a fight hall's rooms before its trial and
+its door after it (the relay holding its clocks until its company stands on its floor - `egTrialAwaits`, `EG_AWAIT_CLOCKS`;
+its closing's walk from its trial's own ground, a broken bridge's never - `egTrialEndAt`); two of its band's kinds an approach;
+THE ENVELOPE in the passages; a Drop below its road's floor (`EG_DROP_LAW10_CM`); the High Road's padding Beats; Rails apart
+through their travels, the Forge's one belt, a Pendulum over the whole flight (`EG_SOLVE_FLIGHT_LAW`); the fittings where a
+body reaches them (an alcove at its court's rim and its ring open there - `egRingSideOpen` in every reader of a ring; a
+balcony 4 m up; a pillar off its bastions, its Gauntlet plate on its top; the winch plates against the walkway; a Glade's
+braziers on its ground; a Captive's chains on its hero chamber's line; a Vault off its island's rim or a side span's length
+off its court); rooms from the whole fresh pool.
+
+**Measured.** Over 204 halls (seeds 1-6, every third hall) against law 9 on the same: the longest stretch the main way walks
+unbroken, at its median, a Rift-Yard 400 m to 180 m, a span 181 to 131, a Court 254 to 147, a Proving Walk 192 to 157, a Deepway
+249 to 172, an Athenaeum 263 to 186, a Brink 237 to 148, a Rampart 269 to 189; spans from circle 2 forked 25% to 86% and laid
+plainest 75% to 14%; a fight hall's door 190-215 m past its trial to 10 m. Over the law pin's 800 halls: 7 laid plainest, 731
+break a bridge turned, the longest unbroken walk a median 159 m (p90 248), the worst spec 27,156 characters. The real motor
+crosses seed 77's first circle and seed 3's seventh, turned bridges and all (`tools/egSpanSolve.mjs`).
+
+**Pins.** `test/net/eliteGates/egperfect_lords.test.js` (21 - each lord finding and upgrade on fights the real producers stand),
+`test/net/eliteGates/egperfect_broken.test.js` (12 - law 10's pin, its 400 halls of the law pin's seeds 77 and 3 laid, proven and
+measured, the real motor) and `test/net/eliteGates/egperfect_broken_unit.test.js` (6 - each law 10 change on a hall or two that shows
+it and on its pieces alone). Mutants: `tools/mutants/egperfect_lords.json` (47) and `tools/mutants/egperfect_broken.json` (30),
+every one dead. PINS MOVED: the law pins of `egaudit3_law`, `egaudit5_f`, `eghero_lay`, `egz_frag` and `egdur_relay` (spec law 10
+the build's, law 9 kept); `law9_rooms` holds law 9 by the seam (`egLawSeam(9)` - its 800 halls hashed as before); `egHallTry`'s
+law unnamed is the seam's, as `egHallOf`'s.
+
+**The four hosts.** None touched (HOST-SPLIT): the law in its own modules, the relay's await in the brain's wake and trial, the
+pilot's frame in the tool.
+
+**The Ledger.** Section A's ELITE-GATES row's law moves to spec law 10 (EG_LAWS).
+
+**Departures from this page**: section 8.2's "18 platforms in four sections" and 8.9's Brink of 132-151 m were law 8's (law 9
+and 10's ways run 300-640 m); section 8.6's approach is two of the band's kinds; section 13.4's signatures stand at the second
+phase as section 13.2 asks; section 13.4's Conquest plants its thirds in turn and burns each to its banner's fall.
+
+### EG-PERFECT (the halls) - 2026-10-18 - THE CLOSING'S WALK, THE FIGHT FLOOR, THE CHAINS, THE STANDS
+
+EG-PERFECT (2026-10-18; the owner: "I want to ensure ... the design of the halls, and everything is absolutely perfect").
+An audit swept LAW 9's halls as the relay reads them. Five findings were measured, four were fixed, and the fifth was
+audited and pinned. No hall is drawn otherwise: `egHallOf` gives the same bytes for laws 4-9, and `egaudit5_f` and
+`law9_rooms` still pass. The relay reads the halls differently, and that is all. RELAY_VERSION moves with the arc's (section 23).
+
+- **THE CLOSING'S WALK** (section 7's stages, section 17.1's cache). THE ASCENT lays a fight hall's door far past its
+  trial's end along the way. Over 500 halls the median from the trial's end to the door was 177 m for a Rift-Yard, 188 m
+  for an Athenaeum and 243 m for a Rampart. The closing after a fight stayed `EG_CLOSING_FIGHT_MS` (20 s), so the door was
+  out of reach in 76-100% of those halls and in 88% of Proving Walks (on their 45 s). The cache can be taken only in the
+  closing (`cacheStep`), so it was lost, and the pull came before the company reached the door.
+  - A door that a trial's end opens now closes, in a hall laid as a way (`egRouted`), in `EG_CLOSING_FIGHT_MS` plus the walk
+    from the trial's end to the door. The walk is timed at THE SPAN BUILD and multiplied by `EG_CLOSING_WALK_X` (1.25), and
+    the result is rounded up to the whole second (`egBrain.js:"export function egClosingMs(spec) {"`).
+  - The trial's end is the last node of road 0's path that stands on the hall's first course's own ground, 0.5 m about
+    (`egBrain.js:"export function egTrialEndAt(spec) {"`). For a Rift-Yard that is its court, for a Rampart its walk, for an
+    Athenaeum its lock, for a Scriptorium its court and for a Proving Walk its champion's court.
+  - The walk is road 0's legs from there by each kind's law (`egRouteSolved`,
+    `egBrain.js:"export function egClosingWalk(spec) {"`). Before a climb, it waits back the grip the last climb spent, as `egRouteCross` does. Each timed
+    pair of a span leg is counted at `EG_WAIT_MAX`. Only +, -, x, / and the square root are used, so the relay and the pins
+    get the same answer on every engine.
+  - The closing's end is said with the stage word, its `su`, which every screen counts
+    (`egBrain.js:"B.su = now + egClosingMs(spec);"`).
+  - The doors that an arrival opens are unchanged: a span's, a Brink's and the Deepway's close in `EG_CLOSING_SPAN_MS`,
+    because the company stands at them. Laws 4-8 keep the closings they had: a Proving Walk 45 s, every other fight 20 s.
+  - Seed 1's hall 1 (a Rift-Yard, its door 244 m past its court) now closes in 76 s, and hall 4 (a Rampart, 192 m past its
+    gate) in 71 s. Over seeds 1-20, circles 1-8, LAW 9's fight closings run 26-142 s for a Rift-Yard (median 63), 54-115 s
+    for a Rampart, 45-90 s for an Athenaeum and 62-174 s for a Proving Walk, which is never under the 45 s it had. THE
+    ESCAPE BUILD reaches the door inside the closing from the trial's far side in every such hall of seeds 1-2, circles 1-6.
+    The count is held after `EG_CLOSING_COUNT_MS` of the closing (`egCountHold`), so a longer closing costs the company no
+    count.
+- **THE DESERTER ON THE COURT** (section 8.7). The relay raised the Deserter at `spec.fight.z - spec.fight.r + 3`.
+  `spec.fight` is the fight floor's bounding disc, and its `r` is half the box's diagonal (a court disc's R x 1.41). The spot
+  therefore stood 7-14 m past the court's rim in every Deserter hall of seeds 1-60 (all eleven under LAW 9, all eight under law 8): on the
+  bridge in, or off every floor (seed 38's hall 16, seed 46's hall 86). It now rises on the fight floor, 1 m in, at the
+  point nearest that spot
+  (`egBrain.js:"egKeepOnFight(spec, spec.fight.x, spec.fight.z - spec.fight.r + 3, 1)"`).
+- **THE ASHFALL IN THE PIT** (section 11.2's Honour Horn). A foul horn's Ashfall threw its pools about the same bounding
+  disc. That put 15-34% of them past a kit or hero Clan Pit's rim and about 80% past a Deepway's, whose bounding disc
+  covers its whole hall. The pools are now thrown about the fight piece under the horn and kept on it
+  (`egBrain.js:"const pit = egFightPieceAt(spec, at.x, at.z, 0, spotY(spec, at))"`). A disc Pit's pools stand whole on
+  it.
+- **THE CAPTIVE'S CHAINS ABOUT A HERO CHAMBER** (section 8.7). LAW 9 lays a hero chamber's three chains about the hall's
+  origin line, so where the way turns the chamber aside they hung off every fight floor (seed 40's hall 66, seed 6's
+  hall 22, seed 60's hall 99). The relay now takes the law's three only where each hangs on a fight floor at its own
+  height (`egBrain.js:"three.every((q) => egOnFight(spec, q.x, q.z, 0, spotY(spec, q)))"`). Otherwise it hangs them about the chamber's court: the fight polygon under its chamber's spot, or else
+  the hall's widest, centred on its box, a quarter of its narrower side out, each kept on it. Over seeds 1-40, 55 halls
+  keep the law's three byte for byte and 2 are refused, and in every one of the 124 Captive halls each chain hangs on
+  the fight ground. Laws 4-8's chains are unchanged (`law9_route`'s 450 halls).
+- **A CHAMBER'S CASTERS ON ITS RAISED ANCHORS** (sections 11.4 and 11.7: "Casters stand at `anchors.caster`"). The law
+  lays a kit chamber's caster anchors on its balconies (3-4 m up, 2.5 m for the deep tide), and a hero's records name
+  theirs on its galleries. The relay read none of them. It now lays them as the fight's stands at the wake
+  (`egBrain.js:"export function egCasterStands(spec) {"`). Each stand is an anchor of a chamber fragment (never a
+  passage's) and carries:
+  - the anchor's plan, `x` and `z`;
+  - its raised floor's height, `y` (`egFeetAt`);
+  - the height its spot names, `ov` (the floor a kit balcony overlooks);
+  - its chamber's reach, `box`: a hero's own box, or else the kit chamber's court and balconies, 1 m under its floor to
+    5 m over.
+
+  A Caster that rises in that chamber takes the nearest free stand there
+  (`egLegion.js:"export function egStandFree(F, x, z, y = NaN) {"`) at the raised floor's height, pinned to it as a Rampart's Caster is to its pillar. Where every stand is
+  held, or the Caster rises outside the chamber (a Vigil's escort on the arrival plate), it rises at its wave's spot.
+  These are the same bodies the waves raise, so THE LEGION'S CAP holds. The Bolt (r 3, THE WIDTH RULE) lands at its
+  mark's feet on its mark's floor (`egStoreyY`). A stand 4.0 m up is a storey apart by `EG_STACK_M`, and it still bolts
+  the floor its balcony overlooks (`egLegion.js:"const overlooks = (m) =>"`). Over seeds 1-6, every one of the 78 stands
+  stands on a fight floor inside its own reach, and every Rift-Yard's rifts, Deepway's chamber spot and Proving Walk's
+  champion lie in a stand's reach. No arrival plate lies in one. Laws 4-8 stand their Casters on the balconies too, read in
+  plan.
+- **THE GAUNTLET'S PLATES** (section 8.3). This finding was audited and nothing was changed. Each plate stands 5.5 m out
+  from the walkway's line. That is 3 m up its pillar's side stair (0.6-1.3 m high there), off the pillar (its rim 7-15 m
+  out) and off the fight floor. The relay reads a pose of any member in the hall within `EG_TOUCH_M` of the plate in plan
+  (`egBrain.js:"const pl = g.p.plate, on = pl &&"`), so a member on the stair holds it. That read is now pinned.
+
+Pins: `egperfect_halls_closing` (3), `egperfect_halls_floor` (2), `egperfect_halls_chains` (2), `egperfect_halls_casters`
+(3) and `egperfect_halls_plates` (1). The mutants are in `tools/mutants/egperfect_halls.json`: 20 records, 19 dead and one
+equivalent as recorded. That one is EGP-closing-grip-unwaited: before a climb, the closing's walk waits back the grip the last
+climb spent, as `routeCrossAt` does, but no LAW 9 closing walk climbs again inside its grip's recovery (twelve walks of two
+climbs over seeds 1-12, none waits), so no pin can fail it. Of the three older records this slice moved, two were re-aimed by content: `EGA3L-fade-caster` (the Caster's storey filter
+now reads its overlook) and `EGA5A2-captive-law-ignored` (the law's three now read). The third, `EGA4L-mingled-unread`, was
+kept in place by laying the stands after `F.still`. All three still die.
+
+RELAY: the slice changes `net/eliteGates/egBrain.js` and `net/eliteGates/egLegion.js`, both in the relay's bundle; the relay's
+version moved with EG-PERFECT's (the EG-PERFECT record above).
+
+HOSTS: none touched (`scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js`, `scenes/exterior.js`). The new
+behaviour lives in the brain's own functions (`egClosingMs`, `egCasterStands`, `egStandFree`), and no Room method changed.
