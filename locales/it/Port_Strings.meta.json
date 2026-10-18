@@ -20159,6 +20159,11 @@
   "tr": "31624d89b7ac",
   "by": "claude-in-session"
  },
+ "prof.craft.xpTop": {
+  "en": "bf5e8dd5fd87",
+  "tr": "cb9bc82c2d01",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "4dbc62be3a13",
@@ -21001,12 +21006,12 @@
  },
  "prof.page.limit": {
   "en": "b9efd5663578",
-  "tr": "fff7bcd00f96",
+  "tr": "97c35330fcc7",
   "by": "claude-in-session"
  },
  "prof.page.limit.rule": {
   "en": "8074c8ae816c",
-  "tr": "19705e849fd6",
+  "tr": "660015764860",
   "by": "claude-in-session"
  },
  "prof.page.loom": {

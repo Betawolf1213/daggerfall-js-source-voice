@@ -414,8 +414,8 @@ export function createProfBook({ door, storage = null, character = () => null, n
       return t;
     },
     /** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b): the crafter's limit over a craft's track as the service last said the
-     *  character's tracks (professionLaw craftLimitOf - `{ cap, room, by }`, the law the service's decisions bind) - a
-     *  discipline its craft's. */
+     *  character's tracks (professionLaw craftLimitOf - `{ cap, room, by, rank }`, the law the service's decisions bind;
+     *  AUDIT FB1018b L5-2: `rank` the rank it is held at) - a discipline its craft's. */
     limit(profession) { return craftLimitOf(state.tracks.values(), profession); },
     /** One material's count in the Stores, own and bought (GOLD-MARKET: and `gold`, bought with gold, where held). */
     store(material) { return state.stores.get(material) ?? { material, own: 0, bought: 0 }; },

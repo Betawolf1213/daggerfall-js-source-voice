@@ -20159,6 +20159,11 @@
   "tr": "8dd268fc77ab",
   "by": "claude-in-session"
  },
+ "prof.craft.xpTop": {
+  "en": "bf5e8dd5fd87",
+  "tr": "ed4adbf7821d",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "26011fac6681",
@@ -21001,7 +21006,7 @@
  },
  "prof.page.limit": {
   "en": "b9efd5663578",
-  "tr": "2b0d1d513cec",
+  "tr": "22edb64d8b5f",
   "by": "claude-in-session"
  },
  "prof.page.limit.rule": {

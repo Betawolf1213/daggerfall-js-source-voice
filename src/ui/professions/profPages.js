@@ -560,10 +560,13 @@ const PARTLY = Object.freeze({});
 
 /** The line a track's XP makes: "11,900 / 12,250 XP" to the next rank, or the Master's total. CRAFT-LIMIT-SAID (FIELD
  *  BUGS 2026-10-18b): a craft the crafter's limit holds (`limit`, professionLaw craftLimitOf) its ceiling - "26,009 /
- *  26,009 XP - the crafter's limit holds it at rank 50" - where "26,009 / 26,010 XP" read as one XP from rank 51. */
+ *  26,009 XP - the crafter's limit holds it at rank 50" - where "26,009 / 26,010 XP" read as one XP from rank 51. AUDIT
+ *  FB1018b L5-3: only at the rank it is held at (the limit's `rank`) - a third craft at 10 keeps its next rank's figure,
+ *  "1,005 / 1,210 XP", where it read "1,005 / 26,009 XP - the crafter's limit holds it at rank 50"; L5-2: and one past its
+ *  cap its own XP and rank, "36,000 / 36,000 XP - ... at rank 60", never "36,000 / 26,009 XP - ... at rank 50". */
 export function xpLine(track, limit = null) {
   if (track.rank >= PROF_RANK_MAX) return t('prof.page.xpMaster', '{xp, number} XP - Master', { xp: track.xp });
-  if (limit?.by?.length) return t('prof.page.xpHeld', '{xp, number} / {cap, number} XP - the crafter\'s limit holds it at rank {rank}', { xp: track.xp, cap: limit.cap, rank: JOURNEYMAN_RANK });
+  if (limit?.by?.length && track.rank >= limit.rank) return t('prof.page.xpHeld', '{xp, number} / {cap, number} XP - the crafter\'s limit holds it at rank {rank}', { xp: track.xp, cap: Math.max(limit.cap, track.xp), rank: limit.rank });
   return t('prof.page.xp', '{xp, number} / {next, number} XP', { xp: track.xp, next: xpForRank(track.rank + 1) });
 }
 /** CRAFT-LIMIT-SAID: the crafts that stand above Journeyman, in the tab's order. */

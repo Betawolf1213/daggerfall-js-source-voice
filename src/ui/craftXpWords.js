@@ -27,7 +27,7 @@ import { craftXp, firstCraftPays, masonXp, FIRST_CRAFT_XP } from '../net/recipeL
 import { creditedXp, professionName, JOURNEYMAN_RANK, CRAFTS_ABOVE_JOURNEYMAN } from '../net/professionLaw.js';
 import { scaleXp } from '../net/firmament/firmamentLaw.js';
 
-/** @typedef {{ limit?: { cap: number, room: number, by: string[] }|null, pct?: number }} CraftPay */
+/** @typedef {{ limit?: { cap: number, room: number, by: string[], rank: number }|null, pct?: number }} CraftPay */
 
 /** CRAFT-LIMIT-SAID: the crafts that hold a track at the limit, as the player's language lists them ("Building and
  *  Provisioning" - Intl.ListFormat's conjunction, ui/credits.js's way). @param {string[]} by track ids */
@@ -48,7 +48,8 @@ export const paidXp = (xp, pay = {}) => creditedXp(scaleXp(xp, pay.pct ?? 0), pa
  * CRAFT-LIMIT-SAID: THE LINE A STATION SAYS IN PLACE OF AN ACT'S XP where its track cannot take `most` (the most the act
  * earns, its first's included, the Firmament's percent on it): the crafter's limit's - "No Smithing XP: Building and
  * Provisioning stand above Journeyman, and the crafter's limit holds Smithing at rank 50." (or "At most 9 Smithing XP"
- * where a little room is left) - or, where no limit holds it, Master's; '' where the track takes all of it.
+ * where a little room is left) - or, where no limit holds it, Master's; '' where the track takes all of it. AUDIT FB1018b L5-2:
+ * the rank the limit holds it at (professionLaw craftLimit's `rank`) - a track past its cap its own, never "at rank 50".
  * @param {string} profession the track's name @param {CraftPay|null|undefined} pay @param {number} most
  */
 export function capLine(profession, pay, most) {
@@ -56,7 +57,7 @@ export function capLine(profession, pay, most) {
   if (!limit || limit.room >= most) return '';
   if (limit.by?.length) {
     return t('prof.page.craft.xpLimit', '{room, plural, =0 {No {profession} XP} other {At most # {profession} XP}}: {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank}.',
-      { room: limit.room, profession, crafts: craftsList(limit.by), rank: JOURNEYMAN_RANK });
+      { room: limit.room, profession, crafts: craftsList(limit.by), rank: limit.rank });
   }
   return t('prof.page.craft.xpTop', '{room, plural, =0 {No {profession} XP: {profession} is at Master} other {At most # {profession} XP: {profession} stops at Master}}.', { room: limit.room, profession });
 }
@@ -115,14 +116,20 @@ export const masonWorksFirstLine = (rank, profession, pay = {}) => capLine(profe
  * craft was the character's first of its pattern at its tier): "(+620 Smithing XP, with the first-time bonus)"; a first
  * of the Weavers' cloth says why none came; any other craft its XP alone. CRAFT-LIMIT-SAID: where the crafter's limit
  * now holds the track with no room left (`limit`, professionLaw craftLimitOf over the book's tracks once the answer is in
- * them - net/profBook.js limit), that is what it says - a first's bonus the limit ate is never said as paid.
+ * them - net/profBook.js limit), that is what it says - a first's bonus the limit ate is never said as paid. AUDIT FB1018b
+ * L5-4: AND MASTER'S, where no craft holds the track and the top leaves it none - "(+0 Smithing XP - Smithing is at
+ * Master)": a Master's limit names no crafts, so its word fell through to "(+0 Smithing XP, with the first-time bonus)",
+ * and a first the top ate (200 paid at 99,800) was said as paid. L5-2: the rank the limit holds it at, the track's own
+ * past its cap.
  * @param {any} r the recipe asked @param {{ xp?: number, first?: boolean }|null|undefined} data the answer @param {string} profession
- * @param {{ room: number, by: string[] }|null} [limit]
+ * @param {{ room: number, by: string[], rank: number }|null} [limit]
  */
 export function craftXpText(r, data, profession, limit = null) {
   const xp = Number(data?.xp) || 0;
-  if (limit?.by?.length && limit.room === 0) {
-    return t('prof.craft.xpLimit', '(+{xp} {profession} XP - {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank})', { xp, profession, crafts: craftsList(limit.by), rank: JOURNEYMAN_RANK });
+  if (limit?.room === 0) {
+    return limit.by?.length
+      ? t('prof.craft.xpLimit', '(+{xp} {profession} XP - {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank})', { xp, profession, crafts: craftsList(limit.by), rank: limit.rank })
+      : t('prof.craft.xpTop', '(+{xp} {profession} XP - {profession} is at Master)', { xp, profession });
   }
   if (!r || data?.first !== true) return t('prof.craft.xp', '(+{xp} {profession} XP)', { xp, profession });
   return firstCraftPays(r)

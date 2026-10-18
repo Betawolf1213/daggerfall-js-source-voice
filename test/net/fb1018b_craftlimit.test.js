@@ -13,12 +13,17 @@
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
-import { standService, T0, sessionStorageOf } from '../accountDb.mjs';
+import { standService, T0, sessionStorageOf, d1 } from '../accountDb.mjs';
+import { craftCapSql } from '../../server-account/src/professions.js';   // AUDIT FB1018b L5-1: the decisions' ceiling, in SQL
 import { accountProf, SESSION_KEY } from '../../src/net/accountClient.js';
 import { createProfBook } from '../../src/net/profBook.js';
 import * as law from '../../src/net/professionLaw.js';
-import { recipeById, craftXp, cookXp, FIRST_CRAFT_XP } from '../../src/net/recipeLaw.js';
+import { recipeById, craftXp, cookXp, masonXp, FIRST_CRAFT_XP } from '../../src/net/recipeLaw.js';
+import { potionById, brewXp, disenchantXp } from '../../src/net/alchemyLaw.js';   // AUDIT FB1018b L5-6: the stations' own laws
+import { temperXp } from '../../src/net/temperLaw.js';
+import * as tm from '../../src/systems/textManager.js';   // AUDIT FB1018b L5-8: the rows in the player's language
 import * as words from '../../src/ui/craftXpWords.js';
 import * as pages from '../../src/ui/professions/profPages.js';
 import { setPref } from '../../src/systems/uiPrefs.js';
@@ -28,6 +33,7 @@ import { FIRM_NODES } from '../../src/net/firmament/firmamentTree.js';
 import { packTree, pathTo, treeStats, xpPct, scaleXp } from '../../src/net/firmament/firmamentLaw.js';
 import { setFirmamentTree, setFirmamentOnline, _resetFirmamentLiveForTests } from '../../src/systems/firmamentLive.js';
 import { hostText } from '../hostText.mjs';
+import { layRecord } from '../realmSeat.mjs';   // AUDIT FB1018b L5-1: a seated character's record, the disenchant's piece in it
 
 const { xpForRank, PROF_XP_MAX } = law;
 const NOON = utcDay(T0) * 86_400 + 12 * 3600;
@@ -51,8 +57,30 @@ async function standBook(env = {}) {
     ON CONFLICT (player, char_id, profession) DO UPDATE SET xp = excluded.xp`).run(mac.id, mac.character, prof, xp, NOON);
   const xpOf = (prof) => Number(raw.prepare('SELECT xp FROM prof_tracks WHERE player = ? AND char_id = ? AND profession = ?').get(mac.id, mac.character, prof)?.xp ?? 0);
   const door = accountProf({ fetch: s.fetch, storage: sessionStorageOf(SESSION_KEY, mac) });
-  const book = createProfBook({ door, storage: memStorage(), character: () => mac.character, now: () => NOON * 1000, sleep: noWait });
-  return { s, raw, mac, give, track, xpOf, book };
+  // AUDIT FB1018b L5-1: a second book of the same character - a second tab, its acts its own (one craft at a time a book)
+  const mk = () => createProfBook({ door, storage: memStorage(), character: () => mac.character, now: () => NOON * 1000, sleep: noWait });
+  const book = mk();
+  return { s, raw, mac, give, track, xpOf, book, mk };
+}
+
+/** AUDIT FB1018b L5-1: ACTS DECIDED AT ONCE - every act's batch (its decision, `INSERT OR IGNORE INTO prof_crafts` and its
+ *  kin) held until `n` have reached theirs, so each act read the character's tracks before any wrote: the Worker's requests
+ *  interleave at every await, and this makes the worst of it the case, whatever an act awaits on its way. Their batches
+ *  then run in the order they came, or (`last`) the last first - so each act is, in one run or the other, the one
+ *  decided second. */
+function decideTogether(db, n, last = false) {
+  const prepare = db.prepare, batch = db.batch;
+  db.prepare = (sql) => Object.assign(prepare.call(db, sql), { act: /INSERT OR IGNORE INTO prof_(crafts|smelts|tempers|brews|disenchants)\b/.test(sql) });
+  let held = [];
+  db.batch = (list) => (!list.some((st) => st.act) ? batch.call(db, list) : new Promise((resolve, reject) => {
+    held.push(() => batch.call(db, list).then(resolve, reject));
+    if (held.length < n) return;
+    const go = held;
+    held = [];
+    db.prepare = prepare;
+    db.batch = batch;
+    for (const f of last ? go.reverse() : go) f();
+  }));
 }
 
 /** The Stores page over a book, at the stations `here` names, and its readers. */
@@ -291,6 +319,87 @@ test('CRAFT-LIMIT-SAID every station says it, read off the real book - Building 
   assert.equal(cookXp(50, { clean: true }), 120, 'what the clean pan earned');
 });
 
+// ─── AUDIT FB1018b L5-1: THE LIMIT IS ONE DECISION ───────────────────
+
+test('AUDIT FB1018b L5-1 the limit is one decision: two acts at once on two tracks at 50, one other craft past - the anvil\'s Silver Dagger beside the workbench\'s Staff, the mason\'s Cut Stone, the alchemy station\'s Healing, the enchanting station\'s Ring and the loom\'s temper, each decided before the other wrote, in either order - one crosses and the other is held at 26,009, its answer what it was credited; never three past (fails on the cap read before the batch and bound in as a literal: both crossed, and every one of the three froze at 26,009 for good) - and the two past still raise after it (mutants: each decision\'s cap the stale one; the count\'s bound, its threshold, its crafts)', async (t) => {
+  t.mock.method(Date, 'now', () => NOON * 1000);
+  const CRAFTS = ['smithing', 'outfitting', 'building', 'provisioning', 'enchanting'];
+  const ring = 'f00dfeedc0ffee01';
+  const races = [
+    ['the workbench', 'building', 'provisioning', (b) => b.craft('staff:pine', { clean: false, name: 'Mac' }, (d) => mintPieces(d))],
+    ['the mason\'s bench', 'building', 'provisioning', (b) => b.smelt('cut:stone', 1, { clean: true })],
+    ['the alchemy station', 'provisioning', 'building', (b) => b.brew('healing', ['p1:16', 'reagent:troll-blood', 'reagent:elixir-vitae', 'metal:mercury'], {}, () => {})],
+    ['the enchanting station', 'enchanting', 'building', (b, mac) => b.disenchant(ring, mac.at())],
+    ['the loom\'s temper', 'outfitting', 'building', (b) => b.temper('leather-cuirass:cured', 1, null)],
+  ];
+  for (const [where, other, past, act] of races) for (const last of [false, true]) {
+    const { s, raw, mac, give, track, xpOf, book, mk } = await standBook();
+    track(past, xpForRank(55));
+    track('smithing', HELD - 5);
+    track(other, HELD - 5);
+    for (const [m, n] of [['ingot:silver', 40], ['metal:tin', 233], ['plank:pine', 40], ['stone:rough', 9], ['p1:16', 9], ['reagent:troll-blood', 9], ['reagent:elixir-vitae', 9], ['metal:mercury', 9], ['leather:cured', 9]]) give(m, n);
+    const r = recipeById('ring:gold:ruby');
+    raw.prepare(`INSERT INTO products (provenance, owner, char_id, maker, recipe, template, material, quality, seed, record, made_at)
+      VALUES (?, ?, ?, 'Mac', ?, ?, ?, 1, 7, 'x', 1)`).run(ring, mac.id, mac.character, r.id, r.templateIndex, r.material ?? 0);
+    // the Ring in the seated character's pack, as its save after the craft carries it (prof12_service.test.js's way)
+    const save = JSON.parse(new TextDecoder().decode(s.env.SAVES._map.get(raw.prepare('SELECT obj FROM realm_characters WHERE id = ?').get(mac.character).obj)));
+    layRecord(s.env, mac.character, { ...save, items: [...(save.items ?? []), { templateIndex: r.templateIndex, provenance: ring, recipe: r.id, name: r.id }] });
+    const b2 = mk();
+    assert.equal((await book.refresh()).ok, true);
+    assert.equal((await b2.refresh()).ok, true);
+    decideTogether(s.env.DB, 2, last);
+    const [a, b] = await Promise.all([book.craft('dagger:silver', { clean: false, name: 'Mac' }, (d) => mintPieces(d)), act(b2, mac)]);
+    assert.equal(a.ok, true, `${where}: the anvil ${JSON.stringify(a)}`);
+    assert.equal(b.ok, true, `${where}: ${JSON.stringify(b)}`);
+    const pastNow = CRAFTS.filter((p) => xpOf(p) > HELD);
+    assert.equal(pastNow.length, 2, `${where}: two crafts past Journeyman, never three (${pastNow.join(', ')})`);
+    const [held, heldAnswer] = xpOf('smithing') > HELD ? [other, b] : ['smithing', a];
+    assert.deepEqual([xpOf(held), Number(heldAnswer.data?.xp)], [HELD, 5], `${where}: the one decided second held at the limit, answered what it was credited`);
+  }
+  // after it: the two past raise on, and the one held stays held
+  const { s, give, track, xpOf, book, mk } = await standBook();
+  track('provisioning', xpForRank(55));
+  track('smithing', HELD - 5);
+  track('building', HELD - 5);
+  for (const [m, n] of [['ingot:silver', 40], ['metal:tin', 233], ['plank:pine', 40]]) give(m, n);
+  const b2 = mk();
+  assert.equal((await book.refresh()).ok, true);
+  assert.equal((await b2.refresh()).ok, true);
+  decideTogether(s.env.DB, 2);
+  await Promise.all([book.craft('dagger:silver', { clean: false, name: 'Mac' }, (d) => mintPieces(d)), b2.craft('staff:pine', { clean: false, name: 'Mac' }, (d) => mintPieces(d))]);
+  const [up, held] = xpOf('smithing') > HELD ? ['smithing', 'building'] : ['building', 'smithing'];
+  assert.equal(xpOf(held), HELD);
+  const before = xpOf(up);
+  assert.equal((await book.refresh({ force: true })).ok, true);
+  const more = await book.craft(up === 'smithing' ? 'tanto:silver' : 'staff:pine', { clean: false, name: 'Mac' }, (d) => mintPieces(d));
+  assert.equal(more.ok, true, JSON.stringify(more));
+  assert.ok(Number(more.data.xp) > 0 && xpOf(up) === before + Number(more.data.xp), `${up}, one of the two, raises on`);
+  const none = await book.craft(held === 'smithing' ? 'tanto:silver' : 'staff:pine', { clean: false, name: 'Mac' }, (d) => mintPieces(d));
+  assert.equal(none.ok, true, JSON.stringify(none));
+  assert.deepEqual([Number(none.data.xp), xpOf(held)], [0, HELD], `${held}, the third, stays held`);
+});
+
+test('AUDIT FB1018b L5-1 one law: the decisions\' SQL ceiling (professions.js craftCapSql) is craftXpCap\'s, over every craft and discipline and every standing of the other four crafts at rank 50\'s last XP or 51\'s first - its own track and the gathering tracks past it never counted (mutants: the count\'s bound, its threshold, its crafts, the ceiling\'s figure)', () => {
+  const db = d1();
+  db._raw.exec('PRAGMA foreign_keys = OFF');   // a character's tracks alone - no account row is read
+  const crafts = law.PROFESSIONS.filter((p) => p.kind === 'crafting').map((p) => p.id);
+  const set = db._raw.prepare(`INSERT INTO prof_tracks (player, char_id, profession, xp, updated_at) VALUES ('p', 'c', ?, ?, 0)
+    ON CONFLICT (player, char_id, profession) DO UPDATE SET xp = excluded.xp`);
+  let n = 0;
+  for (const p of [...crafts, ...law.DISCIPLINES.map((d) => d.id)]) {
+    const own = law.trackOf(p), others = crafts.filter((x) => x !== own);
+    const sql = db._raw.prepare(`SELECT ${craftCapSql('?1', '?2', p)} AS cap`);
+    for (let mask = 0; mask < 1 << others.length; mask++) {
+      const xp = Object.fromEntries(others.map((x, i) => [x, mask & (1 << i) ? HELD + 1 : HELD]));
+      for (const [x, v] of Object.entries({ ...xp, [own]: xpForRank(90), mining: xpForRank(90), fishing: xpForRank(90) })) set.run(x, v);
+      const ranks = Object.fromEntries(Object.entries(xp).map(([x, v]) => [x, law.rankOfXp(v)]));
+      assert.equal(Number(sql.get('p', 'c').cap), law.craftXpCap(p, { ...ranks, [own]: 90, mining: 90, fishing: 90 }), `${p}: ${JSON.stringify(ranks)}`);
+      n++;
+    }
+  }
+  assert.equal(n, 13 * 16, 'every craft and discipline, every standing of the others');
+});
+
 // ─── THE TAB, MASTER, THE LAW ────────────────────────────────────────
 
 test('CRAFT-LIMIT-SAID the tab before the choice and the top: none past - the rule says what a second past 50 does, for good; a gathering track is never held, however many crafts stand past; a Master\'s station line says none (the service credits none at PROF_XP_MAX) and one short of it "At most" (mutants: the rule\'s two arms; the gathering guard; Master\'s arm)', async (t) => {
@@ -308,8 +417,8 @@ test('CRAFT-LIMIT-SAID the tab before the choice and the top: none past - the ru
   track('mining', xpForRank(51) - 1);
   assert.equal((await book.refresh({ force: true })).ok, true);
   assert.equal(tabOf(book, 'mining').xp, '26,009 / 26,010 XP', 'Gathering is unlimited (3.2): never the ceiling\'s line');
-  assert.deepEqual(book.limit?.('mining'), { cap: PROF_XP_MAX, room: PROF_XP_MAX - HELD, by: [] });
-  assert.deepEqual(book.limit?.('jewelcrafting'), { cap: HELD, room: HELD - xpForRank(40), by: ['building', 'enchanting'] }, 'a discipline its craft\'s');
+  assert.deepEqual(book.limit?.('mining'), { cap: PROF_XP_MAX, room: PROF_XP_MAX - HELD, by: [], rank: 100 });
+  assert.deepEqual(book.limit?.('jewelcrafting'), { cap: HELD, room: HELD - xpForRank(40), by: ['building', 'enchanting'], rank: 50 }, 'a discipline its craft\'s');
   // a Master: the service's MIN(earned, PROF_XP_MAX - held) is none
   const dagger = recipeById('dagger:iron');
   assert.equal(words.craftXpLine(dagger, 100, 'Smithing', { limit: law.craftLimit?.('smithing', { smithing: 100 }, PROF_XP_MAX) }), 'No Smithing XP: Smithing is at Master.');
@@ -319,19 +428,197 @@ test('CRAFT-LIMIT-SAID the tab before the choice and the top: none past - the ru
 
 test('CRAFT-LIMIT-SAID the law: craftLimit is craftXpCap\'s ceiling with its room and the crafts that hold it, in the tab\'s order - two others past 50 hold a craft, one does not, its own rank never, a discipline its craft\'s, a gathering track never; craftLimitOf reads it off the service\'s track views by their XP; the host hands the craft\'s word the book\'s limit in its one call (mutants: the order; the room\'s floor; the views\' ranks off their XP)', () => {
   const L = (p, ranks, xp) => law.craftLimit?.(p, ranks, xp);
-  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD), { cap: HELD, room: 0, by: ['building', 'provisioning'] }, 'the tab\'s order, not the ranks\'');
-  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD + 40), { cap: HELD, room: 0, by: ['building', 'provisioning'] }, 'never a room below none');
-  assert.deepEqual(L('smithing', { provisioning: 55, building: 50 }, HELD), { cap: PROF_XP_MAX, room: PROF_XP_MAX - HELD, by: [] }, '50 is not past');
-  assert.deepEqual(L('smithing', { smithing: 90, building: 60 }, xpForRank(90)), { cap: PROF_XP_MAX, room: PROF_XP_MAX - xpForRank(90), by: [] }, 'its own rank never counted');
-  assert.deepEqual(L('cooking', { smithing: 60, building: 51, outfitting: 70 }, 100), { cap: HELD, room: HELD - 100, by: ['smithing', 'building', 'outfitting'] }, 'a discipline its craft\'s; three past, all named');
-  assert.deepEqual(L('smithing', { smithing: 60, building: 60, provisioning: 60 }, xpForRank(60)), { cap: HELD, room: 0, by: ['building', 'provisioning'] }, 'three past (two crafts that crossed at once): the others hold it, never itself');
-  assert.deepEqual(L('herbalism', { smithing: 60, building: 60 }, 5), { cap: PROF_XP_MAX, room: PROF_XP_MAX - 5, by: [] }, 'a gathering track never held');
+  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD), { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 50 }, 'the tab\'s order, not the ranks\'');
+  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD + 40), { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 51 }, 'never a room below none - and held at its own 51 (AUDIT FB1018b L5-2)');
+  assert.deepEqual(L('smithing', { provisioning: 55, building: 50 }, HELD), { cap: PROF_XP_MAX, room: PROF_XP_MAX - HELD, by: [], rank: 100 }, '50 is not past');
+  assert.deepEqual(L('smithing', { smithing: 90, building: 60 }, xpForRank(90)), { cap: PROF_XP_MAX, room: PROF_XP_MAX - xpForRank(90), by: [], rank: 100 }, 'its own rank never counted');
+  assert.deepEqual(L('cooking', { smithing: 60, building: 51, outfitting: 70 }, 100), { cap: HELD, room: HELD - 100, by: ['smithing', 'building', 'outfitting'], rank: 50 }, 'a discipline its craft\'s; three past, all named');
+  // AUDIT FB1018b L5-2: three past (two crafts that crossed at once before L5-1 - players stand there, and nothing lowers a
+  // track): the others hold it, never itself, AT ITS OWN RANK - its words were "holds Smithing at rank 50" at rank 60
+  const three = L('smithing', { smithing: 60, building: 60, provisioning: 60 }, xpForRank(60));
+  assert.deepEqual(three, { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 60 }, 'three past: held where it stands');
+  const AT60 = 'Building and Provisioning stand above Journeyman, and the crafter\'s limit holds Smithing at rank 60';
+  assert.equal(words.capLine('Smithing', { limit: three }, 60), `No Smithing XP: ${AT60}.`, 'the station\'s line');
+  assert.equal(words.craftXpText(recipeById('dagger:silver'), { xp: 0, first: true }, 'Smithing', three), `(+0 Smithing XP - ${AT60})`, 'the craft\'s word');
+  assert.equal(pages.xpLine({ xp: xpForRank(60), rank: 60 }, three), '36,000 / 36,000 XP - the crafter\'s limit holds it at rank 60', 'the tab: its own XP its ceiling, never "36,000 / 26,009 XP - ... at rank 50"');
+  assert.deepEqual(L('herbalism', { smithing: 60, building: 60 }, 5), { cap: PROF_XP_MAX, room: PROF_XP_MAX - 5, by: [], rank: 100 }, 'a gathering track never held');
   for (const [p, ranks] of [['smithing', { provisioning: 55, building: 60 }], ['enchanting', { smithing: 51, building: 50 }], ['masonry', { smithing: 60, provisioning: 70 }]]) {
     assert.equal(L(p, ranks, 0)?.cap, law.craftXpCap(p, ranks), `${p}: craftXpCap's ceiling, the one the service binds`);
   }
   const views = [{ profession: 'building', xp: xpForRank(60), rank: 0 }, { profession: 'provisioning', xp: xpForRank(51), rank: 0 }, { profession: 'smithing', xp: HELD - 7, rank: 0 }, null];
-  assert.deepEqual(law.craftLimitOf?.(views, 'jewelcrafting'), { cap: HELD, room: 7, by: ['building', 'provisioning'] }, 'ranks the service\'s own, off the XP');
-  assert.deepEqual(law.craftLimitOf?.([], 'smithing'), { cap: PROF_XP_MAX, room: PROF_XP_MAX, by: [] }, 'no tracks read: no limit');
+  assert.deepEqual(law.craftLimitOf?.(views, 'jewelcrafting'), { cap: HELD, room: 7, by: ['building', 'provisioning'], rank: 50 }, 'ranks the service\'s own, off the XP');
+  assert.deepEqual(law.craftLimitOf?.([], 'smithing'), { cap: PROF_XP_MAX, room: PROF_XP_MAX, by: [], rank: 100 }, 'no tracks read: no limit');
   // THE HOSTS DO NOT GROW: world.js's craft word hands the book's limit in, in its one call
   assert.match(hostText('src/scenes/world.js'), /\$\{made\} \$\{craftXpText\(rec, r\.data, st\.xp, profBook\.limit\(rec\?\.profession\)\)\}\$\{paid \?/);
+});
+
+// ─── AUDIT FB1018b L5: THE WORDS AT THE EDGES ────────────────────────
+
+test('AUDIT FB1018b L5-3 the tab: a third craft below the rank it is held at keeps its next rank\'s figure - at 10 "1,005 / 1,210 XP" (fails today: "1,005 / 26,009 XP - the crafter\'s limit holds it at rank 50"), at 49 its 50\'s; at 50 the ceiling\'s line, room left or none; L5-2: one past its cap (two that crossed at once) its own XP and rank (mutants: the line below its rank; the line only at the cap; the cap\'s figure past it; the rank Journeyman\'s)', async (t) => {
+  t.mock.method(Date, 'now', () => NOON * 1000);
+  const { track, book } = await standBook();
+  track('building', xpForRank(60));
+  track('provisioning', xpForRank(55));
+  const at = async (xp) => {
+    track('smithing', xp);
+    assert.equal((await book.refresh({ force: true })).ok, true);
+    return [pages.xpLine(book.track('smithing'), book.limit('smithing')), tabOf(book, 'smithing').xp];
+  };
+  const HELD_AT = (xp, cap, rank) => `${xp} / ${cap} XP - the crafter's limit holds it at rank ${rank}`;
+  assert.deepEqual(await at(xpForRank(10) + 5), ['1,005 / 1,210 XP', '1,005 / 1,210 XP'], 'rank 10: its 11\'s figure');
+  assert.deepEqual(await at(xpForRank(49) + 9), ['24,019 / 25,000 XP', '24,019 / 25,000 XP'], 'rank 49: its 50 is still to reach');
+  assert.deepEqual(await at(xpForRank(50) + 500), Array(2).fill(HELD_AT('25,500', '26,009', 50)), 'rank 50, room left: 51 is past its ceiling');
+  assert.deepEqual(await at(HELD), Array(2).fill(HELD_AT('26,009', '26,009', 50)), 'at the ceiling');
+  assert.deepEqual(await at(xpForRank(60)), Array(2).fill(HELD_AT('36,000', '36,000', 60)), 'past its cap: never "36,000 / 26,009 XP - ... at rank 50"');
+});
+
+test('AUDIT FB1018b L5-4 Master\'s word: a Master\'s craft says "(+0 Smithing XP - Smithing is at Master)", first or not, never "with the first-time bonus" nor the crafter\'s limit\'s (fails today: a Master\'s limit names no crafts and fell through to the first\'s word); at 99,800 the Worker pays a new pattern 200 of what it earns and the word is the top\'s, the first the top ate never said as paid (mutants: the top\'s word unsaid; a Master\'s word the limit\'s)', async (t) => {
+  t.mock.method(Date, 'now', () => NOON * 1000);
+  const master = law.craftLimit('smithing', { smithing: 100 }, PROF_XP_MAX);
+  for (const data of [{ xp: 0, first: true }, { xp: 0, first: false }]) {
+    const w = words.craftXpText(recipeById('dagger:iron'), data, 'Smithing', master);
+    assert.equal(w, '(+0 Smithing XP - Smithing is at Master)', JSON.stringify(data));
+    assert.doesNotMatch(w, /stand above Journeyman|first-time bonus/);
+  }
+  const { track, give, xpOf, book } = await standBook();
+  track('smithing', PROF_XP_MAX - 200);
+  give('ingot:silver', 40);
+  give('metal:tin', 233);
+  assert.equal((await book.refresh()).ok, true);
+  const earned = craftXp(3, 99, false) + FIRST_CRAFT_XP;
+  assert.ok(earned > 200, `a new Silver pattern earns ${earned}`);
+  assert.equal(words.craftXpLine(recipeById('dagger:silver'), 99, 'Smithing', pages.payOf(book, 'smithing')), 'At most 200 Smithing XP: Smithing stops at Master.');
+  const r = await book.craft('dagger:silver', { clean: false, name: 'Mac' }, (d) => mintPieces(d));
+  assert.equal(r.ok, true, JSON.stringify(r));
+  assert.deepEqual([r.data.xp, r.data.first, xpOf('smithing')], [200, true, PROF_XP_MAX], 'the top took the rest of the first');
+  assert.equal(words.craftXpText(recipeById('dagger:silver'), r.data, 'Smithing', book.limit('smithing')), '(+200 Smithing XP - Smithing is at Master)');
+  const top = await book.craft('tanto:silver', { clean: false, name: 'Mac' }, (d) => mintPieces(d));
+  assert.equal(top.ok, true, JSON.stringify(top));
+  assert.deepEqual([top.data.xp, top.data.first], [0, true]);
+  assert.equal(words.craftXpText(recipeById('tanto:silver'), top.data, 'Smithing', book.limit('smithing')), '(+0 Smithing XP - Smithing is at Master)');
+});
+
+test('AUDIT FB1018b L5-7 the rooms between an act\'s own XP and its first\'s 500: the fire\'s Hunter\'s Stew, the alchemy station\'s Healing and the mason\'s works say "At most N" where the track has more room than the act\'s own XP and less than its first\'s - and the Worker pays the fire N (mutants: the fire\'s most without its first or without its clean pan; the works\' most without their own XP, a plain chisel\'s, unscaled; the brew\'s most without its first)', async (t) => {
+  t.mock.method(Date, 'now', () => NOON * 1000);
+  const B = await standBook();
+  B.track('smithing', xpForRank(60));
+  B.track('outfitting', xpForRank(60));
+  for (const [m, n] of [['stone:rough', 9], ['food:meat', 9], ['food:mushroom', 9], ['p1:13', 9], ['p1:16', 9], ['reagent:troll-blood', 9], ['reagent:elixir-vitae', 9], ['metal:mercury', 9]]) B.give(m, n);
+  const SO = 'Smithing and Outfitting', works = masonXp(1, 50, { clean: true }) + 499;
+  for (const room of [300, 560]) {
+    B.track('provisioning', HELD - room);
+    B.track('building', HELD - works);
+    assert.equal((await B.book.refresh({ force: true })).ok, true);
+    const page = standPage(B.book, { fire: true, alchemy: true, mason: true });
+    try {
+      page.press('The Fire', 'Hunter\'s Stew');
+      assert.equal(page.box('The Fire')[1].at(-1), LIMIT(room, 'Provisioning', SO), `the fire at room ${room}`);
+      page.press('The Alchemy Station', 'Healing');
+      if (room < 505) assert.match(page.box('The Alchemy Station')[1].join('|'), new RegExp(`At most ${room} Provisioning XP`), 'Healing\'s first pays');
+      else assert.match(page.box('The Alchemy Station')[1].join('|'), /5 Provisioning XP, and 500 the first time/);
+      assert.ok(page.notes('The Mason\'s Bench').includes(LIMIT(works, 'Building', SO)), page.notes('The Mason\'s Bench').join('|'));
+    } finally { page.done(); }
+  }
+  const dish = await B.book.craft('stew:north', { clean: true, name: 'Mac' }, (d) => mintPieces(d));
+  assert.deepEqual([dish.ok, dish.data?.xp, dish.data?.first], [true, 560, true], 'the Worker pays the fire what "At most 560" said');
+});
+
+/** The law's shortest walks from the Warrior's start to four stars that each raise a craft's experience. */
+const craftSky = () => {
+  const tree = { start: 'wr.start', keys: [] };
+  for (const n of ['Anvil\'s Song', 'Master Builder', 'Master Brewer', 'Runic Fluency']) tree.keys.push(...pathTo(tree, [...FIRM_NODES.values()].find((x) => x.name === n).key));
+  return tree;
+};
+const RING = { provenance: 'aaaaaaaaaaaaaaaa', name: 'Gold Ruby Ring', points: 2160, essence: 21, recipe: 'ring:gold:ruby' };
+
+test('AUDIT FB1018b L5-6 the Firmament\'s hand at the fire, the alchemy station and the enchanting station, as the Worker pays the fire and the brew - and on the held lines of the temper, the disenchant and the mason\'s works, a room between the unscaled figure and the scaled one saying "At most" (mutants: the fire\'s clean and plain pans, the brew, the disenchant\'s row and line, the temper\'s line and the works\' most each unscaled)', async (t) => {
+  t.mock.method(Date, 'now', () => NOON * 1000);
+  _resetFirmamentLiveForTests();
+  const tree = craftSky(), st = treeStats(tree);
+  const pP = xpPct(st, 'provisioning'), pE = xpPct(st, 'enchanting'), pB = xpPct(st, 'building'), pS = xpPct(st, 'smithing');
+  assert.ok(pP > 0 && pE > 0 && pB > 0 && pS > 0, 'every craft its percent');
+  try {
+    const A = await standBook({ FIRMAMENT_OPEN: 'on' });
+    A.raw.prepare('INSERT INTO firmament (player, char_id, tree, updated_at) VALUES (?, ?, ?, ?)').run(A.mac.id, A.mac.character, packTree(tree), NOON);
+    setFirmamentOnline(true);
+    setFirmamentTree(tree);
+    A.track('provisioning', xpForRank(30));
+    A.track('enchanting', xpForRank(30));
+    for (const [m, n] of [['food:meat', 9], ['food:mushroom', 9], ['p1:13', 9], ['p1:16', 9], ['reagent:troll-blood', 9], ['reagent:elixir-vitae', 9], ['metal:mercury', 9]]) A.give(m, n);
+    assert.equal((await A.book.refresh()).ok, true);
+    const ring = recipeById(RING.recipe);
+    let page = standPage(A.book, { fire: true, alchemy: true, enchanter: true, disenchantable: () => [RING] });
+    const clean = scaleXp(cookXp(30, { clean: true }), pP), brew = scaleXp(brewXp(potionById('healing'), 30, false), pP);
+    try {
+      page.press('The Fire', 'Hunter\'s Stew');
+      assert.match(page.box('The Fire')[1].join('|'), new RegExp(`half again its ${scaleXp(cookXp(30), pP)} Provisioning XP`));
+      page.press('The Alchemy Station', 'Healing');
+      assert.match(page.box('The Alchemy Station')[1].join('|'), new RegExp(`${brew} Provisioning XP, and 500 the first time`));
+      assert.match(page.text('The Enchanting Station'), new RegExp(`\\+${scaleXp(disenchantXp(ring, 30, 21), pE)} Enchanting XP`));
+    } finally { page.done(); }
+    const dish = await A.book.craft('stew:north', { clean: true, name: 'Mac' }, (d) => mintPieces(d));
+    assert.deepEqual([dish.data?.xp, dish.data?.first], [clean + FIRST_CRAFT_XP, true], 'the Worker\'s clean pan: the percent on it');
+    const b = await A.book.brew('healing', ['p1:16', 'reagent:troll-blood', 'reagent:elixir-vitae', 'metal:mercury'], {}, () => {});
+    assert.deepEqual([b.ok, b.data?.xp], [true, brew + FIRST_CRAFT_XP], JSON.stringify(b));
+    // the held lines: a room between the unscaled figure and the scaled one says "At most"
+    const H = await standBook({ FIRMAMENT_OPEN: 'on' });
+    H.track('building', xpForRank(60));
+    H.track('provisioning', xpForRank(55));
+    const tS = scaleXp(temperXp(recipeById('longsword:steel'), 50), pS), dE = scaleXp(disenchantXp(ring, 50, 21), pE);
+    H.track('smithing', HELD - (tS - 1));
+    H.track('enchanting', HELD - (dE - 1));
+    H.give('ingot:steel', 9);
+    assert.equal((await H.book.refresh()).ok, true);
+    page = standPage(H.book, {
+      forge: true, enchanter: true, disenchantable: () => [RING],
+      temperable: (w) => (w === 'anvil' ? [{ item: {}, name: 'Steel Longsword', recipe: 'longsword:steel', quality: 1, provenance: null }] : []),
+    });
+    const BP = 'Building and Provisioning';
+    try {
+      assert.ok(page.notes('Temper at the Anvil').includes(LIMIT(tS - 1, 'Smithing', BP)), page.notes('Temper at the Anvil').join('|'));
+      assert.ok(page.notes('The Enchanting Station').includes(LIMIT(dE - 1, 'Enchanting', BP)), page.notes('The Enchanting Station').join('|'));
+    } finally { page.done(); }
+    const M = await standBook({ FIRMAMENT_OPEN: 'on' });
+    M.track('smithing', xpForRank(60));
+    M.track('outfitting', xpForRank(60));
+    const most = scaleXp(masonXp(1, 50, { clean: true }), pB) + FIRST_CRAFT_XP;
+    M.track('building', HELD - (most - 1));
+    assert.equal((await M.book.refresh()).ok, true);
+    page = standPage(M.book, { mason: true });
+    try {
+      assert.ok(page.notes('The Mason\'s Bench').includes(LIMIT(most - 1, 'Building', 'Smithing and Outfitting')), page.notes('The Mason\'s Bench').join('|'));
+    } finally { page.done(); }
+    // the fire's clean pan with the town's step, the percent on it, as the Worker pays it
+    const S = await standBook({ FIRMAMENT_OPEN: 'on' });
+    S.raw.prepare('INSERT INTO firmament (player, char_id, tree, updated_at) VALUES (?, ?, ?, ?)').run(S.mac.id, S.mac.character, packTree(tree), NOON);
+    S.track('provisioning', xpForRank(30));
+    assert.equal((await S.book.refresh()).ok, true);
+    page = standPage(S.book, { fire: true, cookSteps: () => 1 });
+    try {
+      page.press('The Fire', 'Hunter\'s Stew');
+      assert.match(page.box('The Fire')[1].join('|'), new RegExp(`${scaleXp(cookXp(30, { clean: true, steps: 1 }), pP)} Provisioning XP to a plain dish's ${scaleXp(cookXp(30, { steps: 1 }), pP)}`));
+    } finally { page.done(); }
+  } finally { _resetFirmamentLiveForTests(); }
+});
+
+test('AUDIT FB1018b L5-8 the limit\'s rows in the player\'s language: German\'s and Russian\'s crafts joined with their own "und" and "и", the rule\'s two arms (Russian\'s named crafts at two past, its before-the-choice arm at one), the tab\'s ceiling and Master\'s word - each the table\'s row as formatMessage reads it (mutants: the crafts joined in English; Russian\'s arms swapped)', () => {
+  const two = law.craftLimit('smithing', { building: 60, provisioning: 55 }, HELD);
+  try {
+    for (const [lang, joined] of [['de', 'Building und Provisioning'], ['ru', 'Building и Provisioning']]) {
+      const rows = tm.parseStringTableCsv(readFileSync(new URL(`../../locales/${lang}/Port_Strings.csv`, import.meta.url), 'utf8'));
+      const row = new Map(rows);
+      tm.patchLocaleTable(lang, 'Port_Strings', rows);
+      tm.setLocale(lang);
+      const say = (key, args) => tm.formatMessage(row.get(key), args);
+      assert.equal(words.capLine('Smithing', { limit: two }, 60), say('prof.page.craft.xpLimit', { room: 0, profession: 'Smithing', crafts: joined, rank: 50 }), `${lang}: the station's line`);
+      assert.equal(words.craftXpText(recipeById('dagger:silver'), { xp: 0, first: true }, 'Smithing', two), say('prof.craft.xpLimit', { xp: 0, profession: 'Smithing', crafts: joined, rank: 50 }), `${lang}: the craft's word`);
+      assert.equal(words.limitRuleLine(['building', 'provisioning']), say('prof.page.limit.rule', { max: 2, full: 'yes', crafts: joined, rank: 50 }), `${lang}: the rule, two past`);
+      assert.equal(words.limitRuleLine(['building']), say('prof.page.limit.rule', { max: 2, full: 'no', crafts: 'Building', rank: 50 }), `${lang}: the rule, one past`);
+      assert.ok(words.limitRuleLine(['building', 'provisioning']).includes(joined) && !words.limitRuleLine(['building']).includes('Building'), `${lang}: the crafts named at two past alone`);
+      assert.equal(words.craftXpText(recipeById('dagger:iron'), { xp: 0, first: true }, 'Smithing', law.craftLimit('smithing', { smithing: 100 }, PROF_XP_MAX)), say('prof.craft.xpTop', { xp: 0, profession: 'Smithing' }), `${lang}: Master's word`);
+      assert.equal(pages.xpLine({ xp: HELD, rank: 50 }, two), say('prof.page.xpHeld', { xp: HELD, cap: HELD, rank: 50 }), `${lang}: the tab's ceiling`);
+    }
+    assert.match(words.limitRuleLine(['building', 'provisioning']), /^Персонаж поднимает выше Подмастерья только 2 ремесла: ваши — Building и Provisioning, поэтому остальные ваши ремёсла/);
+    assert.match(words.limitRuleLine(['building']), /только 2 ремесла; как только 2 из ваших пройдут ранг 50/);
+  } finally { tm.setLocale('en'); }
 });
