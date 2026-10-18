@@ -31,11 +31,11 @@ import * as acorn from 'acorn';
 import { withDom } from '../invdrag.mjs';
 import { mountEnhancedInventory } from '../../src/ui/enhanced/enhancedInventory.js';
 import { planTake, planStore, applyTransfer } from '../../src/systems/item/itemTransfer.js';
-import { searchableKind, restoreSearchLedger, searchLedgerRecord, setSearchParty, searchPartyLens, _resetSearchLedgerForTests } from '../../src/systems/searchables.js';
+import { searchableKind, restoreSearchLedger, searchLedgerRecord, setSearchParty, searchPartyLens, searchKey, searchCooldownLeft, searchedText, SEARCH_COOLDOWN_MINUTES, _resetSearchLedgerForTests } from '../../src/systems/searchables.js';
 import { validSocialFrame, sharedClassicMinutes } from '../../src/net/wire.js';
 import { SocialState } from '../../src/net/social.js';
 import { createSearchParty } from '../../src/scenes/searchPartyHost.js';
-import { setSharedClock } from '../../src/systems/worldTick.js';
+import { setSharedClock, worldMinutes } from '../../src/systems/worldTick.js';
 import { ActionTextBox } from '../../src/ui/actionText.js';
 import { ITEM_TEMPLATES } from '../../src/characters/paperdoll/paperdoll.js';
 import { _resetForTests as resetPrefs } from '../../src/systems/uiPrefs.js';
@@ -47,8 +47,9 @@ const rd = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); };
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const REAL_RANDOM = Math.random;
+const REAL_NOW = Date.now;
 const clock = { t: Date.UTC(2027, 3, 1, 12, 0, 0) };
-afterEach(() => { Math.random = REAL_RANDOM; setSharedClock(null); _resetSearchLedgerForTests(); setSearchParty(null); });
+afterEach(() => { Math.random = REAL_RANDOM; Date.now = REAL_NOW; setSharedClock(null); _resetSearchLedgerForTests(); setSearchParty(null); });
 
 // ═══ THE DUNGEON HOST'S DOORS, sliced (test/systems/partyloot.test.js's method) ═════════════════════════════════════
 const FILES = ['src/scenes/dungeonContext.js', 'src/scenes/roomLootHost.js'].map((p) => { const src = rd(p); return { p, src, ast: acorn.parse(src, { ecmaVersion: 'latest', sourceType: 'module' }) }; });
@@ -144,11 +145,12 @@ const COFFIN = 41315;          // TEXTURE.092's low wooden coffin (systems/searc
 /** A searchable as the build mints it (dungeonContext.js: `{ kind, aabb, key, lock: 0, items: [], records }`). */
 const coffinAt = (i) => ({ kind: searchableKind(COFFIN), aabb: { min: [i * 3, 0, 0], max: [i * 3 + 0.8, 0.45, 2] }, key: `0:${100 + i}`, lock: 0, items: [], records: false });
 function actRoom() {
-  const players = [], q = [];
+  const players = [], q = [], sent = [];
   return {
     players,
+    sent,   // every act frame said, kept
     join(p) { players.push(p); },
-    send(from, data) { q.push({ from, data: clone(data) }); return true; },
+    send(from, data) { const f = { from, data: clone(data) }; q.push(f); sent.push(f); return true; },
     /** The act frames said so far, landed on everyone else in the dungeon, and each player's claims tick after. */
     flush() {
       for (let guard = 0; q.length && guard < 64; guard++) {
@@ -167,11 +169,12 @@ function player(net, acct, { party = PARTY, host = false } = {}) {
   const lens = searchPartyLens();
   const said = [], boxes = [];
   const entity = { level: 6, gender: 'male', name: PLAYERS[acct].name, characterId: `char-${acct}`, career: { name: 'Spellsword' }, stats: { luck: 50, strength: 50, endurance: 48 }, activeEffects: [], items: [], goldPieces: 0 };
-  const P = { id, acct, entity, said, boxes, ledger: { rows: [] }, rand: lcg(acct.length * 104729 + acct.charCodeAt(5)), next: null, window: null };
+  const P = { id, acct, entity, said, boxes, social, ledger: { rows: [] }, rand: lcg(acct.length * 104729 + acct.charCodeAt(5)), next: null, window: null, skew: 0 };
   P.as = (fn) => {
     restoreSearchLedger(P.ledger); setSearchParty(lens);
     Math.random = () => { if (P.next != null) { const v = P.next; P.next = null; return v; } return P.rand(); };
-    try { return fn(); } finally { Math.random = REAL_RANDOM; P.ledger = searchLedgerRecord(); }
+    Date.now = () => clock.t + P.skew;   // this machine's OWN clock, which may be minutes off the relay's (R-3); the shared clock (setSharedClock) is the relay's
+    try { return fn(); } finally { Math.random = REAL_RANDOM; Date.now = REAL_NOW; P.ledger = searchLedgerRecord(); }
   };
   const seat = net.players[0]?.id ?? id;
   const state = {
@@ -239,13 +242,14 @@ function windowOf(P) {
   w.close = () => { const win = w.cur; w.cur = null; win.done = true; P.state.activeOverlay = null; win.deps?.loot?.closed?.(); P.as(() => win.deps?.onClose?.()); };
   return w;
 }
-const crypt = () => {
+const crypt = ({ strangerHost = false } = {}) => {
   setSharedClock(() => sharedClassicMinutes(clock.t));
   const net = actRoom();
-  const ann = player(net, 'acct-ann', { host: true });
+  const eve = strangerHost ? player(net, 'acct-eve', { party: null, host: true }) : null;   // the dungeon's seat is a stranger to the party
+  const ann = player(net, 'acct-ann', { host: !strangerHost });
   const bob = player(net, 'acct-bob');
   const dan = player(net, 'acct-dan');
-  return { net, ann, bob, dan, all: [ann, bob, dan] };
+  return { net, ann, bob, dan, eve, all: [ann, bob, dan] };
 };
 /** Ann searches coffin 0 and finds; the party hears it; Ann's find window closes again. */
 function found() {
@@ -345,4 +349,166 @@ test('GRAVE-PARTY (guard - passes today): a stranger\'s search in the same crypt
   we.close();
   s.net.flush();
   for (const p of s.all) assert.deepEqual(names(find(p)), names(s.theFind), `${p.id}: the party's find, untouched by a stranger's word`);
+});
+
+// ═══ SLICE 3 (2026-10-18) - T28-T30's REST: THE FIND IS A CARRIED KIND, JUDGED BY THE DUNGEON'S HOST ═════════════════════
+// DESIGN.md section 5 and 8.2 (T28-T30), DESIGN-REVIEW D-1/D-1a and R-3. Outcomes only: where each piece is, for every player,
+// once the relay has been flushed - the way the find is carried (a base, takes, claims) is the build's own.
+const desc = (it) => `${it.name}x${it.stackCount ?? 1}`;
+const findDesc = (P, i = 0) => find(P, i).map(desc);
+const objectKey = (i) => searchKey('d777', `0:${100 + i}`);   // the ledger's name for coffin i of this dungeon (searchLocationKey: DFU's map id)
+/** The five hours left on coffin `i` for this player, in game minutes (0: none run). */
+const hoursLeft = (P, i = 0) => P.as(() => searchCooldownLeft(objectKey(i), worldMinutes()));
+/** Start every scene early in a period of the search clock (SEARCH_COOLDOWN_MINUTES), so a few seconds never cross its edge. */
+const alignPeriod = () => { for (let n = 0; n < 400 && sharedClassicMinutes(clock.t) % SEARCH_COOLDOWN_MINUTES > 100; n++) clock.t += 1000; };
+/** The piece of the find a window takes: the first one that is not coin (a coin is counted by its amount). */
+const aPiece = (list) => list.find((it) => it.group !== 'Currency') ?? list[0];
+
+test('T29 / R-3: two partymates search one coffin in one breath - the EARLIER mint by the SHARED clock wins on every client, whatever each machine\'s own clock says, and both windows end on that one find', () => {
+  const s = crypt();
+  alignPeriod();
+  s.ann.skew = 20 * 60_000;    // Ann\'s own clock runs twenty minutes FAST
+  s.bob.skew = -20 * 60_000;   // Bob\'s twenty minutes SLOW: Date.now() would hand Bob every first-open
+  const wa = windowOf(s.ann), wb = windowOf(s.bob);
+  assert.ok(search(s.ann, 1, wa), 'Ann\'s search finds, first by the relay\'s clock');
+  const annFind = findDesc(s.ann, 1);
+  clock.t += 700;
+  assert.ok(search(s.bob, 1, wb), 'Bob\'s search finds, 0.7 s later by the relay\'s clock, before he has heard Ann\'s');
+  assert.notDeepEqual(findDesc(s.bob, 1), annFind, 'two searches, two finds (each player\'s own dice - guard)');
+  wa.close(); wb.close();
+  s.net.flush();
+  for (const p of s.all) assert.deepEqual(findDesc(p, 1), annFind, `T29/R-3: ${p.id} ends on Ann's find - the earlier mint by the shared clock - not ${JSON.stringify(findDesc(p, 1))}: a later close landed a whole list over the earlier search's`);
+});
+
+test('T29: first come at the host - Bob and Dan take the SAME piece of the party\'s find in one breath: exactly one copy between them, the later claim is told "taken", and nobody\'s list shows it again', () => {
+  const s = found();
+  const wb = windowOf(s.bob), wd = windowOf(s.dan);
+  assert.ok(openFind(s.bob, 0, wb) && openFind(s.dan, 0, wd), 'both partymates open the find');
+  const X = wb.take((it) => it.name === aPiece(s.theFind).name);
+  wd.take((it) => it.name === X.name);
+  s.bob.said.length = 0; s.dan.said.length = 0;
+  wb.close();
+  wd.close();
+  s.net.flush();
+  const want = X.group === 'Currency' ? X.stackCount : 1;
+  assert.equal(holds(s.bob, X) + holds(s.dan, X), want, `T29: ${X.name} - Bob holds ${holds(s.bob, X)}, Dan holds ${holds(s.dan, X)}: both kept it (each took it from its own window and said a whole list)`);
+  assert.equal(holds(s.bob, X), want, 'to Bob, whose claim reached the host first');
+  assert.ok(s.dan.said.includes(RL.ROOM_TAKEN_TEXT), 'and Dan is told');
+  for (const p of s.all) assert.equal(find(p).some((it) => it.name === X.name), false, `${p.id}: gone from the find`);
+});
+
+test('T29 / GRAVE-PARTY: the dungeon\'s host is a STRANGER to the searcher\'s party - it judges every claim on the find, never shows the find, and never starts its own five hours', () => {
+  const s = crypt({ strangerHost: true });
+  const { eve } = s;
+  const wa = windowOf(s.ann);
+  assert.ok(search(s.ann, 0, wa), 'Ann searches and finds');
+  const theFind = find(s.ann).map((it) => ({ ...it }));
+  wa.close();
+  s.net.flush();
+  for (const p of s.all) assert.deepEqual(findDesc(p), theFind.map(desc), `${p.id}: the party's one find (guard)`);
+  assert.deepEqual(find(eve), [], 'the host is not of the party: it is shown nothing');
+  assert.equal(hoursLeft(eve), 0, 'and no five hours run for it');
+  assert.ok(hoursLeft(s.bob) > 0, 'while they run for the party (guard)');
+  const wb = windowOf(s.bob), wd = windowOf(s.dan);
+  assert.ok(openFind(s.bob, 0, wb) && openFind(s.dan, 0, wd), 'two partymates open the find');
+  const X = wb.take((it) => it.name === aPiece(theFind).name);
+  wd.take((it) => it.name === X.name);
+  s.dan.said.length = 0;
+  wb.close(); wd.close();
+  s.net.flush();
+  const want = X.group === 'Currency' ? X.stackCount : 1;
+  assert.equal(holds(s.bob, X) + holds(s.dan, X), want, `T29/GRAVE-PARTY: ${X.name} - Bob holds ${holds(s.bob, X)}, Dan holds ${holds(s.dan, X)}: the host outside the party judged nothing, so both kept it`);
+  assert.ok(s.dan.said.includes(RL.ROOM_TAKEN_TEXT), 'the later claim is told');
+  assert.deepEqual(find(eve), [], 'the host still shows no find');
+  assert.equal(hoursLeft(eve), 0, 'and still starts no hours of its own');
+  for (const p of s.all) assert.equal(find(p).some((it) => it.name === X.name), false, `${p.id}: gone from the party's find`);
+});
+
+test('T30 (guard): SEARCH1\'s five hours run for the searcher\'s party alone - a stranger in the same crypt may search the same coffin for herself', () => {
+  const s = found();
+  const eve = player(s.net, 'acct-eve', { party: null });
+  assert.ok(hoursLeft(s.ann) > 0 && hoursLeft(s.bob) > 0 && hoursLeft(s.dan) > 0, 'the five hours run for the party');
+  assert.equal(hoursLeft(eve), 0, 'and not for a stranger');
+  assert.ok(search(eve, 0, windowOf(eve)), 'the stranger searches the same coffin and finds for herself');
+});
+
+test('T30 / GRAVE-PARTY: a find heard before the party was formed is KEPT unlanded, and the coffin presses it again - the party then holds the find, its five hours, the searcher\'s name, and a take of it is the party\'s claim', () => {
+  const s = found();
+  const late = player(s.net, 'acct-eve', { party: null });   // not yet seated with Ann
+  s.net.sent.length = 0;
+  const wa = windowOf(s.ann);
+  assert.ok(openFind(s.ann, 0, wa), 'Ann opens her find again');
+  wa.close();
+  s.net.flush();
+  assert.deepEqual(find(late), [], 'a stranger lands nothing');
+  assert.equal(hoursLeft(late), 0, 'and starts no hours');
+  picture(late.social, 'acct-eve', ['acct-ann', 'acct-eve']);   // Ann's party takes Eve in
+  const we = windowOf(late);
+  assert.ok(openFind(late, 0, we), 'the press reads the kept word again: the find opens');
+  assert.deepEqual(findDesc(late), findDesc(s.ann), 'the same find as the party\'s');
+  assert.ok(hoursLeft(late) > 0, 'her five hours run now');
+  assert.match(late.as(() => searchedText(objectKey(0))), /Ann/, 'and she is told whose search it was');
+  const X = we.take((it) => it.name === aPiece(s.theFind).name);
+  we.close(); s.net.flush();
+  const want = X.group === 'Currency' ? X.stackCount : 1;
+  assert.equal(holds(late, X) + holds(s.ann, X) + holds(s.bob, X) + holds(s.dan, X), want, 'a take of it is one copy in the room');
+  for (const p of [...s.all, late]) assert.equal(find(p).some((it) => it.name === X.name), false, `${p.id}: gone from the find`);
+});
+
+test('T30 / WORLD8 (guard): a word about a find stamped past the respawn is not the room\'s - a partymate who hears it lands nothing and starts no hours', () => {
+  const s = crypt();
+  const wa = windowOf(s.ann);
+  assert.ok(search(s.ann, 0, wa), 'Ann searches and finds');
+  wa.close();
+  const word = s.net.sent.map((f) => f.data.l?.find((r) => r.k === 'srch:0')).filter(Boolean).at(-1);
+  assert.ok(word, 'Ann said the find to the room');
+  const stale = clone(word); stale.t = clock.t - 3 * 24 * 3600_000;
+  s.net.sent.length = 0;
+  s.dan.as(() => s.dan.h.applyActions('a0a0-0001', { k: ROOM, l: [stale] }));
+  assert.deepEqual(find(s.dan), [], 'a word past the room\'s hour lands nothing');
+  assert.equal(hoursLeft(s.dan), 0, 'and starts no hours');
+});
+
+test('T30 / mixed builds: a NEW find word is no WORLD4 list (it says a base, not `r`, so an older build marks it unreadable and a stranger\'s is kept by nobody there) - and carries its searcher', () => {
+  const s = crypt();
+  const wa = windowOf(s.ann);
+  assert.ok(search(s.ann, 0, wa), 'Ann searches and finds');
+  const words = s.net.sent.flatMap((f) => f.data.l ?? []).filter((r) => r.k === 'srch:0');
+  assert.ok(words.length >= 1, 'the search was said to the room');
+  for (const w of words) {
+    assert.equal('r' in w, false, 'T30: the word carries no whole list for an older build to land (`r`)');
+    assert.equal(w.by, 'acct-ann', 'it names its searcher (GRAVE-PARTY)');
+  }
+  const birth = words.find((w) => Array.isArray(w.b));
+  assert.ok(birth, 'and the search said a base `b`');
+  assert.equal(birth.b.length, find(s.ann).length, 'the find\'s own records');
+});
+
+test('T30 / mixed builds: an OLDER build\'s whole-list word is a BIRTH when the room has none, then that peer\'s DIFF - never a list landed over the room\'s: its untouched second word brings back no taken piece, a piece gone from it is its take, one added its put', () => {
+  setSharedClock(() => sharedClassicMinutes(clock.t));
+  const net = actRoom();
+  const bob = player(net, 'acct-bob', { host: true });   // the dungeon's host is a new build; the searcher is Ann on an older one
+  const dan = player(net, 'acct-dan');
+  const t = ITEM_TEMPLATES;
+  const mk = (name, extra = {}) => { const x = t.find((q) => q.name === name); return { group: 'Weapons', templateIndex: x.index, name, material: 0, value: 40, currentCondition: x.hitPoints ?? 50, maxCondition: x.hitPoints ?? 50, ...extra }; };
+  const coin = { group: 'Currency', templateIndex: 276, name: 'Gold Pieces', value: 1, stackCount: 80 };
+  const old = (list) => ({ k: 'srch:0', r: list.map((it) => ({ ...it })), t: clock.t, by: 'acct-ann', bn: 'Ann' });
+  const sayOld = (list) => { net.send('a0a0-0001', { k: ROOM, l: [old(list)] }); net.flush(); };
+  const OLD = [coin, mk('Mace'), mk('Dagger')];
+  sayOld(OLD);
+  for (const p of [bob, dan]) assert.deepEqual(find(p).map((it) => it.name), ['Gold Pieces', 'Mace', 'Dagger'], `${p.id}: the older build's search is the party's find (a birth)`);
+  const wb = windowOf(bob), wd = windowOf(dan);
+  assert.ok(openFind(bob, 0, wb) && openFind(dan, 0, wd), 'two partymates open it');
+  wb.take((it) => it.name === 'Mace'); wd.take((it) => it.name === 'Mace');
+  dan.said.length = 0;
+  wb.close(); wd.close(); net.flush();
+  assert.equal(holds(bob, mk('Mace')) + holds(dan, mk('Mace')), 1, 'first come at the host: one Mace between them, where each kept its own');
+  assert.ok(dan.said.includes(RL.ROOM_TAKEN_TEXT), 'and the later claim is told');
+  sayOld(OLD);   // the older build closes a window it opened before: its list, untouched
+  for (const p of [bob, dan]) assert.equal(find(p).some((it) => it.name === 'Mace'), false, `T30: the Mace is back in ${p.id}'s find - the older build's untouched word was landed as a list`);
+  sayOld([coin, mk('Mace')]);   // its next word: the Dagger gone
+  for (const p of [bob, dan]) assert.equal(find(p).some((it) => it.name === 'Dagger'), false, `${p.id}: the Dagger it took is gone`);
+  sayOld([coin, mk('Mace'), mk('Flail')]);   // and a Flail laid in
+  for (const p of [bob, dan]) assert.equal(find(p).filter((it) => it.name === 'Flail').length, 1, `${p.id}: the Flail it put in is the find's, once`);
+  assert.equal(find(bob).some((it) => it.name === 'Mace'), false, 'and the Mace is still not back, though the older build\'s every word says it');
 });
