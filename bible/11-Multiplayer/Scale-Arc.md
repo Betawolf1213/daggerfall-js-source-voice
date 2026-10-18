@@ -2940,6 +2940,34 @@ pins were made to reach them. PIN MOVED: `int16_progress.test.js` (the seat judg
 `auditlegacy3.test.js` (the tombstone the door's first answer); re-aimed by content, all dead: AUDIT-LEGACY-III-O5's two
 and O12's two, INT17-renown-unmeasured.
 
+### PRIMARY-FOLD part two: built (2026-10-18, this branch - no version, no migration, no drop) - a week read settled, kept
+
+**Counted first.** Every seat route (`seatTurning.js` settleDueOnce) and every chapters reader (`npcChapters.js`
+settleChaptersDue: the sheet, a Focus, a hall writ's draw) asked the primary `SELECT MAX(week)` to learn whether a
+Turning was due - the same answer all week. The chapters' sheet then read its halls, its chapters, their seats' holders
+and the Season's patrons one trip each: 7 trips warm with a Season counted (6 in the counter, which counts none).
+
+**Built.**
+- **A week read settled stays settled** (`server-account/src/weekKept.js`): an isolate that reads a week's Turnings
+  settled - or settles every one due itself (the chapters') - keeps that word, by the binding (DB_ROOT, as every word an
+  isolate keeps beside its database), until the week it was read for has passed; the first read past the boundary asks
+  again and settles. A settled week is never unsettled - no route deletes or rewrites a `town_seat_weeks` or an
+  `npc_chapter_weeks` row (a pin that rewrites one by hand stands a fresh service, as a fresh isolate). One read a week an
+  isolate, where it was one a request.
+- **The sheet's reads in one batch** (`chapterSheet`): the halls (`npcHalls.js` hallRowsRead, handed back to
+  allRegionChapters), the chapters, the seats' holders and the Season's patrons (`patronsRead`/`patronsFrom`, as
+  regionPatrons asks them), each worded as it was asked alone, after the week's settle as before.
+
+**Counted after:** the chapters' sheet warm 6 trips to 3 (7 to 3 with a Season), the seats' list warm 3 to 2; the
+first sheet past a boundary settles as it did. At PRIMARY-TRIPS' evening rates (a sheet some 1.1 a second, the seats'
+list some 1.2, and the other settlers besides) some 5-6 of the primary's trips a second.
+
+**Pins.** `test/server/primaryfold.test.js` (+2): the week kept and asked again past its boundary, the Turning landing,
+the settler's own word kept; the sheet's one batch of four. `tools/mutants/primaryfold.json` (+8, 18 in all: 17 dead, 1
+equivalent as recorded); one survived its first run - the settler's word unkept - and its pin was made to reach it.
+Re-aimed by content, all dead: A3-S2-SHEET-OPEN, A3-T1-SHEET-ZERO, AUDIT-CHAP4-S2-OFF-RETURN and -OFF-NEVER-SETTLED,
+AUDIT-CHAP5-S5-PATRONS-SPLIT, CHAP3B-SHEET-HIDDEN and -SHEET-SETTLE, CHAP7A-PATRONS-SEASON, SEATLEASE-nothing-due.
+
 ### Decisions for the owner
 
 4. **How long a signed-out session may still read.** A signed session lives a few minutes (the relay's identity tokens

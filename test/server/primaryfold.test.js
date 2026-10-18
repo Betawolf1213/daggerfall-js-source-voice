@@ -10,6 +10,8 @@ import { seatRealm } from '../realmSeat.mjs';
 import { doorReads } from '../../server-account/src/door.js';
 import { progressRefusal, seatRefusalOf, progressSpent, PROGRESS_LINE } from '../../server-account/src/progress.js';
 import { isTombstone } from '../../server-account/src/legacy.js';
+import { CHAPTER_TURNING_GRACE_S } from '../../server-account/src/npcChapters.js';
+import { SEAT_WEEK_MS, seatWeekOf } from '../../src/net/townSeatLaw.js';
 
 /** The bucket's question as it was asked on its own (progress.js bucketOf before PRIMARY-FOLD) - the oracle. */
 async function bucketAsked(db, playerId, stream) {
@@ -125,4 +127,65 @@ test('PRIMARY-FOLD the spend takes the door\'s bucket for the route\'s own strea
     await progressSpent({ db, nowS: T0 + 3_600 }, eve.id, '/v1/raid/claim', { recorded: true, renown: { credited: 50 } }, renownDoor);
     assert.deepEqual([at('raid'), at('renown')], [9_000, 7_200], 'each stream its own bucket, the door\'s to its stream');
   } finally { t.done(); }
+});
+
+/** A seated account on a service with the seats, the chapters and a Season counted, on a clock the test moves. */
+async function standWeeks() {
+  const realNow = Date.now;
+  let now = T0;
+  Date.now = () => now * 1000;
+  const s = await standService({ SEATS_OPEN: 'on', CHAPTERS_OPEN: 'on', SEASON_ZERO_WEEK: String(seatWeekOf(T0 * 1000) - 2) });
+  const eve = await s.seated('eve');
+  return { s, eve, tick: (sec) => { now += sec; }, done: () => { Date.now = realNow; } };
+}
+const asks = (trips, re) => trips.flat().filter((q) => re.test(q)).length;
+
+test('PRIMARY-FOLD a week read settled stays settled in its isolate: the seats\' list and the chapters\' sheet ask whether a Turning is due once a week, not on every read; past the week\'s boundary the next read asks again and the week\'s Turning lands; a stood service (a fresh isolate) keeps nothing (mutants: the keep never kept; kept past its week; the kept word unread; the seats\' keep; a settle\'s word unkept)', async () => {
+  const w = await standWeeks();
+  try {
+    const list = () => w.s.call('/v1/seats/list', {}, w.eve.secret);
+    const sheet = () => w.s.call('/v1/chapters/list', { character: w.eve.character }, w.eve.secret);
+    for (let i = 0; i < 2; i++) { assert.equal((await list()).status, 200); assert.equal((await sheet()).status, 200); }   // the Turning, then the read that keeps its word
+    const c = counted(w.s.env);
+    for (let i = 0; i < 3; i++) { assert.equal((await list()).status, 200); assert.equal((await sheet()).status, 200); }
+    c.off();
+    assert.equal(asks(c.trips, /SELECT MAX\(week\) AS w FROM town_seat_weeks/), 0, 'the seats\' week: kept');
+    assert.equal(asks(c.trips, /SELECT MAX\(week\) AS w FROM npc_chapter_weeks/), 0, 'the chapters\' week: kept');
+    const raw = w.s.env.DB._raw;
+    const seatWeeks = () => raw.prepare('SELECT COUNT(*) AS n FROM town_seat_weeks').get().n;
+    const chapterWeeks = () => raw.prepare('SELECT COUNT(*) AS n FROM npc_chapter_weeks').get().n;
+    const before = [seatWeeks(), chapterWeeks()];
+    w.tick(SEAT_WEEK_MS / 1000 + CHAPTER_TURNING_GRACE_S + 1);   // past the boundary, and the chapters' grace
+    const d = counted(w.s.env);
+    assert.equal((await list()).status, 200);
+    assert.equal((await sheet()).status, 200);
+    d.off();
+    assert.equal(asks(d.trips, /SELECT MAX\(week\) AS w FROM town_seat_weeks/) >= 1, true, 'a new week: asked again');
+    assert.equal(asks(d.trips, /SELECT MAX\(week\) AS w FROM npc_chapter_weeks/) >= 1, true);
+    assert.deepEqual([seatWeeks(), chapterWeeks()], [before[0] + 1, before[1] + 1], 'and each week\'s Turning landed');
+    const e = counted(w.s.env);
+    assert.equal((await sheet()).status, 200);
+    e.off();
+    assert.equal(asks(e.trips, /SELECT MAX\(week\) AS w FROM npc_chapter_weeks/), 0, 'the sheet that settled the week kept its word: the next asks nothing');
+  } finally { w.done(); }
+});
+
+test('PRIMARY-FOLD the chapters\' sheet reads its halls, its chapters, their seats\' holders and the Season\'s patrons in ONE batch - each read as it was asked alone - beside the session\'s and the tombstone\'s; the sheet is the sheet it was (mutants: the halls read again; the patrons never read)', async () => {
+  const w = await standWeeks();
+  try {
+    for (let i = 0; i < 2; i++) assert.equal((await w.s.call('/v1/chapters/list', { character: w.eve.character }, w.eve.secret)).status, 200);
+    const c = counted(w.s.env);
+    const r = await w.s.call('/v1/chapters/list', { character: w.eve.character }, w.eve.secret);
+    c.off();
+    assert.equal(r.status, 200);
+    assert.ok(Array.isArray(r.body.chapters));
+    const batch = c.trips.find((t) => t.length > 1);
+    assert.ok(batch, 'one batch');
+    assert.equal(batch.length, 4, 'four reads in it, the Season counted');
+    assert.match(batch[0], /FROM npc_hall_regions ORDER BY region/);
+    assert.match(batch[1], /FROM npc_chapters$/);
+    assert.match(batch[2], /FROM npc_chapter_seats s/);
+    assert.match(batch[3], /JOIN guilds g ON g\.id = c\.patron WHERE c\.patron_season = \?1/);
+    assert.equal(c.trips.length, 3, 'the session, the tombstone and the batch');
+  } finally { w.done(); }
 });

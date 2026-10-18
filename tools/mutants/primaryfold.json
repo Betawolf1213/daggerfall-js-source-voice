@@ -91,5 +91,78 @@
   ],
   "equivalent": true,
   "why": "No route's answer spends one stream twice today (progressSpentOf names each stream once), so the door's bucket is never offered a second time; the line keeps a future answer that did from spending a bucket the first spend already moved."
+ },
+ {
+  "name": "PRIMARYFOLD-week-never-kept",
+  "file": "server-account/src/weekKept.js",
+  "old": "  m.set(name, week);\n",
+  "new": "",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-week-kept-past-its-week",
+  "file": "server-account/src/weekKept.js",
+  "old": "return !!k && kept.get(k)?.get(name) === week;",
+  "new": "return !!k && kept.get(k)?.get(name) !== undefined;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-chapters-kept-word-unread",
+  "file": "server-account/src/npcChapters.js",
+  "old": "  if (weekSettled(db, `chapters:${sw}`, current)) return 0;",
+  "new": "  if (false) return 0;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-seats-kept-word-unread",
+  "file": "server-account/src/seatTurning.js",
+  "old": "  if (weekSettled(db, 'seats', weekAt(nowS))) return { settled: 0, pending: false };",
+  "new": "  if (false) return { settled: 0, pending: false };",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-seats-never-kept",
+  "file": "server-account/src/seatTurning.js",
+  "old": "{ keepWeekSettled(db, 'seats', weekAt(nowS)); return { settled: 0, pending: false }; }",
+  "new": "{ return { settled: 0, pending: false }; }",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-chapters-settle-unkept",
+  "file": "server-account/src/npcChapters.js",
+  "old": "  if (from + n >= current) keepWeekSettled(db, `chapters:${sw}`, current);",
+  "new": "",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-sheet-halls-read-again",
+  "file": "server-account/src/npcChapters.js",
+  "old": "const chapters = (await allChapters(db, nowS, hallRows?.results ?? [])).filter(",
+  "new": "const chapters = (await allChapters(db, nowS)).filter(",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ]
+ },
+ {
+  "name": "PRIMARYFOLD-sheet-patrons-never-read",
+  "file": "server-account/src/npcChapters.js",
+  "old": "  const patrons = patronsFrom(patronRows?.results ?? []);",
+  "new": "  const patrons = patronsFrom([]);",
+  "tests": [
+   "test/server/primaryfold.test.js",
+   "test/net/chap7a_patrons.test.js"
+  ]
  }
 ]
