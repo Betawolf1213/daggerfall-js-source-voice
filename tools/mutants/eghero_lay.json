@@ -650,8 +650,8 @@
   {
     "name": "EGHL-fair-hero-floors-unread",
     "file": "src/net/eliteGates/egFair.js",
-    "old": "if (on(f.y) && egPolyIn(f.poly, x, z, P)) return `h${i}`;",
-    "new": "if (false) return `h${i}`;",
+    "old": "if (on(f.y) && egPolyIn(f.poly, x, z, P)) return byHero ? `h${k}:${i}` : `h${i}`;",
+    "new": "if (false) return byHero ? `h${k}:${i}` : `h${i}`;",
     "tests": [
       "test/net/eliteGates/eghero_lay.test.js"
     ]

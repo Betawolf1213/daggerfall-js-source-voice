@@ -407,8 +407,8 @@
   {
     "name": "PILOT-the-climb-at-a-rested-grip",
     "file": "tools/egSpanSolve.mjs",
-    "old": "climbing = true; skills = CLIMB0;",
-    "new": "climbing = true; skills = SKILL0;",
+    "old": "    skills = CLIMB0;\n    const foot",
+    "new": "    skills = SKILL0;\n    const foot",
     "tests": [
       "test/net/eliteGates/law9_proofs.test.js"
     ]

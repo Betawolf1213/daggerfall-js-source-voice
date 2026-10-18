@@ -12,7 +12,8 @@
 //     node tools/egSpanSolve.mjs --sweep [--band <0-3>] [--seeds <n>] [--from <seed>] [--golden]
 //         THE SWEEP (section 10.5): every course the generator lays in a circle of the band, for each seed, crossed STEP BY
 //         STEP BY THE REAL MOTOR - player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0, every gap
-//         a plain running jump; the online page's parkour at skill 0 for a riser alone) on player/collider.js Collider, over
+//         a plain running jump; EG-PERFECT: the online page's parkour at skill 0 in every frame, as the game forces it, its
+//         running leap refused as the Spire's made level refuses it) on player/collider.js Collider, over
 //         the circle's floors (world/eliteGates/egHall.js egCircleColliderTris, the one bucket the dungeon stands) and its pieces as
 //         the screen rides them (scenes/eliteGates/egSpan.js createEgSpan - the Steps' stepTris slabs, moving on the shared clock,
 //         carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness (test/world/superDungeon/sd7b_steps.test.js) is
@@ -63,6 +64,7 @@ import { gustAt } from '../src/world/superDungeon/sdSteps.js';
 import { identity } from '../src/world/mat4.js';
 import { egPolyIn } from '../src/net/eliteGates/egShape.js';   // EG-HERO-LAY: a hero's floors, crossed as still ground
 import { isMain } from './lib/isMain.mjs';
+import { madeLevelRule } from '../src/systems/madeLevel.js';   // EG-PERFECT: the Spire's running leap refused, as the game refuses it
 
 /** THE SPAN BUILD on the motor (section 10.2 - SD7b's: Speed 10, Running 0), and its skills for the parkour (a riser). */
 export const SWEEP_BUILD = Object.freeze({ speed: 10, running: 0, swimming: 30 });
@@ -168,8 +170,13 @@ export function sweepClimbTris(col, specs) {
  */
 function pilotOf(S, spec, road, t0, trace = null) {
   const { col, span } = S, h = spec.h, X0 = spec.x0;
-  let climbing = false, skills = SKILL0;
-  const parkour = { enabled: () => climbing, inputs: () => skills, tally: () => {}, say: () => {}, hold: null };
+  // EG-PERFECT (2026-10-18; bible/11-Multiplayer/Elite-Gates.md section 10.5): THE ONLINE PAGE'S PARKOUR IN EVERY FRAME - the
+  // enhanced climb is forced on online (systems/features.js `enhanced-climbing`), so the pilot crosses with it on as the game
+  // does (it had it on for a riser and a climb alone, and so never met the running leap), and with the leap refused as the
+  // Spire's made level refuses it (systems/madeLevel.js `runLeap` - scenes/shared.js parkourDeps' `leap`): every gap a plain
+  // running jump, the wall run, the mantle and the free climb the game's own
+  let skills = SKILL0;
+  const parkour = { enabled: () => true, leap: () => madeLevelRule('spire', 'runLeap') !== 'refused', inputs: () => skills, tally: () => {}, say: () => {}, hold: null };
   const m = new PlayerMotor(col, SWEEP_BUILD, { parkour });
   const fail = (step, why) => ({ ok: false, seed: S.seed, h, road, step, why, t: t - t0 });
   let t = t0;
@@ -355,14 +362,12 @@ function pilotOf(S, spec, road, t0, trace = null) {
         const p = me();
         const err = walkTo(clamp(p.x, a.x - 0.6, a.x + 0.6), a.z - a.d / 2 - 1.4);
         if (err) return fail(a.i, `${err} before the riser`);
-        climbing = true;
         let up = false;
         for (let k = 0; k < 4 * 60 && !up; k++) {
           const go = me().z >= a.z - a.d / 2 - 0.8;
           if (frame(still({ forward: 1, run: true, jump: go, up: go }), 0)) return fail(a.i, 'fell off the riser');
           up = m.grounded && m.groundKey === egStepKey(h, a.i);
         }
-        climbing = false;
         if (!up) return fail(a.i, 'the riser was not run up');
         for (let k = 0; k < 8; k++) if (frame(still())) return fail(a.i, 'fell off the riser');
       }
@@ -458,7 +463,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
     if (err) return `${err} on the way to the climb's foot`;
     const yaw = Math.atan2(-c.face[0], -c.face[1]);   // into the face
     for (let k = 0; k < 60 * 5 && m.grip < 1; k++) if (frame(still(), yaw)) return 'fell at the climb\'s foot';
-    climbing = true; skills = CLIMB0;
+    skills = CLIMB0;
     const foot = me().y;
     let high = foot, up = false, why = '';
     for (let k = 0; k < 60 * 90 && !up && !why; k++) {
@@ -469,7 +474,7 @@ function pilotOf(S, spec, road, t0, trace = null) {
       high = Math.max(high, p.y);
       up = m.grounded && p.y >= c.y1 - 0.1;
     }
-    climbing = false; skills = SKILL0;
+    skills = SKILL0;
     if (why) return why;
     if (!up) return `never stood on the climb's lip (${(high - foot).toFixed(2)} m up)`;
     return wayTo(g.to, g);

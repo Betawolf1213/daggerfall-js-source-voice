@@ -484,8 +484,20 @@ export function egMoonBeamZ(s, t) {
 export const egPieceAt = (s, t, out = { dx: 0, dz: 0, solid: true }) => pieceAt(s, t, out, Math.sin);   // AUDIT EG V: the screens' clock (THE LAW'S CLOCK, above, the solver's from spec law 8)
 /** A Pendulum's weight at `t`: across the course (x, the hall's frame) over the middle of the gap before its step (z). */
 export const egPendAt = (s, t) => pendAt(s, t, Math.sin);
-/** Is a body at (x, z), its feet at `y`, inside a Pendulum's weight at `t`? */
-export const egPendHits = (s, t, x, y, z) => pendHits(s, t, x, y, z, Math.sin);
+/** A body's height over its feet (m - player/motor.js CAPSULE_HEIGHT, pinned equal by test/net/eliteGates/egperfect_pend.test.js: the
+ *  relay's bundle does not carry the motor). */
+export const EG_PEND_BODY_H = 1.8;
+/**
+ * Is a body at (x, z), its feet at `y` and `h` tall, inside a Pendulum's weight at `t`? EG-PERFECT (2026-10-18): THE TOUCH IS
+ * THE DRAWN WEIGHT'S - the body's height (its feet to `h` over them) meeting the weight's as the screen draws it, the step's top
+ * to 2 x EG_PEND_HALF over it (scenes/eliteGates/egSpan.js egPendModel's block). It judged feet from 0.6 m under the step to 2.2 m
+ * over it: a jump that cleared the drawn weight by a metre was cast back, and a head in it from below never was. The plan's
+ * test is the law's (pendHits, asked at the step's own height). The timed solver asks it (and THE LAW'S CLOCK's pendHits) of
+ * a body at the step's own height mid-flight, where the old band and this one agree - so every answer it gives, and every
+ * course drawn, is the one it was. The screen's judge (scenes/eliteGates/egSpan.js ride); the relay judges no touch.
+ * @param {any} s @param {number} t @param {number} x @param {number} y @param {number} z @param {number} [h]
+ */
+export const egPendHits = (s, t, x, y, z, h = EG_PEND_BODY_H) => y < s.y + 2 * EG_PEND_HALF && y + h > s.y && pendHits(s, t, x, s.y, z, Math.sin);
 /** A Vent's cycle at `t`: `{ tell, fire }` - its ring's progress over its last EG_VENT_TELL_S (0 to 1, 0 when not told) and
  *  whether it erupts. */
 export function egVentState(s, t) {
