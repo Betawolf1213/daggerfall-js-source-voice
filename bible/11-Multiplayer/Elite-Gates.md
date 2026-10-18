@@ -9862,11 +9862,14 @@ ways record's 36 of 891 was law 9's, its phantoms among them).
 **The pins** (each fails without its fix - `tools/mutants/egperfect_audit.json`, 42 records, every one dead):
 `test/net/eliteGates/egperfect_lords.test.js` (AUDIT A1-A7; 28 in the file), `test/net/eliteGates/egperfect_audit.test.js` (6 - R1-R4,
 P1-P2: the relay's and the ways' halves), `test/world/eliteGates/egperfect_audit_screen.test.js` (5 - S1-S5: the screen's) and
-`test/net/eliteGates/egperfect_broken.test.js`'s THE AUDIT'S HALLS (13 in the file).
+`test/net/eliteGates/egperfect_broken.test.js`'s THE AUDIT'S HALLS (13 in the file). The 156 records of the earlier lists that
+stand on a line the fixes moved, or whose pin moved, were run again: every one dead - the duel's setting-aside
+(`EGPERFECT-duel-ring-fillers-thrown`) once its pin stood Garoth's outsider beside his ring.
 
 **Pins moved**: `egperfect_broken` (LAW10_HASH 650998388; `quietUntil` among the await's clocks; the Rails at π),
 `egperfect_broken_unit` (the Rails at π; the plan's own try is 77:37's ninth - 77:57 lays on law 9's eighth now its long
-bridges break in parts), `egperfect_lords` (a duel's ring: a member outside it beside it is not held, inside is),
+bridges break in parts), `egperfect_lords` (a duel's ring: a member outside it beside it is not held, inside is; Garoth's duel read with its
+outsider beside the ring, where his setting-aside alone keeps Kyn's Due off them),
 `egperfect_tube` (a pose in the tube starts it), `egperfect_hang` (the box in the hall's frame), `egperfect_halls_chains`
 (56 kept), `egaudit5_h` (the Scriptorium's member on its trial's ground), `egaudit5_a2_client` (the law before law 10 that
 parts this Deepway's floors is 9), `egaudit5_b` (the mirrors over a minute - the Lattice's cooldown moves the draws),

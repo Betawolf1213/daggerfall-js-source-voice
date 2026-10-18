@@ -246,8 +246,12 @@ test('EG-PERFECT #6 THE DUEL\'S RING HOLDS ITS LORD (section 13.3, "a ring of fi
   const G = court(1, 100, 'garoth', { n: 2 });
   G.L.hp = G.L.max * 0.6; G.step(on(G));
   assert.ok(G.F.mem.challenge, 'the Clan Muster\'s duel');
+  // (PIN MOVED, EG-PERFECT's audit: the member outside the duel stands beside its ring, where the court is theirs - inside it, THE
+  // UNION FLOOR now holds every blow over the ring for them, and the duel's own setting-aside went unseen)
+  const gch = G.F.mem.challenge, gd = gch.subs[0];
+  const gHere = () => G.subs.map((sub, j) => (sub === gd ? { sub, x: gch.x + 1, z: gch.z } : { sub, x: gch.x + gch.r + 4 + j, z: gch.z }));
   const names = new Set();
-  for (let k = 0; k < 4 * 14 && G.F.mem.challenge; k++) for (const f of G.step(on(G)).filter((q) => q.k === 'eb' && q.o === G.L.i)) names.add(f.nm);
+  for (let k = 0; k < 4 * 14 && G.F.mem.challenge; k++) for (const f of G.step(gHere()).filter((q) => q.k === 'eb' && q.o === G.L.i)) names.add(f.nm);
   for (const nm of ['Slam', "The Kyn's Due"]) assert.ok(!names.has(nm), `no ${nm} in the duel`);
   assert.ok(![...names].some((n) => /Meteor|Comet|Hail|Bolt/.test(n) && n !== 'Wellfire'), 'no Meteor in the duel');
 });
