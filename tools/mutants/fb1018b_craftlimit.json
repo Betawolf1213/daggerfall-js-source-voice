@@ -1,0 +1,464 @@
+[
+  {
+    "name": "CRAFT-LIMIT-SAID-law-order",
+    "file": "src/net/professionLaw.js",
+    "old": "  const by = cap < PROF_XP_MAX ? PROFESSIONS.filter(",
+    "new": "  const by = cap < PROF_XP_MAX ? [...PROFESSIONS].reverse().filter(",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the crafts that hold a track named out of the tab's order"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-by-unheld",
+    "file": "src/net/professionLaw.js",
+    "old": "  const by = cap < PROF_XP_MAX ? ",
+    "new": "  const by = true ? ",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a craft the limit does not hold named as held"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-own-counted",
+    "file": "src/net/professionLaw.js",
+    "old": "p.kind === 'crafting' && p.id !== own && (ranks?.[p.id] ?? 0) > JOURNEYMAN_RANK).map((p) => p.id) : [];",
+    "new": "p.kind === 'crafting' && (ranks?.[p.id] ?? 0) > JOURNEYMAN_RANK).map((p) => p.id) : [];",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the track counted among the crafts that hold it"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-room-floor",
+    "file": "src/net/professionLaw.js",
+    "old": "room: Math.max(0, cap - (Number(xp) || 0))",
+    "new": "room: cap - (Number(xp) || 0)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a room below none, past the cap"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-gathering-held",
+    "file": "src/net/professionLaw.js",
+    "old": "cap = BY_ID.get(own)?.kind === 'crafting' ? craftXpCap(profession, ranks) : PROF_XP_MAX;",
+    "new": "cap = craftXpCap(profession, ranks);",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a gathering track said held (3.2: Gathering is unlimited)"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-views-rank",
+    "file": "src/net/professionLaw.js",
+    "old": "rankOfXp(Number(v.xp))",
+    "new": "v.rank",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a view's rank field read, not the service's own rank of its XP"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-views-discipline",
+    "file": "src/net/professionLaw.js",
+    "old": "  const own = list.find((v) => v.profession === trackOf(profession));",
+    "new": "  const own = list.find((v) => v.profession === profession);",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a discipline asked finds no track, its room the whole cap"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-credit-unfloored",
+    "file": "src/net/professionLaw.js",
+    "old": "Math.max(0, Math.min(Number(earned) || 0, room))",
+    "new": "Math.min(Number(earned) || 0, room)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a credit below none"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-law-credit-unbounded",
+    "file": "src/net/professionLaw.js",
+    "old": "Math.max(0, Math.min(Number(earned) || 0, room))",
+    "new": "Math.max(0, Number(earned) || 0)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the room unread: the credit the service never pays"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-cap-unread",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  if (!limit || limit.room >= most) return '';",
+    "new": "  return '';",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "no station says the limit: the report"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-cap-boundary",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  if (!limit || limit.room >= most) return '';",
+    "new": "  if (!limit || limit.room > most) return '';",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a room that takes the craft exactly said as short of it"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-cap-limit-as-top",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  if (limit.by?.length) {\n    return t('prof.page.craft.xpLimit'",
+    "new": "  if (false) {\n    return t('prof.page.craft.xpLimit'",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the limit said as Master's top"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-list-unjoined",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  try { return new Intl.ListFormat(intlLocale(), { type: 'conjunction' }).format(names); } catch { return names.join(', '); }",
+    "new": "  return names.join(', ');",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the two crafts not listed the language's way"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-paid-unscaled",
+    "file": "src/ui/craftXpWords.js",
+    "old": "creditedXp(scaleXp(xp, pay.pct ?? 0), pay.limit?.room ?? Infinity)",
+    "new": "creditedXp(xp, pay.limit?.room ?? Infinity)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a temper's figure without the Firmament's percent the service lays on"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-paid-unbounded",
+    "file": "src/ui/craftXpWords.js",
+    "old": "creditedXp(scaleXp(xp, pay.pct ?? 0), pay.limit?.room ?? Infinity)",
+    "new": "creditedXp(scaleXp(xp, pay.pct ?? 0), Infinity)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a temper's and a disenchant's figure past the room the limit leaves"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-line-unscaled",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  const xp = scaleXp(craftXp(r.tier, rank, false), pay.pct ?? 0);",
+    "new": "  const xp = craftXp(r.tier, rank, false);",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the anvil's 60 without the Firmament's percent the Worker pays"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-line-first-scaled",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  const more = firstCraftPays(r) ? FIRST_CRAFT_XP : 0;",
+    "new": "  const more = firstCraftPays(r) ? scaleXp(FIRST_CRAFT_XP, pay.pct ?? 0) : 0;",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the first's 500 scaled, which the service lays on whole"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-line-most-plain",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  return capLine(profession, pay, xp + more) || (more",
+    "new": "  return capLine(profession, pay, xp) || (more",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a room that takes the plain craft but not its first said as whole"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-dish-cap-dropped",
+    "file": "src/ui/craftXpWords.js",
+    "old": "export const dishFirstLine = (r, profession, pay = {}, clean = 0) => capLine(profession, pay, clean + (firstCraftPays(r) ? FIRST_CRAFT_XP : 0))\n  || ",
+    "new": "export const dishFirstLine = (r, profession, pay = {}, clean = 0) => ",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the fire promises its first at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-mason-cap-dropped",
+    "file": "src/ui/craftXpWords.js",
+    "old": "export const masonWorksFirstLine = (rank, profession, pay = {}) => capLine(profession, pay, scaleXp(masonXp(1, rank, { clean: true }), pay.pct ?? 0) + FIRST_CRAFT_XP)\n  || ",
+    "new": "export const masonWorksFirstLine = (rank, profession, pay = {}) => ",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the mason's works promise their first at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-word-limit-dropped",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  if (limit?.by?.length && limit.room === 0) {",
+    "new": "  if (false) {",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the craft's word says \"(+0 Smithing XP, with the first-time bonus)\""
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-word-any-room",
+    "file": "src/ui/craftXpWords.js",
+    "old": "  if (limit?.by?.length && limit.room === 0) {",
+    "new": "  if (limit?.by?.length) {",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the limit said after a craft that left room"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-rule-never-full",
+    "file": "src/ui/craftXpWords.js",
+    "old": "full: past.length >= CRAFTS_ABOVE_JOURNEYMAN ? 'yes' : 'no'",
+    "new": "full: 'no'",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the tab never names the two"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-words-rule-always-full",
+    "file": "src/ui/craftXpWords.js",
+    "old": "full: past.length >= CRAFTS_ABOVE_JOURNEYMAN ? 'yes' : 'no'",
+    "new": "full: 'yes'",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the tab names two before there are two"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-pay-no-limit",
+    "file": "src/ui/professions/profPages.js",
+    "old": "export const payOf = (book, id) => ({ limit: craftLimitOf(book?.state?.tracks?.values?.() ?? [], id), pct:",
+    "new": "export const payOf = (book, id) => ({ limit: null, pct:",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the stations read no limit: the report"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-pay-no-pct",
+    "file": "src/ui/professions/profPages.js",
+    "old": "pct: xpPct(firmamentStats(), trackOf(id)) });",
+    "new": "pct: 0 });",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the stations read no Firmament"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-pay-discipline-pct",
+    "file": "src/ui/professions/profPages.js",
+    "old": "pct: xpPct(firmamentStats(), trackOf(id)) });",
+    "new": "pct: xpPct(firmamentStats(), id) });",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a discipline's percent its own channel, not its craft's"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-anvil-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "craftXpLine(r, rank, professionName('smithing'), payOf(book, 'smithing'))",
+    "new": "craftXpLine(r, rank, professionName('smithing'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the anvil as the screenshot read it"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-bench-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "craftXpLine(r, rank, professionName('carpentry'), payOf(book, 'carpentry'))",
+    "new": "craftXpLine(r, rank, professionName('carpentry'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the workbench promises at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-loom-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "craftXpLine(r, rank, professionName('outfitting'), payOf(book, 'outfitting'))",
+    "new": "craftXpLine(r, rank, professionName('outfitting'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the loom promises at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-jewel-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "craftXpLine(r, rank, professionName('jewelcrafting'), payOf(book, 'jewelcrafting'))",
+    "new": "craftXpLine(r, rank, professionName('jewelcrafting'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the jeweller's bench promises at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-mason-works-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "masonWorksFirstLine(rank, professionName('masonry'), payOf(book, 'masonry'))",
+    "new": "masonWorksFirstLine(rank, professionName('masonry'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the mason's works promise at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-mason-carving-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'), payOf(book, 'masonry'))));",
+    "new": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'))));",
+    "tests": [
+      "test/net/fb1015f_firstcraft.test.js"
+    ],
+    "why": "a Master Sculptor's carving promises what a full track never takes"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-fire-pans-at-none",
+    "file": "src/ui/professions/profPages.js",
+    "old": "${pay.limit.room === 0 ? t('prof.page.fire.pansOnly'",
+    "new": "${false ? t('prof.page.fire.pansOnly'",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the pans' XP said where none is paid"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-fire-first-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "dishFirstLine(r, professionName('cooking'), pay, clean)",
+    "new": "dishFirstLine(r, professionName('cooking'))",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the fire promises its first at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-alchemy-cap-dropped",
+    "file": "src/ui/professions/profPages.js",
+    "old": "      capLine(profession, pay, xp + (brewFirstPays(potion) ? more : 0))\n        || ",
+    "new": "      ",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the alchemy station promises at the limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-enchant-line-dropped",
+    "file": "src/ui/professions/profPages.js",
+    "old": "  if (capped) detail.append(el('p', 'px-note', capped));\n",
+    "new": "",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the enchanting station never says why its pieces earn none"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-enchant-row-unbounded",
+    "file": "src/ui/professions/profPages.js",
+    "old": "xp: paidXp(disenchantXp(recipeById(pc.recipe), rank, base), pay) };",
+    "new": "xp: paidXp(disenchantXp(recipeById(pc.recipe), rank, base), { pct: pay.pct }) };",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a piece's Enchanting XP past the room"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-temper-line-dropped",
+    "file": "src/ui/professions/profPages.js",
+    "old": "  if (held) detail.append(el('p', 'px-note', held));\n",
+    "new": "",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the temper never says why it earns none"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-temper-row-unbounded",
+    "file": "src/ui/professions/profPages.js",
+    "old": "+${paidXp(temperXp(r, rank), pay)} ${professionName(craft)} XP",
+    "new": "+${paidXp(temperXp(r, rank), { pct: pay.pct })} ${professionName(craft)} XP",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "a temper's XP past the room"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-tab-xp-unheld",
+    "file": "src/ui/professions/profPages.js",
+    "old": "  if (limit?.by?.length) return t('prof.page.xpHeld'",
+    "new": "  if (false) return t('prof.page.xpHeld'",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the tab reads \"26,009 / 26,010 XP\": one XP from a rank it can never reach"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-tab-xp-limit-unread",
+    "file": "src/ui/professions/profPages.js",
+    "old": "xpLine(tr, craftLimitOf(book.state?.tracks?.values?.() ?? [], _sel))",
+    "new": "xpLine(tr)",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the tab reads no limit"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-tab-rule-dropped",
+    "file": "src/ui/professions/profPages.js",
+    "old": "  pane.append(el('p', 'px-note', limitRuleLine(craftsPastJourneyman(book.state.tracks))));\n",
+    "new": "",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the tab never says what the count does"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-pages-past-at-50",
+    "file": "src/ui/professions/profPages.js",
+    "old": "(tracks.get(p.id)?.rank ?? 0) > JOURNEYMAN_RANK).map((p) => p.id);",
+    "new": "(tracks.get(p.id)?.rank ?? 0) >= JOURNEYMAN_RANK).map((p) => p.id);",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js",
+      "test/systems/prof1_client.test.js"
+    ],
+    "why": "a craft at 50 counted past Journeyman"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-host-word-unlimited",
+    "file": "src/scenes/world.js",
+    "old": "${craftXpText(rec, r.data, st.xp, profBook.limit(rec?.profession))}",
+    "new": "${craftXpText(rec, r.data, st.xp)}",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js",
+      "test/net/fb1015f_firstcraft.test.js"
+    ],
+    "why": "the craft's word in the game hands no limit in"
+  },
+  {
+    "name": "CRAFT-LIMIT-SAID-book-limit-one-craft",
+    "file": "src/net/profBook.js",
+    "old": "    limit(profession) { return craftLimitOf(state.tracks.values(), profession); },",
+    "new": "    limit(profession) { return craftLimitOf(state.tracks.values(), 'smithing'); },",
+    "tests": [
+      "test/net/fb1018b_craftlimit.test.js"
+    ],
+    "why": "the book answers one craft's limit for every track"
+  }
+]
