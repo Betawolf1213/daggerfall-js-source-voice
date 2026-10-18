@@ -47,7 +47,7 @@ async function ride({ far = false } = {}) {
   pool.attach(world.rt);
   const { w, rt, step } = world;
   const riders = createWagonRiders({ selfId: () => 'me', now: () => 0, say() {}, changed() {}, pool, pin() {}, unpin() {} });
-  const riding = () => { const k = pool.shown()?.wagon?.kind; return k === HCC_WIRE_KIND.Trailing || k === HCC_WIRE_KIND.Following; };   // world.js wagonCarriesCompanions
+  const riding = () => pool.carriesCompanions();   // world.js's, as the streaming host asks it
   const bodies = [];
   const party = { party: [{ boat: 1, name: 'Ansel' }, { boat: 1, name: 'Brann' }], wake() {}, hurt() {}, knock() {}, isAshore: () => true };
   layer = createCrewAshore({

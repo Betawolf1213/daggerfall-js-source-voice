@@ -617,7 +617,6 @@ import { hasSailingCabin, savedCabinBoat, cabinSceneName } from '../systems/sail
 import { createSailingCabinAccess } from './sailingCabin.js';
 import { createCaravanAccess, parkedCaravanAt } from './caravanRoom.js';   // WAGONS1: the caravan's room
 import { createWagonRiders, GO_LEAD_MS } from './wagon/wagonRiders.js';   // WAGONS1: the seats in the back
-import { HCC_WIRE_KIND } from '../systems/horse/horseCartWire.js';   // WAGONS1: which way my wagon goes (my companions ride while it goes with me)
 import { RIDE_TEXT, RIDE_ASK_TTL_MS } from '../systems/wagon/wagonSeats.js';
 import { createSailingCabinLink } from '../net/sailingCabinLink.js';
 import { capsuleFits } from '../player/parkour.js';
@@ -10449,9 +10448,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const r = by ? revenantFelled(playerEntity, by, ally) : null;
     if (r) revenantSay(revenantFelledEvent(r, ally, { archive: by.archive ?? by.mobileArchive ?? null }), (l) => townTalk.say(l));
   };
-  /** WAGONS1: whether my wagon goes with me now - trailing my cart, or my team following me: my companions ride in its
-   *  back (systems/wagon/wagonSeats.js companionSeats); parked, they get down and walk at heel. */
-  const wagonCarriesCompanions = () => { const k = hcc.shown()?.wagon?.kind; return k === HCC_WIRE_KIND.Trailing || k === HCC_WIRE_KIND.Following; };
   const crewCount = () => (navalOn() ? naval?.companions?.party?.length ?? 0 : 0);
   const crewAshore = createCrewAshore({
     party: () => (navalOn() ? naval?.companions ?? null : null),
@@ -10459,8 +10455,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     leader: () => (playerSpawned ? { feet: [player.pos[0], player.pos[1], player.pos[2]], yaw: cam.yaw, grounded: !!player.grounded && !player.levitating && !player.swimming } : null),   // AUDIT CC-A3: on a floor or not
     now: () => Math.floor(playerTicker.ownMinutes),
     onKnocked: (c, by) => { naval?.companionKnocked?.(c); felledBy(by, c.name); },   // RVN10: a special foe's blow fells him - a deed on it
-    seat: (i) => wagonRiders?.companionSeat(i, wagonCarriesCompanions()) ?? null,   // WAGONS1: the crew's hands take the seats in my wagon's back first
-    seatDraw: (i) => wagonRiders?.companionSeatDrawn(i, wagonCarriesCompanions()) ?? null,   // WAGONS2: and drawn there as the wagon is drawn (grown under the Overworld)
+    seat: (i) => wagonRiders?.companionSeat(i, hcc.carriesCompanions()) ?? null,   // WAGONS1: the crew's hands take the seats in my wagon's back first
+    seatDraw: (i) => wagonRiders?.companionSeatDrawn(i, hcc.carriesCompanions()) ?? null,   // WAGONS2: and drawn there as the wagon is drawn (grown under the Overworld)
   });
   // COMPANION-SLOTS: the crew's hands ashore take the player's side's slots with the sworn
   registerCompanionCount('crew', () => (navalOn() ? naval?.companions?.party?.length ?? 0 : 0));
@@ -10493,8 +10489,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       rec.revenantCompanion = c.name;
       if (_revenantArrivals.delete(c.name)) revenantCompanionSay('arrive', c.name);
     },
-    seat: (i) => wagonRiders?.companionSeat(crewCount() + i, wagonCarriesCompanions()) ?? null,   // WAGONS1: the sworn take the seats after the crew's
-    seatDraw: (i) => wagonRiders?.companionSeatDrawn(crewCount() + i, wagonCarriesCompanions()) ?? null,   // WAGONS2
+    seat: (i) => wagonRiders?.companionSeat(crewCount() + i, hcc.carriesCompanions()) ?? null,   // WAGONS1: the sworn take the seats after the crew's
+    seatDraw: (i) => wagonRiders?.companionSeatDrawn(crewCount() + i, hcc.carriesCompanions()) ?? null,   // WAGONS2
   });
   /** REVENANT-COMPANION: a sworn one called to the player's side - it says so as it steps through. */
   const noteRevenantArrival = (id) => _revenantArrivals.add(id);

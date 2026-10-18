@@ -1492,6 +1492,10 @@ export function createHorseCartPool({
     if (!p || p.kept) return null;
     return { model: p.wagon?.model ?? null, kind: p.wagon?.kind ?? null, passengers: p.wagon?.passengers ?? [], go: p.go ?? null, declined: p.pn ?? [], position: p.shownWagon ?? null, wire: p.wire?.w?.position ?? null, held: _held.has(owner) };   // WARDEN1: `held` the town watch lifts it
   }
+  /** WAGONS1: whether my wagon goes with me now - trailing my cart, or my team following me: my companions ride in its
+   *  back (systems/wagon/wagonSeats.js companionSeats); parked, they get down (scenes/crewAshore.js getDown - FIELD BUGS
+   *  2026-10-18 WAGON-ALIGHT, which moved this question here from the streaming host) and walk at heel. */
+  function carriesCompanions() { const k = shown()?.wagon?.kind; return k === HCC_WIRE_KIND.Trailing || k === HCC_WIRE_KIND.Following; }
   /** WAGONS1: the seats my wagon has - its model's, once up (0 for no wagon of mine standing). */
   function mySeatCount() {
     const w = shown()?.wagon;
@@ -1812,7 +1816,7 @@ export function createHorseCartPool({
     presentation: { wagonParts, horseArt, hitchOf: () => hitchOf(myKind()), onChanged: () => onChanged?.(), drawWagon, drawWagonSeen, poseHorse: poseHorseBatch, partsOf, hitchOfKind: hitchOf },   // PERF-WAGON: the road's teams by the one verdict
     phys,
     frame, batches, draw, draw3d, drawVeiled3d, targets, hoverName, tooltipText, activate, offsetAll, destroyAll, clearPeers, shown, groundMoved,
-    wireRecord, applyOwner, sweepOwners, applyKept, replaceKept, pruneKept, parkWord, parkedDoor, mySeat, peerSeat, peerRide, mySeatCount, mySeatsKnown,
+    wireRecord, applyOwner, sweepOwners, applyKept, replaceKept, pruneKept, parkWord, parkedDoor, mySeat, peerSeat, peerRide, mySeatCount, mySeatsKnown, carriesCompanions,
     seatDrawn, seatGlue, drawnFrameOf, puppetSeatDrawn, wordSeat,   // WAGONS2: the seats as drawn - the Overworld's grown wagons
     teamOf, driverDrawn, driverSeat, benchKind, driverGlue, cameraHit, cameraFloor, harnessEnds, faceTeams,   // WAGONS3: the team, the driver, the harness, the camera's wall (BENCH-CAM: and the pivot's floor)
     get harness() { return _harness; }, capsuleInBox,

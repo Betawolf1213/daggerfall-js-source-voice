@@ -3039,7 +3039,6 @@ export class Renderer {
       textures: this.textures, isSpectral: isSpectralArchive, bindVao, everyLight, cut,
       holdSkin: this._holdSkinFn,   // MWNPC16: a body's palette for its replay (the unit's word kept - releaseCharacterSkin puts the identity back over one let go)
     });
-    this.stats.shadowDraws = (sp.stats.sunDraws | 0) + (sp.stats.pointDraws | 0);   // PASS-COUNT: the shadow maps' replays this frame
     if (this._air) {
       const count = this._pointLights.length / 4;
       this._air.prepare({   // EL6: the inputs alone - the images are drawn at the resolve, off the frame's depth
@@ -3053,6 +3052,7 @@ export class Renderer {
         haze: this._lane ? this._lane.scatterDensity(this._fogMode, this._fogDensity, this._fogRange[0], this._fogRange[1]) : 0,   // VC7b: the fog's extinction, for the sun's march through the haze
       });
     }
+    this.stats.shadowDraws = (sp.stats.sunDraws | 0) + (sp.stats.pointDraws | 0);   // PASS-COUNT: the shadow maps' replays this frame
     this._perf?.mark('world');   // VC6d: the passes' work is submitted; everything until the sky or the resolve is the world's own draws
     sp.discard();
     this._restoreWorldViewport();
