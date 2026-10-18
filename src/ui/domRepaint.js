@@ -19,17 +19,27 @@
 // the same list it did a moment ago. When the tree genuinely differs -
 // a different stage, a sheet that opened - the path simply misses and
 // the new element starts at the top, which is what it should do.
+//
+// FB1018b SPELL-SCROLL: AND A PANE CAN SAY WHAT IT SHOWS. A tree of the
+// same shape can show another thing in the same place - the next spell's
+// page beside the book's list, another section of the Chronicle - and
+// that pane should start at its top as a new shape does. An element
+// carrying `data-scroll-key` puts the key into its step of the path: the
+// same key keeps its offset, another misses. A pane with no key is kept
+// by its place alone, as before.
 
 /** The path from the host to one element: each step is a tag plus the
- *  element's index among its siblings. Cheap, and stable for a tree
- *  that is rebuilt the same way. */
+ *  element's index among its siblings, and its `data-scroll-key` where
+ *  it carries one. Cheap, and stable for a tree that is rebuilt the
+ *  same way. */
 function pathOf(host, el) {
   const parts = [];
   let n = el;
   while (n && n !== host) {
     const parent = n.parentNode;
     if (!parent) break;
-    parts.push(`${n.tagName}.${n.className || ''}:${[...parent.children].indexOf(n)}`);
+    const key = n.getAttribute?.('data-scroll-key');
+    parts.push(`${n.tagName}.${n.className || ''}${key != null ? `#${key}` : ''}:${[...parent.children].indexOf(n)}`);
     n = parent;
   }
   return parts.reverse().join('>');
