@@ -41,8 +41,12 @@ function packBlock(vendor, name, { blankMap = false } = {}) {
   const tiles = opOf(ops, 'RmbBlock.FldHeader.GroundData.GroundTiles')?.$t;
   const scenery = opOf(ops, 'RmbBlock.FldHeader.GroundData.GroundScenery')?.$g;
   const auto = opOf(ops, 'RmbBlock.FldHeader.AutoMapData');
-  if (!scenery || !auto) return null;
+  const subs = opOf(ops, 'RmbBlock.SubRecords');
+  if (!scenery || !auto || !Array.isArray(subs)) return null;
   const autoMap = auto.$r ? unRun(auto.$r) : auto;
+  // AUDIT FB1018b L4-2: the block's buildings as the pack carries them (each a node of its pool) - the law asks whether
+  // one stands on the footprint, and a block built with none could never show a phantom
+  const nodeOf = (v) => { const n = v?.$n !== undefined ? PACK(vendor).nodes[v.$n] : v; return typeof n === 'string' ? JSON.parse(n) : n; };
   return blockFromJson({
     Name: name.replace(/\.json$/, ''),
     RmbBlock: {
@@ -50,7 +54,7 @@ function packBlock(vendor, name, { blankMap = false } = {}) {
         GroundData: { GroundTiles: (tiles ?? []).map(ROW_CODECS.$t), GroundScenery: scenery.map(ROW_CODECS.$g) },
         AutoMapData: blankMap ? new Array(4096).fill(0) : autoMap,
       },
-      SubRecords: [], Misc3dObjectRecords: [], MiscFlatObjectRecords: [],
+      SubRecords: subs.map(nodeOf).map((s) => ({ XPos: s?.XPos ?? 0, ZPos: s?.ZPos ?? 0 })), Misc3dObjectRecords: [], MiscFlatObjectRecords: [],
     },
   }, 9300);
 }
@@ -96,7 +100,8 @@ test('HOUSE-BUSH: the law - inside a footprint by the town map\'s ladder, never 
   assert.equal(typeof RMB.sceneryUnderRoof, 'function', 'world/rmbFlats.js sceneryUnderRoof');
   const map = (fill) => { const a = new Uint8Array(4096); for (let r = 20; r < 32; r++) for (let c = 20; c < 32; c++) a[r * 64 + c] = fill; return a; };
   // a scenery cell (x, y) of AddNatureFlats' walk stands its foot at automap column 4x and row (from the north) 60 - 4y
-  const at = (a, col, row) => RMB.sceneryUnderRoof(a, col / 4, (60 - row) / 4);
+  const all = () => true;   // every footprint held (the footprint law is heldFootprints', below)
+  const at = (a, col, row, held = all) => RMB.sceneryUnderRoof(a, col / 4, (60 - row) / 4, held);
   const house = map(19);
   assert.equal(at(house, 24, 24), true, 'deep inside');
   assert.equal(at(house, 28, 28), true);
@@ -109,16 +114,26 @@ test('HOUSE-BUSH: the law - inside a footprint by the town map\'s ladder, never 
     assert.equal(at(map(byte), 24, 24), inside, `byte ${byte}`);
   }
   const rim = new Uint8Array(4096).fill(19);
-  assert.equal(RMB.sceneryUnderRoof(rim, 0, 5), false, 'the west rim: the cells west of the foot are the next block\'s');
-  assert.equal(RMB.sceneryUnderRoof(rim, 5, 15), false, 'the north rim');
-  assert.equal(RMB.sceneryUnderRoof(rim, 1, 0), true, 'a cell in from the rim reads its own block');
-  assert.equal(RMB.sceneryUnderRoof(null, 5, 5), false, 'no automap: no footprint');
-  assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4095).fill(19), 5, 5), false, 'a short one is no automap');
-  assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4096).fill(19), 5, 5), true);
+  assert.equal(RMB.sceneryUnderRoof(rim, 0, 5, all), false, 'the west rim: the cells west of the foot are the next block\'s');
+  assert.equal(RMB.sceneryUnderRoof(rim, 5, 15, all), false, 'the north rim');
+  assert.equal(RMB.sceneryUnderRoof(rim, 1, 0, all), true, 'a cell in from the rim reads its own block');
+  assert.equal(RMB.sceneryUnderRoof(null, 5, 5, all), false, 'no automap: no footprint');
+  assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4095).fill(19), 5, 5, all), false, 'a short one is no automap');
+  assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4096).fill(19), 5, 5, all), true);
+  assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4096).fill(19), 5, 5, null), false, 'no buildings known: nothing taken');
+  // AUDIT FB1018b L4-1: a footprint is held when a building of the block stands on it (xPos / 64, zPos / 64)
+  const two = new Uint8Array(4096);
+  for (let r = 10; r < 20; r++) for (let c = 10; c < 20; c++) two[r * 64 + c] = 19;
+  for (let r = 40; r < 50; r++) for (let c = 40; c < 50; c++) two[r * 64 + c] = 19;
+  const held = RMB.heldFootprints(two, [{ xPos: 12 * 64, zPos: 15 * 64 }]);
+  assert.equal(held(14 * 64 + 14), true, 'the footprint its building stands on');
+  assert.equal(held(44 * 64 + 44), false, 'a footprint no building stands on is a phantom');
+  assert.equal(held(30 * 64 + 30), false, 'the street');
+  assert.equal(RMB.heldFootprints(null, []), null);
 });
 
-test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stands inside a footprint, every other stands, and the count is the record\'s (10 in Beautiful Cities, 16 in Beautiful Villages)', () => {
-  for (const [vendor, want] of [['beautiful-cities', 10], ['beautiful-villages', 16]]) {
+test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stands inside a footprint a building of the block stands on, every other stands, and the count is the record\'s (10 in Beautiful Cities, 8 in Beautiful Villages - AUDIT FB1018b L4-1: the Villages\' 16 by the automap alone)', () => {
+  for (const [vendor, want] of [['beautiful-cities', 10], ['beautiful-villages', 8]]) {
     let taken = 0, blocks = 0;
     for (const name of Object.keys(PACK(vendor).files)) {
       if (!name.endsWith('.RMB.json')) continue;
@@ -139,4 +154,16 @@ test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stand
     assert.ok(blocks > 40, `${vendor}: ${blocks} blocks carry their ground and automap whole`);
     assert.equal(taken, want, `${vendor}: the cells taken`);
   }
+});
+
+test('HOUSE-BUSH THE PHANTOM HOUSES (AUDIT FB1018b L4-1): TEMPBSE0\'s automap draws houses its block does not have, and its author planted scenery on that open ground - every one of its scenery cells stands, as it did', () => {
+  const block = packBlock('beautiful-villages', 'TEMPBSE0.RMB.json');
+  assert.ok(block, 'carried whole');
+  assert.equal(block.rmbBlock.subRecords.length, 8, 'eight buildings');
+  const open = sceneryOf(packBlock('beautiful-villages', 'TEMPBSE0.RMB.json', { blankMap: true })), stood = sceneryOf(block);
+  assert.deepEqual([...stood], [...open], 'nothing taken');
+  // the automap alone would take six of them: their four cells are a footprint no building of the block stands on
+  const auto = block.rmbBlock.fldHeader.autoMapData;
+  const underMap = [...open.keys()].filter((k) => { const [x, z] = k.split(',').map(Number); return RMB.sceneryUnderRoof(auto, x / 256, (z - 256) / 256, () => true); });
+  assert.equal(underMap.length, 6, 'six under the drawn footprints');
 });

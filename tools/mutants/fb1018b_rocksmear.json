@@ -78,5 +78,25 @@
       "test/world/fb1018b_rocksmear.test.js"
     ],
     "why": "every prism wound against its corners' order"
+  },
+  {
+    "name": "ROCK-SMEAR-centroid-off-the-axis",
+    "file": "src/world/townStandIns.js",
+    "old": "(a[0] + b[0] + c[0]) / 3 - cx, (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3 - cz]",
+    "new": "(a[0] + b[0] + c[0]) / 3, (a[1] + b[1] + c[1]) / 3, (a[2] + b[2] + c[2]) / 3]",
+    "tests": [
+      "test/world/fb1018b_rocksmear.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-6: a face read against the origin, not the boulder's own axis - a rock stood off its origin faces into itself"
+  },
+  {
+    "name": "ROCK-SMEAR-prism-area-half-shoelace",
+    "file": "src/world/townStandIns.js",
+    "old": "area += a[0] * b[1] - b[0] * a[1];",
+    "new": "area += a[0] * b[1];",
+    "tests": [
+      "test/world/fb1018b_rocksmear.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-6: half the shoelace - the winding right for the docks' corners, wrong for a prism in another quadrant"
   }
 ]

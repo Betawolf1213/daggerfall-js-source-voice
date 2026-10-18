@@ -2,7 +2,7 @@
   {
     "name": "HOUSE-BUSH-not-asked",
     "file": "src/world/rmbFlats.js",
-    "old": "      if (sceneryUnderRoof(autoMap, x, y)) continue;   // HOUSE-BUSH: a cell its author left under a house\n",
+    "old": "      if (sceneryUnderRoof(autoMap, x, y, held)) continue;   // HOUSE-BUSH: a cell its author left under a house\n",
     "new": "",
     "tests": [
       "test/world/fb1018b_housebush.test.js"
@@ -22,8 +22,8 @@
   {
     "name": "HOUSE-BUSH-any-cell",
     "file": "src/world/rmbFlats.js",
-    "old": "  for (const r of [row - 1, row]) for (const c of [col - 1, col]) if (quarterOf(autoMap[r * AUTOMAP_SIDE + c]) === null) return false;\n  return true;",
-    "new": "  return [row - 1, row].some((r) => [col - 1, col].some((c) => quarterOf(autoMap[r * AUTOMAP_SIDE + c]) !== null));",
+    "old": "  for (const r of [row - 1, row]) for (const c of [col - 1, col]) if (quarterOf(autoMap[r * AUTOMAP_SIDE + c]) === null) return false;\n  return held(row * AUTOMAP_SIDE + col);",
+    "new": "  return [row - 1, row].some((r) => [col - 1, col].some((c) => quarterOf(autoMap[r * AUTOMAP_SIDE + c]) !== null)) && held(row * AUTOMAP_SIDE + col);",
     "tests": [
       "test/world/fb1018b_housebush.test.js"
     ],
@@ -72,11 +72,71 @@
   {
     "name": "HOUSE-BUSH-short-automap-read",
     "file": "src/world/rmbFlats.js",
-    "old": "  if (!autoMap || autoMap.length < AUTOMAP_SIDE * AUTOMAP_SIDE) return false;",
-    "new": "  if (!autoMap) return false;",
+    "old": "  if (!autoMap || autoMap.length < AUTOMAP_SIDE * AUTOMAP_SIDE || !held) return false;",
+    "new": "  if (!autoMap || !held) return false;",
     "tests": [
       "test/world/fb1018b_housebush.test.js"
     ],
     "why": "a grid that is not an RMB automap read as one"
+  },
+  {
+    "name": "HOUSE-BUSH-held-unread",
+    "file": "src/world/rmbFlats.js",
+    "old": "  return held(row * AUTOMAP_SIDE + col);   // the four are one footprint: architecture, side by side",
+    "new": "  return true;",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: every footprint the automap draws a roof - TEMPBSE0's and TEMPBSC0's phantom houses take the scenery their authors planted on open ground"
+  },
+  {
+    "name": "HOUSE-BUSH-every-run-held",
+    "file": "src/world/rmbFlats.js",
+    "old": "  return (i) => run[i] >= 0 && held.has(run[i]);",
+    "new": "  return (i) => run[i] >= 0;",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: a footprint no building of the block stands on held as one"
+  },
+  {
+    "name": "HOUSE-BUSH-walk-builds-no-held",
+    "file": "src/world/rmbFlats.js",
+    "old": "  const held = heldFootprints(autoMap, rmb.subRecords);",
+    "new": "  const held = () => true;",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: the walk asks the automap alone - 26 cells taken, 8 of them under phantom houses"
+  },
+  {
+    "name": "HOUSE-BUSH-footprint-one-cell",
+    "file": "src/world/rmbFlats.js",
+    "old": "        if (run[kk] < 0 && quarterOf(autoMap[kk]) !== null) { run[kk] = runs; open.push(kk); }\n",
+    "new": "",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: a footprint read as the one cell its building's origin falls in"
+  },
+  {
+    "name": "HOUSE-BUSH-origin-transposed",
+    "file": "src/world/rmbFlats.js",
+    "old": "    const c = Math.floor(s.xPos / 64), r = Math.floor(s.zPos / 64);",
+    "new": "    const c = Math.floor(s.zPos / 64), r = Math.floor(s.xPos / 64);",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: a building's origin read across the automap's diagonal"
+  },
+  {
+    "name": "HOUSE-BUSH-no-held-takes",
+    "file": "src/world/rmbFlats.js",
+    "old": "AUTOMAP_SIDE * AUTOMAP_SIDE || !held) return false;",
+    "new": "AUTOMAP_SIDE * AUTOMAP_SIDE) return false;",
+    "tests": [
+      "test/world/fb1018b_housebush.test.js"
+    ],
+    "why": "AUDIT FB1018b L4-1: with no word of the block's buildings, the law still asked"
   }
 ]

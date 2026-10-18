@@ -869,7 +869,7 @@ function dock({ decks, piles }) {
  *  their area. ROCK-SMEAR, found beside it: the sides took "counter-clockwise seen from +z" on trust, and both callers
  *  hand it a clockwise list (the ramp's reversed, the steps' mirrored by dockPoint), so the ramp's deck and both
  *  stringers looked into their prisms - drawn inside out under the world's culling. */
-function prismZ(m, tex, corners, z0, z1) {
+export function prismZ(m, tex, corners, z0, z1) {
   let area = 0;
   for (let i = 0; i < corners.length; i++) { const a = corners[i], b = corners[(i + 1) % corners.length]; area += a[0] * b[1] - b[0] * a[1]; }
   const pts = area < 0 ? [...corners].reverse() : corners;   // counter-clockwise seen from +z: each side's outward normal is its edge turned right

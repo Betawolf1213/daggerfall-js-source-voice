@@ -21,7 +21,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import zlib from 'node:zlib';
 
-import { rockMesh, boulderMesh, RMBRP_ROCKS, RMBRP_ROCK_SCALE, RMBRP_PIECES } from '../../src/world/townStandIns.js';
+import { rockMesh, boulderMesh, prismZ, RMBRP_ROCKS, RMBRP_ROCK_SCALE, RMBRP_PIECES } from '../../src/world/townStandIns.js';
+import { MeshBuilder } from '../../src/world/detStandIns.js';
 
 /** Per triangle: the texture map's two singular values (repeats per metre along the face's most and least stretched
  *  directions), its area, and how the texture's v runs with height along the face (dv per metre up). */
@@ -85,6 +86,21 @@ test('ROCK-SMEAR: every rock stand-in, and the pack\'s docks, ramp and steps bes
     const { out, into, litIn } = partsFacing(RMBRP_PIECES[id]());
     assert.ok(out > 0, `${id}: faces`);
     assert.deepEqual([into, litIn], [0, 0], `${id}: ${into} of ${out + into} faces wound into the piece, ${litIn} lit from inside`);
+  }
+});
+
+// AUDIT FB1018b L4-6 (bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18b.md): the pack's rocks stand near their
+// origins and their prisms wind one way, so the law's two terms were not read - a face's centre against the boulder's
+// own axis (round (cx, cz)), and the corners' signed area whichever way they run
+test('ROCK-SMEAR THE LAW, NOT THE PACK\'S CASE (AUDIT FB1018b L4-6): a boulder whose box stands off its origin by more than its width still faces out - its faces are read against its own axis - and a prism faces out whichever way its corners run, in any quadrant', () => {
+  const far = partsFacing(boulderMesh(2, 1, 0.5, 2, 7, 6, -5));
+  assert.deepEqual([far.into, far.litIn], [0, 0], `a boulder round (6, -5): ${far.into} faces wound in, ${far.litIn} lit from inside`);
+  const sq = [[1, 1], [3, 1], [3, 2], [1, 2]];
+  for (const pts of [sq, [...sq].reverse(), sq.map(([x, y]) => [x, -y]), sq.map(([x, y]) => [x, -y]).reverse(), sq.map(([x, y]) => [-x, -y]).reverse()]) {
+    const m = new MeshBuilder();
+    prismZ(m, [0, 0], pts, 0, 1);
+    const f = partsFacing(m.build());
+    assert.deepEqual([f.into, f.litIn], [0, 0], `the prism on ${JSON.stringify(pts)}`);
   }
 });
 
