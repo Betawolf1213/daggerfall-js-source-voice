@@ -24221,7 +24221,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _realmArenaHeld = realmArena(SD_ARENA_FLOORS);   // AUDIT SD III (F2): the arena's rim alone - a fighter held in while its fight lives
   const _realmArenaBridged = realmArena([...SD_REALM_FLOORS, ...SD_HALL_FLOORS, ...SD_STEPS_FLOORS]);   // SD6c: and with the Concord, the bridge and the first step; SD7b: and past it the Steps' band - the void's to take, the cast-back its edge - and the arena
   const gateCourt = gateLink ? createGateCourt({
-    renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link: gateLink, spoils: spoilsPool,
+    renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link: gateLink, spoils: spoilsPool, takeSpoil: takeGateSpoil,   // WB14e: a Tithe-Imp's tithe into the pack by the spoils' own door
     now: () => Date.now() + _sharedOffsetMs, door: () => online?.busyAt ?? null,   // GATE-DOOR: and the court's door answering busy - a word of it, not a silence
     cam: () => cam.pos,
     feet: () => (playerSpawned && modes?.gateArenaDay?.() != null ? player.feetAt() : null),
@@ -25951,7 +25951,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (royalRing) player.arena = { centre: campToScene([royalRing.centre[0], campToWire(player.feetAt())[1], royalRing.centre[1]]), radius: royalRing.radius };
     // WB3b: the court's floor is a ring the body cannot leave - WB9b: the three courts' floor, as far as the walkways
     // between them are laid (one arena, its crossings and clock refilled each frame)
-    if (!player.arena && modes?.gateArenaDay?.() != null) { _courtArena.xa = gateLink?.state()?.xa ?? _gateFloor.none; _courtArena.now = Date.now() + _sharedOffsetMs; _courtArena.day = modes.gateArenaDay(); player.arena = _courtArena; }   // WB14b: and the night whose plan holds me
+    if (!player.arena && modes?.gateArenaDay?.() != null) { _courtArena.xa = gateLink?.state()?.xa ?? _gateFloor.none; _courtArena.now = Date.now() + _sharedOffsetMs; _courtArena.day = modes?.gateArenaDay?.(); player.arena = _courtArena; }   // WB14b: and the night whose plan holds me
     if (!player.arena && modes?.sdRealmSlot?.() != null) player.arena = sdArenaHeld() ? _realmArenaHeld : sdConcordHere() ? _realmArenaBridged : _realmArena;   // AUDIT SD III (F2): standing in it, joined to its living fight, the arena's rim holds me   // SD5a: the Hour's floors are an edge the body cannot leave - the void under them; SD6c: with the Concord, the bridge and the first step among them
     if (!player.arena) player.arena = arenaBouts.ring(); if (!player.arena) { const s = arenaOnline?.session?.(); player.arena = standsRail(modes?.arenaFloorStage?.()?.centre?.() ?? null, player.feetAt()[1], !!s && (s.state ? s.state.h === 1 : !!s.host)); }   // ARENA2: my bout's ring on the arena's sand (the duel's clamp); HOTFIX 1003i: else the stands' rail - no watcher jumps down onto the sand (the session's host may)
     duelPrompt?.render();

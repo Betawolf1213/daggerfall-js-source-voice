@@ -5,7 +5,7 @@
 // Sundering's Rift Way, the Captive's Pen.
 //
 //   the table and the bag   net/gate/gateMods.js GATE_PORTENTS, validGatePortents; net/gate/gateLaw.js gatePortentsOf
-//   the plan                net/gate/gateBrain.js COURTS, WALKS, floorPlan, liveFloors, onFloor, clampToFloor
+//   the plan                net/gate/gateBrain.js COURTS, WALKS, nightPlan, liveFloors, onFloor, clampToFloor
 //   the fight and the wire  newFight's `pt`, the state's `pt` and `xa` by walkway (xaWire); net/wire.js
 //   the screen              world/gate/gateArena.js planOfDay, arrivalOf, the plan's model, collider, slabs, lights, arena;
 //                           the telegraph's whole-arena shape over the plan's floors alone
@@ -20,8 +20,8 @@ import { readFileSync } from 'node:fs';
 import { GATE_PORTENTS, GATE_DIRE, gateDireLine, GATE_TRIALS, CAPTIVE_NAMES, validGatePortents, portentOf, portentBits, hasPortent, gatePortentsWords } from '../../../src/net/gate/gateMods.js';
 import { gatePortentsOf, gateModsOf, gateBossOf, gateTimes, marksLine, marksCarryPortent, portentsLine, gateTitheOf, captiveNameOf, PORTENT_BAG, isGateDay, TITHE_AFTER_MS, TITHE_SPREAD_MS, TITHE_ONE_IN } from '../../../src/net/gate/gateLaw.js';
 import {
-  COURTS, COURTS_HIS, COURT_R, COURT_CENTRE, FLOOR, WALK, WALKS, WALK_ENDS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, POSE_SLACK,
-  floorPlan, PLAN_PLAIN, planOf, liveFloors, onFloor, clampToFloor, walkwayOf, finalCourt, newFight, joinFight, applyHeal, stateOf, xaWire,
+  COURTS, COURTS_HIS, COURT_R, COURT_CENTRE, FLOOR, WALKWAY, WALKS, WALK_ENDS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, POSE_SLACK,
+  nightPlan, PLAN_PLAIN, planOf, liveFloors, onFloor, clampToFloor, walkwayOf, finalCourt, newFight, joinFight, applyHeal, stateOf, xaWire,
 } from '../../../src/net/gate/gateBrain.js';
 import { validGateOut, GATE_COURT_BOUND, GATE_WALKS_MAX, GATE_FLOORS_MAX } from '../../../src/net/wire.js';
 import { foldGate, crossLaid, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
@@ -125,16 +125,16 @@ test('WB14b the floors: the three courts first, then the Muster and the Bridgehe
   assert.ok(COURTS[FLOOR.muster][1] > COURT_R && COURTS[FLOOR.bridgehead][1] > COURTS[FLOOR.muster][1], 'the Vanguard south, the Bridgehead the further');
   assert.ok(COURTS[FLOOR.pen][0] > 2 * COURT_R, 'the Pen east');
   assert.deepEqual(WALK_ENDS.map((e) => [...e]), [[0, 1], [1, 2], [0, 2], [4, 3], [3, 0], [0, 5]]);
-  assert.deepEqual(WALK, { second: 0, third: 1, rift: 2, muster: 3, warden: 4, pen: 5 });
+  assert.deepEqual(WALKWAY, { second: 0, third: 1, rift: 2, muster: 3, warden: 4, pen: 5 });
   assert.equal(GATE_WALKS_MAX, WALKS.length); assert.equal(GATE_FLOORS_MAX, COURTS.length);
   for (const w of WALKS) {
     assert.deepEqual(w, walkwayOf(w.k));
     const gap = Math.hypot(COURTS[w.b][0] - COURTS[w.a][0], COURTS[w.b][1] - COURTS[w.a][1]) - 2 * COURT_R;
-    if (w.k === WALK.rift) assert.ok(gap > 60 && gap < 80, `the Rift Way's fire ${gap.toFixed(1)} m`);
+    if (w.k === WALKWAY.rift) assert.ok(gap > 60 && gap < 80, `the Rift Way's fire ${gap.toFixed(1)} m`);
     else assert.ok(gap >= 18 && gap <= 30, `walkway ${w.k}'s fire ${gap.toFixed(1)} m`);
   }
   // the Rift Way passes the second court well clear of its rim
-  const r = WALKS[WALK.rift], c = COURTS[FLOOR.second];
+  const r = WALKS[WALKWAY.rift], c = COURTS[FLOOR.second];
   const t = (c[0] - r.ax) * r.ux + (c[1] - r.az) * r.uz, side = Math.abs((c[0] - r.ax) * r.uz - (c[1] - r.az) * r.ux);
   assert.ok(t > 0 && t < r.len && side - COURT_R - WALK_HALF_W > 12, `the second court's rim ${(side - COURT_R).toFixed(1)} m off it`);
   // the wire's bound holds every floor's far rim and the arrival
@@ -143,48 +143,48 @@ test('WB14b the floors: the three courts first, then the Muster and the Bridgehe
   for (let k = COURTS_HIS; k < COURTS.length; k++) assert.ok(off(az(...COURTS[k])) > TOWER_WINDOW + 0.1, `floor ${k} out of the great tower's window`);
   assert.ok(off(az(r.ux, r.uz)) > TOWER_WINDOW + 0.1, 'the Rift Way out of it');
   // walkway 4 meets the first court beside its bridge (+z), never over it
-  const into = Math.atan2(-WALKS[WALK.warden].uz, -WALKS[WALK.warden].ux);
+  const into = Math.atan2(-WALKS[WALKWAY.warden].uz, -WALKS[WALKWAY.warden].ux);
   assert.ok(Math.abs(Math.atan2(Math.sin(into - Math.PI / 2), Math.cos(into - Math.PI / 2))) > 0.45, 'clear of the bridge');
 });
 
 test('WB14b the plan: a plain night is WB9b\'s three courts and two walkways from the first court; the Vanguard adds its platforms and walkways and arrives on the Bridgehead; the Sundering trades the walkway to the third for the Rift Way and fights its last phase in the first court; the Captive adds the Pen; the Dire Breach is the Vanguard and the Sundering; one plan a set, made once (mutants: the Rift Way on a plain night; the Vanguard arriving in the first court)', () => {
   assert.deepEqual({ ...PLAN_PLAIN, floors: [...PLAN_PLAIN.floors], walks: [...PLAN_PLAIN.walks] }, { key: '', pt: null, root: 0, floors: [0, 1, 2], walks: [0, 1] });
-  const v = floorPlan(['vanguard']), s = floorPlan(['sunder']), c = floorPlan(['captive']), d = floorPlan(['vanguard', 'sunder']);
+  const v = nightPlan(['vanguard']), s = nightPlan(['sunder']), c = nightPlan(['captive']), d = nightPlan(['vanguard', 'sunder']);
   assert.deepEqual([v.root, [...v.floors], [...v.walks]], [FLOOR.bridgehead, [0, 1, 2, 3, 4], [0, 1, 3, 4]]);
   assert.deepEqual([s.root, [...s.floors], [...s.walks]], [FLOOR.first, [0, 1, 2], [0, 2]]);
   assert.deepEqual([c.root, [...c.floors], [...c.walks]], [FLOOR.first, [0, 1, 2, 5], [0, 1, 5]]);
   assert.deepEqual([d.root, [...d.floors], [...d.walks]], [FLOOR.bridgehead, [0, 1, 2, 3, 4], [0, 2, 3, 4]]);
-  assert.equal(floorPlan(['vanguard']), v, 'made once');
-  assert.equal(floorPlan(['nope']), PLAN_PLAIN, 'a word nobody knows: a plain night');
+  assert.equal(nightPlan(['vanguard']), v, 'made once');
+  assert.equal(nightPlan(['nope']), PLAN_PLAIN, 'a word nobody knows: a plain night');
   assert.equal(planOf({ pt: ['captive'] }), c); assert.equal(planOf(null), PLAN_PLAIN);
   assert.equal(finalCourt({ pt: null }), FLOOR.third); assert.equal(finalCourt({ pt: ['vanguard', 'sunder'] }), FLOOR.first);
 });
 
 test('WB14b the floor law, generalised: the plan\'s root always; each of its walkways as far as it is laid from a floor that is floor; each floor such a walkway reaches laid whole; a portent\'s floor never on a night without it, whatever is laid; the clamp holds a body to the same floor (mutants: a floor open before its walkway is whole; a walkway from a floor not yet reached)', () => {
-  const V = floorPlan(['vanguard']);
+  const V = nightPlan(['vanguard']);
   assert.deepEqual(liveFloors(V, [], T0), [FLOOR.bridgehead]);
   assert.ok(onFloor(...at(FLOOR.bridgehead, 3, 4), [], T0, 0, V) && !onFloor(...at(0), [], T0, 0, V), 'the Bridgehead, and not the first court');
   assert.ok(!onFloor(...at(FLOOR.bridgehead), [], T0) && onFloor(0, 0, [], T0), 'a plain night\'s root is the first court');
   const xa = [];
-  xa[WALK.muster] = T0;
+  xa[WALKWAY.muster] = T0;
   assert.deepEqual(liveFloors(V, xa, T0 + WHOLE - 1), [FLOOR.bridgehead], 'the Muster waits for the whole walkway');
   assert.deepEqual(liveFloors(V, xa, T0 + WHOLE), [FLOOR.bridgehead, FLOOR.muster]);
-  const w = WALKS[WALK.muster], mid = [w.ax + w.ux * w.len * 0.25, w.az + w.uz * w.len * 0.25];
+  const w = WALKS[WALKWAY.muster], mid = [w.ax + w.ux * w.len * 0.25, w.az + w.uz * w.len * 0.25];
   assert.ok(onFloor(...mid, xa, T0 + WALK_LEAD_MS + WALK_FORM_MS / 2, 0, V) && !onFloor(...mid, xa, T0 + WALK_LEAD_MS, 0, V), 'laid as far as it is');
   // walkway 4 laid before walkway 3 is whole: not floor - its start is not reached
   const early = [];
-  early[WALK.warden] = T0 - 99_999;
-  const w4 = WALKS[WALK.warden], on4 = [w4.ax + w4.ux * 5, w4.az + w4.uz * 5];
+  early[WALKWAY.warden] = T0 - 99_999;
+  const w4 = WALKS[WALKWAY.warden], on4 = [w4.ax + w4.ux * 5, w4.az + w4.uz * 5];
   assert.ok(!onFloor(...on4, early, T0, 0, V), 'a walkway from a floor not yet reached');
-  early[WALK.muster] = T0 - 99_999;
+  early[WALKWAY.muster] = T0 - 99_999;
   assert.ok(onFloor(...on4, early, T0, 0, V) && onFloor(0, 0, early, T0, 0, V), 'both whole: the first court reached');
   assert.deepEqual(liveFloors(V, early, T0).sort(), [0, 3, 4], 'and no further than the walkways laid');
   // a plain night stands no portent's floor even with its walkway's word
   assert.ok(!onFloor(...at(FLOOR.pen), [T0 - 99_999, null, null, null, null, T0 - 99_999], T0), 'the Pen is the Captive\'s night\'s');
-  assert.ok(onFloor(...at(FLOOR.pen), [T0 - 99_999, null, null, null, null, T0 - 99_999], T0, 0, floorPlan(['captive'])));
+  assert.ok(onFloor(...at(FLOOR.pen), [T0 - 99_999, null, null, null, null, T0 - 99_999], T0, 0, nightPlan(['captive'])));
   // the Sundering: the Rift Way to the third court, never the walkway from the second
-  const S = floorPlan(['sunder']), rift = [];
-  rift[WALK.rift] = T0 - 99_999;
+  const S = nightPlan(['sunder']), rift = [];
+  rift[WALKWAY.rift] = T0 - 99_999;
   assert.ok(onFloor(...at(FLOOR.third), rift, T0, 0, S) && !onFloor(...at(FLOOR.third), rift, T0), 'the third by the Rift Way');
   assert.ok(!onFloor(...at(FLOOR.third), [T0 - 99_999, T0 - 99_999], T0, 0, S), 'and never by walkway 1');
   // the clamp: back onto the Bridgehead from the fire beside it
@@ -207,11 +207,11 @@ test('WB14b the fight keeps its portents: newFight holds a valid set (a copy) an
   assert.deepEqual(xaWire([T0, undefined, T0 + 5]), [T0, null, T0 + 5]);
   assert.deepEqual(xaWire([T0, null, null]), [T0]);
   assert.deepEqual(xaWire(null), []);
-  f.xa = []; f.xa[WALK.muster] = T0;
+  f.xa = []; f.xa[WALKWAY.muster] = T0;
   assert.deepEqual(stateOf(f).xa, [null, null, null, T0]);
   assert.deepEqual(validGateOut(JSON.parse(JSON.stringify(stateOf(f)))).xa, [null, null, null, T0]);
   const s = foldGate(GATE_STATE_EMPTY, validGateOut(JSON.parse(JSON.stringify(stateOf(f)))), T0);
-  assert.deepEqual(s.pt, ['vanguard', 'sunder']); assert.equal(planOf(s), floorPlan(['vanguard', 'sunder']));
+  assert.deepEqual(s.pt, ['vanguard', 'sunder']); assert.equal(planOf(s), nightPlan(['vanguard', 'sunder']));
   // a heal said from the Bridgehead: believed on the Vanguard's night, not on a plain one
   for (const [pt, ok] of [[['vanguard'], true], [null, false]]) {
     const g = newFight(7, T0, T0 + 3_600_000, 'ruhn', null, pt);
@@ -220,17 +220,17 @@ test('WB14b the fight keeps its portents: newFight holds a valid set (a copy) an
     assert.equal(got > 0, ok, JSON.stringify(pt));
   }
   // the relay births the fight on the night's draw
-  assert.match(read('server/src/index.js'), /md: gateModsOf\(day\), pt: gatePortentsOf\(day\) \}\);/);
-  assert.match(read('src/net/bossSeam.js'), /new: \(\{ day, now, wrathAt, boss, md = null, pt = null \}\) => newFight\(day, now, wrathAt, boss, md, pt\),/);
+  assert.match(read('server/src/index.js'), /md: gateModsOf\(day\), pt: gatePortentsOf\(day\), ti: gateTitheOf\(day\) \}\);/);
+  assert.match(read('src/net/bossSeam.js'), /new: \(\{ day, now, wrathAt, boss, md = null, pt = null, ti = null \}\) => newFight\(day, now, wrathAt, boss, md, pt, ti\),/);
 });
 
 test('WB14b a bound lays its walkway on every screen: over a walkway of the night\'s own past WB9b\'s two (the Flame\'s Rift Way) it lays that one alone; WB9b\'s bounds lay theirs as they did (mutants: the Rift Way laid as walkways 0 and 1)', () => {
   const s = { ...GATE_STATE_EMPTY, day: 1, pt: ['sunder'], xa: [T0] };
   const word = { k: 'atk', i: 9, a: ATTACKS.cross.id, at: T0 + 20_000, x: 0, z: 0, yw: 0, tg: [[...COURTS[FLOOR.third]]] };
   const laid = crossLaid(s, word).xa;
-  assert.equal(laid[WALK.rift], T0 + 20_000 - ATTACKS.cross.windup);
-  assert.equal(laid[WALK.third], undefined, 'never walkway 1');
-  assert.equal(laid[WALK.second], T0, 'the second\'s as it was');
+  assert.equal(laid[WALKWAY.rift], T0 + 20_000 - ATTACKS.cross.windup);
+  assert.equal(laid[WALKWAY.third], undefined, 'never walkway 1');
+  assert.equal(laid[WALKWAY.second], T0, 'the second\'s as it was');
   assert.deepEqual(crossLaid({ ...s, xa: laid }, word), {}, 'never twice');
   assert.deepEqual(crossLaid({ ...GATE_STATE_EMPTY, day: 1, xa: [] }, word).xa, [T0 + 20_000 - ATTACKS.cross.windup, T0 + 20_000 - ATTACKS.cross.windup], 'a plain night\'s (an old checkpoint\'s) bound to the third lays both');
 });
@@ -239,7 +239,7 @@ test('WB14b a bound lays its walkway on every screen: over a walkway of the nigh
 
 test('WB14b the night\'s court on the screen: its plan by its day (the relay\'s draw, the same law); its fighters arrive on its root floor and its way in burns there; the model, the collider, the slabs and the braziers are the plan\'s - a plain night\'s WB9b\'s - and a portent\'s platform keeps no rune ring; the motor holds a body to the night\'s floor (mutants: the platforms on every night; the arrival in the first court on the Vanguard\'s)', () => {
   const vd = dayOf('vanguard'), pd = dayOf(null), cd = dayOf('captive');
-  assert.equal(planOfDay(vd), floorPlan(['vanguard'])); assert.equal(planOfDay(pd), PLAN_PLAIN); assert.equal(planOfDay(null), PLAN_PLAIN);
+  assert.equal(planOfDay(vd), nightPlan(['vanguard'])); assert.equal(planOfDay(pd), PLAN_PLAIN); assert.equal(planOfDay(null), PLAN_PLAIN);
   assert.deepEqual(arrivalOf(PLAN_PLAIN), { at: [0, ARRIVE_Z], wayIn: [0, WAY_IN_Z] });
   const va = arrivalOf(planOfDay(vd));
   assert.deepEqual(va.at, [COURTS[FLOOR.bridgehead][0], COURTS[FLOOR.bridgehead][1] + ARRIVE_Z]);
@@ -255,10 +255,10 @@ test('WB14b the night\'s court on the screen: its plan by its day (the relay\'s 
   const area = (tris) => { let a = 0; for (let i = 0; i < tris.length; i += 9) a += Math.abs((tris[i + 3] - tris[i]) * (tris[i + 8] - tris[i + 2]) - (tris[i + 5] - tris[i + 2]) * (tris[i + 6] - tris[i])) / 2; return a; };
   const disc = Math.PI * COURT_R * COURT_R, deck = (k) => WALKS[k].len * 2 * WALK_HALF_W;
   assert.ok(Math.abs(area(courtFloorTris(['captive'])) - (4 * disc + deck(0) + deck(1) + deck(5))) / (4 * disc) < 0.01, 'the Captive\'s collider: four floors, three decks');
-  assert.deepEqual([...new Set(walkSlabs(['sunder']).map((sl) => sl.walk))], [WALK.second, WALK.rift]);
+  assert.deepEqual([...new Set(walkSlabs(['sunder']).map((sl) => sl.walk))], [WALKWAY.second, WALKWAY.rift]);
   assert.equal(walkSlabs(['sunder']), walkSlabs(['sunder']), 'made once a plan');
-  assert.ok(courtLights(floorPlan(['vanguard'])).length > courtLights().length, 'the platforms\' braziers');
-  assert.equal(courtOpenings(FLOOR.pen, floorPlan(['captive'])).length, 1, 'the Pen opens on its walkway');
+  assert.ok(courtLights(nightPlan(['vanguard'])).length > courtLights().length, 'the platforms\' braziers');
+  assert.equal(courtOpenings(FLOOR.pen, nightPlan(['captive'])).length, 1, 'the Pen opens on its walkway');
   // the motor's arena: the night's floor
   const a = courtArena([], T0, vd);
   assert.equal(a.clamp(courtToDungeon(...[COURTS[FLOOR.bridgehead][0] + 2, 0, COURTS[FLOOR.bridgehead][1]]), 0.4), null, 'on the Bridgehead');
@@ -276,7 +276,7 @@ test('WB14b the telegraph over the night\'s floors: a shape over the whole arena
   const wrath = telegraphShape({ i: 1, a: ATTACKS.wrath.id, at: T0 + 6000, x: 0, z: 0, yw: 0, tg: [] }, 1, T0 + 3000);
   pass.draw(wrath, I, I, [0, 0, 0], 1);
   assert.equal(pass.drawn, 3, 'a plain call: his three courts');
-  pass.draw(wrath, I, I, [0, 0, 0], 1, null, undefined, null, { courts: COURTS, r: COURT_R, ks: floorPlan(['vanguard']).floors });
+  pass.draw(wrath, I, I, [0, 0, 0], 1, null, undefined, null, { courts: COURTS, r: COURT_R, ks: nightPlan(['vanguard']).floors });
   assert.equal(pass.drawn, 5, 'the Vanguard\'s night: its five floors');
   pass.draw(wrath, I, I, [0, 0, 0], 1, null, undefined, null, { courts: [[0, 0]], r: 10 });
   assert.equal(pass.drawn, 1, 'another floor\'s own courts (the Hour\'s, the Spire\'s): all of them');
@@ -286,7 +286,7 @@ test('WB14b the telegraph over the night\'s floors: a shape over the whole arena
 test('WB14b the Deadlands keep clear of every floor of every night: no island within LAND_CLEAR_M of a portent\'s platform or walkway either, so the land is one land whatever the night (mutants: the land keeping clear of his three alone)', () => {
   for (const isl of deadlandsIslands()) assert.ok(floorGap(isl.x, isl.z) >= isl.r * 1.35 + LAND_CLEAR_M);
   for (let k = COURTS_HIS; k < COURTS.length; k++) assert.ok(floorGap(...at(k)) < 0, `floor ${k} counted`);
-  const r = WALKS[WALK.rift];
+  const r = WALKS[WALKWAY.rift];
   assert.ok(floorGap(r.ax + r.ux * r.len / 2, r.az + r.uz * r.len / 2) < 0, 'the Rift Way counted');
   assert.ok(POSE_SLACK > 0);
 });

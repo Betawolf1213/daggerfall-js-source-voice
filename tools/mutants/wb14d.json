@@ -38,7 +38,7 @@
   {
     "name": "WB14d-the-flame-over-walkway-1",
     "file": "src/net/gate/gateBrain.js",
-    "old": "{ a: 'cross', court: FLOOR.third, walk: WALK.rift }",
+    "old": "{ a: 'cross', court: FLOOR.third, walk: WALKWAY.rift }",
     "new": "{ a: 'cross', court: FLOOR.third }",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"

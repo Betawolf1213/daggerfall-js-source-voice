@@ -777,7 +777,7 @@ export class GateTelegraphRenderer {
   draw(shape, proj, view, eye, seconds, fog = null, centre = COURT_CENTRE, walks = null, floor = null) {
     // SD8d: another floor than the Burning Court's - `floor` { r, courts } (the Brass Remnant's arena: one floor, its
     // centre the frame's origin); the court's own by default. WB14b: `ks` the night's floors among them (net/gate/gateBrain.js
-    // floorPlan) - the whole arena's shape is drawn over those alone (a portent's platform stands only on its night)
+    // nightPlan) - the whole arena's shape is drawn over those alone (a portent's platform stands only on its night)
     const floorCourts = floor?.courts ?? COURTS, floorR = floor?.r ?? COURT_R, floorKs = floor ? floor.ks ?? null : PLAN_PLAIN.floors;
     this.drawn = 0;
     this.walked = 0;

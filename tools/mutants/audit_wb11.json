@@ -449,8 +449,8 @@
   {
     "name": "AUDIT-WB11-D7-the-bearers-rising-unsaid",
     "file": "src/scenes/gate/gateHost.js",
-    "old": ": k === HOST.bearer ? COURT_HOST_TEXT.bearers() : null;",
-    "new": ": k === HOST.bearer ? '' : null;",
+    "old": ": k === HOST.bearer ? COURT_HOST_TEXT.bearers()\n",
+    "new": ": k === HOST.bearer ? ''\n",
     "tests": [
       "test/net/gate/audit_wb11.test.js"
     ]

@@ -16,7 +16,7 @@
 // has already cued, landed and judged, and the host's doors.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder, planOf } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder, planOf, HOST, HOST_GONE } from '../../net/gate/gateBrain.js';
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { COURT_WATCH_ASK_MS } from '../../net/gate/gateBrain.js';   // COURT-WATCH: a watcher's ask for a seat, this often
@@ -41,6 +41,8 @@ import { createGateArsenal } from './gateArsenal.js';   // WB14a: the blows that
 import { vanguardLine, vanguardOut } from './gateVanguard.js';   // WB14c: the Vanguard's words, and whether it holds
 import { createGateFlame, flameOf, FLAME_I } from './gateFlame.js';   // WB14d: his Flame, the Sundering's second body
 import { hasPortent } from '../../net/gate/gateMods.js';   // WB14d: a Sundering night's own cards
+import { titheList } from '../../systems/gate/gateSpoils.js';   // WB14e: a Tithe-Imp's tithe, off its seed
+import { TITHE_GOLD } from '../../world/gate/gateBoss.js';   // WB14e: its gold
 import { t } from '../../systems/textManager.js';   // WB14d: its words in the player's language (L10N4)
 import { damageChartModel, drawGateDamageChart } from '../../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../../net/gate/gateReceipt.js';
@@ -70,6 +72,10 @@ export const PHASE_NUMERALS = Object.freeze(['I', 'II', 'III']);
 export const courtPhaseOrder = (n) => (n === 2 ? 'Follow him over the walkway.' : n === 3 ? 'Follow him to the last court.' : null);
 /** WB14d: a Sundering night's turns, carded - the Sundering itself, and the Rejoining's last stand back in the first court
  *  (read through the text core - L10N4). */
+/** WB14e: what a Tithe-Imp's tithe paid me (read through the text core - L10N4). */
+export const COURT_TITHE_TEXT = Object.freeze({
+  mine: (gold, gem) => t('gate.tithe.mine', 'You take its tithe of {gold} gold and {gem}.', { gold, gem }),
+});
 export const SUNDER_CARD = Object.freeze({
   main: () => t('gate.card.sunder', 'The Sundering'),
   sub: () => t('gate.card.sunderSub', 'Bring both halves down together.'),
@@ -265,7 +271,7 @@ export const HEAL_SEND_MS = 1000;
  *   sendHost?: (hit: { i: number, q: number, d: number, r: number }) => boolean,
  *   sendHeal?: (heal: { h: Array<[string, number]> }) => boolean,
  *   sendBody?: (v: number) => boolean,
- *   rng?: () => number,
+ *   rng?: () => number, takeSpoil?: (piece: any) => void,
  *   portalDoor?: (door: any) => void,
  *   soulTrap?: (trap: { chance: number, mobile: number, name: string }) => void,
  *   me?: () => (string|null),
@@ -293,6 +299,7 @@ export function createGateCourt({
   renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null,
   link, spoils = null, now, door = () => null, cam = () => null, feet = () => null, player = () => null, save = () => 100,
   strike = () => {}, say = () => {}, hudHidden = () => false, veiled = () => false, send = () => false, sendCrystal = () => false, sendHost = () => false, sendHeal = () => false, sendBody = () => false, rng = Math.random,
+  takeSpoil = () => {},   // WB14e: a piece into my pack (scenes/world.js takeGateSpoil - the spoils' own door), for a Tithe-Imp's tithe
   portalDoor: layPortalDoor = () => {}, soulTrap = () => {}, me = () => null, yaw = () => null, shake = () => {},
   myId = () => null, pull = () => {}, pullDecay = 0,   // WB14a: my peer id (the marked blows name it), my body's push (the Chains' reel) and its decay
   wantBodies = undefined, makeBodies = null,   // MWNPC10: the body lane's seams (a test's own)
@@ -393,7 +400,7 @@ export function createGateCourt({
   let _mark = markShape([0, 0], 0, MARK_COLOR), _markOf = null, markEmber = MARK_COLOR;   // WB8b: his mark and its ember, remade when his profile is another
   /** WB8c: whether his marks have been said to me on this entry, and the last feeding heard; WB9a: when they were (the
    *  marks' card stands from then - ui/gate/gateMarksView.js MARKS_CARD_ARRIVE_MS) */
-  let marksSaid = false, fedHeard = null, marksAt = null, vgwHeard = null;   // WB14c: the Vanguard's last word heard
+  let marksSaid = false, fedHeard = null, marksAt = null, vgwHeard = null, titheTaken = null;   // WB14c: the Vanguard's last word heard; WB14e: the tithe taken
   /** GATE-UX: when this screen first saw his fall (the relay's clock) - the damage chart stands from then */
   let chartAt = null;
   /** WBX2: the portal home once he has fallen - where it stands (the court's frame) and how far it has risen, its fire's
@@ -467,7 +474,7 @@ export function createGateCourt({
     fellSeen = false; fallFlashAt = -Infinity; columnN = 0; fallCardSet = false;
     if (corpse) { renderer?.destroyBillboardBatch?.(corpse); corpse = null; }
     pools = []; pooled = noMark(); burnAt = -Infinity; inFire = false; outAt = -Infinity; mark = null; poolDraw = [];
-    marksSaid = false; fedHeard = null; marksAt = null; chartAt = null; vgwHeard = null;   // GATE-UX; WB14c
+    marksSaid = false; fedHeard = null; marksAt = null; chartAt = null; vgwHeard = null; titheTaken = null;   // GATE-UX; WB14c; WB14e
     healOwed.clear();   // GATE-HEAL
     portal = null; spin = 0; portalLaid = false; portalSaid = false;
     wayIn = 0; wayInHeld = -Infinity; wayInMine = false;   // GATE-FBX
@@ -706,6 +713,19 @@ export function createGateCourt({
     }
   }
 
+  /** WB14e: A TITHE-IMP I STRUCK WAS CAUGHT (the relay's `tithe`, its seed - to me alone): its gold and its gem into my
+   *  pack once, its gold burst where it fell, and what it was said. */
+  function titheFrame(s, t) {
+    const T = s.tithe;
+    if (!T || T.c === titheTaken || watching()) return;
+    titheTaken = T.c;
+    const list = titheList(T.c, player()?.level ?? 1);
+    for (const piece of list) takeSpoil(piece);
+    const g = s.lg?.gone?.find((x) => x.k === HOST.tithe && x.w === HOST_GONE.slain), f = feet();
+    const at = g ? courtToDungeon(g.x, 1, g.z) : f;
+    if (at && t - T.at <= FED_LATE_MS) addBurst(at, t, FX_KINDS.spoils, TITHE_GOLD);
+    say(COURT_TITHE_TEXT.mine(list[0].gold, list[1].item?.name ?? ''));
+  }
   /** WB9e: THE BURSTS A LANDING THROWS (render/gate/gateFx.js fxBurstOf) - at his feet for his own (the slam, the nova,
    *  Dagon's), where it lands for a leap, a bound or a meteor, under each mark for Hellfire - from its moment on the
    *  relay's clock, in its colour under his profile; a slot reused, the oldest given up past FX_BURSTS_MAX. */
@@ -985,6 +1005,7 @@ export function createGateCourt({
       fxFrame(s, t, P);   // WB9e: the sparks of his landings and the meteor's fall
       drawBody(s, t, P);
       burst(s, t);
+      titheFrame(s, t);   // WB14e: a Tithe-Imp I struck, caught - its tithe mine
       spoils?.frame(onSpoilRest);   // WB9f: each piece's landing sparks
       { const mine = mineXZ(); shape = s.fell ? null : telegraphShape(s.atk, s.phase, t, P, (k) => arsenal.at(s.atk, k, mine)); }   // WB14a: a marked ring where this screen sees its fighter
       // WBX4: his mark under him, while he stands; WBX5: the burning ground (WB8b: his aspect's)

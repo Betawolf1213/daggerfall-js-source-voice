@@ -57,7 +57,7 @@ export const BOSS_SPEED = 3.2;
 // WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md section 2): AND THE FLOORS A PORTENT STANDS - every floor a
 // night may hold is one table (all of COURT_R), its index its name: the three courts, then the Vanguard's Muster and
 // Bridgehead south of the first (off its bridge's line), then the Captive's Pen east of it. A night's PLAN says which
-// stand (floorPlan); a plain night's is WB9b's three.
+// stand (nightPlan); a plain night's is WB9b's three.
 export const COURTS = Object.freeze([Object.freeze([0, 0]), Object.freeze([-68, -22]), Object.freeze([-74, -94]), Object.freeze([-40, 60]), Object.freeze([-20, 128]), Object.freeze([70, -10])]);
 /** WB14b: the floors by name (their index in COURTS) - the three courts WB9b fights in, and the portents'. */
 export const FLOOR = Object.freeze({ first: 0, second: 1, third: 2, muster: 3, bridgehead: 4, pen: 5 });
@@ -93,7 +93,7 @@ export const WALK_SINK_M = 2;
 /** WB14b: each walkway's floors, [from, to] - by its index (bible/11-Multiplayer/Breach-Portents.md section 2). */
 export const WALK_ENDS = Object.freeze([[0, 1], [1, 2], [0, 2], [4, 3], [3, 0], [0, 5]].map((e) => Object.freeze(e)));
 /** WB14b: the walkways by name (their index in WALKS). */
-export const WALK = Object.freeze({ second: 0, third: 1, rift: 2, muster: 3, warden: 4, pen: 5 });
+export const WALKWAY = Object.freeze({ second: 0, third: 1, rift: 2, muster: 3, warden: 4, pen: 5 });
 /** Walkway k's line: from `a` (in court k) to `b` (in court k+1), its direction and its length. WB14b: from floor `a` to
  *  floor `b` (WALK_ENDS[k]). */
 export function walkwayOf(k) {
@@ -122,16 +122,16 @@ export function walkFormed(xa, k, now) {
  * @param {unknown} pt the night's portents (net/gate/gateMods.js validGatePortents - anything else is a plain night)
  * @returns {Readonly<FloorPlan>}
  */
-export function floorPlan(pt) {
+export function nightPlan(pt) {
   const ok = validGatePortents(pt) ?? null, key = ok ? ok.join(',') : '';
   let P = _plans.get(key);
   if (P) return P;
   const has = (id) => !!ok && ok.includes(id);
   /** @type {number[]} */ const floors = [FLOOR.first, FLOOR.second, FLOOR.third];
-  /** @type {number[]} */ const walks = [WALK.second];
-  if (has('sunder')) walks.push(WALK.rift); else walks.push(WALK.third);
-  if (has('vanguard')) { floors.push(FLOOR.muster, FLOOR.bridgehead); walks.push(WALK.muster, WALK.warden); }
-  if (has('captive')) { floors.push(FLOOR.pen); walks.push(WALK.pen); }
+  /** @type {number[]} */ const walks = [WALKWAY.second];
+  if (has('sunder')) walks.push(WALKWAY.rift); else walks.push(WALKWAY.third);
+  if (has('vanguard')) { floors.push(FLOOR.muster, FLOOR.bridgehead); walks.push(WALKWAY.muster, WALKWAY.warden); }
+  if (has('captive')) { floors.push(FLOOR.pen); walks.push(WALKWAY.pen); }
   P = Object.freeze({ key, pt: ok, root: has('vanguard') ? FLOOR.bridgehead : FLOOR.first, floors: Object.freeze(floors.sort((x, y) => x - y)), walks: Object.freeze(walks.sort((x, y) => x - y)) });
   _plans.set(key, P);
   return P;
@@ -139,9 +139,9 @@ export function floorPlan(pt) {
 /** The plans made (a handful at most - one a set of portents). */
 const _plans = new Map();
 /** WB14b: a plain night's plan - WB9b's three courts and two walkways, the first court the root. */
-export const PLAN_PLAIN = floorPlan(null);
+export const PLAN_PLAIN = nightPlan(null);
 /** WB14b: a fight's plan, or a state's - the brain's fight and the court's state alike carry `pt` (the relay's word). */
-export const planOf = (f) => floorPlan(f?.pt ?? null);
+export const planOf = (f) => nightPlan(f?.pt ?? null);
 /**
  * WB14b: THE FLOORS THAT ARE FLOOR at `now` - the plan's root, and every floor of the plan a walkway of the plan laid
  * whole reaches from one that is (WB9b: a court past a walkway laid whole). Pure.
@@ -607,15 +607,17 @@ const hisCourt = (f) => COURTS[Math.max(0, Math.min(COURTS.length - 1, f.court |
  * @param {string} boss the boss's id (net/gate/gateLaw.js GATE_BOSSES)
  * @param {unknown} [md] WB8b: his marks (net/gate/gateLaw.js gateModsOf) - none, the Warden unmarked
  * @param {unknown} [pt] WB14b: the night's portents (net/gate/gateLaw.js gatePortentsOf) - none, a plain night
+ * @param {number|null} [ti] WB14e: how long after his wake the night's Tithe-Imp rises (net/gate/gateLaw.js gateTitheOf) -
+ *   none, a night without one
  */
-export function newFight(day, now, wrathAt, boss, md = null, pt = null) {
+export function newFight(day, now, wrathAt, boss, md = null, pt = null, ti = null) {
   return {
     v: 1, day, boss, startedAt: now, wrathAt, phase: 1, shieldUntil: 0, hp: 0, max: 0,
     /** WB8b: the Warden's marks this fight is fought under (net/gate/gateLaw.js gateModsOf - the relay's draw at the fight's
      *  birth), or null for none; said in every state */
     md: validGateMods(md) ?? null,
     /** WB14b: the night's portents (net/gate/gateLaw.js gatePortentsOf - the relay's draw at the fight's birth), or null for
-     *  none - its floor plan (floorPlan) and its waves, halves and captive; said in every state */
+     *  none - its floor plan (nightPlan) and its waves, halves and captive; said in every state */
     pt: validGatePortents(pt) ? [...validGatePortents(pt)] : null,
     /** AUDIT PRE-MERGE 0929 W1-1: the feedings a Soul-Hungry Warden has had this fight (at most GATE_FEEDS_MAX) - a
      *  fight checkpointed before it counts from none */
@@ -635,6 +637,8 @@ export function newFight(day, now, wrathAt, boss, md = null, pt = null) {
      *  fight's birth, or the first fighter in his court after the Vanguard broke (null until then) */
     vg: hasPortent(pt, 'vanguard') ? newVanguard() : null,
     openAt: hasPortent(pt, 'vanguard') ? null : now,
+    /** WB14e: how long after his wake the Tithe-Imp rises (null, none tonight), and its record once it has (`tt`) */
+    ti: Number.isSafeInteger(ti) && ti >= 0 ? ti : null, tt: null,
     /** WBX5: a phase's turn still to come - PHASE_TURN's entries after the one in flight - and the next of them, begun
      *  when the breath after the last is over */
     queue: [], pending: null,
@@ -1026,11 +1030,13 @@ export function stepBrain(f, now, bodies, rng) {
     out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
     const [first, ...rest] = turnOf(f);   // WB14d: the Sundering's on its night
     f.queue = rest.map((e) => ({ ...e }));
+    hostGone(f, now, out, HOST_GONE.fled, (a) => a.k === HOST.tithe);   // WB14e: a Tithe-Imp still running dives into the fire
     hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's
     f.pending = null;
     beginTurn(f, first, now, here, rng, out);
   }
   stepHost(f, now, here, rng, out, P);   // WB11b: his host's beat - under the Legion-Lord alone
+  stepTithe(f, now, here, rng, out, P);   // WB14e: the night's Tithe-Imp, where it runs
   if (f.sd) stepSunder(f, now, dt, bodies, here, rng, out);   // WB14d: the halves' laws, and the Flame's own beat
   bodyBeat(f, now, here, bodies, rng, out, P);   // his body's beat (WB14d: the Blade's, while he is sundered)
   hpFrame(f, now, out);
@@ -1353,9 +1359,13 @@ export const HOST_KINDS = Object.freeze([
   Object.freeze({ id: 3, key: 'brute', r: 0.8, h: 2.4, speed: 2.8 }),
   Object.freeze({ id: 4, key: 'caster', r: 0.6, h: 2.2, speed: 2.0 }),
   Object.freeze({ id: 5, key: 'markynaz', r: 0.9, h: 3.0, speed: 3.0 }),
+  // WB14e (bible/11-Multiplayer/Breach-Portents.md section 9): 6 the TITHE-IMP - an Imp at 1.3 of its size, burning gold,
+  // carrying the coven's tithe to its master: it runs from the nearest challenger, strikes nobody, and dives into the fire
+  // TITHE_LIFE_MS after it rose; caught, its tithe is theirs who struck it. Any night, one in five, unannounced
+  Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.2 }),
 ]);
 /** The kinds by name. */
-export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5 });
+export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5, tithe: 6 });
 /**
  * THE HOST'S BLOWS, by the kind that strikes them (a Sapper strikes nobody - null): each a disc `r` about the body that
  * strikes it, laid where it stands at its word, wound up `windup`, landing over `active`, the body still `recover` after;
@@ -1372,6 +1382,7 @@ export const HOST_BLOWS = Object.freeze([
   Object.freeze({ kind: 3, key: 'smash', get name() { return t('gate.host.smash', 'Smash'); }, windup: 1300, active: 200, recover: 1100, r: 3, pct: 0.28, base: 9, el: null }),
   Object.freeze({ kind: 4, key: 'bolt', get name() { return t('gate.host.bolt', 'Bolt'); }, windup: 1600, active: 200, recover: 400, r: 3, pct: 0.22, base: 7, el: 'aspect' }),
   Object.freeze({ kind: 5, key: 'rend', get name() { return t('gate.host.rend', 'Rend'); }, windup: 1300, active: 200, recover: 1100, r: 4.5, pct: 0.38, base: 11, el: null }),
+  null,   // WB14e: the Tithe-Imp strikes nobody
 ]);
 /** A host blow under a fight's profile: its element his aspect's where it takes one, and Vengeful's weight on its share
  *  and base (no other mark touches its blows - AUDIT WB11 D11: the host itself is touched through him, Colossal's body
@@ -1431,7 +1442,7 @@ export const SAP_FROM_HIM = 12;
 export const SAP_SPAWN_CLEAR = 8;
 /** How long each kind takes to RISE out of the fire before it moves or strikes (by wire id) - seen rising on every screen;
  *  a Sapper still rising is not drunk, whatever lands beside it. A blow meets each from its first moment. */
-export const HOST_RISE_MS = Object.freeze([800, 2500, 1500, 1500, 1500, 2500]);   // WB14c: a Brute, a Caster, the Markynaz
+export const HOST_RISE_MS = Object.freeze([800, 2500, 1500, 1500, 1500, 2500, 800]);   // WB14c: a Brute, a Caster, the Markynaz; WB14e: the Tithe-Imp an Imp's
 /** A Sapper reaches him at his body, its own and this slack; while his feedings last (SAP_FEEDS_MAX a fight) he drinks it
  *  - SAP_HEAL of the health he stands for, never past it - and past them it burns out against him (crumbled). */
 export const SAP_REACH_SLACK = 0.6;
@@ -1450,7 +1461,7 @@ export const BEARER_PULSE_STAGGER_MS = 900;
 export const BEARER_PULSE_NEAR = 6;
 /** How one of his host left the floor, on the wire (`adie`'s `w`): slain by a challenger, drunk by him (a Sapper), or
  *  crumbled (a phase's turn, the bearers' cap, a Sapper past his feedings, Dagon's Wrath gathering). */
-export const HOST_GONE = Object.freeze({ slain: 0, fed: 1, crumbled: 2 });
+export const HOST_GONE = Object.freeze({ slain: 0, fed: 1, crumbled: 2, fled: 3 });   // WB14e: the Tithe-Imp into the fire
 
 /** WB11b: a fight's host, made at its first beat under the trial: the last number given (each body's own, for the
  *  fight - a room woken from its checkpoint goes on from it), those standing (each `{i, k, h, m, x, z, mv, atk, tg, tgAt,
@@ -1645,7 +1656,7 @@ function stepHost(f, now, here, rng, out, P) {
     if (now < (a.up ?? 0)) continue;   // still rising out of the fire
     if (a.k === HOST.harrier) harrierBeat(f, a, now, here, C, moves, blows);
     else if (a.k === HOST.sapper) sapperBeat(f, a, now, C, moves, out, P);
-    else bearerBeat(a, now, here, blows);
+    else if (a.k === HOST.bearer) bearerBeat(a, now, here, blows);   // WB14e: a Tithe-Imp beside them steps its own way (stepTithe)
   }
   if (moves.length) out.push({ k: 'amv', m: moves });
   if (blows.length) out.push({ k: 'aatk', a: blows });
@@ -1665,12 +1676,12 @@ export const VG_WAVE_LEFT = 0.25;
 export const vanguardCountFor = (n) => Math.max(3, Math.min(10, 2 + Math.ceil(Math.max(0, n) / 2)));
 /** A body's share of its wave's health, by kind (the Imp's one - WB11's three take none here). */
 export const VG_KIND_W = Object.freeze([1, 0, 0, 2.5, 1.5, 6]);
-/** THE STAGES - each its platform (FLOOR), the walkway its clearing lays (WALK) and its three waves, each its kinds (dealt
+/** THE STAGES - each its platform (FLOOR), the walkway its clearing lays (WALKWAY) and its three waves, each its kinds (dealt
  *  round its count in turn) and its team seconds; the Muster's last its lord (the Markynaz, and Imps for the rest). */
 const vgWave = (kinds, s, lord = false) => Object.freeze({ kinds: Object.freeze(kinds), s, lord });
 export const VG_STAGES = Object.freeze([
-  Object.freeze({ floor: FLOOR.bridgehead, walk: WALK.muster, waves: Object.freeze([vgWave([HOST.harrier], 7), vgWave([HOST.harrier, HOST.brute], 9), vgWave([HOST.brute, HOST.caster], 10)]) }),
-  Object.freeze({ floor: FLOOR.muster, walk: WALK.warden, waves: Object.freeze([vgWave([HOST.caster, HOST.harrier], 10), vgWave([HOST.brute, HOST.caster, HOST.harrier], 11), vgWave([HOST.harrier], 14, true)]) }),
+  Object.freeze({ floor: FLOOR.bridgehead, walk: WALKWAY.muster, waves: Object.freeze([vgWave([HOST.harrier], 7), vgWave([HOST.harrier, HOST.brute], 9), vgWave([HOST.brute, HOST.caster], 10)]) }),
+  Object.freeze({ floor: FLOOR.muster, walk: WALKWAY.warden, waves: Object.freeze([vgWave([HOST.caster, HOST.harrier], 10), vgWave([HOST.brute, HOST.caster, HOST.harrier], 11), vgWave([HOST.harrier], 14, true)]) }),
 ]);
 /** HIS PATIENCE: a Vanguard still standing VG_PATIENCE_MS after its first wave, he throws a Meteor of Oblivion from his
  *  court onto a living fighter on the platforms every VG_PATIENCE_EVERY_MS - a clock that keeps a stalled court moving. */
@@ -1829,6 +1840,67 @@ function stepVanguard(f, now, bodies, rng, out, P) {
   return true;
 }
 
+// ── WB14e: THE TITHE-IMP (section 9) ──────────────────────────────────────────────────────────────────────────────
+/** WB14e (2026-10-19, Mac: "And whatever else you can cook up"): one night in five (net/gate/gateLaw.js gateTitheOf - not in
+ *  the omen: the arc's one surprise, and it costs nobody anything), its moment after his wake, while he is in his first or
+ *  second phase and a challenger stands before him, a Tithe-Imp rises at his court's rim farthest from him and runs from
+ *  the nearest challenger (HOST_KINDS' 6.2 m/s, under a runner's 7.6), until it dives into the fire TITHE_LIFE_MS after it
+ *  rose (or as his phase turns). Its health is TITHE_S of the court's mean reference damage: a few blows. Caught, each
+ *  challenger who struck it is handed its tithe - a seed of the relay's own (`tithe`, to that account alone). */
+export const TITHE_LIFE_MS = 22_000;
+export const TITHE_S = 4;
+/** How far ahead of the nearest challenger it runs for, and how near the rim's edge that run counts as cornered (it runs
+ *  along the rim then, the way that leaves the chaser farther behind). */
+export const TITHE_FLEE_M = 8;
+export const TITHE_CORNER_M = 2;
+/** Its health for the levels of the challengers in his court. Pure. */
+export const titheHpFor = (lvs) => Math.max(HOST_HP_MIN, Math.round(lvs.length ? (TITHE_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / lvs.length : 0));
+
+/** The Tithe-Imp's beat: risen once at its moment, its tithe paid once caught, gone into the fire past its life, and
+ *  between, running. */
+function stepTithe(f, now, here, rng, out, P) {
+  if (!Number.isSafeInteger(f.ti) || f.fell || f.wrath) return;
+  const T = (f.tt ??= {}), C = hisCourt(f);
+  if (!T.at) {
+    const woke = openedAt(f);
+    if (!Number.isFinite(woke) || now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj) return;
+    const away = dist(f.pos[0], f.pos[1], C[0], C[1]) < 1 ? f.yaw + Math.PI : Math.atan2(C[0] - f.pos[0], C[1] - f.pos[1]);
+    const spots = rimSpots(C, 1, here, rng, away, SAP_SPREAD);
+    if (!spots.length) return;   // a rim with no clear spot: asked again a beat on
+    const H = (f.lg ??= newHost());
+    raiseHost(f, HOST.tithe, spots, titheHpFor(here.map((b) => f.players[b.sub].lv)), now, out);
+    T.at = now; T.i = H.n;
+    return;
+  }
+  if (T.by && !T.paid) {
+    T.paid = true; T.c = {};
+    for (const sub of T.by) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }
+  }
+  const a = f.lg?.ads.find((o) => o.k === HOST.tithe) ?? null;
+  if (!a) return;
+  if (now >= T.at + TITHE_LIFE_MS) { hostGone(f, now, out, HOST_GONE.fled, (o) => o === a); return; }
+  if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
+  if (now < (a.up ?? 0)) return;
+  const moves = [];
+  titheBeat(a, now, here, C, moves);
+  if (moves.length) out.push({ k: 'amv', m: moves });
+  if (!P.legion) hostHpFrame(f, now, out);   // under the Legion-Lord his host's beat says it with theirs
+}
+/** It runs from the nearest challenger in his court - straight away, or along the rim when the rim stops it. */
+function titheBeat(a, now, here, C, moves) {
+  let near = null;
+  for (const b of here) if (!near || dist(b.x, b.z, a.x, a.z) < dist(near.x, near.z, a.x, a.z)) near = b;
+  if (!near) { stopHost(a, now, moves); return; }
+  const d = dist(a.x, a.z, near.x, near.z) || 1, ux = (a.x - near.x) / d, uz = (a.z - near.z) / d;
+  let [gx, gz] = keepInCourt(a.x + ux * TITHE_FLEE_M, a.z + uz * TITHE_FLEE_M, HOST_RIM_R, C);
+  if (dist(gx, gz, a.x, a.z) < TITHE_CORNER_M) {
+    const left = keepInCourt(a.x - uz * TITHE_FLEE_M, a.z + ux * TITHE_FLEE_M, HOST_RIM_R, C);
+    const right = keepInCourt(a.x + uz * TITHE_FLEE_M, a.z - ux * TITHE_FLEE_M, HOST_RIM_R, C);
+    [gx, gz] = dist(left[0], left[1], near.x, near.z) >= dist(right[0], right[1], near.x, near.z) ? left : right;
+  }
+  walkHost(a, gx, gz, 0, now, C, moves);
+}
+
 // ── WB14d: THE SUNDERING, ITS LAWS (section 5) ─────────────────────────────────────────────────────────────────────
 /** The attacks a body may begin out of `can` - every one while he is whole, its own kit's while sundered (SUNDER_KITS). */
 const inKit = (f, can) => (f.sd ? can.filter((a) => SUNDER_KITS[f.half === HALF.flame ? HALF.flame : HALF.blade].includes(a.key)) : can);
@@ -1860,7 +1932,7 @@ function sunder(f, now, bodies) {
   const m = Math.max(0, standsAt(f) - SUNDER_LAST) / 2, C = COURTS[FLOOR.second];
   const side = (k) => [C[0] + k * SUNDER_SIDE_M, C[1]];
   f.queue = [two ? { a: 'cross', court: FLOOR.second } : { a: 'cross', court: FLOOR.second, at: side(-1) }, { wait: 'arrive' }, { a: 'slam' }];
-  const turn = [two ? { a: 'cross', court: FLOOR.third, walk: WALK.rift } : { a: 'cross', court: FLOOR.second, at: side(1) }, { wait: 'arrive' }, { a: 'nova' }];
+  const turn = [two ? { a: 'cross', court: FLOOR.third, walk: WALKWAY.rift } : { a: 'cross', court: FLOOR.second, at: side(1) }, { wait: 'arrive' }, { a: 'nova' }];
   f.sd = {
     two, m, at: now, rj: 0, hSent: '', hAt: 0,
     bl: { h: m, kn: 0, said: false, lone: null, mend: false },
@@ -2034,9 +2106,11 @@ export function applyHostHit(f, sub, i, d, r, pose, now, seq = null) {
   const got = spendPurse(p, d, a.h, now);
   p.hd = (p.hd ?? 0) + got;
   a.h -= got;
+  if (a.k === HOST.tithe && got > 0 && !(a.by ??= []).includes(sub)) a.by.push(sub);   // WB14e: who struck the Tithe-Imp
   if (a.h > 1e-6) return out;
   H.ads = H.ads.filter((o) => o !== a);
   out.push({ k: 'adie', is: [a.i], w: HOST_GONE.slain, n: p.name, at: now });
+  if (a.k === HOST.tithe) f.tt = { ...(f.tt ?? {}), by: [...a.by], caughtAt: now };   // its tithe paid on the next beat (the relay's dice)
   return out;
 }
 /** WB11b: his host as the state says it - each one standing `[i, k, h, m, x, z, tx, tz, v, at, la, lx, lz]`: its walk

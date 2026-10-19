@@ -15,10 +15,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  COURTS, FLOOR, WALK, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_STANDING_MAX, HOST_GONE, POSE_SLACK, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS,
+  COURTS, FLOOR, WALKWAY, HOST, HOST_KINDS, HOST_BLOWS, HOST_RISE_MS, HOST_STANDING_MAX, HOST_GONE, POSE_SLACK, OPENING_MS, BRAIN_TICK_MS, HIT_KINDS,
   VG_OPEN_MS, VG_WAVE_MAX_MS, VG_WAVE_LEFT, VG_STANDING_MAX, VG_STAGES, VG_KIND_W, VG_PATIENCE_MS, VG_PATIENCE_EVERY_MS, VG_CALL_MS, VG_CALL_N,
   VG_CASTER_KEEP, VG_CASTER_REACH, VG_WORD, vanguardCountFor, newVanguard, openedAt, vanguardHolds, newFight, joinFight, stepBrain, stateOf,
-  applyHostHit, dpsRef, hostBlowUnder, BASE_PROFILE, ATTACKS, ATTACK_BY_ID, walkFormed, floorPlan, liveFloors,
+  applyHostHit, dpsRef, hostBlowUnder, BASE_PROFILE, ATTACKS, ATTACK_BY_ID, walkFormed, nightPlan, liveFloors,
 } from '../../../src/net/gate/gateBrain.js';
 import { judgeGate } from '../../../src/net/bossRef.js';
 import { validGateOut, GATE_HOST_KINDS, GATE_HOST_MAX, GATE_HZ_MAX, GATE_VG_WORDS } from '../../../src/net/wire.js';
@@ -52,14 +52,14 @@ const words = (out, e) => out.filter((o) => o.k === 'vgw' && (e === undefined ||
 // ═══ THE TABLES ══════════════════════════════════════════════════════════════════════════════════════════════════════
 
 test('WB14c the kinds and their blows: the Brute (a Daedroth), the Caster (a Daedra of his aspect) and the Markynaz (a Daedra Lord) beside the Imp, none outrunning a runner, each blow a disc a runner leaves in under half its wind-up; the Bolt his element\'s (mutants: a kind faster than a run; a blow past escape)', () => {
-  assert.deepEqual(HOST_KINDS.slice(3).map((k) => [k.id, k.key]), [[3, 'brute'], [4, 'caster'], [5, 'markynaz']]);
+  assert.deepEqual(HOST_KINDS.slice(3, 6).map((k) => [k.id, k.key]), [[3, 'brute'], [4, 'caster'], [5, 'markynaz']]);   // PIN MOVED (WB14e): the Vanguard's three, the Tithe-Imp after them
   for (const K of HOST_KINDS) assert.ok(K.speed < RUN, K.key);
-  assert.deepEqual(HOST_BLOWS.slice(3).map((b) => [b.kind, b.key, b.r]), [[3, 'smash', 3], [4, 'bolt', 3], [5, 'rend', 4.5]]);
-  for (const B of HOST_BLOWS.slice(3)) assert.ok((B.r / RUN) * 1000 < B.windup / 2, B.key);
-  assert.deepEqual(HOST_BLOWS.slice(3).map((b) => b.name), ['Smash', 'Bolt', 'Rend']);
+  assert.deepEqual(HOST_BLOWS.slice(3, 6).map((b) => [b.kind, b.key, b.r]), [[3, 'smash', 3], [4, 'bolt', 3], [5, 'rend', 4.5]]);   // PIN MOVED (WB14e): the Tithe-Imp's none after them
+  for (const B of HOST_BLOWS.slice(3, 6)) assert.ok((B.r / RUN) * 1000 < B.windup / 2, B.key);
+  assert.deepEqual(HOST_BLOWS.slice(3, 6).map((b) => b.name), ['Smash', 'Bolt', 'Rend']);
   assert.equal(hostBlowUnder(HOST.caster, BASE_PROFILE).el, 'fire');
   assert.equal(hostBlowUnder(HOST.brute, BASE_PROFILE).el, null);
-  assert.deepEqual(HOST_RISE_MS.slice(3), [1500, 1500, 2500]);
+  assert.deepEqual(HOST_RISE_MS.slice(3, 6), [1500, 1500, 2500]);   // PIN MOVED (WB14e): the Tithe-Imp's after them
   assert.equal(GATE_HOST_KINDS, HOST_KINDS.length);
   assert.ok(VG_STANDING_MAX <= GATE_HOST_MAX && HOST_STANDING_MAX === VG_STANDING_MAX);
   assert.ok(GATE_HZ_MAX >= 2 * (VG_STANDING_MAX + 1), 'two swings a second through the whole Vanguard and him pass the frame bucket');
@@ -71,7 +71,7 @@ test('WB14c the kinds and their blows: the Brute (a Daedroth), the Caster (a Dae
 });
 
 test('WB14c the stages: the Bridgehead then the Muster, each three waves and the walkway its clearing lays (3, then 4), sixty-one team seconds in all, the Muster\'s last the Markynaz\'s; a wave vanguardCountFor(the fighters on its platform), 3 to 10 (mutants: a stage\'s walkway swapped; a wave\'s count off)', () => {
-  assert.deepEqual(VG_STAGES.map((S) => [S.floor, S.walk]), [[FLOOR.bridgehead, WALK.muster], [FLOOR.muster, WALK.warden]]);
+  assert.deepEqual(VG_STAGES.map((S) => [S.floor, S.walk]), [[FLOOR.bridgehead, WALKWAY.muster], [FLOOR.muster, WALKWAY.warden]]);
   assert.deepEqual(VG_STAGES.map((S) => S.waves.map((W) => W.s)), [[7, 9, 10], [10, 11, 14]]);
   assert.equal(VG_STAGES.flatMap((S) => S.waves).reduce((s, W) => s + W.s, 0), 61);
   assert.deepEqual(VG_STAGES.flatMap((S) => S.waves.map((W) => W.lord)), [false, false, false, false, false, true]);
@@ -153,10 +153,10 @@ test('WB14c each next wave when VG_WAVE_LEFT of the last or fewer stand - or VG_
   r = beats(f, r.t, r.t + 300, on);
   const clear = words(r.out, VG_WORD.clear);
   assert.equal(clear.length, 1);
-  assert.equal(clear[0].x, WALK.muster);
-  assert.ok(Number.isFinite(f.xa[WALK.muster]) && clear[0].at === f.xa[WALK.muster]);
+  assert.equal(clear[0].x, WALKWAY.muster);
+  assert.ok(Number.isFinite(f.xa[WALKWAY.muster]) && clear[0].at === f.xa[WALKWAY.muster]);
   assert.deepEqual([f.vg.s, f.vg.w], [1, 0]);
-  const plan = floorPlan(['vanguard']);
+  const plan = nightPlan(['vanguard']);
   assert.ok([...liveFloors(plan, f.xa, clear[0].at + 60_000)].includes(FLOOR.muster), 'the Muster floor once its walkway is laid');
   assert.ok(r.out.some((o) => o.k === 'st'), 'the state said at once');
 });
@@ -189,8 +189,8 @@ test('WB14c the Muster: its waves wait for a fighter on it; its last the Markyna
   assert.equal(f.lg.ads.length, 0);
   const broken = words(r.out, VG_WORD.broken);
   assert.equal(broken.length, 1);
-  assert.equal(broken[0].x, WALK.warden);
-  assert.ok(Number.isFinite(f.xa[WALK.warden]));
+  assert.equal(broken[0].x, WALKWAY.warden);
+  assert.ok(Number.isFinite(f.xa[WALKWAY.warden]));
   assert.deepEqual(stateOf(f).vg, [2, 0]);
   assert.ok(vanguardHolds(f), 'broken - and he waits still for one to stand before him');
 });
@@ -275,13 +275,13 @@ test('WB14c the relay takes a blow on one of the Vanguard from the platform its 
 
 test('WB14c the wire: the state\'s `vg` a pair (its stage to 2, its waves to 3), the `vgw` word its word, stage and waves and the walkway a clearing lays; folded, a clearing lays its walkway at its own moment and the stage moves on, and the word is kept for the court to say (mutants: the walkway left to the next state; a word past the table taken)', () => {
   assert.equal(GATE_VG_WORDS, Object.keys(VG_WORD).length);
-  const w = (o) => validGateOut({ k: 'vgw', e: VG_WORD.clear, s: 0, w: 3, x: WALK.muster, at: 5000, ...o });
-  assert.deepEqual(w({}), { k: 'vgw', e: VG_WORD.clear, s: 0, w: 3, x: WALK.muster, at: 5000 });
+  const w = (o) => validGateOut({ k: 'vgw', e: VG_WORD.clear, s: 0, w: 3, x: WALKWAY.muster, at: 5000, ...o });
+  assert.deepEqual(w({}), { k: 'vgw', e: VG_WORD.clear, s: 0, w: 3, x: WALKWAY.muster, at: 5000 });
   for (const bad of [{ e: GATE_VG_WORDS }, { s: 3 }, { w: 4 }, { x: 6 }, { at: -1 }]) assert.equal(w(bad), null, JSON.stringify(bad));
   assert.deepEqual(w({ e: VG_WORD.wave, w: 1, x: undefined }), { k: 'vgw', e: VG_WORD.wave, s: 0, w: 1, at: 5000 });
   const base = { ...GATE_STATE_EMPTY, day: 7, boss: 'ruhn', hp: 900, max: 1000, vg: [0, 3], xa: [] };
   const s1 = foldGate(base, w({}), 5100);
-  assert.equal(s1.xa[WALK.muster], 5000);
+  assert.equal(s1.xa[WALKWAY.muster], 5000);
   assert.deepEqual(s1.vg, [1, 0], 'onward to the Muster');
   assert.deepEqual(s1.vgw, { e: VG_WORD.clear, s: 0, w: 3, at: 5000 });
   const s2 = foldGate(s1, w({ e: VG_WORD.wave, s: 1, w: 1, x: undefined }), 6000);

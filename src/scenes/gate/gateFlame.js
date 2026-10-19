@@ -33,7 +33,7 @@ export const SUNDER_LATE_MS = 2000;
 export const SUNDER_TEXT = Object.freeze({
   kneels: (name) => t('gate.sunder.kneels', '{name} kneels! Bring the other half down!', { name }),
   rises: (name) => t('gate.sunder.rises', '{name} rises.', { name }),
-  rejoin: () => t('gate.sunder.rejoin', 'The halves rejoin - back to the first court!'),
+  rejoin: () => t('gate.sunder.rejoin', 'The halves rejoin in the first court. Run back!'),
 });
 
 const NONE = Object.freeze([]);

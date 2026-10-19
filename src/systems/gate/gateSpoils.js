@@ -29,7 +29,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { seededRng } from '../wind/wind.js';
-import { createRandomWeapon, createRandomArmor, ITEM_GROUPS } from '../loot/loot.js';
+import { createRandomWeapon, createRandomArmor, createRandomGem, ITEM_GROUPS } from '../loot/loot.js';   // WB14e: a Tithe-Imp's gem, ItemBuilder's own draw
 import { setItemFields, isAmmunition, mintCondition, registerCustomTemplates, templateByIndex } from '../item/itemTemplates.js';
 import { applyRarity, rarityChances, lastPass, socketPass, weaponSocketPass, techniquePass } from '../loot/lootRarity.js';   // GEM1: the sockets' passes, the spoils' last but the gems; TECH1: the technique pass, a door's last draw
 import { bossGems } from '../gems.js';   // GEM2: the Warden's gem
@@ -252,6 +252,17 @@ export function rollSpoils(seed, level) {
   const oath = rollDragonfireOath(rolls);
   if (oath) pieces.push({ item: oath, tier: oath.rarity });
   return { gold, pieces, sigil: sigilStone(), card, gems };
+}
+
+/** WB14e (bible/11-Multiplayer/Breach-Portents.md section 9): A TITHE-IMP'S TITHE for one who struck it - gold (TITHE_GOLD_PER_LEVEL
+ *  a level, the seed varying it a fifth either way) and one gem of the classic eight (ItemBuilder's own CreateRandomGem), off
+ *  its seed (the relay's `tithe` word): the same seed and level, the same tithe. In spoilsList's pieces, gold first. */
+export const TITHE_GOLD_PER_LEVEL = 60;
+export function titheList(seed, level) {
+  const rolls = seededRng(((seed >>> 0) ^ 0x7177e) >>> 0);
+  const lv = Math.max(1, Math.floor(Number(level) || 1));
+  const gold = Math.round(TITHE_GOLD_PER_LEVEL * lv * (0.8 + 0.4 * rolls()));
+  return [{ kind: 'gold', gold, tier: 'common' }, { kind: 'item', item: mintCondition(setItemFields(createRandomGem(rolls))), tier: 'common' }];
 }
 
 /** A piece laddered to its tier and known - a Legendary with no record for its kind falls to Rare (applyRarity's own

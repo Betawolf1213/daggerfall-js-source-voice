@@ -12,7 +12,7 @@
 // Not a DFU member. Ledger A (WB).
 import { readReceipt } from './gateReceipt.js';
 import { t } from '../../systems/textManager.js';   // COURT-WATCH: the watcher's line in the player's language (L10N4)
-import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf, SUNDER_PAIR_MS, HALF } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands; WB14b: the night's plan; WB14d: the halves
+import { ATTACKS, nearestCourt, COURTS, WALKS, WALKWAY, hostAt, planOf, SUNDER_PAIR_MS, HALF } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands; WB14b: the night's plan; WB14d: the halves
 
 /**
  * @typedef {{day: number|null, boss: string|null, phase: number, hp: number, max: number, x: number, z: number, yaw: number,
@@ -20,7 +20,7 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf, SUNDER_PAIR
  *   md: ReadonlyArray<string>|null, fed: {ns: ReadonlyArray<string>, at: number}|null,
  *   xa: ReadonlyArray<number|null>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
  *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null,
- *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null, sd?: GateSunder|null}} GateState   (WB14c: the Vanguard's stage, and its last word; WB14d: the halves)
+ *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null, sd?: GateSunder|null, tithe?: {c: number, at: number}|null}} GateState   (WB14c: the Vanguard's stage, and its last word; WB14d: the halves; WB14e: my tithe)
  * @typedef {{two: boolean, m: number, h: number[], kn: number[], lo: number[], rj: number,
  *   fl: {x: number, z: number, yaw: number, move: any, atk: any, sh: number, ct: number, su: number, sa: number}}} GateSunder
  *   WB14d: THE SUNDERING as this screen holds it (net/gate/gateBrain.js sunderState) - the layout (`two`: the halves in two
@@ -42,7 +42,7 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf, SUNDER_PAIR
 export const GATE_STATE_EMPTY = Object.freeze({
   day: null, boss: null, phase: 1, hp: 0, max: 0, x: 0, z: 0, yaw: 0, move: null, atk: null, shieldUntil: 0,
   wrathAt: null, fighters: 0, fell: null, wrath: null, heardAt: 0, md: null, fed: null,
-  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null, sd: null,
+  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null, sd: null, tithe: null,
 });
 
 /** WB11b: how many of his host gone the fold keeps for the court to play out (their fall, their crumbling). */
@@ -164,8 +164,9 @@ export function foldGate(s, g, now, place = bossAt) {
       xa: g.xa ?? [], cx, stunUntil: g.su ?? 0, stunAt: same && s.stunUntil === (g.su ?? 0) ? s.stunAt : (g.su ? now : 0), rk: g.rk ?? 0,
       lg: hostOfState(g.lg, same ? s.lg : null),   // WB11b: his host standing - none said, none held (any other fight's)
       openUntil: g.op ?? 0,   // WB13e: the opening's end - his wake (0: an older relay's word, and no wake)
-      pt: g.pt ?? null,   // WB14b: the night's portents - its floor plan (net/gate/gateBrain.js floorPlan) and what it holds
+      pt: g.pt ?? null,   // WB14b: the night's portents - its floor plan (net/gate/gateBrain.js nightPlan) and what it holds
       sd: sunderOfState(g.sd),   // WB14d: the halves, while he is sundered
+      tithe: same ? s.tithe ?? null : null,   // WB14e: my tithe, the fight's own
       ...(g.sd?.kn?.[HALF.blade] ? { stunAt: g.sd.kn[HALF.blade] } : {}),   // WB14d: the Blade's kneel, from the moment it knelt
     };
   }
@@ -195,6 +196,7 @@ export function foldGate(s, g, now, place = bossAt) {
       if (g.x !== undefined) { const w = [...(s.xa ?? [])]; while (w.length < g.x) w.push(null); if (!Number.isFinite(w[g.x])) w[g.x] = g.at; xa = w; }
       return { ...s, vg: [g.s + (g.e === 1 || g.e === 3 ? 1 : 0), g.e === 1 || g.e === 3 ? 0 : g.w], xa, vgw: { e: g.e, s: g.s, w: g.w, at: g.at }, heardAt: now };
     }
+    case 'tithe': return { ...s, tithe: { c: g.c, at: g.at }, heardAt: now };   // WB14e: a Tithe-Imp I struck was caught - its tithe mine
     case 'stun': return { ...s, stunUntil: g.until, stunAt: g.at, atk: null, move: null, cx: s.cx ? { ...s.cx, c: s.cx.c.map((q) => [q[0], q[1], 0]) } : null, heardAt: now };
     // WB11b: HIS HOST - risen, walking, striking, its health, gone
     case 'ad': case 'amv': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);
@@ -217,8 +219,8 @@ export function crossLaid(s, g) {
   if (g.a !== ATTACKS.cross.id || !g.tg?.[0]) return {};
   const to = nearestCourt(g.tg[0][0], g.tg[0][1]), from = nearestCourt(g.x, g.z), at = g.at - ATTACKS.cross.windup;
   // WB14b: a bound over a walkway of the night's plan from the court it leaves to the court it reaches lays that walkway
-  // alone (the Sundering's halves - the Flame's over the Rift Way, net/gate/gateBrain.js WALK)
-  const own = planOf(s).walks.find((i) => i >= WALK.rift && WALKS[i].a === from && WALKS[i].b === to);
+  // alone (the Sundering's halves - the Flame's over the Rift Way, net/gate/gateBrain.js WALKWAY)
+  const own = planOf(s).walks.find((i) => i >= WALKWAY.rift && WALKS[i].a === from && WALKS[i].b === to);
   if (own != null) {
     if (Number.isFinite(s.xa?.[own])) return {};
     const xa = [...(s.xa ?? [])];
@@ -226,7 +228,7 @@ export function crossLaid(s, g) {
     return { xa };
   }
   const k = to - 1;
-  if (!(k >= 0) || k > WALK.third || Number.isFinite(s.xa?.[k])) return {};
+  if (!(k >= 0) || k > WALKWAY.third || Number.isFinite(s.xa?.[k])) return {};
   const xa = [...(s.xa ?? [])];
   // AUDIT WB9 (brain F5): every walkway up to the court he bounds to, as the relay lays them (net/gate/gateBrain.js beginTurn)
   // - a fight woken from a checkpoint older than WB9 bounds from the first court straight to the third

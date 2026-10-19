@@ -29,7 +29,7 @@
 // players arriving at +z (the bridge) and facing -z, at the boss.
 //
 // Not a DFU member. Ledger A (WB).
-import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, COURTS_HIS, WALKS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, clampToFloor, floorPlan, PLAN_PLAIN } from '../../net/gate/gateBrain.js';
+import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, COURTS_HIS, WALKS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, clampToFloor, nightPlan, PLAN_PLAIN } from '../../net/gate/gateBrain.js';
 import { faces, spike, GATE_ARCHIVE, GATE_STONE_RECORD, ARCH_Y0 } from './gateModel.js';
 import { gateYaw, gatePortentsOf } from '../../net/gate/gateLaw.js';
 import { lightList, packLight, copyLights } from '../../render/lightId.js';   // LIGHT-ID: the court's lights into the frame's list through the one seam
@@ -55,10 +55,10 @@ const UNITS_PER_M = 40;
 export const ARRIVE_Z = COURT_R - 4;
 /** GATE-FBX: THE WAY IN - the gate's fire at the floor's edge by the bridge, where WB3b's membrane stood: its place. */
 export const WAY_IN_Z = COURT_R - 0.6;
-/** WB14b: A NIGHT'S PLAN BY ITS DAY - the floors its portents stand (net/gate/gateBrain.js floorPlan of net/gate/gateLaw.js
+/** WB14b: A NIGHT'S PLAN BY ITS DAY - the floors its portents stand (net/gate/gateBrain.js nightPlan of net/gate/gateLaw.js
  *  gatePortentsOf - the relay draws the fight's with the same law): what the screen builds, where it arrives and where
  *  the motor holds it before the fight has said a word. Pure. */
-export const planOfDay = (day) => (Number.isSafeInteger(day) ? floorPlan(gatePortentsOf(day)) : PLAN_PLAIN);
+export const planOfDay = (day) => (Number.isSafeInteger(day) ? nightPlan(gatePortentsOf(day)) : PLAN_PLAIN);
 /** WB14b: WHERE A NIGHT'S FIGHTERS ARRIVE, the court's frame - its root floor's south edge by ARRIVE_Z (the first court's
  *  bridge; the Vanguard's Bridgehead), facing north across it - and where its way in burns (WAY_IN_Z). Pure. */
 export function arrivalOf(plan = PLAN_PLAIN) {
@@ -264,7 +264,7 @@ function standCourtPiece(f, k, STONE, plan = PLAN_PLAIN) {
  * walkways between the courts are not this mesh - their slabs rise on their own (buildWalkSlabModel, walkSlabs).
  */
 export function buildCourtModel(pt = null) {
-  const plan = floorPlan(pt);   // WB14b: the night's floors and walkways
+  const plan = nightPlan(pt);   // WB14b: the night's floors and walkways
   const f = faces();
   const byArchive = new Map();   // record key -> archive
   const C = (x, y, z) => courtToDungeon(x, y, z);
@@ -377,7 +377,7 @@ export function withCourtLights(lit, lights) {
  *  dungeon's frame (the motor keeps a player on the floor as far as it is laid - courtArena; the rest is there so a step
  *  onto a lip never falls through). */
 export function courtFloorTris(pt = null) {
-  const out = [], plan = floorPlan(pt);   // WB14b: the night's floors and walkways
+  const out = [], plan = nightPlan(pt);   // WB14b: the night's floors and walkways
   const C = (x, z) => courtToDungeon(x, 0, z);
   for (const [ox, oz] of plan.floors.map((k) => COURTS[k])) {
     for (let k = 0; k < FLOOR_SIDES; k++) {
@@ -445,7 +445,7 @@ export const SLAB_RISE_MS = 1500;
  * its turn (the walkway's direction) and its length - from the court the bound leaves toward the one it reaches.
  */
 export function walkSlabs(pt = null) {
-  const plan = floorPlan(pt);   // WB14b: the night's walkways
+  const plan = nightPlan(pt);   // WB14b: the night's walkways
   if (_slabs.has(plan.key)) return _slabs.get(plan.key);
   const out = [];
   for (const w of plan.walks.map((i) => WALKS[i])) {

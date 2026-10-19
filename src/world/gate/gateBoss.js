@@ -544,7 +544,11 @@ export const HOST_LOOKS = Object.freeze({
   brute: Object.freeze({ burning: 27, rime: 27, storm: 27, venom: 27 }),
   caster: Object.freeze({ burning: 26, rime: 25, storm: 29, venom: 32 }),
   markynaz: Object.freeze({ burning: 31, rime: 31, storm: 31, venom: 31 }),
+  tithe: Object.freeze({ burning: 1, rime: 1, storm: 1, venom: 1 }),   // WB14e: an Imp, at TITHE_SCALE, burning gold
 });
+/** WB14e: the Tithe-Imp drawn this much larger than an Imp, and its gold (its glow, its burst, its name's line). */
+export const TITHE_SCALE = 1.3;
+export const TITHE_GOLD = Object.freeze([1.0, 0.8, 0.3]);
 export const HOST_NAMES = Object.freeze({
   1: Object.freeze(['Imp', 'Imps']), 35: Object.freeze(['Fire Atronach', 'Fire Atronachs']), 38: Object.freeze(['Ice Atronach', 'Ice Atronachs']),
   36: Object.freeze(['Iron Atronach', 'Iron Atronachs']), 37: Object.freeze(['Flesh Atronach', 'Flesh Atronachs']),
@@ -560,7 +564,8 @@ export function hostLookOf(k, aspectId) {
   const key = HOST_KINDS[k]?.key ?? 'harrier', table = HOST_LOOKS[key];
   const mobile = table[aspectId] ?? table.burning;
   const names = HOST_NAMES[mobile], name = names?.[0] ?? 'Daedra', plural = names?.[1] ?? 'Daedra';   // WB14c: a row of getters reads as a pair
-  return { mobile, name, plural, hover: ENEMY_BASICS[mobile]?.behaviour === 'Flying' ? HOST_HOVER_M : 0, winged: mobile === 29 };
+  const tithe = k === HOST.tithe;   // WB14e: an Imp by its sprite, the Tithe-Imp by its name and its size
+  return { mobile, name: tithe ? t('gate.host.tithe', 'Tithe-Imp') : name, plural: tithe ? t('gate.host.tithes', 'Tithe-Imps') : plural, hover: ENEMY_BASICS[mobile]?.behaviour === 'Flying' ? HOST_HOVER_M : 0, winged: mobile === 29, scale: tithe ? TITHE_SCALE : 1 };
 }
 /** WB11c: THE ENTITY A BLOW ON ONE OF HIS HOST IS COMPUTED AGAINST - his stand-in's law over its own mobile (every metal
  *  bites, a knight's plate for armour, a health nothing here can empty - the relay holds its real one, never swayed),
@@ -612,7 +617,7 @@ export function hostAct(a, now, look, hurtAt = -Infinity) {
 export function hostFallAct(g, now, look) {
   const since = now - g.at, winged = !!look?.winged;
   if (g.w === 1 || since >= HOST_FALL_MS || since < 0) return { act: 'gone', anims: HURT_ANIMS, frame: 0, loop: false, sink: 0 };
-  return { act: 'fall', anims: winged ? SEDUCER_IDLE_MOVE_ANIMS : HURT_ANIMS, frame: Math.floor((since / HOST_FALL_MS) * 4), loop: winged, sink: g.w === 2 ? HOST_KINDS[g.k].h * (since / HOST_FALL_MS) : 0 };
+  return { act: 'fall', anims: winged ? SEDUCER_IDLE_MOVE_ANIMS : HURT_ANIMS, frame: Math.floor((since / HOST_FALL_MS) * 4), loop: winged, sink: g.w === 2 || g.w === 3 ? HOST_KINDS[g.k].h * (since / HOST_FALL_MS) : 0 };   // WB14e: one that fled sinks into the fire, as one that crumbled
 }
 /** WB11c: HIS HOST, HEARD - each one's own clips (enemyBasics.js: its bark and its attack; its fall the body's thud) at its own place: rising
  *  out of the fire, winding a blow, landing it, hurt, falling; and a Sapper drunk - his growl over the fire's roar. */

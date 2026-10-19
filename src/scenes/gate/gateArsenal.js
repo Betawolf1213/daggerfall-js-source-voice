@@ -24,7 +24,7 @@ import { t } from '../../systems/textManager.js';
 export const ARSENAL_TEXT = Object.freeze({
   chained: () => t('gate.arsenal.chained', 'Chained! Run from him!'),
   branded: () => t('gate.arsenal.branded', 'Dagon\'s Brand is on you. Keep clear of the others!'),
-  nearBrand: () => t('gate.arsenal.nearBrand', 'Dagon\'s Brand - keep clear!'),
+  nearBrand: () => t('gate.arsenal.nearBrand', 'Dagon\'s Brand! Keep clear!'),
   tormentMe: () => t('gate.arsenal.tormentMe', 'Shared Torment on you. Gather the others!'),
   tormentOther: (name) => t('gate.arsenal.tormentOther', 'Shared Torment! Stand with {name}!', { name }),
   tormentAnon: () => t('gate.arsenal.tormentAnon', 'Shared Torment! Stand in the gold!'),

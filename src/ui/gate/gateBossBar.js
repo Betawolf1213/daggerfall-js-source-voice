@@ -222,7 +222,7 @@ export function bossBarModel(s, now, boss, aimed = null, { flame = null, flameMi
   } else if (!s.fell && s.wrath == null && now < (s.stunUntil ?? 0) && !s.sd) callout = { text: BOSS_BAR_TEXT.stunned(Math.ceil((s.stunUntil - now) / 1000)), color: css(STUN_COLOR), t: null, dagon: false, move: false };   // WB14d: a half's kneel is said on its own track
   // WB11c: his Ward-Bearers holding his ward say themselves where nothing of his is being wound up
   let bearers = 0, others = 0;
-  for (const a of s.lg?.ads ?? []) { if (a.k === HOST.bearer) bearers++; else others++; }
+  for (const a of s.lg?.ads ?? []) { if (a.k === HOST.bearer) bearers++; else if (a.k !== HOST.tithe) others++; }   // WB14e: the Tithe-Imp is no host of his
   if (!s.fell && s.wrath == null && bearers > 0 && now < s.shieldUntil && !callout) callout = { text: BOSS_BAR_TEXT.bearers(bearers, s.lg?.ward?.n ?? bearers), color: css(WARD_COLOR), t: null, dagon: false, move: false };
   const toWrath = Number.isFinite(s.wrathAt) ? s.wrathAt - now : Infinity;
   const toReckon = !s.fell && s.wrath == null && s.phase >= 3 && s.rk > now ? s.rk - now : null;

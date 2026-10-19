@@ -17,7 +17,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  COURTS, FLOOR, WALK, ATTACKS, ATTACK_BY_ID, HALF, SUNDER_SPLIT_MIN, SUNDER_LAST, SUNDER_PAIR_MS, SUNDER_RISE, SUNDER_LONE_MS, SUNDER_MEND,
+  COURTS, FLOOR, WALKWAY, ATTACKS, ATTACK_BY_ID, HALF, SUNDER_SPLIT_MIN, SUNDER_LAST, SUNDER_PAIR_MS, SUNDER_RISE, SUNDER_LONE_MS, SUNDER_MEND,
   SUNDER_SIZE, SUNDER_KITS, SUNDER_SIDE_M, SUNDER_TURN, PHASE_TURN, PHASE_AT, BRAIN_TICK_MS, HIT_KINDS, BOSS_R, BOSS_H, CROSS_WARD_MAX_MS,
   newFight, joinFight, stepBrain, stateOf, applyHit, profileOf, flameProfileOf, halfProfile, fightProfile, finalCourt, sunders, walkFormed,
   MELEE_REACH, RECKON_FIRST_MS,
@@ -114,7 +114,7 @@ test('WB14d the turn: on a Sundering night the second phase leaps to his court\'
   assert.ok(f.sd && f.sd.two, 'four in the room: two courts');
   spread(run).step(40);
   assert.equal(f.court, FLOOR.second); assert.equal(f.sd.fl.court, FLOOR.third);
-  assert.ok(Number.isFinite(f.xa[WALK.second]) && Number.isFinite(f.xa[WALK.rift]) && !Number.isFinite(f.xa[WALK.third]), 'walkway 0 and the Rift Way, never walkway 1');
+  assert.ok(Number.isFinite(f.xa[WALKWAY.second]) && Number.isFinite(f.xa[WALKWAY.rift]) && !Number.isFinite(f.xa[WALKWAY.third]), 'walkway 0 and the Rift Way, never walkway 1');
   const fl = run.out.find((o) => o.k === 'atk' && o.b === HALF.flame);
   assert.equal(ATTACK_BY_ID[fl.a], ATTACKS.cross); assert.deepEqual(fl.tg[0], [C2[0], C2[1]]);
 });
@@ -136,7 +136,7 @@ test('WB14d the together layout: with fewer than four living challengers both ha
     assert.deepEqual(fl.tg[0], [C1[0] + SUNDER_SIDE_M, C1[1]], 'the Flame east of it');
     const bl = run.out.find((o) => o.k === 'atk' && o.b === undefined && ATTACK_BY_ID[o.a] === ATTACKS.cross);
     assert.deepEqual(bl.tg[0], [C1[0] - SUNDER_SIDE_M, C1[1]]);
-    assert.ok(!Number.isFinite(run.f.xa[WALK.rift]));
+    assert.ok(!Number.isFinite(run.f.xa[WALKWAY.rift]));
   }
 });
 
@@ -353,8 +353,8 @@ test('WB14d the fold: a state\'s halves held; the Flame\'s words (`b` 1) move it
   const A = { k: 'atk', i: 77, a: ATTACKS.cross.id, at: run.t + 2400, x: 0, z: 0, yw: 0, tg: [[C2[0], C2[1]]], b: 1 };
   const s2 = foldGate(s, validGateOut(A), run.t);
   assert.equal(s2.sd.fl.atk.i, 77); assert.equal(s2.atk, s.atk, 'his own untouched');
-  assert.equal(s2.xa[WALK.rift], run.t, 'the Rift Way laid from its word');
-  assert.ok(!Number.isFinite(s2.xa[WALK.third]));
+  assert.equal(s2.xa[WALKWAY.rift], run.t, 'the Rift Way laid from its word');
+  assert.ok(!Number.isFinite(s2.xa[WALKWAY.third]));
   const mv = foldGate(s2, validGateOut({ k: 'mv', x: 1, z: 2, tx: 3, tz: 4, v: 3, at: run.t, b: 1 }), run.t);
   assert.equal(mv.sd.fl.atk, null); assert.deepEqual([mv.sd.fl.x, mv.sd.fl.z], [1, 2]); assert.equal(mv.move, s.move);
   const ph = foldGate(mv, validGateOut({ k: 'ph', n: 2, until: run.t + 6000, b: 1 }), run.t);

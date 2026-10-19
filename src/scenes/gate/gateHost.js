@@ -19,13 +19,14 @@
 // Not a DFU member. Ledger A (WB11).
 import { HOST, HOST_KINDS, HOST_BLOWS, COURT_CENTRE as GATE_COURT_CENTRE, ATTACKS, hostAt, hostBlowUnder, nearestCourt } from '../../net/gate/gateBrain.js';
 import { hostVerdict, hostTelegraphAt } from '../../net/gate/gateStrike.js';
-import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, BOSS_CUES, gateHitFlash } from '../../world/gate/gateBoss.js';
+import { hostLookOf, hostAct, hostFallAct, hostStandIn, hostCue, bossFrame, bossPlace, HOST_BITE_COLOR, hostPulseColor, emberColor, WARD_COLOR, TITHE_GOLD, BOSS_CUES, gateHitFlash } from '../../world/gate/gateBoss.js';
 import { setBatchHitFlash } from '../../systems/hitFlash.js';   // WB13d: a body of his host struck flashes, as he does
 import { wordShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: a body's health's share, the relay's word
 import { TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_FLASH_MS, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../../render/gate/gateTelegraph.js';
 import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize } from '../../world/rmbFlats.js';
 import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: his host in its Morrowind bodies
+import { t } from '../../systems/textManager.js';   // WB14e: the Tithe-Imp's words in the player's language (L10N4)
 
 /** The words his host says that the bar and the blows do not. `boss` his name, `plural`/`name` the body's (its look's). */
 const an = (name) => `${/^[AEIOU]/i.test(name) ? 'An' : 'A'} ${name}`;
@@ -38,6 +39,10 @@ export const COURT_HOST_TEXT = Object.freeze({
   // Unyielding's 6 s - the signature is cast under it): every blow in it still turned
   felled: (who, left) => (left > 0 ? `${who || 'A challenger'} cuts down a Ward-Bearer. ${left} ${left === 1 ? 'stands' : 'stand'}.` : 'The last Ward-Bearer falls. His ward is failing!'),
   crumbled: 'The Ward-Bearers crumble. His ward is failing!',
+  // WB14e: the Tithe-Imp - its bolt from the fire, its catching (by name), its escape
+  tithe: () => t('gate.host.titheRises', 'A Tithe-Imp bolts from the fire with his tithe. Catch it!'),
+  titheCaught: (who) => t('gate.host.titheCaught', '{who} catches the Tithe-Imp! Its tithe spills.', { who: who || t('gate.host.someone', 'A challenger') }),
+  titheEscaped: () => t('gate.host.titheEscaped', 'The Tithe-Imp escapes into the fire.'),
 });
 /** A rising, a blow, a fall or a word heard later than this after it happened is neither said nor sounded (the court's
  *  FED_LATE_MS law - heard live, never a stale one). */
@@ -74,7 +79,8 @@ const SHAPE_SLOTS = new WeakMap();
  *  `vgw` words), and none for its own kinds. Pure. */
 export function waveLine(s, k, boss, plural) {
   if (s?.vg && s.vg[0] < 2) return null;
-  return k === HOST.harrier ? COURT_HOST_TEXT.harriers(boss, plural) : k === HOST.sapper ? COURT_HOST_TEXT.sappers(boss, plural) : k === HOST.bearer ? COURT_HOST_TEXT.bearers() : null;
+  return k === HOST.harrier ? COURT_HOST_TEXT.harriers(boss, plural) : k === HOST.sapper ? COURT_HOST_TEXT.sappers(boss, plural) : k === HOST.bearer ? COURT_HOST_TEXT.bearers()
+    : k === HOST.tithe ? COURT_HOST_TEXT.tithe() : null;   // WB14e
 }
 
 export function hostShapes(s, now, P, out = []) {
@@ -179,14 +185,14 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
     const fr = bossFrame(act, yaw, at, eye, (rec) => T.tex.getFrameCount?.(rec) ?? 1);
     const rkey = `${fr.record}#${fr.frame}`;
     if (!renderer.textures?.has?.(`${T.archive}_${rkey}`)) uploadRecordFrame?.(T.archive, fr.record, fr.frame);
-    const sz = mobileBillboardSize(T.tex, fr.record);
-    const size = { w: fr.flip ? -sz.w : sz.w, h: sz.h };
-    if (!b.batch) { b.batch = renderer.createBillboardBatch(T.archive, rkey, { w: sz.w, h: sz.h }, [[0, 0, 0]]); b.batch.origin = [0, 0, 0]; }
+    const sz = mobileBillboardSize(T.tex, fr.record), k = b.look.scale ?? 1;   // WB14e: the Tithe-Imp drawn larger than an Imp
+    const size = { w: (fr.flip ? -sz.w : sz.w) * k, h: sz.h * k };
+    if (!b.batch) { b.batch = renderer.createBillboardBatch(T.archive, rkey, { w: sz.w * k, h: sz.h * k }, [[0, 0, 0]]); b.batch.origin = [0, 0, 0]; }
     b.shown = true;
     setBatchHitFlash(b.batch, gateHitFlash(b.hurtAt, b.courtAt ?? -Infinity, t));
     b.batch.record = rkey;
     b.batch.size = size;
-    if (b.batch.bounds) b.batch.bounds[3] = Math.hypot(sz.w, sz.h) * 0.5;
+    if (b.batch.bounds) b.batch.bounds[3] = Math.hypot(sz.w, sz.h) * 0.5 * k;
     b.batch.origin[0] = at[0]; b.batch.origin[1] = at[1]; b.batch.origin[2] = at[2];
   }
 
@@ -255,12 +261,12 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
         // stood offered from its first moment, a shaft stopped by nothing seen)
         T.feet[0] = COURT_CENTRE[0] + x; T.feet[1] = COURT_CENTRE[1] + b.look.hover - act.sink; T.feet[2] = COURT_CENTRE[2] + z;
         _targets.push(T);
-        // a Ward-Bearer holding his ward glows in its gold
-        if (a.k === HOST.bearer && t < s.shieldUntil) {
-          const L = (b.light ??= { x: 0, y: 0, z: 0, range: HOST_LIGHT_RANGE, color: [0, 0, 0] });
+        // a Ward-Bearer holding his ward glows in its gold; WB14e: the Tithe-Imp burns in its own
+        if ((a.k === HOST.bearer && t < s.shieldUntil) || a.k === HOST.tithe) {
+          const L = (b.light ??= { x: 0, y: 0, z: 0, range: HOST_LIGHT_RANGE, color: [0, 0, 0] }), C = a.k === HOST.tithe ? TITHE_GOLD : WARD_COLOR;
           const k = 0.8 + 0.25 * Math.sin(t / 180 + b.seed);
           L.x = COURT_CENTRE[0] + x; L.y = COURT_CENTRE[1] + HOST_LIGHT_Y; L.z = COURT_CENTRE[2] + z;
-          L.color[0] = WARD_COLOR[0] * k; L.color[1] = WARD_COLOR[1] * k; L.color[2] = WARD_COLOR[2] * k;
+          L.color[0] = C[0] * k; L.color[1] = C[1] * k; L.color[2] = C[2] * k;
           _lights.push(L);
         }
       }
@@ -292,6 +298,7 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
         } else {
           play(hostCue('fall', b.look.mobile), p);
           if (g.k === HOST.bearer && g.w === 0) say(COURT_HOST_TEXT.felled(g.n, bearersLeft));
+          else if (g.k === HOST.tithe && !s.fell && s.wrath == null) say(g.w === 0 ? COURT_HOST_TEXT.titheCaught(g.n) : COURT_HOST_TEXT.titheEscaped());   // WB14e
           else if (g.k === HOST.bearer && g.w === 2 && !s.fell && s.wrath == null && !wrathGathers && !crumbleSaid.has(g.at)) { crumbleSaid.add(g.at); say(COURT_HOST_TEXT.crumbled); }
         }
       }
@@ -319,7 +326,7 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
       const one = (b, dead) => {
         const look = b.shown && b.batch ? creatureLook({ mobileType: b.look.mobile }) : null;
         if (!look) return;   // never offered, so never cast-only - its sprite draws
-        lane.offer(rosterActor(b, { id: `host:${b.i}`, look, feet: b.batch.origin, yaw: b.yaw ?? 0, moving: b.act === 'walk',
+        lane.offer(rosterActor(b, { id: `host:${b.i}`, look, feet: b.batch.origin, yaw: b.yaw ?? 0, moving: b.act === 'walk', scale: b.look.scale ?? 1,   // WB14e: the Tithe-Imp's size
           swingKey: dead ? null : b.wound, hitKey: dead ? null : Math.max(b.hurtAt ?? -Infinity, b.courtAt ?? -Infinity), dead: dead ? 1 + ((b.i | 0) % 3) : 0 }), b.batch,
         null, b.batch.hitFlash || 0);   // AUDIT MW-NPC II H5: WB13d's flash on the body - the billboard that carries it is cast-only
       };

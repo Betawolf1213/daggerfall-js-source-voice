@@ -83,8 +83,8 @@
   {
     "name": "WB14b-the-Sundering-keeping-the-third-walkway",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (has('sunder')) walks.push(WALK.rift); else walks.push(WALK.third);\n",
-    "new": "  walks.push(WALK.third);\n",
+    "old": "  if (has('sunder')) walks.push(WALKWAY.rift); else walks.push(WALKWAY.third);\n",
+    "new": "  walks.push(WALKWAY.third);\n",
     "tests": [
       "test/net/gate/wb14b_portents.test.js"
     ]
@@ -92,7 +92,7 @@
   {
     "name": "WB14b-the-Pen-on-no-night",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (has('captive')) { floors.push(FLOOR.pen); walks.push(WALK.pen); }\n",
+    "old": "  if (has('captive')) { floors.push(FLOOR.pen); walks.push(WALKWAY.pen); }\n",
     "new": "\n",
     "tests": [
       "test/net/gate/wb14b_portents.test.js"
@@ -137,7 +137,7 @@
   {
     "name": "WB14b-the-screen-court-a-plain-night-always",
     "file": "src/world/gate/gateArena.js",
-    "old": "export const planOfDay = (day) => (Number.isSafeInteger(day) ? floorPlan(gatePortentsOf(day)) : PLAN_PLAIN);",
+    "old": "export const planOfDay = (day) => (Number.isSafeInteger(day) ? nightPlan(gatePortentsOf(day)) : PLAN_PLAIN);",
     "new": "export const planOfDay = (day) => PLAN_PLAIN;",
     "tests": [
       "test/net/gate/wb14b_portents.test.js"

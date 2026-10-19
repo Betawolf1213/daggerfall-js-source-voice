@@ -130,7 +130,7 @@ walkways between them another (`WALKS`, each `{k, a, b}` - its index, the floor 
 | 4 | 3 | 0 | the Markynaz's fall (section 4) | the Vanguard |
 | 5 | 0 | 5 | the Warden's wake (section 7) | the Captive |
 
-A night's PLAN is the floors and walkways its portents stand (`floorPlan(pt)`): the first two rows of each table always,
+A night's PLAN is the floors and walkways its portents stand (`nightPlan(pt)`): the first two rows of each table always,
 walkway 1 unless the night sunders, and each portent's own. The plan's ROOT is where its fighters arrive - the
 Bridgehead on a Vanguard night, the first court on every other.
 
@@ -363,7 +363,7 @@ a feeding then heals him whole.
 - **The title cards** (WB13e): the Sundering's turn - *II · The Sundering · Bring both halves down together.*; the
   Rejoining - *III · Dagon's Champion · Back to the first court.*
 - **On me** (WB14a, `scenes/gate/gateArsenal.js` ARSENAL_TEXT): *Chained! Run from him!*; *Dagon's Brand is on you.
-  Keep clear of the others!* (and *Dagon's Brand - keep clear!* to one standing by a branded fighter); *Shared Torment on
+  Keep clear of the others!* (and *Dagon's Brand! Keep clear!* to one standing by a branded fighter); *Shared Torment on
   you. Gather the others!*; *Shared Torment! Stand with Ann!* (*Stand in the gold!* for a marked fighter this screen
   cannot name); *Look away!* - each in the ground view's warning (`ui/gate/gateGroundView.js` - `peril.order` in its
   place) while it winds up, its arrow the way out (away from him, from the nearest other, toward the marked; for the
@@ -405,6 +405,27 @@ Caught, every challenger who landed a blow on it is handed **the tithe** - gold 
 (`{k: 'tithe', c}`), spilling where it fell, theirs alone: *"Ann catches the Tithe-Imp! Its tithe spills."*; escaped,
 *"The Tithe-Imp escapes into the fire."* It is not in the omen: the one surprise of the arc, and it costs nobody
 anything.
+
+**As built (WB14e).** The night's moment is the fight's from its birth (`net/gate/gateLaw.js gateTitheOf`, newFight's
+`ti`, the relay's `gateTitheOf(day)`), on any night - a Legion-Lord's too, where it runs beside his host and is no host of
+his. It rises (`stepTithe`, `net/gate/gateBrain.js`) the beat after its moment that finds a challenger before him in his
+first or second phase - never in his last, never to an empty court - at his court's rim about the bearing away from him.
+It runs (`titheBeat`) TITHE_FLEE_M straight from the nearest challenger, along the rim when the rim stops it. It dives into
+the fire (`adie`'s `w` 3, HOST_GONE.fled) TITHE_LIFE_MS after it rose, or as his phase turns (before his host crumbles);
+the Wrath crumbles it with the rest. Caught, every challenger whose blow landed on it (`applyHostHit` keeps them - a blow
+that lands for nothing makes no part of it) is handed its tithe on the next beat: `{k: 'tithe', c, at}`, a seed of the
+relay's dice each, to that fighter's sockets alone (the frame's `to`, `server/src/index.js _gateFan`), once. It is never
+said again at a later `in`: a tithe is a surprise, and nothing on any ledger counts it.
+
+On the screen the tithe goes straight into the pack through the spoils' own door (`scenes/world.js takeGateSpoil`, on the
+court's existing line): gold at TITHE_GOLD_PER_LEVEL (60) a level, a fifth either way, and one gem of the classic eight
+(ItemBuilder's own CreateRandomGem) - `systems/gate/gateSpoils.js titheList`, the seed's own - with a gold burst where it
+fell and *"You take its tithe of 594 gold and a Ruby."* It is drawn as an Imp at TITHE_SCALE (1.3) burning gold (a light of
+its own), named the Tithe-Imp; its rising, its catching and its escape are said (`scenes/gate/gateHost.js COURT_HOST_TEXT`).
+
+**Departure from the sketch, named:** the tithe is not spilled on the court's floor. The spoils' pool keeps one spew at a
+time and one record a day (`scenes/spoilsPool.js`), so a tithe thrown there would take the place of the kill's own spoils;
+a burst of its gold where it fell stands for the spill.
 
 ## 10. The wire, and what the relay judges (WB14a-f)
 
@@ -462,7 +483,7 @@ Each slice's record is written below as it ships.
 **WB14b (2026-10-19) - shipped.** `net/gate/gateMods.js` GATE_PORTENTS (each row's words read through the text core -
 the relay's bundle gains `systems/textManager.js`, which imports nothing), gateDireLine, CAPTIVE_NAMES (each a reader);
 `net/gate/gateLaw.js` gatePortentsOf (the bag: every other carrier, a round of six), portentsLine, gateTitheOf,
-captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), floorPlan, liveFloors, plan-aware onFloor and
+captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), nightPlan, liveFloors, plan-aware onFloor and
 clampToFloor, newFight's `pt`, xaWire; `world/gate/gateArena.js` planOfDay, arrivalOf and the plan's model, collider,
 slabs and lights; `scenes/gate/gateStand.js` (the court's builders out of `scenes/worldModes.js`, HOST-SPLIT); the
 words in the chat, the map's card, the marks card's rows (made the first night that has one) and the herald's omen
@@ -484,6 +505,21 @@ while news, my blows on its bodies from its platforms; `ui/gate/gateBossBar.js` 
 its looks and names. Pins: `test/net/gate/wb14c_vanguard.test.js` (13) and WB11's and WB3's tables (the kinds, the blows,
 the standing cap, the out kinds); mutants: `tools/mutants/wb14c.json` (30, all dead), and the re-aimed WB11, AUDIT WB11,
 WB13e and WB8c records.
+
+**WB14e (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 6 (the Tithe-Imp), HOST.tithe, its rising's span,
+HOST_GONE.fled, TITHE_LIFE_MS, TITHE_S, TITHE_FLEE_M, TITHE_CORNER_M, titheHpFor, stepTithe and titheBeat, newFight's
+`ti` and its record (`tt`), applyHostHit's strikers and the catch, his host's beat stepping only its own kinds, the
+phase's turn sending it into the fire before his host crumbles; `net/bossSeam.js` the birth's `ti`; `server/src/index.js`
+the night's moment at the fight's birth and `_gateFan`'s `to`; `net/wire.js` GATE_HOST_KINDS 7, GATE_HOST_GONE 4, the
+`tithe` word; `net/gate/gateLink.js` the tithe on the state, kept through the fight; `systems/gate/gateSpoils.js`
+titheList, TITHE_GOLD_PER_LEVEL; `scenes/gate/gateCourt.js` the tithe into the pack once (the court's `takeSpoil` door,
+`scenes/world.js`'s takeGateSpoil on the court's line), its gold burst, COURT_TITHE_TEXT; `scenes/gate/gateHost.js` its
+words, its size and its gold; `world/gate/gateBoss.js` its look (TITHE_SCALE, TITHE_GOLD) and a fled body sinking;
+`ui/gate/gateBossBar.js` never counted his host. And the arc's own lines held to WB13b's style law (its scan now reads
+the Vanguard's, the arsenal's, the Sundering's and the tithe's tables): *Dagon's Brand! Keep clear!*, *The halves rejoin
+in the first court. Run back!*. Pins: `test/net/gate/wb14e_tithe.test.js` (13), and the older ones it moved (WB3's out
+kinds, WB11's kinds, blows and ways of going, WB14b's and WB8c's birth, WB14c's tables); mutants: `tools/mutants/wb14e.json`
+(36, all dead), and the re-aimed AUDIT WB11, EGSEAM, GATE-FBX, MWNPC10a and WB8b records.
 
 **WB14d (2026-10-19) - shipped.** `net/gate/gateBrain.js` ATTACKS 17 and 18 (the Sundering, the Rejoining - names
 through the text core), SUNDER_* (SPLIT_MIN, LAST, PAIR_MS, RISE, LONE_MS, MEND, SIZE, KITS, SIDE_M, TURN), HALF, sunders,

@@ -4,7 +4,7 @@
 // the host was a line under its ceiling, and a night's portents make the court's build the night's own). The host wires
 // it; nothing here reads the host's scope but the seams it is handed.
 //
-// THE NIGHT'S PLAN. A portent's floors stand on its night alone (net/gate/gateBrain.js floorPlan): the court's mesh, its
+// THE NIGHT'S PLAN. A portent's floors stand on its night alone (net/gate/gateBrain.js nightPlan): the court's mesh, its
 // walkways' slabs and its collider are the plan's, the plan by the gate's day (world/gate/gateArena.js planOfDay - the
 // relay draws the fight's with the same law), each mesh made once a plan and kept for the session as WB3b's one was.
 //
