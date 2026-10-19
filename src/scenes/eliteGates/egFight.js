@@ -125,7 +125,7 @@ import { egBlowLandsOn } from '../../net/eliteGates/egFair.js';   // THE ASCENT 
 import { egFightView } from '../../net/eliteGates/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
 import { egFeetY, egBears, egByHeight, egOneStorey, egStoreyY } from '../../net/eliteGates/egWalkGraph.js';   // THE ASCENT - HEIGHT: a zone lies on its own floor, a blow is mine on my storey alone
 import { egRunOfMember } from '../../net/eliteGates/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
-import { egVOf, egHymnOf, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../../net/eliteGates/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
+import { egVOf, egHymnOf, egDeclaredX, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../../net/eliteGates/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
 import { egAccordMates, EG_ECHO_Q } from '../../net/eliteGates/egVestige.js';   // EG-ZS (section 15): the pair law; an Echo's number
 import { EG_MASTERIES } from '../../net/eliteGates/egVestige.js';   // AUDIT EG III (lane4 #10): Immovable's number - the census asked only for its holder
 import { egHolderBlow } from '../../systems/eliteGates/spireVestiges.js';   // EG-ZR: a blow of mine with the Vestiges I hold
@@ -675,6 +675,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  the floors it lands on (net/eliteGates/egFair.js egBlowLandsOn - the relay's rule) waits while its span lasts, then misses. A hall
    *  that judges in plan alone keeps the verdict as it was. */
   const onStorey = (v, bl, x, y, z, t) => (v !== 'hit' || egBlowLandsOn(egFightView(spec), bl, x, y, z) ? v : t >= bl.at + Math.max(1, bl.sp ?? 0) ? 'miss' : 'wait');
+  /** FIELD BUGS 2026-10-19b STAND-IN-WHOLE: the factor the relay grows my bucket by here (THE TRUST LAW: my Vestiges'
+   *  declared factor - net/eliteGates/egRun.js egVestigeX's `bx`), read by what one blow of mine can land on a stand-in of
+   *  this hall (world/gate/gateBoss.js standInBlowCap). */
+  const myBlowX = () => { const E = link.state(); return E?.ms ? egDeclaredX(egRunOfMember(E, me()).vs) : 1; };
   /** One body drawn: its look's sprite at its act's frame, at its place. EG-LOOK (section 9): at its DRAWN size (a lord's
    *  presence over its body's scale), its feet on the body's place - the quad stands up from its base - a flyer's hover its
    *  drawn one; a grown sprite casts no shadow; `top` its drawn head this frame (NaN while it stands nowhere on this screen). */
@@ -714,7 +718,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     // you see meets him, never passes through it); it stands where the sprite's feet are drawn
     if (!b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0) {
       // FIELD BUGS 2026-10-18f RELAY-SHARE: its stand-in reads its health as the relay says it - `hp` of its whole, refilled below
-      d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i, () => wordShare(d.target?.hp, d.target?.m)), mobile: look.mobile, name: look.name, m: b.max, hp: b.hp };
+      d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i, () => wordShare(d.target?.hp, d.target?.m), myBlowX), mobile: look.mobile, name: look.name, m: b.max, hp: b.hp };
       d.target.feet[0] = d.at[0]; d.target.feet[1] = centre[1] + y; d.target.feet[2] = d.at[2];
       d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.drawn / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max; d.target.hp = b.hp;
       turnStandIn(d.target, b);   // FIELD BUGS 2026-10-18f TURNED-BLOW: a blow from where I stand, on it as it stands, that the relay will refuse is turned here too
@@ -735,7 +739,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     c.grow = (b.fl & EG_FL.ward) !== 0 ? 0.6 : 1;
     _crystals.push(c);
     if (!b.goneAt && (b.fl & EG_FL.ward) === 0) {
-      c.target ??= { i: b.i, feet: [0, 0, 0], height: CRYSTAL_H, radius: CRYSTAL_R, entity: crystalStandIn({ mobile: 31, scale: 1 }, b.i, () => c.hp), mobile: 31, name: key, m: b.max };   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it (`c.hp`, the share it is drawn at)
+      c.target ??= { i: b.i, feet: [0, 0, 0], height: CRYSTAL_H, radius: CRYSTAL_R, entity: crystalStandIn({ mobile: 31, scale: 1 }, b.i, () => c.hp, myBlowX), mobile: 31, name: key, m: b.max };   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it (`c.hp`, the share it is drawn at)
       c.target.feet[0] = c.at[0]; c.target.feet[1] = c.at[1]; c.target.feet[2] = c.at[2]; c.target.m = b.max;
       turnStandIn(c.target, b);   // FIELD BUGS 2026-10-18f TURNED-BLOW: an errand's object struck from traversal ground (but one standing off the floor, struck from beside it)
       _targets.push(c.target);

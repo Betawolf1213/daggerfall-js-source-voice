@@ -54,7 +54,7 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
 const CEILINGS = [
   ['src/scenes/world.js', 'bootWorld', 36_219, MODULE],   // FIELD BUGS 2026-10-19b: DISENCHANT-SAID's list out to profPages.js disenchantableOf (8 logical lines) and TOWN-EXIT's tvJoinedLegs body out to systems/travel/townExit.js journeyLegs (6) - the ceiling lowered by both
   ['src/scenes/worldModes.js', 'createWorldModes', 10_998, MODULE],
-  ['src/scenes/dungeonContext.js', 'buildDungeonContext', 8_601, MODULE],
+  ['src/scenes/dungeonContext.js', 'buildDungeonContext', 8_463, MODULE],   // FIELD BUGS 2026-10-19b STAND-IN-WHOLE: 8,601 -> 8,463, its four spell doors out (scenes/gate/standInSpell.js)
   ['src/scenes/exterior.js', 'bootExterior', 5_441, MODULE],
   ['src/scenes/naval/navalHost.js', 'createNavalHost', 6_470, MODULE],   // a *Host.js grown into a knot of its own (HOST-SPLIT NAVAL)
   ['src/systems/comeSailAway/comeSailAway.js', 'createComeSailAwayRuntime', 2_783, MODULE],   // the Come Sail Away runtime, one scope (AUDIT HOST-SPLIT NAVAL)

@@ -2651,6 +2651,68 @@ languages that cover the catalog, and two pins that read the court's words moved
 GOLDEN FRAMES (the gate's hash - the two answers' `me`, every frame else word for word: taken out, the old hash to the
 byte) and `sd8c_remnant_page.test.js` (`me: 1` said in two answers, the court's beside the Hour's). Not a DFU member.
 
+## 25. A whole blow on a body the relay runs (STAND-IN-WHOLE, FIELD BUGS 2026-10-19b)
+
+A player's private report: a Disintegrate on an online breach's boss popped a huge number, and his bar never moved.
+
+Every body a relay runs - the Warden, his crystals and his host; the Abyss Dungeon's Remnant, its Echoes and Hearts; every
+lord, add and struck object of an Elite Breach; the sea serpent; my opponent in a refereed bout - is struck on this machine
+against a stand-in (section 5, "A blow on the boss"), and its health stood at a placeholder nothing empties, 1e9. One law
+reads it: a Disintegrate deals its target what health it has left
+(`effects.js:"if (left > 0 && sinks.hurt) { out.damage += left; sinks.hurt(left, { whole: true }); }"` - DFU's
+`Disintegrate.MagicRound`, `SetHealth(0)`). So the cast claimed 1e9, and no wire carries that: the gate's `hit`, `ahit` and
+`xhit` and the Abyss's stop at GATE_DMG_WIRE_MAX (`wire.js:"if (!finite(m.d) || m.d <= 0 || m.d > GATE_DMG_WIRE_MAX) return null;"`,
+100,000), an Elite Breach's at 1e6, a bout's at 10,000 (`arenaLaw.js:"const d = num(m.d, 10000), r = int(m.r, 0, 2);"`).
+Every relay refused the cast whole, and the spell door popped the claim. The relay caps a blow anyway (HIT_CAP_X times
+the reference at the striker's level - section 5's bucket; an Elite Breach's grown by the Vestiges' declared factor), so
+the fix is the stand-in's, as a duel's was (`combat/duelCombat.js` DUEL_STAND_IN, whole at the wire's vital ceiling):
+
+- **THE WHOLE** (`gateBoss.js:"export const STAND_IN_WHOLE = HIT_CAP_X * dpsRef(LV_MAX) * EG_BUCKET_X_MAX;"`, 975) - the
+  most one blow lands at any relay: the gate's cap at LV_MAX (780) grown by the most a breach's bucket grows, over the
+  serpent's (SERPENT_HIT_CAP_X of a galley's reference, 182) and a bout's (`arenaBlowCap`, 122 at most); and under the least
+  ceiling nobody clamps (the bout's 10,000), with the rest of a spell's room beside it. Every stand-in stands at it
+  (`gateBoss.js:"e.maxHealth = e.health = STAND_IN_WHOLE;"`). A Disintegrate counts it whole, every wire carries it and
+  the relay's own law weighs and clips it - his stun heavier, an Unyielding ward 15% lighter (975 of it still past the cap
+  at the level cap), the bucket. The serpent's door already held its claim to 5,000; it carries the whole as it is.
+- **THE NUMBER** says what can land (`standInSpell.js:"const shown = standInShown(dealt, standInBlowCap(body.entity, player.level));"`):
+  the claim, never past the most one blow of mine lands there (`gateBoss.js:"export function standInBlowCap(e, lv) {"` -
+  the relay's cap at my level, grown by the factor the stand-in's owner says my bucket grows by: an Elite Breach hands its
+  stand-ins my Vestiges' declared factor, `egFight.js:"const myBlowX = () =>"`, at most EG_BUCKET_X_MAX; on my opponent the
+  referee's spell cap, ARENA_SPELL_MAX). The paths' riders are told the same (`took`: what the foe could lose). The claim
+  goes out whole beside it - clipping it here would lose what the relay weighs before its cap.
+- **THE DOOR** is one: the court's four spell doors (him, his crystals, his host, my opponent - each its own copy in
+  `buildDungeonContext`) left the host for `scenes/gate/standInSpell.js`
+  (`standInSpell.js:"export function createStandInSpell(host) {"`), which the context wires where they stood
+  (`dungeonContext.js:"const { spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn } = createStandInSpell({"`;
+  `01-Overview/Host-Split.md` STAND-IN-WHOLE).
+- **NOTHING LOCAL READS IT AS A BODY.** With the whole finite, every reader of a stand-in's health was read again: the
+  spell doors' sinks only count, a swing's and a shaft's formula takes nothing (the number is sent, never subtracted), and
+  every lasting family is forgotten at once - nothing here empties a stand-in, pinned on every factory. An "under its
+  health" power reads the relay's word (RELAY-SHARE, `relayHealth`); the weapon masteries the same. The blood ladder read
+  the placeholder and bled the bottom rung on every blow; a whole of 975 would have bled a body of 975's rungs, so it
+  measures no whole on a stand-in (`bloodDecals.js:"maxHealth: Number.isFinite(entity?.maxHealth) && !entity?.relayHealth ? entity.maxHealth : 0,"`):
+  the same rung, by law now; a host body's real whole still comes as its `bloodOf`.
+- **MEHRUNES' RAZOR STAYS PASSED BY** (`artifactEffects.js:"if (!target || !item || target.spareGear) return null;"`, AUDIT
+  WBX F1). Its two reasons were the 1e9 billed to its condition and a blow the wire refused; the wire carries the whole
+  now and no Strikes payload bills wear on a stand-in (F2) - and that is why it stays: the Razor's kill is paid in its own
+  condition, the health it removes (`MehrunesRazorEffect`), and on a body the relay runs nothing would pay it - a whole blow
+  free on every failed save, its number the whole on top of the swing's.
+
+What it does not do: the serpent's own spell door (`scenes/world.js serpentSpellOn`) raises no number and tells its riders
+the claim, as before; a swing's number is not capped (no swing reaches the cap but the Razor's, which stays passed by).
+A departure from DFU (`Disintegrate.MagicRound` kills outright): on a body the relay runs it is the most one blow lands.
+Pins: `test/net/gate/fb1019b_standinwhole.test.js` (5: the whole against the real constants, every wire and the purses;
+a real Disintegrate on every factory's stand-in, out through the real court to the brain; the number on each door at two
+levels, a breach's and a bout's; the readers; the hosts - the context's wiring and an Elite Breach's real fight handing its
+bodies my Vestiges' factor). PIN MOVED: `wb4b_gate_blows.test.js` (his whole; his spell door in the module),
+`fb1018f_relayshare.test.js` (the placeholder's value), `auditwbx.test.js` (the Razor on his real stand-in, the trap's
+door), `audit_wb11.test.js`, `wb9c_gate_reckoning.test.js`, `wb8a_never_swayed.test.js`, `wbx_gate_fixes.test.js`,
+`audit_schools.test.js` (L2 F4 - the riders told what can land), `arena4b_blows.test.js` and `fb1018f_turnedblow.test.js`
+(the three doors' numbers by the body they met, driven on the module). `tools/mutants/fb1019b_standinwhole.json` (20, all
+dead). Re-aimed by content (13, all dead): `arena4b_blows.json`, `audit_schools.json`, `audit_wb11.json`, `wb8a.json` (3),
+`fb1018f_turnedblow.json` (the host's number; the crystal's and the Warden's retired with the copies they named), `blood1.json`,
+`fb1018f_relayshare.json` (5).
+
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
