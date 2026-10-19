@@ -697,6 +697,60 @@ it. Eight mutants over the hooks (a hook dropped, a decision handed
 to the panel, `_close` and the field step not releasing, the seam's
 null and classic arms), each killed.
 
+#### SPELLSHOP-SAID - THE NINTH WINDOW, AND THE NOTICE TAKES ITS CLICK (FIELD BUGS 2026-10-19b)
+
+Two players' private reports: at the Mages Guild's spell shop, Buy did
+nothing - no confirmation, no gold spent. Buy refused: no spellbook in
+the pack, or not the gold (DFU's
+`DaggerfallSpellBookWindow.BuyButton_OnMouseClick`, a
+`DaggerfallUI.MessageBox` for each - ClickAnywhereToClose). The survey
+above counted the spellbook among the windows the enhanced skin
+replaces with a DOM twin, and for the cast book it still is; but
+SHOP-PLUS then put the BUY-mode book inside the Enhanced Plus port
+(`enhancedPorts.js` spellShop), whose classic draw runs onto a
+renderer that paints nothing. Only a box with buttons takes an
+enhanced face of its own (the dialog); the refusal was laid out as
+parchment onto that renderer and never seen. It also STAYED UP: the
+port's dismiss (DROPS-AUDIT F6) asked `win.box`, which the book does
+not keep - its box is `top` and `_box` - so the next press, Leave,
+went to putting away a box nobody could see. An effect's description
+(the chosen spell's "What it does") was the same box, the same way.
+
+The book is the ninth window on the seam:
+`spellbookWindow.js:"if (noticeFrame(this, NOTES.includes(this.top) ? this._boxRows() : null)) {"`,
+the click-anywhere tops named once beside the ones that ask
+(`spellbookWindow.js:"const NOTES = Object.freeze(['noSpellbook', 'notEnoughGold', 'note']);"`),
+BOX1's single read unchanged, and `_close` releasing as the others do.
+And the sweep found the same blindness in two windows the seam already
+drew: the guild's and the coven's box is their queue's head (`top`),
+so their notice never took a click on the window's ground, and a row
+that calls the window's own method (Heal Curse, the Reforge, the
+lifting) acted under it. So the port's dismiss asks the seam rather
+than a field: `enhancedPort.js:"if (noticeShown(win)) { win.click?.(-1, -1); return; }"`
+- the notice is the panel the window raised
+(`enhancedNotice.js:"export const noticeShown = (owner) => owner?._noticeKey != null && panels.has(owner._noticeKey);"`),
+whatever field holds its box, and it is up exactly while the player
+can read it. The bank, the potion maker, the item maker and the spell
+maker, which kept `box`, answer as before. The other ported windows
+(the house and ship lists, the transport picker, the daedra) raise no
+box.
+
+**Tests**: `test/ui/fb1019b_spellshopsaid.test.js` (7) - through the
+real port on the repo's DOM, the records through the real TEXT.RSC
+reader: a no-book Buy and a no-gold Buy put up the record as the
+notice (no parchment, BOX1's read once), the next click - Leave, or
+the window's ground - takes it down with nothing under it acting, a
+key too, and Leave then leaves; an effect's description is the notice;
+the haggle stays the enhanced dialog, is not dismissed by a click, and
+its Yes buys; `_close` releases; the classic skin keeps its parchment;
+the guild's and the coven's notices take the first click (a Heal Curse
+press under one heals nothing); `noticeShown` itself. PIN MOVED: the
+roster (`test/ui/enhancedNotice.test.js`, nine windows, the port the
+seam's one more importer) and DROPS-AUDIT F6
+(`test/ui/enhanced/dropsaudit.test.js`). `tools/mutants/spellshop_said.json`
+(12, all dead); `dropsaudit.json`'s DA-F6-notice-lets-tiles-act
+re-aimed by content.
+
 ### ENH-NOTICE3 - THE ONE DOOR, AND THE HUD LINE AS A TOAST (2026-09-21, Mac: "I do notice the new enhanced pop up system isn't working for everything. All mods, including climates and calories need to utilize the enhanced notification popup. This needs a proper detailed audit, maybe a refactor")
 
 **THE AUDIT.** Three Opus lanes, one question each. The first

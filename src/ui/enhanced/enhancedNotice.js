@@ -289,6 +289,17 @@ export function noticeFrame(owner, rows, { hint = undefined } = {}) {
 }
 
 /**
+ * SPELLSHOP-SAID (FIELD BUGS 2026-10-19b): IS THIS OWNER'S PANEL UP? The
+ * enhanced port's dismiss asks it (ui/enhanced/enhancedPort.js): the
+ * click-anywhere box a ported window holds takes the first click while
+ * the panel the player reads stands - whatever field the window keeps
+ * its box in. It asked `win.box`, which four of the ported windows keep;
+ * the guild's and the coven's box is `top`, the spell shop's `top` and
+ * `_box`, and their notices never took the click.
+ */
+export const noticeShown = (owner) => owner?._noticeKey != null && panels.has(owner._noticeKey);
+
+/**
  * A DOM-NATIVE WINDOW'S OWN BOX (ENH-NOTICE3). The tavern, the
  * inventory and the held map are DOM under the enhanced skin and raise
  * DFU's click-anywhere box from inside themselves; they have no
