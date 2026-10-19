@@ -1,0 +1,34 @@
+[
+  {
+    "name": "MEND-THIRD-share-whole",
+    "file": "src/systems/repairService.js",
+    "old": "export const MEND_SALE_SHARE = REPAIR_COST_SCALE;",
+    "new": "export const MEND_SALE_SHARE = 1;",
+    "tests": ["test/systems/mend_third.test.js", "test/systems/sell_as_found.test.js"],
+    "why": "the printer SELL-AS-FOUND shut: a smith's whole repair adds up to 2.7 times its price to the sale"
+  },
+  {
+    "name": "MEND-THIRD-share-past-the-price",
+    "file": "src/systems/repairService.js",
+    "old": "export const MEND_SALE_SHARE = REPAIR_COST_SCALE;",
+    "new": "export const MEND_SALE_SHARE = 0.37;",
+    "tests": ["test/systems/mend_third.test.js"],
+    "why": "a hair over the repair's third: the best haggler's whole repair breaks even on the sale"
+  },
+  {
+    "name": "MEND-THIRD-share-nothing",
+    "file": "src/systems/tradeModes.js",
+    "old": "  const mended = Math.trunc((item.currentCondition - found) * MEND_SALE_SHARE);",
+    "new": "  const mended = 0;",
+    "tests": ["test/systems/mend_third.test.js", "test/systems/sell_as_found.test.js", "test/systems/fb1019b_deathdropfound.test.js", "test/systems/auditweaponpool.test.js"],
+    "why": "SELL-AS-FOUND as it was: a kit's and a ring's mend sell for nothing - the thread's complaint"
+  },
+  {
+    "name": "MEND-THIRD-rounded-up",
+    "file": "src/systems/tradeModes.js",
+    "old": "  const mended = Math.trunc((item.currentCondition - found) * MEND_SALE_SHARE);",
+    "new": "  const mended = Math.ceil((item.currentCondition - found) * MEND_SALE_SHARE);",
+    "tests": ["test/systems/mend_third.test.js"],
+    "why": "the credit rounded up: a field kit's Daedric cuirass reads 25%, a point the mend did not earn"
+  }
+]

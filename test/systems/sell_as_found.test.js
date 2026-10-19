@@ -4,6 +4,7 @@
 // cost less than the sale it added, and mending worn loot to sell it paid every player online: +102 gold on a
 // value-1000 piece found at 20% (Mercantile 30, Personality 40, a quality-10 counter), +2,592 on a Daedric longsword.
 // Each roll now leaves the condition it set as `foundCondition`, and online the Sell arm reads a piece no higher.
+// MEND-THIRD (2026-10-19, mend_third.test.js): what was mended past the mark counts at the repair's third, never whole.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -57,7 +58,7 @@ test('SELL-AS-FOUND: each of Roleplay & Realism: Items\' rolls leaves the condit
   assert.equal(knight.items.find((it) => it.group === 'Currency')?.foundCondition, undefined, 'gold');
 });
 
-test('SELL-AS-FOUND: online, repairing a found piece to sell it never pays - the counter pays what it paid before, a smith\'s whole repair and a kit\'s 75% alike, for every haggler at every counter (mutants: the mark ignored; read past the mark; the rule offline-only)', () => {
+test('SELL-AS-FOUND: online, repairing a found piece to sell it never pays - the counter pays what it paid before and a third of the mend (MEND-THIRD), a smith\'s whole repair and a kit\'s 75% alike, for every haggler at every counter (mutants: the mark ignored; read past the mark; the rule offline-only)', () => {
   online(() => {
     let checked = 0;
     for (const quality of [1, 10, 20]) {
@@ -69,8 +70,12 @@ test('SELL-AS-FOUND: online, repairing a found piece to sell it never pays - the
             const asFound = quote('Sell', piece, c);
             const repair = quote('Repair', piece, c);
             assert.ok(repair >= 1, 'a repair is never free (FB0929)');
-            assert.equal(quote('Sell', mended(piece), c), asFound, `q${quality} adj${priceAdjustment} m${skills.mercantile}: whole sells as found`);
-            assert.equal(quote('Sell', mended(piece, kitCeiling(piece)), c), asFound, 'a kit\'s 75% the same');
+            // PIN MOVED (MEND-THIRD, 2026-10-19, mend_third.test.js): what was mended past the mark sells at the repair's
+            // third - never whole - so whole sells as the piece at its mark and a third of the mend, and a kit's 75% the same
+            const third = (to) => quote('Sell', { ...piece, currentCondition: found + Math.trunc((to - found) / 3), foundCondition: undefined }, c);
+            assert.equal(quote('Sell', mended(piece), c), third(1000), `q${quality} adj${priceAdjustment} m${skills.mercantile}: whole sells at the mark and a third`);
+            assert.equal(quote('Sell', mended(piece, kitCeiling(piece)), c), third(kitCeiling(piece)), 'a kit\'s 75% the same');
+            assert.ok(quote('Sell', mended(piece), c) < quote('Sell', mended({ ...piece, foundCondition: undefined }), c), 'never whole');
             assert.ok(quote('Sell', mended(piece), c) - repair < asFound, 'the repair is a loss on the sale');
             checked++;
           }
@@ -85,8 +90,9 @@ test('SELL-AS-FOUND: online, repairing a found piece to sell it never pays - the
     // PIN MOVED (MERC-SLOPE, FIELD BUGS 2026-10-08): 1728 was the counter's flat half; a Mercantile 40 / Personality 50
     // seller now stands under it, by their own offer against the best haggler's at half its strength
     assert.equal(quote('Sell', sword, c), 1471, 'as found');
-    assert.equal(quote('Sell', mended(sword), c), 1471, 'whole, as found');
-    assert.ok(quote('Repair', sword, c) > 0);
+    // PIN MOVED (MEND-THIRD): mended whole, the mark and a third of the mend - 46% of 7,359 whole; the repair (4,320) a loss
+    assert.equal(quote('Sell', mended(sword), c), 3384, 'whole, the mark and a third');
+    assert.equal(quote('Repair', sword, c), 4320);
   });
 });
 

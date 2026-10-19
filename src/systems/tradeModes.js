@@ -55,7 +55,7 @@
 
 import { calculateCost, calculateTradePrice, essentialPrice } from './shopStock.js';   // ESSENTIALS-HALF: online, a potion costs half
 import { GOLD_PIECE_WEIGHT_KG, isEnchanted } from './inventory.js';
-import { calculateItemRepairCost, repairRefusal } from './repairService.js';
+import { calculateItemRepairCost, repairRefusal, MEND_SALE_SHARE } from './repairService.js';   // MEND-THIRD: a mend sells at the repair's share - read at a sale, never at load (repairService.js reaches this module through shopStock.js)
 import { itemValueOf, conditionPercentage } from './item/itemTemplates.js';
 import { craftedRarityWorth, socketsOf, gemWorthOf } from './loot/lootRarity.js';   // CRAFT-WORTH: a crafted piece's rolled worth, never a counter's
 import { isOnlinePage } from './online/onlineLane.js';   // SELL-AS-FOUND: online, a sale reads a piece as it was found
@@ -236,10 +236,21 @@ export function buyItemPrice(item, { quality = 0, priceAdjustment = 1000, holida
  *  pile's and a body's at 20-75%, a poorer shelf's at 25-100% (rriRealism.js) - so a sale climbs with a repair. At
  *  REPAIR-RATE's third (repairService.js) the repair cost less than the sale it added: mending worn loot to sell it paid
  *  every player online - +102 gold on a value-1000 piece found at 20% (Mercantile 30, Personality 40, a quality-10
- *  counter), +2,592 on a Daedric longsword. So online the Sell arm reads a piece's condition no higher than the
- *  `foundCondition` those rolls leave on it: a repair or a kit is for using a piece, never for selling it, and wear
- *  after the find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new shelf's),
- *  or found before this - sells at its own condition, repaired or not. Offline, the mod's prices stand. */
+ *  counter), +2,592 on a Daedric longsword. So online the Sell arm reads a piece's condition from the `foundCondition`
+ *  those rolls leave on it: what was mended past the mark counts at MEND_SALE_SHARE (MEND-THIRD, below), never whole,
+ *  and wear after the find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new
+ *  shelf's), or found before this - sells at its own condition, repaired or not. Offline, the mod's prices stand.
+ *  MEND-THIRD (2026-10-19, the Discord's #feature-feedback "Bring back loot price based on the condition!" - "actively
+ *  discourage players to repair an item in order to maximalize the sell price - like with repair kits at early levels,
+ *  and enchants at higher" - through Mac: "Do it"): ONLINE, WHAT A PIECE WAS MENDED PAST ITS MARK SELLS AT THE SHARE A
+ *  REPAIR IS PRICED AT - REPAIR-RATE's third (repairService.js MEND_SALE_SHARE). At Roleplay & Realism: Items' own
+ *  repair price (CalculateItemRepairCost: 0.6 of the value, by the damage) a smith's whole repair never cost less than
+ *  the sale it added, past a cheap piece's rounding; REPAIR-RATE cut the price to a third and left the sale, so mending
+ *  to sell paid, and SELL-AS-FOUND shut that by crediting a mend nothing. Credited at the price's own share, the sum is
+ *  the mod's again: a smith's whole repair is a loss on the sale from a 20-gold repair up, adds at most 0.899 of its
+ *  price from a 1,000-gold one, and is never a gold over its price (that gold the prices' rounding, where a whole repair
+ *  asks a few gold). A kit's or Repairs Objects' mend sells for a third of what the condition is worth. Bible:
+ *  06-Systems/Economy-Arc.md, MEND-THIRD. */
 export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) {
   // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): a wagon's condition is its wear, and its wear prices it only where
   // the seller's wagon upkeep tier says so (Hard). On Boons - and Off - a counter buys it as DFU's plain wagon, which
@@ -247,7 +258,8 @@ export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) 
   if (wagonSoldWhole(item, wagonUpkeepRules())) return 100;
   const found = item?.foundCondition;
   if (!online || !Number.isInteger(found) || !(found < (item?.currentCondition ?? 0))) return conditionPercentage(item);
-  return conditionPercentage({ currentCondition: found, maxCondition: item.maxCondition });
+  const mended = Math.trunc((item.currentCondition - found) * MEND_SALE_SHARE);   // MEND-THIRD: never rounded up
+  return conditionPercentage({ currentCondition: found + mended, maxCondition: item.maxCondition });
 }
 
 /** AUDIT LW-II-2 S1: THE COUNTER'S MARK (net/patronLaw.js PATRON_COUNTER_MARK) - ONLINE, EVERY PIECE AN NPC COUNTER SELLS

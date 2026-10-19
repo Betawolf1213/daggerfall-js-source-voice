@@ -183,8 +183,8 @@ export const ITEM_FIELDS = Object.freeze({
   // Never a receiver's mark: it rides the wire and a realm trade with the piece, so a hand-off launders nothing
   stolen: bool(),
   // SELL-AS-FOUND (AUDIT ECON O1): the condition the world handed a piece over at - Roleplay & Realism: Items' rolls on
-  // a pile, a body and a shelf (systems/roleplayRealismItems/rriRealism.js) - which an online counter's sale reads at best (tradeModes.js
-  // saleConditionPercentage); absent on a piece handed over whole
+  // a pile, a body and a shelf (systems/roleplayRealismItems/rriRealism.js) - which an online counter's sale reads with a third of what
+  // was mended past it (tradeModes.js saleConditionPercentage, MEND-THIRD); absent on a piece handed over whole
   foundCondition: int({ min: 0 }),
   // INT4 (bible/06-Systems/Integrity-Arc.md): a valuable piece's id (systems/item/itemIds.js) - 16 hex, minted at a realm
   // checkpoint and the piece's from then on: the wire carries it (never the receiver's, as `acquired` is), and the
