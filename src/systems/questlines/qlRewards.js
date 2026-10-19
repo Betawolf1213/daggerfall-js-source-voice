@@ -57,10 +57,10 @@ if (PAY_NAMES.some((p) => !PAY_PROFILES[p]) || Object.keys(PAY_PROFILES).some((p
 }
 
 /** The pay an outcome names, read (an unknown name pays nothing extra). */
-export const payOf = (outcome) => PAY_PROFILES[outcome?.pay] ?? PAY_PROFILES.none;
+export const payProfileOf = (outcome) => PAY_PROFILES[outcome?.pay] ?? PAY_PROFILES.none;
 
 /** The gold factor, bounded. */
-export const goldFactor = (outcome) => Math.min(OUTCOME_GOLD_MAX, Math.max(OUTCOME_GOLD_MIN, payOf(outcome).gold));
+export const goldFactor = (outcome) => Math.min(OUTCOME_GOLD_MAX, Math.max(OUTCOME_GOLD_MIN, payProfileOf(outcome).gold));
 
 /** Scales a gold reward by the outcome's factor, in place, at least one coin. Answers the count before and after, or
  *  null when the item is not gold (a script's own item reward is never touched). */
@@ -73,7 +73,7 @@ export function scaleGold(dfItem, outcome, isGold) {
 }
 
 /** The tier a quest's pieces are laddered at: its own, stepped by the pay, 1 to 4. */
-export const rewardTier = (tier, outcome) => Math.min(4, Math.max(1, (tier | 0) + payOf(outcome).step));
+export const rewardTier = (tier, outcome) => Math.min(4, Math.max(1, (tier | 0) + payProfileOf(outcome).step));
 
 /** One piece's rarity at `tier`: the floor, or one rung higher `up` of the time. */
 export function pieceRarity(tier, rolls) {
@@ -103,7 +103,7 @@ const TRIES = 96;
 
 /** Whether `item` fits the player as a piece of `kind`: its group, a class that may equip it, and - a weapon - one of
  *  the player's best weapon skills. */
-export function fits(item, kind, entity, skills = bestWeaponSkills(entity)) {
+export function fitsPlayer(item, kind, entity, skills = bestWeaponSkills(entity)) {
   if (!item || item.group !== KIND_GROUP[kind]) return false;
   if (isForbiddenEquip(entity?.career ?? null, item)) return false;
   if (kind === 'weapon') return skills.includes(weaponSkillUsed(item.templateIndex));
@@ -125,7 +125,7 @@ export function rollRewardChoice({ seed, level, tier, entity = null }) {
   const draw = (kind) => {
     for (let n = 0; n < TRIES; n++) {
       const item = spoilsBase(lv, rolls);
-      if (fits(item, kind, entity, skills)) return item;
+      if (fitsPlayer(item, kind, entity, skills)) return item;
     }
     return null;
   };
@@ -153,6 +153,6 @@ export function factionIdOf(name) {
 }
 
 /** The standing an outcome moves: `[{ factionId, name, amount }]` for each faction it names that the table knows. */
-export const standingOf = (outcome) => Object.entries(outcome?.standing ?? {})
+export const standingMovesOf = (outcome) => Object.entries(outcome?.standing ?? {})
   .map(([name, amount]) => ({ factionId: factionIdOf(name), name, amount }))
   .filter((s) => s.factionId != null && Number.isSafeInteger(s.amount) && s.amount !== 0);

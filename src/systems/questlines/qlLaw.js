@@ -195,7 +195,7 @@ export const levelTier = (level) => (level >= 21 ? 4 : level >= 14 ? 3 : level >
  * quest, a summoning, a cure, a script's child): the level band.
  * @param {{ minReq?: number|null, level?: number, social?: boolean, sheetTier?: number|null }} facts
  */
-export function tierOf({ minReq = null, level = 1, social = false, sheetTier = null } = {}) {
+export function questTierOf({ minReq = null, level = 1, social = false, sheetTier = null } = {}) {
   if (Number.isSafeInteger(sheetTier) && sheetTier >= 1 && sheetTier <= 4) return sheetTier;
   if (Number.isSafeInteger(minReq) && minReq >= 10) return reputationTier(minReq);
   if (Number.isSafeInteger(minReq) && minReq >= 0 && !social) return rankTier(minReq);

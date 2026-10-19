@@ -433,7 +433,7 @@ system; the window's rail already holds its rows.
 
 ### 5.1 The tier
 
-A quest's tier is read off what it already asks (`qlLaw.js` tierOf): rank 0-1 is tier 1, 2-3 tier 2, 4-5 tier 3, 6 and
+A quest's tier is read off what it already asks (`qlLaw.js` questTierOf): rank 0-1 is tier 1, 2-3 tier 2, 4-5 tier 3, 6 and
 above tier 4; a reputation-gated row by its band (20, 40, 60); a social quest and the main quest by the player's level
 band (7, 14, 21); a questline's step by its line's own tier (its sheet's `tier`). Stamped at the start, for life.
 

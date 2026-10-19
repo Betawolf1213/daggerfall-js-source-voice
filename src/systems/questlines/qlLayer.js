@@ -10,9 +10,9 @@
 // be chosen - a quest's choice outlives the quest (the machine drops a tombstone after a week), so the three pieces are
 // the character's from the moment they are rolled, until one is taken - and the questlines begun (QL12-QL16: its line
 // runner's records, qlLineRunner.js).
-import { startStamp, isStamped, observe, readObjectives, outcomeOf, outcomeNow, fallbackOutcome, tierOf } from './qlLaw.js';
+import { startStamp, isStamped, observe, readObjectives, outcomeOf, outcomeNow, fallbackOutcome, questTierOf } from './qlLaw.js';
 import { sheetFor } from './qlSheets.js';
-import { scaleGold, rewardTier, payOf, rollRewardChoice, rewardSeed, standingOf } from './qlRewards.js';
+import { scaleGold, rewardTier, payProfileOf, rollRewardChoice, rewardSeed, standingMovesOf } from './qlRewards.js';
 import { isGoldPieces } from '../inventory.js';
 import { createLineRunner } from './qlLineRunner.js';
 import { noteFirstUse } from '../tutorials.js';   // QL2: the Tutorials' Questlines page, the first quest stamped
@@ -54,7 +54,7 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
       if (!st) return null;
       if (sheetFor(quest?.questName)) noteFirstUse('questlines');   // QL2: the first quest that shows objectives
       const meta = questLists?.findQuestMeta?.(quest?.questName) ?? null;
-      st.tier = tierOf({
+      st.tier = questTierOf({
         minReq: meta?.scope === 'init' ? null : meta?.quest?.minReq ?? null,
         social: meta?.scope === 'social',
         level: ctx.playerEntity?.level ?? 1,
@@ -132,9 +132,9 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
       runner.ended(quest, outcome);   // QL12: a line's step - the line moves on, or offers it again
       if (outcome ? !outcome.failure : quest.questSuccess) history[String(quest.questName).toUpperCase()] = outcome?.id ?? 'done';
       if (!outcome) return null;
-      for (const st of standingOf(outcome)) ctx.changeReputation?.(st.factionId, st.amount, false);
+      for (const st of standingMovesOf(outcome)) ctx.changeReputation?.(st.factionId, st.amount, false);
       if (Number.isSafeInteger(outcome.legal) && outcome.legal !== 0) ctx.changeLegalRep?.(outcome.legal);
-      if (!payOf(outcome).gear || outcome.failure || !(quest.ql.paid || quest.questSuccess)) return null;
+      if (!payProfileOf(outcome).gear || outcome.failure || !(quest.ql.paid || quest.questSuccess)) return null;
       const tier = rewardTier(quest.ql.tier, outcome);
       const pieces = rollRewardChoice({ seed: rewardSeed(quest), level: ctx.playerEntity?.level ?? 1, tier, entity: ctx.playerEntity ?? null });
       if (!pieces.length) return null;

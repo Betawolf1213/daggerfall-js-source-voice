@@ -13,7 +13,7 @@ import { QuestMachine } from '../../../src/systems/quest/machine.js';
 import { setPref } from '../../../src/systems/uiPrefs.js';
 import {
   QUESTLINES_PREF, QL_STAMP, questlinesOn, startStamp, isStamped, freshState, readState, writeState, holds, readObjectives,
-  observe, outcomeNow, fallbackOutcome, tierOf, rankTier, reputationTier, levelTier, symName,
+  observe, outcomeNow, fallbackOutcome, questTierOf, rankTier, reputationTier, levelTier, symName,
 } from '../../../src/systems/questlines/qlLaw.js';
 import { receivedState, mergeSharedState } from '../../../src/systems/questlines/qlState.js';
 import { sheetFor } from '../../../src/systems/questlines/qlSheets.js';
@@ -201,11 +201,11 @@ test('QL1 the tier (section 5.1): a guild\'s rank, a reputation\'s band, a socia
   assert.deepEqual([0, 1, 2, 3, 4, 5, 6, 9].map(rankTier), [1, 1, 2, 2, 3, 3, 4, 4]);
   assert.deepEqual([10, 19, 20, 39, 40, 59, 60].map(reputationTier), [1, 1, 2, 2, 3, 3, 4]);
   assert.deepEqual([1, 6, 7, 13, 14, 20, 21].map(levelTier), [1, 1, 2, 2, 3, 3, 4]);
-  assert.equal(tierOf({ minReq: 5, level: 30 }), 3, 'a guild quest: its rank, whatever the level');
-  assert.equal(tierOf({ minReq: 1, level: 30, social: true }), 4, 'a social quest: the level');
-  assert.equal(tierOf({ minReq: 45, level: 1 }), 3, 'a reputation');
-  assert.equal(tierOf({ minReq: null, level: 15 }), 3, 'no row: the level');
-  assert.equal(tierOf({ minReq: 0, sheetTier: 4 }), 4, 'a sheet\'s own');
+  assert.equal(questTierOf({ minReq: 5, level: 30 }), 3, 'a guild quest: its rank, whatever the level');
+  assert.equal(questTierOf({ minReq: 1, level: 30, social: true }), 4, 'a social quest: the level');
+  assert.equal(questTierOf({ minReq: 45, level: 1 }), 3, 'a reputation');
+  assert.equal(questTierOf({ minReq: null, level: 15 }), 3, 'no row: the level');
+  assert.equal(questTierOf({ minReq: 0, sheetTier: 4 }), 4, 'a sheet\'s own');
 });
 
 // ---- the machine: the stamp at the one start door ----

@@ -203,10 +203,10 @@ export const lineStepOf = (questName) => BY_QUEST.get(String(questName ?? '').to
 export const lineQuestNames = () => [...BY_QUEST.keys()];
 
 /** What the service pays this line (net/questlineClaims.js), or null for a line it pays nothing. */
-export const serviceOf = (line) => QL_SERVICE_LINES[line?.id] ?? null;
+export const lineServiceOf = (line) => QL_SERVICE_LINES[line?.id] ?? null;
 
 /** A step's witness kind (net/questlineClaims.js QL_WITNESS_KINDS), or null for a step the client's quest alone decides. */
-export const witnessOf = (line, index) => serviceOf(line)?.witness?.[index] ?? null;
+export const witnessOf = (line, index) => lineServiceOf(line)?.witness?.[index] ?? null;
 
 /**
  * Does the line open for this player now? `probe` answers the three questions: `level()`, `lineDone(id)`, `online()`.

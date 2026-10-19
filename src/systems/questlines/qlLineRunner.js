@@ -13,7 +13,7 @@
 // when it ends well (the service looks for its receipt, and pays the title or the key). A claim the service could not
 // witness yet - a receipt not claimed, the network down - is asked again, a minute apart, a few times, and again at the
 // next start of the page. The line moves on the client's own quest either way: the service pays, it does not gate.
-import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, serviceOf } from './qlLines.js';
+import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf } from './qlLines.js';
 import { qlStepClaimed } from '../../net/questlineClaims.js';
 import { questlinesOn } from './qlLaw.js';
 
@@ -154,7 +154,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
           id: l.id, group: l.group, title: l.title(), lead: l.lead(), giver: l.giver(), state, steps,
           opens: !rec ? opensWords(l, probe) : state === 'waiting' && l.opens.online && !online() ? opensWords({ ...l, opens: { online: true } }, probe) : null,
           outcome: rec?.done ? last?.text ?? null : null,
-          honour: serviceOf(l)?.title ?? null,
+          honour: lineServiceOf(l)?.title ?? null,
         };
       });
     },
