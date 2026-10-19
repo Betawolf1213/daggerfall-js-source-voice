@@ -103,6 +103,11 @@ export function viewReach({ height, pitch, fovY, back = 0, far = Infinity }) {
   return Math.min(far, height / Math.tan(-top) - back);
 }
 
+/** PERF-TV: the host's record of its last count - what it counted (`gen`, the pixel `x`/`y`, the `radius`), the count
+ *  `n`, and OW-LEAD's `owed`, the pixels themselves (unbuiltAround's `out`). Made here, beside the count it keeps, so the
+ *  host holds one line of it (HOST-SPLIT, at the merge of LAYERED-GEAR). */
+export const unbuiltCount = () => ({ gen: -1, x: NaN, y: NaN, r: -1, n: 0, owed: [] });
+
 /** The pixels whose squares lie within `radius` (Chebyshev) of `center` that `isBuilt` says are not - the count the
  *  governor reads. LOAD-OWED: the host's `isBuilt` answers true for a pixel nothing is building, so the count is what the
  *  stream still owes (scenes/world.js travelViewGovern). OW-LEAD: `out`, when handed, is emptied and then gets each of

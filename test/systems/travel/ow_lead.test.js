@@ -16,7 +16,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { StreamingWorldState, worldCoordToMapPixel } from '../../../src/world/streamingWorld.js';
 import { TERRAIN_SIZE } from '../../../src/world/terrain/terrainSampler.js';
-import { createLoadGovernor, unbuiltAround, owedMetres, leadCap, TV_GOV_LEAD_S } from '../../../src/systems/travel/travelGovernor.js';
+import { createLoadGovernor, unbuiltAround, unbuiltCount, owedMetres, leadCap, TV_GOV_LEAD_S } from '../../../src/systems/travel/travelGovernor.js';
 import { threatCap, foePaced, foeRate } from '../../../src/systems/travel/travelThreat.js';
 import { foeHostile, foeAlerted } from '../../../src/systems/encounters.js';
 import { TRAVEL_VIEW_TEXT, travelWalkRate, TV_MOVE_ACTIONS } from '../../../src/scenes/travelView.js';
@@ -51,7 +51,7 @@ function rideHost(W, { buildS, mps }) {
     travelControlUI: { isShowing: true }, travelOptions: { state: { autopilot: {} } },
     travelView: { active: true, state: 'up' }, tvOwnsJourneys: () => true,
     worldTimeScale: timeScale, setWorldTimeScale: setTimeScale, resetTimeScale, createLoadGovernor, MAX_TIME_SCALE,
-    state, built, queue, unbuiltAround, StreamingWorldState, worldCoordToMapPixel, modes: null, walkMode: true, playerSpawned: true,
+    state, built, queue, unbuiltAround, unbuiltCount, StreamingWorldState, worldCoordToMapPixel, modes: null, walkMode: true, playerSpawned: true,
     player, cam: { pos: at },
     // a build takes the pump BUILD_S of real time, then publishes (buildPixelNow's single atomic set)
     buildPixel: (px, py) => new Promise((resolve) => { d.pending.push({ at: d.t + buildS, done: () => { built.set(`${px},${py}`, { px, py }); resolve(); } }); }),

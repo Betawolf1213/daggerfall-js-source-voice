@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { groundHit, canvasPoint, classifyPick, TV_PICK_MAX } from '../../../src/player/travelPick.js';
 import { planRoute, routeLegs, roadShare, edgeKind, ROUTE_COST, OPPOSITE_BIT, openStepBlocked, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE, routeGround, ROUTE_MARGINS } from '../../../src/systems/travel/travelRoute.js';
-import { createLoadGovernor, viewReach, unbuiltAround, stepDown, TV_GOV_HOLD_S, TV_GOV_CLEAR_S, TV_GOV_STEP, TV_GOV_SETTLE_S } from '../../../src/systems/travel/travelGovernor.js';
+import { createLoadGovernor, viewReach, unbuiltAround, unbuiltCount, stepDown, TV_GOV_HOLD_S, TV_GOV_CLEAR_S, TV_GOV_STEP, TV_GOV_SETTLE_S } from '../../../src/systems/travel/travelGovernor.js';
 import { createTravelOptions, readTravelOptionsSettings } from '../../../src/systems/travel/travelOptions.js';
 import { TRAVEL_OPTIONS_TEXT } from '../../../src/systems/travel/travelOptionsText.js';
 import { mapPixelWorldOrigin, MID_LO, P_SIZE } from '../../../src/systems/travel/travelPaths.js';

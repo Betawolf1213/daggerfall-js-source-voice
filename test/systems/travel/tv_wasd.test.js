@@ -11,7 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { travelWalkRate, TRAVEL_VIEW_TEXT, TV_MOVE_ACTIONS } from '../../../src/scenes/travelView.js';
-import { createLoadGovernor, unbuiltAround, TV_GOV_HOLD_S } from '../../../src/systems/travel/travelGovernor.js';
+import { createLoadGovernor, unbuiltAround, unbuiltCount, TV_GOV_HOLD_S } from '../../../src/systems/travel/travelGovernor.js';
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../../../src/systems/timeScale.js';
 import { foePaced, foeRate } from '../../../src/systems/travel/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
 import { travelDriveForward } from '../../../src/systems/travel/travelAutopilot.js';
@@ -76,7 +76,7 @@ function rig({ onRoad = false } = {}) {
     // on them (`loaded`), so the rig's `unbuilt` are owed, as a stream still building them owes them
     // OW-LEAD: the feet in the middle of pixel (100, 200), native (streamingWorld.js worldCoordToMapPixel's law)
     state: { terrainDistance: 3, loaded: { has: () => true }, worldCoords: () => ({ x: 100.5 * 32768, z: (499 - 200 + 0.5) * 32768 }) }, playerTravelPixel: () => ({ x: 100, y: 200 }), tvGroundGenNow: () => w.unbuilt.size,
-    unbuiltAround, built: { has: (k) => !w.unbuilt.has(k) }, StreamingWorldState,   // ETHER-OW: only what the world streams is owed a build
+    unbuiltAround, unbuiltCount, built: { has: (k) => !w.unbuilt.has(k) }, StreamingWorldState,   // ETHER-OW: only what the world streams is owed a build
     journeyThreatCap: () => ({ cap: Infinity }), journeySlowSaid: () => {},   // OW6: no enemy about (test/systems/travel/ow6_slowdown.test.js runs the cap)
   };
   return { w, g: mountGovernor(env) };

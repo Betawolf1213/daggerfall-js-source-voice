@@ -18,7 +18,7 @@ import { mountEtherChartWindow } from '../../../src/ui/etherChartWindow.js';
 import { TRAVEL_VIEW_BUTTON } from '../../../src/scenes/travelView.js';
 import { TRAVEL_VIEW_BUTTON as HELD_MAP_BUTTON } from '../../../src/ui/heldMap.js';
 import { StreamingWorldState } from '../../../src/world/streamingWorld.js';
-import { unbuiltAround } from '../../../src/systems/travel/travelGovernor.js';
+import { unbuiltAround, unbuiltCount } from '../../../src/systems/travel/travelGovernor.js';
 import { farPlaces, settlementPixels, TV_FAR_RANGE } from '../../../src/systems/travel/travelFarPlaces.js';
 import { nearDungeons, dungeonRows, spawnedPixels } from '../../../src/systems/travel/travelDungeons.js';
 import { dungeonModelSet } from '../../../src/systems/travel/travelDungeonModels.js';
