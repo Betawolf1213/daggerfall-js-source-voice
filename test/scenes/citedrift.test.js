@@ -1223,9 +1223,9 @@ test('CD8b: the C# members ROAD-G G4 names EXIST, and at the lines it cites', ()
   // QUOTE the line they name, so the quote and the number must agree.
   // MUTANT: any name or number below back to the one it replaced.
   // The walk spans the port, its tests and the bible; the records that
-  // QUOTE the retired name (this pin, Testing.md's row, the audit
+  // QUOTE the retired name (this pin, Testing.md's row - in the closed table since LEGIBLE 1b - the audit
   // records) are the only files allowed to carry it.
-  const quotes = (f) => f === 'test/scenes/citedrift.test.js' || f === 'bible/09-Testing/Testing.md' || /^bible\/01-Overview\/(?:[\w-]+\/)*Audit-\d+\.md$/.test(f);
+  const quotes = (f) => f === 'test/scenes/citedrift.test.js' || f === 'bible/09-Testing/Testing-Rows-2026-10-19.md' || /^bible\/01-Overview\/(?:[\w-]+\/)*Audit-\d+\.md$/.test(f);   // LEGIBLE 1b: Testing.md's row stands in the closed table
   for (const f of [...tracked('src'), ...tracked('test'), ...tracked('bible')].filter((f) => /\.(js|mjs|md)$/.test(f) && !quotes(f))) {
     assert.equal(/IsAlreadyPlaced/.test(read(f)), false,
       `${f} names IsAlreadyPlaced; DFU's guard is IsAlreadyInjected (GameObjectHelper.cs:978)`);
