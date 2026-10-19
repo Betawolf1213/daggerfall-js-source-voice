@@ -65,7 +65,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Cached dependencies
+        id: deps
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
+        if: steps.deps.outputs.cache-hit != 'true'
         run: npm ci
       # a scheduled run carries no inputs: the nightly's 500
       - name: Cross every course of band ${{ matrix.band }} with the real motor

@@ -50,9 +50,10 @@ import { JUDGE_VERSION } from './judge.js';
 import { rehomedPrint } from '../../src/systems/loot/lootRarity.js';   // AUDIT FB1018f L1-1: the one move a load's repair makes to a print
 import { LOCKED_SAID_MAX } from '../../src/net/realm/realmTradeLaw.js';   // AUTO-HOLD: the locked pieces an answer names - one number with the session's
 
-/** How long a claim waits for its holder's checkpoint before the holder's still having the piece proves it a copy - a
- *  checkpoint every two minutes, and one in flight when the claim was made. */
-export const DUPE_GRACE_S = 300;
+/** How long a claim waits for its holder's checkpoint before the holder's still having the piece proves it a copy - two
+ *  checkpoints, every five minutes (systems/online/onlineCheckpoint.js ONLINE_CHECKPOINT_MS, CHECKPOINT-5), and half of
+ *  one in flight: the span two and a half checkpoints were before it (AUDIT PLAN-1000 G9 - at 300 it was one). */
+export const DUPE_GRACE_S = 750;
 /** How many keys one statement asks about - D1 binds at most 100 a statement. */
 export const UID_CHUNK = 90;
 /** How many rows one INSERT writes: the four the rows share (?1-?4) and two of each row's own, under D1's hundred. */

@@ -3422,6 +3422,7 @@ net.conduct.respect,"Tratează-i pe toți cu respect. Fără hărțuire, bullyin
 net.conduct.sexual,"Fără remarci sexuale la adresa altor jucători și niciodată nimic sexual care implică minori."
 net.conduct.spam,"Fără spam, fără înșelătorii și fără să te dai drept membru al echipei."
 net.conduct.title,"Codul de conduită"
+net.gate.courtWatch,"Burning Court este plin - privești de la margine până se eliberează un loc."
 net.mod.ambiguous,"{count} jucători se numesc {name}. Nimeni nu a fost redus la tăcere."
 net.mod.chatAgain,"Poți vorbi din nou în chat."
 net.mod.muteRange,"O reducere la tăcere durează între 1 și {max} minute (o săptămână)."

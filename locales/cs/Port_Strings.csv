@@ -3422,6 +3422,7 @@ net.conduct.respect,"Chovej se ke všem s respektem. Žádné obtěžování, š
 net.conduct.sexual,"Žádné sexuální poznámky vůči ostatním hráčům a nikdy nic sexuálního, co se týká nezletilých."
 net.conduct.spam,"Žádný spam, žádné podvody a žádné vydávání se za členy týmu."
 net.conduct.title,"Kodex chování"
+net.gate.courtWatch,"Hořící dvůr je plný - sleduješ ho z okraje, dokud se neuvolní místo."
 net.mod.ambiguous,"{count} hráčů se jmenuje {name}. Nikdo nebyl ztlumen."
 net.mod.chatAgain,"Můžeš znovu chatovat."
 net.mod.muteRange,"Ztlumení je na 1 až {max} minut (jeden týden)."
