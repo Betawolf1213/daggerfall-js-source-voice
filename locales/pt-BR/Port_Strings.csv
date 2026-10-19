@@ -1618,6 +1618,8 @@ eg.vote.respiteHow,"Uma trégua tem sua própria palavra: R, ou /breach respite.
 eg.vote.respiteNone,"Nenhuma trégua está sendo pedida agora."
 eg.witness.watching,"Você observa {who} - saúde {pct}%."
 eg.witness.watchingName,"Você observa {who}."
+features.banthaJungle.note,"Bantha, de Lainlyn a Mournoth, se torna uma selva densa - árvores gigantes sobre a cabeça, palmeiras, e samambaias e folhas largas sob os pés - sob uma névoa úmida, mais espessa ao amanhecer e na chuva. Desativada, mantém suas matas originais."
+features.banthaJungle.title,"Selva de Bantha"
 features.blood.effect,"Tem efeito imediato; quantas marcas ficam, quando o jogo carregar de novo ou você entrar numa masmorra."
 features.blood.marks,"As marcas ficam"
 features.blood.note,"Manchas ficam no chão e nas paredes onde o sangue cai. Um golpe final forte o espalha mais longe, e um golpe pesado em você respinga algumas gotas na tela. O controle deslizante define a quantidade, de Leve a Matadouro; Desligado mantém o respingo clássico que some."
