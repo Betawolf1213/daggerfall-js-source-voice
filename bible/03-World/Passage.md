@@ -57,9 +57,10 @@ aimed at her, nothing paid, she still at her berth (AUDIT PASSAGE A7).
 
 A VOYAGE IS SAILED (AUDIT PASSAGE A1). The planner prices a road step under a sea step, so from her helm the cheapest
 way to a port on a coast road was to come ashore at once and walk - the passenger was set down at the quay they paid
-to leave. Asked for a voyage (`travelRoute.js` `sea.voyage`), the planner brings her ashore only within
-VOYAGE_LANDFALL_PX (3 map pixels, SEA-LANES' ROADSTEAD_PX - a port's roadstead) of the port, and a plan that never
-sails is refused ("Her master knows no way there by sea from here.").
+to leave. Asked for a voyage (`travelRoute.js` `sea.voyage` - every journey from a booked ship's helm asks one,
+`world.js` tvSeaMeans), the planner brings her ashore only within VOYAGE_LANDFALL_PX (3 map pixels, SEA-LANES'
+ROADSTEAD_PX - a port's roadstead) of the port, and a booking's plan that never sails is refused ("Her master knows no
+way there by sea from here.").
 
 ## The voyage
 
@@ -131,7 +132,10 @@ drafted in-session for the thirteen whole languages (`locales/README.md`).
 ## The four hosts
 
 `scenes/world.js` wires it (the passage host built once beside the shipyard's, its frame at the head of the sea's frame
-whatever the sea fight's switch says, the sea's door to it); `scenes/naval/navalHost.js` wires the sea's half
+whatever the sea fight's switch says, the sea's door to it) - the world's own doors handed as they are and the purse and
+the pack the player entity's own (`passageHost.js` reads `court.js` itself): at main's merge of 2026-10-19 LEGIBLE's
+logical-line ceiling found bootWorld 31 over with the first wiring, and the trim took it back under
+(`01-Overview/Host-Split.md`, PASSAGE's merge); `scenes/naval/navalHost.js` wires the sea's half
 (`passageBerths.js` - AUDIT PASSAGE D-M1: it grew createNavalHost's own scope, and moved out to its wiring; B5's word
 read and said, its roll and take-over asked, are lines of that wiring). `scenes/exterior.js`, the fixed-city bench, stands no
 harbour ships - no passage there. `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js` stand no sea.

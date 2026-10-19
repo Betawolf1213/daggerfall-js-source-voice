@@ -104,8 +104,8 @@
   {
     "name": "PASSAGE-host-paid-before-the-voyage-began",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "    const stood = [...deps.feet()], ride = deps.ride?.() ?? null;",
-    "new": "    deps.pay(d.fare); const stood = [...deps.feet()], ride = deps.ride?.() ?? null;",
+    "old": "    const stood = [...feet()], ride = deps.player.transportMode ?? null;",
+    "new": "    pay(d.fare); const stood = [...feet()], ride = deps.player.transportMode ?? null;",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -131,8 +131,8 @@
   {
     "name": "PASSAGE-host-the-player-left-at-her-helm",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "      deps.spawn(stood);\n",
-    "new": "",
+    "old": "      deps.player.spawn(stood[0], stood[1], stood[2]);\n",
+    "new": "\n",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -140,7 +140,7 @@
   {
     "name": "PASSAGE-host-a-list-with-the-mod-off",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "  function offer(ship) {\n    if (!csa()) { deps.say(PASSAGE_TEXT.noSail); return false; }",
+    "old": "  function offer(ship) {\n    if (!csa()) { say(PASSAGE_TEXT.noSail); return false; }",
     "new": "  function offer(ship) {",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
@@ -158,8 +158,8 @@
   {
     "name": "PASSAGE-host-given-up-for-good",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "    if (deps.route(summary, () => {})) { fails = 0; said = null; return; }",
-    "new": "    if (fails >= PASSAGE_RESUMES) return;\n    if (deps.route(summary, () => {})) { fails = 0; said = null; return; }",
+    "old": "    if (deps.route(summary, { voyage: true, noWay: () => {} })) { fails = 0; said = null; return; }",
+    "new": "    if (deps.route(summary, { voyage: true, noWay: () => {} })) { said = null; return; }",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -194,8 +194,8 @@
   {
     "name": "PASSAGE-host-her-hold-lost",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "if (goods) { const pack = deps.pack(); for (const it of held.splice(0)) addItem(pack, it); }",
-    "new": "if (goods) held.splice(0);",
+    "old": "if (goods) { const into = pack(); for (const it of held.splice(0)) addItem(into, it); }",
+    "new": "if (goods) { held.splice(0); }",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -430,8 +430,8 @@
   {
     "name": "AUDIT-PASSAGE-A1-the-voyage-unasked-by-the-world",
     "file": "src/scenes/world.js",
-    "old": "route: (s, noWay) => travelViewRouteTo(s, { voyage: true, noWay }),",
-    "new": "route: (s, noWay) => travelViewRouteTo(s, { noWay }),",
+    "old": "how: 'helm', voyage: !!b.charter }",
+    "new": "how: 'helm' }",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -493,8 +493,8 @@
   {
     "name": "AUDIT-PASSAGE-A5-the-hold-moved-before-the-laying-up",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "    if (!r.LayUpBoat(boat)) return false;\n    const held = r.laidUpHold?.(boat.uid) ?? [];\n    const goods = held.length > 0;\n    if (goods) { const pack = deps.pack(); for (const it of held.splice(0)) addItem(pack, it); }",
-    "new": "    const held = boat.Cargo?.Items ?? [];\n    const goods = held.length > 0;\n    if (goods) { const pack = deps.pack(); for (const it of held.splice(0)) addItem(pack, it); }\n    if (!r.LayUpBoat(boat)) return false;",
+    "old": "    if (!r.LayUpBoat(boat)) return false;\n    const held = r.laidUpHold?.(boat.uid) ?? [];\n    const goods = held.length > 0;\n    if (goods) { const into = pack(); for (const it of held.splice(0)) addItem(into, it); }",
+    "new": "    const held = boat.Cargo?.Items ?? [];\n    const goods = held.length > 0;\n    if (goods) { const into = pack(); for (const it of held.splice(0)) addItem(into, it); }\n    if (!r.LayUpBoat(boat)) return false;",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -520,7 +520,7 @@
   {
     "name": "AUDIT-PASSAGE-A7-the-thrown-route-s-journey-left",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "console.warn('[passage] her voyage would not begin', err); deps.stopJourney?.(); }",
+    "old": "console.warn('[passage] her voyage would not begin', err); stopJourney(); }",
     "new": "console.warn('[passage] her voyage would not begin', err); }",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
@@ -529,8 +529,8 @@
   {
     "name": "AUDIT-PASSAGE-A7-no-way-unsaid",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "sails = helm && deps.route(summary, () => deps.say(PASSAGE_TEXT.noWay));",
-    "new": "sails = helm && deps.route(summary, () => {});",
+    "old": "sails = helm && deps.route(summary, { voyage: true, noWay: () => say(PASSAGE_TEXT.noWay) });",
+    "new": "sails = helm && deps.route(summary, { voyage: true, noWay: () => {} });",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -555,11 +555,11 @@
   },
   {
     "name": "AUDIT-PASSAGE-B2-boarding-from-her-off-her",
-    "file": "src/scenes/world.js",
-    "old": " || naval?.boatInPlay?.() === b, busy:",
-    "new": ", busy:",
+    "file": "src/scenes/naval/passageHost.js",
+    "old": " || deps.naval?.()?.boatInPlay?.() === b;",
+    "new": ";",
     "tests": [
-      "test/scenes/naval/passageaudit.test.js"
+      "test/scenes/naval/passagehost.test.js"
     ]
   },
   {
@@ -628,8 +628,8 @@
   {
     "name": "AUDIT-PASSAGE-D-the-helm-word-every-try",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "{ if (said !== 'helm') { said = 'helm'; deps.say(PASSAGE_TEXT.helm(rec.to.name)); } return; }",
-    "new": "{ deps.say(PASSAGE_TEXT.helm(rec.to.name)); return; }",
+    "old": "{ if (said !== 'helm') { said = 'helm'; say(PASSAGE_TEXT.helm(rec.to.name)); } return; }",
+    "new": "{ said = 'helm'; say(PASSAGE_TEXT.helm(rec.to.name)); return; }",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -637,7 +637,7 @@
   {
     "name": "AUDIT-PASSAGE-D-book-twice",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "    if (charterBoat()) { deps.say(PASSAGE_TEXT.booking); return false; }\n    if (gold() < d.fare)",
+    "old": "    if (charterBoat()) { say(PASSAGE_TEXT.booking); return false; }\n    if (gold() < d.fare)",
     "new": "    if (gold() < d.fare)",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
@@ -700,8 +700,8 @@
   {
     "name": "AUDIT-PASSAGE-A5-the-goods-unsaid",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "    if (goods) deps.say(PASSAGE_TEXT.goods);",
-    "new": "",
+    "old": "    if (goods) say(PASSAGE_TEXT.goods);\n",
+    "new": "\n",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -709,8 +709,8 @@
   {
     "name": "AUDIT-PASSAGE-B3-the-course-word-unsaid",
     "file": "src/scenes/naval/passageHost.js",
-    "old": "deps.stopJourney?.(); deps.say(PASSAGE_TEXT.holds(rec.to.name)); idle = 0;",
-    "new": "deps.stopJourney?.(); idle = 0;",
+    "old": "stopJourney(); say(PASSAGE_TEXT.holds(rec.to.name)); idle = 0;",
+    "new": "stopJourney(); idle = 0;",
     "tests": [
       "test/scenes/naval/passagehost.test.js"
     ]
@@ -744,9 +744,9 @@
   },
   {
     "name": "AUDIT-PASSAGE-D-the-fare-never-deducted",
-    "file": "src/scenes/world.js",
-    "old": "    gold: () => totalGoldAmount(playerEntity), pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); }, pack: () => (playerEntity.items ??= []), forgetBoat:",
-    "new": "    gold: () => totalGoldAmount(playerEntity), pay: (n) => { surfacePlayer(); }, pack: () => (playerEntity.items ??= []), forgetBoat:",
+    "file": "src/scenes/naval/passageHost.js",
+    "old": "else { deductGold(playerEntity, n); surfacePlayer(); } };",
+    "new": "else { surfacePlayer(); } };",
     "tests": [
       "test/scenes/naval/passageaudit.test.js"
     ]

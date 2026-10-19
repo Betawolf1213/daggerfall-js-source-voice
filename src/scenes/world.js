@@ -9775,11 +9775,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     show: (w) => townTalk.showOverlay(w), changed: () => { fleetHost?.restat(); surfacePlayer(); } });
   // PASSAGE (2026-10-19, bible/03-World/Passage.md): a berth's friendly ship booked to a port of my choosing and sailed
   // there - her boat at her berth, the Overworld's crossing at her helm (OWS2) - and the passage over when I step off her
-  const passage = createPassageHost({ naval: () => (navalOn() ? naval : null), csa: () => (csaRuntime && csaOn() ? csaRuntime : null), ports: () => navalPortList(), here: () => navalPortHere(),
-    pixel: () => playerTravelPixel(), ether: () => { const p = playerTravelPixel(); return !!etherSea && inEther(p.x, p.y); }, place: (p) => tvPlaceSummary(p.px, p.py), canGo: () => travelViewCanGo(), route: (s, noWay) => travelViewRouteTo(s, { voyage: true, noWay }), stopJourney: () => travelOptions?.clearTravelDestination?.(),
-    journeyLive: () => !!travelOptions?.isTravelActive, aboard: (b) => csaRuntime?.state?.CurrentBoat === b || csaStandsOn(b) || naval?.boatInPlay?.() === b, busy: () => worldMoveBusy(), journeyTo: () => tvTrip.plan?.summary?.pixel ?? (tvTrip.plan ? 'spot' : null), feet: () => player.feetAt(), spawn: (f) => player.spawn(f[0], f[1], f[2]), ride: () => player.transportMode, remount: (m) => setTransportModeHere(m),
-    gold: () => totalGoldAmount(playerEntity), pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); }, pack: () => (playerEntity.items ??= []), forgetBoat: (uid) => naval?.forgetBoat?.(uid),
-    say: (l) => townTalk.say(l), show: (w) => townTalk.showOverlay(w) });
+  const passage = createPassageHost({ naval: () => naval, csa: () => (csaRuntime && csaOn() ? csaRuntime : null), ports: navalPortList, here: navalPortHere, pixel: playerTravelPixel,
+    ether: (p) => !!etherSea && inEther(p.x, p.y), place: (p) => tvPlaceSummary(p.px, p.py), canGo: travelViewCanGo, route: travelViewRouteTo, travel: () => travelOptions,
+    journeyTo: () => tvTrip.plan?.summary?.pixel ?? (tvTrip.plan ? 'spot' : null), standsOn: csaStandsOn, busy: worldMoveBusy, player, remount: setTransportModeHere, talk: townTalk });
   setHoldingsProvider({
     ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasTransport(TRANSPORT_HORSE), hasCart: () => hasTransport(TRANSPORT_SMALL_CART), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [], onPainted: () => { _hccDirty = true; },
       upkeep, pass: upkeepPass }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it; STEED1/WAGONS4: and keeps them (a kit's hour a skip, as a camp meal's)
@@ -30742,15 +30740,14 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   /** The trip is over when Travel Options no longer walks it - arrived, stopped, or replaced by a journey of its own. */
   const tvTripLive = () => !!tvTrip.plan && !!travelOptions?.route && travelOptions.route === tvTrip.plan.route;
   /** `roads` (TO-ROADS x OW-PATH): by the roads whatever the Path switch says - the map's first-person pick (tvMapForcesRoads). */
-  /** PASSAGE (AUDIT PASSAGE A1): `voyage` - a booked passage's: the planner brings her ashore only at the port
-   *  (travelRoute.js VOYAGE_LANDFALL_PX), and a plan that never sails is refused (`noWay` says so) - a coast road was the
-   *  cheaper way and the passenger was set ashore at the quay they paid to leave. */
+  /** PASSAGE (AUDIT PASSAGE A1): a booked ship's helm asks the planner for a voyage (tvSeaMeans' `voyage`: ashore only
+   *  at the port, travelRoute.js VOYAGE_LANDFALL_PX), and `voyage` - a booked passage's - refuses a plan that never sails
+   *  (`noWay` says so): a coast road was the cheaper way and the passenger was set ashore at the quay they paid to leave. */
   function travelViewRouteTo(summary, { roads = false, voyage = false, noWay = null } = {}) {
     const from = playerTravelPixel();
     // AUDIT DEEP T2-7: Hazelnut's bytes or none - the port's own generated network (Basic Roads off) is not his mod's, as
     // the follow key and the static's paths already hold (`source`): with none, the journey goes across country
     let means = tvSeaMeans();   // OWS2: a boat to cross the water in (at its helm, moored in reach, packed in the pack), or none
-    if (voyage && means) means = { ...means, voyage: true };   // PASSAGE: the planner's ask carries it (tvSeaAsk)
     const raw = terrainGen.roads();
     const roadNet = raw?.source === 'basic-roads' ? raw : null;
     // OW-PATH: FREE walks across country (never onto a road it does not need) - and a free trip with no way falls back
@@ -30960,7 +30957,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (!csaRuntime || !csaOn()) return null;
     if (csaRuntime.isSailing()) {
       const b = csaRuntime.state.CurrentBoat;
-      return tvSeaCrosses(tvSeaRig(b)) ? { start: 'sea', again: !!b.packable, boat: b, how: 'helm' } : null;
+      return tvSeaCrosses(tvSeaRig(b)) ? { start: 'sea', again: !!b.packable, boat: b, how: 'helm', voyage: !!b.charter } : null;   // PASSAGE: a booked ship's helm asks a voyage (tvSeaAsk)
     }
     const feet = player.pos;
     for (const b of csaRuntime.AllBoats) {
@@ -30979,8 +30976,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (means?.how !== 'moored' || !plan || plan.kinds.includes('sea')) return null;
     return replan();
   }
-  /** The planner's ask: where the traveller starts, whether a landfall packs the boat, where the journey ends. */
-  const tvSeaAsk = (means, goal) => (means ? { start: means.start, again: means.again && !means.voyage, goal, voyage: !!means.voyage } : null);   // PASSAGE: a voyage's - ashore at its port, never packed
+  /** The planner's ask: where the traveller starts, whether a landfall packs the boat, where the journey ends - and
+   *  PASSAGE: whether it is a booked ship's voyage (ashore at its port, never packed); the means' other fields ride
+   *  along unread (travelRoute.js planRoute reads `start`, `again`, `goal` and `voyage`). */
+  const tvSeaAsk = (means, goal) => (means ? { ...means, again: means.again && !means.voyage, goal } : null);
   /**
    * SHIP-SAIL (2026-09-28, Mac, of the Overworld taking the map's ship passage itself: "Shouldn't it already function
    * as such?"). The Overworld sails the player's own boats (OWS2); the map sells Daggerfall's passage. A PLACE across

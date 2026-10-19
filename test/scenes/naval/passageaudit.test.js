@@ -24,13 +24,16 @@ test('AUDIT PASSAGE B1/B4: A BOOKED SHIP IS NO CABIN OF MINE - the DFU bank ship
   assert.equal(hasSailingCabin(mine), hasSailingCabin({ ...booked, charter: null }), 'the same hull of mine as ever');
 });
 
-test('AUDIT PASSAGE B2/B3/B7 by source: the world host\'s doors - a boarding from her counts as aboard (the naval host\'s boatInPlay), a world\'s move holds her frame, her master is told where the journey goes, and a hull is offered only where this helm crosses a sea in her (mutants: boarding from her off her; the crossing unwired)', () => {
+test('AUDIT PASSAGE B2/B3/B7 by source: the world host\'s doors - her deck underfoot and the naval host itself (its boatInPlay: a boarding from her counts as aboard - passagehost.test.js), a world\'s move holds her frame, her master is told where the journey goes, and a hull is offered only where this helm crosses a sea in her (mutants: the crossing unwired)', () => {
   const world = read('src/scenes/world.js');
-  assert.match(world, /aboard: \(b\) => csaRuntime\?\.state\?\.CurrentBoat === b \|\| csaStandsOn\(b\) \|\| naval\?\.boatInPlay\?\.\(\) === b, busy: \(\) => worldMoveBusy\(\), journeyTo: \(\) => tvTrip\.plan\?\.summary\?\.pixel \?\? \(tvTrip\.plan \? 'spot' : null\),/);
+  assert.match(world, /const passage = createPassageHost\(\{ naval: \(\) => naval,[^]*?journeyTo: \(\) => tvTrip\.plan\?\.summary\?\.pixel \?\? \(tvTrip\.plan \? 'spot' : null\), standsOn: csaStandsOn, busy: worldMoveBusy,/);
   assert.match(world, /passage: \(ship\) => passage\?\.offer\(ship\), passageCrosses: \(h\) => tvSeaCrosses\(csa\.hullRig\?\.\(h\)\),/);
 });
 
-test('AUDIT PASSAGE (lane D) by source: my own gangway is the first press at a quay, the passage the next; the fare comes out of the purse by its own law - coins, then letters of credit (court.js deductGold) (mutants: the gangway not first; the fare never deducted)', () => {
+test('AUDIT PASSAGE (lane D) by source: my own gangway is the first press at a quay, the passage the next; the fare comes out of the purse by its own law - coins, then letters of credit (court.js deductGold), the player entity\'s own, the world handing no purse of its own (mutants: the gangway not first; the fare never deducted)', () => {
   assert.match(read('src/scenes/naval/navalHost.js'), /const p = e \|\| boatTrigger \|\| gangwayInReach\(\) \? null : passageShip\(\);[^\n]*\n {4}if \(p\) \{ deps\.passage\(/);
-  assert.match(read('src/scenes/world.js'), /const passage = createPassageHost\(\{[^]*?gold: \(\) => totalGoldAmount\(playerEntity\), pay: \(n\) => \{ deductGold\(playerEntity, n\); surfacePlayer\(\); \}/);
+  const host = read('src/scenes/naval/passageHost.js');
+  assert.match(host, /const gold = \(\) => Math\.max\(0, Math\.floor\(Number\(deps\.gold \? deps\.gold\(\) : totalGoldAmount\(playerEntity\)\) \|\| 0\)\);/);
+  assert.match(host, /const pay = \(n\) => \{ if \(deps\.pay\) deps\.pay\(n\); else \{ deductGold\(playerEntity, n\); surfacePlayer\(\); \} \};/);
+  assert.doesNotMatch(read('src/scenes/world.js'), /const passage = createPassageHost\(\{[^\n]*\n[^\n]*\n[^\n]*\b(gold|pay|pack):/, 'the world hands no purse - the player entity\'s own is read');
 });
