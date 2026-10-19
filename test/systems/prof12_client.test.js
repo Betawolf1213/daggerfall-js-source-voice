@@ -387,9 +387,9 @@ test('PROF12 book: a brew is kept as a craft - a lost answer asked again with th
 test('PROF12 wiring: the alchemy station an Alchemist\'s (open for trade) or a home\'s; the enchanting station a Mages Guild hall or a home\'s; the world brews there through the book (its fee, the Apothecary\'s town), transmutes at it by the smelt, mints a brew\'s potions, disenchants the pack\'s pieces; the item maker reads Enchanting\'s share; the service\'s routes stand', () => {
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /if \(interiorBuilding\.buildingType === BUILDING_TYPES\.Alchemist\) return interiorBuilding\.insideOpenShop === false \? null : \{ kind: 'shop', fee: ALCHEMY_FEE \};/);
-  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'alchemy'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018B HOME-BENCH, test/scenes/fb1018b_homebench.test.js): a home's stations serve its owner's account
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'alchemy'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018C HOME-BENCH, test/scenes/fb1018c_homebench.test.js): a home's stations serve its owner's account
   assert.match(m, /guildGroupOfFaction\(townTalk\?\.factionDict \?\? null, interiorBuilding\.factionId\) === GUILD_GROUPS\.MagesGuild\) return \{ kind: 'shop', fee: ENCHANT_FEE \};/);
-  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'enchant'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018B HOME-BENCH, test/scenes/fb1018b_homebench.test.js): a home's stations serve its owner's account
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'enchant'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018C HOME-BENCH, test/scenes/fb1018c_homebench.test.js): a home's stations serve its owner's account
   assert.match(m, /goldDiscountPct: \(\) => enchantGoldPct\(\),/);
   assert.match(src('src/ui/item/itemMakerWindow.js'), /enchantDecision\(this\.selected, this\.powers, this\.sideEffects, \{ gold: this\.gold\(\), discountPct: this\.goldDiscountPct\(\) \}\)/);
   const w = hostText('src/scenes/world.js');

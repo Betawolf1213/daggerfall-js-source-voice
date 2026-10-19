@@ -780,7 +780,7 @@ import { createDataPipeline } from './dataPipeline.js';
 import { createWorldModes } from './worldModes.js';
 import { setAmbientTextHost, tickAmbientText } from '../systems/ambientText.js';   // AT2: Ambient Text's one component - this host claims it and feeds it the frame
 import { OnlineSession, steadyNow, roomKeyFor, DEFAULT_SERVER, WORLD_PUBLISH_MS, WORLD_REPUBLISH_MS, FOES_MS, FOES_FULL_MS, FOES_STALE_MS, SHOWN_MOVE_HOLD_MS } from '../net/online.js';   // ONLINE1: the session; WORLD1: the room's memory; AUDIT 637 D7: the move hold, one law both ends
-import { createSeatClock } from '../net/seatLive.js';   // FIELD BUGS 2026-10-18b SEAT-LIVE: the named seat's patience, which this page's own absence never spends
+import { createSeatClock } from '../net/seatLive.js';   // FIELD BUGS 2026-10-18c SEAT-LIVE: the named seat's patience, which this page's own absence never spends
 import { pageWave } from '../net/reconnectWave.js';   // SCALE2c: a relay deploy's reconnect, spread by the hub's count
 import { quietFoesGate } from '../net/foesQuiet.js';   // SCALE2c: a full foes frame that says nothing, said once
 import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../net/oneSeat.js';   // ONE-SEAT: one tab of a player online - the browser's arm, beside the hub's

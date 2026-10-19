@@ -560,7 +560,7 @@ laid out for the phone's touch layer as for the desktop.
 - **The Professions tab** (character sheet): a left column in two groups (Gathering, Crafting) - each row the icon,
   name, rank, rank's name and a thin bar; the right pane for the chosen one - XP to the next rank, the specialisation
   cards (choose one), the unlocks by rank (tiers, recipes), today's harvests, and "Crafts above Journeyman: 1 of 2".
-  **How it is done** (TOOL-SAID, FIELD BUGS 2026-09-30b; CRAFT-HOWTO, FIELD BUGS 2026-10-18b): under the XP line, a
+  **How it is done** (TOOL-SAID, FIELD BUGS 2026-09-30b; CRAFT-HOWTO, FIELD BUGS 2026-10-18c): under the XP line, a
   paragraph says how the chosen profession is practised. A gatherer says how it gathers (`ui/professions/profPages.js`
   `GATHER_HOW` for Herbalism, Mining and Logging, Hunting's own line, `FISHING_HOW`, and Mining's ground line under its
   own). A craft says where its stations stand, that they are worked from the Stores page (Holdings > Stores), what
@@ -575,7 +575,7 @@ laid out for the phone's touch layer as for the desktop.
   `MASON_RECIPES`; a saw and a cure pay no XP. The anvil's own refining of raw ore is CRAFT1's chain (41.3). The brew's
   words say the pack as well as the Stores, since the brew reads both (BAG-CRAFT, `Materials-Bag.md` 14). The
   Tutorials' Crafting page (`10-UI/Tutorials.md`) is the same map in short. Pinned by
-  `test/ui/professions/fb1018b_crafthowto.test.js`; `tools/mutants/fb1018b_crafthowto.json` (23, all dead).
+  `test/ui/professions/fb1018c_crafthowto.test.js`; `tools/mutants/fb1018c_crafthowto.json` (23, all dead).
 - **The Stores tab**: a grid of materials with counts, each count split own / bought on its card; filters (Ores and
   Metals, Wood, Herbs, Food, Hides and Cloth, Stone, Gems, Essences, Spoils of War), a search box, sort by tier, name or count; a material's actions - **Withdraw to
   pack** (a quantity), and at a Notice Board **List** and **Deliver to a writ**. BAG1 (`Materials-Bag.md` 4): what is

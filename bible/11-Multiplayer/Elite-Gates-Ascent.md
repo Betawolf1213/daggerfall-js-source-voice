@@ -68,7 +68,7 @@ of its own storey alone, however near in plan. A shaft or a spell crosses the op
 refused only where the two stand stacked - a floor or a ceiling over the lower one's plan up to the higher one's own floor
 (`net/eliteGates/egWalkGraph.js` egStacked, over egFloorBetween). So Valkynaz Ilthys's banners, on the Council Rotunda's
 balconies 4 m over its court, are shot from the court as the laws before judged them, and never through a balcony's deck
-from under its rim (FIELD BUGS 2026-10-18b BANNER-SHAFT: every kind of blow was held to its storey, and the banners broke
+from under its rim (FIELD BUGS 2026-10-18c BANNER-SHAFT: every kind of blow was held to its storey, and the banners broke
 only from their own balconies).
 
 Floors stacked are at least 4 m apart (a body's height and the ceiling's thickness); a fall onto a floor of the way

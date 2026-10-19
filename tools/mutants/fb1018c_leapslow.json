@@ -5,7 +5,7 @@
     "old": "(m.slowFalling && !m.grounded)",
     "new": "(m.slowFalling && m.grounded)",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the report itself: a worn Slowfalling piece refuses every leap and dash on the ground"
   },
@@ -15,7 +15,7 @@
     "old": "(m.slowFalling && !m.grounded)",
     "new": "(m.slowFallin && !m.grounded)",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the Flying Kick goes from the air under the spell - KICK-AIR's refusal lost"
   },
@@ -25,7 +25,7 @@
     "old": "(this.slowFalling && !this.grounded)",
     "new": "(this.slowFalling && this.grounded)",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the gate lets the leap go and the motor refuses its flight: \"You cannot leap from here.\" from execute"
   },
@@ -35,7 +35,7 @@
     "old": "(this.slowFalling && !this.grounded)",
     "new": "(this.slowFallin && !this.grounded)",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the motor flies a technique launched in the air under the spell"
   },
@@ -45,7 +45,7 @@
     "old": "        if (this.techFlight && this.jumping) this.velY -= GRAVITY * dt;",
     "new": "        if (!this.techFlight && this.jumping) this.velY -= GRAVITY * dt;",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the flight glides: a 9 m Leap Strike lands at 12.9 m after 1.15 s, past its foe and off its strike's clock"
   },
@@ -55,7 +55,7 @@
     "old": "        if (this.techFlight && this.jumping) this.velY -= GRAVITY * dt;",
     "new": "        if (this.techFlight && this.jumpin) this.velY -= GRAVITY * dt;",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "the exemption never holds: the flight glides"
   },
@@ -65,7 +65,7 @@
     "old": "        if (this.techFlight && this.jumping) this.velY -= GRAVITY * dt;",
     "new": "        if (this.techFlight) this.velY -= GRAVITY * dt;",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "a flight cut short by a placement keeps its arc: the fall after it is never the spell's"
   },
@@ -75,27 +75,27 @@
     "old": "        if (this.techFlight && this.jumping) this.velY -= GRAVITY * dt;",
     "new": "        if (this.techFlight || this.jumping) this.velY -= GRAVITY * dt;",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "JUMP-SLOW's glide from a jump's apex lost under the spell"
   },
   {
     "name": "LEAP-SLOW-the-water-and-the-air-leave-the-flight-on",
     "file": "src/player/motor.js",
-    "old": "      this.techFlight = false;   // FB1018B LEAP-SLOW: and a technique's flight with it - a fall after is the slow fall's to glide\n",
+    "old": "      this.techFlight = false;   // FB1018C LEAP-SLOW: and a technique's flight with it - a fall after is the slow fall's to glide\n",
     "new": "",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "a levitation let go mid-flight drops on plain gravity - Jumping still stands from the launch"
   },
   {
     "name": "LEAP-SLOW-the-parkour-leap-a-technique-flight",
     "file": "src/player/motor.js",
-    "old": "    this.techFlight = false;   // FB1018B LEAP-SLOW: a parkour leap is its own flight - an eject from the hold a technique's was caught in glides under the spell\n",
+    "old": "    this.techFlight = false;   // FB1018C LEAP-SLOW: a parkour leap is its own flight - an eject from the hold a technique's was caught in glides under the spell\n",
     "new": "",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "an eject from the hang a technique's flight was caught in keeps the flight on: its descent never glides"
   },
@@ -105,7 +105,7 @@
     "old": "      this.techFlight = false;   // TECH1: a technique's flight ends on the ground\n",
     "new": "",
     "tests": [
-      "test/combat/fb1018b_leapslow.test.js"
+      "test/combat/fb1018c_leapslow.test.js"
     ],
     "why": "a jump after the landing is still the flight: its descent never glides"
   }

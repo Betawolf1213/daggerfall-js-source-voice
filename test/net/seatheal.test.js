@@ -13,7 +13,7 @@ import * as acorn from 'acorn';
 import { validFoeRecord } from '../../src/net/wire.js';
 import { renownFoeStruck, renownFoeDied } from '../../src/net/renownTracker.js';   // RENOWN1: the kill door's stamps, in the harness's scope
 import { reportPlayerKill } from '../../src/systems/playerKills.js';   // SET2: the kill door's third word, in the harness's scope
-import { createSeatClock } from '../../src/net/seatLive.js';   // PIN MOVED (FIELD BUGS 2026-10-18b SEAT-LIVE): the seat heard is the clock's - the page's own absence spends none of it
+import { createSeatClock } from '../../src/net/seatLive.js';   // PIN MOVED (FIELD BUGS 2026-10-18c SEAT-LIVE): the seat heard is the clock's - the page's own absence spends none of it
 
 const rd = (p) => readFileSync(new URL('../../' + p, import.meta.url), 'utf8');
 const D = rd('src/scenes/dungeonContext.js');

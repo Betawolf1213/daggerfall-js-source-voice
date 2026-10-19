@@ -431,7 +431,7 @@ export const TUTORIALS = Object.freeze([
     ],
   }),
   page({
-    // FB1018B CRAFT-HOWTO: the key opens the Professions page alone - the Stores page is the Holdings tab's since HOLDINGS
+    // FB1018C CRAFT-HOWTO: the key opens the Professions page alone - the Stores page is the Holdings tab's since HOLDINGS
     // (input.js's Professions lands `at: 'professions'`; AUDIT HOLDINGS C7 said so for the first harvest's line, not here)
     id: 'professions', group: 'livelihood', title: 'Professions', trigger: 'When you first gather something.',
     body: [
@@ -439,7 +439,7 @@ export const TUTORIALS = Object.freeze([
     ],
   }),
   page({
-    // FB1018B CRAFT-HOWTO (FIELD BUGS 2026-10-18b, MoonGeneral: "Write a bit more detailed piece about crafting in the
+    // FB1018C CRAFT-HOWTO (FIELD BUGS 2026-10-18c, MoonGeneral: "Write a bit more detailed piece about crafting in the
     // tutorial (doesn't have to be step for step, but something that helps new players know where to look)"): where the
     // stations stand - the shops the interior host's station questions answer (scenes/worldModes.js forgeHere ..
     // enchantHere), a joinery's bench (scenes/world.js workbenchHere), any fire (net/professionLaw.js COOK_FIRE) - and

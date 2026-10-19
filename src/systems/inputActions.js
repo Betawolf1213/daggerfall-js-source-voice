@@ -524,7 +524,7 @@ export function actionLive(action) {
  * the top one, so they share nothing with the world's keys below.
  */
 const g = (title, rows, mod = null) => Object.freeze({ title, mod, rows: Object.freeze(rows.map(([action, label]) => Object.freeze({ action, label }))) });
-/** FB1018B KEY-LOGBOOK (kvassdrit: "Function does not match description in keybinding menu"): THE TWO JOURNAL KEYS NAME
+/** FB1018C KEY-LOGBOOK (kvassdrit: "Function does not match description in keybinding menu"): THE TWO JOURNAL KEYS NAME
  *  THE WINDOW EACH SKIN OPENS. On Enhanced Plus both open the Chronicle (ui/chronicleDoor.js, PX24d) - L on its Quests,
  *  N on its Notes (MAC-K2); on Classic, DFU's logbook as it stands and on its Notebook page. The rows said only a
  *  classic word, so L read "Quest log" over a window headed Chronicle. */
@@ -554,7 +554,7 @@ export const ACTION_GROUPS = Object.freeze([
   ]),
   g('Windows', [
     ['Escape', 'Pause menu'], ['CharacterSheet', 'Character sheet'], ['Inventory', 'Inventory'], ['Status', 'Status'],
-    ['LogBook', journalKeyLabel('Quests', 'logbook')], ['NoteBook', journalKeyLabel('Notes', 'notebook')],   // FB1018B KEY-LOGBOOK
+    ['LogBook', journalKeyLabel('Quests', 'logbook')], ['NoteBook', journalKeyLabel('Notes', 'notebook')],   // FB1018C KEY-LOGBOOK
     ['AutoMap', 'Map'], ['TravelMap', 'Travel map'],
     ['QuickDial', 'Quick dial'], ['TravelView', 'Overworld (the travel view)'],
   ]),

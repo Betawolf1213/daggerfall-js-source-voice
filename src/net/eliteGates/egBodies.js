@@ -35,7 +35,7 @@ import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from '
 import { egZoneLandings, egFloorLess, egBurnsIn } from './egFloor.js';   // AUDIT EG V (lane1 #10): the fight's own zones in the set   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 import { egByHeight, egFeetY, egOneStorey, egStoreyY } from './egWalkGraph.js';   // THE ASCENT - HEIGHT: a blow on its own storey
-import { egStacked } from './egWalkGraph.js';   // FB1018B BANNER-SHAFT: a shaft or a spell refused another storey's body only through a floor
+import { egStacked } from './egWalkGraph.js';   // FB1018C BANNER-SHAFT: a shaft or a spell refused another storey's body only through a floor
 
 /** A body's role. */
 export const EG_ROLE = Object.freeze({ lord: 0, add: 1, obj: 2 });
@@ -374,7 +374,7 @@ export function egHitBody(F, spec, p, i, d, r, pose, now, seq = null, mult = 1, 
   const onFloor = egOnFight(spec, pose.x, pose.z, POSE_SLACK + 6, pose.y);   // THE ASCENT: by the member's feet
   if (!onFloor && gap > MELEE_REACH + POSE_SLACK + 4) return { got: 0, b: null };
   // THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, a blow reaches no body a storey over or under
-  // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach). FB1018B BANNER-SHAFT: a
+  // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach). FB1018C BANNER-SHAFT: a
   // swing reaches its own storey alone; a shaft or a spell crosses the open air to a body of another storey, and is refused
   // only where the two stand stacked (egStacked) - so Ilthys's banners on the Rotunda's balconies, 4 m over the court, are
   // shot from the court as they were before the law judged by height

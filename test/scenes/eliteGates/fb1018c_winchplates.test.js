@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b - WINCH-PLATES (Boar, #bug-reports, "Big bugs of the spires", item 7: "Corridor with winch plates is
+// FIELD BUGS 2026-10-18c - WINCH-PLATES (Boar, #bug-reports, "Big bugs of the spires", item 7: "Corridor with winch plates is
 // very confusing. It's said to hold winch plates, and they are not marked. I guessed that platforms near gate were winch
 // plates."): THE WINCH'S PLATES, MARKED. A Winch Rampart's portcullis rises only while `min(2, n)` members stand on its winch
 // plates (Elite-Gates.md section 8.3), the objective says "Hold the winch plates.", and the relay counts a member within
@@ -59,7 +59,7 @@ function frameOf(spec, E, now) {
 }
 const atPlate = (shapes, q) => shapes.filter((s) => s.kind === TELEGRAPH_KIND.disc && Math.hypot(s.x - q.x, s.z - q.z) < 1e-6);
 
-test('WINCH-PLATES (FIELD BUGS 2026-10-18b): A WINCH\'S PLATES ARE MARKED - in every Winch the law lays, through its trial each winch plate the room counts stands on the screen as a stood-on errand does: one gold disc of EG_TOUCH_M on its own surface, which the floor plan draws (the plates stand off the walkway\'s fight floor); the Siege-Walk, which has none, draws none; the closing, once the portcullis is up, none (mutants: the plates never drawn; drawn on no surface of their own, so cut away; short of the room\'s reach; drawn past the trial)', () => {
+test('WINCH-PLATES (FIELD BUGS 2026-10-18c): A WINCH\'S PLATES ARE MARKED - in every Winch the law lays, through its trial each winch plate the room counts stands on the screen as a stood-on errand does: one gold disc of EG_TOUCH_M on its own surface, which the floor plan draws (the plates stand off the walkway\'s fight floor); the Siege-Walk, which has none, draws none; the closing, once the portcullis is up, none (mutants: the plates never drawn; drawn on no surface of their own, so cut away; short of the room\'s reach; drawn past the trial)', () => {
   for (const { seed, h, spec } of ramparts('winch', 3)) {
     const { E, now } = woken(seed, h, spec);
     assert.equal(E.fight.pg.obj, 'winch', `seed ${seed} hall ${h}: the winch's errand`);

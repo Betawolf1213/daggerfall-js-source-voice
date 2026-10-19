@@ -5,7 +5,7 @@
     "old": "export const homeStationsServe = (home) => home?.mine === true;",
     "new": "export const homeStationsServe = (home) => home?.own === true;",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the report: the station asks whether THIS character owns the home while the door asks whether the account does"
   },
@@ -15,7 +15,7 @@
     "old": "export const homeStationsServe = (home) => home?.mine === true;",
     "new": "export const homeStationsServe = (home) => home?.mine !== true;",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "every visitor served and the owner's account refused"
   },
@@ -25,7 +25,7 @@
     "old": "  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));",
     "new": "  const stationOwnerHere = () => decorOwnerHere();",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the host's station gate as it shipped: the pieces' owner alone"
   },
@@ -35,7 +35,7 @@
     "old": "  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));",
     "new": "  const stationOwnerHere = () => decorOwnerHere() && (!privateVisitRoom && homeStationsServe(interiorHome));",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the account's clause narrows the owner's instead of widening it"
   },
@@ -45,7 +45,7 @@
     "old": "  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));",
     "new": "  const stationOwnerHere = () => decorOwnerHere() || (homeStationsServe(interiorHome));",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "a private visit served the stations decorOwnerHere refuses it"
   },
@@ -55,7 +55,7 @@
     "old": "  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));",
     "new": "  const stationOwnerHere = () => decorOwnerHere() || (privateVisitRoom && homeStationsServe(interiorHome));",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the account's other character refused everywhere but a private visit"
   },
@@ -65,7 +65,7 @@
     "old": "  function useDecorStation(piece) {\n    if (!stationOwnerHere()) {",
     "new": "  function useDecorStation(piece) {\n    if (!decorOwnerHere()) {",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the press refuses the account's other character in its own handle's name"
   },
@@ -75,7 +75,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the Stores page finds no forge in the account's home"
   },
@@ -85,7 +85,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "no workbench"
   },
@@ -95,7 +95,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "no loom"
   },
@@ -105,7 +105,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "no mason's bench"
   },
@@ -115,7 +115,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "no jeweller's bench"
   },
@@ -125,7 +125,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "no alchemy station"
   },
@@ -135,7 +135,7 @@
     "old": "      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };",
     "new": "      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the report's own: \"I wanna enchant thingies\" - no Disenchant at the account's enchanting station"
   },
@@ -145,7 +145,7 @@
     "old": "    if (interiorHome) return interiorHome.own;\n    const b = interiorBuilding;",
     "new": "    if (interiorHome) return interiorHome.mine;\n    const b = interiorBuilding;",
     "tests": [
-      "test/scenes/fb1018b_homebench.test.js"
+      "test/scenes/fb1018c_homebench.test.js"
     ],
     "why": "the wrong fix: decorOwnerHere widened, so the account's other character opens a cupboard whose things live in the owning character's save"
   }

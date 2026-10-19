@@ -367,7 +367,7 @@ import {
   realmDeedAt,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the house the realm gave a knight is theirs, never for sale to them
   homeFootprintM2,   // HOME-PRICE: the ground a house stands on
   homeVoteRows, homeVotePressable, homeVoteOfVerb, homeVoteChoices, homeVoteLines, isHomeVoteVerb,   // HOME-VOTE: the town's word on it, at its door
-  homeStationsServe,   // FB1018B HOME-BENCH: a home's stations serve its owner's account, as its door does
+  homeStationsServe,   // FB1018C HOME-BENCH: a home's stations serve its owner's account, as its door does
 } from '../systems/online/onlineHomes.js';
 import { homeDecorShown, homeVotedLine, homeVotesLine, homeVoteRefusalLine, decorStaysShunned, HOME_VOTE_GONE_LINE } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's decor stands for its insiders alone
 import { goldSum, accountWords } from '../systems/homeWords.js';   // AUDIT HOME-PRICE E4: a home's sums and the account they moved in
@@ -5001,7 +5001,7 @@ export function createWorldModes(host) {
     if (b.buildingType === BUILDING_TYPES.Ship) return ownsShip(playerEntity);
     return houseOwnedAt(b, b.buildingKey ?? 0);
   }
-  /** FB1018B HOME-BENCH: WHOSE THE ROOM'S STATIONS ARE - the pieces' owner's (decorOwnerHere), and in an online home every
+  /** FB1018C HOME-BENCH: WHOSE THE ROOM'S STATIONS ARE - the pieces' owner's (decorOwnerHere), and in an online home every
    *  character of its owner's account, whom its door lets in as the owner's (onlineHomes.js homeStationsServe); never on a
    *  private visit, as decorOwnerHere's first answer. Its storage, bed and decorator stay decorOwnerHere's. */
   const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));
@@ -5051,7 +5051,7 @@ export function createWorldModes(host) {
   }
   /** HOME-STATIONS (2026-09-27, Discord - Tabitha: "CRAFTABLE / PURCHASABLE CRAFT / GUILD STATIONS [Spellmaking,
    *  Alchemy, Enchanting] FOR HOMES / SHIPS"): A STATION PRESSED - its craft's own maker, the guild service's window
-   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone - FB1018B HOME-BENCH: any character
+   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone - FB1018C HOME-BENCH: any character
    *  of its owner's account (stationOwnerHere); the maker's own laws stand (the potion maker's ingredients, the spell
    *  maker's spellbook, what each charges). No guild is asked: the licence was paid when the piece was made a station. */
   function useDecorStation(piece) {

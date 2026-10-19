@@ -62,7 +62,7 @@
 // no shadow (OW-BIG's law), and an errand's numerals stand over the drawn head (egGivenAt). The hit target's reach (its
 // radius - the relay's bodyR), every sound, the telegraphs and the wire are the body's as before; the target's HEIGHT is the
 // drawn sprite's (the relay judges no height - a shot at the head you see meets him): the drawn size is this screen's alone.
-// FB1018B (2026-10-18, FIELD BUGS 2026-10-18b; Boar, #bug-reports): THE CHALLENGE'S RING OF FIRE drawn where the room stands it
+// FB1018C (2026-10-18, FIELD BUGS 2026-10-18c; Boar, #bug-reports): THE CHALLENGE'S RING OF FIRE drawn where the room stands it
 // (duelRing - only the motor was kept to it), A WINCH'S PLATES marked as the stood-on errands are (winchPlates), the open duel
 // said as one at n = 1, the Conquest's word saying what its banners do, and every beat's word past the fold's twelve (beats).
 //
@@ -104,9 +104,9 @@ import { egKindLook, EG_LEGION_KINDS } from '../../net/eliteGates/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../../net/eliteGates/egLords.js';
 import { EG_MARK_FIRE, EG_MARK_FROST, EG_TOUCH_X } from '../../net/eliteGates/egLords.js';   // AUDIT EG III (lane1 #4): the Touched marks and their weight - the lords' one home
 import { egLordPhase, moonShafts } from '../../net/eliteGates/egLords.js';   // AUDIT EG V (lane1 #13, #14): the phase cards; the Long Night's moon-shafts kept lit
-import { EG_DUEL_OPEN } from '../../net/eliteGates/egLords.js';   // FB1018B DUEL-RING: a Challenge met in the open (n = 1), said as one
-import { t } from '../../systems/textManager.js';   // FB1018B DUEL-RING: the open duel's words, in the player's language
-import { shRing } from '../../net/eliteGates/egShape.js';   // FB1018B DUEL-RING: the ring of fire's band
+import { EG_DUEL_OPEN } from '../../net/eliteGates/egLords.js';   // FB1018C DUEL-RING: a Challenge met in the open (n = 1), said as one
+import { t } from '../../systems/textManager.js';   // FB1018C DUEL-RING: the open duel's words, in the player's language
+import { shRing } from '../../net/eliteGates/egShape.js';   // FB1018C DUEL-RING: the ring of fire's band
 import { egHallCentre, egFireFallFlames, EG_FIRE_FALL } from '../../world/eliteGates/egHall.js';   // EG-ZH: the fire falls' flames
 import { GENERAL_FPS } from '../../render/flatAnimation.js';   // EG-ZH: DaggerfallBillboard's framesPerSecond - the fire falls' frames
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../../net/eliteGates/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
@@ -116,7 +116,7 @@ import { createSpireMix } from '../../systems/eliteGates/egMix.js';   // EG-G2: 
 import { EG_LOOK_BIT } from '../../world/eliteGates/egLook.js';   // EG-ZD: a cut feint's dashed fade
 import { TELL_FEINT_FADE } from '../../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
 import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../../net/eliteGates/egBrain.js';   // EG-ZP (sections 15 and 21): THE CENSUS'S VESTIGES, the relay's own law; Lifeline's window
-import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018B WINCH-PLATES: the reach the room counts a member on a winch plate within
+import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018C WINCH-PLATES: the reach the room counts a member on a winch plate within
 import { EG_TRAIL_MS } from '../../net/eliteGates/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
 import { egBlowLandsOn } from '../../net/eliteGates/egFair.js';   // THE ASCENT - HEIGHT: a blow lands on its own storey, on every screen as on the relay
 import { egFightView } from '../../net/eliteGates/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
@@ -178,7 +178,7 @@ export function egToldAt(bl, feet = null) {
  *  bodies one cast meets share their echo's number as they share the cast's. EG-ZS: the number is the law's (net/eliteGates/egVestige.js -
  *  the relay knows an Echo by it), said here as before. */
 export { EG_ECHO_Q };
-/** FB1018B DUEL-RING (section 13.3): THE RING OF FIRE's band, this far either side of its rim (m) - the rim the challenged is
+/** FB1018C DUEL-RING (section 13.3): THE RING OF FIRE's band, this far either side of its rim (m) - the rim the challenged is
  *  kept inside and the company out of (scenes/eliteGates/egClient.js ringKeep, EG_RING_PAD in). */
 export const EG_DUEL_RING_HALF_M = 0.5;
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
@@ -196,10 +196,10 @@ export const EG_SAY = Object.freeze({
   wake: () => '', fury: (n) => `${n || 'The lord'} rages!`, covenant: () => 'The Covenant presses.', covenantrest: () => 'The Covenant has spoken. This Redoubt is the last.',
   stunned: (n) => `${n || 'The lord'} is laid bare!`, scent: () => 'Hunted - run!', scorched: () => 'Grath is scorched!', phase: (n, t) => t, images: () => 'Mirror images! Only one is true.',
   examination: () => 'The Examination: stand on the runes in order!', cage: () => 'The Final Examination: break the seals!', passed: () => 'The Examination is passed.', failed: () => 'The Examination is failed.',
-  // FB1018B DUEL-RING: at n = 1 no ring rises nor falls (section 13.3) - the open duel's own words
+  // FB1018C DUEL-RING: at n = 1 no ring rises nor falls (section 13.3) - the open duel's own words
   challenge: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelOpen', 'A challenge in the open! Deal him a tenth of his health within 15 s.') : 'A challenge! The ring of fire rises.'),
   challengewon: () => 'The challenge is met.', challengeend: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelUnmet', 'The challenge goes unmet.') : 'The ring falls.'),
-  conquest: () => 'Banners claim the floor - it burns, and two standing ward the lord. Break them!',   // FB1018B WARD-BAR: what they do, said (section 13.4)
+  conquest: () => 'Banners claim the floor - it burns, and two standing ward the lord. Break them!',   // FB1018C WARD-BAR: what they do, said (section 13.4)
   muster: () => 'The Muster-Call! The balconies fill.', tithe: () => 'The Soul Tithe: lay your soul in a gem!', bare: () => 'The gems are full - the Cairn-Keeper is laid bare!',
   twinfell: (n) => `${n} falls - fell the other within fifteen seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
   chaining: () => 'Soul-chains bind you. Stay close!', grounded: () => 'The Mother of Dusk is dragged down!', anchors: () => 'The anchors rise again.', vanish: () => 'The Night-Stalker vanishes.',
@@ -707,7 +707,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     L.x = c.at[0]; L.y = c.at[1] + 2; L.z = c.at[2]; L.color[0] = color[0] * k; L.color[1] = color[1] * k; L.color[2] = color[2] * k;
     _lights.push(L);
   }
-  /** FB1018B DUEL-RING (section 13.3, the Last Armsmaster's Challenge and Garoth's Clan Muster: "a ring of fire (r 6) rises
+  /** FB1018C DUEL-RING (section 13.3, the Last Armsmaster's Challenge and Garoth's Clan Muster: "a ring of fire (r 6) rises
    *  around the two"): the ring the room stands (`pg.ring` - `[x, z, r]`) drawn on the fight floor under it as burning ground
    *  is, a band of fire EG_DUEL_RING_HALF_M either side of the rim, its line THE SPIRE DANGER EDGE - where the challenged are
    *  kept in and the company out (ringKeep). Before it, the room's word kept the motor to an unseen rim. */
@@ -718,7 +718,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
     _shapes.push(sh);
   }
-  /** FB1018B WINCH-PLATES (section 8.3, the Winch: "the portcullis rises only while `min(2, n)` members stand on its winch
+  /** FB1018C WINCH-PLATES (section 8.3, the Winch: "the portcullis rises only while `min(2, n)` members stand on its winch
    *  plates"): each winch plate the room counts (net/eliteGates/egBrain.js - `spots.winch`, a member within EG_TOUCH_M; section
    *  16.1's errand marks) drawn as a stood-on errand is (drawGround - gold, it holds) while the winch is still to raise, on its
    *  own disc's surface (the plates stand off the walkway's fight floor, so no floor's clip carries them). The objective named
@@ -989,7 +989,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const at = L ?? L0;
       play3(BOSS_CUES.growl, at ? toDungeon(at.x, (at.y ?? 0) + 3, at.z) : null);
     }
-    // FB1018B SAYS-PAST-TWELVE: the words after the last one said, found by the word itself - the fold keeps EG_SAYS_KEPT and
+    // FB1018C SAYS-PAST-TWELVE: the words after the last one said, found by the word itself - the fold keeps EG_SAYS_KEPT and
     // drops the oldest as each comes, so a count of them stood at twelve and nothing more was said for the rest of the hall
     // (one the fold has dropped: every word it keeps came after it)
     for (let k = lastSay ? F.says.indexOf(lastSay) + 1 : 0; k < F.says.length; k++) { const s = F.says[k], fn = EG_SAY[s.w]; const text = fn ? fn(s.n, s.t) : ''; if (s.w === 'scent' && !s.s?.includes(me())) continue; if (text) say(text); }
@@ -1132,7 +1132,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       live.clear();
       for (const b of F.bodies) liveBody(b, t);
       for (const g of F.gone) if (t - g.goneAt < FALL_MS) liveBody(g, t);
-      winchPlates(F, t);   // FB1018B WINCH-PLATES: the stood-on plates that are no body
+      winchPlates(F, t);   // FB1018C WINCH-PLATES: the stood-on plates that are no body
       for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
       for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
@@ -1208,7 +1208,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const m of F.mk) if (m[0] === meSub && m[2] > t) { if (m[1] === 6) challenged = true; if (m[1] === 5) caged = true; }
       const R = F.pg.ring;
       if (R && f) ring(R[0], R[1], R[2], challenged);
-      if (R) duelRing(R, t);   // FB1018B DUEL-RING: and drawn - the keep alone stood, unseen
+      if (R) duelRing(R, t);   // FB1018C DUEL-RING: and drawn - the keep alone stood, unseen
       if (caged) hold(250);
       // THE PLACE - a gust's push
       if (F.gust && F.gust.at !== gustSeen && t >= F.gust.at) { gustSeen = F.gust.at; if (standing) push(F.gust.dx, F.gust.dz, F.gust.v * (F.gust.ms / 1000)); }

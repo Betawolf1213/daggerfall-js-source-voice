@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b LEAP-SLOW (Warrgrim, "Please Fix Leaping Strike Weapon Techniques. items": "leaping strikes/ any
+// FIELD BUGS 2026-10-18c LEAP-SLOW (Warrgrim, "Please Fix Leaping Strike Weapon Techniques. items": "leaping strikes/ any
 // weapon ability that allows you to leap and perform an aoe attack have been completely disabled/broken ... 'you cannot
 // leap from here' ... It's broken the functionality of numerous legendary weapons ... the unarmed versions of this
 // technique as well, such as flying kick"; and the 2026-10-14 kick report's "flat ground ... nothing works"). The

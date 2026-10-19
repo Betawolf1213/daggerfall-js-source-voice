@@ -174,7 +174,7 @@ export const PLUS_DPAD_DEFAULTS = Object.freeze({
 /** What a d-pad slot may hold - the words the bindings window shows. null is "nothing". */
 export const DPAD_CHOICES = Object.freeze([
   [null, '\u2014'], ['SwitchHand', 'Swap hands'], [NEXT_MODE, 'Next mode (Steal/Grab/Info/Talk)'], ['AutoMap', 'Map'],
-  ['TravelMap', 'Travel map'], ['LogBook', 'Chronicle: Quests'], ['Transport', 'Transport'], ['Rest', 'Rest'],   // FB1018B KEY-LOGBOOK: the window it opens here (this window is Enhanced Plus only)
+  ['TravelMap', 'Travel map'], ['LogBook', 'Chronicle: Quests'], ['Transport', 'Transport'], ['Rest', 'Rest'],   // FB1018C KEY-LOGBOOK: the window it opens here (this window is Enhanced Plus only)
   ['CharacterSheet', 'Character sheet'], ['CastSpell', 'Spellbook'], ['RecastSpell', 'Recast spell'], ['Inventory', 'Inventory'],
   ['StealMode', 'Steal mode'], ['GrabMode', 'Grab mode'], ['InfoMode', 'Info mode'], ['TalkMode', 'Talk mode'],
   ['Jump', 'Jump'], ['Crouch', 'Crouch'], ['ReadyWeapon', 'Draw / sheathe'],
