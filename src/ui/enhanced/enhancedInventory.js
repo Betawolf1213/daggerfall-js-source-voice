@@ -2556,8 +2556,10 @@ function showTip(item, from, row) {
  *  PACK'S HOVER CARD for a window that is not the pack - the shop counter's both lists. `ctx` is that window's own
  *  `{ entity, getQuest }`, held for the card's build (and its late picture's) and never left behind; `side` 'local' for
  *  the player's own piece (it says Worn), 'shop' for the shelf's. The same card, the same comparison against what is worn. */
-export function showItemHover(item, ctx, row, side = 'shop') {
-  if (!item || !row || getPref('plusItemHover') === false) return;
+export function showItemHover(item, ctx, row, side = 'shop', { asked = false } = {}) {
+  // AUDIT SUGGESTIONS-1019 L4-3: a card ASKED for (a press, a phone's only way to see one) is shown whatever the hover
+  // setting says - the setting is about cards that come up under a passing pointer
+  if (!item || !row || (!asked && getPref('plusItemHover') === false)) return;
   hideTip();
   const before = deps;
   let built;
