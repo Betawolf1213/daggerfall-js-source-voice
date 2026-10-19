@@ -103,11 +103,11 @@ before it, on every client and on the worker, so Logging's trees stand where the
 
 | Storey | Law | Numbers (`JUNGLE`) |
 |---|---|---|
-| Canopy | a cell of 2 x 2 tiles (12.8 m) stands one tree somewhere in its middle 60%, unless a glade or a place's clearing opens it | 90% of whole cells; scale 0.80-1.18 |
+| Canopy | every other cell of 2 x 2 tiles (12.8 m) is a **site** - a quincunx on the world's lattice (`canopySite`, SPREAD) - and a site stands one tree somewhere in its middle half, unless a glade or a place's clearing opens it: the trunks about 16 m apart, never nearer than 9 m, and the crowns (16-19 m across) still meet | 90% of whole sites; scale 0.80-1.18 |
 | Emergents | of the canopy, the kapok's parasols and the mahogany's dome alone stand above the rest | 8%; scale 1.28-1.55 |
-| Understorey | young trees on a tile's own dice, thicker in a light gap (a cell with no canopy tree) than under a crown; never within 4.5 m (at the trunk's scale) of a canopy trunk in its cell or a neighbour's - a neighbour PIXEL's too, where its tile hashes stand it (LAY-7); none in a place's fields (LAY-3) | 10% a tile, 38% in a gap; scale 0.36-0.62; flame 50%, fig 25%, banyan 15%, mahogany 10% |
-| Mid storey | one of the rainforest's own Trees - World of Daggerfall's Tree records of archive 500, its palms (Low Poly Trees' 3D palms where that mod is on); none in a place's fields | 2.5% a tile |
-| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers (and under them the floor's carpet, The floor below) - denser in a glade's light (the glade's alone, never a place's pull); never within 2.2 m of a canopy trunk at that trunk's scale (1.8-3.4 m) | 50% a tile, 68% in a glade - one roll a tile under the young trees' and the palms', so a glade (always a gap) stands about 60% (LAY-11) |
+| Understorey | a cell's: one young tree at most, at its own place in the cell's middle 60% (SPREAD - so two never stand nearer than 5 m), thicker in a light gap (a place no canopy crown reaches: 9 m at the trunk's scale) than under a crown; never within 4.5 m (at the trunk's scale) of a canopy trunk in its cell or a neighbour's - a neighbour PIXEL's too, where its site's tile hashes would stand it, grown or not (LAY-7); none in a place's fields (LAY-3) | 16% a cell, 42% in a gap; scale 0.36-0.62; flame 50%, fig 25%, banyan 15%, mahogany 10% |
+| Mid storey | one of the rainforest's own Trees - World of Daggerfall's Tree records of archive 500, its palms (Low Poly Trees' 3D palms where that mod is on) - on the young trees' roll, in their place: a cell stands one of the two at most; none in a place's fields | 5% a cell |
+| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers (and under them the floor's carpet, The floor below) - denser in a glade's light (the glade's alone, never a place's pull); never within 2.2 m of a canopy trunk at that trunk's scale (1.8-3.4 m), nor on the tile a young tree or a palm stands on | 50% a tile, 68% in a glade (LAY-11) |
 
 **Species.** A canopy tree's species is drawn from weights (`canopySpecies`): a base (`JUNGLE.base`), a **grove** - each
 species' own value noise over 32-tile cells (a cell dividing 128, so the world's lattice - AUDIT BANTHA1 LAY-1: at 24
@@ -132,10 +132,18 @@ lean over its sides (0.4 m for the banyan to 3.1 m for the mahogany at scale 1 -
 is the measure whether or not the owner's files loaded (LAY-5/HOST-6: a client on Tree records cleared by the record's
 reach, and its Logging trees stood elsewhere than its room's).
 
-**Cost.** A pixel of whole grass wholly jungle stands about 3,000 canopy trees (240 of them emergents), 2,400 young
-trees and 8,300 palms and plants - about 13,700 flats, against Real forests' mean of about 6,200 (and DFU's scatter's
-9,200) on the same ground - laid on the terrain worker in about 11 ms warm (AUDIT BANTHA1 LAY-10, PERF-6: it was 16;
-the ordinary layout is about 3), never on the frame's thread. The list crosses to the main thread BY COLUMN
+**SPREAD (2026-10-19, the owner: "Lets spread out on the distance between trees").** The canopy stood a tree in every
+cell (12.8 m apart, as near as 5 m), and the young trees and palms each rolled a tile's dice (two as near as 1.3 m):
+5,700 trees a pixel, one to 118 m², the nearest neighbour 7 m at the median. The canopy now stands on every other cell
+in its middle half and the understorey one a cell at most: 2,600 trees a pixel, one to 250 m², the canopy's nearest
+trunk 16 m at the median (11 m at the hundredth) and any tree's 11 m (`test/world/junglespread.test.js`). The crowns
+still close overhead - a site's crown reaches 7-11 m and the next site's trunk stands about 16 m off - so the jungle
+stays a jungle overhead and opens at the eye.
+
+**Cost.** A pixel of whole grass wholly jungle stands about 1,350 canopy trees (100 of them emergents), 1,080 young
+trees and 8,200 palms and plants - about 10,600 flats, against Real forests' mean of about 6,200 (and DFU's scatter's
+9,200) on the same ground - laid on the terrain worker in about 8 ms warm (SPREAD: it was 13,900 flats and 11 ms;
+AUDIT BANTHA1 LAY-10, PERF-6: 16 before that; the ordinary layout is about 3), never on the frame's thread. The list crosses to the main thread BY COLUMN
 (`world/terrain/natureWire.js`: a float64 column a field, the buffers transferred, the objects made again - 2 ms
 against the 10 ms structured clone it was, PERF-2).
 
