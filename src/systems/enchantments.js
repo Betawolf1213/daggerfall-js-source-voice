@@ -793,8 +793,9 @@ const REGISTRY = new Map([
  *  (Equipped, Held: computeEnchantmentMods walks equippedEnchantedItems) or on the blow it strikes - save the two that
  *  weigh the piece itself (Feather Weight, Extra Weight: Enchanted, read wherever it lies), and Health Leech answers
  *  Used as a cost, not a power (AUDIT FB1018b L1-4: latent - every regular MAGIC.DEF row is one power of six kinds, Cast
- *  When Used, Held or Strikes, Vampiric, Absorbs Spells, Enhances Skill; how a mixed or weight-only piece should be
- *  based is the owner's). A piece no slot takes carries a worn power for nothing (loot.js createRegularMagicItem). */
+ *  When Used, Held or Strikes, Vampiric, Absorbs Spells, Enhances Skill; a piece with ANY row this answers false for
+ *  takes a base a slot takes - loot.js powersNeedWearing). A piece no slot takes carries a worn power for nothing
+ *  (loot.js createRegularMagicItem). */
 export const worksUnworn = (e) => ((REGISTRY.get(e?.type)?.flags ?? 0) & PAYLOAD.Used) !== 0;
 
 function applyRepMod(entity, param, amount) {

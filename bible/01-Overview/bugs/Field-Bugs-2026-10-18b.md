@@ -10,13 +10,13 @@ batch cold; each of its findings is written in below where it lands, marked with
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| T1 | SuperDaddy, "Leaping effect on store bought magic items": "Says it enhances dragonish, but appears on things you can't equip like wands ... Same case with magic items for sale that have the suffix "Venom spitting" but cast levitation" | The two names are crossed: Leaping casts Levitate and Venom Spitting enhances Dragonish (the language skill), both classic's own MAGIC.DEF. The defect is the base: a power that works only worn was drawn onto a base no slot takes | fixed (HELD-BASE); Leaping's and Venom Spitting's powers are the owner's call |
+| T1 | SuperDaddy, "Leaping effect on store bought magic items": "Says it enhances dragonish, but appears on things you can't equip like wands ... Same case with magic items for sale that have the suffix "Venom spitting" but cast levitation" | The two names are crossed: Leaping casts Levitate and Venom Spitting enhances Dragonish (the language skill), both classic's own MAGIC.DEF. The defect is the base: a power that works only worn was drawn onto a base no slot takes | fixed (HELD-BASE); Leaping's and Venom Spitting's powers kept, classic's |
 | T2 | cmagoun, "Minor: Spellbook -- Clicking a spell returns you to the top of a spell list" (BioGud: "same with magic items salvaging") | The enhanced book drew every press from nothing, past the house's one repaint, and its list and page shared one scroll; the Chronicle the same. Every salvage window checked keeps its place | fixed (SPELL-SCROLL); the salvage case not reproduced |
 | T3 | Jigglehimmer, "Night Mothers Embrace Legendary does not function": "Imprint: Sweet Mother's Kiss (of The Night Mother's Embrace) - +50% to foes under 25%" | It works on an ordinary foe and always did. On every body the relay runs (the Warden, an Elite Breach's foes, the Remnant, the serpent) the stand-in's placeholder health read as whole | fixed (RELAY-SHARE); where the player tried it is not known |
 | T4 | Aspidichelon, "Usable items hotkeys do not function in dungeons": "1-9 works outside, but not in dungeons" | The hotbar takes the digits ahead of every window unless the HUD's last frame said paused; underground no frame says so while a window stands | fixed (DUNGEON-DIGITS) |
 | T5 | Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": imps that won't die, a vampiric heal off them; a gate's keeper unseen while its AOE showed | The imps are a span's Harriers, which the relay refuses to be struck from a platform (by design); the screen showed the blow and healed off a stand-in nothing empties | fixed (TURNED-BLOW, VAMPIRIC-WARD); the unseen keeper not proven (UNSEEN-KEEPER) |
 | T6 | æther, "Collection: Broken world objects": the sea north-east of Tlactrn Manor, Tunmont docks, a bush in a house wall at Penwall Derry, a rock in Ipsmoth | Two found in our own code; the sea's a mod's dead refusal; the docks not found | fixed (HOUSE-BUSH, ROCK-SMEAR, WOD-SEA-TEST - Mac: "Yes fix WOD"); the docks open |
-| T7 | CC/Astro, "Smithing stuck at 50": "literally 1xp off of levelling up but everything I craft gives me 0xp" | The crafter's limit (Professions-Arc 3.2, Mac's decision): two crafts past Journeyman stop every other one XP short of 51. No word said it, and the station's XP line was another law than the service's credit | the limit said, the line the service's (CRAFT-LIMIT-SAID); letting a craft go back is the owner's call |
+| T7 | CC/Astro, "Smithing stuck at 50": "literally 1xp off of levelling up but everything I craft gives me 0xp" | The crafter's limit (Professions-Arc 3.2, Mac's decision): two crafts past Journeyman stop every other one XP short of 51. No word said it, and the station's XP line was another law than the service's credit | the limit said, the line the service's (CRAFT-LIMIT-SAID); a craft is not let go back |
 
 ## HELD-BASE: a held power is minted on a piece a slot takes (T1)
 
@@ -45,13 +45,26 @@ Wand, a Silent Holy Tome). An artifact, a quest's piece, a made Wand and a froze
 a piece already held: AUDIT FB1018b L1-1 took out the load's repair this fix first carried (a save's such piece moved to
 the Amulet), because a held piece's print is its `templateIndex:material` (`server-account/src/judge.js` ledgerPrintOf)
 and the realm ledger reads a print that moved as forged (`server-account/src/ledger.js` ledgerStep) - a law hold on
-every character that held one. The mint alone is mended. A departure (`01-Overview/Port-Ledger.md` section A, HELD-BASE), the owner's to review. THE
+every character that held one. The mint alone is mended. A departure (`01-Overview/Port-Ledger.md` section A, HELD-BASE), kept (DECIDED, below). THE
 FOUR HOSTS: none touched; every host mints through createRegularMagicItem.
 
-OPEN, for the owner. The pieces already held keep their Wand or tome: mending them needs the realm ledger to take
-a base move as no forgery, an anti-cheat change. Found and left with it: RARITY-WEAR's own save repair (a 140 base to
-133, in `save.js` repairItemLists) moves the print the same way for a piece held since the ledger went live. Leaping's Levitate (4 -> 38 would be Jumping) and Venom Spitting's Dragonish are classic's data, and
-changing either is a design call; no spell in SPELLS.STD spits venom. The item maker still lets a player put a held power
+DECIDED (Mac, 2026-10-19: "Stop with the decisions for me", of every call this batch and its audit left open):
+- **The departure stands** as built, and HOUSE-BUSH's with it.
+- **The realm ledger takes the one move a load's repair makes.** RARITY-WEAR's repair (a rolled Wand to the Amulet, in
+  `save.js` repairItemLists) moved a print the same way: a Wand the service held through it - a guild vault's, a
+  market's - came back on its old print, the taker's load moved it, and the next checkpoint read the honest piece as
+  forged. `lootRarity.js:"export function rehomedPrint(was, now) {"` says whether a print moved as the repair moves it
+  (the group's base no slot takes to its home, the material kept), and `ledger.js` ledgerStep takes it as the piece and
+  reprints its row; every other print on a key is forged, as ever.
+- **The pieces already held are not mended.** They keep their price, and sell; moving them on load needs the ledger to
+  take a religious item's move too, deployed before any client makes it - the client and the service deploy side by
+  side on a merge.
+- **A mixed piece takes a wearable base**: a piece with a Used cast and a worn power is redrawn as a held power's is
+  (`loot.js` powersNeedWearing: any row worn), losing neither half. No regular MAGIC.DEF row is mixed, so no draw moves.
+- **Leaping's Levitate and Venom Spitting's Dragonish stay classic's** (4 -> 38 would be Jumping; no spell in SPELLS.STD
+  spits venom): the report's two names were crossed, not wrong.
+
+The item maker still lets a player put a held power
 on a Wand, as DFU's does. The "Holy Tome of Venom Spitting" in a usable list (T4's screenshot) did not reproduce: the U
 window lists only a Cast When Used piece. What would prove it: that window and the piece's "Item powers:" line or saved
 `enchantments`.
@@ -59,8 +72,8 @@ window lists only a Cast When Used piece. What would prove it: that window and t
 Why no test saw it: `magicitems.test.js` pinned the group routing verbatim, and RARITY-WEAR's pins took "DFU's own
 wands, Use a cast" on trust.
 
-Pins: `test/systems/loot/fb1018b_heldbase.test.js` (7; one pins the ledger's word on a load). Mutants:
-`tools/mutants/fb1018b_heldbase.json` (18, all dead).
+Pins: `test/systems/loot/fb1018b_heldbase.test.js` (8; two pin the ledger's word on a load). Mutants:
+`tools/mutants/fb1018b_heldbase.json` (23, all dead).
 
 ## SPELL-SCROLL: a pick keeps the book's list where it was, and the list scrolls in its own column (T2)
 
@@ -377,8 +390,8 @@ through to "with the first-time bonus", and at 99,800 a first the top ate was sa
 languages named a craft "a made item" in the rule (bg, cs, it, ro, ru) and de "Arbeiten" in the count; each now the
 house's word for a craft.
 
-OPEN, for the owner: whether a craft may be let go back to 50 (as a specialisation is changed). Not built: it changes
-3.2.
+DECIDED (Mac, 2026-10-19: "Stop with the decisions for me"): a craft is not let go back to 50 - 3.2's limit stands, and the tab says it before a second craft
+passes 50.
 
 THE FOUR HOSTS: `world.js` wired (`world.js:"profBook.limit(rec?.profession)"`, the line edited, bootWorld at its
 ceiling). `worldModes.js`, `exterior.js` and `dungeonContext.js` build no station or craft word. Left: the brew's,
@@ -407,7 +420,8 @@ refusal never fired, in DFU or here, and a WoD site stood on any sea pixel its l
 ocean rocks", 2026-10-02, whose fix let a ship meet them rightly and left them standing). Which of the two stood off
 Tlactrn Manor is still not proven - the reporter's map pixel would say. The WoD half is closed for the low sea (a WOODS
 height of 2 or less); a sea pixel at 3 to 5, which the port's water still reads as sea (its line is 5, the sea floor 3.4),
-keeps its sites as the mod's own test does - not measured here (WOODS is ARENA2's).
+keeps its sites as the mod's own test does - not measured here (WOODS is ARENA2's). DECIDED (Mac, 2026-10-19: "Stop with the decisions for me"): the mod's line
+is kept; no report shows a site there.
 
 **WOD-SEA-TEST** (`src/world/worldOfDaggerfall/wodLocationLoader.js` pickState, `src/scenes/pixelBuild.js`; Mac, given the
 choice: "Yes fix WOD"). FIXED, a departure (`01-Overview/Port-Ledger.md` section A): the arm asks the region the PIXEL

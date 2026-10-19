@@ -31,12 +31,12 @@ merged.
 
 | Id | Finding | Verdict |
 |---|---|---|
-| L1-1 | HELD-BASE's load repair moved a held piece's base, and with it its ledger print (`templateIndex:material`, `judge.js` ledgerPrintOf); the realm ledger reads a print that moved as forged (`ledger.js` ledgerStep) - a law hold on an honest character at its next checkpoint. Reproduced on a real-shape pre-fix tome: `271:-` before the load, `133:-` after, `forged: [its uid]` | FIXED by taking the repair out: the mint alone is mended, a piece already held keeps its base. Pinned on the real ledger (stamped, checkpointed, loaded: its print unmoved, nothing forged). Mending held pieces needs the ledger to take a base move - an anti-cheat change, left to the owner. Found and left with it: RARITY-WEAR's older 140-to-133 repair has the same gap for a piece held since the ledger went live |
+| L1-1 | HELD-BASE's load repair moved a held piece's base, and with it its ledger print (`templateIndex:material`, `judge.js` ledgerPrintOf); the realm ledger reads a print that moved as forged (`ledger.js` ledgerStep) - a law hold on an honest character at its next checkpoint. Reproduced on a real-shape pre-fix tome: `271:-` before the load, `133:-` after, `forged: [its uid]` | FIXED by taking the repair out: the mint alone is mended, a piece already held keeps its base. Pinned on the real ledger (stamped, checkpointed, loaded: its print unmoved, nothing forged). Held pieces are not mended (decided). RARITY-WEAR's older 140-to-133 repair had the same gap for a Wand the service held through it: FIXED - the ledger takes that one move as the piece (`lootRarity.js` rehomedPrint), pinned |
 | L1-2 | The Mace of Molag Bal still drained Strength or magicka off a warded blow (VAMPIRIC-WARD's sibling): 20 blows into the Warden's ward gave +62 Strength | FIXED: `artifactEffects.js`'s guard reads the ward; pinned beside VAMPIRIC-WARD |
 | L1-3 | Nothing pinned the redraw's and the armour fallback's arguments (the other gender, level 1): three survivors | FIXED: pinned, recorded, dead |
-| L1-4 | `worksUnworn` was tested on 6 of 27 kinds: Feather Weight and Extra Weight alone read as needing wearing, Health Leech's Used flag (a cost) as working unworn, a mixed Used-and-held row stays on a Wand. Latent - MAGIC.DEF's regular rows carry none of these | FIXED: the whole table pinned (`CastWhenUsed`, `HealthLeech`, `SpecialArtifactEffect` work unworn), the comment corrected; a mixed row keeps its base, pinned as it stands - whether it should is the owner's |
+| L1-4 | `worksUnworn` was tested on 6 of 27 kinds: Feather Weight and Extra Weight alone read as needing wearing, Health Leech's Used flag (a cost) as working unworn, a mixed Used-and-held row stays on a Wand. Latent - MAGIC.DEF's regular rows carry none of these | FIXED: the whole table pinned (`CastWhenUsed`, `HealthLeech`, `SpecialArtifactEffect` work unworn), the comment corrected; a mixed row takes a wearable base (decided; `powersNeedWearing`: any row worn), pinned |
 | L1-5 | Nothing pinned the repair's count or its reach past the pack | MOOT: the repair is gone (L1-1), its records with it |
-| L1-6 | HELD-BASE's ledger row stands in section A ("Approved departures") but says "the departure itself is his to review" | OPEN for the owner before merge; HOUSE-BUSH's row now says the same (L6-2) |
+| L1-6 | HELD-BASE's ledger row stands in section A ("Approved departures") but says "the departure itself is his to review" | DECIDED: both departures kept as built (Mac, 2026-10-19: "Stop with the decisions for me") |
 | L1-7 | The record's "c4fa0b1, 2017" cannot be checked here (no DFU history); the old repair test's "pre-fix" tome was an armour mint relabelled | NOTED; the ledger pin uses the real shape (no material) |
 | L2-1 | A key on an ancestor pane is load-bearing (the grimoire dress's Chronicle scrolls its `.px-qdetail` inside the keyed `.px-body`) and nothing pinned it | FIXED: pinned (same key keeps the child at 70, another puts it at 0), its mutant dead |
 | L2-2 | After a delete the next spell inherited the deleted one's page scroll: the page was keyed by its row, which a delete keeps | FIXED: keyed by the spell's own index (a rename keeps the page, a delete misses); pinned |
@@ -73,7 +73,7 @@ merged.
 | L5-8 | No test rendered a new row in another language | FIXED: German and Russian rendered through formatMessage (the lists, both arms of the rule, Master's word, the ceiling) |
 | L5-9 | Craft and rank names stay English in every language | NOTED: the older convention (`professionName`, `rankName`), not this slice's |
 | L6-1 | Testing.md's `fb1015f_firstcraft` row described its pin from before it moved | FIXED |
-| L6-2 | HOUSE-BUSH's ledger row had one cell and named no approval | FIXED: the row as HELD-BASE's, the departure the owner's to review |
+| L6-2 | HOUSE-BUSH's ledger row had one cell and named no approval | FIXED: the row as HELD-BASE's, its approval named |
 | L6-3 | The sea refusal was written wider than the code (the sea without its height; the coastal shore unsaid) | FIXED with L4-5 |
 | L6-4 | The patch notes' "an Amulet with the same name" was false (the stored name's `%it` fills from the new base) | MOOT: the repair is gone (L1-1), the line with it |
 | L6-5 | "Beside it, on desktop and phone": on a phone the page stands below the list | FIXED in the patch notes |
@@ -85,13 +85,14 @@ merged.
 
 ## After
 
-Tests: the eleven `fb1018b_*` files hold 72 (44 before) - `heldbase` 7, `spellscroll` 8, `relayshare` 9,
+Tests: the eleven `fb1018b_*` files hold 73 (44 before) - `heldbase` 8, `spellscroll` 8, `relayshare` 9,
 `dungeondigits` 5, `turnedblow` 9, `vampiricward` 6, `unseenkeeper` 2, `housebush` 5, `rocksmear` 5, `craftlimit` 13,
-`wodsea` 3; and `fb1004e_padarrange` 9 (8). Mutants: `tools/mutants/fb1018b_*.json` 262 records (161 before), 256 dead
+`wodsea` 3; and `fb1004e_padarrange` 9 (8). Mutants: `tools/mutants/fb1018b_*.json` 267 records (161 before), 261 dead
 and 6 equivalent as recorded (L4-7); older records the fixes moved, re-aimed by content and dead, in `audit29`, `craft3`,
 `egz_state`, `law9_height`, `prof3`, `prof4`, `prof12`, `schools`, `serpentset`, `tech1`.
 
-Code: `loot.js` and `save.js` (the load's repair out), `artifactEffects.js` (the Mace); `domRepaint.js` (the path found,
+Code: `loot.js` and `save.js` (the load's repair out, a mixed piece's base), `lootRarity.js` and
+`server-account/src/ledger.js` (the load's one move taken), `artifactEffects.js` (the Mace); `domRepaint.js` (the path found,
 not mapped), `enhancedSpellbook.js` (the page's key), `input.js`, `touch.js`, `gamepadInput.js` and `enhancedHotbar.js`
 (one pause); `egBodies.js`, `egLords.js`, `egLink.js`, `egLegion.js`, `wire.js`, `egFight.js`, `arcanePowers.js`,
 `enchantments.js`, `sigilSetPowers.js`, `techniqueBlow.js`, and `dungeonContext.js` (existing lines only); `rmbFlats.js`
@@ -100,10 +101,10 @@ not mapped), `enhancedSpellbook.js` (the page's key), `input.js`, `touch.js`, `g
 rows mended). No host grew: `bootWorld` stands at its ceiling. The relay moved to `world219` - TURNED-BLOW had changed
 its bundle under world218's name (`test/net/relayversion.test.js` red since), and L3's wake, storey and radius are in it.
 
-OPEN, for the owner: the HELD-BASE and HOUSE-BUSH departures (L1-6); mending pieces already held - it needs the realm
-ledger to take a base move, and RARITY-WEAR's older repair has the same gap (L1-1); a mixed Used-and-held row's base
-(L1-4); a sea pixel at WOODS 3 to 5 (L4-5); with the record's own: Leaping's and Venom Spitting's powers, and whether a
-craft may be let go back to 50.
+DECIDED (Mac, 2026-10-19: "Stop with the decisions for me", of every call left open here): the HELD-BASE and HOUSE-BUSH departures kept as built (L1-6); the realm
+ledger takes RARITY-WEAR's one load move as the piece, and pieces already held are not mended (L1-1); a mixed
+Used-and-held row takes a wearable base (L1-4); a sea pixel at WOODS 3 to 5 keeps the mod's line (L4-5); Leaping's
+and Venom Spitting's powers stay classic's; a craft is not let go back to 50.
 
 Found and left: `egz_legion.json`'s EGZ-the-divers-dont-wait survives, on main too (L6-8); the enhanced HUD paints under
 a street-slot window over ?world's dungeon arm (L2-6); pose lag at a platform's edge (L3-8); the grimoire dress's phone

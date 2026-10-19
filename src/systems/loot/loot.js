@@ -335,9 +335,11 @@ function magicItemBase(magicItem, playerLevel, gender, rolls) {
 }
 
 /** HELD-BASE (FIELD BUGS 2026-10-18b, SuperDaddy: "appears on things you can't equip like wands"): POWERS THAT WORK
- *  WORN ALONE - a piece has live rows and none of them works off the body (enchantments.js worksUnworn: no Used
- *  payload). MAGIC.DEF's own: Cast When Held, Absorbs Spells and Enhances Skill. */
-export const powersNeedWearing = (rows) => rows.length > 0 && !rows.some(worksUnworn);
+ *  WORN - a piece has a live row that does not work off the body (enchantments.js worksUnworn: no Used payload).
+ *  MAGIC.DEF's own: Cast When Held, Absorbs Spells and Enhances Skill. AUDIT FB1018b L1-4 (decided, Mac: "Stop with the
+ *  decisions for me"): ANY such row - a piece with a Used cast and a worn power takes a base a slot takes, which loses
+ *  neither half (the cast works from any base); every regular MAGIC.DEF row is one power, so no draw moves. */
+export const powersNeedWearing = (rows) => rows.some((r) => !worksUnworn(r));
 /** HELD-BASE: the draws a held power's base takes before the stream is called dead - the soul trap's bound
  *  (shopStock.js createRandomlyFilledSoulTrap). A live stream needs one more draw in six at the worst (Venom Spitting:
  *  a religious item or a Wand, 9 in 56). */

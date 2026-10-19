@@ -16,7 +16,8 @@ import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readMagicDef, MAGIC_ITEM_RECORD_SIZE, ENCHANTMENT_TYPES as T } from '../../../src/formats/magicDef.js';
-import { createRegularMagicItem, createArtifact, createRandomArmor, createRandomReligiousItem, MAGIC_BASE_DRAWS, powersNeedWearing } from '../../../src/systems/loot/loot.js';
+import { createRegularMagicItem, createArtifact, createRandomArmor, createRandomReligiousItem, createRandomJewellery, MAGIC_BASE_DRAWS, powersNeedWearing } from '../../../src/systems/loot/loot.js';
+import { RARITY_HOME, RARITY_HOMED_FROM, rehomedPrint } from '../../../src/systems/loot/lootRarity.js';
 import { stockGuildMagicItems } from '../../../src/systems/shopStock.js';
 import { wearableItem, equipItem } from '../../../src/systems/equip.js';
 import { computeEnchantmentMods, worksUnworn, legacyEnchantmentValue } from '../../../src/systems/enchantments.js';
@@ -158,15 +159,48 @@ test('HELD-BASE A SAVE\'S PIECES STAY AS THEY WERE (AUDIT FB1018b L1-1): the rea
   assert.deepEqual(step.forged, [], 'nothing forged at the next checkpoint');
 });
 
+test('HELD-BASE THE LEDGER TAKES THE LOAD\'S ONE MOVE (AUDIT FB1018b L1-1, decided): RARITY-WEAR\'s repair moves a rolled Wand to the Amulet on load, and a Wand the service held through it - a guild vault\'s, a market\'s - comes back on its old print; the next checkpoint reads the moved piece as itself, its row reprinted, where it read a forgery and held an honest player - and no other move is taken (mutants: the move refused again; any print taken; the material let move; the row not reprinted)', async () => {
+  // the move is exactly the repair's: every Jewellery template no slot takes, and only to its home
+  const jewels = Array.from({ length: 8 }, (_, k) => createRandomJewellery(seq(k / 8 + 0.01)));
+  assert.equal(new Set(jewels.map((j) => j.templateIndex)).size, 8, 'the eight jewels');
+  assert.deepEqual([...new Set(jewels.filter((j) => !wearableItem(j)).map((j) => j.templateIndex))], [...RARITY_HOMED_FROM.Jewellery]);
+  assert.equal(RARITY_HOME.Jewellery, AMULET);
+  const wand = mintCondition(setItemFields({ ...createRandomJewellery(seq(0.99)), rarity: 'rare', affixes: [] }));
+  assert.equal(wand.templateIndex, WAND);
+  stampItemIds({ items: [wand] });
+  const held = ledgerPieces({ items: [structuredClone(wand)], level: 5 });
+  assert.equal(held.length, 1, 'the ledger follows it');
+  const loaded = { items: [structuredClone(wand)], level: 5 };
+  repairItemLists(savedItemLists(loaded));
+  assert.equal(loaded.items[0].templateIndex, AMULET, 'the load moves it home');
+  const shown = ledgerPieces(loaded);
+  assert.notEqual(shown[0].fp, held[0].fp, 'its print moved');
+  const said = [];
+  const stmt = { bind(...a) { said.at(-1).binds = a; return this; }, all: async () => ({ results: [] }), run: async () => ({}) };
+  const db = { prepare: (sql) => (said.push({ sql }), stmt) };
+  const step = await ledgerStep(db, { player: 'p1', char: 'c1', seq: 2, nowS: 1000 }, shown, { mine: { results: [{ uid: held[0].key, char_id: 'c1', state: 'held', fp: held[0].fp, claim_char: null, claim_at: null }] }, dupes: { results: [] } });
+  assert.deepEqual(step.forged, [], 'the honest piece is no forgery');
+  const re = said.find((s) => /UPDATE item_uids SET fp = \?2/.test(s.sql));
+  assert.deepEqual(re?.binds, [held[0].key, shown[0].fp, held[0].fp], 'its row reprinted, from its old print alone');
+  assert.equal(rehomedPrint(held[0].fp, shown[0].fp), true);
+  for (const [was, now] of [[`${WAND}:3`, `${AMULET}:4`], [`${HOLY_TOME}:-`, `${AMULET}:-`], [`${AMULET}:-`, `${WAND}:-`], [`${WAND}:-`, '134:-'], ['1:2', '1:3']]) assert.equal(rehomedPrint(was, now), false, `${was} -> ${now} is another piece`);
+  const other = await ledgerStep({ prepare: () => stmt }, { player: 'p1', char: 'c1', seq: 2, nowS: 1000 }, [{ key: held[0].key, fp: `${HOLY_TOME}:-` }], { mine: { results: [{ uid: held[0].key, char_id: 'c1', state: 'held', fp: held[0].fp, claim_char: null, claim_at: null }] }, dupes: { results: [] } });
+  assert.deepEqual(other.forged, [held[0].key], 'another print on its key is forged, as ever');
+});
+
 test('HELD-BASE THE REDRAW\'S OWN ARGUMENTS AND THE WHOLE TABLE (AUDIT FB1018b L1-3, L1-4): a redrawn base is minted for the holder\'s gender and level, the dead stream\'s armour at the holder\'s level; of every kind the registry knows only a Used cast, Health Leech (its cost on Use) and an artifact\'s special power count as working off the body', () => {
   assert.equal(createRegularMagicItem(TEMPLATES, 1, 'female', seq(0.5, 0.99, 0.3, 0, 0, 0), VENOM).group, 'WomensClothing', 'redrawn for her');
   assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.5, 0.99, 0, 0, 0.99), VENOM).material, createRandomArmor(30, seq(0, 0.99)).material, 'redrawn at the holder\'s level');
   assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.99), VENOM).material, createRandomArmor(30, seq(0.99)).material, 'the dead stream\'s armour at the holder\'s level');
   const unworn = Object.entries(T).filter(([, type]) => worksUnworn({ type, param: 0 })).map(([name]) => name).sort();
   assert.deepEqual(unworn, ['CastWhenUsed', 'HealthLeech', 'SpecialArtifactEffect']);
-  // a piece with a Used cast and a worn power keeps its base - the cast works from the pack (the owner's to change; no
-  // regular MAGIC.DEF row is mixed: one row each)
-  assert.equal(powersNeedWearing([{ type: T.CastWhenUsed, param: 4 }, { type: T.EnhancesSkill, param: 7 }]), false);
+  // AUDIT FB1018b L1-4 (decided): a piece with a Used cast and a worn power takes a base a slot takes - it loses neither
+  // half; Health Leech (a cost) beside a worn power does not keep it on a Wand; none is no need (no regular MAGIC.DEF row
+  // is mixed: one row each, so no draw moves)
+  assert.equal(powersNeedWearing([{ type: T.CastWhenUsed, param: 4 }, { type: T.EnhancesSkill, param: 7 }]), true);
+  assert.equal(powersNeedWearing([{ type: T.HealthLeech, param: 0 }, { type: T.EnhancesSkill, param: 7 }]), true);
+  assert.equal(powersNeedWearing([{ type: T.CastWhenUsed, param: 4 }, { type: T.HealthLeech, param: 0 }]), false);
+  assert.equal(powersNeedWearing([]), false);
   assert.equal(powersNeedWearing([{ type: T.EnhancesSkill, param: 7 }, { type: T.CastWhenHeld, param: 83 }]), true);
   assert.equal(REGULAR.every((r) => r.enchantments.filter((e) => e.type !== -1).length === 1), true, 'every regular row one power');
 });

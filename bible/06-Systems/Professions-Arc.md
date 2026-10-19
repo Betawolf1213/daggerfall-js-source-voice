@@ -4216,9 +4216,8 @@ time you make this piece at this tier.", and the word "You made a Fine Silver Da
   harvest's, the craft's, the smelt's, the temper's, the brew's, the disenchant's, a writ's, a Motherlode's; a
   specialisation's change moves no XP; 0088 kept the higher parent); only deleting the character removes its tracks
   (`server-account/src/realm.js`, PROF-DELETE). So a character's two crafts past 50 are its for good, and the tab now
-  says so before the second is raised. OPEN, for the owner: whether a craft may be let go back to 50 - as a
-  specialisation is changed, for Marks and a wait - so a player who raised two without knowing can choose again. Not
-  built: it changes 3.2's decision, which is Mac's.
+  says so before the second is raised. DECIDED (Mac, 2026-10-19: "Stop with the decisions for me"): a craft is not let go back to 50 - 3.2's limit stands, said
+  before the second craft passes it.
 - **The four hosts**: `scenes/world.js`'s craft word hands the book's limit in, in its one call (`craftXpText(rec,
   r.data, st.xp, profBook.limit(rec?.profession))` - the line edited, none added to bootWorld, which stands at its
   ceiling); `worldModes.js`, `exterior.js` and `dungeonContext.js` build no station page and no craft word - none to

@@ -463,7 +463,9 @@ Used payload - `enchantments.js` worksUnworn) has its base drawn again, as DFU d
 MAGIC_BASE_DRAWS (64) and then armour; a draw that was wearable is the draw it was, and a Used cast keeps any base (a
 Leaping Wand, a Silent Holy Tome). A piece already held keeps its base: a load that moved it would move its print
 (`templateIndex:material`, `server-account/src/judge.js` ledgerPrintOf), which the realm ledger reads as forged
-(`ledger.js` ledgerStep) - AUDIT FB1018b L1-1 took out the save repair this first carried, and mending such pieces is the
-owner's call (it needs the ledger to take a base move). RARITY-WEAR's own 140-to-133 repair above moves the print the
-same way for a piece held since the ledger went live - found and left, the owner's. Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
+(`ledger.js` ledgerStep) - AUDIT FB1018b L1-1 took out the save repair this first carried; such pieces are not mended
+(decided - Mac, 2026-10-19: "Stop with the decisions for me"). RARITY-WEAR's own 140-to-133 repair above moved the print the same way for a Wand the service held
+through it (a vault's, a market's), and the next checkpoint read it as forged: the ledger now takes that one move as
+the piece (`lootRarity.js` rehomedPrint, RARITY_HOMED_FROM). A piece with a Used cast and a worn power takes a wearable
+base too. Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
 such duds before, none now. A departure (Port-Ledger A, HELD-BASE). `test/systems/loot/fb1018b_heldbase.test.js`.
