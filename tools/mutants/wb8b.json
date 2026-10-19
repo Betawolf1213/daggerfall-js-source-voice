@@ -93,8 +93,8 @@
   {
     "name": "WB8b-the-gap-from-the-old-body",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  const gap = dist(pose.x, pose.z, f.pos[0], f.pos[1]) - P.bossR;",
-    "new": "  const gap = dist(pose.x, pose.z, f.pos[0], f.pos[1]) - BOSS_R;",
+    "old": "  const gap = dist(pose.x, pose.z, B.pos[0], B.pos[1]) - P.bossR;",
+    "new": "  const gap = dist(pose.x, pose.z, B.pos[0], B.pos[1]) - BOSS_R;",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
     ]
@@ -156,8 +156,8 @@
   {
     "name": "WB8b-fed-past-his-whole",
     "file": "src/net/gate/gateBrain.js",
-    "old": "      f.hp = Math.min(f.max, f.hp + P.feed * f.max);",
-    "new": "      f.hp = f.hp + P.feed * f.max;",
+    "old": "      else f.hp = Math.min(f.max, f.hp + P.feed * f.max);",
+    "new": "      else f.hp = f.hp + P.feed * f.max;",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
     ]

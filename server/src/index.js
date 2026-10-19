@@ -6928,7 +6928,7 @@ export class Room {
     // health goes out on the beat)
     else if (m.k === 'ahit') this._gateFan(applyHostHit(f, a.sub, m.i, m.d, m.r, at, now, m.q));
     else {
-      GATE_SEAM.hit(f, a.sub, m.d, m.r, at, now, m.q);   // AUDIT WB11 W3: the blow's sequence - once a blow
+      GATE_SEAM.hit(f, a.sub, m.d, m.r, at, now, m.q, m.b === 1 ? { b: 1 } : undefined);   // AUDIT WB11 W3: the blow's sequence - once a blow; WB14d: the half it lands on
       if (f.fell && !f.said) { await this._gateFall(f, now); return; }
     }
     // AUDIT WBX R6: a blow keeps the beat as an `in` does - a court that emptied slept until its day's end, and a client

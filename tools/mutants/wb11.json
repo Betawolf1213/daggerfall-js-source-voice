@@ -74,8 +74,8 @@
   {
     "name": "WB11-the-ward-never-waits-on-them",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
-    "new": "    if (false) return heldBeat(f, now, out);",
+    "old": "    if (bearersStand(f) && now < f.waitUntil) return;",
+    "new": "    if (false) return;",
     "tests": [
       "test/net/gate/wb11_gate_host.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "WB11-their-cap-ignored",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);",
-    "new": "    if (bearersStand(f)) return heldBeat(f, now, out);",
+    "old": "    if (bearersStand(f) && now < f.waitUntil) return;",
+    "new": "    if (bearersStand(f)) return;",
     "tests": [
       "test/net/gate/wb11_gate_host.test.js"
     ]

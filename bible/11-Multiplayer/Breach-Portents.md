@@ -329,6 +329,32 @@ the walkways it came by.
 his. Soul-Hungry's feeding heals both standing halves by half its share each (never past their pools). Grudge-Bearer's
 threat is each half's own. Echoing's second meteor is the Flame's.
 
+**As built (WB14d).** The turn is SUNDER_TURN: the Crushing Leap to his court's heart, then the Sundering (attack 17,
+a disc of 8 m about his feet, 2.6 s); he tears in two at its END (its recovery done - `sunder`), the layout counted then.
+The Flame is a body of its own on the fight (`f.sd.fl`), stepped by the SAME beat as his (`bodyBeat` - the stun, the
+blow in flight and its end, the turn's waits and entries, the choice) through a view of the fight (`flameView`: the
+fight underneath, the Flame's body over it, the count of attack numbers and the walkways laid read through to the fight),
+its words named for it (`b` 1 on its `atk`, `mv`, `ph`). Each half's kit is SUNDER_KITS; a turn's entries are his
+turn's (the bounds, the waits, the signatures), never a kit's. A half's pool is a fraction of his whole, so a share in or
+out moves the pools with his health. A kneel is the half's stun (the Blade's is his own `stunUntil`, said in the state's
+`su`; the Flame's its own), its blow and walk dropped where it stood; `kn` says it the next beat. The Rejoining (attack 18,
+a disc of 9 m, 3.2 s) is called by the Blade at the first court's heart, the Flame landing SUNDER_SIDE_M beside it; at
+its end he stands whole (`whole`) and the last phase begins there with its wait and its signature. In the together layout
+the halves land SUNDER_SIDE_M either side of the second court's heart. While the halves go to rejoin neither chooses, and
+a feeding then heals him whole.
+
+**Departures from the sketch, named:**
+- The Flame is drawn as his aspect's Atronach (Fire, Ice, Iron under the storm, Flesh under the venom - the Sapper's own
+  sprites, `world/gate/gateBoss.js FLAME_LOOKS`) at his scale and three quarters of his height, not his own sprite tinted:
+  two of his sprite across the fire read as one Warden seen twice.
+- The bar keeps his whole health on its track (the halves' pools and his last stand's share, as the relay says it) and
+  puts the halves on a row of their own beneath the bar (each its name, its pool and its line), so every older part of
+  the bar keeps its place; a Sundering night's second mark is cut at SUNDER_LAST, where his last stand begins.
+- The callout under the bar is the blow of the half whose court I stand in - the Flame's while I stand in its court and
+  not the Blade's.
+- The Rejoining's card (*III - Dagon's Champion - Back to the first court.*) is shown as the halves go to rejoin (`rj`),
+  when the court must run, not at the last phase's word a few seconds later; it is never shown twice.
+
 ## 6. The words and the bar (WB14a-d)
 
 - **The bar** keeps one track while he is whole. Sundered it is two, side by side - each half's name, its pool, its ward
@@ -458,6 +484,30 @@ while news, my blows on its bodies from its platforms; `ui/gate/gateBossBar.js` 
 its looks and names. Pins: `test/net/gate/wb14c_vanguard.test.js` (13) and WB11's and WB3's tables (the kinds, the blows,
 the standing cap, the out kinds); mutants: `tools/mutants/wb14c.json` (30, all dead), and the re-aimed WB11, AUDIT WB11,
 WB13e and WB8c records.
+
+**WB14d (2026-10-19) - shipped.** `net/gate/gateBrain.js` ATTACKS 17 and 18 (the Sundering, the Rejoining - names
+through the text core), SUNDER_* (SPLIT_MIN, LAST, PAIR_MS, RISE, LONE_MS, MEND, SIZE, KITS, SIDE_M, TURN), HALF, sunders,
+turnOf (a Sundering night's second turn; its last phase never by his health), halfProfile and flameProfileOf (profileOf
+reads a sundered fight's Blade and a view's Flame), bodyBeat (his body's beat, out of stepBrain whole - the frames the
+caller's; the golden frames unmoved), inKit, flameView and keepFlame, sunder, whole, kneel, rise, rejoin, sunderFed,
+stepSunder, sdFrame and sunderState (the state's `sd`), applyHit's `b` (its half's ward, court, size and pool, and its
+kneel), the Wrath stilling the Flame; `net/bossRef.js` judgeGate's bodyBlow (his blow and the Flame's, each by its own
+profile); `server/src/index.js` the hit's `b` through the seam; `net/wire.js` the state's `sd`, `sdh`, `kn`, `kr`, `rj`,
+`b` on a hit and on the Flame's `atk`, `mv`, `ph`; `net/gate/gateLink.js` foldSunder (the Flame's words into its body,
+its Rift Way laid at its word, the kneels and the risings, the Rejoining, the Wrath's stilling), the state's halves
+(GateSunder); `scenes/gate/gateFlame.js` (new: flameOf - the state with the Flame in his place - its blows judged on my
+feet and its Brand by an arsenal of its own, its cues, bursts, shake and burning ground, its sprite and Morrowind body,
+its glow, mark and telegraph, its body offered to my blows from its own court as FLAME_I, the Sundering's lines);
+`scenes/gate/gateCourt.js` its wiring (the frame, the peril on my feet his or the Flame's - `onMe`, the targets and the
+`hit` word's `b`, the lights, the batches, the pass, the bodies, a kneeling Blade turning a blow), the cards
+(courtPhaseCard's Sundering night, the Rejoining's carded once at `rj`) and no Reckoning's stun line for a kneel;
+`ui/gate/gateBossBar.js` the halves' row (halfState: Kneels and its seconds, Warded, Alone), the night's last mark, the
+callout of the court I stand in; `world/gate/gateBoss.js` FLAME_LOOKS, flameLookOf, HALF_NAMES, halfName, the two
+attacks' colours and cues, `render/gate/gateFx.js` their bursts. Pins: `test/net/gate/wb14d_sundering.test.js` (21), and
+the older ones it moved (WB3's and WB14a's attack ids and out kinds, WB9e's count, the court's and the bar's source and
+parts - GATE-UX 2, WB13a, WB13c, WB14a's wiring, PLUS-DRESS's parts, the two body censuses); mutants:
+`tools/mutants/wb14d.json` (61, all dead), and the re-aimed AUDIT 0929, AUDIT WB9, AUDIT WBX, GATE-FBX, INT11, WB3, WB4b,
+WB8b, WB8c, WB9b, WB9c, WB11, WB13c, WB14a and WBX records (26: 25 dead, 1 recorded equivalent).
 
 **WB14a (2026-10-19) - shipped.** `net/gate/gateBrain.js` ATTACKS 11-16 (their names read through the text core),
 CHAIN_*, GAZE_*, attacksFor's `ctx` (the cooldowns from his wake, `nMin`), brandCountFor, the marked in `begin` (`tg`,

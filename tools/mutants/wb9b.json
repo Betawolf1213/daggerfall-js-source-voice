@@ -65,8 +65,8 @@
   {
     "name": "WB9b-the-signature-cast-at-once",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    if (!here.length && now < (f.waitUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
-    "new": "    if (false) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
+    "old": "    if (!here.length && now < (f.waitUntil ?? 0)) return;",
+    "new": "    if (false) return;",
     "tests": [
       "test/net/gate/wb9b_gate_courts.test.js",
       "test/net/gate/wb3_gate_room.test.js"
@@ -111,8 +111,8 @@
   {
     "name": "WB9b-the-walkway-left-to-the-next-state",
     "file": "src/net/gate/gateLink.js",
-    "old": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}), ...crossLaid(s, g) };",
-    "new": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}) };",
+    "old": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0, ...flameStill(s) } : {}), ...crossLaid(s, g) };",
+    "new": "...(g.a === ATTACKS.wrath.id ? { stunUntil: 0, ...flameStill(s) } : {}) };",
     "tests": [
       "test/net/gate/wb9b_gate_courts.test.js"
     ]

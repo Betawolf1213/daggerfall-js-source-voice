@@ -1508,7 +1508,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world223';   // WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md sections 1, 2 and 10; world222 on its branch, renumbered past GATE-DOOR and COURT-WATCH's world222 at the merge; NOT YET DEPLOYED): THE BREACH'S PORTENTS - the relay draws a night's portents with its fight (net/gate/gateLaw.js gatePortentsOf) and says them in every state (`pt`), the crossings by walkway (`xa`, six, a walkway not laid null), GATE_BRAIN_V and GATE_BRAIN_MIN 6 (a game from before is told to reload); WB14a: the Warden's new arsenal - an atk word names its marked by peer id (`pk`), attack ids to GATE_ATK_ID_MAX (31), the relay's judge counts the Wheel down its turn and never a marked blow or the Gaze; WB14c: the Vanguard - its stages in the state (`vg`) and in words (`vgw`), three host kinds more (GATE_HOST_KINDS 6), a blow on one taken from the floor its body stands on, GATE_HZ_MAX 28. Deploy the relay with the client.
+export const RELAY_VERSION = 'world223';   // WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md sections 1, 2 and 10; world222 on its branch, renumbered past GATE-DOOR and COURT-WATCH's world222 at the merge; NOT YET DEPLOYED): THE BREACH'S PORTENTS - the relay draws a night's portents with its fight (net/gate/gateLaw.js gatePortentsOf) and says them in every state (`pt`), the crossings by walkway (`xa`, six, a walkway not laid null), GATE_BRAIN_V and GATE_BRAIN_MIN 6 (a game from before is told to reload); WB14a: the Warden's new arsenal - an atk word names its marked by peer id (`pk`), attack ids to GATE_ATK_ID_MAX (31), the relay's judge counts the Wheel down its turn and never a marked blow or the Gaze; WB14c: the Vanguard - its stages in the state (`vg`) and in words (`vgw`), three host kinds more (GATE_HOST_KINDS 6), a blow on one taken from the floor its body stands on, GATE_HZ_MAX 28; WB14d: the Sundering - its halves in the state (`sd`) and in words (`sdh`, `kn`, `kr`, `rj`), the half a blow lands on (`hit`'s `b`) and the Flame's own words (`atk`, `mv`, `ph` with `b` 1), the Sundering and the Rejoining (attacks 17 and 18). Deploy the relay with the client.
 // world222: GATE-DOOR and COURT-WATCH (world218 on its branch, renumbered past GRANT2's world218, EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221 at the merge; NOT YET DEPLOYED; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000; from play at a thousand online, "Server is kinda breaking down near oblivion gate cause so many ppl lol"): a gate's court and its copies admit GATE_HELLO_HZ_MAX hellos a second, its opening's crowd, where every room admitted HELLO_HZ_MAX - still spent before the token is read, a busy refusal leaving it unspent; and COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): the answer to an `in` that seats a fighter says so (`me`), so a client the full court kept as its watcher knows when it fights. Deploy relay before clients (a client from before it waits at a deeper door, and a full court still casts it out, as it did).
 // world221: FIELD BUGS 2026-10-18f (bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md TURNED-BLOW; bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md L3; world219 on its branch, renumbered past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 at the merge; NOT YET DEPLOYED): THE STRIKE RULE ONE LAW ON BOTH ENDS - the relay's refusal of a blow struck from traversal ground (net/eliteGates/egBodies.js egStruckOff) is the one the screen asks, and the storey (egStoreyApart) the same; a woken lord's first phase said in the beat that wakes it (`eph`, egLordsWake), so no screen holds it asleep until the fight's next whole word; each body's radius said beside its row (`ead` and `efs` carry `r`, net/eliteGates/egBodies.js egRadiusWire - outside the 19-element row, so a client before it drops the field and keeps the word, and a client after it with an older relay judges as it did). Either end may deploy first.
 // world220: FIELD BUGS 2026-10-18d (bible/01-Overview/bugs/Field-Bugs-2026-10-18d.md; world219 on its branch, renumbered past EG-PERFECT's world219 at the merge - world218 the live relay's when it was written, GRANT2 deployed with #1018's merge). TWIN-REKINDLE: net/eliteGates/egBrain.js sapperReach - a Sapper reaching a fallen lord burns out against the body, never feeds it: a Twin fed at nought stood again un-hittable with its fall's flag on, threw blows, and its pair's raise never came. BANNER-SHAFT (Boar: "Big bugs of the spires"; bible/11-Multiplayer/Elite-Gates.md sections 13.3 and 13.4, Elite-Gates-Ascent.md section 2): a member's shaft or spell on an Elite Breach body of another storey lands through open air, refused only where the two stand stacked (net/eliteGates/egWalkGraph.js egStacked; a swing still reaches its own storey alone), so Valkynaz Ilthys's banners on the Rotunda's balconies are shot from the court. DUEL-RING: the Last Armsmaster's Challenge met in the open at n = 1 says so, called and ended (`challenge`'s and `challengeend`'s `t`, EG_DUEL_OPEN - a client before it reads the ring's words, as ever). SEAT-LIVE (the same drop; FIELD BUGS 2026-10-18d, FloopZe's 'Castle Daggerfall guards loot duping'): A DUNGEON ROOM'S SEAT IS A LIVE SOCKET'S - net/seatLive.js joins the bundle; the host is the eldest socket that has said a frame (a hello, a pose, its stream, its own lane, its memory - never a ping) within FOES_STALE_MS (moved here from net/online.js) of another being there to hear it, the change said to the room as a leave's is, and a socket back from silence a joiner, told the seat and stamped after it (Room _hostOf, _leads, _seatHeard, _seatKeep); a building's room keeps the eldest. The welcome carries no new field: a page reads world220 as the relay to ask (net/seatLive.js SEAT_RELAY_MIN), and an older page meets the same frames
@@ -4516,7 +4516,7 @@ export const GATE_BRAIN_V = 6;
 export const GATE_BRAIN_MIN = 6;
 /** What the room says back (the client drops any other kind). WB8b: `fed` - a fallen challenger fed a Soul-Hungry
  *  Warden (their name, his health after). */
-export const GATE_OUT_KINDS = Object.freeze(['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd', 'vgw']);   // WB14c: `vgw` - a stage of the Vanguard   // INT11: `bd` - the relay's count has fallen me (enforced)   // WB9c: the crystals grown, their health, one broken, the Reckoning broken and he stunned; WB11b: his host risen, walking, striking, its health, gone
+export const GATE_OUT_KINDS = Object.freeze(['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd', 'vgw', 'sdh', 'kn', 'kr', 'rj']);   // WB14d: the Sundering's - the halves' pools, a kneel, a rising, the Rejoining   // WB14c: `vgw` - a stage of the Vanguard   // INT11: `bd` - the relay's count has fallen me (enforced)   // WB9c: the crystals grown, their health, one broken, the Reckoning broken and he stunned; WB11b: his host risen, walking, striking, its health, gone
 /** A level claim on the wire - the brain clamps it to its own 1..60; past this it is not a level at all. */
 export const GATE_LV_WIRE_MAX = 999;
 /** One blow's claimed damage on the wire - the brain caps a blow far lower (HIT_CAP_X); past this it is no blow. */
@@ -4627,7 +4627,7 @@ const GATE_RECEIPT_RE = /^r1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
 const GATE_BOSS_RE = /^[a-z]{1,16}$/;
 
 /**
- * A client's gate frame, projected: `{k:'in', lv}` or `{k:'hit', q, d, r}` (to a gate's room - WB9c `xhit` on a crystal,
+ * A client's gate frame, projected: `{k:'in', lv}` or `{k:'hit', q, d, r, b?}` (to a gate's room - WB14d `b` 1 his Flame; WB9c `xhit` on a crystal,
  * WB11b `ahit` on one of his host, by its number `i`), `{k:'spent', d}` or
  * `{k:'site', d, px, py, pl}` (to the hub), or null. The fields ride the frame's top
  * level (the design's table), so the projection names each and drops everything else.
@@ -4651,7 +4651,8 @@ export function validGateIn(m) {
   if (m.r !== 0 && m.r !== 1 && m.r !== 2) return null;
   if (m.k === 'xhit') return intIn(m.c, 0, GATE_CRYSTALS_MAX - 1) ? { k: 'xhit', c: m.c, q: m.q, d: m.d, r: m.r } : null;   // WB9c: which crystal
   if (m.k === 'ahit') return Number.isSafeInteger(m.i) && m.i >= 1 && m.i <= GATE_SEQ_MAX ? { k: 'ahit', i: m.i, q: m.q, d: m.d, r: m.r } : null;   // WB11b: which of his host
-  return { k: 'hit', q: m.q, d: m.d, r: m.r };
+  if (m.b !== undefined && m.b !== 0 && m.b !== 1) return null;   // WB14d: the half it lands on
+  return { k: 'hit', q: m.q, d: m.d, r: m.r, ...(m.b === 1 ? { b: 1 } : {}) };
 }
 
 // ─── PVP-REF: A SIEGE'S ROOM (bible/11-Multiplayer/Seats-Arc.md 6.1; net/siege/siegeRef.js) ───
@@ -4816,8 +4817,24 @@ const gateMove = (mv) => (mv && typeof mv === 'object' && [mv.x, mv.z, mv.tx, mv
  *  three), as a pair; its words (`vgw`'s `e`) number GATE_VG_WORDS. */
 export const GATE_VG_WORDS = 6;
 const gateVg = (v) => (Array.isArray(v) && v.length === 2 && intIn(v[0], 0, 2) && intIn(v[1], 0, 3) ? [v[0], v[1]] : null);
-/** WB14a: the highest attack id a word may name (net/gate/gateBrain.js ATTACKS - the new arsenal's 11 to 16, the Sundering's
- *  17 and 18 to come; room to 31). */
+/** WB14d: a pair, one a half (the Blade's, the Flame's - net/gate/gateBrain.js HALF), each passing `each`. */
+const gateHalves = (v, each) => Array.isArray(v) && v.length === 2 && v.every(each);
+const gateHalf = (b) => b === 0 || b === 1;
+/** WB14d: THE SUNDERING ON THE WIRE (net/gate/gateBrain.js sunderState) - the layout, each half's whole and pool, each one's
+ *  kneel (its moment, 0 standing) and mending, the Rejoining's moment (0 none yet), and the Flame's body: where, its walk,
+ *  its blow, its ward, its court, its stun. */
+const gateSd = (sd) => {
+  if (!sd || typeof sd !== 'object' || !gateHalf(sd.two) || !gateHp(sd.m) || !gateHalves(sd.h, (h) => gateHp(h) && h <= sd.m)) return null;
+  if (!gateHalves(sd.kn, msOrNone) || !gateHalves(sd.lo, gateHalf) || !msOrNone(sd.rj)) return null;
+  const F = sd.fl;
+  if (!F || typeof F !== 'object' || !gateXZ(F.x) || !gateXZ(F.z) || !finite(F.yw) || Math.abs(F.yw) > 8 || !Number.isSafeInteger(F.sh) || F.sh < 0) return null;
+  if (!intIn(F.ct, 0, GATE_FLOORS_MAX - 1) || !msOrNone(F.su)) return null;
+  const mv = F.mv == null ? null : gateMove(F.mv), atk = F.atk == null ? null : gateAtk(F.atk);
+  if ((F.mv != null && !mv) || (F.atk != null && !atk)) return null;
+  return { two: sd.two, m: sd.m, h: [...sd.h], kn: [...sd.kn], lo: [...sd.lo], rj: sd.rj, fl: { x: F.x, z: F.z, yw: F.yw, mv, atk, sh: F.sh, ct: F.ct, su: F.su } };
+};
+/** WB14a: the highest attack id a word may name (net/gate/gateBrain.js ATTACKS - the new arsenal's 11 to 16, WB14d's Sundering
+ *  and Rejoining 17 and 18; room to 31). */
 export const GATE_ATK_ID_MAX = 31;
 const gateAtk = (a) => {
   if (!a || typeof a !== 'object' || !Number.isSafeInteger(a.i) || a.i < 1 || !Number.isInteger(a.a) || a.a < 0 || a.a > GATE_ATK_ID_MAX) return null;
@@ -4893,12 +4910,21 @@ export function validGateOut(m) {
       if (m.op != null && !(m.op === 0 || gateMs(m.op))) return null;   // WB13e: the opening's end (none from an older relay)
       const vg = m.vg == null ? null : gateVg(m.vg);   // WB14c: the Vanguard's stage and its waves risen
       if (m.vg != null && !vg) return null;
-      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}), ...(pt ? { pt } : {}), ...(vg ? { vg } : {}), ...(m.me === 1 ? { me: 1 } : {}) };   // COURT-WATCH: `me` the answer to my own `in` - the seat mine
+      const sd = m.sd == null ? null : gateSd(m.sd);   // WB14d: the halves, while he is sundered
+      if (m.sd != null && !sd) return null;
+      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}), ...(pt ? { pt } : {}), ...(vg ? { vg } : {}), ...(sd ? { sd } : {}), ...(m.me === 1 ? { me: 1 } : {}) };   // COURT-WATCH: `me` the answer to my own `in` - the seat mine
     }
-    case 'mv': { const mv = gateMove(m); return mv ? { k: 'mv', ...mv } : null; }
-    case 'atk': { const a = gateAtk(m); return a ? { k: 'atk', ...a } : null; }
+    // WB14d: a walk, a blow and a ward of his Flame's (`b` 1) - none, his own (the Blade's, sundered)
+    case 'mv': { const mv = gateMove(m); return mv && (m.b === undefined || m.b === 1) ? { k: 'mv', ...mv, ...(m.b === 1 ? { b: 1 } : {}) } : null; }
+    case 'atk': { const a = gateAtk(m); return a && (m.b === undefined || m.b === 1) ? { k: 'atk', ...a, ...(m.b === 1 ? { b: 1 } : {}) } : null; }
     case 'hp': return gateHp(m.h) && gateHp(m.m) && m.h <= m.m ? { k: 'hp', h: m.h, m: m.m } : null;
-    case 'ph': return Number.isInteger(m.n) && m.n >= 2 && m.n <= 3 && gateMs(m.until) ? { k: 'ph', n: m.n, until: m.until } : null;
+    case 'ph': return Number.isInteger(m.n) && m.n >= 2 && m.n <= 3 && gateMs(m.until) && (m.b === undefined || m.b === 1) ? { k: 'ph', n: m.n, until: m.until, ...(m.b === 1 ? { b: 1 } : {}) } : null;
+    // WB14d: THE SUNDERING - the halves' pools (each, and the whole each began at), a half knelt, a half risen with its pool,
+    // and the halves gone to rejoin
+    case 'sdh': return gateHalves(m.h, gateHp) && gateHp(m.m) && m.h.every((h) => h <= m.m) ? { k: 'sdh', h: [...m.h], m: m.m } : null;
+    case 'kn': return gateHalf(m.b) && gateMs(m.at) ? { k: 'kn', b: m.b, at: m.at } : null;
+    case 'kr': return gateHalf(m.b) && gateHp(m.h) && gateMs(m.at) ? { k: 'kr', b: m.b, h: m.h, at: m.at } : null;
+    case 'rj': return gateMs(m.at) ? { k: 'rj', at: m.at } : null;
     case 'wrath': return gateMs(m.at) ? { k: 'wrath', at: m.at } : null;
     case 'fell': {
       const f = gateFell(m);

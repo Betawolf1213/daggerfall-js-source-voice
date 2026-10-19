@@ -365,6 +365,11 @@ export const ATTACKS = Object.freeze({
   // THE UNMAKING: every other one of `n` wedges about his court's heart (`tg[0]`), the first centred on his facing, out to
   // `r`; then - a recovery and a breath later - the other half (a second cast turned a wedge on, the Spokes' own trick)
   unmake: Object.freeze({ id: 16, key: 'unmake', get name() { return t('gate.attack.unmake', 'The Unmaking'); }, windup: 3000, active: 300, recover: 1000, shape: 'wedges', n: 8, r: COURT_R + 1, pct: 0.45, base: 12, el: null, aim: 'point', phase: 3, range: 40, w: 1, minGap: 0, cd: 45_000 }),
+  // WB14d (bible/11-Multiplayer/Breach-Portents.md section 5): THE SUNDERING - on a Sundering night, at the second phase's
+  // turn, at his court's heart he tears in two (SUNDER_TURN; never chosen); and THE REJOINING - the halves met again at the
+  // first court's heart, where he stands whole for his last stand. Each a disc about his feet, judged as any plain blow.
+  sunder: Object.freeze({ id: 17, key: 'sunder', get name() { return t('gate.attack.sunder', 'The Sundering'); }, windup: 2600, active: 300, recover: 600, shape: 'disc', r: 8, pct: 0.45, base: 12, el: null, aim: 'self', phase: 99, range: 999, w: 0, minGap: 0 }),
+  rejoin: Object.freeze({ id: 18, key: 'rejoin', get name() { return t('gate.attack.rejoin', 'The Rejoining'); }, windup: 3200, active: 300, recover: 800, shape: 'disc', r: 9, pct: 0.5, base: 14, el: null, aim: 'self', phase: 99, range: 999, w: 0, minGap: 0 }),
 });
 /** The attacks by their wire id. */
 export const ATTACK_BY_ID = Object.freeze(Object.values(ATTACKS).sort((a, b) => a.id - b.id));
@@ -395,6 +400,39 @@ export const CROSS_WAIT_MAX_MS = 30_000;
 /** The ward the turn raises: through the bound, the walkway's laying and the whole wait at most - the wait's end (a
  *  challenger in the court) sets it to his profile's ward from then. */
 export const CROSS_WARD_MAX_MS = 45_000;
+
+// ── WB14d: THE SUNDERING (bible/11-Multiplayer/Breach-Portents.md section 5) ─────────────────────────────────────────
+// (2026-10-19, Mac: "the boss splitting and players having to split and navigate to beat both sides and then merging at the
+// end for its final stand (chance based encounter modifer)".) On a Sundering night the second phase's turn is no bound: he
+// leaps to his court's heart and tears in two - RUHN'S BLADE (his body: `f` itself) and RUHN'S FLAME (his aspect's fire made
+// flesh: `f.sd.fl`, a body of its own stepped by the same beat through a view of the fight - flameView). With
+// SUNDER_SPLIT_MIN living challengers in the room the Blade bounds to the second court and the Flame to the third over the
+// Rift Way; with fewer both bound to the second and fight there side by side. What he has left above SUNDER_LAST is their
+// two pools (each a fraction of his whole, so a share in or out moves them with him); a half whose pool is spent KNEELS
+// (its stun - no step, no blow, no blow taken) SUNDER_PAIR_MS, and rises with SUNDER_RISE of its pool unless the other is
+// brought down first - then they REJOIN at the first court's heart and he stands whole at SUNDER_LAST for his last phase.
+// A standing half with nobody before it SUNDER_LONE_MS mends SUNDER_MEND of its pool a second (the split layout alone).
+export const SUNDER_SPLIT_MIN = 4;
+export const SUNDER_LAST = 0.26;
+export const SUNDER_PAIR_MS = 20_000;
+export const SUNDER_RISE = 0.3;
+export const SUNDER_LONE_MS = 10_000;
+export const SUNDER_MEND = 0.01;
+/** The halves by number (the `hit` word's `b`, and every word of a half's): the Blade, the Flame. */
+export const HALF = Object.freeze({ blade: 0, flame: 1 });
+/** Each half's body, a share of his size. */
+export const SUNDER_SIZE = Object.freeze([0.85, 0.75]);
+/** Each half's arsenal - the Blade his steel and his reach, the Flame his fire. */
+export const SUNDER_KITS = Object.freeze([Object.freeze(['cleave', 'slam', 'charge', 'leap', 'chains']), Object.freeze(['hellfire', 'meteor', 'nova', 'brand'])]);
+/** Where the halves land beside one another in a court they share (the together layout, and the Rejoining's meeting):
+ *  this far either side of its heart, east-west. */
+export const SUNDER_SIDE_M = 5;
+/** The turn on a Sundering night: the leap to the heart, then the Sundering itself (its end splits him - sunder). */
+export const SUNDER_TURN = Object.freeze([Object.freeze({ a: 'leap', centre: true }), Object.freeze({ a: 'sunder' })]);
+/** Is this fight's second phase a Sundering's (its night's portent)? */
+export const sunders = (f) => hasPortent(f?.pt, 'sunder');
+/** The turn a phase crossed begins (PHASE_TURN's, or the Sundering's). */
+const turnOf = (f) => (f.phase === 2 && sunders(f) ? SUNDER_TURN : PHASE_TURN[f.phase]);
 
 // ── WB9c: DAGON'S RECKONING AND THE CRYSTALS ────────────────────────────
 /** When the first Reckoning comes after Dagon's Champion's turn is done, and each after the last one ended (broken or
@@ -529,11 +567,24 @@ export const profileOf = (f) => {
   // three and a half times the garbage of an unmarked one. The fight's `md` and the fold's are one array for as long
   // as they stand (the relay's is made at newFight, the screen's once an `st`), so the profile is kept by that array.
   const md = f?.md;
-  if (md == null || typeof md !== 'object') return fightProfile(md);
-  let P = _profileByMd.get(md);
+  let P = md == null || typeof md !== 'object' ? fightProfile(md) : _profileByMd.get(md);
   if (!P) { P = fightProfile(md); _profileByMd.set(md, P); }
-  return P;
+  // WB14d: a sundered fight's body is its half's - the Flame's for its own beat and its own state (`half` 1), else the Blade's
+  return f?.half === HALF.flame ? halfProfile(P, HALF.flame) : f?.sd ? halfProfile(P, HALF.blade) : P;
 };
+/** WB14d: THE FLAME'S PROFILE in a sundered fight - its body's (SUNDER_SIZE), the rest his marks'. */
+export const flameProfileOf = (f) => halfProfile(profileOf(f?.sd ? { md: f.md } : f), HALF.flame);
+/** WB14d: A HALF'S PROFILE - his marks' numbers with its body's size (SUNDER_SIZE of his: the Blade's reach measured from a
+ *  smaller body, the Flame's smaller still); each made once a profile. */
+export function halfProfile(P, b) {
+  let two = _halves.get(P);
+  if (!two) {
+    two = SUNDER_SIZE.map((k, i) => Object.freeze({ ...P, size: P.size * k, bossR: P.bossR * k, bossH: P.bossH * k, half: i }));
+    _halves.set(P, two);
+  }
+  return two[b] ?? two[HALF.blade];
+}
+const _halves = new WeakMap();
 /** The profile each marks array was read as (arrays drop out with the states that hold them). */
 const _profileByMd = new WeakMap();
 /** What an attack is under a profile - its line (reach, phase, element, name, ground, share, base). */
@@ -686,11 +737,16 @@ export function freeSeat(f, present) {
  * shielded, past the account's blow rate, a pose that says nothing, a melee blow from out of reach, anything from
  * off the court. Clipped (and counted): past the one-blow cap, past the bucket.
  */
-export function applyHit(f, sub, d, r, pose, now, seq = null) {
+export function applyHit(f, sub, d, r, pose, now, seq = null, o = {}) {
   const p = f.players[sub];
   if (!p || f.fell || f.wrath || !Number.isFinite(d) || !(d > 0)) return 0;
   if (now >= f.wrathAt) return 0;   // AUDIT WBX R6: midnight is the Wrath's, whether or not a beat has said so yet
-  if (now < f.shieldUntil) return 0;
+  // WB14d: SUNDERED, a blow names the half it lands on (the `hit` word's `b` - the Blade's unless the Flame's), and each is
+  // its own body: its ward, its court, its size, its pool; a half kneeling takes nothing
+  const half = f.sd ? (o?.b === HALF.flame ? HALF.flame : HALF.blade) : null;
+  const B = half === HALF.flame ? f.sd.fl : f, H = half === null ? null : half ? f.sd.fl : f.sd.bl;
+  if (now < B.shieldUntil) return 0;
+  if (H?.kn) return 0;
   // the blow rate: a token bucket, GATE_HIT_HZ_MAX a second, one second deep - spent whatever the blow turns out to be
   // (AUDIT WB11 W3: once a blow, however many bodies it meets - spendBlow, the one hand of every arm)
   if (!spendBlow(p, now, seq, 'b')) return 0;
@@ -698,21 +754,22 @@ export function applyHit(f, sub, d, r, pose, now, seq = null) {
   if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return 0;   // nobody strikes the court from off it - WB9b: its floor as far as it is laid; WB14b: the night's plan's
   // AUDIT WB9 (brain F1): nor from outside the court he fights in - he chooses, aims at and waits for only those in it
   // (`here`), so a fighter on a walkway or in a court he has left struck him from where no blow of his could answer
-  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return 0;
-  const P = profileOf(f);
-  const gap = dist(pose.x, pose.z, f.pos[0], f.pos[1]) - P.bossR;   // WB8b: his body's own size (Colossal's is larger)
+  if (!inCourt(pose.x, pose.z, B.court, POSE_SLACK)) return 0;
+  const P = half === HALF.flame ? flameProfileOf(f) : profileOf(f);
+  const gap = dist(pose.x, pose.z, B.pos[0], B.pos[1]) - P.bossR;   // WB8b: his body's own size (Colossal's is larger)
   if (r === HIT_KINDS.Melee && gap > MELEE_REACH + POSE_SLACK) return 0;
   // the damage: WB8b's Unyielding lightens it, then it is capped a blow, then the bucket
   const ref = dpsRef(p.lv);
   p.bucket = Math.min(BUCKET_DEPTH_X * ref, p.bucket + (Math.max(0, now - p.bucketAt) / 1000) * BUCKET_RATE_X * ref);
   p.bucketAt = now;
   const want = d * P.hitX * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);   // WB9c: a stunned Warden takes it heavier
-  const got = Math.max(0, Math.min(want, HIT_CAP_X * ref, p.bucket, f.hp));
+  const got = Math.max(0, Math.min(want, HIT_CAP_X * ref, p.bucket, f.hp, H ? H.h * f.max : Infinity));   // WB14d: never past the half's pool
   p.bucket -= got;
   p.clipped += want - got;   // the caps' clipping - what his ward took off is his, not a cap's
   p.dealt += got;
-  if (got > 0) { f.threat[sub] = (f.threat[sub] ?? 0) + got; p.hits = (p.hits ?? 0) + 1; p.best = Math.max(p.best ?? 0, got); }   // GATE-UX: the chart's blows and best
+  if (got > 0) { B.threat[sub] = (B.threat[sub] ?? 0) + got; p.hits = (p.hits ?? 0) + 1; p.best = Math.max(p.best ?? 0, got); }   // GATE-UX: the chart's blows and best; WB14d: each half's threat its own
   f.hp -= got;
+  if (H) { H.h -= got / f.max; if (H.h <= 1e-9) kneel(f, half, now); }   // WB14d: the half's pool, and its kneel as it is spent
   if (f.hp <= 1e-6 && f.max > 0) {
     settleAt(f, now);   // AUDIT WBX F3: where he fell, not where his last beat left him
     f.hp = 0;
@@ -918,7 +975,8 @@ export function stepBrain(f, now, bodies, rng) {
       if (!p || !b.dead || p.fed || !(f.max > 0) || !hasPart(p) || (f.feeds ?? 0) >= P.feedsMax) continue;
       p.fed = true;
       f.feeds = (f.feeds ?? 0) + 1;
-      f.hp = Math.min(f.max, f.hp + P.feed * f.max);
+      if (f.sd) sunderFed(f, P.feed);   // WB14d: sundered, each half standing drinks half of it, never past its pool
+      else f.hp = Math.min(f.max, f.hp + P.feed * f.max);
       (ns ??= []).push(p.name);
     }
     if (ns) {
@@ -940,6 +998,7 @@ export function stepBrain(f, now, bodies, rng) {
   if (now >= f.wrathAt - wr.windup) {
     f.move = null;
     f.cx = null; f.stunUntil = 0;   // WB9c: the midnight overtakes a Reckoning and a stun alike
+    if (f.sd) { f.sd.fl.atk = null; f.sd.fl.move = null; f.sd.fl.queue = []; f.sd.fl.pending = null; }   // WB14d: and his Flame stands as Dagon gathers (every screen drops its blow at the Wrath's word)
     f.atk = { i: ++f.seq, a: wr.id, at: Math.max(f.wrathAt, now + 1000), x: f.pos[0], z: f.pos[1], yw: f.yaw, tg: [], until: 0 };
     f.atk.until = f.atk.at + wr.active;
     out.push({ k: 'atk', ...atkFrame(f.atk) });
@@ -958,21 +1017,37 @@ export function stepBrain(f, now, bodies, rng) {
   // a phase crossed: a roar, the ward, and the phase's turn (WB9b PHASE_TURN - the bound to the next court, the wait
   // there for a challenger, then its signature); an attack in flight is superseded - the new word is the one every
   // screen draws
-  if (f.max > 0 && f.phase < 3 && f.hp / f.max <= PHASE_AT[f.phase - 1]) {
+  // WB14d: on a Sundering night the last phase is the Rejoining's, never his health's
+  if (f.max > 0 && f.phase < 3 && f.hp / f.max <= PHASE_AT[f.phase - 1] && !(f.phase === 2 && sunders(f))) {
     f.phase++;
     f.shieldUntil = now + CROSS_WARD_MAX_MS;   // WB9b: the ward holds through the bound and the wait (the wait sets its end)
     f.move = null;
     f.cx = null; f.stunUntil = 0;
     out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
-    const [first, ...rest] = PHASE_TURN[f.phase];
+    const [first, ...rest] = turnOf(f);   // WB14d: the Sundering's on its night
     f.queue = rest.map((e) => ({ ...e }));
     hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's
     f.pending = null;
     beginTurn(f, first, now, here, rng, out);
   }
   stepHost(f, now, here, rng, out, P);   // WB11b: his host's beat - under the Legion-Lord alone
-  // WB9c: STUNNED - his Reckoning broken, he kneels: no step, no blow, until it passes
-  if (now < (f.stunUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }
+  if (f.sd) stepSunder(f, now, dt, bodies, here, rng, out);   // WB14d: the halves' laws, and the Flame's own beat
+  bodyBeat(f, now, here, bodies, rng, out, P);   // his body's beat (WB14d: the Blade's, while he is sundered)
+  hpFrame(f, now, out);
+  sdFrame(f, now, out);   // WB14d: the halves' pools
+  cxFrame(f, now, out);
+  stateFrame(f, now, out);
+  return out;
+}
+
+/**
+ * WB14d: ONE BODY'S BEAT - his, or (sundered) the Blade's and the Flame's each (the Flame's through its view of the fight,
+ * flameView): its stun, its attack in flight and its end, its turn's waits and entries, his Reckonings, and the choice -
+ * a target kept a while, and what its kit can do to it from here, else a walk at it. The frames are the caller's.
+ */
+function bodyBeat(f, now, here, bodies, rng, out, P) {
+  // WB9c: STUNNED - his Reckoning broken, he kneels: no step, no blow, until it passes (WB14d: a half kneeling, the same)
+  if (now < (f.stunUntil ?? 0)) return;
   // an attack in flight: the charge runs its lane over its active span, a leap lands him where it falls; the rest hold
   // still until their recovery ends
   if (f.atk) {
@@ -984,7 +1059,7 @@ export function stepBrain(f, now, bodies, rng) {
     if (P.legion && A === ATTACKS.cross && f.court === f.atk.to) raiseBearers(f, now, bodies, rng, out);   // WB11b: his Ward-Bearers rise in the court he lands in (once a court)
     if (A === ATTACKS.reckon && now >= f.atk.at && f.cx) f.cx = null;   // WB9c: the Reckoning landed - the crystals are spent in it
     if (A === ATTACKS.chains && now >= f.atk.at && f.atk.held == null) f.atk.held = chainHeld(f, bodies);   // WB14a: the chain holds, or breaks, as it lands
-    if (now < f.atk.until) { hpFrame(f, now, out); cxFrame(f, now, out); stateFrame(f, now, out); return out; }
+    if (now < f.atk.until) return;
     const was = f.atk;
     f.runA = f.atk.a === f.lastA ? (f.runA ?? 0) + 1 : 1;   // WB13f
     f.lastA = f.atk.a;
@@ -993,6 +1068,9 @@ export function stepBrain(f, now, bodies, rng) {
     f.target = null;
     f.nextAt = now + BREATH_MS;
     if (ATTACK_BY_ID[was.a] === ATTACKS.reckon) f.rk = now + RECKON_EVERY_MS;   // WB9c: the next a minute after this one's end
+    // WB14d: the Sundering's end tears him in two; the Rejoining's makes him whole for his last phase
+    if (ATTACK_BY_ID[was.a] === ATTACKS.sunder && !f.sd) sunder(f, now, bodies);
+    if (ATTACK_BY_ID[was.a] === ATTACKS.rejoin && f.sd) whole(f, now, out);
     // WB8b: ECHOING - a meteor falls again, a breath after the first: on the one it fell for, where they stand now (and
     // alive), else where the first fell; an echo has none of its own, and a phase's turn clears it with the rest
     if (P.echo && ATTACK_BY_ID[was.a] === ATTACKS.meteor && !was.echo) f.queue.unshift({ a: 'meteor', echo: true, who: was.who ?? null, point: was.tg?.[0] ?? null });
@@ -1010,13 +1088,13 @@ export function stepBrain(f, now, bodies, rng) {
   if (P.legion && f.pending?.wait && now >= f.nextAt) {
     if (f.pending.wait !== 'bearers') {
       const none = !here.length && now < (f.waitUntil ?? 0);
-      if (none) return heldBeat(f, now, out);
+      if (none) return;
       f.pending = { wait: 'bearers' };
       f.waitUntil = now + BEARER_WARD_MAX_MS;
       f.shieldUntil = f.waitUntil;
       out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
     }
-    if (bearersStand(f) && now < f.waitUntil) return heldBeat(f, now, out);
+    if (bearersStand(f) && now < f.waitUntil) return;
     hostGone(f, now, out, HOST_GONE.crumbled, (a) => a.k === HOST.bearer);   // the cap: any still standing crumble
     f.shieldUntil = P.shieldMs + now;   // his own ward, as a challenger's arrival raises it below (Unyielding's 6 s)
     out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
@@ -1026,7 +1104,7 @@ export function stepBrain(f, now, bodies, rng) {
   // WB9b: THE WAIT in a new court - his ward holds until a living challenger stands in it (or CROSS_WAIT_MAX_MS), then
   // holds his profile's ward more while the turn goes on (the signature is cast under it)
   if (f.pending?.wait && now >= f.nextAt) {
-    if (!here.length && now < (f.waitUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }
+    if (!here.length && now < (f.waitUntil ?? 0)) return;
     f.shieldUntil = now + P.shieldMs;
     out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
     f.pending = f.queue.length ? f.queue.shift() : null;
@@ -1036,8 +1114,7 @@ export function stepBrain(f, now, bodies, rng) {
     const next = f.pending;
     f.pending = null;
     beginTurn(f, next, now, here, rng, out);
-    hpFrame(f, now, out); stateFrame(f, now, out);
-    return out;
+    return;
   }
   // WB9c: Dagon's Champion's turn done in the last court, his Reckonings are armed - the first RECKON_FIRST_MS from then;
   // one due - he leaps to the court's heart and calls it (`rk` -2 while it is under way: its end sets the next)
@@ -1048,12 +1125,12 @@ export function stepBrain(f, now, bodies, rng) {
       f.move = null;
       f.queue = [{ a: 'reckon' }];
       beginTurn(f, { a: 'leap', centre: true }, now, here, rng, out);
-      hpFrame(f, now, out); stateFrame(f, now, out);
-      return out;
+      return;
     }
   }
-  // choose: a target he keeps a while, and what can be done to it from here - else walk at it
-  if (now >= f.nextAt && !f.pending) {
+  // choose: a target he keeps a while, and what can be done to it from here - else walk at it (WB14d: never while the
+  // halves go to rejoin)
+  if (now >= f.nextAt && !f.pending && !f.sd?.rj) {
     let target = f.target ? here.find((b) => b.sub === f.target) ?? null : null;
     if (!target || now - f.targetAt >= TARGET_HOLD_MS) {
       target = pickTarget(f, here, rng);
@@ -1064,7 +1141,7 @@ export function stepBrain(f, now, bodies, rng) {
       const gap = dist(target.x, target.z, f.pos[0], f.pos[1]) - P.bossR;
       const near = here.filter((b) => dist(b.x, b.z, f.pos[0], f.pos[1]) <= P.atk.slam.r).length;   // WB8b: Colossal's slam reaches further
       if (now - (f.freeAt ?? 0) >= REPEAT_WALK_MS) f.runA = 0;   // WB13f: a walk-in that long breaks the run
-      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(openedAt(f)) ? openedAt(f) + OPENING_MS : -Infinity });   // WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
+      const can = inKit(f, attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(openedAt(f)) ? openedAt(f) + OPENING_MS : -Infinity }));   // WB14d: a half's from its kit; WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
       if (can.length) { f.move = null; begin(f, chooseAttack(can, rng), now, target, here, rng, out); }
       else walkToward(f, target, now, out);
     } else if (f.move) {
@@ -1074,10 +1151,6 @@ export function stepBrain(f, now, bodies, rng) {
     }
   }
   stepWalk(f, now);
-  hpFrame(f, now, out);
-  cxFrame(f, now, out);
-  stateFrame(f, now, out);
-  return out;
 }
 
 /** Where the last said walk has taken him by `now`. */
@@ -1123,7 +1196,7 @@ function beginTurn(f, entry, now, bodies, rng, out) {
     // walkway (`walk` - the Flame's Rift Way) is that walkway alone
     if (Number.isInteger(entry.walk)) { if (!Number.isFinite(f.xa[entry.walk])) f.xa[entry.walk] = now; }
     else for (let k = 0; k < entry.court; k++) if (!Number.isFinite(f.xa[k])) f.xa[k] = now;
-    begin(f, atk, now, null, bodies, rng, out, COURTS[entry.court], false, entry.court);
+    begin(f, atk, now, null, bodies, rng, out, entry.at ?? COURTS[entry.court], false, entry.court);   // WB14d: or beside the heart (`at` - two halves in one court)
     return;
   }
   begin(f, atk, now, who, bodies, rng, out, entry.centre ? hisCourt(f) : who ? null : entry.point ?? null, !!entry.echo);   // WB9b: the heart of the court he fights in
@@ -1756,6 +1829,164 @@ function stepVanguard(f, now, bodies, rng, out, P) {
   return true;
 }
 
+// ── WB14d: THE SUNDERING, ITS LAWS (section 5) ─────────────────────────────────────────────────────────────────────
+/** The attacks a body may begin out of `can` - every one while he is whole, its own kit's while sundered (SUNDER_KITS). */
+const inKit = (f, can) => (f.sd ? can.filter((a) => SUNDER_KITS[f.half === HALF.flame ? HALF.flame : HALF.blade].includes(a.key)) : can);
+/** The Flame's own body: every field its beat moves (the rest of the fight its view reads through to him). */
+const FLAME_KEYS = Object.freeze(['pos', 'yaw', 'court', 'move', 'atk', 'lastA', 'runA', 'freeAt', 'nextAt', 'target', 'targetAt', 'queue', 'pending', 'waitUntil', 'shieldUntil', 'stunUntil', 'used', 'threat']);
+/** The words of the Flame's beat that name their body (`b`). */
+const FLAME_WORDS = new Set(['atk', 'mv', 'ph']);
+
+/** THE FLAME'S VIEW OF THE FIGHT: the fight underneath (its phase, its fighters, its marks and portents, the halves), the
+ *  Flame's body over it (FLAME_KEYS), and the count of attacks and the walkways laid read and written through to the fight
+ *  - one count of attack numbers, one floor. Its beat moves the view; keepFlame writes the body back. */
+function flameView(f) {
+  const V = Object.create(f, {
+    seq: { get: () => f.seq, set: (v) => { f.seq = v; } },
+    xa: { get: () => f.xa, set: (v) => { f.xa = v; } },
+  });
+  for (const k of FLAME_KEYS) V[k] = f.sd.fl[k];
+  V.half = HALF.flame;
+  return V;
+}
+function keepFlame(f, V) { for (const k of FLAME_KEYS) f.sd.fl[k] = V[k]; }
+
+/** THE SUNDERING'S END: he tears in two. The layout is the living challengers in the room's (SUNDER_SPLIT_MIN); the pools
+ *  what he stands at above SUNDER_LAST, half each (a fraction of his whole); the Flame rises where he stands; each half has
+ *  its turn (its bound, its wait, its signature as its ward breaks - the Blade a Ground Slam, the Flame a Flame Nova); and
+ *  the state is said at once, the halves in it, before any word of the Flame's. */
+function sunder(f, now, bodies) {
+  const two = bodies.filter((b) => !b.dead && f.players[b.sub]).length >= SUNDER_SPLIT_MIN;
+  const m = Math.max(0, standsAt(f) - SUNDER_LAST) / 2, C = COURTS[FLOOR.second];
+  const side = (k) => [C[0] + k * SUNDER_SIDE_M, C[1]];
+  f.queue = [two ? { a: 'cross', court: FLOOR.second } : { a: 'cross', court: FLOOR.second, at: side(-1) }, { wait: 'arrive' }, { a: 'slam' }];
+  const turn = [two ? { a: 'cross', court: FLOOR.third, walk: WALK.rift } : { a: 'cross', court: FLOOR.second, at: side(1) }, { wait: 'arrive' }, { a: 'nova' }];
+  f.sd = {
+    two, m, at: now, rj: 0, hSent: '', hAt: 0,
+    bl: { h: m, kn: 0, said: false, lone: null, mend: false },
+    fl: { h: m, kn: 0, said: false, lone: null, mend: false, pos: [f.pos[0], f.pos[1]], yaw: f.yaw, court: f.court, move: null, atk: null, lastA: -1, runA: 0,
+      freeAt: now, nextAt: now + TURN_BREATH_MS, target: null, targetAt: 0, queue: turn.slice(1), pending: turn[0], waitUntil: 0,
+      shieldUntil: f.shieldUntil, stunUntil: 0, used: {}, threat: {} },
+  };
+  f.lastStateAt = -Infinity;   // said this beat - before any word of the Flame's (its first is a beat on)
+}
+
+/** THE REJOINING'S END: he stands whole - the halves gone into him, the last phase begun in the first court (its ward, its
+ *  wait for a challenger, its signature: the Spokes, then the four between), the state said this beat. */
+function whole(f, now, out) {
+  f.sd = null;
+  f.phase = 3;
+  f.shieldUntil = now + CROSS_WARD_MAX_MS;
+  out.push({ k: 'ph', n: f.phase, until: f.shieldUntil });
+  f.queue = PHASE_TURN[3].slice(1).map((e) => ({ ...e }));   // the turn's wait and signature - he already stands in his last court
+  f.lastStateAt = -Infinity;
+}
+
+/** A HALF BROUGHT DOWN KNEELS: its pool spent, its blow and its walk dropped where they stand (a kneel mid-charge kneels
+ *  where the charge has carried it), SUNDER_PAIR_MS of its stun - said by the next beat (`kn`). */
+function kneel(f, b, now) {
+  const H = b ? f.sd.fl : f.sd.bl;
+  H.h = 0; H.kn = now; H.said = false; H.lone = null; H.mend = false;
+  if (b) { const V = flameView(f); settleAt(V, now); keepFlame(f, V); } else settleAt(f, now);
+  const B = b ? f.sd.fl : f;
+  B.atk = null; B.move = null; B.target = null; B.queue = []; B.pending = null;
+  B.stunUntil = now + SUNDER_PAIR_MS;
+}
+
+/** THE PAIR LAW BROKEN: a half knelt past SUNDER_PAIR_MS rises with SUNDER_RISE of its pool (`kr`), and the court tries again. */
+function rise(f, b, now, out) {
+  const S = f.sd, H = b ? S.fl : S.bl, B = b ? S.fl : f;
+  H.kn = 0; H.said = false;
+  H.h = SUNDER_RISE * S.m;
+  f.hp += H.h * f.max;
+  B.stunUntil = 0;
+  B.nextAt = now + BREATH_MS;
+  out.push({ k: 'kr', b, h: Math.round(H.h * f.max), at: now });
+}
+
+/** BOTH KNELT: they rise to rejoin (`rj`) - each warded, each bounding back to the first court (the Blade to its heart, the
+ *  Flame beside it), where the Blade calls the Rejoining; he stands at SUNDER_LAST from now. */
+function rejoin(f, now, out) {
+  const S = f.sd, C = COURTS[FLOOR.first];
+  S.rj = now;
+  for (const H of [S.bl, S.fl]) { H.h = 0; H.kn = 0; H.said = false; H.lone = null; H.mend = false; }
+  f.hp = f.max * SUNDER_LAST;
+  for (const B of [f, S.fl]) { B.stunUntil = 0; B.atk = null; B.move = null; B.target = null; B.shieldUntil = now + CROSS_WARD_MAX_MS; B.nextAt = now + TURN_BREATH_MS; }
+  f.pending = { a: 'cross', court: FLOOR.first };
+  f.queue = [{ a: 'rejoin' }];
+  S.fl.pending = { a: 'cross', court: FLOOR.first, at: [C[0] + SUNDER_SIDE_M, C[1]] };
+  S.fl.queue = [];
+  out.push({ k: 'rj', at: now });
+}
+
+/** WB8b's SOUL-HUNGRY under the Sundering: a feeding heals each standing half by half its share, never past its pool (his
+ *  whole, once they go to rejoin). */
+function sunderFed(f, feed) {
+  const S = f.sd;
+  if (S.rj) { f.hp = Math.min(f.max, f.hp + feed * f.max); return; }
+  for (const H of [S.bl, S.fl]) {
+    if (H.kn) continue;
+    const add = Math.min(Math.max(0, S.m - H.h), feed / 2);
+    H.h += add;
+    f.hp += add * f.max;
+  }
+}
+
+/**
+ * THE HALVES' LAWS, each beat while he is sundered (`dt` the beat's span): a kneel said; both knelt and they rejoin; a
+ * kneel past the pair law rises; a half with nobody living in its court SUNDER_LONE_MS mends (the split layout alone);
+ * the Flame's threat forgets as his does; and the Flame's own beat - bodyBeat over its view, before the challengers in its
+ * own court, its words naming it (`b`).
+ */
+function stepSunder(f, now, dt, bodies, here, rng, out) {
+  const S = f.sd;
+  for (const b of [HALF.blade, HALF.flame]) {
+    const H = b ? S.fl : S.bl;
+    if (H.kn && !H.said) { H.said = true; out.push({ k: 'kn', b, at: H.kn }); }
+  }
+  if (!S.rj && S.bl.kn && S.fl.kn) rejoin(f, now, out);
+  if (!S.rj) for (const b of [HALF.blade, HALF.flame]) if ((b ? S.fl : S.bl).kn && now >= (b ? S.fl : S.bl).kn + SUNDER_PAIR_MS) rise(f, b, now, out);
+  const hereF = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, S.fl.court, POSE_SLACK));
+  for (const b of [HALF.blade, HALF.flame]) {
+    const H = b ? S.fl : S.bl;
+    if (!S.two || S.rj || H.kn || (b ? hereF : here).length) { H.lone = null; H.mend = false; continue; }
+    H.lone ??= now;
+    H.mend = now - H.lone >= SUNDER_LONE_MS;
+    if (!H.mend) continue;
+    const add = Math.min(Math.max(0, S.m - H.h), (SUNDER_MEND * S.m * dt) / 1000);
+    H.h += add;
+    f.hp += add * f.max;
+  }
+  const keep = Math.pow(1 - profileOf(f).threatDecay, dt / 1000);
+  for (const k of Object.keys(S.fl.threat)) { S.fl.threat[k] *= keep; if (S.fl.threat[k] < 0.5) delete S.fl.threat[k]; }
+  const V = flameView(f), k0 = out.length;
+  bodyBeat(V, now, hereF, bodies, rng, out, profileOf(V));
+  keepFlame(f, V);
+  for (let k = k0; k < out.length; k++) if (FLAME_WORDS.has(out[k].k)) out[k].b = HALF.flame;
+}
+
+/** Each half's pool in points, as the wire says it (a pool not quite spent is a point). */
+const sdHealth = (f) => [Math.ceil(f.sd.bl.h * f.max), Math.ceil(f.sd.fl.h * f.max)];
+/** The halves' pools, at most every HP_SEND_MS, when they have moved (`sdh`: each half's, and the whole each began at). */
+function sdFrame(f, now, out) {
+  const S = f.sd;
+  if (!S || now - (S.hAt ?? 0) < HP_SEND_MS) return;
+  const h = sdHealth(f), m = Math.ceil(S.m * f.max), key = `${h.join(',')}/${m}`;   // the whole as a pool rounds - never under it
+  if (key === S.hSent) return;
+  S.hSent = key; S.hAt = now;
+  out.push({ k: 'sdh', h, m });
+}
+/** The Sundering as a state says it: the layout, each half's whole and pool, kneel and mending, the Rejoining's moment, and
+ *  the Flame's body (where, its walk, its blow, its ward, its court, its stun - the Blade's are his own fields). */
+function sunderState(f) {
+  const S = f.sd, F = S.fl;
+  return {
+    two: S.two ? 1 : 0, m: Math.ceil(S.m * f.max), h: sdHealth(f), kn: [S.bl.kn || 0, F.kn || 0], lo: [S.bl.mend ? 1 : 0, F.mend ? 1 : 0], rj: S.rj || 0,
+    fl: { x: r2(F.pos[0]), z: r2(F.pos[1]), yw: r2(F.yaw), mv: F.move ? { x: r2(F.move.x), z: r2(F.move.z), tx: r2(F.move.tx), tz: r2(F.move.tz), v: F.move.v, at: F.move.at } : null,
+      atk: F.atk ? atkFrame(F.atk) : null, sh: F.shieldUntil, ct: F.court | 0, su: F.stunUntil > 0 ? F.stunUntil : 0 },
+  };
+}
+
 /** WB11b: a blow's hand - the blow rate's token spent (one hand for a blow on him, on a crystal and on his host), false
  *  past GATE_HIT_HZ_MAX a second. AUDIT WB11 W3: ONCE A BLOW - a frame under the sequence `seq` (the wire's `q`) of the blow just charged,
  *  within BLOW_GROUP_MS, on a body `who` it has not met, rides on it (BLOW_BODIES_MAX bodies at most); every other frame
@@ -1867,5 +2098,6 @@ export function stateOf(f) {
     ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),   // WB11b: his host standing - said only under the Legion-Lord
     ...(Number.isSafeInteger(openedAt(f)) ? { op: openedAt(f) + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen (WB14c: none while his Vanguard holds)
     ...(f.vg ? { vg: [f.vg.s, f.vg.w] } : {}),   // WB14c: the Vanguard's stage and its waves risen
+    ...(f.sd ? { sd: sunderState(f) } : {}),   // WB14d: the halves, while he is sundered
   };
 }

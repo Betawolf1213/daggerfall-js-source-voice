@@ -15,7 +15,7 @@
 // The charge is run on the walk's frames at a run's pace, his body carried down the lane as the brain carries it.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, BOSS_H, LEAP_AIR_MS, CROSS_AIR_MS, airOf, leapAt, profileOf, isDagons, HOST, HOST_KINDS, HOST_RISE_MS, hostAt } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, BOSS_H, LEAP_AIR_MS, CROSS_AIR_MS, airOf, leapAt, profileOf, isDagons, HOST, HOST_KINDS, HOST_RISE_MS, hostAt, HALF } from '../../net/gate/gateBrain.js';
 import { bossAt } from '../../net/gate/gateLink.js';
 import { telegraphAt, chargeHead, hostTelegraphAt } from '../../net/gate/gateStrike.js';
 import {
@@ -35,6 +35,25 @@ import { fxBurstOf } from '../../render/gate/gateFx.js';   // WB13d: a landing w
  *  size he stands (BOSS_H is the body the blows are measured against - three Daedra Lords tall). */
 export const BOSS_LOOKS = Object.freeze({ ruhn: Object.freeze({ mobile: 31, scale: 3 }) });
 export const bossLookOf = (id) => BOSS_LOOKS[id] ?? BOSS_LOOKS.ruhn;
+/** WB14d (bible/11-Multiplayer/Breach-Portents.md section 5): HIS FLAME, SEEN - his aspect's Atronach (the Fire, the Ice,
+ *  the Iron under the storm, the Flesh under the venom - the Sapper's own sprites, enemyBasics.js 35-38) at his own scale,
+ *  its profile's size three quarters of his: a second body across the fire, never his own sprite twice. */
+export const FLAME_LOOKS = Object.freeze({ burning: 35, rime: 38, storm: 36, venom: 37 });
+export const flameLookOf = (aspectId) => Object.freeze({ mobile: FLAME_LOOKS[aspectId] ?? FLAME_LOOKS.burning, scale: BOSS_LOOKS.ruhn.scale });
+/** WB14d: the halves' names (read through the text core - L10N4) - his Blade, and his aspect's fire made flesh (`boss` his
+ *  own name, the last word of it: "Ruhn's Blade", "Ruhn's Rime"). */
+export const HALF_NAMES = Object.freeze({
+  blade: (boss) => t('gate.sunder.blade', "{boss}'s Blade", { boss }),
+  burning: (boss) => t('gate.sunder.flame', "{boss}'s Flame", { boss }),
+  rime: (boss) => t('gate.sunder.rime', "{boss}'s Rime", { boss }),
+  storm: (boss) => t('gate.sunder.storm', "{boss}'s Storm", { boss }),
+  venom: (boss) => t('gate.sunder.venom', "{boss}'s Venom", { boss }),
+});
+/** WB14d: half `b`'s name under a profile, for a boss named `name`. */
+export const halfName = (b, P, name) => {
+  const boss = String(name ?? '').trim().split(/\s+/).pop() || 'Ruhn';
+  return (b === HALF.flame ? HALF_NAMES[P?.aspect?.id] ?? HALF_NAMES.burning : HALF_NAMES.blade)(boss);
+};
 
 /**
  * WB4b: THE ENTITY A BLOW ON HIM IS COMPUTED AGAINST - on the striker's machine, by the port's own formulas (a swing's
@@ -170,6 +189,9 @@ export const ATTACK_COLORS = Object.freeze({
   wheel: Object.freeze([1.0, 0.38, 0.16]),
   gaze: Object.freeze([1.0, 0.97, 0.9]),
   unmake: Object.freeze([0.78, 0.2, 0.62]),
+  // WB14d: the Sundering's tear (his ember torn toward Oblivion's crimson) and the Rejoining's gold where the halves meet
+  sunder: Object.freeze([1.0, 0.22, 0.4]),
+  rejoin: Object.freeze([1.0, 0.62, 0.22]),
 });
 /** WB9c: the crystals of Oblivion - their heart's glow (his aspect's colour where he wears one: CRYSTAL_ASPECT), and the
  *  stunned Warden's daze (a pale ember). */
@@ -386,6 +408,10 @@ export const BOSS_CUES = Object.freeze({
     wheel: voice(B.barkSound, 0.37, 1.6),
     gaze: voice(B.barkSound, 0.29, 1.8),
     unmake: Object.freeze({ id: FIRE_CAST_ID, pitch: 0.305, volume: 1.7, reach: 80, at: 'him' }),
+    // WB14d: the Sundering - his attack's cry torn low, heard in every court; the Rejoining's lower still (the Torment's
+    // clip, each four semitones and more below the last)
+    sunder: Object.freeze({ clip: B.attackSound, pitch: 0.62, volume: 1.9, reach: 160, at: 'him' }),
+    rejoin: Object.freeze({ clip: B.attackSound, pitch: 0.48, volume: 2.0, reach: 160, at: 'him' }),
   }),
   // WB13d: the release - his blade's swing, his weight gathered as it comes down, his fire loosed (Dagon's too)
   release: Object.freeze({
@@ -406,6 +432,8 @@ export const BOSS_CUES = Object.freeze({
     wheel: Object.freeze({ clip: SWING_LOW, pitch: 0.55, volume: 1.6, reach: 45, at: 'him' }),
     gaze: fireLoosed(1.4, 70),
     unmake: fireLoosed(1.5, 60),
+    sunder: Object.freeze({ clip: BODY_FALL, pitch: 0.45, volume: 1.7, reach: 120, at: 'him' }),   // WB14d
+    rejoin: Object.freeze({ clip: BODY_FALL, pitch: 0.36, volume: 1.8, reach: 160, at: 'him' }),
   }),
   land: Object.freeze({
     cleave: voice(B.attackSound, 0.8),
@@ -425,6 +453,8 @@ export const BOSS_CUES = Object.freeze({
     wheel: voice(B.attackSound, 0.66, 1.6),
     gaze: Object.freeze({ clip: BURNING, pitch: 0.85, volume: 1.6, reach: 70, at: 'him' }),
     unmake: Object.freeze({ clip: BURNING, pitch: 0.6, volume: 2, reach: 80, at: 'him' }),
+    sunder: voice(B.attackSound, 0.5, 2),   // WB14d
+    rejoin: Object.freeze({ clip: BODY_FALL, pitch: 0.22, volume: 2.2, reach: 160, at: 'him' }),
   }),
   roar: voice(B.barkSound, 0.5, 1.8),
   fall: voice(B.barkSound, 0.4, 1.8),
@@ -484,7 +514,7 @@ export const BOSS_STRIDE_M = 2.8;
 export const GROWL_EVERY_MS = Object.freeze([7000, 13000]);
 export const HURT_GAP_MS = 1400;
 export const HURT_SHARE = 0.004;
-export const QUAKE_ON = Object.freeze(['slam', 'charge', 'nova', 'wrath', 'leap', 'meteor', 'cross', 'reckon']);   // WBX5: his leap's landing and a meteor's fall shake it too; WB9: the bound's and the Reckoning's
+export const QUAKE_ON = Object.freeze(['slam', 'charge', 'nova', 'wrath', 'leap', 'meteor', 'cross', 'reckon', 'sunder', 'rejoin']);   // WB14d: and the Sundering's and the Rejoining's   // WBX5: his leap's landing and a meteor's fall shake it too; WB9: the bound's and the Reckoning's
 /** WB13d: A LANDING FELT - the camera's shake (systems/betterAmbience.js weaponKick, under the player's own maxShake) at
  *  nought metres from where it lands and the reach it fades to nothing over; a reach of none: the whole arena feels it. */
 export const LAND_SHAKE = Object.freeze({

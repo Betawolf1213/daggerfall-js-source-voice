@@ -272,8 +272,8 @@
   {
     "name": "INT11-JUDGE-AT-LANDING",
     "file": "src/net/bossRef.js",
-    "old": "    else if (A.shape === 'all' || now >= a.at + BODY_AFTER_MS) landing(a, live, share, (x, z) => inAttack(a, x, z, P), out);",
-    "new": "    else landing(a, live, share, (x, z) => inAttack(a, x, z, P), out);",
+    "old": "  else if (A.shape === 'all' || now >= a.at + BODY_AFTER_MS) landing(a, live, share, (x, z) => inAttack(a, x, z, P), out);",
+    "new": "  else landing(a, live, share, (x, z) => inAttack(a, x, z, P), out);",
     "tests": [
       "test/net/int11_body.test.js"
     ]

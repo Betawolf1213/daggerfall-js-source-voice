@@ -58,7 +58,7 @@ const word = (A, over = {}) => ({ i: 7, a: A.id, at: T0, x: 0, z: 0, yw: 0, tg: 
 
 test('WB14a the arsenal: six attacks more, ids 11 to 16, each a cooldown of its own (none of the eleven before has one) - the Brand and the Torment ask a court of two; the Chains and the Gaze are the struck screen\'s alone (mutants: an id moved; a cooldown dropped; the Gaze counted by the relay)', () => {
   assert.deepEqual(NEW.map((k) => ATTACKS[k].id), [11, 12, 13, 14, 15, 16]);
-  assert.deepEqual(ATTACK_BY_ID.map((a) => a.id), [...Array(17).keys()]);
+  assert.deepEqual(ATTACK_BY_ID.map((a) => a.id), [...Array(19).keys()]);   // PIN MOVED (WB14d): and the Sundering and the Rejoining, 17 and 18
   assert.deepEqual(NEW.map((k) => ATTACKS[k].cd), [22_000, 28_000, 28_000, 30_000, 35_000, 45_000]);
   for (const A of ATTACK_BY_ID) if (!NEW.includes(A.key)) assert.equal(A.cd, undefined, `${A.key} keeps none`);
   assert.deepEqual(NEW.map((k) => ATTACKS[k].nMin ?? 1), [1, 2, 2, 1, 1, 1]);
@@ -406,7 +406,7 @@ test('WB14a the court wires it: the arsenal judged beside his own blows, the rin
   assert.match(gc, /arsenal\.judge\(s, t, P, /);
   assert.match(gc, /telegraphShape\(s\.atk, s\.phase, t, P, \(k\) => arsenal\.at\(s\.atk, k, mine\)\)/);
   assert.match(gc, /_places\.set\(d\.id, c\); _others\.push\(c\);/);
-  assert.match(gc, /peril: order \?\? peril, blindAt: arsenal\.blindAt\(\)/);
+  assert.match(gc, /peril: order \?\? onMe, blindAt: arsenal\.blindAt\(\)/);   // PIN MOVED (WB14d): the blow on my feet his or his Flame's (onMe)
   assert.match(gc, /pull: \(vx, vz\) => !watching\(\) && pull\(vx, vz\)/, 'a watcher is never reeled');
   const w = read('src/scenes/world.js');
   assert.match(w, /myId: \(\) => online\?\.id \?\? null, pull: \(vx, vz\) => player\.blowPush\(vx, vz\), pullDecay: BLOW_PUSH_DECAY,/);

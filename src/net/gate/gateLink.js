@@ -12,7 +12,7 @@
 // Not a DFU member. Ledger A (WB).
 import { readReceipt } from './gateReceipt.js';
 import { t } from '../../systems/textManager.js';   // COURT-WATCH: the watcher's line in the player's language (L10N4)
-import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands; WB14b: the night's plan
+import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf, SUNDER_PAIR_MS, HALF } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands; WB14b: the night's plan; WB14d: the halves
 
 /**
  * @typedef {{day: number|null, boss: string|null, phase: number, hp: number, max: number, x: number, z: number, yaw: number,
@@ -20,7 +20,12 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './ga
  *   md: ReadonlyArray<string>|null, fed: {ns: ReadonlyArray<string>, at: number}|null,
  *   xa: ReadonlyArray<number|null>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
  *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null,
- *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null}} GateState   (WB14c: the Vanguard's stage, and its last word)
+ *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null, sd?: GateSunder|null}} GateState   (WB14c: the Vanguard's stage, and its last word; WB14d: the halves)
+ * @typedef {{two: boolean, m: number, h: number[], kn: number[], lo: number[], rj: number,
+ *   fl: {x: number, z: number, yaw: number, move: any, atk: any, sh: number, ct: number, su: number, sa: number}}} GateSunder
+ *   WB14d: THE SUNDERING as this screen holds it (net/gate/gateBrain.js sunderState) - the layout (`two`: the halves in two
+ *   courts), each half's whole and pool (the Blade's first), each one's kneel and mending, the Rejoining's moment, and the
+ *   Flame's body (its place, facing, walk, blow, ward, court, and its kneel's stun and its moment). The Blade's body is his.
  * @typedef {{ads: ReadonlyArray<{i: number, k: number, h: number, m: number, x: number, z: number, mv: any, atk: {at: number, x: number, z: number}|null, rose: number, yaw: number}>,
  *   gone: ReadonlyArray<{i: number, k: number, x: number, z: number, w: number, n: string|null, at: number}>, ward?: {n: number, at: number, is?: ReadonlyArray<number>}}} GateHost
  *   GATE-UX: `fell` carries `dm`, the kill's damage chart (net/gate/gateBrain.js damageChart), from a relay that makes one.
@@ -37,7 +42,7 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './ga
 export const GATE_STATE_EMPTY = Object.freeze({
   day: null, boss: null, phase: 1, hp: 0, max: 0, x: 0, z: 0, yaw: 0, move: null, atk: null, shieldUntil: 0,
   wrathAt: null, fighters: 0, fell: null, wrath: null, heardAt: 0, md: null, fed: null,
-  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null,
+  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null, sd: null,
 });
 
 /** WB11b: how many of his host gone the fold keeps for the court to play out (their fall, their crumbling). */
@@ -98,6 +103,42 @@ function foldHost(s, g, now) {
   }
 }
 
+/** WB14d: the Wrath's word stills his Flame - its blow and its walk dropped, as the relay drops them. */
+const flameStill = (s) => (s.sd ? { sd: { ...s.sd, fl: { ...s.sd.fl, atk: null, move: null } } } : {});
+/** WB14d: THE HALVES AS A STATE SAYS THEM (net/wire.js gateSd's projection), or null - the Flame's kneel moment its stun's. */
+const sunderOfState = (d) => (d ? {
+  two: d.two === 1, m: d.m, h: [...d.h], kn: [...d.kn], lo: [...d.lo], rj: d.rj,
+  fl: { x: d.fl.x, z: d.fl.z, yaw: d.fl.yw, move: d.fl.mv, atk: d.fl.atk, sh: d.fl.sh, ct: d.fl.ct, su: d.fl.su, sa: d.kn[HALF.flame] || 0 },
+} : null);
+/** WB14d: ONE WORD OF THE SUNDERING folded into the state - a walk, a blow or a ward of the Flame's (`b` 1), the halves'
+ *  pools, a half knelt (its blow and walk dropped where it stands, its stun the pair law's), a half risen, the halves gone
+ *  to rejoin. A word of the halves before a state that names them changes nothing (the relay says one at the split). Pure. */
+function foldSunder(s, g, now, place) {
+  const S = s.sd;
+  if (!S) return s;
+  const F = S.fl;
+  switch (g.k) {
+    case 'mv': return { ...s, sd: { ...S, fl: { ...F, atk: null, move: { x: g.x, z: g.z, tx: g.tx, tz: g.tz, v: g.v, at: g.at }, x: g.x, z: g.z, yaw: g.v > 0 ? Math.atan2(g.tx - g.x, g.tz - g.z) : F.yaw } }, heardAt: now };
+    case 'atk': return { ...s, sd: { ...S, fl: { ...F, atk: { i: g.i, a: g.a, at: g.at, x: g.x, z: g.z, yw: g.yw, tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null, x: g.x, z: g.z, yaw: g.yw } }, heardAt: now, ...crossLaid(s, g) };
+    case 'ph': return { ...s, sd: { ...S, fl: { ...F, sh: g.until } }, heardAt: now };
+    case 'sdh': return { ...s, sd: { ...S, h: [...g.h], m: g.m }, heardAt: now };
+    case 'kn': {
+      const kn = [...S.kn], h = [...S.h], lo = [...S.lo];
+      kn[g.b] = g.at; h[g.b] = 0; lo[g.b] = 0;
+      if (g.b === HALF.flame) { const [x, z] = bossAt(F, g.at); return { ...s, sd: { ...S, kn, h, lo, fl: { ...F, atk: null, move: null, x, z, su: g.at + SUNDER_PAIR_MS, sa: g.at } }, heardAt: now }; }
+      const [x, z] = place(s, g.at);
+      return { ...s, sd: { ...S, kn, h, lo }, atk: null, move: null, x, z, stunUntil: g.at + SUNDER_PAIR_MS, stunAt: g.at, heardAt: now };
+    }
+    case 'kr': {
+      const kn = [...S.kn], h = [...S.h];
+      kn[g.b] = 0; h[g.b] = g.h;
+      return g.b === HALF.flame ? { ...s, sd: { ...S, kn, h, fl: { ...F, su: 0 } }, heardAt: now } : { ...s, sd: { ...S, kn, h }, stunUntil: 0, heardAt: now };
+    }
+    case 'rj': return { ...s, sd: { ...S, rj: g.at, kn: [0, 0], h: [0, 0], lo: [0, 0], fl: { ...F, su: 0 } }, stunUntil: 0, heardAt: now };
+    default: return s;
+  }
+}
+
 /**
  * One word folded into the court's state. `st` replaces everything it names; the rest move their own fields; an
  * attack's word supersedes the one in flight (the relay's law - one attack at a time); a word from another day's
@@ -124,19 +165,22 @@ export function foldGate(s, g, now, place = bossAt) {
       lg: hostOfState(g.lg, same ? s.lg : null),   // WB11b: his host standing - none said, none held (any other fight's)
       openUntil: g.op ?? 0,   // WB13e: the opening's end - his wake (0: an older relay's word, and no wake)
       pt: g.pt ?? null,   // WB14b: the night's portents - its floor plan (net/gate/gateBrain.js floorPlan) and what it holds
+      sd: sunderOfState(g.sd),   // WB14d: the halves, while he is sundered
+      ...(g.sd?.kn?.[HALF.blade] ? { stunAt: g.sd.kn[HALF.blade] } : {}),   // WB14d: the Blade's kneel, from the moment it knelt
     };
   }
   if (s.day === null) return s;   // nothing but a whole state starts a fight
+  if (g.b === HALF.flame || g.k === 'sdh' || g.k === 'kn' || g.k === 'kr' || g.k === 'rj') return foldSunder(s, g, now, place);   // WB14d: the halves' own
   switch (g.k) {
     // WB9c: a walk, or another attack's word, and the Reckoning's crystals are done with (the relay grows them only with
     // its word, and spends them at its landing or its breaking - no word of their own says so)
     case 'mv': return { ...s, atk: null, move: { x: g.x, z: g.z, tx: g.tx, tz: g.tz, v: g.v, at: g.at }, x: g.x, z: g.z, yaw: g.v > 0 ? Math.atan2(g.tx - g.x, g.tz - g.z) : s.yaw, heardAt: now, cx: null };
     // AUDIT WB9 (brain F3): the Wrath's word ends a stun as the relay ends it (net/gate/gateBrain.js - "the midnight overtakes a
     // Reckoning and a stun alike"); no other attack begins under one
-    case 'atk': return { ...s, atk: { i: g.i, a: g.a, at: g.at, x: g.x, z: g.z, yw: g.yw, tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null, x: g.x, z: g.z, yaw: g.yw, heardAt: now, cx: s.cx && s.cx.i === g.i ? s.cx : null, ...(g.a === ATTACKS.wrath.id ? { stunUntil: 0 } : {}), ...crossLaid(s, g) };   // WB14a: its marked, by peer id
+    case 'atk': return { ...s, atk: { i: g.i, a: g.a, at: g.at, x: g.x, z: g.z, yw: g.yw, tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null, x: g.x, z: g.z, yaw: g.yw, heardAt: now, cx: s.cx && s.cx.i === g.i ? s.cx : null, ...(g.a === ATTACKS.wrath.id ? { stunUntil: 0, ...flameStill(s) } : {}), ...crossLaid(s, g) };   // WB14a: its marked, by peer id
     case 'hp': return { ...s, hp: g.h, max: g.m, heardAt: now };
     case 'ph': return { ...s, phase: g.n, shieldUntil: g.until, heardAt: now };
-    case 'wrath': return { ...s, wrath: g.at, atk: null, heardAt: now, lg: s.lg ? { ...s.lg, ads: [] } : null };   // WB11b: his host is gone with the court
+    case 'wrath': return { ...s, wrath: g.at, atk: null, heardAt: now, lg: s.lg ? { ...s.lg, ads: [] } : null, ...flameStill(s) };   // WB11b: his host is gone with the court; WB14d: his Flame's blow
     case 'fed': return { ...s, hp: g.h, max: g.m, fed: { ns: g.ns, at: g.at }, heardAt: now };   // WB8b: the health his feeding left, and who fed him (AUDIT PRE-MERGE 0929 W1-3: every one of the beat's)
     // WB9c: THE CRYSTALS - grown whole at the Reckoning's word, their health as it falls, each one broken (and by whom),
     // and the Reckoning broken: he is stunned and the crystals are gone. A word of another Reckoning's crystals is not these.

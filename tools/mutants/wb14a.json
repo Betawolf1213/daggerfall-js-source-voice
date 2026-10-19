@@ -193,8 +193,8 @@
   {
     "name": "WB14a-the-gaze-counted-by-the-relay",
     "file": "src/net/bossRef.js",
-    "old": "    if (!A || !(share > 0) || screenJudged(A)) a.bj = true;",
-    "new": "    if (!A || !(share > 0)) a.bj = true;",
+    "old": "  if (!A || !(share > 0) || screenJudged(A)) a.bj = true;",
+    "new": "  if (!A || !(share > 0)) a.bj = true;",
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
     ],
@@ -204,8 +204,8 @@
   {
     "name": "WB14a-the-relay-s-wheel-once-at-its-landing",
     "file": "src/net/bossRef.js",
-    "old": "    else if (A === ATTACKS.wheel) sweep(",
-    "new": "    else if (A === null) sweep(",
+    "old": "  else if (A === ATTACKS.wheel) sweep(",
+    "new": "  else if (A === null) sweep(",
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
     ]
@@ -339,8 +339,8 @@
   {
     "name": "WB14a-the-fold-forgets-the-marked",
     "file": "src/net/gate/gateLink.js",
-    "old": "tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null,",
-    "new": "tg: g.tg }, move: null,",
+    "old": "    case 'atk': return { ...s, atk: { i: g.i, a: g.a, at: g.at, x: g.x, z: g.z, yw: g.yw, tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null,",
+    "new": "    case 'atk': return { ...s, atk: { i: g.i, a: g.a, at: g.at, x: g.x, z: g.z, yw: g.yw, tg: g.tg }, move: null,",
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
     ]

@@ -169,8 +169,8 @@
   {
     "name": "AUDWBX-F3-the-fall-at-the-words-start",
     "file": "src/net/gate/gateLink.js",
-    "old": "      const [x, z] = place(s, g.at);",
-    "new": "      const [x, z] = [s.x, s.z];",
+    "old": "      const [x, z] = place(s, g.at);\n      return { ...s, fell:",
+    "new": "      const [x, z] = [s.x, s.z];\n      return { ...s, fell:",
     "tests": [
       "test/net/gate/auditwbx.test.js"
     ]

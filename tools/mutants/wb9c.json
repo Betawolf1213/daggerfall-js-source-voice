@@ -76,8 +76,8 @@
   {
     "name": "WB9c-an-attack-through-the-stun",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (now < (f.stunUntil ?? 0)) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
-    "new": "  if (false) { hpFrame(f, now, out); stateFrame(f, now, out); return out; }",
+    "old": "  if (now < (f.stunUntil ?? 0)) return;",
+    "new": "  if (false) return;",
     "tests": [
       "test/net/gate/wb9c_gate_reckoning.test.js"
     ]
