@@ -247,6 +247,13 @@ directory by `test/bible/audit18_bible_docs.test.js`:
   forty-eight. Conservative, and off (every light) in the sprite pass, the
   studio bake, a panel bracket, an overflowed frame and behind `?clusters=off`
   (`Enhanced-Lighting-Arc.md`, LC1).
+- `jungleFloorArt.js` - BANTHA2 THE JUNGLE FLOOR'S PLANTS (2026-10-19, the owner: "At the ground level, the image shows
+  the flora abundence that should be present in the jungle"): `JUNGLE_FLOOR_PLANTS` - the owner's tall tuft and archive
+  500's sedge, ferns, broad-leaved bush, palmlet, flowering stem and spike, each with its height, stiffness, sway and
+  share at the poor and lush ends of the patch; `jungleFloorArt(pictureOf)` lays their pictures in the meadow's atlas
+  (`fitSprite`) as a set the meadow's program wears (`labGrass.js` `MEADOW_ART`'s shape: its ladders written by
+  `meadowVsEdits`, its hue share 0 - the ground's light, never its hue); `floorPick` the vertex stage's pick in JS.
+  Drawn by a second grass field (`scenes/jungleFloorHost.js`; `03-World/Bantha-Jungle.md` "The floor").
 - `labGrass.js` - GR1 the LAB'S GRASS: grass-proto.html's blade shaders
   verbatim, its placer law, and a renderer of its own beside the world's,
   drawn on grass records of the near ring outside winter. GR2 darkened

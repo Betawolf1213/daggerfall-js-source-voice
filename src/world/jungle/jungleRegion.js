@@ -4,9 +4,10 @@
 // continuous field the layout (on the terrain worker) and the haze (on the main thread) both read, so the trees thin and
 // the air clears at the same border.
 //
-// DFU's political map (POLITIC.PAK, MapsFile.GetPoliticIndex - read here through the port's getRegionIndexAt) names a
-// region per map pixel, 819.2 m square: a region's edge is a staircase of pixel edges. Here:
-//   - THE FIELD. Each pixel near the region carries its SIGNED DISTANCE from the region's edge - from its centre to the
+// BANTHA2 (2026-10-19, the owner: "The area is red in bantha and should be the jungle biome"): Bantha is the area the
+// owner painted on the Hammerfell shore (world/jungle/banthaArea.js, a set of map pixels, 819.2 m square), where BANTHA1
+// stood the jungle on Glenpoint's political region - either way an edge that is a staircase of pixel edges. Here:
+//   - THE FIELD. Each pixel near the area carries its SIGNED DISTANCE from the area's edge - from its centre to the
 //     nearest pixel of the other side's square, in pixels, positive inside and negative outside, held at
 //     JUNGLE_FIELD_REACH past it - read the first time a pixel is asked and kept (jungleField: no sweep of the map). Read between pixel centres (bilinearly,
 //     jungleSignedAt) the field crosses zero along the pixels' shared edges and rounds the staircase's corners.
@@ -19,11 +20,8 @@
 // A job to the terrain worker carries the pixel's 3x3 of distances (jungleNine) - nine numbers, nothing else crosses.
 // ═══════════════════════════════════════════════════════════════════
 import { ecoNoise, ecoOrigin } from '../ecotone.js';
+import { banthaAreaHas } from './banthaArea.js';
 
-/** The regions that are jungle - Glenpoint (MapsFile region 18, POLITIC 146), due north of Daggerfall city, the first of
- *  the continent's biomes. The owner's call (2026-10-18): Bantha, the region the owner first named (10), holds no pixel of
- *  Daggerfall's map and no place - a name it lists and never paints (AUDIT BANTHA1 RISK, tools/jungleExtent.mjs). */
-export const JUNGLE_REGIONS = Object.freeze([18]);
 /** How far (pixels) from the edge the field is exact; past it a pixel reads this much and a half, its side's sign. */
 export const JUNGLE_FIELD_REACH = 6;
 /** A map pixel (m) - terrainSampler.js TERRAIN_SIZE, held here as ecotone.js holds its own. */
@@ -46,14 +44,13 @@ const smoothstep = (a, b, v) => {
 /**
  * THE FIELD over a `width` x `height` map, ASKED, NEVER SWEPT: `at(x, y)` a pixel's signed distance (pixels; the file's
  * head), `-(reach + 0.5)` off the map and wherever nothing of the other side is within the reach. A pixel's distance is
- * read the first time it is asked - its neighbours' regions out to the reach, ring by ring, stopping once no nearer ring
- * can beat what it found - and kept, as each pixel's region is kept once read: a pixel the stream never builds is never
- * read, and no frame or boot pays for the map's other 499,000 pixels. `regionAt(x, y)` a pixel's region
- * (MapsFile.getRegionIndexAt); a pixel off the map is outside.
- * @param {{ width: number, height: number, regionAt: (x: number, y: number) => number, regions?: readonly number[], reach?: number }} o
+ * read the first time it is asked - its neighbours' sides out to the reach, ring by ring, stopping once no nearer ring
+ * can beat what it found - and kept, as each pixel's side is kept once read: a pixel the stream never builds is never
+ * read, and no frame or boot pays for the map's other 499,000 pixels. `insideAt(x, y)` whether a pixel is the jungle's
+ * (banthaArea.js banthaAreaHas, the owner's area); a pixel off the map is outside.
+ * @param {{ width: number, height: number, insideAt?: (x: number, y: number) => boolean, reach?: number }} o
  */
-export function jungleField({ width, height, regionAt, regions = JUNGLE_REGIONS, reach = JUNGLE_FIELD_REACH }) {
-  const isJungle = regions.length === 1 ? ((r) => r === regions[0]) : ((r) => regions.includes(r));
+export function jungleField({ width, height, insideAt = banthaAreaHas, reach = JUNGLE_FIELD_REACH }) {
   const side = new Uint8Array(width * height).fill(2);   // 2 not yet read, 1 the jungle's, 0 not
   const dist = new Float32Array(width * height).fill(NaN);
   const far = reach + 0.5;
@@ -61,7 +58,7 @@ export function jungleField({ width, height, regionAt, regions = JUNGLE_REGIONS,
     if (x < 0 || y < 0 || x >= width || y >= height) return 0;
     const i = y * width + x;
     let v = side[i];
-    if (v === 2) side[i] = v = isJungle(regionAt(x, y)) ? 1 : 0;
+    if (v === 2) side[i] = v = insideAt(x, y) ? 1 : 0;
     return v;
   };
   const toOther = (me, x, y, dx, dy, best) => {
@@ -70,7 +67,7 @@ export function jungleField({ width, height, regionAt, regions = JUNGLE_REGIONS,
   };
   return {
     width, height, reach,
-    /** A pixel's region read as the jungle's (1) or not (0) - off the map, not. */
+    /** A pixel read as the jungle's (1) or not (0) - off the map, not. */
     inside: sideAt,
     /** A pixel's signed distance from the jungle's edge (pixels). */
     at(x, y) {
@@ -91,15 +88,17 @@ export function jungleField({ width, height, regionAt, regions = JUNGLE_REGIONS,
   };
 }
 
-/** The field's cache, one a maps object (the world's; a new install of the map is a new object). */
+/** The field's cache, one a world (its maps object - a new install of the map is a new world). */
 const _fields = new WeakMap();
 /**
- * The world's field, made the first time it is asked (nothing read until a pixel is) and kept with the map.
- * @param {{ getRegionIndexAt: (x: number, y: number) => number }} maps @param {number} width @param {number} height
+ * The world's field, made the first time it is asked (nothing read until a pixel is) and kept with its world.
+ * `insideAt` the jungle's pixels (the owner's area; a test's own).
+ * @param {object} maps the world's map, its key @param {number} width @param {number} height
+ * @param {(x: number, y: number) => boolean} [insideAt]
  */
-export function jungleFieldOf(maps, width, height) {
+export function jungleFieldOf(maps, width, height, insideAt = banthaAreaHas) {
   let f = _fields.get(maps);
-  if (!f) { f = jungleField({ width, height, regionAt: (x, y) => maps.getRegionIndexAt(x, y) }); _fields.set(maps, f); }
+  if (!f) { f = jungleField({ width, height, insideAt }); _fields.set(maps, f); }
   return f;
 }
 
@@ -152,11 +151,21 @@ export function jungleDepthAt(px, py, nine, x, z) {
 /** The layout's share at a depth (m): 0 past JUNGLE_EDGE.out outside the line, 1 past JUNGLE_EDGE.in inside it. */
 export const jungleShare = (depth) => smoothstep(-JUNGLE_EDGE.out, JUNGLE_EDGE.in, depth);
 
+/** BANTHA2: A POINT'S OWN DRAW against the layout's share (0..1) - an integer hash of its world place at an eighth of a
+ *  metre (x east, z north; jungleHost's frame), the same on every client and at every origin: the jungle floor's plant
+ *  stands where it is under the share and the meadow's grass where it is not (scenes/jungleFloorHost.js), so the two
+ *  carpets trade places across the edge and never stand twice. Pure. */
+export function jungleFloorDraw(wx, wz) {
+  let h = (Math.imul(Math.round(wx * 8), 0x27d4eb2d) ^ Math.imul(Math.round(wz * 8), 0x165667b1) ^ 0x464c5252) >>> 0;   // 'FLRR'
+  h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d) >>> 0; h ^= h >>> 12; h = Math.imul(h, 0x297a2d39) >>> 0; h ^= h >>> 15;
+  return (h >>> 8) / 16777216;
+}
+
 /** AUDIT PRECIP AIR-12: THE JUNGLE'S AIR leans in over a band of its own (m of depth: none this far outside the line,
  *  whole this far inside) - kilometres, where the haze's is a few hundred metres (it held the tropics' air and the
- *  mountain woods' a 19 C step apart across 1.5 km, and the sleet between them to 75 m). Over this band a Glenpoint winter
- *  walks from snow through a few hundred metres of sleet into the jungle's rain. Inside the field's exact reach
- *  (JUNGLE_FIELD_REACH, 4.9 km) both ways; the jungle stands 24 km deep at its heart. */
+ *  mountain woods' a 19 C step apart across 1.5 km, and the sleet between them to 75 m). Over this band a Dragontail
+ *  winter (the area's western foothills, the Mountain's climate) walks from snow through sleet into the jungle's rain. Inside the field's exact reach
+ *  (JUNGLE_FIELD_REACH, 4.9 km) both ways; the jungle stands 32 km deep at its heart (Mournoth's, BANTHA2). */
 export const JUNGLE_AIR_EDGE = Object.freeze({ out: 2000, in: 4000 });
 /** The jungle's air's share at a depth (m): 0 past JUNGLE_AIR_EDGE.out outside the line, 1 past JUNGLE_AIR_EDGE.in in. */
 export const jungleAirShare = (depth) => smoothstep(-JUNGLE_AIR_EDGE.out, JUNGLE_AIR_EDGE.in, depth);

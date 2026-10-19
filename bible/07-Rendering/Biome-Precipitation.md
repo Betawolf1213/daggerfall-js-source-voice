@@ -57,7 +57,8 @@ its far ends, the point's row held to the Bay's and none in the Eltheric's box (
 **A BIOME OVERLAY** leans the air toward its own numbers by its share (`setAirBiome`). The jungle registers the
 Rainforest's air over a band of its own, kilometres wide (`world/jungle/jungleRegion.js` `jungleAirShare`,
 `scenes/jungleHost.js` - AIR-12: it leaned by its haze's few hundred metres, a 19 C wall with a band of sleet ~75 m
-wide), so Glenpoint's jungle rains in a Mountain Woods winter and its edge is a walk through sleet.
+wide), so the jungle rains where the land's own winter would snow - in the Dragontail foothills its western edge stands
+on (the Mountain's climate; BANTHA2 - at BANTHA1 it stood on Glenpoint's Mountain Woods) - and its edge is a walk through sleet.
 
 | Climate | mean | season half-range | day half-range | spell | median row |
 |---|---|---|---|---|---|
@@ -84,7 +85,7 @@ random minutes of ten years, a fall of 0.7). Each cell is the share of wet hours
 | Northmoor | 64 / 25 / 11 | 11 / 12 / 77 | 4 / 8 / 88 |
 | Daggerfall | 66 / 22 / 12 | 10 / 11 / 79 | 5 / 8 / 87 |
 | Wayrest | 67 / 20 / 13 | 12 / 12 / 77 | 5 / 9 / 86 |
-| Glenpoint (before the jungle's lean) | 83 / 14 / 3 | 18 / 13 / 69 | 10 / 11 / 79 |
+| Glenpoint | 83 / 14 / 3 | 18 / 13 / 69 | 10 / 11 / 79 |
 | Wrothgarian Mountains | 92 / 6 / 2 | 30 / 13 / 57 | 20 / 12 / 67 |
 | Dragontail Mountains | 74 / 15 / 10 | 17 / 12 / 71 | 9 / 10 / 81 |
 | Ilessan Hills | 78 / 17 / 5 | 15 / 12 / 73 | 8 / 10 / 82 |

@@ -13,8 +13,9 @@
 //                 (software GL) and its numbers are only relative.
 //   SECONDS=8     how long each scene is sampled after it settles
 //   SCENES=city,road,dungeon   which to run
-//   SCENES=jungle  BANTHA1 (AUDIT BANTHA1 DOC-10): the city of Glenpoint, deep in the jungle and its haze (LOC=<a
-//                 town of Glenpoint's> for another); JUNGLE=off its kill door, to A/B the jungle
+//   SCENES=jungle  BANTHA1 (AUDIT BANTHA1 DOC-10; BANTHA2's area): the city of Satakalaam, deep in the jungle and its haze
+//                 (LOC=<a town of Satakalaam's> for another - tools/jungleExtent.mjs lists the area's); JUNGLE=off its kill
+//                 door, to A/B the jungle
 //   OUT=perf.json where to append the rows (default: print only)
 //
 // The scene is settled when the world says so (`window.__shotReady`:
@@ -46,7 +47,7 @@ const SCENES = {
   city: `/play/?world&region=Daggerfall&loc=Daggerfall&class=1&novideo&shot&fps`,
   road: `/play/?world&spawn=random&class=1&novideo&shot&fps`,
   dungeon: `/play/?shot&class=0&fps`,
-  jungle: `/play/?world&region=Glenpoint&loc=${encodeURIComponent(process.env.LOC || 'Glenpoint')}&class=1&novideo&shot&fps`,
+  jungle: `/play/?world&region=Satakalaam&loc=${encodeURIComponent(process.env.LOC || 'Satakalaam')}&class=1&novideo&shot&fps`,
 };
 
 const server = await createServer({ root: ROOT, server: { port: PORT, strictPort: true, hmr: false, watch: null }, logLevel: 'error' });

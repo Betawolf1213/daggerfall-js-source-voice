@@ -231,7 +231,7 @@ import { createExteriorFoes, MAX_ACTIVE_ENCOUNTER_FOES, encounterCap, WILD_PACK_
 import { createBreather, frameFitBudget } from '../systems/buildBreather.js';   // PERF7: the stream build yields to the frame; PERF-EXT24: a slice of what the frame left
 import { pieceIndex } from '../render/labGrass.js';   // PERF8: the piece under a point, by arithmetic
 import { meterFor } from '../render/perfMeter.js';   // GRASS2: the field gets a zone of its own - it was inside the world's
-import { LabGrassRenderer, createGrassField, grassRecordsOf, tileMeanColour, discSlotCount, LAB_GRASS, LAB_DIM, GRASS_TONES, GRASS_TONES_CLASSIC } from '../render/labGrass.js';   // GR1: the lab's grass, byte for byte; PERF-EXT20: the field's slot count, warmed at mount
+import { LabGrassRenderer, createGrassField, grassRecordsOf, floorRecordsOf, tileMeanColour, discSlotCount, LAB_GRASS, LAB_DIM, GRASS_TONES, GRASS_TONES_CLASSIC } from '../render/labGrass.js';   // GR1: the lab's grass, byte for byte; PERF-EXT20: the field's slot count, warmed at mount
 import { windDrive, floraSwayOn, gustPhaseAfterShift, gustClock } from '../systems/wind/windDrive.js';   // WIND3: the one wind in every consumer's units; the flats' sway
 import { WindWispsRenderer, wispsOn, SAND_LOOK } from '../render/windWisps.js';   // WIND3: the wind, seen; WEATHER2d: the sandstorm's sand in the same program
 import { HeatHazeRenderer } from '../render/heatHaze.js';   // HAZE1: Heat Haze's ring, drawn
@@ -269,6 +269,7 @@ import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../
 import { treeKind } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it
 import { createTreesHost } from './treesHost.js';   // LPT1 / BANTHA1 (HOST-SPLIT): the near 3D trees - Low Poly Trees' door and the jungle's, and their frame
 import { createJungleHost } from './jungleHost.js';   // BANTHA1: Bantha's jungle - its field, its trees' door, its haze
+import { createJungleFloorHost, floorPictures } from './jungleFloorHost.js';   // BANTHA2: the jungle's floor - a second field of the grass
 import { createSnowCoverHost, twinKey, twinLayers } from './snowCoverHost.js';   // PRECIP4: the snow the ground keeps, about the player
 import { realForestsOn, roadVergesOn, climateBlendOn, jungleOn, jungleHazeOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
 import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Eltheric Ocean's
@@ -2799,7 +2800,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // GR1: the lab's grass - one scatter of the lab's 1,200,000 candidates in a
   // 420m window around the eye, kept where the tiles are grass, rebuilt when
   // the eye leaves the window's middle. Enhanced skin and switch only.
-  const grassRecords = new Map();   // archive -> Set of grass records
+  const grassRecords = new Map(), floorRecords = new Map();   // archive -> Set of grass records; BANTHA2: of the jungle floor's (grass and dirt - floorRecordsOf)
   const groundPuddles = new Map();   // WATER-PUDDLE: archive -> its layers, each puddle record's water in its alpha (the pass's own mask)
   const groundMeanColour = new Map();   // GR4: archive -> [record] -> mean rgb 0..1
   const groundDrawnMeans = new Map();   // AUDIT GRASS-LIT2 B2: archive -> the uploaded mod tile set's record means (null: the classic file's)
@@ -3016,6 +3017,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // field and air its own host's (scenes/jungleHost.js); a pixel HOLDS the handles its far pictures stand on and lets them go
   // with it (AUDIT LPT B5). The stream's state, its pixels and its ground are asked of the world, never held
   const jungle = jungleOn() ? createJungleHost({ renderer, maps, mapWidth: MAP_W, mapHeight: MAP_H, stateOf: () => state, builtOf: () => built, heightAt: (x, z) => heightAt(x, z), breathe: () => breather.breathe(), haze: jungleHazeOn() }) : null;
+  const jungleFloor = jungle && labGrass ? createJungleFloorHost({ gl: renderer.gl, jungle, pictures: floorPictures({ getTexture, palette }), density: grassDensity / LAB_GRASS.density, provoke: pageParam('provoke') !== 'last', onArrive: () => { labGrassField = null; } }) : null;   // BANTHA2: the jungle's floor, a second field of the grass (scenes/jungleFloorHost.js) - made when the jungle comes near; the meadow's field placed again beside it
   let _snowArrival = null;   // AUDIT PRECIP HOST-2: a trip's arrival minute (the event clock's) while its time has yet to run - declared before the host that reads it
   const snowCover = createSnowCoverHost({ renderer, climateAt, mapHeight: MAP_H, stateOf: () => state, builtOf: () => built, heightAt: (x, z) => heightAt(x, z), owns: precipLawOn, markReskin: (key) => _reskin.skin(key), now: () => (_snowArrival !== null && worldMinutes() < _snowArrival ? _snowArrival : ((_snowArrival = null), worldMinutes())), place: () => ({ px: state.current.x, py: state.current.y }), arriving: () => !playerSpawned });   // AUDIT PRECIP HOST-2: ONE clock - a trip's arrival minute until its own time has run   // PRECIP4 (scenes/snowCoverHost.js): the ground's snow on the enhanced lane - its draws, its builds' seasons, the sweep
   const trees = createTreesHost({ renderer, getTexture, seasons, seasonsActive: () => seasonsActive, lowPolyTreesOn: modSetting('low-poly-trees', 'Enabled') && params.get('trees') !== 'off', jungle, breathe: () => breather.breathe(), yards: () => yards });
@@ -5718,7 +5720,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!grassRecords.has(groundArchive)) {
       const layers = [];
       for (let r = 0; r < groundTex.recordCount; r++) layers.push(groundTex.getColor32(groundTex.getDFBitmap(r, 0), 0));
-      grassRecords.set(groundArchive, grassRecordsOf(layers));
+      grassRecords.set(groundArchive, grassRecordsOf(layers)); floorRecords.set(groundArchive, floorRecordsOf(layers));   // BANTHA2: the floor's beside the meadow's
       groundPuddles.set(groundArchive, markPuddleWater(layers));   // WATER-PUDDLE: the blades ask the mask the pass draws by
       // GR4: each record's MEAN colour, for the grass root that stands on
       // it - averaged once, rather than sampled per blade. AUDIT 68 S17:
@@ -35053,7 +35055,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // repeats is free. A stash here would be mutable state and a
       // coordinate guard bought for no measured gain.
       const _bare = riteHost?.clearing() ?? null;   // AUDIT WB12d (G2): the faithful's burned earth, this frame
-      const keep = (x, z) => {
+      const keep = (x, z, floor = false) => {   // BANTHA2: `floor` the jungle floor's keep - its records (grass and dirt), and the meadow kept out of every point it claims
         const hit = pieceAt(x, z);
         if (!hit) return null;
         const { p, t, grass } = hit;
@@ -35065,7 +35067,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // ECOTONE1: at a climate border the root stands in the climate the ground's border gives it - its grass, its puddles
         const ga = p.ecoGround ? borderGround(p, lx, lz) : p.groundArchive;
         const g = ga === p.groundArchive ? grass : grassRecords.get(ga);
-        if (rec === 0 || !g || !g.has(rec)) return null;
+        if (rec === 0 || !(floor ? floorRecords.get(ga) : g)?.has(rec) || (!floor && jungleFloor?.claims(x, z))) return null;
         // GRASS-PATH1 (2026-09-19, Mac: "Grass shouldnt be on dirt
         // paths"): the road painter's own mask. A track across grass
         // writes 10/11/12/51 - the SAME records the natural dirt-grass
@@ -35132,13 +35134,14 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         const { p, t } = hit;
         return surfaceNormalAt(p.groundNormals, x - t[0], z - t[2], grassNormalScratch);
       };
-      if (!labGrassField) labGrassField = createGrassField(labGrass, { keep, ground, slope, density: grassDensity });   // PERF1: the pref's fraction of the lab's field
+      if (!labGrassField) labGrassField = jungleFloor ? jungleFloor.pair(createGrassField(labGrass, { keep, ground, slope, density: grassDensity })) : createGrassField(labGrass, { keep, ground, slope, density: grassDensity });   // PERF1: the pref's fraction of the lab's field; BANTHA2: the floor's paired with it
       labGrassField.update(ex, ez, keep, ground, slope);
+      jungleFloor?.update(ex, ez, (x, z) => keep(x, z, true), ground, slope);   // BANTHA2: the jungle's floor, where it claims
       window.__grassStats = () => ({ blades: labGrass.count, drawn: labGrass.drawn, vertsPerBlade: labGrass._meadow ? labGrass.vertsCards : labGrass._oneQuad ? labGrass.vertsFar : labGrass.verts, nearPixels: nearPieces().length, cells: labGrassField?.live.size ?? 0, slots: labGrassField?.slots ?? 0,   // GRASS AUDIT 1: `verts` below is the near blade's; `vertsPerBlade` is the frame's (MEADOW1: a near tuft's cards in the meadow). PERF-URL: `cells` and `slots` had been swallowed by this comment - the hook answered without them
         perCell: labGrass.perCell, range: LAB_GRASS.range, height: LAB_GRASS.height, verts: labGrass.verts,
         // GRASS2: what the field HOLDS, against what a slot-sized draw
         // would have submitted - the pad, measured rather than assumed.
-        held: labGrass.slotCount ? labGrass.slotCount.reduce((a, b) => a + b, 0) : null });
+        held: labGrass.slotCount ? labGrass.slotCount.reduce((a, b) => a + b, 0) : null, floor: jungleFloor && { on: jungleFloor.on, cells: jungleFloor.field?.live.size ?? 0, blades: jungleFloor.renderer?.count ?? 0, drawn: jungleFloor.renderer?.drawn ?? null } });   // BANTHA2: the jungle floor's field
       // GR2: the sky's row on the lab's slider - a sunny day is the lab's
       // 70. AUDIT 49 F4: the lab's uWind is WIND.speed, which carries the
       // gust; uWindV is the rate without it - the same pair the rain is
@@ -35168,6 +35171,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           points: renderer._pointLights, pointColors: renderer._pointColorData(renderer._pointLights.length >> 2, true) },
         { dir: wd.dir, speed: wd.slider * wd.gust, windV: wd.windV, sway: floraSwayOn() && wd.on },   // AUDIT MEADOW1: the trees' sway switch - the meadow sways while they do
         LAB_GRASS.range, getPref('grassStyle'));   // GRASS-PX: the row's word, read live - the style is a uniform, so it flips without a reload
+      jungleFloor?.drawBeside(labGrass);   // BANTHA2: the jungle's floor, under the meadow's light and wind
       // GRASS2: the field had been inside the WORLD's span, which is the
       // one number that cannot say whether the grass is worth what it
       // costs. It marks its own now, and hands the frame straight back.

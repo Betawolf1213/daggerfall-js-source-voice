@@ -1,13 +1,20 @@
-# The Jungle of Bantha (BANTHA1, 2026-10-18)
+# The Jungle of Bantha (BANTHA1, 2026-10-18; BANTHA2, 2026-10-19)
 
 **The owner's call (2026-10-18), with `jungle_trees.zip`: "Bantha, north of daggerfall is going to be the first region in
 the continent to recieve a biome expansion. Using the attached file, populate the area in a dense jungle like format.
 When traveling inside the area there should be a fog-like haze that reduces visability. This needs to be insanely
 detailed and not hurt performance. No band aids."**
 
-**Glenpoint** (MapsFile region 18, POLITIC 146 - due north of Daggerfall city; the owner's call once Bantha, the region
-first named, proved to hold no land on Daggerfall's map: AUDIT BANTHA1 RISK) stands as a jungle in four storeys - the owner's five trees closing a canopy
-overhead, emergents above it, young trees and palms in its light gaps, ferns and flowers on its floor - under a humid
+**BANTHA2 - the owner's call (2026-10-19), with a map of the Iliac Bay and an area of its south-eastern shore painted
+red, and a "Jungle Preview" of a floor carpeted in grass, ferns and broad leaves under the trees: "1. The area is red in
+bantha and should be the jungle biome 2. At the ground level, the image shows the flora abundence that should be present
+in the jungle ... no band aids."**
+
+**Bantha** - the area the owner painted on Hammerfell's shore of the Bay, from Lainlyn and Satakalaam east to Mournoth and
+the map's edge (`world/jungle/banthaArea.js`; BANTHA1 stood it on Glenpoint, region 18, once Bantha's own region proved to
+hold no land: AUDIT BANTHA1 RISK) - stands as a jungle in four storeys - the owner's five trees closing a canopy
+overhead, emergents above it, young trees and palms in its light gaps, ferns and flowers on its floor, and under them a
+carpet of grass, ferns and broad leaves with no earth showing (The floor) - under a humid
 haze that is thickest at dawn and in rain, fog and storms, thins as the player climbs out of it, and drifts. Its edge is no line:
 the trees come in as stands and the air closes over a kilometre. Inside it, the haze hides the streamed world past a
 kilometre or so - and what it hides is not drawn, so the jungle pays for itself. Its own Features row (`bantha-jungle`,
@@ -49,8 +56,32 @@ curtains hang from it), of the 3 m above it (`TRUNK_BAND`; AUDIT BANTHA1 TREE-5:
 
 ## Where the jungle is
 
-`world/jungle/jungleRegion.js`. DFU's political map names a region per map pixel (819.2 m), so a region's edge is a
-staircase of pixel edges. Here each pixel near the region carries its **signed distance** from the edge - from its centre
+**The owner's area** (BANTHA2). Their map is Daggerfall's own 1000 x 500 at 0.4: it registers on the Bay's coasts at 2.5
+map pixels a pixel and no offset (99.2% of its sea on the map's sea). `tools/banthaArea.mjs` holds their red as they drew
+it (`BANTHA_DRAWN`, a run a row on their 400 x 200 picture, 4,185 of their pixels - never their picture, a render of the
+game's map) and reads it into map pixels by four laws:
+
+1. **The drawing at its own resolution.** Each of their pixels is 2.5 map pixels (2 km) square, so a line they drew at a
+   slant is a staircase of 2 km steps: their red is smoothed by a Gaussian of 0.75 of their pixels (`DRAWN_SIGMA` - it
+   takes a one-pixel step and keeps every feature two pixels wide; a hole of one of their pixels closes, a line one
+   pixel across stays one map pixel across) and read at each map pixel's centre at a half.
+2. **Hammerfell's land.** A map pixel is the area's where POLITIC names it land of a Hammerfell region (`REGION_RACES`'
+   Redguard): at the Bay's eastern end their red reached over the inlet onto a strip of Wayrest's and Gavaudon's shore.
+3. **The coast is its north edge.** Their map's coast stands a pixel or two off the map's own, so a column whose top is
+   within `COAST_REACH` (6 map pixels) of the water runs on up through Hammerfell's land to it; a top further inland is
+   where they drew it.
+4. **The water it closes round** (a lake, a river's pool) is the area's - the jungle's air over it; the land it left
+   unpainted is not.
+
+`world/jungle/banthaArea.js` `BANTHA_AREA_ROWS` is what that law wrote on the freeware's map (the test derives it again,
+row for row): **25,787 map pixels** (17,300 km², about 1.9 times Daggerfall's region) in 86 rows, the box (591, 272) to
+(999, 357) - Mournoth 8,004, Totambu 7,026, Lainlyn 3,988, Satakalaam 3,470, the Dragontail Mountains 1,912, Kozanset
+1,328, Tigonus 22, and 37 of lakes it closes round; the Rainforest's climate 23,415 of them, the Mountain's 2,329 (the
+Dragontail foothills), water 43; 168 towns and cities, Satakalaam's and Lainlyn's among them (`tools/jungleExtent.mjs`).
+Its heart, in Mournoth, stands 32 km inside its line. `banthaAreaHas(x, y)` reads a pixel off the rows.
+
+**The field.** `world/jungle/jungleRegion.js`. The area is a set of map pixels (819.2 m), so its edge is a
+staircase of pixel edges. Here each pixel near the area carries its **signed distance** from the edge - from its centre
 to the nearest square of the other side, positive inside, held at six pixels (`jungleField`) - read the first time a
 pixel is asked, ring by ring out from it until no nearer ring can beat what it found, and kept: no boot or frame sweeps
 the map (a whole-map sweep cost 30 ms cold on the main thread; the stream's pixels cost about 0.1 ms each, once). Read **bilinearly between pixel centres** the field crosses zero on the shared edges and
@@ -76,7 +107,7 @@ before it, on every client and on the worker, so Logging's trees stand where the
 | Emergents | of the canopy, the kapok's parasols and the mahogany's dome alone stand above the rest | 8%; scale 1.28-1.55 |
 | Understorey | young trees on a tile's own dice, thicker in a light gap (a cell with no canopy tree) than under a crown; never within 4.5 m (at the trunk's scale) of a canopy trunk in its cell or a neighbour's - a neighbour PIXEL's too, where its tile hashes stand it (LAY-7); none in a place's fields (LAY-3) | 10% a tile, 38% in a gap; scale 0.36-0.62; flame 50%, fig 25%, banyan 15%, mahogany 10% |
 | Mid storey | one of the rainforest's own Trees - World of Daggerfall's Tree records of archive 500, its palms (Low Poly Trees' 3D palms where that mod is on); none in a place's fields | 2.5% a tile |
-| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers - denser in a glade's light (the glade's alone, never a place's pull); never within 2.2 m of a canopy trunk at that trunk's scale (1.8-3.4 m) | 50% a tile, 68% in a glade - one roll a tile under the young trees' and the palms', so a glade (always a gap) stands about 60% (LAY-11) |
+| Floor | the rainforest's own cover - archive 500's other records, its ferns, shrubs and flowers (and under them the floor's carpet, The floor below) - denser in a glade's light (the glade's alone, never a place's pull); never within 2.2 m of a canopy trunk at that trunk's scale (1.8-3.4 m) | 50% a tile, 68% in a glade - one roll a tile under the young trees' and the palms', so a glade (always a gap) stands about 60% (LAY-11) |
 
 **Species.** A canopy tree's species is drawn from weights (`canopySpecies`): a base (`JUNGLE.base`), a **grove** - each
 species' own value noise over 32-tile cells (a cell dividing 128, so the world's lattice - AUDIT BANTHA1 LAY-1: at 24
@@ -140,6 +171,75 @@ stands as the Tree record it carries - never an empty jungle, never a Logging no
 asks again on BUILD-RETRY's backoff (`BUILD_RETRY_MS`; TREE-6: one failed fetch was the session's). A 3D tree takes its
 sun at its crown (`uSunLift`, `JUNGLE_SUN_LIFT` 0.6 of its height - TREE-2: one shadow tap at the root lit or darkened a
 whole 22 m tree by its foot's shade), and the door uploads nothing on a frame with no tree near (TREE-9).
+
+## The floor
+
+**BANTHA2** - the owner's "Jungle Preview": a floor of grass, ferns and broad leaves under the trees, no earth showing.
+The floor storey above stands the rainforest's cover as flats, half a tile's chance a 6.4 m tile - a plant every 80 m²,
+the jungle's red earth between them. A carpet that thick is the grass system's to draw (`render/labGrass.js`: a field
+of cells about the eye, placed a slice a frame, faded and culled, instanced), so the floor is a **second field of it**
+(`scenes/jungleFloorHost.js`, a module the world host wires - HOST-SPLIT): its own renderer wearing the floor's plants
+on the meadow's crossed cards (MEADOW1, `render/grassMeadow.js`), its own density and seed. The flats still stand over it.
+
+**The plants** (`render/jungleFloorArt.js` `JUNGLE_FLOOR_PLANTS`, in the atlas's eight cells): the owner's tall tuft
+(`src/assets/grass/source/tuft-tall.png`, the meadow's first sprite) for the grass, and archive 500's own low cover - the
+pictures the floor storey's flats wear, the classic record's or a pack's (`floorPictures`), never a Tree record:
+
+| Plant | Record | Height (m) | Stiff / sway | Share, poor patch / lush |
+|---|---|---|---|---|
+| grass (the owner's tall tuft) | - | 0.5 | 1 / 1 | 42% / 30% |
+| sedge | 7 | 0.5 | 1 / 1 | 16% / 10% |
+| fern | 9 | 1.2 | 0.6 / 0.8 | 12% / 20% |
+| frond | 10 | 0.95 | 0.6 / 0.8 | 10% / 16% |
+| broad-leaved bush | 1 | 0.9 | 0.3 / 0.6 | 5% / 8% |
+| palmlet | 27 | 1.0 | 0.5 / 0.7 | 6% / 7% |
+| flowering stem | 21 | 0.9 | 0.5 / 0.7 | 4% / 5% |
+| spike | 6 | 1.1 | 0.4 / 0.7 | 4% / 4% (the rest) |
+
+Each picture is laid in the meadow's 64-texel cell beside the tuft (`fitSprite`: whole texels a pixel where it fits,
+shrunk at the texel's centre where it does not, its foot on the cell's floor, a pack's soft alpha cut at a half), so the
+meadow's program and its coverage-kept mip chain wear them unchanged. A plant's card stands its own height - its drawn
+height over the lab's mean blade, times the blade's own draw and the patch's (the meadow's 1.25 on a lush patch) - and
+which plant a tuft wears is its width byte's, by shares the patch leans: a lush patch more fern and leaf, a poor one more
+grass and sedge. The vertex stage's ladder (`ladderPick`, written from the set: `meadowVsEdits(art)`) and `floorPick`
+agree at every byte.
+
+**Its colours.** Of the meadow's colour law (MEADOW1: a texel takes the ground's hue as far as it is green) the floor takes
+the ground's **light** and never its **hue** (`uArtHue`: the meadow's set 1, the floor's 0): a fern on the jungle's red
+earth stays a fern's green. With the hue (2026-10-19's photographs) the tufts took the earth's hue and stood pale pink.
+
+**How thick.** `JUNGLE_FLOOR.plants`: 1.8 plants a square metre where the floor is whole, at the grass row's Full (the
+row's tiers thin it as they thin the meadow - the pref's share, `floorDensity`). At 1 a square metre the red earth still
+showed between the ferns (2026-10-19's photographs); at 2.5 it was a wall of leaves, and the owner: "Reduce the amount
+of ground flora. Its a little too much" (2026-10-19). Its seed is its own (`JUNGLE_FLOOR.seed`; a field of the meadow's
+seed at a lower density stands on a prefix of its spots).
+
+**Where.** A plant stands where the jungle's floor **claims** the point (`jungleHost.floorClaims`): the point's own draw
+(`jungleFloorDraw`, an integer hash of its world place at an eighth of a metre - the same on every client and at every
+origin) under the layout's share there (`jungleShare`: none 60 m outside the line, whole 480 m inside) - so the carpet
+comes in across the edge as the trees do. On DFU's dirt and grass **by their place** - records 1 and 2, whatever their
+colour, as the layout reads them (`JUNGLE.ground`) - and on a blend or a place's tile more than half its texels theirs
+(the world host's keep with the floor's records, `floorRecordsOf`); never stone, a road, a track, water, a site's floor or
+the snow the ground shows. **Not by colour** (2026-10-19, found photographing it): the Rainforest's ground is the Swamp's
+(TEXTURE.402), whose grass is an olive mud (61, 60, 40) and whose stone a green moss (44, 63, 38), so the meadow's colour
+test took the stone and refused the grass - and the floor stood on the odd patch of dirt, the jungle's grass bare between. The meadow's own grass keeps out of every point the floor claims,
+so the two never stand twice: deep in the jungle the floor is the only grass.
+
+**When.** Made the first time the jungle comes within `JUNGLE_FLOOR.near` (760 m: the field's range and the layout's
+fringe, with 400 m to spare) of the eye - its pictures read then - and kept; outside the jungle its cells hold nothing. No
+ARENA2 picture for any plant, no floor (never a plant stood in another's picture): the meadow stands as it did. With
+no meadow (the classic skin, the grass row Off, `?grass=off`) there is no floor either: the flats stand alone. A read or a
+build that failed is said once (`console.warn`) and never asked again.
+
+**Paired with the meadow.** The world host's every door to its grass field - a pixel re-read, the burned earth, the
+floating origin's shift - reaches the floor's too, by the one handle (`pair`); a new meadow field (a teleport's re-anchor)
+is a new floor field. Its draw is the meadow's program under the meadow's frame - its view, light, wind and range
+(`drawBeside`, the renderer's stored `frame`).
+
+**Cost.** The field holds the meadow's 394 cells about the eye, each 4,860 blades (1.8 plants a square metre, three
+blades a tuft, over a 30 m cell) at 16 bytes: **31 MB of GPU buffers**, beside the meadow's 39 MB - allocated only once the
+jungle comes near. Its cells are placed a slice a frame as the meadow's are. **Open:** its frame time on a GPU (beside the
+jungle's, below).
 
 ## The haze
 
@@ -212,22 +312,29 @@ wilderness the jungle grows in, and each beginFrame of theirs clears the haze.
 
 **HOST-SPLIT.** bootWorld stood at its ceiling. The trees' door and frame came out of it into `scenes/treesHost.js`
 (Low Poly Trees' door with its season, the near sets of both doors, the handles' owners) - 26 code lines out, the
-jungle's wiring in, the host 21,160 code lines (its ceiling lowered to that).
+jungle's wiring in, the host 21,160 code lines (its ceiling lowered to that). BANTHA2's floor is a module of its own
+(`scenes/jungleFloorHost.js`); bootWorld gained its wiring alone (the host made, the floor's records beside the meadow's,
+the keep's floor door, the pairing, the update and the draw) and stays under the ceiling.
 
 ## Online, switches
 
 **Forced on online** (`onlineLane.js` via the row's `online: true`): the jungle's trees are where Logging's trees stand in
-Glenpoint, so a room has one jungle. Offline, the Features row `bantha-jungle` (prefs `banthaJungle`, on by default) on the
+the area, so a room has one jungle. The floor's carpet is drawn alone (no tree, no collision, nothing Logging fells), so
+its thickness follows each player's grass row, as the meadow's does. Offline, the Features row `bantha-jungle` (prefs `banthaJungle`, on by default) on the
 enhanced skin; the classic skin keeps DFU's own woods. `?jungle=off` the kill door (offline); `?junglehaze=off` stands
 the jungle under clear air. Read once, as the world loads.
 
 ## Departures from DFU (Port-Ledger A, THE JUNGLE OF BANTHA)
 
-- `DefaultTerrainNature.LayoutNature` scatters Glenpoint's own climate archive (Mountain Woods) over it as it does
-  anywhere; here Glenpoint's tiles are laid by the jungle's own law - the owner's trees, the rainforest's palms and floor
-  (archive 500).
-- **Glenpoint, not Bantha** (the owner's call, 2026-10-18): Daggerfall lists Bantha (region 10) and paints no pixel of
-  it; the jungle takes the land due north of Daggerfall city.
+- `DefaultTerrainNature.LayoutNature` scatters each pixel's own climate archive over it (the Rainforest's 500 over most
+  of the area, the Mountain's in the Dragontail foothills) as it does anywhere; here the area's tiles are laid by the
+  jungle's own law - the owner's trees, the rainforest's palms and floor (archive 500).
+- **The owner's area, not a region** (BANTHA2, the owner's call, 2026-10-19): Daggerfall lists Bantha (region 10) and
+  paints no pixel of it, and BANTHA1 stood the jungle on Glenpoint (region 18); the jungle is now the area the owner
+  painted on Hammerfell's shore - map pixels of seven regions, no region whole.
+- **The floor's carpet** (BANTHA2): DFU stands the rainforest's cover as scattered billboards; here a second field of the
+  port's grass carpets the ground with the same pictures on crossed cards, 1.8 plants a square metre, and the meadow's
+  grass keeps out of it.
 - DFU's fog is one `RenderSettings.fog` for the world; here a regional height haze multiplies it (and the sky takes it).
 - DFU draws every streamed terrain the camera sees; here the haze culls what it hides whole.
 - **Winter, as DFU's rainforest** (AUDIT BANTHA1 TREE-4, NAMED): the Rainforest climate is Swamp-based, so in winter its
@@ -251,10 +358,27 @@ order. `tools/mutants/bantha1.json` (104: 103 dead and one recorded equivalent -
 the moved pins re-aimed by content (`tools/mutants/lpt1_trees.json` and eleven more at the slice; eight lists more at the
 audit, sd20c's put back as it was with its pins).
 
+**BANTHA2.** `test/world/bantha2_area.test.js` (4): the area's rows and `banthaAreaHas`, the drawing they came from, the
+world's field reading them, the derivation's four laws on a drawn map (High Rock's shore, the coast within reach and
+not past it, the lakes and the land left unpainted, the staircase smoothed, the smallest features kept), and with ARENA2
+the rows derived again on the freeware's map. `test/world/bantha2_floor.test.js` (11): the plants, a picture as a sprite,
+the set, the pick as the GPU runs it, the stages, the colours (the ground's light, never its hue), the floor's ground,
+the claim across the edge and at every origin, the host and the wiring; with ARENA2 (11th), the floor's ground on the
+freeware's Swamp, Temperate and Mountain archives. `test/render/grassmeadow.test.js`'s colour law
+runs the stage against its twin at the hue shares 1, 0 and a half. `tools/mutants/bantha2.json` (48, all dead with
+ARENA2 and without); `meadow1.json` and `grasspx.json` re-aimed where the meadow's ladders became the set's.
+**Seen in the running game** (2026-10-19, the freeware's data, headless Chromium on SwiftShader, the land view at 1,
+`tools/grassLookProbe.mjs` waiting with `UNTIL` for the floor's field whole): Satakalaam's jungle (map pixel 839, 301),
+summer at 10:00 - at eye level a carpet of ferns, fronds, broad leaves, palmlets and the owner's tufts in their own greens
+under the canopy, thinning to single plants on the mud at a great trunk's foot; looking down, the earth between them. At
+2.5 a square metre (the first photographs) a wall of leaves - the owner: "a little too much" - and the floor stood on
+the swamp's dirt alone (the ground law above, "Where"): by place, about six times as many tufts stood in the same view.
+
 **Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
 no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Where it stands.** On the freeware's own data (`tools/fetch-data.sh`, `tools/jungleExtent.mjs`, 2026-10-18) region
 10, Bantha, holds no pixel of POLITIC.PAK and no place - Daggerfall names it and never paints it - so the jungle stood
-nowhere; the owner chose Glenpoint (`JUNGLE_REGIONS`, `world/jungle/jungleRegion.js`), due north of Daggerfall city.
+nowhere; the owner chose Glenpoint (`JUNGLE_REGIONS` then, `world/jungle/jungleRegion.js`), due north of Daggerfall city -
+until BANTHA2 (2026-10-19) stood it on the area the owner painted (Where the jungle is).
 **Seen in the running game** (2026-10-18, the freeware's data, headless Chromium on SwiftShader, the land view at 1):
 Hearthsly Court, 25 map pixels inside Glenpoint, summer - at 11:00 the manor's fields open ground under the haze and,
 every other way, a closed canopy of the owner's trees with the kapok's parasols standing over it and palms in its gaps,

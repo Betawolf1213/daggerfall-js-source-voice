@@ -21,7 +21,7 @@
 //
 // THE CLIMATE BLENDS. A climate's numbers stand at its map pixel's CENTRE and are read bilinearly between centres - so
 // the air warms across a Mountain-to-Desert border over the pixel either side of it, never at the edge. A BIOME OVERLAY
-// (the Glenpoint jungle - world/jungle/jungleRegion.js's field) leans the numbers toward its own by its share, so the
+// (the jungle of Bantha - world/jungle/jungleRegion.js's field) leans the numbers toward its own by its share, so the
 // jungle's rain stops at its wandering edge in a band of sleet, and the snow begins.
 import { CLIMATES, MAX_MAP_PIXEL_Y } from '../../formats/mapsFile.js';
 import { TERRAIN_SIZE, STREAMING_TERRAIN_SCALE, SCALED_OCEAN_ELEVATION } from '../../world/terrain/terrainSampler.js';

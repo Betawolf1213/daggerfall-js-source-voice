@@ -17,7 +17,7 @@ import {
 } from '../../src/world/jungle/jungleModels.js';
 import { COVER_RADIUS_FRAC, createCoverIndex, rayCylinder } from '../../src/ai/cover.js';
 import {
-  JUNGLE_REGIONS, JUNGLE_FIELD_REACH, JUNGLE_EDGE, JUNGLE_WANDER_MAX, jungleField, jungleNine, jungleSignedAt,
+  JUNGLE_FIELD_REACH, JUNGLE_EDGE, JUNGLE_WANDER_MAX, jungleField, jungleNine, jungleSignedAt,
   jungleDepthAt, jungleShare,
 } from '../../src/world/jungle/jungleRegion.js';
 import { JUNGLE, JUNGLE_PALMS, JUNGLE_COVER, withJungle, canopySpecies, jungleWhole, jungleStandNoise, gladeField } from '../../src/world/terrain/jungleNature.js';
@@ -174,10 +174,11 @@ test('BANTHA1 a jungle tree\'s far picture is LPT1\'s own (renderImpostor): the 
 });
 
 test('BANTHA1 the field: each pixel near Bantha its signed distance from the region\'s edge (its centre to the other side\'s nearest square, pixels), held at the reach, read only when asked; read between pixel centres it crosses zero on the shared edge and agrees across every pixel edge, the wander and all (mutants: the sign lost; an axis neighbour read as its diagonal; a ring stopped short; the wander off the world lattice)', () => {
-  assert.deepEqual(JUNGLE_REGIONS, [18], 'Glenpoint - Bantha (10) holds no land on the map (AUDIT BANTHA1 RISK)');
+  // BANTHA2: the field's sides are a set of map pixels (the owner's area, world/jungle/banthaArea.js - test/world/
+  // bantha2_area.test.js); BANTHA1's were Glenpoint's political region
   const W = 24, H = 16, inside = (x, y) => x >= 6 && x < 14 && y >= 4 && y < 11;
   let reads = 0;
-  const field = jungleField({ width: W, height: H, regionAt: (x, y) => { reads++; return inside(x, y) ? 18 : 3; } });
+  const field = jungleField({ width: W, height: H, insideAt: (x, y) => { reads++; return inside(x, y); } });
   const d = (x, y) => field.at(x, y);
   assert.equal(reads, 0, 'nothing read until asked');
   // against the brute force: every pixel of the map, the nearest square of the other side
@@ -188,7 +189,7 @@ test('BANTHA1 the field: each pixel near Bantha its signed distance from the reg
       assert.ok(near(d(x, y), inside(x, y) ? best : -best, 1e-6), `${x},${y}`);
     }
   }
-  assert.ok(reads <= W * H, 'each pixel\'s region read once');
+  assert.ok(reads <= W * H, 'each pixel\'s side read once');
   assert.equal(d(-1, 3), -(JUNGLE_FIELD_REACH + 0.5), 'off the map: outside');
   assert.equal(d(6, 7), 0.5, 'a border pixel inside: half a pixel to the edge');
   assert.equal(d(5, 7), -0.5, 'its neighbour outside');
@@ -199,7 +200,7 @@ test('BANTHA1 the field: each pixel near Bantha its signed distance from the reg
   // a ring's nearest square is r - 0.5 off and its corner farther: a diagonal found in ring 3 (2.5 by 2.5, 3.54) loses
   // to an axis neighbour in ring 4 (3.5) - the search runs every ring that could still beat what it holds
   const holes = new Set(['13,13', '14,10']);
-  const pocked = jungleField({ width: 24, height: 24, regionAt: (x, y) => (holes.has(`${x},${y}`) ? 3 : 18) });
+  const pocked = jungleField({ width: 24, height: 24, insideAt: (x, y) => !holes.has(`${x},${y}`) });
   assert.equal(pocked.at(10, 10), 3.5, 'the axis neighbour a ring out, not the diagonal a ring in');
   assert.equal(jungleNine(field, 23, 15), null, 'nowhere near: no job');
   // the edge between (5,7) and (6,7): x = 819.2 in pixel 5, 0 in pixel 6 - zero there, and the same either side
@@ -381,7 +382,7 @@ test('AUDIT BANTHA1 LAY-1/2/3/7/8/9: the groves and the stands on the world\'s l
   }
   assert.ok(crowded >= 3, `the edges read (${crowded} tiles crowded across them)`);
   // LAY-8: the field's first read is a float32
-  const field = jungleField({ width: 24, height: 16, regionAt: (x, y) => (x >= 6 && x < 14 && y >= 4 && y < 11 ? 18 : 3) });
+  const field = jungleField({ width: 24, height: 16, insideAt: (x, y) => x >= 6 && x < 14 && y >= 4 && y < 11 });
   for (const [x, y] of [[4, 2], [15, 12], [5, 3]]) { const v = field.at(x, y); assert.equal(v, Math.fround(v)); assert.equal(field.at(x, y), v); }
 });
 
@@ -602,7 +603,7 @@ test('BANTHA1 the haze, eased and coloured: share, density and floor each follow
 /** A stream's state over a map of 24 x 16 with Bantha a block - for the host. */
 function hostWorld() {
   const W = 24, H = 16, inside = (x, y) => x >= 6 && x < 14 && y >= 4 && y < 11;
-  const maps = { getRegionIndexAt: (x, y) => (inside(x, y) ? 18 : 3) };
+  const maps = {};   // the world's key (BANTHA2: the jungle's pixels are `inside`, handed to the host)
   // the stream's own law (world/streamingWorld.js pixelTranslation): the origin pixel and the recentres' compensation
   const state = { mapOrigin: { x: 9, y: 5 }, compensation: [0, 0, 0],
     pixelTranslation(px, py, out = [0, 0, 0]) { const c = state.compensation; out[0] = (px - state.mapOrigin.x) * PIXEL_M + c[0]; out[1] = c[1]; out[2] = -(py - state.mapOrigin.y) * PIXEL_M + c[2]; return out; } };
@@ -610,7 +611,7 @@ function hostWorld() {
   const sent = [], skies = [];
   const renderer = { _focus: new Float32Array(4), setJungleHaze: (u) => sent.push(u ? Array.from(u) : null) };
   const sky = { setHazeSky: (v) => skies.push(v ? Array.from(v) : null) };
-  const host = createJungleHost({ renderer, maps, mapWidth: W, mapHeight: H, stateOf: () => state, builtOf: () => built, heightAt: () => ground.y + state.compensation[1], trees: { door: true } });
+  const host = createJungleHost({ renderer, maps, mapWidth: W, mapHeight: H, stateOf: () => state, builtOf: () => built, heightAt: () => ground.y + state.compensation[1], trees: { door: true }, insideAt: inside });
   return { host, sent, skies, sky, built, state, ground };
 }
 
@@ -668,7 +669,7 @@ test('BANTHA1 the jungle\'s host: the terrain job a pixel\'s 3x3 of distances wh
   assert.ok(host.depthAt(400, 400 + 2 * PIXEL_M) < 0 && host.depthAt(400 + 5 * PIXEL_M, 400) < 0);
   // ...and the depth is the field's read IN that pixel, at the point's place in it - the block's middle row (9, 7) the
   // deepest and (9, 8) under it shallower again, which no read off another pixel's 3x3 reaches
-  const ref = jungleField({ width: 24, height: 16, regionAt: (x, y) => (x >= 6 && x < 14 && y >= 4 && y < 11 ? 18 : 3) });
+  const ref = jungleField({ width: 24, height: 16, insideAt: (x, y) => x >= 6 && x < 14 && y >= 4 && y < 11 });
   for (const [x, z] of [[400, 400 - 3 * PIXEL_M], [400 + 2 * PIXEL_M, 400 - 4 * PIXEL_M], [-300, 100], [700, 400 - 2 * PIXEL_M]]) {
     const px = 9 + Math.floor(x / PIXEL_M), py = 5 - Math.floor(z / PIXEL_M);
     const lx = x - (px - 9) * PIXEL_M, lz = z + (py - 5) * PIXEL_M;
@@ -689,7 +690,7 @@ test('BANTHA1 the jungle\'s host: the terrain job a pixel\'s 3x3 of distances wh
   assert.equal(sent.at(-1), null, 'outside: off');
   assert.equal(skies.at(-1), null);
   assert.ok(!host.hides([4000, 0, -10, 4100, 15, 10], [0, 0, 0]), 'no haze, nothing hidden');
-  const clear = createJungleHost({ renderer: { _focus: new Float32Array(4), setJungleHaze: (u) => sent.push(u) }, maps: { getRegionIndexAt: () => 18 }, mapWidth: 4, mapHeight: 4, stateOf: () => ({ mapOrigin: { x: 0, y: 0 }, compensation: [0, 0, 0], pixelTranslation: (px, py, o = [0, 0, 0]) => o }), builtOf: () => new Map(), heightAt: () => 0, haze: false, trees: { door: true } });
+  const clear = createJungleHost({ renderer: { _focus: new Float32Array(4), setJungleHaze: (u) => sent.push(u) }, maps: {}, insideAt: () => true, mapWidth: 4, mapHeight: 4, stateOf: () => ({ mapOrigin: { x: 0, y: 0 }, compensation: [0, 0, 0], pixelTranslation: (px, py, o = [0, 0, 0]) => o }), builtOf: () => new Map(), heightAt: () => 0, haze: false, trees: { door: true } });
   assert.equal(clear.haze({ fogColor, fogRow, eye: [1, 1, 1], dt: 0.016, minute: 0, weather: 'rain', sky }), fogColor, '?junglehaze=off: the jungle under clear air');
   assert.equal(sent.at(-1), null);
 });
@@ -1009,7 +1010,7 @@ test('AUDIT BANTHA1 DOC-6: the host reads the haze off the world - its floor the
   // the travel view: the renderer's focus is the eye
   const d = hostWorld();
   const focus = Float32Array.from([1200, 40, -300, 1]);
-  const host = createJungleHost({ renderer: { _focus: focus, setJungleHaze: () => {} }, maps: { getRegionIndexAt: () => 18 }, mapWidth: 24, mapHeight: 16, stateOf: () => d.state, builtOf: () => d.built, heightAt: () => 10, trees: { door: true } });
+  const host = createJungleHost({ renderer: { _focus: focus, setJungleHaze: () => {} }, maps: {}, insideAt: () => true, mapWidth: 24, mapHeight: 16, stateOf: () => d.state, builtOf: () => d.built, heightAt: () => 10, trees: { door: true } });
   host.haze({ fogColor, fogRow, eye: [5, 1, 5], dt: 0.05, minute: 600, weather: 'sunny', sky: null });
   assert.deepEqual(Array.from(host.eye), [1200, 40, -300], 'measured from the focus');
 });
@@ -1055,7 +1056,7 @@ test('AUDIT BANTHA1 DOC-6: the far ring hazes its fog by the haze\'s own law; ev
   r.endPanelFrame();
   assert.deepEqual(Array.from(r._haze), Array.from(hz), 'the panel gives the world its haze back');
   let reads = 0;
-  const field = jungleField({ width: 20, height: 20, regionAt: (x, y) => { reads++; return x > 8 ? 18 : 3; } });
+  const field = jungleField({ width: 20, height: 20, insideAt: (x) => { reads++; return x > 8; } });
   const d1 = field.at(5, 5), before = reads;
   assert.equal(field.at(5, 5), d1); assert.equal(reads, before, 'kept: the second read searches nothing');
   for (let k = 0; k < 400; k++) field.at(k % 20, Math.floor(k / 20));

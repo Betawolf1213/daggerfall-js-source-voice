@@ -863,9 +863,10 @@ export function realForestsOn(search) {
   return !!row && (isOnlinePage(search) || isEnhanced(search));
 }
 /** BANTHA1 (bible/03-World/Bantha-Jungle.md): THE JUNGLE'S SWITCH - the Features row (`banthaJungle`) on the enhanced
- *  skin, and on for everyone online whatever their skin: the jungle's trees are where Logging's trees stand in Glenpoint,
- *  and the room agrees on its ground (realForestsOn's shape). `?jungle=off` the kill door, offline. The world host reads
- *  it once, at its mount (a flip reaches the next world). Off - and on the classic skin - Glenpoint is DFU's own woods. */
+ *  skin, and on for everyone online whatever their skin: the jungle's trees are where Logging's trees stand in Bantha (the
+ *  owner's area, BANTHA2 - world/jungle/banthaArea.js), and the room agrees on its ground (realForestsOn's shape).
+ *  `?jungle=off` the kill door, offline. The world host reads it once, at its mount (a flip reaches the next world). Off -
+ *  and on the classic skin - the shore wears DFU's own rainforest. */
 export function jungleOn(search) {
   if (pageParam('jungle', search) === 'off' && !isOnlinePage(search)) return false;
   const row = onlineForcedPref('banthaJungle', search) ?? getPref('banthaJungle');
