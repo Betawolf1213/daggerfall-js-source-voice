@@ -38,6 +38,7 @@ import { createLoadGovernor, unbuiltAround } from '../../../src/systems/travel/t
 import { foePaced, foeRate } from '../../../src/systems/travel/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
 import { travelPathUsesRoads, TRAVEL_PATH_TEXT, setTravelPathMode } from '../../../src/systems/travel/travelPathMode.js';
 import { freePull } from '../../../src/systems/travel/freePull.js';
+import { journeyLegs, townExit } from '../../../src/systems/travel/townExit.js';   // TOWN-EXIT: tvJoinedLegs' body, moved out whole
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE } from '../../../src/systems/timeScale.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
@@ -186,6 +187,7 @@ function host({ firstPerson = false, roads = false, enhanced = true } = {}) {
     planRoute, routeGround, routeLegs, joinPoint, routeDrawPoints, roadShare, crossesWater, dryLine, TV_MOUNTAIN_CLIMATE, travelTripLine,
     travelPathUsesRoads, TRAVEL_PATH_TEXT,   // OW-PATH (main's Roads / Free switch on the Overworld's bar): the route asks it
     freePull,   // PIN MOVED (GRANT3, HOST-SPLIT): tvFreePull's pull is systems/travel/freePull.js
+    journeyLegs, townExit, built: new Map(),   // PIN MOVED (TOWN-EXIT): tvJoinedLegs' body is systems/travel/townExit.js - no pixel built here, no town to leave
     tvSeaMeans: () => null, tvSeaBegin: () => {}, csaRuntime: null, csaOn: () => false, csaAboard: { aboard: false },
     tvOfferPassage: (place) => { h.offered.push(place.name); return false; },
     tvCautious: () => false, partyWalkBegin: (dest) => h.party.push(dest), travelGovernor: { reset() {} },

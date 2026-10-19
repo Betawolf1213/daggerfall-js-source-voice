@@ -487,7 +487,8 @@ import { showPaceBox, hidePaceBox } from '../ui/travel/travelPaceControls.js';  
 import { markShown, travellerKin } from '../systems/travel/travelViewFilters.js';   // OW-FILTER: a hidden group's sprites hidden with its marks
 import { travelPathMode, travelPathUsesRoads, pickTakesPlace, fineMoveHeld, TRAVEL_PATH_TEXT } from '../systems/travel/travelPathMode.js';   // OW-PATH: roads or free, and the snap to a town
 import { groundHit, canvasPoint, classifyPick } from '../player/travelPick.js';   // TV2: the click's ground
-import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travel/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
+import { planRoute, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travel/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
+import { journeyLegs, townExit } from '../systems/travel/townExit.js';   // TOWN-EXIT: a journey's legs - out of a walled town by a gate, else joined to its first road (OW-ROADSIDE)
 import { createSeaHelm, seaHelmStep, seaHelmLook, headingOf as seaHeadingOf, squareOnly as seaSquareOnly } from '../systems/seaHelm.js';   // OWS2: the journey's hand on the helm
 import { createLoadGovernor, unbuiltAround } from '../systems/travel/travelGovernor.js';   // TV2: "Cap it to what loads cleanly"
 import { createWildAlert, noticeRoll, WILD_MARK_S } from '../systems/wild/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
@@ -496,7 +497,7 @@ import { playerOnPathAt, pathsDataPoint } from '../systems/travel/travelPaths.js
 import { threatCap, foeRate } from '../systems/travel/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW) - TIME-DILATION: x1 inside a hostile ship's hold
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travel/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
 import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travel/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
-import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travel/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
+import { routeGround, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travel/travelRoute.js';   // OW-MOUNTAINS; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
 import { bandsNear, wanderAt, bandSight, bandChaseStep, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travel/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travel/travelBands.js';   // TV7b: the chase, shared
 import { walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, memberWalkStep, walkAskStands, sameWalkDest, NO_WALK_ANSWER, PARTY_WALK_RADIUS_M } from '../systems/party/partyWalk.js';   // TV8: group travel, the leader drives (AUDIT OW3: the whole law, pure)
@@ -30818,6 +30819,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (dry) { plan = dry; means = null; }
     if (!plan) { tvSeaNoWay(from, summary.pixel, means, net, 'land', summary); return false; }
     const legs = tvJoinedLegs(from, plan, roads);
+    if (!legs) return false;   // TOWN-EXIT: the town's gates shut for the night (said)
     const ok = travelOptions.beginTravelAlongRoute({ legs, summary, name: summary.name }, tvCautious(), { quiet: tvQuiet });
     if (!ok) return false;
     partyWalkBegin({ pixel: summary.pixel });   // TV8: the party walks with me, if I lead one gathered
@@ -30912,13 +30914,13 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const o = mapPixelToWorldCoords(x, y);
     return ringPassPoints(r.locationRect, r.locationBorderRect, from, to, { x: o.x + 16384, z: o.z + 16384 });
   }
+  /** TOWN-EXIT (FIELD BUGS 2026-10-19b): a journey's legs (systems/travel/townExit.js journeyLegs, moved out whole) - out of
+   *  the walled town it starts in by a gate (townExit over the built pixel: its gates, its navgrid), else joined to its
+   *  first road (OW-ROADSIDE); null, and said, where every gate is shut for the night. */
   function tvJoinedLegs(from, plan, roads = false) {
-    plan = tvFreePull(plan, roads);
-    const legs = routeLegs(plan.pixels, plan.kinds, { ringAt: tvRingAt });   // OW-TOWN-RING: round a town the route passes through
-    if (!legs.length || (plan.kinds[0] !== 'road' && plan.kinds[0] !== 'track')) return legs;   // THE MERGE: a launch (OWS2) is no road to join
-    const c = (p) => { const o = mapPixelToWorldCoords(p.x, p.y); return { x: o.x + 16384, z: o.z + 16384 }; };
-    const me = state.worldCoords(player.pos);
-    return [{ x: from.x, y: from.y, kind: 'open', at: joinPoint({ x: me.x, z: me.z }, c(from), legs[0].at ?? c(legs[0])) }, ...legs];   // OW-TOWN-RING: a first leg on a town's ring is joined toward its own point
+    const legs = journeyLegs(from, tvFreePull(plan, roads), { me: state.worldCoords(player.pos), ringAt: tvRingAt, exitAt: (x, y, to, me) => townExit(built.get(`${x},${y}`), tvTownRects(x, y), me, to) });
+    if (!legs) tvSay(TRAVEL_VIEW_TEXT.gatesShut);
+    return legs;
   }
   /** A walk to a spot. AUDIT OW4 D1/D6: `door` (a spawned dungeon's exterior rect, native - travelViewSpawnWalk) makes it
    *  a walk to a PLACE's door: its pixel is a place's (never refused for the peaks, its step in exempt - a spawn stands on
@@ -30945,6 +30947,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const dry = water ? null : tvMooredDry(seaAsk ? means : null, plan, () => planRoute(from, pix, { roads: wnet?.roads ?? null, tracks: wnet?.tracks ?? null, ...tvRouteGround(), goalExempt: !!door }));   // AUDIT OW5 S3
     if (dry) { plan = dry; seaAsk = null; }
     let legs = tvJoinedLegs(from, plan, roads);
+    if (!legs) return false;   // TOWN-EXIT: the town's gates shut for the night (said)
     // AUDIT OW5 S4: a spot on the sea in the traveller's own pixel, from afloat - the planner's one pixel is no step, so the
     // route had no leg at all: the crossing read its kind as land, landed the boat mid-sea and packed it from under the
     // traveller. One sea leg to the spot (its arrival the sea spot's square)

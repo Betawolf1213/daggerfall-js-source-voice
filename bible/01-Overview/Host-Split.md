@@ -467,3 +467,13 @@ none, used by three (the drop's receipt, the zone's frame, the room's collect) -
 the module's `held`, `frame` and `collectHeard`. `bootWorld` 21,750 -> 21,688 code lines, and its ceiling back to
 21,695, where it stood before FB1015's raise. The pins that read the block by source (`test/systems/fb1014_pvpescrow.test.js`)
 read the module, and the bible's anchors name it (`01-Overview/bugs/Field-Bugs-2026-10-15c.md`).
+
+## TOWN-EXIT - tvJoinedLegs out (FIELD BUGS 2026-10-19b)
+
+Not a slice of the order: a fix whose function had to change past its wiring. `tvJoinedLegs` - the Overworld's legs,
+OW-TOWN-RING's ring handed to the route and OW-ROADSIDE's join - left `bootWorld` whole for
+`src/systems/travel/townExit.js` `journeyLegs`, with the way out of a walled town beside it (`06-Systems/Travel-View.md`
+TOWN-EXIT). The host keeps one call (the traveller, the ring and the way out over the built pixel handed in) and the shut
+town's word, and each of its two journeys a guard. `bootWorld` 36,190 -> 36,184 logical lines; its ceiling 36,233 ->
+36,227. The pins that read the moved body read the module (`tv2_click_to_move`, `ow_wod`, `fb0929d_toroads`), and the
+records that named its text were re-aimed by content (`ow2.json`, `owwod.json`, `ow3j.json`, `hostsplit.json`).

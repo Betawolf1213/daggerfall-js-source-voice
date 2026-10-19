@@ -26,6 +26,7 @@ import { createTravelView, TRAVEL_VIEW_TEXT, travelTripLine } from '../../../src
 import { routePath } from '../../../src/ui/travel/travelViewHud.js';
 import { forwardOf, TV_RISE_S } from '../../../src/player/travelCamera.js';
 import { hostText } from '../../hostText.mjs';   // HOST-SPLIT 2 (AUDIT, the second read): its negatives read the host whole
+import { journeyLegs } from '../../../src/systems/travel/townExit.js';   // PIN MOVED (TOWN-EXIT): the join's home
 import { TRAVEL_HELD_TEXT } from '../../../src/ui/enhanced/enhancedTravelControl.js';   // AUDIT DEEP X-6
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
@@ -520,7 +521,8 @@ test('TV2 host wiring: the click is a ray from the VIEW\'s eye through this fram
   assert.match(w, /if \(duelEnemyNear\(\) \|\| areEnemiesNearby\(exteriorFoePool\(\)\) \|\| navalHostileNear\(\)\) \{ tvSay\(TRAVEL_VIEW_TEXT\.enemies\); return false; \}/);   // PIN MOVED (TIME-DILATION: nor a hostile ship's reach)
   // AUDIT OW3 J8: the pins name what stands - the peaks' law and the road's join - so reverting either reddens here
   assert.match(w, /planRoute\(from, summary\.pixel, \{ roads: net\?\.roads \?\? null, tracks: net\?\.tracks \?\? null, \.\.\.tvRouteGround\(\), sea: tvSeaAsk\(means, 'land'\) \}\);   \/\/ OW-MOUNTAINS/, 'Hazelnut\'s bytes, whichever source raised them - never across the peaks (AUDIT OW4 J3: the ground read once), and the boat to cross the water in (OWS2)');
-  assert.match(w, /const legs = tvJoinedLegs\(from, plan, roads\);\n\s*const ok = travelOptions\.beginTravelAlongRoute\(\{ legs, summary, name: summary\.name \}, tvCautious\(\), \{ quiet: tvQuiet \}\);/, 'OW-ROADSIDE: the road joined first');
+  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019b_townexit.test.js): no journey where the town's gates are shut
+  assert.match(w, /const legs = tvJoinedLegs\(from, plan, roads\);\n\s*if \(!legs\) return false;[^\n]*\n\s*const ok = travelOptions\.beginTravelAlongRoute\(\{ legs, summary, name: summary\.name \}, tvCautious\(\), \{ quiet: tvQuiet \}\);/, 'OW-ROADSIDE: the road joined first');
   // AUDIT DEEP T2-3/X-7: the player's own cautious choice (the map's last toggles), and quiet only while the view is up
   assert.match(w, /const tvCautious = \(\) => !!travelMapPopUpState\(\)\.speedCautious;\n\s*const tvQuiet = \(\) => !!travelView\?\.active;/);
   // AUDIT TV A1: the line's points are one a LEG, so the leg index cuts it where the traveller is
@@ -531,7 +533,7 @@ test('TV2 host wiring: the click is a ray from the VIEW\'s eye through this fram
   // AUDIT TV A5: a town's grown rect asked across the 3x3 about the hit
   assert.match(w, /for \(let dy = -1; dy <= 1; dy\+\+\) \{\n\s*for \(let dx = -1; dx <= 1; dx\+\+\) \{\n\s*const summary = tvPlaceSummary\(pix\.x \+ dx, pix\.y \+ dy\);/);
   // PIN MOVED (AUDIT OW5 S4): an own-pixel sea spot is given its one sea leg first; AUDIT OW5b D3: the walk carries its door
-  assert.match(w, /let legs = tvJoinedLegs\(from, plan, roads\);\n(?:\s*\/\/[^\n]*\n)*\s*if \(!legs\.length && seaAsk\?\.goal === 'sea'\) \{ legs = \[\{ x: pix\.x, y: pix\.y, kind: 'sea' \}\]; plan = \{ \.\.\.plan, kinds: \['sea'\] \}; \}\n(\s*if \(door\) n = [^\n]*\n)?\s*const ok = travelOptions\.beginTravelAlongRoute\(\{ legs, point: \{ pixel: pix, x: n\.x, z: n\.z, door \}, name: TRAVEL_VIEW_TEXT\.spot \}, tvCautious\(\), \{ quiet: tvQuiet \}\)/);
+  assert.match(w, /let legs = tvJoinedLegs\(from, plan, roads\);\n\s*if \(!legs\) return false;[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*if \(!legs\.length && seaAsk\?\.goal === 'sea'\) \{ legs = \[\{ x: pix\.x, y: pix\.y, kind: 'sea' \}\]; plan = \{ \.\.\.plan, kinds: \['sea'\] \}; \}\n(\s*if \(door\) n = [^\n]*\n)?\s*const ok = travelOptions\.beginTravelAlongRoute\(\{ legs, point: \{ pixel: pix, x: n\.x, z: n\.z, door \}, name: TRAVEL_VIEW_TEXT\.spot \}, tvCautious\(\), \{ quiet: tvQuiet \}\)/);
   for (const dep of [/onPick: \(x, y, e\) => onTravelViewPick\(x, y, e\),/, /onMark: \(key, e\) => onTravelViewMark\(key, e\),/, /marks: travelViewMarks,/, /route: travelViewRoute,/, /trip: \(\) => \(tvWalking \? TRAVEL_VIEW_TEXT\.travelling\(tvWalking, tvHeld\) : tvTripLive\(\) \? tvTrip\.line : ''\),/]) assert.match(w, dep);   // PIN MOVED (AUDIT OW5 G3): the keys' speed first
 });
 
@@ -616,9 +618,15 @@ test('OW-ROADSIDE (Mac: routes "appear traveling alongside" the road): the join 
   const ap = r.to.state.autopilot;
   assert.deepEqual(ap.destinationWorldRect, rectOf(join.x - P_SIZE / 2, join.z - P_SIZE / 2, P_SIZE, P_SIZE), 'the join first');
   assert.deepEqual(r.to.route.legs[0].at, join, 'kept on the leg');
-  const w = hostText('src/scenes/world.js');
-  assert.match(w, /if \(!legs\.length \|\| \(plan\.kinds\[0\] !== 'road' && plan\.kinds\[0\] !== 'track'\)\) return legs;/, 'a route that starts on open ground has no road to join');
-  assert.match(w, /return \[\{ x: from\.x, y: from\.y, kind: 'open', at: joinPoint\(\{ x: me\.x, z: me\.z \}, c\(from\), legs\[0\]\.at \?\? c\(legs\[0\]\)\) \}, \.\.\.legs\];/);
+  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019b_townexit.test.js): the join is systems/travel/townExit.js journeyLegs' -
+  // world.js's tvJoinedLegs moved out whole - and is pinned by what it makes, not by its text
+  const px = [{ x: 500, y: 250 }, { x: 501, y: 250 }, { x: 502, y: 250 }];
+  const me = { x: o.x + 16384 + 3000, z: o.z + 9000 };
+  assert.deepEqual(journeyLegs({ x: 500, y: 250 }, { pixels: px, kinds: ['road', 'road'] }, { me }), [{ x: 500, y: 250, kind: 'open', at: join }, { x: 502, y: 250, kind: 'road' }],
+    'a route whose first step is the road\'s is joined first, at the nearest point of its first run\'s line');
+  assert.deepEqual(journeyLegs({ x: 500, y: 250 }, { pixels: px, kinds: ['track', 'track'] }, { me })[0], { x: 500, y: 250, kind: 'open', at: join }, 'a track\'s too');
+  assert.deepEqual(journeyLegs({ x: 500, y: 250 }, { pixels: px, kinds: ['open', 'open'] }, { me }), [{ x: 502, y: 250, kind: 'open' }], 'a route that starts on open ground has no road to join');
+  assert.deepEqual(journeyLegs({ x: 500, y: 250 }, { pixels: px, kinds: ['road', 'road'] }, { me: { x: o.x + 1000, z: o.z + 9000 } })[0].at, { x: o.x + 16384, z: o.z + 16384 }, 'behind the run\'s start: its start, the start pixel\'s middle');
   // the drawn route joins the road where the walk does (AUDIT OW3 J4: systems/travel/travelRoute.js routeDrawPoints, both journeys)
   assert.deepEqual(routeDrawPoints({ x: 1, z: 2 }, [{ x: 500, y: 250, at: { x: 7, z: 8 } }, { x: 503, y: 250 }, { x: 504, y: 251 }], { x: 90, z: 91 }, (l) => [l.x * 10, l.y * 10]),
     [[1, 2], [7, 8], [5030, 2500], [90, 91]], 'the traveller, the join\'s own point, a pixel\'s middle, the end - never the last leg\'s middle');

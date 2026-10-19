@@ -1784,8 +1784,7 @@ the rock scaled by a million 83 km under it (`03-World/World-Of-Daggerfall.md`, 
 The planner still prices no climb on open ground: its terrain law is OW-MOUNTAINS' - the
 Mountain climate and a steep step (TV_STEEP_RISE 16) between two pixels' small-heightmap bytes. MountainWoods (230),
 a rise under 16 a pixel however long, and the large heightmap's relief inside a pixel pass it. The heightmaps are the
-player's own (WOODS.WLD); none is in this workspace, so no threshold was tuned blind. A journey that starts inside a
-town joins its first road from the pixel's middle, as before.
+player's own (WOODS.WLD); none is in this workspace, so no threshold was tuned blind.
 
 **Proof.** `test/world/worldOfDaggerfall/ow_wod.test.js` (10), `tools/mutants/owwod.json` (18, all dead); the collider's own pins moved to the
 tree (`test/world/worldOfDaggerfall/audit_wod_branch.test.js`, `test/player/colliderkeys.test.js`), the hosts' lifted code and pins to the new lines.
@@ -2320,3 +2319,64 @@ The owner: *"fix a pre existing issue where AI can actually use the overworld as
   `tvJourneyUp` and `travelViewCanGo` ask `navalHostileNear()` (NAV-H's enemy nearby) beside the land's foes and a duel.
 
 `test/systems/naval/timedilation.test.js` (3), `tools/mutants/timedilation.json` (16, all dead).
+
+## TOWN-EXIT - out of a walled town by a gate (FIELD BUGS 2026-10-19b, a player's private report)
+
+A player's private report: leaving a town by the Overworld's journey, or walking through one, the way out failed
+wherever the traveller stood far from a gate, and left them caught in a corner of the wall.
+
+**What it was.** A route's legs are its pixels after the first, and OW-TOWN-RING rings only the towns a route passes
+THROUGH - never the one it starts in (travelRoute.js:"const rings = pixels.map"). So a journey begun in a town aimed its first leg at the next
+pixel's middle, or, where its first step was a road's or a track's, at OW-ROADSIDE's join on the line from the town's own
+middle (townExit.js:"|| (plan.kinds[0] !== 'road' && plan.kinds[0] !== 'track')", moved there from `world.js` `tvJoinedLegs`) - straight across the town and through its wall. All
+that stood between the traveller and the wall was TRAVEL-NAV1's steering: feelers a frame long and a detour of two hundred
+metres (travelSteer.js:"if (s.walked - (f.along - s.sStart) > P.detourBudget)"), which a city's wall outlasts, and the notches its walls make. Flown over Kaloguja's own walls
+(Beautiful Cities' wall blocks, its gates' passages open), the walk from the west of the town toward the pixel north of
+it met a notch's wall, was turned along the walls - past the north gate's passage at the journey's pace - and was stopped
+inside them, the way ahead blocked: the report, reproduced.
+
+**THE FIX** (`systems/travel/townExit.js`). `tvJoinedLegs` is `journeyLegs` now (townExit.js:"export function journeyLegs"), moved out of
+`bootWorld` whole with OW-ROADSIDE's join as it was, and the host hands it the way out: `townExit` (townExit.js:"export function townExit") over the
+start pixel as its build keeps it - its gates (pixelBuild.js:"made.cityGates =") and its town's navgrid.
+- **On the streets.** The town's navgrid (DFU's CityNavigation, every block's automap carved out of it - a wall's and a
+  gate's model among them) says where its streets are: a walled town's are a piece of the grid of their own that never
+  reaches its edge, and the fields outside the walls do (LW-WALLS). A traveller in the fields - a notch among them, inside
+  the box the four gates stand on - or in a yard no gate opens onto walks out as before (townExit.js:"if (streets.open)"); so does one in
+  an open town (no gates), in a pixel not yet built (no gates and no navgrid: the ground holds the drive until it is), or in
+  no navgrid. The block names' fallback the report proposed is not needed: a pixel the traveller can walk in is built.
+- **The gate.** Each gate is read where its model stands, on the side its model's +z faces - away from its town, every
+  one of the 260 gates of the 65 cities whose grid and width the pack names (`gatesOf`) - and open as its model stands.
+  The way out walks to a gate's inner point, through it to its outer point (`GATE_IN`, one path's width either side of
+  its wall, on its own line - each point's arrival square off the wall, so the walk between them goes straight through
+  the passage), out to the ring's band, round the ring the shorter way by length (`ringRound`: clockwise on a tie, as
+  ringPassPoints) and to the point where the route's own line leaves the ring - by the gate whose whole walk is shortest:
+  the streets' steps to it, then the points. Mostly the departing side's; another's where the ring is the shorter way.
+- **The legs.** Each point is a leg aimed at it in its OWN pixel (the autopilot asks a leg's arrival only there - the
+  ring of a town eight blocks across runs in the next pixel), marked `ring` (townExit.js:"...worldCoordToMapPixel"): OW-TOWN-RING's flag is read
+  four ways - Travel Options' leg copy keeps it, a resume in the town's pixel skips none (travelOptions.js:"if (cur && !cur.ring && cur.x === mp.x && cur.y === mp.y)"), takes
+  none for a road's join and rejoins no road between them - and each fits a way out as it fits a ring. The three on the
+  way to the ring are on foot (the open ground's rate); the ring's are on the ground the route leaves by.
+- **The gates shut.** Offline, by night, DaggerfallCityGate shuts every gate at dusk and its closed model is a wall
+  (cityGate.js:"export function updateCityGate", AUDIT 64 F14): the walled town is sealed until dawn, classic's own law. A journey from its streets with
+  no gate open is refused - "The town gates are shut for the night - there is no way out until morning."
+  (travelView.js:"gatesShut: 'The town") - and never begun (world.js:"if (!legs) tvSay"). Online the gates stand open (OL5), and so does the way out.
+
+**Departure.** None from a DFU member: the Overworld's route is the port's own already (TV2's Ledger A row), and the
+gates' night is DFU's. The steering, the autopilot and Travel Options' own straight journeys (First-Person Travel with
+its roads off, the classic skin) are untouched: the mod's beeline still meets the wall, as it does in DFU.
+
+**Left as it is.** A journey whose route never leaves the traveller's own pixel (a spot in the town's own fields) is not
+asked for a way out. The way to the gate is the steering's, through the town's streets - the navgrid finds the gate,
+it is not walked cell by cell. A gate that shuts while the traveller walks to it (dusk at the journey's pace) stops the
+walk as any blocked way does, and the resume is refused. The gate's passage is no ARENA2 reading here: the flights stand
+it at four metres, a narrow guess.
+
+**The four hosts.** `scenes/world.js` wired - it alone raises the Overworld and plans its routes. `scenes/exterior.js`
+(the fixed city's host) plans no route; `scenes/worldModes.js` and `scenes/dungeonContext.js` begin no journey indoors.
+
+`test/systems/travel/fb1019b_townexit.test.js` (8: Kaloguja and Mesajer as the pixel's build mints them - their gates,
+the streets, the way out, the gates shut, the legs, Travel Options walking them, the host's own `tvJoinedLegs`, and the
+flight). PIN MOVED: `tv2_click_to_move` (the join pinned by what `journeyLegs` makes; both journeys' guard),
+`ow_wod` (the ring handed through `journeyLegs`), `fb0929d_toroads` (its lifted host given the module).
+`tools/mutants/fb1019b_townexit.json`; re-aimed by content: `ow2.json` OW-ROADSIDE-alongside, `owwod.json`
+OW-TOWN-RING-host-no-ring, `ow3j.json` OW3-J8-roadside-reverted.

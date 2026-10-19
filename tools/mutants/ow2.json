@@ -81,11 +81,12 @@
   },
   {
     "name": "OW-ROADSIDE-alongside",
-    "file": "src/scenes/world.js",
-    "old": "    if (!legs.length || (plan.kinds[0] !== 'road' && plan.kinds[0] !== 'track')) return legs;",
-    "new": "    return legs;",
+    "file": "src/systems/travel/townExit.js",
+    "old": "  if (!legs.length || (plan.kinds[0] !== 'road' && plan.kinds[0] !== 'track')) return legs;",
+    "new": "  return legs;",
     "tests": [
-      "test/systems/travel/tv2_click_to_move.test.js"
+      "test/systems/travel/tv2_click_to_move.test.js",
+      "test/systems/travel/fb1019b_townexit.test.js"
     ],
     "note": "The first leg runs beside the road to its bend."
   },

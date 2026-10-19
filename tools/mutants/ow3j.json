@@ -243,8 +243,8 @@
   {
     "name": "OW3-J8-roadside-reverted",
     "file": "src/scenes/world.js",
-    "old": "    const legs = tvJoinedLegs(from, plan, roads);\n    const ok = travelOptions.beginTravelAlongRoute({ legs, summary,",
-    "new": "    const legs = routeLegs(plan.pixels, plan.kinds);\n    const ok = travelOptions.beginTravelAlongRoute({ legs, summary,",
+    "old": "    const legs = tvJoinedLegs(from, plan, roads);\n    if (!legs) return false;",
+    "new": "    const legs = plan.pixels.slice(1).map((p, i) => ({ x: p.x, y: p.y, kind: plan.kinds[i] }));\n    if (!legs) return false;",
     "tests": [
       "test/systems/travel/tv2_click_to_move.test.js"
     ],

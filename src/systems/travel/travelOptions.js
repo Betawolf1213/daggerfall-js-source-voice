@@ -310,12 +310,17 @@ export function ringSideOf(dx, dy) {
   const sx = Math.sign(dx), sy = Math.sign(dy);
   return (sy < 0 ? 'n' : sy > 0 ? 's' : '') + (sx > 0 ? 'e' : sx < 0 ? 'w' : '');
 }
-export function ringPassPoints(locationRect, locationBorderRect, from, to, mid) {
+/** The ring's eight points, native {x, z}: the middle of its band on each side (north is +z), a side's point on the road's
+ *  own line (`mid`, the pixel's middle) kept on the side, and the four corners where two bands cross. TOWN-EXIT
+ *  (systems/travel/townExit.js) walks the same ring out of a walled town. */
+export function ringPoints(locationRect, locationBorderRect, mid) {
   const L = locationRect, B = locationBorderRect;
-  // the middle of the ring's band on each side (north is +z), and a side's point on the road's own line, kept on the side
   const wx = (B.xMin + L.xMin) / 2, ex = (L.xMax + B.xMax) / 2, nz = (L.zMax + B.zMax) / 2, sz = (B.zMin + L.zMin) / 2;
   const cx = Math.min(L.xMax, Math.max(L.xMin, mid.x)), cz = Math.min(L.zMax, Math.max(L.zMin, mid.z));
-  const at = { n: { x: cx, z: nz }, ne: { x: ex, z: nz }, e: { x: ex, z: cz }, se: { x: ex, z: sz }, s: { x: cx, z: sz }, sw: { x: wx, z: sz }, w: { x: wx, z: cz }, nw: { x: wx, z: nz } };
+  return { n: { x: cx, z: nz }, ne: { x: ex, z: nz }, e: { x: ex, z: cz }, se: { x: ex, z: sz }, s: { x: cx, z: sz }, sw: { x: wx, z: sz }, w: { x: wx, z: cz }, nw: { x: wx, z: nz } };
+}
+export function ringPassPoints(locationRect, locationBorderRect, from, to, mid) {
+  const at = ringPoints(locationRect, locationBorderRect, mid);
   const a = RING_ORDER.indexOf(ringSideOf(from[0], from[1])), b = RING_ORDER.indexOf(ringSideOf(to[0], to[1]));
   if (a < 0 || b < 0) return [];
   if (a === b) return [at[RING_ORDER[a]]];
