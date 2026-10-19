@@ -20,7 +20,7 @@
 import { mintId, overRate } from './accounts.js';
 import {
   asks, shut, trackView, trackRow, storeOf, spendableSql, spendStatements, seatStepsFor, workableSql, workStatements, workHeld,
-  craftCapSql,   // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself
+  craftCapSql,   // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself
 } from './professions.js';
 import { dice } from './unitRoll.js';   // SILVER-FINDS: the service's dice moved below professions.js and marks.js
 import { rankOfXp, specsAt, STORES_MAX, PROF_OPS_MAX, PROF_OPS_WINDOW_S, ARCANE_ESSENCE, trackOf } from '../../src/net/professionLaw.js';
@@ -91,7 +91,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   if (await overRate(ctx, `prof:${player.id}`, PROF_OPS_MAX, PROF_OPS_WINDOW_S)) return { error: 'prof-rate' };
   const { rank, specs } = await tracksOf(db, player.id, character, 'alchemy', nowS);
   if (rank < potion.rank) return { error: 'prof-rank' };
-  const cap = craftCapSql('?1', '?2', 'alchemy');   // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself
+  const cap = craftCapSql('?1', '?2', 'alchemy');   // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself
   const steps = await seatStepsFor(db, player.id, character, seat, 'alchemy', nowS);
   // THE UNBRUISED HERBS (4.3): each herb's own units this brew spends (bought ones go first - AUDIT BAG-CRAFT A1: and loose
   // ones before them, never picked by this character), at most what was picked unbruised
@@ -218,7 +218,7 @@ export async function disenchantPiece(ctx, player, env, { character, provenance,
   const essence = essenceOf(points, specs[50] === DISENCHANTER);
   if (essence < 1) return { error: 'prof-no-essence' };
   const origin = p.bought_with === 'gold' ? 'gold' : p.char_id === character && p.bought_with == null ? 'own' : 'bought';
-  const cap = craftCapSql('?1', '?2', 'enchanting');   // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself
+  const cap = craftCapSql('?1', '?2', 'enchanting');   // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself
   const xp = scaleXp(disenchantXp(r, rank, base), xpPct(await firmStatsOf(db, player, env, character), 'enchanting'));   // AUDIT PROF12 E2: the piece's recipe's tier, quartered; none for the counter's goods alone - FIRM1: the Firmament's hand on it
   // AUDIT PROF-541 B2: THE RECORD'S OWN PIECE - a realm character's, out of the record its tab last checkpointed
   const prep = side.at ? await prepareRealmRecord(ctx, player.id, side.at, (save) => {

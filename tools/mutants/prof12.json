@@ -881,7 +881,7 @@
       "test/net/prof12_service.test.js",
       "test/systems/prof12_client.test.js"
     ],
-    "note": "AUDIT FB1018b L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
+    "note": "AUDIT FB1018f L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
   },
   {
     "name": "PROF12-svc-dis-listed",
@@ -982,7 +982,7 @@
       "test/net/prof12_service.test.js",
       "test/systems/prof12_client.test.js"
     ],
-    "note": "AUDIT FB1018b L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
+    "note": "AUDIT FB1018f L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
   },
   {
     "name": "PROF12-svc-herb-unbruised-never",
@@ -1248,7 +1248,7 @@
     "tests": [
       "test/systems/prof12_client.test.js"
     ],
-    "note": "AUDIT FB1018b L5-5: re-aimed at the disenchant - its old text ended at \"/** The smith's stock (PROF3)\", which CRAFT4 put the reforge above, so it named the reforge (CRAFT4-book-reforge-no-store's site, craft4.json) and survived its own test."
+    "note": "AUDIT FB1018f L5-5: re-aimed at the disenchant - its old text ended at \"/** The smith's stock (PROF3)\", which CRAFT4 put the reforge above, so it named the reforge (CRAFT4-book-reforge-no-store's site, craft4.json) and survived its own test."
   },
   {
     "name": "PROF12-pages-alchemy-undrawn",

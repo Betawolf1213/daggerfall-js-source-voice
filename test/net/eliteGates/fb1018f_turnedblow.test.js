@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b TURNED-BLOW (bible/01-Overview/bugs/ - Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs":
+// FIELD BUGS 2026-10-18f TURNED-BLOW (bible/01-Overview/bugs/ - Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs":
 // "Imps that follow you around won't die after hitting several times. Its an exploit for heals if you have a vampiric weapon
 // to heal yourself during the breach run"). The imps are the legion's Harriers (net/eliteGates/egLegion.js), which on a span
 // shadow the company along its platforms (bible/11-Multiplayer/Elite-Gates.md section 8.2). A blow struck from traversal
@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { egHallOf, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE, EG_FL, egBodiesOf, egBodyWire, egStruckOff, egStrikeTurned, egLordAsleep, EG_TURNS_FL } from '../../../src/net/eliteGates/egBodies.js';
-import { egStoreyApart, egRisen, egRadiusWire, egFightState } from '../../../src/net/eliteGates/egBodies.js';   // AUDIT FB1018b L3-4, L3-6
+import { egStoreyApart, egRisen, egRadiusWire, egFightState } from '../../../src/net/eliteGates/egBodies.js';   // AUDIT FB1018f L3-4, L3-6
 import { EG_OBJ } from '../../../src/net/eliteGates/egLords.js';
 import { EG_KIND, egLegionRaise } from '../../../src/net/eliteGates/egLegion.js';
 import { egFightView, egGroundAt, EG_STRIKE_PAD_M } from '../../../src/net/eliteGates/egWalkGraph.js';
@@ -55,7 +55,7 @@ async function spire(seed, h, { wake = true } = {}) {
   const arrive = { x: spec.arrive.x, z: spec.arrive.z, y: spec.arrive.y ?? 0 };
   const pos = { [ME]: { sx: spec.x0 + arrive.x, z: arrive.z, y: arrive.y }, 'acct-1': { sx: spec.x0 + arrive.x + 0.5, z: arrive.z, y: arrive.y } };
   let E = { ...EG_STATE_EMPTY, b: B.b, seed: B.seed, geo: 0 };   // the breach this screen stands in (its call's word), its stage and fight the room's
-  const words = [];   // AUDIT FB1018b L3-1: every word the screen heard, in order
+  const words = [];   // AUDIT FB1018f L3-1: every word the screen heard, in order
   const tell = (w) => { if (!w || (w.to && w.to !== ME)) return; const v = validEgOut(JSON.parse(JSON.stringify(w))); if (v) { words.push(v); E = foldEg(E, v, now); } };
   const centre = egHallCentre(spec), feet = [centre[0] + arrive.x, centre[1] + arrive.y, centre[2] + arrive.z], sent = [];
   const fight = createEgFight({ renderer: { textures: { has: () => true }, createBillboardBatch: (archive, record, size) => ({ archive, record, size, origin: [0, 0, 0], bounds: [0, 0, 0, 1] }), destroyBillboardBatch: NOOP },
@@ -211,14 +211,14 @@ test('TURNED-BLOW THE HOST\'S SWING AND SHAFT (scenes/dungeonContext.js - buildD
   const dc = rd('src/scenes/dungeonContext.js');
   const swing = dc.slice(dc.indexOf('  function swingOnHost(hb, damage, lookDir) {'), dc.indexOf('  function spellOnHost('));
   assert.match(swing, /^ {2}function swingOnHost\(hb, damage, lookDir\) \{\n {4}if \(hb\.entity\.warded\) wardTurns\(hb\);[^\n]*\n {4}else if \(damage <= 0\) \{/, 'the swing: the ward\'s ring first, then a zero blow\'s parry, else the blood and the number out');
-  // PIN MOVED (AUDIT FB1018b L3-7): the turned shaft says its word beside the ring (THE TURNED BLOW SAYS ITS WORD, below)
+  // PIN MOVED (AUDIT FB1018f L3-7): the turned shaft says its word beside the ring (THE TURNED BLOW SAYS ITS WORD, below)
   assert.match(dc, /\n {12}if \(hb\.entity\.warded\) \{ wardTurns\(hb\); [^\n]*\}[^\n]*\n {12}else playerArrowHitFoe\(m, hb, \{[^\n]*landOnHost\(hb, d, HIT_KINDS\.Shaft\)[^\n]*\n {12}if \(!hb\.entity\.warded && techniquePierces\(m, hb\)\) continue;/, 'the shaft: the ward\'s ring, else the one player-arrow law');
   assert.match(dc, /function wardTurns\(boss\) \{ audio\.play3d\(SOUND\.Parry6, bossChest\(boss\)/, 'the ring is the ward\'s own, at the body\'s chest');
 });
 
-// ── AUDIT FB1018b lane L3 ─────────────────────────────────────────────────────────────────────────────────────────
+// ── AUDIT FB1018f lane L3 ─────────────────────────────────────────────────────────────────────────────────────────
 
-test('TURNED-BLOW THE WAKE SAID AT ONCE (AUDIT FB1018b L3-1; section 8.6): a Court\'s lord woken by its wake ring says its first phase in the beat that wakes it (`eph` - the screen holds a lord asleep until it hears a phase, and the whole fight\'s word came up to two seconds later), so on the next frame the screen holds it awake and offers it whole, the blow sent and landed; that first phase turns no card (mutants: the wake\'s phase unsaid; the wake folded as a phase turn)', async () => {
+test('TURNED-BLOW THE WAKE SAID AT ONCE (AUDIT FB1018f L3-1; section 8.6): a Court\'s lord woken by its wake ring says its first phase in the beat that wakes it (`eph` - the screen holds a lord asleep until it hears a phase, and the whole fight\'s word came up to two seconds later), so on the next frame the screen holds it awake and offers it whole, the blow sent and landed; that first phase turns no card (mutants: the wake\'s phase unsaid; the wake folded as a phase turn)', async () => {
   const C = await spire(12345, hallOf(12345, 'court'));
   const L = C.B.F.bodies.find((b) => b.role === EG_ROLE.lord), ring = C.spec.ring;
   assert.ok(L && !L.up2, 'the lord stands asleep');
@@ -242,7 +242,7 @@ test('TURNED-BLOW THE WAKE SAID AT ONCE (AUDIT FB1018b L3-1; section 8.6): a Cou
   assert.ok(C.relayBlow(L.i) > 0, 'which the relay lands');
 });
 
-test('TURNED-BLOW THE STOREY (AUDIT FB1018b L3-6; Elite-Gates-Ascent.md section 2): on a span of THE ASCENT\'s law, a Harrier on an island 14 m over mine is turned on the screen (its stand-in warded, the ward\'s word, never sent) as the relay refuses it (five shafts land nothing); one on my own island whole on both - the one storey law (egStoreyApart) the relay\'s egHitBody and the screen\'s egStrikeTurned both call, and the screen asks it where the body stands now (mutants: the screen blind to the storey; the body\'s height read at its word, not where its walk has carried it; the relay\'s storey unasked)', async () => {
+test('TURNED-BLOW THE STOREY (AUDIT FB1018f L3-6; Elite-Gates-Ascent.md section 2): on a span of THE ASCENT\'s law, a Harrier on an island 14 m over mine is turned on the screen (its stand-in warded, the ward\'s word, never sent) as the relay refuses it (five shafts land nothing); one on my own island whole on both - the one storey law (egStoreyApart) the relay\'s egHitBody and the screen\'s egStrikeTurned both call, and the screen asks it where the body stands now (mutants: the screen blind to the storey; the body\'s height read at its word, not where its walk has carried it; the relay\'s storey unasked)', async () => {
   const S = await spire(12345, 7), view = egFightView(S.spec);
   assert.equal(S.spec.kind, 'span');
   const isl = S.spec.islands.filter((i) => egGroundAt(view, i.x, i.y ?? 0, i.z, 0));
@@ -280,7 +280,7 @@ test('TURNED-BLOW THE STOREY (AUDIT FB1018b L3-6; Elite-Gates-Ascent.md section 
   assert.equal((src.match(/!egOneStorey\(egStoreyY\(/g) ?? []).length, 1, 'the rule written once');
 });
 
-test('TURNED-BLOW THE OBJECT\'S RADIUS (AUDIT FB1018b L3-4): an errand\'s object is struck from beside it off the floor by its own radius (egStruckOff) - a spark\'s 0.6, a chain\'s 0.8, an anchor\'s 0.9, a false wall\'s 1, a rift\'s 1.3, a Wellspring\'s spring 2.2 (a rift too: no kind says it) - and the screen now hears that radius, said beside each body\'s row of nineteen (`ead` and `efs`, through the real wire and link): at every gap off a floor\'s edge the screen judges a blow as the relay does; a word that says none (a relay before it) still folds, a malformed list is refused (mutants: the radius unsaid in a risen word or the whole fight; dropped by the wire; unfolded by the link; halved; a short or a negative list kept; one radius for every body)', () => {
+test('TURNED-BLOW THE OBJECT\'S RADIUS (AUDIT FB1018f L3-4): an errand\'s object is struck from beside it off the floor by its own radius (egStruckOff) - a spark\'s 0.6, a chain\'s 0.8, an anchor\'s 0.9, a false wall\'s 1, a rift\'s 1.3, a Wellspring\'s spring 2.2 (a rift too: no kind says it) - and the screen now hears that radius, said beside each body\'s row of nineteen (`ead` and `efs`, through the real wire and link): at every gap off a floor\'s edge the screen judges a blow as the relay does; a word that says none (a relay before it) still folds, a malformed list is refused (mutants: the radius unsaid in a risen word or the whole fight; dropped by the wire; unfolded by the link; halved; a short or a negative list kept; one radius for every body)', () => {
   const spec = egHallOf(12345, 1, 0), view = egFightView(spec), d = view.fl.find((f) => f.t === 'd');
   const at = [d.x + d.r + EG_STRIKE_PAD_M + 3, d.y ?? 0, d.z];   // off the fight ground, at the floor's height
   const heard = (w) => { const v = validEgOut(JSON.parse(JSON.stringify(w))); assert.ok(v, `${w.k} valid`); return foldEg({ ...EG_STATE_EMPTY }, v, T0).fight.bodies; };
@@ -310,7 +310,7 @@ test('TURNED-BLOW THE OBJECT\'S RADIUS (AUDIT FB1018b L3-4): an errand\'s object
   assert.equal(validEgOut({ ...egFightState({ h: 1, wokeAt: T0, bodies: [o], blows: [], tethers: [], marks: [], pg: {}, zones: [] }, T0), r: [] }), null, 'the whole fight\'s too');
 });
 
-test('TURNED-BLOW AN OBJECT TURNED IS NEVER SENT (AUDIT FB1018b lane L3\'s survivor): an errand\'s rift struck from the arrival plate - the screen\'s door refuses it by the object\'s own stand-in, as it refuses a lord\'s or an add\'s, nothing sent and nothing flashed (mutants: the door\'s guard blind to the struck objects)', async () => {
+test('TURNED-BLOW AN OBJECT TURNED IS NEVER SENT (AUDIT FB1018f lane L3\'s survivor): an errand\'s rift struck from the arrival plate - the screen\'s door refuses it by the object\'s own stand-in, as it refuses a lord\'s or an add\'s, nothing sent and nothing flashed (mutants: the door\'s guard blind to the struck objects)', async () => {
   const Y = await spire(12345, hallOf(12345, 'yard'));
   const rift = Y.B.F.bodies.find((b) => b.role === EG_ROLE.obj && b.hp > 0 && !(b.fl & EG_FL.ward));
   assert.ok(rift, 'a rift to strike');
@@ -323,7 +323,7 @@ test('TURNED-BLOW AN OBJECT TURNED IS NEVER SENT (AUDIT FB1018b lane L3\'s survi
   assert.equal(Y.E().fight.bodies.find((b) => b.i === rift.i).hurtAt, hurtAt, 'nor flashed');
 });
 
-test('TURNED-BLOW THE TURNED BLOW SAYS ITS WORD AT EVERY DOOR (AUDIT FB1018b L3-2, L3-7; scenes/dungeonContext.js by its text - buildDungeonContext does not run in Node): a spell on a body of the court\'s or the Spire\'s pops its number by the stand-in it met, so a turned one says "No footing" or "Warded" (ui/hitNumbers.js numberFor), never the claim; a shaft a ward or the ground turns says its word beside the ring, as a swing\'s formula does on the same stand-in - one of his host\'s and the Warden\'s (mutants: each spell door\'s number blind to its body; each turned shaft silent)', () => {
+test('TURNED-BLOW THE TURNED BLOW SAYS ITS WORD AT EVERY DOOR (AUDIT FB1018f L3-2, L3-7; scenes/dungeonContext.js by its text - buildDungeonContext does not run in Node): a spell on a body of the court\'s or the Spire\'s pops its number by the stand-in it met, so a turned one says "No footing" or "Warded" (ui/hitNumbers.js numberFor), never the claim; a shaft a ward or the ground turns says its word beside the ring, as a swing\'s formula does on the same stand-in - one of his host\'s and the Warden\'s (mutants: each spell door\'s number blind to its body; each turned shaft silent)', () => {
   const dc = rd('src/scenes/dungeonContext.js');
   const door = (fn, next) => dc.slice(dc.indexOf(`  function ${fn}(`), dc.indexOf(next));
   for (const [fn, next, body] of [['spellOnCrystal', '  function gateHostBodies(', 'cr'], ['spellOnHost', '  function arenaRivalBody(', 'hb'], ['spellOnBoss', '  function spellOnStandIn(', 'boss']]) {

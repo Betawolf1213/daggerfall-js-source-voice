@@ -86,7 +86,7 @@ export function setKeybindNoticeSink(fn) { _carriedSink = fn; deliverCarried(); 
 /** Tests (and the I3 controls window) swap the live store. */
 export function setBindings(b) { _bindings = b; setStatusBindings(b); }   // STATUS-LIVE: a rebound Status key renames the readout's caption with it
 
-// AUDIT FB1018b L2-5: THE HOST'S PAUSE, ASKED AT THE KEY. A host hands its input layers one hooks object (GP1: the
+// AUDIT FB1018f L2-5: THE HOST'S PAUSE, ASKED AT THE KEY. A host hands its input layers one hooks object (GP1: the
 // finger's and the pad's; `paused()` is AUDIT 62 F7's gate, the game's pause, the predicate the mouse arms carry), and
 // both ask it live. The hotbar takes its slots' keys on the window's capture phase, BETWEEN frames, and read the pause
 // off the HUD's last frame instead: a key that opened a window and a digit before the next frame - the use-magic-item

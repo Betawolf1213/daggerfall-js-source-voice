@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b RELAY-SHARE (Jigglehimmer, #bug-reports, "Night Mothers Embrace Legendary does not function":
+// FIELD BUGS 2026-10-18f RELAY-SHARE (Jigglehimmer, #bug-reports, "Night Mothers Embrace Legendary does not function":
 // "Does not do what the tooltip implies" - the card's line "Imprint: Sweet Mother's Kiss (of The Night Mother's Embrace) -
 // +50% to foes under 25%"). A body the relay runs - the gate's Warden, his crystals and host, the Abyss Dungeon's Remnant,
 // its Echoes and Hearts, every lord and add of an Elite Breach, the sea serpent - is struck on this machine against a
@@ -29,7 +29,7 @@ import * as POW from '../../../src/systems/martialPowers.js';
 import { healthShare, wordShare } from '../../../src/combat/healthShare.js';
 import { weaponAttackDamage } from '../../../src/combat/formulas.js';
 import { createWeapon } from '../../../src/combat/enemyEquipment.js';
-import { tellTechniqueLanded, blowMult } from '../../../src/combat/technique/techniqueBlow.js';   // AUDIT FB1018b L3-5: Headsman's Chop
+import { tellTechniqueLanded, blowMult } from '../../../src/combat/technique/techniqueBlow.js';   // AUDIT FB1018f L3-5: Headsman's Chop
 import { _resetTechniquesForTests } from '../../../src/combat/techniques.js';
 import { makeEnemyEntity } from '../../../src/characters/enemy/enemyEntity.js';
 import { ENEMY_BASICS } from '../../../src/characters/enemy/enemyBasics.js';
@@ -74,7 +74,7 @@ import { createSerpentHost } from '../../../src/scenes/serpentHost.js';
 import { createSerpentLink } from '../../../src/net/serpent/serpentLink.js';
 import { newSerpentFight, joinSerpentFight, serpentStateOf } from '../../../src/net/serpent/serpentBrain.js';
 import { validSerpentOut } from '../../../src/net/wire.js';
-import { numberFor } from '../../../src/ui/hitNumbers.js';   // AUDIT FB1018b L6-7: a turned blow's word
+import { numberFor } from '../../../src/ui/hitNumbers.js';   // AUDIT FB1018f L6-7: a turned blow's word
 import { HIT_KINDS } from '../../../src/net/gate/gateBrain.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
@@ -124,13 +124,13 @@ const fight = (over = {}) => ({ ...GATE_STATE_EMPTY, day: 700, boss: 'ruhn', hp:
 
 /** An Elite Breach's fight over a recording renderer (test/net/eliteGates/eglook_lords.test.js's own rig). */
 const T0 = 1_800_000_000_000;
-// AUDIT FB1018b L3-6: each stands on the fight ground under it, as the relay stands every body (net/eliteGates/egBodies.js egBodyNew -
+// AUDIT FB1018f L3-6: each stands on the fight ground under it, as the relay stands every body (net/eliteGates/egBodies.js egBodyNew -
 // egFeetAt): the hall's first disc is 18 m up, and a lord drawn at 0 under it is a storey below my feet there, turned
 const feetAt = (x, z) => egFeetAt(egFightView(egHallOf(12345, 5, 0)), x, z);
 const lordRow = (i, key, hp, max, { x = 0, z = 30 } = {}) => egBodyOf([i, EG_ROLE.lord, EG_BOSS_KEYS.indexOf(key), 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 1, 0, 0, Math.PI], T0);
 const addRow = (i, k, hp, max, { x = 6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.add, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
 const objRow = (i, k, hp, max, { x = -6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.obj, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
-function breach(bodies, { feet: withFeet = true } = {}) {   // AUDIT FB1018b L6-7: `feet` false - this screen holds none of mine
+function breach(bodies, { feet: withFeet = true } = {}) {   // AUDIT FB1018f L6-7: `feet` false - this screen holds none of mine
   const E = { ...EG_STATE_EMPTY, b: '0123456789abcdef', h: 5, sg: 'trial', seed: 12345, geo: 0, end: null, hw: T0 - 5000, co: [['acct-0', 'Mac', 1]], fight: { ...EG_STATE_EMPTY.fight, h: 5, wk: T0, bodies, pg: {} } };
   assert.ok(egHallOf(12345, 5, 0), 'a hall to fight in');
   const renderer = { textures: new Set(), createBillboardBatch: (archive, record, size, centres) => ({ archive, record, size: { ...size }, centres, origin: null, bounds: [0, 0, 0, 1] }), destroyBillboardBatch: () => {} };
@@ -305,7 +305,7 @@ test('RELAY-SHARE THE FAMILY on a body the relay runs: Serpent\'s Kiss doubles u
   setPlayerDoor(null);
 });
 
-test('RELAY-SHARE ONE LAW, SIX READERS: the loot\'s powers, the masteries, the martial and arcane paths, the sets and the techniques\' Headsman\'s Chop (AUDIT FB1018b L3-5) read a body\'s share through combat/healthShare.js alone - none keeps a `health / maxHealth` of its own - and the stand-ins carry the reader they are handed (mutants: a reader\'s copy put back; the stand-in\'s reader unkept)', () => {
+test('RELAY-SHARE ONE LAW, SIX READERS: the loot\'s powers, the masteries, the martial and arcane paths, the sets and the techniques\' Headsman\'s Chop (AUDIT FB1018f L3-5) read a body\'s share through combat/healthShare.js alone - none keeps a `health / maxHealth` of its own - and the stand-ins carry the reader they are handed (mutants: a reader\'s copy put back; the stand-in\'s reader unkept)', () => {
   for (const p of ['src/systems/loot/lootPowers.js', 'src/systems/weaponMastery.js', 'src/systems/martialPowers.js', 'src/systems/arcanePowers.js', 'src/systems/sigil/sigilSetPowers.js', 'src/combat/technique/techniqueBlow.js']) {
     const s = strip(read(p));
     assert.match(s, /import \{ healthShare \} from '(?:\.\.\/)+(?:combat\/)?healthShare\.js';/, `${p} reads the one law`);
@@ -320,9 +320,9 @@ test('RELAY-SHARE ONE LAW, SIX READERS: the loot\'s powers, the masteries, the m
   assert.equal(bossStandIn({ mobile: 31 }, 'x', 0.5).relayShare, null, 'a reader, or none');
 });
 
-// ── AUDIT FB1018b lanes L3 and L6 ────────────────────────────────────────────────────────────────────────────────
+// ── AUDIT FB1018f lanes L3 and L6 ────────────────────────────────────────────────────────────────────────────────
 
-test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018b L6-7, and lane L3\'s survivor; TURNED-BLOW\'s own law): on a screen that holds no feet of mine in the hall, a lord under a quarter of its word is turned - its stand-in warded in the ward\'s word (never the ground\'s: I stand on no ground it could name), Sweet Mother\'s Kiss gives nothing on it (the plain blow), and the door sends nothing; a struck object the same (mutants: standing nowhere turns nothing; the ground\'s word with no feet)', async () => {
+test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018f L6-7, and lane L3\'s survivor; TURNED-BLOW\'s own law): on a screen that holds no feet of mine in the hall, a lord under a quarter of its word is turned - its stand-in warded in the ward\'s word (never the ground\'s: I stand on no ground it could name), Sweet Mother\'s Kiss gives nothing on it (the plain blow), and the door sends nothing; a struck object the same (mutants: standing nowhere turns nothing; the ground\'s word with no feet)', async () => {
   fresh();
   const me = imprinted();
   const plain = weaponAttackDamage(me, bossStandIn({ mobile: 31 }, 'unread'), 0, sword(), ROLL);
@@ -377,7 +377,7 @@ test('RELAY-SHARE THE SERPENT\'S WORD IS THE FIGHT I STAND IN (lane L3\'s surviv
   assert.equal(sh.healthShare(), null, 'another day\'s: no word');
 });
 
-test('RELAY-SHARE HEADSMAN\'S CHOP (AUDIT FB1018b L3-5; combat/technique/techniqueBlow.js blowMult): its weight on what a foe has lost reads the one law - an orc at a fifth of its health (as it did), and a body the relay runs at a fifth of the relay\'s word (its stand-in\'s 1e9 placeholder read whole before, so the Chop gave nothing on any of them); no word heard, whole (mutants: the Chop\'s own copy of the share again)', () => {
+test('RELAY-SHARE HEADSMAN\'S CHOP (AUDIT FB1018f L3-5; combat/technique/techniqueBlow.js blowMult): its weight on what a foe has lost reads the one law - an orc at a fifth of its health (as it did), and a body the relay runs at a fifth of the relay\'s word (its stand-in\'s 1e9 placeholder read whole before, so the Chop gave nothing on any of them); no word heard, whole (mutants: the Chop\'s own copy of the share again)', () => {
   const chop = { mult: 1.2, wounded: 1.0 };
   const orc = makeEnemyEntity(7, ENEMY_BASICS[7], null, 1, ROLL);
   orc.health = Math.floor(orc.maxHealth * 0.2);

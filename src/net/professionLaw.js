@@ -991,15 +991,15 @@ export function craftXpCap(profession, ranks) {
   const past = Object.entries(ranks ?? {}).filter(([p, r]) => p !== own && BY_ID.get(p)?.kind === 'crafting' && r > JOURNEYMAN_RANK).length;
   return past >= CRAFTS_ABOVE_JOURNEYMAN ? xpForRank(JOURNEYMAN_RANK + 1) - 1 : PROF_XP_MAX;
 }
-/** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b; the Discord, "Smithing stuck at 50": "it is literally 1xp off of levelling
+/** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f; the Discord, "Smithing stuck at 50": "it is literally 1xp off of levelling
  *  up but everything I craft gives me 0xp"): THE LIMIT AS IT STANDS OVER ONE CRAFT'S TRACK, for the words that say it -
  *  `cap` the most it may hold (craftXpCap's, which the service's decisions bind), `room` what the track at `xp` can still
  *  take under it (none at the cap, as none at Master), and `by` the crafts past Journeyman that hold it there, in the
  *  Professions tab's order - empty where the limit does not hold it. `ranks` every track's rank, as craftXpCap's. A
  *  gathering track is never held (3.2: "Gathering is unlimited" - no decision of the service caps one).
- *  AUDIT FB1018b L5-2: and `rank` THE RANK IT IS HELD AT - the cap's (Journeyman's 50 under the limit, Master's where none
+ *  AUDIT FB1018f L5-2: and `rank` THE RANK IT IS HELD AT - the cap's (Journeyman's 50 under the limit, Master's where none
  *  holds it), or the track's own where it stands past its cap: a third craft that crossed with another before AUDIT
- *  FB1018b L5-1 made the limit one decision (nothing lowers a track) is held at its 60, never "at rank 50". */
+ *  FB1018f L5-1 made the limit one decision (nothing lowers a track) is held at its 60, never "at rank 50". */
 export function craftLimit(profession, ranks, xp) {
   const own = trackOf(profession), cap = BY_ID.get(own)?.kind === 'crafting' ? craftXpCap(profession, ranks) : PROF_XP_MAX;
   const by = cap < PROF_XP_MAX ? PROFESSIONS.filter((p) => p.kind === 'crafting' && p.id !== own && (ranks?.[p.id] ?? 0) > JOURNEYMAN_RANK).map((p) => p.id) : [];

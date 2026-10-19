@@ -1,4 +1,4 @@
-// HOUSE-BUSH (FIELD BUGS 2026-10-18b, thread T6 "Collection: Broken world objects", æther: "Small bush in a house wall,
+// HOUSE-BUSH (FIELD BUGS 2026-10-18f, thread T6 "Collection: Broken world objects", æther: "Small bush in a house wall,
 // near east gate of Penwall Derry" - a bush standing half inside a vine-covered house wall, the automap crop beside a
 // building block, two taverns named on it).
 //
@@ -44,7 +44,7 @@ function packBlock(vendor, name, { blankMap = false } = {}) {
   const subs = opOf(ops, 'RmbBlock.SubRecords');
   if (!scenery || !auto || !Array.isArray(subs)) return null;
   const autoMap = auto.$r ? unRun(auto.$r) : auto;
-  // AUDIT FB1018b L4-2: the block's buildings as the pack carries them (each a node of its pool) - the law asks whether
+  // AUDIT FB1018f L4-2: the block's buildings as the pack carries them (each a node of its pool) - the law asks whether
   // one stands on the footprint, and a block built with none could never show a phantom
   const nodeOf = (v) => { const n = v?.$n !== undefined ? PACK(vendor).nodes[v.$n] : v; return typeof n === 'string' ? JSON.parse(n) : n; };
   return blockFromJson({
@@ -121,7 +121,7 @@ test('HOUSE-BUSH: the law - inside a footprint by the town map\'s ladder, never 
   assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4095).fill(19), 5, 5, all), false, 'a short one is no automap');
   assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4096).fill(19), 5, 5, all), true);
   assert.equal(RMB.sceneryUnderRoof(new Uint8Array(4096).fill(19), 5, 5, null), false, 'no buildings known: nothing taken');
-  // AUDIT FB1018b L4-1: a footprint is held when a building of the block stands on it (xPos / 64, zPos / 64)
+  // AUDIT FB1018f L4-1: a footprint is held when a building of the block stands on it (xPos / 64, zPos / 64)
   const two = new Uint8Array(4096);
   for (let r = 10; r < 20; r++) for (let c = 10; c < 20; c++) two[r * 64 + c] = 19;
   for (let r = 40; r < 50; r++) for (let c = 40; c < 50; c++) two[r * 64 + c] = 19;
@@ -132,7 +132,7 @@ test('HOUSE-BUSH: the law - inside a footprint by the town map\'s ladder, never 
   assert.equal(RMB.heldFootprints(null, []), null);
 });
 
-test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stands inside a footprint a building of the block stands on, every other stands, and the count is the record\'s (10 in Beautiful Cities, 8 in Beautiful Villages - AUDIT FB1018b L4-1: the Villages\' 16 by the automap alone)', () => {
+test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stands inside a footprint a building of the block stands on, every other stands, and the count is the record\'s (10 in Beautiful Cities, 8 in Beautiful Villages - AUDIT FB1018f L4-1: the Villages\' 16 by the automap alone)', () => {
   for (const [vendor, want] of [['beautiful-cities', 10], ['beautiful-villages', 8]]) {
     let taken = 0, blocks = 0;
     for (const name of Object.keys(PACK(vendor).files)) {
@@ -156,7 +156,7 @@ test('HOUSE-BUSH: both town packs swept - every scenery cell the law takes stand
   }
 });
 
-test('HOUSE-BUSH THE PHANTOM HOUSES (AUDIT FB1018b L4-1): TEMPBSE0\'s automap draws houses its block does not have, and its author planted scenery on that open ground - every one of its scenery cells stands, as it did', () => {
+test('HOUSE-BUSH THE PHANTOM HOUSES (AUDIT FB1018f L4-1): TEMPBSE0\'s automap draws houses its block does not have, and its author planted scenery on that open ground - every one of its scenery cells stands, as it did', () => {
   const block = packBlock('beautiful-villages', 'TEMPBSE0.RMB.json');
   assert.ok(block, 'carried whole');
   assert.equal(block.rmbBlock.subRecords.length, 8, 'eight buildings');

@@ -144,7 +144,7 @@ Enchanting - ten professions a character holds, with the five that gather.
 
 - **The crafter's limit** - DECIDED: a character may raise at most **two crafts above Journeyman (50)**. Gathering is
   unlimited. CRAFT3 (41.6): two of the five crafts. No one character makes everything; trade equips an army.
-  CRAFT-LIMIT-SAID (41.10, FIELD BUGS 2026-10-18b): a third craft stops at 26,009 XP, one short of rank 51, and every
+  CRAFT-LIMIT-SAID (41.10, FIELD BUGS 2026-10-18f): a third craft stops at 26,009 XP, one short of rank 51, and every
   act of it then pays none - said at every station, on the Professions tab and in the craft's word since. No rank is
   ever lowered, so the two are the character's for good (OPEN, the owner's: a craft let go).
 - **Online only** - DECIDED: nothing offline earns profession XP.
@@ -4163,7 +4163,7 @@ outfitting. I got somehow it once from...Fishing net? Then never after."
   dead). PIN MOVED: `craft1_chain` (the host's craft word, its chain still first) and `prof10_client` (the jeweller's
   XP its own line).
 
-### 41.10 CRAFT-LIMIT-SAID - the crafter's limit said where it acts, and a station's XP the service's own (BUILT 2026-10-18, FIELD BUGS 2026-10-18b)
+### 41.10 CRAFT-LIMIT-SAID - the crafter's limit said where it acts, and a station's XP the service's own (BUILT 2026-10-18, FIELD BUGS 2026-10-18f)
 
 The Discord, CC/Astro, "Smithing stuck at 50": "I am unsure if its meant to stop here or if I am missing something but
 I have been stuck at level 50 smithing for about 3 days now. it is literally 1xp off of levelling up but everything I
@@ -4184,7 +4184,7 @@ time you make this piece at this tier.", and the word "You made a Fine Silver Da
   The line read neither the limit (the report's 0) nor the stars (a Smithing XP star's percent, paid and never said),
   and a Master's stations promised figures a full track never takes (`PROF_XP_MAX - held` is none).
 - **DECIDED: the limit stands (the owner's) and is said where it acts; a station says what the service credits.**
-  The service decides by the same law; AUDIT FB1018b L5-1 made it one decision: each act's INSERT and its track's write
+  The service decides by the same law; AUDIT FB1018f L5-1 made it one decision: each act's INSERT and its track's write
   count the other crafts past Journeyman in their own statement (`server-account/src/professions.js` craftCapSql, a
   D1 batch one transaction) - the ceiling had been `craftXpCap` of a track read before the batch, bound as a literal,
   so two acts at once could raise a third craft past 50 and freeze all three for good. No wire or account version
@@ -4229,10 +4229,10 @@ time you make this piece at this tier.", and the word "You made a Fine Silver Da
   languages owing them with the rest.
 - **As built**: `src/net/professionLaw.js`, `src/net/profBook.js`, `src/ui/craftXpWords.js`,
   `src/ui/professions/profPages.js`, `src/scenes/world.js` (one line), `locales/*`. Pinned:
-  `test/net/fb1018b_craftlimit.test.js` (6) - the report end to end on the real Worker, book and pages (and the limit
+  `test/net/fb1018f_craftlimit.test.js` (6) - the report end to end on the real Worker, book and pages (and the limit
   shown the cause); the line against the Worker at seven rooms; the Firmament's percent on the anvil, the jeweller's
   and a temper, as the Worker pays it; every station at the limit; the tab before the choice, a gathering track,
-  Master; the law and the host's one call. `tools/mutants/fb1018b_craftlimit.json` (46, all dead). PIN MOVED:
+  Master; the law and the host's one call. `tools/mutants/fb1018f_craftlimit.json` (46, all dead). PIN MOVED:
   `fb1015f_firstcraft` (the host's word; Building 100's boxes - a Master takes none - and the quarter and the 500 at
   Building 99), `craft1_chain` (the host's word), `prof9_client` (a Master's fire; AUDIT PROF-541 K7's steps at an
   Expert's 90), `prof12_client` (a Master's enchanting station; AUDIT PROF12 E2's quarter at 90). Re-aimed by

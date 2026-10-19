@@ -75,7 +75,7 @@ import { weaponSkillUsed } from '../../characters/weapons.js';
 import { SKILLS } from '../skills.js';
 import { friendlyProtected } from '../../combat/playerWeapon.js';
 import { KNIGHT_CITY_WATCH } from '../../characters/mobile/mobileTypes.js';
-import { healthShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's share of its health, the one law
+import { healthShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: a body's share of its health, the one law
 
 /** All the thorns a wearer's pieces sum to, at most, a blow. BAL5 (bible/05-Combat/Balance-Arc.md section 11): 10, the
  *  top of a Legendary line's band and a Legendary sear's own most - it was 25, a whole endgame swing paid back on every
@@ -206,7 +206,7 @@ const isWeapon = (it) => it?.group === 'Weapons';
  *  the same power (AUDIT LOOT F4: a Legendary in one hand and a Rare imprinted with its power in the other are one entry,
  *  its piece the first the table lists, and the other's blows rode nothing); armour's and jewellery's always. */
 const blowPowers = (entity, weapon) => wornPowers(entity).filter((p) => !isWeapon(p.item) || p.item === weapon || (!!weapon && powerIds(weapon).includes(p.id)));
-/** A body's share of its health: the one law (combat/healthShare.js - FIELD BUGS 2026-10-18b RELAY-SHARE: a body the relay
+/** A body's share of its health: the one law (combat/healthShare.js - FIELD BUGS 2026-10-18f RELAY-SHARE: a body the relay
  *  runs reads the relay's word, where its stand-in's placeholder read whole and Sweet Mother's Kiss and Serpent's Kiss's
  *  double never fired on any of them); a body whose word says nothing reads whole, so no "under" power fires on it. */
 const share = (e) => healthShare(e) ?? 1;

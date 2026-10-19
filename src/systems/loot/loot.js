@@ -334,9 +334,9 @@ function magicItemBase(magicItem, playerLevel, gender, rolls) {
   return base;
 }
 
-/** HELD-BASE (FIELD BUGS 2026-10-18b, SuperDaddy: "appears on things you can't equip like wands"): POWERS THAT WORK
+/** HELD-BASE (FIELD BUGS 2026-10-18f, SuperDaddy: "appears on things you can't equip like wands"): POWERS THAT WORK
  *  WORN - a piece has a live row that does not work off the body (enchantments.js worksUnworn: no Used payload).
- *  MAGIC.DEF's own: Cast When Held, Absorbs Spells and Enhances Skill. AUDIT FB1018b L1-4 (decided, Mac: "Stop with the
+ *  MAGIC.DEF's own: Cast When Held, Absorbs Spells and Enhances Skill. AUDIT FB1018f L1-4 (decided, Mac: "Stop with the
  *  decisions for me"): ANY such row - a piece with a Used cast and a worn power takes a base a slot takes, which loses
  *  neither half (the cast works from any base); every regular MAGIC.DEF row is one power, so no draw moves. */
 export const powersNeedWearing = (rows) => rows.some((r) => !worksUnworn(r));

@@ -7658,7 +7658,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _serpentStandIn = null;
   const serpentStandIn = () => {
     if (!_serpentStandIn) {
-      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent', () => serpentHost?.healthShare() ?? null);   // FIELD BUGS 2026-10-18b RELAY-SHARE: its health as the relay says it
+      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent', () => serpentHost?.healthShare() ?? null);   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it
       e.armor = 100; e.armorValues = new Array(7).fill(100); e.skills = 0;
       _serpentStandIn = e;
     }

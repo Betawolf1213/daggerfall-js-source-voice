@@ -97,7 +97,7 @@ test('CRAFT-FIRST-SHOWN the craft\'s word, from the real Worker\'s answer throug
   // THE HOSTS DO NOT GROW: world.js's craft says its XP through the module, one call
   const w = hostText('src/scenes/world.js');
   assert.match(w, /^import \{ craftXpText \} from '\.\.\/ui\/craftXpWords\.js';/m);
-  // PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): one call still, the crafter's limit over the track handed in (profBook.js limit)
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): one call still, the crafter's limit over the track handed in (profBook.js limit)
   assert.match(w, /const rec = recipeById\(recipe\);\n.*\n\s+return \{ ok: true, text: `\$\{chain \? `\$\{chain\} ` : ''\}\$\{made\} \$\{craftXpText\(rec, r\.data, st\.xp, profBook\.limit\(rec\?\.profession\)\)\}\$\{paid \?/);
   assert.doesNotMatch(w, /\(\+\$\{r\.data\.xp\} \$\{st\.xp\} XP\)/, 'the old word, which left `first` unread, is gone');
 });
@@ -171,7 +171,7 @@ test('CRAFT-FIRST-SHOWN the stations say it, read off the real book: the loom\'s
     assert.equal(jewel[0], 'Silver Ring - rank 0');
     assert.ok(jewel[1].includes('Your rank 0, margin 0: Crude 20 | Standard 60 | Fine 20. A clean facet is a step better.'), jewel[1].join('|'));
     assert.equal(jewel[1].at(-1), FIRST(20, 'Smithing'));
-    // THE WORKBENCH, Building 100. PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): a Master's track takes no more XP -
+    // THE WORKBENCH, Building 100. PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track takes no more XP -
     // the service credits MIN(earned, PROF_XP_MAX - held), none - so the Staff, the works and a Sculptor's carving say so
     // (it said "5 Building XP, and 500 more", which the Worker never paid); the quarter and the 500 at Building 99, below
     const TOP = 'No Building XP: Building is at Master.';

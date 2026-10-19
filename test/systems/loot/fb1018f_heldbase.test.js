@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b HELD-BASE (SuperDaddy, #bug-reports, "Leaping effect on store bought magic items.": "Says it
+// FIELD BUGS 2026-10-18f HELD-BASE (SuperDaddy, #bug-reports, "Leaping effect on store bought magic items.": "Says it
 // enhances dragonish, but appears on things you can't equip like wands. More than likely supposed to be Cast on Use -
 // Jumping. Same case with magic items for sale that have the suffix 'Venom spitting' but cast levitation.").
 //
@@ -11,7 +11,7 @@
 // never reach its holder. Driven on the real producer (loot.js createRegularMagicItem over readMagicDef's records), the
 // real guild shelf (shopStock.js stockGuildMagicItems), the real equip table and enchantment fold, the real U window's
 // list and info box, the save's real repair runner (save.js repairItemLists) and the realm ledger's own step
-// (server-account/src/ledger.js) - AUDIT FB1018b L1-1: a load moves no saved piece's base.
+// (server-account/src/ledger.js) - AUDIT FB1018f L1-1: a load moves no saved piece's base.
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -138,7 +138,7 @@ test('HELD-BASE ONE RECORD, ONE PIECE (the report\'s question - a guard): every 
     [true, false, false, false, false, false]);
 });
 
-test('HELD-BASE A SAVE\'S PIECES STAY AS THEY WERE (AUDIT FB1018b L1-1): the realm ledger follows a valuable piece by its print (its template and material, judge.js ledgerPrintOf); a load that moved a pre-fix "Holy Tome of Venom Spitting" to the Amulet made the next checkpoint read the honest piece as forged and hold its player - a load moves no base, and the ledger finds nothing (mutant: the old repair wired again)', async () => {
+test('HELD-BASE A SAVE\'S PIECES STAY AS THEY WERE (AUDIT FB1018f L1-1): the realm ledger follows a valuable piece by its print (its template and material, judge.js ledgerPrintOf); a load that moved a pre-fix "Holy Tome of Venom Spitting" to the Amulet made the next checkpoint read the honest piece as forged and hold its player - a load moves no base, and the ledger finds nothing (mutant: the old repair wired again)', async () => {
   // the pre-fix piece in its real shape: DFU's religious draw (no material), the template's name, rows, uses and price
   const rec = REGULAR[VENOM];
   const rows = rec.enchantments.filter((e) => e.type !== -1);
@@ -159,7 +159,7 @@ test('HELD-BASE A SAVE\'S PIECES STAY AS THEY WERE (AUDIT FB1018b L1-1): the rea
   assert.deepEqual(step.forged, [], 'nothing forged at the next checkpoint');
 });
 
-test('HELD-BASE THE LEDGER TAKES THE LOAD\'S ONE MOVE (AUDIT FB1018b L1-1, decided): RARITY-WEAR\'s repair moves a rolled Wand to the Amulet on load, and a Wand the service held through it - a guild vault\'s, a market\'s - comes back on its old print; the next checkpoint reads the moved piece as itself, its row reprinted, where it read a forgery and held an honest player - and no other move is taken (mutants: the move refused again; any print taken; the material let move; the row not reprinted)', async () => {
+test('HELD-BASE THE LEDGER TAKES THE LOAD\'S ONE MOVE (AUDIT FB1018f L1-1, decided): RARITY-WEAR\'s repair moves a rolled Wand to the Amulet on load, and a Wand the service held through it - a guild vault\'s, a market\'s - comes back on its old print; the next checkpoint reads the moved piece as itself, its row reprinted, where it read a forgery and held an honest player - and no other move is taken (mutants: the move refused again; any print taken; the material let move; the row not reprinted)', async () => {
   // the move is exactly the repair's: every Jewellery template no slot takes, and only to its home
   const jewels = Array.from({ length: 8 }, (_, k) => createRandomJewellery(seq(k / 8 + 0.01)));
   assert.equal(new Set(jewels.map((j) => j.templateIndex)).size, 8, 'the eight jewels');
@@ -188,13 +188,13 @@ test('HELD-BASE THE LEDGER TAKES THE LOAD\'S ONE MOVE (AUDIT FB1018b L1-1, decid
   assert.deepEqual(other.forged, [held[0].key], 'another print on its key is forged, as ever');
 });
 
-test('HELD-BASE THE REDRAW\'S OWN ARGUMENTS AND THE WHOLE TABLE (AUDIT FB1018b L1-3, L1-4): a redrawn base is minted for the holder\'s gender and level, the dead stream\'s armour at the holder\'s level; of every kind the registry knows only a Used cast, Health Leech (its cost on Use) and an artifact\'s special power count as working off the body', () => {
+test('HELD-BASE THE REDRAW\'S OWN ARGUMENTS AND THE WHOLE TABLE (AUDIT FB1018f L1-3, L1-4): a redrawn base is minted for the holder\'s gender and level, the dead stream\'s armour at the holder\'s level; of every kind the registry knows only a Used cast, Health Leech (its cost on Use) and an artifact\'s special power count as working off the body', () => {
   assert.equal(createRegularMagicItem(TEMPLATES, 1, 'female', seq(0.5, 0.99, 0.3, 0, 0, 0), VENOM).group, 'WomensClothing', 'redrawn for her');
   assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.5, 0.99, 0, 0, 0.99), VENOM).material, createRandomArmor(30, seq(0, 0.99)).material, 'redrawn at the holder\'s level');
   assert.equal(createRegularMagicItem(TEMPLATES, 30, 'male', seq(0.99), VENOM).material, createRandomArmor(30, seq(0.99)).material, 'the dead stream\'s armour at the holder\'s level');
   const unworn = Object.entries(T).filter(([, type]) => worksUnworn({ type, param: 0 })).map(([name]) => name).sort();
   assert.deepEqual(unworn, ['CastWhenUsed', 'HealthLeech', 'SpecialArtifactEffect']);
-  // AUDIT FB1018b L1-4 (decided): a piece with a Used cast and a worn power takes a base a slot takes - it loses neither
+  // AUDIT FB1018f L1-4 (decided): a piece with a Used cast and a worn power takes a base a slot takes - it loses neither
   // half; Health Leech (a cost) beside a worn power does not keep it on a Wand; none is no need (no regular MAGIC.DEF row
   // is mixed: one row each, so no draw moves)
   assert.equal(powersNeedWearing([{ type: T.CastWhenUsed, param: 4 }, { type: T.EnhancesSkill, param: 7 }]), true);

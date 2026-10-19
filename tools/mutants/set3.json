@@ -151,7 +151,7 @@
     "tests": [
       "test/systems/set3_powers.test.js"
     ],
-    "note": "FIELD BUGS 2026-10-18b RELAY-SHARE (PIN MOVED): re-aimed by content - under half is read through the one share law (combat/healthShare.js)."
+    "note": "FIELD BUGS 2026-10-18f RELAY-SHARE (PIN MOVED): re-aimed by content - under half is read through the one share law (combat/healthShare.js)."
   },
   {
     "name": "SET3-the-carry-dropped",

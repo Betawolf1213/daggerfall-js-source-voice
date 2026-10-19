@@ -5,7 +5,7 @@
     "old": "  hideEnhancedHud();\n  hudText?.hide();",
     "new": "  hudText?.hide();",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the report: the dungeon's window frame says nothing to the enhanced HUD, so its bar keeps the digits"
   },
@@ -15,7 +15,7 @@
     "old": "drawEnhancedHud(null, 0, 0, { hidden: true, paused: true });",
     "new": "drawEnhancedHud(null, 0, 0, { hidden: true, paused: false });",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the HUD hidden but the bar told the game runs - the digit still the bar's, slot 1 drunk behind the window"
   },
@@ -25,7 +25,7 @@
     "old": "drawEnhancedHud(null, 0, 0, { hidden: true, paused: true });",
     "new": "drawEnhancedHud(null, 0, 0, { hidden: false, paused: true });",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the bar's keys the window's, but the HUD left painted over every dungeon window"
   },
@@ -35,7 +35,7 @@
     "old": "  if (!host) return;\n  drawEnhancedHud(null, 0, 0,",
     "new": "  drawEnhancedHud(null, 0, 0,",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the hide door builds a HUD (and binds its bar) that no frame asked for"
   },
@@ -45,7 +45,7 @@
     "old": "hideHudText: () => hideHudTextSurfaces(hudText),",
     "new": "hideHudText: () => {},",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the context's door no longer hud.js's - both dungeon hosts call nothing"
   },
@@ -55,7 +55,7 @@
     "old": "if (dungeonCtx.uiOverlayActive) { dungeonCtx.hideHudText?.(); hideWorldPlaque();",
     "new": "if (dungeonCtx.uiOverlayActive) { hideWorldPlaque();",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "?world's dungeon arm returns above drawFoes with no word to the HUD"
   },
@@ -65,7 +65,7 @@
     "old": "ctx.hideHudText?.(); hideWorldPlaque(); ctx.tickOverlay(dt); ctx.drawOverlay(canvas);",
     "new": "hideWorldPlaque(); ctx.tickOverlay(dt); ctx.drawOverlay(canvas);",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "?dungeon returns above drawFoes with no word to the HUD"
   },
@@ -75,7 +75,7 @@
     "old": "{ font: townTalk.font, cursorActive: gamePaused(), reticleHidden: !!tvf,",
     "new": "{ font: townTalk.font, cursorActive: false, reticleHidden: !!tvf,",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the street's HUD told the game runs under a window - the bar takes the digits outside too"
   },
@@ -85,7 +85,7 @@
     "old": "{ font: townTalk.font, cursorActive: gamePaused(),",
     "new": "{ font: townTalk.font, cursorActive: false,",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "the fixed city's HUD told the game runs under a window"
   },
@@ -95,7 +95,7 @@
     "old": "          cursorActive: overlayHeld,",
     "new": "          cursorActive: false,",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "a building's HUD told the game runs under its window - the bar takes the digits indoors"
   },
@@ -105,7 +105,7 @@
     "old": "{ font: hudFont, cursorActive: !!activeOverlay,",
     "new": "{ font: hudFont, cursorActive: false,",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
     "why": "drawFoes' HUD told the game runs under the readout it draws over (the unpaused window)"
   },
@@ -115,10 +115,10 @@
     "old": "const keysPaused = () => hostPaused() ?? lastPaused;",
     "new": "const keysPaused = () => lastPaused;",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js",
+      "test/ui/hud/fb1018f_dungeondigits.test.js",
       "test/ui/plus/fb1004e_padarrange.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5, the fault itself: the bar's keys read the HUD's last frame - a digit between a window's key and the next frame presses the slot behind the window, and a street window over the dungeon arm leaves the bar its keys (L2-6)"
+    "why": "AUDIT FB1018f L2-5, the fault itself: the bar's keys read the HUD's last frame - a digit between a window's key and the next frame presses the slot behind the window, and a street window over the dungeon arm leaves the bar its keys (L2-6)"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-key-gate-the-frame",
@@ -126,19 +126,19 @@
     "old": "  if (!bar || !hotbarMode() || dropOwners.size || keysPaused()) return;\n  if (keyHolds.size) return;",
     "new": "  if (!bar || !hotbarMode() || dropOwners.size || lastPaused) return;\n  if (keyHolds.size) return;",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: the digit's own gate back on the last frame's word"
+    "why": "AUDIT FB1018f L2-5: the digit's own gate back on the last frame's word"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-mouse-slot-reads-the-frame",
     "file": "src/ui/enhanced/enhancedHotbar.js",
-    "old": "  if (!bar || !hotbarMode() || dropOwners.size || keysPaused()) return;   // AUDIT FB1018b L2-5: the keys' one gate",
+    "old": "  if (!bar || !hotbarMode() || dropOwners.size || keysPaused()) return;   // AUDIT FB1018f L2-5: the keys' one gate",
     "new": "  if (!bar || !hotbarMode() || dropOwners.size || lastPaused) return;",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: a slot on a mouse button (AUDIT KB1) reads the last frame - the button presses the slot behind a window opened since"
+    "why": "AUDIT FB1018f L2-5: a slot on a mouse button (AUDIT KB1) reads the last frame - the button presses the slot behind a window opened since"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-crossbar-reads-the-frame",
@@ -148,38 +148,38 @@
     "tests": [
       "test/ui/plus/fb1004e_padarrange.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: the pad's crossbar on the last frame's word while the keyboard's slots ask the host - the two hands disagree again"
+    "why": "AUDIT FB1018f L2-5: the pad's crossbar on the last frame's word while the keyboard's slots ask the host - the two hands disagree again"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-touch-door-silent",
     "file": "src/ui/touch/touch.js",
-    "old": "  noteHostInput(hooks);   // AUDIT FB1018b L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n",
+    "old": "  noteHostInput(hooks);   // AUDIT FB1018f L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n",
     "new": "",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: the finger's door keeps the host's hooks to itself - the keys fall back on the last frame's word"
+    "why": "AUDIT FB1018f L2-5: the finger's door keeps the host's hooks to itself - the keys fall back on the last frame's word"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-pad-door-silent",
     "file": "src/ui/gamepadInput.js",
-    "old": "  noteHostInput(hooks);   // AUDIT FB1018b L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n",
+    "old": "  noteHostInput(hooks);   // AUDIT FB1018f L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n",
     "new": "",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js",
+      "test/ui/hud/fb1018f_dungeondigits.test.js",
       "test/ui/plus/fb1004e_padarrange.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: the pad's door keeps the host's hooks to itself"
+    "why": "AUDIT FB1018f L2-5: the pad's door keeps the host's hooks to itself"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-noted-after-the-refusal",
     "file": "src/ui/touch/touch.js",
-    "old": "  noteHostInput(hooks);   // AUDIT FB1018b L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n  if (!isTouchDevice()) return null;",
+    "old": "  noteHostInput(hooks);   // AUDIT FB1018f L2-5: the host's pause, for the hotbar's keys too - before the refusal below\n  if (!isTouchDevice()) return null;",
     "new": "  if (!isTouchDevice()) return null;\n  noteHostInput(hooks);",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js"
+      "test/ui/hud/fb1018f_dungeondigits.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: noted only on a touch device - a desktop's keys never hear the host"
+    "why": "AUDIT FB1018f L2-5: noted only on a touch device - a desktop's keys never hear the host"
   },
   {
     "name": "DUNGEON-DIGITS-L2-5-host-pause-unread",
@@ -187,9 +187,9 @@
     "old": "  try { return !!paused(); } catch { return null; }",
     "new": "  try { return !!paused() && false; } catch { return null; }",
     "tests": [
-      "test/ui/hud/fb1018b_dungeondigits.test.js",
+      "test/ui/hud/fb1018f_dungeondigits.test.js",
       "test/ui/plus/fb1004e_padarrange.test.js"
     ],
-    "why": "AUDIT FB1018b L2-5: a host noted and never asked - its windows never stand the keys down"
+    "why": "AUDIT FB1018f L2-5: a host noted and never asked - its windows never stand the keys down"
   }
 ]

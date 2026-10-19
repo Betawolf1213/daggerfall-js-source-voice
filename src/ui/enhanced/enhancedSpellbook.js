@@ -29,7 +29,7 @@
 // that reorders a list you are looking at is a worse answer than the
 // order being right.
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
-import { repaintKeepingScroll } from '../domRepaint.js';   // FB1018b SPELL-SCROLL: a pick keeps the list where it was
+import { repaintKeepingScroll } from '../domRepaint.js';   // FB1018f SPELL-SCROLL: a pick keeps the list where it was
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { overlayAction, eventMeans } from '../input.js';   // KB1: and the registry's answer for the book's own key
 import {
@@ -167,7 +167,7 @@ function pxDivider(word) {
   return d;
 }
 
-/** FB1018b SPELL-SCROLL (FIELD BUGS 2026-10-18b; cmagoun on the Discord: "Clicking a spell returns you to the top of a
+/** FB1018f SPELL-SCROLL (FIELD BUGS 2026-10-18f; cmagoun on the Discord: "Clicking a spell returns you to the top of a
  *  spell list ... Save the scroll position when you click a spell"): every press draws the book again from nothing, and a
  *  list drawn from nothing stands at its top - a pick put the list back at its first spell, and lit whichever row then
  *  stood under the pointer.
@@ -237,7 +237,7 @@ function paint() {
 
   const sel = rows[picked];
   const detail = el('div', 'px-qdetail');
-  // FB1018b SPELL-SCROLL: another spell's page starts at its top; the list keeps its place. AUDIT FB1018b L2-2: THE KEY
+  // FB1018f SPELL-SCROLL: another spell's page starts at its top; the list keeps its place. AUDIT FB1018f L2-2: THE KEY
   // IS THE SPELL, NOT ITS ROW - it was `picked`, and a delete keeps `picked` (confirmDelete: the row gone, the next spell
   // takes its place), so the spell after a deleted one opened at the deleted one's offset. The spell's index is the port's
   // name for a spell, the one the quickslot and the hotbar key it by (systems/quickslots.js keyedSpell): a rename or an

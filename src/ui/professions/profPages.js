@@ -559,9 +559,9 @@ export function enchantGoldPct() {
 const PARTLY = Object.freeze({});
 
 /** The line a track's XP makes: "11,900 / 12,250 XP" to the next rank, or the Master's total. CRAFT-LIMIT-SAID (FIELD
- *  BUGS 2026-10-18b): a craft the crafter's limit holds (`limit`, professionLaw craftLimitOf) its ceiling - "26,009 /
+ *  BUGS 2026-10-18f): a craft the crafter's limit holds (`limit`, professionLaw craftLimitOf) its ceiling - "26,009 /
  *  26,009 XP - the crafter's limit holds it at rank 50" - where "26,009 / 26,010 XP" read as one XP from rank 51. AUDIT
- *  FB1018b L5-3: only at the rank it is held at (the limit's `rank`) - a third craft at 10 keeps its next rank's figure,
+ *  FB1018f L5-3: only at the rank it is held at (the limit's `rank`) - a third craft at 10 keeps its next rank's figure,
  *  "1,005 / 1,210 XP", where it read "1,005 / 26,009 XP - the crafter's limit holds it at rank 50"; L5-2: and one past its
  *  cap its own XP and rank, "36,000 / 36,000 XP - ... at rank 60", never "36,000 / 26,009 XP - ... at rank 50". */
 export function xpLine(track, limit = null) {
@@ -573,7 +573,7 @@ export function xpLine(track, limit = null) {
 export const craftsPastJourneyman = (tracks) => PROFESSIONS.filter((p) => p.kind === 'crafting' && (tracks.get(p.id)?.rank ?? 0) > JOURNEYMAN_RANK).map((p) => p.id);
 /** How many crafts stand above Journeyman (PROF0 3.2's limit). */
 export const craftsAboveJourneyman = (tracks) => craftsPastJourneyman(tracks).length;
-/** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b): WHAT A STATION'S ACTS ARE PAID UNDER, read as the service pays them - the
+/** CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f): WHAT A STATION'S ACTS ARE PAID UNDER, read as the service pays them - the
  *  crafter's limit over the craft's track, off the book's tracks (professionLaw craftLimitOf; the service's decisions bind
  *  craftXpCap of the same ranks), and the Firmament's percent on its XP (FIRM1: the stars in force; the service scales by
  *  its own firmStatsOf). ui/craftXpWords.js says them. @param {any} book @param {string} id a craft or a discipline */
@@ -694,7 +694,7 @@ export function drawProfessionsPage(detail, rerender, kit) {
     }
   }
   pane.append(el('p', 'prof-limit', t('prof.page.limit', 'Crafts above Journeyman: {n} of {max}', { n: craftsAboveJourneyman(book.state.tracks), max: CRAFTS_ABOVE_JOURNEYMAN })));
-  // CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b): what the count does - which two, that the others stop at 50, and for good
+  // CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f): what the count does - which two, that the others stop at 50, and for good
   pane.append(el('p', 'px-note', limitRuleLine(craftsPastJourneyman(book.state.tracks))));
   // GENTLE ACTS (PROF0 5.1): the accessibility choice, beside the acts it changes
   const gentle = el('label', 'prof-gentle');

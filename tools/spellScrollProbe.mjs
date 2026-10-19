@@ -1,6 +1,6 @@
-// SPELL-SCROLL (FIELD BUGS 2026-10-18b): THE BOOK'S LIST, AND ITS SIBLINGS, IN A REAL BROWSER.
+// SPELL-SCROLL (FIELD BUGS 2026-10-18f): THE BOOK'S LIST, AND ITS SIBLINGS, IN A REAL BROWSER.
 //
-// The pins (test/ui/enhanced/fb1018b_spellscroll.test.js) run on the suite's minimal DOM, which has no layout: they prove
+// The pins (test/ui/enhanced/fb1018f_spellscroll.test.js) run on the suite's minimal DOM, which has no layout: they prove
 // a pane's offset is carried across a repaint, and they read the book's CSS as text. What the CSS DOES - that the list
 // is the pane that scrolls, and the chosen spell's page stands beside it in view - only a browser's layout can say. This
 // mounts the real windows over the dev server's real modules and sheets in Chromium, scrolls each list, presses as a

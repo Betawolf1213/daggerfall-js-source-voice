@@ -52,7 +52,7 @@ import {
   STORES_MAX, WITHDRAW_MAX, PROF_OPS_MAX, PROF_OPS_WINDOW_S, HARVEST_LATE_S, HARVEST_EARLY_S,
   PROF_RID_RE, PROF_XP_MAX, profSwitchOf, basketStep, herbKey, professionOfFamily, courtWritCount, COURT_WRITS_PER_DAY,
   glintsMax, smeltRecipe, SMELT_MAX, smeltXp, DEEP_UNCONFIRMED_PER_DAY,   // CAP-OFF: no day's cap to import
-  xpForRank, JOURNEYMAN_RANK, CRAFTS_ABOVE_JOURNEYMAN,   // AUDIT FB1018b L5-1: the crafter's limit read in the decision (craftCapSql)
+  xpForRank, JOURNEYMAN_RANK, CRAFTS_ABOVE_JOURNEYMAN,   // AUDIT FB1018f L5-1: the crafter's limit read in the decision (craftCapSql)
   stockOf, STOCK_MAX, withdrawable, cutsMax, workPer, workSpecRank, hideOfFoe, HIGH_HIDES_PER_DAY, HIGH_HIDE_TIER,
   HAUL_YIELD, FISH_KEY, haulTier,   // PROF8
   herbXpTier,   // HERB-XP
@@ -211,14 +211,14 @@ export const spendableSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_st
 /** AUDIT BAG-CRAFT A1: THE UNITS A STATION MAY SPEND - a craft, a smelt, a brew, a temper: own, bought and loose, never
  *  gold's (bagLaw.js STATION_ORIGINS); spent by `workStatements`, loose first. */
 export const workableSql = (p, c, m) => `COALESCE((SELECT SUM(qty) FROM prof_stores WHERE player = ${p} AND char_id = ${c} AND material = ${m} AND origin IN (${originsSql(STATION_ORIGINS)})), 0)`;
-/** AUDIT FB1018b L5-1 (the crafter's limit was not one decision): THE CRAFTER'S LIMIT IN SQL - professionLaw craftXpCap's
+/** AUDIT FB1018f L5-1 (the crafter's limit was not one decision): THE CRAFTER'S LIMIT IN SQL - professionLaw craftXpCap's
  *  ceiling over `profession`'s track (a discipline its craft's), read off the character's tracks as they stand when the
  *  statement runs: one XP short of rank 51 where CRAFTS_ABOVE_JOURNEYMAN of its other crafts hold rank 51's XP, else
  *  Master's. Every act's decision and its track's write read it in the act's own batch (a D1 batch is one transaction):
  *  the cap was craftXpCap of a SELECT several awaits before the batch, bound in as a literal, so two acts at once on two
  *  tracks at 50 with one other craft past each read one past, each bound Master's 100,000 and both crossed - three past,
  *  and every craft of the three then held at 26,009 for good (nothing lowers a track). `p` and `c` the player's and the
- *  character's SQL. Pinned to craftXpCap over every craft and every standing of the others (fb1018b_craftlimit.test.js). */
+ *  character's SQL. Pinned to craftXpCap over every craft and every standing of the others (fb1018f_craftlimit.test.js). */
 export function craftCapSql(p, c, profession) {
   const own = trackOf(profession), past = xpForRank(JOURNEYMAN_RANK + 1);
   const others = PROFESSIONS.filter((x) => x.kind === 'crafting' && x.id !== own).map((x) => `'${x.id}'`).join(', ');
@@ -1140,7 +1140,7 @@ export async function smeltAtForge(ctx, player, env, { character, recipe: id, co
   // PROF11: a mason's work's XP is a craft's (recipeLaw masonXp: the rank's tier a unit, a clean chisel's half again) and
   // its first time's 500 (?11, where firstCraftPays) laid on in the decision; every other work's the smelt's
   const act = r.act ? clean === true : false;
-  // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself (craftCapSql); a work that pays none, none
+  // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself (craftCapSql); a work that pays none, none
   const cap = r.xp ? craftCapSql('?1', '?2', r.xp) : '0';
   const xp = scaleXp(r.act ? masonXp(count, rank, { clean: act }) : r.xp ? smeltXp(out.tier, count, rank) : 0,   // AUDIT 29 A7: the record's quarter, at the smith's rank
     r.xp ? xpPct(await firmStatsOf(db, player, env, character), trackOf(r.xp)) : 0);   // FIRM1: the Firmament's hand on the craft's XP
@@ -1291,7 +1291,7 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   const crack = cracked === true;   // PROF10: a Siege-cracked Gem set as the piece's gem - a Lapidary's (3.3), in a piece that sets one
   if (crack && !(takesCracked(r) && specs[100] === LAPIDARY)) return { error: 'prof-lapidary' };
   if (!recipeOpen(r, rank, specs)) return { error: 'prof-rank' };
-  const cap = craftCapSql('?1', '?2', craft);   // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself
+  const cap = craftCapSql('?1', '?2', craft);   // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself
   const wood = heartwood === true && takesHeartwood(r);
   const inputs = recipeInputs(r, { heartwood: wood, joiner: specs[50] === 'joiner', cracked: crack });
   // SEAT2b part two: the seat's crafting halls' steps, where the crafter's guild holds the town it crafts in (seatStepsFor)
@@ -1444,7 +1444,7 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
     record = await mintProductRecord({ p: c.p, s: c.s, h: c.h, r: c.r, q: quality + 1, m: c.m, c: c.c, a: c.a === 1, u: c.u ?? null, f: c.f ?? null, v: c.v ?? null }, await signingKey(env, subtle), { subtle, nowS });   // CRAFT-PROCS: the craft's mint version kept - a piece made before mints as it was
   }
   const cost = temperCost(r);
-  const cap = craftCapSql('?1', '?2', craft);   // AUDIT FB1018b L5-1: the crafter's limit read in the decision itself
+  const cap = craftCapSql('?1', '?2', craft);   // AUDIT FB1018f L5-1: the crafter's limit read in the decision itself
   const xp = scaleXp(temperXp(r, rank), xpPct(await firmStatsOf(db, player, env, character), craft));   // AUDIT UICALM-FIRM1 L2 L3: the Firmament's hand on a temper's XP, as on the anvil's
   const nonce = mintId(rand);
   const decided = 'EXISTS (SELECT 1 FROM prof_tempers WHERE player = ?1 AND rid = ?2 AND n = ?3)';

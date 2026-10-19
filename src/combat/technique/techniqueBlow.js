@@ -18,7 +18,7 @@
 //   single   the nearest foe it reaches alone
 //   feet     where the strike is made from, in the host's frame; `yaw` the look's
 
-import { healthShare } from '../healthShare.js';   // AUDIT FB1018b L3-5: Headsman's Chop reads a body's share by the one law
+import { healthShare } from '../healthShare.js';   // AUDIT FB1018f L3-5: Headsman's Chop reads a body's share by the one law
 
 /** A foe's capsule (the DaggerfallEnemy prefab's controller radius) when its record states none. */
 export const TECH_BODY_RADIUS = 0.45;
@@ -68,7 +68,7 @@ export function blowReaches(blow, foe, sight) {
   return cos >= Math.cos(/** @type {number} */ (blow.arc));
 }
 
-/** The blow's weight on this foe: its multiplier, and Headsman's Chop's share of what the foe has lost. AUDIT FB1018b L3-5:
+/** The blow's weight on this foe: its multiplier, and Headsman's Chop's share of what the foe has lost. AUDIT FB1018f L3-5:
  *  that share by the one law (combat/healthShare.js healthShare) - a body the relay runs by the relay's word of it, never its
  *  stand-in's 1e9 placeholder (whole, so the Chop gave nothing on any of them); none heard, whole, as before. */
 export function blowMult(blow, foe) {

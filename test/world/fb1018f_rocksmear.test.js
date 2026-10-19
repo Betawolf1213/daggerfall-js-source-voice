@@ -1,4 +1,4 @@
-// ROCK-SMEAR (FIELD BUGS 2026-10-18b, thread T6 "Collection: Broken world objects", æther: "Rock missing textures and
+// ROCK-SMEAR (FIELD BUGS 2026-10-18f, thread T6 "Collection: Broken world objects", æther: "Rock missing textures and
 // clipping with the pole. In Ipsmoth." - a grey stone rock by a stream at dusk, its texture a flat grey smear).
 //
 // Ipsmoth is Beautiful Villages' (location-36-183: GENRAS03, CLOTAS01, RESIAS06, FARMAA03), and its blocks stand
@@ -89,10 +89,10 @@ test('ROCK-SMEAR: every rock stand-in, and the pack\'s docks, ramp and steps bes
   }
 });
 
-// AUDIT FB1018b L4-6 (bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18b.md): the pack's rocks stand near their
+// AUDIT FB1018f L4-6 (bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md): the pack's rocks stand near their
 // origins and their prisms wind one way, so the law's two terms were not read - a face's centre against the boulder's
 // own axis (round (cx, cz)), and the corners' signed area whichever way they run
-test('ROCK-SMEAR THE LAW, NOT THE PACK\'S CASE (AUDIT FB1018b L4-6): a boulder whose box stands off its origin by more than its width still faces out - its faces are read against its own axis - and a prism faces out whichever way its corners run, in any quadrant', () => {
+test('ROCK-SMEAR THE LAW, NOT THE PACK\'S CASE (AUDIT FB1018f L4-6): a boulder whose box stands off its origin by more than its width still faces out - its faces are read against its own axis - and a prism faces out whichever way its corners run, in any quadrant', () => {
   const far = partsFacing(boulderMesh(2, 1, 0.5, 2, 7, 6, -5));
   assert.deepEqual([far.into, far.litIn], [0, 0], `a boulder round (6, -5): ${far.into} faces wound in, ${far.litIn} lit from inside`);
   const sq = [[1, 1], [3, 1], [3, 2], [1, 2]];

@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-18b RELAY-SHARE (Jigglehimmer, #bug-reports, "Night Mothers Embrace Legendary does not function":
+// FIELD BUGS 2026-10-18f RELAY-SHARE (Jigglehimmer, #bug-reports, "Night Mothers Embrace Legendary does not function":
 // "Does not do what the tooltip implies" - "Imprint: Sweet Mother's Kiss (of The Night Mother's Embrace) - +50% to foes
 // under 25%"): A BODY'S SHARE OF ITS HEALTH, the one law every "under its health" power reads.
 //

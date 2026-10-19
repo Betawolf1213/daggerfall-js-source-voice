@@ -12,7 +12,7 @@
 // never whether this one's is still owed. The craft's answer says it, and its word says it after.
 // bible/06-Systems/Professions-Arc.md 41.9.
 //
-// CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18b; the Discord, "Smithing stuck at 50": "I have been stuck at level 50 smithing
+// CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f; the Discord, "Smithing stuck at 50": "I have been stuck at level 50 smithing
 // for about 3 days now. it is literally 1xp off of levelling up but everything I craft gives me 0xp"): WHAT A STATION
 // SAYS IS WHAT THE SERVICE CREDITS. The service pays an act its own law's XP with the Firmament's percent on it (FIRM1's
 // scaleXp - never on the first's 500), the first's 500 laid on, all under the room its track has left (professionLaw
@@ -48,7 +48,7 @@ export const paidXp = (xp, pay = {}) => creditedXp(scaleXp(xp, pay.pct ?? 0), pa
  * CRAFT-LIMIT-SAID: THE LINE A STATION SAYS IN PLACE OF AN ACT'S XP where its track cannot take `most` (the most the act
  * earns, its first's included, the Firmament's percent on it): the crafter's limit's - "No Smithing XP: Building and
  * Provisioning stand above Journeyman, and the crafter's limit holds Smithing at rank 50." (or "At most 9 Smithing XP"
- * where a little room is left) - or, where no limit holds it, Master's; '' where the track takes all of it. AUDIT FB1018b L5-2:
+ * where a little room is left) - or, where no limit holds it, Master's; '' where the track takes all of it. AUDIT FB1018f L5-2:
  * the rank the limit holds it at (professionLaw craftLimit's `rank`) - a track past its cap its own, never "at rank 50".
  * @param {string} profession the track's name @param {CraftPay|null|undefined} pay @param {number} most
  */
@@ -116,7 +116,7 @@ export const masonWorksFirstLine = (rank, profession, pay = {}) => capLine(profe
  * craft was the character's first of its pattern at its tier): "(+620 Smithing XP, with the first-time bonus)"; a first
  * of the Weavers' cloth says why none came; any other craft its XP alone. CRAFT-LIMIT-SAID: where the crafter's limit
  * now holds the track with no room left (`limit`, professionLaw craftLimitOf over the book's tracks once the answer is in
- * them - net/profBook.js limit), that is what it says - a first's bonus the limit ate is never said as paid. AUDIT FB1018b
+ * them - net/profBook.js limit), that is what it says - a first's bonus the limit ate is never said as paid. AUDIT FB1018f
  * L5-4: AND MASTER'S, where no craft holds the track and the top leaves it none - "(+0 Smithing XP - Smithing is at
  * Master)": a Master's limit names no crafts, so its word fell through to "(+0 Smithing XP, with the first-time bonus)",
  * and a first the top ate (200 paid at 99,800) was said as paid. L5-2: the rank the limit holds it at, the track's own

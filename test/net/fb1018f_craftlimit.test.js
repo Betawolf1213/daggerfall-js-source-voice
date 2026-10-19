@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID (the Discord's #bug-reports, CC/Astro, "Smithing stuck at 50": "I am unsure if
+// FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID (the Discord's #bug-reports, CC/Astro, "Smithing stuck at 50": "I am unsure if
 // its meant to stop here or if I am missing something but I have been stuck at level 50 smithing for about 3 days now.
 // it is literally 1xp off of levelling up but everything I craft gives me 0xp") - THE CRAFTER'S LIMIT, SAID WHERE IT
 // ACTS. PROF0 3.2 (DECIDED; Mac kept it at CAP-OFF, Professions-Arc 40): a character raises two crafts past Journeyman,
@@ -9,21 +9,21 @@
 // (ui/professions/profPages.js) and the words (ui/craftXpWords.js), against the law both ends read (net/professionLaw.js
 // craftLimit, craftLimitOf, creditedXp). The new law is read through its namespaces, so on the code before the fix
 // every test here runs and fails on what it says, not on an import.
-// bible/01-Overview/bugs/Field-Bugs-2026-10-18b.md CRAFT-LIMIT-SAID; bible/06-Systems/Professions-Arc.md 41.10.
+// bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md CRAFT-LIMIT-SAID; bible/06-Systems/Professions-Arc.md 41.10.
 import '../chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { standService, T0, sessionStorageOf, d1 } from '../accountDb.mjs';
-import { craftCapSql } from '../../server-account/src/professions.js';   // AUDIT FB1018b L5-1: the decisions' ceiling, in SQL
+import { craftCapSql } from '../../server-account/src/professions.js';   // AUDIT FB1018f L5-1: the decisions' ceiling, in SQL
 import { accountProf, SESSION_KEY } from '../../src/net/accountClient.js';
 import { createProfBook } from '../../src/net/profBook.js';
 import * as law from '../../src/net/professionLaw.js';
 import { recipeById, craftXp, cookXp, masonXp, FIRST_CRAFT_XP } from '../../src/net/recipeLaw.js';
-import { potionById, brewXp, disenchantXp } from '../../src/net/alchemyLaw.js';   // AUDIT FB1018b L5-6: the stations' own laws
+import { potionById, brewXp, disenchantXp } from '../../src/net/alchemyLaw.js';   // AUDIT FB1018f L5-6: the stations' own laws
 import { temperXp } from '../../src/net/temperLaw.js';
-import * as tm from '../../src/systems/textManager.js';   // AUDIT FB1018b L5-8: the rows in the player's language
+import * as tm from '../../src/systems/textManager.js';   // AUDIT FB1018f L5-8: the rows in the player's language
 import * as words from '../../src/ui/craftXpWords.js';
 import * as pages from '../../src/ui/professions/profPages.js';
 import { setPref } from '../../src/systems/uiPrefs.js';
@@ -33,7 +33,7 @@ import { FIRM_NODES } from '../../src/net/firmament/firmamentTree.js';
 import { packTree, pathTo, treeStats, xpPct, scaleXp } from '../../src/net/firmament/firmamentLaw.js';
 import { setFirmamentTree, setFirmamentOnline, _resetFirmamentLiveForTests } from '../../src/systems/firmamentLive.js';
 import { hostText } from '../hostText.mjs';
-import { layRecord } from '../realmSeat.mjs';   // AUDIT FB1018b L5-1: a seated character's record, the disenchant's piece in it
+import { layRecord } from '../realmSeat.mjs';   // AUDIT FB1018f L5-1: a seated character's record, the disenchant's piece in it
 
 const { xpForRank, PROF_XP_MAX } = law;
 const NOON = utcDay(T0) * 86_400 + 12 * 3600;
@@ -57,13 +57,13 @@ async function standBook(env = {}) {
     ON CONFLICT (player, char_id, profession) DO UPDATE SET xp = excluded.xp`).run(mac.id, mac.character, prof, xp, NOON);
   const xpOf = (prof) => Number(raw.prepare('SELECT xp FROM prof_tracks WHERE player = ? AND char_id = ? AND profession = ?').get(mac.id, mac.character, prof)?.xp ?? 0);
   const door = accountProf({ fetch: s.fetch, storage: sessionStorageOf(SESSION_KEY, mac) });
-  // AUDIT FB1018b L5-1: a second book of the same character - a second tab, its acts its own (one craft at a time a book)
+  // AUDIT FB1018f L5-1: a second book of the same character - a second tab, its acts its own (one craft at a time a book)
   const mk = () => createProfBook({ door, storage: memStorage(), character: () => mac.character, now: () => NOON * 1000, sleep: noWait });
   const book = mk();
   return { s, raw, mac, give, track, xpOf, book, mk };
 }
 
-/** AUDIT FB1018b L5-1: ACTS DECIDED AT ONCE - every act's batch (its decision, `INSERT OR IGNORE INTO prof_crafts` and its
+/** AUDIT FB1018f L5-1: ACTS DECIDED AT ONCE - every act's batch (its decision, `INSERT OR IGNORE INTO prof_crafts` and its
  *  kin) held until `n` have reached theirs, so each act read the character's tracks before any wrote: the Worker's requests
  *  interleave at every await, and this makes the worst of it the case, whatever an act awaits on its way. Their batches
  *  then run in the order they came, or (`last`) the last first - so each act is, in one run or the other, the one
@@ -319,9 +319,9 @@ test('CRAFT-LIMIT-SAID every station says it, read off the real book - Building 
   assert.equal(cookXp(50, { clean: true }), 120, 'what the clean pan earned');
 });
 
-// ─── AUDIT FB1018b L5-1: THE LIMIT IS ONE DECISION ───────────────────
+// ─── AUDIT FB1018f L5-1: THE LIMIT IS ONE DECISION ───────────────────
 
-test('AUDIT FB1018b L5-1 the limit is one decision: two acts at once on two tracks at 50, one other craft past - the anvil\'s Silver Dagger beside the workbench\'s Staff, the mason\'s Cut Stone, the alchemy station\'s Healing, the enchanting station\'s Ring and the loom\'s temper, each decided before the other wrote, in either order - one crosses and the other is held at 26,009, its answer what it was credited; never three past (fails on the cap read before the batch and bound in as a literal: both crossed, and every one of the three froze at 26,009 for good) - and the two past still raise after it (mutants: each decision\'s cap the stale one; the count\'s bound, its threshold, its crafts)', async (t) => {
+test('AUDIT FB1018f L5-1 the limit is one decision: two acts at once on two tracks at 50, one other craft past - the anvil\'s Silver Dagger beside the workbench\'s Staff, the mason\'s Cut Stone, the alchemy station\'s Healing, the enchanting station\'s Ring and the loom\'s temper, each decided before the other wrote, in either order - one crosses and the other is held at 26,009, its answer what it was credited; never three past (fails on the cap read before the batch and bound in as a literal: both crossed, and every one of the three froze at 26,009 for good) - and the two past still raise after it (mutants: each decision\'s cap the stale one; the count\'s bound, its threshold, its crafts)', async (t) => {
   t.mock.method(Date, 'now', () => NOON * 1000);
   const CRAFTS = ['smithing', 'outfitting', 'building', 'provisioning', 'enchanting'];
   const ring = 'f00dfeedc0ffee01';
@@ -379,7 +379,7 @@ test('AUDIT FB1018b L5-1 the limit is one decision: two acts at once on two trac
   assert.deepEqual([Number(none.data.xp), xpOf(held)], [0, HELD], `${held}, the third, stays held`);
 });
 
-test('AUDIT FB1018b L5-1 one law: the decisions\' SQL ceiling (professions.js craftCapSql) is craftXpCap\'s, over every craft and discipline and every standing of the other four crafts at rank 50\'s last XP or 51\'s first - its own track and the gathering tracks past it never counted (mutants: the count\'s bound, its threshold, its crafts, the ceiling\'s figure)', () => {
+test('AUDIT FB1018f L5-1 one law: the decisions\' SQL ceiling (professions.js craftCapSql) is craftXpCap\'s, over every craft and discipline and every standing of the other four crafts at rank 50\'s last XP or 51\'s first - its own track and the gathering tracks past it never counted (mutants: the count\'s bound, its threshold, its crafts, the ceiling\'s figure)', () => {
   const db = d1();
   db._raw.exec('PRAGMA foreign_keys = OFF');   // a character's tracks alone - no account row is read
   const crafts = law.PROFESSIONS.filter((p) => p.kind === 'crafting').map((p) => p.id);
@@ -429,11 +429,11 @@ test('CRAFT-LIMIT-SAID the tab before the choice and the top: none past - the ru
 test('CRAFT-LIMIT-SAID the law: craftLimit is craftXpCap\'s ceiling with its room and the crafts that hold it, in the tab\'s order - two others past 50 hold a craft, one does not, its own rank never, a discipline its craft\'s, a gathering track never; craftLimitOf reads it off the service\'s track views by their XP; the host hands the craft\'s word the book\'s limit in its one call (mutants: the order; the room\'s floor; the views\' ranks off their XP)', () => {
   const L = (p, ranks, xp) => law.craftLimit?.(p, ranks, xp);
   assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD), { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 50 }, 'the tab\'s order, not the ranks\'');
-  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD + 40), { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 51 }, 'never a room below none - and held at its own 51 (AUDIT FB1018b L5-2)');
+  assert.deepEqual(L('smithing', { provisioning: 55, building: 60 }, HELD + 40), { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 51 }, 'never a room below none - and held at its own 51 (AUDIT FB1018f L5-2)');
   assert.deepEqual(L('smithing', { provisioning: 55, building: 50 }, HELD), { cap: PROF_XP_MAX, room: PROF_XP_MAX - HELD, by: [], rank: 100 }, '50 is not past');
   assert.deepEqual(L('smithing', { smithing: 90, building: 60 }, xpForRank(90)), { cap: PROF_XP_MAX, room: PROF_XP_MAX - xpForRank(90), by: [], rank: 100 }, 'its own rank never counted');
   assert.deepEqual(L('cooking', { smithing: 60, building: 51, outfitting: 70 }, 100), { cap: HELD, room: HELD - 100, by: ['smithing', 'building', 'outfitting'], rank: 50 }, 'a discipline its craft\'s; three past, all named');
-  // AUDIT FB1018b L5-2: three past (two crafts that crossed at once before L5-1 - players stand there, and nothing lowers a
+  // AUDIT FB1018f L5-2: three past (two crafts that crossed at once before L5-1 - players stand there, and nothing lowers a
   // track): the others hold it, never itself, AT ITS OWN RANK - its words were "holds Smithing at rank 50" at rank 60
   const three = L('smithing', { smithing: 60, building: 60, provisioning: 60 }, xpForRank(60));
   assert.deepEqual(three, { cap: HELD, room: 0, by: ['building', 'provisioning'], rank: 60 }, 'three past: held where it stands');
@@ -452,9 +452,9 @@ test('CRAFT-LIMIT-SAID the law: craftLimit is craftXpCap\'s ceiling with its roo
   assert.match(hostText('src/scenes/world.js'), /\$\{made\} \$\{craftXpText\(rec, r\.data, st\.xp, profBook\.limit\(rec\?\.profession\)\)\}\$\{paid \?/);
 });
 
-// ─── AUDIT FB1018b L5: THE WORDS AT THE EDGES ────────────────────────
+// ─── AUDIT FB1018f L5: THE WORDS AT THE EDGES ────────────────────────
 
-test('AUDIT FB1018b L5-3 the tab: a third craft below the rank it is held at keeps its next rank\'s figure - at 10 "1,005 / 1,210 XP" (fails today: "1,005 / 26,009 XP - the crafter\'s limit holds it at rank 50"), at 49 its 50\'s; at 50 the ceiling\'s line, room left or none; L5-2: one past its cap (two that crossed at once) its own XP and rank (mutants: the line below its rank; the line only at the cap; the cap\'s figure past it; the rank Journeyman\'s)', async (t) => {
+test('AUDIT FB1018f L5-3 the tab: a third craft below the rank it is held at keeps its next rank\'s figure - at 10 "1,005 / 1,210 XP" (fails today: "1,005 / 26,009 XP - the crafter\'s limit holds it at rank 50"), at 49 its 50\'s; at 50 the ceiling\'s line, room left or none; L5-2: one past its cap (two that crossed at once) its own XP and rank (mutants: the line below its rank; the line only at the cap; the cap\'s figure past it; the rank Journeyman\'s)', async (t) => {
   t.mock.method(Date, 'now', () => NOON * 1000);
   const { track, book } = await standBook();
   track('building', xpForRank(60));
@@ -472,7 +472,7 @@ test('AUDIT FB1018b L5-3 the tab: a third craft below the rank it is held at kee
   assert.deepEqual(await at(xpForRank(60)), Array(2).fill(HELD_AT('36,000', '36,000', 60)), 'past its cap: never "36,000 / 26,009 XP - ... at rank 50"');
 });
 
-test('AUDIT FB1018b L5-4 Master\'s word: a Master\'s craft says "(+0 Smithing XP - Smithing is at Master)", first or not, never "with the first-time bonus" nor the crafter\'s limit\'s (fails today: a Master\'s limit names no crafts and fell through to the first\'s word); at 99,800 the Worker pays a new pattern 200 of what it earns and the word is the top\'s, the first the top ate never said as paid (mutants: the top\'s word unsaid; a Master\'s word the limit\'s)', async (t) => {
+test('AUDIT FB1018f L5-4 Master\'s word: a Master\'s craft says "(+0 Smithing XP - Smithing is at Master)", first or not, never "with the first-time bonus" nor the crafter\'s limit\'s (fails today: a Master\'s limit names no crafts and fell through to the first\'s word); at 99,800 the Worker pays a new pattern 200 of what it earns and the word is the top\'s, the first the top ate never said as paid (mutants: the top\'s word unsaid; a Master\'s word the limit\'s)', async (t) => {
   t.mock.method(Date, 'now', () => NOON * 1000);
   const master = law.craftLimit('smithing', { smithing: 100 }, PROF_XP_MAX);
   for (const data of [{ xp: 0, first: true }, { xp: 0, first: false }]) {
@@ -498,7 +498,7 @@ test('AUDIT FB1018b L5-4 Master\'s word: a Master\'s craft says "(+0 Smithing XP
   assert.equal(words.craftXpText(recipeById('tanto:silver'), top.data, 'Smithing', book.limit('smithing')), '(+0 Smithing XP - Smithing is at Master)');
 });
 
-test('AUDIT FB1018b L5-7 the rooms between an act\'s own XP and its first\'s 500: the fire\'s Hunter\'s Stew, the alchemy station\'s Healing and the mason\'s works say "At most N" where the track has more room than the act\'s own XP and less than its first\'s - and the Worker pays the fire N (mutants: the fire\'s most without its first or without its clean pan; the works\' most without their own XP, a plain chisel\'s, unscaled; the brew\'s most without its first)', async (t) => {
+test('AUDIT FB1018f L5-7 the rooms between an act\'s own XP and its first\'s 500: the fire\'s Hunter\'s Stew, the alchemy station\'s Healing and the mason\'s works say "At most N" where the track has more room than the act\'s own XP and less than its first\'s - and the Worker pays the fire N (mutants: the fire\'s most without its first or without its clean pan; the works\' most without their own XP, a plain chisel\'s, unscaled; the brew\'s most without its first)', async (t) => {
   t.mock.method(Date, 'now', () => NOON * 1000);
   const B = await standBook();
   B.track('smithing', xpForRank(60));
@@ -531,7 +531,7 @@ const craftSky = () => {
 };
 const RING = { provenance: 'aaaaaaaaaaaaaaaa', name: 'Gold Ruby Ring', points: 2160, essence: 21, recipe: 'ring:gold:ruby' };
 
-test('AUDIT FB1018b L5-6 the Firmament\'s hand at the fire, the alchemy station and the enchanting station, as the Worker pays the fire and the brew - and on the held lines of the temper, the disenchant and the mason\'s works, a room between the unscaled figure and the scaled one saying "At most" (mutants: the fire\'s clean and plain pans, the brew, the disenchant\'s row and line, the temper\'s line and the works\' most each unscaled)', async (t) => {
+test('AUDIT FB1018f L5-6 the Firmament\'s hand at the fire, the alchemy station and the enchanting station, as the Worker pays the fire and the brew - and on the held lines of the temper, the disenchant and the mason\'s works, a room between the unscaled figure and the scaled one saying "At most" (mutants: the fire\'s clean and plain pans, the brew, the disenchant\'s row and line, the temper\'s line and the works\' most each unscaled)', async (t) => {
   t.mock.method(Date, 'now', () => NOON * 1000);
   _resetFirmamentLiveForTests();
   const tree = craftSky(), st = treeStats(tree);
@@ -601,7 +601,7 @@ test('AUDIT FB1018b L5-6 the Firmament\'s hand at the fire, the alchemy station 
   } finally { _resetFirmamentLiveForTests(); }
 });
 
-test('AUDIT FB1018b L5-8 the limit\'s rows in the player\'s language: German\'s and Russian\'s crafts joined with their own "und" and "и", the rule\'s two arms (Russian\'s named crafts at two past, its before-the-choice arm at one), the tab\'s ceiling and Master\'s word - each the table\'s row as formatMessage reads it (mutants: the crafts joined in English; Russian\'s arms swapped)', () => {
+test('AUDIT FB1018f L5-8 the limit\'s rows in the player\'s language: German\'s and Russian\'s crafts joined with their own "und" and "и", the rule\'s two arms (Russian\'s named crafts at two past, its before-the-choice arm at one), the tab\'s ceiling and Master\'s word - each the table\'s row as formatMessage reads it (mutants: the crafts joined in English; Russian\'s arms swapped)', () => {
   const two = law.craftLimit('smithing', { building: 60, provisioning: 55 }, HELD);
   try {
     for (const [lang, joined] of [['de', 'Building und Provisioning'], ['ru', 'Building и Provisioning']]) {

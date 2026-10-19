@@ -51,7 +51,7 @@ instance list, in list order, and for each instance:
    location alone, and a pixel with one has left at step 1. The port
    asks the pixel's own region (`formats/mapsFile.js` getRegionIndexAt,
    the sea's politic 64 is 31), a departure - WOD-SEA-TEST (FIELD BUGS
-   2026-10-18b, `01-Overview/Port-Ledger.md` section A);
+   2026-10-18f, `01-Overview/Port-Ledger.md` section A);
 3. the instance names another map pixel - skip;
 4. `terrainX`/`terrainY` outside 1..128 - skip;
 5. Basic Roads says a road or a track crosses the pixel

@@ -2928,7 +2928,7 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
    FAMILY rather than for the window that was reported. */
 .sb-shell, .cr-shell { display: flex; align-items: center; justify-content: center; }
 .sb-shell .px-win { width: min(920px, 94vw); height: min(620px, 86dvh); }
-/* FB1018b SPELL-SCROLL: THE BOOK'S LIST SCROLLS IN ITS OWN COLUMN, as DFU's does (its ListBox in its own rect, the
+/* FB1018f SPELL-SCROLL: THE BOOK'S LIST SCROLLS IN ITS OWN COLUMN, as DFU's does (its ListBox in its own rect, the
    chosen spell's panels standing beside it). The journal grew with its rows (min-height: 100%), so the one scroll was the
    body's: a spell picked down the list had its page scrolled away above it, and a phone's page stood under every row.
    The journal is held to the body; the list and the page scroll each on their own - the grimoire dress's book, worn plain. */

@@ -1,10 +1,10 @@
-# AUDIT FB1018b (2026-10-18) - the day's second field bugs, read cold
+# AUDIT FB1018f (2026-10-18) - the day's second field bugs, read cold
 
-Mac, of the branch for `01-Overview/bugs/Field-Bugs-2026-10-18b.md` (at fd57d382b7, before its pull request): **"Audit
+Mac, of the branch for `01-Overview/bugs/Field-Bugs-2026-10-18f.md` (at fd57d382b7, before its pull request): **"Audit
 everything first"**. This page is the audit: the ten fixes on the branch (HELD-BASE, SPELL-SCROLL, RELAY-SHARE,
 DUNGEON-DIGITS, TURNED-BLOW, VAMPIRIC-WARD, HOUSE-BUSH, ROCK-SMEAR, WOD-SEA-TEST, CRAFT-LIMIT-SAID), the one not proven
 (UNSEEN-KEEPER), their pins, their mutants and their records. Each finding has its verdict here. What it changed is
-written into the pages it touched, marked `AUDIT FB1018b` with the finding's id, and in the code beside the fix.
+written into the pages it touched, marked `AUDIT FB1018f` with the finding's id, and in the code beside the fix.
 
 ## How it was run
 
@@ -85,9 +85,9 @@ merged.
 
 ## After
 
-Tests: the eleven `fb1018b_*` files hold 73 (44 before) - `heldbase` 8, `spellscroll` 8, `relayshare` 9,
+Tests: the eleven `fb1018f_*` files hold 73 (44 before) - `heldbase` 8, `spellscroll` 8, `relayshare` 9,
 `dungeondigits` 5, `turnedblow` 9, `vampiricward` 6, `unseenkeeper` 2, `housebush` 5, `rocksmear` 5, `craftlimit` 13,
-`wodsea` 3; and `fb1004e_padarrange` 9 (8). Mutants: `tools/mutants/fb1018b_*.json` 267 records (161 before), 261 dead
+`wodsea` 3; and `fb1004e_padarrange` 9 (8). Mutants: `tools/mutants/fb1018f_*.json` 267 records (161 before), 261 dead
 and 6 equivalent as recorded (L4-7); older records the fixes moved, re-aimed by content and dead, in `audit29`, `craft3`,
 `egz_state`, `law9_height`, `prof3`, `prof4`, `prof12`, `schools`, `serpentset`, `tech1`.
 

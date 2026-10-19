@@ -160,7 +160,7 @@ function chronicleRig(deps) {
       setAttribute(k, v) { n.attrs[k] = String(v); },
       addEventListener(t, fn) { (n.listeners[t] ??= []).push(fn); }, removeEventListener() {},
       remove() { n.removed = true; },
-      querySelectorAll: () => [] };   // FB1018b SPELL-SCROLL: the repaint asks for the scrolled panes first (ui/domRepaint.js) - a fake with no layout has none
+      querySelectorAll: () => [] };   // FB1018f SPELL-SCROLL: the repaint asks for the scrolled panes first (ui/domRepaint.js) - a fake with no layout has none
     Object.defineProperty(n, 'innerHTML', { set() { n.children = []; }, get() { return ''; } });
     return n;
   };

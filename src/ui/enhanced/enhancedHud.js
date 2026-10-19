@@ -1027,7 +1027,7 @@ function wearUiPillar(doc, root) {
 }
 
 /**
- * FB1018b DUNGEON-DIGITS (Discord #bug-reports, Aspidichelon: "Usable items hotkeys do not function in dungeons - 1-9
+ * FB1018f DUNGEON-DIGITS (Discord #bug-reports, Aspidichelon: "Usable items hotkeys do not function in dungeons - 1-9
  * works outside, but not in dungeons"): THE HUD'S WORD UNDER A WINDOW, for a frame that never reaches drawHud.
  *
  * Under a window drawHud tells this HUD `hidden` and `paused` (ui/hud/hud.js's `paused: !!cursorActive`), and the
@@ -1039,7 +1039,7 @@ function wearUiPillar(doc, root) {
  * every other window's digits, dead, and slot 1's potion drunk through a paused game. The hosts' overlay branch
  * already calls the HUD's hide door (`hideHudTextSurfaces`); it says this too now. The same word drawHud gives, by
  * the same call: the HUD and its bar hidden, the bar's keys the window's. A HUD never built has nothing painted and
- * no bar to hold a key. AUDIT FB1018b L2-5: the bar's keys now ask the host's own pause at the press
+ * no bar to hold a key. AUDIT FB1018f L2-5: the bar's keys now ask the host's own pause at the press
  * (enhancedHotbar.js keysPaused) - this word hides the HUD, and holds the keys only on a page whose host handed none.
  */
 export function hideEnhancedHud() {

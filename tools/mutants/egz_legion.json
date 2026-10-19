@@ -223,7 +223,7 @@
     "tests": [
       "test/net/eliteGates/egz_legion.test.js"
     ],
-    "why": "PIN MOVED (FIELD BUGS 2026-10-18b TURNED-BLOW): the strike rule moved into net/eliteGates/egBodies.js egStruckOff - its call in egBlow"
+    "why": "PIN MOVED (FIELD BUGS 2026-10-18f TURNED-BLOW): the strike rule moved into net/eliteGates/egBodies.js egStruckOff - its call in egBlow"
   },
   {
     "name": "EGZ-the-false-wall-unstruck",
@@ -233,7 +233,7 @@
     "tests": [
       "test/net/eliteGates/egz_legion.test.js"
     ],
-    "why": "PIN MOVED (FIELD BUGS 2026-10-18b TURNED-BLOW): the false wall's exception moved into net/eliteGates/egBodies.js egStruckOff"
+    "why": "PIN MOVED (FIELD BUGS 2026-10-18f TURNED-BLOW): the false wall's exception moved into net/eliteGates/egBodies.js egStruckOff"
   },
   {
     "name": "EGZ-the-height-dropped",

@@ -134,7 +134,7 @@
     "tests": [
       "test/net/audit29_service.test.js"
     ],
-    "note": "AUDIT FB1018b L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
+    "note": "AUDIT FB1018f L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
   },
   {
     "name": "AUDIT29-A7-the-smith-s-rank-unasked",

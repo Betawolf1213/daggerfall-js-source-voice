@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b VAMPIRIC-WARD (Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": "Its an exploit for heals if
+// FIELD BUGS 2026-10-18f VAMPIRIC-WARD (Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": "Its an exploit for heals if
 // you have a vampiric weapon to heal yourself during the breach run"). Vampiric Effect when strikes heals the wearer every
 // point a blow DEALS (systems/enchantments.js - VampiricEffect.cs; bible/05-Combat/Balance-Arc.md BAL7). A blow on a body a
 // referee holds is resolved against its stand-in, and a ward the referee keeps turns it whole - the stand-in says so
@@ -16,7 +16,7 @@ import { bossStandIn, bossLookOf } from '../../src/world/gate/gateBoss.js';
 import { createWeapon } from '../../src/combat/enemyEquipment.js';
 import * as LR from '../../src/systems/loot/lootRarity.js';
 import { ARTIFACTS, SPECIAL_ARTIFACT_HANDLERS, maceState } from '../../src/systems/artifactEffects.js';
-// AUDIT FB1018b lane L3: the arcane paths' riders, the sets' strike
+// AUDIT FB1018f lane L3: the arcane paths' riders, the sets' strike
 import * as AP from '../../src/systems/arcanePaths.js';
 import * as POW from '../../src/systems/arcanePowers.js';
 import { signatureSpell } from '../../src/systems/signatureSpells.js';
@@ -72,7 +72,7 @@ test('VAMPIRIC-WARD GORTWOG\'S CLEAVER ON THE WARDEN: the Legendary as the loot 
   assert.ok(landed > 0);
 });
 
-test('VAMPIRIC-WARD THE MACE OF MOLAG BAL (AUDIT FB1018b L1-2): its strike takes the target\'s magicka or Strength as a landed blow\'s gift - a warded target gives nothing (the ward turns the blow whole), an unwarded one as before (artifactEffects.js; mutant: the ward unread)', () => {
+test('VAMPIRIC-WARD THE MACE OF MOLAG BAL (AUDIT FB1018f L1-2): its strike takes the target\'s magicka or Strength as a landed blow\'s gift - a warded target gives nothing (the ward turns the blow whole), an unwarded one as before (artifactEffects.js; mutant: the ward unread)', () => {
   const mace = SPECIAL_ARTIFACT_HANDLERS.get(ARTIFACTS.MaceOfMolagBal);
   const wielder = () => ({ isPlayer: true, magicka: 20, maxMagicka: 30, stats: { strength: 50 }, activeEffects: [], level: 10 });
   const target = (warded) => ({ health: 30, magicka: 10, stats: { strength: 30, willpower: 0, luck: 0 }, level: 1, skills: {}, activeEffects: [], warded });
@@ -84,9 +84,9 @@ test('VAMPIRIC-WARD THE MACE OF MOLAG BAL (AUDIT FB1018b L1-2): its strike takes
   assert.deepEqual([b.magicka, t2.magicka], [26, 4], 'a landed blow drains as it did');
 });
 
-// ── AUDIT FB1018b lane L3: every other answer of a landed blow, refused off a ward ──────────────────────────────────
+// ── AUDIT FB1018f lane L3: every other answer of a landed blow, refused off a ward ──────────────────────────────────
 
-test('VAMPIRIC-WARD A SPELL INTO A WARD (AUDIT FB1018b L3-2): a necromancer\'s Siphon Life (the path\'s signature spell, through the one landing every cast tells its riders - systems/spell/spellPower.js tellSpellLanded) cast at the Warden\'s stand-in while his ward stands heals nothing - the spell landed nothing, the relay takes nothing of it; with the ward down it heals its share as it did (mutants: the arcane riders blind to the ward)', () => {
+test('VAMPIRIC-WARD A SPELL INTO A WARD (AUDIT FB1018f L3-2): a necromancer\'s Siphon Life (the path\'s signature spell, through the one landing every cast tells its riders - systems/spell/spellPower.js tellSpellLanded) cast at the Warden\'s stand-in while his ward stands heals nothing - the spell landed nothing, the relay takes nothing of it; with the ward down it heals its share as it did (mutants: the arcane riders blind to the ward)', () => {
   const { Destruction: DES, Restoration: RES, Alteration: ALT, Mysticism: MYS, Illusion: ILL, Thaumaturgy: THA } = SKILLS;
   const STATS = { strength: 50, intelligence: 80, willpower: 60, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 };
   const career = buildCustomCareer({ name: 'Mage', hp: 8, stats: STATS, skills: [DES, RES, ALT, MYS, ILL, THA, SKILLS.ShortBlade, SKILLS.Archery, SKILLS.Medical, SKILLS.Etiquette, SKILLS.Streetwise, SKILLS.Lockpicking] });
@@ -118,7 +118,7 @@ test('VAMPIRIC-WARD A SPELL INTO A WARD (AUDIT FB1018b L3-2): a necromancer\'s S
   } finally { setPlayerDoor(null); POW._resetArcanePowersForTests(); }
 });
 
-test('VAMPIRIC-WARD CAST WHEN STRIKES INTO A WARD (AUDIT FB1018b L3-2; CastWhenStrikes.cs\'s own sourceDamage == 0 guard): a blow a ward turns dealt nothing - its spell is not cast at the turned body and the weapon pays nothing for it; a blow that lands casts and pays its 10 as it did (mutants: Cast When Strikes blind to the ward)', () => {
+test('VAMPIRIC-WARD CAST WHEN STRIKES INTO A WARD (AUDIT FB1018f L3-2; CastWhenStrikes.cs\'s own sourceDamage == 0 guard): a blow a ward turns dealt nothing - its spell is not cast at the turned body and the weapon pays nothing for it; a blow that lands casts and pays its 10 as it did (mutants: Cast When Strikes blind to the ward)', () => {
   const blade = () => ({ name: 'Blade', templateIndex: 120, group: 3, currentCondition: 100, maxCondition: 100, enchantments: [{ type: T.CastWhenStrikes, param: 7 }] });
   const casts = [];
   const ctx = { spellsByIndex: () => new Map([[7, { name: 'Fireball' }]]), applySpellToTarget: (record, entity, target) => casts.push([record.name, target.name]) };
@@ -132,7 +132,7 @@ test('VAMPIRIC-WARD CAST WHEN STRIKES INTO A WARD (AUDIT FB1018b L3-2; CastWhenS
   assert.equal(b2.currentCondition, 100 - DURABILITY_LOSS_ON_STRIKE, 'and pays its 10');
 });
 
-test('VAMPIRIC-WARD THE SETS\' STRIKE INTO A WARD (AUDIT FB1018b L3-3; systems/sigil/sigilSetPowers.js setStrike, setBlow\'s own AUDIT SETS L4): through the real formula on the Warden\'s stand-in, warded - the Battlemage\'s Panoply returns no magicka of its armed cast and Sethrakul\'s Coilscale lays no Constrict on him; unwarded, both as they did (mutants: the sets\' strike blind to the ward)', () => {
+test('VAMPIRIC-WARD THE SETS\' STRIKE INTO A WARD (AUDIT FB1018f L3-3; systems/sigil/sigilSetPowers.js setStrike, setBlow\'s own AUDIT SETS L4): through the real formula on the Warden\'s stand-in, warded - the Battlemage\'s Panoply returns no magicka of its armed cast and Sethrakul\'s Coilscale lays no Constrict on him; unwarded, both as they did (mutants: the sets\' strike blind to the ward)', () => {
   const stats = () => ({ strength: 75, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 });
   const player = () => ({ isPlayer: true, items: [], stats: stats(), skills: new Array(35).fill(60), skillUses: new Array(35).fill(0), level: 30, career: {}, activeEffects: [], health: 100, maxHealth: 100, magicka: 0, maxMagicka: 1000, armorValues: new Array(7).fill(100) });
   const wear = (pieces) => { const e = player(); for (const r of pieces.slice(0, 4)) { const it = mintAetheric(r); e.items.push(it); equipItem(e, it); } return e; };

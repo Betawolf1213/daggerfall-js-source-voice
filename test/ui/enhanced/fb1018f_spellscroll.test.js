@@ -1,4 +1,4 @@
-// SPELL-SCROLL (FIELD BUGS 2026-10-18b; the Discord's #bug-reports, cmagoun, "Minor: Spellbook -- Clicking a spell returns
+// SPELL-SCROLL (FIELD BUGS 2026-10-18f; the Discord's #bug-reports, cmagoun, "Minor: Spellbook -- Clicking a spell returns
 // you to the top of a spell list": "Once you get a number of created/purchased spells in your book, this makes navigation
 // awkward. Save the scroll position when you click a spell."). The enhanced book drew itself from nothing on every press
 // (`host.innerHTML = ''`), and a list drawn from nothing stands at its top: measured in Chromium, 40 spells, the list at
@@ -20,7 +20,7 @@ import { mountEnhancedSpellbook } from '../../../src/ui/enhanced/enhancedSpellbo
 import { mountEnhancedChronicle } from '../../../src/ui/enhanced/enhancedChronicle.js';
 import { repaintKeepingScroll } from '../../../src/ui/domRepaint.js';
 import { ENHANCED_CSS } from '../../../src/ui/enhanced/enhancedStyle.js';
-import { PLUS_CSS } from '../../../src/ui/enhanced/enhancedPlusStyle.js';   // AUDIT FB1018b L2-3: the two sheets laid after it
+import { PLUS_CSS } from '../../../src/ui/enhanced/enhancedPlusStyle.js';   // AUDIT FB1018f L2-3: the two sheets laid after it
 import { UI_CALM_CSS } from '../../../src/ui/uiCalmStyle.js';
 import { SpellbookWindow, SPELLBOOK_RECTS } from '../../../src/ui/spellbookWindow.js';
 import { buildCustomSpell, blankEffectSettings } from '../../../src/systems/spell/spellMaker.js';
@@ -56,7 +56,7 @@ test('SPELL-SCROLL the enhanced book: a spell picked down the list leaves the li
     one(host, 'px-qdetail').scrollTop = 120;
     byClass(host, 'act').find((b) => b.textContent === 'Rename').onclick();
     assert.equal(one(host, 'px-qdetail').scrollTop, 120, 'the same spell\'s page keeps its place under a press');
-    // AUDIT FB1018b L2-2: by the spell itself, its index - never its row, which the next spell takes when one is deleted
+    // AUDIT FB1018f L2-2: by the spell itself, its index - never its row, which the next spell takes when one is deleted
     assert.equal(one(host, 'px-qdetail').getAttribute('data-scroll-key'), `spell ${spells[20].index}`, 'the page names the spell it shows');
     byClass(host, 'px-qrow')[21].onclick();
     assert.equal(one(host, 'px-qdetail').scrollTop, 0, 'another spell\'s page starts at its top');
@@ -70,7 +70,7 @@ test('SPELL-SCROLL the enhanced book: a spell picked down the list leaves the li
   } finally { view.destroy(); host.remove(); }
 });
 
-test('AUDIT FB1018b L2-2 THE PAGE IS KEYED BY ITS SPELL, NOT ITS ROW: a spell renamed keeps its page where it was (a new record under the same index); a spell deleted hands its row to the next spell, whose page starts at its top - it opened at the deleted spell\'s offset, the key being the row (mutants: the page keyed by its row; by its name)', () => {
+test('AUDIT FB1018f L2-2 THE PAGE IS KEYED BY ITS SPELL, NOT ITS ROW: a spell renamed keeps its page where it was (a new record under the same index); a spell deleted hands its row to the next spell, whose page starts at its top - it opened at the deleted spell\'s offset, the key being the row (mutants: the page keyed by its row; by its name)', () => {
   const spells = bookOf(10);
   const host = document.createElement('div');
   document.body.append(host);
@@ -111,7 +111,7 @@ test('SPELL-SCROLL the book\'s layout: the list scrolls in its own column, the p
   assert.ok(ENHANCED_CSS.indexOf('.sb-shell .px-body {') > ENHANCED_CSS.indexOf('.px-body { flex: 1;'));
 });
 
-test('AUDIT FB1018b L2-3 THE BOOK\'S COLUMN RULES ARE THE ONLY WORD ON THEM: the four selectors the layout pin reads stand once each in the enhanced sheet and in neither sheet laid after it (Enhanced Plus, UI-calm) - the pin read the first rule, and a later one under the same selector takes the cascade back (mutants: the body given its scroll back by a later rule; the journal grown again by one)', () => {
+test('AUDIT FB1018f L2-3 THE BOOK\'S COLUMN RULES ARE THE ONLY WORD ON THEM: the four selectors the layout pin reads stand once each in the enhanced sheet and in neither sheet laid after it (Enhanced Plus, UI-calm) - the pin read the first rule, and a later one under the same selector takes the cascade back (mutants: the body given its scroll back by a later rule; the journal grown again by one)', () => {
   const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const sel of ['.sb-shell .px-body', '.sb-shell .px-journal', '.sb-shell .px-qrail', '.sb-shell .px-qdetail']) {
     const rule = new RegExp(`${esc(sel)}\\s*[,{]`, 'g');   // the selector a rule's own (its list's or its last), never a descendant's
@@ -144,7 +144,7 @@ test('SPELL-SCROLL the Chronicle: a card folded or a note removed down the page 
   } finally { view.destroy(); host.remove(); }
 });
 
-test('SPELL-SCROLL the house\'s one repaint (ui/domRepaint.js): a scrolled pane is found again by its place and given its offset back; a pane that names what it shows keeps it for the same name and starts at the top for another, and so does a scrolled pane inside it (AUDIT FB1018b L2-1); a pane at its top is left alone (mutants: the key out of the path; the key the named pane\'s own step only; nothing recorded)', () => {
+test('SPELL-SCROLL the house\'s one repaint (ui/domRepaint.js): a scrolled pane is found again by its place and given its offset back; a pane that names what it shows keeps it for the same name and starts at the top for another, and so does a scrolled pane inside it (AUDIT FB1018f L2-1); a pane at its top is left alone (mutants: the key out of the path; the key the named pane\'s own step only; nothing recorded)', () => {
   const host = document.createElement('div');
   const draw = (key) => {
     host.innerHTML = '';
@@ -166,7 +166,7 @@ test('SPELL-SCROLL the house\'s one repaint (ui/domRepaint.js): a scrolled pane 
   at.pane.scrollTop = 0;
   repaintKeepingScroll(host, () => { at = draw(null); at.pane.scrollTop = 50; });   // a screen that places its own pane
   assert.equal(at.pane.scrollTop, 50, 'a pane that stood at its top is not put back over the screen\'s own placing');
-  // AUDIT FB1018b L2-1: A NAME COVERS THE PANES INSIDE ITS PANE - the grimoire dress's Chronicle scrolls its `.px-qdetail`
+  // AUDIT FB1018f L2-1: A NAME COVERS THE PANES INSIDE ITS PANE - the grimoire dress's Chronicle scrolls its `.px-qdetail`
   // inside the `.px-body` that names the section, so the key is every step's, not the scrolled element's alone
   let inner = null;
   const nest = (key) => {
@@ -185,7 +185,7 @@ test('SPELL-SCROLL the house\'s one repaint (ui/domRepaint.js): a scrolled pane 
   assert.equal(inner.scrollTop, 0, 'another name: the pane inside starts at its top too');
 });
 
-test('AUDIT FB1018b L2-4 THE REPAINT FINDS A SCROLLED PANE BY ITS OWN PATH, never by mapping the rebuilt tree: a list of 400 rows and the pane after it, both scrolled and drawn again, are found and given their places, and the paths read are theirs alone - every element\'s path built its siblings\' list at every step, ~400 ms a fold in a Chronicle of 500 notes, scrolled, in Chromium (mutants: the tree mapped whole; searched in order)', () => {
+test('AUDIT FB1018f L2-4 THE REPAINT FINDS A SCROLLED PANE BY ITS OWN PATH, never by mapping the rebuilt tree: a list of 400 rows and the pane after it, both scrolled and drawn again, are found and given their places, and the paths read are theirs alone - every element\'s path built its siblings\' list at every step, ~400 ms a fold in a Chronicle of 500 notes, scrolled, in Chromium (mutants: the tree mapped whole; searched in order)', () => {
   const host = document.createElement('div');
   let list = null, aside = null;
   const draw = () => {

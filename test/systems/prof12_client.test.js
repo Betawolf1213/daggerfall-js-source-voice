@@ -237,7 +237,7 @@ test('PROF12 pages: The Enchanting Station - away, the word; at a Mages Guild ha
   const { calls } = stubPages({ enchanter: { kind: 'shop', fee: ENCHANT_FEE }, enchantingTrack: { rank: 100, specs: { 50: 'efficient', 100: null } } });
   page = pageOf();
   assert.match(page.text(), /The guild's enchanter - 50 gold a piece\. Enchanting 100 \(Master\): the item maker's gold 25% less\./);
-  // PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): a Master's track takes no more XP - the service credits
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track takes no more XP - the service credits
   // MIN(earned, PROF_XP_MAX - held), none - so the piece says +0 and the station why (it said +7, which the Worker never
   // paid); AUDIT PROF12 E2's quarter is pinned at an Expert's 90 below, where it is paid
   assert.match(page.text(), /No Enchanting XP: Enchanting is at Master\.Iron Longsword600 points - 6 Arcane Essence, \+0 Enchanting XP/);
@@ -445,7 +445,7 @@ test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its r
   assert.match(page.text(), /Linen Plain Robes700 points - 7 Arcane Essence, \+0 Enchanting XP/);
   assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+30 Enchanting XP/);
   page.done();
-  // PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): the quarter at an Expert's 90 - the same top tier, 7, as a Master's,
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): the quarter at an Expert's 90 - the same top tier, 7, as a Master's,
   // with room left to take it (a Master's track takes none: the service credits MIN(earned, PROF_XP_MAX - held))
   stubPages({ enchanter: { kind: 'home', fee: 0 }, enchantingTrack: { rank: 90, specs: { 50: null, 100: null } }, over: { disenchantable: () => pieces } });
   page = pageOf();

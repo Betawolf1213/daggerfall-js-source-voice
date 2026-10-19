@@ -40,7 +40,7 @@ export function numberFor(r) {
   if (r.ineffective) return { kind: 'ineffective', text: 'Ineffective', tag: null };
   if (!r.hit) return { kind: 'miss', text: 'Miss', tag: null };
   // WB13d: a blow into the gate boss's ward lands nothing (the relay refuses it) - it says so, never a number. FIELD BUGS
-  // 2026-10-18b TURNED-BLOW: in the Spire the ground can turn it too (a blow from traversal ground strikes nothing), and the
+  // 2026-10-18f TURNED-BLOW: in the Spire the ground can turn it too (a blow from traversal ground strikes nothing), and the
   // stand-in says which (scenes/eliteGates/egFight.js turnStandIn, `wardText` - "No footing")
   if (r.target?.warded) return { kind: 'warded', text: r.target.wardText || 'Warded', tag: null };
   const dmg = Math.max(0, Math.round(r.damage || 0));

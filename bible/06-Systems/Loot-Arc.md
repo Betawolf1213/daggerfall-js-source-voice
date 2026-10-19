@@ -479,7 +479,7 @@ threshold, past its cap but never past the Rare threshold; `rarityChances` takes
 a wall, as Cleave and the Nova do.
 
 **A foe's share of its health** (the execution's quarter, venom's half) is the one law, `combat/healthShare.js`
-healthShare (FIELD BUGS 2026-10-18b RELAY-SHARE). On a body the relay runs - the gate's Warden, his crystals and host,
+healthShare (FIELD BUGS 2026-10-18f RELAY-SHARE). On a body the relay runs - the gate's Warden, his crystals and host,
 the Remnant, its Echoes and Hearts, every lord and add of an Elite Breach, the sea serpent - the blow is computed
 against a stand-in whose health is a placeholder (`world/gate/gateBoss.js` bossStandIn, 1e9 of 1e9). Until RELAY-SHARE
 this page's powers read it as whole there, so Sweet Mother's Kiss and Serpent's Kiss's double never fired on any of

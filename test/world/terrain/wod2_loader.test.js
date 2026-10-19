@@ -76,7 +76,7 @@ test('WOD2: the FIRST valid instance naming a pixel takes it - placing it sets h
   assert.deepEqual(picks.map((p) => [p.index, p.flatten]), [[0, false], [1, true]]);
 });
 
-test('WOD2: a pixel that already holds a location - a type-0 instance ANYWHERE in the list ends the call; the sea arm reads the PIXEL\'s region (PIN MOVED, FIELD BUGS 2026-10-18b WOD-SEA-TEST: the mod read mapRegionIndex, the location\'s, so the arm never fired)', () => {
+test('WOD2: a pixel that already holds a location - a type-0 instance ANYWHERE in the list ends the call; the sea arm reads the PIXEL\'s region (PIN MOVED, FIELD BUGS 2026-10-18f WOD-SEA-TEST: the mod read mapRegionIndex, the location\'s, so the arm never fired)', () => {
   const loc = { ...TILE, hasLocation: true, mapRegionIndex: 17 };
   assert.deepEqual(picked(loc, [{}, { type: 2 }]), [], 'type 2 skips a location\'s pixel');
   assert.deepEqual(picked(loc, [{ type: 1 }]), [0], 'an "other" type falls through the flag');
@@ -389,7 +389,7 @@ test('WOD2: the streaming host wires the loader where DFU does - decision before
   const w = hostText('src/scenes/world.js');
   assert.match(w, /const wod = wodOn\(\) \? openWodWorld\(\{ online: params\.has\('online'\) \}\) : null;/);
   assert.match(w, /wod\.noteRegion\(maps\.getRegionIndexAt\(here\.x, here\.y\)\);\s*await wod\.settle\(\);/);
-  // PIN MOVED (FIELD BUGS 2026-10-18b WOD-SEA-TEST): the tile carries the pixel's own region for the sea arm, where it carried
+  // PIN MOVED (FIELD BUGS 2026-10-18f WOD-SEA-TEST): the tile carries the pixel's own region for the sea arm, where it carried
   // GetMapPixelData's mapRegionIndex (the location's, -1 off one - under which the arm never fired)
   assert.match(w, /regionIndex: maps\.getRegionIndexAt\(px, py\),/, 'the pixel\'s own region, the sea arm\'s');
   assert.match(w, /worldHeight: host\.woods\.getHeightMapValue\(px, py\),/);

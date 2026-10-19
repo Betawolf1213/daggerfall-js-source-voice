@@ -60,7 +60,7 @@ export const WOD_AWAKE_REGION = 17;
 /** :76 - "Ocean Region Detected! Unsupported!" */
 export const WOD_REFUSED_REGION = 31;
 /** :117-121 - the regions whose low tiles (worldHeight <= 2) are sea. 31 is the sea itself: the region a pixel of the
- *  sea answers (PlayerGPS's politic 64, `mapsFile.js` getRegionIndexAt). FIELD BUGS 2026-10-18b WOD-SEA-TEST: asked of
+ *  sea answers (PlayerGPS's politic 64, `mapsFile.js` getRegionIndexAt). FIELD BUGS 2026-10-18f WOD-SEA-TEST: asked of
  *  the PIXEL's own region (the tile's `regionIndex`), never MapPixelData's mapRegionIndex - see pickState. */
 export const WOD_OCEAN_REGIONS = Object.freeze([31, 3, 29, 28, 30]);
 
@@ -260,7 +260,7 @@ export function pickLocationsScan(tile, session, getPrefab, pathsPoint = null, s
 /**
  * The loop's state for one tile (FLOW2: the scan's and the walk's).
  *
- * FIELD BUGS 2026-10-18b WOD-SEA-TEST (Mac: "Yes fix WOD"; `01-Overview/Port-Ledger.md` section A): THE SEA ARM ASKS
+ * FIELD BUGS 2026-10-18f WOD-SEA-TEST (Mac: "Yes fix WOD"; `01-Overview/Port-Ledger.md` section A): THE SEA ARM ASKS
  * THE PIXEL'S OWN REGION. The mod reads `mapRegionIndex` (:117), which GetMapPixelData fills from the pixel's LOCATION
  * alone - and a pixel with one has already left at :103 - so in DFU the arm never fired, and every site its lists name
  * on the sea stood there: rocks off Tlactrn Manor in open water (æther), the rocks ships met (FIELD BUGS 2026-10-02). The

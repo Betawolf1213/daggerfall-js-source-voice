@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b UNSEEN-KEEPER (Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": "Enemy which needed to be beat
+// FIELD BUGS 2026-10-18f UNSEEN-KEEPER (Low_Poly_Gaming, "Weir Key Generated Elite Breach bugs": "Enemy which needed to be beat
 // to spawn the gate to the next hall was not visible but they were still able to attack. I could see their AOE on the ground
 // but not the enemy"). NOT PROVEN - the record (bible/01-Overview/bugs/) says what would prove it. What is pinned here is what
 // the trace measured, so it can be run again: (1) on the law as it stands, every keeper a hall's door waits on - a Proving

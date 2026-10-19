@@ -5,8 +5,8 @@
     "old": "      if (param !== 1 || target?.warded) return null;",
     "new": "      if (param !== 1) return null;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js",
-      "test/net/eliteGates/fb1018b_turnedblow.test.js"
+      "test/systems/fb1018f_vampiricward.test.js",
+      "test/net/eliteGates/fb1018f_turnedblow.test.js"
     ],
     "why": "the bug as shipped: a vampiric blade heals the whole claim of a blow a ward turns - the Warden's, the Remnant's, the Spire's"
   },
@@ -16,7 +16,7 @@
     "old": "      if (param !== 1 || target?.warded) return null;",
     "new": "      if (target?.warded) return null;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js"
+      "test/systems/fb1018f_vampiricward.test.js"
     ],
     "why": "the at-range param heals on a strike"
   },
@@ -26,9 +26,9 @@
     "old": "if (!entity || !target || damage === 0 || target.warded) return null;",
     "new": "if (!entity || !target || damage === 0) return null;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js"
+      "test/systems/fb1018f_vampiricward.test.js"
     ],
-    "why": "AUDIT FB1018b L1-2: the Mace of Molag Bal takes magicka and Strength off a warded blow"
+    "why": "AUDIT FB1018f L1-2: the Mace of Molag Bal takes magicka and Strength off a warded blow"
   },
   {
     "name": "VAMPIRIC-WARD-arcane-riders-blind",
@@ -36,9 +36,9 @@
     "old": "if (!id || !r || reflected || target?.warded) return;",
     "new": "if (!id || !r || reflected) return;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js"
+      "test/systems/fb1018f_vampiricward.test.js"
     ],
-    "why": "AUDIT FB1018b L3-2: Siphon Life heals off a spell into a ward (Conflux stacks, every rider answers it)"
+    "why": "AUDIT FB1018f L3-2: Siphon Life heals off a spell into a ward (Conflux stacks, every rider answers it)"
   },
   {
     "name": "VAMPIRIC-WARD-cast-when-strikes-blind",
@@ -46,9 +46,9 @@
     "old": "if (!target || damage === 0 || target.warded) return null;",
     "new": "if (!target || damage === 0) return null;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js"
+      "test/systems/fb1018f_vampiricward.test.js"
     ],
-    "why": "AUDIT FB1018b L3-2: Cast When Strikes casts its spell at a turned body and wears the blade for a blow that dealt nothing"
+    "why": "AUDIT FB1018f L3-2: Cast When Strikes casts its spell at a turned body and wears the blade for a blow that dealt nothing"
   },
   {
     "name": "VAMPIRIC-WARD-sets-strike-blind",
@@ -56,8 +56,8 @@
     "old": "if (!(damage > 0) || !weapon || target?.warded) return;",
     "new": "if (!(damage > 0) || !weapon) return;",
     "tests": [
-      "test/systems/fb1018b_vampiricward.test.js"
+      "test/systems/fb1018f_vampiricward.test.js"
     ],
-    "why": "AUDIT FB1018b L3-3: the Battlemage's Panoply returns magicka and Coilscale lays Constrict off turned blows"
+    "why": "AUDIT FB1018f L3-3: the Battlemage's Panoply returns magicka and Coilscale lays Constrict off turned blows"
   }
 ]

@@ -34,7 +34,7 @@ import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, ADMIT_R, FAN_R, ENGAGE_R, S
 import { serpentBossById, serpentCountdown, serpentCountdownWords, serpentSwims, SERPENT_BRAIN_V, SERPENT_DIVE_MS } from '../net/serpent/serpentLaw.js';
 import { cellRoomOfWire } from '../net/wire.js';
 import { bodySayer } from '../net/bossBody.js';   // INT15: my hull, said to the cell
-import { wordShare } from '../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: its health's share, the relay's word
+import { wordShare } from '../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health's share, the relay's word
 import { shapeMeets, shipHurt, crushHurt, gripHurt, grindHurt, venomBite, venomHurt, shoveOf, shoveLeft, maelPull, globAt, poolOf, poolBites, fleetShare, SHOVE_S } from '../systems/serpent/serpentStrike.js';
 
 /** INT13: the line as the relay's count wrecks her (`bd`). */
@@ -474,7 +474,7 @@ export function createSerpentHost(deps) {
       const c = target.box?.c;
       if (c) deps.fx?.('wake', [c[0], c[1], c[2]], 0.5);   // the sea thrown up off its hide, as a ball's
     },
-    /** FIELD BUGS 2026-10-18b RELAY-SHARE: ITS HEALTH'S SHARE as the relay says it (the bar's `hp` of its `max`), or null
+    /** FIELD BUGS 2026-10-18f RELAY-SHARE: ITS HEALTH'S SHARE as the relay says it (the bar's `hp` of its `max`), or null
      *  with no fight of mine - what its stand-in (scenes/world.js serpentStandIn) answers an "under its health" power
      *  (combat/healthShare.js). Its coil is its grip, not a foe of its own: a shaft on the coil reads the serpent's share. */
     healthShare() {

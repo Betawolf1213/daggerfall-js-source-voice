@@ -14,7 +14,7 @@
 //     flagged in World-Arc.md.
 //   - Ground scenery reads GroundScenery[x][15 - y], skips records < 1
 //     (0 is a marker), places at (x*256, natureFlatsOffsetY, y*256+256)*scale
-//     with the climate nature archive. HOUSE-BUSH (FIELD BUGS 2026-10-18b, a
+//     with the climate nature archive. HOUSE-BUSH (FIELD BUGS 2026-10-18f, a
 //     departure from AddNatureFlats): a cell whose foot the block's own
 //     automap draws inside a building is not stood (sceneryUnderRoof).
 //   - Editor flats (archive 199) are two DIFFERENT laws. A SUBRECORD
@@ -63,13 +63,13 @@ export const NATURE_FLATS_Y = NATURE_FLATS_OFFSET_Y * GLOBAL_SCALE;
 /** HOUSE-BUSH: an RMB block's automap is AUTOMAP_SIDE pixels a side, AUTOMAP_SIDE / 16 to a ground tile. */
 const AUTOMAP_SIDE = 64, AUTOMAP_PER_TILE = AUTOMAP_SIDE / 16;
 /**
- * HOUSE-BUSH (FIELD BUGS 2026-10-18b, æther on the Discord: "Small bush in a house wall, near east gate of Penwall
+ * HOUSE-BUSH (FIELD BUGS 2026-10-18f, æther on the Discord: "Small bush in a house wall, near east gate of Penwall
  * Derry"). WHETHER A GROUND-SCENERY CELL'S FOOT STANDS INSIDE A BUILDING, as the block's own automap draws it.
  *
  * AddNatureFlats (RMBLayout.cs, the walk below) stands every scenery record a block names and reads no building, so a
  * cell its author left under a house stands in the house - a billboard through its wall. Beautiful Cities' composite
  * blocks were made so: Penwall Derry's east gate (WALLAA09.TVRNAS01) stands its record 4 inside a House2, and the two
- * town packs between them hold 18 such cells (AUDIT FB1018b L4-1: 26 counted by the automap alone, 8 of them under
+ * town packs between them hold 18 such cells (AUDIT FB1018f L4-1: 26 counted by the automap alone, 8 of them under
  * footprints no building of the block stands on). The author took the same class out by hand elsewhere (TVRNAL01's edit
  * sets two classic cells to -1, both on a House2). DFU stands them as written; the port does not (Port-Ledger A).
  *
@@ -79,7 +79,7 @@ const AUTOMAP_SIDE = 64, AUTOMAP_PER_TILE = AUTOMAP_SIDE / 16;
  * 4x - 1 and 4x and rows 59 - 4y and 60 - 4y. INSIDE is all four of them architecture by the town map's ladder
  * (ui/town/townQuarters.js quarterOf - not street, a ground flat's mark, a ship or a special); a foot on a footprint's
  * edge or corner is left as authored, and so is one on the block's rim, whose far cells are the next block's.
- * AUDIT FB1018b L4-1: AND THE FOOTPRINT IS A BUILDING'S. Two Beautiful Villages blocks (TEMPBSE0, TEMPBSC0) draw houses
+ * AUDIT FB1018f L4-1: AND THE FOOTPRINT IS A BUILDING'S. Two Beautiful Villages blocks (TEMPBSE0, TEMPBSC0) draw houses
  * on their automaps that the blocks do not have, and their authors planted scenery on that open ground; a footprint no
  * subrecord of the block stands on is no roof (`held`, heldFootprints below). Without `held` nothing is taken.
  * @param {?ArrayLike<number>} autoMap the block's fldHeader.autoMapData
@@ -96,7 +96,7 @@ export function sceneryUnderRoof(autoMap, x, y, held) {
 }
 
 /**
- * HOUSE-BUSH (AUDIT FB1018b L4-1): THE FOOTPRINTS THE BLOCK'S OWN BUILDINGS STAND ON. A footprint is a 4-connected run
+ * HOUSE-BUSH (AUDIT FB1018f L4-1): THE FOOTPRINTS THE BLOCK'S OWN BUILDINGS STAND ON. A footprint is a 4-connected run
  * of architecture on the automap (quarterOf's ladder, as sceneryUnderRoof reads it); it is held when a subrecord's
  * origin falls in it - automap column xPos / 64, row zPos / 64, which puts 817 of Beautiful Cities' 884 buildings and 502
  * of Beautiful Villages' 557 on their own footprint. Answers the test sceneryUnderRoof takes, or null without an automap.
@@ -330,7 +330,7 @@ export function collectBlockFlats(dfBlock, natureArchive, { climateIndex = null,
   // Ground scenery -> climate nature flats.
   const scenery = rmb.fldHeader.groundData.groundScenery;
   const autoMap = rmb.fldHeader.autoMapData;   // HOUSE-BUSH
-  const held = heldFootprints(autoMap, rmb.subRecords);   // AUDIT FB1018b L4-1: the footprints a building of the block stands on
+  const held = heldFootprints(autoMap, rmb.subRecords);   // AUDIT FB1018f L4-1: the footprints a building of the block stands on
   for (let y = 0; y < 16; y++) {
     for (let x = 0; x < 16; x++) {
       const item = scenery[x][15 - y];

@@ -9220,7 +9220,7 @@ it asserted the misreading. shopplus_spellshop.test.js's effect row
 moved with it. Both new pins fail on the old reading with the player's
 own words. 13 mutations, 13 dead (`tools/mutants/sbfx.json`).
 
-SPELL-SCROLL (FIELD BUGS 2026-10-18b; cmagoun on the Discord: "Clicking a
+SPELL-SCROLL (FIELD BUGS 2026-10-18f; cmagoun on the Discord: "Clicking a
 spell returns you to the top of a spell list"): THE BOOK DREW ITSELF FROM
 NOTHING ON EVERY PRESS and wrote it straight (`host.innerHTML = ''`), past
 the house's one repaint - so a pick put the list back at Spell 1, the row
@@ -9239,18 +9239,18 @@ book, worn plain - `.sb-shell .px-body` holds them and scrolls neither), and
 the page names the spell it shows (`data-scroll-key`, the helper's new
 word: domRepaint.js:"const key = n.getAttribute?.('data-scroll-key');"), so
 another spell's page starts at its top - named by the spell's own index,
-never its row (AUDIT FB1018b L2-2: a delete kept the row, and the next spell
+never its row (AUDIT FB1018f L2-2: a delete kept the row, and the next spell
 opened at the deleted one's offset). The helper finds a saved pane by its
-own path, walking down its indices (AUDIT FB1018b L2-4: it had mapped the
+own path, walking down its indices (AUDIT FB1018f L2-4: it had mapped the
 whole rebuilt tree, quadratic - one fold in a scrolled Chronicle of 500
 notes ~400 ms, now 69 ms). The Chronicle (the same bones) lost
 its page on every fold, remove, share and abandon, and draws the same way,
 its page named by its section (enhancedChronicle.js:"body.setAttribute('data-scroll-key', section);").
 The Reforge's Salvage page and the pack's Salvage were measured holding
 already (one scroller kept, its rows replaced). Pins:
-test/ui/enhanced/fb1018b_spellscroll.test.js (8); the layout itself is
+test/ui/enhanced/fb1018f_spellscroll.test.js (8); the layout itself is
 driven in Chromium by tools/spellScrollProbe.mjs. 22 mutations, 22 dead
-(`tools/mutants/fb1018b_spellscroll.json`).
+(`tools/mutants/fb1018f_spellscroll.json`).
 
 PX24 (Mac: "with the logbook and history, I want them as one detailed
 UI"): THE CHRONICLE. Two classic windows built at four sites -
@@ -15300,7 +15300,7 @@ hosts named (townTalk.frame for world.js and exterior.js, townTalk.hudFrame
 for worldModes.js, dungeonContext.js's own, `ui/hud/hud.js` for the label) -
 and, since AUDIT FONT F3, on the dungeon hosts' overlay branch too, which
 returns above drawHud: `hideHudTextSurfaces` takes both surfaces down
-before that return. (FB1018b DUNGEON-DIGITS: and the enhanced HUD with
+before that return. (FB1018f DUNGEON-DIGITS: and the enhanced HUD with
 its hotbar, told hidden and paused as drawHud tells it under a window -
 `10-UI/Slots-Hotbar-Status.md`.)
 

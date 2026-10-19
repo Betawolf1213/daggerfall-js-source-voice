@@ -288,7 +288,7 @@ test('PROF9 pages: The Fire - away from one, the word (no dish offered); at one,
     assert.match(page.text(), /Provisioning 100 \(Master\)\. Your Skillet widens the pan's window\./);   // PIN MOVED (CRAFT3): the fire reads Provisioning's track
     page.dish('Hunter\'s Stew (northern').onclick();
     assert.match(page.text(), /Endurance \+5 for 2 hours\. Yours never spoil\./);
-    // PIN MOVED (CRAFT3): a dish raises Provisioning. PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): a Master's track
+    // PIN MOVED (CRAFT3): a dish raises Provisioning. PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track
     // takes no more XP (the service credits MIN(earned, PROF_XP_MAX - held), none), so the pans say no XP and the line why;
     // the pans' XP at an Expert's 90, in AUDIT PROF-541 K7's pin
     assert.match(page.text(), /Two servings \(a Cook's\), into your pack\. 3 pans\.No Provisioning XP: Provisioning is at Master\./);
@@ -623,7 +623,7 @@ test('AUDIT PROF-541 K6: the Orchard Tart\'s stamina is the player\'s to end, as
 });
 
 test('AUDIT PROF-541 K7: the fire\'s XP line says what the service pays - the town Apothecary\'s steps in it (recipeLaw cookXp\'s `steps`, the host\'s cookSteps), a plain line where there are none', () => {
-  // PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): an Expert's 90 - the same top tier, 7, as a Master's, with room left
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): an Expert's 90 - the same top tier, 7, as a Master's, with room left
   // to take it (a Master's track takes none: the service credits MIN(earned, PROF_XP_MAX - held))
   stubPages({ rank: 90, over: { cookSteps: () => 2 } });
   let page = pageOf();

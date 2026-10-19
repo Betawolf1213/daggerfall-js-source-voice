@@ -61,7 +61,7 @@
     "tests": [
       "test/ui/gate/wb13d_blows.test.js"
     ],
-    "why": "PIN MOVED (FIELD BUGS 2026-10-18b TURNED-BLOW): the warded number's line carries the stand-in's own word now"
+    "why": "PIN MOVED (FIELD BUGS 2026-10-18f TURNED-BLOW): the warded number's line carries the stand-in's own word now"
   },
   {
     "name": "WB13d-the-word-on-any-blow",

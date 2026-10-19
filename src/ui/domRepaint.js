@@ -20,7 +20,7 @@
 // a different stage, a sheet that opened - the path simply misses and
 // the new element starts at the top, which is what it should do.
 //
-// FB1018b SPELL-SCROLL: AND A PANE CAN SAY WHAT IT SHOWS. A tree of the
+// FB1018f SPELL-SCROLL: AND A PANE CAN SAY WHAT IT SHOWS. A tree of the
 // same shape can show another thing in the same place - the next spell's
 // page beside the book's list, another section of the Chronicle - and
 // that pane should start at its top as a new shape does. An element
@@ -49,7 +49,7 @@ function pathOf(host, el) {
   return { path: parts.reverse().join('>'), at: at.reverse() };
 }
 
-/** AUDIT FB1018b L2-4: THE ELEMENT A SAVED PATH NAMES, found by walking
+/** AUDIT FB1018f L2-4: THE ELEMENT A SAVED PATH NAMES, found by walking
  *  down its indices - the only element that can carry them - and taken
  *  when its own path reads the same (the tags, the classes and the keys
  *  on the way). The rebuilt tree is never mapped whole: every element's
@@ -90,7 +90,7 @@ export function repaintKeepingScroll(host, rebuild, { focus = false } = {}) {
   if (kept) giveFocus(host, kept);
   if (!saved.length || !host) return;
   for (const [path, top, left] of saved) {
-    const el = findPath(host, path);   // AUDIT FB1018b L2-4: the one element that can be it, never the whole tree mapped
+    const el = findPath(host, path);   // AUDIT FB1018f L2-4: the one element that can be it, never the whole tree mapped
     if (!el) continue;   // the tree changed shape - the new element starts fresh
     if (top) el.scrollTop = top;
     if (left) el.scrollLeft = left;

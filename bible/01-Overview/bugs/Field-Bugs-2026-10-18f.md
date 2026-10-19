@@ -1,11 +1,11 @@
-# FIELD BUGS 2026-10-18b - seven threads from the bug-reports channel, the day's second batch
+# FIELD BUGS 2026-10-18f - seven threads from the bug-reports channel, handed over as the day's second (numbered 18f past main's 18b to 18e at the merge)
 
 Seven more threads from the Discord's #bug-reports, handed over as screenshots after FIELD BUGS 2026-10-18 merged (pull
 request #1012), under the same order: "No band aid fixes". Read on main at `138604baa` (#1012's merge). Each thread was
 traced by a lane of its own on the real modules; a fix lands only where the cause is proven, and where it is not, the
-record says so and what would prove it. The pins are `fb1018b_*`, the mutants `tools/mutants/fb1018b_*.json`.
+record says so and what would prove it. The pins are `fb1018f_*`, the mutants `tools/mutants/fb1018f_*.json`.
 
-AUDIT FB1018b (`01-Overview/audits/Audit-Field-Bugs-2026-10-18b.md`, Mac: "Audit everything first") read the whole
+AUDIT FB1018f (`01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md`, Mac: "Audit everything first") read the whole
 batch cold; each of its findings is written in below where it lands, marked with its id.
 
 | | Report | What it was | Done |
@@ -42,7 +42,7 @@ FIXED. A piece whose powers need wearing (`powersNeedWearing`: live rows, none a
 `enchantments.js` worksUnworn) has its base drawn again in DFU's order, as DFU draws again over an Arrow, up to
 MAGIC_BASE_DRAWS (64), then armour. A wearable first draw is the draw it was, and a Used cast keeps any base (a Leaping
 Wand, a Silent Holy Tome). An artifact, a quest's piece, a made Wand and a frozen record stay as they are, and so does
-a piece already held: AUDIT FB1018b L1-1 took out the load's repair this fix first carried (a save's such piece moved to
+a piece already held: AUDIT FB1018f L1-1 took out the load's repair this fix first carried (a save's such piece moved to
 the Amulet), because a held piece's print is its `templateIndex:material` (`server-account/src/judge.js` ledgerPrintOf)
 and the realm ledger reads a print that moved as forged (`server-account/src/ledger.js` ledgerStep) - a law hold on
 every character that held one. The mint alone is mended. A departure (`01-Overview/Port-Ledger.md` section A, HELD-BASE), kept (DECIDED, below). THE
@@ -72,8 +72,8 @@ window lists only a Cast When Used piece. What would prove it: that window and t
 Why no test saw it: `magicitems.test.js` pinned the group routing verbatim, and RARITY-WEAR's pins took "DFU's own
 wands, Use a cast" on trust.
 
-Pins: `test/systems/loot/fb1018b_heldbase.test.js` (8; two pin the ledger's word on a load). Mutants:
-`tools/mutants/fb1018b_heldbase.json` (23, all dead).
+Pins: `test/systems/loot/fb1018f_heldbase.test.js` (8; two pin the ledger's word on a load). Mutants:
+`tools/mutants/fb1018f_heldbase.json` (23, all dead).
 
 ## SPELL-SCROLL: a pick keeps the book's list where it was, and the list scrolls in its own column (T2)
 
@@ -95,7 +95,7 @@ DFU's book never moves on a pick: ListBox.MouseClick (ListBox.cs:465-504) only s
 FIXED. The book draws through the repaint (`enhancedSpellbook.js:"if (host) repaintKeepingScroll(host, paint);"`); the
 list and the page scroll each in their own column (`.sb-shell .px-body` holds them and scrolls neither - the grimoire
 dress's book, worn plain); and a pane names what it shows (`domRepaint.js:"const key = n.getAttribute?.('data-scroll-key');"`),
-so another spell's page starts at its top while the list keeps its place. AUDIT FB1018b L2-2: the page is named by its
+so another spell's page starts at its top while the list keeps its place. AUDIT FB1018f L2-2: the page is named by its
 spell (its `index`, the port's name for a spell, the quickslot's and the hotbar's), not its row - a delete kept the row,
 and the spell after a deleted one opened at the deleted one's offset; a rename keeps the page. L2-1: a key also names
 the panes inside its pane (the grimoire dress's Chronicle scrolls its `.px-qdetail` inside the keyed `.px-body`).
@@ -121,8 +121,8 @@ Why no test saw it: nothing mounted the book, scrolled its list and pressed a ro
 "not pinnable here" - but the suite's DOM keeps a node's scrollTop and starts a new node at 0, which is all it needs (the
 mutation of domRepaint that records nothing, a survivor only `tools/enhancedScrollProbe.mjs` killed, now dies in the suite).
 
-Pins: `test/ui/enhanced/fb1018b_spellscroll.test.js` (8; AUDIT FB1018b L2-3: the book's column rules are the only word on
-them in every sheet). Mutants: `tools/mutants/fb1018b_spellscroll.json` (22, all dead).
+Pins: `test/ui/enhanced/fb1018f_spellscroll.test.js` (8; AUDIT FB1018f L2-3: the book's column rules are the only word on
+them in every sheet). Mutants: `tools/mutants/fb1018f_spellscroll.json` (22, all dead).
 Four tests that build their own node stand-ins gained `querySelectorAll: () => []` (journal1, questreset1, questshelfmain,
 discord5), no assertion changed.
 
@@ -132,7 +132,7 @@ discord5), no assertion changed.
 stand-ins take their owner's reader), `src/scenes/gate/gateCourt.js`, `src/scenes/gate/gateHost.js`,
 `src/scenes/eliteGates/egFight.js`, `src/scenes/superDungeon/sdRemnant.js`, `src/scenes/serpentHost.js`,
 `src/scenes/world.js` (the serpent's stand-in: one line changed, none added). The six readers: `lootPowers.js`,
-`weaponMastery.js`, `martialPowers.js`, `arcanePowers.js`, `sigil/sigilSetPowers.js`, and (AUDIT FB1018b L3-5)
+`weaponMastery.js`, `martialPowers.js`, `arcanePowers.js`, `sigil/sigilSetPowers.js`, and (AUDIT FB1018f L3-5)
 `combat/technique/techniqueBlow.js` - Headsman's Chop kept its own share and read the placeholder (a lord at a fifth
 got x1.20 for x2.00).
 
@@ -165,10 +165,10 @@ THE FOUR HOSTS: `world.js` (the serpent's line, none added). `dungeonContext.js`
 struck, hands the formula the owner's target, which now carries its reader. `worldModes.js` and `exterior.js` stand no
 relay body.
 
-Pins: `test/systems/loot/fb1018b_relayshare.test.js` (9; AUDIT FB1018b: the Chop, a struck object's word read as it
+Pins: `test/systems/loot/fb1018f_relayshare.test.js` (9; AUDIT FB1018f: the Chop, a struck object's word read as it
 falls, the serpent's word the fight I stand in - L3-9 - and standing nowhere turns every blow, L6-7; the breach fixture's
 bodies stand on the fight ground under them, as the relay stands them - L3-6 turned the ones it had left at y 0 under an
-18 m disc). Mutants: `tools/mutants/fb1018b_relayshare.json` (35, all dead); three older records whose anchors moved were re-aimed by content (`audit_martial.json` L3F2, `audit_wb11.json`
+18 m disc). Mutants: `tools/mutants/fb1018f_relayshare.json` (35, all dead); three older records whose anchors moved were re-aimed by content (`audit_martial.json` L3F2, `audit_wb11.json`
 W1, `set3.json`'s half line).
 
 ## DUNGEON-DIGITS: a dungeon window gets its digits (T4)
@@ -194,11 +194,11 @@ FIXED. The hide door both branches already call (`dungeonContext.js:"hideHudText
 now tells the enhanced HUD what drawHud tells it under a window (`enhancedHud.js:"export function hideEnhancedHud() {"`),
 so the HUD and its bar hide and the keys belong to the window; the next frame of play gives them back. The pad's
 crossbar already stood down under every dungeon window (`gamepadInput.js:"    const xbOn = !overlay && crossbarInForce();"`,
-the dungeon's `overlayActive`); the bar's own gate now agrees with it (AUDIT FB1018b L2-7). THE FOUR HOSTS: `world.js`, `exterior.js` and worldModes' building arm draw the HUD every frame with the
+the dungeon's `overlayActive`); the bar's own gate now agrees with it (AUDIT FB1018f L2-7). THE FOUR HOSTS: `world.js`, `exterior.js` and worldModes' building arm draw the HUD every frame with the
 game's pause; the dungeon arm's window branch already calls the door (no line added); `dungeon.js` mounts the same
 context. Our own feature: DFU does not Update its HUD under a window (DaggerfallUI.cs:429-433).
 
-AUDIT FB1018b L2-5, L2-6: the two this section first left are fixed. The bar asked the HUD's last frame, so a digit
+AUDIT FB1018f L2-5, L2-6: the two this section first left are fixed. The bar asked the HUD's last frame, so a digit
 between a key that opens a window and the next frame was the bar's (reproduced: the use-magic-item list put in the
 dungeon's slot, then Digit1 - slot 1's potion drunk, the list never heard it); and a window in the street's slot over
 ?world's dungeon arm (Recall's prompt), which no dungeon frame sees, left the bar its digits while the pad's crossbar
@@ -212,9 +212,9 @@ dungeon's own slot; the door it would need adds a host line).
 Why no test saw it: the bar's pins drove `drawEnhancedHotbar` with a `paused` they chose, and the hide door's asked
 about the text surfaces alone.
 
-Pins: `test/ui/hud/fb1018b_dungeondigits.test.js` (5), `test/ui/plus/fb1004e_padarrange.test.js`'s one pause (AUDIT
-FB1018b L2-5/L2-6); `test/systems/auditcontrib.test.js`'s source pin reads the new gate. Mutants:
-`tools/mutants/fb1018b_dungeondigits.json` (19, all dead).
+Pins: `test/ui/hud/fb1018f_dungeondigits.test.js` (5), `test/ui/plus/fb1004e_padarrange.test.js`'s one pause (AUDIT
+FB1018f L2-5/L2-6); `test/systems/auditcontrib.test.js`'s source pin reads the new gate. Mutants:
+`tools/mutants/fb1018f_dungeondigits.json` (19, all dead).
 
 ## TURNED-BLOW: a blow the relay refuses is refused on the screen too (T5)
 
@@ -241,7 +241,7 @@ blow from my feet; every heal and power already refuses a warded target, and Vam
 number says "No footing" or "Warded". THE FOUR HOSTS: `dungeonContext.js` (the one door a blow on a Spire body leaves
 through); `world.js`, `exterior.js` and `worldModes.js` unchanged.
 
-AUDIT FB1018b L3 found the screen and the relay still apart, and closed each:
+AUDIT FB1018f L3 found the screen and the relay still apart, and closed each:
 - **A woken lord** (L3-1): the screen held a Court lord asleep until the fight's next whole word, up to 2 s after its
   wake, and turned every blow the relay landed meanwhile. The wake now says its first phase in the beat that wakes it
   (`eph`, `egLords.js` egLordsWake), which the link takes as a wake, no phase turn.
@@ -264,14 +264,14 @@ AUDIT FB1018b L3 found the screen and the relay still apart, and closed each:
 The relay is at `world219` (`test/net/relayversion.test.js`): TURNED-BLOW's rule and these moved its bundle. Either end
 may deploy first.
 
-Found and left (AUDIT FB1018b L6-8): `tools/mutants/egz_legion.json`'s EGZ-the-divers-dont-wait survives, on main's
+Found and left (AUDIT FB1018f L6-8): `tools/mutants/egz_legion.json`'s EGZ-the-divers-dont-wait survives, on main's
 2c98d9554a too - the span AI these imps belong to, older than this slice.
 
 RECORDED, not fixed: the heal is still the claim's wherever the relay lands only part of a blow (the purse clips it, a
 Shield-Wall or Shielded front turns it, a flier is out of reach) - closing that needs the relay to tell each striker
 what landed, per blow.
 
-Pins: `test/net/eliteGates/fb1018b_turnedblow.test.js` (9). Mutants: `tools/mutants/fb1018b_turnedblow.json` (44, all
+Pins: `test/net/eliteGates/fb1018f_turnedblow.test.js` (9). Mutants: `tools/mutants/fb1018f_turnedblow.json` (44, all
 dead). Moved with the strike rule: two records in `tools/mutants/egz_legion.json`, one in `tools/mutants/wb13d.json`,
 and one call site in `test/net/eliteGates/law9_height.test.js`.
 
@@ -281,10 +281,10 @@ and one call site in `test/net/eliteGates/law9_height.test.js`.
 healed the whole claim of blows into the Warden's ward and into the Brass Remnant while shut; Gortwog's Cleaver, as the
 loot maker mints it, healed every point of 20 blows into the Warden's ward. FIXED
 (`enchantments.js:"if (param !== 1 || target?.warded) return null;"`): VampiricEffect.cs's own law told what the blow
-dealt, not a departure. AUDIT FB1018b L1: the Mace of Molag Bal's drain had the same hole and gives nothing off a ward
-or a blow of none (`artifactEffects.js:"if (!entity || !target || damage === 0 || target.warded) return null;"`). AUDIT FB1018b L3-2,
+dealt, not a departure. AUDIT FB1018f L1: the Mace of Molag Bal's drain had the same hole and gives nothing off a ward
+or a blow of none (`artifactEffects.js:"if (!entity || !target || damage === 0 || target.warded) return null;"`). AUDIT FB1018f L3-2,
 L3-3: a spell into a ward, Cast When Strikes and the sets' strike refuse it too (TURNED-BLOW). Pins:
-`test/systems/fb1018b_vampiricward.test.js` (6). Mutants: `tools/mutants/fb1018b_vampiricward.json` (6, all dead).
+`test/systems/fb1018f_vampiricward.test.js` (6). Mutants: `tools/mutants/fb1018f_vampiricward.json` (6, all dead).
 
 ## UNSEEN-KEEPER: the gate keeper drawn nowhere - not proven (T5)
 
@@ -297,7 +297,7 @@ loaded - the driver keeps a failed texture for the session, every body of that m
 and nothing said so; it now logs once (`egFight.js:"const failed = (why) =>"`), behaviour unchanged - or an animation
 frame never uploaded (a texture pack missing a record). What would prove it, from the player: could they hit it; did a
 companion see it; the console then; their texture or sprite mods; the hall, the foe's card, a screenshot with the AOE.
-Pins: `test/scenes/eliteGates/fb1018b_unseenkeeper.test.js` (2). Mutants: `tools/mutants/fb1018b_unseenkeeper.json` (2,
+Pins: `test/scenes/eliteGates/fb1018f_unseenkeeper.test.js` (2). Mutants: `tools/mutants/fb1018f_unseenkeeper.json` (2,
 all dead).
 
 ## HOUSE-BUSH: a bush its author left under a house is not stood (T6)
@@ -316,13 +316,13 @@ cells (10 in Cities, 8 in Villages). The author removed the same class by hand e
 FIXED, a departure (`01-Overview/Port-Ledger.md` section A, HOUSE-BUSH): a scenery cell whose four automap cells are all
 buildings by the town map's own ladder (`townQuarters.js` quarterOf), in a footprint a building of the block stands on
 (heldFootprints: a subrecord's origin, automap column xPos / 64 and row zPos / 64, falls in it), is not stood; a cell on
-a footprint's edge or corner, or on the block's rim, stands as authored. AUDIT FB1018b L4-1: the automap alone took 26,
+a footprint's edge or corner, or on the block's rim, stands as authored. AUDIT FB1018f L4-1: the automap alone took 26,
 and 8 of them were Beautiful Villages' TEMPBSE0 and TEMPBSC0, whose automaps draw houses the blocks do not have - their
 authors planted that open ground; the first sweep built its blocks with no subrecords, so it could not see one (L4-2). Classic blocks fall under the same law; how many of BLOCKS.BSA's
 cells it takes was not measured (no ARENA2 here). THE FOUR HOSTS: `world.js` and `exterior.js` get it through
 collectBlockFlats; `worldModes.js` and `dungeonContext.js` lay out no town block.
 
-Pins: `test/world/fb1018b_housebush.test.js` (5). Mutants: `tools/mutants/fb1018b_housebush.json` (16: 14 dead, 2 equivalent as recorded - AUDIT FB1018b L4-7).
+Pins: `test/world/fb1018f_housebush.test.js` (5). Mutants: `tools/mutants/fb1018f_housebush.json` (16: 14 dead, 2 equivalent as recorded - AUDIT FB1018f L4-7).
 
 ## ROCK-SMEAR: the pack's rocks drawn outside in, their texture box-mapped (T6)
 
@@ -339,12 +339,12 @@ one, "the flat grey smear".
 FIXED. Every face looks out of the boulder and is box-mapped (no face stretches past 1 : 1/√3, the rows level on the
 sides). Found beside it: prismZ took its corners as counter-clockwise on trust, and both its callers hand it clockwise
 lists, so the dock ramp (53143) and the steps' stringers (53144) were drawn inside out too; prismZ now winds by the
-corners' own area. AUDIT FB1018b L4-6: the pack's rocks stand near their origins and its prisms wind one way, so a
+corners' own area. AUDIT FB1018f L4-6: the pack's rocks stand near their origins and its prisms wind one way, so a
 boulder off its origin and a prism in each winding and quadrant are pinned too. Ipsmoth's count (16 rocks, nine wet) is
 data evidence, read off the pack. The collider reads no winding. THE FOUR HOSTS: as HOUSE-BUSH's. `03-World/Beautiful-Towns.md`'s two
 stand-in rows corrected.
 
-Pins: `test/world/fb1018b_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018b_rocksmear.json` (13: 10 dead, 3 equivalent as recorded).
+Pins: `test/world/fb1018f_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018f_rocksmear.json` (13: 10 dead, 3 equivalent as recorded).
 
 ## CRAFT-LIMIT-SAID: the crafter's limit said where it acts, and a station's XP the service's own (T7)
 
@@ -376,7 +376,7 @@ enchant rows say "+0". The craft's word says the limit, never a bonus the limit 
 crafter's limit holds it at rank 50", and "A character raises only 2 crafts past Journeyman: yours are Building and
 Provisioning, so your other crafts stop at rank 50. No craft's rank is ever lowered." (before the second: "once 2 of
 yours pass rank 50, the others stop there"). The six new strings in the thirteen whole languages and each glossary.
-AUDIT FB1018b L5-1: the service's limit was not one decision. Each act bound `craftXpCap` of a track read several
+AUDIT FB1018f L5-1: the service's limit was not one decision. Each act bound `craftXpCap` of a track read several
 awaits before its batch as a literal, so two acts at once on two tracks at 50, with one other craft past, each read one
 past, each bound Master's ceiling, and both crossed - three past, and every one of the three then held at 26,009 for
 good (reproduced at all five stations on the real Worker). Each decision and its track's write now count the other
@@ -386,7 +386,7 @@ account version moves. L5-2: for a character already there, a craft held past it
 Smithing at rank 60"), never at 50 (`craftLimit` answers the rank it holds). L5-3: a third craft below 50 reads its next
 rank's figure ("1,005 / 1,210 XP"), the ceiling line only at the rank it is held at. L5-4: a Master's craft word is the
 top's, "(+200 Smithing XP - Smithing is at Master)" (`prof.craft.xpTop`, in the thirteen whole languages) - it fell
-through to "with the first-time bonus", and at 99,800 a first the top ate was said as paid. AUDIT FB1018b L6-6: five
+through to "with the first-time bonus", and at 99,800 a first the top ate was said as paid. AUDIT FB1018f L6-6: five
 languages named a craft "a made item" in the rule (bg, cs, it, ro, ru) and de "Arbeiten" in the count; each now the
 house's word for a craft.
 
@@ -398,16 +398,16 @@ ceiling). `worldModes.js`, `exterior.js` and `dungeonContext.js` build no statio
 temper's and disenchant's words ("(+0 ...)" - their stations say it first; they claim no bonus); the forge, which states
 no figure. Our own feature: no DFU member moves.
 
-AUDIT FB1018b L5-5: `tools/mutants/prof12.json`'s `PROF12-book-dis-unapplied` was misaimed, not a gap - its text ran on
+AUDIT FB1018f L5-5: `tools/mutants/prof12.json`'s `PROF12-book-dis-unapplied` was misaimed, not a gap - its text ran on
 into the reforge's, which `craft4.json` already holds; re-aimed at the disenchant, it dies on `prof12_client`.
 
 Why no test saw it: the limit was pinned on the Worker and the lines on the page, never on one character; five tests
 certified a Master's figures the Worker never pays.
 
-Pins: `test/net/fb1018b_craftlimit.test.js` (13; AUDIT FB1018b L5-6 to L5-8: the Firmament's percent at the fire,
+Pins: `test/net/fb1018f_craftlimit.test.js` (13; AUDIT FB1018f L5-6 to L5-8: the Firmament's percent at the fire,
 alchemy, enchanting, the works and the held lines; the "At most" rooms between an act's XP and its first's 500; the rows
 in German and Russian). PIN MOVED: `fb1015f_firstcraft`, `craft1_chain`, `prof9_client`, `prof12_client`;
-`craft3_five`'s two bind pins (L5-1). Mutants: `tools/mutants/fb1018b_craftlimit.json` (79, all dead); 20 older records
+`craft3_five`'s two bind pins (L5-1). Mutants: `tools/mutants/fb1018f_craftlimit.json` (79, all dead); 20 older records
 re-aimed by content, all dead.
 
 ## T6's other two: the sea off Tlactrn Manor - WOD-SEA-TEST fixed; Tunmont's docks - not found
@@ -433,15 +433,15 @@ instances, the type the arm skips: every one of its 227,938 (rocks 209,436, shri
 How many of them named a sea pixel was not counted: the WOODS and MAPS data are ARENA2's, not in the tree. Online every
 client builds the same pick, so the room's world moves together with the release. The account service's camp claims
 (`seatHolding.js` claimBounty, `seatInfluence.js` claimOrcCamp) take a WoD camp's site id and read only its form and
-pixel (AUDIT FB1018b L4-4) - they list no site, so a camp the pick no longer stands is one no client clears, and a
+pixel (AUDIT FB1018f L4-4) - they list no site, so a camp the pick no longer stands is one no client clears, and a
 modified client's claim is bounded as before. THE FOUR HOSTS: `world.js` through its streaming build (`pixelBuild.js`,
 no bootWorld line); `exterior.js` stands only Privateer's Hold's camp, no pick; `worldModes.js` and `dungeonContext.js`
-build no WoD site. `03-World/World-Of-Daggerfall.md` step 2 names the departure. Pins: `test/world/worldOfDaggerfall/fb1018b_wodsea.test.js` (3; one is data evidence and passes
+build no WoD site. `03-World/World-Of-Daggerfall.md` step 2 names the departure. Pins: `test/world/worldOfDaggerfall/fb1018f_wodsea.test.js` (3; one is data evidence and passes
 on either code). PIN MOVED: `test/world/terrain/wod2_loader.test.js`'s sea-arm test ("the sea arm is dead code") and its
 host wiring line; `tools/mutants/wod2.json`'s record that held the host to the location's region is re-aimed as the old
-read; AUDIT FB1018b L4-3: `test/systems/flow2_fast_tests.test.js`'s sea tiles named the dead field, so the pixel walk's
+read; AUDIT FB1018f L4-3: `test/systems/flow2_fast_tests.test.js`'s sea tiles named the dead field, so the pixel walk's
 sea arm was never compared with the scan's - they name the pixel's region now. Mutants:
-`tools/mutants/fb1018b_wodsea.json` (8: 7 dead, 1 equivalent as recorded).
+`tools/mutants/fb1018f_wodsea.json` (8: 7 dead, 1 equivalent as recorded).
 
 **Tunmont's docks.** Tunmont's grid has no dock blocks, so the railed pier is our own QUAYS jetty (`quayModel.js` railX).
 The real planQuay and buildQuayModel on made shores of 12, 60 and 195 m face every closed part out, and the jetty and

@@ -1230,10 +1230,10 @@ export function repairRarityBases(items) {
   return n;
 }
 
-/** AUDIT FB1018b L1-1: THE BASES repairRarityBases MOVES FROM, by group - the group's templates no slot takes (the Wand;
- *  pinned against the table, fb1018b_heldbase.test.js). */
+/** AUDIT FB1018f L1-1: THE BASES repairRarityBases MOVES FROM, by group - the group's templates no slot takes (the Wand;
+ *  pinned against the table, fb1018f_heldbase.test.js). */
 export const RARITY_HOMED_FROM = Object.freeze({ Jewellery: Object.freeze([140]) });
-/** AUDIT FB1018b L1-1 (decided, Mac: "Stop with the decisions for me"): WHETHER A LEDGER PRINT MOVED AS A LOAD'S REPAIR
+/** AUDIT FB1018f L1-1 (decided, Mac: "Stop with the decisions for me"): WHETHER A LEDGER PRINT MOVED AS A LOAD'S REPAIR
  *  MOVES IT - `was` and `now` prints (`template:material`, server-account/src/judge.js ledgerPrintOf); true when `now`
  *  is `was`'s base gone home (RARITY_HOMED_FROM to RARITY_HOME), its material kept. The realm ledger takes it as the same
  *  piece (ledger.js ledgerStep): a rolled Wand the service held through RARITY-WEAR - a guild vault's, a market's - comes

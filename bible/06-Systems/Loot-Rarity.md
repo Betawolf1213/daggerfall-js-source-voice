@@ -450,7 +450,7 @@ grades no piece it refuses (`rarityEligible`), the spoils' base is made again on
 the Amulet - the same weight and condition (`repairRarityBases`, `RARITY_HOME`). The Jewellery records still name no
 templates: a King's Mark lands on any wearable jewel. `test/systems/fb1001_wand.test.js`.
 
-## HELD-BASE (FIELD BUGS 2026-10-18b) - DFU'S OWN MAGIC, ON A PIECE A SLOT TAKES
+## HELD-BASE (FIELD BUGS 2026-10-18f) - DFU'S OWN MAGIC, ON A PIECE A SLOT TAKES
 
 RARITY-WEAR's last sentence, "DFU's own wands (MAGIC.DEF's, Use a cast) ... stay wands", was not yet true: DFU's
 CreateRegularMagicItem (ItemBuilder.cs:555-582, `loot.js` createRegularMagicItem) draws a magic item's base off the
@@ -463,9 +463,9 @@ Used payload - `enchantments.js` worksUnworn) has its base drawn again, as DFU d
 MAGIC_BASE_DRAWS (64) and then armour; a draw that was wearable is the draw it was, and a Used cast keeps any base (a
 Leaping Wand, a Silent Holy Tome). A piece already held keeps its base: a load that moved it would move its print
 (`templateIndex:material`, `server-account/src/judge.js` ledgerPrintOf), which the realm ledger reads as forged
-(`ledger.js` ledgerStep) - AUDIT FB1018b L1-1 took out the save repair this first carried; such pieces are not mended
+(`ledger.js` ledgerStep) - AUDIT FB1018f L1-1 took out the save repair this first carried; such pieces are not mended
 (decided - Mac, 2026-10-19: "Stop with the decisions for me"). RARITY-WEAR's own 140-to-133 repair above moved the print the same way for a Wand the service held
 through it (a vault's, a market's), and the next checkpoint read it as forged: the ledger now takes that one move as
 the piece (`lootRarity.js` rehomedPrint, RARITY_HOMED_FROM). A piece with a Used cast and a worn power takes a wearable
 base too. Over 600 days of a quality-10 guild shelf, 52 of 4,200 pieces were
-such duds before, none now. A departure (Port-Ledger A, HELD-BASE). `test/systems/loot/fb1018b_heldbase.test.js`.
+such duds before, none now. A departure (Port-Ledger A, HELD-BASE). `test/systems/loot/fb1018f_heldbase.test.js`.

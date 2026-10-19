@@ -394,10 +394,10 @@ test('THE ASCENT - HEIGHT (section 2): EVERY CALL SITE HANDS THE FEET - the rela
     'src/net/eliteGates/egBrain.js': ['egOnFight(view, b.x, b.z, 4, b.y)', 'egAtDoor(spec, b.x, b.z, b.y) && B.mem[b.sub]?.hereH === B.h', 'egOnArrive(spec, b.x, b.z, 1.5, b.y)) { m.hereH', 'egOnArrive(spec, b.x, b.z, 1.5, b.y)) { B.mem', 'egAtDoor(spec, p.x, p.z, p.y) || !fairOf', 'egAtDoor(spec, x, z, y)) { egFairCross', 'egOnArrive(spec, x, z, 2, y)',
       '[egKeepOnFight(view, b.x, b.z, 1, b.y)]', 'egStruckOff(view, body, p.x, p.y, p.z)', 'whole: true, y: ys?.[j]', "nm: 'Ashfall', y: m.y", "nm: 'Spark', y: o.y", "nm: 'Wellhead Vent', y: m.y", 'nm: E.name, y: e.y', "{ p, b, el, y }", 'egBears(H, egFeetY(spec, b.y))', 'egFightPieceAt(spec, fx, fz, 0, fy)', 'ringSpots(spec, L0.x, L0.z, 12, egWaveSize(F.n), rng, L0.y)',
       'return !Number.isFinite(oy) || egBears(oy, egFeetY(spec, b.y));', 'for (const a of reachable(b, spec.alcoves, false))', 'for (const q of reachable(b, spec.spots.hcache))', 'for (const q of reachable(b, spec.spots.lniche))', '(!egByHeight(spec) || egBears(o.y ?? 0, egFeetY(spec, b.y)))'],
-    // PIN MOVED (FIELD BUGS 2026-10-18b TURNED-BLOW): the strike rule a hit's object is judged by moved into egBodies.js egStruckOff
+    // PIN MOVED (FIELD BUGS 2026-10-18f TURNED-BLOW): the strike rule a hit's object is judged by moved into egBodies.js egStruckOff
     // (the one law every screen asks too) - egBlow hands it the striker's feet, and it reads the object's own
     'src/net/eliteGates/egBodies.js': ['egGroundAt(view, x, y, z, EG_STRIKE_PAD_M)', 'egGroundAt(view, b.x, egFeetY(view, b.y), b.z',
-      // AUDIT FB1018b L3-6: the storey a hit's body stands in moved into egStoreyApart (the one law every screen asks too) - egHitBody
+      // AUDIT FB1018f L3-6: the storey a hit's body stands in moved into egStoreyApart (the one law every screen asks too) - egHitBody
       // hands it the striker's feet and the body's, and egStrikeTurned the body's where its walk has carried it
       'egStoreyApart(F.view ?? spec, pose.x, pose.y, pose.z, bx, b.y, bz)', 'egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz)'],
     'src/net/eliteGates/egLegion.js': ['K.r, a.y);', 'egArchCut(spec, a.x, a.z, ex, ez, a.y)', 'egKeepOnFight(spec, mark.x, mark.z, 0.5, a.y)', 'egGroundAt(spec, a.x, egFeetY(spec, a.y), a.z, 0.5)', 'egOnFight(spec, n.m.x, n.m.z, -3, n.m.y)', "nm: 'Pyre', y: a.y", 'egAirKeep(view, gx, gz, a.y)', 'egAirNext(view, a.x, a.z, tx, tz, a.y)'],
@@ -406,7 +406,7 @@ test('THE ASCENT - HEIGHT (section 2): EVERY CALL SITE HANDS THE FEET - the rela
     'src/scenes/eliteGates/egClient.js': ['at.z, 0, at.y);', 'egAtDoor(spec, egLocalX(spec, at.sx), at.z, at.y)', '{ slot: egSlotAt(sx), sx, y, z }'],
     'src/scenes/eliteGates/egFight.js': ['onStorey(egBlowVerdict(bl, f[0], f[1], t, 400, me()), bl, f[0], fy, f[1], t)', 'onStorey(egBlowVerdict(bl, q[0], q[2], t, 400, sub), bl, q[0], q[1], q[2], t)', 'egBlowLandsOn(egFightView(spec), bl, x, y, z)', '(Number.isFinite(z.y) && !egBears(z.y, egFeetY(spec, fy)))', 'egRimCastsBack(F.zones, f[0], f[1], t, egFeetY(spec, fy))',
       'sh.by = Number.isFinite(bl.y) ? bl.y : NaN;   // THE ASCENT', "sh.style = TELEGRAPH_STYLE.weight; sh.by = Number.isFinite(bl.y) ? bl.y : NaN;", 'hv.by = sh.by;', 'sh.by = Number.isFinite(z.y) ? z.y : NaN;', 'sl.by = NaN;', '!!f && egOneStorey(st, bl.y) && bl.s.some', 'egStoreyY(egFightView(spec), f[0], fy, f[1])',
-      // AUDIT FB1018b lane L3: the screen's strike rule is handed my feet's height (TURNED-BLOW's turnStandIn)
+      // AUDIT FB1018f lane L3: the screen's strike rule is handed my feet's height (TURNED-BLOW's turnStandIn)
       'egStruckOff(view, b, at[0], at[1], at[2])', 'egStrikeTurned(view, b, at[0], at[1], at[2], now())'],
   };
   for (const [file, want] of Object.entries(sites)) {

@@ -5,7 +5,7 @@
     "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
     "new": "ocean: WOD_OCEAN_REGIONS.includes(tile.mapRegionIndex) && tile.worldHeight <= 2,",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+      "test/world/worldOfDaggerfall/fb1018f_wodsea.test.js"
     ],
     "why": "the mod's read again: a location's region, so the arm never fires and the sea stands its sites"
   },
@@ -15,7 +15,7 @@
     "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
     "new": "ocean: false,",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+      "test/world/worldOfDaggerfall/fb1018f_wodsea.test.js"
     ],
     "why": "no sea arm at all"
   },
@@ -25,7 +25,7 @@
     "old": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1) && tile.worldHeight <= 2,",
     "new": "ocean: WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1),",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+      "test/world/worldOfDaggerfall/fb1018f_wodsea.test.js"
     ],
     "why": "a coastal region's high ground refused as sea"
   },
@@ -35,7 +35,7 @@
     "old": "    let result = politicIndex === 64 ? 31 : politicIndex - 128;",
     "new": "    let result = politicIndex === 64 ? 0 : politicIndex - 128;",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js"
+      "test/world/worldOfDaggerfall/fb1018f_wodsea.test.js"
     ],
     "why": "the sea answers no ocean region, and the arm passes it"
   },
@@ -47,7 +47,7 @@
     "tests": [
       "test/systems/flow2_fast_tests.test.js"
     ],
-    "why": "AUDIT FB1018b L4-3: the pixel walk's sea arm against the verbatim scan - FLOW2's sea tiles named the dead field, so its sea was never sea"
+    "why": "AUDIT FB1018f L4-3: the pixel walk's sea arm against the verbatim scan - FLOW2's sea tiles named the dead field, so its sea was never sea"
   },
   {
     "name": "WOD-SEA-TEST-walk-sea-type0-placed",
@@ -57,7 +57,7 @@
     "tests": [
       "test/systems/flow2_fast_tests.test.js"
     ],
-    "why": "AUDIT FB1018b L4-3: a type 0 on the sea placed by the walk where the scan ends the call"
+    "why": "AUDIT FB1018f L4-3: a type 0 on the sea placed by the walk where the scan ends the call"
   },
   {
     "name": "WOD-SEA-TEST-scan-sea-arm-unread",
@@ -67,7 +67,7 @@
     "tests": [
       "test/systems/flow2_fast_tests.test.js"
     ],
-    "why": "AUDIT FB1018b L4-3: the verbatim scan's sea arm dropped - the walk is no longer its equal on the sea"
+    "why": "AUDIT FB1018f L4-3: the verbatim scan's sea arm dropped - the walk is no longer its equal on the sea"
   },
   {
     "name": "WOD-SEA-TEST-no-default",
@@ -75,10 +75,10 @@
     "old": "WOD_OCEAN_REGIONS.includes(tile.regionIndex ?? -1)",
     "new": "WOD_OCEAN_REGIONS.includes(tile.regionIndex)",
     "tests": [
-      "test/world/worldOfDaggerfall/fb1018b_wodsea.test.js",
+      "test/world/worldOfDaggerfall/fb1018f_wodsea.test.js",
       "test/systems/flow2_fast_tests.test.js"
     ],
     "equivalent": true,
-    "why": "AUDIT FB1018b L4-7: includes(undefined) is false over the five regions as -1 is; the default says that a tile with no region is no sea"
+    "why": "AUDIT FB1018f L4-7: includes(undefined) is false over the five regions as -1 is; the default says that a tile with no region is no sea"
   }
 ]

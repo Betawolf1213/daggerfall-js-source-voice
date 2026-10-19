@@ -273,7 +273,7 @@
     "tests": [
       "test/systems/tech1_runner.test.js"
     ],
-    "why": "PIN MOVED (AUDIT FB1018b L3-5): the Chop's share reads combat/healthShare.js healthShare, one line"
+    "why": "PIN MOVED (AUDIT FB1018f L3-5): the Chop's share reads combat/healthShare.js healthShare, one line"
   },
   {
     "name": "TECH1-a-miss-lands",

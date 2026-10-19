@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b DUNGEON-DIGITS - Discord #bug-reports, Aspidichelon, "Usable items hotkeys do not function in
+// FIELD BUGS 2026-10-18f DUNGEON-DIGITS - Discord #bug-reports, Aspidichelon, "Usable items hotkeys do not function in
 // dungeons": "1-9 works outside, but not in dungeons for some reason", over the use-magic-item list on the enhanced skin,
 // each row numbered on the right. The list's own digits were never the defect (ui/listPicker.js input picks
 // `scrollIndex + d - 1` in every host). The hotbar - the enhanced skin's default quickbar since HB-LYCFREE - takes the
@@ -22,7 +22,7 @@ import { createPotion } from '../../../src/systems/loot/loot.js';
 import { HEALING_RECIPE_KEY, MAGICKA_RECIPE_KEY } from '../../../src/systems/healingSupply.js';
 import { setHotbarSlot, hotbarEntryForItem, clearHotbarSlot, useQuickslot } from '../../../src/systems/quickslots.js';
 import { _resetForTests as resetPrefs } from '../../../src/systems/uiPrefs.js';
-import { attachTouch } from '../../../src/ui/touch/touch.js';   // AUDIT FB1018b L2-5: the doors a host hands its input hooks
+import { attachTouch } from '../../../src/ui/touch/touch.js';   // AUDIT FB1018f L2-5: the doors a host hands its input hooks
 import { attachGamepad } from '../../../src/ui/gamepadInput.js';
 
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
@@ -188,9 +188,9 @@ test('DUNGEON-DIGITS WHY OUTSIDE WORKED: the street\'s and a building\'s frames 
   assert.match(rd('src/scenes/dungeonContext.js'), /get overlayIsNative\(\) \{ return !!activeOverlay\?\.isChoiceWindow; \},/, 'the slot this test stands for: a native window is handed the raw code');
 }));
 
-// AUDIT FB1018b L2-5 / L2-6 - LAST in the file: they hand the page a host's input hooks (ui/input.js noteHostInput), and
+// AUDIT FB1018f L2-5 / L2-6 - LAST in the file: they hand the page a host's input hooks (ui/input.js noteHostInput), and
 // each lets them go (an object with no `paused` is no host) so nothing after reads them.
-test('AUDIT FB1018b L2-5 THE PAUSE AT THE PRESS: a window opened by one key and a digit before the next frame - the digit is the window\'s, asked of the host\'s own hooks (the ones it hands the finger), never the HUD\'s last frame of play, and so is a slot\'s mouse button; the window gone, a digit before the next frame is the bar\'s again (mutants: the keys reading the last frame\'s word; the mouse slot reading it; the touch door noting nothing)', () => withPage((doc) => {
+test('AUDIT FB1018f L2-5 THE PAUSE AT THE PRESS: a window opened by one key and a digit before the next frame - the digit is the window\'s, asked of the host\'s own hooks (the ones it hands the finger), never the HUD\'s last frame of play, and so is a slot\'s mouse button; the window gone, a digit before the next frame is the bar\'s again (mutants: the keys reading the last frame\'s word; the mouse slot reading it; the touch door noting nothing)', () => withPage((doc) => {
   const me = player();
   const [heal, mana] = me.items;
   const pressed = [];
@@ -229,7 +229,7 @@ test('AUDIT FB1018b L2-5 THE PAUSE AT THE PRESS: a window opened by one key and 
   } finally { clearHotbarSlot(0); attachTouch(null, {}); }
 }));
 
-test('AUDIT FB1018b L2-6 A WINDOW NO DUNGEON FRAME SEES: over ?world\'s dungeon arm a window in the street\'s slot (Recall\'s prompt) stands while drawFoes\' HUD frame says play (its own slot empty) - the bar stands down by the world host\'s hooks, which the pad\'s crossbar reads too; the hosts\' hooks, read (mutants: the pad door noting nothing; the bar reading the last frame\'s word)', () => withPage(() => {
+test('AUDIT FB1018f L2-6 A WINDOW NO DUNGEON FRAME SEES: over ?world\'s dungeon arm a window in the street\'s slot (Recall\'s prompt) stands while drawFoes\' HUD frame says play (its own slot empty) - the bar stands down by the world host\'s hooks, which the pad\'s crossbar reads too; the hosts\' hooks, read (mutants: the pad door noting nothing; the bar reading the last frame\'s word)', () => withPage(() => {
   const me = player();
   const [heal, mana] = me.items;
   const pressed = [];

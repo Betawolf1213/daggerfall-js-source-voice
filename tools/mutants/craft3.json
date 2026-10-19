@@ -107,7 +107,7 @@
     "tests": [
       "test/net/prof11_service.test.js"
     ],
-    "note": "AUDIT FB1018b L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
+    "note": "AUDIT FB1018f L5-1: re-aimed by content - the cap read in the statement (craftCapSql), no longer bound."
   },
   {
     "name": "CRAFT3-service-asked-unmapped",

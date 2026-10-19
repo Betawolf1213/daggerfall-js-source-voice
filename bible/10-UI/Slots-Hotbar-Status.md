@@ -378,7 +378,7 @@ save. A player who had chosen Diamond left no trace and moves to the hotbar with
 Pinned: `test/systems/hb_lycfree.test.js` (8). The diamond's own suites choose the diamond now that it is not the default
 (Testing.md's row names them).
 
-## DUNGEON-DIGITS - a dungeon window gets its digits (FIELD BUGS 2026-10-18b)
+## DUNGEON-DIGITS - a dungeon window gets its digits (FIELD BUGS 2026-10-18f)
 
 > "Usable items hotkeys do not function in dungeons. 1-9 works outside, but not in dungeons for some reason." -
 > Aspidichelon, #bug-reports, over the use-magic-item list (each row numbered on the right)
@@ -404,5 +404,5 @@ host. And the dungeon context's own drawHud reads its own slot alone (`cursorAct
 window standing over ?world's dungeon arm (Recall's prompt) leaves the bar its keys - not proven to meet a window that
 reads digits.
 
-Pinned: `test/ui/hud/fb1018b_dungeondigits.test.js` (3). Mutants: `tools/mutants/fb1018b_dungeondigits.json` (11, all
+Pinned: `test/ui/hud/fb1018f_dungeondigits.test.js` (3). Mutants: `tools/mutants/fb1018f_dungeondigits.json` (11, all
 dead).

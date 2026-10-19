@@ -214,7 +214,7 @@ export function rockMesh(id) {
   const [x0, x1, down, up, z0, z1] = RMBRP_ROCKS[id].map((v) => v * RMBRP_ROCK_SCALE[id]);
   return boulderMesh(x1 - x0, up, down, z1 - z0, Number(id), (x0 + x1) / 2, (z0 + z1) / 2);
 }
-/** ROCK-SMEAR (FIELD BUGS 2026-10-18b, æther: "Rock missing textures and clipping with the pole. In Ipsmoth."): the
+/** ROCK-SMEAR (FIELD BUGS 2026-10-18f, æther: "Rock missing textures and clipping with the pole. In Ipsmoth."): the
  *  boulder was drawn INSIDE OUT. Its faces took the normal their corners' order gave - 40 of its 48 (its sides and its
  *  underside) looking into the rock - and MeshBuilder winds a face to look along its normal, so under the world's
  *  back-face culling the near side of every rock was culled and the inside of its far side drawn: a hollow grey shell,

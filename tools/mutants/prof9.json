@@ -1344,7 +1344,7 @@
     "tests": [
       "test/systems/prof9_client.test.js"
     ],
-    "note": "CRAFT3: re-aimed by content. PIN MOVED (FIELD BUGS 2026-10-18b CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "CRAFT3: re-aimed by content. PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "AUDIT-PROF-541-K7-steps-unread",

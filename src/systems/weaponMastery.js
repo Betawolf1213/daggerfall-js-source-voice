@@ -39,7 +39,7 @@ import { registerWeaponBlowMod } from './entityMods.js';
 import { registerSwingPaceMod } from '../characters/weaponStates.js';
 import { swingFamily } from '../combat/swingLaw.js';   // AUDIT MARTIAL L2 F3: the swing's family, no record built
 import { techniqueFamily } from '../combat/technique/techniqueRoster.js';
-import { healthShare } from '../combat/healthShare.js';   // FIELD BUGS 2026-10-18b RELAY-SHARE: a body's share of its health, the one law
+import { healthShare } from '../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: a body's share of its health, the one law
 
 /** Each effective point of a weapon's climb past 100 is this much more of what it does (BAL9b's per point). */
 export const WEAPON_POTENCY_PER_POINT = SCHOOL_POTENCY_PER_POINT;
@@ -67,7 +67,7 @@ export function weaponClimb(entity, skill, { online = isOnlinePage() } = {}) {
 /** The struck foe's share of its health - null where this machine cannot know it: a body the relay runs, its health here
  *  a placeholder nothing empties (world/gate/gateBoss.js bossStandIn `relayHealth` - the Warden, his crystals and host,
  *  the Remnant, the Elite Gates' court, the sea serpent), with no word of its own heard. AUDIT MARTIAL L3 F2: read as
- *  full, the hammer took its x1.8 on every blow of a boss fight and the axe never its own. FIELD BUGS 2026-10-18b
+ *  full, the hammer took its x1.8 on every blow of a boss fight and the axe never its own. FIELD BUGS 2026-10-18f
  *  RELAY-SHARE: the one law (combat/healthShare.js) - such a body now reads the relay's own word of its health (its
  *  stand-in's owner's reader), so each half pays its own there too, and the mean only where no word is heard. */
 const shareOf = healthShare;
