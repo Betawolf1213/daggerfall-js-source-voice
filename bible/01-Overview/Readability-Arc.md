@@ -152,3 +152,35 @@ braces counted; a crowded file skipped by its line count. Six records of `tools/
 by content at the converted rows and the new walk, all dead. One was retired: `HOST-SPLIT-the-ceiling-counts-comments`
 mutated `codeLines`, which is gone - a syntax tree holds no comments, so there is nothing left for that mutant to
 break.
+
+## LEGIBLE 1b - Testing.md's file table closed (2026-10-19)
+
+The owner: *"Should we get rid of testing.md"*, then *"Do both"*.
+
+`Testing.md` was 5.7 MB, 99% of it one table: a row for every test file, with its test count, and one line with the
+suite's total. `test/bible/manifest.test.js` failed the suite unless every count and the total matched the tree, so
+every pull request that added a test edited the same line, and any two of them conflicted on it. 2,167 of the 3,407
+commits to main in the fortnight before touched the page.
+
+What a row said, its test file mostly says already: for half the rows, at least 80% of the row's words are in the file
+it describes, and the rest is paraphrase, dates and cross-references. Copying the rows into the files' header comments
+would have added 5.4 MB of mostly repeated prose to the tests, so the table was closed instead, whole:
+
+- **`09-Testing/Testing-Rows-2026-10-19.md`** holds the 3,557 rows as they stood, in their order, under their own
+  headings. It is a record: nothing adds a row, and `manifest.test.js` holds it at 3,557. It cannot be frozen byte
+  for byte, because its rows carry 55 cites into our code and 5 into `Port-Ledger.md`, which `npm run cites` keeps
+  true like any other page's.
+- **`Testing.md`** keeps its prose - how the suite runs, the two tiers of data, PY1 and EF1 - and says where the
+  table went. The suite counts itself: the runner reports what ran, and the landing page counts the declared tests
+  from the tree when it builds.
+- **`manifest.test.js`** holds three things now: test file names stay unique (the bible names a test by its file name
+  alone), `Testing.md` grows no table or total again, and the closed table keeps its 3,557 rows. Its second test, that
+  a row whose count moved names its newest pins, went with the counts it guarded.
+- **The pins that read the table** were kept, pointed where the text now stands. A slice's "records" pin that its
+  testing row exists (WW3, WEATHER2a-d, WIND3/4, HT2, TEX1, BA1, IF1, AUDIT-DW) reads the closed table; a pin that a
+  page may not teach a retired claim (AUDIT 39r, the lycanthropy timer, WORLD6b-iii's suppressed tick, ROAD-G's
+  struck rationale, D1-NEAR's California) reads `Testing.md` and the closed table together; `citedrift`'s two cites
+  read the closed table. AUDIT 58 kept its claims about Port-Status, a record of 2026-09-02, and dropped the two that
+  read the manifest's Suite line, which this slice retired on purpose.
+- `test/ui/enhanced/landing.test.js` held the landing page's test count equal to the Suite line; it holds it to an
+  independent walk of `test/` now.

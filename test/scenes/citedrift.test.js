@@ -735,7 +735,7 @@ const SOURCE_CITES = [
     EX, /if \(act === 'Escape' && pauseDoorReady\(\)\) \{ hudCtx\.togglePause\(\); return true; \}/],
   ['bible/01-Overview/audits/Audit-58.md', /`src\/scenes\/exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?` now/, EX, /setDefaultEnchantCtx/],
   ['bible/06-Systems/Systems-Arc.md', /`exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?`, `world\.js:(?:"[^"]+"(?:\.\."[^"]+")?|\d+(?:-\d+)?)`/, EX, /playerTicker\.advance\(60\);/],
-  ['bible/09-Testing/Testing.md', /keydown ladder \(exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/,
+  ['bible/09-Testing/Testing-Rows-2026-10-19.md', /keydown ladder \(exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\)/,
     EX, /^ {4}if \(e\.code === 'Escape'\) backButtonHeld = true;$/],
   ['bible/10-UI/UI-Arc.md', /exterior\.js:"([^"]+)"(?:\.\."([^"]+)")?\. It is the only window/, EX, /createSpellbookWindow\(\{/],
   // AUDIT QS6 F1, a fifth time and at a second door: this row names FIVE hosts
@@ -928,7 +928,7 @@ const LEDGER_CITES = [
   ['src/systems/passiveSpecials.js', [/ENCHANTING, WHOLE/]],
   ['test/tooling/faceuvresidue.test.js', [/FaceUVTool's 1,803-UV residual/]],
   ['test/tooling/probehygiene.test.js', [/THREE PROBES THE T2 SWEEP FOUND STALE/]],
-  ['bible/09-Testing/Testing.md', [/THREE PROBES THE T2 SWEEP FOUND STALE/,
+  ['bible/09-Testing/Testing-Rows-2026-10-19.md', [/THREE PROBES THE T2 SWEEP FOUND STALE/,
     /FaceUVTool's 1,803-UV residual/]],
   ['bible/01-Overview/handoffs/Port-Status-2026-09-02.md',
     [/THE KEYBINDING REGISTRY/, /THE KEYBINDING REGISTRY/, /VidFile: a MID-STREAM PALETTE/]],
