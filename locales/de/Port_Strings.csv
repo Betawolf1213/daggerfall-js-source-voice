@@ -1618,6 +1618,8 @@ eg.vote.respiteHow,"Eine Atempause hat ihr eigenes Wort: R oder /breach respite.
 eg.vote.respiteNone,"Gerade wird keine Atempause gefragt."
 eg.witness.watching,"Du siehst {who} zu - Gesundheit {pct} %."
 eg.witness.watchingName,"Du siehst {who} zu."
+features.banthaJungle.note,"Bantha, von Lainlyn bis Mournoth, wächst zu dichtem Dschungel - Baumriesen über dem Kopf, Palmen, Farne und breite Blätter unter den Füßen - unter einem feuchten Dunst, am dichtesten im Morgengrauen und im Regen. Aus behält es seine ursprünglichen Wälder."
+features.banthaJungle.title,"Dschungel von Bantha"
 features.blood.effect,"Wirkt sofort; wie viele Spuren bleiben, beim nächsten Laden des Spiels oder wenn du ein Verlies betrittst."
 features.blood.marks,"Spuren bleiben"
 features.blood.note,"Flecken bleiben auf Böden und Wänden, wo Blut landet. Ein großer Todesstoß verspritzt es weiter, und ein schwerer Treffer gegen dich sprenkelt ein paar Tropfen auf den Bildschirm. Der Regler bestimmt die Menge, von Leicht bis Schlachthaus; Aus behält den klassischen Spritzer, der verblasst."
