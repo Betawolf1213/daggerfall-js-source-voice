@@ -255,6 +255,7 @@ export const QUEST_CTX_CONTRACT = Object.freeze([
   'offerReward', 'onQuestEnded', 'onQuestStarted', 'onQuestlineOffer', 'ownMinutes', 'partySize', 'playSong',   // QL3: a quest's choice of gear, rolled - the host's window
   'playSound', 'playVideo', 'playerEntity', 'playerHasItem',
   'playerRaceName', 'questClockStepMax', 'questFoeInstances', 'questFoeKilled', 'questWhere',   // GUIDE4: the host's two questions for the lens's look
+  'questlineService',   // QL12: the account service's door for the questlines' claims - optional, the page's own by default
   'raiseTime', 'raisedSeconds', 'regionPriceAdjustment', 'releaseQuestItem',
   'relinkQuestTopics', 'removeItemFromPlayer', 'removeNpcQuestor',
   'removeProgressRumors', 'removeQuestInfoTopics', 'removeQuestRumors',
@@ -268,7 +269,7 @@ export const QUEST_CTX_REQUIRED = Object.freeze(['data']);
 /** Members a host may decline on purpose. `onQuestStarted` is an EXTRA
  *  listener beside the bridge's own one-time recording, and the shipping
  *  host declines it - so its absence is not worth a word. */
-export const QUEST_CTX_OPTIONAL_BY_DESIGN = Object.freeze(['onQuestStarted', 'hasQuestTopics']);   // QREPAIR: only a host with a topic tree can say whether a quest has its topics
+export const QUEST_CTX_OPTIONAL_BY_DESIGN = Object.freeze(['onQuestStarted', 'hasQuestTopics', 'onQuestlineOffer', 'questlineService']);   // QREPAIR: only a host with a topic tree can say whether a quest has its topics; QL3: a reward waiting is said in the host's HUD line whether or not a host listens; QL12: the service's door is the page's own (questlineHost.js) - a host hands one only to replace it (a test's fake)
 
 /** QUEST-SHELF: the bridge's own refusal beside the machine's ladder (machine.js shelveRefusal) - a raid the world runs
  *  (WA_RAID_QUESTS - the sea's own, ended by its fight). One word for the press and the button alike. */

@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Doar un Transmutator preface un metal în următ
 account.refusal.progressPlay,"Ai câștigat tot ce îți permite jocul de până acum. Continuă să joci și va reveni."
 account.refusal.progressSeat,"Doar personajul de pe tărâm pe care îl joci câștigă asta, iar acum îl are alt dispozitiv. Preia-l din nou aici ca să câștigi în continuare."
 account.refusal.protected,"Moderatorii nu pot fi reduși la tăcere."
+account.refusal.qlBody,"Pasul acesta al seriei de misiuni nu a putut fi revendicat."
+account.refusal.qlClosed,"Răsplățile seriilor de misiuni nu îți sunt disponibile acum."
 account.refusal.queue,"Mulți jucători se conectează deodată - ești la rând. Încearcă din nou peste câteva secunde."
 account.refusal.raiseLate,"Prea târziu - acea moarte rămâne acum definitivă."
 account.refusal.raiseNoLine,"Doar un personaj al unei case (Project Legacy) este păstrat pentru o Înviere."

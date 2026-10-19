@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Jeden kov v další mění jen Transmutátor - v
 account.refusal.progressPlay,"Získal jsi vše, co tvé dosavadní hraní dovoluje. Hraj dál a vrátí se to."
 account.refusal.progressSeat,"Tohle získává jen postava říše, kterou hraješ, a teď ji má jiné zařízení. Převezmi ji tady znovu a budeš získávat dál."
 account.refusal.protected,"Moderátory nelze ztlumit."
+account.refusal.qlBody,"Tento krok série úkolů se nepodařilo vyzvednout."
+account.refusal.qlClosed,"Odměny ze sérií úkolů pro tebe teď nejsou dostupné."
 account.refusal.queue,"Přihlašuje se mnoho hráčů najednou - jsi ve frontě. Zkus to za pár sekund."
 account.refusal.raiseLate,"Příliš pozdě - ta smrt už platí navždy."
 account.refusal.raiseNoLine,"Na Vzkříšení se čeká jen u postavy rodu (Project Legacy)."

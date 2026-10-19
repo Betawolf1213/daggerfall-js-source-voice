@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Solo un Trasmutatore trasforma un metallo nel su
 account.refusal.progressPlay,"Hai guadagnato tutto ciò che il tuo gioco finora consente. Continua a giocare e tornerà."
 account.refusal.progressSeat,"Solo il personaggio del reame con cui stai giocando guadagna questo, e ora lo ha un altro dispositivo. Riprendilo qui per continuare a guadagnare."
 account.refusal.protected,"I moderatori non possono essere silenziati."
+account.refusal.qlBody,"Non è stato possibile riscattare quel passo della catena di missioni."
+account.refusal.qlClosed,"Le ricompense delle catene di missioni non sono disponibili per te in questo momento."
 account.refusal.queue,"Molti giocatori stanno accedendo insieme - sei in coda. Riprova tra qualche secondo."
 account.refusal.raiseLate,"Troppo tardi: quella morte è ormai definitiva."
 account.refusal.raiseNoLine,"Solo un personaggio di una casata (Project Legacy) viene trattenuto per una Resurrezione."

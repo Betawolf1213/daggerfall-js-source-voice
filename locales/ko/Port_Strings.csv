@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"금속을 다음 금속으로 바꾸는 것은 �
 account.refusal.progressPlay,"지금까지 플레이한 만큼 얻을 수 있는 것은 모두 얻었습니다. 계속 플레이하면 다시 채워집니다."
 account.refusal.progressSeat,"지금 플레이 중인 왕국 캐릭터만 그것을 얻을 수 있는데, 지금은 다른 기기가 그 캐릭터를 쓰고 있습니다. 계속 얻으려면 여기서 다시 접속하세요."
 account.refusal.protected,"관리자는 채팅 금지할 수 없습니다."
+account.refusal.qlBody,"이 연계 퀘스트 단계를 받을 수 없습니다."
+account.refusal.qlClosed,"지금은 연계 퀘스트 보상을 이용할 수 없습니다."
 account.refusal.queue,"많은 플레이어가 동시에 로그인하고 있어 대기 중입니다. 몇 초 후 다시 시도하세요."
 account.refusal.raiseLate,"너무 늦었습니다 - 그 죽음은 이제 영원히 확정되었습니다."
 account.refusal.raiseNoLine,"가문(Project Legacy)의 캐릭터만 부활을 위해 보류됩니다."

@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Nur ein Transmutierer verwandelt ein Metall in d
 account.refusal.progressPlay,"Du hast alles verdient, was dein bisheriges Spiel erlaubt. Spiel weiter, dann kommt es zurück."
 account.refusal.progressSeat,"Das verdient nur der Reichscharakter, den du spielst, und ein anderes Gerät hat ihn gerade. Übernimm ihn hier wieder, um weiter zu verdienen."
 account.refusal.protected,"Moderatoren können nicht stummgeschaltet werden."
+account.refusal.qlBody,"Dieser Schritt der Questreihe konnte nicht eingelöst werden."
+account.refusal.qlClosed,"Die Belohnungen der Questreihen sind für dich gerade nicht verfügbar."
 account.refusal.queue,"Viele Spieler melden sich gerade gleichzeitig an - du stehst in der Warteschlange. Versuch es in ein paar Sekunden noch einmal."
 account.refusal.raiseLate,"Zu spät - dieser Tod steht jetzt für immer."
 account.refusal.raiseNoLine,"Nur eine Figur eines Hauses (Project Legacy) wird für eine Wiederbelebung gehalten."

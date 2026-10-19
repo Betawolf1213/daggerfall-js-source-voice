@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Seul un Transmutateur change un métal en le sui
 account.refusal.progressPlay,"Vous avez gagné tout ce que votre jeu jusqu’ici permet. Continuez à jouer et cela reviendra."
 account.refusal.progressSeat,"Seul le personnage du royaume que vous jouez gagne cela, et un autre appareil l’a pris. Reprenez-le ici pour continuer à gagner."
 account.refusal.protected,"Les modérateurs ne peuvent pas être réduits au silence."
+account.refusal.qlBody,"Cette étape de la chaîne de quêtes n’a pas pu être réclamée."
+account.refusal.qlClosed,"Les récompenses des chaînes de quêtes ne vous sont pas accessibles pour le moment."
 account.refusal.queue,"Beaucoup de joueurs se connectent en même temps - vous êtes dans la file. Réessayez dans quelques secondes."
 account.refusal.raiseLate,"Trop tard - cette mort est désormais définitive."
 account.refusal.raiseNoLine,"Seul un personnage d’une maison (Project Legacy) est retenu pour une Résurrection."

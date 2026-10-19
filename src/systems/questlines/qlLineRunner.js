@@ -69,9 +69,10 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     const rec = lines[c.line];
     if (!rec) return;
     const d = a?.ok ? a.data ?? {} : null;
-    // answered: an open written, an end witnessed (or one the service says it will never witness - a guest, a line it
-    // does not pay), and the pay told once
-    const answered = !!d && (c.phase === 'open' ? (d.opened || d.witnessed || d.why) : (d.witnessed || d.why));
+    // answered: an open written (or found written - a retried open whose first answer was lost reads `witnessed`, true or
+    // false), an end witnessed (or one the service says it will never witness - a guest, a line it does not pay), and
+    // the pay told once
+    const answered = !!d && (c.phase === 'open' ? (d.opened || typeof d.witnessed === 'boolean' || d.why) : (d.witnessed || d.why));
     if (answered) {
       pending = pending.filter((x) => x !== c);
       rec.claims[c.step] = c.phase === 'open' ? (rec.claims[c.step] ?? 'opened') : (d.witnessed ? 'witnessed' : `refused:${d.why}`);

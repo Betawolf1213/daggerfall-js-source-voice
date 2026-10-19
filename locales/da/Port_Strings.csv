@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Kun en Transmutator forvandler ét metal til det
 account.refusal.progressPlay,"Du har tjent alt, hvad dit spil indtil nu tillader. Bliv ved med at spille, så kommer det igen."
 account.refusal.progressSeat,"Kun den rigekarakter, du spiller, tjener det, og en anden enhed har den nu. Tag den op igen her for at tjene videre."
 account.refusal.protected,"Moderatorer kan ikke gøres tavse."
+account.refusal.qlBody,"Det trin i opgaveforløbet kunne ikke indløses."
+account.refusal.qlClosed,"Opgaveforløbenes belønninger er ikke tilgængelige for dig lige nu."
 account.refusal.queue,"Mange spillere logger ind på én gang - du står i kø. Prøv igen om et par sekunder."
 account.refusal.raiseLate,"For sent - den død står ved magt for altid nu."
 account.refusal.raiseNoLine,"Kun en figur fra et hus (Project Legacy) holdes for en Genopstandelse."

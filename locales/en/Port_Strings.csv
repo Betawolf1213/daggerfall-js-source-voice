@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Only a Transmuter turns one metal into the next 
 account.refusal.progressPlay,"You have earned all that your play so far allows. Keep playing and it comes back."
 account.refusal.progressSeat,"Only the realm character you are playing earns that, and another device has it now. Take it up again here to go on earning."
 account.refusal.protected,"Moderators cannot be muted."
+account.refusal.qlBody,"That questline step could not be claimed."
+account.refusal.qlClosed,"The questlines' rewards aren't available to you right now."
 account.refusal.queue,"Many players are signing in at once - you are in line. Try again in a few seconds."
 account.refusal.raiseLate,"Too late - that death stands for good now."
 account.refusal.raiseNoLine,"Only a character of a house (Project Legacy) is held for a Resurrect."

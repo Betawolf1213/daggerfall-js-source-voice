@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Hanya Transmutator yang mengubah satu logam menj
 account.refusal.progressPlay,"Kamu sudah mendapatkan semua yang diizinkan permainanmu sejauh ini. Terus bermain dan itu akan kembali."
 account.refusal.progressSeat,"Hanya karakter ranah yang sedang kamu mainkan yang mendapatkan itu, dan perangkat lain sedang memegangnya. Ambil alih lagi di sini untuk terus mendapatkannya."
 account.refusal.protected,"Moderator tidak bisa dibisukan."
+account.refusal.qlBody,"Langkah alur misi itu tidak dapat diklaim."
+account.refusal.qlClosed,"Hadiah alur misi sedang tidak tersedia untukmu saat ini."
 account.refusal.queue,"Banyak pemain sedang masuk bersamaan - kamu sedang mengantre. Coba lagi dalam beberapa detik."
 account.refusal.raiseLate,"Terlambat - kematian itu kini berlaku selamanya."
 account.refusal.raiseNoLine,"Hanya karakter dari sebuah wangsa (Project Legacy) yang ditahan untuk Kebangkitan."

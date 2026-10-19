@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Bare en Transmutator gjør ett metall om til det
 account.refusal.progressPlay,"Du har tjent alt spillet ditt så langt tillater. Fortsett å spille, så kommer det tilbake."
 account.refusal.progressSeat,"Bare rikekarakteren du spiller, tjener det, og en annen enhet har den nå. Ta den opp igjen her for å fortsette å tjene."
 account.refusal.protected,"Moderatorer kan ikke dempes."
+account.refusal.qlBody,"Det trinnet i oppdragsrekken kunne ikke løses inn."
+account.refusal.qlClosed,"Belønningene fra oppdragsrekkene er ikke tilgjengelige for deg akkurat nå."
 account.refusal.queue,"Mange spillere logger inn samtidig - du står i kø. Prøv igjen om noen sekunder."
 account.refusal.raiseLate,"For sent - den døden står for godt nå."
 account.refusal.raiseNoLine,"Bare en figur fra et hus (Project Legacy) holdes for en Gjenoppstandelse."

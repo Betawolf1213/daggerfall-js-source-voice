@@ -2769,6 +2769,16 @@
   "tr": "92b23ff5b7d1",
   "by": "claude-in-session"
  },
+ "account.refusal.qlBody": {
+  "en": "45bc8d7a3486",
+  "tr": "ad2ada288ff2",
+  "by": "claude-in-session"
+ },
+ "account.refusal.qlClosed": {
+  "en": "e6eecb70e3cf",
+  "tr": "8eb928023794",
+  "by": "claude-in-session"
+ },
  "account.refusal.queue": {
   "en": "e47dae0b7d71",
   "tr": "224a721ef337",

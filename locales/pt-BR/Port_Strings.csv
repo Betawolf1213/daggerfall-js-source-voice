@@ -553,6 +553,8 @@ account.refusal.profTransmuter,"Só um Transmutador transforma um metal no segui
 account.refusal.progressPlay,"Você ganhou tudo o que seu jogo até agora permite. Continue jogando e isso volta."
 account.refusal.progressSeat,"Só o personagem do reino que você está jogando ganha isso, e outro dispositivo está com ele agora. Retome-o aqui para continuar ganhando."
 account.refusal.protected,"Moderadores não podem ser silenciados."
+account.refusal.qlBody,"Não foi possível resgatar essa etapa da cadeia de missões."
+account.refusal.qlClosed,"As recompensas das cadeias de missões não estão disponíveis para você agora."
 account.refusal.queue,"Muitos jogadores estão entrando ao mesmo tempo - você está na fila. Tente de novo em alguns segundos."
 account.refusal.raiseLate,"Tarde demais - essa morte agora é definitiva."
 account.refusal.raiseNoLine,"Só um personagem de uma casa (Project Legacy) é mantido para uma Ressurreição."
