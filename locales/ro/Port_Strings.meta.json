@@ -2214,6 +2214,11 @@
   "tr": "d6b51a51b47d",
   "by": "claude-in-session"
  },
+ "account.refusal.noRelayKey": {
+  "en": "f30ce4c5cdb0",
+  "tr": "55c0ce197ad4",
+  "by": "claude-in-session"
+ },
  "account.refusal.noRentRoom": {
   "en": "673af4e8d3b3",
   "tr": "15f9c968e4f6",
@@ -8037,6 +8042,11 @@
  "eg.row.falls": {
   "en": "4b22cefe01d1",
   "tr": "20a812ad5708",
+  "by": "claude-in-session"
+ },
+ "eg.say.perches": {
+  "en": "419f5f081d80",
+  "tr": "edb5c2624623",
   "by": "claude-in-session"
  },
  "eg.touch.ping": {
@@ -26022,6 +26032,21 @@
  "wagon.upkeep.boons.rickety": {
   "en": "8dcc1fe1e4b7",
   "tr": "26514505d2b5",
+  "by": "claude-in-session"
+ },
+ "wild.death.burnt": {
+  "en": "bc8b28fb275b",
+  "tr": "b0c24d3356cd",
+  "by": "claude-in-session"
+ },
+ "wild.death.burntLate": {
+  "en": "22380c1ebf90",
+  "tr": "f1bd35392407",
+  "by": "claude-in-session"
+ },
+ "wild.death.letters": {
+  "en": "83c43a6db2b0",
+  "tr": "9898f244fec5",
   "by": "claude-in-session"
  },
  "wild.escrow.collectLate": {

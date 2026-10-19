@@ -191,7 +191,7 @@ row names its town by map id (`market_listings.vendor_map`) and no pixel, and a 
 
 - **The key is the town's unsigned map id** - the seats', the homes', the stalls' and the patrons' own. The law's lines
   (`net/townEconLaw.js`: TOWN_ECON_SOURCES, _WEIGHTS, _CAPS, _DECAY, _DAYS, _HALF, `townActivity`, `townPlayersShare`, the
-  report) are read by both ends; the service is `server-account/src/townEcon.js` (acct155, migration 0131).
+  report) are read by both ends; the service is `server-account/src/townEcon.js` (acct156, migration 0132; acct155 and 0131 until GRANT2 took them on main).
 - **The town registry** (`POST /v1/towns/witness { town: { map, px, py, region, location } }`). The service learns which
   town stands at a pixel, and which map id a raid's `region:location` names, from the clients' word, agreed: the kind
   `town` of `world_witness` (Seats-Arc 3.2), three accounts a week registered giving the same report confirm it

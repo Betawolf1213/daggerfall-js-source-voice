@@ -52,7 +52,7 @@
   },
   {
     "name": "TOWNECON-AUDIT2-REC9-pixel-not-unique",
-    "file": "server-account/migrations/0131_town_econ.sql",
+    "file": "server-account/migrations/0132_town_econ.sql",
     "old": "CREATE UNIQUE INDEX IF NOT EXISTS idx_town_econ_towns_pixel ON town_econ_towns (px, py);",
     "new": "CREATE INDEX IF NOT EXISTS idx_town_econ_towns_pixel ON town_econ_towns (px, py);",
     "tests": [
@@ -62,7 +62,7 @@
   },
   {
     "name": "TOWNECON-AUDIT2-REC9-place-not-unique",
-    "file": "server-account/migrations/0131_town_econ.sql",
+    "file": "server-account/migrations/0132_town_econ.sql",
     "old": "CREATE UNIQUE INDEX IF NOT EXISTS idx_town_econ_towns_place ON town_econ_towns (region, location);",
     "new": "CREATE INDEX IF NOT EXISTS idx_town_econ_towns_place ON town_econ_towns (region, location);",
     "tests": [
