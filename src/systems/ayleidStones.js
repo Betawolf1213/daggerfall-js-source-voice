@@ -55,9 +55,9 @@ registerUniqueFind({ id: 'varla-stone', minTier: VARLA_STONE_TIER, weight: 1, la
 /** The stones' words. */
 export const STONE_TEXT = Object.freeze({
   welkynd: 'The Welkynd Stone flares blue and is spent. Your magicka is full.',
-  welkyndFull: 'Your magicka is already full - the stone would be wasted.',
+  welkyndFull: 'Your magicka is already full. The stone would be wasted.',
   varla: (n) => `The Varla Stone flares and is spent. ${n === 1 ? 'An enchanted piece you wear is' : `${n} enchanted pieces you wear are`} whole again.`,
-  varlaWhole: 'Every enchanted piece you wear is already whole - the stone would be wasted.',
+  varlaWhole: 'Every enchanted piece you wear is already whole. The stone would be wasted.',
   nobody: 'Nothing happens.',
 });
 /** One off a stack, or the stone off the list. */
