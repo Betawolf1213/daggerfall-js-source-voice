@@ -360,7 +360,10 @@ ROSE-SEEN (`01-Overview/bugs/Field-Bugs-2026-10-15e.md`): a follow-up blow -
 Open Hand's second, Many Endings' echo - runs no formula, so the seam
 never heard it and the Rose looked like nothing. It raises its own
 number through `showFollowUp`, tagged with the power's name, under the
-same enhanced-only gate.
+same enhanced-only gate. CHAIN-SEEN (FIELD BUGS 2026-10-19b,
+`06-Systems/Loot-Arc.md` LOOT5): a blow's reach on another foe -
+Chain Lightning's arc, Earthshaker's quake, Dragonfire's burst - ran
+no formula either, and said nothing; each raises its number so now.
 
 
 
