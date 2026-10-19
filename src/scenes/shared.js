@@ -16,6 +16,7 @@ import { SkyRenderer, buildDaySkyPanorama, buildNightSkyPanorama, buildFallbackS
 import { SEASON } from '../world/climateSwaps.js';
 import { skyFrameForTime, isNight, setLightCurve, daylightScale } from '../world/worldClock.js';   // DS1: isNight for the mod's moonlight, setLightCurve for the mod's own curve; CLK3 review: daylightScale for its moonlight's ramp
 import { createWindModel } from '../systems/wind/wind.js';   // WIND1; WEATHER2b: the lead is the front's own (leadMinutes)
+import { systemWordOf } from '../systems/weather/weatherSim.js';   // AUDIT PRECIP FALL-2: a weather is its system on the precipitation law's lane
 import { releaseUnloadGuard } from '../systems/unloadGuard.js';   // MAC-L3: a door the game opened is not a door to warn about
 import { EnhancedSkyRenderer, skyState, easeWeather, weatherRow, CLOUD_SHADOW, moonlightTerm, WEATHER_EASE_MINUTES, WIND_SECONDS_PER_MINUTE } from '../render/enhancedSky.js';   // ES1: the enhanced sky, behind the skin; EV5: its moons light the world
 import { meterFor } from '../render/perfMeter.js';   // VC6d: `?perf=zones` - the sky's own span
@@ -599,7 +600,7 @@ export function createSkyController(gl, params) {
         // EVENT1: under the dread the SKY wears the storm (DREAD_SKY_WORD) - its row, its clouds, the mod's preset - and
         // walks back to the sim's own word as the dread lifts; the wind below keeps the sim's word, so the grass, the
         // rain and the wind's voice are the weather's as they were
-        const skyWord = dreadW > 0 ? DREAD_SKY_WORD : weatherName;
+        const skyWord = dreadW > 0 ? DREAD_SKY_WORD : systemWordOf(weatherName);   // AUDIT PRECIP FALL-2: the deck is its system's - a storm falling as snow is a storm's sky (and the mod's preset, its strikes)
         const want = weatherRow(skyWord);
         // CLK1 (2026-09-08, Mac: "in sync with the world clock"): ONE
         // CLOCK. The presentation walks on GAME MINUTES - the host's
@@ -636,7 +637,7 @@ export function createSkyController(gl, params) {
         // gets up first and the sky darkens behind it - the storm
         // rolling in. `dt` is stretched or shrunk to make the ease's
         // own walk land on the front's clock.
-        windModel.tick(extra?.classicMinutes ?? 0, weatherName, extra?.violence ?? weatherName, extra?.approach ?? 0);   // WEATHER2a: the violence word rides beside the worn one; WEATHER3c: the storms drawing near
+        windModel.tick(extra?.classicMinutes ?? 0, systemWordOf(weatherName), extra?.violence ?? weatherName, extra?.approach ?? 0);   // WEATHER2a: the violence word rides beside the worn one; WEATHER3c: the storms drawing near; AUDIT PRECIP FALL-2: a front is a new system, never its phase turning
         // WIND2 (AUDIT 56): the ease stretches for the WHOLE lead, from
         // the change itself. WIND1 stretched it only while the front's
         // factor was strictly between 0 and 1 - and at the change the
@@ -683,7 +684,7 @@ export function createSkyController(gl, params) {
           // the MOD's horizon; and the ground's deck takes their shadow.
           if (clouds) {
             const cb = dreadW > 0 ? { word: skyWord, row: weatherRowNow } : cloudBaseOf(extra, weatherName, weatherRowNow);   // WEATHER3c; EVENT1: the dread's deck over the map's clear air
-            clouds.setState(cloudsStateUnderMod(st, dynamicMoons, { minuteOfDay, weather: cb.word, classicMinutes: nowMinutes, skyMinutes: skyNow, seconds, drift: driftXZ, row: cb.row }),
+            clouds.setState(cloudsStateUnderMod(st, dynamicMoons, { minuteOfDay, weather: cb.word, classicMinutes: nowMinutes, skyMinutes: skyNow, seconds, drift: driftXZ, row: cb.row, skyRow: weatherRowNow }),   // SKY-HZN: the far fade the sky's
               cb.row, cb.word, easeDt, driftXZ, (extra?.flash ?? 0) + dreadGlow, extra?.pos ?? null, extra?.cells ?? null);   // WEATHER2c: the field's cells; EVENT1: the red strikes' glow
             if (clouds.shadow) Object.assign(dynamicDeck, clouds.shadow);
           }
@@ -707,7 +708,9 @@ export function createSkyController(gl, params) {
           // far cumulus is lit white while the storm overhead is dark by its own grey. The dome, the fog and the sun
           // keep the worn word, eased on the front. Off the lane the clouds take the dome's own state, as before.
           const cb = dreadW > 0 ? { word: skyWord, row: weatherRowNow } : cloudBaseOf(extra, weatherName, weatherRowNow);   // EVENT1: as above
-          const cloudSky = cb.row === weatherRowNow ? enhancedSky.state : skyState({ minuteOfDay, weather: cb.word, classicMinutes: extra?.classicMinutes ?? 0, skyMinutes: skyNow, seconds, drift: driftXZ, row: cb.row });
+          // SKY-HZN: the clear air's colours, but the far fade is the dome's own horizon - the colour the fog and the dome
+          // wear at the horizon, greyed by the worn row (the base's ungreyed palette painted the lid's bottom rows bright)
+          const cloudSky = cb.row === weatherRowNow ? enhancedSky.state : { ...skyState({ minuteOfDay, weather: cb.word, classicMinutes: extra?.classicMinutes ?? 0, skyMinutes: skyNow, seconds, drift: driftXZ, row: cb.row }), horizon: enhancedSky.state.horizon };
           clouds.setState(cloudSky, cb.row, cb.word, easeDt, driftXZ, (extra?.flash ?? 0) + dreadGlow, extra?.pos ?? null, extra?.cells ?? null);   // WEATHER2c: the field's cells; EVENT1: the red strikes' glow
         }
         // VC4: the ground's deck carries the slab's own shadow map and its square

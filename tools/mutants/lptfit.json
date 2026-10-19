@@ -86,8 +86,8 @@
   {
     "name": "LPTFIT-the-host-fits-the-wild-alone",
     "file": "src/scenes/pixelBuild.js",
-    "old": "          if (fit) fit[i] = lptFitCap(lptPathMask, vergeNet, px, py, c[0], c[2], crown, v);",
-    "new": "          if (fit) fit[i] = wild[i] ? lptFitCap(lptPathMask, vergeNet, px, py, c[0], c[2], crown, v) : Infinity;",
+    "old": "          if (fit) fit[i] = lptFitCap(lptPathMask, g.vergeNet, g.px, g.py, c[0], c[2], crown, v);",
+    "new": "          if (fit) fit[i] = wild[i] ? lptFitCap(lptPathMask, g.vergeNet, g.px, g.py, c[0], c[2], crown, v) : Infinity;",
     "tests": ["test/world/road/lptfit.test.js"]
   },
   {

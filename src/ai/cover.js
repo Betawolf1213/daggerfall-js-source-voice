@@ -123,13 +123,16 @@ export function createCoverIndex({ enabled = coverSwitchOn } = {}) {
   const sets = new Map();
   let stamp = 0;
 
+  /** A set of no proxies yet, `t` its frame's translation - in the index once placed (add, place). */
+  const fresh = (t) => ({ items: [], t: t || (() => ZERO3), grid: new Map(), wide: new Map(), wideR: 0, min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] });
   /** Add proxies to the set `key` (appended to what it holds); `t` its frame's translation. */
   function add(key, items, t = null) {
     let set = sets.get(key);
-    if (!set) {
-      set = { items: [], t: t || (() => ZERO3), grid: new Map(), wide: new Map(), wideR: 0, min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] };
-      sets.set(key, set);
-    }
+    if (!set) sets.set(key, (set = fresh(t)));
+    return fill(set, items);
+  }
+  /** Proxies into a set, placed or not. */
+  function fill(set, items) {
     for (const it of items) {
       if (!(it?.r > 0) || !(it.h > 0) || !it.c || it.c.noCover) continue;   // AUDIT TACT B3: a person is no cover
       it._mark = 0;
@@ -159,6 +162,10 @@ export function createCoverIndex({ enabled = coverSwitchOn } = {}) {
   }
 
   function remove(key) { sets.delete(key); }
+  /** AUDIT PRECIP HOST-7: a set built aside (`staged`, filled a slice at a time with `fill`) put in for `key` in one
+   *  step, whatever it held before - a pixel re-skinned in place trades its cover as it trades its flats, never a frame
+   *  with neither or both. */
+  function place(key, set) { sets.set(key, set); }
 
   /** The nearest cover along the unit ray `dir` from `origin` within `maxDist`; Infinity for none. `sight`: the ray
    *  is a line of sight to a target at `maxDist`, which a proxy holding that end does not hide (AUDIT TACT B2). */
@@ -209,7 +216,9 @@ export function createCoverIndex({ enabled = coverSwitchOn } = {}) {
   }
 
   return {
-    add, remove, hit,
+    add, remove, hit, fill, place,
+    /** AUDIT PRECIP HOST-7: a set of no proxies, outside the index until it is placed. */
+    staged: (t = null) => fresh(t),
     /** Is cover read at all (the Enhanced AI switch). */
     on: () => !!enabled(),
     /** How many proxies, over every set (tests, probes). */

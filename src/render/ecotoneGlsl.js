@@ -21,8 +21,12 @@ const f = (v) => (Number.isInteger(v) ? `${v}.0` : `${v}`);
 
 /**
  * The chunk, for a program whose texels decode through `decode` (the lane's elDecode; '' for the classic program's
- * display values). Declares the uniforms and `vec3 ecotone(vec3 own, vec2 local, vec3 tl, vec2 gx, vec2 gy)`: `own` the
- * pixel's own decoded texel, `local` its pixel-local metres (vLocalXZ), `tl` its (tuv, layer), `gx`/`gy` its gradient.
+ * display values). Declares the uniforms, `vec4 ecoWeights(vec2 local)` (the shares of the pixel's own set and its
+ * neighbours' at pixel-local metres - main asks it once; the pixel's own whole where uEcoOrigin.z says no neighbour's
+ * set differs) and
+ * `vec3 ecotone(vec3 own, vec4 w, vec3 tl, vec2 gx, vec2 gy)`: `own` the pixel's own decoded texel, `w` those weights
+ * (AUDIT PRECIP GROUND-6: the snow's winter texel crosses the border by the same, render/snowCoverGlsl.js), `tl` its
+ * (tuv, layer), `gx`/`gy` its gradient.
  * @param {string} decode
  */
 export function ecotoneGlsl(decode = '') {
@@ -64,6 +68,7 @@ void ecoAdd(inout vec4 w, int slot, float v) {
 // the shares of the pixel's own set and of uEcoArr1-3 at a fragment (x own; summing to 1) - PRECIP4's winter texel
 // (render/snowCoverGlsl.js) crosses the border by the same weights
 vec4 ecoWeights(vec2 local) {
+  if (uEcoOrigin.z == 0) return vec4(1.0, 0.0, 0.0, 0.0);   // every neighbour wears the pixel's own set
   float sx = local.x < 409.6 ? -1.0 : 1.0, sz = local.y < 409.6 ? -1.0 : 1.0;
   float ux = sx < 0.0 ? local.x : local.x - 819.2, uz = sz < 0.0 ? local.y : local.y - 819.2;
   // the three neighbours of the nearer corner, and which of the two seams can move a weight (world/ecotone.js
@@ -81,9 +86,7 @@ vec4 ecoWeights(vec2 local) {
   ecoAdd(w, nd, (1.0 - ox) * (1.0 - oz));
   return w;
 }
-vec3 ecotone(vec3 own, vec2 local, vec3 tl, vec2 gx, vec2 gy) {
-  if (uEcoOrigin.z == 0) return own;
-  vec4 w = ecoWeights(local);
+vec3 ecotone(vec3 own, vec4 w, vec3 tl, vec2 gx, vec2 gy) {
   if (w.x >= 1.0) return own;
   vec3 c = own * w.x;
   if (w.y > 0.0) c += w.y * ${decode}(textureGrad(uEcoArr1, tl, gx, gy).rgb);

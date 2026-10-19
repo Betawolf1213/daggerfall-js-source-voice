@@ -146,7 +146,8 @@ test('A1: both hosts take the season from the clock, with ?season demoted to a p
     assert.doesNotMatch(text, /const season = /, `${host}: the season is frozen again`);
     // PlayerFootsteps (:107, :122-133) re-reads SeasonValue every
     // frame and re-picks the set; the snow crunch is not a boot value.
-    assert.match(text, /winter: season === SEASON\.Winter/,
+    // AUDIT PRECIP (PIN MOVED): the world host asks the snow under the feet on the snow lane - the season's winter off it
+    assert.match(text, /winter: (?:snowCover\.winterAt\(player\.pos, )?season === SEASON\.Winter/,
       `${host}: the footstep set lost its winter arm`);
     // SetSunlightScale (WeatherManager.cs:316-319).
     assert.match(text, /weatherSun = weatherSunlightScale\(weather, season === SEASON\.Winter\)/,
@@ -392,9 +393,10 @@ test('R1 CLOSEOUT: the frame cannot poll the straightened season away while the 
   const world = hostText('src/scenes/world.js');
   const build = world.slice(world.indexOf('async function buildPixelNow'));
   // PIN MOVED (PRECIP4, 2026-10-19): the pixel's season is read there too - off the host's, or the snow's on the lane
-  assert.ok(build.indexOf('await terrainGen.generate') < build.indexOf('snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season'),
+  // (AUDIT PRECIP HOST-6, PIN MOVED: through the build's recorder, which keeps it)
+  assert.ok(build.indexOf('await terrainGen.generate') < build.indexOf('snowRec ? snowRec.pixel(groundMid - SEA_LEVEL_M, host.season) : host.season'),
     'the season is read after the worker yields - the window is real');
-  assert.ok(build.indexOf('snowCover.seasonOfPixel(') < build.indexOf('getTerrainGroundArchive(climate, pixelSeason)'), 'and the ground archive after it');
+  assert.ok(build.indexOf('snowRec.pixel(') < build.indexOf('getTerrainGroundArchive(climate, pixelSeason)'), 'and the ground archive after it');
 
   // THE LATCH. The frame's poll is the first thing tickSeason answers
   // to, the teleport raises it beside the straightening, and it comes

@@ -922,7 +922,7 @@
   {
     "name": "LPT1-every-flat-wild",
     "file": "src/scenes/pixelBuild.js",
-    "old": "wild[i] = wildFlats.has(`${k}#${i}`) ? 1 : 0;",
+    "old": "wild[i] = g.wild.has(`${k}#${i}`) ? 1 : 0;",
     "new": "wild[i] = 0;",
     "tests": [
       "test/systems/lpt1_lowpolytrees.test.js"
@@ -931,7 +931,7 @@
   {
     "name": "LPT1-flats-unscaled",
     "file": "src/scenes/pixelBuild.js",
-    "old": "          const v = lptVariety(px, py, c[0], c[2], !wild[i]).scale;",
+    "old": "          const v = lptVariety(g.px, g.py, c[0], c[2], !wild[i]).scale;",
     "new": "          const v = LPT_SCALE_MAX;",
     "tests": [
       "test/systems/lpt1_lowpolytrees.test.js"
@@ -987,8 +987,8 @@
   {
     "name": "LPT1-sway-of-the-tree",
     "file": "src/scenes/pixelBuild.js",
-    "old": "        batch.sway = floraSwayOf(archive, natureSet, plain.h);\n        _lptSway",
-    "new": "        batch.sway = floraSwayOf(archive, natureSet, far.size.h);\n        _lptSway",
+    "old": "        batch.sway = floraSwayOf(archive, g.natureSet, plain.h);\n        _lptSway",
+    "new": "        batch.sway = floraSwayOf(archive, g.natureSet, far.size.h);\n        _lptSway",
     "tests": [
       "test/systems/lpt1_lowpolytrees.test.js"
     ]

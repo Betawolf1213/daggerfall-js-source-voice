@@ -413,6 +413,9 @@ export class PrecipitationRenderer {
      *  null draws the mode as it is (the classic lane, a test). A wet mode draws its drops at (1 - share) of the
      *  intensity and its flakes at the share, one beside the other (MIX_SHIFT): sleet, wet snow, the snow line. */
     this.snowShare = null;
+    /** AUDIT PRECIP FALL-6/7: the flakes' offset while drawFall draws them, and the array their travel is handed in */
+    this._shift = null;
+    this._windUp = new Float32Array(2);
     /** RAIN-CLOCK: the host time (s) the fall's clock counts from, and of
      *  the last frame it drew - null until the first draw */
     this._t0 = null;
@@ -519,7 +522,7 @@ export class PrecipitationRenderer {
     const gl = this.gl;
     if (!this.pixelProgram) this._buildPixelSnow();
     const full = Math.round(LAB_COUNTS.snow * Math.min(1, Math.max(0, this.intensity)));
-    const count = this.countCap ? Math.min(full, this.countCap) : full;
+    const count = this.countCap != null ? Math.min(full, this.countCap) : full;
     if (count <= 0) return;
     if (!this._vp) this._vp = new Float32Array(16);
     mat4Multiply(this._vp, proj, view);
@@ -531,7 +534,7 @@ export class PrecipitationRenderer {
     gl.uniform1f(P.uBox, LAB_BOX);
     gl.uniform1f(P.uFall, LAB_FALL.snow);
     gl.uniform2fv(P.uWindV, this.windV);
-    gl.uniform2fv(P.uWindOff, this.windOff);
+    gl.uniform2fv(P.uWindOff, this.windUpload());   // AUDIT PRECIP FALL-6/7: the flakes aside while drawFall draws them
     gl.uniform1f(P.uProjY, proj[5]);
     gl.uniform1f(P.uAspect, proj[5] / proj[0]);
     gl.uniform1f(P.uMinSize, this.pixelSnow.minParticleSize);
@@ -552,20 +555,34 @@ export class PrecipitationRenderer {
 
   /** PRECIP1: THE FALL AT THE AIR'S SNOW SHARE (`snowShare`) - the hosts' draw. On the enhanced lane a wet mode is one
    *  fall in two looks: the rain's (a storm's, under a storm) at what is not snow, the lab's flakes at what is, the flakes'
-   *  volume carried aside (MIX_SHIFT, on the wind's own offset) so a flake never falls in a drop's column - sleet, wet
-   *  snow, the snow line. With no share, off the lane, or a dry mode: `draw` as it is. */
+   *  volume carried aside (MIX_SHIFT, added to the wind's travel as it is handed over - `_shift`) so a flake never falls
+   *  in a drop's column - sleet, wet snow, the snow line. AUDIT PRECIP FALL-6: aside at EVERY share - one field of
+   *  flakes whatever falls beside them, so the air crossing the freezing point moves no flake (only the drops thin out);
+   *  FALL-7: the wind's own travel is never swapped, so the clock's re-origin always lands on it, and nothing is made a
+   *  frame; FALL-8: a ?rain=<n> cap is the whole fall's, split by the share. With no share, off the lane, or a dry mode:
+   *  `draw` as it is. */
   drawFall(mode, proj, view, camPos, camRight, timeSeconds) {
     const s = this.snowShare;
     if (!this.enhanced || s == null || !(mode === 'rain' || mode === 'storm' || mode === 'snow')) return this.draw(mode, proj, view, camPos, camRight, timeSeconds);
-    const all = this.intensity, share = Math.min(1, Math.max(0, s)), drops = mode === 'snow' ? 'rain' : mode, wind = this.windOff;
+    const all = this.intensity, cap = this.countCap, share = Math.min(1, Math.max(0, s)), drops = mode === 'snow' ? 'rain' : mode;
+    const dropCap = cap == null ? null : Math.round(cap * (1 - share));
     try {
-      if (share < 1) { this.intensity = all * (1 - share); this.draw(drops, proj, view, camPos, camRight, timeSeconds); }
+      if (share < 1) { this.intensity = all * (1 - share); this.countCap = dropCap; this.draw(drops, proj, view, camPos, camRight, timeSeconds); }
       if (share > 0) {
-        this.intensity = all * share;
-        if (share < 1) this.windOff = Float32Array.of(wind[0] + MIX_SHIFT[0], wind[1] + MIX_SHIFT[1]);
+        this.intensity = all * share; this.countCap = cap == null ? null : cap - (share < 1 ? dropCap : 0);
+        this._shift = MIX_SHIFT;
         this.draw('snow', proj, view, camPos, camRight, timeSeconds);
       }
-    } finally { this.intensity = all; this.windOff = wind; }
+    } finally { this.intensity = all; this.countCap = cap; this._shift = null; }
+  }
+
+  /** The wind's travel as a draw hands it over: its own (the clock re-origins it), with the flakes' MIX_SHIFT added while
+   *  drawFall draws them - into one owned array, never a new one a frame (RAIN-LEAK). */
+  windUpload() {
+    const sh = this._shift;
+    if (!sh) return this.windOff;
+    this._windUp[0] = this.windOff[0] + sh[0]; this._windUp[1] = this.windOff[1] + sh[1];
+    return this._windUp;
   }
 
   /** mode 'rain'|'storm'|'snow'; storm shares the rain look. */
@@ -583,7 +600,7 @@ export class PrecipitationRenderer {
     // intensity, so a sprinkle is a few thousand drops and a front
     // fills the volume in rather than switching it on.
     const full = Math.round((LAB_COUNTS[mode] ?? LAB_COUNTS.rain) * Math.min(1, Math.max(0, this.intensity)));
-    const count = this.countCap ? Math.min(full, this.countCap) : full;
+    const count = this.countCap != null ? Math.min(full, this.countCap) : full;
     if (count <= 0) return;
     if (!this._vp) this._vp = new Float32Array(16);
     mat4Multiply(this._vp, proj, view);
@@ -598,7 +615,7 @@ export class PrecipitationRenderer {
     gl.uniform1f(L.uBox, LAB_BOX);
     gl.uniform1f(L.uFall, LAB_FALL[mode] ?? LAB_FALL.rain);
     gl.uniform2fv(L.uWindV, this.windV);
-    gl.uniform2fv(L.uWindOff, this.windOff);
+    gl.uniform2fv(L.uWindOff, this.windUpload());   // AUDIT PRECIP FALL-6/7: the flakes aside while drawFall draws them
     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
     gl.disable(gl.CULL_FACE);

@@ -329,7 +329,7 @@ test('AUDIT TACT B2: no one-way hiding place - a tree is a trunk and a crown, an
   // ECOTONE1: PIN MOVED - any of the pixel's nature archives (a climate border stands its neighbour's too), its Trees
   // named by that archive's SUMMER set: the season's own number names none in winter, so a winter wood's trees were cover
   // as flats until then
-  assert.match(hostText('src/scenes/world.js'), /coverProxies\(c, size, \{ tree: natureSet\.has\(archive\) && isTreeRecord\(natureBase\(archive\), record\) \}\)/);
+  assert.match(hostText('src/scenes/world.js'), /coverProxies\(c, size, \{ tree: g\.natureSet\.has\(archive\) && isTreeRecord\(g\.natureBase\(archive\), record\) \}\)/);
   assert.match(hostText('src/scenes/world.js'), /const natureBase = \(a\) => \(a === natureArchive \? climate\.natureArchive : borderNature\.get\(a\)\);/);
 });
 

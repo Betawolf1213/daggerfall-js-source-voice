@@ -33,6 +33,7 @@
 // the bilinear blend of its corners - the diagonal the shore tile's own
 // art follows - feathered by SHORE_SOFTNESS.
 import { WATER_DRAW_MASK_TABLE } from '../world/water/waterCorners.js';
+import { snowCoreGlsl } from './snowCoverGlsl.js';   // AUDIT PRECIP GROUND-5: the ground's snow, for a puddle's mask under it
 import { PUDDLE_RECORDS } from '../world/puddleMask.js';   // WATER-PUDDLE: the records whose water is their art's   // MAC2: the corner table is a leaf the player's feet share; WATER-DRAW1: the DRAW's half of it - the feet's is the law's own table, and the two are not the same question
 import { WIND_ROW_CALM, WIND_ROW_SPAN } from '../systems/wind/wind.js';
 import { getPref } from '../systems/uiPrefs.js';   // FT6: the switch, read here alone
@@ -362,6 +363,8 @@ in float vDepth;
 in float vGrow;
 uniform sampler2DArray uTileArr;
 uniform usampler2D uTilemap;
+uniform highp ivec3 uEcoOrigin;   // AUDIT PRECIP GROUND-5: the pixel's first world tile on the snow lane (render/snowCoverGlsl.js)
+${snowCoreGlsl()}
 uniform float uTileSize;
 uniform int uTileDim;          // WATER-AUDIT: the tilemap's side (128 in the world, the town's own in the fixed city)
 uniform uvec4 uWaterMask[8];   // WATER1: 256 nibbles - converted tile byte -> water corners
@@ -486,7 +489,12 @@ void main() {
     if (isPuddleRecord(rec)) {
       int turn = int(data & 3u);
       vec2 puv = PUDDLE_ROT[turn] * f + PUDDLE_TRANS[turn];
-      edge *= smoothstep(0.3, 0.7, textureGrad(uTileArr, vec3(puv, float(rec)), PUDDLE_ROT[turn] * wgx, PUDDLE_ROT[turn] * wgy).a);
+      float pa = textureGrad(uTileArr, vec3(puv, float(rec)), PUDDLE_ROT[turn] * wgx, PUDDLE_ROT[turn] * wgy).a;
+      // AUDIT PRECIP GROUND-5: under the snow the water is the texel's the ground wears there - its winter record's mask
+      // in the cover's share (a puddle frozen under snow is the winter art's, a thaw's the summer's)
+      float pc = snowCover(vLocalXZ, vWorldPos.y, vec3(0.0, 1.0, 0.0), wgx, wgy);
+      if (pc > 0.0) pa = mix(pa, textureGrad(uTileArr, vec3(puv, float(rec) + float(uSnowArr.x)), PUDDLE_ROT[turn] * wgx, PUDDLE_ROT[turn] * wgy).a, pc);
+      edge *= smoothstep(0.3, 0.7, pa);
     }
     if (edge <= 0.002) discard;
     // the water's own colour: the climate's water texel (record 0), averaged to one colour by its mip chain

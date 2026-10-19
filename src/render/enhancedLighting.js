@@ -1037,8 +1037,10 @@ void main() {
   vec2 gx = ROT[t] * dFdx(unwrapped);
   vec2 gy = ROT[t] * dFdy(unwrapped);
   vec3 tex = elDecode(textureGrad(uTileArr, vec3(tuv, float(layer)), gx, gy).rgb);
-  tex = ecotone(tex, vLocalXZ, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share
-  tex = snowGround(tex, vLocalXZ, vWorldPos.y, normalize(vNormal), vec3(tuv, float(layer)), gx, gy);   // PRECIP4: the snow the ground keeps
+  vec4 ew = ecoWeights(vLocalXZ);   // ECOTONE1: the border's shares, once (AUDIT PRECIP GROUND-6: the snow crosses it by the same)
+  tex = ecotone(tex, ew, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share
+  float snowC = snowCover(vLocalXZ, vWorldPos.y, normalize(vNormal), gx, gy);   // PRECIP4: the snow the ground keeps (the bed below reads it too)
+  tex = snowGround(tex, ew, snowC, vec3(tuv, float(layer)), gx, gy);
   ${waterBedMix((t) => `elDecode(${t})`)}
   vec3 n = normalize(vNormal);
   // PERF-SUN2 (2026-09-19, Mac: "over 1000 calls and looking up in the sky

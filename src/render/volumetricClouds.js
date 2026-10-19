@@ -351,6 +351,9 @@ export const DECK_VARY_FULL = Math.min(...Object.values(VC_PROFILE).map((r) => r
  *  tan; every other word takes the row's colours unchanged. */
 export const CELL_TINT = Object.freeze({ sandstorm: Object.freeze([0.88, 0.72, 0.46]) });
 const PROFILE_KEYS = ['base', 'top', 'density', 'dark', 'flat', 'shear', 'vary'];   // VC6a: `vary` eases with the rest
+/** AUDIT PRECIP FALL-5: what a wet cell walks from its warm side to the snow's by its share - the profile, its sky row's
+ *  cover and grey, and its curtain's weight (PRECIP1: its tint is the share itself). */
+const SHARE_KEYS = [...PROFILE_KEYS, 'cover', 'grey', 'fall'];
 
 // ═══ VC7a (2026-09-23): LIVING CLOUDS ════════════════════════════════
 // Mac: "improve the volumetric cloud system to be more immersive". The
@@ -482,13 +485,22 @@ export function cellOf(weather, x, z, r) {
  *  exterior hosts make. Pure over toHost. */
 export function cellOfField(c, toHost) {
   const [x, z] = toHost(c.x, c.z);
-  const cell = grownCell(cellOf(c.word, x, z, c.r), c.env);   // VC7a: as grown as its system
-  if (cell && c.snow != null && cell.fall > 0) {
-    // PRECIP1: what falls under it at the air's snow share there (the map cell's `snow`) - its curtain's weight and its
-    // tint walk from the rain's (a storm's) to the snow's, so a front over the snow line greys into white across it
-    const wet = CURTAIN_FALL[c.raw === 'thunder' ? 'thunder' : 'rain'][0];
-    cell.fallKind = c.snow; cell.fall = wet + (CURTAIN_FALL.snow[0] - wet) * c.snow;
+  // AUDIT PRECIP FALL-5 / SKY-POP: on the precipitation law's lane (a wet cell carries its `snow`) the cloud WALKS with
+  // the air as its fall does - its system's warm side (a storm's tower, a rain's deck; a snow front's warm side is the
+  // rain's) toward the snow's deck by the share, its shape, cover, grey and curtain together: it swapped whole (top 4200
+  // to 2000, darkness .7 to .3, its rank) where its word's rounding crossed a half. All before the growth, which takes a
+  // young system's whole cloud and its fall down with it (VC7c - the curtain was set after it, and fell whole: SKY-3).
+  let own;
+  if (c.snow != null && (c.raw === 'rain' || c.raw === 'thunder' || c.raw === 'snow')) {
+    const warm = c.raw === 'snow' ? 'rain' : c.raw, k = Math.min(1, Math.max(0, c.snow));
+    own = cellOf(warm, x, z, c.r);
+    const white = cellOf('snow', x, z, c.r);
+    for (const key of SHARE_KEYS) own[key] = own[key] + (white[key] - own[key]) * k;
+    own.fallKind = k;
+  } else {
+    own = cellOf(c.word, x, z, c.r);
   }
+  const cell = grownCell(own, c.env);   // VC7a: as grown as its system
   if (!cell || c.imp == null) return cell;
   const out = { ...cell, imp: c.imp, rank: c.rank };
   if (c.shape) out.shape = c.shape;   // WEATHER3h: its outline; a frame change is a translation, the shape rides it
@@ -1001,14 +1013,19 @@ float veilAcross(int i, vec2 xz, float rad) {
 // up the column (whole below the base yb, thinning linearly to nothing at yt) - by Simpson's rule, on a piece the
 // caller has cut at the base, so the vertical term is smooth within it
 const int VEIL_PANELS = 16;   // Simpson's panels a piece: 2.4% of the depth at worst over lobed outlines and clips (vc7c_curtains), exact on a circle
-float veilPiece(int i, vec3 cam, vec3 dir, float a, float b, float rad, float yb, float yt) {
-  if (b <= a) return 0.0;
-  float h = (b - a) / float(VEIL_PANELS), sum = 0.0;
+// SKY-2: and (y) the share of that depth the horizon takes - each sample faded by its OWN distance (veilFade), so a
+// piece's aerial perspective never depends on where the nearest veil begins or on which side of the slab's start it falls
+float veilFade(float t) { return 1.0 - exp(-t / ${glslF(CURTAIN_FADE_M)}); }
+vec2 veilPiece(int i, vec3 cam, vec3 dir, float a, float b, float rad, float yb, float yt) {
+  if (b <= a) return vec2(0.0);
+  float h = (b - a) / float(VEIL_PANELS);
+  vec2 sum = vec2(0.0);
   for (int k = 0; k <= VEIL_PANELS; k++) {
     float t = a + h * float(k);
     float y = cam.y + dir.y * t;
     float up = y <= yb ? 1.0 : clamp((yt - y) / max(yt - yb, 1.0), 0.0, 1.0);
-    sum += (k == 0 || k == VEIL_PANELS ? 1.0 : (k % 2 == 1 ? 4.0 : 2.0)) * veilAcross(i, cam.xz + dir.xz * t, rad) * up;
+    float d = (k == 0 || k == VEIL_PANELS ? 1.0 : (k % 2 == 1 ? 4.0 : 2.0)) * veilAcross(i, cam.xz + dir.xz * t, rad) * up;
+    sum += d * vec2(1.0, veilFade(t));
   }
   return sum * h / 3.0;
 }
@@ -1020,7 +1037,7 @@ float veilPiece(int i, vec3 cam, vec3 dir, float a, float b, float rad, float yb
 // colour and transmittance, in its own aerial perspective), back the veil past it, which hangs among the slab's
 // cloud and is composited in the march at tBack, its depth-weighted distance, under the slab's own perspective.
 void curtains(vec3 cam, vec3 dir, float tSplit, out vec4 front, out vec4 back, out float tBack) {
-  float tauF = 0.0, tauB = 0.0, tNear = 1e9, tSum = 0.0;
+  float tauF = 0.0, tauB = 0.0, tSum = 0.0;
   vec3 tintF = vec3(0.0), tintB = vec3(0.0);
   for (int i = 0; i < 8; i++) {
     if (i >= uCellCount) break;
@@ -1062,21 +1079,16 @@ void curtains(vec3 cam, vec3 dir, float tSplit, out vec4 front, out vec4 back, o
     // the chord's pieces: below the base and above it, each side of the slab's start
     float tB = yb / up;
     float c0 = ta, c3 = tb, c1 = clamp(min(tB, tSplit), c0, c3), c2 = clamp(max(tB, tSplit), c1, c3);
-    float lo = veilPiece(i, cam, dir, c0, c1, rad, yb, yt), mid = veilPiece(i, cam, dir, c1, c2, rad, yb, yt), hi = veilPiece(i, cam, dir, c2, c3, rad, yb, yt);
-    float inF = w * (lo + (c2 <= tSplit ? mid : 0.0)), inB = w * (hi + (c2 <= tSplit ? 0.0 : mid));
+    vec2 lo = veilPiece(i, cam, dir, c0, c1, rad, yb, yt), mid = veilPiece(i, cam, dir, c1, c2, rad, yb, yt), hi = veilPiece(i, cam, dir, c2, c3, rad, yb, yt);
+    vec2 inF = w * (lo + (c2 <= tSplit ? mid : vec2(0.0))), inB = w * (hi + (c2 <= tSplit ? vec2(0.0) : mid));
     vec3 tint = mix(mix(uCloudShade * (1.0 - 0.6 * uCellB[i].x), uHorizonColor, 0.3), mix(uCloudLit, uHorizonColor, 0.4), F.y);   // rain the cell's own dark grey, snow pale
-    tauF += inF; tintF += tint * inF;
-    tauB += inB; tintB += tint * inB; tSum += inB * 0.5 * (max(ta, tSplit) + tb);
-    if (inF > 0.0) tNear = min(tNear, ta);
+    tauF += inF.x; tintF += tint * (inF.x - inF.y) + uHorizonColor * inF.y;   // SKY-2: each sample in its own aerial perspective
+    tauB += inB.x; tintB += tint * (inB.x - inB.y) + uHorizonColor * inB.y; tSum += inB.x * 0.5 * (max(ta, tSplit) + tb);
   }
   front = vec4(0.0, 0.0, 0.0, 1.0);
   back = vec4(0.0, 0.0, 0.0, 1.0);
   tBack = tauB > 0.0 ? tSum / tauB : 1e9;
-  if (tauF > 0.0) {
-    float Tv = exp(-tauF);
-    vec3 veil = tintF / tauF * (1.0 - Tv);
-    front = vec4(mix(veil, uHorizonColor * (1.0 - Tv), 1.0 - exp(-tNear / ${glslF(CURTAIN_FADE_M)})), Tv);   // their own aerial perspective
-  }
+  if (tauF > 0.0) { float Tv = exp(-tauF); front = vec4(tintF / tauF * (1.0 - Tv), Tv); }   // SKY-2: faded sample by sample
   if (tauB > 0.0) { float Tv = exp(-tauB); back = vec4(tintB / tauB * (1.0 - Tv), Tv); }
 }
 // VC7c: a ray with no slab to cut at - the horizon's own rows (where the rain meets the ground) carry the veil too
@@ -1093,6 +1105,11 @@ float hg(float c, float g) { float g2 = g * g; return (1.0 - g2) / (4.0 * PI * p
 // column merged with the zone's slab (the column's wall at the zone's base - a horizontal circle, so a smooth conic on
 // the sky), and drew a hard arc across it
 float aerial(float t) { return 1.0 - exp(-min(t, 1e6) / 14000.0); }
+// SKY-BAND: where the walk stops (aerial(FAR_M) is 0.9998), and the opacity of the rest metres of slab the walk left - a deck
+// at the zone's cover, its coverage cut's own curve (density()), closing over FAR_REST_M of a whole deck
+const float FAR_M = 120000.0;
+const float FAR_REST_M = 10000.0;
+float farA(float rest) { return 1.0 - exp(-max(rest, 0.0) * clamp(pow(uCover, 1.6), 0.05, 1.0) / FAR_REST_M); }
 float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
 // VC6b: a colour's HUE at luminance one. Every tint below is taken
 // through this, so a tint can only move a colour's hue and never its
@@ -1177,7 +1194,13 @@ void main() {
   // SLAB-SPAN: the slab is THIS RAY's - its spans (raySpans), their first 24 km walked and the air between them jumped
   float len = raySpans(cam, dir);
   float t0 = spanA[0];
-  if (t0 > 120000.0) { outColor = underCurtains(uHorizonColor, 0.0, cam, dir); return; }
+  // SKY-BAND: THE SLAB THE WALK DOES NOT REACH IS THE HORIZON'S, BY ITS OWN LENGTH. The walk is the spans' first 24 km and
+  // never past FAR_M (aerial() is 0.9998 there - a sample past it is the horizon's colour whatever it finds); what of the
+  // spans it leaves (rest) is laid in that colour at the opacity its length gives a deck of the zone's cover (farA). One
+  // law for every ray - the far early-out is its answer with nothing walked - so no span's start can leave a row bare to
+  // the dome: a cell's empty column took the walk short of the zone's deck and the dome's own sunset strip showed through
+  // in steps at the horizon (the map's lane at dusk)
+  if (t0 >= FAR_M) { float a = farA(len); outColor = underCurtains(uHorizonColor * a, 1.0 - a, cam, dir); return; }
   float walk = min(len, 24000.0);
   float t1 = t0, left = walk;   // where the spans' first walk metres end
   for (int k = 0; k < SPANS; k++) {
@@ -1186,6 +1209,9 @@ void main() {
     if (l >= left) { t1 = spanA[k] + left; break; }
     left -= l; t1 = spanB[k];
   }
+  t1 = min(t1, FAR_M);
+  float rest = len;
+  for (int k = 0; k < SPANS; k++) { if (k >= spanN) break; rest -= max(min(spanB[k], t1) - spanA[k], 0.0); }
   float ds = walk / float(uSteps);
   float coarse = ds * 3.0;   // VC6d: the stride over empty air
   fReach = coarse;   // VC7c: how near a cell's rim must be to count
@@ -1259,7 +1285,7 @@ void main() {
     empty = 0;
     // VC7c: the veil past the slab's start goes in before the first cloud behind it - only a lit sample can stand in
     // front of it or behind it, so the empty air between needs no order
-    if (!veiled && tBack <= t) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(tBack)); T *= back.a; veiled = true; }
+    if (!veiled && tBack <= t) { col += T * back.rgb; T *= back.a; veiled = true; }   // SKY-2: already in its own aerial perspective
     {
       float h = clamp((p.y - fBase) / max(fTop - fBase, 1.0), 0.0, 1.0);
       float tau = lightDepth(p);
@@ -1284,7 +1310,8 @@ void main() {
     }
     t += ds;
   }
-  if (!veiled) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(tBack)); T *= back.a; }   // VC7c: behind every cloud the march lit
+  if (!veiled) { col += T * back.rgb; T *= back.a; }   // VC7c: behind every cloud the march lit; SKY-2: already faded
+  { float a = farA(rest); col += T * uHorizonColor * a; T *= 1.0 - a; }   // SKY-BAND: the slab past the walk
   vec4 ice = cirrus(cam, dir);   // VC7d: far above the slab - behind it along the ray
   col += T * ice.rgb;
   T *= ice.a;
@@ -1542,11 +1569,12 @@ export class VolumetricClouds {
     if (Math.abs(dx) >= n || Math.abs(dz) >= n) { this.shadowFull = true; this.pendingShift = null; return; }
     const dst = this.shadowScratch, src = this.shadowMap;
     withTarget(gl, dst, viewport, () => {});   // attached, if it never was
-    // the strips the blit will not cover are re-filled ALL LIGHT by upload
-    gl.bindTexture(gl.TEXTURE_2D, dst.tex);
-    if (dx !== 0) gl.texSubImage2D(gl.TEXTURE_2D, 0, dx > 0 ? n - dx : 0, 0, Math.abs(dx), n, gl.RGBA, gl.UNSIGNED_BYTE, this.white.subarray(0, Math.abs(dx) * n * 4));
-    if (dz !== 0) gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, dz > 0 ? n - dz : 0, n, Math.abs(dz), gl.RGBA, gl.UNSIGNED_BYTE, this.white.subarray(0, Math.abs(dz) * n * 4));
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    // SKY-CAP: the strips the blit will not cover are MARCHED in this same update (update's shadow block, before its
+    // stripe) - never left all light for a sweep: the haze reads the square's edge for every ray whose sun foot is
+    // past it, so a white strip there lit the whole far haze at dusk after every pixel crossing
+    this.shadowStrips = [];
+    if (dx !== 0) this.shadowStrips.push([dx > 0 ? n - dx : 0, 0, Math.abs(dx), n]);
+    if (dz !== 0) this.shadowStrips.push([0, dz > 0 ? n - dz : 0, n, Math.abs(dz)]);
     gl.bindFramebuffer(gl.READ_FRAMEBUFFER, src.fbo);
     gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, dst.fbo);
     // old texel (i, j) is new texel (i - dx, j - dz)
@@ -1654,9 +1682,11 @@ export class VolumetricClouds {
       gl.uniform3fv(u.uLightDir, s.sunDir);   // the SUN's: the moon casts none
       gl.uniform1i(u.uSteps, q.shadowSteps);
       withTarget(gl, this.shadowMap, viewport, () => {
+        if (!this.shadowFull && this.shadowStrips) for (const [x, y, w, h] of this.shadowStrips) { gl.viewport(x, y, w, h); gl.drawArrays(gl.TRIANGLES, 0, 3); }   // SKY-CAP: a crossing's new strips, now
         gl.viewport(0, y0, q.shadow, Math.min(rows, q.shadow - y0));
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       });
+      this.shadowStrips = null;
       if (this.shadowFull) { this.shadowFull = false; this.shadowMarched = true; this.mapOrigin = [this.origin[0], this.origin[1]]; }
       else {
         this.shadowStripe++;

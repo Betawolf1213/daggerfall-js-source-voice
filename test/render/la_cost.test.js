@@ -365,7 +365,8 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
     '_clustersLive', '_clusterRect', '_clusterZ', '_camFwd', '_clusterTex', '_decalLights',
     '_focus',   // TV1: the point the fog measures from (setFocus stamps)
     '_haze',   // BANTHA1: the jungle's haze (setJungleHaze stamps; beginFrame clears it unarmed)
-    '_dwColumn'];   // merged beside DW-F: the water column's frame (setWaterColumn stamps; beginFrame clears it)
+    '_dwColumn',   // merged beside DW-F: the water column's frame (setWaterColumn stamps; beginFrame clears it)
+    '_snowFrame', '_snowTex'];   // AUDIT PRECIP GROUND-7: the frame's snowlines and their texture (setSnowFrame stamps)
   // NOT INPUTS: the programs' location tables (re-looked-up by _installWorldSet, which forgets the blocks), scratch the
   // block writes before it reads, the memo's own keys (the first test), the gates' stamps, the GL-state shadows - and
   // the automap's four, which _uploadFog sends only to a program that declares them: the mesh's, never these four
@@ -382,7 +383,8 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
     '_lastProgram', '_hazeOn',   // AUDIT BANTHA1 HAZE-2: the bound program and which programs hold the jungle's haze on - GL-state shadows, never an input
     '_bbTintOn',   // ARENA5: a batch's wash (the arena crowd's half in a banner's colours), the same kind of GL-state shadow
     '_bbGlintOn',   // TELL2: a wind-up's glint, the same kind of GL-state shadow
-    '_bbLptCutOn'];   // LPT1: a far picture's handover to its 3D tree, the same kind of GL-state shadow
+    '_bbLptCutOn',   // LPT1: a far picture's handover to its 3D tree, the same kind of GL-state shadow
+    '_tSnowOn'];   // PRECIP4: the snow's switch, the same kind of GL-state shadow
   const { canvas } = stateGl();
   const r = new Renderer(canvas);
   for (const lane of [null, EL_LANE]) {
@@ -398,7 +400,7 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
   const stamping = new Set([...methods].filter(([, b]) => /this\._frameStamp\+\+/.test(b)).map(([n]) => n));
   const callsStamping = (b) => [...stamping].some((n) => b.includes(`this.${n}(`));
   // the setters that must stamp themselves, by name - the list LA-COST1 wrote the word into
-  for (const n of ['setExposure', 'setContact', 'setVolumetrics', '_syncAir', '_forgetTextureShadows', 'setMoonlight', 'setAmbientTrilight', 'setFog', 'setWaterFog', 'setPointLights', 'setFlashLight', 'setIndirectLight', 'setLightDir', 'beginFrame', 'endPanelFrame', 'renderCharacterSpriteImage']) {
+  for (const n of ['setExposure', 'setContact', 'setVolumetrics', '_syncAir', '_forgetTextureShadows', 'setMoonlight', 'setAmbientTrilight', 'setFog', 'setWaterFog', 'setPointLights', 'setFlashLight', 'setIndirectLight', 'setLightDir', 'beginFrame', 'endPanelFrame', 'renderCharacterSpriteImage', 'setSnowFrame']) {
     assert.ok(stamping.has(n), `${n} moves the stamp`);
   }
   const BIRTH = new Set(['constructor']);

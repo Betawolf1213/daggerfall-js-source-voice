@@ -22,12 +22,12 @@
   {
     "name": "SKY-ARC-the-veil-by-the-entry",
     "file": "src/render/volumetricClouds.js",
-    "old": "  if (!veiled) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(tBack)); T *= back.a; }",
-    "new": "  if (!veiled) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(t0)); T *= back.a; }",
+    "old": "sum += d * vec2(1.0, veilFade(t));",
+    "new": "sum += d * vec2(1.0, veilFade(a));",
     "tests": [
       "test/render/vc7d_cirrus.test.js",
       "test/systems/weather/vc7c_curtains.test.js"
-    ]
+    , "test/render/audit_precip_sky.test.js"]
   },
   {
     "name": "SKY-ARC-the-aerial-scale",

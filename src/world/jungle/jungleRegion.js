@@ -152,6 +152,15 @@ export function jungleDepthAt(px, py, nine, x, z) {
 /** The layout's share at a depth (m): 0 past JUNGLE_EDGE.out outside the line, 1 past JUNGLE_EDGE.in inside it. */
 export const jungleShare = (depth) => smoothstep(-JUNGLE_EDGE.out, JUNGLE_EDGE.in, depth);
 
+/** AUDIT PRECIP AIR-12: THE JUNGLE'S AIR leans in over a band of its own (m of depth: none this far outside the line,
+ *  whole this far inside) - kilometres, where the haze's is a few hundred metres (it held the tropics' air and the
+ *  mountain woods' a 19 C step apart across 1.5 km, and the sleet between them to 75 m). Over this band a Glenpoint winter
+ *  walks from snow through a few hundred metres of sleet into the jungle's rain. Inside the field's exact reach
+ *  (JUNGLE_FIELD_REACH, 4.9 km) both ways; the jungle stands 24 km deep at its heart. */
+export const JUNGLE_AIR_EDGE = Object.freeze({ out: 2000, in: 4000 });
+/** The jungle's air's share at a depth (m): 0 past JUNGLE_AIR_EDGE.out outside the line, 1 past JUNGLE_AIR_EDGE.in in. */
+export const jungleAirShare = (depth) => smoothstep(-JUNGLE_AIR_EDGE.out, JUNGLE_AIR_EDGE.in, depth);
+
 /** The most the wander moves the line (m) - a pixel whose 3x3 is all farther outside than this and the layout's own
  *  reach stands no jungle at all. */
 export const JUNGLE_WANDER_MAX = JUNGLE_WANDER.octaves.reduce((s, o) => s + o.amp, 0);

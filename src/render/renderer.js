@@ -1055,8 +1055,10 @@ void main() {
   vec2 gx = ROT[t] * dFdx(unwrapped);
   vec2 gy = ROT[t] * dFdy(unwrapped);
   vec3 tex = textureGrad(uTileArr, vec3(tuv, float(layer)), gx, gy).rgb;
-  tex = ecotone(tex, vLocalXZ, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share
-  tex = snowGround(tex, vLocalXZ, vWorldPos.y, normalize(vNormal), vec3(tuv, float(layer)), gx, gy);   // PRECIP4: the snow the ground keeps
+  vec4 ew = ecoWeights(vLocalXZ);   // ECOTONE1: the border's shares, once (AUDIT PRECIP GROUND-6: the snow crosses it by the same)
+  tex = ecotone(tex, ew, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share
+  float snowC = snowCover(vLocalXZ, vWorldPos.y, normalize(vNormal), gx, gy);   // PRECIP4: the snow the ground keeps (the bed below reads it too)
+  tex = snowGround(tex, ew, snowC, vec3(tuv, float(layer)), gx, gy);
   ${waterBedMix()}
   vec3 n = normalize(vNormal);
   float diff = max(dot(n, uLightDir), 0.0);
@@ -1548,7 +1550,7 @@ import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's q
 import { SKIN_PAL_ROW, SKIN_PALETTE_UNIT } from './skinPalette.js';   // MWNPC1: the GPU skin's palette shape
 import { lightIdsOf, lightList, packLight } from './lightId.js';   // LIGHT-ID: each light's identity, lifted off its list for the shadow pass (and the flash packed through the seam)
 import { ecotoneGlsl, ECO_UNITS } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours - the chunk, and the units their tile sets bind on
-import { snowCoverGlsl, TWIN_LAYERS } from './snowCoverGlsl.js';   // PRECIP4: the snow the ground keeps - the chunk, and a twin set's summer half
+import { snowCoverGlsl, TWIN_LAYERS, SNOW_LINES_UNIT } from './snowCoverGlsl.js';   // PRECIP4: the snow the ground keeps - the chunk, a twin set's summer half, the frame's lines' unit
 import { SNOW_VS, snowTerrainFs, SNOW_UNITS, SNOW_LAYER, snowSurfaceRise } from './snowfallGlsl.js';   // SNOWFALL1: the mod's snow surface, lit as the ground is
 import { GLOW_SPRITE_VS, GLOW_SPRITE_FS, GLOW_FIELD_VS, GLOW_FIELD_FS, GLOW_FIELDS_MAX, GLOW_REACH_MAX, glowFieldReach, GLOW_MESH_FS, GLOW_CLOCK_PERIOD, GLOW_CHARGE_PULL, GLOW_DRAWS_MAX, GLOW_DEPTH_FLOOR, glowUnit, glowMeshVs, glowRingDraws } from './weaponGlowGlsl.js';   // WEAPON-GLOW1: a weapon's element, drawn
 const SNOW_UNIT_LIST = Object.entries(SNOW_UNITS);   // AUDIT ENVIRONS P1: the five pictures' units, listed once
@@ -1769,6 +1771,10 @@ export class Renderer {
     this._tEcoOn = null;
     /** PRECIP4: whether the installed terrain program's snow switch is on (drawTerrain's `snow`) @type {boolean|null} */
     this._tSnowOn = null;
+    /** AUDIT PRECIP GROUND-1: the bound arrays' winter offsets as last uploaded (own, eco 1-3) */
+    this._tSnowArr = [-1, -1, -1, -1];
+    /** AUDIT PRECIP GROUND-7: the frame's snow - the window's lines texture and its frame (setSnowFrame) */
+    this._snowFrame = null; this._snowTex = null; this._snowTexSide = 0; this._snowGen = -1;
     this._forgetTextureShadows();   // AUDIT-AIR1: nothing is bound yet, so nothing may be claimed
     // EV2: the sub-mesh texture cache's generation. drawMesh used to
     // mint a `${archive}_${record}` string per sub-mesh per frame -
@@ -1919,9 +1925,13 @@ export class Renderer {
 
     this._csStamp = 0; this._csUploaded = {}; this._csRect = new Float32Array(4);
     this.tileArrays = new Map(); // archive -> TEXTURE_2D_ARRAY
-    /** PRECIP4: each tile array's [width, height, layers] (makeTwinArray reads them - WebGL2 cannot ask a texture)
+    /** PRECIP4: each tile array's [width, height, layers] (WebGL2 cannot ask a texture)
      *  @type {Map<any, number[]>} */
     this._tileDims = new Map();
+    /** AUDIT PRECIP GROUND-1: each tile array TEXTURE's layer count - a twin's (2 x TWIN_LAYERS) says its winter half is
+     *  there, so a draw's winter offsets are the bound arrays' own, never a record kept beside them
+     *  @type {WeakMap<WebGLTexture, number>} */
+    this._arrLayers = new WeakMap();
     /** EE5: the cloud deck the ground shadows under, handed over by the
      *  host from the SKY's own state. Null = no shadows, which is the
      *  classic skin and every interior. */
@@ -2455,8 +2465,8 @@ export class Renderer {
     this._tEcoOn = null;
     // PRECIP4 (render/snowCoverGlsl.js): the pixel's snowline at its corners, the switch and its winter layers, its
     // neighbours' winter layers and its first world tile - the installed terrain program's own
-    this.tSnow = Object.fromEntries(['H10', 'H50', 'H90', 'Set', 'Eco', 'Tile'].map((n) => [n, gl.getUniformLocation(this.terrainProgram, `uSnow${n}`)]));
-    this._tSnowOn = null;
+    this.tSnow = Object.fromEntries(['Lines', 'Set', 'Win', 'Arr'].map((n) => [n, gl.getUniformLocation(this.terrainProgram, `uSnow${n}`)]));
+    this._tSnowOn = null; this._tSnowArr = [-1, -1, -1, -1];
     this.tULightDir = gl.getUniformLocation(this.terrainProgram, 'uLightDir');
     this.tUAmbient = gl.getUniformLocation(this.terrainProgram, 'uAmbient');
     this.tUSunScale = gl.getUniformLocation(this.terrainProgram, 'uSunScale');
@@ -3252,7 +3262,7 @@ export class Renderer {
     this._tTileSize = null;
     (this._tEcoTex ??= [null, null, null]).fill(null);   // ECOTONE1: the neighbours' sets on units 3-5
     this._tEcoOn = null;   // ECOTONE1: and the border switch, a frame's like the tile size
-    this._tSnowOn = null;   // PRECIP4: and the snow's
+    this._tSnowOn = null; this._tSnowArr = [-1, -1, -1, -1];   // PRECIP4: and the snow's
     // LA-COST1 (2026-09-27): THE FOUR FRAME BLOCKS ARE A TEXTURE SHADOW TOO. Each binds the lane's images - the three
     // shadow arrays, the eye, the previous depth, the grid - on units 8 to 14 and then trusts them until the stamp
     // moves; a foreign pass binds its own there (the far ring its 1x1 on unit 11 when the air is off - LA-AUDIT C3: not
@@ -7363,57 +7373,42 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     if (!this._retroMips) gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAX_LEVEL, 0);   // RETRO1: loaded under retro mode without mip maps (_applyRetroMips)
     this.tileArrays.set(archive, tex);
-    this._tileDims.set(archive, [w, h, layers.length]);   // PRECIP4: a twin is made of two of them (makeTwinArray)
+    this._tileDims.set(archive, [w, h, layers.length]);   // PRECIP4
+    this._arrLayers.set(tex, layers.length);   // AUDIT PRECIP GROUND-1: a twin's winter half is the texture's own fact
     return tex;
   }
 
   /**
-   * PRECIP4 (render/snowCoverGlsl.js): A GROUND SET'S TWIN - one tile array holding `summer`'s records and then
-   * `winter`'s (TWIN_LAYERS on), copied on the GPU from the two uploaded arrays (uploadTileArray) at the larger one's
-   * size, mipmapped and sampled as every tile array is; cached under `key` (a PLACE-LRU key: releaseTileArray lets it
-   * go). The snow lane's terrain draws bind it in place of the summer set, and the fragment takes its winter half in the
-   * snow's share. Null while either set is not uploaded, or when they are not one set's length.
+   * AUDIT PRECIP GROUND-7: THE FRAME'S SNOW - the snow lane's lattice of snowlines about the player, handed to the terrain
+   * program once a frame (scenes/snowCoverHost.js frame(); render/snowCoverGlsl.js): `lines` (Float32Array, side x side x 4:
+   * h10, h50, h90 a point, rows south), `side`, `origin` the window's first point's world tile ([x, z], the ecotone's
+   * frame), `spacing` the lattice's in tiles, `altitude` the world height's offset to metres above the sea, `gen` the
+   * lines' generation (uploaded when it moves). Null: no snow this frame (off the lane, the classic skin).
    */
-  makeTwinArray(key, summer, winter) {
-    if (this.tileArrays.has(key)) return this.tileArrays.get(key);
-    const a = this.tileArrays.get(summer), b = this.tileArrays.get(winter);
-    const da = this._tileDims.get(summer), db = this._tileDims.get(winter);
-    if (!a || !b || !da || !db || da[2] !== TWIN_LAYERS || db[2] !== TWIN_LAYERS) return null;
+  setSnowFrame(f) {
+    this._snowFrame = f ?? null;
+    this._frameStamp++;   // LA-COST1: the terrain's frame block binds the lines and sends their window - a frame handed after it sends them again
+    if (!f) return;
     const gl = this.gl;
-    const w = Math.max(da[0], db[0]), h = Math.max(da[1], db[1]);
-    const tex = gl.createTexture();
-    this._activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);
-    gl.texImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.RGBA, w, h, 2 * TWIN_LAYERS, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    // the copy: each source layer read through one framebuffer and blitted (scaled up where a pack's set is larger) into
-    // its layer of the twin through another - the bound framebuffers and the scissor put back as they stood
-    const readWas = gl.getParameter(gl.READ_FRAMEBUFFER_BINDING), drawWas = gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING);
-    const scissor = gl.isEnabled(gl.SCISSOR_TEST);
-    if (scissor) gl.disable(gl.SCISSOR_TEST);
-    const rf = gl.createFramebuffer(), df = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, rf);
-    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, df);
-    for (let i = 0; i < 2 * TWIN_LAYERS; i++) {
-      const [src, d] = i < TWIN_LAYERS ? [a, da] : [b, db];
-      gl.framebufferTextureLayer(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, src, 0, i % TWIN_LAYERS);
-      gl.framebufferTextureLayer(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, tex, 0, i);
-      gl.blitFramebuffer(0, 0, d[0], d[1], 0, 0, w, h, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+    if (!this._snowTex || this._snowTexSide !== f.side) {
+      if (this._snowTex) gl.deleteTexture(this._snowTex);
+      this._snowTex = gl.createTexture();
+      this._snowTexSide = f.side;
+      this._snowGen = -1;
+      this._activeTexture(gl.TEXTURE0 + SNOW_LINES_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, this._snowTex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, f.side, f.side, 0, gl.RGBA, gl.FLOAT, null);
     }
-    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, readWas);
-    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, drawWas);
-    gl.deleteFramebuffer(rf); gl.deleteFramebuffer(df);
-    if (scissor) gl.enable(gl.SCISSOR_TEST);
-    // sampled as uploadTileArray samples every tile array (GRAIN1's chain and magnifier, the ground tier, DFU's clamp,
-    // RETRO1's level), one statement a line of its own here so each of those laws' records names its one site there
-    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex); gl.generateMipmap(gl.TEXTURE_2D_ARRAY);
-    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.NEAREST); this._setGroundSampler(groundSharpnessTier());
-    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    if (this._retroMips !== true) gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAX_LEVEL, 0);
-    this._tArrayTex = null;   // PERF-TEX2: unit 0 holds the twin now - the next terrain draw binds its own
-    this.tileArrays.set(key, tex);
-    this._tileDims.set(key, [w, h, 2 * TWIN_LAYERS]);
-    return tex;
+    if (this._snowGen !== f.gen) {
+      this._activeTexture(gl.TEXTURE0 + SNOW_LINES_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, this._snowTex);
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, f.side, f.side, gl.RGBA, gl.FLOAT, f.lines);
+      this._snowGen = f.gen;
+    }
   }
+
 
   /** GRAIN AUDIT 1: the anisotropy extension, asked for ONCE - a driver
    *  without it is remembered as `false`, not re-asked per archive. */
@@ -7523,7 +7518,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const loc = Object.fromEntries(['uProj', 'uView', 'uModel', 'uLightDir', 'uAmbient', 'uSunScale', 'uSunColor', 'uMoonDir', 'uMoonScale', 'uMoonColor',
       'uPointCount', 'uPointLights', 'uPointColors', 'uIndirect', 'uIndirectColor', 'uSnowDepths', 'uSnowLimits', 'uSnowDynMap', 'uSnowDynTexel',
       'uSnowStatMap', 'uSnowFarMap', 'uSnowFlags', 'uSnowRadius', 'uSnowInner', 'uSnowOuter', 'uSnowBoundaryFade', 'uSnowDarkening',
-      'uSnowDynamic', 'uSnowStatic', 'uSnowContext', 'uSnowFar', 'uSnowAlbedo'].map((n) => [n, gl.getUniformLocation(program, n)]));
+      'uSnowDynamic', 'uSnowStatic', 'uSnowContext', 'uSnowFar', 'uSnowAlbedo',
+      'uSnowLines', 'uSnowSet', 'uSnowWin', 'uEcoOrigin', 'uSnowAnchor'].map((n) => [n, gl.getUniformLocation(program, n)]));   // AUDIT PRECIP GROUND-9: and the ground's own snow
     const el = this._worldSet === set && this._elLocsOf ? this._elLocsOf(program) : null;
     return (set.terrainSnow = { program, loc, el, fog: this._fogLocs(program), cs: [gl.getUniformLocation(program, 'uCloudShadowMap'), gl.getUniformLocation(program, 'uCloudShadowRect')], frame: -1, units: false });
   }
@@ -7549,6 +7545,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       S.units = true;
       gl.uniform1i(L.uSnowDynamic, SNOW_UNITS.dynamic); gl.uniform1i(L.uSnowStatic, SNOW_UNITS.static); gl.uniform1i(L.uSnowContext, SNOW_UNITS.context);
       gl.uniform1i(L.uSnowFar, SNOW_UNITS.far); gl.uniform1i(L.uSnowAlbedo, SNOW_UNITS.albedo);
+      gl.uniform1i(L.uSnowLines, SNOW_LINES_UNIT);   // AUDIT PRECIP GROUND-9
     }
     if (S.frame !== this._frameStamp) {   // the frame's block, as the ground's (drawTerrain's PERF3 block)
       S.frame = this._frameStamp;
@@ -7569,6 +7566,18 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.uniform4fv(L.uIndirect, this._indirect);
       gl.uniform3fv(L.uIndirectColor, this._c3(this._indirectColor));
       if (S.el) { this._el.snow = S.el; this._uploadEl('snow'); }
+      // AUDIT PRECIP GROUND-9: the frame's snowlines (setSnowFrame) - the mod's snow laid where the ground wears snow, at
+      // the window's first world tile and the scene point it stands at; none (uSnowSet.y 0) off the snow lane: the whole ground
+      const sf = this._snowFrame;
+      if (sf && this._snowTex) {
+        this._activeTexture(gl.TEXTURE0 + SNOW_LINES_UNIT);
+        gl.bindTexture(gl.TEXTURE_2D, this._snowTex);
+        this._activeTexture(gl.TEXTURE0);
+        gl.uniform3i(L.uSnowWin, sf.origin[0], sf.origin[1], sf.side);
+        gl.uniform3i(L.uEcoOrigin, sf.origin[0], sf.origin[1], 0);
+        gl.uniform2f(L.uSnowAnchor, sf.anchor[0], sf.anchor[1]);
+        gl.uniform4f(L.uSnowSet, sf.altitude, 1, sf.spacing, 0);
+      } else gl.uniform4f(L.uSnowSet, 0, 0, 0, 0);
     }
     this._csLoc.snow = S.cs;
     this._uploadCloudShadow('snow');
@@ -7684,13 +7693,12 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    *  unused slot), `side` the W/E/S/N and `corner` the SW/SE/NW/NE slots
    *  (Int32Array 4 each; 0 the pixel's own set), `origin` its first world tile
    *  (Int32Array 3, the last 1). Null (every caller but the streaming world's
-   *  border pixels) draws the pixel's own set alone. PRECIP4: `snow` - the
-   *  pixel's ground snow on the snow lane (render/snowCoverGlsl.js;
-   *  scenes/snowCoverHost.js drawOf): `h10`, `h50`, `h90` its snowline at its
-   *  corners (Float32Array 4 each), `set` (Float32Array 4: the world height's
-   *  altitude offset, 1, its winter layers), `eco` its neighbours' winter
-   *  layers (Int32Array 3), `tile` its first world tile (Int32Array 2). Null
-   *  draws no snow - DFU's season on the ground, the set as it is. */
+   *  border pixels) draws the pixel's own set alone. PRECIP4: `snow` - on the
+   *  snow lane the pixel's first world tile (Int32Array 2, the ecotone's
+   *  frame: scenes/snowCoverHost.js drawOf), its snow read off the frame's
+   *  lines (setSnowFrame - AUDIT PRECIP GROUND-7) and its arrays' winter halves
+   *  off the arrays (GROUND-1). Null draws no snow - DFU's season on the
+   *  ground, the set as it is. */
   drawTerrain(surface, modelMatrix, arrayTex, tilemapTex, tileSize, clip = false, eco = null, snow = null) {
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
     const gl = this.gl;
@@ -7740,6 +7748,14 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.uniform1i(this.tUTileArr, 0);
       gl.uniform1i(this.tUTilemap, 2);
       for (let k = 0; k < ECO_UNITS.length; k++) gl.uniform1i(this.tEco.arr[k], ECO_UNITS[k]);   // ECOTONE1
+      // AUDIT PRECIP GROUND-7: the frame's snow - its lines on their unit, its frame; the switch itself a draw's (below)
+      const sf = this._snowFrame;
+      gl.uniform1i(this.tSnow.Lines, SNOW_LINES_UNIT);
+      if (sf && this._snowTex) {
+        this._activeTexture(gl.TEXTURE0 + SNOW_LINES_UNIT);
+        gl.bindTexture(gl.TEXTURE_2D, this._snowTex);
+        gl.uniform3i(this.tSnow.Win, sf.origin[0], sf.origin[1], sf.side);
+      }
     }
     // PERF-TEX2: the TILEMAP is this pixel's own and always binds; the
     // tile ARRAY is the world's single atlas, the same object for every
@@ -7754,6 +7770,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.bindTexture(gl.TEXTURE_2D, tilemapTex);
     // ECOTONE1: a border pixel's neighbours - their sets on units 3-5 (shadowed: a frame's border pixels share them) and
     // the three uniforms that say which wears which; any other pixel sets the one switch off, once while it stays off
+    const snowOn = !!(snow && this._snowFrame && this._snowTex);   // PRECIP4: this draw's snow, on a frame that has it
     if (eco) {
       const shadow = (this._tEcoTex ??= [null, null, null]);
       for (let k = 0; k < ECO_UNITS.length; k++) {
@@ -7768,16 +7785,24 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.uniform4iv(this.tEco.corner, eco.corner);
       gl.uniform3iv(this.tEco.origin, eco.origin);
       this._tEcoOn = true;
+    } else if (snowOn) {
+      gl.uniform3i(this.tEco.origin, snow[0], snow[1], 0);   // AUDIT PRECIP GROUND-7: a lane draw's first world tile, the one origin the ecotone and the snow share
+      this._tEcoOn = null;
     } else if (this._tEcoOn !== false) {
       gl.uniform3i(this.tEco.origin, 0, 0, 0);
       this._tEcoOn = false;
     }
-    // PRECIP4: the pixel's snow (render/snowCoverGlsl.js); any other draw sets the one switch off, once while it stays off
-    if (snow) {
-      const u = this.tSnow;
-      gl.uniform4fv(u.H10, snow.h10); gl.uniform4fv(u.H50, snow.h50); gl.uniform4fv(u.H90, snow.h90);
-      gl.uniform4fv(u.Set, snow.set); gl.uniform3iv(u.Eco, snow.eco); gl.uniform2iv(u.Tile, snow.tile);
-      this._tSnowOn = true;
+    // PRECIP4: the pixel's snow (render/snowCoverGlsl.js) - the frame's lines and this draw's switch; AUDIT PRECIP
+    // GROUND-1: each bound array's winter half read off the array itself (a twin is 2 x TWIN_LAYERS), shadowed
+    if (snowOn) {
+      const arr = this._tSnowArr, layer = (t) => (t && this._arrLayers.get(t) === 2 * TWIN_LAYERS ? TWIN_LAYERS : 0);
+      const a0 = layer(arrayTex), a1 = eco ? layer(eco.tex[0]) : 0, a2 = eco ? layer(eco.tex[1]) : 0, a3 = eco ? layer(eco.tex[2]) : 0;
+      if (arr[0] !== a0 || arr[1] !== a1 || arr[2] !== a2 || arr[3] !== a3) { gl.uniform4i(this.tSnow.Arr, a0, a1, a2, a3); arr[0] = a0; arr[1] = a1; arr[2] = a2; arr[3] = a3; }
+      if (this._tSnowOn !== true || this._tSnowAlt !== this._snowFrame.altitude) {
+        const sf = this._snowFrame;
+        gl.uniform4f(this.tSnow.Set, sf.altitude, 1, sf.spacing, 0);
+        this._tSnowOn = true; this._tSnowAlt = sf.altitude;
+      }
     } else if (this._tSnowOn !== false) {
       gl.uniform4f(this.tSnow.Set, 0, 0, 0, 0);
       this._tSnowOn = false;
@@ -7852,6 +7877,11 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       seaHaze: u('uSeaHaze'),   // FAR-SEA1: the far ring's haze on the sea
       // VC4 recorded that the deck's shadow reached neither the grass nor the water; WATER1 closes the water half
       cloud: [u('uCloudShadowMap'), u('uCloudShadowRect')],
+      // AUDIT PRECIP GROUND-5: the ground's snow, for a puddle's mask under it (render/snowCoverGlsl.js snowCoreGlsl)
+      snow: { lines: u('uSnowLines'), set: u('uSnowSet'), win: u('uSnowWin'), arr: u('uSnowArr'), origin: u('uEcoOrigin') },
+      // the program's own snow state, shadowed (PERF-EXT13: a frame without snow costs the water no call): its lines'
+      // unit sent, its switch (GL's own 0 - off - until sent), the altitude it holds, the winter half it reads
+      snowUnit: false, snowOn: false, snowAlt: NaN, snowArr: -1,
       maskUploaded: false,
     };
   }
@@ -7963,10 +7993,18 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     if (count > 0) gl.uniform3fv(L.pointColors, this._pointColorData(count, true));
     gl.uniform4fv(L.indirect, this._indirect);
     gl.uniform3fv(L.indirectColor, this._indirectColor);
+    // AUDIT PRECIP GROUND-5: the frame's snow lines (setSnowFrame) on their unit; each row says whether it reads them
+    if (this._snowFrame && this._snowTex) {
+      if (!L.snowUnit) { gl.uniform1i(L.snow.lines, SNOW_LINES_UNIT); L.snowUnit = true; }   // a sampler's unit is the program's: sent once
+      this._activeTexture(gl.TEXTURE0 + SNOW_LINES_UNIT);
+      gl.bindTexture(gl.TEXTURE_2D, this._snowTex);
+      gl.uniform3i(L.snow.win, this._snowFrame.origin[0], this._snowFrame.origin[1], this._snowFrame.side);
+    }
   }
 
-  /** WATER-NEXT 2: the draw state every water sheet takes, and the rows - [surface, modelMatrix, arrayTex, tilemapTex]
-   *  (the open sea's rows carry no textures). */
+  /** WATER-NEXT 2: the draw state every water sheet takes, and the rows - [surface, modelMatrix, arrayTex, tilemapTex,
+   *  snow] (the open sea's rows carry no textures; `snow` a pixel's first world tile on the snow lane - its puddles
+   *  under the snow wear its winter art's: AUDIT PRECIP GROUND-5). */
   _drawWaterRows(L, rows, n) {
     this._close2D();   // PERF-2D: every draw hands the baseline back first (a no-op after the callers' own)
     const gl = this.gl;
@@ -7995,8 +8033,18 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.depthFunc(gl.LEQUAL);
     let bound = null;
     for (let i = 0; i < n; i++) {
-      const row = rows[i], surface = row[0], arrayTex = row[2], tilemapTex = row[3];
+      const row = rows[i], surface = row[0], arrayTex = row[2], tilemapTex = row[3], snow = row[4] && this._snowFrame && this._snowTex ? row[4] : null;
       gl.uniformMatrix4fv(L.model, false, row[1]);
+      // the row's snow: its first world tile its own; the switch, the altitude and its array's winter half shadowed
+      if (snow) {
+        const sf = this._snowFrame, half = arrayTex && this._arrLayers.get(arrayTex) === 2 * TWIN_LAYERS ? TWIN_LAYERS : 0;
+        gl.uniform3i(L.snow.origin, snow[0], snow[1], 0);
+        if (L.snowArr !== half) { gl.uniform4i(L.snow.arr, half, 0, 0, 0); L.snowArr = half; }
+        if (!L.snowOn || L.snowAlt !== sf.altitude) { gl.uniform4f(L.snow.set, sf.altitude, 1, sf.spacing, 0); L.snowOn = true; L.snowAlt = sf.altitude; }
+      } else if (L.snowOn) {
+        gl.uniform4f(L.snow.set, 0, 0, 0, 0);
+        L.snowOn = false;
+      }
       if (i === 0 || arrayTex !== bound) {
         this._activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, arrayTex);
