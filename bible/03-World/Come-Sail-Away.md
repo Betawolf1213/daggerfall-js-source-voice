@@ -2576,7 +2576,11 @@ packs every hull (`getBoatTransforms`: `Crewed` sets `packable` too), and makes 
   her hold's weight on top made a ship packed off a plundered hold ONE item heavier than the bearer could ever carry -
   set down in a chest, no take could lift it again. Parts heavier than the bearer's MaxEncumbrance are not made now
   (`partsTooHeavy`): the pick-up and the menu say why, a fast travel and a landfall leave her where she lies; a lost
-  boat is packed whatever she weighs (`01-Overview/bugs/Field-Bugs-2026-10-05c.md`).]
+  boat is packed whatever she weighs (`01-Overview/bugs/Field-Bugs-2026-10-05c.md`).] [PARTS-WEIGHT, FIELD BUGS
+  2026-10-18e: her hold rides her parts no more - they weigh her timbers alone, her hold kept under her number as
+  before. CARGO-ANYWHERE's door stowed into a packed hold with no gate, so parts grew past what the bearer could lift and
+  sat in a chest for good; a load gives every parts item its hull's weight (`comeSailAwayItems.js` `repairPartsWeights`).
+  A departure from the mod's PackBoat sum (`01-Overview/bugs/Field-Bugs-2026-10-18e.md`).]
 - The boat menu lists Pick up on every hull (`systems/comeSailAway/csaBoatMenu.js`). The world host hands the runtime the pack
   (`items.player`) and the menu its word (`noDeed`); an Overworld landfall packs a ship only with her deed.
 - Pins: `test/systems/comeSailAway/shippack.test.js` (8) and `test/systems/naval/shipclaim.test.js`'s two; `test/systems/comeSailAway/boatmenu.test.js`, `test/systems/comeSailAway/csa_boats.test.js`,

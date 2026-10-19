@@ -8613,7 +8613,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return !!w;
     },
     nameOf: (uid) => fleetHost?.nameOf?.({ uid }) ?? '',
-    weigh: (items) => totalWeight(items ?? []),
     say: (text) => townTalk.say(text),
   });
   /** COMPANION-KIT (2026-10-01, Mac: companions "act as storage"): my companion activated - his pack (the party's live
