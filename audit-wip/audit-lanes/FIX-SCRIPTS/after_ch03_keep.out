@@ -1,0 +1,6 @@
+asked: 1030
+complete: true success: true outcome: keep
+gold paid by the script: 1 | gear offered: 1
+1030: "Mind - the Guild gives a Spire key to a house once, %pcf. If one of your blood has taken one from us before you, there is none for you now. Well? Keep it, or let the Order seal it?"
+1040: The priest of the Hour says nothing at all, and leaves. "Kept, then," Ysolde says. "It goes to your house - unless one of your blood took the Guild's key before you. A house has it once. Turn it when you are ready, and not before. There is a man who knows what waits on the other side better than I do. He will find you."
+1004: Ysolde counts out _gold_ gold: the Guild's fee for a key brought up out of the deep places.

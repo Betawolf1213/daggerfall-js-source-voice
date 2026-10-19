@@ -1,0 +1,406 @@
+[
+ {
+  "name": "R1-greater-no-rung-up",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "greater: Object.freeze({ gold: 1.25, gear: true, step: 1 }),",
+  "new": "greater: Object.freeze({ gold: 1.25, gear: true, step: 0 }),",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the harder way no longer pays a rung up the gear ladder (section 5.2)"
+ },
+ {
+  "name": "R2-lesser-full-coin",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "lesser: Object.freeze({ gold: 0.75, gear: true, step: 0 }),",
+  "new": "lesser: Object.freeze({ gold: 1, gear: true, step: 0 }),",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the merciful way pays full coin"
+ },
+ {
+  "name": "R3-greater-plain-coin",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "greater: Object.freeze({ gold: 1.25,",
+  "new": "greater: Object.freeze({ gold: 1,",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the harder way pays no more coin"
+ },
+ {
+  "name": "R4-tier3-magic",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "3: Object.freeze({ floor: 'rare', up: 0 }),",
+  "new": "3: Object.freeze({ floor: 'magic', up: 0 }),",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "tier 3 pays Magic, not Rare"
+ },
+ {
+  "name": "R5-forbidden-unread",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "  if (isForbiddenEquip(entity?.career ?? null, item)) return false;\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a class offered gear it may not equip"
+ },
+ {
+  "name": "R6-worst-weapon-skills",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": ".sort((a, b) => b.v - a.v || a.i - b.i)",
+  "new": ".sort((a, b) => a.v - b.v || a.i - b.i)",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the weapon is fitted to the two WORST weapon skills"
+ },
+ {
+  "name": "R7-betrayal-pays-gear",
+  "file": "src/systems/questlines/qlRewards.js",
+  "old": "betrayal: Object.freeze({ gold: 1, gear: false, step: 0 }),",
+  "new": "betrayal: Object.freeze({ gold: 1, gear: true, step: 0 }),",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a betrayal pays the betrayed guild's piece"
+ },
+ {
+  "name": "L1-letter-is-pay",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "    if (resource?.itemName === 'letter') return;\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a letter handed over marks the quest paid"
+ },
+ {
+  "name": "L2-named-every-time",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "if (named && !history[`named:${quest.questName}`]) {",
+  "new": "if (named) {",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a named piece more than once a character"
+ },
+ {
+  "name": "L3-offers-hoard",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "      if (offers.length > OFFERS_MAX) offers = offers.slice(-OFFERS_MAX);\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "rewards waiting grow without bound"
+ },
+ {
+  "name": "L4-legal-unmoved",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "      if (Number.isSafeInteger(outcome.legal) && outcome.legal !== 0) ctx.changeLegalRep?.(outcome.legal);\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "an outcome's legal standing never moves"
+ },
+ {
+  "name": "L5-ending-twice",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "if (!isStamped(quest) || quest.ql.moved) return null;",
+  "new": "if (!isStamped(quest)) return null;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a second end (a resync, a tombstone after end quest) pays standing and gear again"
+ },
+ {
+  "name": "L6-restore-ids-reset",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "nextOffer = Math.max(Number.isSafeInteger(data?.nextOffer) ? data.nextOffer : 1, ...offers.map((o) => o.id + 1), 1);",
+  "new": "nextOffer = 1;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a reload reuses a waiting offer's id"
+ },
+ {
+  "name": "L7-failure-struck-on-ladder",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "if (outcome ? !outcome.failure : quest.questSuccess) history[",
+  "new": "if (true) history[",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a failed quest is struck as done on its guild ladder"
+ },
+ {
+  "name": "L8-no-tutorial",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "      if (sheetFor(quest?.questName)) noteFirstUse('questlines');   // QL2: the first quest that shows objectives\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js",
+   "test/ui/tut1_tutorials.test.js"
+  ],
+  "why": "the Tutorials' Questlines page never pops"
+ },
+ {
+  "name": "L9-failure-pays-gear",
+  "file": "src/systems/questlines/qlLayer.js",
+  "old": "if (!payProfileOf(outcome).gear || outcome.failure || !(quest.ql.paid || quest.questSuccess)) return null;",
+  "new": "if (!payProfileOf(outcome).gear || !(quest.ql.paid || quest.questSuccess)) return null;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a failure outcome offers gear"
+ },
+ {
+  "name": "W1-foe-dead-unspawned",
+  "file": "src/systems/questlines/qlLaw.js",
+  "old": "(f.killCount | 0) >= Math.max(1, f.spawnCount | 0)",
+  "new": "(f.killCount | 0) >= (f.spawnCount | 0)",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a foe never placed reads as dead"
+ },
+ {
+  "name": "W2-catchall-beats-success",
+  "file": "src/systems/questlines/qlLaw.js",
+  "old": "    if (o?.failure && quest.questSuccess && isCatchAll(o)) o = fallbackOutcome(quest, sheet) ?? o;\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a success whose row missed settles as the catch-all failure"
+ },
+ {
+  "name": "W3-opened-latch-dropped",
+  "file": "src/systems/questlines/qlLaw.js",
+  "old": "    const open = done || failed || !!st?.opened?.includes(o.id) || holds(",
+  "new": "    const open = done || failed || holds(",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "an objective shown is hidden again when its open state clears"
+ },
+ {
+  "name": "W4-clock-not-started-runs",
+  "file": "src/systems/questlines/qlLaw.js",
+  "old": "return !!r && !!r.clockEnabled && !r.clockFinished;",
+  "new": "return !!r && !r.clockFinished;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a clock never started reads as running"
+ },
+ {
+  "name": "N1-end-claim-no-choice",
+  "file": "src/systems/questlines/qlLineRunner.js",
+  "old": "queueClaim(at.line.id, at.index, 'end', outcome?.id ?? null);",
+  "new": "queueClaim(at.line.id, at.index, 'end', null);",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the end claim carries no choice: the Covens' Hoard key (choice keep) is never paid"
+ },
+ {
+  "name": "N2-claim-one-try",
+  "file": "src/systems/questlines/qlLineRunner.js",
+  "old": "export const CLAIM_TRIES = 5;",
+  "new": "export const CLAIM_TRIES = 1;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "an unwitnessed claim is asked once a page"
+ },
+ {
+  "name": "N3-restore-forgets-open",
+  "file": "src/systems/questlines/qlLineRunner.js",
+  "old": "else if (!ended && !said) queueClaim(id, i, 'open');",
+  "new": "else if (false) queueClaim(id, i, 'open');",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a step whose opening claim was never answered is not re-opened on load"
+ },
+ {
+  "name": "N4-stale-step-moves-line",
+  "file": "src/systems/questlines/qlLineRunner.js",
+  "old": "if (!rec || rec.done || rec.step !== at.index) return null;",
+  "new": "if (!rec || rec.done) return null;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "an earlier step's quest ending again moves the line on"
+ },
+ {
+  "name": "I1-weir-road-ungated",
+  "file": "src/systems/questlines/qlLines.js",
+  "old": "opens: { after: 'covensHoard', online: true },",
+  "new": "opens: { online: true },",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the Weir Road opens before the Covens' Hoard"
+ },
+ {
+  "name": "A1-name-underscores",
+  "file": "src/systems/questlines/qlActions.js",
+  "old": "action.given = match.groups.given.replace(/_/g, ' ');",
+  "new": "action.given = match.groups.given;",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a giver named \"Ysolde_Marnhel\""
+ },
+ {
+  "name": "D1-orders-ladder-lost",
+  "file": "src/systems/questlines/qlLadders.js",
+  "old": "if (name.startsWith('Order:')) return orderOf(name.slice(6));",
+  "new": "if (name.startsWith('Order:')) return orderOf(name.slice(7));",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "a knightly order member has no ladder"
+ },
+ {
+  "name": "J1-named-piece-unlabelled",
+  "file": "src/ui/questlines/qlJournal.js",
+  "old": "    if (p.named) card.append(el(doc, 'div', 'px-qpiece-tier px-qpiece-named', t('ql.journal.named', 'This quest\\u2019s own')));\n",
+  "new": "",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the named card is not marked as the quest's own"
+ },
+ {
+  "name": "Q1-objective-news-on-return",
+  "file": "src/ui/quest/questLens.js",
+  "old": "if (was && doneNow.length) events.push(",
+  "new": "if (doneNow.length) events.push(",
+  "tests": [
+   "test/ui/quest/audit_guide.test.js",
+   "test/ui/quest/guide3_herald.test.js",
+   "test/ui/quest/guide1_questLens.test.js",
+   "test/ui/quest/guide4_tracker.test.js",
+   "test/ui/quest/guide5_marks.test.js",
+   "test/ui/enhanced/guide2_wayThere.test.js",
+   "test/systems/quest/questshelf.test.js",
+   "test/systems/quest/qa2_nearsite.test.js",
+   "test/systems/quest/fb1017b_shamtrail.test.js",
+   "test/systems/l10n4_hardcoded.test.js",
+   "test/systems/l10n3d_sites.test.js"
+  ],
+  "why": "a quest back after a look with no entries re-announces every objective done"
+ },
+ {
+  "name": "Q2-failed-is-current",
+  "file": "src/ui/quest/questLens.js",
+  "old": ".find((o) => o.state === 'open')?.text ?? null;",
+  "new": ".find((o) => o.state === 'open' || o.state === 'failed')?.text ?? null;",
+  "tests": [
+   "test/ui/quest/audit_guide.test.js",
+   "test/ui/quest/guide3_herald.test.js",
+   "test/ui/quest/guide1_questLens.test.js",
+   "test/ui/quest/guide4_tracker.test.js",
+   "test/ui/quest/guide5_marks.test.js",
+   "test/ui/enhanced/guide2_wayThere.test.js",
+   "test/systems/quest/questshelf.test.js",
+   "test/systems/quest/qa2_nearsite.test.js",
+   "test/systems/quest/fb1017b_shamtrail.test.js",
+   "test/systems/l10n4_hardcoded.test.js",
+   "test/systems/l10n3d_sites.test.js"
+  ],
+  "why": "the tracker card shows a failed objective as the one to do now"
+ },
+ {
+  "name": "Q3-translation-ignored",
+  "file": "src/ui/quest/questLens.js",
+  "old": "const raw = typeof own === 'string' && own.trim() ? own : String(text ?? '');",
+  "new": "const raw = String(text ?? '');",
+  "tests": [
+   "test/ui/quest/audit_guide.test.js",
+   "test/ui/quest/guide3_herald.test.js",
+   "test/ui/quest/guide1_questLens.test.js",
+   "test/ui/quest/guide4_tracker.test.js",
+   "test/ui/quest/guide5_marks.test.js",
+   "test/ui/enhanced/guide2_wayThere.test.js",
+   "test/systems/quest/questshelf.test.js",
+   "test/systems/quest/qa2_nearsite.test.js",
+   "test/systems/quest/fb1017b_shamtrail.test.js",
+   "test/systems/l10n4_hardcoded.test.js",
+   "test/systems/l10n3d_sites.test.js"
+  ],
+  "why": "a pack's QL.<quest>.<id> words are never read: the sheet's English always"
+ },
+ {
+  "name": "K1-claim-wrong-route",
+  "file": "src/net/accountClient.js",
+  "old": "const a = await post('/v1/ql/claim', body);",
+  "new": "const a = await post('/v1/ql/claims', body);",
+  "tests": [],
+  "why": "every claim 404s: no title, no key ever"
+ },
+ {
+  "name": "K2-dead-session-kept",
+  "file": "src/net/accountClient.js",
+  "old": "const a = await post('/v1/ql/claim', body); if (a?.error === 'auth') forgetSession(storage); return a; },",
+  "new": "const a = await post('/v1/ql/claim', body); return a; },",
+  "tests": [],
+  "why": "a dead session is never forgotten"
+ },
+ {
+  "name": "K3-account-always",
+  "file": "src/net/accountClient.js",
+  "old": "    account: () => storedSession(storage)?.id ?? null,   // whose the line's pay is: none signed in, none asked",
+  "new": "    account: () => 'acct',",
+  "tests": [],
+  "why": "serviceReady with nobody signed in"
+ },
+ {
+  "name": "X1-QLWR04-tier1",
+  "file": "src/systems/questlines/sheets/questlines.json",
+  "old": "{\"quest\":\"QLWR04\",\"tier\":4,",
+  "new": "{\"quest\":\"QLWR04\",\"tier\":1,",
+  "tests": [
+   "test/systems/quest/questbridge.test.js",
+   "test/systems/quest/audit24_questseams.test.js"
+  ],
+  "why": "the Weir Road's ending pays tier-1 gear"
+ }
+]

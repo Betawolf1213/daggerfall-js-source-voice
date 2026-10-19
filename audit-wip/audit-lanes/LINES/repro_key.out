@@ -1,0 +1,6 @@
+char 1 burningDoors 2: {"witnessed":true}
+char 1 burningDoors 3: {"witnessed":true,"title":"doorwarden"}
+char 1 covensHoard 2 (seal): {"witnessed":true,"title":"covenbane"}
+char 2 covensHoard 2 (keep): {"witnessed":true}
+account row: {"eg_keys":1,"ql_key":0}  the step's choice: seal
+QLCH03 keep path: _keepway_ task: when _tokeep_ say 1040 outcome _keep_ ql paid end quest

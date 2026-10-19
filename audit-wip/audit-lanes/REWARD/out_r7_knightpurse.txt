@@ -1,0 +1,6 @@
+answer 0 ("I will [take the purse]") - asked: 1
+   {"outcome":"paid","success":true,"paid":true,"rewards":[],"rep":[[0,4]],"legal":[],"offers":[{"outcome":"paid","tier":3,"rarities":["rare","rare","rare"]}]}
+   gold given: 0  popups: 1
+answer 1 ("Refuse it") - asked: 1
+   {"outcome":"refused","success":true,"paid":true,"rewards":[],"rep":[[0,8]],"legal":[],"offers":[{"outcome":"refused","tier":3,"rarities":["rare","rare","rare"]}]}
+   gold given: 0  popups: 0

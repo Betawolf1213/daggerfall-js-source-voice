@@ -1,0 +1,14 @@
+[
+ {"name":"a restore asks no open", "file":"src/systems/questlines/qlLineRunner.js", "old":"          else if (!ended && !rec.done && !said) queueClaim(id, i, 'open');\n", "new":""},
+ {"name":"b end drops its outcome", "file":"src/systems/questlines/qlLineRunner.js", "old":"queueClaim(at.line.id, at.index, 'end', outcome?.id ?? null);", "new":"queueClaim(at.line.id, at.index, 'end', null);"},
+ {"name":"c the door's path", "file":"src/net/accountClient.js", "old":"post('/v1/ql/claim', body)", "new":"post('/v1/ql/claims', body)"},
+ {"name":"d the phase dropped", "file":"src/systems/questlines/qlLineRunner.js", "old":"step: c.step, phase: c.phase, ", "new":"step: c.step, "},
+ {"name":"e given up after CLAIM_TRIES", "file":"src/systems/questlines/qlLineRunner.js", "old":"    c.next = nowMs() + (c.tries < CLAIM_TRIES ? CLAIM_RETRY_MS : CLAIM_SLOW_MS);\n", "new":"    c.next = nowMs() + CLAIM_RETRY_MS;\n    if (c.tries >= CLAIM_TRIES) pending = pending.filter((x) => x !== c);\n"},
+ {"name":"f keys dropped", "file":"src/systems/questlines/qlLineRunner.js", "old":"keys: Number.isSafeInteger(d.keys) ? d.keys : null", "new":"keys: null"},
+ {"name":"g a guest's open refused", "file":"server-account/src/questlines.js", "old":"  if (phase === 'open') { await opening.run(); return { opened: true }; }\n  if (!qlStepClaimed(line, step)) return { why: 'unpaid' };\n  if (!player?.handle) return { why: 'guest' };", "new":"  if (!player?.handle) return { why: 'guest' };\n  if (phase === 'open') { await opening.run(); return { opened: true }; }\n  if (!qlStepClaimed(line, step)) return { why: 'unpaid' };"},
+ {"name":"h the step's own opening as the window", "file":"server-account/src/questlines.js", "old":"(SELECT MIN(o.opened_at) FROM ql_steps o WHERE o.account = ?1 AND o.line = ?2)", "new":"(SELECT MIN(o.opened_at) FROM ql_steps o WHERE o.account = ?1 AND o.line = ?2 AND o.step = ?3)"},
+ {"name":"i one receipt two steps", "file":"server-account/src/questlines.js", "old":"COALESCE((SELECT MAX(p.seen_at) + 1 FROM ql_steps p WHERE p.account = ?1 AND p.line = ?2 AND p.step < ?3), 0)", "new":"0"},
+ {"name":"j the order's ceiling", "file":"server-account/src/questlines.js", "old":"${x}.at >= ${SINCE} AND ${x}.at < ${UNTIL}", "new":"${x}.at >= ${SINCE}"},
+ {"name":"k the key behind the breach alone", "file":"src/net/questlineClaims.js", "old":"after: 'burningDoors', key:", "new":"after: 'covensHoard', key:"},
+ {"name":"l unseen not shown", "file":"src/systems/questlines/qlLineRunner.js", "old":"    if (d && c.phase === 'end') rec.claims[c.step] = d.why === 'guest' ? 'refused:guest' : 'unseen';\n", "new":""}
+]

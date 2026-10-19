@@ -1,0 +1,3 @@
+GAME_START_QUESTS: [ 'S0000977', '_BRISIEN' ] - with a sheet: [ 'S0000977', '_BRISIEN' ]
+pages popped at the game start: [ 'questlines' ]
+the page says it pops: "When you first take a quest with objectives."

@@ -1,0 +1,13 @@
+import { makeBridge, actsOf, noteAct, QL_LINES, lineById, RUNNER, DAY } from './harness.mjs';
+const h = makeBridge({ level: 30, online: true });
+const q = h.bridge.machine.startQuestByName('QLBD02');
+for (const task of q.tasks.values()) for (const a of task.actions) if (['PlaceNpc','PlaceFoe','RevealLocation'].includes(a.constructor?.typeName)) a.isComplete = true;
+const show = (label) => console.log(label, [...q.tasks.values()].map((t) => `${t.symbol?.name}:${t.getTriggerValue() ? 1 : 0}`).join(' '), 'complete', q.questComplete, 'asked', h.st.asked.length, 'pack', h.st.pack.size);
+h.tick(3); show('t0');
+h.advance(4 * 3600); h.tick(3); show('courier');
+const foe = q.getFoe({ name: 'summoner' }) ?? [...q.resources.values()].find((r) => r.isFoe && r.symbol.name === 'summoner');
+console.log('summoner queue', foe?.itemQueue?.length, 'spawn', foe?.spawnCount);
+h.kill(q); h.tick(3); show('killed');
+const a = h.st.asked.shift(); console.log('asked', a?.message?.id, a?.choices?.map((c) => c.id)); a?.respond(0); h.tick(3); show('answered');
+h.click(q); h.tick(3); show('clicked');
+console.log(h.st.popups.map((p) => p.text.slice(0, 60)));

@@ -1,0 +1,4 @@
+as shipped   : asked=1 gold=0 ended=false ask complete=false
+   console: []
+misspelt 1909: asked=0 gold=0 ended=false ask complete=true
+   console: ["[quest] M0B60Y10: ask 1900 names a message the quest does not have - nothing asked"]

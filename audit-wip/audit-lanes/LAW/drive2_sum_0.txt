@@ -1,0 +1,71 @@
+M0B00Y06: [14769ms] walks 60 err 0 done 60 reached done:27 failed:33
+M0B00Y15: [9948ms] walks 60 err 0 done 60 reached failed:56 done:4
+M0B30Y04: [8304ms] walks 60 err 0 done 60 reached failed:41 done:19
+M0C00Y13: [6529ms] walks 60 err 0 done 60 reached failed:47 done:13
+M0B11Y18: [26589ms] walks 60 err 0 done 60 reached failed:28 slain:10 betrayed:7 loyal:10 escaped:5 | FAIL->OK 20 | SUCCESS-WITH-OPEN-OBJ 11
+M0B60Y10: [11889ms] walks 60 err 0 done 60 reached failed:30 reported:15 quiet:15
+B0B20Y07: [5534ms] walks 60 err 0 done 60 reached failed:45 done:15
+B0B60Y12: [8703ms] walks 60 err 0 done 60 reached failed:47 taken:5 left:8
+B0B80Y17: [10931ms] walks 60 err 0 done 60 reached failed:45 sold:10 burned:5
+B0C00Y10: [8421ms] walks 60 err 0 done 60 reached failed:47 done:13
+N0B00Y08: [10656ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-OPEN report | OBJ-NEVER-DONE sleep,report
+N0B10Y01: [12519ms] walks 60 err 0 done 60 reached failed:36 done:24
+N0B20Y05: [9280ms] walks 60 err 0 done 60 reached failed:51 done:9
+N0C00Y10: [13243ms] walks 60 err 0 done 60 reached done:29 failed:31 | SUCCESS-WITH-OPEN-OBJ 20
+O0A0AL00: [15399ms] walks 60 err 0 done 60 reached joined:42 failed:18 | SUCCESS-WITH-OPEN-OBJ 8
+O0B00Y12: [13429ms] walks 60 err 0 done 60 reached failed:32 done:28
+O0B10Y06: [12786ms] walks 60 err 0 done 60 reached done:34 failed:26 | SUCCESS-WITH-OPEN-OBJ 27
+O0B2XY08: [10157ms] walks 60 err 0 done 60 reached done:27 failed:33 | SUCCESS-WITH-OPEN-OBJ 19
+L0B00Y00: [12357ms] walks 60 err 0 done 60 reached done:22 failed:38
+L0B10Y01: [10538ms] walks 60 err 0 done 60 reached done:11 failed:49
+L0B30Y09: [16131ms] walks 60 err 0 done 60 reached done:21 failed:39
+00B00Y00: [10171ms] walks 60 err 0 done 60 reached done:17 failed:43
+C0B00Y03: [9618ms] walks 60 err 0 done 60 reached failed:45 done:15
+C0B10Y06: [6662ms] walks 60 err 0 done 60 reached done:28 failed:32 | SUCCESS-WITH-OPEN-OBJ 19
+C0B3XY09: [15613ms] walks 60 err 0 done 60 reached bribed:14 failed:41 destroyed:5 | FAIL->OK 14 | SUCCESS-WITH-OPEN-OBJ 4
+C0C00Y13: [8501ms] walks 60 err 0 done 60 reached done:36 failed:24
+G0B00Y00: [10845ms] walks 60 err 0 done 60 reached done:22 failed:38
+R0C10Y00: [10474ms] walks 60 err 0 done 60 reached delivered:32 failed:24 defied:3 surrendered:1 | OVERLAP delivered+surrendered defied+delivered | SUCCESS-WITH-OPEN-OBJ 14
+R0C10Y05: [9974ms] walks 60 err 0 done 60 reached failed:35 done:25
+R0C10Y10: [7152ms] walks 60 err 0 done 60 reached failed:28 done:32
+R0C10Y14: [3852ms] walks 60 err 0 done 60 reached done:32 failed:28
+R0C10Y20: [6518ms] walks 60 err 0 done 60 reached done:32 failed:28 | SUCCESS-WITH-OPEN-OBJ 23
+R0C11Y19: [9330ms] walks 60 err 0 done 60 reached returned:35 failed:22 defied:2 surrendered:1 | OVERLAP defied+returned returned+surrendered | SUCCESS-WITH-OPEN-OBJ 24
+R0C20Y22: [8019ms] walks 60 err 0 done 60 reached failed:19 delivered:32 returned:9 | FAIL->OK 7 | OVERLAP returned+delivered
+K0C00Y00: [13013ms] walks 60 err 0 done 60 reached done:19 failed:25 sold:8 loyal:8 | FAIL->OK 8 | OVERLAP loyal+done | SUCCESS-WITH-OPEN-OBJ 21
+K0C00Y05: [14253ms] walks 60 err 0 done 60 reached failed:37 left:11 rescued:12 | NEVER reclaimed | FAIL->OK 11
+K0C01Y00: [13909ms] walks 60 err 0 done 60 reached failed:27 victim:7 kept:6 gem:11 cousin:9 | OVERLAP victim+cousin victim+cousin+gem victim+gem cousin+gem | SUCCESS-WITH-OPEN-OBJ 10
+A0C00Y00: [30807ms] walks 60 err 0 done 60 reached failed:33 caught:18 done:9
+A0C00Y10: [8332ms] walks 60 err 0 done 60 reached walked:43 failed:9 won:8 | FAIL->OK 36
+A0C00Y15: [11873ms] walks 60 err 0 done 60 reached failed:21 defended:8 yielded:4 delivered:22 recovered:5 | OVERLAP defended+delivered recovered+delivered+yielded
+A0C01Y03: [9493ms] walks 60 err 0 done 60 reached paid:19 failed:31 gift:10 | SUCCESS-WITH-OPEN-OBJ 28
+A0C0XY04: [27381ms] walks 60 err 0 done 60 reached pact:15 failed:30 slain:13 betrayed:2 | FAIL->OK 30 | OVERLAP pact+slain betrayed+slain pact+betrayed+slain
+Q0C00Y01: [12470ms] walks 60 err 0 done 60 reached done:33 failed:27 | SUCCESS-WITH-OPEN-OBJ 16
+Q0C00Y07: [10533ms] walks 60 err 0 done 60 reached failed:46 done:14
+Q0C20Y02: [10533ms] walks 60 err 0 done 60 reached failed:37 done:23 | SUCCESS-WITH-OPEN-OBJ 9
+P0A01L00: [17248ms] walks 60 err 0 done 60 reached ring:18 failed:29 oath:13
+P0B00L06: [13123ms] walks 60 err 0 done 60 reached guild:31 clan:25 failed:4 | FAIL->OK 31 | SUCCESS-WITH-OPEN-OBJ 6
+P0B10L10: [11794ms] walks 60 err 0 done 60 reached done:41 failed:19 | SUCCESS-WITH-OPEN-OBJ 7
+30C00Y00: [11011ms] walks 60 err 0 done 60 reached failed:46 done:14
+70C00Y00: [12154ms] walks 60 err 0 done 60 reached failed:35 done:25
+U0C00Y00: [15523ms] walks 60 err 0 done 60 reached done:37 failed:23 | SUCCESS-WITH-OPEN-OBJ 6
+Y0C00Y00: [10049ms] walks 60 err 0 done 60 reached failed:49 done:11
+S0000002: [16238ms] walks 60 err 0 done 60 reached refused:40 caught:3 opened:2 sealed:15 | NEVER overtaken,eadwyre,failed | SUCCESS->FAILURE 1 | OVERLAP caught+eadwyre | SUCCESS-WITH-OPEN-OBJ 17
+S0000006: [26510ms] walks 60 err 0 done 60 reached unravelled:9 refused:26 delivered:25 | NEVER failed
+S0000010: [14846ms] walks 60 err 0 done 60 reached refused:22 failed:10 returned:28 | SUCCESS-WITH-OPEN-OBJ 5
+S0000015: [7072ms] walks 60 err 0 done 60 reached accused:11 tried:6 sold:8 claimed:13 slain:10 dismissed:12 | NEVER failed | FAIL->OK 37 | OVERLAP tried+accused tried+claimed+sold claimed+dismissed slain+claimed+sold slain+claimed+dismissed claimed+accused slain+claimed+accused tried+dismissed slain+dismissed slain+sold claimed+sold
+S0000020: [8905ms] walks 60 err 0 done 60 reached read:60 | NEVER refused,failed | FAIL->OK 60 | OBJ-NEVER-DONE learn
+S0000101: [6056ms] walks 60 err 0 done 60 reached over:60 | NEVER failed | FAIL->OK 60
+S0000106: [6165ms] walks 60 err 0 done 60 reached adored:60 | FAIL->OK 60
+S0000502: [23843ms] walks 60 err 0 done 60 reached done:27 failed:33 | SUCCESS-WITH-OPEN-OBJ 10
+S0000999: [93189ms] walks 27 err 0 done 0 reached  | NEVER done,failed | OBJ-NEVER-OPEN ghost,letter,royals | OBJ-NEVER-DONE ghost,letter,royals
+FetchWood01: [11496ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-DONE deliver
+QLBD01: [9746ms] walks 60 err 0 done 60 reached met:45 failed:15
+QLBD05: [11058ms] walks 60 err 0 done 60 reached guild:12 broker:17 failed:17 order:14
+QLHR01: [10435ms] walks 60 err 0 done 60 reached met:36 failed:24
+QLIF01: [10608ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-OPEN reading | OBJ-NEVER-DONE star,reading
+QLIP01: [9300ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-OPEN report | OBJ-NEVER-DONE fish,herbs,report
+QLIR02: [7228ms] walks 60 err 0 done 60 reached failed:36 done:24 | SUCCESS-WITH-OPEN-OBJ 13
+QLIT01: [10106ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-OPEN report | OBJ-NEVER-DONE cards,report
+QLOC01: [5979ms] walks 60 err 0 done 60 reached met:46 failed:14
+QLWR02: [6492ms] walks 60 err 0 done 60 reached failed:60 | NEVER done | OBJ-NEVER-OPEN meet | OBJ-NEVER-DONE halls,meet

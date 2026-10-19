@@ -1,0 +1,24 @@
+## draft
+{
+  "quest": "S0000003",
+  "objectives": [],
+  "outcomes": [
+    {
+      "id": "done",
+      "text": "TODO",
+      "on": {
+        "task": "_no_"
+      },
+      "pay": "standard"
+    },
+    {
+      "id": "failed",
+      "text": "TODO",
+      "on": {
+        "ended": true
+      },
+      "pay": "none",
+      "failure": true
+    }
+  ]
+}

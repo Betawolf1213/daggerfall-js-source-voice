@@ -1,0 +1,159 @@
+ROW!   M0B50Y09 1900 [79] The merchant's purse is light for a gargoyle, %pcf. How will you take your pay?
+label  M0B50Y09 1901 [19] The fee, as agreed.
+LABEL! M0B50Y09 1902 [48] Waive it - let the Guild's good name be the pay.
+ROW!   M0B60Y10 1900 [109] It's done, then. Not a word of this to the Mages Guild - the client was very clear. We understand each other?
+LABEL! M0B60Y10 1901 [41] Not a word. Pay me and it never happened.
+LABEL! M0B60Y10 1902 [69] A rogue summoner is the Mages Guild's business. They will hear of it.
+ROW!   M0B21Y19 1900 [100] "You kept me alive. My father would have wanted you to have this - it was his." _daughter_ holds out
+row    M0B21Y19 1900 [29] an heirloom wrapped in cloth.
+label  M0B21Y19 1901 [18] Take the heirloom.
+LABEL! M0B21Y19 1902 [32] Refuse it - she has lost enough.
+ROW!   B0B40Y08 1900 [68] The orcs' plunder from the caravans still lies in ___dungeon_, %pcf.
+ROW!   B0B40Y08 1900 [51] By the old custom of arms, the spoils of a war band
+ROW!   B0B40Y08 1900 [55] belong to the knight who broke it. Will you claim them?
+LABEL! B0B40Y08 1901 [39] I claim them. I took them by the sword.
+LABEL! B0B40Y08 1902 [101] Return them to the caravan masters they were taken from. A knight does not grow rich on stolen goods.
+ROW!   B0B40Y09 1900 [61] The herders whose cattle that giant ate have scraped together
+ROW!   B0B40Y09 1900 [60] a purse for you, %pcf. It is not much - it is what the giant
+row    B0B40Y09 1900 [28] left them. Will you take it?
+LABEL! B0B40Y09 1901 [43] I will. The work was hard, and fairly done.
+LABEL! B0B40Y09 1902 [80] No. Let them buy new cattle with it. A knight does not take bread from the poor.
+ROW!   B0B60Y12 1900 [56] _nobleman_ says the grave goods in ___dungeon_ are yours
+ROW!   B0B60Y12 1900 [64] for your trouble, %pcf - the old woman has no more use for them.
+row    B0B60Y12 1900 [19] Will you take them?
+LABEL! B0B60Y12 1901 [49] I will. The heir gives them freely, and I accept.
+LABEL! B0B60Y12 1902 [73] Leave them with her ashes. I went to give her rest, not to rob her grave.
+ROW!   B0B70Y14 1900 [57] The order does not pay its own, %pcf - but she lied to us
+ROW!   B0B70Y14 1900 [53] to cheat the Fighters Guild of its fee, and this once
+row    B0B70Y14 1900 [40] there is gold for you. Will you take it?
+LABEL! B0B70Y14 1901 [52] I will. Her lie cost me as dearly as the Daedra did.
+LABEL! B0B70Y14 1902 [108] No. I swore to fight for glory, not gold. Send it to the Fighters Guild - it is the fee she cheated them of.
+row    B0B70Y16 1900 [45] The order will ask who slew the dragon, %pcf.
+row    B0B70Y16 1900 [39] As we agreed - we both stood before it.
+row    B0B70Y16 1900 [33] You will tell them so, won't you?
+LABEL! B0B70Y16 1901 [48] A bargain is a bargain. We both stood before it.
+LABEL! B0B70Y16 1902 [91] I will not lie to the order. You found it; I slew it, alone. That is what I will tell them.
+ROW!   B0B80Y17 1900 [74] The lich's books of necromancy still lie in its lair in ___dungeon_, %pcf.
+ROW!   B0B80Y17 1900 [68] The Mages Guild offers good coin to study them; the temple would see
+row    B0B80Y17 1900 [48] them burned. The choice is yours - you won them.
+LABEL! B0B80Y17 1901 [67] Sell them to the Mages Guild. Let the scholars learn what they can.
+LABEL! B0B80Y17 1902 [81] Burn them, as the temple asks. No one will raise the dead from those pages again.
+ROW!   B0B50Y11 1900 [63] _nobleman_ is so pleased, %pcf, that a fountain is to be raised
+ROW!   B0B50Y11 1900 [54] with your name carved upon it. Shall I tell _nobleman_
+row    B0B50Y11 1900 [22] you accept the honour?
+LABEL! B0B50Y11 1901 [38] Gladly. Let my name be carved upon it.
+LABEL! B0B50Y11 1902 [114] Let it bear no name of mine. Raise it as a well for the common folk - the deed was the order's duty, not my glory.
+row    N0B40Y07 1900 [37] Banished, and none the worse for it -
+row    N0B40Y07 1900 [36] exactly as I wanted. Now, my scroll,
+row    N0B40Y07 1900 [33] if you please. That is =daedra_'s
+row    N0B40Y07 1900 [33] true name you are carrying, and I
+row    N0B40Y07 1900 [28] shall have need of it again.
+label  N0B40Y07 1901 [20] Here is your scroll.
+LABEL! N0B40Y07 1902 [43] I will burn it. =daedra_ stays in Oblivion.
+row    L0A01L00 1900 [39] _npc_'s heart has failed. Poor bastard.
+row    L0A01L00 1900 [48] It is custom that a novice be paid a single gold
+row    L0A01L00 1900 [49] coin for the first sanctioned death - and custom,
+row    L0A01L00 1900 [47] among the devout, to give that coin to Mephala.
+row    L0A01L00 1900 [23] Which will it be, %pcn?
+label  L0A01L00 1901 [14] Take the coin.
+label  L0A01L00 1902 [19] Give it to Mephala.
+row    L0B40Y04 1900 [48] _knight_ will not see the throne, and our client
+row    L0B40Y04 1900 [49] sits a step nearer to it. A royal so near a crown
+row    L0B40Y04 1900 [47] is worth more to us in debt than in coin, %pcf.
+row    L0B40Y04 1900 [44] Your fee - will you take it, or let it stand
+row    L0B40Y04 1900 [42] as a debt the client owes the Brotherhood?
+label  L0B40Y04 1901 [24] The gold, as contracted.
+LABEL! L0B40Y04 1902 [59] Let the debt stand. A royal debtor is worth more than gold.
+row    L0B60Y10 1900 [47] The hero of Betony, dead at last. Street gossip
+row    L0B60Y10 1900 [40] had it before you were through the door.
+row    L0B60Y10 1900 [49] Here is your fee - unless you would do as the old
+row    L0B60Y10 1900 [45] accounters did, and pay for the mark's rites.
+ROW!   L0B60Y10 1900 [51] Nine men killed in the Betony war, the stories say.
+ROW!   L0B60Y10 1900 [60] That deserves a better grave than gossip. Your choice, %pcf.
+LABEL! L0B60Y10 1901 [42] Take the fee. Heroes die like anyone else.
+LABEL! L0B60Y10 1902 [32] Spend it on the veteran's rites.
+ROW!   C0B00Y02 1900 [54] _guardian_ backs against the wall, the _item_ in hand.
+ROW!   C0B00Y02 1900 [54] "It was only a game. _child_ played the part, and even
+ROW!   C0B00Y02 1900 [54] _priest_ was fooled. Take the thing back - only let me
+ROW!   C0B00Y02 1900 [52] go, and no one at __qgiver_ need ever know my name."
+LABEL! C0B00Y02 1901 [38] Take the _item_ and let _guardian_ go.
+LABEL! C0B00Y02 1902 [65] Take the _item_, and see that __qgiver_ learns _guardian_'s name.
+row    C0B00Y02 1903 [45] _guardian_ presses the _item_ into your hands
+row    C0B00Y02 1903 [44] and is gone before you can change your mind.
+ROW!   C0B00Y02 1904 [52] _guardian_ hands over the _item_ and slinks out into
+ROW!   C0B00Y02 1904 [54] the street. __qgiver_ will know the name of the knight
+row    C0B00Y02 1904 [47] who robbed a temple with a child's play-acting.
+ROW!   R0C11Y03 1900 [78] _chemist_ sends word the heart came to %g2 fresh, and the daedra will not soon
+ROW!   R0C11Y03 1900 [76] forget the name of the one who carried it. I have the gold we agreed, %pcf -
+ROW!   R0C11Y03 1900 [78] or, if you would rather, the favour of my house, which at court is worth more.
+label  R0C11Y03 1901 [20] The gold, as agreed.
+LABEL! R0C11Y03 1902 [35] Your house's favour. Keep the gold.
+ROW!   R0C11Y26 1900 [68] The Ripper is dead, and the _reward_ gold I promised is yours, %pcf.
+ROW!   R0C11Y26 1900 [70] Yet it was the women of ___qgiver_'s streets he hunted, and no one has
+ROW!   R0C11Y26 1900 [72] ever paid them a copper for their fear. Will you take it, or shall they?
+LABEL! R0C11Y26 1901 [32] I'll take the gold. I earned it.
+LABEL! R0C11Y26 1902 [31] Give it to the women he hunted.
+ROW!   R0C11Y16 1900 [64] A holy relic, and a fine one. Some temple is missing this, %pcf,
+ROW!   R0C11Y16 1900 [63] and its priests would pay well to learn who has it now. Here is
+row    R0C11Y16 1900 [48] your gold, and for it, you never saw me. Agreed?
+label  R0C11Y16 1901 [24] Agreed. I never saw you.
+LABEL! R0C11Y16 1902 [58] Keep your gold. The temple will hear where its relic went.
+ROW!   K0C01Y10 1900 [58] Ah, the Bothdorjii Scroll. I can smell the brimstone on it
+row    K0C01Y10 1900 [50] from here. Hand it over, %pcf, and I will tell you
+row    K0C01Y10 1900 [48] what I know of the storm that wrecked your ship.
+LABEL! K0C01Y10 1901 [56] Hand over the scroll and hear the truth about the storm.
+LABEL! K0C01Y10 1902 [60] Burn it here. Words that wake the Princes are better unread.
+ROW!   K0C01Y10 1903 [51] You burned it? You witless %ra! Have you any notion
+ROW!   K0C01Y10 1903 [56] what that scroll was worth? Get out of my sight. Whoever
+ROW!   K0C01Y10 1903 [56] sent that storm after you, you will not hear it from me.
+ROW!   A0C01Y01 1900 [58] They're dead - both of them! You have saved my life, %pcf.
+ROW!   A0C01Y01 1900 [60] Here is the gold we agreed, though the gods know I will need
+row    A0C01Y01 1900 [42] every coin if they come again for my land.
+label  A0C01Y01 1901 [24] Take the gold we agreed.
+LABEL! A0C01Y01 1902 [65] Keep it. Spend it on stout locks, and on holding on to your land.
+ROW!   A0C01Y03 1900 [67] _hermit_'s answer, at last! You have done everything I asked, %pcf.
+row    A0C01Y03 1900 [42] Here is your gold - every coin I promised.
+label  A0C01Y03 1901 [27] Take the gold, as promised.
+LABEL! A0C01Y03 1902 [54] Keep it - call it a wedding gift for you and _spouse_.
+ROW!   A0C01Y06 1900 [63] Look - finish off _master_, and the gold I was paid to send you
+ROW!   A0C01Y06 1900 [70] there is yours. Every coin. Only keep my name away from the guard, eh?
+LABEL! A0C01Y06 1901 [35] Take the gold, and let _qgiver_ go.
+LABEL! A0C01Y06 1902 [55] Keep it. The guard will hear how you sold me to an orc.
+ROW!   A0C01Y06 1903 [56] _qgiver_ goes pale. "You wouldn't..." But you would, and
+row    A0C01Y06 1903 [48] the guard will hear of it before the day is out.
+ROW!   A0C01Y13 1900 [64] Home, at last! I owe you my life, %pcn. Now give me that letter.
+ROW!   A0C01Y13 1900 [56] _giver_ and _sister_ will learn what it is to be afraid.
+LABEL! A0C01Y13 1901 [51] Give _lover_ the letter. They are his to deal with.
+LABEL! A0C01Y13 1902 [59] Keep the letter for the magistrate. Let the law judge them.
+ROW!   A0C01Y13 1903 [67] _lover_ stares at you, then laughs bitterly. "The magistrate, then.
+ROW!   A0C01Y13 1903 [64] Much good may it do you. You have my thanks - and nothing more."
+ROW!   A0C41Y18 1900 [65] Of course, there is the coward's way - the way of whoever gave it
+ROW!   A0C41Y18 1900 [69] to you. Give the _finger_ to some other poor soul, and the mummy will
+ROW!   A0C41Y18 1900 [63] follow it instead of you. I would not. But the choice is yours.
+LABEL! A0C41Y18 1901 [48] Destroy the mummy in its tomb and end the curse.
+LABEL! A0C41Y18 1902 [59] Pass the _finger_ on to a stranger, as it was passed to me.
+ROW!   A0C41Y18 1903 [65] The next stranger on the road takes your package without a second
+ROW!   A0C41Y18 1903 [52] look. Tonight, the mummy will come for someone else.
+ROW!   Q0C4XY04 1900 [59] Thou hast it, %pcn, and still it beats! Quickly now, before
+ROW!   Q0C4XY04 1900 [51] it cools - what wouldst thou have of thy poor aunts
+row    Q0C4XY04 1900 [20] for so fine a heart?
+LABEL! Q0C4XY04 1901 [35] The _reward_ thou didst promise me.
+LABEL! Q0C4XY04 1902 [43] Nothing. Let it be a gift to my dear aunts.
+ROW!   P0A01L00 1900 [58] The lesser one is ash, and %vam saw it done. Will you take
+ROW!   P0A01L00 1900 [61] the ring that marks you as one of us, %pcf - or bind yourself
+row    P0A01L00 1900 [23] to the family in blood?
+label  P0A01L00 1901 [22] Take the ring of %vam.
+LABEL! P0A01L00 1902 [43] Take no ring. Swear the blood-oath instead.
+ROW!   P0B10L08 1900 [58] So the Prince's coven has felt the teeth of %vam. Tell me,
+ROW!   P0B10L08 1900 [55] %pcf - is the Coven of ==daedra_ broken, or only bowed?
+label  P0B10L08 1901 [29] Broken. %reg belongs to %vam.
+LABEL! P0B10L08 1902 [81] Only bowed. Let my reward go to the Prince's coven, the price of a lasting peace.
+ROW!   P0B01L02 1900 [57] So you are %pcf. And that is the _vamprelic_ of the elder
+ROW!   P0B01L02 1900 [52] circle, I see. Give it here - %vam will take it into
+row    P0B01L02 1900 [19] proper keeping now.
+LABEL! P0B01L02 1901 [54] Give the _vamprelic_ to _vampire_. It belongs to %vam.
+LABEL! P0B01L02 1902 [43] Keep it. You stole it, and it is yours now.
+ROW!   P0B01L02 1903 [53] You would keep a relic of the elder circle from %vam?
+ROW!   P0B01L02 1903 [52] How very ... mortal of you. Keep it, then, %pcf, and
+row    P0B01L02 1903 [42] learn how long the patience of %vam lasts.
+rows over: 61, labels over: 44

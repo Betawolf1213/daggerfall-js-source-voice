@@ -1,0 +1,4 @@
+after the Queen: success true, choices {"letter":"queen","hunt":"hunt"}
+ended: complete true, DFU success true, choices {"letter":"queen","hunt":"hunt"}
+outcome rows holding at the end: ["failed"] -> settled "failed": "The letter never reached anyone who could use it."
+the layer's standing moves (propagate false): []; gear offers: 0

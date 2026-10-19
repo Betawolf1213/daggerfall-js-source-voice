@@ -1,0 +1,7 @@
+bootWorld                    base 36190 head 36193 delta 3
+createWorldModes             base 10997 head 10997 delta 0
+buildDungeonContext          base 8450 head 8453 delta 3
+bootExterior                 base 5049 head 5051 delta 2
+createNavalHost              base 6096 head 6098 delta 2
+createComeSailAwayRuntime    base 2481 head 2481 delta 0
+createEgClient               base 2775 head 2779 delta 4

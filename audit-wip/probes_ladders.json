@@ -1,0 +1,6 @@
+[
+ {"name":"the level unread","file":"src/systems/questlines/qlLadders.js","old":"    const offers = questRankFor(g, m.rank, level);","new":"    const offers = m.rank;"},
+ {"name":"the orders' prefix","file":"src/systems/questlines/qlLadders.js","old":"  if (name.startsWith('Order:')) return orderOf(name.slice(6));","new":"  if (name.startsWith('Order:')) return orderOf(name.slice(7));"},
+ {"name":"the divine's rows","file":"src/systems/questlines/qlLadders.js","old":"(r.membership === 'M' || (divine && r.membership === divine))","new":"(r.membership === 'M')"},
+ {"name":"the adult filter","file":"src/systems/questlines/qlLadders.js","old":" && (!r.adult || adult));","new":");"}
+]

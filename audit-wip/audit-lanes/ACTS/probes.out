@@ -1,0 +1,60 @@
+M1 egClient: valkynaz-felled on every Redoubt
+mutant applied to src/scenes/eliteGates/egClient.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M2 sdClaims: hour-broken on a re-claim ('claimed') too
+mutant applied to src/net/superDungeon/sdClaims.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M3 serpentClaims: serpent-slain on a re-claim too
+mutant applied to src/net/serpent/serpentClaims.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M4 dungeonContext: any dungeon's elite (a Super dungeon's six)
+mutant applied to src/scenes/dungeonContext.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M5 arenaBouts: a relay bout lost counts
+mutant applied to src/scenes/arena/arenaBouts.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M6 profBook: a craft another tab minted counts here
+mutant applied to src/net/profBook.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M7 navalHost: a peer's guns count
+mutant applied to src/scenes/naval/navalHost.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M8 gambitTableGame: a watcher's board counts
+mutant applied to src/scenes/gambitTableGame.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M9 deepWatersFish: a fish that swam off (despawned, its loot whole) counts
+mutant applied to src/scenes/deepWater/deepWatersFish.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M10 raidingParties: a raid cleansed anywhere, unfought
+mutant applied to src/systems/raidingParties.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M11 iliacTableSession: a lost game counts
+mutant applied to src/systems/iliac/iliacTableSession.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M12 cardTableSession: any showdown counts
+mutant applied to src/systems/card/cardTableSession.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M13 fishHost: only a trophy haul counts
+mutant applied to src/scenes/fishHost.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M14 foragingInstall: an empty net counts
+mutant applied to src/systems/foraging/foragingInstall.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 
+M15 revenantFate: noted before the record answers
+mutant applied to src/systems/revenant/revenantFate.js
+  test/systems/questlines/ql11_acts.test.js: # pass 11 # fail 0 
+  test/systems/questlines/ql12_lines.test.js: # pass 12 # fail 0 

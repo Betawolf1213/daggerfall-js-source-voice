@@ -1,0 +1,2 @@
+look 1 events ["objective"] -> notice: ["Objective done","Wild Animal","Kill the beast"]
+look 2 events ["updated"] -> notice: ["Objective done","Wild Animal"]

@@ -1,0 +1,27 @@
+kinds declared: 23  kinds a script waits on: 23
+declared, no script waits: []
+waited, not declared: []
+sheet act bindings not declared: []
+  rite-broken      QLBD03:1
+  breach-closed    QLBD04:1
+  elite-foe-slain  QLCH01:3
+  hour-broken      QLHR02:1
+  arena-won        QLIA01:1 QLIA02:3
+  star-taken       QLIF01:1 QLIF02:3
+  gem-socketed     QLIG01:1
+  piece-reforged   QLIG02:1
+  fish-caught      QLIP01:3
+  herb-gathered    QLIP01:3
+  ore-mined        QLIP02:3
+  wood-chopped     QLIP02:3
+  piece-crafted    QLIP03:1
+  port-reached     QLIS01:1 QLOC02:2
+  cargo-delivered  QLIS02:1
+  ship-struck      QLIS03:1
+  cards-won        QLIT01:1
+  gambit-won       QLIT02:1
+  raid-repelled    QLIW01:1
+  revenant-knelt   QLIW02:1
+  serpent-slain    QLOC03:1
+  redoubt-taken    QLWR01:1 QLWR02:3
+  valkynaz-felled  QLWR03:1

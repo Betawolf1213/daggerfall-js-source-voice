@@ -1,0 +1,77 @@
+=== b_repro_ask_missing_msg.mjs
+as shipped   : asked=1 gold=0 ended=false ask complete=false
+   console: []
+[questlines] M0B60Y10: ask 1900 names a message the quest does not have (1909) - asked with what it has
+misspelt 1909: asked=1 gold=0 ended=false ask complete=false
+   console: []
+=== b_repro_deploy_share.mjs
+R0C11Y26: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":true,"reason":null}; with it off: {"ok":true,"reason":null}
+M0B50Y09: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":false,"reason":"guild"}; with it off: {"ok":false,"reason":"guild"}
+A0C01Y03: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":false,"reason":"mismatch"}; with it off: {"ok":false,"reason":"mismatch"}
+=== b_repro_order.mjs
+A0C41Y18 - the boxes in the order the player reads them:
+   1. Let me see the Finger. Ah... Yes, it bears the cur
+   2.  hands you a letter wrapped around a small object 
+   3. [question] Of course, there is the coward's way - the way of 
+A0C01Y06 - the boxes in the order the player reads them:
+   1. Don't hurt me, Hero! I didn't know what  was plann
+   2. [question] Look - finish off , and the gold I was paid to sen
+=== b_repro_outcome_unknown.mjs
+as shipped           : {"ended":true,"success":true,"outcome":"waived","rep":[[41,5],[41,5]],"offers":1,"history":{"M0B50Y09":"waived"}}
+`outcome _waivd_` added: {"ended":true,"success":true,"outcome":"waived","rep":[[41,5],[41,5]],"offers":1,"history":{"M0B50Y09":"waived"}}
+=== b_repro_party_ask.mjs
+member received: true
+sharer asked: 1
+resync: {"ok":true,"resync":true,"reason":null}
+member asked (no click of theirs): 1
+sharer: outcome=paid gold=["Gold Piecesx546"] | member: ended=true outcome=given gold=[] rep=[[512,5]]
+=== b_repro_party_ask2.mjs
+member -> sharer sync: {"ok":true,"resync":true,"reason":null}
+sharer, box still up: ended=false tasks qlkeep=false qlalt=true
+sharer: outcome=given success=true gold=[] rep=[] offers=0
+member: outcome=given gold=[] offers=1
+=== b_repro_pickerart.mjs
+art loaded: false | asked: 1
+top is the pick: true
+window done: true | boxes left: 0
+after 50 ticks - asked: 1 | ask.asking: undefined | ask complete: false | quest ended: false
+=== b_repro_qlact_share.mjs
+QLBD03 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLBD03 after 3 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLBD04 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLBD04 after 3 ticks: sender cannot prepare (gone) - ended headless, skipped
+QLWR01 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLWR01 after 3 ticks: sender cannot prepare (gone) - ended headless, skipped
+QLIF01 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLIF01 after 3 ticks: sender cannot prepare (gone) - ended headless, skipped
+QLIT01 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLIT01 after 3 ticks: sender cannot prepare (gone) - ended headless, skipped
+QLIS01 after 0 ticks: sender cannot prepare (questline) - ended headless, skipped
+QLIS01 after 3 ticks: sender cannot prepare (gone) - ended headless, skipped
+=== b_repro_restart_unstamped.mjs
+started on: stamped true | restart allowed: true
+restarted: ok=true stamped=true | 5 ports reached, heard by 1 quests | the act's task set: true
+=== r_r19_sharetier.mjs
+sender (level 21) R0C10Y10: tier 4
+receiver (level 1): received true; its copy's tier 1 - its own stamp would read tier 1
+receiver's offer: tier 1, pieces magic Soldier's Tanto of the Owl | magic Helm of Embers | magic Mark of the Oak
+=== r_r20_sharenamed.mjs
+QLBD05 shareable: false
+file:///tmp/claude-0/-home-user-daggerfall-js-source/3623cd79-09cc-592b-97d8-4abfb43f9e1e/scratchpad/audit-lanes/FIX-FLOW/r_r20_sharenamed.mjs:18
+  for (const t of q.tasks.values()) for (const a of t.actions) if (a.typeName === 'PlaceNpc') a.isComplete = true;
+                    ^
+
+TypeError: Cannot read properties of undefined (reading 'tasks')
+    at file:///tmp/claude-0/-home-user-daggerfall-js-source/3623cd79-09cc-592b-97d8-4abfb43f9e1e/scratchpad/audit-lanes/FIX-FLOW/r_r20_sharenamed.mjs:18:21
+
+Node.js v22.22.0
+=== share_tier.mjs
+the level-1 player's own A0C10Y02: tier 1
+the level-25 sharer's A0C10Y02: tier 4
+the level-1 player's received copy: ok true tier 1
+the level-1 holder's offer: tier 1 pieces magic,magic,magic
+=== share_deploy.mjs
+before the deploy - shared to a mate: true  | sender ql: null
+after the deploy - the same quest resynced to that mate: true 
+after the deploy - shared to a new mate: true 
+tasks in the envelope vs the receiver's reference parse: 10 14

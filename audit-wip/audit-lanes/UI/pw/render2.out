@@ -1,0 +1,84 @@
+focus at open: button.on: ◆Quests◆
+TAB STOPS:
+  button.: ◆Stats◆
+  button.: ◆Growth◆
+  button.: ◆Holdings◆
+  button.: ◆Family◆
+  button.: ◆Tutorials◆
+  button.: ◆System◆
+  button.px-qrow px-qreward on: ◆Reward: Wild Animal
+  button.px-qrow px-qreward: ◆Reward: The Caged Broker
+  button.px-qrow: ◆The Emperor’s Letter
+  button.px-qrow: ◆A Silent Summons
+  button.px-qrow: ◆Wild Animal◆
+  button.px-qrow: ◆The Lich’s Relic
+  button.px-qrow px-qlinerow: ◆The Harbourmaster’s Word
+  button.px-qrow px-qlinerow: ◆The Burning Doors
+  button.px-qrow px-qlinerow: ◆The Smith’s Secrets
+  button.px-qrow px-qlinerow: ◆The Merchant’s Road
+  button.px-qrow px-qlinerow done: ◆The Covens’ Hoard
+  button.px-qrow px-qlinerow done: ◆The Weir Road
+  button.px-qrow px-qlinerow done: ◆The Hour That Was Not
+  button.px-qrow px-qlinerow done: ◆The Old Coil
+  button.px-qrow px-qlinerow done: ◆The Court Crafter
+  button.px-qrow px-qlinerow done: ◆The Herald’s Call
+  button.px-qrow px-qlinerow done: ◆The Bay’s Troubles
+  button.px-qrow px-qlinerow done: ◆Written in the Stars
+  button.px-qrow px-qlinerow done: ◆A Seat at the Table
+  button.px-qrow px-qlinerow: ◆The Fighters Guild
+  button.px-qrow done: ◆Rat Problem
+  button.px-qrow done: Clear archive (1)
+  button.act: Take this
+  button.act: Take this
+  button.act: Take this
+  button.px-profile: ◇Sign inUnnamed · level 1
+  body.: import * as scn from './scenario.js';
+wi
+  button.on: ◆Quests◆
+  button.: ◆Stats◆
+  button.: ◆Growth◆
+  button.: ◆Holdings◆
+  button.: ◆Family◆
+  button.: ◆Tutorials◆
+  button.: ◆System◆
+  button.px-qrow px-qreward on: ◆Reward: Wild Animal
+  button.px-qrow px-qreward: ◆Reward: The Caged Broker
+  button.px-qrow: ◆The Emperor’s Letter
+  button.px-qrow: ◆A Silent Summons
+  button.px-qrow: ◆Wild Animal◆
+  button.px-qrow: ◆The Lich’s Relic
+  button.px-qrow px-qlinerow: ◆The Harbourmaster’s Word
+  button.px-qrow px-qlinerow: ◆The Burning Doors
+  button.px-qrow px-qlinerow: ◆The Smith’s Secrets
+  button.px-qrow px-qlinerow: ◆The Merchant’s Road
+  button.px-qrow px-qlinerow done: ◆The Covens’ Hoard
+  button.px-qrow px-qlinerow done: ◆The Weir Road
+  button.px-qrow px-qlinerow done: ◆The Hour That Was Not
+  button.px-qrow px-qlinerow done: ◆The Old Coil
+  button.px-qrow px-qlinerow done: ◆The Court Crafter
+  button.px-qrow px-qlinerow done: ◆The Herald’s Call
+  button.px-qrow px-qlinerow done: ◆The Bay’s Troubles
+  button.px-qrow px-qlinerow done: ◆Written in the Stars
+  button.px-qrow px-qlinerow done: ◆A Seat at the Table
+  button.px-qrow px-qlinerow: ◆The Fighters Guild
+
+focused a line row: button.px-qrow px-qlinerow: ◆The Harbourmaster’s Word
+after Enter on it  : button.px-qrow px-qlinerow on: ◆The Harbourmaster’s Word
+lit row            : ◆The Harbourmaster’s Word
+next Tab lands on  : button.px-qrow px-qlinerow: ◆The Burning Doors
+
+TAKE buttons: [
+  "Take this [title: Take Warrior's Long Bow of the Sage: it is set at your feet and your pack opens over it]",
+  "Take this [title: Take Guardian's Kite Shield of Iron Will: it is set at your feet and your pack opens over it]",
+  "Take this [title: Take Mule's Cloth Amulet of the Falcon: it is set at your feet and your pack opens over it]"
+]
+taken: [[1,1]] | focus now: button.act: Take this
+rail now: [
+  'Rewards waiting',
+  '◆Reward: The Caged Broker',
+  'Main Quests',
+  '◆The Emperor’s Letter',
+  '◆A Silent Summons'
+]
+
+ERRORS: none

@@ -1,0 +1,17 @@
+unlogged quest page buttons: [ 'Track', 'Abandon quest', 'Restart quest', 'Hide from journal' ]
+after "Hide from journal": hidden list = ["20"]
+  rail still lists it: true | a Show hidden toggle: none
+  its page buttons now: [ 'Track', 'Abandon quest', 'Restart quest', 'Hide from journal' ]
+after "Track": pinned 20 - the HUD card: null
+
+SWITCH OFF rail: [
+  'Main Quests',
+  '◆The Emperor’s Letter',
+  'Side Quests',
+  '◆Wild Animal◆',
+  '◆The Lich’s Relic',
+  'Archived',
+  '◆Rat Problem',
+  'Clear archive (1)'
+]
+  any new part in the window: 0

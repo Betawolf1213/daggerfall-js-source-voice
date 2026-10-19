@@ -1,0 +1,19 @@
+dungeon corpse at tier 5: magic+ 17.5%  rare+ 4.5%  legendary 0.70%
+dungeon chest at tier 5: magic+ 17.5%  rare+ 4.5%  legendary 0.70%
+dungeon corpse at tier 10: magic+ 25.0%  rare+ 7.5%  legendary 1.30%
+dungeon chest at tier 10: magic+ 25.0%  rare+ 7.5%  legendary 1.30%
+dungeon corpse at tier 15: magic+ 32.5%  rare+ 10.5%  legendary 1.90%
+dungeon chest at tier 15: magic+ 32.5%  rare+ 10.5%  legendary 1.90%
+dungeon corpse at tier 21: magic+ 41.5%  rare+ 14.1%  legendary 2.62%
+dungeon chest at tier 21: magic+ 41.5%  rare+ 14.1%  legendary 2.62%
+
+a social quest (Commoners, Merchants, Nobility: the level band) - tier by level: L1=t1 L7=t2 L14=t3 L21=t4 L30=t4
+a guild quest by rank: rank0=t1 rank2=t2 rank4=t3 rank6=t4 rank9=t4
+tier 1: each of the three pieces magic 100.0%  rare 0.0%  legendary 0.0%  - a piece's mean worth (judge) at L21 1815
+tier 2: each of the three pieces magic 74.8%  rare 25.2%  legendary 0.0%  - a piece's mean worth (judge) at L21 2235
+tier 3: each of the three pieces magic 0.0%  rare 100.0%  legendary 0.0%  - a piece's mean worth (judge) at L21 3729
+tier 4: each of the three pieces magic 0.0%  rare 84.4%  legendary 15.6%  - a piece's mean worth (judge) at L21 3868
+tier 1: a choice of three holds a Rare-or-better 0.0%, a Legendary 0.0%
+tier 2: a choice of three holds a Rare-or-better 56.6%, a Legendary 0.0%
+tier 3: a choice of three holds a Rare-or-better 100.0%, a Legendary 0.0%
+tier 4: a choice of three holds a Rare-or-better 100.0%, a Legendary 39.7%

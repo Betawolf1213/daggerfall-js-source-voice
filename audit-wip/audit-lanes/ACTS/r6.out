@@ -1,0 +1,3 @@
+heard by 2 quests; after one fish: A false B false
+after a load, switch off, B shelved: heard by 1 quest(s)
+second fish: A true (acts {"fish-caught":2} ) B false (acts {"fish-caught":1} )

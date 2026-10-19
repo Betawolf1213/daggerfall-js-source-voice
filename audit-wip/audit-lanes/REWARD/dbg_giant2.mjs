@@ -1,0 +1,13 @@
+import { makeBridge, tick } from './_bridge.mjs';
+const { bridge, rec } = makeBridge();
+const quest = bridge.machine.startQuestByName('M0B00Y16', 41);
+for (const task of quest.tasks.values()) for (const a of task.actions) if (['PlaceFoe', 'PlaceNpc', 'HideNpc', 'RevealLocation'].includes(a.typeName)) a.isComplete = true;
+tick(bridge, 2);
+quest.getTask({ name: 'victim' }).start(); quest.getTask({ name: 'S.09' }).clear();
+quest.getTask({ name: 'S.03' }).start(); quest.getTask({ name: 'S.10' }).start(); quest.getTask({ name: 'yes' }).start();
+tick(bridge, 2);
+const origEnd = quest.endQuest.bind(quest);
+quest.endQuest = () => { console.log('END QUEST; tasks set:', [...quest.tasks.values()].filter((t) => t.triggered).map((t) => t.symbol?.name).join(' ')); return origEnd(); };
+for (const a of quest.getTask({ name: 'yes' }).actions) if (a.typeName === 'PcAt') a.isComplete = true;
+quest.getTask({ name: 'S.13' }).start(); tick(bridge, 3);
+console.log('after escort: ql', JSON.stringify(quest.ql), 'complete', quest.questComplete);

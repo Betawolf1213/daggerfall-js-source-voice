@@ -1,0 +1,8 @@
+(node:17637) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+after 5 failed tries, the step's claims record: {} (the opening dropped from the queue)
+rite receipt claimed at 1800000420 -> recorded true
+ql_steps: [{"step":2,"opened_at":1800000480,"done_at":null},{"step":3,"opened_at":1800000840,"done_at":null}]
+gate_kills: [{"at":1800000420,"earned":"dealt","stones":2}]
+direct claim now: {"witnessed":false}
+runner claims after a load: {"3":"opened"}

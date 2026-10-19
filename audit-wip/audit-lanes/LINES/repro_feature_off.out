@@ -1,0 +1,3 @@
+loot rarity on: false
+set a gem: {"ok":false,"reason":"off"} | acts heard: []
+introGear opens at level 9 offline: true

@@ -1,0 +1,12 @@
+town errands that pay a choice of gear, tiered by level: 11
+   A0C00Y11 Commoners minReq 0 0 places: 
+   A0C01Y09 Commoners minReq 0 2 places: _item0_ local house2 | _store_ local generalstore
+   R0C10Y10 Nobility minReq 1 0 places: 
+   R0C10Y11 Nobility minReq 1 0 places: 
+   R0C10Y12 Nobility minReq 1 0 places: 
+   R0C10Y13 Nobility minReq 1 1 places: _palace_ remote palace
+   R0C10Y14 Nobility minReq 1 0 places: 
+   R0C10Y15 Nobility minReq 1 0 places: 
+   R0C10Y17 Nobility minReq 1 0 places: 
+   R0C10Y20 Nobility minReq 1 0 places: 
+   R0C11Y16 Nobility minReq 1 0 places: 

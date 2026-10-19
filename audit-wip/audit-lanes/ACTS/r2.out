@@ -1,0 +1,10 @@
+(node:22773) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+1. QLBD04 started, 5 open claims unanswered (service down): claims = {"2":"witnessed"}  step 3 rows = 0
+2. service back, the same page: open asked again? no (dropped until the next load)
+3. breach closed, receipt counted: acts heard = ["breach-closed"]
+4. QLBD04 ended well, end claims asked: claims = {"2":"witnessed"}
+   ql_steps = [{"step":2,"opened_at":1799999900,"done_at":1799999950},{"step":3,"opened_at":1800001080,"done_at":null}]  gate_kills.at = 1800001020
+   ql_titles = 0 (Doorwarden, bit 1 - its steps 2 and 3: unpaid)
+5. next load, end asked again: claims = {"2":"witnessed"}  done_at = null
+6. the Covens' Hoard step 3 (key kept): open -> {"opened":true}  end -> {"witnessed":false}  players row = {"eg_keys":1,"ql_key":0,"ql_titles":0} (ql_key 0: the questline's key never paid; eg_keys 1 is the breach claim's own key roll)

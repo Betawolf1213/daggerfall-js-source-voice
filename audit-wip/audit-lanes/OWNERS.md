@@ -1,0 +1,11 @@
+# AUDIT QUESTLINES - who holds what (2026-10-19)
+Lanes still reading (frozen snapshot ql-audit at fe033c256): LAW a68d00e46ef126b70, UI a474da1105fcae7d8, DOC a80440c9cc9c4375c.
+Lanes done (REPORT.md saved): SERVICE, ACTS, BRANCH, LINES, REWARD.
+Fixers (live tree, no git; brief FIXER-BRIEF.md):
+- FLOW aac73c3892fe989d7: qlActions.js, qlState.js, shareActions.js, questShare.js, machine.js (receive/restart), questBridge.js choiceBoxes + a receive-tier dep, guildServiceWindows.js ServiceFlowWindow, share-shape parse path; tests ql4_actions, new ql4_flow. BRANCH-1,2,3,7,9code,10code,11,12,14,19; REWARD-1,2,15(qlState).
+- PATCH adc62935fe6e24357: patches/*.json, sheets/*.json except questlines.json, qlPatches.js, tools/qlPatchKit/qlSheetLaw/qlCheck; tests ql1_sheets, ql4_branches. BRANCH-4,5(=REWARD-4),6,8,9pin,10law,13,15,16,18; REWARD-6 data, REWARD-12 law, REWARD-5 law (named.base).
+- SCRIPTS a14d9cb757d5777c9: quests/QL*.txt, sheets/questlines.json (not `named`). LINES-4 words+gold,8,9,10,23,24,26,27; ACTS-7/ACTS-4 words.
+- ACTS a9a9d100cb93a4b10: qlActs.js, producers, ql11_acts.test.js, elite-foe module. ACTS-3,4,5,6,7(decided LEFT),8,9.
+- REWARD a970f843fed15678b: qlRewards.js, qlLayer.js, actions.js GivePc, item-info prefix, honestItems.mjs, new ql3_rewards.test.js, named in questlines.json at the end. REWARD-3,5,6code,7(TIER_FLOORS[4] rare no rung),9,10,11,12code,13,15code; LINES-20.
+- ME: SERVICE (done, 7fc1d326a); ACTS-1 (= SERVICE); ACTS-2/LINES-2/3/6 gates; LINES-5/14/15/16 ladders; LINES-7/12/13/17/18/19/21 runner; LINES-4 service key + HUD; LINES-22/25; REWARD-6 UI, REWARD-8 (pauseDoor/HUD; the drop notice -> REWARD fixer), REWARD-14 record; unseen in the window; translations; record; audit page.
+LAW lane done. Routed: REWARD fixer += LAW-2(=REWARD-3), LAW-3 gear flag, LAW-6 pins (owns ql1_layer.test.js now), LAW-10 key prefixes, LAW-11 rowOf cache, ctx.onOfferDropped (REWARD-8 part). PATCH fixer += LAW-1 sheet half (`success` field + law + 121 sheets + M0B11Y18 outcome), LAW-3 data, LAW-7, LAW-8, LAW-9, LAW-13 (owns qlSheetDraft.mjs). FLOW += LAW-4/5 repros. ME: LAW-1 code (qlLaw fallbackOutcome: sheet.success ?? done ?? none), LAW-12 (vampire sweep ended), LAW-15 (bridge TDZ), LINES gates/runner (done in tree), LINES-4 service (done).

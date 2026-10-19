@@ -1,0 +1,4 @@
+shown first: Wild Animal
+focus: button.act "Take this" (Take #1 of the reward shown: Wild Animal)
+after 1st Enter - taken [[1,1]] - focus: button.act "Take this" (Take #0 of the reward shown: The Caged Broker)
+after 2nd Enter - taken [[1,1],[2,0]] - rewards left: 0

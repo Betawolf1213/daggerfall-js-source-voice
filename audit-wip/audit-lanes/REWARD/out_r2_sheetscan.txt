@@ -1,0 +1,45 @@
+{
+  sheets: 283,
+  outcomes: 775,
+  pays: {
+    standard: 305,
+    none: 359,
+    greater: 41,
+    betrayal: 11,
+    lesser: 24,
+    own: 33,
+    double: 2
+  }
+}
+failure outcomes that COST standing/legal (QFAIL-FREE reads these): 6 [
+  'N0B20Y02.slain {"The_Mages_Guild":-5} legal 0',
+  'O0B00Y00.surrendered {"The_Thieves_Guild":-3} legal 2',
+  'O0B00Y01.watch {"The_Thieves_Guild":-3} legal 2',
+  'O0B00Y01.surrendered {"The_Thieves_Guild":-3} legal 0',
+  'O0B00Y11.surrendered {"The_Thieves_Guild":-3} legal 0',
+  'O0B10Y00.surrendered {"The_Thieves_Guild":-3} legal 2'
+]
+failure outcomes whose pay names gear: 0 []
+named: 22
+   QLBD05.guild standard weapon "Ysolde's Ember-Rod"
+   QLBD05.order standard jewel "Covenant Seal of the Hour"
+   QLBD05.broker greater armor "Broker's Dusk-Wing Mantle"
+   QLCH03.seal greater jewel "Hourkeeper's Linen Signet"
+   QLHR02.daggerfall standard jewel "Lysandus's Remembrance"
+   QLHR02.sentinel standard weapon "Sunfall Scimitar"
+   QLHR02.wayrest standard armor "Eadwyre's Ward"
+   QLHR02.orsinium standard weapon "Tusk of the Sixth Stone"
+   QLHR02.underking greater armor "Numidian Heartplate"
+   QLHR02.blades lesser weapon "Akaviri Oath"
+   QLIA02.named standard jewel "The Crowd's Favour"
+   QLIF02.done standard jewel "The Astrologer's Star"
+   QLIG02.done standard armor "The Armourer's Temper"
+   QLIP03.done standard jewel "The Crafter's Thanks"
+   QLIR02.done standard armor "The Carter's Gauntlets"
+   QLIS03.struck standard armor "Storm-Captain's Coat"
+   QLIT02.done standard jewel "The Regular's Lucky Charm"
+   QLIW02.done standard weapon "The Watch's Thanks"
+   QLOC03.offering lesser jewel "Walkabout Charm"
+   QLOC03.scale greater armor "Sethrakul's Scale"
+   QLWR04.truth standard armor "Oathkeeper's Dragon Helm"
+   QLWR04.mercy greater weapon "Corvane's Spire-Blade"

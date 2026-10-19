@@ -1,0 +1,6 @@
+B0B71Y03 on=false put down: ended=true success=false outcome=undefined legal=[] offers=0 popups=0
+K0C01Y00 on=false victim path: victory=false ended=false success=false outcome=undefined gold=[] offers=0
+B0B81Y02 on=false yes task "yes" ran 5/6 actions; prompts' yes: yes,yes,yes,yes
+B0B71Y03 on=true put down: ended=true success=true outcome=released legal=[2] offers=1 popups=1
+K0C01Y00 on=true victim path: victory=true ended=true success=true outcome=victim gold=["Gold Piecesx708"] offers=1
+B0B81Y02 on=true yes task "qlyes" ran 5/6 actions; prompts' yes: qlyes,qlyes,qlyes,qlyes

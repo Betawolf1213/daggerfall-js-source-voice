@@ -1,0 +1,10 @@
+(node:5717) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+1. guest opens QLBD03:      runner claims = {"2":"opened"}  ql_steps rows = 0
+2. registers:               status 200
+3. reload: claims = {"2":"opened"} (no open re-queued: claims[2] says opened)
+4. rite receipt claimed:    acts heard = ["rite-broken"]  gate_kills = [{"earned":"rite","at":1800003600}]
+5. end claims sent:         claims = {"2":"opened"}
+   ql_steps = [{"line":"burningDoors","step":2,"opened_at":1800003660,"done_at":null}]
+   the receipt's row at 1800003600 < the step opened at 1800003660: the witness (g.at >= opened_at) can never read it
+   a direct claim now: {"witnessed":false}

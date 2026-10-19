@@ -1,0 +1,242 @@
+[
+ {
+  "name": "BAL9c-the-service-behind-the-law",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct120';",
+  "tests": [
+   "test/systems/tech1_roster.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157."
+ },
+ {
+  "name": "BR5-account-version-unmoved",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct123';",
+  "tests": [
+   "test/server/legacy7_service.test.js",
+   "test/server/founder5.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117, and the mutant is the version main left. CRAFT-HOLD (PIN MOVED, acct115 on its branch, renumbered past BR5 at the merge): acct116. BR5: the rebrand to DFO Online (2026-10-11). acct113 on its branch, renumbered past GUILD-SEEN and GUILD3 at the merge (PIN MOVED): acct115, and the mutant is the version main left. GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge), and the mutant is the version main left."
+ },
+ {
+  "name": "CRAFT-HOLD-account-version-unmoved",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct123';",
+  "tests": [
+   "test/server/legacy7_service.test.js",
+   "test/server/founder5.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117, and the mutant is the version main left. acct115 on its branch, renumbered past BR5 at the merge: acct116, and the mutant is the version main left. GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge), and the mutant is the version main left."
+ },
+ {
+  "name": "CRAFT-HOLD-wrangler-version-unmoved",
+  "file": "server-account/wrangler.toml",
+  "old": "ACCOUNT_VERSION = \"acct159\"\n",
+  "new": "ACCOUNT_VERSION = \"acct123\"\n",
+  "tests": [
+   "test/server/realm1.test.js",
+   "test/server/founder5.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117, and the mutant is the version main left.  GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge), and the mutant is the version main left."
+ },
+ {
+  "name": "EGECO2-title-dropped",
+  "file": "src/net/identityToken.js",
+  "old": "'masterwellhead', 'spirechampion', 'spirefirst', 'wikimaid', 'doorwarden',",
+  "new": "'masterwellhead', 'spirefirst', 'wikimaid', 'doorwarden',",
+  "tests": [
+   "test/net/eliteGates/egeco_honours.test.js"
+  ],
+  "note": "QL12 (re-aimed by content: the questlines' five after the WikiMaid). WIKIMAID (re-aimed by content)."
+ },
+ {
+  "name": "KNIGHT-HOUSE-version-unmoved",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct76';",
+  "tests": [
+   "test/systems/fb1004d_knight_house.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117, and the mutant is the version main left. CRAFT-HOLD (PIN MOVED, acct115 on its branch, renumbered past BR5 at the merge): acct116. BR5 (PIN MOVED, acct113 on its branch, renumbered past GUILD-SEEN's acct113 and GUILD3's acct114 at the merge): acct115. GUILD-SEEN (PIN MOVED): acct113. HOME-VOTE (PIN MOVED, acct109 and then acct110 on its branch, renumbered past PATRON-LOAD and PATRON-LOAD II at the merges): acct112. PATRON-LOAD II (PIN MOVED): acct110, migration 0107. PATRON-LOAD (PIN MOVED): acct109. TECH1 (PIN MOVED): acct108, the item law's version 2, after LW15's acct107. LW15 (PIN MOVED, past INT11-INT14's acct105 and SCALE4d's acct106 at the merges): acct107. SCALE4d (PIN MOVED): acct106. INT11-INT14 (PIN MOVED): acct105. INT7-INT10 (PIN MOVED, past the Chapters' acct103 at the merge): acct104. A deploy that did not happen looks like one that did. SERPENT1 (PIN MOVED, re-aimed by content at its merge of main): acct78. GLOBAL-MARKET (PIN MOVED): acct79. SHADOW-CLOAK (PIN MOVED at its merges of main, past SERPENT1 and GLOBAL-MARKET): acct80. SERAPH-WINGS (PIN MOVED): acct81. AUDIT ARENA-LADDER (PIN MOVED at its merges of main, past GLOBAL-MARKET, SHADOW-CLOAK and SERAPH-WINGS): acct82. CRYSTAL-FIST (PIN MOVED): acct83. SERPENT-SET / SILVER-FINDS (PIN MOVED at its merge of main, past CRYSTAL-FIST): acct84 - re-aimed by content. YARD-SHED (PIN MOVED, re-aimed by content): acct85. YARD-HEIGHT (PIN MOVED, re-aimed by content): acct86. LEGACY7 (PIN MOVED at its merges of main, past SERPENT-SET's acct84, YARD-SHED's acct85 and YARD-HEIGHT's acct86): acct87. STORM-SHED, STORM-SHED 2 and TEXT-F1 (PIN MOVED): acct88 to acct90. CAP-OFF (PIN MOVED, re-aimed by content): acct91. FOUNDER5 (PIN MOVED, re-aimed by content): acct92. SD9b (re-aimed by content at the merges past CAP-OFF and FOUNDER5): acct93. SCALE4a-c (PIN MOVED, re-aimed by content at the merge past SD9b's acct94): acct95. TAVERN CARDS (PIN MOVED): acct96. SERVER-POST and HOURS-FIRST (PIN MOVED, re-aimed by content at the merge past TAVERN CARDS' acct96): acct97. PERMADEATH-HOUSES (re-aimed by content): acct98. The Chapters (PIN MOVED, re-aimed by content at the merge past PERMADEATH-HOUSES' acct98): acct99. CARDS9 and CARDS10 (PIN MOVED, at the Chapters' merge of main): acct99. UNWITNESSED-ORE (PIN MOVED): acct102. The Chapters (CHAP1-CHAP7b, PIN MOVED, re-aimed by content past CARDS9 and CARDS10's acct99, INT1-INT6's acct100, BAG-CRAFT's acct101 and UNWITNESSED-ORE's acct102 at the merges): acct103. Re-aimed to acct112 at the merge past HOME-VOTE (acct111). GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge)."
+ },
+ {
+  "name": "SHAM-TRAIL-not-read",
+  "file": "src/scenes/quest/questData.js",
+  "old": "questlineLines(name, (patchable.has(name) ? patchedLines(name, patchable.get(name)) : null) ?? quests.get(name) ?? null)",
+  "new": "questlineLines(name, quests.get(name) ?? null)",
+  "tests": [
+   "test/systems/quest/fb1017b_shamtrail.test.js"
+  ],
+  "why": "the browser's pack never applies the patch"
+ },
+ {
+  "name": "GATEKEYS-the-empty-var-back",
+  "file": "server-account/wrangler.toml",
+  "old": "ACCOUNT_VERSION = \"acct159\"\n",
+  "new": "ACCOUNT_VERSION = \"acct159\"\nGATE_PUBLIC_KEY = \"\"\n",
+  "tests": [
+   "test/server/accountdeploy.test.js",
+   "test/net/gate/wb5b_gate_claim.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117, and the mutant is the version main left. CRAFT-HOLD (PIN MOVED, acct115 on its branch, renumbered past BR5 at the merge): acct116. BR5 (PIN MOVED, acct113 on its branch, renumbered past GUILD-SEEN's acct113 and GUILD3's acct114 at the merge): acct115. GUILD-SEEN (PIN MOVED): acct113. HOME-VOTE (PIN MOVED, acct109 and then acct110 on its branch, renumbered past PATRON-LOAD and PATRON-LOAD II at the merges): acct112. PATRON-LOAD II (PIN MOVED): acct110, migration 0107. PATRON-LOAD (PIN MOVED): acct109. TECH1 (PIN MOVED): acct108, the item law's version 2, after LW15's acct107. LW15 (PIN MOVED, past INT11-INT14's acct105 and SCALE4d's acct106 at the merges): acct107. SCALE4d (PIN MOVED): acct106. INT11-INT14 (PIN MOVED): acct105. INT7-INT10 (PIN MOVED, past the Chapters' acct103 at the merge): acct104. A var of the name: every deploy rewrites it and Cloudflare refuses the secret its binding. FIELD BUGS 2026-09-30 (PIN MOVED): acct33. PROF7 (PIN MOVED): acct36. HOUSING (PIN MOVED): acct37. WB9g (PIN MOVED): acct38. PATREON-LINK (PIN MOVED): acct45. FIELD BUGS 2026-10-01 part four (PIN MOVED): acct46. BOULDERS (PIN MOVED): acct47. MORE-NODES (PIN MOVED): acct48. TIME1 (PIN MOVED): acct49. WB12d (PIN MOVED): acct62, acct46 on its branch. AUDIT 529 (PIN MOVED): acct64. GUILD-YARD (PIN MOVED): acct65. PROF9 (PIN MOVED): acct67. PROF10 (PIN MOVED): acct68. PROF12 (PIN MOVED): acct69. AUDIT PROF-541 (PIN MOVED): acct70. SILVER-WAYS and PROF2b (PIN MOVED): acct71 (acct66 on its branch). ARENA4, ARENA4b and WD3 at the arena's merges of main (PIN MOVED): acct72 - acct47 and acct48 on their branch, acct66 at the first merge past main's acct65, acct71 at the second past its acct70, acct72 at the third past SILVER-WAYS' acct71. AEGIS (PIN MOVED): acct73. BAG1 and GUILD2 (PIN MOVED): acct74 - acct73 on their branch, past AEGIS's at the merge. AUDIT HOME-PRICE (PIN MOVED, re-aimed by content): the version is HOME-PRICE's acct75. PRIMARCH and FOUNDER4 (PIN MOVED): acct76 - acct75 on their branch, past HOME-PRICE's at the merge. FIELD BUGS 2026-10-04d KNIGHT-HOUSE (PIN MOVED): acct77 - acct75 on its branch, past HOME-PRICE's and PRIMARCH and FOUNDER4's at the merge. SERPENT1 (PIN MOVED): acct78 - acct75, acct76 then acct77 on its branch, past HOME-PRICE's, PRIMARCH and FOUNDER4's and KNIGHT-HOUSE's at the merges. GLOBAL-MARKET (PIN MOVED): acct79. SHADOW-CLOAK (PIN MOVED at its merges of main, past SERPENT1 and GLOBAL-MARKET): acct80. SERAPH-WINGS (PIN MOVED): acct81. AUDIT ARENA-LADDER (PIN MOVED at its merges of main, past GLOBAL-MARKET, SHADOW-CLOAK and SERAPH-WINGS): acct82. CRYSTAL-FIST (PIN MOVED): acct83. SERPENT-SET / SILVER-FINDS (PIN MOVED at its merge of main, past CRYSTAL-FIST): acct84 - re-aimed by content. YARD-SHED (PIN MOVED, re-aimed by content): acct85. YARD-HEIGHT (PIN MOVED, re-aimed by content): acct86. LEGACY7 (PIN MOVED at its merges of main, past SERPENT-SET's acct84, YARD-SHED's acct85 and YARD-HEIGHT's acct86): acct87. FOUNDER5 (re-aimed by content on main): acct92. SD9b (re-aimed by content at the merges past CAP-OFF and FOUNDER5): acct93. SCALE4a-c (PIN MOVED, re-aimed by content at the merge past SD9b's acct94): acct95. TAVERN CARDS (PIN MOVED): acct96. SERVER-POST and HOURS-FIRST (PIN MOVED, re-aimed by content at the merge past TAVERN CARDS' acct96): acct97. The Chapters (PIN MOVED, past PERMADEATH-HOUSES' acct98 at the merge): acct99. CARDS9 and CARDS10 (PIN MOVED, at the Chapters' merge of main): acct99. UNWITNESSED-ORE (PIN MOVED): acct102. The Chapters (CHAP1-CHAP7b, PIN MOVED, re-aimed by content past CARDS9 and CARDS10's acct99, INT1-INT6's acct100, BAG-CRAFT's acct101 and UNWITNESSED-ORE's acct102 at the merges): acct103. Re-aimed to acct112 at the merge past HOME-VOTE (acct111). GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge)."
+ },
+ {
+  "name": "GUIDE1-quiet-read-reveals",
+  "file": "src/ui/quest/questLens.js",
+  "old": "    return quietly(quest, () => message.getTextTokens(-1, QUIET_ROLL, true, false));",
+  "new": "    return quietly(quest, () => message.getTextTokens(-1, QUIET_ROLL, true, true));",
+  "tests": [
+   "test/ui/quest/guide1_questLens.test.js"
+  ],
+  "equivalent": true,
+  "why": "AUDIT GUIDE L3 gave the quiet read its own hooks, whose addDialog answers nothing - a reveal the flag lets through lands there, so the flag is the first of two guards (the letter's signoff, which reveals with no flag, passes only the second); AUDIT-GUIDE-L3-the-letter-loud kills the hooks' removal"
+ },
+ {
+  "name": "GUIDE1-ended-always-paid",
+  "file": "src/scenes/quest/questBridge.js",
+  "old": "success: !!q.questSuccess, ql:",
+  "new": "success: true, ql:",
+  "tests": [
+   "test/ui/quest/guide1_questLens.test.js",
+   "test/systems/quest/questbridge.test.js"
+  ]
+ },
+ {
+  "name": "GUIDE3-rank-ending-routine",
+  "file": "src/ui/quest/questHerald.js",
+  "old": "const RANK = Object.freeze({ updated: 0, objective: 0.5, urgent: 1, started: 2, completed: 3, ended: 3 });",
+  "new": "const RANK = Object.freeze({ updated: 0, objective: 0.5, urgent: 1, started: 2, completed: 0, ended: 3 });",
+  "tests": [
+   "test/ui/quest/guide3_herald.test.js"
+  ]
+ },
+ {
+  "name": "GUIDE3-rank-deadline-over-new",
+  "file": "src/ui/quest/questHerald.js",
+  "old": "const RANK = Object.freeze({ updated: 0, objective: 0.5, urgent: 1, started: 2, completed: 3, ended: 3 });",
+  "new": "const RANK = Object.freeze({ updated: 0, objective: 0.5, urgent: 2, started: 1, completed: 3, ended: 3 });",
+  "tests": [
+   "test/ui/quest/guide3_herald.test.js"
+  ]
+ },
+ {
+  "name": "GUIDE3-news-before-the-tick",
+  "file": "src/scenes/quest/questBridge.js",
+  "old": "    machine.tick();\n    updateTimer = 0;\n    questlines.look();   // QL1: what each stamped quest's state has shown, latched\n    news();",
+  "new": "    news();\n    machine.tick();\n    updateTimer = 0;\n    questlines.look();   // QL1: what each stamped quest's state has shown, latched",
+  "tests": [
+   "test/ui/quest/guide3_herald.test.js"
+  ]
+ },
+ {
+  "name": "GUIDE4-the-heralds-cap",
+  "file": "src/ui/quest/questTracker.js",
+  "old": "entryOpening(v.latest?.lines, TRACKER_OPENING_MAX),",
+  "new": "entryOpening(v.latest?.lines),",
+  "tests": [
+   "test/ui/quest/guide4_tracker.test.js"
+  ]
+ },
+ {
+  "name": "HACKED-GOLD-account-version-unmoved",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct123';",
+  "tests": [
+   "test/systems/tech1_roster.test.js",
+   "test/server/realm1.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157."
+ },
+ {
+  "name": "INSTANCES-COPY-TAKES-SENDERS",
+  "file": "src/systems/quest/machine.js",
+  "old": "    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid",
+  "new": "    questData = { ...this._onThisClock(questData), ...NO_SHELF, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid",
+  "tests": [
+   "test/systems/quest/instances3_door.test.js"
+  ],
+  "why": "a partner's copy carries the sender's epoch"
+ },
+ {
+  "name": "MAC-F-the-body-draws-through-the-fold",
+  "file": "src/ui/enhanced/enhancedChronicle.js",
+  "old": "        if (!isFolded(folded, section, i)) {\n          // QL2: what the quest asks now, above its journal - the pause tab's block, one home (ui/questlines/qlJournal.js)\n          if (section === 'quests') { const block = qlObjectivesBlock(document, e.ql); if (block) entry.append(block); }\n          for (const line of e.body) entry.append(el('p', null, line));\n        }",
+  "new": "        {\n          // QL2: what the quest asks now, above its journal - the pause tab's block, one home (ui/questlines/qlJournal.js)\n          if (section === 'quests') { const block = qlObjectivesBlock(document, e.ql); if (block) entry.append(block); }\n          for (const line of e.body) entry.append(el('p', null, line));\n        }",
+  "tests": [
+   "test/ui/enhanced/macfg_fold_and_specials.test.js"
+  ]
+ },
+ {
+  "name": "NAMEAS-the-account-version-unmoved",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct121';",
+  "tests": [
+   "test/server/duel_record.test.js",
+   "test/server/mail1.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157."
+ },
+ {
+  "name": "QS-the-list-unhanded",
+  "file": "src/scenes/quest/questBridge.js",
+  "old": "hidden: notebook?.getHiddenQuests?.() ?? [], shelved, unlogged,",
+  "new": "hidden: notebook?.getHiddenQuests?.() ?? [], unlogged,",
+  "tests": [
+   "test/systems/quest/questshelf.test.js"
+  ]
+ },
+ {
+  "name": "QS-A-a-shelf-received",
+  "file": "src/systems/quest/machine.js",
+  "old": "    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid\n    const quest = this._newQuest();",
+  "new": "    questData = { ...this._onThisClock(questData), ...NO_INSTANCE, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid\n    const quest = this._newQuest();",
+  "tests": [
+   "test/systems/quest/questshelf.test.js"
+  ]
+ },
+ {
+  "name": "S38-version-not-bumped",
+  "file": "src/net/wire.js",
+  "old": "export const RELAY_VERSION = 'world224';",
+  "new": "export const RELAY_VERSION = 'world131';",
+  "tests": [
+   "test/net/soc1_hub.test.js",
+   "test/net/relayversion.test.js"
+  ],
+  "note": "QL12 (re-aimed by content: world222 - the five questline titles in the vocabulary). FIELD BUGS 2026-10-18f (re-aimed by content: world221, past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 - TURNED-BLOW's strike rule and AUDIT FB1018f L3's wake, storey and radius in the bundle). FIELD BUGS 2026-10-18d (re-aimed by content: world220, past EG-PERFECT's world219). TWIN-REKINDLE (re-aimed by content: world219). WIKIMAID (re-aimed by content: world214). EG-PLAY (PIN MOVED, world195, world206, world211 then world212 on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET, KG5, PVP-LOOT + QUEST-HOME, SERPENT5, ONE-BODY, INSTANCES, WEAPON-GLOW1, HUB-PULL + DO-ASK, TIDY2 and REZ-BLOODLINE + GRAVE-PARTY at the merges): world213. REZ-BLOODLINE + GRAVE-PARTY (PIN MOVED - FIELD BUGS 2026-10-16b; world208 on each branch, then world210 and world211 on this one, renumbered past main's INSTANCES world208, WEAPON-GLOW1 world209, HUB-PULL + DO-ASK world210 and TIDY2 world211 at the merges): world212, a party pose says a body fallen for good (`fg`), and a cell keeps the graves searched in it (`gr`). TIDY2 (PIN MOVED - world209 on its branch, renumbered past main's WEAPON-GLOW1 world209 and HUB-PULL + DO-ASK world210 at the merge): world211, the relay's files into feature folders, no behaviour moved. HUB-PULL + DO-ASK (PIN MOVED - world208 then world209 on its branch, renumbered past main's INSTANCES world208 and WEAPON-GLOW1 world209 at the merges): world210, the bus never calls a shard and the Worker asks a room reset before it ran once more. WEAPON-GLOW1 (PIN MOVED; world208 on its branch, renumbered past main's INSTANCES world208 at the merge): world209, a weapon in a hand carries its glow. INSTANCES (PIN MOVED): world208, an instance is a world room of its own. ONE-BODY (PIN MOVED - FIELD BUGS 2026-10-15c, world206 on its branch, renumbered past main's SERPENT5 world206 at the merge): world207, one body an account in a cell or a dungeon. SERPENT5 (PIN MOVED): world206, Coilbreaker and The Maelstrom in the token's vocabulary. PVP-LOOT + QUEST-HOME (PIN MOVED, world201 on each branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge, world203 on the integration, renumbered past main's KG-SET world203 and KG5 world204 at the merge of main - FIELD BUGS 2026-10-14): world205. KG5 (PIN MOVED, world203 on its branch, past main's FIVE-ASKS world202): world204, the relay runs The King's Gambit. KG-SET (PIN MOVED, world201 then world202 on its branch, past main's CHAT-TRADE world201 and FIVE-ASKS world202): world203, the Iliac set's catalog without its words and nine cards more. FIVE-ASKS (PIN MOVED, world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): world202. CHAT-TRADE (PIN MOVED): world201. CHAT-LANG (PIN MOVED, world192 on its branch, past main's COATS1 world195): world196. COATS1 (PIN MOVED, world194 on its branch, renumbered past SLIM-FRAME at the merge): world195. SLIM-FRAME (PIN MOVED): world194. SERPENT4 (PIN MOVED, world192 on its branch, renumbered past SCALE5c's world192 at the merge): world193. SCALE5c (PIN MOVED): world192. SCALE5b (PIN MOVED): world191. AUDIT MW-NPC II (PIN MOVED, world188, then world189, on its branch, past INT11-INT14's world188 and SCALE5a's world189 at the merges): world190. SCALE5a (PIN MOVED): world189. INT11-INT14 (PIN MOVED, world186 on its branch, past SD-HERALD's world186 and WAGONS1's world187 at the merge): world188. WAGONS1 (PIN MOVED, world182, world183, world185 then world186 on its branch, past SD-HERALD's world186 at the fourth merge): world187. SD-HERALD (PIN MOVED, past INT7-INT10's world185 at the merge): world186. INT7-INT10 (PIN MOVED, past CHAP4c's world183 and PERF-RELAY1's world184 at the merges): world185. PERF-RELAY1 (PIN MOVED, past CHAP4c's world183 at the merge): world184. CHAP4c (PIN MOVED, past CARDS10's world182 at the merge): world183. CARDS10 (PIN MOVED, past TAVERN-TABLES' world180 and TV-BEYOND's world181 at the merges): world182. CHAP4c (PIN MOVED, past TV-BEYOND's world181 at the merge): world182. TV-BEYOND: world181. CHAP4c (PIN MOVED, past TAVERN-TABLES' world180 at the merge): world181. TAVERN-TABLES (PIN MOVED, past HOURS-FIRST's world179 at the merge): world180. SERVER-POST and HOURS-FIRST (PIN MOVED, past TAVERN CARDS' world178 at the merge): world179. TAVERN CARDS (PIN MOVED): world178. HERALD (PIN MOVED): world138. FRIENDS-SYNC (re-aimed by content): world141 - CLIMB5/CLIMB6 moved it on without this record; then world142, FRIENDS-SYNC's own. ELITE FOES (re-aimed by content): world143, the foe record's `z`. The Seats arc (re-aimed at its merges): world149, then world150 past main's ELITE FOES at the merge of #519-#523. WB12 (re-aimed at its merge): world151, past main's CLIMB5 and CLIMB6, FRIENDS-SYNC, ELITE FOES and the Seats arc (world141 on its branch). GLYPH-WEAR: world152. BROKER-CAGE (re-aimed by content): world153, the rite word's `c` and the hub's `cl`. The arena merge (re-aimed): world155, ARENA4 (world142 on its branch) past main's world142-world154. HOTFIX 1003f (re-aimed by content): world156, every arena floor draws everyone in it. Integrated worker candidate world159 preserves staff teleport and boat identity. AEGIS (re-aimed by content): world160, the Aegis of Oblivion's title, glyph and aura in the token's vocabulary. GUILD2 (re-aimed by content): world161, the guild and heraldry laws moved under the relay - world160 on its branch, past the DFO integration's world157-world159 and AEGIS's world160. PRIMARCH (re-aimed by content): world162, the Primarch's title, glyph and aura in the token's vocabulary. SUNBABY1 (re-aimed by content): world163, the sun baby's word on the hub's live events - world162 on its branch, past main's PRIMARCH. PARTY-LEAD (re-aimed by content): world164, the hub's party.lead act - world162 on its branch, renumbered past main's PRIMARCH and SUNBABY1 at the merge. SERPENT1 (re-aimed by content): world165, the serpent frame - world162 on its branch, past PRIMARCH and SUNBABY1, then world164 past PARTY-LEAD. SERPENT2 (re-aimed by content): world166, the serpent herald. SHADOW-CLOAK (PIN MOVED at its merges of main, past SERPENT1 and SERPENT2): world167. SERAPH-WINGS (PIN MOVED): world168. AUDIT ARENA-LADDER (PIN MOVED at its merges of main, past SHADOW-CLOAK and SERAPH-WINGS): world169. TELL8 (PIN MOVED): re-aimed by content - the owner winds up at a peer it hunts (`tf` its target's feet, `atMe` the damage's gate), a peer's blow carries its class, the relay moved to world162 on its branch. THE FEUD MERGE (re-aimed by content): world170 - TELL8's, AUDIT TELL's, RVN13's and FEUD WIRE's world162-world165 as one version, renumbered past main's world169. CRYSTAL-FIST (PIN MOVED at its merge of main, past THE FEUD MERGE): world171. WATCH-FIX (re-aimed by content): world172, the watch record's `lr` - the living-world resident a watchman stands for. SERPENT3 (re-aimed by content, then PIN MOVED at its merges of main, past CRYSTAL-FIST and WATCH-FIX): world173, the sea serpent brain - world171 on its branch. LEGACY7 (PIN MOVED): world174. SUPER-DUNGEONS (re-aimed by content, past CRYSTAL-FIST at one merge of main and past WATCH-FIX, SERPENT3 and LEGACY7 at the next): world175 - the arc's one version, SD-ONLINE's room per layout and SD3's `sd` frame, world171 on its branch, then world172."
+ },
+ {
+  "name": "TECH1-AUDIT-the-service-behind-the-law",
+  "file": "server-account/src/service.js",
+  "old": "export const ACCOUNT_VERSION = 'acct159';",
+  "new": "export const ACCOUNT_VERSION = 'acct107';",
+  "tests": [
+   "test/systems/tech1_roster.test.js"
+  ],
+  "note": "QL12 (PIN MOVED): acct157. EG-PLAY (PIN MOVED): acct124 (acct116, acct118, acct119, acct121 then acct122 on its branch, renumbered past CRAFT-HOLD, YARD-SWEEP + HANDLE-EMAIL, SEAT-LEASE, GATHER-SPEED + MARKET-SPEED, D1-LOAD, BAL9, NAME-AS and HACKED-GOLD at the merges); HACKED-GOLD (PIN MOVED): acct123; NAME-AS (PIN MOVED): acct122; BAL9 (PIN MOVED): acct121. YARD-SWEEP + HANDLE-EMAIL (PIN MOVED): acct117 - a service before law 2's still fails. CRAFT-HOLD (PIN MOVED, acct115 on its branch, renumbered past BR5 at the merge): acct116. BR5 (PIN MOVED, acct113 on its branch, renumbered past GUILD-SEEN's acct113 and GUILD3's acct114 at the merge): acct115. GUILD-SEEN (PIN MOVED): acct113. SCALE4f + SCALE4g (re-aimed by content, PIN MOVED): the service is acct110, past TECH1's acct108 and PATRON-LOAD's acct109 at the merges - a service before law 2's acct108 still fails. Re-aimed to acct112 at the merge past HOME-VOTE (acct111). GATHER-SPEED + MARKET-SPEED (PIN MOVED): acct119, the version moved on (acct118 on its branch, renumbered past SEAT-LEASE at the merge). NAME-AS (PIN MOVED): acct122 (acct121 on its branch, renumbered past BAL9 at the merge)."
+ },
+ {
+  "name": "TIME3-a-copy-on-the-senders-clock",
+  "file": "src/systems/quest/machine.js",
+  "old": "    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid\n    const quest = this._newQuest();",
+  "new": "    questData = { ...questData, ...NO_SHELF, ...NO_INSTANCE, ql: receivedState(questData.ql) };\n    const quest = this._newQuest();",
+  "tests": [
+   "test/systems/quest/time3_quests.test.js"
+  ]
+ },
+ {
+  "name": "WIKIMAID-title-not-in-vocabulary",
+  "file": "src/net/identityToken.js",
+  "old": "'spirechampion', 'spirefirst', 'wikimaid', 'doorwarden',",
+  "new": "'spirechampion', 'spirefirst', 'doorwarden',",
+  "tests": [
+   "test/net/wikimaid.test.js"
+  ],
+  "note": "QL12 (re-aimed by content: the questlines' five after it). The relay and the client refuse the word."
+ }
+]

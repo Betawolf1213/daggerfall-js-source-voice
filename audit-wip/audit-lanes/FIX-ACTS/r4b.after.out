@@ -1,0 +1,4 @@
+the first star, answered: [["star-taken",1]]
+a second, its answer lost (landed on the service): [] kept: {"acct-1|char-1":{"rid":"fql11probe0002","tree":"wr.start|wr.s1,wr.s2"}}
+read() re-sends the kept change - held now: ["wr.s1","wr.s2"]  acts heard: [["star-taken",1]]
+a reload re-sends a third - held now: ["wr.g","wr.s1","wr.s2"]  acts heard: [["star-taken",1]]

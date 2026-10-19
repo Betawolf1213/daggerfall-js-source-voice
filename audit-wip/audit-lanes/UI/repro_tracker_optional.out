@@ -1,0 +1,7 @@
+objectives: [
+  'done: Take the sacred _item_ from ___mondung_, where the lich =lich_ guards it',
+  "open(optional): Destroy =lich_, the _item_'s maker",
+  'open: Return the _item_ to _questgiver_ in ___questgiver_'
+]
+currentObjective -> "Destroy =lich_, the _item_'s maker"
+the HUD card's line -> "Destroy =lich_, the _item_'s maker"

@@ -1,0 +1,12 @@
+B0B40Y09: "The herders whose cattle that giant ate have scraped together a purse ..."
+   keep "I will. The work was hard, and fairly do" -> outcome=paid given=[] gear tier=3 standing=[] script repute lines=[[0,4]]
+   alt  "No. Let them buy new cattle with it. A k" -> outcome=refused given=[] gear tier=3 standing=[] script repute lines=[[0,8]]
+B0B40Y08: "The orcs' plunder from the caravans still lies in ___dungeon_, Hero. B..."
+   keep "I claim them. I took them by the sword. " -> outcome=claimed given=[] gear tier=3 standing=[] script repute lines=[[0,4]]
+   alt  "Return them to the caravan masters they " -> outcome=returned given=[] gear tier=3 standing=[[510,5]] script repute lines=[[0,4]]
+B0B60Y12: " says the grave goods in ___dungeon_ are yours for your trouble, Hero ..."
+   keep "I will. The heir gives them freely, and " -> outcome=taken given=[] gear tier=4 standing=[] script repute lines=[[0,4],[0,10]]
+   alt  "Leave them with her ashes. I went to giv" -> outcome=left given=[] gear tier=4 standing=[[450,3]] script repute lines=[[0,4],[0,10]]
+B0B80Y17: "The lich's books of necromancy still lie in its lair in ___dungeon_, H..."
+   keep "Sell them to the Mages Guild. Let the sc" -> outcome=sold given=[] gear tier=4 standing=[[40,3]] script repute lines=[[0,4]]
+   alt  "Burn them, as the temple asks. No one wi" -> outcome=burned given=[] gear tier=4 standing=[[450,4]] script repute lines=[[0,4]]

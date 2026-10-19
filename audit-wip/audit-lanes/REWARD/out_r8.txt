@@ -1,0 +1,5 @@
+   tasks set at the end: S.17 escortComplete success
+escort, then claim: outcome=rescued (sheet pay: greater = gold x1.25)  script minted 610 gold, player paid 610 - x1.00; gear tier 2 (stamped 1); ended true
+   tasks set at the end: S.17 escortComplete success
+claim, then escort: outcome=rescued (sheet pay: greater = gold x1.25)  script minted 569 gold, player paid 569 - x1.00; gear tier 2 (stamped 1); ended true
+control QLWR04 mercy: outcome=mercy  minted 740, paid 925 - x1.25

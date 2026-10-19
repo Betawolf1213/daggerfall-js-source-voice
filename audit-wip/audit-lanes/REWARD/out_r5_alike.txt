@@ -1,0 +1,9 @@
+flagship quests: 66
+pass the pin by name, but every non-failure outcome pays the SAME in effect: 7
+   A0C0XY04 (script pays gold: false) pact:own betrayed:none slain:none
+   B0B40Y09 (script pays gold: false) paid:standard refused:lesser
+   B0B50Y11 (script pays gold: false) named:standard well:lesser
+   P0A01L00 (script pays gold: false) ring:standard oath:lesser
+   P0B10L08 (script pays gold: false) triumph:standard truce:lesser
+   Q0C4XY04 (script pays gold: false) paid:standard gift:lesser
+   R0C11Y28 (script pays gold: true) both:double ruler:standard

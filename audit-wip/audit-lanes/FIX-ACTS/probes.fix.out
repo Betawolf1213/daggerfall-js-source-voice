@@ -1,0 +1,73 @@
+BASELINE (unmutated mirror): [('ql11_acts.test.js', '28', '0')]
+KILLED  M1 egClient: valkynaz-felled on every Redoubt  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 redoubt-taken and valkynaz-felled (scenes/eliteGates/egClient.js redoubtActs, off thi
+KILLED  M1b egClient: a Rehearsal counted  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 redoubt-taken and valkynaz-felled (scenes/eliteGates/egClient.js redoubtActs, off thi
+KILLED  M1c egClient: a re-claim counted  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 redoubt-taken and valkynaz-felled (scenes/eliteGates/egClient.js redoubtActs, off thi
+KILLED  M2 sdClaims: hour-broken on a re-claim (claimed) too  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 hour-broken (net/superDungeon/sdClaims.js): said off an Hour receipt the service coun
+KILLED  M3 serpentClaims: serpent-slain on a re-claim too  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 serpent-slain (net/serpent/serpentClaims.js): said off a serpent receipt the service 
+KILLED  M4 qlEliteFoe: any dungeon's elite (a Super dungeon's six)  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 elite-foe-slain (systems/questlines/qlEliteFoe.js - the dungeon host hands it its pla
+KILLED  M4b qlEliteFoe: the elite mark unread  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 elite-foe-slain (systems/questlines/qlEliteFoe.js - the dungeon host hands it its pla
+KILLED  M4c qlEliteFoe: the eliteFoe mark unread  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 elite-foe-slain (systems/questlines/qlEliteFoe.js - the dungeon host hands it its pla
+KILLED  M5 arenaBouts: a relay bout lost counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 arena-won at the relay (scenes/arena/arenaBouts.js relayVerdict): a ladder bout (`pve
+KILLED  ACTS-6 arenaBouts: a players' bout counts (the old gate)  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 arena-won at the relay (scenes/arena/arenaBouts.js relayVerdict): a ladder bout (`pve
+KILLED  A-w arenaBouts: a watcher's counted  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 arena-won at the relay (scenes/arena/arenaBouts.js relayVerdict): a ladder bout (`pve
+KILLED  A-721a arenaBouts: the act on any ladder verdict  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 arena-won on this screen's floor (scenes/arena/arenaBouts.js verdict): a ladder bout 
+KILLED  A-721b arenaBouts: the pit's practice counted  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 arena-won on this screen's floor (scenes/arena/arenaBouts.js verdict): a ladder bout 
+KILLED  M6 profBook: a craft another tab minted counts here  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 piece-crafted (net/profBook.js craftOne): a kept craft the service answered, minted b
+KILLED  ACTS-4 profBook: a dish counted (the old gate)  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 piece-crafted (net/profBook.js craftOne): a kept craft the service answered, minted b
+KILLED  M7 navalHost: a peer's guns count  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 ship-struck (scenes/naval/navalHost.js, a ship's state changed - the crew's arm, AUDI
+KILLED  M8 gambitTableGame: a watcher's board counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 gambit-won (scenes/gambitTableGame.js settle, a game the relay decided): the seat tha
+KILLED  M8b gambitTableGame: the winner unread  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 gambit-won (scenes/gambitTableGame.js settle, a game the relay decided): the seat tha
+KILLED  M9 deepWatersFish: a fish that swam off (despawned, its loot whole) counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 fish-caught (scenes/deepWater/deepWatersFish.js remove): a fish whose item was taken 
+KILLED  M9b deepWatersFish: counted at every remove  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 fish-caught (scenes/deepWater/deepWatersFish.js remove): a fish whose item was taken 
+KILLED  M10 raidingParties: a raid cleansed anywhere, unfought  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 raid-repelled (systems/raidingParties.js cleanse): a raid I fought (a blow of mine on
+KILLED  M10b raidingParties: the pixel unread  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 raid-repelled (systems/raidingParties.js cleanse): a raid I fought (a blow of mine on
+KILLED  M11 iliacTableSession: a lost game counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 cards-won offline (systems/iliac/iliacTableSession.js _finish): an Iliac game against
+KILLED  M11b iliacTableSession: a draw counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 cards-won offline (systems/iliac/iliacTableSession.js _finish): an Iliac game against
+KILLED  M12 cardTableSession: any showdown counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 cards-won offline (systems/card/cardTableSession.js, a Hold'em evening against the re
+KILLED  M13 fishHost: only a trophy haul counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 fish-caught (scenes/fishHost.js, the net's answered haul): every haul the service ans
+KILLED  M14 foragingInstall: an empty net counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingInstall.js useFora
+KILLED  F-axe foragingInstall: an axe that gathered nothing counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingInstall.js useFora
+KILLED  F-basket foragingInstall: an empty basket counts  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingInstall.js useFora
+KILLED  M15 revenantFate: noted before the record answers  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 revenant-knelt (systems/revenant/revenantFate.js beginYield): one of mine, beaten, it
+KILLED  ACTS-5a firmamentBook: the toggle counted again (the old diff against the last answer)  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 star-taken, each star once (net/firmament/firmamentBook.js `held`, AUDIT QUESTLINES A
+KILLED  ACTS-5b firmamentBook: the kept change uncounted  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 star-taken, each star once (net/firmament/firmamentBook.js `held`, AUDIT QUESTLINES A
+KILLED  ACTS-5c firmamentBook: the stars unkept across a reload  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 star-taken, each star once (net/firmament/firmamentBook.js `held`, AUDIT QUESTLINES A
+SURVIVED  ACTS-5d firmamentBook: the sky read counted  ql11_acts.test.js: pass 28 fail 0
+KILLED  ACTS-8a dungeonContext: the elite foe's condition back in the host  ql11_acts.test.js: pass 27 fail 1
+      not ok - QL11 THE SWEEP, both ways: every kind has a producer in src/; every producer names a kind;
+KILLED  ACTS-8b egClient: the Redoubt's acts back in createEgClient  ql11_acts.test.js: pass 26 fail 2
+      not ok - QL11 THE SWEEP, both ways: every kind has a producer in src/; every producer names a kind;
+      not ok - QL11 redoubt-taken and valkynaz-felled (scenes/eliteGates/egClient.js redoubtActs, off thi

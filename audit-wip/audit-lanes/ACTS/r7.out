@@ -1,0 +1,2 @@
+guest /v1/prof/state -> 403 {"error":"prof-need-account"}
+guest /v1/prof/craft -> 403 {"error":"progress-seat"}

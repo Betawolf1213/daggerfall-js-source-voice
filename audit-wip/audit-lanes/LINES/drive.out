@@ -1,0 +1,93 @@
+== burningDoors {"QLBD05":0,"QLBD02":0} done=true step=5 outcomes={"0":"met","1":"read","2":"broken","3":"closed","4":"guild"} claims={"2":"witnessed","3":"witnessed"}
+   QLBD01 OK outcome=met gold=173 offers=met:t3
+   QLBD02 OK outcome=read gold=465 offers=read:t4
+   QLBD03 OK outcome=broken gold=472 offers=broken:t3
+   QLBD04 OK outcome=closed gold=399 offers=closed:t3
+   QLBD05 OK outcome=guild gold=593 offers=guild:t3:named=Ysolde's Ember-Rod
+== burningDoors {"QLBD05":1,"QLBD02":0} done=true step=5 outcomes={"0":"met","1":"read","2":"broken","3":"closed","4":"order"} claims={"2":"witnessed","3":"witnessed"}
+   QLBD01 OK outcome=met gold=231 offers=met:t3
+   QLBD02 OK outcome=read gold=435 offers=read:t4
+   QLBD03 OK outcome=broken gold=436 offers=broken:t3
+   QLBD04 OK outcome=closed gold=452 offers=closed:t3
+   QLBD05 OK outcome=order gold=556 offers=order:t3:named=Covenant Seal of the Hour
+== burningDoors {"QLBD05":2,"QLBD02":0} done=true step=5 outcomes={"0":"met","1":"read","2":"broken","3":"closed","4":"broker"} claims={"2":"witnessed","3":"witnessed"}
+   QLBD01 OK outcome=met gold=209 offers=met:t3
+   QLBD02 OK outcome=read gold=713 offers=read:t4
+   QLBD03 OK outcome=broken gold=516 offers=broken:t3
+   QLBD04 OK outcome=closed gold=513 offers=closed:t3
+   QLBD05 OK outcome=broker gold=663 offers=broker:t4:named=Broker's Dusk-Wing Mantle
+== burningDoors {"QLBD02":1,"QLBD05":0} done=true step=5 outcomes={"0":"met","1":"sealed","2":"broken","3":"closed","4":"guild"} claims={"2":"witnessed","3":"witnessed"}
+   QLBD01 OK outcome=met gold=158 offers=met:t3
+   QLBD02 OK outcome=sealed gold=315 offers=sealed:t3
+   QLBD03 OK outcome=broken gold=341 offers=broken:t3
+   QLBD04 OK outcome=closed gold=381 offers=closed:t3
+   QLBD05 OK outcome=guild gold=496 offers=guild:t3:named=Ysolde's Ember-Rod
+== covensHoard {"QLCH03":0,"QLBD02":0} done=true step=3 outcomes={"0":"done","1":"done","2":"keep"} claims={"2":"opened"}
+   QLCH01 OK outcome=done gold=450 offers=done:t3
+   QLCH02 OK outcome=done gold=344 offers=done:t3
+   QLCH03 OK outcome=keep gold=- offers=keep:t3
+== covensHoard {"QLCH03":1,"QLBD02":0} done=true step=3 outcomes={"0":"done","1":"done","2":"seal"} claims={"2":"opened"}
+   QLCH01 OK outcome=done gold=582 offers=done:t3
+   QLCH02 OK outcome=done gold=342 offers=done:t3
+   QLCH03 OK outcome=seal gold=596 offers=seal:t4:named=Hourkeeper's Linen Signet
+== weirRoad {"QLWR04":0,"QLBD02":0} done=true step=4 outcomes={"0":"done","1":"done","2":"done","3":"truth"} claims={"0":"witnessed","1":"witnessed","2":"witnessed"}
+   QLWR01 OK outcome=done gold=556 offers=done:t4
+   QLWR02 OK outcome=done gold=726 offers=done:t4
+   QLWR03 OK outcome=done gold=655 offers=done:t4
+   QLWR04 OK outcome=truth gold=889 offers=truth:t4:named=Oathkeeper's Dragon Helm
+== weirRoad {"QLWR04":1,"QLBD02":0} done=true step=4 outcomes={"0":"done","1":"done","2":"done","3":"mercy"} claims={"0":"witnessed","1":"witnessed","2":"witnessed"}
+   QLWR01 OK outcome=done gold=795 offers=done:t4
+   QLWR02 OK outcome=done gold=589 offers=done:t4
+   QLWR03 OK outcome=done gold=887 offers=done:t4
+   QLWR04 OK outcome=mercy gold=1023 offers=mercy:t4:named=Corvane's Spire-Blade
+== hourThatWasNot {"QLHR02":[0],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"daggerfall"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=519 offers=met:t4
+   QLHR02 OK outcome=daggerfall gold=723 offers=daggerfall:t4:named=Lysandus's Remembrance
+== hourThatWasNot {"QLHR02":[1],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"sentinel"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=870 offers=met:t4
+   QLHR02 OK outcome=sentinel gold=871 offers=sentinel:t4:named=Sunfall Scimitar
+== hourThatWasNot {"QLHR02":[2],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"wayrest"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=575 offers=met:t4
+   QLHR02 OK outcome=wayrest gold=566 offers=wayrest:t4:named=Eadwyre's Ward
+== hourThatWasNot {"QLHR02":[3,0],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"orsinium"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=769 offers=met:t4
+   QLHR02 OK outcome=orsinium gold=598 offers=orsinium:t4:named=Tusk of the Sixth Stone
+== hourThatWasNot {"QLHR02":[3,1],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"underking"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=608 offers=met:t4
+   QLHR02 OK outcome=underking gold=843 offers=underking:t4:named=Numidian Heartplate
+== hourThatWasNot {"QLHR02":[3,2],"QLBD02":0} done=true step=2 outcomes={"0":"met","1":"blades"} claims={"1":"opened"}
+   QLHR01 OK outcome=met gold=843 offers=met:t4
+   QLHR02 OK outcome=blades gold=653 offers=blades:t4:named=Akaviri Oath
+== oldCoil {"QLOC03":0,"QLBD02":0} done=true step=3 outcomes={"0":"met","1":"sailed","2":"offering"} claims={"2":"opened"}
+   QLOC01 OK outcome=met gold=419 offers=met:t3
+   QLOC02 OK outcome=sailed gold=455 offers=sailed:t3
+   QLOC03 OK outcome=offering gold=281 offers=offering:t3:named=Walkabout Charm
+== oldCoil {"QLOC03":1,"QLBD02":0} done=true step=3 outcomes={"0":"met","1":"sailed","2":"scale"} claims={"2":"opened"}
+   QLOC01 OK outcome=met gold=525 offers=met:t3
+   QLOC02 OK outcome=sailed gold=581 offers=sailed:t3
+   QLOC03 OK outcome=scale gold=709 offers=scale:t4:named=Sethrakul's Scale
+== introCrafts {"QLIP03":null,"QLBD02":0} done=true step=3 outcomes={"0":"done","1":"done","2":"done"} claims={}
+   QLIP01 OK outcome=done gold=108 offers=done:t1
+   QLIP02 OK outcome=done gold=110 offers=done:t1
+   QLIP03 OK outcome=done gold=178 offers=done:t1:named=The Crafter's Thanks
+== introGear {"QLIG02":null,"QLBD02":0} done=true step=2 outcomes={"0":"done","1":"done"} claims={}
+   QLIG01 OK outcome=done gold=177 offers=done:t1
+   QLIG02 OK outcome=done gold=152 offers=done:t1:named=The Armourer's Temper
+== introSea {"QLIS03":null,"QLBD02":0} done=true step=3 outcomes={"0":"sailed","1":"delivered","2":"struck"} claims={}
+   QLIS01 OK outcome=sailed gold=202 offers=sailed:t2
+   QLIS02 OK outcome=delivered gold=220 offers=delivered:t2
+   QLIS03 OK outcome=struck gold=380 offers=struck:t2:named=Storm-Captain's Coat
+== introRoad {"QLIR02":null,"QLBD02":0} done=true step=2 outcomes={"0":"done","1":"done"} claims={}
+   QLIR01 OK outcome=done gold=126 offers=done:t1
+   QLIR02 OK outcome=done gold=177 offers=done:t1:named=The Carter's Gauntlets
+== introTables {"QLIT02":null,"QLBD02":0} done=true step=2 outcomes={"0":"done","1":"done"} claims={}
+   QLIT01 OK outcome=done gold=193 offers=done:t1
+   QLIT02 OK outcome=done gold=180 offers=done:t1:named=The Regular's Lucky Charm
+== introArena {"QLIA02":null,"QLBD02":0} done=true step=2 outcomes={"0":"won","1":"named"} claims={}
+   QLIA01 OK outcome=won gold=233 offers=won:t2
+   QLIA02 OK outcome=named gold=240 offers=named:t2:named=The Crowd's Favour
+== introBay {"QLIW02":null,"QLBD02":0} done=true step=2 outcomes={"0":"done","1":"done"} claims={}
+   QLIW01 OK outcome=done gold=309 offers=done:t2
+== introFirmament {"QLIF02":null,"QLBD02":0} done=true step=2 outcomes={"0":"done","1":"done"} claims={}
+   QLIF01 OK outcome=done gold=122 offers=done:t1
+   QLIF02 OK outcome=done gold=194 offers=done:t1:named=The Astrologer's Star

@@ -1,0 +1,14 @@
+import { makeBridge, actsOf, noteAct, QL_LINES, lineById, RUNNER, DAY } from './harness.mjs';
+const h = makeBridge({ level: 30, online: true });
+const others = {};
+for (const o of QL_LINES) others[o.id] = { step: o.steps.length, done: true };
+h.runner.restore(others);
+const q = h.bridge.machine.startQuestByName('QLBD02');
+for (const task of q.tasks.values()) for (const a of task.actions) if (['PlaceNpc','PlaceFoe','RevealLocation'].includes(a.constructor?.typeName)) a.isComplete = true;
+const show = (label) => console.log(label, [...q.tasks.values()].map((t) => `${t.symbol?.name}:${t.getTriggerValue() ? 1 : 0}`).join(' '), 'complete', q.questComplete, 'asked', h.st.asked.length, 'pack', h.st.pack.size);
+h.tick(3); h.advance(4 * 3600); h.tick(3); show('courier');
+h.kill(q); h.tick(3); show('killed');
+const a = h.st.asked.shift(); console.log('asked', a?.message?.id); a?.respond(Number(process.argv[2] ?? 1)); h.tick(3); show('answered');
+h.click(q); h.tick(3); show('clicked');
+h.click(q); h.tick(3); show('clicked2');
+console.log(h.st.asked.length, 'asks pending');

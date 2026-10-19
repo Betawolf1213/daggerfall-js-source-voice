@@ -1,0 +1,135 @@
+[FightersGuild] M0B00Y17 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[FightersGuild] M0B11Y18 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[FightersGuild] M0B40Y05 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[KnightlyOrders] B0B71Y03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[KnightlyOrders] B0B81Y02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MagesGuild] N0B00Y09 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MagesGuild] N0B00Y17 outcomes[2]: pays "greater" (gear) on "_S.19_", which ends the quest unpaid: "own" or "none"
+[MagesGuild] N0B00Y17 outcomes[3]: pays "standard" (gear) on "_S.19_", which ends the quest unpaid: "own" or "none"
+[MagesGuild] N0B00Y17 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MagesGuild] N0B11Y18 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MagesGuild] N0B21Y14 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[books] no BOOKS prices registered - book values fall back to the template basePrice (loud interim: warm them with preloadBookPrices)
+[ThievesGuild] O0A0AL00 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[ThievesGuild] O0B00Y11 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[DarkBrotherhood] L0B00Y02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[HolyOrders] C0B3XY09 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[HolyOrders] C0C00Y10 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C10Y00 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C10Y01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C10Y02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C10Y18 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C11Y19 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C11Y28 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C20Y22 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C4XY23 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Nobility] R0C60Y24 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C00Y03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C00Y04 outcomes[1]: pays "standard" (gear) on "_S.03_", which ends the quest unpaid: "own" or "none"
+[Merchants] K0C00Y05 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C00Y07 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C00Y09 outcomes[1]: pays "standard" (gear) on "_S.06_", which ends the quest unpaid: "own" or "none"
+[Merchants] K0C00Y09 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C01Y00 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Merchants] K0C30Y03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C00Y10 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C00Y11 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C00Y14 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C00Y15 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C00Y16 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C01Y06 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C01Y13 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C10Y02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C10Y05 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Commoners] A0C41Y18 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Vampires] $CUREVAM success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Vampires] P0B00L06 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] _BRISIEN outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000001 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000002 outcomes[2]: pays "standard" (gear) on "_S.15_", which ends the quest unpaid: "own" or "none"
+[MainQuest] S0000002 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000003 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000004 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000005 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000006 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000007 outcomes[1]: pays "standard" (gear) on "_delay_", which ends the quest unpaid: "own" or "none"
+[MainQuest] S0000007 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000008 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000008 outcomes[1]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000008 outcomes[2]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000008 outcomes[3]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000008 outcomes[4]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000009 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000010 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000011 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000012 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000013 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000015 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000015 outcomes[1]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000015 outcomes[2]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[1]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[2]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[3]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[4]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[5]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000016 outcomes[6]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000017 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000018 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000020 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000021 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000022 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000100 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000101 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000102 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000103 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000104 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000500 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000501 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[MainQuest] S0000503 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000503 outcomes[1]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000977 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000988 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[MainQuest] S0000999 outcomes[0]: pays "standard" (gear) - nothing in the script pays (give pc, ql paid, train pc): "own" or "none"
+[Mods] RRMSTARM1 success: "done" waits on a task a choice sets - a success no row named made no choice
+[Mods] RRMSTARM2 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLBD01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLBD02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLBD03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLBD04 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLBD05 outcomes[0].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLBD05 outcomes[1].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLBD05 outcomes[2].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLBD05 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLCH03 outcomes[1].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLCH03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLHR01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLHR02 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLHR02 outcomes[1].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLHR02 outcomes[2].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLHR02 outcomes[3].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLHR02 outcomes[4].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLHR02 outcomes[5].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLHR02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIA01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIA02 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLIA02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIF02 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLIG02 outcomes[0].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLIP03 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLIR02 outcomes[0].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLIS01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIS02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIS03 outcomes[0].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLIS03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLIT02 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLIW02 outcomes[0].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLOC01 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLOC02 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLOC03 outcomes[0].named.base: "undefined" - a jewel base the reward's roll makes: Amulet, Bracer, Ring, Bracelet, Mark, Torc, Cloth Amulet
+[Questlines] QLOC03 outcomes[1].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLOC03 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+[Questlines] QLWR04 outcomes[0].named.base: "undefined" - a armor base the reward's roll makes: Cuirass, Gauntlets, Greaves, Left Pauldron, Right Pauldron, Helm, Boots, Buckler, Round Shield, Kite Shield, Tower Shield
+[Questlines] QLWR04 outcomes[1].named.base: "undefined" - a weapon base the reward's roll makes: Dagger, Tanto, Staff, Shortsword, Wakizashi, Broadsword, Saber, Longsword, Katana, Claymore, Dai-katana, Mace, Flail, Warhammer, Battle Axe, War Axe, Short Bow, Long Bow
+[Questlines] QLWR04 success: the quest can end a success no outcome holds for, and the sheet names no success fallback (`success`, or an outcome `done`)
+133 problems

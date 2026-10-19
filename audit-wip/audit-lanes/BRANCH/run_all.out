@@ -1,0 +1,123 @@
+M0B50Y09 choice 0: asked=1 ended=true success=true paid=true outcome=fee choices={"payment":"keep"} gold/items=["Gold Piecesx636"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [Hail to the hero, Hero!  Well done! This paltry fee of  636 ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+M0B50Y09 choice 1: asked=1 ended=true success=true paid=true outcome=waived choices={"payment":"alt"} gold/items=[] given=[] rep=[[41,5],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+M0B60Y10 choice 0: asked=1 ended=true success=true paid=true outcome=quiet choices={"discretion":"keep"} gold/items=["Gold Piecesx624"] given=[] rep=[[41,2],[41,5]] legal=[] offers=1 popups=1 [Bang-up job, Hero.  Those Mages Guild bananas ain't  wise to]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+M0B60Y10 choice 1: asked=1 ended=true success=true paid=true outcome=reported choices={"discretion":"alt"} gold/items=[] given=[] rep=[[40,5],[41,-2],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+M0B21Y19 choice 0: asked=1 ended=true success=true paid=true outcome=kept choices={"payment":"keep"} gold/items=["magic_itemx1"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [I don't know how I can thank you for  saving my life, as wel]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+M0B21Y19 choice 1: asked=1 ended=true success=true paid=true outcome=refused choices={"payment":"alt"} gold/items=[] given=[] rep=[[0,10],[523,5],[41,3],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B40Y08 choice 0: asked=1 ended=true success=true paid=true outcome=claimed choices={"spoils":"keep"} gold/items=[] given=[] rep=[[0,4],[41,5]] legal=[] offers=1 popups=1 [The orc menace has been  stricken from %reg[nullMCP].  All h]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B40Y08 choice 1: asked=1 ended=true success=true paid=true outcome=returned choices={"spoils":"alt"} gold/items=[] given=[] rep=[[0,4],[510,5],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B40Y09 choice 0: asked=1 ended=true success=true paid=true outcome=paid choices={"purse":"keep"} gold/items=[] given=[] rep=[[0,4],[41,5]] legal=[] offers=1 popups=1 [Now you are a true   killer, Hero! And to think  I got to sh]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B40Y09 choice 1: asked=1 ended=true success=true paid=true outcome=refused choices={"purse":"alt"} gold/items=[] given=[] rep=[[0,8],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B60Y12 choice 0: asked=1 ended=true success=true paid=true outcome=taken choices={"grave":"keep"} gold/items=[] given=[] rep=[[0,4],[0,10],[41,5]] legal=[] offers=1 popups=1 [Well I'll be. I didn't figure  's ancestor was  really one o]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B60Y12 choice 1: asked=1 ended=true success=true paid=true outcome=left choices={"grave":"alt"} gold/items=[] given=[] rep=[[0,4],[0,10],[450,3],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B70Y14 choice 0: asked=1 ended=true success=true paid=true outcome=paid choices={"gold":"keep"} gold/items=["Gold Piecesx590"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [So you killed the Daedra eh? Actually,  this is kind of emba]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B70Y14 choice 1: asked=1 ended=true success=true paid=true outcome=refused choices={"gold":"alt"} gold/items=[] given=[] rep=[[41,4],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B70Y16 choice 0: asked=1 ended=true success=true paid=true outcome=shared choices={"glory":"keep"} gold/items=[] given=[] rep=[[0,6],[0,10],[41,5]] legal=[] offers=1 popups=1 [All hail Hero, known  from this point onward as a  dragonsla]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B70Y16 choice 1: asked=1 ended=true success=true paid=true outcome=truth choices={"glory":"alt"} gold/items=[] given=[] rep=[[0,6],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B80Y17 choice 0: asked=1 ended=true success=true paid=true outcome=sold choices={"books":"keep"} gold/items=[] given=[] rep=[[0,4],[40,3],[41,5]] legal=[] offers=1 popups=1 [Hail to the hero, Hero!  Well done! Your name will be  recor]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B80Y17 choice 1: asked=1 ended=true success=true paid=true outcome=burned choices={"books":"alt"} gold/items=[] given=[] rep=[[0,4],[450,4],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B50Y11 choice 0: asked=1 ended=true success=true paid=true outcome=named choices={"fountain":"keep"} gold/items=[] given=[] rep=[[0,4],[0,10],[41,5]] legal=[] offers=1 popups=1 [ will be quite  pleased. He has even offered  to dedicate a ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B50Y11 choice 1: asked=1 ended=true success=true paid=true outcome=well choices={"fountain":"alt"} gold/items=[] given=[] rep=[[0,8],[0,10],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+B0B71Y03: no ask (patch is a mend or a prompt)
+B0B81Y02: no ask (patch is a mend or a prompt)
+[books] no BOOKS prices registered - book values fall back to the template basePrice (loud interim: warm them with preloadBookPrices)
+N0B40Y07 choice 0: asked=1 ended=true success=true paid=true outcome=returned choices={"name":"keep"} gold/items=["Bookx1"] given=["Parchmentx1"] rep=[[41,5]] legal=[] offers=1 popups=1 [Well done, Hero. Now, I  don't have any gold to offer you,  ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo || [quest] CastSpellDo could not find spell matching spellID '-1' from spell 'Banish_Daedra'
+N0B40Y07 choice 1: asked=1 ended=true success=true paid=true outcome=burned choices={"name":"alt"} gold/items=[] given=["Parchmentx1"] rep=[[450,3],[40,-2],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo || [quest] CastSpellDo could not find spell matching spellID '-1' from spell 'Banish_Daedra'
+L0A01L00 choice 0: asked=1 ended=true success=true paid=true outcome=coin choices={"payment":"keep"} gold/items=["Gold Piecesx1"] given=["Parchmentx1"] rep=[[41,5]] legal=[] offers=1 popups=2 [A young street urchin presses  a letter into your hand. As   | Well done, Hero.   was stricken with sudden  heart failure. ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+L0A01L00 choice 1: asked=1 ended=true success=true paid=true outcome=offering choices={"payment":"alt"} gold/items=[] given=["Parchmentx1"] rep=[[108,3],[15,2],[41,5]] legal=[] offers=1 popups=1 [A young street urchin presses  a letter into your hand. As  ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+L0B40Y04 choice 0: asked=1 ended=true success=true paid=true outcome=fee choices={"payment":"keep"} gold/items=["Gold Piecesx558"] given=[] rep=[[411,-2],[41,5]] legal=[] offers=1 popups=1 [Beautiful, Hero, truly. Brings  tears to these weary eyes. A]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+L0B40Y04 choice 1: asked=1 ended=true success=true paid=true outcome=debt choices={"payment":"alt"} gold/items=[] given=[] rep=[[108,4],[411,-2],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+L0B60Y10 choice 0: asked=1 ended=true success=true paid=true outcome=fee choices={"payment":"keep"} gold/items=["Gold Piecesx568"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [What a battle! I heard about it  already. Street gossip is f]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+L0B60Y10 choice 1: asked=1 ended=true success=true paid=true outcome=rites choices={"payment":"alt"} gold/items=[] given=[] rep=[[450,3],[108,2],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+C0B00Y02 choice 0: asked=1 ended=false success=false paid=false outcome=null choices={} gold/items=[] given=["Common Symbolx1"] rep=[] legal=[] offers=0 popups=1 [ presses the Common Symbol into your hands  and is gone befo]
+   NOT ENDED: triggered tasks: 95 sham rescueitem qlask qlspare qlsparepath; running clocks: 
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+C0B00Y02 choice 1: asked=1 ended=false success=false paid=false outcome=null choices={} gold/items=[] given=["Iconx1"] rep=[] legal=[] offers=0 popups=1 [ hands over the Icon and slinks out into  the street. BLANK ]
+   NOT ENDED: triggered tasks: 97 sham rescueitem qlask qlexpose qlexposepath; running clocks: 
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y03 choice 0: asked=1 ended=true success=true paid=true outcome=gold choices={"payment":"keep"} gold/items=["Gold Piecesx649"] given=["Daedra's Heartx1"] rep=[[41,5]] legal=[] offers=1 popups=1 [Outstanding job, Hero. I knew those  daedralings wouldn't sl]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y03 choice 1: asked=1 ended=true success=true paid=true outcome=favour choices={"payment":"alt"} gold/items=[] given=["Daedra's Heartx1"] rep=[[0,10],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y26 choice 0: asked=1 ended=true success=true paid=true outcome=paid choices={"payment":"keep"} gold/items=["Gold Piecesx690"] given=[] rep=[[41,5]] legal=[] offers=1 popups=2 [You are a true friend, Hero.  The people of BLANK are becomi | BLANK is at peace again, Hero,  thanks to you. Here is the 6]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y26 choice 1: asked=1 ended=true success=true paid=true outcome=given choices={"payment":"alt"} gold/items=[] given=[] rep=[[512,5],[41,5]] legal=[] offers=1 popups=1 [You are a true friend, Hero.  The people of BLANK are becomi]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y16 choice 0: asked=1 ended=true success=true paid=true outcome=quiet choices={"silence":"keep"} gold/items=["Gold Piecesx690"] given=["Telescopex1"] rep=[[41,5]] legal=[] offers=1 popups=1 [You must be Hero.   told me to expect you.  I am . Let me  h]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+R0C11Y16 choice 1: asked=1 ended=true success=true paid=true outcome=told choices={"silence":"alt"} gold/items=[] given=["Telescopex1"] rep=[[0,-10],[450,4],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+K0C01Y00: no ask (patch is a mend or a prompt)
+K0C01Y10 choice 0: asked=1 ended=true success=true paid=true outcome=told choices={"scroll":"keep"} gold/items=[] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [Ah, the Bothdorjii Scroll. Very good.  Now, let me tell you ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+K0C01Y10 choice 1: asked=1 ended=true success=false paid=false outcome=burned choices={"scroll":"alt"} gold/items=[] given=[] rep=[[450,3],[510,-2],[41,-2]] legal=[] offers=0 popups=1 [You burned it? You witless %ra[nullMCP]! Have you any notion]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y01 choice 0: asked=1 ended=false success=true paid=true outcome=null choices={"payment":"keep"} gold/items=["Gold Piecesx536"] given=[] rep=[] legal=[] offers=0 popups=1 [You have saved my life, Hero. I will  gladly pay you our agr]
+   NOT ENDED: triggered tasks: 130 questdone qlask qlkeep; running clocks: timer
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y01 choice 1: asked=1 ended=false success=true paid=true outcome=null choices={"payment":"alt"} gold/items=[] given=[] rep=[] legal=[] offers=0 popups=0
+   NOT ENDED: triggered tasks: 132 qlask qlalt qlaltpath; running clocks: timer
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y03 choice 0: asked=1 ended=true success=true paid=true outcome=paid choices={"payment":"keep"} gold/items=["Gold Piecesx541"] given=["Yellow Flowersx1","Parchmentx1"] rep=[[41,5]] legal=[] offers=1 popups=1 [ rips open the letter from  . "Kindness! Of course. Now  I u]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y03 choice 1: asked=1 ended=true success=true paid=true outcome=gift choices={"payment":"alt"} gold/items=[] given=["Yellow Flowersx1","Parchmentx1"] rep=[[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y06 choice 0: asked=1 ended=false success=false paid=false outcome=null choices={} gold/items=[] given=[] rep=[] legal=[] offers=0 popups=0
+   NOT ENDED: triggered tasks: 142 qlask qlkeep; running clocks: 
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y06 choice 1: asked=1 ended=false success=false paid=false outcome=null choices={} gold/items=[] given=[] rep=[] legal=[] offers=0 popups=1 [ goes pale. "You wouldn't..." But you would, and  the guard ]
+   NOT ENDED: triggered tasks: 144 qlask qlalt qlaltpath; running clocks: 
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y13 choice 0: asked=1 ended=true success=true paid=true outcome=avenged choices={"justice":"keep"} gold/items=["magic_itemx1"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [You have been honorable, Hero. I thank you.  Take this magic]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C01Y13 choice 1: asked=1 ended=true success=false paid=false outcome=lawful choices={"justice":"alt"} gold/items=[] given=[] rep=[[41,-2]] legal=[5] offers=0 popups=1 [ stares at you, then laughs bitterly. "The magistrate, then.]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C41Y18 choice 0: asked=1 ended=false success=true paid=true outcome=null choices={} gold/items=[] given=["Parchmentx1","Fingerx1"] rep=[] legal=[] offers=0 popups=1 [ hands you a letter wrapped  around a small object and hurri]
+   NOT ENDED: triggered tasks: 154 S.01 S.03 qlask qlkeep; running clocks: S.10
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+A0C41Y18 choice 1: asked=1 ended=true success=true paid=true outcome=passed choices={"curse":"alt"} gold/items=[] given=["Parchmentx1","Fingerx1"] rep=[[41,5]] legal=[] offers=0 popups=2 [ hands you a letter wrapped  around a small object and hurri | The next stranger on the road takes your package without a s]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+Q0C4XY04 choice 0: asked=1 ended=true success=true paid=true outcome=paid choices={"payment":"keep"} gold/items=["Malachitex1"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [Look, see how it still steams and  beats in Hero's  bloody h]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+Q0C4XY04 choice 1: asked=1 ended=true success=true paid=true outcome=gift choices={"payment":"alt"} gold/items=[] given=[] rep=[[0,5],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0A01L00 choice 0: asked=1 ended=true success=true paid=true outcome=ring choices={"rite":"ring"} gold/items=["Ringx1"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [Excellent, Hero. You'll make  a fine member of %vam[ERROR: P]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0A01L00 choice 1: asked=1 ended=true success=true paid=true outcome=oath choices={"rite":"oath"} gold/items=[] given=[] rep=[[0,5],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0B10L08 choice 0: asked=1 ended=true success=true paid=true outcome=triumph choices={"peace":"broken"} gold/items=["Malachitex1"] given=[] rep=[[41,5]] legal=[] offers=1 popups=1 [You have honored %vam[ERROR: PC not a vampire]  this night, ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0B10L08 choice 1: asked=1 ended=true success=true paid=true outcome=truce choices={"peace":"bowed"} gold/items=[] given=[] rep=[[0,5],[41,5]] legal=[] offers=1 popups=0
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0B01L02 choice 0: asked=1 ended=true success=true paid=true outcome=served choices={"relic":"serve"} gold/items=[] given=[] rep=[[0,5],[41,5]] legal=[] offers=1 popups=1 [Pleased to meet you at last, Hero.  I, of course, am .  %vam]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo
+P0B01L02 choice 1: asked=1 ended=true success=false paid=false outcome=kept choices={"relic":"defy"} gold/items=[] given=["Scarabx1"] rep=[[0,-10],[41,-2]] legal=[] offers=0 popups=1 [You would keep a relic of the elder circle from %vam[ERROR: ]
+   warns: [quest] host wired 14/79 seams; absent (these quest verbs will idle): addDialog, addFace, addGold, addProgressRumor, addQuestRumor, addQuestTopics, addQuestorPo

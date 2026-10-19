@@ -1,0 +1,6 @@
+asked: 1030
+complete: true success: true outcome: keep
+gold paid by the script: 0 | gear offered: 1
+1030: "Well, %pcf? Keep it, or let the Order seal it?"
+1040: Ysolde slides the key across the table to you. The priest of the Hour says nothing at all, and leaves. "Turn it when you are ready," Ysolde says, "and not before. There is a man who knows what waits on the other side better than I do. I think he will find you."
+1004: _gold_ gold: the Guild's fee and the Order's thanks, together.

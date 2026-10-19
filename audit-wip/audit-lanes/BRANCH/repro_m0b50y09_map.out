@@ -1,0 +1,3 @@
+switch off (DFU): _S.06_ (the map) ran=true reveal done=true say 1080 shown=true
+keep (the fee): _S.06_ (the map) ran=true reveal done=true say 1080 shown=true
+alt (waive the fee): _S.06_ (the map) ran=false reveal done=false say 1080 shown=false

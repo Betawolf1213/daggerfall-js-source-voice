@@ -1,0 +1,3 @@
+after the pay: success true, _S.06_ holds true
+a few ticks on: _S.06_ holds false
+at the end, outcomes holding: ["failed"] - settled: done

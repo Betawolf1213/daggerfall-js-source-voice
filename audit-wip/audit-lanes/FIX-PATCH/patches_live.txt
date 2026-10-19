@@ -1,0 +1,1475 @@
+
+######## FightersGuild M0B50Y09
+--- [0] count 1
+<<< OLD
+_victory_ task:
+                when _S.01_ and _qgclicked_
+
+>>> NEW
+_victory_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The merchant's purse is light for a gargoyle, %pcf. How will you take your pay?
+
+Message:  1901
+The fee, as agreed.
+
+Message:  1902
+Waive it - let the Guild's good name be the pay.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	reveal _newdung_ readmap
+    say 1080
+>>> NEW
+	reveal _newdung_ readmap
+    say 1080
+
+_qlask_ task:
+	when _S.01_ and _qgclicked_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	start timer _end_
+
+######## FightersGuild M0B60Y10
+--- [0] count 1
+<<< OLD
+_S.12_ task:
+	when _S.10_ or _S.11_ 
+
+>>> NEW
+_S.12_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> It's done, then. Not a word of this to the Mages Guild - the client was very clear. We understand each other?
+
+Message:  1901
+Not a word. Pay me and it never happened.
+
+Message:  1902
+A rogue summoner is the Mages Guild's business. They will hear of it.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	give pc _gold_
+	end quest
+>>> NEW
+	give pc _gold_
+	end quest
+
+_qlask_ task:
+	when _S.10_ or _S.11_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## FightersGuild M0B21Y19
+--- [0] count 1
+<<< OLD
+	pc at _safehouse_ set _S.14_ 
+
+>>> NEW
+	pc at _safehouse_ set _qlarrive_ 
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> "You kept me alive. My father would have wanted you to have this - it was his." _daughter_ holds out
+<ce> an heirloom wrapped in cloth.
+
+Message:  1901
+Take the heirloom.
+
+Message:  1902
+Refuse it - she has lost enough.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _qgclicked_ and _insidespawn_
+	say 1003
+>>> NEW
+	when _qgclicked_ and _insidespawn_
+	say 1003
+
+_qlarrive_ task:
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlkeeppath_ task:
+	when _qlkeep_
+	start task _S.14_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _daughter_ by +10
+	end quest
+
+######## KnightlyOrders B0B40Y08
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_ 
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The orcs' plunder from the caravans still lies in ___dungeon_, %pcf.
+<ce> By the old custom of arms, the spoils of a war band
+<ce> belong to the knight who broke it. Will you claim them?
+
+Message:  1901
+I claim them. I took them by the sword.
+
+Message:  1902
+Return them to the caravan masters they were taken from. A knight does not grow rich on stolen goods.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+>>> NEW
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +4
+	end quest
+
+######## KnightlyOrders B0B40Y09
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_ 
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The herders whose cattle that giant ate have scraped together
+<ce> a purse for you, %pcf. It is not much - it is what the giant
+<ce> left them. Will you take it?
+
+Message:  1901
+I will. The work was hard, and fairly done.
+
+Message:  1902
+No. Let them buy new cattle with it. A knight does not take bread from the poor.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+>>> NEW
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +8
+	end quest
+
+######## KnightlyOrders B0B60Y12
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_ 
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _nobleman_ says the grave goods in ___dungeon_ are yours
+<ce> for your trouble, %pcf - the old woman has no more use for them.
+<ce> Will you take them?
+
+Message:  1901
+I will. The heir gives them freely, and I accept.
+
+Message:  1902
+Leave them with her ashes. I went to give her rest, not to rob her grave.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+>>> NEW
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +4
+	change repute with _nobleman_ by +10
+	end quest
+
+######## KnightlyOrders B0B70Y14
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_ 
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The order does not pay its own, %pcf - but she lied to us
+<ce> to cheat the Fighters Guild of its fee, and this once
+<ce> there is gold for you. Will you take it?
+
+Message:  1901
+I will. Her lie cost me as dearly as the Daedra did.
+
+Message:  1902
+No. I swore to fight for glory, not gold. Send it to the Fighters Guild - it is the fee she cheated them of.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_daedra4_ task:
+	place foe _fire_ at _dungeon_
+>>> NEW
+_daedra4_ task:
+	place foe _fire_ at _dungeon_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## KnightlyOrders B0B70Y16
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The order will ask who slew the dragon, %pcf.
+<ce> As we agreed - we both stood before it.
+<ce> You will tell them so, won't you?
+
+Message:  1901
+A bargain is a bargain. We both stood before it.
+
+Message:  1902
+I will not lie to the order. You found it; I slew it, alone. That is what I will tell them.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+>>> NEW
+	when _S.02_ and not _S.01_ 
+	clear _S.02_ _clearclick_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +6
+	end quest
+
+######## KnightlyOrders B0B80Y17
+--- [0] count 1
+<<< OLD
+_success_ task:
+	when _S.02_ and _S.01_ 
+
+>>> NEW
+_success_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The lich's books of necromancy still lie in its lair in ___dungeon_, %pcf.
+<ce> The Mages Guild offers good coin to study them; the temple would see
+<ce> them burned. The choice is yours - you won them.
+
+Message:  1901
+Sell them to the Mages Guild. Let the scholars learn what they can.
+
+Message:  1902
+Burn them, as the temple asks. No one will raise the dead from those pages again.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_old_ task:
+	place foe _F.00_ at _dungeon_
+>>> NEW
+_old_ task:
+	place foe _F.00_ at _dungeon_
+
+_qlask_ task:
+	when _S.02_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +4
+	end quest
+
+######## KnightlyOrders B0B50Y11
+--- [0] count 1
+<<< OLD
+_S.02_ task:
+	clicked npc _qgiver_ 
+
+>>> NEW
+_S.02_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _nobleman_ is so pleased, %pcf, that a fountain is to be raised
+<ce> with your name carved upon it. Shall I tell _nobleman_
+<ce> you accept the honour?
+
+Message:  1901
+Gladly. Let my name be carved upon it.
+
+Message:  1902
+Let it bear no name of mine. Raise it as a well for the common folk - the deed was the order's duty, not my glory.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_S.05_ task:
+	place foe _ghost_ at _dungeon_
+>>> NEW
+_S.05_ task:
+	place foe _ghost_ at _dungeon_
+
+_qlclick_ task:
+	clicked npc _qgiver_
+
+_qlask_ task:
+	when _qlclick_ and _S.01_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+_qlclear_ task:
+	when _qlclick_ and not _S.01_
+	clear _qlclick_ _qlclear_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _local_ by +8
+	change repute with _nobleman_ by +10
+	end quest
+
+######## KnightlyOrders B0B71Y03
+--- [0] count 1
+<<< OLD
+	change repute with _witch_ by -10 
+
+>>> NEW
+	change repute with _witch_ by -10 
+	give pc nothing
+
+
+######## KnightlyOrders B0B81Y02
+--- [0] count 4
+<<< OLD
+ yes yes no _no_
+>>> NEW
+ yes _qlyes_ no _no_
+--- [1] count 1
+<<< OLD
+
+yes task:
+
+>>> NEW
+
+_qlyes_ task:
+
+
+######## MagesGuild N0B40Y07
+--- [0] count 1
+<<< OLD
+_reward_ task:
+	when _qgclicked_ and _S.10_ and not _S.06_ 
+
+>>> NEW
+_reward_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Banished, and none the worse for it -
+<ce> exactly as I wanted. Now, my scroll,
+<ce> if you please. That is =daedra_'s
+<ce> true name you are carrying, and I
+<ce> shall have need of it again.
+
+Message:  1901
+Here is your scroll.
+
+Message:  1902
+I will burn it. =daedra_ stays in Oblivion.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _out_ and not _S.06_ 
+	say 1060
+>>> NEW
+	when _out_ and not _S.06_ 
+	say 1060
+
+_qlask_ task:
+	when _qgclicked_ and _S.10_ and not _S.06_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	unset _qgclicked_
+	end quest
+
+######## DarkBrotherhood L0A01L00
+--- [0] count 1
+<<< OLD
+_S.06_ task:
+	when _S.11_ and _S.05_ 
+
+>>> NEW
+_S.06_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _npc_'s heart has failed. Poor bastard.
+<ce> It is custom that a novice be paid a single gold
+<ce> coin for the first sanctioned death - and custom,
+<ce> among the devout, to give that coin to Mephala.
+<ce> Which will it be, %pcn?
+
+Message:  1901
+Take the coin.
+
+Message:  1902
+Give it to Mephala.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	dropped _decanter_ at _mansion_ 
+	clear _S.04_
+>>> NEW
+	dropped _decanter_ at _mansion_ 
+	clear _S.04_
+
+_qlask_ task:
+	when _S.11_ and _S.05_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## DarkBrotherhood L0B40Y04
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _knight_ will not see the throne, and our client
+<ce> sits a step nearer to it. A royal so near a crown
+<ce> is worth more to us in debt than in coin, %pcf.
+<ce> Your fee - will you take it, or let it stand
+<ce> as a debt the client owes the Brotherhood?
+
+Message:  1901
+The gold, as contracted.
+
+Message:  1902
+Let the debt stand. A royal debtor is worth more than gold.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	say 1003
+	clear _qgclicked_ _clearclick_
+>>> NEW
+	say 1003
+	clear _qgclicked_ _clearclick_
+
+_qlask_ task:
+	when _qgclicked_ and _S.02_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## DarkBrotherhood L0B60Y10
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.02_ 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The hero of Betony, dead at last. Street gossip
+<ce> had it before you were through the door.
+<ce> Here is your fee - unless you would do as the old
+<ce> accounters did, and pay for the mark's rites.
+<ce> Nine men killed in the Betony war, the stories say.
+<ce> That deserves a better grave than gossip. Your choice, %pcf.
+
+Message:  1901
+Take the fee. Heroes die like anyone else.
+
+Message:  1902
+Spend it on the veteran's rites.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	injured _F.01_ saying 1022 
+	injured _F.00_ saying 1023
+>>> NEW
+	injured _F.01_ saying 1022 
+	injured _F.00_ saying 1023
+
+_qlask_ task:
+	when _qgclicked_ and _S.02_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## HolyOrders C0B00Y02
+--- [0] count 1
+<<< OLD
+_rescueitem_ task:
+	when _talkguardian_ and _revealsham_ 
+	get item _item_ 
+	hide npc _guardian_ 
+	say 1025 
+
+>>> NEW
+_rescueitem_ task:
+	get item _item_ 
+	hide npc _guardian_ 
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _guardian_ backs against the wall, the _item_ in hand.
+<ce> "It was only a game. _child_ played the part, and even
+<ce> _priest_ was fooled. Take the thing back - only let me
+<ce> go, and no one at __qgiver_ need ever know my name."
+
+Message:  1901
+Take the _item_ and let _guardian_ go.
+
+Message:  1902
+Take the _item_, and see that __qgiver_ learns _guardian_'s name.
+
+Message:  1903
+<ce> _guardian_ presses the _item_ into your hands
+<ce> and is gone before you can change your mind.
+
+Message:  1904
+<ce> _guardian_ hands over the _item_ and slinks out into
+<ce> the street. __qgiver_ will know the name of the knight
+<ce> who robbed a temple with a child's play-acting.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	when _qgclicked_ and not _rescueitem_ and not _exorcise_
+	clear _qgclicked_ _clearclick_
+>>> NEW
+	when _qgclicked_ and not _rescueitem_ and not _exorcise_
+	clear _qgclicked_ _clearclick_
+
+_qlask_ task:
+	when _talkguardian_ and _revealsham_
+	ask 1900 choices 1901 _qlspare_ 1902 _qlexpose_
+
+variable _qlspare_
+variable _qlexpose_
+
+_qlsparepath_ task:
+	when _qlspare_
+	say 1903
+	start task _rescueitem_
+
+_qlexposepath_ task:
+	when _qlexpose_
+	say 1904
+	start task _rescueitem_
+
+######## Nobility R0C11Y03
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	when _S.06_ and _npcclicked_ 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _chemist_ sends word the heart came to %g2 fresh, and the daedra will not soon
+<ce> forget the name of the one who carried it. I have the gold we agreed, %pcf -
+<ce> or, if you would rather, the favour of my house, which at court is worth more.
+
+Message:  1901
+The gold, as agreed.
+
+Message:  1902
+Your house's favour. Keep the gold.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_S.07_ task:
+	injured _daedra_ saying 1020
+>>> NEW
+_S.07_ task:
+	injured _daedra_ saying 1020
+
+_qlask_ task:
+	when _S.06_ and _npcclicked_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _questgiver_ by +10
+	end quest
+
+######## Nobility R0C11Y26
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	when _qgclicked_ and _S.00_ 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The Ripper is dead, and the _reward_ gold I promised is yours, %pcf.
+<ce> Yet it was the women of ___qgiver_'s streets he hunted, and no one has
+<ce> ever paid them a copper for their fear. Will you take it, or shall they?
+
+Message:  1901
+I'll take the gold. I earned it.
+
+Message:  1902
+Give it to the women he hunted.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_total_ task:
+	end quest
+>>> NEW
+_total_ task:
+	end quest
+
+_qlask_ task:
+	when _qgclicked_ and _S.00_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	unset _qgclicked_
+	end quest
+
+######## Nobility R0C11Y16
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	toting _item2_ and _npc2_ clicked 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> A holy relic, and a fine one. Some temple is missing this, %pcf,
+<ce> and its priests would pay well to learn who has it now. Here is
+<ce> your gold, and for it, you never saw me. Agreed?
+
+Message:  1901
+Agreed. I never saw you.
+
+Message:  1902
+Keep your gold. The temple will hear where its relic went.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	make _item2_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+>>> NEW
+	make _item2_ permanent 
+	change repute with _questgiver_ by -20 
+	end quest 
+
+_qlask_ task:
+	toting _item2_ and _npc2_ clicked
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _questgiver_ by -10
+	end quest
+
+######## Merchants K0C01Y00
+--- [0] count 1
+<<< OLD
+_S.08_ task:
+	clicked npc _victim_ 
+	hide npc _victim_ 
+	say 1011 
+
+>>> NEW
+_S.08_ task:
+	clicked npc _victim_ 
+	hide npc _victim_ 
+	say 1011 
+	start task _victory_
+
+
+######## Merchants K0C01Y10
+--- [0] count 1
+<<< OLD
+_S.04_ task:
+	toting _bothdorjii_ and _qgiver_ clicked 
+
+>>> NEW
+_S.04_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Ah, the Bothdorjii Scroll. I can smell the brimstone on it
+<ce> from here. Hand it over, %pcf, and I will tell you
+<ce> what I know of the storm that wrecked your ship.
+
+Message:  1901
+Hand over the scroll and hear the truth about the storm.
+
+Message:  1902
+Burn it here. Words that wake the Princes are better unread.
+
+Message:  1903
+<ce> You burned it? You witless %ra! Have you any notion
+<ce> what that scroll was worth? Get out of my sight. Whoever
+<ce> sent that storm after you, you will not hear it from me.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_S.05_ task:
+	injured _F.01_ 
+	say 1014 
+>>> NEW
+_S.05_ task:
+	injured _F.01_ 
+	say 1014 
+
+_qlask_ task:
+	toting _bothdorjii_ and _qgiver_ clicked
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	say 1903
+	end quest
+
+######## Commoners A0C01Y01
+--- [0] count 1
+<<< OLD
+_questdone_ task:
+	when _clickqgiver_ and _slain_ 
+
+>>> NEW
+_questdone_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> They're dead - both of them! You have saved my life, %pcf.
+<ce> Here is the gold we agreed, though the gods know I will need
+<ce> every coin if they come again for my land.
+
+Message:  1901
+Take the gold we agreed.
+
+Message:  1902
+Keep it. Spend it on stout locks, and on holding on to your land.
+
+QBN:
+--- [2] count 1
+<<< OLD
+-- even with the previous fix, people are still suffering from impossible quest.
+-- making it 100% spawn chance, no delayed nonsense.
+>>> NEW
+-- even with the previous fix, people are still suffering from impossible quest.
+-- making it 100% spawn chance, no delayed nonsense.
+
+_qlask_ task:
+	when _clickqgiver_ and _slain_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+
+######## Commoners A0C01Y03
+--- [0] count 1
+<<< OLD
+_S.05_ task:
+	toting _answer_ and _qgiver_ clicked 
+
+>>> NEW
+_S.05_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> _hermit_'s answer, at last! You have done everything I asked, %pcf.
+<ce> Here is your gold - every coin I promised.
+
+Message:  1901
+Take the gold, as promised.
+
+Message:  1902
+Keep it - call it a wedding gift for you and _spouse_.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	give pc _gold_ 
+	end quest
+>>> NEW
+	give pc _gold_ 
+	end quest
+
+_qlask_ task:
+	toting _answer_ and _qgiver_ clicked
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	end quest
+
+######## Commoners A0C01Y06
+--- [0] count 1
+<<< OLD
+_traitordead_ task:
+	killed 1 _mmaster_ 
+	give pc nothing 
+
+>>> NEW
+_traitordead_ task:
+	killed 1 _mmaster_ 
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Look - finish off _master_, and the gold I was paid to send you
+<ce> there is yours. Every coin. Only keep my name away from the guard, eh?
+
+Message:  1901
+Take the gold, and let _qgiver_ go.
+
+Message:  1902
+Keep it. The guard will hear how you sold me to an orc.
+
+Message:  1903
+<ce> _qgiver_ goes pale. "You wouldn't..." But you would, and
+<ce> the guard will hear of it before the day is out.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_S.13_ task:
+	end quest
+>>> NEW
+_S.13_ task:
+	end quest
+
+_qlask_ task:
+	when _findtraitor_ and not _traitordead_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlpaid_ task:
+	when _traitordead_ and _qlkeep_ and not _qlunpaid_
+	give pc _gold_
+
+_qlunpaid_ task:
+	when _traitordead_ and not _qlkeep_
+	give pc nothing
+
+_qlaltpath_ task:
+	when _qlalt_
+	say 1903
+
+######## Commoners A0C01Y13
+--- [0] count 1
+<<< OLD
+	pc at _sistershouse_ set _S.05_ 
+
+>>> NEW
+	pc at _sistershouse_ set _qlarrive_ 
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Home, at last! I owe you my life, %pcn. Now give me that letter.
+<ce> _giver_ and _sister_ will learn what it is to be afraid.
+
+Message:  1901
+Give _lover_ the letter. They are his to deal with.
+
+Message:  1902
+Keep the letter for the magistrate. Let the law judge them.
+
+Message:  1903
+<ce> _lover_ stares at you, then laughs bitterly. "The magistrate, then.
+<ce> Much good may it do you. You have my thanks - and nothing more."
+
+QBN:
+--- [2] count 1
+<<< OLD
+	say 2005 
+	drop _lover_ face
+>>> NEW
+	say 2005 
+	drop _lover_ face
+
+_qlarrive_ task:
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlkeeppath_ task:
+	when _qlkeep_
+	start task _S.05_
+
+_qlaltpath_ task:
+	when _qlalt_
+	say 1903
+	drop _lover_ face
+	end quest
+
+######## Commoners A0C41Y18
+--- [0] count 1
+<<< OLD
+	say 1025 
+	unset _S.06_ _S.08_ _S.04_ _S.07_ 
+
+>>> NEW
+	say 1025 
+	start task _qlask_
+	unset _S.06_ _S.08_ _S.04_ _S.07_ 
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Of course, there is the coward's way - the way of whoever gave it
+<ce> to you. Give the _finger_ to some other poor soul, and the mummy will
+<ce> follow it instead of you. I would not. But the choice is yours.
+
+Message:  1901
+Destroy the mummy in its tomb and end the curse.
+
+Message:  1902
+Pass the _finger_ on to a stranger, as it was passed to me.
+
+Message:  1903
+<ce> The next stranger on the road takes your package without a second
+<ce> look. Tonight, the mummy will come for someone else.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	add dialog for item _finger_ 
+	log 1011 step 1
+>>> NEW
+	add dialog for item _finger_ 
+	log 1011 step 1
+
+_qlask_ task:
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	take _finger_ from pc
+	say 1903
+	make _gold1_ permanent
+	end quest
+
+######## Witches Q0C4XY04
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	toting _heart_ and _questgiver_ clicked 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> Thou hast it, %pcn, and still it beats! Quickly now, before
+<ce> it cools - what wouldst thou have of thy poor aunts
+<ce> for so fine a heart?
+
+Message:  1901
+The _reward_ thou didst promise me.
+
+Message:  1902
+Nothing. Let it be a gift to my dear aunts.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	clear _S.10_ 
+
+variable _exitstarter_
+>>> NEW
+	clear _S.10_ 
+
+variable _exitstarter_
+
+_qlask_ task:
+	toting _heart_ and _questgiver_ clicked
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _questgiver_ by +5
+	end quest
+
+######## Vampires P0A01L00
+--- [0] count 1
+<<< OLD
+_pcgetsgold_ task:
+	when _qgclicked_ and _mondead_ 
+
+>>> NEW
+_pcgetsgold_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> The lesser one is ash, and %vam saw it done. Will you take
+<ce> the ring that marks you as one of us, %pcf - or bind yourself
+<ce> to the family in blood?
+
+Message:  1901
+Take the ring of %vam.
+
+Message:  1902
+Take no ring. Swear the blood-oath instead.
+
+QBN:
+--- [2] count 1
+<<< OLD
+_S.06_ task:
+	start timer _1stparton_
+>>> NEW
+_S.06_ task:
+	start timer _1stparton_
+
+_qlask_ task:
+	when _qgclicked_ and _mondead_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _questgiver_ by +5
+	end quest
+
+######## Vampires P0B10L08
+--- [0] count 1
+<<< OLD
+_reward_ task:
+	when _vampclicked_ and _success_ 
+
+>>> NEW
+_reward_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> So the Prince's coven has felt the teeth of %vam. Tell me,
+<ce> %pcf - is the Coven of ==daedra_ broken, or only bowed?
+
+Message:  1901
+Broken. %reg belongs to %vam.
+
+Message:  1902
+Only bowed. Let my reward go to the Prince's coven, the price of a lasting peace.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	add dialog for person _vamp_ 
+	log 1014 step 0
+>>> NEW
+	add dialog for person _vamp_ 
+	log 1014 step 0
+
+_qlask_ task:
+	when _vampclicked_ and _success_
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	ql paid
+	change repute with _daedra_ by +5
+	end quest
+
+######## Vampires P0B01L02
+--- [0] count 1
+<<< OLD
+_vampclicked_ task:
+	toting _vamprelic_ and _vampire_ clicked 
+
+>>> NEW
+_vampclicked_ task:
+	when _qlkeep_
+
+--- [1] count 1
+<<< OLD
+
+QBN:
+>>> NEW
+
+Message:  1900
+<ce> So you are %pcf. And that is the _vamprelic_ of the elder
+<ce> circle, I see. Give it here - %vam will take it into
+<ce> proper keeping now.
+
+Message:  1901
+Give the _vamprelic_ to _vampire_. It belongs to %vam.
+
+Message:  1902
+Keep it. You stole it, and it is yours now.
+
+Message:  1903
+<ce> You would keep a relic of the elder circle from %vam?
+<ce> How very ... mortal of you. Keep it, then, %pcf, and
+<ce> learn how long the patience of %vam lasts.
+
+QBN:
+--- [2] count 1
+<<< OLD
+	log 1020 step 0 
+
+_S.06_ task:
+	start timer _1stparton_
+>>> NEW
+	log 1020 step 0 
+
+_S.06_ task:
+	start timer _1stparton_
+
+_qlask_ task:
+	toting _vamprelic_ and _vampire_ clicked
+	ask 1900 choices 1901 _qlkeep_ 1902 _qlalt_
+
+variable _qlkeep_
+variable _qlalt_
+
+_qlaltpath_ task:
+	when _qlalt_
+	say 1903
+	get item _vamprelic_
+	make _vamprelic_ permanent
+	change repute with _vampire_ by -10
+	end quest

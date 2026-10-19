@@ -1,0 +1,7 @@
+introBay opens: {"level":6,"online":true} steps: QLIW01 QLIW02
+online, Renown 1: revenants held = true
+online, Renown 3: revenants held = true
+online, Renown 6: revenants held = true
+online, Renown 9: revenants held = true
+online, Renown 10: revenants held = false
+REVENANT_MIN_RENOWN 10 - Renown XP to reach it: 5510

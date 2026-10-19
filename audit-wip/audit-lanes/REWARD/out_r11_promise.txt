@@ -1,0 +1,4 @@
+sheets with NO outcome that pays gear: 24
+   A0C00Y06(none) A0C0XY04(own/none/none) $CUREVAM(own/none) $CUREWER(own/own/none) 10C00Y00(own) 20C00Y00(own) 30C00Y00(own) 40C00Y00(own/own) 50C00Y00(own) 60C00Y00(own) 70C00Y00(own) 80C0XY00(own/own) 90C00Y00(own) T0C00Y00(own) U0C00Y00(own) V0C00Y00(own) W0C00Y00(own) X0C00Y00(own) Y0C00Y00(own) Z0C00Y00(own) S0000106(own) S0000107(own) RRMSTARM0(own) RRMSTARM2(own/own/own)
+
+the Quests tab draws, for one of them (tier 2, running): What to do ◇ Summon the Prince Finish it to choose one of 3 pieces of gear fitted to you (Magic or better), beside its own reward.

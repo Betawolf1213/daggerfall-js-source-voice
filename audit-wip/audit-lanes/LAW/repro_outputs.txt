@@ -1,0 +1,66 @@
+=== m0b11y18_betrayed.mjs
+after the Queen: success true, choices {"letter":"queen","hunt":"hunt"}
+ended: complete true, DFU success true, choices {"letter":"queen","hunt":"hunt"}
+outcome rows holding at the end: ["failed"] -> settled "betrayed": "You sold the dead man's letter to the traitor it named."
+the layer's standing moves (propagate false): [{"fid":380,"amount":-5,"propagate":false},{"fid":386,"amount":5,"propagate":false}]; gear offers: 0
+=== m0b00y16_gold.mjs
+escort complete: true, success: true
+settled outcome: rescued (pay greater, gold x1.25)
+gold the script minted 451, paid 451 (x1.00) - owed 564
+gear offer tier 2 (the greater step applied at the end)
+=== brisien_gear.mjs
+while running: tier 1, outcome null, the window draws: "Finish it to choose one of 3 pieces of gear fitted to you (Magic or better), beside its own reward."
+ended: complete true, DFU success false, paid false, outcome met (pay standard) - gear offers made: 0
+=== share_tier.mjs
+the level-1 player's own A0C10Y02: tier 1
+the level-25 sharer's A0C10Y02: tier 4
+the level-1 player's received copy: ok true tier 4
+the level-1 holder's offer: tier 4 pieces rare,rare,rare
+=== share_deploy.mjs
+before the deploy - shared to a mate: true  | sender ql: null
+after the deploy - the same quest resynced to that mate: false mismatch
+after the deploy - shared to a new mate: false mismatch
+tasks in the envelope vs the receiver's reference parse: 10 14
+=== nocturnal_yield.mjs
+after the pay: success true, _S.06_ holds true
+a few ticks on: _S.06_ holds false
+at the end, outcomes holding: ["failed"] - settled: done
+=== curewer_temple.mjs
+settled: failed - the Quests tab's ended row says: "'s hunt came, and you are a lycanthrope still." (failure true)
+=== m0b40y05_timeout.mjs
+DFU: success false; filed: "Hunt for a Spriggan ended at :  On Sundas the 1st of Morning... he job done.   Outcome: The spriggan is dead and the woodsmen are back at work. "
+layer: outcome slain; history {"M0B40Y05":"slain"}
+=== bindings.mjs
+ok  started: {"started":true} -> true
+ok  ended (running): {"ended":true} -> false
+ok  success (running): {"success":true} -> false
+ok  step 0 (startup logs 1020 step 0): {"step":0} -> true
+ok  step 1 (not yet): {"step":1} -> false
+ok  task, unset: {"task":"_S.06_"} -> false
+ok  task, set by start: {"task":"_S.06_"} -> true
+ok  task, inner name: {"task":"S.06"} -> true
+ok  item, not carried: {"item":"_amulet_"} -> false
+ok  item, carried: {"item":"_amulet_"} -> true
+ok  item names a clock: {"item":"_S.35_"} -> false
+ok  clock, not started: {"clock":"_S.35_"} -> false
+ok  clock, started: {"clock":"_S.35_"} -> true
+ok  clockDone, running: {"clockDone":"_S.35_"} -> false
+ok  clock, run out: {"clock":"_S.35_"} -> false
+ok  clockDone, run out: {"clockDone":"_S.35_"} -> true
+    (Foe _F.00_ is 3 Archer: spawnCount 3)
+ok  foeDead, 2 of 3: {"foeDead":"_F.00_"} -> false
+ok  foeDead, 3 of 3: {"foeDead":"_F.00_"} -> true
+ok  global 30 set: {"global":30} -> true
+ok  global 31 unset: {"global":31} -> false
+ok  act 2 of 2: {"act":"fish-caught","n":2} -> true
+ok  act 2 of 3: {"act":"fish-caught","n":3} -> false
+ok  choice taken: {"choice":{"branch":"letter","is":"queen"}} -> true
+ok  choice not taken: {"choice":{"branch":"letter","is":"traitor"}} -> false
+ok  all: {"all":[{"task":"_S.06_"},{"item":"_amulet_"}]} -> true
+ok  any: {"any":[{"task":"_S.07_"},{"item":"_amulet_"}]} -> true
+ok  not: {"not":{"task":"_S.07_"}} -> true
+ok  empty all: {"all":[]} -> false
+ok  empty any: {"any":[]} -> false
+ok  unknown kind: {"taks":"_S.06_"} -> false
+ok  ended (end quest ran, grace): {"ended":true} -> true
+    (isEnding true, ticksToEnd 2, questComplete false)

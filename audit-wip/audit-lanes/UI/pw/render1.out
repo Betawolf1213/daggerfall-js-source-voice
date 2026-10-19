@@ -1,0 +1,558 @@
+RAIL (in order):
+  div.px-qarch px-qfirst: Rewards waiting
+  button.px-qrow px-qreward on: ◆Reward: Wild Animal
+  button.px-qrow px-qreward: ◆Reward: The Caged Broker
+  div.px-qarch: Main Quests
+  button.px-qrow: ◆The Emperor’s Letter
+  button.px-qrow: ◆A Silent Summons
+  div.px-qarch: Side Quests
+  button.px-qrow: ◆Wild Animal◆
+  button.px-qrow: ◆The Lich’s Relic
+  div.px-qarch: Questlines
+  button.px-qrow px-qlinerow: ◆The Harbourmaster’s Word  [title: Under way]
+  button.px-qrow px-qlinerow: ◆The Burning Doors  [title: Waiting for its next step]
+  button.px-qrow px-qlinerow: ◆The Smith’s Secrets  [title: Waiting for its next step]
+  button.px-qrow px-qlinerow: ◆The Merchant’s Road  [title: Waiting for its next step]
+  button.px-qrow px-qlinerow done: ◆The Covens’ Hoard  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Weir Road  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Hour That Was Not  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Old Coil  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Court Crafter  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Herald’s Call  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆The Bay’s Troubles  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆Written in the Stars  [title: Not begun]
+  button.px-qrow px-qlinerow done: ◆A Seat at the Table  [title: Finished]
+  button.px-qrow px-qlinerow: ◆The Fighters Guild  [title: Your guild’s quests, rank by rank]
+  div.px-qarch: Archived
+  button.px-qrow done: ◆Rat Problem
+  button.px-qrow done: Clear archive (1)
+
+OPENED ON:
+WILD ANIMAL
+
+Choose one piece. The others are gone once you take it.
+
+Warrior's Long Bow of the Sage
+RARE · WEAPON
++18% damage [10-25]
++5 Intelligence [5-10]
++14 Dodging [10-20]
+Take this
+Guardian's Kite Shield of Iron Will
+RARE · ARMOUR
++8 Willpower [5-10]
++10 Personality [5-10]
++12 armor [6-12]
+Take this
+Mule's Cloth Amulet of the Falcon
+RARE · JEWELLERY
++26% carrying capacity [20-35]
++7 Agility [5-10]
++13 Thaumaturgy [10-20]
++26% Shock resistance [20-35]
+Take this
+
+=== ROW 0: ◆Reward: Wild Animal   (lit: ["◆Reward: Wild Animal"])
+WILD ANIMAL
+
+Choose one piece. The others are gone once you take it.
+
+Warrior's Long Bow of the Sage
+RARE · WEAPON
++18% damage [10-25]
++5 Intelligence [5-10]
++14 Dodging [10-20]
+Take this
+Guardian's Kite Shield of Iron Will
+RARE · ARMOUR
++8 Willpower [5-10]
++10 Personality [5-10]
++12 armor [6-12]
+Take this
+Mule's Cloth Amulet of the Falcon
+RARE · JEWELLERY
++26% carrying capacity [20-35]
++7 Agility [5-10]
++13 Thaumaturgy [10-20]
++26% Shock resistance [20-35]
+Take this
+
+=== ROW 1: ◆Reward: The Caged Broker   (lit: ["◆Reward: The Caged Broker"])
+THE CAGED BROKER
+
+Choose one piece. The others are gone once you take it.
+
+Warrior's Katana of Iron Will
+RARE · WEAPON
++10 Willpower [5-10]
++19 Long Blade [10-20]
++5 Intelligence [5-10]
++11% damage [10-25]
+Take this
+Ysolde’s Ember-Rod
+THIS QUEST’S OWN
+RARE · ARMOUR
++11 armor [6-12]
++14 Streetwise [10-20]
++11 Swimming [10-20]
++17 Jumping [10-20]
+Take this
+Mule's Ring of the Serpent
+RARE · JEWELLERY
++20% Poison resistance [20-35]
++9 Strength [5-10]
++33% Magic resistance [20-35]
++28% carrying capacity [20-35]
+Take this
+
+=== ROW 2: ◆The Emperor’s Letter   (lit: ["◆The Emperor’s Letter"])
+THE EMPEROR’S LETTER
+Track
+WHAT TO DO
+◇
+Find proof of what really became of Prince Greklith
+HOW IT ENDED
+
+The trail went cold.
+
+Abandon quest
+Restart quest
+Hide from journal
+
+A letter, sealed.
+
+=== ROW 3: ◆A Silent Summons   (lit: ["◆A Silent Summons"])
+A SILENT SUMMONS
+Track
+WHAT TO DO
+◇
+Read the letter the courier brought
+
+Finish it to choose one of 3 pieces of gear fitted to you (Magic or better), beside its own reward.
+
+Abandon quest
+Restart quest
+Hide from journal
+
+=== ROW 4: ◆Wild Animal◆   (lit: ["◆Wild Animal◆"])
+WILD ANIMAL
+Time remains: 2 days 7 hours
+Track
+WHAT TO DO
+◆
+Kill the wild beast loose in Lord Kain’s house
+DONE
+◇
+Return to Lord Kain in Daggerfall for your pay
+
+Finish it to choose one of 3 pieces of gear fitted to you (Magic or better), beside its own reward.
+
+Abandon quest
+Restart quest
+Hide from journal
+
+Lord Kain has a beast loose in his house.
+
+He wants it dead.
+
+=== ROW 5: ◆The Lich’s Relic   (lit: ["◆The Lich’s Relic"])
+THE LICH’S RELIC
+Track
+WHAT TO DO
+◆
+Take the sacred relic from Fang Lair, where the lich Vanus guards it
+DONE
+◇
+Destroy Vanus, the relic’s maker
+OPTIONAL
+◇
+Return the relic to the Prior in Daggerfall
+◇
+Bring the notes to the clan
+OR
+◇
+Bring the notes to the Guild
+✕
+Keep the acolyte alive
+FAILED
+YOUR CHOICES
+
+The lich’s apprentice begs for his life.
+Let him go
+
+Finish it to choose one of 3 pieces of gear fitted to you (Magic or better), beside its own reward.
+
+Abandon quest
+Restart quest
+Hide from journal
+
+The temple’s relic was stolen.
+
+=== ROW 6: ◆The Harbourmaster’s Word   (lit: ["◆The Harbourmaster’s Word"])
+THE HARBOURMASTER’S WORD
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+A harbourmaster needs a captain. Any captain. Even you.
+
+GIVEN BY a harbourmaster
+
+UNDER WAY
+
+THE STEPS
+◆
+Under Sail
+DONE
+You berthed at Sentinel after a league under sail.
+◈
+A Hold Full
+NOW
+◇
+Strike Your Colours
+
+=== ROW 7: ◆The Burning Doors   (lit: ["◆The Burning Doors"])
+THE BURNING DOORS
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+Someone is opening Dagon’s Breaches on purpose. A Master Conjurer of the Mages Guild wants to know who, and how.
+
+GIVEN BY Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest
+
+WAITING FOR ITS NEXT STEP
+
+Opens online.
+
+THE STEPS
+◆
+A Letter from Wayrest
+DONE
+Ysolde told you who writes the breaches.
+◆
+The Faithful
+DONE
+You brought the rite-book sealed.
+◈
+Breaking the Rite
+NOW
+WITNESSED
+◇
+Through the Burning Door
+WITNESSED
+◇
+The Caged Broker
+
+Finish it to earn the title Doorwarden, held by your account.
+
+=== ROW 8: ◆The Smith’s Secrets   (lit: ["◆The Smith’s Secrets"])
+THE SMITH’S SECRETS
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+An armourer offers to show you what a good piece of gear can still be made into.
+
+GIVEN BY an armourer
+
+WAITING FOR ITS NEXT STEP
+
+THE STEPS
+◆
+A Stone in the Setting
+DONE
+The armourer set a stone in your blade.
+◈
+Tempered Again
+NOW
+
+=== ROW 9: ◆The Merchant’s Road   (lit: ["◆The Merchant’s Road"])
+THE MERCHANT’S ROAD
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+A stable master knows a merchant yard that pays well for a wagon’s load, if someone will haul it.
+
+GIVEN BY a stable master
+
+WAITING FOR ITS NEXT STEP
+
+THE STEPS
+◈
+A Wagon’s Load
+NOW
+◇
+The Long Haul
+
+=== ROW 10: ◆The Covens’ Hoard   (lit: ["◆The Covens’ Hoard"])
+THE COVENS’ HOARD
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+Dagon’s covens hoard the Battlespire’s keys in the deep places. Their champions glow gold.
+
+GIVEN BY Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest
+
+NOT BEGUN
+
+Opens after The Burning Doors, online.
+
+THE STEPS
+◇
+Gold-Lit
+◇
+The Lieutenant
+◇
+What the Key Opens
+
+Finish it to earn the title Covenbane, held by your account.
+
+=== ROW 11: ◆The Weir Road   (lit: ["◆The Weir Road"])
+THE WEIR ROAD
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+The Battlespire fell in 3E 398. One of its last class of Battlemages has never stopped living that year.
+
+GIVEN BY Corvane Tull, Battlemage of the Spire’s last class
+
+NOT BEGUN
+
+Opens after The Covens’ Hoard, online.
+
+THE STEPS
+◇
+The Weir Gate
+WITNESSED
+◇
+The Torn Halls
+WITNESSED
+◇
+A Warrior Duke
+WITNESSED
+◇
+The Battlemage’s Account
+
+Finish it to earn the title Weirwalker, held by your account.
+
+=== ROW 12: ◆The Hour That Was Not   (lit: ["◆The Hour That Was Not"])
+THE HOUR THAT WAS NOT
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+The priests of Akatosh feel a wound in time under the Bay, and brass where there should be stone.
+
+GIVEN BY Prior Anselm Vey of the Order of the Hour
+
+NOT BEGUN
+
+Opens at level 12, online.
+
+THE STEPS
+◇
+Brass at Dusk
+◇
+The Orrery of Endings
+WITNESSED
+
+Finish it to earn the title Witness of the Hour, held by your account.
+
+=== ROW 13: ◆The Old Coil   (lit: ["◆The Old Coil"])
+THE OLD COIL
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+Sentinel’s sailors say the World-Skin was shed once, and that what was shed still swims.
+
+GIVEN BY Hamid al-Rasheen, a packet captain of Sentinel
+
+NOT BEGUN
+
+Opens online.
+
+THE STEPS
+◇
+The Sailors’ Tale
+◇
+The Packet Lanes
+◇
+The Shed Skin
+WITNESSED
+
+Finish it to earn the title Satakal's Witness, held by your account.
+
+=== ROW 14: ◆The Court Crafter   (lit: ["◆The Court Crafter"])
+THE COURT CRAFTER
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+A crafter who works for the court wants an apprentice who can find their own materials.
+
+GIVEN BY a court crafter
+
+NOT BEGUN
+
+Opens online.
+
+THE STEPS
+◇
+Of Rod and Root
+◇
+Ore and Timber
+◇
+Made by Hand
+
+=== ROW 15: ◆The Herald’s Call   (lit: ["◆The Herald’s Call"])
+THE HERALD’S CALL
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+The Arena’s Herald is calling for new blood, and pays the first purse in advance of glory.
+
+GIVEN BY the Arena’s Herald
+
+NOT BEGUN
+
+Opens online.
+
+THE STEPS
+◇
+First Blood
+◇
+A Name in the Sand
+
+=== ROW 16: ◆The Bay’s Troubles   (lit: ["◆The Bay’s Troubles"])
+THE BAY’S TROUBLES
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+A captain of the watch has more trouble than soldiers: raiders on the roads, and the dead who will not lie down.
+
+GIVEN BY a captain of the watch
+
+NOT BEGUN
+
+Opens online.
+
+THE STEPS
+◇
+Raiders at the Gate
+◇
+The Kneeling Dead
+
+=== ROW 17: ◆Written in the Stars   (lit: ["◆Written in the Stars"])
+WRITTEN IN THE STARS
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+An astrologer insists your fortune is written on the Firmament, and that you can write the rest yourself.
+
+GIVEN BY an astrologer
+
+NOT BEGUN
+
+Opens online.
+
+THE STEPS
+◇
+The First Star
+◇
+A Constellation of Your Own
+
+=== ROW 18: ◆A Seat at the Table   (lit: ["◆A Seat at the Table"])
+A SEAT AT THE TABLE
+
+A questline is a story told in several quests, one after another. Each step is given when the last one ends.
+
+A tavern regular is looking for someone new to lose to. Or, better, to beat.
+
+GIVEN BY a tavern regular
+
+FINISHED
+
+THE STEPS
+◆
+A Hand of Cards
+DONE
+You won a hand of cards.
+◆
+The King’s Gambit
+DONE
+You beat the regular at The King’s Gambit, and he bought the next round.
+HOW IT ENDED
+
+You beat the regular at The King’s Gambit, and he bought the next round.
+
+=== ROW 19: ◆The Fighters Guild   (lit: ["◆The Fighters Guild"])
+THE FIGHTERS GUILD
+
+A guild’s own quests, by the rank that opens them. Each rank is a promotion; a quest marked with a choice ends more than one way.
+
+YOUR RANK: PROTECTOR
+
+APPRENTICE
+◆
+Quest M0B00Y06
+DONE
+◇
+Quest M0B00Y07
+JOURNEYMAN
+◆
+Quest M0B00Y16
+DONE
+A CHOICE
+SWORDSMAN
+◇
+Quest M0B11Y18
+A CHOICE
+◇
+Quest M0B1XY01
+PROTECTOR
+◇
+Quest M0B20Y02
+DEFENDER (NOT YET)
+◇
+Quest M0B21Y19
+A CHOICE
+◇
+Quest M0B30Y03
+WARDER (NOT YET)
+◇
+Quest M0B40Y05
+A CHOICE
+GUARDIAN (NOT YET)
+◇
+Quest M0B50Y09
+A CHOICE
+CHAMPION (NOT YET)
+◇
+Quest M0B60Y10
+A CHOICE
+◇
+Quest M0B70Y11
+WARRIOR (NOT YET)
+◇
+Quest M0B80Y12
+MASTER (NOT YET)
+◇
+Quest M0B90Y13
+
+=== ROW 20: ◆Rat Problem   (lit: ["◆Rat Problem"])
+RAT PROBLEM
+Remove
+
+COMPLETED AT 9 MORNING STAR
+
+You killed the rats.
+
+Outcome: The cellar is clean.
+
+=== ROW 21: Clear archive (1)   (lit: ["◆Rat Problem"])
+RAT PROBLEM
+Remove
+
+COMPLETED AT 9 MORNING STAR
+
+You killed the rats.
+
+Outcome: The cellar is clean.
+
+ERRORS: none

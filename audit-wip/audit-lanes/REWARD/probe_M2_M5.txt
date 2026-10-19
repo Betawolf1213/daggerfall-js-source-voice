@@ -1,0 +1,40 @@
+MUTANT in src/systems/questlines/qlRewards.js: 'lesser: Object.freeze({ gold: 0.75,' -> 'lesser: Object.freeze({ gold: 1,'
+   # pass 9 # fail 0  test/systems/questlines/ql1_layer.test.js
+   # pass 3 # fail 0  test/systems/questlines/ql4_branches.test.js
+   # pass 12 # fail 0  test/systems/questlines/ql12_lines.test.js
+   # pass 6 # fail 0  test/ui/questlines/ql2_journal.test.js
+   # pass 19 # fail 0  test/systems/questlines/ql1_sheets.test.js
+   # pass 11 # fail 0  test/systems/questlines/ql11_acts.test.js
+   # pass 8 # fail 0  test/systems/questlines/ql4_actions.test.js
+   # pass 29 # fail 0  test/systems/quest/questbridge.test.js
+   restored: 0 dirty
+MUTANT in src/systems/questlines/qlRewards.js: 'greater: Object.freeze({ gold: 1.25, gear: true, step: 1 })' -> 'greater: Object.freeze({ gold: 1.5, gear: true, step: 0 })'
+   # pass 9 # fail 0  test/systems/questlines/ql1_layer.test.js
+   # pass 3 # fail 0  test/systems/questlines/ql4_branches.test.js
+   # pass 12 # fail 0  test/systems/questlines/ql12_lines.test.js
+   # pass 6 # fail 0  test/ui/questlines/ql2_journal.test.js
+   # pass 19 # fail 0  test/systems/questlines/ql1_sheets.test.js
+   # pass 11 # fail 0  test/systems/questlines/ql11_acts.test.js
+   # pass 8 # fail 0  test/systems/questlines/ql4_actions.test.js
+   # pass 29 # fail 0  test/systems/quest/questbridge.test.js
+   restored: 0 dirty
+MUTANT in src/systems/questlines/qlRewards.js: '1: Object.freeze({ floor: 'magic', up: 0 }),' -> '1: Object.freeze({ floor: 'magic', up: 1 }),'
+   # pass 9 # fail 0  test/systems/questlines/ql1_layer.test.js
+   # pass 3 # fail 0  test/systems/questlines/ql4_branches.test.js
+   # pass 12 # fail 0  test/systems/questlines/ql12_lines.test.js
+   # pass 6 # fail 0  test/ui/questlines/ql2_journal.test.js
+   # pass 19 # fail 0  test/systems/questlines/ql1_sheets.test.js
+   # pass 11 # fail 0  test/systems/questlines/ql11_acts.test.js
+   # pass 8 # fail 0  test/systems/questlines/ql4_actions.test.js
+   # pass 29 # fail 0  test/systems/quest/questbridge.test.js
+   restored: 0 dirty
+MUTANT in src/systems/questlines/qlLayer.js: 'if (named && !history[`named:${quest.questName}`]) {' -> 'if (named) {'
+   # pass 9 # fail 0  test/systems/questlines/ql1_layer.test.js
+   # pass 3 # fail 0  test/systems/questlines/ql4_branches.test.js
+   # pass 12 # fail 0  test/systems/questlines/ql12_lines.test.js
+   # pass 6 # fail 0  test/ui/questlines/ql2_journal.test.js
+   # pass 19 # fail 0  test/systems/questlines/ql1_sheets.test.js
+   # pass 11 # fail 0  test/systems/questlines/ql11_acts.test.js
+   # pass 8 # fail 0  test/systems/questlines/ql4_actions.test.js
+   # pass 29 # fail 0  test/systems/quest/questbridge.test.js
+   restored: 0 dirty

@@ -1,0 +1,4 @@
+member -> sharer sync: {"ok":true,"resync":true,"reason":null}
+sharer, box still up: ended=false tasks qlkeep=false qlalt=true
+sharer: outcome=given success=true gold=["Gold Piecesx554"] rep=[[512,5]] offers=1
+member: outcome=given gold=[] offers=1

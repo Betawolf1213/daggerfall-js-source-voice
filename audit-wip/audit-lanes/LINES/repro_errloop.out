@@ -1,0 +1,3 @@
+ticks: 20  QLBD01 started: 38  error-terminated: 19
+first error: [quest] QuestMachine encountered an exception in quest QLBD01: Tried to assign resource ysolde to Place without at least
+line record: {"step":0,"done":false,"wait":0,"outcomes":{},"claims":{}}
