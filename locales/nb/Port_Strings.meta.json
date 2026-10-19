@@ -8094,6 +8094,16 @@
   "tr": "744cb97c78cc",
   "by": "claude-in-session"
  },
+ "features.banthaJungle.note": {
+  "en": "2b2e15596f0e",
+  "tr": "bc1604546259",
+  "by": "claude-in-session"
+ },
+ "features.banthaJungle.title": {
+  "en": "af557fb81d4c",
+  "tr": "b835557f4061",
+  "by": "claude-in-session"
+ },
  "features.blood.effect": {
   "en": "309a6a38a632",
   "tr": "2c811e3a883e",
@@ -20540,8 +20550,8 @@
   "by": "claude-in-session"
  },
  "prof.page.anvil.odds": {
-  "en": "87ce4342dfe3",
-  "tr": "c829591cb8c3",
+  "en": "c1a325764f8d",
+  "tr": "a6c9847371ed",
   "by": "claude-in-session"
  },
  "prof.page.anvil.shop": {
@@ -20590,8 +20600,8 @@
   "by": "claude-in-session"
  },
  "prof.page.bench.odds": {
-  "en": "1b7ecbaafeb1",
-  "tr": "0ffd8070b5e2",
+  "en": "f042a02ce767",
+  "tr": "bc7b2e525a78",
   "by": "claude-in-session"
  },
  "prof.page.bench.ramKit": {
@@ -21160,8 +21170,8 @@
   "by": "claude-in-session"
  },
  "prof.page.jewel.odds": {
-  "en": "4519e6329a41",
-  "tr": "b9561af48d38",
+  "en": "221374f8e4d8",
+  "tr": "f00e99cf5461",
   "by": "claude-in-session"
  },
  "prof.page.jewel.points": {
@@ -21300,18 +21310,18 @@
   "by": "claude-in-session"
  },
  "prof.page.loom.odds": {
-  "en": "24b4454f928a",
-  "tr": "91828492de4c",
+  "en": "5f78a1cd2040",
+  "tr": "020ee7363a9a",
   "by": "claude-in-session"
  },
  "prof.page.loom.oddsLeather": {
-  "en": "00b6f3c4f090",
-  "tr": "e0a632477946",
+  "en": "1fd2bec1813b",
+  "tr": "947a776a8025",
   "by": "claude-in-session"
  },
  "prof.page.loom.oddsTailor": {
-  "en": "67e5b5ffb82c",
-  "tr": "adf6ce5f907a",
+  "en": "555fefee329f",
+  "tr": "870b1eaff377",
   "by": "claude-in-session"
  },
  "prof.page.loom.setDown": {
@@ -21410,8 +21420,8 @@
   "by": "claude-in-session"
  },
  "prof.page.mason.odds": {
-  "en": "0d311f608200",
-  "tr": "d8ef71cd47db",
+  "en": "73db5713e856",
+  "tr": "3db417856c73",
   "by": "claude-in-session"
  },
  "prof.page.mason.quick": {
