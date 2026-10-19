@@ -255,7 +255,7 @@ test('WX2 the hosts: both read the front under the enhanced sky only, and the cl
     assert.match(h, /ambientWord = enhancedFront \? soundWeather\(fx, weather\) : weather;[^\n]*\n\s*setHeardWeather\(ambientWord, enhancedFront \? fx\.intensity : 1\);[^\n]*\n\s*ambience\.setPreset\(presetForExterior\(ambientWord, isNight\(minute\)\)\);\s*\n\s*ambience\.rainGain = enhancedFront \? fx\.intensity : 1;/, `${host}: the ear follows the front, the gain too, classic verbatim (AUDIT 61: the word is named once, for the mod's lightning listener too)`);
     assert.match(h, /const precipShown = enhancedFront \? fx\.shown : precipMode;\s*\n\s*if \(precipShown === 'sand'\) \{[\s\S]{0,600}?\} else if \(precipShown && precip\) \{/, `${host}: what falls is what the front shows`);
     assert.match(h, /if \(precip\.enhanced\) \{\s*\n\s*precip\.intensity = fx\.intensity;/, `${host}: the intensity is set inside the enhanced branch only`);
-    assert.match(h, /precip\.draw\(precipShown, proj, view/, `${host}: the draw takes the shown mode`);
+    assert.match(h, /precip\.drawFall\(precipShown, proj, view/, `${host}: the draw takes the shown mode (PRECIP1: the fall at the air's snow share)`);
     assert.match(h, /const fogNow = wxNow\.fog;/, `${host}: the fog row is the front's`);
     assert.doesNotMatch(h.slice(h.indexOf('function frame(now)')), /[^.]weatherSun\b(?!\s*=)/, `${host}: no frame consumer reads the raw sun scale any more`);
     assert.doesNotMatch(h.slice(h.indexOf('function frame(now)')), /\bweatherFog\b(?!\s*=)/, `${host}: no frame consumer reads the raw fog row any more`);
