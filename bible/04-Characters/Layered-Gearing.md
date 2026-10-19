@@ -3,7 +3,7 @@
 **The owner's calls.** 2026-10-18, of the skin card's two panels: *"add a option between those two thats also called On
 foot Layered Gearing Skin (WIP) Female and Male"*. 2026-10-19, merging it: *"These need a proper toggle in the account
 profile for players to either equip skins or use this integration"*, and of its art: *"Approve as an exception"*,
-credited to DFO.
+credited to DFO. Then: *"Make sure this is on by default"* (LAYERED-GEAR-ON).
 
 With Layered Gearing chosen, the player's body on foot is drawn in the armor it actually wears, in the body chosen
 (Female or Male - a male character may choose the female body and the other way round). The art is
@@ -15,16 +15,20 @@ With Layered Gearing chosen, the player's body on foot is drawn in the armor it 
 The profile window's Skin card (`src/ui/skinCard.js`) opens on a two-way toggle, **Look: Skins | Layered Gearing
 (WIP)** - a player either equips skins or uses this. The choice is the one setting the body and the look already read,
 `Graphics.LayeredGear` (`systems/modSettings.js`): 0 is Skins; 1 and 2 are Layered Gearing in the female or the male
-body.
+body; 3 (`LAYERED_OWN`, layeredArmor.js) is Layered Gearing in the character's own body, and **the default**: every
+player starts in it, each character in its own body, and the card says so ("Your character's own body, until you choose
+one."). The body resolves it live (`eotbBody.js` lookNow, `playerEntity.gender`); the look sends the body it is (`lg` 1
+or 2), never 3.
 
 - **Skins**: the On foot and Mounted pickers, as DISC23-B2 and SKIN2 laid them out.
 - **Layered Gearing**: the body choice, Female or Male, each pictured in plain leather (`layeredPreviewUrl`), and the
   Mounted picker - a rider has no layered art, so on a horse the player is drawn in the Mounted skin, and as a werewolf
   or a wereboar in the beast's own sprite. The On foot picker is put away: it is not what the player is drawn as on
   foot. It stays the fallback for a frame the layered art has none for.
-- Turning Layered Gearing on wears the body last chosen this session (`layeredBodyToWear`), else the character's own
-  (`playerEntity.gender`, handed in by the profile window, `enhancedMenu.js` accountWindow; no character, the female
-  body). Turning it off writes 0; the On foot skin chosen before is still the one worn.
+- Turning Layered Gearing on again wears the body last chosen this session (`layeredBodyToWear`), else the character's
+  own (3). A body pressed is that body from then on, whatever the character. The card marks the own body by
+  `playerEntity.gender` (handed in by the profile window, `enhancedMenu.js` accountWindow; no character, male, as
+  `playerEntity` starts). Turning it off writes 0; the On foot skin chosen before is still the one worn.
 
 It is a skin, not a feature: it is not in Features -> Eye of the Beholder's dials (the old `Graphics.Worn Armour`
 switch is gone).
@@ -50,8 +54,8 @@ switch is gone).
 
 ## Online
 
-The look carries the choice as an optional field `lg` (1 female, 2 male; left out when off, so a look without it keeps
-the bytes it always had) - `net/remotePlayers.js` composeLook and `ownLayeredGear`, kept by the relay's `validLook`
+The look carries the body as an optional field `lg` (1 female, 2 male - the own-body default sent as the character's;
+left out when off, so a look without it keeps the bytes it always had) - `net/remotePlayers.js` composeLook and `ownLayeredGear`, kept by the relay's `validLook`
 (`net/wire.js`). A peer whose look has `lg` walks in their armor, in the body they chose (`net/peer/peerRiders.js`).
 **RELAY_VERSION world224** (world218 in the package, renumbered past main's world218-223 at the merge): deploy the relay
 before the clients. An older relay drops `lg`, and the player is seen in their on-foot skin or class, as before. The

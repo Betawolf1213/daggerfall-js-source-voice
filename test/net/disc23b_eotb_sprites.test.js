@@ -73,6 +73,7 @@ test('DISC23-B: the sets are NAMED - sixteen on foot, five in the saddle, the ar
 
 test('DISC23-B2: the PROFILE carries the skin - every set as its own picture, the worn one marked, a press worn at once', () => {
   _resetModSettings();
+  setModSetting(V, 'Graphics.LayeredGear', 0);   // PIN MOVED (LAYERED-GEAR-ON): Layered Gearing is on by default; these pins are the Skins look's
   const sets = skinSets();
   assert.equal(sets.foot.length, FOOT_SKINS); assert.equal(sets.horse.length, 5);   // SKIN2: the mod's sixteen and the classes
   assert.deepEqual(sets.foot.map((s) => s.name), MOD_SETTINGS[V].keys['Graphics.OnFoot'].labels);

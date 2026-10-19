@@ -128,7 +128,8 @@ function look() {
     readyStance: s['Graphics.ReadyStance'] ?? 2,
     graphic: s['Graphics.Enable'] !== false,                   // "Toggle the player graphic" - ToggleBillboard's argument
     wornArmour: layeredGenderOf(s['Graphics.LayeredGear']) != null,   // LAYERED-GEAR: the skin chosen on the profile (player/eyeOfTheBeholder/layeredArmor.js)
-    layeredGender: layeredGenderOf(s['Graphics.LayeredGear']),        // LAYERED-GEAR: and its body, female or male
+    layeredChoice: s['Graphics.LayeredGear'] ?? 0,                    // LAYERED-GEAR-ON: the choice, LAYERED_OWN (the default) the character's own body
+    layeredGender: layeredGenderOf(s['Graphics.LayeredGear'], playerEntity?.gender),   // LAYERED-GEAR: and its body, female or male
     turnToView: s['Graphics.TurnToView'] ?? 2,
     attackStrings: s['Graphics.AttackStrings'] ?? 3,
     mirrorTime: s['Graphics.MirrorTime'] ?? 3,
@@ -414,7 +415,7 @@ export function createEotbBody({ count = spriteCount, urlFor = eotbSpriteUrl, de
    *  spriteFor here asked for the werewolf, and a wereboar saw the wolf
    *  on themselves while the others (net/peer/peerRiders.js, off the pose's
    *  `wb`) draw the boar. The look is the settings plus the live form. */
-  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0, ...(cfg.wornArmour ? wornOutfit(cfg.layeredGender) : {}) });   // COATS1: and the horse's look, off the rig's record
+  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0, ...(cfg.wornArmour ? wornOutfit(layeredGenderOf(cfg.layeredChoice, playerEntity?.gender)) : {}) });   // LAYERED-GEAR-ON: the own body read as the character is now   // COATS1: and the horse's look, off the rig's record
   /** PR-WW1: the form the lycan tables were last fetched for */
   let preloadedForm = null;
   /** COATS1: the look the mounted tables were last fetched in */

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import {
   pieceCode, outfitOfSlots, outfitOfItems, OUTFIT_SLOTS, layeredSprite, composeStrip, isLayeredKey, LAYERED_ARCHIVE,
-  CLOAK_SLOTS, cloakOfSlots, outfitPieces, dyeCloth, applyHoodFix, decodeLayered, layeredGenderOf, layeredPreviewUrl,
+  CLOAK_SLOTS, cloakOfSlots, outfitPieces, dyeCloth, applyHoodFix, decodeLayered, layeredGenderOf, layeredPreviewUrl, LAYERED_OWN,
 } from '../../../src/player/eyeOfTheBeholder/layeredArmor.js';
 import { MOD_SETTINGS, modSetting, setModSetting, _resetModSettings } from '../../../src/systems/modSettings.js';
 import { MOD_CURATED } from '../../../src/systems/features.js';
@@ -199,18 +199,26 @@ test('every hood fix strip sits on its body strip\'s canvas, and decodeLayered l
   assert.ok(Buffer.compare(Buffer.from(pic.data), Buffer.from(bare.data)) !== 0);   // the fix changes the picture
 });
 
-test('LAYERED-GEAR: a skin chosen on the profile, not a feature\'s dial - off, female or male, and the look carries it', () => {
+test('LAYERED-GEAR: a skin chosen on the profile, not a feature\'s dial - off, female, male or the character\'s own (LAYERED-GEAR-ON: the default), and the look carries the body (mutants: LAYERED-ON-default-off, LAYERED-ON-own-unread)', () => {
   _resetModSettings();
   const V = 'eye-of-the-beholder', key = MOD_SETTINGS[V].keys['Graphics.LayeredGear'];
-  assert.equal(key.default, 0, 'off until chosen');
-  assert.deepEqual([...key.labels], ['Off', 'Female', 'Male']);
+  // PIN MOVED (LAYERED-GEAR-ON, the owner 2026-10-19: "Make sure this is on by default"): on, in the character's own body
+  assert.equal(key.default, LAYERED_OWN, 'on until Skins is chosen');
+  assert.equal(LAYERED_OWN, 3);
+  assert.deepEqual([...key.labels], ['Off', 'Female', 'Male', 'Your own body']);
   assert.ok(!MOD_CURATED[V].includes('Graphics.LayeredGear'), 'not in the mod\'s details (the Features drawer)');
   assert.equal(MOD_SETTINGS[V].keys['Graphics.WornArmour'], undefined, 'the old switch is gone');
-  assert.deepEqual([0, 1, 2, 3, null].map(layeredGenderOf), [null, 'female', 'male', null, null]);
+  assert.deepEqual([0, 1, 2, 4, null].map((c) => layeredGenderOf(c, 'female')), [null, 'female', 'male', null, null]);
+  assert.deepEqual(['female', 'male', undefined].map((g) => layeredGenderOf(LAYERED_OWN, g)), ['female', 'male', 'male'], 'the own body: the character\'s, else male (playerEntity\'s own default)');
   assert.equal(layeredPreviewUrl('female'), null, 'node: no bundle, no picture');
-  // the look: OMITTED while off, `class`'s law - a look without it keeps the bytes it always had
   const who = { race: 'Nord', gender: 'male' };
-  assert.equal(ownLayeredGear(), null);
+  // the default: the character's own body is sent as the body it is - never 3 on the wire
+  assert.equal(ownLayeredGear(who), 2);
+  assert.equal(composeLook(who).lg, 2);
+  assert.equal(composeLook({ race: 'Nord', gender: 'female' }).lg, 1);
+  // the look: OMITTED while off (Skins), `class`'s law - a look without it keeps the bytes it always had
+  setModSetting(V, 'Graphics.LayeredGear', 0);
+  assert.equal(ownLayeredGear(who), null);
   assert.ok(!('lg' in composeLook(who)));
   setModSetting(V, 'Graphics.LayeredGear', 1);
   assert.equal(ownLayeredGear(), 1);
@@ -226,7 +234,7 @@ test('LAYERED-GEAR: a skin chosen on the profile, not a feature\'s dial - off, f
   _resetModSettings();
 });
 
-test('LAYERED-GEAR: the skin card\'s third panel, between on foot and mounted - choosing a body wears it', () => {
+test('LAYERED-GEAR: the skin card offers the bodies - PIN MOVED (the owner, 2026-10-19: "a proper toggle in the account profile"): no third panel; the Look toggle opens on Layered Gearing, the own body marked, and a body pressed is worn (test/ui/skinmode_toggle.test.js pins the toggle)', () => {
   _resetModSettings();
   const el = (tag) => {
     const n = { tag, children: [], attrs: {}, className: '', textContent: '', parent: null };
@@ -240,20 +248,16 @@ test('LAYERED-GEAR: the skin card\'s third panel, between on foot and mounted - 
     for (const c of n.children ?? []) find(c, cls, out);
     return out;
   };
-  const card = skinCard({ createElement: el });
-  const heads = () => find(card.root, 'skinhead');
+  const card = skinCard({ createElement: el }, { gender: () => 'female' });
   const label = (h) => find(h, 'fieldlabel')[0].textContent;
-  const name = (h) => find(h, 'skinname')[0].textContent;
-  assert.deepEqual(heads().map(label), ['On foot', 'On foot Layered Gearing Skin (WIP)', 'Mounted']);
-  assert.equal(name(heads()[1]), 'Off');
-  assert.equal(heads()[1].title, 'Choose on foot layered gearing skin (wip)');
-  assert.deepEqual(skinSets().layered.map((x) => x.name), ['Off', 'Female', 'Male']);
-  heads()[1].onclick();
-  const tiles = find(card.root, 'skintile');
-  assert.deepEqual(tiles.map((x) => find(x, 'skinname')[0].textContent), ['Off', 'Female', 'Male']);
-  tiles[2].onclick();
+  const name = (x) => find(x, 'skinname')[0].textContent;
+  assert.deepEqual(find(card.root, 'skinhead').map(label), ['Mounted'], 'no On foot panel, no third panel');
+  assert.deepEqual(skinSets().layered.map((x) => x.name), ['Off', 'Female', 'Male', 'Your own body']);
+  const tiles = () => find(card.root, 'skintile');
+  assert.deepEqual(tiles().map(name), ['Female', 'Male']);
+  assert.deepEqual(tiles().map((x) => x.attrs['aria-pressed']), ['true', 'false'], 'the own body, a female character\'s');
+  tiles()[1].onclick();
   assert.equal(modSetting('eye-of-the-beholder', 'Graphics.LayeredGear'), 2, 'the store the body reads and the look sends');
-  assert.equal(name(heads()[1]), 'Male');
-  assert.equal(find(card.root, 'skintile').length, 0, 'chosen: closed');
+  assert.deepEqual(tiles().map((x) => x.attrs['aria-pressed']), ['false', 'true']);
   _resetModSettings();
 });

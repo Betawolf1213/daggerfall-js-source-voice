@@ -14524,6 +14524,11 @@
   "tr": "442c83287c7d",
   "by": "claude-in-session"
  },
+ "mods.eyeOfTheBeholder.skin.layeredOwn": {
+  "en": "b232d4787937",
+  "tr": "508232300cc4",
+  "by": "claude-in-session"
+ },
  "mods.eyeOfTheBeholder.skin.lightFighterFemale": {
   "en": "a4e5a86832da",
   "tr": "a9aaac69172f",
@@ -25707,6 +25712,11 @@
  "skin.layered.body": {
   "en": "718a7e8a582e",
   "tr": "b9cefbd5a96e",
+  "by": "claude-in-session"
+ },
+ "skin.layered.own": {
+  "en": "3748471a300a",
+  "tr": "6b8296bb9248",
   "by": "claude-in-session"
  },
  "skin.look": {

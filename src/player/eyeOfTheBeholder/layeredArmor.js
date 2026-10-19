@@ -94,8 +94,15 @@ export const outfitCombo = (p) => `${FAMILY[p.head[0]]}_${FAMILY[p.top[0]]}_${FA
 
 const bodyOf = (gender) => (gender === 'female' ? 'female' : 'male');
 
-/** LAYERED-GEAR: the body a Graphics.LayeredGear choice (or a look's `lg`) draws - 1 female, 2 male - or null for off. */
-export const layeredGenderOf = (choice) => (choice === 1 ? 'female' : choice === 2 ? 'male' : null);
+/** LAYERED-GEAR-ON (2026-10-19, the owner: "Make sure this is on by default"): Graphics.LayeredGear's value for THE
+ *  CHARACTER'S OWN BODY, and its default - every character is drawn in its armor, in its own body, until the player
+ *  chooses a body or Skins on the profile. Never on the wire: the look sends the body it resolves to (`lg` 1 or 2). */
+export const LAYERED_OWN = 3;
+
+/** LAYERED-GEAR: the body a Graphics.LayeredGear choice (or a look's `lg`) draws - 1 female, 2 male, LAYERED_OWN the
+ *  character's own (`own`, its `gender`: female, else male) - or null for off. */
+export const layeredGenderOf = (choice, own = null) => (choice === 1 ? 'female' : choice === 2 ? 'male'
+  : choice === LAYERED_OWN ? bodyOf(own) : null);
 
 /** The class-sheet record group each body table reads (classSkins.js CLASS_TABLE_BASE's law): Death the hurt pose
  *  (10-14) where the body has one, else the idle; the bow / cast (20-24) where the body has it (both do now - an
