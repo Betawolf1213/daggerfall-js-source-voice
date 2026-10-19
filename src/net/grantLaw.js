@@ -291,7 +291,7 @@ export const GRANT_RELAY_MIN = 218;
 export const relaySupportsGrant = (v) => Number(/^world(\d+)$/.exec(String(v ?? ''))?.[1]) >= GRANT_RELAY_MIN;
 /** FOE-BOUNDS (Spawn-Grants section 19): the first relay that takes a tally's `stats` - an older one refuses the whole tally
  *  for a word it does not know, so a reader hands that row only to a relay at this or later. */
-export const GRANT_STATS_RELAY_MIN = 222;
+export const GRANT_STATS_RELAY_MIN = 223;
 /** Does the relay at version `v` take a tally's `stats`? */
 export const relaySupportsGrantStats = (v) => Number(/^world(\d+)$/.exec(String(v ?? ''))?.[1]) >= GRANT_STATS_RELAY_MIN;
 

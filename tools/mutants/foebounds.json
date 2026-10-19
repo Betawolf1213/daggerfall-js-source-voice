@@ -274,7 +274,7 @@
     "file": "src/net/online.js",
     "old": "      if (primary) this.grantStatsOk = relaySupportsGrantStats(relayV);",
     "new": "      if (primary) this.grantStatsOk = true;",
-    "why": "`stats` said to a world221 relay",
+    "why": "`stats` said to a world222 relay",
     "tests": [
       "test/net/grantdoor_relay.test.js"
     ]
@@ -302,9 +302,9 @@
   {
     "name": "FOE-BOUNDS-stats-floor-off-by-one",
     "file": "src/net/grantLaw.js",
-    "old": "export const GRANT_STATS_RELAY_MIN = 222;",
-    "new": "export const GRANT_STATS_RELAY_MIN = 221;",
-    "why": "a world221 relay handed `stats`",
+    "old": "export const GRANT_STATS_RELAY_MIN = 223;",
+    "new": "export const GRANT_STATS_RELAY_MIN = 222;",
+    "why": "a world222 relay handed `stats`",
     "tests": [
       "test/net/grantdoor_relay.test.js"
     ]

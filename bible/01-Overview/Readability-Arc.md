@@ -59,14 +59,15 @@ change:
 
 - **A mechanical change** (the formatter, a rename) is proved, not tested: the program before and after is
   compared as a syntax tree - identical apart from layout and comments for the formatter, identical apart from the
-  renamed names for a rename. A slice that cannot pass that comparison is not mechanical, and is judged as a
-  rewrite.
+  renamed names for a rename (`node tools/sameProgram.mjs --against <rev>`, LEGIBLE 2). A slice that cannot pass
+  that comparison is not mechanical, and is judged as a rewrite.
 - **A rewrite by hand** (a function made readable) is held by the suite and by the mutation lists: every mutant
   the file's records name must still apply and still die. A record the rewrite moves is re-aimed by content, in the
   same change, as `mutantdrift.test.js` demands.
 - **The pins move with the text.** A mechanical change carries every mutant record and cite with it by running
   the same change over both sides: the record's file with and without its mutant, both transformed, then compared
-  again to find the record's new text. Nothing is re-aimed by hand that a tool can carry.
+  again to find the record's new text (`node tools/carryPins.mjs --transform <module>`, LEGIBLE 2). Nothing is
+  re-aimed by hand that a tool can carry.
 
 ## The order
 
@@ -75,8 +76,9 @@ the owner's to call.
 
 | Slice | What | Needs |
 |---|---|---|
-| LEGIBLE 1 | The ceiling counts logical lines, so it is blind to layout | - (below) |
-| LEGIBLE 2 | The syntax-tree comparison that proves a mechanical change, and the carrier that moves mutant records and cites through one | - |
+| LEGIBLE 1 | The ceiling counts logical lines, so it is blind to layout | shipped (below) |
+| LEGIBLE 1b | Testing.md's file table closed; the suite counts itself | shipped (below) |
+| LEGIBLE 2 | The syntax-tree comparison that proves a mechanical change, and the carrier that moves mutant records and cites through one | shipped (below) |
 | LEGIBLE 3 | The formatter: one pinned version and configuration, the whole tree formatted folder by folder with its pins carried, a `--check` in CI and `.git-blame-ignore-revs` | a new dev dependency; a quiet window per folder |
 | LEGIBLE 4 | Lint that holds the line: one statement per line, no comma sequences, a ratchet on new short names | - |
 | LEGIBLE 5 | The glossary (`Glossary.md`) and the renames, one abbreviation per slice (`dw`, `csa`, `wod`, `lpt`, ...), by the language service and carried like the formatter | a quiet window per rename |
@@ -152,3 +154,91 @@ braces counted; a crowded file skipped by its line count. Six records of `tools/
 by content at the converted rows and the new walk, all dead. One was retired: `HOST-SPLIT-the-ceiling-counts-comments`
 mutated `codeLines`, which is gone - a syntax tree holds no comments, so there is nothing left for that mutant to
 break.
+
+## LEGIBLE 1b - Testing.md's file table closed (2026-10-19)
+
+The owner: *"Should we get rid of testing.md"*, then *"Do both"*.
+
+`Testing.md` was 5.7 MB, 99% of it one table: a row for every test file, with its test count, and one line with the
+suite's total. `test/bible/manifest.test.js` failed the suite unless every count and the total matched the tree, so
+every pull request that added a test edited the same line, and any two of them conflicted on it. 2,167 of the 3,407
+commits to main in the fortnight before touched the page.
+
+What a row said, its test file mostly says already: for half the rows, at least 80% of the row's words are in the file
+it describes, and the rest is paraphrase, dates and cross-references. Copying the rows into the files' header comments
+would have added 5.4 MB of mostly repeated prose to the tests, so the table was closed instead, whole:
+
+- **`09-Testing/Testing-Rows-2026-10-19.md`** holds the 3,571 rows as they stood, in their order, under their own
+  headings, with the 14 main added before this merged. It is a record: nothing adds a row, and `manifest.test.js` holds it at 3,571. It cannot be frozen byte
+  for byte, because its rows carry 55 cites into our code and 5 into `Port-Ledger.md`, which `npm run cites` keeps
+  true like any other page's.
+- **`Testing.md`** keeps its prose - how the suite runs, the two tiers of data, PY1 and EF1 - and says where the
+  table went. The suite counts itself: the runner reports what ran, and the landing page counts the declared tests
+  from the tree when it builds.
+- **`manifest.test.js`** holds three things now: test file names stay unique (the bible names a test by its file name
+  alone), `Testing.md` grows no table or total again, and the closed table keeps its 3,571 rows. Its second test, that
+  a row whose count moved names its newest pins, went with the counts it guarded.
+- **The pins that read the table** were kept, pointed where the text now stands. A slice's "records" pin that its
+  testing row exists (WW3, WEATHER2a-d, WIND3/4, HT2, TEX1, BA1, IF1, AUDIT-DW) reads the closed table; a pin that a
+  page may not teach a retired claim (AUDIT 39r, the lycanthropy timer, WORLD6b-iii's suppressed tick, ROAD-G's
+  struck rationale, D1-NEAR's California) reads `Testing.md` and the closed table together; `citedrift`'s two cites
+  read the closed table. AUDIT 58 kept its claims about Port-Status, a record of 2026-09-02, and dropped the two that
+  read the manifest's Suite line, which this slice retired on purpose.
+- `test/ui/enhanced/landing.test.js` held the landing page's test count equal to the Suite line; it holds it to an
+  independent walk of `test/` now.
+
+## LEGIBLE 2 - the proof and the carrier (2026-10-19)
+
+The owner: *"Do both"*, then *"build everything in one PR"*. Two tools that every mechanical slice after this one
+stands on, and no slice of their own yet to use them - the formatter is LEGIBLE 3.
+
+**`tools/sameProgram.mjs`** compares two versions of a file as syntax trees (acorn, with eslint-scope for names) and
+says whether they are the same program, and where they first differ if not:
+
+- Layout, comments, quote style, redundant parentheses and trailing commas are not in the tree. A literal is its
+  value (`1e3` and `1000`), a template its text, a regular expression its pattern and flags.
+- A variable is compared by the declaration it resolves to, and the two versions must pair their variables one to
+  one. It may change its name only where the change was asked for (`--rename old=new`), and a rename that makes a
+  name reach a different binding - a parameter renamed onto a module constant's name - breaks the pairing and fails.
+- Names other code reads keep their spelling: exported declarations, the outer names of import and export
+  specifiers (`import { dw as deepWaters }` is a rename; `import { deepWaters }` is not), property keys, member names,
+  labels. A shorthand property (`{ dw }`) is both a key and a variable, so its rename is `{ dw: deepWaters }`.
+- A file with `with` or a direct `eval(` takes no rename. And one change no tree holds: a renamed function or class
+  carries its new `name` at run time, which the slice making the rename must check nothing reads.
+- `node tools/sameProgram.mjs --against <rev>` proves every changed file in the working tree against a revision; a
+  file added, deleted or renamed is not a mechanical change to it, and says so.
+
+**`tools/carryPins.mjs`** carries the mutant records and the cites through any change written as a
+`transform(source, file)` function:
+
+- A record is carried by running the transform over the file with and without its mutant: the outputs differ only
+  where the mutant does, so the stretch between their common start and end, widened to whole lines and then until it
+  stands once, is the record's new text. Every carried record is checked to reproduce the transformed mutant exactly.
+  What cannot be carried - a stale record, a mutant the transform erases or cannot run on - is reported, never
+  guessed. A record whose text stands twice is carried at its first copy, as `tools/mutate.mjs`
+  applies it, and comes out naming that site alone.
+- A cite is carried by lining the two versions up token by token (comments included): the token where the quote
+  starts finds its new line, and a line inside a block comment keeps its offset in the comment. The new anchor is
+  written by `tools/citeAnchor.mjs`'s own rules, as `npm run cites -- --apply` would write it; where a crowded line
+  became several and the first takes no quote, the next one that does is used. An anchor written in code outside a
+  comment is a person's to write (citeAnchor's own rule), and is reported.
+- The records are carried on worker threads (`--jobs`, every core by default), each heap capped.
+
+Proved on the tree, with `test/breakLines.mjs` - a layout-only change, a line break after every `;`, `{` and `}`
+that has code after it, which splits crowded lines as a formatter would - standing in for the formatter:
+
+- The 577 mutant records on eight files (`gambitPatrons.js`, `stir.js`, `foeBodies.js`, `partyTravel.js`,
+  `smithItems.js`, `revenantUnquiet.js`, `hostScope.mjs`, `hostceiling.test.js`) carried, none refused, and every
+  transformed file the same program.
+- The anchors into the eight most-cited files under 120 KB (`townTalk.js`, `input.js`, `dungeon.js`,
+  `spellbookWindow.js`, `save.js`, `notebook.js`, `listPicker.js`, `enchantments.js`): 231 carried, 374 records with
+  them, and 4 reported - three anchors written inside test strings, and one line the stand-in transform splits inside
+  a parameter pattern (`magicRound({` / `round, entity, item, ctx }) {`), which no line of it can quote.
+- `world.js`, the biggest file and the most pinned: 3,781 records carried in 263 seconds on four cores, and 271 of its
+  272 anchors - the one left is another call the stand-in splits after its `({`. Two of those records are on
+  mutantdrift's CARRIED_AIM, naming two sites each; carried at their first copy, as `tools/mutate.mjs` applies them,
+  they come out naming one, and the slice that carries them takes them off that list.
+
+The carrier's first run on `world.js` was killed at 13 GB. A carried record's text was a slice of the transformed
+mutant, and in V8 a slice keeps the whole string it was cut from alive: 3,781 records held 3,781 copies of a 3 MB
+file. The records are copied out of their file now, and the same run peaks at 1.2 GB.

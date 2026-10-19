@@ -3,7 +3,7 @@
 // street pools (scenes/exteriorFoes.js) each with its own grants' host (scenes/grantHost.js) - a record no builder could
 // give is never built, never updated and never ADOPTED: a hand-off of it is refused before it is mine, its copy taken
 // down silently (no death, no body, no loot), tallied once against its SENDER and never against me; an ally is
-// unverified; the staff's `off` switch judges nothing; a relay before world222 is never handed `stats`; and a sender the
+// unverified; the staff's `off` switch judges nothing; a relay before world223 is never handed `stats`; and a sender the
 // relay vouched stands on grants is held to them from its first frame.
 import '../modsOff.js';
 import { test } from 'node:test';
@@ -107,7 +107,7 @@ test('FOE-BOUNDS A RECORD NO BUILDER COULD GIVE IS NEVER BUILT: a new number at 
   assert.equal(D.host.tallied().get(`${OWNER}|stats`), 1, 'the companion tallied nothing');
 });
 
-test('FOE-BOUNDS THE STAFF\'S SWITCH, AND AN OLDER RELAY: while the law is `off` nothing is judged; a relay before world222 is never handed `stats` - the rest of the tally goes (mutants: judged with the law off; `stats` to an older relay)', async () => {
+test('FOE-BOUNDS THE STAFF\'S SWITCH, AND AN OLDER RELAY: while the law is `off` nothing is judged; a relay before world223 is never handed `stats` - the rest of the tally goes (mutants: judged with the law off; `stats` to an older relay)', async () => {
   const { D, honest } = await stood();
   D.session.grantMode = 'off';
   D.pool.applyFoes(OWNER, { ...honest, n: 60, full: 0, f: [{ ...honest.f[0], i: 800, k: 50_000, h: 50_000 }] });

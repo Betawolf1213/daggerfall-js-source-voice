@@ -1177,9 +1177,23 @@ what the solver proves, road by road:
 the span build would refuse every honest faster player (AUDIT EG II L2-5).
 
 **The sweep.** CI runs SD7b's harness (the real `PlayerMotor` on the real `Collider` over `stepTris` slabs). A course
-costs about 182 ms of motor (a falling one 2.5 s), so a pull request runs 25 seeds a band plus the law pin's golden
-seeds, and the 500-seed sweep per band runs nightly and before every relay deploy. EG6a sweeps every band's pieces: the
-generator lays them all (`tools/egSpanSolve.mjs --sweep`, `.github/workflows/eg-sweep.yml`).
+cost about 182 ms of motor when EG6a measured it (a falling one 2.5 s); on 2026-10-19 it costs about a second, so a pull
+request's 25 seeds a band plus the law pin's golden seeds take 2.5 to 3 minutes, and the 500-seed sweep per band runs
+nightly and before every relay deploy. EG6a sweeps every band's pieces: the generator lays them all
+(`tools/egSpanSolve.mjs --sweep`, `.github/workflows/eg-sweep.yml`).
+
+SWEEP-FAST (2026-10-19, Mac: "Yes"): one job a band took 27 to 53 minutes over its 500 seeds, and every relay deploy that
+moved the relay waited about an hour on it (54, 70 and 54 minutes that day), with the account service's deploy (which
+waits for the relay to serve its version) and the site's (which waits for the account service's) behind it. Past a
+hundred seeds a band now runs in six parts at once - `--part p/k`, every sixth seed of the band's list from the part's
+own, the golden seeds among them, so every seed is swept by exactly one part (`test/tooling/sweepfast.test.js`) - about
+84 seeds and 9 minutes a job; a pull request's 25 stay one job a band. Nothing is swept less. Found and left, for the
+page's own speed: every span piece enters the collider as a mover (`scenes/eliteGates/egSpan.js` stand - each bucket's
+`addMesh` takes a translation), so the broad phase (`player/collider.js` fileBucket) files 139 of a circle's 140 buckets
+as `always` and every sphere and ray query walks them all; the collider's `_near` and `raycastHit` are about 40% of the
+sweep's time, and the live page's Elite Breach pays the same on every body's move. Filing each piece by where it stands
+(re-filed as it moves, as PERF-COL2 files a floating frame's buckets) would be the fix - a collider change, to be
+measured and pinned on its own.
 The pilot takes a launch onto a piece running away from it (a Rail, a Drum on its travel) only where the reach less one
 capsule's radius still lands - the reach's far edge is a corner caught and stepped up onto, which a face moving away never
 gives - and a launch onto a timed piece only where the launch off it follows for a launch `HOLD_S` late too, as the launch

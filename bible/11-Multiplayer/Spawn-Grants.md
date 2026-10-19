@@ -693,7 +693,7 @@ were not attached).
   loot, no experience). The dungeon host's stream (applyFoeRecord) does not apply such a record - the reader's copy
   stands as it was. Tallied `stats` against the SENDER, once a record, never against the receiver.
 - **`stats` is a case's reason** (net/grantLaw.js GRANT_CASE_REASONS) and a reader's tally word; a reader hands it only
-  to a relay at world222 or later (GRANT_STATS_RELAY_MIN - an older one refuses the whole tally).
+  to a relay at world223 or later (GRANT_STATS_RELAY_MIN - an older one refuses the whole tally).
 - **The relay's strip** (GRANT9, `grantStrip` on): a record over its bound goes to nobody - the one authority every copy
   hears, so no copy stands it, adopts it or passes it on (the spec's tombstone, while the switch is on) - and is counted
   once a sender, record and claim under the relay's own name (net/grantMeasure.js GRANT_RELAY_READER, `~relay` - no
@@ -756,6 +756,6 @@ case. The account service (server-account/src/grants.js) now opens one on the re
 
 Departures: the spec asked for a new enemy-transfer ingress; the relay's signed batch to `/v1/mod/grant-feed` is that
 receipt already, so no new route. Pins: `test/server/grantcase_own.test.js` (4). Mutants for sections 19-21:
-`tools/mutants/foebounds.json`. Relay world222, account service acct157 - deploy the service with or before the relay;
+`tools/mutants/foebounds.json`. Relay world223, account service acct158 - deploy the service with or before the relay;
 nothing else orders them.
 

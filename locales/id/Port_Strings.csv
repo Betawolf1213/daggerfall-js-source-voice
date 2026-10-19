@@ -3408,6 +3408,7 @@ net.conduct.respect,"Perlakukan semua orang dengan hormat. Tidak ada pelecehan, 
 net.conduct.sexual,"Tidak ada komentar seksual yang ditujukan kepada pemain lain, dan sama sekali tidak ada hal seksual yang melibatkan anak di bawah umur."
 net.conduct.spam,"Tidak ada spam, tidak ada penipuan, dan jangan berpura-pura menjadi staf."
 net.conduct.title,"Kode Etik"
+net.gate.courtWatch,"Burning Court penuh - kamu menonton dari tepinya sampai ada tempat kosong."
 net.mod.ambiguous,"Ada {count} pemain bernama {name}. Tidak ada yang dibisukan."
 net.mod.chatAgain,"Kamu bisa mengobrol lagi."
 net.mod.muteRange,"Bisu berlaku 1 sampai {max} menit (satu minggu)."

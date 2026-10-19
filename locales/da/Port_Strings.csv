@@ -3408,6 +3408,7 @@ net.conduct.respect,"Behandl alle med respekt. Ingen chikane, mobning eller trus
 net.conduct.sexual,"Ingen seksuelle bemærkninger rettet mod andre spillere, og aldrig noget seksuelt, der involverer mindreårige."
 net.conduct.spam,"Ingen spam, ingen svindel, og udgiv dig ikke for at være en del af staben."
 net.conduct.title,"Adfærdskodeks"
+net.gate.courtWatch,"Det Brændende Hof er fuldt - du ser med fra kanten, indtil en plads bliver ledig."
 net.mod.ambiguous,"{count} spillere hedder {name}. Ingen blev gjort tavs."
 net.mod.chatAgain,"Du kan chatte igen."
 net.mod.muteRange,"En tavshed varer 1 til {max} minutter (én uge)."
