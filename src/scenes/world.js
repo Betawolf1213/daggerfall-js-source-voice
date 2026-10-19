@@ -8426,7 +8426,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       setPlayerPosition: csaSetPlayerPosition,
       finishBoarding: csaFinishBoarding,
       setFacing: (yawDeg, pitchDeg) => csaSetFacing(yawDeg, pitchDeg),   // PlayerMouseLook.SetFacing -> Init: the owed look dropped
-      turnPlayer: (deg) => { cam.yaw += (deg * Math.PI) / 180; },   // the child's world yaw turned with its parent's
+      turnPlayer: (deg) => { cam.yaw += (deg * Math.PI) / 180; player.carryTurn?.((deg * Math.PI) / 180); },   // the child's world yaw turned with its parent's (AUDIT BODY-MOTION RIG-6: and counted as the deck's)
       freeze: (seconds) => { player.freezeMotor = seconds; },
       frozen: () => (player.freezeMotor ?? 0) > 0,
       stopRunning: () => { player.isRunning = false; },
@@ -8973,7 +8973,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       allowed: csaOn() && !!online && walkMode && playerSpawned && !_teleporting && !_traveling && (modes?.mode ?? 'exterior') === 'exterior' && !(playerEntity.health <= 0 || modes?.deathUp?.()),   // a death puts me off (DC1: the body does not move while the camera dies)
       feet: () => player.pos, height: player.height ?? CAPSULE_HEIGHT, swimming: !!player.isPlayerSwimming,
       ground: (b) => (!player.grounded ? null : typeof player.groundKey === 'string' && player.groundKey.startsWith(`csaBoat:${csaBoatId(b)}:`) ? 'boat' : 'other'),
-      carry: (d, yawDeg) => { player.carryBy(d[0], d[1], d[2]); cam.yaw += (yawDeg * Math.PI) / 180; _csaMovedPlayer = true; },   // the helm's turnPlayer: the child's world yaw turned with its parent's
+      carry: (d, yawDeg) => { player.carryBy(d[0], d[1], d[2]); cam.yaw += (yawDeg * Math.PI) / 180; player.carryTurn?.((yawDeg * Math.PI) / 180); _csaMovedPlayer = true; },   // the helm's turnPlayer: the child's world yaw turned with its parent's
     });
     if (boat || _csaBuckets.size) csaSyncColliders();   // the boats where they stand now (FIELD BUGS 2026-10-01b: every peer's, aboard or not - the one I left stands on)
   }
