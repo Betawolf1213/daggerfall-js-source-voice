@@ -91,7 +91,9 @@
 
 import { fpArm, hasDaggerfallArrows } from '../../combat/fpArm.js';
 import { dressStanding } from '../../systems/clothingStanding.js';   // DRESS1 (2026-09-30, Discord): the Standing page's Dress line
-import { questRail, shelvedRail, journalLines, questTitleOf, QUEST_URGENT_SECONDS, remainWords } from '../quest/questRail.js';
+import { questRail, shelvedRail, unloggedRail, journalLines, questTitleOf, QUEST_URGENT_SECONDS, remainWords } from '../quest/questRail.js';
+import { qlObjectivesBlock, qlOfferDetail, offerRowWords, qlLineDetail, lineStateWords, qlLadderDetail } from '../questlines/qlJournal.js';
+import { TITLE_TEXT } from '../playerBadge.js';   // QL12: the title a questline earns, in the badge's own words   // QL2: a stamped quest's objectives, choices and outcome; the rewards waiting
 import { entryTarget, targetWords, WHERE_TEXT } from '../quest/questLens.js';   // GUIDE2: where a quest points, and the way there   // MAC-K2: the ONE quest walk, shared with the chronicle
 import { questTracker, followOn, trackButton } from '../quest/questTracker.js';   // GUIDE4: the HUD's card - the Track toggle, and the quest the journal opens on
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1: a tap on the scrim resumes
@@ -5425,24 +5427,39 @@ function pauseQuests(body) {
   // needs the same one - the L key's window had no quests in it at all
   // and a second copy of this here is how the two would drift.
   const log = hooks.questLog() ?? { active: [], finished: [] };
-  const { active, finished, hidden } = questRail(log);
+  const rail0 = questRail(log);
+  const { finished, hidden } = rail0;
+  // QL2: a stamped quest whose objectives stand before its first journal entry is a quest of the rail's too
+  const active = [...rail0.active, ...unloggedRail(log)];
   const shelved = shelvedRail(log);   // QUEST-SHELF: and the quests set aside
   // JOURNAL-CLEAN (2026-09-30, Discord: "Should there be a way to clean both finished and unfinished quests from your
   // journal for a cleaner look?"): the host's tidy-ups (scenes/quest/questBridge.js journalClean - remove / clear the
   // archive, hide / unhide an active quest). A host that hands none draws no buttons rather than buttons that do
   // nothing.
   const clean = hooks.journalClean?.() ?? null;
-  if (!active.length && !finished.length && !hidden.length && !shelved.length) {
+  // QL3 (bible/06-Systems/Questlines-Arc.md section 5.2): the rewards waiting to be chosen - each an ended quest's three
+  // pieces, its own rail section above the quests, one press from the Take (key `r:<id>`)
+  const offers = (clean?.offers?.() ?? []).map((o) => ({ key: `r:${o.id}`, name: offerRowWords(o), offer: o }));
+  // QL12 (Questlines-Arc.md section 6, the owner's fifth: "One unified place to view questlines"): THE QUESTLINES - every
+  // line, begun or not, under its own heading (key `l:<id>`): the ones under way first, then those still to begin, the
+  // finished last. None while the questlines are off (the bridge hands none).
+  const LINE_ORDER = { running: 0, waiting: 1, locked: 2, done: 3 };
+  const lines = (log.lines ?? []).map((l) => ({ key: `l:${l.id}`, name: l.title, line: l }))
+    .sort((a, b) => (LINE_ORDER[a.line.state] ?? 9) - (LINE_ORDER[b.line.state] ?? 9));
+  // QL12 (section 4.4): and each guild the player is a member of, as its own ladder (key `g:<guild>`)
+  const ladderRows = (log.ladders ?? []).map((g) => ({ key: `g:${g.key}`, name: g.name, ladder: g }));
+  lines.push(...ladderRows);
+  if (!active.length && !finished.length && !hidden.length && !shelved.length && !offers.length && !lines.length) {
     body.append(el('p', 'px-note', t('pause.journal.none', 'No active quests.')));
     return;
   }
   const shown = questShowHidden ? hidden : [];
-  const rows = [...active, ...shown, ...shelved, ...finished];
+  const rows = [...offers, ...active, ...shown, ...shelved, ...finished, ...lines];
   // GUIDE4: THE JOURNAL OPENS ON THE QUEST THE HUD SHOWS - the tracker's (the one tracked, else the one the journal
   // last changed) - and only then on the first row.
   if (!rows.some((r) => r.key === questSel)) {
     const onHud = followOn() ? questTracker.tracked()?.id : null;   // AUDIT GUIDE T2: the card's or the marks' quest
-    questSel = (onHud != null ? rows.find((r) => r.id === onHud)?.key : null) ?? rows[0]?.key ?? null;   // JOURNAL-CLEAN: every quest hidden is no row
+    questSel = (onHud != null ? rows.find((r) => r.id === onHud)?.key : null) ?? rows[0]?.key ?? null;   // JOURNAL-CLEAN: every quest hidden is no row; QL12: the lines come last, so a quest is opened on first
   }
   const sel = rows.find((r) => r.key === questSel);
 
@@ -5480,8 +5497,22 @@ function pauseQuests(body) {
     if (items.length) railList(items, cls);
     else rail.append(el('div', 'px-qnone', '\u2014'));
   };
-  section(t('pause.journal.main', 'Main Quests'), mains, '', true);
+  // QL3: a section only while a reward waits - a quest's choice of gear, the first thing the journal has to ask
+  if (offers.length) { rail.append(el('div', 'px-qarch px-qfirst', t('ql.journal.rewards', 'Rewards waiting'))); railList(offers, ' px-qreward'); }
+  section(t('pause.journal.main', 'Main Quests'), mains, '', !offers.length);
   section(t('pause.journal.side', 'Side Quests'), sides, '');
+  // QL12: the questlines - each row tagged with where it stands, a finished one dimmed as the archive is
+  if (lines.length) {
+    rail.append(el('div', 'px-qarch', t('ql.journal.lines', 'Questlines')));
+    for (const q of lines) {
+      const state = q.line?.state ?? 'running';
+      const b = el('button', `px-qrow px-qlinerow${state === 'done' || state === 'locked' ? ' done' : ''}${q.key === questSel ? ' on' : ''}`);
+      b.append(el('span', 'px-c', '\u25c6'), document.createTextNode(questTitleOf(q.name)));
+      b.title = q.ladder ? t('ql.journal.ladderRow', 'Your guild\u2019s quests, rank by rank') : lineStateWords(state);
+      b.onclick = () => { questSel = q.key; render(); };
+      rail.append(b);
+    }
+  }
   // JOURNAL-CLEAN: the hidden quests, drawn only when asked for, under their own heading - and the toggle that asks,
   // which names how many are hidden so a tidied journal never looks like quests were lost.
   if (questShowHidden && hidden.length) section(t('pause.journal.hidden', 'Hidden'), hidden, ' done');
@@ -5515,7 +5546,22 @@ function pauseQuests(body) {
   wrap.append(rail);
 
   const detail = el('div', 'px-qdetail');
-  if (sel) {
+  if (sel?.offer) {
+    // QL3: a reward waiting - its quest's name, and its three pieces, each with its Take
+    const head2 = el('div', 'px-qname');
+    head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.offer.title)), el('span', 'px-qwing px-flip'));
+    detail.append(head2, qlOfferDetail(document, sel.offer, (i) => { clean?.takeOffer?.(sel.offer.id, i); questSel = null; render(); }));
+  } else if (sel?.line) {
+    // QL12: a questline - its story, its steps as the path walked, what it waits on and what it earns
+    const head2 = el('div', 'px-qname');
+    head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.line.title)), el('span', 'px-qwing px-flip'));
+    detail.append(head2, qlLineDetail(document, sel.line, { titleText: (k) => TITLE_TEXT[k] ?? k }));
+  } else if (sel?.ladder) {
+    // QL12 (section 4.4): a guild's ladder - its quests by the rank that opens them
+    const head2 = el('div', 'px-qname');
+    head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.ladder.name)), el('span', 'px-qwing px-flip'));
+    detail.append(head2, qlLadderDetail(document, sel.ladder));
+  } else if (sel) {
     const head2 = el('div', 'px-qname');
     head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.name)), el('span', 'px-qwing px-flip'));   // PX28
     detail.append(head2);
@@ -5544,6 +5590,9 @@ function pauseQuests(body) {
       const where = questWhere(sel.written?.at(-1)?.message, 'px-qwhere');
       if (where) detail.append(where);
     }
+    // QL2 (bible/06-Systems/Questlines-Arc.md section 6): a stamped quest's objectives, its choices and how it ended -
+    // ui/questlines/qlJournal.js, the chronicle's own block too. DFU's quest (no `ql`) draws nothing here.
+    { const block = qlObjectivesBlock(document, sel.ql); if (block) detail.append(block); }
     // BOUNTY1 (Mac: "i also dont see the bounty in my questlog means i cant abandon it?"): a bounty's two presses - Abandon
     // (twice: the first arms it, so a stray click gives nothing up) and, in a party, Share
     if (sel.entries && isBountyQuestId(sel.id)) {
@@ -5654,8 +5703,8 @@ function pauseQuests(body) {
       // beneath it, newest first.
       const latest = sel.entries[sel.entries.length - 1];
       const desc = el('div', 'px-qdesc');
-      for (const line of latest) desc.append(el('p', null, line));
-      detail.append(desc);
+      for (const line of latest ?? []) desc.append(el('p', null, line));   // QL2: a quest with no entry yet has its objectives alone
+      if (latest) detail.append(desc);
       if (sel.entries.length > 1) {
         detail.append(pxDivider(t('pause.journal.title', 'Journal')));
         const offered = latestPlace(sel);   // GUIDE2: the place the where line above already offers

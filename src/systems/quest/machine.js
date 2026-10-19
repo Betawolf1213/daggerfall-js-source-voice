@@ -286,6 +286,7 @@
 
 import { Parser } from './parser.js';
 import { defaultActionTemplates } from './actions.js';
+import { receivedState, mergeSharedState } from '../questlines/qlState.js';   // QL1: a shared copy's questline state (decision 7)
 import { QuestResourceBehaviour } from './resourceBehaviour.js';
 import { FACTION_TYPES } from '../../formats/factionFile.js';
 import { SECONDS_PER_WEEK } from '../gameDate.js';
@@ -491,6 +492,8 @@ export class QuestMachine {
       // QG1: PromptMulti's 2-4 button box - BUTTONS.RCI record
       // numbers out, the clicked record number back
       showPromptMulti: (q, message, buttons, respond) => this.deps.showPromptMulti?.(q, message, buttons, respond),
+      // QL4: the questlines' `ask` - a question's message and 2-4 choices' messages, the index taken answered back
+      showChoice: (q, message, choices, respond) => this.deps.showChoice?.(q, message, choices, respond),
       changeReputation: (fid, amount, propagate) => this.deps.changeReputation?.(fid, amount, propagate),
       changeLegalRep: (amount) => this.deps.changeLegalRep?.(amount),
       playerLevel: () => this.deps.playerLevel?.() ?? 0,
@@ -549,6 +552,9 @@ export class QuestMachine {
       releaseQuestItem: (questUID, itemResource) => this.deps.releaseQuestItem?.(questUID, itemResource),
       makeHeldQuestItemsPermanent: (questUID, symbol) => this.deps.makeHeldQuestItemsPermanent?.(questUID, symbol),
       offerReward: (q, dfItem) => this.deps.offerReward?.(q, dfItem),
+      // QL3: a stamped quest's reward, at GivePc's moment - the layer's (scenes/quest/questBridge.js); absent, DFU's alone
+      questReward: (q, dfItem, resource) => this.deps.questReward?.(q, dfItem, resource),
+      questEnding: (q) => this.deps.questEnding?.(q),   // QL3: a stamped quest's outcome, at its `end quest`
       // REALM P0.4: the shares a quest's gold reward is paid in - the party's, for a quest kept in step with it. VERMIN-SHARED: `sharedCopy` - `quest` is a copy kept in step (its name shared, and it that name's live copy - AUDIT Q7: never a later private instance), so its `pick one of` draws the share's roll (actions.js PickOneOf)
       rewardShares: (quest) => (this.sharedQuestNames.has(quest?.questName) ? Math.max(1, Math.trunc(this.deps.partySize?.() ?? 1) || 1) : 1), sharedCopy: (quest) => !!quest && this.sharedQuestNames.has(quest.questName) && this.sharedCandidateNamed(quest.questName) === quest,
       isPlayerInTown: () => this.deps.isPlayerInTown?.() ?? false,
@@ -697,6 +703,10 @@ export class QuestMachine {
     quest.start();
     adoptLinkedDungeonSize(quest, this);   // AUDIT DELVE E5: where the medium size is either side, the size its markers know
     this.deps.addQuestTopics?.(quest);
+    // QL1 (bible/06-Systems/Questlines-Arc.md decision 1): THE STAMP, at the one door every new quest starts through - a
+    // scheduled one, a list's, a start's, a restart's. A quest that already carries one (none does here: a shared copy
+    // and a load restore theirs, and never pass this door) keeps it. The layer answers (scenes/quest/questBridge.js).
+    if (quest.ql == null) quest.ql = this.deps.questlinesStamp?.(quest) ?? null;
     // QUEST-UID1 (2026-09-24, found tracing "two letters from the queen"): `quests.Add(quest.UID, quest)` (:725) is a
     // Dictionary.Add - a UID already on the live table THROWS, and the quest standing there stays. `set` replaced it
     // in silence, so a quest minted before a load and started after it (the offer popup a quickload runs under - see
@@ -1227,7 +1237,7 @@ export class QuestMachine {
    *  this quest has its final local UID, reaches the exact link a
    *  fresh accept would have made. */
   receiveSharedQuest(questData) {
-    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE };   // TIME3: the sender's countdowns, on this character's clock
+    questData = { ...this._onThisClock(questData), ...NO_SHELF, ...NO_INSTANCE, ql: receivedState(questData.ql) };   // TIME3: the sender's countdowns, on this character's clock; QL1: the party's progress, this holder's reward unpaid
     const quest = this._newQuest();
     const uid = nextUid();
     // AUDIT DROPS A3: an envelope the restore chokes on is REFUSED (null), never half a quest on the live table
@@ -1411,7 +1421,9 @@ export class QuestMachine {
     // stood in another layout) - kept below, the partner's assignments carried onto it (Place.keepOwnSite)
     const sitesBefore = new Map();
     for (const r of quest.resources.values()) if (r.isPlace && r.siteDetails) sitesBefore.set(r.symbol?.name, structuredClone(r.siteDetails));
+    const qlBefore = quest.ql;   // QL1: this copy's questline state, merged with the partner's below
     quest.restoreSaveData({ ...questData, uid, instanceEpoch: quest.instanceEpoch ?? null }, this._saveResolvers());   // INSTANCES: and its instance - this copy's own (NO_INSTANCE)
+    quest.ql = mergeSharedState(qlBefore, questData.ql);   // QL1 (decision 7): the party's progress monotonic, the holder's reward its own
     for (const r of quest.resources.values()) if (r.isPlace && sitesBefore.has(r.symbol?.name)) r.keepOwnSite?.(sitesBefore.get(r.symbol?.name));
     for (const r of quest.resources.values()) {
       if (r.isClock && !r.clockFinished && finishedBefore.has(r.symbol?.name)) {
@@ -1712,7 +1724,11 @@ export class QuestMachine {
 
   /** Dispose resources then task actions (Quest.cs Dispose order,
    *  AUDIT quest-P5), mark tombstoned (site-link scrub rides Q3). */
-  tombstoneQuest(quest) {
+  tombstoneQuest(quest, { ended = false } = {}) {
+    // QL1 (bible/06-Systems/Questlines-Arc.md section 2.3): a quest a system ENDS in its own place - the werewolf's cure
+    // closes $CUREWER (racialQuests.js endLycanthropyQuests, DFU's own tombstone, EndLycanthropyQuests) - settles its
+    // questlines outcome as its own `end quest` would (quest.js endQuest), first, while its tasks still stand
+    if (ended && !quest.questComplete && !quest.questTombstoned) quest.hooks?.questEnding?.(quest);
     // DISC28-I: a shared copy that ENDED (its own `end quest`, not an error's removal, not a finish a partner's
     // envelope just brought - that one is the partner's to tell) leaves its final state for the party, taken now,
     // before the dispose below

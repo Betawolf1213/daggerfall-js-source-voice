@@ -24,7 +24,8 @@ import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { repaintKeepingScroll } from '../domRepaint.js';   // FB1018f SPELL-SCROLL: a press keeps the page where it was
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { overlayAction, eventMeans } from '../input.js';   // LV1's audit: the REGISTRY's answer (AUDIT KB1: `eventAction`, the event's own read) for the key this window is named after
-import { questRail, questTitleOf, remainWords, QUEST_URGENT_SECONDS } from '../quest/questRail.js';   // MAC-K2: the ONE quest walk, shared with the pause window's Quests tab
+import { questRail, questTitleOf, remainWords, QUEST_URGENT_SECONDS } from '../quest/questRail.js';
+import { qlObjectivesBlock } from '../questlines/qlJournal.js';   // QL2: a stamped quest's objectives, as the pause tab draws them   // MAC-K2: the ONE quest walk, shared with the pause window's Quests tab
 import { entryTarget, targetWords, WHERE_TEXT } from '../quest/questLens.js';   // GUIDE2: where a quest points, said the way every face says it
 import { followOn, trackButton } from '../quest/questTracker.js';   // GUIDE4: the HUD's card - the Track toggle's one home
 import { breakableNote } from '../../systems/notebook.js';   // JOURNAL1: a note the notebook's wrap can take, whatever was typed
@@ -173,6 +174,7 @@ export function chronicleModel(d = {}) {
         note: said?.note ?? null,
         find: said?.find ?? null,
         clockSeconds: q.clockSeconds,
+        ql: q.ql ?? null,   // QL2: a stamped quest's objectives, choices and outcome - the pause tab's own block (ui/questlines/qlJournal.js)
       };
     }),
     ...rail.finished.map((q) => ({
@@ -631,6 +633,8 @@ function paint() {
         }
         if (share && sharing === e.index) entry.append(shareStrip(share, e.index));
         if (!isFolded(folded, section, i)) {
+          // QL2: what the quest asks now, above its journal - the pause tab's block, one home (ui/questlines/qlJournal.js)
+          if (section === 'quests') { const block = qlObjectivesBlock(document, e.ql); if (block) entry.append(block); }
           for (const line of e.body) entry.append(el('p', null, line));
         }
         box.append(entry);

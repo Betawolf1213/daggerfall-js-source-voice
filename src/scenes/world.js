@@ -958,7 +958,7 @@ import { relayVersionSeen, buildUpdateSeen, fetchLiveBuildTag, relayRestartText,
 import { BUILD_TAG } from '../buildTag.js';   // SRV-N: which build this tab is actually running
 import { morrowindDataCount, morrowindDataGeneration, getBytes } from './dataSource.js';   // MWBODY1: the bodies' gate - Morrowind data attached - and its generation
 // Q4-v: THE QUEST BRIDGE - the machine goes live in this host.
-import { createQuestBridge, tokensToRows } from './quest/questBridge.js';
+import { createQuestBridge, tokensToRows, choiceBoxes } from './quest/questBridge.js';
 import { loadQuestPack } from './quest/questData.js';
 import { ensureFactionRep, getReputation, changeReputation } from '../systems/faction/factionRep.js';
 import { changeLegalRep, legalRepOf, CRIMES, setCrimeCommitted, lowerRepForCrime, setCrimeRepFactor } from '../systems/court.js';   // the region's LegalRep: the status box, the quest actions, the crimes (REP1 retired :498-511's levy)
@@ -19975,6 +19975,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       buttonsMulti: buttons,
       onButton: (b) => { respond(b); return []; },
     }),
+    showChoice: (q, message, choices, respond) => showQuestBox(choiceBoxes(q, message, choices, respond)),   // QL4: the questlines' `ask` (questBridge.js choiceBoxes)
     // QV1: PlayVideo's door, live - ten corpus quests write `play
     // video N` (the main-quest ANIMs) and the line warned-and-dropped.
     // The player is the infection lane's own mount (ui/videoPlayer,
@@ -20253,7 +20254,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     activeQuestNames: () => [...questBridge.machine.quests.values()].filter((q) => !q.questComplete && !q.questTombstoned).map((q) => q.questName), // REST8: the curse arms' idle check (racialArmIdle)
     tombstoneQuestsByName: (name) => {
       for (const q of [...questBridge.machine.quests.values()]) {
-        if (q.questName === name && !q.questTombstoned) questBridge.machine.tombstoneQuest(q);
+        if (q.questName === name && !q.questTombstoned) questBridge.machine.tombstoneQuest(q, { ended: true });   // QL1: the cure ends it - its outcome settled
       }
     },
     tombstoneQuestsByPrefix: (prefix) => {

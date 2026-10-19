@@ -16,6 +16,7 @@
 
 import { unpackTree, packTree, pointsLeft, EMPTY_TREE, FIRM_RESPEC_GOLD } from './firmamentLaw.js';
 import { walletReserve } from '../realm/realmGoldLaw.js';   // a refused respec gives back exactly what it took
+import { noteAct } from '../../systems/questlines/qlActs.js';   // QL11: the features' acts, heard by the running quests
 
 /** Where this device keeps a change whose answer did not come: { [account|character]: { rid, tree } }. */
 export const FIRM_KEPT_KEY = 'firm1.kept';
@@ -94,7 +95,14 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
     tell();
     const r = await door.set(who, packTree(tree), id);
     state.sending = null;
-    if (r?.ok) { keep(null); apply(r.data); tell(); return { ok: true, silver: Number(r.data?.silver) || 0 }; }
+    if (r?.ok) {
+      keep(null);
+      const had = new Set(state.tree?.keys ?? []);
+      apply(r.data);
+      noteAct('star-taken', state.tree.keys.filter((k) => !had.has(k)).length);   // QL11: a star taken - each the service holds now that it did not (none is no act)
+      tell();
+      return { ok: true, silver: Number(r.data?.silver) || 0 };
+    }
     const error = r?.error ?? 'server';
     state.error = error;
     if (!UNHEARD.has(error)) { keep(null); await book.read(); state.error = error; tell(); }

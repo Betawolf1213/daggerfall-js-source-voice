@@ -247,6 +247,15 @@ export class PlayerNotebook {
     this.finishedQuests.push(entry);
   }
 
+  /** QL3 (bible/06-Systems/Questlines-Arc.md section 2.4): one more line at the end of the entry filed last - a
+   *  stamped quest's outcome, the port's own, after DFU's messages. Nothing when nothing is filed. */
+  appendFinishedLine(text) {
+    const entry = this.finishedQuests.at(-1);
+    if (!entry || typeof text !== 'string' || !text.trim()) return false;
+    entry.push({ formatting: 'text', text: text.trim() }, NEWLINE);
+    return true;
+  }
+
   _createFinishedQuest(questName, success, quest = null) {
     const status = success ? EN.completedQuest : EN.endedQuest;
     const header = { formatting: 'highlight', text: format(EN.finishQuestHeader, questName, status, this.deps.midDateTimeString?.() ?? '') };

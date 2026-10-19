@@ -317,7 +317,8 @@ const LOOSE_PUPPETS_MAX = Math.max(24, CELL_LOOSE_PUPPETS);
 export const LAYOUT_MISMATCH_TEXT = 'This dungeon is laid out differently for another player here - one of you may be on an older version. Reload the page so you all see the same monsters.';
 import { partyFoeLoses, partyFoeHits, partyFoeHeals, noteFighter, foeFighters, takeWholeBlow, PARTY_ME } from '../systems/party/partyScale.js';   // PSCALE1: a shared foe weighs whoever fights it
 import { renownFoeStruck, renownFoeDied, renownFoeCarry, renownFoeRevived } from '../net/renownTracker.js';   // RENOWN1: a foe the player fought pays its Renown XP when it dies, by any hand   // AUDIT RENOWN1 GAME-10: a rebuilt foe keeps my blows, a revived one forgets them
-import { reportPlayerKill } from '../systems/playerKills.js';   // SET2: my own kills, told
+import { reportPlayerKill, registerPlayerKillListener } from '../systems/playerKills.js';   // SET2: my own kills, told; QL11: and heard (an elite foe of an Elite dungeon)
+import { noteAct } from '../systems/questlines/qlActs.js';   // QL11: the features' acts, heard by the running quests
 import { sparedByPlayer } from '../combat/friendlyFire.js';   // AUDIT CC-B6: the thrown torch's pass
 /** AUDIT SET P-M3: a kill the host's record names me for - its kind, as the exterior owner's `slain` word says it. */
 const REMOTE_KILL = Object.freeze({ kind: 'remote' });
@@ -1190,6 +1191,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // AUDIT BAL (Balance-Arc.md section 10): offline, ELITE-FLOOR reads the level this dungeon's class foes are built at
   const _eliteOnline = isOnlinePage() || opts.selfId?.() != null;
   if (elitesAllowed({ onlinePage: isOnlinePage(), inRoom: opts.selfId?.() != null })) pickDungeonElites(enemies, dfLocation?.dungeon?.recordElement?.header?.locationId ?? dfLocation?.name ?? '', { elite: !!dfLocation?.elite, count: _superTier ? SUPER_ELITE_FOES : null, classLevel: _eliteOnline ? Infinity : (_superTier ? superFoeLevel(effectiveLevel(playerEntity)) : effectiveLevel(playerEntity)) });   // SD4a: a Super dungeon's six
+  registerPlayerKillListener('ql11-elite-foe', (en) => { if (en?.eliteFoe && en.elite && dungeonTier(dfLocation) === 'elite') noteAct('elite-foe-slain'); });   // QL11: an elite foe slain by my blow in an ELITE-tier dungeon (every kill door tells playerKills; by name, so the next dungeon's replaces it - and no foe outside a dungeon carries `elite`)
   // C8 E1 (?foes): CLASS enemies (mobileType > 43, human morphology)
   // spawn as canonical rigs instead of their C3 billboards - one rig
   // per enemy (individual animation state), floor-snapped through the

@@ -1720,6 +1720,17 @@ export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   };
 }
 
+/** QL12 (2026-10-19; bible/06-Systems/Questlines-Arc.md section 5.3): THE QUESTLINES' CLAIM (server-account/src/
+ *  questlines.js) through the one door - `claim({ line, step, choice? })` a questline's step opened or ended,
+ *  `{ ok, data: { opened?, witnessed?, title?, key?, why? } }`; no session is `no-session`, never a throw. */
+export function accountQuestlines({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    claim: async (body) => { const r = await post('/v1/ql/claim', body); if (r?.error === 'auth') forgetSession(storage); return r; },
+    account: () => storedSession(storage)?.id ?? null,   // whose the line's pay is: none signed in, none asked
+  };
+}
+
 /**
  * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
  * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no

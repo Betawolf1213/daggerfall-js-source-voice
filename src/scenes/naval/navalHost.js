@@ -117,6 +117,7 @@ import { createNavalLoads } from './navalLoads.js';   // SHOT-KINDS: the captain
 import { createVolleyTally } from './navalTally.js';   // AUDIT NAV1 G17: my volley's tally - CARD-CREW: and her men it took
 import { seaLiveryOf, seaFlagsOf } from '../../systems/naval/seaColours.js';   // SEA-COLOURS: the sea's ships in their own paint and flags
 import { liveryCode } from '../../systems/naval/shipLivery.js';
+import { noteAct } from '../../systems/questlines/qlActs.js';   // QL11: the features' acts, heard by the running quests
 
 /** The record's name in the save's per-mod slot (systems/modSaveData.js) - the port's own, as the Sigil Broker's is. */
 export const NAVAL_SAVE_VENDOR = 'NavalCombat';
@@ -1180,6 +1181,7 @@ export function createNavalHost(deps) {
     if (change === SHIP_STATES.struck) {
       entry.struck = { by, at: clock };
       if (by === myId()) crewEvent(boatInPlay() ?? myBoat(), 'win');   // SHIP-CREW: she struck to us
+      if (by === myId()) noteAct('ship-struck');   // QL11: a ship made to strike her colours - by my guns (a peer's are theirs)
       if (news) deps.say?.(`${s.names?.name ?? 'It'} surrenders!`, 4);
       sound(NAVAL_CLASSIC.bell, s.pos, 0.8);   // her bell as the colours come down
     } else if (change === SHIP_STATES.sinking) {

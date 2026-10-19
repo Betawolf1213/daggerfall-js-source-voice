@@ -17,8 +17,11 @@ Asked four things, the owner answered:
 | A new currency, or the existing ones? | "Reuse existing" - no sixth Wallet currency |
 | The online world is about 3E 406; the Abyss Dungeon's Hour reads the Warp in the West (3E 417) as past. How does a questline settle it? | "An echo of a Break to come" (decision 5) |
 
-**Status: QL0 DESIGNED 2026-10-19.** Nothing is built. Section 9 is the build order; section 10 holds the calls still
-the owner's.
+Then, the same day: "Dude. Develop this all. I dont want a design doc. I want everything built to perfection." The five
+calls section 10 left open were taken at the record's own defaults (section 10 says each).
+
+**Status: QL1-QL16 BUILT 2026-10-19** (pull request #1047). Section 0 is the game as the design read it; sections 1-10
+are what was built, and where the build departs from the design it says so in place ("AS BUILT").
 
 ## 0. What stands, read against the code (2026-10-19)
 
@@ -100,6 +103,12 @@ Taken at the design. Each is the owner's to overrule; 1, 3, 4 and 5 are the owne
    - **Every quest a player can be given** gets an objective sheet and the outcome rewards: the 187 listed quests, the
      main quest's 34 scripts and `_BRISIEN`, the sixteen summonings, the two cures, `CUSTOM01` and the 29 mod quests -
      270. A test holds the sheet set to exactly the set the offer paths, the main quest and the summonings can reach.
+     AS BUILT: **248**. Counting what a player can actually be GIVEN took 22 of the 29 mod quests out: Foraging's 18
+     tool bonuses are rolls with no journal entry that no one gives, and Warm Ashes' four are the sea's own events, run
+     by the world. 187 listed + `CUSTOM01` + 16 summonings + 2 cures + 35 main quest + Roleplay & Realism's 3 +
+     Foraging's four FetchWood quests = 248, and `test/systems/questlines/ql1_sheets.test.js` names every quest the pack
+     holds as given or as left out with its reason. The questlines' own 35 quests (section 4) have sheets of their own
+     beside them.
    - **The flagship set gets hand-written branches.** Its rule, read off the list and the scripts so it cannot drift by
      taste: every listed quest that asks the player a `prompt` (37), every quest offered at rank 4 or above (20), and
      every one-time quest (22) - 66 once the overlaps are counted (section 3). The owner adds any quest by name.
@@ -108,7 +117,8 @@ Taken at the design. Each is the owner's to overrule; 1, 3, 4 and 5 are the owne
      it never replaces one.
 4. **NO NEW CURRENCY** (the owner). Rewards are drawn from what the game already has: gold, silver (the service's),
    Deadlands Embers, Weir Keys, Welkynd Shards, Renown XP, standing, set pieces, named gear, titles and auras, tavern
-   cards. The Wallet keeps its five.
+   cards. The Wallet keeps its five. AS BUILT: gold, a choice of gear, standing and legal standing (the client's), a
+   named piece at a questline's end, and the service's titles (one a line) and one Weir Key (section 5).
 5. **THE HOUR IS AN ECHO OF A BREAK TO COME** (the owner). The world is about 3E 406; the Warp in the West is 3E 417. A
    Dragon Break has no before and after - that is what makes it one - and the Hour is "the moment itself, kept outside
    time" (`Super-Dungeons.md` section 7). The Abyss questline reads it so: the Bay WILL break, the Hour is that moment
@@ -153,88 +163,100 @@ One word, one thing (`11-Multiplayer/Guilds-Made-Plain.md`). Checked against the
 | **Branch** | a point where the player's choice sets which way a quest goes | a `pick one of`, which is a draw the player never sees |
 | **Outcome** | how a quest ended, and what it paid | an "ending" - the Endings are the Abyss's six (`Super-Dungeons.md`) |
 
-### 2.2 The objective sheet
+### 2.2 The objective sheet (AS BUILT)
 
-One sheet a quest, data the port writes (`systems/questlines/sheets/<family>.js`, one file a guild or group). M0B00Y06,
-the Fighters Guild's wild beast in a citizen's house, as its sheet would read - the symbols are the script's own:
+One sheet a quest, data the port writes, filed by family as JSON (`src/systems/questlines/sheets/<family>.json`, the
+fourteen families of `src/systems/questlines/qlFamilies.js` and the Questlines' own), read by
+`src/systems/questlines/qlSheets.js`. JSON and not code: a sheet's lines are quest text - Daggerfall's kind of words,
+read in a translation's words where a pack carries them (TextQuests `QL.<QUEST>.<id>`, the `-LOC` route a DFU quest's
+own messages take), never a string of the port's interface. M0B00Y06 as filed:
 
-```js
-{
-  quest: 'M0B00Y06',
-  tier: 1,                                    // section 5.1
-  objectives: [
-    { id: 'slay', text: ['ql.M0B00Y06.slay', 'Kill the beast loose in %house'], open: { started: true }, done: { task: '_mondead_' }, mark: '_house_' },
-    { id: 'tell', text: ['ql.M0B00Y06.tell', 'Return to %qgiver for your pay'], open: { task: '_mondead_' }, done: { task: '_S.02_' } },
-  ],
-  branches: [],                               // section 2.3; the flagship set's
-  outcomes: [
-    { id: 'done', on: { task: '_S.02_' }, pay: 'standard' },   // section 5; `_S.02_` is the task that says `give pc _gold_`
-  ],
-}
+```json
+{"quest":"M0B00Y06","objectives":[
+  {"id":"slay","text":"Kill the wild beast loose in _house_","done":{"task":"_mondead_"},"mark":"_house_"},
+  {"id":"report","text":"Return to _qgiver_ for your pay","open":{"task":"_mondead_"},"done":{"task":"_S.02_"}}],
+ "outcomes":[
+  {"id":"done","text":"The beast is dead and the citizen's house is safe.","on":{"task":"_S.02_"},"pay":"standard"},
+  {"id":"failed","text":"The Guild gave the job to someone else.","on":{"ended":true},"pay":"none","failure":true}]}
 ```
 
-- **What an objective may bind to** (`open`, `done`, `fail`): a task set or clear, a resource placed or found, an item
-  held, a clock running or expired, a global variable, the quest ended. Each reads the machine's own state through
-  `QuestLens` - no state of the layer's own decides what the player sees.
-- **Shape.** Objectives are required unless `optional`; a `group` names objectives done in any order; `any` names
-  alternatives, any one of which is enough ("Return the ring - or sell it to the fence").
-- **The text** names resources with the machine's own macros, so `%dungeon` reads the place the script placed, in the
-  player's language.
-- **Drafted by a tool.** QL1's `qlSheetDraft.mjs` (under `tools/`) reads a script - its places, persons, items, foes, and the tasks
-  that file a journal entry - and writes a first sheet to be read and corrected. 270 sheets are written by hand only
-  where the draft is wrong.
+- **What a binding reads** (`open`, `done`, `fail`, an outcome's `on`; `src/systems/questlines/qlLaw.js` BINDING_KINDS):
+  `started`, `ended`, `success`, a `task` set, an `item` carried, a `clock` running or `clockDone`, a journal `step`,
+  a `global`, a `foeDead`, an `act` heard (QL11), a `choice` taken, and `all` / `any` / `not` over them. Each reads the
+  machine's own state; nothing the layer keeps decides what a player sees but its LATCHES (below).
+- **The latches** (`qlLaw.js` observe). What the machine showed once stays shown: an objective opened stays open, one
+  done stays done though its script clears its task, a branch's first choice stands, the outcome settles once. A
+  script that clears a task to re-arm it never takes back a line the player has read.
+- **The text** names resources with the script's own symbols (`_house_`, `__house_`, `=monster_`), read through the
+  machine's macros quietly (`src/ui/quest/questLens.js` quietText), in the player's language where a pack has it.
+- **Shape.** `optional`; `group`; `any` (alternatives, joined by "or"); `mark` (the place the objective is about - the
+  window's; the HUD's marks keep the newest entry's target, section 6). A sheet's `tier` is the questlines' own.
+- **The tools.** `tools/qlSheetDraft.mjs` (a script's resources, settable tasks, journal steps, rewards),
+  `tools/qlCheck.mjs <Family>` (every sheet against its script; the family's set; its flagship branches),
+  `tools/qlFormat.mjs` (one sheet a line), `tools/qlPatchKit.mjs` (the hand-in branch, below).
 
-### 2.3 Branches
+### 2.3 Branches (AS BUILT)
 
-Some flagship quests already branch, and their sheet only names the branch. N0B00Y09, the Mages Guild's scholar's
-research: a Dark Brotherhood agent's letter asks for the paper instead, and `prompt 1014 yes _S.08_ no _nononono_`
-decides who gets it. The script already has three ends: the paper brought to the Guild (`_S.12_`); the paper sold, and
-the Brotherhood's forged copy handed to the Guild as well, paid twice (`_S.10_`, then `_S.13_`); or the paper sold
-and the quest over (`_S.11_` - which of the last two is DFU's `pick one of`, a draw). All three end through `_reward_`
-or beside it, so an outcome bound to `_reward_` would read the double-dealer as loyal: a sheet binds the task that
-tells the ends apart. Under QL each is an outcome of its own, with its own standing - for example:
+A branch is a choice in the player's own words that sets a task; its outcomes are the sheet's. Four patterns, each
+quest's named in its sheet's family file:
 
-```js
-branches: [{ id: 'research', choices: [
-  { id: 'brotherhood', text: ['ql.N0B00Y09.db',    'Give the research to the Dark Brotherhood'], sets: '_S.08_' },
-  { id: 'guild',       text: ['ql.N0B00Y09.guild', 'Bring the research to the Guild'],          sets: '_nononono_' },
-]}],
-outcomes: [
-  { id: 'loyal',  on: { task: '_S.12_' }, pay: 'standard',    standing: { The_Mages_Guild: +5 } },
-  { id: 'double', on: { task: '_S.13_' }, pay: 'double',      standing: { The_Dark_Brotherhood: +5 } },
-  { id: 'sold',   on: { task: '_S.11_' }, pay: 'brotherhood', standing: { The_Dark_Brotherhood: +5, The_Mages_Guild: -5 } },
-],
-```
+- **A - the script already decides.** A `prompt` whose two sides end differently: the sheet names the tasks that tell
+  the ends apart (N0B00Y09: `_S.12_` loyal, `_S.13_` double, `_S.11_` sold).
+- **B - a prompt whose sides end alike.** The sheet's outcomes differ by what the choice cost (L0B50Y11: the
+  information bought, or the mark found anyway).
+- **C - the hand-in** (`tools/qlPatchKit.mjs`). Where the story holds no decision, the questor asks how the player
+  takes their pay: the reward task waits for `_qlkeep_`; `_qlask_` asks when the reward task's own condition holds;
+  `_qlaltpath_` is the other answer's ending - `ql paid` and the reward task's lines that end the quest, without its
+  gold.
+- **D - by hand**, where the reward task's trigger is not one `when` line (`toting`, `clicked npc`): three patches
+  written as C's are (M0B21Y19, B0B50Y11, K0C01Y10, R0C11Y16, A0C01Y03, A0C01Y06, A0C01Y13, A0C41Y18, C0B00Y02,
+  Q0C4XY04, P0B01L02).
 
-Where a flagship quest has no branch, the wave writes one as a patch (`questPatches.js`'s law: exact text, exact count, a
-throw on a mismatch) that adds what the choice needs, and the sheet names it.
+A branch's patches are `src/systems/questlines/patches/<family>.json`, applied as the pack is read and ONLY while the
+switch is on (`src/systems/questlines/qlPatches.js` questlineLines - the read the start's stamp follows, so a quest
+begun with the switch off is DFU's script whole). Each patch is SHAM-TRAIL's law: exact text, exact count, a warning
+and DFU's text on a mismatch. New messages are numbered from 1900 (QL_MESSAGE_BASE), new tasks are `_ql..._`.
 
-QL adds three actions to the machine, registered beside the extension's (`systems/questlines/qlActions.js`):
+THE QUESTLINES' ACTIONS (`src/systems/questlines/qlActions.js`), registered by the quest bridge after DFU's 82 and
+Jagget's four, claiming no line of the shipped corpus (`test/systems/questlines/ql4_actions.test.js`):
 
-- `ask <message> choices <message> _task_ <message> _task_ ...` - two to four choices in talk; the one taken sets its
-  task. DFU's `prompt` is its two-choice case and stays as it is.
-- `outcome _name_` - marks the outcome a path reached, for the reward layer and the window.
-- `ql reward` - stands where a script says `give pc _gold_`, and pays the outcome (section 5). A script that pays
-  before its end (DFU's list calls it the "reward bug") is patched to pay here.
+- `ask <message> choices <message> _task_ <message> _task_ [...]` - two to four choices, each its own message; the one
+  taken starts its task. Complete only on the answer: a box closed unanswered asks again, and a load under the
+  question asks afresh.
+- `outcome _name_` - the outcome a path reached, written where the script decides it (first one stands).
+- `ql act <kind> <n>` - a trigger: true once the player has done `n` acts of `kind` since the task first asked (QL11).
+- `ql paid` - the quest a success and its outcome's reward, without the QuestComplete box `give pc nothing` raises
+  (that box is the script's words for the reward the player just turned down).
+- `ql name _person_ <Given_Name>` - a questline giver by their own name (Ysolde Marnhel wrote the breach's book).
 
-A branch's new tasks are named `_ql_..._`, so no script's own symbol is ever shadowed, and a quest saved before the
-patch keeps the actions it was saved with (`task.js` restores them whole), as SHAM-TRAIL's reveal does.
+AS BUILT: the design's `ql reward` was not needed. GivePc's own moment reaches the layer for every reward a script pays
+(`questReward`: the gold scaled by the outcome the quest's state holds then), and the outcome settles at the quest's
+own `end quest` (`questEnding`, `src/systems/quest/quest.js` endQuest) - so a quest that pays before it ends (M0B00Y16
+pays at the giant's death and ends at the merchant's rescue) pays by the outcome it ends on, and no script is patched to
+move its reward. A letter handed over with `give pc` is not pay (the main quest's invitations). A quest a system ends in
+its own place settles there too: the werewolf's cure closes `$CUREWER` (`machine.js` tombstoneQuest's `ended`).
 
 ### 2.4 What a quest keeps
 
-Its save gains one port-only field beside `shareId` and `instanceEpoch`: `ql: { stamp: 1, choices: { fate: 'spare' },
-outcome: 'mercy', paid: true }`. The machine saves and restores it as data; the layer reads it. The notebook's
-finished entry (`finishedQuestEntries`) gains the outcome's line.
+Its save gains one port-only field, `ql` (`src/systems/questlines/qlState.js`): `{ stamp, tier, opened, done, failed,
+choices, outcome, paid, moved, acts, offer }`. A quest started with the switch off carries `ql: null` for life. A
+shared copy carries the party's progress (opened, done, failed, choices, outcome - merged monotonically on each resync)
+and never the holder's reward (`paid`, `moved`, `acts` and `offer` are reset on receipt). The notebook files the
+outcome's line under the quest's finished entry.
 
 ### 2.5 The pins
 
-- **Every objective is reachable.** A scripted run of each quest (the corpus harness `auditquests_linkage.test.js`
-  already drives) opens and closes every objective its sheet names, and every outcome is reached by some path.
-- **A sheet names only what its script has.** Every task, resource and message a sheet binds to exists in its script
-  after the patches; a sheet for a quest no path offers fails.
-- **The sets are exact.** The sheet set is the reachable set (270); the flagship set is the rule's (66).
-- **The stamp is kept.** A quest started under one value of the switch reads the same after the switch changes.
-- Each pin mutation-checked (A PIN MUST FAIL); the records in `tools/mutants/`.
+- `test/systems/questlines/ql1_layer.test.js` - the switch, the state, the bindings, the latches, the tier, the stamp,
+  the bridge's layer through M0B00Y06.
+- `test/systems/questlines/ql1_sheets.test.js` - the sets exact (248, and every questline step), each family's sheets
+  naming only what their scripts have, the flagship 66 each with a branch whose outcomes pay differently.
+- `test/systems/questlines/ql4_actions.test.js`, `test/systems/questlines/ql4_branches.test.js` - the actions, and a
+  branch run through the real bridge: switch off DFU's script, the fee, the fee waived (quietly).
+- `test/systems/questlines/ql11_acts.test.js` - the acts, swept both ways.
+- `test/systems/questlines/ql12_lines.test.js`, `test/systems/questlines/ql12_ladders.test.js` - the questlines'
+  scripts, their witnesses and the runner; the guilds' ladders.
+- `test/ui/questlines/ql2_journal.test.js` - the window's parts, and the Quest Guide's objective news.
+- `test/server/ql12_claim.test.js` - the service's claim.
 
 ## 3. The flagship 66
 
@@ -259,6 +281,15 @@ The Holy Orders and the Witches are thin by the rule; the Order of the Hour's qu
 summonings' sheets carry the temples and the covens further. Each wave (section 9) reads its family's flagship quests
 and writes, for each, the branch its story holds: a `prompt` that already decides an end (N0B00Y09's, section 2.3)
 becomes two named outcomes; a yes or no that does not, and a quest with neither, gets a branch written for it.
+
+AS BUILT (QL4-QL10, every family's waves the same day): all 66 carry a branch whose outcomes pay differently - pinned
+by `ql1_sheets.test.js`. Patterns (section 2.3) by count: A, the script's own choice, in most (every Thieves Guild and
+Nobility smuggler's `prompt`, the Merchants' and Commoners' ambushes); C, the hand-in, in 17; D, by hand, in 11. Where
+a branch's patch also MENDS a DFU script it is said in its family's file and in the Port-Ledger's QUESTLINES row:
+B0B50Y11 (clicking the questgiver ended the quest a success without the ghost killed), K0C01Y00 (the victim's path
+never set `_victory_`, so it never paid), B0B71Y03 (putting the child down now pays its honourable ending). The waves
+also wrote down every DFU script they found odd and left as shipped (a dead end, a clock with no task, a bare-named
+task); they are the QUESTLINES row's Ledger B list.
 
 ## 4. The questlines
 
@@ -371,30 +402,43 @@ The owner's fourth: "Tying all our newly integrated features into quests". Three
 - **The work that is already work** - bounties, Notice Board writs, harbour contracts, revenant errands, caravans,
   hall writs - stays its own system, and the window shows it (section 6).
 
-## 5. The rewards
+## 5. The rewards (AS BUILT - `src/systems/questlines/qlRewards.js`)
 
 ### 5.1 The tier
 
-A quest's tier is read off what it already asks: rank 0-1 is tier 1, 2-3 tier 2, 4-5 tier 3, 6 and above tier 4; a
-reputation-gated row by its band; a social quest by the player's level band; a questline quest by its line's place.
+A quest's tier is read off what it already asks (`qlLaw.js` tierOf): rank 0-1 is tier 1, 2-3 tier 2, 4-5 tier 3, 6 and
+above tier 4; a reputation-gated row by its band (20, 40, 60); a social quest and the main quest by the player's level
+band (7, 14, 21); a questline's step by its line's own tier (its sheet's `tier`). Stamped at the start, for life.
 
 ### 5.2 What an outcome pays (the client's, as today)
 
-- **Gold.** DFU's formula stays the base, times the outcome's factor (from 0.75 to 1.5; the merciful way may pay less
-  and win more standing).
-- **A piece of gear, chosen.** Each outcome offers three pieces from the Loot ladder at the tier's floor (tier 1 Magic,
-  tier 2 Magic with a Rare chance, tier 3 Rare, tier 4 Rare with a Legendary chance), fitted to the player - their
-  armour's weight, their weapons' skills - and the player keeps one. Rolled through the same producer as a dungeon's
-  loot (TEST THE SHAPE THE PRODUCER MINTS), so the item law and the copy ledger read it as any piece; seeded by the
-  quest's uid and the outcome, so a reload never rolls again. It lands in the reward pile (RW1) and the Loot Banner
-  shows it.
-- **Named pieces.** Each flagship quest and each questline outcome may name one piece of its own (a fixed roll, as
-  Gilded's are), once a character.
-- **Standing, both ways.** An outcome moves the standing of every side its branch touched - the house betrayed loses
-  what the house served gains. Online through the Roll, inside the claim's cap.
-- **Renown XP**, as `renownQuestXp` pays now, by tier.
-- **Measured before it ships.** QL3 measures gear a played hour from quests against a dungeon of the same tier and holds
-  the quests under it; the outcome factor and the floors are its constants, and the page records the measure.
+- **Gold.** DFU's formula stays the base, times the outcome's pay (PAY_PROFILES): `standard` 1, `lesser` 0.75 (the
+  merciful way: less coin, more standing - the sheet's), `greater` 1.25 and a rung up the gear's ladder (the harder
+  way), `double` 1 (the script itself pays both sides), and three that add no gear - `betrayal` (the other side's coin,
+  never the betrayed guild's piece), `own` (the script's own reward is the reward: a Prince's artifact, a cure) and
+  `none` (a quest that ended unpaid). Scaled at GivePc's moment by the outcome the quest's state holds then.
+- **A piece of gear, chosen.** An outcome that pays gear, on a quest that paid (its script's `give pc`, `ql paid`, or a
+  success), offers REWARD_CHOICES (three) pieces - a weapon, an armour piece, a jewel - at the tier's floor
+  (TIER_FLOORS: tier 1 Magic; tier 2 Magic, a quarter a rung up; tier 3 Rare; tier 4 Rare, 15% a rung up), fitted to the
+  player (their armour's weight - `isForbiddenEquip` - and their two best weapon skills). Rolled through the dungeons'
+  own producer (`gateSpoils.js` spoilsBase, `lootRarity.js` applyRarity), so the item law and the copy ledger read it
+  as any piece; seeded by the quest's name, uid and start time (`rewardSeed`), so a reload never rolls again. The three wait in
+  the Quests tab ("Rewards waiting", at most OFFERS_MAX - twelve) until one is taken; the one taken goes the reward's
+  way (RW1's pile, the pack opened over it), the others are gone.
+- **A named piece** (AS BUILT: the questlines' endings alone). A line's last step's outcome may name one of its three
+  cards (`named: { name, kind }` - the card of that kind takes the name, once a character). The design offered a named
+  piece to each flagship quest of DFU's as well; those keep the ladder's own names, because a DFU quest already names
+  what it pays in its own words, and a hundred names of the port's over Daggerfall's quests is the "Daggerfall's words
+  stay" decision broken. A named piece is rolled, not fixed: a fixed roll is Gilded's, held to its record by the wire
+  (`gilded.js` validGildedMarks), and a quest's piece is held by the item law as every rolled piece is.
+- **Standing, both ways.** An outcome moves every faction its sheet names (`standing`, -10 to 10 each - by
+  Quests-Factions.txt name, read to its id) and the legal standing (`legal`), once, at the quest's end. Online the Roll
+  bounds it as every quest's gain (`Chapters-Arc.md` 3.3).
+- **Renown XP** stays `renownQuestXp`'s, unchanged.
+- **The measure** (QL3's, owed). A quest pays ONE piece (one of three taken), at Magic or Rare - fewer than a dungeon
+  of its tier drops in the time a quest takes, and the online wealth budget judges a character's gear as it judges
+  every piece. The numbers of a played hour are owed to the first week of play (the Integrity arc's own measure,
+  `realm_wealth_hours`), and TIER_FLOORS is the one constant to move.
 
 ### 5.3 What the service pays (only what it witnessed)
 
@@ -408,79 +452,81 @@ QL pays them through one module (`server-account/src/questlines.js`) and one rou
   of the Chapters' shape (3.3).
 - Opened by `QUESTLINES_OPEN` (`off` | `dev` | `on`) in `server-account/wrangler.toml`, as every service feature is.
 
-## 6. The window: one place
+## 6. The window: one place (AS BUILT)
 
-The pause window's Quests tab, rebuilt on the journal bones (a rail of pages, the chosen page beside it, as Growth,
-Holdings, Family and Tutorials are). A window redesigned on purpose: it cites this page, not DFU (SCOPE1).
+The pause window's Quests tab (`src/ui/enhanced/enhancedMenu.js` pauseQuests) is the one place, its questline parts one
+module both faces draw from (`src/ui/questlines/qlJournal.js` - the Chronicle on L draws the same objectives block).
+A window redesigned on purpose: it cites this page, not DFU (SCOPE1). The rail, in order:
 
-- **Questlines** - each line the player has begun or can begin: its quests as steps, the one under way, the next and
-  what opens it, the branches taken drawn as the path walked. The guilds' ladders (4.4) sit here.
-- **Active** - each quest under way: its giver, its objectives (done struck, optional marked, alternatives joined by
-  "or"), the outcome's reward shown before it is chosen - its tier, "choose one of three", any named piece.
-- **Work** - bounties, writs, contracts, errands, caravans: what is under way, from the log seam the streaming host
-  already widens.
-- **Done** - each finished quest with its outcome and what it paid.
+- **Rewards waiting** - while any wait: each ended quest's three pieces, one press from its Take.
+- **Main Quests**, **Side Quests** - as before; a stamped quest's page draws under its entry WHAT TO DO (its objectives
+  as the machine opened them: done struck, failed crossed, optional marked, alternatives joined by "or"), YOUR
+  CHOICES, HOW IT ENDED, and what finishing it pays (the tier's floor in words, read off TIER_FLOORS). A stamped quest
+  whose objectives stand before its first journal entry is a row too (`unloggedRail`).
+- **Questlines** - every line, the ones under way first, then those still to begin, the finished last; a line's page
+  says what a questline is, its story and giver, its steps as the path walked (done, now, to come - "witnessed" on a
+  step the service checks, with a press saying what that means), what it waits on ("Opens at level 10, online."), how
+  it ended and the title it earns. Then each guild the player is a member of, as its LADDER (section 4.4).
+- **Hidden**, **Abandoned**, **Archived** - as before; an archived entry carries its outcome's line.
 
-The Quest Guide reads objectives: the tracker shows the current one, the herald announces one opened or done, the map
-marks bind to the objective's `mark`. L lands on the tab on Enhanced Plus and DFO Grimoire (`mountEnhancedMenu`'s
-pause landing); the Chronicle keeps Notes, Messages, History and People, and its Quests page hands over to the tab
-(one word, one thing). On the classic skin, L is DFU's logbook as ever, and the pause door opens the tab
-(`ui/pauseDoor.js`, as Growth and the mail do).
+The Quest Guide reads objectives (`src/ui/quest/questLens.js`): a view carries the objective asked now (the tracker's
+card says it in place of the entry's opening) and the ones done (the herald's new news, "Objective done", ranked over a
+routine entry). AS BUILT, two of the design's lines stand otherwise: the HUD's map marks keep the newest entry's target
+(the Guide's honesty rules, W1 and W2, decide what a mark may reveal, and an objective's `mark` names a place the entry
+already has); and L keeps landing on the Chronicle, whose Quests page draws the same objectives block - the tab is a
+press away, and two doors to one module disagree about nothing. The design's "Work" page is the rail as it stands:
+bounties, revenant hunts and Legacy's quests are already its rows (`questLog`'s widened walk).
 
-Plain words (`10-UI/Plain-Words.md`): the tab says what a questline, an objective and an outcome are, on the tab; every
-number from the constant that enforces it; a press explains what a hover does. Every string through `t()`. A Tutorials
-page ("Questlines"), met the first time a quest is stamped.
+The Tutorials' **Questlines** page (`src/systems/tutorialCatalogue.js`) pops the first time a quest with objectives
+starts. Every string through `t()`, drafted in the thirteen languages the catalog requires.
 
-## 7. The hosts, and where the code goes
+## 7. The hosts, and where the code goes (AS BUILT)
 
-- `src/systems/questlines/` - the law: sheets, the evaluator over `QuestLens`, branches, outcomes, tiers, rewards;
-  `qlActions.js`; `quests/` (the questlines' scripts); `questlineActs.js` (the acts feed). Pure and tested alone.
-- `scenes/quest/questlineHost.js` - the one seam the hosts wire, the `fishHost.js` shape: it owns its state and
-  frame, the host constructs it once. THE FOUR HOSTS: `world.js` and `worldModes.js` and `dungeonContext.js` wire it
-  (each runs quests); `exterior.js`, the fixed city, wires the objectives and is named FLAGGED for the endgame lines
-  (no streamer, no endgame place).
-- `src/ui/questlines/` - the tab, mounted lazily through `mountEnhancedChunk`, dressed by `enhancedFrame.js`'s roles.
-- `server-account/src/questlines.js` - the claim. No relay arm: every witness QL needs is a receipt the service holds.
+- `src/systems/questlines/` - the law, pure: `qlState.js` (the save field), `qlLaw.js` (the switch, the stamp, the
+  bindings, the latches, the tier), `qlSheets.js` + `sheets/`, `qlFamilies.js`, `qlPatches.js` + `patches/`,
+  `qlActions.js`, `qlRewards.js`, `qlActs.js` (the acts feed), `qlLines.js` (the questlines), `qlLineRunner.js`,
+  `qlLadders.js`, `qlLayer.js` (the layer the bridge makes), and `quests/` (the questlines' scripts).
+- `src/scenes/quest/questBridge.js` - THE ONE CONSTRUCTION SEAM: it makes the layer over its machine, registers the
+  actions and the acts' sink, and hands the window `questLog`'s `lines` and `ladders` and `journalClean`'s offers.
+  `src/scenes/quest/questlineHost.js` is the account service's door it builds (an online page alone). The hosts
+  carry one line each where nothing else knows the moment - the `ask` box's door (`world.js`, `exterior.js`), the
+  cure's settle (`world.js`), and the acts no feature module hears (section 4.5) - `hostceiling.test.js` holding them.
+- `src/ui/questlines/` - the window's parts; `enhancedMenu.js`, `enhancedChronicle.js`, `enhancedStyle.js` and
+  `enhancedFrame.js` draw and dress them.
+- `src/net/questlineClaims.js` - the claim's shared law; `server-account/src/questlines.js` - the claim
+  (`POST /v1/ql/claim`); `server-account/migrations/0133_questlines.sql`.
 
 ## 8. Not changed
 
 - DFU's machine and its 82 templates; the vendored scripts (patched as read, never edited).
 - The classic skin's logbook, verbatim.
-- Offline with the switch off: DFU's quests as DFU runs them.
+- Offline with the switch off: DFU's quests as DFU runs them - no stamp, no patch, no objective, no reward added.
 - The main quest's story and its endings. It gains objectives and rewards, no branch, and stays refused for sharing.
-- Every endgame place's rules, rates and drops. No questline makes a rare drop certain (section 10 asks about the one
-  Weir Key).
+- Every endgame place's rules, rates and drops.
 - The Chapters, the bounty boards and the writs, each its own system.
 - The Wallet's five currencies.
 
-## 9. The slices
+## 9. The slices (AS BUILT, 2026-10-19)
 
-| Slice | What | Pins |
+| Slice | What was built | Pins |
 |---|---|---|
-| **QL1 THE LAYER** | the sheet, the evaluator over `QuestLens`, the stamp and its save field, the Features row and its lock online; the Fighters Guild's 20 sheets as the proof; the sheet's draft tool; Port-Ledger A row (decision 6) | reachable, names-only-what-it-has, the stamp kept, OL1 answered |
-| **QL2 THE WINDOW** | the Quests tab's four pages; L's landing; the Guide reading objectives; the Tutorials page; thirteen languages | the walk's one source; plain words; the l10n ratchet |
-| **QL3 THE REWARDS** | tiers, outcome factors, the choice of three, named pieces, standing both ways; the measure | the producer's shape; the seeded roll; the measure's bound |
-| **QL4 THE BRANCHES** | `ask`, `outcome`, `ql reward`; the party's rule; the Fighters Guild's 6 flagship quests | every outcome reached; a shared choice taken by every copy |
-| **QL5-QL10 THE WAVES** | sheets and rewards for every quest, and branches for the flagship set, by family: Knightly Orders; Mages Guild, Witches and the summonings; Thieves Guild, Dark Brotherhood, Vampires and the cures; Holy Orders; Nobility, Merchants and Commoners; the main quest and the mods | the sets exact (270, 66) when QL10 lands |
-| **QL11 THE ACTS** | the acts feed and its kinds | every kind produced and read |
-| **QL12 THE BURNING DOORS** | the line; `/v1/ql/claim`; `QUESTLINES_OPEN` | the claim pays only against a receipt |
-| **QL13 THE COVENS' HOARD and THE WEIR ROAD** | the Cycle's second and third lines | the key once an account |
-| **QL14 THE HOUR THAT WAS NOT** | the Abyss line | |
-| **QL15 THE INTRODUCTIONS** | a line for each Tutorials group | |
-| **QL16 THE OLD COIL** | if the owner takes it | |
+| **QL1 THE LAYER** | the switch (a Features row, forced on online), the stamp and its save field, the sheet and its law, the latches; the Fighters Guild's sheets as the proof; the tools | `ql1_layer`, `ql1_sheets` |
+| **QL2 THE WINDOW** | the Quests tab's questline parts, the Questlines and ladders sections, the Guide's objective news, the Tutorials page, thirteen languages | `ql2_journal`, `ql12_ladders`, the Guide's suites |
+| **QL3 THE REWARDS** | tiers, pay profiles, the choice of three, named pieces, standing both ways | `ql1_layer` |
+| **QL4 THE BRANCHES** | `ask`, `outcome`, `ql act`, `ql paid`, `ql name`; the patches; the hand-in kit | `ql4_actions`, `ql4_branches` |
+| **QL5-QL10 THE WAVES** | 248 sheets in fourteen families; the 66 flagship branches | `ql1_sheets` (the sets exact) |
+| **QL11 THE ACTS** | the acts feed, its kinds and their producers | `ql11_acts` |
+| **QL12-QL16 THE QUESTLINES** | the registry and runner; thirty-five scripts in thirteen lines; the service's claim and its titles and key; `QUESTLINES_OPEN` | `ql12_lines`, `ql12_claim` |
 
-Each slice ships its own pins and its record here; an audit follows the slices it reads, as the house does.
+## 10. The owner's calls (taken at the record's defaults - "Develop this all")
 
-**Scale, honestly.** 270 sheets of three to six lines, 66 branches, eight questlines and their givers' words, all in
-thirteen languages. The waves are the bulk of it, and each is a slice of its own.
-
-## 10. The owner's calls - open
-
-1. **The questline's Weir Key** (II.2): once an account, as designed - or none, the line pointing the player at the
-   lieutenant's ordinary drop chance instead?
-2. **Who chooses in a shared quest**: the sharer, as designed - or each copy its own (the copies then end differently
-   for different mates)?
-3. **A title a questline**, paid by the service on the last witnessed step - or the existing titles only?
-4. **THE OLD COIL** (4.3) - in, or not now?
-5. **The givers' names** that are the port's own (the Battlemage of III, the Order's priest, the coven lieutenant) -
-   the owner's to name, or QL's slices to propose.
+1. **The questline's Weir Key** (II.3): once an account, to a player who keeps it, behind the Burning Doors witnessed
+   whole (section 5.3).
+2. **Who chooses in a shared quest**: the sharer - a choice is a task, and the copies take it on the resync
+   (`qlState.js` mergeSharedState: the local choice first).
+3. **A title a questline**: one each of the five lines the service pays (Doorwarden, Covenbane, Weirwalker, Witness of
+   the Hour, Satakal's Witness). The introductions pay no title: nothing witnesses them.
+4. **THE OLD COIL**: in (section 4.3).
+5. **The givers' names**: proposed here - Ysolde Marnhel (already the breach book's author), Corvane Tull (the
+   Battlemage), Prior Anselm Vey (the Order of the Hour), Hamid al-Rasheen (Sentinel's packet captain). The owner may
+   rename any; each is one `ql name` line and one registry string.

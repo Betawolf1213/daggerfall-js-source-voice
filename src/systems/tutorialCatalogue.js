@@ -369,6 +369,18 @@ export const TUTORIALS = Object.freeze([
       'Many quests have a time limit. Turning down work costs nothing, except in the main story.',
     ],
   }),
+  // QL2 (bible/06-Systems/Questlines-Arc.md section 6): what the questlines changed, the first time a quest carries them
+  page({
+    id: 'questlines', group: 'quests',
+    get title() { return t('tutorials.questlines.title', 'Questlines'); },
+    get trigger() { return t('tutorials.questlines.trigger', 'When you first take a quest with objectives.'); },
+    get body() {
+      return [
+        t('tutorials.questlines.body1', 'The Quests tab lists what each quest asks of you and ticks off each step. Some quests make you choose, and end differently for each choice.'),
+        t('tutorials.questlines.body2', 'A finished quest lets you pick one of three pieces of gear. Questlines are longer stories, quest after quest, listed in the same tab.'),
+      ];
+    },
+  }),
   page({
     id: 'quest-guide', group: 'quests', title: 'Tracking Quests', trigger: 'When you first track a quest.',
     body: [
