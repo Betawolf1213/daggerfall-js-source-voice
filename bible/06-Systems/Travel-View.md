@@ -2359,7 +2359,7 @@ start pixel as its build keeps it - its gates (pixelBuild.js:"made.cityGates =")
 - **The gates shut.** Offline, by night, DaggerfallCityGate shuts every gate at dusk and its closed model is a wall
   (cityGate.js:"export function updateCityGate", AUDIT 64 F14): the walled town is sealed until dawn, classic's own law. A journey from its streets with
   no gate open is refused - "The town gates are shut for the night - there is no way out until morning."
-  (travelView.js:"gatesShut: 'The town") - and never begun (world.js:"if (!legs) tvSay"). Online the gates stand open (OL5), and so does the way out.
+  (travelView.js:"get gatesShut()", the text core's `travel.gatesShut`, drafted in-session for the catalog's languages) - and never begun (world.js:"if (!legs) tvSay"). Online the gates stand open (OL5), and so does the way out.
 
 **Departure.** None from a DFU member: the Overworld's route is the port's own already (TV2's Ledger A row), and the
 gates' night is DFU's. The steering, the autopilot and Travel Options' own straight journeys (First-Person Travel with

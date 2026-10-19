@@ -63,6 +63,7 @@ import {
 } from '../player/travelCamera.js';
 import { travelRateOf } from '../systems/timeScale.js';   // RATE-LAW: the keys' travel runs at its ground's rate
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { t } from '../systems/textManager.js';   // TOWN-EXIT: the shut town's word in the player's language
 
 /** A press that moves further than this (px) before it lifts is a drag (the orbit), not a click (a pick). */
 export const TV_CLICK_SLOP = 6;
@@ -118,7 +119,7 @@ export const TRAVEL_VIEW_TEXT = Object.freeze({
   passenger: 'You are aboard another\'s boat - its helmsman sets the course.',
   rider: 'You ride in another\'s wagon - its driver sets the course.',   // WAGONS2: seated in the back of another's wagon (scenes/wagon/wagonRiders.js)
   climbing: 'You cannot set out on a journey from a wall - climb down first.',   // AUDIT FB1007b C2
-  gatesShut: 'The town gates are shut for the night - there is no way out until morning.',   // TOWN-EXIT (systems/travel/townExit.js): offline, every gate a wall from dusk to dawn
+  get gatesShut() { return t('travel.gatesShut', 'The town gates are shut for the night - there is no way out until morning.'); },   // TOWN-EXIT (systems/travel/townExit.js): offline, every gate a wall from dusk to dawn
   noLaunch: 'There is no water here for your boat to float in.',
   noWayAtSea: 'Your boat can make no way toward its mark.',
   noShore: 'There is no safe landing here. Your boat stays in the water.',

@@ -1786,6 +1786,7 @@ town.econ.reason.raid,"Μια επιδρομή στις πύλες της βλά
 town.econ.trend.falling,"Η αγορά πέφτει."
 town.econ.trend.flat,"Η αγορά σταθερή."
 town.econ.trend.rising,"Η αγορά ανεβαίνει."
+travel.gatesShut,"Οι πύλες της πόλης είναι κλειστές για τη νύχτα - δεν υπάρχει έξοδος μέχρι το πρωί."
 wagon.upkeep.boons.failing,"Η {name} σας διαλύεται. Μια Αυλή Αμαξών ή ένα Κιτ Επισκευής Άμαξας θα την επισκευάσει."
 wagon.upkeep.boons.rickety,"Η {name} σας είναι ετοιμόρροπη. Μια Αυλή Αμαξών μπορεί να την επισκευάσει."
 wild.escrow.collectLate,"Αυτό το αντικείμενο δεν φυλασσόταν πια για σένα."
