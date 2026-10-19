@@ -3408,6 +3408,7 @@ net.conduct.respect,"Behandle alle mit Respekt. Keine Belästigung, kein Mobbing
 net.conduct.sexual,"Keine sexuellen Bemerkungen gegenüber anderen Spielern - und niemals irgendetwas Sexuelles, das Minderjährige betrifft."
 net.conduct.spam,"Kein Spam, kein Betrug, und gib dich nicht als Teammitglied aus."
 net.conduct.title,"Verhaltenskodex"
+net.gate.courtWatch,"Der Burning Court ist voll - du siehst vom Rand aus zu, bis ein Platz frei wird."
 net.mod.ambiguous,"{count} Spieler heißen {name}. Niemand wurde stummgeschaltet."
 net.mod.chatAgain,"Du kannst wieder chatten."
 net.mod.muteRange,"Eine Stummschaltung dauert 1 bis {max} Minuten (eine Woche)."
