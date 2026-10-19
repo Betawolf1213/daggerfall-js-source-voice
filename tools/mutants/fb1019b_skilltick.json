@@ -5,7 +5,7 @@
     "old": "  const have = (tally * reflexesMod) >> 16;\n",
     "new": "  const have = tally;\n",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the line counts raw uses where the pass counts them scaled"
   },
@@ -15,7 +15,7 @@
     "old": "entity.career?.advancementMultiplier ?? 1, entity.level ?? 1);",
     "new": "entity.career?.advancementMultiplier ?? 1, 1);",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the requirement at level 1 - a level-7 player told a skill is closer than it is"
   },
@@ -25,7 +25,7 @@
     "old": "  return { have, need: needed, ready: !held && have >= needed, held, wait };",
     "new": "  return { have, need: needed, ready: !held && have + 1 >= needed, held, wait };",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the strip says ready one use short - the rest raises nothing"
   },
@@ -35,7 +35,7 @@
     "old": "value >= 95 && !masterSkillsActive(entity) && lockedBy(entity, i) ? 'lock' : null;",
     "new": "false ? 'lock' : null;",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "a skill held at 95 reads ready, and its uses go at the rest"
   },
@@ -45,7 +45,7 @@
     "old": "  const held = value >= 100 ? (masteryRefusal(entity, i) == null ? 'master' : 'cap')",
     "new": "  const held = false ? 'cap'",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "an unmastered 100 reads ready forever"
   },
@@ -55,7 +55,7 @@
     "old": "ready: banked + uses / cost >= 1, held: null, wait };",
     "new": "ready: uses / cost >= 1, held: null, wait };",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "past 100 the banked part of a point read as nothing"
   },
@@ -65,7 +65,7 @@
     "old": "  if (p.held === 'cap') return t('pause.skills.tickCap',",
     "new": "  if (p.held === 'lock') return t('pause.skills.tickCap',",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the lock said as the cap"
   },
@@ -75,7 +75,7 @@
     "old": "    if (improvable > 0) out.push(",
     "new": "    if (improvable > 99) out.push(",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the thread's 'your skills can be improved' never shows"
   },
@@ -85,7 +85,7 @@
     "old": "r.kind === NOTICE_IMPROVE ? 1 : 0);",
     "new": "r.kind === NOTICE_IMPROVE ? 3 : 0);",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the standing skills line moves under the level's - the row a player looks for, moved"
   },
@@ -95,7 +95,7 @@
     "old": "          ? t('tutorials.characterSheet.skillRaiseStats',",
     "new": "          ? false && t('tutorials.characterSheet.skillRaiseStats',",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the page never says when a skill goes up"
   },
@@ -105,7 +105,7 @@
     "old": "    progress: (id, now = null) => skillAdvanceProgress(e, id, { now }),",
     "new": "    progress: undefined,",
     "tests": [
-      "test/systems/fb1019_skilltick.test.js"
+      "test/systems/fb1019b_skilltick.test.js"
     ],
     "why": "the page has no reading to draw"
   }

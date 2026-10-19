@@ -4702,6 +4702,7 @@ ${paceControlsCss('tview')}
 .pack-shell .walletsheet .wallet-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
   padding: 3px 0; font-size: 14px; line-height: 1.35; }
 .pack-shell .walletsheet .wallet-k { color: var(--dim); }
+.pack-shell .walletsheet .wallet-kg { margin-left: 4px; font-size: 12px; opacity: 0.75; font-variant-numeric: tabular-nums; white-space: pre; }
 .pack-shell .walletsheet .wallet-v { color: var(--bone); text-align: right; font-variant-numeric: tabular-nums; }
 .pack-shell .walletsheet .wallet-row.none .wallet-v, .pack-shell .walletsheet .wallet-v.why { color: var(--dim); opacity: 0.75; }
 .pack-shell .walletsheet .wallet-v.why { font-size: 12px; }

@@ -351,7 +351,7 @@ Audited the same day: `01-Overview/audits/Audit-Spec-Reset.md` (AUDIT SPEC-RESET
 
 The Discord's #suggestions, 2026-10-19 (Brother Frank: *"I'd very much like it if the team considered adding the ability
 (if it is possible) to either change one of our skills out or allow some of these specializations to work with just the
-one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-Overview/bugs/Field-Bugs-2026-10-19.md`.
+one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-Overview/bugs/Field-Bugs-2026-10-19b.md`.
 
 - **The law** (`systems/skillSwap.js`): one class skill the character has not mastered out, one miscellaneous skill in,
   in the same group (the 2/2/1 slots stand); a mastered skill never leaves; the values stay; the career becomes the
@@ -365,7 +365,7 @@ one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-O
   where one swap would open a path (`swapOpens`, AUDIT SUGGESTIONS-1019 L5-1). A swap into a group whose mastery slots
   are spent, and offline with Master Skills off one that starts or ends DFU's 95 lock, is said beside the picks and in
   the ask: a warning, not a refusal - a swap can be wanted for leveling alone (AUDIT L5-1, L5-2).
-- Pins: `test/systems/fb1019_skillswap.test.js`, the page drawn in `test/ui/growth/fb1019_swappage.test.js`, the audit's
-  laws in `test/systems/fb1019_audit.test.js`; `tools/mutants/fb1019_skillswap.json`, `fb1019_audit.json`. Audit:
+- Pins: `test/systems/fb1019b_skillswap.test.js`, the page drawn in `test/ui/growth/fb1019b_swappage.test.js`, the audit's
+  laws in `test/systems/fb1019b_audit.test.js`; `tools/mutants/fb1019b_skillswap.json`, `fb1019b_audit.json`. Audit:
   `01-Overview/audits/Audit-Suggestions-1019.md`.
 

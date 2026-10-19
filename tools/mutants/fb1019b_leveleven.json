@@ -5,7 +5,7 @@
     "old": "export const averageLevelHp = (h, endurance) => (Math.trunc(h / 2) + h) / 2 + hitPointsModifier(endurance);",
     "new": "export const averageLevelHp = (h, endurance) => (0 + h) / 2 + hitPointsModifier(endurance);",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the average of a roll that cannot fall under half - the floor too low"
   },
@@ -15,7 +15,7 @@
     "old": "export const averageLevelHp = (h, endurance) => (Math.trunc(h / 2) + h) / 2 + hitPointsModifier(endurance);",
     "new": "export const averageLevelHp = (h, endurance) => (Math.trunc(h / 2) + h) / 2;",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the thread's whole ask: Endurance paid back on every level"
   },
@@ -25,7 +25,7 @@
     "old": "(Math.trunc(level) - 1) * Math.max(1, averageLevelHp(h, endurance)));",
     "new": "(Math.trunc(level) - 1) * averageLevelHp(h, endurance));",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "a level under the floor of 1 a level - CalculateHitPointsPerLevelUp never adds less"
   },
@@ -35,7 +35,7 @@
     "old": "  return Math.floor(25 + h + (Math.trunc(level) - 1)",
     "new": "  return Math.floor(25 + (Math.trunc(level) - 1)",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "RollMaxHealth's level 1 is 25 + h"
   },
@@ -45,7 +45,7 @@
     "old": "  const even = online ? evenHpOf(entity, (entity.stats?.endurance ?? NaN) + (x?.end ?? 0)) : 0;",
     "new": "  const even = 0;",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "no floor anywhere"
   },
@@ -55,7 +55,7 @@
     "old": "  const even = online ? evenHpOf(entity, (entity.stats?.endurance ?? NaN) + (x?.end ?? 0)) : 0;",
     "new": "  const even = evenHpOf(entity, (entity.stats?.endurance ?? NaN) + (x?.end ?? 0));",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the layer taken off keeps the floor - a save would carry it"
   },
@@ -65,7 +65,7 @@
     "old": "  const even = online ? evenHpOf(entity, (entity.stats?.endurance ?? NaN) + (x?.end ?? 0)) : 0;",
     "new": "  const even = online ? evenHpOf(entity, (entity.stats?.endurance ?? NaN)) : 0;",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the thread's 'bonus endurance being available from the firmament tree' does nothing"
   },
@@ -75,7 +75,7 @@
     "old": ", mp: capAt('mp', (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0)), end });",
     "new": ", mp: capAt('mp', (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0)) });",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the sky's Endurance never reaches the floor"
   },
@@ -85,7 +85,7 @@
     "old": "  // after the points, not before them), current health left as it stands (L2-1)\n  refreshOnlineLayer(entity, { keepHealth: true });\n",
     "new": "  // after the points, not before them), current health left as it stands (L2-1)\n",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "a level-up's floor stale until the next round"
   },
@@ -95,7 +95,7 @@
     "old": "\n  refreshOnlineLayer(entity, { keepHealth: true });   // LEVEL-EVEN: the online health floor over the new level and maximum (AUDIT LEVEL-EVEN L2-1: health as it stands)",
     "new": "",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the virtue lane's level stale"
   },
@@ -105,7 +105,7 @@
     "old": "export const ONLINE_BONUS_POOL = 5;",
     "new": "export const ONLINE_BONUS_POOL = 4;",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the mean is 5"
   },
@@ -115,7 +115,7 @@
     "old": "    entity.pendingBonusPool = online ? ONLINE_BONUS_POOL :",
     "new": "    entity.pendingBonusPool = !online ? ONLINE_BONUS_POOL :",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "offline loses BonusPool, online keeps the roll"
   },
@@ -125,7 +125,7 @@
     "old": "get endurance() { return isOnlinePage() ?",
     "new": "get endurance() { return false ?",
     "tests": [
-      "test/systems/fb1019_leveleven.test.js"
+      "test/systems/fb1019b_leveleven.test.js"
     ],
     "why": "the screen tells an online player Endurance pays only from now on"
   }

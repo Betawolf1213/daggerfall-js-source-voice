@@ -117,7 +117,7 @@ choice keys against the shipped modsettings and their clamp, the
 credit, the vendor, the boot order, the world reader and the hosts'
 hand-off. Not run here: a game.
 
-## Departures (2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-19.md`)
+## Departures (2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-19b.md`)
 
 The mod stood 1:1 until the Discord's "Weapon/Armor Materials" thread ("any new character can wander outside, kill some
 easy orcs on the overworld, and get orcish gear right from the get-go"); SCOPE1 makes it ours to move, and two moves are

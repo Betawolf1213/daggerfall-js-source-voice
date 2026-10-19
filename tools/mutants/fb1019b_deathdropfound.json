@@ -4,7 +4,7 @@
     "file": "src/systems/unleveledLoot.js",
     "old": "  item.foundCondition = item.currentCondition;   // ASF-DEATH: SELL-AS-FOUND's mark (tradeModes.js saleConditionPercentage)\n",
     "new": "",
-    "tests": ["test/systems/fb1019_deathdropfound.test.js"],
+    "tests": ["test/systems/fb1019b_deathdropfound.test.js"],
     "why": "a Daedroth's blade falls unmarked - mended, it sells whole online"
   },
   {
@@ -12,7 +12,7 @@
     "file": "src/systems/unleveledLoot.js",
     "old": "  item.foundCondition = item.currentCondition;   // ASF-DEATH\n",
     "new": "",
-    "tests": ["test/systems/fb1019_deathdropfound.test.js"],
+    "tests": ["test/systems/fb1019b_deathdropfound.test.js"],
     "why": "the field's farm: a Daedra Lord's plate mended and sold at full value"
   },
   {
@@ -20,7 +20,7 @@
     "file": "src/systems/unleveledLoot.js",
     "old": "  item.foundCondition = item.currentCondition;   // ASF-DEATH\n",
     "new": "  item.foundCondition = item.maxCondition;   // ASF-DEATH\n",
-    "tests": ["test/systems/fb1019_deathdropfound.test.js"],
+    "tests": ["test/systems/fb1019b_deathdropfound.test.js"],
     "why": "a mark at the piece's best is no mark"
   }
 ]

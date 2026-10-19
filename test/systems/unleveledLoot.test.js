@@ -127,7 +127,7 @@ test('UL1: the corpse - a Daedra Lord\'s roll over 70 drops daedric (a weapon ov
   world({ luck: 50, level: 10 });
   const lord = makeEnemyEntity(31, ENEMY_BASICS[31], career(), 10, fixed(0.5));
   lord.items = [goldStack(250)];
-  // rolls: Range(0,101)=100 (>70), METAL-RAMP's Range(0,20)=0 (under level 10: the race's metal - fb1019_metalramp pins the ramp), Range(0,100)=99 (>50: a weapon), Range(113,131)=113 (a dagger), rangeFloat(0.3,0.75)=0.3, gold: Range(1,6)=1
+  // rolls: Range(0,101)=100 (>70), METAL-RAMP's Range(0,20)=0 (under level 10: the race's metal - fb1019b_metalramp pins the ramp), Range(0,100)=99 (>50: a weapon), Range(113,131)=113 (a dagger), rangeFloat(0.3,0.75)=0.3, gold: Range(1,6)=1
   unlevelDroppedLoot(lord, { rolls: seq(0.999, 0, 0.999, 0, 0, 0) });
   assert.equal(lord.items.length, 2);
   const dagger = lord.items[1];

@@ -1,173 +1,166 @@
-# FIELD BUGS 2026-10-19 - the suggestions: the metals and their price, the one weapon skill, the guild's storage, the body a level gives, the lens and the ticker
+# FIELD BUGS 2026-10-19 - the patreon chat, read to its root
 
-From the Discord's #suggestions, through Mac: thirteen screenshots and no words, the rule for a batch like it
-(`Field-Bugs-2026-09-29d.md`) - every thread read on the real modules (six read-only lanes, one a thread), the port's
-own faults fixed and pinned, and every design ask put to Mac before anything was built. Four were asked at once; the
-answers are each row's. The level rolls' answer was *"Your opinion"*, and the opinion is recorded where it was built
-(LEVEL-EVEN). Then Mac: *"Audit everything built"* - `01-Overview/audits/Audit-Suggestions-1019.md`, six cold lanes; what
-it changed is written below as it now stands, marked with its finding's id.
+Four threads from the Discord's #patreon-chat (2026-10-18 evening), handed over as screenshots, then "fix anything not
+fixed and audit. No band aids". Three are fixed here (the wallet's in `06-Systems/Wallet.md`); the fourth is a request
+that waits on the owner's choices. Read on the code as it stands at main's `391473073`. AUDIT FB1019
+(`01-Overview/audits/Audit-Field-Bugs-2026-10-19.md`) read all of it cold; what it changed is marked here with its
+finding's id.
 
-| | Thread | Reporter | What it was | Done |
-|---|---|---|---|---|
-| 1 | "Weapon/Armor Materials": orcs on the overworld drop Orcish "right from the get-go", "Newbies are skipping 90% of the gear material progression", "the lower end materials are harder to find than the higher end materials" | (the thread's opener) | Unleveled Loot's AddOrcish and AddDaedric read no level: an Orc Warlord's 19.8% at Luck 50 was Orcish at level 1 as at 40, a Daedroth's 19.8% Daedric, while the mod's own world roll gave Mithril or better under 0.2% of the time | asked: Mac, "Level ramp" - built (METAL-RAMP) |
-| 2 | the same thread: "individual pieces of Daedric and Orcish armor are worth 10x as much as their equivalent weapons ... get tens of thousands of gold by vendoring off the daedric armor" | (the same) | the prices are Daggerfall's (one material multiplier, ItemTemplates' armour base prices 50-100 against weapons' 1-50: a Daedric cuirass 153,600, a longsword 23,040); the farm was the port's - the mod's death drops never left a `foundCondition`, so online a mended drop sold whole | fixed (ASF-DEATH); the prices asked: Mac, "Leave DFU prices" |
-| 3 | "With the addition of arcane and martial specialisations": "change one of our skills out or allow some of these specializations to work with just the one weapon skill" - the window: "Your class can't master two weapon skills, so no martial path is available." | Brother Frank | a career's lists are fixed at creation; a path is a pair of masterable weapon skills (martialPaths.js martialPossible); only class skills can be mastered (masterSkills.js) | asked: Mac, "Paid skill swap" - built (SKILL-SWAP) |
-| 4 | "Guild Hall Storage Improvements": no preview of a vault piece (a legendary's base, a rare's mods), no filter, the Stores' form under every stored row, the amount typed by hand, "a 'transfer all' button" - and containers in the hall | Alkfay | the vault's rows were text (the service already sends each piece's record "for the picture and the card"); the Stores' page drew every row before its form and its Units was required | built (GUILD-UX); the hall's own containers recorded, not built - every hall chest IS the vault (Guild-Overhaul.md, Seats-Arc 8.2), and a second shared store is the service's |
-| 5 | "Make Health from Endurance retroactive": "people are not penalized dozens or possibly hundreds of hp for not investing in endurance as early as possible", "class health per level apply as an average", "consistently give 5 attribute points per level" | (the thread's opener) | one stored maximum, each level's roll added (advancement.js applyLevelUp, DFU verbatim): nothing past is paid back; Fortify, items and the Firmament never reach it (permanent Endurance); the pool is BonusPool's 4-6 | asked: Mac, "Your opinion" - built online (LEVEL-EVEN) |
-| 6 | "Can we get panini projection as a graphics setting?" | Georgi | nothing in the tree; the renderer's "world drawn smaller and shown" present (`render/renderer.js` _retroBegin) is the seam a warp would take, and every screen-to-world read (`player/tapRay.js`) and lens sum outside the matrices would have to follow it | recorded - a renderer slice of its own (below) |
-| 7 | "Add Gloves/Gauntlet materials assisting with hand to hand +to hit" (Accepted, Finished on the Discord) | NOPper | what shipped is BAL6-GAUNTLETS (`05-Combat/Balance-Arc.md`): a beast's claws take its plate gauntlets' metal as DAMAGE, the owner's choice of three; a man's fist takes no metal and no to-hit | recorded - the human fist's to-hit is not built; Mac's call |
-| 8 | "Show current XP towards skill/next skill level up ticker, QoL": "20/100 ... how close you are", "explain exactly how one gains xp", "'your skills can be improved' notification ... since XP does not hang over" | Cruor | nothing read `skillUses`; a raise lands only at a rest or a journey more than 360 game minutes after the last check (raiseSkills), and below 100 the whole tally goes on a raise (DFU verbatim) | built (SKILL-TICK); carrying the overflow is a DFU departure not asked for |
+| | Report | What it was | Done |
+|---|---|---|---|
+| 1 | Flylighter: "Are these supposed to be weighing us down even in the wallet? ... If this isn't a bug, it might be prudent to list the total weight of the wallet up top as the wallet's weight" (309 Welkynd Shards, the wallet's card saying Weight 0.00 kg) | Not a bug - WALLET1's call: the pieces the wallet holds weigh what they always did; the wallet itself weighs nothing, and its card said its own weight alone | WALLET-WEIGHT (`06-Systems/Wallet.md`): the owner kept the weights; the enhanced pack's wallet row and card say what it holds weighs |
+| 2 | Cl3arSky: "You guys ever found The Revenant that would show on red on the map in the cave it's supposed to be in? I swear i explored fully 2 caves already for this one rev and i can't find him." Shines: "he never showed up in the lair. I had to bait them out to me on the road" | The lair's stand stood its revenant at the layout's farthest enemy marker - all but always in a border cap, a pocket no walk reaches | LAIR-REACH, below; and two more ways a known lair stood empty - its revenant out on the road (LAIR-HOME) and an interior marker no walk reaches (LAIR-WALK) |
+| 3 | [IMB]Monday: a ship bug - "If you get boarded.. repel the attackers.. board them.. etc. You can use overview as your crew class as enemies" | Read as "you can't use the Overworld view - your crew counts as enemies": a raid WON at sea never ended, and its five `_ally_` Warriors stood on the deck, hostile on their mobile team - "You cannot survey the land with enemies nearby", and no rest, no journey, for as long as the player sailed | RAID-WON, below |
+| 4 | Eterna: "how would eye go abt getting a nice little turtle symbol beside my ingame name" | A request, not a defect. A symbol beside a name is a GLYPH (`net/identityToken.js` GLYPHS, drawn by `ui/playerBadge.js`), a closed list the account service grants (`server-account/src/titles.js` glyphsOf) - by age or role, by a named list in `server-account/wrangler.toml` (WikiMaid's rabbit, 2026-10-17, is the shape), or by a Patreon tier (candle, trumpet, crown); never chosen, never by a Discord role, never an emoji in a name (`sanitizeName` keeps ASCII). There is no turtle | put to the owner: who it is for (her alone by her in-game handle, or a tier), glyph alone or with a title, its look, and the relay's version step that comes with a new glyph. The owner (2026-10-19): not now |
 
-## ASF-DEATH: a death drop sells as it fell (2)
+## LAIR-REACH: a revenant at home stands where a walk reaches
 
-`src/systems/unleveledLoot.js` dropWeapon and dropArmor.
+`src/scenes/dungeonContext.js` (`dungeonEnd`, the lair's stand and the Rift).
 
-**Found on the real modules.** SELL-AS-FOUND (AUDIT ECON O1, Port-Ledger A) marks every piece Roleplay & Realism: Items'
-rolls hand over worn with `foundCondition`, and online the Sell arm reads a piece no higher (`tradeModes.js`
-saleConditionPercentage). Unleveled Loot's death drops roll their own condition (30-75%, the armour's off the RANDOM
-piece's smaller maximum) on the corpse after the body's roll has run (`hostCombat.js` spawnEnemyLoot, then
-`corpseMarker.js` raiseEnemyDeath), so they carried no mark: a Daedric piece off a Daedra Lord or a Daedroth, mended at a
-smith, sold whole online. The thread's "tens of thousands of gold" is that.
+FOUND, on the code. RVN7d (`12-Enhanced-AI/Feud-Arc.md` 18.4) stands a revenant at home "at the layout marker farthest
+from the entrance" - `standLairRevenant` handed `dungeonEndOf` the layout's raw enemy markers. A Daggerfall dungeon's
+layout is closed by caps, its border blocks (named B...), and the caps RING the layout - so the marker farthest from the
+way in all but always stands in one, in a pocket no walk reaches. SD-REACH (`11-Multiplayer/Super-Dungeons.md`,
+2026-10-08) found exactly this of an Abyss Dungeon's Rift ("In a place with absolutely no connection to the other
+blocks") and fixed the Rift's candidates (`sdEndMarks`: an interior block's enemy markers, never a cap's nor a block's
+start markers; out of the water where any is, AUDIT SD IV F38) - but the lair's stand, which SD4b had made "one law"
+with the Rift, kept reading the raw markers. So a known lair stood its revenant, resting and unaware, where nobody could
+reach it: the red circle on the map was right, the dungeon was right, and the revenant was in the rock. The record
+claimed by the stand stayed out until the visit ended, and the next visit stood it there again. Shines' road is the
+same law from the other side: a lair never answered, so the only meeting left was the open world's return roll.
 
-**The fix.** Both drops leave the condition they rolled as `foundCondition`. The mod's rolls and draws are unchanged; offline
-nothing reads the mark. The armour's condition, read off the random piece, is never over its own piece's maximum (AUDIT
-L1-2: the ramp's lighter plate could stand at 135% of its own, a departure from 1.1.2 named in `06-Systems/Unleveled-Loot.md`),
-and a bounty's reward, which rolls its condition too, is marked as found (`bountyReward.js`, AUDIT L1-3). `test/systems/fb1019_deathdropfound.test.js` (2, red on the code before);
-`tools/mutants/fb1019_deathdropfound.json` (3, 3 dead).
+THE FIX. One host function, `dungeonEnd()` - `dungeonEndOf(the way in, sdEndMarks(_layoutEnemies, dungeon.blocks, the
+floor under each))` - and both stands ask it: the lair's (`const far = dungeonEnd()`) and the Rift's (`const end =
+dungeonEnd()`). `dungeonEndOf` is asked in one place in the host, so no third stand can take the raw markers again. With
+every marker in a cap, the farthest of them; with none, the start markers - a lair somewhere, never none; a lair with no
+end at all frees its claim, as before. The host's code lines: +1 (`test/scenes/hostceiling.test.js` holds).
 
-## METAL-RAMP: the top metals come with the level (1)
+What LAIR-REACH left - an interior marker in a pocket no walk reaches, and a revenant the road had stood a moment before -
+is LAIR-WALK and LAIR-HOME, below.
 
-`src/systems/unleveledLoot.js` (`METAL_RAMP_FULL`, `rampMetal`, addOrcish and addDaedric's `level`, unlevelDroppedLoot).
+- **Pinned**: `test/systems/revenant/lair_reach.test.js` (2: the law the lair now reads - the raw markers' end in the
+  cap, SD-REACH's in the interior block, every marker in a cap the farthest of them, a flooded block's marker only with
+  none dry; the host - one `dungeonEnd`, its body, both stands asking it, `dungeonEndOf` asked once, the lair never the
+  raw markers, no end the claim freed). PIN MOVED: `test/systems/rvn7d_stand.test.js` (the stand's `const far =
+  dungeonEnd()`), `test/world/superDungeon/sd4b_rift.test.js` and `test/world/sd22_reach.test.js` (the two stands' calls
+  and the helper's body). `tools/mutants/lair_reach.json` (5, all dead). Re-aimed by content: `sd4b.json`'s
+  SD4B-the-lair-off-the-law onto `const far = dungeonEnd();`.
 
-A drop the mod's roll grants is its race's metal on a draw of `Range(0, 20)` under the killer's level - one draw more,
-taken only under 20 and only once the mod's roll has granted the drop - and otherwise the level's rung of the middle
-metals: Elven at 1-4, Dwarven 5-8, Mithril 9-12, Adamantium 13-16, Ebony 17-19 (plate of the same metal for the armour
-arm). At 20 and up the mod stands exactly as it was, stream and all. The level is the raiser's: a room's base rolls at
-the room's (`roomLootHost.js`), a kill at the player's - and for the whole raise the mod's Luck and level are the
-raiser's, so an armour drop's own CreateRandomArmor, which reaches the mod's RandomArmorMaterial, rolls the same on every
-client of a room (AUDIT L1-1; a fault older than the batch). The middle metal goes through the Mods pane's material
-switches as the race's does (AUDIT L1-4). So a level-1 character's Warlord gives Orcish on 1 kill in 20 of
-the mod's 19.8%, and Elven on the rest - the top two later, the ones under them more often, which is the thread's ask
-in both halves. The odds of a drop at all, the gold's division and the Mods pane's switches are the mod's.
+## LAIR-HOME: a known lair answers when the road has stood its revenant
 
-`test/systems/fb1019_metalramp.test.js` (4); `tools/mutants/fb1019_metalramp.json` (7: 6 dead, and one - the corpse's
-level dropped - equivalent since AUDIT L1-1, the raise's default level being the raiser's). PIN MOVED:
-`unleveledLoot.test.js`'s corpse test takes the ramp's draw into its four granted drops' streams (at level 10, under the
-ramp's full level); what it pins of the mod is unchanged.
+`src/systems/revenant/revenant.js` (the body registry, `goesHome`, the claims, `revenantStale`), `src/scenes/exteriorFoes.js`
+(`withdrawStale`), `src/scenes/dungeonContext.js` (its pool's withdrawal, `revenantForLair`'s `foes`).
 
-## LEVEL-EVEN: the body a level gives, evened online (5)
+FOUND, on the code. RVN7d stood a revenant at home only when it was not OUT, and `out` was one flag for every stand: the
+road's return roll (`revenantToReturn`) claims a due revenant the moment it stands it for the player, and a killer over
+the player's body keeps it. A lair entered after the road had stood its revenant - out of sight, or by the door the player
+went in at - was empty for the whole visit; the open world's pool is frozen while the player is underground, so the body
+by the door kept the record out until they came back up. Shines' "I had to bait them out to me on the road" is that arm.
 
-`src/systems/levelEven.js`, `src/systems/renownLayer.js` (the floor a term of the online layer; `refreshOnlineLayer`),
-`src/systems/firmamentPowers.js` (the stars' Endurance handed to the layer each round), `src/systems/advancement.js`
-(`bonusPoolFor`'s online 5; the refresh after a level), `src/systems/oblivionLeveling.js` (the refresh),
-`src/ui/levelingChoice.js`, `src/ui/levelUp/levelUpView.js` (the words).
+THE FIX - ONE REVENANT, ONE BODY. The record knows its body: the entity its latest stand put it in (`applyRevenant`), or
+the foe still standing after its deed (a killer over my body, a felling foe - `revenantDeed`); one that got away, one run
+from and one fallen leave none. Entering its lair, one that is out goes home (`goesHome`) unless its body is in the lair's
+own pool already (a stand here this visit), is in a fight with the player - either way: its harm reached them within the
+fight's window (`harmMark.js harmFightSince` - it is at the door behind them), or theirs reached it (its feud ledger open,
+AUDIT FB1019 C3 - a beaten one chased home is never made whole by its lair) - kneels for the player's judgement (its last
+deed `yielded`), or has not stood up yet (a claim pending, within `REVENANT_STAND_GRACE_MS` - past it, a stand that never
+came). The body a later stand replaces is LEFT for good (`_left`, AUDIT FB1019 C1 - read off the registry alone, the
+lair's body slain, fled from or routed made the road's the revenant again: its loot twice, a second escape, a third body),
+and STALE (`revenantStale` - never a sworn one's): it does nothing in its revenant's name - no deed, no fall, no kneel, no
+oath (C2) - and the open world's pool withdraws it and its band as the cull takes a foe (no corpse, no kill, no deed -
+`withdrawStale`), and so does the dungeon's (its own door, `questPoolOps.removeFoe`), so whichever stand came last is the
+one body. A load and a new game forget the bodies and the claims. A stale body is no presence (`revenantPresence`). A claim keeps what was
+before it: a lair's claim that stood nobody gives the road's back as it was (`releaseRevenantStand`), and a claim over one
+that never stood keeps the state before that one. The dungeon asks with its own pool (`revenantForLair(..., { foes })`),
+never the door, which the first frame may still hold for the open world.
 
-**Mac's answer was "Your opinion".** The opinion, built:
+- **Pinned**: `test/systems/revenant/lair_home.test.js` (6: home from the road, the road body stale and no presence; never
+  home in a fight, kneeling, or here already; the grace and the releases; the bodies - a left one left for good through
+  the later body's fall, flight or rout, doing nothing in its name, a sworn one never stale, a load forgetting them; my
+  blows, the pending claim over a body, a dead record in the pool; the two pools' withdrawals and the dungeon's asks).
+  PIN MOVED: `test/systems/rvn7d_stand.test.js` (the two asks carry the pool). `tools/mutants/lair_home.json` (26, all
+  dead). Re-aimed by content: `rvn7d.json`'s four home records,
+  `revenant.json`'s REVENANT-AAA-no-claim and REVENANT-AAA-the-claim-never-freed.
 
-- **The floor, retroactive.** Online the maximum health is never below `25 + h + (level - 1) * max(1, avg + HitPointsModifier(END))`
-  - RollMaxHealth's level 1, then every level at the class's average CalculateHitPointsPerLevelUp roll with the
-  Endurance the character has NOW. So raising Endurance pays every level back (the thread's ask), a run of low rolls is
-  lifted to the class's average (the averaged roll's ask, without taking the high rolls away), and nobody's health falls.
-  Endurance there is the permanent one with the Firmament's stars in it (awake online alone), not a spell's or a ring's:
-  those come and go mid-fight and no stored health reads them, and with no service checking health a fortified body
-  would be a lever. The thread's "+1 hp/lvl for each 10 over 50" is already the rule (`floor(END / 10) - 5`).
-- **On the online layer, never in the save.** The floor's health rides `renownHp` with Renown's and the Firmament's
-  (`renownLayer.js`), so the save keeps the stored maximum and the health at its share (`offlineVitals`), offline is
-  Daggerfall's own, the lycanthrope's limiter caps Daggerfall's maximum beneath it as it does Renown's (AUDIT RENOWN1
-  GAME-4), and it is read again at every magic round, and at every level-up on both leveling lanes once its points are
-  spent (the Oghma Infinium's and the classic rollout's too) with health kept as it stands, not rescaled (AUDIT L2-1,
-  L2-2). Mentor mode sizes its body off the stored maximum and the floor's share (`evenHp`, AUDIT L2-3); the
-  Firmament's small health stars take their share of the floored body (AUDIT L2-4).
-- **Five points a level, online.** BonusPool's Range(4, 7) has a mean of 5; online every level hands out 5, drawn from no
-  stream. A level already pending keeps its drawn pool.
-- **Not built: the averaged roll itself.** With the floor, an unlucky roll is lifted and a lucky one kept; replacing the
-  roll would take the lucky one away.
+## LAIR-WALK: a revenant at home stands where a walk from the way in reaches
 
-Balance: BAL11's threat table (`05-Combat/Balance-Arc.md` section 17) was tuned on the rolled health; the floor raises a
-below-average body to the average and nothing above it. `test/systems/fb1019_leveleven.test.js` (7);
-`tools/mutants/fb1019_leveleven.json` (13, 13 dead).
+`src/ai/nav/navmesh.js` (`reachableFrom`, `REACH_LEVEL_M` - the port's own query in the file's head),
+`src/world/dungeon/dungeonEnd.js` (`reachableEndOf`, `LAIR_WALK_WAIT_MS`), `src/scenes/dungeonContext.js` (the lair's wait,
+its walk, its end and its spot).
 
-## SKILL-TICK: how close a skill is, and when it will rise (8)
+LAIR-REACH's candidates are an interior block's enemy markers; one can still stand in a pocket no walk reaches, which only
+a walk over the floor can tell (SD-REACH's own note, of the Rift). The dungeon bakes that floor already - ENHANCED AI 3b's
+navmesh, on by default and always online, anchored on the player's feet on the dungeon's first frame (the way in for a
+player who walked in; after a load, a Recall or a teleport into the dungeon, wherever they stand). So the lair WAITS for it
+when it is coming (at most `LAIR_WALK_WAIT_MS`, 20 s; a bake that fails says so at once), floods its floor ONCE from that
+anchor (`reachableFrom`: the poly the anchor stands on and every poly joined to it across a shared edge - an unlocked
+action door stands open in the bake, while a locked door is a wall, and a one-way drop, a teleporter's jump or a lever's
+lift joins nothing), and stands its revenant at the farthest candidate on that floor (`reachableEndOf`, a tie keeping the
+list's order) - SD-REACH's candidates first, then every layout marker (a reachable cap's or wet one is still a place a walk
+comes to) - and on a spot about it on that floor too, else the marker itself (AUDIT FB1019 B3: the spot is set up to 4 m
+off, and a ledge's drop could land it below). A point is on the floor only where it stands within `REACH_LEVEL_M` (1 m) of
+that floor's surface under it (B2: a low sealed room stacked over a hall, its own floor never in the mesh, is not taken for
+the hall). THE FIRST CUT asked a path per candidate, six at most (`findPath`), and with six failing fell back to the very
+marker the walk had refused - the normal case in a dungeon split by locked doors - each failure walking the whole floor
+again in the frame (B1); the flood answers every candidate at once (1.5 ms on 3k polys, 7.3 ms on 11k - the auditor's
+measure). With no navmesh (the Enhanced AI switched off offline, a bake that failed or never landed), or no marker on the
+floor at all (every one past a locked door or a drop, which a player opens with their own means), SD-REACH's end, as
+LAIR-REACH stood it. The query lives in `navmesh.js`'s head, above the body: it calls the body's own locate and heights and
+changes none of them - the body stays project-final's, pinned by digest. THE RIFT KEEPS SD-REACH ALONE: it stands the
+same on every client, and a client's bake is anchored on its own feet. A rest in the lair while the bake is coming may stand
+a due revenant over the player before the lair's stand would have claimed it - RVN7d's own rest law ("Rest in its lair
+while it is due and it wakes you").
 
-`src/systems/advancement.js` (`skillAdvanceProgress`, `skillsReadyToImprove`), `src/ui/enhanced/enhancedCharSheet.js`
-(the model's `progress`), `src/ui/enhanced/enhancedMenu.js` (`skillTickText`, the Stats page's line under each bar),
-`src/ui/levelUp/levelNotice.js` (`NOTICE_IMPROVE`, the strip's standing line), `src/systems/tutorialCatalogue.js`.
+- **Pinned**: `test/systems/revenant/lair_walk.test.js` (4: the floor a walk reaches on real bakes - the hall's far end,
+  never the sealed room beside it nor the low room stacked over it; the auditor's split hall - the hall's own farthest,
+  never a refused marker; the end a walk reaches; the host's wait, its bound, its anchor, its walk, its tiers, its spot, and
+  the Rift's own). PIN MOVED: `test/systems/rvn7d_stand.test.js` (the ask once the navmesh has landed; the lair's end),
+  `test/world/superDungeon/sd4b_rift.test.js` and `test/world/sd22_reach.test.js` (the end's body through
+  `reachableEndOf`; the Super dungeon's frame line), `test/systems/revenant/lair_reach.test.js` (the lair's end, the law
+  asked in dungeonEnd alone). `tools/mutants/lair_walk.json` (16, all dead). Re-aimed by content: `lair_reach.json`'s three host
+  records, `sd4b.json`'s SD4B-the-lair-off-the-law, `rvn7d.json`'s RVN7d-never-asked and RVN7d-asked-every-frame.
 
-- **The ticker** is raiseSkills' own test read ahead of the pass: the uses as Reflexes scales them against
-  GetSkillAdvancementRequirement's number (the class's multiplier and the level in it), and past 100 a mastered skill's
-  banked progress against the ladder's price (MOVE-BANK's units). Under every skill bar on the enhanced Stats page:
-  *12 / 40 uses to the next point*, *Ready - rest or travel to raise it* - or, while raiseSkills' 360-minute gate is
-  shut, *Ready - a rest or journey raises it once 3 more hours have passed* (AUDIT L3-1) - or why it will not: *At its
-  limit*, *At 100 - master it to climb further*, *Held while a primary skill is at 100* (AUDIT L3-3), the held ones
-  saying their uses are not kept, which is the thread's "does not hang over". The 95 lock is read in the pass's own
-  order, so a primary the pass takes from 99 to 100 holds a later skill (AUDIT L3-2). A seeded sweep of 160 characters,
-  99s among them, pins the reading to the pass's own result.
-- **The notice**: while any skill is ready and the gate open, the HUD strip carries a standing *Skills can be improved*
-  line (*1 skill is ready - rest or travel to raise it*, *N skills are ready - ... them*), just above a level's row,
-  counted only while the strip shows and building nothing (`countReadyToImprove`, AUDIT L3-4).
-- **The how**: the tutorial's character page says when a used skill rises (a rest or a journey, at most once every 6
-  hours), and on the enhanced skin alone where to look (AUDIT L6-4). The thread's point-for-point table of every skill's uses is not written: it is 35 skills'
-  worth of the game's own call sites (`hostCombat.js`, `hostMagic.js`, `worldTick.js` and the rest), and the ticker shows
-  the number each of them moves.
-- Classic skin: nothing drawn (THE NATIVE-WINDOW RULE; DFU's sheet has no such line).
+## RAID-WON: a raid won at sea ends
 
-`test/systems/fb1019_skilltick.test.js` (6); `tools/mutants/fb1019_skilltick.json` (11, 11 dead).
+`src/scenes/naval/navalHost.js` (`wonRaid`, both of `winBoarding`'s throw-back branches, `leaveShipGate`, stepBoarding's
+ship gone), `src/scenes/world.js` (endRaid's `won` and `crew`, the deck's and the ring's landings, `raidLate`),
+`src/scenes/worldModes.js` (below deck's landing), `src/scenes/raidAshore.js` (`won`, `crew`, `late`),
+`src/systems/naval/navalBoarding.js` (`RAID_CREW`).
 
-## GUILD-UX: the vault's cards and filter, the Stores' form first (4)
+FOUND, reproduced on the real quest machine (Warm Ashes' own WAQ_SHIP_SMALLRAID, the sea's gate) and the real
+enemies-near law. The sea fight starts Warm Ashes' raid on a crewed boat (`navalHost.js beginFight`); while it runs the
+player's crew is held off the deck and the raid's five `_ally_` Warriors stand in its place. Won - the pirate attack's
+leader down (`_winner_`), or the small raid's wave killed and its Leave Ship answered 'naval' - the boarding ended
+(`winBoarding` -> `endBoarding`) and the RAID DID NOT: nothing called `endRaid` on a win (only `castOff`, a raid given up,
+did), the small raid ran on to its hour and the pirate attack to its `_reset_`, and neither script ever removes `_ally_`.
+`change foe _ally_ team 1` sets their team (`entity.team`) but not their mobile team, which is the law the enemies-near
+question reads (`systems/encounters.js areEnemiesNearby`, DFU's GameManager :709 - left as it is): five Warriors on the
+deck with green bars, sailing with the ship, counted as enemies near - the Overworld refused ("You cannot survey the land
+with enemies nearby", `travelView.js`), and every rest and journey with it, for as long as the player stayed aboard. Not
+the reading that enemies take the crew's class: her defenders keep her own classes, the player's hands are allies and go
+home at the end (traced on the real naval and crew hosts).
 
-`src/ui/socialPanel.js` (guildVaultNodes, guildStoresNodes; `vaultRowAccepts`, `guildPutAll`; the panel's `itemCard`).
+THE FIX. A raid the throw-back won ends as RAID-ASHORE ends one ashore: `winBoarding` calls `wonRaid` after the boarding's
+end on both of its throw-back branches (a legend's first wave too, before the second comes over), which asks the world
+host's `endRaid(quest, { won: true })` -> `raidAshore.won`: every living foe of the quest withdrawn now and again as it ends
+(its `_ally_` among them; its dead left to be looted), and the quest ended with `end quest`'s two ticks of grace
+(`endQuest` - the machine tombstones it after them, never the tombstone in the middle of its own Leave Ship; AUDIT FB1019
+D3: and no break from outside a tick, which cut the grace tick the pirate attack's victory gong rides); one already ending
+is never begun again, one already ended has its foes withdrawn alone. The quest's uid stays the naval host's until it
+really ends (`raidEnded`) - AUDIT FB1019 D1: the Leave Ship route let go of it before the win, and the small raid's grace
+stood its waiting wave on the open ground's ring - so a Leave Ship or a wave its grace ticks still run is the sea fight's,
+never a voyage's prize window nor the ring; her ship gone in the tick its Leave Ship runs, and a raid a load carried, are
+won and ended all the same; and a wave that lands after its raid is over (its stand awaited its art or an online grant
+past both sweeps) is withdrawn as it lands (`raidAshore.late` - the deck's landing, and, D5, found writing this record,
+the open ground's ring and below deck; a raid's foe alone, `WA_RAID_QUESTS`). D2: her ship gone from the sea under
+the fight - the raid sends no more and her stranded boarders fight on (AUDIT NAV1 B6) - and now its crew goes home
+(`raidAshore.crew`, the quest's living `_ally_`), never left on the deck counted as enemies near. Raid quests carry no
+faction, so the end costs no standing.
 
-- **The vault's card.** Each row with a record carries the pack's own card (`enhancedInventory.js` showItemHover, the
-  SHOP-HOVER card - stats, affixes, set, against what is worn): a mouse's pointer brings it and takes it, a press of the
-  name toggles it, asked past the hover setting (a finger's only preview); it goes at every repaint, the panel's close
-  and its teardown (AUDIT L4-2, L4-3). The enhanced skin's alone (AUDIT L4-4). Rows and their search name a piece as
-  the pack does - an unidentified one by its kind (`vaultRowName`, AUDIT L4-6).
-- **The vault's filter.** The stores' own (`storeFilter.js`): a search over the name the row shows, the pack's pages and
-  the rarities, each listing what this vault holds with counts. Rows are hidden in place, so the search keeps its focus as
-  it is typed; the filter holds across a repaint and is let go with another vault; a filter that hides every row says so
-  (AUDIT L4-7).
-- **The Stores' form first**, the stored rows after the acts; **Units left empty is all of it** (the vault's How many
-  already was) - all held that the guild has room for on the way in, all you may take that your Stores have room for on
-  the way out, the character's room read over every origin the service counts (AUDIT L4-1).
-- **Put in all**: every material of the character's Stores, each to the guild's room for it, one deposit after another
-  through the writs book's own door, so every check the service makes and the writs' hour budget stand. A refusal stops
-  the run and says what went in and why (AUDIT L4-5); what went in stays in.
-- Not built: the hall's own containers (row 4). The sluggishness is the vault's three round trips a piece (a checkpoint,
-  the act, a read again); a remote pane in the pack with its own act would cut it, and is a slice of its own.
-
-`test/net/guild/fb1019_guildux.test.js` (10, six of them AUDIT L4's); `tools/mutants/fb1019_guildux.json` (12, 12 dead). PIN MOVED:
-`prof6_client.test.js` and `audit31_client.test.js` find the Units field by its new label.
-
-## SKILL-SWAP: a class skill changed, for gold (3)
-
-`src/systems/skillSwap.js` (`SKILL_SWAP_GOLD` 100,000, `swapOutChoices`, `swapInChoices`, `skillSwapRefusal`, `swapSkill`),
-`src/ui/growth/specGuide.js` (the model's `swap`, `drawSkillSwap`, the never-headline's hint).
-
-One class skill the character has not mastered is given up, and one miscellaneous skill takes its place in that same
-group - so the 2/2/1 masteries and every slot spent stand. A mastered skill never leaves (a mastery is permanent; a held
-path is two of them). Values do not move. The career becomes the character's own copy (the save keeps it whole); its
-name and every other term stay. **The level does not move**: the classic sum is the class's skills', so both stored sums
-move by what the swap moved it - a trained skill brought in pays no levels, an untrained one owes none, and the progress
-to the next level stands. Paid as SPEC-RESET is (coins, letters, online the Empire's account), at half its price; the
-price is a first setting, one constant. On the Growth tab's Specialisations page, under the paths: the two picks and the
-swap, asked first. Brother Frank's class (Blunt mastered, no other weapon in it) gives up a minor skill for Long Blade and
-the Blunt-and-Long-Blade paths open. The never-headline's hint shows only where one swap opens a path (`swapOpens`, AUDIT
-L5-1); a swap into a group whose slots are spent, or one that starts or ends DFU's 95 lock, is said beside the picks and
-in the ask - a warning, not a refusal (AUDIT L5-1, L5-2). The swapped career is marked (`swapped`), so an heir keeps it
-(`legacy/family.js`, AUDIT L5-4). No fold reads the career's lists, so the swap folds nothing (AUDIT L6-2).
-
-`test/systems/fb1019_skillswap.test.js` (5); `tools/mutants/fb1019_skillswap.json` (10, 10 dead). The page is pinned
-drawn (`test/ui/growth/fb1019_swappage.test.js`, AUDIT L6-1); the audit's laws, every lane's, in
-`test/systems/fb1019_audit.test.js` (19) and `tools/mutants/fb1019_audit.json` (42, 42 dead).
-
-## Recorded, not built
-
-- **Panini projection (6).** A third frame kind beside retro and render scale in `Renderer._retroBegin`: the world drawn
-  at a wider lens into the image and presented through the Panini mapping, the 2D pass, the HUD and the hands after it
-  unwarped. Everything that reads the screen through the rectilinear lens has to follow it - `player/tapRay.js` (taps, the
-  travel view's picks, the lock-on dot, the card table's cursor), the nameplates (`net/remotePlayers.js`, `ui/nameLayer.js`),
-  `ui/worldPlaque.js` reticleAnchor, the climb hands' lens and the thunderlock's muzzle - while the centre ray holds. A
-  graphics row of its own (`systems/features.js`, Off and strengths), five hosts' projections. A slice for the renderer.
-- **The gauntlets' to-hit for a man's fist (7).** BAL6-GAUNTLETS measured the to-hit shapes for the beast and the owner
-  chose damage alone; the human fist was never asked.
-- **The hall's containers (4)** and **a point-for-point skill table (8)**: above.
+- **Pinned**: `test/systems/naval/raidwon.test.js` (8: the small raid won at sea ends, each of its three outcomes, and the
+  record of the bug - five Warriors left, counted as enemies near; `won`'s own law; the hosts; and on the real sea fight
+  (AUDIT FB1019's own rig): the small raid's Leave Ship route through its grace, the pirate attack's grace tick and gong,
+  her ship gone under the fight, a legend's two waves, a raid a load carried and her ship gone at its Leave Ship; `crew`
+  and `late` on all three landings, another quest's lander left standing). PIN MOVED: `test/systems/naval/navaudit_boarding.test.js` ("a won raid ends with its win"; her ship gone,
+  its crew home; the world host's endRaid run with its `won` arm), `test/systems/naval/nav_h_host.test.js` (a voyage's
+  quest by its own uid; a carried raid's uid kept till its end). `tools/mutants/raidwon.json` (22, all dead).

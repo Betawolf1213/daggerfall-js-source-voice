@@ -1,6 +1,6 @@
 # AUDIT SUGGESTIONS-1019 (2026-10-19) - the #suggestions batch, audited
 
-Mac, of pull request #1036 (`01-Overview/bugs/Field-Bugs-2026-10-19.md` - ASF-DEATH, METAL-RAMP, LEVEL-EVEN, SKILL-TICK,
+Mac, of pull request #1036 (`01-Overview/bugs/Field-Bugs-2026-10-19b.md` - ASF-DEATH, METAL-RAMP, LEVEL-EVEN, SKILL-TICK,
 GUILD-UX, SKILL-SWAP): **"Audit everything"**, then **"Audit everything built"**. This page is the findings, each with
 its verdict. What the audit changed is written into the batch's record as it now stands, each change marked AUDIT
 SUGGESTIONS-1019 (in the code, LEVEL-EVEN's as AUDIT LEVEL-EVEN) and its id.
@@ -52,7 +52,7 @@ The scratch scripts are the session's (`scratchpad/audit/`); none is committed.
 | L5-2 | LOW | Offline with Master Skills off, a swap can start or end DFU's 95 lock at once, unsaid | FIXED: said beside the picks and in the ask |
 | L5-3 | LOW | The swap's select pushed the pane sideways at 568x320 | FIXED: `max-width: 100%` |
 | L5-4 | LOW | Legacy dropped a swapped stock class for an heir (the family keeps a career only when its name is not its index's) | FIXED: a swapped career is marked (`swapped`), kept whole by `family.js` careerFields and counted custom; its household still wears the class |
-| L6-1 | HIGH | The swap's page had no pin: eight mutants of it survived | FIXED: `test/ui/growth/fb1019_swappage.test.js` draws the real page over the fake document |
+| L6-1 | HIGH | The swap's page had no pin: eight mutants of it survived | FIXED: `test/ui/growth/fb1019b_swappage.test.js` draws the real page over the fake document |
 | L6-2 | MED | The swap's laws unpinned: the Empire's account online, the offline refusal's words, a major group's word, the fold | FIXED: pinned; the fold (`computeEntityMods`) removed - no fold reads the career's lists |
 | L6-3 | MED | The HUD's count unpinned | FIXED: by source (the hosts do not run in Node) |
 | L6-4 | MED | The tutorial sent the classic skin to a Stats page line it never draws | FIXED: that sentence on the enhanced skin alone |
@@ -76,10 +76,10 @@ languages with its record, every placeholder present, every plural arm right.
 
 ## Pins
 
-`test/systems/fb1019_audit.test.js` (L1, L2, L3, L5, L6 laws), `test/ui/growth/fb1019_swappage.test.js` (the page),
-`test/net/guild/fb1019_guildux.test.js` (six more: L4); the batch's own suites re-aimed where the words moved.
-`tools/mutants/fb1019_audit.json` (42); the batch's records and five older ones (`audit_uicalm_firm1.json`,
+`test/systems/fb1019b_audit.test.js` (L1, L2, L3, L5, L6 laws), `test/ui/growth/fb1019b_swappage.test.js` (the page),
+`test/net/guild/fb1019b_guildux.test.js` (six more: L4); the batch's own suites re-aimed where the words moved.
+`tools/mutants/fb1019b_audit.json` (42); the batch's records and five older ones (`audit_uicalm_firm1.json`,
 `auditlegacy3.json`, `wagons2_final.json`, `lv2.json`, `orl1.json`) re-aimed by content, each dead; `wagons2_final.json`
 gains one for `vaultRowName`'s wagon read, and its pin of the row's name moved with it. One record fell equivalent:
-`fb1019_metalramp.json`'s corpse-level-dropped, since L1-1 makes a raise's default level the raiser's (marked so, with
+`fb1019b_metalramp.json`'s corpse-level-dropped, since L1-1 makes a raise's default level the raiser's (marked so, with
 L1-1's own records killing a raise that forgets it).
