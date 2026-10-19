@@ -202,7 +202,7 @@
   {
     "name": "TURNED-BLOW-storey-unasked-on-screen",
     "file": "src/net/eliteGates/egBodies.js",
-    "old": "  return egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz);",
+    "old": "  return egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz, false);",
     "new": "  return false;",
     "tests": [
       "test/net/eliteGates/fb1018f_turnedblow.test.js"
@@ -212,8 +212,8 @@
   {
     "name": "TURNED-BLOW-storey-at-the-word",
     "file": "src/net/eliteGates/egBodies.js",
-    "old": "bx, b.mv ? egWalkY(b.mv, now) : b.y, bz);",
-    "new": "bx, b.y, bz);",
+    "old": "bx, b.mv ? egWalkY(b.mv, now) : b.y, bz, false);",
+    "new": "bx, b.y, bz, false);",
     "tests": [
       "test/net/eliteGates/fb1018f_turnedblow.test.js"
     ],

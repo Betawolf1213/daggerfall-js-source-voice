@@ -563,6 +563,22 @@ laid out for the phone's touch layer as for the desktop.
 - **The Professions tab** (character sheet): a left column in two groups (Gathering, Crafting) - each row the icon,
   name, rank, rank's name and a thin bar; the right pane for the chosen one - XP to the next rank, the specialisation
   cards (choose one), the unlocks by rank (tiers, recipes), today's harvests, and "Crafts above Journeyman: 1 of 2".
+  **How it is done** (TOOL-SAID, FIELD BUGS 2026-09-30b; CRAFT-HOWTO, FIELD BUGS 2026-10-18d): under the XP line, a
+  paragraph says how the chosen profession is practised. A gatherer says how it gathers (`ui/professions/profPages.js`
+  `GATHER_HOW` for Herbalism, Mining and Logging, Hunting's own line, `FISHING_HOW`, and Mining's ground line under its
+  own). A craft says where its stations stand, that they are worked from the Stores page (Holdings > Stores), what
+  they make of the gathered goods and what earns its XP (`CRAFT_HOW`: Smithing, Building, Outfitting, and Provisioning's
+  cooking after its brew, `ALCHEMY_HOW`; Enchanting's is `ENCHANTING_HOW`). Each paragraph is read in the player's
+  language when the page is drawn. Until CRAFT-HOWTO, Smithing, Building and Outfitting showed their specialisation
+  cards and nothing else, and Provisioning never named Cooking (MoonGeneral, the Discord's #bug-reports: "when it comes
+  to the crafting skills you no explanation there"). THE WORDS ARE THE CODE'S: the shops a craft names are the ones the
+  interior host's station questions answer (`scenes/worldModes.js` forgeHere, jewellerHere, workbenchHere, masonHere,
+  loomHere, alchemyHere, enchantHere), with the home's own station, a joinery's bench (`scenes/world.js` workbenchHere,
+  CARP-YARD) and any lit fire (`COOK_FIRE`). The works are `SMELT_RECIPES`, `SAW_RECIPES`, `CURE_RECIPES` and
+  `MASON_RECIPES`; a saw and a cure pay no XP. The anvil's own refining of raw ore is CRAFT1's chain (41.3). The brew's
+  words say the pack as well as the Stores, since the brew reads both (BAG-CRAFT, `Materials-Bag.md` 14). The
+  Tutorials' Crafting page (`10-UI/Tutorials.md`) is the same map in short. Pinned by
+  `test/ui/professions/fb1018d_crafthowto.test.js`; `tools/mutants/fb1018d_crafthowto.json` (23, all dead).
 - **The Stores tab**: a grid of materials with counts, each count split own / bought on its card; filters (Ores and
   Metals, Wood, Herbs, Food, Hides and Cloth, Stone, Gems, Essences, Spoils of War), a search box, sort by tier, name or count; a material's actions - **Withdraw to
   pack** (a quantity), and at a Notice Board **List** and **Deliver to a writ**. BAG1 (`Materials-Bag.md` 4): what is

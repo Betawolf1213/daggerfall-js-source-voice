@@ -646,7 +646,9 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   a guild was joined between the fall and the take, or the hub is silent.
 - **Lane 1's freeze.** A record the judge holds still loses its drop, and the room is given none of it (`burnt`, no
   order): a held character hands no value to another player. It keeps the killer's piece (Mac, 2026-10-14): that one
-  goes only to its killer, who can never have it from a held record.
+  goes only to its killer, who can never have it from a held record. BURNT-SAID (FIELD BUGS 2026-10-18b): the fallen's
+  game took that drop out of the pack and said nothing (`dropped` 0 with no order) - its death screen now says the
+  pieces were lost and that the character's trading is frozen, and names any letters of credit among them by their worth.
 - **THE FOUR HOSTS.** `scenes/world.js` WIRED (the zone word, the blows, the referee's readout, the fall, the drop, the
   deposit, the seizure, the escrow - the killer's collect carried, the fallen's piece taken back, both on the zone's
   frame, `wildEscrowHost.js:"const wildEscrowFrame = () =>"`); `scenes/dungeonContext.js` (the zone's halls) WIRED through world.js's own `wildStrike` and
@@ -946,7 +948,9 @@ Every route above but the lineage asks `progressRefusal` before it reads a word 
 rate - `PROGRESS_ROUTES`): the account's realm character holding its lease (one an account, realm.js joinRealm), alive,
 and - where the route names a character - the one it names. Answered `progress-seat` (403) otherwise, and `trade-held`
 (403, with `held`) while that character's trade is held (verdict.js holdOf: a forged record the judge found, or staff).
-A find names no character: the account's seat is asked. An honest client claims online alone (the Renown tracker, the
+A find names no character: the account's seat is asked - and the town economy's Watch (`/v1/towns/watch`, AUDIT TOWN-ECON 2
+SVC-2: it had counted footsteps for an account with no seat, or one held; asked of the account's seat, spending no bucket -
+a town's share is no player's progress, `06-Systems/Town-Economy-Arc.md` section 4). An honest client claims online alone (the Renown tracker, the
 Marks, profession and seat books run only with `?online`), online is the realm's (REALM-DOOR), and an online realm
 character's id is the realm's own (world.js sets it from the service) - so an honest player is always its seat. What it
 refuses: an offline id (each a fresh set of nodes a day), another of the account's characters, a seat another device took,

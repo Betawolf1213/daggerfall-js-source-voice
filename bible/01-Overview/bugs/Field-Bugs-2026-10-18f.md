@@ -247,7 +247,7 @@ AUDIT FB1018f L3 found the screen and the relay still apart, and closed each:
   (`eph`, `egLords.js` egLordsWake), which the link takes as a wake, no phase turn.
 - **The storey** (L3-6): the relay lands nothing on a body a storey over or under me (`egOneStorey`), and the screen did
   not ask - a Harrier on an island 14 m up was offered, and a leech healed the claim. One law now,
-  `egBodies.js:"export function egStoreyApart(view, x, y, z, bx, by, bz) {"`, which egHitBody and
+  `egBodies.js:"export function egStoreyApart(view, x, y, z, bx, by, bz, melee = true) {"`, which egHitBody and
   `egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0) {"` both call, the screen judging the body
   where its walk has carried it.
 - **An object's radius** (L3-4): the screen judged a struck object at 1 m; the relay's are their own (a spark 0.6, a
