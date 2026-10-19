@@ -1178,6 +1178,10 @@ the span build would refuse every honest faster player (AUDIT EG II L2-5).
 costs about 182 ms of motor (a falling one 2.5 s), so a pull request runs 25 seeds a band plus the law pin's golden
 seeds, and the 500-seed sweep per band runs nightly and before every relay deploy. EG6a sweeps every band's pieces: the
 generator lays them all (`tools/egSpanSolve.mjs --sweep`, `.github/workflows/eg-sweep.yml`).
+The pilot takes a launch onto a piece running away from it (a Rail, a Drum on its travel) only where the reach less one
+capsule's radius still lands - the reach's far edge is a corner caught and stepped up onto, which a face moving away never
+gives - and a launch onto a timed piece only where the launch off it follows for a launch `HOLD_S` late too, as the launch
+itself is held (EG-SWEEP-RED, section 31).
 
 ### 10.6 The toll and the fall
 
@@ -9906,3 +9910,52 @@ changed.
   way's axis there, and no standing segment of it (`egRingSideWalls`) comes within the plate's radius - nothing to fix.
 - A turned Beat's dial reads XII along +z, as its model's own does: left as drawn.
 - Rooms: towers stand in 76% of law 10's halls (drawn from the whole fresh pool; law 9's 82%).
+
+### EG-SWEEP-RED - 2026-10-19 - THE FOUR COURSES THE DEPLOY'S SWEEP DID NOT CROSS
+
+The relay's deploy for `world219` (EG-PERFECT, #1030) was refused three times - relay deploys 784, 786 and 788 - by the
+500-seed sweep it runs before it drops a player (section 10.5, "The sweep"), on the same four courses each time: 2 of 3,529 in
+band 1, 2 of 3,482 in band 3. The pull request had swept 25 seeds a band and none of the four (seeds 140, 342, 464 and 500)
+is among them. The relay stood at `world218`, the account deploy behind it waited on `world219`, and the site behind that on
+the account service's `acct156`. Each of the four seeds' circles crossed whole on the tree before EG-PERFECT (`cfff653`), its
+halls laid by law 9, and failed on every tree after: the courses are spec law 10's, the pilot and the screen are not new. One
+failure was the game's, three the pilot's.
+
+**THE BREATH KEPT TO ITS OWN SPAN LINK** (`world/eliteGates/egLook.js` egGustSections - the screen's breath, its
+streamers and the pilot's gust read). Seed 342's Hall 37 (band 1, ground 0) lays two Gust links one after the other on road 0:
+span link 0's three Gusts at y 0 on the hall's line, span link 1's three 12 m up on x 14.85. A section was a run of Gust
+steps on one road with no other piece between, so the six were one run: the first course's line, its height stretched to 12 m
+over z 4.11-29.47. The bridge the way takes back over the first course (link 20, x -1.15, 12 m up) stood inside it and was
+blown - the pilot pushed off it at 2.7 m/s - and span link 1's own Gusts, 14.85 m off the section's line, past
+`EG_GUST_REACH_M`, never blew at all. A run is one span link's now (`span` on the section): 797 of 6,000 law 10 halls over
+seeds 1-60 laid a Gust run straight on into another link's. The laws before lay no `span`, and draw as they did.
+
+**A PLAN'S CHAIN HELD FOR A LAUNCH A HOLD LATE** (`tools/egSpanSolve.mjs` launch). Seed 464's Hall 47 (band 1, ground 5)
+turns a bridge onto one Beat (link 8, heading -x). The first launch into the Beat's window was taken with the launch off it
+possible at one moment only - 21.966 s into the road, the Beat gone at 22.038 s - and the pilot's run-up reaches an edge a frame late
+(0.03 s, its own acceleration): it landed on the lip, stepped up, and no launch came before the Beat went. A launch is taken
+only where it lands `HOLD_S` either side; its chain is now asked of a launch `HOLD_S` late too, and the plan waits for a
+Beat it can leave.
+
+**A RAIL RUNNING AWAY LANDED ON WITHIN THE REACH UNCAUGHT** (`tools/egSpanSolve.mjs` lands). Seed 140's Hall 76 (two Rails
+in one phase, 2.4 m apart, running apart) and seed 500's Hall 77 (a Rail running away from the ground) were jumped at the last
+of the solver's window, the gap at landing 3.09-3.21 m against the reach's 3.26. `egJumpReach` counts the capsule over both
+edges, and the far one is a corner caught and stepped up onto (seed 464's landing above, 0.33 m under the top, was such a
+catch); a face moving away from the body gives none - the body was pinned to the Rail's face and fell. Onto a piece receding
+at the landing, the pilot takes a launch only where the reach less one capsule's radius (`EG_BODY_R`, 2.91 m on the level)
+still lands.
+
+**The pins** (`test/tooling/egsweep_red.test.js`, 3; `tools/mutants/egsweep_red.json`, 4 records, every one dead): the two
+sections of seed 342's Hall 37 on their own lines and storeys, its bridge in no breath, every Gust of it blowing, the course
+crossed; seed 464's Hall 47 crossed; seeds 140's and 500's Rails crossed. Each course is crossed from the deploy's own start.
+
+**Weighed and left, said so.** THE TIMED SOLVER's window (`egJumpLands`) counts the far edge's catch onto a receding piece
+as onto a still one, so the last few hundredths of a Rail's window as it runs away over-promise the span build by up to a
+capsule's radius. No course is left uncrossed by it - the pilot finds the launch with the radius to spare in every course
+of the sweep - but a player of the span build who jumps at the last of such a window falls short. Mending it is the law's
+(`egSpanLaw.js` is in the relay's bundle: every hall laid again, and the relay's version with it), and the owner's call.
+
+**The relay.** Nothing in the relay's bundle moved (`world/eliteGates/egLook.js` and `tools/` are the client's and the
+sweep's): `world219` stands as EG-PERFECT left it, and this is what lets its deploy through.
+
+**The four hosts.** None touched (HOST-SPLIT).
