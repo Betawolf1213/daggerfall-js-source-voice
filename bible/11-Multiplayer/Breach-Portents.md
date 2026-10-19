@@ -290,6 +290,14 @@ the fight's one host (`f.lg`): every screen draws, hears and judges them as his 
 waves never said as his host's, `waveLine`), the bar says the Vanguard's platform and wave in his host's line
 (*The Vanguard - Bridgehead, wave 2 of 3*), and its stages' lines are `scenes/gate/gateVanguard.js`'s.
 
+**AUDIT, found in WB14f.** As WB14c shipped, the court offered the Vanguard's bodies to my blows on its platforms but sent
+none of those blows: `scenes/gate/gateCourt.js hostHit` still asked WB11's question, whether I stood in the court *he*
+fights in, while the relay (`applyHostHit`) takes a blow from the floor the struck body stands on. Every blow from the
+Bridgehead and the Muster went nowhere, and WB14c's pin was a pin on the line that offered the targets. Both now ask the
+relay's question (`myFloor`, `fromItsFloor`): a body is offered, and a blow on it sent, from the floor it stands on and no
+other - his court, a platform, the Captive's Pen. Pinned on the court itself, a Brute struck from its platform
+(`test/net/gate/wb14f_captive.test.js`).
+
 ## 5. The Sundering (WB14d)
 
 At the second phase's turn (66%) he does not bound: he calls **the Sundering** at his court's heart (2.6 s, a disc of
@@ -387,6 +395,40 @@ Pen in gold until it is spent, then is gone - back through the breach the Covena
 
 Lore: section 19 of `World-Bosses.md` - *the Covenant fights every one*. Its knights are taken. The caged prisoners of
 *Oblivion*'s gates are the precedent.
+
+**As built (WB14f).** A Captive night's fight carries its captive from its birth (`net/gate/gateBrain.js newCaptive`,
+newFight's `cp`: when his gaolers rose and how many, when he went free, the Reckoning his ward takes, when it landed on it -
+each 0 until it comes). At his wake (`stepCaptive`) walkway 5 is laid to the Pen and **the gaolers** rise with it - host
+kind 7, a Ward-Bearer's body, Pulse and rising (HOST_KINDS, HOST_BLOWS, HOST_RISE_MS), `bearerCountFor` of the fight's
+challengers on a ring CAPTIVE_RING_R (7 m) about the Pen's heart, BEARER_TEAM_S of their reference damage shared over them.
+Each Pulses at whoever comes near in the Pen (`bearerBeat`; his element's, so the struck screen's alone), and a blow on one
+is taken from the Pen alone (the floor its body stands on, `applyHostHit`). They outlive his phases' turns (`notGaoler`:
+the Pen is no court of his) and crumble only with the Wrath. The beat after the last is cut down he is free (`cpf`), and
+the Covenant's ward is given to the next Reckoning at its word (`cpw`, its attack's number - `captiveWard` from `begin`), or
+at once to one still winding up as he goes free, never in its last RECKON_CLOSE_MS (the crystals' law: no screen could hear
+it in time). The Reckoning the ward takes lands on nobody: the relay's judge marks it judged (`net/bossRef.js judgeGate`,
+`wardTakes`) and every screen's court spares its fighter (`scenes/gate/gateCourt.js judge`); its crystals still grow and
+still break for the stun. A Reckoning broken before it lands gives the ward back (`applyCrystalHit`), and the next one takes
+it. The ward is spent as the Reckoning it takes lands (`cp`'s `s`), once.
+
+On the screen (`scenes/gate/gateCaptive.js`): the knight kneels at the Pen's heart as Daggerfall's Knight (mobile 145; a
+Dame by Daggerfall's woman knight, archive 487 - `net/gate/gateMods.js CAPTIVE_DAMES`, `world/gate/gateBoss.js
+knightLookOf`), bowed in a hurt frame while chained, a chain in Dagon's crimson from each gaoler to him on the floor
+(`captiveChains`); free, he stands in his idle in the ward's gold light, and the Reckoning his ward takes is drawn in the
+ward's gold with the safe edge (`dress`; the bar's callout in the same gold). He is gone CAPTIVE_GONE_MS (1.5 s) after it
+lands on the ward, with a gold burst at his going as at his freeing. The bar's host line says *Gaolers: 3*, then *The
+Covenant's ward* until it is spent; the gaolers are never counted his host. The words (`CAPTIVE_TEXT`, through the text
+core): *"Sir Evrard of the Covenant lies chained in the Pen. Cut down the gaolers!"*, *"Ann cuts down a gaoler. 2 stand."*,
+*"Sir Evrard is free! The Covenant's ward stands over the court."*, *"Sir Evrard raises the Covenant's ward against Dagon's
+Reckoning!"*, *"Dagon's Reckoning breaks on the Covenant's ward. Sir Evrard goes back through the breach."*
+
+**Departures from the sketch, named:**
+- The rising's order is *"Cut down the gaolers!"*, not *"Free him!"*: half the Covenant's knights are Dames, and the order
+  names the work.
+- A Reckoning broken by its crystals before it lands does not spend the ward. The sketch says the ward takes "the next
+  Dagon's Reckoning to land"; one broken never landed.
+- Freed while a Reckoning still winds up, the ward takes that one: it is the next to land.
+- The gaolers ring the knight at 7 m, not the Ward-Bearers' 9: their chains reach him across the Pen, not across its rim.
 
 ## 8. The Dire Breach (WB14b)
 
@@ -505,6 +547,21 @@ while news, my blows on its bodies from its platforms; `ui/gate/gateBossBar.js` 
 its looks and names. Pins: `test/net/gate/wb14c_vanguard.test.js` (13) and WB11's and WB3's tables (the kinds, the blows,
 the standing cap, the out kinds); mutants: `tools/mutants/wb14c.json` (30, all dead), and the re-aimed WB11, AUDIT WB11,
 WB13e and WB8c records.
+
+**WB14f (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 7 (the gaoler), HOST.gaoler, HOST_BLOWS 7 (its Pulse,
+the Ward-Bearer's), its rising's span, CAPTIVE_RING_R, newCaptive and newFight's `cp`, stepCaptive (the gaolers and the
+walkway at his wake, their Pulses, the freeing, the ward spent), captiveWard (from `begin`'s Reckoning, and at the freeing),
+wardTakes, captiveSpent, notGaoler (the turn's crumble spares them), applyCrystalHit (a broken Reckoning gives the ward
+back), stateOf's `cp`; `net/bossRef.js` judgeGate (the warded Reckoning counts nobody); `net/gate/gateLaw.js`
+captiveIndexOf; `net/gate/gateMods.js` CAPTIVE_DAMES; `net/wire.js` GATE_HOST_KINDS 8, the state's `cp`, `cpf` and `cpw`;
+`net/gate/gateLink.js` captiveOfState and the two words' folds; `scenes/gate/gateCaptive.js` (new: the knight, his chains, his
+glow, the ward's gold, the words); `scenes/gate/gateCourt.js` the warded Reckoning spares me, the Captive wired into the
+court's frame, passes, lights and leave, and THE AUDIT OF WB14c (section 4): his host offered, and a blow on it sent, from
+the floor its body stands on (`myFloor`, `fromItsFloor`); `ui/gate/gateBossBar.js` the gaolers' line, then the ward's, and
+the warded Reckoning's callout in gold; `world/gate/gateBoss.js` the gaoler's look and name, KNIGHT_MOBILE, knightLookOf,
+knightAct. Pins: `test/net/gate/wb14f_captive.test.js` (12), WB13b's style law over CAPTIVE_TEXT, and the older ones it
+moved (WB3's out kinds, WB11's kinds and blows, WB14e's wire counts, WB8c's telegraph line, WB14c's targets line);
+mutants: `tools/mutants/wb14f.json` (33, all dead), and the re-aimed WB11, AUDIT WB11 and GATE-FBX records.
 
 **WB14e (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 6 (the Tithe-Imp), HOST.tithe, its rising's span,
 HOST_GONE.fled, TITHE_LIFE_MS, TITHE_S, TITHE_FLEE_M, TITHE_CORNER_M, titheHpFor, stepTithe and titheBeat, newFight's

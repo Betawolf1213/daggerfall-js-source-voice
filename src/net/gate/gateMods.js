@@ -175,3 +175,5 @@ export const CAPTIVE_NAMES = Object.freeze([
   () => t('gate.captive.tavia', 'Dame Tavia'), () => t('gate.captive.aldric', 'Sir Aldric'), () => t('gate.captive.ysolde', 'Dame Ysolde'),
   () => t('gate.captive.corvin', 'Sir Corvin'), () => t('gate.captive.marisse', 'Dame Marisse'),
 ]);   // each read through the text core where it is said (L10N4)
+/** WB14f: which of CAPTIVE_NAMES is a Dame's (drawn as Daggerfall's woman knight - world/gate/gateBoss.js knightLookOf). */
+export const CAPTIVE_DAMES = Object.freeze([false, true, false, true, false, true, false, true]);

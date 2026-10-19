@@ -20,7 +20,10 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALKWAY, hostAt, planOf, SUNDER_P
  *   md: ReadonlyArray<string>|null, fed: {ns: ReadonlyArray<string>, at: number}|null,
  *   xa: ReadonlyArray<number|null>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
  *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null,
- *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null, sd?: GateSunder|null, tithe?: {c: number, at: number}|null}} GateState   (WB14c: the Vanguard's stage, and its last word; WB14d: the halves; WB14e: my tithe)
+ *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null, sd?: GateSunder|null, tithe?: {c: number, at: number}|null, cp?: GateCaptive|null}} GateState   (WB14c: the Vanguard's stage, and its last word; WB14d: the halves; WB14e: my tithe; WB14f: the Captive)
+ * @typedef {{at: number, n: number, f: number, w: number, s: number}} GateCaptive
+ *   WB14f: THE CAPTIVE as this screen holds it (net/gate/gateBrain.js newCaptive) - when his gaolers rose and how many, when he
+ *   went free, the number of the Reckoning his ward takes, and when it landed on it (each 0 until it comes).
  * @typedef {{two: boolean, m: number, h: number[], kn: number[], lo: number[], rj: number,
  *   fl: {x: number, z: number, yaw: number, move: any, atk: any, sh: number, ct: number, su: number, sa: number}}} GateSunder
  *   WB14d: THE SUNDERING as this screen holds it (net/gate/gateBrain.js sunderState) - the layout (`two`: the halves in two
@@ -42,8 +45,11 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALKWAY, hostAt, planOf, SUNDER_P
 export const GATE_STATE_EMPTY = Object.freeze({
   day: null, boss: null, phase: 1, hp: 0, max: 0, x: 0, z: 0, yaw: 0, move: null, atk: null, shieldUntil: 0,
   wrathAt: null, fighters: 0, fell: null, wrath: null, heardAt: 0, md: null, fed: null,
-  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null, sd: null, tithe: null,
+  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null, sd: null, tithe: null, cp: null,
 });
+
+/** WB14f: the Captive as the state says him (`[at, n, f, w, s]`), or null on a night without him. Pure. */
+export const captiveOfState = (c) => (Array.isArray(c) && c.length === 5 ? { at: c[0], n: c[1], f: c[2], w: c[3], s: c[4] } : null);
 
 /** WB11b: how many of his host gone the fold keeps for the court to play out (their fall, their crumbling). */
 export const HOST_GONE_KEPT = 16;
@@ -167,6 +173,7 @@ export function foldGate(s, g, now, place = bossAt) {
       pt: g.pt ?? null,   // WB14b: the night's portents - its floor plan (net/gate/gateBrain.js nightPlan) and what it holds
       sd: sunderOfState(g.sd),   // WB14d: the halves, while he is sundered
       tithe: same ? s.tithe ?? null : null,   // WB14e: my tithe, the fight's own
+      cp: captiveOfState(g.cp),   // WB14f: the Captive, on his night
       ...(g.sd?.kn?.[HALF.blade] ? { stunAt: g.sd.kn[HALF.blade] } : {}),   // WB14d: the Blade's kneel, from the moment it knelt
     };
   }
@@ -197,6 +204,9 @@ export function foldGate(s, g, now, place = bossAt) {
       return { ...s, vg: [g.s + (g.e === 1 || g.e === 3 ? 1 : 0), g.e === 1 || g.e === 3 ? 0 : g.w], xa, vgw: { e: g.e, s: g.s, w: g.w, at: g.at }, heardAt: now };
     }
     case 'tithe': return { ...s, tithe: { c: g.c, at: g.at }, heardAt: now };   // WB14e: a Tithe-Imp I struck was caught - its tithe mine
+    // WB14f: THE CAPTIVE freed, and the Reckoning his ward takes - each on the Captive this screen holds
+    case 'cpf': return s.cp ? { ...s, cp: { ...s.cp, f: s.cp.f || g.at }, heardAt: now } : s;
+    case 'cpw': return s.cp ? { ...s, cp: { ...s.cp, w: g.i }, heardAt: now } : s;
     case 'stun': return { ...s, stunUntil: g.until, stunAt: g.at, atk: null, move: null, cx: s.cx ? { ...s.cx, c: s.cx.c.map((q) => [q[0], q[1], 0]) } : null, heardAt: now };
     // WB11b: HIS HOST - risen, walking, striking, its health, gone
     case 'ad': case 'amv': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);

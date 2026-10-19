@@ -11,6 +11,7 @@ import { COURT_STRIKE_TEXT, COURT_RECKON_TEXT, COURT_MARKS_TEXT, courtPhaseOrder
 import { VANGUARD_TEXT } from '../../../src/scenes/gate/gateVanguard.js';   // WB14: the arc's own tables
 import { ARSENAL_TEXT } from '../../../src/scenes/gate/gateArsenal.js';
 import { SUNDER_TEXT } from '../../../src/scenes/gate/gateFlame.js';
+import { CAPTIVE_TEXT } from '../../../src/scenes/gate/gateCaptive.js';   // WB14f: the Captive's own
 import { COURT_HOST_TEXT } from '../../../src/scenes/gate/gateHost.js';
 import { COURT_TEXT } from '../../../src/world/gate/gateArena.js';
 import { GATE_TEXT } from '../../../src/scenes/gate/gatePool.js';
@@ -55,6 +56,7 @@ function lines() {
   for (const [k, v] of Object.entries(SUNDER_TEXT)) add(`sunder.${k}`, v('Ruhn\'s Blade'));
   for (const [k, v] of Object.entries(SUNDER_CARD)) add(`sunderCard.${k}`, v());
   add('tithe.mine', COURT_TITHE_TEXT.mine(600, 'a Ruby')); add('host.titheCaught', COURT_HOST_TEXT.titheCaught('Ann'));
+  for (const [k, v] of Object.entries(CAPTIVE_TEXT)) add(`captive.${k}`, k === 'felled' ? v('Ann', 2) : v('Sir Evrard'));   // WB14f: the Captive's moments
   for (const [k, v] of Object.entries(COURT_TEXT)) add(`court.${k}`, v);
   add('gate.opensIn', GATE_TEXT.opensIn('3:12')); add('gate.collapsesIn', GATE_TEXT.collapsesIn('6:12'));
   for (const [k, v] of Object.entries(GATE_NO_TEXT)) add(`no:${k}`, v);

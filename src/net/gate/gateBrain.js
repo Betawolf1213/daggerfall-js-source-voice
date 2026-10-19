@@ -639,6 +639,8 @@ export function newFight(day, now, wrathAt, boss, md = null, pt = null, ti = nul
     openAt: hasPortent(pt, 'vanguard') ? null : now,
     /** WB14e: how long after his wake the Tithe-Imp rises (null, none tonight), and its record once it has (`tt`) */
     ti: Number.isSafeInteger(ti) && ti >= 0 ? ti : null, tt: null,
+    /** WB14f: the Captive on a night that holds him (newCaptive), null on any other */
+    cp: hasPortent(pt, 'captive') ? newCaptive() : null,
     /** WBX5: a phase's turn still to come - PHASE_TURN's entries after the one in flight - and the next of them, begun
      *  when the breath after the last is over */
     queue: [], pending: null,
@@ -1031,12 +1033,13 @@ export function stepBrain(f, now, bodies, rng) {
     const [first, ...rest] = turnOf(f);   // WB14d: the Sundering's on its night
     f.queue = rest.map((e) => ({ ...e }));
     hostGone(f, now, out, HOST_GONE.fled, (a) => a.k === HOST.tithe);   // WB14e: a Tithe-Imp still running dives into the fire
-    hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's
+    hostGone(f, now, out, HOST_GONE.crumbled, notGaoler);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's (WB14f: the Captive's gaolers are the Pen's)
     f.pending = null;
     beginTurn(f, first, now, here, rng, out);
   }
   stepHost(f, now, here, rng, out, P);   // WB11b: his host's beat - under the Legion-Lord alone
   stepTithe(f, now, here, rng, out, P);   // WB14e: the night's Tithe-Imp, where it runs
+  stepCaptive(f, now, bodies, rng, out);   // WB14f: the Captive's gaolers, his freeing and his ward
   if (f.sd) stepSunder(f, now, dt, bodies, here, rng, out);   // WB14d: the halves' laws, and the Flame's own beat
   bodyBeat(f, now, here, bodies, rng, out, P);   // his body's beat (WB14d: the Blade's, while he is sundered)
   hpFrame(f, now, out);
@@ -1252,6 +1255,7 @@ function begin(f, atk, now, target, bodies, rng, out, point = null, echo = false
   f.atk = { i: ++f.seq, a: atk.id, at, x: f.pos[0], z: f.pos[1], yw: f.yaw, tg, until: at + atk.active + atk.recover, ...(pk ? { pk } : {}), ...(target ? { who: target.sub } : {}), ...(echo ? { echo: true } : {}), ...(Number.isInteger(to) ? { to } : {}) };
   out.push({ k: 'atk', ...atkFrame(f.atk) });
   if (atk === ATTACKS.reckon) growCrystals(f, now, bodies, rng, out);   // WB9c: the crystals rise as he calls it
+  if (atk === ATTACKS.reckon) captiveWard(f, now, out);   // WB14f: and the Covenant's ward takes it, the knight freed
 }
 
 /**
@@ -1320,6 +1324,7 @@ export function applyCrystalHit(f, sub, c, d, r, pose, now, seq = null) {
   q.h = 0;
   out.push({ k: 'cxb', i: X.i, c, n: p.name, at: now });
   if (X.c.every((o) => o.h <= 0)) {
+    if (f.cp?.w === X.i) f.cp.w = 0;   // WB14f: a Reckoning broken never lands - the Covenant's ward waits for the next
     f.cx = null;
     f.atk = null; f.move = null; f.queue = []; f.pending = null; f.target = null;
     f.stunUntil = now + STUN_MS;
@@ -1363,9 +1368,12 @@ export const HOST_KINDS = Object.freeze([
   // carrying the coven's tithe to its master: it runs from the nearest challenger, strikes nobody, and dives into the fire
   // TITHE_LIFE_MS after it rose; caught, its tithe is theirs who struck it. Any night, one in five, unannounced
   Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.2 }),
+  // WB14f (section 7): 7 the GAOLER - WB11's Ward-Bearer's body and Pulse under another name, in the Captive's Pen: the
+  // knight's chain held while one stands, and a Pulse at whoever comes near (a Captive night is never a Legion-Lord's)
+  Object.freeze({ id: 7, key: 'gaoler', r: 0.6, h: 2.2, speed: 0 }),
 ]);
 /** The kinds by name. */
-export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5, tithe: 6 });
+export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5, tithe: 6, gaoler: 7 });
 /**
  * THE HOST'S BLOWS, by the kind that strikes them (a Sapper strikes nobody - null): each a disc `r` about the body that
  * strikes it, laid where it stands at its word, wound up `windup`, landing over `active`, the body still `recover` after;
@@ -1383,6 +1391,8 @@ export const HOST_BLOWS = Object.freeze([
   Object.freeze({ kind: 4, key: 'bolt', get name() { return t('gate.host.bolt', 'Bolt'); }, windup: 1600, active: 200, recover: 400, r: 3, pct: 0.22, base: 7, el: 'aspect' }),
   Object.freeze({ kind: 5, key: 'rend', get name() { return t('gate.host.rend', 'Rend'); }, windup: 1300, active: 200, recover: 1100, r: 4.5, pct: 0.38, base: 11, el: null }),
   null,   // WB14e: the Tithe-Imp strikes nobody
+  // WB14f: a gaoler's Pulse - the Ward-Bearer's own, by its own name's reader
+  Object.freeze({ kind: 7, key: 'pulse', get name() { return t('gate.host.pulse', 'Ward Pulse'); }, windup: 1400, active: 200, recover: 0, r: 3.5, pct: 0.18, base: 6, el: 'aspect' }),
 ]);
 /** A host blow under a fight's profile: its element his aspect's where it takes one, and Vengeful's weight on its share
  *  and base (no other mark touches its blows - AUDIT WB11 D11: the host itself is touched through him, Colossal's body
@@ -1442,7 +1452,7 @@ export const SAP_FROM_HIM = 12;
 export const SAP_SPAWN_CLEAR = 8;
 /** How long each kind takes to RISE out of the fire before it moves or strikes (by wire id) - seen rising on every screen;
  *  a Sapper still rising is not drunk, whatever lands beside it. A blow meets each from its first moment. */
-export const HOST_RISE_MS = Object.freeze([800, 2500, 1500, 1500, 1500, 2500, 800]);   // WB14c: a Brute, a Caster, the Markynaz; WB14e: the Tithe-Imp an Imp's
+export const HOST_RISE_MS = Object.freeze([800, 2500, 1500, 1500, 1500, 2500, 800, 1500]);   // WB14c: a Brute, a Caster, the Markynaz; WB14e: the Tithe-Imp an Imp's; WB14f: a gaoler a Ward-Bearer's
 /** A Sapper reaches him at his body, its own and this slack; while his feedings last (SAP_FEEDS_MAX a fight) he drinks it
  *  - SAP_HEAL of the health he stands for, never past it - and past them it burns out against him (crumbled). */
 export const SAP_REACH_SLACK = 0.6;
@@ -1901,6 +1911,71 @@ function titheBeat(a, now, here, C, moves) {
   walkHost(a, gx, gz, 0, now, C, moves);
 }
 
+// ── WB14f: THE CAPTIVE (section 7) ────────────────────────────────────────────────────────────────────────────────
+/** WB14f (2026-10-19, Mac: "And whatever else you can cook up"): ON A CAPTIVE NIGHT a knight of the Covenant kneels at the
+ *  Pen's heart (who he is - net/gate/gateLaw.js captiveNameOf - is the screens'; the relay knows his gaolers). At his wake the
+ *  walkway to the Pen rises (WALKWAY.pen) and his gaolers with it: bearerCountFor(the fight's challengers) of them on a ring
+ *  CAPTIVE_RING_R about the Pen's heart, BEARER_TEAM_S of their reference damage shared over them (the Ward-Bearers' law),
+ *  each Pulsing at whoever comes near. The last one down, he is free (`cpf`), and the next Dagon's Reckoning to land lands on
+ *  the Covenant's ward and on no fighter (`cpw` at its word - or at once, for one still winding up as he goes free): the
+ *  relay's judge and every screen spare it, and its crystals still break for the stun. A Reckoning broken before it lands
+ *  leaves the ward for the next; it is spent once. Gaolers outlive his phases' turns (their Pen is no court of his). */
+export const CAPTIVE_RING_R = 7;
+/** A night's captive: when his gaolers rose and how many, when he went free, the number of the Reckoning his ward takes
+ *  (0 none yet) and when that one landed on it - each 0 until it comes. */
+export const newCaptive = () => ({ at: 0, n: 0, f: 0, w: 0, s: 0 });
+/** Does the Covenant's ward take `atk` - the Reckoning its `w` names? `cp` the fight's or a state's (net/gate/gateLink.js).
+ *  Pure. */
+export const wardTakes = (cp, atk) => !!cp && !!atk && cp.w > 0 && atk.i === cp.w && atk.a === ATTACKS.reckon.id;
+/** Is the ward spent at `now` - said so (`s`), or the Reckoning it takes landed? Pure. */
+export const captiveSpent = (cp, atk, now) => !!cp && (cp.s > 0 || (wardTakes(cp, atk) && now >= atk.at));
+/** Those of his host a phase's turn crumbles - all but the Captive's gaolers. */
+const notGaoler = (a) => a.k !== HOST.gaoler;
+
+/** The Captive's beat: his gaolers risen at his wake (and the walkway to the Pen), their Pulses while they stand, his
+ *  freeing as the last falls, and his ward spent as the Reckoning it takes lands. */
+function stepCaptive(f, now, bodies, rng, out) {
+  const K = f.cp;
+  if (!K || f.fell || f.wrath) return;
+  if (!K.at) {
+    const woke = openedAt(f);
+    if (!Number.isFinite(woke) || now < woke + OPENING_MS) return;
+    f.xa = [...(Array.isArray(f.xa) ? f.xa : [])];
+    if (!Number.isFinite(f.xa[WALKWAY.pen])) f.xa[WALKWAY.pen] = now;
+    const fighters = bodies.filter((b) => f.players[b.sub]);
+    const n = bearerCountFor(fighters.length), C = COURTS[FLOOR.pen], a0 = rng() * 2 * Math.PI, spots = [];
+    for (let k = 0; k < n; k++) { const a = a0 + (k / n) * 2 * Math.PI; spots.push([r2(C[0] + Math.sin(a) * CAPTIVE_RING_R), r2(C[1] + Math.cos(a) * CAPTIVE_RING_R)]); }
+    f.lg ??= newHost();
+    raiseHost(f, HOST.gaoler, spots, hostTeamHpFor(BEARER_TEAM_S, fighters.map((b) => f.players[b.sub].lv), n), now, out);
+    K.at = now; K.n = n;
+    f.lastStateAt = -Infinity;   // the state says the walkway at once
+    return;
+  }
+  if (!K.f) {
+    const gaolers = f.lg?.ads.filter((a) => a.k === HOST.gaoler) ?? [];
+    if (gaolers.length) {
+      for (const a of gaolers) if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
+      const near = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, FLOOR.pen, POSE_SLACK)), blows = [];
+      for (const a of gaolers) if (now >= (a.up ?? 0)) bearerBeat(a, now, near, blows);
+      if (blows.length) out.push({ k: 'aatk', a: blows });
+      hostHpFrame(f, now, out);
+      return;
+    }
+    K.f = now;
+    out.push({ k: 'cpf', at: now });
+    f.lastStateAt = -Infinity;
+    if (reckonOpen(f, now)) captiveWard(f, now, out);   // a Reckoning still winding up as he goes free: the ward takes it
+  }
+  if (!K.s && wardTakes(K, f.atk) && now >= f.atk.at) { K.s = f.atk.at; f.lastStateAt = -Infinity; }
+}
+/** The Covenant's ward given to the Reckoning in flight - the knight free, the ward neither spent nor given (`cpw`). */
+function captiveWard(f, now, out) {
+  const K = f.cp;
+  if (!K || !K.f || K.s || K.w || f.atk?.a !== ATTACKS.reckon.id) return;
+  K.w = f.atk.i;
+  out.push({ k: 'cpw', i: K.w, at: now });
+}
+
 // ── WB14d: THE SUNDERING, ITS LAWS (section 5) ─────────────────────────────────────────────────────────────────────
 /** The attacks a body may begin out of `can` - every one while he is whole, its own kit's while sundered (SUNDER_KITS). */
 const inKit = (f, can) => (f.sd ? can.filter((a) => SUNDER_KITS[f.half === HALF.flame ? HALF.flame : HALF.blade].includes(a.key)) : can);
@@ -2173,5 +2248,6 @@ export function stateOf(f) {
     ...(Number.isSafeInteger(openedAt(f)) ? { op: openedAt(f) + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen (WB14c: none while his Vanguard holds)
     ...(f.vg ? { vg: [f.vg.s, f.vg.w] } : {}),   // WB14c: the Vanguard's stage and its waves risen
     ...(f.sd ? { sd: sunderState(f) } : {}),   // WB14d: the halves, while he is sundered
+    ...(f.cp ? { cp: [f.cp.at, f.cp.n, f.cp.f, f.cp.w, f.cp.s] } : {}),   // WB14f: the Captive - his gaolers risen, freed, the Reckoning his ward takes, spent
   };
 }

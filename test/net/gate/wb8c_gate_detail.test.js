@@ -278,7 +278,7 @@ test('WB8c the seams, by source: the relay births each fight on the day\'s marks
   const gc = read('src/scenes/gate/gateCourt.js');
   assert.match(gc, /const P = profileOf\(s\);   \/\/ WB8b: the fight's marks, as law/);
   assert.match(gc, /judge\(s, t, P\);/); assert.match(gc, /burn\(s, t, P\);/); assert.match(gc, /cue\(s, t, P\);/); assert.match(gc, /drawBody\(s, t, P\);/);
-  assert.match(gc, /shape = s\.fell \? null : telegraphShape\(s\.atk, s\.phase, t, P, \(k\) => arsenal\.at\(s\.atk, k, mine\)\);/);
+  assert.match(gc, /shape = s\.fell \? null : captive\.dress\(telegraphShape\(s\.atk, s\.phase, t, P, \(k\) => arsenal\.at\(s\.atk, k, mine\)\), s\);/);   // PIN MOVED (WB14f): the telegraph dressed in the ward's gold for the Reckoning it takes (scenes/gate/gateCaptive.js dress)
   assert.match(gc, /poolDraw = pools\.length \? poolShapes\(pools, t, poolColor\(P\), TELEGRAPH_STYLE\[P\.el\] \?\? TELEGRAPH_STYLE\.fire\) : NONE;/);   // WB9e: in his ground's own grain
   assert.match(gc, /const w = sz\.w \* body\.scale \* P\.size, h = sz\.h \* body\.scale \* P\.size;/);
   assert.match(read('src/ui/enhanced/enhancedPlusStyle.js'), /body \.wb-boss-marks \{/);   // WB9a: the marks' row under his health, dressed where the trials' line was

@@ -70,10 +70,10 @@ test('WB11 the trial and the tables: Legion-Lord is the ninth trial and the only
   assert.deepEqual(GATE_TRIALS.filter((t) => t.legion).map((t) => t.id), ['legion']);
   assert.equal(gateTrialOf('legion').name, 'Legion-Lord');
   assert.ok(MARK_TIPS.legion && MARK_ICONS.legion, 'a way to meet it and a sign');
-  assert.deepEqual(HOST_KINDS.map((k) => [k.id, k.key]), [[0, 'harrier'], [1, 'sapper'], [2, 'bearer'], [3, 'brute'], [4, 'caster'], [5, 'markynaz'], [6, 'tithe']]);   // PIN MOVED (WB14e): and the Tithe-Imp (test/net/gate/wb14e_tithe.test.js); WB14c: and the Vanguard's three (test/net/gate/wb14c_vanguard.test.js)
-  assert.deepEqual(HOST, { harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5, tithe: 6 });   // PIN MOVED (WB14e): and the Tithe-Imp
+  assert.deepEqual(HOST_KINDS.map((k) => [k.id, k.key]), [[0, 'harrier'], [1, 'sapper'], [2, 'bearer'], [3, 'brute'], [4, 'caster'], [5, 'markynaz'], [6, 'tithe'], [7, 'gaoler']]);   // PIN MOVED (WB14f): and the Captive's gaolers (test/net/gate/wb14f_captive.test.js); PIN MOVED (WB14e): and the Tithe-Imp (test/net/gate/wb14e_tithe.test.js); WB14c: and the Vanguard's three (test/net/gate/wb14c_vanguard.test.js)
+  assert.deepEqual(HOST, { harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5, tithe: 6, gaoler: 7 });   // PIN MOVED (WB14f): and the gaolers; PIN MOVED (WB14e): and the Tithe-Imp
   for (const k of HOST_KINDS) assert.ok(k.speed < 7.6, `${k.key}: a runner outruns it`);
-  assert.deepEqual(HOST_BLOWS.map((b) => b?.key ?? null), ['bite', null, 'pulse', 'smash', 'bolt', 'rend', null], 'a Sapper strikes nobody');   // PIN MOVED (WB14e): nor the Tithe-Imp; WB14c: the Vanguard's
+  assert.deepEqual(HOST_BLOWS.map((b) => b?.key ?? null), ['bite', null, 'pulse', 'smash', 'bolt', 'rend', null, 'pulse'], 'a Sapper strikes nobody');   // PIN MOVED (WB14f): a gaoler's Pulse a Ward-Bearer's; PIN MOVED (WB14e): nor the Tithe-Imp; WB14c: the Vanguard's
   for (const B of HOST_BLOWS.filter(Boolean)) assert.ok((B.r / 7.6) * 1000 < B.windup / 2, `${B.key}: out of it from its own feet in under half its wind-up`);
   assert.deepEqual([0, 1, 2, 3, 4, 6, 7, 9, 10, 40].map(harrierCountFor), [2, 2, 2, 2, 3, 3, 4, 4, 5, 5]);
   assert.deepEqual([0, 1, 3, 4, 8, 12, 16, 40].map(sapperCountFor), [1, 1, 1, 2, 3, 4, 4, 4]);

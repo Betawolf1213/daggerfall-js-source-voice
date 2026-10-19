@@ -545,6 +545,7 @@ export const HOST_LOOKS = Object.freeze({
   caster: Object.freeze({ burning: 26, rime: 25, storm: 29, venom: 32 }),
   markynaz: Object.freeze({ burning: 31, rime: 31, storm: 31, venom: 31 }),
   tithe: Object.freeze({ burning: 1, rime: 1, storm: 1, venom: 1 }),   // WB14e: an Imp, at TITHE_SCALE, burning gold
+  gaoler: Object.freeze({ burning: 26, rime: 25, storm: 29, venom: 27 }),   // WB14f: the Ward-Bearer's Daedra, by another name
 });
 /** WB14e: the Tithe-Imp drawn this much larger than an Imp, and its gold (its glow, its burst, its name's line). */
 export const TITHE_SCALE = 1.3;
@@ -565,7 +566,19 @@ export function hostLookOf(k, aspectId) {
   const mobile = table[aspectId] ?? table.burning;
   const names = HOST_NAMES[mobile], name = names?.[0] ?? 'Daedra', plural = names?.[1] ?? 'Daedra';   // WB14c: a row of getters reads as a pair
   const tithe = k === HOST.tithe;   // WB14e: an Imp by its sprite, the Tithe-Imp by its name and its size
+  if (k === HOST.gaoler) return { mobile, name: t('gate.host.gaoler', 'Gaoler'), plural: t('gate.host.gaolers', 'Gaolers'), hover: 0, winged: mobile === 29, scale: 1 };   // WB14f: a Ward-Bearer's body, the Pen's name
   return { mobile, name: tithe ? t('gate.host.tithe', 'Tithe-Imp') : name, plural: tithe ? t('gate.host.tithes', 'Tithe-Imps') : plural, hover: ENEMY_BASICS[mobile]?.behaviour === 'Flying' ? HOST_HOVER_M : 0, winged: mobile === 29, scale: tithe ? TITHE_SCALE : 1 };
+}
+/** WB14f: THE CAPTIVE'S BODY - Daggerfall's Knight (mobile 145): his archive, or a Dame's her own (net/gate/gateMods.js
+ *  CAPTIVE_DAMES). Pure. */
+export const KNIGHT_MOBILE = 145;
+export const knightLookOf = (dame) => Object.freeze({ mobile: KNIGHT_MOBILE, archive: (dame ? ENEMY_BASICS[KNIGHT_MOBILE]?.femaleTexture : null) ?? ENEMY_BASICS[KNIGHT_MOBILE]?.maleTexture ?? null });
+/** WB14f: the hurt frame the captive is held bowed in while chained (bossFrame clamps it to the record's last). */
+export const KNIGHT_BOWED_FRAME = 9;
+/** WB14f: what the captive is doing at `now` - bowed in his chains, or standing free (his idle). Pure. */
+export function knightAct(freed, now) {
+  if (!freed) return { act: 'chained', anims: HURT_ANIMS, frame: KNIGHT_BOWED_FRAME, loop: false, sink: 0 };
+  return { act: 'idle', anims: IDLE_ANIMS, frame: Math.floor((Math.max(0, now) / 1000) * IDLE_ANIM_SPEED), loop: true, sink: 0 };
 }
 /** WB11c: THE ENTITY A BLOW ON ONE OF HIS HOST IS COMPUTED AGAINST - his stand-in's law over its own mobile (every metal
  *  bites, a knight's plate for armour, a health nothing here can empty - the relay holds its real one, never swayed),

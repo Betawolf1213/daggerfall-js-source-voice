@@ -367,8 +367,10 @@ export const TITHE_AFTER_MS = 50_000;
 export const TITHE_SPREAD_MS = 100_000;
 /** WB14e: when a night's Tithe-Imp rises, ms after his wake - null on a night with none. */
 export const gateTitheOf = (day) => (isGateDay(day) && gateRoll(day, 21) % TITHE_ONE_IN === 0 ? TITHE_AFTER_MS + (gateRoll(day, 22) % (TITHE_SPREAD_MS / 1000)) * 1000 : null);
-/** WB14f: the night's captive knight, by name (net/gate/gateMods.js CAPTIVE_NAMES). */
-export const captiveNameOf = (day) => CAPTIVE_NAMES[gateRoll(day, 23) % CAPTIVE_NAMES.length]();
+/** WB14f: the night's captive knight - by his place in net/gate/gateMods.js CAPTIVE_NAMES (CAPTIVE_DAMES says a Dame's), and
+ *  by name. */
+export const captiveIndexOf = (day) => gateRoll(day, 23) % CAPTIVE_NAMES.length;
+export const captiveNameOf = (day) => CAPTIVE_NAMES[captiveIndexOf(day)]();
 /** WB14b: the portents said - "His vanguard holds the approach." (the Dire Breach's line before its two); '' for none. */
 export const portentsLine = (pt) => {
   const ok = validGatePortents(pt);

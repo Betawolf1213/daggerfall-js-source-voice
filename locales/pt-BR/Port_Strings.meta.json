@@ -9664,6 +9664,11 @@
   "tr": "c875c9acbf52",
   "by": "claude-in-session"
  },
+ "gate.bar.gaolers": {
+  "en": "46abe378bd08",
+  "tr": "f1efb324c0e9",
+  "by": "claude-in-session"
+ },
  "gate.bar.halfWarded": {
   "en": "bddb0c1c0e65",
   "tr": "b383ddc6033c",
@@ -9684,9 +9689,19 @@
   "tr": "08d8d108a887",
   "by": "claude-in-session"
  },
+ "gate.bar.ward": {
+  "en": "4ea6dd0430e9",
+  "tr": "5a08a9c2626c",
+  "by": "claude-in-session"
+ },
  "gate.captive.aldric": {
   "en": "1b651b16c0a8",
   "tr": "1b651b16c0a8",
+  "by": "claude-in-session"
+ },
+ "gate.captive.chained": {
+  "en": "758a26cbdbf5",
+  "tr": "1dd34227697b",
   "by": "claude-in-session"
  },
  "gate.captive.corvin": {
@@ -9697,6 +9712,16 @@
  "gate.captive.evrard": {
   "en": "a5f46554718d",
   "tr": "a5f46554718d",
+  "by": "claude-in-session"
+ },
+ "gate.captive.felled": {
+  "en": "612feba2d519",
+  "tr": "01090b07b807",
+  "by": "claude-in-session"
+ },
+ "gate.captive.freed": {
+  "en": "9e6f54d5a4be",
+  "tr": "7e04456860bd",
   "by": "claude-in-session"
  },
  "gate.captive.gaelan": {
@@ -9714,9 +9739,19 @@
   "tr": "b945104cd699",
   "by": "claude-in-session"
  },
+ "gate.captive.spent": {
+  "en": "1bd59539d600",
+  "tr": "9ed053945814",
+  "by": "claude-in-session"
+ },
  "gate.captive.tavia": {
   "en": "8c47149b7628",
   "tr": "22f14b822801",
+  "by": "claude-in-session"
+ },
+ "gate.captive.ward": {
+  "en": "6f117bf43b68",
+  "tr": "498b3d0e3f1d",
   "by": "claude-in-session"
  },
  "gate.captive.ysolde": {
@@ -9744,6 +9779,16 @@
   "tr": "dd232436df0b",
   "by": "claude-in-session"
  },
+ "gate.host.gaoler": {
+  "en": "de3bf5b8f1aa",
+  "tr": "07ed98e21ae8",
+  "by": "claude-in-session"
+ },
+ "gate.host.gaolers": {
+  "en": "1ba77ff2f693",
+  "tr": "ed8c82f93f5b",
+  "by": "claude-in-session"
+ },
  "gate.host.lich": {
   "en": "e3596dcb959b",
   "tr": "e3596dcb959b",
@@ -9762,6 +9807,11 @@
  "gate.host.markynazes": {
   "en": "76e8ccd3e6aa",
   "tr": "76e8ccd3e6aa",
+  "by": "claude-in-session"
+ },
+ "gate.host.pulse": {
+  "en": "024543f8702e",
+  "tr": "c0ccd821cdd1",
   "by": "claude-in-session"
  },
  "gate.host.rend": {

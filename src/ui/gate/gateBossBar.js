@@ -20,7 +20,7 @@
 // marks' row, the bar clear of the crosshair.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons, VG_STAGES, HALF, SUNDER_LAST, sunders } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons, VG_STAGES, HALF, SUNDER_LAST, sunders, wardTakes, captiveSpent } from '../../net/gate/gateBrain.js';
 import { t } from '../../systems/textManager.js';   // WB14c: the Vanguard's line in the player's language (L10N4)
 import { telegraphAt } from '../../net/gate/gateStrike.js';
 import { countdownText } from '../../net/gate/gateLaw.js';
@@ -73,6 +73,9 @@ export const BOSS_BAR_TEXT = Object.freeze({
   kneels: (secs) => t('gate.bar.kneels', 'Kneels - {secs}s', { secs }),
   halfWarded: () => t('gate.bar.halfWarded', 'Warded'),
   alone: () => t('gate.bar.alone', 'Alone'),
+  // WB14f: the Captive's - his gaolers standing, then the Covenant's ward over the court until it takes a Reckoning
+  gaolers: (n) => t('gate.bar.gaolers', 'Gaolers: {n}', { n }),
+  ward: () => t('gate.bar.ward', 'The Covenant\'s ward'),
 });
 
 /** WB14d: the bar's line for half `b` of a sundered state at `now` - its kneel's seconds, its ward, its being alone - or ''. Pure. */
@@ -218,11 +221,11 @@ export function bossBarModel(s, now, boss, aimed = null, { flame = null, flameMi
   if (!s.fell && A === ATTACKS.reckon && tel && now < atk.at && s.cx) {
     let left = 0;
     for (const q of s.cx.c) if (q[2] > 0) left++;
-    callout = { text: BOSS_BAR_TEXT.reckon(P.atk.reckon.name, left, s.cx.c.length, Math.ceil((atk.at - now) / 1000)), color: css(crystalColor(P)), t: tel.t, dagon: true, move: false };
+    callout = { text: BOSS_BAR_TEXT.reckon(P.atk.reckon.name, left, s.cx.c.length, Math.ceil((atk.at - now) / 1000)), color: css(wardTakes(s.cp, atk) ? WARD_COLOR : crystalColor(P)), t: tel.t, dagon: true, move: false };   // WB14f: in the ward's gold, the one it takes
   } else if (!s.fell && s.wrath == null && now < (s.stunUntil ?? 0) && !s.sd) callout = { text: BOSS_BAR_TEXT.stunned(Math.ceil((s.stunUntil - now) / 1000)), color: css(STUN_COLOR), t: null, dagon: false, move: false };   // WB14d: a half's kneel is said on its own track
   // WB11c: his Ward-Bearers holding his ward say themselves where nothing of his is being wound up
-  let bearers = 0, others = 0;
-  for (const a of s.lg?.ads ?? []) { if (a.k === HOST.bearer) bearers++; else if (a.k !== HOST.tithe) others++; }   // WB14e: the Tithe-Imp is no host of his
+  let bearers = 0, others = 0, gaolers = 0;
+  for (const a of s.lg?.ads ?? []) { if (a.k === HOST.bearer) bearers++; else if (a.k === HOST.gaoler) gaolers++; else if (a.k !== HOST.tithe) others++; }   // WB14e: the Tithe-Imp is no host of his; WB14f: the gaolers the Captive's
   if (!s.fell && s.wrath == null && bearers > 0 && now < s.shieldUntil && !callout) callout = { text: BOSS_BAR_TEXT.bearers(bearers, s.lg?.ward?.n ?? bearers), color: css(WARD_COLOR), t: null, dagon: false, move: false };
   const toWrath = Number.isFinite(s.wrathAt) ? s.wrathAt - now : Infinity;
   const toReckon = !s.fell && s.wrath == null && s.phase >= 3 && s.rk > now ? s.rk - now : null;
@@ -247,6 +250,8 @@ export function bossBarModel(s, now, boss, aimed = null, { flame = null, flameMi
     fighters: s.fighters | 0,
     reckonIn: toReckon !== null ? BOSS_BAR_TEXT.reckonIn(countdownText(toReckon)) : null,   // WB9c
     host: !s.fell && s.wrath == null && s.vg && s.vg[0] < 2 ? BOSS_BAR_TEXT.vanguard(BOSS_BAR_TEXT.stages()[s.vg[0]], Math.max(1, s.vg[1]), VG_STAGES[s.vg[0]].waves.length)
+      : !s.fell && s.wrath == null && gaolers > 0 ? BOSS_BAR_TEXT.gaolers(gaolers)   // WB14f: the Captive's gaolers, then his ward over the court
+      : !s.fell && s.wrath == null && s.cp?.f > 0 && !captiveSpent(s.cp, s.atk, now) ? BOSS_BAR_TEXT.ward()
       : !s.fell && s.wrath == null && others > 0 ? BOSS_BAR_TEXT.host(others) : null,   // WB11c: the rest of his host standing; WB14c: his Vanguard's progress in its place
     alpha: Math.round(alpha * 20) / 20, now,
     low: !s.fell && frac > 0 && frac < LOW_HEALTH,   // WB13e: the bar pulses

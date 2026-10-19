@@ -4530,7 +4530,7 @@ export const GATE_BRAIN_V = 6;
 export const GATE_BRAIN_MIN = 6;
 /** What the room says back (the client drops any other kind). WB8b: `fed` - a fallen challenger fed a Soul-Hungry
  *  Warden (their name, his health after). */
-export const GATE_OUT_KINDS = Object.freeze(['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd', 'vgw', 'sdh', 'kn', 'kr', 'rj', 'tithe']);   // WB14e: a Tithe-Imp's tithe, to its catcher alone; WB14d: the Sundering's - the halves' pools, a kneel, a rising, the Rejoining   // WB14c: `vgw` - a stage of the Vanguard   // INT11: `bd` - the relay's count has fallen me (enforced)   // WB9c: the crystals grown, their health, one broken, the Reckoning broken and he stunned; WB11b: his host risen, walking, striking, its health, gone
+export const GATE_OUT_KINDS = Object.freeze(['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd', 'vgw', 'sdh', 'kn', 'kr', 'rj', 'tithe', 'cpf', 'cpw']);   // WB14f: the Captive freed, and his ward given a Reckoning; WB14e: a Tithe-Imp's tithe, to its catcher alone; WB14d: the Sundering's - the halves' pools, a kneel, a rising, the Rejoining   // WB14c: `vgw` - a stage of the Vanguard   // INT11: `bd` - the relay's count has fallen me (enforced)   // WB9c: the crystals grown, their health, one broken, the Reckoning broken and he stunned; WB11b: his host risen, walking, striking, its health, gone
 /** A level claim on the wire - the brain clamps it to its own 1..60; past this it is not a level at all. */
 export const GATE_LV_WIRE_MAX = 999;
 /** One blow's claimed damage on the wire - the brain caps a blow far lower (HIT_CAP_X); past this it is no blow. */
@@ -4622,7 +4622,7 @@ export const GATE_CRYSTALS_MAX = 8;
 /** WB11b: the most of his host one word names (a wave, a beat's walks or blows, its health, the gone, a state's host) -
  *  net/gate/gateBrain.js HOST_STANDING_MAX pinned under it; and the kinds (HOST_KINDS) and the ways one goes (HOST_GONE). */
 export const GATE_HOST_MAX = 16;
-export const GATE_HOST_KINDS = 7;   // WB14c: and the Vanguard's Brute, Caster and Markynaz; WB14e: the Tithe-Imp
+export const GATE_HOST_KINDS = 8;   // WB14c: and the Vanguard's Brute, Caster and Markynaz; WB14e: the Tithe-Imp; WB14f: the Captive's gaolers
 export const GATE_HOST_GONE = 4;   // WB14e: and fled (the Tithe-Imp into the fire)
 /** A health the room names, whole points. */
 export const GATE_HP_MAX = 1e9;
@@ -4847,6 +4847,9 @@ const gateSd = (sd) => {
   if ((F.mv != null && !mv) || (F.atk != null && !atk)) return null;
   return { two: sd.two, m: sd.m, h: [...sd.h], kn: [...sd.kn], lo: [...sd.lo], rj: sd.rj, fl: { x: F.x, z: F.z, yw: F.yw, mv, atk, sh: F.sh, ct: F.ct, su: F.su } };
 };
+/** WB14f: THE CAPTIVE ON THE WIRE (net/gate/gateBrain.js newCaptive) - when his gaolers rose and how many, when he went free,
+ *  the number of the Reckoning his ward takes and when it landed on it; each 0 until it comes. */
+const gateCp = (c) => (Array.isArray(c) && c.length === 5 && msOrNone(c[0]) && intIn(c[1], 0, GATE_HOST_MAX) && msOrNone(c[2]) && Number.isSafeInteger(c[3]) && c[3] >= 0 && msOrNone(c[4]) ? [...c] : null);
 /** WB14a: the highest attack id a word may name (net/gate/gateBrain.js ATTACKS - the new arsenal's 11 to 16, WB14d's Sundering
  *  and Rejoining 17 and 18; room to 31). */
 export const GATE_ATK_ID_MAX = 31;
@@ -4926,7 +4929,9 @@ export function validGateOut(m) {
       if (m.vg != null && !vg) return null;
       const sd = m.sd == null ? null : gateSd(m.sd);   // WB14d: the halves, while he is sundered
       if (m.sd != null && !sd) return null;
-      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}), ...(pt ? { pt } : {}), ...(vg ? { vg } : {}), ...(sd ? { sd } : {}), ...(m.me === 1 ? { me: 1 } : {}) };   // COURT-WATCH: `me` the answer to my own `in` - the seat mine
+      const cp = m.cp == null ? null : gateCp(m.cp);   // WB14f: the Captive, on his night
+      if (m.cp != null && !cp) return null;
+      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}), ...(pt ? { pt } : {}), ...(vg ? { vg } : {}), ...(sd ? { sd } : {}), ...(cp ? { cp } : {}), ...(m.me === 1 ? { me: 1 } : {}) };   // COURT-WATCH: `me` the answer to my own `in` - the seat mine
     }
     // WB14d: a walk, a blow and a ward of his Flame's (`b` 1) - none, his own (the Blade's, sundered)
     case 'mv': { const mv = gateMove(m); return mv && (m.b === undefined || m.b === 1) ? { k: 'mv', ...mv, ...(m.b === 1 ? { b: 1 } : {}) } : null; }
@@ -4941,6 +4946,9 @@ export function validGateOut(m) {
     case 'rj': return gateMs(m.at) ? { k: 'rj', at: m.at } : null;
     // WB14e: A TITHE-IMP'S TITHE - its seed (32 bits of the relay's own), to the account that struck it
     case 'tithe': return Number.isSafeInteger(m.c) && m.c >= 0 && m.c <= 0xffffffff && gateMs(m.at) ? { k: 'tithe', c: m.c, at: m.at } : null;
+    // WB14f: THE CAPTIVE freed (the last gaoler down), and the Reckoning his ward takes (its attack's number)
+    case 'cpf': return gateMs(m.at) ? { k: 'cpf', at: m.at } : null;
+    case 'cpw': return Number.isSafeInteger(m.i) && m.i >= 1 && gateMs(m.at) ? { k: 'cpw', i: m.i, at: m.at } : null;
     case 'wrath': return gateMs(m.at) ? { k: 'wrath', at: m.at } : null;
     case 'fell': {
       const f = gateFell(m);

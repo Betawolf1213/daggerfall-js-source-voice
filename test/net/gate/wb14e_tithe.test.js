@@ -83,7 +83,7 @@ test('WB14e the kind: an Imp at 1.3 of its body, under a runner\'s pace, that st
   assert.equal(titheHpFor([10, 10, 10]), Math.round(TITHE_S * dpsRef(10)));
   assert.equal(titheHpFor([1]), Math.max(HOST_HP_MIN, Math.round(TITHE_S * dpsRef(1))));
   assert.equal(titheHpFor([]), HOST_HP_MIN);
-  assert.deepEqual([GATE_HOST_KINDS, GATE_HOST_GONE], [7, 4]);
+  assert.deepEqual([GATE_HOST_KINDS, GATE_HOST_GONE], [8, 4]);   // PIN MOVED (WB14f): and the Captive's gaolers
 });
 
 test('WB14e it rises once at its moment after his wake, at his court\'s rim on the side away from him, with the court\'s levels\' health - never before, never on a night without one (mutants: risen at the fight\'s birth; at the rim beside him; twice)', () => {

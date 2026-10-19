@@ -110,7 +110,7 @@
   {
     "name": "WB11-host-outlives-its-phase",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    hostGone(f, now, out, HOST_GONE.crumbled);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's\n",
+    "old": "    hostGone(f, now, out, HOST_GONE.crumbled, notGaoler);   // WB11b: his host crumbles at every turn - each kind is its phase's or its court's (WB14f: the Captive's gaolers are the Pen's)\n",
     "new": "",
     "tests": [
       "test/net/gate/wb11_gate_host.test.js"
@@ -272,10 +272,11 @@
   {
     "name": "WB11-targets-from-anywhere",
     "file": "src/scenes/gate/gateCourt.js",
-    "old": "!s.lg || !(fromHisCourt(s, t) || vanguardOut(s)) ? NONE : host.targets();",
-    "new": "!s.lg ? NONE : host.targets();",
+    "old": "if (k >= 0) for (const T of host.targets()) if (nearestCourt(T.feet[0] - COURT_CENTRE[0], T.feet[2] - COURT_CENTRE[2]) === k) _hostMine.push(T);",
+    "new": "if (k >= 0) for (const T of host.targets()) _hostMine.push(T);",
     "tests": [
-      "test/net/gate/wb11_gate_host.test.js"
+      "test/net/gate/wb11_gate_host.test.js",
+      "test/net/gate/wb14f_captive.test.js"
     ]
   },
   {

@@ -33,7 +33,7 @@
 // one judge for every FULL shape stamp, per fight floor, on SHARED-TIME trails (net/eliteGates/egFair.js's time law - `[t, x, y, z, h]`,
 // `t` the pose's own send time on the relay's clock), and judgePlace, the hall's own hazards at their landing. The three
 // above keep their arrival-timed trails: their enforcement is off (BODY_DEFAULT.enforce), so their error was never paid.
-import { ATTACK_BY_ID, ATTACKS, profileOf, flameProfileOf, hostBlowUnder, screenJudged } from './gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, profileOf, flameProfileOf, hostBlowUnder, screenJudged, wardTakes } from './gate/gateBrain.js';
 import { inAttack, chargeStrikes, wheelStrikes, blowOf } from './gate/gateStrike.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_RESET_PCT, SD_END_PCT, SD_ARENA_SLACK, blowShape, pulsePctOf, handSwept, behindPillar, inArena } from './superDungeon/sdRemnant.js';
 import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, coilHolds, serpentShipsFighting, serpentOnShip } from './serpent/serpentBrain.js';
@@ -127,6 +127,7 @@ export function judgeGate(f, bodies, now) {
   if (f.fell || f.wrath) return [];
   const out = [], live = living(f, bodies), prev = Math.max(f.bjAt ?? -Infinity, now - 1000);
   f.bjAt = now;
+  if (wardTakes(f.cp, f.atk)) f.atk.bj = true;   // WB14f: the Reckoning the Covenant's ward takes lands on no fighter
   bodyBlow(f.atk, live, profileOf(f), prev, now, out);
   if (f.sd) bodyBlow(f.sd.fl.atk, live, flameProfileOf(f), prev, now, out);   // WB14d: and his Flame's, by its own body
   const P = profileOf(f);

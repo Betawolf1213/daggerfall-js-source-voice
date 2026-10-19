@@ -214,8 +214,8 @@
   {
     "name": "AUDIT-WB11-B4-the-fallen-not-counted",
     "file": "src/net/gate/gateBrain.js",
-    "old": "const fighters = bodies.filter((b) => f.players[b.sub]);",
-    "new": "const fighters = bodies.filter((b) => !b.dead && f.players[b.sub]);",
+    "old": "const fighters = bodies.filter((b) => f.players[b.sub]);\n  const n = bearerCountFor(fighters.length), C = hisCourt(f)",
+    "new": "const fighters = bodies.filter((b) => !b.dead && f.players[b.sub]);\n  const n = bearerCountFor(fighters.length), C = hisCourt(f)",
     "tests": [
       "test/net/gate/audit_wb11.test.js"
     ]
