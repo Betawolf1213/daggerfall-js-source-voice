@@ -1,0 +1,162 @@
+[
+ {
+  "name": "VENDORB-listed-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listed AFTER INSERT ON market_listings WHEN NEW.vendor_id IS NOT NULL",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listed AFTER INSERT ON market_listings WHEN 0",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a listing put up at a trader leaves the region's board kept"
+ },
+ {
+  "name": "VENDORB-listing-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings WHEN OLD.vendor_id IS NOT NULL OR NEW.vendor_id IS NOT NULL",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings WHEN 0",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a listing bought or cancelled stays on the kept board"
+ },
+ {
+  "name": "VENDORB-listing-old-region",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (OLD.region, NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
+  "new": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a listing moved to another region stays on the old region's board"
+ },
+ {
+  "name": "VENDORB-trader-in-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "  WHEN NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor'\nBEGIN",
+  "new": "  WHEN 0\nBEGIN",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a trader set down leaves its region's board kept"
+ },
+ {
+  "name": "VENDORB-trader-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "  WHEN (OLD.yard = 0 AND CASE WHEN json_valid(OLD.place) THEN json_extract(OLD.place, '$.station') END = 'vendor') OR (NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor')",
+  "new": "  WHEN (NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor')",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a trader taken off its station leaves its listings on the kept board"
+ },
+ {
+  "name": "VENDORB-house-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house AFTER UPDATE OF player, char_id, owner_name, region, entry, guild_id ON homes",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house AFTER UPDATE OF price ON homes",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a house's door, owner, guild or region changed leaves the board kept"
+ },
+ {
+  "name": "VENDORB-house-old-region",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (OLD.region, NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_gone",
+  "new": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_gone",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a house moved to another region stays on the old region's board"
+ },
+ {
+  "name": "VENDORB-house-gone-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region = OLD.region;",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  UPDATE market_vendor_boards SET ver = ver + 1 WHERE 0;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a house released stays on the kept board"
+ },
+ {
+  "name": "VENDORB-patron-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_patron AFTER INSERT ON market_patron_sales\nBEGIN",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_patron AFTER INSERT ON market_patron_sales WHEN 0\nBEGIN",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a patron's sale missing from the kept board"
+ },
+ {
+  "name": "VENDORB-runout-kept",
+  "file": "server-account/src/market.js",
+  "old": "  const board = kept && Number(kept.built) === Number(kept.ver) && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const board = kept && Number(kept.built) === Number(kept.ver) ? vendorBoardOf(kept.rows) : null;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a listing run out still on the board"
+ },
+ {
+  "name": "VENDORB-version-unread",
+  "file": "server-account/src/market.js",
+  "old": "  const board = kept && Number(kept.built) === Number(kept.ver) && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const board = kept && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a board kept through every write"
+ },
+ {
+  "name": "VENDORB-keep-unguarded",
+  "file": "server-account/src/market.js",
+  "old": "WHERE region = ?4 AND ver = ?2')",
+  "new": "WHERE region = ?4 AND ?2 IS NOT NULL')",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a board read before a write kept as the board after it"
+ },
+ {
+  "name": "VENDORB-patrons-past-day",
+  "file": "server-account/src/market.js",
+  "old": "    patrons: board.patrons.filter((/** @type {any} */ r) => Number(r.at) > since).map(patronView),",
+  "new": "    patrons: board.patrons.map(patronView),",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a kept board tells a patron's sale past its day"
+ },
+ {
+  "name": "VENDORB-mine-any-char",
+  "file": "server-account/src/market.js",
+  "old": "mine: l.v_player === player.id && l.v_char === me,",
+  "new": "mine: l.v_player === player.id,",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "every character of the account told the house is its own"
+ },
+ {
+  "name": "VENDORB-guildmate-any-door",
+  "file": "server-account/src/market.js",
+  "old": "          ...(l.v_entry === 'guild' && mate.has(`${l.v_player}\\n${l.v_char}`) ? { guildmate: true } : {}),",
+  "new": "          ...(mate.has(`${l.v_player}\\n${l.v_char}`) ? { guildmate: true } : {}),",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a guildmate's private house told as a guild's"
+ },
+ {
+  "name": "VENDORB-expiry-unread",
+  "file": "server-account/src/market.js",
+  "old": "    const until = Math.min(Number(next?.results?.[0]?.next ?? Infinity), nowS + VENDOR_BOARD_KEPT_S);",
+  "new": "    const until = nowS + VENDOR_BOARD_KEPT_S;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a board kept past its first listing's end"
+ }
+]

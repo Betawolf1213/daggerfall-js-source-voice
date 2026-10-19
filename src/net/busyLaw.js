@@ -39,7 +39,7 @@ export const BUSY_READS = new Map([
   ['/v1/homes/decor', 'POST'],      // a home's pieces
   ['/v1/prof/pixels', 'POST'],      // a pixel's nodes - the hour's third busiest (29,249 asks)
   ['/v1/seats/list', 'POST'],       // the seats, from the isolate's kept rows
-  ['/v1/market/vendors', 'POST'],   // a region's traders
+  ['/v1/market/vendors', 'POST'],   // a region's traders - VENDOR-BOARD: its kept board written once a version, a write a shed read only defers (market.js vendorBoard)
   ['/v1/marks/balance', 'POST'],    // the Marks held
   ['/v1/guilds/invites', 'POST'],   // the invitations waiting
   ['/v1/realm/lineages', 'POST'],   // the account's lineages

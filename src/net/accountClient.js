@@ -1021,6 +1021,14 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
     // button. Every arm of this function returns the same shape.
     forgetD1Bookmark();   // AUDIT SCALE II A-6: a call that could not be made - a preflight refusing the header among them
     if (!passKeptThrough(e)) forgetSessionPass();   // SESSION-SIGN: the same, for the pass's - but a timeout's (E7)
+    // SLOW-SHED (bible/11-Multiplayer/Scale-Arc.md SLOW-SHED): A READ THE SERVICE WAS TOO SLOW TO ANSWER IS ITS OVERLOAD'S
+    // WORD - its reads stand back as an overload answer stands them back. In the 18:05 overload the database answered
+    // slowly and refused almost nothing: each tab's read timed out, was `offline` to the gate, and was asked again, and
+    // the region's traders were asked four times as often. A write, a sign-in or an act that times out holds nothing.
+    if (e?.name === 'TimeoutError' && busyRead(path, method)) {
+      const n = _busy.n + 1;
+      _busy = { n, until: Math.max(_busy.until, now() + busyWaitMs(n, rand())) };
+    }
     return { ok: false, error: 'offline' };
   }
   if (PASS_MOVES.has(path)) forgetSessionPass(); else noteSessionPass(secret, res);   // SESSION-SIGN E2

@@ -31,7 +31,8 @@ import { busyRead, BUSY_SHED_MS } from '../../src/net/busyLaw.js';   // BUSY-GAT
  *  reason: a deploy that did not happen looks exactly like one that
  *  did. Kept in step with ACCOUNT_VERSION in wrangler.toml, which
  *  test/server/accountworker.test.js holds. */
-export const ACCOUNT_VERSION = 'acct158';   // acct158: FOE-BOUNDS and GRANT-ASKS (2026-10-19, acct156 on its branch, renumbered past TOWN-ECON's acct156 and PLAN-1000's acct157 at the merges; Mac: "Spec + B + A"; bible/11-Multiplayer/Spawn-Grants.md sections 19 and 21) - the relay's own count opens a moderators' case: a record it stripped because no builder could give it (the batch's `~relay` tally, its evidence on the line) and an account's own asks far past its budget in a window; one batch's findings on an account are one line; the count opens at most GRANT_OWN_CASES_HOUR cases an hour; a tally's `stats` is a case's reason; the Discord card says the spawn grants opened a case of theirs
+export const ACCOUNT_VERSION = 'acct159';   // acct159: LEAN-READS (2026-10-19, the account database overloaded again from 18:05 UTC - "D1 DB is overloaded. Requests queued for too long." on the harvest and the pixels, the median request 10 s; the owner: "Do everything. No band aids. No short fixes."; bible/11-Multiplayer/Scale-Arc.md THE OVERLOAD OF 2026-10-19) - LEAN-WITNESS: a hall's and a seat's answers that agree with their key's confirmation a second after it are late, kept by the database (witness_confirmed, its triggers), and the reads that judge read the rest - a hall witness reads no region unless its own answers could have it ignored, and a late report moves no region (leanWitness.js, npcHalls.js, townSeats.js; migration 0133); YARD-SNAP: a town's yards one row, built at the version the database moves on every yard row written (decor.js, migration 0134); VENDOR-BOARD: a region's traders one row, the caller's door off its own rows (market.js vendorBoard, migration 0135); WRIT-BOARD: a region's writs sought by their owner (professions.js, migration 0136); ARENA-BOARD: the arena board's counts one row a season (arena.js arenaShared, migration 0137); SLOW-SHED: an isolate whose requests wait SLOW_SHED_WAIT_MS a statement sheds what an overload sheds (service.js noteD1Wait)
+// acct158: FOE-BOUNDS and GRANT-ASKS (2026-10-19, acct156 on its branch, renumbered past TOWN-ECON's acct156 and PLAN-1000's acct157 at the merges; Mac: "Spec + B + A"; bible/11-Multiplayer/Spawn-Grants.md sections 19 and 21) - the relay's own count opens a moderators' case: a record it stripped because no builder could give it (the batch's `~relay` tally, its evidence on the line) and an account's own asks far past its budget in a window; one batch's findings on an account are one line; the count opens at most GRANT_OWN_CASES_HOUR cases an hour; a tally's `stats` is a case's reason; the Discord card says the spawn grants opened a case of theirs
 // acct157: PLAN-1000 (2026-10-18, acct155 on its branch, renumbered past GRANT2's acct155 and TOWN-ECON TE2's acct156 at the merge; the owner at a thousand online: "We really need to future proof even more and improve our server. Like really deep"; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000) - PRIMARY-FOLD: a claim's door asks its tombstone, seat and bucket in one statement (door.js), the spend steps its bucket inside its own upsert (progress.js spendProgress, AUDIT PLAN-1000 C1), a week read settled stays settled in its isolate (weekKept.js), the chapters' sheet and a chapter claim read in one batch each; SESSION-SIGN: the hot routes believe a signed pass of five minutes for the session's lookup (sessionPass.js, `x-session-pass`); no migration.
 // acct156: TOWN-ECON TE2 (2026-10-18, Mac: "Everything"; bible/06-Systems/Town-Economy-Arc.md section 4) - the town economy's players' share: the towns' shares read (/v1/towns/econ), a town witnessed into the registry (/v1/towns/witness), the Watch's ticks walked in a town claimed (/v1/towns/watch), a trader's sale, a patron's and a raid driven off counted at their town, each account capped a town a day; migration 0132 (renumbered past GRANT2's 0131_grant_measure, acct155, at the merge). And LAW-3 (section 7.4): the item law's `counterPaid` (src/systems/item/itemFields.js) SEA-TRADE and AUDIT TOWN-ECON 2 (2026-10-18, the same branch, the same version - none of it deployed between): a captain's dealing a `sea` act of the Watch's claim; a town reported with a Watch tick at its pixel, struck and audited by a developer (/v1/towns/strike, /v1/towns/audit), its shares kept by the clock (`town_econ_kept`), the doors behind TOWNS_OPEN, and the town Watch asked of the account's seat (INT16).
 // acct155: GRANT2 (2026-10-18, Mac: "Lets build the plan"; bible/11-Multiplayer/Spawn-Grants.md section 12) - the spawn grants' measure: POST /v1/mod/grant-feed takes a cell's window of grant asks under the relay's signature (grants.js takeGrantMeasure, net/grantMeasure.js), once, into grant_batches and grant_rows (migration 0131_grant_measure); a developer reads it with /v1/mod/realm-grants (grantsMeasure: per kind, an account's asks an hour, what the buckets and the ceiling would have refused, the cells' most live; tools/realmReview.mjs grants)
@@ -80,7 +81,34 @@ export function noteOverload(/** @type {number} */ nowMs) { busyShedUntil = Math
 /** BUSY-GATE: whether this request is a read the isolate sheds at `nowMs`. */
 export const shedding = (/** @type {string} */ path, /** @type {string} */ method, /** @type {number} */ nowMs) => busyRead(path, method) && nowMs < busyShedUntil;
 /** BUSY-GATE: a stood service is a fresh isolate - nothing shed. */
-export function _resetBusyShed() { busyShedUntil = 0; }
+export function _resetBusyShed() { busyShedUntil = 0; slowWaits.length = 0; }
+
+/** SLOW-SHED (2026-10-19, the account database overloaded again, 18:05-18:25 UTC; bible/11-Multiplayer/Scale-Arc.md
+ *  SLOW-SHED): A DATABASE TOO SLOW TO ANSWER IS SHED AS ONE THAT REFUSES. BUSY-GATE's shed opened only on D1's own word
+ *  (`overloaded`), and it left the case it could not measure yet - "a slow database that is not yet refusing opens neither
+ *  gate". In the overload it is the case that held: 52 refusals logged in twelve minutes while the median request waited 10 s
+ *  and the region's traders were asked four times as often (each tab's read timing out and asked again). Measured over
+ *  thirty hours of the service's own metrics (each request's D1 wait over its statements, ten minutes a point): a healthy
+ *  service 40-680 ms a statement, every overload of the thirty hours 1,200-2,400 ms. So each isolate keeps its last
+ *  SLOW_SHED_SPAN_MS of requests' waits (metrics.js measured), and while they average SLOW_SHED_WAIT_MS a statement or
+ *  more over SLOW_SHED_MIN requests or more, it sheds what an overload sheds (noteOverload) - each request itself that
+ *  slow keeping it open, so it closes BUSY_SHED_MS after the last one once the database answers quickly again. A shed read asks the database nothing and adds nothing here. */
+export const SLOW_SHED_WAIT_MS = 1_500;
+export const SLOW_SHED_SPAN_MS = 30_000;
+export const SLOW_SHED_MIN = 16;
+/** SLOW-SHED: this isolate's recent requests - `{ at, ms, n }` their D1 wait over their statements, oldest first. */
+const slowWaits = /** @type {{ at: number, ms: number, n: number }[]} */ ([]);
+/** SLOW-SHED: a request's D1 wait (`ms`) over its `statements`, ended at `nowMs` - and the shed opened where the span
+ *  averages too slow. A request that asked the database nothing says nothing of it. */
+export function noteD1Wait(/** @type {number} */ ms, /** @type {number} */ statements, /** @type {number} */ nowMs) {
+  if (!(statements > 0) || !Number.isFinite(ms)) return;
+  slowWaits.push({ at: nowMs, ms, n: statements });
+  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) slowWaits.shift();
+  if (slowWaits.length < SLOW_SHED_MIN || ms / statements < SLOW_SHED_WAIT_MS) return;   // a quick request keeps nothing open
+  let waited = 0, asked = 0;
+  for (const w of slowWaits) { waited += w.ms; asked += w.n; }
+  if (waited / asked >= SLOW_SHED_WAIT_MS) noteOverload(nowMs);
+}
 
 /** SCALE4d (2026-10-10, Mac: "we just hit 500 online people. I think its time to scale up our server and improve
  *  performance for more people"): THE ROUTES WHOSE READS A D1 READ REPLICA MAY SERVE. The token's mint is a dozen

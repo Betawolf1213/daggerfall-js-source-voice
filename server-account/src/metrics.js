@@ -76,7 +76,7 @@
 //   GROUP BY route, status ORDER BY n DESC
 // ═══════════════════════════════════════════════════════════════════
 
-import { ROUTES, savePathOf, realmPathOf, DB_ROOT } from './service.js';
+import { ROUTES, savePathOf, realmPathOf, DB_ROOT, noteD1Wait } from './service.js';   // SLOW-SHED: a request's D1 wait heard by the isolate's shed
 import { HEARTBEAT_PARTS } from './heartbeat.js';
 
 /** The route as a TEMPLATE: a served path as it stands, a save slot or a realm character's save by its shape - never
@@ -218,6 +218,7 @@ export async function measured(request, env, serve, exec = null) {
   const tally = { n: 0, ms: 0, rr: 0, rw: 0, replica: 0, tables: /** @type {Record<string, number>} */ ({}) };
   const counted = env.DB ? { ...env, DB: countedDb(env.DB, tally) } : env;
   const res = await serve(request, counted, said, exec);
+  noteD1Wait(tally.ms, tally.n, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait
   const parts = typeof said.parts === 'string' ? said.parts : '';   // AUDIT SCALE II A-3: the service's own word on the body it read
   try {
     const route = routeLabel(new URL(request.url).pathname);

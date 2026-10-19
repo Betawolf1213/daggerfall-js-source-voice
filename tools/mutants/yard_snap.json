@@ -1,0 +1,134 @@
+[
+ {
+  "name": "YARDSNAP-delete-unmoved",
+  "file": "server-account/migrations/0134_yard_snap.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 1",
+  "new": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 9",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a yard piece taken away (or its home released) leaves its town's row standing"
+ },
+ {
+  "name": "YARDSNAP-move-one-town",
+  "file": "server-account/migrations/0134_yard_snap.sql",
+  "old": "  UPDATE home_yards SET ver = ver + 1 WHERE map_id = OLD.map_id AND OLD.yard = 1;\n",
+  "new": "",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a yard piece moved to another town leaves the town it left standing"
+ },
+ {
+  "name": "YARDSNAP-room-moves-town",
+  "file": "server-account/migrations/0134_yard_snap.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard = 1",
+  "new": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard >= 0",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a room's piece moves its town, and every room write builds the town again"
+ },
+ {
+  "name": "YARDSNAP-build-order",
+  "file": "server-account/src/decor.js",
+  "old": "    FROM (SELECT ${cols} FROM home_decor WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT ${DECOR_YARDS_TOWN_MAX}))",
+  "new": "    FROM (SELECT ${cols} FROM home_decor WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY id LIMIT ${DECOR_YARDS_TOWN_MAX}))",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "the town's bound cut in another order than the read's"
+ },
+ {
+  "name": "YARDSNAP-build-unbounded",
+  "file": "server-account/src/decor.js",
+  "old": "ORDER BY building_key, placed_at, id LIMIT ${DECOR_YARDS_TOWN_MAX}))\n    WHERE built != ver",
+  "new": "ORDER BY building_key, placed_at, id))\n    WHERE built != ver",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a town past its bound answered whole"
+ },
+ {
+  "name": "YARDSNAP-stale-answered",
+  "file": "server-account/src/decor.js",
+  "old": "  const built = Number(snap.built) === Number(snap.ver) ? yardRowsOf(snap.rows) : null;",
+  "new": "  const built = yardRowsOf(snap.rows);",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a stale row answered over the rows as they stand"
+ },
+ {
+  "name": "YARDSNAP-no-row-reads",
+  "file": "server-account/src/decor.js",
+  "old": "  if (!snap) return { mapId, yards: [] };\n",
+  "new": "",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a town that never stood a yard read for its rows"
+ },
+ {
+  "name": "YARDSNAP-rows-unordered",
+  "file": "server-account/src/decor.js",
+  "old": "  return rows.sort((x, y) => cmp(x.building_key, y.building_key) || cmp(x.placed_at, y.placed_at) || cmp(x.id, y.id));",
+  "new": "  return rows;",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a built row trusted for the order json_group_array kept",
+  "equivalent": true,
+  "why": "json_group_array keeps its ordered subquery's order on every SQLite this service runs on (node:sqlite here, D1 there), so the built rows already stand in the read's order; SQLite's documentation promises no order for the aggregate, and the sort is the read's own guarantee where it promises none"
+ },
+ {
+  "name": "YARDSNAP-columns",
+  "file": "server-account/src/decor.js",
+  "old": "export const YARD_SNAP_COLS = Object.freeze(['map_id', 'building_key', 'id', 'model', 'flat_archive', 'flat_record', 'place', 'placed_at', 'item', 'paid', 'yard']);",
+  "new": "export const YARD_SNAP_COLS = Object.freeze(['map_id', 'building_key', 'id', 'model', 'flat_archive', 'flat_record', 'place', 'placed_at', 'paid', 'yard']);",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a column SELECT * reads left out of the built row"
+ },
+ {
+  "name": "YARDSNAP-route-unbuilt",
+  "file": "server-account/src/index.js",
+  "old": "          await settleYards(ctx.db, body?.mapId).catch((e) => console.warn('[yards] the town not built', e?.message ?? e));   // YARD-SNAP: and built again (the clock builds one this misses)\n",
+  "new": "",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "a decor route leaves its town stale until the clock"
+ },
+ {
+  "name": "YARDSNAP-clock-gone",
+  "file": "server-account/src/cron.js",
+  "old": "  ['yard-snap', (ctx) => settleStaleYards(ctx.db)],\n",
+  "new": "",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "nothing builds a town a cascade left stale"
+ },
+ {
+  "name": "YARDSNAP-clock-page",
+  "file": "server-account/src/decor.js",
+  "old": "export const YARDS_SETTLE_A_MINUTE = 50;",
+  "new": "export const YARDS_SETTLE_A_MINUTE = 5000;",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "the clock builds every stale town in one firing"
+ },
+ {
+  "name": "YARDSNAP-backfill-bound",
+  "file": "server-account/migrations/0134_yard_snap.sql",
+  "old": "    WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT 2000));",
+  "new": "    WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id));",
+  "tests": [
+   "test/server/yard_snap.test.js"
+  ],
+  "note": "the towns standing at the migration built past their bound"
+ }
+]

@@ -1,0 +1,42 @@
+[
+ {
+  "name": "WRITB-board-unindexed",
+  "file": "server-account/migrations/0136_writ_board.sql",
+  "old": "CREATE INDEX IF NOT EXISTS idx_writs_board ON writs (day, region, owner);\n",
+  "new": "",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "the board's owners walked again"
+ },
+ {
+  "name": "WRITB-owner-unindexed",
+  "file": "server-account/migrations/0136_writ_board.sql",
+  "old": "CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, kind, faction);\n",
+  "new": "",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "a member's own writs found over every region's day"
+ },
+ {
+  "name": "WRITB-order-indexed",
+  "file": "server-account/src/professions.js",
+  "old": "owner IN ('', ?3) ORDER BY +kind, faction, slot",
+  "new": "owner IN ('', ?3) ORDER BY kind, faction, slot",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "the UNIQUE index chosen for its order"
+ },
+ {
+  "name": "WRITB-order",
+  "file": "server-account/src/professions.js",
+  "old": "owner IN ('', ?3) ORDER BY +kind, faction, slot",
+  "new": "owner IN ('', ?3) ORDER BY +kind, slot",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "the board in another order"
+ }
+]

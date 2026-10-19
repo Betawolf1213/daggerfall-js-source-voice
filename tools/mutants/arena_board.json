@@ -1,0 +1,112 @@
+[
+ {
+  "name": "ARENAB-pve-in",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_pve_in AFTER INSERT ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a ladder bout recorded leaves the board kept"
+ },
+ {
+  "name": "ARENAB-pve-up",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_pve_up AFTER UPDATE ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a run voided leaves the climb kept"
+ },
+ {
+  "name": "ARENAB-pve-out",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_pve_out AFTER DELETE ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "an account gone keeps its ladder on the board"
+ },
+ {
+  "name": "ARENAB-pvp-in",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_pvp_in AFTER INSERT ON arena_pvp BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a players' bout leaves the rated board kept"
+ },
+ {
+  "name": "ARENAB-pvp-up",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_pvp_up AFTER UPDATE ON arena_pvp BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "an account gone keeps its side of a players' bout on the board"
+ },
+ {
+  "name": "ARENAB-member-in",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_member_in AFTER INSERT ON arena_members BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a banner joined leaves the members kept"
+ },
+ {
+  "name": "ARENAB-member-up",
+  "file": "server-account/migrations/0137_arena_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS arena_board_member_up AFTER UPDATE ON arena_members BEGIN UPDATE arena_boards SET ver = ver + 1; END;\n",
+  "new": "",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a banner left leaves the members kept"
+ },
+ {
+  "name": "ARENAB-version-unread",
+  "file": "server-account/src/arena.js",
+  "old": "  const shared = kept && Number(kept.built) === Number(kept.ver) ? arenaSharedOf(kept.rows) : null;",
+  "new": "  const shared = kept ? arenaSharedOf(kept.rows) : null;",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "the board kept through every write"
+ },
+ {
+  "name": "ARENAB-keep-unguarded",
+  "file": "server-account/src/arena.js",
+  "old": "'UPDATE arena_boards SET rows = ?1, built = ?2 WHERE season = ?3 AND ver = ?2'",
+  "new": "'UPDATE arena_boards SET rows = ?1, built = ?2 WHERE season = ?3 AND ?2 IS NOT NULL'",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "a slow count put over a newer one"
+ },
+ {
+  "name": "ARENAB-last-swapped",
+  "file": "server-account/src/arena.js",
+  "old": "    standings: standingsFrom(at(5), at(6)), last: season > 1 ? standingsFrom(at(7), at(8)) : { red: 0, blue: 0 },",
+  "new": "    standings: standingsFrom(at(7), at(8)), last: season > 1 ? standingsFrom(at(5), at(6)) : { red: 0, blue: 0 },",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "last season's points read as this season's"
+ },
+ {
+  "name": "ARENAB-rosters-swapped",
+  "file": "server-account/src/arena.js",
+  "old": "    rosters: { red: at(9), blue: at(10) }, counts: at(11),",
+  "new": "    rosters: { red: at(10), blue: at(9) }, counts: at(11),",
+  "tests": [
+   "test/server/arena_board.test.js"
+  ],
+  "note": "the banners' rosters crossed"
+ }
+]

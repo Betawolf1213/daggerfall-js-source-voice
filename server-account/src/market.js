@@ -2063,50 +2063,106 @@ export async function marketVendors(ctx, player, env, { region, character = null
   const closed = shut(player, env);
   if (closed) return closed;
   if (!regionOk(region)) return { error: 'bad-region' };
-  // PATRON-LOAD (2026-10-10, Mac: "the newest update account service keeps failing"): THE REGION'S READ RECKONS NOTHING.
-  // Every online client standing in a living town reads it each PATRON_READ_S (scenes/world.js livingPatronsRead), and
-  // its lazy reckoning - up to PATRON_READ_STATEMENTS statements a read, one region's run by each of its readers at once,
-  // all of them on a deploy's reload - backed the database's writes up until D1 refused as overloaded and the deploy's own
-  // guest mint answered 500. The hour's cron reckons the towns waiting longest; a trader opened (/vendor) and a seller's
-  // own page (/myvendors) reckon their towns; this read tells what they sold.
-  // PATRON-LOAD II (2026-10-11, the owner: "I think the database is overloaded"; migration 0107): AND BY THE LISTING'S OWN
-  // REGION. Both statements walked every open listing in the market and, for each, every piece in its town (~720,000 rows
-  // a statement, 4.2 billion of the day's 5.66 billion). A trader's listing carries its home's region (listGood), so
-  // `l.region = ?2` asks what `h.region = ?2` asks, and idx_market_vendor_region answers it: the region's trader listings
-  // alone, newest first, each found its piece by idx_home_decor_piece.
+  // VENDOR-BOARD (2026-10-19; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD; migration 0135): THE REGION'S BOARD, EVERY
+  // CALLER'S ALIKE, IS ONE ROW (vendorBoard), and the caller's own door - its own house, its guild's, a room it rents -
+  // is read off two of its own rows, where the board's two statements asked them of every listing
   const me = typeof character === 'string' && CHAR_ID_RE.test(character) ? character : '';
+  const board = await vendorBoard(ctx, region);
+  const [mates, rooms] = me ? await db.batch([
+    db.prepare('SELECT a.player, a.char_id FROM guild_members a JOIN guild_members b ON b.guild_id = a.guild_id WHERE b.player = ?1 AND b.char_id = ?2').bind(player.id, me),
+    db.prepare(`SELECT map_id, building_key, MAX(until) AS until FROM home_rooms WHERE tenant = ?1 AND tenant_char = ?2 AND until > ?3
+      GROUP BY map_id, building_key`).bind(player.id, me, nowS),
+  ]) : [null, null];
+  const mate = new Set((mates?.results ?? []).map((/** @type {any} */ m) => `${m.player}\n${m.char_id}`));
+  const rent = new Map((rooms?.results ?? []).map((/** @type {any} */ r) => [`${r.map_id}:${r.building_key}`, Number(r.until)]));
+  const traderOf = (/** @type {any} */ l) => `${l.v_map}:${l.v_key}:${l.v_id}`;
+  const shown = new Set(board.newest.map(traderOf));
+  const results = [...board.newest, ...board.houses.filter((/** @type {any} */ l) => !shown.has(traderOf(l)))];
+  const since = nowS - PATRON_TOLD_S;
+  return {
+    ok: true, region,
+    patrons: board.patrons.filter((/** @type {any} */ r) => Number(r.at) > since).map(patronView),   // LW15: the region's patrons' purchases, for its towns to draw
+    rows: results.map((l) => {
+      const tenancy = rent.get(`${l.v_map}:${l.v_key}`);
+      return listingView(l, player.id, {
+        vendor: { map: Number(l.v_map), id: l.v_id }, map: Number(l.v_map), buildingKey: Number(l.v_key), owner: l.v_owner,
+        // the house's door, as the town answer says it to this character (homeMayEnter's own fields)
+        home: { owner: l.v_owner, entry: l.v_entry, mine: l.v_player === player.id && l.v_char === me,
+          ...(l.v_entry === 'guild' && mate.has(`${l.v_player}\n${l.v_char}`) ? { guildmate: true } : {}),
+          ...(Number.isSafeInteger(tenancy) ? { tenant: tenancy } : {}) },   // the rooms read rents still running alone
+      });
+    }),
+  };
+}
+
+/**
+ * VENDOR-BOARD (2026-10-19, the account database overloaded again: the region's traders the read most asked again in
+ * the 18:05 overload - 1,517 asks in five minutes where 330 was the rate; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD;
+ * migration 0135): THE REGION'S TRADERS AS EVERY CALLER READS THEM - `{ newest, houses, patrons }`, the rows the board's
+ * three reads answer, before any caller's own door. Its kept row while it is its version's (the database moves it on
+ * every trader listing, trader, trader's house and patron sale written) and before `until` (the first of its listings to
+ * run out); else read - the version, the three reads and the next listing to run out in ONE batch, one snapshot - and kept
+ * at the version it read (`built`): a write landing between leaves the version past it, so the next caller reads again -
+ * and only where the version is still the one it read, so a slow reader never puts an older board over a newer one
+ * another kept meanwhile. A region's first read makes its row, for the writes to move.
+ *
+ * PATRON-LOAD (2026-10-10, Mac: "the newest update account service keeps failing"): THE REGION'S READ RECKONS NOTHING.
+ * Every online client standing in a living town reads it each PATRON_READ_S (scenes/world.js livingPatronsRead), and its
+ * lazy reckoning - up to PATRON_READ_STATEMENTS statements a read - backed the database's writes up until D1 refused as
+ * overloaded. The hour's cron reckons the towns waiting longest; a trader opened (/vendor) and a seller's own page
+ * (/myvendors) reckon their towns; this read tells what they sold. PATRON-LOAD II (migration 0107): AND BY THE LISTING'S
+ * OWN REGION - a trader's listing carries its home's region (listGood), so `l.region = ?2` asks what `h.region = ?2`
+ * asks, and idx_market_vendor_region answers it. AUDIT LW-II-2 W6: AND EVERY PUBLIC TRADER OF THE REGION its patrons may
+ * buy of - each such house's newest piece, where the board's VENDOR_BOARD_SHOWN newest left the house out: the towns'
+ * word reads its traders off these rows (world.js livingPatronsStep). Bounded as the board is: a house a row,
+ * VENDOR_BOARD_SHOWN of them.
+ * @param {{ db: any, nowS: number }} ctx @param {number} region
+ */
+export async function vendorBoard({ db, nowS }, region) {
+  const kept = await db.prepare(VENDOR_BOARD_READ).bind(region).first();
+  const board = kept && Number(kept.built) === Number(kept.ver) && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;
+  if (board) return board;
+  if (!kept) await db.prepare('INSERT OR IGNORE INTO market_vendor_boards (region) VALUES (?1)').bind(region).run();
   const columns = `l.*, d.map_id AS v_map, d.id AS v_id, h.building_key AS v_key, h.owner_name AS v_owner, h.player AS v_player,
-      h.entry AS v_entry, (h.player = ?3 AND h.char_id = ?4) AS v_mine,
-      (h.entry = 'guild' AND EXISTS (SELECT 1 FROM guild_members a JOIN guild_members b ON b.guild_id = a.guild_id
-        WHERE a.player = h.player AND a.char_id = h.char_id AND b.player = ?3 AND b.char_id = ?4)) AS v_guildmate,
-      (SELECT MAX(r.until) FROM home_rooms r WHERE r.map_id = h.map_id AND r.building_key = h.building_key AND r.tenant = ?3 AND r.tenant_char = ?4 AND r.until > ?1) AS v_tenancy`;
-  const { results: newest = [] } = await db.prepare(`SELECT ${columns}
+      h.char_id AS v_char, h.entry AS v_entry`;
+  const [v, newest, houses, patrons, next] = await db.batch([
+    db.prepare('SELECT ver FROM market_vendor_boards WHERE region = ?1').bind(region),
+    db.prepare(`SELECT ${columns}
     FROM market_listings l JOIN home_decor d ON d.map_id = l.vendor_map AND d.id = l.vendor_id
     JOIN homes h ON h.map_id = d.map_id AND h.building_key = d.building_key
     WHERE l.state = 'open' AND l.expires_at > ?1 AND l.vendor_id IS NOT NULL AND l.region = ?2 AND h.region = ?2 AND h.player = l.seller AND d.yard = 0
       AND h.guild_id IS NULL AND json_extract(d.place, '$.station') = '${VENDOR_STATION}'
-    ORDER BY l.at DESC LIMIT ${VENDOR_BOARD_SHOWN}`).bind(nowS, region, player.id, me).all();
-  // AUDIT LW-II-2 W6: AND EVERY PUBLIC TRADER OF THE REGION its patrons may buy of - each such house's newest piece, where
-  // the board's VENDOR_BOARD_SHOWN newest left the house out: the towns' word reads its traders off these rows (world.js
-  // livingPatronsStep), and a quieter trader under a busier region's newest three hundred stood in no town - no browser
-  // came, and its town's word was forgotten. Bounded as the board is: a house a row, VENDOR_BOARD_SHOWN of them
-  const { results: houses = [] } = await db.prepare(`SELECT * FROM (SELECT ${columns},
+    ORDER BY l.at DESC LIMIT ${VENDOR_BOARD_SHOWN}`).bind(nowS, region),
+    db.prepare(`SELECT * FROM (SELECT ${columns},
       ROW_NUMBER() OVER (PARTITION BY d.map_id, d.building_key, d.id ORDER BY l.at DESC, l.id) AS v_rank
     ${PATRON_FROM} WHERE ${PATRON_SQL} AND l.expires_at > ?1 AND l.region = ?2 AND h.region = ?2) WHERE v_rank = 1
-    ORDER BY at DESC LIMIT ${VENDOR_BOARD_SHOWN}`).bind(nowS, region, player.id, me).all();
-  const traderOf = (/** @type {any} */ l) => `${l.v_map}:${l.v_key}:${l.v_id}`;
-  const shown = new Set(newest.map(traderOf));
-  const results = [...newest, ...houses.filter((l) => !shown.has(traderOf(l)))];
-  return {
-    ok: true, region,
-    patrons: await patronsTold(db, { region }, nowS).catch(() => []),   // LW15: the region's patrons' purchases, for its towns to draw
-    rows: results.map((l) => listingView(l, player.id, {
-      vendor: { map: Number(l.v_map), id: l.v_id }, map: Number(l.v_map), buildingKey: Number(l.v_key), owner: l.v_owner,
-      // the house's door, as the town answer says it to this character (homeMayEnter's own fields)
-      home: { owner: l.v_owner, entry: l.v_entry, mine: Number(l.v_mine) === 1,
-        ...(Number(l.v_guildmate) === 1 ? { guildmate: true } : {}), ...(Number.isSafeInteger(l.v_tenancy) && l.v_tenancy > nowS ? { tenant: Number(l.v_tenancy) } : {}) },
-    })),
-  };
+    ORDER BY at DESC LIMIT ${VENDOR_BOARD_SHOWN}`).bind(nowS, region),
+    db.prepare(PATRON_TOLD_SQL('s.region = ?2')).bind(nowS - PATRON_TOLD_S, region),
+    db.prepare(`SELECT MIN(expires_at) AS next FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = ?1 AND expires_at > ?2`).bind(region, nowS),
+  ]);
+  const read = { newest: newest?.results ?? [], houses: houses?.results ?? [], patrons: patrons?.results ?? [] };
+  const ver = v?.results?.[0]?.ver;
+  const text = JSON.stringify(read);
+  if (Number.isSafeInteger(ver) && text.length <= VENDOR_BOARD_MAX_CHARS) {
+    const until = Math.min(Number(next?.results?.[0]?.next ?? Infinity), nowS + VENDOR_BOARD_KEPT_S);
+    await db.prepare('UPDATE market_vendor_boards SET rows = ?1, built = ?2, until = ?3 WHERE region = ?4 AND ver = ?2')
+      .bind(text, ver, until, region).run()
+      .catch((/** @type {any} */ e) => console.warn('[market] the region\'s board not kept', e?.message ?? e));   // the answer stands; the next caller reads it again
+  }
+  return read;
+}
+/** VENDOR-BOARD: a region's kept board. */
+export const VENDOR_BOARD_READ = 'SELECT ver, built, until, rows FROM market_vendor_boards WHERE region = ?1';
+/** VENDOR-BOARD: the longest a board's text is kept (a D1 row holds 2 MB; the region's 300 newest and 300 houses are some
+ *  400 KB) - past it the board is read every time, as before. */
+export const VENDOR_BOARD_MAX_CHARS = 1_500_000;
+/** VENDOR-BOARD: how long a board with no listing to run out is kept before it is read again regardless. */
+export const VENDOR_BOARD_KEPT_S = 86_400;
+/** VENDOR-BOARD: a kept board's text read back, or null for one that is not a board. */
+export function vendorBoardOf(/** @type {unknown} */ text) {
+  let o;
+  try { o = JSON.parse(String(text)); } catch { return null; }
+  return o && Array.isArray(o.newest) && Array.isArray(o.houses) && Array.isArray(o.patrons) ? o : null;
 }
 
 /**
@@ -2363,6 +2419,8 @@ export async function patronsTold(db, of, nowS) {   // AUDIT LW-III: exported fo
   const since = nowS - PATRON_TOLD_S;
   const { results = [] } = await db.prepare(PATRON_TOLD_SQL(where))
     .bind(since, ...(maps ? [...maps, Math.floor(since / PATRON_HOUR_S)] : [/** @type {{ region: number }} */ (of).region])).all();
-  return results.map((r) => ({ listing: r.listing, map: Number(r.map), vendor: r.vendor_id, buildingKey: r.building_key == null ? null : Number(r.building_key),
-    hour: Number(r.hour), minute: Number(r.minute), seed: Number(r.seed), price: Number(r.price), at: Number(r.at), name: String(goodOf(r.item)?.name ?? '') }));
+  return results.map(patronView);
 }
+/** A patron's purchase as a reader is told it (patronsTold's rows, VENDOR-BOARD's kept ones). */
+const patronView = (/** @type {any} */ r) => ({ listing: r.listing, map: Number(r.map), vendor: r.vendor_id, buildingKey: r.building_key == null ? null : Number(r.building_key),
+  hour: Number(r.hour), minute: Number(r.minute), seed: Number(r.seed), price: Number(r.price), at: Number(r.at), name: String(goodOf(r.item)?.name ?? '') });

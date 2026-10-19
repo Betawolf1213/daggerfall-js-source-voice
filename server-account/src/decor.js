@@ -267,8 +267,12 @@ export async function decorOf({ db }, player, { mapId, buildingKey, seat = false
  */
 export async function yardsOf({ db }, _player, { mapId } = {}) {
   if (!homeMapIdOk(mapId)) return { error: 'bad-home' };
-  const { results = [] } = await db.prepare(`SELECT * FROM home_decor WHERE map_id = ? AND yard = 1
-    ORDER BY building_key, placed_at, id LIMIT ?`).bind(mapId, DECOR_YARDS_TOWN_MAX).all();
+  // YARD-SNAP: the town's built row where it is its version's; the rows, as they stand, where it is not; no row, no yard
+  const snap = await db.prepare(YARD_SNAP_READ).bind(mapId).first();
+  if (!snap) return { mapId, yards: [] };
+  const built = Number(snap.built) === Number(snap.ver) ? yardRowsOf(snap.rows) : null;
+  const results = built ?? (await db.prepare(`SELECT * FROM home_decor WHERE map_id = ? AND yard = 1
+    ORDER BY building_key, placed_at, id LIMIT ?`).bind(mapId, DECOR_YARDS_TOWN_MAX).all()).results ?? [];
   const by = new Map();
   for (const row of results) {
     const p = pieceOfRow(row);
@@ -277,6 +281,51 @@ export async function yardsOf({ db }, _player, { mapId } = {}) {
     by.get(row.building_key).push(p);
   }
   return { mapId, yards: [...by].map(([buildingKey, pieces]) => ({ buildingKey, pieces })) };
+}
+
+/**
+ * YARD-SNAP (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md YARD-SNAP; migration
+ * 0134): A TOWN'S YARDS, ONE ROW. 673,882 yards reads on the day read some 1,400 rows each, sorted (9.1% of the
+ * database's statement time) for an answer that moves only when a yard piece is written. `home_yards` holds each town's
+ * rows as this read takes them, built at a version the database moves on every yard row written - by a route, a cascade
+ * or a sweep alike (the migration's triggers) - so a read is one row while it is its version's, and the rows as they
+ * stand while it is not (never an answer older than the rows). A decor route builds its town again as it answers
+ * (settleYards); the minute's clock builds what anything else left (settleStaleYards).
+ */
+/** The columns a built row keeps, in order - `SELECT *`'s, which pieceOfRow reads. */
+export const YARD_SNAP_COLS = Object.freeze(['map_id', 'building_key', 'id', 'model', 'flat_archive', 'flat_record', 'place', 'placed_at', 'item', 'paid', 'yard']);
+/** A town's built row. */
+export const YARD_SNAP_READ = 'SELECT ver, built, rows FROM home_yards WHERE map_id = ?';
+/** How many stale towns the minute's clock builds a firing. */
+export const YARDS_SETTLE_A_MINUTE = 50;
+/** The build: every stale town `where` names, its rows read in their own order (idx_home_decor_yard_order) and kept at the
+ *  version it read them at - in one statement, so no write lands between the read and the version. */
+const yardsBuildSql = (/** @type {string} */ where) => {
+  const cols = YARD_SNAP_COLS.join(', ');
+  return `UPDATE home_yards SET built = ver, rows = (SELECT json_group_array(json_array(${cols}))
+    FROM (SELECT ${cols} FROM home_decor WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT ${DECOR_YARDS_TOWN_MAX}))
+    WHERE built != ver AND ${where}`;
+};
+/** A town's row built again, if a write left it stale - after a decor route's write (index.js). */
+export const settleYards = (/** @type {any} */ db, /** @type {unknown} */ mapId) =>
+  (homeMapIdOk(mapId) ? db.prepare(yardsBuildSql('map_id = ?1')).bind(mapId).run() : Promise.resolve(null));
+/** The minute's clock (cron.js `yard-snap`): the stale towns built, YARDS_SETTLE_A_MINUTE a firing; how many. */
+export async function settleStaleYards(/** @type {any} */ db) {
+  const r = await db.prepare(yardsBuildSql(`map_id IN (SELECT map_id FROM home_yards WHERE built != ver LIMIT ${YARDS_SETTLE_A_MINUTE})`)).run();
+  return Number(r?.meta?.changes ?? 0);
+}
+/** A built row's rows as `SELECT *` answers them, in the read's own order - or null for a text that is not one. */
+export function yardRowsOf(/** @type {unknown} */ text) {
+  let list;
+  try { list = JSON.parse(String(text)); } catch { return null; }
+  if (!Array.isArray(list)) return null;
+  const rows = [];
+  for (const a of list) {
+    if (!Array.isArray(a) || a.length !== YARD_SNAP_COLS.length) return null;
+    rows.push(Object.fromEntries(YARD_SNAP_COLS.map((c, i) => [c, a[i]])));
+  }
+  const cmp = (/** @type {any} */ x, /** @type {any} */ y) => (x < y ? -1 : x > y ? 1 : 0);
+  return rows.sort((x, y) => cmp(x.building_key, y.building_key) || cmp(x.placed_at, y.placed_at) || cmp(x.id, y.id));
 }
 
 /**

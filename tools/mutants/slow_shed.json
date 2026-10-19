@@ -1,0 +1,112 @@
+[
+ {
+  "name": "SLOWSHED-floor",
+  "file": "server-account/src/service.js",
+  "old": "  if (slowWaits.length < SLOW_SHED_MIN || ms / statements < SLOW_SHED_WAIT_MS) return;",
+  "new": "  if (slowWaits.length < SLOW_SHED_MIN - 1 || ms / statements < SLOW_SHED_WAIT_MS) return;",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "one request fewer than the floor opens the shed"
+ },
+ {
+  "name": "SLOWSHED-threshold-side",
+  "file": "server-account/src/service.js",
+  "old": "  if (waited / asked >= SLOW_SHED_WAIT_MS) noteOverload(nowMs);",
+  "new": "  if (waited / asked > SLOW_SHED_WAIT_MS) noteOverload(nowMs);",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "a database exactly at the threshold not shed"
+ },
+ {
+  "name": "SLOWSHED-span",
+  "file": "server-account/src/service.js",
+  "old": "  while (slowWaits.length && nowMs - slowWaits[0].at > SLOW_SHED_SPAN_MS) slowWaits.shift();",
+  "new": "  while (slowWaits.length && nowMs - slowWaits[0].at > 10 * SLOW_SHED_SPAN_MS) slowWaits.shift();",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "slow requests long gone keep the shed opening"
+ },
+ {
+  "name": "SLOWSHED-unweighted",
+  "file": "server-account/src/service.js",
+  "old": "  for (const w of slowWaits) { waited += w.ms; asked += w.n; }",
+  "new": "  for (const w of slowWaits) { waited += w.ms / w.n; asked += 1; }",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "the mean a request's, not a statement's - a hundred quick statements read as slow"
+ },
+ {
+  "name": "SLOWSHED-quick-keeps-open",
+  "file": "server-account/src/service.js",
+  "old": "  if (slowWaits.length < SLOW_SHED_MIN || ms / statements < SLOW_SHED_WAIT_MS) return;",
+  "new": "  if (slowWaits.length < SLOW_SHED_MIN) return;",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "a quick request keeps the shed open past the drain"
+ },
+ {
+  "name": "SLOWSHED-nothing-counted",
+  "file": "server-account/src/service.js",
+  "old": "  if (!(statements > 0) || !Number.isFinite(ms)) return;",
+  "new": "  if (!Number.isFinite(ms)) return;",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "a shed read (no statement) counted as a quick request"
+ },
+ {
+  "name": "SLOWSHED-wait-unheard",
+  "file": "server-account/src/metrics.js",
+  "old": "  noteD1Wait(tally.ms, tally.n, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait\n",
+  "new": "",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "the service never hears its own wait"
+ },
+ {
+  "name": "SLOWSHED-client-timeout-unheard",
+  "file": "src/net/accountClient.js",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method)) {",
+  "new": "    if (false && busyRead(path, method)) {",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "a display read that timed out asked again at once"
+ },
+ {
+  "name": "SLOWSHED-client-any-read",
+  "file": "src/net/accountClient.js",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method)) {",
+  "new": "    if (e?.name === 'TimeoutError') {",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "an act that timed out holds the reads"
+ },
+ {
+  "name": "SLOWSHED-client-unreachable",
+  "file": "src/net/accountClient.js",
+  "old": "    if (e?.name === 'TimeoutError' && busyRead(path, method)) {",
+  "new": "    if (busyRead(path, method)) {",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "the player's own dropped line holds the reads"
+ },
+ {
+  "name": "SLOWSHED-client-no-doubling",
+  "file": "src/net/accountClient.js",
+  "old": "      _busy = { n, until: Math.max(_busy.until, now() + busyWaitMs(n, rand())) };\n    }\n    return { ok: false, error: 'offline' };",
+  "new": "      _busy = { n, until: Math.max(_busy.until, now() + busyWaitMs(1, rand())) };\n    }\n    return { ok: false, error: 'offline' };",
+  "tests": [
+   "test/net/slow_shed.test.js"
+  ],
+  "note": "timeouts in a row never wait longer"
+ }
+]

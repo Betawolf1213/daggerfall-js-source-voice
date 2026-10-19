@@ -22,12 +22,12 @@
  {
   "name": "BUSYGATE-count-not-kept",
   "file": "src/net/accountClient.js",
-  "old": "      const n = _busy.n + 1;",
-  "new": "      const n = 1;",
+  "old": "      const n = _busy.n + 1;\n      _busy = { n, until: Math.max(_busy.until, now() + Math.max(busyWaitMs(n, rand()), retryAfterMs(after))) };",
+  "new": "      const n = 1;\n      _busy = { n, until: Math.max(_busy.until, now() + Math.max(busyWaitMs(n, rand()), retryAfterMs(after))) };",
   "tests": [
    "test/net/busy_gate.test.js"
   ],
-  "note": "every overload answer the first - the wait never doubles"
+  "note": "every overload answer the first - the wait never doubles LEAN-READS: re-aimed by content at the code the slice moved."
  },
  {
   "name": "BUSYGATE-retry-after-unread",
