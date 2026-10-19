@@ -218,12 +218,12 @@
  {
   "name": "COURTWATCH-relay-min-early",
   "file": "src/net/wire.js",
-  "old": "export const COURT_WATCH_RELAY_MIN = 218;",
-  "new": "export const COURT_WATCH_RELAY_MIN = 217;",
+  "old": "export const COURT_WATCH_RELAY_MIN = 222;",
+  "new": "export const COURT_WATCH_RELAY_MIN = 221;",
   "tests": [
    "test/net/gate/courtwatch.test.js"
   ],
-  "note": "AUDIT PLAN-1000: G3 - world218 first says me."
+  "note": "AUDIT PLAN-1000: G3 - world222 first says me."
  },
  {
   "name": "COURTWATCH-host-unwatched",

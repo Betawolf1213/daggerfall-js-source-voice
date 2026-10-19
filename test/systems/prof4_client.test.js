@@ -484,7 +484,7 @@ test('PROF4 wiring: a built pixel keeps its forest (the tree flats by World of D
   assert.match(w, /planeBand: \(\) => planeBand\(\{ agility: liveStat\(playerEntity, 'agility'\), willpower: liveStat\(playerEntity, 'willpower'\) \}\),/);
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /if \(interiorBuilding\.buildingType === BUILDING_TYPES\.FurnitureStore\) return interiorBuilding\.insideOpenShop === false \? null : \{ kind: 'shop', fee: WORKBENCH_FEE \};/);
-  assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'workbench'\)\) return \{ kind: 'home', fee: 0 \};/);
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'workbench'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018D HOME-BENCH, test/scenes/fb1018d_homebench.test.js): a home's stations serve its owner's account
   const r = src('src/render/renderer.js');
   assert.match(r, /uniform vec3 uTip;/);
   assert.match(r, /if \(uTip\.z != 0\.0\) \{/);

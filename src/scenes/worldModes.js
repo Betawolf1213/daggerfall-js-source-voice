@@ -276,7 +276,8 @@ import { setUnleveledLootWorld, unleveledLootPreTransition, unleveledLootExterio
 import { discoverBuilding, undiscoverBuilding, getDiscoveredBuilding, getLastLockpickAttempt, setLastLockpickAttempt, shownBuildingName } from '../systems/discovery.js';   // H3: selling a house takes its name back off the map
 import { BUILDING_KEY_0 } from '../systems/talk/talkTopics.js';   // H3: the no-key key both ship interiors are filed under
 import { carriedPieces } from '../systems/item/itemIds.js';   // AUTO-HOLD: the room's word never lands a piece I carry (world/interior/interiorShared.js)
-import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootKeyOf, interiorLootRecords } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
+import { interiorLocationKey, mintInteriorShared, composeInteriorShared, applyInteriorShared, applyInteriorLoot, interiorActionRecords, interiorLootOpen, interiorLootFrame, interiorLootUnborn, interiorLootRoll, interiorLootBirth, interiorLootAside, interiorLootLeave } from '../world/interior/interiorShared.js';   // WORLD6a: the building as a world room - the pure half; AUDIT WORLD6a A1: the bag minted there
+import { wallMsForClassicMinutes } from '../net/wire.js';   // OUTDOOR-LOOT: the SHARED clock - the relay's wall - a cupboard's first-open instant is read from (R-3)
 import { getHolidayId } from '../systems/holidays.js';
 import { guildOfFaction, guildGroupOfFaction, isMember } from '../systems/guild/guilds.js';
 // V5: rest above ground. The window and the session have been finished
@@ -366,6 +367,7 @@ import {
   realmDeedAt,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the house the realm gave a knight is theirs, never for sale to them
   homeFootprintM2,   // HOME-PRICE: the ground a house stands on
   homeVoteRows, homeVotePressable, homeVoteOfVerb, homeVoteChoices, homeVoteLines, isHomeVoteVerb,   // HOME-VOTE: the town's word on it, at its door
+  homeStationsServe,   // FB1018D HOME-BENCH: a home's stations serve its owner's account, as its door does
 } from '../systems/online/onlineHomes.js';
 import { homeDecorShown, homeVotedLine, homeVotesLine, homeVoteRefusalLine, decorStaysShunned, HOME_VOTE_GONE_LINE } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's decor stands for its insiders alone
 import { goldSum, accountWords } from '../systems/homeWords.js';   // AUDIT HOME-PRICE E4: a home's sums and the account they moved in
@@ -1994,51 +1996,6 @@ export function createWorldModes(host) {
   let _intShared = null;
   let privateVisitOwner = null;
   let privateVisitRoom = null;   // staff visiting another character's personal interior
-  /** WORLD4's law for a building: the container is the room's - said on the OPEN, which CLAIMS it (a claim speaks
-   *  only for a container the room has not spoken about, AUDIT WORLD4 C2/D5), on a RESTOCK (the new day's stock is
-   *  the room's, whoever browsed first), and on the CLOSE (what is left). */
-  function interiorPublishLoot(key, { claim = false } = {}) {
-    const s = _intShared;
-    const canon = interiorLootKeyOf(key);
-    if (!s?.locationKey || !canon || !interiorCtx || s.home) return false;   // HOME1: a home's cupboards are never the room's
-    if (s.unreadable?.has(canon)) return false;   // AUDIT SETS M2: never over a word this build cannot read
-    if (claim && s.seen.has(canon)) return false;
-    const l = interiorLootRecords(interiorCtx, [canon], s.tooBig);
-    if (!l.length) return false;   // never opened, or too large to say - it stays this player's own
-    const first = !s.seen.has(canon);
-    s.seen.add(canon);
-    if (first) host.onLootClaimed?.();   // AUDIT WORLD4 D5: the memory goes out now, not up to fifteen seconds from now
-    return !!host.onActions?.({ k: s.locationKey, l });
-  }
-  /** A window opened on a container: the claim, and the window remembered so its close - through WHICHEVER of the
-   *  slot's drains frees it (a trade window has no close hook of its own, X6) - says what is left.
-   *  AUDIT WORLD6a A5 (WORLD4 C6 again): a RESTOCK is said HERE, at the window's mount, not where the roll was made -
-   *  the container arm rolled a stranger's cupboard before the private-property prompt, so a player who answered No
-   *  (DFU: "No claims nothing") had already told the room the cupboard's whole contents; `fresh` is the arm's word
-   *  that this open rolled the new day's stock, and then the word is not a claim but the room's new stock. */
-  function interiorLootOpened(key, win, { fresh = false } = {}) {
-    const s = _intShared;
-    const canon = interiorLootKeyOf(key);
-    if (!s?.locationKey || !canon || !win) return;
-    if (s.unreadable?.has(canon)) setMidScreenText(LOOT_NEWER_TEXT);   // AUDIT SETS M2: what is shown is this build's own roll, and it is never said to the room
-    s.openKey = canon; s.openWin = win;
-    interiorPublishLoot(canon, { claim: !fresh });
-  }
-  /** Every interior frame: the open container's window is GONE - the close's word.
-   *  AUDIT WORLD6a A3 (CRITICAL): gone means gone from the STACK, not from the slot. `interiorOverlay` mirrors the TOP
-   *  of interiorWindows and mountInterior PUSHES (ROAD-B B1), so a quest popup, an inventory or a text box laid over
-   *  an open shelf made the slot another window while the shelf's stood beneath, still bound to its rows: the close
-   *  went out mid-transaction, `openKey` was cleared, a peer's word then landed under the live window (AUDIT WORLD4
-   *  C1's orphaned rows: an item taken twice), and the two theft comparisons read a shelf the room had moved - a
-   *  peer's purchase made this player a thief. The stack is asked whether the window still exists. */
-  function interiorLootSettle() {
-    const s = _intShared;
-    if (!s?.openWin) return;
-    if (interiorWindows.containsWindow(s.openWin) && !s.openWin.done) return;
-    const k = s.openKey;
-    s.openKey = null; s.openWin = null;
-    interiorPublishLoot(k);
-  }
   /**
    * IF - THE INTERIOR FOE POOL. A building interior carries NO STATIC
    * ENEMIES in DFU: DaggerfallInterior's whole marker vocabulary is
@@ -3568,6 +3525,7 @@ export function createWorldModes(host) {
   const interiorPeek = createInteriorPeek({
     containers: () => interiorCtx?.containers, decor: () => interiorDecor, owned: () => ownsThisInterior(),
     shut: () => !!(interiorHome && !interiorHome.own) || !!privateVisitRoom || caravanGuestHere(), hall: () => hallMemberHere(), today: () => stockedToday(),
+    unborn: (key) => interiorLootUnborn(interiorCtx, key, _intShared),   // OUTDOOR-LOOT: a cupboard the room has not spoken about is a name, never a roll that is no one's word
   });
 
   /** BS1: the book reader on a bare id - the bookshelf picks by id,
@@ -3683,7 +3641,7 @@ export function createWorldModes(host) {
           decorDeliverCarried();   // DECOR2b: furniture taken off the shelf is delivered, never carried
         },
       });
-      if (win) { interiorOverlay = win; interiorLootOpened(`shelf:${i}`, win, { fresh }); }   // WORLD6a: the shelf is the room's from the open
+      if (win) { interiorOverlay = win; interiorLootOpen(interiorCtx, `shelf:${i}`, win, _intShared, { fresh }); }   // WORLD6a: the shelf is the room's from the open
       return;
     }
     // U8c: the native trade screen when the art is up (the E2/E3
@@ -3694,7 +3652,7 @@ export function createWorldModes(host) {
       const w = openTradeWindow(shelf, b, 'Buy');
       if (!w) return;   // DISC10-E L3: the counter refused the beast at its door (and said so) - nothing to mount, nothing claimed
       interiorOverlay = w;
-      interiorLootOpened(`shelf:${i}`, interiorOverlay, { fresh });   // WORLD6a: and so from the trade window - its close is the frame's settle
+      interiorLootOpen(interiorCtx, `shelf:${i}`, interiorOverlay, _intShared, { fresh });   // WORLD6a: and so from the trade window - its close is the frame's settle
       return;
     }
     showShelfList(shelf, 0, fresh);   // AUDIT WORLD6a A4: the keyed fallback claims too
@@ -3795,7 +3753,7 @@ export function createWorldModes(host) {
     let win = null;
     win = openTradeWindow(target, b, 'Sell');
     if (!win) return true;   // DISC10-E L3: refused at the trade door, which said so - handled, never the keyed fallback
-    if (shelf) interiorLootOpened('shelf:0', win, { fresh });   // WORLD6a: what is sold lands on the room's shelf
+    if (shelf) interiorLootOpen(interiorCtx, 'shelf:0', win, _intShared, { fresh });   // WORLD6a: what is sold lands on the room's shelf
     // Found wiring X6: neither trade skin calls hooks.onClose - they set
     // `done` and the frame's own sweep frees the slot, so a trade window
     // that needs cleanup on close hangs it off that sweep.
@@ -3907,7 +3865,7 @@ export function createWorldModes(host) {
         carriedWeightKg: carriedWeight(playerEntity),
         maxEncumbranceKg: entityMaxEncumbrance(playerEntity),   // DaggerfallTradeWindow.cs:1039 reads PlayerEntity.MaxEncumbrance
       }),
-      commit: (m, staged, price, proceeds) => commitTrade(shelf, m, staged, price, proceeds, identifySpell),
+      commit: (m, staged, price, proceeds) => commitTrade(shelf, m, staged, price, proceeds, identifySpell, { holidayId: getHolidayId(Math.floor(skyMinutes()), b.regionIndex ?? 0), guildFactionId }),   // AUDIT TOWN-ECON 2 PRICE-1: the purchase's own asks
       // AUDIT 63 F48: DoSteal's five effects (DaggerfallTradeWindow.cs
       // :913-928). The same four sinks the private-property theft
       // above already uses, in DoSteal's own - inverted - order, which
@@ -3939,7 +3897,7 @@ export function createWorldModes(host) {
       ...(road ? {
         commit: (m, staged, price, proceeds) => {
           if (road.allow?.(m, staged, price) === false) { if (m === 'Sell' || m === 'SellMagic') (playerEntity.items ??= []).push(...staged); return false; }
-          const r = commitTrade(shelf, m, staged, price, proceeds, identifySpell);
+          const r = commitTrade(shelf, m, staged, price, proceeds, identifySpell, { holidayId: getHolidayId(Math.floor(skyMinutes()), b.regionIndex ?? 0), guildFactionId });
           road.done?.(m, staged, price);
           return r;
         },
@@ -3952,10 +3910,10 @@ export function createWorldModes(host) {
   /** ConfirmTrade_OnButtonClick's Yes arm (:1027-1092), host side.
    *  One Mercantile tally per CONCLUDED DEAL, not per item - DFU
    *  raises OnTrade once and tallies once, however many goods moved. */
-  function commitTrade(shelf, mode, staged, price, proceeds, identifySpell = null) {
+  function commitTrade(shelf, mode, staged, price, proceeds, identifySpell = null, asked = {}) {
     if (mode === 'Buy') {
       deductGold(playerEntity, price);
-      markCounterBought(staged);   // AUDIT LW-II-2 S1: online, a counter's piece is never a patron's (before a stack's merge takes it)
+      markCounterBought(staged, { price, ...asked });   // AUDIT LW-II-2 S1: online, a counter's piece is never a patron's (before a stack's merge takes it); LAW-3: and what it cost
       for (const it of staged) {
         const i = shelf.items.indexOf(it);
         if (i >= 0) shelf.items.splice(i, 1);
@@ -4089,7 +4047,7 @@ export function createWorldModes(host) {
     if (totalGoldAmount(playerEntity) < price) return null;
     deductGold(playerEntity, price);
     shelf.items.splice(at, 1);
-    markCounterBought([it]);   // AUDIT LW-II-2 S1: the keyed list's purchase marked as the counter's
+    markCounterBought([it], { price });   // AUDIT LW-II-2 S1: the keyed list's purchase marked as the counter's; LAW-3: and what it cost
     playerEntity.items = playerEntity.items || [];
     if (isFurnishing(it)) decorDeliver([it]);   // DECOR2b: the furnisher delivers
     // AUDIT HOLDINGS F8: a ship's deed off the keyed shelf goes to the Fleet's book as the counter's does (she waits at
@@ -4131,12 +4089,15 @@ export function createWorldModes(host) {
   function itemValue(it) { return itemValueOf(it); }   // JAN1: the one value read (a non-finite value is an absent one)
   // SEAT1d (Seats-Arc 7.2, 7.6): a seat town's shop asks its holder's members less, and everyone less on Market Day - a
   // multiplier of its own on the shop's price adjustment (never regionPriceAdjustment's region-wide index), for what the
-  // player BUYS and has REPAIRED alone; what a shop pays for a sale is the shop's own
+  // player BUYS and has REPAIRED - and, SEAT-LOOP (Town-Economy-Arc 7.5), what a shop pays for a sale held to that ask.
+  // TOWN-ECON TE1 (bible/06-Systems/Town-Economy-Arc.md 3): online, the town's own economy too - its asking factor with
+  // the seat's (never below net/townEconLaw.js TOWN_FACTOR_FLOOR), and a sale's paying factor, which only ever falls and
+  // never passes the ask (systems/town/townEcon.js; AUDIT TOWN-ECON 2 PRICE-7)
   function shopAdjustment(b, mode) {
     if (Number.isFinite(b?.priceIndex)) return b.priceIndex;   // AUDIT MERCHANT-YARDS Y2: a counter that names its own index (a yard's, systems/merchantYards.js YARD_PRICE_INDEX) is priced at it, both ways
     const adj = regionPriceAdjustment(playerEntity, b?.regionIndex ?? 0);
-    const f = mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : 1;
-    if (b?.roadDiscount && mode === 'Buy') return Math.round(adj * f * (1 - b.roadDiscount));   // LW11: a friend's counter on the road
+    const f = host.townShopFactor?.(b, mode) ?? (mode === 'Buy' || mode === 'Repair' ? host.seatShopFactor?.(b) ?? 1 : mode === 'Sell' || mode === 'SellMagic' ? Math.min(1, host.seatShopFactor?.(b) ?? 1) : 1);   // AUDIT TOWN-ECON 2 PRICE-4: no town law wired, SEAT-LOOP's bound here - a counter pays no more than it asks this player
+    if (b?.roadDiscount && (mode === 'Buy' || mode === 'Sell' || mode === 'SellMagic')) return Math.round(adj * f * (1 - b.roadDiscount));   // LW11: a friend's counter on the road; AUDIT TOWN-ECON 2 PRICE-4: its friend's price both ways, so an endless shelf's essentials sold back never pay
     return f === 1 ? adj : Math.round(adj * f);
   }
   function buyPrice(it) {
@@ -4162,7 +4123,7 @@ export function createWorldModes(host) {
     return getTradePrice('Sell', lot.cost, b.quality, {
       mercantile: skillValue(playerEntity, SKILLS.Mercantile),
       personality: playerEntity.stats?.personality == null ? 50 : liveStat(playerEntity, 'personality'),
-    }, lot.pieces);
+    }, lot.pieces, lot.resale);   // LAW-3: a counter's piece never fetches more than it cost
   }
   // ── U23: THE STATIC NPC SEAM ────────────────────────────────────
   // PlayerActivate.ActivateStaticNPC/StaticNPCClick (:742-766,
@@ -4984,6 +4945,7 @@ export function createWorldModes(host) {
       if (target) target.stockedDate = c.stockedDate ?? 0;
       if (target && kind === 'container') target.openedOn = c.openedOn ?? 0;   // UXB1-O: a record cached before it carries none - never searched
     }
+    interiorLootAside(interiorCtx, _intShared);   // OUTDOOR-LOOT: the cache has laid a stranger's cupboard the list of an earlier visit - online that is no one's word, the room's is
     if (setDown) say('What a chest here held, where no chest stands now, was set down at your feet.');   // HOLD-KEPT
     interiorCtx.guildShelves = data.guildShelves ?? {};   // GUILD-SHELF: a stale day's shelf is left for guildShelf to replace at the next open
     // #32: through the system's own restore, which settles the matrix
@@ -5042,6 +5004,10 @@ export function createWorldModes(host) {
     if (b.buildingType === BUILDING_TYPES.Ship) return ownsShip(playerEntity);
     return houseOwnedAt(b, b.buildingKey ?? 0);
   }
+  /** FB1018D HOME-BENCH: WHOSE THE ROOM'S STATIONS ARE - the pieces' owner's (decorOwnerHere), and in an online home every
+   *  character of its owner's account, whom its door lets in as the owner's (onlineHomes.js homeStationsServe); never on a
+   *  private visit, as decorOwnerHere's first answer. Its storage, bed and decorator stay decorOwnerHere's. */
+  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));
   /** WAGONS2-VISIT: STANDING IN ANOTHER PLAYER'S CARAVAN, A VISIT (systems/caravanVisit.js) - Mac: they come in "to craft,
    *  rest, look around": its stations, its bed and its pieces to look at are mine to use; its storage and its decorator
    *  never (decorOwnerHere is false on a visit, so the decorator stands no button, as in another's home). */
@@ -5088,11 +5054,11 @@ export function createWorldModes(host) {
   }
   /** HOME-STATIONS (2026-09-27, Discord - Tabitha: "CRAFTABLE / PURCHASABLE CRAFT / GUILD STATIONS [Spellmaking,
    *  Alchemy, Enchanting] FOR HOMES / SHIPS"): A STATION PRESSED - its craft's own maker, the guild service's window
-   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone; the maker's own laws stand (the
-   *  potion maker's ingredients, the spell maker's spellbook, what each charges). No guild is asked: the licence was
-   *  paid when the piece was made a station. */
+   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone - FB1018D HOME-BENCH: any character
+   *  of its owner's account (stationOwnerHere); the maker's own laws stand (the potion maker's ingredients, the spell
+   *  maker's spellbook, what each charges). No guild is asked: the licence was paid when the piece was made a station. */
   function useDecorStation(piece) {
-    if (!decorOwnerHere()) {
+    if (!stationOwnerHere()) {
       if (!hallMemberHere()) {   // GUILD1d: a hall's stations are its members'
         if (interiorHome) say(homeBelongsLine(interiorHome));
         if (!caravanGuestHere()) return;   // WAGONS2-VISIT: a caravan's stations serve its visitor
@@ -7152,7 +7118,7 @@ export function createWorldModes(host) {
     // AUDIT WORLD6a A4: the keyed fallback (no trade art) claimed nothing and guarded nothing - the room's word landed
     // under its rows and a purchase was never told; every page of it is an open on the shelf, like the art's windows
     const si = interiorCtx?.shelves?.indexOf(shelf) ?? -1;
-    if (si >= 0) interiorLootOpened(`shelf:${si}`, interiorOverlay, { fresh });
+    if (si >= 0) interiorLootOpen(interiorCtx, `shelf:${si}`, interiorOverlay, _intShared, { fresh });
   }
   function buyItem(shelf, it) {
     const bought = doBuy(shelf, it);
@@ -8815,7 +8781,8 @@ export function createWorldModes(host) {
         // HOME1: an ONLINE home keeps its room - its owner and whoever they let in stand in it together, and its
         // cupboards are never the room's (the owner's are their storage, a visitor's are shut - the container arm).
         const owned = !!privateVisitRoom || b?.buildingType === BUILDING_TYPES.Ship || (!interiorHome && houseOwnedAt(b, b?.buildingKey));
-        _intShared = mintInteriorShared(interiorLocationKey(questSceneCtx?.()?.mapId ?? 0, b?.buildingKey ?? 0, visitLayoutNow()), { owned, home: !!interiorHome });   // WD3 (AUDIT WD3 B3): the room of the building in its layout   // AUDIT WORLD6a A1: the bag from the one mint, its key spelled as the pure half reads it
+        _intShared = mintInteriorShared(interiorLocationKey(questSceneCtx?.()?.mapId ?? 0, b?.buildingKey ?? 0, visitLayoutNow()), { owned, home: !!interiorHome, net: { selfId: () => host.selfId?.() ?? null, seat: () => host.roomHost?.() ?? null, now: () => performance.now(), wallNow: () => (sharedClockOn() ? wallMsForClassicMinutes(worldMinutes()) : null), send: (d) => host.onActions?.(d), say: (t) => setMidScreenText(t), claimed: () => host.onLootClaimed?.(), entity: () => playerEntity, carried: () => carriedPieces(playerEntity) } });   // WD3 (AUDIT WD3 B3): the room of the building in its layout   // AUDIT WORLD6a A1: the bag from the one mint, its key spelled as the pure half reads it   // OUTDOOR-LOOT: and the host's wiring - the act path, the SHARED clock (R-3), the seat, the player's hands - for the cupboards' room law
+        interiorLootAside(ctx, _intShared);   // OUTDOOR-LOOT: a list a stranger's cupboard was built with is no one's word (again after the cache restore below)
         const key = _intShared.locationKey;
         if (key) ctx.actions.onChanged = (recs) => host.onActions?.({ k: key, a: recs });
       }
@@ -9162,6 +9129,7 @@ export function createWorldModes(host) {
           // false, and is never a theft.
           let fresh = false;   // AUDIT WORLD6a A5: this open rolled the new day's stock (said at the window, not at the roll)
           const openLoot = (privateProperty = false) => {
+            if (privateProperty) interiorLootBirth(interiorCtx, key, _intShared);   // OUTDOOR-LOOT: the Yes mints the held roll as the room's and composes it into the cupboard - BEFORE the keeping below is taken, or a first opener's theft marks read an empty one
             const before = privateProperty ? new Set(c.items ?? []) : null;   // STOLEN-GOODS AUDIT S1: the owner's keeping - the mark's and the basket's one Set
             const win = interiorInventory({
               loot: { items: () => c.items, storage: !privateProperty, stolenFrom: before },   // SHIP-STORE: an owned house's or ship's cupboard is the player's storage, two-way; STOLEN-GOODS: a stranger's is a theft, each take of theirs marked as it lands
@@ -9185,7 +9153,7 @@ export function createWorldModes(host) {
               },
             });
             if (win && privateProperty) c.openedOn = c.stockedDate;   // UXB1-O: this character has seen this stock (shopStock.js stockSearched)
-            if (win) { interiorOverlay = win; if (!owned) interiorLootOpened(key, win, { fresh }); }   // WORLD6a: a stranger's cupboard is the room's from the open
+            if (win) { interiorOverlay = win; if (!owned) interiorLootOpen(interiorCtx, key, win, _intShared, { fresh, keeping: before }); }   // WORLD6a: a stranger's cupboard is the room's from the open
           };
           const owned = ownsThisInterior(b);   // UXB1-N: the one predicate the plaque reads too
           if (owned) {
@@ -9202,16 +9170,18 @@ export function createWorldModes(host) {
             // StockHouseContainer clears and re-mints (:293-294), so a
             // stranger's cupboard refills overnight; the `??=` that
             // stood here stocked it once per interior build.
+            if (_intShared?.unreadable?.has(key)) { setMidScreenText(LOOT_NEWER_TEXT); return true; }   // AUDIT SETS M2: a cupboard the room has spoken about in words this build cannot read is never opened here - not over a roll of its own either (OUTDOOR-LOOT)
             const today = stockedToday();
+            let rolled = null;
             if (needsRestock(c, today)) {
-              c.stockedDate = today;
-              c.items = stockHouseContainer({ buildingType: b?.buildingType, record: containerTextureRecord(c.modelIdNum) }, playerEntity);
+              rolled = stockHouseContainer({ buildingType: b?.buildingType, record: containerTextureRecord(c.modelIdNum) }, playerEntity);
               // FORAGE3: PlayerActivate.OnLootSpawned (:914), raised for a house container as for a shelf - before
               // "If no contents" (:916), so a subscriber's item can fill a cupboard that stocked empty
-              raiseContainerLootSpawned({ containerType: LOOT_CONTAINER_TYPES.HouseContainers, items: c.items, buildingType: b?.buildingType, quality: b?.quality, luck: liveStat(playerEntity, 'luck') });
+              raiseContainerLootSpawned({ containerType: LOOT_CONTAINER_TYPES.HouseContainers, items: rolled, buildingType: b?.buildingType, quality: b?.quality, luck: liveStat(playerEntity, 'luck') });
+              if (!interiorLootRoll(interiorCtx, key, rolled, _intShared, today)) { c.stockedDate = today; c.items = rolled; }   // OUTDOOR-LOOT: online the roll is HELD by the room - never written to the cupboard, so the plaque stays a name and a No claims nothing
               fresh = true;   // AUDIT WORLD6a A5: said at the window's mount, after the prompt - No claims nothing
             }
-            if (c.items.length === 0) return true;   // "If no contents, do nothing"
+            if ((rolled ?? c.items).length === 0) return true;   // "If no contents, do nothing"
             // UXB1-M: DFU's own box (PlayerActivate.cs:916-918: CommonMessageBoxButtons.YesNo, PrivatePropertyId) -
             // Yes and No a mouse presses, on the parchment or the enhanced card; Y, N and Return (No) as DFU's.
             interiorOverlay = new YesNoBoxWindow({
@@ -9261,6 +9231,7 @@ export function createWorldModes(host) {
     // and the action objects are still alive to be read.
     unleveledLootPreTransition();   // UL1: OnPreTransition (TransitionExterior)
     cacheInteriorScene();
+    interiorLootLeave(interiorCtx, _intShared);   // OUTDOOR-LOOT (D-1): a claim in flight and not lapsed goes with its claimer - before the bag is dropped and the memory goes out
     host.onInteriorLeave?.();   // WORLD6a: the room's memory goes out while the building still stands
     teardownQuestFlats();   // Q4-v: OnDestroy for the quest stands, before the batch teardown
     peopleBodies.destroy();   // MWNPC8a: the room's people's bodies with it
@@ -9925,7 +9896,7 @@ export function createWorldModes(host) {
           wildBodies: () => host.wildBodies?.() ?? null, wildStrike: (id, w, sw, o) => !!host.wildStrike?.(id, w, sw, o), wildSpellMarks: () => host.wildSpellMarks?.() ?? null, wildSpellOut: (id, sp) => !!host.wildSpellOut?.(id, sp),   // PVPDUNGEON: a fair player of the zone, struck in its dungeons
           onArenaHit: (hit) => !!host.onArenaHit?.(hit),   // ARENA4: and the door a blow's number on them leaves through - to the referee
           spoilContents: (key) => host.spoilContents?.(key) ?? null,   // WB9f: a piece of his spoils, listed on the plaque
-          onActions: (data) => host.onActions?.(data), peers: () => host.peers?.() ?? null, selfId: () => host.selfId?.() ?? null, party: () => host.partyNear?.() ?? [], nodeMarks: (feet) => host.professionMarks?.(feet) ?? null, questMarks: () => dungeonQuestMarksHere(),   // GUIDE8: the Exact tier's quest resources, on the dungeon's map and compass; NODE-MARKS: the dungeon's nodes on its compass, at its own feet; WORLD3: a door moved goes out; the peers the foes see; whose blow a puppet's is
+          onActions: (data) => host.onActions?.(data), peers: () => host.peers?.() ?? null, selfId: () => host.selfId?.() ?? null, party: () => host.partyNear?.() ?? [], nodeMarks: (feet) => host.professionMarks?.(feet) ?? null, questMarks: () => dungeonQuestMarksHere(), grants: () => host.grants?.() ?? null,   // GUIDE8: the Exact tier's quest resources, on the dungeon's map and compass; NODE-MARKS: the dungeon's nodes on its compass, at its own feet; WORLD3: a door moved goes out; the peers the foes see; whose blow a puppet's is
           postItem: (text) => host.postItem?.(text) ?? false, canPostItem: () => host.canPostItem?.() ?? false,   // CHAT-POST: the dungeon's pack posts through the outer host
           allyMarks: (sp) => host.allyMarks?.(sp) ?? null,   // AID1 onto ALLY-CAST: the party mates' bodies, in the dungeon's frame - SPELL-GIFT: with the spell
           companionBodies: () => host.companionBodies?.() ?? null,   // COMPANION-KIT: my companions underground (the dungeon's own records)
@@ -10625,7 +10596,7 @@ export function createWorldModes(host) {
     // QUEST-POPUP-PAUSE (2026-09-26, Mac: "Pause them offline"): the interior pools keep WINFOE1's clock under a
     // window - except, offline, under a quest box on top (the host's own read, world.js _questBoxHoldsFoes).
     const foeDt = host.questBoxHoldsFoes?.() ? 0 : dt;
-    if (mode === 'interior') interiorLootSettle();   // WORLD6a: a container's window gone (the stack reconciled above) is the close's word
+    if (mode === 'interior') interiorLootFrame(interiorCtx, _intShared, { now: performance.now(), open: (w) => interiorWindows.containsWindow(w) });   // WORLD6a: a container's window gone (the stack reconciled above) is the close's word; OUTDOOR-LOOT: and the cupboards' claims, lapse and re-ask
     seatHallsFrame(performance.now());   // AUDIT SEATS-2 C1: the seat halls, known late
     decorTool.frame({ dt, cam, overlayUp: overlayHeld, interior: mode === 'interior' });   // DECOR1d: the button, the panel's scan, the free camera
     if (mode === 'interior') cardGameFrame(performance.now());   // CARDS4: the card table's patrons think and deal on, under any window
@@ -13489,12 +13460,12 @@ export function createWorldModes(host) {
       if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;
       if (mode !== 'interior' || !interiorCtx || !_intShared?.locationKey || !data || data.k !== _intShared.locationKey) return false;
       const n = (Array.isArray(data.a) ? interiorCtx.actions.applyRemote(data.a) : 0)
-        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { seen: _intShared.seen, openKey: _intShared.openKey, today: stockedToday(), unreadable: _intShared.unreadable, carried: carriedPieces(playerEntity) }) : 0);   // HOME1: no word lands on a home's cupboards (world/interior/interiorShared.js); AUTO-HOLD: nor a piece I carry
+        + (!_intShared.home && Array.isArray(data.l) ? applyInteriorLoot(interiorCtx, data.l, { ..._intShared, from: id, today: stockedToday(), carried: carriedPieces(playerEntity) }) : 0);   // HOME1: no word lands on a home's cupboards (world/interior/interiorShared.js); AUTO-HOLD: nor a piece I carry; OUTDOOR-LOOT: the sender's, for a cupboard's seat to judge on receipt
       return n > 0;
     },
     placeActionRecords(keys) {
       if (mode === 'dungeon') return dungeonCtx ? (dungeonCtx.actionRecords?.(keys) ?? null) : null;
-      return mode === 'interior' && interiorCtx && _intShared?.locationKey ? interiorActionRecords(interiorCtx, keys, { locationKey: _intShared.locationKey, tooBig: _intShared.tooBig, home: _intShared.home }) : null;
+      return mode === 'interior' && interiorCtx && _intShared?.locationKey ? interiorActionRecords(interiorCtx, keys, { locationKey: _intShared.locationKey, tooBig: _intShared.tooBig, home: _intShared.home, room: _intShared.room }) : null;
     },
     restoreDungeonSave(extras) {
       if (mode !== 'dungeon' || !dungeonCtx) return false;
@@ -13780,6 +13751,7 @@ export function createWorldModes(host) {
         // and DFU's load deregisters the dying scene rather than
         // serializing it (RespawnPlayer :464).
         if (cacheScene) cacheInteriorScene();
+        interiorLootLeave(interiorCtx, _intShared);   // OUTDOOR-LOOT (D-1): a teleport's or a load's leave keeps a claim in flight too
         host.onInteriorLeave?.();   // WORLD6a: a load or a teleport out is a leave too
         _intShared = null;
         // OnPop runs on every window the manager removes
@@ -14065,7 +14037,7 @@ export function createWorldModes(host) {
       const t = interiorBuilding.buildingType;
       // AUDIT 29 D4: a smith's open for trade - not one broken into by night (its insideOpenShop latch false)
       if (t === BUILDING_TYPES.WeaponSmith || t === BUILDING_TYPES.Armorer) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: FORGE_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2: a hall's, its members'
       return caravanGuestStation('forge');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14074,7 +14046,7 @@ export function createWorldModes(host) {
     workbenchHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.FurnitureStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: WORKBENCH_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2
       return caravanGuestStation('workbench');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14083,7 +14055,7 @@ export function createWorldModes(host) {
     loomHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.ClothingStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: LOOM_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2
       return caravanGuestStation('loom');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14093,7 +14065,7 @@ export function createWorldModes(host) {
     masonHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.GeneralStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: MASON_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('mason');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14104,7 +14076,7 @@ export function createWorldModes(host) {
       if (mode !== 'interior' || !interiorBuilding) return null;
       const t = interiorBuilding.buildingType;
       if (t === BUILDING_TYPES.PawnShop || t === BUILDING_TYPES.GemStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: JEWEL_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('jeweller');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14114,7 +14086,7 @@ export function createWorldModes(host) {
     alchemyHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.Alchemist) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: ALCHEMY_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('alchemy');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14125,7 +14097,7 @@ export function createWorldModes(host) {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.GuildHall && interiorBuilding.factionId
         && guildGroupOfFaction(townTalk?.factionDict ?? null, interiorBuilding.factionId) === GUILD_GROUPS.MagesGuild) return { kind: 'shop', fee: ENCHANT_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('enchant');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },

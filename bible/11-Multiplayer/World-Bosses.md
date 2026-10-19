@@ -2629,7 +2629,7 @@ to be thrown out. Now a full court keeps them as its **watchers**:
   no real part in the fight (`hasPart`: under SEAT_KEEP_MS stood and under RECEIPT_SHARE of its share dealt) - one who
   fought keeps its seat and its claim for the whole fight, a reconnect costing it nothing. So at a full court of real
   fighters a watcher stays one: seating past 256 is COURT-WIDE's, never unseating a fighter.
-- **Only on a relay that says `me`** (G3): a client the full court keeps as its watcher on a relay before world218 would
+- **Only on a relay that says `me`** (G3): a client the full court keeps as its watcher on a relay before world222 would
   be seated by that relay's next `in` and never told - in the census and his health, striking nothing - so before it a
   full court refuses as it did (`wire.js` relaySupportsCourtWatch, read off the welcome).
 - **Its bounds** (G13): the court and its seven copies hold 2,048 sockets - at most 1,792 watch beside 256 fighters; the

@@ -40,6 +40,7 @@ import { groundViewModel, drawGateGround } from '../../ui/gate/gateGroundView.js
 import { damageChartModel, drawGateDamageChart } from '../../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../../net/gate/gateReceipt.js';
 import { bodySayer } from '../../net/bossBody.js';   // INT15: my body, said to the court's room
+import { wordShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: his health's share, the relay's word
 import { createGateHost } from './gateHost.js';   // WB11c: the Legion-Lord's host - its bodies, blows, words and sounds
 import { createPopulationLane } from '../../characters/npcBodies.js'; import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: the court's creatures in their Morrowind bodies
 import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
@@ -373,6 +374,9 @@ export function createGateCourt({
   let rk = null, rkDone = null, stunHeard = 0, crystalPass = null, crystalTried = false;
   /** AUDIT WB11 W1: the crystals' stand-ins, one a crystal, each naming its own (world/gate/gateBoss.js crystalStandIn) */
   const crystalIns = [];
+  /** FIELD BUGS 2026-10-18f RELAY-SHARE: crystal `c`'s reader of its health - the share the relay's word last gave it in the
+   *  Reckoning this screen holds (`rk.hp`); none before one (a crystal is a body my blows meet only while one stands). */
+  const crystalShare = (c) => () => rk?.hp[c] ?? null;
   const _targets = [], _crystalDraw = [], _crystalSlots = [], _crystalLights = [], _chest = [0, 0, 0];
   /** AUDIT WB9 (court F4): how far each walkway is laid this frame (net/gate/gateBrain.js walkFormed) - refilled, never made */
   const _walked = WALKS.map(() => 0);
@@ -781,7 +785,7 @@ export function createGateCourt({
     const X = s.cx;
     if (X && X.c.length && !sameCx(rk, X) && !(rkDone && rkDone.i === X.i && rkDone.x0 === X.c[0][0] && rkDone.z0 === X.c[0][1])) {
       rk = crystalsOf(X, s, t);
-      for (const q of rk.targets) q.entity = (crystalIns[q.c] ??= crystalStandIn(bossLookOf(s.boss), q.c));
+      for (const q of rk.targets) q.entity = (crystalIns[q.c] ??= crystalStandIn(bossLookOf(s.boss), q.c, crystalShare(q.c)));   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it
       // its call said while it is still to land (news to a fighter come in late through the wind-up too); each crystal
       // heard grinding up out of the stone as it grows, never long after
       let left = 0;
@@ -953,7 +957,7 @@ export function createGateCourt({
       const s = link.state(), t = now();
       // AUDIT WB B6: nor once the Wrath has come - the relay judges no blow after it, and he is no one's to strike
       if (!s || s.day === null || s.fell || s.wrath != null || bossAct(s, t).act === 'gone') return null;
-      standIn ??= bossStandIn(bossLookOf(s.boss), bossOf(s).name);
+      standIn ??= bossStandIn(bossLookOf(s.boss), bossOf(s).name, () => { const q = link.state(); return wordShare(q?.hp, q?.max); });   // FIELD BUGS 2026-10-18f RELAY-SHARE: his health as the relay says it (the bar's)
       const [x, z] = bossPlace(s, t), P = profileOf(s);
       return { feet: courtToDungeon(x, 0, z), yaw: s.yaw, height: P.bossH, radius: P.bossR, warded: t < s.shieldUntil, entity: standIn, mobile: bossLookOf(s.boss).mobile };   // WB8b: his profile's body - the relay measures a blow from the same
     },

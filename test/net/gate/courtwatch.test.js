@@ -221,7 +221,7 @@ test('AUDIT PLAN-1000 the watcher, cold-read: his burning ground bites a fighter
   h.link.word({ ...st, fell: { at: 1, top: [], n: 3 } });
   h.clock.t = 80_000 + 3 * COURT_WATCH_ASK_MS; assert.equal(h.c.askAgain(), false, 'fallen: no seat to ask for');
   // G3: a relay that says `me`, or a refusal as before
-  assert.deepEqual(['world217', 'world218', 'world300', null].map(relaySupportsCourtWatch), [false, true, true, false]);
+  assert.deepEqual(['world221', 'world222', 'world300', null].map(relaySupportsCourtWatch), [false, true, true, false]);
   const refused = [];
   const old = createGateLink({ now: () => 0, watches: () => false, onRefused: (m) => refused.push(m) });
   old.word({ k: 'no', m: 'the court is full' });

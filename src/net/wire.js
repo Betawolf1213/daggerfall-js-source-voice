@@ -42,6 +42,8 @@ import { HUB_SHARD_ROOMS, isHubShard, HUB_FIND_Q_MAX, REGION_SHARD_ROOMS } from 
 //                    {t:'own', data}                    OWN1: MY OWN live foes in a world room, beside the host's (a building's, a
 //                                                       shared quest's); a hit marked `own` goes to the `to` it names
 //                    {t:'act', data}                    a change to the room's doors, levers, movers and loot, from anyone in it (WORLD3/WORLD4)
+//                    {t:'grant', k, id, kind, n}        GRANT2: a spawn grant asked of my own cell, read by net/grantLaw.js validGrantAsk
+//                                                       there (GRANT_HZ_MAX); answered {t:'grant', k: ok|no|off, id, gr?|r?}
 //                    {t:'social', k, acct?, peer?, party?}   a friend or party act, in the HUB alone (SOC1): SOCIAL_HZ_MAX a second
 //                    {t:'party', p}                     my party pose - where I stand and how I fare - to the hub (SOC1): PARTY_HZ_MAX a second
 //   room -> client:  {t:'welcome', id, peers:[{id,name,look,pose,title?,glyphs?}], host, world, now}   now: the relay's clock, ms (WORLD5)
@@ -1260,6 +1262,7 @@ export function validFoeRecord(r) {
   // LOOT7 (the Loot arc): `cp` a CHAMPION's trait - its index in systems/champions.js CHAMPION_TRAITS (this file names
   // none of them: the relay reads it), absent for a foe that is none; the reader stands its puppet as the same champion
   if (r.cp !== undefined) { if (!Number.isInteger(r.cp) || r.cp < 0 || r.cp > CHAMPION_TRAIT_MAX) return null; out.cp = r.cp; }
+  if (r.gr !== undefined) { if (!Array.isArray(r.gr) || r.gr.length !== 2 || !Number.isSafeInteger(r.gr[0]) || r.gr[0] < 0 || r.gr[0] > 0x7fffffff || !Number.isInteger(r.gr[1]) || r.gr[1] < 0 || r.gr[1] > 23) return null; out.gr = [r.gr[0], r.gr[1]]; }   // GRANT3 (bible/11-Multiplayer/Spawn-Grants.md section 13): its grant's number and its member - the frame's `gs` holds the grant
   // GREATER-GIANT (2026-10-08, the owner: "everyone in the zone should see the same ... that the big giant is a Greater
   // Giant"): `gg` the zone's Greater Giant this foe is (its index, 0..7 - systems/wild/wildGiants.js), absent for any other -
   // every puppet stands it at its size and its name, and a client that sees one never stands a copy of its own
@@ -1476,6 +1479,15 @@ export const HEARTBEAT_MS = 20000;
  *  heartbeat so the two cannot be tuned apart: four pings to a pose, which keeps today's five-second on-wire cadence
  *  (the cadence intermediaries and phones were already proven against) while the object sleeps between poses. */
 export const PING_MS = HEARTBEAT_MS / 4;
+/** WORLD2: how often the stream carries EVERY layout foe, not the changed alone - a dropped delta heals within it.
+ *  FIELD BUGS 2026-10-18d SEAT-LIVE: moved here from net/online.js (which re-exports it), because the relay reads the
+ *  seat's staleness below off it - the one home both ends import. */
+export const FOES_FULL_MS = 2000;
+/** AUDIT WORLD2 C5: a seat heard from no more recently than this (its stream, or its word in the welcome) is not a
+ *  live seat - the joiner steps its own foes rather than stand among frozen ones. SEAT-LIVE: and the relay's own word -
+ *  a dungeon room's host that has said no frame for this long, with another socket there to hear it, holds the seat no
+ *  longer (net/seatLive.js seatOf). */
+export const FOES_STALE_MS = 3 * FOES_FULL_MS;
 /** SLAM13 (2026-09-16, AUDIT SLAM A2): A KEEPALIVE IS HEARD BY THE WHOLE CROWD AT MOST THIS OFTEN. SLAM8 fans an
  *  unmoved pose to everyone in range, untiered, because a standing player's heartbeat is the one frame whose whole job
  *  is to be heard - and it assumed that frame comes every HEARTBEAT_MS, which is what the port's client does. A
@@ -1496,7 +1508,12 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world218';   // GATE-DOOR (bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000; from play at a thousand online, "Server is kinda breaking down near oblivion gate cause so many ppl lol"): a gate's court and its copies admit GATE_HELLO_HZ_MAX hellos a second, its opening's crowd, where every room admitted HELLO_HZ_MAX - still spent before the token is read, a busy refusal leaving it unspent; and COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): the answer to an `in` that seats a fighter says so (`me`), so a client the full court kept as its watcher knows when it fights. Deploy relay before clients (a client from before it waits at a deeper door, and a full court still casts it out, as it did).
+export const RELAY_VERSION = 'world222';   // GATE-DOOR and COURT-WATCH (world218 on its branch, renumbered past GRANT2's world218, EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221 at the merge; NOT YET DEPLOYED; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000; from play at a thousand online, "Server is kinda breaking down near oblivion gate cause so many ppl lol"): a gate's court and its copies admit GATE_HELLO_HZ_MAX hellos a second, its opening's crowd, where every room admitted HELLO_HZ_MAX - still spent before the token is read, a busy refusal leaving it unspent; and COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): the answer to an `in` that seats a fighter says so (`me`), so a client the full court kept as its watcher knows when it fights. Deploy relay before clients (a client from before it waits at a deeper door, and a full court still casts it out, as it did).
+// world221: FIELD BUGS 2026-10-18f (bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md TURNED-BLOW; bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md L3; world219 on its branch, renumbered past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 at the merge; NOT YET DEPLOYED): THE STRIKE RULE ONE LAW ON BOTH ENDS - the relay's refusal of a blow struck from traversal ground (net/eliteGates/egBodies.js egStruckOff) is the one the screen asks, and the storey (egStoreyApart) the same; a woken lord's first phase said in the beat that wakes it (`eph`, egLordsWake), so no screen holds it asleep until the fight's next whole word; each body's radius said beside its row (`ead` and `efs` carry `r`, net/eliteGates/egBodies.js egRadiusWire - outside the 19-element row, so a client before it drops the field and keeps the word, and a client after it with an older relay judges as it did). Either end may deploy first.
+// world220: FIELD BUGS 2026-10-18d (bible/01-Overview/bugs/Field-Bugs-2026-10-18d.md; world219 on its branch, renumbered past EG-PERFECT's world219 at the merge - world218 the live relay's when it was written, GRANT2 deployed with #1018's merge). TWIN-REKINDLE: net/eliteGates/egBrain.js sapperReach - a Sapper reaching a fallen lord burns out against the body, never feeds it: a Twin fed at nought stood again un-hittable with its fall's flag on, threw blows, and its pair's raise never came. BANNER-SHAFT (Boar: "Big bugs of the spires"; bible/11-Multiplayer/Elite-Gates.md sections 13.3 and 13.4, Elite-Gates-Ascent.md section 2): a member's shaft or spell on an Elite Breach body of another storey lands through open air, refused only where the two stand stacked (net/eliteGates/egWalkGraph.js egStacked; a swing still reaches its own storey alone), so Valkynaz Ilthys's banners on the Rotunda's balconies are shot from the court. DUEL-RING: the Last Armsmaster's Challenge met in the open at n = 1 says so, called and ended (`challenge`'s and `challengeend`'s `t`, EG_DUEL_OPEN - a client before it reads the ring's words, as ever). SEAT-LIVE (the same drop; FIELD BUGS 2026-10-18d, FloopZe's 'Castle Daggerfall guards loot duping'): A DUNGEON ROOM'S SEAT IS A LIVE SOCKET'S - net/seatLive.js joins the bundle; the host is the eldest socket that has said a frame (a hello, a pose, its stream, its own lane, its memory - never a ping) within FOES_STALE_MS (moved here from net/online.js) of another being there to hear it, the change said to the room as a leave's is, and a socket back from silence a joiner, told the seat and stamped after it (Room _hostOf, _leads, _seatHeard, _seatKeep); a building's room keeps the eldest. The welcome carries no new field: a page reads world220 as the relay to ask (net/seatLive.js SEAT_RELAY_MIN), and an older page meets the same frames
+// world219: EG-PERFECT (2026-10-18, world218 on its branch, renumbered past GRANT2's world218 at the merge; bible/11-Multiplayer/Elite-Gates.md section 31's EG-PERFECT records; Mac: "I want to ensure the boss attacks, the design of the halls, and everything is absolutely perfect. Traversing between sections should present a challenge, platforming should be detailed"): the lords' blows fair and whole (the union floor's havens, pools and rings; the Valkynaz' signatures at their second phase; the Lattice a sweep), spec law 10 THE BROKEN WAY (net/eliteGates/egDurable.js EG_LAWS - laws 4 to 9 kept), a fight hall's clocks awaiting its company, the closing's walk, the tube's clock, the void zones, the toll's rooms. Deploy relay before clients (THE DRAIN keeps every live breach on its own law).
+// world218: GRANT2 (2026-10-18, Mac: "Lets build the plan"; bible/11-Multiplayer/Spawn-Grants.md section 12; NOT YET DEPLOYED): THE SPAWN GRANTS, MEASURED - a cell takes `{t:'grant', k:'mint', id, kind, n}` from a socket whose pose stands in it (net/grantLaw.js validGrantAsk, on grantGate's bucket) and answers `{t:'grant', k:'ok', id, gr}` - a grant made out to the asker, its cell and account, the pixel and the world minute, its signed level and Renown, a seed and the elite and champion marks it rolls, ten minutes' life, signed with GATE_SIGNING_KEY (net/grantLaw.js grantBytes, `spawn-grant1`); the gate (an account's bucket per kind, the cell's ceiling) is counted on every ask, and said (`no`) only while the relay setting `grantMode` enforces - it measures from this deploy (unset: measure), and `off` answers `off`; a cell's welcome says the mode (`gm`). Each cell posts its window of asks, signed, to the account service's GRANT_FEED_URL (net/grantMeasure.js, `grant-measure1`; acct155 keeps it). A client before it never asks; a client asks only a relay at world218 or later (GRANT_RELAY_MIN), which an older one would close the socket on. GRANT3-GRANT9 (sections 13-16, the same drop): the renewal, free, carry, heir and tally asks; a world room's own lane asks too (no pixel, no open-country kind, carried cell to cell alone); the settings `grantRoll` (an encounter's grant `encr`, its species its seed's) and `grantStrip` (the relay drops a record its grant does not stand), each off unset
+// world217: GROUND-GATE (FIELD BUGS 2026-10-17f, bible/01-Overview/bugs/Field-Bugs-2026-10-17f.md; world216 on its branch, renumbered past PROX-VOICE's world216 - reverted, its row kept so no relay takes it - at the merge; Mac's call on bible/03-World/Landforms.md C2: "Relay turns old builds away"): a ground room's hello says the ground its build stands on (`gl`, GROUND_LAW), and while the relay setting `groundGate` is on (net/relayCfg.js - off until the site serves this build, since the relay deploys first) a hello there that says less or none is refused, before anything is written: the relay's words in the error frame every build shows, and a close reason of its own (GROUND_OLD_REASON) (a close reason is 123 bytes at most). A hello on the ground asks nothing; an old one asks the hub's settings once a TTL, awaited in a cold room. Deploy relay before clients.
 // world215: SAFE (2026-10-17, world214 on its branch - main's WIKIMAID took world214 first, below; Mac: "Lets do every single thing here. I want a full fledged future proof system"; bible/11-Multiplayer/Chat-Safety-Arc.md; NOT YET DEPLOYED): THE CHAT'S SAFETY - every chat line the relay relays carries its stamp (`sg`, net/safety/chatStamp.js: Ed25519 over the tab, the speaker's account, the name, the time and the words, with GATE_SIGNING_KEY), which a report carries to the account service as its proof; a socket wearing the sprout says one public line every NEW_VOICE_GAP_MS (`slowed`); the public channels' lines are batched to the account service's reviewer (MOD_FEED_URL, net/safety/chatFeed.js - signed, never awaited by a line); a BAN order (identityToken.js ORDER_KINDS 'ban', `bn`) taken from a carrier (`{t:'ban', order}`) or through the service's door (SAFE_LAW_PATH, checked by the Worker before the hub is woken), each of the account's sockets silenced and told `banned`; and an order the service pushed handed to its target's own hub sockets (`law`) to carry to every room it holds
 // world214: WIKIMAID (2026-10-17, for SylviaBun: "the WikiMaid title and a purple aura with bunnies"; bible/06-Systems/Accounts-And-Cloud-Saves-Arc.md WIKIMAID; NOT YET DEPLOYED): the vocabulary's three new words - WIKIMAID last of TITLES and of GLYPHS, THE LILAC WARREN last of AURAS (net/identityToken.js), which the relay reads off every hello's token; nothing else in the law moved. Deploy the relay BEFORE the account service (acct150), or every token SylviaBun is signed - the glyph rides it whether or not she wears anything - is refused whole
 // world213:   EG-PLAY (2026-10-11, bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY; world195, world197, world198, world199, world200, world201, world203, world205, world206, world211 then world212 on its branch, renumbered past main's COATS1 world195, CHAT-LANG world196, BAL8 world197, SPAWN-REBIRTH world198, AUDIT ETHER-OW world199, PEER-ACTS world200, CHAT-TRADE world201, FIVE-ASKS world202, KG-SET world203, KG5 world204, PVP-LOOT + QUEST-HOME world205, SERPENT5 world206, ONE-BODY world207, INSTANCES world208, WEAPON-GLOW1 world209, HUB-PULL + DO-ASK world210, TIDY2 world211 and REZ-BLOODLINE + GRAVE-PARTY world212 at the merges; NOT YET DEPLOYED): AN ELITE BREACH'S ROOM - the hub opens a breach on the account service's signed order and calls its company (`eg` `open`, `call`), the breach's room `eg:<16hex>` admits its company alone and runs its halls by the director's law (net/eliteGates/egLaw.js, net/eliteGates/egBrain.js; EG-FULL: net/eliteGates/egShape.js, net/eliteGates/egBodies.js, net/eliteGates/egLegion.js, net/eliteGates/egLords.js, net/eliteGates/egVestige.js, net/eliteGates/egRun.js) and signs its receipts (net/eliteGates/egReceipt.js); the `eg` frame's kinds and bounds here (validEgIn, validEgOut, validEgOpenTell)
@@ -2031,10 +2048,12 @@ export function inRangeOf(roomKey, from) {
   return (to) => !!to && Math.max(Math.abs(fx - Math.floor(to.x / PIXEL_UNITS)), Math.abs(fy - Math.floor(to.z / PIXEL_UNITS))) <= RANGE_PIXELS;
 }
 
-/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'ban'|'renown'|'guild'|'guildout'|'home'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'eg'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
+/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'ban'|'renown'|'guild'|'guildout'|'home'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'grant'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'eg'|'wild'|'wdun'|'holdem'|'iliac'|'gambit', ...}
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/net/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
+/** GRANT2-GRANT3: the fields a grant ask may carry, carried through the parse as they came (net/grantLaw.js validGrantAsk). */
+const GRANT_ASK_FIELDS = Object.freeze(['k', 'id', 'kind', 'n', 'gs', 'grs', 'hs', 'rows']);   // AUDIT GRANT A7/A8: frees and heirs batched, a renewal whole
 export function parseClient(text, { hasHello = false } = {}) {
   if (typeof text !== 'string') return { error: 'text frames only' };
   // WORLD1/WORLD2: the frames past MAX_FRAME_BYTES are the world frame and the foes frame, told by their prefix
@@ -2171,6 +2190,12 @@ export function parseClient(text, { hasHello = false } = {}) {
     if (!hasHello) return { error: 'ow before hello' };
     const o = validOwIn(m);
     return o ? { t: 'ow', ...o } : { error: 'bad ow' };
+  }
+  if (m.t === 'grant') {   // GRANT2 (bible/11-Multiplayer/Spawn-Grants.md section 12): a spawn grant asked - its fields carried, the cell's _grantFrame judges them (net/grantLaw.js validGrantAsk: this file is that one's import, so it is read there)
+    if (!hasHello) return { error: 'grant before hello' };
+    const g = { t: 'grant' };
+    for (const f of GRANT_ASK_FIELDS) if (m[f] !== undefined) g[f] = m[f];   // GRANT3: every ask's fields (validGrantAsk reads the ones its `k` names)
+    return g;
   }
   if (m.t === 'ping') return { t: 'ping' };
   if (m.t === 'hello') {
@@ -4538,7 +4563,7 @@ export const relaySupportsGateHeal = (v) => { const m = /^world(\d+)$/.exec(type
  *  that seats a fighter says so (`me`). A client the full court keeps as its watcher on an older relay would be seated by
  *  that relay's next `in` and never told - in the census and the boss's health, striking nothing - so before it a full
  *  court refuses as it did. */
-export const COURT_WATCH_RELAY_MIN = 218;
+export const COURT_WATCH_RELAY_MIN = 222;   // world222 - GATE-DOOR's and COURT-WATCH's (world218 on their branch; main's GRANT2, EG-PERFECT and FIELD BUGS 2026-10-18d and 18f took world218 to world221)
 export const relaySupportsCourtWatch = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= COURT_WATCH_RELAY_MIN; };
 export const GATE_HEAL_ROWS_MAX = 8;
 export const GATE_HEAL_WIRE_MAX = 100_000;
@@ -5813,7 +5838,9 @@ export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantr
   // AUDIT EG III (Elite-Gates.md section 27.5): Bladestorm and Deadeye struck - said to their striker (`s`), its screen's beat
   'storm', 'deadeye',
   // AUDIT EG IV (Elite-Gates.md section 8.3): a Rampart's march holding its gate - its Ward-Bearers warded
-  'gateheld']);
+  'gateheld',
+  // EG-PERFECT (Elite-Gates.md section 13.3): the Wyrm's broken perches rising again, molten, at its second phase's turn
+  'perches']);
 /** The gifts a member is told of (`egot`'s `w`). */
 export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep', 'page']);   // LAYER THREE: 'page' - a page of the Annals (`p`)
 /** The zones' kinds (`ez`). */
@@ -5894,11 +5921,13 @@ function egCompany(co, full) {
   return new Set(out.map((t) => t[0])).size === out.length ? out : null;
 }
 /** A stage's word: the hall, the stage, when it began and ends (0 open-ended), the count (`cl` left, `ca` when it last
- *  began to run - 0 held), the hall's wake and its door (0 none). */
+ *  began to run - 0 held), the hall's wake and its door (0 none). EG-PERFECT (2026-10-18; Elite-Gates.md section 11.3): `tm`
+ *  when the company reached a routed hall's Collapsing Tube (relay ms - net/eliteGates/egBrain.js egTubeMouthOf), kept only
+ *  with it: a word without one is the word it was, and a bad one is no instant, never no stage. */
 function egStage(m) {
   if (!intIn(m.h, 0, EG_HALL_WIRE_MAX) || !EG_STAGES.includes(m.sg) || !egMs(m.sa) || !egMs(m.su)) return null;
   if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
-  return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
+  return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn, ...(gateMs(m.tm) ? { tm: m.tm } : {}) };
 }
 /** EG-ZQ (Elite-Gates.md section 14, Colossal): a body's size on the wire, thousandths of its look's - 0 its look's own, else
  *  within these (Colossal's rank II, the largest the law folds, is 1400: net/eliteGates/egLaw.js EG_DECREES, pinned under it - wire.js
@@ -5924,6 +5953,10 @@ function egBody(t) {
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
+/** AUDIT FB1018f L3-4: each body's radius beside its row (net/eliteGates/egBodies.js egRadiusWire - metres, hundredths; one a row,
+ *  in its order) - or none, a relay's before it (the screen then judges as it did). Beside the rows, not in them: a build before it
+ *  drops the field and keeps the word. Answers the list (a copy), undefined for none, null for a malformed one. */
+const egRadii = (r, n) => (r === undefined ? undefined : Array.isArray(r) && r.length === n && r.every((v) => finite(v) && v >= 0 && v <= EG_XZ_MAX) ? [...r] : null);
 /** A blow (net/eliteGates/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
  *  push, span. THE ASCENT (LAW 9; Elite-Gates-Ascent.md section 2): `y`, the height it lands at (a hall that judges by height
  *  says it - net/eliteGates/egBodies.js egAim; a coordinate's bound), so every screen draws and judges it on its own storey; none
@@ -6096,15 +6129,16 @@ export function validEgOut(m) {
     // ── the fight ──
     case 'efs': {
       const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW), zs = egList(m.zs ?? [], egZone);   // EG-ZJ: the live zones (section 22 - a joiner's)
-      return b && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg), zs } : null;
+      const r = b ? egRadii(m.r, b.length) : null;   // AUDIT FB1018f L3-4: the bodies' radii beside them
+      return b && r !== null && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, ...(r ? { r } : {}), bl, tx, mk, pg: egProgress(m.pg), zs } : null;
     }
-    case 'ead': { const a = egBodies(m.a, 24); return a && gateMs(m.at) ? { k: 'ead', a, at: m.at } : null; }
+    case 'ead': { const a = egBodies(m.a, 24), r = a ? egRadii(m.r, a.length) : null; return a && r !== null && gateMs(m.at) ? { k: 'ead', a, ...(r ? { r } : {}), at: m.at } : null; }   // AUDIT FB1018f L3-4: and their radii
     case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 10 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) && egXZ(t[7]) && egXZ(t[8]) && egYaw(t[9]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }   // EG-ZJ: each walk's height and its end's; AUDIT EG V (lane1 #7): its facing
     case 'ehp': { const h = egList(m.h, (t) => (Array.isArray(t) && t.length === 2 && intIn(t[0], 1, 1e9) && intIn(t[1], 0, EG_HP_MAX) ? [...t] : null), EG_WIRE_BODIES_MAX); return h ? { k: 'ehp', h } : null; }
     case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
     case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;
     case 'eb': { const b = egBlowW(m); return b ? { k: 'eb', ...b } : null; }
-    case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i } : null;
+    case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i, ...(Number.isSafeInteger(m.at) && m.at >= 0 ? { at: m.at } : {}) } : null;   // EG-PERFECT: the instant it was cut at (its FEINT_AT - net/eliteGates/egBodies.js egCut)
     case 'tell': { const b = egBlowW(m); return b && intIn(m.sh, 1, 400) ? { k: 'tell', ...b, sh: m.sh } : null; }   // EG-H1: Watchfire's early outline, its lead shown (ms)
     case 'untell': return intIn(m.i, 1, 1e9) ? { k: 'untell', i: m.i } : null;
     case 'etx': { const t = egList(m.t, egTether); return t ? { k: 'etx', t } : null; }

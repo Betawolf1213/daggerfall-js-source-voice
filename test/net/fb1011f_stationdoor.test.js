@@ -44,7 +44,7 @@ function rig(opts) {
   const log = { said: [], flows: [], pauses: [], focus: [] };
   let host = null;
   const env = {
-    decorOwnerHere: () => opts?.owner ?? true, hallMemberHere: () => false, caravanGuestHere: () => false, interiorHome: (opts?.owner ?? true) ? null : { owner: 'Someone' },
+    stationOwnerHere: () => opts?.owner ?? true, hallMemberHere: () => false, caravanGuestHere: () => false, interiorHome: (opts?.owner ?? true) ? null : { owner: 'Someone' },   // PIN MOVED (FB1018D HOME-BENCH): the press asks the stations' owner question
     homeBelongsLine: () => 'This is not your home.', say: (t) => log.said.push(t),
     PROF_STATIONS, forgeOffered: () => opts?.online ?? true, stationColdLine: (k) => `cold ${k}`,
     interiorKeyCtx: { togglePause: (o) => { log.pauses.push({ ...o, slotWas: host.slot }); host.slot = { pause: true }; } },

@@ -29,6 +29,7 @@ import { isEnhanced } from '../systems/uiSkin.js';
 import { getPref } from '../systems/uiPrefs.js';   // RA1: the Enhanced pane's sky switch
 import { pageParam } from '../systems/pageQuery.js';   // CLIMB1: `?parkour=off`, the enhanced climb's kill door
 import { isOnlinePage, onlineForcedPref } from '../systems/online/onlineLane.js';   // CLIMB1: online the skin is not asked, and the row is the lane's
+import { madeRuleHere } from '../systems/madeLevel.js';   // EG-PERFECT: the made level's law refuses the running leap on its proven ways
 import { carriedWeight } from '../systems/inventory.js';   // CLIMB2: a heavy pack cuts the enhanced climb's reach
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // CLIMB2: ...over what the body can carry
 import { DynamicSkiesRenderer } from '../render/dynamicSkiesRenderer.js';   // DS1: Dynamic Skies' skybox, the mod's own pass
@@ -48,6 +49,7 @@ import { announceSkillRaise, announceMastery, announceSkillMilestone } from '../
 import { masterSkillsBoxDue, setMasterSkills, MASTER_SKILLS_OFFER_ROWS, MASTER_SKILLS_INFO_ROWS, MASTER_SKILLS_DECLINED_TEXT, MASTER_SKILLS_INTRO_ROWS, nextMasteryChoice, masteryChoiceRows, masterSkill } from '../systems/masterSkills.js';   // SOFTCAP3/4
 import { nextPathChoice, pathChoices, pathChoiceRows, pathsOpenRows, choosePath, pathDeclinedText, pathDeclinedGrowthText } from '../systems/arcanePaths.js';   // SCHOOLS1: the specialisation's one ask - GROWTH4: its words, the Growth tab's where it stands
 import { nextMartialChoice, martialChoices, martialChoiceRows, martialOpenRows, chooseMartialPath, martialDeclinedText, martialDeclinedGrowthText } from '../systems/martialPaths.js';   // MARTIAL1: the martial specialisation's one ask
+import { computeEntityMods } from '../systems/entityMods.js';   // AUDIT SPEC-RESET L1-3: a chosen path's stats now, not at the next round
 import { DOOR_SPELL_TEXT, castBySkeletonKey } from '../systems/mysticism.js';   // X1: the door-spell alert lines; D9: Open.CheckCastByItem
 import { raiseSkills } from '../systems/advancement.js';   // AUDIT 23 (entity-1): the rest-end raise
 import { tickPlayerMinutes, runMagicRoundsFor, worldMinutes, skyMinutes, setWorldMinutes, ownMinutes, advanceOwnMinutes, tickInFlight, MINUTES_PER_DAY, CLASSIC_MINUTES_PER_SECOND, sharedClockOn } from '../systems/worldTick.js';
@@ -921,9 +923,14 @@ export const FOREST_HIDDEN_LOCATION_TYPES = Object.freeze(new Set([4, 7, 9, 10, 
  *  climb takes at the classic climb's cadence (climbingDeps' own). */
 /** CLIMB-NODE (FIELD BUGS 2026-10-01, Mac: "Hold it at nodes"): `hold` - whether the free climb's walk-in start is held
  *  (the world host's: a profession's node under the look, or an act playing - player/motor.js _freeStart). */
+/** EG-PERFECT (2026-10-18; bible/11-Multiplayer/Elite-Gates.md section 10.5): `leap` - whether the running leap may fly here
+ *  (player/motor.js _pkMayLeap, the leap at an edge and its late press): the made level's law (systems/madeLevel.js `runLeap`)
+ *  refuses it on the Spire's spans and the Hour's Steps, whose every gap is proven with the plain jump. One home for the four
+ *  hosts' motors (THE ONE CONSTRUCTION SEAM): the world host's made level answers, every other host's none. */
 export function parkourDeps(entity, say = null, { hold = null } = {}) {
   return {
     enabled: () => parkourSwitchOn(),
+    leap: () => madeRuleHere('runLeap') !== 'refused',
     inputs: () => {
       const most = maxFatigue(entity), cap = entityMaxEncumbrance(entity);
       return {
@@ -1541,7 +1548,8 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
   } else {
     // SCHOOLS1 (bible/06-Systems/Arcane-Specialisations.md section 3): THE SPECIALISATION - two schools mastered and no
     // path yet, on a pass that put no other box up (a mastery's own choice comes first): asked ONCE a character,
-    // permanently decided by Yes; No leaves it to the skill screen, which offers every open path.
+    // decided by Yes (given up only for gold - SPEC-RESET, systems/specReset.js); No leaves it to the skill screen, which
+    // offers every open path.
     // AUDIT SCHOOLS L4 M1: ONE path open is asked about (Yes chooses it); SEVERAL are named in an OK box that sends the
     // player to the skill screen, where each is offered - a permanent Yes on whichever stood first in the table was no
     // choice at all
@@ -1552,7 +1560,7 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
       if (open.length > 1) ask(pathsOpenRows(open, { growth: isEnhanced() }), null, null, { okOnly: true });   // GROWTH4: the enhanced skin's guide is the Growth tab's
       else {
         ask(pathChoiceRows(entity, path.id),
-          () => { const r = choosePath(entity, path.id); say(r.text); if (r.ok) audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
+          () => { const r = choosePath(entity, path.id); say(r.text); if (r.ok) { computeEntityMods(entity); audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); } },
           () => say(isEnhanced() ? pathDeclinedGrowthText() : pathDeclinedText()));
       }
     } else {
@@ -1566,7 +1574,7 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
         if (open.length > 1) ask(martialOpenRows(open, { growth: isEnhanced() }), null, null, { okOnly: true });
         else {
           ask(martialChoiceRows(entity, martial.id),
-            () => { const r = chooseMartialPath(entity, martial.id); say(r.text); if (r.ok) audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
+            () => { const r = chooseMartialPath(entity, martial.id); say(r.text); if (r.ok) { computeEntityMods(entity); audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); } },
             () => say(isEnhanced() ? martialDeclinedGrowthText() : martialDeclinedText()));
         }
       }

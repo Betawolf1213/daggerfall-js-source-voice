@@ -14,14 +14,14 @@ frozen worktrees - two of the slices had had no cold read at all (COURT-WATCH, C
 and no edit until each had reported. The worst: SESSION-SIGN's saving was mostly the replicas' (some 5-6 primary trips a
 second, not 36 - E1, recorded); a pass let the checkpoint and the beat write through a sign-out or a ban (E3 - each asks
 its session and the ban in its own statement now); a new registration read as a guest for four minutes (E2); a watcher
-was bitten by his burning ground (G1); a client on a relay before world218 would be seated and never told (G3 - the
+was bitten by his burning ground (G1); a client on a relay before world222 would be seated and never told (G3 - the
 watcher now waits on a relay that says `me`); a claim whose rate window turned mid-door was refused `progress-seat`
 (F1); the relay-load workflow finished green having read nothing (H3). Every finding fixed, pinned or recorded in
 `11-Multiplayer/Scale-Arc.md` (the lane blocks under RELAY-LOAD, PRIMARY-FOLD, SESSION-SIGN and the owner's calls) and
 `11-Multiplayer/World-Bosses.md` section 24; one call made for the owner (G2: a seat frees only of a fighter gone with
 no part - one who fought keeps it; seating past 256 is COURT-WIDE's). The audit's own slips caught too: two re-aimed
-records that did not parse (E4), a dangling cite (H1), counts said wrong (E12, H8, H9, F8). Relay world218 re-hashed in
-place, account acct155 (undeployed). Mutants: sessionsign 38, plan1000 30 (one equivalent), primaryfold 42 (four
+records that did not parse (E4), a dangling cite (H1), counts said wrong (E12, H8, H9, F8). Relay world222 re-hashed in
+place, account acct157 (undeployed; world218 and acct155 on the branch, renumbered past main's at the merge). Mutants: sessionsign 38, plan1000 30 (one equivalent), primaryfold 42 (four
 equivalent), gatedoor 14 (one equivalent), relayload 38 - all dead or recorded.
 
 **2026-10-18 - AUDIT PLAN-1000 (RELAY-LOAD, GATE-DOOR, PRIMARY-FOLD parts one to three).** Mac, at a thousand

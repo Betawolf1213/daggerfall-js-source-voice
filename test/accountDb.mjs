@@ -13,6 +13,7 @@ import { _resetYardsKept } from '../server-account/src/decor.js';   // YARD-SHED
 import { _resetBusyShed } from '../server-account/src/service.js';   // BUSY-GATE: and nothing shed
 import { _resetWeeksKept } from '../server-account/src/weekKept.js';   // PRIMARY-FOLD: nor any week read settled
 import { forgetChapters } from '../server-account/src/npcHalls.js';   // AUDIT CHAP3 T4: nor any region's chapters - a test's first read is its own database's
+import { _resetTownEconForTests } from '../server-account/src/townEcon.js';   // TOWN-ECON TE2: nor the towns' shares
 import { renownXpFor } from '../src/net/renown.js';
 import { mintReceipt, importReceiptKey } from '../src/net/gate/gateReceipt.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // MERGE 2: TERMS1 - a request that makes an account carries the versions ticked
@@ -98,6 +99,7 @@ export async function standService(extra = {}) {
   _resetBusyShed();
   forgetChapters();
   _resetWeeksKept();
+  _resetTownEconForTests();
   const kp = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
   const pkcs8 = Buffer.from(new Uint8Array(await subtle.exportKey('pkcs8', kp.privateKey))).toString('base64');
   const gk = await subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);

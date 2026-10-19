@@ -1411,6 +1411,12 @@ Developer's alone - a token whose glyphs say `dev`), and `/relay <setting> -` ha
   ground room refuses a hello from a build on an older ground (net/wire.js GROUND_LAW). A cell reads it at a hello that
   says an older ground or none, never at one on the ground: it asks the hub then at most every RELAY_CFG_TTL_MS, and
   waits for the answer while the room has never had one, so a cold cell's first hello is not the one let through.
+- GRANT2 (`11-Multiplayer/Spawn-Grants.md` section 12): `grantMode` (var GRANT_MODE) `measure` (and unset), `enforce` or
+  `off` - the spawn grants' law. A cell reads it at an ask, never at a hello: waited on at its first ask, asked again at
+  most every five minutes (GRANT_CFG_TTL_MS), since every cell a player roams asks.
+- GRANT8 and GRANT9 (`11-Multiplayer/Spawn-Grants.md` section 16): `grantRoll` (var GRANT_ROLL) and `grantStrip` (var
+  GRANT_STRIP), each on or off, off unset - an encounter's grant rolling its species from its seed, and the relay dropping
+  a foe record its grant does not stand. Each is read as `grantMode` is fetched, from the settings the cell last had.
 
 **A halo told when its cell judges poses** (`server/src/index.js` _refereesPoses, `_rfSay`). SCALE2c moved a halo's
 pose rate here because the relay judges fights off the poses that reach each cell, a halo's copies too:
@@ -2930,7 +2936,7 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 
 Relay slices ride as few drops as possible (the deploy policy above): GATE-DOOR's is the next.
 
-### GATE-DOOR: built (2026-10-18, this branch - relay world218, one drop at the merge)
+### GATE-DOOR: built (2026-10-18, this branch - relay world222, one drop at the merge)
 
 - **The relay.** A gate's court and its copies admit GATE_HELLO_HZ_MAX (48) hellos a second, burst the same, where every
   room admitted HELLO_HZ_MAX (10) - its own bucket, still asked before the token is read (`server/src/index.js`, the hello
@@ -2952,7 +2958,8 @@ with its token unread, which then opens the court once the door refills, while a
 stamp on a busy close and none on a drop; the court's silence with its door answering, before and past the wait, and the
 host's wiring. `tools/mutants/gatedoor.json`: 8, all dead (a ninth - the door read at my arrival - survived, and the line
 it aimed at was redundant, a refusal from before arrival first seen on the arrival's own frame: taken out). PIN MOVED: the
-relay version's 45 pins, world217 to world218 (each pin's history kept).
+relay version's 45 pins, world217 to world218 (each pin's history kept); at the merge, world221 to world222 - main's
+GRANT2, EG-PERFECT and FIELD BUGS 2026-10-18d and 18f had taken world218 to world221.
 
 **AUDIT PLAN-1000, lane B (a cold read on a frozen tree; fixed after it).**
 - **B1 (MED), fixed: a court the Worker refused before it opened was still a silence.** An overloaded object's 503
@@ -3152,8 +3159,8 @@ The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofin
   below: SESSION-SIGN).
 - **5 - both, in order: COURT-WATCH now, COURT-WIDE next.** COURT-WATCH (`World-Bosses.md` section 24, built): the
   257th stays in the court as its watcher - the fight heard and seen, none of a fighter's part - and asks for a seat
-  every COURT_WATCH_ASK_MS; the relay's answer to an `in` that seats a fighter says `me`. Rides world218 (re-hashed in
-  place, undeployed). A seat frees only as freeSeat frees one - a fighter gone with no real part in the fight: one who
+  every COURT_WATCH_ASK_MS; the relay's answer to an `in` that seats a fighter says `me`. Rides world222 (re-hashed in
+  place, undeployed; world218 on the branch). A seat frees only as freeSeat frees one - a fighter gone with no real part in the fight: one who
   fought keeps its seat and its claim for the whole fight, a reconnect costing it nothing (AUDIT PLAN-1000 G2, the call
   made: a watcher is seated past 256 by COURT-WIDE, never by unseating a fighter). COURT-WIDE - copies that hold
   fighters of their own and hand the court one batch a beat - is the future-proof shape past 256, and waits on its own
@@ -3175,7 +3182,7 @@ The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofin
   (two and a half, as before), pinned to ONLINE_CHECKPOINT_MS (`realm1.test.js`). Pinned by `realm0.test.js` REALM P0.5
   (PIN MOVED) and CHECKPOINT5-two-minutes-again (dead).
 
-### SESSION-SIGN: built (2026-10-18, this branch - acct155, no migration, no drop)
+### SESSION-SIGN: built (2026-10-18, this branch - acct157, no migration, no drop)
 
 **Counted first.** Every authenticated request asked the account database who its secret is (`accounts.js`
 resolveSession, WHO_SQL: one statement, the session and its player) - some 30-74 of the primary's round trips a second at
@@ -3232,7 +3239,8 @@ the lookup); the lag (a ban and a sign-out at the mint at once, at a hot route a
 preflight. `test/net/sessionsign_client.test.js` (2): the page keeps, sends and lets go of its pass, and the realm's door
 carries it. `tools/mutants/sessionsign.json`: 24 at the slice, all dead. PIN MOVED: the account version's pins, acct154 to
 acct155 (PLAN-1000 - PRIMARY-FOLD's changes to the Worker's law had not moved it): nine version records, and five records
-re-aimed by content (AUDIT PLAN-1000 E12, H9: this said "nine re-aimed"), all dead.
+re-aimed by content (AUDIT PLAN-1000 E12, H9: this said "nine re-aimed"), all dead. At the merge, acct156 to acct157 -
+main's GRANT2 and TOWN-ECON TE2 had taken acct155 and acct156.
 
 **AUDIT PLAN-1000, lane E (a cold read on a frozen tree; fixed after it).** Forgery and replay held under every attempt
 the lane made (an altered body, a stretched `x`, another account's secret, the secret with a character added, another
