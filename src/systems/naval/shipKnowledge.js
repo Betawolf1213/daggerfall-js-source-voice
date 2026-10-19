@@ -180,7 +180,7 @@ export function glassCard(f, known, { study = 0, within = null } = {}) {
   const colours = coloursWords(faction, disguised ? f.falseFlag : f.flag);
   rows.push(['Colours', colours], ['Range', `${Math.round(f.distance)} m - ${way}`], ['Bearing', mindWords({ hostile: f.hostile, faction, temper: f.temper, mode: f.mode, bound: disguised ? '' : f.bound })]);
   if (known >= KNOW.studied) {
-    if (f.falseFlag) rows.unshift(['False colours', 'Too many gunports for a trader - this is a pirate']);
+    if (f.falseFlag) rows.unshift(['False colours', 'Too many gunports for a trader. This is a pirate.']);
     rows.push(['Guns', gunsWords(f.hull)], ['Hands', handsWords(f.crew)], ['Hurts', `hull ${Math.round(f.hullShare * 100)}%${f.sailShare != null ? `, canvas ${Math.round(f.sailShare * 100)}%` : ''}${f.fire ? ' - burning' : ''}`], ['Hold', cargoWords(f.cargo)]);
     if (f.bounty) rows.push(['Wanted', f.bounty]);
     if (f.lore) rows.push(['Lore', f.lore]);

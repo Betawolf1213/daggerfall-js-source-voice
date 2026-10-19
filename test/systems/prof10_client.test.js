@@ -231,7 +231,7 @@ test('PROF10 pages: The Jeweller\'s Bench - away, the word; at a Pawn Shop or a 
     const benchFamilies = () => { const f = page.buttons().filter((b) => b.className.includes('prof-family')); return f.slice(f.findIndex((b) => b.textContent === 'Ring')); };
     assert.deepEqual(benchFamilies().map((b) => b.textContent), ['Ring', 'Mark', 'Bracelet', 'Bracer', 'Amulet', 'Torc', 'Cloth Amulet', 'Wand', 'Silver', 'Gold', 'Platinum']);
     assert.deepEqual(page.buttons().filter((b) => b.className.includes('prof-recipe')).map((b) => b.textContent).slice(0, 4),
-      ['Silver Ringcan make now', 'Silver Ruby Ringcan make now', 'Silver Emerald Ringwants its inputs', 'Silver Sapphire Ringwants its inputs']);
+      ['Silver Ringcan make now', 'Silver Ruby Ringcan make now', 'Silver Emerald Ringneeds materials', 'Silver Sapphire Ringneeds materials']);
     assert.equal(page.buttons().filter((b) => b.className.includes('prof-recipe')).length, 10, 'the plain Ring and a gem each');
     assert.deepEqual(jewelRecipes('ring', 'gold').map((r) => r.id).slice(0, 2), ['ring:gold', 'ring:gold:ruby']);
     page.family('Gold').onclick();
@@ -241,7 +241,7 @@ test('PROF10 pages: The Jeweller\'s Bench - away, the word; at a Pawn Shop or a 
     assert.equal(page.recipe('Ironwood Ruby Wand').textContent, 'Ironwood Ruby Wandrank 70');
     page.family('Cloth Amulet').onclick();
     assert.equal(benchFamilies().length, 8, 'the Cloth Amulet\'s Linen, no row of its own');
-    assert.equal(page.recipe('Ruby Cloth Amulet').textContent, 'Ruby Cloth Amuletwants its inputs');
+    assert.equal(page.recipe('Ruby Cloth Amulet').textContent, 'Ruby Cloth Amuletneeds materials');
     page.family('Ring').onclick();
     page.recipe('Silver Ruby Ring').onclick();
     assert.match(page.text(), /Silver Ruby Ring - rank 0metal:silver 1 \/ 1 \(9 stored\)gem:ruby 1 \/ 1 \(9 stored\)/);
@@ -326,7 +326,7 @@ test('PROF10 pages: a Wand\'s Heartwood for a plank and a Lapidary\'s Siege-crac
     page.family('Ring').onclick();
     page.recipe('Silver Emerald Ring').onclick();
     assert.equal(page.box('Set a Siege-cracked Gem'), null);
-    assert.equal(page.recipe('Silver Emerald Ring').textContent, 'Silver Emerald Ringwants its inputs');
+    assert.equal(page.recipe('Silver Emerald Ring').textContent, 'Silver Emerald Ringneeds materials');
     page.recipe('Silver Ruby Ring').onclick();
     assert.match(page.text(), /Quality chances: Fine 35% \| Superior 52% \| Masterwork 13%\. They get better the further your rank \(100\) is above the recipe's \(0\)\./);   // PIN MOVED (PLAIN-ODDS): the odds said in plain words
     page.button('Quick craft').onclick();
@@ -363,13 +363,13 @@ test('PROF10 pages: the facet\'s keys - Space stops the turn (a held key\'s repe
     page.button('Craft').onclick();
     page.draw();
     assert.equal(page.button('Cook').disabled, true, 'the facet holds the fire');
-    assert.match(page.text(), /Your hands are at the jeweller's bench - finish there first\./);
+    assert.match(page.text(), /Your hands are at the jeweller's bench\. Finish there first\./);
     setDownProfAct();
     page.draw();
     page.button('Cook').onclick();
     page.draw();
     assert.equal(page.button('Craft').disabled, true, 'the pan holds the bench');
-    assert.match(page.text(), /Your hands are at the fire - finish there first\./);
+    assert.match(page.text(), /Your hands are at the fire\. Finish there first\./);
     assert.ok(_cookForTests().act);
     setDownProfAct();
     // the page shut under the facet: let go, nothing asked
@@ -391,7 +391,7 @@ test('PROF10 pages: Jewelcrafting practised on the Professions page - its four c
     assert.deepEqual(rows, ['Mining', 'Logging', 'Herbalism', 'Hunting', 'Fishing', 'Smithing', 'Building', 'Outfitting', 'Provisioning', 'Enchanting']);
     page.buttons().find((b) => b.textContent.startsWith('Smithing')).onclick();
     page.draw();
-    assert.doesNotMatch(page.text(), /not practised in the Bay yet/);
+    assert.doesNotMatch(page.text(), /isn't available in the Bay yet/);
     const cards = page.buttons().filter((b) => b.className.includes('prof-spec'));
     // PIN MOVED (CRAFT3): the track's four a rank, each named its discipline's - Jewelcrafting's four among the smith's
     assert.deepEqual(cards.map((c) => [c.querySelector('b').textContent, c.querySelector('.prof-of')?.textContent, c.disabled]),
@@ -443,7 +443,7 @@ test('PROF10 items: a piece is DFU\'s own jewellery - its template and group, it
   assert.deepEqual([pieceOfRecipe(gold, 'ring:gold:ruby'), pieceOfRecipe(gold, 'ring:gold:emerald')], [true, false], 'a commission\'s piece is its recipe\'s');
   const wand = mintPiece({ recipe: 'wand:ghostwood:diamond', quality: 2, seed: 3 }, PROV);
   assert.deepEqual([wand.templateIndex, wand.name, wand.enchantmentPoints], [140, 'Ghostwood Diamond Wand', 1320]);
-  assert.match(JEWEL_KEPT_TEXT, /The last facet caught the light, but no word came back/);
+  assert.match(JEWEL_KEPT_TEXT, /The last facet caught the light, but the realm has not answered yet/);
   assert.equal(jewelPointsLine(recipeById('ring:silver')), '1,800 enchantment points');
 });
 

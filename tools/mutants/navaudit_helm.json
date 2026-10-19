@@ -571,7 +571,7 @@
   {
     "name": "NAV1H-the-wreck-sails",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (d.state === SHIP_STATES.wrecked) return 'The ship is crippled - no sail will set.';\n",
+    "old": "    if (d.state === SHIP_STATES.wrecked) return 'The ship is crippled. No sail will set.';\n",
     "new": "",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"
@@ -580,7 +580,7 @@
   {
     "name": "NAV1H-the-rig-refusal-unsaid",
     "file": "src/scenes/naval/navalHost.js",
-    "old": "    if (d.maxSail > 0 && d.sailShare() <= 0) return 'The rigging is shot away - no sail will set.';\n",
+    "old": "    if (d.maxSail > 0 && d.sailShare() <= 0) return 'The rigging is shot away. No sail will set.';\n",
     "new": "",
     "tests": [
       "test/systems/naval/navaudit_helm.test.js"

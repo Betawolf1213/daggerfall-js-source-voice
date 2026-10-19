@@ -2,7 +2,7 @@
   {
     "name": "CRAFT-HOWTO-smithing-dropped",
     "file": "src/ui/professions/profPages.js",
-    "old": "  smithing: () => t('prof.page.how.smithing', 'Smithing is done at a forge: a Weaponsmith\\'s, an Armorer\\'s or one in your own home. Open the Stores page there (Holdings > Stores). The Forge smelts the ore you mine into ingots, and the Anvil makes weapons, armour and tools from them - or from raw ore, smelting it first. Jewellery is made at a jeweller\\'s bench: a Pawn Shop\\'s, a Gem Store\\'s or one in your own home. Smelting and every piece you make earn Smithing XP.'),\n",
+    "old": "  smithing: () => t('prof.page.how.smithing', 'Smithing is done at a forge: a Weaponsmith\\'s, an Armorer\\'s or one in your own home. Open the Stores page there (Holdings > Stores). The Forge smelts the ore you mine into ingots, and the Anvil makes weapons, armour and tools from them, or from raw ore by smelting it first. Jewellery is made at a jeweller\\'s bench: a Pawn Shop\\'s, a Gem Store\\'s or one in your own home. Smelting and every piece you make earn Smithing XP.'),\n",
     "new": "",
     "tests": [
       "test/ui/professions/fb1018d_crafthowto.test.js"
@@ -262,7 +262,7 @@
   {
     "name": "CRAFT-HOWTO-raw-ore-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": " - or from raw ore, smelting it first.",
+    "old": ", or from raw ore by smelting it first.",
     "new": ".",
     "why": "AUDIT FB1018D L1-5: the anvil's smelt-first chain (CRAFT1) unsaid",
     "tests": [

@@ -79,7 +79,7 @@ test('CRAFT-HOWTO THE PAGE: every profession\'s pane says how it is done - each 
     provisioning: [ALCHEMY_HOW, CRAFT_HOW.provisioning()],
     enchanting: [ENCHANTING_HOW(0)],
   });
-  assert.match(said.hunting[0], /^Skin a body you killed with a Skinning Knife in your pack/, 'Hunting\'s own words');
+  assert.match(said.hunting[0], /^To skin a body you killed, have a Skinning Knife in your pack/, 'Hunting\'s own words');
   // a craft's words are the table's, every one a paragraph of its own (the four crafts the brew and the item maker leave)
   assert.deepEqual(Object.keys(CRAFT_HOW), ['smithing', 'building', 'outfitting', 'provisioning']);
   for (const p of PROFESSIONS.filter((x) => x.kind === 'crafting')) {
@@ -130,7 +130,7 @@ test('CRAFT-HOWTO THE WORDS ARE THE CODE\'S: each craft names the shops its stat
   assert.match(CRAFT_HOW.building(), /a Furniture Store's, a joinery's or one in your own home/);
   // the fire is any lit one, and nobody's to charge for
   assert.deepEqual(COOK_FIRE, { kind: 'fire', fee: 0 });
-  assert.match(CRAFT_HOW.provisioning(), /^Cooking is done at any lit fire - a campfire, a hearth or a brazier: stand within reach of its flame/);
+  assert.match(CRAFT_HOW.provisioning(), /^Cook at any lit fire, such as a campfire, a hearth or a brazier: stand close to its flame/);
   // every one is worked on the Stores page, the Holdings tab's (enhancedMenu.js: the Professions page the Stats rail's)
   assert.deepEqual(PROF_PAGE_SECTIONS.map(([id]) => id), ['professions', 'stores']);
   const menu = src('src/ui/enhanced/enhancedMenu.js');
@@ -141,7 +141,7 @@ test('CRAFT-HOWTO THE WORDS ARE THE CODE\'S: each craft names the shops its stat
   // THE WORKS: the forge's ingots of mined ore pay Smithing; a saw and a cure pay nothing, a mason's work Building
   const ingots = SMELT_RECIPES.filter((r) => r.out.startsWith('ingot:') && r.inputs.every((i) => /^(metal|ore):/.test(i.key)));
   assert.ok(ingots.length >= 8 && ingots.every((r) => trackOf(r.xp) === 'smithing'), 'the forge smelts the ore you mine, for Smithing XP');
-  assert.match(CRAFT_HOW.smithing(), /The Forge smelts the ore you mine into ingots, and the Anvil makes weapons, armour and tools from them - or from raw ore, smelting it first\./);
+  assert.match(CRAFT_HOW.smithing(), /The Forge smelts the ore you mine into ingots, and the Anvil makes weapons, armour and tools from them, or from raw ore by smelting it first\./);
   assert.match(CRAFT_HOW.smithing(), /Smelting and every piece you make earn Smithing XP\.$/);
   assert.ok(SAW_RECIPES.length && SAW_RECIPES.every((r) => r.xp === null && r.station === 'workbench'), 'a saw pays no XP');
   assert.match(CRAFT_HOW.building(), /saws the logs you fell into planks/);

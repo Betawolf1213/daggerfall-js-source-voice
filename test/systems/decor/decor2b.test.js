@@ -89,8 +89,8 @@ test('DECOR2b the furnisher\'s pieces: Daggerfall\'s Furniture group, twenty-nin
   assert.deepEqual([pillow.flat, pillow.looks, pillow.icon, pillow.item.g], [[200, 11], null, { archive: 200, record: 11, dye: null }, 8]);
   assert.equal(decorFurnishingEntry(statue(), 0), null);
   // what is said
-  assert.equal(furnishingDeliveredLine(['Oak Chair']), 'The Oak Chair will be delivered - set it down from the Decorate panel in any room you can decorate.');
-  assert.equal(furnishingDeliveredLine(['Oak Chair', 'Curtains', 'Small Pillow']), '3 pieces of furniture will be delivered - set them down from the Decorate panel in any room you can decorate.');
+  assert.equal(furnishingDeliveredLine(['Oak Chair']), 'The Oak Chair will be delivered. Place it from the Decorate panel in any room you can decorate.');
+  assert.equal(furnishingDeliveredLine(['Oak Chair', 'Curtains', 'Small Pillow']), '3 pieces of furniture will be delivered. Place them from the Decorate panel in any room you can decorate.');
   assert.equal(furnishingBackLine(1), 'A piece of your furniture came back to Your things.');
   assert.equal(furnishingBackLine(2), '2 pieces of your furniture came back to Your things.');
   assert.equal(ownBackLines([statue(), furn(221), statue(), furn(229)], decorOwnBackLine),
@@ -344,7 +344,7 @@ test('DECOR2b setting delivered furniture down: listed among "Your things" after
   btn(panelOf(rig), 'Take down').fire('click');
   await settle();
   assert.deepEqual([rig.standing.length, rig.furnishings.includes(bed), rig.pack.includes(bed)], [0, true, false], 'among the deliveries again');
-  assert.equal(rig.said.at(-1), 'Plain Double Bed taken down - set it down again from Your things.');
+  assert.equal(rig.said.at(-1), 'Plain Double Bed taken down. Set it down again from Your things.');
   // a pillow: as its own picture
   rig.frame();
   root = panelOf(rig);

@@ -176,7 +176,7 @@ test('AUDIT 31 U2, U10: every field under its visible name; a Post or a Commissi
   const go = () => btn(byClass(r.host, 'work-form')[0], 'Commission');
   assert.equal(go().getAttribute('title'), 'Name the crafter.');
   who.value = '1x'; who.oninput();
-  assert.equal(go().getAttribute('title'), 'That is not a name a crafter could have.');
+  assert.equal(go().getAttribute('title'), 'That isn\'t a valid username.');
   who.value = 'merra'; who.oninput();
   assert.equal(go().getAttribute('title'), 'You cannot commission yourself.');
   who.value = 'Silverthorn'; who.oninput();
@@ -223,7 +223,7 @@ test('AUDIT 31 U4, U11, H6, U13: Yours declines a commission naming you and says
   const held = Object.assign([], { blocked: 1 });
   const h = workRig({ data: boardData(), pieces: held });
   await openWork(h.host);
-  assert.match(byClass(h.host, 'seal-commission')[0].textContent, /Your piece for it is equipped, locked or bound - free it first\./);   // BOARD-UI (PIN MOVED)
+  assert.match(byClass(h.host, 'seal-commission')[0].textContent, /Your piece for it is equipped, locked or bound\. Free it first\./);   // BOARD-UI (PIN MOVED)
   h.v.unmount();
 });
 

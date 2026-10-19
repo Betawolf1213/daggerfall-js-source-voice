@@ -125,7 +125,7 @@ test('AUDIT 32 P2/P4: one act a page - the loom\'s Craft held while the anvil\'s
     pickShirt(p);
     const loomCraft = p.buttons().filter((b) => b.textContent === 'Craft').at(-1);
     assert.equal(loomCraft.disabled, true, 'the loom waits');
-    assert.match(p.text(), /Your hands are at the anvil - finish there first\./);
+    assert.match(p.text(), /Your hands are at the anvil\. Finish there first\./);
     assert.equal(docKeys.size, 1, 'one act, one loop');
     setDownProfAct();
     p.draw();
@@ -185,7 +185,7 @@ test('AUDIT 32 P8/R4: Standard-bearer\'s Silk says what it waits on; the Outfitt
     p.btn('Clothing').onclick();
     p.btn('Straps').onclick();   // PIN MOVED (CRAFT2): a garment, then its cloth in the box
     p.btn('Standard-bearer\'s Silk').onclick();
-    assert.match(p.text(), /cloth:standard comes with the sieges - a Siege Honour's Spoils\./);   // PIN MOVED (AUDIT-SEATS): the sieges yield it now
+    assert.match(p.text(), /cloth:standard comes from the sieges, as Siege Honour Spoils\./);   // PIN MOVED (AUDIT-SEATS): the sieges yield it now
     assert.doesNotMatch(p.text(), /Nothing yields it yet/);
     const root = el('div');
     document.body.append(root);

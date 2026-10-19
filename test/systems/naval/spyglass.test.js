@@ -137,7 +137,7 @@ test('SPYGLASS the glass\'s card: unknown - her hull and her way, nothing of her
   const seen = glassCard(f, KNOW.studied, { study: 0.2 });
   assert.deepEqual([seen.title, seen.sub, seen.tone, seen.study], ['The Black Gull', 'Pirate Sloop', 'pirate', 1]);
   assert.deepEqual(seen.rows, [
-    ['False colours', 'Too many gunports for a trader - this is a pirate'], ['Colours', 'the black flag'], ['Range', '1234 m - making 10 knots'], ['Bearing', 'Wary - picks targets carefully'],
+    ['False colours', 'Too many gunports for a trader. This is a pirate.'], ['Colours', 'the black flag'], ['Range', '1234 m - making 10 knots'], ['Bearing', 'Wary - picks targets carefully'],
     ['Guns', '6 swivels, a swivel gun forward'], ['Hands', 'about 10 hands'], ['Hurts', 'hull 50%, canvas 75% - burning'], ['Hold', 'riding easy - some cargo'], ['Wanted', '300 gold - posted at Wayrest'],
   ]);
   assert.equal(glassCard({ ...f, hostile: true, mode: 'engage' }, KNOW.colours).title, 'The Black Gull', 'her guns on me: false colours hold for nobody');

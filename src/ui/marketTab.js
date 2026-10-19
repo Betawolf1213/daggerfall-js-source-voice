@@ -96,7 +96,7 @@ const GOODS_SAID = 8;
  *  tab and the book never disagree - a bid that leads, a bid standing, a bid overtaken as it was decided). */
 const MOVED = MARKET_MOVED;
 /** AUDIT PROF-541 R2-C7: why a spoiled dish of your own make does not list. */
-export const SPOILED_DISH_WHY = 'spoiled - only a fresh dish of your own make goes to the market';
+export const SPOILED_DISH_WHY = 'spoiled - only fresh dishes you made can be sold';
 /** MARKET-AUDIT: the material families the filters offer - those the market knows a material of (the Spoils of War, a
  *  family the Stores keep, has none: its two materials are a metal and a cloth, and its filter read nothing ever). */
 const LISTED_FAMILIES = Object.freeze(MARKET_FAMILIES.filter(([f]) => marketCatalogue().some((c) => c.family === f)));
@@ -627,7 +627,7 @@ export function createMarketTab(m, ui) {
     // AUDIT PROF-541 R2-C7: a dish of your own make spoiled since it was cooked lists neither way - its record mints it
     // fresh (smithItems.js asMinted), so the Crafted list leaves it out - and is said so, never "list it as a crafted piece"
     if (h === 'yours' && (item.foodStage ?? 0) > 0) return SPOILED_DISH_WHY;
-    return h === 'other' || h === 'none' || h === 'unasked' ? null : h === 'yours' ? 'your own make - list it as a crafted piece' : h === 'elsewhere' ? 'on the market already' : 'being looked up';
+    return h === 'other' || h === 'none' || h === 'unasked' ? null : h === 'yours' ? 'made by you - list it as a crafted piece' : h === 'elsewhere' ? 'on the market already' : 'being looked up';
   };
   /** BOARD-UI: a form's field under its name. */
   const field = (name, input, cls = '') => {
@@ -722,7 +722,7 @@ export function createMarketTab(m, ui) {
         : el('span', 'notice-tip', auction ? 'You carry no Masterwork to auction.' : 'You carry no crafted piece to sell.'),
       field(auction ? 'Opening bid (silver)' : `Price in ${unitWord}`, price));
       const them = (n) => (n === 1 ? 'it' : 'them');
-      if (others) notes.append(el('p', 'notice-tip', `${plural(others, 'crafted piece')} you hold ${others === 1 ? 'is' : 'are'} another player's by its maker's record - only they sell ${them(others)} as crafted.${goldOk() && m.goods ? ` List ${them(others)} from your pack for gold instead.` : ''}`));
+      if (others) notes.append(el('p', 'notice-tip', `${plural(others, 'crafted piece')} you hold ${others === 1 ? 'is' : 'are'} made by another player, and only the maker can sell ${them(others)} as crafted.${goldOk() && m.goods ? ` List ${them(others)} from your pack for gold instead.` : ''}`));
       if (elsewhere) notes.append(el('p', 'notice-tip', `${plural(elsewhere, 'crafted piece')} you hold ${elsewhere === 1 ? 'is' : 'are'} already listed, on the road or in a home.`));
       worth = () => st.list.price;
       can = () => !!chosen;
@@ -881,8 +881,8 @@ export function createMarketTab(m, ui) {
           : b.state === 'won' ? 'won - it comes to you'
             // AUDIT 31 S3: a void bid is a removed auction's, or a won one its seller could not be paid for in seven days;
             // U13: its Marks come back when this tab is next read - never "when you next open the market", which it is
-            : b.state === 'void' ? (b.returned ? 'void - your silver is back' : 'void - your silver comes back at the next look')
-              : b.returned ? 'outbid - your silver is back' : 'outbid - your silver comes back at the next look';
+            : b.state === 'void' ? (b.returned ? 'void - your silver is back' : 'void - your silver comes back when you next open the market')
+              : b.returned ? 'outbid - your silver is back' : 'outbid - your silver comes back when you next open the market';
         bl.append(el('li', `market-listing state-${b.state}`, `${m.pieceName(b.piece)} - ${marksText(b.amount)}${b.courier ? ` + ${b.courier} courier` : ''} - ${word}`));
       }
       box.append(bl);

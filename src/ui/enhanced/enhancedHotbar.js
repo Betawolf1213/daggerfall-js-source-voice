@@ -141,10 +141,10 @@ const padInHand = () => { try { return controllerLook(); } catch { return false;
 // pad's, a rebound Select's), and the bar's hint stands beside it.
 export const PAD_ARRANGE_TEXT = Object.freeze({
   choose: (name) => `Choose a hotbar slot for ${name}.`,
-  picked: (name) => `${name} is in hand - choose a slot for it.`,
+  picked: (name) => `${name} is in hand. Choose a slot for it.`,
   hint: 'Select a slot to take it in hand, then another to put it there. Options clears a slot.',
-  hintHand: 'Choose a slot: select it - or hold a bumper and press the slot\'s button.',
-  hintHandRow: 'Choose a slot: select it.',
+  hintHand: 'Choose a slot, or hold a bumper and press the slot\'s button.',
+  hintHandRow: 'Select a slot to choose it.',
 });
 /** The bar's raise and its picked slot, from every reason it may be up under a window. */
 function raiseSync() {
@@ -196,7 +196,7 @@ const mouseMode = () => !!bar && hotbarMode() && !lastHidden && !dropOwners.size
 const editable = () => hotbarAcceptsDrops() || mouseMode();
 const HINT_DROP = 'Drag any item or a spell onto a slot. Drag a slot off the bar to clear it.';   // UI2: any item
 const HINT_EDIT = 'Click a slot to use it. Drag to move it, drag it off the bar or right-click to clear it.';
-const HINT_XB = 'Drag onto a slot. In play, hold LB or RB and press the button the slot shows - the d-pad alone never uses a slot.';
+const HINT_XB = 'Drag onto a slot. In play, hold LB or RB and press the button the slot shows. The d-pad alone never uses a slot.';
 
 // ── PADPLUS1: THE CROSSBAR ────────────────────────────────────────
 /** Is the bar a crossbar right now: Enhanced Plus, the hotbar chosen, and the Plus card's Crossbar switch - Auto

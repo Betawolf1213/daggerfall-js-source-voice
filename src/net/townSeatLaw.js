@@ -925,7 +925,7 @@ export const seatHallOf = (seat, guildId) => !!seat && !!guildId && seat.holder?
 /** The Charter Room's words. */
 export const SEAT_HALL_TEXT = Object.freeze({
   where: 'The Charter Room',
-  clear: 'Too near someone of the court - keep two metres from every person and every quest mark.',
+  clear: 'Too close to someone of the court. Keep two metres from every person and every quest mark.',
   room: 'The Charter Room is the palace\'s largest room - set the piece down there.',
 });
 
@@ -1243,15 +1243,15 @@ export function siegeAftermath(kind, result, raised, { forfeitPaid = false, thro
 export const SIEGE_WHY = Object.freeze({
   'pass-early': 'The field opens ten minutes before the battle.',
   'pass-late': 'The battle\'s window has closed.',
-  'field-bad': 'Your game could not work out this town\'s field.',
+  'field-bad': 'Your game could not load this town\'s battlefield.',
   'field-unsettled': 'Waiting for the other side\'s scouts to agree on the field - try again in a moment.',
   'honours-character': 'Honours go to the character who signed for this battle - play them to claim it.',   // AUDIT SEATS-3 A3
   'honours-twice': 'Your Honours from this battle are claimed already.',
   // AUDIT-SEATS S3 (17: a void siege): a receipt that reached the service after its week's Turning, which voided the battle;
   // VOID (18): or after the Moderators voided it (`/siege void`)
-  'battle-void': 'That battle is void - at its Turning, or by the Moderators - and its result does not count.',   // VOID: a moderator's too
+  'battle-void': 'That battle is void (at its Turning or by the Moderators), and its result does not count.',   // VOID: a moderator's too
   // AUDIT 529 V5: a moderator's `/siege void` that reached the service after the battle's week was reckoned
-  'battle-settled': 'That battle\'s week is settled - its Turning has reckoned it, and it can no longer be voided.',
+  'battle-settled': 'That battle\'s week is settled and can no longer be voided.',
   // AUDIT-SEATS S10 (8.1: "changing either ... is refused in a siege week")
   'heraldry-siege': 'Your guild fights a battle for a seat this week. Its heraldry may change after the Turning.',
 });

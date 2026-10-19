@@ -38,8 +38,8 @@
   {
     "name": "FB-page-old-words",
     "file": "src/ui/revenant/revenantPage.js",
-    "old": "'Its will must be broken - strike its weakness, stagger it, or dodge its blow perfectly.'",
-    "new": "'Its will must be broken - strike its weakness, or stagger it twice.'",
+    "old": "'Its will must be broken: strike its weakness, stagger it, or dodge its blow perfectly.'",
+    "new": "'Its will must be broken: strike its weakness, or stagger it twice.'",
     "tests": [
       "test/systems/revenant/feudbalance.test.js"
     ]

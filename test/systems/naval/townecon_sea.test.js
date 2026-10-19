@@ -132,7 +132,7 @@ test('SEA-TRADE the harbour office: online its exchange priced by the port town\
   const x = o.exchange({ uid: 1, cargo: hold });
   assert.deepEqual(x.rows.map(({ have, ...r }) => r), exchangeOf(WAYREST, 3, {}, 0, townExchangeFactors(95)));
   assert.equal(x.band, 'Booming');
-  assert.match(exchangeText(x).lede, / Port economy: Booming - the exchange's prices follow it\.$/);
+  assert.match(exchangeText(x).lede, / Port economy: Booming\. Exchange prices follow it\.$/);
   assert.equal(x.buy('wine', 3).ok, true);
   assert.deepEqual(told, ['100,100']);
   assert.equal(x.sell('wine', 1).ok, true);

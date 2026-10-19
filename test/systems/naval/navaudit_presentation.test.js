@@ -792,7 +792,7 @@ test('AUDIT NAV1 (the presentation) THE SKINS AND THE WORDS: the kit\'s face on 
   assert.equal(144, 72 + 48 + 8 + 16, 'the menu\'s press, air, and the right margin');
   assert.equal(56, (72 + 48 + 8 - 16) / 2, 'centred in what is left');
   const host = readFileSync(new URL('../../../src/scenes/naval/navalHost.js', import.meta.url), 'utf8');
-  assert.ok(host.includes("`Grappling hooks! ${entry.ship.names?.name ? `${entry.ship.names.name} is` : 'The pirates are'} coming alongside - repel boarders!`"));
+  assert.ok(host.includes("`Grappling hooks! ${entry.ship.names?.name ? `${entry.ship.names.name} is` : 'The pirates are'} coming alongside. Repel boarders!`"));
 });
 
 // ── the sea at a glance (5d) ──────────────────────────────────────────────────────────────────────────────────────

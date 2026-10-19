@@ -10067,7 +10067,7 @@ online's, opened through the world host.
 
 **Proof.** `test/ui/eliteGates/egplus_ui.test.js` (8): the roles, the cut, the sheets' paint and face, the classic skin's
 dress, the panel, the boards, the start window's model and its whole flow, and the doors. `tools/mutants/egplus.json`: 19
-records. Pins moved: `egaudit3_pres` (the recap's capstones are a line), `egaudit5_c_hud` (the touch note is the foot; the
+records, every one dead (with the nine re-aimed: 442 dead, 0 survived). Pins moved: `egaudit3_pres` (the recap's capstones are a line), `egaudit5_c_hud` (the touch note is the foot; the
 last runs are rows), `egeco_board` (a row's parts); nine mutant records re-aimed by content (`cardsplus`,
 `egaudit3_pres`, `egaudit5_c`, `egz_mastery`, `egz_return`). `test/ui/font3_readable.test.js` holds the breach's five sheets
 to the type floor. `tools/egPlusProbe.mjs` draws each window through its real painter on Enhanced Plus, Stone, the classic

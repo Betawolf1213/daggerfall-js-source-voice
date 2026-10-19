@@ -272,7 +272,7 @@
   {
     "name": "SPY-card-seen-unsaid",
     "file": "src/systems/naval/shipKnowledge.js",
-    "old": "    if (f.falseFlag) rows.unshift(['False colours', 'Too many gunports for a trader - this is a pirate']);\n",
+    "old": "    if (f.falseFlag) rows.unshift(['False colours', 'Too many gunports for a trader. This is a pirate.']);\n",
     "new": "",
     "tests": [
       "test/systems/naval/spyglass.test.js"

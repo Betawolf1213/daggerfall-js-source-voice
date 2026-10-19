@@ -377,7 +377,7 @@ test('AUDIT EG V L7-20 NO LINE TELLS A SCREEN IN HAND TO TYPE (section 27.8): th
   void Ew;
   const C = rd('src/scenes/eliteGates/egClient.js');
   assert.ok(!C.includes('/breach forsake again to go.') && C.includes('Forsake the breach? Your recall is lost. Forsake again to go.'));
-  assert.ok(!C.includes('type /breach then to step through') && C.includes('step through the arch, or answer the call where you stand.'));
+  assert.ok(!C.includes('type /breach then to step through') && C.includes('Step through the arch, or answer the call where you stand.'));
   const doc = fakeDocument();
   destroyEgHud();
   drawEgPanel({ offer: null, asks: [{ q: 'ready', title: 'Ready?', opts: ['Not yet', 'Ready'], left: 5000, mine: null, tally: [] }] }, { doc, touch: true });

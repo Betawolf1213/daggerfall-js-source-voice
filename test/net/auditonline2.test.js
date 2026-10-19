@@ -136,5 +136,5 @@ test('AUDIT ONLINE2 F5: AN OFFER THIS BUILD CANNOT READ ends the trade with the 
   assert.equal(said.A.at(-1), tradeRefusedText('Bran'), 'its maker: the reader\'s game refused it');
   assert.notEqual(said.A.at(-1), tradeWhyText('refused', 'Bran'), 'never "Bran\'s offer was not valid"');
   assert.deepEqual([packA.st.items.map((i) => i.id), packB.st.items.map((i) => i.id)], [['set-piece'], ['ring']], 'nothing moved');
-  assert.match(tradeUnreadableText('Ann'), /reload/);
+  assert.equal(tradeUnreadableText('Ann'), 'Ann\'s offer has an item your game does not recognise. Reload for the newest version. The trade is off');
 });

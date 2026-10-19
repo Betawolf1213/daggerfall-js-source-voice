@@ -165,7 +165,7 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
     const w = wornSkin();
     const sets = offer();
     if (!w.on) {
-      root.append(el('p', 'meta', 'Your third-person look is Eye of the Beholder\u2019s. It is off, so you have no sprite body to dress.'));
+      root.append(el('p', 'meta', 'Your third-person look comes from Eye of the Beholder, which is off. Turn it on to choose a skin.'));
       const acts = el('div', 'acts');
       const b = el('button', 'act primary', 'Turn it on');
       b.type = 'button';
@@ -174,7 +174,7 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
       root.append(acts);
       return;
     }
-    root.append(el('p', 'meta', 'How you look in third person, and to other players online who do not see you in a Morrowind body.'));
+    root.append(el('p', 'meta', 'How you look in third person, and to other players who don\u2019t see you in a Morrowind body.'));
     // the look sends only a CHOSEN set, so until one is pressed the others see this player's class
     if (!w.chosen) root.append(el('p', 'meta skinhint', 'Until you choose one, other players see you as your class.'));
     panel('On foot', FOOT, sets.foot, w.foot, FOOT_GROUPS);

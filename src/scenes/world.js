@@ -2056,7 +2056,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // relayNowS - declared far below, so said here as the seats' book says it): the device's clock let a receipt go on
       // add, eight days fast; and the retry's clock the shared one (it was written inside that line's comment, never passed)
       nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null), nowMs: () => Date.now() + _sharedOffsetMs,
-      onCounted: (a) => townTalk?.say?.(a.rated ? `Iliac Hand: the game is on the season's board - your rating ${a.rating} (${a.delta >= 0 ? '+' : ''}${a.delta}).` : 'Iliac Hand: the game is kept, but not counted - you have played that opponent often enough today.'),
+      onCounted: (a) => townTalk?.say?.(a.rated ? `Iliac Hand: the game is on the season's board - your rating ${a.rating} (${a.delta >= 0 ? '+' : ''}${a.delta}).` : 'Iliac Hand: this game is not ranked. You have played that opponent enough times today.'),
       onGuest: () => townTalk?.say?.('Iliac Hand: register your account to keep your ranked games on the board.') })
     : null;
   // KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON BOARD - the service's door, and the
@@ -2134,7 +2134,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  task, as a trade saves at once; the checkpoint (onlineCheckpoint) is handed in once it is built (REALM P0.5). */
   const saveSoon = createSaveSoon();
   /** BAG1: a deposit whose answer did not come - its goods stay out of the bag until the counting-house answers. */
-  const BAG_DEPOSIT_KEPT_TEXT = 'The counting-house is slow to answer. Your goods are on their way to the Stores, and are asked after again when you open the Stores.';
+  const BAG_DEPOSIT_KEPT_TEXT = 'The counting-house is slow to answer. Your goods are on their way to the Stores.';
   /** PROF1: withdrawn from the Stores into the pack - the items the law names, minted as DFU mints them (law 3: they
    *  never go back). */
   const profMint = (key, n) => {
@@ -7101,7 +7101,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // in (`?region=&loc=`). AUDIT LEGACY B7: a birth that waits for nobody (a stale address, a birth already made) or
     // whose files would not load goes back to the title menu, SAID - never to a stranger's wizard: the line waits on the
     // record (its heir chosen, unborn), and the fallen's save asks again.
-    const legacyBirthFailed = (why) => { console.warn(`[legacy] the birth did not take: ${why}`); setRealmNotice(globalThis.sessionStorage, `The heir could not be born: ${why}. The house waits - ${realmNew ? 'choose who carries it on from the Online page' : 'load the fallen\'s save to try again'}.`); releaseUnloadGuard(); exitToTitleMenu(); };   // HOUSE-WAITS (FIELD BUGS 2026-10-09f): online the fallen is a tombstone - the Online page names the waiting house
+    const legacyBirthFailed = (why) => { console.warn(`[legacy] the birth did not take: ${why}`); setRealmNotice(globalThis.sessionStorage, `The heir could not be born: ${why}. The house waits. ${realmNew ? 'Choose who carries it on from the Online page' : 'Load the fallen\'s save to try again'}.`); releaseUnloadGuard(); exitToTitleMenu(); };   // HOUSE-WAITS (FIELD BUGS 2026-10-09f): online the fallen is a tombstone - the Online page names the waiting house
     Promise.all([createChargenFlow(fetchBytes), legacyReady]).then(([{ careers, spellsByIndex: sbi, factionDict }, host]) => {
       spellsByIndex = sbi;
       const r = host?.bornResult({ careers, factionDict });
@@ -10618,7 +10618,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // slots, the one most lately sworn steps away to wait
     if (companionsWithYou() > COMPANION_SLOTS) {
       const last = revenantsWithYou().sort((a, b) => (b.swornAt ?? 0) - (a.swornAt ?? 0))[0];
-      if (last && sendRevenantAway(last.id, { byYou: false })) townTalk.say(`Your companions are full - ${last.name} steps away to wait.`);   // RVN11: the slots' hold, never the player's sending (no loyalty lost)
+      if (last && sendRevenantAway(last.id, { byYou: false })) townTalk.say(`Your companions are full. ${last.name} steps away to wait.`);   // RVN11: the slots' hold, never the player's sending (no loyalty lost)
     }
     try { revenantCompanionBarks(); } catch { /* a bark is no frame's business */ }
     // RVN11 (bible/12-Enhanced-AI/Feud-Arc.md 22.1): a fight won at my side, +3 loyalty
@@ -11835,7 +11835,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
               if (owed > 0) deductGold(playerEntity, owed);
               profBook.refresh({ force: true }).catch(() => {});
               saveSoon.changed();
-              return { ok: false, text: `${name} was disenchanted already - its Essence is in your Stores, and it leaves your pack${owed > 0 ? `; you paid the enchanter ${owed} gold` : ''}.` };
+              return { ok: false, text: `${name} was already disenchanted. Its Essence is in your Stores, and it leaves your pack${owed > 0 ? `; you paid the enchanter ${owed} gold` : ''}.` };
             }
             return { ok: false, text: accountRefusalText(r?.error) };
           }
@@ -13924,7 +13924,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands
     // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)
     if (_unstreamedLanding) {
-      townTalk.say(_unstreamedLanding === 'ether' ? `${ETHER_SEA_TITLE} is closed in this game - you wake in the Bay's waters.` : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);
+      townTalk.say(_unstreamedLanding === 'ether' ? `${ETHER_SEA_TITLE} is closed. You wake in the Bay's waters.` : 'That land is not part of this game. You wake at the edge of the Iliac Bay.', 7);
       _unstreamedLanding = null;
     }
 
@@ -14676,10 +14676,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const fallen = out.fallen;
     const choices = out.choices.map((p) => ({
       key: `p${p.id}`, who: p, name: legacyFullName(p),
-      sub: `${legacyIdentity(p)} - ${p.characterId ? 'their journey picks up where they left it' : 'sets out from the family seat'}`,
+      sub: `${legacyIdentity(p)} - ${p.characterId ? 'they pick up where they left off' : 'sets out from the family seat'}`,
       act: `Carry on as ${p.given}`,
     }));
-    if (out.newborn) choices.push({ key: 'newborn', who: null, name: `A child of ${fallen.given}`, sub: `Born of the blood, raised in ${legacyHouse(fam)} - a new heir comes of age`, act: 'Raise an heir' });
+    if (out.newborn) choices.push({ key: 'newborn', who: null, name: `A child of ${fallen.given}`, sub: `Born of the blood and raised in ${legacyHouse(fam)}, a new heir comes of age`, act: 'Raise an heir' });
     const retired = !fallen.died;
     const final = retired ? `${legacyFullName(fallen)} retires to keep the house` : fallen.died.cause === 'years' ? `${legacyFullName(fallen)} has died of their years` : `${legacyFullName(fallen)} has fallen`;   // AUDIT LEGACY III F11d: where they keep it is the house's (household.js)
     const lines = [
@@ -14687,7 +14687,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT LEGACY III F11c: the mod's "your descendant" only where a descendant is offered - a sibling or a parent is kin
       retired ? `${fallen.given} has carried the house long enough. The mantle passes on.` : out.newborn ? LEGACY_TEXT.heir : choices.length ? LEGACY_TEXT.kin : LEGACY_TEXT.noHeir,
       choices.length ? `${legacyHouse(fam, 'The')} goes on. Who carries the line now?` : `There is no one left of ${legacyHouse(fam)}. The line ends here, and its tree is kept in the Hall of Ancestors.`];
-    if (out.estate > 0 && choices.length) lines.push(`The estate - ${out.estate} gold - passes to whoever takes up the name.`);
+    if (out.estate > 0 && choices.length) lines.push(`The estate of ${out.estate} gold passes to whoever takes up the name.`);
     const ov = createSuccessionOverlay({
       title: final, lines, choices, faces: legacyFaces,
       choose: (key) => {
@@ -15849,7 +15849,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         };
         const pixel = extras.dungeon?.pixel ?? dungeonPixelFor(extras.locationKey, locationIndex.values(), (mt) => longitudeLatitudeToMapPixel(mt.longitude, mt.latitude));
         csaElsewhere = !pixel;   // CSA-J (the audit): a dungeon this world cannot find is no landing at the save's place
-        if (!pixel) townTalk.say('(saved in a dungeon this world cannot find - character restored; travel there yourself)');
+        if (!pixel) townTalk.say('(the dungeon you saved in could not be found. Your character is restored; travel there yourself)');
         else if (onlineOn && !(pixel.x === getInt('Startup', 'StartCellX') && pixel.y === getInt('Startup', 'StartCellY'))) {
           // ONLINE-UNDERGROUND-LOAD1 (Lost, 2026-09-19): an online page never puts a character back INSIDE a dungeon -
           // it wakes them at the nearest temple, town or graveyard to it (the death respawn's own search, over the
@@ -15870,14 +15870,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           await _teleportToPixel(pixel.x, pixel.y, null, { modEvent: 'load' });   // SIB2: SaveLoadManager.OnLoad
           const entered = await (modes?.startInDungeon?.({ locationKey: extras.locationKey, fromLoad: true, recorded: extras.dungeon ?? {} }) ?? false);   // StartDungeonInterior: the enter marker first, the saved position over it; CASTLE1: the SAVED dungeon's door, not the first one loaded
           if (entered) { playerSpawned = true; await modes?.restoreDungeonSave?.(extras); }   // AUDIT OH-F B1: RestoreEnemyData whole before the mod loop below
-          else { _wodInside = false; townTalk.say('(the dungeon has no entrance here - character restored at its door)'); }   // WOD6: it landed outside after all
+          else { _wodInside = false; townTalk.say('(the dungeon could not be entered. Your character is restored at its door)'); }   // WOD6: it landed outside after all
           if (!entered) csaElsewhere = true;   // CSA-J (the audit): outside at its door, not where the save stood
           if (!entered) carrySavedFires();   // AUDIT REST II H5: my fires with me
           standOuterCamps();   // AUDIT REST II H6: the save's camps outside, in or out
         }
         if (!pixel) { standOuterCamps(); carrySavedFires(); }   // AUDIT REST II H5 + H6: a dungeon this world cannot find - restored outside, my fires with me
       } else if (extras.locationKey && extras.locationKey !== 'world') {
-        townTalk.say('(saved elsewhere - character restored; travel there yourself)');
+        townTalk.say('(saved somewhere else. Your character is restored; travel there yourself)');
         csaElsewhere = true;
       }
       ohAbyss?.onRespawnerComplete();   // OH-D: RestorePositionHelper's respawn completes (LoadInProgress) before the mod loop restores the save's record
@@ -20969,7 +20969,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // whole of hour 11. A cap is kept only while the hour it was sent in is still the page's
       if (a.capped) {
         const hour = renownHour();
-        if (_renownSentHour === hour && _renownCapHour !== hour) { _renownCapHour = hour; tradeSay('You have earned all the Renown XP one hour allows. Your fighting still counts toward your skills.'); }
+        if (_renownSentHour === hour && _renownCapHour !== hour) { _renownCapHour = hour; tradeSay('You have earned the most Renown XP allowed this hour. Fighting still raises your skills.'); }
       }
     },
     // AUDIT RENOWN1 UI-4: a refusal that ends reporting is SAID - the sentences were written and nothing ever showed them
@@ -21557,14 +21557,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // one): `/mail` - the mailbox, on either skin and wherever the player stands (the enhanced pause face with its window
         // open: ui/pauseDoor.js's door, worldModes.js openPauseAt indoors and underground). Local, never sent.
         { const at = mailboxCommandOf(text); if (at) {   // PRIVATE-REPORT: and `/bug`, the mailbox's private report form
-          if (!postSource()) { chatLog.push(tabId, { text: 'The mailbox is online - it opens once you are connected and signed in.', system: true }); return true; }
+          if (!postSource()) { chatLog.push(tabId, { text: 'Connect and sign in to use the mailbox.', system: true }); return true; }
           if (!modes?.openPauseAt?.(at)) hudCtx.togglePause({ at });
           return true;
         } }
         // EG-PLAY: `/breach` - answer an Elite Breach's call; `/breach rehearse` - the day's Rehearsal; `/breach home` - a
         // Redoubt's way home. Local, never sent as chat. AUDIT EG V (c, L7-1): its words WHOLE (net/chatCommands.js
         // breachCommandOf) - `/breach pick 2`, `vote yes`, `buy tonic` - where a one-word door read each as no command
-        { const arg = breachCommandOf(text); if (arg != null) { if (!egClient) chatLog.push(tabId, { text: 'Elite Breaches are online - connect and sign in first.', system: true }); else egClient.command(arg); return true; } }
+        { const arg = breachCommandOf(text); if (arg != null) { if (!egClient) chatLog.push(tabId, { text: 'Connect and sign in to use Elite Breaches.', system: true }); else egClient.command(arg); return true; } }
         if (/^\/unstuck(\s+cancel)?$/i.test(text.trim())) {
           // PVPUNSTUCK: outside the zone at once (30 min cooldown); in the zone after a five-minute wait with a bar that can
           // be cancelled (a second /unstuck or "/unstuck cancel" cancels too), and a 60 minute cooldown - overworld and dungeons
@@ -22275,7 +22275,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const wedButtonFor = (peerId) => {
     if (!online || !peerId || !realmSession || !legacyOn()) return null;
     const label = 'Propose marriage';
-    if (!online.wedOk) return { label, enabled: false, why: 'The server cannot carry a wedding yet.' };
+    if (!online.wedOk) return { label, enabled: false, why: 'The server does not support weddings yet.' };
     const st = wedMgr.stateFor(peerId);
     if (st === 'incoming') return { label: 'Answer their proposal', enabled: true };
     if (st === 'outgoing') return { label: 'Proposal sent', enabled: false, why: 'Waiting for their answer.' };
@@ -22291,7 +22291,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const wedPropose = (peerId) => {
     if (wedMgr.stateFor(peerId) === 'incoming') { profileWin?.hide(); if (!wedAsk(peerId)) tradeSay('Close the window you have open, then answer.'); return; }
     const r = wedMgr.request(peerId);
-    if (!r.ok) tradeSay(r.why === 'link' ? TRY_AGAIN_TEXT : r.why === 'sent' ? 'Your proposal stands - wait for their answer.' : wedMineText(r.why));
+    if (!r.ok) tradeSay(r.why === 'link' ? TRY_AGAIN_TEXT : r.why === 'sent' ? 'Your proposal stands. Wait for their answer.' : wedMineText(r.why));
     repaintDuelProfile();
   };
   /** LEGACY7 part three: the account's unions read again - a spouse of another house dead or gone is word that reaches
@@ -22722,7 +22722,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         .catch(() => {});
     }
     try { betterAmbience.weaponKick(5); } catch { /* no shaker */ }
-    const line = 'The Greater Giant bellows - the giants of the mountains answer its call!';
+    const line = 'The Greater Giant bellows, and the giants of the mountains answer its call!';
     setMidScreenText(line, 4); townTalk.say(line);
   };
   const GIANT_RETREAT_M = 200;
@@ -22871,7 +22871,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const [x, y] = h.split(',').map(Number);
     const hall = wildHallAt(wildActiveNow(), x, y);
     const name = locationIndex.get(h)?.name ?? 'an elite hall';
-    const line = `Crows gather over ${name}${hall ? ` in ${wildRingName(hall.ring)}` : ''} - someone has fallen there.`;
+    const line = `Crows gather over ${name}${hall ? ` in ${wildRingName(hall.ring)}` : ''}. Someone has fallen there.`;
     setMidScreenText(line, 5);
     townTalk.say(line);
     _wildLineHold = { line, until: Date.now() + WILD_LINE_HOLD_MS };   // WILD-LINE-HOLD: real seconds, whatever the journey's pace
@@ -22930,7 +22930,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // so no hall was ever marked as entered, and nothing locked behind it)
     if (!hall) {
       if (TEST_GODMODE && staffPowers().god) return true;
-      townTalk.say('The way in is sealed - only the halls marked on the map are open today.'); return false;
+      townTalk.say('The way in is sealed. Only the halls marked on the map are open today.'); return false;
     }
     const lockSay = (left) => setMidScreenText(`You cannot enter this hall again for ${Math.max(1, Math.ceil(left / 60000))} minute${Math.ceil(left / 60000) === 1 ? '' : 's'}.`, 4);
     // HALL-LOCK: this machine's own memory of the lock answers first - a hub that never heard my way out (a word lost on
@@ -23001,7 +23001,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _zoneWatchAt = now;
     setCrimeCommitted(playerEntity, CRIMES.Assault);
     _crimeResponse();
-    townTalk.say('The town watch has seen you strike - the guards are coming!');
+    townTalk.say('The town watch saw you strike. The guards are coming!');
   };
   /** MY BLOW ON A FAIR PLAYER `to` - a swing or a shaft. INT9: rolled on my own sheet against the neutral stand-in (a
    *  siege's way: the target's sheet is not mine to read - AUDIT C&C H5), the number sent for the RELAY to referee
@@ -23152,7 +23152,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const pile = droppedLoot.seedPile(items, mark.feet, WILD_PILE_ICON, null, null, { unsaved: true, drawn: false, owner: 'wild' });
     pile.noStore = WILD_NO_STORE; pile.wildBody = from; pile.label = `${name}'s body`;
     _wildBodies.set(from, { pile, minted, name });
-    tradeSay(`${name} has fallen by your hand - search their body to take one piece of their gear.`);
+    tradeSay(`${name} has fallen by your hand. Search their body to take one piece of their gear.`);
   };
   /** The body pressed: the pack in choose-one over its worn pieces - "players can choose 1 item of the equipped ones". */
   const openWildBody = (pile) => {
@@ -23472,17 +23472,17 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (playerEntity.health <= 0) { unstuckCancel(null); return; }
       if (left <= 0) {
         unstuckCancel(null);
-        if (wildStrangerWithin(UNSTUCK_ENEMY_M)) { townTalk.say(`/unstuck fails - another player is within ${UNSTUCK_ENEMY_M} m.`); return; }
+        if (wildStrangerWithin(UNSTUCK_ENEMY_M)) { townTalk.say(`/unstuck failed: another player is within ${UNSTUCK_ENEMY_M} m.`); return; }
         const moved = unstuckNow();
         if (moved) _unstuckAt = Date.now();
         townTalk.say(moved ? 'You find your way free.' : 'There is nowhere to send you from out here.');
         return;
       }
-      if (el) { const m = Math.floor(left / 60000), sec = Math.floor((left % 60000) / 1000); el._label.textContent = `Unstucking in ${m}:${String(sec).padStart(2, '0')}`; el._fill.style.width = `${Math.round(100 * (1 - left / UNSTUCK_WAIT_MS))}%`; }
+      if (el) { const m = Math.floor(left / 60000), sec = Math.floor((left % 60000) / 1000); el._label.textContent = `Unsticking in ${m}:${String(sec).padStart(2, '0')}`; el._fill.style.width = `${Math.round(100 * (1 - left / UNSTUCK_WAIT_MS))}%`; }
     };
     _unstuckWait = { until, el, timer: setInterval(tickBar, 250) };
     tickBar();
-    say('You begin to unstuck - five minutes. Cancel with the bar or /unstuck cancel.');
+    say('Unsticking in 5 minutes. Cancel with the bar or /unstuck cancel.');
   };
   /** PVPUNSTUCK (the owner: "3 m forward wont help, to the next town will"): outdoors, /unstuck is the walk to the nearest town -
    *  the zone's own towns too - arrived at like the guild's teleport but never asked of the zone's travel law. */
@@ -23574,7 +23574,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const from = playerTravelPixel();
     const here = inEther(from.x, from.y);
     if (to ? here === inEther(to.x, to.y) : !here) return false;
-    townTalk.say('Nothing of the Bay\'s magic reaches across the Veil - only the crossing does.');
+    townTalk.say('The Bay\'s magic does not reach across the Veil. Only the crossing does.');
     return true;
   };
   const wildTeleportRefused = (to = null) => {
@@ -23583,7 +23583,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!m) return false;
     const from = playerTravelPixel();
     if (!(from && wildInside(m, from.x, from.y)) && !(to && wildInside(m, to.x, to.y))) return false;
-    townTalk.say('No teleport reaches into or out of the Wrothgarian Mountains - only the mountain roads between its tiers.');
+    townTalk.say('You cannot teleport into or out of the Wrothgarian Mountains. Use the mountain roads between its tiers.');
     return true;
   };
   const wildTravelGate = (to, spoken = 0) => {
@@ -23641,7 +23641,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** The Inspect card's Challenge button, as the law says it now: the label and whether it can go (and why not). */
   const duelButtonFor = (peerId) => {
     if (!online || !peerId) return null;
-    if (!online.duelOk) return { label: 'Challenge to a duel', enabled: false, why: 'The server cannot carry a duel yet.' };
+    if (!online.duelOk) return { label: 'Challenge to a duel', enabled: false, why: 'The server does not support duels yet.' };
     const st = duelMgr.stateFor(peerId);
     if (st === 'incoming') return { label: 'Accept duel', enabled: !duelCan() && duelNear(peerId), why: duelCan() === 'outdoors' ? 'A duel is fought outdoors.' : `Stand within ${DUEL_RANGE_M} m of them.` };
     if (st === 'outgoing') return { label: 'Challenge sent', enabled: false, why: 'Waiting for their answer.' };
@@ -23743,7 +23743,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const w = a?.ok ? a.data?.weir : null;
     if (w && Number.isSafeInteger(w.keys)) {
       egClient?.restack(w.keys);
-      if (w.found) { chatNotice("You find a Weir Key - one of the Spire's portal keys. Use it to open an Elite Breach."); egClient?.beat('key'); }   // EG-G1: the Rare chime (section 27.5)
+      if (w.found) { chatNotice("You find a Weir Key, one of the Spire's portal keys. Use it to open an Elite Breach."); egClient?.beat('key'); }   // EG-G1: the Rare chime (section 27.5)
     }
     return a;
   };
@@ -25596,7 +25596,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         const below = surfaceAt(cam.pos[0], cam.pos[2]);
         // AUDIT POI E13: over ground not yet built, refused - the landing reached 15 m, found no floor and stood the body in
         // the air at the eye (the editor's guard against blows already down: the fall hurt)
-        if (!Number.isFinite(below)) { panel.say(t('poi.editor.hereNoGround', 'The ground under the eye is not built yet. Fly over the world, or exit to where you stood.'), 'bad'); return; }
+        if (!Number.isFinite(below)) { panel.say(t('poi.editor.hereNoGround', 'The ground here has not loaded yet. Fly on, or exit to where you were standing.'), 'bad'); return; }
         landing = floorLanding(collider, [cam.pos[0], cam.pos[1], cam.pos[2]], Math.max(10, cam.pos[1] - below + 5), 0);
         // ...and the teleport's own check (UNSTUCK-OUT): a floor inside a rock is no place to stand - the nearest open ground
         if (heldInSolid(collider, landing)) landing = openGroundNear(collider, landing[0], landing[2], { dry: (floor) => floor >= tvSeaY() }) ?? landing;
@@ -25696,7 +25696,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const away = !!rt?.physicalPersistenceEnabled && !rt.canAccessWagonInventory?.()?.allowed;
     const price = upkeep.mendPrice(away);
     if (!price) { townTalk.say(WAGON_UPKEEP_TEXT.whole(wagonWord(w))); return true; }
-    const rows = [`Mend your ${wagonWord(w)} for ${price} gold?`, ...(away ? ['It is not here - the wright goes out to where it stands.'] : [])];
+    const rows = [`Mend your ${wagonWord(w)} for ${price} gold?`, ...(away ? ['It is not here, so the wright will go out to where it stands.'] : [])];
     townTalk.showOverlay(new YesNoBoxWindow({ rows, onYes: () => {
       if (totalGoldAmount(playerEntity) < price) { townTalk.say(WAGON_UPKEEP_TEXT.poor(price)); return; }
       deductGold(playerEntity, price);
@@ -25931,7 +25931,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** AUDIT SOC B17: the F-menu's word when no link is open to act on - "try again" would have promised a second try. */
   const NOT_CONNECTED_TEXT = 'You are not connected';
   /** AUDIT SOC B10: the line on the world tab when there is no account to be anyone by. */
-  const NO_ACCOUNT_TEXT = 'Friends and parties are off: this browser keeps no storage, so there is no account to be anyone by';
+  const NO_ACCOUNT_TEXT = 'Friends and parties are off because this browser keeps no storage';
   const socialActText = (k, who) => (k === 'friend.request' ? `Friend request sent to ${who}`
     : k === 'party.invite' ? `Party invite sent to ${who}`
       : k === 'friend.remove' ? `${who} is no longer your friend` : 'Sent');
@@ -26660,7 +26660,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // but this popup line is a separate string (`refusePartyRest`/`chatNotice` both just display whatever
     // this returns) that still had "Waiting on ${names}" baked in from before that instruction existed - the
     // one spot I missed. Generic now, matching everywhere else this rule already applies.
-    const line = `You are ready to rest. (${readyCount}/${totalCount} ready). Everyone can /ready or press Rest.`;
+    const line = `You are ready to rest (${readyCount}/${totalCount} ready). Everyone can /ready or press Rest.`;
     if (partyRoundActive(nearHere)) return 'Resting vote ongoing.';
     _partyRestGateRefusedAt = social.now();
     // PARTY-REST16 (2026-09-22, per-request: "when the players move more then 15m away where the vote
@@ -26901,7 +26901,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // a member not yet ready is asked by the leader, a member already ready and the leader just see the count.
       // No names (PARTY-REST17's rule for the chat): "the leader" is always enough.
       const iLead = social.leads();
-      if (!iLead && !_partyRestReady) chatNotice(`The leader wants to rest - press R to be ready! (${readyCount}/${totalCount} ready)`);
+      if (!iLead && !_partyRestReady) chatNotice(`The leader wants to rest. Press R to be ready! (${readyCount}/${totalCount} ready)`);
       else chatNotice(`${readyCount}/${totalCount} ready to rest.${iLead ? ' Waiting for the party.' : ''}`);
     }
   };
@@ -26915,7 +26915,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  underground), and the latch re-arms only when that rest has ENDED or I have come near (then the mirror opens
    *  instead) - so a member across town is told once per nap, never sixty times a second. Not while the HUD is
    *  down for a death (AUDIT DROPS D3), a loiter is said as one, and the label stays PARTY_REST_FAR_SECONDS. */
-  const PARTY_REST_FAR_TEXT = (who, loitering = false) => `${who} is ${loitering ? 'loitering' : 'resting'} - come within ${PARTY_REST_RADIUS} m of them to ${loitering ? 'wait' : 'rest'} with the party.`;
+  const PARTY_REST_FAR_TEXT = (who, loitering = false) => `${who} is ${loitering ? 'loitering' : 'resting'}. Come within ${PARTY_REST_RADIUS} m of them to ${loitering ? 'wait' : 'rest'} with the party.`;
   const PARTY_REST_FAR_SECONDS = 4;   // AUDIT DROPS D3: the label's default 1.5 s is a refusal's; a notice about somebody else stays long enough to be read
   let _partyRestFarSaid = false;
   const partyRestFarNotice = (rest, near, row) => {
@@ -27689,7 +27689,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     picture: (it, wake) => itemPicture(it, { onReady: wake }),   // MENU-ORDER: a piece's picture on its row
     take: (row) => vendorTake(row), collectGold: async () => {
       const region = vendorRegionHere();
-      if (region == null) return { ok: false, text: 'Collect your takings where a region\'s bank can hold them.' };
+      if (region == null) return { ok: false, text: 'You can only collect your takings in a region with a bank.' };
       const r = await marketBook.collectGold(region);
       return vendorSaid(r, `Your takings are in your account in ${REGION_NAMES[region] ?? 'this region'}.`);
     },
@@ -27956,7 +27956,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const mentorWord = refreshMentor(playerEntity, mentorLevels);
     setFirmamentMentoring(!!playerEntity._mentor);   // AUDIT UICALM-FIRM1 L1 L2: the sky sleeps the frame mentoring starts, and wakes the frame it ends
     if (mentorWord) {
-      const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended - your real level, skills, attributes and gear are back.';
+      const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended. Your real level, skills, attributes and gear are back.';
       try { chatLog.push(chatLog.active, { text, system: true }); } catch { /* no chat yet: the sheet says it too */ }
     }
     if (!social) return;
@@ -28263,7 +28263,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // below, so the frame that opens it draws it (and ahead of the party's run, which SOC3/SOC4 pin as renders alone).
     if (_letterPending) {
       if (socialPanel?.openLetters({ draft: _letterPending.draft })) _letterPending = null;
-      else if (performance.now() - _letterPending.at > LETTER_PENDING_MS) { tradeSay(_letterPending.lost ?? 'Your letters could not open - the page is still in your journal.'); _letterPending = null; }   // AUDIT 28 N1: a note's letter says the note's words
+      else if (performance.now() - _letterPending.at > LETTER_PENDING_MS) { tradeSay(_letterPending.lost ?? 'Your letters could not be opened. The page is still in your journal.'); _letterPending = null; }   // AUDIT 28 N1: a note's letter says the note's words
     }
     partyTravel?.tick();   // PARTY-TRAVEL: the party's journey - throttled inside to PARTY_TRIP_TICK_MS
     partyRestFollowTick();   // PARTY-REST1: every frame, not throttled to the send cadence - a few property reads, and a follower's own countdown should start and end as promptly as the leader's does
@@ -29352,9 +29352,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     iliacOnline: { ok: () => !!online?.iliacOk, send: (w) => !!online?.sendIliac(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // AUDIT CARDS-6 E5: my socket's welcomes (the card tables' one count)
     iliacRanked: {
       // AUDIT CARDS-6 E14: a guest's account is offered no ranked seat - it was, and every vouch it asked failed
-      why: () => (!realmSession ? 'Ranked games are a realm character\'s - its cards are the ones the realm keeps.' : !iliacDoor.me() ? 'Sign in to play ranked.' : iliacDoor.guest() ? iliacRefusalText('ranked-needs-account') : null),
+      why: () => (!realmSession ? 'Only a realm character can play ranked games.' : !iliacDoor.me() ? 'Sign in to play ranked.' : iliacDoor.guest() ? iliacRefusalText('ranked-needs-account') : null),
       vouch: async (deck) => {
-        if (!realmSession) return { ok: false, why: 'Ranked games are a realm character\'s.' };
+        if (!realmSession) return { ok: false, why: 'Only a realm character can play ranked games.' };
         // AUDIT CARDS-6 E6: A READ (realmGoldAct's `read`) - the order moves nothing on the record, so an answer lost is
         // "not answering", never the session's end; asked as an act (`needsAnswer`) a lost answer or a `seq` was
         // `unknown`, and the player was thrown to the title menu for asking to play cards

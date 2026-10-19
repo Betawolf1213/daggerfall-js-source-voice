@@ -201,9 +201,9 @@ test('CRAFT2 loom: a garment one pattern, its cloth chosen from what is held (th
     p.press('Clothing');
     p.rows().find((b) => b.textContent.startsWith('Straps')).onclick();
     assert.match(p.text(), /Linen Straps - rank 0/);
-    assert.doesNotMatch(p.text(), /comes with the sieges/);
+    assert.doesNotMatch(p.text(), /comes from the sieges/);
     p.press('Standard-bearer\'s Silk');
     assert.match(p.text(), /Standard-bearer's Silk Straps - rank 55/);
-    assert.match(p.text(), /cloth:standard comes with the sieges - a Siege Honour's Spoils\./);
+    assert.match(p.text(), /cloth:standard comes from the sieges, as Siege Honour Spoils\./);
   } finally { p.done(); }
 });

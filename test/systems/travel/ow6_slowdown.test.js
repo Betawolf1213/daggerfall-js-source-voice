@@ -84,7 +84,7 @@ test('OW6: the panel says why the clock is held - the land loading, an enemy nea
   assert.equal(TRAVEL_HELD_TEXT(5, 40, 'foes'), 'Held to ×5 of ×40 with enemies near');
   assert.equal(TRAVEL_HELD_TEXT(1, 40, 'ground'), 'Held to ×1 of ×40 until the Overworld rises');   // AUDIT OW5 G1's word
   assert.equal(TRAVEL_HELD_TEXT(1, 40, 'junk'), `Held to ×1 of ×40 ${TRAVEL_HELD_WHY.load}`);
-  assert.equal(TRAVEL_VIEW_TEXT.enemiesSlow, 'Enemies near - you slow your pace.');
+  assert.equal(TRAVEL_VIEW_TEXT.enemiesSlow, 'Enemies are near. You slow your pace.');
   const foe = (o = {}) => ({ dead: false, ai: { isHostile: true, detected: true, inSight: true }, entity: { mobileEnemy: { team: 'Orcs' } }, ...o });
   assert.equal(foeHostile(foe()), true);
   assert.equal(foeHostile(foe({ dead: true })), false);

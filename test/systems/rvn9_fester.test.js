@@ -77,7 +77,7 @@ test('RVN9 THE DAYS: the first count only sets the day; then each whole day caug
   const ev = N.takeRevenantNotice(p, at(22));
   assert.equal(ev.kind, 'festered');
   assert.equal(ev.kicker, 'Grows bolder');
-  assert.equal(ev.body, `${r.given} grows bolder - it has waited too long.`);
+  assert.equal(ev.body, `${r.given} grows bolder. It has waited too long.`);
   assert.equal(r.notice, null);
   // the notice's step itself counts the days (the encounter tick asks it, never the festering alone)
   const q = made(p, { dueDay: 30 });

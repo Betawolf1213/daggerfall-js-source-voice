@@ -218,7 +218,7 @@ export function siegeHonourLine(honours) {
 }
 
 /** SEAT2b part two (c): the card's word on Honours after a revolt. */
-export const SIEGE_REVOLT_HONOUR = 'A revolt earns no Honours - putting it down is its own reward.';
+export const SIEGE_REVOLT_HONOUR = 'A revolt earns no Honours. Putting it down is its own reward.';
 /**
  * WHAT THE HUD SAYS: `{ bar: [title, banners], works, sides, self: [...], card: { title, line, honour, claim } | null }`
  * (SEAT2b part two (b): `works` the Gatehouse's, the Ram's and the Walls' line, '' for none).
@@ -230,7 +230,7 @@ export function siegeHudModel(s, battle, me, now, { watching = false, honours = 
     title: siegeResultTitle(s.end, battle),
     line: siegeResultLine(s),
     // SEAT2b part two (c): a revolt earns no Honours (net/siege/siegeRef.js honoured) - its claim settles the result alone
-    honour: watching ? '' : battle.kind === 'revolt' ? SIEGE_REVOLT_HONOUR : honours === undefined ? (claimable ? 'Your receipt is kept - claim it for your Honours.' : '') : siegeHonourLine(honours),
+    honour: watching ? '' : battle.kind === 'revolt' ? SIEGE_REVOLT_HONOUR : honours === undefined ? (claimable ? 'Your receipt is saved. Claim it for your Honours.' : '') : siegeHonourLine(honours),
     claim: !watching && honours === undefined && claimable,
   } : null;
   return {
