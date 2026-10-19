@@ -22679,6 +22679,16 @@
   "tr": "391f0f204273",
   "by": "claude-in-session"
  },
+ "quest.offer.questorBusy": {
+  "en": "d9c7f3c4fe22",
+  "tr": "2936e66ae93a",
+  "by": "claude-in-session"
+ },
+ "quest.offer.questorBusyUnnamed": {
+  "en": "c624798a2c3a",
+  "tr": "0ec44039edf9",
+  "by": "claude-in-session"
+ },
  "quest.possessedChild.shamTrail": {
   "en": "a04e4542dca6",
   "tr": "41ce89f2f38f",

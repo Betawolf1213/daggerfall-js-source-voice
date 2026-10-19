@@ -3777,7 +3777,9 @@ export function createWorldModes(host) {
    *  window's, by construction, and no drain has to remember it. */
   /** DISC10-E L3: what a service arm answers when the TRADE DOOR refused
    *  its counter (ui/tradeDoor.js - a transformed lycanthrope). The door
-   *  has already said the line; the popup reads this as a dispatch. */
+   *  has already said the line; the popup reads this as a dispatch.
+   *  QUESTOR-SAID: and the guild's quest door's silent close, C#'s
+   *  CloseWindow with nothing pushed - a dispatch of nothing. */
   const DOOR_REFUSED = Object.freeze({ refusedByDoor: true });
   function openTradeWindow(shelf, b, mode, { guildFactionId = null, reducedRepairCost: repairDiscount = null, identifySpell = null } = {}, road = null) {
     // AUDIT 63 F11: CalculateTradePrice's player reads are BOTH live on
@@ -6748,8 +6750,7 @@ export function createWorldModes(host) {
         entity: playerEntity,
         onClose: () => closeSpellWindow(potionWin),
       });  potionWin = enhancedWindow(potionWin, 'potionMaker');   // PORT4: the enhanced skin's face; the classic window unchanged
-      mountServiceWindow(potionWin);
-      return null;
+      return mountServiceWindow(potionWin);   // QUESTOR-SAID: handed back, as the book's - a null read "not available yet" over it
     }
     // M4: the item maker, the Mages Guild's own enchanter. M4 wired
     // the destination immediately below - ItemMakerWindow into the
@@ -6766,8 +6767,7 @@ export function createWorldModes(host) {
         onEnchanted: () => surfacePlayer(),
         onClose: () => closeSpellWindow(itemWin),
       });  itemWin = enhancedWindow(itemWin, 'itemMaker');   // PORT4: the enhanced skin's face; the classic window unchanged
-      mountServiceWindow(itemWin);
-      return null;
+      return mountServiceWindow(itemWin);   // QUESTOR-SAID: handed back, as the book's - a null read "not available yet" over it
     }
     // U42: BUY SPELLS. DFU pushes the spellbook itself in BUY MODE
     // from the service popup - one window, one `true` argument
@@ -6804,10 +6804,10 @@ export function createWorldModes(host) {
         onClose: () => closeSpellWindow(bookWin),
       }, { buyMode: true });
       bookWin = enhancedWindow(bookWin, 'spellShop');   // SHOP-PLUS: the Enhanced Plus face; the classic window unchanged
-      // Mount AND hand back, the repair arm's shape rather than the
-      // maker windows' `return null` - the popup's onService reads the
-      // return value, and a null makes it answer "not available yet"
-      // over a window that just opened.
+      // Mount AND hand back, the repair arm's shape (and since
+      // QUESTOR-SAID the potion and item makers' too) - the popup's
+      // onService reads the return value, and a null makes it answer
+      // "not available yet" over a window that just opened.
       return mountServiceWindow(bookWin);
     }
     // E8: the spell maker is a NATIVE window now (INFO01I0), so it
@@ -6904,9 +6904,11 @@ export function createWorldModes(host) {
         buildingFactionId: route.buildingFactionId,
       });
       const boxes = questBridge.offerBoxes(step, rows);
-      // A guild offer's first step is 'offer' or 'fail' - both box; an
-      // empty chain is the silent-close face and opens nothing.
-      if (boxes.length) flow = new ServiceFlowWindow(boxes, { onClose: () => closeSelf() });
+      // A guild offer's first step is 'offer' or 'fail' - both box - and a
+      // questor whose quest is open says so (QUESTOR-SAID). An empty chain
+      // is C#'s silent close (a drawn quest with no offer message): the
+      // popup closes on nothing, never "That service is not available yet."
+      flow = boxes.length ? new ServiceFlowWindow(boxes, { onClose: () => closeSelf() }) : DOOR_REFUSED;
     }
     return flow;
   }
@@ -11818,7 +11820,8 @@ export function createWorldModes(host) {
       const memberships = activeMemberships(playerEntity);   // V2e: the vampire-aware book
       // The real caller assigns what openServiceFlow RETURNS - the
       // trade arms hand back a flow for the popup to mount, where the
-      // maker windows mount themselves and answer null. A probe that
+      // maker windows mount themselves and hand themselves back
+      // (QUESTOR-SAID: a null read "not available yet"). A probe that
       // dropped the return value would test only half of them.
       const flow = openServiceFlow(destination, { guild, memberships, store: null, rows: null, route: null });
       // the same contract the real caller keeps: a window mounts, a
