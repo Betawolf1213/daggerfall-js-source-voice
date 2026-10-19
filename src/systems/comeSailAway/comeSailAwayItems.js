@@ -101,7 +101,7 @@ export function mintParts(hull, variant, uid) {
 }
 
 /**
- * PARTS-WEIGHT (FIELD BUGS 2026-10-18b, the port's own): THE LOAD'S REPAIR OF A BOAT'S PARTS - each given its hull's
+ * PARTS-WEIGHT (FIELD BUGS 2026-10-18e, the port's own): THE LOAD'S REPAIR OF A BOAT'S PARTS - each given its hull's
  * packed weight (comeSailAwayHulls.js packedHullWeight), in place. Before PARTS-WEIGHT her hold rode her
  * parts (PackBoat's sum, and the hold door's), so parts a stow had grown sat in chests no take could lift them from - a
  * Large Galley's past an emptied pack. Her hold is kept under her number all along (PackedCargoes), so nothing is lost.

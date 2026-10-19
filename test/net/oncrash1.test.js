@@ -350,7 +350,7 @@ test('ONCRASH1 A2/A3/B4a: the three doors a stranger\'s foe comes through - the 
   assert.match(d, /const r = validFoeRecord\(raw\);\s*if \(!r\) return;/, 'the dungeon\'s stream projects its records, as the exterior cell always has');
   assert.match(d, /validFoeRecord/, 'and it imports the wire\'s door rather than checking by hand');
   // A4: the heartbeat is the APPLY's word
-  assert.match(code('src/scenes/world.js'), /if \(modes\?\.applyDungeonFoes\?\.\(id, data\) && modes\?\.mode === 'dungeon'\) _foesInAt = performance\.now\(\);/, 'a frame that did not apply is no heartbeat');
+  assert.match(code('src/scenes/world.js'), /if \(modes\?\.applyDungeonFoes\?\.\(id, data\) && modes\?\.mode === 'dungeon'\) seatClock\.heard\(performance\.now\(\)\);/, 'a frame that did not apply is no heartbeat');   // PIN MOVED (FIELD BUGS 2026-10-18d SEAT-LIVE): the seat heard is the seat clock's (net/seatLive.js createSeatClock) - the page's own absence spends none of it
   // B5d: the SAVE is a door too - ONCRASH1 said the angle defect was not reachable offline; it was, here
   assert.match(code('src/scenes/world.js'), /if \(Number\.isFinite\(pose\.yaw\)\) cam\.yaw = wrapAngle\(pose\.yaw\);/, 'a save\'s yaw is bounded like the wire\'s');
   // B5a: the collider's substep count has a ceiling of its own, not one held by its callers

@@ -316,7 +316,7 @@ test('AUDIT 2 a fitting\'s whole box on the plan: its turned corners on her deck
 
 // ── THE HOLD, THE WAY, THE PAD ─────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT 2 a packed ship\'s hold: her parts stored in her own hold come back to the pack as it shuts, and nothing weighs on them (PARTS-WEIGHT, FIELD BUGS 2026-10-18b: her timbers alone, open, shut or refused); a Rowboat\'s plunder opens; the hold key passes over a Rowboat with nothing aboard and a ship with no door to her (mutants: the parts, the rowboat, the fallback)', () => {
+test('AUDIT 2 a packed ship\'s hold: her parts stored in her own hold come back to the pack as it shuts, and nothing weighs on them (PARTS-WEIGHT, FIELD BUGS 2026-10-18e: her timbers alone, open, shut or refused); a Rowboat\'s plunder opens; the hold key passes over a Rowboat with nothing aboard and a ship with no door to her (mutants: the parts, the rowboat, the fallback)', () => {
   const pack = [];
   let opened = null, openOk = true;
   const parts = { templateIndex: 9999, UID: 2, weightInKg: 120 };

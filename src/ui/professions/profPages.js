@@ -538,10 +538,38 @@ export const STORES_EMPTY_CARRY_LINE = 'Your Stores are empty. What you gather g
 export const STORES_EMPTY_LINE = 'Your Stores are empty. What you gather online goes here. Press the use key at an herb patch, tree, ore vein, boulder, a body you killed, or in water with a net - or use the matching tool from your hotbar or a quick slot. Tools used from your pack gather nothing.';   // TOUCH-HOLD: the knife's Use
 const storesEmptyLine = () => t('prof.page.stores.empty', STORES_EMPTY_LINE);
 const storesEmptyCarryLine = () => t('prof.page.stores.emptyCarry', STORES_EMPTY_CARRY_LINE);
-/** PROF12: how Alchemy is practised, as the Professions page says it. */
-export const ALCHEMY_HOW = 'Brew at an alchemy station (an Alchemist\'s or your own home) from the Stores page, with what your Stores hold. The recipes are the original game\'s twenty potions. Herbs, metals and gems are gathered; the rest are bought from the Apothecaries\' counter. The classic potion maker still works but gives no Provisioning XP.';
+/** PROF12: how Alchemy is practised, as the Professions page says it. FB1018D CRAFT-HOWTO: with what the bag and the pack
+ *  hold too - "with what your Stores hold" stood from before BAG-CRAFT, and the brew reads the station's own (workOf). */
+export const ALCHEMY_HOW = 'Brew at an alchemy station (an Alchemist\'s or your own home) from the Stores page, with what you carry or keep in your Stores. The recipes are the original game\'s twenty potions. Herbs, metals and gems are gathered; the rest are bought from the Apothecaries\' counter. The classic potion maker still works but gives no Provisioning XP.';
 const fishingHow = () => t('prof.page.how.fishing', FISHING_HOW);
 const alchemyHow = () => t('prof.page.how.alchemy', ALCHEMY_HOW);
+/**
+ * FB1018D CRAFT-HOWTO (FIELD BUGS 2026-10-18d, the Discord's #bug-reports, MoonGeneral: "for the crafting side of this
+ * mechanic i have no clue on how to start it ... when it comes to the crafting skills you no explanation there"): HOW A
+ * CRAFT IS PRACTISED, as the page says it - each crafting profession's paragraph where a gathering one's stands
+ * (GATHER_HOW, TOOL-SAID), each a function read when the page is drawn (L10N4, UNLOCKS' shape). Provisioning's brew is
+ * ALCHEMY_HOW's and Enchanting's whole word ENCHANTING_HOW's; this says the rest. The port's own: DFU has no crafting
+ * profession (Ledger A, the professions' row). Every claim is the code's:
+ * - WHERE: a station is worked on the Stores page while the player stands at it (drawStationTiles' `here`, the
+ *   provider's station question): a Weaponsmith's or an Armorer's forge and anvil, a Pawn Shop's or a Gem Store's
+ *   jeweller's bench, a Furniture Store's workbench, a General Store's mason's bench, a Clothing Store's loom - or the
+ *   home's own (scenes/worldModes.js forgeHere, jewellerHere, workbenchHere, masonHere, loomHere); a joinery's bench
+ *   (scenes/world.js workbenchHere, CARP-YARD); any lit fire (professionLaw COOK_FIRE; worldModes cookFireHere).
+ * - WHAT: the forge's smelts (professionLaw SMELT_RECIPES - two ore an ingot), the anvil's weapons, armour and tools
+ *   (recipeLaw SMITH_RECIPES) and from raw ore its chain's smelts (net/chainLaw.js chainPlan, CRAFT1); the workbench's
+ *   saws (SAW_RECIPES) and its staves, bows, arrows and furniture (CARPENTRY_RECIPES); the mason's cut and mix
+ *   (MASON_RECIPES - Rough Stone, quarried); the loom's cures (CURE_RECIPES - hides, skinned) and its pieces
+ *   (OUTFITTING_RECIPES), its Linen and Wool bought, never made (COUNTER_ONLY; WEAVERS_STOCK, at a Clothing Store's loom
+ *   and the Market tab - and Linen at a furnisher's counter too, FURNISHER_STOCK: AUDIT FB1018D L1-9); a dish's meat, fish, herbs and Basket's food (recipeLaw DISHES), into the pack.
+ * - XP: a smelt's (smeltXp) and a piece's (craftXp), a mason's work's (masonXp), a dish's (cookXp) and a brew's, each on
+ *   its craft's track (trackOf); a saw and a cure none (`xp: null`).
+ */
+export const CRAFT_HOW = Object.freeze({
+  smithing: () => t('prof.page.how.smithing', 'Smithing is done at a forge: a Weaponsmith\'s, an Armorer\'s or one in your own home. Open the Stores page there (Holdings > Stores). The Forge smelts the ore you mine into ingots, and the Anvil makes weapons, armour and tools from them - or from raw ore, smelting it first. Jewellery is made at a jeweller\'s bench: a Pawn Shop\'s, a Gem Store\'s or one in your own home. Smelting and every piece you make earn Smithing XP.'),
+  building: () => t('prof.page.how.building', 'Carpentry is done at a workbench: a Furniture Store\'s, a joinery\'s or one in your own home; Masonry at a mason\'s bench: a General Store\'s or one in your own home. Open the Stores page there (Holdings > Stores). The workbench saws the logs you fell into planks and makes staves, bows, arrows and furniture; the mason\'s bench cuts the stone you quarry and mixes Mortar. Every piece, cut and mix earns Building XP; sawing earns none.'),
+  outfitting: () => t('prof.page.how.outfitting', 'Outfitting is done at a loom: a Clothing Store\'s or one in your own home. Open the Stores page there (Holdings > Stores). The loom\'s tanning rack cures the hides you skin into leather, and the loom makes leather armour, clothing, rugs, tapestries and the Fishing-Net. Linen and Wool are bought from the Weavers, at a Clothing Store\'s loom or a Notice Board\'s Market. Every piece earns Outfitting XP; curing earns none.'),
+  provisioning: () => t('prof.page.how.cooking', 'Cooking is done at any lit fire - a campfire, a hearth or a brazier: stand within reach of its flame and open the Stores page (Holdings > Stores). Dishes are made from the meat you skin, the fish you net, herbs and the food a Basket finds, and go to your pack. Brewing and cooking both earn Provisioning XP.'),   // beside ALCHEMY_HOW: Provisioning's cooking (CRAFT3)
+});
 /** PROF12: how Enchanting is practised, and what its rank takes off the item maker's gold. */
 export const ENCHANTING_HOW = (pct) => t('prof.page.how.enchanting', 'Level Enchanting by disenchanting crafted pieces into Arcane Essence at an enchanting station (a Mages Guild hall or your own home) from the Stores page. The original game\'s item maker works as before{off, select, yes {, and your rank takes {pct}% off its cost} other {. From Journeyman, your rank lowers its cost}}.',
   { off: pct > 0 ? 'yes' : 'no', pct });   // L10N4: one sentence, its rank's share a select
@@ -623,6 +651,9 @@ export function drawProfessionsPage(detail, rerender, kit) {
     pane.append(el('p', 'px-note', ENCHANTING_HOW(enchantDiscountPct(tr.rank, tr.specs?.[50] ?? null))));
   } else if (_sel === trackOf('alchemy')) {   // CRAFT3: Provisioning's brewing
     pane.append(el('p', 'px-note', alchemyHow()));
+    pane.append(el('p', 'px-note', CRAFT_HOW.provisioning()));   // FB1018D CRAFT-HOWTO: and its cooking
+  } else if (Object.hasOwn(CRAFT_HOW, _sel)) {
+    pane.append(el('p', 'px-note', CRAFT_HOW[_sel]()));   // FB1018D CRAFT-HOWTO: Smithing, Building, Outfitting
   } else if (PROFESSIONS.find((x) => x.id === _sel)?.kind === 'gathering' && practised) {
     const today = book.state.today?.[_sel] ?? 0;   // CAP-OFF: the day's harvests, a count against no cap
     pane.append(el('p', 'prof-today', t('prof.page.today.harvests', 'Today: {n, plural, one {# harvest} other {# harvests}}', { n: today })));

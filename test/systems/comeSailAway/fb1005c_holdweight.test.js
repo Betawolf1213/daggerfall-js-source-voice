@@ -6,9 +6,9 @@
 // good. Parts no take could ever lift are not made now (systems/comeSailAway/comeSailAway.js partsTooHeavy) - the pick-up says why,
 // the boat menu says why, a fast travel and a landfall leave her where she lies, her hold aboard; a lost boat is packed
 // whatever she weighs. Come Sail Away's real runtime over test/csaScene.mjs, the world host's seams as world.js gives.
-// PARTS-WEIGHT (FIELD BUGS 2026-10-18b, bible/01-Overview/bugs/Field-Bugs-2026-10-18b.md) MOVED THESE PINS: her hold rides
+// PARTS-WEIGHT (FIELD BUGS 2026-10-18e, bible/01-Overview/bugs/Field-Bugs-2026-10-18e.md) MOVED THESE PINS: her hold rides
 // her parts no more, so the gate weighs her timbers alone - a bearer too weak for those is the one refused now, and a
-// heavy hold packs (test/systems/comeSailAway/fb1018b_partsweight.test.js pins the rest).
+// heavy hold packs (test/systems/comeSailAway/fb1018e_partsweight.test.js pins the rest).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

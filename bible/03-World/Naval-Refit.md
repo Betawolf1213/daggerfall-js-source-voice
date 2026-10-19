@@ -137,7 +137,7 @@ CHANGED:
   bucket), the one whose cabin I am in (`modes.sailingCabin`); any ship of mine BY HER NUMBER (`openShip`) - afloat
   here or anywhere (her boat's hold), laid up (Come Sail Away's PackedCargoes under her number - `laidUpHold`, the very
   list her placing takes back aboard), or packed in the pack (the same list - her parts weigh her timbers alone, so
-  nothing stowed or taken here weighs on them: PARTS-WEIGHT, `01-Overview/bugs/Field-Bugs-2026-10-18b.md`, retired the
+  nothing stowed or taken here weighs on them: PARTS-WEIGHT, `01-Overview/bugs/Field-Bugs-2026-10-18e.md`, retired the
   weighing as the window shut, which grew parts past what the bearer could lift; AUDIT 2: her parts stored in her own
   hold come back to the pack as it shuts). A Rowboat carries no hold of her own - the mod gives her no cargo
   box (`HULL_HOLDS`) - and is said so; AUDIT 2: unless the sea has put something aboard her (Come Sail Away gives every

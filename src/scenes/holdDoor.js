@@ -18,7 +18,7 @@
 //   book - wherever she lies.
 // - ANY SHIP OF THEIRS BY HER NUMBER (`openShip`, the Fleet page's): afloat here or anywhere (her boat's own hold), laid
 //   up (Come Sail Away's PackedCargoes under her number - laidUpHold, the same list her placing takes back aboard), or
-//   packed in the pack (the same list - PARTS-WEIGHT, FIELD BUGS 2026-10-18b: her parts weigh her timbers alone, so
+//   packed in the pack (the same list - PARTS-WEIGHT, FIELD BUGS 2026-10-18e: her parts weigh her timbers alone, so
 //   nothing put in or taken out here weighs on them, wherever they lie).
 // A Rowboat carries no hold - the mod gives her no cargo box (HULL_HOLDS) - and is said so.
 //

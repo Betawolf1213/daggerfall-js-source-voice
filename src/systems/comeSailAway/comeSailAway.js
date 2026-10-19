@@ -293,7 +293,7 @@ export const PARTS_STANDING_TEXT = 'This ship is already afloat - these are its 
 export const DEED_NOT_HELD_TEXT = 'You need the ship\'s deed in your pack to pick it up.';
 /** HOLD-WEIGHT (FIELD BUGS 2026-10-05c, the port's own): the pick-up's refusal of a boat whose parts would weigh more than
  *  the bearer can carry at all - parts no take could ever lift out of a chest again. PARTS-WEIGHT (FIELD BUGS
- *  2026-10-18b): her hold rides her parts no more, so it is her timbers that are too heavy, and the words say so. */
+ *  2026-10-18e): her hold rides her parts no more, so it is her timbers that are too heavy, and the words say so. */
 export const PARTS_TOO_HEAVY_TEXT = 'The ship\'s parts are too heavy for you to carry.';
 /** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action) - their table a
  *  leaf since HUD-HELM (comeSailAwayActions.js), re-exported here so every reader keeps its import. */
@@ -1944,7 +1944,7 @@ export function createComeSailAwayRuntime(deps) {
    *   than the Large Boat's).
    * - HER WEIGHT (HOLD-WEIGHT): parts the bearer could never carry are never made (`partsTooHeavy`) - nothing is done and
    *   false answers, as for a missing deed; `lost` (recoverLostBoats alone) packs a boat no one can reach anyway.
-   * - HER HOLD WEIGHS NOTHING ON HER PARTS (PARTS-WEIGHT, FIELD BUGS 2026-10-18b - a DEPARTURE from the C#'s
+   * - HER HOLD WEIGHS NOTHING ON HER PARTS (PARTS-WEIGHT, FIELD BUGS 2026-10-18e - a DEPARTURE from the C#'s
    *   `val.weightInKg += weight`): the hold still goes into PackedCargoes, but her parts weigh her timbers alone. The hold
    *   opens from anywhere (scenes/holdDoor.js CARGO-ANYWHERE) and a stow there had no gate, so her parts grew past what
    *   the bearer could lift; set down in a chest, no door found them to weigh again, and no take could lift them.
@@ -2003,7 +2003,7 @@ export function createComeSailAwayRuntime(deps) {
    *  (DFU's CanCarryAmount, itemTransfer.js planTake) refused it for good. Whether those parts would be that item - the
    *  take's own arithmetic (inventory.js canHoldAmount) over an empty pack, so a full pack still packs her as the mod
    *  does and only parts no take could ever lift are refused. False where the host reads no MaxEncumbrance.
-   *  PARTS-WEIGHT (FIELD BUGS 2026-10-18b): her hold rides her parts no more, so her timbers alone are weighed. */
+   *  PARTS-WEIGHT (FIELD BUGS 2026-10-18e): her hold rides her parts no more, so her timbers alone are weighed. */
   function partsTooHeavy(boat) {
     const most = deps.entity?.maxEncumbrance?.();
     if (!Number.isFinite(most)) return false;

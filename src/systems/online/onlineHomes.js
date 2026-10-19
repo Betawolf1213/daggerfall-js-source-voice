@@ -191,6 +191,17 @@ export const homeYardWhere = (home) => (home?.hall ? "Your guild's yard" : 'Your
 export const homeLockedLine = (home) => (home.hall ? `This is the hall of ${home.hall.name}. Its doors open to its members.` : `This is ${home.owner}'s home. The door is locked.`);
 /** What a visitor reads at a home's cupboard. */
 export const homeBelongsLine = (home) => `This belongs to ${home.hall ? home.hall.name : home.owner}.`;
+/**
+ * FB1018D HOME-BENCH (the Discord, Cruor: "shared account homes don't let other characters access their craft benches"):
+ * WHETHER AN ONLINE HOME'S STATIONS SERVE THE CHARACTER PLAYING - any character of its owner's account (`mine`), the
+ * owning character (`own`) among them. The door lets the account's other characters in as its owner's (homeMayEnter's
+ * `mine`, homeDoorAnswer's 'enter'), and the station asked `own` alone - so the character the door admitted was told at
+ * the station "This belongs to <its own account's handle>". A station's licence was paid once, and using it spends nothing of
+ * the home's: the crafter's own Stores, purse and spellbook pay. What the home keeps stays the owning character's
+ * (`own`): its storage (that character's save), its bed, its decorator and its sale. A guild's hall is nobody's `mine`
+ * (server-account/src/homes.js homesInTown) - its stations are its members' (scenes/worldModes.js hallMemberHere).
+ */
+export const homeStationsServe = (home) => home?.mine === true;
 /** The hover's line under a house anyone may buy. */
 export const homeForSaleLine = (price) => `Can be your home: ${gold(price)} gold`;
 /** The offer at the door. */
