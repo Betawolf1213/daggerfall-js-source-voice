@@ -3603,6 +3603,13 @@ export function createNavalHost(deps) {
     }
   }
 
+  /** RAID-WON (bible/01-Overview/bugs/Field-Bugs-2026-10-19.md): a raid this throw-back won ends with it - its living foes
+   *  withdrawn, its `_ally_` among them, and its quest ended as its own `end quest` ends one (world.js endRaid's `won`,
+   *  scenes/raidAshore.js) - never left running with its crew on my deck, counted as enemies near. Its uid stays mine until
+   *  the quest ends (raidEnded): a Leave Ship or a wave its grace ticks still run is the sea fight's, never a voyage's. */
+  function wonRaid(quest) {
+    if (quest) deps.board?.endRaid?.(quest, { won: true });
+  }
   /** The fight won: a boarding's prize, or boarders thrown back. */
   function winBoarding(b, entry) {
     // SHIP-CREW: a boarding stood - each hand's count - and won: a prize taken, or the boarders thrown back
@@ -3617,6 +3624,7 @@ export function createNavalHost(deps) {
         entry.boardedAgain = true;
         entry.ship.damage.apply({ hull: 0, sail: 0, crew: entry.ship.damage.crew / 2 }, clock);
         endBoarding();
+        wonRaid(b.quest);   // RAID-WON: her first wave's raid won - its crew home before the second comes over
         deps.mid?.(`The boarders are thrown back - and ${entry.ship.names?.name ?? 'it'} sends more over the rail!`, 3);
         startBoarding('repel', entry, again);
         return;
@@ -3629,6 +3637,7 @@ export function createNavalHost(deps) {
       entry.ship.damage.apply({ hull: 0, sail: 0, crew: entry.ship.damage.crew }, clock);
       entry.ship.boarded = false;
       endBoarding();
+      wonRaid(b.quest);   // RAID-WON: after the boarding's end, as castOff's lost raid (the raid's end comes back through raidEnded)
       return;
     }
     b.win();

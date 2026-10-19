@@ -9623,8 +9623,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT NAV1 (B6): a raid the sea fight let go of - its boarders cast off, the deck left to them, the sea emptied -
       // ends with it (QuestMachine's own TombstoneQuest), never its waves following the player about; `withdraw`: its
       // living boarders go back over the rail with it (a tombstoned quest leaves the foes it made standing)
-      endRaid: (quest, { withdraw = false } = {}) => {
+      endRaid: (quest, { withdraw = false, won = false } = {}) => {
         if (!quest || !questBridge) return;
+        if (won) { raidAshore.won(quest); return; }   // RAID-WON (scenes/raidAshore.js): won at sea, ended as one thrown back ashore
         if (withdraw) for (const f of [...exteriorFoes.foes]) if (!f.dead && f.questBehaviour?.questUID === quest.uid) exteriorFoes.removeFoe(f);
         if (quest.questTombstoned) return;   // ended by its own clock: its boarders withdrawn, nothing more to end
         try { questBridge.machine.tombstoneQuest(quest); } catch (e) { console.warn('[naval] the raid would not end', e); }

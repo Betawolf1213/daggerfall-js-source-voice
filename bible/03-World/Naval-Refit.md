@@ -179,7 +179,11 @@ CHANGED (DECLARED, Port-Ledger section A):
 - **Leave Ship ashore** (`warmAshesShips.js LeaveShip.update`, the arm off region 31): the ship blocks back to `_base`
   (the IL resets them only at sea), the host's `raidAshore(quest)` withdraws the raid, and the quest ends as its own
   `end quest` ends one (`questBreak`, `endQuest` - the machine tombstones it after its two ticks of grace). Message 1014
-  ("The attackers have been fought off") is the quest's own, said before. At sea nothing changes.
+  ("The attackers have been fought off") is the quest's own, said before. At sea the sea fight's gate answers (NAV-D) -
+  and RAID-WON (2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-19.md`): a raid the sea fight WON ends the same way,
+  through the naval host's win (`navalHost.js wonRaid` -> world.js endRaid's `won` -> `raidAshore.js won`): its living
+  foes withdrawn, its `_ally_` among them, and its quest ended as `end quest` ends one. It ran on, five Warriors on the deck
+  counted as enemies near.
 - **The withdraw** (`scenes/raidAshore.js createRaidAshore`, built once by the world host before the quest bridge):
   every LIVING foe the quest stood (`questFoesOf`, the quest resource behaviour's UID - world.js endRaid's law) out of
   every pool it can stand in now - the street's (`exteriorFoes`) and, below deck, the room's (`modes.interiorPool()`) -

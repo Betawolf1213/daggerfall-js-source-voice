@@ -1,0 +1,82 @@
+[
+  {
+    "name": "RAID-WON-the-won-raid-left-running",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "      endBoarding();\n      wonRaid(b.quest);   // RAID-WON: after the boarding's end, as castOff's lost raid (the raid's end comes back through raidEnded)\n",
+    "new": "      endBoarding();\n",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-a-legends-first-wave-unended",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "        wonRaid(b.quest);   // RAID-WON: her first wave's raid won - its crew home before the second comes over\n",
+    "new": "",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-the-world-hosts-arm-unwired",
+    "file": "src/scenes/world.js",
+    "old": "        if (won) { raidAshore.won(quest); return; }   // RAID-WON (scenes/raidAshore.js): won at sea, ended as one thrown back ashore\n",
+    "new": "",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-no-end",
+    "file": "src/scenes/raidAshore.js",
+    "old": "      if (!quest.questComplete && !(quest.ticksToEnd > 0)) { quest.questBreak = true; quest.endQuest(); }\n",
+    "new": "",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-the-grace-restarted",
+    "file": "src/scenes/raidAshore.js",
+    "old": "      if (!quest.questComplete && !(quest.ticksToEnd > 0)) {",
+    "new": "      if (!quest.questComplete) {",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-the-ended-one-held",
+    "file": "src/scenes/raidAshore.js",
+    "old": "      if (quest.questTombstoned) return withdraw(quest);",
+    "new": "      if (quest.questTombstoned) return this.over(quest);",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-its-foes-kept",
+    "file": "src/scenes/raidAshore.js",
+    "old": "      const n = this.over(quest);",
+    "new": "      const n = 0;",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  },
+  {
+    "name": "RAID-WON-its-uid-let-go-at-the-win",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "    if (quest) deps.board?.endRaid?.(quest, { won: true });",
+    "new": "    if (quest) { raidUids.delete(quest.uid); deps.board?.endRaid?.(quest, { won: true }); }",
+    "tests": [
+      "test/systems/naval/raidwon.test.js",
+      "test/systems/naval/navaudit_boarding.test.js"
+    ]
+  }
+]

@@ -37,10 +37,11 @@ test('LAIR-REACH the law the lair now reads: the farthest marker a walk reaches 
 });
 
 test('LAIR-REACH the host: the lair\'s stand and the Rift ask ONE end - dungeonEnd, over SD-REACH\'s candidates from the way in - and nothing in the host hands dungeonEndOf the raw markers; a lair with no end frees its claim (mutants: the lair off the law; the Rift off it; the candidates unasked)', () => {
-  assert.match(D, /function dungeonEnd\(\) \{\n\s*return dungeonEndOf\(dungeon\.enterMarker \?\? dungeon\.startMarker \?\? null, sdEndMarks\(_layoutEnemies, dungeon\.blocks, \(m\) => floorLanding\(collider, \[m\.x, m\.y \+ 0\.2, m\.z\]\)\[1\]\)\);\n\s*\}/);
-  assert.equal(D.match(/dungeonEndOf\(/g)?.length, 1, 'the end\'s law asked in one place');
+  // LAIR-WALK (test/systems/revenant/lair_walk.test.js): `reaches`, the walk's test - the Rift asks none (dungeonEndOf)
+  assert.match(D, /function dungeonEnd\(reaches = null\) \{\n\s*return reachableEndOf\(dungeon\.enterMarker \?\? dungeon\.startMarker \?\? null, sdEndMarks\(_layoutEnemies, dungeon\.blocks, \(m\) => floorLanding\(collider, \[m\.x, m\.y \+ 0\.2, m\.z\]\)\[1\]\), reaches\);\n\s*\}/);
+  assert.equal(D.match(/reachableEndOf\(|dungeonEndOf\(/g)?.length, 1, 'the end\'s law asked in one place');
   const lair = D.slice(D.indexOf('async function standLairRevenant() {'), D.indexOf('function standDungeonBand('));
-  assert.match(lair, /const far = dungeonEnd\(\);/, 'the lair\'s stand');
+  assert.match(lair, /const far = \(walk && dungeonEnd\([^\n]*\)\) \|\| dungeonEnd\(\);/, 'the lair\'s stand - the walk\'s end, else SD-REACH\'s');
   assert.match(lair, /if \(!far\) \{ releaseRevenantStand\(r\); return null; \}/, 'no end: the claim freed');
   assert.doesNotMatch(lair, /_layoutEnemies/, 'never the raw markers');
   const rift = D.slice(D.indexOf('function standSdEnd() {'), D.indexOf('const probe = {', D.indexOf('function standSdEnd() {')));

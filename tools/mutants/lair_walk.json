@@ -1,0 +1,101 @@
+[
+  {
+    "name": "LAIR-WALK-the-walk-unread",
+    "file": "src/world/dungeon/dungeonEnd.js",
+    "old": "  if (typeof reaches !== 'function') return dungeonEndOf(from, marks);\n",
+    "new": "  return dungeonEndOf(from, marks);\n",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-nearest-first",
+    "file": "src/world/dungeon/dungeonEnd.js",
+    "old": ".sort((a, b) => b.d - a.d || a.i - b.i)",
+    "new": ".sort((a, b) => a.d - b.d || a.i - b.i)",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-a-tie-reordered",
+    "file": "src/world/dungeon/dungeonEnd.js",
+    "old": ".sort((a, b) => b.d - a.d || a.i - b.i)",
+    "new": ".sort((a, b) => b.d - a.d || b.i - a.i)",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-tries-unbounded",
+    "file": "src/world/dungeon/dungeonEnd.js",
+    "old": ".slice(0, tries)",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-lair-not-waiting",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (playerFeet && !_lairAsked && (!enhancedNav.requested || enhancedNav.settled || Date.now() - (_lairWaitFrom ??= Date.now()) > LAIR_WALK_WAIT_MS)) {",
+    "new": "    if (playerFeet && !_lairAsked) {",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-no-bound",
+    "file": "src/scenes/dungeonContext.js",
+    "old": " || enhancedNav.settled || Date.now() - (_lairWaitFrom ??= Date.now()) > LAIR_WALK_WAIT_MS)) {",
+    "new": " || enhancedNav.settled)) {",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-never-landed",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "\n        .finally(() => { enhancedNav.settled = true; });   // LAIR-WALK: landed or failed, the lair waits no longer",
+    "new": ";",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-no-anchor",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      enhancedNav.anchor = [playerFeet[0], playerFeet[1], playerFeet[2]];   // LAIR-WALK: the way in a walk is measured from\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-walk-unasked",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const far = (walk && dungeonEnd(walk)) || dungeonEnd();",
+    "new": "    const far = dungeonEnd();",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-a-walk-to-anywhere",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const walk = enhancedNav.chf && enhancedNav.anchor ? (m) => !!findPath(enhancedNav.chf, enhancedNav.anchor, floorLanding(collider, [m.x, m.y + 0.2, m.z])) : null;",
+    "new": "    const walk = enhancedNav.chf && enhancedNav.anchor ? () => true : null;",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-rift-on-a-clients-walk",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const end = dungeonEnd();",
+    "new": "    const end = dungeonEnd(enhancedNav.chf ? () => true : null);",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  }
+]

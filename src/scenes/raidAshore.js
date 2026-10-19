@@ -24,6 +24,15 @@
 // (`over`), the street's or the room's, the dead left lying to be looted; the ship blocks back to their base; and the
 // quest ended as its own `end quest` ends one (the machine tombstones it after its tick), so no wave and no crew is called
 // again. Its message (1014, "The attackers have been fought off") is the quest's, said before the Leave Ship runs.
+//
+// RAID-WON (FIELD BUGS 2026-10-19, the Discord, [IMB]Monday: "If you get boarded.. repel the attackers.. board them..
+// etc. You can use overview as your crew class as enemies"; bible/01-Overview/bugs/Field-Bugs-2026-10-19.md): AT SEA THE
+// SAME LAW. A raid the sea fight started (scenes/naval/navalHost.js beginFight) and the player won - its leader down, or
+// its wave killed and its Leave Ship the sea fight's - ran on: the small raid until its hour, the pirate attack until
+// its `_reset_`, and its five `_ally_` Warriors (the hands it stood in my crew's place) stood on my deck after it, hostile
+// on their mobile team, so the Overworld, a rest and a journey all said enemies were near for as long as I sailed. Won,
+// it ends as one thrown back ashore does (`won`): its living foes withdrawn, its quest ended as its own `end quest`
+// ends one.
 
 /** A quest's own foes still standing, out of a pool's list - the quest resource behaviour's UID (world.js endRaid's law). */
 export const questFoesOf = (quest, foes) => (quest ? (foes ?? []).filter((f) => f && !f.dead && f.questBehaviour?.questUID === quest.uid) : []);
@@ -59,6 +68,17 @@ export function createRaidAshore(deps) {
       if (!quest || !ending.has(quest.uid)) return 0;
       ending.delete(quest.uid);
       return withdraw(quest);
+    },
+    /** RAID-WON: a raid WON at sea (navalHost.js winBoarding, through world.js endRaid): ended as one thrown back ashore -
+     *  its foes withdrawn now and as its quest ends (`over`), and its quest ended as its own `end quest` ends one
+     *  (questBreak, endQuest: the machine tombstones it after its two ticks); one already ending its foes alone, one
+     *  already ended its foes withdrawn once. Answers how many went now. */
+    won(quest) {
+      if (!quest) return 0;
+      if (quest.questTombstoned) return withdraw(quest);
+      const n = this.over(quest);
+      if (!quest.questComplete && !(quest.ticksToEnd > 0)) { quest.questBreak = true; quest.endQuest(); }
+      return n;
     },
     get ending() { return ending.size; },
   };

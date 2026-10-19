@@ -1,0 +1,164 @@
+[
+  {
+    "name": "LAIR-HOME-out-never-home",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "(!x.out || goesHome(x, wall, foes))",
+    "new": "!x.out",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-stale-test-read-off-the-id",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  return !!b && b !== entity;\n}",
+    "new": "  return false;\n}",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-presence-counting-a-stale-body",
+    "file": "src/systems/revenant/revenant.js",
+    "old": " && !revenantStale(f.entity));   // LAIR-HOME: a body it left is none",
+    "new": ");",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-fight-unread",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (harmFightSince(b, wall) != null) return false;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-kneel-unread",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  return r.history?.[r.history.length - 1]?.deed !== 'yielded';",
+    "new": "  return true;",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-pool-unread",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if ((foes ?? []).some((f) => f && !f.dead && f.entity === b)) return false;\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-no-grace",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (_claims.has(r.id) || !b) return wall - (r.outAt || 0) >= REVENANT_STAND_GRACE_MS;",
+    "new": "  if (!b) return true;",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-release-clearing-the-roads",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (was?.out) { r.outAt = was.outAt; return; }\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-release-keeping-a-fresh-one",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (was?.out) { r.outAt = was.outAt; return; }\n  r.out = false; r.outAt = 0;",
+    "new": "  if (was?.out) { r.outAt = was.outAt; return; }\n  return;",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-a-claim-over-a-claim-overwriting",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (!_claims.has(r.id)) _claims.set(",
+    "new": "  _claims.set(",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-a-getaways-body-kept",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  bodyStood(r, r.out ? entity : null);",
+    "new": "  bodyStood(r, entity);",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-falls-body-kept",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  _bodies.delete(r.id); _claims.delete(r.id);   // LAIR-HOME: no body left to keep\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-sworn-withdrawn",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  if (!s?.id || s.sworn) return false;",
+    "new": "  if (!s?.id) return false;",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-a-stand-no-body",
+    "file": "src/systems/revenant/revenant.js",
+    "old": "  bodyStood(r, entity);   // LAIR-HOME: its latest body - any other it stood in is stale\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-never-withdrawn",
+    "file": "src/scenes/exteriorFoes.js",
+    "old": "      if (revenantStale(f.entity)) { withdrawStale(f); continue; }\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-band-left",
+    "file": "src/scenes/exteriorFoes.js",
+    "old": "    for (const g of foes) if (g !== f && !g.dead && !g.puppet && g.retinueOf === id) { releaseFoeBatch(g); g.dead = true; }\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-dungeon-never-withdrawing",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if (revenantStale(f.entity)) { for (const g of foes) if (g.retinueOf === f.entity.revenant.id) questPoolOps.removeFoe(g); questPoolOps.removeFoe(f); continue; }",
+    "new": "      if (false) { questPoolOps.removeFoe(f); continue; }",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-HOME-the-lair-pool-unasked",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const r = revenantForLair(playerEntity, lairPixel(), { foes });",
+    "new": "    const r = revenantForLair(playerEntity, lairPixel());",
+    "tests": [
+      "test/systems/revenant/lair_home.test.js"
+    ]
+  }
+]

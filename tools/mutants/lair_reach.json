@@ -2,8 +2,8 @@
   {
     "name": "LAIR-REACH-the-lair-off-the-law",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    const far = dungeonEnd();",
-    "new": "    const far = dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies);",
+    "old": "    const far = (walk && dungeonEnd(walk)) || dungeonEnd();",
+    "new": "    const far = reachableEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies);",
     "tests": [
       "test/systems/revenant/lair_reach.test.js"
     ]
@@ -12,7 +12,7 @@
     "name": "LAIR-REACH-the-rift-off-the-law",
     "file": "src/scenes/dungeonContext.js",
     "old": "    const end = dungeonEnd();",
-    "new": "    const end = dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies);",
+    "new": "    const end = reachableEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies);",
     "tests": [
       "test/systems/revenant/lair_reach.test.js"
     ]
@@ -20,8 +20,8 @@
   {
     "name": "LAIR-REACH-the-candidates-unasked",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    return dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, sdEndMarks(",
-    "new": "    return dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies ?? sdEndMarks(",
+    "old": "    return reachableEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, sdEndMarks(",
+    "new": "    return reachableEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, _layoutEnemies ?? sdEndMarks(",
     "tests": [
       "test/systems/revenant/lair_reach.test.js"
     ]
