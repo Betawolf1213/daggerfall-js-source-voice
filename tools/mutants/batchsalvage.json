@@ -56,8 +56,8 @@
   {
     "name": "BATCH-SALVAGE-a-sweep-takes-a-Legendary",
     "file": "src/ui/enhanced/enhancedInventory.js",
-    "old": "['All Rare', (it) => it.rarity === 'rare'],",
-    "new": "['All Rare', (it) => it.rarity === 'rare' || it.rarity === 'legendary'],",
+    "old": "[() => t('inventory.batch.allRare', 'All Rare'), (it) => it.rarity === 'rare'],",
+    "new": "[() => t('inventory.batch.allRare', 'All Rare'), (it) => it.rarity === 'rare' || it.rarity === 'legendary'],",
     "tests": [
       "test/systems/batchsalvage.test.js"
     ]

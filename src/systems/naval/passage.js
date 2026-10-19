@@ -18,6 +18,8 @@
 // TravelTimeCalculator.CalculateTripCost - and this passage is priced by it too (passageFare). Ledger A (PASSAGE).
 import { HULL } from './navalShips.js';
 import { calculateTripCost } from '../travel/travel.js';
+import { sceneCompassWord } from '../compassWords.js';
+import { t } from '../textManager.js';   // L10N4: every word of the passage in the player's language
 
 /** The hulls a passenger is carried in: a sail to cross a sea (OWS2's law, world.js tvSeaCrosses) - never the Rowboat,
  *  whose lone rower tires a kilometre out; never the Large Galley, which never moors (shipLife.js BERTH_HULLS). */
@@ -40,13 +42,11 @@ export const passagePixels = (from, to) => Math.max(Math.abs((to.x | 0) - (from.
  *  passage pays for the ocean its straight line crosses. No inn is paid: a passenger sleeps aboard. */
 export const passageFare = (from, to) => calculateTripCost(0, Math.max(1, passagePixels(from, to)), { travelShip: true }).totalCost;
 
-const WINDS = Object.freeze(['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west']);
-/** Which way a port lies, in the eight winds: map pixels (y runs south). '' for the same pixel. */
-export function bearingWord(from, to) {
+/** Which way a port lies, in the eight winds (systems/compassWords.js, the one home of the eight ways): map pixels, y
+ *  running south - turned into the scene's frame (+z north). '' for the same pixel. */
+export function passageWind(from, to) {
   const dx = (to.x | 0) - (from.x | 0), dn = (from.y | 0) - (to.y | 0);
-  if (!dx && !dn) return '';
-  const a = Math.atan2(dx, dn);   // 0 north, east a quarter turn on
-  return WINDS[((Math.round(a / (Math.PI / 4)) % 8) + 8) % 8];
+  return dx || dn ? sceneCompassWord(dx, dn) : '';
 }
 
 /**
@@ -62,7 +62,7 @@ export function passageDestinations(ports, here, { hereKey = null, known = () =>
   for (const port of ports ?? []) {
     if (!port?.name || port.key === hereKey || !known(port)) continue;
     const to = { x: port.px, y: port.py };
-    out.push({ port, fare: passageFare(here, to), bearing: bearingWord(here, to), pixels: passagePixels(here, to) });
+    out.push({ port, fare: passageFare(here, to), bearing: passageWind(here, to), pixels: passagePixels(here, to) });
   }
   return out.sort((a, b) => a.pixels - b.pixels || a.port.name.localeCompare(b.port.name));
 }
@@ -81,27 +81,43 @@ export function charterRecord(x) {
   };
 }
 
-const ship = (name) => name ?? 'The ship';
-/** The words. */
+const ship = (name) => name ?? t('passage.theShip', 'The ship');
+/** The eight winds in the player's language (systems/compassWords.js's English words are the keys' own). */
+const WIND_TEXT = Object.freeze({
+  north: () => t('passage.wind.north', 'north'), 'north-east': () => t('passage.wind.northEast', 'north-east'),
+  east: () => t('passage.wind.east', 'east'), 'south-east': () => t('passage.wind.southEast', 'south-east'),
+  south: () => t('passage.wind.south', 'south'), 'south-west': () => t('passage.wind.southWest', 'south-west'),
+  west: () => t('passage.wind.west', 'west'), 'north-west': () => t('passage.wind.northWest', 'north-west'),
+});
+const windText = (w) => WIND_TEXT[w]?.() ?? w;
+/** The words - every one through the text core (L10N4). */
 export const PASSAGE_TEXT = Object.freeze({
   /** The look comes onto her at her berth. */
-  hint: (name) => `${ship(name)} lies at her berth - Activate to book passage.`,
+  hint: (name) => t('passage.hint', '{ship} lies at her berth - Activate to book passage.', { ship: ship(name) }),
   /** A row of her master's list. */
-  row: (d) => `${d.port.name} - ${d.bearing ? `${d.bearing}, ` : ''}${d.fare} gold`,
+  row: (d) => (d.bearing
+    ? t('passage.row', '{port} - {wind}, {fare} gold', { port: d.port.name, wind: windText(d.bearing), fare: d.fare })
+    : t('passage.rowHere', '{port} - {fare} gold', { port: d.port.name, fare: d.fare })),
   /** The question, before a coin is paid. */
-  ask: (name, dest, fare, gold) => [`Book passage on ${ship(name)} to ${dest}?`, `The fare is ${fare} gold. You have ${gold}.`, 'Her master sails you there. Step off her and the passage ends.'],
-  booked: (name, captain, fare, dest) => `${captain ? `Captain ${captain}` : 'Her master'} takes your ${fare} gold. ${ship(name)} sails for ${dest}.`,
-  poor: (fare) => `You cannot afford the fare of ${fare} gold.`,
-  none: 'Her master knows of no port you have heard of to sail for.',
-  noSail: 'No ship can carry you while Come Sail Away is off.',
-  booking: 'You have a passage booked already.',
-  ether: 'Her master sails these isles alone - the Bay\'s ports are beyond the Veil.',
-  gone: 'She has cast off.',
-  failed: 'Her master cannot make ready to sail.',
-  helm: (dest) => `Go to her helm to sail on for ${dest} - her master steers from there.`,
-  stood: (dest) => `Her master will sail no further toward ${dest} from here. Take her helm, or step ashore.`,
-  goods: 'What you put in her hold is carried off her.',
-  ended: (name) => `${ship(name)} stands out to sea.`,
+  ask: (name, dest, fare, gold) => [
+    t('passage.ask', 'Book passage on {ship} to {port}?', { ship: ship(name), port: dest }),
+    t('passage.askFare', 'The fare is {fare} gold. You have {gold}.', { fare, gold }),
+    t('passage.askRule', 'Her master sails you there. Step off her and the passage ends.'),
+  ],
+  booked: (name, captain, fare, dest) => (captain
+    ? t('passage.bookedCaptain', 'Captain {captain} takes your {fare} gold. {ship} sails for {port}.', { captain, fare, ship: ship(name), port: dest })
+    : t('passage.booked', 'Her master takes your {fare} gold. {ship} sails for {port}.', { fare, ship: ship(name), port: dest })),
+  poor: (fare) => t('passage.poor', 'You cannot afford the fare of {fare} gold.', { fare }),
+  get none() { return t('passage.none', 'Her master knows of no port you have heard of to sail for.'); },
+  get noSail() { return t('passage.noSail', 'No ship can carry you while Come Sail Away is off.'); },
+  get booking() { return t('passage.booking', 'You have a passage booked already.'); },
+  get ether() { return t('passage.ether', 'Her master sails these isles alone - the Bay\'s ports are beyond the Veil.'); },
+  get gone() { return t('passage.gone', 'She has cast off.'); },
+  get failed() { return t('passage.failed', 'Her master cannot make ready to sail.'); },
+  helm: (dest) => t('passage.helm', 'Go to her helm to sail on for {port} - her master steers from there.', { port: dest }),
+  stood: (dest) => t('passage.stood', 'Her master will sail no further toward {port} from here. Take her helm, or step ashore.', { port: dest }),
+  get goods() { return t('passage.goods', 'What you put in her hold is carried off her.'); },
+  ended: (name) => t('passage.ended', '{ship} stands out to sea.', { ship: ship(name) }),
 });
 /** The look's word on her (navalHost.js passageHint). */
 export const passageHintText = (name) => PASSAGE_TEXT.hint(name);

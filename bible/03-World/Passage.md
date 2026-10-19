@@ -90,6 +90,11 @@ She is her master's ship, never the player's:
 Online: a harbour ship another player stands is taken over at the booking, as a boarding takes her; her boat is a boat
 of mine on the wire, so another player may ride her as a passenger (CSA-K).
 
+## The words
+
+Every word the passage says is the text core's (`t('passage.*')`, L10N4 - the eight winds of a port's row too),
+drafted in-session for the thirteen whole languages (`locales/README.md`).
+
 ## The four hosts
 
 `scenes/world.js` wires it (the passage host built once beside the shipyard's, its frame at the head of the sea's frame

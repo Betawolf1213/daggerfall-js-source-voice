@@ -3687,29 +3687,34 @@ function askSalvage(item) {
  *  question. Not a DFU member (Daggerfall has no salvage). */
 export const BATCH_LABEL = 'Batch salvage';
 export const BATCH_HINT = 'Choose the pieces to salvage.';
-export const BATCH_COUNT = (n, shards) => `${n} chosen, for ${shardsText(shards)}`;
-/** The foot's sweeps: a tier that breaks often, and the junk mark (LOOT18) - each adds what would break now. */
+export const BATCH_COUNT = (n, shards) => t('inventory.batch.count', '{n} chosen, for {shards}', { n, shards: shardsText(shards) });
+/** The foot's sweeps: a tier that breaks often, and the junk mark (LOOT18) - each adds what would break now; each its
+ *  label (read in the player's language) and its test. */
 export const BATCH_SWEEPS = Object.freeze([
-  ['All Magic', (it) => it.rarity === 'magic'],
-  ['All Rare', (it) => it.rarity === 'rare'],
-  ['All junk', (it) => isJunk(it)],
+  [() => t('inventory.batch.allMagic', 'All Magic'), (it) => it.rarity === 'magic'],
+  [() => t('inventory.batch.allRare', 'All Rare'), (it) => it.rarity === 'rare'],
+  [() => t('inventory.batch.allJunk', 'All junk'), (it) => isJunk(it)],
 ]);
-export const BATCH_ASK = (n, shards) => [`Salvage ${n} ${n === 1 ? 'piece' : 'pieces'}?`, `They are gone for good, and you get ${shardsText(shards)}.`];
+export const BATCH_ASK = (n, shards) => [
+  t('inventory.batch.ask', 'Salvage {n, plural, one {# piece} other {# pieces}}?', { n }),
+  t('inventory.batch.askShards', 'They are gone for good, and you get {shards}.', { shards: shardsText(shards) }),
+];
 /** The names the question lists before "and n more". */
 export const BATCH_NAMES_SHOWN = 6;
-export const BATCH_DONE = (n, shards, kept = 0) => `Salvaged ${n} ${n === 1 ? 'piece' : 'pieces'}, for ${shardsText(shards)}.${kept ? ` ${kept} would not break and ${kept === 1 ? 'was' : 'were'} kept.` : ''}`;
+export const BATCH_DONE = (n, shards, kept = 0) => t('inventory.batch.done', 'Salvaged {n, plural, one {# piece} other {# pieces}}, for {shards}.', { n, shards: shardsText(shards) })
+  + (kept ? ` ${t('inventory.batch.kept', '{kept, plural, one {# would not break and was kept.} other {# would not break and were kept.}}', { kept })}` : '');
 /** Why a pressed piece takes no tick (systems/reforge.js salvageRefusal's reasons), in the card's own words where it has them. */
 export function batchRefusal(name, why) {
   if (why === 'locked') return lockedText(name);
   if (why === 'gems') return SALVAGE_GEMS(name);
   if (why === 'classic') return SALVAGE_CLASSIC(name);
-  if (why === 'worn') return `${name} is worn - take it off to salvage it.`;
-  if (why === 'bound') return `${name} is bound to you, and does not break.`;
-  if (why === 'quest') return `${name} belongs to a quest.`;
-  if (why === 'aetheric') return `${name} is Aetheric - the Sigil Broker dismantles it, not the Reforge.`;
-  if (why === 'gilded') return `${name} is Gilded - its roll is never broken down.`;
-  if (why === 'artifact') return `${name} is an artifact, and never breaks.`;
-  return `${name} has nothing to salvage.`;
+  if (why === 'worn') return t('inventory.batch.worn', '{name} is worn - take it off to salvage it.', { name });
+  if (why === 'bound') return t('inventory.batch.bound', '{name} is bound to you, and does not break.', { name });
+  if (why === 'quest') return t('inventory.batch.quest', '{name} belongs to a quest.', { name });
+  if (why === 'aetheric') return t('inventory.batch.aetheric', '{name} is Aetheric - the Sigil Broker dismantles it, not the Reforge.', { name });
+  if (why === 'gilded') return t('inventory.batch.gilded', '{name} is Gilded - its roll is never broken down.', { name });
+  if (why === 'artifact') return t('inventory.batch.artifact', '{name} is an artifact, and never breaks.', { name });
+  return t('inventory.batch.nothing', '{name} has nothing to salvage.', { name });
 }
 /** The chosen that still stand: a piece gone from the pack, or one that would no longer break (worn, locked since), is
  *  let go of the choosing. */
@@ -3730,28 +3735,28 @@ function salvageFoot() {
   const shards = chosen.reduce((n, it) => n + salvageShards(it), 0);
   const foot = el('div', 'salvagefoot');
   foot.setAttribute('role', 'toolbar');
-  foot.setAttribute('aria-label', BATCH_LABEL);
-  foot.append(el('span', 'salvagecount', chosen.length ? BATCH_COUNT(chosen.length, shards) : BATCH_HINT));
+  foot.setAttribute('aria-label', t('inventory.batch.label', BATCH_LABEL));
+  foot.append(el('span', 'salvagecount', chosen.length ? BATCH_COUNT(chosen.length, shards) : t('inventory.batch.hint', BATCH_HINT)));
   const open = salvageable(pack);
   for (const [label, sweeps] of BATCH_SWEEPS) {
     const these = open.filter(sweeps);
     if (!these.length) continue;
-    const b = el('button', 'act', `${label} (${these.length})`);
+    const b = el('button', 'act', t('inventory.batch.sweep', '{label} ({n})', { label: label(), n: these.length }));
     b.type = 'button';
     b.onclick = () => { for (const it of these) salvageSel.add(it); notice = null; render(); };
     foot.append(b);
   }
   if (chosen.length) {
-    const clear = el('button', 'act', 'Clear');
+    const clear = el('button', 'act', t('inventory.batch.clear', 'Clear'));
     clear.type = 'button';
     clear.onclick = () => { salvageSel.clear(); notice = null; render(); };
     foot.append(clear);
   }
-  const go = el('button', 'act primary', `Salvage ${chosen.length}`);
+  const go = el('button', 'act primary', t('inventory.batch.go', 'Salvage {n}', { n: chosen.length }));
   go.type = 'button';
   go.disabled = !chosen.length;
   go.onclick = () => { if (salvageSel?.size) askSalvageMany(); };
-  const stop = el('button', 'act', 'Cancel');
+  const stop = el('button', 'act', t('inventory.batch.cancel', 'Cancel'));
   stop.type = 'button';
   stop.onclick = () => { salvageSel = null; notice = null; render(); };
   foot.append(go, stop);
@@ -3768,12 +3773,12 @@ function askSalvageMany() {
   const shards = chosen.reduce((n, it) => n + salvageShards(it), 0);
   dismantleEl = el('div', 'inv-info inv-dismantle inv-salvage inv-salvage-many');
   dismantleEl.setAttribute('role', 'alertdialog');
-  dismantleEl.setAttribute('aria-label', BATCH_LABEL); dismantleEl.setAttribute('aria-modal', 'true');
+  dismantleEl.setAttribute('aria-label', t('inventory.batch.label', BATCH_LABEL)); dismantleEl.setAttribute('aria-modal', 'true');
   const card = el('div', 'card');
   const sec = el('div', 'inv-info-box');
   for (const t of BATCH_ASK(chosen.length, shards)) sec.append(el('p', 'center', t));
   const names = chosen.slice(0, BATCH_NAMES_SHOWN).map((it) => itemLongName(it, { getQuest: deps.getQuest ?? null }));
-  if (chosen.length > BATCH_NAMES_SHOWN) names.push(`and ${chosen.length - BATCH_NAMES_SHOWN} more`);
+  if (chosen.length > BATCH_NAMES_SHOWN) names.push(t('inventory.batch.more', 'and {n} more', { n: chosen.length - BATCH_NAMES_SHOWN }));
   sec.append(el('p', 'center salvagenames', names.join(', ')));
   card.append(sec);
   const row = el('div', 'acts');
@@ -4127,7 +4132,8 @@ function render() {
       head.append(codex);
       // BATCH-SALVAGE: the pack chooses what to break - shown while a piece would break, or while it chooses
       if (salvageSel || salvageable(deps.items?.() ?? []).length) {
-        const many = el('button', `act salvagebtn${salvageSel ? ' primary' : ''}`, BATCH_LABEL);
+        const many = el('button', 'act salvagebtn', t('inventory.batch.label', BATCH_LABEL));
+        if (salvageSel) many.classList.add('primary');
         many.type = 'button';
         many.setAttribute('aria-pressed', String(!!salvageSel));
         many.onclick = () => { salvageSel = salvageSel ? null : new Set(); picked = null; goldEntry = null; notice = null; render(); };

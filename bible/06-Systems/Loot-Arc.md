@@ -692,6 +692,7 @@ slot with the single piece's keys - the count, the shards and the first six name
 its tick. Yes breaks them through `reforge.js` `salvageMany`: each through `salvagePiece`, in order, so a refusal
 since the choice (worn, locked) costs only its own piece and is counted in the line it says ("Salvaged 3 pieces, for
 7 Welkynd Shards. 1 would not break and was kept."); a piece chosen twice breaks once. The law is LOOT9's unchanged.
+Its words are the text core's (`t('inventory.batch.*')`, L10N4), drafted in-session for the thirteen whole languages.
 The classic pack has no card and no batch: the Reforge's Salvage page and its "Salvage every Magic" (LOOT18) stay its
 doors. `test/systems/batchsalvage.test.js` (5), `tools/mutants/batchsalvage.json` (13, all dead).
 

@@ -12,7 +12,7 @@ import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  PASSAGE_HULLS, PASSAGE_LEAVE_M, PASSAGE_RESUMES, passagePixels, passageFare, bearingWord, passageDestinations, charterRecord, PASSAGE_TEXT, passageHintText,
+  PASSAGE_HULLS, PASSAGE_LEAVE_M, PASSAGE_RESUMES, passagePixels, passageFare, passageWind, passageDestinations, charterRecord, PASSAGE_TEXT, passageHintText,
 } from '../../../src/systems/naval/passage.js';
 import { HULL } from '../../../src/systems/naval/navalShips.js';
 import { calculateTripCost } from '../../../src/systems/travel/travel.js';
@@ -42,7 +42,7 @@ test('PASSAGE: the fare is Daggerfall\'s ship over every pixel of the voyage - 2
 
 test('PASSAGE: the eight winds - north up the map (y runs south), a quarter turn east (mutants: y read north; the winds turned)', () => {
   const o = { x: 50, y: 50 };
-  const at = (dx, dy) => bearingWord(o, { x: 50 + dx, y: 50 + dy });
+  const at = (dx, dy) => passageWind(o, { x: 50 + dx, y: 50 + dy });
   assert.deepEqual([at(0, -9), at(9, -9), at(9, 0), at(9, 9), at(0, 9), at(-9, 9), at(-9, 0), at(-9, -9)],
     ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west']);
   assert.equal(at(9, -2), 'east', 'nearest wind');
