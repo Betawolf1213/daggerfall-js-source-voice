@@ -9,7 +9,7 @@ import { scene } from '../../csaScene.mjs';
 
 const VOYAGE = { to: { name: 'Sentinel', px: 130, py: 100 }, ship: 'The Fair Silk', captain: 'Ana Rhea', fare: 50 };
 
-test('PASSAGE csa: a booked ship\'s voyage is saved with her and read back onto her at a load - a copy, never the live record; a boat of mine saves none (mutants: the voyage unsaved; unread at the load)', () => {
+test('PASSAGE csa: a booked ship\'s voyage is saved with her and read back onto her at a load - a copy, never the live record; a boat of mine saves none (mutants: the voyage unsaved; saved live, not a copy; unread at the load)', () => {
   const s = scene();
   const mine = s.place(1, 0, [100, 34, 200]);
   const booked = s.place(2, 0, [160, 34, 200]);

@@ -10319,6 +10319,11 @@
   "tr": "75865980013a",
   "by": "claude-in-session"
  },
+ "inventory.batch.keep": {
+  "en": "466fc492747c",
+  "tr": "38f1a3cc944e",
+  "by": "claude-in-session"
+ },
  "inventory.batch.kept": {
   "en": "2ae48b3b9948",
   "tr": "32d73e2db1bc",
@@ -10352,6 +10357,11 @@
  "inventory.batch.worn": {
   "en": "82ec0ec903e3",
   "tr": "e182934492c8",
+  "by": "claude-in-session"
+ },
+ "inventory.batch.yes": {
+  "en": "fcf57649fcdb",
+  "tr": "93f2d2013075",
   "by": "claude-in-session"
  },
  "inventory.store.anyMaterial": {
@@ -17689,9 +17699,19 @@
   "tr": "40b14c651644",
   "by": "claude-in-session"
  },
+ "passage.holds": {
+  "en": "dcd1f8fde061",
+  "tr": "8d440ff52b3d",
+  "by": "claude-in-session"
+ },
  "passage.noSail": {
   "en": "0436c56c8944",
   "tr": "5ef707b7c5e2",
+  "by": "claude-in-session"
+ },
+ "passage.noWay": {
+  "en": "cff34d7fb73f",
+  "tr": "0d437bcbe7b1",
   "by": "claude-in-session"
  },
  "passage.none": {
@@ -17714,9 +17734,9 @@
   "tr": "5a7a6192139a",
   "by": "claude-in-session"
  },
- "passage.stood": {
-  "en": "005e08069264",
-  "tr": "6f24b8153803",
+ "passage.stuck": {
+  "en": "99e84628cba1",
+  "tr": "b86f03387d93",
   "by": "claude-in-session"
  },
  "passage.theShip": {

@@ -83,7 +83,7 @@ import { KNOW, falseFlagOf, merchantOfHull, glassReach, knowledgeOf, glassHolds,
 import { drawHold, flotsamKeys, choiceEffect, choiceOffer, holdTier, CHOICES, prizeDeedValue, SALVAGE_LOT, isSalvage, salvageOf, STRONGBOX_KEY, STRONGBOX_RARITY_TIER } from '../../systems/naval/navalPlunder.js';
 import { mintStores } from '../../systems/naval/navalStores.js';   // SALVAGE: a wreck's stores, minted as the yard's are
 import { mintDeed } from '../../systems/comeSailAway/comeSailAwayItems.js';   // SHIP-CLAIM: a claimed prize's deed, the shelf's own mint
-import { PASSAGE_HULLS, passageHintText } from '../../systems/naval/passage.js';   // PASSAGE: the hulls that carry a passenger, and the ship's word
+import { createPassageBerths } from './passageBerths.js';   // PASSAGE: a berth's ship to book, and her boat made the voyage's
 import { yardOffer, yardAll, fieldMend, FIELD_QUIET_S, FIELD_REFLOAT, YARD_PRICE, provisionOffer, seaRepair, wantsRepair, paidDamage, STORE_POINTS, STORES_STOCK, storesToWhole, SEA_REPAIR_UNDER_FIRE, FIELD_MEND_CAP } from '../../systems/naval/navalYard.js';
 import { createCompanions, companionRows } from '../../systems/naval/crewCompanions.js';   // CREW-COMPANIONS
 import { createShipCrew, reloadScaleOf, mendScaleOf, handsBonusOf, crewCard, CREW_ORDERS, ORDER_TEXT, spiritsOf, LOOKOUT_ROLE, FIRST_MATE, crewWorth, NO_WORTH, SEASONED_HIRE } from '../../systems/naval/shipCrew.js';   // SHIP-CREW; CAPT-CREW: what her posts are worth
@@ -4392,64 +4392,9 @@ export function createNavalHost(deps) {
     if (k && k !== gangwaySaid) deps.say?.(g.way === 'aboard' ? `The gangway${g.name ? ` to the ${g.name}` : ''} - Activate to go aboard.` : 'The gangway - Activate to step ashore.', 3);
     gangwaySaid = k;
   }
-  // ── PASSAGE (2026-10-19, the owner: "buy and ride a friendly boat (if one is docked) at any port"): a harbour's own
-  // friendly ship, booked from her quay - the voyage is scenes/naval/passageHost.js's, its law systems/naval/passage.js ──
-  /** The ship a player on foot could book passage on: one of a harbour's own (never a packet, a prize or a ship fading)
-   *  lying moored at her berth, afloat and friendly (stanceOf: lawful, and no crown's hunt on me), of a hull that crosses a
-   *  sea (passage.js PASSAGE_HULLS), her side within FOOT_BOARD_M of the feet and the look on her. Null at a helm, in a
-   *  boarding, with the switch off or no passage door. */
-  function passageShip() {
-    if (!enabled || boarding || myBoat() || !deps.passage) return null;
-    const feet = deps.feet(), look = deps.look?.(), lf = look ? flatUnit(look.dir) : null;
-    for (const e of sea.values()) {
-      const s = e.ship;
-      if (!e.fromHarbour || e.liner || e.prize || e.retiring || s.errand?.kind !== 'moored' || !PASSAGE_HULLS.includes(s.hull) || !stanceOf(s).friendly) continue;
-      if (dist2d(s.pos, feet) - hullBuild(s.hull).beam > FOOT_BOARD_M) continue;
-      const to = lf ? [s.pos[0] - look.origin[0], 0, s.pos[2] - look.origin[2]] : null;
-      if (to && (to[0] * lf[0] + to[2] * lf[2]) / (Math.hypot(to[0], to[2]) || 1) < 0.5) continue;
-      return e;
-    }
-    return null;
-  }
-  let passageSaid = null;
-  /** The ship's word as the look comes onto her - once a ship, as the gangway's. */
-  function passageHint() {
-    const e = deps.passage ? passageShip() : null;
-    if (e && e.id !== passageSaid) deps.say?.(passageHintText(e.ship.names?.name ?? null), 3);
-    passageSaid = e?.id ?? null;
-  }
-  /**
-   * PASSAGE BOOKED: the ship I booked made the boat I sail in - claimPrize's first half on a sound ship. Her deed minted
-   * at her worth (never into the pack or the Fleet's book: she is no ship of mine), her boat placed at her berth as she
-   * lies (Come Sail Away's LaunchFromDeed), `charter` written on it (the voyage's record, saved with her), and she never
-   * packs. Her hands are
-   * her boat's (a fresh state, every hand aboard). She still lies at her berth until the voyage is under way
-   * (charterSailed) - a journey refused takes her boat back and leaves her as she was. Answers the boat, or null (she is
-   * gone, or the placing failed - nothing changed).
-   */
-  function charter(id, record) {
-    const e = sea.get(id), r = csa();
-    const h = e ? harbours.get(e.ship.errand?.harbour)?.harbour : null, b = h?.berths?.[e.ship.errand.berth];
-    if (!e || !b || typeof r?.LaunchFromDeed !== 'function' || typeof deps.board?.mintUid !== 'function') return null;
-    const s = e.ship, at = alongside(b, s.hull, h.hull), pos = [at[0], deps.seaY(), at[1]];
-    const worth = prizeDeedValue(s.hull), deed = mintDeed(s.hull, s.variant ?? 0, deps.board.mintUid(), worth);
-    let boat = null;
-    try { boat = r.LaunchFromDeed(deed, [deed], pos, forwardOfYaw(b.yaw), deps.board.terrainAt?.(pos)); } catch (err) { console.warn('[naval] a booked ship would not be placed', err); }
-    if (!boat) return null;
-    boat.charter = record;
-    boat.packable = false;   // never parts in my pack - so the crossing never plans a second launch of her (OWS2's `again`)
-    return boat;
-  }
-  /** PASSAGE: the voyage under way - she is let go from the sea without sinking (her boat stands in her place), and not
-   *  stood at her berth again today. A ship another stands is mine to let go, as a boarding takes her over. */
-  function charterSailed(id) {
-    const e = sea.get(id);
-    if (!e) return false;
-    if (e.owner) adopt(e);
-    departedOf(e.fromHarbour, where().day ?? 0).add(e.ship.seed);
-    drop(e);
-    return true;
-  }
+  // ── PASSAGE (2026-10-19; bible/03-World/Passage.md): a harbour's own friendly ship, booked from her quay - the sea's half
+  // in scenes/naval/passageBerths.js (AUDIT PASSAGE D-M1: out of this scope), the voyage scenes/naval/passageHost.js's ──
+  const { passageShip, passageHint, charter, charterSailed } = createPassageBerths({ sea, harbours, enabled: () => enabled, boarding: () => boarding, myBoat, csa, stanceOf, drop, adopt, departedOf, day: () => where().day ?? 0, hullBox }, deps);
   let dockPortsAt = -Infinity;
   /** The Fleet's word of where each boat of mine lies made fast (`deps.dockedPort(boat, name | null)`), once a second -
    *  AUDIT HOLDINGS Q8: "nowhere" said only where it is known - a known harbour's mouth within HARBOUR_STAND of her, or

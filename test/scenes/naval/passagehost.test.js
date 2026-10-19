@@ -1,15 +1,17 @@
 // PASSAGE (2026-10-19; bible/03-World/Passage.md) - THE VOYAGE'S HOST HALF (scenes/naval/passageHost.js), over stand-in
 // doors: the booking (her master's ports, the question, all of it or none of it) and the passage's life (sailed on when
-// a voyage stops, over when I step off her - her hold ashore, her boat gone, her record forgotten).
+// a voyage stops, over when I step off her - her hold ashore, her boat gone, her record forgotten). AUDIT PASSAGE (lane A):
+// the stand-in runtime moves her hold as Come Sail Away's LayUpBoat does (under her number) and refuses while a player
+// stands aboard her, as the real one does - the first stand-in did neither, and the order it hid was wrong.
 
 import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createPassageHost } from '../../../src/scenes/naval/passageHost.js';
+import { createPassageHost, hullReach } from '../../../src/scenes/naval/passageHost.js';
 import { ListPickerWindow } from '../../../src/ui/listPicker.js';
 import { YesNoBoxWindow } from '../../../src/ui/yesNoBox.js';
-import { PASSAGE_TEXT, PASSAGE_LEAVE_M, PASSAGE_FIRST_S, PASSAGE_RESUME_S, PASSAGE_RESUMES, passageFare } from '../../../src/systems/naval/passage.js';
+import { PASSAGE_TEXT, PASSAGE_LEAVE_M, PASSAGE_OFF_S, PASSAGE_FIRST_S, PASSAGE_RESUME_S, PASSAGE_RESUMES, PASSAGE_SLOW, passageFare } from '../../../src/systems/naval/passage.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const PORTS = [
@@ -22,21 +24,29 @@ const SHIP = { id: 'local:3', name: 'The Fair Silk', captain: 'Ana Rhea', hull: 
 /** A world of stand-ins: Come Sail Away's runtime (its boats, its helm, its laying up), the sea's charter, the journey,
  *  the purse and the pack. `o` changes a door. */
 function world(o = {}) {
-  const log = { say: [], shown: [], spawned: [], paid: [], forgot: [], routed: [], sailed: [], laid: [] };
-  const w = { gold: o.gold ?? 200, feet: [0, 0, 0], live: false, onDeck: false, pack: [], log };
+  const log = { say: [], shown: [], spawned: [], paid: [], forgot: [], routed: [], sailed: [], laid: [], remount: [], stopped: 0 };
+  const w = { gold: o.gold ?? 200, feet: [0, 0, 0], live: false, onDeck: false, pack: [], log, canGo: o.canGo ?? true, ride: o.ride ?? 'foot' };
   const rt = {
-    AllBoats: [], state: { CurrentBoat: null }, sailing: false,
+    AllBoats: [], state: { CurrentBoat: null }, sailing: false, passengers: 0, held: new Map(),
     isSailing() { return this.sailing; },
-    StartSailing(b) { if (o.helmThrows) throw new Error('no helm'); this.sailing = true; this.state.CurrentBoat = b; w.feet = [...b.GameObject.position]; },
+    StartSailing(b) { if (o.helmThrows) throw new Error('no helm'); this.sailing = true; this.state.CurrentBoat = b; w.feet = [...b.GameObject.position]; w.ride = 'foot'; },
     StopSailing() { this.sailing = false; this.state.CurrentBoat = null; },
-    LayUpBoat(b) { if (b === this.state.CurrentBoat) return false; log.laid.push(b.uid); this.AllBoats.splice(this.AllBoats.indexOf(b), 1); return true; },
-    forgetHold(uid) { log.forgot.push(['hold', uid]); return true; },
+    // Come Sail Away's LayUpBoat: refused at the helm or with a player aboard; her hold moved under her number; gone
+    LayUpBoat(b) {
+      if (b === this.state.CurrentBoat || this.passengers > 0) return false;
+      log.laid.push(b.uid);
+      this.held.set(b.uid, [...(this.held.get(b.uid) ?? []), ...b.Cargo.Items.splice(0)]);
+      this.AllBoats.splice(this.AllBoats.indexOf(b), 1);
+      return true;
+    },
+    laidUpHold(uid) { if (!this.held.has(uid)) this.held.set(uid, []); return this.held.get(uid); },
+    forgetHold(uid) { log.forgot.push(['hold', uid]); if (this.held.get(uid)?.length) return false; return this.held.delete(uid); },
   };
   w.rt = rt;
   const naval = {
     charter(id, record) {
       if (o.gone) return null;
-      const boat = { uid: 9001, charter: record, GameObject: { position: [50, 0, 0] }, Cargo: { Items: [] } };
+      const boat = { uid: 9001, hull: SHIP.hull, charter: record, GameObject: { position: [50, 0, 0] }, Cargo: { Items: [] } };
       rt.AllBoats.push(boat);
       return boat;
     },
@@ -46,7 +56,10 @@ function world(o = {}) {
     naval: () => naval, csa: () => (o.csaOff ? null : rt),
     ports: () => o.ports ?? PORTS, here: () => PORTS[0], pixel: () => ({ x: 100, y: 100 }), ether: () => !!o.ether,
     place: (p) => (p.name === 'Wayrest' && !o.knowsWayrest ? null : { name: p.name, pixel: { x: p.px, y: p.py } }),
-    canGo: () => (o.canGo ?? true), route: (s) => { log.routed.push(s.name); if (o.route === false) return false; w.live = true; return true; },
+    canGo: () => w.canGo, stopJourney: () => { log.stopped++; w.live = false; },
+    route: (s, noWay) => { log.routed.push(s.name); if (o.route === 'noway' || w.noWay) { noWay?.(); return false; } if (o.route === false) return false; w.live = true; w.to = s.pixel; if (o.routeThrows) throw new Error('the route threw'); return true; },
+    journeyTo: () => (w.live ? w.to ?? null : null), busy: () => !!w.busy,
+    ride: () => w.ride, remount: (m) => { log.remount.push(m); w.ride = m; },
     journeyLive: () => w.live, aboard: (b) => rt.state.CurrentBoat === b || w.onDeck,
     feet: () => w.feet, spawn: (f) => { log.spawned.push([...f]); w.feet = [...f]; },
     gold: () => w.gold, pay: (n) => { log.paid.push(n); w.gold -= n; }, pack: () => w.pack, forgetBoat: (uid) => log.forgot.push(['boat', uid]),
@@ -89,11 +102,19 @@ test('PASSAGE host: her master\'s ports - every port I know but this one, neares
   assert.equal(w.host.charterBoat(), boat);
   assert.equal(w.host.offer(SHIP), false, 'one passage at a time');
   assert.equal(w.log.say.at(-1), PASSAGE_TEXT.booking);
+  // a second question answered after the first booked (two lists opened before either was answered): refused at Yes
+  const v = world();
+  v.host.offer(SHIP); v.log.shown[0]._pick(0);
+  v.host.offer(SHIP); v.log.shown[2]._pick(0);
+  v.log.shown[1].answer(true);
+  v.log.shown[3].answer(true);
+  assert.deepEqual([v.rt.AllBoats.length, v.log.paid], [1, [50]], 'one boat, one fare');
+  assert.equal(v.log.say.at(-1), PASSAGE_TEXT.booking);
 });
 
-test('PASSAGE host: ALL OF IT OR NONE OF IT - a voyage refused (the route will not go, a foe near, the helm will not take) puts everything back: her boat gone, the player where they stood, nothing paid, her ship at her berth; a purse short and her ship gone ask nothing (mutants: the refusal leaves her boat; the fare taken on a refusal; the player left at her helm)', () => {
-  for (const o of [{ route: false }, { canGo: false }, { helmThrows: true }]) {
-    const w = world({ ...o, knowsWayrest: true });
+test('PASSAGE host: ALL OF IT OR NONE OF IT - a voyage refused (the route will not go, no way by sea, the route throwing, a foe near, the helm will not take) puts everything back: her boat gone, the player where they stood and riding as they rode, no journey left, nothing paid, her ship at her berth; a purse short and her ship gone ask nothing (mutants: the refusal leaves her boat; the fare taken on a refusal; the player left at her helm; the rider left on foot; the thrown route\'s journey left; no way unsaid)', () => {
+  for (const o of [{ route: false }, { route: 'noway' }, { routeThrows: true }, { canGo: false }, { helmThrows: true }]) {
+    const w = world({ ...o, knowsWayrest: true, ride: 'horse' });
     w.feet = [3, 1, 4];
     const warn = console.warn; console.warn = () => {};
     try { bookTo(w, 'Wayrest'); } finally { console.warn = warn; }
@@ -102,7 +123,10 @@ test('PASSAGE host: ALL OF IT OR NONE OF IT - a voyage refused (the route will n
     assert.deepEqual(w.log.sailed, [], 'her ship at her berth');
     assert.equal(w.rt.isSailing(), false, 'no helm held');
     assert.deepEqual(w.feet, [3, 1, 4], 'set back where I stood');
+    assert.equal(w.ride, 'horse', 'riding as I rode (AUDIT PASSAGE A7: the helm puts a rider on foot)');
     if (o.helmThrows) assert.equal(w.log.say.at(-1), PASSAGE_TEXT.failed);
+    if (o.route === 'noway') assert.equal(w.log.say.at(-1), PASSAGE_TEXT.noWay, 'no way by sea, said');
+    if (o.routeThrows) assert.deepEqual([w.log.stopped, w.live], [1, false], 'the journey the route began is ended (AUDIT PASSAGE A7)');
   }
   const poor = world({ gold: 49 });
   bookTo(poor, 'Sentinel');
@@ -126,24 +150,38 @@ test('PASSAGE host: no list where none can sail - Come Sail Away off, past the V
   assert.deepEqual([lone.log.shown.length, lone.log.say.at(-1)], [0, PASSAGE_TEXT.none]);
 });
 
-test('PASSAGE host: THE PASSAGE\'S LIFE - aboard with no voyage under way, her master sails on (first after PASSAGE_FIRST_S, then each PASSAGE_RESUME_S, PASSAGE_RESUMES times at most, then says he will sail no further); on her deck away from the helm, the helm is asked for; paused, nothing moves (mutants: never resumed; resumed past the cap; resumed off the helm)', () => {
+test('PASSAGE host: THE PASSAGE\'S LIFE - aboard with no voyage under way, her master sails on (first after PASSAGE_FIRST_S on a host that meets her fresh, then each PASSAGE_RESUME_S) for as long as I stand aboard; PASSAGE_RESUMES tries in a row that find no way and he says so, once, and tries on at PASSAGE_SLOW times the pace; a way found, the count starts again; on her deck away from the helm, the helm is asked for, once; paused or in a world\'s move, nothing moves (mutants: never resumed; given up for good; the stuck word every try; the helm word every try; resumed off the helm; she packs after a load)', () => {
   const w = world();
   bookTo(w, 'Sentinel');
   w.live = false;   // a foe stopped the voyage
   w.host.frame(PASSAGE_RESUME_S - 0.5);
   assert.deepEqual(w.log.routed, ['Sentinel'], 'not yet');
   w.host.frame(100, true);
-  assert.deepEqual(w.log.routed, ['Sentinel'], 'paused: nothing');
+  w.busy = true; w.host.frame(100); w.busy = false;
+  assert.deepEqual(w.log.routed, ['Sentinel'], 'paused, or a world\'s move: nothing');
   w.host.frame(1);
   assert.deepEqual(w.log.routed, ['Sentinel', 'Sentinel'], 'sails on');
-  for (let i = 1; i < PASSAGE_RESUMES; i++) { w.live = false; w.host.frame(PASSAGE_RESUME_S); }
-  assert.equal(w.log.routed.length, 1 + PASSAGE_RESUMES);
+  for (let i = 0; i < 5; i++) { w.live = false; w.host.frame(PASSAGE_RESUME_S); }
+  assert.equal(w.log.routed.length, 7, 'and on, every time it stops - never given up while I stand aboard (AUDIT PASSAGE B3)');
+  // no way from here: PASSAGE_RESUMES in a row, said once; then on at the slow pace
+  w.live = false; w.noWay = true;
+  const before = w.log.routed.length;
+  for (let i = 0; i < PASSAGE_RESUMES; i++) w.host.frame(PASSAGE_RESUME_S);
+  assert.equal(w.log.routed.length, before + PASSAGE_RESUMES);
+  assert.equal(w.log.say.filter((t) => t === PASSAGE_TEXT.stuck('Sentinel')).length, 1, 'said once');
+  w.host.frame(PASSAGE_RESUME_S);
+  assert.equal(w.log.routed.length, before + PASSAGE_RESUMES, 'the slow pace');
+  w.host.frame(PASSAGE_RESUME_S * (PASSAGE_SLOW - 1));
+  assert.equal(w.log.routed.length, before + PASSAGE_RESUMES + 1, 'and tried on');
+  w.host.frame(PASSAGE_RESUME_S * PASSAGE_SLOW);
+  assert.equal(w.log.say.filter((t) => t === PASSAGE_TEXT.stuck('Sentinel')).length, 1, 'never said again in the same run');
+  w.noWay = false;
+  w.host.frame(PASSAGE_RESUME_S * PASSAGE_SLOW);
+  assert.equal(w.live, true, 'a way found');
   w.live = false;
   w.host.frame(PASSAGE_RESUME_S);
-  w.host.frame(PASSAGE_RESUME_S);
-  assert.equal(w.log.routed.length, 1 + PASSAGE_RESUMES, 'no further');
-  assert.equal(w.log.say.filter((t) => t === PASSAGE_TEXT.stood('Sentinel')).length, 1, 'said once');
-  // a load put me on her deck, off the helm: a fresh host's first try waits PASSAGE_FIRST_S, and asks for the helm
+  assert.equal(w.log.routed.length, before + PASSAGE_RESUMES + 4, 'the count starts again: the usual pace');
+  // a load put me on her deck, off the helm: a fresh host's first try waits PASSAGE_FIRST_S, and asks for the helm, once
   const v = world();
   bookTo(v, 'Sentinel');
   const boat = v.rt.AllBoats[0];
@@ -156,12 +194,30 @@ test('PASSAGE host: THE PASSAGE\'S LIFE - aboard with no voyage under way, her m
   assert.equal(boat.packable, false, 'never packed, after a load too');
   assert.deepEqual(loaded.log.routed, [], 'never routed off the helm');
   assert.equal(loaded.log.say.at(-1), PASSAGE_TEXT.helm('Sentinel'));
+  loaded.host.frame(PASSAGE_RESUME_S); loaded.host.frame(PASSAGE_RESUME_S);
+  assert.equal(loaded.log.say.filter((t) => t === PASSAGE_TEXT.helm('Sentinel')).length, 1, 'asked once');
   loaded.rt.StartSailing(boat);
   loaded.host.frame(PASSAGE_RESUME_S);
   assert.deepEqual(loaded.log.routed, ['Sentinel'], 'at her helm: she sails on');
 });
 
-test('PASSAGE host: STEP OFF HER AND THE PASSAGE ENDS - past PASSAGE_LEAVE_M and not aboard, what was put in her hold comes into the pack, her boat is laid up and her hold and record forgotten, and she stands out to sea; within reach, or at her helm, she waits; a record that reads as nothing ends at once (mutants: never ended; her hold lost; ended on the quay beside her)', () => {
+test('AUDIT PASSAGE B3: HER MASTER HOLDS HIS COURSE - a journey begun from her helm to anywhere but her port (another place, a spot on the map) is stopped and said, and he sails on for her port soon after; one for her port goes on (mutants: a journey elsewhere kept; the course word unsaid)', () => {
+  const w = world();
+  bookTo(w, 'Sentinel');
+  w.host.frame(1);
+  assert.deepEqual([w.log.stopped, w.live], [0, true], 'her own voyage goes on');
+  w.to = { x: 100, y: 60 };   // the passenger picks Wayrest on the Overworld from her helm
+  w.host.frame(1);
+  assert.deepEqual([w.log.stopped, w.live], [1, false], 'stopped');
+  assert.equal(w.log.say.at(-1), PASSAGE_TEXT.holds('Sentinel'));
+  w.host.frame(PASSAGE_FIRST_S + 0.1);
+  assert.deepEqual([w.log.routed.at(-1), w.to], ['Sentinel', { x: 130, y: 100 }], 'and sails on for her port');
+  w.to = 'spot';
+  w.host.frame(1);
+  assert.equal(w.log.stopped, 2, 'a spot on the map too');
+});
+
+test('PASSAGE host: STEP OFF HER AND THE PASSAGE ENDS - past PASSAGE_LEAVE_M beyond her HULL\'s reach and not aboard, for PASSAGE_OFF_S together: what was put in her hold comes into the pack, her boat is laid up and her hold and record forgotten, and she stands out to sea; on her forecastle off the ground, within reach or for a moment, she waits (mutants: never ended; her hold lost; ended on the quay beside her; her root\'s measure; no grace)', () => {
   const w = world();
   bookTo(w, 'Sentinel');
   const boat = w.rt.AllBoats[0];
@@ -169,11 +225,20 @@ test('PASSAGE host: STEP OFF HER AND THE PASSAGE ENDS - past PASSAGE_LEAVE_M and
   boat.Cargo.Items.push(stored);
   w.rt.StopSailing();   // the landfall: off her helm, ashore beside her
   w.live = false;
-  w.feet = [50 + PASSAGE_LEAVE_M - 1, 0, 0];
-  w.host.frame(1);
-  assert.ok(w.rt.AllBoats.includes(boat), 'a step from her: she waits');
-  w.feet = [50 + PASSAGE_LEAVE_M + 1, 0, 0];
-  w.host.frame(1);
+  const reach = hullReach(SHIP.hull);
+  assert.ok(reach > 20, 'a Small Ship reaches past 20 m from her root');
+  w.feet = [50 + reach + PASSAGE_LEAVE_M - 1, 0, 0];   // AUDIT PASSAGE A2: a jump at her bow's end was "off her" by the root
+  w.host.frame(5);
+  assert.ok(w.rt.AllBoats.includes(boat), 'within her reach: she waits');
+  w.feet = [50 + reach + PASSAGE_LEAVE_M + 1, 0, 0];
+  w.host.frame(PASSAGE_OFF_S / 2);
+  assert.ok(w.rt.AllBoats.includes(boat), 'a moment off her: she waits');
+  w.feet = [50, 0, 0];
+  w.host.frame(PASSAGE_OFF_S / 2);   // back beside her - the grace begins again
+  w.feet = [50 + reach + PASSAGE_LEAVE_M + 1, 0, 0];
+  w.host.frame(PASSAGE_OFF_S * 0.75);
+  assert.ok(w.rt.AllBoats.includes(boat), 'the grace counts together, never in pieces');
+  w.host.frame(PASSAGE_OFF_S * 0.5);
   assert.deepEqual(w.rt.AllBoats, [], 'her boat gone');
   assert.deepEqual(w.log.laid, [9001]);
   assert.ok(w.pack.includes(stored), 'her hold ashore');
@@ -181,17 +246,83 @@ test('PASSAGE host: STEP OFF HER AND THE PASSAGE ENDS - past PASSAGE_LEAVE_M and
   assert.ok(w.log.say.includes(PASSAGE_TEXT.goods));
   assert.equal(w.log.say.at(-1), PASSAGE_TEXT.ended(SHIP.name));
   assert.equal(w.host.charterBoat(), null);
-  const bad = world();
-  bad.rt.AllBoats.push({ uid: 7, charter: { to: {} }, GameObject: { position: [0, 0, 0] }, Cargo: { Items: [] } });
-  bad.host.frame(1);
-  assert.deepEqual(bad.rt.AllBoats, [], 'no voyage in it: over');
+});
+
+test('PASSAGE host: ANOTHER PLAYER ABOARD HOLDS THE END - Come Sail Away refuses to lay her up, nothing moves (her hold stays in her, nothing is said); the moment they are off her she goes, her hold carried ashore and said (mutants: the hold moved before the laying up; the goods unsaid)', () => {
+  const w = world();
+  bookTo(w, 'Sentinel');
+  const boat = w.rt.AllBoats[0];
+  const stored = { name: 'Silk', templateIndex: 1 };
+  boat.Cargo.Items.push(stored);
+  w.rt.StopSailing(); w.live = false;
+  w.rt.passengers = 1;
+  w.feet = [500, 0, 0];
+  w.host.frame(PASSAGE_OFF_S + 1);
+  w.host.frame(PASSAGE_OFF_S + 1);
+  assert.ok(w.rt.AllBoats.includes(boat), 'she waits for them');
+  assert.deepEqual([w.pack.length, boat.Cargo.Items.length], [0, 1], 'her hold where it was (AUDIT PASSAGE A5)');
+  assert.ok(!w.log.say.includes(PASSAGE_TEXT.goods));
+  w.rt.passengers = 0;
+  w.host.frame(PASSAGE_OFF_S + 1);
+  assert.deepEqual(w.rt.AllBoats, [], 'gone');
+  assert.ok(w.pack.includes(stored), 'her hold ashore');
+  assert.equal(w.log.say.filter((t) => t === PASSAGE_TEXT.goods).length, 1, 'and said, once');
+  assert.equal(w.rt.held.has(9001), false, 'her number\'s hold let go');
+});
+
+test('PASSAGE host: A FOE NEAR SPENDS NO TRY - while the journey\'s gate refuses, her master waits it out at the usual pace without counting a try; the moment it clears she sails on (mutants: a try spent on a refusal; the gate dropped)', () => {
+  const w = world();
+  bookTo(w, 'Sentinel');
+  w.live = false;
+  w.canGo = false;   // a raider's fight: 61 s and more of it
+  for (let t = 0; t < 4; t++) w.host.frame(PASSAGE_RESUME_S);
+  assert.deepEqual(w.log.routed, ['Sentinel'], 'never asked while refused (AUDIT PASSAGE A3)');
+  w.canGo = true;
+  w.host.frame(PASSAGE_RESUME_S);
+  assert.deepEqual(w.log.routed, ['Sentinel', 'Sentinel'], 'sails on when it clears');
+  assert.ok(!w.log.say.includes(PASSAGE_TEXT.stuck('Sentinel')), 'no run of failures counted against her');
+});
+
+test('PASSAGE host: HER MASTER\'S CLOCK IS HER BOAT\'S - a load that stands another booked boat finds him fresh (the first try after PASSAGE_FIRST_S, his words unsaid), whatever the last voyage spent; a record that reads as nothing sails nowhere and ends only when I am off her (mutants: the clock the host\'s; a bad record laid up under me)', () => {
+  const w = world();
+  bookTo(w, 'Sentinel');
+  w.live = false;
+  w.live = false; w.noWay = true;
+  for (let i = 0; i < PASSAGE_RESUMES; i++) w.host.frame(PASSAGE_RESUME_S);
+  assert.ok(w.log.say.includes(PASSAGE_TEXT.stuck('Sentinel')), 'the last voyage at the slow pace');
+  w.noWay = false;
+  const tried = w.log.routed.length;
+  // a load: her boat stood again as another object, at her helm
+  const old = w.rt.AllBoats[0];
+  w.rt.StopSailing();
+  w.rt.AllBoats.length = 0;
+  const loaded = { ...old, GameObject: { position: [60, 0, 0] }, Cargo: { Items: [] } };
+  w.rt.AllBoats.push(loaded);
+  w.rt.StartSailing(loaded);
+  w.live = false;
+  w.host.frame(PASSAGE_FIRST_S + 0.1);
+  assert.equal(w.log.routed.length, tried + 1, 'he sails on after a load (AUDIT PASSAGE A4)');
+  // a record that reads as nothing: never sailed, never laid up under me; off her, over
+  const b = world();
+  const bad = { uid: 7, hull: 2, charter: { to: {} }, GameObject: { position: [0, 0, 0] }, Cargo: { Items: [] } };
+  b.rt.AllBoats.push(bad);
+  b.onDeck = true;
+  b.host.frame(PASSAGE_FIRST_S + PASSAGE_RESUME_S);
+  assert.deepEqual([b.rt.AllBoats.length, b.log.routed.length], [1, 0], 'aboard: she stands, and sails nowhere (AUDIT PASSAGE A6)');
+  b.onDeck = false; b.feet = [500, 0, 0];
+  b.host.frame(PASSAGE_OFF_S + 0.1);
+  assert.deepEqual(b.rt.AllBoats, [], 'off her: over');
 });
 
 test('PASSAGE host wiring: the world host builds it once and calls it - the berth\'s ship\'s Activate, its frame whatever the sea fight\'s switch, the Overworld\'s crossing as the voyage; a booked ship is never boarded as mine moored, never said left moored, never packed, never the Fleet\'s, and saved with her voyage (mutants: each door unwired)', () => {
   const world = read('src/scenes/world.js');
   assert.match(world, /^import \{ createPassageHost \} from '\.\/naval\/passageHost\.js';/m);
   assert.match(world, /\n {4}passage: \(ship\) => passage\?\.offer\(ship\),/, 'the sea\'s door to it');
-  assert.match(world, /const passage = createPassageHost\(\{[^]*?canGo: \(\) => travelViewCanGo\(\), route: \(s\) => travelViewRouteTo\(s\),/, 'the Overworld\'s journey is the voyage');
+  assert.match(world, /const passage = createPassageHost\(\{[^]*?canGo: \(\) => travelViewCanGo\(\), route: \(s, noWay\) => travelViewRouteTo\(s, \{ voyage: true, noWay \}\), stopJourney: \(\) => travelOptions\?\.clearTravelDestination\?\.\(\),/, 'the Overworld\'s journey is the voyage - a voyage\'s');
+  assert.match(world, /if \(voyage && means\) means = \{ \.\.\.means, voyage: true \};/, 'the planner asked for a voyage (AUDIT PASSAGE A1)');
+  assert.match(world, /if \(voyage && !plan\?\.kinds\.includes\('sea'\)\) \{ noWay\?\.\(\); return false; \}/, 'a plan that never sails refused');
+  assert.match(world, /const tvSeaAsk = \(means, goal\) => \(means \? \{ start: means\.start, again: means\.again && !means\.voyage, goal, voyage: !!means\.voyage \} : null\);/, 'and never packed to launch again');
+  assert.match(world, /ride: \(\) => player\.transportMode, remount: \(m\) => setTransportModeHere\(m\),/, 'the rider remounted on a refusal');
   assert.match(world, /\n {4}passage\.frame\(dt, gamePaused\(\) \|\| _loading\);[^\n]*\n {4}const on = navalOn\(\);/, 'its frame, before the switch returns');
   assert.match(world, /if \(!b\.GameObject\?\.activeSelf \|\| b\.inside \|\| b\.charter \|\| !tvSeaCrosses\(tvSeaRig\(b\)\)\) continue;/, 'never boarded as mine moored');
   assert.match(world, /if \(!boat\.charter\) tvSay\(TRAVEL_VIEW_TEXT\.leftMoored\);/, 'never said left moored');

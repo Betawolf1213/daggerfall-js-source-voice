@@ -1524,6 +1524,7 @@ export function inventoryQuickAct(target) {
   // WHERE-ROBES: the pad's X on a loot row is a click on it, so it sends the quest click as the row's own click does -
   // without it a quest item taken by X never reached its `clicked item` trigger
   if (row._padFrom === 'remote') { sendQuestItemClick(item, deps.getQuest ?? null); take(item); return true; }
+  if (salvageSel) { chooseSalvage(item); return true; }   // AUDIT BATCH C3: the pad's X ticks while the pack chooses - it wore the piece
   const act = localPrimaryAct(item, deps.entity);
   if (!act) use(item);
   else if (act.kind === 'takeOff') takeOff(item.equipSlot);
@@ -2745,7 +2746,7 @@ function itemRow(item, from = 'local') {
   // INV1: a LOCAL row drags. A loot row does not - taking from a pile
   // is a click, and a drag that could also transfer would make a slip
   // a theft.
-  if (from === 'local') dragFrom(row, item);
+  if (from === 'local' && !choosing) dragFrom(row, item);   // AUDIT BATCH C3: a ticked piece is never dragged off while the pack chooses
   row.onclick = (e) => {
     // AUDIT INV1 Fb: a release that DRAGGED is not a pick. The click
     // fires after pointerup, so without this a reorder would also
@@ -2804,6 +2805,7 @@ function itemRow(item, from = 'local') {
   row.onmouseenter = () => { if (getPref('plusItemHover') !== false) showTip(item, from, row); };
   row.onmouseleave = hideTip;
   row.oncontextmenu = (e) => { e.preventDefault(); if (drag) return; openMenu(item, from, e.clientX, e.clientY); };   // DROPS-AUDIT F10: a touch long-press mid-drag is the drag's, not the menu's
+  if (choosing) row.oncontextmenu = (e) => { e.preventDefault(); chooseSalvage(item); };   // AUDIT BATCH C3: the menu's Wear and Drop wait while the pack chooses - a right click, a long press or the pad's menu ticks it
   return row;
 }
 
@@ -3690,6 +3692,9 @@ export const BATCH_HINT = 'Choose the pieces to salvage.';
 export const BATCH_COUNT = (n, shards) => t('inventory.batch.count', '{n} chosen, for {shards}', { n, shards: shardsText(shards) });
 /** The foot's sweeps: a tier that breaks often, and the junk mark (LOOT18) - each adds what would break now; each its
  *  label (read in the player's language) and its test. */
+/** AUDIT BATCH C2: what no sweep takes, whatever its tier's or mark's - a Legendary (an Exalted one with it), chosen by
+ *  hand or not at all: the junk mark takes any gear, and "All junk" swept a junk-marked Legendary in. */
+export const sweepSpares = (it) => it?.rarity === 'legendary';
 export const BATCH_SWEEPS = Object.freeze([
   [() => t('inventory.batch.allMagic', 'All Magic'), (it) => it.rarity === 'magic'],
   [() => t('inventory.batch.allRare', 'All Rare'), (it) => it.rarity === 'rare'],
@@ -3739,7 +3744,7 @@ function salvageFoot() {
   foot.append(el('span', 'salvagecount', chosen.length ? BATCH_COUNT(chosen.length, shards) : t('inventory.batch.hint', BATCH_HINT)));
   const open = salvageable(pack);
   for (const [label, sweeps] of BATCH_SWEEPS) {
-    const these = open.filter(sweeps);
+    const these = open.filter((it) => sweeps(it) && !sweepSpares(it));
     if (!these.length) continue;
     const b = el('button', 'act', t('inventory.batch.sweep', '{label} ({n})', { label: label(), n: these.length }));
     b.type = 'button';
@@ -3782,21 +3787,20 @@ function askSalvageMany() {
   sec.append(el('p', 'center salvagenames', names.join(', ')));
   card.append(sec);
   const row = el('div', 'acts');
-  const ok = el('button', 'act primary', 'Salvage');
+  const ok = el('button', 'act primary', t('inventory.batch.yes', 'Salvage'));
   ok.onclick = (e) => {
     e?.stopPropagation?.();
     closeDismantle();
     const pack = deps.items?.() ?? [];
     const r = salvageMany(chosen, { items: pack });
-    salvageSel = null;
-    if (picked && !pack.includes(picked)) picked = null;
+    salvageSel = null;   // (no card is open while the pack chooses: a press ticks, never picks)
     notice = BATCH_DONE(r.count, r.shards, r.refused.length);
     refresh();
     render();
   };
-  const no = el('button', 'act', 'Keep');
+  const no = el('button', 'act', t('inventory.batch.keep', 'Keep'));
   no.onclick = (e) => { e?.stopPropagation?.(); closeDismantle(); };   // every piece kept, the ticks with them
-  row.append(pairGuard(ok), no);
+  row.append(pairGuard(ok), no);   // AUDIT BATCH C5: a pair's second click (the foot's Salvage double-pressed) never breaks them
   card.append(row);
   dismantleEl.append(card);
   document.body.append(dismantleEl);
@@ -4021,6 +4025,7 @@ function render() {
   // after the pane is gone is a no-op, not a crash.
   if (!host) return;
   repaints++;
+  if (salvageSel) pruneSalvage(deps.items?.() ?? []);   // AUDIT BATCH C4: before the rows are drawn - a piece locked or worn since keeps no tick
   _lineEpoch++;   // VIRT: a pass reads every item as it stands now
   // ENH-NOTICE3 - THE `notice` LINE IS DFU'S CLICK-ANYWHERE BOX, not a
   // status line, and on the enhanced skin it is the panel's. Every
@@ -4197,7 +4202,7 @@ function render() {
     lists.append(listCol());
     dock.append(catsCol(), lists);
     // LOOT-BULK: Stash all belongs to the list it walks - the pack page - centred on the bottom edge of that list.
-    if (STORE_FILTER_KINDS.has(remote.kind)) {
+    if (STORE_FILTER_KINDS.has(remote.kind) && !salvageSel) {   // AUDIT BATCH C3: not while the pack chooses - its own foot stands there
       const foot = el('div', 'stashfoot');
       const stashAll = el('button', 'act', t('inventory.store.stashAll', 'Stash all'));
       stashAll.onclick = () => bulkMove('stash');

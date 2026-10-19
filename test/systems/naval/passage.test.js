@@ -63,7 +63,7 @@ test('PASSAGE: her master\'s ports - every port known but the one I stand at, ne
   const list = passageDestinations(ports, here, { hereKey: '100,100', known: (p) => p.name !== 'Wayrest' });
   assert.deepEqual(list.map((d) => d.port.name), ['Anticlere', 'Betony', 'Sentinel'], 'never the port I stand at, an unknown one or a nameless one; ties by name');
   assert.deepEqual(list.map((d) => [d.pixels, d.fare, d.bearing]), [[10, 25, 'north'], [10, 25, 'west'], [30, 50, 'east']]);
-  assert.deepEqual(passageDestinations(ports, here).map((d) => d.port.name), ['Daggerfall', 'Anticlere', 'Betony', 'Sentinel', 'Wayrest'], 'no port held back: every port');
+  assert.deepEqual(passageDestinations(ports, here).map((d) => d.port.name), ['Anticlere', 'Betony', 'Sentinel', 'Wayrest'], 'no port held back but one she would set me ashore at from here (AUDIT PASSAGE A1)');
   assert.deepEqual(passageDestinations(null, here), []);
   assert.equal(PASSAGE_TEXT.row(list[2]), 'Sentinel - east, 50 gold');
 });
@@ -84,4 +84,25 @@ test('PASSAGE: the words - her name with its own article, the purse beside the f
   assert.match(ask[2], /Step off her and the passage ends/);
   assert.equal(PASSAGE_TEXT.booked('The Fair Silk', 'Ana Rhea', 50, 'Sentinel'), 'Captain Ana Rhea takes your 50 gold. The Fair Silk sails for Sentinel.');
   assert.equal(PASSAGE_TEXT.booked(null, null, 25, 'Sentinel'), 'Her master takes your 25 gold. The ship sails for Sentinel.');
+});
+
+test('AUDIT PASSAGE A1: A BOOKED VOYAGE IS SAILED - on a coast whose road joins two ports, the planner from her helm comes ashore at once and walks the road (a road step 1, a sea step 1.2 - the hazard); asked for a voyage it sails, ashore only within VOYAGE_LANDFALL_PX of the port, the reach SEA-LANES gives a port\'s roadstead; her master offers no port that near (mutants: the voyage unread; the landfall\'s reach unread)', async () => {
+  const { planRoute, VOYAGE_LANDFALL_PX } = await import('../../../src/systems/travel/travelRoute.js');
+  const { ROADSTEAD_PX } = await import('../../../src/systems/naval/seaLanes.js');
+  const { DIR_DELTA } = await import('../../../src/world/road/roadNetwork.js');
+  assert.equal(VOYAGE_LANDFALL_PX, ROADSTEAD_PX, 'one reach: a port\'s roadstead');
+  const W = 60, H = 20, isWater = (x, y) => y >= 10;
+  const E = DIR_DELTA.find(([, dx, dy]) => dx === 1 && dy === 0)[0], Wd = DIR_DELTA.find(([, dx, dy]) => dx === -1 && dy === 0)[0];
+  const roads = new Uint8Array(W * H);
+  for (let x = 10; x <= 40; x++) { if (x < 40) roads[9 * W + x] |= E; if (x > 10) roads[9 * W + x] |= Wd; }
+  const from = { x: 10, y: 10 }, to = { x: 40, y: 9 };   // her berth's water, and the port on the coast road
+  const walked = planRoute(from, to, { roads, isWater, width: W, height: H, sea: { start: 'sea', again: false, goal: 'land' } });
+  assert.equal(walked.kinds[0], 'landfall', 'unasked, she puts the passenger ashore at the quay they left');
+  const sailed = planRoute(from, to, { roads, isWater, width: W, height: H, sea: { start: 'sea', again: false, goal: 'land', voyage: true } });
+  assert.equal(sailed.kinds[0], 'sea', 'asked for a voyage, she sails');
+  const at = sailed.kinds.indexOf('landfall'), ashore = sailed.pixels[at + 1];
+  assert.ok(at > 0 && Math.max(Math.abs(ashore.x - to.x), Math.abs(ashore.y - to.y)) <= VOYAGE_LANDFALL_PX, `ashore within the port's reach (${JSON.stringify(ashore)})`);
+  assert.equal(sailed.kinds.filter((k) => k === 'landfall').length, 1, 'once');
+  const near = passageDestinations([{ key: 'a', name: 'Near', px: 100 + VOYAGE_LANDFALL_PX, py: 100 }, { key: 'b', name: 'Far', px: 100 + VOYAGE_LANDFALL_PX + 1, py: 100 }], { x: 100, y: 100 });
+  assert.deepEqual(near.map((d) => d.port.name), ['Far'], 'a port she would set me ashore at from here is walked to');
 });

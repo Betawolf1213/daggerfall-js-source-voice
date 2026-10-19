@@ -4682,7 +4682,7 @@ ${paceControlsCss('tview')}
   text-shadow: 2px 2px 0 rgba(0,0,0,0.7); }
 .pack-shell .itemrow.salvpick { border-color: var(--brass); outline: 2px solid rgba(192,138,62,0.5); outline-offset: 2px; }
 .pack-shell .itemrow.salvno { opacity: 0.45; }
-.pack-shell .itemrow .salv-mark { position: absolute; right: 2px; top: 1px; color: rgb(243,239,44); font-size: 12px;
+.pack-shell .itemrow .salv-mark { position: absolute; right: 2px; top: 1px; z-index: 3; color: rgb(243,239,44); font-size: 12px;   /* AUDIT BATCH C7: over the Plus face's sigil rune (z-index 2) */
   text-shadow: 2px 2px 0 rgba(0,0,0,0.85); }
 .inv-salvage-many .salvagenames { color: #9c937d; font-size: 13px; }
 /* The dock's rows are the reference's TILE GRID: square panels, the

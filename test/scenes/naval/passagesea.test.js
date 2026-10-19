@@ -8,7 +8,7 @@ import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from '../../navalSea.mjs';
-import { PASSAGE_HULLS, PASSAGE_TEXT } from '../../../src/systems/naval/passage.js';
+import { PASSAGE_HULLS, PASSAGE_TEXT, PASSAGE_RAY_M } from '../../../src/systems/naval/passage.js';
 import { BOAT_DEED_TEMPLATE } from '../../../src/systems/shipyards.js';
 import { hullBuild } from '../../../src/systems/naval/navalShips.js';
 
@@ -33,29 +33,33 @@ async function port() {
   assert.ok(e, 'a ship of a passage hull at her berth');
   return { w, e, asked, placed };
 }
-/** On foot beside her, the look on her (or `away` from her). */
-function standBy(w, e, { away = false } = {}) {
-  const s = e.ship.pos, beam = hullBuild(e.ship.hull).beam;
-  const feet = [s[0] + beam + 4, 0, s[2]];
+/** On foot beside her side - `gap` metres off it, across her beam (her side's normal, off her yaw) - the look on her side
+ *  (or `away` from her). */
+function standBy(w, e, { away = false, gap = 3 } = {}) {
+  const s = e.ship.pos, side = [Math.cos(e.ship.yaw), 0, -Math.sin(e.ship.yaw)], off = hullBuild(e.ship.hull).halfWidth + gap;
+  const feet = [s[0] + side[0] * off, 0, s[2] + side[2] * off];
   w.view.feet = feet;
-  w.view.look = { origin: [feet[0], 1.6, feet[2]], dir: away ? [1, 0, 0] : [-1, 0, 0] };
+  w.view.look = { origin: [feet[0], 1.6, feet[2]], dir: away ? side : [-side[0], 0, -side[2]] };
 }
+/** Identity, never a deep compare: a failed equal on a ship's entry inspects the whole sea. */
+const same = (a, b, msg) => assert.ok(a === b, msg);
 
 test('PASSAGE sea: a harbour\'s own friendly ship at her berth takes Activate on foot and asks the passage door - her number, name, captain and hull; never with the look off her, out of reach, or at a helm (mutants: the look unread; the reach unread; no door asked)', async () => {
   const { w, e, asked } = await port();
   standBy(w, e, { away: true });
-  assert.equal(w.host.passageShip(), null, 'the look off her');
+  assert.ok(w.host.passageShip() === null, 'the look off her');
   standBy(w, e);
-  assert.equal(w.host.passageShip(), e);
+  same(w.host.passageShip(), e, 'the look on her side');
   assert.equal(w.host.takesActivate(), true, 'the street hears it as the sea\'s press');
   assert.equal(w.host.activate(), true);
   assert.deepEqual(asked, [{ id: e.id, name: e.ship.names?.name ?? null, captain: e.ship.names?.captain ?? null, hull: e.ship.hull, faction: e.ship.cls.faction }]);
-  w.view.feet = [e.ship.pos[0] + hullBuild(e.ship.hull).beam + 40, 0, e.ship.pos[2]];
-  w.view.look = { origin: [w.view.feet[0], 1.6, w.view.feet[2]], dir: [-1, 0, 0] };
-  assert.equal(w.host.passageShip(), null, 'out of reach');
+  standBy(w, e, { gap: PASSAGE_RAY_M + 1 });
+  assert.ok(w.host.passageShip() === null, 'her side past the ray\'s reach (AUDIT PASSAGE B6)');
+  standBy(w, e, { gap: PASSAGE_RAY_M - 1 });
+  same(w.host.passageShip(), e, 'within it');
   w.deps.passage = undefined;
   standBy(w, e);
-  assert.equal(w.host.passageShip(), null, 'no door: no ship to book');
+  assert.ok(w.host.passageShip() === null, 'no door: no ship to book');
 });
 
 test('PASSAGE sea: her word as the look comes onto her, once a ship (mutants: never said; said every frame)', async () => {
@@ -70,23 +74,23 @@ test('PASSAGE sea: a ship that is not hers to carry me is no passage - a packet,
   const { w, e } = await port();
   standBy(w, e);
   e.fromHarbour = null;
-  assert.equal(w.host.passageShip(), null, 'not a harbour\'s own');
+  assert.ok(w.host.passageShip() === null, 'not a harbour\'s own');
   e.fromHarbour = PORT.key;
   const cls = e.ship.cls;
   e.ship.cls = { ...cls, faction: 'pirate' };
-  assert.equal(w.host.passageShip(), null, 'no lawful master');
+  assert.ok(w.host.passageShip() === null, 'no lawful master');
   e.ship.cls = cls;
   e.retiring = true;
-  assert.equal(w.host.passageShip(), null, 'fading out');
+  assert.ok(w.host.passageShip() === null, 'fading out');
   e.retiring = false;
   const errand = e.ship.errand;
   e.ship.errand = { ...errand, kind: 'depart' };
-  assert.equal(w.host.passageShip(), null, 'under way');
+  assert.ok(w.host.passageShip() === null, 'under way');
   e.ship.errand = errand;
-  assert.equal(w.host.passageShip(), e, 'and herself again');
+  same(w.host.passageShip(), e, 'and herself again');
 });
 
-test('PASSAGE sea: her boat at her berth from a deed of her own hull, never into the pack, the voyage written on it - and she lies there still until the voyage is under way; then let go and not stood again today (mutants: the record unwritten; she dropped at the placing; never let go; stood again after a door)', async () => {
+test('PASSAGE sea: her boat at her berth from a deed of her own hull, never into the pack, the voyage written on it - and she lies there still until the voyage is under way; then let go and not stood again today (mutants: the record unwritten; she packs; she dropped at the placing; never let go; stood again after a door)', async () => {
   const { w, e, placed } = await port();
   const record = { to: { name: 'Sentinel', px: 130, py: 100 }, ship: 'x', captain: null, fare: 50 };
   const boat = w.host.charter(e.id, record);
@@ -107,4 +111,43 @@ test('PASSAGE sea: her boat at her berth from a deed of her own hull, never into
   w.run(1);
   assert.ok(!moored(w).some((x) => x.ship.seed === seed), 'not stood at her berth again today');
   assert.equal(w.host.charterSailed(e.id), false);
+});
+
+test('AUDIT PASSAGE (lanes B, D): no passage on a packet, a prize or a rowboat, at a helm, through her own helm\'s or hold\'s ray, nor on a hull this helm cannot cross a sea in (a Carrack under the Classic handling) (mutants: the packet carries; the prize carries; any hull carries; at a helm; the press over her helm ray; the crossing unasked)', async () => {
+  const { w, e } = await port();
+  standBy(w, e);
+  same(w.host.passageShip(), e, 'herself');
+  const check = (set, unset, msg) => { set(); assert.ok(w.host.passageShip() === null, msg); unset(); same(w.host.passageShip(), e, `${msg} - and herself again`); };
+  check(() => { e.liner = { seed: 1 }; }, () => { e.liner = null; }, 'a packet keeps her timetable');
+  check(() => { e.prize = { fate: null }; }, () => { e.prize = null; }, 'a prize carries no one');
+  const hull = e.ship.hull;
+  check(() => { e.ship.hull = 0; }, () => { e.ship.hull = hull; }, 'a rowboat crosses no sea');
+  check(() => { w.deps.passageCrosses = (h) => h !== hull; }, () => { w.deps.passageCrosses = undefined; }, 'a hull this helm cannot cross a sea in (AUDIT PASSAGE B7)');
+  const rt = w.deps.csa();
+  const mine = { GameObject: { activeSelf: true, position: [0, 0, 0] } };
+  check(() => { w.deps.csa = () => ({ ...rt, isSailing: () => true, state: { AllBoats: [mine], CurrentBoat: mine } }); }, () => { w.deps.csa = () => rt; }, 'at a helm');
+  assert.equal(w.host.takesActivate({ boatTrigger: true }), false, 'her own helm, hold or door under the ray first');
+  assert.equal(w.host.takesActivate(), true);
+});
+
+test('AUDIT PASSAGE B5: ANOTHER PLAYER\'S SHIP AT HER BERTH IS BOOKED TOO - her copy carries no errand on the wire, so she is found lying still at a berth of a harbour I know; her boat stands at that berth, and her letting go takes her over and marks her sailed from that harbour today (mutants: a peer\'s copy unbookable; her berth not found; not taken over)', async () => {
+  const { w, e, placed } = await port();
+  const harbour = e.ship.errand.harbour, berth = e.ship.errand.berth, seed = e.ship.seed;
+  e.owner = 'peer-b'; e.ship.errand = null; e.ship.speed = 0; e.fromHarbour = null;   // as another player's word stands her
+  standBy(w, e);
+  same(w.host.passageShip(), e, 'lying still at a berth: hers to book');
+  e.ship.speed = 5;
+  assert.ok(w.host.passageShip() === null, 'under way: no berth');
+  e.ship.speed = 0;
+  const boat = w.host.charter(e.id, { to: { name: 'Sentinel', px: 1, py: 2 }, ship: null, captain: null, fare: 25 });
+  assert.ok(boat, 'her boat stands');
+  const b = [...w.host._sea.values()].length;
+  assert.ok(Math.hypot(placed[0].pos[0] - e.ship.pos[0], placed[0].pos[2] - e.ship.pos[2]) < 1, 'at the berth she lies at');
+  const id = e.id;
+  assert.equal(w.host.charterSailed(id), true);
+  assert.equal(e.owner, null, 'taken over before she is let go - mine to let go, as a boarding takes her');
+  assert.equal([...w.host._sea.values()].length, b - 1, 'let go');
+  assert.ok(![...w.host._sea.values()].some((x) => x.ship.seed === seed), 'from my sea');
+  w.host.clear(); w.run(1);
+  assert.ok(![...w.host._sea.values()].some((x) => x.ship.seed === seed && x.ship.errand?.harbour === harbour && x.ship.errand?.berth === berth), 'not stood at her berth again today, by me');
 });
