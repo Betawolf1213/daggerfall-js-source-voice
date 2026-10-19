@@ -1,4 +1,3 @@
-// @ts-check
 // ═══════════════════════════════════════════════════════════════════
 // WORN-ARMOUR — THE ON-FOOT SPRITE IN THE ARMOUR ACTUALLY WORN.
 //
@@ -47,7 +46,7 @@ export function cloakOfSlots(slots) {
   for (const s of CLOAK_SLOTS) {
     const it = slots?.[s];
     if (!it || !CLOAK_TEMPLATES.has(it.templateIndex)) continue;
-    const dye = Number.isInteger(it.dye) ? it.dye : it.dyeColor;   // a garment's dye (systems/itemDye.js itemDyeColor's order)
+    const dye = Number.isInteger(it.dye) ? it.dye : it.dyeColor;   // a garment's dye (systems/item/itemDye.js itemDyeColor's order)
     return Number.isInteger(dye) && dye >= 0 && dye <= 9 ? dye : CLOAK_DEFAULT_DYE;
   }
   return null;
@@ -150,21 +149,18 @@ export const isLayeredKey = (key) => typeof key === 'string' && key.startsWith('
 const IN_BROWSER = typeof window !== 'undefined';
 /** `<gender>/<combo>/<record>-<frame>` -> the built strip's URL (eager URL strings, lazy pixels - eotbSprite's law). */
 const STRIPS = IN_BROWSER
-  // @ts-expect-error - import.meta.glob is a Vite macro (the build expands it; node never reaches it)
   ? Object.fromEntries(Object.entries(import.meta.glob('../../../vendor/layered-armor/*/*/*.png', { eager: true, query: '?url', import: 'default' }))
     .map(([p, u]) => [p.split('/').slice(-3).join('/').replace(/\.png$/, ''), /** @type {string} */ (u)]))
   : {};
 
 /** `<gender>/<record>-<frame>` -> the cloak strip's URL. */
 const CLOAK_STRIPS = IN_BROWSER
-  // @ts-expect-error - import.meta.glob is a Vite macro (the build expands it; node never reaches it)
   ? Object.fromEntries(Object.entries(import.meta.glob('../../../vendor/layered-armor/cloak/*/*.png', { eager: true, query: '?url', import: 'default' }))
     .map(([p, u]) => [p.split('/').slice(-2).join('/').replace(/\.png$/, ''), /** @type {string} */ (u)]))
   : {};
 
 /** `<gender>/<combo>/<record>-<frame>` -> the hood fix strip's URL (only where the hooded frame needs one). */
 const HOODFIX_STRIPS = IN_BROWSER
-  // @ts-expect-error - import.meta.glob is a Vite macro (the build expands it; node never reaches it)
   ? Object.fromEntries(Object.entries(import.meta.glob('../../../vendor/layered-armor/hoodfix/*/*/*.png', { eager: true, query: '?url', import: 'default' }))
     .map(([p, u]) => [p.split('/').slice(-3).join('/').replace(/\.png$/, ''), /** @type {string} */ (u)]))
   : {};

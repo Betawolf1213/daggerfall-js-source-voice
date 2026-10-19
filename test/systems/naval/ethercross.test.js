@@ -58,7 +58,7 @@ test('ETHER-CROSSING the voyage: three days; out to the open water off Veilhaven
   assert.match(crossingRows('home').join(' '), /Set a course for home\? \(3 days\)/);
   assert.match(crossingRows('out', { days: 1 }).join(' '), /\(1 day - your ship/);
   assert.match(crossingWords('out'), /You have crossed into the Eltheric Ocean\. Veilhaven lies ahead\.$/);   // PIN MOVED (ELTHERIC): the Etheric Sea's
-  assert.match(crossingWords('home'), /The Iliac Bay - home\.$/);
+  assert.match(crossingWords('home'), /The Iliac Bay\. Home\.$/);   // PIN MOVED (VOICE2): no dash aside (Voice.md rule 5)
   assert.match(CROSS_REFUSED.passengers, /deck is your own/); assert.match(CROSS_REFUSED.hostile, /enemy/);
 });
 

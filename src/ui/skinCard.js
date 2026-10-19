@@ -39,12 +39,19 @@
 // skin wears it and closes the panel on it.
 //
 // LAYERED-GEAR (2026-10-18, the owner: "add a option between those two thats
-// also called On foot Layered Gearing Skin (WIP) Female and Male"): a third
-// panel between them - the body drawn in the helmet, chest and legs armor it
-// wears (player/eyeOfTheBeholder/layeredArmor.js), as a woman or a man, or
-// off. It writes Graphics.LayeredGear; the body reads it (eotbBody.js look())
-// and the look carries it (net/remotePlayers.js composeLook, `lg`). With it on,
-// the on-foot skin above is the one the rider and a werewolf fall back to.
+// also called On foot Layered Gearing Skin (WIP) Female and Male"; 2026-10-19,
+// merging it: "These need a proper toggle in the account profile for players
+// to either equip skins or use this integration"): the card opens on a toggle,
+// LOOK: SKINS | LAYERED GEARING (WIP). Skins is the two panels above. Layered
+// Gearing draws the body on foot in the helmet, chest and leg armor it wears
+// (player/eyeOfTheBeholder/layeredArmor.js), in the body chosen - Female or
+// Male, two pictures - beside the Mounted panel: a rider has no layered art.
+// The On foot panel is put away, as it is not what the player is drawn as on
+// foot. Both write Graphics.LayeredGear (0 Skins, 1 female, 2 male); the body
+// reads it (eotbBody.js look()) and the look carries it (net/remotePlayers.js
+// composeLook, `lg`). Turned on, it wears the body last chosen this session,
+// else the character's own; turned off, the on-foot skin chosen before is worn
+// again (bible/04-Characters/Layered-Gearing.md).
 //
 // Not a DFU member: Daggerfall Unity has no profile and no skins. The
 // sprites are the vendored mod's (vendor/eye-of-the-beholder).
@@ -61,6 +68,14 @@ const FOOT = 'Graphics.OnFoot';
 const HORSE = 'Graphics.OnHorse';
 const LAYERED = 'Graphics.LayeredGear';   // LAYERED-GEAR: 0 off, 1 female, 2 male
 
+/** LAYERED-GEAR: the body Layered Gearing was last worn in this session (1 female, 2 male; 0 none yet) - what turning
+ *  it back on wears. */
+let lastBody = 0;
+/** The pins' reset: no body chosen yet this session. */
+export function _resetSkinCardBody() { lastBody = 0; }
+/** The body turning Layered Gearing on wears: the last chosen, else the character's own (`playerEntity.gender`). */
+export const layeredBodyToWear = (gender) => lastBody || (gender === 'male' ? 2 : 1);
+
 /** The front-on standing view: orientation 0 of the idle table (EOTB's wheel, the record offset 0, unmirrored). */
 const FRONT = 0;
 
@@ -69,8 +84,8 @@ const FRONT = 0;
  * foot, the mounted idle's for a rider. Pure off the declarations and the bundle's own index, so node pins it.
  * `key` is the bundle's own name for the picture (`<archive>_<record>-<frame>`); `url` the built asset's, null outside
  * a browser build (eotbSprite.js's glob), where the tile says the name alone.
- * LAYERED-GEAR: `layered` the On foot Layered Gearing Skin's three - off, female, male - each body pictured in plain
- * leather (layeredArmor.js layeredPreviewUrl; off has no picture).
+ * LAYERED-GEAR: `layered` the setting's three - off, female, male - each body pictured in plain leather
+ * (layeredArmor.js layeredPreviewUrl; off has no picture, and the card offers the two bodies).
  * @returns {{foot: Array<{index:number, name:string, key:string|null, url:string|null}>, horse: Array<{index:number, name:string, key:string|null, url:string|null}>, layered: Array<{index:number, name:string, key:string|null, url:string|null}>}}
  */
 export function skinSets() {
@@ -106,11 +121,13 @@ export const FOOT_GROUPS = Object.freeze([
  * The card. `doc` the document (the pins hand a fake); the card repaints itself on every press. SKIN2: two panels,
  * ON FOOT and MOUNTED, each closed to the one skin worn - its picture and its name - and opened on a press to the
  * skins it offers; one is open at a time, and a skin chosen closes it on the new one. `sets` the offer (skinSets; the
- * pins hand one with URLs, which only a browser build's glob has).
+ * pins hand one with URLs, which only a browser build's glob has). LAYERED-GEAR: over them the Look toggle, and
+ * `gender` the character's own body ('male' or 'female'; the menu hands playerEntity's), the one Layered Gearing
+ * first wears.
  * @param {Document} doc
- * @param {{sets?: typeof skinSets}} [opts]
+ * @param {{sets?: typeof skinSets, gender?: () => (string|null|undefined)}} [opts]
  */
-export function skinCard(doc, { sets: offer = skinSets } = {}) {
+export function skinCard(doc, { sets: offer = skinSets, gender = () => null } = {}) {
   const el = (t, cls, txt) => {
     const n = doc.createElement(t);
     if (cls) n.className = cls;
@@ -176,6 +193,32 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
     root.append(p);
   }
 
+  /** LAYERED-GEAR: the Look toggle - Skins or Layered Gearing, one radio each; a press switches the look at once. */
+  function lookToggle(layeredOn) {
+    const row = el('div', 'skinmode');
+    const word = t('skin.look', 'Look');
+    row.append(el('span', 'fieldlabel', word));
+    const set = el('div', 'skinmodeset');
+    set.setAttribute('role', 'radiogroup');
+    set.setAttribute('aria-label', word);
+    for (const [on, name] of [[false, t('skin.mode.skins', 'Skins')], [true, t('skin.mode.layered', 'Layered Gearing (WIP)')]]) {
+      const chosen = on === layeredOn;
+      const b = el('button', `skinmodebtn${chosen ? ' on' : ''}`, name);
+      b.type = 'button';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', chosen ? 'true' : 'false');
+      b.onclick = () => {
+        if (chosen) return;
+        setModSetting(VENDOR, LAYERED, on ? layeredBodyToWear(gender()) : 0);
+        open = null;
+        paint();
+      };
+      set.append(b);
+    }
+    row.append(set);
+    root.append(row);
+  }
+
   function paint() {
     root.textContent = '';
     root.append(el('h3', null, 'Skin'));
@@ -192,12 +235,20 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
       return;
     }
     root.append(el('p', 'meta', 'How you look in third person, and to other players online who do not see you in a Morrowind body.'));
-    // the look sends only a CHOSEN set, so until one is pressed the others see this player's class
-    if (!w.chosen) root.append(el('p', 'meta skinhint', 'Until you choose one, other players see you as your class.'));
-    panel('On foot', FOOT, sets.foot, w.foot, FOOT_GROUPS);
-    // LAYERED-GEAR: between the two - the armor worn, as a woman or a man
-    const layeredLabel = t('skin.layeredGear', 'On foot Layered Gearing Skin (WIP)');
-    panel(layeredLabel, LAYERED, sets.layered ?? [], w.layered, [{ label: '', from: 0, to: Infinity }], layeredLabel.toLowerCase());
+    const layeredOn = w.layered > 0;
+    if (layeredOn) lastBody = w.layered;
+    lookToggle(layeredOn);
+    if (layeredOn) {
+      // LAYERED-GEAR: the body, drawn in the armor worn - the On foot panel put away, Mounted as ever
+      root.append(el('p', 'meta', t('skin.layered.about', 'On foot you are drawn in the helmet, chest and leg armor you wear. On a horse you are drawn in your mounted skin.')));
+      const bodyWord = t('skin.layered.body', 'Body');
+      root.append(el('span', 'skingroup', bodyWord));
+      root.append(grid(bodyWord, (sets.layered ?? []).filter((s) => s.index > 0), LAYERED, w.layered));
+    } else {
+      // the look sends only a CHOSEN set, so until one is pressed the others see this player's class
+      if (!w.chosen) root.append(el('p', 'meta skinhint', 'Until you choose one, other players see you as your class.'));
+      panel('On foot', FOOT, sets.foot, w.foot, FOOT_GROUPS);
+    }
     panel('Mounted', HORSE, sets.horse, w.horse, [{ label: '', from: 0, to: Infinity }]);
   }
 

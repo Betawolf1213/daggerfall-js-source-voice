@@ -7544,6 +7544,21 @@
   "tr": "7ecd6073bfb3",
   "by": "claude-in-session"
  },
+ "credits.layeredArmor.terms": {
+  "en": "33961b6e098d",
+  "tr": "59526fb8f30e",
+  "by": "claude-in-session"
+ },
+ "credits.layeredArmor.title": {
+  "en": "d526553a1364",
+  "tr": "348c50233e66",
+  "by": "claude-in-session"
+ },
+ "credits.layeredArmor.what": {
+  "en": "9dbdb0c94be2",
+  "tr": "984115e06200",
+  "by": "claude-in-session"
+ },
  "credits.meanerMonsters.terms": {
   "en": "8b57e9f6c39b",
   "tr": "26265bdfe842",
@@ -7582,6 +7597,21 @@
  "credits.pcaao.what": {
   "en": "c9d3780c9642",
   "tr": "f690f8166f0b",
+  "by": "claude-in-session"
+ },
+ "credits.pixelifyGlyphs.terms": {
+  "en": "36906102db21",
+  "tr": "c57f734981f0",
+  "by": "claude-in-session"
+ },
+ "credits.pixelifyGlyphs.title": {
+  "en": "e6a6671b76a4",
+  "tr": "37b981576895",
+  "by": "claude-in-session"
+ },
+ "credits.pixelifyGlyphs.what": {
+  "en": "b63c6e0d282a",
+  "tr": "2aed7201a387",
   "by": "claude-in-session"
  },
  "credits.raidingParties.terms": {
@@ -11095,7 +11125,7 @@
   "by": "claude-in-session"
  },
  "martial.choice.others": {
-  "en": "f5b2939d8953",
+  "en": "2ee154fbf478",
   "tr": "bb912c360ff2",
   "by": "claude-in-session"
  },
@@ -11220,7 +11250,7 @@
   "by": "claude-in-session"
  },
  "martial.open.count": {
-  "en": "2aac6c00f9f5",
+  "en": "8b0caa2220c5",
   "tr": "fb16a8d0141b",
   "by": "claude-in-session"
  },
@@ -11360,7 +11390,7 @@
   "by": "claude-in-session"
  },
  "martial.sheet.next": {
-  "en": "7b48436ad824",
+  "en": "6f0b92a56211",
   "tr": "de1a344c58f0",
   "by": "claude-in-session"
  },
@@ -18135,7 +18165,7 @@
   "by": "claude-in-session"
  },
  "pause.master.specHeld": {
-  "en": "926f25f50ecd",
+  "en": "f634dddb395e",
   "tr": "9a0fbbcfbbd3",
   "by": "claude-in-session"
  },
@@ -20395,12 +20425,12 @@
   "by": "claude-in-session"
  },
  "prof.craft.xpLimit": {
-  "en": "ebd9569af9a3",
+  "en": "610bfc621a06",
   "tr": "e5b9f9e47f9b",
   "by": "claude-in-session"
  },
  "prof.craft.xpTop": {
-  "en": "bf5e8dd5fd87",
+  "en": "17683031667e",
   "tr": "09839a02b5c5",
   "by": "claude-in-session"
  },
@@ -20745,7 +20775,7 @@
   "by": "claude-in-session"
  },
  "prof.page.craft.xpLimit": {
-  "en": "0a83e8c8e02b",
+  "en": "cb999e30f827",
   "tr": "730d9ee2ddd9",
   "by": "claude-in-session"
  },
@@ -20755,7 +20785,7 @@
   "by": "claude-in-session"
  },
  "prof.page.craft.xpTop": {
-  "en": "fb99bb33663b",
+  "en": "04daa324f2d7",
   "tr": "c9264bc2965f",
   "by": "claude-in-session"
  },
@@ -24940,7 +24970,7 @@
   "by": "claude-in-session"
  },
  "schools.choice.others": {
-  "en": "2301df02f8d1",
+  "en": "fd4a7c4fa718",
   "tr": "333b030785ac",
   "by": "claude-in-session"
  },
@@ -25100,7 +25130,7 @@
   "by": "claude-in-session"
  },
  "schools.open.count": {
-  "en": "09adfea43a27",
+  "en": "d552b9e3552f",
   "tr": "bf5976d4d3a1",
   "by": "claude-in-session"
  },
@@ -25255,7 +25285,7 @@
   "by": "claude-in-session"
  },
  "schools.sheet.next": {
-  "en": "1ea055617344",
+  "en": "1f723a988395",
   "tr": "a2129de210d7",
   "by": "claude-in-session"
  },
@@ -25669,9 +25699,29 @@
   "tr": "a65115fe50b5",
   "by": "claude-in-session"
  },
- "skin.layeredGear": {
-  "en": "a3511c499bdc",
-  "tr": "8c433a352b5a",
+ "skin.layered.about": {
+  "en": "497b82dd15d1",
+  "tr": "f5cc7be64e00",
+  "by": "claude-in-session"
+ },
+ "skin.layered.body": {
+  "en": "718a7e8a582e",
+  "tr": "37113b8ef90e",
+  "by": "claude-in-session"
+ },
+ "skin.look": {
+  "en": "b8db515e7ae6",
+  "tr": "ec5eefbfdcf3",
+  "by": "claude-in-session"
+ },
+ "skin.mode.layered": {
+  "en": "3283d395837c",
+  "tr": "50cf46a59489",
+  "by": "claude-in-session"
+ },
+ "skin.mode.skins": {
+  "en": "3e03229d39e4",
+  "tr": "e09f57963747",
   "by": "claude-in-session"
  },
  "social.stores.noRoom": {

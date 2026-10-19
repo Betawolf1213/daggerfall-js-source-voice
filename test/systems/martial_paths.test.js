@@ -192,7 +192,7 @@ test('MARTIAL1 THE CHOICE: two weapon skills mastered open their path; the choic
   assert.ok(rows.includes('Resetting it later costs 200,000 gold.'));   // PIN MOVED (SPEC-RESET): the paid reset's price, where it said permanent
   assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.vanguard).join(' '), /10% less damage.*Judgement \(signature technique\).*8 meters.*2\.5 meters.*4% of your health.*3 enemies/);
   assert.match(MP.martialPowerRows(MP.MARTIAL_BY_ID.berserker).join(' '), /Below 50%.*20% more damage.*10%.*Savage Whirl.*3 meters.*8 seconds.*10%/);
-  assert.match(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger, MP.MARTIAL_BY_ID.vanguard]).join(' '), /2 martial specialisations are open to you: Ranger, Vanguard/);
+  assert.match(MP.martialOpenRows([MP.MARTIAL_BY_ID.ranger, MP.MARTIAL_BY_ID.vanguard]).join(' '), /2 martial specializations are open to you: Ranger, Vanguard/);   // PIN MOVED (VOICE2): specialization (Voice.md rule 8)
 });
 
 test('MARTIAL1 THE SAVE: the martial path and its one ask round-trip beside the arcane path; an id no table holds reads as none; a save from before the arc has none (mutants: the path dropped on save; an unknown id kept)', () => {

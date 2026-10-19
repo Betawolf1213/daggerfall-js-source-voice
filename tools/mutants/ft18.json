@@ -138,8 +138,8 @@
   {
     "name": "FT18-the-diamond-beats-the-hotbar",
     "file": "src/systems/featureLanes.js",
-    "old": "  const style = getPref(QUICKBAR_STYLE_PREF);\n  if (style === 'hotbar') return getPref(HOTBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';",
-    "new": "  const style = getPref(QUICKBAR_STYLE_PREF);\n  if (getPref(QUICKSLOTS_PREF) === false) return 'off';\n  if (style === 'hotbar') return getPref(HOTBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';",
+    "old": "  const style = getPref(QUICKBAR_STYLE_PREF);\n  if (style === 'hotbar') return getPref(QUICKBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';",
+    "new": "  const style = getPref(QUICKBAR_STYLE_PREF);\n  if (getPref(QUICKSLOTS_PREF) === false) return 'off';\n  if (style === 'hotbar') return getPref(QUICKBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';",
     "tests": [
       "test/systems/ft18_features.test.js"
     ]

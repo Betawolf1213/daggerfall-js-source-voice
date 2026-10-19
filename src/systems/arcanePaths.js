@@ -349,7 +349,7 @@ export function pathChoiceRows(entity, id, { others = true } = {}) {
     ...pathPowerRows(p),
     '',
     t('schools.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),
-    ...(more > 0 ? [t('schools.choice.others', '{n, plural, one {# other specialisation is open to you.} other {# other specialisations are open to you.}}', { n: more })] : []),
+    ...(more > 0 ? [t('schools.choice.others', '{n, plural, one {# other specialization is open to you.} other {# other specializations are open to you.}}', { n: more })] : []),
   ];
 }
 
@@ -359,7 +359,7 @@ export function pathsOpenRows(open, { growth = false } = {}) {
   return [
     t('schools.open.title', 'Specialization'),
     '',
-    t('schools.open.count', '{n, plural, one {# specialisation is open to you:} other {# specialisations are open to you:}}', { n: open.length }),
+    t('schools.open.count', '{n, plural, one {# specialization is open to you:} other {# specializations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
     growth ? t('schools.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu.')

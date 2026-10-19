@@ -931,7 +931,7 @@ export class CharSheet {
     const pool = martialChoices(e);
     if (!pool.length) return;
     const p = pool[(this._martialPick = ((this._martialPick ?? -1) + 1)) % pool.length];
-    const more = pool.length > 1 ? ['', t('martial.sheet.next', '{n, plural, one {# martial specialisation is open - No, then W, for the next.} other {# martial specialisations are open - No, then W, for the next.}}', { n: pool.length })] : [];
+    const more = pool.length > 1 ? ['', t('martial.sheet.next', '{n, plural, one {# martial specialization is open - No, then W, for the next.} other {# martial specializations are open - No, then W, for the next.}}', { n: pool.length })] : [];
     this.child = new YesNoBoxWindow({
       rows: [...martialChoiceRows(e, p.id, { others: false }), ...more],
       onYes: () => { const r = chooseMartialPath(e, p.id); if (r.ok) computeEntityMods(e); this.notice = r.text; this.noticeOk = r.ok; },
@@ -950,7 +950,7 @@ export class CharSheet {
     const pool = pathChoices(e);
     if (!pool.length) return;
     const p = pool[(this._pathPick = ((this._pathPick ?? -1) + 1)) % pool.length];
-    const more = pool.length > 1 ? ['', t('schools.sheet.next', '{n, plural, one {# specialisation is open - No, then S, for the next.} other {# specialisations are open - No, then S, for the next.}}', { n: pool.length })] : [];
+    const more = pool.length > 1 ? ['', t('schools.sheet.next', '{n, plural, one {# specialization is open - No, then S, for the next.} other {# specializations are open - No, then S, for the next.}}', { n: pool.length })] : [];
     this.child = new YesNoBoxWindow({
       rows: [...pathChoiceRows(e, p.id, { others: false }), ...more],
       onYes: () => { const r = choosePath(e, p.id); if (r.ok) computeEntityMods(e); this.notice = r.text; this.noticeOk = r.ok; },

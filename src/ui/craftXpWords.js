@@ -56,10 +56,10 @@ export function capLine(profession, pay, most) {
   const limit = pay?.limit;
   if (!limit || limit.room >= most) return '';
   if (limit.by?.length) {
-    return t('prof.page.craft.xpLimit', '{room, plural, =0 {No {profession} XP} other {At most # {profession} XP}}: {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank}.',
+    return t('prof.page.craft.xpLimit', '{room, plural, =0 {No {profession} experience} other {At most # {profession} experience}}: {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank}.',
       { room: limit.room, profession, crafts: craftsList(limit.by), rank: limit.rank });
   }
-  return t('prof.page.craft.xpTop', '{room, plural, =0 {No {profession} XP: {profession} is at Master} other {At most # {profession} XP: {profession} stops at Master}}.', { room: limit.room, profession });
+  return t('prof.page.craft.xpTop', '{room, plural, =0 {No {profession} experience: {profession} is at Master} other {At most # {profession} experience: {profession} stops at Master}}.', { room: limit.room, profession });
 }
 
 /**
@@ -128,8 +128,8 @@ export function craftXpText(r, data, profession, limit = null) {
   const xp = Number(data?.xp) || 0;
   if (limit?.room === 0) {
     return limit.by?.length
-      ? t('prof.craft.xpLimit', '(+{xp} {profession} XP - {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank})', { xp, profession, crafts: craftsList(limit.by), rank: limit.rank })
-      : t('prof.craft.xpTop', '(+{xp} {profession} XP - {profession} is at Master)', { xp, profession });
+      ? t('prof.craft.xpLimit', '(+{xp} {profession} experience. {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank})', { xp, profession, crafts: craftsList(limit.by), rank: limit.rank })
+      : t('prof.craft.xpTop', '(+{xp} {profession} experience. {profession} is at Master)', { xp, profession });
   }
   if (!r || data?.first !== true) return t('prof.craft.xp', '(+{xp} {profession} experience)', { xp, profession });
   return firstCraftPays(r)

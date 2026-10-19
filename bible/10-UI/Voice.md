@@ -67,6 +67,12 @@ instructions.
   Dash asides became second sentences; XP became experience in sentences, a crafting or seat tier a grade, an arena
   or card-table tier a rank, a "stack" a count of times. Progress bars and their numbers ("1,234 / 5,510 XP") are
   stat lines and stay as they were.
+- At the merge onto main (2026-10-19, LAYERED-GEAR's pull request): main's lines written after VOICE2 was cut, where
+  they sat beside its lines, were brought into the same voice - American spelling in the strings main added (center,
+  harbor, Jeweler, specialization, the Specializations rail), and the crafter's-limit lines of FIELD BUGS 2026-10-18f
+  (`src/ui/craftXpWords.js`: "No Smithing experience: ...", "(+0 Smithing experience. Smithing is at Master)"), which
+  shared a box with VOICE2's "60 Smithing experience". One VOICE2 change was undone: Travel Options' help lines are
+  the mod's own words (`travelOptionsText.js`, TO1) and keep "travelling".
 
 The English catalog (`locales/en/Port_Strings.csv`) follows the source. Every VOICE2 change keeps the meaning of the
 line it replaced, so the languages keep their translations: each machine row's record was moved to the new English

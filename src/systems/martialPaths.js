@@ -415,7 +415,7 @@ export function martialChoiceRows(entity, id, { others = true } = {}) {
     ...martialPowerRows(p),
     '',
     t('martial.choice.reset', 'Resetting it later costs {gold, number} gold.', { gold: SPEC_RESET_GOLD }),
-    ...(more > 0 ? [t('martial.choice.others', '{n, plural, one {# other martial specialisation is open to you.} other {# other martial specialisations are open to you.}}', { n: more })] : []),
+    ...(more > 0 ? [t('martial.choice.others', '{n, plural, one {# other martial specialization is open to you.} other {# other martial specializations are open to you.}}', { n: more })] : []),
   ];
 }
 
@@ -425,7 +425,7 @@ export function martialOpenRows(open, { growth = false } = {}) {
   return [
     t('martial.open.title', 'Martial Specialization'),
     '',
-    t('martial.open.count', '{n, plural, one {# martial specialisation is open to you:} other {# martial specialisations are open to you:}}', { n: open.length }),
+    t('martial.open.count', '{n, plural, one {# martial specialization is open to you:} other {# martial specializations are open to you:}}', { n: open.length }),
     open.map((p) => p.name).join(', '),
     '',
     growth ? t('martial.open.whereGrowth', 'See them all and choose one on the Growth tab of the pause menu.')

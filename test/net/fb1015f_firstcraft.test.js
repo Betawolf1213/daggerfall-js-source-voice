@@ -174,7 +174,7 @@ test('CRAFT-FIRST-SHOWN the stations say it, read off the real book: the loom\'s
     // THE WORKBENCH, Building 100. PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track takes no more XP -
     // the service credits MIN(earned, PROF_XP_MAX - held), none - so the Staff, the works and a Sculptor's carving say so
     // (it said "5 Building XP, and 500 more", which the Worker never paid); the quarter and the 500 at Building 99, below
-    const TOP = 'No Building XP: Building is at Master.';
+    const TOP = 'No Building experience: Building is at Master.';   // PIN MOVED (VOICE2): experience, not XP; no dash aside (the craft-limit lines in the voice)
     press('The Workbench', 'Staff');
     assert.deepEqual([box('The Workbench')[0], box('The Workbench')[1].at(-1)], ['Pine Staff - rank 0', TOP]);
     // THE MASON'S BENCH: the works' first, and a Sculptor's carving
@@ -194,7 +194,7 @@ test('CRAFT-FIRST-SHOWN the stations say it, read off the real book: the loom\'s
     draw();
     press('The Workbench', 'Staff');
     assert.deepEqual([box('The Workbench')[0], box('The Workbench')[1].at(-1)], ['Pine Staff - rank 0', FIRST(5, 'Building')]);
-    assert.ok(station('The Mason\'s Bench').querySelectorAll('p').some((p) => p.textContent === 'Your first cut and your first mix each earn 500 more Building XP.'));
+    assert.ok(station('The Mason\'s Bench').querySelectorAll('p').some((p) => p.textContent === 'Your first cut and your first mix each earn 500 more Building experience.'));   // PIN MOVED (VOICE2): experience in a sentence (Voice.md rule 3)
   } finally {
     setProfessionsPages(null);
     root?.remove?.();

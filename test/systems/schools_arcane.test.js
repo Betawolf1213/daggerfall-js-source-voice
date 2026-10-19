@@ -168,7 +168,7 @@ test('SCHOOLS1 THE CHOICE: two mastered schools open their path, three open thre
   assert.deepEqual(rows, ['Specialize as Necromancer?', 'Restoration and Mysticism', '',   // PIN MOVED (VOICE2): American spelling
     'Death\'s Due: Each kill restores 5% of your health and 5% of your magicka.',
     'Siphon Life (signature spell): Heals you for 50% of the damage dealt.', '', 'Resetting it later costs 200,000 gold.',   // PIN MOVED (SPEC-RESET)
-    '2 other specialisations are open to you.']);
+    '2 other specializations are open to you.']);   // PIN MOVED (VOICE2): specialization (Voice.md rule 8)
   assert.equal(AP.pathChoiceRows(mage([ALT, RES, MYS]), 'necromancer', { others: false }).length, 7);
 });
 

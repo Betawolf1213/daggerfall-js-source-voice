@@ -240,7 +240,7 @@ test('PROF12 pages: The Enchanting Station - away, the word; at a Mages Guild ha
   // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track takes no more XP - the service credits
   // MIN(earned, PROF_XP_MAX - held), none - so the piece says +0 and the station why (it said +7, which the Worker never
   // paid); AUDIT PROF12 E2's quarter is pinned at an Expert's 90 below, where it is paid
-  assert.match(page.text(), /No Enchanting XP: Enchanting is at Master\.Iron Longsword600 points: 6 Arcane Essence, \+0 Enchanting experience/);
+  assert.match(page.text(), /No Enchanting experience: Enchanting is at Master\.Iron Longsword600 points: 6 Arcane Essence, \+0 Enchanting experience/);   // PIN MOVED (VOICE2): experience, not XP; no dash aside (the craft-limit lines in the voice)
   assert.equal(enchantGoldPct(), 25, 'a Master\'s 20 and an Efficient\'s 5');
   // the item maker's window reads the share: its gold label and the gold it asks
   const player = { items: [], gold: 0, goldPieces: 0 };
@@ -450,7 +450,7 @@ test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its r
   stubPages({ enchanter: { kind: 'home', fee: 0 }, enchantingTrack: { rank: 90, specs: { 50: null, 100: null } }, over: { disenchantable: () => pieces } });
   page = pageOf();
   assert.match(page.text(), /Gold Ruby Ring2,160 points: 21 Arcane Essence, \+78 Enchanting experience/, 'tier 3 at an Expert\'s 7: quartered');
-  assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+7 Enchanting XP/, 'AUDIT PROF12 E2: the Iron sword\'s tier 1, quartered at 7 - 30 / 4');
+  assert.match(page.text(), /Iron Longsword600 points: 6 Arcane Essence, \+7 Enchanting experience/, 'AUDIT PROF12 E2: the Iron sword\'s tier 1, quartered at 7 - 30 / 4');   // PIN MOVED (VOICE2): no dash aside, no "XP" in a sentence (Voice.md rules 3, 5)
   page.done();
   setProfessionsPages(null);
   assert.match(hostText('src/scenes/world.js'), /essence: essenceOf\(points, profBook\?\.track\('enchanting'\)\?\.specs\?\.\[50\] === DISENCHANTER\), recipe: it\.recipe \}/);

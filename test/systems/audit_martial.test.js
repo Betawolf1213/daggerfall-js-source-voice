@@ -756,7 +756,7 @@ test('AUDIT MARTIAL L5 L4: the box counts the OTHER open paths only - none with 
   const rows1 = MP.martialChoiceRows(fighter([LB, AR], 100), 'ranger');
   assert.equal(rows1.some((r) => /other martial/.test(r)), false);
   const rows3 = MP.martialChoiceRows(fighter([LB, AR, SB], 100), 'ranger');
-  assert.equal(rows3.at(-1), '2 other martial specialisations are open to you.');
+  assert.equal(rows3.at(-1), '2 other martial specializations are open to you.');   // PIN MOVED (VOICE2): specialization (Voice.md rule 8)
 }));
 
 test('AUDIT MARTIAL L5 H2: THE ONE ASK (scenes/shared.js raisePlayerSkills), DRIVEN - one path open is asked in the martial words and Yes chooses it; several are named in an OK box choosing none; asked once; with the arcane ask due on the same pass, the arcane box first and the martial on the next (mutants: the ask forgets it asked; one open given the OK box; Yes chooses the arcane)', () => clean(() => {

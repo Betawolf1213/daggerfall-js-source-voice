@@ -29,9 +29,9 @@ export function windWrite(v) { for (const k of WIND_PARTS) setPref(k, v === true
 /** HB1's key (ui/enhanced/enhancedHotbar.js HOTBAR_PREF, read by systems/uiSkin.js hotbarInForce) and QS's. */
 export const QUICKBAR_STYLE_PREF = 'quickbarStyle';
 export const QUICKSLOTS_PREF = 'quickslots';
-/** DIAMOND-HB: slot shape of the ten-slot bar, 'square' (default) or 'diamond'. Read by
- *  ui/enhanced/enhancedHotbar.js hotbarGems. */
-export const HOTBAR_SHAPE_PREF = 'hotbarShape';
+/** DIAMOND-HB: slot shape of the ten-slot bar, 'square' (default) or 'diamond' (ui/enhanced/enhancedHotbar.js
+ *  HOTBAR_SHAPE_PREF, read by its hotbarGems). */
+export const QUICKBAR_SHAPE_PREF = 'hotbarShape';
 /** DIAMOND-HB: Diamond is the hotbar's first four slots drawn as a diamond (style 'diamond'), so it works like the
  *  ten-slot bar. Off is unchanged: the old QS diamond, hidden, with its keys working. Diamonds is the ten-slot bar
  *  with diamond-shaped slots. */
@@ -41,14 +41,14 @@ export const QUICK_SLOTS_DEFAULT = 'hotbar';   // HB-LYCFREE: the hotbar is the 
  *  on is an old save that chose Diamond; systems/uiPrefs.js moves it to 'diamond' on load. */
 export function quickSlotsRead() {
   const style = getPref(QUICKBAR_STYLE_PREF);
-  if (style === 'hotbar') return getPref(HOTBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';
+  if (style === 'hotbar') return getPref(QUICKBAR_SHAPE_PREF) === 'diamond' ? 'gems' : 'hotbar';
   if (style === 'diamond') return 'diamond';
   return getPref(QUICKSLOTS_PREF) === false ? 'off' : 'diamond';
 }
 export function quickSlotsWrite(v) {
   if (v === 'hotbar' || v === 'gems') {
     setPref(QUICKBAR_STYLE_PREF, 'hotbar');
-    setPref(HOTBAR_SHAPE_PREF, v === 'gems' ? 'diamond' : 'square');
+    setPref(QUICKBAR_SHAPE_PREF, v === 'gems' ? 'diamond' : 'square');
     return;
   }
   if (v === 'diamond') { setPref(QUICKBAR_STYLE_PREF, 'diamond'); setPref(QUICKSLOTS_PREF, true); return; }

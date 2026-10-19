@@ -210,7 +210,7 @@ export const EG_SAY = Object.freeze({
   // FB1018D DUEL-RING: at n = 1 no ring rises nor falls (section 13.3) - the open duel's own words
   challenge: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelOpen', 'A challenge in the open! Deal him a tenth of his health within 15 s.') : 'A challenge! The ring of fire rises.'),
   challengewon: () => 'The challenge is met.', challengeend: (n, w) => (w === EG_DUEL_OPEN ? t('eg.say.duelUnmet', 'The challenge goes unmet.') : 'The ring falls.'),
-  conquest: () => 'Banners claim the floor. It burns, and two standing ward the lord. Break them!',   // FB1018D WARD-BAR: what they do, said (section 13.4)
+  conquest: () => 'Banners claim the floor, and it burns. Two standing ward the lord. Break them!',   // FB1018D WARD-BAR: what they do, said (section 13.4)
   muster: () => 'The Muster-Call! The balconies fill.', tithe: () => 'The Soul Tithe: lay your soul in a gem!', bare: () => 'The gems are full. The Cairn-Keeper is laid bare!',
   twinfell: (n) => `${n} falls. Bring down the other within fifteen seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
   chaining: () => 'Soul-chains bind you. Stay close!', grounded: () => 'The Mother of Dusk is dragged down!', anchors: () => 'The anchors rise again.', vanish: () => 'The Night-Stalker vanishes.',
