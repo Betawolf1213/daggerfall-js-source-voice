@@ -46,6 +46,8 @@ change) and read `bible/01-Overview/Port-Doctrine.md` before touching code.
   the shape), never into `bootWorld`, `createWorldModes`, `buildDungeonContext`,
   `bootExterior`, `navalHost`'s `createNavalHost` or `comeSailAway`'s
   `createComeSailAwayRuntime` themselves - and on the relay into a Room method of its own,
-  never into `_message`. `test/scenes/hostceiling.test.js` fails a host that lengthens
-  past its ceiling in code lines; `node tools/hostScope.mjs <host>` maps what a
+  never into `_message`, nor into any other function the test holds to a ceiling.
+  `test/scenes/hostceiling.test.js` fails a host that lengthens
+  past its ceiling in logical lines (statements and entries - splitting a crowded
+  line costs nothing); `node tools/hostScope.mjs <host>` maps what a
   block reads and writes before you move it.
