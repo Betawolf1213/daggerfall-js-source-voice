@@ -18,6 +18,8 @@
 import { jungleFieldOf, jungleNine, jungleDepthAt } from '../world/jungle/jungleRegion.js';
 import { TERRAIN_SIZE as PIXEL_M } from '../world/terrain/terrainSampler.js';   // a map pixel (m)
 import { createJungleTrees } from '../systems/jungleTreesAssets.js';
+import { setAirBiome, CLIMATE_AIR } from '../systems/weather/airTemperature.js';   // PRECIP1: the jungle's own air
+import { CLIMATES } from '../formats/mapsFile.js';
 import {
   JUNGLE_HAZE, hazeShare, hazeDayFactor, hazeWeatherFactor, hazeDrift, createHazeState, stepHaze, hazeUniforms, fogColorWith,
   hazeSkyUniform, hazeHides,
@@ -34,6 +36,15 @@ export function createJungleHost({ renderer, maps, mapWidth, mapHeight, stateOf,
   const door = trees ?? createJungleTrees({ renderer, breathe });
   let field = null;
   const fieldNow = () => (field ??= jungleFieldOf(maps, mapWidth, mapHeight));
+  // PRECIP1 (systems/weather/airTemperature.js): THE JUNGLE'S AIR - the rainforest's, leaned in by the haze's share of the
+  // jungle's field (its wider band: the air warms before the first tree), so what falls in it is rain whatever the
+  // land's own climate (Glenpoint's Mountain Woods), and its edge is a band of sleet, never a line. Field metres in.
+  const _airNine = new Array(9);
+  setAirBiome('jungle', (fx, fz) => {
+    const px = Math.floor(fx / PIXEL_M), py = mapHeight - 1 - Math.floor(fz / PIXEL_M);
+    const nine = jungleNine(fieldNow(), px, py, _airNine);
+    return nine ? hazeShare(jungleDepthAt(px, py, nine, fx - px * PIXEL_M, fz - (mapHeight - 1 - py) * PIXEL_M)) : 0;
+  }, CLIMATE_AIR[CLIMATES.Rainforest]);
   const hs = createHazeState();
   const u = new Float32Array(8), skyU = new Float32Array(4), colour = new Float32Array(3);
   const _t = [0, 0, 0], _eye = [0, 0, 0], _abs = [0, 0, 0], _nine = new Array(9);

@@ -60,6 +60,7 @@
 
 import { seededRng } from '../wind/wind.js';
 import { precipitationForWeather } from '../../world/weather.js';
+import { precipLawOn, currentSnowShare } from './weatherSim.js';   // PRECIP1: rain and snow one fall, its phase the air's
 
 /** Each mode's peak range, as a fraction of the profile's count: what
  *  a cut into that weather can roll. A rain can be a sprinkle; a storm
@@ -100,6 +101,10 @@ export { smoothstep };
 
 /** The LOOK a mode has: storm shares the rain's. null for no mode. */
 export const precipKind = (mode) => (mode === 'snow' ? 'snow' : mode === 'sand' ? 'sand' : mode ? 'rain' : null);   // WEATHER2d: the sand is its own look
+/** PRECIP1: the FALL a mode belongs to, for the taper - under the air's law rain, a storm and snow are one fall whose
+ *  phase is the air's (the drops and flakes drawn at its snow share, render/precipitation.js draw), so a phase change
+ *  walks the peak across with no gap, as a shower thickening into a storm does; off it, the look (precipKind). */
+const fallOf = (mode) => (mode && mode !== 'sand' && precipLawOn() ? 'wet' : precipKind(mode));
 
 /** A roll `u` in 0..1 placed in the mode's peak range, by its skew (RAIN-SPRINKLE). */
 export function rollPeak(mode, u) {
@@ -190,7 +195,7 @@ export function soundWeather(sample, weather) {
  * intensity at the player (0..1, placed in the mode's range) or null
  * where there is no map (the episode rolls its own). Returns the sample, which `sample()`
  * repeats:
- *   { changed, from, to, t, shown, kind, intensity, peak }
+ *   { changed, from, to, t, shown, kind, intensity, peak, snow }
  * `changed` is true on the tick that saw a cut; `t` is the arrival,
  * clamped; `shown` is the mode being drawn (null for none); `intensity`
  * is the fraction of the profile's drops on screen; `peak` is the
@@ -242,7 +247,7 @@ export function createWeatherFront({ seed = 7 } = {}) {
       const outMode = outgoing?.mode ?? null;
       let mode = null;
       let target = 0;
-      if (inMode && outMode && precipKind(inMode) === precipKind(outMode)) {
+      if (inMode && outMode && fallOf(inMode) === fallOf(outMode)) {
         // one look, the peak walks across - a shower thickening into a storm
         mode = a >= 0.5 ? inMode : outMode;
         target = lerp(outgoing.peak, episode.peak, smoothstep(PRECIP_IN[0], PRECIP_IN[1], a)) * wander(tsec, episode.phase);
@@ -259,12 +264,13 @@ export function createWeatherFront({ seed = 7 } = {}) {
       }
       // a change of kind mid-fall never relabels the residual - the last
       // few flakes are not a few drops
-      if (shown && mode && precipKind(shown) !== precipKind(mode)) intensity = 0;
+      if (shown && mode && fallOf(shown) !== fallOf(mode)) intensity = 0;
       if (whole) intensity = target;   // a boot into rain is rain (the sky's own first-call law); so is a load into it
       else intensity += (target - intensity) * (1 - Math.exp(-Math.max(0, dt) / PRECIP_SMOOTH_SECONDS));
       if (intensity < SHOWN_FLOOR && target === 0) intensity = 0;
       shown = intensity >= SHOWN_FLOOR ? mode : null;
-      out = { changed, from, to, t: a, shown, kind: precipKind(shown), intensity, peak: episode?.peak ?? 0 };
+      // PRECIP1: `snow` the fall's snow share - the air's at the player under its law, the mode's own off it
+      out = { changed, from, to, t: a, shown, kind: precipKind(shown), intensity, peak: episode?.peak ?? 0, snow: shown === 'sand' || !shown ? 0 : precipLawOn() ? currentSnowShare() : shown === 'snow' ? 1 : 0 };
       return out;
     },
     /** The last tick's answer. */

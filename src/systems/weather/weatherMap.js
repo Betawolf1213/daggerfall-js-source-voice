@@ -705,8 +705,9 @@ export function searchReach(type, range = 0) {
 
 /** Every system alive at `minutes` whose shaped disc may come within
  *  `range` of (x, z) (its shape's bound), nearest centre first, each with
- *  its centre's distance `d`. */
-export function systemsNear(x, z, minutes, climateAt, range = 0) {
+ *  its centre's distance `d`. `types` the front types asked (PRECIP3: the
+ *  snowpack asks the wet ones alone - a cell comes with its front). */
+export function systemsNear(x, z, minutes, climateAt, range = 0, types = PRIORITY) {
   const out = [];
   const take = (b) => {
     const s = systemAt(b, minutes);
@@ -714,7 +715,7 @@ export function systemsNear(x, z, minutes, climateAt, range = 0) {
     const d = Math.hypot(s.x - x, s.z - z);
     if (d - s.reach <= range) out.push({ ...s, d });
   };
-  for (const type of PRIORITY) {
+  for (const type of types) {
     const spec = SYSTEM_TYPES[type];
     if (spec.parent) continue;   // cells are found through their fronts
     const cell = CELL_OF[type] && SYSTEM_TYPES[CELL_OF[type]];
@@ -788,7 +789,7 @@ export const insideClip = (s, x, z) => !s.clip || Math.hypot(s.clip[0] - x, s.cl
  * - 'sunny', clear air, where none does - with the strongest intensity
  * that word has there (0 in clear air), the system that paints it, and
  * `raw`, that system's own word before the ground law (a winter storm's
- * 'thunder' where the word is 'snow'). `ground(word, x, z)` (optional) is
+ * 'thunder' where the word is 'snow'). `ground(word, x, z, intensity)` (optional) is
  * the ground law a word goes through before priority (WEATHER2a: rain
  * over snow ground is snow). One resolution for every reader: `weatherAt`
  * below and the sim's sample, which finds its systems once a minute and
@@ -802,7 +803,7 @@ export function wornAmong(systems, x, z, ground = null) {
     if (dx * dx + dz * dz >= reach * reach || !insideClip(s, x, z)) continue;   // beyond its outline's furthest: the cheap test first
     const band = bandAt(s, radialOf(s, x, z));
     if (!band) continue;
-    const word = ground ? ground(band.word, x, z) : band.word;
+    const word = ground ? ground(band.word, x, z, band.intensity) : band.word;   // PRECIP1: the band's own fall chills the air it falls through
     if (!best || RANK[word] < RANK[best.word] || (word === best.word && band.intensity > best.intensity)) best = { word, intensity: band.intensity, system: s, raw: band.word };
   }
   return best ?? { word: 'sunny', intensity: 0, system: null, raw: 'sunny' };
@@ -842,7 +843,7 @@ export function skyCells(systems, x, z, ground = null) {
     for (const [r, raw] of s.bands) {
       const word = ground ? ground(raw, s.x, s.z) : raw;
       const imp = (SKY_WEIGHT[word] ?? 0.5) * (d <= r ? 2 : r / d);
-      out.push({ x: s.x, z: s.z, r, word, imp, rank: RANK[word] ?? PRIORITY.length, id: `${s.id}:${raw}`, d, shape: s.shape ?? null, clip: s.clip ?? null, env: s.env ?? 1 });   // VC7a: its envelope - the cloud grows and thins with its system
+      out.push({ x: s.x, z: s.z, r, word, raw, imp, rank: RANK[word] ?? PRIORITY.length, id: `${s.id}:${raw}`, d, shape: s.shape ?? null, clip: s.clip ?? null, env: s.env ?? 1 });   // VC7a: its envelope - the cloud grows and thins with its system; PRECIP1: and the band's own word
     }
   }
   return out;

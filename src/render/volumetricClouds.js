@@ -483,6 +483,12 @@ export function cellOf(weather, x, z, r) {
 export function cellOfField(c, toHost) {
   const [x, z] = toHost(c.x, c.z);
   const cell = grownCell(cellOf(c.word, x, z, c.r), c.env);   // VC7a: as grown as its system
+  if (cell && c.snow != null && cell.fall > 0) {
+    // PRECIP1: what falls under it at the air's snow share there (the map cell's `snow`) - its curtain's weight and its
+    // tint walk from the rain's (a storm's) to the snow's, so a front over the snow line greys into white across it
+    const wet = CURTAIN_FALL[c.raw === 'thunder' ? 'thunder' : 'rain'][0];
+    cell.fallKind = c.snow; cell.fall = wet + (CURTAIN_FALL.snow[0] - wet) * c.snow;
+  }
   if (!cell || c.imp == null) return cell;
   const out = { ...cell, imp: c.imp, rank: c.rank };
   if (c.shape) out.shape = c.shape;   // WEATHER3h: its outline; a frame change is a translation, the shape rides it

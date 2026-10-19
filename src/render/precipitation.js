@@ -205,6 +205,9 @@ void main(){
 }`;
 export const LAB_BOX = 42;
 export const LAB_COUNTS = Object.freeze({ rain: 26000, storm: 26000, snow: 20000 });
+/** PRECIP1: where a mixed fall's flakes stand against its drops - a fraction of the box east and north, added to the wind's
+ *  carried offset the flakes' volume wraps by (any offset that is not a whole box parts the two lattices). */
+export const MIX_SHIFT = Object.freeze([LAB_BOX * 0.37, LAB_BOX * 0.53]);
 export const LAB_FALL = Object.freeze({ rain: 22.0, storm: 22.0, snow: 1.6 });
 
 // RAIN-CLOCK: THE FALL'S OWN CLOCK. Every program here moves its drops by
@@ -406,6 +409,10 @@ export class PrecipitationRenderer {
      *  walk it on the front under the enhanced environments; the classic
      *  draw never reads it and never sets it. */
     this.intensity = 1;
+    /** PRECIP1 (systems/weather/airTemperature.js): the fall's snow share, 0..1 - the hosts hand the front's (`snow`);
+     *  null draws the mode as it is (the classic lane, a test). A wet mode draws its drops at (1 - share) of the
+     *  intensity and its flakes at the share, one beside the other (MIX_SHIFT): sleet, wet snow, the snow line. */
+    this.snowShare = null;
     /** RAIN-CLOCK: the host time (s) the fall's clock counts from, and of
      *  the last frame it drew - null until the first draw */
     this._t0 = null;
@@ -541,6 +548,24 @@ export class PrecipitationRenderer {
     gl.enable(gl.CULL_FACE);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
+  }
+
+  /** PRECIP1: THE FALL AT THE AIR'S SNOW SHARE (`snowShare`) - the hosts' draw. On the enhanced lane a wet mode is one
+   *  fall in two looks: the rain's (a storm's, under a storm) at what is not snow, the lab's flakes at what is, the flakes'
+   *  volume carried aside (MIX_SHIFT, on the wind's own offset) so a flake never falls in a drop's column - sleet, wet
+   *  snow, the snow line. With no share, off the lane, or a dry mode: `draw` as it is. */
+  drawFall(mode, proj, view, camPos, camRight, timeSeconds) {
+    const s = this.snowShare;
+    if (!this.enhanced || s == null || !(mode === 'rain' || mode === 'storm' || mode === 'snow')) return this.draw(mode, proj, view, camPos, camRight, timeSeconds);
+    const all = this.intensity, share = Math.min(1, Math.max(0, s)), drops = mode === 'snow' ? 'rain' : mode, wind = this.windOff;
+    try {
+      if (share < 1) { this.intensity = all * (1 - share); this.draw(drops, proj, view, camPos, camRight, timeSeconds); }
+      if (share > 0) {
+        this.intensity = all * share;
+        if (share < 1) this.windOff = Float32Array.of(wind[0] + MIX_SHIFT[0], wind[1] + MIX_SHIFT[1]);
+        this.draw('snow', proj, view, camPos, camRight, timeSeconds);
+      }
+    } finally { this.intensity = all; this.windOff = wind; }
   }
 
   /** mode 'rain'|'storm'|'snow'; storm shares the rain look. */

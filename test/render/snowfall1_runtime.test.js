@@ -315,7 +315,9 @@ test('SNOWFALL1 the hosts: world.js and exterior.js build the one runtime on the
     const s = read(host);
     assert.match(s, /const snowfall = createSnowfallHost\(\{ gl: renderer\.gl, renderer, enhanced: !!sky\.enhanced, ground: /, `${host}: built on the lane, over its ground`);
     assert.match(s, /snowfall\.frame\(\{ now: now \/ 1000, inside: true, player: null, weather, seconds: worldMinutes\(\) \* 60, winter: season === SEASON\.Winter, /, `${host}: ticked indoors`);
-    assert.match(s, /snowfall\.frame\(\{ now: now \/ 1000, inside: false, player: snowPlayer\(\), weather, seconds: worldMinutes\(\) \* 60, winter: season === SEASON\.Winter, [^\n]*npcs: snowNpcs, corpses: snowBodies \}\);/, `${host}: ticked outdoors, the walkers and the bodies handed`);
+    // PIN MOVED (PRECIP4, 2026-10-19): the streamed world's winter is the snow under the player on the snow lane
+    // (scenes/snowCoverHost.js winterAt - the season off it)
+    assert.match(s, /snowfall\.frame\(\{ now: now \/ 1000, inside: false, player: snowPlayer\(\), weather, seconds: worldMinutes\(\) \* 60, winter: (?:season === SEASON\.Winter|snowCover\.winterAt\(walkMode && playerSpawned \? player\.pos : cam\.pos, season === SEASON\.Winter\)), [^\n]*npcs: snowNpcs, corpses: snowBodies \}\);/, `${host}: ticked outdoors, the walkers and the bodies handed`);
     const draw = s.search(/^ {4}(if \(!tvf\) )?snowfall\.draw\(/m), ground = s.indexOf('renderer.drawTerrain(', draw), deck = s.lastIndexOf('renderer.setCloudShadow(sky?.cloudShadow ?? null);', draw);
     assert.ok(draw > 0 && deck > 0 && deck < draw && ground > draw, `${host}: the snow under the frame's cloud deck, before the ground under it`);
     assert.equal(s.indexOf('renderer.drawTerrain(', s.lastIndexOf('renderer.setCloudShadow(sky?.cloudShadow ?? null);', ground) + 1), ground, `${host}: and no ground drawn between the deck and the snow`);

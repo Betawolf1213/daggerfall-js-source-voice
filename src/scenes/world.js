@@ -269,6 +269,7 @@ import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../
 import { treeKind } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it
 import { createTreesHost } from './treesHost.js';   // LPT1 / BANTHA1 (HOST-SPLIT): the near 3D trees - Low Poly Trees' door and the jungle's, and their frame
 import { createJungleHost } from './jungleHost.js';   // BANTHA1: Bantha's jungle - its field, its trees' door, its haze
+import { createSnowCoverHost } from './snowCoverHost.js';   // PRECIP4: the snow the ground keeps, about the player
 import { realForestsOn, roadVergesOn, climateBlendOn, jungleOn, jungleHazeOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
 import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Eltheric Ocean's
 import { preloadTamrielTrace } from '../ui/tamrielTrace.js';   // TAMRIEL3: Daggerfall's own map of Tamriel, off the player's two files
@@ -1021,7 +1022,8 @@ import { loadIcon } from '../ui/textureCanvas.js';   // HOME-YARD: the decorator
 import { decorScanDeps } from '../systems/decor/decorScan.js';   // HOME-YARD: the catalogue's scan (DECOR-DUNGEON: one constructor for both hosts)
 import { DOOR_TYPE } from '../world/meshReader.js';   // ARENA1: the undercroft's stair is a dungeon entrance (DECOR-DUNGEON: GLOBAL_SCALE went with the yards' scan deps, systems/decor/decorScan.js)
 import { homeLookSig } from '../net/homeLaw.js';
-import { setWeather, setHeardWeather, heardWeather, fallingWeather, currentWeather, currentWeatherRaw, tickWeather, weatherRespawn, applyClimateWeather, importClimateWeathers, weatherJumpStamp, setSharedWeather, rollClimateWeathersForDay, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround } from '../systems/weather/weatherSim.js';
+import { setAirGround, altitudeOfWorldY } from '../systems/weather/airTemperature.js';   // PRECIP1: the air's map, and the player's height in it
+import { setWeather, setHeardWeather, heardWeather, fallingWeather, currentWeather, currentWeatherRaw, tickWeather, weatherRespawn, applyClimateWeather, importClimateWeathers, weatherJumpStamp, setSharedWeather, rollClimateWeathersForDay, sampleWeatherField, weatherCrossingStamp, currentFieldCells, currentWeatherIntensity, currentCloudBase, currentWindApproach, currentMapSystems, sampleWeatherIndoors, weatherArrivalStamp, mapGround, precipLawOn } from '../systems/weather/weatherSim.js';
 import { createDistantStorms, thunderSourceAt, THUNDER_SOURCE_M } from '../systems/distantStorms.js';   // WEATHER3d: the storms at a distance
 import { createStormLights } from '../systems/lightning.js';   // BOLT: the strikes themselves - their channels and their light
 import { LightningBoltsRenderer } from '../render/lightningBolts.js';   // BOLT: the channels, drawn
@@ -2897,8 +2899,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let seenJump = weatherJumpStamp();   // WX2a: the sim's jump stamp as this host last saw it
   let seenCrossing = weatherCrossingStamp();   // WEATHER2b: the sim's crossing stamp as this host last saw it
   /** WEATHER2b: the player's place in the field's metres, the map's climate lookup, and the field's cells in this host's space for the clouds. */
-  const fieldXZ = () => { const wc = state.worldCoords(walkMode ? player.pos : cam.pos); return fieldFromNative(wc.x, wc.z); };
-  const climateAt = (px, py) => maps.getClimateIndex(px, py);
+  const fieldXZ = () => { const p = walkMode ? player.pos : cam.pos, wc = state.worldCoords(p); return [...fieldFromNative(wc.x, wc.z), altitudeOfWorldY(p[1] - state.compensation[1])]; };   // PRECIP1: and the height above the sea the air is read at
+  const climateAt = (px, py) => maps.getClimateIndex(px, py); setAirGround({ climateAt, heightAt: (px, py) => woods.getHeightMapValue(px, py) });   // PRECIP1: the air reads the map's climates and heights
   const mapGroundHere = mapGround(climateAt);   // AUDIT WEATHER3 R1: the ground law the map's words go through, here
   const fieldCellsHere = () => currentFieldCells().map((c) => cellOfField(c, (x, z) => { const n = nativeFromField(x, z); return state.localFromWorld(n[0], n[1]); })).filter(Boolean);   // WEATHER3c: the map's cells carry their importance and rank to the renderer's pick; WEATHER3g: a storm cell its clip
   /** CSA-E: WeatherManager.OnWeatherChange's one listener here (Come Sail Away's wind), set once its runtime stands. */
@@ -3011,6 +3013,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // field and air its own host's (scenes/jungleHost.js); a pixel HOLDS the handles its far pictures stand on and lets them go
   // with it (AUDIT LPT B5). The stream's state, its pixels and its ground are asked of the world, never held
   const jungle = jungleOn() ? createJungleHost({ renderer, maps, mapWidth: MAP_W, mapHeight: MAP_H, stateOf: () => state, builtOf: () => built, heightAt: (x, z) => heightAt(x, z), breathe: () => breather.breathe(), haze: jungleHazeOn() }) : null;
+  const snowCover = createSnowCoverHost({ renderer, climateAt, mapHeight: MAP_H, stateOf: () => state, builtOf: () => built, heightAt: (x, z) => heightAt(x, z), owns: precipLawOn, markReskin: (key) => _reskin.mark(key) });   // PRECIP4 (scenes/snowCoverHost.js): the ground's snow on the enhanced lane - its draws, its builds' seasons, the sweep
   const trees = createTreesHost({ renderer, getTexture, seasons, seasonsActive: () => seasonsActive, lowPolyTreesOn: modSetting('low-poly-trees', 'Enabled') && params.get('trees') !== 'off', jungle, breathe: () => breather.breathe(), yards: () => yards });
   const { lowPolyTrees, lptSway: _lptSway, lptWindfall: _lptWindfall } = trees;   // LPT1: the door, and the flats' shares of the wind by prototype (the build writes them)
   mwViewAttachHorse(renderer);   // COATS3D: the 3D horse under the Morrowind body
@@ -5656,7 +5659,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!e) return null;
     for (let k = 0; k < 3; k++) {
       const a = e.archives[k];
-      e.tex[k] = a == null ? null : renderer.tileArrays.get(a) ?? null;
+      e.tex[k] = snowCover.arrayOf(a);   // PRECIP4: a twin on the snow lane
       if (a != null && !e.tex[k]) return null;
     }
     return e;
@@ -5809,7 +5812,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     livingBaseRate, livingCarriedOf, livingChapterOf, livingCrews, livingCycleOf, livingDeadAt, livingFlatOf,
     livingKilled, livingPlaceOf, livingRate, livingSlay, livingTownsIndex, livingTripsOf, loadGroundSet, lookOfHome,
     jungle, lowPolyTrees, maps, modelFeetOf, onlineHomes, personTex, playerTravelPixel, portOnSea, renderer, restrideTerrain,
-    seasons, siegeFieldsByTown, snowfall, standPixelNpcs, standWodPile, strideFor, terrainGen, tileSide,
+    seasons, siegeFieldsByTown, snowCover, snowfall, standPixelNpcs, standWodPile, strideFor, terrainGen, tileSide,
     townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened, wodPathsPoint,
     worldHeight,
     get _gateClearNow() { return _gateClearNow; },
@@ -6255,7 +6258,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _seasonHoldKey = null;
   function tickSeason() {
     if (_seasonStraightening) return;   // the FRAME's poll only (see above)
-    if (refreshSeason()) _reskin.markAll();   // the CLASSIC flip re-skins every pixel: the ground atlas, the tiles and the climate swaps all turn (ROAD A1)
+    if (refreshSeason() && !snowCover.on) _reskin.markAll();   // PRECIP4: never on the snow lane, whose pixels turn by the snow (scenes/snowCoverHost.js sweep); the CLASSIC flip re-skins every pixel: the ground atlas, the tiles and the climate swaps all turn (ROAD A1)
     // A pixel whose textures are still crossing must PUBLISH before its
     // key can be torn down - the same hazard pump re-checks for after
     // its await (buildPixel publishes only at its very end, so a
@@ -29324,7 +29327,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         flats.push(fb);
       }
     }
-    for (const cell of ground) if (!cell.deepWaters?.hide) r.drawTerrain(cell.dwTerrain ?? cell.terrain, cell._pixelMatrix, r.tileArrays.get(cell.groundArchive), cell.tilemapTex, 6.4, !!cell._dwBytes, ecoDraw(cell));   // DW-C: a pure-ocean pixel's ground is not drawn
+    for (const cell of ground) if (!cell.deepWaters?.hide) r.drawTerrain(cell.dwTerrain ?? cell.terrain, cell._pixelMatrix, snowCover.arrayOf(cell.groundArchive), cell.tilemapTex, 6.4, !!cell._dwBytes, ecoDraw(cell), snowCover.drawOf(cell));   // DW-C: a pure-ocean pixel's ground is not drawn
     // RW1 (AUDIT): AND THE WATER, as the street frame draws it - the seafloor under a carved cell's holes (a pure-ocean
     // pixel's whole floor - FINAL AUDIT: it was left out, the sea the sky), then the surfaces over the bed on the frame's
     // last uniforms (a waterfront looked out on showed the dry bed)
@@ -33278,7 +33281,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
             onExteriorWater: _onWater,
           }, pickFootstepSet({
             inside: false,
-            winter: season === SEASON.Winter,
+            winter: snowCover.winterAt(player.pos, season === SEASON.Winter),   // PRECIP4: the snow under the feet, on the snow lane
             climateIndex: maps.getClimateIndex(_p.x, _p.y),
             onExteriorWater: _onWater,
             // PlayerMotor.OnPathTile (:568-574) is tile records 46, 47
@@ -33293,7 +33296,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           // PEER-FS1: the SAME ctx, cached as a kind for the pose composer -
           // see _lastFootstepKind's own header, above `footsteps`'s declaration.
           _lastFootstepKind = pickFootstepKind({
-            inside: false, winter: season === SEASON.Winter, climateIndex: maps.getClimateIndex(_p.x, _p.y),
+            inside: false, winter: snowCover.winterAt(player.pos, season === SEASON.Winter), climateIndex: maps.getClimateIndex(_p.x, _p.y),
             onExteriorWater: _onWater, onExteriorPath: _surf.path, onStaticGeometry: _surf.staticGeometry,
           });
           if (_step) hitEffects?.footfall?.(player.pos, [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)]);   // BLOOD2d: a foot came down - treading in blood tracks it
@@ -33314,7 +33317,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
             grounded: player.grounded, standingStill: player.standing, isRunning: player.isRunning, movingLessThanHalfSpeed: player.movingLessThanHalfSpeed,
             levitating: player.levitating, swimming: !!player.isPlayerSwimming, motorSwimming: !!player.swimming, pos: player.pos, centreY: player.pos[1] + player.height / 2,
             waterSurfaceY: null, onExteriorWater: _onWater, onExteriorWaterAny: _onWater, onExteriorPath: !!_surf.path, onStaticGeometry: !!_surf.staticGeometry, onFoot: isOnFoot(player.transportMode),
-            winter: season === SEASON.Winter, climateIndex: maps.getClimateIndex(_p.x, _p.y), loadInProgress: false, paused: _overlayHeld || _seasonHeld,   // AUDIT-BA F2/F3: the reposition rides rebase(); a held frame is a paused one
+            winter: snowCover.winterAt(player.pos, season === SEASON.Winter), climateIndex: maps.getClimateIndex(_p.x, _p.y), loadInProgress: false, paused: _overlayHeld || _seasonHeld,   // AUDIT-BA F2/F3: the reposition rides rebase(); a held frame is a paused one
           });
         }
         csaUpdate(dt);   // CSA-D: Come Sail Away's Update and LateUpdate after the motor - the helm's pin and the boat's move carry the body before the eye is taken from it
@@ -33957,6 +33960,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // this host's derived lets - re-derive whenever they disagree
       if (shownWeather() !== weather) applyWeather(shownWeather());
     }
+    { const _sp = playerTravelPixel(); snowCover.tick({ px: _sp.x, py: _sp.y, t: playerTicker.classicMinutes, dt, arriving: !playerSpawned }); }   // PRECIP4: the snow the ground keeps, about the player - its window integrated, its lines eased, the standing pixels swept
     // WX2: the front's word for this frame. Under the enhanced sky the
     // arrival is WIND1's front, read off the controller; under the
     // classic sky it is 1 and the terms are the weather's own.
@@ -33999,7 +34003,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       heading: wd.on ? wd.dir : null, feet: walkMode && playerSpawned ? player.pos : cam.pos, height: player.height });   // WINDFALL1: the mod's frame - its sounds and leaves, and the law the flora lean by (one wind: WIND1's heading); AUDIT ENVIRONS W1: WindMod.Update's Time.deltaTime, held by a pause and scaled with the world
     meterFor(renderer.gl)?.markCpu('snow');   // PERF-SIM1: the snow layer's frame
     _snowPixels.clear();
-    snowfall.frame({ now: now / 1000, inside: false, player: snowPlayer(), weather, seconds: worldMinutes() * 60, winter: season === SEASON.Winter, climate: maps.getClimateIndex(_wfPx.x, _wfPx.y), overworld: !!tvf, npcs: snowNpcs, corpses: snowBodies });   // SNOWFALL1: DynamicSnowController.Update - its tiers round the player, the tracks, the snowpack by the event clock; TV-SNOW: under the Overworld, which draws no snow, the clocks alone (snowfallHost.js)
+    snowfall.frame({ now: now / 1000, inside: false, player: snowPlayer(), weather, seconds: worldMinutes() * 60, winter: snowCover.winterAt(walkMode && playerSpawned ? player.pos : cam.pos, season === SEASON.Winter), climate: maps.getClimateIndex(_wfPx.x, _wfPx.y), overworld: !!tvf, npcs: snowNpcs, corpses: snowBodies });   // SNOWFALL1: DynamicSnowController.Update - its tiers round the player, the tracks, the snowpack by the event clock; TV-SNOW: under the Overworld, which draws no snow, the clocks alone (snowfallHost.js)
     meterFor(renderer.gl)?.markCpu('storms');   // PERF-SIM1: the animals, the lightning, the dread and the sun baby, the sky and the light settings
     animalAmbience.update(dt, cam.pos);   // A4: town animal barks (PlayRandomlyIfPlayerNear)
     // Storm lightning strobe. AUDIT 39 (#14): ENHANCED-SKIN ONLY -
@@ -34540,7 +34544,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       if (p.deepWaters?.hide) continue;   // DW-C: DeepWaterTerrainCapRenderer.Apply - a pure-ocean pixel's drawHeightmap = false
       const pixelMatrix = p._pixelMatrix;
       renderer.drawTerrain(p.dwTerrain ?? p.terrain, pixelMatrix,   // DW-C: what the cap clipped whole is out of the index set (the cull)
-        renderer.tileArrays.get(p.groundArchive), p.tilemapTex, 6.4, !!p._dwBytes, ecoDraw(p));   // FAR-CLIP1: and the rest of its clip is the clip program's - DeepWaterTerrainCapRenderer.ApplyWaterTexelClip's material, per terrain it patched; ECOTONE1: a border pixel's neighbours' sets
+        snowCover.arrayOf(p.groundArchive), p.tilemapTex, 6.4, !!p._dwBytes, ecoDraw(p), snowCover.drawOf(p));   // FAR-CLIP1: and the rest of its clip is the clip program's - DeepWaterTerrainCapRenderer.ApplyWaterTexelClip's material, per terrain it patched; ECOTONE1: a border pixel's neighbours' sets
     }
     if (deepWaters) drawDeepWatersFloors(groundQueue);   // DW-C: the seafloor, opaque, under the ground's holes (the sky's foreign span, below, covers it)
     if (oceanHoles) drawOceanHolesOpaque(groundQueue);   // OH-C: the pit's black and the surface's underside, with the floors
@@ -34948,7 +34952,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // falls next and never what has already fallen.
         precip.enhanced = !!sky?.cloudShadow;
         if (precip.enhanced) {
-          precip.intensity = fx.intensity;   // WX2: the front's share of the profile
+          precip.intensity = fx.intensity; precip.snowShare = fx.snow ?? null;   // WX2: the front's share of the profile; PRECIP1: and its snow share
           // WX1: THE LAB'S WIND LAW, term for term - the rate handed to the
           // shader is the lab's metres a second WITHOUT the gust, and the
           // travel integrated on the CPU carries it, as grass-proto.html's
@@ -34967,7 +34971,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // click is a Travel Options journey, whose DisableWeatherAndSound stood the particles down while the rain loop
         // played on - but the Overworld's journey is SEEN, the world going on under it, so what falls keeps falling there
         if ((!_travelWeatherOff || tvf) && !_dwPrecipOff) {
-          precip.draw(precipShown, proj, view, wxEye32, camRight, now / 1000);
+          precip.drawFall(precipShown, proj, view, wxEye32, camRight, now / 1000);   // PRECIP1: at the air's snow share
           renderer.markForeignPass();   // EV6: so did the rain
         }
       }
@@ -35022,7 +35026,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // paid before.
       let _pieceAt = null;
       let _near = null;
-      const nearPieces = () => (_near ??= [...built.values()].filter((p) => p._stride === 1 && p.tilemapBytes && p.season !== SEASON.Winter));
+      const nearPieces = () => (_near ??= [...built.values()].filter((p) => p._stride === 1 && p.tilemapBytes && (snowCover.on || p.season !== SEASON.Winter)));   // PRECIP4: on the snow lane every pixel, each blade asked (keep)
       const pieceAt = (x, z) => (_pieceAt ??= pieceIndex(   // PERF8: one Map read per blade instead of a scan of every near pixel
         nearPieces().map((p) => ({ p, t: state.pixelTranslation(p.px, p.py, [0, 0, 0]), grass: grassRecords.get(p.groundArchive) })),
         TERRAIN_SIZE))(x, z);
@@ -35048,6 +35052,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         const ga = p.ecoGround ? borderGround(p, lx, lz) : p.groundArchive;
         const g = ga === p.groundArchive ? grass : grassRecords.get(ga);
         if (rec === 0 || !g || !g.has(rec)) return null;
+        if (snowCover.on && snowCover.buries(p, lx, lz, x, z)) return null;   // PRECIP4: no blade through the snow lying there
         // GRASS-PATH1 (2026-09-19, Mac: "Grass shouldnt be on dirt
         // paths"): the road painter's own mask. A track across grass
         // writes 10/11/12/51 - the SAME records the natural dirt-grass
