@@ -50,7 +50,7 @@
 import { egCircleSpecs, egFirstHallOf } from '../src/net/eliteGates/egLaw.js';
 import { egHallOf, egSpecForget } from '../src/net/eliteGates/egLaw.js';
 import { egSpanPairs, egPairWindows, egSpanProof, egRoadCross, egFastCross, egCrossMin, egCourseOf, egJumpLands, egJumpReach, egPieceAt, egPendHits,
-  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, egAlongOf, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
+  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, egAlongOf, egSpanBuildOf, EG_SPAN_RUN_MPS, EG_BODY_R, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
 import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_RISE_M } from '../src/net/eliteGates/egRouteProof.js';   // THE ASCENT: the route's legs
 import { egRouteLen } from '../src/net/eliteGates/egRoute.js';
 import { egSynth9Give } from './lib/egLaw9Synth.mjs';   // THE ASCENT: synthetic LAW 9 halls, until THE ROOMS lays them
@@ -91,6 +91,11 @@ const LATE_S = 0.2;           // a landing looked ahead from comes this late, at
 const STILL = new Set(['still', 'ledge', 'drop', 'gust', 'vent', 'bone', 'crumble']);
 /** The pieces that keep time under a foot: gone off their beat (a Beat, a Moon branch, a crust) or falling after one. */
 const TIMED = new Set(['beat', 'moon', 'slag', 'crumble', 'bone', 'sink']);
+/** EG-SWEEP-RED: THE SPAN BUILD with no catch at the far edge - its reach one capsule's radius short (the solver's reach
+ *  counts the capsule over both edges: the landing's is a corner caught and stepped up onto, which a Rail's face moving
+ *  away from the body never gives - the 500-seed sweep before world219's deploy, two jumps 3.1-3.2 m onto a Rail running
+ *  away, the body pinned to its face and falling) */
+const UNCAUGHT = Object.freeze({ ...egSpanBuildOf(0), reach: (/** @type {number} */ h) => { const r = egJumpReach(h); return { reach: r.reach - EG_BODY_R, air: r.air }; } });
 const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 /** Still ground under me: the circle's floors, a Falling Wall's or a Collapsing Tube's segment, one of Grath's islands
@@ -277,7 +282,9 @@ function pilotOf(S, spec, road, t0, trace = null) {
   /** a piece where it stands at `u` - a slag crossing the spout's crust I stand on (`lane`), never the other's */
   const pieceAt = (q, u, lane = -1) => (q.kind === 'slag' && lane >= 0 ? { dx: egSlagX(q, lane) - q.x, dz: 0, solid: egSlagState(q, lane, u).st === 'crust' } : egPieceAt(q, u));
   const lzOf = (p, u, lane = -1) => (p.a ? p.a.z + pieceAt(p.a, u, lane).dz + p.a.d / 2 : p.edge);
-  const lands = (p, u) => egJumpLands(p, u - HOLD_S) && egJumpLands(p, u) && egJumpLands(p, u + HOLD_S);
+  /** EG-SWEEP-RED: what I land on runs away from me as I come down on it (a Rail, a Drum on its travel) - its edge's catch is none */
+  const recedes = (p, u) => { if (!p.b) return false; const T = u + airOf(p); return egPieceAt(p.b, T + 0.02).dz > egPieceAt(p.b, T).dz + 1e-6; };
+  const lands = (p, u) => egJumpLands(p, u - HOLD_S) && egJumpLands(p, u) && egJumpLands(p, u + HOLD_S) && (!recedes(p, u) || egJumpLands(p, u, UNCAUGHT));
   const goneAt = (q, since, lane = -1) => {
     if (!q || !TIMED.has(q.kind)) return Infinity;
     if (EG_CRUMBLE_KINDS.includes(q.kind)) return since + EG_CRUMBLE_DELAY_S - 0.06;
@@ -325,17 +332,24 @@ function pilotOf(S, spec, road, t0, trace = null) {
     const p = pairs[pi];
     return lands(p, u) && (turn || !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null)) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);   // (a turned course keeps no Gust)
   };
+  /** the chain from pair `pi` launched at `u`: while what it lands on keeps time, the launch from THERE made in time too */
+  const follows = (pi, u, depth = 0) => {
+    const p = pairs[pi], nx = pairs[pi + 1];
+    if (!(p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8)) return true;
+    const land = u + airOf(p), kb = p.b.kind === 'slag' ? egSlagLane(p.b, land) : -1, key = `${pi + 1}:${Math.round(land * 50)}`;
+    if (!ahead.has(key)) ahead.set(key, launch(pi + 1, land + p.b.d / EG_SPAN_RUN_MPS + LATE_S, EG_CRUMBLE_KINDS.includes(p.b.kind) || p.b.kind === 'sink' ? land + LATE_S : land, depth + 1, kb) != null);
+    return ahead.get(key);
+  };
   const launch = (pi, ready, since, depth = 0, lane = -1) => {
-    const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p), nx = pairs[pi + 1];
+    const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p);
     let best = null, bestOv = -Infinity, first = null;
     for (let u = ready; u <= ready + EG_SOLVE_HORIZON_S && u + 0.05 < gone; u += 0.02) {
       if (first != null && u > first + WINDOW_LOOK_S) break;
       if (!takes(pi, u, lane)) continue;
-      if (p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8) {
-        const land = u + air, kb = p.b.kind === 'slag' ? egSlagLane(p.b, land) : -1, key = `${pi + 1}:${Math.round(land * 50)}`;
-        if (!ahead.has(key)) ahead.set(key, launch(pi + 1, land + p.b.d / EG_SPAN_RUN_MPS + LATE_S, EG_CRUMBLE_KINDS.includes(p.b.kind) || p.b.kind === 'sink' ? land + LATE_S : land, depth + 1, kb) != null);
-        if (!ahead.get(key)) continue;
-      }
+      // EG-SWEEP-RED: the chain held for a launch HOLD_S late too, as the launch itself is held - a plan whose next launch had no
+      // slack at all (the 500-seed sweep before world219's deploy: a Beat jumped onto 0.03 s late, a frame of the run-up's
+      // own, and no launch off it before it went)
+      if (!follows(pi, u, depth) || !follows(pi, u + HOLD_S, depth)) continue;
       // the window found: within its first WINDOW_LOOK_S, the moment the two tops line up best (a still pair: its first)
       first ??= u;
       const ov = overlap(p, u, air, lane);
