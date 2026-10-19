@@ -177,7 +177,7 @@ export function openEgStartWindow(o) {
     if (r.kind === 'board') { shut(); let back = false; const again = () => { if (!back && !done) { back = true; showMain(); } }; if (!o.board(again)) again(); return; }   // EG-ZM: the boards, and back
     // the stake, the keyless line and the warning are words, not choices - but the port's picker closed itself on the pick
     // (ui/listPicker.js _pick; DFU's DaggerfallListPickerWindow leaves the close to its owner), so the list is asked again
-    // (FIELD BUGS 2026-10-18b STAKE-ROW: a bare return left no window and the key answering "already asks" until the
+    // (FIELD BUGS 2026-10-18c STAKE-ROW: a bare return left no window and the key answering "already asks" until the
     // screen let go)
     if (r.kind !== 'start') { shut(); showMain(); return; }
     if (!r.missing.length) { choose({ ew: r.ew, wg: [...wager], rh: false }); return; }

@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18b, STAKE-ROW, and AUDIT STAKE-ROW (bible/01-Overview/bugs/Field-Bugs-2026-10-18b.md,
+// FIELD BUGS 2026-10-18c, STAKE-ROW, and AUDIT STAKE-ROW (bible/01-Overview/bugs/Field-Bugs-2026-10-18c.md,
 // bible/01-Overview/audits/Audit-Stake-Row.md; Mac: "The top option doesnt work when using the weird key", then "Weir key",
 // then "It can be tapped"): the start window's word rows - the stake ("Weir Keys: 3 - one will be staked."), the keyless
 // line and the quest warning - are words, not choices; picked, the port's list picker (ui/listPicker.js `_pick`) has

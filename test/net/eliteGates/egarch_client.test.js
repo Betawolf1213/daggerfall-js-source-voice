@@ -109,9 +109,9 @@ test('EG-F THE START WINDOW: the stake, the warning, Hall 1 and every Redoubt th
   assert.deepEqual(R.log.at(-1), ['choose', { ew: 0, wg: [], rh: true }]);
   R = run();
   pick('Weir Keys: 3 - one will be staked.');
-  // PIN MOVED (FIELD BUGS 2026-10-18b STAKE-ROW): the port's picker closes itself on any pick (ui/listPicker.js _pick; DFU's
+  // PIN MOVED (FIELD BUGS 2026-10-18c STAKE-ROW): the port's picker closes itself on any pick (ui/listPicker.js _pick; DFU's
   // leaves the close to its owner), so the stake picked asks the list again - the old list closed, a new one open
-  // (test/ui/eliteGates/fb1018b_stakerow.test.js drives the real picker on the real slot)
+  // (test/ui/eliteGates/fb1018c_stakerow.test.js drives the real picker on the real slot)
   assert.equal(R.lists.length, 2, 'the stake is words, not a choice: the list again');
   assert.equal(R.lists[0].open, false);
   assert.equal(R.top().open, true);
@@ -470,7 +470,7 @@ test('EG-F THE HOSTS BY SOURCE: the world host builds the arch pool and hands it
     'const egArchPool = params.has(\'online\') ? createEgArchPool({',
     '    arches: egArchPool,   // EG-F: the Elite Breaches\' arches, stood, drawn and pressed beside the gate',
     '    keyFacts: egKeyFacts, startWindow: egStartWindow, arches: egArchPool, callPortal: _egCallPortal, prompt: egCallPrompt, feet: egFeet, probes: egProbes,   // EG-F',
-    '    ...egStartListDoors({ ready: listPickerArtLoaded, slot: egWindowSlot, makeList: (items, onPick, onCancel) => new ListPickerWindow({ items, backdrop: \'none\', onPick: (i) => onPick(i), onCancel: () => onCancel() }) }),',   // PIN MOVED (AUDIT STAKE-ROW): the list's doors are the window's own (egStartListDoors), run over the real slot by test/ui/eliteGates/fb1018b_stakerow.test.js
+    '    ...egStartListDoors({ ready: listPickerArtLoaded, slot: egWindowSlot, makeList: (items, onPick, onCancel) => new ListPickerWindow({ items, backdrop: \'none\', onPick: (i) => onPick(i), onCancel: () => onCancel() }) }),',   // PIN MOVED (AUDIT STAKE-ROW): the list's doors are the window's own (egStartListDoors), run over the real slot by test/ui/eliteGates/fb1018c_stakerow.test.js
     'ask: egStartAsk((w) => townTalk.showOverlay(w), (o) => new YesNoBoxWindow(o)),',   // PIN MOVED (AUDIT EG III lane4 #12): DFU's YesNo box through the question's door (ui/eliteGates/egStartWindow.js egStartAsk - test/scenes/eliteGates/egaudit3_client.test.js)
     'if (ea) frame.ea = ea;',
     'exteriorFoes.setOnEgArch((from, r) => { const p = online?.peers?.get(from); egClient?.archHeard(from, r, p?.shown ? onlineToScene(p.shown) : null); });',

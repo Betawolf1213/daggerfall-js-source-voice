@@ -1,6 +1,6 @@
 # AUDIT STAKE-ROW (2026-10-18) - the Weir Key's top option, read cold
 
-Mac, of pull request #1020 (`01-Overview/bugs/Field-Bugs-2026-10-18b.md` at 1e61b81b8): **"Audit this"**. This page is
+Mac, of pull request #1020 (`01-Overview/bugs/Field-Bugs-2026-10-18c.md` at 1e61b81b8): **"Audit this"**. This page is
 the audit: STAKE-ROW's fix, its pins, its mutants and its record. Each finding has its verdict here. What it changed is
 written into the pages it touched, marked `AUDIT STAKE-ROW` with the finding's id, and in the code beside the fix.
 
