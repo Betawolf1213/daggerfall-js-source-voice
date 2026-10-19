@@ -52,3 +52,29 @@ test('QL12 the ladder\'s page: what a ladder is, the rank held, each rung, the d
   assert.deepEqual(rows.map((r) => r.className.split(' ')[1]), ['done', 'next']);
   assert.match(rows[1].querySelector('.px-qobj-tag').title, /ends differently/);
 });
+
+test('AUDIT QUESTLINES LINES-5, LINES-14, LINES-15, LINES-16: a rung is reached while the guild OFFERS it - by level for the Mages Guild and the knightly orders (questRankFor), by rank for the rest; a knightly order\'s ladder; a temple\'s own divine\'s quests on its ladder; an adult row only while the setting allows one (mutants: the level; the orders\' prefix; the divine\'s rows; the adult filter)', () => {
+  const MG = GUILD_GROUPS.MagesGuild;
+  const KO = GUILD_GROUPS.KnightlyOrder;
+  const HO = GUILD_GROUPS.HolyOrder;
+  const mpools = new Map([
+    [MG, [{ name: 'N0B00Y08', membership: 'M', minReq: 0 }, { name: 'N0B40Y07', membership: 'M', minReq: 4 }, { name: 'N0B60Y01', membership: 'M', minReq: 6 }]],
+    [KO, [{ name: 'B0B00Y00', membership: 'M', minReq: 0 }, { name: 'B0B40Y08', membership: 'M', minReq: 4 }]],
+    [HO, [{ name: 'C0B00Y02', membership: 'M', minReq: 0 }, { name: 'D0B00Y00', membership: 'T', minReq: 0 }, { name: 'D0B00Y01', membership: 'A', minReq: 0 }]],
+    [FG, [{ name: 'M0B00Y06', membership: 'M', minReq: 0 }, { name: 'M0B1XY01', membership: 'M', minReq: 1, adult: true }]],
+  ]);
+  // the Mages Guild offers by level: an Apprentice (rank 1) of level 5 reaches the rank-4 rung, not the rank-6 one
+  const [mg] = ladders({ memberships: { [MG]: { guild: 'MagesGuild', rank: 1 } }, pools: mpools, level: 5 });
+  assert.deepEqual(mg.rungs.map((r) => [r.rank, r.reached]), [[0, true], [4, true], [6, false]], 'level 5 offers rank 4');
+  const [fg] = ladders({ memberships: { [FG]: { guild: 'FightersGuild', rank: 0 } }, pools: mpools, level: 30 });
+  assert.deepEqual(fg.rungs.map((r) => [r.rank, r.reached]), [[0, true]], 'the Fighters Guild by rank alone - and its adult row left out');
+  const [fga] = ladders({ memberships: { [FG]: { guild: 'FightersGuild', rank: 0 } }, pools: mpools, level: 30, adult: true });
+  assert.deepEqual(fga.rungs.map((r) => [r.rank, r.reached, r.quests.map((q) => q.name)]), [[0, true, ['M0B00Y06']], [1, false, ['M0B1XY01']]], 'the setting on: the adult row');
+  // a knightly order: its own ladder, by level too
+  const [ko] = ladders({ memberships: { [KO]: { guild: 'Order:Raven', rank: 0 } }, pools: mpools, level: 4 });
+  assert.equal(ko?.key, 'Order:Raven', 'an order\'s ladder');
+  assert.deepEqual(ko.rungs.map((r) => [r.rank, r.reached]), [[0, true], [4, true]]);
+  // a temple of Akatosh: its members' rows and Akatosh's own, never Arkay's
+  const [ho] = ladders({ memberships: { [HO]: { guild: 'Temple:Akatosh', rank: 0 } }, pools: mpools });
+  assert.deepEqual(ho.rungs[0].quests.map((q) => q.name), ['C0B00Y02', 'D0B00Y00']);
+});

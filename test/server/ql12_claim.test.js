@@ -258,7 +258,7 @@ test('QL12 THE HOUR AND THE OLD COIL: an Hour broken witnesses the Hour\'s step 
   assert.deepEqual(titlesHeld({ handle: 'Witness', ql_titles: row(me).ql_titles }, {}).filter((x) => QL_TITLES.includes(x)), ['hourwitness', 'satakalwitness']);
 });
 
-test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burning Doors witnessed whole (the Doorwarden held - never its breach alone); Covenbane on its END, never its opening; the Weir Key once an account - to a player who keeps it, the choice the first end said, never to one who sealed it, and never twice (mutants: the after-gate; the opening paying; the choice; the key\'s guard; the balance)', async (t) => {
+test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burning Doors witnessed whole (the Doorwarden held - never its breach alone); Covenbane on its END, never its opening; the Weir Key once an account - to an end that keeps it, a seal no bar to a later keep, never twice and said so (mutants: the after-gate; the opening paying; the choice; the key\'s guard; the balance; keyHeld)', async (t) => {
   const { S, at, open, ql, gate, row, steps } = await stood(t);
   /** The Burning Doors witnessed whole at `s`: the line opened, a rite, its end, a breach, its end. */
   const doors = async (who, s) => {
@@ -291,17 +291,18 @@ test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burnin
   const paid = (await ql(me, 'covensHoard', 2, 'keep')).body;
   assert.deepEqual(paid, { witnessed: true, title: 'covenbane', key: true, keys: before + 1 }, 'kept: the key, its balance, and Covenbane');
   assert.deepEqual(row(me), { eg_keys: before + 1, ql_titles: qlTitleBit('doorwarden') | qlTitleBit('covenbane'), ql_key: 1 });
-  assert.deepEqual((await ql(me, 'covensHoard', 2, 'keep')).body, { witnessed: true }, 'once an account');
+  assert.deepEqual((await ql(me, 'covensHoard', 2, 'keep')).body, { witnessed: true, keyHeld: true }, 'once an account - and said so (AUDIT QUESTLINES LINES-4)');
   assert.equal(row(me).eg_keys, before + 1, 'no second key');
-  // SEALED: the title, no key - and the choice the first end said stands
+  // SEALED: the title, no key - the step's record the first end's choice; and a later character of the account who keeps
+  // it is the account's key (AUDIT QUESTLINES LINES-4: a first `seal` barred the key from every character for good)
   const seal = await S.registered('Sealer');
   await doors(seal, T0 + 300);
   await open(seal, 'covensHoard', 2);
   const k0 = row(seal).eg_keys;
   assert.deepEqual((await ql(seal, 'covensHoard', 2, 'seal')).body, { witnessed: true, title: 'covenbane' });
-  assert.deepEqual((await ql(seal, 'covensHoard', 2, 'keep')).body, { witnessed: true }, 'sealed is sealed');
-  assert.deepEqual([row(seal).eg_keys, row(seal).ql_key], [k0, 0]);
-  assert.equal(steps(seal).find((s) => s.line === 'covensHoard').choice, 'seal');
+  assert.deepEqual([row(seal).eg_keys, row(seal).ql_key], [k0, 0], 'sealed: no key');
+  assert.deepEqual((await ql(seal, 'covensHoard', 2, 'keep')).body, { witnessed: true, key: true, keys: k0 + 1 }, 'a later keep: the account\'s key');
+  assert.equal(steps(seal).find((s) => s.line === 'covensHoard').choice, 'seal', 'the record keeps the first choice');
   // A STEP DONE BY AN END WITH NO CHOICE takes the next end's
   const late = await S.registered('LateKeeper');
   await doors(late, T0 + 400);
@@ -387,7 +388,7 @@ test('QL12 THE VOCABULARY: the five join TITLES last, in QL_TITLES\' order; a re
  *  can be cut (`down`), the clocks, the honours told. Only the claims of the `lines` under test reach the service (the
  *  others are answered `unpaid`, kept off the wire). */
 function runnerOn(S, who, lines) {
-  const kv = new Map([[SESSION_KEY, JSON.stringify({ secret: who.secret, id: who.id })], [SERVICE_KEY, 'https://accounts.invalid']]);
+  const kv = new Map([[SESSION_KEY, JSON.stringify({ secret: who.secret, id: who.id, kind: who.handle ? 'account' : 'guest' })], [SERVICE_KEY, 'https://accounts.invalid']]);
   const storage = { getItem: (k) => kv.get(k) ?? null, setItem: (k, v) => kv.set(k, v), removeItem: (k) => kv.delete(k) };
   const door = accountQuestlines({ fetch: S.fetch, storage });
   const R = { wire: [], down: 0, honours: [], clock: { s: 1000, ms: 0 }, inflight: new Set() };
@@ -398,7 +399,7 @@ function runnerOn(S, who, lines) {
     R.wire.push([b.line, b.step, b.phase, a?.ok ? a.data : a]);
     return a;
   };
-  const service = { account: door.account, claim: (b) => { const p = claim(b); R.inflight.add(p); p.finally(() => R.inflight.delete(p)); return p; } };
+  const service = { account: door.account, guest: door.guest, claim: (b) => { const p = claim(b); R.inflight.add(p); p.finally(() => R.inflight.delete(p)); return p; } };
   let uid = 1;
   const machine = { quests: new Map(), questsToInvoke: [],
     scheduleQuestByName(name) { const q = { uid: uid++, questName: name, questComplete: false, questTombstoned: false }; machine.questsToInvoke.push(q); return q; },
@@ -418,27 +419,37 @@ function runnerOn(S, who, lines) {
   R.wait = (s, ms = 0) => { R.clock.s += s; R.clock.ms += ms; };
   /** A load: the runner remade from its own save. */
   R.load = () => { const save = R.runner.snapshot(); R.runner = R.make(); R.runner.restore(save); };
+  /** Ticks, an hour of the character's time apart (AUDIT QUESTLINES LINES-17: one new line an hour), until `id` begins. */
+  R.begin = async (id) => { for (let i = 0; i < 20 && !R.runner.lineState(id); i++) { await R.tick(); if (!R.runner.lineState(id)) R.wait(STEP_GAP_S); } };
+  /** The session's kind changed - a guest registered in place. */
+  R.registered = () => kv.set(SESSION_KEY, JSON.stringify({ secret: who.secret, id: who.id, kind: 'account' }));
   return R;
 }
 
-test('AUDIT QUESTLINES SERVICE-1/-3: a guest who registers mid-line - the Old Coil through the real runner and door: every claim carries its phase, the guest\'s opening is written, the account registers in place, a load asks again only what is owed, the serpent slain after it is witnessed and Satakal\'s Witness paid and told (mutants: a guest\'s open filed unwritten; the door\'s path; the phase dropped)', async (t) => {
+test('AUDIT QUESTLINES SERVICE-1/-3, LINES-2: a guest\'s page begins no line the service pays (its deeds are never recorded) and says why; the guest registers in place and the Old Coil begins - through the real runner and door every claim carries its phase, each step is opened, a load asks again only what is owed, the serpent slain after it is witnessed and Satakal\'s Witness paid and told (mutants: the account gate; the door\'s path; the phase dropped)', async (t) => {
   setPref(QUESTLINES_PREF, true);
   const H = await stood(t);
   const g = await H.S.guest();
   const R = runnerOn(H.S, g, ['oldCoil']);
-  for (const q of ['QLOC01', 'QLOC02']) { await R.tick(); R.done(q); R.wait(STEP_GAP_S); }
-  await R.tick();   // QLOC03 starts
-  assert.ok(R.wire.every(([, , phase]) => phase === 'open'), 'every opening says so');
-  assert.deepEqual(R.wire.map(([l, s, , d]) => [l, s, d]), [['oldCoil', 0, { opened: true }], ['oldCoil', 1, { opened: true }], ['oldCoil', 2, { opened: true }]], 'each step of a line the service pays is opened - a guest\'s too');
-  assert.equal(H.steps(g).length, 3, 'written');
-  // the guest registers - in place, the same id - and the page reloads
+  for (let i = 0; i < 14; i++) { await R.tick(); R.wait(STEP_GAP_S); }
+  assert.equal(R.runner.lineState('oldCoil'), null, 'a guest\'s page: the line not begun');
+  const row = R.runner.rows().find((l) => l.id === 'oldCoil');
+  assert.deepEqual([row.state, row.opens], ['locked', 'Opens with a registered account.']);
+  assert.deepEqual(R.wire, [], 'nothing asked');
+  // the guest registers - in place, the same id
   H.at(T0 + 50);
   assert.equal((await H.S.call('/v1/auth/register', { handle: 'WasGuest', password: 'a good long one', ...ACCEPTED }, g.secret)).status, 200);
+  R.registered();
   const me = { ...g, handle: 'WasGuest' };
+  await R.begin('oldCoil');
+  for (const q of ['QLOC01', 'QLOC02']) { R.done(q); R.wait(STEP_GAP_S); await R.tick(); }
+  assert.ok(R.wire.every(([, , phase]) => phase === 'open'), 'every opening says so');
+  assert.deepEqual(R.wire.map(([l, s, , d]) => [l, s, d]), [['oldCoil', 0, { opened: true }], ['oldCoil', 1, { opened: true }], ['oldCoil', 2, { opened: true }]], 'each step of a line the service pays is opened');
+  assert.equal(H.steps(me).length, 3, 'written');
   const asked = R.wire.length;
   R.load();
   await R.tick();
-  assert.equal(R.wire.length, asked, 'nothing owed: every opening was answered');
+  assert.equal(R.wire.length, asked, 'a load: nothing owed - every opening was answered');
   // the serpent slain, its receipt claimed; QLOC03 ends with its outcome
   H.at(T0 + 100);
   await H.serpent(me);
@@ -446,7 +457,7 @@ test('AUDIT QUESTLINES SERVICE-1/-3: a guest who registers mid-line - the Old Co
   R.done('QLOC03', 'scale');
   await R.tick();
   assert.deepEqual(R.wire.at(-1), ['oldCoil', 2, 'end', { witnessed: true, title: 'satakalwitness' }]);
-  assert.deepEqual(R.honours, [{ line: 'oldCoil', title: 'satakalwitness', key: false, keys: null }], 'told once');
+  assert.deepEqual(R.honours, [{ line: 'oldCoil', title: 'satakalwitness', key: false, keys: null, keyHeld: false }], 'told once');
   assert.equal(H.row(me).ql_titles, qlTitleBit('satakalwitness'));
   assert.equal(R.runner.lineState('oldCoil').claims[2], 'witnessed');
 });
@@ -458,7 +469,7 @@ test('AUDIT QUESTLINES SERVICE-2/-3: a claim is never given up - the Hour\'s ope
   const lines = ['hourThatWasNot'];
   const R = runnerOn(H.S, me, lines);
   H.at(T0 + 10);
-  await R.tick();   // QLHR01 starts: the line's first letter, opened
+  await R.begin('hourThatWasNot');   // QLHR01 starts: the line's first letter, opened
   assert.deepEqual(R.wire, [['hourThatWasNot', 0, 'open', { opened: true }]]);
   R.done('QLHR01');
   R.wait(STEP_GAP_S);
@@ -519,10 +530,11 @@ test('AUDIT QUESTLINES SERVICE-3/-7: the Covens\' Hoard kept through the real ru
   const R = runnerOn(H.S, me, ['covensHoard']);
   R.runner.restore({ burningDoors: { step: 5, outcomes: {}, done: true, wait: 0, claims: { 2: 'witnessed', 3: 'witnessed' } }, covensHoard: { step: 2, outcomes: {}, done: false, wait: 0, claims: {} } });
   await R.tick();   // QLCH03 starts
+  assert.ok(R.wire.some(([l, st, p]) => l === 'covensHoard' && st === 2 && p === 'open'), 'QLCH03 opened');
   const before = H.row(me).eg_keys;
   R.done('QLCH03', 'keep');
   await R.tick();
   assert.deepEqual(R.wire.at(-1), ['covensHoard', 2, 'end', { witnessed: true, title: 'covenbane', key: true, keys: before + 1 }]);
-  assert.deepEqual(R.honours, [{ line: 'covensHoard', title: 'covenbane', key: true, keys: before + 1 }], 'the key\'s balance handed on, for the pack');
+  assert.deepEqual(R.honours, [{ line: 'covensHoard', title: 'covenbane', key: true, keys: before + 1, keyHeld: false }], 'the key\'s balance handed on, for the pack');
   assert.equal(H.row(me).ql_key, 1);
 });

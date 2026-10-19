@@ -19,6 +19,8 @@ import { receivedState, mergeSharedState } from '../../../src/systems/questlines
 import { sheetFor } from '../../../src/systems/questlines/qlSheets.js';
 import { FEATURES } from '../../../src/systems/features.js';
 import { FEATURE_PREF_ONLINE } from '../../../src/systems/features.js';
+import { questSource, loadTables as loadPackTables } from '../../qlSources.mjs';   // AUDIT QUESTLINES LAW-6: the pack as the game reads it
+import { goldStack } from '../../../src/systems/inventory.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');
@@ -81,13 +83,14 @@ test('QL1 the state: written whole, read back field by field, and anything else 
 });
 
 test('QL1 a shared copy (decision 7): the party\'s progress travels, the holder\'s reward never does; a resync is monotonic', () => {
-  const sender = { ...freshState(), done: ['a'], choices: { fate: 'spare' }, outcome: null, paid: true, moved: true, offer: { pieces: [{}] }, acts: { k: 1 } };
+  // PIN MOVED (AUDIT QUESTLINES REWARD-15): a state keeps no `offer` - a reward's choice waits in the layer's offers
+  const sender = { ...freshState(), done: ['a'], choices: { fate: 'spare' }, outcome: null, paid: true, moved: true, acts: { k: 1 } };
   const got = receivedState(writeState(sender));
   assert.deepEqual(got.done, ['a']);
   assert.deepEqual(got.choices, { fate: 'spare' });
   assert.equal(got.paid, false, 'a copy arrives unpaid');
   assert.equal(got.moved, false);
-  assert.equal(got.offer, null);
+  assert.equal('offer' in got, false, 'no choice of reward rides a quest\'s state');
   assert.deepEqual(got.acts, {}, 'an act is this world\'s');
   assert.equal(receivedState(null), null, 'DFU\'s quest arrives as DFU\'s');
   const local = { ...freshState(), done: ['b'], failed: ['a'], choices: { fate: 'kill' }, paid: true, acts: { j: 3 } };
@@ -193,7 +196,9 @@ test('QL1 the latch: done stays done when the script clears its task, a branch\'
   assert.equal(fallbackOutcome(ended, sheet).id, 'failed');
   assert.equal(fallbackOutcome({ ...ended, questSuccess: true }, sheet).id, 'done', 'success: the outcome named done first');
   const unnamed = { outcomes: sheet.outcomes.filter((o) => o.id !== 'done' && o.id !== 'failed').concat([{ id: 'lost', on: { ended: true }, failure: true }]) };
-  assert.equal(fallbackOutcome({ ...ended, questSuccess: true }, unnamed).id, 'mercy', '...else the first that is no failure');
+  // PIN MOVED (AUDIT QUESTLINES LAW-1): a success with no `done` is the sheet's own `success`, never a guess at the first
+  assert.equal(fallbackOutcome({ ...ended, questSuccess: true }, unnamed), null, '...never the first that is no failure');
+  assert.equal(fallbackOutcome({ ...ended, questSuccess: true }, { ...unnamed, success: 'mercy' }).id, 'mercy', '...but the one the sheet names');
   assert.equal(fallbackOutcome(ended, unnamed).id, 'lost', '...and a failure the first failure');
 });
 
@@ -270,7 +275,7 @@ test('QL1/QL3 the bridge makes the layer: M0B00Y06 stamped at its start, its obj
   // the snapshot carries it; a restore brings it back
   const snap = bridge.snapshot();
   assert.equal(snap.questlines.offers.length, 1);
-  const b2 = makeBridge();
+  const b2 = makeBridge({ offerReward: () => {} });   // AUDIT QUESTLINES REWARD-13: a host with the door a piece goes through
   b2.restore(snap);
   assert.equal(b2.questlines.offers().length, 1, 'the choice outlives the session');
   const taken = b2.questlines.take(b2.questlines.offers()[0].id, 1);
@@ -294,4 +299,96 @@ test('QL1 the bridge leaves a quest begun with the switch off as DFU\'s: no obje
   assert.equal(quest.ql, null);
   const log = bridge.questLog();
   assert.ok(log.ended.every((r) => r.ql === null) && log.active.every((r) => r.ql === null));
+});
+
+// ---- AUDIT QUESTLINES LAW-6: four claims of the record, each held by a quest of the pack through the real bridge ----
+
+/** A bridge over the pack as the game reads it (the questlines' patches while the switch is on - test/qlSources.mjs), the
+ *  world's half headless: an action that needs a scene finishes quietly. */
+function packBridge(over = {}) {
+  loadPackTables();
+  setPref(QUESTLINES_PREF, true);
+  const rec = { offers: [], rep: [], rewards: [], gold: [] };
+  let now = 1000;
+  const bridge = createQuestBridge({
+    data: { readListTable: (name) => { try { return read(join(VENDOR, 'Tables', `QuestList-${name}.txt`)); } catch { return null; } }, getQuestSourceLines: (n) => questSource(n, true) },
+    classicSeconds: () => now, nowSeconds: () => now, worldSeconds: () => now,
+    playerEntity: { name: 'Hero', level: 10, gender: 'male', career: { weaponArmorShieldsBitfield: 0, forbiddenMaterialsFlags: 0 }, skills: new Array(35).fill(30) },
+    getReputation: () => 0, carriesQuestItem: () => false,
+    onQuestlineOffer: (o) => rec.offers.push(o), changeReputation: (fid, amount) => rec.rep.push([fid, amount]),
+    offerReward: (_q, item) => rec.rewards.push(item), addGold: (n) => rec.gold.push(n),
+    ...over,
+  });
+  const start = (name) => {
+    const warn = console.warn; console.warn = () => {};
+    try {
+      const q = bridge.machine.startQuestByName(name, 0);
+      for (const t of q.tasks.values()) for (const a of t.actions) if (!a.isTriggerCondition) { const up = a.update.bind(a); a.update = (c) => { try { up(c); } catch { a.setComplete(); } }; }
+      return q;
+    } finally { console.warn = warn; }
+  };
+  const tick = (n = 1) => { const warn = console.warn; console.warn = () => {}; try { for (let i = 0; i < n; i++) { now += 60; bridge.machine.tick(); bridge.questlines.look(); } } finally { console.warn = warn; } };
+  return { bridge, rec, start, tick };
+}
+
+test('AUDIT QUESTLINES LAW-6: Nocturnal\'s summoning (40C00Y00) paid and ended an hour later settles `done` - the catch-all yields to DFU\'s word that it succeeded (mutants: the catch-all yield deleted)', () => {
+  const { rec, start, tick } = packBridge();
+  const q = start('40C00Y00');
+  tick(2);
+  q.resources.get('monster').killCount = 1; tick(2);   // the mage dead: _S.05_
+  const click = q.getTask({ name: 'S.04' }).actions.find((a) => a.typeName === 'ClickedNpc');
+  click.checkTrigger = () => true; tick(1); click.checkTrigger = () => false;   // Nocturnal's slave: _S.06_ pays, unsets _S.04_
+  assert.equal(q.questSuccess, true, 'paid');
+  tick(3);
+  assert.equal(q.getTask({ name: 'S.06' }).getTriggerValue(), false, 'its success task no longer holds');
+  q.resources.get('bonk').remainingTimeInSeconds = 0; tick(4);   // `_bonk_`: end quest
+  assert.equal(q.ql.outcome, 'done', 'never "The contract with Nocturnal lapsed unfulfilled" for a player it paid');
+  assert.equal(rec.offers.length, 0, '`own`: the Prince\'s artifact is the reward');
+});
+
+test('AUDIT QUESTLINES LAW-6: the werewolf\'s cure ($CUREWER) closed by the system that cured it - machine.tombstoneQuest\'s `ended` - settles there: `cured` (mutants: tombstoneQuest\'s ended settle deleted)', () => {
+  const { bridge, start, tick } = packBridge();
+  const q = start('$CUREWER');
+  tick(2);
+  q.getTask({ name: 'S.14' }).start();   // the child drank the blood
+  bridge.machine.tombstoneQuest(q, { ended: true });   // lycanthropy.js endLycanthropy's close (world.js tombstoneQuestsByName)
+  assert.equal(q.ql.outcome, 'cured');
+  assert.equal(q.ql.moved, true, 'settled once, at the tombstone');
+});
+
+test('AUDIT QUESTLINES LAW-6: M0B00Y06 whose time runs out inside its hand-in\'s grace ends twice - and settles ONCE: one choice of gear, one outcome (mutants: ending\'s moved guard deleted)', () => {
+  const { bridge, rec, start, tick } = packBridge();
+  const q = start('M0B00Y06');
+  let ends = 0;
+  const end = q.endQuest.bind(q);
+  q.endQuest = () => { ends++; return end(); };
+  tick(1);
+  q.getTask({ name: 'mondead' }).start(); q.getTask({ name: 'qgclicked' }).start();
+  tick(1);   // the hand-in: gold, `end quest`
+  const clock = q.resources.get('2dung');
+  clock.remainingTimeInSeconds = 0; clock.clockEnabled = true;   // the time limit runs out inside the grace: its own `end quest`
+  tick(5);
+  assert.equal(ends, 2, 'the script ended it twice');
+  assert.equal(rec.offers.length, 1, 'one choice of gear');
+  assert.equal(q.ql.outcome, 'done');
+  assert.equal(bridge.questlines.ending(q), null, 'a third end changes nothing');
+  assert.equal(rec.offers.length, 1);
+});
+
+test('AUDIT QUESTLINES LAW-6: QLWR04\'s courier letter (`give pc _letter_ notify`) pays nothing - the quest stays unpaid and its mercy\'s gold is scaled x1.25; a second gold reward is never scaled again (mutants: reward\'s letter rule deleted; reward\'s paid guard on the gold deleted)', () => {
+  const { rec, start, tick } = packBridge({ playerEntity: { name: 'Hero', level: 20, gender: 'male', career: { weaponArmorShieldsBitfield: 0, forbiddenMaterialsFlags: 0 }, skills: new Array(35).fill(30) } });
+  const q = start('QLWR04');
+  for (const t of q.tasks.values()) for (const a of t.actions) if (a.typeName === 'PlaceNpc') a.isComplete = true;
+  for (const a of q.getTask({ name: 'courier' }).actions) if (a.typeName === 'GivePc') a.offerImmediatelyNow();
+  q.getTask({ name: 'courier' }).start(); tick(3);   // the courier's letter arrives
+  assert.equal(q.ql.paid, false, 'a letter is the quest\'s mail, never its pay');
+  const gold = q.getItem({ name: 'gold' }).daggerfallUnityItem;
+  const minted = gold.stackCount;
+  q.getTask({ name: 'tomercy' }).start(); tick(6);
+  assert.equal(q.ql.outcome, 'mercy');
+  assert.equal(gold.stackCount, Math.round(minted * 1.25), 'greater: x1.25 at GivePc');
+  assert.ok(rec.rewards.includes(gold), 'the scaled purse is the one offered');
+  const second = goldStack(200);
+  q.hooks.questReward(q, second, { itemName: 'gold' });   // a second `give pc` of gold: the quest already paid
+  assert.equal(second.stackCount, 200, 'scaled once a quest');
 });

@@ -4,6 +4,8 @@
 -- ruling faction (factiontype Province - the crown the watch answers to), keeping a table at a tavern of the player's
 -- own town. The act is the raids' (qlActs.js raid-repelled - systems/raidingParties.js: a raid the player fought in,
 -- the town cleansed; raiders strike towns of the Bay every day - bandits, orcs or knights).
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIW01
 DisplayName: Raiders at the Gate
 -- Message panels
@@ -38,8 +40,7 @@ Message:  1011
  fight until the raiders are driven off. Then come
  and find me at _inn_ in __inn_.
 
-<ce>                                  _captain_
-<ce>                              Captain of the Watch
+<ce>                    _captain_, Captain of the Watch
 
 Message:  1012
 <ce>          A watchman in a dented helm falls into step

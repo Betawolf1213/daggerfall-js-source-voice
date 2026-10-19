@@ -1144,7 +1144,9 @@ export function createProfBook({ door, storage = null, character = () => null, n
       applyTrack(r.data?.track);
       if (!had) return { ok: true, data: r.data, elsewhere: true };
       try { mint(r.data, w); } catch (e) { console.warn('[prof] a craft would not mint', e); }   // AUDIT 30 C4: the kept craft its fee
-      if (w.brew !== true) noteAct('piece-crafted');   // QL11: a piece made at a station - minted once, by the tab that let it go (a brew's potions are no piece)
+      // AUDIT QUESTLINES ACTS-4: nor a dish - Cooking's recipes are crafts too (recipeLaw.js dishRecipe, kind 'dish'), and a
+      // stew cooked at any fire is no piece made at a station
+      if (w.brew !== true && recipeById(w.recipe)?.kind !== 'dish') noteAct('piece-crafted');   // QL11: a piece made at a station - minted once, by the tab that let it go (a brew's potions are no piece)
       return { ok: true, data: r.data };
     }
     if (keptAnswer(r)) return { ok: false, error: r?.error ?? 'offline', kept: true };

@@ -3,6 +3,8 @@
 -- by a questor: the note is the offer. The giver is unnamed (an armourer): an Armorer of the player's own town, at its
 -- armoury. The act is the sockets' (qlActs.js gem-socketed - systems/reforge.js setGemPiece, LOOT20/GEM1: free, any
 -- socket, from the pack or the Reforge's press). The gem is the player's own: a quest's gift would read as its pay.
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIG01
 DisplayName: A Stone in the Setting
 -- Message panels
@@ -36,8 +38,7 @@ Message:  1011
  The mines give gems up, and so do the dead. Then
  come to _shop_ in __shop_ and tell me.
 
-<ce>                                    _smith_
-<ce>                                    armourer
+<ce>                               _smith_, armourer
 
 Message:  1012
 <ce>         An apprentice in a scorched leather apron

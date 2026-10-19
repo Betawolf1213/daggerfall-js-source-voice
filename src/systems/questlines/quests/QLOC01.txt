@@ -3,6 +3,9 @@
 -- by a questor: the letter is the offer. Lore: canon - Satakal, the Redguards' World-Skin, who sheds the world as a
 -- snake its skin and devours himself; Tall Papa (Ruptga), who taught the spirits the Walkabout between the skins. The
 -- port's own: Sethrakul, the skin that was shed and still swims (bible/03-World/Sea-Serpent.md), Hamid al-Rasheen.
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName), and it was
+-- "Letter: master of a Sentinel packet".
 Quest: QLOC01
 DisplayName: The Sailors’ Tale
 -- Message panels
@@ -36,8 +39,7 @@ Message:  1011
  is careened. Buy me a drink and I will tell you a
  sailors' tale. You will not believe it. Nor did I.
 
-<ce>                              Hamid al-Rasheen
-<ce>                       master of a Sentinel packet
+<ce>               Hamid al-Rasheen, master of a Sentinel packet
 
 Message:  1012
 <ce>         A sun-dark sailor with a Sentinel accent shoulders

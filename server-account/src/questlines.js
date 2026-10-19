@@ -108,7 +108,7 @@ export function qlTitleSteps(lineId) {
 
 /**
  * THE CLAIM. An `open`: `{ opened: true }`, any step of a line the service pays. An `end`: `{ witnessed: false }`,
- * `{ witnessed: true, title?, key?, keys? }`, `{ why: 'guest' }` for a row with no handle, or `{ why: 'unpaid' }` for a
+ * `{ witnessed: true, title?, key?, keys?, keyHeld? }`, `{ why: 'guest' }` for a row with no handle, or `{ why: 'unpaid' }` for a
  * step the service pays nothing. Either: `{ error }` - 'ql-closed' (the switch), 'ql-body' (a body questlineClaims.js
  * qlClaimOf refuses).
  * @param {{ db: any, env?: any }} ctx
@@ -155,16 +155,18 @@ export async function claimQl({ db, env = null }, player, body, nowS) {
       AND (SELECT COUNT(*) FROM ql_steps WHERE account = ?1 AND line = ?3 AND step IN (SELECT value FROM json_each(?4)) AND done_at IS NOT NULL) = ?5`)
       .bind(player.id, qlTitleBit(law.title), line, JSON.stringify(titleSteps), titleSteps.length));
   }
-  // THE KEY - once an account, kept: its step done (behind the Cycle's first line witnessed whole) with the choice that
-  // keeps it
+  // THE KEY - once an account: its step done (behind the Cycle's first line witnessed whole) by an end that KEEPS it -
+  // this end's own choice (AUDIT QUESTLINES LINES-4: a first character's `seal` never bars the account's key from a later
+  // character who keeps it; the step's `choice` stays the first one said, its record). A keep that finds the key given
+  // already is told so (`keyHeld`), never silent.
   const key = law.key ?? null;
-  const keyAt = key && key.at === step ? statements.length : -1;
+  const keyAt = key && key.at === step && choice === key.choice ? statements.length : -1;
   if (keyAt >= 0) {
     statements.push(db.prepare(`UPDATE players SET eg_keys = eg_keys + 1, ql_key = 1 WHERE id = ?1 AND ql_key = 0
-      AND EXISTS (SELECT 1 FROM ql_steps WHERE account = ?1 AND line = ?2 AND step = ?3 AND done_at IS NOT NULL AND choice = ?4)
-      RETURNING eg_keys`).bind(player.id, line, step, key.choice));
+      AND EXISTS (SELECT 1 FROM ql_steps WHERE account = ?1 AND line = ?2 AND step = ?3 AND done_at IS NOT NULL)
+      RETURNING eg_keys`).bind(player.id, line, step));
   }
-  statements.push(db.prepare('SELECT done_at FROM ql_steps WHERE account = ?1 AND line = ?2 AND step = ?3').bind(player.id, line, step));
+  statements.push(db.prepare('SELECT s.done_at, p.ql_key FROM ql_steps s JOIN players p ON p.id = s.account WHERE s.account = ?1 AND s.line = ?2 AND s.step = ?3').bind(player.id, line, step));
   const results = await db.batch(statements);
   const row = results.at(-1)?.results?.[0];
   if (row?.done_at == null) return { witnessed: false };
@@ -173,6 +175,6 @@ export async function claimQl({ db, env = null }, player, body, nowS) {
   return {
     witnessed: true,
     ...(titled ? { title: law.title } : {}),
-    ...(keyed ? { key: true, keys: Number(keyed.eg_keys) || 0 } : {}),
+    ...(keyed ? { key: true, keys: Number(keyed.eg_keys) || 0 } : keyAt >= 0 && Number(row.ql_key) === 1 ? { keyHeld: true } : {}),
   };
 }

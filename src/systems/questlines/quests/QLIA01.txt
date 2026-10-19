@@ -4,6 +4,8 @@
 -- systems/questlines/qlActs.js, a ladder bout of the player's own); the Herald of the Arena stands at its gate in
 -- Daggerfall (bible/11-Multiplayer/Arena.md section 1) and pays the purse where the bout is won, so no Person is placed.
 -- The giver is unnamed, as the registry's (qlLines.js "the Arena's Herald").
+-- AUDIT QUESTLINES LINES-26: the broadsheet ends on its crier's name - DFU's pack names a quest letter by its last line
+-- (ItemHelper.cs:335-348, itemInfo.js questLetterName); it was "Letter: Somebody always bleeds."
 Quest: QLIA01
 DisplayName: First Blood
 -- Message panels
@@ -37,6 +39,8 @@ Message:  1011
 
 <ce>                Nobody dies on the Arena's sand.
 <ce>                   Somebody always bleeds.
+<ce>
+<ce>              The Herald of the Arena of Daggerfall
 
 Message:  1012
 <ce>          A crier in the Arena's colours slaps a broadsheet

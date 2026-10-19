@@ -20261,7 +20261,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     },
     tombstoneQuestsByPrefix: (prefix) => {
       for (const q of [...questBridge.machine.quests.values()]) {
-        if (!q.questComplete && !q.questTombstoned && q.questName?.startsWith(prefix)) questBridge.machine.tombstoneQuest(q);
+        if (!q.questComplete && !q.questTombstoned && q.questName?.startsWith(prefix)) questBridge.machine.tombstoneQuest(q, { ended: true });   // AUDIT QUESTLINES LAW-12: the cure's sweep settles what it ends
       }
     },
     // VampirismEffect.StartQuest:243-255 - the clan IS the faction id,

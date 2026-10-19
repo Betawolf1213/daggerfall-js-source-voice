@@ -124,13 +124,14 @@ export function outcomeNow(quest, sheet, probe = {}) {
   return null;
 }
 
-/** The outcome a quest that ended with none latched reads as: the sheet's success or failure fallback (`done` and
- *  `failed` by name, else the first outcome / null). */
+/** The outcome a quest that ended with none latched reads as: on a success, the sheet's own success fallback - its
+ *  `success` (an outcome's id) or else its `done` - and never a guess (AUDIT QUESTLINES LAW-1: "the first non-failure
+ *  outcome" filed a loyal M0B11Y18 as `betrayed`; the sheet law requires every sheet that can succeed to name it);
+ *  on a failure, `failed` by name, else the first failure / null. */
 export function fallbackOutcome(quest, sheet) {
   const list = sheet?.outcomes ?? [];
-  const named = list.find((o) => o.id === (quest?.questSuccess ? 'done' : 'failed'));
-  if (named) return named;
-  return quest?.questSuccess ? (list.find((o) => !o.failure) ?? null) : (list.find((o) => o.failure) ?? null);
+  if (quest?.questSuccess) return list.find((o) => o.id === (sheet?.success ?? 'done') && !o.failure) ?? null;
+  return list.find((o) => o.id === 'failed') ?? list.find((o) => o.failure) ?? null;
 }
 
 /**

@@ -75,7 +75,7 @@ export function questSource(name, on = true) {
 /** A machine that knows every line the pack says. */
 export function packMachine(over = {}) {
   loadTables();
-  const m = new QuestMachine({ nowSeconds: () => 0, getQuestSourceLines: (n) => questSource(n, true), ...over });
+  const m = new QuestMachine({ nowSeconds: () => 0, getQuestSourceLines: (n, on) => questSource(n, on ?? true), ...over });   // AUDIT QUESTLINES BRANCH-12: the seam's second word, as questData.js reads it
   for (const t of questActionsExtensionTemplates()) m.registerAction(t);
   for (const t of questlineActionTemplates()) m.registerAction(t);
   return m;

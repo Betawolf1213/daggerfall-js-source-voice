@@ -1756,13 +1756,15 @@ export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
 }
 
 /** QL12 (2026-10-19; bible/06-Systems/Questlines-Arc.md section 5.3): THE QUESTLINES' CLAIM (server-account/src/
- *  questlines.js) through the one door - `claim({ line, step, choice? })` a questline's step opened or ended,
- *  `{ ok, data: { opened?, witnessed?, title?, key?, why? } }`; no session is `no-session`, never a throw. */
+ *  questlines.js) through the one door - `claim({ line, step, phase, choice? })` a questline's step opened or ended,
+ *  `{ ok, data: { opened?, witnessed?, title?, key?, keys?, keyHeld?, why? } }`; no session is `no-session`, never a
+ *  throw. `guest()` whether the signed-in account is a guest's. */
 export function accountQuestlines({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
   return {
     claim: async (body) => { const a = await post('/v1/ql/claim', body); if (a?.error === 'auth') forgetSession(storage); return a; },
     account: () => storedSession(storage)?.id ?? null,   // whose the line's pay is: none signed in, none asked
+    guest: () => (storedSession(storage)?.kind ?? null) === 'guest',   // AUDIT QUESTLINES LINES-2: a guest's witnessed deed is never recorded
   };
 }
 

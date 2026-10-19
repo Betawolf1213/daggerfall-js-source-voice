@@ -3,6 +3,8 @@
 -- step 1 ends: the regular's word is in the journal at once. The giver is unnamed (a tavern regular): a Resident of the
 -- player's own town, at its tavern. The act is the King's Gambit's (qlActs.js gambit-won - scenes/gambitTableGame.js,
 -- a game won against a tavern's regular or another player; Kings-Gambit.md).
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIT02
 DisplayName: The King’s Gambit
 -- Message panels
@@ -17,11 +19,12 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _regular_, a regular at _inn_ in __inn_, says
- cards are only luck. The King's Gambit is war
- across a card table: armies, kings and potions. I
- am to win a game of it - fell the other king and
- keep my own - then go back to _inn_ to say so.
+ The regular who staked me sent me on to a friend:
+ _regular_, who sits at the board at _inn_ in
+ __inn_ and says cards are only luck. The King's
+ Gambit is war across a card table: armies, kings
+ and potions. I am to win a game of it - fell the
+ other king and keep my own - then go to _inn_.
 
 Message:  1011
 %qdt:

@@ -5,6 +5,8 @@
 -- wagon's load hauled" is no act kind (qlActs.js says why: nothing in the game finishes one), so the haul is DFU's own
 -- delivery - a load handed over (`get item`, never pay) and carried to a merchant in another town (`toting`), who pays
 -- the haulage. A wagon carries it if the player has one; the script cannot tell, and its words do not pretend to.
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIR01
 DisplayName: A Wagon’s Load
 -- Message panels
@@ -38,8 +40,7 @@ Message:  1011
  have one, on your own back if you must. The
  merchant pays the haulage, and pays it well.
 
-<ce>                                   _master_
-<ce>                                 stable master
+<ce>                           _master_, stable master
 
 Message:  1012
 <ce>          A stable lad smelling of hay and horse

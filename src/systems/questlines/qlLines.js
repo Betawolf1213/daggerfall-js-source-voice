@@ -22,27 +22,34 @@
 // title is its quest's DisplayName in English (test/systems/questlines/ql12_lines.test.js holds the two to one word).
 import { t } from '../textManager.js';
 import { QL_SERVICE_LINES } from '../../net/questlineClaims.js';
+import { REVENANT_MIN_RENOWN } from '../revenant/revenant.js';   // AUDIT QUESTLINES LINES-3: the Renown a revenant comes at, in the window's words
 
 /**
- * @typedef {{ quest: string, title: () => string }} LineStep
- * @typedef {{ level?: number, after?: string, online?: boolean }} LineOpens
+ * @typedef {{ quest: string, title: () => string, needs?: ReadonlyArray<LineNeed> }} LineStep
+ *   `needs` what the step's deed cannot be done without (AUDIT QUESTLINES ACTS-2, LINES-3, LINES-6): the step waits,
+ *   saying so, until each holds - never started to fail every day
+ * @typedef {'lootRarity'|'kingsGambit'|'naval'|'renown'} LineNeed
+ *   `lootRarity` Loot rarity on (a socket, a reforge); `kingsGambit` The King's Gambit on (its table); `naval` Naval
+ *   Combat on (the sea's own deeds); `renown` the Renown a revenant comes at (revenant.js REVENANT_MIN_RENOWN, online)
+ * @typedef {{ level?: number, after?: string, online?: boolean, account?: boolean }} LineOpens
  *   `level` the character's level at least; `after` another line finished first; `online` only where the account
- *   service answers (every endgame line: its witnesses are the service's rows)
- * @typedef {{ id: string, group: 'cycle'|'hour'|'coil'|'intro', tutorial: string|null, tier: number,
+ *   service answers (every endgame line: its witnesses are the service's rows); `account` a registered account, never a
+ *   guest's (AUDIT QUESTLINES LINES-2: the service records no guest's receipt, so no witnessed deed could be done)
+ * @typedef {{ id: string, group: 'cycle'|'hour'|'coil'|'intro', tier: number,
  *   title: () => string, lead: () => string, giver: () => string, opens: LineOpens, steps: ReadonlyArray<LineStep> }} Line
  */
 
 /** @param {Line} l @returns {Readonly<Line>} */
-const line = (l) => Object.freeze({ ...l, opens: Object.freeze({ ...l.opens }), steps: Object.freeze(l.steps.map((s) => Object.freeze(s))) });
+const line = (l) => Object.freeze({ ...l, opens: Object.freeze({ ...l.opens }), steps: Object.freeze(l.steps.map((s) => Object.freeze({ ...s, ...(s.needs ? { needs: Object.freeze([...s.needs]) } : {}) }))) });
 
 /** The lines, in the window's order: the Cycle, the Hour, the Coil, then the introductions. */
 export const QL_LINES = Object.freeze([
   line({
-    id: 'burningDoors', group: 'cycle', tutorial: null, tier: 3,
+    id: 'burningDoors', group: 'cycle', tier: 3,
     title: () => t('ql.line.burningDoors', 'The Burning Doors'),
     lead: () => t('ql.line.burningDoors.lead', 'Someone is opening Dagon’s Breaches on purpose. A Master Conjurer of the Mages Guild wants to know who, and how.'),
     giver: () => t('ql.line.burningDoors.giver', 'Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest'),
-    opens: { level: 10, online: true },
+    opens: { level: 10, online: true, account: true },
     steps: [
       { quest: 'QLBD01', title: () => t('ql.step.QLBD01', 'A Letter from Wayrest') },
       { quest: 'QLBD02', title: () => t('ql.step.QLBD02', 'The Faithful') },
@@ -52,11 +59,11 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'covensHoard', group: 'cycle', tutorial: null, tier: 3,
+    id: 'covensHoard', group: 'cycle', tier: 3,
     title: () => t('ql.line.covensHoard', 'The Covens’ Hoard'),
     lead: () => t('ql.line.covensHoard.lead', 'Dagon’s covens hoard the Battlespire’s keys in the deep places. Their champions glow gold.'),
     giver: () => t('ql.line.covensHoard.giver', 'Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest'),
-    opens: { after: 'burningDoors', online: true },
+    opens: { after: 'burningDoors', online: true, account: true },
     steps: [
       { quest: 'QLCH01', title: () => t('ql.step.QLCH01', 'Gold-Lit') },
       { quest: 'QLCH02', title: () => t('ql.step.QLCH02', 'The Lieutenant') },
@@ -64,11 +71,11 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'weirRoad', group: 'cycle', tutorial: null, tier: 4,
+    id: 'weirRoad', group: 'cycle', tier: 4,
     title: () => t('ql.line.weirRoad', 'The Weir Road'),
     lead: () => t('ql.line.weirRoad.lead', 'The Battlespire fell in 3E 398. One of its last class of Battlemages has never stopped living that year.'),
     giver: () => t('ql.line.weirRoad.giver', 'Corvane Tull, Battlemage of the Spire’s last class'),
-    opens: { after: 'covensHoard', online: true },
+    opens: { after: 'covensHoard', online: true, account: true },
     steps: [
       { quest: 'QLWR01', title: () => t('ql.step.QLWR01', 'The Weir Gate') },
       { quest: 'QLWR02', title: () => t('ql.step.QLWR02', 'The Torn Halls') },
@@ -77,22 +84,22 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'hourThatWasNot', group: 'hour', tutorial: null, tier: 4,
+    id: 'hourThatWasNot', group: 'hour', tier: 4,
     title: () => t('ql.line.hourThatWasNot', 'The Hour That Was Not'),
     lead: () => t('ql.line.hourThatWasNot.lead', 'The priests of Akatosh feel a wound in time under the Bay, and brass where there should be stone.'),
     giver: () => t('ql.line.hourThatWasNot.giver', 'Prior Anselm Vey of the Order of the Hour'),
-    opens: { level: 12, online: true },
+    opens: { level: 12, online: true, account: true },
     steps: [
       { quest: 'QLHR01', title: () => t('ql.step.QLHR01', 'Brass at Dusk') },
       { quest: 'QLHR02', title: () => t('ql.step.QLHR02', 'The Orrery of Endings') },
     ],
   }),
   line({
-    id: 'oldCoil', group: 'coil', tutorial: null, tier: 3,
+    id: 'oldCoil', group: 'coil', tier: 3,
     title: () => t('ql.line.oldCoil', 'The Old Coil'),
     lead: () => t('ql.line.oldCoil.lead', 'Sentinel’s sailors say the World-Skin was shed once, and that what was shed still swims.'),
     giver: () => t('ql.line.oldCoil.giver', 'Hamid al-Rasheen, a packet captain of Sentinel'),
-    opens: { level: 8, online: true },
+    opens: { level: 8, online: true, account: true },
     steps: [
       { quest: 'QLOC01', title: () => t('ql.step.QLOC01', 'The Sailors’ Tale') },
       { quest: 'QLOC02', title: () => t('ql.step.QLOC02', 'The Packet Lanes') },
@@ -100,11 +107,11 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'introCrafts', group: 'intro', tutorial: 'livelihood', tier: 1,
+    id: 'introCrafts', group: 'intro', tier: 1,
     title: () => t('ql.line.introCrafts', 'The Court Crafter'),
     lead: () => t('ql.line.introCrafts.lead', 'A crafter who works for the court wants an apprentice who can find their own materials.'),
     giver: () => t('ql.line.introCrafts.giver', 'a court crafter'),
-    opens: { level: 2, online: true },   // the Professions' harvests and crafts are the account service's to answer
+    opens: { level: 2, online: true, account: true },   // the Professions' harvests and crafts are the account service's to answer - a registered account's (AUDIT QUESTLINES ACTS-2: they refuse a guest)
     steps: [
       { quest: 'QLIP01', title: () => t('ql.step.QLIP01', 'Of Rod and Root') },
       { quest: 'QLIP02', title: () => t('ql.step.QLIP02', 'Ore and Timber') },
@@ -112,30 +119,30 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'introGear', group: 'intro', tutorial: 'loot', tier: 1,
+    id: 'introGear', group: 'intro', tier: 1,
     title: () => t('ql.line.introGear', 'The Smith’s Secrets'),
     lead: () => t('ql.line.introGear.lead', 'An armourer offers to show you what a good piece of gear can still be made into.'),
     giver: () => t('ql.line.introGear.giver', 'an armourer'),
     opens: { level: 4 },
     steps: [
-      { quest: 'QLIG01', title: () => t('ql.step.QLIG01', 'A Stone in the Setting') },
-      { quest: 'QLIG02', title: () => t('ql.step.QLIG02', 'Tempered Again') },
+      { quest: 'QLIG01', title: () => t('ql.step.QLIG01', 'A Stone in the Setting'), needs: ['lootRarity'] },
+      { quest: 'QLIG02', title: () => t('ql.step.QLIG02', 'Tempered Again'), needs: ['lootRarity'] },
     ],
   }),
   line({
-    id: 'introSea', group: 'intro', tutorial: 'sea', tier: 2,
+    id: 'introSea', group: 'intro', tier: 2,
     title: () => t('ql.line.introSea', 'The Harbourmaster’s Word'),
     lead: () => t('ql.line.introSea.lead', 'A harbourmaster needs a captain. Any captain. Even you.'),
     giver: () => t('ql.line.introSea.giver', 'a harbourmaster'),
     opens: { level: 5 },
     steps: [
-      { quest: 'QLIS01', title: () => t('ql.step.QLIS01', 'Under Sail') },
-      { quest: 'QLIS02', title: () => t('ql.step.QLIS02', 'A Hold Full') },
-      { quest: 'QLIS03', title: () => t('ql.step.QLIS03', 'Strike Your Colours') },
+      { quest: 'QLIS01', title: () => t('ql.step.QLIS01', 'Under Sail'), needs: ['naval'] },
+      { quest: 'QLIS02', title: () => t('ql.step.QLIS02', 'A Hold Full'), needs: ['naval'] },
+      { quest: 'QLIS03', title: () => t('ql.step.QLIS03', 'Strike Your Colours'), needs: ['naval'] },
     ],
   }),
   line({
-    id: 'introRoad', group: 'intro', tutorial: 'travel', tier: 1,
+    id: 'introRoad', group: 'intro', tier: 1,
     title: () => t('ql.line.introRoad', 'The Merchant’s Road'),
     lead: () => t('ql.line.introRoad.lead', 'A stable master knows a merchant yard that pays well for a wagon’s load, if someone will haul it.'),
     giver: () => t('ql.line.introRoad.giver', 'a stable master'),
@@ -146,18 +153,18 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'introTables', group: 'intro', tutorial: 'challenges', tier: 1,
+    id: 'introTables', group: 'intro', tier: 1,
     title: () => t('ql.line.introTables', 'A Seat at the Table'),
     lead: () => t('ql.line.introTables.lead', 'A tavern regular is looking for someone new to lose to. Or, better, to beat.'),
     giver: () => t('ql.line.introTables.giver', 'a tavern regular'),
     opens: { level: 2 },
     steps: [
       { quest: 'QLIT01', title: () => t('ql.step.QLIT01', 'A Hand of Cards') },
-      { quest: 'QLIT02', title: () => t('ql.step.QLIT02', 'The King’s Gambit') },
+      { quest: 'QLIT02', title: () => t('ql.step.QLIT02', 'The King’s Gambit'), needs: ['kingsGambit'] },
     ],
   }),
   line({
-    id: 'introArena', group: 'intro', tutorial: 'challenges', tier: 2,
+    id: 'introArena', group: 'intro', tier: 2,
     title: () => t('ql.line.introArena', 'The Herald’s Call'),
     lead: () => t('ql.line.introArena.lead', 'The Arena’s Herald is calling for new blood, and pays the first purse in advance of glory.'),
     giver: () => t('ql.line.introArena.giver', 'the Arena’s Herald'),
@@ -168,18 +175,18 @@ export const QL_LINES = Object.freeze([
     ],
   }),
   line({
-    id: 'introBay', group: 'intro', tutorial: 'world', tier: 2,
+    id: 'introBay', group: 'intro', tier: 2,
     title: () => t('ql.line.introBay', 'The Bay’s Troubles'),
     lead: () => t('ql.line.introBay.lead', 'A captain of the watch has more trouble than soldiers: raiders on the roads, and the dead who will not lie down.'),
     giver: () => t('ql.line.introBay.giver', 'a captain of the watch'),
     opens: { level: 6, online: true },
     steps: [
       { quest: 'QLIW01', title: () => t('ql.step.QLIW01', 'Raiders at the Gate') },
-      { quest: 'QLIW02', title: () => t('ql.step.QLIW02', 'The Kneeling Dead') },
+      { quest: 'QLIW02', title: () => t('ql.step.QLIW02', 'The Kneeling Dead'), needs: ['renown'] },
     ],
   }),
   line({
-    id: 'introFirmament', group: 'intro', tutorial: 'online', tier: 1,
+    id: 'introFirmament', group: 'intro', tier: 1,
     title: () => t('ql.line.introFirmament', 'Written in the Stars'),
     lead: () => t('ql.line.introFirmament.lead', 'An astrologer insists your fortune is written on the Firmament, and that you can write the rest yourself.'),
     giver: () => t('ql.line.introFirmament.giver', 'an astrologer'),
@@ -209,24 +216,47 @@ export const lineServiceOf = (line) => QL_SERVICE_LINES[line?.id] ?? null;
 export const witnessOf = (line, index) => lineServiceOf(line)?.witness?.[index] ?? null;
 
 /**
- * Does the line open for this player now? `probe` answers the three questions: `level()`, `lineDone(id)`, `online()`.
- * @param {Readonly<Line>} l
- * @param {{ level: () => number, lineDone: (id: string) => boolean, online: () => boolean }} probe
+ * @typedef {{ level: () => number, lineDone: (id: string) => boolean, online: () => boolean, registered?: () => boolean,
+ *   need?: (need: LineNeed) => boolean }} LineProbe
+ *   `registered()` a registered account signed in (never a guest's); `need(n)` whether a step's need holds now
+ */
+
+/** The needs of a line's step that do not hold now (none: the step may start). */
+export const unmetNeeds = (l, index, probe) => (l.steps[index]?.needs ?? []).filter((n) => !(probe.need?.(n) ?? true));
+
+/**
+ * Does the line open for this player now? `probe` answers its questions (LineProbe): the level, a line done, online, a
+ * registered account, and its first step's needs.
+ * @param {Readonly<Line>} l @param {LineProbe} probe
  */
 export function lineOpens(l, probe) {
   const o = l.opens;
   if (o.online && !probe.online()) return false;
+  if (o.account && !(probe.registered?.() ?? true)) return false;
   if (Number.isFinite(o.level) && probe.level() < /** @type {number} */ (o.level)) return false;
   if (o.after && !probe.lineDone(o.after)) return false;
-  return true;
+  return unmetNeeds(l, 0, probe).length === 0;
 }
 
-/** What a line still waits on, in words - the window's "Opens ..." line, or null when nothing stands in its way. */
-export function opensWords(l, probe) {
+/** A step's need, in words - the window's "Opens with ..." (the Features rows' own names). */
+const NEED_WORDS = Object.freeze({
+  lootRarity: () => t('ql.line.needs.lootRarity', 'with Loot rarity on'),
+  kingsGambit: () => t('ql.line.needs.kingsGambit', 'with The King\u2019s Gambit on'),
+  naval: () => t('ql.line.needs.naval', 'with Naval Combat on'),
+  renown: () => t('ql.line.needs.renown', 'at Renown {n}', { n: REVENANT_MIN_RENOWN }),
+});
+
+/**
+ * What a line still waits on, in words - the window's "Opens ..." line, or null when nothing stands in its way. `step`:
+ * the step a begun line stands at (its needs), else its first.
+ */
+export function opensWords(l, probe, step = 0) {
   const o = l.opens;
   const parts = [];
   if (Number.isFinite(o.level) && probe.level() < /** @type {number} */ (o.level)) parts.push(t('ql.line.opensLevel', 'at level {n}', { n: o.level }));
   if (o.after && !probe.lineDone(o.after)) parts.push(t('ql.line.opensAfter', 'after {line}', { line: lineById(o.after)?.title() ?? o.after }));
   if (o.online && !probe.online()) parts.push(t('ql.line.opensOnline', 'online'));
+  else if (o.account && !(probe.registered?.() ?? true)) parts.push(t('ql.line.opensAccount', 'with a registered account'));
+  for (const n of unmetNeeds(l, step, probe)) parts.push(NEED_WORDS[n]());
   return parts.length ? t('ql.line.opens', 'Opens {when}.', { when: parts.join(', ') }) : null;
 }

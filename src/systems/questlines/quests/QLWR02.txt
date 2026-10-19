@@ -1,6 +1,7 @@
 -- QL12 (2026-10-19; bible/06-Systems/Questlines-Arc.md section 4.1): THE WEIR ROAD, step 2 of 4.
 -- The port's own script on DFU's machine (systems/questlines/qlLines.js). Started by the line's runner: Corvane's words
--- are in the journal at once (the last step ended at his table), and he waits at his tavern. WITNESSED
+-- are in the journal at once (the last step ended at his table), and he names the tavern he moves on to - a fresh
+-- Place each step, and he keeps no room long (AUDIT QUESTLINES LINES-10). WITNESSED
 -- (net/questlineClaims.js, `redoubts3`): the step waits on three Redoubts taken (`ql act redoubt-taken 3`). A visit
 -- before is answered and cleared (M0B30Y04's `_clearclick_`). Lore: canon - Imago Storm led Dagon's legions in 3E 398,
 -- and later turned on his Prince; the Spire's council of masters. The port's own - the torn halls fell back along the
@@ -20,10 +21,11 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- Corvane Tull wants more of the torn halls taken
- back: three Redoubts of an Elite Breach, from the
- Kyn who hold them for rank. He will wait for me
- at _tavern_ in __tavern_.
+ Corvane Tull is moving on - he keeps no room long -
+ to _tavern_ in __tavern_. He wants more of the
+ torn halls taken back: three Redoubts of an Elite
+ Breach, from the Kyn who hold them for rank. He
+ will wait for me there.
 
 Message:  1013
 <ce>       "Three." Corvane writes it down - the date at the
@@ -47,8 +49,8 @@ They say the Battlemage goes somewhere at night that is not in the Bay at all.
 
 Message:  1015
 <ce>       "Three Redoubts, %pcf. I have counted every hall
-<ce>        of that place every night for eight years. I can
-<ce>        wait for three more."
+<ce>        of that place every night since the Spire fell.
+<ce>        I can wait for three more."
 
 Message:  1016
 %qdt:

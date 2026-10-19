@@ -3,6 +3,8 @@
 -- step 1 ends: the armourer's word is in the journal at once. The giver is unnamed (an armourer): an Armorer of the
 -- player's own town, at its armoury. The act is the Reforge's (qlActs.js piece-reforged - systems/reforge.js
 -- reforgePiece, LOOT9: one line of a Magic or Rare piece rolled again, for Welkynd Shards and gold, at the Mages Guild).
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIG02
 DisplayName: Tempered Again
 -- Message panels
@@ -17,11 +19,12 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _smith_, the armourer at _shop_ in __shop_,
- says the mages can do what no smith can: roll a
- piece's virtue again at the Reforge. I am to have
- a piece reforged at a Mages Guild, then go back to
- _shop_ to say how it went.
+ Word from the armourer who taught me to set a
+ stone: the mages can do what no smith can, and
+ roll a piece's virtue again at the Reforge. I am
+ to have a piece reforged at a Mages Guild, then
+ tell _smith_, an armourer at _shop_ in __shop_
+ who knows the Reforge, how it went.
 
 Message:  1011
 %qdt:
@@ -55,7 +58,7 @@ Looking for _smith_? Try _shop_. Follow the hammering.
 --              %qdt occurs 2 times.
 --           _smith_ occurs 7 times.
 --            _gold_ occurs 1 time.
---            _shop_ occurs 5 times.
+--            _shop_ occurs 4 times.
 --           __shop_ occurs 2 times.
 
 QBN:

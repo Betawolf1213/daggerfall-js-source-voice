@@ -84,8 +84,10 @@ export async function loadQuestPack() {
       /** QuestList-<name>.txt (the QuestListsManager's dep). */
       readListTable: (name) => tables.get(`QuestList-${name}`) ?? null,
       /** Quest source lines by name (the machine + lists dep) - QL4: a flagship quest's branch over them while the
-       *  questlines' switch is on (the read the start's stamp follows - systems/questlines/qlPatches.js). */
-      getQuestSourceLines: (name) => questlineLines(name, (patchable.has(name) ? patchedLines(name, patchable.get(name)) : null) ?? quests.get(name) ?? null),
+       *  questlines' switch is on (the read the start's stamp follows - systems/questlines/qlPatches.js). AUDIT
+       *  QUESTLINES BRANCH-12: `questlines` reads it as a copy's stamp says it was read (machine.js parseQuestShape, a
+       *  stamped restart) - absent, the switch now. */
+      getQuestSourceLines: (name, questlines) => questlineLines(name, (patchable.has(name) ? patchedLines(name, patchable.get(name)) : null) ?? quests.get(name) ?? null, questlines),
       questCount: quests.size,
     };
   })();

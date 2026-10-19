@@ -3,6 +3,10 @@
 -- came (`local tavern` - a port, most likely, a cargo just delivered). The act: a ship made to strike her colours
 -- (`ql act ship-struck 1` - systems/questlines/qlActs.js, the naval host's, by the player's own guns); then back to
 -- the harbourmaster for the purse. The giver is unnamed, as the registry's (qlLines.js "a harbourmaster").
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIS03
 DisplayName: Strike Your Colours
 -- Message panels
@@ -17,26 +21,26 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- A note came from _master_, the harbourmaster at
- _tavern_ here in __tavern_. Pirates are taking
- ships off this coast. I am to meet one at sea and
- make her strike her colours, then come back to
- _tavern_ for my purse.
+ A note came from _master_, harbourmaster at
+ _tavern_ here in __tavern_ and a friend of the
+ one who sent me to sea. Pirates are taking ships
+ off this coast. I am to meet one at sea and make
+ her strike her colours, then come to _tavern_.
 
 Message:  1011
 Captain,
 
-     You can sail and you can carry. Now the hard
- part. There are ships off this coast that take
- other ships, and the navy is never where they are.
+     The harbourmaster who sent you to sea says you
+ can sail and you can carry. Now the hard part.
+ There are ships off this coast that take other
+ ships, and the navy is never where they are.
 
      Find one. Fight her. Make her strike her
  colours - a ship that has struck is beaten, and her
  crew know it. Then come and find me at _tavern_,
  and drink on the harbour's purse.
 
-<ce>                                    _master_
-<ce>                                  harbourmaster
+<ce>                             _master_, harbourmaster
 
 Message:  1012
 <ce>           A runner from the docks hands you a note sealed
@@ -64,7 +68,7 @@ The harbourmaster at _tavern_ wants someone to fight the pirates the navy won't.
 <--->
 _master_? Runs the harbour. Lost three ships to pirates this season.
 <--->
-There's talk at _tavern_ of a new captain. The harbourmaster's own find.
+There's talk at _tavern_ of a new captain, sent up the coast by another harbourmaster.
 
 QBN:
 Item _note_ letter used 1011

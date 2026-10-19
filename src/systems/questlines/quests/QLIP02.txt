@@ -3,6 +3,8 @@
 -- step 1 ends: the crafter's word is in the journal at once. The giver is unnamed (a court crafter): a Smith of the
 -- player's own town, at its general store. The acts are the features' (qlActs.js): ore or stone mined (Mining and
 -- Quarrying, a vein's ore or a boulder's stone), wood chopped (Logging, or Foraging's axe). Nothing is taken.
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIP02
 DisplayName: Ore and Timber
 -- Message panels
@@ -17,10 +19,11 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _crafter_, the court crafter at _store_ in
- __store_, has heavier work for me. I am to
+ Word from the court crafter: heavier work, and a
+ colleague to judge it - _crafter_, who keeps the
+ court's stock at _store_ in __store_. I am to
  mine ore or stone three times and chop wood three
- times, and then go back to _store_ to say so.
+ times, and then go to _store_ to say so.
 
 Message:  1011
 %qdt:
@@ -36,22 +39,23 @@ Message:  1013
 <ce>        _crafter_ looks at your hands - the blisters,
 <ce>          the splinters - and seems well pleased.
 <ce>
-<ce>       "Fish and herbs feed the kitchen and the still.
-<ce>        Ore and timber are the bones of everything else.
-<ce>        You have fed both now. Next, you make something
-<ce>        of it yourself."
+<ce>       "The court's crafter said you would come back
+<ce>        with blisters. Fish and herbs feed the kitchen
+<ce>        and the still. Ore and timber are the bones of
+<ce>        everything else. You have fed both now. Next,
+<ce>        you make something of it yourself."
 
 Message:  1014
-The court's crafter at _store_? Sends apprentices up the hills for ore, I hear.
+_crafter_ at _store_ keeps the court's stock. Sends apprentices up the hills for ore, I hear.
 <--->
-_crafter_ makes for the court. Has a new apprentice, they say. Is that you?
+_crafter_ is judging the court crafter's new apprentice, they say. Is that you?
 <--->
 Looking for _crafter_? Try _store_. Mind the timber stacked by the door.
 
 -- Symbols used in the QRC file:
 --
 --              %qdt occurs 2 times.
---         _crafter_ occurs 7 times.
+--         _crafter_ occurs 8 times.
 --            _gold_ occurs 1 time.
 --           _store_ occurs 5 times.
 --          __store_ occurs 2 times.

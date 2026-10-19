@@ -1,6 +1,8 @@
 -- QL12 (2026-10-19; bible/06-Systems/Questlines-Arc.md section 4.1): THE BURNING DOORS, step 1 of 5.
 -- The port's own script on DFU's machine (systems/questlines/qlLines.js). Started by the line's runner, never offered
 -- by a questor: the letter is the offer. Lore: Ysolde Marnhel wrote "On the Burning Doors" (systems/breachBook.js).
+-- AUDIT QUESTLINES LINES-24: the purse is the line's tier-3 band (300 to 600), as every other step of the Cycle's; and
+-- the letter signs off with her name (LINES-26: DFU's pack names a quest letter by its last line, ItemHelper.cs:335).
 Quest: QLBD01
 DisplayName: A Letter from Wayrest
 -- Message panels
@@ -32,8 +34,7 @@ Message:  1011
      The Guild has given me rooms at _hall_
  in __hall_. Come when you can. Come armed.
 
-<ce>                              Ysolde Marnhel
-<ce>                Master Conjurer, the Mages Guild of Wayrest
+<ce>                 Ysolde Marnhel, Master Conjurer of Wayrest
 
 Message:  1012
 <ce>             A courier in the Mages Guild's grey steps out
@@ -64,12 +65,12 @@ The Master Conjurer from Wayrest? She is looking for someone brave or foolish.
 --
 --              %pcn occurs 1 time.
 --              %qdt occurs 1 time.
---             _hall_ occurs 3 times.
+--             _hall_ occurs 4 times.
 --            __hall_ occurs 2 times.
 
 QBN:
 Item _letter_ letter used 1011
-Item _gold_ gold range 150 to 250
+Item _gold_ gold range 300 to 600
 
 Person _ysolde_ faction The_Mages_Guild female anyInfo 1014
 Place _hall_ remote magery

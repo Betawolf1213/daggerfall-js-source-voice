@@ -166,12 +166,20 @@ export function tokensToRows(tokens) {
  *  host's quest box (THE ONE CONSTRUCTION SEAM - world.js and exterior.js each hand it to their own showQuestBox): the
  *  question's message, then a pick among the choices' own words. The pick cannot be dismissed without an answer -
  *  Escape shows the question again - as PromptMulti's box cannot (PromptMulti.cs:87-88, AllowCancel false). The
- *  answer is the choice's index. */
+ *  answer is the choice's index, given once.
+ *  AUDIT QUESTLINES BRANCH-7: the chain waits BEHIND the boxes already up (`behind` - ui/guildServiceWindows.js
+ *  ServiceFlowWindow.push): pushed in front, newest first, the question came before the words that set it up (A0C41Y18's
+ *  coward's way over the sage's curse). AUDIT QUESTLINES BRANCH-3: a pick the window cannot show (its onCancel told
+ *  'unshown', guildServiceWindows.js PICK_UNSHOWN - no list art yet) settles the chain with null, and the ask asks again later (qlActions.js ASK_AGAIN_TICKS);
+ *  dropped unanswered it held the question up for the session, and re-shown it would loop the question for ever. A
+ *  question with no words of its own (BRANCH-9: a message the quest lacks) is the pick alone. */
 export function choiceBoxes(q, message, choices, respond) {
   const labels = choices.map((c) => tokensToRows(c.getTextTokens(-1, q.rolls)).join(' ').replace(/\s+/g, ' ').trim());
-  const question = () => ({ rows: tokensToRows(message.getTextTokens(-1, q.rolls)), onClick: () => [pick()] });
-  const pick = () => ({ picker: labels, onPick: (i) => { respond(i); return []; }, onCancel: () => [question()] });
-  return question();
+  let answered = false;
+  const answer = (i) => { if (!answered) { answered = true; respond(i); } return []; };
+  const question = () => (message ? { rows: tokensToRows(message.getTextTokens(-1, q.rolls)), onClick: () => [pick()] } : pick());
+  const pick = () => ({ picker: labels, onPick: (i) => answer(i), onCancel: (why) => (why === 'unshown' ? answer(null) : [question()]) });
+  return { ...question(), behind: true };
 }
 
 /** StartGameBehaviour.cs:445-447 - the two quests a new character
@@ -334,6 +342,9 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
   });
 
   let questLists = null;
+  /** QL1: the questlines' layer, made below over this machine - declared first, so a dep the machine calls before it is
+   *  made reads null, never the temporal dead zone (AUDIT QUESTLINES LAW-15). */
+  /** @type {any} */ let questlines = null;
   const machine = new QuestMachine({
     world: ctx.world ?? null,
     nowSeconds: () => ctx.classicSeconds?.() ?? 0,
@@ -349,7 +360,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     ownMinutes: () => ctx.ownMinutes?.() ?? null,
     questClockStepMax: () => ctx.questClockStepMax?.() ?? Infinity,   // WORLD7: online, a quest clock bounds the LIVED part of a gap to the host's step, a raise charged nothing (QCLOCK-WORLD; TIME3 charged it whole); a host that says nothing charges every clock, DFU's own
     sharedClock: () => !!ctx.sharedClock?.(),   // GUARD-ONLINE: online, a guarded quest's window is the player's arrival's (quest/onlineGuard.js)
-    getQuestSourceLines: (name) => ctx.data.getQuestSourceLines(name),
+    getQuestSourceLines: (name, questlines) => ctx.data.getQuestSourceLines(name, questlines),   // AUDIT QUESTLINES BRANCH-12: a copy's script as its stamp read it (machine.js parseQuestShape)
     playerLevel: () => ctx.playerEntity?.level ?? 0,
     playerGender: () => ctx.playerEntity?.gender ?? 'male',
     playerName: () => ctx.playerEntity?.name ?? null,
@@ -439,7 +450,9 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     onQuestStarted: (q) => { questLists.noteQuestStarted(q); ctx.onQuestStarted?.(q); },
     // FE1: the tombstone's OnQuestEnded (QuestMachine.cs:1047) - the
     // HUD escort faces' quest-end sweep rides the world ctx
-    onQuestEnded: (q) => ctx.onQuestEnded?.(q),
+    // AUDIT QUESTLINES LINES-7: and a questline's step gone without its end (an error terminated it) is offered again a day
+    // later, never parsed again every tick
+    onQuestEnded: (q) => { questlines?.runner?.dropped?.(q); ctx.onQuestEnded?.(q); },
   });
   // QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): the questlines' three actions, after DFU's 82 - here, so every
   // host's machine has them before a save or a script that says them is read (a first-match scan; none of DFU's claims
@@ -485,7 +498,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
   // QL12: the account service's door for the endgame lines (questlineHost.js) - a host's own (a test's fake, or null
   // to have none) where it hands one, else the page's: online, the stored session's
   const qlService = ctx.questlineService !== undefined ? ctx.questlineService : questlineService();
-  const questlines = createQuestlines({
+  questlines = createQuestlines({
     machine, questLists, service: qlService,
     ctx: {
       carriesQuestItem: (r) => ctx.carriesQuestItem?.(r) ?? false,
@@ -504,9 +517,11 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       expand: (q, text, key) => quietText(q, text, key),
       // AUDIT QUESTLINES SERVICE-7: a title is the house's HONOUR-BANNER as every title grant is (the line, the record, either
       // way); the key's balance restacks the pack's keys at once (weirKey.js: the item is the balance's face)
-      onHonour: ({ title, key, keys }) => {
+      // AUDIT QUESTLINES LINES-4: a key kept that the account had already taken is said, never silent
+      onHonour: ({ title, key, keys, keyHeld }) => {
         if (title) { announceHonour('title', title); ctx.addHUDText?.(t('ql.line.honourTitle', 'You have earned the title {title}.', { title: TITLE_TEXT[title] ?? title })); }
         if (key) ctx.addHUDText?.(t('ql.line.honourKey', 'A Weir Key is yours: it waits with your keys.'));
+        if (keyHeld && !key) ctx.addHUDText?.(t('ql.line.honourKeyHeld', 'The Covens\u2019 Hoard gives one Weir Key to an account, and yours was given already.'));
         if (key && Number.isSafeInteger(keys) && ctx.playerEntity?.items) restackWeirKeys(ctx.playerEntity.items, keys);
       },
     },
@@ -529,7 +544,8 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     return getLocalizedFactionName(fid, name || String(fid));
   };
   function ladderRows() {
-    return guildLadders({ memberships: activeMemberships(ctx.playerEntity ?? null), pools: questLists.guilds, history: questlines.history() })
+    // AUDIT QUESTLINES LINES-5, LINES-16: the level (two guilds offer by it) and the adult setting, as the list reads them
+    return guildLadders({ memberships: activeMemberships(ctx.playerEntity ?? null), pools: questLists.guilds, history: questlines.history(), level: ctx.playerEntity?.level ?? 1, adult: getBool('ChildGuard', 'PlayerNudity') })
       .map((l) => ({ ...l, name: factionWords(l.factionId), rungs: l.rungs.map((r) => ({ ...r, quests: r.quests.map((q) => ({ ...q, title: questTitle(q.name) })) })) }));
   }
 

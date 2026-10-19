@@ -21,7 +21,7 @@ export const ACT_KINDS = Object.freeze({
   'herb-gathered': 'gather',   // a plant gathered
   'ore-mined': 'gather',   // ore or gems mined
   'wood-chopped': 'gather',   // wood chopped
-  'piece-crafted': 'make',   // a piece made at a crafting station
+  'piece-crafted': 'make',   // a piece made at a crafting station (never a brew's potions, nor a dish cooked - AUDIT QUESTLINES ACTS-4)
   // the loot's own laws
   'gem-socketed': 'loot',   // a gem set in a socket
   'piece-reforged': 'loot',   // a piece reforged
@@ -38,9 +38,9 @@ export const ACT_KINDS = Object.freeze({
   // could never close. It comes back with the feature that hauls one, and its producer.
   // the world's events
   'raid-repelled': 'world',   // a raid on a town driven off
-  'arena-won': 'world',   // a bout won in the Arena
+  'arena-won': 'world',   // a ladder bout won in the Arena (never a bout between players - AUDIT QUESTLINES ACTS-6)
   'revenant-knelt': 'world',   // a revenant made to kneel
-  'star-taken': 'world',   // a star taken on the Firmament
+  'star-taken': 'world',   // a star taken on the Firmament - each star once (never one given back and taken again - AUDIT QUESTLINES ACTS-5)
   // the endgame (each also a receipt the service holds - section 5.3)
   'rite-broken': 'endgame',   // Dagon's Faithful's rite broken before the breach opened
   'breach-closed': 'endgame',   // a Dagon's Breach closed

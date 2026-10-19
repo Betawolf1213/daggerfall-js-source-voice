@@ -1103,7 +1103,9 @@ export function createArenaBouts(deps) {
     throwAt(C, [...r.losers, ...r.winners], throws.refuse, THROWN_REFUSE);
     const mine = C.you ? boutFighter(C.b, C.you) : null;
     const won = !!mine && r.side === mine.side;
-    if (won) noteAct('arena-won');   // QL11: a bout won in the Arena - the relay's verdict, my side (a watcher has none)
+    // AUDIT QUESTLINES ACTS-6: a LADDER bout (`pve` - the relay-run opponent, Arena.md's "The Ladder"), as this screen's own
+    // is (`verdict`, C.ladder): a bout between players - rated, casual or a private session's - is no step of the ladder
+    if (won && C.relay.kind === 'pve') noteAct('arena-won');   // QL11: a bout won in the Arena - the relay's verdict, my side (a watcher has none)
     const lines = [line];
     if (C.relay.kind === 'pve' && mine) {
       const purse = won ? boutPurse(C.next?.purse ?? 0, C.crowd.favour[C.you] ?? 0) : 0;

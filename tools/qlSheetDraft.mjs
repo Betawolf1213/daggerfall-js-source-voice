@@ -11,7 +11,8 @@
 //   node tools/qlSheetDraft.mjs <QUEST> --on       ...read with its branch patched in
 //   node tools/qlSheetDraft.mjs --family <Name>    every quest of a family, briefly (name, title, size, steps)
 import { isMain } from './lib/isMain.mjs';
-import { QUEST_FILES, parsedQuest, packMachine, questSource, classicRows } from '../test/qlSources.mjs';
+import { QUEST_FILES, parsedQuest, packMachine, questSource, classicRows, loadTables } from '../test/qlSources.mjs';
+import { globalVarsTable } from '../src/systems/quest/tables.js';
 import { settable } from './qlSheetLaw.mjs';
 import { LIST_GROUP_FAMILY, UNLISTED_FAMILY } from '../src/systems/questlines/qlFamilies.js';
 import { lineStepOf } from '../src/systems/questlines/qlLines.js';
@@ -34,15 +35,20 @@ export function qrcMessages(lines) {
   return out;
 }
 
-/** The QBN's tasks as written: name -> its lines (the startup block is `(startup)`). */
+/** The QBN's tasks as written: name -> its lines (the startup block is `(startup)`). AUDIT QUESTLINES LAW-13: a task
+ *  linked to a global variable is a header too - `LiftedCurse _S.09_`, its first word a Quests-GlobalVars name, as the
+ *  parser reads it (quest/parser.js _getGlobalReference, task.js GLOBAL_VAR_HEADER) - or its lines are filed under the
+ *  task before it (S0000003's draft bound its reward to `_no_`). */
 export function qbnTasks(lines) {
+  loadTables();
   const out = new Map();
   let cur = null, inQbn = false;
   for (const l of lines) {
     if (/^\s*QBN:/i.test(l)) { inQbn = true; cur = '(startup)'; out.set(cur, []); continue; }
     if (!inQbn) continue;
     const head = /^\s*(_[A-Za-z0-9.]+_)\s+task:|^\s*until\s+(_[A-Za-z0-9.]+_)\s+performed:|^\s*variable\s+(_[A-Za-z0-9.]+_)/.exec(l);
-    if (head) { cur = head[1] ?? `until ${head[2]}` ?? head[3]; if (head[3]) { out.set(`variable ${head[3]}`, []); cur = null; continue; } out.set(cur, []); continue; }
+    const linked = /^\s*([A-Za-z0-9_.]+)\s+(_[A-Za-z0-9.]+_)\s*$/.exec(l);
+    if (!head && linked && globalVarsTable().hasValue(linked[1])) { cur = linked[2]; out.set(cur, []); continue; }
     if (cur && l.trim() && !/^\s*--/.test(l)) out.get(cur).push(l.trim());
   }
   return out;

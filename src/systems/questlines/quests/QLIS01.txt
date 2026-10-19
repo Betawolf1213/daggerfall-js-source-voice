@@ -4,6 +4,8 @@
 -- (`local tavern`). The act: a port reached under sail (`ql act port-reached 1` - systems/questlines/qlActs.js, the
 -- harbour office's berth); then back to the harbourmaster for the purse. The giver is unnamed, as the registry's
 -- (qlLines.js "a harbourmaster").
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIS01
 DisplayName: Under Sail
 -- Message panels
@@ -36,8 +38,7 @@ To whoever reads this with a ship in mind,
      Then come and find me at _tavern_, and
  there is a purse in it.
 
-<ce>                                    _master_
-<ce>                                  harbourmaster
+<ce>                             _master_, harbourmaster
 
 Message:  1012
 <ce>           A runner from the docks tugs your sleeve and

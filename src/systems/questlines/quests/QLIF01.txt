@@ -4,6 +4,8 @@
 -- reading the sky at its temple. The act is the Firmament's (qlActs.js star-taken - net/firmament/firmamentBook.js, a
 -- star the account service holds that it did not; Firmament.md: Stars come with Renown, Craft points with the
 -- professions). Online, as the sky is.
+-- AUDIT QUESTLINES LINES-26: the letter signs off on one line, its sender's name and calling - DFU's pack names a
+-- quest letter by its last line (ItemHelper.cs:335-348, itemInfo.js questLetterName).
 Quest: QLIF01
 DisplayName: The First Star
 -- Message panels
@@ -39,8 +41,7 @@ Message:  1011
      Take one. Any one. Then come to _temple_ in
  __temple_, and I will read what you chose.
 
-<ce>                                    _seer_
-<ce>                                  astrologer
+<ce>                              _seer_, astrologer
 
 Message:  1012
 <ce>         A novice with ink-stained fingers hands you

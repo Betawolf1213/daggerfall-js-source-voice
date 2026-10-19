@@ -2,7 +2,10 @@
 -- The port's own script on DFU's machine (systems/questlines/qlLines.js). Started by the line's runner an hour after
 -- step 2 ends: the crafter's word is in the journal at once. The giver is unnamed (a court crafter): a Smith of the
 -- player's own town, at its general store. The act is the stations' (qlActs.js piece-crafted - net/profBook.js, a piece
--- minted at a station; a brew's potions are no piece, so the words name no alchemy). Nothing is taken.
+-- minted at a station; a brew's potions are no piece, nor a dish cooked at a fire - AUDIT QUESTLINES ACTS-4 - so the
+-- words name no alchemy, and say a pot on the fire is supper, not a piece). Nothing is taken.
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIP03
 DisplayName: Made by Hand
 -- Message panels
@@ -17,11 +20,12 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _crafter_, the court crafter at _store_ in
- __store_, says a gatherer is only half a crafter.
- The other half is making. I am to make a piece of
- my own at a crafting station - a forge, a loom, a
- bench - and then go back to _store_ to say so.
+ Word again from the court crafter: a gatherer is
+ only half a crafter. The other half is making. I
+ am to make a piece of my own at a crafting
+ station - a forge, a loom, a bench - and show it
+ to _crafter_, who judges work for the court at
+ _store_ in __store_.
 
 Message:  1011
 %qdt:
@@ -33,19 +37,20 @@ Message:  1012
 <ce>         "Gathering is half of it. Make something.
 <ce>         The forge at an armourer's, the loom at a
 <ce>         clothier's, the mason's bench here - any
-<ce>          station will do. Then come back to me."
+<ce>         station will do. A pot on the fire is supper,
+<ce>              not a piece. Then come back to me."
 
 Message:  1013
 <ce>        "You made it yourself? Start to finish?"
 <ce>        _crafter_ asks after every step of the work,
 <ce>          and nods at every answer.
 <ce>
-<ce>       "Then you need no master, and I have lost an
-<ce>        apprentice. The court will hear your name one
-<ce>        day. I would like it to hear you began here."
+<ce>       "Then you need no master, and the court crafter
+<ce>        has lost an apprentice. The court will hear your
+<ce>        name one day. I will tell it you began with us."
 
 Message:  1014
-The court's crafter at _store_? Lost an apprentice to the trade, I hear.
+_crafter_ at _store_ judges work for the court. Waiting on an apprentice's piece, I hear.
 <--->
 _crafter_ makes for the court. Says the new apprentice will make a crafter yet.
 <--->
@@ -54,9 +59,9 @@ Looking for _crafter_? Try _store_, at the mason's bench.
 -- Symbols used in the QRC file:
 --
 --              %qdt occurs 2 times.
---         _crafter_ occurs 7 times.
+--         _crafter_ occurs 8 times.
 --            _gold_ occurs 1 time.
---           _store_ occurs 5 times.
+--           _store_ occurs 4 times.
 --          __store_ occurs 2 times.
 
 QBN:

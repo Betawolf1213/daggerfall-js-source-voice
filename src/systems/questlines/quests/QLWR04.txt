@@ -4,7 +4,9 @@
 -- the keys - the truth (the sheet's `truth`, a Knightly Order's standing) or the mercy asked of him (`mercy`, his last
 -- gift). Lore: canon - the Imperial Secretary surrendered the Spire's portal keys in 3E 398, nearly every Battlemage was
 -- killed, and an apprentice drove the legions out; the Elder Council; the Knights of the Dragon. The port's own -
--- Corvane, and why the keys were given up (said as his account, never against the canon).
+-- Corvane, and why the keys were given up (said as his account, never against the canon). AUDIT QUESTLINES LINES-9:
+-- the page is dated "today", never a year the online calendar runs past (it was "3E 406"), and he has known "since
+-- the Spire fell", never a count of years.
 Quest: QLWR04
 DisplayName: The Battlemage’s Account
 -- Message panels
@@ -36,8 +38,8 @@ Message:  1011
  the Secretary who surrendered the portal keys, too.
 
      I know why the keys were given up. I have known
- for eight years. I need you to hear it before I
- write it down. _tavern_, in __tavern_.
+ since the Spire fell. I need you to hear it before
+ I write it down. _tavern_, in __tavern_.
 
 <ce>                       Corvane Tull, Battlemage
 
@@ -83,8 +85,8 @@ Message:  1040
 <ce>
 <ce>       "The truth, then. All of it, and his reasons with
 <ce>        it. The Empire can judge the rest." He writes for
-<ce>        a long time. When he looks up, the date at the
-<ce>        top of the page reads 3E 406.
+<ce>        a long time. When he looks up, the page is dated
+<ce>        today, and not 3E 398.
 
 Message:  1041
 <ce>       Corvane closes his eyes. "Taken, not given. He has

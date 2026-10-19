@@ -1491,10 +1491,12 @@ export class GivePc extends ActionTemplate {
       console.warn(`[quest] Could not find Item resource symbol ${this.itemSymbol?.name}`);
       return;
     }
-    shareQuestGold(this.parentQuest, item.daggerfallUnityItem);   // REALM P0.4: a party's quest pays one reward
     // QL3 (bible/06-Systems/Questlines-Arc.md section 5.2): a stamped quest's outcome settled and paid - its gold by the
     // outcome's factor, its choice of gear set waiting (systems/questlines/qlLayer.js reward). DFU's quest: nothing.
+    // AUDIT QUESTLINES REWARD-11: before the party's split - split first, the HUD named the share of the unscaled purse
+    // ("309 gold") and the pile held the scaled one (386)
     this.parentQuest.hooks?.questReward?.(this.parentQuest, item.daggerfallUnityItem, item);
+    shareQuestGold(this.parentQuest, item.daggerfallUnityItem);   // REALM P0.4: a party's quest pays one reward
     if (this.textId !== 0) {
       this.parentQuest.hooks?.giveItemToPlayer?.(item.daggerfallUnityItem, true);   // AddPosition.Front
       this.parentQuest.showMessagePopup(this.textId);

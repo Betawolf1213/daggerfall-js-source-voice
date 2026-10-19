@@ -45,10 +45,16 @@
 //                                ownMinutes; the world's offline), for
 //                                the one act that stamps a marker of
 //                                theirs: TrainPc's training time.
-//   getQuestSourceLines(name)  - quest source by name (the vendored
-//                                pack through the host's data seam;
-//                                the QuestListsManager stand-in that
-//                                StartQuest schedules through)
+//   getQuestSourceLines(name, questlines) - quest source by name (the
+//                                vendored pack through the host's data
+//                                seam; the QuestListsManager stand-in
+//                                that StartQuest schedules through).
+//                                AUDIT QUESTLINES BRANCH-12/14:
+//                                `questlines` reads a flagship quest
+//                                with its branch (true) or as DFU's
+//                                (false) - a shared copy's shape and a
+//                                stamped restart; absent, the switch now
+//                                (systems/questlines/qlPatches.js)
 //   showPopup(quest, tokens)   - ONE message box: the already-
 //                              expanded token array of one chunk. The
 //                              host stacks them (PushWindow), newest
@@ -286,7 +292,7 @@
 
 import { Parser } from './parser.js';
 import { defaultActionTemplates } from './actions.js';
-import { receivedState, mergeSharedState } from '../questlines/qlState.js';   // QL1: a shared copy's questline state (decision 7)
+import { receivedState, mergeSharedState, freshState, QL_STAMP } from '../questlines/qlState.js';   // QL1: a shared copy's questline state (decision 7); AUDIT QUESTLINES BRANCH-14: a restart's stamp
 import { QuestResourceBehaviour } from './resourceBehaviour.js';
 import { FACTION_TYPES } from '../../formats/factionFile.js';
 import { SECONDS_PER_WEEK } from '../gameDate.js';
@@ -1242,6 +1248,9 @@ export class QuestMachine {
     const uid = nextUid();
     // AUDIT DROPS A3: an envelope the restore chokes on is REFUSED (null), never half a quest on the live table
     try { quest.restoreSaveData({ ...questData, uid }, this._saveResolvers()); } catch (e) { console.warn(`[quest] shared quest refused: ${e?.message ?? e}`); return null; }
+    // AUDIT QUESTLINES REWARD-1: a stamped copy's tier is the HOLDER's, read as the layer's stamp reads it at a start (the
+    // holder's level, or the quest's own row - deps.questlinesStamp), never the envelope's (qlState.js receivedState)
+    if (quest.ql) quest.ql.tier = this.deps.questlinesStamp?.(quest)?.tier ?? 1;
     this._relinkQuestItems(quest);
     // AUDIT 68 S29-share-topics: StartQuest's talk registration, in its place (before the live table) - a received
     // quest's people and places had no 'tell me about'/'where is', and its `dialog link` actions found no quest
@@ -1506,9 +1515,13 @@ export class QuestMachine {
    *  world, so the SCRIPT's shape depended on where the receiver stood: a `local` Place throws in the wilderness
    *  or in a town without that building, and the receiver was told they "do not know this quest". The shape is
    *  the script's; the world's half (the sites, the NPCs, the homes) comes from the sender's envelope, as a save
-   *  file's does. */
-  parseQuestShape(questName, factionId = 0) {
-    const lines = this.deps.getQuestSourceLines?.(questName);
+   *  file's does.
+   *  AUDIT QUESTLINES BRANCH-12: AND THE SCRIPT IS THE ONE THE COPY WAS READ WITH. `questlines` is the envelope's stamp
+   *  (questShare.js receiveSharedQuest): a stamped copy was read with its branch, an unstamped one as DFU's (begun before
+   *  the deploy, or offline with the switch off) - and the read followed the RECEIVER's switch, forced on online, so every
+   *  share and every resync of a copy begun on DFU's script was refused as a forgery ('mismatch'). Absent: the switch now. */
+  parseQuestShape(questName, factionId = 0, { questlines = undefined } = {}) {
+    const lines = this.deps.getQuestSourceLines?.(questName, questlines);
     if (!lines) return null;
     return this.parseQuestForLists(lines, Number(factionId) || 0, { headless: true });
   }
@@ -1691,9 +1704,15 @@ export class QuestMachine {
     const why = this.restartRefusal(uid, { refuse });
     if (why) return { ok: false, reason: why };
     const old = this.quests.get(Number(uid));
-    const lines = this.deps.getQuestSourceLines?.(old.questName);
+    // AUDIT QUESTLINES BRANCH-14: THE STAMP IS FOR LIFE, A RESTART'S TOO (decision 1). A stamped quest restarted with the
+    // switch off (offline, the player's) was read and started as DFU's: a questline's own step unstamped, its `ql act`
+    // deaf for good (qlActions.js QlAct). A stamped quest is read with its branch and starts stamped whatever the switch
+    // says now (its tier the holder's, as a start reads it); an unstamped one restarts as any start does, by the switch now.
+    const stamped = old.ql?.stamp === QL_STAMP;
+    const lines = this.deps.getQuestSourceLines?.(old.questName, stamped || undefined);
     const fresh = lines ? this.parseQuestForLists(lines, old.factionId) : null;
     if (!fresh) return { ok: false, reason: 'unparsed' };
+    if (stamped) fresh.ql = this.deps.questlinesStamp?.(fresh) ?? { ...freshState(), tier: old.ql.tier };
     if (this.sharedCandidateNamed(old.questName) === old) this.sharedQuestNames.delete(old.questName);
     this.removeQuest(old);
     try {

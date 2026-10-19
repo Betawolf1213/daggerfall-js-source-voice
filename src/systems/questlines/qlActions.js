@@ -31,23 +31,48 @@
 //                                                                   start-up, before the talk shows the person.
 import { ActionTemplate } from '../quest/actions.js';
 import { Symbol as QuestSymbol } from '../quest/symbol.js';
-import { isStamped } from './qlLaw.js';
+import { isStamped, isEnding } from './qlLaw.js';
+import { sheetFor } from './qlSheets.js';   // AUDIT QUESTLINES BRANCH-10: an outcome is one its quest's sheet has
 
 const SYMBOL = '[a-zA-Z0-9_.]+';
+
+/** AUDIT QUESTLINES BRANCH-3: a question answered null - the host could not show its pick (questBridge.js choiceBoxes:
+ *  no list art yet) - is asked again this many of the machine's ticks later (30 s at machine.js TICKS_PER_SECOND 10).
+ *  Asked again on the next tick, the question came back the moment it was clicked away, for as long as the art was not
+ *  there; and before, nothing answered at all - the box went, and the question was never asked again until a load. */
+export const ASK_AGAIN_TICKS = 300;
+
+/** AUDIT QUESTLINES BRANCH-1: THE QUESTIONS UP, QUEST BY QUEST - an ask's latch is its QUEST's, by the ask's place (its
+ *  task, its index there), not the action object's: a party's resync rebuilds every action (machine.js
+ *  updateSharedQuest), and the rebuilt ask, its own latch gone, raised the question again over the box still up. No save
+ *  state: a load builds new quests, and asks afresh. A place holds UP while its box is up, else the ticks left before a
+ *  question answered null is asked again. */
+const held = new WeakMap();
+const UP = -1;
+const heldOf = (quest) => { let m = held.get(quest); if (!m) held.set(quest, (m = new Map())); return m; };
+
+/** AUDIT QUESTLINES BRANCH-1: A RECEIVED COPY KEPT IN STEP WITH A PARTY ASKS NOTHING - the sharer chooses, and the copies
+ *  take the choice on the resync (decision 7, record 10.2). Every copy asked: the resync carried the sharer's click, so
+ *  the member was asked the sharer's question; the member's answer synced back and decided the sharer's copy under the
+ *  sharer's own box, whose answer then started the other choice's task - the kept gold AND the standing for giving it up
+ *  (R0C11Y26). A received copy with no party to resync it (machine.js rewardShares: the party gone; or after a load - the
+ *  share memory is no save state) is its holder's alone, and asks. */
+const awaitsSharer = (quest) => quest?.ql?.received === true && !!quest.hooks?.sharedCopy?.(quest) && (quest.hooks?.rewardShares?.(quest) ?? 1) > 1;
 
 /** `ask` - a choice in the player's own words. The host shows the question's message and the choices' messages
  *  (hooks.showChoice - a box, then a pick that cannot be dismissed without a choice, as PromptMulti's box cannot -
  *  PromptMulti.cs:87-88); the choice taken starts its task. COMPLETE ONLY ON THE ANSWER: while the question is up it is
  *  not asked again, and a question no one answered - the page reloaded under it, the box torn down with its scene - is
- *  asked again (the `asking` latch is no save state: a load asks afresh). A host that answers null (closed unanswered)
- *  is asked again too. allowRearm false, as PromptMulti: once answered, the task must be armed again to ask again. */
+ *  asked again (the latch is no save state: a load asks afresh). A host that answers null (its pick could not be shown)
+ *  is asked again ASK_AGAIN_TICKS later. AUDIT QUESTLINES BRANCH-19: allowRearm false, as PromptMulti: once answered it is
+ *  never asked again - a task cleared and set again does not re-arm it (ActionTemplate.rearmAction). */
 export class QlAsk extends ActionTemplate {
   static typeName = 'QlAsk';
   get saveShape() { return [['id'], ['choiceIds'], ['choiceTasks', 'symArray']]; }
   constructor(parentQuest) {
     super(parentQuest);
     this.allowRearm = false;
-    this.asking = false;   // the question is up - transient: a load asks again
+    this.reported = false;   // AUDIT QUESTLINES BRANCH-9: a missing message said once - transient
     this.id = 0;
     /** @type {number[]} */
     this.choiceIds = [];
@@ -68,24 +93,39 @@ export class QlAsk extends ActionTemplate {
     }
     return action;
   }
-  update(_caller) {
-    if (this.asking) return;
+  update(caller) {
     const quest = this.parentQuest;
-    const message = quest.getMessage(this.id);
-    const choices = this.choiceIds.map((id) => quest.getMessage(id));
-    if (!message || choices.some((c) => !c)) {
-      console.warn(`[quest] ${quest.questName}: ask ${this.id} names a message the quest does not have - nothing asked`);
-      this.setComplete();
-      return;
+    const task = caller?.symbol ?? null, at = caller?.actions?.indexOf?.(this) ?? -1;
+    const key = `${task?.name ?? ''}#${at}`, latch = heldOf(quest), was = latch.get(key);
+    if (was === UP) return;
+    if (was > 0) { latch.set(key, was - 1); return; }
+    if (awaitsSharer(quest)) return;
+    const message = quest.getMessage(this.id) ?? null;
+    const offered = this.choiceIds.map((id, i) => ({ id, task: this.choiceTasks[i], message: quest.getMessage(id) ?? null }));
+    const choices = offered.filter((c) => c.message);
+    // AUDIT QUESTLINES BRANCH-9: A MESSAGE THE QUEST DOES NOT HAVE FAILS LOUDLY, AND THE QUEST STAYS ANSWERABLE. The ask
+    // warned, marked itself done and asked nothing - the reward waited on its choice for ever (M0B60Y10 with a misspelt
+    // id passed every pin). Said once as an error, naming the quest and the ids; asked with what it has (the choices that
+    // have words, the pick alone if the question has none); never complete but on an answer.
+    if (!this.reported && (!message || choices.length < offered.length)) {
+      this.reported = true;
+      const missing = [...(message ? [] : [this.id]), ...offered.filter((c) => !c.message).map((c) => c.id)];
+      console.error(`[questlines] ${quest.questName}: ask ${this.id} names a message the quest does not have (${missing.join(', ')}) - ${choices.length ? 'asked with what it has' : 'nothing to ask: it waits, unanswered'}`);
     }
-    if (!quest.hooks?.showChoice) return;   // no host to ask: the question waits, as a prompt with no box does
-    this.asking = true;
-    quest.hooks.showChoice(quest, message, choices, (index) => {
-      this.asking = false;
-      const sym = Number.isInteger(index) ? this.choiceTasks[index] : null;
-      if (!sym) return;   // closed unanswered: asked again on the next tick
-      this.setComplete();
-      quest.startTask(sym);
+    if (!choices.length) return;
+    latch.set(key, UP);
+    quest.hooks?.showChoice?.(quest, message, choices.map((c) => c.message), (index) => {
+      if (latch.get(key) === UP) latch.delete(key);
+      const chosen = Number.isInteger(index) ? choices[index] : null;
+      if (!chosen) { latch.set(key, ASK_AGAIN_TICKS); return; }   // closed unanswered: asked again later
+      // AUDIT QUESTLINES BRANCH-1: THE ANSWER IS THE ASK'S AS IT STANDS NOW - the one in this place (a resync's rebuild of
+      // it, or itself), and only while unanswered: not once it is complete or a choice of its is already set (a partner's
+      // answer, carried on the resync while this box was up - taken too, both ways paid), nor once the quest is ending.
+      const live = task ? quest.getTask?.(task)?.actions?.[at] : this;
+      if (!(live instanceof QlAsk) || live.id !== this.id || live.isComplete || isEnding(quest) || quest.questTombstoned
+        || live.choiceTasks.some((s) => quest.getTask?.(s)?.getTriggerValue?.())) return;
+      live.setComplete();
+      quest.startTask(chosen.task);
     });
   }
 }
@@ -108,8 +148,15 @@ export class QlOutcome extends ActionTemplate {
     return action;
   }
   update(_caller) {
-    const quest = this.parentQuest;
-    if (isStamped(quest) && !quest.ql.outcome && this.outcomeSymbol?.name) quest.ql.outcome = this.outcomeSymbol.name;
+    const quest = this.parentQuest, name = this.outcomeSymbol?.name;
+    if (isStamped(quest) && !quest.ql.outcome && name) {
+      // AUDIT QUESTLINES BRANCH-10: a name the quest's sheet does not have is no outcome - written, it stood first, so the
+      // sheet's own bindings never settled one, and the quest ended a success that paid no standing and no gear and filed
+      // `done` (outcomeOf finds no row). Said, and left to the sheet. A quest with no sheet has nothing to hold it to.
+      const sheet = sheetFor(quest.questName);
+      if (!sheet || (sheet.outcomes ?? []).some((o) => o.id === name)) quest.ql.outcome = name;
+      else console.warn(`[questlines] ${quest.questName}: outcome ${name} is not one its sheet has - left to the sheet's bindings`);
+    }
     this.setComplete();
   }
 }

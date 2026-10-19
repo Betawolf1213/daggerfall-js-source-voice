@@ -467,6 +467,19 @@ export function egClaimDone(a) {
   return a?.error === 'receipt' || a?.error === 'not-yours';
 }
 
+/**
+ * QL11: THE REDOUBT'S ACTS, off a claim's answer `a` for its receipt `c` - a Redoubt taken, its e1 receipt counted once
+ * (`recorded`; a Rehearsal's is practice), and a Valkynaz's besides: every fifth Court (egLaw.js egBossOf), the receipt's
+ * own `w` (egPay.js egValkRedoubt - the one law the service pays a `w` receipt by). AUDIT QUESTLINES ACTS-8: here, out of
+ * createEgClient's scope, which the host ceiling holds (test/scenes/hostceiling.test.js) - its claim loop calls it, one line.
+ * @param {any} a @param {any} c
+ */
+function redoubtActs(a, c) {
+  if (!a?.ok || !a.data?.recorded || a.data.q !== 'w' || c?.rh === 1) return;
+  noteAct('redoubt-taken');
+  if (egValkRedoubt(c.w)) noteAct('valkynaz-felled');
+}
+
 /** A request id the service takes (server-account/src/eg.js EG_RQ_RE). */
 function requestId() {
   const b = new Uint8Array(12);
@@ -984,8 +997,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         const seq = keysAsk(), a = await account.claim(r);   // AUDIT EG IV (lane3 #10): its balance in its ask's order
         if (a?.ok && Number.isSafeInteger(a.data?.keys)) restack(a.data.keys, seq);
         if (a?.ok && a.data?.recorded && a.data.q === 'w') say(`Redoubt ${a.data.w} is yours.`);
-        if (a?.ok && a.data?.recorded && a.data.q === 'w' && c.rh !== 1) noteAct('redoubt-taken');   // QL11: a Redoubt taken - its e1 receipt counted once (`recorded`; a Rehearsal's is practice)
-        if (a?.ok && a.data?.recorded && a.data.q === 'w' && c.rh !== 1 && egValkRedoubt(c.w)) noteAct('valkynaz-felled');   // QL11: and a Valkynaz's - every fifth Court (egLaw.js egBossOf), the receipt's own `w`
+        redoubtActs(a, c);   // QL11: a Redoubt taken, and a Valkynaz's (AUDIT QUESTLINES ACTS-8: said at module scope, below egClaimDone)
         // EG-E (section 19): WHAT IT PAID - the service's word on a Redoubt's receipt (the week's pay, the pity's passes,
         // the Marks, the deed, the embers), and the spoils it rolls; a re-claim answers the same (`again`), a guest's its
         // gold alone. Never for a Rehearsal (the service pays none).

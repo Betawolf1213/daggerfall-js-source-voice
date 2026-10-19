@@ -3,7 +3,10 @@
 -- step 1 ends: the stable master's word is in the journal at once. The giver is unnamed (a stable master): a
 -- Shopkeeper of the player's own town, at its tavern. NO ACT (qlActs.js: a wagon's load hauled is no kind): DFU's own
 -- haul - the load collected from a merchant in another town (`get item`, never pay) and carried all the way back to
--- the stable master (`toting`), who pays.
+-- the stable master (`toting`), who pays. The player stands in the buyer's town when it begins, so its stable master
+-- is that town's, who has heard of the haul.
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIR02
 DisplayName: The Long Haul
 -- Message panels
@@ -18,11 +21,11 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _master_, the stable master at _inn_ in
- __inn_, has a longer road for me. A load of
- the stable's own is waiting with _seller_ at
- _yard_ in __yard_. I am to collect it and haul
- it all the way back to _inn_.
+ Word of my haul has reached _master_, a stable
+ master at _inn_ in __inn_, who has a longer
+ road for me. A load of the stable's own is waiting
+ with _seller_ at _yard_ in __yard_. I am to
+ collect it and haul it all the way back to _inn_.
 
 Message:  1011
 %qdt:

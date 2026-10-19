@@ -1181,8 +1181,9 @@ export function createNavalHost(deps) {
     const news = by === myId() || newsworthy(entry);   // SEA-PEACE: a fight between ships a bay away is no news of mine
     if (change === SHIP_STATES.struck) {
       entry.struck = { by, at: clock };
-      if (by === myId()) crewEvent(boatInPlay() ?? myBoat(), 'win');   // SHIP-CREW: she struck to us
-      if (by === myId()) noteAct('ship-struck');   // QL11: a ship made to strike her colours - by my guns (a peer's are theirs)
+      // SHIP-CREW: she struck to us; QL11: a ship made to strike her colours - by my guns (a peer's are theirs). AUDIT
+      // QUESTLINES ACTS-8: the act in the crew's own arm, no line of its own (HOST-SPLIT)
+      if (by === myId()) { crewEvent(boatInPlay() ?? myBoat(), 'win'); noteAct('ship-struck'); }
       if (news) deps.say?.(`${s.names?.name ?? 'It'} surrenders!`, 4);
       sound(NAVAL_CLASSIC.bell, s.pos, 0.8);   // her bell as the colours come down
     } else if (change === SHIP_STATES.sinking) {

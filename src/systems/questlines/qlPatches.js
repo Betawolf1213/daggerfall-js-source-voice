@@ -29,7 +29,9 @@ import COMMONERS from './patches/commoners.json' with { type: 'json' };
 import WITCHES from './patches/witches.json' with { type: 'json' };
 import VAMPIRES from './patches/vampires.json' with { type: 'json' };
 
-/** The first message id a branch's own words may take (DFU's scripts number theirs from 1000 and never reach it). */
+/** The first message id a branch's own words may take. DFU's scripts number theirs from 1000; none uses an id from 1900 to
+ *  1999 (the highest below is 1161 - A0C01Y13 alone goes past, to 2000, 2001 and 2005). AUDIT QUESTLINES BRANCH-18: the
+ *  pins hold a patch's words to the band - from 1900, and never an id its script already has (ql1_sheets.test.js). */
 export const QL_MESSAGE_BASE = 1900;
 
 /** Every family's patches, by family name. */

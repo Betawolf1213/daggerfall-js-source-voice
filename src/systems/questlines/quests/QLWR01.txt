@@ -3,8 +3,11 @@
 -- by a questor: Corvane Tull's letter is the offer (QLBD01's shape). WITNESSED (net/questlineClaims.js, `redoubt`): the
 -- step waits on an Elite Breach's first Court taken (`ql act redoubt-taken 1`, said by scenes/eliteGates/egClient.js).
 -- Then his table, where he pays; a visit before is answered and cleared, as DFU's guild quests clear an early click
--- (M0B30Y04's `_clearclick_`). Lore: canon - Jagar Tharn gave the Spire to Dagon, and in 3E 398 his legions took it;
--- the world is 3E 406. The port's own - Corvane, the torn halls, the Kyn's proving ground (Elite-Gates.md section 3).
+-- (M0B30Y04's `_clearclick_`). Lore: canon - Jagar Tharn gave the Spire to Dagon, and in 3E 398 his legions took it.
+-- The port's own - Corvane, the torn halls, the Kyn's proving ground (Elite-Gates.md section 3). AUDIT QUESTLINES
+-- LINES-9: no line counts the years since 3E 398 - the online calendar runs a game year about a real month
+-- (net/wire.js sharedClassicMinutes), so "eight years" would be wrong by the winter; the words say "since the Spire
+-- fell". LINES-10: Corvane keeps no room long (a fresh Place each step), and says so - never "I am always here".
 Quest: QLWR01
 DisplayName: The Weir Gate
 -- Message panels
@@ -16,8 +19,8 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>       Corvane pushes a purse across the table: _gold_
-<ce>       gold, some of it in coin eight years out of date.
-<ce>                 "For the first Court."
+<ce>       gold, some of it in coin struck before the Spire
+<ce>              fell. "For the first Court."
 
 QuestLogEntry:  [1010]
 %qdt:
@@ -38,7 +41,8 @@ Message:  1011
      Turn it. Raise the breach and take its first
  Court. The halls on the other side are the ones I
  slept in. Then come and find me at _tavern_ in
- __tavern_. I am always there.
+ __tavern_. I keep a room there, for now. I never
+ keep one long.
 
 <ce>                       Corvane Tull, Battlemage
 
@@ -62,7 +66,7 @@ Message:  1013
 <ce>        proving ground. I mean to take it back."
 
 Message:  1014
-The Battlemage? Sits in the corner and writes letters dated eight years ago.
+The Battlemage? Sits in the corner and writes letters dated 3E 398.
 <--->
 Corvane Tull pays in old coin and never speaks above a whisper.
 <--->
@@ -71,7 +75,7 @@ They say he was a student at the Battlespire. They say a lot of things.
 Message:  1015
 <ce>       "The first Court," Corvane says, without looking
 <ce>        up from his papers. "Turn the key. Raise the
-<ce>        breach. I will be here. I am always here."
+<ce>        breach. I will be here until you have."
 
 Message:  1016
 %qdt:

@@ -4,6 +4,8 @@
 -- the player's own town, at its temple. The act is the Firmament's (qlActs.js star-taken, three). Lore: canon - the
 -- Guardian constellations (the Warrior, the Mage, the Thief) and the Serpent that wanders among them; the Firmament's
 -- own signs are the port's (Firmament.md section 3).
+-- AUDIT QUESTLINES LINES-10: a Person is made fresh in each step's quest (a new name, in whatever town the player
+-- stands in), so this step's giver is introduced as NEW - sent on by the last step's - never spoken of as the same one.
 Quest: QLIF02
 DisplayName: A Constellation of Your Own
 -- Message panels
@@ -18,11 +20,11 @@ QuestComplete:  [1004]
 
 QuestLogEntry:  [1010]
 %qdt:
- _seer_, the astrologer at _temple_ in
- __temple_, says one star is a beginning and
- three are a shape. I am to take three more stars
- on the Firmament, then go back to _temple_ for
- a reading.
+ The astrologer who read my first star has sent
+ me on to _seer_, who reads the sky at _temple_
+ in __temple_: one star is a beginning, and three
+ are a shape. I am to take three more stars on the
+ Firmament, then go to _temple_ for a reading.
 
 Message:  1011
 %qdt:
