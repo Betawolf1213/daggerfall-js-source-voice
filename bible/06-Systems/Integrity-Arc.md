@@ -306,6 +306,35 @@ node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x
 Pinned by `test/net/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
 `tools/mutants/fb1014_summonrepair.json` (16, dead).
 
+PURSE-MEND (FIELD BUGS 2026-10-19b, a player's private report: a purse of -8,000,000 and a carry weight of -19,995 kg
+after a sale at 0.0.235) added a third. TRADE-WRAP (FIELD BUGS 2026-10-18b) stopped the counter paying below nothing,
+and left a record it had already paid that way to "a staff repair" - which `realm-repair`, a faction's flag and a refund,
+could not reach: the purse stayed below nothing, the judge's `gold` finding held the trade, and every payment found the
+coins short and spent the letters first. `realm-findings` now says the purse the record holds (`character.purse` - the
+wealth counts a purse below nothing as none, so nothing else said it), and `realm-mend { id, ticket, was, gold, note? }`
+mends one: the record's purse, still the `was` staff reckoned from (`mend-moved` otherwise: played since, or the wrong
+character), and below nothing (`mend-not-negative` otherwise), is SET to nothing - never added to - and `gold`, what the
+character is owed, 0 to one int's worth, is given as ONE LETTER OF CREDIT at the front of the pack: what the trade window
+itself pays for a sum the pack cannot carry (`tradeModes.js sellProceeds`), never a purse of coin (a million coins weigh
+2,500 kg). The law is `src/net/repairLaw.js` (`purseMendOf`, `applyPurseMend`), the service's and the tool's. The act is
+the repair's machinery (`review.js staffMend`, which both run): the dead mended never, once a ticket in `realm_repairs`
+(a mend's row names no faction and no bit - 0 and 0 - `was` the purse it found, `gold` the letter; a ticket names one act,
+and one of the other kind is `repair-ticket`), the record seized one sequence on with its seat taken, the gold witnessed
+and the `repair` faucet's, the act written among the findings. AND THE HOLD THE PURSE MADE GOES WITH IT: when the
+character's hold is the law's, the finding it stands on is the purse's alone (`PURSE_SIG`, the signature `lawSigOf`
+writes for `gold`) and no timed hold stands, the mend lifts it as the next clean checkpoint would - the hold and its
+signature gone, `judge_rev` one on, guarded on the judgement it read - and the strike stands, fading as every strike does
+(which strike the purse struck, the row does not say). A hold the purse is not alone in, a timed hold and staff's own stay
+for the next checkpoint and for staff. No migration: the mend's row is `realm_repairs`' own shape. The tool:
+
+```sh
+node tools/realmReview.mjs findings <realm character id>
+node tools/realmReview.mjs mend <realm character id> <ticket> <was: the purse below nothing> <gold owed> [note]
+```
+
+Pinned by `test/net/fb1019b_pursemend.test.js` over the real Worker, a record the game writes (`save.js snapshotPlayer`)
+after the old counter's sale, checkpointed so the judge holds it; `tools/mutants/fb1019b_pursemend.json` (24, dead).
+
 ### AUTO-HOLD - no hold waits on a person (2026-10-16, `server-account/src/verdict.js`, `ledger.js`, migration 0120)
 
 Players on Discord, frozen "until staff have looked" because "copies of an item were found", none of them meaning to
