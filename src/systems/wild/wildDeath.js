@@ -18,6 +18,9 @@
 //     take it for ten minutes. A letter of credit too (LETTERS-DROP, 2026-10-09), ahead of the decor's kept-back list.
 //     CART-AWAY (Mac, 2026-10-15: "if its parked outside the zone nothing should be lost"): the cart's only while the
 //     wagon is with them - parked off the zone, stabled or none, it keeps every piece and its coin (systems/wild/wildCart.js).
+//     COMPANION-DROP (2026-10-19, the owner: "Bag drops; no send-off in zone"): and every companion's at their side - a
+//     crew hand's pack, a sworn revenant's pack and kit (wildDropLaw.js wildPacks) - as the cart is; and none is sent off
+//     from inside the zone (crewCompanions.js, revenantCompanions.js).
 //   WORN: kept on a death to a foe. On a death at another player's hand the killer may take ONE worn piece the same
 //     rules let go (`wornOffer`) - the fallen's own game gives it (net/wild/wildFight.js).
 // The purse is the death penalty's (systems/deathPenalty.js) and unchanged.
@@ -26,7 +29,7 @@ import { WILD_ITEMS_MAX } from '../../net/wire.js';
 
 // THE LAW - INT9: its home is systems/wild/wildDropLaw.js (a leaf the account Worker bundles: the service takes a death's drop
 // off the record), re-exported here
-export { WILD_NEVER_GROUPS, keptOnWildDeath, wildCanLose, takeWildDrop, WILD_GOLD_LOSS, takeWildGold, wornOffer, wildRecord, takeWildDeath, wildPickOf, wildDropCandidates, wildCartRecordOf, wildCartMayBeAway, wildTookOf, wildTakeTook } from './wildDropLaw.js';
+export { WILD_NEVER_GROUPS, keptOnWildDeath, wildCanLose, takeWildDrop, WILD_GOLD_LOSS, takeWildGold, wornOffer, wildRecord, takeWildDeath, wildPickOf, wildDropCandidates, wildCartRecordOf, wildCartMayBeAway, wildTookOf, wildTakeTook, WILD_REVENANTS_MAX, wildSwornAtSide, WILD_PACK, wildPacks, wildPacksOf } from './wildDropLaw.js';
 
 /** A list cut into the wire's chunks. */
 export function wildChunks(list, size = WILD_ITEMS_MAX, bytes = Infinity) {

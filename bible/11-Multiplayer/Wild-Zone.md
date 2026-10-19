@@ -181,6 +181,39 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   drives. A seizure honours no word - its carrier holds neither the record nor the mask - and a tab from before the word
   says none: both take the cart as before. A fall asked again answers its first take whatever is said, so the fallen's
   own ask, made first, is what its killer's seizure is answered too. Its limit is section 22's.
+- COMPANION-DROP (FIELD BUGS 2026-10-19b, a player's private report; THE OWNER'S DECISION, 2026-10-19, asked whether
+  a companion's bag drops in the zone and whether one may be sent off from inside it: "Bag drops; no send-off in
+  zone"): A COMPANION AT THE FALLEN'S SIDE DROPS WHAT HE CARRIES WITH THEIRS. The law read the pack and the cart and
+  never a companion, so a companion's pack (COMPANION-KIT, `03-World/Naval-Combat.md`) and a sworn revenant's pack and
+  kit (`06-Systems/Revenants.md` sections 13 and 40) lay outside the drop - and sending him off stowed them outside
+  the zone. CART-AWAY's law, for the companions: storage WITH the player drops, storage outside the zone keeps. AT THE
+  SIDE: every crew hand ashore - he walks with the player through every door, so he is where they fall (with the naval
+  arc switched off too: his record still says ashore, and he comes back ashore with it, as the mod-off wagon goes where
+  its owner goes) - and the sworn walking with them, in the zone the first `WILD_REVENANTS_MAX` the record lists, the one
+  the zone stands (`wildDropLaw.js:"export const wildSwornAtSide = (list) =>"`; the party stands the same one,
+  `revenantCompanions.js:"export const swornAtYourSide = () =>"`); the rest wait outside the zone, and one away, resting
+  or abroad is away. Each pack at the side is read as the cart is (`wildDropLaw.js:"export function wildPacks"`): its
+  pieces join the drop by worth through the same `wildCanLose` - a letter drops (LETTERS-DROP), a bound, quest, wallet
+  or kept-back piece and the consumables stay - its coin's share joins the one gold pile, and what a full remains will
+  not take goes back to its own pack. DECIDED here, named: a sworn one's KIT (RVN-GEAR) drops as its pack does - its
+  pieces are the player's own, given from the pack and taken back at will, worn by the companion and never by the
+  player, so the player's own worn law (kept on a death to a foe, the killer's one pick) is not theirs. THE RECORD
+  DECIDES, NO WORD: the service reads who is at the side off the record it keeps
+  (`wildDropLaw.js:"export const wildPacksOf = (save) =>"` - the sea's `party`, the feud's `list`), its answer naming
+  each piece's pack (`from`: `crew:<boat>:<name>`, `sworn:<id>`, `kit:<id>`, `WILD_PACK`) and each pack's coin share
+  (`gold.packs`); the fallen's game takes exactly that out of its own live lists (`wildTakeTook`'s `packs` -
+  `world.js:"const out = wildTakeTook(playerEntity"`), and a piece whose pack is not there is left, never another
+  list's piece of the same marks. NO SEND-OFF IN THE ZONE: a hand ashore is never sent back aboard from inside it
+  (`crewCompanions.js:"export function heldAtSide"`, the boat's picker), nor the sworn one at the side sent away or on an
+  errand (`revenantCompanions.js:"export const leaveRefusal = (r) =>"`; the roster says it, and the slots' hold sends
+  another) - said in the zone's own voice, the teleport refusal's said of a companion (`WILD_TEXT.companionStays`: "No
+  companion leaves the Wrothgarian Mountains but at your side - Bran walks out with you."); nothing of mine is given as
+  kit to a sworn one waiting outside the zone (`WILD_TEXT.companionAway`). CARRIED OFF IN THE ZONE: a hand knocked out or
+  fallen from her roster gives his pack up into the player's pack, never her hold
+  (`crewCompanions.js:"export const packStaysAshore = () =>"`, the host's stowPack), and the sworn one at the side knocked
+  out hands its pack and kit to the player before it goes, said once (`WILD_TEXT.companionLeft`) - so nothing a companion
+  carries leaves the zone but at the player's side. A desertion or a betrayal there (RVN11b/c) keeps its split as ever:
+  what it keeps is its own, won back only by felling it. ACCOUNT DEPLOY: the law is the Worker's leaf (section 8).
 - WORN: kept on a death to a foe. At another player's hand, in the open country (a cell room), the killer may take
   ONE worn piece: the fallen's game shows the list (`worn`, under the fall's id), the killer's body window picks
   (`pick`, INT9: to the relay, in the room that refereed the fall, within `WILD_REF.pickMs`, naming what the offer
@@ -350,6 +383,12 @@ all (`wildFrame` reads `online.wildOk`), and no `wdun` word is sent to a hub tha
 CART-AWAY (2026-10-15, section 4) is one field on the account service's `/v1/wild/fall` body, `cart` (0 the wagon away,
 1 with them) - no relay frame and no migration. A service from before it ignores the word and a tab from before it says
 none: either way the cart is taken as it was, so the two deploy in either order.
+
+COMPANION-DROP (2026-10-19, section 4) is the Worker's leaf (`src/systems/wild/wildDropLaw.js`, already on
+`account-deploy.yml`'s list) and one field of its answer, `gold.packs` - no relay frame, no migration, no new body field:
+an ACCOUNT DEPLOY, which the merge runs. A tab from before it takes nothing out of its companions' own lists: a piece
+the service took stays in his pack there as the fallen's own copy, written down by its id (INT9's `knownCopySteps`),
+which moves by no route - the site and the service deploy together, on the same merge.
 
 ## 9. The journeys (WILD3, PVPTIERS)
 
@@ -593,8 +632,9 @@ half health", "everyone in the zone should see the same ... that the big giant i
 - NO REVENANTS (the owner: "No elite or any monster in the zone can be a revenant", then "Only 1 revenant allowed to
   summon in the zone"): a foe of the zone or a Greater Giant is never a revenant's candidate
   (`revenant.js:"if (entity.wildFoe || entity.wildGiant)"`), none returns and no lair stands while I am in the zone,
-  and only `WILD_REVENANTS_MAX` (1, `revenantCompanions.js:"export const WILD_REVENANTS_MAX"`) sworn revenant walks at
-  my side there - the rest wait outside it.
+  and only `WILD_REVENANTS_MAX` (1, `wildDropLaw.js:"export const WILD_REVENANTS_MAX"` - COMPANION-DROP: its home the
+  drop's law, which drops what that one carries, section 4) sworn revenant walks at my side there - the rest wait
+  outside it.
 - NO TELEPORT into, out of or inside the zone (section 9), and no /unstuck outdoors there (section 17).
 
 ## 17. /unstuck (PVPUNSTUCK)
@@ -841,4 +881,6 @@ the two-phase handoff - end to end through the real relay room, account service 
 `test/systems/fb1014_pvpescrow.test.js`, `tools/mutants/fb1014_pvpescrow.json`. CART-AWAY (Mac, 2026-10-15 - the cart's share
 only while the wagon is with them; through the real drop law, the real Horse Cart and Cargo runtime's records, the zone's
 own mask and the real account service): `test/systems/fb1015_cartaway.test.js`, `tools/mutants/fb1015_cartaway.json` (20, all
-dead).
+dead). COMPANION-DROP (the owner, 2026-10-19 - a companion at the side drops what he carries, none sent off from inside the
+zone; through the real drop law, the real naval host's party, the real feud's sworn and the real account service):
+`test/systems/fb1019b_companiondrop.test.js`, `tools/mutants/fb1019b_companiondrop.json`.

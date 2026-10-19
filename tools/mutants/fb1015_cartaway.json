@@ -11,8 +11,8 @@
   {
     "name": "CART-AWAY-the-gold-share-still-taken",
     "file": "src/systems/wild/wildDropLaw.js",
-    "old": "  const coin = takeWildGold(entity, { cart: withCart });",
-    "new": "  const coin = takeWildGold(entity);",
+    "old": "  const coin = takeWildGold(entity, { cart: withCart, packs });",
+    "new": "  const coin = takeWildGold(entity, { packs });",
     "tests": [
       "test/systems/fb1015_cartaway.test.js"
     ]

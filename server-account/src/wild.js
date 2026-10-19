@@ -38,6 +38,12 @@
 // mode (src/systems/wild/wildDropLaw.js wildCartMayBeAway: parked, stabled or none - never driven, following or beside them
 // unstabled). A seizure honours none (its carrier holds neither the record nor the mask), and a tab that says nothing
 // (one from before the word) drops the cart as ever. Asked again, a fall answers its first take, whatever is said.
+//
+// COMPANION-DROP (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Bag drops; no send-off in zone"): A COMPANION AT THE
+// FALLEN'S SIDE DROPS HIS PACK WITH THEIRS. No word is asked: the record says who is at the side - its sea's crew
+// ashore and its feud's sworn walking with it, the zone's one (src/systems/wild/wildDropLaw.js wildPacksOf) - and the law
+// takes their packs and kits as it takes the cart, its answer's `took` naming each piece's pack and `gold.packs` each
+// pack's coin share, so the fallen's game takes the same out of its own (wildTakeTook).
 import { verifyWildReceipt, verifyWildCollect, WILD_FALL_GRACE_S, WILD_COLLECT_TTL_S } from '../../src/net/wild/wildReceipt.js';
 import { mintRemainsOrder, remainsDigest, ORDER_TTL_S } from '../../src/net/identityToken.js';
 import { streamsFoes, WILD_REMAINS_MS } from '../../src/net/wire.js';
@@ -82,7 +88,8 @@ async function answerOf(/** @type {any} */ ctx, /** @type {CryptoKey} */ signing
     const wh = await remainsDigest(records, { subtle: ctx.subtle });
     order = await mintRemainsOrder({ s: fallen, wr: r, wh, wn: records.length, wm, ...(killerFirst && killer ? { wk: killer, wi: 0, ...(escrow ? { we: 1 } : {}) } : {}), ...(wg ? { wg } : {}) }, signing, { subtle: ctx.subtle, nowS: oi });
   }
-  return { r, order, items: records, kept, wi: killerFirst ? 0 : -1, took: Array.isArray(tk?.took) ? tk.took : [], gold: { purse: tk?.gold?.purse ?? 0, cart: tk?.gold?.cart ?? 0 }, ...(burnt ? { burnt: true } : {}), ...(seq != null ? { realm: { seq } } : {}), ...(escrow ? { escrow: escrowView(escrow) } : {}) };
+  const packs = tk?.gold?.packs && typeof tk.gold.packs === 'object' ? { packs: tk.gold.packs } : {};   // COMPANION-DROP: each pack's coin share, by its word
+  return { r, order, items: records, kept, wi: killerFirst ? 0 : -1, took: Array.isArray(tk?.took) ? tk.took : [], gold: { purse: tk?.gold?.purse ?? 0, cart: tk?.gold?.cart ?? 0, ...packs }, ...(burnt ? { burnt: true } : {}), ...(seq != null ? { realm: { seq } } : {}), ...(escrow ? { escrow: escrowView(escrow) } : {}) };
 }
 
 /**
