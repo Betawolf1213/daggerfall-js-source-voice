@@ -6810,13 +6810,11 @@ fold). The item law still counts the maker's rows by EFFECT
 enchanted under the old rule passes in the save and on the wire - the
 lesson of MAKER-KEPT (`01-Overview/bugs/Field-Bugs-2026-10-16c.md`),
 where a law tightened after the fact read honest pieces as forged and
-held their owners' trade. What that leaves open: the account service
-judges with the same law (`server-account/src/judge.js`, the market's
-and the vault's `lawfulItem`), and nothing on a maker's row dates it,
-so a modified client can still lay one setting many times and the law
-takes it as it takes an old piece. A stamp the client writes would
-prove nothing (a modified client leaves it off); telling new from old
-needs a record the service keeps.
+held their owners' trade. The account service judges with the same
+law (`server-account/src/judge.js`, the market's and the vault's
+`lawfulItem`), and nothing on a maker's row dates it, so the service
+does not yet tell a piece made after SIDE-ONCE from one made before;
+that waits on the owner.
 
 Pinned: `test/systems/fb1019b_sideonce.test.js` (4, on the real
 window, both skins: a taken setting gone from its chooser and the
