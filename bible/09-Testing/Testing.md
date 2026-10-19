@@ -253,7 +253,7 @@ one is silence wearing evidence's clothes.
 Pre-push gate: lint, the types, the bible's gates and `npm run test:changed`; CI's sharded `verify` is the whole gate, and `npm run check` (test + build, in series) is for when CI cannot run it (FAST-SUITE - CLAUDE.md, and "How the suite runs" above).
 
 `test/bible/manifest.test.js` holds three things: no test file shares its name with another (the bible names tests by
-name alone), this page carries no file table again, and `Testing-Rows-2026-10-19.md` stays closed at the 3,565 rows
+name alone), this page carries no file table again, and `Testing-Rows-2026-10-19.md` stays closed at the 3,571 rows
 it closed with.
 
 ## PY1 - THE PARITY PINS WERE BLIND (2026-08-28)

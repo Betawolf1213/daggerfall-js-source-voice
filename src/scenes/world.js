@@ -9630,8 +9630,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT NAV1 (B6): a raid the sea fight let go of - its boarders cast off, the deck left to them, the sea emptied -
       // ends with it (QuestMachine's own TombstoneQuest), never its waves following the player about; `withdraw`: its
       // living boarders go back over the rail with it (a tombstoned quest leaves the foes it made standing)
-      endRaid: (quest, { withdraw = false } = {}) => {
+      endRaid: (quest, { withdraw = false, won = false, crew = false } = {}) => {
         if (!quest || !questBridge) return;
+        if (won) { raidAshore.won(quest); return; }   // RAID-WON (scenes/raidAshore.js): won at sea, ended as one thrown back ashore
+        if (crew) raidAshore.crew(quest);   // RAID-WON: her ship gone - its crew home, its stranded boarders fighting on
         if (withdraw) for (const f of [...exteriorFoes.foes]) if (!f.dead && f.questBehaviour?.questUID === quest.uid) exteriorFoes.removeFoe(f);
         if (quest.questTombstoned) return;   // ended by its own clock: its boarders withdrawn, nothing more to end
         try { questBridge.machine.tombstoneQuest(quest); } catch (e) { console.warn('[naval] the raid would not end', e); }
@@ -19266,7 +19268,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (_deck === false) return false;
       if (_deck) {
         holdSpotWhile(collider, { x: _deck[0][0], y: _deck[0][1] + 0.9, z: _deck[0][2] }, () => exteriorFoes.spawnFoe(handle.foe.foeType, _deck[0], { gender: questFoeGender(handle.foe), yaw: _deck[1], questBehaviour: handle.behaviour, feetGiven: true }))
-          .then((f) => navalDeckBody(f, _deck[2]))   // DECK-WALK: a raid's wave stands on her deck, and stays on it
+          .then((f) => { if (!raidAshore.late(handle.foe?.parentQuest, f)) navalDeckBody(f, _deck[2]); })   // DECK-WALK: a raid's wave stands on her deck, and stays on it; RAID-WON: unless its raid ended while it stood up
           .catch((e) => console.error('[quest] naval deck foe stand failed:', e?.message ?? e));
         return true;
       }
@@ -19305,7 +19307,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         gender: questFoeGender(foe),
         yaw: Math.atan2(feet[0] - spot.x, feet[2] - spot.z),   // LookAt player (CreateFoe.cs:328)
         questBehaviour: handle.behaviour,
-      })).catch((e) => console.error('[quest] exterior foe stand failed:', e?.message ?? e));
+      })).then((f) => raidAshore.late(foe.parentQuest, f)).catch((e) => console.error('[quest] exterior foe stand failed:', e?.message ?? e));   // RAID-WON (AUDIT FB1019 D1): a raid's wave landing after its raid ended, withdrawn
       return true;
     },
     /** GameManager.RaiseOnEncounterEvent - its one core consumer is
@@ -29505,6 +29507,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     csaFrame: (dt, axes) => { _csaAxes = axes; csaFrame(dt); },   // CSA-C: a MonoBehaviour's Update and LateUpdate indoors too - a boat placed on a dungeon's water is baked, lit and drawn there; CSA-J (the audit): from the modes' frame, after its motor, on its axes
     onTransitionInterior: () => { navalStow(); csaOnTransition(); navalTransition(); },   // CSA-C: PlayerEnterExit.OnTransitionInterior; NAV-H: a building has no sea
     onTransitionExterior: () => { navalStow(); csaOnTransition(); navalTransition(); },   // CSA-C: PlayerEnterExit.OnTransitionExterior; NAV-H: a fresh sea at the door
+    raidLate: (quest, f) => raidAshore.late(quest, f),   // RAID-WON (AUDIT FB1019 D1): a raid's wave landing below deck after its raid ended, withdrawn (scenes/raidAshore.js)
     gateCourtLights: () => gateCourt?.lights() ?? [],   // WB4: the glow on him, in the court's light channel
     gateBoss: () => gateCourt?.target() ?? null,   // WB4b: him as a body my blows meet
     gateFloor: () => { _gateFloor.xa = gateLink?.state()?.xa ?? _gateFloor.none; _gateFloor.now = Date.now() + _sharedOffsetMs; return _gateFloor; },   // WB9b: the walkways laid between the courts, on the relay's clock (one object, refilled - AUDIT WB D10's law)

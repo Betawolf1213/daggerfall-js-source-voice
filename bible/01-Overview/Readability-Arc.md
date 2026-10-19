@@ -168,15 +168,15 @@ What a row said, its test file mostly says already: for half the rows, at least 
 it describes, and the rest is paraphrase, dates and cross-references. Copying the rows into the files' header comments
 would have added 5.4 MB of mostly repeated prose to the tests, so the table was closed instead, whole:
 
-- **`09-Testing/Testing-Rows-2026-10-19.md`** holds the 3,565 rows as they stood, in their order, under their own
-  headings, with the 8 main added before this merged. It is a record: nothing adds a row, and `manifest.test.js` holds it at 3,565. It cannot be frozen byte
+- **`09-Testing/Testing-Rows-2026-10-19.md`** holds the 3,571 rows as they stood, in their order, under their own
+  headings, with the 14 main added before this merged. It is a record: nothing adds a row, and `manifest.test.js` holds it at 3,571. It cannot be frozen byte
   for byte, because its rows carry 55 cites into our code and 5 into `Port-Ledger.md`, which `npm run cites` keeps
   true like any other page's.
 - **`Testing.md`** keeps its prose - how the suite runs, the two tiers of data, PY1 and EF1 - and says where the
   table went. The suite counts itself: the runner reports what ran, and the landing page counts the declared tests
   from the tree when it builds.
 - **`manifest.test.js`** holds three things now: test file names stay unique (the bible names a test by its file name
-  alone), `Testing.md` grows no table or total again, and the closed table keeps its 3,565 rows. Its second test, that
+  alone), `Testing.md` grows no table or total again, and the closed table keeps its 3,571 rows. Its second test, that
   a row whose count moved names its newest pins, went with the counts it guarded.
 - **The pins that read the table** were kept, pointed where the text now stands. A slice's "records" pin that its
   testing row exists (WW3, WEATHER2a-d, WIND3/4, HT2, TEX1, BA1, IF1, AUDIT-DW) reads the closed table; a pin that a

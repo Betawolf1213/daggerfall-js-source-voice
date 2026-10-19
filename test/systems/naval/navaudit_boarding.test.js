@@ -192,7 +192,7 @@ test('AUDIT NAV1 (B5) a raid WON the moment its winning task fires - the flagshi
   assert.equal(h.host.boarding, null, 'won');
   assert.ok(h.log.mid.includes('The boarders are thrown back!'));
   assert.equal(p.ship.boarded, false);
-  assert.deepEqual(h.log.ended, [], 'a won raid ends itself');
+  assert.deepEqual(h.log.ended, [[quest, { won: true }]], 'a won raid ends with its win');   // PIN MOVED (RAID-WON, test/systems/naval/raidwon.test.js): it ran on - its `_ally_` stood on my deck after it, counted as enemies near
   assert.equal(h.host.leaveShipGate(quest), 'naval');
 });
 
@@ -235,12 +235,14 @@ test('AUDIT NAV1 (B6, B7) a raid\'s own hour run out, my deck left to them, the 
 });
 
 test('AUDIT NAV1 (B6) the world host\'s endRaid, run: its living boarders withdrawn (the quest\'s own foes, alive), then the quest tombstoned through the machine; a quest already over only withdrawn (mutants: the dead or another quest\'s foes removed, a tombstoned quest ended twice)', () => {
-  const m = /\n {6}endRaid: (\(quest, \{ withdraw = false \} = \{\}\) => \{\n[\s\S]*?\n {6}\}),\n/.exec(WORLD);
+  const m = /\n {6}endRaid: (\(quest, \{ withdraw = false, won = false, crew = false \} = \{\}\) => \{\n[\s\S]*?\n {6}\}),\n/.exec(WORLD);   // PIN MOVED (RAID-WON): and a won raid's arm, and her ship gone, its crew's
   assert.ok(m, 'endRaid lifted');
   const mine = (uid, dead = false) => ({ dead, questBehaviour: { questUID: uid } });
   const foes = [mine(7), mine(7, true), mine(8), { dead: false }, mine(7)];
   const removed = [], ended = [];
-  const endRaid = new Function('d', `const { exteriorFoes, questBridge } = d; return ${m[1]};`)({
+  const wonAsked = [];
+  const endRaid = new Function('d', `const { exteriorFoes, questBridge, raidAshore } = d; return ${m[1]};`)({
+    raidAshore: { won: (q) => wonAsked.push(q), crew: () => 0 },
     exteriorFoes: { foes, removeFoe: (f) => { removed.push(f); foes.splice(foes.indexOf(f), 1); } },
     questBridge: { machine: { tombstoneQuest: (q) => { ended.push(q); q.questTombstoned = true; } } },
   });
@@ -255,6 +257,11 @@ test('AUDIT NAV1 (B6) the world host\'s endRaid, run: its living boarders withdr
   endRaid(r);
   assert.equal(foes.some((f) => f.questBehaviour?.questUID === 8), true, 'no withdraw asked: its boarders stand');
   assert.deepEqual(ended, [q, r]);
+  // RAID-WON (test/systems/naval/raidwon.test.js): a won raid ended as one thrown back ashore - raidAshore's `won`, never
+  // the tombstone in the middle of its own Leave Ship
+  const w = { uid: 9, questTombstoned: false };
+  endRaid(w, { won: true });
+  assert.deepEqual([wonAsked, ended.includes(w)], [[w], false]);
 });
 
 // ── the prize, the fire, the founder (B3, B4) ──────────────────────────────────────────────────────────────────
@@ -365,7 +372,7 @@ test('AUDIT NAV1 (B4, B6) a raider\'s ship gone under her boarders: they fight o
   h.host._sea.delete(p.id);   // she is gone (sunk and dropped)
   h.run(0.2);
   assert.equal(h.host.boarding, null);
-  assert.deepEqual(h.log.ended, [[quest, { withdraw: false }]], 'her raid ends; her boarders stand');
+  assert.deepEqual(h.log.ended, [[quest, { withdraw: false, crew: true }]], 'her raid ends; her boarders stand');   // PIN MOVED (RAID-WON, AUDIT FB1019 D2): and its crew goes home (test/systems/naval/raidwon.test.js)
   assert.deepEqual(h.host.getSaveData().raids, []);
 });
 
