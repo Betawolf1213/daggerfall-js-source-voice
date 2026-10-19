@@ -22,8 +22,8 @@
   {
     "name": "SAYS-TWELVE-new-screen-says-all",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    beat = null; lastSay = E.fight.says.at(-1) ?? null;",
-    "new": "    beat = null; lastSay = null;",
+    "old": "    beat = null; beatNext = []; lastSay = E.fight.says.at(-1) ?? null;",
+    "new": "    beat = null; beatNext = []; lastSay = null;",
     "tests": [
       "test/scenes/eliteGates/fb1018c_saystwelve.test.js"
     ],

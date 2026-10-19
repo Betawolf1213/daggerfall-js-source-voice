@@ -125,7 +125,7 @@ re-aimed (PIN MOVED).
 `src/scenes/eliteGates/egFight.js` (duelRing), `src/net/eliteGates/egLords.js` (EG_DUEL_OPEN), the locales.
 
 FOUND, on the Armsmaster's court (seed 1, hall 10, two members) through the real director and the client's fold and
-draw plan: the ring reaches every screen as `pg.ring` (`egLords.js:"if (!open) { egPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }"`),
+draw plan: the ring reaches every screen as `pg.ring` (`egLords.js:"if (!open) { kitPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }"`),
 and the client read it only to hold the player's movement at the rim. Nothing drew it: the line was said, the frame
 had no shape at the ring.
 
@@ -156,14 +156,14 @@ exactly 4 m over the court - EG_STACK_M - so each is another storey. On seed 1, 
 at -7), shafts and spells from the court 8 and 12 m from a banner did nothing; from the balcony they did 20. The
 record wants them shot: 13.4 calls the banner "an errand's object, struck", AUDIT EG V lane5 #14 added the stairs
 because the banners "stood out of every melee reach", and 8.3 answers an off-floor errand "with arrows and spells".
-The ward was real (`egLords.js:"const held = banners.length >= 2 && now < (F.mem.bannerWardUntil ?? 0);"`) and no
+The ward was real (`egLords.js:"const held = !!C && banners.length >= 2 && now < C.wardUntil;"`, the Conquest's own since main's EG-PERFECT) and no
 lord bar showed it, though 25.2 promises "the cage on the lord's bar is red-bronze and hatched".
 
 FIXED. A swing still reaches its own storey alone; a shaft or a spell is refused only where the two stand stacked
 (`egWalkGraph.js:"export const egStacked = (view, ax, ay, az, bx, by, bz) =>"`), so it flies through the open air
 between a court and its balcony. The lord bar carries `ward`: it reads "... - Warded" over a caged track, and the
 Conquest's line says what the banners do: "Banners claim the floor - it burns, and two standing ward the lord. Break
-them!" The banners standing in every phase is the record's (13.4: the Conquest is her signature). For Mac's eye: the
+them!" The banners standing in every phase was the record's when this was read (13.4: the Conquest her signature); main's EG-PERFECT, merged after, makes the Conquest her second phase's, a banner planted in turn (13.2), and both pins turn her there. For Mac's eye: the
 same rule lets a shaft reach a lord or an add on an open storey (lords still throw at their own storey and walk the
 stairs, as under law 8); egFloorBetween's stair test is coarse, so a shot from a stair's foot is refused.
 

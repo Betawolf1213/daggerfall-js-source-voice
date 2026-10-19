@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 import { egHallOf, egCirclePlan, egFirstHallOf, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE } from '../../../src/net/eliteGates/egBodies.js';
+import { egLordsOf } from '../../../src/net/eliteGates/egLords.js';
 import { egStacked, egByHeight } from '../../../src/net/eliteGates/egWalkGraph.js';
 import { HIT_KINDS } from '../../../src/net/gate/gateBrain.js';
 
@@ -45,8 +46,11 @@ function conquest(seed, h, spec) {
   assert.equal(B.sg, 'trial', `hall ${h} woke`);
   const f = spec.fight;
   for (const [sub] of co) pos[sub] = { sx: spec.x0 + f.x, z: f.z - 3, y: f.y };
+  // EG-PERFECT (section 13.2): the Conquest is her second phase's, a banner planted in turn every EG_CONQUEST_EVERY_MS -
+  // turned as egaudit5_b turns a lord, and the three waited for
+  for (const L of egLordsOf(B.F)) L.hp = Math.floor(L.max * 0.6);
   let banners = [];
-  for (let k = 0; k < 400 && !banners.length; k++) { beat(); banners = B.F.bodies.filter((b) => b.role === EG_ROLE.obj && b.t === 'banner'); }
+  for (let k = 0; k < 400 && banners.length < 3; k++) { beat(); banners = B.F.bodies.filter((b) => b.role === EG_ROLE.obj && b.t === 'banner'); }
   assert.equal(banners.length, 3, 'the Conquest: a banner on each balcony');
   return { B, banners, now: () => now, tick: (ms) => (now += ms) };
 }

@@ -72,7 +72,8 @@ test('WARD-BAR (FIELD BUGS 2026-10-18c): ILTHYS\'S BANNERS\' WARD ON HER BAR - a
   for (let k = 0; k < 20; k++) beat();
   let bar = egLordBars(E)[0];
   assert.deepEqual([bar?.name, bar?.ward], ['Valkynaz Ilthys', false], 'awake, her bar, no ward');
-  // the Conquest
+  // the Conquest - EG-PERFECT (section 13.2): her second phase's, turned as egaudit5_b turns a lord, its banners planted in turn
+  L().hp = Math.floor(L().max * 0.6);
   for (let k = 0; k < 200 && !(banners() === 3 && egLordBars(E)[0]?.ward); k++) beat();
   assert.equal(banners(), 3, 'three banners on my screen');
   assert.ok((L().fl & EG_FL.ward) !== 0, 'the room wards her');
@@ -83,12 +84,12 @@ test('WARD-BAR (FIELD BUGS 2026-10-18c): ILTHYS\'S BANNERS\' WARD ON HER BAR - a
   try {
     drawEgSpireHud(egSpireHudModel(E, 'acct-0', now), { doc });
     const [track, track2] = find(doc.body, 'eg-lord-track');
-    assert.deepEqual([find(doc.body, 'eg-lord-name')[0].textContent, track.className, track2.className], ['Valkynaz Ilthys - I - Warded', 'eg-lord-track ward', 'eg-lord-track'], 'drawn: the word, the cage on her own track alone');
+    assert.deepEqual([find(doc.body, 'eg-lord-name')[0].textContent, track.className, track2.className], ['Valkynaz Ilthys - II - Warded', 'eg-lord-track ward', 'eg-lord-track'], 'drawn: the word, the cage on her own track alone');
     assert.ok(said.includes('Banners claim the floor - it burns, and two standing ward the lord. Break them!'), `the Conquest's word says what they do (${JSON.stringify(said)})`);
     // the ward lapses at 25 s, the banners still burning
     for (let k = 0; k < 120 && egLordBars(E)[0]?.ward; k++) beat();
     assert.deepEqual([egLordBars(E)[0].ward, banners()], [false, 3], 'its 25 s spent, the banners standing');
     drawEgSpireHud(egSpireHudModel(E, 'acct-0', now), { doc });
-    assert.deepEqual([find(doc.body, 'eg-lord-name')[0].textContent, find(doc.body, 'eg-lord-track')[0].className], ['Valkynaz Ilthys - I', 'eg-lord-track'], 'and the cage lifts');
+    assert.deepEqual([find(doc.body, 'eg-lord-name')[0].textContent, find(doc.body, 'eg-lord-track')[0].className], ['Valkynaz Ilthys - II', 'eg-lord-track'], 'and the cage lifts');
   } finally { destroyEgSpireHud(); }
 });
