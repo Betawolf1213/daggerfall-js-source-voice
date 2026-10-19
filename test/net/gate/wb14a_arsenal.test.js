@@ -29,6 +29,7 @@ import {
 } from '../../../src/net/gate/gateStrike.js';
 import { judgeGate } from '../../../src/net/bossRef.js';
 import { validGateOut, GATE_ATK_ID_MAX } from '../../../src/net/wire.js';
+import { foldGate, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import { telegraphShape, telegraphField, TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_FS, TELEGRAPH_CHAIN_HALF_W, TORMENT_COLOR, TELEGRAPH_EDGE_SAFE } from '../../../src/render/gate/gateTelegraph.js';
 import { createGateArsenal, ARSENAL_TEXT, GAZE_COLOR } from '../../../src/scenes/gate/gateArsenal.js';
 import { orderPeril } from '../../../src/scenes/gate/gateCourt.js';
@@ -131,6 +132,11 @@ test('WB14a the marked: the chained and the tormented his target, the branded br
   assert.deepEqual(st.pk ?? st.atk?.pk ?? null, w.pk, 'the wire keeps them');
   // no ids, no pk
   assert.equal(atkFrame({ i: 1, a: 12, at: 1, x: 0, z: 0, yw: 0, tg: [[1, 2]] }).pk, undefined);
+  // and every screen keeps them - the word folded, and the state that carries it
+  const live = { ...GATE_STATE_EMPTY, day: 7, boss: 'ruhn', hp: 900, max: 1000 };
+  const folded = foldGate(live, validGateOut({ k: 'atk', ...w }), T0);
+  assert.deepEqual(folded.atk.pk, w.pk, 'the fold keeps who is marked');
+  assert.equal(foldGate(live, validGateOut({ k: 'atk', ...w, pk: undefined }), T0).atk.pk, undefined);
 });
 
 test('WB14a the wire: an atk word\'s `pk` - one valid peer id for each of its targets, or none - and any id to GATE_ATK_ID_MAX; anything else refuses the word (mutants: a pk of the wrong length taken; a twelfth id refused)', () => {

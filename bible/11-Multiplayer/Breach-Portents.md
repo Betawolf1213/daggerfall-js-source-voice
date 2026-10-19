@@ -442,8 +442,10 @@ from stepsIn, `orderPeril`) and `scenes/world.js` (my peer id, the motor's push 
 `ui/gate/gateGroundView.js` `peril.order` and the Gaze's white; `world/gate/gateBoss.js` each new attack's cues (pitched
 down, four semitones from the rest of their clip) and colours. Pins: `test/net/gate/wb14a_arsenal.test.js` (15) and the
 older ones the arsenal moved (WB3's ids, WB8b's FAVOURED_PHASE, WB8c's, WB9d's and WB13c's court lines, WB9e's count,
-WB13a's one edge - the Torment's gold and the Gaze's none); mutants: `tools/mutants/wb14a.json` (37: 35 dead, 2 recorded
-equivalent - the guards that keep the relay from counting a marked blow should one ever gain a ground).
+WB13a's one edge - the Torment's gold and the Gaze's none); mutants: `tools/mutants/wb14a.json` (38: 36 dead, 2 recorded
+equivalent - the guards that keep the relay from counting a marked blow should one ever gain a ground). Found after its
+first push and fixed: the client's fold of an atk word dropped its `pk` (`net/gate/gateLink.js`), so a marked screen
+never knew it was marked - pinned through the fold (WB14a-the-fold-forgets-the-marked).
 
 ## 13. What it does not do, said so
 

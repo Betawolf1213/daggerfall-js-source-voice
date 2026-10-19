@@ -335,5 +335,14 @@
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
     ]
+  },
+  {
+    "name": "WB14a-the-fold-forgets-the-marked",
+    "file": "src/net/gate/gateLink.js",
+    "old": "tg: g.tg, ...(g.pk ? { pk: g.pk } : {}) }, move: null,",
+    "new": "tg: g.tg }, move: null,",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ]
   }
 ]
