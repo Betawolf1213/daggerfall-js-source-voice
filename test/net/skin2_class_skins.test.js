@@ -207,6 +207,7 @@ const text = (n) => n.textContent;
 
 test('SKIN2: the card is two panels, closed to the skin worn - one opens at a time, and a choice wears it and closes', () => {
   _resetModSettings();
+  setModSetting(V, 'Graphics.LayeredGear', 0);   // PIN MOVED (LAYERED-GEAR-ON): Layered Gearing is on by default; these pins are the Skins look's
   const sets = skinSets();
   assert.equal(sets.foot.length, FOOT_SKIN_COUNT);
   assert.equal(sets.foot[16].key, '1523_15-0', 'a class skin\'s picture is its own front-on idle');
@@ -259,6 +260,7 @@ test('SKIN2: the card is two panels, closed to the skin worn - one opens at a ti
 
 test('SKIN2: the head carries the worn skin\'s picture - the same one its tile draws', () => {
   _resetModSettings();
+  setModSetting(V, 'Graphics.LayeredGear', 0);   // PIN MOVED (LAYERED-GEAR-ON): Layered Gearing is on by default; these pins are the Skins look's
   assert.ok(skinSets().foot.every((s) => s.url === null), 'node: no bundle (the browser build\'s glob is the only source of URLs)');
   const withUrls = () => { const s = skinSets(); for (const x of [...s.foot, ...s.horse]) x.url = `u:${x.key}`; return s; };
   const card = skinCard(doc, { sets: withUrls });
