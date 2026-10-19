@@ -213,9 +213,10 @@ ApplyGravity): plain gravity carries it to its aim on its strike's clock - a 9 m
 after 1.15 s - and the spell bills none of its fall but its last step's (the fall's start re-anchored each step, as the
 glide's is). The glide
 takes the body again once the flight is over: a jump's descent and a walk off an edge after the landing, a placement
-mid-flight, a levitation or the water let go in the air, and a parkour leap out of the hang a flight was caught in (the
-flight is a Jumping, which the ground, a catch, a climb and a placement clear; the swim/levitate branch and
-`_pkLaunch` end it themselves). The parkour's running leap stays refused under the spell (`_pkMayLeap`): it has no aim,
+mid-flight, a levitation or the water let go in the air, and the drop out of the hang or the wall a flight was caught
+on (the flight is a Jumping, which the ground, a climb and a placement clear; the swim/levitate branch ends it, and so
+do a parkour catch and a wall grab where they begin - `_parkourBegin`, `_wallBegin` - since a clamber's exit sets
+Jumping again: AUDIT FB1018D L2-2). The parkour's running leap stays refused under the spell (`_pkMayLeap`): it has no aim,
 and under the spell it would be a traversal glide. A departure, Port-Ledger A.
 
 **The acts.** A **swing** sets the technique's blow on the weapon (`PlayerWeapon.techniqueBlow`) and starts the

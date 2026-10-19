@@ -2093,6 +2093,14 @@ export class Room {
     for (const [ws, b] of this._all()) if (ws !== except && b.id && b !== a) list.push(b);
     return seatOf(list, Date.now(), { live: seatStreams(a.key) }) === a.id;
   }
+  /** SEAT-LIVE (AUDIT FB1018D L4-2): whether a leave moves the seat the room knows - the leaver led it, or it was the host
+   *  the room was last told (`_seatSaid`): a silent host whose socket closes with no farewell before any frame said the
+   *  change. By the live law the joiner already leads, so `_leads` reads the leaver as no host; and `_seatHeard`, finding
+   *  the told host gone from the room, would take the new seat as said - the room never told, the seat's page never
+   *  streaming nor writing the room's memory. */
+  _leaveMovesSeat(a, ws) {
+    return this._leads(a, ws) || (seatStreams(a.key) && a.id != null && a.id === this._seatSaid);
+  }
   /** SEAT-LIVE: whether the kept host `id` has gone quiet - a dungeon room's, none of its sockets heard within
    *  FOES_STALE_MS (the walk then asks whether another socket was there to hear it). A host still streaming is O(1). */
   _seatStale(id) {
@@ -4797,7 +4805,7 @@ export class Room {
     if ((isChannelShard(a.key) || (a.ly && isGateRoom(a.key))) && a.vid) { this._vidIdx.delete(a.vid); this._hubUpOwe(a.vid, 'x', 0); }   // SCALE5d part two: a court copy's too   // SCALE5c: and the bus told it went
     else if (isChannelBus(a.key)) this._busCountMoved();   // SCALE5c: the bus's - its shards told the hub's count
     this._travOwed.delete(a.id);   // AUDIT DEEP2 C2: the leave takes the mark out - an owed clear of it is said
-    if (!isChatRoom(a.key) && this._leads(a, ws)) this._sayHost({ skip: ws, except: ws });   // WORLD1: the host left - the next-longest in the room is the host now, said to everyone (ROSTER-G: a channel has no host)
+    if (!isChatRoom(a.key) && this._leaveMovesSeat(a, ws)) this._sayHost({ skip: ws, except: ws });   // WORLD1: the host left - the next-longest in the room is the host now, said to everyone (ROSTER-G: a channel has no host)
     if (isBattleRoom(a.key) && a.sub) { try { await this._siegeGone(ws, a.sub, Date.now()); } catch (e) { console.warn('[siege] leave failed', e?.message ?? e); } }   // AUDIT-SEATS T3: a fighter's place kept from now
     if (isSocialRoom(a.key) && a.acct) { try { await this._leaveAccount(ws, a, Date.now()); } catch (e) { console.warn('[hub] leave failed', e?.message ?? e); } }   // SOC1: last seen stamped, the friends and the party told
     if (a.id && String(a.key ?? '').startsWith('interior:')) { try { await this._holdemLeave(a, Date.now()); } catch (e) { console.warn('[holdem] leave failed', e?.message ?? e); } }   // CARDS5: folded out of turn, stood up at the hand's end

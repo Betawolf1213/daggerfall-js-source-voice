@@ -38,5 +38,15 @@
       "test/scenes/eliteGates/fb1018d_winchplates.test.js"
     ],
     "why": "the plates still marked once the portcullis is up"
+  },
+  {
+    "name": "WINCH-PLATES-before-the-trial",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "    if (stageNow !== 'trial') return;",
+    "new": "    if (stageNow !== 'trial' && stageNow !== 'arrive') return;",
+    "tests": [
+      "test/scenes/eliteGates/fb1018d_winchplates.test.js"
+    ],
+    "why": "AUDIT FB1018D L3-M3: the plates marked while the company gathers, before the trial that asks for them"
   }
 ]

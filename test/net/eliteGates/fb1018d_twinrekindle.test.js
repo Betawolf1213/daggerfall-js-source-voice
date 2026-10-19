@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18 FB1018D TWIN-REKINDLE (bible/01-Overview/bugs/Field-Bugs-2026-10-18.md; Boar, #bug-reports, "Big
+// FIELD BUGS 2026-10-18d TWIN-REKINDLE (bible/01-Overview/bugs/Field-Bugs-2026-10-18d.md; Boar, #bug-reports, "Big
 // bugs of the spires", item 6: "I killed fire daedra and he ressurected without timer ... Then I killed Ice and was
 // prompted to kill Fire within 15 seconds. Problem is, he was intangible. Spells and melee just passed through him, however
 // he still could use skills and do damage, his lifebar was about 15%"). The director stands a Sapper for the Court's first

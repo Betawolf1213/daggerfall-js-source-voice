@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"En línea, el reino guarda tu reputación con los grem
 tutorials.chapters.body2,"Las evaluaciones te ascienden hasta el rango {cap}; los rangos {officer} y {master} son puestos del capítulo, ganados por Mérito en el Cambio de cada domingo. Un tablón de anuncios explica los capítulos."
 tutorials.chapters.title,"Capítulos de gremio"
 tutorials.chapters.trigger,"La primera vez que te conectas en línea como miembro de un gremio, un templo o una orden."
-tutorials.crafting.body,"En línea, se fabrica en una estación: ponte junto a una y abre Menú > Propiedades > Almacén. Cocina en cualquier fuego."
+tutorials.crafting.body,"En línea, se fabrica en una estación: ponte junto a una, pulsa {Professions} y abre Propiedades > Almacén. Cocina en cualquier fuego."
 tutorials.crafting.more,"Tu hogar también puede tener estaciones. Cada profesión de fabricación en {Professions} cuenta más."
 tutorials.crafting.shops1,"Forja: armeros, forjadores de armaduras. Telar: Tiendas de ropa. Banco de trabajo: Tiendas de muebles, carpinterías."
 tutorials.crafting.shops2,"Banco de joyero: Casas de empeños, Tiendas de gemas. Banco de cantero: Tiendas generales. Alquimia: Alquimistas. Encantamiento: casas del Gremio de Magos."

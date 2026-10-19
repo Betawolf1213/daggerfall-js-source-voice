@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"Online vede říše tvé cechovní postavení. Úkoly 
 tutorials.chapters.body2,"Hodnocení tě povyšují do hodnosti {cap}; hodnosti {officer} a {master} jsou křesla kapituly, získaná Zásluhami při každém nedělním Obratu. Kapituly vysvětluje nástěnka."
 tutorials.chapters.title,"Kapituly cechů"
 tutorials.chapters.trigger,"Když se poprvé připojíš online jako člen cechu, chrámu nebo řádu."
-tutorials.crafting.body,"Online vyrábíš u stanoviště: postav se k němu a otevři Menu > Majetek > Sklady. Vařit můžeš u jakéhokoli ohně."
+tutorials.crafting.body,"Online vyrábíš u stanoviště: postav se k němu, stiskni {Professions} a otevři Majetek > Sklady. Vařit můžeš u jakéhokoli ohně."
 tutorials.crafting.more,"I tvůj domov může mít stanoviště. Každé řemeslo pod {Professions} řekne víc."
 tutorials.crafting.shops1,"Výheň: Zbrojíři, Platnéři. Stav: Obchody s oděvy. Pracovní stůl: Obchody s nábytkem, truhlárny."
 tutorials.crafting.shops2,"Klenotnický stůl: Zastavárny, Obchody s drahokamy. Kamenický stůl: Smíšené zboží. Alchymie: Alchymisté. Očarování: síně Cechu mágů."

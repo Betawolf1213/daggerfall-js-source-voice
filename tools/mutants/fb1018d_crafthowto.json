@@ -202,7 +202,7 @@
   {
     "name": "CRAFT-HOWTO-professions-old-words",
     "file": "src/systems/tutorialCatalogue.js",
-    "old": "{Professions} opens them. Your stored goods are kept under Menu > Holdings > Stores.",
+    "old": "{Professions} opens them, and your stored goods are under Holdings > Stores in the same window.",
     "new": "{Professions} opens them and your Stores, where your stored goods are kept.",
     "tests": [
       "test/ui/professions/fb1018d_crafthowto.test.js"
@@ -228,5 +228,75 @@
       "test/ui/professions/fb1018d_crafthowto.test.js"
     ],
     "why": "a whole language without the page's last point"
+  },
+  {
+    "name": "CRAFT-HOWTO-cooking-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "Brewing and cooking both earn Provisioning XP.",
+    "new": "Brewing earns Provisioning XP; cooking earns none.",
+    "why": "AUDIT FB1018D L1-5: the page tells a cook a dish pays nothing - the XP clause unread by the pin",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-building-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "Every piece, cut and mix earns Building XP",
+    "new": "No piece, cut or mix earns Building XP",
+    "why": "AUDIT FB1018D L1-5: the workbench and the mason's bench said to pay nothing",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-outfitting-unpaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": "Every piece earns Outfitting XP",
+    "new": "No piece earns Outfitting XP",
+    "why": "AUDIT FB1018D L1-5: the loom said to pay nothing",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-raw-ore-unsaid",
+    "file": "src/ui/professions/profPages.js",
+    "old": " - or from raw ore, smelting it first.",
+    "new": ".",
+    "why": "AUDIT FB1018D L1-5: the anvil's smelt-first chain (CRAFT1) unsaid",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-menu-path",
+    "file": "src/systems/tutorialCatalogue.js",
+    "old": "stand at one, press {Professions} and open Holdings > Stores.",
+    "new": "stand at one and open Menu > Holdings > Stores.",
+    "why": "AUDIT FB1018D L1-6: a path the Classic skin has not - its Escape is DFU's pause, no tabs",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-professions-menu-path",
+    "file": "src/systems/tutorialCatalogue.js",
+    "old": "{Professions} opens them, and your stored goods are under Holdings > Stores in the same window.",
+    "new": "{Professions} opens them. Your stored goods are kept under Menu > Holdings > Stores.",
+    "why": "AUDIT FB1018D L1-6: the Professions page's Classic-false path",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
+  },
+  {
+    "name": "CRAFT-HOWTO-controls-row-stores",
+    "file": "src/systems/inputActions.js",
+    "old": "['Professions', 'Open your Professions page (online)']",
+    "new": "['Professions', 'Open your Professions and Stores (online)']",
+    "why": "AUDIT FB1018D L1-7: the key's Controls row keeps the claim the tutorial dropped - it lands on the Professions page",
+    "tests": [
+      "test/ui/professions/fb1018d_crafthowto.test.js"
+    ]
   }
 ]

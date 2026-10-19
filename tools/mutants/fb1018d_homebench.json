@@ -148,5 +148,25 @@
       "test/scenes/fb1018d_homebench.test.js"
     ],
     "why": "the wrong fix: decorOwnerHere widened, so the account's other character opens a cupboard whose things live in the owning character's save"
+  },
+  {
+    "name": "HOME-BENCH-guildmate-served",
+    "file": "src/systems/online/onlineHomes.js",
+    "old": "export const homeStationsServe = (home) => home?.mine === true;",
+    "new": "export const homeStationsServe = (home) => home?.mine === true || home?.guildmate === true;",
+    "tests": [
+      "test/scenes/fb1018d_homebench.test.js"
+    ],
+    "why": "AUDIT FB1018D L1-3: a guildmate the door lets in crafts at the owner's stations - survived every suite before this pin"
+  },
+  {
+    "name": "HOME-BENCH-tenant-served",
+    "file": "src/systems/online/onlineHomes.js",
+    "old": "export const homeStationsServe = (home) => home?.mine === true;",
+    "new": "export const homeStationsServe = (home) => home?.mine === true || home?.tenant > 0;",
+    "tests": [
+      "test/scenes/fb1018d_homebench.test.js"
+    ],
+    "why": "AUDIT FB1018D L1-3: a tenant crafts at the landlord's stations"
   }
 ]

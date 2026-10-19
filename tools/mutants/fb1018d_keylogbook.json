@@ -148,5 +148,25 @@
       "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the street's N re-aimed at the messages: N's row says Notes over a window opened elsewhere"
+  },
+  {
+    "name": "KEY-LOGBOOK-classic-mode-dropped",
+    "file": "src/ui/chronicleDoor.js",
+    "old": "    mode: deps.mode,",
+    "new": "    mode: 'activeQuests',",
+    "tests": [
+      "test/systems/fb1018d_keylogbook.test.js"
+    ],
+    "why": "AUDIT FB1018D L1-2: classic N opens the logbook on Active Quests - the row's \"notebook (Classic)\" false, and held as a literal alone it passed"
+  },
+  {
+    "name": "KEY-LOGBOOK-host-mode-unhanded",
+    "file": "src/scenes/exterior.js",
+    "old": "      ...questJournalHooks(),\n      mode,\n",
+    "new": "      ...questJournalHooks(),\n",
+    "tests": [
+      "test/systems/fb1018d_keylogbook.test.js"
+    ],
+    "why": "AUDIT FB1018D L1-2: the city host hands the door no mode - its classic N opens on the logbook's first page"
   }
 ]

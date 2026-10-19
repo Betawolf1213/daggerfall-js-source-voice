@@ -93,3 +93,30 @@ test('WARD-BAR (FIELD BUGS 2026-10-18d): ILTHYS\'S BANNERS\' WARD ON HER BAR - a
     assert.deepEqual([find(doc.body, 'eg-lord-name')[0].textContent, find(doc.body, 'eg-lord-track')[0].className], ['Valkynaz Ilthys - II', 'eg-lord-track'], 'and the cage lifts');
   } finally { destroyEgSpireHud(); }
 });
+
+test('WARD-BAR (AUDIT FB1018D L5-6): THE WARD IS ITS OWN FLAG - a lord in fury, stunned or flying reads no ward on its bar (mutant: any flag read as the ward)', () => {
+  let found = null;
+  for (let seed = 1; seed <= 30 && !found; seed++) {
+    const plan = egCirclePlan(seed, 5);
+    for (let k = 0; k < plan.length && !found; k++) { const spec = egHallOf(seed, egFirstHallOf(5) + k, 0); if (spec.kind === 'court' && spec.lord === 'ilthys') found = { seed, spec }; }
+  }
+  const { seed, spec } = found, h = spec.h, rng = seeded(seed), co = [['acct-0', 'Mac', 1], ['acct-1', 'Ann', 2]];
+  const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'acct-0', o: 'Mac', ew: 0, rh: 0, seed, op: T0, co, site: SITE, wg: [] });
+  let now = T0 + EG_SEALED_MS + 100;
+  for (const [sub] of co) assert.equal(egEnter(B, sub, `ord${sub}`.padEnd(20, 'x'), 40, now), null);
+  B.pr = ''; B.dc = [];
+  B.h = h; B.sg = 'arrive'; B.wk = now; B.cnt = { left: 1_800_000, at: now }; B.pulledAt = now; B.su = now + 30_000;
+  const pos = Object.fromEntries(co.map(([sub], i) => [sub, { sx: spec.x0 + spec.arrive.x + i * 0.5, z: spec.arrive.z }]));
+  const step = () => { now += 250; return egStep(B, now, co.map(([sub]) => ({ sub, ...pos[sub], dead: false, at: now })), rng); };
+  for (let k = 0; k < 400 && B.sg !== 'trial'; k++) step();
+  const { k: _k, ...st } = egStateOf(B, now);
+  let E = foldEg(foldEg(EG_STATE_EMPTY, wire({ k: 'st', ...st }), now), wire(egFightState(B.F, now)), now);
+  const f = spec.fight;
+  for (const [sub] of co) pos[sub] = { sx: spec.x0 + f.x, z: f.z - 3, y: f.y };
+  for (let k = 0; k < 20; k++) for (const fr of step()) if (!fr.to || fr.to === 'acct-0') E = foldEg(E, wire(fr), now);
+  assert.equal(egLordBars(E)[0]?.ward, false, 'awake, no ward');
+  for (const flag of ['fury', 'stun', 'fly']) {
+    const E2 = { ...E, fight: { ...E.fight, bodies: E.fight.bodies.map((b) => (b.role === EG_ROLE.lord ? { ...b, fl: b.fl | EG_FL[flag] } : b)) } };
+    assert.equal(egLordBars(E2)[0]?.ward, false, `${flag}: not Warded`);
+  }
+});

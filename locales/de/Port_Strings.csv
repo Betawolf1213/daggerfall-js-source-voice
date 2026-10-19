@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"Online führt das Reich dein Gildenansehen. Quests heb
 tutorials.chapters.body2,"Prüfungen befördern dich bis Rang {cap}; die Ränge {officer} und {master} sind Kapitelämter, bei der Wende jedes Sonntags durch Verdienst errungen. Ein Anschlagbrett erklärt die Kapitel."
 tutorials.chapters.title,"Gildenkapitel"
 tutorials.chapters.trigger,"Wenn du zum ersten Mal als Mitglied einer Gilde, eines Tempels oder eines Ordens online kommst."
-tutorials.crafting.body,"Online stellst du Dinge an einer Station her: Stell dich an eine und öffne Menü > Besitz > Lager. Kochen kannst du an jedem Feuer."
+tutorials.crafting.body,"Online stellst du Dinge an einer Station her: Stell dich an eine, drück {Professions} und öffne Besitz > Lager. Kochen kannst du an jedem Feuer."
 tutorials.crafting.more,"Auch dein Zuhause kann Stationen haben. Jeder Handwerksberuf unter {Professions} sagt mehr."
 tutorials.crafting.shops1,"Esse: Waffenschmiede, Rüstungsschmiede. Webstuhl: Kleiderläden. Werkbank: Möbelläden, Schreinerwerkstätten."
 tutorials.crafting.shops2,"Juwelierbank: Pfandhäuser, Edelsteinläden. Steinmetzbank: Gemischtwarenläden. Alchemie: Alchemisten. Verzaubern: Häuser der Magiergilde."

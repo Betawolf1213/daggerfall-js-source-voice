@@ -37,13 +37,15 @@
 // and the counter now says which (`paceLine` is the pure half). The line stands only when one of them is not the default:
 // no line is the display's own pace, uncapped (the browser always waits for the display).
 //
-// FB1018D HITCH-KEEP (FIELD BUGS 2026-10-18, Awesomenout: "Normally, my game runs at a stable 144 FPS, but sometimes my
+// FB1018D HITCH-KEEP (FIELD BUGS 2026-10-18d, Awesomenout: "Normally, my game runs at a stable 144 FPS, but sometimes my
 // FPS suddenly drops dramatically, going as low as 30 FPS or even 0 FPS ... I've also tried changing the graphics
 // settings, but it doesn't seem to make any difference"): THE MINUTE'S WORST FRAME, KEPT. The worst frame above is its
 // second's, gone a second later - a hitch that comes and goes is over before a screenshot can catch it, and `?perf=cpu`
 // averages its zones over PERF_EVERY frames. A frame of HITCH_MS or more is a hitch, and the counter keeps the worst of
 // the last HITCH_KEEP_MS: how long it was, how long ago, how many the minute held, and the main thread's script in its
-// second in SCRIPT-SPLIT's three parts (the worst sample's own - systems/frameClock.js frameCpu). A hitch whose script is
+// frame in SCRIPT-SPLIT's three parts (the frame that opened the gap - systems/frameClock.js frameSampleAt, asked the tick
+// after it; AUDIT FB1018D L2-1: the second's worst sample was another frame's when a heavy frame that was no hitch shared
+// its second). A hitch whose script is
 // about its length is the main thread's (`frame` the game's own callback, `before` whatever ran first - a timer, a
 // message, a collection - `stream` the world's build); one whose script is small is not script at all. The line stands
 // only while the minute holds one. And a page put away draws no frames (the browser holds its animation frames), so the
@@ -54,7 +56,7 @@
 // The pure half (`fpsStats`) is executed by test/ui/enhanced/mwarms_fps.test.js;
 // the DOM half runs against the same stub document AUDIT 62 built.
 
-import { frameCpu } from '../systems/frameClock.js';   // PERF1: the hosts' script time
+import { frameCpu, frameSampleAt } from '../systems/frameClock.js';   // PERF1: the hosts' script time; FB1018D HITCH-KEEP: one frame's
 import { frameCapSkip, frameCapFps } from '../systems/frameCap.js';   // FPS-CAP1: the frames the cap held back are not counted; PASS-COUNT: and the cap said
 
 const PERIOD_MS = 1000;
@@ -72,8 +74,9 @@ export function hitchCount(stamps) {
 
 /**
  * FB1018D HITCH-KEEP: the kept seconds' worst frame - its ms, how many seconds before `now` its second closed, the
- * hitches they held between them, and its second's script (the worst sample's three parts) - or null with none kept.
- * Pure. @param {{at:number, worstMs:number, hitches:number, cpu:any}[]} kept the seconds that held a hitch, in order
+ * hitches they held between them, and that frame's own script (frameSampleAt's, or null where no host stamped it) - or
+ * null with none kept. Pure. @param {{at:number, worstMs:number, hitches:number, cpu:any}[]} kept the seconds that held a
+ * hitch, in order
  */
 export function keptHitch(kept, now) {
   let worst = null, count = 0;
@@ -81,15 +84,15 @@ export function keptHitch(kept, now) {
   if (!worst) return null;
   const c = worst.cpu;
   return { ms: worst.worstMs, agoS: Math.round((now - worst.at) / 1000), count,
-    scriptMs: c ? c.worstMs : null, inFrameMs: c ? c.worstInFrameMs : null, beforeMs: c ? c.worstBeforeMs : null, streamMs: c ? c.worstStreamMs : null };
+    scriptMs: c ? c.ms : null, inFrameMs: c ? c.inFrameMs : null, beforeMs: c ? c.beforeMs : null, streamMs: c ? c.streamMs : null };
 }
 
 /** FB1018D HITCH-KEEP: the hitch lines from `keptHitch`'s answer - '' with none, the script's only with a clock, under
- *  it and indented, `frame` SCRIPT-SPLIT's `in frame` (labels and numbers, as the draws line is). Pure. */
+ *  it, `frame` SCRIPT-SPLIT's `in frame` (labels and numbers, as the draws line is). Pure. */
 export function hitchLine(h) {
   if (!h) return '';
   return `\nhitch ${h.ms.toFixed(0)} ms  ${h.agoS} s ago  ${h.count} a minute`
-    + (h.scriptMs != null ? `\n  script ${h.scriptMs.toFixed(0)}  frame ${h.inFrameMs.toFixed(0)}  before ${h.beforeMs.toFixed(0)}  stream ${h.streamMs.toFixed(0)}` : '');
+    + (h.scriptMs != null ? `\nscript ${h.scriptMs.toFixed(0)}  frame ${h.inFrameMs.toFixed(0)}  before ${h.beforeMs.toFixed(0)}  stream ${h.streamMs.toFixed(0)}` : '');
 }
 
 /**
@@ -174,6 +177,7 @@ export function mountFpsCounter({ enabled = () => true, raf = (typeof requestAni
   let sumView = 0, sumShadow = 0;   // PASS-COUNT: the view out's and the shadow maps'
   let last = null;   // PERF9: the last second's numbers, for the probe
   const kept = [];   // FB1018D HITCH-KEEP: the seconds of the last HITCH_KEEP_MS that held a hitch
+  let gapMs = 0, gapCpu = null;   // FB1018D HITCH-KEEP (AUDIT FB1018D L2-1): the second's longest gap of HITCH_MS or more, and the script of the frame that opened it
   // FB1018D HITCH-KEEP: the page was put away (or shown again) since its last frame - the gap is no frame of the
   // player's. The browser sends visibilitychange both ways, and holds every animation frame between the two.
   let hid = false;
@@ -185,11 +189,13 @@ export function mountFpsCounter({ enabled = () => true, raf = (typeof requestAni
   let handle = 0;
   let live = true;
   function tick(now) {
-    if (hid) { hid = false; stamps = []; sumDraws = 0; sumBinds = 0; samples = 0; sumView = 0; sumShadow = 0; }   // FB1018D HITCH-KEEP: a second starts at the first frame shown
+    if (hid) { hid = false; stamps = []; sumDraws = 0; sumBinds = 0; samples = 0; sumView = 0; sumShadow = 0; gapMs = 0; gapCpu = null; }   // FB1018D HITCH-KEEP: a second starts at the first frame shown
     // FPS-CAP1: a callback the Frame Rate Cap held back drew nothing, so it is not a frame. The host asked the same
     // question with the same stamp (one decision per stamp, systems/frameCap.js), so this counts what the game drew.
     if (frameCapSkip(now)) { if (live && raf) handle = raf(tick); return; }
+    const prev = stamps.length ? stamps[stamps.length - 1] : null;
     stamps.push(now);
+    if (prev != null && now - prev >= HITCH_MS && now - prev > gapMs) { gapMs = now - prev; gapCpu = frameSampleAt(prev); }   // FB1018D HITCH-KEEP: asked while that frame's sample is the clock's newest
     const st = stats?.();   // PERF3: one complete frame's counts, whichever side of the host's callback this tick fell
     if (st) { sumDraws += st.draws; sumBinds += st.texBinds; sumView += st.viewDraws ?? 0; sumShadow += st.shadowDraws ?? 0; samples++; }
     const on = !!enabled();
@@ -204,9 +210,9 @@ export function mountFpsCounter({ enabled = () => true, raf = (typeof requestAni
         const gpu = samples ? drawsLine(sumDraws / samples, sumBinds / samples, sumView / samples, sumShadow / samples) : '';
         const i = on ? info?.() : null;   // PERF-SCALE: the GPU and the size, while shown
         const size = sizeLine(i);
-        // FB1018D HITCH-KEEP: a second that held a hitch is kept for HITCH_KEEP_MS, its script beside it
+        // FB1018D HITCH-KEEP: a second that held a hitch is kept for HITCH_KEEP_MS, its own frame's script beside it
         const hitches = hitchCount(stamps);
-        if (hitches) kept.push({ at: now, worstMs, hitches, cpu });
+        if (hitches) kept.push({ at: now, worstMs, hitches, cpu: gapCpu });
         while (kept.length && now - kept[0].at > HITCH_KEEP_MS) kept.shift();
         const hitch = keptHitch(kept, now);
         if (on) el.textContent = `${fps} fps\n${meanMs.toFixed(1)} ms  worst ${worstMs.toFixed(0)}`
@@ -222,6 +228,7 @@ export function mountFpsCounter({ enabled = () => true, raf = (typeof requestAni
           hitch };   // FB1018D HITCH-KEEP: the minute's worst frame (keptHitch), or null
       }
       stamps = [now];
+      gapMs = 0; gapCpu = null;   // FB1018D HITCH-KEEP
       sumDraws = 0; sumBinds = 0; samples = 0;   // PERF3
       sumView = 0; sumShadow = 0;   // PASS-COUNT
     }

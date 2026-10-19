@@ -16651,14 +16651,16 @@ three visits. It ends by itself when the hidden host's socket goes, as the repor
   the frame stamps its socket heard (`hd`, lazily, as a pose is; a hello its coming in, `hi`), and the seat as it now
   stands is said to the room when it is not the one the room was last told (`_seatSaid`, kept by `_sayHost`) - a host
   gone quiet is a host change, as a leave is; a seat named by silence that leaves is said too (`_leads` reads the same
-  law).
+  law). And a silent seat the room was last told that LEAVES says the change at its leave (`_leaveMovesSeat`, AUDIT
+  FB1018D L4-2): its socket gone with no farewell, no later frame could say it - the told host was no longer present.
 - **A socket back from silence is a joiner**: told whose the seat is, and stamped after the live seat when its old stamp
   would outrank it (`_seatAfter`, never level with it: the tie goes by id) - so its frozen world never takes the seat
   back. A reconnect keeps a live socket's stamp (AUDIT WORLD A4) and gives a silent one the same treatment
   (`_seatKeep`).
 - **The page asks for the seat it runs** (`online.js` `_askSeat`, `seatAskDue`): while no frame of the named host's
   stream has come for FOES_STALE_MS, its pose goes every FOES_FULL_MS, unmoved, so a joiner standing still is heard and
-  named - at a relay from world219 alone (`relaySupportsSeatLive`).
+  named - at a relay from world220 alone (`relaySupportsSeatLive`: SEAT_RELAY_MIN; world219 is main's EG-PERFECT,
+  which has no seat law - AUDIT FB1018D L4-1).
 - **The page's own absence spends no seat's patience** (`createSeatClock`, `world.js:"seatClock.frame(now); modes?.setDungeonAuthority?.(dungeonAuthority(now));"`):
   a gap of FOES_STALE_MS between this page's frames gives the named seat FOES_STALE_MS again, so SEAT-HEAL never takes
   the foes on a page's first frame back while the relay names another.
@@ -16678,7 +16680,8 @@ context): the kills made while it hid stand up again in its next memory (the tak
 silent host keeps the pen as before. The castle's hostility is the room's (one player's trespass turns every guard on
 everyone, and the memory keeps `hostile`): the owner's call, per player or shared, untouched here.
 
-Pinned: `test/net/fb1018d_seatlive.test.js` (5) and `test/scenes/fb1018d_seatloop.test.js` (1, the report's loop over the
-dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018d_seatlive.json` (19, all dead). The relay is
-world219 (re-hashed in place with TWIN-REKINDLE, undeployed).
+Pinned: `test/net/fb1018d_seatlive.test.js` (11) and `test/scenes/fb1018d_seatloop.test.js` (1, the report's loop over the
+dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018d_seatlive.json` (31: 30 dead, one recorded
+equivalent). The relay is world220 (main's EG-PERFECT took world219; re-hashed in place while undeployed). Audited:
+`01-Overview/audits/Audit-Field-Bugs-2026-10-18d.md`.
 

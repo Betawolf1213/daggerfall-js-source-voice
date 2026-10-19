@@ -64,7 +64,7 @@ const R = {};
  * effect flags the hosts write (shared.js applyMotorEffectFlags), the motor's step, the rig's technique step, then the
  * weapon's (its 'hit' resolved on the foes as a host resolves it).
  */
-function street({ weapon = null, gloves = null, foes = [], slow = false } = {}) {
+function street({ weapon = null, gloves = null, foes = [], slow = false, spawn = [0, 3, 0] } = {}) {
   reset();
   setPlayerDoor({ foes: () => foes });
   const me = player();
@@ -78,7 +78,7 @@ function street({ weapon = null, gloves = null, foes = [], slow = false } = {}) 
   const col = new Collider(() => 0);
   col.addMesh('platform', [-6, 3, -6, 6, 3, -6, 6, 3, 12, -6, 3, 12], [0, 1, 2, 0, 2, 3], new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]));
   const m = new PlayerMotor(col, motorStats(me), { jumpBoost: () => jumpSpeedMultiplier(me), enhancedJumping: () => isEnhancedJumping(me) });
-  m.spawn(0, 3, 0);
+  m.spawn(...spawn);
   const log = { said: [], started: [], hits: [], fell: 0, steps: 0 };
   const look = { yaw: 0, pitch: -0.15 };
   const ctx = (held) => ({
@@ -98,7 +98,7 @@ function street({ weapon = null, gloves = null, foes = [], slow = false } = {}) 
   for (let i = 0; i < 20; i++) frame();   // settled on the platform, past the jump's 0.1 s gate
   assert.equal(m.grounded, true, 'the body stands');
   assert.equal(m.slowFalling, slow, slow ? 'The Raven\'s Wings worn: the slow fall\'s flag on, standing' : 'no spell');
-  return { me, pw, m, log, frame };
+  return { me, pw, m, log, frame, look };
 }
 /** The key pressed for a frame and let go the next - and the frames until the body is down again, counted from the
  *  release (the launch): its landing, the time it flew, the blow it struck. */
@@ -248,4 +248,114 @@ test('LEAP-SLOW THE FLIGHT CUT SHORT: a placement mid-flight, a levitation let g
   assert.ok(!m.onWall && !m.grounded && m.velY > 0, 'ejected off the wall');
   const ed = descent(m);
   assert.ok(Math.abs(ed.fastest + SLOWFALL_VELOCITY) < 1e-9 && ed.fell < 0.1, `the eject's descent glides (${ed.fastest.toFixed(2)} m/s)`);
+});
+
+test('LEAP-SLOW (AUDIT FB1018D L2-3): A FALL THAT IS NO JUMP IS THE AIR TOO, AND A FLIGHT DOWN BILLS NOTHING - under the spell, a Flying Kick pressed while the body glides off the platform\'s edge is refused at the press; a Leap Strike pressed on the platform and let go in that glide does not fly; and a Leap Strike from the platform down to the ground 3 m below lands billing none of its 3 m (mutants: the gate\'s air read off Jumping alone; the flight\'s fall never re-anchored)', () => {
+  const FWD = { ...STILL, forward: 1 };
+  let s = street({ gloves: gauntlets(), foes: [foeAt(0, 0, 16)], slow: true, spawn: [0, 3, 10] });
+  for (let i = 0; i < 900 && s.m.grounded; i++) s.frame(FWD);
+  for (let i = 0; i < 10; i++) s.frame();
+  assert.equal(s.m.grounded, false, 'off the edge, gliding');
+  s.frame(STILL, true);
+  assert.deepEqual(s.log.said, [T.CANNOT_LEAP_TEXT], 'the kick refused in the glide');
+  assert.equal(T.techniqueState().aiming, false);
+  s = street({ weapon: sword(), foes: [foeAt(0, 0, 18)], slow: true, spawn: [0, 3, 11] });
+  s.look.pitch = -0.35;
+  s.frame(STILL, true);
+  assert.equal(T.techniqueState().aiming, true, 'aimed on the platform');
+  for (let i = 0; i < 900 && s.m.grounded; i++) s.frame(FWD, true);
+  for (let i = 0; i < 6; i++) s.frame(STILL, true);
+  assert.equal(s.m.grounded, false, 'walked off, still holding');
+  s.frame(STILL, false);
+  assert.equal(T.techniqueState().act, null, 'let go in the glide: no flight');
+  assert.deepEqual(s.log.said, [T.CANNOT_LEAP_TEXT]);
+  s = street({ weapon: sword(), foes: [foeAt(0, 0, 15)], slow: true, spawn: [0, 3, 9] });
+  s.look.pitch = -0.3;
+  s.frame(STILL, true);
+  s.frame(STILL, false);
+  assert.equal(T.techniqueState().act, 'flight', 'the leap down goes');
+  for (let i = 0; i < 240 && !s.m.grounded; i++) s.frame();
+  s.frame();
+  assert.ok(s.m.pos[1] < 0.05, `down on the ground (${s.m.pos[1].toFixed(2)})`);
+  assert.ok(s.log.fell < 0.3, `none of its 3 m billed (${s.log.fell.toFixed(3)} m)`);
+});
+
+test('LEAP-SLOW (AUDIT FB1018D L2-2): A FLIGHT CAUGHT ENDS THERE - a Leap Strike\'s flight under the spell caught in a hang on a thin wall, then over the top: the hang ends the technique\'s flight, and the drop past the wall glides at the spell\'s 2.1 m/s as the same clamber does from a plain jump (mutant: the catch leaving techFlight set, the clamber\'s exit Jumping at plain gravity)', () => {
+  const BOX = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 3, 7, 6, 3, 6, 2, 0, 4, 7, 0, 7, 3, 1, 2, 6, 1, 6, 5];
+  const ID = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  const pk = { enabled: () => true, inputs: () => ({ climbing: 50, jumping: 50 }), say: () => {}, tally: () => {} };
+  const run = (how) => {
+    const col = new Collider(() => 0);
+    let n = 0;
+    const box = (x0, y0, z0, x1, y1, z1) => col.addMesh(`b${n++}`, new Float32Array([x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1]), BOX, ID);
+    box(-3, 0, 1.3, 3, 2.4, 1.5);   // a thin wall, its lip at 2.4
+    box(-3, 0, 1.5, 3, 1.0, 8);     // the floor beyond it, 1.4 m under the lip
+    const m = new PlayerMotor(col, { speed: 50, running: 30 }, { parkour: pk });
+    m.spawn(0, 0.02, how === 'tech' ? -3 : 0.7);
+    for (let i = 0; i < 30; i++) m.update(DT, STILL, 0);
+    m.slowFalling = true;
+    if (how === 'tech') { const fl = T.launchTo([...m.pos], [0, 0, 1.2], TECHNIQUES.leap.apex); assert.equal(m.techniqueLaunch(fl.dir, fl.along, fl.up), true, 'launched'); }
+    let hung = false;
+    for (let i = 0; i < 180 && !hung; i++) { m.update(DT, JUMP, 0); hung = !!m.hanging; }
+    assert.ok(hung, `${how}: caught in a hang`);
+    for (let i = 0; i < 20; i++) m.update(DT, STILL, 0);
+    const inHang = m.techFlight;
+    let moved = false, after = false, fastest = 0;
+    for (let i = 0; i < 400; i++) {
+      m.update(DT, { ...STILL, forward: 1 }, 0);
+      if (m.parkoured) moved = true;
+      if (moved && !m._pkMove && !m._wall) after = true;
+      if (after) { fastest = Math.min(fastest, m.velY); if (m.grounded) break; }
+    }
+    assert.ok(after && m.grounded, `${how}: over the top and down (${m.pos.map((v) => v.toFixed(2))})`);
+    return { inHang, fastest };
+  };
+  const jumped = run('jump'), flown = run('tech');
+  assert.equal(flown.inHang, false, 'the hang ends the technique\'s flight');
+  assert.ok(flown.fastest > -SLOWFALL_VELOCITY - 0.05, `the drop after the clamber glides (${flown.fastest.toFixed(2)} m/s; the spell's ${(-SLOWFALL_VELOCITY).toFixed(2)})`);
+  assert.ok(Math.abs(flown.fastest - jumped.fastest) < 0.05, `as the plain jump's clamber does (${jumped.fastest.toFixed(2)})`);
+});
+
+test('LEAP-SLOW (AUDIT FB1018D L2-2): A WALL TAKEN ENDS A FLIGHT - a Leap Strike\'s flight under the spell, Forward and Jump held into a climbable face, grabs it mid-air (no move: _pkGrab), and the technique\'s flight ends on the wall (mutant: a wall taken leaving techFlight set)', () => {
+  const BOX = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 3, 7, 6, 3, 6, 2, 0, 4, 7, 0, 7, 3, 1, 2, 6, 1, 6, 5];
+  const ID = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  const pk = { enabled: () => true, inputs: () => ({ climbing: 90, jumping: 50 }), say: () => {}, tally: () => {} };
+  const col = new Collider(() => 0);
+  col.addMesh('wall', new Float32Array([-3, 0, 1.3, 3, 0, 1.3, 3, 12, 1.3, -3, 12, 1.3, -3, 0, 3, 3, 0, 3, 3, 12, 3, -3, 12, 3]), BOX, ID);   // a face with no lip in reach
+  const m = new PlayerMotor(col, { speed: 50, running: 30 }, { parkour: pk });
+  m.spawn(0, 0.02, -3);
+  for (let i = 0; i < 30; i++) m.update(DT, STILL, 0);
+  m.slowFalling = true;
+  const fl = T.launchTo([...m.pos], [0, 0, 1.4], TECHNIQUES.leap.apex);
+  assert.equal(m.techniqueLaunch(fl.dir, fl.along, fl.up), true, 'launched');
+  assert.equal(m.techFlight, true);
+  let mode = null;
+  for (let i = 0; i < 120 && !mode; i++) { m.update(DT, { ...STILL, forward: 1, jump: true }, 0); mode = m._wall?.mode ?? null; }
+  assert.equal(mode, 'climb', 'grabbed the face mid-flight');
+  assert.equal(m.techFlight, false, 'the wall ends the technique\'s flight');
+});
+
+test('LEAP-SLOW (AUDIT FB1018D L2-2): A FLIGHT THAT MANTLES ENDS THERE - a Leap Strike\'s flight under the spell, Forward and Jump held, mantles a 1.4 m wall straight from the air (a move, no hang), and the drop past it glides at the spell\'s 2.1 m/s (mutant: a parkour move leaving techFlight set - its exit sets Jumping again, at plain gravity)', () => {
+  const BOX = [0, 2, 1, 0, 3, 2, 4, 5, 6, 4, 6, 7, 0, 1, 5, 0, 5, 4, 3, 7, 6, 3, 6, 2, 0, 4, 7, 0, 7, 3, 1, 2, 6, 1, 6, 5];
+  const ID = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  const pk = { enabled: () => true, inputs: () => ({ climbing: 50, jumping: 50 }), say: () => {}, tally: () => {} };
+  const col = new Collider(() => 0);
+  col.addMesh('wall', new Float32Array([-3, 0, 1.3, 3, 0, 1.3, 3, 1.4, 1.3, -3, 1.4, 1.3, -3, 0, 1.5, 3, 0, 1.5, 3, 1.4, 1.5, -3, 1.4, 1.5]), BOX, ID);   // 0.2 m thick, open ground past it
+  const m = new PlayerMotor(col, { speed: 50, running: 30 }, { parkour: pk });
+  m.spawn(0, 0.02, -3);
+  for (let i = 0; i < 30; i++) m.update(DT, STILL, 0);
+  m.slowFalling = true;
+  const fl = T.launchTo([...m.pos], [0, 0, 0.9], TECHNIQUES.leap.apex);
+  assert.equal(m.techniqueLaunch(fl.dir, fl.along, fl.up), true, 'launched');
+  let moved = null, after = false, fastest = 0;
+  for (let i = 0; i < 600; i++) {
+    m.update(DT, { ...STILL, jump: true, forward: 1 }, 0);
+    if (m.parkoured && !moved) moved = m.parkoured;
+    if (moved && !m._pkMove) after = true;
+    if (after) { fastest = Math.min(fastest, m.velY); if (m.grounded) break; }
+  }
+  assert.equal(moved, 'mantle', 'mantled from the flight, no hang');
+  assert.ok(after && m.grounded && m.pos[2] > 1.5, `over and down (${m.pos.map((v) => v.toFixed(2))})`);
+  assert.equal(m.techFlight, false);
+  assert.ok(fastest > -SLOWFALL_VELOCITY - 0.05, `the drop glides (${fastest.toFixed(2)} m/s; the spell's ${(-SLOWFALL_VELOCITY).toFixed(2)})`);
 });

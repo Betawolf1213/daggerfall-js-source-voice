@@ -2181,6 +2181,7 @@ export class PlayerMotor {
   _wallBegin(mode, normal, lipY, key) {
     this._pkUnsink();
     this._wall = { mode, normal: [normal[0], 0, normal[2]], lipY, key: key ?? null, carrier: null, warned: false, upRefused: false, look: this._pkLookNow ?? null };
+    this.techFlight = false;   // FB1018D LEAP-SLOW (AUDIT FB1018D L2-2): a wall taken ends a technique's flight - a grab mid-flight is no move (_pkGrab), and an eject from it is the parkour leap's own flight, the slow fall's to glide
     this._pkSide = null;   // AUDIT CLIMB2 A3: a new wall asks the look afresh (a corner is no new wall: C7)
     if (key != null) this._wall.carrier = this.collider.bucketPose?.(key) ?? null;
     this._wallTally = 0;
@@ -2467,7 +2468,6 @@ export class PlayerMotor {
     this.fallStart = this.pos[1];
     this.parkoured = this.parkoured ? [].concat(this.parkoured, 'leap') : 'leap';   // AUDIT CLIMB-ARC L13
     this._pkLeap = { dir: [dir[0], 0, dir[2]] };
-    this.techFlight = false;   // FB1018D LEAP-SLOW: a parkour leap is its own flight - an eject from the hold a technique's was caught in glides under the spell
     this._pkArm = { t: 0, air: true };
     this._pkJumpLatch = false;
     this._pkOffEdge = null;
@@ -2819,6 +2819,7 @@ export class PlayerMotor {
     this._pkUnsink();
     this._pkArm = null;   // the tap catch: the press is spent on the move
     this._pkLeap = null;  // CLIMB3: a leap's flight ends in what it caught
+    this.techFlight = false;   // FB1018D LEAP-SLOW (AUDIT FB1018D L2-2): and a technique's - a clamber's or a vault's exit sets Jumping again, and the drop after it is the slow fall's to glide
     this._pkOffEdge = null;   // AUDIT CLIMB-ARC L6: a move is no run off an edge (a wall run let go is no late leap)
     this._pkMove = move;
     // CLIMB2: a corner the shimmy turns is no new exertion. AUDIT CLIMB-ARC L13: a frame of several steps can begin two
@@ -3398,8 +3399,9 @@ export class PlayerMotor {
         this.fallStart = this.pos[1];
         // FB1018D LEAP-SLOW: a technique's flight keeps the arc it was launched on (techniqueLaunch), to its aim on its
         // strike's clock - the spell bills none of its fall and glides the body again once the flight is over: the flight
-        // is a Jumping, which the ground, a catch, a climb and a placement each clear (the water, a levitation and a
-        // parkour leap end it themselves: the swim/levitate branch, _pkLaunch)
+        // is a Jumping, which the ground, a climb and a placement each clear, and the water, a levitation, a parkour move
+        // (a catch, a clamber, a vault - _parkourBegin; AUDIT FB1018D L2-2: an exit sets Jumping again) and a wall taken (a
+        // grab, a hang - _wallBegin, before any eject) end it themselves (the swim/levitate branch, _parkourBegin, _wallBegin)
         if (this.techFlight && this.jumping) this.velY -= GRAVITY * dt;
         else this.velY = -SLOWFALL_VELOCITY;   // F032: DFU's step, not ours
       } else {

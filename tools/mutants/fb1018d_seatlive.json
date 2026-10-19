@@ -190,5 +190,138 @@
       "test/net/fb1018d_seatlive.test.js"
     ],
     "why": "the clock never told of the page's frames"
+  },
+  {
+    "name": "SEAT-LIVE-leave-live-law-alone",
+    "file": "server/src/index.js",
+    "old": "    return this._leads(a, ws) || (seatStreams(a.key) && a.id != null && a.id === this._seatSaid);",
+    "new": "    return this._leads(a, ws);",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-2: a silent host gone with no farewell leaves the seat unsaid - the new host never streams nor writes"
+  },
+  {
+    "name": "SEAT-LIVE-told-host-absence-unasked",
+    "file": "server/src/index.js",
+    "old": "if (this._seatSaid != null && this._byId().has(this._seatSaid)) { this._sayHost(); said = true; }",
+    "new": "if (this._seatSaid != null) { this._sayHost(); said = true; }",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-2: unreachable since the leave's fix - the host the room was told can leave its index only through _leave, which now says the seat when the leaver was the told host (_leaveMovesSeat); a reconnect keeps its id and a wake re-reads the eldest present. The guard stays as the wake's safety; nothing reaches it",
+    "equivalent": true
+  },
+  {
+    "name": "SEAT-LIVE-foes-unheard",
+    "file": "src/net/seatLive.js",
+    "old": " || message.startsWith(FOES_PREFIX) ||",
+    "new": " ||",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-3 / L5-2: a host standing still, streaming its foes, loses the seat"
+  },
+  {
+    "name": "SEAT-LIVE-own-lane-unheard",
+    "file": "src/net/seatLive.js",
+    "old": " || message.startsWith(OWN_PREFIX) ||",
+    "new": " ||",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-3: a joiner heard on its own lane alone read as silent"
+  },
+  {
+    "name": "SEAT-LIVE-any-frame-heard",
+    "file": "src/net/seatLive.js",
+    "old": "export const seatTraffic = (/** @type {any} */ message) => typeof message === 'string'\n  && (",
+    "new": "export const seatTraffic = (/** @type {any} */ message) => typeof message === 'string'\n  || (",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-3: a hidden host's ping, act or chat line keeps its seat"
+  },
+  {
+    "name": "SEAT-LIVE-relay-min-low",
+    "file": "src/net/seatLive.js",
+    "old": "export const SEAT_RELAY_MIN = 220;",
+    "new": "export const SEAT_RELAY_MIN = 219;",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-1 / L5-1: EG-PERFECT's world219, which keeps the eldest, asked for the seat"
+  },
+  {
+    "name": "SEAT-LIVE-host-named-unheard",
+    "file": "src/net/online.js",
+    "old": "    this._seatHeardAt = this._now();   // SEAT-LIVE: a host named is a host heard\n",
+    "new": "",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L4-3 / L5-4: a page asks for the seat on the heels of a host frame"
+  },
+  {
+    "name": "SEAT-LIVE-walk-every-room",
+    "file": "server/src/index.js",
+    "old": "    return seatOf(list, Date.now(), { live: live && seatStreams(list[0]?.key) });",
+    "new": "    return seatOf(list, Date.now(), { live });",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-3: a building's quiet host loses its seat to a newcomer"
+  },
+  {
+    "name": "SEAT-LIVE-leads-every-room",
+    "file": "server/src/index.js",
+    "old": "    return seatOf(list, Date.now(), { live: seatStreams(a.key) }) === a.id;",
+    "new": "    return seatOf(list, Date.now(), { live: true }) === a.id;",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-3: a building host's leave unsaid"
+  },
+  {
+    "name": "SEAT-LIVE-keep-building-judged",
+    "file": "server/src/index.js",
+    "old": "    if (!seatStreams(replaced.key)) return replaced.since ?? now;\n",
+    "new": "",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-3: a building host whose connection blips loses its seat (AUDIT WORLD A4)"
+  },
+  {
+    "name": "SEAT-LIVE-ask-every-room",
+    "file": "src/net/seatLive.js",
+    "old": "  !!(s.streams && s.ok && s.open",
+    "new": "  !!(s.ok && s.open",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-3: a pose every FOES_FULL_MS, for ever, in every building"
+  },
+  {
+    "name": "SEAT-LIVE-returner-not-now",
+    "file": "server/src/index.js",
+    "old": "Math.max(now, (sa.since ?? 0) + 1)",
+    "new": "((sa.since ?? 0) + 1)",
+    "tests": [
+      "test/net/fb1018d_seatlive.test.js",
+      "test/scenes/fb1018d_seatloop.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-4: a socket back from silence outranks a joiner who came in while it was away"
   }
 ]

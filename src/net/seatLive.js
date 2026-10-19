@@ -29,7 +29,7 @@
 import { FOES_FULL_MS, FOES_STALE_MS, FOES_PREFIX, OWN_PREFIX, WORLD_PREFIX, isWorldRoom } from './wire.js';
 
 /** The relay that keeps a dungeon room's seat by liveness - a page asks only that one for the seat (`seatAskDue`). */
-export const SEAT_RELAY_MIN = 219;
+export const SEAT_RELAY_MIN = 220;
 export const relaySupportsSeatLive = (/** @type {any} */ v) => Number(/^world(\d+)$/.exec(String(v ?? ''))?.[1]) >= SEAT_RELAY_MIN;
 /** A pose's and a hello's first bytes, as the session writes them (`{ t: 'pose', p }`, `{ t: 'hello', ... }` - net/hubShards.js
  *  shardKeeps reads the same). */

@@ -71,6 +71,7 @@ test('WINCH-PLATES (FIELD BUGS 2026-10-18d): A WINCH\'S PLATES ARE MARKED - in e
         `seed ${seed} hall ${h}: the plate at (${q.x}, ${q.z}) marked gold at the room's reach, on its own surface, drawn`);
     }
     assert.deepEqual(plates.flatMap((q) => atPlate(frameOf(spec, { ...E, sg: 'closing' }, now), q)), [], 'the closing: the portcullis up, no plate marked');
+    assert.deepEqual(plates.flatMap((q) => atPlate(frameOf(spec, { ...E, sg: 'arrive' }, now), q)), [], 'AUDIT FB1018D L3-M3: arriving, before the trial (the hall\'s fight already on the screen), no plate marked');
   }
   for (const { seed, h, spec } of ramparts('siege', 1)) {
     const { E, now } = woken(seed, h, spec);

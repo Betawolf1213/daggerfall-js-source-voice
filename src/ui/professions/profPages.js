@@ -559,8 +559,8 @@ const alchemyHow = () => t('prof.page.how.alchemy', ALCHEMY_HOW);
  *   (recipeLaw SMITH_RECIPES) and from raw ore its chain's smelts (net/chainLaw.js chainPlan, CRAFT1); the workbench's
  *   saws (SAW_RECIPES) and its staves, bows, arrows and furniture (CARPENTRY_RECIPES); the mason's cut and mix
  *   (MASON_RECIPES - Rough Stone, quarried); the loom's cures (CURE_RECIPES - hides, skinned) and its pieces
- *   (OUTFITTING_RECIPES), its Linen and Wool the Weavers' alone (COUNTER_ONLY; WEAVERS_STOCK, at a Clothing Store's loom
- *   and the Market tab); a dish's meat, fish, herbs and Basket's food (recipeLaw DISHES), into the pack.
+ *   (OUTFITTING_RECIPES), its Linen and Wool bought, never made (COUNTER_ONLY; WEAVERS_STOCK, at a Clothing Store's loom
+ *   and the Market tab - and Linen at a furnisher's counter too, FURNISHER_STOCK: AUDIT FB1018D L1-9); a dish's meat, fish, herbs and Basket's food (recipeLaw DISHES), into the pack.
  * - XP: a smelt's (smeltXp) and a piece's (craftXp), a mason's work's (masonXp), a dish's (cookXp) and a brew's, each on
  *   its craft's track (trackOf); a saw and a cure none (`xp: null`).
  */

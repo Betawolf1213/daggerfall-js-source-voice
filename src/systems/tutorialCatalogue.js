@@ -432,10 +432,12 @@ export const TUTORIALS = Object.freeze([
   }),
   page({
     // FB1018D CRAFT-HOWTO: the key opens the Professions page alone - the Stores page is the Holdings tab's since HOLDINGS
-    // (input.js's Professions lands `at: 'professions'`; AUDIT HOLDINGS C7 said so for the first harvest's line, not here)
+    // (input.js's Professions lands `at: 'professions'`; AUDIT HOLDINGS C7 said so for the first harvest's line, not here).
+    // AUDIT FB1018D L1-6: and the Stores are reached from the window the key opens - "Menu > Holdings" is the Enhanced
+    // menu's alone: Escape on the Classic skin is DFU's pause, which has no tabs (ui/pauseDoor.js CLASSIC-PAGES)
     id: 'professions', group: 'livelihood', title: 'Professions', trigger: 'When you first gather something.',
     body: [
-      'Online, gathering, crafting and selling level up your professions. {Professions} opens them. Your stored goods are kept under Menu > Holdings > Stores.',
+      'Online, gathering, crafting and selling level up your professions. {Professions} opens them, and your stored goods are under Holdings > Stores in the same window.',
     ],
   }),
   page({
@@ -443,12 +445,13 @@ export const TUTORIALS = Object.freeze([
     // tutorial (doesn't have to be step for step, but something that helps new players know where to look)"): where the
     // stations stand - the shops the interior host's station questions answer (scenes/worldModes.js forgeHere ..
     // enchantHere), a joinery's bench (scenes/world.js workbenchHere), any fire (net/professionLaw.js COOK_FIRE) - and
-    // that a station is worked on the Stores page. Each crafting profession's own page says the rest
+    // that a station is worked on the Stores page - by the Professions key, the one door to it on either skin (AUDIT FB1018D
+    // L1-6). Each crafting profession's own page says the rest
     // (ui/professions/profPages.js CRAFT_HOW). Pops with the first gather, after the two pages it follows.
     id: 'crafting', group: 'livelihood',
     get title() { return t('tutorials.crafting.title', 'Crafting'); },
     get trigger() { return t('tutorials.crafting.trigger', 'When you first gather something.'); },
-    get body() { return [t('tutorials.crafting.body', 'Online, you craft at a station: stand at one and open Menu > Holdings > Stores. Cook at any fire.')]; },
+    get body() { return [t('tutorials.crafting.body', 'Online, you craft at a station: stand at one, press {Professions} and open Holdings > Stores. Cook at any fire.')]; },
     get points() {
       return [
         t('tutorials.crafting.shops1', 'Forge: Weaponsmiths, Armorers. Loom: Clothing Stores. Workbench: Furniture Stores, joineries.'),

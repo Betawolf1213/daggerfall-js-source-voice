@@ -82,22 +82,12 @@
   {
     "name": "HITCH-KEEP-second-unkept",
     "file": "src/ui/fpsCounter.js",
-    "old": "        if (hitches) kept.push({ at: now, worstMs, hitches, cpu });\n",
+    "old": "        if (hitches) kept.push({ at: now, worstMs, hitches, cpu: gapCpu });\n",
     "new": "",
     "tests": [
       "test/ui/fb1018d_hitchkeep.test.js"
     ],
     "why": "a hitch gone with its second, as before"
-  },
-  {
-    "name": "HITCH-KEEP-means-parts",
-    "file": "src/ui/fpsCounter.js",
-    "old": "inFrameMs: c ? c.worstInFrameMs : null",
-    "new": "inFrameMs: c ? c.inFrameMs : null",
-    "tests": [
-      "test/ui/fb1018d_hitchkeep.test.js"
-    ],
-    "why": "the hitch's in-frame part read off the second's mean"
   },
   {
     "name": "HITCH-KEEP-before-mislabelled",
@@ -132,7 +122,7 @@
   {
     "name": "HITCH-KEEP-hidden-gap-counted",
     "file": "src/ui/fpsCounter.js",
-    "old": "    if (hid) { hid = false; stamps = []; sumDraws = 0; sumBinds = 0; samples = 0; sumView = 0; sumShadow = 0; }",
+    "old": "    if (hid) { hid = false; stamps = []; sumDraws = 0; sumBinds = 0; samples = 0; sumView = 0; sumShadow = 0; gapMs = 0; gapCpu = null; }",
     "new": "    if (hid) { hid = false; }",
     "tests": [
       "test/ui/fb1018d_hitchkeep.test.js"
@@ -170,33 +160,113 @@
     "why": "a disposed counter still listens"
   },
   {
-    "name": "HITCH-KEEP-clock-before-as-frame",
-    "file": "src/systems/frameClock.js",
-    "old": "if (b > worst) { worst = b; worstF = f; worstW = w; worstL = l; }",
-    "new": "if (b > worst) { worst = b; worstF = f; worstW = f; worstL = l; }",
+    "name": "HITCH-KEEP-second-worst-sample",
+    "file": "src/ui/fpsCounter.js",
+    "old": "        if (hitches) kept.push({ at: now, worstMs, hitches, cpu: gapCpu });",
+    "new": "        if (hitches) kept.push({ at: now, worstMs, hitches, cpu: cpu && { ms: cpu.worstMs, inFrameMs: cpu.inFrameMs, beforeMs: cpu.beforeMs, streamMs: cpu.streamMs } });",
     "tests": [
       "test/ui/fb1018d_hitchkeep.test.js"
     ],
-    "why": "the worst sample's time before its callback read as its callback's"
+    "why": "AUDIT FB1018D L2-1: the second's worst sample read as the hitch's - another frame's whenever a heavy frame shared the second"
   },
   {
-    "name": "HITCH-KEEP-clock-stream-dropped",
-    "file": "src/systems/frameClock.js",
-    "old": "worstL = l; }",
-    "new": "worstL = 0; }",
+    "name": "HITCH-KEEP-gap-stamp-unasked",
+    "file": "src/ui/fpsCounter.js",
+    "old": "gapCpu = frameSampleAt(prev);",
+    "new": "gapCpu = frameSampleAt(now);",
     "tests": [
       "test/ui/fb1018d_hitchkeep.test.js"
     ],
-    "why": "the world's build lent to the worst frame unsaid"
+    "why": "AUDIT FB1018D L2-1: the frame after the gap asked, not the one that opened it"
   },
   {
-    "name": "HITCH-KEEP-clock-means-parts",
-    "file": "src/systems/frameClock.js",
-    "old": "worstInFrameMs: worstF,",
-    "new": "worstInFrameMs: inFrame / n,",
+    "name": "HITCH-KEEP-gap-not-the-longest",
+    "file": "src/ui/fpsCounter.js",
+    "old": "now - prev >= HITCH_MS && now - prev > gapMs",
+    "new": "now - prev >= HITCH_MS",
     "tests": [
       "test/ui/fb1018d_hitchkeep.test.js"
     ],
-    "why": "the worst frame's callback said as the window's mean"
+    "why": "AUDIT FB1018D L2-1: the second's last hitch's script said beside its longest"
+  },
+  {
+    "name": "HITCH-KEEP-gap-unreset",
+    "file": "src/ui/fpsCounter.js",
+    "old": "      gapMs = 0; gapCpu = null;   // FB1018D HITCH-KEEP\n",
+    "new": "",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-1: a second's hitch's frame carried into the next"
+  },
+  {
+    "name": "HITCH-KEEP-under-twice-unkept",
+    "file": "src/ui/fpsCounter.js",
+    "old": "        if (hitches) kept.push(",
+    "new": "        if (hitches && worstMs >= 2 * HITCH_MS) kept.push(",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-4: a hitch under twice HITCH_MS never kept"
+  },
+  {
+    "name": "HITCH-KEEP-minute-shortened",
+    "file": "src/ui/fpsCounter.js",
+    "old": "now - kept[0].at > HITCH_KEEP_MS)",
+    "new": "now - kept[0].at > HITCH_KEEP_MS - 5000)",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-4: the minute five seconds short"
+  },
+  {
+    "name": "HITCH-KEEP-hide-keeps-draws",
+    "file": "src/ui/fpsCounter.js",
+    "old": "    if (hid) { hid = false; stamps = []; sumDraws = 0; sumBinds = 0; samples = 0;",
+    "new": "    if (hid) { hid = false; stamps = []; samples = 0;",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-4: the draws before the hide summed into the frames after it"
+  },
+  {
+    "name": "HITCH-KEEP-age-floored",
+    "file": "src/ui/fpsCounter.js",
+    "old": "agoS: Math.round(",
+    "new": "agoS: Math.floor(",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-4: the age floored, not rounded"
+  },
+  {
+    "name": "HITCH-KEEP-clock-sample-unstamped",
+    "file": "src/systems/frameClock.js",
+    "old": "samples.push([now, busy, inFrame, before, stream, stamp]);",
+    "new": "samples.push([now, busy, inFrame, before, stream]);",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-1: no frame found by its stamp - no hitch says its script"
+  },
+  {
+    "name": "HITCH-KEEP-clock-sample-misread",
+    "file": "src/systems/frameClock.js",
+    "old": "return { ms: b, inFrameMs: f, beforeMs: w, streamMs: l };",
+    "new": "return { ms: b, inFrameMs: f, beforeMs: f, streamMs: l };",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-1: a frame's time before its callback read as its callback's"
+  },
+  {
+    "name": "HITCH-KEEP-clock-oldest-first",
+    "file": "src/systems/frameClock.js",
+    "old": "if (at === stamp) return",
+    "new": "if (at !== stamp) return",
+    "tests": [
+      "test/ui/fb1018d_hitchkeep.test.js"
+    ],
+    "why": "AUDIT FB1018D L2-1: the stamp's frame not the one answered"
   }
 ]

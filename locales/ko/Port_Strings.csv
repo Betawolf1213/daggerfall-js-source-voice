@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"온라인에서는 왕국이 길드 평판을 관리�
 tutorials.chapters.body2,"심사로는 {cap}계급까지 승급합니다. {officer}계급과 {master}계급은 지부 자리로, 매주 일요일 주간 전환 때 공적으로 얻습니다. 게시판에서 지부에 대해 알아볼 수 있습니다."
 tutorials.chapters.title,"길드 지부"
 tutorials.chapters.trigger,"길드, 사원, 기사단의 일원으로 처음 온라인에 접속했을 때."
-tutorials.crafting.body,"온라인에서는 작업대에서 제작합니다. 작업대 앞에 서서 메뉴 > 소유물 > 창고를 여세요. 요리는 어느 불에서나 합니다."
+tutorials.crafting.body,"온라인에서는 작업대에서 제작합니다. 작업대 앞에 서서 {Professions} 키를 누른 뒤 소유물 > 창고를 여세요. 요리는 어느 불에서나 합니다."
 tutorials.crafting.more,"당신의 집에도 작업대를 둘 수 있습니다. {Professions}의 각 제작 직업에서 더 자세히 알려 줍니다."
 tutorials.crafting.shops1,"화로: 무기 대장장이, 갑옷 대장장이. 베틀: 옷가게. 작업대: 가구점, 목공소."
 tutorials.crafting.shops2,"보석 세공대: 전당포, 보석상. 석공 작업대: 잡화점. 연금술: 연금술사. 마법 부여: 마법사 길드 회관."

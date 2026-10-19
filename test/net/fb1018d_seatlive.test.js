@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { fakeRoom } from '../fakeRoom.mjs';
 import { fakeSocketClass } from '../fakeSocket.mjs';
 import { OnlineSession } from '../../src/net/online.js';
-import { FOES_STALE_MS, FOES_FULL_MS, PIXEL_UNITS } from '../../src/net/wire.js';
+import { FOES_STALE_MS, FOES_FULL_MS, PIXEL_UNITS, RELAY_VERSION } from '../../src/net/wire.js';
 import { seatOf, createSeatClock, seatStreams, relaySupportsSeatLive, SEAT_RELAY_MIN } from '../../src/net/seatLive.js';
 
 const at = (k = 0) => ({ x: PIXEL_UNITS + 10 + k, y: 0, z: PIXEL_UNITS + 10, yaw: 0, pitch: 0, mv: 0 });
@@ -204,4 +204,165 @@ test('SEAT-LIVE THE PAGE: the page\'s own absence spends no seat\'s patience - a
   assert.match(w, /seatClock\.frame\(now\); modes\?\.setDungeonAuthority\?\.\(dungeonAuthority\(now\)\);/, 'the frame tells the clock first');
   assert.match(w, /&& online\.host && !online\.isHost\(\) && seatClock\.live\(now\)\);/, 'the seat reads the clock');
   assert.equal((w.match(/seatClock\.heard\(performance\.now\(\)\)/g) ?? []).length, 2, 'the host\'s word and its stream applied');
+});
+
+test('SEAT-LIVE (AUDIT FB1018D L4-2): A SILENT HOST THAT LEAVES WITH NO FAREWELL HANDS THE SEAT ON, SAID - its silence past FOES_STALE_MS, its socket closed (a phone\'s background kill, a crash) before any frame said the change: the room is told the joiner, the joiner\'s session holds the seat and its memory is kept; and a room drained and come into again is told nothing past its welcome (mutants: the leave read by the live law alone; the told host\'s absence unasked)', async () => {
+  await onClock(async (c) => {
+    const r = fakeRoom(ROOM);
+    const H = r.connect(), P = r.connect();
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    for (let k = 0; k < 3; k++) { c.t += FOES_FULL_MS; await r.pose(H, at(k)); await r.pose(P, at(1 + k)); }   // both live
+    const t0 = c.t;
+    c.t += FOES_STALE_MS - 1500; await r.pose(P, at(5));   // the joiner heard, the host still inside its bound
+    assert.deepEqual(hostSaid(P), [], 'nothing said yet');
+    c.t = t0 + FOES_STALE_MS + 500;   // the host silent past its bound - and no frame from anyone since
+    await r.drop(H);   // its socket closes without a farewell
+    assert.deepEqual(hostSaid(P), ['pppp-0002'], 'the leave says the seat the room never heard move');
+    c.t += 500; await r.pose(P, at(6));
+    assert.deepEqual(hostSaid(P), ['pppp-0002'], 'said once');
+    await r.world(P, memory('P'), { final: true });
+    assert.equal(r.store.get('world:meta')?.by, 'pppp-0002', 'its memory kept');
+    // drained, and come into again: the welcome says the host, and no frame says it twice
+    await r.drop(P);
+    c.t += 1000;
+    const Q = r.connect();
+    await r.hello(Q, 'qqqq-0003', at(9));
+    assert.equal(ofType(Q, 'welcome')[0].host, 'qqqq-0003');
+    for (let k = 0; k < 4; k++) { c.t += FOES_FULL_MS; await r.pose(Q, at(10 + k)); }
+    assert.deepEqual(hostSaid(Q), [], 'a host told to nobody here is not said again');
+  });
+});
+
+test('SEAT-LIVE (AUDIT FB1018D L4-3): THE FRAMES THAT HOLD A SEAT ARE A PAGE\'S - a host that only streams its foes, standing still, keeps the seat; a joiner heard on its own lane alone is live; a ping the room hears, an act or a chat line keeps no hidden host\'s seat (mutants: the foes stream, the own lane uncounted; a ping, any frame counted)', async () => {
+  const foes = (n) => JSON.stringify({ t: 'foes', data: { n, k: ROOM, f: [] } });
+  const own = (n) => JSON.stringify({ t: 'own', data: { n, k: ROOM, f: [] } });
+  await onClock(async (c) => {
+    const r = fakeRoom(ROOM);
+    const H = r.connect(), P = r.connect();
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    for (let k = 0; k < 15; k++) { c.t += FOES_FULL_MS; await r.raw(H, foes(k)); await r.pose(P, at(2 + k)); }
+    assert.equal(r.room._hostOf(), 'hhhh-0001', 'its stream alone holds it');
+  });
+  await onClock(async (c) => {
+    const r = fakeRoom(ROOM);
+    const H = r.connect(), P = r.connect(), Q = r.connect();
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    await r.hello(Q, 'qqqq-0003', at(2));
+    for (let k = 0; k < 6; k++) { c.t += FOES_FULL_MS; await r.raw(P, own(k)); await r.pose(Q, at(3 + k)); }
+    assert.equal(r.room._hostOf(), 'pppp-0002', 'the eldest live is the own lane\'s');
+  });
+  for (const say of ['{"t":"ping","x":1}', JSON.stringify({ t: 'act', data: { d: 1 } }), JSON.stringify({ t: 'chat', text: 'brb' })]) {
+    await onClock(async (c) => {
+      const r = fakeRoom(ROOM);
+      const H = r.connect(), P = r.connect();
+      await r.hello(H, 'hhhh-0001', at());
+      await r.hello(P, 'pppp-0002', at(1));
+      for (let k = 0; k < 8; k++) { c.t += 1000; await r.raw(H, say); await r.pose(P, at(2 + k)); }
+      assert.equal(r.room._hostOf(), 'pppp-0002', `${say} is no page's frame`);
+    });
+  }
+});
+
+test('SEAT-LIVE (AUDIT FB1018D L4-1, L4-3): THE RELAY TO ASK IS THE ONE THAT CARRIES THE LAW, AND A HOST NAMED IS HEARD - world220 first (world219 is EG-PERFECT\'s, with no seat law), and this build\'s own; a session told a new host asks nothing for FOES_STALE_MS after (mutants: the min a relay too low; the host frame not heard)', () => {
+  assert.equal(SEAT_RELAY_MIN, 220, 'world220 first carries net/seatLive.js');
+  assert.equal(relaySupportsSeatLive('world219'), false, 'EG-PERFECT\'s world219 keeps the eldest');
+  assert.equal(relaySupportsSeatLive(RELAY_VERSION), true, 'this build\'s relay');
+  const { FakeWS, sockets } = fakeSocketClass();
+  const c = { t: 1_000_000 };
+  const s = new OnlineSession({ url: 'wss://relay.test', name: 'p', id: 'pppp-0002', secret: 'secret-of-pppp-0002', WebSocketImpl: FakeWS, now: () => c.t });
+  const quiet = (fn) => { const l = console.log, w = console.warn, i = console.info; console.log = console.warn = console.info = () => {}; try { return fn(); } finally { console.log = l; console.warn = w; console.info = i; } };
+  quiet(() => s.join(ROOM, at()));
+  const ws = sockets[0];
+  ws.open();
+  quiet(() => ws.receive({ t: 'welcome', id: 'pppp-0002', peers: [{ id: 'hhhh-0001', name: 'h', pose: at(1) }, { id: 'qqqq-0003', name: 'q', pose: at(2) }], host: 'hhhh-0001', world: null, v: RELAY_VERSION }));
+  s.sendPose(at(2));
+  const poses = () => ws.sent.map((x) => JSON.parse(x)).filter((x) => x.t === 'pose').length;
+  const run = (ms) => { for (let k = 0; k < ms; k += 100) { c.t += 100; quiet(() => s.tick()); } };
+  run(FOES_STALE_MS + FOES_FULL_MS * 2);
+  assert.ok(poses() > 1, 'asking while the named host is unheard');
+  quiet(() => ws.receive({ t: 'host', id: 'qqqq-0003' }));
+  const p0 = poses();
+  run(FOES_STALE_MS - 200);
+  assert.equal(poses(), p0, 'a host just named is a host heard: nothing asked of it yet');
+});
+
+/** AUDIT FB1018D L5-3: a socket as the runtime's Room.fetch accepts it - its attachment stamped `at`, when it opened (AUDIT
+ *  WB A1). test/fakeRoom.mjs's connect leaves it out, and a building's seat reads it (net/seatLive.js seatInAt: no `hi`
+ *  is written there). */
+const opened = (r) => { const ws = r.connect(); ws.att.at = Date.now(); return ws; };
+
+test('SEAT-LIVE (AUDIT FB1018D L5-3): A BUILDING\'S ROOM KEEPS THE ELDEST - its host streams no foes, so no silence there takes a seat: a third socket come in after a quiet spell leaves the eldest its seat, the eldest\'s leave is said, a reconnect after a quiet spell keeps its stamp (AUDIT WORLD A4), and the page asks no building for its seat (mutants: the walk, the lead, the reconnect and the ask read every room as a dungeon\'s)', async () => {
+  const BUILDING = 'interior:m187.65537';
+  const room = async (fn) => onClock(async (c) => {
+    const r = fakeRoom(BUILDING);
+    const H = opened(r), P = opened(r);
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    c.t += 3 * FOES_STALE_MS;
+    await fn(r, H, P, c);
+  });
+  await room(async (r) => {
+    const Q = opened(r);
+    await r.hello(Q, 'qqqq-0003', at(2));
+    assert.equal(r.room._hostOf(), 'hhhh-0001', 'a third come in: the eldest');
+    await r.drop(r.sockets[0]);
+    assert.equal(r.room._hostOf(), 'pppp-0002');
+    assert.equal(hostSaid(r.sockets[1]).at(-1), 'pppp-0002', 'the eldest\'s leave said: the next eldest holds it');
+  });
+  await room(async (r) => {
+    const H2 = opened(r);
+    await r.hello(H2, 'hhhh-0001', at());
+    assert.equal(r.room._hostOf(), 'hhhh-0001', 'the reconnect keeps the eldest\'s stamp');
+  });
+  const { FakeWS, sockets } = fakeSocketClass();
+  const c = { t: 1_000_000 };
+  const s = new OnlineSession({ url: 'wss://relay.test', name: 'p', id: 'pppp-0002', secret: 'secret-of-pppp-0002', WebSocketImpl: FakeWS, now: () => c.t });
+  const quiet = (fn) => { const l = console.log, w = console.warn, i = console.info; console.log = console.warn = console.info = () => {}; try { return fn(); } finally { console.log = l; console.warn = w; console.info = i; } };
+  quiet(() => s.join(BUILDING, at()));
+  sockets[0].open();
+  quiet(() => sockets[0].receive({ t: 'welcome', id: 'pppp-0002', peers: [{ id: 'hhhh-0001', name: 'h', pose: at(1) }], host: 'hhhh-0001', world: null, v: RELAY_VERSION }));
+  s.sendPose(at(2));
+  const poses = () => sockets[0].sent.map((x) => JSON.parse(x)).filter((x) => x.t === 'pose').length;
+  const p0 = poses();
+  for (let k = 0; k < FOES_STALE_MS * 3; k += 100) { c.t += 100; quiet(() => s.tick()); }
+  assert.equal(poses(), p0, 'no ask in a building');
+});
+
+test('SEAT-LIVE (AUDIT FB1018D L5-4): A SOCKET BACK FROM SILENCE COMES IN NOW - after a joiner who came in while it was away, so when the seat leaves it passes to that joiner (mutant: the returner stamped just after the seat, outranking the newer joiner)', async () => {
+  await onClock(async (c) => {
+    const r = fakeRoom(ROOM);
+    const H = opened(r), P = opened(r);
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    c.t += FOES_STALE_MS + 1000;
+    await r.pose(P, at(2));
+    assert.equal(r.room._hostOf(), 'pppp-0002', 'the host silent: the joiner holds the seat');
+    c.t += 1000;
+    const Q = opened(r);
+    await r.hello(Q, 'qqqq-0003', at(3));
+    c.t += 1000;
+    await r.pose(H, at(4));   // back from silence: a joiner, stamped now
+    await r.pose(Q, at(5));
+    await r.drop(P);
+    assert.equal(r.room._hostOf(), 'qqqq-0003', 'the seat passes to the one who came in before the returner came back');
+  });
+});
+
+test('SEAT-LIVE (AUDIT FB1018D L4-2): A LEAVER THAT LED BY THE LIVE LAW, BEFORE THE ROOM WAS TOLD, IS A HOST LEAVING - the told host silent past its bound, the eldest live joiner leaves before any frame said the change: the room is told the next live socket at the leave, not a frame later (mutant: the leave read by seniority)', async () => {
+  await onClock(async (c) => {
+    const r = fakeRoom(ROOM);
+    const H = opened(r), P = opened(r), Q = opened(r);
+    await r.hello(H, 'hhhh-0001', at());
+    await r.hello(P, 'pppp-0002', at(1));
+    await r.hello(Q, 'qqqq-0003', at(2));
+    for (let k = 0; k < 2; k++) { c.t += FOES_FULL_MS; await r.pose(H, at(k)); await r.pose(P, at(3 + k)); await r.pose(Q, at(5 + k)); }
+    c.t += FOES_STALE_MS - 500; await r.pose(P, at(7)); await r.pose(Q, at(8));   // the host still inside its bound
+    assert.deepEqual(hostSaid(Q), [], 'nothing said');
+    c.t += 1000;   // the host past its bound; P, the eldest live, leaves before any frame
+    await r.drop(P);
+    assert.deepEqual(hostSaid(Q), ['qqqq-0003'], 'told at the leave');
+  });
 });

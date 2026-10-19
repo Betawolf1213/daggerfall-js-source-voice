@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"Secara daring, ranah mencatat kedudukan serikatmu. Mis
 tutorials.chapters.body2,"Peninjauan menaikkanmu sampai peringkat {cap}; peringkat {officer} dan {master} adalah kursi cabang, dimenangkan dengan Jasa pada Pergantian setiap Minggu. Papan pengumuman menjelaskan cabang."
 tutorials.chapters.title,"Cabang Serikat"
 tutorials.chapters.trigger,"Saat pertama kali daring sebagai anggota serikat, kuil, atau ordo."
-tutorials.crafting.body,"Saat daring, kamu membuat barang di stasiun: berdirilah di salah satunya dan buka Menu > Harta > Gudang. Memasak bisa di api mana pun."
+tutorials.crafting.body,"Saat daring, kamu membuat barang di stasiun: berdirilah di salah satunya, tekan {Professions}, lalu buka Harta > Gudang. Memasak bisa di api mana pun."
 tutorials.crafting.more,"Rumahmu juga bisa punya stasiun. Setiap profesi kerajinan di {Professions} menjelaskan lebih lanjut."
 tutorials.crafting.shops1,"Tungku tempa: Pandai Senjata, Pandai Zirah. Alat tenun: Toko Pakaian. Meja kerja: Toko Perabot, bengkel kayu."
 tutorials.crafting.shops2,"Meja perhiasan: Rumah Gadai, Toko Permata. Meja tukang batu: Toko Kelontong. Alkimia: Alkemis. Pemesonaan: aula Mages Guild."

@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"Online, o reino guarda sua posição nas guildas. As m
 tutorials.chapters.body2,"As avaliações promovem você até o posto {cap}; os postos {officer} e {master} são cadeiras do capítulo, conquistadas por Mérito na Virada de cada domingo. Um quadro de avisos explica os capítulos."
 tutorials.chapters.title,"Capítulos das guildas"
 tutorials.chapters.trigger,"Na primeira vez que você entra online como membro de uma guilda, um templo ou uma ordem."
-tutorials.crafting.body,"Online, você fabrica numa estação: fique junto a uma e abra Menu > Propriedades > Estoques. Cozinhe em qualquer fogo."
+tutorials.crafting.body,"Online, você fabrica numa estação: fique junto a uma, pressione {Professions} e abra Propriedades > Estoques. Cozinhe em qualquer fogo."
 tutorials.crafting.more,"Seu lar também pode ter estações. Cada profissão de fabricação em {Professions} diz mais."
 tutorials.crafting.shops1,"Forja: Ferreiros de Armas, Armeiros. Tear: Lojas de Roupas. Bancada: Lojas de Móveis, marcenarias."
 tutorials.crafting.shops2,"Bancada de joalheiro: Casas de Penhores, Lojas de Gemas. Bancada de pedreiro: Armazéns. Alquimia: Alquimistas. Encantamento: salões da Guilda dos Magos."

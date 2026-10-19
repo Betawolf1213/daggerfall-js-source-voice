@@ -150,3 +150,25 @@ test('FB1018D HOME-BENCH THE HOST\'S GATE: the host\'s own functions over the se
   hallA.gate.press({ station: 'enchant' });
   assert.deepEqual([hallA.log.said, hallA.log.opened], [['This belongs to The Hand.'], []]);
 });
+
+test('FB1018D HOME-BENCH THE DOOR\'S OTHER VISITORS (AUDIT FB1018D L1-3): Cruor opens A\'s home to its guild, and Mara\'s character, in that guild, is let in as a guildmate; Mara\'s character renting a room there is let in as a tenant - and neither is the owner\'s account, so neither is served a station: homeStationsServe false, every accessor null, the press told whose home it is (mutants: a guildmate served; a tenant served)', async (t) => {
+  const { svc, cruor, A, Mara, mara, reader } = await town(t);
+  const raw = svc.env.DB._raw;
+  raw.prepare('INSERT INTO guilds (id, name, name_key, tag, ranks, founded_at) VALUES (?, ?, ?, ?, ?, ?)').run('g2', 'The Hearth', 'the hearth', 'HTH', '[]', T0);
+  for (const [who, char, name] of [[cruor, A, 'Cruor'], [mara, Mara, 'Mara']]) {
+    raw.prepare('INSERT INTO guild_members (player, char_id, guild_id, rank, name, joined_at) VALUES (?, ?, ?, ?, ?, ?)').run(who.id, char, 'g2', 3, name, T0);
+  }
+  assert.equal((await svc.call('/v1/homes/entry', { mapId: MAP, buildingKey: HOME, entry: 'guild' }, cruor.secret)).status, 200);
+  const mate = (await reader(mara, Mara)).homeAt(MAP, HOME);
+  assert.deepEqual([mate.mine, mate.guildmate, homeDoorAnswer(mate), homeStationsServe(mate)], [false, true, 'enter', false], 'a guildmate: let in, and no station of hers');
+  assert.equal((await svc.call('/v1/homes/entry', { mapId: MAP, buildingKey: HOME, entry: 'private' }, cruor.secret)).status, 200);
+  raw.prepare("INSERT INTO home_rooms (map_id, building_key, room, anchor, price, listed, tenant, tenant_char, until) VALUES (?, ?, 1, 'a', 10, 1, ?, ?, ?)").run(MAP, HOME, mara.id, Mara, T0 + 86_400);
+  const tenant = (await reader(mara, Mara)).homeAt(MAP, HOME);
+  assert.deepEqual([tenant.mine, tenant.tenant > 0, homeDoorAnswer(tenant), homeStationsServe(tenant)], [false, true, 'enter', false], 'a tenant: let in, and no station of hers');
+  for (const [who, row] of [['the guildmate', mate], ['the tenant', tenant]]) {
+    const { gate, log } = room(row);
+    for (const [station, here] of Object.entries(STATIONS)) assert.equal(gate[here](), null, `${who} at the ${station}`);
+    gate.press({ station: 'forge' });
+    assert.deepEqual([log.said, log.opened], [['This belongs to Cruor.'], []], `${who} is told whose home it is, and nothing opens`);
+  }
+});

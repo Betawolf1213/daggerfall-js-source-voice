@@ -48,5 +48,15 @@
       "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "the Conquest's word says to break them and never what they do"
+  },
+  {
+    "name": "WARD-BAR-any-flag",
+    "file": "src/ui/eliteGates/egSpireHud.js",
+    "old": "      ward: (L.fl & EG_FL.ward) !== 0 }));",
+    "new": "      ward: L.fl !== 0 }));",
+    "tests": [
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-6: a lord in fury, stunned or flying drawn caged and Warded"
   }
 ]

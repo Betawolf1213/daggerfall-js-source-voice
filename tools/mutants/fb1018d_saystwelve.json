@@ -28,5 +28,15 @@
       "test/scenes/eliteGates/fb1018d_saystwelve.test.js"
     ],
     "why": "a screen opened on a running fight says its whole kept list"
+  },
+  {
+    "name": "SAYS-TWELVE-dropped-last-says-none",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "for (let k = lastSay ? F.says.indexOf(lastSay) + 1 : 0; k < F.says.length; k++)",
+    "new": "for (let k = lastSay ? (F.says.indexOf(lastSay) + 1 || F.says.length) : 0; k < F.says.length; k++)",
+    "tests": [
+      "test/scenes/eliteGates/fb1018d_saystwelve.test.js"
+    ],
+    "why": "AUDIT FB1018D L5-5: more than twelve words between two frames - the last said folded out - read as all of them said, and none of the twelve kept said"
   }
 ]

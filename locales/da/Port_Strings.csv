@@ -5203,7 +5203,7 @@ tutorials.chapters.body1,"Online fører riget din laugsanseelse. Opgaver hæver 
 tutorials.chapters.body2,"Bedømmelser forfremmer dig op til rang {cap}; rang {officer} og {master} er kapitelstole, vundet ved Fortjeneste ved hver søndags Vending. En opslagstavle forklarer kapitler."
 tutorials.chapters.title,"Laugenes kapitler"
 tutorials.chapters.trigger,"Når du første gang kommer online som medlem af et laug, et tempel eller en orden."
-tutorials.crafting.body,"Online laver du ting ved en arbejdsstation: stil dig ved en, og åbn Menu > Ejendele > Forråd. Lav mad ved enhver ild."
+tutorials.crafting.body,"Online laver du ting ved en arbejdsstation: stil dig ved en, tryk på {Professions}, og åbn Ejendele > Forråd. Lav mad ved enhver ild."
 tutorials.crafting.more,"Dit hjem kan også have arbejdsstationer. Hvert håndværksfag under {Professions} fortæller mere."
 tutorials.crafting.shops1,"Esse: Våbensmede, Rustningssmede. Væv: Tøjbutikker. Arbejdsbænk: Møbelbutikker, snedkerier."
 tutorials.crafting.shops2,"Juvelerbænk: Pantelånere, Juvelbutikker. Stenhuggerbænk: Købmænd. Alkymi: Alkymister. Fortryllelse: Mages Guild-haller."

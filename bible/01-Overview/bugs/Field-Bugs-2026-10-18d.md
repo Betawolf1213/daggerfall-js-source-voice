@@ -5,6 +5,9 @@ Read on the code as it stands at main's `1ec80616f`. Each was traced on the real
 where the cause is proven ("No band aid fixes", the owner's standing word on these threads); where it is not, the
 record says so and what would prove it. The pins are `fb1018d_*`, the mutants `tools/mutants/fb1018d_*.json`.
 
+AUDITED the same day: `01-Overview/audits/Audit-Field-Bugs-2026-10-18d.md` (AUDIT FB1018D, five cold lanes on the
+slice's head). Each section below says what the audit changed in it.
+
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | MoonGeneral, "No clue how to start cr[afting]": "for the crafting side of this mechanic i have no clue on how to start it ... when it comes to the crafting skills you no explanation there" | The Professions page explained every gathering profession and two of the crafts. Smithing, Building and Outfitting drew their perk cards with nothing above them, Provisioning never named Cooking, and no tutorial page said where a station stands | written (CRAFT-HOWTO) |
@@ -13,7 +16,7 @@ record says so and what would prove it. The pins are `fb1018d_*`, the mutants `t
 | 4 | Boar, "Big bugs of the spires", seven items | 6, the Twins: a Sapper fed a fallen Twin, which stood on the relay un-hittable on every screen. 1, the ring was never drawn; 4, THE ASCENT refused a shaft at the balconies' banners, and the ward was never shown; 7, the plates were never drawn. 2 and 4.1 are the hall's look, not built. 3 is the record's law, and said. 5's windows are the record's; a key clash found on the way is the owner's call | 6, 1, 4 and 7 fixed (TWIN-REKINDLE, DUEL-RING, BANNER-SHAFT, WARD-BAR, WINCH-PLATES; SAYS-PAST-TWELVE found on the way); 2 and 4.1 open, below |
 | 5 | kvassdrit, "L opens chronicles instead of Quest tab": "Function does not match description in keybinding menu" | What L opens is a recorded decision (PX24d, MAC-K2); the Controls row, written later by KB1, kept DFU's word | fixed (KEY-LOGBOOK) |
 | 6 | Warrgrim, "Please Fix Leaping Strike Weapon Techniques. items": "leaping strikes/ any weapon ability that allows you to leap and perform an aoe attack have been completely disabled/broken ... "you cannot leap from here" ... extends to the unarmed versions of this technique as well, such as flying kick" | A piece that casts Slowfalling while held (a Rare armour flavour, The Raven's Wings) refused every leap and dash on flat ground: the gate read the spell, not the air | changed (LEAP-SLOW), a departure, for Mac's review |
-| 7 | FloopZe, "Castle Daggerfall guards loot duping": "the guards aggro automatically and after killing them I am able to able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a few exits ...)" | Not proven for this report. One path that fits every clause reproduced: a room's host gone silent (a hidden tab) kept the relay's pen while a joiner ran the foes, so the joiner's kills and takes were never kept and every walk back in was welcomed with full bodies - 2280, 4560, 6840 gold | the dupe fixed (SEAT-LIVE, relay world219); the auto-aggro the owner's call, below |
+| 7 | FloopZe, "Castle Daggerfall guards loot duping": "the guards aggro automatically and after killing them I am able to able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a few exits ...)" | Not proven for this report. One path that fits every clause reproduced: a room's host gone silent (a hidden tab) kept the relay's pen while a joiner ran the foes, so the joiner's kills and takes were never kept and every walk back in was welcomed with full bodies - 2280, 4560, 6840 gold | the dupe fixed (SEAT-LIVE, relay world220); the auto-aggro the owner's call, below |
 | 8 | Tibbnak, "Quest: A danngerous wizard, Theodyval laboratory, can complete quest offline but not online" | Not proven. The instance and the offline game stand the quest's Mage on the same marker; public stands nothing, by INSTANCES' law | open: what would find it, below |
 
 ## CRAFT-HOWTO: every crafting profession says where it is worked (1)
@@ -38,13 +41,23 @@ said its key opens the Stores (since HOLDINGS it opens the Professions page alon
 claim in the gather line), and ALCHEMY_HOW said "with what your Stores hold", stale since BAG-CRAFT. The eleven new
 strings are drafted in the thirteen whole languages; the twelve drafting languages wait as every new key does.
 
+AUDIT FB1018D. "Menu > Holdings > Stores" was the Enhanced menu's path alone: on the Classic skin Escape is DFU's pause,
+which has no tabs, and the Professions key is the one door to the Stores on either skin
+(`pauseDoor.js:"  if (profPageAt(hooks.at)) {"`). Both pages say the key now - "stand at one, press {Professions} and
+open Holdings > Stores", and "{Professions} opens them, and your stored goods are under Holdings > Stores in the same
+window" - and the Crafting body is redrafted in the thirteen whole languages (L1-6). The key's own Controls row kept
+the claim the tutorial dropped ("Open your Professions and Stores") and reads "Open your Professions page (online)"
+(L1-7). Each XP clause is pinned whole (L1-5). fi, ja and pl's drafts of ALCHEMY_HOW, stale once this slice moved its
+English, are redrafted (L1-11). Linen is a furnisher's counter's too (FURNISHER_STOCK): the comments said the Weavers'
+alone and are corrected; the page's words leave the furnisher out, which is incomplete, not false (L1-9).
+
 Left: the how-to texts name no fee (each station's own section says it); a shop has no object to press, so the player
 opens the Stores page there themselves. The first gather now pops three tutorial pages together (four with the
 Materials Bag's) - one line makes the Crafting page menu-only, the owner's call.
 
 Pins: `test/ui/professions/fb1018d_crafthowto.test.js` (4: the real page for all ten professions; the words against
 the station questions, the joinery, the fire and the XP law; the tutorial page, its seam and search; the locales).
-Mutants: `tools/mutants/fb1018d_crafthowto.json` (23, all dead).
+Mutants: `tools/mutants/fb1018d_crafthowto.json` (30, all dead).
 
 ## HITCH-KEEP: the counter keeps the minute's worst frame (2)
 
@@ -68,21 +81,30 @@ Not measurable here: the streaming builds on a cell crossing, first sight of a p
 What the counter could not do. It showed the worst frame of its own second and no more, so a 500 ms stall was gone
 before it could be read. And after the page was hidden it read "0 fps" - the first second back counted the hidden
 seconds' gap as one frame (on HEAD, hidden 9 s: "8 fps ... worst 9007", or "0 fps 9006.9 ms" hidden early in a
-second). That last is very likely the report's "0 FPS" on an alt-tab.
+second). That last is possibly the report's "0 FPS" (AUDIT FB1018D L2-6: nothing shows an alt-tab hid the page,
+and the player describes the drops during play).
 
 FIXED. A `visibilitychange` starts the counter's second again at the first frame shown. The counter keeps every second
 that held a frame of HITCH_MS (50 ms) or more for HITCH_KEEP_MS (60 s), and while the minute holds one prints its
-worst, how long ago and how many, and the frame clock's split of that worst frame (`frameCpu`'s worst sample:
-script, `frame` the game's callback, `before` a timer, message or collection, `stream` the world's build). A hitch with
+worst, how long ago and how many, and the frame clock's split of the frame that opened that gap, asked by the rAF
+stamp it began at (`frameClock.js:"export function frameSampleAt(stamp) {"`: script, `frame` the game's callback,
+`before` a timer, message or collection, `stream` the world's build). A hitch with
 little script under it is the GPU, the compositor or untimed work; one that is nearly all script is the game's.
 `window.__fpsStats().hitch` carries the same.
+
+AUDIT FB1018D. The split was first `frameCpu`'s worst sample when the second closed - the second's heaviest script,
+which is another frame's whenever a heavy frame that was no hitch shares the second: a 60 ms hitch with 3 ms of script
+printed "script 45" off its neighbour, and by this record's own rule read as the game's (L2-1). The clock's samples
+carry their frame's stamp, and the counter asks for the frame before the second's longest gap. The pins now hold a
+50-99 ms hitch, the minute's edge (kept at 58 s, gone at 61), and the draws line after a hide (L2-4, L5-9); the script
+line's claimed indent, which a right-aligned box cannot show, is gone (L2-5).
 
 What would name it, from the player: the counter's `hitch` lines just after a stutter (Settings > Interface > FPS
 counter); online or not, browser or desktop, VSync and the Frame Rate Cap; what they were doing (riding, crossing
 cells, others arriving, a town); on the desktop, a performance trace (View > Toggle Developer Tools).
 
-Pins: `test/ui/fb1018d_hitchkeep.test.js` (3: the real counter over a page that can be hidden, and the real frame
-clock). Mutants: `tools/mutants/fb1018d_hitchkeep.json` (20, all dead).
+Pins: `test/ui/fb1018d_hitchkeep.test.js` (4: the real counter over a page that can be hidden, and the real frame
+clock; the hitch's own frame among a heavier one). Mutants: `tools/mutants/fb1018d_hitchkeep.json` (27, all dead).
 
 ## HOME-BENCH: a home's stations serve its owner's account, as its door does (3)
 
@@ -113,9 +135,17 @@ account's handle to its own other characters; a home's admitted visitors (party,
 caravan's can. SylviaBun's and bag boy's "transfer houses between same-account characters" is a feature request,
 not built.
 
-Pins: `test/scenes/fb1018d_homebench.test.js` (2: the rule for A, B and a stranger; the host's gate - every station
+AUDIT FB1018D. "A visitor the door admits is refused" was pinned for a home open to anyone alone; a guildmate the door
+lets in (entry 'guild') and a tenant are pinned refused too, every accessor null (L1-3). A knight's house still
+refuses the account's other character (L1-4): the service hands B the deed row
+(`homes.js:"homes: results.filter((h) => !(h.deed === 1 && h.player === player.id && h.char_id === me)).map((h) => {"`),
+which reads `mine` and so would serve its stations - but the house's pieces are A's save's and the service lists none,
+so B finds no station to press. Cruor's report still stands in a knight's house; closing it needs a deed house's
+pieces on the service. Left.
+
+Pins: `test/scenes/fb1018d_homebench.test.js` (3: the rule for A, B and a stranger; the host's gate - every station
 serves B with no fee and no refusal, the cupboard stays A's, a visitor and a private visit get none, a hall serves its
-member). Mutants: `tools/mutants/fb1018d_homebench.json` (15, all dead). Seven source pins and two mutant records
+member; a guildmate and a tenant refused). Mutants: `tools/mutants/fb1018d_homebench.json` (17, all dead). Seven source pins and two mutant records
 re-aimed (PIN MOVED).
 
 ## Report 4: Boar's spires
@@ -134,8 +164,16 @@ ground on the floor. And a second false line: at n = 1 the record stands no ring
 "The ring of fire rises." and "The ring falls." The relay's `challenge` and `challengeend` carry `t: 'open'`
 (`egLords.js:"export const EG_DUEL_OPEN = 'open';"`), and the screen says "A challenge in the open! Deal him a tenth
 of his health within 15 s." and "The challenge goes unmet." - drafted in every language. A client before it reads the
-ring's words, as ever. Pins: `test/scenes/eliteGates/fb1018d_duelring.test.js` (2). Mutants:
-`tools/mutants/fb1018d_duelring.json` (7, all dead).
+ring's words, as ever.
+
+AUDIT FB1018D. A company of one that killed the Armsmaster mid-duel was told "The challenge goes unmet." at the
+killing blow: the fall ends the duel, and the end said the open duel's word (L3-1). A duel the lord's fall ends says
+nothing of its own now (`egLords.js:"  if (fell && !(ch.r > 0)) return;"`); the fall is told. Pinned with it: Garoth's
+ring (a ring of 6, no braziers) is called and ended as a ring, never as the open duel (L3-M1, in `egaudit5_b`); a
+member with no feet in the fight sees the ring (L3-M2); the band's half-metre as a literal (L5-9).
+
+Pins: `test/scenes/eliteGates/fb1018d_duelring.test.js` (4). Mutants: `tools/mutants/fb1018d_duelring.json` (12, all
+dead).
 
 ### Item 2, the puzzle's stones: the hall's look, recorded and not built
 
@@ -153,7 +191,7 @@ question for the hall's look"). What closes it: a look slice that stands the Hou
 
 FOUND. THE ASCENT refused a member's blow of ANY kind on a body one storey up, and the Rotunda's balconies stand
 exactly 4 m over the court - EG_STACK_M - so each is another storey. On seed 1, hall 25 (the court at -11, a balcony
-at -7), shafts and spells from the court 8 and 12 m from a banner did nothing; from the balcony they did 20. The
+at -7, read at main's `1ec80616f`; -14 and -10 on the merged tree, AUDIT FB1018D L3-4), shafts and spells from the court 8 and 12 m from a banner did nothing; from the balcony they did 20. The
 record wants them shot: 13.4 calls the banner "an errand's object, struck", AUDIT EG V lane5 #14 added the stairs
 because the banners "stood out of every melee reach", and 8.3 answers an off-floor errand "with arrows and spells".
 The ward was real (`egLords.js:"const held = !!C && banners.length >= 2 && now < C.wardUntil;"`, the Conquest's own since main's EG-PERFECT) and no
@@ -167,13 +205,22 @@ them!" The banners standing in every phase was the record's when this was read (
 same rule lets a shaft reach a lord or an add on an open storey (lords still throw at their own storey and walk the
 stairs, as under law 8); egFloorBetween's stair test is coarse, so a shot from a stair's foot is refused.
 
+AUDIT FB1018D. egStacked is a column test, not a line of sight: it refuses a shot only where the two stand in one
+column, and the relay has no line-of-sight test on any storey. That a shot crosses the open air is the honest
+client's - its collider holds the balcony's deck (`egCircleColliderTris`) and its missiles raycast against it; a
+crafted hit through a deck lands, as a crafted shot through a wall on one storey always has (L3-5). "Warded" (the gate
+bar's BOSS_BAR_TEXT) and the Conquest's new line are English literals: they wait on EG-L10N with the Spire's other
+words (L3-3). The bar's ward is its own flag - a lord in fury, stunned or flying draws no cage - pinned (L5-6).
+
 FOUND ON THE WAY, SAYS-PAST-TWELVE: the fold keeps a hall's last EG_SAYS_KEPT (12) lines, and the screen counted lines
 to find the new ones, so after twelve the count stood still and nothing more was said that hall (16 folded, 11 said, in
-the probe). It now finds the new lines by the last one said.
+the probe). It now finds the new lines by the last one said; and when more than twelve fold between two frames, so the
+last one said is folded out, it says the twelve kept (AUDIT FB1018D L5-5, pinned).
 
-Pins: `test/net/eliteGates/fb1018d_bannershaft.test.js` (1), `test/ui/eliteGates/fb1018d_wardbar.test.js` (1),
-`test/scenes/eliteGates/fb1018d_saystwelve.test.js` (1). Mutants: `tools/mutants/fb1018d_bannershaft.json` (4),
-`fb1018d_wardbar.json` (5), `fb1018d_saystwelve.json` (3), all dead; law9_height's 27 still dead.
+Pins: `test/net/eliteGates/fb1018d_bannershaft.test.js` (1), `test/ui/eliteGates/fb1018d_wardbar.test.js` (2),
+`test/scenes/eliteGates/fb1018d_saystwelve.test.js` (2). Mutants: `tools/mutants/fb1018d_bannershaft.json` (4),
+`fb1018d_wardbar.json` (6), `fb1018d_saystwelve.json` (4), all dead; law9_height's 70 still dead (AUDIT FB1018D L5-10:
+the 27 first written were its egWalkGraph and egBodies share).
 `egpres_hud.test.js` re-aimed (PIN MOVED: the bar's `ward: false`).
 
 ### Item 4.1, the floor greyed: the law lands, the fall is not built
@@ -198,13 +245,15 @@ Winch halls the screen drew nothing at either plate.
 FIXED. `egFight.js:"  function winchPlates(F, t) {"` draws each plate gold, sized to EG_TOUCH_M (the 2.5 m reach the
 relay counts), on its own surface during the trial. Left: the Gauntlet's plates are unmarked for the same reason, on
 sloped stairs where a flat quad would cut the slope; the Conquest's thirds (3.5 s) and Both Courts Burn (3.0 s) are
-counted ahead on the relay and drawn only as they start. Pins: `test/scenes/eliteGates/fb1018d_winchplates.test.js`
-(1). Mutants: `tools/mutants/fb1018d_winchplates.json` (4, all dead).
+counted ahead on the relay and drawn only as they start. AUDIT FB1018D L3-M3: none before the trial either - the
+fight's state stands through the arrival, and the pin now asks it there. Pins:
+`test/scenes/eliteGates/fb1018d_winchplates.test.js` (1). Mutants: `tools/mutants/fb1018d_winchplates.json` (5, all
+dead).
 
 
 ### TWIN-REKINDLE: a Sapper burns out against a fallen lord (item 6)
 
-`src/net/eliteGates/egBrain.js` (sapperReach). Relay world219.
+`src/net/eliteGates/egBrain.js` (sapperReach). Relay world220.
 
 FOUND, by running the real director (`egBreachNew`, `egStep`, `egBlow`) on seed 1, hall 35, solo, with every frame
 folded into the client's state:
@@ -226,10 +275,12 @@ A Sapper that reaches a fallen lord burns out against the body and spends no fee
 of two lords (the Twin Court, the Old Masters, the Clan Feud). With it, the Sapper crumbles at the body and Vael is
 raised at half 20.25 s after his fall, hittable. Elite-Gates.md section 12's Sapper row says so.
 
-THE RELAY. egBrain.js rides the relay's bundle, so the relay is world219, with BANNER-SHAFT, DUEL-RING and SEAT-LIVE. The slice first re-hashed world218 in place,
+THE RELAY. egBrain.js rides the relay's bundle, so the relay is world220, with BANNER-SHAFT, DUEL-RING and SEAT-LIVE. The slice first re-hashed world218 in place,
 reading wire.js's "NOT YET DEPLOYED"; `/health` serves world218 (GRANT2 deployed with #1018's merge), and a re-hash
-would have left the relay deploy reading "already current" with the fix never shipped. world218's row stands as
-recorded; the version's pins moved to world219 and soc1's version mutant was re-aimed by content.
+would have left the relay deploy reading "already current" with the fix never shipped. It took world219, which main's
+EG-PERFECT took first; merged, this is world220. world218's and world219's rows stand as recorded; the version's pins
+moved to world220 and soc1's version mutant was re-aimed by content (AUDIT FB1018D L3-2, L4-1, L5-1: this paragraph,
+SEAT-LIVE's gate and three comments still said world219).
 
 Left: the line says "fifteen seconds" in a court of two or fewer, whose window is twenty (EG_TWIN_ONE_MS); it
 understates, so it is harmless, and saying the seconds means carrying them on the `esay`. The record promises no
@@ -264,9 +315,13 @@ law 5, no raw read of a bound key):
 - 1-6 pick a card while the offer is up (`egClient.js:"if (m && E.offer?.v?.length) { const card = E.offer.v[Number(m[1]) - 1];"`),
   and with no offer or decree open a digit votes Ready - while 1-4 are the quickslots, the keys a player reaches for to
   heal after a lord.
+- N, the default NoteBook, is read raw the same way
+  (`egClient.js:"if (open.length && (code === 'KeyY' || code === 'KeyN')) return this.vote(code === 'KeyY' ? 'yes' : 'no');"`):
+  at a rest it votes no on Ready, or with only a decree open votes the decree's first option - and N's Controls row
+  (KEY-LOGBOOK) is false there. Whether the Notes window opens as well is unproven (AUDIT FB1018D L1-1).
 KB1's sweep misses it because the Spire writes `code === 'KeyY'`, not `e.code === 'KeyY'`. Elite-Gates.md 27.8 gives
 the panel those keys and its hint says "Y: the Ready vote", while KB1 gives Y to the mouse. Which wins changes the
-Spire's controls, so it is Mac's: (a) the Spire never takes a key the world has bound (Ready by click, pad or
+Spire's controls, so it is Mac's: (a) the Spire never takes a key the world has bound (Y, N and the digits alike) (Ready by click, pad or
 `/breach vote yes`), rewording 27.8 and the hint; or (b) the panel's keys become rebindable actions on free codes. Ten
 seconds for a decree, read beside the cards, is tight for a solo reader; lengthening EG_ASK_MS is the record's law to
 change, also the owner's. What would prove it was Boar's path: whether he pressed Y or a number at the rest, or a
@@ -289,9 +344,17 @@ changed: a key rebound gets what the row says (LogBook moved to K: K opened and 
 The pause window's Quests tab is one click from Escape's System tab; a key straight to it would be a feature.
 Left: the touch button's "Journal" (still true) and two comments that say "quest log".
 
+AUDIT FB1018D. The rows' "(Classic)" half was held as a literal alone: a door that opened classic N on the logbook's
+Active Quests passed. The pin opens the classic logbook through each host's own call and the real door, and reads the
+page it opened on (L1-2). The label reads awkwardly inside the held-key prompt ("L is already Chronicle: Quests
+(Enhanced Plus) / logbook (Classic)'s primary key.") and may overflow the classic replace box - unproven, it needs
+FONT0003's widths, and QuickSpell's row already does: Left (L1-8). The L10N4 count for plusPad.js fell 19 -> 18
+because the scanner does not read "Chronicle: Quests" as prose (its colon), not because the words go through `t()` -
+they do not, as no Controls row does (L1-10). At a Spire rest N is the Spire's (item 5, L1-1).
+
 Pins: `test/systems/fb1018d_keylogbook.test.js` (2: every scenes host's L and N, each building host's page mapping
 run, the real Chronicle opened under the minimal DOM; the rows carry its heading and page). Mutants:
-`tools/mutants/fb1018d_keylogbook.json` (15, all dead). The L10N4 ratchet written down (plusPad.js 19 -> 18).
+`tools/mutants/fb1018d_keylogbook.json` (17, all dead). The L10N4 ratchet written down (plusPad.js 19 -> 18).
 
 ## LEAP-SLOW: a Slowfall spell refuses a technique's flight in the air alone (6)
 
@@ -317,8 +380,8 @@ spell.
 CHANGED, a departure carried from JUMP-SLOW's, for Mac's review. The gate and the launch refuse the spell only off the
 ground (`(m.slowFalling && !m.grounded)`), so the Flying Kick from the air stays refused under it (KICK-AIR). A
 technique's flight under the spell stays on plain gravity while it is the jump it launched, the fall's start still
-re-anchored each step so no fall is billed; the swim/levitate branch and `_pkLaunch` end it, and the ground, a catch,
-a climb and a placement clear it, so an ordinary fall glides again. Measured with the runner's `launchTo`: a 9 m Leap
+re-anchored each step so no fall is billed; the swim/levitate branch ends it, and the ground, a parkour catch or a
+wall grab (`_parkourBegin`, `_wallBegin`), a climb and a placement clear it, so an ordinary fall glides again. Measured with the runner's `launchTo`: a 9 m Leap
 Strike lands 8.81 m out after 0.78 s of its arc's 0.80 s, with the spell or without; launched under the old glide it
 reached 12.9 m after 1.15 s. The parkour's running leap stays refused under the spell (`_pkMayLeap`): it has no aim,
 and lifting it would be a glide across a gap. Port-Ledger A: JUMP-SLOW's row widened. This supersedes 10-11b's
@@ -328,17 +391,22 @@ Left: the slow fall's "held against a wall" arm still runs in a flight (it diffe
 more than a step); after a catch the Jump spell's air control stays off until the ground (older than this). The one
 line still says eleven causes; with the spell lifted on the ground none of the others is invisible there.
 
-Pins: `test/combat/fb1018d_leapslow.test.js` (5, every one red on the old code: the Wings from their record through
+AUDIT FB1018D. The flight was first cleared at `_pkLaunch`, so a flight caught in a hang kept it, and a clamber's exit
+sets Jumping again: the drop after it fell at full gravity under the spell (L2-2). It is cleared where a catch and a
+wall grab begin, and a direct mantle glides. The pins now hold the fall a flight bills - a Leap Strike down 3 m bills
+under 0.3 m, the whole 3 m with the re-anchor gone - and a kick pressed while gliding off an edge refused (L2-3).
+
+Pins: `test/combat/fb1018d_leapslow.test.js` (9, the first five red on the old code: the Wings from their record through
 `equipItem`; a grounded Leap Strike lands on its aim and strikes; it pays once; the kick from the air and the motor's
 own launch refused; a jump's descent and a ledge after the landing glide and bill nothing; a flight cut short glides
-again). Mutants: `tools/mutants/fb1018d_leapslow.json` (11, all dead); four KICK-AIR and TECH1 records re-aimed by
-content.
+again; the walk-off kick, the leap down, the catch, the grab and the mantle). Mutants:
+`tools/mutants/fb1018d_leapslow.json` (14, all dead); four KICK-AIR and TECH1 records re-aimed by content.
 
 ## SEAT-LIVE: a dungeon room's seat is a live socket's (7)
 
 `src/net/seatLive.js` (new, in the relay's bundle), `server/src/index.js` (the Room's `_hostOf`, `_hostWalk`,
-`_leads`, `_seatStale`, `_seatHeard`, `_seatAfter`, `_seatKeep`), `src/net/online.js` (`_askSeat`), `src/net/wire.js`
-(FOES_FULL_MS and FOES_STALE_MS, their one home), `src/scenes/world.js` (the seat clock, wiring). Relay world219.
+`_leads`, `_leaveMovesSeat`, `_seatStale`, `_seatHeard`, `_seatAfter`, `_seatKeep`), `src/net/online.js` (`_askSeat`), `src/net/wire.js`
+(FOES_FULL_MS and FOES_STALE_MS, their one home), `src/scenes/world.js` (the seat clock, wiring). Relay world220.
 
 NOT PROVEN FOR THIS REPORT; ONE PATH FITS EVERY CLAUSE, REPRODUCED. Offline, a dungeon left is destroyed and rebuilt
 (`worldModes.js:"function exitDungeonNow() {"`), never cached, as DFU's: the guards come back alive with a fresh
@@ -374,11 +442,24 @@ Orsinium's, Field-Bugs-2026-09-28f) - Castle Daggerfall's RDB needs ARENA2 to re
 castle's anger should be each player's own is Mac's. What would prove the report's path: whether anyone else was in the
 castle (AFK or minimised), or the relay's `world:meta.by` and `.at` for its room.
 
-Pins: `test/net/fb1018d_seatlive.test.js` (5, on the real Room, session and clock: a silent host loses the seat and its
+AUDIT FB1018D. A silent host whose socket closed with no farewell - after the relay's bound on its last frame, before
+the room's next frame - left the room never told (L4-2): the leave asked `_leads`, false by the live law, and the next
+frame found the told host gone and moved the seat in silence, so the joiner kept the gone socket as its host and never
+streamed - the dupe again, until it left. The leave says the seat now when the leaver is the host last told
+(`server/src/index.js:"  _leaveMovesSeat(a, ws) {"`). The page's gate read SEAT_RELAY_MIN 219, main's EG-PERFECT
+relay, which has no seat law, so a page there sent 28 unmoved poses a minute: it is 220, pinned against world219 (L4-1,
+L5-1). The frames that count - a foes stream, its own lane, never a ping, not every frame - are pinned on the real
+Room (L4-3, L5-2). The building pins ran on an attachment with no `at`, a shape the runtime never mints; they stamp it,
+and the building law is pinned at its five sites (L5-3). A returner is stamped now, and a host named counts as heard
+(L5-4). AUDIT ATTACH's widest socket is measured in a dungeon instance room too (`hd`, `hi`: 1086 bytes, under the
+pin's 1100; L4-4).
+
+Pins: `test/net/fb1018d_seatlive.test.js` (11, on the real Room, session and clock: a silent host loses the seat and its
 write is refused, the joiner's kept, the host back a joiner; a live host keeps it, a reconnect, a building, a leave, a
 tie, the ask, the wiring) and `test/scenes/fb1018d_seatloop.test.js` (1: the report's loop through the real doors and
-Room - the bodies stay empty three visits running, the gold flat). Mutants: `tools/mutants/fb1018d_seatlive.json` (19,
-all dead). Re-aimed with PIN MOVED: seatheal, world1, world2, auditworld34, oncrash1, world6biiid, auditworld6a and
+Room - the bodies stay empty three visits running, the gold flat). Mutants: `tools/mutants/fb1018d_seatlive.json` (31:
+30 dead, one recorded equivalent - the told host's presence guard, which nothing reaches since the leave says the
+seat: the told host leaves the index only through `_leave`). Re-aimed with PIN MOVED: seatheal, world1, world2, auditworld34, oncrash1, world6biiid, auditworld6a and
 auditworld6b (`seatClock` for `_foesInAt`), and slam11 (the host poses through its hellos).
 
 ## Report 8: Theodyval Laboratory - not proven

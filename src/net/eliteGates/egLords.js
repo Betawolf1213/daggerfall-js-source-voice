@@ -882,7 +882,7 @@ export function egLordHit(F, spec, L, sub, name, got, pose, now, here, out, ctx 
   L.hp = 0;
   if (egHas(L, EG_FL.mirror)) { egGone(F, [L], EG_GONE.slain, name, now, out); KITS[L.key]?.mirrorDown?.(F, L, now, out); return; }
   L.fellAt = now; egSaid(L, L.ph, now);   // EG-ZJ: its fall's instant on the wire (AUDIT EG V, lane1 #6: and the Twins' "Together" reads it)
-  endChallenge(F, L, now, out, false);   // AUDIT EG V (lane1 #1): a fallen lord's duel ends with it - its ring never stands ownerless
+  endChallenge(F, L, now, out, false, true);   // AUDIT EG V (lane1 #1): a fallen lord's duel ends with it - its ring never stands ownerless
   egSetFl(F, L, EG_FL.fell, true, out);
   // AUDIT EG IV (lane1 #1; sections 13.3 and 18): the fight falls when EVERY lord of it has - Clan Feud's champion beside the Court's
   // lord, the Twin Court's two, the Old Masters - and a pair under the Twins' law (egLordsPair) opens its window at the first fall
@@ -1729,7 +1729,7 @@ function challengeTick(F, spec, L, now, here, rng, out, ctx, ms, garoth = false)
 }
 /** A duel ended - only by the lord that called it (AUDIT EG V, lane1 #1): its marks off, its ring and braziers gone, its lord's
  *  next one due (the Armsmaster's 30 s on; Garoth's at his next turn) and its held threshold freed. */
-function endChallenge(F, L, now, out, early) {
+function endChallenge(F, L, now, out, early, fell = false) {
   const ch = F.mem.challenge;
   if (!ch || ch.by !== L.i) return;
   for (const s of ch.subs) egUnmark(F, s, 6);
@@ -1737,6 +1737,7 @@ function endChallenge(F, L, now, out, early) {
   L.duelAt = L.key === 'garoth' ? Infinity : now + 30_000;
   if (L.key === 'garoth') L.hpFloor = null;   // AUDIT EG IV (lane1 #21): the duel over, the threshold it held is free
   egGone(F, egObjsOf(F, 'brazier'), EG_GONE.crumbled, '', now, out);
+  if (fell && !(ch.r > 0)) return;   // FB1018D DUEL-RING (AUDIT FB1018D L3-1): an open duel the lord's fall ends says nothing of its own - the fall is told, and 'unmet' was false at the killing blow
   out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend', ...(ch.r > 0 ? {} : { t: EG_DUEL_OPEN }) });   // FB1018D DUEL-RING: an open duel's end, no ring to fall
 }
 /** A blow on lord `L` by a member its own duel challenged (`sub`), `got` landed: counted toward the tenth that meets it. */
