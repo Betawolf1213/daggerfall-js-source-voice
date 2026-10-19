@@ -10,11 +10,12 @@
 -- src/net/questlineClaims.js (QL_SERVICE_LINES - which steps are witnessed and by what, the title a line pays, the
 -- Covens' Hoard's key); the service server-account/src/questlines.js claimQl, at `POST /v1/ql/claim`.
 --
--- THE SERVICE PAYS ONLY WHAT IT WITNESSED. A step the service pays is claimed twice by the account's client: its first
--- claim opens it here (`opened_at`, the service's clock), and a later one finds the step's witness - the endgame
--- place's own receipt row (gate_kills, eg_redoubts, sd_kills, serpent_kills) written at or after `opened_at` - and
--- marks it done (`done_at`, with the outcome's `choice` where the claim carries one). A receipt from before the line
--- asked for it opens nothing. One row an (account, line, step): a claim asked twice opens once.
+-- THE SERVICE PAYS ONLY WHAT IT WITNESSED. A step the service pays is claimed twice by the account's client: its `open`
+-- writes its row here (`opened_at`, the service's clock), and its `end` finds the step's witness - the endgame place's
+-- own receipt row (gate_kills, eg_redoubts, sd_kills, serpent_kills) claimed at or after the LINE's first `opened_at`,
+-- newer than the receipt that witnessed an earlier step of the line (`seen_at`, that receipt's second: one receipt, one
+-- step) - and marks it done (`done_at`, with the outcome's `choice` where the claim carries one). One row an (account,
+-- line, step): an opening asked twice opens once.
 --
 -- CASCADE: an account that is gone takes its questlines with it.
 CREATE TABLE IF NOT EXISTS ql_steps (
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS ql_steps (
   step      INTEGER NOT NULL,
   opened_at INTEGER NOT NULL,
   done_at   INTEGER,
+  seen_at   INTEGER,
   choice    TEXT,
   PRIMARY KEY (account, line, step),
   FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE

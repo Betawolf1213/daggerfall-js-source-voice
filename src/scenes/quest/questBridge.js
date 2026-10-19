@@ -90,6 +90,8 @@ import { questlineActionTemplates } from '../../systems/questlines/qlActions.js'
 import { setActSink } from '../../systems/questlines/qlActs.js';   // QL11: the features' acts, heard by this bridge's layer
 import { questlineService, serviceReady } from './questlineHost.js';   // QL12: the endgame lines' claims - the account service's door, online alone
 import { TITLE_TEXT } from '../../ui/playerBadge.js';   // QL12: a line's title, in the badge's own words
+import { announceHonour } from '../../ui/lootBanner.js';   // AUDIT QUESTLINES SERVICE-7: a line's title, the house's HONOUR-BANNER
+import { restackWeirKeys } from '../../systems/eliteGates/weirKey.js';   // AUDIT QUESTLINES SERVICE-7: the key's balance, the pack's face at once
 import { questlinesOn } from '../../systems/questlines/qlLaw.js';   // QL12: the lines are the window's only while the questlines are on
 import { ladders as guildLadders } from '../../systems/questlines/qlLadders.js';   // QL12: the guilds' ladders (section 4.4)
 import { activeMemberships } from '../../systems/guild/guilds.js';   // QL12: the player's own book, for the ladders
@@ -500,9 +502,12 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       nowSeconds: () => ctx.classicSeconds?.() ?? 0,
       online: () => serviceReady(qlService),
       expand: (q, text, key) => quietText(q, text, key),
-      onHonour: ({ title, key }) => {
-        if (title) ctx.addHUDText?.(t('ql.line.honourTitle', 'You have earned the title {title}.', { title: TITLE_TEXT[title] ?? title }));
+      // AUDIT QUESTLINES SERVICE-7: a title is the house's HONOUR-BANNER as every title grant is (the line, the record, either
+      // way); the key's balance restacks the pack's keys at once (weirKey.js: the item is the balance's face)
+      onHonour: ({ title, key, keys }) => {
+        if (title) { announceHonour('title', title); ctx.addHUDText?.(t('ql.line.honourTitle', 'You have earned the title {title}.', { title: TITLE_TEXT[title] ?? title })); }
         if (key) ctx.addHUDText?.(t('ql.line.honourKey', 'A Weir Key is yours: it waits with your keys.'));
+        if (key && Number.isSafeInteger(keys) && ctx.playerEntity?.items) restackWeirKeys(ctx.playerEntity.items, keys);
       },
     },
   });

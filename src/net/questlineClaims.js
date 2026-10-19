@@ -7,15 +7,21 @@
 //
 // THE LAW (decision 8): the service pays only what it witnessed. A step done in an endgame place is witnessed by that
 // place's receipt, already on the service's own rows - a Dagon's Breach's (`gate_kills`, r1), an Elite Breach's Redoubt
-// (`eg_redoubts`, e1), an Hour's (`sd_kills`, h1), the Sea Serpent's (`serpent_kills`, l1) - and only one written AFTER
-// the step was opened on the service (`ql_steps.opened_at`): a receipt from before the line asked for it opens nothing.
-// The client's own quest moves on the client's own act (qlActs.js) as any quest does; the service's pay waits for its
-// row. Nothing a classic quest does reaches this file.
+// (`eg_redoubts`, e1), an Hour's (`sd_kills`, h1), the Sea Serpent's (`serpent_kills`, l1) - and only one written after
+// the LINE was first opened on the service (its first `ql_steps.opened_at`), and IN THE LINE'S ORDER: newer than the
+// receipt that witnessed an earlier step of the line, older than one that witnessed a later step, so one receipt
+// witnesses one step (AUDIT QUESTLINES SERVICE-2, SERVICE-5). A row's `at` is the second its receipt was CLAIMED (every
+// producer writes its own clock), so a receipt held unclaimed - at most its TTL, a week - counts from its claim.
+// A claim says its PHASE (SERVICE-6): `open` when the client starts the step (it writes the opening, for a guest too -
+// an opening pays nothing; SERVICE-1), `end` when the step ended well (it reads the witness, and pays). The client's own
+// quest moves on the client's own act (qlActs.js) as any quest does; the service's pay waits for its row. Nothing a
+// classic quest does reaches this file.
 //
-// WHAT IT PAYS. A title a questline (decision: one each), on its `titleAt` step; and the Covens' Hoard's Weir Key, once
-// an account, to a player who keeps it (`key`). The key is the one pay no receipt witnesses - its lieutenant dies in a
-// dungeon no relay sees - so it is held behind the Cycle's first line witnessed whole (`after`), once an account: the
-// same bound the Spire's launch gift kept (migration 0124: one key to every account that had closed a breach).
+// WHAT IT PAYS. A title a questline (decision: one each), on its `titleAt` step, held by the account; and the Covens'
+// Hoard's Weir Key, once an account, to a player who keeps it (`key`). The key is the one pay no receipt witnesses - its
+// lieutenant dies in a dungeon no relay sees - so its step is held behind the Cycle's first line witnessed whole
+// (`after`: that line's title held - SERVICE-4), once an account: the same bound the Spire's launch gift kept (migration
+// 0124: one key to every account that had closed a breach).
 //
 // Not a DFU member. Ledger A (QUESTLINES).
 
@@ -27,10 +33,10 @@
 export const QL_WITNESS_KINDS = Object.freeze(['rite', 'breach', 'redoubt', 'redoubts3', 'valkynaz', 'hour', 'serpent']);
 
 /** The questlines the service pays, by id: how many steps; which are witnessed and by what; the title and the step that
- *  pays it; the key's step, the choice that keeps it and what must be witnessed first. */
+ *  pays it; the key's step, the choice that keeps it and the line that must be witnessed whole first (its title held). */
 export const QL_SERVICE_LINES = Object.freeze({
   burningDoors: Object.freeze({ steps: 5, witness: Object.freeze({ 2: 'rite', 3: 'breach' }), title: 'doorwarden', titleAt: 3 }),
-  covensHoard: Object.freeze({ steps: 3, witness: Object.freeze({}), title: 'covenbane', titleAt: 2, after: Object.freeze(['burningDoors', 3]), key: Object.freeze({ at: 2, choice: 'keep' }) }),
+  covensHoard: Object.freeze({ steps: 3, witness: Object.freeze({}), title: 'covenbane', titleAt: 2, after: 'burningDoors', key: Object.freeze({ at: 2, choice: 'keep' }) }),
   weirRoad: Object.freeze({ steps: 4, witness: Object.freeze({ 0: 'redoubt', 1: 'redoubts3', 2: 'valkynaz' }), title: 'weirwalker', titleAt: 2 }),
   hourThatWasNot: Object.freeze({ steps: 2, witness: Object.freeze({ 1: 'hour' }), title: 'hourwitness', titleAt: 1 }),
   oldCoil: Object.freeze({ steps: 3, witness: Object.freeze({ 2: 'serpent' }), title: 'satakalwitness', titleAt: 2 }),
@@ -44,20 +50,23 @@ export const qlTitleBit = (title) => { const i = QL_TITLES.indexOf(title); retur
 
 /** The choices a claim may carry - a word of the line's own (`keep` | `seal`). */
 const CHOICE_RE = /^[a-z]{1,16}$/;
+/** A claim's phase: the step started (`open`) or ended well (`end`). */
+export const QL_PHASES = Object.freeze(['open', 'end']);
 
 /**
- * A claim's body as the wire may carry it, or null: `{ line, step, choice? }` - a line this file names, a step inside
- * it, a choice in plain lower-case. Refuse, never repair.
+ * A claim's body as the wire may carry it, or null: `{ line, step, phase, choice? }` - a line this file names, a step
+ * inside it, its phase, a choice in plain lower-case. Refuse, never repair.
  * @param {any} body
- * @returns {{ line: string, step: number, choice: string|null } | null}
+ * @returns {{ line: string, step: number, phase: 'open'|'end', choice: string|null } | null}
  */
 export function qlClaimOf(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
-  const { line, step, choice } = body;
+  const { line, step, phase, choice } = body;
   if (typeof line !== 'string' || !Object.hasOwn(QL_SERVICE_LINES, line)) return null;
   if (!Number.isSafeInteger(step) || step < 0 || step >= QL_SERVICE_LINES[line].steps) return null;
+  if (!QL_PHASES.includes(phase)) return null;
   if (choice !== undefined && choice !== null && (typeof choice !== 'string' || !CHOICE_RE.test(choice))) return null;
-  return { line, step, choice: choice ?? null };
+  return { line, step, phase, choice: choice ?? null };
 }
 
 /** Does the service pay anything at this step (a witness, the title, the key)? A step it pays nothing is never claimed. */

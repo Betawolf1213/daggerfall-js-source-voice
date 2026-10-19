@@ -97,15 +97,17 @@ test('QL13 the Covens\' Hoard\'s key: kept by the outcome the service reads, and
   const ids = (sheet?.outcomes ?? []).filter((o) => !o.failure).map((o) => o.id);
   assert.ok(ids.includes(svc.key.choice), `the outcome "${svc.key.choice}" keeps the key`);
   assert.ok(ids.some((id) => id !== svc.key.choice), 'and another gives it up');
-  assert.deepEqual(svc.after, ['burningDoors', 3], 'the breach closed, witnessed');
-  assert.equal(QL_SERVICE_LINES.burningDoors.witness[3], 'breach');
+  assert.equal(svc.after, 'burningDoors', 'the Burning Doors witnessed whole (AUDIT QUESTLINES SERVICE-4: its title held, never its breach alone)');
+  assert.equal(QL_SERVICE_LINES.burningDoors.title, 'doorwarden');
+  assert.deepEqual(QL_SERVICE_LINES.burningDoors.witness, { 2: 'rite', 3: 'breach' });
 });
 
-test('QL12 the claim\'s shape: a line the service pays, a step inside it, a plain choice - refused, never repaired', () => {
-  assert.deepEqual(qlClaimOf({ line: 'burningDoors', step: 3 }), { line: 'burningDoors', step: 3, choice: null });
-  assert.deepEqual(qlClaimOf({ line: 'covensHoard', step: 2, choice: 'keep' }), { line: 'covensHoard', step: 2, choice: 'keep' });
-  for (const bad of [null, [], {}, { line: 'introSea', step: 0 }, { line: 'burningDoors', step: 5 }, { line: 'burningDoors', step: -1 },
-    { line: 'burningDoors', step: 1.5 }, { line: 'burningDoors', step: '1' }, { line: 'covensHoard', step: 2, choice: 'KEEP' }, { line: '__proto__', step: 0 }]) {
+test('QL12 the claim\'s shape: a line the service pays, a step inside it, its phase (AUDIT QUESTLINES SERVICE-6), a plain choice - refused, never repaired', () => {
+  assert.deepEqual(qlClaimOf({ line: 'burningDoors', step: 3, phase: 'open' }), { line: 'burningDoors', step: 3, phase: 'open', choice: null });
+  assert.deepEqual(qlClaimOf({ line: 'covensHoard', step: 2, phase: 'end', choice: 'keep' }), { line: 'covensHoard', step: 2, phase: 'end', choice: 'keep' });
+  for (const bad of [null, [], {}, { line: 'introSea', step: 0, phase: 'open' }, { line: 'burningDoors', step: 5, phase: 'open' }, { line: 'burningDoors', step: -1, phase: 'end' },
+    { line: 'burningDoors', step: 1.5, phase: 'end' }, { line: 'burningDoors', step: '1', phase: 'end' }, { line: 'covensHoard', step: 2, phase: 'end', choice: 'KEEP' }, { line: '__proto__', step: 0, phase: 'open' },
+    { line: 'burningDoors', step: 3 }, { line: 'burningDoors', step: 3, phase: 'shut' }]) {
     assert.equal(qlClaimOf(bad), null, JSON.stringify(bad));
   }
   assert.equal(qlStepClaimed('burningDoors', 0), false, 'a letter is the client\'s');
@@ -193,18 +195,17 @@ test('QL12 the runner, the switch off: no line opens (its quests would not be st
   setPref(QUESTLINES_PREF, true);
 });
 
-test('QL12 the service: a witnessed step claimed at its start and its end; a title told once; an unanswered claim asked again, and again after a load', async () => {
-  // the service as server-account/src/questlines.js answers: the first claim of a step opens it, a later one looks for
-  // its receipt, and the title is paid once
+test('QL12 the service: every step of a paid line opened at its start, a witnessed step\'s end claimed with its outcome; a title told once; an end not witnessed yet is `unseen` and asked again, and again after a load (AUDIT QUESTLINES SERVICE-2, LINES-11)', async () => {
+  // the service as server-account/src/questlines.js answers: an `open` opens, an `end` looks for its receipt, the title
+  // paid once
   let witnessNow = false;
   const serviceFor = (calls) => {
-    const opened = new Set();
     let titled = false;
     return {
       account: () => 'acct',
       claim: async (body) => {
         calls.push(body);
-        if (!opened.has(body.step)) { opened.add(body.step); return { ok: true, data: { opened: true } }; }
+        if (body.phase === 'open') return { ok: true, data: { opened: true } };
         if (!witnessNow) return { ok: true, data: { witnessed: false } };
         const title = body.step === 3 && !titled ? 'doorwarden' : undefined;
         if (title) titled = true;
@@ -223,34 +224,35 @@ test('QL12 the service: a witnessed step claimed at its start and its end; a tit
     }
     step(); await settle();
   };
+  const bd = () => calls.filter((c) => c.line === 'burningDoors');
   await walk(2);   // the letter and the coven are the client's own; the rite's step opens
-  assert.deepEqual(calls.filter((c) => c.line === 'burningDoors'), [{ line: 'burningDoors', step: 2 }], 'opened at its start, alone');
+  assert.deepEqual(bd(), [0, 1, 2].map((s) => ({ line: 'burningDoors', step: s, phase: 'open' })), 'each step opened at its start - the first letter the witness\'s window');
   runner.ended(machine.end('QLBD03'), { id: 'done', failure: false });
   step(); await settle();
-  assert.equal(calls.filter((c) => c.line === 'burningDoors' && c.step === 2).length, 2, 'claimed at its end');
-  assert.equal(runner.lineState('burningDoors').claims[2], 'opened', 'not witnessed yet: asked again later');
+  assert.deepEqual(bd().at(-1), { line: 'burningDoors', step: 2, phase: 'end', choice: 'done' }, 'claimed at its end, with its outcome');
+  assert.equal(runner.lineState('burningDoors').claims[2], 'unseen', 'not witnessed yet: asked again later');
+  assert.equal(runner.rows().find((l) => l.id === 'burningDoors').steps[2].unseen, true);
   witnessNow = true;
   step(); await settle();
-  assert.equal(calls.filter((c) => c.line === 'burningDoors' && c.step === 2).length, 2, 'not before its minute');
+  assert.equal(bd().filter((c) => c.step === 2 && c.phase === 'end').length, 1, 'not before its minute');
   const save = runner.snapshot();
-  // a load: the unanswered end asked again at once (another page - the service has it opened already)
+  // a load: the unanswered end asked again at once
   const calls2 = [];
-  const svc2 = serviceFor(calls2);
-  await svc2.claim({ line: 'burningDoors', step: 2 });
-  const again = runnerWith({ level: 30, service: svc2 });
+  const again = runnerWith({ level: 30, service: serviceFor(calls2) });
   again.runner.restore(save);
   again.step(); await settle();
-  assert.equal(calls2.filter((c) => c.line === 'burningDoors' && c.step === 2).length, 2, 'asked at the load');
+  assert.equal(calls2.filter((c) => c.line === 'burningDoors' && c.step === 2 && c.phase === 'end').length, 1, 'asked at the load');
   assert.equal(again.runner.lineState('burningDoors').claims[2], 'witnessed');
   // and the first page's own retry, its minute come
   clock.ms += CLAIM_RETRY_MS;
   step(); await settle();
   assert.equal(runner.lineState('burningDoors').claims[2], 'witnessed');
+  assert.equal(runner.rows().find((l) => l.id === 'burningDoors').steps[2].unseen, false);
   // the breach: its end pays the title, told once
   clock.s += STEP_GAP_S; step(); await settle();
   runner.ended(machine.end('QLBD04'), { id: 'done', failure: false });
   step(); await settle();
-  assert.deepEqual(honours, [{ line: 'burningDoors', title: 'doorwarden', key: false }]);
+  assert.deepEqual(honours, [{ line: 'burningDoors', title: 'doorwarden', key: false, keys: null }]);
 });
 
 test('QL12 the runner offline: an endgame line begun waits where it stood, and says why', () => {

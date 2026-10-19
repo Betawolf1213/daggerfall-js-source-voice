@@ -97,7 +97,7 @@
 //   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
 //   POST /v1/eg/starts   { subs } -> { starts: { [sub]: [w, ..., 0] | null }, keys, rehearsal, rk }   (EG-F: the start window's preflight - which starts each member may make)
 //   POST /v1/lamp/claim  {} -> { granted, why? }   (LAMP-KEEPER II: a lamp keeper spoken to - I Love Lamp, laid once on the row; `why` 'held' | 'guest')
-//   POST /v1/ql/claim    { line, step, choice? } -> { opened } | { witnessed, title?, key?, keys? } | { why }   (QL12: a questline's step - opened by its first claim, witnessed by its endgame receipt written after; a line's title once, the Covens' Hoard's Weir Key once an account; `why` 'unpaid' | 'guest'; behind QUESTLINES_OPEN - 403 ql-closed, 400 ql-body)
+//   POST /v1/ql/claim    { line, step, phase, choice? } -> { opened } | { witnessed, title?, key?, keys? } | { why }   (QL12: a questline's step - `open` writes its opening, a guest's too; `end` reads its endgame receipt, claimed in the line's window and order; a line's title once, the Covens' Hoard's Weir Key once an account; `why` 'unpaid' | 'guest'; behind QUESTLINES_OPEN - 403 ql-closed, 400 ql-body)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -1436,8 +1436,8 @@ const service = {
       }
 
       if (path === '/v1/ql/claim' && request.method === 'POST') {
-        // QL12: A QUESTLINE'S STEP CLAIMED - the session says who, questlines.js opens the step or reads its witness (the
-        // endgame place's own receipt row, written after the step was opened) and pays the line's title and the key
+        // QL12: A QUESTLINE'S STEP CLAIMED - the session says who, questlines.js opens the step (`open`) or reads its witness
+        // (`end`: the endgame place's own receipt row, in the line's window and order) and pays the line's title and the key
         const r = await claimQl({ ...ctx, env }, who.player, body, nowS);
         if ('error' in r) return no(r.error, QL_STATUS[/** @type {keyof typeof QL_STATUS} */ (r.error)] ?? 400, origin);
         return json(r, 200, origin);

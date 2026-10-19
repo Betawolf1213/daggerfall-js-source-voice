@@ -9,12 +9,16 @@
 // machine, never by uid, so a restart (QUEST-RESET - a new copy) or a quest set aside (QUEST-SHELF) is still the step.
 //
 // THE SERVICE'S PART (decision 8; net/questlineClaims.js). A step the service pays - a witnessed one, a title's, the
-// key's - is CLAIMED twice: when it starts (the service writes when it opened, so only a receipt after it counts) and
-// when it ends well (the service looks for its receipt, and pays the title or the key). A claim the service could not
-// witness yet - a receipt not claimed, the network down - is asked again, a minute apart, a few times, and again at the
-// next start of the page. The line moves on the client's own quest either way: the service pays, it does not gate.
+// key's - is CLAIMED twice, each claim saying its phase: `open` when it starts (the service writes the opening - the
+// line's first is its witness's window), `end` when it ends well (the service looks for its receipt, and pays the title
+// or the key). A claim the service could not answer - the network down, the switch shut - or an end it could not witness
+// yet - a receipt not claimed - is asked again: a minute apart CLAIM_TRIES times, then every CLAIM_SLOW_MS for as long
+// as the page lives, and again at the next start of the page - never given up (AUDIT QUESTLINES SERVICE-2: an open
+// dropped after five minutes left a step no deed could witness). An end the service has not witnessed is the step's
+// `unseen` in the window: a later deed's receipt witnesses it. The line moves on the client's own quest either way: the
+// service pays, it does not gate.
 import { QL_LINES, lineById, lineStepOf, lineOpens, opensWords, witnessOf, lineServiceOf } from './qlLines.js';
-import { qlStepClaimed } from '../../net/questlineClaims.js';
+import { QL_SERVICE_LINES, qlStepClaimed } from '../../net/questlineClaims.js';
 import { questlinesOn } from './qlLaw.js';
 
 /** The game seconds a line waits between one step's end and the next step's start - an hour of the character's time,
@@ -22,20 +26,22 @@ import { questlinesOn } from './qlLaw.js';
 export const STEP_GAP_S = 3600;
 /** A step that ended badly is offered again a day of the character's time later. */
 export const RETRY_GAP_S = 24 * 3600;
-/** A claim the service could not answer is asked again this many real milliseconds later, at most CLAIM_TRIES times a
- *  page. */
+/** A claim the service could not answer is asked again this many real milliseconds later, CLAIM_TRIES times, and then
+ *  every CLAIM_SLOW_MS while the page lives. */
 export const CLAIM_RETRY_MS = 60_000;
 export const CLAIM_TRIES = 5;
+export const CLAIM_SLOW_MS = 600_000;
 
 /** A line's record, fresh. */
 const freshLine = () => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {} });
 
 /**
  * @param {{ machine: any, ctx?: any, service?: any, nowMs?: () => number }} deps
- *   `ctx` - level(), online(), nowSeconds() (the character's clock), onHonour({ line, title, key }) (a title or key the
- *   service paid), outcomeText(quest) (the step's outcome in the player's words, filed with the step);
- *   `service` - the account service's door (scenes/quest/questlineHost.js): `claim({ line, step, choice })` answering
- *   `{ ok, data: { opened?, witnessed?, title?, key?, why? } }`, never a throw; null offline
+ *   `ctx` - level(), online(), nowSeconds() (the character's clock), onHonour({ line, title, key, keys }) (a title or key
+ *   the service paid - `keys` the account's Weir Keys after it), outcomeText(quest) (the step's outcome in the player's
+ *   words, filed with the step);
+ *   `service` - the account service's door (scenes/quest/questlineHost.js): `claim({ line, step, phase, choice })`
+ *   answering `{ ok, data: { opened?, witnessed?, title?, key?, keys?, why? } }`, never a throw; null offline
  */
 export function createLineRunner({ machine, ctx = {}, service = null, nowMs = () => Date.now() }) {
   /** id -> the line's record */
@@ -57,31 +63,33 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     return machine.questsToInvoke?.find?.((q) => q.questName === questName) ?? null;
   };
 
+  /** A claim to ask: the `open` of every step of a line the service pays (its first is the witness's window - AUDIT
+   *  QUESTLINES SERVICE-2), the `end` of a step it pays. */
   function queueClaim(lineId, step, phase, choice = null) {
-    if (!service || !qlStepClaimed(lineId, step)) return;
+    if (!service || !(phase === 'open' ? Object.hasOwn(QL_SERVICE_LINES, lineId) : qlStepClaimed(lineId, step))) return;
     if (pending.some((c) => c.line === lineId && c.step === step && c.phase === phase)) return;
     pending.push({ line: lineId, step, choice, phase, next: 0, tries: 0 });
   }
 
   async function ask(c) {
     let a;
-    try { a = await service.claim({ line: c.line, step: c.step, ...(c.choice ? { choice: c.choice } : {}) }); } catch { a = { ok: false, error: 'offline' }; }
+    try { a = await service.claim({ line: c.line, step: c.step, phase: c.phase, ...(c.choice ? { choice: c.choice } : {}) }); } catch { a = { ok: false, error: 'offline' }; }
     const rec = lines[c.line];
     if (!rec) return;
     const d = a?.ok ? a.data ?? {} : null;
-    // answered: an open written (or found written - a retried open whose first answer was lost reads `witnessed`, true or
-    // false), an end witnessed (or one the service says it will never witness - a guest, a line it does not pay), and
-    // the pay told once
-    const answered = !!d && (c.phase === 'open' ? (d.opened || typeof d.witnessed === 'boolean' || d.why) : (d.witnessed || d.why));
+    // answered for good: an open written, an end witnessed, or a step the service pays nothing - and the pay told once.
+    // A guest's end, and an end not witnessed yet, are kept and asked again (a guest may register; a later deed's receipt
+    // witnesses the step)
+    const answered = !!d && (d.why === 'unpaid' || (c.phase === 'open' ? !!d.opened : d.witnessed === true));
     if (answered) {
       pending = pending.filter((x) => x !== c);
-      rec.claims[c.step] = c.phase === 'open' ? (rec.claims[c.step] ?? 'opened') : (d.witnessed ? 'witnessed' : `refused:${d.why}`);
-      if (d.title || d.key) ctx.onHonour?.({ line: c.line, title: d.title ?? null, key: !!d.key });
+      rec.claims[c.step] = d.why === 'unpaid' ? 'refused:unpaid' : c.phase === 'open' ? (rec.claims[c.step] ?? 'opened') : 'witnessed';
+      if (d.title || d.key) ctx.onHonour?.({ line: c.line, title: d.title ?? null, key: !!d.key, keys: Number.isSafeInteger(d.keys) ? d.keys : null });
       return;
     }
+    if (d && c.phase === 'end') rec.claims[c.step] = d.why === 'guest' ? 'refused:guest' : 'unseen';
     c.tries++;
-    c.next = nowMs() + CLAIM_RETRY_MS;
-    if (c.tries >= CLAIM_TRIES) pending = pending.filter((x) => x !== c);
+    c.next = nowMs() + (c.tries < CLAIM_TRIES ? CLAIM_RETRY_MS : CLAIM_SLOW_MS);
   }
 
   function startStep(l, rec) {
@@ -137,7 +145,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
      * The window's rows: every line, begun or not - `{ id, group, title, lead, giver, state, steps, opens, outcome, honour }`
      * (`honour` the title the line pays, or null).
      * `state` 'done' | 'running' | 'waiting' (between steps, or offline for an endgame line) | 'locked'; each step
-     * `{ title, state: 'done'|'current'|'next', witnessed: bool, outcome }` - the steps after the current one are named
+     * `{ title, state: 'done'|'current'|'next', witnessed: bool, unseen: bool, outcome }` - the steps after the current one are named
      * (a line is a story the player can see the shape of), their quests not yet given.
      */
     rows() {
@@ -145,7 +153,9 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const rec = lines[l.id];
         const steps = l.steps.map((s, i) => {
           const state = !rec ? 'next' : rec.done || i < rec.step ? 'done' : i === rec.step ? 'current' : 'next';
-          return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), outcome: rec?.outcomes?.[i]?.text ?? null };
+          // `unseen`: done, and its end not witnessed by the service yet (a later deed's receipt witnesses it)
+          const said = rec?.claims?.[i];
+          return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), unseen: state === 'done' && (said === 'unseen' || said === 'refused:guest'), outcome: rec?.outcomes?.[i]?.text ?? null };
         });
         const running = !!rec && !rec.done && !!runningStep(l.steps[rec.step]?.quest);
         const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : 'waiting';
@@ -180,11 +190,10 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         };
         const rec = lines[id];
         for (let i = 0; i <= Math.min(rec.step, l.steps.length - 1); i++) {
-          if (!qlStepClaimed(id, i)) continue;
           const ended = i < rec.step;
           const said = rec.claims[i];
-          if (ended && said !== 'witnessed' && !String(said ?? '').startsWith('refused:')) queueClaim(id, i, 'end', rec.outcomes[i]?.id ?? null);
-          else if (!ended && !said) queueClaim(id, i, 'open');
+          if (ended && said !== 'witnessed' && said !== 'refused:unpaid') queueClaim(id, i, 'end', rec.outcomes[i]?.id ?? null);
+          else if (!ended && !rec.done && !said) queueClaim(id, i, 'open');
         }
       }
     },
