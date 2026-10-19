@@ -70,15 +70,15 @@ test('WB11 the trial and the tables: Legion-Lord is the ninth trial and the only
   assert.deepEqual(GATE_TRIALS.filter((t) => t.legion).map((t) => t.id), ['legion']);
   assert.equal(gateTrialOf('legion').name, 'Legion-Lord');
   assert.ok(MARK_TIPS.legion && MARK_ICONS.legion, 'a way to meet it and a sign');
-  assert.deepEqual(HOST_KINDS.map((k) => [k.id, k.key]), [[0, 'harrier'], [1, 'sapper'], [2, 'bearer']]);
-  assert.deepEqual(HOST, { harrier: 0, sapper: 1, bearer: 2 });
+  assert.deepEqual(HOST_KINDS.map((k) => [k.id, k.key]), [[0, 'harrier'], [1, 'sapper'], [2, 'bearer'], [3, 'brute'], [4, 'caster'], [5, 'markynaz']]);   // WB14c: and the Vanguard's three (test/net/gate/wb14c_vanguard.test.js)
+  assert.deepEqual(HOST, { harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5 });
   for (const k of HOST_KINDS) assert.ok(k.speed < 7.6, `${k.key}: a runner outruns it`);
-  assert.deepEqual(HOST_BLOWS.map((b) => b?.key ?? null), ['bite', null, 'pulse'], 'a Sapper strikes nobody');
+  assert.deepEqual(HOST_BLOWS.map((b) => b?.key ?? null), ['bite', null, 'pulse', 'smash', 'bolt', 'rend'], 'a Sapper strikes nobody');   // WB14c: the Vanguard's
   for (const B of HOST_BLOWS.filter(Boolean)) assert.ok((B.r / 7.6) * 1000 < B.windup / 2, `${B.key}: out of it from its own feet in under half its wind-up`);
   assert.deepEqual([0, 1, 2, 3, 4, 6, 7, 9, 10, 40].map(harrierCountFor), [2, 2, 2, 2, 3, 3, 4, 4, 5, 5]);
   assert.deepEqual([0, 1, 3, 4, 8, 12, 16, 40].map(sapperCountFor), [1, 1, 1, 2, 3, 4, 4, 4]);
   assert.deepEqual([0, 1, 5, 6, 12, 18, 40].map(bearerCountFor), [2, 2, 2, 3, 4, 4, 4]);
-  assert.equal(HOST_STANDING_MAX, Math.max(HARRIERS_MAX, SAPPERS_MAX, 4));
+  assert.equal(HOST_STANDING_MAX, Math.max(HARRIERS_MAX, SAPPERS_MAX, 4, 12));   // WB14c: the Vanguard stands twelve
   assert.ok(GATE_HOST_MAX >= HOST_STANDING_MAX && GATE_HOST_MAX >= harrierCountFor(1e9), 'the wire names every one that can stand');
   assert.equal(GATE_HOST_KINDS, HOST_KINDS.length); assert.equal(GATE_HOST_GONE, Object.keys(HOST_GONE).length);
   assert.equal(harrierHpFor([10, 20]), Math.round((HARRIER_S * (dpsRef(10) + dpsRef(20))) / 2), 'the court\'s MEAN reference');
@@ -413,7 +413,7 @@ test('WB11 the wire: a blow on one of his host (`ahit` - its number, a sequence,
   assert.deepEqual(validGateIn({ k: 'ahit', i: 4, q: 9, d: 12.5, r: 0, x: 1 }), { k: 'ahit', i: 4, q: 9, d: 12.5, r: 0 });
   for (const bad of [{ k: 'ahit', i: 0, q: 9, d: 12, r: 0 }, { k: 'ahit', i: 1.5, q: 9, d: 12, r: 0 }, { k: 'ahit', q: 9, d: 12, r: 0 }, { k: 'ahit', i: 2, q: 9, d: 0, r: 0 }, { k: 'ahit', i: 2, q: 9, d: 12, r: 3 }]) assert.equal(validGateIn(bad), null, JSON.stringify(bad));
   assert.deepEqual(validGateOut({ k: 'ad', w: 1, m: 90, a: [[3, 1, 2], [4, -5, 6]], at: 50, z: 1 }), { k: 'ad', w: 1, m: 90, a: [[3, 1, 2], [4, -5, 6]], at: 50 });
-  assert.equal(validGateOut({ k: 'ad', w: 3, m: 90, a: [[3, 1, 2]], at: 50 }), null, 'no fourth kind');
+  assert.equal(validGateOut({ k: 'ad', w: GATE_HOST_KINDS, m: 90, a: [[3, 1, 2]], at: 50 }), null, 'no kind past the table\'s (WB14c: the Vanguard\'s three after his host\'s)');
   assert.equal(validGateOut({ k: 'ad', w: 0, m: 0, a: [[3, 1, 2]], at: 50 }), null, 'a body of no health');
   assert.equal(validGateOut({ k: 'ad', w: 0, m: 9, a: Array.from({ length: GATE_HOST_MAX + 1 }, (_, i) => [i + 1, 0, 0]), at: 50 }), null, 'past the most');
   assert.equal(validGateOut({ k: 'ad', w: 0, m: 9, a: [[0, 0, 0]], at: 50 }), null, 'numbered nothing');

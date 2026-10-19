@@ -20,7 +20,8 @@
 // marks' row, the bar clear of the crosshair.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, PHASE_AT, profileOf, HOST, isDagons, VG_STAGES } from '../../net/gate/gateBrain.js';
+import { t } from '../../systems/textManager.js';   // WB14c: the Vanguard's line in the player's language (L10N4)
 import { telegraphAt } from '../../net/gate/gateStrike.js';
 import { countdownText } from '../../net/gate/gateLaw.js';
 import { attackColor, crystalColor, STUN_COLOR, WARD_COLOR } from '../../world/gate/gateBoss.js';
@@ -65,6 +66,9 @@ export const BOSS_BAR_TEXT = Object.freeze({
   // saw them rise); the rest of his host standing, in the foot
   bearers: (left, n) => `Ward-Bearers - ${n > left ? `${left} of ${n}` : left} ${left === 1 ? 'stands' : 'stand'}`,
   host: (n) => `His host: ${n}`,
+  // WB14c: his Vanguard holding the approach - its platform and its wave (read through the text core - L10N4)
+  vanguard: (stage, w, of) => t('gate.bar.vanguard', 'The Vanguard - {stage}, wave {w} of {of}', { stage, w, of }),
+  stages: () => [t('gate.bar.bridgehead', 'Bridgehead'), t('gate.bar.muster', 'Muster')],
 });
 
 const css = (c) => `rgb(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)})`;
@@ -209,7 +213,8 @@ export function bossBarModel(s, now, boss, aimed = null) {
     wrathNear: !s.fell && s.wrath == null && toWrath <= WRATH_NEAR_MS,
     fighters: s.fighters | 0,
     reckonIn: toReckon !== null ? BOSS_BAR_TEXT.reckonIn(countdownText(toReckon)) : null,   // WB9c
-    host: !s.fell && s.wrath == null && others > 0 ? BOSS_BAR_TEXT.host(others) : null,   // WB11c: the rest of his host standing
+    host: !s.fell && s.wrath == null && s.vg && s.vg[0] < 2 ? BOSS_BAR_TEXT.vanguard(BOSS_BAR_TEXT.stages()[s.vg[0]], Math.max(1, s.vg[1]), VG_STAGES[s.vg[0]].waves.length)
+      : !s.fell && s.wrath == null && others > 0 ? BOSS_BAR_TEXT.host(others) : null,   // WB11c: the rest of his host standing; WB14c: his Vanguard's progress in its place
     alpha: Math.round(alpha * 20) / 20, now,
     low: !s.fell && frac > 0 && frac < LOW_HEALTH,   // WB13e: the bar pulses
   };

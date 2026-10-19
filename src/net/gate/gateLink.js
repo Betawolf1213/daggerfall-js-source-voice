@@ -19,7 +19,8 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './ga
  *   move: any, atk: any, shieldUntil: number, wrathAt: number|null, fighters: number, fell: any, wrath: number|null, heardAt: number,
  *   md: ReadonlyArray<string>|null, fed: {ns: ReadonlyArray<string>, at: number}|null,
  *   xa: ReadonlyArray<number|null>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
- *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null}} GateState
+ *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null,
+ *   vg?: number[]|null, vgw?: {e: number, s: number, w: number, at: number}|null}} GateState   (WB14c: the Vanguard's stage, and its last word)
  * @typedef {{ads: ReadonlyArray<{i: number, k: number, h: number, m: number, x: number, z: number, mv: any, atk: {at: number, x: number, z: number}|null, rose: number, yaw: number}>,
  *   gone: ReadonlyArray<{i: number, k: number, x: number, z: number, w: number, n: string|null, at: number}>, ward?: {n: number, at: number, is?: ReadonlyArray<number>}}} GateHost
  *   GATE-UX: `fell` carries `dm`, the kill's damage chart (net/gate/gateBrain.js damageChart), from a relay that makes one.
@@ -36,7 +37,7 @@ import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './ga
 export const GATE_STATE_EMPTY = Object.freeze({
   day: null, boss: null, phase: 1, hp: 0, max: 0, x: 0, z: 0, yaw: 0, move: null, atk: null, shieldUntil: 0,
   wrathAt: null, fighters: 0, fell: null, wrath: null, heardAt: 0, md: null, fed: null,
-  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null,
+  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null, vg: null, vgw: null,
 });
 
 /** WB11b: how many of his host gone the fold keeps for the court to play out (their fall, their crumbling). */
@@ -118,7 +119,7 @@ export function foldGate(s, g, now, place = bossAt) {
     const same = s.day === g.d;
     const cx = g.cx ? { i: g.cx.i, m: g.cx.m, c: g.cx.c.map((q) => [q[0], q[1], q[2]]), broke: same && s.cx?.i === g.cx.i ? s.cx.broke : [] } : null;
     return {
-      day: g.d, boss: g.b, phase: g.ph, hp: g.h, max: g.m, x: g.x, z: g.z, yaw: g.yw, move: g.mv, atk: g.atk, shieldUntil: g.sh, wrathAt: g.wr, fighters: g.n, fell: g.fell, wrath: g.wrath, heardAt: now, md: g.md ?? null, fed: same ? s.fed ?? null : null,
+      day: g.d, boss: g.b, phase: g.ph, hp: g.h, max: g.m, x: g.x, z: g.z, yaw: g.yw, move: g.mv, atk: g.atk, shieldUntil: g.sh, wrathAt: g.wr, fighters: g.n, fell: g.fell, wrath: g.wrath, heardAt: now, md: g.md ?? null, vg: g.vg ?? null, vgw: same ? s.vgw ?? null : null, fed: same ? s.fed ?? null : null,
       xa: g.xa ?? [], cx, stunUntil: g.su ?? 0, stunAt: same && s.stunUntil === (g.su ?? 0) ? s.stunAt : (g.su ? now : 0), rk: g.rk ?? 0,
       lg: hostOfState(g.lg, same ? s.lg : null),   // WB11b: his host standing - none said, none held (any other fight's)
       openUntil: g.op ?? 0,   // WB13e: the opening's end - his wake (0: an older relay's word, and no wake)
@@ -143,6 +144,13 @@ export function foldGate(s, g, now, place = bossAt) {
     case 'cxh': return s.cx && s.cx.i === g.i ? { ...s, cx: { ...s.cx, c: s.cx.c.map((q, k) => [q[0], q[1], Number.isFinite(g.h[k]) ? g.h[k] : q[2]]) }, heardAt: now } : s;
     case 'cxb': return s.cx && s.cx.i === g.i && s.cx.c[g.c] ? { ...s, cx: { ...s.cx, c: s.cx.c.map((q, k) => (k === g.c ? [q[0], q[1], 0] : q)), broke: [...s.cx.broke, { c: g.c, n: g.n, at: g.at }] }, heardAt: now } : s;
     // (the stun keeps the crystals, every one broken - who broke the last is said with it; the next word clears them)
+    // WB14c: A STAGE OF THE VANGUARD - its stage and waves, the walkway a clearing lays (at its own moment, every screen at
+    // once), and the word itself for the court to say while it is news
+    case 'vgw': {
+      let xa = s.xa;
+      if (g.x !== undefined) { const w = [...(s.xa ?? [])]; while (w.length < g.x) w.push(null); if (!Number.isFinite(w[g.x])) w[g.x] = g.at; xa = w; }
+      return { ...s, vg: [g.s + (g.e === 1 || g.e === 3 ? 1 : 0), g.e === 1 || g.e === 3 ? 0 : g.w], xa, vgw: { e: g.e, s: g.s, w: g.w, at: g.at }, heardAt: now };
+    }
     case 'stun': return { ...s, stunUntil: g.until, stunAt: g.at, atk: null, move: null, cx: s.cx ? { ...s.cx, c: s.cx.c.map((q) => [q[0], q[1], 0]) } : null, heardAt: now };
     // WB11b: HIS HOST - risen, walking, striking, its health, gone
     case 'ad': case 'amv': case 'aatk': case 'ah': case 'adie': return foldHost(s, g, now);

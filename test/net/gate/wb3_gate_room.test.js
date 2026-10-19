@@ -401,7 +401,7 @@ test('WB3 wire: the client says two things - `in` with a level claim, `hit` with
   assert.deepEqual(validGateIn({ k: 'in', lv: 12, bv: 1.5 }), { k: 'in', lv: 12 });
   assert.deepEqual(validGateIn({ k: 'spent', d: 514, x: 1 }), { k: 'spent', d: 514 });
   for (const bad of [{ k: 'spent' }, { k: 'spent', d: -1 }, { k: 'spent', d: 1.5 }]) assert.equal(validGateIn(bad), null);
-  assert.deepEqual(GATE_OUT_KINDS, ['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd']);   // PIN MOVED (INT11): and the count's fall; WB8b: a Soul-Hungry Warden's feeding; WB9c: the crystals and the stun; WB11b: his host
+  assert.deepEqual(GATE_OUT_KINDS, ['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd', 'vgw']);   // PIN MOVED (INT11): and the count's fall; PIN MOVED (WB14c): and a stage of the Vanguard; WB8b: a Soul-Hungry Warden's feeding; WB9c: the crystals and the stun; WB11b: his host
   assert.deepEqual(validGateIn({ k: 'in', lv: 12, x: 1 }), { k: 'in', lv: 12 });
   assert.deepEqual(validGateIn({ k: 'hit', q: 3, d: 12.5, r: 2, extra: true }), { k: 'hit', q: 3, d: 12.5, r: 2 });
   for (const bad of [{ k: 'in' }, { k: 'in', lv: 0 }, { k: 'in', lv: GATE_LV_WIRE_MAX + 1 }, { k: 'in', lv: 1.5 }, { k: 'hit', q: -1, d: 1, r: 0 }, { k: 'hit', q: 1, d: 0, r: 0 },

@@ -25,6 +25,7 @@ import {
   stateAnims,   // AUDIT WB11 C1: his host's tables by the port's own law
 } from '../../characters/mobile/mobileUnit.js';
 import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
+import { t } from '../../systems/textManager.js';   // WB14c: the Vanguard's own names in the player's language (L10N4)
 import { makeEnemyEntity } from '../../characters/enemy/enemyEntity.js';
 import { courtToDungeon } from './gateArena.js';
 import { hitFlashStrength } from '../../systems/hitFlash.js';   // WB13d: his body struck flashes on the game's own curve
@@ -508,11 +509,19 @@ export const HOST_LOOKS = Object.freeze({
   harrier: Object.freeze({ burning: 1, rime: 1, storm: 1, venom: 1 }),
   sapper: Object.freeze({ burning: 35, rime: 38, storm: 36, venom: 37 }),
   bearer: Object.freeze({ burning: 26, rime: 25, storm: 29, venom: 27 }),
+  // WB14c: the Vanguard's - a Daedroth's weight, a Daedra of his aspect's fire (a Lich under the venom), and his lieutenant a
+  // Daedra Lord, as he is
+  brute: Object.freeze({ burning: 27, rime: 27, storm: 27, venom: 27 }),
+  caster: Object.freeze({ burning: 26, rime: 25, storm: 29, venom: 32 }),
+  markynaz: Object.freeze({ burning: 31, rime: 31, storm: 31, venom: 31 }),
 });
 export const HOST_NAMES = Object.freeze({
   1: Object.freeze(['Imp', 'Imps']), 35: Object.freeze(['Fire Atronach', 'Fire Atronachs']), 38: Object.freeze(['Ice Atronach', 'Ice Atronachs']),
   36: Object.freeze(['Iron Atronach', 'Iron Atronachs']), 37: Object.freeze(['Flesh Atronach', 'Flesh Atronachs']),
   26: Object.freeze(['Fire Daedra', 'Fire Daedra']), 25: Object.freeze(['Frost Daedra', 'Frost Daedra']), 29: Object.freeze(['Daedra Seducer', 'Daedra Seducers']), 27: Object.freeze(['Daedroth', 'Daedroths']),
+  // WB14c: the Vanguard's Lich and its Markynaz (a Daedra Lord by his rank, read through the text core - L10N4)
+  32: Object.freeze({ get 0() { return t('gate.host.lich', 'Lich'); }, get 1() { return t('gate.host.liches', 'Liches'); } }),
+  31: Object.freeze({ get 0() { return t('gate.host.markynaz', 'Markynaz'); }, get 1() { return t('gate.host.markynazes', 'Markynazes'); } }),
 });
 export const HOST_HOVER_M = 0.9;
 /** A host body's look - its mobile, its names, how high it hovers, whether it is drawn winged - for kind `k` under the
@@ -520,7 +529,7 @@ export const HOST_HOVER_M = 0.9;
 export function hostLookOf(k, aspectId) {
   const key = HOST_KINDS[k]?.key ?? 'harrier', table = HOST_LOOKS[key];
   const mobile = table[aspectId] ?? table.burning;
-  const [name, plural] = HOST_NAMES[mobile] ?? ['Daedra', 'Daedra'];
+  const names = HOST_NAMES[mobile], name = names?.[0] ?? 'Daedra', plural = names?.[1] ?? 'Daedra';   // WB14c: a row of getters reads as a pair
   return { mobile, name, plural, hover: ENEMY_BASICS[mobile]?.behaviour === 'Flying' ? HOST_HOVER_M : 0, winged: mobile === 29 };
 }
 /** WB11c: THE ENTITY A BLOW ON ONE OF HIS HOST IS COMPUTED AGAINST - his stand-in's law over its own mobile (every metal

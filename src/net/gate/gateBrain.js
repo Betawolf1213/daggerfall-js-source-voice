@@ -580,6 +580,10 @@ export function newFight(day, now, wrathAt, boss, md = null, pt = null) {
     rk: 0, cx: null, stunUntil: 0, cxSentAt: 0, cxSent: '',
     /** WB11b: his host under the Legion-Lord trial (newHost - made at the fight's first beat under it), null in any other */
     lg: null,
+    /** WB14c: the Vanguard on a night that holds it (newVanguard), null on any other; and when his opening began - the
+     *  fight's birth, or the first fighter in his court after the Vanguard broke (null until then) */
+    vg: hasPortent(pt, 'vanguard') ? newVanguard() : null,
+    openAt: hasPortent(pt, 'vanguard') ? null : now,
     /** WBX5: a phase's turn still to come - PHASE_TURN's entries after the one in flight - and the next of them, begun
      *  when the breath after the last is over */
     queue: [], pending: null,
@@ -945,6 +949,9 @@ export function stepBrain(f, now, bodies, rng) {
     hpFrame(f, now, out);   // AUDIT WBX R5
     return out;
   }
+  // WB14c: HIS VANGUARD HOLDS THE APPROACH - its waves on its platforms, and he waits in his court until it breaks and a
+  // challenger stands before him (his opening begins then)
+  if (stepVanguard(f, now, bodies, rng, out, P)) return heldBeat(f, now, out);
   // WB9b: the challengers standing in the court he fights in - the only ones he chooses, aims at and waits for (a body
   // still on the walkway, or left behind in a court he has leapt from, is not before him)
   const here = bodies.filter((b) => !b.dead && f.players[b.sub] && inCourt(b.x, b.z, f.court, POSE_SLACK));
@@ -1057,7 +1064,7 @@ export function stepBrain(f, now, bodies, rng) {
       const gap = dist(target.x, target.z, f.pos[0], f.pos[1]) - P.bossR;
       const near = here.filter((b) => dist(b.x, b.z, f.pos[0], f.pos[1]) <= P.atk.slam.r).length;   // WB8b: Colossal's slam reaches further
       if (now - (f.freeAt ?? 0) >= REPEAT_WALK_MS) f.runA = 0;   // WB13f: a walk-in that long breaks the run
-      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(f.startedAt) ? f.startedAt + OPENING_MS : -Infinity });   // WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
+      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(openedAt(f)) ? openedAt(f) + OPENING_MS : -Infinity });   // WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
       if (can.length) { f.move = null; begin(f, chooseAttack(can, rng), now, target, here, rng, out); }
       else walkToward(f, target, now, out);
     } else if (f.move) {
@@ -1139,7 +1146,8 @@ function begin(f, atk, now, target, bodies, rng, out, point = null, echo = false
   } else if (atk.aim === 'point') {
     // WBX5: one spot - the leap comes down inside the ring he keeps to, a meteor falls anywhere on the floor
     const p = point ?? (target ? [target.x, target.z] : [f.pos[0], f.pos[1]]);
-    tg = [keepInCourt(p[0], p[1], atk === ATTACKS.leap ? BOSS_REACH_R : COURT_R, C)];
+    const PC = point && atk === ATTACKS.meteor ? COURTS[nearestCourt(p[0], p[1])] : C;   // WB14c: his patience's meteor falls on the platform it is called at
+    tg = [keepInCourt(p[0], p[1], atk === ATTACKS.leap ? BOSS_REACH_R : COURT_R, PC)];
     if (atk === ATTACKS.leap && (tg[0][0] !== f.pos[0] || tg[0][1] !== f.pos[1])) f.yaw = Math.atan2(tg[0][0] - f.pos[0], tg[0][1] - f.pos[1]);
   } else if (atk === ATTACKS.hellfire) {
     const live = bodies.filter((b) => !b.dead && f.players[b.sub]);
@@ -1262,9 +1270,19 @@ export const HOST_KINDS = Object.freeze([
   Object.freeze({ id: 0, key: 'harrier', r: 0.5, h: 1.5, speed: 5 }),
   Object.freeze({ id: 1, key: 'sapper', r: 0.7, h: 2.3, speed: 1.6 }),
   Object.freeze({ id: 2, key: 'bearer', r: 0.6, h: 2.2, speed: 0 }),
+  // WB14c (bible/11-Multiplayer/Breach-Portents.md section 4): THE VANGUARD'S KINDS, beside the Harrier (its Imps) - never on a
+  // Legion-Lord night, so never beside his host:
+  //   3 the BRUTE - a Daedroth: it walks at the nearest fighter on its platform and Smashes the ground about itself
+  //   4 the CASTER - a Daedra of his aspect (a Fire Daedra, a Frost Daedra, a Daedra Seducer, a Lich): it keeps
+  //     VG_CASTER_KEEP from the nearest fighter and Bolts a fighter's feet within VG_CASTER_REACH
+  //   5 the MARKYNAZ - the Warden's lieutenant, a Daedra Lord: a Brute's walk and a Rend of its own, and it calls Imps
+  //     out of the fire every VG_CALL_MS (a markynaz serves a valkynaz - the Kyn's ranks)
+  Object.freeze({ id: 3, key: 'brute', r: 0.8, h: 2.4, speed: 2.8 }),
+  Object.freeze({ id: 4, key: 'caster', r: 0.6, h: 2.2, speed: 2.0 }),
+  Object.freeze({ id: 5, key: 'markynaz', r: 0.9, h: 3.0, speed: 3.0 }),
 ]);
 /** The kinds by name. */
-export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2 });
+export const HOST = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, brute: 3, caster: 4, markynaz: 5 });
 /**
  * THE HOST'S BLOWS, by the kind that strikes them (a Sapper strikes nobody - null): each a disc `r` about the body that
  * strikes it, laid where it stands at its word, wound up `windup`, landing over `active`, the body still `recover` after;
@@ -1276,6 +1294,11 @@ export const HOST_BLOWS = Object.freeze([
   Object.freeze({ kind: 0, key: 'bite', name: 'Bite', windup: 900, active: 200, recover: 900, r: 2, pct: 0.12, base: 4, el: null }),
   null,
   Object.freeze({ kind: 2, key: 'pulse', name: 'Ward Pulse', windup: 1400, active: 200, recover: 0, r: 3.5, pct: 0.18, base: 6, el: 'aspect' }),
+  // WB14c: the Vanguard's - a Brute's Smash and the Markynaz's Rend about themselves, a Caster's Bolt at a fighter's feet
+  // (its word's spot), his aspect's element
+  Object.freeze({ kind: 3, key: 'smash', get name() { return t('gate.host.smash', 'Smash'); }, windup: 1300, active: 200, recover: 1100, r: 3, pct: 0.28, base: 9, el: null }),
+  Object.freeze({ kind: 4, key: 'bolt', get name() { return t('gate.host.bolt', 'Bolt'); }, windup: 1600, active: 200, recover: 400, r: 3, pct: 0.22, base: 7, el: 'aspect' }),
+  Object.freeze({ kind: 5, key: 'rend', get name() { return t('gate.host.rend', 'Rend'); }, windup: 1300, active: 200, recover: 1100, r: 4.5, pct: 0.38, base: 11, el: null }),
 ]);
 /** A host blow under a fight's profile: its element his aspect's where it takes one, and Vengeful's weight on its share
  *  and base (no other mark touches its blows - AUDIT WB11 D11: the host itself is touched through him, Colossal's body
@@ -1303,7 +1326,9 @@ export const SAPPERS_MAX = 6;
 /** The most of his host standing at once. The kinds never stand together - each is its phase's or its new court's, and
  *  every one crumbles at a phase's turn - so it is the most of one kind (net/wire.js GATE_HOST_MAX bounds every list on
  *  the wire - pinned over it). */
-export const HOST_STANDING_MAX = Math.max(HARRIERS_MAX, SAPPERS_MAX, bearerCountFor(Infinity));
+/** WB14c: the most of the Vanguard standing at once (its waves and the Markynaz's Imps). */
+export const VG_STANDING_MAX = 12;
+export const HOST_STANDING_MAX = Math.max(HARRIERS_MAX, SAPPERS_MAX, bearerCountFor(Infinity), VG_STANDING_MAX);   // WB14c: the Vanguard's twelve
 /** Each one's health for a wave over the levels `lvs` of the living challengers that size it (`k` how many rise). */
 export const harrierHpFor = (lvs) => Math.max(HOST_HP_MIN, Math.round(lvs.length ? (HARRIER_S * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / lvs.length : 0));
 export const hostTeamHpFor = (teamS, lvs, k) => Math.max(HOST_HP_MIN, Math.round((teamS * lvs.reduce((s, lv) => s + dpsRef(lv), 0)) / Math.max(1, k)));
@@ -1333,7 +1358,7 @@ export const SAP_FROM_HIM = 12;
 export const SAP_SPAWN_CLEAR = 8;
 /** How long each kind takes to RISE out of the fire before it moves or strikes (by wire id) - seen rising on every screen;
  *  a Sapper still rising is not drunk, whatever lands beside it. A blow meets each from its first moment. */
-export const HOST_RISE_MS = Object.freeze([800, 2500, 1500]);
+export const HOST_RISE_MS = Object.freeze([800, 2500, 1500, 1500, 1500, 2500]);   // WB14c: a Brute, a Caster, the Markynaz
 /** A Sapper reaches him at his body, its own and this slack; while his feedings last (SAP_FEEDS_MAX a fight) he drinks it
  *  - SAP_HEAL of the health he stands for, never past it - and past them it burns out against him (crumbled). */
 export const SAP_REACH_SLACK = 0.6;
@@ -1554,6 +1579,183 @@ function stepHost(f, now, here, rng, out, P) {
   hostHpFrame(f, now, out);
 }
 
+// ── WB14c: THE VANGUARD ─────────────────────────────────────────────────
+/** WB14c (2026-10-19, Mac: "the chance of a gate to spawn with platforms of wave based adds that need to be defeated before
+ *  encountering the boss"; bible/11-Multiplayer/Breach-Portents.md section 4): the Vanguard's beat. Its first wave rises
+ *  VG_OPEN_MS after a fighter stands on the Bridgehead; each next one when VG_WAVE_LEFT of the last or fewer still stand,
+ *  or VG_WAVE_MAX_MS after it rose - a wave due with nobody on its platform waits for somebody. A wave's health is its team
+ *  seconds of the platform's living challengers' whole reference damage (the crystals' law), shared over its bodies by
+ *  kind (VG_KIND_W); vanguardCountFor of them, VG_STANDING_MAX standing at most. */
+export const VG_OPEN_MS = 6000;
+export const VG_WAVE_MAX_MS = 30_000;
+export const VG_WAVE_LEFT = 0.25;
+export const vanguardCountFor = (n) => Math.max(3, Math.min(10, 2 + Math.ceil(Math.max(0, n) / 2)));
+/** A body's share of its wave's health, by kind (the Imp's one - WB11's three take none here). */
+export const VG_KIND_W = Object.freeze([1, 0, 0, 2.5, 1.5, 6]);
+/** THE STAGES - each its platform (FLOOR), the walkway its clearing lays (WALK) and its three waves, each its kinds (dealt
+ *  round its count in turn) and its team seconds; the Muster's last its lord (the Markynaz, and Imps for the rest). */
+const vgWave = (kinds, s, lord = false) => Object.freeze({ kinds: Object.freeze(kinds), s, lord });
+export const VG_STAGES = Object.freeze([
+  Object.freeze({ floor: FLOOR.bridgehead, walk: WALK.muster, waves: Object.freeze([vgWave([HOST.harrier], 7), vgWave([HOST.harrier, HOST.brute], 9), vgWave([HOST.brute, HOST.caster], 10)]) }),
+  Object.freeze({ floor: FLOOR.muster, walk: WALK.warden, waves: Object.freeze([vgWave([HOST.caster, HOST.harrier], 10), vgWave([HOST.brute, HOST.caster, HOST.harrier], 11), vgWave([HOST.harrier], 14, true)]) }),
+]);
+/** HIS PATIENCE: a Vanguard still standing VG_PATIENCE_MS after its first wave, he throws a Meteor of Oblivion from his
+ *  court onto a living fighter on the platforms every VG_PATIENCE_EVERY_MS - a clock that keeps a stalled court moving. */
+export const VG_PATIENCE_MS = 240_000;
+export const VG_PATIENCE_EVERY_MS = 15_000;
+/** The Markynaz calls VG_CALL_N Imps out of the fire every VG_CALL_MS; a Brute and the Markynaz strike within their reach
+ *  of a fighter (VG_MELEE_REACH past their body); a Caster keeps VG_CASTER_KEEP from the nearest fighter and Bolts one
+ *  within VG_CASTER_REACH every VG_CASTER_EVERY_MS. */
+export const VG_CALL_MS = 15_000;
+export const VG_CALL_N = 2;
+export const VG_MELEE_REACH = 1.4;
+export const VG_CASTER_KEEP = Object.freeze([10, 16]);
+export const VG_CASTER_REACH = 22;
+export const VG_CASTER_EVERY_MS = 5000;
+/** The Vanguard's words on the wire (`vgw`'s `e`): a wave risen, a platform cleared, the Markynaz risen, the Vanguard
+ *  broken, his patience, his opening. */
+export const VG_WORD = Object.freeze({ wave: 0, clear: 1, lord: 2, broken: 3, patience: 4, open: 5 });
+/** A Vanguard night's record: its stage (0 the Bridgehead, 1 the Muster, VG_STAGES.length broken), the waves risen in it,
+ *  when the next is due, when the last rose and how many, when the first of all rose, his next patience, the Markynaz's
+ *  number and his next call, and whether his opening has begun. */
+export const newVanguard = () => ({ s: 0, w: 0, due: 0, rose: 0, last: 0, first: 0, pat: 0, lord: 0, call: 0, opened: false });
+/** When his opening began (null while his Vanguard holds - a fight checkpointed before WB14c: its birth). */
+export const openedAt = (f) => (f?.vg && !f.vg.opened ? null : f?.openAt ?? f?.startedAt ?? null);
+/** Does a Vanguard still hold him? */
+export const vanguardHolds = (f) => !!f?.vg && !f.vg.opened;
+
+/** A Brute's or the Markynaz's beat: a blow in flight runs out; the nearest fighter on its platform struck within reach,
+ *  else walked at. */
+function vgMeleeBeat(a, now, on, C, moves, blows) {
+  if (a.atk) { if (now < a.atk.until) return; a.atk = null; }
+  let mark = null;
+  for (const b of on) if (!mark || dist(b.x, b.z, a.x, a.z) < dist(mark.x, mark.z, a.x, a.z)) mark = b;
+  if (!mark) { stopHost(a, now, moves); return; }
+  const K = HOST_KINDS[a.k], B = HOST_BLOWS[a.k];
+  if (dist(a.x, a.z, mark.x, mark.z) - K.r <= VG_MELEE_REACH) {
+    stopHost(a, now, moves);
+    a.atk = { at: now + B.windup, x: a.x, z: a.z, until: now + B.windup + B.active + B.recover };
+    blows.push([a.i, a.atk.at, a.x, a.z]);
+    return;
+  }
+  walkHost(a, mark.x, mark.z, K.r + 0.6, now, C, moves);
+}
+/** A Caster's beat: a Bolt in flight runs out; one due falls at the feet of the nearest fighter within reach (where they
+ *  stand at its word); otherwise it keeps its distance - away from one too near, toward one too far. */
+function vgCasterBeat(a, now, on, C, moves, blows) {
+  if (a.atk) { if (now < a.atk.until) return; a.atk = null; }
+  let mark = null;
+  for (const b of on) if (!mark || dist(b.x, b.z, a.x, a.z) < dist(mark.x, mark.z, a.x, a.z)) mark = b;
+  if (!mark) { stopHost(a, now, moves); return; }
+  const d = dist(a.x, a.z, mark.x, mark.z), B = HOST_BLOWS[HOST.caster];
+  if (now >= a.next && d <= VG_CASTER_REACH) {
+    stopHost(a, now, moves);
+    a.atk = { at: now + B.windup, x: r2(mark.x), z: r2(mark.z), until: now + B.windup + B.active + B.recover };
+    a.next = now + VG_CASTER_EVERY_MS;
+    blows.push([a.i, a.atk.at, a.atk.x, a.atk.z]);
+    return;
+  }
+  if (d < VG_CASTER_KEEP[0] && d > 1e-6) walkHost(a, a.x + ((a.x - mark.x) / d) * 6, a.z + ((a.z - mark.z) / d) * 6, 0, now, C, moves);
+  else if (d > VG_CASTER_KEEP[1]) walkHost(a, mark.x, mark.z, VG_CASTER_KEEP[1] - 2, now, C, moves);
+  else stopHost(a, now, moves);
+}
+/** A Vanguard wave risen on its platform C: `W`'s kinds dealt round vanguardCountFor(the fighters on it), the standing cap
+ *  kept; each body's health its kind's share of the wave's team seconds. Answers how many rose. */
+function vgRaise(f, W, C, on, now, rng, out) {
+  const H = f.lg;
+  const n = Math.min(vanguardCountFor(on.length), VG_STANDING_MAX - H.ads.length);
+  const spots = n > 0 ? rimSpots(C, n, on, rng) : [];
+  if (!spots.length) return 0;
+  const kinds = spots.map((_, i) => (W.lord ? (i === 0 ? HOST.markynaz : HOST.harrier) : W.kinds[i % W.kinds.length]));
+  const total = W.s * on.reduce((s, b) => s + dpsRef(f.players[b.sub].lv), 0), wsum = kinds.reduce((s, k) => s + VG_KIND_W[k], 0);
+  for (const k of new Set(kinds)) {
+    const mine = spots.filter((_, i) => kinds[i] === k);
+    raiseHost(f, k, mine, Math.max(HOST_HP_MIN, Math.round((total * VG_KIND_W[k]) / Math.max(1e-9, wsum))), now, out);
+    if (k === HOST.markynaz) { f.vg.lord = H.n; f.vg.call = now + VG_CALL_MS; }
+  }
+  for (const a of H.ads) if (a.k === HOST.caster && a.next === now) a.next = now + 1500;   // a Caster's first Bolt a breath after it has risen
+  return spots.length;
+}
+/**
+ * WB14c: THE VANGUARD'S BEAT - true while it holds him (he waits in his court; the beat says only his health and his
+ * state). Its bodies carried and stepped (the Imps WB11's Harriers, at the fighter farthest from him; a Brute and the
+ * Markynaz at the nearest; a Caster at its distance), its waves raised on the platform they are due on, a platform
+ * cleared laying the walkway onward (`vgw`, its walkway and moment beside it: every screen lays it at once), the
+ * Markynaz's fall crumbling his Imps and breaking the Vanguard, his patience's meteors, and - broken - his opening as the
+ * first challenger stands in his court.
+ */
+function stepVanguard(f, now, bodies, rng, out, P) {
+  const V = f.vg;
+  if (!V || V.opened || f.fell || f.wrath) return false;
+  const H = (f.lg ??= newHost());
+  for (const a of H.ads) if (a.mv) { const [x, z] = hostAt(a, now); a.x = x; a.z = z; }
+  if (f.atk && now >= f.atk.until) { f.atk = null; f.nextAt = now + BREATH_MS; }   // his patience's meteor spent
+  const living = bodies.filter((b) => !b.dead && f.players[b.sub]);
+  if (V.s >= VG_STAGES.length) {
+    if (!living.some((b) => inCourt(b.x, b.z, FLOOR.first, POSE_SLACK))) return true;
+    // broken, and a challenger before him: his opening begins - his wake OPENING_MS from now, said at once
+    V.opened = true;
+    f.openAt = now; f.nextAt = now + OPENING_MS; f.lastStateAt = -Infinity;
+    out.push({ k: 'vgw', e: VG_WORD.open, s: V.s, w: 0, at: now });
+    return false;
+  }
+  const S = VG_STAGES[V.s], C = COURTS[S.floor];
+  const on = living.filter((b) => inCourt(b.x, b.z, S.floor, POSE_SLACK));
+  // the Markynaz down: his Imps crumble with him
+  if (V.lord && !H.ads.some((a) => a.i === V.lord)) { V.lord = 0; hostGone(f, now, out, HOST_GONE.crumbled, (a) => a.k === HOST.harrier); }
+  if (V.w < S.waves.length) {
+    if (V.w === 0 && !V.due && on.length) V.due = now + VG_OPEN_MS;
+    const due = V.w === 0 ? V.due > 0 && now >= V.due : H.ads.length <= Math.floor(V.last * VG_WAVE_LEFT) || now >= V.rose + VG_WAVE_MAX_MS;
+    if (due && on.length) {
+      const W = S.waves[V.w], n = vgRaise(f, W, C, on, now, rng, out);
+      if (n > 0) {
+        V.w++; V.rose = now; V.last = n;
+        if (!V.first) { V.first = now; V.pat = now + VG_PATIENCE_MS; }
+        out.push({ k: 'vgw', e: VG_WORD.wave, s: V.s, w: V.w, at: now });
+        if (W.lord) out.push({ k: 'vgw', e: VG_WORD.lord, s: V.s, w: V.w, at: now });
+      }
+    }
+  } else if (!H.ads.length) {
+    // the platform cleared: the walkway onward rises (WB9b's slabs, its law of the laid floor)
+    f.xa = [...(Array.isArray(f.xa) ? f.xa : [])];
+    if (!Number.isFinite(f.xa[S.walk])) f.xa[S.walk] = now;
+    out.push({ k: 'vgw', e: V.s === VG_STAGES.length - 1 ? VG_WORD.broken : VG_WORD.clear, s: V.s, w: V.w, x: S.walk, at: f.xa[S.walk] });
+    V.s++; V.w = 0; V.due = 0; V.last = 0; V.rose = 0;
+    f.lastStateAt = -Infinity;   // the state says the crossing at once
+    return true;
+  }
+  // the Markynaz calls his Imps
+  if (V.lord && now >= V.call) {
+    V.call = now + VG_CALL_MS;
+    const lord = H.ads.find((a) => a.i === V.lord), room = VG_STANDING_MAX - H.ads.length;
+    if (lord && room > 0 && on.length) {
+      const spots = rimSpots(C, Math.min(VG_CALL_N, room), on, rng, Math.atan2(lord.x - C[0], lord.z - C[1]), Math.PI / 3);
+      if (spots.length) raiseHost(f, HOST.harrier, spots, harrierHpFor(on.map((b) => f.players[b.sub].lv)), now, out);
+    }
+  }
+  // his patience: a meteor from his court on a fighter out on the platforms
+  if (V.first && now >= V.pat && !f.atk) {
+    const out1 = living.filter((b) => VG_STAGES.some((g) => inCourt(b.x, b.z, g.floor, POSE_SLACK)));
+    if (out1.length) {
+      if (V.pat === V.first + VG_PATIENCE_MS) out.push({ k: 'vgw', e: VG_WORD.patience, s: V.s, w: V.w, at: now });
+      const who = out1[Math.floor(rng() * out1.length) % out1.length];
+      begin(f, ATTACKS.meteor, now, null, out1, rng, out, [who.x, who.z]);
+    }
+    V.pat = now + VG_PATIENCE_EVERY_MS;
+  }
+  const moves = [], blows = [];
+  for (const a of [...H.ads]) {
+    if (a.up > now) continue;   // its rising (WB11's law)
+    if (a.k === HOST.harrier) harrierBeat(f, a, now, on, C, moves, blows);
+    else if (a.k === HOST.caster) vgCasterBeat(a, now, on, C, moves, blows);
+    else vgMeleeBeat(a, now, on, C, moves, blows);
+  }
+  if (moves.length) out.push({ k: 'amv', m: moves });
+  if (blows.length) out.push({ k: 'aatk', a: blows });
+  hostHpFrame(f, now, out);
+  return true;
+}
+
 /** WB11b: a blow's hand - the blow rate's token spent (one hand for a blow on him, on a crystal and on his host), false
  *  past GATE_HIT_HZ_MAX a second. AUDIT WB11 W3: ONCE A BLOW - a frame under the sequence `seq` (the wire's `q`) of the blow just charged,
  *  within BLOW_GROUP_MS, on a body `who` it has not met, rides on it (BLOW_BODIES_MAX bodies at most); every other frame
@@ -1595,8 +1797,8 @@ export function applyHostHit(f, sub, i, d, r, pose, now, seq = null) {
   if (!p || f.fell || f.wrath || !a || !(a.h > 0) || !Number.isFinite(d) || !(d > 0) || now >= f.wrathAt) return out;
   if (!spendBlow(p, now, seq, `a${i}`)) return out;
   if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return out;
-  if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;
   const [ax, az] = hostAt(a, now);
+  if (!inCourt(pose.x, pose.z, nearestCourt(ax, az), POSE_SLACK)) return out;   // WB14c: from the floor it stands on (his court, under the Legion-Lord; the Vanguard's platform)
   if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, ax, az) - HOST_KINDS[a.k].r > MELEE_REACH + POSE_SLACK) return out;
   const got = spendPurse(p, d, a.h, now);
   p.hd = (p.hd ?? 0) + got;
@@ -1663,6 +1865,7 @@ export function stateOf(f) {
     cx: f.cx ? { i: f.cx.i, m: f.cx.m, c: f.cx.c.map((q) => [q.x, q.z, Math.ceil(q.h)]) } : null,
     su: f.stunUntil > 0 ? f.stunUntil : 0, rk: f.rk > 0 ? f.rk : 0,
     ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),   // WB11b: his host standing - said only under the Legion-Lord
-    ...(Number.isSafeInteger(f.startedAt) ? { op: f.startedAt + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen
+    ...(Number.isSafeInteger(openedAt(f)) ? { op: openedAt(f) + OPENING_MS } : {}),   // WB13e: the opening's end - his wake, on every screen (WB14c: none while his Vanguard holds)
+    ...(f.vg ? { vg: [f.vg.s, f.vg.w] } : {}),   // WB14c: the Vanguard's stage and its waves risen
   };
 }

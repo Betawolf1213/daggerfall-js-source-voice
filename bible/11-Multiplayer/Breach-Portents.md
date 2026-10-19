@@ -225,15 +225,18 @@ blinding). The arc's one blow a step does not answer (answer 5).
 
 ## 4. The Vanguard (WB14c)
 
-The fighters arrive on **the Bridgehead**. Across the fire to the north the Warden stands in the first court under his
-ward - seen, never reached: *"His vanguard holds the approach. Break it."*
+The fighters arrive on **the Bridgehead** (the night's plan's root - `world/gate/gateArena.js arrivalOf`). Across the fire
+to the north the Warden stands in the first court - seen, never reached (no walkway is laid to him, and the relay takes
+no blow on him from another floor): he waits there, his opening not begun (`openedAt` is null, and the state says no
+`op` - no wake on any screen) until the Vanguard breaks and a challenger stands before him.
 
 **The waves.** Six seconds after the first fighter stands on the Bridgehead (VG_OPEN_MS) the first wave rises from the
-fire at its rim; each next wave rises when a quarter of the one before still stands, or VG_WAVE_MAX_MS (30 s) after it
-rose. A wave's health is its TEAM SECONDS of the platform's living challengers' whole reference damage (the crystals'
-law: a crowd breaks it in the same time as a few), shared over its bodies by kind; its bodies number
-`clamp(2 + ceil(n / 2), 3, 10)` for `n` living challengers on the platform, at most VG_STANDING_MAX (12) of the Vanguard
-standing. A wave due with nobody on its platform waits for somebody.
+fire at its rim; each next wave rises when a quarter of the one before or fewer still stand (VG_WAVE_LEFT - three
+risen, all of them down), or VG_WAVE_MAX_MS (30 s) after it rose. A wave's health is its TEAM SECONDS of the platform's living challengers' whole reference damage (the crystals'
+law: a crowd breaks it in the same time as a few), shared over its bodies by kind (VG_KIND_W: an Imp 1, a Brute 2.5, a Caster 1.5, the Markynaz 6); its bodies number
+`clamp(2 + ceil(n / 2), 3, 10)` (vanguardCountFor) for `n` living challengers on the platform, the wave's kinds dealt
+round them in turn, at most VG_STANDING_MAX (12) of the Vanguard standing. A wave due with nobody on its platform waits
+for somebody. Each rising is the host's own word (`ad`), and every stage of it a `vgw` word (VG_WORD).
 
 | platform | wave | its bodies | team seconds |
 |---|---|---|---|
@@ -247,31 +250,45 @@ standing. A wave due with nobody on its platform waits for somebody.
 Sixty-one team seconds in all: about two minutes of a court striking at half its reference, and two crossings.
 
 **The platform cleared.** The last body of the Bridgehead's last wave down, walkway 3 rises to the Muster (WB9b's slabs,
-its law of the laid floor) - *"The Bridgehead is clear."* - and the Muster's waves begin when a fighter stands on it.
-The Markynaz down, his Imps crumble and walkway 4 rises to the Warden - *"The Markynaz falls. The way to the Warden
-opens."* The Warden's opening (OPENING_MS) begins as the first fighter stands in his court: his wake, his marks' card,
-his fight, all as on any night.
+its law of the laid floor) - *"The Bridgehead is clear."* - the `vgw` word carrying the walkway and its moment, so every
+screen lays it at once (the state follows in the same beat); the Muster's waves begin VG_OPEN_MS after a fighter stands
+on it. The Markynaz down, his Imps crumble and walkway 4 rises to the Warden - *"The Markynaz falls. The way to the Warden
+opens."* The Warden's opening (OPENING_MS) begins as the first fighter stands in his court (`vgw` open; `openAt`, the
+state's `op` said at once): his wake, his fight and the new arsenal's cooldowns all count from it, as on any night from
+the fight's birth.
 
 **The kinds** (`net/gate/gateBrain.js HOST_KINDS`, new ids beside WB11's three - Daggerfall's own bodies):
 
 | id | kind | body | moves | its blow |
 |---|---|---|---|---|
-| 0 | **Imp** (WB11's Harrier) | r 0.5, h 1.5, hovers | 5.0 m/s at the fighter standing farthest from the rest | Bite: disc r 2 about itself, 0.9 s, 12% + 4 |
+| 0 | **Imp** (WB11's Harrier) | r 0.5, h 1.5, hovers | 5.0 m/s at the fighter on its platform standing farthest from the Warden (WB11's own law) | Bite: disc r 2 about itself, 0.9 s, 12% + 4 |
 | 3 | **Brute** - a Daedroth | r 0.8, h 2.4 | 2.8 m/s at the nearest fighter | Smash: disc r 3 about itself, 1.3 s, 28% + 9 |
-| 4 | **Caster** - a Fire Daedra (Burning), Frost Daedra (Rime), Daedra Seducer (Storm), Lich (Venom) | r 0.6, h 2.2 | 2.0 m/s, keeping 10-16 m from the nearest fighter | Bolt: disc r 3 at a fighter's feet within 22 m, 1.6 s, 22% + 7 of his element, leaving his ground (Hellfire's pool) |
-| 5 | **the Markynaz** - the Warden's lieutenant, a Daedra Lord at 1.6 times its size | r 0.9, h 3.0 | 3.0 m/s at the nearest fighter | Rend: disc r 4.5 about itself, 1.3 s, 38% + 11; and every 15 s he calls two Imps out of the fire |
+| 4 | **Caster** - a Fire Daedra (Burning), Frost Daedra (Rime), Daedra Seducer (Storm), Lich (Venom) | r 0.6, h 2.2 | 2.0 m/s, keeping 10-16 m from the nearest fighter | Bolt: disc r 3 at a fighter's feet within 22 m (where they stand at its word), every 5 s, 1.6 s, 22% + 7 of his element |
+| 5 | **the Markynaz** - the Warden's lieutenant, a Daedra Lord, as he is | r 0.9, h 3.0 | 3.0 m/s at the nearest fighter | Rend: disc r 4.5 about itself, 1.3 s, 38% + 11; and every 15 s he calls two Imps out of the fire |
+
+Departures from the sketch, named: the Bolt leaves no burning ground (a host blow's disc is judged by `hostVerdict`, and
+the pools are his own landings' - `landingPools`; a Caster's ground would be a second law of the ground for one kind),
+and the Markynaz stands at a Daedra Lord's own size (his host's bodies are drawn at their mobiles' sizes; a scaled one
+would be the first). Blows on the Vanguard are taken from the platform its body stands on (`applyHostHit` reads the
+floor under the body, not his court), the relay counts its Smash and Rend as it counts every plain blow, never the Bolt
+(his element's), and the gate's frame bucket rises to GATE_HZ_MAX 28 so two swings a second through all twelve and him
+still pass.
 
 A Dremora rank: a markynaz serves a valkynaz (*Oblivion*'s Kyn ranks, the Warden's own title among them).
 
 **His patience** (VG_PATIENCE_MS, 4 minutes after the first wave): a Vanguard still standing then, he throws a Meteor of
-Oblivion from his court onto a living fighter on the platforms every 15 s - his own Meteor, its wind-up, its ground: a
-clock that keeps a stalled court moving, never a wipe. *"Valkynaz Ruhn tires of waiting."*
+Oblivion from his court onto a living fighter on the platforms every 15 s - his own Meteor, its wind-up, its ground,
+laid on the platform it is called at (`begin` keeps a point Meteor to the floor of its point): a clock that keeps a
+stalled court moving, never a wipe. *"Valkynaz Ruhn tires of waiting."* - said once.
 
 **Late, and cast out.** A fighter who steps in later arrives on the Bridgehead too, the walkways laid behind the court
 standing: a run of about 17 s to the Warden. A death is cast out as on any night.
 
 **Never in a Legion-Lord night** (section 1). The Vanguard's host and his run on the same bodies' law
-(`stepHost`'s - each a point, a health, a walk said once, a disc wound up), in a beat of their own (`stepVanguard`).
+(`stepHost`'s - each a point, a health, a walk said once, a disc wound up), in a beat of their own (`stepVanguard`), in
+the fight's one host (`f.lg`): every screen draws, hears and judges them as his host (`scenes/gate/gateHost.js` - its
+waves never said as his host's, `waveLine`), the bar says the Vanguard's platform and wave in his host's line
+(*The Vanguard - Bridgehead, wave 2 of 3*), and its stages' lines are `scenes/gate/gateVanguard.js`'s.
 
 ## 5. The Sundering (WB14d)
 
@@ -428,6 +445,19 @@ Pins: `test/net/gate/wb14b_portents.test.js` (13); mutants: `tools/mutants/wb14b
 fixed in WB14a's push: the court's `reset` had lost its first line of resets behind the night's arrival (a comment
 swallowed them) - a new night's attacks numbered as the last night's were never judged; pinned by a Slam that must land
 on both nights (WB14b-the-resets-lost-behind-the-arrival).
+
+**WB14c (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 3-5 (the Brute, the Caster, the Markynaz) and their
+blows (the Smash, the Bolt, the Rend - names through the text core), VG_* and VG_STAGES, vanguardCountFor, newVanguard,
+openedAt, vanguardHolds, stepVanguard (the waves, the clearings and their walkways, the Markynaz and his Imps, his
+patience, his opening), newFight's `vg` and `openAt`, the state's `vg` and its `op` (none while the Vanguard holds),
+applyHostHit from the floor under the body, a point Meteor kept to its own floor; `net/wire.js` the state's `vg`, the
+`vgw` word, GATE_HOST_KINDS 6, GATE_HZ_MAX 28; `net/gate/gateLink.js` the fold of both (a clearing's walkway laid at its
+moment, the last word kept across a state); `scenes/gate/gateVanguard.js` (new: the Vanguard's lines); `scenes/gate/gateHost.js`
+waveLine (its waves never said as his host's) and a Bolt in his element's colour; `scenes/gate/gateCourt.js` its lines said
+while news, my blows on its bodies from its platforms; `ui/gate/gateBossBar.js` its line in his host's; `world/gate/gateBoss.js`
+its looks and names. Pins: `test/net/gate/wb14c_vanguard.test.js` (13) and WB11's and WB3's tables (the kinds, the blows,
+the standing cap, the out kinds); mutants: `tools/mutants/wb14c.json` (30, all dead), and the re-aimed WB11, AUDIT WB11,
+WB13e and WB8c records.
 
 **WB14a (2026-10-19) - shipped.** `net/gate/gateBrain.js` ATTACKS 11-16 (their names read through the text core),
 CHAIN_*, GAZE_*, attacksFor's `ctx` (the cooldowns from his wake, `nMin`), brandCountFor, the marked in `begin` (`tg`,

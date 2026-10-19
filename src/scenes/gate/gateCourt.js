@@ -38,6 +38,7 @@ import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../../ui/gate/
 import { marksCardModel, drawGateMarksCard } from '../../ui/gate/gateMarksView.js';   // WB9a: the night's marks over the screen as a fighter steps in
 import { groundViewModel, drawGateGround } from '../../ui/gate/gateGroundView.js';   // WB9d: his ground and his element, felt
 import { createGateArsenal } from './gateArsenal.js';   // WB14a: the blows that strike by who they mark, and the Gaze
+import { vanguardLine, vanguardOut } from './gateVanguard.js';   // WB14c: the Vanguard's words, and whether it holds
 import { damageChartModel, drawGateDamageChart } from '../../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../../net/gate/gateReceipt.js';
 import { bodySayer } from '../../net/bossBody.js';   // INT15: my body, said to the court's room
@@ -363,7 +364,7 @@ export function createGateCourt({
   let _mark = markShape([0, 0], 0, MARK_COLOR), _markOf = null, markEmber = MARK_COLOR;   // WB8b: his mark and its ember, remade when his profile is another
   /** WB8c: whether his marks have been said to me on this entry, and the last feeding heard; WB9a: when they were (the
    *  marks' card stands from then - ui/gate/gateMarksView.js MARKS_CARD_ARRIVE_MS) */
-  let marksSaid = false, fedHeard = null, marksAt = null;
+  let marksSaid = false, fedHeard = null, marksAt = null, vgwHeard = null;   // WB14c: the Vanguard's last word heard
   /** GATE-UX: when this screen first saw his fall (the relay's clock) - the damage chart stands from then */
   let chartAt = null;
   /** WBX2: the portal home once he has fallen - where it stands (the court's frame) and how far it has risen, its fire's
@@ -436,7 +437,7 @@ export function createGateCourt({
     fellSeen = false; fallFlashAt = -Infinity; columnN = 0; fallCardSet = false;
     if (corpse) { renderer?.destroyBillboardBatch?.(corpse); corpse = null; }
     pools = []; pooled = noMark(); burnAt = -Infinity; inFire = false; outAt = -Infinity; mark = null; poolDraw = [];
-    marksSaid = false; fedHeard = null; marksAt = null; chartAt = null;   // GATE-UX
+    marksSaid = false; fedHeard = null; marksAt = null; chartAt = null; vgwHeard = null;   // GATE-UX; WB14c
     healOwed.clear();   // GATE-HEAL
     portal = null; spin = 0; portalLaid = false; portalSaid = false;
     wayIn = 0; wayInHeld = -Infinity; wayInMine = false;   // GATE-FBX
@@ -617,6 +618,8 @@ export function createGateCourt({
     // AUDIT PRE-MERGE 0929 W2-3: a feeding is said while it is news, judged by its age alone - "the first of this
     // entry" stood in for "stale", and a tab hidden through a second feeding said it, and growled, a minute late
     if (s.fed && s.fed.at !== fedHeard) { fedHeard = s.fed.at; if (t - s.fed.at <= FED_LATE_MS) { say(COURT_MARKS_TEXT.fed(bossOf(s).name, s.fed.ns)); sound(BOSS_CUES.growl, s, t, null); } }
+    // WB14c: a stage of the Vanguard, said while it is news (its first wave, a platform cleared, the Markynaz, his patience)
+    if (s.vgw && `${s.vgw.e}@${s.vgw.at}` !== vgwHeard) { vgwHeard = `${s.vgw.e}@${s.vgw.at}`; const line = t - s.vgw.at <= FED_LATE_MS ? vanguardLine(s.vgw, bossOf(s).name) : null; if (line) say(line); }
     if (s.fell && !fellCued) { fellCued = true; if (t < s.fell.at + FALL_CRY_LATE_MS) sound(BOSS_CUES.fall, s, t, null); }   // AUDIT WB B7: never a cry from long ago
     bodySounds(s, t, A);
   }
@@ -1068,7 +1071,7 @@ export function createGateCourt({
      */
     hostTargets() {
       const s = link.state(), t = now();
-      return !s || s.day === null || s.fell || s.wrath != null || !s.lg || !fromHisCourt(s, t) ? NONE : host.targets();
+      return !s || s.day === null || s.fell || s.wrath != null || !s.lg || !(fromHisCourt(s, t) || vanguardOut(s)) ? NONE : host.targets();   // WB14c: the Vanguard's on its platforms (the relay takes a blow from the floor its body stands on)
     },
     /**
      * WB11c: A BLOW OF MINE MET ONE OF HIS HOST - `i` its number, `d` the formula's number on this machine, `r` its kind:

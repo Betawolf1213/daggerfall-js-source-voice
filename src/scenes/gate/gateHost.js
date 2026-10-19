@@ -70,6 +70,13 @@ const SHAPE_SLOTS = new WeakMap();
  * @param {any} s the court's state (net/gate/gateLink.js) @param {number} now @param {any} P the fight's profile
  * @param {any[]} [out] refilled
  */
+/** WB14c: the line a wave of his host's says as it rises - none for the Vanguard's (its stages say themselves: the court's
+ *  `vgw` words), and none for its own kinds. Pure. */
+export function waveLine(s, k, boss, plural) {
+  if (s?.vg && s.vg[0] < 2) return null;
+  return k === HOST.harrier ? COURT_HOST_TEXT.harriers(boss, plural) : k === HOST.sapper ? COURT_HOST_TEXT.sappers(boss, plural) : k === HOST.bearer ? COURT_HOST_TEXT.bearers() : null;
+}
+
 export function hostShapes(s, now, P, out = []) {
   out.length = 0;
   const ads = s?.lg?.ads;
@@ -90,7 +97,7 @@ export function hostShapes(s, now, P, out = []) {
     if (!tel || tel.since >= Math.max(B.active, 1) + TELEGRAPH_FLASH_MS) continue;
     const start = a.atk.at - B.windup, span = Math.max(B.active, 1);
     const fadeOut = tel.since > span ? 1 - (tel.since - span) / TELEGRAPH_FLASH_MS : 1;
-    const pulse = a.k === HOST.bearer, el = hostBlowUnder(a.k, P).el, sh = next();
+    const el = hostBlowUnder(a.k, P).el, pulse = el != null, sh = next();   // WB14c: a Caster's Bolt in his element's colour, as a Ward-Bearer's Pulse
     sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = sh.end[0] = a.atk.x; sh.origin[1] = sh.end[1] = a.atk.z; sh.r = B.r; sh.halfW = 0;
     sh.t = tel.t; sh.flash = tel.since >= 0 ? 1 : 0; sh.alpha = Math.max(0, fadeOut); sh.color = pulse ? hostPulseColor(P) : HOST_BITE_COLOR; sh.edge = TELEGRAPH_EDGE;
     sh.court = nearestCourt(a.atk.x, a.atk.z); sh.style = pulse ? TELEGRAPH_STYLE[el] ?? TELEGRAPH_STYLE.weight : TELEGRAPH_STYLE.weight;
@@ -216,7 +223,8 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
             const wave = `${a.k}@${a.rose}`;
             if (!wavesSaid.has(wave)) {
               wavesSaid.add(wave);
-              say(a.k === HOST.harrier ? COURT_HOST_TEXT.harriers(boss, b.look.plural) : a.k === HOST.sapper ? COURT_HOST_TEXT.sappers(boss, b.look.plural) : COURT_HOST_TEXT.bearers());
+              const line = waveLine(s, a.k, boss, b.look.plural);   // WB14c: the Vanguard's waves are said by its own words (the court's), never as his host's
+              if (line) say(line);
             }
           }
         }

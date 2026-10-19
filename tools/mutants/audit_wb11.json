@@ -140,7 +140,7 @@
   {
     "name": "AUDIT-WB11-W3-the-bucket-at-eight",
     "file": "src/net/wire.js",
-    "old": "export const GATE_HZ_MAX = 16;",
+    "old": "export const GATE_HZ_MAX = 28;",
     "new": "export const GATE_HZ_MAX = 8;",
     "tests": [
       "test/net/gate/audit_wb11.test.js"
@@ -449,8 +449,8 @@
   {
     "name": "AUDIT-WB11-D7-the-bearers-rising-unsaid",
     "file": "src/scenes/gate/gateHost.js",
-    "old": ": COURT_HOST_TEXT.bearers());",
-    "new": ": '');",
+    "old": ": k === HOST.bearer ? COURT_HOST_TEXT.bearers() : null;",
+    "new": ": k === HOST.bearer ? '' : null;",
     "tests": [
       "test/net/gate/audit_wb11.test.js"
     ]

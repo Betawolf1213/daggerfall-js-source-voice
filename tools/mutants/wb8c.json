@@ -332,8 +332,8 @@
   {
     "name": "WB8c-the-feeding-forgotten",
     "file": "src/net/gate/gateLink.js",
-    "old": "md: g.md ?? null, fed: same ? s.fed ?? null : null,",
-    "new": "md: g.md ?? null, fed: null,",
+    "old": "vgw: same ? s.vgw ?? null : null, fed: same ? s.fed ?? null : null,",
+    "new": "vgw: same ? s.vgw ?? null : null, fed: null,",
     "tests": [
       "test/net/gate/wb8c_gate_detail.test.js"
     ]
@@ -341,8 +341,8 @@
   {
     "name": "WB8c-the-state-forgets-the-marks",
     "file": "src/net/gate/gateLink.js",
-    "old": "md: g.md ?? null, fed: same ? s.fed ?? null : null,",
-    "new": "md: null, fed: same ? s.fed ?? null : null,",
+    "old": "md: g.md ?? null, vg: g.vg ?? null,",
+    "new": "md: null, vg: g.vg ?? null,",
     "tests": [
       "test/net/gate/wb8c_gate_detail.test.js"
     ]
