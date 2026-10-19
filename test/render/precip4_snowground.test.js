@@ -48,6 +48,12 @@ test('PRECIP4 THE FRAGMENT\'S COVER: its snowline read between the pixel\'s corn
     assert.equal(f.snowCover([lx, lz], [180, 280, 380, 480][k] + 200, up), 1, `whole over corner ${k}`);
     assert.equal(f.snowCover([lx, lz], [100, 200, 300, 400][k] - 200, up), 0, `bare under corner ${k}`);
   }
+  // each corner reads its own line and no other: a height whole over one corner's and under the next's
+  const k = chunk({ uSnowH10: [100, 600, 1100, 1600], uSnowH50: [150, 650, 1150, 1650], uSnowH90: [180, 680, 1180, 1680] });
+  for (const [c, lx, lz] of [[0, 0, 0], [1, PIX, 0], [2, 0, PIX], [3, PIX, PIX]]) {
+    assert.equal(k.snowCover([lx, lz], 180 + 500 * c + 20, up), 1, `whole over corner ${c}'s own`);
+    assert.equal(k.snowCover([lx, lz], 100 + 500 * c - 40, up), 0, `bare under corner ${c}'s own`);
+  }
   // the middle reads the corners' mean
   assert.equal(f.snowCover([PIX / 2, PIX / 2], 380, up), 1);
   assert.equal(f.snowCover([PIX / 2, PIX / 2], 200, up), 0);
@@ -203,6 +209,7 @@ test('PRECIP4 THE TWIN SET: a set\'s summer records then its winter ones, blitte
 
 /** A stream about pixel (200, 100) with its pixels `built`, and a host over it whose lines a test sets by hand. */
 function hostRig({ built = new Map(), owns = true, comp = [0, 0, 0] } = {}) {
+  const lane = { on: owns };
   const marked = [];
   const state = {
     compensation: comp, mapOrigin: { x: 200, y: 100 }, current: { x: 200, y: 100 },
@@ -210,20 +217,22 @@ function hostRig({ built = new Map(), owns = true, comp = [0, 0, 0] } = {}) {
   };
   const tileArrays = new Map([[302, { id: 'summer' }], [twinKey(302), { id: 'twin' }], [2, { id: 'desert' }]]);
   const renderer = { tileArrays, makeTwinArray: (key) => { tileArrays.set(key, { id: key }); return tileArrays.get(key); } };
-  const host = createSnowCoverHost({ renderer, climateAt: () => 0, mapHeight: 500, stateOf: () => state, builtOf: () => built, heightAt: () => SEA_LEVEL_M + 100, owns: () => owns, markReskin: (k) => marked.push(k) });
+  const host = createSnowCoverHost({ renderer, climateAt: () => 0, mapHeight: 500, stateOf: () => state, builtOf: () => built, heightAt: () => SEA_LEVEL_M + 100, owns: () => lane.on, markReskin: (k) => marked.push(k) });
   /** every lattice point's shown line, one line */
   const setAll = (line) => {
     for (let j = 40; j <= 60; j++) for (let i = 90; i <= 110; i++) host._lines.set(`${i},${j}`, { target: Float32Array.from(line), shown: Float32Array.from(line) });
   };
-  return { host, marked, state, setAll, tileArrays };
+  return { host, marked, state, setAll, tileArrays, lane };
 }
 
 test('PRECIP4 THE HOST: the lane asked each frame (a turn re-skins every standing pixel); the snowline bilinear between lattice points; a pixel\'s draw its corners\' lines, its set\'s twin and its neighbours\' - the world\'s height offset; the twin array on the lane, the set off it (mutants: the corners swapped; the offset\'s sign; the twin off the lane)', async () => {
   const built = new Map([['200,100', { px: 200, py: 100, groundArchive: 302, eco: { archives: [302, 2, null] } }], ['201,100', { px: 201, py: 100 }]]);
-  const { host, marked, setAll, state } = hostRig({ built, comp: [0, 50, 0] });
+  const { host, marked, setAll, state, lane } = hostRig({ built, comp: [0, 50, 0] });
+  assert.equal(host.on, true, 'the lane known before the first frame - a boot\'s builds ask it');
   host.tick({ px: 200, py: 100, t: NaN });
-  assert.equal(host.on, true);
-  assert.deepEqual(marked.sort(), ['200,100', '201,100'], 'the turn on re-skins every standing pixel');
+  assert.deepEqual(marked, [], 'the first frame turns nothing: the boot built on the lane');
+  lane.on = false; host.tick({ px: 200, py: 100, t: NaN }); lane.on = true; host.tick({ px: 200, py: 100, t: NaN });
+  assert.deepEqual(marked.sort(), ['200,100', '200,100', '201,100', '201,100'], 'a turn of the lane in play re-skins every standing pixel, each way');
   setAll([100, 200, 300]);
   // a line that varies east-west across one lattice cell: points i=100 (pixel 200) and i=101 (pixel 202)
   for (let j = 40; j <= 60; j++) host._lines.set(`101,${j}`, { target: Float32Array.of(300, 400, 500), shown: Float32Array.of(300, 400, 500) });
@@ -244,6 +253,13 @@ test('PRECIP4 THE HOST: the lane asked each frame (a turn re-skins every standin
   assert.deepEqual([...d.tile], ecoOrigin(200, 100));
   state.compensation[1] = 80;
   assert.equal(host.drawOf(built.get('200,100')).set[0], Math.fround(-(80 + SEA_LEVEL_M)), 'the offset this frame\'s');
+  // the lane turned off under a standing twin: the set as it is again
+  const turned = hostRig({ built });
+  turned.host.tick({ px: 200, py: 100, t: NaN });
+  await turned.host.loadTwin({ climateType: 1, groundArchive: 302 }, { tileArray: () => {} }, async () => {});
+  assert.equal(turned.host.arrayOf(302).id, twinKey(302));
+  turned.lane.on = false; turned.host.tick({ px: 200, py: 100, t: NaN });
+  assert.equal(turned.host.arrayOf(302).id, 'summer', 'off: the summer set, the twin standing unused');
   // off the lane: nothing drawn, the set as it is, every standing pixel re-skinned
   const off = hostRig({ built, owns: false });
   off.host.tick({ px: 200, py: 100, t: NaN });
@@ -297,6 +313,33 @@ test('PRECIP4 THE BUILD\'S SEASONS: a pixel\'s buildings winter from the band\'s
   assert.equal(off.host.buries({ px: 200, py: 100 }, 1, 1, 0, 0), false);
 });
 
+test('PRECIP4 THE BUILD WAITS FOR THE SNOW: on the lane a build settles the window about the player first - integrated in slices with a breath between, its lines read once and shown as read; then it answers at once; off the lane it waits for nothing (mutants: no breath; the lines unread; a settle every build)', async () => {
+  const { host } = hostRig();
+  const t = (406 * 360 + 250) * 1440;   // early autumn: a short history
+  const rig = createSnowCoverHost({ renderer: { tileArrays: new Map() }, climateAt: () => 0, mapHeight: 500, stateOf: () => ({ compensation: [0, 0, 0] }), builtOf: () => new Map(), heightAt: () => 0, owns: () => true, markReskin: () => {}, place: () => ({ px: 200, py: 100, t }) });
+  let breaths = 0;
+  await rig.settle(async () => { breaths++; });
+  assert.equal(rig.ready, true);
+  assert.equal(rig._lines.size, (2 * SNOW_COVER.radius + 1) ** 2, 'every point of the window read');
+  for (const l of rig._lines.values()) assert.deepEqual([...l.shown], [...l.target], 'shown as read');
+  assert.ok(breaths >= 0);
+  const before = rig._lattice.stepsRun + rig._lattice.stepsSkipped;
+  const lines = new Map([...rig._lines].map(([k, l]) => [k, l.target]));
+  await rig.settle(async () => { throw new Error('no breath needed'); });
+  assert.equal(rig._lattice.stepsRun + rig._lattice.stepsSkipped, before, 'settled: nothing integrated again');
+  for (const [k, l] of rig._lines) assert.equal(l.target, lines.get(k), 'nor read again');
+  // sliced: a long history breathes between slices
+  const deep = createSnowCoverHost({ renderer: { tileArrays: new Map() }, climateAt: () => 0, mapHeight: 500, stateOf: () => ({ compensation: [0, 0, 0] }), builtOf: () => new Map(), heightAt: () => 0, owns: () => true, markReskin: () => {}, place: () => ({ px: 200, py: 100, t: (407 * 360 + 30) * 1440 }) });
+  let n = 0;
+  await deep.settle(async () => { n++; });
+  assert.ok(n > 0 && deep.ready, `a winter's history breathes: ${n} breaths`);
+  // off the lane: nothing
+  const off = createSnowCoverHost({ renderer: { tileArrays: new Map() }, climateAt: () => 0, mapHeight: 500, stateOf: () => ({ compensation: [0, 0, 0] }), builtOf: () => new Map(), heightAt: () => 0, owns: () => false, markReskin: () => {}, place: () => ({ px: 200, py: 100, t }) });
+  await off.settle(async () => { throw new Error('no breath off the lane'); });
+  assert.equal(off._lines.size, 0);
+  assert.equal(host.on, true);
+});
+
 test('PRECIP4 THE SWEEP: a standing pixel built under other snow - its buildings\' season turned, or its flats\' cover a step on - built again through the re-skin, the nearest SNOW_COVER.sweepMax first; one built under the snow now left standing (mutants: the step unread; the order reversed; no cap)', () => {
   const built = new Map();
   for (let k = 0; k < 8; k++) built.set(`${200 + k},100`, { px: 200 + k, py: 100 });
@@ -314,6 +357,19 @@ test('PRECIP4 THE SWEEP: a standing pixel built under other snow - its buildings
   const p = built.get('205,100');
   p._snow = host.signatureOf(p.px, p.py, 100, 200, 300);
   assert.ok(!host.sweep().includes('205,100'), 'rebuilt: standing');
+  // the buildings' season unturned (the middle's cover a half before and after) and the flats' cover a step on at the low
+  // and the high ground: built again
+  const one = new Map([['200,100', { px: 200, py: 100 }]]);
+  const r2 = hostRig({ built: one });
+  r2.host.tick({ px: 200, py: 100, t: NaN });
+  r2.setAll([0, 200, 400]);
+  const q = one.get('200,100');
+  q._snow = r2.host.signatureOf(200, 100, 100, 200, 300);
+  near(q._snow.covers[0], 0.3, 1e-9, 'low'); near(q._snow.covers[2], 0.7, 1e-9, 'high');
+  r2.setAll([190, 200, 210]);
+  assert.deepEqual(r2.host.sweep(), ['200,100'], 'the flats\' cover moved a step');
+  r2.setAll([100, 200, 300]);
+  assert.deepEqual(r2.host.sweep(), [], 'under a step: standing');
 });
 
 test('PRECIP4 THE WIRING: the builds read the pixel\'s season off the host (its buildings, its town\'s swaps, its windmills, its homes), the summer set and its twin for the ground, each flat its own season, and keep the snow they were built under; the world draws each pixel with its twin and its snow, its border\'s twins, re-skins by the snow on the lane, grows no grass through it, and hears the snow under the feet (mutants: each line reverted)', () => {
@@ -327,7 +383,8 @@ test('PRECIP4 THE WIRING: the builds read the pixel\'s season off the host (its 
   assert.match(b, /archive = f\.archive == null && fSeason === season \? natureArchive : getNatureArchive\(base, fSeason\);/);
   assert.match(b, /_snow: snowCover\?\.signatureOf\(px, py, groundLo - SEA_LEVEL_M, groundMid - SEA_LEVEL_M, groundHi - SEA_LEVEL_M\) \?\? null,/);
   const w = read('src/scenes/world.js');
-  assert.match(w, /const snowCover = createSnowCoverHost\(\{ renderer, climateAt, mapHeight: MAP_H, stateOf: \(\) => state, builtOf: \(\) => built, heightAt: \(x, z\) => heightAt\(x, z\), owns: precipLawOn, markReskin: \(key\) => _reskin\.mark\(key\) \}\);/);
+  assert.match(w, /const snowCover = createSnowCoverHost\(\{ renderer, climateAt, mapHeight: MAP_H, stateOf: \(\) => state, builtOf: \(\) => built, heightAt: \(x, z\) => heightAt\(x, z\), owns: precipLawOn, markReskin: \(key\) => _reskin\.mark\(key\), place: \(\) => \(\{ px: state\.current\.x, py: state\.current\.y, t: worldMinutes\(\) \}\) \}\);/);
+  assert.match(b, /if \(snowCover\?\.on\) await snowCover\.settle\(\(\) => breather\.breathe\(\)\);[^\n]*\n {4}const season = snowCover/, 'a build waits for the snow before its season');
   assert.match(w, /snowCover\.tick\(\{ px: _sp\.x, py: _sp\.y, t: playerTicker\.classicMinutes, dt, arriving: !playerSpawned \}\);/);
   assert.match(w, /if \(refreshSeason\(\) && !snowCover\.on\) _reskin\.markAll\(\);/);
   assert.match(w, /e\.tex\[k\] = snowCover\.arrayOf\(a\);/);

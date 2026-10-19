@@ -11,7 +11,9 @@ import {
 } from '../../../src/systems/weather/snowpack.js';
 import { setAirGround, airParamsAt, airTemperature, LAPSE_C_PER_M, COLDEST_DAY } from '../../../src/systems/weather/airTemperature.js';
 import { systemsNear, PRIORITY } from '../../../src/systems/weather/weatherMap.js';
-import { skyMinuteOfEvent } from '../../../src/systems/skyCalendar.js';
+import { skyMinuteOfEvent, setSkyCalendar } from '../../../src/systems/skyCalendar.js';
+import { SKY_SEGMENTS } from '../../../src/net/skyLaw.js';
+import { sharedClassicMinutes } from '../../../src/net/wire.js';
 import { CLIMATES } from '../../../src/formats/mapsFile.js';
 
 const near = (a, b, eps, msg) => assert.ok(Math.abs(a - b) <= eps, `${msg}: ${a} vs ${b}`);
@@ -96,6 +98,18 @@ test('PRECIP3 THE SNOW YEAR: its origin a step on the event clock\'s grid, at or
   assert.equal(yearOriginOf(405 * Y + 10), yearOriginOf(405 * Y + MIDSUMMER_MINUTE - 1), 'one year, one origin');
   assert.notEqual(yearOriginOf(405 * Y + MIDSUMMER_MINUTE - 1), yearOriginOf(405 * Y + MIDSUMMER_MINUTE + S), 'midsummer turns it');
   assert.equal(MIDSUMMER_MINUTE, (COLDEST_DAY + 180) * 1440);
+  // online the sky keeps its own pace (TIME1): the origin is still a step of the EVENT clock's grid, the first at or after
+  // the sky's midsummer
+  setSkyCalendar(true);
+  try {
+    for (const days of [30, 200, 500, 900]) {
+      const t = sharedClassicMinutes(SKY_SEGMENTS[0].fromMs + days * 86_400_000);
+      const o = yearOriginOf(t);
+      assert.equal(o % S, 0, `on the event clock's grid, ${days} days on`);
+      const after = ((skyMinuteOfEvent(o) - MIDSUMMER_MINUTE) % Y + Y) % Y, before = ((skyMinuteOfEvent(o - S) - MIDSUMMER_MINUTE) % Y + Y) % Y;
+      assert.ok(after < Y / 2 && before > Y / 2, `the first step at or after the sky's midsummer, ${days} days on`);
+    }
+  } finally { setSkyCalendar(false); }
 });
 
 test('PRECIP3 THE LATTICE: a place\'s pack is the same whoever integrates it and in whatever company (two windows sharing a point), in one go or in slices, its quiet steps skipped exactly; the pack now is the next step\'s at that step; the wet types alone asked of the map (mutants: the skip loosened; a point\'s history leaning on its neighbours; the partial step at the step\'s start)', () => {
@@ -132,6 +146,8 @@ test('PRECIP3 THE LATTICE: a place\'s pack is the same whoever integrates it and
     a.advance([pt], next);
     for (let k = 0; k < N; k++) near(now[k], pt.swe[k], 1e-4, `the partial step meets the step at level ${k}`);
     assert.deepEqual(WET_TYPES, ['rain', 'snow']);
+    for (const held of a._systems.values()) for (const s of held.systems) assert.ok(['rain', 'snow', 'thunder'].includes(s.type), `the lattice asks the wet types alone: ${s.type}`);
+    assert.ok([...a._systems.values()].some((h) => h.systems.length), 'and found some');
     for (const s of systemsNear(pt.x, pt.z, t, woods, 20000, WET_TYPES)) assert.ok(['rain', 'snow', 'thunder'].includes(s.type), 'wet alone');
     assert.ok(PRIORITY.length > WET_TYPES.length);
   } finally { setAirGround(null); }

@@ -113,13 +113,16 @@ function noise3(x, z, t, cell, minutes, salt) {
   const z0 = e0 + (f0 - e0) * v, z1 = e1 + (f1 - e1) * v;
   return z0 + (z1 - z0) * w;
 }
-/** THE SPELL at field (x, z) and event minute `t`, in [-1, 1] (times a climate's `spell` it is degrees). Pure. */
-export function spellAt(x, z, t) {
-  const dx = SPELL.drift[0] * t, dz = SPELL.drift[1] * t, oct = SPELL.octaves;
+/** THE SPELL in the air mass's own frame (the drift taken out): at its point (x, z) and event minute `t`, in [-1, 1]. Pure. */
+export function spellOf(x, z, t) {
+  const oct = SPELL.octaves;
   let n = 0;
-  for (let k = 0; k < oct.length; k++) n += oct[k].weight * noise3(x - dx, z - dz, t, oct[k].cell, oct[k].minutes, SPELL.salt + k);
+  for (let k = 0; k < oct.length; k++) n += oct[k].weight * noise3(x, z, t, oct[k].cell, oct[k].minutes, SPELL.salt + k);
   return Math.max(-1, Math.min(1, (n - 0.5) * 4));   // the sum's spread widened to the climate's swing (value noise sits near its middle: sd 0.55)
 }
+/** THE SPELL at field (x, z) and event minute `t`, in [-1, 1] (times a climate's `spell` it is degrees): the air mass's
+ *  own field, carried on its drift. Pure. */
+export const spellAt = (x, z, t) => spellOf(x - SPELL.drift[0] * t, z - SPELL.drift[1] * t, t);
 
 // ---- where the air is read: the climates, the ground's height, the biomes -----------------
 

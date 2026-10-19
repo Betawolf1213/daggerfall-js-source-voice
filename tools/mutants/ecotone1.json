@@ -139,8 +139,8 @@
   {
     "name": "ECOTONE1-classic-call-dropped",
     "file": "src/render/renderer.js",
-    "old": "  tex = ecotone(tex, vLocalXZ, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share\n  ${waterBedMix()}",
-    "new": "  ${waterBedMix()}",
+    "old": "  tex = ecotone(tex, vLocalXZ, vec3(tuv, float(layer)), gx, gy);   // ECOTONE1: a border's ground, its neighbours' share\n  tex = snowGround(tex, vLocalXZ, vWorldPos.y",
+    "new": "  tex = snowGround(tex, vLocalXZ, vWorldPos.y",
     "tests": [
       "test/systems/ecotone1.test.js"
     ]

@@ -201,6 +201,7 @@ export function createPixelBuild(host) {
     let groundLo = Infinity, groundHi = -Infinity;
     for (let i = 1; i < positions.length; i += 3) { if (positions[i] < groundLo) groundLo = positions[i]; if (positions[i] > groundHi) groundHi = positions[i]; }
     const groundMid = dfLocation ? avg * worldHeight : (groundLo + groundHi) / 2;
+    if (snowCover?.on) await snowCover.settle(() => breather.breathe());   // the snow about the player integrated before a season is read
     const season = snowCover ? snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season;
     const climateArchive = (archive, record) => applyClimate(archive, record, climateBase, season);
     // WD3 (AUDIT WD3 G5): A TOWN'S BUILDINGS WEAR ITS LOCATION'S CLIMATE - DaggerfallLocation's ClimateUse.UseLocation

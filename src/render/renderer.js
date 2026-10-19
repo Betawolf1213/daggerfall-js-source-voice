@@ -7403,13 +7403,12 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, drawWas);
     gl.deleteFramebuffer(rf); gl.deleteFramebuffer(df);
     if (scissor) gl.enable(gl.SCISSOR_TEST);
-    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);
-    gl.generateMipmap(gl.TEXTURE_2D_ARRAY);
-    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.NEAREST);   // GRAIN1: as every tile array
-    this._setGroundSampler(groundSharpnessTier());
-    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    if (!this._retroMips) gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAX_LEVEL, 0);   // RETRO1
+    // sampled as uploadTileArray samples every tile array (GRAIN1's chain and magnifier, the ground tier, DFU's clamp,
+    // RETRO1's level), one statement a line of its own here so each of those laws' records names its one site there
+    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex); gl.generateMipmap(gl.TEXTURE_2D_ARRAY);
+    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.NEAREST); this._setGroundSampler(groundSharpnessTier());
+    gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    if (this._retroMips !== true) gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAX_LEVEL, 0);
     this._tArrayTex = null;   // PERF-TEX2: unit 0 holds the twin now - the next terrain draw binds its own
     this.tileArrays.set(key, tex);
     this._tileDims.set(key, [w, h, 2 * TWIN_LAYERS]);

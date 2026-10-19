@@ -47,8 +47,8 @@
   {
     "name": "PRECIP1-the-drift-dropped",
     "file": "src/systems/weather/airTemperature.js",
-    "old": "const dx = SPELL.drift[0] * t, dz = SPELL.drift[1] * t, oct = SPELL.octaves;",
-    "new": "const dx = 0, dz = 0, oct = SPELL.octaves;",
+    "old": "export const spellAt = (x, z, t) => spellOf(x - SPELL.drift[0] * t, z - SPELL.drift[1] * t, t);",
+    "new": "export const spellAt = (x, z, t) => spellOf(x, z, t);",
     "tests": [
       "test/systems/weather/precip1_air.test.js"
     ]
@@ -349,7 +349,9 @@
     "new": "  if (c <= 0.0) return c;",
     "tests": [
       "test/render/precip4_snowground.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "the patch formula itself maps a whole cover to 1 for every patch value (smoothstep(-e, e, 1 + e - p) with p in [0, 1]); the early return is the fast path, kept"
   },
   {
     "name": "PRECIP4-the-ends-quarter-span",
@@ -462,8 +464,8 @@
   {
     "name": "PRECIP4-the-scissor-left-off",
     "file": "src/render/renderer.js",
-    "old": "    if (scissor) gl.enable(gl.SCISSOR_TEST);\n    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);",
-    "new": "    gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);",
+    "old": "    if (scissor) gl.enable(gl.SCISSOR_TEST);\n",
+    "new": "",
     "tests": [
       "test/render/precip4_snowground.test.js"
     ]
@@ -507,7 +509,7 @@
   {
     "name": "PRECIP4-the-twin-off-the-lane",
     "file": "src/scenes/snowCoverHost.js",
-    "old": "      return (on && winterOf.has(a) ? renderer.tileArrays.get(twinKey(a)) : null) ?? renderer.tileArrays.get(a) ?? null;",
+    "old": "      return (lane() && winterOf.has(a) ? renderer.tileArrays.get(twinKey(a)) : null) ?? renderer.tileArrays.get(a) ?? null;",
     "new": "      return (winterOf.has(a) ? renderer.tileArrays.get(twinKey(a)) : null) ?? renderer.tileArrays.get(a) ?? null;",
     "tests": [
       "test/render/precip4_snowground.test.js"
@@ -516,8 +518,8 @@
   {
     "name": "PRECIP4-a-desert-twinned",
     "file": "src/scenes/snowCoverHost.js",
-    "old": "      if (!on || !groundIsSnowy(climate, SEASON.Winter)) return;",
-    "new": "      if (!on) return;",
+    "old": "      if (!lane() || !groundIsSnowy(climate, SEASON.Winter)) return;",
+    "new": "      if (!lane()) return;",
     "tests": [
       "test/render/precip4_snowground.test.js"
     ]
@@ -653,6 +655,60 @@
     "file": "src/scenes/world.js",
     "old": "    { const _sp = playerTravelPixel(); snowCover.tick({ px: _sp.x, py: _sp.y, t: playerTicker.classicMinutes, dt, arriving: !playerSpawned }); }",
     "new": "",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-the-first-frame-turns",
+    "file": "src/scenes/snowCoverHost.js",
+    "old": "  const lane = () => (on ?? !!owns());",
+    "new": "  const lane = () => (on ?? false);",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-the-settle-breathless",
+    "file": "src/scenes/snowCoverHost.js",
+    "old": "      while (!(ready = lattice.advance(window, t, SETTLE_MS))) await breathe();",
+    "new": "      ready = lattice.advance(window, t);",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-the-settle-unread",
+    "file": "src/scenes/snowCoverHost.js",
+    "old": "      for (const pt of window) readNow(pt, t);\n      gen++;\n    },",
+    "new": "      gen++;\n    },",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-a-settle-every-build",
+    "file": "src/scenes/snowCoverHost.js",
+    "old": "      if (ready && nowRead > -Infinity) return;",
+    "new": "",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-the-build-unsettled",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "    if (snowCover?.on) await snowCover.settle(() => breather.breathe());   // the snow about the player integrated before a season is read\n",
+    "new": "",
+    "tests": [
+      "test/render/precip4_snowground.test.js"
+    ]
+  },
+  {
+    "name": "PRECIP4-a-first-read-from-bare",
+    "file": "src/scenes/snowCoverHost.js",
+    "old": "    if (!l.shown) l.shown = Float32Array.from(l.target);",
+    "new": "    if (!l.shown) l.shown = Float32Array.from(BARE_LINE);",
     "tests": [
       "test/render/precip4_snowground.test.js"
     ]

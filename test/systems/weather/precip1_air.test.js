@@ -9,14 +9,15 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  airTemperature, airParamsAt, snowShareOf, seasonAir, dayAir, spellAt, setAirGround, setAirBiome, airGround, macroHeightM,
+  airTemperature, airParamsAt, snowShareOf, seasonAir, dayAir, spellAt, spellOf, SPELL, setAirGround, setAirBiome, airGround, macroHeightM,
   altitudeOfWorldY, dayAndHourOf, CLIMATE_AIR, LAPSE_C_PER_M, COLDEST_DAY, WARMEST_HOUR, FALL, SNOW_ALL_C, RAIN_ALL_C,
   SEA_LEVEL_M, LATITUDE_C_PER_ROW,
 } from '../../../src/systems/weather/airTemperature.js';
 import {
   setPrecipLaw, precipLawOn, snowShareAt, phaseWord, phaseRound, mapGround, currentSnowShare, setWeather, resetWeatherSim,
-  setSnowGroundLaw, PHASE_HYSTERESIS, PHASE_INTENSITY,
+  setSnowGroundLaw, PHASE_HYSTERESIS, PHASE_INTENSITY, setWeatherFieldLaw, setWeatherMapLaw, sampleWeatherField, currentWeather,
 } from '../../../src/systems/weather/weatherSim.js';
+import { weatherAt } from '../../../src/systems/weather/weatherMap.js';
 import { createWeatherFront } from '../../../src/systems/weather/weatherFront.js';
 import { PrecipitationRenderer, MIX_SHIFT } from '../../../src/render/precipitation.js';
 import { mixColor, CURTAIN_RAIN_COLOR, CURTAIN_SNOW_COLOR, curtainsOf } from '../../../src/render/rainCurtains.js';
@@ -64,9 +65,11 @@ test('PRECIP1 THE SPELL: pure in place and minute, within [-1, 1], continuous (a
   }
   const mean = vals.reduce((a, b) => a + b, 0) / vals.length, sd = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length);
   assert.ok(Math.abs(mean) < 0.12 && sd > 0.4 && sd < 0.75, `centred and spread: mean ${mean.toFixed(3)} sd ${sd.toFixed(3)}`);
-  // the air mass rides the drift: the spell a day on, a day's drift downwind, is the same mass (its time octave aside)
-  const a = spellAt(300000, 200000, 10 * 1440), b = spellAt(300000 + 18 * 1, 200000 + 6 * 1, 10 * 1440 + 1);
-  assert.ok(Math.abs(a - b) < 0.005, 'a minute on, a minute\'s drift downwind');
+  // the air mass rides the drift: the field at a place is the mass's own field where the drift has carried it from
+  for (const t of [0, 777, 10 * 1440, 123456]) {
+    for (const [x, z] of [[300000, 200000], [12345, 67890]]) assert.equal(spellAt(x, z, t), spellOf(x - SPELL.drift[0] * t, z - SPELL.drift[1] * t, t), `carried at ${t}`);
+  }
+  assert.ok(SPELL.drift[0] > 0 && SPELL.drift[1] > 0, 'east-north-east, as the Bay\'s air');
 });
 
 test('PRECIP1 THE CLIMATES BLEND between pixel centres - a climate\'s own numbers at its centre, the border warmed over the pixel either side and never at its edge; the latitude from each climate\'s own middle row; the ground\'s height blended as the air; a biome leans the air by its share (mutants: the blend nearest-pixel; the latitude dropped; the biome unleaned)', () => {
@@ -162,6 +165,24 @@ test('PRECIP2 THE FRONT\'S SNOW SHARE: under the law the player\'s share (the si
     fx = fr.tick({ weather: 'snow', nowMinutes: 1000, jump: true, tsec: 0, peak: 1 });
     assert.equal(fx.snow, currentSnowShare());
   } finally { setPrecipLaw(null); resetWeatherSim(); }
+  // under the law, at a rain front's heart and at the height where its air is half snow: the front carries the sim's
+  // share, a fraction - never the word's whole or none
+  const woodsAt = () => CLIMATES.Woodlands, x = 151 * S, z = 400 * S;
+  let m = (406 * 360 + COLDEST_DAY) * 1440;
+  while (weatherAt(x, z, m, woodsAt).word !== 'rain') m += 60;
+  setAirGround({ climateAt: woodsAt, heightAt: () => 0 });
+  setPrecipLaw(true); setWeatherFieldLaw(true); setWeatherMapLaw(true);
+  try {
+    const intensity = weatherAt(x, z, m, woodsAt).intensity;
+    let lo = -2000, hi = 4000;
+    for (let i = 0; i < 60; i++) { const h = (lo + hi) / 2; if (snowShareAt(x, z, m, h, intensity, 'rain') > 0.5) hi = h; else lo = h; }
+    sampleWeatherField(m, CLIMATES.Woodlands, [x, z, (lo + hi) / 2], woodsAt, 'jump');
+    const share = currentSnowShare();
+    assert.ok(share > 0.2 && share < 0.8, `a sleet: ${share}`);
+    const fr = createWeatherFront({ seed: 3 });
+    const fx = fr.tick({ weather: currentWeather(), nowMinutes: m, jump: true, tsec: 0, peak: 1 });
+    near(fx.snow, share, 1e-12, 'the front carries the air\'s share');
+  } finally { setPrecipLaw(null); setWeatherFieldLaw(null); setWeatherMapLaw(null); setAirGround(null); resetWeatherSim(); }
   const src = readFileSync('src/systems/weather/weatherFront.js', 'utf8');
   assert.match(src, /const fallOf = \(mode\) => \(mode && mode !== 'sand' && precipLawOn\(\) \? 'wet' : precipKind\(mode\)\);/);
   assert.match(src, /if \(inMode && outMode && fallOf\(inMode\) === fallOf\(outMode\)\) \{/);

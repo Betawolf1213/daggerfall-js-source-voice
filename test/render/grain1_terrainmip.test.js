@@ -79,7 +79,8 @@ test('GRAIN1: the tile array is the ONLY texture this touches - the sprites keep
   // every other generateMipmap in the renderer predates this; the sprite and
   // flat paths must not have acquired one, or every billboard goes soft.
   const mips = [...r.matchAll(/gl\.generateMipmap\(([^)]*)\)/g)].map((m) => m[1]);
-  assert.deepEqual(mips, ['gl.TEXTURE_2D_ARRAY'], `only the tile array is mipmapped (found: ${mips.join(', ')})`);
+  // PIN MOVED (PRECIP4, 2026-10-19): and a ground set's twin (renderer.js makeTwinArray) - a tile array too, sampled as one
+  assert.deepEqual(mips, ['gl.TEXTURE_2D_ARRAY', 'gl.TEXTURE_2D_ARRAY'], `only the tile arrays are mipmapped (found: ${mips.join(', ')})`);
 });
 
 test('GRAIN2: the anisotropy is a DIAL, and its tiers never exceed what the driver allows', async () => {
