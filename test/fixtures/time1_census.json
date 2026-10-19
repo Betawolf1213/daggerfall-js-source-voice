@@ -246,6 +246,18 @@
    "why": "the weather's pace"
   },
   {
+   "file": "src/scenes/world.js",
+   "has": "snowCover.tick({ px: _sp.x, py: _sp.y, t: playerTicker.classicMinutes,",
+   "clock": "event",
+   "why": "PRECIP4: the snowpack walks the event clock with the weather map that dropped it (its season and hour the sky's - snowpack.js)"
+  },
+  {
+   "file": "src/scenes/world.js",
+   "has": "place: () => ({ px: state.current.x, py: state.current.y, t: worldMinutes() })",
+   "clock": "event",
+   "why": "PRECIP4: a build's settle - the snowpack's event minute, as the frame's tick"
+  },
+  {
    "file": "src/scenes/exterior.js",
    "has": "nowMinutes: playerTicker.classicMinutes, tsec",
    "clock": "event",
