@@ -2690,8 +2690,8 @@ account service's (its window law `loadHours` and its drawing `answerTable` are 
 
 Every sum is weighted by `_sample_interval` (Analytics Engine samples under load); a peak is a room's own, unweighted.
 `.github/workflows/relay-load.yml` asks them by hand from the Actions tab ("Relay load", 1 to 168 hours), with the
-deploy's token (Account Analytics: Read), and draws them into the run's summary; a refusal is a warning, never a stop.
-It reads only, and it is no part of the relay's bundle: no version, no drop.
+deploy's token (Account Analytics: Read), and draws them into the run's summary; a refusal is a warning, and a run that
+read nothing fails (AUDIT PLAN-1000 H3). It reads only, and it is no part of the relay's bundle: no version, no drop.
 
 **Not here: the Worker's own refusals.** A room the runtime called overloaded, or reset, is answered at the Worker's
 door (DO-ASK `askRoom`), before any room counts it; those are Cloudflare's Workers Observability and its GraphQL
@@ -2701,13 +2701,17 @@ rides the next relay slice that drops anyway.
 **Pins.** `test/server/relayload.test.js` (2): the questions over the relay's dataset (read off `server/wrangler.toml`),
 each double the field a flushed RoomMetrics point carries there, every sum weighted, a peak unweighted, the orders, the
 window refused before the SQL, an answer drawn; the workflow by hand only, its input once as environment, its own
-queue, deploying nothing, its metrics step run under bash over a fake SQL API. `tools/mutants/relayload.json`: 10 - 9
-dead, 1 equivalent as recorded (d1-load.yml's own belt and braces).
+queue, deploying nothing, its metrics step run as written under bash over a fake SQL API. `tools/mutants/relayload.json`:
+38, all dead (the lane blocks below: 10 at the slice, one of them wrongly recorded equivalent; 22 from lane A; 6 from
+lane H).
 
 **Met live, fixed.** The SQL API refused the kinds question (HTTP 422): an IF's two arms must be one type, and a Double
 beside the Integer `0` is not - `0.0` now, and pinned (RELAYLOAD-if-integer). The fake SQL API of the pins cannot know
-it; only the real one did. The fixed kinds question and the windows question have not been asked live since (the
-session's token was not to be used again); the first run from the Actions tab asks them.
+it; only the real one did. AUDIT PLAN-1000 H4: none of the three as it stands has been asked live since - the kinds'
+fixed IF, and lane A's windows (`IN`, its LIMIT, a 24-hour span) and crowds (`blob1 != 'chat'`) after the one live
+crowds run (the session's token was not to be used again). Cloudflare's SQL reference lists `IN`, `toStartOfInterval(ts,
+INTERVAL 'n' UNIT)` and `if()`, and says nothing of an integer arm beside a float one - which the 422 taught. The first
+run from the Actions tab asks them: run it once after the merge.
 
 **The first reading** (2026-10-18, the last 24 hours, the crowds question, run by hand with the owner's token): every one
 of the forty busiest room-windows was `chat`, peaking at 1,074 sockets at 18:50 UTC and 1,054 at 21:24 UTC the day before,
@@ -2716,6 +2720,34 @@ kind, never a room; a region's bus holds its region's players the same way): sin
 player as a ShardSocket in its own index (`_vhello`, `_adopt`), so its peak is the hub links - every tab online, about a
 thousand (AUDIT PLAN-1000 A8). The cap at its door (CHAT_SOCKETS_MAX) counts real sockets only, so the bus refuses
 nobody at 2,048; what it carries is every hub hello, leave and handed-up act of the whole world, one object's work.
+
+**AUDIT PLAN-1000, lane A (a cold read on a frozen tree; fixed after it - commit "AUDIT PLAN-1000 lane A").**
+- **A1:** `chat` is about four sockets a player, not two - each bus holds every shard's player again; said above.
+- **A2:** 22 of the lane's 23 candidate mutants survived the slice's pins. The pins now hold every question's columns to
+  its aliases, every alias to the double RoomMetrics writes, no COUNT, the IF whole, the orders, limits and span, the
+  workflow's token step run, the fake SQL API held to its URL and method; 22 records.
+- **A3, A4:** the windows question is the crowd's kinds over at most 24 hours, every row of the span (a LIMIT of 400 had
+  cut it silently); the crowds question leaves the channels out (the hub's bus filled all forty rows).
+- **A5, A8:** a bucket's sockets are an estimate from below; "most likely the hub's bus", its peak the hub links.
+- **A6:** the summary says the window the SQL asks (an empty input is one hour), through the tool's `--hours`.
+- **A7:** the refusal-drawn record was no equivalent - an HTTP 500 carrying rows was drawn; fixtures for both tools.
+- **A9:** one book of questions and one command line for both tools (`tools/d1Load.mjs` questionBook, runBook).
+- **A10:** the token is the two steps' that use it, never the job's.
+
+**AUDIT PLAN-1000, lane H (lane A's fixes and the branch whole, cold-read; fixed after it).** RELAY-LOAD's part:
+- **H1:** lane A had no block of its own here, and this record's pins line still said 10 - the block above and the line.
+- **H3:** the workflow finished green when every question was refused, and blamed the token for any answer but 200 (a
+  422 is the SQL's): a run that read nothing exits 1, its partial summary kept, and the token is named on 401 and 403
+  alone - any other answer says the API's own words.
+- **H4:** recorded above.
+- **H10:** the pins prepended their own `set -euo pipefail` and so never held the step's; they run it as written now,
+  and hold `--max-time 60`, the run's last warning, and the job's `timeout-minutes: 10` (added: a hung call held a runner
+  up to six hours). Six records, all dead.
+- **Checked and sound** (lane H, reproduced): every column each question reads is the double `RoomMetrics.flush` writes,
+  one by one; every SUM weighted, counts `SUM(_sample_interval)`, MAX and the crowds rows unweighted, both IF arms Float64;
+  the windows LIMIT (36 a span hour and 36) covers three kinds' every bucket at the 24-hour cap; the token on the two
+  steps alone, no `set -x`, the input as environment and held to 1-168 whole hours; relayload 38 and d1load 12 records,
+  all dead.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
@@ -2845,7 +2877,7 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 1. **The gate court's door - at a thousand, now.** A court admits HELLO_HZ_MAX (10) hellos a second, one bucket for
    everyone, and a player in the court whose fight has said nothing for COURT_SILENT_MS (20 s) is cast out
    (`gateCourt.js` silent - a socket still retrying counts as silence). Modelled on the client's own retry ladder
-   (hubWaveModel's, at the court's rate): 256 arriving within 5 s are refused busy 636 times (the mean of twenty seeds),
+   (hubWaveModel's, at the court's rate): 256 arriving within 5 s are refused busy 636.5 times (the mean of twenty seeds),
    the median player in at 11.9 s and the last at 28.4 s; 512 within 10 s, the median at 24.7 s. So at the opening a share of the crowd is
    thrown out of the court it is waiting to enter, walks back in and queues again - the field's "breaking down near
    oblivion gate". A hello costs the court some 1.4 ms at 256 (the real Room on the pins' fake, tokens minted apart).
@@ -2872,7 +2904,7 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 8. **10,000 writes:** past 3,000 one primary does not carry the hot rows whatever is folded: each account's hot rows
    sharded by account across databases (the hub's shape), cross-account acts by escrow (`piece_escrow`, `wild_escrow`
    the precedent). A database split by domain frees little - every route reads `players`, `sessions` and
-   `realm_characters`, and 105 foreign keys cascade from `players`. **ACCOUNT-SHARDS, a design of its own.**
+   `realm_characters`, and 103 foreign keys reference `players`, 90 of them cascading (AUDIT PLAN-1000 H8: this said 105). **ACCOUNT-SHARDS, a design of its own.**
 
 ### The slices, in order
 
@@ -2883,7 +2915,13 @@ read-only surveys say comes next. **Design target unchanged: 10,000 concurrent, 
 3. **PRIMARY-FOLD - the account's own** (no drop): the per-request checks folded into each act's own batches, the
    chapters' Turning on the minute's clock and its list off a replica, the mint's #1 off the primary, the seats' list on
    a SEAT-REPLICA session. Some 30 trips a second at 1,000, no behaviour moved; each measured before and after with the
-   trip counter.
+   trip counter. AUDIT PLAN-1000 H2 - WHAT WAS BUILT (parts one to three, below): the door's reads in one statement, a
+   week read settled kept in its isolate, the chapters' sheet and a chapter claim in one batch each - some 12 trips a
+   second by the parts' own counts (3.8 + 5-6 + 2.4), not 30. Left, each with its reason: the mint's #1 off the primary
+   (AUDIT SCALE4d A1's law - a #1 read stale off a replica is counted again and stored; the honours stay on the binding);
+   the chapters' list off a replica and the seats' list on a SEAT-REPLICA session (each settles a Turning its reads must
+   see - now asked once a week, so what remains is their own rows, a replica's only once the settle carries a bookmark:
+   a slice of its own when `tools/d1Load.mjs`'s readings say the primary needs it).
 4. **SESSION-SIGN** (decision 4, below): the session's lookup off every hot route - a short-lived signed session the
    service mints and the hot routes verify, the lookup kept for the routes that change an account.
 5. **COURT-WIDE** (decision 5): copies that hold fighters of their own and hand the court one batch a beat.
@@ -2901,7 +2939,7 @@ Relay slices ride as few drops as possible (the deploy policy above): GATE-DOOR'
   costs a court some 1.4 ms of its own at 256 sockets, so the opening's door spends some 70 ms of the court's second while
   the crowd comes in. Modelled (the client's own retry ladder at the court's rate, twenty seeds, the refusals their mean:
   `RATE=48 ARRIVE_S=5 N=256 node tools/hubWaveModel.mjs`): 256 arriving within 5 s are in within their arrival, none
-  refused (636 refusals at 10); 1,024 arriving over 20 s - four courts' crowds through one door, a bound and not a court,
+  refused (636.5 refusals at 10); 1,024 arriving over 20 s - four courts' crowds through one door, a bound and not a court,
   which holds 256 - are refused 61 times, the median player in at 10.1 s (9,593 refusals and 50.3 s at 10).
 - **The client.** The session stamps a busy refusal of its room on its own clock (`online.js` `busyAt`), and the court
   reads it (`gateCourt.js` `door`, handed by the world host): while I am new to a court (COURT_DOOR_WAIT_MS, 60 s from my
@@ -2965,15 +3003,17 @@ own batch (`progress.js` spendProgress). One statement, not a batch: eight pins 
 batch at the door would have answered them first; the routes' batches keep every failure they had. A request that names
 a character and claims nothing asks the tombstone alone, as it did.
 
-**Counted after:** a Renown claim 7 trips to 5, with a region 8 to 6, with a name 6 to 4; a harvest 10 to 8; nothing else
+**Counted after:** a Renown claim 7 trips to 5, with a pledged region 8 to 6 (an unpledged one 6 to 4 - AUDIT PLAN-1000
+H12: two saved either way), with a name 6 to 4; a harvest 10 to 8; nothing else
 moved. A claim saves its door's reads less one, and its spend's read: three when enforced, two when measured, and one for
 a claim that names no character (a silver find posts `{ kind, rid }`: struck 8 to 7) - a claim that spends nothing (an
-unstruck find, 11) saves none, and a repeat saves one (Renown's, 4 to 3) - AUDIT PLAN-1000 C5, where this said "every other
+unstruck find, 11) saves none, and a repeat saves one measured (Renown's, 4 to 3) and two enforced (5 to 3, H12) - AUDIT PLAN-1000 C5, where this said "every other
 claim two fewer". At the evening's measured rates (a Renown claim some 1.4 a second, a harvest some 0.5 - PRIMARY-TRIPS'
 statements a second over each route's statements a request) the two named routes are 3.8 of the primary's trips a second
 of the 90-130 the plan names - the floor; the other claims' rates are not in the tree. The rest of PRIMARY-FOLD below.
 
-**Pins.** `test/server/primaryfold.test.js` (3): the oracle - the door answers as the three questions did asked alone,
+**Pins, at the slice** (before AUDIT PLAN-1000 C1 moved the spend; the current list is the lane blocks' "Pins after
+it"). `test/server/primaryfold.test.js` (3): the oracle - the door answers as the three questions did asked alone,
 over every state they read; the trips - an enforced claim asks the seat and the bucket of nobody else, credited and spent
 from the door's read; the spend - the door's bucket to its own stream alone. `tools/mutants/primaryfold.json`: 10 - 9
 dead, 1 equivalent as recorded (the door's bucket offered once: no answer spends a stream twice today). Two survived
@@ -3066,6 +3106,33 @@ Pins after it: `primaryfold.test.js` 7, widened; `tools/mutants/primaryfold.json
 recorded (+5: kept by the Proxy, the chapters reading the seats' word, a partial catch-up kept, the rate after the
 reads, the rate after a repeat's answer).
 
+**AUDIT PLAN-1000, lane F (a cold read of lanes B, C and D's fixes, on a frozen tree; fixed after it).** The spend's one
+step (C1) matched the old read-then-write on every state of a differential fuzz - some 217,000 claims over debts, past-cap
+buckets, `played_at` past `played_s`, a cap or rate of 0 or a million, fractional, negative, NaN, Infinity and 2^40
+amounts, enforced and measured, the same hour and the next - every row of both tables to the type: 0 mismatches.
+- **F1 (LOW), fixed: C4 could refuse a seated character's claim `progress-seat`.** The rate's peek is asked before the
+  door's await and the count after it; a request of the same account that opened the next window between them (240 a
+  minute from one isolate) let a claim through whose seat was never read, and the client takes `progress-seat` as
+  final (a Renown report dropped). The claim asks its seat then (`index.js`, doorReads again), pinned by the interleave.
+- **F2, F3, F4 (LOW), pinned:** the peek's edges (the window's very next request the first refused; the window after a
+  full one asks the door once); two claims in one hour, every column of the hour's row summed; the watcher's line read
+  in the player's language at say-time (a German row loaded).
+- **F5 (INFO, = H6), fixed:** `_helloHz` sat between AUDIT-SEATS R3's doc and its method - above it now, its doc naming
+  the stands' rate (a battle key's is HELLO_HZ_MAX either way).
+- **F6 (INFO), recorded: overlapping enforced claims overdraw.** The Renown clamp reads the door's bucket before the
+  route; two claims that overlap are both credited to it, and since C1 the overdraw is a debt the next claims pay back
+  (before C1 it was a debit lost). `progress.js`'s "credited only what its bucket holds" holds for claims that do not
+  overlap.
+- **F7 (INFO):** an answer that spends two streams (a raid's cleanse paying Renown, a writ, a harvest that strikes
+  silver) is one trip fewer since C1 - its second stream's read went with the first's.
+- **F8 (INFO):** 636.5, not 636 (corrected above). **F9:** four survivors recorded equivalent with their reasons (the
+  B1 stamp's `_closedByUs`, `progress_play.at`, the spend's `Math.trunc`, the RETURNING subquery). **F10 (INFO):** a
+  config with no `enforce` reads measured where stepBudget defaulted to enforced - unreachable (progressConfig always
+  says a boolean). **F11:** part one's pins paragraph marked as the slice's.
+
+Pins after it: `primaryfold.test.js` 7, widened; `tools/mutants/primaryfold.json` 42 - 38 dead, 4 equivalent as
+recorded; `gatedoor.json` 14 - 13 dead, 1 equivalent.
+
 ### Decisions for the owner
 
 The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofing" - each answered below its question.
@@ -3086,15 +3153,27 @@ The owner, of decisions 4-6 (2026-10-18): "Make the best call for future proofin
 - **5 - both, in order: COURT-WATCH now, COURT-WIDE next.** COURT-WATCH (`World-Bosses.md` section 24, built): the
   257th stays in the court as its watcher - the fight heard and seen, none of a fighter's part - and asks for a seat
   every COURT_WATCH_ASK_MS; the relay's answer to an `in` that seats a fighter says `me`. Rides world218 (re-hashed in
-  place, undeployed). COURT-WIDE - copies that hold fighters of their own and hand the court one batch a beat - is the
-  future-proof shape past 256, and waits on its own blockers (the brain's census, trails and `here` bound at 256, the
-  copies' uncoalesced poses, the fight record's 2 MB) before it is built.
+  place, undeployed). A seat frees only as freeSeat frees one - a fighter gone with no real part in the fight: one who
+  fought keeps its seat and its claim for the whole fight, a reconnect costing it nothing (AUDIT PLAN-1000 G2, the call
+  made: a watcher is seated past 256 by COURT-WIDE, never by unseating a fighter). COURT-WIDE - copies that hold
+  fighters of their own and hand the court one batch a beat - is the future-proof shape past 256, and waits on its own
+  blockers (the brain's census, trails and `here` bound at 256, the copies' uncoalesced poses - a watcher's too, some
+  40 ms of the court a second at 1,792 watchers, G13 - the fight record's 2 MB) before it is built. The court and its
+  seven copies hold 2,048 sockets: at most 1,792 watch beside 256 fighters (World-Bosses.md section 24).
 - **6 - CHECKPOINT-5: built.** ONLINE_CHECKPOINT_MS 300,000 (`systems/online/onlineCheckpoint.js`): a page put away
-  already checkpoints as it hides and one closed leaves with its save, and every act the service settles saves at once
-  - the periodic checkpoint guards a crash alone, which now loses at most five minutes of walking and looting. Some 60%
-  of the periodic checkpoints go - some 9 of the primary's trips a second at the evening's rate (PRIMARY-TRIPS' 7.66
-  checkpoints a second, three trips each, most of them the periodic one's). Pinned by `realm0.test.js` REALM P0.5 (PIN
-  MOVED) and CHECKPOINT5-two-minutes-again (dead).
+  already checkpoints as it hides, and every act the service settles saves at once - the periodic checkpoint guards a
+  crash alone. AUDIT PLAN-1000 G10 (this said "one closed leaves with its save" and "walking and looting"): a close may
+  cut the hide's put off - RESCUE-SAVE keeps it on that device for its next join, while another device reads the
+  service's, up to five minutes old - and a crash now loses at most five minutes of what the service did not settle:
+  the walking and looting, a quest's steps, a level and its skills, a local shop's buys, never a trade's goods; a give a
+  receiver took from a giver that crashed before its record saw it (a drop, a chest, a body) is locked as the receiver's
+  copy (AUTO-HOLD), its window five minutes where it was two. Some 60% of the periodic checkpoints go - some 9 of the
+  primary's trips a second at the evening's rate if some 65% of PRIMARY-TRIPS' 7.66 checkpoints a second were the
+  periodic one's (G12: "most of them", never measured), three trips each; since SESSION-SIGN a checkpoint is two, so
+  some 6. G9: the two windows the account service sized to two minutes follow it - "playing now" REALM_PLAYING_S 600
+  (two checkpoints; at 300 a playing character read idle a moment each period) and a copy's grace DUPE_GRACE_S 750
+  (two and a half, as before), pinned to ONLINE_CHECKPOINT_MS (`realm1.test.js`). Pinned by `realm0.test.js` REALM P0.5
+  (PIN MOVED) and CHECKPOINT5-two-minutes-again (dead).
 
 ### SESSION-SIGN: built (2026-10-18, this branch - acct155, no migration, no drop)
 
@@ -3109,8 +3188,10 @@ lookup.
 
 **Built.**
 - **The pass** (`server-account/src/sessionPass.js`): a hot route (passRoute - the checkpoint's PUT, `/v1/heartbeat`,
-  `/v1/homes/town`, `/v1/prof/pixels`, `/v1/chapters/list`, `/v1/seats/list`) that the lookup answered hands back
-  `x-session-pass`: the account's id, its session, handle, registration, mute and ban, good for PASS_TTL_S (300 - the
+  `/v1/homes/town`, `/v1/prof/pixels`, `/v1/chapters/list`, `/v1/seats/list`) whose lookup the primary answered (the
+  binding, or a session begun at the primary - AUDIT PLAN-1000 E5) hands back `x-session-pass`
+  (`src/net/sessionPassLaw.js`, H11): the account's id, its session, handle, registration and mute - a banned account is
+  handed none (E6) - good for PASS_TTL_S (300 - the
   owner's five minutes), MAC'd with HMAC-SHA-256 under a key HKDF draws from IDENTITY_PRIVATE_KEY for passes alone (no
   new secret; a pass is never a relay token), the secret in the MAC and never in the pass. The next asks believe it
   there without the lookup. A pass PASS_RENEW_S (60) or less from its end is not believed - the lookup answers and the
@@ -3120,18 +3201,28 @@ lookup.
 - **The page** (`net/accountClient.js`): the one door keeps the pass an answer handed it, with its secret, and sends it
   with that secret's calls alone - and so never to a service from before SESSION-SIGN, whose preflight lets no such
   header through (it never handed one: the deploys may land in either order). A call that could not be made (a preflight
-  refusing it - a service rolled back), a refusal of the session and a sign-out let it go. The realm's own door
-  (`systems/realmSaves.js` realmAsk) carries it, the checkpoint being a hot route.
-- **The lag is the decision's:** a sign-out, a password change, a recovery, a ban or a mute reaches a hot route at its
-  pass's renewal - under PASS_TTL_S - PASS_RENEW_S (240 s) after it was minted - and every other route at once, the
-  relay's token among them (a ban and a mute are pushed to the relay besides).
+  refusing it - a service rolled back), a refusal of the session, a sign-out, and an answer that moves the account under
+  its secret (a guest registered, a sign-in, a recovery, a password changed - E2) let it go; a call that timed out or was
+  aborted keeps it (E7). The realm's own door (`systems/realmSaves.js` realmAsk) carries it, the checkpoint being a hot
+  route.
+- **The lag is the decision's, on the reads:** a sign-out, a password change, a recovery, a ban, a mute or an unmute
+  reaches a hot route's reads at its pass's renewal - under PASS_TTL_S - PASS_RENEW_S (240 s) after it was minted, off
+  the primary's own answer - and every other route at once, the relay's token among them (a ban and a mute are pushed to
+  the relay besides). An unban is no lag (a banned account held no pass). **The writes do not wait (E3):** the checkpoint
+  asks its session and the ban in the read batch it already makes, and the heartbeat's beat in its own UPDATE - no trip
+  more, a signed-out session saving and crediting nothing.
 
 **Counted after (an estimate at the evening's rates, CHECKPOINT-5's cadence):** a page's hot asks are some one each
 35 s (a town's homes, 29 a second at a thousand), 145 s (the heartbeat) and 300 s (the checkpoint) - some 40 lookups a
 second at a thousand online. Under passes a page asks one lookup each 240 s at most on them: some 4 a second, so some 36
-of the lookups a second go, of the 30-74 the plan counted on the primary; which share was the primary's depends on the
-replicas' lag at the hour (the checkpoint's always: it writes). A checkpoint is two trips where it was three. A pass costs
-an HMAC to mint and one to check (microseconds, no I/O) and some 300 bytes a request.
+of the lookups a second go. **A lookup saved is not a primary trip saved (AUDIT PLAN-1000 E1, counted over the real
+Worker by D1's session law):** on the three replica routes (the heartbeat, a town's homes, the pixels) a session begun at
+the primary only moves its first statement from the lookup to the route's own first read, and a bookmarked session's
+lookup was a replica's - no primary trip either way. The primary saves one a request on the binding routes alone: the
+checkpoint (two trips where it was three), the chapters' sheet and the seats' list - some 5-6 of its trips a second at
+the record's rates (3.3 checkpoints, 1.1 sheets, 1.2 lists), more only while a replica lags. The rest is the replicas'
+load: some 30 lookups a second off them, the longer queue at SHED-LONG's peak. A pass costs an HMAC to mint and one to
+check (microseconds, no I/O) and some 300 bytes a request.
 
 **Pins.** `test/server/sessionsign.test.js` (5): the oracle - every hot route answers under a pass exactly as under the
 lookup, for a guest, an account, a developer, a newcomer a week cannot yet witness, a muted one and a banned one, the
@@ -3139,5 +3230,43 @@ switches on and at `dev`, asking no lookup; the checkpoint two trips; believed o
 secret's hands alone (another account's secret, an altered or stretched pass, another key's, one at or past its renewal:
 the lookup); the lag (a ban and a sign-out at the mint at once, at a hot route at the renewal); no key, no pass; the
 preflight. `test/net/sessionsign_client.test.js` (2): the page keeps, sends and lets go of its pass, and the realm's door
-carries it. `tools/mutants/sessionsign.json`: 24, all dead. PIN MOVED: the account version's pins, acct154 to acct155
-(PLAN-1000 - PRIMARY-FOLD's changes to the Worker's law had not moved it), and nine records re-aimed by content, all dead.
+carries it. `tools/mutants/sessionsign.json`: 24 at the slice, all dead. PIN MOVED: the account version's pins, acct154 to
+acct155 (PLAN-1000 - PRIMARY-FOLD's changes to the Worker's law had not moved it): nine version records, and five records
+re-aimed by content (AUDIT PLAN-1000 E12, H9: this said "nine re-aimed"), all dead.
+
+**AUDIT PLAN-1000, lane E (a cold read on a frozen tree; fixed after it).** Forgery and replay held under every attempt
+the lane made (an altered body, a stretched `x`, another account's secret, the secret with a character added, another
+key, a cut MAC, four parts, a relay `v1.` token read as a pass and a pass read as one, a non-canonical base64 of the same
+bytes): the lookup each time.
+- **E1 (MED), recorded above:** the saving is mostly the replicas', some 5-6 primary trips a second.
+- **E2 (MED), fixed: a new registration read as a guest for up to four minutes.** A guest's pass says no handle, and
+  registering upgrades the account under the same secret: the hot routes answered `mail-needs-account`,
+  `prof-need-account`. The page lets its pass go on every answer that moves the account under its secret.
+- **E3 (MED), fixed: the checkpoint and the beat are writes, and a pass let them through a sign-out or a ban** - a save
+  landed 200 s after "sign out of every device" (against SAFE4's "no save"). Each asks its session and the ban itself,
+  in the statement it already makes.
+- **E4 (MED), fixed:** two SCALE4g records the slice re-aimed no longer parsed (a ` }` written into the wrong record) -
+  mutantdrift holds a record to apply, not to parse; both re-run, dead.
+- **E5 (LOW), fixed: a pass minted off a lagging replica's lookup** carried the state from before a sign-out and was
+  believed another 240 s: minted off the primary's own answer alone (`passMintable`, service.js DB_FIRST_PRIMARY).
+- **E6 (LOW), fixed: an unban lagged** - a banned account's 403 carried a pass that held the ban: minted after the ban
+  check, a banned account handed none (its ban and reason left out of the pass). An unmute's board flag still lags to
+  the renewal, recorded above.
+- **E7 (LOW), fixed:** the page let its pass go on any thrown fetch, its own heartbeat's timeout included - under the very
+  overload a pass is for. A timeout or an abort keeps it.
+- **E8 (LOW), pinned:** the oracle's town had no home and its pixels a refused one, so every account read alike there -
+  a home seeded, valid pixels, each route's answers held to differ across the accounts; the oracle held to PASS_PATHS
+  whole; the realm door's offline forget and the length bound pinned.
+- **E9 (LOW), fixed:** a long ban reason made a pass past the 1,024 bound, minted every ask and never believed - a pass
+  past PASS_MAX_CHARS is minted none (and carries no reason now).
+- **E10 (INFO), left: HKDF to an HMAC key was not run in workerd here** (no runtime in the tree, no network).
+  `patreon.js`'s seal already derives through HKDF in production; a service whose derivation failed mints no pass and
+  asks the lookup as before - the cost is the saving, never a refusal.
+- **E11 (INFO), recorded in `sessionPass.js`:** IDENTITY_PRIVATE_KEY outlives a deploy, so a slice that changes what a
+  pass claims changes PASS_INFO with it.
+- **E12 (INFO), fixed:** the PRIMARY-FOLD import comment back on `doorReads`; the count above.
+
+Pins after it: `sessionsign.test.js` 5, `sessionsign_client.test.js` 2, both widened; `tools/mutants/sessionsign.json` 38,
+all dead (+14: the mint before the ban, off a replica, binding-only, the first-primary word, a route added, the bound
+unminted and unread, the save's and the beat's session and ban unread or unsent, a timeout forgetting, a registration
+keeping, the realm's offline keep).

@@ -4534,6 +4534,12 @@ export const relaySupportsGateSite = (v) => { const m = /^world(\d+)$/.exec(type
  *  whole number of points under GATE_HEAL_WIRE_MAX. */
 export const GATE_HEAL_RELAY_MIN = 140;   // world140 - WB11's and GATE-HEAL's (world138 on their branch; main's HERALD and LOOT7 took world138 and world139)
 export const relaySupportsGateHeal = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= GATE_HEAL_RELAY_MIN; };
+/** COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24; AUDIT PLAN-1000 G3): the first relay whose answer to an `in`
+ *  that seats a fighter says so (`me`). A client the full court keeps as its watcher on an older relay would be seated by
+ *  that relay's next `in` and never told - in the census and the boss's health, striking nothing - so before it a full
+ *  court refuses as it did. */
+export const COURT_WATCH_RELAY_MIN = 218;
+export const relaySupportsCourtWatch = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= COURT_WATCH_RELAY_MIN; };
 export const GATE_HEAL_ROWS_MAX = 8;
 export const GATE_HEAL_WIRE_MAX = 100_000;
 /** DISCORD-GATES: a gate's place on the wire - "Copperham, Wrothgarian Mountains" (gateSite.js `place`) - and its law:

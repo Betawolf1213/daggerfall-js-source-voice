@@ -139,6 +139,21 @@ test('AUDIT PLAN-1000 C1 THE SPEND IS ONE STEP OVER THE ROW AS IT STANDS: its SQ
     assert.equal(n, 2 * 3 * 6 * 5 * 3);
     assert.equal(await spendProgress(db, 'no-such-player', 'renown', 5, T0, { enforce: true, streams: { renown: { rate: 1, cap: 2 } } }), null, 'no account row: nothing spent');
 
+    // AUDIT PLAN-1000 F3: TWO CLAIMS IN ONE HOUR - the hour's row sums them, every column of it
+    for (const enforce of [true, false]) {
+      raw.prepare('DELETE FROM progress_play WHERE player = ?').run(eve.id);
+      raw.prepare('DELETE FROM progress_hours WHERE player = ?').run(eve.id);
+      raw.prepare('UPDATE players SET played_s = 0 WHERE id = ?').run(eve.id);
+      const band = { rate: 0, cap: 10 };
+      const one = stepBudget({ allowance: null, played: 0, gain: 12, band, enforce });
+      const two = stepBudget({ allowance: one.allowance, played: 0, gain: 7, band, enforce });
+      await spendProgress(db, eve.id, 'renown', 12, T0, { enforce, streams: { renown: band } });
+      await spendProgress(db, eve.id, 'renown', 7, T0 + 60, { enforce, streams: { renown: band } });
+      const hour = raw.prepare("SELECT amount, played_s, over, claims FROM progress_hours WHERE player = ? AND stream = 'renown'").get(eve.id);
+      assert.ok(one.over > 0 && two.over > 0, 'both past the bucket');
+      assert.deepEqual([Number(hour.amount), Number(hour.played_s), Number(hour.over), Number(hour.claims)], [19, 0, one.over + two.over, 2], `the hour, both claims summed (enforce ${enforce})`);
+    }
+
     // THE OVERLAP: the second claim's spend lands between the first's start and its write - both debits kept
     raw.prepare('DELETE FROM progress_play WHERE player = ?').run(eve.id);
     raw.prepare('UPDATE players SET played_s = 0 WHERE id = ?').run(eve.id);
@@ -275,7 +290,7 @@ test('PRIMARY-FOLD a chapter claim reads its head, its Roll\'s rows and the reco
   } finally { Date.now = realNow; }
 });
 
-test('AUDIT PLAN-1000 C4 a claim the account\'s rate will refuse asks the tombstone alone - never the seat or the bucket - and is refused 429; a tombstone over its rate still hears 410 first, as it always did (mutants: the claim\'s reads asked of a refused claim; the count taken twice)', async () => {
+test('AUDIT PLAN-1000 C4 a claim the account\'s rate will refuse asks the tombstone alone - never the seat or the bucket - and is refused 429, the window\'s very next request the first refused (F2); the window after a full one asks the door once and lands; a claim the peek found full and its count let through - the window turned between them - asks its seat and lands (F1); a tombstone over its rate still hears 410 first, as it always did (mutants: the claim\'s reads asked of a refused claim; the count taken twice; the peek one late; the peek of any window; the seat unasked after the turn)', async () => {
   const t = await stand();
   try {
     // a fresh window (the stand's own requests counted in the last): every count below is this test's
@@ -284,13 +299,44 @@ test('AUDIT PLAN-1000 C4 a claim the account\'s rate will refuse asks the tombst
     // one under the rate: the claim lands - the door's look at the rate counts nothing (the count is the door's own, once)
     for (let i = 0; i < ACCOUNT_MAX - 1; i++) overAccountRate(t.eve.id, nowS, ACCOUNT_MAX, ACCOUNT_WINDOW_S);
     assert.equal((await t.s.call('/v1/renown/xp', { character: t.eve.character, xp: 10, rid: '00000000000000c3' }, t.eve.secret)).status, 200, 'the last request the window holds');
-    overAccountRate(t.eve.id, nowS, ACCOUNT_MAX, ACCOUNT_WINDOW_S);   // the window full
-    const c = counted(t.s.env);
+    const c = counted(t.s.env);   // F2: the window holds ACCOUNT_MAX - the very next is the first refused
     const r = await t.s.call('/v1/renown/xp', { character: t.eve.character, xp: 10, rid: '00000000000000c4' }, t.eve.secret);
     c.off();
     assert.equal(r.status, 429);
     assert.equal(c.trips.flat().filter((q) => q.includes('AS seat_id')).length, 0, 'no claim reads');
     assert.equal(c.trips.flat().filter((q) => q === `SELECT 1 FROM realm_characters WHERE ${TOMB_WHERE}`).length, 1, 'the tombstone alone');
+    // F2: the next window, after a full one - the door asked once, the claim landing
+    const next = nowS + ACCOUNT_WINDOW_S;
+    Date.now = () => next * 1000;
+    const n = counted(t.s.env);
+    assert.equal((await t.s.call('/v1/renown/xp', { character: t.eve.character, xp: 10, rid: '00000000000000c6' }, t.eve.secret)).status, 200, 'a new window: served');
+    n.off();
+    assert.equal(n.trips.flat().filter((q) => q.includes(TOMB_WHERE)).length, 1, 'the door asked once - the full window before it is no window of this one\'s');
+    // F1: the window full in its last second, the claim held in its tombstone read while another request opens the next
+    const last = next + 2 * ACCOUNT_WINDOW_S - 1;
+    Date.now = () => last * 1000;
+    for (let i = 0; i < ACCOUNT_MAX; i++) overAccountRate(t.eve.id, last, ACCOUNT_MAX, ACCOUNT_WINDOW_S);
+    const db = t.s.env.DB, prepare = db.prepare.bind(db);
+    let release, entered, held = false;
+    const gate = new Promise((r) => { release = r; }), inDoor = new Promise((r) => { entered = r; });
+    db.prepare = (sql) => {
+      const st = prepare(sql);
+      if (!held && sql === `SELECT 1 FROM realm_characters WHERE ${TOMB_WHERE}`) {
+        held = true;
+        const first = st.first.bind(st);
+        st.first = async (...a) => { entered(); await gate; return first(...a); };
+      }
+      return st;
+    };
+    try {
+      const A = t.s.call('/v1/renown/xp', { character: t.eve.character, xp: 10, rid: '00000000000000c7' }, t.eve.secret);
+      await inDoor;
+      Date.now = () => (last + 1) * 1000;   // the next window's first second
+      assert.notEqual((await t.s.call('/v1/prof/state', {}, t.eve.secret)).status, 429, 'another request, counted in the next window, opens it');
+      release();
+      const a = await A;
+      assert.deepEqual([a.status, a.body?.error], [200, undefined], 'the claim its count let through is asked its seat, and lands - never `progress-seat`');
+    } finally { db.prepare = prepare; }
     t.raw.prepare('UPDATE realm_characters SET dead_at = ? WHERE id = ?').run(nowS, t.eve.character);
     const dead = await t.s.call('/v1/renown/xp', { character: t.eve.character, xp: 10, rid: '00000000000000c5' }, t.eve.secret);
     assert.deepEqual([dead.status, dead.body.error], [410, 'dead'], 'dead before over');

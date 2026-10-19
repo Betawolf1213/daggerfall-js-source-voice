@@ -164,6 +164,9 @@ export const ANY_REPLICA_ROUTES = new Map();
 export const REPLICA_ANY = 'first-unconstrained';
 /** BOOKMARK-SPIRAL: asked of a request's database, true when its session began at any instance (replicaDb, REPLICA_ANY). */
 export const DB_ANY = Symbol('db-any');
+/** SESSION-SIGN (AUDIT PLAN-1000 E5): asked of a request's database, true when its session began at the primary
+ *  (replicaDb, REPLICA_CONSTRAINT) - its first statement, the session's lookup, the primary's own answer. */
+export const DB_FIRST_PRIMARY = Symbol('db-first-primary');
 
 /** SCALE4g: THE DATABASE A REQUEST RUNS ON - a D1 session for a route and method REPLICA_ROUTES names, started from the
  *  bookmark the request carries (every read at least as new as that position: the caller's own last writes, read back)
@@ -195,6 +198,7 @@ export function replicaDb(/** @type {any} */ db, constraint = REPLICA_CONSTRAINT
     get(target, key) {
       if (key === DB_ROOT) return root;
       if (key === DB_ANY) return constraint === REPLICA_ANY;   // BOOKMARK-SPIRAL: its lookup's miss asks the primary
+      if (key === DB_FIRST_PRIMARY) return constraint === REPLICA_CONSTRAINT;   // SESSION-SIGN: its lookup the primary's
       const v = Reflect.get(target, key);
       return typeof v === 'function' ? v.bind(target) : v;
     },

@@ -2609,20 +2609,41 @@ THE PLAN PAST 1,000, decision 5). The fight seats 256 accounts (`net/gate/gateBr
 ask was told `the court is full` and cast out before the gate - at a thousand online, a crowd's later arrivals walked in
 to be thrown out. Now a full court keeps them as its **watchers**:
 
-- **The relay** answers a full court's `in` as before (`no`, `the court is full`), and keeps the socket - its beats are
-  the room's, so a watcher hears and sees the fight. The answer to an `in` that seats a fighter says so (`me: 1` on its
+- **The relay** answers a full court's `in` as before (`no`, `the court is full`) - handed the fight as it stands just
+  before it (AUDIT PLAN-1000 G8: a watcher drew no boss until the next state, up to 5 s) - and keeps the socket: its
+  beats are the room's, so a watcher hears and sees the fight. It refuses every fighter's frame a watcher sends (a blow,
+  a crystal's, his host's, a heal: junked; a body word unheard), so a modified client takes no fighter's part (lane G,
+  reproduced on the real Room). The answer to an `in` that seats a fighter says so (`me: 1` on its
   state, carried by `validGateOut`): a relay's word, never a guess from a beat.
 - **The client** (`net/gate/gateLink.js` `watching`): the full court's `no` is no refusal - said once, *The Burning Court
   is full - you watch from its edge until a place frees.* - and the court (`scenes/gate/gateCourt.js`) sends none of a
   fighter's part while it watches: no blow on him, a crystal or his host, no mate's heal owed, no body word; and none of
-  his blows lands on it. Every COURT_WATCH_ASK_MS (15 s) it asks for a seat again, through the host's own `in` door
-  (scenes/world.js, the welcome's one line) - a fighter gone a while frees one (`freeSeat`) - and the answer with `me`
-  seats it.
+  his blows lands on it, nor his burning ground (AUDIT PLAN-1000 G1 - it bit a watcher every second), and no heal is
+  owed it (G6 - one owed while watching was said once seated). Every COURT_WATCH_ASK_MS (15 s, `gateBrain.js`) it asks
+  for a seat again, through the host's own `in` door (scenes/world.js, the welcome's one line), never once he has fallen
+  or his Wrath is on (G4 - the relay's `the gate is closing` cast it out, in words that are false at the Wrath); the
+  answer with `me` seats it. The relay answers a socket's sooner ask as before and walks the court's sockets only when a
+  newcomer meets a full fight with a seat to free (G7: an `in` cost the court some 0.5 ms at 2,048 sockets, and a
+  modified watcher's spam took freed seats ahead of the honest asks).
+- **Which seat frees** (G2: this said "a fighter gone a while frees one"): freeSeat frees one only of a fighter gone with
+  no real part in the fight (`hasPart`: under SEAT_KEEP_MS stood and under RECEIPT_SHARE of its share dealt) - one who
+  fought keeps its seat and its claim for the whole fight, a reconnect costing it nothing. So at a full court of real
+  fighters a watcher stays one: seating past 256 is COURT-WIDE's, never unseating a fighter.
+- **Only on a relay that says `me`** (G3): a client the full court keeps as its watcher on a relay before world218 would
+  be seated by that relay's next `in` and never told - in the census and his health, striking nothing - so before it a
+  full court refuses as it did (`wire.js` relaySupportsCourtWatch, read off the welcome).
+- **Its bounds** (G13): the court and its seven copies hold 2,048 sockets - at most 1,792 watch beside 256 fighters; the
+  next meets every copy full (503), waits COURT_DOOR_WAIT_MS and is cast out. The copies hand every watcher's pose up to
+  the court uncoalesced, though no fight reads them (some 40 ms of the court a second at 1,792 watchers at 4 Hz) -
+  COURT-WIDE's blocker. A watcher whose socket drops after the seal is refused at its hello (`the gate is sealed`, G5):
+  no seat can come after the seal, and a relay deploy then sends every watcher home.
 - **What it does not do.** A watcher earns no share and no spoils (the relay's receipts are its fighters'); the boss
   does not know it is there.
 
 The next step - copies that hold fighters of their own, past 256 (COURT-WIDE) - is `Scale-Arc.md`'s, with its blockers.
-Pins: `test/net/gate/courtwatch.test.js` (5); `tools/mutants/plan1000.json` COURTWATCH-* (15, all dead). PIN MOVED:
+Pins: `test/net/gate/courtwatch.test.js` (6 - the sixth AUDIT PLAN-1000 lane G's: the ground, a crystal, a heal, the ask
+after the fall, its cadence and clock, an older relay, the line's language); `tools/mutants/plan1000.json` COURTWATCH-*
+(30 - 29 dead, 1 equivalent as recorded: a watcher's owed heals, which since G6 it is never owed). PIN MOVED:
 `auditwb_court.test.js` AUDIT WB B5 (a sealed gate refuses; a full court keeps). AUDIT PLAN-1000 (the account and gate
 sets run whole after the slice, the change's own tests having passed it): the watcher's line goes through the text core
 (`net.gate.courtWatch`, `courtWatchText()` - the L10N4 ratchet held `gateLink.js` at 6), drafted in the thirteen

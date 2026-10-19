@@ -39,7 +39,7 @@
  {
   "name": "PRIMARYFOLD-room-asks-again",
   "file": "server-account/src/index.js",
-  "old": "const room = await progressRoom(db, who.player.id, stream, line, door.bucket);",
+  "old": "const room = await progressRoom(db, who.player.id, stream, line, read.bucket);",
   "new": "const room = await progressRoom(db, who.player.id, stream, line);",
   "tests": [
    "test/server/primaryfold.test.js"
@@ -326,5 +326,91 @@
    "test/server/primaryfold.test.js"
   ],
   "note": "AUDIT PLAN-1000 D5: a repeat counts toward the hour - answered before the rate, a repeat is a free claim."
+ },
+ {
+  "name": "PRIMARYFOLD-seat-unasked-after-turn",
+  "file": "server-account/src/index.js",
+  "old": "const read = door.seat === undefined ? await doorReads(db, who.player.id, { tomb: null, stream }) : door;",
+  "new": "const read = door;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F1 - a claim whose rate window turned between the peek and the count asks its seat, never progress-seat."
+ },
+ {
+  "name": "PRIMARYFOLD-rate-peek-one-late",
+  "file": "server-account/src/accounts.js",
+  "old": "&& w.count + 1 > max;",
+  "new": "&& w.count > max;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F2 - the window's very next request is the first refused."
+ },
+ {
+  "name": "PRIMARYFOLD-rate-peek-any-window",
+  "file": "server-account/src/accounts.js",
+  "old": "return !!w && w.start >= Math.floor(nowS / windowS) * windowS && w.count + 1 > max;",
+  "new": "return !!w && w.count + 1 > max;",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F2 - the peek reads this window alone."
+ },
+ {
+  "name": "PRIMARYFOLD-hour-over-not-summed",
+  "file": "server-account/src/progress.js",
+  "old": "over = over + excluded.over, claims",
+  "new": "over = excluded.over, claims",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F3 - the hour sums what each claim took past its bucket."
+ },
+ {
+  "name": "PRIMARYFOLD-hour-claims-not-counted",
+  "file": "server-account/src/progress.js",
+  "old": "over = over + excluded.over, claims = claims + 1`",
+  "new": "over = over + excluded.over, claims = 1`",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F3 - the hour counts its claims."
+ },
+ {
+  "name": "PRIMARYFOLD-bucket-at-unmoved",
+  "file": "server-account/src/progress.js",
+  "old": "played_at = excluded.played_at, at = excluded.at",
+  "new": "played_at = excluded.played_at, at = progress_play.at",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F9 - the bucket row's at.",
+  "equivalent": true,
+  "why": "No route reads progress_play.at: it says when the row last moved, for a person reading the table. Kept as the column's own meaning."
+ },
+ {
+  "name": "PRIMARYFOLD-claim-untruncated",
+  "file": "server-account/src/progress.js",
+  "old": "line.rate, Math.trunc(amount), config.enforce",
+  "new": "line.rate, amount, config.enforce",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F9 - the amount truncated.",
+  "equivalent": true,
+  "why": "progressSpentOf truncates every amount before spendProgress is asked, so the trunc here repeats it; kept, as spendProgress is exported and may be asked with any number."
+ },
+ {
+  "name": "PRIMARYFOLD-returning-the-start",
+  "file": "server-account/src/progress.js",
+  "old": "      RETURNING allowance`)",
+  "new": "      RETURNING (SELECT allowance FROM progress_play WHERE player = ?1 AND stream = ?2) AS allowance`)",
+  "tests": [
+   "test/server/primaryfold.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F9 - the spend answers the row it wrote.",
+  "equivalent": true,
+  "why": "A RETURNING subquery reads the table after the upsert, in SQLite and in D1 alike - the same value as the column the row returns."
  }
 ]

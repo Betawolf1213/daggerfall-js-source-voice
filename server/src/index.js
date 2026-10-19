@@ -238,7 +238,7 @@ import { newDuelRef, duelNote, duelOpen, duelBoutOf, duelBlow, duelPose, duelEnd
 import { newWildRef, wildZone, wildPose, wildBlow, wildKin, sameGuild, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_FALL_PREFIX, WILD_REF } from '../../src/net/wild/wildRef.js';   // INT9: the open zone refereed
 import { mintWildReceipt, mintWildCollect } from '../../src/net/wild/wildReceipt.js';   // INT9: a fall, signed; MAC (2026-10-14): and a killer's collect
 import { mintDuelReceipt } from '../../src/net/duel/duelReceipt.js';   // INT8: a duel won, signed
-import { applyCrystalHit, applyHostHit, applyHeal, healRef, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX } from '../../src/net/gate/gateBrain.js';
+import { applyCrystalHit, applyHostHit, applyHeal, healRef, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX, hasPart, COURT_WATCH_ASK_MS } from '../../src/net/gate/gateBrain.js';
 import { mintReceipt, importReceiptKey, readReceipt, RECEIPT_TTL_S } from '../../src/net/gate/gateReceipt.js';
 import { bodyConfig, bodyStruck, bodySaid, bodyHealed, bodyLife, bodyCensus, bodyMeasure, bodyOut, bodyDown, bodyTellOwed, HULL_REFLOAT, BODY_TRAIL_MS, BODY_TRAIL_MAX } from '../../src/net/bossBody.js';   // INT11: the body counted
 import { BODY_DEFAULT, BODY_LINE_MAX } from '../../src/net/bossBody.js';   // AUDIT SCALE II R1-4: a relay setting's line, refused past it in words
@@ -6117,17 +6117,17 @@ export class Room {
   _drawn(b, key) {
     return !isBattleRoom(key) || this._siege?.fighters?.[b.sub] ? b : { ...b, pose: null };
   }
+  /** AUDIT PLAN-1000 B2: THE ROOM'S HELLO RATE - one answer for every door that spends its bucket (`_hellos`): a channel's
+   *  CHAT_HELLO_HZ_MAX, a gate's court's (and its copies') GATE_HELLO_HZ_MAX, every other room's HELLO_HZ_MAX (a battle room's stands too: _battleHelloGate). A door that
+   *  asked another rate of the same bucket clamped it to its own (tokenGate caps a bucket at the rate asked): one change
+   *  of gear in a court cut its door from 48 to 10. */
+  _helloHz(key) { return isChatRoom(key) ? CHAT_HELLO_HZ_MAX : isGateRoom(key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX; }
   /**
    * AUDIT-SEATS R3: A BATTLE ROOM'S HELLO GATE, spent only once the hello's token and pass are verified (the hello's own
    * note says why), BY ACCOUNT: each its own HELLO_HZ_MAX a second - an account's reconnect loop waits on itself alone -
    * and the stands besides on the room's stored bucket (sixty spectators' hellos bounded together as a room's were); a
    * fighter never waits on the stands. `{ pass, bucket }` - `bucket` the room's, where it was spent.
    */
-  /** AUDIT PLAN-1000 B2: THE ROOM'S HELLO RATE - one answer for every door that spends its bucket (`_hellos`): a channel's
-   *  CHAT_HELLO_HZ_MAX, a gate's court's (and its copies') GATE_HELLO_HZ_MAX, every other room's HELLO_HZ_MAX. A door that
-   *  asked another rate of the same bucket clamped it to its own (tokenGate caps a bucket at the rate asked): one change
-   *  of gear in a court cut its door from 48 to 10. */
-  _helloHz(key) { return isChatRoom(key) ? CHAT_HELLO_HZ_MAX : isGateRoom(key) ? GATE_HELLO_HZ_MAX : HELLO_HZ_MAX; }
   async _battleHelloGate(sub, side, now) {
     const own = tokenGate(this._helloBy.get(sub), now, HELLO_HZ_MAX);
     this._helloBy.delete(sub);
@@ -6799,10 +6799,18 @@ export class Room {
       if (!(m.bv >= GATE_BRAIN_MIN)) { this._send(ws, JSON.stringify({ t: 'gate', k: 'no', m: 'the gate is closed' })); return; }
       if (!f) f = this._fight = GATE_SEAM.new({ day, now, wrathAt: gateTimes(day).wrathAt, boss: gateBossOf(day).id, md: gateModsOf(day) });   // WB8b: the day's marks, kept on the fight
       const joined = !f.players[a.sub];   // AUDIT WB A3: a newcomer - an `in` again (every welcome says one) changes nothing to keep
+      // AUDIT PLAN-1000 G7: a full court's watcher asks every COURT_WATCH_ASK_MS - one that asks sooner (a modified client)
+      // is answered as the last time and takes no seat ahead of the honest asks
+      const full = joined && Object.keys(f.players).length >= GATE_FIGHTERS_MAX;
+      const asked = (this._watchAsked ??= new WeakMap());
+      if (full && now - (asked.get(ws) ?? -Infinity) < COURT_WATCH_ASK_MS - BRAIN_TICK_MS) { this._send(ws, JSON.stringify({ t: 'gate', k: 'no', m: 'the court is full' })); return; }
       const present = new Set();   // AUDIT WB A1: the accounts in the court now - a full fight frees an idle seat, never theirs
-      for (const [, b] of this._courtSockets()) if (b.id && b.sub) present.add(b.sub);   // SCALE5d part two: and in its copies
+      // AUDIT PLAN-1000 G7: walked only when a newcomer meets a full fight with an idle seat to free (freeSeat's own law)
+      if (full && Object.values(f.players).some((p) => !hasPart(p))) for (const [, b] of this._courtSockets()) if (b.id && b.sub) present.add(b.sub);   // SCALE5d part two: and in its copies
       if (!GATE_SEAM.join(f, a.sub, a.name ?? '', m.lv, now, present, { admits: gateAdmits(day, now) })) {
         const no = f.fell || f.wrath ? 'the gate is closing' : Object.keys(f.players).length >= GATE_FIGHTERS_MAX ? 'the court is full' : 'the gate is sealed';
+        // AUDIT PLAN-1000 G8: a full court's watcher is handed the fight as it stands before the word that keeps it there
+        if (no === 'the court is full') { asked.set(ws, now); this._send(ws, JSON.stringify({ t: 'gate', ...GATE_SEAM.stateOf(f) })); }
         this._send(ws, JSON.stringify({ t: 'gate', k: 'no', m: no }));
         return;
       }

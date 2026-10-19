@@ -18,8 +18,8 @@
 // Not a DFU member. Ledger A (WB).
 import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../../net/gate/gateBrain.js';
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
-import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';
-import { COURT_WATCH_ASK_MS } from '../../net/gate/gateLink.js';   // COURT-WATCH: a watcher's ask for a seat, this often   // GATE-FBX: and when the court comes apart
+import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
+import { COURT_WATCH_ASK_MS } from '../../net/gate/gateBrain.js';   // COURT-WATCH: a watcher's ask for a seat, this often
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
 import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, COURT_DOOR_WAIT_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
@@ -504,7 +504,8 @@ export function createGateCourt({
     }
     if (pools.length) pools = pools.filter((p) => t < p.until);
     const f = feet(), e = player();
-    if (!pools.length || !f || !e || !(e.health > 0) || s.fell || s.wrath != null) { inFire = false; return; }
+    // AUDIT PLAN-1000 G1: and never a watcher's - the ground burns his fighters, as his blows land on them alone
+    if (!pools.length || !f || !e || !(e.health > 0) || s.fell || s.wrath != null || watching()) { inFire = false; return; }
     const p = poolUnder(pools, f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2], t);
     if (!p) { if (inFire) { inFire = false; outAt = t; } return; }
     // WB9d: the ground I stand in, named and coloured for the rim and the warning (ui/gate/gateGroundView.js); a step in
@@ -938,7 +939,8 @@ export function createGateCourt({
      * fallen away and never hears my own), `id` the caster's peer id in the room: owed to them. False outside a live fight.
      */
     healedBy(id, n) {
-      if (!healLive(link.state()) || !(n > 0) || typeof id !== 'string' || !id) return false;
+      // AUDIT PLAN-1000 G6: a watcher is owed no heal - one owed while I watched was said once I was seated
+      if (!healLive(link.state()) || !(n > 0) || typeof id !== 'string' || !id || watching()) return false;
       healOwed.set(id, (healOwed.get(id) ?? 0) + n);
       return true;
     },
@@ -1178,10 +1180,13 @@ export function createGateCourt({
       peersPrimed = true;
     },
     /** COURT-WATCH: whether a watcher asks the court for a seat again now - once every COURT_WATCH_ASK_MS of watching
-     *  (the host's own `in` door, scenes/world.js, sends it), never while I fight. */
+     *  (the host's own `in` door, scenes/world.js, sends it), never while I fight, and never once he has fallen or his
+     *  Wrath is on the court (AUDIT PLAN-1000 G4: no seat comes then, and the relay's `the gate is closing` cast me out). */
     askAgain() {
       const t = now();
       if (!watching()) { watchAskedAt = -Infinity; return false; }
+      const st = link.state();
+      if (st.fell || st.wrath != null) return false;
       if (watchAskedAt === -Infinity) { watchAskedAt = t; return false; }
       if (t - watchAskedAt < COURT_WATCH_ASK_MS) return false;
       watchAskedAt = t;

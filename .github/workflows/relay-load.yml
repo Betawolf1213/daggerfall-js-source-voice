@@ -26,6 +26,8 @@ concurrency:
 jobs:
   read:
     runs-on: ubuntu-latest
+    # AUDIT PLAN-1000 H10: three questions of a minute's bound each - a hung call never holds a runner for six hours
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash
@@ -60,6 +62,7 @@ jobs:
           echo "**Window: the last $(node tools/relayLoad.mjs --hours "$HOURS") hour(s), to $(date -u +%H:%M) UTC**" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           failed=0
+          answered=0
           for q in $(node tools/relayLoad.mjs --names); do
             node tools/relayLoad.mjs --sql "$q" "$HOURS" > "$RUNNER_TEMP/$q.sql"
             code=$(curl -sS --max-time 60 -o "$RUNNER_TEMP/$q.json" -w '%{http_code}' -X POST \
@@ -67,11 +70,19 @@ jobs:
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" --data-binary "@$RUNNER_TEMP/$q.sql") || true
             if [ "${code:-000}" = "200" ] && node tools/relayLoad.mjs --table "$q" "$RUNNER_TEMP/$q.json" >> "$GITHUB_STEP_SUMMARY"; then
               echo "" >> "$GITHUB_STEP_SUMMARY"
+              answered=$((answered + 1))
             else
               failed=1
-              echo "::warning::the $q question was refused (HTTP ${code:-000}) - the token needs Account Analytics: Read"
+              # AUDIT PLAN-1000 H3: the token is named only where the API refused it - any other answer (a 422, the SQL
+              # the API would not run) says its own words, which follow
+              case "${code:-000}" in
+                401|403) echo "::warning::the $q question was refused (HTTP $code) - the token needs Account Analytics: Read" ;;
+                *) echo "::warning::the $q question was not answered (HTTP ${code:-000}) - the API's own words follow" ;;
+              esac
               head -c 400 "$RUNNER_TEMP/$q.json" || true
               echo
             fi
           done
           [ "$failed" = "0" ] || echo "::warning::some readings are missing from the summary - see the warnings above"
+          # AUDIT PLAN-1000 H3: a run that read nothing is no reading - red, its partial summary kept
+          if [ "$answered" = "0" ]; then echo "::error::no question was answered - nothing was read"; exit 1; fi

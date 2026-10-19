@@ -5503,7 +5503,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  What the row puts there, read while it is on. A pixel's field is kept for the next record a save or a load stands
    *  on it - the last LIFT_FIELDS_KEPT pixels asked, the longest unasked let go first (AUDIT LANDFORMS II F3: dropped
    *  whole past eight, a save whose records stood on nine pixels made every field again - a town's is a kernel pass,
-   *  146 ms for nine on the main thread and 0.4-0.6 s for sixteen - at every save, online every two-minute checkpoint).
+   *  146 ms for nine on the main thread and 0.4-0.6 s for sixteen - at every save, online every periodic checkpoint).
    *  AUDIT LANDFORMS B1: the rect is the build's for a pixel not built yet too - the one setLocationTiles will stamp
    *  (tvTownRects' own fallback). A load stands records before their pixels stream in (its camps anywhere in the world, a
    *  neighbour's piles), and the wild lift it took there was up to 203 m off a location's levelled ground (Tamarilyn
@@ -23985,7 +23985,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     onFell: (day, f) => { const site = gateOmen?.current?.()?.site; chatNotice(fellLine({ near: site?.day === day ? site.near : null, boss: gateBossOf(day).name, top: f.top })); },   // WB13b: no place found - "in the wilds"
     onReceipt: (r) => { gateClaims?.add(r); grantSpoilsOutside(r); },   // WB5b: to the account service, kept until it is counted; AUDIT WB A2: and its spoils, when no court's floor will give them
     onRefused: (why) => { if (modes?.gateArenaDay?.() != null) ejectFromCourt(gateRefusalText(why)); },   // AUDIT WB B5: the relay will not have me in this fight - out before the gate, not left in an empty court; GATE-RELOAD: in what its word means (an outdated game is told to reload, never that an open gate is closed)
-    place: bossPlace,   // AUDIT WBX F3: his fall frozen where he fell, as the court draws him
+    place: bossPlace, watches: () => !!online?.courtWatchOk,   // AUDIT WBX F3: his fall frozen where he fell, as the court draws him; AUDIT PLAN-1000 G3: a watcher only on a relay that says `me`
   }) : null;
   let _gateInFor = -1;   // WB3b: the welcome my level claim was said for - once per welcome of the court's room
   /** WB4: THE FIGHT ON THIS SCREEN (scenes/gate/gateCourt.js) - the boss where the relay says he stands, his telegraphs, his
@@ -28924,7 +28924,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen
     _rezSeen = null;   // AUDIT CONTRIB A6: alive - the next death takes its own snapshot of what the party's poses say
-    if (checkpointDue(now, _checkpointAt)) { if (realmSession?.idle) realmSession.idle(() => onlineCheckpoint()); else onlineCheckpoint(); }   // SCALE2b: the periodic one may be answered by the save the service holds (realmSaves.js idle)   // REALM P0.5: every two real minutes, alive and in the seat (the first such frame persists the join's call-in)
+    if (checkpointDue(now, _checkpointAt)) { if (realmSession?.idle) realmSession.idle(() => onlineCheckpoint()); else onlineCheckpoint(); }   // SCALE2b: the periodic one may be answered by the save the service holds (realmSaves.js idle)   // REALM P0.5: every ONLINE_CHECKPOINT_MS (five real minutes, CHECKPOINT-5), alive and in the seat (the first such frame persists the join's call-in)
     if (instanceDoor.refused(online)) modes?.forceExitToExterior?.();   // INSTANCES (the audit): alive, an instance's door shut on me (not of its owner's party - a kick, a lapse) - out, as the realm's door does, never left inside it alone
     const mode = modes?.mode ?? 'exterior';   // audit24_wave37: guarded on the OBJECT above its own declaration (the frame runs after it)
     const cabin = modes?.sailingCabin;

@@ -51,6 +51,7 @@ on:
     paths:
       - "server-account/**"
       - "src/net/identityToken.js"
+      - "src/net/sessionPassLaw.js"
       - "src/net/staffTeleport.js"
       - "src/net/relayCfg.js"
       - "src/net/hubShards.js"

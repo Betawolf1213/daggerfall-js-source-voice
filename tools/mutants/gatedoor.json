@@ -115,5 +115,17 @@
   "tests": [
    "test/net/gate/gatedoor.test.js"
   ]
+ },
+ {
+  "name": "GATEDOOR-never-opened-closed-by-us",
+  "file": "src/net/online.js",
+  "old": "if (!this._opened.has(ws) && !this._closedByUs && isGateRoom(room)) this.busyAt",
+  "new": "if (!this._opened.has(ws) && isGateRoom(room)) this.busyAt",
+  "tests": [
+   "test/net/gate/gatedoor.test.js"
+  ],
+  "note": "AUDIT PLAN-1000: F9 - a socket we closed ourselves is no door answering.",
+  "equivalent": true,
+  "why": "After leave() the socket is no room of this session (_roomOf is null), so the close never reaches here; kept beside the shard-miss law two lines up, which reads the same pair."
  }
 ]

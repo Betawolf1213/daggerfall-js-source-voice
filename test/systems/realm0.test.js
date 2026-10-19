@@ -11,7 +11,7 @@
 //          lend has the rest called in.
 //   P0.4 - the faucets: a shop pays at most half what it asks online, a pile's gold is not the level's, the Sigil
 //          Broker's stock is bound to its buyer, and a party's shared quest pays one gold reward in shares.
-//   P0.5 - the character is saved as it plays online: every two real minutes, and at each change a trade makes to the
+//   P0.5 - the character is saved as it plays online: every ONLINE_CHECKPOINT_MS (five real minutes, CHECKPOINT-5), and at each change a trade makes to the
 //          pack - the giver's loss on disk before the goods leave.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -13,7 +13,7 @@
     "name": "SCALE4g-bookmark-unread",
     "file": "server-account/src/service.js",
     "old": "  if (bookmark && !PRIMARY_FIRST_ROUTES.has(path)) { try { return replicaDb(db, bookmark); } catch { /* a bookmark D1 refuses: as with none, below */ } }\n",
-    "new": " }",
+    "new": "",
     "tests": [
       "test/server/scale4g.test.js"
     ],
@@ -53,7 +53,7 @@
     "name": "SCALE4g-unexposed",
     "file": "server-account/src/index.js",
     "old": " out.headers.append('access-control-expose-headers', 'x-d1-bookmark'); }",
-    "new": "",
+    "new": " }",
     "tests": [
       "test/server/scale4g.test.js"
     ],

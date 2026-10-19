@@ -15,6 +15,8 @@ import {
 } from '../../server-account/src/realm.js';
 import { _resetKeyForTests } from '../../server-account/src/signing.js';
 import { freshSave } from '../realmSeat.mjs';   // AUDIT REALM2 S1: a first save is a new character's
+import { ONLINE_CHECKPOINT_MS } from '../../src/systems/online/onlineCheckpoint.js';   // AUDIT PLAN-1000 G9: the cadence the windows are sized to
+import { DUPE_GRACE_S } from '../../server-account/src/ledger.js';
 import { ACCEPTED } from '../../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
@@ -293,7 +295,10 @@ test('REALM P1: the shapes - a summary projected and bounded, a name trimmed and
   assert.deepEqual(JSON.parse(realmSummaryOf({ level: -1, className: 7, race: 'Nord', face: 1.5 })), { level: null, className: null, race: 'Nord', gender: null, face: null, region: null });
   assert.equal(realmNameOf('x'.repeat(50)).length, 32);
   assert.equal(realmNameOf('   '), null);
-  assert.equal(REALM_PLAYING_S, 300, 'a tile says "playing" for five minutes past the last checkpoint (they come every two)');
+  // PIN MOVED (AUDIT PLAN-1000 G9, CHECKPOINT-5): two checkpoints' span, and the copy's grace two and a half
+  assert.equal(REALM_PLAYING_S, 600, 'a tile says "playing" for ten minutes past the last checkpoint (they come every five)');
+  assert.ok(REALM_PLAYING_S >= 2 * ONLINE_CHECKPOINT_MS / 1000, 'never a period\'s gap where a playing character reads idle');
+  assert.ok(DUPE_GRACE_S >= 2.5 * ONLINE_CHECKPOINT_MS / 1000, 'a claim waits two checkpoints of its holder and one in flight');
   const { env } = await stand();
   const res = await worker.fetch(new Request('https://accounts.invalid/v1/realm', { method: 'OPTIONS' }), env);
   assert.match(res.headers.get('access-control-allow-headers'), /x-realm-lease, x-realm-seq, x-realm-summary/);
