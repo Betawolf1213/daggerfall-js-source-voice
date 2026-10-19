@@ -3411,6 +3411,7 @@ net.conduct.respect,"Behandle alle med respekt. Ingen trakassering, mobbing elle
 net.conduct.sexual,"Ingen seksuelle kommentarer rettet mot andre spillere, og aldri noe seksuelt som involverer mindreårige."
 net.conduct.spam,"Ingen spam, ingen svindel, og ikke utgi deg for å være en del av staben."
 net.conduct.title,"Atferdsregler"
+net.gate.courtWatch,"Burning Court er full - du ser på fra kanten til en plass blir ledig."
 net.mod.ambiguous,"{count} spillere heter {name}. Ingen ble dempet."
 net.mod.chatAgain,"Du kan chatte igjen."
 net.mod.muteRange,"En demping er 1 til {max} minutter (én uke)."

@@ -3411,6 +3411,7 @@ net.conduct.respect,"Trata a todos con respeto. Nada de acoso, intimidación ni 
 net.conduct.sexual,"Nada de comentarios sexuales dirigidos a otros jugadores, y jamás nada sexual que involucre a menores."
 net.conduct.spam,"Nada de spam, nada de estafas y no te hagas pasar por miembro del equipo."
 net.conduct.title,"Código de conducta"
+net.gate.courtWatch,"La Corte Ardiente está llena - miras desde el borde hasta que quede un sitio libre."
 net.mod.ambiguous,"Hay {count} jugadores llamados {name}. No se ha silenciado a nadie."
 net.mod.chatAgain,"Ya puedes volver a chatear."
 net.mod.muteRange,"Un silencio dura de 1 a {max} minutos (una semana)."

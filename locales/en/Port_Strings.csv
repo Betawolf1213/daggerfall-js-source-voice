@@ -3411,6 +3411,7 @@ net.conduct.respect,"Treat everyone with respect. No harassment, bullying or thr
 net.conduct.sexual,"No sexual remarks aimed at other players, and nothing sexual involving minors, ever."
 net.conduct.spam,"No spam, no scams, and no pretending to be staff."
 net.conduct.title,"Code of Conduct"
+net.gate.courtWatch,"The Burning Court is full - you watch from its edge until a place frees."
 net.mod.ambiguous,"{count} players are called {name}. Nobody was muted."
 net.mod.chatAgain,"You can chat again."
 net.mod.muteRange,"A mute is 1 to {max} minutes (one week)."

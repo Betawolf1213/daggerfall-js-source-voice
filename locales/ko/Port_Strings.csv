@@ -3411,6 +3411,7 @@ net.conduct.respect,"모든 사람을 존중하세요. 채팅, 이름, 쪽지 �
 net.conduct.sexual,"다른 플레이어를 향한 성적인 발언은 금지이며, 미성년자가 관련된 성적인 것은 어떤 경우에도 절대 안 됩니다."
 net.conduct.spam,"스팸, 사기, 운영진 사칭은 금지입니다."
 net.conduct.title,"행동 강령"
+net.gate.courtWatch,"불타는 궁정이 가득 찼습니다 - 자리가 날 때까지 가장자리에서 지켜봅니다."
 net.mod.ambiguous,"{name}(이)라는 플레이어가 {count}명 있습니다. 아무도 채팅 금지되지 않았습니다."
 net.mod.chatAgain,"다시 채팅할 수 있습니다."
 net.mod.muteRange,"채팅 금지는 1~{max}분(일주일)입니다."
