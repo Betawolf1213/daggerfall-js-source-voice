@@ -5811,7 +5811,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  record outside the law is refused WHOLE here as it is there. */
   function applyFoeRecord(f, raw) {
     const r = validFoeRecord(raw);
-    if (!r || grants?.()?.statsRefused?.(f._ownFrom ?? _foesFrom, { ...r, t: r.t ?? f.mobileType, l: r.l ?? f.streamedLevel }, { lane: 'dungeon' })) return;   // FOE-BOUNDS (section 19): a host's word no builder could give is not applied - my copy stands as it was, never rescaled
+    if (!r) return;
+    if (grants?.()?.statsRefused?.(f._ownFrom ?? _foesFrom, { ...r, t: r.t ?? f.mobileType, l: r.l ?? f.streamedLevel }, { lane: 'dungeon' })) return;   // FOE-BOUNDS (section 19): a host's word no builder could give is not applied - my copy stands as it was, never rescaled
     if (f._mwWire) applyWireLook(f, r);   // AUDIT MW-NPC II K3: a puppet's owner's seed (a layout copy's is its layout point's, every machine's)
     const p = f._pup ?? (f._pup = { feet: [f.ai.feet[0], f.ai.feet[1], f.ai.feet[2]], yaw: f.ai.yaw, moving: false, hurt: false, hurtUntil: 0, strike: null, a: null, target: null, c: null, cast: null });
     if (typeof r.g === 'string') p.target = r.g;   // WORLD3: whose blow this puppet's is

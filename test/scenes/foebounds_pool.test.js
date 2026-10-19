@@ -144,7 +144,7 @@ test('FOE-BOUNDS THE FOUR HOSTS: the street\'s pool and a building\'s (one creat
   const rd = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
   const dc = rd('src/scenes/dungeonContext.js');
   assert.ok(dc.includes("if (grants?.()?.statsRefused?.(from, r, { lane: 'dungeon', ally: lo && comp.has(r.i) })) { if (f) dropOwnPuppet(key, f); _ownPending.delete(key); continue; }"), 'the own lane');
-  assert.ok(dc.includes("if (!r || grants?.()?.statsRefused?.(f._ownFrom ?? _foesFrom, { ...r, t: r.t ?? f.mobileType, l: r.l ?? f.streamedLevel }, { lane: 'dungeon' })) return;"), 'the host\'s stream');
+  assert.ok(dc.includes("if (!r) return;\n    if (grants?.()?.statsRefused?.(f._ownFrom ?? _foesFrom, { ...r, t: r.t ?? f.mobileType, l: r.l ?? f.streamedLevel }, { lane: 'dungeon' })) return;"), 'the host\'s stream');
   assert.ok(rd('src/scenes/worldModes.js').includes('createExteriorFoes'), 'a building\'s pool is the street\'s');
   assert.ok(!rd('src/scenes/exterior.js').includes('applyFoes'), 'the old exterior streams none');
 });
