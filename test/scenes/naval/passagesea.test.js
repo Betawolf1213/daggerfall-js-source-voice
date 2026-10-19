@@ -8,6 +8,8 @@ import '../../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { sea } from '../../navalSea.mjs';
+import { room } from '../../navalRoom.mjs';
+import { navalWireRecord, validNavalRecord, NAVAL_WIRE_GONE } from '../../../src/systems/naval/navalWire.js';
 import { PASSAGE_HULLS, PASSAGE_TEXT, PASSAGE_RAY_M } from '../../../src/systems/naval/passage.js';
 import { BOAT_DEED_TEMPLATE } from '../../../src/systems/shipyards.js';
 import { hullBuild } from '../../../src/systems/naval/navalShips.js';
@@ -150,4 +152,50 @@ test('AUDIT PASSAGE B5: ANOTHER PLAYER\'S SHIP AT HER BERTH IS BOOKED TOO - her 
   assert.ok(![...w.host._sea.values()].some((x) => x.ship.seed === seed), 'from my sea');
   w.host.clear(); w.run(1);
   assert.ok(![...w.host._sea.values()].some((x) => x.ship.seed === seed && x.ship.errand?.harbour === harbour && x.ship.errand?.berth === berth), 'not stood at her berth again today, by me');
+});
+
+test('AUDIT PASSAGE B5: A BOOKED SHIP IS GONE FOR EVERY PLAYER - her seed said in the word (`q`, the last NAVAL_WIRE_GONE, said on by every reader): the copy lying at her berth fades out, and no player stands her there again that day or takes her over, whoever stood her and whoever booked her; the door reads it whole or refuses the word; before, the next player to stand the port stood her again at her berth (mutants: `q` unsaid; unread; not said on; the roll unasked; her copy kept; her copy read again; taken over again)', async () => {
+  const PASSENGER = { to: { name: 'Sentinel', px: 1, py: 2 }, ship: null, captain: null, fare: 25 };
+  const gone = (c, seed) => ![...c.s.host._sea.values()].some((x) => x.ship.seed === seed);
+  for (const [booker, leaves] of [['stander', false], ['other', false], ['stander', true]]) {
+    const r = await room([{ id: 'a', hull: null, water: coast }, { id: 'b', hull: null, water: coast }]);
+    for (const c of r.clients.values()) {
+      c.s.deps.passage = () => true; c.s.deps.board.mintUid = () => 4242; c.s.deps.harbourNear = () => PORT;
+      c.s.deps.csa = () => ({ state: { AllBoats: [] }, isSailing: () => false, LaunchFromDeed: (deed, list, pos) => ({ uid: deed.UID, hull: Math.floor(deed.message / 10), GameObject: { position: pos } }) });
+      c.s.view.feet = [0, 0, 300];
+    }
+    r.run(3);
+    const stander = [...r.get('a').s.host._sea.values()].some((x) => !x.owner && x.fromHarbour) ? r.get('a') : r.get('b');
+    const other = stander === r.get('a') ? r.get('b') : r.get('a');
+    const by = booker === 'stander' ? stander : other, them = by === stander ? other : stander;
+    const e = [...by.s.host._sea.values()].find((x) => PASSAGE_HULLS.includes(x.ship.hull) && (x.fromHarbour || x.owner));
+    assert.ok(e, `${booker}: a ship to book`);
+    const seed = e.ship.seed;
+    assert.ok(!gone(them, seed), `${booker}: both see her at her berth`);
+    assert.ok(by.s.host.charter(e.id, PASSENGER), `${booker}: her boat`);
+    assert.equal(by.s.host.charterSailed(e.id), true);
+    if (leaves) {   // the stander sails off at once: the other rolls the port while her copy still fades at her berth
+      by.s.view.feet = [99999, 0, 99999];
+      r.run(1);
+      assert.ok([...them.s.host._sea.values()].some((x) => x.ship.seed === seed && x.retiring), 'her copy fading as the other takes the port');
+    }
+    r.run(6);   // past SHIP_FADE_S
+    assert.ok(gone(by, seed) && gone(them, seed), `${booker}: gone from both seas - her copy faded out, never kept or taken over`);
+    // the booker sails off; the other player rolls the port afresh (a door's visit, a day's harbour found again)
+    by.s.view.feet = [99999, 0, 99999];
+    r.run(3);
+    them.s.host.clear(); r.run(3);
+    assert.ok(gone(them, seed), `${booker}: never stood at her berth again today by the other player`);
+  }
+  // said on: a word heard from another player is said in mine, so a player who never met the booker hears it too
+  const w = (await port()).w;
+  assert.equal(w.host.applyWord('peer-c', { s: [], q: [77, 78] }), true);
+  assert.deepEqual(w.host.word()?.q, [77, 78], 'said on in my word');
+  // the door: said, bounded, read whole or the word refused
+  const said = navalWireRecord({ ships: [], gone: [1, 2, 3] });
+  assert.deepEqual(said.q, [1, 2, 3], 'said in its own key - the only thing said');
+  assert.deepEqual(validNavalRecord(said).gone, [1, 2, 3]);
+  assert.deepEqual(validNavalRecord({ s: [] }).gone, [], 'an older build\'s word says none');
+  assert.equal(navalWireRecord({ ships: [], gone: Array.from({ length: NAVAL_WIRE_GONE + 3 }, (_, i) => i) }).q.length, NAVAL_WIRE_GONE, 'the last NAVAL_WIRE_GONE');
+  for (const bad of [{ s: [], q: 'x' }, { s: [], q: [-1] }, { s: [], q: [1.5] }, { s: [], q: Array.from({ length: NAVAL_WIRE_GONE + 1 }, (_, i) => i) }]) assert.equal(validNavalRecord(bad), null, JSON.stringify(bad).slice(0, 40));
 });

@@ -759,5 +759,86 @@
     "tests": [
       "test/scenes/naval/passagesea.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-q-unsaid",
+    "file": "src/systems/naval/navalWire.js",
+    "old": "  if (q.length) out.q = q;",
+    "new": "",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-q-unread",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "    hearGone(rec.gone);   // AUDIT PASSAGE B5",
+    "new": "    // AUDIT PASSAGE B5",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-q-not-said-on",
+    "file": "src/scenes/naval/passageBerths.js",
+    "old": "    said = [...said, seed].slice(-NAVAL_WIRE_GONE);\n    for",
+    "new": "    for",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-the-roll-unasked",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "departed.has(seed) || goneSeed(seed) ||",
+    "new": "departed.has(seed) ||",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-her-copy-kept",
+    "file": "src/scenes/naval/passageBerths.js",
+    "old": "    for (const e of host.sea.values()) if (e.ship.seed === seed) host.retire(e);",
+    "new": "",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-her-copy-read-again",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "      if (goneSeed(w.seed)) continue;   // AUDIT PASSAGE B5",
+    "new": "      // AUDIT PASSAGE B5",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-taken-over-again",
+    "file": "src/scenes/naval/navalHost.js",
+    "old": "own.has(e.ship.seed) && !goneSeed(e.ship.seed) &&",
+    "new": "own.has(e.ship.seed) &&",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-the-door-unbounded",
+    "file": "src/systems/naval/navalWire.js",
+    "old": "!Array.isArray(gone) || gone.length > NAVAL_WIRE_GONE ||",
+    "new": "!Array.isArray(gone) ||",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-PASSAGE-B5-the-booker-unsaid",
+    "file": "src/scenes/naval/passageBerths.js",
+    "old": "    noteGone(e.ship.seed);   // AUDIT PASSAGE B5",
+    "new": "    // AUDIT PASSAGE B5",
+    "tests": [
+      "test/scenes/naval/passagesea.test.js"
+    ]
   }
 ]

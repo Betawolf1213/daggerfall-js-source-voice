@@ -115,8 +115,13 @@ She is her master's ship, never the player's:
 
 Online: a harbour ship another player stands is booked too (found by her berth), and taken over at the booking, as a
 boarding takes her; her boat is a boat of mine on the wire, so another player may ride her as a passenger (CSA-K).
-Recorded, not fixed: her letting go is no departure on the wire - the player who stands the port next may stand her at
-her berth again the same day (the naval word carries no departed seed; AUDIT PASSAGE B5).
+HER LETTING GO IS EVERY PLAYER'S (AUDIT PASSAGE B5): her seed rides the naval word (`navalWire.js` `q`, the last
+NAVAL_WIRE_GONE, said on by every reader - `passageBerths.js` noteGone): the copy lying at her berth on another screen
+fades out as her boat stands in her place, and no player stands her there again that day, takes her over there while
+she fades or keeps a copy of her, whoever stood her and whoever booked her. Before, her letting go was the booker's
+alone: the next player to stand the port stood her at her berth again, bookable a second time. A player who never
+hears a word that says her (the booker gone from the room before they came, and nobody since who heard it) may still
+stand her - as a spent packet (AUDIT BAY A18).
 
 ## The words
 
@@ -127,15 +132,16 @@ drafted in-session for the thirteen whole languages (`locales/README.md`).
 
 `scenes/world.js` wires it (the passage host built once beside the shipyard's, its frame at the head of the sea's frame
 whatever the sea fight's switch says, the sea's door to it); `scenes/naval/navalHost.js` wires the sea's half
-(`passageBerths.js` - AUDIT PASSAGE D-M1: it grew createNavalHost's own scope, and moved out to five lines of wiring). `scenes/exterior.js`, the fixed-city bench, stands no
+(`passageBerths.js` - AUDIT PASSAGE D-M1: it grew createNavalHost's own scope, and moved out to its wiring; B5's word
+read and said, its roll and take-over asked, are lines of that wiring). `scenes/exterior.js`, the fixed-city bench, stands no
 harbour ships - no passage there. `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js` stand no sea.
 
 ## Pins
 
 `test/systems/naval/passage.test.js` (the law, and the planner's voyage), `test/scenes/naval/passagehost.test.js` (the
 booking, the voyage's life, the end, the wiring), `test/scenes/naval/passagesea.test.js` (the ship at her berth, her
-boat, her letting go - the real naval host and pool), `test/systems/comeSailAway/passage_csa.test.js` (the save and the
+boat, her letting go - the real naval host and pool, two players' rooms), `test/systems/comeSailAway/passage_csa.test.js` (the save and the
 pack, the real runtime), `test/scenes/naval/passageaudit.test.js` (the cabins, the world's audit doors);
-`tools/mutants/passage.json` (84: 82 dead, 2 recorded equivalent). The audit: `01-Overview/audits/Audit-Passage-Batch-Salvage.md`.
+`tools/mutants/passage.json` (93: 91 dead, 2 recorded equivalent). The audit: `01-Overview/audits/Audit-Passage-Batch-Salvage.md`.
 
 Not a DFU member. Ledger A (PASSAGE).

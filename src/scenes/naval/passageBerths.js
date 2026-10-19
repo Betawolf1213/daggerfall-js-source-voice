@@ -6,7 +6,7 @@
 // scenes/naval/passageHost.js's; the law systems/naval/passage.js.
 //
 //   host = { sea, harbours, enabled(), boarding(), myBoat(), csa(), stanceOf(ship), drop(entry), adopt(entry),
-//            departedOf(key, day), day(), hullBox(boat) }   - the naval host's own state and doors
+//            retire(entry), departedOf(key, day), day(), hullBox(boat) }   - the naval host's own state and doors
 //   deps = the naval host's deps (`passage`, `passageCrosses(hull)`, `look`, `say`, `seaY`, `board.mintUid`,
 //          `board.terrainAt`)
 //
@@ -17,6 +17,7 @@ import { forwardOfYaw } from '../../systems/naval/navalAI.js';
 import { segmentBoxEntry } from '../../systems/naval/navalBallistics.js';
 import { prizeDeedValue } from '../../systems/naval/navalPlunder.js';
 import { mintDeed } from '../../systems/comeSailAway/comeSailAwayItems.js';
+import { NAVAL_WIRE_GONE } from '../../systems/naval/navalWire.js';
 
 /** @param {any} host @param {any} deps */
 export function createPassageBerths(host, deps) {
@@ -91,7 +92,23 @@ export function createPassageBerths(host, deps) {
     if (e.owner) host.adopt(e);
     host.departedOf(e.fromHarbour ?? m?.key, host.day()).add(e.ship.seed);
     host.drop(e);
+    noteGone(e.ship.seed);   // AUDIT PASSAGE B5: and every player's - said in my word
     return true;
   }
-  return { passageShip, passageHint, charter, charterSailed };
+  /** AUDIT PASSAGE B5: THE BOOKED SHIPS, EVERY PLAYER'S - each by her seed (harbourFrame's: her port's, the day's, her
+   *  berth's), mine and every word's (the naval wire's `q`): no player stands her at her berth again that day, takes
+   *  her over there or keeps a copy of her - one still lying there fades out - and each is said on in my word, the last
+   *  NAVAL_WIRE_GONE (before, her letting go was mine alone: the next player to stand the port stood her again). */
+  const gone = new Set();
+  let said = [];
+  function noteGone(seed) {
+    if (!Number.isInteger(seed) || gone.has(seed)) return;
+    gone.add(seed);
+    said = [...said, seed].slice(-NAVAL_WIRE_GONE);
+    for (const e of host.sea.values()) if (e.ship.seed === seed) host.retire(e);
+  }
+  const goneSeed = (seed) => gone.has(seed);
+  const goneSaid = () => said;
+  const hearGone = (seeds) => { for (const sd of seeds ?? []) noteGone(sd); };
+  return { passageShip, passageHint, charter, charterSailed, goneSeed, goneSaid, hearGone };
 }

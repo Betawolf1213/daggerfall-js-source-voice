@@ -4394,7 +4394,7 @@ export function createNavalHost(deps) {
   }
   // ── PASSAGE (2026-10-19; bible/03-World/Passage.md): a harbour's own friendly ship, booked from her quay - the sea's half
   // in scenes/naval/passageBerths.js (AUDIT PASSAGE D-M1: out of this scope), the voyage scenes/naval/passageHost.js's ──
-  const { passageShip, passageHint, charter, charterSailed } = createPassageBerths({ sea, harbours, enabled: () => enabled, boarding: () => boarding, myBoat, csa, stanceOf, drop, adopt, departedOf, day: () => where().day ?? 0, hullBox }, deps);
+  const { passageShip, passageHint, charter, charterSailed, goneSeed, goneSaid, hearGone } = createPassageBerths({ sea, harbours, enabled: () => enabled, boarding: () => boarding, myBoat, csa, stanceOf, drop, adopt, retire, departedOf, day: () => where().day ?? 0, hullBox }, deps);
   let dockPortsAt = -Infinity;
   /** The Fleet's word of where each boat of mine lies made fast (`deps.dockedPort(boat, name | null)`), once a second -
    *  AUDIT HOLDINGS Q8: "nowhere" said only where it is known - a known harbour's mouth within HARBOUR_STAND of her, or
@@ -4450,7 +4450,7 @@ export function createNavalHost(deps) {
         // AUDIT BAY A20: the port's own a player sailing off lets go of (out of their word) - taken over where they
         // lie by the one who rolls the port now (they faded out of their berths under my eyes, the roll long done)
         const own = new Set(Array.from({ length: n }, (_, i) => seedOf(i)));
-        for (const e of [...sea.values()]) if (e.owner && e.retiring && own.has(e.ship.seed) && e.ship.damage.state === SHIP_STATES.afloat) { adopt(e); e.retiring = false; }
+        for (const e of [...sea.values()]) if (e.owner && e.retiring && own.has(e.ship.seed) && !goneSeed(e.ship.seed) && e.ship.damage.state === SHIP_STATES.afloat) { adopt(e); e.retiring = false; }   // AUDIT PASSAGE B5: never one booked
         continue;
       }
       rolled.add(h.harbour);
@@ -4464,7 +4464,7 @@ export function createNavalHost(deps) {
         const back = [...sea.values()].find((x) => !x.owner && x.retiring && x.ship.seed === seed && x.fromHarbour === h.key);
         if (back) { back.retiring = false; continue; }
         // AUDIT SHIP-LIFE B3: her seed anyone's already (another's copy of her, whatever class it drew) - not stood again
-        if (!cls || departed.has(seed) || [...sea.values()].some((x) => x.ship.seed === seed && x.ship.damage.state !== SHIP_STATES.sunk) || !berthFree(h.key, i)) continue;
+        if (!cls || departed.has(seed) || goneSeed(seed) || [...sea.values()].some((x) => x.ship.seed === seed && x.ship.damage.state !== SHIP_STATES.sunk) || !berthFree(h.key, i)) continue;
         const b = h.harbour.berths[i], at = alongside(b, cls.hull, h.harbour.hull);   // QUAYS: her side to its quay
         const e = launch({ seed, classId: cls.id, variant: 0, pos: [at[0], seaY, at[1]], yaw: b.yaw, errand: { kind: 'moored', harbour: h.key, berth: i, until: dwellOf(errandRng(seed)), path: null, i: 0 } });
         if (e) { e.fromHarbour = h.key; e.ship.sails = 0; e.ship.sailsWant = 0; }
@@ -4797,7 +4797,7 @@ export function createNavalHost(deps) {
     const casks = shots.floaters().filter((f) => f.kind === 'flotsam' && !f.owner).map((f) => ({ id: Number(f.id), pos: f.pos, from: f.from, lot: f.lot, deep: !!f.deep }));   // AUDIT CAPTAIN'S SEA D8: a deep ship's the richer on every client
     // AUDIT GN-G3: my boat's laid broadsides - another screen lays her as mine does (her shutters up, her guns out)
     const laid = b ? Object.entries(galleonGuns.read(b, clock) ?? {}).filter(([, side]) => side.laid).map(([side]) => side) : [];
-    return navalWireRecord({ ships, volleys, barrels: wireBarrels, me, law: notoriety.snapshot(), traffic: setting('ShipsAtSea', TRAFFIC_DEFAULT), casks, spent: spentSaid, laid }, toWire);   // AUDIT BAY A18: the packets I have seen spent
+    return navalWireRecord({ ships, volleys, barrels: wireBarrels, me, law: notoriety.snapshot(), traffic: setting('ShipsAtSea', TRAFFIC_DEFAULT), casks, spent: spentSaid, gone: goneSaid(), laid }, toWire);   // AUDIT BAY A18: the packets I have seen spent
   }
   /** A peer's word: their ships stood as puppets, their volleys flown and drawn, their barrels afloat. */
   function applyWord(owner, raw, toScene = (p) => p) {
@@ -4809,8 +4809,10 @@ export function createNavalHost(deps) {
       dropOwner(owner);
       return true;
     }
+    hearGone(rec.gone);   // AUDIT PASSAGE B5: the harbour ships booked - heard before her copy is read
     const keep = new Set();
     for (const w of rec.ships) {
+      if (goneSeed(w.seed)) continue;   // AUDIT PASSAGE B5: a booked ship is nobody's at sea - a copy of her let go
       const id = `${owner}:${w.n}`;
       let e = sea.get(id);
       if (e && (e.ship.seed !== w.seed || e.ship.cls.id !== w.classId)) { drop(e); e = null; }   // her number said again for another ship: that one is gone

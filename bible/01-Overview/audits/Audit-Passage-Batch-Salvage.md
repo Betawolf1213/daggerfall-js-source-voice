@@ -8,7 +8,7 @@ salvage (a fake pack driven by its own presses, and mutants over it); D, the rec
 the recorded mutants re-run and eleven of its own written against what the docs claim).
 
 Every finding was re-run before it was fixed, and each fix is pinned by a test that goes red on the audited code.
-Mutation-proven: `tools/mutants/passage.json` (84: 82 dead, 2 recorded equivalent - 40 records new with the audit) and
+Mutation-proven: `tools/mutants/passage.json` (93: 91 dead, 2 recorded equivalent - 49 records new with the audit) and
 `tools/mutants/batchsalvage.json` (25, all dead - 12 new).
 
 ## Lane A - the passage's law and its host
@@ -31,7 +31,7 @@ Mutation-proven: `tools/mutants/passage.json` (84: 82 dead, 2 recorded equivalen
 | B2 | Bug | **A boarding from her ended the passage.** A boarding puts the player on the enemy's deck 13-16 m off her: her boat was laid up mid-fight and the player left on the prize at sea. | Aboard counts the naval host's `boatInPlay`; nothing is judged through a world's move (A2). |
 | B3 | Risk | **A crewed warship for 25 gold.** Three resumes and her master stood down; the passenger could steer her anywhere - fights, prizes, past the Veil - for good. | He never gives her up while a passenger stands aboard (PASSAGE_SLOW after PASSAGE_RESUMES fail); a journey begun to anywhere but her port is stopped ("Her master holds his course for Sentinel.") and he sails on. RECORDED: between his tries (at most 60 s) the passenger may still steer her by hand. |
 | B4 | Risk | **What was put in her sailing cabin was lost.** The boat menu offered a cabin under her number; it was orphaned when she sailed on. | `hasSailingCabin` is false for a booked boat. |
-| B5 | Risk | **Online, only the player who stands the port could book.** A peer's copy of a harbour ship carries no errand on the wire. | Moored is also a copy lying still at a known harbour's berth (`mooredAt`); she is taken over at the booking. RECORDED: her letting go is no departure on the wire - the player who stands the port next may stand her at her berth again the same day (the naval word carries no departed seed). |
+| B5 | Risk | **Online, only the player who stands the port could book.** A peer's copy of a harbour ship carries no errand on the wire. | Moored is also a copy lying still at a known harbour's berth (`mooredAt`); she is taken over at the booking. Her letting go was no departure on the wire - the player who stood the port next stood her at her berth again the same day, bookable twice, and one who took the port while her copy faded took her over - first RECORDED, then fixed the same day at the owner's word ("So its not seen by other players?" - "Yes"): her seed rides the naval word (`q`, NAVAL_WIRE_GONE, said on by every reader); her copy fades out, and no player stands her, takes her over or keeps her (`passagesea.test.js`, two players' rooms; nine mutants). |
 | B6 | Risk | **Activate was taken from the whole quay.** Any spot 18 m off her with the look within 60 degrees: the townsfolk's talk, doors, wagons and the gathering's nodes lost the press. | The look's ray must strike HER HULL within PASSAGE_RAY_M (8 m); my own ship's gangway stays the first press. RECORDED: a person on the ray between the player and her side, within the 8 m, still loses the press to her - the activation's ladder is pinned and was not reordered. |
 | B7 | Nit | **A Carrack booked under the Classic handling never sailed** (OWS2 refuses her) while the hint kept offering her. | The naval host's `passageCrosses` (`tvSeaCrosses`): a hull this helm cannot cross a sea in is offered no passage. |
 | B8 | - | Host rules: see D-M1. | - |
@@ -75,7 +75,6 @@ press outside; virtual and remote rows. The bible's gates, the host ceilings, th
 
 ## Not fixed
 
-- **B5** her letting go is no departure on the wire (a same-day restand by the next player to stand the port).
 - **B6** a person on the ray within 8 m of her side loses the press to her.
 - **B3** a passenger may steer her by hand between her master's tries.
 - **A5** a hold brought ashore takes no weight.
