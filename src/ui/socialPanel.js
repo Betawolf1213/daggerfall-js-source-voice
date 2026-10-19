@@ -76,8 +76,20 @@ import { t } from '../systems/textManager.js';   // GUILD-UX: the storage pages'
 import { storeFilterAccepts, storeRarityAccepts, storeQuery, storeFilterOptions, storeRarityOptions } from './storeFilter.js';   // GUILD-UX: the stores' one filter
 import { showItemHover, hideItemHover } from './enhanced/enhancedInventory.js';   // GUILD-UX: the pack's one item card
 import { playerEntity } from '../characters/playerEntity.js';   // GUILD-UX: the card's comparison is against what I wear
+import { isEnhanced } from '../systems/uiSkin.js';   // AUDIT SUGGESTIONS-1019 L4-4: the card is the enhanced skin's
+import { itemLongName } from '../systems/item/itemInfo.js';   // AUDIT SUGGESTIONS-1019 L4-6: a row named as the pack names the piece
+import { LOOSE_ORIGIN } from '../net/bagLaw.js';   // AUDIT SUGGESTIONS-1019 L4-1: the loose units the service's room counts
 /** GUILD-UX: the vault row's card - the pack's own (enhancedInventory.js showItemHover), compared against what I wear. */
-const ITEM_CARD = Object.freeze({ show: (rec, row) => showItemHover(rec, { entity: playerEntity }, row, 'shop'), hide: () => hideItemHover() });
+// AUDIT SUGGESTIONS-1019 L4-4: on the enhanced skin alone - the card's sheet is the enhanced dress's (enhancedPlusStyle.js),
+// and on the classic skin it fell, unstyled, below the screen
+export const ITEM_CARD = Object.freeze({
+  show: (rec, row, { asked = false } = {}) => { if (isEnhanced()) showItemHover(rec, { entity: playerEntity }, row, 'shop', { asked }); },
+  hide: () => hideItemHover(),
+});
+/** AUDIT SUGGESTIONS-1019 L4-6: a vault row's name as the pack would say it (itemInfo.js itemLongName - an unidentified
+ *  piece unnamed), never the service's record name, which is the piece's true one; a wagon by its kind; an old row with
+ *  no record by the service's line. */
+export const vaultRowName = (row) => String(wagonItemName(row?.rec) ?? (row?.rec?.group ? itemLongName(row.rec) : row?.name) ?? t('social.vault.anItem', 'an item'));
 /** The first node under `n` (itself included) wearing class `cls` - a walk of `children`, so it reads any DOM. */
 const childOfClass = (n, cls) => {
   if (String(n?.className ?? '').split(/\s+/).includes(cls)) return n;
@@ -89,7 +101,7 @@ const childOfClass = (n, cls) => {
 export function vaultRowAccepts(row, f) {
   const rec = row?.rec ?? {};
   const q = storeQuery(f?.query);
-  const name = String(wagonItemName(rec) ?? row?.name ?? '').toLowerCase();
+  const name = vaultRowName(row).toLowerCase();
   return storeFilterAccepts(rec, f?.cat ?? 'all') && storeRarityAccepts(rec, f?.rarity ?? 'all') && (!q || name.includes(q));
 }
 /** A piece of the pack as the vault's Put in names it - the Open Wagon and the Caravan by their own names (their record's
@@ -1137,6 +1149,8 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     };
     const stores = ps.mine?.() ?? new Map();
     const heldOf = (k) => { const v = [...stores.values()].find((x) => x.material === k); return v ? v.own + v.bought : 0; };
+    // AUDIT SUGGESTIONS-1019 L4-1: the room the service counts - every origin of it, gold-bought and loose units too (writs.js moveGuildStores)
+    const roomHeld = (k) => { const v = [...stores.values()].find((x) => x.material === k); return v ? v.own + v.bought + (v.gold | 0) + (v[LOOSE_ORIGIN] | 0) : 0; };
     const guildOf = (k) => gs.rows.find((r) => r.material === k)?.qty ?? 0;
     const mine = [...stores.values()].filter((v) => v.own + v.bought > 0);
     // R1: what this character may take out - an Officer or the Guildmaster any of it, a member their own deposit
@@ -1144,7 +1158,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     const outMost = (k) => { const r = gs.rows.find((x) => x.material === k); return r ? (gs.mayWithdraw ? r.qty : r.mine) : 0; };
     // GUILD-UX: empty is all of it - all you hold that the guild has room for in, all you may take that your Stores have room for out
     const putUnits = (k) => (unitsEmpty() ? Math.min(heldOf(k), Math.max(0, GUILD_STORES_MAX - guildOf(k))) : unitsTyped());
-    const takeUnits = (k) => (unitsEmpty() ? Math.min(outMost(k), Math.max(0, STORES_MAX - heldOf(k))) : unitsTyped());
+    const takeUnits = (k) => (unitsEmpty() ? Math.min(outMost(k), Math.max(0, STORES_MAX - roomHeld(k))) : unitsTyped());
     const form = el('div', 'dfsocial-form');
     if (mine.length) {
       if (!mine.some((v) => v.material === d.storeIn)) d.storeIn = mine[0].material;
@@ -1175,7 +1189,13 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
       acts.append(liveBtn(t('social.stores.putAll', 'Put in all'), () => {
         const why = W.busy ? 'a moment' : !allMoves().length ? t('social.stores.noRoomAll', 'the guild Stores have no room for any of it') : '';
         return { enabled: !why, why };
-      }, { run: () => guildDo(guildPutAll(W, allMoves()), (r) => t('social.stores.putAllDone', '{n, plural, one {# material} other {# materials}} put in the guild Stores.', { n: r.moved })) }));
+      }, {
+        // AUDIT SUGGESTIONS-1019 L4-5: a run the service stopped part way says what went in before it, and why it stopped
+        run: () => guildDo(guildPutAll(W, allMoves()).then((r) => (!r.ok && r.moved > 0 ? { ok: true, moved: r.moved, stopped: r } : r)),
+          (r) => (r.stopped
+            ? t('social.stores.putAllStopped', '{n, plural, one {# material} other {# materials}} went in, then the guild Stores refused: {why}', { n: r.moved, why: guildWordText(r.stopped.error, r.stopped, Math.floor(social.now() / 1000)) })
+            : t('social.stores.putAllDone', '{n, plural, one {# material} other {# materials}} put in the guild Stores.', { n: r.moved }))),
+      }));
     }
     if (gs.rows.length) {
       acts.append(liveBtn('Take out', () => {
@@ -1183,7 +1203,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
         const why = !takeable.length ? 'Officers and the guildmaster, or what you put in of your own'
           : W.busy ? 'a moment' : !n ? (unitsEmpty() ? t('social.stores.noRoomMine', 'your Stores have no room for more of it') : `a number from 1 to ${STORES_MAX.toLocaleString('en-US')}`)
             : n > outMost(k) ? (gs.mayWithdraw ? `the guild Stores hold ${outMost(k).toLocaleString('en-US')}` : `you put in ${outMost(k).toLocaleString('en-US')} of your own`)
-              : heldOf(k) + n > STORES_MAX ? `your Stores hold at most ${STORES_MAX.toLocaleString('en-US')} of a material` : '';
+              : roomHeld(k) + n > STORES_MAX ? `your Stores hold at most ${STORES_MAX.toLocaleString('en-US')} of a material` : '';
         return { enabled: !why, why };
       }, {
         run: () => { const k = d.storeOut, n = takeUnits(k); if (n > 0 && k) guildDo(W.withdrawStores(k, n), `${n.toLocaleString('en-US')} ${ps.name(k, n)} taken into your Stores.`, () => { d.storeUnits = ''; }); },
@@ -1471,12 +1491,14 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
   /** GUILD-UX: the vault's filter, kept across repaints (a read, a take) and let go with the guild's page. */
   const vaultFilter = () => (guildUi.vaultFilter ??= { cat: 'all', rarity: 'all', query: '' });
   /** GUILD-UX: each vault row shown or hidden by the filter as it stands - `shown` its `[row element, vault row]` pairs. */
-  const applyVaultFilter = (shown) => {
+  const applyVaultFilter = (shown, none = null) => {
     const f = vaultFilter();
-    for (const [r, row] of shown) r.style.display = vaultRowAccepts(row, f) ? '' : 'none';   // a style, not `hidden`: the row's own display rule outranks the attribute
+    let seen = 0;
+    for (const [r, row] of shown) { const ok = vaultRowAccepts(row, f); r.style.display = ok ? '' : 'none'; if (ok) seen++; }   // a style, not `hidden`: the row's own display rule outranks the attribute
+    if (none) none.style.display = shown.length && !seen ? '' : 'none';   // AUDIT SUGGESTIONS-1019 L4-7: a filter that hides every row says so
   };
   /** GUILD-UX: the bar - a search, the pack's pages and the rarities, each holding what this vault holds, with counts. */
-  const vaultFilterBar = (items, shown) => {
+  const vaultFilterBar = (items, shown, none) => {
     const f = vaultFilter();
     const recs = items.map((r) => r.rec ?? {});
     const bar = el('div', 'dfsocial-form');
@@ -1484,18 +1506,25 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     q.className = 'dfsocial-field'; q.type = 'search'; q.maxLength = 40; q.value = f.query;
     q.placeholder = t('social.vault.find', 'Find a piece'); q.setAttribute('aria-label', q.placeholder);
     q.setAttribute('autocomplete', 'off'); q.setAttribute('spellcheck', 'false');
-    q.addEventListener('input', () => { f.query = q.value; applyVaultFilter(shown); });
-    const menu = (label, options, key) => selectOf(label, options.map((o) => [o.id, `${o.label} (${o.count})`]), f[key], (v) => { f[key] = v; applyVaultFilter(shown); });
+    q.addEventListener('input', () => { f.query = q.value; applyVaultFilter(shown, none); });
+    const menu = (label, options, key) => selectOf(label, options.map((o) => [o.id, `${o.label} (${o.count})`]), f[key], (v) => { f[key] = v; applyVaultFilter(shown, none); });
     bar.append(q, menu(t('social.vault.page', 'A page of the pack'), storeFilterOptions(recs, f.cat), 'cat'), menu(t('social.vault.rarity', 'A rarity'), storeRarityOptions(recs, f.rarity), 'rarity'));
     return bar;
   };
   /** GUILD-UX: a vault row's card - the pack's own, beside the row on a hover, and on a press of the row for a finger;
    *  gone when the pointer leaves and at every repaint, so it never outlives the row it was for. */
+  // AUDIT SUGGESTIONS-1019 L4-3: a MOUSE's pointer brings the card and takes it; a press of the name toggles it - on a
+  // phone a tap fired enter, click and leave in one, and the card came and went at once
+  let cardRow = null;
+  const hideCard = () => { cardRow = null; itemCard.hide(); };
   const vaultCardOn = (r, rec) => {
-    const show = () => itemCard.show(rec, r);
-    r.addEventListener('mouseenter', show);
-    r.addEventListener('mouseleave', () => itemCard.hide());
-    childOfClass(r, 'dfsocial-name')?.addEventListener('click', show);
+    const mouse = (e) => (e?.pointerType ?? 'mouse') === 'mouse';
+    r.addEventListener('pointerenter', (e) => { if (mouse(e)) { cardRow = r; itemCard.show(rec, r); } });
+    r.addEventListener('pointerleave', (e) => { if (mouse(e)) hideCard(); });
+    childOfClass(r, 'dfsocial-name')?.addEventListener('click', () => {
+      if (cardRow === r) { hideCard(); return; }
+      cardRow = r; itemCard.show(rec, r, { asked: true });
+    });
   };
 
   /** GUILD2b: THE VAULT - the guild's pieces, each with its depositor; Take for a member who may, Put in from the pack for
@@ -1538,9 +1567,10 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     // search keeps its focus as it is typed - and each row's CARD, the pack's own (enhancedInventory.js showItemHover), on
     // a hover or a press of its name
     const shown = [];
-    if (vv.items.length) out.push(vaultFilterBar(vv.items, shown));
+    const none = el('div', 'dfsocial-empty', t('social.vault.noMatch', 'No piece in the vault matches.'));
+    if (vv.items.length) out.push(vaultFilterBar(vv.items, shown, none));
     for (const row of vv.items) {
-      const it = { ...row, name: wagonItemName(row.rec) ?? row.name };   // WAGONS2 (FINAL AUDIT): a marked wagon put in before its row was named by its kind
+      const it = { ...row, name: vaultRowName(row) };   // WAGONS2 (FINAL AUDIT): a marked wagon put in before its row was named by its kind; AUDIT SUGGESTIONS-1019 L4-6: and an unidentified piece unnamed
       const r = personRow({ name: it.count > 1 ? `${it.name} x${it.count}` : it.name, sub: `put in by ${it.by}` });
       if (row.rec) vaultCardOn(r, row.rec);
       shown.push([r, row]);
@@ -1551,7 +1581,8 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
       }
       out.push(r);
     }
-    applyVaultFilter(shown);
+    out.push(none);
+    applyVaultFilter(shown, none);
     // PUT IN, from the pack - what may leave it (systems/tradePack.js tradeRefusal: never a worn, a quest's, a summoned,
     // a bound piece, gold, a boat's or the Materials Bag)
     if (vaultMayPut(st) && g.pack) {
@@ -1831,7 +1862,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
 
   /** The whole body, and the tab badges over it. */
   const repaint = () => {
-    itemCard.hide();   // GUILD-UX: a vault row's card never outlives the row it was for
+    hideCard();   // GUILD-UX: a vault row's card never outlives the row it was for
     painted = social.version; paintedUi = ui; paintedMail = mail?.version ?? 0; paintedGuild = guild?.version ?? 0; paintedWho = guildWho();
     paintedJourney = journeyKey();   // PARTY-UI
     paintedLead = !!canLead();   // PARTY-LEAD
@@ -1928,6 +1959,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     if (!alive || !open) return false;
     open = false; confirm = null; ui++;
     root.dataset.open = '0';
+    hideCard();   // AUDIT SUGGESTIONS-1019 L4-2: nor the panel - closed, the pointer locked, no leave ever came
     onClose?.();   // and takes it back inside the closing gesture, the only place a lock request is honoured
     return true;
   };
@@ -2033,6 +2065,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     destroy() {
       if (!alive) return;
       alive = false;
+      hideCard();   // AUDIT SUGGESTIONS-1019 L4-2
       win.removeEventListener('keydown', onKey, true);
       if (social.onInvite === mineInvite) social.onInvite = priorInvite;
       root.remove?.();

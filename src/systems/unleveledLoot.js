@@ -91,8 +91,13 @@ let _world = null;
 export function setUnleveledLootWorld(world) { _world = world; }
 export const _worldReader = () => _world;
 const player = () => _world?.playerEntity?.() ?? null;
-const playerLevel = () => Math.max(1, player()?.level | 0);
-const playerLuck = () => liveStat(player(), 'luck');
+// AUDIT SUGGESTIONS-1019 L1-1: THE RAISER'S TERMS, while a corpse is raised (unlevelDroppedLoot). A room's base names its
+// own Luck and level (roomLootHost.js, PARTY-LOOT), but the armour drop's CreateRandomArmor reaches this mod's own
+// RandomArmorMaterial override, which read the LOCAL player's Luck - so two clients raising one seeded body drew a
+// different number of draws and disagreed on the piece's condition and the gold after it. Inside a raise, the raiser's.
+let _raiserLuck = null, _raiserLevel = null;
+const playerLevel = () => _raiserLevel ?? Math.max(1, player()?.level | 0);
+const playerLuck = () => _raiserLuck ?? liveStat(player(), 'luck');
 const insideOpenShop = () => !!_world?.insideOpenShop?.();
 const insideDungeon = () => !!_world?.insideDungeon?.();
 const buildingQuality = () => _world?.buildingQuality?.() ?? 0;
@@ -255,6 +260,9 @@ function dropArmor(loot, material, rolls) {
   const random = mintCondition(named(createRandomArmor(playerLevel(), rolls)));
   const item = mintCondition(named({ group: 'Armor', templateIndex: random.templateIndex, material, variant: 0 }));
   item.currentCondition = int(F(rangeFloat(0.3, 0.75, rolls) * F(random.maxCondition ?? 0)));
+  // AUDIT SUGGESTIONS-1019 L1-2: never over the piece's own maximum - the ramp's middle metal can be lighter plate than
+  // the random piece the condition was read off (1.1.2's bug for bug had always made it the heavier)
+  if (Number.isFinite(item.maxCondition) && item.currentCondition > item.maxCondition) item.currentCondition = item.maxCondition;
   item.foundCondition = item.currentCondition;   // ASF-DEATH
   loot.push(item);
   return item;
@@ -273,7 +281,7 @@ export const rampMetal = (level) => Math.min(7, 3 + Math.trunc((Math.max(1, leve
 /** The metal a granted drop takes at `level`: `top` at METAL_RAMP_FULL and up, else on the ramp's draw. */
 function rampedMetal(top, level, rolls) {
   if (level >= METAL_RAMP_FULL || rangeInt(0, METAL_RAMP_FULL, rolls) < level) return top;
-  return rampMetal(level);
+  return materialSwitch(rampMetal(level), matSwitchList());   // AUDIT SUGGESTIONS-1019 L1-4: through the Mods pane's switches, as the mod's own metals go
 }
 /** AddDaedric: the Lord over 70, the Seducer over 75 (always a weapon),
  *  the Fire and Frost Daedra and the Daedroth over 80. */
@@ -300,18 +308,24 @@ export function addOrcish(loot, enemyId, rolls, level = playerLevel()) {
  *  multiplied by Range(1, luck's tenth + 1). */
 export function unlevelDroppedLoot(entity, { rolls = Math.random, r = null, luck = undefined, level: levelIn = undefined } = {}) {   // PARTY-LOOT: the raiser's Luck and level when it names them (a room's base rolls on the room's), else the player's
   if (!entity || !Array.isArray(entity.items)) return;
-  luckMod = int((luck ?? playerLuck()) / 10);
-  const b = entity.basics ?? {};
-  const id = entity.mobileType;
+  const luckNow = luck ?? playerLuck();
   const level = levelIn != null ? Math.max(1, levelIn | 0) : playerLevel();
-  if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls, level);
-  else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls, level);
-  for (const item of entity.items) {
-    if (item.group !== 'Currency' || item.templateIndex !== GOLD_TEMPLATE) continue;
-    item.stackCount = int((item.stackCount ?? 0) / level);
-    if (item.stackCount < 1) item.stackCount = 1;
-    item.stackCount *= rangeInt(1, luckMod + 1, rolls);
-  }
+  const was = [_raiserLuck, _raiserLevel];
+  _raiserLuck = luckNow; _raiserLevel = level;   // AUDIT SUGGESTIONS-1019 L1-1: the raiser's, for every roll the raise reaches
+  try {
+    luckMod = int(luckNow / 10);
+    const b = entity.basics ?? {};
+    const id = entity.mobileType;
+    if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls, level);
+    else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls, level);
+    luckMod = int(luckNow / 10);   // the armour drop's override set it again - to the same raiser's Luck now
+    for (const item of entity.items) {
+      if (item.group !== 'Currency' || item.templateIndex !== GOLD_TEMPLATE) continue;
+      item.stackCount = int((item.stackCount ?? 0) / level);
+      if (item.stackCount < 1) item.stackCount = 1;
+      item.stackCount *= rangeInt(1, luckMod + 1, rolls);
+    }
+  } finally { [_raiserLuck, _raiserLevel] = was; }
 }
 
 // ── Awake ──────────────────────────────────────────────────────────

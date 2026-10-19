@@ -355,11 +355,17 @@ one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-O
 
 - **The law** (`systems/skillSwap.js`): one class skill the character has not mastered out, one miscellaneous skill in,
   in the same group (the 2/2/1 slots stand); a mastered skill never leaves; the values stay; the career becomes the
-  character's own copy, saved whole. Both stored level sums move by what the swap moved the sum, so the level and the
+  character's own copy, saved whole and marked `swapped`, so an heir keeps it (`legacy/family.js` careerFields, AUDIT
+  SUGGESTIONS-1019 L5-4) and its household still wears the class. Both stored level sums move by what the swap moved the sum, so the level and the
   progress to the next stand. `SKILL_SWAP_GOLD` 100,000, paid as section 10's reset is (coins, letters, online the
   Empire's account).
 - **The page** (`ui/growth/specGuide.js` drawSkillSwap): under the Specialisations page's paths - *Change a class skill*,
   the two picks, *Swap · 100,000 gold*, asked first, refused (the press disabled, saying why) short of the gold. A
-  family whose class can never meet a path says, under its headline, that a class skill can be changed below.
-- Pins: `test/systems/fb1019_skillswap.test.js`; `tools/mutants/fb1019_skillswap.json`.
+  family whose class can never meet a path says, under its headline, that a class skill can be changed below - only
+  where one swap would open a path (`swapOpens`, AUDIT SUGGESTIONS-1019 L5-1). A swap into a group whose mastery slots
+  are spent, and offline with Master Skills off one that starts or ends DFU's 95 lock, is said beside the picks and in
+  the ask: a warning, not a refusal - a swap can be wanted for leveling alone (AUDIT L5-1, L5-2).
+- Pins: `test/systems/fb1019_skillswap.test.js`, the page drawn in `test/ui/growth/fb1019_swappage.test.js`, the audit's
+  laws in `test/systems/fb1019_audit.test.js`; `tools/mutants/fb1019_skillswap.json`, `fb1019_audit.json`. Audit:
+  `01-Overview/audits/Audit-Suggestions-1019.md`.
 

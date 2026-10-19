@@ -10104,6 +10104,21 @@
   "tr": "2105ecaff55b",
   "by": "claude-in-session"
  },
+ "growth.swap.lockOff": {
+  "en": "d62831062c25",
+  "tr": "dde173e17b5d",
+  "by": "claude-in-session"
+ },
+ "growth.swap.lockOn": {
+  "en": "1bb1baa90134",
+  "tr": "56640f1e03ee",
+  "by": "claude-in-session"
+ },
+ "growth.swap.noSlots": {
+  "en": "87be34e1619e",
+  "tr": "a127a55728b4",
+  "by": "claude-in-session"
+ },
  "growth.swap.out": {
   "en": "a29d0ff6010e",
   "tr": "198edff06be5",
@@ -10575,8 +10590,8 @@
   "by": "claude-in-session"
  },
  "levelup.blurb.enduranceOnline": {
-  "en": "cd57036da4da",
-  "tr": "bd00335a30e2",
+  "en": "d814c2458a55",
+  "tr": "b14861414fd3",
   "by": "claude-in-session"
  },
  "levelup.blurb.intelligence": {
@@ -17640,8 +17655,8 @@
   "by": "claude-in-session"
  },
  "notice.skills.improveSub": {
-  "en": "900654adbb21",
-  "tr": "97dfb48acd3d",
+  "en": "422d110b310c",
+  "tr": "f3c36615b988",
   "by": "claude-in-session"
  },
  "pause.ask.hint": {
@@ -18110,13 +18125,23 @@
   "by": "claude-in-session"
  },
  "pause.skills.tickLock": {
-  "en": "7ab98159d918",
-  "tr": "8aa8a870af6f",
+  "en": "2c29ab460606",
+  "tr": "25e7fc6666dc",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickMaster": {
+  "en": "7e86ccfbc6f4",
+  "tr": "e0ef74077fa5",
   "by": "claude-in-session"
  },
  "pause.skills.tickReady": {
   "en": "cd23b5fe25fa",
   "tr": "ef10bdcbbdcb",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickReadyLater": {
+  "en": "116c0416db8e",
+  "tr": "7a18913bcef1",
   "by": "claude-in-session"
  },
  "pause.skills.unknown": {
@@ -25554,14 +25579,29 @@
   "tr": "fa5708507b1a",
   "by": "claude-in-session"
  },
+ "social.stores.putAllStopped": {
+  "en": "c89850781d13",
+  "tr": "1327318933e6",
+  "by": "claude-in-session"
+ },
  "social.stores.units": {
   "en": "c8968681d239",
   "tr": "4a18931e8685",
   "by": "claude-in-session"
  },
+ "social.vault.anItem": {
+  "en": "b5d4f5af9954",
+  "tr": "fec17870c975",
+  "by": "claude-in-session"
+ },
  "social.vault.find": {
   "en": "f186ae97a924",
   "tr": "08745d8aeb77",
+  "by": "claude-in-session"
+ },
+ "social.vault.noMatch": {
+  "en": "169b8843cbbd",
+  "tr": "36f48c05c299",
   "by": "claude-in-session"
  },
  "social.vault.page": {
@@ -26145,6 +26185,11 @@
   "by": "claude-in-session"
  },
  "tutorials.characterSheet.skillRaise": {
+  "en": "81ca136336cd",
+  "tr": "1dcf514b78f1",
+  "by": "claude-in-session"
+ },
+ "tutorials.characterSheet.skillRaiseStats": {
   "en": "681395dd0dfd",
   "tr": "57b50e538afe",
   "by": "claude-in-session"

@@ -164,8 +164,9 @@ export const ATTRIBUTE_BLURB = Object.freeze({
   // named a number that rides nothing.
   get agility() { return t('levelup.blurb.agility', 'Raises your chance to hit and lowers the enemy\'s chance to hit you.'); },
   // systems/chargen.js hitPointsPerLevelUp reads hitPointsModifier = floor(endurance / 10) - 5.
-  // LEVEL-EVEN (systems/levelEven.js): online the health floor reads Endurance as it stands, so every level is lifted
-  get endurance() { return isOnlinePage() ? t('levelup.blurb.enduranceOnline', 'Raises the health of every level you have gained, and of every level to come.') : t('levelup.blurb.endurance', 'Raises the health you gain each level from now on.'); },
+  // LEVEL-EVEN (systems/levelEven.js): online the health floor reads Endurance as it stands, so every level is lifted -
+  // AUDIT SUGGESTIONS-1019 L6-5: for a body under the floor; a body that rolled above it keeps its rolls and gains nothing past
+  get endurance() { return isOnlinePage() ? t('levelup.blurb.enduranceOnline', 'Raises the health you gain each level. Online, your health never falls below your class\'s average for every level at the Endurance you have now.') : t('levelup.blurb.endurance', 'Raises the health you gain each level from now on.'); },
   // systems/shopStock.js:"export function calculateTradePrice" haggles Mercantile and Personality against the
   // merchant's; scenes/townTalk.js:"personality: playerEntity.stats?.personality != null ? liveStat(playerEntity, 'personality') : 50,"
   // is the talk reaction's personality / 5; systems/court.js:"let chance = legalRep" is the Not Guilty plea's.

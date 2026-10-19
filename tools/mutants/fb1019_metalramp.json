@@ -10,7 +10,7 @@
     "old": "rangeInt(0, METAL_RAMP_FULL, rolls) < level) return top;", "new": "rangeInt(0, METAL_RAMP_FULL, rolls) <= level) return top;",
     "tests": ["test/systems/fb1019_metalramp.test.js"], "why": "one draw in twenty more of the race's metal at every level" },
   { "name": "METAL-RAMP-rung-ignored", "file": "src/systems/unleveledLoot.js",
-    "old": "  return rampMetal(level);\n}", "new": "  return 3;\n}",
+    "old": "  return materialSwitch(rampMetal(level), matSwitchList());", "new": "  return materialSwitch(3, matSwitchList());",
     "tests": ["test/systems/fb1019_metalramp.test.js"], "why": "a withheld drop always Elven - the middle metals never come more often" },
   { "name": "METAL-RAMP-plate-left-daedric", "file": "src/systems/unleveledLoot.js",
     "old": "  return dropArmor(loot, 0x0200 + metal, rolls);   // plate of the metal: 521 Daedric", "new": "  return dropArmor(loot, 521, rolls);   // plate of the metal: 521 Daedric",
@@ -20,7 +20,8 @@
     "new": "  if (rangeInt(0, METAL_RAMP_FULL, rolls) < level || level >= METAL_RAMP_FULL) return top;",
     "tests": ["test/systems/fb1019_metalramp.test.js"], "why": "a draw more at 20 and up - the mod's own stream moved where it should stand" },
   { "name": "METAL-RAMP-corpse-level-dropped", "file": "src/systems/unleveledLoot.js",
-    "old": "  if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls, level);\n  else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls, level);",
-    "new": "  if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls);\n  else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls);",
-    "tests": ["test/systems/fb1019_metalramp.test.js"], "why": "a room's base rolls at the player's level, not the room's" }
+    "old": "    if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls, level);\n    else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls, level);",
+    "new": "    if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls);\n    else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls);",
+    "tests": ["test/systems/fb1019_metalramp.test.js"], "equivalent": true,
+    "why": "equivalent since AUDIT SUGGESTIONS-1019 L1-1: inside a raise the default level is the raiser's (`_raiserLevel`), so the dropped argument reads the same; AUDIT-1019-L1-1's records kill a raise that forgets it" }
 ]

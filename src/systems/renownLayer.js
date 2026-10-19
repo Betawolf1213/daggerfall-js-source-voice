@@ -80,6 +80,7 @@ export function setRenownLayer(entity, level) {
   // LEVEL-EVEN (systems/levelEven.js): the floor's health, at the permanent Endurance with the Firmament's in it
   const even = online ? evenHpOf(entity, (entity.stats?.endurance ?? NaN) + (x?.end ?? 0)) : 0;
   const b = x || even ? { hp: r.hp + (x?.hp ?? 0) + even, mp: r.mp + (x?.mp ?? 0) } : r;
+  entity.evenHp = even;   // AUDIT LEVEL-EVEN L2-3: the floor's share of the layer, for the readers that size the body (mentorMode.js)
   if (renownHpOf(entity) === b.hp && renownMpOf(entity) === b.mp) return b;
   const hpFrom = entity.maxHealth, mpFrom = entity.maxMagicka;
   entity.renownHp = b.hp;
@@ -110,10 +111,15 @@ export function setOnlineLayerExtra(entity, extra) {
 }
 
 /** LEVEL-EVEN: put the layer on again at the Renown it was last put on for - a level-up moved the stored maximum the
- *  floor is read against. Nothing where the layer is off. */
-export function refreshOnlineLayer(entity) {
+ *  floor is read against. Nothing where the layer is off. AUDIT LEVEL-EVEN L2-1: `keepHealth` - a level-up's refresh
+ *  leaves current health as it stands (DFU's level-up never moves CurrentHealth), only bounded by the new maximum; the
+ *  layer's fraction-keeping is for the layer going on and off, and here it took a high roll's own health away. */
+export function refreshOnlineLayer(entity, { keepHealth = false } = {}) {
   const level = entity ? _levels.get(entity) : null;
-  if (level != null) setRenownLayer(entity, level);
+  if (level == null) return;
+  const health = entity.health;
+  setRenownLayer(entity, level);
+  if (keepHealth && Number.isFinite(health)) entity.health = Math.min(health, entity.maxHealth);
 }
 
 /**

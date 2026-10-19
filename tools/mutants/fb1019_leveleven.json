@@ -72,8 +72,8 @@
   {
     "name": "LEVEL-EVEN-round-hands-no-endurance",
     "file": "src/systems/firmamentPowers.js",
-    "old": ", end: attributeGain(entity, 'endurance', read) });",
-    "new": " });",
+    "old": ", mp: capAt('mp', (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0)), end });",
+    "new": ", mp: capAt('mp', (c.mp ?? 0) + pctOf(baseMp, c.mpPct ?? 0)) });",
     "tests": [
       "test/systems/fb1019_leveleven.test.js"
     ],
@@ -82,8 +82,8 @@
   {
     "name": "LEVEL-EVEN-refresh-dropped-classic",
     "file": "src/systems/advancement.js",
-    "old": "  refreshOnlineLayer(entity);   // LEVEL-EVEN: the floor over the new maximum (systems/levelEven.js)\n",
-    "new": "",
+    "old": "  // after the points, not before them), current health left as it stands (L2-1)\n  refreshOnlineLayer(entity, { keepHealth: true });\n",
+    "new": "  // after the points, not before them), current health left as it stands (L2-1)\n",
     "tests": [
       "test/systems/fb1019_leveleven.test.js"
     ],
@@ -92,7 +92,7 @@
   {
     "name": "LEVEL-EVEN-refresh-dropped-virtue",
     "file": "src/systems/oblivionLeveling.js",
-    "old": "\n  refreshOnlineLayer(entity);   // LEVEL-EVEN: the online health floor over the new level and maximum",
+    "old": "\n  refreshOnlineLayer(entity, { keepHealth: true });   // LEVEL-EVEN: the online health floor over the new level and maximum (AUDIT LEVEL-EVEN L2-1: health as it stands)",
     "new": "",
     "tests": [
       "test/systems/fb1019_leveleven.test.js"

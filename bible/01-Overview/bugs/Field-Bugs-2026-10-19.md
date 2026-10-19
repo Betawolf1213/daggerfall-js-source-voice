@@ -4,7 +4,8 @@ From the Discord's #suggestions, through Mac: thirteen screenshots and no words,
 (`Field-Bugs-2026-09-29d.md`) - every thread read on the real modules (six read-only lanes, one a thread), the port's
 own faults fixed and pinned, and every design ask put to Mac before anything was built. Four were asked at once; the
 answers are each row's. The level rolls' answer was *"Your opinion"*, and the opinion is recorded where it was built
-(LEVEL-EVEN).
+(LEVEL-EVEN). Then Mac: *"Audit everything built"* - `01-Overview/audits/Audit-Suggestions-1019.md`, six cold lanes; what
+it changed is written below as it now stands, marked with its finding's id.
 
 | | Thread | Reporter | What it was | Done |
 |---|---|---|---|---|
@@ -29,7 +30,9 @@ piece's smaller maximum) on the corpse after the body's roll has run (`hostComba
 smith, sold whole online. The thread's "tens of thousands of gold" is that.
 
 **The fix.** Both drops leave the condition they rolled as `foundCondition`. The mod's rolls and draws are unchanged; offline
-nothing reads the mark. `test/systems/fb1019_deathdropfound.test.js` (2, red on the code before);
+nothing reads the mark. The armour's condition, read off the random piece, is never over its own piece's maximum (AUDIT
+L1-2: the ramp's lighter plate could stand at 135% of its own, a departure from 1.1.2 named in `06-Systems/Unleveled-Loot.md`),
+and a bounty's reward, which rolls its condition too, is marked as found (`bountyReward.js`, AUDIT L1-3). `test/systems/fb1019_deathdropfound.test.js` (2, red on the code before);
 `tools/mutants/fb1019_deathdropfound.json` (3, 3 dead).
 
 ## METAL-RAMP: the top metals come with the level (1)
@@ -40,11 +43,15 @@ A drop the mod's roll grants is its race's metal on a draw of `Range(0, 20)` und
 taken only under 20 and only once the mod's roll has granted the drop - and otherwise the level's rung of the middle
 metals: Elven at 1-4, Dwarven 5-8, Mithril 9-12, Adamantium 13-16, Ebony 17-19 (plate of the same metal for the armour
 arm). At 20 and up the mod stands exactly as it was, stream and all. The level is the raiser's: a room's base rolls at
-the room's (`roomLootHost.js`), a kill at the player's. So a level-1 character's Warlord gives Orcish on 1 kill in 20 of
+the room's (`roomLootHost.js`), a kill at the player's - and for the whole raise the mod's Luck and level are the
+raiser's, so an armour drop's own CreateRandomArmor, which reaches the mod's RandomArmorMaterial, rolls the same on every
+client of a room (AUDIT L1-1; a fault older than the batch). The middle metal goes through the Mods pane's material
+switches as the race's does (AUDIT L1-4). So a level-1 character's Warlord gives Orcish on 1 kill in 20 of
 the mod's 19.8%, and Elven on the rest - the top two later, the ones under them more often, which is the thread's ask
 in both halves. The odds of a drop at all, the gold's division and the Mods pane's switches are the mod's.
 
-`test/systems/fb1019_metalramp.test.js` (4); `tools/mutants/fb1019_metalramp.json` (7, 7 dead). PIN MOVED:
+`test/systems/fb1019_metalramp.test.js` (4); `tools/mutants/fb1019_metalramp.json` (7: 6 dead, and one - the corpse's
+level dropped - equivalent since AUDIT L1-1, the raise's default level being the raiser's). PIN MOVED:
 `unleveledLoot.test.js`'s corpse test takes the ramp's draw into its four granted drops' streams (at level 10, under the
 ramp's full level); what it pins of the mod is unchanged.
 
@@ -67,7 +74,10 @@ ramp's full level); what it pins of the mod is unchanged.
 - **On the online layer, never in the save.** The floor's health rides `renownHp` with Renown's and the Firmament's
   (`renownLayer.js`), so the save keeps the stored maximum and the health at its share (`offlineVitals`), offline is
   Daggerfall's own, the lycanthrope's limiter caps Daggerfall's maximum beneath it as it does Renown's (AUDIT RENOWN1
-  GAME-4), and it is read again at every magic round and at every level-up on both leveling lanes.
+  GAME-4), and it is read again at every magic round, and at every level-up on both leveling lanes once its points are
+  spent (the Oghma Infinium's and the classic rollout's too) with health kept as it stands, not rescaled (AUDIT L2-1,
+  L2-2). Mentor mode sizes its body off the stored maximum and the floor's share (`evenHp`, AUDIT L2-3); the
+  Firmament's small health stars take their share of the floored body (AUDIT L2-4).
 - **Five points a level, online.** BonusPool's Range(4, 7) has a mean of 5; online every level hands out 5, drawn from no
   stream. A level already pending keeps its drawn pool.
 - **Not built: the averaged roll itself.** With the floor, an unlucky roll is lifted and a lucky one kept; replacing the
@@ -86,13 +96,17 @@ below-average body to the average and nothing above it. `test/systems/fb1019_lev
 - **The ticker** is raiseSkills' own test read ahead of the pass: the uses as Reflexes scales them against
   GetSkillAdvancementRequirement's number (the class's multiplier and the level in it), and past 100 a mastered skill's
   banked progress against the ladder's price (MOVE-BANK's units). Under every skill bar on the enhanced Stats page:
-  *12 / 40 uses to the next point*, *Ready - rest or travel to raise it*, or why it will not - *At its limit*, *Held at
-  95 while a primary skill is at 100* - each saying its uses are not kept, which is the thread's "does not hang over". A
-  seeded sweep of 160 characters pins the reading to the pass's own result.
-- **The notice**: while any skill is ready, the HUD strip carries a standing *Skills can be improved* line (*N skills are
-  ready - rest or travel to raise them*), just above a level's row, read off the character every frame like the level's.
+  *12 / 40 uses to the next point*, *Ready - rest or travel to raise it* - or, while raiseSkills' 360-minute gate is
+  shut, *Ready - a rest or journey raises it once 3 more hours have passed* (AUDIT L3-1) - or why it will not: *At its
+  limit*, *At 100 - master it to climb further*, *Held while a primary skill is at 100* (AUDIT L3-3), the held ones
+  saying their uses are not kept, which is the thread's "does not hang over". The 95 lock is read in the pass's own
+  order, so a primary the pass takes from 99 to 100 holds a later skill (AUDIT L3-2). A seeded sweep of 160 characters,
+  99s among them, pins the reading to the pass's own result.
+- **The notice**: while any skill is ready and the gate open, the HUD strip carries a standing *Skills can be improved*
+  line (*1 skill is ready - rest or travel to raise it*, *N skills are ready - ... them*), just above a level's row,
+  counted only while the strip shows and building nothing (`countReadyToImprove`, AUDIT L3-4).
 - **The how**: the tutorial's character page says when a used skill rises (a rest or a journey, at most once every 6
-  hours) and where to look. The thread's point-for-point table of every skill's uses is not written: it is 35 skills'
+  hours), and on the enhanced skin alone where to look (AUDIT L6-4). The thread's point-for-point table of every skill's uses is not written: it is 35 skills'
   worth of the game's own call sites (`hostCombat.js`, `hostMagic.js`, `worldTick.js` and the rest), and the ticker shows
   the number each of them moves.
 - Classic skin: nothing drawn (THE NATIVE-WINDOW RULE; DFU's sheet has no such line).
@@ -104,21 +118,24 @@ below-average body to the average and nothing above it. `test/systems/fb1019_lev
 `src/ui/socialPanel.js` (guildVaultNodes, guildStoresNodes; `vaultRowAccepts`, `guildPutAll`; the panel's `itemCard`).
 
 - **The vault's card.** Each row with a record carries the pack's own card (`enhancedInventory.js` showItemHover, the
-  SHOP-HOVER card - stats, affixes, set, against what is worn) on a hover, and on a press of its name for a finger; it
-  goes when the pointer leaves and at every repaint.
+  SHOP-HOVER card - stats, affixes, set, against what is worn): a mouse's pointer brings it and takes it, a press of the
+  name toggles it, asked past the hover setting (a finger's only preview); it goes at every repaint, the panel's close
+  and its teardown (AUDIT L4-2, L4-3). The enhanced skin's alone (AUDIT L4-4). Rows and their search name a piece as
+  the pack does - an unidentified one by its kind (`vaultRowName`, AUDIT L4-6).
 - **The vault's filter.** The stores' own (`storeFilter.js`): a search over the name the row shows, the pack's pages and
   the rarities, each listing what this vault holds with counts. Rows are hidden in place, so the search keeps its focus as
-  it is typed; the filter holds across a repaint and is let go with another vault.
+  it is typed; the filter holds across a repaint and is let go with another vault; a filter that hides every row says so
+  (AUDIT L4-7).
 - **The Stores' form first**, the stored rows after the acts; **Units left empty is all of it** (the vault's How many
   already was) - all held that the guild has room for on the way in, all you may take that your Stores have room for on
-  the way out.
+  the way out, the character's room read over every origin the service counts (AUDIT L4-1).
 - **Put in all**: every material of the character's Stores, each to the guild's room for it, one deposit after another
   through the writs book's own door, so every check the service makes and the writs' hour budget stand. A refusal stops
-  the run and says why; what went in stays in.
+  the run and says what went in and why (AUDIT L4-5); what went in stays in.
 - Not built: the hall's own containers (row 4). The sluggishness is the vault's three round trips a piece (a checkpoint,
   the act, a read again); a remote pane in the pack with its own act would cut it, and is a slice of its own.
 
-`test/net/guild/fb1019_guildux.test.js` (4); `tools/mutants/fb1019_guildux.json` (12, 12 dead). PIN MOVED:
+`test/net/guild/fb1019_guildux.test.js` (10, six of them AUDIT L4's); `tools/mutants/fb1019_guildux.json` (12, 12 dead). PIN MOVED:
 `prof6_client.test.js` and `audit31_client.test.js` find the Units field by its new label.
 
 ## SKILL-SWAP: a class skill changed, for gold (3)
@@ -134,9 +151,14 @@ move by what the swap moved it - a trained skill brought in pays no levels, an u
 to the next level stands. Paid as SPEC-RESET is (coins, letters, online the Empire's account), at half its price; the
 price is a first setting, one constant. On the Growth tab's Specialisations page, under the paths: the two picks and the
 swap, asked first. Brother Frank's class (Blunt mastered, no other weapon in it) gives up a minor skill for Long Blade and
-the Blunt-and-Long-Blade paths open.
+the Blunt-and-Long-Blade paths open. The never-headline's hint shows only where one swap opens a path (`swapOpens`, AUDIT
+L5-1); a swap into a group whose slots are spent, or one that starts or ends DFU's 95 lock, is said beside the picks and
+in the ask - a warning, not a refusal (AUDIT L5-1, L5-2). The swapped career is marked (`swapped`), so an heir keeps it
+(`legacy/family.js`, AUDIT L5-4). No fold reads the career's lists, so the swap folds nothing (AUDIT L6-2).
 
-`test/systems/fb1019_skillswap.test.js` (5); `tools/mutants/fb1019_skillswap.json` (10, 10 dead).
+`test/systems/fb1019_skillswap.test.js` (5); `tools/mutants/fb1019_skillswap.json` (10, 10 dead). The page is pinned
+drawn (`test/ui/growth/fb1019_swappage.test.js`, AUDIT L6-1); the audit's laws, every lane's, in
+`test/systems/fb1019_audit.test.js` (19) and `tools/mutants/fb1019_audit.json` (42, 42 dead).
 
 ## Recorded, not built
 

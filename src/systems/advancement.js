@@ -25,7 +25,7 @@ import { OGHMA_BONUS_POOL } from './artifactEffects.js';   // V3: the sheet's og
 import { SKILLS, setSkillRecentlyIncreased, levelUpSkillSum } from './skills.js';
 // SOFTCAP1: skills past 100 - the cost ladder and the milestones (a leaf)
 import { SKILL_SOFT_CAP, SKILL_HARD_CAP, softcapCostMultiplier, milestoneAt } from './skillSoftcap.js';
-import { masterSkillsActive, skillCanPassCap } from './masterSkills.js';   // SOFTCAP3: the climb past 100 and the lifted 95 lock are Master Skills'
+import { masterSkillsActive, skillCanPassCap, masteryRefusal } from './masterSkills.js';   // SOFTCAP3: the climb past 100 and the lifted 95 lock are Master Skills'
 import { hitPointsPerLevelUp, spendPoolLowest } from './chargen.js';
 import { ONLINE_BONUS_POOL } from './levelEven.js';   // LEVEL-EVEN: online, every level's pool is 5
 import { refreshOnlineLayer } from './renownLayer.js';   // LEVEL-EVEN: the online health floor read again over the level's new maximum
@@ -240,27 +240,58 @@ export function raiseSkills(entity, classicTimeMinutes, rolls = Math.random, onL
  * ... 'your skills can be improved' notification to let players know they should probably rest, since XP does not hang
  * over"). Where skill `i` stands against raiseSkills' own test, read the way the next pass will read it - the uses as
  * Reflexes scales them, against GetSkillAdvancementRequirement's number (past 100 a mastered skill's banked progress and
- * the ladder's price, MOVE-BANK's units). Answers `{ have, need, ready, held }`: `ready`, the next pass raises it; `held`,
- * why a pass will not however many uses it counts - 'cap' (100 unmastered, or the hard cap) or 'lock' (DFU's 95 lock, a
- * primary already at 100) - and a held skill's uses are spent by the pass all the same (`entity.skillUses[i] = 0`
- * above), which is the thread's "does not hang over". Daggerfall shows none of it; the port's own sheet line.
+ * the ladder's price, MOVE-BANK's units). Answers `{ have, need, ready, held, wait }`: `ready`, the next pass raises it;
+ * `held`, why a pass will not however many uses it counts - 'cap' (the hard cap, or 100 with no mastery to be had),
+ * 'master' (100, and a mastery open to it - masterSkills.js masteryRefusal) or 'lock' (DFU's 95 lock: a primary at 100,
+ * or one the same pass takes to 100 before it - AUDIT SUGGESTIONS-1019 L3-2, raiseSkills asks alreadyMasteredASkill per
+ * raise); `wait`, the game minutes before a pass can run at all (the 360-minute gate - L3-1), 0 with no clock given.
+ * Daggerfall shows none of it; the port's own sheet line.
  */
-export function skillAdvanceProgress(entity, i) {
+export function skillAdvanceProgress(entity, i, { now = null } = {}) {
+  const wait = skillCheckWait(entity, now);
   const value = entity.skills?.[i] ?? 0;
   const needed = skillUsesForAdvancement(value, SKILL_ADVANCEMENT_MULTIPLIER[i], entity.career?.advancementMultiplier ?? 1, entity.level ?? 1);
   const reflexesMod = 0x10000 - (((entity.reflexes ?? 2) - 2) << 13);
   const tally = entity.skillUses?.[i] ?? 0;
   if (value >= SKILL_SOFT_CAP && skillCanPassCap(entity, i)) {
-    if (value >= SKILL_HARD_CAP) return { have: 0, need: 0, ready: false, held: 'cap' };
+    if (value >= SKILL_HARD_CAP) return { have: 0, need: 0, ready: false, held: 'cap', wait };
     const cost = needed * softcapCostMultiplier(value);
     const uses = Math.floor((tally * reflexesMod) / 0x10000), banked = entity.skillProgress?.[i] ?? 0;
-    return { have: Math.floor(banked * cost) + uses, need: cost, ready: banked + uses / cost >= 1, held: null };   // the pass's own test
+    return { have: Math.floor(banked * cost) + uses, need: cost, ready: banked + uses / cost >= 1, held: null, wait };   // the pass's own test
   }
   const have = (tally * reflexesMod) >> 16;
-  const held = value >= 100 ? 'cap' : value >= 95 && !masterSkillsActive(entity) && alreadyMasteredASkill(entity) ? 'lock' : null;
-  return { have, need: needed, ready: !held && have >= needed, held };
+  const held = value >= 100 ? (masteryRefusal(entity, i) == null ? 'master' : 'cap')
+    : value >= 95 && !masterSkillsActive(entity) && lockedBy(entity, i) ? 'lock' : null;
+  return { have, need: needed, ready: !held && have >= needed, held, wait };
 }
-/** SKILL-TICK: the skills the next pass would raise - what the HUD's standing line counts. None before chargen is done. */
+/** AUDIT SUGGESTIONS-1019 L3-1: the game minutes before raiseSkills' gate opens (`now` strictly more than
+ *  SKILL_RAISE_CHECK_INTERVAL past the last check) - 0 when it is open, or when no clock is given. */
+export function skillCheckWait(entity, now = null) {
+  if (!Number.isFinite(now)) return 0;
+  return Math.max(0, Math.floor(entity?.lastSkillCheckTime ?? 0) + SKILL_RAISE_CHECK_INTERVAL + 1 - Math.floor(now));
+}
+/** The pass's raise of skill `i` below 100: its uses reach the requirement (the uses as Reflexes scales them). */
+const meetsBelowCap = (entity, i) => ((((entity.skillUses?.[i] ?? 0) * (0x10000 - (((entity.reflexes ?? 2) - 2) << 13))) >> 16)
+  >= skillUsesForAdvancement(entity.skills?.[i] ?? 0, SKILL_ADVANCEMENT_MULTIPLIER[i], entity.career?.advancementMultiplier ?? 1, entity.level ?? 1));
+/** AUDIT SUGGESTIONS-1019 L3-2: whether DFU's 95 lock stands for skill `i` when the pass reaches it - a primary at 100
+ *  already, or a primary before it in the pass at 99 that the pass raises to 100 (its own lock not standing). */
+function lockedBy(entity, i) {
+  if (alreadyMasteredASkill(entity)) return true;
+  for (const j of entity.career?.primarySkills ?? []) {
+    if (j >= i || entity.skills?.[j] !== 99 || skillCanPassCap(entity, j)) continue;
+    if (meetsBelowCap(entity, j) && !lockedBy(entity, j)) return true;
+  }
+  return false;
+}
+/** SKILL-TICK: how many skills the next pass would raise, building nothing (the HUD asks every frame - AUDIT
+ *  SUGGESTIONS-1019 L3-4); 0 before chargen is done and while the gate is shut (`now` given). */
+export function countReadyToImprove(entity, { now = null } = {}) {
+  if (!entity?.chargenDone || !Array.isArray(entity.skillUses) || skillCheckWait(entity, now) > 0) return 0;
+  let n = 0;
+  for (let i = 0; i < entity.skillUses.length; i++) if (skillAdvanceProgress(entity, i).ready) n++;
+  return n;
+}
+/** SKILL-TICK: the skills the next pass would raise, in the pass's order. None before chargen is done. */
 export const skillsReadyToImprove = (entity) => {
   if (!entity?.chargenDone || !Array.isArray(entity.skillUses)) return [];
   const out = [];
@@ -330,6 +361,7 @@ export function applyLevelUp(entity, distribute, rolls = Math.random, prerolledP
   // health raise; both flags clear together (:392-393).
   if (entity.oghmaLevelUp) {
     distribute(entity.stats, OGHMA_BONUS_POOL);
+    refreshOnlineLayer(entity, { keepHealth: true });   // AUDIT LEVEL-EVEN L2-2: the book's Endurance reaches the floor now
     entity.readyToLevelUp = false;
     entity.oghmaLevelUp = false;
     entity.pendingLevel = null;
@@ -340,12 +372,14 @@ export function applyLevelUp(entity, distribute, rolls = Math.random, prerolledP
   // DISC10-E L4: onto the RAW maximum - MaxHealth reads the lycanthrope's limiter now, and `+=` through it would bake the urge's ceiling into the level
   entity.maxHealth = (entity.rawMaxHealth ?? entity.maxHealth) + hitPointsPerLevelUp(entity.career, entity.stats.endurance, rolls);   // PERMANENT endurance, verbatim (audit F8 - DFU reads Stats.PermanentEndurance here, not the live value)
   entity.health = Math.min(entity.health, entity.maxHealth);
-  refreshOnlineLayer(entity);   // LEVEL-EVEN: the floor over the new maximum (systems/levelEven.js)
   // AUDIT 23 (ui-native-1): DFU rolls BonusPool() exactly ONCE, at the
   // level-up screen's setup - the UI hands its shown pool back here so
   // a second, discarded draw never burns a number from the stream.
   const pool = prerolledPool ?? bonusPoolFor(entity, rolls);
   distribute(entity.stats, pool);
+  // LEVEL-EVEN (systems/levelEven.js): the floor over the new maximum and the Endurance just spent (AUDIT LEVEL-EVEN L2-2:
+  // after the points, not before them), current health left as it stands (L2-1)
+  refreshOnlineLayer(entity, { keepHealth: true });
   entity.readyToLevelUp = false;
   entity.pendingLevel = null;
   entity.pendingBonusPool = null;   // the level is spent, so its pool is not pending either

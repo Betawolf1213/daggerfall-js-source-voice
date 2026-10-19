@@ -32,7 +32,7 @@ test('SKILL-TICK: a skill\'s line is raiseSkills\' own number - the uses as Refl
   const lb = SKILLS.LongBlade;
   p.skillUses[lb] = 40;
   const need = skillUsesForAdvancement(p.skills[lb], SKILL_ADVANCEMENT_MULTIPLIER[lb], 1.5, 7);
-  assert.deepEqual(skillAdvanceProgress(p, lb), { have: 50, need, ready: 50 >= need, held: null });
+  assert.deepEqual(skillAdvanceProgress(p, lb), { have: 50, need, ready: 50 >= need, held: null, wait: 0 });
 });
 
 test('SKILL-TICK: ready is exactly what the next pass raises - a seeded sweep of skills, tallies, Reflexes, the 95 lock, the cap at 100, Master Skills\' climb and its banked progress (mutants: ready read below the requirement, the lock forgotten, the cap forgotten, the bank forgotten)', () => {
@@ -62,7 +62,7 @@ test('SKILL-TICK: ready is exactly what the next pass raises - a seeded sweep of
 test('SKILL-TICK: held skills say why their uses go - 100 unmastered, the hard cap, DFU\'s 95 lock; past 100 a mastered skill counts its bank and the ladder\'s price (mutants: the held words swapped)', () => {
   const p = fresh();
   p.skills[SKILLS.Axe] = 100; p.skillUses[SKILLS.Axe] = 500;
-  assert.equal(skillAdvanceProgress(p, SKILLS.Axe).held, 'cap');
+  assert.equal(skillAdvanceProgress(p, SKILLS.Axe).held, 'cap', 'offline, Master Skills off: no mastery to be had');
   p.skills[SKILLS.LongBlade] = 100;
   p.skills[SKILLS.BluntWeapon] = 96; p.skillUses[SKILLS.BluntWeapon] = 20000;
   assert.equal(skillAdvanceProgress(p, SKILLS.BluntWeapon).held, 'lock', 'a primary at 100 holds the rest at 95');
@@ -71,13 +71,13 @@ test('SKILL-TICK: held skills say why their uses go - 100 unmastered, the hard c
   assert.equal(skillAdvanceProgress(p, SKILLS.BluntWeapon).held, null, 'Master Skills lifts the lock');
   p.skills[SKILLS.LongBlade] = 120; p.skillUses[SKILLS.LongBlade] = 10; p.skillProgress = new Array(35).fill(0); p.skillProgress[SKILLS.LongBlade] = 0.5;
   const cost = skillUsesForAdvancement(120, 2, 1.5, 7) * softcapCostMultiplier(120);
-  assert.deepEqual(skillAdvanceProgress(p, SKILLS.LongBlade), { have: Math.floor(0.5 * cost) + 10, need: cost, ready: false, held: null });
+  assert.deepEqual(skillAdvanceProgress(p, SKILLS.LongBlade), { have: Math.floor(0.5 * cost) + 10, need: cost, ready: false, held: null, wait: 0 });
   p.skills[SKILLS.LongBlade] = 200;
   assert.equal(skillAdvanceProgress(p, SKILLS.LongBlade).held, 'cap', 'the hard cap');
   assert.equal(skillTickText({ have: 3, need: 40, ready: false, held: null }), '3 / 40 uses to the next point');
   assert.equal(skillTickText({ have: 40, need: 40, ready: true, held: null }), 'Ready - rest or travel to raise it');
   assert.equal(skillTickText({ have: 9, need: 4, ready: false, held: 'cap' }), 'At its limit - uses are not kept');
-  assert.equal(skillTickText({ have: 9, need: 4, ready: false, held: 'lock' }), 'Held at 95 while a primary skill is at 100 - uses are not kept');
+  assert.equal(skillTickText({ have: 9, need: 4, ready: false, held: 'lock' }), 'Held while a primary skill is at 100 - uses are not kept');   // AUDIT SUGGESTIONS-1019 L3-3
   assert.deepEqual(skillsReadyToImprove({ ...p, chargenDone: false }), [], 'none before chargen is done');
 });
 
@@ -88,7 +88,7 @@ test('SKILL-TICK: the HUD strip\'s standing line - there while any skill is read
   assert.equal(one.length, 1);
   assert.equal(one[0].kind, NOTICE_IMPROVE); assert.equal(one[0].standing, true);
   assert.equal(one[0].title, 'Skills can be improved');
-  assert.equal(one[0].sub, '1 skill is ready - rest or travel to raise them');
+  assert.equal(one[0].sub, '1 skill is ready - rest or travel to raise it');   // AUDIT SUGGESTIONS-1019 L6-6
   const both = n.frame(10, { improvable: 3, owed: true });
   assert.deepEqual(both.slice(-2).map((r) => r.kind), [NOTICE_IMPROVE, NOTICE_LEVEL], 'the level\'s row last, the skills\' just above');
   assert.equal(both.at(-2).sub, '3 skills are ready - rest or travel to raise them');
@@ -106,6 +106,6 @@ test('SKILL-TICK: the Stats page\'s model hands each row its reading, and the ro
   assert.deepEqual(sheetModel(p).progress(SKILLS.Axe), skillAdvanceProgress(p, SKILLS.Axe));
   const src = (await import('node:fs')).readFileSync(new URL('../../src/ui/enhanced/enhancedMenu.js', import.meta.url), 'utf8');
   const rows = src.slice(src.indexOf('function statsSkills(detail, m) {'), src.indexOf('/** ADVANTAGES: GetClassSpecials'));
-  assert.match(rows, /const tick = m\.progress \? skillTickText\(m\.progress\(id\)\) : '';/);
+  assert.match(rows, /const tick = m\.progress \? skillTickText\(m\.progress\(id, ownMinutes\(\)\)\) : '';/);
   assert.match(rows, /if \(tick\) r\.append\(el\('div', 'px-skilltick', tick\)\);/);
 });

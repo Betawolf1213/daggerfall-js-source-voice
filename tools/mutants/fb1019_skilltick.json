@@ -22,8 +22,8 @@
   {
     "name": "SKILL-TICK-ready-early",
     "file": "src/systems/advancement.js",
-    "old": "  return { have, need: needed, ready: !held && have >= needed, held };",
-    "new": "  return { have, need: needed, ready: !held && have + 1 >= needed, held };",
+    "old": "  return { have, need: needed, ready: !held && have >= needed, held, wait };",
+    "new": "  return { have, need: needed, ready: !held && have + 1 >= needed, held, wait };",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
     ],
@@ -32,7 +32,7 @@
   {
     "name": "SKILL-TICK-lock-forgotten",
     "file": "src/systems/advancement.js",
-    "old": "value >= 95 && !masterSkillsActive(entity) && alreadyMasteredASkill(entity) ? 'lock' : null;",
+    "old": "value >= 95 && !masterSkillsActive(entity) && lockedBy(entity, i) ? 'lock' : null;",
     "new": "false ? 'lock' : null;",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
@@ -42,8 +42,8 @@
   {
     "name": "SKILL-TICK-cap-forgotten",
     "file": "src/systems/advancement.js",
-    "old": "  const held = value >= 100 ? 'cap' :",
-    "new": "  const held = false ? 'cap' :",
+    "old": "  const held = value >= 100 ? (masteryRefusal(entity, i) == null ? 'master' : 'cap')",
+    "new": "  const held = false ? 'cap'",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
     ],
@@ -52,8 +52,8 @@
   {
     "name": "SKILL-TICK-bank-forgotten",
     "file": "src/systems/advancement.js",
-    "old": "ready: banked + uses / cost >= 1, held: null };",
-    "new": "ready: uses / cost >= 1, held: null };",
+    "old": "ready: banked + uses / cost >= 1, held: null, wait };",
+    "new": "ready: uses / cost >= 1, held: null, wait };",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
     ],
@@ -92,8 +92,8 @@
   {
     "name": "SKILL-TICK-tutorial-unsaid",
     "file": "src/systems/tutorialCatalogue.js",
-    "old": "        t('tutorials.characterSheet.skillRaise',",
-    "new": "        false && t('tutorials.characterSheet.skillRaise',",
+    "old": "          ? t('tutorials.characterSheet.skillRaiseStats',",
+    "new": "          ? false && t('tutorials.characterSheet.skillRaiseStats',",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
     ],
@@ -102,8 +102,8 @@
   {
     "name": "SKILL-TICK-model-dropped",
     "file": "src/ui/enhanced/enhancedCharSheet.js",
-    "old": "    progress: (id) => skillAdvanceProgress(e, id),\n",
-    "new": "",
+    "old": "    progress: (id, now = null) => skillAdvanceProgress(e, id, { now }),",
+    "new": "    progress: undefined,",
     "tests": [
       "test/systems/fb1019_skilltick.test.js"
     ],

@@ -519,7 +519,7 @@ export function commitVirtueLevelUp(entity, deltas, purse, s, rolls = Math.rando
     if (d > 0) entity.stats[key] = entity.stats[key] + d;
   }
   entity.level += 1;
-  refreshOnlineLayer(entity);   // LEVEL-EVEN: the online health floor over the new level and maximum
+  refreshOnlineLayer(entity, { keepHealth: true });   // LEVEL-EVEN: the online health floor over the new level and maximum (AUDIT LEVEL-EVEN L2-1: health as it stands)
   rollOverLevelProgress(entity);
   entity.readyToLevelUp = false;
   entity.pendingLevel = null;

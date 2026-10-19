@@ -5109,7 +5109,11 @@ function askCard(lines, onYes) {
 export function skillTickText(p) {
   if (!p) return '';
   if (p.held === 'cap') return t('pause.skills.tickCap', 'At its limit - uses are not kept');
-  if (p.held === 'lock') return t('pause.skills.tickLock', 'Held at 95 while a primary skill is at 100 - uses are not kept');
+  // AUDIT SUGGESTIONS-1019 L3-3: a 100 a mastery is still open to is not at its limit, and a locked skill above 95 is not "at 95"
+  if (p.held === 'master') return t('pause.skills.tickMaster', 'At 100 - master it to climb further');
+  if (p.held === 'lock') return t('pause.skills.tickLock', 'Held while a primary skill is at 100 - uses are not kept');
+  // AUDIT SUGGESTIONS-1019 L3-1: ready, but the gate shut - a rest or a journey before it opens raises nothing
+  if (p.ready && p.wait > 0) return t('pause.skills.tickReadyLater', 'Ready - a rest or journey raises it once {hours, plural, one {# more hour has} other {# more hours have}} passed', { hours: Math.ceil(p.wait / 60) });
   if (p.ready) return t('pause.skills.tickReady', 'Ready - rest or travel to raise it');
   return t('pause.skills.tick', '{have} / {need} uses to the next point', { have: p.have, need: p.need });
 }
@@ -5128,7 +5132,7 @@ function statsSkills(detail, m) {
       // SOFTCAP1/6: 0..100 as ever, and under a MASTERED skill the gold 100..200 bar (its track shows from the moment
       // of mastery, empty at 100) - the one mark this pane carries of it
       r.append(top, skillMeter(m.skillBase ? m.skillBase(id) : m.skill(id), mastered));   // SOFTCAP7: the bars climb the TRAINED value
-      const tick = m.progress ? skillTickText(m.progress(id)) : '';   // SKILL-TICK
+      const tick = m.progress ? skillTickText(m.progress(id, ownMinutes())) : '';   // SKILL-TICK; AUDIT SUGGESTIONS-1019 L3-1: on the character's own clock (systems/worldTick.js), the gate's
       if (tick) r.append(el('div', 'px-skilltick', tick));
       grid.append(r);
     }

@@ -73,7 +73,8 @@ import { buttonText } from '../../systems/controlsConfig.js';    // GetButtonTex
 // four more places to forget it. The module is a leaf here: it imports
 // systems/skills.js and a faction constant, and nothing in ui/.
 import { playerEntity } from '../../characters/playerEntity.js';
-import { skillsReadyToImprove } from '../../systems/advancement.js';   // SKILL-TICK: the standing skills line
+import { countReadyToImprove } from '../../systems/advancement.js';   // SKILL-TICK: the standing skills line
+import { ownMinutes } from '../../systems/worldTick.js';   // AUDIT SUGGESTIONS-1019 L3-1: the character's own clock, the skill check's gate (read at a call, never at load)
 import { openLevelUpWindow } from './levelUpOpener.js';   // LV3: the strip's level row is a button now
 import { noteFirstUse } from '../../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
@@ -92,7 +93,7 @@ export const NOTICE_QUEST = 'quest';
  *  notification to let players know they should probably rest, since XP does not hang over". */
 export const NOTICE_IMPROVE = 'improve';
 export const improveTitle = () => t('notice.skills.improve', 'Skills can be improved');
-export const improveSub = (n) => t('notice.skills.improveSub', '{n, plural, one {# skill is} other {# skills are}} ready - rest or travel to raise them', { n });
+export const improveSub = (n) => t('notice.skills.improveSub', '{n, plural, one {# skill is ready - rest or travel to raise it} other {# skills are ready - rest or travel to raise them}}', { n });   // AUDIT SUGGESTIONS-1019 L6-6: the pronoun in each arm
 export const questSlainTitle = () => t('pause.journal.questSlain', 'Quest target slain');   // L10N4: read when it is drawn
 /** QUEST-NOTE: who fell, as the notice and the chat name it - the Foe's own name, else its type's, else the quest's foe. */
 export const questFoeName = (foe) => String(foe?.displayName || foe?.typeName || t('pause.journal.questFoe', 'Your quest\'s foe')).trim();
@@ -495,11 +496,12 @@ function rowNode(doc, r) {
  */
 export const levelOwed = (e = playerEntity) => !!e?.readyToLevelUp;
 /** SKILL-TICK: how many skills the next pass would raise - what the strip's standing skills line counts. */
-export const skillsImprovable = (e = playerEntity) => skillsReadyToImprove(e).length;
+export const skillsImprovable = (e = playerEntity) => countReadyToImprove(e, { now: ownMinutes() });   // AUDIT SUGGESTIONS-1019 L3-1/L3-4: on the gate's clock, building nothing
 
-export function drawLevelNotices({ owed = levelOwed(), improvable = skillsImprovable(), hidden = false, now = nowMs(), doc = (typeof document === 'undefined' ? null : document) } = {}) {
+export function drawLevelNotices({ owed = levelOwed(), improvable = undefined, hidden = false, now = nowMs(), doc = (typeof document === 'undefined' ? null : document) } = {}) {
   if (!doc || !isEnhanced()) return null;
-  const rows = hidden ? [] : levelNotices.frame(now, { owed, improvable });
+  // AUDIT SUGGESTIONS-1019 L3-4: the skills counted only for a strip that shows
+  const rows = hidden ? [] : levelNotices.frame(now, { owed, improvable: improvable ?? skillsImprovable() });
   levelNotices.sweep(now, { owed });
   // Checked on every frame the strip is up rather than only when the
   // paint changes: the HUD host is built by the call that runs right

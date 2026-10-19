@@ -99,8 +99,8 @@
  {
   "name": "the-hidden-HUD-keeps-its-strip",
   "file": "src/ui/levelUp/levelNotice.js",
-  "old": "  const rows = hidden ? [] : levelNotices.frame(now, { owed, improvable });",
-  "new": "  const rows = levelNotices.frame(now, { owed, improvable });",
+  "old": "  const rows = hidden ? [] : levelNotices.frame(now, { owed, improvable: improvable ?? skillsImprovable() });",
+  "new": "  const rows = levelNotices.frame(now, { owed, improvable: improvable ?? skillsImprovable() });",
   "tests": [
    "test/ui/levelNotice.test.js"
   ],

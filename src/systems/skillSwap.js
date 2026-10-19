@@ -29,7 +29,6 @@ import { careerGroupOf, isMasteredSkill } from './masterSkills.js';
 import { resetGold } from './specReset.js';   // SPEC-RESET's purse: coins, letters and online the Empire's account
 import { payUndoable } from './court.js';
 import { accountOfSave, REALM_EMPIRE_ACCOUNT } from '../net/realm/realmGoldLaw.js';
-import { computeEntityMods } from './entityMods.js';
 import { t } from './textManager.js';
 
 /** SKILL-SWAP: what one swap costs. */
@@ -64,19 +63,30 @@ export const swapGroupOf = (entity, out) => careerGroupOf(entity, out);
 /** The group's word in a sentence - the Growth page's own (ui/growth/specGuide.js groupWord's keys). */
 const groupWord = (g) => (g === 'primary' ? t('growth.spec.group.primary', 'primary') : g === 'major' ? t('growth.spec.group.major', 'major') : t('growth.spec.group.minor', 'minor'));
 
+/** The career with `inn` in `out`'s place in its group - a copy, the entity's own untouched; the original when `out` is in
+ *  no group. AUDIT SUGGESTIONS-1019 L5-4: marked `swapped`, so the family's record keeps it whole for an heir as it keeps a
+ *  custom class (legacy/family.js careerFields) - it is no longer the class file its index names. */
+export function swappedCareer(entity, out, inn) {
+  const group = careerGroupOf(entity, out);
+  if (!group) return entity?.career ?? null;
+  const key = LIST[group];
+  return { ...entity.career, [key]: entity.career[key].map((id) => (id === out ? inn : id)), swapped: true };
+}
+/** AUDIT SUGGESTIONS-1019 L5-1: whether one swap of `out` for `inn` lets `possible` (a family's law - martialPaths.js
+ *  martialPossible, arcanePaths.js pathPossible) answer yes, the masteries and their slots as they stand. */
+export const swapOpens = (entity, out, inn, possible) => !!entity?.career && possible({ ...entity, career: swappedCareer(entity, out, inn) });
+
 /** Swap them: pay SKILL_SWAP_GOLD, put `inn` in `out`'s place in its group on the character's own copy of the career,
  *  and move both level sums by what the swap moved the sum. Returns { ok, text }. */
 export function swapSkill(entity, out, inn) {
   const why = skillSwapRefusal(entity, out, inn);
   if (why) return { ok: false, text: why };
   const group = careerGroupOf(entity, out);
-  const key = LIST[group];
   const before = levelUpSkillSum(entity);
   payUndoable(entity, SKILL_SWAP_GOLD, entity._online === true ? accountOfSave(entity, REALM_EMPIRE_ACCOUNT) : null);
-  entity.career = { ...entity.career, [key]: entity.career[key].map((id) => (id === out ? inn : id)) };
+  entity.career = swappedCareer(entity, out, inn);
   const moved = levelUpSkillSum(entity) - before;
   entity.startingLevelUpSkillSum = (entity.startingLevelUpSkillSum ?? 0) + moved;
   entity.currentLevelUpSkillSum = (entity.currentLevelUpSkillSum ?? 0) + moved;
-  computeEntityMods(entity);
   return { ok: true, text: t('skillswap.done', '{inn} is now one of your {group} skills, in place of {out}.', { inn: SKILL_NAMES[inn], out: SKILL_NAMES[out], group: groupWord(group) }) };
 }

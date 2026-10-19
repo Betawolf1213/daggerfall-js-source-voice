@@ -176,7 +176,7 @@ export function sheetModel(entity) {
     skillReal: (id) => realSkillValue(e, id),
     skillText: (id) => skillValueText(e, id),
     // SKILL-TICK: where each skill stands against the next pass's raise (systems/advancement.js skillAdvanceProgress)
-    progress: (id) => skillAdvanceProgress(e, id),
+    progress: (id, now = null) => skillAdvanceProgress(e, id, { now }),   // AUDIT SUGGESTIONS-1019 L3-1: `now` the character's own clock, for the gate
     mentor: e._mentor ? mentorStatusText(e) : null,   // automatic: said only while mentoring
     // ARENA2: the arena's title and record (systems/arena/arenaLadder.js) - null until a bout has been fought on its sand
     arena: arenaSheetLine(e.arenaLadder, e.arenaLeague),

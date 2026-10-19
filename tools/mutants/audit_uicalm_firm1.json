@@ -20,8 +20,8 @@
   {
     "name": "AUF-L1H1-hp-apart",
     "file": "src/systems/firmamentPowers.js",
-    "old": "hp: capAt('hp', (c.hp ?? 0) + pctOf(baseHp, c.hpPct ?? 0))",
-    "new": "hp: (c.hp ?? 0) + pctOf(baseHp, c.hpPct ?? 0)",
+    "old": "hp: capAt('hp', (c.hp ?? 0) + pctOf(floored, c.hpPct ?? 0))",
+    "new": "hp: (c.hp ?? 0) + pctOf(floored, c.hpPct ?? 0)",
     "tests": [
       "test/systems/audit_uicalm_firm1.test.js"
     ]
