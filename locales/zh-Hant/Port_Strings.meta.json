@@ -94,6 +94,16 @@
   "tr": "536fddff7789",
   "by": "claude-in-session"
  },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "d8580f698d4f",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "5d6b3f4329aa",
+  "by": "claude-in-session"
+ },
  "features.calmHud.note": {
   "en": "aa9c398cb552",
   "tr": "8049fced4a23",

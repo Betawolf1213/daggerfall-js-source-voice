@@ -3554,6 +3554,16 @@
   "tr": "f760ceb2d3b4",
   "by": "claude-in-session"
  },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "51a5fbc80e3e",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "3dde389fd89d",
+  "by": "claude-in-session"
+ },
  "features.blood.effect": {
   "en": "309a6a38a632",
   "tr": "e3d00072f824",

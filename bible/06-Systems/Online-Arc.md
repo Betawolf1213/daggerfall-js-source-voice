@@ -742,7 +742,10 @@ the next rooms.
   everyone when the host leaves (the next-longest) or, on the
   same-millisecond tie the smaller id wins, when a joiner leads. The
   session (`src/net/online.js`) keeps `host`, answers `isHost()`, and
-  calls `onHost(id, mine)` on a change alone.
+  calls `onHost(id, mine)` on a change alone. SEAT-LIVE (2026-10-18,
+  below): a dungeon room's host is the longest of the sockets still
+  HEARD - one silent past FOES_STALE_MS with another there to hear it
+  is passed over, and the change is said as a leave's is.
 - **The memory** (`server/src/index.js`): in a WORLD ROOM
   (`isWorldRoom` - a `dungeon:` key, today) the host publishes
   `{t:'world', data}` - the one frame admitted past `MAX_FRAME_BYTES`,
@@ -838,7 +841,9 @@ one that stood fixed on the PR:
   next-longest, and neither the hello nor the replaced socket's leave
   said so - the room's publishing stalled until an unrelated leave.
   The reconnect keeps the first hello's stamp, so the seat stays; a
-  hello announces only when the seat actually moved.
+  hello announces only when the seat actually moved. (SEAT-LIVE: in a
+  dungeon room, a live socket's stamp - one back from silence comes in
+  after the seat.)
 - **A5 (low) the floor rode the socket.** `worldAt` on the attachment
   let a host reset `WORLD_MIN_MS` by reconnecting. The floor is the
   room's `world:meta.at`.
@@ -8419,7 +8424,14 @@ view, "Station: Alchemy >" cycles the craft offered, free, and follows a newly c
 through the guild service's own door (openServiceFlow, no guild), so the maker's own laws stand: the potion maker's
 ingredients, the spell maker's spellbook, and what each charges. A visitor is told whose home it is, as a storage
 piece's visitor is. STATION-DOOR (`01-Overview/bugs/Field-Bugs-2026-10-11f.md`): online, an alchemy or enchanting station
-asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting).
+asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting). FB1018D HOME-BENCH (the
+Discord, Cruor: "shared account homes don't let other characters access their craft benches"): in an online home the
+owner is the owner's ACCOUNT, as at its door - every character of it is served by every station (the press, and the
+Stores page's forge, workbench, loom, mason's and jeweller's benches and alchemy and enchanting stations), where the
+station asked the owning character alone and told the account's other character "This belongs to <its own handle>"
+(`systems/online/onlineHomes.js` homeStationsServe, `scenes/worldModes.js` stationOwnerHere). A station's use spends
+nothing of the home's; its storage stays the owning character's. `test/scenes/fb1018d_homebench.test.js`,
+`tools/mutants/fb1018d_homebench.json`.
 
 **THE SERVICE** (`server-account/src/decor.js` placeJson). The craft is written with the place. ACCOUNT_VERSION
 acct16 (acct15 on its branch; main's FOUNDER3 took acct15 first) - the account Worker deploys from CI on a change to its bundle.
@@ -9481,7 +9493,9 @@ took: three town homes a character, no upkeep.
   (`scenes/world.js`, the location rect's entry, beside HUB1's arrival line) and by any door of it, believed for a
   minute; an unanswered ask keeps what was known and waits ten seconds before the next; a door waits at most 2.5
   seconds for a town it has never heard from and then goes on under Daggerfall's law. `own` is read against the
-  character playing now; the account's other characters may always walk in, but a home is not theirs.
+  character playing now; the account's other characters may always walk in, but a home is not theirs - its storage,
+  its bed, its decorator and its sale stay the owning character's. Its crafting stations serve them (FB1018D HOME-BENCH,
+  under HOME-STATIONS), as its door does.
 - **Where the service's list decides.** Online, a building it names is that player's home; one it does not name -
   or a town not heard from yet - stands under Daggerfall's own law, and that includes this character's own OFFLINE
   house: it is a house the server never hears of, not one taken away, so it keeps its storage and its bed, and anyone
@@ -13431,7 +13445,7 @@ so every later record landed on the next foe (ONCRASH1 read the foes like the ac
 index). A refused record is a hole now. A body the room has said nothing of waits for its terms (PARTY-LOOT).
 
 Not closed: the memory is the host's alone and publishes every WORLD_PUBLISH_MS. A non-host who takes, leaves and
-re-enters inside that window reads the older memory, and a backgrounded host publishes nothing. A live loot word about a body whose rebuild is still loading its art is skipped too (no container yet), so that body takes the memory's record. That needs a design
+re-enters inside that window reads the older memory (since PARTY-LOOT the live host refuses the re-take). A live loot word about a body whose rebuild is still loading its art is skipped too (no container yet), so that body takes the memory's record. That needs a design
 call (the host answering arrivals with its live loot words, or the relay keeping them). `01-Overview/bugs/Field-Bugs-2026-09-27f.md`;
 `test/systems/corpsegold.test.js` mounts the real restore chain; `tools/mutants/corpsegold.json`.
 
@@ -16609,3 +16623,65 @@ clock ahead (fb1016b_doortoken, fb1014_questhome) and pass in order and alone. T
 build no session and no minter and assign no `onPeerDeath`. The 388 files that drive the session, the bodies or the
 account client: 3,885 tests passed, two skipped (they want MAPS.BSA and ARENA2). Three source pins read the lines this
 read moved and were moved with them: ACC1d's and NAME-ADOPT's minter (`now: steadyNow`), WORLD1's import.
+
+## SEAT-LIVE (FIELD BUGS 2026-10-18d, FloopZe, "Castle Daggerfall guards loot duping") - a dungeon room's seat is a live socket's
+
+**The report**, from the Discord's #bug-reports: *"I went into Castle Daggerfall and the guards aggro automatically and after
+killing them I am able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon
+re-entering the castle. (This fixed itself after a few exits...)"*
+
+**Why.** Two seats had grown apart. The relay named the room's host as the socket in it longest (WORLD1) and kept the
+memory and the foes stream from that socket alone; the page handed the room's foes to a joiner once that host's stream
+had been silent FOES_STALE_MS (AUDIT WORLD2 C2/C5, SEAT-HEAL), and PARTY-LOOT's arbitration goes with the foes. A host
+whose page was hidden (a background tab, a minimised client: the frame loop stops, the socket stays open) kept the
+relay's seat for as long as its tab lived. The joiner who ran the room meanwhile - its kills, the bodies it minted, the
+takes it granted - wrote none of it to the memory (`world.js:"if (!online || !online.isHost() || online.status !== 'open' || !isWorldRoom(online.room)) return false;"`), and every walk back in was welcomed with the hidden host's
+last memory: the bodies full again, the dead standing. Measured over the dungeon's real doors: 2280, 4560, 6840 gold in
+three visits. It ends by itself when the hidden host's socket goes, as the report's did.
+
+**The law** (`src/net/seatLive.js`, one home for both ends; FOES_FULL_MS and FOES_STALE_MS moved into `src/net/wire.js`,
+`src/net/online.js` re-exporting them):
+- **The relay's seat is among the live** (`server/src/index.js` `_hostOf`, `_hostWalk`, `_leads`; `seatOf`). A dungeon
+  room's socket is live while it has said a FRAME - its hello, a pose, its stream, its own lane, its memory, never a ping
+  (the runtime answers that in the object's sleep) - within FOES_STALE_MS of another socket being there to hear it
+  (`seatSilent`; a socket alone owes nothing, and a newcomer owes the host FOES_STALE_MS from its coming in, so a host
+  standing alone keeps its seat when someone walks in and its stream starts). The eldest live socket is the seat; none
+  live, the eldest. SCALE5b's kept host is asked again once it goes quiet (`_seatStale`).
+- **The seat's door at every frame** (`_seatHeard`, one line at the top of `_message`, before any door reads the host):
+  the frame stamps its socket heard (`hd`, lazily, as a pose is; a hello its coming in, `hi`), and the seat as it now
+  stands is said to the room when it is not the one the room was last told (`_seatSaid`, kept by `_sayHost`) - a host
+  gone quiet is a host change, as a leave is; a seat named by silence that leaves is said too (`_leads` reads the same
+  law). And a silent seat the room was last told that LEAVES says the change at its leave (`_leaveMovesSeat`, AUDIT
+  FB1018D L4-2): its socket gone with no farewell, no later frame could say it - the told host was no longer present.
+- **A socket back from silence is a joiner**: told whose the seat is, and stamped after the live seat when its old stamp
+  would outrank it (`_seatAfter`, never level with it: the tie goes by id) - so its frozen world never takes the seat
+  back. A reconnect keeps a live socket's stamp (AUDIT WORLD A4) and gives a silent one the same treatment
+  (`_seatKeep`).
+- **The page asks for the seat it runs** (`online.js` `_askSeat`, `seatAskDue`): while no frame of the named host's
+  stream has come for FOES_STALE_MS, its pose goes every FOES_FULL_MS, unmoved, so a joiner standing still is heard and
+  named - at a relay from world220 alone (`relaySupportsSeatLive`: SEAT_RELAY_MIN; world219 is main's EG-PERFECT,
+  which has no seat law - AUDIT FB1018D L4-1).
+- **The page's own absence spends no seat's patience** (`createSeatClock`, `world.js:"seatClock.frame(now); modes?.setDungeonAuthority?.(dungeonAuthority(now));"`):
+  a gap of FOES_STALE_MS between this page's frames gives the named seat FOES_STALE_MS again, so SEAT-HEAL never takes
+  the foes on a page's first frame back while the relay names another.
+- **A building's room keeps the eldest**: its host streams no foes (AUDIT WORLD6a B8), so standing still there is no
+  silence, and nothing takes a building's seat by silence.
+
+**The four hosts.** `scenes/world.js` WIRED (the seat clock in place of `_foesInAt` - the same lines, no line added to
+`bootWorld`); `scenes/worldModes.js` and `scenes/dungeonContext.js` untouched (the mode machine forwards the seat as it
+did, and the dungeon's `setAuthority`/`applyFoes` stand); `scenes/exterior.js` builds no session. The relay's change is a
+Room method of its own and one wiring line in `_message`, and a field in the hello's stamp (`_seatKeep`).
+
+**What it does not do.** Between the host's silence and the relay hearing the joiner (its next frame; at most
+FOES_FULL_MS once it asks), the joiner runs the room by SEAT-HEAL and its grants wait on the relay's word to be kept: a
+farewell inside that moment is refused as before. A host back from hiding to an EMPTY room whose socket died meanwhile is
+named again over its own context, which the welcome's memory lands on only in its loot words (`restoreSharedWorld` once a
+context): the kills made while it hid stand up again in its next memory (the takes, which only grow, stay). A building's
+silent host keeps the pen as before. The castle's hostility is the room's (one player's trespass turns every guard on
+everyone, and the memory keeps `hostile`): the owner's call, per player or shared, untouched here.
+
+Pinned: `test/net/fb1018d_seatlive.test.js` (11) and `test/scenes/fb1018d_seatloop.test.js` (1, the report's loop over the
+dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018d_seatlive.json` (31: 30 dead, one recorded
+equivalent). The relay is world220 (main's EG-PERFECT took world219; re-hashed in place while undeployed). Audited:
+`01-Overview/audits/Audit-Field-Bugs-2026-10-18d.md`.
+

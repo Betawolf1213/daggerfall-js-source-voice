@@ -241,7 +241,9 @@ knot (`test/scenes/hostceiling.test.js`). The wiring is the motion made once per
 `motionWord` (the word a line for each of what it says - the body, its blow, its hands: AUDIT RIG-10, it was one line of
 412 characters), and handed to the third-person `poseAssembly` as its `motion` slot; the hip lantern's rider moved out
 to pay for them - the swing and last frame's heading are `createHipLantern` (`src/systems/lanternSwing.js`, beside the
-swing's law). `createFpArm` now stands at 1,988. The lantern at the waist swings on the gait's stride while the layer
+swing's law) - 1,988 code lines after the audit. LEGIBLE 1 (2026-10-19, `01-Overview/Readability-Arc.md`) counts a host
+in logical lines, blind to layout, and gives `createFpArm` a ceiling of its own: it stands at 2,854 against 3,252, the
+layer's wiring two more than main's without it (2,852). The lantern at the waist swings on the gait's stride while the layer
 walks the legs (the walk clip's otherwise, as before - HT-WAIST), in the hips' own frame (AUDIT RIG-7: read in the
 facing, a strafe's swung it across the hips).
 

@@ -780,6 +780,7 @@ import { createDataPipeline } from './dataPipeline.js';
 import { createWorldModes } from './worldModes.js';
 import { setAmbientTextHost, tickAmbientText } from '../systems/ambientText.js';   // AT2: Ambient Text's one component - this host claims it and feeds it the frame
 import { OnlineSession, steadyNow, roomKeyFor, DEFAULT_SERVER, WORLD_PUBLISH_MS, WORLD_REPUBLISH_MS, FOES_MS, FOES_FULL_MS, FOES_STALE_MS, SHOWN_MOVE_HOLD_MS } from '../net/online.js';   // ONLINE1: the session; WORLD1: the room's memory; AUDIT 637 D7: the move hold, one law both ends
+import { createSeatClock } from '../net/seatLive.js';   // FIELD BUGS 2026-10-18d SEAT-LIVE: the named seat's patience, which this page's own absence never spends
 import { pageWave } from '../net/reconnectWave.js';   // SCALE2c: a relay deploy's reconnect, spread by the hub's count
 import { quietFoesGate } from '../net/foesQuiet.js';   // SCALE2c: a full foes frame that says nothing, said once
 import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../net/oneSeat.js';   // ONE-SEAT: one tab of a player online - the browser's arm, beside the hub's
@@ -915,7 +916,7 @@ import { createDuelManager, DUEL_RADIUS_M, DUEL_RANGE_M, DUEL_COUNTDOWN_MS, ring
 // WILD1 (2026-10-07, bible/11-Multiplayer/Wild-Zone.md): THE OPEN ZONE - the Wrothgarian Mountains: its law (a leaf), a
 // death's drop and its one piece, the fights between players, the room's remains as piles, and the HUD's two glyphs
 import { wildHallPicks, wildHallAt, wildHallTemplateOk } from '../systems/wild/wildDungeons.js';   // PVPDUNGEONS: the day's halls, picked alike on every client   // PVPDUNGEONS
-import { setWildHere, wildHere, isWildRegion, wildMaskOf, wildInside, wildNear, setWildDeath, wildDeath, WILD_TEXT, WILD_DEATH_HOLD_S, WILD_NAME } from '../systems/wild/wildZone.js';
+import { setWildHere, wildHere, isWildRegion, wildMaskOf, wildInside, wildNear, setWildDeath, wildDeath, WILD_TEXT, WILD_DEATH_HOLD_S, WILD_NAME, ZONE_WATCH_SCALE } from '../systems/wild/wildZone.js';
 import { createPartyTruce } from '../systems/wild/wildZone.js';   // PARTY-TRUCE (FIELD BUGS 2026-10-09b)
 import { GREATER_GIANT_CALL, GREATER_GIANT_CALL_AT } from '../systems/wild/wildZone.js';   // GREATER-GIANT
 import { wildRing, wildRingAt, wildRingName, wildRingBonus, setWildMask, wildMask, WILD_RINGS, wildJourney, WILD_GIANT, WILD_GIANT_CHANCE, WILD_GIANT_MAX, WILD_STRANGER_M, WILD_STRANGER_SEE_M, WILD_STRANGER_SLOW_M, WILD_STRANGER_RGBA } from '../systems/wild/wildZone.js';   // WILD2: the four rings; WILD3: the journeys
@@ -5512,7 +5513,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  What the row puts there, read while it is on. A pixel's field is kept for the next record a save or a load stands
    *  on it - the last LIFT_FIELDS_KEPT pixels asked, the longest unasked let go first (AUDIT LANDFORMS II F3: dropped
    *  whole past eight, a save whose records stood on nine pixels made every field again - a town's is a kernel pass,
-   *  146 ms for nine on the main thread and 0.4-0.6 s for sixteen - at every save, online every two-minute checkpoint).
+   *  146 ms for nine on the main thread and 0.4-0.6 s for sixteen - at every save, online every periodic checkpoint).
    *  AUDIT LANDFORMS B1: the rect is the build's for a pixel not built yet too - the one setLocationTiles will stamp
    *  (tvTownRects' own fallback). A load stands records before their pixels stream in (its camps anywhere in the world, a
    *  neighbour's piles), and the wild lift it took there was up to 203 m off a location's levelled ground (Tamarilyn
@@ -7665,7 +7666,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _serpentStandIn = null;
   const serpentStandIn = () => {
     if (!_serpentStandIn) {
-      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent');
+      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent', () => serpentHost?.healthShare() ?? null);   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it
       e.armor = 100; e.armorValues = new Array(7).fill(100); e.skills = 0;
       _serpentStandIn = e;
     }
@@ -8612,7 +8613,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return !!w;
     },
     nameOf: (uid) => fleetHost?.nameOf?.({ uid }) ?? '',
-    weigh: (items) => totalWeight(items ?? []),
     say: (text) => townTalk.say(text),
   });
   /** COMPANION-KIT (2026-10-01, Mac: companions "act as storage"): my companion activated - his pack (the party's live
@@ -9630,8 +9630,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // AUDIT NAV1 (B6): a raid the sea fight let go of - its boarders cast off, the deck left to them, the sea emptied -
       // ends with it (QuestMachine's own TombstoneQuest), never its waves following the player about; `withdraw`: its
       // living boarders go back over the rail with it (a tombstoned quest leaves the foes it made standing)
-      endRaid: (quest, { withdraw = false } = {}) => {
+      endRaid: (quest, { withdraw = false, won = false, crew = false } = {}) => {
         if (!quest || !questBridge) return;
+        if (won) { raidAshore.won(quest); return; }   // RAID-WON (scenes/raidAshore.js): won at sea, ended as one thrown back ashore
+        if (crew) raidAshore.crew(quest);   // RAID-WON: her ship gone - its crew home, its stranded boarders fighting on
         if (withdraw) for (const f of [...exteriorFoes.foes]) if (!f.dead && f.questBehaviour?.questUID === quest.uid) exteriorFoes.removeFoe(f);
         if (quest.questTombstoned) return;   // ended by its own clock: its boarders withdrawn, nothing more to end
         try { questBridge.machine.tombstoneQuest(quest); } catch (e) { console.warn('[naval] the raid would not end', e); }
@@ -10898,7 +10900,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     playerWeaponSheathed: () => !!weaponRig.playerWeapon.sheathed,   // AUDIT 24 (wave 42): pacification's drawn-weapon penalty
     shake: (k) => betterAmbience.weaponKick(k),   // AUDIT TELL H6: my blow that staggers a watchman kicks the camera
     raidHere: () => raidDefendingHere(),   // RAID-GUARDS: a raid on in this town spares its defenders every blow of the player's
-    guardScale: () => (wildHere() ? 10 : 1),   // ZONE-WATCH (ZONE_WATCH_SCALE): the open zone's towns post their watch ten times as strong
+    guardScale: () => (wildHere() ? ZONE_WATCH_SCALE : 1),   // ZONE-WATCH (systems/wild/wildZone.js ZONE_WATCH_SCALE): the open zone's towns post their watch ten times as strong
     levelBonus: () => seatEdicts.guardLevelBonus(Math.floor(skyMinutes())),   // SEAT1d: a Curfew's night watch - AUDIT SEATS-3 E1: the sky's night (TIME1), the one the town sees
     fightHere: () => areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]),   // PROTECT-FIGHT: under the protection, a fight spares the street's walkers
     oneVoice: () => livingWorldOn(), windowUp: () => townTalk.overlayActive,   // HALT-ONE: the living watch calls as one, and nobody under a window (cityGuards.js)
@@ -11745,7 +11747,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           const paid = f.fee > 0 && !r.elsewhere;
           const rec = recipeById(recipe);
           const made = rec?.kind === 'siege' ? storedText(rec.name, Number(r.data.count) || 1) : craftedText(mintPieces(r.data));   // SEAT2b part two: a Ram Kit is the Stores'
-          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp)}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };
+          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp, profBook.limit(rec?.profession))}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };   // CRAFT-LIMIT-SAID: and the crafter's limit, where it now holds the track
         },
         stock: async (material, qty, counter = stockOf(material)?.counter) => {
           const r = await profBook.stock(material, qty);
@@ -18002,7 +18004,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         else worldQuickSave(saveName, { quiet: true });
       }
       return names.length > 0;
-    } catch (e) { console.error('[online] checkpoint failed', e); return false; }   // never the frame's end: the next is due in two minutes
+    } catch (e) { console.error('[online] checkpoint failed', e); return false; }   // never the frame's end: the next is due ONLINE_CHECKPOINT_MS on
   };
   /** REALM P1.3: THE REALM'S CHECKPOINT - the character composed by the standing host and handed to the session by the
    *  composer's sink. Refused as the exit save is on the death screen: a dead character is never the realm's save. */
@@ -18037,8 +18039,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (realmSession) {
     // the title exit and the page put away are the checkpoint's: registered with its other doors (THE CHECKPOINT'S
     // DOORS, below the duel's). AUDIT REALM2 C2: the lease given up as the page GOES (pagehide, the unload guard answered) - the leave alone, with
-    // keepalive (the browser finishes it; a save that large it cannot, so the two-minute checkpoints bound what a close
-    // costs) - and taken again when a page the back-forward cache kept is shown
+    // keepalive (the browser finishes it; a save that large it cannot, so the periodic checkpoints - ONLINE_CHECKPOINT_MS -
+    // and the one the page asked as it hid bound what a close costs) - and taken again when a page the back-forward cache kept is shown
     whenPageGoes(globalThis, () => { legacyHost?.pageGone(); realmSession.leave({ keepalive: true }); }, () => { realmSession.rejoin(); });   // REZ-BLOODLINE: a death held for a Resurrect decided first - its tombstone takes the lease, the leave then sends nothing
   }
   /** REALM P1.3: A CHARACTER BORN ONLINE - made at the service once chargen is done, its first save the service's
@@ -19266,7 +19268,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (_deck === false) return false;
       if (_deck) {
         holdSpotWhile(collider, { x: _deck[0][0], y: _deck[0][1] + 0.9, z: _deck[0][2] }, () => exteriorFoes.spawnFoe(handle.foe.foeType, _deck[0], { gender: questFoeGender(handle.foe), yaw: _deck[1], questBehaviour: handle.behaviour, feetGiven: true }))
-          .then((f) => navalDeckBody(f, _deck[2]))   // DECK-WALK: a raid's wave stands on her deck, and stays on it
+          .then((f) => { if (!raidAshore.late(handle.foe?.parentQuest, f)) navalDeckBody(f, _deck[2]); })   // DECK-WALK: a raid's wave stands on her deck, and stays on it; RAID-WON: unless its raid ended while it stood up
           .catch((e) => console.error('[quest] naval deck foe stand failed:', e?.message ?? e));
         return true;
       }
@@ -19305,7 +19307,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         gender: questFoeGender(foe),
         yaw: Math.atan2(feet[0] - spot.x, feet[2] - spot.z),   // LookAt player (CreateFoe.cs:328)
         questBehaviour: handle.behaviour,
-      })).catch((e) => console.error('[quest] exterior foe stand failed:', e?.message ?? e));
+      })).then((f) => raidAshore.late(foe.parentQuest, f)).catch((e) => console.error('[quest] exterior foe stand failed:', e?.message ?? e));   // RAID-WON (AUDIT FB1019 D1): a raid's wave landing after its raid ended, withdrawn
       return true;
     },
     /** GameManager.RaiseOnEncounterEvent - its one core consumer is
@@ -20475,7 +20477,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // WORLD2: ONE SIMULATION PER ROOM. While I host a world room the dungeon's layout foes are mine to step and I
   // stream every changed one FOES_MS apart (every one FOES_FULL_MS apart, so a dropped delta heals); while another
   // hosts, my layout foes are puppets that follow the stream and my blows on them go to the host as hits.
-  let _foesSentAt = -Infinity, _foesFullAt = -Infinity, _foesInAt = -Infinity;
+  let _foesSentAt = -Infinity, _foesFullAt = -Infinity; const seatClock = createSeatClock(FOES_STALE_MS);   // SEAT-LIVE: the seat heard (its stream applied, its word) - a page back from a hidden spell gives it its patience again
   const _foesQuiet = quietFoesGate();   // SCALE2c: what my cell last heard from me - a full frame that says nothing is said once (net/foesQuiet.js)
   let _ownSentAt = -Infinity, _ownFullAt = -Infinity;   // QUEST-PARTY phase 3b: the room's own lane (OWN1), on its own clocks
   let _duelRingSaid = null;   // DUEL1: the id of the ring my foes frame last said I stand in (null: none)
@@ -20656,7 +20658,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  seat is ALIVE - its stream, or its word in the welcome, heard within FOES_STALE_MS (AUDIT WORLD2 C2/C5: a dead
    *  socket, a terminal close or a silent host left a joiner's dungeon frozen with every blow dropped). Read every
    *  frame, not on a host change alone. */
-  const dungeonAuthority = (now = performance.now()) => !(online?.room && isWorldRoom(online.room) && online.status === 'open' && online.host && !online.isHost() && now - _foesInAt < FOES_STALE_MS);
+  const dungeonAuthority = (now = performance.now()) => !(online?.room && isWorldRoom(online.room) && online.status === 'open' && online.host && !online.isHost() && seatClock.live(now));
   let onlineToScene = (p) => [p.x, p.y, p.z];
   // AUDIT MERGE-PLUS B1: ...and its inverse, for a POINT I send (PEERFX1's struck point) - the pose's own per-mode law,
   // written beside the pose each frame. The blow's point went through the overworld's mapping in every mode, so in a
@@ -21250,7 +21252,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // WORLD1: the room's memory in - a welcome that carries the world the room keeps lands on the standing dungeon
     // (the mode machine refuses another dungeon's); a new host publishes at once
     online.onWorld = (shared) => { if (modes?.restorePlaceSharedWorld?.(shared)) console.info('[online] the room\'s memory restored'); };   // WORLD6a: on the standing place, a dungeon or a building
-    online.onHost = (id, mine) => { if (mine) { _worldPublishedAt = -Infinity; _foesFullAt = -Infinity; } else if (id && isWorldRoom(online.room)) _foesInAt = performance.now(); modes?.setDungeonAuthority?.(dungeonAuthority()); };   // AUDIT WORLD6b A9: a cell's seat is no heartbeat   // WORLD2: the seat decides who steps the foes; a new host streams every foe at once; another's word is its first heartbeat
+    online.onHost = (id, mine) => { if (mine) { _worldPublishedAt = -Infinity; _foesFullAt = -Infinity; } else if (id && isWorldRoom(online.room)) seatClock.heard(performance.now()); modes?.setDungeonAuthority?.(dungeonAuthority()); };   // AUDIT WORLD6b A9: a cell's seat is no heartbeat   // WORLD2: the seat decides who steps the foes; a new host streams every foe at once; another's word is its first heartbeat
     online.onFoes = (id, data) => {
       if (isCellRoom(online.room)) {
         if ((modes?.mode ?? 'exterior') === 'exterior') exteriorFoes.applyFoes(id, data);
@@ -21267,7 +21269,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // that throws on this client every frame (ONCRASH1 drops it) still read as a live host for ever - so
       // FOES_STALE_MS could never fire, the seat never came back, and the player walked a dungeon of frozen puppets
       // that received nothing. A crash was bad; a silent soft-lock is worse. `applyDungeonFoes` already answers.
-      if (modes?.applyDungeonFoes?.(id, data) && modes?.mode === 'dungeon') _foesInAt = performance.now();
+      if (modes?.applyDungeonFoes?.(id, data) && modes?.mode === 'dungeon') seatClock.heard(performance.now());
     };
     // PEERFX1: my weapon blows (a splash marked fromPlayer - melee, arrows, never a spell) and the ring of a blow on
     // me ride the pose to the players who see me; every splash drawn here is the dedupe for theirs
@@ -23060,8 +23062,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _wildLastWeapon = null;   // INT9: the weapon of my last strike that left - the referee's word on it wears it
   // ZONE-WATCH (the owner: "attacking other players in cities will call the guards"): my blow or my spell on a player in a
   // town of the zone - in its streets or under one of its roofs - is ASSAULT, the watch's own crime, and the watch comes
-  // (ten times as strong here) for me; once each ten seconds, so a fight keeps it called without a storm of posts
-  const ZONE_WATCH_SCALE = 10;
+  // (ten times as strong here - ZONE_WATCH_SCALE) for me; once each ten seconds, so a fight keeps it called without a storm of posts
   let _zoneWatchAt = -Infinity;
   const zoneWatchCall = () => {
     const mode = modes?.mode ?? 'exterior';
@@ -23998,7 +23999,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     onFell: (day, f) => { const site = gateOmen?.current?.()?.site; chatNotice(fellLine({ near: site?.day === day ? site.near : null, boss: gateBossOf(day).name, top: f.top })); },   // WB13b: no place found - "in the wilds"
     onReceipt: (r) => { gateClaims?.add(r); grantSpoilsOutside(r); },   // WB5b: to the account service, kept until it is counted; AUDIT WB A2: and its spoils, when no court's floor will give them
     onRefused: (why) => { if (modes?.gateArenaDay?.() != null) ejectFromCourt(gateRefusalText(why)); },   // AUDIT WB B5: the relay will not have me in this fight - out before the gate, not left in an empty court; GATE-RELOAD: in what its word means (an outdated game is told to reload, never that an open gate is closed)
-    place: bossPlace,   // AUDIT WBX F3: his fall frozen where he fell, as the court draws him
+    place: bossPlace, watches: () => !!online?.courtWatchOk,   // AUDIT WBX F3: his fall frozen where he fell, as the court draws him; AUDIT PLAN-1000 G3: a watcher only on a relay that says `me`
   }) : null;
   let _gateInFor = -1;   // WB3b: the welcome my level claim was said for - once per welcome of the court's room
   /** WB4: THE FIGHT ON THIS SCREEN (scenes/gate/gateCourt.js) - the boss where the relay says he stands, his telegraphs, his
@@ -24221,7 +24222,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _realmArenaBridged = realmArena([...SD_REALM_FLOORS, ...SD_HALL_FLOORS, ...SD_STEPS_FLOORS]);   // SD6c: and with the Concord, the bridge and the first step; SD7b: and past it the Steps' band - the void's to take, the cast-back its edge - and the arena
   const gateCourt = gateLink ? createGateCourt({
     renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link: gateLink, spoils: spoilsPool,
-    now: () => Date.now() + _sharedOffsetMs,
+    now: () => Date.now() + _sharedOffsetMs, door: () => online?.busyAt ?? null,   // GATE-DOOR: and the court's door answering busy - a word of it, not a silence
     cam: () => cam.pos,
     feet: () => (playerSpawned && modes?.gateArenaDay?.() != null ? player.feetAt() : null),
     player: () => playerEntity,
@@ -25270,7 +25271,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const inRealm = modes?.sdRealmSlot?.() != null;
     if (!inRealm && _sdReceipts.size) sdReceiptsLeft();   // AUDIT SD: a receipt that never burst - its spoils into the pack
     // SD9e: whatever is still on the arena's floor into the pack - and AUDIT SD II (L5 F5): a checkpoint asked at once (the
-    // Hour refuses every save, so what it gave stood on the device alone until the next one, two minutes on)
+    // Hour refuses every save, so what it gave stood on the device alone until the next periodic one)
     if (!inRealm && _sdFightHeld) { sdSpoilsBurst?.leave(); saveSoon.changed(); }
     if (!inRealm && _sdFightHeld) { sdFightLink.leave(); sdBlows?.leave(); sdRemVoice?.leave(); sdFx?.leave(); _sdFightHeld = false; }
     if (!inRealm) sdFx?.away();   // AUDIT SD V (L5): the next arrival exhales, whatever was heard
@@ -28932,7 +28933,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
     }   // AUDIT WORLD B6: the dungeon's and the building's death screens stand in the mode's slot   // AUDIT MWBODY B7: and no body stands frozen over the death screen
     _rezSeen = null;   // AUDIT CONTRIB A6: alive - the next death takes its own snapshot of what the party's poses say
-    if (checkpointDue(now, _checkpointAt)) { if (realmSession?.idle) realmSession.idle(() => onlineCheckpoint()); else onlineCheckpoint(); }   // SCALE2b: the periodic one may be answered by the save the service holds (realmSaves.js idle)   // REALM P0.5: every two real minutes, alive and in the seat (the first such frame persists the join's call-in)
+    if (checkpointDue(now, _checkpointAt)) { if (realmSession?.idle) realmSession.idle(() => onlineCheckpoint()); else onlineCheckpoint(); }   // SCALE2b: the periodic one may be answered by the save the service holds (realmSaves.js idle)   // REALM P0.5: every ONLINE_CHECKPOINT_MS (five real minutes, CHECKPOINT-5), alive and in the seat (the first such frame persists the join's call-in)
     if (instanceDoor.refused(online)) modes?.forceExitToExterior?.();   // INSTANCES (the audit): alive, an instance's door shut on me (not of its owner's party - a kick, a lapse) - out, as the realm's door does, never left inside it alone
     const mode = modes?.mode ?? 'exterior';   // audit24_wave37: guarded on the OBJECT above its own declaration (the frame runs after it)
     const cabin = modes?.sailingCabin;
@@ -29068,7 +29069,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     spectatorFrame();   // AUDIT-SEATS G4: a spectator's free camera begun - or, its watching over, set back where it stood
     // WB3b: THE COURT'S ROOM HEARS MY LEVEL CLAIM once per welcome (net/gate/gateBrain.js - the health I bring into the fight
     // and the bucket I may deal from); a reconnect's welcome says it again, and the relay keeps my first
-    if (gateLink && online.gateOk && isGateRoom(online.room) && online.welcomes !== _gateInFor && online.sendGate({ k: 'in', lv: Math.max(1, playerEntity.level | 0), bv: GATE_BRAIN_V })) _gateInFor = online.welcomes;
+    if (gateLink && online.gateOk && isGateRoom(online.room) && (online.welcomes !== _gateInFor || gateCourt?.askAgain()) && online.sendGate({ k: 'in', lv: Math.max(1, playerEntity.level | 0), bv: GATE_BRAIN_V })) _gateInFor = online.welcomes;
     // PERF11 (2026-09-19, Mac: "Online mode needs further performance
     // improvements"): ONE peersNear() A FRAME. The owner sweeps below -
     // the foes' prune and the camps' - each built the list from scratch
@@ -29103,7 +29104,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ownStream(now);    // QUEST-PARTY phase 3b: mine in a building, on the room's own lane
     actFlush();        // AUDIT WORLD3 A3: an act the wire refused, re-read and re-sent
     hitFlush(now);     // AUDIT FOES FOE2: and a BLOW the wire refused - a joiner applies none locally, so a lost frame is a lost blow
-    modes?.setDungeonAuthority?.(dungeonAuthority(now));   // AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
+    seatClock.frame(now); modes?.setDungeonAuthority?.(dungeonAuthority(now));   // SEAT-LIVE: this frame told the clock first (a gap is the page away, not the seat); AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
     hccParkTick(now); doorToken.frame();   // HCC-PARK: my parked team's word to the cell it stands in, when it changed   // DOOR-TOKEN: the way out approached - its token minted on the walk to the door
     overworldLedgerFrame(now); searchPartyFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them; GRAVE-PARTY: and the stones I searched
     caravanDecorTick(now);   // WAGONS2-VISIT: what I placed in my caravan, to its room, when it changed
@@ -29505,6 +29506,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     csaFrame: (dt, axes) => { _csaAxes = axes; csaFrame(dt); },   // CSA-C: a MonoBehaviour's Update and LateUpdate indoors too - a boat placed on a dungeon's water is baked, lit and drawn there; CSA-J (the audit): from the modes' frame, after its motor, on its axes
     onTransitionInterior: () => { navalStow(); csaOnTransition(); navalTransition(); },   // CSA-C: PlayerEnterExit.OnTransitionInterior; NAV-H: a building has no sea
     onTransitionExterior: () => { navalStow(); csaOnTransition(); navalTransition(); },   // CSA-C: PlayerEnterExit.OnTransitionExterior; NAV-H: a fresh sea at the door
+    raidLate: (quest, f) => raidAshore.late(quest, f),   // RAID-WON (AUDIT FB1019 D1): a raid's wave landing below deck after its raid ended, withdrawn (scenes/raidAshore.js)
     gateCourtLights: () => gateCourt?.lights() ?? [],   // WB4: the glow on him, in the court's light channel
     gateBoss: () => gateCourt?.target() ?? null,   // WB4b: him as a body my blows meet
     gateFloor: () => { _gateFloor.xa = gateLink?.state()?.xa ?? _gateFloor.none; _gateFloor.now = Date.now() + _sharedOffsetMs; return _gateFloor; },   // WB9b: the walkways laid between the courts, on the relay's clock (one object, refilled - AUDIT WB D10's law)

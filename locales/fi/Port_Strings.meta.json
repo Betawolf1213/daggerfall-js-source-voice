@@ -3554,6 +3554,16 @@
   "tr": "edba5865ffe1",
   "by": "claude-in-session"
  },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "d7f3a24919ee",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "0cfa7ae5ea76",
+  "by": "claude-in-session"
+ },
  "features.blood.effect": {
   "en": "309a6a38a632",
   "tr": "77678a3ba178",
@@ -9390,8 +9400,8 @@
   "by": "claude-in-session"
  },
  "prof.page.how.alchemy": {
-  "en": "1df3a4158e86",
-  "tr": "c0a7a6204315",
+  "en": "010b4180e9a8",
+  "tr": "814225dd93ee",
   "by": "claude-in-session"
  },
  "prof.page.how.enchanting": {

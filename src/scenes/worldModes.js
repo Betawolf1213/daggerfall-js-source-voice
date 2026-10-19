@@ -367,6 +367,7 @@ import {
   realmDeedAt,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the house the realm gave a knight is theirs, never for sale to them
   homeFootprintM2,   // HOME-PRICE: the ground a house stands on
   homeVoteRows, homeVotePressable, homeVoteOfVerb, homeVoteChoices, homeVoteLines, isHomeVoteVerb,   // HOME-VOTE: the town's word on it, at its door
+  homeStationsServe,   // FB1018D HOME-BENCH: a home's stations serve its owner's account, as its door does
 } from '../systems/online/onlineHomes.js';
 import { homeDecorShown, homeVotedLine, homeVotesLine, homeVoteRefusalLine, decorStaysShunned, HOME_VOTE_GONE_LINE } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's decor stands for its insiders alone
 import { goldSum, accountWords } from '../systems/homeWords.js';   // AUDIT HOME-PRICE E4: a home's sums and the account they moved in
@@ -2159,7 +2160,7 @@ export function createWorldModes(host) {
       gender: questFoeGender(foe),
       yaw: Math.atan2(feet[0] - spot.x, feet[2] - spot.z),   // LookAt player (:328)
       questBehaviour: handle.behaviour,
-    })).catch((e) => console.error('[quest] interior foe stand failed:', e?.message ?? e));
+    })).then((f) => host.raidLate?.(foe.parentQuest, f)).catch((e) => console.error('[quest] interior foe stand failed:', e?.message ?? e));   // RAID-WON (AUDIT FB1019 D1): a raid's wave landing after its raid ended, withdrawn
     return true;
   }
 
@@ -5003,6 +5004,10 @@ export function createWorldModes(host) {
     if (b.buildingType === BUILDING_TYPES.Ship) return ownsShip(playerEntity);
     return houseOwnedAt(b, b.buildingKey ?? 0);
   }
+  /** FB1018D HOME-BENCH: WHOSE THE ROOM'S STATIONS ARE - the pieces' owner's (decorOwnerHere), and in an online home every
+   *  character of its owner's account, whom its door lets in as the owner's (onlineHomes.js homeStationsServe); never on a
+   *  private visit, as decorOwnerHere's first answer. Its storage, bed and decorator stay decorOwnerHere's. */
+  const stationOwnerHere = () => decorOwnerHere() || (!privateVisitRoom && homeStationsServe(interiorHome));
   /** WAGONS2-VISIT: STANDING IN ANOTHER PLAYER'S CARAVAN, A VISIT (systems/caravanVisit.js) - Mac: they come in "to craft,
    *  rest, look around": its stations, its bed and its pieces to look at are mine to use; its storage and its decorator
    *  never (decorOwnerHere is false on a visit, so the decorator stands no button, as in another's home). */
@@ -5049,11 +5054,11 @@ export function createWorldModes(host) {
   }
   /** HOME-STATIONS (2026-09-27, Discord - Tabitha: "CRAFTABLE / PURCHASABLE CRAFT / GUILD STATIONS [Spellmaking,
    *  Alchemy, Enchanting] FOR HOMES / SHIPS"): A STATION PRESSED - its craft's own maker, the guild service's window
-   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone; the maker's own laws stand (the
-   *  potion maker's ingredients, the spell maker's spellbook, what each charges). No guild is asked: the licence was
-   *  paid when the piece was made a station. */
+   *  (openServiceFlow, net/decorLaw.js DECOR_STATION_SERVICES), for its owner alone - FB1018D HOME-BENCH: any character
+   *  of its owner's account (stationOwnerHere); the maker's own laws stand (the potion maker's ingredients, the spell
+   *  maker's spellbook, what each charges). No guild is asked: the licence was paid when the piece was made a station. */
   function useDecorStation(piece) {
-    if (!decorOwnerHere()) {
+    if (!stationOwnerHere()) {
       if (!hallMemberHere()) {   // GUILD1d: a hall's stations are its members'
         if (interiorHome) say(homeBelongsLine(interiorHome));
         if (!caravanGuestHere()) return;   // WAGONS2-VISIT: a caravan's stations serve its visitor
@@ -14032,7 +14037,7 @@ export function createWorldModes(host) {
       const t = interiorBuilding.buildingType;
       // AUDIT 29 D4: a smith's open for trade - not one broken into by night (its insideOpenShop latch false)
       if (t === BUILDING_TYPES.WeaponSmith || t === BUILDING_TYPES.Armorer) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: FORGE_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'forge')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2: a hall's, its members'
       return caravanGuestStation('forge');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14041,7 +14046,7 @@ export function createWorldModes(host) {
     workbenchHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.FurnitureStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: WORKBENCH_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'workbench')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2
       return caravanGuestStation('workbench');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14050,7 +14055,7 @@ export function createWorldModes(host) {
     loomHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.ClothingStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: LOOM_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'loom')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2
       return caravanGuestStation('loom');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14060,7 +14065,7 @@ export function createWorldModes(host) {
     masonHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.GeneralStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: MASON_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('mason');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14071,7 +14076,7 @@ export function createWorldModes(host) {
       if (mode !== 'interior' || !interiorBuilding) return null;
       const t = interiorBuilding.buildingType;
       if (t === BUILDING_TYPES.PawnShop || t === BUILDING_TYPES.GemStore) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: JEWEL_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('jeweller');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14081,7 +14086,7 @@ export function createWorldModes(host) {
     alchemyHere() {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.Alchemist) return interiorBuilding.insideOpenShop === false ? null : { kind: 'shop', fee: ALCHEMY_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'alchemy')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('alchemy');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
@@ -14092,7 +14097,7 @@ export function createWorldModes(host) {
       if (mode !== 'interior' || !interiorBuilding) return null;
       if (interiorBuilding.buildingType === BUILDING_TYPES.GuildHall && interiorBuilding.factionId
         && guildGroupOfFaction(townTalk?.factionDict ?? null, interiorBuilding.factionId) === GUILD_GROUPS.MagesGuild) return { kind: 'shop', fee: ENCHANT_FEE };
-      if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };
+      if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };
       if (hallMemberHere() && interiorDecor.list().some((p) => p?.station === 'enchant')) return { kind: 'home', fee: 0 };   // AUDIT GUILD1d A2's law
       return caravanGuestStation('enchant');   // WAGONS2-VISIT: and a caravan's, its visitor's
     },
