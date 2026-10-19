@@ -6775,6 +6775,58 @@ enchanted item is not offered again.
 
 Pins: 16 in `enchantmentcatalogue.test.js` (18 mutations, 16 dead,
 2 recorded equivalent) and 3 added to `enchanting.test.js`.
+
+**SIDE-ONCE - A SIDE EFFECT'S SETTING IS PICKED ONCE (FIELD BUGS
+2026-10-19b; the owner, 2026-10-19: "One copy per setting").** A
+DEPARTURE, Port-Ledger A. DFU gives User Takes Damage and Item
+Deteriorates `AllowMultipleSecondaryInstances` beside the primary flag
+(`UserTakesDamage.cs:35`, `ItemDeteriorates.cs:37`), and the secondary
+picker leaves a taken setting out only when that flag is absent
+(`DaggerfallItemMakerWindow.cs:849-855`). So the same setting could be
+picked again and again up to the ten-row guard, each copy adding its
+negative cost to the budget - the trade this section opens with, taken
+ten times over for one drawback. The port carried it verbatim; a
+player's private report found it. `ITEM_MAKER_EFFECT_FLAGS` now gives
+both effects the primary flag alone, so `primaryPick` hides a taken
+setting as it does every other effect's: in sunlight AND in holy
+places is still two rows, in holy places twice is not. No effect
+carries the secondary flag now.
+
+Its sibling ships with it: an effect whose every setting is taken -
+Health Leech with all three, Bad Reactions From with all three, User
+Takes Damage with both - stayed in the list and opened an empty
+chooser, because DFU's primary filter (`DaggerfallItemMakerWindow.cs:644`,
+`DaggerfallItemMakerWindow.cs:689`) asks whether the
+EFFECT may be taken again, never whether a setting is left
+(`HealthLeech.cs:37` allows more than one Health Leech, never one
+setting twice). `primaryPickerList` now drops an effect whose
+`primaryPick` would offer nothing. Both skins read the one list: the
+Enhanced skin's Add side effect presses the classic button and its
+list draws the classic picker's rows.
+
+A PIECE MADE BEFORE KEEPS ITS COPIES (the owner chose no refund and no
+fold). The item law still counts the maker's rows by EFFECT
+(`itemLaw.js` makerFindings, `many` reads the primary flag), so a piece
+enchanted under the old rule passes in the save and on the wire - the
+lesson of MAKER-KEPT (`01-Overview/bugs/Field-Bugs-2026-10-16c.md`),
+where a law tightened after the fact read honest pieces as forged and
+held their owners' trade. What that leaves open: the account service
+judges with the same law (`server-account/src/judge.js`, the market's
+and the vault's `lawfulItem`), and nothing on a maker's row dates it,
+so a modified client can still lay one setting many times and the law
+takes it as it takes an old piece. A stamp the client writes would
+prove nothing (a modified client leaves it off); telling new from old
+needs a record the service keeps.
+
+Pinned: `test/systems/fb1019b_sideonce.test.js` (4, on the real
+window, both skins: a taken setting gone from its chooser and the
+other settings still offered; "in holy places" asked for ten times
+landing once at -1000/1800; each of four effects gone from the list
+with every setting taken; the item maker's own write of a setting
+taken nine times passing the law). PIN MOVED:
+`enchantmentcatalogue.test.js` (no effect carries the secondary flag;
+Item Deteriorates' chooser without its taken setting).
+`tools/mutants/fb1019b_sideonce.json` (6, all dead).
 ## U41 - THE TRAVEL MAP (2026-08-24)
 
 The classic world map, at last: the province art on V, the region
