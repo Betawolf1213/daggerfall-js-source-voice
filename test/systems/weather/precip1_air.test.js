@@ -123,7 +123,7 @@ test('PRECIP1 THE LAW\'S LANE: on with the ground law\'s lane and a host\'s map 
     assert.equal(precipLawOn(), false, 'the classic lane: off');
     setPrecipLaw(true); assert.equal(precipLawOn(), true, 'forced');
   } finally { setPrecipLaw(null); setSnowGroundLaw(null); setAirGround(null); }
-  assert.match(readFileSync('src/systems/weather/weatherSim.js', 'utf8'), /get\('biomeprecip'\) !== 'off'/, 'the door back');
+  assert.match(readFileSync('src/systems/weather/weatherSim.js', 'utf8'), /_precipDoor \?\?= pageParam\('biomeprecip'\) !== 'off';/, 'the door back, through the page\'s one parse');
 });
 
 test('PRECIP1 WHAT FALLS: a wet system\'s word at a place is the air\'s - rain in cold air falls as snow, snow in warm air as rain, a storm in cold air is a snow; a dry word itself; the map\'s ground law routes through it on the lane; the player\'s word rounds the share with PHASE_HYSTERESIS (mutants: the rounding\'s band dropped; a snow system kept snow in warm air)', () => {

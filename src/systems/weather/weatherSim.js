@@ -54,6 +54,7 @@ export { WEATHER_TYPES };
 // the world weather map reads the same odds); re-exported whole.
 import { WEATHER_ENUM, rollWeather } from './weatherTable.js';
 import { airTemperature, snowShareOf, airGround } from './airTemperature.js';   // PRECIP1: the air decides what falls
+import { pageParam } from '../pageQuery.js';   // PERF-URL: the page's one parse (the law's door)
 export { WEATHER_ENUM, WEATHER_TABLE, weatherTableFor, rollWeather } from './weatherTable.js';
 
 // ---- the module state ----------------------------------------------
@@ -296,7 +297,7 @@ export function setPrecipLaw(on) { _precipOverride = on == null ? null : !!on; }
  *  handed the air its map, and `?biomeprecip=off` not given. */
 export function precipLawOn() {
   if (_precipOverride !== null) return _precipOverride;
-  _precipDoor ??= new URLSearchParams(globalThis.location?.search ?? '').get('biomeprecip') !== 'off';
+  _precipDoor ??= pageParam('biomeprecip') !== 'off';
   return _precipDoor && snowGroundLawOn() && airGround() !== null;
 }
 /** THE SNOW SHARE at field (x, z), `altitude` metres above the sea (null: the macro ground there), at event minute
