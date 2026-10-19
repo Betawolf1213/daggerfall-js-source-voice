@@ -7666,7 +7666,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _serpentStandIn = null;
   const serpentStandIn = () => {
     if (!_serpentStandIn) {
-      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent');
+      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent', () => serpentHost?.healthShare() ?? null);   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it
       e.armor = 100; e.armorValues = new Array(7).fill(100); e.skills = 0;
       _serpentStandIn = e;
     }
@@ -11745,7 +11745,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           const paid = f.fee > 0 && !r.elsewhere;
           const rec = recipeById(recipe);
           const made = rec?.kind === 'siege' ? storedText(rec.name, Number(r.data.count) || 1) : craftedText(mintPieces(r.data));   // SEAT2b part two: a Ram Kit is the Stores'
-          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp)}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };
+          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp, profBook.limit(rec?.profession))}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };   // CRAFT-LIMIT-SAID: and the crafter's limit, where it now holds the track
         },
         stock: async (material, qty, counter = stockOf(material)?.counter) => {
           const r = await profBook.stock(material, qty);

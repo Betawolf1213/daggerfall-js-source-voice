@@ -786,7 +786,9 @@ from circle 11 the High Road's 11-18), with islands between them, from the arriv
 law's own count, measured over 150 seeds).
 
 - **Harriers** (Imps, hovering at `HOST_HOVER_M` 0.9 m) shadow the company along the course. Over platforms they
-  body-block and never bite; they bite only on islands and plates (traversal ground is never aimed at, section 11.7).
+  body-block and never bite; they bite only on islands and plates (traversal ground is never aimed at, section 11.7). And
+  a blow struck from a platform strikes none of them: from there every screen turns it, in the relay's own law (FIELD BUGS
+  2026-10-18f TURNED-BLOW, section 11.7).
 - **Divers** dive at it from the air, from the Shade: only at its islands and plates, under the Diver's rule (ground at
   least the shape's width plus 2 m: 6 m).
 - **The door** opens on the first living member at the end with a fair trail (section 21).
@@ -1502,6 +1504,26 @@ archives (section 25).
   (`player.arena.clamp`), with open edges released. `hit` (on any body, by its number) is accepted only from a pose on
   the fight ground of the current fight, and a member off the fight floors for more than 6 s in a fight is hunted by the
   Harriers (EG-ZB).
+- **A blow the law turns is turned on the screen too** (FIELD BUGS 2026-10-18f TURNED-BLOW; Low_Poly_Gaming: "Imps that
+  follow you around won't die after hitting several times. Its an exploit for heals if you have a vampiric weapon"). The
+  relay's strike rule is one law, `net/eliteGates/egBodies.js` egStruckOff, which its egBlow calls. Every screen asks it,
+  with a body's flags (a ward, a friend, a vanished lord - EG_TURNS_FL) and a lord asleep in its ring (egLordAsleep), as
+  egStrikeTurned. Each frame `scenes/eliteGates/egFight.js` turnStandIn marks the stand-in of every body my blows meet
+  `warded` where the relay will take nothing from a blow struck from my feet. Then no heal or power of a landed blow
+  answers it (the leech, Vampiric Effect - `systems/enchantments.js` VAMPIRIC-WARD - the sets' and the martial powers),
+  the swing and the shaft ring off it as off the Warden's ward (`scenes/dungeonContext.js` swingOnHost), nothing is
+  sent (hostHit), and its number says "No footing" (the ground's) or "Warded" (a ward's) - at the swing, the shaft and
+  the spell alike (AUDIT FB1018f L3-7, L3-2). AUDIT FB1018f L3 closed what still stood apart: the storey is one law on
+  both ends (`egStoreyApart`, which egHitBody and egStrikeTurned call - a body a storey over or under me is turned, the
+  screen judging it where its walk has carried it); a lord woken says its first phase in that beat (`eph`, egLordsWake),
+  so no screen holds it asleep for the 2 s to the fight's next whole word; each body's radius rides beside its row
+  (`ead`/`efs` `r`) so the screen judges an object by the relay's own; and a spell (the arcane riders), Cast When Strikes
+  and the sets' strike refuse a warded target as the rest do. The screen judges this frame's feet, the relay the
+  socket's last pose: at a platform's edge the two may differ for about a tenth of a second (L3-8). Before it the screen offered a
+  span's shadowing Harriers from every platform, bled them, sent the blow and healed the whole claim: twenty blows of a
+  vampiric blade with a leech line healed 264 for 240 claimed, off a Harrier that never lost a point. Still the claim's,
+  not the relay's: a blow its purse clips (the bucket, the cap, the body's last points), a Shield-Wall's or a Shielded
+  elite's front, a flyer out of a blade's reach - a heal of what landed wants the relay's word of it to its striker.
 
 ### 11.8 Moving through a fragment
 
