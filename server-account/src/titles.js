@@ -282,11 +282,19 @@ export const isModerator = (player, env) =>
   typeof player?.handle === 'string' && !!player.handle
   && moderatorHandles(env).has(player.handle.toLowerCase());
 
+/** SHADOW-FANG-MOD (2026-10-19, Mac: "Give the shadow fang title mod perms including ban"): THE TITLES THAT MODERATE -
+ *  their holders may do everything canModerate opens (mute, ban, unban, strikes, the reports' queue, a case's buttons),
+ *  and are protected as a moderator is. Held by the title's own list (TIER_LISTS), so taking the handle off takes the
+ *  rights with the title on the next call. The GLYPH stays the title's own: no shield, as for a developer. */
+export const MOD_TIERS = Object.freeze(['shadowfang']);
+
 /** MOD1: MAY THIS PLAYER MODERATE? A moderator may, and so may a
  *  developer - the people who can already speak as the server are not
  *  made to add themselves to a second list to mute somebody. The GLYPH
- *  stays the moderator list's alone: the dev mark already says more. */
-export const canModerate = (player, env) => isModerator(player, env) || isDeveloper(player, env);
+ *  stays the moderator list's alone: the dev mark already says more.
+ *  SHADOW-FANG-MOD: and so may a holder of a MOD_TIERS title. */
+export const canModerate = (player, env) => isModerator(player, env) || isDeveloper(player, env)
+  || MOD_TIERS.some((t) => holdsTier(t, player, env));
 
 /** FOUNDER3: WHEN THIS ACCOUNT FIRST PLAYED. Founder was read off
  *  `registered_at`, and registering is only the moment a player chose a
