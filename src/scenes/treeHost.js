@@ -93,13 +93,15 @@ export function standTrees({ px, py, day, climate, confirmed = false, forest = n
   const all = forest?.trees ?? [];
   if (!WOOD_TABLES[climate] || !all.length) return out;
   const woods = all.filter((f) => (f.wood ?? 0) >= FOREST.woods);   // FOREST1 (F3)
-  const flats = woods.length ? woods : all;
+  // NODE-CLEAR (AUDIT 2026-10-01 part four): never a tree inside a rock piece, where no look reaches it - asked once a
+  // flat, not once a flat a tree (JUNGLE-WOODS: the jungle's 48 trees a day over its ~5,400 tree flats)
+  const flats = (woods.length ? woods : all).filter((f) => !insideRocks(rocks, f.x, f.z));
   const claimed = new Set();
   for (const t of trees({ x: px, y: py, day, climate, confirmed })) {
     const lx = t.u * TERRAIN_SIZE, lz = t.v * TERRAIN_SIZE;
     let best = null, bestD = Infinity;
     for (const f of flats) {
-      if (claimed.has(f.id) || insideRocks(rocks, f.x, f.z)) continue;   // NODE-CLEAR (AUDIT 2026-10-01 part four): never a tree inside a rock piece, where no look reaches it
+      if (claimed.has(f.id)) continue;
       const d = (f.x - lx) ** 2 + (f.z - lz) ** 2;
       if (d < bestD) { bestD = d; best = f; }
     }

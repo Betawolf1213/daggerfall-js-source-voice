@@ -172,6 +172,15 @@ asks again on BUILD-RETRY's backoff (`BUILD_RETRY_MS`; TREE-6: one failed fetch 
 sun at its crown (`uSunLift`, `JUNGLE_SUN_LIFT` 0.6 of its height - TREE-2: one shadow tap at the root lit or darkened a
 whole 22 m tree by its foot's shade), and the door uploads nothing on a frame with no tree near (TREE-9).
 
+**A large tree gathering spot** (JUNGLE-WOODS, 2026-10-19, the owner: "The forest region we recently implemented should
+be a large tree gathering spot. Moreso than other places within daggerfall"): a map pixel of the area stands **48 of
+Logging's trees a day** (`net/nodeLaw.js` `JUNGLE_TREE_SLOTS`, `treeSlots`) - four times the Woodlands' and the
+Rainforest's 12, the most anywhere else - every slot a tree (on ground nobody has vouched for, a slot whose Teak or
+Mahogany waits on the witnesses stands Pine, where an ordinary Rainforest pixel stands nothing), each at a jungle tree
+of the day's law point (`scenes/treeHost.js` `standTrees`). The area's law, the service's as the client's (acct159):
+`06-Systems/Professions-Arc.md` JUNGLE-WOODS. Each stands ringed in Logging's green along its own 3D tree near the eye
+(NODE-OUTLINE, Professions-Arc 46).
+
 ## The floor
 
 **BANTHA2** - the owner's "Jungle Preview": a floor of grass, ferns and broad leaves under the trees, no earth showing.
