@@ -338,7 +338,8 @@ THE COUNT CHIP, THE RECAP, THE REHEARSAL, RIDDEN POSES, THE SPIRE MIX, ROLE READ
 **The item.** Template **575**, free today (the gate's 570-572 and the Ayleid stones' 573-574 come before it). It is a
 row of its own, `WEIR_KEY_ROW` in `src/systems/eliteGates/weirKey.js`:
 
-- `{index:575, baseWeight:0.25, hitPoints:1000, basePrice:500, rarity:20, bound:true, stackable:true}`, in the
+- `{index:575, baseWeight:0.25, hitPoints:1000, basePrice:500, rarity:20, bound:true, stackable:true, packOnly:true}`
+  (the leaf `WEIR_KEY_LAW_ROW`, `src/systems/eliteGates/weirKeyRow.js`, since KEY-LAW; pack-only since KEY-FACE, below), in the
   miscellany group (`UselessItems2`), never a gem (PORTAL1's lesson: every Gems piece is a crystal a slot takes);
 - its art: a Battlemage's key in gold leaf with a blue stone in its bow, painted in code under the Spire's held archive
   block (`src/world/eliteGates/egKeyArt.js`, EG-ZH), which EG1's registry holds - never a borrowed record, because Port-Doctrine
@@ -364,6 +365,23 @@ real relay instance, so the key is a service-side balance and the item is its fa
   staked, and those a lost open's answer took unseen (section 22) - says *The key turns to rust.*, and the stack is
   restacked (AUDIT EG IV).
 - It is bound to the account, never traded, and never lost to a death.
+- **The face is the pack's alone** (FIELD BUGS 2026-10-19b KEY-FACE). The restack reads the pack and nothing else
+  (`weirKey.js:"  const held = items.filter(isWeirKey);"`), so a face anywhere else is a key it cannot see. The row was
+  bound and not pack-only, and a bound piece goes to the wagon and the player's own storage (`itemBound.js`
+  `BOUND_KEEPS`): a face stowed there left the pack showing none, the next answer gave it a new one, and the stowed ones,
+  carried back, showed keys the account never held - every one of them rust at the next use (a player's private report:
+  a pack of keys gone at one use). So the row is **pack-only**, the Wallet's law (`06-Systems/Wallet.md`; `isPackOnly`):
+  both skins refuse the wagon and every storage (a home's chest, a ship's hold, a companion's pack) in its own words,
+  *Weir Key stays in your pack.*, and the doors that are no window's - a room's decoration (`decorStandOf`), a revenant's
+  take (`revenantMayTake`), the shift-drop (`physicalItems.js` `shiftDrop`) - read the same mark; the trade, the counter, a
+  death in the zone, a salvage and a peer's list refuse it as a bound piece already. A save from before holds faces out
+  of the pack; it loads with every one folded away (`foldStrayWeirKeys`, called from `save.js` restorePlayer beside the
+  load's item repairs, over every list the save holds but the pack - the one walk, `savedItemLists` - and a room's own
+  things, `decorOwn`), so the account's balance restacks the pack whole and nothing turns to rust. A face the find threw
+  on a body and the player never took up is folded the same way at the next load. OPEN: that throw is the one face
+  still made outside the pack - taken up only after a later answer restacked the pack to the whole balance, it leaves
+  the pack one over, and the next answer says the rust line for it (the account loses nothing). Pinned:
+  `test/net/eliteGates/fb1019b_keyface.test.js` (5), `tools/mutants/fb1019b_keyface.json` (13, all dead).
 
 **Where they come from.** The service rolls every one with its own `rand`, at a claim it already verifies. This is
 the `sdHonoursRoll` way: AUDIT SD III R4 moved the Hour's honours off the receipt seed because the page can read the
