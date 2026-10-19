@@ -282,7 +282,7 @@ test('ETHER-CHART the doors: the travel map\'s door opens the chart past the Vei
   const t = officeText(o);
   assert.deepEqual(t, etherOfficeText(o));
   // PIN MOVED (ELTHERIC): the Etheric Sea's
-  assert.equal(t.lede, 'Veilhaven - a freeport of the Eltheric Ocean, in the Shallows, 7 leagues past the Veil. No crown\'s writ runs past the Veil, and no crown\'s favours. Your charts hold 1 isle.');
+  assert.equal(t.lede, 'Veilhaven - a freeport of the Eltheric Ocean, in the Shallows, 7 leagues past the Veil. No crown\'s writ runs past the Veil, and no crown\'s favors. Your charts hold 1 isle.');
   assert.deepEqual(t.board.map((b) => [b.title, b.words, b.press]), [['Talk on the quay', 'A tale.', ''], ['Talk on the quay', 'Another.', '']]);
   assert.deepEqual(t.letters, [{ id: 'chart', title: 'A chart of these waters', words: '12 isles your charts do not hold, marked on them.', press: 'Buy - 150 gold', can: true }]);
   assert.deepEqual(t.heads.board, ['The quay\'s talk', 'the legends of these waters']);

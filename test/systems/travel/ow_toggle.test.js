@@ -80,7 +80,7 @@ function rig({ firstPerson = false, enhanced = true } = {}) {
     tvWater: () => false, tvSeaY: () => 0, TV_SEA_EPS_M: 0.5, TRAVEL_VIEW_TEXT: { water: 'water' },
     locationIndex: new Map(), locationWorldRect: () => null,
     gamePaused: () => false, modes: { modalWindowUp: () => false }, duelEnemyNear: () => false, navalHostileNear: () => false,   // TIME-DILATION: no hostile ship
-    areEnemiesNearby: () => false, exteriorFoePool: () => [],
+    areEnemiesNearby: () => false, exteriorFoePool: () => [], wildSeen: (foes) => foes,   // OW-RISE: the raise counts the foes the view's danger does
   };
   const names = Object.keys(env);
   // PIN MOVED (TO-ROADS): the map's fork asks tvRoutesJourneys (First-Person Travel's roads key, off in this store) -

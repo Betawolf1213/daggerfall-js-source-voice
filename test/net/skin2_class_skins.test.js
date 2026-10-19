@@ -215,15 +215,16 @@ test('SKIN2: the card is two panels, closed to the skin worn - one opens at a ti
   const heads = () => find(card.root, 'skinhead');
   const tiles = () => find(card.root, 'skintile');
   const panelOf = (h) => h.parent;
-  assert.equal(panels().length, 2, 'two panels');
-  assert.deepEqual(heads().map((h) => text(find(h, 'fieldlabel')[0])), ['On foot', 'Mounted']);
+  // PIN MOVED (LAYERED-GEAR): three panels - the On foot Layered Gearing Skin's between on foot and mounted
+  assert.equal(panels().length, 3, 'three panels');
+  assert.deepEqual(heads().map((h) => text(find(h, 'fieldlabel')[0])), ['On foot', 'On foot Layered Gearing Skin (WIP)', 'Mounted']);
   assert.equal(tiles().length, 0, 'CLOSED: no grid down the profile');
-  assert.deepEqual(heads().map((h) => text(find(h, 'skinname')[0])), ['Light Fighter (female)', 'Light Fighter (female)'], 'each closed to the skin worn');
-  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['false', 'false']);
+  assert.deepEqual(heads().map((h) => text(find(h, 'skinname')[0])), ['Light Fighter (female)', 'Off', 'Light Fighter (female)'], 'each closed to the skin worn');
+  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['false', 'false', 'false']);
   // open on foot: its skins, under the mod's heading and the classes'
   heads()[0].onclick();
-  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['true', 'false']);
-  assert.ok(panels()[0].className.includes('open') && !panels()[1].className.includes('open'));
+  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['true', 'false', 'false']);
+  assert.ok(panels()[0].className.includes('open') && !panels()[2].className.includes('open'));
   assert.equal(tiles().length, FOOT_SKIN_COUNT, 'every on-foot skin');
   assert.deepEqual(find(card.root, 'skingroup').map(text), FOOT_GROUPS.map((g) => g.label));
   const grids = find(card.root, 'skingrid');
@@ -231,12 +232,12 @@ test('SKIN2: the card is two panels, closed to the skin worn - one opens at a ti
   assert.equal(grids[1].attrs['aria-label'], 'Original classes');   // PIN MOVED: BR5, the original game's classes, not its name
   assert.ok(grids.every((g) => g.parent === grids[0].parent && panelOf(heads()[0]) === grids[0].parent.parent), 'inside the panel it opened');
   // open mounted: on foot closes - one at a time
-  heads()[1].onclick();
-  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['false', 'true']);
+  heads()[2].onclick();
+  assert.deepEqual(heads().map((h) => h.attrs['aria-expanded']), ['false', 'false', 'true']);
   assert.equal(tiles().length, 5);
   assert.equal(find(card.root, 'skingroup').length, 0, 'one shelf, no heading');
   // pressing the open head closes it
-  heads()[1].onclick();
+  heads()[2].onclick();
   assert.equal(tiles().length, 0);
   // choose a class skin: worn, the panel closed on it, its picture in the head
   heads()[0].onclick();
@@ -266,12 +267,12 @@ test('SKIN2: the head carries the worn skin\'s picture - the same one its tile d
   const heads = () => find(card.root, 'skinhead');
   assert.equal(imgOf(heads()[0]).src, 'u:112364_0-0', 'the worn set, front on');
   assert.equal(imgOf(heads()[0]).alt, '', 'the name beside it speaks');
-  assert.equal(imgOf(heads()[1]).src, 'u:112382_0-0', 'the worn rider');
+  assert.equal(imgOf(heads()[2]).src, 'u:112382_0-0', 'the worn rider');   // PIN MOVED (LAYERED-GEAR): the third panel
   assert.equal(heads()[0].title, 'Choose on foot skin');
   heads()[0].onclick();
   assert.equal(heads()[0].title, 'Close on foot skins');
   assert.equal(heads()[0].children.at(-1).textContent, '\u25b4', 'the chevron points up, open');
-  assert.equal(heads()[1].children.at(-1).textContent, '\u25be');
+  assert.equal(heads()[2].children.at(-1).textContent, '\u25be');
   const tile = find(card.root, 'skintile')[16];
   assert.equal(imgOf(tile).src, 'u:1523_15-0');
   tile.onclick();

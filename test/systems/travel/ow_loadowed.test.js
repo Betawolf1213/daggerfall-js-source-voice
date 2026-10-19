@@ -130,10 +130,13 @@ test('LOAD-OWED: A PIXEL THE STREAM IS BUILDING HOLDS THE OVERWORLD\'S CLOCK, AN
   t.after(() => { resetTimeScale(); _resetTravelPace(); });
   const h = journeyHost();
   h.d.t = 0;
-  // P in flight: the land IS loading - the clock is halved down to walking pace, and the panel says it is the land
+  // P in flight: the land IS loading - the clock is held, and the panel says it is the land. PIN MOVED (OW-LEAD,
+  // test/systems/travel/ow_lead.test.js): held by how near P is - the traveller eased toward it, never into it (it was halved to
+  // x1 by the time P had stood unbuilt eight seconds, wherever P lay)
   await h.run(9);
-  assert.equal(timeScale(), 1, 'held to walking pace while the stream builds a pixel of the grid');
-  assert.deepEqual(h.held(), [1, 'load'], 'and said so: "Held to x1 of x100 while the land loads"');
+  assert.ok(timeScale() < ASK, `held while the stream builds a pixel of the grid: x${timeScale()}`);
+  assert.equal(h.held()[1], 'load', 'and said so: "Held to xN of x100 while the land loads"');
+  assert.ok(h.pixel().x < P.px, 'and never walked into the pixel the stream owes');
   assert.deepEqual(h.d.said, [], 'no enemy said - there is none');
   assert.equal(h.state.loaded.has(PK), true, 'owed: on the stream\'s books');
   // ... and its build throws
@@ -156,7 +159,8 @@ test('LOAD-OWED: A PIXEL THE STREAM IS BUILDING HOLDS THE OVERWORLD\'S CLOCK, AN
 });
 
 test('LOAD-OWED: THE COUNT IS THE STREAM\'S OWN BOOKS - built, or not owed by the stream (its `loaded` grid: built or building), the line the host counts with; a pixel queued or in flight is owed, one let go is not, and where the world streams nothing nothing is ever loaded (ETHER-OW\'s law, kept)', () => {
-  const m = /\n {6}uc\.n = unbuiltAround\(px, radius, (\(x, y\) => [^\n]*)\);\n/.exec(W);
+  // PIN MOVED (OW-LEAD, test/systems/travel/ow_lead.test.js): the count's line hands the owed pixels on too (`uc.owed`)
+  const m = /\n {6}uc\.n = unbuiltAround\(px, radius, (\(x, y\) => [^\n]*?)(?:, uc\.owed)?\);\n/.exec(W);
   assert.ok(m, 'the governor\'s count');
   const state = new StreamingWorldState(1);
   const built = new Set();

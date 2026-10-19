@@ -92,17 +92,18 @@ test('DISC23-B2: the PROFILE carries the skin - every set as its own picture, th
     const tiles = () => find(card.root, hasClass('skintile'));
     const worn = () => tiles().filter((t) => t.attrs['aria-pressed'] === 'true').map((t) => find(t, hasClass('skinname'))[0].textContent);
     const wornHeads = () => heads().map((h) => find(h, hasClass('skinname'))[0].textContent);
-    assert.deepEqual(wornHeads(), ['Light Fighter (female)', 'Light Fighter (female)'], 'the first set on foot and in the saddle');
+    // PIN MOVED (LAYERED-GEAR): the On foot Layered Gearing Skin's panel stands between the two, off
+    assert.deepEqual(wornHeads(), ['Light Fighter (female)', 'Off', 'Light Fighter (female)'], 'the first set on foot and in the saddle');
     assert.equal(find(card.root, hasClass('skinhint')).length, 1, 'until one is chosen, the others see the class - and the card says so');
     heads()[0].onclick();
     assert.equal(tiles().length, sets.foot.length);
     assert.deepEqual(worn(), ['Light Fighter (female)']);
     tiles()[11].onclick();   // Fighter Mage (male)
     assert.equal(modSetting(V, 'Graphics.OnFoot'), 11, 'the store the body reads and the look sends');
-    assert.deepEqual(wornHeads(), ['Fighter Mage (male)', 'Light Fighter (female)']);
+    assert.deepEqual(wornHeads(), ['Fighter Mage (male)', 'Off', 'Light Fighter (female)']);
     assert.equal(find(card.root, hasClass('skinhint')).length, 0, 'chosen');
     assert.equal(composeLook({ race: 'Nord', gender: 'male' }).eo, 11, 'and the look carries it');
-    heads()[1].onclick();
+    heads()[2].onclick();   // PIN MOVED (LAYERED-GEAR): Mounted is the third panel
     tiles()[4].onclick();
     assert.equal(modSetting(V, 'Graphics.OnHorse'), 4);
     // the mod off: no panels to change nothing - the switch instead
@@ -112,7 +113,7 @@ test('DISC23-B2: the PROFILE carries the skin - every set as its own picture, th
     const on = find(card.root, (n) => n.textContent === 'Turn it on')[0];
     on.onclick();
     assert.equal(modSetting(V, 'Enabled'), true);
-    assert.equal(heads().length, 2);
+    assert.equal(heads().length, 3);   // PIN MOVED (LAYERED-GEAR): and the layered gearing skin's panel
   });
   // the profile window draws it, under the account card
   assert.match(src('src/ui/enhanced/enhancedMenu.js'), /body\.append\(accountBody\(\)\);\s*\n\s*body\.append\(skinCard\(document\)\.root\);/);

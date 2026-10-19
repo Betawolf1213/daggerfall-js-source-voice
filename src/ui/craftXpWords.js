@@ -87,8 +87,8 @@ export function craftXpLine(r, rank, profession, pay = {}) {
   const xp = scaleXp(craftXp(r.tier, rank, false), pay.pct ?? 0);
   const more = firstCraftPays(r) ? FIRST_CRAFT_XP : 0;
   return capLine(profession, pay, xp + more) || (more
-    ? t('prof.page.craft.xpFirst', '{xp} {profession} XP, and {more} more the first time you make this piece at this tier.', { xp, profession, more })
-    : t('prof.page.craft.xpShop', '{xp} {profession} XP. Made only of cloth from the Weavers, it earns no first-time bonus.', { xp, profession }));
+    ? t('prof.page.craft.xpFirst', '{xp} {profession} experience, and {more} more the first time you make this piece at this grade.', { xp, profession, more })
+    : t('prof.page.craft.xpShop', '{xp} {profession} experience. It is made only from the Weavers\' cloth, so it earns no first-time bonus.', { xp, profession }));
 }
 
 /**
@@ -99,7 +99,7 @@ export function craftXpLine(r, rank, profession, pay = {}) {
  * @param {any} r a recipe of net/recipeLaw.js COOKING_RECIPES @param {string} profession @param {CraftPay} [pay] @param {number} [clean]
  */
 export const dishFirstLine = (r, profession, pay = {}, clean = 0) => capLine(profession, pay, clean + (firstCraftPays(r) ? FIRST_CRAFT_XP : 0))
-  || (firstCraftPays(r) ? t('prof.page.fire.first', 'The first time you cook this dish: {more} more {profession} XP.', { more: FIRST_CRAFT_XP, profession }) : '');
+  || (firstCraftPays(r) ? t('prof.page.fire.first', 'The first time you cook this dish: {more} more {profession} experience.', { more: FIRST_CRAFT_XP, profession }) : '');
 
 /**
  * The mason's bench's works' first-time line: the first cut and the first mix each lay on the 500 (masonXp's `first` -
@@ -108,7 +108,7 @@ export const dishFirstLine = (r, profession, pay = {}, clean = 0) => capLine(pro
  * @param {number} rank @param {string} profession @param {CraftPay} [pay]
  */
 export const masonWorksFirstLine = (rank, profession, pay = {}) => capLine(profession, pay, scaleXp(masonXp(1, rank, { clean: true }), pay.pct ?? 0) + FIRST_CRAFT_XP)
-  || t('prof.page.mason.worksFirst', 'Your first cut and your first mix each earn {more} more {profession} XP.',
+  || t('prof.page.mason.worksFirst', 'Your first cut and your first mix each earn {more} more {profession} experience.',
     { more: masonXp(1, rank, { first: true }) - masonXp(1, rank), profession });
 
 /**
@@ -131,8 +131,8 @@ export function craftXpText(r, data, profession, limit = null) {
       ? t('prof.craft.xpLimit', '(+{xp} {profession} XP - {crafts} stand above Journeyman, and the crafter\'s limit holds {profession} at rank {rank})', { xp, profession, crafts: craftsList(limit.by), rank: limit.rank })
       : t('prof.craft.xpTop', '(+{xp} {profession} XP - {profession} is at Master)', { xp, profession });
   }
-  if (!r || data?.first !== true) return t('prof.craft.xp', '(+{xp} {profession} XP)', { xp, profession });
+  if (!r || data?.first !== true) return t('prof.craft.xp', '(+{xp} {profession} experience)', { xp, profession });
   return firstCraftPays(r)
-    ? t('prof.craft.xpFirst', '(+{xp} {profession} XP, with the first-time bonus)', { xp, profession })
-    : t('prof.craft.xpFirstShop', '(+{xp} {profession} XP - your first, but cloth from the Weavers earns no first-time bonus)', { xp, profession });
+    ? t('prof.craft.xpFirst', '(+{xp} {profession} experience, with the first-time bonus)', { xp, profession })
+    : t('prof.craft.xpFirstShop', '(+{xp} {profession} experience. Your first, but the Weavers\' cloth earns no first-time bonus)', { xp, profession });
 }

@@ -305,7 +305,7 @@ export function essenceReforgeRefusal(item, index) {
 }
 /** CRAFT4: the stations' words - a piece changed under the press (taken off, moved, raised elsewhere), and a temper or a
  *  reforge the service made that the piece left the pack before it took. */
-export const TEMPER_MOVED_TEXT = 'That piece is not as it was - look again.';
+export const TEMPER_MOVED_TEXT = 'That piece is not as it was. Look again.';
 export const TEMPER_LOST_TEXT = 'The temper was paid for, but the piece left your pack or changed before it took the step.';
 export const REFORGE_LOST_TEXT = 'The Essence was spent, but the piece left your pack or changed before its line was rolled.';
 /** A REFORGE WITH ESSENCE, ON THE PIECE: the line rolled again off the service's `seed` (lootRarity.js reforgeAffix - the
@@ -468,16 +468,16 @@ export function craftedText(pieces) {
 /** SEAT2b part two (PROF0 4.8: "690 | Ram Kit | Stores (a siege work)"): what a siege work's craft says - its kits go to
  *  the Stores, never the pack (the service answers no piece - professions.js craftAtAnvil): "You made a Ram Kit - it waits
  *  in your Stores". */
-export const storedText = (name, count = 1) => (count > 1 ? `You made ${count} ${name}s - they wait in your Stores` : `You made a ${name} - it waits in your Stores`);
+export const storedText = (name, count = 1) => (count > 1 ? `You made ${count} ${name}s. They wait in your Stores` : `You made a ${name} - it waits in your Stores`);
 /** What a craft whose answer did not come says: kept, and made when it does. */
-export const CRAFT_KEPT_TEXT = 'The anvil rang, but no word came back - the work is kept, and made when the word comes.';
+export const CRAFT_KEPT_TEXT = 'The anvil rang, but no word came back. The work is kept and will be finished when word comes.';
 /** AUDIT 30 A4: the workbench's own (Carpentry's work is planed, not struck). */
-export const BENCH_KEPT_TEXT = 'The shavings fell, but no word came back - the work is kept, and made when the word comes.';
+export const BENCH_KEPT_TEXT = 'The shavings fell, but no word came back. The work is kept and will be finished when word comes.';
 /** PROF7: the loom's own. */
-export const LOOM_KEPT_TEXT = 'The last stitch was pulled, but no word came back - the work is kept, and made when the word comes.';
+export const LOOM_KEPT_TEXT = 'The last stitch was pulled, but no word came back. The work is kept and will be finished when word comes.';
 /** PROF11: the mason's bench's own. */
-export const MASON_KEPT_TEXT = 'The last chip fell, but no word came back - the work is kept, and made when the word comes.';
+export const MASON_KEPT_TEXT = 'The last chip fell, but no word came back. The work is kept and will be finished when word comes.';
 /** PROF9: the fire's own. */
-export const COOK_KEPT_TEXT = 'The last pan came off the fire, but no word came back - the dish is kept, and made when the word comes.';
+export const COOK_KEPT_TEXT = 'The last pan came off the fire, but no word came back. The dish is kept and will be finished when word comes.';
 /** PROF10: the jeweller's bench's own. */
-export const JEWEL_KEPT_TEXT = 'The last facet caught the light, but no word came back - the piece is kept, and made when the word comes.';
+export const JEWEL_KEPT_TEXT = 'The last facet caught the light, but no word came back. The piece is kept and will be finished when word comes.';

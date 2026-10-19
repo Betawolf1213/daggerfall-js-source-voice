@@ -38,6 +38,14 @@
 // the classes under their own headings). One opens at a time; choosing a
 // skin wears it and closes the panel on it.
 //
+// LAYERED-GEAR (2026-10-18, the owner: "add a option between those two thats
+// also called On foot Layered Gearing Skin (WIP) Female and Male"): a third
+// panel between them - the body drawn in the helmet, chest and legs armor it
+// wears (player/eyeOfTheBeholder/layeredArmor.js), as a woman or a man, or
+// off. It writes Graphics.LayeredGear; the body reads it (eotbBody.js look())
+// and the look carries it (net/remotePlayers.js composeLook, `lg`). With it on,
+// the on-foot skin above is the one the rider and a werewolf fall back to.
+//
 // Not a DFU member: Daggerfall Unity has no profile and no skins. The
 // sprites are the vendored mod's (vendor/eye-of-the-beholder).
 // ═══════════════════════════════════════════════════════════════════
@@ -45,10 +53,13 @@
 import { MOD_SETTINGS, modSetting, setModSetting, storedModSetting } from '../systems/modSettings.js';
 import { spriteFor, eotbSpriteUrl } from '../player/eyeOfTheBeholder/eotbSprite.js';
 import { EOTB_FOOT_SET_COUNT } from '../player/classSkins.js';
+import { layeredPreviewUrl, layeredGenderOf } from '../player/eyeOfTheBeholder/layeredArmor.js';   // LAYERED-GEAR
+import { t } from '../systems/textManager.js';
 
 const VENDOR = 'eye-of-the-beholder';
 const FOOT = 'Graphics.OnFoot';
 const HORSE = 'Graphics.OnHorse';
+const LAYERED = 'Graphics.LayeredGear';   // LAYERED-GEAR: 0 off, 1 female, 2 male
 
 /** The front-on standing view: orientation 0 of the idle table (EOTB's wheel, the record offset 0, unmirrored). */
 const FRONT = 0;
@@ -58,7 +69,9 @@ const FRONT = 0;
  * foot, the mounted idle's for a rider. Pure off the declarations and the bundle's own index, so node pins it.
  * `key` is the bundle's own name for the picture (`<archive>_<record>-<frame>`); `url` the built asset's, null outside
  * a browser build (eotbSprite.js's glob), where the tile says the name alone.
- * @returns {{foot: Array<{index:number, name:string, key:string|null, url:string|null}>, horse: Array<{index:number, name:string, key:string|null, url:string|null}>}}
+ * LAYERED-GEAR: `layered` the On foot Layered Gearing Skin's three - off, female, male - each body pictured in plain
+ * leather (layeredArmor.js layeredPreviewUrl; off has no picture).
+ * @returns {{foot: Array<{index:number, name:string, key:string|null, url:string|null}>, horse: Array<{index:number, name:string, key:string|null, url:string|null}>, layered: Array<{index:number, name:string, key:string|null, url:string|null}>}}
  */
 export function skinSets() {
   const keys = MOD_SETTINGS[VENDOR]?.keys ?? {};
@@ -66,14 +79,18 @@ export function skinSets() {
     const s = spriteFor(table, FRONT, 0, look(index));
     return { index, name, key: s?.key ?? null, url: s ? eotbSpriteUrl(s.key) : null };
   });
-  return { foot: of(FOOT, 'Idle', (i) => ({ onFoot: i })), horse: of(HORSE, 'IdleHorse', (i) => ({ onHorse: i })) };
+  const layered = (keys[LAYERED]?.labels ?? []).map((name, index) => {
+    const g = layeredGenderOf(index);
+    return { index, name, key: null, url: g ? layeredPreviewUrl(g) : null };
+  });
+  return { foot: of(FOOT, 'Idle', (i) => ({ onFoot: i })), horse: of(HORSE, 'IdleHorse', (i) => ({ onHorse: i })), layered };
 }
 
 /** What the card says the player is wearing: the set's index, and whether they ever chose it (the look sends only a
  *  chosen set - net/remotePlayers.js ownEotbSet). */
 export function wornSkin() {
   return {
-    foot: modSetting(VENDOR, FOOT), horse: modSetting(VENDOR, HORSE),
+    foot: modSetting(VENDOR, FOOT), horse: modSetting(VENDOR, HORSE), layered: modSetting(VENDOR, LAYERED) ?? 0,
     chosen: storedModSetting(VENDOR, FOOT) !== undefined,
     on: modSetting(VENDOR, 'Enabled') === true,
   };
@@ -130,14 +147,14 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
     return g;
   }
 
-  function panel(label, key, sets, worn, groups) {
+  function panel(label, key, sets, worn, groups, noun = `${label.toLowerCase()} skin`) {
     const isOpen = open === key;
     const p = el('div', `skinpanel${isOpen ? ' open' : ''}`);
     const head = el('button', 'skinhead');
     head.type = 'button';
     head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     const wearing = sets.find((s) => s.index === worn) ?? null;
-    head.title = isOpen ? `Close ${label.toLowerCase()} skins` : `Choose ${label.toLowerCase()} skin`;
+    head.title = isOpen ? `Close ${noun}s` : `Choose ${noun}`;
     if (wearing?.url) head.append(art(wearing));
     const words = el('span', 'skinheadtext');
     words.append(el('span', 'fieldlabel', label));
@@ -178,6 +195,9 @@ export function skinCard(doc, { sets: offer = skinSets } = {}) {
     // the look sends only a CHOSEN set, so until one is pressed the others see this player's class
     if (!w.chosen) root.append(el('p', 'meta skinhint', 'Until you choose one, other players see you as your class.'));
     panel('On foot', FOOT, sets.foot, w.foot, FOOT_GROUPS);
+    // LAYERED-GEAR: between the two - the armor worn, as a woman or a man
+    const layeredLabel = t('skin.layeredGear', 'On foot Layered Gearing Skin (WIP)');
+    panel(layeredLabel, LAYERED, sets.layered ?? [], w.layered, [{ label: '', from: 0, to: Infinity }], layeredLabel.toLowerCase());
     panel('Mounted', HORSE, sets.horse, w.horse, [{ label: '', from: 0, to: Infinity }]);
   }
 

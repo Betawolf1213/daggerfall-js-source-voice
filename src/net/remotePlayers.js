@@ -380,8 +380,19 @@ export function ownEotbSet() {
   } catch { return null; }   // not vendored: no set
 }
 
-/** The player's look, as the hello carries it. DISC23-B: `eotbSet` the chosen sprite set (ownEotbSet, the host's read). */
-export function composeLook(entity, { eotbSet = ownEotbSet() } = {}) {
+/** LAYERED-GEAR: the On foot Layered Gearing Skin this player chose on the profile - 1 female, 2 male - or null: off, or
+ *  their Eye Of The Beholder off (no sprite body to dress). What the look's `lg` says (wire.js validLook). */
+export function ownLayeredGear() {
+  try {
+    if (!modSetting('eye-of-the-beholder', 'Enabled')) return null;
+    const v = modSetting('eye-of-the-beholder', 'Graphics.LayeredGear');
+    return v === 1 || v === 2 ? v : null;
+  } catch { return null; }   // not vendored, or the key not declared: off
+}
+
+/** The player's look, as the hello carries it. DISC23-B: `eotbSet` the chosen sprite set (ownEotbSet, the host's read).
+ *  LAYERED-GEAR: `layered` the On foot Layered Gearing Skin chosen (ownLayeredGear). */
+export function composeLook(entity, { eotbSet = ownEotbSet(), layered = ownLayeredGear() } = {}) {
   const items = [];
   const table = entity ? equipTableOf(entity) : [];
   for (let slot = 0; slot < table.length; slot++) {
@@ -406,7 +417,8 @@ export function composeLook(entity, { eotbSet = ownEotbSet() } = {}) {
   // serialize to the bytes it always did.
   const klass = careerName(entity);
   // DISC23-B: `eo` OMITTED while the mod is off, `class`'s law - a look without it keeps the bytes it always had
-  return { race: entity?.race ?? 'Breton', gender: entity?.gender ?? 'male', faceIndex: entity?.faceIndex ?? 0, ...(klass ? { class: klass } : {}), ...(Number.isInteger(eotbSet) ? { eo: eotbSet } : {}), items };
+  // LAYERED-GEAR: `lg` OMITTED while the skin is off, the same law
+  return { race: entity?.race ?? 'Breton', gender: entity?.gender ?? 'male', faceIndex: entity?.faceIndex ?? 0, ...(klass ? { class: klass } : {}), ...(Number.isInteger(eotbSet) ? { eo: eotbSet } : {}), ...(layered === 1 || layered === 2 ? { lg: layered } : {}), items };
 }
 
 /** One string per distinct look: the doll cache's key.

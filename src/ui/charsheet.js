@@ -854,7 +854,7 @@ export class CharSheet {
         : guide && pathPossible(e) ? t('schools.sheet.guide', 'Arcane paths  (S)') : null;
     // MARTIAL1: and the Martial row under that, the same way - the weapons' specialisation (W)
     const martialText = martialPathOf(e) && masterSkillsActive(e) ? t('martial.sheet.chosen', '{name}  (W)', { name: martialPathOf(e).name })
-      : masterSkillsActive(e) && martialChoices(e).length ? t('martial.sheet.choose', 'Martial specialisation  (W)')
+      : masterSkillsActive(e) && martialChoices(e).length ? t('martial.sheet.choose', 'Martial specialization  (W)')
         : guide && martialPossible(e) ? t('martial.sheet.guide', 'Martial paths  (W)') : null;
     const h = (lines + 1 + (pathText ? 1 : 0) + (martialText ? 1 : 0)) * 9 + 14;   // SOFTCAP3: + the Master Skills row under the skills
     const w = twoColumn ? 246 : 130;
@@ -979,7 +979,7 @@ export class CharSheet {
         return;
       }
       const id = pool[(this._masteryPick = ((this._masteryPick ?? -1) + 1)) % pool.length];
-      const more = pool.length > 1 ? ['', `${pool.length} skills are ready - No, then M, for the next.`] : [];   // SOFTCAP6
+      const more = pool.length > 1 ? ['', `${pool.length} skills are ready. Answer No, then press M for the next.`] : [];   // SOFTCAP6
       this.child = new YesNoBoxWindow({
         rows: [...masteryChoiceRows(e, id, SKILL_NAMES), ...more],
         onYes: () => { const r = masterSkill(e, id, SKILL_NAMES); this.notice = r.text; this.noticeOk = r.ok; },
