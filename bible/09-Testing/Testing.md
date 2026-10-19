@@ -16,8 +16,32 @@ removed and nothing weakened: every file runs on every PR and before every deplo
 minutes, and on the merge the deploy ran the same check again (6 min 45 s of its 7 min 24 s) - a change ~15 minutes from
 its push to the site; the suite alone ~6 minutes on a four-core runner, two whole-world files a fifth of it.
 
-- **CI, in parallel (FLOW1).** `.github/workflows/verify.yml` is the one check - lint and the types, the suite in four
-  shards, the build - as jobs that run at once. `check.yml` (the PR) calls it, and its `check` job passes only when all
+- **CI-FAST (2026-10-19, Mac: "Do both and whatever else could speed up everything").** A run was the slowest of four
+  shards, ~13.6 minutes of a suite grown to 30,606 tests in 3,557 files, and the shards were uneven (6.7 to 13.6
+  minutes) because 1,327 files had no recorded time and each weighed the median. Now: eight shards; the times recorded
+  by CI on every run (CI-TIMES, below - the local re-take was stopped at 500 of 3,557 files after an hour); every job
+  restores `node_modules` from the cache keyed by
+  `package-lock.json` and runs `npm ci` only on a miss (verify.yml's jobs and the course sweep's); and a red shard names
+  its failures - `tools/failSummary.mjs`, a second reporter beside the runner's own in every runner `runTests` starts,
+  writes each failing test's file, line, name and first line of why at the end of the log, and on GitHub Actions as an
+  annotation on the check and a table in the job's summary (a red shard's log had said `# fail 2` and no more). Nothing
+  run less: every file, every shard, every part. Pinned by `test/tooling/cifast_failsummary.test.js`,
+  `fastsuite.test.js` and `flow1_ci.test.js`.
+- **CI-TIMES (2026-10-19, Mac: "Do it" - the shards' times recorded by CI, not re-taken by hand).** Every shard records
+  each of its files' wall time in that run (`node tools/testShards.mjs i/8 --record <file>`: the runner's own
+  `test:complete` for a file, its process from start to end, kept by the summary's reporter - `tools/fileTimes.mjs`)
+  and keeps the record as an artifact. After a green run `.github/workflows/test-times.yml` - which `check.yml` and
+  `deploy.yml` call beside their result, so neither the check nor the publish waits on it - merges the eight onto the
+  times the run was split by (`node tools/testTimes.mjs --merge <dir>`: a recorded time replaces the old, a file not
+  timed keeps its own, a file gone from the suite is dropped) and saves them in the Actions cache, and keeps them as the
+  `test-times` artifact for a commit of `tools/testTimes.json` when one is wanted. verify.yml's `times` job finds the
+  newest saved times - a lookup, nothing downloaded, one small job ahead of the shards - and every shard restores THAT ONE key
+  (`fail-on-cache-miss`), so all eight split by the same times and every file is still in exactly one shard; with
+  none saved, the committed file, as before. A runner a test starts of its own never writes into a shard's record (the
+  reporter takes the path out of the environment as it loads). A pull request's saved times are its own (the cache
+  keeps a branch's to it); main's, saved by the deploy, are everyone's. Pinned by `test/tooling/citimes.test.js`.
+- **CI, in parallel (FLOW1).** `.github/workflows/verify.yml` is the one check - lint and the types, the suite in eight
+  shards (four until CI-FAST, below), the build - as jobs that run at once. `check.yml` (the PR) calls it, and its `check` job passes only when all
   of it did (it runs `always()` and reads the result: a required check SKIPPED because its need failed would pass).
   `deploy.yml` pins main's head once, verifies that commit with the same jobs beside the site's own build of it, and
   publishes only after both passed. `release-desktop.yml`'s `gate` calls it too, on the release's own commit, and every
@@ -26,7 +50,8 @@ its push to the site; the suite alone ~6 minutes on a four-core runner, two whol
   longest first, each onto the lightest shard - so the four finish together (~245 s of recorded time each, ~80 s a
   job); EVERY FILE IS IN EXACTLY ONE SHARD, and a file with no recorded time weighs the median.
 - **The times (FLOW1).** `npm run test:times` re-times every file into `tools/testTimes.json`. Stale times only
-  balance the shards less well - they never leave a file out. Take them again when a slow file comes or goes.
+  balance the shards less well - they never leave a file out. CI keeps its own current (CI-TIMES, above); the
+  committed file is what a machine of one's own and a run with no saved times split by.
 - **The loop (FLOW3).** `npm run test:changed` runs the tests a change can move (`tools/testChanged.mjs`): the files
   that import a changed file through any depth of modules, the ones whose text names it (the source pins read files by
   path), the ones that changed; a change to package.json, the lockfile or tsconfig runs everything. A change to one
@@ -159,7 +184,6 @@ The 35 allocation mutants over the ten suites and ALLOC-RACE's own three
 (`tools/mutants/allocrace.json`: the settle dropped from the list, the settle
 that waits for nothing, a suite's own list again): 38 dead.
 
-
 Two tiers per module:
 1. **Synthetic fixtures** - in-memory data built inside the test. Always run;
    CI stays green with no game data (88 pass, 49 skip).
@@ -229,9 +253,8 @@ one is silence wearing evidence's clothes.
 Pre-push gate: lint, the types, the bible's gates and `npm run test:changed`; CI's sharded `verify` is the whole gate, and `npm run check` (test + build, in series) is for when CI cannot run it (FAST-SUITE - CLAUDE.md, and "How the suite runs" above).
 
 `test/bible/manifest.test.js` holds three things: no test file shares its name with another (the bible names tests by
-name alone), this page carries no file table again, and `Testing-Rows-2026-10-19.md` stays closed at the 3,557 rows
+name alone), this page carries no file table again, and `Testing-Rows-2026-10-19.md` stays closed at the 3,565 rows
 it closed with.
-
 
 ## PY1 - THE PARITY PINS WERE BLIND (2026-08-28)
 

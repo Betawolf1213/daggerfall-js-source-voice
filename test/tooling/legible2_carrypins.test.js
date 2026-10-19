@@ -72,9 +72,11 @@ test('LEGIBLE 2 lineMap: a line maps to every line its tokens moved to, and a li
 });
 
 test('LEGIBLE 2 carryCites: an anchor into a changed file is carried to the line its code moved to, written by citeAnchor\'s rules; one in a code string is left for a person (mutants: only the first of a split line\'s lines tried; an anchor in code written)', () => {
+  // built in pieces, so this file itself carries no anchor into a file the tree does not have (citeanchor CA1)
+  const cite = (quote) => `fixture.js${':"'}${quote}"`;
   const doc = [
-    'The cap is checked at fixture.js:"if (state.n > LIMIT)", and the comment at fixture.js:"whose second line is cited".',
-    "The second registration is fixture.js:\"register({ name: 'two'\".",
+    `The cap is checked at ${cite('if (state.n > LIMIT)')}, and the comment at ${cite('whose second line is cited')}.`,
+    `The second registration is ${cite("register({ name: 'two'")}.`,
   ].join('\n');
   const testFile = "const pinned = 'fixture.js:\"state.n++\"';\n";
   const { docs, carried, failed } = carryCites({

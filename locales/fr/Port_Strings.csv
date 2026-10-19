@@ -3408,6 +3408,7 @@ net.conduct.respect,"Traitez tout le monde avec respect. Pas de harcèlement, d�
 net.conduct.sexual,"Aucune remarque sexuelle visant d’autres joueurs, et jamais rien de sexuel impliquant des mineurs."
 net.conduct.spam,"Pas de spam, pas d’arnaques, et ne vous faites pas passer pour un membre de l’équipe."
 net.conduct.title,"Code de conduite"
+net.gate.courtWatch,"La Cour ardente est pleine - vous regardez depuis son bord jusqu’à ce qu’une place se libère."
 net.mod.ambiguous,"{count} joueurs s’appellent {name}. Personne n’a été réduit au silence."
 net.mod.chatAgain,"Vous pouvez de nouveau discuter."
 net.mod.muteRange,"Une mise en sourdine dure de 1 à {max} minutes (une semaine)."
