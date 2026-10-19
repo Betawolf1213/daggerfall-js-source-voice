@@ -3101,7 +3101,8 @@ and nothing in the world set a node apart from the ground about it. DECIDED here
   view's focus when one is set, every rate a whole number of cycles over its 60 s clock. Drawn after each mode's
   opaque world through the veiled bodies' hook, as the auras are (the street's pass, the dungeon's `lateWorldDraw`);
   never under the travel view; built at idle once a node is first marked; a glow that will not build costs the glow,
-  never the game (`createNodeGlowPass`, the world host's one door to it).
+  never the game (`createNodeGlowPass`, the world host's one door to it). NODE-OUTLINE (section 46, 2026-10-19): a node with a
+  picture is ringed along its own picture instead; the glow lights a node with none (a body drawn as a 3D character).
 - **Not built, named**: the held map's node marks (section 21's "the held map marks the patches and veins a character
   has worked before" - still as PROF1 and PROF2 left it); no setting turns the glow or the marks off (the professions'
   own switch does).
@@ -4733,6 +4734,49 @@ the slice wires a line into (`scenes/world.js`, `scenes/dungeonContext.js`, `net
 `ui/enhanced/enhancedMenu.js`, `systems/uiPrefs.js`) were not judged whole again: their records still apply
 (`test/tooling/mutantdrift.test.js`), and those on the lines the slice moved were re-aimed and judged above.
 Ledger A (PROFESSIONS, GATHER-FEEL II).
+
+## 46. NODE-OUTLINE - a node ringed along its own picture (BUILT 2026-10-19)
+
+The owner: **"Overhaul gathering material visuals. Actually outline the sprite itself instead of a faint sparkle like it
+is now."** FACT: NODE-MARKS' glow (section 31) is a card stood before the node - a halo, a shimmer and motes, slight by
+intent - so the eye found a sparkle near a node, never the node's own shape; a tree's glow was a 2.6 x 3.4 m patch about
+its root under a 20 m crown. DECIDED and BUILT (`render/nodeOutline.js`):
+
+- **Its own picture.** The gathering host's marks carry each node's PICTURES (`scenes/gatherHost.js`, `pictures` on a
+  mark): the flats it stood for the node - which batch, which of its flats (`first`, `count` - nodes share a batch by
+  record) and their centres, recorded where the batch is made - a dungeon vein's own batches, and for a tree its kind's
+  own (`GatherKind.picturesOf`; `scenes/treeHost.js`: the forest's flat, and its centre - the very array its pixel's 3D
+  tree set holds, so the Low Poly Trees' or the jungle's 3D tree that stands for it near the eye is found by it). The
+  renderer keeps the flats' basis and the 3D trees' frames it drew (`lptDrawnFrames`, spent in the flats' call,
+  forgotten each beginFrame), so the outline is drawn on the very trees and far pictures the frame stood.
+- **A silhouette, then its ring.** Each frame a node's pictures are drawn again, unmoved, by the billboard program's own
+  vertex stage (`bbVertexShader` - they stand, sway and give way to their 3D tree as the world drew them) into its tile
+  of a depth-only atlas (`OUTLINE_GRID` x `OUTLINE_GRID` tiles of `OUTLINE_TILE` texels, a node a tile - its rectangle
+  on screen snapped to whole pixels and fitted in, a texel a pixel where it fits), cut where the picture is cut. Then
+  over the node's rectangle a fragment outside the silhouette within the ring's width of it (16 taps: 8 directions at
+  the width and half of it) is the ring, in the profession's colour (`ui/nodeMarks.js`, the compass's) at the depth of
+  the silhouette it borders, stood `OUTLINE_RING_BACK` behind it - so a wall before the node hides it, the ground or a
+  tree behind it shows it, and it never draws over the node itself. **Why not shifted copies** (WEAPON-GLOW1's law): the
+  copies of a 3D tree's front cards drew over its own back cards - lines through the canopy (`tools/nodeOutlineProbe.mjs`,
+  2026-10-19: 18% of the ring over the tree); pushing the copies behind the whole tree hid the ring wherever another tree
+  stood close behind, which in the jungle is everywhere.
+- **Its measure.** `OUTLINE_PX` 2.5 pixels at 1080 rows, with the image, never under 1.5 (a retro image's pixels are
+  large); `OUTLINE_ALPHA` 0.95, breathing 12% at a quarter hertz (still under reduced motion); kindled and faded with
+  distance by the glow's own law (`nodeGlows`: 0.6 s, 80 to 120 m), 16 at most (the atlas's tiles - the glow's budget);
+  fogged and hazed by the frame's fog and the jungle's haze where its depth stands.
+- **The glow stays where there is no picture.** A mark with none - Hunting's body drawn as a 3D character - is lit by the
+  glow as before (`createNodeOutlinePass`'s `glow`, the world host's `createNodeGlowPass`); SENSE1's look round keeps
+  the glow too (its finds have no picture). An outline that will not build hands every mark to the glow.
+- **Where.** The world host's hook after each mode's opaque world, as the glow was (the street's, a dungeon's
+  `lateWorldDraw`); never in a building nor under the travel view. One draw a picture into the atlas and one quad a node
+  on screen; the frame's target, its viewport and the world's baseline handed back (blend off, depth LESS and written,
+  faces culled, a scissor where one stood).
+- **Pinned**: `test/scenes/nodeoutline.test.js` (9); `tools/nodeOutlineProbe.mjs` compiles and links both programs in a
+  real WebGL2 context, draws a herb flat of a two-flat batch and a 3D tree of crossed cards through the pass, and reads
+  the frame back (15 checks: the ring outside every picture and within its width, the neighbour flat unringed, the
+  colours, one even ring at half kindling, a wall hiding it, the baseline back). Mutants: `tools/mutants/nodeoutline.json`
+  (26, all dead). PIN MOVED: NODE-MARKS' and WB9g's hook pins (`nodemarks.test.js`, `invislook.test.js`,
+  `wb9g_insignia.test.js`, `nodemarks.json`, `wb9g.json`) read `nodeOutlinePass`.
 
 ## Appendix A - a day of a gatherer
 

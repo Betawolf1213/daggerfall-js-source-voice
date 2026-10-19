@@ -174,6 +174,8 @@ export function treeKind({ book, renderer = null, flatBatchAabb = null, getTextu
   /** AUDIT 30 A11: the pixels torn down - a fall's logs whose texture came after its pixel went are never laid (an
    *  entry's batch list outlives it, so it could not say so). */
   const torn = new WeakSet();
+  /** NODE-OUTLINE: each tree's pictures, made once a batch it stands in (none made a frame) */
+  const pictured = new WeakMap();
   const drop = (entry, b) => {
     const i = entry.batches.indexOf(b);
     if (i >= 0) entry.batches.splice(i, 1);
@@ -208,6 +210,16 @@ export function treeKind({ book, renderer = null, flatBatchAabb = null, getTextu
     gone: (n) => goneIn(book, n.key, 'logs'),
     goneSound: 'fall',   // GATHER-FEEL: the tree heard coming down, its ground struck as the picture lies flat (FALL_S)
     mark: (n) => (goneIn(book, n.key, 'logs') ? null : n.flat?.jungle != null ? jungleTreeMark(n.flat) : TREE_MARK),   // NODE-MARKS: a standing tree; a felled one's stump none; AUDIT BANTHA1 TREE-3: a jungle tree's outside its trunk
+    /** NODE-OUTLINE (render/nodeOutline.js): a standing tree's picture is its forest's own flat - and near the eye the 3D
+     *  tree that stands for it, found by the flat's centre (the very array its pixel's tree set holds). */
+    picturesOf(n, entry) {
+      const g = entry?.forest?.groups?.get(n.flat?.group);
+      const c = g?.centers?.[n.flat.i];
+      if (!g?.batch || !c) return null;
+      let p = pictured.get(n);
+      if (!p || p[0].batch !== g.batch || p[0].center !== c) pictured.set(n, (p = [{ batch: g.batch, first: n.flat.i, count: 1, centers: [c], center: c, entry }]));
+      return p;
+    },
     tools: Object.freeze([FT.WoodAxe]),   // TOOL-USE: the Wood-Axe's Use at a tree is E there
     where: () => actChecksRefusal(GROUND_WHERE, GROUND_WHERE_WORDS),   // SETTLE-SAID
     /** PROF-MENU: the menu's title - the tree its wood is. */
