@@ -19,6 +19,8 @@ globalThis.localStorage = {
 
 const N = await import('../../../src/systems/revenant/revenant.js');
 const { markPlayerHarm, endPlayerFights } = await import('../../../src/systems/harmMark.js');
+const { feudOf } = await import('../../../src/systems/feudLedger.js');
+const { modSaveRecords, restoreModSaveRecords } = await import('../../../src/systems/modSaveData.js');
 const { setPref, _resetForTests } = await import('../../../src/systems/uiPrefs.js');
 const { setPlayerDoor } = await import('../../../src/systems/playerDoor.js');
 const { setWorldMinutes } = await import('../../../src/systems/worldTick.js');
@@ -95,21 +97,54 @@ test('LAIR-HOME a claim not yet stood waits its grace, then is a stand that neve
   assert.deepEqual([q.out, q.outAt, N.revenantStale(road)], [true, roadAt, false], 'still out, where it stood');
 });
 
-test('LAIR-HOME the bodies: a killer over my body is its body; one that got away leaves none; a fallen one none; a sworn one is never stale (mutants: a getaway\'s body kept; the fall\'s kept; the sworn withdrawn)', () => {
+test('LAIR-HOME the bodies: a killer over my body is its body; a body a later stand replaced is left FOR GOOD - whatever comes of the later one (slain, got away, routed) - and does nothing in its name (no deed, no fall, no kneel, no oath); a sworn one is never stale; a load forgets them all (AUDIT FB1019 C1, C2) (mutants: staleness off the registry; a left body\'s deed; the load keeping them; the sworn withdrawn)', () => {
+  for (const after of ['slain', 'fled', 'routed']) {
+    N._resetRevenantForTests(); _store.clear(); endPlayerFights();
+    const p = me();
+    const { r, road } = onTheRoad(p);
+    assert.equal(N.revenantForLair(p, HERE, { now: NOW, foes: [] }), r);
+    const home = foe(r);
+    N.applyRevenant(home, r, { now: NOW });
+    if (after === 'slain') N.revenantSlain(p, home, { now: NOW });
+    else if (after === 'fled') N.revenantDeed(p, home, 'fled', { mobileType: M.Orc, rolls: () => 0 });
+    else N.revenantRouted(p, { entity: home, mobileType: M.Orc, gender: 'male' }, { rolls: () => 0 });
+    assert.equal(N.revenantStale(road), true, `the lair's body ${after}: the road's stays left`);
+    const before = JSON.stringify(N.revenantById(r.id));
+    assert.equal(N.revenantDeed(p, road, 'fled', { mobileType: M.Orc, rolls: () => 0 }), null, 'no deed in its name');
+    assert.equal(N.revenantSlain(p, road, { now: NOW }), null, 'nor its fall');
+    assert.equal(N.revenantYielded(p, road, { now: NOW }), null, 'nor its kneel');
+    assert.equal(N.revenantSpared(p, road, { now: NOW }), null, 'nor its oath');
+    assert.equal(JSON.stringify(N.revenantById(r.id)), before, 'its record untouched');
+  }
+  // a killer over my body is its body; a sworn one never stale
+  N._resetRevenantForTests(); _store.clear();
   const p = me();
   const killer = { mobileType: M.Orc, level: 6, champion: 'mighty', unquiet: true, health: 50, maxHealth: 50, team: 'Monster' };
   const r = N.revenantDeed(p, killer, 'slew', { mobileType: M.Orc, rolls: () => 0 });
-  r.lair = { ...LAIR }; r.lairKnown = true;
   assert.equal(r.out, true, 'standing over my body');
   assert.equal(N.revenantStale(killer), false);
-  assert.equal(N.revenantStale({ revenant: { id: r.id } }), true, 'any other body of it is stale');
-  assert.equal(N.revenantStale({ revenant: { id: r.id, sworn: true } }), false, 'a sworn one is its own law');
-  N.revenantDeed(p, killer, 'fled', { mobileType: M.Orc, rolls: () => 0 });
-  assert.equal(N.revenantStale({ revenant: { id: r.id } }), false, 'got away: no body stands');
-  const e = foe(r);
-  N.applyRevenant(e, N.revenantById(r.id), { now: NOW });
-  N.revenantSlain(p, e, { now: NOW });
-  assert.equal(N.revenantStale({ revenant: { id: r.id } }), false, 'fallen: none');
+  const next = foe(r);
+  N.applyRevenant(next, r, { now: NOW });
+  assert.deepEqual([N.revenantStale(killer), N.revenantStale(next)], [true, false], 'a later stand leaves it');
+  const kept = killer.revenant;
+  killer.revenant = { id: kept.id, name: kept.name, rank: kept.rank, sworn: true };   // a sworn one's stamp (revenantCompanions.js)
+  assert.equal(N.revenantStale(killer), false, 'a sworn one is its own law, even a body it left');
+  killer.revenant = kept;
+  assert.equal(N.revenantStale({ revenant: { id: r.id } }), false, 'a body this session does not know');
+  // a load stands no body: what it had left is forgotten with it
+  const save = modSaveRecords();
+  restoreModSaveRecords(save);
+  assert.equal(N.revenantStale(killer), false, 'a load forgets the bodies');
+});
+
+test('LAIR-HOME never home while I fight its road body - my blows on it (its feud ledger open: a beaten one chased home is never made whole by its lair) as well as its on me; a lair\'s claim still standing up over a road body answers no second ask (a rest\'s); a dead record of its body in the pool is no body here (AUDIT FB1019 C3) (mutants: my blows unread; the pending claim over a body; a dead record counted)', () => {
+  const p = me();
+  const { r, road } = onTheRoad(p);
+  assert.ok(feudOf(road), 'my first blow opens its ledger');
+  assert.equal(N.revenantForLair(p, HERE, { now: NOW, foes: [] }), null, 'beaten down and chased home: it is no home of its');
+  delete road._feud;
+  assert.equal(N.revenantForLair(p, HERE, { now: NOW, foes: [{ entity: road, dead: true }] }), r, 'a dead record of its body is none here');
+  assert.equal(N.revenantForLair(p, HERE, { now: NOW, dueOnly: true, foes: [] }), null, 'its lair\'s claim still standing up: no second ask');
 });
 
 test('LAIR-HOME the hosts: the open world\'s pool withdraws a stale body and its band as the cull takes a foe, before its fate, after a puppet; the dungeon\'s pool withdraws one too, and asks with its own pool, both of its asks (mutants: never withdrawn; the band left; a corpse left; the dungeon never withdrawing; the pool unasked)', () => {
@@ -117,7 +152,7 @@ test('LAIR-HOME the hosts: the open world\'s pool withdraws a stale body and its
   assert.match(X, /\n {8}continue;\n {6}\}\n {6}\/\/ LAIR-HOME[^\n]*\n[^\n]*\n {6}if \(revenantStale\(f\.entity\)\) \{ withdrawStale\(f\); continue; \}\n {6}\/\/ REVENANT-FATE/, 'after the puppet\'s branch, before the fate');
   const w = X.slice(X.indexOf('function withdrawStale(f) {'), X.indexOf('function withdrawStale(f) {') + 420);
   assert.match(w, /for \(const g of foes\) if \(g !== f && !g\.dead && !g\.puppet && g\.retinueOf === id\) \{ releaseFoeBatch\(g\); g\.dead = true; \}/);
-  assert.match(w, /releaseFoeBatch\(f\);\n\s*f\.dead = true;/);
+  assert.match(w, /releaseFoeBatch\(f\);\n\s*f\.dead = true;\n\s*if \(f\.ai\?\.detected\) setEnemyAlert\(playerEntity, false\);/, 'its alert let go with it');
   assert.doesNotMatch(w, /corpse|revenantDeed|revenantRouted/, 'no corpse, no deed');
   const D = read('src/scenes/dungeonContext.js');
   assert.match(D, /\n {6}if \(f\.dead\) continue;\n {6}if \(revenantStale\(f\.entity\)\) \{ for \(const g of foes\) if \(g\.retinueOf === f\.entity\.revenant\.id\) questPoolOps\.removeFoe\(g\); questPoolOps\.removeFoe\(f\); continue; \}/, 'the dungeon\'s pool too: one body, whichever stand came last');

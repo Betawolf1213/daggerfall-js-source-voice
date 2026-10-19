@@ -235,14 +235,14 @@ test('AUDIT NAV1 (B6, B7) a raid\'s own hour run out, my deck left to them, the 
 });
 
 test('AUDIT NAV1 (B6) the world host\'s endRaid, run: its living boarders withdrawn (the quest\'s own foes, alive), then the quest tombstoned through the machine; a quest already over only withdrawn (mutants: the dead or another quest\'s foes removed, a tombstoned quest ended twice)', () => {
-  const m = /\n {6}endRaid: (\(quest, \{ withdraw = false, won = false \} = \{\}\) => \{\n[\s\S]*?\n {6}\}),\n/.exec(WORLD);   // PIN MOVED (RAID-WON): and a won raid's arm
+  const m = /\n {6}endRaid: (\(quest, \{ withdraw = false, won = false, crew = false \} = \{\}\) => \{\n[\s\S]*?\n {6}\}),\n/.exec(WORLD);   // PIN MOVED (RAID-WON): and a won raid's arm, and her ship gone, its crew's
   assert.ok(m, 'endRaid lifted');
   const mine = (uid, dead = false) => ({ dead, questBehaviour: { questUID: uid } });
   const foes = [mine(7), mine(7, true), mine(8), { dead: false }, mine(7)];
   const removed = [], ended = [];
   const wonAsked = [];
   const endRaid = new Function('d', `const { exteriorFoes, questBridge, raidAshore } = d; return ${m[1]};`)({
-    raidAshore: { won: (q) => wonAsked.push(q) },
+    raidAshore: { won: (q) => wonAsked.push(q), crew: () => 0 },
     exteriorFoes: { foes, removeFoe: (f) => { removed.push(f); foes.splice(foes.indexOf(f), 1); } },
     questBridge: { machine: { tombstoneQuest: (q) => { ended.push(q); q.questTombstoned = true; } } },
   });
@@ -372,7 +372,7 @@ test('AUDIT NAV1 (B4, B6) a raider\'s ship gone under her boarders: they fight o
   h.host._sea.delete(p.id);   // she is gone (sunk and dropped)
   h.run(0.2);
   assert.equal(h.host.boarding, null);
-  assert.deepEqual(h.log.ended, [[quest, { withdraw: false }]], 'her raid ends; her boarders stand');
+  assert.deepEqual(h.log.ended, [[quest, { withdraw: false, crew: true }]], 'her raid ends; her boarders stand');   // PIN MOVED (RAID-WON, AUDIT FB1019 D2): and its crew goes home (test/systems/naval/raidwon.test.js)
   assert.deepEqual(h.host.getSaveData().raids, []);
 });
 

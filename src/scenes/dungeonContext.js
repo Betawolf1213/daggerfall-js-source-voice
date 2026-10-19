@@ -299,7 +299,7 @@ import { quickLootTake, plaqueActionFor } from '../systems/quickLoot.js'; import
 import { combatVisualsOn, foeDraw, markConcealedHit } from '../systems/combatVisuals.js';   // ECV1: what the enhanced skin draws for a concealed foe
 import { UnderwaterFog } from '../render/underwaterFog.js';   // ROAD-B (b3): UnderwaterFog.cs, called from PlayerEnterExit.Update's dungeon guard
 import { NavClient } from '../ai/nav/navClient.js';   // ENHANCED AI 3b
-import { findPath } from '../ai/nav/navmesh.js';   // LAIR-WALK: the navmesh's one entry point - a walk from the way in
+import { reachableFrom } from '../ai/nav/navmesh.js';   // LAIR-WALK: the floor a walk reaches from the way in (the port's own query, over the body's locate)
 import { getPref } from '../systems/uiPrefs.js';
 import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';   // MWNPC5b: the foes in their Morrowind bodies
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook, drawBodiesUnderWindow } from '../characters/foeBodies.js';
@@ -1875,9 +1875,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  layout, so the farthest point all but always stood in one, a pocket no walk reaches - nor a block's start markers;
    *  out of the water where any is, each candidate's floor the collider's). A Super dungeon's Rift and a revenant's lair
    *  stand by it - one law; the lair read the raw markers, and stood its revenant in the cap. LAIR-WALK: `reaches`, the
-   *  candidates a walk from the way in reaches (a path on the navmesh), the farthest of them; null when none does. */
+   *  floor a walk from the way in reaches - the farthest of SD-REACH's candidates on it, else of every layout marker on
+   *  it (a reachable cap's or wet one is still a place a walk comes to); null when none is. */
   function dungeonEnd(reaches = null) {
-    return reachableEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, sdEndMarks(_layoutEnemies, dungeon.blocks, (m) => floorLanding(collider, [m.x, m.y + 0.2, m.z])[1]), reaches);
+    const from = dungeon.enterMarker ?? dungeon.startMarker ?? null;
+    return reachableEndOf(from, sdEndMarks(_layoutEnemies, dungeon.blocks, (m) => floorLanding(collider, [m.x, m.y + 0.2, m.z])[1]), reaches) ?? (reaches ? reachableEndOf(from, _layoutEnemies.filter((m) => !m.eliteCopy), reaches) : null);
   }
   /** ITS LAIR STAND - entering its lair while it is living, unsworn, not out, and due or known: it stands at the
    *  dungeon's end a walk reaches (dungeonEnd), FOUND RESTING (unaware - it hunts nobody until it sees or hears me, so a first
@@ -1887,12 +1889,16 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!foeDeps || !collider) return null;
     const r = revenantForLair(playerEntity, lairPixel(), { foes });   // LAIR-HOME: this pool, where a body of it may stand already
     if (!r) return null;
-    // LAIR-WALK: the farthest a walk from where I came in reaches, on the navmesh (its candidates SD-REACH's - LAIR-REACH);
-    // with no navmesh, or none it reaches, SD-REACH's end - the Rift's own (SD4b lifted the law to world/dungeon/dungeonEnd.js)
-    const walk = enhancedNav.chf && enhancedNav.anchor ? (m) => !!findPath(enhancedNav.chf, enhancedNav.anchor, floorLanding(collider, [m.x, m.y + 0.2, m.z])) : null;
-    const far = (walk && dungeonEnd(walk)) || dungeonEnd();
+    // LAIR-WALK: the farthest a walk from where I came in reaches, on the navmesh's floor flooded once (its candidates
+    // SD-REACH's - LAIR-REACH); with no navmesh SD-REACH's end - the Rift's own (SD4b lifted the law to
+    // world/dungeon/dungeonEnd.js) - and with none on the floor the same: every marker past a locked door or a drop, which
+    // a player opens with their own means. AUDIT FB1019 B3: and the spot it stands on about it on that floor too
+    const walk = enhancedNav.chf ? reachableFrom(enhancedNav.chf, enhancedNav.anchor) : null;
+    const reaches = walk && ((m) => walk(floorLanding(collider, [m.x, m.y + 0.2, m.z])));
+    const far = (reaches && dungeonEnd(reaches)) || dungeonEnd();
     if (!far) { releaseRevenantStand(r); return null; }
-    const sp = spotAbout([far.x, far.y, far.z], 4) ?? { x: far.x, y: far.y, z: far.z };
+    const about = spotAbout([far.x, far.y, far.z], 4);
+    const sp = about && (!reaches || reaches(about)) ? about : { x: far.x, y: far.y, z: far.z };
     const so = revenantSpawnOptions(r, effectiveLevel(playerEntity));
     const f = await spawnLooseFoe(r.mobileType, [sp.x, sp.y, sp.z], { gender: so.gender, level: so.level, revenant: r, lairStand: true }).catch(() => null);
     if (!f || !f.entity?.revenant) { releaseRevenantStand(r); return null; }

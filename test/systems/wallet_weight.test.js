@@ -12,6 +12,7 @@ import { mintWallet, walletContents, walletLedger, walletLines, walletKg, setWal
 import { letterOfCredit, carriedWeight } from '../../src/systems/inventory.js';
 import { sigilStone, welkyndShards } from '../../src/systems/gate/gateSpoils.js';
 import { mountEnhancedInventory } from '../../src/ui/enhanced/enhancedInventory.js';
+import { mountEnhancedTrade } from '../../src/ui/enhanced/enhancedTrade.js';
 import { ENHANCED_CSS } from '../../src/ui/enhanced/enhancedStyle.js';
 import { withDom } from '../invdrag.mjs';
 
@@ -63,7 +64,7 @@ test('WALLET-WEIGHT the pack: the wallet\'s row and its card say what it holds w
       ['embers', ['wallet-k', 'wallet-v'], 'Deadlands Embers'], ['shards', ['wallet-k', 'wallet-v'], 'Welkynd Shards'],
     ], 'the ledger\'s rows as they were, a label and a figure');
     assert.deepEqual(rows.map((r) => r.children[0].querySelectorAll('.wallet-kg').map((k) => [k.tagName, k.textContent])),
-      [[], [], [['SMALL', '0.50 kg']], [['SMALL', '9.75 kg']], [['SMALL', '30.90 kg']]], 'a holding\'s weight beside its name, the coin none');
+      [[], [], [['SMALL', ' 0.50 kg']], [['SMALL', ' 9.75 kg']], [['SMALL', ' 30.90 kg']]], 'a holding\'s weight beside its name, a word apart (AUDIT FB1019 A3), the coin none');
     const carry = host.querySelectorAll('.k').find((k) => k.textContent === 'Carry Weight');
     assert.match(carry.parent.children[1].textContent, /^41 \//, 'the carry weight: 41.15 kg and the purse\'s 0.25, each piece once');
     press(/Welkynd Shard/, sheet);
@@ -82,5 +83,42 @@ test('WALLET-WEIGHT the pack: the wallet\'s row and its card say what it holds w
     view.unmount();
   });
   _resetWalletForTests();
-  assert.match(ENHANCED_CSS, /\.pack-shell \.walletsheet \.wallet-kg \{ margin-left: 8px; font-size: 12px; opacity: 0\.75;/);
+  assert.match(ENHANCED_CSS, /\.pack-shell \.walletsheet \.wallet-kg \{ margin-left: 4px; font-size: 12px; opacity: 0\.75; font-variant-numeric: tabular-nums; white-space: pre; \}/);   // AUDIT FB1019 A2: the whole rule (A3: its own space kept)
+});
+
+test('WALLET-WEIGHT another window\'s card says each piece where it lies: the shop lists the wallet\'s pieces on rows of their own, so its wallet card says the wallet\'s own weight - never a closed pack\'s figure, nor the pieces twice; the sheet\'s weight a word apart from its name (AUDIT FB1019 A1, A3) (mutants: the pack\'s model kept past its mount; another window\'s card adding the pieces; the name and weight run together)', () => {
+  setWalletSilver(null);
+  globalThis.window ??= globalThis;
+  withDom((dom) => {
+    const text = (n) => [n.textContent, ...n.children.map(text)].join(' ');
+    const wallet = mintWallet();
+    const e = { name: 'Aelwyn', stats: { strength: 50 }, goldPieces: 0, items: [wallet, welkyndShards(309)] };
+    const host = dom.mk('div'); dom.body.append(host);
+    const view = mountEnhancedInventory(host, { entity: e, items: () => e.items, onExit: () => {} });
+    host.querySelectorAll('button').find((x) => /^\s*Valuables/.test(text(x))).onclick({});
+    assert.equal(host.querySelectorAll('.itemrow').find((r) => /Wallet/.test(text(r))).querySelector('.itemwt').textContent, '30.90 kg');
+    host.querySelectorAll('button').find((x) => /Wallet/.test(text(x))).onclick({});
+    const k = host.querySelector('.walletsheet').querySelectorAll('.wallet-row').find((r) => r.dataset.key === 'shards').children[0];
+    assert.equal(k.textContent + k.children.map((c) => c.textContent).join(''), 'Welkynd Shards 30.90 kg', 'as a browser reads the label: a word apart');
+    view.unmount();
+    e.items = [wallet, welkyndShards(9)];   // 300 spent since
+    const shop = dom.mk('div'); dom.body.append(shop);
+    mountEnhancedTrade(shop, { mode: 'Buy', shopName: 'The Shop', entity: e, shelfItems: () => [], packItems: () => e.items, accepts: () => true,
+      enchanted: () => false, priceCtx: () => ({ quality: 10, priceAdjustment: 1000, skills: { mercantile: 50, personality: 50 } }), gold: () => 0 });
+    const weightOf = () => {
+      const tip = dom.body.children.find((c) => /inv-tip/.test(c.className));
+      const all = []; const walk = (n) => { all.push(n); n.children.forEach(walk); }; walk(tip);
+      return all.find((g) => /\bpair\b/.test(g.className) && g.children[0]?.textContent === 'Weight')?.children[1].textContent;
+    };
+    shop.querySelectorAll('button').find((b) => /Clothing/.test(text(b))).onclick({});   // the wallet and the shards are Clothing & Misc's
+    const rows = shop.querySelectorAll('.itemrow');
+    const said = rows.map((r) => { r.onmouseenter?.(); return [text(r).replace(/\s+/g, ' ').trim().split(' ').slice(1, 3).join(' '), r.querySelector('.itemwt')?.textContent, weightOf()]; });
+    assert.deepEqual(said, [['Wallet 0.00', '0.00 kg', '0.00 kg'], ['Welkynd Shard', '0.90 kg', '0.90 kg']], 'each card as its row - the pieces on their own rows');
+    // the pack open beside it (its model live): the shop's wallet card still counts no piece twice
+    const again = mountEnhancedInventory(host, { entity: e, items: () => e.items, onExit: () => {} });
+    shop.querySelectorAll('.itemrow').find((r) => /Wallet/.test(text(r))).onmouseenter?.();
+    assert.equal(weightOf(), '0.00 kg', 'another window\'s card, the pack open or not');
+    again.unmount();
+  });
+  _resetWalletForTests();
 });

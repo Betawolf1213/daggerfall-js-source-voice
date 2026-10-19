@@ -121,7 +121,7 @@ test('RVN7d THE STAND: asked once a visit, the first frame I stand there; this d
   // SD4b (PIN MOVED): the farthest-marker law lifted to world/dungeon/dungeonEnd.js, where a Super dungeon's Rift reads it
   // too - its behaviour pinned there (test/world/superDungeon/sd4b_rift.test.js). PIN MOVED (LAIR-REACH): over SD-REACH's
   // candidates, the Rift's own end (test/systems/revenant/lair_reach.test.js) - the raw markers stood it in a border cap
-  assert.match(D, /const far = \(walk && dungeonEnd\([^\n]*\)\) \|\| dungeonEnd\(\);/);   // PIN MOVED (LAIR-WALK): the farthest a walk reaches, else SD-REACH's
+  assert.match(D, /const far = \(reaches && dungeonEnd\(reaches\)\) \|\| dungeonEnd\(\);/);   // PIN MOVED (LAIR-WALK): the farthest a walk reaches, else SD-REACH's
   assert.match(D, /const f = await spawnLooseFoe\(r\.mobileType, \[sp\.x, sp\.y, sp\.z\], \{ gender: so\.gender, level: so\.level, revenant: r, lairStand: true \}\)\.catch\(\(\) => null\);\n\s*if \(!f \|\| !f\.entity\?\.revenant\) \{ releaseRevenantStand\(r\); return null; \}/);
   assert.match(D, /f\._lairStand = true;\n\s*if \(f\.ai\) \{ f\.ai\.detected = false; f\.ai\.target = null; \}   \/\/ found resting/);
   assert.match(D, /standDungeonBand\(f, bandMembers\(r, effectiveLevel\(playerEntity\)\)\);\n\s*return f;/);

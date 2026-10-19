@@ -101,7 +101,7 @@ import { revenantSay as sayRevenant } from './revenantVoice.js';   // RVN3: the 
 import { registerBlowTakenMod } from '../blowTaken.js';   // RVN2: what its adaptations take off a blow (the leaf the formulas and a spell's landing read)
 import { registerEntityFold, newMods, EMPTY_MODS, computeEntityMods } from '../entityMods.js';   // RVN2: its elemental adaptations on the saving throw
 import { registerSilverDoubleVeto } from '../../combat/formulas.js';   // RVN2: a Silver-scarred one's double gone
-import { setFeudGate, setFeudClock, noteFeudHarm, noteFeudBackstab, takeFeud, setFeudWeakTest, feudWeakBlow, elementFeudClass } from '../feudLedger.js';
+import { setFeudGate, setFeudClock, noteFeudHarm, noteFeudBackstab, takeFeud, setFeudWeakTest, feudWeakBlow, elementFeudClass, feudOf } from '../feudLedger.js';
 
 // ── the numbers ─────────────────────────────────────────────────────
 /** A revenant is a foe of this level or more (LOOT7's champion floor, ELITE-FLOOR's). */
@@ -525,6 +525,7 @@ setUnquietGate((entity) => revenantOn() && !revenantHeld() && huntingRevenants()
  *  the record, or null when it may not be one. `mobileType`/`gender` from the pool's record where the entity lacks
  *  them. */
 export function revenantDeed(player, entity, deedName, { mobileType = entity?.mobileType, gender = 'male', rec = null, archive = null, now = nowMinutes(), rolls = Math.random, ally = null, unbroken = false, slip = false } = {}) {   // RVN10: `ally` the companion a felling knocked out; RVN12b: `unbroken` - its will held at the killing blow (RVN3's tear-away); AUDIT UNQUIET: `slip` - it slipped away from the choice
+  if (revenantStale(entity)) return null;   // LAIR-HOME (AUDIT FB1019 C2): a body its revenant left does nothing in its name - nor takes its registry back
   // RVN1: the fight is over - its ledger taken whatever the answer (it dies with the fight). AUDIT FEUD: but a felling
   // is no end - the foe fights on, its will read from that ledger (RVN3): it stays whole for the deed that ends the fight
   const ledger = deedName === 'felled' ? null : takeFeud(entity);
@@ -788,7 +789,7 @@ export function revenantFleeStep(f, feet, { onMe = () => true, mayRun = true, ro
 /** Slain: the record is closed. Answers the record (its name for the line), or null for no revenant. */
 export function revenantSlain(player, entity, { now = nowMinutes(), deedName = 'fell' } = {}) {
   const id = entity?.revenant?.id;
-  if (!id) return null;
+  if (!id || revenantStale(entity)) return null;   // LAIR-HOME (AUDIT FB1019 C2): a left body's fall is none of its revenant's
   ensureMirror(player);
   const r = revenantById(id);
   if (!r || r.defeated || r.sworn) return null;   // REVENANT-COMPANION: a sworn one's fall is a knock-out, never this
@@ -805,7 +806,7 @@ export function revenantSlain(player, entity, { now = nowMinutes(), deedName = '
 // ── REVENANT-FATE: beaten, it yields; judged, it dies or is sworn ─────────────
 /** It yields - beaten, held at the edge of death, its fate the player's (a deed of its record). Answers the record. */
 export function revenantYielded(player, entity, { now = nowMinutes() } = {}) {
-  const r = entity?.revenant?.id ? (ensureMirror(player), revenantById(entity.revenant.id)) : null;
+  const r = entity?.revenant?.id && !revenantStale(entity) ? (ensureMirror(player), revenantById(entity.revenant.id)) : null;   // LAIR-HOME (AUDIT FB1019 C2)
   if (!r || r.defeated || r.sworn) return null;
   deed(r, 'yielded', now);
   touch(r);
@@ -820,7 +821,7 @@ export function revenantExecuted(player, entity, { now = nowMinutes() } = {}) {
 }
 /** SPARED: sworn to the player - it hunts nobody now; REVENANT-COMPANION keeps it (`state` where it stands). */
 export function revenantSpared(player, entity, { now = nowMinutes(), state = 'with', health = null, maxHealth = null } = {}) {
-  const r = entity?.revenant?.id ? (ensureMirror(player), revenantById(entity.revenant.id)) : null;
+  const r = entity?.revenant?.id && !revenantStale(entity) ? (ensureMirror(player), revenantById(entity.revenant.id)) : null;   // LAIR-HOME (AUDIT FB1019 C2)
   if (!r || r.defeated || r.sworn) return null;
   r.sworn = true; r.fate = 'sworn'; r.swornAt = now; r.out = false; r.notice = null;
   r.dread = false;   // UNQUIET: sworn, the Dread is home no longer - it walks with me
@@ -857,38 +858,46 @@ export const revenantRecord = (player, id) => { ensureMirror(player); return rev
  *  later stand took its place - and its pool withdraws it (revenantStale). This session's, never saved: a load stands no
  *  body. */
 const _bodies = new Map();
+/** AUDIT FB1019 (C1): THE BODIES A REVENANT HAS LEFT - stale for good. Staleness read off the registry alone ended with
+ *  its entry: the lair's body slain, fled from or routed, the road's body it had left stood on as the revenant again (its
+ *  loot twice, its escapes counted twice, a third body on the road). A body once left stays left. */
+let _left = new WeakSet();
 /** The claims not yet stood (a lair's, a road's), by id: whether it was out before the claim, and since when - a stand
  *  that stood nobody gives back exactly that (releaseRevenantStand). A body stood ends its claim. */
 const _claims = new Map();
 /** `entity` is `r`'s body now - or, `entity` null, it has none standing (it got away, I ran from it). */
 function bodyStood(r, entity) {
   if (!r?.id) return;
-  if (entity) _bodies.set(r.id, entity); else _bodies.delete(r.id);
+  const was = _bodies.get(r.id);
+  if (was && entity && was !== entity) _left.add(was);   // AUDIT FB1019 (C1): the body a later one replaces is left for good
+  if (entity) { _bodies.set(r.id, entity); _left.delete(entity); } else _bodies.delete(r.id);
   _claims.delete(r.id);
 }
+/** LAIR-HOME (AUDIT FB1019): a load or a new game stands no body and keeps no claim. */
+function forgetBodies() { _bodies.clear(); _claims.clear(); _left = new WeakSet(); }
 function claim(r, wall = Date.now()) {
   if (!_claims.has(r.id)) _claims.set(r.id, { out: !!r.out, outAt: r.outAt || 0 });   // a claim over one never stood keeps what was before it
   r.out = true;
   r.outAt = wall;
 }
-/** LAIR-HOME: is `entity` a revenant body its record has left - a later stand stands it elsewhere? Never a sworn one's (a
- *  companion is its own law), never a body this session does not know. Its pool withdraws a stale body, and its band. */
+/** LAIR-HOME: is `entity` a revenant body its record has left - a later stand stood it elsewhere (AUDIT FB1019 C1: for
+ *  good, whatever comes of that later body)? Never a sworn one's (a companion is its own law), never a body this session
+ *  does not know. Its pool withdraws a stale body, and its band; it does no deed in its revenant's name. */
 export function revenantStale(entity) {
   const s = entity?.revenant;
-  if (!s?.id || s.sworn) return false;
-  const b = _bodies.get(s.id);
-  return !!b && b !== entity;
+  return !!s?.id && !s.sworn && _left.has(entity);
 }
 /** LAIR-HOME: may a revenant that is OUT be at home when I enter its lair? Its body stands somewhere else - the road's
  *  return, a killer over my body - and it goes home, the lair standing it and the body it leaves gone stale, UNLESS that
  *  body is here already (in `foes`, the lair's own pool - a stand here this visit), is in a fight with me (its harm reached me within the fight's window,
- *  harmMark.js harmFightSince - it is at the door behind me), kneels awaiting my judgement (its last deed `yielded`), or
+ *  harmMark.js harmFightSince - it is at the door behind me; AUDIT FB1019 C3: or mine on it, its feud ledger open - a
+ *  beaten one chased home is never made whole by its lair), kneels awaiting my judgement (its last deed `yielded`), or
  *  has not stood up yet (a claim pending, within REVENANT_STAND_GRACE_MS - past it, a stand that never came). */
 function goesHome(r, wall, foes) {
   const b = _bodies.get(r.id) ?? null;
   if (_claims.has(r.id) || !b) return wall - (r.outAt || 0) >= REVENANT_STAND_GRACE_MS;
   if ((foes ?? []).some((f) => f && !f.dead && f.entity === b)) return false;
-  if (harmFightSince(b, wall) != null) return false;
+  if (harmFightSince(b, wall) != null || feudOf(b, false)) return false;
   return r.history?.[r.history.length - 1]?.deed !== 'yielded';
 }
 
@@ -1723,8 +1732,8 @@ registerModSaveData(REVENANT_SAVE, {
   // AUDIT (2026-10-02): one standing as the save is made comes back later (REVENANT_LOST_MINUTES), not at once beside
   // the street's copy of it - the street's save leaves it out (scenes/exteriorFoes.js snapshotWorld)
   getSaveData: () => ({ v: 1, list: _state.list.map((r) => (r.gone ? r : { ...r, out: false, outAt: 0, dueAt: r.out ? Math.max(r.dueAt, nowMinutes() + REVENANT_LOST_MINUTES) : r.dueAt })), lastDay: _state.lastDay }),
-  restoreSaveData: (rec) => { _state.list = mergeRevenants(rec?.list ?? [], []); _state.lastDay = sanitizeDay(rec?.lastDay); _state.mirrorId = null; _lastSlew = null; clearPlayerHarm(); endPlayerFights(); },   // the last game's harm is no one's death in this one (RVN10: nor its fights a rout; AUDIT FEUD: nor its killer a thief)
-  newGame: () => { _state.list = []; _state.lastDay = null; _state.mirrorId = null; _lastSlew = null; clearPlayerHarm(); endPlayerFights(); },
+  restoreSaveData: (rec) => { _state.list = mergeRevenants(rec?.list ?? [], []); _state.lastDay = sanitizeDay(rec?.lastDay); _state.mirrorId = null; _lastSlew = null; clearPlayerHarm(); endPlayerFights(); forgetBodies(); },   // the last game's harm is no one's death in this one (RVN10: nor its fights a rout; AUDIT FEUD: nor its killer a thief)
+  newGame: () => { _state.list = []; _state.lastDay = null; _state.mirrorId = null; _lastSlew = null; clearPlayerHarm(); endPlayerFights(); forgetBodies(); },
 });
 
 /** LEGACY6 (bible/06-Systems/Legacy-Arc.md section 10, "the killer is remembered"): THE FOE THAT ENDED A CHARACTER -
@@ -1763,4 +1772,4 @@ export function inheritRevenant(player, rec, { now = nowMinutes(), rolls = Math.
 }
 
 /** Tests only: forget everything. */
-export function _resetRevenantForTests() { _state.list = []; _state.mirrorId = null; _state.lastDay = null; _bodies.clear(); _claims.clear(); }
+export function _resetRevenantForTests() { _state.list = []; _state.mirrorId = null; _state.lastDay = null; forgetBodies(); }

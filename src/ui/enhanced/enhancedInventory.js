@@ -2562,7 +2562,7 @@ export function showItemHover(item, ctx, row, side = 'shop') {
   const before = deps;
   let built;
   deps = { ...before, ...ctx };
-  try { built = infoCard(item, side, () => { if (tipEl && tipFor === item) showItemHover(item, ctx, row, side); }); } finally { deps = before; }
+  try { built = infoCard(item, side, () => { if (tipEl && tipFor === item) showItemHover(item, ctx, row, side); }, { own: false }); } finally { deps = before; }   // AUDIT FB1019 A1: another window's card - each piece where it lies
   tipEl = el('div', 'inv-tip');
   tipFor = item;
   tipEl.setAttribute('role', 'tooltip');
@@ -3291,7 +3291,7 @@ const gemHomes = () => (deps.items?.() ?? []).filter((it) => emptySockets(it) > 
 const techniqueKeyWord = () => actionKeyWord(TECHNIQUE_ACTION);
 /** PLUS7: the item's card WITHOUT its buttons - the detail column's, the hover card's. CARD-FIT: `body` puts its words
  *  in a body of their own (`.card-body`), so the detail column can hang its buttons under it, never inside it. */
-function infoCard(picked, side, ready = render, { body = false } = {}) {
+function infoCard(picked, side, ready = render, { body = false, own = true } = {}) {   // AUDIT FB1019 A1: `own` - the pack's own card (its wallet says what it holds), never another window's
   // AUDIT GEM: a well's open chooser, its asked Shatter and a gem's "Set in..." list are the SELECTION's - another piece
   // picked and this one picked again starts clean, never a stale question answered by one press
   if (body && picked !== wellPick) { wellOpen = null; wellAsk = null; gemTargets = null; wellPick = picked; }
@@ -3351,7 +3351,7 @@ function infoCard(picked, side, ready = render, { body = false } = {}) {
     pair('Recipe for', line.recipe.potion);
     pair('Ingredients', line.recipe.ingredients.join(', ') || '(none)');
   }
-  pair('Weight', walletKg(shownKg(picked, line)));   // WALLET-WEIGHT: the wallet's card, what it holds
+  pair('Weight', walletKg(own ? shownKg(picked, line) : line.weight));   // WALLET-WEIGHT: the wallet's card, what it holds - in the pack; another window lists its pieces on their own rows
   pair('Condition', line.condition != null ? `${line.word} · ${line.condition}%` : null);
   // HT2: a light source is never WORN - the honest line for one is
   // whether it is the lit one, which is the same fact the classic
@@ -3785,7 +3785,7 @@ function walletSheet(w) {
       const row = el('div', `wallet-row${r.none ? ' none' : ''}`);
       row.dataset.key = r.key;
       const k = el('span', 'wallet-k', r.label);
-      if (r.weight) k.append(el('small', 'wallet-kg', r.weight));   // WALLET-WEIGHT: what a holding weighs, beside its name
+      if (r.weight) k.append(el('small', 'wallet-kg', ` ${r.weight}`));   // WALLET-WEIGHT: what a holding weighs, beside its name (AUDIT FB1019 A3: a word apart - its own space, read aloud or copied)
       row.append(k, el('span', `wallet-v${r.figure == null ? ' why' : ''}`, r.figure ?? r.note));
       box.append(row);
       if (r.figure != null && r.note) box.append(el('p', 'wallet-note', r.note));
@@ -4447,6 +4447,7 @@ export function mountEnhancedInventory(hostEl, d = {}) {
       deps = {};
       onExit = () => {};
       picked = null;
+      model = null;   // AUDIT FB1019 A1: the pack's model goes with it - another window's card never reads a closed pack's wallet
       remote = null;
       _view = null;
       delete globalThis.__pack;

@@ -160,11 +160,18 @@ in it weightless): **the card says what it holds**, and no weight changes.
   (`.wallet-kg`); an empty holding and the coin say none - the gold is the purse's (E4's counter, weighed by
   `carriedWeight` as DFU's PlayerEntity.CarriedWeight does), the silver no piece.
 - **What does not move**: the carry weight (each piece counted once, where it lies - the wallet adds nothing to it); the
-  classic window (it keeps the pieces on DFU's tabs, each row its own weight) and its box's words; the hotbar's line.
-- **Pinned**: `test/systems/wallet_weight.test.js` (2: what it holds weighs - each holding, all of them, what the
+  classic window (it keeps the pieces on DFU's tabs, each piece's Info saying its own weight - AUDIT FB1019 A4: its rows
+  show none) and its box's words; the hotbar's line.
+- **Another window's card** (AUDIT FB1019 A1): a shop's, a trade's - it lists the wallet's pieces on rows of their own, so
+  its wallet card says the wallet's own weight (`infoCard`'s `own: false` from `showItemHover`), never a closed pack's
+  figure (the pack's model is let go at its unmount) nor the pieces twice. A holding's weight carries its own space (A3:
+  read aloud or copied, "Welkynd Shards 30.90 kg").
+- **Pinned**: `test/systems/wallet_weight.test.js` (3: what it holds weighs - each holding, all of them, what the
   carry weight counts for them, the ledger's weights, the classic words unmoved; the pack - the wallet's row and card,
   the sheet's weights beside the names, a held piece's own card, the carry weight counting each piece once, an empty
-  wallet's 0.00 kg). PIN MOVED: `test/systems/wallet1.test.js` (`walletContents` carries `weights` and `weight`).
-  `tools/mutants/wallet_weight.json` (9, all dead). Re-aimed by content: `wallet1.json`'s WALLET1-lines-silver-unknown
+  wallet's 0.00 kg; another window's card through the real shop, the pack shut and open, and the label's space).
+  PIN MOVED: `test/systems/wallet1.test.js` (`walletContents` carries `weights` and `weight`).
+  `tools/mutants/wallet_weight.json` (12: 11 dead, 1 equivalent as recorded - the model let go is memory once no other
+  window reads it). Re-aimed by content: `wallet1.json`'s WALLET1-lines-silver-unknown
   and `wallet_ui.json`'s WALLET-UI-the-worth-in-no-note and WALLET-UI-the-silver-counted-as-nought, onto the rows that
   now carry their weight.

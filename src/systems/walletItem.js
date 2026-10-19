@@ -168,7 +168,7 @@ export const SILVER_WHY = Object.freeze({ offline: 'kept by your account online'
  * one set of words for both. WALLET-WEIGHT (2026-10-19, from play: "Are these supposed to be weighing us down even in the
  * wallet?"): a holding it holds any of says what it weighs (`weight`, null for none and for the coin - the gold is the
  * purse's, the silver no piece) - the enhanced sheet's alone: the classic window keeps the pieces on DFU's tabs, each
- * row its own weight, and its box's words stand.
+ * piece's Info saying its own weight, and its box's words stand.
  * @param {ReturnType<typeof walletContents>} c
  */
 export function walletLedger(c) {

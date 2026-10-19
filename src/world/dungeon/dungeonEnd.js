@@ -26,25 +26,20 @@ export function dungeonEndOf(from, marks) {
 /** LAIR-WALK: how long a revenant's lair waits on the dungeon's navmesh to know where a walk reaches (wall ms) - a bake
  *  that never lands stands it by the marker law alone. */
 export const LAIR_WALK_WAIT_MS = 20000;
-/** LAIR-WALK: the most candidates a walk is asked of - each a path search over the whole of the way in's floor when it
- *  fails (ai/nav/navmesh.js findPath: measured 17 ms on a 10k-poly floor and 81 ms on a 44k one, a found path 31-104 ms),
- *  so six failing cost a large layout half a second once a visit; past them, the marker law. */
-export const LAIR_WALK_TRIES = 6;
 /**
  * LAIR-WALK (bible/01-Overview/bugs/Field-Bugs-2026-10-19.md): THE END A WALK REACHES - the farthest of `marks` from `from`
- * that `reaches` answers true for (the host's: a path on the dungeon's navmesh from where I came in), the farthest asked
- * first and a tie keeping the list's order as dungeonEndOf does, `tries` of them at most; null when none of those reaches.
+ * that `reaches` answers true for (the host's: the floor the navmesh floods from where I came in, ai/nav/navmesh.js
+ * reachableFrom), the farthest asked first and a tie keeping the list's order as dungeonEndOf does; null when none does.
  * No test (`reaches` null): dungeonEndOf.
  * @template {{ x: number, z: number }} M
  * @param {{ x: number, z: number } | null | undefined} from
  * @param {M[] | null | undefined} marks
  * @param {((m: M) => boolean) | null} [reaches]
- * @param {{ tries?: number }} [opts]
  * @returns {M | null}
  */
-export function reachableEndOf(from, marks, reaches = null, { tries = LAIR_WALK_TRIES } = {}) {
+export function reachableEndOf(from, marks, reaches = null) {
   if (typeof reaches !== 'function') return dungeonEndOf(from, marks);
   const list = Array.isArray(marks) ? marks.filter((m) => Number.isFinite(m?.x) && Number.isFinite(m?.z)) : [];
   const d = (/** @type {M} */ m) => (from ? Math.hypot(m.x - from.x, m.z - from.z) : 0);
-  return list.map((m, i) => ({ m, i, d: d(m) })).sort((a, b) => b.d - a.d || a.i - b.i).slice(0, tries).find(({ m }) => reaches(m))?.m ?? null;
+  return list.map((m, i) => ({ m, i, d: d(m) })).sort((a, b) => b.d - a.d || a.i - b.i).find(({ m }) => reaches(m))?.m ?? null;
 }

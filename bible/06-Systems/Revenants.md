@@ -491,7 +491,8 @@ forgets the lair until it is heard of again.
 
 **The lair stand (RVN7d).** Enter its lair while it lives, unsworn, and is due or its lair known, and it is there - at
 the dungeon's far end (LAIR-REACH and LAIR-WALK, 2026-10-19: the farthest a walk from the way in reaches on the
-dungeon's navmesh - never a border cap's pocket, where it once stood out of every player's reach; LAIR-HOME: and there even
+dungeon's navmesh - with no navmesh (the Enhanced AI off offline, a bake that failed) or nothing on its floor, the
+farthest interior marker - never a border cap's pocket, where it once stood out of every player's reach; LAIR-HOME: and there even
 when the road had stood it a moment before, unless that body is in a fight with you or kneels for your judgement - one
 revenant, one body, the body it left withdrawn; `01-Overview/bugs/Field-Bugs-2026-10-19.md`), resting with its band (a first blow may be a backstab), its gold a quarter richer. Rest in its
 lair while it is due and it wakes you, standing over you. Any rest underground may be a due revenant's return. The law:

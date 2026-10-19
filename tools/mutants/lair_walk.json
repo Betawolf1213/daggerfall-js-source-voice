@@ -1,5 +1,32 @@
 [
   {
+    "name": "LAIR-WALK-no-flood",
+    "file": "src/ai/nav/navmesh.js",
+    "old": "  while (stack.length) { const cur = stack.pop(); for (const q of mesh.polys[cur].neis) if (q >= 0 && !seen[q]) { seen[q] = 1; stack.push(q); } }\n",
+    "new": "",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-any-poly-reaching",
+    "file": "src/ai/nav/navmesh.js",
+    "old": "    if (pi < 0 || seen[pi] !== 1) return false;",
+    "new": "    if (pi < 0) return false;",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-level-unread",
+    "file": "src/ai/nav/navmesh.js",
+    "old": "    return Number.isFinite(y) && Math.abs(y - p[1]) <= REACH_LEVEL_M;",
+    "new": "    return true;",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
     "name": "LAIR-WALK-the-walk-unread",
     "file": "src/world/dungeon/dungeonEnd.js",
     "old": "  if (typeof reaches !== 'function') return dungeonEndOf(from, marks);\n",
@@ -27,10 +54,10 @@
     ]
   },
   {
-    "name": "LAIR-WALK-the-tries-unbounded",
+    "name": "LAIR-WALK-a-cap-on-the-walk",
     "file": "src/world/dungeon/dungeonEnd.js",
-    "old": ".slice(0, tries)",
-    "new": "",
+    "old": ".sort((a, b) => b.d - a.d || a.i - b.i).find(",
+    "new": ".sort((a, b) => b.d - a.d || a.i - b.i).slice(0, 1).find(",
     "tests": [
       "test/systems/revenant/lair_walk.test.js"
     ]
@@ -74,17 +101,35 @@
   {
     "name": "LAIR-WALK-the-walk-unasked",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    const far = (walk && dungeonEnd(walk)) || dungeonEnd();",
+    "old": "    const far = (reaches && dungeonEnd(reaches)) || dungeonEnd();",
     "new": "    const far = dungeonEnd();",
     "tests": [
       "test/systems/revenant/lair_walk.test.js"
     ]
   },
   {
-    "name": "LAIR-WALK-a-walk-to-anywhere",
+    "name": "LAIR-WALK-the-walk-to-anywhere",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    const walk = enhancedNav.chf && enhancedNav.anchor ? (m) => !!findPath(enhancedNav.chf, enhancedNav.anchor, floorLanding(collider, [m.x, m.y + 0.2, m.z])) : null;",
-    "new": "    const walk = enhancedNav.chf && enhancedNav.anchor ? () => true : null;",
+    "old": "    const reaches = walk && ((m) => walk(floorLanding(collider, [m.x, m.y + 0.2, m.z])));",
+    "new": "    const reaches = walk && (() => true);",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-every-marker-never-asked",
+    "file": "src/scenes/dungeonContext.js",
+    "old": " ?? (reaches ? reachableEndOf(from, _layoutEnemies.filter((m) => !m.eliteCopy), reaches) : null);",
+    "new": ";",
+    "tests": [
+      "test/systems/revenant/lair_walk.test.js"
+    ]
+  },
+  {
+    "name": "LAIR-WALK-the-spot-unasked",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const sp = about && (!reaches || reaches(about)) ? about : { x: far.x, y: far.y, z: far.z };",
+    "new": "    const sp = about ?? { x: far.x, y: far.y, z: far.z };",
     "tests": [
       "test/systems/revenant/lair_walk.test.js"
     ]
