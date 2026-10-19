@@ -508,6 +508,18 @@ rolls the Weir Key at EG_KEY_ODDS_PORTENT (a quarter, the rite's) for a receipt 
 
 The tithe (section 9) is the Tithe-Imp's alone, on its own seed, beside the receipt and never on it.
 
+**As built (WB14g).** The relay mints `p` on every receipt a fighter earns (`server/src/index.js _gateFallOnce`, from
+`net/gate/gateBrain.js receiptPortents`: the night's portents' bits, `net/gate/gateMods.js portentBits`, the Captive's only
+where `cp`'s `f` says he went free) and never on the rite's own receipt, whose ember is all it pays. `net/gate/gateReceipt.js
+receiptValid` takes `p` as a whole number from 1 to RECEIPT_PORTENTS_MAX (7, every bit) and refuses it on a rite's receipt;
+a receipt without it reads as plain, so neither the relay nor the account service has to deploy first. The spoils
+(`systems/gate/gateSpoils.js rollSpoils`'s `p`) roll one more piece of Magic or better for each bit, in SPOILS_PORTENT_BITS'
+order (the Vanguard's, the Sundering's, the Captive's), after the Dragonfire Oath, and say how many (`portent`); the floor
+(`scenes/spoilsPool.js spoilsList`) throws them among the pieces and draws each one's picture after every other's, as the
+Oath's is (AUDIT WORLD-REWARDS A1's law), so every other picture of a portent receipt is the plain receipt's. The account
+service (`server-account/src/eg.js egGateWeir`) rolls the Weir Key at EG_KEY_ODDS_PORTENT (a quarter, the rite's) for a
+receipt with `p`; ACCOUNT_VERSION acct159.
+
 ## 12. The slices and their records
 
 | slice | what |
@@ -547,6 +559,14 @@ while news, my blows on its bodies from its platforms; `ui/gate/gateBossBar.js` 
 its looks and names. Pins: `test/net/gate/wb14c_vanguard.test.js` (13) and WB11's and WB3's tables (the kinds, the blows,
 the standing cap, the out kinds); mutants: `tools/mutants/wb14c.json` (30, all dead), and the re-aimed WB11, AUDIT WB11,
 WB13e and WB8c records.
+
+**WB14g (2026-10-19) - shipped.** `net/gate/gateBrain.js` receiptPortents; `net/gate/gateReceipt.js` `p` (RECEIPT_PORTENTS_MAX,
+optional, never on the rite's receipt, minted only above 0); `server/src/index.js` the mint's `p`; `systems/gate/gateSpoils.js`
+rollSpoils's `p` and `portent`, SPOILS_PORTENT_BITS; `scenes/spoilsPool.js` spoilsList (the claims' `p`, the portents' pictures
+last); `server-account/src/eg.js` EG_KEY_ODDS_PORTENT and egGateWeir's odds; `server-account/src/service.js` and
+`wrangler.toml` ACCOUNT_VERSION acct159 (every version pin moved with its note). Pins: `test/net/gate/wb14g_pays.test.js` (5);
+mutants: `tools/mutants/wb14g.json`, and the re-aimed version records (hackedgold, bal9, crafthold, nameas, br5,
+fb1004d_knight_house, tech1, gatekeys). RELAY_VERSION world224's LAW hash recomputed. The arc is whole.
 
 **WB14f (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 7 (the gaoler), HOST.gaoler, HOST_BLOWS 7 (its Pulse,
 the Ward-Bearer's), its rising's span, CAPTIVE_RING_R, newCaptive and newFight's `cp`, stepCaptive (the gaolers and the

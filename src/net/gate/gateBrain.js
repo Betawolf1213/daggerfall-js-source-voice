@@ -26,7 +26,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { t } from '../../systems/textManager.js';   // WB14a: the new arsenal's names in the player's language (L10N4)
-import { readGateMods, validGateMods, GATE_TRIALS, validGatePortents, hasPortent } from './gateMods.js';   // WB8b: the Warden's marks - the fight's profile is made from them; WB14b: the night's portents - its floor plan
+import { readGateMods, validGateMods, GATE_TRIALS, validGatePortents, hasPortent, portentBits } from './gateMods.js';   // WB8b: the Warden's marks - the fight's profile is made from them; WB14b: the night's portents - its floor plan
 
 // ── the court and the body ─────────────────────────────────────────────
 /** Where the court's centre stands in the arena's own dungeon frame, metres: its one made block's middle
@@ -893,6 +893,9 @@ export function earned(f, sub) {
 }
 /** How `sub` earned it, for the receipt: 'dealt' first (it is the stronger claim), else 'stood'. */
 export const earnedBy = (f, sub) => (f.players[sub]?.dealt >= RECEIPT_SHARE * (f.players[sub]?.share ?? Infinity) ? 'dealt' : 'stood');
+/** WB14g (bible/11-Multiplayer/Breach-Portents.md section 11): THE PORTENTS A KILL'S RECEIPT SAYS (net/gate/gateReceipt.js `p`) -
+ *  the night's, a bit each (net/gate/gateMods.js portentBits), the Captive's only where he went free; 0 a plain night. Pure. */
+export const receiptPortents = (f) => portentBits((f?.pt ?? []).filter((id) => id !== 'captive' || f.cp?.f > 0));
 
 /** The attack's wind-up in this phase (WB9c: Dagon's are never shortened; WB9b: nor the bound - its flight is fixed). */
 export const windupOf = (atk, phase) => (phase >= 3 && atk.id !== ATTACKS.wrath.id && atk.id !== ATTACKS.reckon.id && atk.id !== ATTACKS.cross.id ? Math.round(atk.windup * PHASE3_WINDUP) : atk.windup);

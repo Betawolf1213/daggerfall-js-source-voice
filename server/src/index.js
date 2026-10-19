@@ -238,7 +238,7 @@ import { newDuelRef, duelNote, duelOpen, duelBoutOf, duelBlow, duelPose, duelEnd
 import { newWildRef, wildZone, wildPose, wildBlow, wildKin, sameGuild, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_FALL_PREFIX, WILD_REF } from '../../src/net/wild/wildRef.js';   // INT9: the open zone refereed
 import { mintWildReceipt, mintWildCollect } from '../../src/net/wild/wildReceipt.js';   // INT9: a fall, signed; MAC (2026-10-14): and a killer's collect
 import { mintDuelReceipt } from '../../src/net/duel/duelReceipt.js';   // INT8: a duel won, signed
-import { applyCrystalHit, applyHostHit, applyHeal, healRef, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX, hasPart, COURT_WATCH_ASK_MS } from '../../src/net/gate/gateBrain.js';
+import { applyCrystalHit, applyHostHit, applyHeal, healRef, earnedBy, receiptPortents, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX, hasPart, COURT_WATCH_ASK_MS } from '../../src/net/gate/gateBrain.js';
 import { mintReceipt, importReceiptKey, readReceipt, RECEIPT_TTL_S } from '../../src/net/gate/gateReceipt.js';
 import { bodyConfig, bodyStruck, bodySaid, bodyHealed, bodyLife, bodyCensus, bodyMeasure, bodyOut, bodyDown, bodyTellOwed, HULL_REFLOAT, BODY_TRAIL_MS, BODY_TRAIL_MAX } from '../../src/net/bossBody.js';   // INT11: the body counted
 import { BODY_DEFAULT, BODY_LINE_MAX } from '../../src/net/bossBody.js';   // AUDIT SCALE II R1-4: a relay setting's line, refused past it in words
@@ -7018,7 +7018,7 @@ export class Room {
     f.rc = {};
     for (const sub of Object.keys(f.players)) {
       if (!GATE_SEAM.earned(f, sub)) continue;
-      try { f.rc[sub] = await mintReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...(helped.has(sub) ? { r: 1 } : {}), ...this._bodyMeasureOf(f, sub, GATE_SEAM.earned) }, key, { subtle: crypto.subtle, nowS }); }   // AUDIT WBX S2: the level the fight admitted it at; INT14: the count's measure
+      try { f.rc[sub] = await mintReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...(helped.has(sub) ? { r: 1 } : {}), ...this._bodyMeasureOf(f, sub, GATE_SEAM.earned), ...(receiptPortents(f) ? { p: receiptPortents(f) } : {}) }, key, { subtle: crypto.subtle, nowS }); }   // AUDIT WBX S2: the level the fight admitted it at; INT14: the count's measure
       catch (e) { console.warn('[gate] receipt refused', e?.message ?? e); }
     }
     // WB12d: one who broke the rite and took no part in the fight - a receipt of the rite alone (its ember, and nothing else)
