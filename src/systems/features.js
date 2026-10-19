@@ -992,9 +992,9 @@ export const FEATURES = Object.freeze([
     id: 'questlines',
     group: 'world',
     get title() { return t('features.questlines.title', 'Questlines'); },
-    get note() { return t('features.questlines.note', 'Every quest shows what it asks of you as objectives, some let you choose how they end, and finishing one '
-      + 'lets you pick a piece of gear fitted to you. Questlines lead you to the Breaches, the Battlespire and the Abyss. '
-      + 'Off is the classic journal and its rewards. Always on online.'); },
+    get note() { return t('features.questlines.note', 'Every quest shows its objectives, some let you choose how they end, and each one finished offers a piece '
+      + 'of gear fitted to you; questlines lead to the Breaches, the Battlespire and the Abyss. Off is the classic journal and its '
+      + 'rewards, and online it is always on.'); },
     get effect() { return t('features.questlines.effect', 'Takes effect on the next quest you take; quests you already have keep the rules they began with.'); },
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'questlines', initial: true, online: true }),   // systems/questlines/qlLaw.js QUESTLINES_PREF
