@@ -96,38 +96,6 @@ import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';
 import { WodSpawner } from '../world/worldOfDaggerfall/wodSpawner.js';
 
 /** @param {any} host */
-/**
- * AUDIT PRECIP HOST-7: THE FLAT LOG GROUPED - a group a drawn picture (NUDE-FLATS' stand-in's: base-anchored, so it stands
- * where the figure did), its centres the flats' own in the log's order; `pics[j]` flat j's picture now. Answers the groups,
- * the wild flats' marks (`${group}#${i}`, LPT1 - DFU's terrain variety is theirs, a location's flat takes none) and each
- * flat's place, [group, index].
- * @param {Array<{ c: number[], wild?: number }>} log @param {Array<number[]>} pics
- */
-export function groupFlats(log, pics) {
-  const groups = new Map(), wild = new Set(), places = new Array(log.length);
-  for (let j = 0; j < log.length; j++) {
-    const [archive, record] = drawnFlat(pics[j][0], pics[j][1]);
-    const k = `${archive}_${record}`;
-    let g = groups.get(k);
-    if (!g) groups.set(k, (g = []));
-    places[j] = [k, g.length];
-    if (log[j].wild != null) wild.add(`${k}#${g.length}`);
-    g.push(log[j].c);
-  }
-  return { groups, wild, places };
-}
-/** AUDIT PRECIP HOST-7: each logged tree's group, place and archive (`archives[j]`, flat j's) as it stands - PROF4's
- *  `${group}#${i}`, where a felled tree is sunk.
- *  @param {Array<{ tree?: any }>} log @param {number[]} archives @param {Array<[string, number]>} places */
-export function placeTrees(log, archives, places) {
-  for (let j = 0; j < log.length; j++) {
-    const t = log[j].tree;
-    if (t) { t.group = places[j][0]; t.i = places[j][1]; t.archive = archives[j]; }
-  }
-}
-/** AUDIT PRECIP HOST-7: two climate tables that swap every picture alike. */
-const sameTable = (a, b) => a.size === b.size && [...a].every(([k, v]) => b.get(k) === v);
-
 export function createPixelBuild(host) {
   const {
     MILL_SAIL_PAD, TERRAIN_INDICES, TERRAIN_INDICES_LOD, _building, _dwRubble, _dwRubbleCarry, _groundBefore,
@@ -1629,3 +1597,37 @@ export function createPixelBuild(host) {
   _reskin.skinWith(reskinPixelNow);   // AUDIT PRECIP HOST-7: the snow's turn, re-skinned in place (world/seasonReskin.js runSkin)
   return { buildPixelNow };
 }
+
+// The build's helpers stand after its constructor: a moved module's constructor is its first exported function
+// (test/scenes/bootorder.test.js BOOT-TDZ2 walks it as the host's).
+/**
+ * AUDIT PRECIP HOST-7: THE FLAT LOG GROUPED - a group a drawn picture (NUDE-FLATS' stand-in's: base-anchored, so it stands
+ * where the figure did), its centres the flats' own in the log's order; `pics[j]` flat j's picture now. Answers the groups,
+ * the wild flats' marks (`${group}#${i}`, LPT1 - DFU's terrain variety is theirs, a location's flat takes none) and each
+ * flat's place, [group, index].
+ * @param {Array<{ c: number[], wild?: number }>} log @param {Array<number[]>} pics
+ */
+export function groupFlats(log, pics) {
+  const groups = new Map(), wild = new Set(), places = new Array(log.length);
+  for (let j = 0; j < log.length; j++) {
+    const [archive, record] = drawnFlat(pics[j][0], pics[j][1]);
+    const k = `${archive}_${record}`;
+    let g = groups.get(k);
+    if (!g) groups.set(k, (g = []));
+    places[j] = [k, g.length];
+    if (log[j].wild != null) wild.add(`${k}#${g.length}`);
+    g.push(log[j].c);
+  }
+  return { groups, wild, places };
+}
+/** AUDIT PRECIP HOST-7: each logged tree's group, place and archive (`archives[j]`, flat j's) as it stands - PROF4's
+ *  `${group}#${i}`, where a felled tree is sunk.
+ *  @param {Array<{ tree?: any }>} log @param {number[]} archives @param {Array<[string, number]>} places */
+export function placeTrees(log, archives, places) {
+  for (let j = 0; j < log.length; j++) {
+    const t = log[j].tree;
+    if (t) { t.group = places[j][0]; t.i = places[j][1]; t.archive = archives[j]; }
+  }
+}
+/** AUDIT PRECIP HOST-7: two climate tables that swap every picture alike. */
+const sameTable = (a, b) => a.size === b.size && [...a].every(([k, v]) => b.get(k) === v);
