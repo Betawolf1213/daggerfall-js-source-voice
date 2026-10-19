@@ -65,4 +65,9 @@ recorded - the model let go is memory once no other window reads it), `lair_walk
 `raidwon.json` (22), all dead. Re-aimed by content, each dead again: `auditfeud.json` AF-R6-load-keeps,
 `revenantaudit.json` AUDIT-A2-the-load-keeps-the-mark and `rvn10.json` RVN10-load-ends-nothing (the load's line now
 forgets the bodies, C1), `nav_h.json` NAV-H-the-gate-sailing-home (the Leave Ship's win, D1) and `navaudit_boarding.json`
-NAVB-B4-the-stranded-raid-left-running (its crew home, D2).
+NAVB-B4-the-stranded-raid-left-running (its crew home, D2). The broad run (`npm run test:changed`, 27,008 tests) moved
+two more pins: `test/scenes/fb1012d_allyrace.test.js` (its fixture stood three returns, then swore the first body - left
+for good under C1 and C2, it swears nothing now; the oath is the latest body's) and `test/systems/dw3_icons.test.js`
+(`infoCard`'s `own`, A1); `fb1012d_allyrace.json`, `dw1.json` and `ui1.json` run again, all dead. `ui1.json`'s
+AUDIT-UI-A3-a-repaint-on-every-resize did not parse (its `if` taken, its `else` left - older than this branch) and was
+re-aimed by content to what it names: dead.
