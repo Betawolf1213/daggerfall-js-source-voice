@@ -136,10 +136,10 @@ CHANGED:
   the one at whose helm I stand, the one whose deck I stand on (the sea fight's `boatInPlay`, else the deck's own
   bucket), the one whose cabin I am in (`modes.sailingCabin`); any ship of mine BY HER NUMBER (`openShip`) - afloat
   here or anywhere (her boat's hold), laid up (Come Sail Away's PackedCargoes under her number - `laidUpHold`, the very
-  list her placing takes back aboard), or packed in the pack (the same list - and her parts carry her hold's weight, as
-  PackBoat sums it, so they are weighed again as the window shuts: `packedHullWeight` and the hold's own kg - AUDIT 2:
-  and weighed as her timbers alone while it is open, so what is taken out of her is not counted twice; her parts stored
-  in her own hold come back to the pack as it shuts). A Rowboat carries no hold of her own - the mod gives her no cargo
+  list her placing takes back aboard), or packed in the pack (the same list - her parts weigh her timbers alone, so
+  nothing stowed or taken here weighs on them: PARTS-WEIGHT, `01-Overview/bugs/Field-Bugs-2026-10-18e.md`, retired the
+  weighing as the window shut, which grew parts past what the bearer could lift; AUDIT 2: her parts stored in her own
+  hold come back to the pack as it shuts). A Rowboat carries no hold of her own - the mod gives her no cargo
   box (`HULL_HOLDS`) - and is said so; AUDIT 2: unless the sea has put something aboard her (Come Sail Away gives every
   boat her Cargo, and a cask rowed through or a strand's salvage fills it), when hers opens as any hold does. The key
   passes over a Rowboat with nothing aboard, and over a ship with no door to her (not standing, her parts not in the

@@ -4397,7 +4397,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     try { r = applySpell(harm, playerEntity.level, cr.entity, sinks, Math.random, { entity: playerEntity }); } finally { cr.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
     tellStandIn(sp, cr.entity, r, dealt, caster);
-    reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
+    reportPlayerAttack({ hit: true, damage: Math.round(dealt), target: cr.entity });   // HN1: the number pops as a blow's does - AUDIT FB1018f L3-2: by the body it met, so a turned one says its word
     return landOnCrystal(cr, dealt, HIT_KINDS.Spell);
   }
   // ═══ WB11c: HIS HOST, MET ═════════════════════════════════════════════════════════════════════════════════════════
@@ -4426,7 +4426,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   /** A swing of mine that met one of his host (resolveHit's own verdict and number): a zero blow's parry as its mobile
    *  parries, else the hit's sound and its own blood at it and the number out; OnWeaponHitEntity either way. */
   function swingOnHost(hb, damage, lookDir) {
-    if (damage <= 0) {
+    if (hb.entity.warded) wardTurns(hb);   // FIELD BUGS 2026-10-18f TURNED-BLOW: a blow its referee turns whole (the Spire's - scenes/eliteGates/egFight.js turnStandIn) rings off it as his ward does: no blood, nothing sent
+    else if (damage <= 0) {
       const snd = zeroDamageHitSound({ weapon: playerWeapon.strikingWeapon, arrowHit: false, parrySounds: !!ENEMY_BASICS[hb.mobileType]?.parrySounds, roll: Math.random() });
       if (snd?.at === 'enemy') audio.play3d(snd.sound, hostChest(hb), 1.1, { maxDistance: 24 });
       else if (snd) audio.playOneShot(snd.sound, 1.1);
@@ -4447,7 +4448,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     try { r = applySpell(harm, playerEntity.level, hb.entity, sinks, Math.random, { entity: playerEntity }); } finally { hb.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
     tellStandIn(sp, hb.entity, r, dealt, caster);
-    reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
+    reportPlayerAttack({ hit: true, damage: Math.round(dealt), target: hb.entity });   // HN1: the number pops as a blow's does - AUDIT FB1018f L3-2: by the body it met, so a turned one says its word
     return landOnHost(hb, dealt, HIT_KINDS.Spell);
   }
   // ═══ ARENA4: MY OPPONENT ON A RELAY'S SAND, MET ═══════════════════════════════════════════════════════════════
@@ -4571,7 +4572,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     try { r = applySpell(harm, playerEntity.level, boss.entity, sinks, Math.random, { entity: playerEntity }); } finally { boss.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
     tellStandIn(sp, boss.entity, r, dealt, caster);
-    reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
+    reportPlayerAttack({ hit: true, damage: Math.round(dealt), target: boss.entity });   // HN1: the number pops as a blow's does - AUDIT FB1018f L3-2: by the body it met, so a turned one says its word
     return landOnBoss(boss, dealt, HIT_KINDS.Spell);
   }
   /** AUDIT WB11 W1: A CAST WHEN STRIKES SPELL ON A STAND-IN OF THE COURT - the one it names: one of his host (`hostI`),
@@ -4876,7 +4877,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
           const struckBy = (b) => !!m.technique?.struck?.includes(b);
           const boss = struckBy(gateBossBody()) ? null : gateBossBody();
           if (boss && missileHitsCapsule(m.pos, boss.ai.feet, boss.ai.height, boss.ai.radius)) {
-            if (boss.warded) wardTurns(boss);
+            if (boss.warded) { wardTurns(boss); reportPlayerAttack({ hit: true, damage: 0, target: boss.entity }); }   // AUDIT FB1018f L3-7: a shaft his ward turns says "Warded", as a swing's formula does on his stand-in (WB13d)
             else playerArrowHitFoe(m, boss, { playerEntity, playerWeapon, playerFeet, audio, hitEffects, say: (l) => hudText.add(l), dealDamage: (t, d) => landOnBoss(boss, d, HIT_KINDS.Shaft) });
             if (!boss.warded && techniquePierces(m, boss)) continue;
             retireMissile(m);
@@ -4904,8 +4905,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
           if (hb) {
             // AUDIT WB11 W2: no backstab, as no swing on one has (its `yaw` 0 is no facing - every shaft from its -z side was
             // a backstab, x3 and a Backstabbing use); W5: its blood laddered against its own whole (`bloodOf`)
-            playerArrowHitFoe(m, hb, { playerEntity, playerWeapon, playerFeet: null, audio, hitEffects, say: (l) => hudText.add(l), dealDamage: (t, d) => landOnHost(hb, d, HIT_KINDS.Shaft) });
-            if (techniquePierces(m, hb)) continue;
+            if (hb.entity.warded) { wardTurns(hb); reportPlayerAttack({ hit: true, damage: 0, target: hb.entity }); }   // FIELD BUGS 2026-10-18f TURNED-BLOW: a shaft its referee turns whole rings off it, as his ward turns one - AUDIT FB1018f L3-7: and says its word, as a swing's formula does on the same stand-in ("No footing", "Warded")
+            else playerArrowHitFoe(m, hb, { playerEntity, playerWeapon, playerFeet: null, audio, hitEffects, say: (l) => hudText.add(l), dealDamage: (t, d) => landOnHost(hb, d, HIT_KINDS.Shaft) });
+            if (!hb.entity.warded && techniquePierces(m, hb)) continue;
             retireMissile(m);
             continue;
           }
@@ -5256,7 +5258,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   /** SEAT-HEAL (2026-09-22, a player's report: "I kill a rat, my party member comes in and still sees it alive, and hits
    *  the air for me"). THE SEAT WAS A ONE-WAY LATCH. world.js hands a joiner the foes when the host's stream has been
    *  silent FOES_STALE_MS (a backgrounded host tab stops the frame loop, so it streams nothing), and the heartbeat that
-   *  would hand them back (`_foesInAt`) is stamped only when a frame is APPLIED - while `applyFoesFrame` refuses every
+   *  would hand them back (`seatClock`) is stamped only when a frame is APPLIED - while `applyFoesFrame` refuses every
    *  frame for as long as this context is the authority. So one silence of six seconds left the joiner in a private
    *  dungeon for good: the rat alive on its screen, its blows applied to its own copy and never sent to the host.
    *  A frame that reaches here is the live seat-holder's word (online.js delivers a world room's foes frame only when

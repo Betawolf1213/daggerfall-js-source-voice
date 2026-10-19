@@ -434,8 +434,8 @@
   {
     "name": "EG6A-a-beat-landed-on-to-fall",
     "file": "tools/egSpanSolve.mjs",
-    "old": "      if (p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8) {",
-    "new": "      if (false) {",
+    "old": "    if (!(p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8)) return true;",
+    "new": "    if (true) return true;",
     "tests": [
       "test/tooling/eg6a_sweep.test.js"
     ]

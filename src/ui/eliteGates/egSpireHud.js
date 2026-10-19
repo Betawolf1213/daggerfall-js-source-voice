@@ -66,6 +66,7 @@ import { egTwistShown } from '../../net/eliteGates/egRun.js';   // AUDIT EG V (L
 import { EG_PRES_TEXT, EG_BAND_LINES } from './egBeats.js';
 import { EG_PARTY_CSS } from './egParty.js';
 import { titleCardModel, TITLE_CARD_CSS, TITLE_CARD_STYLE_ID } from '../gate/gateTitleCard.js';
+import { BOSS_BAR_TEXT } from '../gate/gateBossBar.js';   // FB1018D WARD-BAR: the gate bar's word for a warded lord
 import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from '../native/nativePanel.js';
 import { PIXEL_FONT_CSS } from '../pixelifyFive.js';
 import { injectEnhancedFonts } from '../enhanced/enhancedStyle.js';
@@ -263,7 +264,9 @@ export function egDoorMarker(me, door, yaw) {
  *  at nought (egLordBars). */
 export function egLordBar(E) { return egLordBars(E)[0] ?? null; }
 /** AUDIT EG V (lane1 #22): the bars of every true lord standing awake, in the fight's order (the Court's own first), at most
- *  EG_LORD_BARS_MAX - each `{ name, court, frac, phase }`. Pure. */
+ *  EG_LORD_BARS_MAX - each `{ name, court, frac, phase, ward }`. FB1018D WARD-BAR (section 25.2, "the cage on the lord's bar
+ *  is red-bronze and hatched"): `ward` while the room says the lord warded (EG_FL.ward - Ilthys's banners holding it, an
+ *  errand's ward, Unyielding's), when no blow lands on it. Pure. */
 export const EG_LORD_BARS_MAX = 2;
 /** The model's lord bars: the first (`lord`) and a second lord standing (`lord2`), in a Court alone. Pure. */
 const egLordBarsOf = (E) => { const bars = egLordBars(E); return bars[0]?.court ? { lord: bars[0], lord2: bars[1] ?? null } : { lord: null, lord2: null }; };
@@ -271,7 +274,17 @@ export function egLordBars(E) {
   if (!E?.b || !(E.h > 0) || E.fight?.h !== E.h) return [];
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
   return (E.fight.bodies ?? []).filter((b) => b.role === EG_ROLE.lord && b.ph > 0 && (b.fl & (EG_FL.mirror | EG_FL.friend)) === 0 && b.hp > 0).slice(0, EG_LORD_BARS_MAX)   // standing: a fall says its nought (`efell`, `ehp`), a raise its health
-    .map((L) => ({ name: egBossName(EG_BOSS_KEYS[L.k] ?? '', L.pt), court: spec.kind === 'court', frac: L.max > 0 ? Math.round(Math.max(0, Math.min(1, L.hp / L.max)) * 1000) / 1000 : 0, phase: ['', 'I', 'II', 'III'][L.ph] ?? '' }));
+    .map((L) => ({ name: egBossName(EG_BOSS_KEYS[L.k] ?? '', L.pt), court: spec.kind === 'court', frac: L.max > 0 ? Math.round(Math.max(0, Math.min(1, L.hp / L.max)) * 1000) / 1000 : 0, phase: ['', 'I', 'II', 'III'][L.ph] ?? '',
+      ward: (L.fl & EG_FL.ward) !== 0 }));   // FB1018D WARD-BAR
+}
+
+/** A lord's bar's line: its name, its phase and - FB1018D WARD-BAR - the gate bar's own word while it stands warded
+ *  (ui/gate/gateBossBar.js BOSS_BAR_TEXT), so a blow that lands on nothing is told why. Pure. */
+export const egLordLine = (L) => `${L.name}${L.phase ? ` - ${L.phase}` : ''}${L.ward ? ` - ${BOSS_BAR_TEXT.warded}` : ''}`;
+/** FB1018D WARD-BAR: a bar's track caged (`ward`) or not, its class written only when it changes. */
+function wardOn(track, on) {
+  const cls = on ? 'eg-lord-track ward' : 'eg-lord-track';
+  if (track && track.className !== cls) track.className = cls;
 }
 
 // ── THE STAGE'S LINE ──────────────────────────────────────────────────────────────────────────────────────────
@@ -476,6 +489,10 @@ export const EG_SPIRE_CSS = `
 .eg-lord-name { text-align: center; font-size: 15px; letter-spacing: 0.08em; }
 .eg-lord-track { position: relative; height: calc(var(--eg-lord-h, 30px) - 20px); margin-top: 3px; background: rgba(8,6,6,0.8); border: 1px solid #5a2a20; box-sizing: border-box; }
 .eg-lord-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(180deg, #d9463c, #7d1b15); }
+/* FB1018D WARD-BAR (section 25.2): a warded lord's cage over its bar, red-bronze and hatched, its health dimmed under it */
+.eg-lord-track.ward { border-color: #c4643a; }
+.eg-lord-track.ward .eg-lord-fill { filter: saturate(0.45) brightness(0.7); }
+.eg-lord-track.ward::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(135deg, rgba(196,100,58,0.8) 0 2px, transparent 2px 7px); }
 .eg-lord-two { display: none; margin-top: 6px; }
 .eg-lord.two .eg-lord-two { display: block; }
 .eg-door { position: absolute; transform: translate(-50%, -50%); display: none; text-align: center; font-size: 12px; color: #e8c473; }
@@ -535,7 +552,7 @@ function build(doc) {
   live.setAttribute?.('aria-live', 'polite');
   root.append(col, lord, door, touch, live);
   (doc.body ?? doc.documentElement)?.append(root);
-  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, held, gain, dec, fold, obj, objLine, prog, riddles, stage, marks, first, lord, lordName, fill, lordName2, fill2, door, arrow, doorText, touch, live };
+  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, held, gain, dec, fold, obj, objLine, prog, riddles, stage, marks, first, lord, lordName, track, fill, lordName2, track2, fill2, door, arrow, doorText, touch, live };   // FB1018D WARD-BAR: the tracks, for the cage
 }
 
 /**
@@ -583,14 +600,15 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   const L = model.lord, L2 = model.lord2 ?? null;
   const lordCls = `eg-lord${L ? ' on' : ''}${L && L2 ? ' two' : ''}`;
   if (P.lord.className !== lordCls) P.lord.className = lordCls;
-  put('lord', P.lordName, L ? `${L.name}${L.phase ? ` - ${L.phase}` : ''}` : '');
+  put('lord', P.lordName, L ? egLordLine(L) : '');
+  wardOn(P.track, !!L?.ward); wardOn(P.track2, !!L2?.ward);   // FB1018D WARD-BAR: the cage while the room says the ward
   const lw = L ? `${(L.frac * 100).toFixed(1)}%` : '0%';
   if (lw !== shown.lordW) { shown.lordW = lw; P.fill.style.width = lw; }
   // AUDIT EG V (c, L7-18; section 27.1 - a desk's bar, and "a 44 px lord's bar" on a phone held sideways): the bar's height
   // the layout's own (EG_LAYOUTS lordH - the name over it, the track the rest), never a sheet's literal
   const lh = `${Number(model.lordH) || EG_LAYOUTS.desktop.lordH}px`;
   if (lh !== shown.lordH) { shown.lordH = lh; P.lord.style.setProperty?.('--eg-lord-h', lh); }
-  put('lord2', P.lordName2, L2 ? `${L2.name}${L2.phase ? ` - ${L2.phase}` : ''}` : '');   // AUDIT EG V (lane1 #22): the second lord standing
+  put('lord2', P.lordName2, L2 ? egLordLine(L2) : '');   // AUDIT EG V (lane1 #22): the second lord standing
   const lw2 = L2 ? `${(L2.frac * 100).toFixed(1)}%` : '0%';
   if (lw2 !== shown.lordW2) { shown.lordW2 = lw2; P.fill2.style.width = lw2; }
   // the door's marker
