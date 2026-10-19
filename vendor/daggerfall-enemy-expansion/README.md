@@ -43,8 +43,8 @@ Fifty new enemies and a new law for where enemies come from:
   `ClassBase.mdb.csv`;
 - forty-three careers they are built from (`CareerBase.cdb.csv`), sixteen
   classic monsters restatted (`ClassicMonsterReplacement.mdb.csv`), the
-  classic Barbarian and Monk redrawn (`ClassicClassBase.mdb.csv`) and the
-  city guard's spell records drawn;
+  classic Barbarian and Monk redrawn (`ClassicClassBase.mdb.csv`), and
+  pictures for the city guard's spell records that DFU never draws (below);
 - **thirty-nine encounter tables** (`DefaultTableReplacement.tdb.csv`) for the
   nineteen dungeon types, the water, and each climate's day, night and city
   night - a dungeon's table chosen by the dungeon itself (the same table every
@@ -95,7 +95,7 @@ Fifty new enemies and a new law for where enemies come from:
 ## Where the art is
 
 `tools/dexExtract.mjs` measures every picture of every archive the mod's
-tables draw (6,378 of them, in 59 archives) against every record of every
+tables draw (6,358 of them, in 58 archives) against every record of every
 TEXTURE file of the player's own ARENA2, and sends each to one of three
 places:
 
@@ -107,8 +107,8 @@ places:
   rebuilds it from the player's own file when the archive loads
   (`formats/derivedTexture.js`) - a render of game data is game data
   (`bible/01-Overview/Port-Doctrine.md`).
-- **734 are Daggerfall's sprites under the authors' paint** - the city guard's
-  new spell records (399), the Bounty Hunter (1504, TEXTURE.482), the Druid and
+- **714 are Daggerfall's sprites under the authors' paint** - the Bounty
+  Hunter (1504, TEXTURE.482), the Druid and
   the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid (1512, from
   490), the Knight, Spellsword and Archer Riders' new sets (1530-1533, from 491
   and 495) and King Lysandus (1609, from 473) - carried byte for byte under
@@ -120,7 +120,7 @@ places:
   1995 demo's Bat, Gargoyle, Nymph and Skeleton (Mac, 2026-10-19: the demo's
   art is the mod's, not the retail ARENA2 the doctrine names) - under
   `public/art/daggerfall-enemy-expansion/`, as indexed PNG where the picture
-  fits one (5,282 of the 5,520 shipped) and RGBA where not, each read back and
+  fits one (5,262 of the 5,500 shipped) and RGBA where not, each read back and
   compared to its texel before the next is written.
 
 Each directory answers to its listing (`*.files.json`: every name and its
@@ -132,7 +132,13 @@ the bundle (it fails on any difference), `--write` to write it.
 **Not carried**: archives 1633 (Gryphon), 1641 (Frost Giant), 1642-1644 (the
 Centaurs - Daggerfall's centaur, TEXTURE.263, repainted), 1645 (Shark) and
 1706 (Clannfear). The bundle carries their pictures and no table of 1.3.4
-names them - they are an add-on's to draw.
+names them - they are an add-on's to draw. Nor the twenty pictures of the city
+guard's archive, 399 (Daggerfall's guard repainted, at records 20-24): DFU
+dresses a mobile in a mod's pictures only when its archive's record 0, frame 0
+has one (`TextureReplacement.GetMobileBillboardMaterial`), and then only the
+records the archive's own TEXTURE file has - TEXTURE.399 has twenty, 0-19, and
+the bundle no `399_0-0`. In DFU they are never drawn, so they are not carried
+(`tools/dexExtract.mjs` drawnClassic).
 
 **One number, two pictures**: `vendor/class-skins/` (the player's on-foot skins)
 uses archives 1513, 1514, 1519, 1520 and 1530 for other sheets than these, and

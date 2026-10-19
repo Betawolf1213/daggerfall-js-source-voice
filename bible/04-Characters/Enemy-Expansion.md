@@ -40,10 +40,10 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 
 - **Permission**: "Yes, record my word" - recorded in the README and the registry; the authors' own words are the
   open record.
-- **The art** (`vendor/daggerfall-enemy-expansion/README.md`, Where the art is): every one of the 6,378 pictures the
+- **The art** (`vendor/daggerfall-enemy-expansion/README.md`, Where the art is): every one of the 6,358 pictures the
   tables draw was measured against every TEXTURE record (`tools/dexExtract.mjs`). 858 ARE Daggerfall's records - the
   five unused rider sets, TEXTURE.491-495, and the Will-o'-wisp, TEXTURE.379 - and are rebuilt from the player's own
-  files, never carried. 734 are Daggerfall's sprites under the authors' paint, and Mac approved them on
+  files, never carried. 714 are Daggerfall's sprites under the authors' paint, and Mac approved them on
   **Port-Doctrine's third exception** ("Approve 3rd exception", then "Yes, cover all of them" once the measure found
   four more than the first count). The 1995 demo's four (Bat, Gargoyle, Nymph, Skeleton) are the mod's own art: the
   doctrine names the retail ARENA2 ("Mod art, ship it").

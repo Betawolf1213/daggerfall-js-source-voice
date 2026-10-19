@@ -34,6 +34,11 @@
 //   (systems/enemyExpansion/dexTables.js), each string the vendored file's bytes exactly (the DEX0 suite holds them so).
 // - The archives no table draws (1633 Gryphon, 1641 Frost Giant, 1642-1644 the Centaurs, 1645 Shark, 1706 Clannfear -
 //   pictures for add-ons; three of them are Daggerfall's centaur repainted) are not carried, and the tool says so.
+// - NOR ARE A CLASSIC ARCHIVE'S PICTURES THAT DFU NEVER DRAWS. A mobile wears a mod's pictures only when its archive's
+//   record 0, frame 0 has one (TextureReplacement.GetMobileBillboardMaterial: `LoadFromCacheOrImport(archive, 0, 0)`
+//   decides HasImportedTextures), and an archive with a TEXTURE file then imports only that file's records. The bundle
+//   carries the city guard's 399 at records 20-24 alone - TEXTURE.399 has twenty records, 0-19, and no 399_0-0 - so DFU
+//   draws none of the twenty; they are not carried either (`drawnClassic`).
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,11 +59,17 @@ export const OWN_DIR = 'public/art/daggerfall-enemy-expansion';
 export const REPAINT_DIR = 'public/art/daggerfall-enemy-expansion-repainted';
 export const ART_INDEX = 'src/systems/enemyExpansion/dexArt.js';
 export const TABLE_TEXT = 'src/systems/enemyExpansion/dexTableText.js';
-/** The archives Port-Doctrine's third exception carries (Mac, 2026-10-19): the city guard's reskin (399), the Bounty
- *  Hunter (1504, from TEXTURE.482), the Druid and the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid
+/** The archives Port-Doctrine's third exception carries (Mac, 2026-10-19): the Bounty Hunter (1504, from TEXTURE.482), the Druid and the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid
  *  (1512, from 490), the four new riders (1530-1533, from 491 and 495) and King Lysandus (1609, from 473) - measured
  *  silhouette for silhouette against the player's own sprites before the exception was asked for. */
-export const REPAINTED_ARCHIVES = Object.freeze([399, 1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609]);
+export const REPAINTED_ARCHIVES = Object.freeze([1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609]);
+
+/** An archive whose pictures a mobile wears in DFU: a mod's own archive (no TEXTURE file - its records import from 0 up),
+ *  or a classic one whose record 0, frame 0 the bundle replaces (GetMobileBillboardMaterial's gate). */
+export function drawnClassic(archive, names, arena2) {
+  const classic = existsSync(join(arena2, `TEXTURE.${String(archive).padStart(3, '0')}`));
+  return !classic || names.has(`${archive}_0-0`);
+}
 
 /** The bundle's text assets the vendor directory carries verbatim, by the name the manifest gives each. */
 export const VERBATIM_TEXT = Object.freeze({
@@ -166,8 +177,10 @@ export function dexAssets(arena2, bundleBytes) {
 
   const drawn = archivesDrawn(text);
   const textures = bundle.textures.filter((t) => NAME.test(t.name));
-  const carried = textures.filter((t) => drawn.has(Number(NAME.exec(t.name)[1])));
-  const notCarried = [...new Set(textures.filter((t) => !drawn.has(Number(NAME.exec(t.name)[1]))).map((t) => Number(NAME.exec(t.name)[1])))].sort((a, b) => a - b);
+  const names = new Set(textures.map((t) => t.name));
+  const wears = (a) => drawn.has(a) && drawnClassic(a, names, arena2);
+  const carried = textures.filter((t) => wears(Number(NAME.exec(t.name)[1])));
+  const notCarried = [...new Set(textures.filter((t) => !wears(Number(NAME.exec(t.name)[1]))).map((t) => Number(NAME.exec(t.name)[1])))].sort((a, b) => a - b);
 
   const palette = new DFPalette();
   palette.load(new Uint8Array(readFileSync(join(arena2, 'ART_PAL.COL'))), 'ART_PAL.COL');
@@ -231,7 +244,7 @@ if (isMain(import.meta.url)) {
   if (!arena2 || !src) { console.error('usage: node tools/dexExtract.mjs <arena2> "<daggerfall enemy expansion.dfmod>" [--write]'); process.exit(2); }
   const t0 = Date.now();
   const { out, report } = dexAssets(arena2, new Uint8Array(readFileSync(src)));
-  console.log(`${report.carried} pictures of ${report.archives} archives: ${report.derived} derived from the player's records, ${report.own} own and ${report.repainted} repainted shipped (${report.indexed} indexed), ${(report.bytes / 1e6).toFixed(1)} MB; not carried (no table draws them): ${report.notCarried.join(', ')}; ${Date.now() - t0} ms`);
+  console.log(`${report.carried} pictures of ${report.archives} archives: ${report.derived} derived from the player's records, ${report.own} own and ${report.repainted} repainted shipped (${report.indexed} indexed), ${(report.bytes / 1e6).toFixed(1)} MB; not carried (no table draws them, or DFU never wears them): ${report.notCarried.join(', ')}; ${Date.now() - t0} ms`);
   const wanted = new Set(Object.keys(out));
   if (write) {
     for (const dir of [OWN_DIR, REPAINT_DIR]) {

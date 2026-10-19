@@ -154,8 +154,9 @@ test('DEX0 the art: every shipped picture is in its listing by sha256 and every 
     for (const f of l.Files) assert.equal(sha(readFileSync(join(ROOT, dir, f))), l.Sha256[f], `${dir}/${f}`);
   }
   const repainted = listingOf('repainted.files.json').Files.map((f) => Number(f.split('_')[0]));
-  assert.deepEqual([...new Set(repainted)].sort((a, b) => a - b), [399, 1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609], 'the third exception\'s archives, no more');
-  assert.equal(listingOf('daggerfall-enemy-expansion.files.json').Files.length + listingOf('repainted.files.json').Files.length, 5520);
+  assert.deepEqual([...new Set(repainted)].sort((a, b) => a - b), [1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609], 'the third exception\'s archives, no more');
+  assert.equal(listingOf('daggerfall-enemy-expansion.files.json').Files.length + listingOf('repainted.files.json').Files.length, 5500);
+  assert.equal(DEX_ART[399], undefined, 'the guard\'s 399: DFU never wears it (no 399_0-0, and TEXTURE.399 ends at record 19)');
 });
 
 test('DEX0 the pictures that ARE Daggerfall\'s records are specs naming the record and nothing else - no pixel of them is carried', () => {

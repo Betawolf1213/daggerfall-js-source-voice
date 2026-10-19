@@ -1002,7 +1002,7 @@ const BUNDLE_ART = new Map([
       why: "THIRD-PARTY - Daggerfall Enemy Expansion 1.3.4 (Kamer & Kab), carried on Mac's word of the authors' permission; the authors' own enemy sprites and emission maps (Kamer's renders and his own drawings, Kab's classes, the 1995 demo's four), re-encoded from the bundle's Texture2D objects by tools/dexExtract.mjs as indexed PNG where the picture fits one, none of them a picture any TEXTURE record covers (see vendor/daggerfall-enemy-expansion/README.md)" }],
   ['public/art/daggerfall-enemy-expansion-repainted/',
     { manifest: 'vendor/daggerfall-enemy-expansion/repainted.files.json', derived: DEX_DERIVED,
-      why: "THIRD-PARTY - Daggerfall Enemy Expansion 1.3.4 (Kamer & Kab), carried on Mac's word of the authors' permission; Daggerfall's own sprites under the authors' paint - the city guard's spell records, the Bounty Hunter, the Druid, the Necromancer Acolyte, the Rogue Druid, the four riders' new sets and King Lysandus - byte for byte from the bundle (see vendor/daggerfall-enemy-expansion/README.md)" }],
+      why: "THIRD-PARTY - Daggerfall Enemy Expansion 1.3.4 (Kamer & Kab), carried on Mac's word of the authors' permission; Daggerfall's own sprites under the authors' paint - the Bounty Hunter, the Druid, the Necromancer Acolyte, the Rogue Druid, the four riders' new sets and King Lysandus - byte for byte from the bundle (see vendor/daggerfall-enemy-expansion/README.md)" }],
   // WINDFALL1: the mod's own three pictures - leaves and a snowflake, the author's pixels (no Daggerfall record).
   ['vendor/windfall/Textures/',
     { manifest: 'vendor/windfall/windfall.files.json',
