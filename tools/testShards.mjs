@@ -13,7 +13,7 @@
 //   node tools/testShards.mjs --plan 4       # each shard's file count and recorded seconds
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { isMain } from './lib/isMain.mjs';
@@ -83,14 +83,19 @@ export function shardsOf(files, n, times = {}) {
  * in its turn; elsewhere it is one runner, as before. A runner that cannot start says why (it was a bare exit 1), and
  * `extra` - the runner's own flags a caller hands on (`npm test -- --test-name-pattern=...`) - rides every runner, after
  * this file's, so a caller's own `--test-concurrency` wins.
+ *
+ * CI-FAST (2026-10-19): and THE FAILURES NAMED (`summary`, on unless a caller says no): every runner reports twice to
+ * stdout - the runner's own reporter, as it chose before (spec on a terminal, TAP elsewhere), and tools/failSummary.mjs,
+ * which names each failing test at the end of the log, and on GitHub Actions as an annotation and in the job's summary.
+ * A red shard said "# fail 2" and no more; its two names now stand at its end.
  * @param {string[]} files
  */
 export const WIN32_ARGV_BUDGET = 30000;
 export function runTests(files, { root = ROOT, times = readTimes(root), cores = availableParallelism(), spawn = spawnSync, extra = [],
-  budget = process.platform === 'win32' ? WIN32_ARGV_BUDGET : Infinity } = {}) {
+  budget = process.platform === 'win32' ? WIN32_ARGV_BUDGET : Infinity, summary = true } = {}) {
   if (!files.length) return 0;
   const ordered = shardsOf(files, 1, times)[0].files;
-  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...extra];
+  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary ? summaryReporters(root) : []), ...extra];
   const base = process.execPath.length + head.reduce((n, a) => n + a.length + 3, 0);   // a space and two quotes an argument
   const runs = [];
   let run = [], used = base;
@@ -108,6 +113,13 @@ export function runTests(files, { root = ROOT, times = readTimes(root), cores = 
   }
   return status;
 }
+
+/** CI-FAST: the runner's two reporters - its own, as it would choose it (spec on a terminal, TAP elsewhere), and the
+ *  failures' summary (tools/failSummary.mjs) - both to stdout. */
+export const summaryReporters = (root = ROOT, tty = !!process.stdout.isTTY) => [
+  `--test-reporter=${tty ? 'spec' : 'tap'}`, '--test-reporter-destination=stdout',
+  `--test-reporter=${pathToFileURL(join(root, 'tools/failSummary.mjs')).href}`, '--test-reporter-destination=stdout',
+];
 
 /** AUDIT FAST-SUITE F7: the runner's own flags among a tool's arguments (`--test-name-pattern=x`, `--test-only`, ...),
  *  handed on to it; the tool's own (`--list`, `--base`) are not the runner's. */
