@@ -55,10 +55,11 @@
 
 import { calculateCost, calculateTradePrice, essentialPrice } from './shopStock.js';   // ESSENTIALS-HALF: online, a potion costs half
 import { GOLD_PIECE_WEIGHT_KG, isEnchanted } from './inventory.js';
-import { calculateItemRepairCost, repairRefusal, MEND_SALE_SHARE } from './repairService.js';   // MEND-THIRD: a mend sells at the repair's share - read at a sale, never at load (repairService.js reaches this module through shopStock.js)
+import { calculateItemRepairCost, repairRefusal } from './repairService.js';
 import { itemValueOf, conditionPercentage } from './item/itemTemplates.js';
 import { craftedRarityWorth, socketsOf, gemWorthOf } from './loot/lootRarity.js';   // CRAFT-WORTH: a crafted piece's rolled worth, never a counter's
-import { isOnlinePage } from './online/onlineLane.js';   // SELL-AS-FOUND: online, a sale reads a piece as it was found
+import { isOnlinePage } from './online/onlineLane.js';   // SELL-AS-FOUND and MEND-THIRD: online, a sale reads a found piece through its mark
+import { foundSalePercentage, isFoundMarked } from './item/foundMark.js';   // SELL-AS-FOUND and MEND-THIRD: the mark's one home
 import { isCampfireKit } from './survival/items.js';   // AUDIT REST: the Campfire an essential online
 import { isFirewood } from './rest/restItems.js';
 import { isPotion } from './useItem.js';   // ESSENTIALS-HALF: the potion, by DFU's own IsPotion   // JAN1: the one value read; RRI2: ConditionPercentage, the Sell arm's third argument
@@ -231,35 +232,29 @@ export function buyItemPrice(item, { quality = 0, priceAdjustment = 1000, holida
   return (isPotion(item) || isCampfireKit(item) || isFirewood(item)) && !holiday ? essentialPrice(held, { online }) : held;   // AUDIT REST: REST2's Campfire and Firewood arm
 }
 
-/** SELL-AS-FOUND (AUDIT ECON O1, 2026-10-01): ONLINE A COUNTER PAYS FOR A PIECE AS THE WORLD HANDED IT OVER, AT BEST.
+/** SELL-AS-FOUND (AUDIT ECON O1, 2026-10-01) AND MEND-THIRD (2026-10-19): ONLINE A COUNTER PAYS FOR A FOUND PIECE AT
+ *  THE CONDITION THE WORLD HANDED IT OVER AT, AND A THIRD OF WHAT ITS OWNER'S OWN MENDS PUT PAST IT.
  *  Roleplay & Realism: Items' condition prices are the room's (onlineLane.js), and its rolls hand pieces over worn - a
  *  pile's and a body's at 20-75%, a poorer shelf's at 25-100% (rriRealism.js) - so a sale climbs with a repair. At
  *  REPAIR-RATE's third (repairService.js) the repair cost less than the sale it added: mending worn loot to sell it paid
  *  every player online - +102 gold on a value-1000 piece found at 20% (Mercantile 30, Personality 40, a quality-10
- *  counter), +2,592 on a Daedric longsword. So online the Sell arm reads a piece's condition from the `foundCondition`
- *  those rolls leave on it: what was mended past the mark counts at MEND_SALE_SHARE (MEND-THIRD, below), never whole,
- *  and wear after the find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new
- *  shelf's), or found before this - sells at its own condition, repaired or not. Offline, the mod's prices stand.
- *  MEND-THIRD (2026-10-19, the Discord's #feature-feedback "Bring back loot price based on the condition!" - "actively
- *  discourage players to repair an item in order to maximalize the sell price - like with repair kits at early levels,
- *  and enchants at higher" - through Mac: "Do it"): ONLINE, WHAT A PIECE WAS MENDED PAST ITS MARK SELLS AT THE SHARE A
- *  REPAIR IS PRICED AT - REPAIR-RATE's third (repairService.js MEND_SALE_SHARE). At Roleplay & Realism: Items' own
- *  repair price (CalculateItemRepairCost: 0.6 of the value, by the damage) a smith's whole repair never cost less than
- *  the sale it added, past a cheap piece's rounding; REPAIR-RATE cut the price to a third and left the sale, so mending
- *  to sell paid, and SELL-AS-FOUND shut that by crediting a mend nothing. Credited at the price's own share, the sum is
- *  the mod's again: a smith's whole repair is a loss on the sale from a 20-gold repair up, adds at most 0.899 of its
- *  price from a 1,000-gold one, and is never a gold over its price (that gold the prices' rounding, where a whole repair
- *  asks a few gold). A kit's or Repairs Objects' mend sells for a third of what the condition is worth. Bible:
+ *  counter), +2,592 on a Daedric longsword. So online the Sell arm reads a found piece through the mark it was handed
+ *  over with (item/foundMark.js foundSalePercentage): a smith's paid repair adds nothing to the sale, at any counter,
+ *  in any region, at any guild's discount (AUDIT MEND-THIRD L1-1, L1-2 - a third of it, credited, paid at a cheap smith
+ *  sold at a dear counter, and at the Fighters Guild's rank discount), and a Repair Kit's, Repairs Objects' or the Varla
+ *  Stone's mend past the mark sells for a third of what the condition is worth (MEND-THIRD - the Discord's
+ *  #feature-feedback "Bring back loot price based on the condition!": "actively discourage players to repair an item in
+ *  order to maximalize the sell price - like with repair kits at early levels, and enchants at higher"); wear after the
+ *  find still lowers the sale. A piece with no mark - handed over whole (a craft, a reward, a new shelf's), or found
+ *  before this - sells at its own condition, repaired or not. Offline, the mod's prices stand. Bible:
  *  06-Systems/Economy-Arc.md, MEND-THIRD. */
 export function saleConditionPercentage(item, { online = isOnlinePage() } = {}) {
   // WAGON-TIERS (2026-10-15, Mac: "Yes, same tiers"): a wagon's condition is its wear, and its wear prices it only where
   // the seller's wagon upkeep tier says so (Hard). On Boons - and Off - a counter buys it as DFU's plain wagon, which
   // never wore: whole (bible/06-Systems/Wagon-Upkeep.md, The tiers)
   if (wagonSoldWhole(item, wagonUpkeepRules())) return 100;
-  const found = item?.foundCondition;
-  if (!online || !Number.isInteger(found) || !(found < (item?.currentCondition ?? 0))) return conditionPercentage(item);
-  const mended = Math.trunc((item.currentCondition - found) * MEND_SALE_SHARE);   // MEND-THIRD: never rounded up
-  return conditionPercentage({ currentCondition: found + mended, maxCondition: item.maxCondition });
+  if (!online) return conditionPercentage(item);
+  return foundSalePercentage(item);
 }
 
 /** AUDIT LW-II-2 S1: THE COUNTER'S MARK (net/patronLaw.js PATRON_COUNTER_MARK) - ONLINE, EVERY PIECE AN NPC COUNTER SELLS
@@ -373,7 +368,7 @@ export function tradeCost(mode, staged = [], {
         // DFU passes ConditionPercentage (:462) into a slot its own
         // CalculateCost never reads - see the header; RRI2: Roleplay &
         // Realism: Items' override reads it, so the slot is passed.
-        // SELL-AS-FOUND: online, no better than the condition the world handed the piece over at
+        // SELL-AS-FOUND and MEND-THIRD: online, a found piece at its mark and a third of its owner's own mends past it
         const c = calculateCost(counterValueOf(item), quality, priceAdjustment, saleConditionPercentage(item, { online })) * stack;   // JAN1: an item with no finite value is priced at its base, never NaN; CRAFT-WORTH: a crafted piece at its plain worth
         cost += c;
         sold(item, c, stack);   // LAW-3
@@ -385,7 +380,12 @@ export function tradeCost(mode, staged = [], {
         // WITHOUT the stack multiply - a stack of five soul gems fences
         // for the price of one. Verbatim, and deliberately not "fixed".
         modeActionEnabled = true;
-        const c = calculateCost(counterValueOf(item), quality, priceAdjustment);   // CRAFT-WORTH: a fenced crafted piece at its plain worth
+        // AUDIT MEND-THIRD L3-1: ONLINE A FOUND PIECE FENCES AS IT SELLS - through its mark. DFU's CalculateCost here takes
+        // no condition (the mod's override reads it whole), and the item maker enchants a found piece for one side effect
+        // at no gold: a Daedric cuirass found at 47% sold for 22,350 and fenced, unmended, for 47,553. An unmarked piece -
+        // a magic item's condition is its uses - and every piece offline fence as DFU's do.
+        const fenced = live && isFoundMarked(item) ? saleConditionPercentage(item, { online: true }) : -1;
+        const c = calculateCost(counterValueOf(item), quality, priceAdjustment, fenced);   // CRAFT-WORTH: a fenced crafted piece at its plain worth
         cost += c;
         sold(item, c, stack);   // LAW-3: the stack it hands over cost what it cost
         break;

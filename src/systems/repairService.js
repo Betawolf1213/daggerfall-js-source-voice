@@ -49,11 +49,6 @@ import { stampLayout, layoutStampOfMapId, recordStands } from './layoutPins.js';
  *  formula asks - REPAIR-EASE (2026-09-30, Mac: "nerf repair costs") had it at two thirds - offline and online, every
  *  shop and guild, applied after the guild discount, floored at 1. */
 export const REPAIR_COST_SCALE = 1 / 3;
-/** MEND-THIRD (2026-10-19, bible/06-Systems/Economy-Arc.md): online, the share of what a found piece was mended past its
- *  mark that a counter's sale credits (tradeModes.js saleConditionPercentage) - the repair's own price share, so a mend's
- *  credit and a repair's price stand in Roleplay & Realism: Items' proportion, where mending to sell never paid, wherever
- *  REPAIR-RATE sets the price. */
-export const MEND_SALE_SHARE = REPAIR_COST_SCALE;
 /** AUDIT REPAIR-EASE F4: and no instant-repair premium. Roleplay & Realism: Items prices an instant repair at 0.9 of
  *  the damage against 0.6 - 1.5 times - which the port's InstantRepairs-on default turned on for everyone and so
  *  undid the two thirds exactly under conditionBasedPrices. Instant is the port's default now, not a service bought. */

@@ -43,14 +43,9 @@ test('ASF-DEATH: a Daedroth\'s weapon, a Daedra Lord\'s armour and an Orc Warlor
   assert.equal(orcish.material, 8); assert.equal(orcish.foundCondition, orcish.currentCondition);
 });
 
-test('ASF-DEATH: online a mended Daedric drop sells as it fell and a third of the mend (MEND-THIRD) - the smith\'s repair a loss on the sale, never whole; offline the mod\'s condition price stands (mutant: the mark dropped)', () => {
+test('ASF-DEATH: online a mended Daedric drop sells as it fell - the smith\'s repair adds nothing to the sale; offline the mod\'s condition price stands (mutant: the mark dropped)', () => {
   const [plate] = drop(31, seq(0.999, 0, 0, 0.5, 0.2, 0.999, 0.999));
   const mended = { ...plate, currentCondition: plate.maxCondition };
-  // PIN MOVED (MEND-THIRD, 2026-10-19): it sold as found; the mend past the mark now sells at the repair's third
-  const third = { ...plate, currentCondition: plate.currentCondition + Math.trunc((plate.maxCondition - plate.currentCondition) / 3), foundCondition: undefined };
-  online(() => {
-    assert.equal(sell(mended), sell(third), 'online: whole sells at the mark and a third');
-    assert.ok(sell(mended) < sell({ ...mended, foundCondition: undefined }), 'online: never whole');
-  });
+  online(() => assert.equal(sell(mended), sell(plate), 'online: whole sells as found'));
   assert.ok(sell(mended) > sell(plate), 'offline: a mended piece sells higher, the mod\'s own law');
 });

@@ -4114,7 +4114,7 @@ export function createWorldModes(host) {
   // SELLING branch of CalculateTradePrice (DaggerfallTradeWindow's
   // GetTradePrice; DFU's condition parameter is declared-but-unused).
   // CRAFT-WORTH (2026-10-11, the exploit audit): THE COUNTER'S OWN LAW, as buyPrice's is - the trade window's Sell walk
-  // (a crafted piece at its plain worth, online the condition the world handed it over at) at the counter's own index
+  // (a crafted piece at its plain worth, online a found piece at its mark and a third of its owner's own mends - MEND-THIRD) at the counter's own index
   // (a yard's too). This keyed shelf priced the raw value at the region's index and read no condition, so the art's
   // absence was a door round every sale law the window keeps.
   function sellPrice(it) {

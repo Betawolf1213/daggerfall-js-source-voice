@@ -192,14 +192,16 @@ current design "does not work in an enjoyable manner"):
   hundredth of a piece's condition, asks when the ceiling holds back a piece
   the player may have meant, and is kept, said, on every refusal.
 - **Selling, online** (SELL-AS-FOUND, AUDIT ECON O1, and MEND-THIRD, below;
-  `src/systems/tradeModes.js`): a counter pays for a piece at the condition
-  the world handed it over at, and a third of what was mended past it.
-  Roleplay & Realism: Items hands loot over worn and prices a sale by
-  condition, so at a third a repair cost less than the sale it added, and
-  mending loot to sell it paid every player - a printer opened by this arc's
-  own price. SELL-AS-FOUND closed it by crediting a mend nothing; MEND-THIRD
-  credits it at the repair's own third, which keeps it closed. A piece handed
-  over whole is untouched.
+  `src/systems/item/foundMark.js`, `src/systems/tradeModes.js`): a counter
+  pays for a found piece at the condition the world handed it over at, and a
+  third of what its owner's own mends - a kit, Repairs Objects, the Varla
+  Stone - put past it. Roleplay & Realism: Items hands loot over worn and
+  prices a sale by condition, so at a third a repair cost less than the sale
+  it added, and mending loot to sell it paid every player - a printer opened
+  by this arc's own price. SELL-AS-FOUND closed it by crediting a mend
+  nothing; MEND-THIRD credits its owner's own mends and never a smith's paid
+  one, which keeps it closed at every counter. A piece handed over whole is
+  untouched.
 - **Next** (Phase 3): the Vault and Loadouts make "the right tool for the
   job" a choice rather than a chore, and secure services let a smith or a
   mage sell repairs without either side being robbed.
@@ -214,50 +216,57 @@ that powerful while having entire bag full of items)". It came the day
 ASF-DEATH (`01-Overview/bugs/Field-Bugs-2026-10-19b.md`) gave Unleveled Loot's
 death drops SELL-AS-FOUND's mark, so online nearly every weapon and piece of
 armour a player loots sold as found, and a kit or Repairs Objects added nothing
-to its sale. Mac asked for a middle ground; offered this one with the numbers
-below, Mac: "Do it".
+to its sale. Mac asked for a middle ground; offered a third of every mend,
+Mac: "Do it". Audited the same day (`01-Overview/audits/Audit-Mend-Third.md`),
+the third of a SMITH'S mend paid again - repaired at a cheap smith and sold at
+a dear counter (+10,433 on a Daedric cuirass found at 20%, Mercantile and
+Personality 100, a quality-1 smith and a quality-20 counter), or at the
+Fighters Guild's rank discount (+9,383 at rank 9, one counter) - and the first
+build's "a smith's repair is a loss on the sale" had held at one counter alone.
+Asked again, Mac: "Only your own mends", "Keep a third".
 
-**Measured** on the real counter (`tradeCost`, `getTradePrice`, online).
-Before SELL-AS-FOUND a smith's whole repair of a found piece added 0.90 to
-2.76 times its price to the sale (the lots below, wherever the repair asks 20
-gold or more): the haggle counts twice, lowering the
-repair's ask and raising the sale. That is the printer SELL-AS-FOUND shut, and
-on Daedric plate the #suggestions thread's "tens of thousands". At Roleplay &
-Realism: Items' own repair price (CalculateItemRepairCost, 0.6 of the value by
-the damage) the same repair never paid, past a cheap piece's rounding:
-REPAIR-RATE cut the price to a third and left the sale where it stood.
+**The rule** (`src/systems/item/foundMark.js`, the found mark's one home;
+`src/systems/tradeModes.js` `saleConditionPercentage`). A piece the world
+hands over worn carries `foundCondition`. Its owner's OWN mends - a Repair Kit
+(`smithItems.js` useRepairKit), a tick of Repairs Objects (`enchantments.js`),
+the Varla Stone (`ayleidStones.js`) - count the part of each mend above the
+mark to `selfMended` (`creditOwnMend`), never past the room above the mark; a
+smith's paid repair counts none. Online a counter reads a marked piece at its
+mark and `MEND_SALE_SHARE` (a third) of `selfMended`, no more than the piece
+holds above the mark, rounded down (`foundSalePercentage`). Wear after the
+find eats the credit first, and below the mark the piece reads its own
+condition; a piece with no mark, and every piece offline, sell at their own
+condition. The Mages Guild's Sell Magic Items reads the same, online, for a
+marked piece (AUDIT L3-1), and so does a patron's worth (L1-4).
 
-**The rule** (`src/systems/tradeModes.js` `saleConditionPercentage`,
-`src/systems/repairService.js` `MEND_SALE_SHARE`). Online, a marked piece
-sells at its mark and `MEND_SALE_SHARE` of what was mended past it, rounded
-down. The share is REPAIR-RATE's own `REPAIR_COST_SCALE`, so a mend's credit
-and a repair's price stand in the mod's proportion wherever the price is set.
-It sits beside the price, and the sale reads it when it prices a piece, never
-as the module loads: `repairService.js` reaches `tradeModes.js` through
-`shopStock.js`, `worldTick.js`, `pcaao.js` and `itemInfo.js`. Wear after the find still lowers the sale; a piece with no mark,
-and every piece offline, sell at their own condition.
+**What it does.** A smith's whole repair of a found piece adds nothing to its
+sale, at any counter, in any region, at any guild's discount - so mending to
+sell at a smith is the repair's price lost, as under SELL-AS-FOUND. An
+owner's mend sells for a third of what it put past the mark. On a Daedric
+cuirass found at 47% (Mercantile 30, Personality 40, a quality-10 counter): a
+field kit lifts its sale from 22,350 to 24,727 (+7,133 before SELL-AS-FOUND,
+nothing under it); a smith-made Daedric kit (one Daedric Ingot, base value
+800, and a Cured Leather) adds 3,804 (11,888 before SELL-AS-FOUND). A kit pays
+on the metals worth more than its ingot: at that counter from Moonstone and
+Dwarven up, about even at Silver, a loss at Iron and Steel - and on Daedric
+plate the ingot is worth more forged into a Standard cuirass (7,926 an ingot)
+than spent as a kit. A piece takes three smith's kits or four field kits to
+its ceiling (three quarters; nine tenths for a Superior kit).
 
-**What it does.** Over 18,225 lots of real pieces - a dagger, a longsword and a
-claymore from iron to Daedric, a cuirass and boots from leather to Daedric,
-found across the roll's 20-75%, at counters of quality 1-20, regions at 50-150%
-and every haggle - a smith's whole repair is a loss on the sale from a 20-gold
-repair up, adds at most 0.899 of its price from a 1,000-gold one, and is never
-a gold over its price (that gold is the prices' rounding, where a whole repair
-asks a few gold). A kit or a ring of Repairs Objects sells for a third of what
-the condition is worth: a field kit on a Daedric cuirass found at 47%
-(Mercantile 30, Personality 40, a quality-10 counter) lifts its sale from
-22,350 to 24,727, where it was +7,133 before SELL-AS-FOUND and nothing under
-it; a steel longsword found at 20% and worn with the ring sells at 30% after
-an hour of the ring's rounds (fifteen ticks, 720 of its 2,400 mended).
-`test/systems/mend_third.test.js`, `tools/mutants/mend_third.json`.
+**The ring, the deliberate faucet** (AUDIT L2-3; Mac: "Keep a third"). A ring
+of Repairs Objects is free, mends one carried piece a fiftieth of its
+condition every four rounds, and runs through every rest: one 8-hour rest
+over six Daedric cuirasses found at 47% adds 37,092 to their sale (134,100 to
+171,192), about 309 gold for each of the rest's 120 ticks; and a found piece
+the ring mends whole sells about 37% above its as-found price, over the
+roll's whole range. It is bounded by the loot itself: no piece's credit passes a third of
+its room above the mark, and wear and re-mending cannot stack it. Before
+SELL-AS-FOUND the same rest added 114,126; under it, nothing. The Varla Stone
+mends a worn enchanted piece whole once, a rare find (an enchanted Daedric
+cuirass found at 20%: 9,510 to 21,874).
 
-**What it leaves.** A kit makes gold on the top metals. A smith-made Daedric
-kit (one Daedric Ingot, base value 800, and a Cured Leather) mends a quarter of
-a Daedric piece, and on that cuirass the quarter sells for 3,804 more (it was
-11,888 before SELL-AS-FOUND). Each found piece lifts once, and no further than
-a kit's ceiling (three quarters; nine tenths for a Superior kit), and under
-METAL-RAMP Daedric falls mostly from level 20. Recorded, not closed: if it
-shows in Phase 1's ledger, the lever is the kit's price, not the sale.
+`test/systems/mend_third.test.js`, `test/systems/auditmendthird.test.js`,
+`tools/mutants/mend_third.json`, `tools/mutants/auditmendthird.json`.
 
 ## Homes, priced by what you get (HOME-PRICE, 2026-10-04)
 

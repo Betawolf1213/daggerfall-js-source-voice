@@ -85,7 +85,8 @@ import {
 import { enchantmentRowCost } from './enchanting.js';   // AUDIT PROF-541 J4: a Rare roll the piece's points hold
 import { minedMaterial } from '../net/professionLaw.js';
 import { weaponOfMaterial, armorOfMaterial, createWeapon } from '../combat/enemyEquipment.js';
-import { setItemFields, mintCondition, templateByIndex, registerItemUseHandler, conditionPercentage, conditionShare, mendOrder } from './item/itemTemplates.js';   // AUDIT ECON R2: the card's own percentage; MEND-WORN: the mend order's one home
+import { setItemFields, mintCondition, templateByIndex, registerItemUseHandler, conditionPercentage, conditionShare, mendOrder } from './item/itemTemplates.js';
+import { creditOwnMend, scaleFoundMark } from './item/foundMark.js';   // MEND-THIRD: a kit's mend credited; AUDIT MEND-THIRD L1-6: a temper moves the mark   // AUDIT ECON R2: the card's own percentage; MEND-WORN: the mend order's one home
 import { registerTabledLootHandler, registerEnemyLootExtra } from './loot/loot.js';   // REPAIR-EASE: the field kit's two loot doors
 import { itemLongName } from './item/itemInfo.js';
 import './professions/profTemplates.js';   // the Repair Kit's row (692), registered with the ores and ingots
@@ -278,7 +279,7 @@ const TEMPER_MINTED = Object.freeze(['maxCondition', 'weightInKg', 'quality', 'r
 export function temperItem(item, { quality, record = null } = {}) {
   const from = pieceQuality(item);
   if (!item || temperRefusal(item) || quality !== from + 1) return false;
-  const share = item.maxCondition > 0 ? conditionShare(item) : 1;
+  const share = item.maxCondition > 0 ? conditionShare(item) : 1, oldMax = item.maxCondition;
   const c = typeof item.provenance === 'string' && asMinted(item) ? readProductRecord(record) : null;
   const fresh = c && c.p === item.provenance && c.r === item.recipe && c.q === quality
     ? mintPiece({ recipe: c.r, quality: c.q, seed: c.c, maker: c.m, marked: c.a === 1, dye: c.u ?? null, hand: c.f ?? null, version: c.v ?? 0 }, c.p) : null;   // CRAFT-PROCS: at its record's mint version
@@ -291,6 +292,10 @@ export function temperItem(item, { quality, record = null } = {}) {
     item.quality = quality;
   }
   item.currentCondition = Math.max(0, Math.min(item.maxCondition, Math.round(item.maxCondition * share)));
+  // AUDIT MEND-THIRD L1-6 (L2-6, L3-5): a found piece's mark, and its owner's mends past it, the same share of the new
+  // maximum - left where they stood, the mark fell as a share and the temper's kept share read as a mend, so a Daedric
+  // cuirass found at 47% sold at 43% for the gold its temper cost
+  scaleFoundMark(item, oldMax, item.maxCondition);
   return true;
 }
 /** Why a piece's line may not be reforged with Essence, or null: 'not' (no Magic or Rare line the Reforge may roll -
@@ -362,8 +367,9 @@ export function useRepairKit(kit, items, { target = null, pack = items } = {}) {
   const want = repairKitTargets(kit, pack);
   const it = target == null ? want[0] : want.includes(target) ? target : null;
   if (!it) return null;
-  const before = conditionShare(it), from = conditionPercentage(it);
+  const before = conditionShare(it), from = conditionPercentage(it), was = it.currentCondition;
   it.currentCondition = Math.min(kitCeiling(it, kit), it.currentCondition + Math.ceil(it.maxCondition * (kit.fieldKit === true ? FIELD_KIT_REPAIR : KIT_REPAIR)));   // KIT-CEILING: never past three quarters - CRAFT5: nine tenths, a Superior or Masterwork kit's
+  creditOwnMend(it, was);   // MEND-THIRD: a kit is its owner's own mend - a third of it past a found piece's mark sells
   const i = items.indexOf(kit);
   if (i >= 0) items.splice(i, 1);
   return { item: it, before, after: conditionShare(it), from, to: conditionPercentage(it) };

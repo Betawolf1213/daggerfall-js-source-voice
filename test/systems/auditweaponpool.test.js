@@ -35,8 +35,7 @@ test('AUDIT WEAPON-POOL P1: SELL-AS-FOUND\'s mark moves by the same share - a pi
   assert.deepEqual([found.maxCondition, found.currentCondition, found.foundCondition], [1600, 800, 800]);
   assert.deepEqual([mended.maxCondition, mended.currentCondition, mended.foundCondition], [1600, 1600, 800]);
   assert.equal(saleConditionPercentage(found, { online: true }), 50, 'as found: still half');
-  // PIN MOVED (MEND-THIRD, 2026-10-19): the found half and a third of the mend (800 + 266 of 1,600), never 1%
-  assert.equal(saleConditionPercentage(mended, { online: true }), 66, 'mended: the counter pays the found half and a third of the mend, never 1%');
+  assert.equal(saleConditionPercentage(mended, { online: true }), 50, 'mended: the counter still pays the found half, never 1%');
 });
 
 test('AUDIT WEAPON-POOL P2: a weapon still on its row\'s pool moves before it wears - a blow, a Cast-When-Strikes strike and a Cast-When-Held bill each land on the one pool, wherever the piece came back from (a hung piece, a revenant\'s take, a quest\'s prize, a bequest, a market record); lowerCondition asks it first (mutants: the door dropped)', () => {

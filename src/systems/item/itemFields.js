@@ -186,6 +186,10 @@ export const ITEM_FIELDS = Object.freeze({
   // a pile, a body and a shelf (systems/roleplayRealismItems/rriRealism.js) - which an online counter's sale reads with a third of what
   // was mended past it (tradeModes.js saleConditionPercentage, MEND-THIRD); absent on a piece handed over whole
   foundCondition: int({ min: 0 }),
+  // MEND-THIRD (AUDIT MEND-THIRD, 2026-10-19): the points its owner's OWN mends - a Repair Kit, Repairs Objects, the Varla
+  // Stone - put above a found piece's mark, a third of which an online counter's sale credits (item/foundMark.js); never
+  // what a smith's paid repair did
+  selfMended: int({ min: 0 }),
   // INT4 (bible/06-Systems/Integrity-Arc.md): a valuable piece's id (systems/item/itemIds.js) - 16 hex, minted at a realm
   // checkpoint and the piece's from then on: the wire carries it (never the receiver's, as `acquired` is), and the
   // service's ledger reads it (server-account/src/verdict.js ledgerStep)
