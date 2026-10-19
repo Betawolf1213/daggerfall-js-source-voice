@@ -409,9 +409,10 @@ export function openGroundNear(collider, x, z, { rings = OPEN_GROUND_RINGS, step
   }
   return null;
 }
-/** UNSTUCK-OUT: whether a body standing with its feet at `feet` is held by a static solid (its feet or its head). */
-export function heldInSolid(collider, feet) {
-  return collider.insideSolid([feet[0], feet[1] + CAPSULE_RADIUS, feet[2]]) || collider.insideSolid([feet[0], feet[1] + CAPSULE_HEIGHT - CAPSULE_RADIUS, feet[2]]);
+/** UNSTUCK-OUT: whether a body standing with its feet at `feet` is held by a static solid (its feet or its head).
+ *  DECOR-CLEAR (player/lateSolid.js): `height`, the body's own - a crouched one's head is lower. */
+export function heldInSolid(collider, feet, height = CAPSULE_HEIGHT) {
+  return collider.insideSolid([feet[0], feet[1] + CAPSULE_RADIUS, feet[2]]) || collider.insideSolid([feet[0], feet[1] + height - CAPSULE_RADIUS, feet[2]]);
 }
 
 /** floorLanding's footprint sweep: the highest floor its five rays (the centre and a ring at ~half the capsule's

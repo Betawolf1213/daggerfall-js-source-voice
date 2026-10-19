@@ -12542,6 +12542,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const yards = homeDecor && onlineHomes ? createHomeYards({
     api: homeDecor, homes: onlineHomes, built: () => built, translation: (px, py) => state.pixelTranslation(px, py),
     feet: () => (walkMode && playerSpawned ? player.feetAt() : null),
+    body: player,   // DECOR-CLEAR: the body a yard's late piece is withheld from - the motor's own feet, never the eye's low-passed ones
     outside: () => _mode() === 'exterior' && playerSpawned && !player.riding,
     eye: () => cam.pos,
     cull: (box) => yardCull(box),   // PERF-YARD: the pieces culled as the town's own models are

@@ -2295,3 +2295,35 @@ massif; and the collider's floor is the bilinear read where the drawn landform g
 metres on the steepest ridges. `test/player/unstuckout.test.js` (2) - the real collider over real closed rock meshes;
 `tools/mutants/unstuckout.json` (7), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): `tvSeaY` declared
 beside `state`, before the boot's own load reads it (the outdoor arm's refusals that audit worded went with the arm).
+
+## DECOR-CLEAR - a late solid never closes on the body (FIELD BUGS 2026-10-19b)
+
+The collider is winding-blind and holds both faces of every triangle, so a solid ADDED where a body already stands holds
+it by its inner walls - or, under 0.9 m, the resolve throws it onto the top. Daggerfall Unity never meets this indoors:
+`PlayerEnterExit.TransitionInterior` lays the interior out first ("This needs to be done first", `PlayerEnterExit.cs:721`)
+and only then stands the player (`PlayerEnterExit.cs:794-795`, the landing and SetStanding). The port's online home stands its owner's
+pieces after the entry (`06-Systems/Online-Arc.md` DECOR-CLEAR, the two private reports), and UNSTUCK-OUT's landing check
+was the port's one guard against a late arrival, a fast-travel landing's alone.
+
+- **The law** (`player/lateSolid.js` lateSolidCloses, over a collider holding the late solid alone): it closes on a
+  body - `{ pos, height }`, the motor's own - never where its box misses the capsule's (a piece hung wholly over the
+  head, open beneath, though a line up from the feet crosses it once; the gate asks the box first, before it builds
+  that collider), else when one of its faces stands deeper in the capsule than the resolve's skin
+  (`collider.js` SKIN, exported for it: a face the body rests on or leans against stands at the radius and holds
+  nothing), or when the body's feet or head is inside one of its closed parts (`heldInSolid`, UNSTUCK-OUT's parity law,
+  which now takes the body's own height - a crouched head is lower; the landing's call is unchanged).
+- **The gate** (`lateSolidsOf(collider)`, one a collider, gone with it): `settle(body)`, asked every frame by the call
+  that holds the body, makes that body the one the gate GUARDS and stands each withheld solid it is now clear of; a
+  late solid goes in through `add` - at once where the body is clear of it, else WITHHELD - checked against the body
+  it names, or, naming none, the body the gate guards (none guarded yet, or `null`: at once, as every solid always
+  stood); `remove` takes a bucket down and forgets one withheld; a key withheld stays withheld through a new `add` of
+  it (a recentre's move), asked again at the next settle. A settle handed no body stands nothing and guards on.
+- Its users: a home's placed pieces and a yard's (`scenes/decor/decorRoom.js` - the motor handed in by `worldModes.js`
+  and `world.js`, the room's draw settling every frame), and a home's own furniture put back (`decorBase.js`, naming
+  no body - the gate's). Another player's body is never this collider's: each client's gate guards its own. The same
+  class stands elsewhere, not through the gate yet - a mover's bucket (a lift, an action door, a placed door hung as
+  one) and a neighbour pixel's rocks built round a body (UNSTUCK-OUT's open note above); either can stand through it
+  with one `add`, where a frame of its collider settles it.
+
+`test/scenes/decor/fb1019b_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (28: 27
+dead, 1 equivalent as recorded); `tools/mutants/unstuckout.json`'s head record re-aimed to the height (7, all dead).

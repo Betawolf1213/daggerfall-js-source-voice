@@ -1,0 +1,257 @@
+[
+  {
+    "name": "DC-a-placed-piece-past-the-gate",
+    "file": "src/scenes/decor/decorRoom.js",
+    "old": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, body);",
+    "new": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, null);",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-never-settled",
+    "file": "src/scenes/decor/decorRoom.js",
+    "old": "    if (body) late()?.settle(body);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-a-piece-taken-down-forgets-nothing",
+    "file": "src/scenes/decor/decorRoom.js",
+    "old": "    late()?.remove(decorKeyOf(entry.piece.id));",
+    "new": "    collider?.()?.removeBucket?.(decorKeyOf(entry.piece.id));",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-recentre-stands-it",
+    "file": "src/scenes/decor/decorRoom.js",
+    "old": "        lateSolidsOf(c)?.add(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix, null);",
+    "new": "        c?.addMesh?.(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-rooms-own-past-the-gate",
+    "file": "src/scenes/decor/decorBase.js",
+    "old": "lateSolidsOf(collider)?.add(baseBucketOf(key), p.cpu.positions, p.cpu.indices, p.matrix);",
+    "new": "lateSolidsOf(collider)?.add(baseBucketOf(key), p.cpu.positions, p.cpu.indices, p.matrix, null);",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-rooms-own-taken-out-forgets-nothing",
+    "file": "src/scenes/decor/decorBase.js",
+    "old": "lateSolidsOf(collider)?.remove(baseBucketOf(key)); }",
+    "new": "collider?.removeBucket?.(baseBucketOf(key)); }",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-skin-past-the-radius",
+    "file": "src/player/lateSolid.js",
+    "old": "probe.capsuleContact(body.pos, height, -SKIN, null, HIT)",
+    "new": "probe.capsuleContact(body.pos, height, SKIN, null, HIT)",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-skin-at-the-radius",
+    "file": "src/player/lateSolid.js",
+    "old": "probe.capsuleContact(body.pos, height, -SKIN, null, HIT)",
+    "new": "probe.capsuleContact(body.pos, height, 0, null, HIT)",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-parity-unasked",
+    "file": "src/player/lateSolid.js",
+    "old": " || heldInSolid(probe, body.pos, height);",
+    "new": ";",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-box-unasked",
+    "file": "src/player/lateSolid.js",
+    "old": "  if (!b || !boxMeetsBody([...b.min, ...b.max], body.pos, height)) return false;\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-box-turned",
+    "file": "src/player/lateSolid.js",
+    "old": "  return b[0] <= feet[0] + CAPSULE_RADIUS && b[3] >= feet[0] - CAPSULE_RADIUS",
+    "new": "  return b[0] >= feet[0] + CAPSULE_RADIUS && b[3] >= feet[0] - CAPSULE_RADIUS",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-gate-asks-no-box-first",
+    "file": "src/player/lateSolid.js",
+    "old": "  const closes = (h, body) => boxMeetsBody(h.box ??= transformedAabb(localAabb(h.positions), h.matrix), body.pos, body.height ?? CAPSULE_HEIGHT)\n    && lateSolidCloses(probeOf(h), body);",
+    "new": "  const closes = (h, body) => lateSolidCloses(probeOf(h), body);",
+    "equivalent": true,
+    "why": "the gate's box first only spares the probe's build - the law (lateSolidCloses) asks the same box of the probe's own bounds, never wider than the box the gate asks (its triangles' own box, turned), so every answer is the same; it is there for the cost of a town's two thousand yard pieces, which no pin measures",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-height-unread",
+    "file": "src/player/lateSolid.js",
+    "old": "  const height = body.height ?? CAPSULE_HEIGHT;",
+    "new": "  const height = CAPSULE_HEIGHT;",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-head-at-standing-height",
+    "file": "src/player/enterExit.js",
+    "old": "feet[1] + height - CAPSULE_RADIUS",
+    "new": "feet[1] + CAPSULE_HEIGHT - CAPSULE_RADIUS",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js",
+      "test/player/unstuckout.test.js"
+    ]
+  },
+  {
+    "name": "DC-no-collider-a-gate",
+    "file": "src/player/lateSolid.js",
+    "old": "  if (!collider || typeof collider !== 'object') return null;\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-a-gate-an-asking",
+    "file": "src/player/lateSolid.js",
+    "old": "  if (!gate) { gate = makeGate(collider); GATES.set(collider, gate); }",
+    "new": "  if (!gate) { gate = makeGate(collider); }",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-body-unguarded",
+    "file": "src/player/lateSolid.js",
+    "old": "      guarded = body;\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-a-solid-naming-none-unguarded",
+    "file": "src/player/lateSolid.js",
+    "old": "    add(key, positions, indices, matrix, body = guarded) {",
+    "new": "    add(key, positions, indices, matrix, body = null) {",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-a-withheld-one-not-kept",
+    "file": "src/player/lateSolid.js",
+    "old": "      if (!held.has(key) && !(body?.pos && closes(h, body))) {",
+    "new": "      if (!(body?.pos && closes(h, body))) {",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-gate-stands-what-closes",
+    "file": "src/player/lateSolid.js",
+    "old": "      if (!held.has(key) && !(body?.pos && closes(h, body))) {",
+    "new": "      if (!held.has(key)) {",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-an-unknown-body-taken-as-clear",
+    "file": "src/player/lateSolid.js",
+    "old": "      if (!body?.pos) return 0;\n      guarded = body;",
+    "new": "      guarded = body;",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-settle-stands-what-closes",
+    "file": "src/player/lateSolid.js",
+    "old": "        if (closes(h, body)) continue;\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-settle-stands-it-again",
+    "file": "src/player/lateSolid.js",
+    "old": "        held.delete(key);\n        collider.addMesh?.(key, h.positions, h.indices, h.matrix);",
+    "new": "        collider.addMesh?.(key, h.positions, h.indices, h.matrix);",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-removal-keeps-it-withheld",
+    "file": "src/player/lateSolid.js",
+    "old": "    remove(key) {\n      held.delete(key);\n",
+    "new": "    remove(key) {\n",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-probe-where-the-model-is-made",
+    "file": "src/player/lateSolid.js",
+    "old": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix);",
+    "new": "h.probe.addMesh(PROBE, h.positions, h.indices, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-placed-pieces-given-no-body",
+    "file": "src/scenes/worldModes.js",
+    "old": "    body: player,   // DECOR-CLEAR: a piece landing round the body - or the room's own put back - is solid once it is clear (player/lateSolid.js)\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-a-yard-given-no-body",
+    "file": "src/scenes/homeYards.js",
+    "old": "      body: deps.body ?? null,   // DECOR-CLEAR: a piece landing round a passer-by is solid once they are clear of it\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  },
+  {
+    "name": "DC-the-yards-given-no-body",
+    "file": "src/scenes/world.js",
+    "old": "    body: player,   // DECOR-CLEAR: the body a yard's late piece is withheld from - the motor's own feet, never the eye's low-passed ones\n",
+    "new": "",
+    "tests": [
+      "test/scenes/decor/fb1019b_decorclear.test.js"
+    ]
+  }
+]

@@ -453,6 +453,8 @@ export function yardLotQuads(lot, origin, high = YARD_MARK_HIGH, roads = []) {
  *   feet()       - where the player stands (scene); outside() - whether the player walks the street (no building,
  *                  no dungeon, no saddle)
  *   collider()   - the world's collider (addMesh, removeBucket, surfaceHit)
+ *   body         - DECOR-CLEAR: the player's body, live (the motor), or null - a yard's piece landing round it draws, and
+ *                  is solid once the body is clear of it (decorRoom.js `body`, player/lateSolid.js)
  *   cull(box)    - PERF-YARD: the host's view test of a piece's box in the scene (decorRoom.js DECOR_DRAW / DECOR_SHADOW /
  *                  DECOR_SKIP), or none - every piece within YARD_DRAW_M drawn
  *   meshes, renderer, getTexture, uploadRecord, uploadRecordFrame, iconUrl - the pipeline's, as a room's pool takes them
@@ -558,6 +560,7 @@ export function createHomeYards(deps) {
     y.pool = createDecorRoom({
       meshes: deps.meshes, renderer: deps.renderer, getTexture: deps.getTexture, uploadRecord: deps.uploadRecord, uploadRecordFrame: deps.uploadRecordFrame,
       collider: () => deps.collider?.() ?? null, origin: () => originOf(y),
+      body: deps.body ?? null,   // DECOR-CLEAR: a piece landing round a passer-by is solid once they are clear of it
       // YARD-LIGHT: a lamp lights as the town's (yardLampOf) - the room's machinery mounts it when its picture stands, moves
       // it with a recentre (restand) and takes it down with the piece; `lamps` reads them in the order the pieces stand
       lampOf: yardLampOf,

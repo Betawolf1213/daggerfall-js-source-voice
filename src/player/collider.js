@@ -64,7 +64,10 @@ const GROUND_NY = Math.cos((SLOPE_LIMIT_DEG * Math.PI) / 180);
  *  against what it touches. */
 export const SIDE_CONTACT = 1e-4;
 const TAN_SLOPE_LIMIT = Math.tan((SLOPE_LIMIT_DEG * Math.PI) / 180);   // AUDIT LANDFORMS II I3: the terrain floor snap's reach
-const SKIN = 0.02;
+/** The resolve's contact skin: a face within a sphere's radius + SKIN is met (it grounds, it is leaned on), and pushed
+ *  out only to the radius (_resolveSphere). DECOR-CLEAR (player/lateSolid.js): a face deeper in than the skin is one a
+ *  body is IN, not one it rests on. */
+export const SKIN = 0.02;
 
 /** The slack on the broad-phase box, in world units: the triangles' own arithmetic is float, so the box is grown by
  *  a hair rather than trusted to the last bit. Far below CELL, so it costs nothing in rejects. */
