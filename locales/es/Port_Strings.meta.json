@@ -2034,6 +2034,16 @@
   "tr": "8cb9ceb73b69",
   "by": "claude-in-session"
  },
+ "account.refusal.mendMoved": {
+  "en": "f2d73067470e",
+  "tr": "7d1116b24e62",
+  "by": "claude-in-session"
+ },
+ "account.refusal.mendNotNegative": {
+  "en": "f2a03e0749b4",
+  "tr": "116789b03eaf",
+  "by": "claude-in-session"
+ },
  "account.refusal.method": {
   "en": "3828c1bd90e5",
   "tr": "570b5ae591a8",
@@ -2902,6 +2912,11 @@
  "account.refusal.repairNotSet": {
   "en": "cc0bc29bd55f",
   "tr": "93bfb8221c13",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairTicket": {
+  "en": "f9401e68dfd8",
+  "tr": "c34cf739727c",
   "by": "claude-in-session"
  },
  "account.refusal.reportBody": {
