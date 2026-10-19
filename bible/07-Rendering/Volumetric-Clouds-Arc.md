@@ -715,3 +715,58 @@ keeping its own sweep's pace. Mutants: `tools/mutants/rainfps.json`, 12, 12 dead
 pane's cloud quality, Low, costs a rain sky a quarter of Default's (151 ms
 against 551 in the lab); High costs five times Default in rain (2869 ms) and
 is for strong GPUs only.
+
+## SKY-ARC - the aerial perspective is the light path's (2026-10-19)
+
+**From play:** a player's screenshot on the Discord, "BY THE RING", posted by the owner with "can you fix this weird
+issue in the sky?". One hard, smooth arc ran across a dusk sky. On one side the player's own overcast deck was warm
+yellow-ochre, on the other blue-grey, and the line swept from high overhead down to the horizon.
+
+**Reproduced** in the game at Daggerfall: minute 525200 (4 Morning Star, 17:20), the map's word cloudy, facing north,
+under Dynamic Skies. It also reproduces in the sky lab with that minute's map cells. Removing one cell from the lab's
+list removes the line: the eastern system's overcast ring, its centre 84 km east, its own cloud 13 km away, and its
+SLAB-SPAN reach (85 km) putting its bounding column's wall 0.7 km west of the eye. That cell brings no cloud where the
+line is drawn.
+
+**The cause.** The march faded every sample toward the horizon's colour by where the span holding it BEGAN. SLAB-SPAN
+had moved the fade from the ray's one entry to each span's own start (above). But spans are bookkeeping: they only say
+where the walk may skip air, and they merge and split where the cells' bounding columns meet the zone's slab.
+
+- A ray that leaves the cell's column below the zone's base keeps the zone's deck in a span of its own, so the deck is
+  faded by `uBase / dir.y`.
+- A ray that leaves the column above the zone's base merges the column (from the cell's own, lower base) with the zone,
+  so the same deck is faded by the column's start.
+
+The locus between the two is the column's wall at the zone's base. That wall is a horizontal circle, so on the sky it is
+a smooth conic, and since the fade steps across it the line is hard. Its colour was the horizon's: warm at dusk.
+
+**The law.** Aerial perspective belongs to the light's path from the eye to the point that scattered it. Each sample is
+now faded by its own distance (`volumetricClouds.js:"float aerial(float t)"`), and so are the back veils at theirs
+(`aerial(tBack)`). The spans decide only where the march walks, never what colour it finds. No merge or split of spans
+can draw a line again. SLAB-SPAN's pale block cannot come back either: a sample far behind an empty cell's disc is faded
+by its own distance, as before. The deck is a little hazier through its depth than at its base, by between the fade at
+its base and the fade at its top.
+
+Rejected alternatives:
+
+- **Feathering or resizing the bounding columns** would only move the line.
+- **Fading by the ray's entry again** brings back SLAB-SPAN's pale block.
+
+**Pinned** in `test/render/skyarc_aerial.test.js` (2), on the march's own GLSL through `test/cloudSky.mjs`: the colour
+step across the merge locus is the sky's own step beside it (it was ten times that), and a cell whose cloud a ray never
+meets leaves that ray as the zone alone draws it. `weather2c_cloudcells.test.js`'s aerial law moved with it: the horizon's
+share is between the fade at the slab's base and at its top, times the cloud's opacity, and more than the entry's alone.
+`vc7d_cirrus.test.js` and `vc7c_curtains.test.js` quote the veils' `aerial(tBack)`. Mutants: `tools/mutants/skyarc.json`
+(4, 4 dead); SLAB-SPAN's and AUDIT VC7's records on the fade re-aimed onto the new law (4 dead).
+
+**Also found while reproducing it** (not the arc; open for the owner):
+
+- **A saturated band at the horizon under Dynamic Skies** on the weather map's lane: yellow at 17:00, red at 17:40,
+  stair-stepped, over a grey lid. It brings back the hard sunset line DSH1 fixed. The bridge hands `cloudsStateUnderMod`
+  the clear air's base row (`row: cb.row`, grey 0), so the mod's fog colour comes back ungreyed. The same colour is what
+  far banks fade toward, which is why the arc's warm side was warm. The fix is to grey by the player's own eased weather
+  row, pinned beside `dsh1_horizon.test.js`.
+- **A sun-coloured cap at dusk** in the far haze. Upward rays' sun-path foot leaves the 13.1 km cloud-shadow square, and
+  `clamp(g, lo, hi)` in fp32 can land a hair outside it, where `cloudShadowAt` reads full sun. `_shiftShadowMap` does
+  the same for a sweep after every eastward pixel crossing, since it fills the uncovered strip all light. The fix is to
+  clamp in UV space and fill the uncovered strip by extending the old map's edge.

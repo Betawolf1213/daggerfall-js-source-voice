@@ -1087,6 +1087,12 @@ vec4 underCurtains(vec3 col, float T, vec3 cam, vec3 dir) {
   return vec4(front.rgb + front.a * col, T * front.a);
 }
 float hg(float c, float g) { float g2 = g * g; return (1.0 - g2) / (4.0 * PI * pow(1.0 + g2 - 2.0 * g * c, 1.5)); }
+// SKY-ARC (2026-10-19, a player's screenshot "BY THE RING"): THE AERIAL PERSPECTIVE IS THE LIGHT PATH'S - the share of the
+// horizon's colour a sample takes is its own distance's, never the span list's. Spans only say where the march may skip
+// air; read off where a sample's span BEGAN, the one deck took two fades either side of the locus where a cell's bounding
+// column merged with the zone's slab (the column's wall at the zone's base - a horizontal circle, so a smooth conic on
+// the sky), and drew a hard arc across it
+float aerial(float t) { return 1.0 - exp(-min(t, 1e6) / 14000.0); }
 float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
 // VC6b: a colour's HUE at luminance one. Every tint below is taken
 // through this, so a tint can only move a colour's hue and never its
@@ -1186,10 +1192,10 @@ void main() {
   float jit = hash12(gl_FragCoord.xy);
   float t = t0 + ds * jit;
   int span = 0;
-  // aerial perspective: a far bank takes the horizon's colour - by the distance its span begins at (SLAB-SPAN: a
-  // span's own, so a storm near and the deck far behind it on one ray are each faded by their own distance; with one
-  // span, the ray's entry for all of it, as it was)
-  float fade = 1.0 - exp(-t0 / 14000.0);
+  // aerial perspective: a far bank takes the horizon's colour - by each sample's own distance (aerial; SLAB-SPAN made it
+  // a span's own, so a storm near and the deck far behind it on one ray were each faded by their own distance; SKY-ARC
+  // takes it the last step, off the span list entirely - a span's start moved with the cells' bounding columns, not the
+  // light)
   float cosTheta = dot(dir, uLightDir);
   float phase = min(mix(hg(cosTheta, 0.55), hg(cosTheta, -0.1), 0.4) * 4.0 * PI, 2.5);   // the average over the sphere is 1; the forward peak capped
   // ═══ VC6b: THE LOW SUN ══════════════════════════════════════════════
@@ -1232,7 +1238,7 @@ void main() {
     // case - without it a ray that crosses several banks could stop
     // short of t1 and lose the far one.
     // SLAB-SPAN: past a span's end, on to the next - the air between holds no cloud, so it costs no step
-    while (span < spanN && t > spanB[span]) { span++; if (span < spanN) fade = 1.0 - exp(-spanA[span] / 14000.0); }
+    while (span < spanN && t > spanB[span]) span++;
     if (span >= spanN) break;
     if (t < spanA[span]) { t = spanA[span] + ds * jit; strode = false; empty = 0; }
     if (i >= uSteps + ${MARCH_SLACK} || t > t1) break;
@@ -1253,7 +1259,7 @@ void main() {
     empty = 0;
     // VC7c: the veil past the slab's start goes in before the first cloud behind it - only a lit sample can stand in
     // front of it or behind it, so the empty air between needs no order
-    if (!veiled && tBack <= t) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), fade); T *= back.a; veiled = true; }
+    if (!veiled && tBack <= t) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(tBack)); T *= back.a; veiled = true; }
     {
       float h = clamp((p.y - fBase) / max(fTop - fBase, 1.0), 0.0, 1.0);
       float tau = lightDepth(p);
@@ -1272,13 +1278,13 @@ void main() {
       float light = lightOctaves(tau, phase, deckHere);   // VC7e: the octaves - a deck's
       vec3 S = uLightColor * light * gain * (1.0 - 0.8 * fDark) * (1.0 - 0.5 * fGrey) * fTint + ambient;
       float Ti = exp(-rho * EXT * ds);
-      col += T * mix(S, uHorizonColor, fade) * (1.0 - Ti);
+      col += T * mix(S, uHorizonColor, aerial(t)) * (1.0 - Ti);
       T *= Ti;
       if (T < 0.01) break;
     }
     t += ds;
   }
-  if (!veiled) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), fade); T *= back.a; }   // VC7c: behind every cloud the march lit
+  if (!veiled) { col += T * mix(back.rgb, uHorizonColor * (1.0 - back.a), aerial(tBack)); T *= back.a; }   // VC7c: behind every cloud the march lit
   vec4 ice = cirrus(cam, dir);   // VC7d: far above the slab - behind it along the ray
   col += T * ice.rgb;
   T *= ice.a;
