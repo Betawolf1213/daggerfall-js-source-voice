@@ -1417,6 +1417,11 @@ Developer's alone - a token whose glyphs say `dev`), and `/relay <setting> -` ha
 - GRANT8 and GRANT9 (`11-Multiplayer/Spawn-Grants.md` section 16): `grantRoll` (var GRANT_ROLL) and `grantStrip` (var
   GRANT_STRIP), each on or off, off unset - an encounter's grant rolling its species from its seed, and the relay dropping
   a foe record its grant does not stand. Each is read as `grantMode` is fetched, from the settings the cell last had.
+  FOE-BOUNDS (section 19): `grantStrip` drops a record no builder could give too, counted under the relay's own name.
+- GRANT-DOOR (`11-Multiplayer/Spawn-Grants.md` section 20): `grantDoor` (var GRANT_DOOR) on or off, off unset - while on, a
+  foes room (a cell, a world room) refuses a hello that does not say the spawn grants its build stands on (`gv`), with
+  GROUND-GATE's words; a cold room asks the hub before its first such hello. Off until the site serves the build that
+  says it.
 
 **A halo told when its cell judges poses** (`server/src/index.js` _refereesPoses, `_rfSay`). SCALE2c moved a halo's
 pose rate here because the relay judges fights off the poses that reach each cell, a halo's copies too:

@@ -466,7 +466,7 @@ captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), floorPlan, liv
 clampToFloor, newFight's `pt`, xaWire; `world/gate/gateArena.js` planOfDay, arrivalOf and the plan's model, collider,
 slabs and lights; `scenes/gate/gateStand.js` (the court's builders out of `scenes/worldModes.js`, HOST-SPLIT); the
 words in the chat, the map's card, the marks card's rows (made the first night that has one) and the herald's omen
-post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world223 (world222 on its branch, renumbered past GATE-DOOR at the merge).
+post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world224 (world222 on its branch, renumbered past GATE-DOOR at one merge and past FOE-BOUNDS and GRANT-DOOR's world223 at the next).
 Pins: `test/net/gate/wb14b_portents.test.js` (13); mutants: `tools/mutants/wb14b.json` (18, all dead). Found in it and
 fixed in WB14a's push: the court's `reset` had lost its first line of resets behind the night's arrival (a comment
 swallowed them) - a new night's attacks numbered as the last night's were never judged; pinned by a Slam that must land
