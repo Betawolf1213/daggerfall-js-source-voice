@@ -477,7 +477,7 @@ test('PROF10 book: a piece carries a Lapidary\'s cracked gem to the door - `crac
 test('PROF10 wiring: the jeweller\'s bench a Pawn Shop\'s or a Gem Store\'s (open for trade) or a home\'s station; the world crafts a piece there by Jewelcrafting\'s station, the facet\'s band off WIL and LUC, a Lapidary\'s gem through the book; the service\'s route reads it, refuses it to all but a Lapidary and answers a piece\'s hand; the pages draw the bench beside the fire; the bench sold where it works', () => {
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /if \(t === BUILDING_TYPES\.PawnShop \|\| t === BUILDING_TYPES\.GemStore\) return interiorBuilding\.insideOpenShop === false \? null : \{ kind: 'shop', fee: JEWEL_FEE \};/);
-  assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'jeweller'\)\) return \{ kind: 'home', fee: 0 \};/);
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'jeweller'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018D HOME-BENCH, test/scenes/fb1018d_homebench.test.js): a home's stations serve its owner's account
   assert.match(m, /if \(hallMemberHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'jeweller'\)\) return \{ kind: 'home', fee: 0 \};/);
   const w = src('src/scenes/world.js');
   assert.match(w, /: profession === 'jewelcrafting'[^\n]*\n\s*\? \{ here: \(\) => modes\?\.jewellerHere\?\.\(\) \?\? null, a: 'a jeweller\\'s bench', who: 'jeweller', noun: 'jeweller\\'s bench', kept: JEWEL_KEPT_TEXT, xp: professionName\('jewelcrafting'\) \}/);   // PIN MOVED (AUDIT PROF-541 R2-C2): no station's own busy word; PIN MOVED (CRAFT3): the XP word the craft's track's

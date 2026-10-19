@@ -309,6 +309,8 @@ import { mintStamp, stampTabOf, PUBLIC_TABS } from '../../src/net/safety/chatSta
 import { sealFeed, FEED_SIG_HEADER, FEED_BATCH, FEED_WAIT_MS, FEED_POST_MS } from '../../src/net/safety/chatFeed.js';   // SAFE5: the reviewer's feed
 import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarksFor, signGrant, grantBucketIdle, GRANT_TTL_MS, GRANT_SKEW_MS, GRANT_TALLY_MS, grantRenewed, grantCarried, grantHanded, grantSignedHere, GRANT_OPEN_KINDS, grantKindRolled, grantMarksAllow } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
 import { newGrantMeasure, foldGrantAsk, foldGrantTally, grantMeasureBatch, sealGrantMeasure, GRANT_MEASURE_MS, GRANT_MEASURE_SIG_HEADER, GRANT_MEASURE_POST_MS } from '../../src/net/grantMeasure.js';   // GRANT2: and its measure, to the service
+import { seatOf, seatElder, seatStreams, seatTraffic, seatSilent, seatHeardAt, seatInAt, othersInOf } from '../../src/net/seatLive.js';   // FIELD BUGS 2026-10-18d SEAT-LIVE: a dungeon room's seat is a live socket's
+import { FOES_STALE_MS } from './relay.js';   // SEAT-LIVE: the seat's staleness, the page's own (net/wire.js)
 import { holdemGate, holdemSitRoomGate } from './relay.js';   // CARDS5: the card table's gate; AUDIT CARDS-3 A4: the room's sits
 import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand, actAt as holdemAct, tick as holdemTick, nextAt as holdemNextAt, emptyTable as holdemEmpty, tableLook as holdemLook, stateDelta as holdemDelta, holdemGoldTable } from '../../src/net/holdemTable.js';   // CARDS5: THE RELAY DEALS - the room's card tables (holdemTable.js imports only cardLaw.js, which imports only dice.js)
 // WILD1 (2026-10-07, the owner: "Wrothgarian mountains need to be turned into a open pvp zone"): ONE FILE JOINS THE
@@ -865,6 +867,7 @@ export class Room {
     this._everyone = null;       // SCALE5c: { at, s } - everyone online as the bus last said it (`_everyoneSaid`)
     this._busKey = undefined;    // SCALE5c part two: the channel this bus is (its first shard's), never another's
     this._hostMemo = undefined;  // SCALE5b: the room's host (`_hostOf`), kept until a socket's id or hello stamp moves - undefined: not known
+    this._seatSaid = undefined;  // SEAT-LIVE: the host the room was last told (`_sayHost`) - undefined: not known since this object woke
     this._relayCfg = undefined;  // SCALE5b: the relay's settings (net/relayCfg.js) - the hub's from its storage, any other room's as the hub last answered
     this._relayCfgAt = -Infinity;   // SCALE5b: when a room not the hub last asked
     this._rfSaid = false;        // SCALE5b: whether this cell last said it judges the poses that reach it (`_rfSay`)
@@ -2069,30 +2072,93 @@ export class Room {
    *  `except`, or with a socket that is not the host's, the kept answer; else the walk. */
   _hostOf(except = null) {
     this._all();   // a walk due past IDX_TRUST_MS runs first, as the walk below would have run it - and forgets the kept host if it finds the room moved
-    if (this._hostMemo === undefined) this._hostMemo = this._hostWalk(null);
+    if (this._hostMemo === undefined || this._seatStale(this._hostMemo)) this._hostMemo = this._hostWalk(null);   // SEAT-LIVE: and a kept host gone quiet is asked again
     const host = this._hostMemo;
     if (except == null || host == null) return host;
     if (this._all().get(except)?.id !== host) return host;
     return this._hostWalk(except);
   }
-  /** The walk itself - what `_hostOf` answered before SCALE5b. */
-  _hostWalk(except) {
-    let best = null;
-    for (const [ws, a] of this._all()) {
-      if (ws === except || !a.id) continue;
-      if (!best || (a.since ?? 0) < (best.since ?? 0) || ((a.since ?? 0) === (best.since ?? 0) && a.id < best.id)) best = a;
-    }
-    return best?.id ?? null;
+  /** The walk itself - what `_hostOf` answered before SCALE5b. FIELD BUGS 2026-10-18d SEAT-LIVE (net/seatLive.js): a
+   *  dungeon room's seat is the eldest of its LIVE sockets - one silent past FOES_STALE_MS with another there to hear it
+   *  holds it no longer - and, none live, the eldest; every other room's, the eldest. */
+  _hostWalk(except, live = true) {
+    const list = [];
+    for (const [ws, a] of this._all()) if (ws !== except && a.id) list.push(a);
+    return seatOf(list, Date.now(), { live: live && seatStreams(list[0]?.key) });
   }
-  /** Does this hello'd attachment lead every other (but except's) - is it the room's host? */
+  /** Does this hello'd attachment lead every other (but except's) - is it the room's host? SEAT-LIVE: by the seat's own
+   *  law (`seatOf`), with `a` counted though its socket has left the index (a leaver's). */
   _leads(a, except = null) {
-    for (const [ws, b] of this._all()) if (ws !== except && b.id && b.id !== a.id && ((b.since ?? 0) < (a.since ?? 0) || ((b.since ?? 0) === (a.since ?? 0) && b.id < a.id))) return false;
-    return true;
+    const list = [a];
+    for (const [ws, b] of this._all()) if (ws !== except && b.id && b !== a) list.push(b);
+    return seatOf(list, Date.now(), { live: seatStreams(a.key) }) === a.id;
+  }
+  /** SEAT-LIVE (AUDIT FB1018D L4-2): whether a leave moves the seat the room knows - the leaver led it, or it was the host
+   *  the room was last told (`_seatSaid`): a silent host whose socket closes with no farewell before any frame said the
+   *  change. By the live law the joiner already leads, so `_leads` reads the leaver as no host; and `_seatHeard`, finding
+   *  the told host gone from the room, would take the new seat as said - the room never told, the seat's page never
+   *  streaming nor writing the room's memory. */
+  _leaveMovesSeat(a, ws) {
+    return this._leads(a, ws) || (seatStreams(a.key) && a.id != null && a.id === this._seatSaid);
+  }
+  /** SEAT-LIVE: whether the kept host `id` has gone quiet - a dungeon room's, none of its sockets heard within
+   *  FOES_STALE_MS (the walk then asks whether another socket was there to hear it). A host still streaming is O(1). */
+  _seatStale(id) {
+    if (id == null) return false;
+    const now = Date.now();
+    let any = false;
+    for (const ws of this._byId().get(id) ?? []) { const a = this._all().get(ws); if (!a || !seatStreams(a.key)) return false; any = true; if (now - seatHeardAt(a) <= FOES_STALE_MS) return false; }
+    return any;
+  }
+  /** SEAT-LIVE: the seat's own door, at every frame of a dungeon room - BEFORE any door reads the host. A socket's FRAME
+   *  (net/seatLive.js seatTraffic: its hello, a pose, its stream, its own lane, its memory - never a ping) stamps it heard
+   *  (`hd`, written lazily as a pose is; a hello its coming in, `hi`). One that was silent comes back a JOINER: told whose
+   *  the seat is (it may have missed it), and stamped after the live seat when its old stamp would outrank it - so its
+   *  frozen world never takes the seat back. The seat as it now stands is said to the room when it is not the one the
+   *  room was last told: a host gone quiet is a host change, as a leave is. Answers the attachment as it now stands
+   *  (`_message` reads on from it). */
+  _seatHeard(ws, a, message, now = Date.now()) {
+    if (!a || !seatStreams(a.key)) return a;
+    let back = false;
+    if (seatTraffic(message)) {
+      if (a.id && now - seatHeardAt(a) > FOES_STALE_MS) {   // heard lately: live, and no walk
+        const list = [];
+        for (const [, b] of this._all()) if (b.id) list.push(b);
+        back = seatSilent(a, othersInOf(list)(this._all().get(ws) ?? a), now);
+      }
+      const since = back ? this._seatAfter(a, now) : a.since;
+      const at = { ...a, hd: now, ...(a.id ? {} : { hi: now }), ...(since !== a.since ? { since } : {}) };   // a hello: its coming in, which the hello's own write keeps
+      if (this._setAttach(ws, at, since === a.since && !!a.id)) a = at;
+    }
+    if (this._seatSaid === undefined) this._seatSaid = this._hostWalk(null, false);   // woken: the room was told the eldest (a change this wake then says again - a host frame said twice is nothing)
+    const host = this._hostOf();
+    let said = false;
+    if (host !== this._seatSaid) { if (this._seatSaid != null && this._byId().has(this._seatSaid)) { this._sayHost(); said = true; } else this._seatSaid = host; }   // a host told to nobody here (a drained room) is not said again
+    if (back && host && !said) this._send(ws, JSON.stringify({ t: 'host', id: host }));
+    return a;
+  }
+  /** SEAT-LIVE: the hello stamp a socket back from silence takes - its own, unless that would outrank the room's live seat,
+   *  when it comes in just after the seat's. */
+  _seatAfter(a, now) {
+    const seat = this._hostOf();
+    let sa = null;
+    for (const w of seat && seat !== a.id ? this._byId().get(seat) ?? [] : []) { sa = this._all().get(w) ?? null; if (sa) break; }
+    return sa && seatElder(a, sa) ? Math.max(now, (sa.since ?? 0) + 1) : (a.since ?? now);
+  }
+  /** SEAT-LIVE: a reconnect's hello stamp - the socket it replaces keeps its seat (AUDIT WORLD A4: a host whose connection
+   *  blipped) while that socket was live; one back from silence comes in after the live seat (`_seatAfter`). */
+  _seatKeep(replaced, now) {
+    if (!replaced) return now;
+    if (!seatStreams(replaced.key)) return replaced.since ?? now;
+    let othersIn = null;   // since when another has been here to hear it (the replaced socket has lost its id by now)
+    for (const [, b] of this._all()) if (b.id && b !== replaced) { const t = seatInAt(b); if (othersIn == null || t < othersIn) othersIn = t; }
+    return seatSilent(replaced, othersIn, now) ? this._seatAfter(replaced, now) : (replaced.since ?? now);
   }
   /** The host frame to everyone but skip (whose welcome carries it), the host counted without except (a leaver).
-   *  Nothing on the instance: a wake changes no host. */
+   *  Nothing on the instance: a wake changes no host. SEAT-LIVE: what was said is kept (`_seatSaid`). */
   _sayHost({ skip = null, except = null } = {}) {
     const host = this._hostOf(except);
+    this._seatSaid = host;
     if (!host) return;
     const out = JSON.stringify({ t: 'host', id: host });
     for (const [other, b] of [...this._all()]) if (other !== skip && b.id) this._send(other, out);
@@ -3204,6 +3270,7 @@ export class Room {
     if (a.id && isCellRoom(a.key) && wardenDue(this._wardenAt, Date.now())) {
       try { await this._parkWarden(Date.now()); } catch (e) { this._parks = null; this._wardenAt = Date.now() + WARDEN_RETRY_MS; console.warn('[park] the watch', e?.message ?? e); }
     }
+    a = this._seatHeard(ws, a, message);   // FIELD BUGS 2026-10-18d SEAT-LIVE: a dungeon room's seat follows its live sockets - before any door reads the host
     // AUDIT WORLD A1: a large frame - or any frame shaped as a world frame - is the host's memory or nothing, and is
     // answered BEFORE any parse: a socket with no hello is refused, the frame is metered on the pose bucket, and
     // anyone but a world room's host is ignored unparsed (a handover races; parsing 512 KiB for a stranger was the
@@ -3418,7 +3485,7 @@ export class Room {
         // AUDIT SCALE II R2-4: and kept, so a woken instance whose sockets say nothing still knows it
         if (this._hubKeyKept !== this._hubKey) { this._hubKeyKept = this._hubKey; try { await this.state.storage.put(HUB_KEY_KEY, this._hubKey); } catch { this._hubKeyKept = null; } }
       }
-      if (!this._setAttach(ws, { ...a, ...placed, ...shown, ...(shard ? { vid, hm: { acct: m.acct ?? null, as: m.asecret ?? null, ps: m.ps === 1 ? 1 : 0, sc: m.secret } } : copy ? { vid } : {}), id: m.id, name: who.name, title: who.title, ...(who.ts ? { ts: who.ts } : {}), glyphs: who.glyphs, gx: who.gx, au: who.au, ...(who.rb ? { rb: who.rb } : {}), lv: who.lv, ...guild, ...(who.hn ? { hn: who.hn, hc: who.hc, hb: who.hb, hg: who.hg } : {}), ...(who.ci && !chat && !isSocialRoom(a.key) ? { ci: who.ci } : {}), ...(armsOk(who.wa) && !chat && !isSocialRoom(a.key) ? { wa: who.wa } : {}), gio: who.gio, sub: who.subject, ...(instParty ? { ip: 1 } : {}), ...(siegeSide ? { sd: siegeSide } : {}), mu: who.mu, pose: chat ? null : m.pose, since: replaced?.since ?? now, ...arena, ...charLv, ...linked, ...(chat && who.kind === 'guest' ? { gu: 1 } : {}), ...(m.w2 === 1 ? { w2: 1 } : {}) })) { this._refuse(ws, 'hello too large'); return; }   // MOD1: `sub` the verified account (what a mute names), `mu` until when it may not talk   // RENOWN1: `lv` the Renown level the token carried   // AUDIT SAFE RELAY-11: `gu`, a guest's socket in a channel - paced as a sprout's (`_newVoiceWait`)
+      if (!this._setAttach(ws, { ...a, ...placed, ...shown, ...(shard ? { vid, hm: { acct: m.acct ?? null, as: m.asecret ?? null, ps: m.ps === 1 ? 1 : 0, sc: m.secret } } : copy ? { vid } : {}), id: m.id, name: who.name, title: who.title, ...(who.ts ? { ts: who.ts } : {}), glyphs: who.glyphs, gx: who.gx, au: who.au, ...(who.rb ? { rb: who.rb } : {}), lv: who.lv, ...guild, ...(who.hn ? { hn: who.hn, hc: who.hc, hb: who.hb, hg: who.hg } : {}), ...(who.ci && !chat && !isSocialRoom(a.key) ? { ci: who.ci } : {}), ...(armsOk(who.wa) && !chat && !isSocialRoom(a.key) ? { wa: who.wa } : {}), gio: who.gio, sub: who.subject, ...(instParty ? { ip: 1 } : {}), ...(siegeSide ? { sd: siegeSide } : {}), mu: who.mu, pose: chat ? null : m.pose, since: this._seatKeep(replaced, now), ...arena, ...charLv, ...linked, ...(chat && who.kind === 'guest' ? { gu: 1 } : {}), ...(m.w2 === 1 ? { w2: 1 } : {}) })) { this._refuse(ws, 'hello too large'); return; }   // MOD1: `sub` the verified account (what a mute names), `mu` until when it may not talk   // RENOWN1: `lv` the Renown level the token carried   // AUDIT SAFE RELAY-11: `gu`, a guest's socket in a channel - paced as a sprout's (`_newVoiceWait`)
       if (!chat && m.pose && this._trailing({ key: a.key, sub: who.subject })) this._trailPose(ws, m.pose, now);   // AUDIT INT11: a fighter's socket new to the room stands where its hello put it, from now - on its trail, or none says when
       // SRV-N: `v` rides EVERY welcome, a channel's included. A player in the enhanced skin holds a presence socket
       // and one chat socket per tab; whichever reconnects first after a hand deploy is the one that notices, and the
@@ -4738,7 +4805,7 @@ export class Room {
     if ((isChannelShard(a.key) || (a.ly && isGateRoom(a.key))) && a.vid) { this._vidIdx.delete(a.vid); this._hubUpOwe(a.vid, 'x', 0); }   // SCALE5d part two: a court copy's too   // SCALE5c: and the bus told it went
     else if (isChannelBus(a.key)) this._busCountMoved();   // SCALE5c: the bus's - its shards told the hub's count
     this._travOwed.delete(a.id);   // AUDIT DEEP2 C2: the leave takes the mark out - an owed clear of it is said
-    if (!isChatRoom(a.key) && this._leads(a, ws)) this._sayHost({ skip: ws, except: ws });   // WORLD1: the host left - the next-longest in the room is the host now, said to everyone (ROSTER-G: a channel has no host)
+    if (!isChatRoom(a.key) && this._leaveMovesSeat(a, ws)) this._sayHost({ skip: ws, except: ws });   // WORLD1: the host left - the next-longest in the room is the host now, said to everyone (ROSTER-G: a channel has no host)
     if (isBattleRoom(a.key) && a.sub) { try { await this._siegeGone(ws, a.sub, Date.now()); } catch (e) { console.warn('[siege] leave failed', e?.message ?? e); } }   // AUDIT-SEATS T3: a fighter's place kept from now
     if (isSocialRoom(a.key) && a.acct) { try { await this._leaveAccount(ws, a, Date.now()); } catch (e) { console.warn('[hub] leave failed', e?.message ?? e); } }   // SOC1: last seen stamped, the friends and the party told
     if (a.id && String(a.key ?? '').startsWith('interior:')) { try { await this._holdemLeave(a, Date.now()); } catch (e) { console.warn('[holdem] leave failed', e?.message ?? e); } }   // CARDS5: folded out of turn, stood up at the hand's end

@@ -780,6 +780,7 @@ import { createDataPipeline } from './dataPipeline.js';
 import { createWorldModes } from './worldModes.js';
 import { setAmbientTextHost, tickAmbientText } from '../systems/ambientText.js';   // AT2: Ambient Text's one component - this host claims it and feeds it the frame
 import { OnlineSession, steadyNow, roomKeyFor, DEFAULT_SERVER, WORLD_PUBLISH_MS, WORLD_REPUBLISH_MS, FOES_MS, FOES_FULL_MS, FOES_STALE_MS, SHOWN_MOVE_HOLD_MS } from '../net/online.js';   // ONLINE1: the session; WORLD1: the room's memory; AUDIT 637 D7: the move hold, one law both ends
+import { createSeatClock } from '../net/seatLive.js';   // FIELD BUGS 2026-10-18d SEAT-LIVE: the named seat's patience, which this page's own absence never spends
 import { pageWave } from '../net/reconnectWave.js';   // SCALE2c: a relay deploy's reconnect, spread by the hub's count
 import { quietFoesGate } from '../net/foesQuiet.js';   // SCALE2c: a full foes frame that says nothing, said once
 import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../net/oneSeat.js';   // ONE-SEAT: one tab of a player online - the browser's arm, beside the hub's
@@ -7665,7 +7666,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let _serpentStandIn = null;
   const serpentStandIn = () => {
     if (!_serpentStandIn) {
-      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent');
+      const e = bossStandIn({ mobile: SERPENT_VOICE_ROWS.dreugh }, 'the sea serpent', () => serpentHost?.healthShare() ?? null);   // FIELD BUGS 2026-10-18f RELAY-SHARE: its health as the relay says it
       e.armor = 100; e.armorValues = new Array(7).fill(100); e.skills = 0;
       _serpentStandIn = e;
     }
@@ -8612,7 +8613,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return !!w;
     },
     nameOf: (uid) => fleetHost?.nameOf?.({ uid }) ?? '',
-    weigh: (items) => totalWeight(items ?? []),
     say: (text) => townTalk.say(text),
   });
   /** COMPANION-KIT (2026-10-01, Mac: companions "act as storage"): my companion activated - his pack (the party's live
@@ -11745,7 +11745,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           const paid = f.fee > 0 && !r.elsewhere;
           const rec = recipeById(recipe);
           const made = rec?.kind === 'siege' ? storedText(rec.name, Number(r.data.count) || 1) : craftedText(mintPieces(r.data));   // SEAT2b part two: a Ram Kit is the Stores'
-          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp)}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };
+          return { ok: true, text: `${chain ? `${chain} ` : ''}${made} ${craftXpText(rec, r.data, st.xp, profBook.limit(rec?.profession))}${paid ? `, and paid the ${f.who ?? st.who} ${f.fee} gold` : ''}.` };   // CRAFT-LIMIT-SAID: and the crafter's limit, where it now holds the track
         },
         stock: async (material, qty, counter = stockOf(material)?.counter) => {
           const r = await profBook.stock(material, qty);
@@ -20475,7 +20475,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // WORLD2: ONE SIMULATION PER ROOM. While I host a world room the dungeon's layout foes are mine to step and I
   // stream every changed one FOES_MS apart (every one FOES_FULL_MS apart, so a dropped delta heals); while another
   // hosts, my layout foes are puppets that follow the stream and my blows on them go to the host as hits.
-  let _foesSentAt = -Infinity, _foesFullAt = -Infinity, _foesInAt = -Infinity;
+  let _foesSentAt = -Infinity, _foesFullAt = -Infinity; const seatClock = createSeatClock(FOES_STALE_MS);   // SEAT-LIVE: the seat heard (its stream applied, its word) - a page back from a hidden spell gives it its patience again
   const _foesQuiet = quietFoesGate();   // SCALE2c: what my cell last heard from me - a full frame that says nothing is said once (net/foesQuiet.js)
   let _ownSentAt = -Infinity, _ownFullAt = -Infinity;   // QUEST-PARTY phase 3b: the room's own lane (OWN1), on its own clocks
   let _duelRingSaid = null;   // DUEL1: the id of the ring my foes frame last said I stand in (null: none)
@@ -20656,7 +20656,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  seat is ALIVE - its stream, or its word in the welcome, heard within FOES_STALE_MS (AUDIT WORLD2 C2/C5: a dead
    *  socket, a terminal close or a silent host left a joiner's dungeon frozen with every blow dropped). Read every
    *  frame, not on a host change alone. */
-  const dungeonAuthority = (now = performance.now()) => !(online?.room && isWorldRoom(online.room) && online.status === 'open' && online.host && !online.isHost() && now - _foesInAt < FOES_STALE_MS);
+  const dungeonAuthority = (now = performance.now()) => !(online?.room && isWorldRoom(online.room) && online.status === 'open' && online.host && !online.isHost() && seatClock.live(now));
   let onlineToScene = (p) => [p.x, p.y, p.z];
   // AUDIT MERGE-PLUS B1: ...and its inverse, for a POINT I send (PEERFX1's struck point) - the pose's own per-mode law,
   // written beside the pose each frame. The blow's point went through the overworld's mapping in every mode, so in a
@@ -21250,7 +21250,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // WORLD1: the room's memory in - a welcome that carries the world the room keeps lands on the standing dungeon
     // (the mode machine refuses another dungeon's); a new host publishes at once
     online.onWorld = (shared) => { if (modes?.restorePlaceSharedWorld?.(shared)) console.info('[online] the room\'s memory restored'); };   // WORLD6a: on the standing place, a dungeon or a building
-    online.onHost = (id, mine) => { if (mine) { _worldPublishedAt = -Infinity; _foesFullAt = -Infinity; } else if (id && isWorldRoom(online.room)) _foesInAt = performance.now(); modes?.setDungeonAuthority?.(dungeonAuthority()); };   // AUDIT WORLD6b A9: a cell's seat is no heartbeat   // WORLD2: the seat decides who steps the foes; a new host streams every foe at once; another's word is its first heartbeat
+    online.onHost = (id, mine) => { if (mine) { _worldPublishedAt = -Infinity; _foesFullAt = -Infinity; } else if (id && isWorldRoom(online.room)) seatClock.heard(performance.now()); modes?.setDungeonAuthority?.(dungeonAuthority()); };   // AUDIT WORLD6b A9: a cell's seat is no heartbeat   // WORLD2: the seat decides who steps the foes; a new host streams every foe at once; another's word is its first heartbeat
     online.onFoes = (id, data) => {
       if (isCellRoom(online.room)) {
         if ((modes?.mode ?? 'exterior') === 'exterior') exteriorFoes.applyFoes(id, data);
@@ -21267,7 +21267,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // that throws on this client every frame (ONCRASH1 drops it) still read as a live host for ever - so
       // FOES_STALE_MS could never fire, the seat never came back, and the player walked a dungeon of frozen puppets
       // that received nothing. A crash was bad; a silent soft-lock is worse. `applyDungeonFoes` already answers.
-      if (modes?.applyDungeonFoes?.(id, data) && modes?.mode === 'dungeon') _foesInAt = performance.now();
+      if (modes?.applyDungeonFoes?.(id, data) && modes?.mode === 'dungeon') seatClock.heard(performance.now());
     };
     // PEERFX1: my weapon blows (a splash marked fromPlayer - melee, arrows, never a spell) and the ring of a blow on
     // me ride the pose to the players who see me; every splash drawn here is the dedupe for theirs
@@ -29103,7 +29103,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ownStream(now);    // QUEST-PARTY phase 3b: mine in a building, on the room's own lane
     actFlush();        // AUDIT WORLD3 A3: an act the wire refused, re-read and re-sent
     hitFlush(now);     // AUDIT FOES FOE2: and a BLOW the wire refused - a joiner applies none locally, so a lost frame is a lost blow
-    modes?.setDungeonAuthority?.(dungeonAuthority(now));   // AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
+    seatClock.frame(now); modes?.setDungeonAuthority?.(dungeonAuthority(now));   // SEAT-LIVE: this frame told the clock first (a gap is the page away, not the seat); AUDIT WORLD2 C2: the seat re-read every frame - a dead socket, a terminal close or a silent host hands the foes back
     hccParkTick(now); doorToken.frame();   // HCC-PARK: my parked team's word to the cell it stands in, when it changed   // DOOR-TOKEN: the way out approached - its token minted on the walk to the door
     overworldLedgerFrame(now); searchPartyFrame(now);   // OW6L: what I spent and my spawns' clocks, to the cell that keeps them; GRAVE-PARTY: and the stones I searched
     caravanDecorTick(now);   // WAGONS2-VISIT: what I placed in my caravan, to its room, when it changed

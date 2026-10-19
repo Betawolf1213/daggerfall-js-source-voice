@@ -8014,6 +8014,11 @@
   "tr": "165296e1c352",
   "by": "claude-in-session"
  },
+ "eg.hit.noFooting": {
+  "en": "36cafe71cf04",
+  "tr": "81eb8841de6c",
+  "by": "claude-in-session"
+ },
  "eg.panel.noteTouch": {
   "en": "7a7fe891ec83",
   "tr": "75906679a6a1",
@@ -8042,6 +8047,16 @@
  "eg.row.falls": {
   "en": "4b22cefe01d1",
   "tr": "59a22c2c42eb",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "9e791d849484",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "485733bc5d43",
   "by": "claude-in-session"
  },
  "eg.say.perches": {
@@ -20334,6 +20349,16 @@
   "tr": "deaa50623994",
   "by": "claude-in-session"
  },
+ "prof.craft.xpLimit": {
+  "en": "ebd9569af9a3",
+  "tr": "071df6ff9141",
+  "by": "claude-in-session"
+ },
+ "prof.craft.xpTop": {
+  "en": "bf5e8dd5fd87",
+  "tr": "385e4c2c132d",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "9d31c6ac262d",
@@ -20674,9 +20699,19 @@
   "tr": "591a1a7a47ed",
   "by": "claude-in-session"
  },
+ "prof.page.craft.xpLimit": {
+  "en": "0a83e8c8e02b",
+  "tr": "0ae300506866",
+  "by": "claude-in-session"
+ },
  "prof.page.craft.xpShop": {
   "en": "78aff271f890",
   "tr": "ed525c525ef6",
+  "by": "claude-in-session"
+ },
+ "prof.page.craft.xpTop": {
+  "en": "fb99bb33663b",
+  "tr": "0d8275214edc",
   "by": "claude-in-session"
  },
  "prof.page.crafting": {
@@ -20909,6 +20944,11 @@
   "tr": "bbac54430eba",
   "by": "claude-in-session"
  },
+ "prof.page.fire.pansOnly": {
+  "en": "3f775f27b64d",
+  "tr": "8627ee8f1779",
+  "by": "claude-in-session"
+ },
  "prof.page.fire.quick": {
   "en": "58361144a9ac",
   "tr": "64465ea4cb5d",
@@ -21010,8 +21050,18 @@
   "by": "claude-in-session"
  },
  "prof.page.how.alchemy": {
-  "en": "1df3a4158e86",
-  "tr": "5432f05c4f51",
+  "en": "010b4180e9a8",
+  "tr": "e99c67941fae",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.building": {
+  "en": "81a899fc68aa",
+  "tr": "f73f4ca685de",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.cooking": {
+  "en": "c132c8088fba",
+  "tr": "35c8d3faab13",
   "by": "claude-in-session"
  },
  "prof.page.how.enchanting": {
@@ -21052,6 +21102,16 @@
  "prof.page.how.miningSurveyor": {
   "en": "8ea3b3f58e32",
   "tr": "1672134803a4",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.outfitting": {
+  "en": "833d2e70dbed",
+  "tr": "ed0d65795fea",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.smithing": {
+  "en": "3cb5f680ad26",
+  "tr": "dd6daa5a85f6",
   "by": "claude-in-session"
  },
  "prof.page.jewel": {
@@ -21162,6 +21222,11 @@
  "prof.page.limit": {
   "en": "b9efd5663578",
   "tr": "10978723800a",
+  "by": "claude-in-session"
+ },
+ "prof.page.limit.rule": {
+  "en": "8074c8ae816c",
+  "tr": "9bd3b5642fcc",
   "by": "claude-in-session"
  },
  "prof.page.loom": {
@@ -21917,6 +21982,11 @@
  "prof.page.xp": {
   "en": "68e1984a6285",
   "tr": "68e1984a6285",
+  "by": "claude-in-session"
+ },
+ "prof.page.xpHeld": {
+  "en": "97f273d26381",
+  "tr": "d13e92c9f4ae",
   "by": "claude-in-session"
  },
  "prof.page.xpMaster": {
@@ -26192,6 +26262,36 @@
  "tutorials.characterSheet.skillRaiseStats": {
   "en": "681395dd0dfd",
   "tr": "73e01519f3fd",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.body": {
+  "en": "c5ba22688057",
+  "tr": "f97bb1118e57",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.more": {
+  "en": "7c91bad9f667",
+  "tr": "0ed88802931d",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops1": {
+  "en": "c0fa00345614",
+  "tr": "103899448a0f",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops2": {
+  "en": "b6ae4490b103",
+  "tr": "1191f8fb2500",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.title": {
+  "en": "ea78b34da11f",
+  "tr": "c903ca00a6cc",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.trigger": {
+  "en": "3c9c8044cdbd",
+  "tr": "8ca4af41596f",
   "by": "claude-in-session"
  },
  "tutorials.guilds.body1": {
