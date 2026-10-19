@@ -72,7 +72,7 @@ import { relaySupportsFoeInventory } from './wire.js';
 // Not a DFU member: Daggerfall Unity has no multiplayer. Ledger A row.
 import { validStaffTeleportIn, validStaffTeleportOut, staffTeleportSupported } from './staffTeleport.js';
 import { validRelayCfgIn, validRelayCfgOut, relayCfgSupported } from './relayCfg.js';
-import { relaySupportsSeatLive, seatAskDue, seatStreams } from './seatLive.js';   // FIELD BUGS 2026-10-18c SEAT-LIVE: a dungeon room's seat is a live socket's
+import { relaySupportsSeatLive, seatAskDue, seatStreams } from './seatLive.js';   // FIELD BUGS 2026-10-18d SEAT-LIVE: a dungeon room's seat is a live socket's
 import { relaySupportsGrant, grantModeOf, validGrantAsk, validGrantOut, grantGate } from './grantLaw.js';   // GRANT2: the spawn grants' asks (bible/11-Multiplayer/Spawn-Grants.md section 12)   // SCALE5b: the relay's settings, a developer's
 import { hubHopOf, isChannelShard, channelOf, hubShardsSupported, HUB_FIND_MAX, HUB_FIND_Q_MAX, HUB_GUILD_WHO_MS, HUB_GUILD_WHO_MAX, HUB_WHO_MS } from './hubShards.js';   // SCALE5c: the hub, sixteen ways
 import { CHAT_ROSTER_MAX } from './wire.js';   // SCALE5c: the World tab's list while the hub is small
@@ -262,7 +262,7 @@ export const WORLD_PUBLISH_MS = 15000;
 export const WORLD_REPUBLISH_MS = 5 * 60 * 1000;
 /** WORLD2: how often the host streams its changed foes (5 a second - under FOES_HZ_MAX with room for a burst). */
 export const FOES_MS = 200;
-/** WORLD2: the stream's full frame, and AUDIT WORLD2 C5's seat staleness. FIELD BUGS 2026-10-18c SEAT-LIVE: their home is
+/** WORLD2: the stream's full frame, and AUDIT WORLD2 C5's seat staleness. FIELD BUGS 2026-10-18d SEAT-LIVE: their home is
  *  net/wire.js (the relay elects the seat by the same staleness); re-exported here for the callers that always read them here. */
 export { FOES_FULL_MS, FOES_STALE_MS };
 /** A pose farther than this from the drawn one is a teleport: the peer snaps rather than sweeps (world frame / scene frame). */
@@ -882,7 +882,7 @@ export class OnlineSession {
     this._lastSent = null;
     this._lastSentAt = -Infinity;
     this._lastPingAt = -Infinity;   // RELAY-H1: the liveness ping's own clock - it must never delay the heartbeat pose
-    this.seatLiveOk = false;        // FIELD BUGS 2026-10-18c SEAT-LIVE: my room's relay names a dungeon's seat among its live sockets (net/seatLive.js, world219)
+    this.seatLiveOk = false;        // FIELD BUGS 2026-10-18d SEAT-LIVE: my room's relay names a dungeon's seat among its live sockets (net/seatLive.js, world219)
     this._seatHeardAt = -Infinity;  // SEAT-LIVE: when the named host was last heard - its word (a welcome, a host frame) or its stream's frame
     this._seatAskedAt = -Infinity;  // SEAT-LIVE: when I last asked the relay for the seat (`_askSeat`)
     this._pose = null;
@@ -1177,7 +1177,7 @@ export class OnlineSession {
     this._who.set(id, now);
     return true;
   }
-  /** FIELD BUGS 2026-10-18c SEAT-LIVE (net/seatLive.js): ASKING FOR A SILENT HOST'S SEAT. The relay names a dungeon room's
+  /** FIELD BUGS 2026-10-18d SEAT-LIVE (net/seatLive.js): ASKING FOR A SILENT HOST'S SEAT. The relay names a dungeon room's
    *  seat among the sockets it hears, and a joiner standing still says a pose only every HEARTBEAT_MS - so while the named
    *  host's stream has not come for FOES_STALE_MS (its page hidden: the page here has taken its foes), my pose goes every
    *  FOES_FULL_MS, unmoved: the relay hears me, names the seat, and the memory is the room's again. Answers whether it went. */

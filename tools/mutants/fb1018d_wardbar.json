@@ -5,7 +5,7 @@
     "old": "      ward: (L.fl & EG_FL.ward) !== 0 }));",
     "new": "      ward: false }));",
     "tests": [
-      "test/ui/eliteGates/fb1018c_wardbar.test.js"
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "the bug: her ward stands and the bar says nothing"
   },
@@ -15,7 +15,7 @@
     "old": "  const cls = on ? 'eg-lord-track ward' : 'eg-lord-track';",
     "new": "  const cls = on ? 'eg-lord-track' : 'eg-lord-track';",
     "tests": [
-      "test/ui/eliteGates/fb1018c_wardbar.test.js"
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "the model knows the ward and the track never wears the cage"
   },
@@ -25,7 +25,7 @@
     "old": "${L.ward ? ` - ${BOSS_BAR_TEXT.warded}` : ''}",
     "new": "${''}",
     "tests": [
-      "test/ui/eliteGates/fb1018c_wardbar.test.js"
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "the cage without its word - nothing a screen reader says"
   },
@@ -35,7 +35,7 @@
     "old": "wardOn(P.track, !!L?.ward); wardOn(P.track2, !!L2?.ward);",
     "new": "wardOn(P.track, !!L?.ward); wardOn(P.track2, !!L?.ward);",
     "tests": [
-      "test/ui/eliteGates/fb1018c_wardbar.test.js"
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "a second lord's bar caged by the first's ward"
   },
@@ -45,7 +45,7 @@
     "old": "conquest: () => 'Banners claim the floor - it burns, and two standing ward the lord. Break them!',",
     "new": "conquest: () => 'Banners claim the floor. Break them!',",
     "tests": [
-      "test/ui/eliteGates/fb1018c_wardbar.test.js"
+      "test/ui/eliteGates/fb1018d_wardbar.test.js"
     ],
     "why": "the Conquest's word says to break them and never what they do"
   }

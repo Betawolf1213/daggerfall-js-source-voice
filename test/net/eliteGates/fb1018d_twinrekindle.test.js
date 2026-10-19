@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18 FB1018C TWIN-REKINDLE (bible/01-Overview/bugs/Field-Bugs-2026-10-18.md; Boar, #bug-reports, "Big
+// FIELD BUGS 2026-10-18 FB1018D TWIN-REKINDLE (bible/01-Overview/bugs/Field-Bugs-2026-10-18.md; Boar, #bug-reports, "Big
 // bugs of the spires", item 6: "I killed fire daedra and he ressurected without timer ... Then I killed Ice and was
 // prompted to kill Fire within 15 seconds. Problem is, he was intangible. Spells and melee just passed through him, however
 // he still could use skills and do damage, his lifebar was about 15%"). The director stands a Sapper for the Court's first
@@ -71,7 +71,7 @@ function onScreen(E, i) {
   return { b, meets: !!b && !b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0 };
 }
 
-test('FB1018C TWIN-REKINDLE: a Sapper stood for a Twin before its fall burns out against the body - the fallen Twin is never fed, throws no blow, shows no bar and lies until its window raises it at half, when every screen\'s blows meet it again; Isk\'s fall then opens a window over a Vael that can be struck (mutants: a fallen lord fed; a corpse at nought fed)', () => {
+test('FB1018D TWIN-REKINDLE: a Sapper stood for a Twin before its fall burns out against the body - the fallen Twin is never fed, throws no blow, shows no bar and lies until its window raises it at half, when every screen\'s blows meet it again; Isk\'s fall then opens a window over a Vael that can be struck (mutants: a fallen lord fed; a corpse at nought fed)', () => {
   const C = twinsCourt(), { vael, isk } = C;
   C.at(isk, 20);
   const sap = sapperFor(C, vael);
@@ -122,7 +122,7 @@ test('FB1018C TWIN-REKINDLE: a Sapper stood for a Twin before its fall burns out
   assert.equal(onScreen(C.E(), vael.i).meets, true);
 });
 
-test('FB1018C TWIN-REKINDLE: a Sapper still heals a lord STANDING - the gate\'s 2% when it reaches him, its feeding counted and said, gone as fed (mutant: no lord fed)', () => {
+test('FB1018D TWIN-REKINDLE: a Sapper still heals a lord STANDING - the gate\'s 2% when it reaches him, its feeding counted and said, gone as fed (mutant: no lord fed)', () => {
   const C = twinsCourt(), { vael, isk } = C;
   vael.hp = vael.max * 0.8;
   C.at(isk, 20);

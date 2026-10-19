@@ -1689,7 +1689,7 @@ function errandTick(F, spec, L, now, here, rng, out) {
     }
   }
 }
-/** FB1018C DUEL-RING (section 13.3, "n = 1: no ring and no braziers"): the word a Challenge met in the open adds to its
+/** FB1018D DUEL-RING (section 13.3, "n = 1: no ring and no braziers"): the word a Challenge met in the open adds to its
  *  `challenge` and its `challengeend` (`t`) - every screen says that duel, never a ring of fire that does not rise or fall
  *  (scenes/eliteGates/egFight.js EG_SAY). */
 export const EG_DUEL_OPEN = 'open';
@@ -1718,7 +1718,7 @@ function challengeTick(F, spec, L, now, here, rng, out, ctx, ms, garoth = false)
     for (let j = 0; j < need; j++) { const a = (j / need) * Math.PI * 2; const [x, z, y] = egKeepOnFight(spec, cx + Math.sin(a) * 9, cz + Math.cos(a) * 9, 1, L.y); obj(F, 'brazier', x, z, egHpTeam(F, 4), now, out, { r: 0.8, y }); }
     if (!open) { kitPlace(F, L, cx + 2, cz, now); F.pg.ring = [cx, cz, 6]; }
     F.mem.mkDirty = 1;
-    say(out, 'challenge', { s: picks.map((m) => m.sub), ...(open ? { t: EG_DUEL_OPEN } : {}) });   // FB1018C DUEL-RING: the open duel said as one - no ring rises
+    say(out, 'challenge', { s: picks.map((m) => m.sub), ...(open ? { t: EG_DUEL_OPEN } : {}) });   // FB1018D DUEL-RING: the open duel said as one - no ring rises
     return;
   }
   // another lord's ring stands: Garoth's due duel waits for it under his ward (the errand not yet called)
@@ -1737,7 +1737,7 @@ function endChallenge(F, L, now, out, early) {
   L.duelAt = L.key === 'garoth' ? Infinity : now + 30_000;
   if (L.key === 'garoth') L.hpFloor = null;   // AUDIT EG IV (lane1 #21): the duel over, the threshold it held is free
   egGone(F, egObjsOf(F, 'brazier'), EG_GONE.crumbled, '', now, out);
-  out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend', ...(ch.r > 0 ? {} : { t: EG_DUEL_OPEN }) });   // FB1018C DUEL-RING: an open duel's end, no ring to fall
+  out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend', ...(ch.r > 0 ? {} : { t: EG_DUEL_OPEN }) });   // FB1018D DUEL-RING: an open duel's end, no ring to fall
 }
 /** A blow on lord `L` by a member its own duel challenged (`sub`), `got` landed: counted toward the tenth that meets it. */
 function duelHit(F, L, sub, got, now, out) {

@@ -309,7 +309,7 @@ import { mintStamp, stampTabOf, PUBLIC_TABS } from '../../src/net/safety/chatSta
 import { sealFeed, FEED_SIG_HEADER, FEED_BATCH, FEED_WAIT_MS, FEED_POST_MS } from '../../src/net/safety/chatFeed.js';   // SAFE5: the reviewer's feed
 import { grantGate, grantModeOf, GRANT_MODES, GRANT_CFG_TTL_MS, validGrantAsk, grantMintGate, grantMarksFor, signGrant, grantBucketIdle, GRANT_TTL_MS, GRANT_SKEW_MS, GRANT_TALLY_MS, grantRenewed, grantCarried, grantHanded, grantSignedHere, GRANT_OPEN_KINDS, grantKindRolled, grantMarksAllow } from '../../src/net/grantLaw.js';   // GRANT2: the spawn grant's law (bible/11-Multiplayer/Spawn-Grants.md)
 import { newGrantMeasure, foldGrantAsk, foldGrantTally, grantMeasureBatch, sealGrantMeasure, GRANT_MEASURE_MS, GRANT_MEASURE_SIG_HEADER, GRANT_MEASURE_POST_MS } from '../../src/net/grantMeasure.js';   // GRANT2: and its measure, to the service
-import { seatOf, seatElder, seatStreams, seatTraffic, seatSilent, seatHeardAt, seatInAt, othersInOf } from '../../src/net/seatLive.js';   // FIELD BUGS 2026-10-18c SEAT-LIVE: a dungeon room's seat is a live socket's
+import { seatOf, seatElder, seatStreams, seatTraffic, seatSilent, seatHeardAt, seatInAt, othersInOf } from '../../src/net/seatLive.js';   // FIELD BUGS 2026-10-18d SEAT-LIVE: a dungeon room's seat is a live socket's
 import { FOES_STALE_MS } from './relay.js';   // SEAT-LIVE: the seat's staleness, the page's own (net/wire.js)
 import { holdemGate, holdemSitRoomGate } from './relay.js';   // CARDS5: the card table's gate; AUDIT CARDS-3 A4: the room's sits
 import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemSitRefusal, stand as holdemStand, actAt as holdemAct, tick as holdemTick, nextAt as holdemNextAt, emptyTable as holdemEmpty, tableLook as holdemLook, stateDelta as holdemDelta, holdemGoldTable } from '../../src/net/holdemTable.js';   // CARDS5: THE RELAY DEALS - the room's card tables (holdemTable.js imports only cardLaw.js, which imports only dice.js)
@@ -2078,7 +2078,7 @@ export class Room {
     if (this._all().get(except)?.id !== host) return host;
     return this._hostWalk(except);
   }
-  /** The walk itself - what `_hostOf` answered before SCALE5b. FIELD BUGS 2026-10-18c SEAT-LIVE (net/seatLive.js): a
+  /** The walk itself - what `_hostOf` answered before SCALE5b. FIELD BUGS 2026-10-18d SEAT-LIVE (net/seatLive.js): a
    *  dungeon room's seat is the eldest of its LIVE sockets - one silent past FOES_STALE_MS with another there to hear it
    *  holds it no longer - and, none live, the eldest; every other room's, the eldest. */
   _hostWalk(except, live = true) {
@@ -3262,7 +3262,7 @@ export class Room {
     if (a.id && isCellRoom(a.key) && wardenDue(this._wardenAt, Date.now())) {
       try { await this._parkWarden(Date.now()); } catch (e) { this._parks = null; this._wardenAt = Date.now() + WARDEN_RETRY_MS; console.warn('[park] the watch', e?.message ?? e); }
     }
-    a = this._seatHeard(ws, a, message);   // FIELD BUGS 2026-10-18c SEAT-LIVE: a dungeon room's seat follows its live sockets - before any door reads the host
+    a = this._seatHeard(ws, a, message);   // FIELD BUGS 2026-10-18d SEAT-LIVE: a dungeon room's seat follows its live sockets - before any door reads the host
     // AUDIT WORLD A1: a large frame - or any frame shaped as a world frame - is the host's memory or nothing, and is
     // answered BEFORE any parse: a socket with no hello is refused, the frame is metered on the pose bucket, and
     // anyone but a world room's host is ignored unparsed (a handover races; parsing 512 KiB for a stranger was the

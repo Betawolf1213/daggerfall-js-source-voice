@@ -1,4 +1,4 @@
-// FB1018C HOME-BENCH (the Discord, #bug-reports, Cruor: "Works fine on main character, but shared account homes don't let
+// FB1018D HOME-BENCH (the Discord, #bug-reports, Cruor: "Works fine on main character, but shared account homes don't let
 // other characters access their craft benches. Pls fix. I wanna enchant thingies!"). An online home is one CHARACTER's
 // (`own`), and its door lets every character of the owner's account in (`mine` - net/homeLaw.js homeMayEnter,
 // systems/online/onlineHomes.js homeDoorAnswer's 'enter'). The stations inside asked `own` alone (scenes/worldModes.js
@@ -8,7 +8,7 @@
 // character's. Driven through the real account service over node:sqlite (a home claimed by character A, the town read
 // as character B of the same account and as another account's player), the real client registry over the real route
 // (net/accountClient.js accountHomes, onlineHomes.js createOnlineHomes), and the host's own gate functions lifted out
-// of its source and run over those rows. tools/mutants/fb1018c_homebench.json.
+// of its source and run over those rows. tools/mutants/fb1018d_homebench.json.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -101,7 +101,7 @@ async function town(t) {
   return { svc, cruor, mara, A: a.character, B: B.id, Mara: m.character, reader };
 }
 
-test('FB1018C HOME-BENCH THE DOOR AND THE STATION ASK ONE OWNER: through the real service and the real registry - Cruor\'s character A\'s home, read as A, is A\'s own; read as B, Cruor\'s other character, it is not B\'s own and its door lets B in as the owner\'s (`mine`), and its stations serve B as they serve A (homeStationsServe); read as Mara, another account, its door is shut until Cruor opens it to anyone, and its stations never serve her; a guild\'s hall is nobody\'s `mine`, whoever reads it (mutants: the station asks `own` alone; the law turned round)', async (t) => {
+test('FB1018D HOME-BENCH THE DOOR AND THE STATION ASK ONE OWNER: through the real service and the real registry - Cruor\'s character A\'s home, read as A, is A\'s own; read as B, Cruor\'s other character, it is not B\'s own and its door lets B in as the owner\'s (`mine`), and its stations serve B as they serve A (homeStationsServe); read as Mara, another account, its door is shut until Cruor opens it to anyone, and its stations never serve her; a guild\'s hall is nobody\'s `mine`, whoever reads it (mutants: the station asks `own` alone; the law turned round)', async (t) => {
   const { svc, cruor, A, B, Mara, mara, reader } = await town(t);
   const asA = (await reader(cruor, A)).homeAt(MAP, HOME);
   const asB = (await reader(cruor, B)).homeAt(MAP, HOME);
@@ -121,7 +121,7 @@ test('FB1018C HOME-BENCH THE DOOR AND THE STATION ASK ONE OWNER: through the rea
   assert.equal(homeStationsServe(null), false, 'no online home: Daggerfall\'s own house law (decorOwnerHere)');
 });
 
-test('FB1018C HOME-BENCH THE HOST\'S GATE: the host\'s own functions over the service\'s rows - in Cruor\'s character A\'s home, every station (the forge, the workbench, the loom, the mason\'s and the jeweller\'s benches, the alchemy and the enchanting stations) serves Cruor\'s other character B at no fee, and B\'s press opens it saying nothing, as A\'s does; the cupboard stays A\'s ("This belongs to Cruor."); Mara, let in by an open door, is told whose home it is and served no station; a private visit is served none; a hall\'s stations serve its member B and not Cruor\'s A (mutants: the station asks decorOwnerHere; each accessor asks decorOwnerHere; the private visit unread; the press asks decorOwnerHere; the account\'s clause anded)', async (t) => {
+test('FB1018D HOME-BENCH THE HOST\'S GATE: the host\'s own functions over the service\'s rows - in Cruor\'s character A\'s home, every station (the forge, the workbench, the loom, the mason\'s and the jeweller\'s benches, the alchemy and the enchanting stations) serves Cruor\'s other character B at no fee, and B\'s press opens it saying nothing, as A\'s does; the cupboard stays A\'s ("This belongs to Cruor."); Mara, let in by an open door, is told whose home it is and served no station; a private visit is served none; a hall\'s stations serve its member B and not Cruor\'s A (mutants: the station asks decorOwnerHere; each accessor asks decorOwnerHere; the private visit unread; the press asks decorOwnerHere; the account\'s clause anded)', async (t) => {
   const { svc, cruor, A, B, Mara, mara, reader } = await town(t);
   assert.equal((await svc.call('/v1/homes/entry', { mapId: MAP, buildingKey: HOME, entry: 'public' }, cruor.secret)).status, 200);
   const rows = { A: (await reader(cruor, A)).homeAt(MAP, HOME), B: (await reader(cruor, B)).homeAt(MAP, HOME), Mara: (await reader(mara, Mara)).homeAt(MAP, HOME) };

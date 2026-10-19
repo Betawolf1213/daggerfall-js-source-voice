@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c SEAT-LIVE (FloopZe, "Castle Daggerfall guards loot duping": "I am able to continuously enter/exit
+// FIELD BUGS 2026-10-18d SEAT-LIVE (FloopZe, "Castle Daggerfall guards loot duping": "I am able to continuously enter/exit
 // the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a
 // few exits...)"). THE REPORT'S LOOP, WALKED: a castle room whose host's page is hidden (its socket open, its frames
 // stopped), and a player who walks in, takes every body the host left, walks out and back in, three times. Mounted, not

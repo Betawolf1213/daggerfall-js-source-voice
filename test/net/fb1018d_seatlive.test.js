@@ -1,10 +1,10 @@
-// FIELD BUGS 2026-10-18c SEAT-LIVE (FloopZe, "Castle Daggerfall guards loot duping": "I am able to continuously enter/exit
+// FIELD BUGS 2026-10-18d SEAT-LIVE (FloopZe, "Castle Daggerfall guards loot duping": "I am able to continuously enter/exit
 // the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This fixed itself after a
 // few exits...)"). The relay named a room's host as the socket in it longest and kept the room's memory from that socket
 // alone, while the page handed the room's foes to a joiner once that host went silent (SEAT-HEAL) - so a host whose page
 // was hidden kept the pen while the joiner ran the room, and nothing the joiner did was kept. Mounted, not matched: the
 // real relay Room over test/fakeRoom.mjs (net/seatLive.js its law), the real OnlineSession over test/fakeSocket.mjs, and
-// the seat clock scenes/world.js reads. The dungeon's own doors across visits are test/scenes/fb1018c_seatloop.test.js.
+// the seat clock scenes/world.js reads. The dungeon's own doors across visits are test/scenes/fb1018d_seatloop.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

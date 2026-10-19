@@ -8424,14 +8424,14 @@ view, "Station: Alchemy >" cycles the craft offered, free, and follows a newly c
 through the guild service's own door (openServiceFlow, no guild), so the maker's own laws stand: the potion maker's
 ingredients, the spell maker's spellbook, and what each charges. A visitor is told whose home it is, as a storage
 piece's visitor is. STATION-DOOR (`01-Overview/bugs/Field-Bugs-2026-10-11f.md`): online, an alchemy or enchanting station
-asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting). FB1018C HOME-BENCH (the
+asks first - its maker, or its profession's act on the Stores page (the brew, Disenchanting). FB1018D HOME-BENCH (the
 Discord, Cruor: "shared account homes don't let other characters access their craft benches"): in an online home the
 owner is the owner's ACCOUNT, as at its door - every character of it is served by every station (the press, and the
 Stores page's forge, workbench, loom, mason's and jeweller's benches and alchemy and enchanting stations), where the
 station asked the owning character alone and told the account's other character "This belongs to <its own handle>"
 (`systems/online/onlineHomes.js` homeStationsServe, `scenes/worldModes.js` stationOwnerHere). A station's use spends
-nothing of the home's; its storage stays the owning character's. `test/scenes/fb1018c_homebench.test.js`,
-`tools/mutants/fb1018c_homebench.json`.
+nothing of the home's; its storage stays the owning character's. `test/scenes/fb1018d_homebench.test.js`,
+`tools/mutants/fb1018d_homebench.json`.
 
 **THE SERVICE** (`server-account/src/decor.js` placeJson). The craft is written with the place. ACCOUNT_VERSION
 acct16 (acct15 on its branch; main's FOUNDER3 took acct15 first) - the account Worker deploys from CI on a change to its bundle.
@@ -9494,7 +9494,7 @@ took: three town homes a character, no upkeep.
   minute; an unanswered ask keeps what was known and waits ten seconds before the next; a door waits at most 2.5
   seconds for a town it has never heard from and then goes on under Daggerfall's law. `own` is read against the
   character playing now; the account's other characters may always walk in, but a home is not theirs - its storage,
-  its bed, its decorator and its sale stay the owning character's. Its crafting stations serve them (FB1018C HOME-BENCH,
+  its bed, its decorator and its sale stay the owning character's. Its crafting stations serve them (FB1018D HOME-BENCH,
   under HOME-STATIONS), as its door does.
 - **Where the service's list decides.** Online, a building it names is that player's home; one it does not name -
   or a town not heard from yet - stands under Daggerfall's own law, and that includes this character's own OFFLINE
@@ -16624,7 +16624,7 @@ build no session and no minter and assign no `onPeerDeath`. The 388 files that d
 account client: 3,885 tests passed, two skipped (they want MAPS.BSA and ARENA2). Three source pins read the lines this
 read moved and were moved with them: ACC1d's and NAME-ADOPT's minter (`now: steadyNow`), WORLD1's import.
 
-## SEAT-LIVE (FIELD BUGS 2026-10-18c, FloopZe, "Castle Daggerfall guards loot duping") - a dungeon room's seat is a live socket's
+## SEAT-LIVE (FIELD BUGS 2026-10-18d, FloopZe, "Castle Daggerfall guards loot duping") - a dungeon room's seat is a live socket's
 
 **The report**, from the Discord's #bug-reports: *"I went into Castle Daggerfall and the guards aggro automatically and after
 killing them I am able to continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon
@@ -16678,7 +16678,7 @@ context): the kills made while it hid stand up again in its next memory (the tak
 silent host keeps the pen as before. The castle's hostility is the room's (one player's trespass turns every guard on
 everyone, and the memory keeps `hostile`): the owner's call, per player or shared, untouched here.
 
-Pinned: `test/net/fb1018c_seatlive.test.js` (5) and `test/scenes/fb1018c_seatloop.test.js` (1, the report's loop over the
-dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018c_seatlive.json` (19, all dead). The relay is
+Pinned: `test/net/fb1018d_seatlive.test.js` (5) and `test/scenes/fb1018d_seatloop.test.js` (1, the report's loop over the
+dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018d_seatlive.json` (19, all dead). The relay is
 world219 (re-hashed in place with TWIN-REKINDLE, undeployed).
 

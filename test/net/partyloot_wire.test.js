@@ -34,7 +34,7 @@ import * as acorn from 'acorn';
 import { OnlineSession, FOES_MS, FOES_FULL_MS } from '../../src/net/online.js';
 import { isWorldRoom, isCellRoom, actFrameFits, ACT_HZ_MAX, respawnDue, sharedClassicMinutes, validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX, FOES_STALE_MS } from '../../src/net/wire.js';
 import { quietFoesGate } from '../../src/net/foesQuiet.js';
-import { createSeatClock } from '../../src/net/seatLive.js';   // PIN MOVED: FIELD BUGS 2026-10-18c SEAT-LIVE - onFoes tells the seat clock it heard the seat (world.js `seatClock`), where it stamped `_foesInAt`
+import { createSeatClock } from '../../src/net/seatLive.js';   // PIN MOVED: FIELD BUGS 2026-10-18d SEAT-LIVE - onFoes tells the seat clock it heard the seat (world.js `seatClock`), where it stamped `_foesInAt`
 import { ARENA_PUPPET_OWNER } from '../../src/net/arena/arenaLaw.js';
 import { foeSeed, applyWireLook } from '../../src/characters/foeBodies.js';
 import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../../src/systems/loot/loot.js';

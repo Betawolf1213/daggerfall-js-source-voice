@@ -1,9 +1,9 @@
-# FIELD BUGS 2026-10-18c - eight threads from the bug-reports channel, each read to its root
+# FIELD BUGS 2026-10-18d - eight threads from the bug-reports channel, each read to its root
 
 Eight threads from the Discord's #bug-reports, handed over as nine screenshots (Boar's spires thread ran to two).
 Read on the code as it stands at main's `1ec80616f`. Each was traced on the real modules first, and a fix lands only
 where the cause is proven ("No band aid fixes", the owner's standing word on these threads); where it is not, the
-record says so and what would prove it. The pins are `fb1018c_*`, the mutants `tools/mutants/fb1018c_*.json`.
+record says so and what would prove it. The pins are `fb1018d_*`, the mutants `tools/mutants/fb1018d_*.json`.
 
 | | Report | What it was | Done |
 |---|---|---|---|
@@ -42,9 +42,9 @@ Left: the how-to texts name no fee (each station's own section says it); a shop 
 opens the Stores page there themselves. The first gather now pops three tutorial pages together (four with the
 Materials Bag's) - one line makes the Crafting page menu-only, the owner's call.
 
-Pins: `test/ui/professions/fb1018c_crafthowto.test.js` (4: the real page for all ten professions; the words against
+Pins: `test/ui/professions/fb1018d_crafthowto.test.js` (4: the real page for all ten professions; the words against
 the station questions, the joinery, the fire and the XP law; the tutorial page, its seam and search; the locales).
-Mutants: `tools/mutants/fb1018c_crafthowto.json` (23, all dead).
+Mutants: `tools/mutants/fb1018d_crafthowto.json` (23, all dead).
 
 ## HITCH-KEEP: the counter keeps the minute's worst frame (2)
 
@@ -81,8 +81,8 @@ What would name it, from the player: the counter's `hitch` lines just after a st
 counter); online or not, browser or desktop, VSync and the Frame Rate Cap; what they were doing (riding, crossing
 cells, others arriving, a town); on the desktop, a performance trace (View > Toggle Developer Tools).
 
-Pins: `test/ui/fb1018c_hitchkeep.test.js` (3: the real counter over a page that can be hidden, and the real frame
-clock). Mutants: `tools/mutants/fb1018c_hitchkeep.json` (20, all dead).
+Pins: `test/ui/fb1018d_hitchkeep.test.js` (3: the real counter over a page that can be hidden, and the real frame
+clock). Mutants: `tools/mutants/fb1018d_hitchkeep.json` (20, all dead).
 
 ## HOME-BENCH: a home's stations serve its owner's account, as its door does (3)
 
@@ -113,9 +113,9 @@ account's handle to its own other characters; a home's admitted visitors (party,
 caravan's can. SylviaBun's and bag boy's "transfer houses between same-account characters" is a feature request,
 not built.
 
-Pins: `test/scenes/fb1018c_homebench.test.js` (2: the rule for A, B and a stranger; the host's gate - every station
+Pins: `test/scenes/fb1018d_homebench.test.js` (2: the rule for A, B and a stranger; the host's gate - every station
 serves B with no fee and no refusal, the cupboard stays A's, a visitor and a private visit get none, a hall serves its
-member). Mutants: `tools/mutants/fb1018c_homebench.json` (15, all dead). Seven source pins and two mutant records
+member). Mutants: `tools/mutants/fb1018d_homebench.json` (15, all dead). Seven source pins and two mutant records
 re-aimed (PIN MOVED).
 
 ## Report 4: Boar's spires
@@ -134,8 +134,8 @@ ground on the floor. And a second false line: at n = 1 the record stands no ring
 "The ring of fire rises." and "The ring falls." The relay's `challenge` and `challengeend` carry `t: 'open'`
 (`egLords.js:"export const EG_DUEL_OPEN = 'open';"`), and the screen says "A challenge in the open! Deal him a tenth
 of his health within 15 s." and "The challenge goes unmet." - drafted in every language. A client before it reads the
-ring's words, as ever. Pins: `test/scenes/eliteGates/fb1018c_duelring.test.js` (2). Mutants:
-`tools/mutants/fb1018c_duelring.json` (7, all dead).
+ring's words, as ever. Pins: `test/scenes/eliteGates/fb1018d_duelring.test.js` (2). Mutants:
+`tools/mutants/fb1018d_duelring.json` (7, all dead).
 
 ### Item 2, the puzzle's stones: the hall's look, recorded and not built
 
@@ -171,9 +171,9 @@ FOUND ON THE WAY, SAYS-PAST-TWELVE: the fold keeps a hall's last EG_SAYS_KEPT (1
 to find the new ones, so after twelve the count stood still and nothing more was said that hall (16 folded, 11 said, in
 the probe). It now finds the new lines by the last one said.
 
-Pins: `test/net/eliteGates/fb1018c_bannershaft.test.js` (1), `test/ui/eliteGates/fb1018c_wardbar.test.js` (1),
-`test/scenes/eliteGates/fb1018c_saystwelve.test.js` (1). Mutants: `tools/mutants/fb1018c_bannershaft.json` (4),
-`fb1018c_wardbar.json` (5), `fb1018c_saystwelve.json` (3), all dead; law9_height's 27 still dead.
+Pins: `test/net/eliteGates/fb1018d_bannershaft.test.js` (1), `test/ui/eliteGates/fb1018d_wardbar.test.js` (1),
+`test/scenes/eliteGates/fb1018d_saystwelve.test.js` (1). Mutants: `tools/mutants/fb1018d_bannershaft.json` (4),
+`fb1018d_wardbar.json` (5), `fb1018d_saystwelve.json` (3), all dead; law9_height's 27 still dead.
 `egpres_hud.test.js` re-aimed (PIN MOVED: the bar's `ward: false`).
 
 ### Item 4.1, the floor greyed: the law lands, the fall is not built
@@ -198,8 +198,8 @@ Winch halls the screen drew nothing at either plate.
 FIXED. `egFight.js:"  function winchPlates(F, t) {"` draws each plate gold, sized to EG_TOUCH_M (the 2.5 m reach the
 relay counts), on its own surface during the trial. Left: the Gauntlet's plates are unmarked for the same reason, on
 sloped stairs where a flat quad would cut the slope; the Conquest's thirds (3.5 s) and Both Courts Burn (3.0 s) are
-counted ahead on the relay and drawn only as they start. Pins: `test/scenes/eliteGates/fb1018c_winchplates.test.js`
-(1). Mutants: `tools/mutants/fb1018c_winchplates.json` (4, all dead).
+counted ahead on the relay and drawn only as they start. Pins: `test/scenes/eliteGates/fb1018d_winchplates.test.js`
+(1). Mutants: `tools/mutants/fb1018d_winchplates.json` (4, all dead).
 
 
 ### TWIN-REKINDLE: a Sapper burns out against a fallen lord (item 6)
@@ -235,7 +235,7 @@ Left: the line says "fifteen seconds" in a court of two or fewer, whose window i
 understates, so it is harmless, and saying the seconds means carrying them on the `esay`. The record promises no
 countdown for the window, and none is drawn.
 
-Pins: `test/net/eliteGates/fb1018c_twinrekindle.test.js` (2). Mutants: `tools/mutants/fb1018c_twinrekindle.json` (3,
+Pins: `test/net/eliteGates/fb1018d_twinrekindle.test.js` (2). Mutants: `tools/mutants/fb1018d_twinrekindle.json` (3,
 all dead); AUDIT EG IV's `EGA4L-sapper-feeds-uncapped` re-aimed by content.
 
 ### Item 3, the loot after a boss: the record's law, and said
@@ -289,9 +289,9 @@ changed: a key rebound gets what the row says (LogBook moved to K: K opened and 
 The pause window's Quests tab is one click from Escape's System tab; a key straight to it would be a feature.
 Left: the touch button's "Journal" (still true) and two comments that say "quest log".
 
-Pins: `test/systems/fb1018c_keylogbook.test.js` (2: every scenes host's L and N, each building host's page mapping
+Pins: `test/systems/fb1018d_keylogbook.test.js` (2: every scenes host's L and N, each building host's page mapping
 run, the real Chronicle opened under the minimal DOM; the rows carry its heading and page). Mutants:
-`tools/mutants/fb1018c_keylogbook.json` (15, all dead). The L10N4 ratchet written down (plusPad.js 19 -> 18).
+`tools/mutants/fb1018d_keylogbook.json` (15, all dead). The L10N4 ratchet written down (plusPad.js 19 -> 18).
 
 ## LEAP-SLOW: a Slowfall spell refuses a technique's flight in the air alone (6)
 
@@ -328,10 +328,10 @@ Left: the slow fall's "held against a wall" arm still runs in a flight (it diffe
 more than a step); after a catch the Jump spell's air control stays off until the ground (older than this). The one
 line still says eleven causes; with the spell lifted on the ground none of the others is invisible there.
 
-Pins: `test/combat/fb1018c_leapslow.test.js` (5, every one red on the old code: the Wings from their record through
+Pins: `test/combat/fb1018d_leapslow.test.js` (5, every one red on the old code: the Wings from their record through
 `equipItem`; a grounded Leap Strike lands on its aim and strikes; it pays once; the kick from the air and the motor's
 own launch refused; a jump's descent and a ledge after the landing glide and bill nothing; a flight cut short glides
-again). Mutants: `tools/mutants/fb1018c_leapslow.json` (11, all dead); four KICK-AIR and TECH1 records re-aimed by
+again). Mutants: `tools/mutants/fb1018d_leapslow.json` (11, all dead); four KICK-AIR and TECH1 records re-aimed by
 content.
 
 ## SEAT-LIVE: a dungeon room's seat is a live socket's (7)
@@ -374,10 +374,10 @@ Orsinium's, Field-Bugs-2026-09-28f) - Castle Daggerfall's RDB needs ARENA2 to re
 castle's anger should be each player's own is Mac's. What would prove the report's path: whether anyone else was in the
 castle (AFK or minimised), or the relay's `world:meta.by` and `.at` for its room.
 
-Pins: `test/net/fb1018c_seatlive.test.js` (5, on the real Room, session and clock: a silent host loses the seat and its
+Pins: `test/net/fb1018d_seatlive.test.js` (5, on the real Room, session and clock: a silent host loses the seat and its
 write is refused, the joiner's kept, the host back a joiner; a live host keeps it, a reconnect, a building, a leave, a
-tie, the ask, the wiring) and `test/scenes/fb1018c_seatloop.test.js` (1: the report's loop through the real doors and
-Room - the bodies stay empty three visits running, the gold flat). Mutants: `tools/mutants/fb1018c_seatlive.json` (19,
+tie, the ask, the wiring) and `test/scenes/fb1018d_seatloop.test.js` (1: the report's loop through the real doors and
+Room - the bodies stay empty three visits running, the gold flat). Mutants: `tools/mutants/fb1018d_seatlive.json` (19,
 all dead). Re-aimed with PIN MOVED: seatheal, world1, world2, auditworld34, oncrash1, world6biiid, auditworld6a and
 auditworld6b (`seatClock` for `_foesInAt`), and slam11 (the host poses through its hellos).
 

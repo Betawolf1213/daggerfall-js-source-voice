@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c - BANNER-SHAFT (Boar, #bug-reports, "Big bugs of the spires", item 4: "Daedra lord fight, name
+// FIELD BUGS 2026-10-18d - BANNER-SHAFT (Boar, #bug-reports, "Big bugs of the spires", item 4: "Daedra lord fight, name
 // starting on V: banners spawn during all stages however their effect is unclear, and they can be broken only if you stay
 // close to them (I mean ranged attacks outside their postaments don't break them)"): VALKYNAZ ILTHYS'S BANNERS SHOT FROM
 // THE COURT. The Conquest plants a banner on each of the Council Rotunda's balconies, 4 m over the court (Elite-Gates.md
@@ -55,7 +55,7 @@ function conquest(seed, h, spec) {
   return { B, banners, now: () => now, tick: (ms) => (now += ms) };
 }
 
-test('BANNER-SHAFT (FIELD BUGS 2026-10-18c): ILTHYS\'S BANNERS ARE SHOT FROM THE COURT - in a Rotunda of THE ASCENT\'s law, a member on the court clear of a balcony\'s plan lands a shaft and a spell on the banner 4 m over it; a swing within reach in plan does not reach a storey up; from under the balcony\'s rim (stacked under it) nothing lands; from the balcony every kind does (mutants: every kind held to its storey again; a swing let up a storey; the stack read from the higher one\'s floor; the lower and the higher swapped)', () => {
+test('BANNER-SHAFT (FIELD BUGS 2026-10-18d): ILTHYS\'S BANNERS ARE SHOT FROM THE COURT - in a Rotunda of THE ASCENT\'s law, a member on the court clear of a balcony\'s plan lands a shaft and a spell on the banner 4 m over it; a swing within reach in plan does not reach a storey up; from under the balcony\'s rim (stacked under it) nothing lands; from the balcony every kind does (mutants: every kind held to its storey again; a swing let up a storey; the stack read from the higher one\'s floor; the lower and the higher swapped)', () => {
   for (const { seed, h, spec } of rotundas(2)) {
     assert.ok(egByHeight(spec), `seed ${seed}: a hall that judges by height`);
     const W = conquest(seed, h, spec);

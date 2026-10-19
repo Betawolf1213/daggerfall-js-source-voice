@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c CRAFT-HOWTO - the Discord's #bug-reports, "No clue how to start crafting", MoonGeneral: "I've
+// FIELD BUGS 2026-10-18d CRAFT-HOWTO - the Discord's #bug-reports, "No clue how to start crafting", MoonGeneral: "I've
 // already found out really quickly how to do the gathering jobs ... But for the crafting side of this mechanic i have no
 // clue on how to start it. When going to the professions tab when selecting a gathering quest besides it being easy to
 // understand it has an extra explanation for every gathering skill, but when it comes to the crafting skills you no

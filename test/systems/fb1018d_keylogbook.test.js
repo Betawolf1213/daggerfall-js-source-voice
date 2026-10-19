@@ -1,4 +1,4 @@
-// FB1018C KEY-LOGBOOK - the journal keys' rows name the window they open.
+// FB1018D KEY-LOGBOOK - the journal keys' rows name the window they open.
 //
 // The report (Discord #bug-reports, kvassdrit, "L opens chronicles instead of Quest tab"): "Function does not match
 // description in keybinding menu". The Controls row for L read "Quest log"; on Enhanced Plus L opens the Chronicle on
@@ -77,7 +77,7 @@ async function drawn(section) {
   } finally { w.close(); }
 }
 
-test('FB1018C KEY-LOGBOOK: L\'s row names the window L opens on each skin - the Chronicle on its Quests, and the classic logbook', async () => {
+test('FB1018D KEY-LOGBOOK: L\'s row names the window L opens on each skin - the Chronicle on its Quests, and the classic logbook', async () => {
   const pages = landed('toggleLogbook');
   assert.equal(pages.length, 1, `every host's L lands on one page: ${pages}`);
   const { heading, page } = await drawn(pages[0]);
@@ -92,7 +92,7 @@ test('FB1018C KEY-LOGBOOK: L\'s row names the window L opens on each skin - the 
   assert.equal(dpadChoiceWord('LogBook'), `${heading}: ${page}`);
 });
 
-test('FB1018C KEY-LOGBOOK: N\'s row names the window N opens on each skin - the Chronicle on its Notes, and the classic notebook', async () => {
+test('FB1018D KEY-LOGBOOK: N\'s row names the window N opens on each skin - the Chronicle on its Notes, and the classic notebook', async () => {
   const pages = landed('toggleNotebook');
   assert.equal(pages.length, 1, `every host's N lands on one page: ${pages}`);
   const { heading, page } = await drawn(pages[0]);

@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c - WARD-BAR (Boar, #bug-reports, "Big bugs of the spires", item 4: "banners spawn during all stages
+// FIELD BUGS 2026-10-18d - WARD-BAR (Boar, #bug-reports, "Big bugs of the spires", item 4: "banners spawn during all stages
 // however their effect is unclear"): WHAT VALKYNAZ ILTHYS'S BANNERS DO, TOLD. The Conquest's banners burn a third of the floor
 // each and, while two stand, hold her ward (Elite-Gates.md section 13.4) - a ward no blow lands through. The burning was
 // drawn; the ward was nowhere on the screen, though the page gives it its look (section 25.2: "the cage on the lord's bar is
@@ -41,7 +41,7 @@ function fakeDocument() {
 }
 const find = (n, cls, out = []) => { if (String(n.className).split(/\s+/).includes(cls)) out.push(n); for (const c of n.children) find(c, cls, out); return out; };
 
-test('WARD-BAR (FIELD BUGS 2026-10-18c): ILTHYS\'S BANNERS\' WARD ON HER BAR - at the Conquest the room wards her while two banners stand, and every screen\'s bar says it: the model\'s `ward`, *Warded* after her name and phase, the track caged (its `ward` class - red-bronze, hatched); 25 s on the ward lapses and so do they; the Conquest\'s word says what the banners do (mutants: the ward never read; the cage never drawn; the word unsaid; the first bar\'s cage on the second\'s track)', () => {
+test('WARD-BAR (FIELD BUGS 2026-10-18d): ILTHYS\'S BANNERS\' WARD ON HER BAR - at the Conquest the room wards her while two banners stand, and every screen\'s bar says it: the model\'s `ward`, *Warded* after her name and phase, the track caged (its `ward` class - red-bronze, hatched); 25 s on the ward lapses and so do they; the Conquest\'s word says what the banners do (mutants: the ward never read; the cage never drawn; the word unsaid; the first bar\'s cage on the second\'s track)', () => {
   let found = null;
   for (let seed = 1; seed <= 30 && !found; seed++) {
     const plan = egCirclePlan(seed, 5);

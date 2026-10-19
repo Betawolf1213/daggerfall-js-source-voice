@@ -5,7 +5,7 @@
     "old": "(r === HIT_KINDS.Melee || egStacked(V, pose.x, sm, pose.z, bx, sb, bz))",
     "new": "(true || egStacked(V, pose.x, sm, pose.z, bx, sb, bz))",
     "tests": [
-      "test/net/eliteGates/fb1018c_bannershaft.test.js"
+      "test/net/eliteGates/fb1018d_bannershaft.test.js"
     ],
     "why": "the bug: a shaft or a spell from the court never lands on a banner a storey up"
   },
@@ -15,7 +15,7 @@
     "old": "(r === HIT_KINDS.Melee || egStacked(V, pose.x, sm, pose.z, bx, sb, bz))",
     "new": "(egStacked(V, pose.x, sm, pose.z, bx, sb, bz))",
     "tests": [
-      "test/net/eliteGates/fb1018c_bannershaft.test.js"
+      "test/net/eliteGates/fb1018d_bannershaft.test.js"
     ],
     "why": "a sword reaches a banner 4 m over the court"
   },
@@ -25,7 +25,7 @@
     "old": "(ay <= by ? egFloorBetween(view, ax, az, ay, by) :",
     "new": "(ay <= by ? egFloorBetween(view, bx, bz, ay, by) :",
     "tests": [
-      "test/net/eliteGates/fb1018c_bannershaft.test.js"
+      "test/net/eliteGates/fb1018d_bannershaft.test.js"
     ],
     "why": "the higher one's own floor always over its own plan: every shot up a storey refused again"
   },
@@ -35,7 +35,7 @@
     "old": "(ay <= by ? egFloorBetween",
     "new": "(ay >= by ? egFloorBetween",
     "tests": [
-      "test/net/eliteGates/fb1018c_bannershaft.test.js"
+      "test/net/eliteGates/fb1018d_bannershaft.test.js"
     ],
     "why": "a shot from under the balcony's rim, through its deck, lands"
   }

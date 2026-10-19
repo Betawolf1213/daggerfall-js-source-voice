@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-18c SEAT-LIVE (FloopZe, the bug-reports channel, "Castle Daggerfall guards loot duping": "I am able to
+// FIELD BUGS 2026-10-18d SEAT-LIVE (FloopZe, the bug-reports channel, "Castle Daggerfall guards loot duping": "I am able to
 // continuously enter/exit the castle and the loot/corpses respawn, duping the items/gold upon re-entering the castle. (This
 // fixed itself after a few exits...)"): A DUNGEON ROOM'S SEAT IS A LIVE SOCKET'S.
 //

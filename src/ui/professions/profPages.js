@@ -538,13 +538,13 @@ export const STORES_EMPTY_CARRY_LINE = 'Your Stores are empty. What you gather g
 export const STORES_EMPTY_LINE = 'Your Stores are empty. What you gather online goes here. Press the use key at an herb patch, tree, ore vein, boulder, a body you killed, or in water with a net - or use the matching tool from your hotbar or a quick slot. Tools used from your pack gather nothing.';   // TOUCH-HOLD: the knife's Use
 const storesEmptyLine = () => t('prof.page.stores.empty', STORES_EMPTY_LINE);
 const storesEmptyCarryLine = () => t('prof.page.stores.emptyCarry', STORES_EMPTY_CARRY_LINE);
-/** PROF12: how Alchemy is practised, as the Professions page says it. FB1018C CRAFT-HOWTO: with what the bag and the pack
+/** PROF12: how Alchemy is practised, as the Professions page says it. FB1018D CRAFT-HOWTO: with what the bag and the pack
  *  hold too - "with what your Stores hold" stood from before BAG-CRAFT, and the brew reads the station's own (workOf). */
 export const ALCHEMY_HOW = 'Brew at an alchemy station (an Alchemist\'s or your own home) from the Stores page, with what you carry or keep in your Stores. The recipes are the original game\'s twenty potions. Herbs, metals and gems are gathered; the rest are bought from the Apothecaries\' counter. The classic potion maker still works but gives no Provisioning XP.';
 const fishingHow = () => t('prof.page.how.fishing', FISHING_HOW);
 const alchemyHow = () => t('prof.page.how.alchemy', ALCHEMY_HOW);
 /**
- * FB1018C CRAFT-HOWTO (FIELD BUGS 2026-10-18c, the Discord's #bug-reports, MoonGeneral: "for the crafting side of this
+ * FB1018D CRAFT-HOWTO (FIELD BUGS 2026-10-18d, the Discord's #bug-reports, MoonGeneral: "for the crafting side of this
  * mechanic i have no clue on how to start it ... when it comes to the crafting skills you no explanation there"): HOW A
  * CRAFT IS PRACTISED, as the page says it - each crafting profession's paragraph where a gathering one's stands
  * (GATHER_HOW, TOOL-SAID), each a function read when the page is drawn (L10N4, UNLOCKS' shape). Provisioning's brew is
@@ -651,9 +651,9 @@ export function drawProfessionsPage(detail, rerender, kit) {
     pane.append(el('p', 'px-note', ENCHANTING_HOW(enchantDiscountPct(tr.rank, tr.specs?.[50] ?? null))));
   } else if (_sel === trackOf('alchemy')) {   // CRAFT3: Provisioning's brewing
     pane.append(el('p', 'px-note', alchemyHow()));
-    pane.append(el('p', 'px-note', CRAFT_HOW.provisioning()));   // FB1018C CRAFT-HOWTO: and its cooking
+    pane.append(el('p', 'px-note', CRAFT_HOW.provisioning()));   // FB1018D CRAFT-HOWTO: and its cooking
   } else if (Object.hasOwn(CRAFT_HOW, _sel)) {
-    pane.append(el('p', 'px-note', CRAFT_HOW[_sel]()));   // FB1018C CRAFT-HOWTO: Smithing, Building, Outfitting
+    pane.append(el('p', 'px-note', CRAFT_HOW[_sel]()));   // FB1018D CRAFT-HOWTO: Smithing, Building, Outfitting
   } else if (PROFESSIONS.find((x) => x.id === _sel)?.kind === 'gathering' && practised) {
     const today = book.state.today?.[_sel] ?? 0;   // CAP-OFF: the day's harvests, a count against no cap
     pane.append(el('p', 'prof-today', t('prof.page.today.harvests', 'Today: {n, plural, one {# harvest} other {# harvests}}', { n: today })));

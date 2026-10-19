@@ -198,7 +198,7 @@ the same strike landing with the body. A fall already under way keeps where it b
 top of a jump, the kick's 2.5 m rise is measured from feet already in the air, so it reaches a ledge a jump's height
 higher than a kick from the ground (once in 10 s).
 
-**LEAP-SLOW - the slow fall refuses a flight in the air alone** (FIELD BUGS 2026-10-18c, JUMP-SLOW's law carried to the techniques' leaps, for Mac's review, on
+**LEAP-SLOW - the slow fall refuses a flight in the air alone** (FIELD BUGS 2026-10-18d, JUMP-SLOW's law carried to the techniques' leaps, for Mac's review, on
 Warrgrim's "Please Fix Leaping Strike Weapon Techniques. items" - "you cannot leap from here", the legendary weapons and
 the Flying Kick - and the 2026-10-14 kick report's "flat ground ... nothing works"). The gate and the motor's launch
 read the slow fall's flag, which is the SPELL's (`shared.js` `applyMotorEffectFlags`, the dungeon's `playerSlowFalling`)
@@ -667,11 +667,11 @@ Gauntlets' Flying Kick and Haymaker) - every technique a press away.
   ground and let go in the air, the other leaps and dashes refused in the air, the kick's other refusals (the saddle, a
   slow fall, the water, a levitation), and no feather fall (a 7 m ledge's fall kept). Mutants
   `tools/mutants/fb1015_kickair.json` (9, all dead).
-- `test/combat/fb1018c_leapslow.test.js` (5) - LEAP-SLOW on a real PlayerMotor over a real Collider through the press and
+- `test/combat/fb1018d_leapslow.test.js` (5) - LEAP-SLOW on a real PlayerMotor over a real Collider through the press and
   the release, the spell put on by The Raven's Wings through the real equip door: the Leap Strike from the ground under
   it (on its aim, the arc's time, the foe struck, no fall billed but its last step), its price, the Flying Kick from the air still refused
   (and the motor's own launch in the air), the glide after the landing (a jump, a walk off an edge), and the flight cut
-  short (a placement, a levitation let go, a catch and the eject out of it). Mutants `tools/mutants/fb1018c_leapslow.json`
+  short (a placement, a levitation let go, a catch and the eject out of it). Mutants `tools/mutants/fb1018d_leapslow.json`
   (11, all dead).
 - `test/scenes/tech1_hosts.test.js` (4) - the action, its key and its rows; the rig's order, its held-hit flag; THE FOUR HOSTS,
   swept from the source (each host's door, and each ground pass's marks call right after its foes'); the dungeon lane;

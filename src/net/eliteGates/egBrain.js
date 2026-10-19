@@ -1890,7 +1890,7 @@ function sapperGoal(F, spec, a) {
 const nearestClosed = (F, a) => (F.closedSpots ?? []).reduce((b, q) => (!b || dist(q[0], q[1], a.x, a.z) < dist(b[0], b[1], a.x, a.z) ? q : b), null);
 /** A Sapper at its objective: gone into it. AUDIT EG IV (lane1 #17; section 12: "heals it, the gate's law"): a lord drinks it
  *  as the gate's Warden does - SAP_HEAL of its health while its fight's feedings last (SAP_FEEDS_MAX), burnt out against it
- *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). FB1018C
+ *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). FB1018D
  *  TWIN-REKINDLE: only a lord STANDING drinks - the gate's Warden is fed only while he stands, and a lord of a fight of two
  *  lies a body after its fall (a Twin in its window, the Twin Court's first, the Old Masters'), so a Sapper stood for it
  *  before its fall burns out against the body: fed, the body stood again with its fall's flag still on - a lord on the

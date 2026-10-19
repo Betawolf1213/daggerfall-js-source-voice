@@ -5,7 +5,7 @@
     "old": "['LogBook', journalKeyLabel('Quests', 'logbook')]",
     "new": "['LogBook', 'Quest log']",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the report: L's row says Quest log over a window headed Chronicle"
   },
@@ -15,7 +15,7 @@
     "old": "['LogBook', journalKeyLabel('Quests', 'logbook')]",
     "new": "['LogBook', journalKeyLabel('Quest', 'logbook')]",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "one character: the row names a page the Chronicle does not have"
   },
@@ -25,7 +25,7 @@
     "old": "['LogBook', journalKeyLabel('Quests', 'logbook')]",
     "new": "['LogBook', journalKeyLabel('Quests', 'logboo')]",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "one character: the classic skin's half no longer names the logbook L opens there"
   },
@@ -35,7 +35,7 @@
     "old": "['NoteBook', journalKeyLabel('Notes', 'notebook')]",
     "new": "['NoteBook', 'Notebook']",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the same fault on N: Notebook over a window headed Chronicle"
   },
@@ -45,7 +45,7 @@
     "old": "['NoteBook', journalKeyLabel('Notes', 'notebook')]",
     "new": "['NoteBook', journalKeyLabel('Note', 'notebook')]",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "one character: N's row names a page the Chronicle does not have"
   },
@@ -55,7 +55,7 @@
     "old": "`Chronicle: ${page} (Enhanced Plus) / ${classic} (Classic)`",
     "new": "`Chronicle: ${page} (Enhanced Plu) / ${classic} (Classic)`",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "one character: the rows name a skin the game does not call by that name (uiSkin.js SKIN_NAMES)"
   },
@@ -65,7 +65,7 @@
     "old": "`Chronicle: ${page} (Enhanced Plus) / ${classic} (Classic)`",
     "new": "`Chronicl: ${page} (Enhanced Plus) / ${classic} (Classic)`",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "one character: both rows name a window the Enhanced Plus door does not open"
   },
@@ -75,7 +75,7 @@
     "old": "['LogBook', 'Chronicle: Quests']",
     "new": "['LogBook', 'Quest log']",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the Controller bindings window's d-pad word, the same fault on the pad"
   },
@@ -85,7 +85,7 @@
     "old": "  who.append(el('h2', null, 'Chronicle'));",
     "new": "  who.append(el('h2', null, 'Chronicles'));",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the window renamed and the rows not: the pin reads the heading the real door draws"
   },
@@ -95,7 +95,7 @@
     "old": "  ['quests', 'Quests'], ['notes', 'Notes'],",
     "new": "  ['quests', 'Quest'], ['notes', 'Notes'],",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the Quests page renamed and the row not: the pin reads the page the door opened on"
   },
@@ -105,7 +105,7 @@
     "old": "        : (mode === 'notebook' ? 'notes' : 'quests'),",
     "new": "        : (mode === 'notebook' ? 'notes' : 'notes'),",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "MAC-K2's mapping undone in the world host (and the interior host it builds for): L lands on Notes under a row that says Quests"
   },
@@ -115,7 +115,7 @@
     "old": "    toggleLogbook: () => { const w = makeJournalWindow('activeQuests');",
     "new": "    toggleLogbook: () => { const w = makeJournalWindow('notebook');",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the fixed city's L re-aimed at the notebook: the hosts no longer agree with the row"
   },
@@ -125,7 +125,7 @@
     "old": "    toggleLogbook() { mountInterior(host.makeJournal?.('activeQuests')); },",
     "new": "    toggleLogbook() { mountInterior(host.makeJournal?.('notebook')); },",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "a building's L re-aimed at the notebook - the host that builds no window is read through the outer hosts' mapping"
   },
@@ -135,7 +135,7 @@
     "old": "    toggleLogbook() { this._openJournal('activeQuests'); },",
     "new": "    toggleLogbook() { this._openJournal('notebook'); },",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the dungeon's L re-aimed at the notebook"
   },
@@ -145,7 +145,7 @@
     "old": "    toggleNotebook: () => townTalk.showOverlay(makeJournalWindow('notebook')),",
     "new": "    toggleNotebook: () => townTalk.showOverlay(makeJournalWindow('messages')),",
     "tests": [
-      "test/systems/fb1018c_keylogbook.test.js"
+      "test/systems/fb1018d_keylogbook.test.js"
     ],
     "why": "the street's N re-aimed at the messages: N's row says Notes over a window opened elsewhere"
   }

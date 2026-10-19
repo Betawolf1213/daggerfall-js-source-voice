@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c - SAYS-PAST-TWELVE (found proving Boar's item 4, "their effect is unclear": the Conquest's word on the
+// FIELD BUGS 2026-10-18d - SAYS-PAST-TWELVE (found proving Boar's item 4, "their effect is unclear": the Conquest's word on the
 // screen): EVERY BEAT'S WORD SAID, HOWEVER LONG THE FIGHT. The breach's fold keeps a hall's last EG_SAYS_KEPT words
 // (net/eliteGates/egLink.js `esay`) and drops the oldest as each comes; the screen's fight said the words past a COUNT of them
 // (scenes/eliteGates/egFight.js beats), and the count stood at twelve once the list was full - so from a hall's twelfth word on,
@@ -20,7 +20,7 @@ const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
 const seeded = (seed) => { let s = seed; return () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return s / 4294967296; }; };
 const wire = (f) => { const { to: _to, ...rest } = f; const v = validEgOut(JSON.parse(JSON.stringify(rest))); assert.ok(v, `the wire refuses ${f.k}`); return v; };
 
-test('SAYS-PAST-TWELVE (FIELD BUGS 2026-10-18c): EVERY WORD SAID PAST THE FOLD\'S TWELVE - the director\'s Muster-Call said into a member\'s state three times over EG_SAYS_KEPT is said on the screen each time it comes, the fold keeping its twelve; a screen that opens on the fight already running says none of the words before it (mutants: the words past the last said never found; the last said never kept; a new screen saying the whole list)', () => {
+test('SAYS-PAST-TWELVE (FIELD BUGS 2026-10-18d): EVERY WORD SAID PAST THE FOLD\'S TWELVE - the director\'s Muster-Call said into a member\'s state three times over EG_SAYS_KEPT is said on the screen each time it comes, the fold keeping its twelve; a screen that opens on the fight already running says none of the words before it (mutants: the words past the last said never found; the last said never kept; a new screen saying the whole list)', () => {
   let found = null;
   for (let seed = 1; seed <= 30 && !found; seed++) {
     const plan = egCirclePlan(seed, 5);

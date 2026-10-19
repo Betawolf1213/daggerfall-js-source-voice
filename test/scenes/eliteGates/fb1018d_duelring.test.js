@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-18c - DUEL-RING (Boar, #bug-reports, "Big bugs of the spires", item 1: "Arm master (skeleton boss) ring
+// FIELD BUGS 2026-10-18d - DUEL-RING (Boar, #bug-reports, "Big bugs of the spires", item 1: "Arm master (skeleton boss) ring
 // of fire skill is written on the screen, but no visual effects"): THE LAST ARMSMASTER'S RING OF FIRE, DRAWN. The Challenge
 // (Elite-Gates.md section 13.3: "a ring of fire (r 6) rises around the two") stood on the relay (`pg.ring`), every screen
 // said "A challenge! The ring of fire rises." and kept the motor to its rim (scenes/eliteGates/egClient.js ringKeep) - and
@@ -60,7 +60,7 @@ function court(n) {
 const ringsAt = ({ shapes, plan }, R) => shapes.filter((s) => s.kind === TELEGRAPH_KIND.ring && Math.hypot(s.origin[0] - R[0], s.origin[1] - R[1]) < 1e-6)
   .map((s) => ({ r0: s.r0, r1: s.r1, color: [...s.color], pool: s.pool, style: s.style, drawn: plan.draws.some((d) => d.sh === s) }));
 
-test('DUEL-RING (FIELD BUGS 2026-10-18c): THE RING OF FIRE IS DRAWN - the Last Armsmaster\'s Challenge, called on the relay over a company of two, stands its ring (`pg.ring`, r 6) on the member\'s screen with the whole fight\'s word, and the screen draws it: a band of fire EG_DUEL_RING_HALF_M either side of its rim on the court\'s floor, burning ground\'s pool and fire\'s grain, in the floor plan\'s draws; none before the Challenge, none once the ring falls (mutants: the ring never drawn; its band shut)', () => {
+test('DUEL-RING (FIELD BUGS 2026-10-18d): THE RING OF FIRE IS DRAWN - the Last Armsmaster\'s Challenge, called on the relay over a company of two, stands its ring (`pg.ring`, r 6) on the member\'s screen with the whole fight\'s word, and the screen draws it: a band of fire EG_DUEL_RING_HALF_M either side of its rim on the court\'s floor, burning ground\'s pool and fire\'s grain, in the floor plan\'s draws; none before the Challenge, none once the ring falls (mutants: the ring never drawn; its band shut)', () => {
   const C = court(2);
   let before = 0, ring = null;
   for (let k = 0; k < 600 && !ring; k++) {
@@ -82,7 +82,7 @@ test('DUEL-RING (FIELD BUGS 2026-10-18c): THE RING OF FIRE IS DRAWN - the Last A
   assert.deepEqual(ringsAt(C.draw(), ring), [], 'and is drawn no more');
 });
 
-test('DUEL-RING (FIELD BUGS 2026-10-18c): A COMPANY OF ONE IS TOLD THE OPEN DUEL - at n = 1 the Challenge raises no ring and no brazier (section 13.3), and its word says the duel in the open, never a ring of fire; a company of two still hears the ring rise (mutants: the open duel unsaid; its end unsaid; the two lines swapped; the two ends swapped)', () => {
+test('DUEL-RING (FIELD BUGS 2026-10-18d): A COMPANY OF ONE IS TOLD THE OPEN DUEL - at n = 1 the Challenge raises no ring and no brazier (section 13.3), and its word says the duel in the open, never a ring of fire; a company of two still hears the ring rise (mutants: the open duel unsaid; its end unsaid; the two lines swapped; the two ends swapped)', () => {
   const said = (n) => {
     const C = court(n);
     for (let k = 0; k < 600 && !C.B.F.mem.challenge; k++) { C.beat(); if (k % 4 === 0) C.draw(); }
