@@ -194,16 +194,16 @@ on the meadow's crossed cards (MEADOW1, `render/grassMeadow.js`), its own densit
 (`src/assets/grass/source/tuft-tall.png`, the meadow's first sprite) for the grass, and archive 500's own low cover - the
 pictures the floor storey's flats wear, the classic record's or a pack's (`floorPictures`), never a Tree record:
 
-| Plant | Record | Height (m) | Stiff / sway | Share, poor patch / lush |
-|---|---|---|---|---|
-| grass (the owner's tall tuft) | - | 0.5 | 1 / 1 | 42% / 30% |
-| sedge | 7 | 0.5 | 1 / 1 | 16% / 10% |
-| fern | 9 | 1.2 | 0.6 / 0.8 | 12% / 20% |
-| frond | 10 | 0.95 | 0.6 / 0.8 | 10% / 16% |
-| broad-leaved bush | 1 | 0.9 | 0.3 / 0.6 | 5% / 8% |
-| palmlet | 27 | 1.0 | 0.5 / 0.7 | 6% / 7% |
-| flowering stem | 21 | 0.9 | 0.5 / 0.7 | 4% / 5% |
-| spike | 6 | 1.1 | 0.4 / 0.7 | 4% / 4% (the rest) |
+| Plant | Record | Height (m) | Stiff / sway | Judged share, poor / lush (at 1.8) | Share, poor / lush (JUNGLE-GRASS) | A square metre, poor / lush |
+|---|---|---|---|---|---|---|
+| grass (the owner's tall tuft) | - | 0.5 | 1 / 1 | 42% / 30% | 55.2% / 49.6% | 1.76 / 1.58 |
+| sedge | 7 | 0.5 | 1 / 1 | 16% / 10% | 21.0% / 16.5% | 0.67 / 0.53 |
+| fern | 9 | 1.2 | 0.6 / 0.8 | 12% / 20% | 6.8% / 11.3% | 0.22 / 0.36 |
+| frond | 10 | 0.95 | 0.6 / 0.8 | 10% / 16% | 5.6% / 9.0% | 0.18 / 0.29 |
+| broad-leaved bush | 1 | 0.9 | 0.3 / 0.6 | 5% / 8% | 2.8% / 4.5% | 0.09 / 0.14 |
+| palmlet | 27 | 1.0 | 0.5 / 0.7 | 6% / 7% | 3.4% / 4.0% | 0.11 / 0.13 |
+| flowering stem | 21 | 0.9 | 0.5 / 0.7 | 4% / 5% | 2.3% / 2.8% | 0.07 / 0.09 |
+| spike | 6 | 1.1 | 0.4 / 0.7 | 5% / 4% (the rest) | 2.8% / 2.3% (the rest) | 0.09 / 0.07 |
 
 Each picture is laid in the meadow's 64-texel cell beside the tuft (`fitSprite`: whole texels a pixel where it fits,
 shrunk at the texel's centre where it does not, its foot on the cell's floor, a pack's soft alpha cut at a half), so the
@@ -217,11 +217,20 @@ agree at every byte.
 the ground's **light** and never its **hue** (`uArtHue`: the meadow's set 1, the floor's 0): a fern on the jungle's red
 earth stays a fern's green. With the hue (2026-10-19's photographs) the tufts took the earth's hue and stood pale pink.
 
-**How thick.** `JUNGLE_FLOOR.plants`: 1.8 plants a square metre where the floor is whole, at the grass row's Full (the
-row's tiers thin it as they thin the meadow - the pref's share, `floorDensity`). At 1 a square metre the red earth still
-showed between the ferns (2026-10-19's photographs); at 2.5 it was a wall of leaves, and the owner: "Reduce the amount
-of ground flora. Its a little too much" (2026-10-19). Its seed is its own (`JUNGLE_FLOOR.seed`; a field of the meadow's
-seed at a lower density stands on a prefix of its spots).
+**How thick.** `JUNGLE_FLOOR.plants` where the floor is whole, at the grass row's Full (the row's tiers thin it as they
+thin the meadow - the pref's share, `floorDensity`). At 1 a square metre the red earth still showed between the ferns
+(2026-10-19's photographs); at 2.5 it was a wall of leaves, and the owner: "Reduce the amount of ground flora. Its a
+little too much" (2026-10-19) - thinned to 1.8 (`JUNGLE_FLOOR_JUDGED`, the table's judged shares). There its tufts and
+sedge stood 0.88 a square metre, two fifths of the 2.27 the meadow stands everywhere else, and the meadow's own grass
+keeps out of the floor (Where, below) - so the jungle read as leaves on bare mud, and the owner: **"Grass isnt showing
+within the new jungle region"** (JUNGLE-GRASS, 2026-10-19). Now the floor is two rates (`render/jungleFloorArt.js`):
+its **flora** - fern, frond, bush, palmlet, bloom, spike - at the rate the owner judged, plant for plant (a fern stands
+as often a square metre as at 1.8), and its **grass** - the tuft and the sedge, in their judged proportion - at the
+meadow's own (`JUNGLE_FLOOR_GRASS`: the meadow's blades over the lab's span, three a tuft), more on a poor patch than a
+lush one as before: **3.19 plants a square metre** (`JUNGLE_FLOOR_PLANTS_M2`), every share derived from those two. The
+meadow's grass stays out: its colour law would take the earth's hue (Its colours, above) and its one hue share is a
+uniform its set holds - the floor wears the same tuft at its own hue. Its seed is its own (`JUNGLE_FLOOR.seed`; a field
+of the meadow's seed at a lower density stands on a prefix of its spots).
 
 **Where.** A plant stands where the jungle's floor **claims** the point (`jungleHost.floorClaims`): the point's own draw
 (`jungleFloorDraw`, an integer hash of its world place at an eighth of a metre - the same on every client and at every
@@ -245,9 +254,9 @@ floating origin's shift - reaches the floor's too, by the one handle (`pair`); a
 is a new floor field. Its draw is the meadow's program under the meadow's frame - its view, light, wind and range
 (`drawBeside`, the renderer's stored `frame`).
 
-**Cost.** The field holds the meadow's 394 cells about the eye, each 4,860 blades (1.8 plants a square metre, three
-blades a tuft, over a 30 m cell) at 16 bytes: **31 MB of GPU buffers**, beside the meadow's 39 MB - allocated only once the
-jungle comes near. Its cells are placed a slice a frame as the meadow's are. **Open:** its frame time on a GPU (beside the
+**Cost.** The field holds the meadow's 394 cells about the eye, each 8,601 blades (3.19 plants a square metre, three
+blades a tuft, over a 30 m cell) at 16 bytes: **54 MB of GPU buffers** at the grass row's Full (31 MB at BANTHA2's 1.8 -
+JUNGLE-GRASS's grass the difference), beside the meadow's 39 MB - allocated only once the jungle comes near. Its cells are placed a slice a frame as the meadow's are. **Open:** its frame time on a GPU (beside the
 jungle's, below).
 
 ## The haze
@@ -342,8 +351,9 @@ the jungle under clear air. Read once, as the world loads.
   paints no pixel of it, and BANTHA1 stood the jungle on Glenpoint (region 18); the jungle is now the area the owner
   painted on Hammerfell's shore - map pixels of seven regions, no region whole.
 - **The floor's carpet** (BANTHA2): DFU stands the rainforest's cover as scattered billboards; here a second field of the
-  port's grass carpets the ground with the same pictures on crossed cards, 1.8 plants a square metre, and the meadow's
-  grass keeps out of it.
+  port's grass carpets the ground with the same pictures on crossed cards and the owner's tuft - the flora at the rate the
+  owner judged, the grass at the meadow's own (JUNGLE-GRASS: 3.19 plants a square metre) - and the meadow's grass keeps
+  out of it.
 - DFU's fog is one `RenderSettings.fog` for the world; here a regional height haze multiplies it (and the sky takes it).
 - DFU draws every streamed terrain the camera sees; here the haze culls what it hides whole.
 - **Winter, as DFU's rainforest** (AUDIT BANTHA1 TREE-4, NAMED): the Rainforest climate is Swamp-based, so in winter its
@@ -382,6 +392,17 @@ summer at 10:00 - at eye level a carpet of ferns, fronds, broad leaves, palmlets
 under the canopy, thinning to single plants on the mud at a great trunk's foot; looking down, the earth between them. At
 2.5 a square metre (the first photographs) a wall of leaves - the owner: "a little too much" - and the floor stood on
 the swamp's dirt alone (the ground law above, "Where"): by place, about six times as many tufts stood in the same view.
+
+**JUNGLE-GRASS.** `test/world/junglegrass.test.js` (3): the floor's grass the meadow's own rate, its flora the judged
+rate plant for plant, the tuft and the sedge in proportion, the shares whole and the pick agreeing with them;
+`tools/mutants/junglegrass.json` (6, all dead), and BANTHA2's density mutant re-aimed at the judged rate (`bantha2.json`,
+48 dead with ARENA2). **Seen in the running game** (2026-10-19, the freeware's data, headless Chromium on SwiftShader, the
+land view at 1, `tools/grassLookProbe.mjs` with four views from one spot 200-420 m out of Ceradbu, Mournoth, deep in the
+area - a new game's Morning Star, the jungle's ground snowless): before, ferns, fronds and bushes over red earth with a
+pale tuft here and there; after, the tufts and sedge filling the ground between the same ferns - 153,062 of the floor's
+blades in view against 82,253 (a new game's winter takes the meadow's grass under the snow elsewhere; the floor stood
+through it). The ground there: 87% DFU's grass record by place, 1.4% its green stone, which the floor stands nothing on
+(`__findTiles` over the nine pixels about the village).
 
 **Recorded.** The five pictures are the owner's own (2026-10-18, at AUDIT BANTHA1's opening: "These textures are ours") -
 no pixel of them is ARENA2's; the doctrine's SUPPLIED rows say so (`test/tooling/doctrine.test.js`). **Where it stands.** On the freeware's own data (`tools/fetch-data.sh`, `tools/jungleExtent.mjs`, 2026-10-18) region
