@@ -30,6 +30,10 @@ CHANGED: a pillar whose Caster's body is gone, by any hand, is done
 before (its Caster crumbles), and a pillar whose Caster was never raised (`g.i` unset) still waits on its plate. A run
 already stuck in a Gauntlet when this deploys finishes on the relay's next beat: its slain Casters' pillars read done.
 
+THE RELAY. `egBrain.js` is in the relay's bundle, so `RELAY_VERSION` moves to `world220` (`src/net/wire.js`, its row in
+`test/net/relayversion.test.js`; no file joins the bundle). Deploy the relay before the clients, as every Elite Breach
+change is: the client is unchanged.
+
 NOT CHANGED, AND OPEN. The plates are still unmarked on the screen. With a kill now counting, the plate is the way
 round a Caster rather than the only way through, so marking it is a later slice's (a ground mark in
 `scenes/eliteGates/egFight.js`, where GROUND_COLORS already names a `plate`).
