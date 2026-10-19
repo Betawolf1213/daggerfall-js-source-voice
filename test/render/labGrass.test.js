@@ -84,7 +84,7 @@ test('GR1: grass records come from the archive\u2019s own texels - none for road
   assert.equal(grassRecordsOf(winter).size, 0, 'a winter archive has no green base, so nothing is grass');
   // the host: the near ring, the season, the sea plane, the record
   const w = hostText('src/scenes/world.js');
-  assert.match(w, /p\._stride === 1 && p\.tilemapBytes && p\.season !== SEASON\.Winter/, 'near ring only, never in winter');
+  assert.match(w, /p\._stride === 1 && p\.tilemapBytes && \(snowCover\.on \|\| p\.season !== SEASON\.Winter\)/, 'near ring only, never in winter (PRECIP4: on the snow lane each blade asks the snow instead)');
   // PIN MOVED (ECOTONE1, 2026-10-07): the records of the ground the root stands in - its pixel's (`grass`), or at a climate
   // border the neighbour's set the ground's border gives it there
   assert.match(w, /const g = ga === p\.groundArchive \? grass : grassRecords\.get\(ga\);\n\s*if \(rec === 0 \|\| !g \|\| !g\.has\(rec\)\) return null;/, 'a water record or a non-grass record: no blade');

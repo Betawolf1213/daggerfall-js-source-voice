@@ -391,15 +391,17 @@ test('R1 CLOSEOUT: the frame cannot poll the straightened season away while the 
   // the last write left is what the destination is skinned with.
   const world = hostText('src/scenes/world.js');
   const build = world.slice(world.indexOf('async function buildPixelNow'));
-  assert.ok(build.indexOf('await terrainGen.generate') < build.indexOf('getTerrainGroundArchive(climate, host.season)'),
-    'the ground archive is chosen after the worker yields - the window is real');
+  // PIN MOVED (PRECIP4, 2026-10-19): the pixel's season is read there too - off the host's, or the snow's on the lane
+  assert.ok(build.indexOf('await terrainGen.generate') < build.indexOf('snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season'),
+    'the season is read after the worker yields - the window is real');
+  assert.ok(build.indexOf('snowCover.seasonOfPixel(') < build.indexOf('getTerrainGroundArchive(climate, pixelSeason)'), 'and the ground archive after it');
 
   // THE LATCH. The frame's poll is the first thing tickSeason answers
   // to, the teleport raises it beside the straightening, and it comes
   // down in a `finally` so a failed build cannot switch the frame's
   // season off for the rest of the session.
   const tick = world.slice(world.indexOf('function tickSeason() {'));
-  assert.match(tick.slice(0, tick.indexOf('\n  }')), /^function tickSeason\(\) \{\n(\s*\/\/[^\n]*\n)*\s*if \(_seasonStraightening\) return;[^\n]*\n\s*if \(refreshSeason\(\)\) _reskin\.markAll\(\);/,
+  assert.match(tick.slice(0, tick.indexOf('\n  }')), /^function tickSeason\(\) \{\n(\s*\/\/[^\n]*\n)*\s*if \(_seasonStraightening\) return;[^\n]*\n\s*if \(refreshSeason\(\)(?: && !snowCover\.on)?\) _reskin\.markAll\(\);/,
     'the frame poll stands down FIRST - above the refreshSeason that would otherwise mutate the cache');
   const tp = world.slice(world.indexOf('async function _teleportToPixel'));
   const core = tp.slice(0, tp.indexOf('\n  }'));

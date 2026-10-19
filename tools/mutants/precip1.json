@@ -590,8 +590,8 @@
   {
     "name": "PRECIP4-the-build-season-the-hosts",
     "file": "src/scenes/pixelBuild.js",
-    "old": "    const season = snowCover ? snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season;",
-    "new": "    const season = host.season;",
+    "old": "    const pixelSeason = snowCover ? snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season;",
+    "new": "    const pixelSeason = host.season;",
     "tests": [
       "test/render/precip4_snowground.test.js"
     ]
@@ -608,8 +608,8 @@
   {
     "name": "PRECIP4-the-flat-season-the-pixels",
     "file": "src/scenes/pixelBuild.js",
-    "old": "      const fSeason = snowCover?.on ? snowCover.flatSeason(px, py, f.x, f.z, f.y - SEA_LEVEL_M, season) : season;",
-    "new": "      const fSeason = season;",
+    "old": "      const fSeason = snowCover?.on ? snowCover.flatSeason(px, py, f.x, f.z, f.y - SEA_LEVEL_M, pixelSeason) : pixelSeason;",
+    "new": "      const fSeason = pixelSeason;",
     "tests": [
       "test/render/precip4_snowground.test.js"
     ]

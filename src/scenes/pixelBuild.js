@@ -202,16 +202,16 @@ export function createPixelBuild(host) {
     for (let i = 1; i < positions.length; i += 3) { if (positions[i] < groundLo) groundLo = positions[i]; if (positions[i] > groundHi) groundHi = positions[i]; }
     const groundMid = dfLocation ? avg * worldHeight : (groundLo + groundHi) / 2;
     if (snowCover?.on) await snowCover.settle(() => breather.breathe());   // the snow about the player integrated before a season is read
-    const season = snowCover ? snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season;
-    const climateArchive = (archive, record) => applyClimate(archive, record, climateBase, season);
+    const pixelSeason = snowCover ? snowCover.seasonOfPixel(px, py, groundMid - SEA_LEVEL_M, host.season) : host.season;
+    const climateArchive = (archive, record) => applyClimate(archive, record, climateBase, pixelSeason);
     // WD3 (AUDIT WD3 G5): A TOWN'S BUILDINGS WEAR ITS LOCATION'S CLIMATE - DaggerfallLocation's ClimateUse.UseLocation
     // (ApplyClimateSettings: Summary.Climate, from DFLocation.Climate), the terrain the pixel's. One and the same for
     // every classic town (MAPS.BSA reads the location's climate off the pixel); a world-data file says its own (81 of
     // Beautiful Villages' towns name a climate other than their pixel's), as DFU stands them.
     const townClimateBase = dfLocation?.climate?.climateType ?? climateBase;
-    const townClimateArchive = townClimateBase === climateBase ? climateArchive : (archive, record) => applyClimate(archive, record, townClimateBase, season);
-    const groundArchive = snowCover ? snowCover.groundArchive(climate, season) : getTerrainGroundArchive(climate, season);   // the TERRAIN member, Desert winter-guarded (TerrainMaterialProvider.cs:126-133); PRECIP4: the summer set on the snow lane
-    const natureArchive = getNatureArchive(climate.natureArchive, season);
+    const townClimateArchive = townClimateBase === climateBase ? climateArchive : (archive, record) => applyClimate(archive, record, townClimateBase, pixelSeason);
+    const groundArchive = snowCover ? snowCover.groundArchive(climate, pixelSeason) : getTerrainGroundArchive(climate, pixelSeason);   // the TERRAIN member, Desert winter-guarded (TerrainMaterialProvider.cs:126-133); PRECIP4: the summer set on the snow lane
+    const natureArchive = getNatureArchive(climate.natureArchive, pixelSeason);
     // VERGE1 (Mac: "Making sure objects, like trees, avoid pathways and roads. Currently they slightly overlap"): THE
     // ROADS THIS PIXEL WAS PAINTED WITH - none when the kernel painted none (the roads sweep builds it again when the
     // network lands) - and the half widths of the climate's own pictures, its summer set's (a season moves no flat)
@@ -226,12 +226,12 @@ export function createPixelBuild(host) {
     await snowCover?.loadTwin(climate, pipeline, loadGroundSet);   // PRECIP4: and its winter twin, on the snow lane
     // ECOTONE1: and at a climate border the neighbours' sets, held by this pixel as its own is - which set each of
     // its eight neighbours wears (0 its own, 1-3 the sets on the terrain program's units 3-5), and its lattice origin
-    const groundNear = near ? near.map((c) => (snowCover ? snowCover.groundArchive(c, season) : getTerrainGroundArchive(c, season))) : null;
+    const groundNear = near ? near.map((c) => (snowCover ? snowCover.groundArchive(c, pixelSeason) : getTerrainGroundArchive(c, pixelSeason))) : null;
     let eco = null;
     if (groundNear?.some((a) => a !== groundArchive)) {
       const archives = [...new Set(groundNear.filter((a) => a !== groundArchive))];
       for (const a of archives) await loadGroundSet(a, pipeline);
-      for (const c of near) if (archives.includes(snowCover?.groundArchive(c, season))) await snowCover.loadTwin(c, pipeline, loadGroundSet);   // PRECIP4: the neighbours' twins
+      for (const c of near) if (archives.includes(snowCover?.groundArchive(c, pixelSeason))) await snowCover.loadTwin(c, pipeline, loadGroundSet);   // PRECIP4: the neighbours' twins
       const slot = (k) => (groundNear[k] === groundArchive ? 0 : archives.indexOf(groundNear[k]) + 1);
       const [ox, oz] = ecoOrigin(px, py);
       eco = {
@@ -299,7 +299,7 @@ export function createPixelBuild(host) {
     // Per-pixel climate swap table: pixels from the swapped archive, UVs
     // from the original (the SetDungeonTextures pattern; verbatim
     // MaterialReader.ChangeClimate semantics).
-    const texRemap = markRemapLaw(new Map(), `climate:${townClimateBase}.${season}`);   // AUDIT MENU-ORDER C3: named by the law it is built in (townClimateArchive's)
+    const texRemap = markRemapLaw(new Map(), `climate:${townClimateBase}.${pixelSeason}`);   // AUDIT MENU-ORDER C3: named by the law it is built in (townClimateArchive's)
     const models = []; // { gpu, local } - local precomposed pixel-local matrix
     // PERF4: the pixel's static models, merged as they arrive (the
     // transform rides the build's own awaits) into one mesh per pixel,
@@ -387,7 +387,7 @@ export function createPixelBuild(host) {
         // player and a world-keyed phase would re-seed every mill in
         // sight on every shift.
         if (b.layout.windmills.length && isEnhanced()) {
-          const parts = await getWindmillMeshes(townClimateBase, season === SEASON.Winter);
+          const parts = await getWindmillMeshes(townClimateBase, pixelSeason === SEASON.Winter);
           if (!host.millParts) {
             host.millParts = parts;
             console.log(`[windmills] first mill streamed in (${b.blockName})`);
@@ -436,7 +436,7 @@ export function createPixelBuild(host) {
           // GUILD-YARD: and a guild's hall this character keeps - its painter tries a look on it as an owner's does
           if (homeRow && (homeLook || homeRow.mine || homeRow.keeper)) {
             entry._home = { bk: homeKey, sig: homeLookSig(homeLook), seq: 0 };
-            entry.texRemap = homeLook ? await homeLookRemap(gpu.subMeshes, texRemap, homeLook, season, pipeline) : null;
+            entry.texRemap = homeLook ? await homeLookRemap(gpu.subMeshes, texRemap, homeLook, pixelSeason, pipeline) : null;
             pixelHomeKeys.add(homeKey);
           }
           models.push(entry);
@@ -906,8 +906,8 @@ export function createPixelBuild(host) {
       if ((forests || (jungle && f.archive === JUNGLE_ARCHIVE)) && insideRocks(pixelRocks, f.x, f.z)) continue;   // AUDIT BANTHA1 LAY-4: and the jungle's, whatever the woods' switch
       // ECOTONE1: a border's flat is its own climate's - the summer archive the kernel names, worn in the season's set
       // PRECIP4: on the snow lane each wears the snow at its own foot against its own draw (scenes/snowCoverHost.js flatSeason)
-      const fSeason = snowCover?.on ? snowCover.flatSeason(px, py, f.x, f.z, f.y - SEA_LEVEL_M, season) : season;
-      const base = f.archive ?? climate.natureArchive, archive = f.archive == null && fSeason === season ? natureArchive : getNatureArchive(base, fSeason);
+      const fSeason = snowCover?.on ? snowCover.flatSeason(px, py, f.x, f.z, f.y - SEA_LEVEL_M, pixelSeason) : pixelSeason;
+      const base = f.archive ?? climate.natureArchive, archive = f.archive == null && fSeason === pixelSeason ? natureArchive : getNatureArchive(base, fSeason);
       // VERGE1: and none reaches over a road or a track - the disc of its widest picture (world/road/roadVerge.js);
       // BANTHA1: a jungle tree's its FOOT - its roots, buttresses and the curtains it hangs to the ground - at its own
       // scale, never its crown: a road is cut through the jungle, and the canopy may close over it
@@ -1259,7 +1259,7 @@ export function createPixelBuild(host) {
       chapterHalls: pixelChapterHalls,   // CHAP7b (above)
       beach: beach ?? null,   // AUDIT LANDFORMS II H2: DFU's own blend in a location's pixel with the row on - where a gathering node asks the beach line
       px, py, terrain, water, tilemapTex, tilemap, groundArchive, models, windmills, batches, flatAnims, texRemap, lights: pixelLights, hearths: pixelHearths, animals: pixelAnimals, springs: pixelSprings, skyBase: climate.skyBase, samples, natureCount: nature.length,
-      tilemapBytes, season,   // GR1: the placer reads the tiles and the season (PRECIP4: the pixel's)
+      tilemapBytes, season: pixelSeason,   // GR1: the placer reads the tiles and the season (PRECIP4: the pixel's)
       _snow: snowCover?.signatureOf(px, py, groundLo - SEA_LEVEL_M, groundMid - SEA_LEVEL_M, groundHi - SEA_LEVEL_M) ?? null,   // PRECIP4: the snow it was built under (the sweep's)
       townClimate: townClimateBase,   // DECOR-OUTDOOR: the climate its town's buildings wear - a yard's pieces wear it too (scenes/homeYards.js)
       paths,   // GRASS-PATH1: which tiles the road painter wrote; null on a pixel built before the network arrived

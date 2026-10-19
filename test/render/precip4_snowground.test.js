@@ -325,7 +325,10 @@ test('PRECIP4 THE BUILD WAITS FOR THE SNOW: on the lane a build settles the wind
   assert.ok(breaths >= 0);
   const before = rig._lattice.stepsRun + rig._lattice.stepsSkipped;
   const lines = new Map([...rig._lines].map(([k, l]) => [k, l.target]));
+  const px = { px: 200, py: 100, groundArchive: 302 }, d = rig.drawOf(px);
+  d.h10[0] = 999;   // a mark on the draw's cache: it is made again only when the lines move
   await rig.settle(async () => { throw new Error('no breath needed'); });
+  assert.equal(rig.drawOf(px).h10[0], 999, 'settled: no line read again, no draw made again');
   assert.equal(rig._lattice.stepsRun + rig._lattice.stepsSkipped, before, 'settled: nothing integrated again');
   for (const [k, l] of rig._lines) assert.equal(l.target, lines.get(k), 'nor read again');
   // sliced: a long history breathes between slices
@@ -374,17 +377,17 @@ test('PRECIP4 THE SWEEP: a standing pixel built under other snow - its buildings
 
 test('PRECIP4 THE WIRING: the builds read the pixel\'s season off the host (its buildings, its town\'s swaps, its windmills, its homes), the summer set and its twin for the ground, each flat its own season, and keep the snow they were built under; the world draws each pixel with its twin and its snow, its border\'s twins, re-skins by the snow on the lane, grows no grass through it, and hears the snow under the feet (mutants: each line reverted)', () => {
   const b = read('src/scenes/pixelBuild.js');
-  assert.match(b, /const season = snowCover \? snowCover\.seasonOfPixel\(px, py, groundMid - SEA_LEVEL_M, host\.season\) : host\.season;/);
-  assert.doesNotMatch(b.slice(b.indexOf('\n', b.indexOf('const season = snowCover'))), /host\.season\b(?!sReady|sActive)/, 'no build line reads the host\'s season past it');
-  assert.match(b, /const groundArchive = snowCover \? snowCover\.groundArchive\(climate, season\) : getTerrainGroundArchive\(climate, season\);/);
+  assert.match(b, /const pixelSeason = snowCover \? snowCover\.seasonOfPixel\(px, py, groundMid - SEA_LEVEL_M, host\.season\) : host\.season;/);
+  assert.doesNotMatch(b.slice(b.indexOf('\n', b.indexOf('const pixelSeason = snowCover'))), /host\.season\b(?!sReady|sActive)/, 'no build line reads the host\'s season past it');
+  assert.match(b, /const groundArchive = snowCover \? snowCover\.groundArchive\(climate, pixelSeason\) : getTerrainGroundArchive\(climate, pixelSeason\);/);
   assert.match(b, /await loadGroundSet\(groundArchive, pipeline\);\n {4}await snowCover\?\.loadTwin\(climate, pipeline, loadGroundSet\);/);
-  assert.match(b, /if \(archives\.includes\(snowCover\?\.groundArchive\(c, season\)\)\) await snowCover\.loadTwin\(c, pipeline, loadGroundSet\);/);
-  assert.match(b, /const fSeason = snowCover\?\.on \? snowCover\.flatSeason\(px, py, f\.x, f\.z, f\.y - SEA_LEVEL_M, season\) : season;/);
-  assert.match(b, /archive = f\.archive == null && fSeason === season \? natureArchive : getNatureArchive\(base, fSeason\);/);
+  assert.match(b, /if \(archives\.includes\(snowCover\?\.groundArchive\(c, pixelSeason\)\)\) await snowCover\.loadTwin\(c, pipeline, loadGroundSet\);/);
+  assert.match(b, /const fSeason = snowCover\?\.on \? snowCover\.flatSeason\(px, py, f\.x, f\.z, f\.y - SEA_LEVEL_M, pixelSeason\) : pixelSeason;/);
+  assert.match(b, /archive = f\.archive == null && fSeason === pixelSeason \? natureArchive : getNatureArchive\(base, fSeason\);/);
   assert.match(b, /_snow: snowCover\?\.signatureOf\(px, py, groundLo - SEA_LEVEL_M, groundMid - SEA_LEVEL_M, groundHi - SEA_LEVEL_M\) \?\? null,/);
   const w = read('src/scenes/world.js');
   assert.match(w, /const snowCover = createSnowCoverHost\(\{ renderer, climateAt, mapHeight: MAP_H, stateOf: \(\) => state, builtOf: \(\) => built, heightAt: \(x, z\) => heightAt\(x, z\), owns: precipLawOn, markReskin: \(key\) => _reskin\.mark\(key\), place: \(\) => \(\{ px: state\.current\.x, py: state\.current\.y, t: worldMinutes\(\) \}\) \}\);/);
-  assert.match(b, /if \(snowCover\?\.on\) await snowCover\.settle\(\(\) => breather\.breathe\(\)\);[^\n]*\n {4}const season = snowCover/, 'a build waits for the snow before its season');
+  assert.match(b, /if \(snowCover\?\.on\) await snowCover\.settle\(\(\) => breather\.breathe\(\)\);[^\n]*\n {4}const pixelSeason = snowCover/, 'a build waits for the snow before its season');
   assert.match(w, /snowCover\.tick\(\{ px: _sp\.x, py: _sp\.y, t: playerTicker\.classicMinutes, dt, arriving: !playerSpawned \}\);/);
   assert.match(w, /if \(refreshSeason\(\) && !snowCover\.on\) _reskin\.markAll\(\);/);
   assert.match(w, /e\.tex\[k\] = snowCover\.arrayOf\(a\);/);
