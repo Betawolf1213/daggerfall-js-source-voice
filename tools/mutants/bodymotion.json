@@ -281,8 +281,8 @@
   {
     "name": "BODY-MOTION-two-run-at-the-chest",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    run: { R: row(11, 24, 24, -43, 0.12,",
-    "new": "    run: { R: row(40, 24, 95, -43, 0.12,",
+    "old": "    run: { R: row(11, -5, 28, -44, 0,",
+    "new": "    run: { R: row(40, -5, 95, -44, 0,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -362,8 +362,8 @@
   {
     "name": "BODY-MOTION-blow-chest-unturned",
     "file": "src/characters/bodyMotion/bodyMotion.js",
-    "old": "gp.chest.yaw * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0))),",
-    "new": "gp.chest.yaw * (1 - k))),",
+    "old": "(gp.chest.yaw + runTurn) * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0))),",
+    "new": "(gp.chest.yaw + runTurn) * (1 - k))),",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]

@@ -275,6 +275,8 @@ export function createBodyMotion() {
       const gp = gaitPose(gait, gi, body);
       const L = body.leg;
       const runLean = lerp(CARRY[clsFrom]?.runLean ?? 0, CARRY[cls]?.runLean ?? 0, clsFrom ? clsMix : 1) * gp.run * gp.move * RAD;
+      // TWO-RUN: a class's chest turned toward its weapon at a run (CARRY's `runTurn`), as the lean, by the run's share
+      const runTurn = lerp(CARRY[clsFrom]?.runTurn ?? 0, CARRY[cls]?.runTurn ?? 0, clsFrom ? clsMix : 1) * gp.run * gp.move * RAD;
       const hipYaw = gp.hip.yaw - gait.psi * gp.move * BLOW_TRUNK.steer * k + (bp ? bp.hip * RAD * wind : 0);
       const plan = {
         w,
@@ -283,7 +285,7 @@ export function createBodyMotion() {
           yaw: hipYaw, roll: gp.hip.roll, pitch: gp.hip.pitch,
         },
         chest: {
-          yaw: Math.max(hipYaw - BLOW_TRUNK.twist * RAD, Math.min(hipYaw + BLOW_TRUNK.twist * RAD, gp.chest.yaw * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0))),
+          yaw: Math.max(hipYaw - BLOW_TRUNK.twist * RAD, Math.min(hipYaw + BLOW_TRUNK.twist * RAD, (gp.chest.yaw + runTurn) * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0))),
           roll: gp.chest.roll + (bp ? bp.chest[1] * RAD * wind : 0),
           pitch: gp.chest.pitch + runLean + (bp ? bp.chest[2] * RAD * wind : 0),
         },
