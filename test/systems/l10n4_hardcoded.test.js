@@ -685,7 +685,7 @@ const HARDCODED = {
   'src/ui/pixelifyFive.js': 2,
   'src/ui/playerBadge.js': 35,   // SERPENT5: The Maelstrom's word, beside the other auras'; EG-E2: the Spire's thirteen titles and three auras in words; WIKIMAID: the Lilac Warren's word, beside the other auras'
   'src/ui/playerHistory.js': 1,
-  'src/ui/plus/plusPad.js': 19,
+  'src/ui/plus/plusPad.js': 18,
   'src/ui/plus/plusPadBinds.js': 30,
   'src/ui/prisonScreen.js': 1,
   'src/ui/professions/profPages.js': 30,

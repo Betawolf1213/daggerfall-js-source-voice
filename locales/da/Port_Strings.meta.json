@@ -8044,6 +8044,16 @@
   "tr": "1c3c2cc14bc0",
   "by": "claude-in-session"
  },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "5394e756c977",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "9ccfe5a5e04c",
+  "by": "claude-in-session"
+ },
  "eg.say.perches": {
   "en": "419f5f081d80",
   "tr": "b2313ea9be9a",
@@ -20900,8 +20910,18 @@
   "by": "claude-in-session"
  },
  "prof.page.how.alchemy": {
-  "en": "1df3a4158e86",
-  "tr": "25c7af830aec",
+  "en": "010b4180e9a8",
+  "tr": "8c9cf1680132",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.building": {
+  "en": "81a899fc68aa",
+  "tr": "24692cab80b1",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.cooking": {
+  "en": "c132c8088fba",
+  "tr": "b8c7a80882e9",
   "by": "claude-in-session"
  },
  "prof.page.how.enchanting": {
@@ -20942,6 +20962,16 @@
  "prof.page.how.miningSurveyor": {
   "en": "8ea3b3f58e32",
   "tr": "9485ef589b51",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.outfitting": {
+  "en": "833d2e70dbed",
+  "tr": "5afff71e088c",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.smithing": {
+  "en": "3cb5f680ad26",
+  "tr": "d16277bb8d93",
   "by": "claude-in-session"
  },
  "prof.page.jewel": {
@@ -25977,6 +26007,36 @@
  "tutorials.chapters.trigger": {
   "en": "365aec48fe12",
   "tr": "dc11f146384a",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.body": {
+  "en": "c5ba22688057",
+  "tr": "1e6d916c6413",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.more": {
+  "en": "7c91bad9f667",
+  "tr": "31e419dd6ab1",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops1": {
+  "en": "c0fa00345614",
+  "tr": "da8290f97942",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops2": {
+  "en": "b6ae4490b103",
+  "tr": "b2fdd7ab5b2b",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.title": {
+  "en": "ea78b34da11f",
+  "tr": "c13d3dd2fa08",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.trigger": {
+  "en": "3c9c8044cdbd",
+  "tr": "3a19f9be5fca",
   "by": "claude-in-session"
  },
  "tutorials.guilds.body1": {

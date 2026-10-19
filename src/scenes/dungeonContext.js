@@ -5237,7 +5237,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   /** SEAT-HEAL (2026-09-22, a player's report: "I kill a rat, my party member comes in and still sees it alive, and hits
    *  the air for me"). THE SEAT WAS A ONE-WAY LATCH. world.js hands a joiner the foes when the host's stream has been
    *  silent FOES_STALE_MS (a backgrounded host tab stops the frame loop, so it streams nothing), and the heartbeat that
-   *  would hand them back (`_foesInAt`) is stamped only when a frame is APPLIED - while `applyFoesFrame` refuses every
+   *  would hand them back (`seatClock`) is stamped only when a frame is APPLIED - while `applyFoesFrame` refuses every
    *  frame for as long as this context is the authority. So one silence of six seconds left the joiner in a private
    *  dungeon for good: the rat alive on its screen, its blows applied to its own copy and never sent to the host.
    *  A frame that reaches here is the live seat-holder's word (online.js delivers a world room's foes frame only when

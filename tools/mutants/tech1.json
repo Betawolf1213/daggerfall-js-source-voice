@@ -529,8 +529,8 @@
   {
     "name": "TECH1-a-leap-from-the-water",
     "file": "src/player/motor.js",
-    "old": "    if (this.swimming || this.levitating || this.slowFalling || this.climb?.isClimbing",
-    "new": "    if (this.levitating || this.slowFalling || this.climb?.isClimbing",
+    "old": "    if (this.swimming || this.levitating || (this.slowFalling && !this.grounded) || this.climb?.isClimbing",
+    "new": "    if (this.levitating || (this.slowFalling && !this.grounded) || this.climb?.isClimbing",
     "tests": [
       "test/systems/tech1_runner.test.js"
     ]

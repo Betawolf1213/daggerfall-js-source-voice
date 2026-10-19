@@ -1890,9 +1890,13 @@ function sapperGoal(F, spec, a) {
 const nearestClosed = (F, a) => (F.closedSpots ?? []).reduce((b, q) => (!b || dist(q[0], q[1], a.x, a.z) < dist(b[0], b[1], a.x, a.z) ? q : b), null);
 /** A Sapper at its objective: gone into it. AUDIT EG IV (lane1 #17; section 12: "heals it, the gate's law"): a lord drinks it
  *  as the gate's Warden does - SAP_HEAL of its health while its fight's feedings last (SAP_FEEDS_MAX), burnt out against it
- *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). */
+ *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). FB1018D
+ *  TWIN-REKINDLE: only a lord STANDING drinks - the gate's Warden is fed only while he stands, and a lord of a fight of two
+ *  lies a body after its fall (a Twin in its window, the Twin Court's first, the Old Masters'), so a Sapper stood for it
+ *  before its fall burns out against the body: fed, the body stood again with its fall's flag still on - a lord on the
+ *  relay, throwing blows, that no screen's blow could meet, and that kept the pair's raise from ever coming. */
 function sapperReach(F, spec, a, now, out) {
-  const L = a.lordGoal ? egBodyById(F, a.lordGoal) : null, feeds = !!L && (F.mem.fed ?? 0) < SAP_FEEDS_MAX;
+  const L = a.lordGoal ? egBodyById(F, a.lordGoal) : null, feeds = !!L && L.hp > 0 && (F.mem.fed ?? 0) < SAP_FEEDS_MAX;
   egGone(F, [a], a.lordGoal && !feeds ? EG_GONE.crumbled : EG_GONE.fed, '', now, out);
   if (a.lordGoal) { if (feeds) { F.mem.fed = (F.mem.fed ?? 0) + 1; L.hp = Math.min(L.max, L.hp + L.max * SAP_HEAL); out.push({ k: 'esay', w: 'sapperfed' }); } return; }
   if (a.goal) { if (!(F.closedSpots ?? []).includes(a.goal)) return; F.closedSpots = F.closedSpots.filter((q) => q !== a.goal); egRaiseObj(F, 'rift', a.goal[0], a.goal[1], Math.round((a.goal[2] ?? egHpTeam(F, EG_RIFT_TEAM_S, 5)) / 3), now, out, { r: 1.3 }); out.push({ k: 'esay', w: 'reopened' }); return; }
