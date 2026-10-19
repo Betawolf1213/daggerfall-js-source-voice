@@ -69,7 +69,7 @@ test('BODY-MOTION THE STRIDE is Alexander\'s - 2.3 h (v^2/gh)^0.3 - capped at th
   assert.ok(dutyFactor(8.1, h, GAIT_STYLES.run) < dutyFactor(4, h, GAIT_STYLES.run), 'and less ground the faster');
 });
 
-test('BODY-MOTION A PLANTED FOOT STANDS STILL: walking and running, each foot\'s ankle stays put in the world through the flat of its stance while the body travels over it - the stride\'s clock is the distance over the stride (mutants: BODY-MOTION-phase-by-time, BODY-MOTION-stance-half-length, BODY-MOTION-stance-backward)', () => {
+test('BODY-MOTION A PLANTED FOOT STANDS STILL: walking and running, each foot\'s ankle stays put in the world through the flat of its stance while the body travels over it - the stride\'s clock is the distance over the stride, so each foot strikes once a stride of ground (paced by time, a walk struck a quarter less often and a slow walk half again as often) (mutants: BODY-MOTION-phase-by-time, BODY-MOTION-stance-half-length, BODY-MOTION-stance-backward)', () => {
   for (const [name, inp] of [['walk', gin({ forward: 1, speed: 4.43 })], ['run', gin({ forward: 1, speed: 8.1, running: true })], ['slow walk', gin({ forward: 1, speed: 1.6 })]]) {
     const state = walk(inp, 1.5);
     let travel = 0, worst = 0, seen = 0;
@@ -91,11 +91,25 @@ test('BODY-MOTION A PLANTED FOOT STANDS STILL: walking and running, each foot\'s
     assert.ok(seen > 10, `${name}: the flat of a stance was seen (${seen})`);
     assert.ok(worst < 0.02 * body.leg, `${name}: the planted foot slid ${worst.toFixed(3)} units`);
   }
+  // PIN ADDED (AUDIT BODY-MOTION, the author's pass): a planted foot stands in the world however the clock runs, so the
+  // slide above cannot tell a clock paced by time from one paced by the ground - the strikes over the ground can
+  for (const [name, v] of [['slow walk', 1.6], ['walk', 4.43]]) {
+    let strikes = 0, stride = 0, frames = 0;
+    const was = { L: true, R: true };
+    walk(gin({ forward: 1, speed: v }), 4, (s, g, t) => {
+      if (t < 1) return;
+      stride += g.stride; frames++;
+      for (const side of ['L', 'R']) { if (g.feet[side].stance && !was[side]) strikes++; was[side] = g.feet[side].stance; }
+    });
+    const ratio = (strikes * (stride / frames) / 2) / (v * 3 * U);
+    assert.ok(Math.abs(ratio - 1) < 0.2, `${name}: a strike every ${ratio.toFixed(2)} of half a stride of ground`);
+  }
 });
 
-test('BODY-MOTION THE HIPS RIDE THE LEGS: a walk is highest over the standing foot and dips where both are down; a run sinks at mid-stance (the leg\'s spring) and rises in the flight; and no standing foot is ever asked past its leg\'s reach (mutants: BODY-MOTION-walk-bob-inverted, BODY-MOTION-reach-unheld)', () => {
+test('BODY-MOTION THE HIPS RIDE THE LEGS: a walk is highest over the standing foot and dips where both are down; a run sinks at mid-stance (the leg\'s spring) and rises in the flight; and no standing foot is ever asked past its leg\'s reach - nor through a reversal and a run of new keys, where the plan alone leaves a foot behind it (unheld, a leg asked 7 units past) (mutants: BODY-MOTION-walk-bob-inverted, BODY-MOTION-reach-unheld)', () => {
   for (const [name, inp, mid] of [['walk', gin({ forward: 1, speed: 3 }), 'high'], ['run', gin({ forward: 1, speed: 7, running: true }), 'low']]) {
     const state = walk(inp, 1.5);
+    const g0 = gaitPose(state, inp, body);
     let atMid = [], between = [], over = 0;
     walk(inp, 1, (s, g) => {
       const u = frac(s.phase);
@@ -113,16 +127,33 @@ test('BODY-MOTION THE HIPS RIDE THE LEGS: a walk is highest over the standing fo
     assert.ok(atMid.length && between.length);
     if (mid === 'high') {
       assert.ok(m > b + 0.2, `${name}: highest over the standing foot (${m.toFixed(2)} over ${b.toFixed(2)})`);
-      // over the standing foot the leg is slack under the hips: they stand at the walk's own height over the ankle
-      const want = body.ankle + GAIT_STYLES.walk.height * body.leg;
+      // over the standing foot the leg is slack under the hips: they stand at the walk's own height over the ankle - PIN
+      // MOVED (AUDIT BODY-MOTION GAIT-3): the walk's carriage, which lowers with the pace (`heightFast`) so a fast walk's
+      // legs reach its stance's ends
+      const want = body.ankle + (GAIT_STYLES.walk.height + (GAIT_STYLES.walk.heightFast - GAIT_STYLES.walk.height) * g0.frShare) * body.leg;
       assert.ok(Math.abs(m - want) < 0.6, `${name}: at the walk's own height over the standing foot (${m.toFixed(2)}, the walk's ${want.toFixed(2)})`);
     }
     else assert.ok(m < b - 0.5, `${name}: sunk at mid-stance (${m.toFixed(2)} under ${b.toFixed(2)})`);
     assert.ok(over < 0.01, `${name}: a standing foot asked ${over.toFixed(3)} past its leg`);
   }
+  // PIN ADDED (AUDIT BODY-MOTION, the author's pass): a steady gait's plan keeps its own feet in reach, so the hold the
+  // legs put on the hips shows only where the plan cannot - a reversal's, a new key's
+  for (const [name, input] of [['forward to back', (t) => gin({ forward: t < 1.5 ? 1 : -1, speed: 4.43 })], ['new keys', (t) => gin({ ...[{ forward: 1 }, { forward: 1, strafe: 1 }, { strafe: 1 }, { forward: -1, strafe: 1 }, { forward: -1 }, { forward: -1, strafe: -1 }][Math.floor(t * 3) % 6], speed: 4.43 })]]) {
+    let over = 0;
+    walk(input, 4, (s, g, t) => {
+      if (t < 1) return;
+      for (const side of ['L', 'R']) {
+        if (!g.feet[side].stance) continue;
+        const sign = side === 'R' ? 1 : -1;
+        const j = [g.hip.at[0] + Math.cos(g.hip.yaw) * sign * body.hipWidth / 2, g.hip.at[1] + Math.sin(g.hip.yaw) * sign * body.hipWidth / 2, g.hip.at[2] - sign * Math.sin(g.hip.roll) * body.hipWidth / 2];
+        over = Math.max(over, len(sub(g.feet[side].at, j)) - body.legs[side]);
+      }
+    });
+    assert.ok(over < 0.01, `${name}: a standing foot asked ${over.toFixed(3)} past its leg`);
+  }
 });
 
-test('BODY-MOTION THE STEER: a strafe turns the hips toward the travel (to the right, clockwise: a negative turn) and the chest back to the facing; a backpedal past STEER.back flips the legs and turns the hips the other way, never more than STEER.backMax (mutants: BODY-MOTION-steer-sign, BODY-MOTION-backpedal-never)', () => {
+test('BODY-MOTION THE STEER: a strafe turns the hips toward the travel (to the right, clockwise: a negative turn) and the chest back to the facing; a backpedal (back and to the right) turns the hips the other way, their back toward the travel, never more than STEER.backMax (mutants: BODY-MOTION-steer-sign, BODY-MOTION-backpedal-never)', () => {
   const right = walk(gin({ strafe: 1, speed: 4.43 }), 1.5);
   assert.ok(right.psi < -50 * RAD && right.psi >= -STEER.max * RAD - 1e-9, `strafing right the hips turn right (${(right.psi / RAD).toFixed(1)})`);
   const left = walk(gin({ strafe: -1, speed: 4.43 }), 1.5);
@@ -136,28 +167,32 @@ test('BODY-MOTION THE STEER: a strafe turns the hips toward the travel (to the r
 });
 
 test('BODY-MOTION TURNING ON THE SPOT: standing, the feet keep their place in the world while the body turns over them, and once twisted past TURN.step the foot on the turn\'s side steps back under the body first; a cut of more than TURN.snap re-plants both at once (mutants: BODY-MOTION-feet-turn-with-the-body, BODY-MOTION-step-the-wrong-foot)', () => {
+  // PIN MOVED (AUDIT BODY-MOTION GAIT-8 / GAIT-11): each foot stands in the world on its own - a step is a foot's own
+  // flight of kind 'step' - and a turn faster than TURN.rate is a cut (a flick, a teleport) that re-plants both, so the
+  // small turn is turned at 4 radians a second, not in one frame
+  const stepping = (st) => (st.feet.L.swing?.kind === 'step' ? 'L' : st.feet.R.swing?.kind === 'step' ? 'R' : null);
   const s = walk(gin(), 1);
   const before = gaitPose(s, gin(), body).feet.L.at;
   // a small turn to the right: the feet stay where they stand - in the rig they turn the other way (counter-clockwise)
   const small = 12 * RAD;
-  walk(gin({ yaw: small }), 0.05, null, s);
+  walk((t) => gin({ yaw: Math.min(small, t * 4) }), 0.1, null, s);
   const after = gaitPose(s, gin({ yaw: small }), body).feet.L.at;
   const expect = [before[0] * Math.cos(small) - before[1] * Math.sin(small), before[0] * Math.sin(small) + before[1] * Math.cos(small)];
   assert.ok(Math.hypot(after[0] - expect[0], after[1] - expect[1]) < 0.05, `the left foot held its world place (${after[0].toFixed(2)},${after[1].toFixed(2)} vs ${expect[0].toFixed(2)},${expect[1].toFixed(2)})`);
-  assert.equal(s.step, null, 'no step under TURN.step');
+  assert.equal(stepping(s), null, 'no step under TURN.step');
   // past it, turning right: the right foot steps first
   let first = null;
-  walk((t) => gin({ yaw: small + t * 1.4 }), 0.6, (st) => { if (!first && st.step) first = st.step.side; }, s);
+  walk((t) => gin({ yaw: small + t * 1.4 }), 0.6, (st) => { if (!first) first = stepping(st); }, s);
   assert.equal(first, 'R', 'turning right, the right foot opens first');
   walk(gin({ yaw: small + 0.84 }), 1.5, null, s);
   const settled = gaitPose(s, gin({ yaw: small + 0.84 }), body).feet;
   assert.ok(Math.abs(settled.L.at[0] - (body.restHip[0] - body.hipWidth / 2)) < 1 && Math.abs(settled.R.at[0] - (body.restHip[0] + body.hipWidth / 2)) < 1, 'both feet back under the body once the turn is done');
   walk(gin({ yaw: small + 0.84 + Math.PI }), 1 / 60, null, s);
-  assert.equal(s.step, null, 'a half turn in one frame: re-planted, not stepped');
+  assert.equal(stepping(s), null, 'a half turn in one frame: re-planted, not stepped');
   assert.ok(TURN.step > 0 && TURN.snap > TURN.step);
 });
 
-test('BODY-MOTION THE FAMILIES AND THE RACES: the female skeleton walks a narrower track with more turn in the pelvis, the beast on the ball of its foot; a race twice as tall strides longer in the world at the same pace (its leg longer in metres) (mutants: BODY-MOTION-female-track, BODY-MOTION-height-ignored)', () => {
+test('BODY-MOTION THE FAMILIES\' AND THE RACES\' TERMS: the female style\'s track narrower and her pelvis\'s turn greater, the beast\'s foot set on its ball (the styles\' terms - bodymotion_claims.test.js walks them, AUDIT BODY-MOTION DOC-5); a leg half as long again in metres strides longer by Alexander\'s law, and one 1.4 times as long is asked of the rig (mutants: BODY-MOTION-female-track, BODY-MOTION-height-ignored)', () => {
   const track = (kind) => {
     const s = walk(gin({ forward: 1, speed: 4.43, kind }), 1.5);
     const g = gaitPose(s, gin({ forward: 1, speed: 4.43, kind }), body);
@@ -225,7 +260,7 @@ test('BODY-MOTION THE SOLVE on retail\'s bones: the hips\' middle where asked, t
   assert.ok(orthonormal([-1, 0, 0, 0, 1, 0, 0, 0, 1])[0] === -1, 'and keeps a mirror a mirror');
 });
 
-test('BODY-MOTION THE SOLVE EASES: at a share of its weight every bone is only part of the way from the clip\'s pose to the request - the layer comes on and goes off without a pop (mutants: BODY-MOTION-weight-ignored)', () => {
+test('BODY-MOTION THE SOLVE EASES: at half its weight the head stands about half the way from the clip\'s pose to the request - the layer comes on and goes off without a pop (mutants: BODY-MOTION-weight-ignored)', () => {
   const g = gaitPose(walk(gin(), 0.5), gin(), body);
   const ask = { hip: { ...g.hip, at: [g.hip.at[0], g.hip.at[1] + 10, g.hip.at[2] - 6] }, chest: { yaw: 0.5, roll: 0, pitch: 0.3 }, feet: g.feet };
   const restM = sm(sk, new Map(), GRAPH_ROOT);

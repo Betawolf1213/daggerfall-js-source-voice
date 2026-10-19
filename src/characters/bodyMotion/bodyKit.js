@@ -136,6 +136,9 @@ function measure(skeleton, rootRef, skelMats) {
   const flat = (v) => norm([v[0], v[1], 0]);
   const restHip = scale(add(p(L.thigh), p(R.thigh)), 0.5);
   const neckAt = p(bones.neck) ?? p(bones.head) ?? add(p(chest), [0, 0, leg * 0.15]);
+  const footAxes = { L: restAxes(skeleton, L.foot), R: restAxes(skeleton, R.foot) };
+  // the ankle at rest: the angle from the shin (ankle to knee) to the toes' way - the ankle's range is read off it (bodySolve.js)
+  const ankleAt = (s, ax) => Math.acos(clamp(dot(norm(sub(p(s.calf), p(s.foot))), norm(apply(rotationPart(rest.get(s.foot).a), ax.fwd))), -1, 1));
   return Object.freeze({
     bones, leg, arm,
     legs: { L: legOf(L), R: legOf(R) },
@@ -150,7 +153,8 @@ function measure(skeleton, rootRef, skelMats) {
     chestFix: rotFromTo(flat(shoulderRight)[0] > 0.5 ? shoulderRight : [1, 0, 0], [1, 0, 0]),
     restHip,
     restChestUp: norm(sub(neckAt, p(chest))),
-    footAxes: { L: restAxes(skeleton, L.foot), R: restAxes(skeleton, R.foot) },
+    footAxes,
+    ankleRest: { L: footAxes.L ? ankleAt(L, footAxes.L) : Math.PI / 2, R: footAxes.R ? ankleAt(R, footAxes.R) : Math.PI / 2 },
     headAxes: bones.head != null ? restAxes(skeleton, bones.head) : null,
     wb: skeleton.byName.get('weapon bone') ?? null,
     wbL: skeleton.byName.get('weapon bone left') ?? null,

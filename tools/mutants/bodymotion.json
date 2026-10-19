@@ -47,8 +47,8 @@
   {
     "name": "BODY-MOTION-phase-by-time",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "  if (stride > 1e-6) s.phase = frac(s.phase + (s.speed / stride) * dt);",
-    "new": "  if (stride > 1e-6) s.phase = frac(s.phase + 1.8 * dt);",
+    "old": "  s.dPhase = s.walking && stride > 1e-6 ? (dist * uH) / stride : 0;",
+    "new": "  s.dPhase = s.walking && stride > 1e-6 ? 1.8 * dt : 0;",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -56,8 +56,8 @@
   {
     "name": "BODY-MOTION-stance-half-length",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "  const A = (stride * beta) / 2;",
-    "new": "  const A = (stride * beta) / 4;",
+    "old": "  const A = (stride * beta) / 2;\n  const hf = [",
+    "new": "  const A = (stride * beta) / 4;\n  const hf = [",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -65,8 +65,8 @@
   {
     "name": "BODY-MOTION-stance-backward",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "      g = place(A * (1 - 2 * q), stancePitch(q, P));",
-    "new": "      g = place(-A * (1 - 2 * q), stancePitch(q, P));",
+    "old": "    const land = rotXY([n[0] + d[0] * (A + shift) - body.restHip[0], n[1] + d[1] * (A + shift) - body.restHip[1]], turn);",
+    "new": "    const land = rotXY([n[0] - d[0] * (A + shift) - body.restHip[0], n[1] - d[1] * (A + shift) - body.restHip[1]], turn);",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -83,7 +83,7 @@
   {
     "name": "BODY-MOTION-reach-unheld",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "    hipZ = smin(hipZ, top, L * 0.04);",
+    "old": "    hipZ = lerp(hipZ, smin(hipZ, top, L * 0.04), holds);",
     "new": "    hipZ = Math.max(hipZ, top - 1e9);",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
@@ -92,8 +92,8 @@
   {
     "name": "BODY-MOTION-steer-sign",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "    : -clamp(theta * STEER.forward, -STEER.max * RAD, STEER.max * RAD);",
-    "new": "    : clamp(theta * STEER.forward, -STEER.max * RAD, STEER.max * RAD);",
+    "old": "    : -clamp(s.th * STEER.forward, -STEER.max * RAD, STEER.max * RAD);",
+    "new": "    : clamp(s.th * STEER.forward, -STEER.max * RAD, STEER.max * RAD);",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "BODY-MOTION-backpedal-never",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "} else if (off > STEER.back + STEER.hyst) s.back = true;",
-    "new": "} else if (off > 1e9) s.back = true;",
+    "old": "} else if (offDeg > STEER.back + STEER.hyst) s.back = true;",
+    "new": "} else if (offDeg > 1e9) s.back = true;",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -110,8 +110,8 @@
   {
     "name": "BODY-MOTION-feet-turn-with-the-body",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "    const twist = wrapAngle(yaw - a.yaw0);\n    let p = rotXY(a.p, twist);",
-    "new": "    const twist = 0;\n    let p = rotXY(a.p, twist);",
+    "old": "    const carry = (p) => { const q = rotXY([p[0] - dx, p[1] - dy], dYaw); return [q[0], q[1], p[2] - dz]; };",
+    "new": "    const carry = (p) => { const q = rotXY([p[0] - dx, p[1] - dy], 0); return [q[0], q[1], p[2] - dz]; };",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "BODY-MOTION-step-the-wrong-foot",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "    const first = tr > 0 ? 'R' : 'L';",
-    "new": "    const first = tr > 0 ? 'L' : 'R';",
+    "old": "  const turnSide = s.yawRate > 0.05 ? 'R' : s.yawRate < -0.05 ? 'L' : null;",
+    "new": "  const turnSide = s.yawRate > 0.05 ? 'L' : s.yawRate < -0.05 ? 'R' : null;",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -137,8 +137,8 @@
   {
     "name": "BODY-MOTION-height-ignored",
     "file": "src/characters/bodyMotion/gait.js",
-    "old": "  const h = input.legM;\n  const stride = strideLength(s.speed, h, P) * U;",
-    "new": "  const h = 1;\n  const stride = strideLength(s.speed, h, P) * U;",
+    "old": "  const L = body.leg, h = input.legM, U = input.unitsPerM || 1;",
+    "new": "  const L = body.leg, h = 1, U = input.unitsPerM || 1;",
     "tests": [
       "test/characters/bodyMotion/bodymotion_gait.test.js"
     ]
@@ -209,7 +209,7 @@
   {
     "name": "BODY-MOTION-two-grip-spacing",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "export const TWO_HAND_GRIP = Object.freeze({ two: -0.2,",
+    "old": "export const TWO_HAND_GRIP = Object.freeze({ two: -0.4,",
     "new": "export const TWO_HAND_GRIP = Object.freeze({ two: 0.2,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
@@ -245,8 +245,8 @@
   {
     "name": "BODY-MOTION-one-idle-blade",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    idle: { R: row(8, 21, 16, -8, 0, { blade: dir(0.3, 0.72, -0.62),",
-    "new": "    idle: { R: row(8, 21, 16, -8, 0, { blade: dir(0.3, 0.72, 0.62),",
+    "old": "    idle: { R: row(5, 21, 8, -7, 0, { blade: dir(0.26, 0.74, -0.62),",
+    "new": "    idle: { R: row(5, 21, 8, -7, 0, { blade: dir(0.26, 0.74, 0.62),",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -254,8 +254,8 @@
   {
     "name": "BODY-MOTION-one-run-blade",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    run: { R: row(2, 25, 24, -12, 0.35, { blade: dir(0.32, -0.42, -0.85),",
-    "new": "    run: { R: row(2, 25, 24, -12, 0.35, { blade: dir(0.32, 0.42, -0.85),",
+    "old": "    run: { R: row(16, -3, 46, -42, 0.35, { blade: dir(0.54, -0.51, -0.67),",
+    "new": "    run: { R: row(16, -3, 46, -42, 0.35, { blade: dir(0.54, 0.51, -0.67),",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -272,8 +272,8 @@
   {
     "name": "BODY-MOTION-haft-hand-unplaced",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    out.L = hafHand(out.R, out.grip.R, out.R.frame, TWO_HAND_GRIP[cls], body.arm);",
-    "new": "    out.L = null;",
+    "old": "    const haf = hafHand(out.R, out.grip.R, out.R.frame,",
+    "new": "    const haf = null && hafHand(out.R, out.grip.R, out.R.frame,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -281,8 +281,8 @@
   {
     "name": "BODY-MOTION-two-run-at-the-chest",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    run: { R: row(-14, 18, 20, -6, 0.12,",
-    "new": "    run: { R: row(40, 18, 95, -6, 0.12,",
+    "old": "    run: { R: row(11, 24, 24, -43, 0.12,",
+    "new": "    run: { R: row(40, 24, 95, -43, 0.12,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -299,8 +299,8 @@
   {
     "name": "BODY-MOTION-pair-run-forward",
     "file": "src/characters/bodyMotion/carry.js",
-    "old": "    run: { R: row(-46, 16, 12, -10, 0.1,",
-    "new": "    run: { R: row(46, 16, 12, -10, 0.1,",
+    "old": "    run: { R: row(-47, 21, 7, 0, 0.1,",
+    "new": "    run: { R: row(47, 21, 7, 0, 0.1,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -362,8 +362,8 @@
   {
     "name": "BODY-MOTION-blow-chest-unturned",
     "file": "src/characters/bodyMotion/bodyMotion.js",
-    "old": "          yaw: gp.chest.yaw * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0),",
-    "new": "          yaw: gp.chest.yaw * (1 - k),",
+    "old": "gp.chest.yaw * (1 - k) + (bp ? bp.chest[0] * RAD * wind : 0))),",
+    "new": "gp.chest.yaw * (1 - k))),",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -389,8 +389,8 @@
   {
     "name": "BODY-MOTION-backhand-the-forehand",
     "file": "src/characters/bodyMotion/bodyMotion.js",
-    "old": "    const bp = blowPose(family, blowName(b.type, b.reversed), blowU(b.section, b.progress), side);",
-    "new": "    const bp = blowPose(family, blowName(b.type, false), blowU(b.section, b.progress), side);",
+    "old": "    const name = blowName(b.type, b.reversed);",
+    "new": "    const name = blowName(b.type, false);",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -470,8 +470,8 @@
   {
     "name": "BODY-MOTION-never-stepped",
     "file": "src/combat/fpArm.js",
-    "old": "      motion.step(dt, motionWord({ cam, third: viewMode === 'third',",
-    "new": "      motion.step(dt, motionWord({ cam, third: false && viewMode === 'third',",
+    "old": "        cam, third: viewMode === 'third', rig: thirdBuilt,",
+    "new": "        cam, third: false && viewMode === 'third', rig: thirdBuilt,",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]
@@ -488,8 +488,8 @@
   {
     "name": "BODY-MOTION-stale-heading",
     "file": "src/characters/bodyMotion/bodyMotion.js",
-    "old": "      if (input.on && !wasOn) { gait.yaw = null; gait.yawRate = 0; }",
-    "new": "      if (input.on && !wasOn) { gait.yawRate = 0; }",
+    "old": "      if (input.on && !wasOn) Object.assign(gait, createGaitState());",
+    "new": "      if (input.on && !wasOn) gait.yawRate = 0;",
     "tests": [
       "test/characters/bodyMotion/bodymotion_carry.test.js"
     ]

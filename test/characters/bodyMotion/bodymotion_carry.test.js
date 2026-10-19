@@ -62,7 +62,7 @@ function play(scene, seconds, each = null, motion = createBodyMotion(), t0 = 0) 
 /** The chest's frame of `mats` (bodySolve.js bodyFrames). */
 const frameOf = (mats) => bodyFrames(body, mats);
 
-test('BODY-MOTION THE CLASSES: each weapon type and hands mode to the carry it is held in - nothing in hand free, the one-handers one, the two-handers two, the staff wide, the spear spear, a pair dual, bare fists up fists, and a bow, a crossbow, a thrown weapon and a readied spell to the clip\'s own arms; a two-hander\'s left hand closes a fifth of an arm down the haft, a staff\'s and a spear\'s half an arm up it (mutants: BODY-MOTION-axe-two-as-one, BODY-MOTION-spell-carried, BODY-MOTION-two-grip-spacing)', () => {
+test('BODY-MOTION THE CLASSES: each weapon type and hands mode to the carry it is held in - nothing in hand free, the one-handers one, the two-handers two, the staff wide, the spear spear, a pair dual, bare fists up fists, and a bow, a crossbow, a thrown weapon and a readied spell to the clip\'s own arms; a two-hander\'s left hand closes two fifths of an arm down the haft, a staff\'s and a spear\'s half an arm up it (mutants: BODY-MOTION-axe-two-as-one, BODY-MOTION-spell-carried, BODY-MOTION-two-grip-spacing)', () => {
   const T = MW_WEAPON_TYPE;
   const rows = [
     [{}, 'free'], [{ mwType: T.LongBladeOneHand, shown: false }, 'free'],
@@ -71,13 +71,13 @@ test('BODY-MOTION THE CLASSES: each weapon type and hands mode to the carry it i
     [{ mwType: T.LongBladeTwoHand, shown: true }, 'two'], [{ mwType: T.BluntTwoClose, shown: true }, 'two'], [{ mwType: T.AxeTwoHand, shown: true }, 'two'],
     [{ mwType: T.BluntTwoWide, shown: true }, 'wide'], [{ mwType: T.SpearTwoWide, shown: true }, 'spear'],
     [{ mwType: T.LongBladeOneHand, shown: true, hands: 'dual' }, 'dual'], [{ mwType: T.HandToHand, shown: true }, 'fists'],
-    [{ mwType: T.None, shown: true, hands: 'fists' }, 'fists'],
+    [{ mwType: T.None, shown: true, hands: 'fists' }, 'fists'], [{ mwType: T.None, shown: true }, 'fists'],   // AUDIT BODY-MOTION MELEE-3: a peer's, a person's bare hands (and the player's beside a shield or a light) - 'single'
     [{ mwType: T.MarksmanBow, shown: true }, 'clip'], [{ mwType: T.MarksmanCrossbow, shown: true }, 'clip'], [{ mwType: T.MarksmanThrown, shown: true }, 'clip'],
     [{ mwType: T.LongBladeOneHand, shown: true, spell: true }, 'clip'],
   ];
   assert.deepEqual(rows.map(([w]) => carryClassOf(w)), rows.map(([, c]) => c));
   assert.deepEqual(['one', 'dual', 'two', 'wide', 'spear', 'fists', 'free', 'clip'].map(meleeFamilyOf), ['one', 'one', 'two', 'two', 'two', 'fists', null, null]);
-  assert.deepEqual({ ...TWO_HAND_GRIP }, { two: -0.2, wide: 0.5, spear: 0.55 });
+  assert.deepEqual({ ...TWO_HAND_GRIP }, { two: -0.4, wide: 0.5, spear: 0.55 });   // PIN MOVED (AUDIT BODY-MOTION CARRY-1): a fifth down, the left fist sat inside the right forearm
   assert.equal(blowName('slash', true), 'back');
   assert.equal(blowName('chop', true), 'chop');
 });
@@ -109,8 +109,10 @@ test('BODY-MOTION A ONE-HANDER, HELD DOWN AND AWAY FROM THE SIDE (Mac\'s stance)
   assert.ok(b[1] > 0.5 && b[2] < -0.4 && b[0] > 0.1, `forward, down and out (${b.map((v) => v.toFixed(2))})`);
   // running
   const runB = [], runOut = [], freeSwing = [];
-  play({ weapon: MW_WEAPON_TYPE.LongBladeOneHand, forward: 1, speed: 8.1, running: true }, 2, (m, mo, t) => {
-    if (t < 1) return;
+  // PIN MOVED (AUDIT BODY-MOTION CARRY-4/6): the carry's gait shares follow the gait's on a spring now, the blade brought
+  // round the outside of the body - the last hundredth of the run's share comes in after the first second, from above
+  play({ weapon: MW_WEAPON_TYPE.LongBladeOneHand, forward: 1, speed: 8.1, running: true }, 2.2, (m, mo, t) => {
+    if (t < 1.2) return;
     runB.push(blade(m, 'weapon bone'));
     runOut.push(pt(m, 'bip01 r hand')[0] - pt(m, 'bip01 r thigh')[0]);
     freeSwing.push(pt(m, 'bip01 l hand')[1]);
@@ -120,7 +122,7 @@ test('BODY-MOTION A ONE-HANDER, HELD DOWN AND AWAY FROM THE SIDE (Mac\'s stance)
   assert.ok(Math.max(...freeSwing) - Math.min(...freeSwing) > 0.5 * A, 'the free arm swings');
 });
 
-test('BODY-MOTION A TWO-HANDER: at rest a low guard with both hands on the grip (the left on the haft below the right); at a run carried at the hip in the right hand, the blade trailing behind and down, the left hand let go to swing (Mac: "running with a 2 hander by the hip") (mutants: BODY-MOTION-haft-hand-unplaced, BODY-MOTION-two-run-at-the-chest)', () => {
+test('BODY-MOTION A TWO-HANDER: at rest a low guard with both hands on the grip (the left on the haft toward the pommel - AUDIT BODY-MOTION CARRY-NIT: it said below); at a run carried at the hip in the right hand, the blade trailing behind and down, the left hand let go to swing (Mac: "running with a 2 hander by the hip") (mutants: BODY-MOTION-haft-hand-unplaced, BODY-MOTION-two-run-at-the-chest)', () => {
   const idle = play({ weapon: MW_WEAPON_TYPE.LongBladeTwoHand }, 1.5).mats;
   const grip = pt(idle, 'weapon bone'), b = blade(idle, 'weapon bone');
   const haft = [grip[0] + b[0] * TWO_HAND_GRIP.two * A, grip[1] + b[1] * TWO_HAND_GRIP.two * A, grip[2] + b[2] * TWO_HAND_GRIP.two * A];
@@ -157,7 +159,7 @@ test('BODY-MOTION A PAIR: at rest both held down and away from the sides as mirr
   assert.ok(behind.every(([, , br, bl]) => br < -0.6 && bl < -0.6), 'both blades trailing');
 });
 
-test('BODY-MOTION THE CLIP KEEPS WHAT IT CARRIES: a bow, a readied spell and the draw leave the arms to the clip (the layer\'s arms at no weight), a lit torch the left arm; the legs and the trunk stay the layer\'s (mutants: BODY-MOTION-torch-arm-taken, BODY-MOTION-equip-arms-taken)', () => {
+test('BODY-MOTION THE CLIP KEEPS WHAT IT CARRIES: a bow and the draw leave the arms to the clip (the layer\'s arms at no weight), a lit torch the left arm and the right still the carry\'s (a spell, and the trunk under the clip\'s arms: AUDIT BODY-MOTION RIG-4\'s pin) (mutants: BODY-MOTION-torch-arm-taken, BODY-MOTION-equip-arms-taken)', () => {
   const rest = sm(sk, new Map(), GRAPH_ROOT);
   const still = (scene, side) => len(sub(play(scene, 1.2).mats.get(sk.byName.get(`bip01 ${side} hand`)).t, rest.get(sk.byName.get(`bip01 ${side} hand`)).t));
   assert.ok(still({ weapon: MW_WEAPON_TYPE.MarksmanBow }, 'r') < 3 && still({ weapon: MW_WEAPON_TYPE.MarksmanBow }, 'l') < 3, 'a bow: the clip\'s arms (the hands where the trunk carries them)');
@@ -216,7 +218,7 @@ test('BODY-MOTION A SLASH WITH THE WHOLE BODY: wound up to the right and behind 
   assert.ok(pt(follow, 'weapon bone')[0] < 0 && chestYaw(follow) > 15, 'followed through to the left, the chest turned left');
 });
 
-test('BODY-MOTION THE OTHER BLOWS: the chop wound up over the head and down through the front; the thrust drawn back to the hip and driven straight out ahead; the backhand wound up across the body to the left and swept out to the right with its edge leading (mutants: BODY-MOTION-chop-from-below, BODY-MOTION-thrust-short, BODY-MOTION-backhand-the-forehand)', () => {
+test('BODY-MOTION THE OTHER BLOWS: the chop wound up by the head, its blade up, and down through the front; the thrust driven straight out ahead from its wind-up; the backhand wound up across the body to the left and swept out to the right with its edge leading (mutants: BODY-MOTION-chop-from-below, BODY-MOTION-thrust-short, BODY-MOTION-backhand-the-forehand)', () => {
   const chop = strike({ weapon: MW_WEAPON_TYPE.LongBladeOneHand }, { type: 'chop', hand: 'R' }, [U.windup, 0.68]);
   assert.ok(pt(chop[U.windup], 'weapon bone')[2] > pt(chop[U.windup], 'bip01 head')[2] - 0.2 * A, 'the chop wound up by the head');
   assert.ok(blade(chop[U.windup], 'weapon bone')[2] > 0.4, 'the blade up');
@@ -231,7 +233,7 @@ test('BODY-MOTION THE OTHER BLOWS: the chop wound up over the head and down thro
   assert.ok(pt(back[0.68], 'weapon bone')[0] > 0.5 * A, 'out to the right');
 });
 
-test('BODY-MOTION THE LEFT HAND\'S BLOW is the right\'s mirror (a pair\'s left blade, a left fist); a two-hander\'s left hand stays on the haft through the whole blow (mutants: BODY-MOTION-left-blow-unmirrored, BODY-MOTION-two-blow-haft-dropped)', () => {
+test('BODY-MOTION THE LEFT HAND\'S BLOW: a pair\'s left blade\'s is the right\'s mirror, its grip and its blade (its trunk: bodymotion_claims.test.js); a two-hander\'s left hand stays on the haft through the whole blow (mutants: BODY-MOTION-left-blow-unmirrored, BODY-MOTION-two-blow-haft-dropped)', () => {
   const r = strike({ weapon: MW_WEAPON_TYPE.LongBladeOneHand, hands: 'dual' }, { type: 'slash', hand: 'R' }, [U.windup, U.hit]);
   const l = strike({ weapon: MW_WEAPON_TYPE.LongBladeOneHand, hands: 'dual' }, { type: 'slash', hand: 'L' }, [U.windup, U.hit]);
   for (const u of [U.windup, U.hit]) {
@@ -276,7 +278,7 @@ test('BODY-MOTION THE LEGS KEEP WALKING UNDER A BLOW (rule 26\'s gap, closed): m
   assert.ok(worst < 0.03 * body.leg, `the planted foot stood (${worst.toFixed(3)} units)`);
 });
 
-test('BODY-MOTION SWITCHED BACK ON (third person again, the switch thrown) with the heading moved while it was off: the feet re-planted under the body, no step and no bank from a stale heading read as one frame\'s turn (mutants: BODY-MOTION-stale-heading)', () => {
+test('BODY-MOTION SWITCHED BACK ON (third person again, the switch thrown) with the heading moved while it was off: no step and no bank from a stale heading read as one frame\'s turn - however far it moved (mutants: BODY-MOTION-stale-heading)', () => {
   const motion = createBodyMotion();
   play({}, 1, null, motion);
   for (let i = 0; i < 30; i++) motion.step(1 / 60, sceneInput({ on: false, yaw: 0 }));
@@ -284,9 +286,18 @@ test('BODY-MOTION SWITCHED BACK ON (third person again, the switch thrown) with 
   play({ yaw: 1.1 }, 0.5, (m, mo) => { worstBank = Math.max(worstBank, Math.abs(mo.status().bank)); stepped = stepped ?? mo.status().stepping; }, motion);
   assert.equal(stepped, null, 'no step');
   assert.ok(worstBank < 1e-3, `no bank (${worstBank})`);
+  // PIN ADDED (AUDIT BODY-MOTION, the author's pass): a heading moved that far is a snap - the feet re-planted however
+  // the state stood - so a turn too small to snap, from a walk, is the stale state's tell (kept, it banked and stepped)
+  const again = createBodyMotion();
+  play({ forward: 1, speed: 4.43 }, 1, null, again);
+  for (let i = 0; i < 30; i++) again.step(1 / 60, sceneInput({ on: false, yaw: 0 }));
+  let bank = 0, step = null;
+  play({ yaw: 0.12 }, 0.5, (m, mo) => { bank = Math.max(bank, Math.abs(mo.status().bank)); step = step ?? mo.status().stepping; }, again);
+  assert.equal(step, null, 'a small turn while off: no step');
+  assert.ok(bank < 1e-3, `a small turn while off: no bank (${bank})`);
 });
 
-test('BODY-MOTION THE RIG\'S WORD: on only in third person, on a base_anim skeleton (male, female, beast), never a creature\'s or a werewolf\'s body, and only while the switch is on; the whole body the clip\'s while dead, recoiling, climbing or seated; the machine\'s upper-body state its blow\'s section (mutants: BODY-MOTION-on-in-first-person, BODY-MOTION-creature-walked, BODY-MOTION-switch-ignored, BODY-MOTION-section-misnamed)', () => {
+test('BODY-MOTION THE RIG\'S WORD: on only in third person, on a base_anim skeleton (male, female, beast), never a creature\'s or a werewolf\'s body, and only while the switch is on; the word naming the body the clip\'s while dead, recoiling, climbing or seated (the layer stepping aside for it: bodymotion_claims.test.js DOC-9); the machine\'s upper-body state its blow\'s section (mutants: BODY-MOTION-on-in-first-person, BODY-MOTION-creature-walked, BODY-MOTION-switch-ignored, BODY-MOTION-section-misnamed)', () => {
   const rig = { ok: true, settingsSkeleton: 'meshes/base_anim_female.nif', mwType: MW_WEAPON_TYPE.LongBladeOneHand };
   const cam = { yaw: 0.4, move: { forward: 1, strafe: 0, speed: 4, running: true, grounded: true } };
   const base = { cam, third: true, rig, built: { raceScale: { height: 1.1, weight: 0.9 } } };
@@ -316,7 +327,7 @@ test('BODY-MOTION THE WIRING, by source: poseAssembly lays the `motion` slot aft
   const arm = readFileSync(new URL('../../../src/combat/fpArm.js', import.meta.url), 'utf8');
   assert.equal((arm.match(/motion: motion\.slot,/g) ?? []).length, 1, 'one pose takes the slot');
   assert.match(arm, /hold: rifleHold\('third', t\),[^\n]*\n\s*motion: motion\.slot,/, 'the third-person body\'s');
-  assert.match(arm, /aimFactor = aimingFactor\(aimFactor, accurateAiming\(upper\), dt\);\n(?:\s*\/\/[^\n]*\n)*\s*motion\.step\(dt, motionWord\(\{ cam, third: viewMode === 'third', rig: thirdBuilt, built, dead, hit: !!hitState,/, 'stepped after the clips, every frame');
+  assert.match(arm, /aimFactor = aimingFactor\(aimFactor, accurateAiming\(upper\), dt\);\n(?:\s*\/\/[^\n]*\n)*\s*motion\.step\(dt, motionWord\(\{\s*cam, third: viewMode === 'third', rig: thirdBuilt, built, dead, hit: !!hitState && !actionState,/, 'stepped after the clips, every frame - a recoil taking the body only out of a blow (PIN MOVED, AUDIT BODY-MOTION MELEE-5: taken mid-blow, the layer let go and the raw attack clip froze the legs)');
   assert.match(arm, /hipLantern\.step\(cam, dt, motion\.stride\(\)\.move > 0\.5 \? motion\.stride\(\)\.phase : /, 'the lantern on the gait\'s stride');
   const features = readFileSync(new URL('../../../src/systems/features.js', import.meta.url), 'utf8');
   assert.match(features, /id: 'mw-body-motion',[\s\S]*?control: Object\.freeze\(\{ store: 'prefs', key: 'mwBodyMotion', initial: true, online: 'player' \}\)/);

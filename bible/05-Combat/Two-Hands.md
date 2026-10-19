@@ -384,7 +384,7 @@ second weapon. So the second hand is the sprite lane's idea on a skeleton: THE L
   pair is held, through the guard's own memo (`pairBladeMeasure`, now one for both: the guard's measure moved out of
   `createFpArm` with it, `guardMeasure`, so the arm's closure gains the wiring alone - 1,997 -> 1,999 code lines, under
   HOST-SPLIT's 2,000-line knot). The angle eases on `PAIR_SPREAD.TAU` (0.12 s) in either view (`pairSpreadStep`) and is
-  laid in first person alone (the body in third person carries a pair its own way - BODY-MOTION, `04-Characters/Body-Motion.md`: down and away from its sides at rest, swept behind it at a run), over every composition and its
+  laid in first person alone (the body in third person carries a pair its own way - BODY-MOTION, `04-Characters/Body-Motion.md`: down and away from its sides at rest, swept behind it at a run; with Morrowind Body Motion switched off, the clips' own pair as before - AUDIT BODY-MOTION DOC-16), over every composition and its
   guard, so the carry starts from what was drawn; sheathed or with the hands taken, it eases back. Measured on the
   fixture: its blades stand clear at rest, so MIN (0.046 rad); a blade leaned 0.45 rad across the middle, 0.121 rad, the
   two GAP apart.

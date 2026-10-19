@@ -113,7 +113,7 @@ function blowAt(blow, t, seconds) {
   return { ...blow, section: 'follow', progress: (t - rEnd) / (T - rEnd) };
 }
 
-/** The four views: each a projection of a rig point to [x, y] on a panel (y down), the travel laid on the side view. */
+/** The five views: each a projection of a rig point to [x, y] on a panel (y down), the travel laid on the side view. */
 const VIEWS = {
   side: (p, tr) => [p[1] + tr[1], -p[2]],
   front: (p) => [p[0], -p[2]],

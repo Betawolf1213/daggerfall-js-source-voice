@@ -115,6 +115,9 @@ export function lanternSwingMatrix(s, out = new Float32Array(9)) {
  * the motor's bag the movement slot already reads (`cam.move`: the input axes and the applied speed), the heading's
  * turn, and the walking body's stride phase (0..1 - the body motion's gait while it walks the legs, else the walk
  * clip's; null standing) - and writes the hang's attitude into `rot` for the pose that follows. At rest it settles plumb.
+ * `hipYaw` (radians, the body motion's turn of the hips off the facing - bodyKit.js bodyTurn's sense, + to the left):
+ * the hang rides the hips, so the way the body goes is read in theirs (AUDIT BODY-MOTION RIG-7: read in the facing's, a
+ * strafe's lantern swung 60 degrees off its own way, the hips turned toward the travel under it).
  */
 export function createHipLantern() {
   const swing = createLanternSwing();
@@ -123,9 +126,11 @@ export function createHipLantern() {
     swing,
     /** Hanging still and plumb again (a new body, a lantern lit afresh). */
     reset() { Object.assign(swing, createLanternSwing()); yaw = null; },
-    step(cam, dt, stride, rot) {
+    step(cam, dt, stride, rot, hipYaw = 0) {
       const mv = (cam && cam.move) || null;
-      const f = mv ? (mv.forward || 0) : 0, st = mv ? (mv.strafe || 0) : 0;
+      const f0 = mv ? (mv.forward || 0) : 0, s0 = mv ? (mv.strafe || 0) : 0;
+      const ch = Math.cos(Number(hipYaw) || 0), sh = Math.sin(Number(hipYaw) || 0);
+      const f = f0 * ch - s0 * sh, st = s0 * ch + f0 * sh;   // the hips' forward (-sin, cos) and right (cos, sin) of the turn
       const len = Math.hypot(f, st);
       const speed = len > 0 && mv ? (mv.speed || 0) : 0;
       const y = cam ? (cam.yaw || 0) : 0;

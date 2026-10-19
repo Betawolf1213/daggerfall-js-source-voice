@@ -19,7 +19,7 @@
 // Answers a small report, or null when nothing was posed.
 
 import { solveReach, rotFrames, rotFromTo, rotFraction, handFrame, orthonormal, rotationPart } from '../../combat/climbRig.js';
-import { algebra, clamp01, transpose, apply, mul, bodyTurn, fromColumns, bodyOf, turnOf, at } from './bodyKit.js';
+import { algebra, clamp01, clamp, transpose, apply, mul, bodyTurn, fromColumns, bodyOf, turnOf, at, RAD } from './bodyKit.js';
 
 const { sub, add, scale, dot, cross, norm, len, lerp3 } = algebra;
 
@@ -45,6 +45,11 @@ export function bodyFrames(body, mats) {
   };
 }
 
+/** THE ANKLE'S RANGE (degrees off the rest's own shin-to-toe angle): how far a foot in the air may draw its toes up toward
+ *  the shin, and point them away (AUDIT BODY-MOTION GAIT-4: the swing's pitch is the ground's, so a run's mid-swing,
+ *  its shin swung back, drew the toes up 82 degrees). A foot on the ground keeps the gait's: it stands on the ground. */
+export const ANKLE = Object.freeze({ dorsi: 25, plantar: 50 });
+
 const IDENT = Object.freeze([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 /** A bone's rotation `Rt` taken toward by `w` from its own: the rotation to set. */
 const toward = (Rc, Rt, w) => (w >= 1 ? Rt : mul(rotFraction(mul(Rt, transpose(Rc)), w), Rc));
@@ -56,6 +61,9 @@ const toward = (Rc, Rt, w) => (w >= 1 ? Rt : mul(rotFraction(mul(Rt, transpose(R
  *   chest  - { yaw, roll, pitch } - the chest's turn in the body frame;
  *   head   - { yaw, roll, pitch } - the head's;
  *   feet   - { L, R }: { at, toe, up, w } - the ankle's point, the toes' way, the sole's up;
+ *   armW   - { L, R }: how far each arm is the layer's (0 the clip's - a bow's, a spell's, a draw's, the long gun's, a
+ *            torch's left): the chest, the neck and the head are the layer's as far as either arm is, each collarbone as
+ *            far as its own arm is - the rest the clip's, so an aim the clip holds stays where it holds it;
  *   arms   - (ctx) => { L, R }: each a climb hand request ({ at, fingers, palm, pole, curl, w }) or null, asked with
  *            { body, mats, frames, skeleton } once the trunk stands.
  */
@@ -101,8 +109,13 @@ export function solveBody(skeleton, pose, rootRef, skelMats, plan) {
   }
   // the trunk: the chest's turn spread up the spine; then the neck and the collarbones as they stand at rest on it (the
   // clip's own swings of them - an attack clip's, a draw's - would carry the shoulders off the arms' requests)
+  // AUDIT BODY-MOTION RIG-4 / DOC-3 / CARRY-10: the upper body is whoever has the arms' - the layer's chest turn, lean
+  // and collarbones under a bow's arms swung its hand 18.6 units and 38 degrees off the clip's aim, and turned a long
+  // gun's barrel 9 to 14 degrees with the gait's counter-turn
+  const armL = clamp01(plan.armW?.L ?? 1), armR = clamp01(plan.armW?.R ?? 1), armAny = Math.max(armL, armR);
   if (plan.chest) {
-    const Rt0 = mul(mul(bodyTurn(plan.chest.yaw ?? 0, plan.chest.roll ?? 0, plan.chest.pitch ?? 0), body.chestFix), body.restRot.get(body.chest));
+    const own = mul(mul(bodyTurn(plan.chest.yaw ?? 0, plan.chest.roll ?? 0, plan.chest.pitch ?? 0), body.chestFix), body.restRot.get(body.chest));
+    const Rt0 = armAny >= 1 ? own : toward(R0(body.chest), own, armAny);   // the clip's chest where it stands, as far as the clip has the arms
     const chestNow = rotNow(body.chest);
     const Rt = toward(chestNow, Rt0, w);
     const Q = mul(Rt, transpose(chestNow));
@@ -115,12 +128,13 @@ export function solveBody(skeleton, pose, rootRef, skelMats, plan) {
     for (const ref of [bones.neck, bones.L.clavicle, bones.R.clavicle]) {
       const parent = ref == null ? null : skeleton.nodes.get(ref).parent;
       const restOf = ref == null ? null : restRotOf(skeleton, body, ref), restParent = parent == null ? null : restRotOf(skeleton, body, parent);
-      if (restOf && restParent) decide(ref, mul(rotNow(parent), mul(transpose(restParent), restOf)));
+      const share = ref === bones.L.clavicle ? armL : ref === bones.R.clavicle ? armR : armAny;
+      if (restOf && restParent) decide(ref, toward(rotNow(ref), mul(rotNow(parent), mul(transpose(restParent), restOf)), share));
     }
   }
   // the head, level with the world however the trunk sways under it
   if (plan.head && bones.head != null && body.restRot.has(bones.head)) {
-    decide(bones.head, mul(bodyTurn(plan.head.yaw ?? 0, plan.head.roll ?? 0, plan.head.pitch ?? 0), body.restRot.get(bones.head)));
+    decide(bones.head, toward(rotNow(bones.head), mul(bodyTurn(plan.head.yaw ?? 0, plan.head.roll ?? 0, plan.head.pitch ?? 0), body.restRot.get(bones.head)), armAny));
   }
   // written as locals, top down (each against its parent's NEW rotation), kept rotations; then composed once
   for (const ref of order) {
@@ -217,7 +231,7 @@ function reachLimb(skeleton, pose, mats, a, b, c, target, pole, end) {
   const Da = rotFromTo(norm(sub(E, S)), norm(sub(sol.mid, S)));
   const Db = rotFromTo(norm(apply(Da, sub(W, E))), norm(sub(sol.end, sol.mid)));
   const Ra1 = mul(Da, Ra), Rb1 = mul(Db, mul(Da, Rb)), Rc0 = mul(Db, mul(Da, Rc));
-  const Rc1 = (end && end(Rc0, mul(Db, Da))) || Rc0;
+  const Rc1 = (end && end(Rc0, mul(Db, Da), sol)) || Rc0;
   const write = (ref, Rparent, R) => {
     const local = pose.get(ref) ?? skeleton.nodes.get(ref).rest;
     pose.set(ref, { rotation: orthonormal(Rparent ? mul(transpose(Rparent), R) : R), translation: local.translation, scale: local.scale });
@@ -242,10 +256,23 @@ function poseFoot(skeleton, pose, mats, body, side, f, w) {
   const out = side === 'R' ? 1 : -1;
   const pole = norm(add([toe[0], toe[1], 0], [out * 0.12, 0, 0.02]));
   const ax = body.footAxes[side];
-  return reachLimb(skeleton, pose, mats, limb.thigh, limb.calf, limb.foot, lerp3(A, f.at, k), pole, (Rf) => {
+  return reachLimb(skeleton, pose, mats, limb.thigh, limb.calf, limb.foot, lerp3(A, f.at, k), pole, (Rf, _D, sol) => {
     if (!ax || !f.toe) return null;
     const curToe = norm(apply(Rf, ax.fwd)), curUp = norm(apply(Rf, ax.up));
-    return mul(rotFrames(curToe, curUp, norm(lerp3(curToe, f.toe, k)), norm(lerp3(curUp, f.up ?? [0, 0, 1], k))), Rf);
+    let toeTo = norm(lerp3(curToe, f.toe, k)), upTo = norm(lerp3(curUp, f.up ?? [0, 0, 1], k));
+    // a foot in the air within the ankle's range of the shin the reach gave it (ANKLE)
+    if (f.stance === false && sol) {
+      const shin = norm(sub(sol.mid, sol.end));
+      const a = Math.acos(clamp(dot(shin, toeTo), -1, 1)), rest = body.ankleRest?.[side] ?? Math.PI / 2;
+      const want = clamp(a, rest - ANKLE.dorsi * RAD, rest + ANKLE.plantar * RAD);
+      const across = sub(toeTo, scale(shin, dot(toeTo, shin)));
+      if (want !== a && len(across) > 1e-6) {
+        const t2 = add(scale(shin, Math.cos(want)), scale(norm(across), Math.sin(want)));
+        upTo = norm(apply(rotFromTo(toeTo, t2), upTo));
+        toeTo = t2;
+      }
+    }
+    return mul(rotFrames(curToe, curUp, toeTo, upTo), Rf);
   });
 }
 
