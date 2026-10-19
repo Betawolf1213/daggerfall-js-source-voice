@@ -11,8 +11,8 @@
   {
     "name": "FAST-default-concurrency",
     "file": "tools/testShards.mjs",
-    "old": "  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary ? summaryReporters(root) : []), ...extra];",
-    "new": "  const head = ['--test', ...(summary ? summaryReporters(root) : []), ...extra];",
+    "old": "  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary || record ? summaryReporters(root) : []), ...extra];",
+    "new": "  const head = ['--test', ...(summary || record ? summaryReporters(root) : []), ...extra];",
     "tests": [
       "test/tooling/fastsuite.test.js"
     ]
@@ -47,7 +47,7 @@
   {
     "name": "FAST-shard-own-spawn",
     "file": "tools/testShards.mjs",
-    "old": "  return runTests(files, { extra: runnerFlags(argv.slice(1)) });\n}",
+    "old": "  return runTests(files, { times, extra: runnerFlags(argv.slice(1)), record });\n}",
     "new": "  return spawnSync(process.execPath, ['--test', ...files], { cwd: ROOT, stdio: 'inherit' }).status ?? 1;\n}",
     "tests": [
       "test/tooling/fastsuite.test.js"
@@ -112,8 +112,8 @@
   {
     "name": "FAST-F7-flags-ahead-of-concurrency",
     "file": "tools/testShards.mjs",
-    "old": "  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary ? summaryReporters(root) : []), ...extra];",
-    "new": "  const head = ['--test', ...extra, `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary ? summaryReporters(root) : [])];",
+    "old": "  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary || record ? summaryReporters(root) : []), ...extra];",
+    "new": "  const head = ['--test', ...extra, `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary || record ? summaryReporters(root) : [])];",
     "tests": [
       "test/tooling/fastsuite.test.js"
     ]
@@ -121,7 +121,7 @@
   {
     "name": "CI-FAST-summary-never-handed",
     "file": "tools/testShards.mjs",
-    "old": "...(summary ? summaryReporters(root) : [])",
+    "old": "...(summary || record ? summaryReporters(root) : [])",
     "new": "...[]",
     "tests": [
       "test/tooling/fastsuite.test.js"
@@ -191,8 +191,8 @@
   {
     "name": "CI-FAST-install-every-time",
     "file": ".github/workflows/verify.yml",
-    "old": "        if: steps.deps.outputs.cache-hit != 'true'\n        run: npm ci\n      - name: Test shard ${{ matrix.shard }} of 8\n",
-    "new": "        run: npm ci\n      - name: Test shard ${{ matrix.shard }} of 8\n",
+    "old": "        if: steps.deps.outputs.cache-hit != 'true'\n        run: npm ci\n      - name: The times the shards split by\n",
+    "new": "        run: npm ci\n      - name: The times the shards split by\n",
     "tests": [
       "test/tooling/cifast_failsummary.test.js"
     ],

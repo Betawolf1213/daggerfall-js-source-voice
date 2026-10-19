@@ -29,14 +29,14 @@ test('CI-FAST THE RUN\'S END NAMES EVERY FAILING TEST: on the real runner, its f
     const out = r.stdout;
     assert.match(out, /^# fail [1-9]\d*$/m, 'the TAP report still there');
     const block = out.slice(out.indexOf('# ---- 2 failing tests'));
-    assert.match(block, /# FAIL made\.test\.js:4 {2}fails here\n# {6}one is not two\n/);
-    assert.match(block, /# FAIL made\.test\.js:5 {2}child fails\n# {6}child broke\n/);
+    assert.match(block, /# FAIL made\.test\.js:[4] {2}fails here\n# {6}one is not two\n/);
+    assert.match(block, /# FAIL made\.test\.js:[5] {2}child fails\n# {6}child broke\n/);
     assert.doesNotMatch(block, /FAIL [^\n]*  (parent|passes)\n/, 'only the tests that failed themselves');
     assert.match(out, /^::error file=made\.test\.js,line=4,title=fails here::one is not two$/m);
     assert.match(out, /^::error file=made\.test\.js,line=5,title=child fails::child broke$/m);
     const md = readFileSync(summary, 'utf8');
     assert.match(md, /### 2 failing tests/);
-    assert.match(md, /\| `made\.test\.js:4` \| fails here \| one is not two \|/);
+    assert.match(md, /\| `made\.test\.js:[4]` \| fails here \| one is not two \|/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -68,5 +68,5 @@ test('CI-FAST THE WORKFLOWS: the suite in eight shards; every job of verify.yml 
   }
   const v = read('.github/workflows/verify.yml');
   assert.match(v, /shard: \[1, 2, 3, 4, 5, 6, 7, 8\]/);
-  assert.match(v, /run: node tools\/testShards\.mjs \$\{\{ matrix\.shard \}\}\/8\n/);
+  assert.match(v, /run: node tools\/testShards\.mjs \$\{\{ matrix\.shard \}\}\/8 --record "\$RUNNER_TEMP\/test-times\.json"\n/, 'PIN MOVED (CI-TIMES): and records its times');
 });

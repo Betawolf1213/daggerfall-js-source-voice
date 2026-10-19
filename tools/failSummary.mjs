@@ -9,8 +9,16 @@
 //   - on GitHub Actions, one `::error` annotation a failure (each on the check's own page, at its file and line), and
 //     the same list in the job's summary ($GITHUB_STEP_SUMMARY).
 // A run with no failure writes nothing. It changes no test and no verdict: the runner's exit status is its own.
+// CI-TIMES (2026-10-19): and where TEST_TIMES_RECORD names a file, it adds each file's wall time in this run to it
+// (tools/fileTimes.mjs) - a CI shard's record, the next run's balance.
 import { appendFileSync } from 'node:fs';
 import { relative } from 'node:path';
+import { fileTimeOf, addTimes } from './fileTimes.mjs';
+
+// CI-TIMES: the record's path, taken out of the environment as the reporter loads - before the runner starts any file's
+// process - so a runner a test starts of its own (the pins here start several) never writes its made files into it.
+const RECORD = process.env.TEST_TIMES_RECORD ?? '';
+delete process.env.TEST_TIMES_RECORD;
 
 /** Test failures worth naming: every failing test but a parent failing only through its subtests. */
 export const ownFailure = (data) => data?.details?.error?.failureType !== 'subtestsFailed';
@@ -53,11 +61,16 @@ export function summaryOf(fails, { github = false } = {}) {
 
 /** The reporter (node --test --test-reporter=tools/failSummary.mjs): collects, then writes once the run ends. */
 export default async function* failSummary(source) {
-  const fails = [];
+  const fails = [], times = {};
   for await (const ev of source) {
+    const timed = fileTimeOf(ev);
+    if (timed) times[timed[0]] = timed[1];
     if (ev?.type !== 'test:fail' || !ownFailure(ev.data)) continue;
     const d = ev.data;
     fails.push({ file: repoPath(d.file), line: d.line, name: String(d.name ?? ''), why: whyOf(d.details?.error) });
+  }
+  if (RECORD && Object.keys(times).length) {
+    try { addTimes(RECORD, times); } catch (e) { yield `# [tests] the times were not recorded: ${e?.message ?? e}\n`; }
   }
   const github = process.env.GITHUB_ACTIONS === 'true';
   const { log, annotations, markdown } = summaryOf(fails, { github });

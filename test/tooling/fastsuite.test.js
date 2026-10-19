@@ -38,7 +38,8 @@ test('FAST-SUITE: runTests runs the files longest first, every core at once, in 
 test('FAST-SUITE: every door runs through it - npm test is the whole suite as one shard, a CI shard and test:changed call runTests, and nothing spawns its own `node --test` (mutants: a door with its own spawn)', () => {
   assert.equal(JSON.parse(read('package.json')).scripts.test, 'node tools/testShards.mjs 1/1');
   const shards = read('tools/testShards.mjs'), changed = read('tools/testChanged.mjs');
-  assert.match(shards, /return runTests\(files, \{ extra: runnerFlags\(argv\.slice\(1\)\) \}\);\n\}/, 'a shard, its runner flags handed on');
+  // PIN MOVED (CI-TIMES): the shard hands on the times it was split by and its record too
+  assert.match(shards, /return runTests\(files, \{ times, extra: runnerFlags\(argv\.slice\(1\)\), record \}\);\n\}/, 'a shard, its runner flags handed on');
   assert.match(changed, /return runTests\(files, \{ extra: runnerFlags\(argv\) \}\);\n\}/, 'the changed tests, likewise');
   assert.equal((shards.match(/\['--test'/g) ?? []).length, 1, 'one spawn of the runner, runTests\'');
   assert.doesNotMatch(changed, /\['--test'/, 'test:changed spawns none of its own');

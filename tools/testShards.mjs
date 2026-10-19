@@ -10,9 +10,10 @@
 //
 //   node tools/testShards.mjs 2/4            # run shard 2 of 4 (what CI runs)
 //   node tools/testShards.mjs 2/4 --list     # print its files, one a line
+//   node tools/testShards.mjs 2/8 --record t.json   # run it, adding each file's wall time to t.json (CI-TIMES)
 //   node tools/testShards.mjs --plan 4       # each shard's file count and recorded seconds
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { availableParallelism } from 'node:os';
@@ -88,14 +89,20 @@ export function shardsOf(files, n, times = {}) {
  * stdout - the runner's own reporter, as it chose before (spec on a terminal, TAP elsewhere), and tools/failSummary.mjs,
  * which names each failing test at the end of the log, and on GitHub Actions as an annotation and in the job's summary.
  * A red shard said "# fail 2" and no more; its two names now stand at its end.
+ *
+ * CI-TIMES (2026-10-19): and THE TIMES RECORDED (`record`, a path - a CI shard's `--record`): the summary's reporter
+ * (on for it whatever `summary` says) adds each file's wall time in this run to that JSON file (TEST_TIMES_RECORD,
+ * tools/fileTimes.mjs) - every runner of a split list to the one file. The next run's shards are balanced by them
+ * (verify.yml, test-times.yml).
  * @param {string[]} files
  */
 export const WIN32_ARGV_BUDGET = 30000;
 export function runTests(files, { root = ROOT, times = readTimes(root), cores = availableParallelism(), spawn = spawnSync, extra = [],
-  budget = process.platform === 'win32' ? WIN32_ARGV_BUDGET : Infinity, summary = true } = {}) {
+  budget = process.platform === 'win32' ? WIN32_ARGV_BUDGET : Infinity, summary = true, record = '' } = {}) {
   if (!files.length) return 0;
   const ordered = shardsOf(files, 1, times)[0].files;
-  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary ? summaryReporters(root) : []), ...extra];
+  const head = ['--test', `--test-concurrency=${Math.max(1, cores | 0)}`, ...(summary || record ? summaryReporters(root) : []), ...extra];
+  const env = record ? { ...process.env, TEST_TIMES_RECORD: resolve(record) } : undefined;
   const base = process.execPath.length + head.reduce((n, a) => n + a.length + 3, 0);   // a space and two quotes an argument
   const runs = [];
   let run = [], used = base;
@@ -106,7 +113,7 @@ export function runTests(files, { root = ROOT, times = readTimes(root), cores = 
   runs.push(run);
   let status = 0;
   for (const list of runs) {
-    const r = spawn(process.execPath, [...head, ...list], { cwd: root, stdio: 'inherit' });
+    const r = spawn(process.execPath, [...head, ...list], { cwd: root, stdio: 'inherit', ...(env ? { env } : {}) });
     if (r.error) console.error(`[tests] the test runner did not start: ${r.error.message ?? r.error}`);
     const s = r.status ?? 1;
     if (s !== 0 && status === 0) status = s;
@@ -133,11 +140,14 @@ function main(argv) {
     return 0;
   }
   const shard = parseShard(argv[0]);
-  if (!shard) { console.error('usage: node tools/testShards.mjs <i>/<n> [--list] | --plan <n>'); return 2; }
-  const { files } = shardsOf(testFiles(), shard.total, readTimes())[shard.index - 1];
+  if (!shard) { console.error('usage: node tools/testShards.mjs <i>/<n> [--list] [--record <times.json>] | --plan <n>'); return 2; }
+  const times = readTimes();
+  const { files } = shardsOf(testFiles(), shard.total, times)[shard.index - 1];
   if (argv.includes('--list')) { for (const f of files) console.log(f); return 0; }
-  console.log(`shard ${shard.index}/${shard.total}: ${files.length} files`);
-  return runTests(files, { extra: runnerFlags(argv.slice(1)) });
+  const at = argv.indexOf('--record'), record = at > 0 ? argv[at + 1] ?? '' : '';
+  if (at > 0 && !record) { console.error('--record wants the file to write the times to'); return 2; }
+  console.log(`shard ${shard.index}/${shard.total}: ${files.length} files (split by ${Object.keys(times).length} recorded times)`);
+  return runTests(files, { times, extra: runnerFlags(argv.slice(1)), record });
 }
 
 if (isMain(import.meta.url)) process.exitCode = main(process.argv.slice(2));
