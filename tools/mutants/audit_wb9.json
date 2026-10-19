@@ -228,8 +228,8 @@
   {
     "name": "AUDIT-WB9-the-far-walkway-for-the-middle-court",
     "file": "src/render/gate/gateTelegraph.js",
-    "old": "(one && w.k !== k0 && w.k !== k0 - 1)",
-    "new": "(one && w.k !== k0)",
+    "old": "(one && w.a !== k0 && w.b !== k0)",
+    "new": "(one && w.a !== k0)",
     "tests": [
       "test/net/gate/audit_wb9.test.js"
     ]

@@ -2589,6 +2589,18 @@ fighter back in after his fall). Found and NOT fixed, outside the slice: `AUDWBX
 (`tools/mutants/auditwbx2.json`, `server/src/index.js`) survives on the pushed head as before this change - a relay
 pin for the next relay slice.
 
+## 23. The Breach's portents (WB14, 2026-10-19) - its own page
+
+Mac: *"adding the chance of a gate to spawn with platforms of wave based adds that need to be defeated before
+encountering the boss / More diabolical boss movesets / More unique, but not super hard mechanics. Like the boss
+splitting and players having to split and navigate to beat both sides and then merging at the end for its final stand
+(chance based encounter modifer)"*, then *"This is all yours to take on."* The record is
+`11-Multiplayer/Breach-Portents.md`: a third kind of mark beside his aspect and his trials (section 8 here, and section
+17's Legion-Lord, which carries none), the night's floor plan that grows this page's three courts (section 14, WB9b)
+into a graph of six floors and six walkways, the Warden's new arsenal, and the slices WB14a-g. Every law on this page
+holds on a plain night as it did - a portent adds to the court; it never changes the gate's clock, its marks or its
+claim.
+
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,

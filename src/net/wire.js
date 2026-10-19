@@ -211,7 +211,7 @@ import { readHouse } from './houseLaw.js';   // LEGACY7 part two: a house rides 
 import { validHoldemIn, validHoldemOut } from './holdemTable.js';   // CARDS5: the relay's card table's words both ways - holdemTable.js imports only cardLaw.js, which imports only dice.js (already the bundle's)
 import { validIliacIn, validIliacOut } from './iliac/iliacTable.js';   // CARDS10: the relay's Iliac table's words both ways - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds
 import { validGambitIn, validGambitOut } from './gambit/gambitTable.js';   // KG5: the relay's King's Gambit table's words both ways - gambitTable.js imports the law (kingsGambit.js, which brings enemyBasics.js and mathf.js) and Hold'em's bounds
-import { validGateMods, GATE_FEEDS_MAX } from './gate/gateMods.js';   // WB8b: the Warden's marks on a gate's state - gateMods.js imports nothing, so the worker's graph stays flat
+import { validGateMods, GATE_FEEDS_MAX, validGatePortents } from './gate/gateMods.js';   // WB8b: the Warden's marks on a gate's state - gateMods.js imports nothing, so the worker's graph stays flat
 import { egStampOk } from './eliteGates/egShape.js';   // EG-FULL: a Spire blow's FULL shape stamp, checked as the wire carries it - egShape.js imports nothing, so the worker's graph stays flat
 export { validRollSpec, validRoll, rollDice, ROLL_DICE_MAX, ROLL_SIDES_MAX, ROLL_MOD_MAX };
 export { validHoldemIn, validHoldemOut };
@@ -1499,7 +1499,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world221';   // FIELD BUGS 2026-10-18f (bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md TURNED-BLOW; bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md L3; world219 on its branch, renumbered past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 at the merge; NOT YET DEPLOYED): THE STRIKE RULE ONE LAW ON BOTH ENDS - the relay's refusal of a blow struck from traversal ground (net/eliteGates/egBodies.js egStruckOff) is the one the screen asks, and the storey (egStoreyApart) the same; a woken lord's first phase said in the beat that wakes it (`eph`, egLordsWake), so no screen holds it asleep until the fight's next whole word; each body's radius said beside its row (`ead` and `efs` carry `r`, net/eliteGates/egBodies.js egRadiusWire - outside the 19-element row, so a client before it drops the field and keeps the word, and a client after it with an older relay judges as it did). Either end may deploy first.
+export const RELAY_VERSION = 'world222';   // WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md sections 1, 2 and 10; NOT YET DEPLOYED): THE BREACH'S PORTENTS - the relay draws a night's portents with its fight (net/gate/gateLaw.js gatePortentsOf) and says them in every state (`pt`), the crossings by walkway (`xa`, six, a walkway not laid null), GATE_BRAIN_V and GATE_BRAIN_MIN 6 (a game from before is told to reload). Deploy the relay with the client. Before it: world221, FIELD BUGS 2026-10-18f (bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md TURNED-BLOW; bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md L3; world219 on its branch, renumbered past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 at the merge; NOT YET DEPLOYED): THE STRIKE RULE ONE LAW ON BOTH ENDS - the relay's refusal of a blow struck from traversal ground (net/eliteGates/egBodies.js egStruckOff) is the one the screen asks, and the storey (egStoreyApart) the same; a woken lord's first phase said in the beat that wakes it (`eph`, egLordsWake), so no screen holds it asleep until the fight's next whole word; each body's radius said beside its row (`ead` and `efs` carry `r`, net/eliteGates/egBodies.js egRadiusWire - outside the 19-element row, so a client before it drops the field and keeps the word, and a client after it with an older relay judges as it did). Either end may deploy first.
 // world220: FIELD BUGS 2026-10-18d (bible/01-Overview/bugs/Field-Bugs-2026-10-18d.md; world219 on its branch, renumbered past EG-PERFECT's world219 at the merge - world218 the live relay's when it was written, GRANT2 deployed with #1018's merge). TWIN-REKINDLE: net/eliteGates/egBrain.js sapperReach - a Sapper reaching a fallen lord burns out against the body, never feeds it: a Twin fed at nought stood again un-hittable with its fall's flag on, threw blows, and its pair's raise never came. BANNER-SHAFT (Boar: "Big bugs of the spires"; bible/11-Multiplayer/Elite-Gates.md sections 13.3 and 13.4, Elite-Gates-Ascent.md section 2): a member's shaft or spell on an Elite Breach body of another storey lands through open air, refused only where the two stand stacked (net/eliteGates/egWalkGraph.js egStacked; a swing still reaches its own storey alone), so Valkynaz Ilthys's banners on the Rotunda's balconies are shot from the court. DUEL-RING: the Last Armsmaster's Challenge met in the open at n = 1 says so, called and ended (`challenge`'s and `challengeend`'s `t`, EG_DUEL_OPEN - a client before it reads the ring's words, as ever). SEAT-LIVE (the same drop; FIELD BUGS 2026-10-18d, FloopZe's 'Castle Daggerfall guards loot duping'): A DUNGEON ROOM'S SEAT IS A LIVE SOCKET'S - net/seatLive.js joins the bundle; the host is the eldest socket that has said a frame (a hello, a pose, its stream, its own lane, its memory - never a ping) within FOES_STALE_MS (moved here from net/online.js) of another being there to hear it, the change said to the room as a leave's is, and a socket back from silence a joiner, told the seat and stamped after it (Room _hostOf, _leads, _seatHeard, _seatKeep); a building's room keeps the eldest. The welcome carries no new field: a page reads world220 as the relay to ask (net/seatLive.js SEAT_RELAY_MIN), and an older page meets the same frames
 // world219: EG-PERFECT (2026-10-18, world218 on its branch, renumbered past GRANT2's world218 at the merge; bible/11-Multiplayer/Elite-Gates.md section 31's EG-PERFECT records; Mac: "I want to ensure the boss attacks, the design of the halls, and everything is absolutely perfect. Traversing between sections should present a challenge, platforming should be detailed"): the lords' blows fair and whole (the union floor's havens, pools and rings; the Valkynaz' signatures at their second phase; the Lattice a sweep), spec law 10 THE BROKEN WAY (net/eliteGates/egDurable.js EG_LAWS - laws 4 to 9 kept), a fight hall's clocks awaiting its company, the closing's walk, the tube's clock, the void zones, the toll's rooms. Deploy relay before clients (THE DRAIN keeps every live breach on its own law).
 // world218: GRANT2 (2026-10-18, Mac: "Lets build the plan"; bible/11-Multiplayer/Spawn-Grants.md section 12; NOT YET DEPLOYED): THE SPAWN GRANTS, MEASURED - a cell takes `{t:'grant', k:'mint', id, kind, n}` from a socket whose pose stands in it (net/grantLaw.js validGrantAsk, on grantGate's bucket) and answers `{t:'grant', k:'ok', id, gr}` - a grant made out to the asker, its cell and account, the pixel and the world minute, its signed level and Renown, a seed and the elite and champion marks it rolls, ten minutes' life, signed with GATE_SIGNING_KEY (net/grantLaw.js grantBytes, `spawn-grant1`); the gate (an account's bucket per kind, the cell's ceiling) is counted on every ask, and said (`no`) only while the relay setting `grantMode` enforces - it measures from this deploy (unset: measure), and `off` answers `off`; a cell's welcome says the mode (`gm`). Each cell posts its window of asks, signed, to the account service's GRANT_FEED_URL (net/grantMeasure.js, `grant-measure1`; acct155 keeps it). A client before it never asks; a client asks only a relay at world218 or later (GRANT_RELAY_MIN), which an older one would close the socket on. GRANT3-GRANT9 (sections 13-16, the same drop): the renewal, free, carry, heir and tally asks; a world room's own lane asks too (no pixel, no open-country kind, carried cell to cell alone); the settings `grantRoll` (an encounter's grant `encr`, its species its seed's) and `grantStrip` (the relay drops a record its grant does not stand), each off unset
@@ -4496,8 +4496,13 @@ export const GATE_KINDS = Object.freeze(['in', 'hit', 'spent', 'site', 'xhit', '
  *  cannot see, never break a crystal, and read the Reckoning's landing as a miss. 5 is WB11's Legion-Lord: his host
  *  (net/gate/gateBrain.js HOST_KINDS) and the nine-trial rotation of marks (net/gate/gateLaw.js) - a client that knows neither would
  *  stand in an Imp's bite, never see an Atronach walking, fight a ward it cannot break, and name tonight's marks wrong. */
-export const GATE_BRAIN_V = 5;
-export const GATE_BRAIN_MIN = 5;
+//  6 is WB14's (bible/11-Multiplayer/Breach-Portents.md): the night's portents and its floor plan (the Vanguard's platforms,
+//  the Rift Way, the Pen), the Warden's new arsenal (the Chains, the Brand, the Torment, the Wheel, the Gaze, the
+//  Unmaking), his halves under the Sundering, the Vanguard's and the Captive's host, the Tithe-Imp - a client that knows
+//  none of it would stand in a Brand it cannot see, strike a half it cannot name and walk onto a platform the floor law
+//  refuses.
+export const GATE_BRAIN_V = 6;
+export const GATE_BRAIN_MIN = 6;
 /** What the room says back (the client drops any other kind). WB8b: `fed` - a fallen challenger fed a Soul-Hungry
  *  Warden (their name, his health after). */
 export const GATE_OUT_KINDS = Object.freeze(['st', 'mv', 'atk', 'hp', 'ph', 'wrath', 'fell', 'rcpt', 'no', 'fed', 'cx', 'cxh', 'cxb', 'stun', 'ad', 'amv', 'aatk', 'ah', 'adie', 'bd']);   // INT11: `bd` - the relay's count has fallen me (enforced)   // WB9c: the crystals grown, their health, one broken, the Reckoning broken and he stunned; WB11b: his host risen, walking, striking, its health, gone
@@ -4574,6 +4579,11 @@ export const GATE_NO_WORDS = Object.freeze(['the gate is closed', 'the gate is s
 /** A point on the court the room names: metres about its centre - the court is 36 across, and this is its bound with room to spare.
  *  WB9b: about the FIRST court's centre - the third stands some 120 m off it, and this is the three's bound. */
 export const GATE_COURT_BOUND = 160;
+/** WB14b: the most walkways a night's floor plan names (net/gate/gateBrain.js WALKS - pinned equal). */
+export const GATE_WALKS_MAX = 6;
+/** WB14b: the most floors a night's plan stands (net/gate/gateBrain.js COURTS - pinned equal): a court index on the wire is
+ *  under it. */
+export const GATE_FLOORS_MAX = 6;
 /** WB9c: the most crystals one Reckoning grows (net/gate/gateBrain.js RECKON_CRYSTALS - pinned equal). */
 export const GATE_CRYSTALS_MAX = 8;
 /** WB11b: the most of his host one word names (a wave, a beat's walks or blows, its health, the gone, a state's host) -
@@ -4790,8 +4800,9 @@ const gateAtk = (a) => {
   return { i: a.i, a: a.a, at: a.at, x: a.x, z: a.z, yw: a.yw, tg: a.tg.map((p) => [p[0], p[1]]) };
 };
 const gateTop = (top) => (Array.isArray(top) ? top.slice(0, GATE_TOP_MAX).filter((n) => typeof n === 'string' && n).map(sanitizeName) : []);
-/** WB9b: the crossings' words - at most two relay moments. */
-const gateXa = (xa) => (xa == null ? [] : Array.isArray(xa) && xa.length <= 2 && xa.every(gateMs) ? [...xa] : undefined);
+/** WB9b: the crossings' words - at most two relay moments. WB14b: by walkway (net/gate/gateBrain.js xaWire) - at most
+ *  GATE_WALKS_MAX, a walkway not laid `null`, the last one a moment. */
+const gateXa = (xa) => (xa == null ? [] : Array.isArray(xa) && xa.length <= GATE_WALKS_MAX && xa.every((t) => t === null || gateMs(t)) && (!xa.length || xa[xa.length - 1] !== null) ? [...xa] : undefined);
 /** WB9c: a Reckoning's crystals - its attack's number, the health each grew with, and each spot (and, in a state, the
  *  health it stands at). */
 const gateCx = (cx, withHp) => {
@@ -4843,15 +4854,16 @@ export function validGateOut(m) {
       if (!Number.isSafeInteger(m.n) || m.n < 0 || m.n > 4096) return null;
       const mv = m.mv == null ? null : gateMove(m.mv), atk = m.atk == null ? null : gateAtk(m.atk), fell = m.fell == null ? null : gateFell(m.fell);
       const md = validGateMods(m.md);   // WB8b: his marks - known words, one aspect at most, or none
-      if ((m.mv != null && !mv) || (m.atk != null && !atk) || (m.fell != null && !fell) || (m.wrath != null && !gateMs(m.wrath)) || md === undefined) return null;
+      const pt = validGatePortents(m.pt);   // WB14b: the night's portents - known words, one or the Dire Breach's two, or none
+      if ((m.mv != null && !mv) || (m.atk != null && !atk) || (m.fell != null && !fell) || (m.wrath != null && !gateMs(m.wrath)) || md === undefined || pt === undefined) return null;
       // WB9b/c: the court he fights in, the walkways laid, the crystals standing, the stun and the next Reckoning
       const xa = gateXa(m.xa), cx = m.cx == null ? null : gateCx(m.cx, true);
-      if (xa === undefined || (m.cx != null && !cx) || (m.ct != null && !intIn(m.ct, 0, 2))) return null;
+      if (xa === undefined || (m.cx != null && !cx) || (m.ct != null && !intIn(m.ct, 0, GATE_FLOORS_MAX - 1))) return null;   // WB14b: any floor of the plan
       if ((m.su != null && !(m.su === 0 || gateMs(m.su))) || (m.rk != null && !(m.rk === 0 || gateMs(m.rk)))) return null;
       const lg = m.lg == null ? null : gateHostState(m.lg);   // WB11b: his host standing - said only under the Legion-Lord
       if (m.lg != null && !lg) return null;
       if (m.op != null && !(m.op === 0 || gateMs(m.op))) return null;   // WB13e: the opening's end (none from an older relay)
-      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}) };
+      return { k: 'st', d: m.d, b: m.b, ph: m.ph, h: m.h, m: m.m, x: m.x, z: m.z, yw: m.yw, mv, atk, sh: m.sh, wr: m.wr, n: m.n, fell, wrath: m.wrath ?? null, md, ct: m.ct ?? 0, xa, cx, su: m.su ?? 0, rk: m.rk ?? 0, op: m.op ?? 0, ...(lg ? { lg } : {}), ...(pt ? { pt } : {}) };
     }
     case 'mv': { const mv = gateMove(m); return mv ? { k: 'mv', ...mv } : null; }
     case 'atk': { const a = gateAtk(m); return a ? { k: 'atk', ...a } : null; }

@@ -515,7 +515,7 @@
   },
   {
     "name": "GATE-FBX-the-court-lays-a-door-again",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/gate/gateStand.js",
     "old": "    // GATE-FBX: and NO door of its own - the bridge's membrane is gone; until he falls the court is left by death or the Wrath\n",
     "new": "    ctx.exitDoors.push({ court: true });\n",
     "tests": [

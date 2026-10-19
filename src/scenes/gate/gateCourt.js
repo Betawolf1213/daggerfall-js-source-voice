@@ -16,11 +16,11 @@
 // has already cued, landed and judged, and the host's doors.
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder, planOf } from '../../net/gate/gateBrain.js';
 import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
-import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
+import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DROP, COURT_TEXT, WAY_IN_Z, WAY_IN_HOLD_MS, WAY_IN_NEAR_M, ARRIVE_Z, arrivalOf, planOfDay, COURT_SILENT_MS, COURT_FRAME_GAP_MS, wayInStep, portalFade } from '../../world/gate/gateArena.js';
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../../render/gate/gateTelegraph.js';
 import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
 import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../../render/gate/gateFx.js';   // WB9e: his blows seen landing
@@ -349,10 +349,17 @@ export function createGateCourt({
    *  call and this one (stepsIn), and whether the first look has been taken */
   let arrivedAt = null, heardSeen = null, wordAt = null, frameAt = null, peersPrimed = false;
   let _peersWere = new Set(), _peersNow = new Set();
-  const ARRIVAL = courtToDungeon(0, 0, ARRIVE_Z);
+  const ARRIVAL = courtToDungeon(0, 0, ARRIVE_Z);   // WB14b: the night's root floor's (reset - the Vanguard's Bridgehead)
   /** GATE-FBX: the court's fires this frame - the way home and the way in - one list, refilled (AUDIT WB D10's law) */
   const _fires = [], _portalFire = { origin: [0, 0, 0], yaw: 0, open: 1, fade: 0, spin: 0 };
   const _wayIn = { origin: courtToDungeon(0, -PORTAL_DROP, WAY_IN_Z), yaw: 0, open: 1, fade: 0, spin: 0, fireOnly: true };
+  /** WB14b: the night's arrival and its way in, by its plan (world/gate/gateArena.js arrivalOf) - the court's frame's own */
+  function arriveAt(d) {
+    const a = arrivalOf(planOfDay(d));
+    const p = courtToDungeon(a.at[0], 0, a.at[1]), w = courtToDungeon(a.wayIn[0], -PORTAL_DROP, a.wayIn[1]);
+    ARRIVAL[0] = p[0]; ARRIVAL[1] = p[1]; ARRIVAL[2] = p[2];
+    _wayIn.origin = w;
+  }
   /** WBX7: my soul trap on him - its chance (frozen at the cast) and when it runs out on the relay's clock - and whether
    *  his fall has rolled it */
   let trapMark = null, trapJudged = null;   // AUDIT WBX F6: the day whose fall rolled it - once a fight, across a walk out and back
@@ -373,6 +380,9 @@ export function createGateCourt({
   const _targets = [], _crystalDraw = [], _crystalSlots = [], _crystalLights = [], _chest = [0, 0, 0];
   /** AUDIT WB9 (court F4): how far each walkway is laid this frame (net/gate/gateBrain.js walkFormed) - refilled, never made */
   const _walked = WALKS.map(() => 0);
+  /** WB14b: the night's floors as the telegraph pass draws over them (render/gate/gateTelegraph.js `floor` - the whole arena's
+   *  shape over the plan's floors alone), refilled each frame */
+  const _floors = { courts: COURTS, r: COURT_R, ks: planOf(null).floors };
   /** WB9d: his ground and his element, felt - the ground I stand in (its name and colour) and the last bite or elemental
    *  blow that landed on me (when, and its colour) */
   let groundName = '', groundColor = null, biteAt = -Infinity, biteColor = null;
@@ -386,7 +396,8 @@ export function createGateCourt({
   let meteorNow = null, fxPass = null, fxTried = false;
 
   function reset(d) {
-    day = d; judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;
+    day = d;
+    arriveAt(d);   // WB14b judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;
     prevT = -Infinity; hurtAt = -Infinity; shape = null; standIn = null; spewed = false; spoilsSaid = false;
     stepFrom = null; strideRun = 0; growlAt = null; hpHeard = null; gruntAt = -Infinity; quaked = noMark(); thunderPhase = 0; thudCued = false;
     released = noMark(); courtFlashAt = -Infinity; hpFlashSeen = null;   // WB13d
@@ -904,6 +915,7 @@ export function createGateCourt({
       else { const [mx, mz] = bossPlace(s, t); _mark.origin[0] = mx; _mark.origin[1] = mz; _mark.yaw = s.yaw; _mark.color = t < s.shieldUntil ? WARD_COLOR : markEmber; _mark.court = nearestCourt(mx, mz); mark = _mark; }   // AUDIT WB D10's law: one shape, refilled; WB9b: over the court he stands in
       poolDraw = pools.length ? poolShapes(pools, t, poolColor(P), TELEGRAPH_STYLE[P.el] ?? TELEGRAPH_STYLE.fire) : NONE;   // WB9e: his ground in its own grain
       for (const w of WALKS) _walked[w.k] = walkFormed(s.xa, w.k, t);   // AUDIT WB9 (court F4): how far each walkway is laid - his shapes go on over it
+      _floors.ks = planOf(s).floors;   // WB14b: the night's
       // WB13a: a blow still to come on my feet (WB13c: the bar says MOVE by its name; never over the step's fire)
       const fp = feet(), alive = !!fp && (player()?.health ?? 0) > 0;
       const peril = alive ? perilAt(s, t, P, fp[0] - COURT_CENTRE[0], fp[2] - COURT_CENTRE[2], yaw()) : null;
@@ -912,7 +924,7 @@ export function createGateCourt({
       // his aspect and his trials, each with its sign, its line and how to meet it, while he stands to be read
       // (net/gate/gateBrain.js OPENING_MS); gone once he has fallen, and never over the step's fire
       if (marksAt !== null && s.fell) marksAt = null;
-      drawGateMarksCard(marksAt !== null ? marksCardModel(s.md, bossOf(s), { mode: 'arrive', since: marksAt, now: t }) : null, { hidden: hudHidden() || veiled() });
+      drawGateMarksCard(marksAt !== null ? marksCardModel(s.md, bossOf(s), { mode: 'arrive', since: marksAt, now: t, pt: s.pt }) : null, { hidden: hudHidden() || veiled() });
       drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() || veiled() });   // WB13e: his wake, a phase's turn, his fall
       // GATE-UX (Mac: "a detailed damage chart after the boss kill, showing and ranking everyone's damage"): THE DAMAGE
       // CHART once he has fallen - the relay's own count of every challenger's part, to the side, never over the step's fire
@@ -1088,10 +1100,10 @@ export function createGateCourt({
         if (crystalPass) { crystalPass.draw(_crystalDraw, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
       if (pass) {
-        for (const ps of poolDraw) { pass.draw(ps, proj, view, eye, seconds, fog, COURT_CENTRE, _walked); drew = true; }   // WBX5: the burning ground under all
+        for (const ps of poolDraw) { pass.draw(ps, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WBX5: the burning ground under all
         if (mark) { pass.draw(mark, proj, view, eye, seconds, fog); drew = true; }   // WBX4: where he stands and faces
-        if (shape) { pass.draw(shape, proj, view, eye, seconds, fog, COURT_CENTRE, _walked); drew = true; }   // AUDIT WB9 (court F4): and over the laid walkways
-        for (const hs of host.shapes()) { pass.draw(hs, proj, view, eye, seconds, fog, COURT_CENTRE, _walked); drew = true; }   // WB11c: his host's blows, its paths and its tethers
+        if (shape) { pass.draw(shape, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // AUDIT WB9 (court F4): and over the laid walkways; WB14b: the night's floors
+        for (const hs of host.shapes()) { pass.draw(hs, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WB11c: his host's blows, its paths and its tethers
       }
       if (_fxLive.length || meteorNow) {   // WB9e: his blows landing - the sparks and the meteor's fall, over the telegraph
         if (!fxTried && gl) { fxTried = true; try { fxPass = new GateFxRenderer(gl); } catch (e) { console.warn('[gate] his effects would not build', e?.message ?? e); fxPass = null; } }

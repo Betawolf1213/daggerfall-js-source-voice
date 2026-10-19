@@ -11,14 +11,14 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { readReceipt } from './gateReceipt.js';
-import { ATTACKS, nearestCourt, COURTS, hostAt } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands
+import { ATTACKS, nearestCourt, COURTS, WALKS, WALK, hostAt, planOf } from './gateBrain.js';   // WB9b: the bound's word and the court it lands in; WB11b: where one of his host stands; WB14b: the night's plan
 
 /**
  * @typedef {{day: number|null, boss: string|null, phase: number, hp: number, max: number, x: number, z: number, yaw: number,
  *   move: any, atk: any, shieldUntil: number, wrathAt: number|null, fighters: number, fell: any, wrath: number|null, heardAt: number,
  *   md: ReadonlyArray<string>|null, fed: {ns: ReadonlyArray<string>, at: number}|null,
- *   xa: ReadonlyArray<number>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
- *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number}} GateState
+ *   xa: ReadonlyArray<number|null>, cx: {i: number, m: number, c: number[][], broke: ReadonlyArray<{c: number, n: string, at: number}>}|null,
+ *   stunUntil: number, stunAt: number, rk: number, lg: GateHost|null, openUntil?: number, pt?: ReadonlyArray<string>|null}} GateState
  * @typedef {{ads: ReadonlyArray<{i: number, k: number, h: number, m: number, x: number, z: number, mv: any, atk: {at: number, x: number, z: number}|null, rose: number, yaw: number}>,
  *   gone: ReadonlyArray<{i: number, k: number, x: number, z: number, w: number, n: string|null, at: number}>, ward?: {n: number, at: number, is?: ReadonlyArray<number>}}} GateHost
  *   GATE-UX: `fell` carries `dm`, the kill's damage chart (net/gate/gateBrain.js damageChart), from a relay that makes one.
@@ -35,7 +35,7 @@ import { ATTACKS, nearestCourt, COURTS, hostAt } from './gateBrain.js';   // WB9
 export const GATE_STATE_EMPTY = Object.freeze({
   day: null, boss: null, phase: 1, hp: 0, max: 0, x: 0, z: 0, yaw: 0, move: null, atk: null, shieldUntil: 0,
   wrathAt: null, fighters: 0, fell: null, wrath: null, heardAt: 0, md: null, fed: null,
-  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0,
+  xa: Object.freeze([]), cx: null, stunUntil: 0, stunAt: 0, rk: 0, lg: null, openUntil: 0, pt: null,
 });
 
 /** WB11b: how many of his host gone the fold keeps for the court to play out (their fall, their crumbling). */
@@ -121,6 +121,7 @@ export function foldGate(s, g, now, place = bossAt) {
       xa: g.xa ?? [], cx, stunUntil: g.su ?? 0, stunAt: same && s.stunUntil === (g.su ?? 0) ? s.stunAt : (g.su ? now : 0), rk: g.rk ?? 0,
       lg: hostOfState(g.lg, same ? s.lg : null),   // WB11b: his host standing - none said, none held (any other fight's)
       openUntil: g.op ?? 0,   // WB13e: the opening's end - his wake (0: an older relay's word, and no wake)
+      pt: g.pt ?? null,   // WB14b: the night's portents - its floor plan (net/gate/gateBrain.js floorPlan) and what it holds
     };
   }
   if (s.day === null) return s;   // nothing but a whole state starts a fight
@@ -161,8 +162,18 @@ export function foldGate(s, g, now, place = bossAt) {
  *  rise here as they rise on the relay's clock without waiting for the next whole state. Pure; `{}` for any other word. */
 export function crossLaid(s, g) {
   if (g.a !== ATTACKS.cross.id || !g.tg?.[0]) return {};
-  const k = nearestCourt(g.tg[0][0], g.tg[0][1]) - 1;
-  if (!(k >= 0) || Number.isFinite(s.xa?.[k])) return {};
+  const to = nearestCourt(g.tg[0][0], g.tg[0][1]), from = nearestCourt(g.x, g.z), at = g.at - ATTACKS.cross.windup;
+  // WB14b: a bound over a walkway of the night's plan from the court it leaves to the court it reaches lays that walkway
+  // alone (the Sundering's halves - the Flame's over the Rift Way, net/gate/gateBrain.js WALK)
+  const own = planOf(s).walks.find((i) => i >= WALK.rift && WALKS[i].a === from && WALKS[i].b === to);
+  if (own != null) {
+    if (Number.isFinite(s.xa?.[own])) return {};
+    const xa = [...(s.xa ?? [])];
+    xa[own] = at;
+    return { xa };
+  }
+  const k = to - 1;
+  if (!(k >= 0) || k > WALK.third || Number.isFinite(s.xa?.[k])) return {};
   const xa = [...(s.xa ?? [])];
   // AUDIT WB9 (brain F5): every walkway up to the court he bounds to, as the relay lays them (net/gate/gateBrain.js beginTurn)
   // - a fight woken from a checkpoint older than WB9 bounds from the first court straight to the third

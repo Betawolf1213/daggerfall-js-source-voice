@@ -74,8 +74,8 @@
   {
     "name": "WB3-a-blow-from-off-the-court",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return 0;",
-    "new": "  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK * 30)) return 0;",
+    "old": "  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return 0;",
+    "new": "  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK * 30, planOf(f))) return 0;",
     "tests": [
       "test/net/gate/wb3_gate_room.test.js",
       "test/net/gate/audit_wb11.test.js"

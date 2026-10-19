@@ -25,7 +25,7 @@
 // full-rate damage whatever anybody says.
 //
 // Not a DFU member. Ledger A (WB).
-import { readGateMods, validGateMods, GATE_TRIALS } from './gateMods.js';   // WB8b: the Warden's marks - the fight's profile is made from them
+import { readGateMods, validGateMods, GATE_TRIALS, validGatePortents, hasPortent } from './gateMods.js';   // WB8b: the Warden's marks - the fight's profile is made from them; WB14b: the night's portents - its floor plan
 
 // ── the court and the body ─────────────────────────────────────────────
 /** Where the court's centre stands in the arena's own dungeon frame, metres: its one made block's middle
@@ -52,9 +52,21 @@ export const BOSS_SPEED = 3.2;
  * (render/deadlands.js SIGIL_TOWER, a little east of north), so the arrival's sightline to it stays as WB6a left it.
  * Each rim is some 24 m from the next - a walkway's length.
  */
-export const COURTS = Object.freeze([Object.freeze([0, 0]), Object.freeze([-68, -22]), Object.freeze([-74, -94])]);
+//
+// WB14b (2026-10-19, bible/11-Multiplayer/Breach-Portents.md section 2): AND THE FLOORS A PORTENT STANDS - every floor a
+// night may hold is one table (all of COURT_R), its index its name: the three courts, then the Vanguard's Muster and
+// Bridgehead south of the first (off its bridge's line), then the Captive's Pen east of it. A night's PLAN says which
+// stand (floorPlan); a plain night's is WB9b's three.
+export const COURTS = Object.freeze([Object.freeze([0, 0]), Object.freeze([-68, -22]), Object.freeze([-74, -94]), Object.freeze([-40, 60]), Object.freeze([-20, 128]), Object.freeze([70, -10])]);
+/** WB14b: the floors by name (their index in COURTS) - the three courts WB9b fights in, and the portents'. */
+export const FLOOR = Object.freeze({ first: 0, second: 1, third: 2, muster: 3, bridgehead: 4, pen: 5 });
+/** WB14b: how many of COURTS are his courts - the floors a phase is fought in (courtOfPhase); the rest are the portents'. */
+export const COURTS_HIS = 3;
+/** WB14d: THE COURT HIS LAST PHASE IS FOUGHT IN - the third, or (the Sundering) the first, where his halves fall back
+ *  together; his Reckonings are armed there. */
+export const finalCourt = (f) => (hasPortent(f?.pt, 'sunder') ? FLOOR.first : FLOOR.third);
 /** The court a phase is fought in (its index in COURTS). */
-export const courtOfPhase = (phase) => Math.max(0, Math.min(COURTS.length - 1, (phase | 0) - 1));
+export const courtOfPhase = (phase) => Math.max(0, Math.min(COURTS_HIS - 1, (phase | 0) - 1));
 /** The court nearest a point - where a body standing there is (the courts' discs never meet). */
 export function nearestCourt(x, z) {
   let best = 0, bd = Infinity;
@@ -69,41 +81,99 @@ export const inCourt = (x, z, k, pad = 0) => !!COURTS[k] && Math.hypot(x - COURT
  * that crosses it (the fight's `xa[k]`) its stones rise out of the fire from the court he leaves toward the one he leaps
  * to - the first WALK_LEAD_MS after the word, then on over WALK_FORM_MS - and it is floor as far as it has risen
  * (walkFormed; world/gate/gateArena.js slabRise raises each stone whole before the floor reaches it). Walkway k joins court k
- * to court k+1.
+ * to court k+1. WB14b: walkway k joins floor `a` to floor `b` (WALK_ENDS) - WB9b's two, then the Sundering's Rift Way from
+ * the first court to the third, the Vanguard's two (the Bridgehead to the Muster, the Muster to the first court) and the
+ * Captive's (the first court to the Pen); its stones rise from `a`, whatever laid it.
  */
 export const WALK_HALF_W = 3.2;
 export const WALK_LEAD_MS = 1000;
 export const WALK_FORM_MS = 4000;
 export const WALK_SINK_M = 2;
-/** Walkway k's line: from `a` (in court k) to `b` (in court k+1), its direction and its length. */
+/** WB14b: each walkway's floors, [from, to] - by its index (bible/11-Multiplayer/Breach-Portents.md section 2). */
+export const WALK_ENDS = Object.freeze([[0, 1], [1, 2], [0, 2], [4, 3], [3, 0], [0, 5]].map((e) => Object.freeze(e)));
+/** WB14b: the walkways by name (their index in WALKS). */
+export const WALK = Object.freeze({ second: 0, third: 1, rift: 2, muster: 3, warden: 4, pen: 5 });
+/** Walkway k's line: from `a` (in court k) to `b` (in court k+1), its direction and its length. WB14b: from floor `a` to
+ *  floor `b` (WALK_ENDS[k]). */
 export function walkwayOf(k) {
-  const A = COURTS[k], B = COURTS[k + 1];
+  const e = WALK_ENDS[k], A = e ? COURTS[e[0]] : null, B = e ? COURTS[e[1]] : null;
   if (!A || !B) return null;
   const dx = B[0] - A[0], dz = B[1] - A[1], d = Math.hypot(dx, dz), ux = dx / d, uz = dz / d, r = COURT_R - WALK_SINK_M;
   const ax = A[0] + ux * r, az = A[1] + uz * r, bx = B[0] - ux * r, bz = B[1] - uz * r;
-  return Object.freeze({ k, ax, az, bx, bz, ux, uz, len: Math.hypot(bx - ax, bz - az) });
+  return Object.freeze({ k, a: e[0], b: e[1], ax, az, bx, bz, ux, uz, len: Math.hypot(bx - ax, bz - az) });
 }
-export const WALKS = Object.freeze(COURTS.slice(1).map((_, k) => walkwayOf(k)));
+export const WALKS = Object.freeze(WALK_ENDS.map((_, k) => walkwayOf(k)));
 /** How much of walkway k is laid at `now` (0..1) - from WALK_LEAD_MS after its crossing's word (`xa[k]`) over
  *  WALK_FORM_MS; none before. */
 export function walkFormed(xa, k, now) {
   const at = Array.isArray(xa) ? xa[k] : null;
   return Number.isFinite(at) ? Math.max(0, Math.min(1, (now - at - WALK_LEAD_MS) / WALK_FORM_MS)) : 0;
 }
+
+// ── WB14b: THE NIGHT'S FLOOR PLAN ───────────────────────────────────────
+/**
+ * WB14b (bible/11-Multiplayer/Breach-Portents.md section 2): A NIGHT'S PLAN - the floors and walkways its portents stand
+ * (net/gate/gateMods.js GATE_PORTENTS), and its ROOT, where its fighters arrive: every night his three courts and the
+ * walkway to the second; the walkway to the third unless he sunders (his halves leave the first court by the second's
+ * and by the Rift Way); the Vanguard's two platforms and their walkways, its Bridgehead the root; the Captive's Pen and its
+ * walkway. A plain night's is WB9b's exactly. Pure; one plan a set of portents, made once and kept.
+ * @typedef {{key: string, pt: ReadonlyArray<string>|null, root: number, floors: ReadonlyArray<number>, walks: ReadonlyArray<number>}} FloorPlan
+ * @param {unknown} pt the night's portents (net/gate/gateMods.js validGatePortents - anything else is a plain night)
+ * @returns {Readonly<FloorPlan>}
+ */
+export function floorPlan(pt) {
+  const ok = validGatePortents(pt) ?? null, key = ok ? ok.join(',') : '';
+  let P = _plans.get(key);
+  if (P) return P;
+  const has = (id) => !!ok && ok.includes(id);
+  /** @type {number[]} */ const floors = [FLOOR.first, FLOOR.second, FLOOR.third];
+  /** @type {number[]} */ const walks = [WALK.second];
+  if (has('sunder')) walks.push(WALK.rift); else walks.push(WALK.third);
+  if (has('vanguard')) { floors.push(FLOOR.muster, FLOOR.bridgehead); walks.push(WALK.muster, WALK.warden); }
+  if (has('captive')) { floors.push(FLOOR.pen); walks.push(WALK.pen); }
+  P = Object.freeze({ key, pt: ok, root: has('vanguard') ? FLOOR.bridgehead : FLOOR.first, floors: Object.freeze(floors.sort((x, y) => x - y)), walks: Object.freeze(walks.sort((x, y) => x - y)) });
+  _plans.set(key, P);
+  return P;
+}
+/** The plans made (a handful at most - one a set of portents). */
+const _plans = new Map();
+/** WB14b: a plain night's plan - WB9b's three courts and two walkways, the first court the root. */
+export const PLAN_PLAIN = floorPlan(null);
+/** WB14b: a fight's plan, or a state's - the brain's fight and the court's state alike carry `pt` (the relay's word). */
+export const planOf = (f) => floorPlan(f?.pt ?? null);
+/**
+ * WB14b: THE FLOORS THAT ARE FLOOR at `now` - the plan's root, and every floor of the plan a walkway of the plan laid
+ * whole reaches from one that is (WB9b: a court past a walkway laid whole). Pure.
+ * @param {Readonly<FloorPlan>} plan @param {ReadonlyArray<number>|null|undefined} xa @param {number} now
+ * @returns {number[]}
+ */
+export function liveFloors(plan, xa, now) {
+  const live = [plan.root];
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const k of plan.walks) {
+      const w = WALKS[k];
+      if (live.includes(w.b) || !live.includes(w.a) || !plan.floors.includes(w.b) || walkFormed(xa, k, now) < 1) continue;
+      live.push(w.b);
+      grew = true;
+    }
+  }
+  return live;
+}
 /**
  * WB9b: THE FLOOR A BODY MAY STAND ON at `now` (the fight's crossings `xa`): the first court; each walkway as far as it
  * is laid; each court past a walkway laid whole. `pad` widens every part (a pose's slack). The relay's bound on where a
- * blow may come from, and (clampToFloor) the motor's on where a player may walk - one law, both ends. Pure.
+ * blow may come from, and (clampToFloor) the motor's on where a player may walk - one law, both ends. Pure. WB14b: the
+ * night's plan's - its root (the first court, or the Vanguard's Bridgehead), each of its walkways as far as it is laid
+ * from a floor that is floor, each of its floors such a walkway reaches laid whole (liveFloors).
  */
-export function onFloor(x, z, xa, now, pad = 0) {
+export function onFloor(x, z, xa, now, pad = 0, plan = PLAN_PLAIN) {
   if (!Number.isFinite(x) || !Number.isFinite(z)) return false;
-  for (let k = 0; k < COURTS.length; k++) {
-    if (k > 0 && walkFormed(xa, k - 1, now) < 1) break;
-    if (inCourt(x, z, k, pad)) return true;
-  }
-  for (const w of WALKS) {
-    const f = walkFormed(xa, w.k, now);
-    if (!(f > 0)) break;
+  const live = liveFloors(plan, xa, now);
+  for (const k of live) if (inCourt(x, z, k, pad)) return true;
+  for (const k of plan.walks) {
+    const w = WALKS[k], f = walkFormed(xa, k, now);
+    if (!(f > 0) || !live.includes(w.a)) continue;
     const t = (x - w.ax) * w.ux + (z - w.az) * w.uz, side = Math.abs((x - w.ax) * w.uz - (z - w.az) * w.ux);
     if (t >= -pad && t <= w.len * f + pad && side <= WALK_HALF_W + pad) return true;
   }
@@ -112,20 +182,20 @@ export function onFloor(x, z, xa, now, pad = 0) {
 /**
  * WB9b: THE NEAREST POINT OF THE FLOOR (onFloor's, every part drawn in by `inset` - a body's own radius) to (x, z), or
  * null when (x, z) already stands on it: the motor's clamp in the court (world/gate/gateArena.js courtArena), as the duel's
- * ring clamps to its disc. Pure.
+ * ring clamps to its disc. Pure. WB14b: the night's plan's floor (onFloor's).
  */
-export function clampToFloor(x, z, xa, now, inset = 0) {
+export function clampToFloor(x, z, xa, now, inset = 0, plan = PLAN_PLAIN) {
   let best = null, bd = Infinity;
   const consider = (px, pz) => { const d = Math.hypot(px - x, pz - z); if (d < bd) { bd = d; best = [px, pz]; } };
-  for (let k = 0; k < COURTS.length; k++) {
-    if (k > 0 && walkFormed(xa, k - 1, now) < 1) break;
+  const live = liveFloors(plan, xa, now);
+  for (const k of live) {
     const [cx, cz] = COURTS[k], r = Math.max(0, COURT_R - inset), d = Math.hypot(x - cx, z - cz);
     if (d <= r) return null;
     consider(cx + ((x - cx) / d) * r, cz + ((z - cz) / d) * r);
   }
-  for (const w of WALKS) {
-    const f = walkFormed(xa, w.k, now);
-    if (!(f > 0)) break;
+  for (const k of plan.walks) {
+    const w = WALKS[k], f = walkFormed(xa, k, now);
+    if (!(f > 0) || !live.includes(w.a)) continue;
     const hw = Math.max(0, WALK_HALF_W - inset), L = w.len * f;
     const t = (x - w.ax) * w.ux + (z - w.az) * w.uz, s2 = (x - w.ax) * w.uz - (z - w.az) * w.ux;
     if (t >= 0 && t <= L && Math.abs(s2) <= hw) return null;
@@ -443,13 +513,17 @@ const hisCourt = (f) => COURTS[Math.max(0, Math.min(COURTS.length - 1, f.court |
  * @param {number} day @param {number} now @param {number} wrathAt the gate's midnight (net/gate/gateLaw.js gateTimes)
  * @param {string} boss the boss's id (net/gate/gateLaw.js GATE_BOSSES)
  * @param {unknown} [md] WB8b: his marks (net/gate/gateLaw.js gateModsOf) - none, the Warden unmarked
+ * @param {unknown} [pt] WB14b: the night's portents (net/gate/gateLaw.js gatePortentsOf) - none, a plain night
  */
-export function newFight(day, now, wrathAt, boss, md = null) {
+export function newFight(day, now, wrathAt, boss, md = null, pt = null) {
   return {
     v: 1, day, boss, startedAt: now, wrathAt, phase: 1, shieldUntil: 0, hp: 0, max: 0,
     /** WB8b: the Warden's marks this fight is fought under (net/gate/gateLaw.js gateModsOf - the relay's draw at the fight's
      *  birth), or null for none; said in every state */
     md: validGateMods(md) ?? null,
+    /** WB14b: the night's portents (net/gate/gateLaw.js gatePortentsOf - the relay's draw at the fight's birth), or null for
+     *  none - its floor plan (floorPlan) and its waves, halves and captive; said in every state */
+    pt: validGatePortents(pt) ? [...validGatePortents(pt)] : null,
     /** AUDIT PRE-MERGE 0929 W1-1: the feedings a Soul-Hungry Warden has had this fight (at most GATE_FEEDS_MAX) - a
      *  fight checkpointed before it counts from none */
     feeds: 0,
@@ -575,7 +649,7 @@ export function applyHit(f, sub, d, r, pose, now, seq = null) {
   // (AUDIT WB11 W3: once a blow, however many bodies it meets - spendBlow, the one hand of every arm)
   if (!spendBlow(p, now, seq, 'b')) return 0;
   if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z)) return 0;
-  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return 0;   // nobody strikes the court from off it - WB9b: its floor as far as it is laid
+  if (!onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return 0;   // nobody strikes the court from off it - WB9b: its floor as far as it is laid; WB14b: the night's plan's
   // AUDIT WB9 (brain F1): nor from outside the court he fights in - he chooses, aims at and waits for only those in it
   // (`here`), so a fighter on a walkway or in a court he has left struck him from where no blow of his could answer
   if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return 0;
@@ -688,7 +762,7 @@ export const HEAL_DEPTH_X = 2;
 export function applyHeal(f, sub, by, n, pose, now) {
   const p = f.players[sub], q = f.players[by];
   if (!p || !q || sub === by || f.fell || f.wrath || now >= f.wrathAt || !Number.isFinite(n) || !(n > 0)) return 0;
-  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return 0;
+  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return 0;
   const ref = healRef(p.lv), depth = HEAL_DEPTH_X * ref;
   p.hb = Math.min(depth, (Number.isFinite(p.hb) ? p.hb : depth) + (Math.max(0, now - (Number.isFinite(p.hbAt) ? p.hbAt : now)) / 1000) * (ref / HEAL_REFILL_S));
   p.hbAt = now;
@@ -907,7 +981,7 @@ export function stepBrain(f, now, bodies, rng) {
   // WB9c: Dagon's Champion's turn done in the last court, his Reckonings are armed - the first RECKON_FIRST_MS from then;
   // one due - he leaps to the court's heart and calls it (`rk` -2 while it is under way: its end sets the next)
   if (f.phase >= 3 && !f.pending && !f.queue.length && !f.atk) {
-    if (!f.rk && f.court === COURTS.length - 1) f.rk = now + RECKON_FIRST_MS;
+    if (!f.rk && f.court === finalCourt(f)) f.rk = now + RECKON_FIRST_MS;   // WB14d: the last court his last phase is fought in
     if (f.rk > 0 && now >= f.rk && now >= f.nextAt) {
       f.rk = -2;
       f.move = null;
@@ -984,8 +1058,10 @@ function beginTurn(f, entry, now, bodies, rng, out) {
   if (atk === ATTACKS.cross && Number.isInteger(entry.court) && COURTS[entry.court]) {
     f.xa = [...(Array.isArray(f.xa) ? f.xa : [])];
     // every walkway up to the court he bounds to - a fight woken from a checkpoint older than WB9 crosses from the first
-    // court straight to the third, and its players walk both (the wire says them in order: no gap)
-    for (let k = 0; k < entry.court; k++) if (!Number.isFinite(f.xa[k])) f.xa[k] = now;
+    // court straight to the third, and its players walk both (the wire says them in order: no gap). WB14d: a turn's own
+    // walkway (`walk` - the Flame's Rift Way) is that walkway alone
+    if (Number.isInteger(entry.walk)) { if (!Number.isFinite(f.xa[entry.walk])) f.xa[entry.walk] = now; }
+    else for (let k = 0; k < entry.court; k++) if (!Number.isFinite(f.xa[k])) f.xa[k] = now;
     begin(f, atk, now, null, bodies, rng, out, COURTS[entry.court], false, entry.court);
     return;
   }
@@ -1074,7 +1150,7 @@ export function applyCrystalHit(f, sub, c, d, r, pose, now, seq = null) {
   if (!p || f.fell || f.wrath || !q || !(q.h > 0) || !Number.isFinite(d) || !(d > 0) || now >= f.wrathAt) return out;
   if (!reckonOpen(f, now)) return out;   // AUDIT WB9 (brain F2): only while the Reckoning still winds up, and not in its last breath
   if (!spendBlow(p, now, seq, `x${c}`)) return out;   // his hand (AUDIT WB11 W3: once a blow)
-  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return out;
+  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return out;
   if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;   // AUDIT WB9 (brain F1): from his court, as a blow on him
   if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, q.x, q.z) - CRYSTAL_R > MELEE_REACH + POSE_SLACK) return out;
   const ref = dpsRef(p.lv);
@@ -1451,7 +1527,7 @@ export function applyHostHit(f, sub, i, d, r, pose, now, seq = null) {
   const p = f.players[sub], H = f.lg, a = H && Number.isSafeInteger(i) ? H.ads.find((o) => o.i === i) ?? null : null;
   if (!p || f.fell || f.wrath || !a || !(a.h > 0) || !Number.isFinite(d) || !(d > 0) || now >= f.wrathAt) return out;
   if (!spendBlow(p, now, seq, `a${i}`)) return out;
-  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK)) return out;
+  if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z) || !onFloor(pose.x, pose.z, f.xa, now, POSE_SLACK, planOf(f))) return out;
   if (!inCourt(pose.x, pose.z, f.court, POSE_SLACK)) return out;
   const [ax, az] = hostAt(a, now);
   if (r === HIT_KINDS.Melee && dist(pose.x, pose.z, ax, az) - HOST_KINDS[a.k].r > MELEE_REACH + POSE_SLACK) return out;
@@ -1487,6 +1563,14 @@ function stateFrame(f, now, out) {
   f.lastStateAt = now;
   out.push(stateOf(f));
 }
+/** WB14b: THE CROSSINGS ON THE WIRE - by walkway, a walkway not laid null, none after the last one laid (a plain night's
+ *  are WB9b's, in order and whole). Pure. */
+export const xaWire = (xa) => {
+  const a = Array.isArray(xa) ? xa : [];
+  const out = Array.from({ length: Math.min(a.length, WALKS.length) }, (_, i) => (Number.isFinite(a[i]) ? a[i] : null));   // a hole too (a sparse array's)
+  while (out.length && out[out.length - 1] === null) out.pop();
+  return out;
+};
 /** The whole state as the wire says it (the `st` kind): on entering, and every STATE_SEND_MS. */
 export function stateOf(f) {
   return {
@@ -1495,9 +1579,10 @@ export function stateOf(f) {
     atk: f.atk ? atkFrame(f.atk) : null, sh: f.shieldUntil, wr: f.wrathAt, n: Object.keys(f.players).length,
     fell: f.fell ? { at: f.fell.at, top: f.fell.top, n: f.fell.n, ...(f.fell.dm ? { dm: f.fell.dm } : {}) } : null, wrath: f.wrath ? f.wrath.at : null,   // GATE-UX: the chart with it (a late door, a reconnect)
     md: f.md ?? null,   // WB8b: his marks - every screen fights the fight's own, whatever the day's draw would say
+    ...(f.pt ? { pt: f.pt } : {}),   // WB14b: the night's portents - none said, a plain night
     // WB9b: the court he fights in and the crossings' words (the walkways laid); WB9c: the crystals standing, the stun,
     // and when the next Reckoning comes (for its countdown)
-    ct: f.court | 0, xa: (Array.isArray(f.xa) ? f.xa : []).filter(Number.isFinite),
+    ct: f.court | 0, xa: xaWire(f.xa),   // WB14b: by walkway - a hole (a walkway not laid) null, none after the last laid
     cx: f.cx ? { i: f.cx.i, m: f.cx.m, c: f.cx.c.map((q) => [q.x, q.z, Math.ceil(q.h)]) } : null,
     su: f.stunUntil > 0 ? f.stunUntil : 0, rk: f.rk > 0 ? f.rk : 0,
     ...(f.lg ? { lg: hostStateOf(f.lg) } : {}),   // WB11b: his host standing - said only under the Legion-Lord

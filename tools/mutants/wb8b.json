@@ -298,8 +298,8 @@
   {
     "name": "WB8b-the-wire-takes-any-marks",
     "file": "src/net/wire.js",
-    "old": " || md === undefined) return null;",
-    "new": ") return null;",
+    "old": " || md === undefined || pt === undefined) return null;",
+    "new": " || pt === undefined) return null;",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
     ]
@@ -316,8 +316,8 @@
   {
     "name": "WB8b-the-old-law-let-in",
     "file": "src/net/wire.js",
-    "old": "export const GATE_BRAIN_MIN = 5;",
-    "new": "export const GATE_BRAIN_MIN = 4;",
+    "old": "export const GATE_BRAIN_MIN = 6;",
+    "new": "export const GATE_BRAIN_MIN = 5;",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
     ]
@@ -325,8 +325,8 @@
   {
     "name": "WB8b-the-relay-fights-unmarked",
     "file": "server/src/index.js",
-    "old": "boss: gateBossOf(day).id, md: gateModsOf(day) });   // WB8b",
-    "new": "boss: gateBossOf(day).id });   // WB8b",
+    "old": "boss: gateBossOf(day).id, md: gateModsOf(day), pt: gatePortentsOf(day) });   // WB8b",
+    "new": "boss: gateBossOf(day).id, pt: gatePortentsOf(day) });   // WB8b",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js",
       "test/net/gate/wb8c_gate_detail.test.js"

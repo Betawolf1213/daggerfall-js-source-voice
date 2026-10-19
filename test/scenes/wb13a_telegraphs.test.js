@@ -306,5 +306,5 @@ test('WB13a: the court feeds the warning every frame from my feet and the camera
   const gc = readFileSync(new URL('../../src/scenes/gate/gateCourt.js', import.meta.url), 'utf8');
   assert.match(gc, /const peril = alive \? perilAt\(s, t, P, fp\[0\] - COURT_CENTRE\[0\], fp\[2\] - COURT_CENTRE\[2\], yaw\(\)\) : null;/);
   assert.match(readFileSync(new URL('../../src/scenes/world.js', import.meta.url), 'utf8'), /yaw: \(\) => cam\.yaw,   \/\/ WB13a/);
-  assert.ok(COURTS.length === 3);
+  assert.ok(COURTS.length === 6, 'WB14b: his three courts and the portents\' three floors');
 });

@@ -35,7 +35,7 @@
 // Not a DFU member. Ledger A (WB).
 import { FOG_FACTOR_GLSL } from '../labGrass.js';
 import { buildProgram } from '../glProgram.js';
-import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W } from '../../net/gate/gateBrain.js';
+import { ATTACK_BY_ID, ATTACKS, BOSS_R, COURT_CENTRE, COURT_R, COURTS, BASE_PROFILE, windupOf, nearestCourt, isDagons, WALKS, WALK_HALF_W, PLAN_PLAIN } from '../../net/gate/gateBrain.js';
 import { telegraphAt } from '../../net/gate/gateStrike.js';
 import { attackColor } from '../../world/gate/gateBoss.js';
 
@@ -738,8 +738,9 @@ export class GateTelegraphRenderer {
    */
   draw(shape, proj, view, eye, seconds, fog = null, centre = COURT_CENTRE, walks = null, floor = null) {
     // SD8d: another floor than the Burning Court's - `floor` { r, courts } (the Brass Remnant's arena: one floor, its
-    // centre the frame's origin); the court's own by default
-    const floorCourts = floor?.courts ?? COURTS, floorR = floor?.r ?? COURT_R;
+    // centre the frame's origin); the court's own by default. WB14b: `ks` the night's floors among them (net/gate/gateBrain.js
+    // floorPlan) - the whole arena's shape is drawn over those alone (a portent's platform stands only on its night)
+    const floorCourts = floor?.courts ?? COURTS, floorR = floor?.r ?? COURT_R, floorKs = floor ? floor.ks ?? null : PLAN_PLAIN.floors;
     this.drawn = 0;
     this.walked = 0;
     if (!shape || !(shape.alpha > 0.001) || !this.gl) return;   // AUDIT EG V (L6-5): a destroyed pass draws nothing
@@ -799,6 +800,7 @@ export class GateTelegraphRenderer {
       gl.uniform2f(U.uWalkA, strip.a[0], strip.a[1]); gl.uniform2f(U.uWalkU, strip.u[0], strip.u[1]); gl.uniform1f(U.uWalkLen, strip.len);
     }
     for (let k = k0; k < k1; k++) {
+      if (!one && floorKs && !floorKs.includes(k)) continue;
       const q = telegraphQuadOver(shape, k, floorCourts, floorR);
       if (!q) continue;
       gl.uniform2f(U.uCourt, floorCourts[k][0], floorCourts[k][1]);
@@ -812,13 +814,13 @@ export class GateTelegraphRenderer {
       let on = false;
       for (const w of WALKS) {
         const f = walks[w.k];
-        if (!(f > 0) || (one && w.k !== k0 && w.k !== k0 - 1)) continue;
+        if (!(f > 0) || (one && w.a !== k0 && w.b !== k0)) continue;   // WB14b: a walkway by its two floors
         if (!on) { on = true; gl.bindVertexArray(this.walkVao); gl.uniform1i(U.uOnWalk, 1); gl.uniform2f(U.uCourt, COURTS[k0][0], COURTS[k0][1]); }
         gl.uniform2f(U.uWalkA, w.ax, w.az);
         gl.uniform2f(U.uWalkU, w.ux, w.uz);
         gl.uniform1f(U.uWalkLen, w.len * Math.min(1, f));
-        gl.uniform2f(U.uWalkC0, COURTS[w.k][0], COURTS[w.k][1]);
-        gl.uniform2f(U.uWalkC1, COURTS[w.k + 1][0], COURTS[w.k + 1][1]);
+        gl.uniform2f(U.uWalkC0, COURTS[w.a][0], COURTS[w.a][1]);
+        gl.uniform2f(U.uWalkC1, COURTS[w.b][0], COURTS[w.b][1]);
         gl.drawArrays(gl.TRIANGLES, 0, TELEGRAPH_WALK_QUAD.length / 2);
         this.walked++;
       }

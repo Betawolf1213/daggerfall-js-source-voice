@@ -304,8 +304,8 @@
   {
     "name": "WB8c-the-card-without-marks",
     "file": "src/systems/gate/gateOmen.js",
-    "old": ": [`${boss.name}, ${boss.title}`, marksLineOf(c.t.day)])] };",
-    "new": ": [`${boss.name}, ${boss.title}`])] };",
+    "old": ": [`${boss.name}, ${boss.title}`, marksLineOf(c.t.day), ...(pt ? [pt] : [])])] };",
+    "new": ": [`${boss.name}, ${boss.title}`, ...(pt ? [pt] : [])])] };",
     "tests": [
       "test/net/gate/wb8c_gate_detail.test.js"
     ]
@@ -313,8 +313,8 @@
   {
     "name": "WB8c-the-marks-said-every-line",
     "file": "src/systems/gate/gateOmen.js",
-    "old": "&& marksDay !== t.day) { marksDay = t.day;",
-    "new": "&& true) { marksDay = t.day;",
+    "old": "&& marksDay !== t.day) {\n          marksDay = t.day;",
+    "new": "&& true) {\n          marksDay = t.day;",
     "tests": [
       "test/ui/wb1_gate_omen.test.js"
     ]
@@ -322,8 +322,8 @@
   {
     "name": "WB8c-the-herald-mute-on-marks",
     "file": "src/net/gate/gateHerald.js",
-    "old": ".${map} ${RITE_OMEN_LINE}${marks}`,",
-    "new": ".${map} ${RITE_OMEN_LINE}`,",
+    "old": ".${map} ${RITE_OMEN_LINE}${marks}${pt",
+    "new": ".${map} ${RITE_OMEN_LINE}${pt",
     "tests": [
       "test/net/gate/wb8c_gate_detail.test.js",
       "test/net/gate/discordgates.test.js"

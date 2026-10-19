@@ -59,7 +59,7 @@ export function bossSeam(name, members) {
 
 /** THE GATE'S WARDEN: born of `{ day, now, wrathAt, boss, md }`, joined while `o.admits`. */
 export const GATE_SEAM = bossSeam('gate', {
-  new: ({ day, now, wrathAt, boss, md = null }) => newFight(day, now, wrathAt, boss, md),
+  new: ({ day, now, wrathAt, boss, md = null, pt = null }) => newFight(day, now, wrathAt, boss, md, pt),   // WB14b: and the night's portents
   join: (f, sub, name, lv, now, present = null, o = {}) => joinFight(f, sub, name, lv, now, o.admits, present),
   hit: applyHit, step: stepBrain, stateOf, judge: judgeGate, earned,
 });
