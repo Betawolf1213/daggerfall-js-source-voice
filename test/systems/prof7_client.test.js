@@ -439,6 +439,18 @@ test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held a
   assert.equal(loomRecipes('clothing', 'cloth:wool', 'MensClothing').length, 41);
   assert.equal(loomRecipes('clothing', 'cloth:wool', 'WomensClothing').length, 35);
   assert.deepEqual(loomRecipes('tools').map((r) => r.id), ['fishingnet:linen']);
+  // PLAIN-ODDS: a Leatherworker's leather says its step, and the plain stitch's line stands for anyone else's
+  const loomTrack = tracks.get('outfitting');
+  const ODDS_EVEN = 'Quality chances: Crude 20% | Standard 60% | Fine 20%. They get better the further your rank (10) is above the recipe\'s (10). Press every stitch on the beat to raise the result one quality.';
+  press('Leather');
+  buttons().find((b) => b.textContent.startsWith('Cuirass')).onclick();
+  assert.match(text(), /Leather Cuirass - rank 10/);
+  assert.ok(text().includes(ODDS_EVEN) && !text().includes('Being a'), text());
+  loomTrack.specs[50] = 'leatherworker'; draw();
+  assert.ok(text().includes(`${ODDS_EVEN} Being a Leatherworker raises leather one more.`), text());
+  loomTrack.specs[50] = 'tailor'; draw();
+  assert.ok(text().includes(ODDS_EVEN) && !text().includes('Being a'), 'a Tailor\'s step is clothing\'s alone');
+  loomTrack.specs[50] = null;
   press('Clothing');
   assert.ok(buttons().some((b) => b.textContent === 'Women\'s' && b.className.includes(' on')), 'the player\'s own clothing first');
   press('Men\'s');
@@ -448,6 +460,9 @@ test('PROF7 pages: the Loom at a Clothing Store - the cures for the hides held a
   assert.match(shirt.textContent, /wants its inputs/);
   shirt.onclick();
   assert.match(text(), /Linen Short Shirt - rank 0/);
+  loomTrack.specs[50] = 'tailor'; draw();   // PLAIN-ODDS: a Tailor's clothing says its step
+  assert.ok(text().includes('Quality chances: Standard 50% | Fine 40% | Superior 10%. They get better the further your rank (10) is above the recipe\'s (0). Press every stitch on the beat to raise the result one quality. Being a Tailor raises clothing one more.'), text());
+  loomTrack.specs[50] = null; draw();
   assert.deepEqual(buttons().filter((b) => b.parentNode?.className?.includes('prof-made')).map((b) => b.textContent), ['Linen', 'Wool', 'Silk - rank 40', 'Standard-bearer\'s Silk - rank 55'], 'CRAFT2: its four cloths, the two past the rank naming it');
   await press('Buy 2 from the Weavers - 4 silver');
   assert.deepEqual(bought, [['cloth:linen', 2, 'weavers']]);
@@ -544,7 +559,7 @@ test('PROF7 wiring: the street and the dungeon stamp and list their bodies for H
   assert.match(w, /profBook\.track\('hunting'\)\.specs\?\.\[50\] !== 'tracker' \|\| _mode\(\) !== 'exterior'\) return null;\n\s*return trackerMarks\(exteriorFoes\.foes, enchantFeet\(\)\);/);
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /if \(interiorBuilding\.buildingType === BUILDING_TYPES\.ClothingStore\) return interiorBuilding\.insideOpenShop === false \? null : \{ kind: 'shop', fee: LOOM_FEE \};/);
-  assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'loom'\)\) return \{ kind: 'home', fee: 0 \};/);
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'loom'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018D HOME-BENCH, test/scenes/fb1018d_homebench.test.js): a home's stations serve its owner's account
   const g = src('src/scenes/gatherHost.js');
   assert.match(g, /const gone = act\.loose \? !w : !act\.dungeon && !stood\.has\(pixelKey\(act\.px, act\.py\)\);/);
   assert.match(g, /climate: a\.info\?\.climate \?\? null, region: a\.info\?\.region \?\? null, act: report,/);

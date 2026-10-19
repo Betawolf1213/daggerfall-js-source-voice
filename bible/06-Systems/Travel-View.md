@@ -1842,6 +1842,8 @@ my party's - every mark keeps its order now, a crowd where its first member stoo
 
 ## OW-NODE-KM, OW-HUBS, OW-KIN, OW-WHO, SEAT-TIP, HORSE-FACE (FIELD BUGS 2026-10-04e)
 
+TOWN-ECON (2026-10-16, `06-Systems/Town-Economy-Arc.md` section 3): the seat's card is now every town's - its economy and prices above, a seat's own lines below (a held seat's Charter line left out: its holder line names the guild) - made by `systems/town/townEcon.js` (`tipAt`, and `tipFnAt` for the Overworld's plate); `scenes/world.js` seatTipAt is gone.
+
 The Overworld's block gains a Players section (Friends, Guild, Others, the least Renown) and the node reach (any, 0.5,
 1, 2 km) - one store with the travel map's (`systems/travel/travelViewFilters.js`); a friend's name is drawn in the friends'
 blue and a guild-mate's in violet; a town whose gate stands a carriage driver wears a brass wheel; a seat's plate under
@@ -2187,9 +2189,10 @@ a pixel whose read failed once costs one build's hold; one that could never be b
 clock under x100 for about two minutes (at x20 lowest, the halvings and the climb's +5 a step) and holds nothing after
 its fifth ask.
 
-Recorded, not changed: loads that keep a failure but throw in no build - Low Poly Trees (lowPolyTreesAssets.js:"failed = true;":
-the trees stay flats), the snowfall's masks (snowfallHost.js:"failed = true; console.warn": no snow) and the helm's
-art (world.js `_csa*Load ??=`) - a session's look lost, not a hole in the world.
+Recorded, not changed: loads that keep a failure but throw in no build - the snowfall's masks (snowfallHost.js:"failed = true; console.warn": no snow) and the helm's
+art (world.js `_csa*Load ??=`) - a session's look lost, not a hole in the world. Low Poly Trees' door no longer keeps
+one: since AUDIT BANTHA1 TREE-6 it is asked again on this backoff (lowPolyTreesAssets.js:"failedUntil = now() + (BUILD_RETRY_MS[tries] ?? Infinity);"),
+the trees flats meanwhile.
 
 **The four hosts.** `scenes/world.js` wired - it alone streams pixels (the pump, the frame's re-ask, the person
 pictures). `scenes/exterior.js` (one fixed city, built once), `scenes/worldModes.js` (a building) and

@@ -148,6 +148,7 @@
 // }
 
 import { Boat, setLights, HULL_NAMES, HULL_PRICES, packedHullWeight, CARGO_CONTAINER_IMAGE, TRIGGER_MODEL, goModelName, meshLocalBounds, colliderBounds, animatorOf, boatAnimators, boatParticleSystems, nodeOf, AUDIO_CLIPS, SAIL_ANIMATION_SPEED } from './comeSailAwayBoat.js';
+import { hullFromMessage } from './comeSailAwayHulls.js';   // PARTS-WEIGHT: GetHullFromMessage, the leaf's
 import { firmStat } from '../firmamentLive.js';   // FIRM1: the Firmament's helmsman (sailSpeed)
 import { constantCurve, twoConstantsCurve, SPACE } from '../../world/unityParticles.js';
 import { quatEuler } from '../../world/unityAnimator.js';
@@ -231,8 +232,9 @@ export function upPlaneRaycast(origin, direction, h) {
 /** `ray.origin + ray.direction * t`, in Unity's floats. */
 const alongRay = (o, d, t) => [f(f(o[0]) + f(f(d[0]) * f(t))), f(f(o[1]) + f(f(d[1]) * f(t))), f(f(o[2]) + f(f(d[2]) * f(t)))];
 
-/** GetHullFromMessage / GetVariantFromMessage: the item's `message` is hull * 10 + variant. */
-export const hullFromMessage = (message) => Math.trunc(message / 10) % 10;
+/** GetHullFromMessage / GetVariantFromMessage: the item's `message` is hull * 10 + variant (the hull's the leaf's -
+ *  PARTS-WEIGHT: the save's repair reads it there). */
+export { hullFromMessage };
 export const variantFromMessage = (message) => message % 10;
 
 /**
@@ -289,9 +291,10 @@ export const PARTS_STANDING_TEXT = 'This ship is already afloat - these are its 
 /** SHIP-PACK (the port's own): the pack's refusal of a deed ship whose deed is not in the pack - her parts take its place,
  *  and a deed left elsewhere would call a second ship of hers to a port. */
 export const DEED_NOT_HELD_TEXT = 'You need the ship\'s deed in your pack to pick it up.';
-/** HOLD-WEIGHT (FIELD BUGS 2026-10-05c, the port's own): the pick-up's refusal of a boat whose parts, her hold's weight on
- *  them, would weigh more than the bearer can carry at all - parts no take could ever lift out of a chest again. */
-export const HOLD_TOO_HEAVY_TEXT = 'The hold is too heavy to pack the ship. Unload some cargo first.';
+/** HOLD-WEIGHT (FIELD BUGS 2026-10-05c, the port's own): the pick-up's refusal of a boat whose parts would weigh more than
+ *  the bearer can carry at all - parts no take could ever lift out of a chest again. PARTS-WEIGHT (FIELD BUGS
+ *  2026-10-18e): her hold rides her parts no more, so it is her timbers that are too heavy, and the words say so. */
+export const PARTS_TOO_HEAVY_TEXT = 'The ship\'s parts are too heavy for you to carry.';
 /** The mod's two helm keys this slice reads, as the port's registry actions (KB1: one key, one action) - their table a
  *  leaf since HUD-HELM (comeSailAwayActions.js), re-exported here so every reader keeps its import. */
 export { BOAT_ACTIONS };
@@ -1844,7 +1847,7 @@ export function createComeSailAwayRuntime(deps) {
         if (state.CurrentBoat != null && state.CurrentBoat === boat) deps.midScreenText('You cannot pack a boat you are driving!', 1.5);
         else if ((deps.passengersAboard?.(boat) ?? 0) > 0) deps.midScreenText(PASSENGERS_ABOARD_TEXT, 1.5);   // CSA-K (DECLARED): the driver's refusal, for a deck another player stands on - a pack would drop them in the sea
         else if (deedMissing(boat)) deps.midScreenText(DEED_NOT_HELD_TEXT, 1.5);   // SHIP-PACK: a deed ship goes with her deed
-        else if (partsTooHeavy(boat)) deps.midScreenText(HOLD_TOO_HEAVY_TEXT, 1.5);   // HOLD-WEIGHT: parts no take could lift again
+        else if (partsTooHeavy(boat)) deps.midScreenText(PARTS_TOO_HEAVY_TEXT, 1.5);   // HOLD-WEIGHT: parts no take could lift again
         else PackBoat(boat, true);   // PackBoat(boat, item: true)
       }
     } else if (isSailing() && boat === state.CurrentBoat) StopSailingDelayed();
@@ -1939,8 +1942,12 @@ export function createComeSailAwayRuntime(deps) {
    * - HER WORTH: what placed her (`itemValue` - her deed's or her parts'; a claimed prize's papers, a quarter of her
    *   hull's price), the hull's price only for a boat no item placed; her weight packedHullWeight's (a ship's no more
    *   than the Large Boat's).
-   * - HER HOLD'S WEIGHT (HOLD-WEIGHT): parts the bearer could never carry are never made (`partsTooHeavy`) - nothing is
-   *   done and false answers, as for a missing deed; `lost` (recoverLostBoats alone) packs a boat no one can reach anyway.
+   * - HER WEIGHT (HOLD-WEIGHT): parts the bearer could never carry are never made (`partsTooHeavy`) - nothing is done and
+   *   false answers, as for a missing deed; `lost` (recoverLostBoats alone) packs a boat no one can reach anyway.
+   * - HER HOLD WEIGHS NOTHING ON HER PARTS (PARTS-WEIGHT, FIELD BUGS 2026-10-18e - a DEPARTURE from the C#'s
+   *   `val.weightInKg += weight`): the hold still goes into PackedCargoes, but her parts weigh her timbers alone. The hold
+   *   opens from anywhere (scenes/holdDoor.js CARGO-ANYWHERE) and a stow there had no gate, so her parts grew past what
+   *   the bearer could lift; set down in a chest, no door found them to weigh again, and no take could lift them.
    * Answers whether she was packed.
    */
   function PackBoat(boat, item = false, lost = false) {
@@ -1959,15 +1966,13 @@ export function createComeSailAwayRuntime(deps) {
       val.weightInKg = packedHullWeight(boat.hull);
       val.name = boatItemName(val.name, boat.hull, boat.variant);
       if (boat.Cargo.Items.length > 0) {
-        const weight = f(deps.cargoWeight(boat.Cargo.Items));   // ItemCollection.GetWeight
         const key = cargoKey(val.UID);
         // Dictionary.Add's throw - SHIP-PACK: asked before the hold moves, and the spent entry takePlaceItem leaves under
         // her own number (emptied and kept) hers to fill again
         if (state.PackedCargoes.has(key) && !(boat.uid && state.PackedCargoes.get(key).length === 0)) throw new Error(`ArgumentException: An item with the same key has already been added. (${key})`);
         const val3 = [];
         transferAll(boat.Cargo.Items, val3);   // val3.TransferAll(boat.Cargo.Items): from the hold into the packed collection
-        val.weightInKg = f(val.weightInKg + weight);
-        state.PackedCargoes.set(key, val3);
+        state.PackedCargoes.set(key, val3);   // PARTS-WEIGHT: its weight never on her parts (the C#'s `val.weightInKg += weight`)
       }
       // SHIP-PACK: her deed goes with her - HOLDINGS: out of the Fleet's book too, where her title is kept now (AUDIT
       // HOLDINGS F1: kept there, her parts left the pack - sold, chested, dropped - read her laid up and Summon stood her
@@ -1998,12 +2003,12 @@ export function createComeSailAwayRuntime(deps) {
    *  heavier than the bearer could ever carry: AddItem took it unasked, and once it was set down, every take of it
    *  (DFU's CanCarryAmount, itemTransfer.js planTake) refused it for good. Whether those parts would be that item - the
    *  take's own arithmetic (inventory.js canHoldAmount) over an empty pack, so a full pack still packs her as the mod
-   *  does and only parts no take could ever lift are refused. False where the host reads no MaxEncumbrance. */
+   *  does and only parts no take could ever lift are refused. False where the host reads no MaxEncumbrance.
+   *  PARTS-WEIGHT (FIELD BUGS 2026-10-18e): her hold rides her parts no more, so her timbers alone are weighed. */
   function partsTooHeavy(boat) {
     const most = deps.entity?.maxEncumbrance?.();
     if (!Number.isFinite(most)) return false;
-    const hold = boat?.Cargo?.Items?.length ? f(deps.cargoWeight(boat.Cargo.Items)) : 0;
-    return canHoldAmount(1, f(packedHullWeight(boat.hull) + hold), most, 0) <= 0;
+    return canHoldAmount(1, packedHullWeight(boat.hull), most, 0) <= 0;
   }
   /** OpenCargo (6521-6525): the inventory over the boat's cargo, as a loot target. */
   function OpenCargo(boat) { deps.openCargo?.(boat.Cargo); }

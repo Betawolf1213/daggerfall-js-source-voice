@@ -42,6 +42,7 @@ import { WALLET_GIFT, giveWalletGift } from '../walletItem.js';   // WALLET1: a 
 import { BINDER_GIFT, giveBinderGift, cleanBinders } from '../iliac/iliacItems.js';   // CARDS8: and a Card Binder with the starter deck, once
 import '../professions/profTemplates.js';   // PROF2: the ores, ingots and stone a pack may hold, known to every scene a save loads in
 import '../rest/restItems.js';   // REST6: the seven rest supplies (1700-1706), known to every scene a save loads in
+import { repairPartsWeights } from '../comeSailAway/comeSailAwayItems.js';   // PARTS-WEIGHT: a boat's parts weighed as her hull alone
 import { repairRarityNames, repairRarityBases } from '../loot/lootRarity.js';   // DISC29-B: a Magic or Rare Roleplay & Realism: Items piece given back its make's word; RARITY-WEAR: a rolled wand worn as an Amulet
 import { SOCIAL_GROUPS } from '../../formats/factionFile.js';   // AUDIT 24
 import { travelMapSaveData, restoreTravelMapSaveData } from '../travel/travelMapState.js';   // U41: TravelMapSaveData
@@ -752,9 +753,18 @@ export function repairItemLists(repairLists) {
     const n = repairRarityBases(list);
     if (n) console.info(`[save] RARITY-WEAR: ${n} rolled piece(s) on a base nothing can wear moved to one a slot takes`);
   }
+  // HELD-BASE (FIELD BUGS 2026-10-18f) mends the mint alone: AUDIT FB1018f L1-1 - a load that moved a saved piece's base
+  // rewrote the print the realm ledger follows it by (server-account/src/judge.js ledgerPrintOf, templateIndex:material),
+  // and the next checkpoint read an honest piece as forged and held its player. A piece a save kept stays as it was.
   // AUDIT CARDS-6 A6: every card worth its tier's worth (iliacItems.js cleanBinders - a card minted before CARDS9 carried
   // a coin's) in every list, not the pack's alone: one in the wagon, the bag or a house chest kept its coin after a load
   for (const list of repairLists) cleanBinders(list);
+  // PARTS-WEIGHT (FIELD BUGS 2026-10-18e): a boat's parts weigh her timbers alone now - parts her hold had made too heavy
+  // to lift, in a chest or anywhere, given her hull's packed weight (comeSailAwayItems.js repairPartsWeights)
+  for (const list of repairLists) {
+    const n = repairPartsWeights(list);
+    if (n) console.info(`[save] PARTS-WEIGHT: ${n} boat parts item(s) weighed as their hull alone`);
+  }
 }
 
 /** PORTAL1 (AUDIT PORTAL1 U9): how many saves this page has restored - every load, whichever host runs it, passes the one

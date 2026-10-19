@@ -158,6 +158,7 @@ const HARDCODED = {
   'src/net/staffCommands.js': 10,
   'src/net/staffTeleport.js': 7,
   'src/net/tideLaw.js': 21,
+  'src/net/townEconBook.js': 5,   // AUDIT TOWN-ECON 2 SVC-1: a developer's `/town audit` and `/town strike` - their usage and the audit's lines, a developer's words (as npcHallBook.js's `/hall` and townSeatBook.js's `/seat`), never a player's
   'src/net/townSeatBook.js': 37,
   'src/net/townSeatLaw.js': 180,
   'src/net/tradeSession.js': 44,
@@ -222,7 +223,7 @@ const HARDCODED = {
   'src/render/superDungeon/sdVeil.js': 1,
   'src/render/serpentRender.js': 4,
   'src/render/shadowPass.js': 6,
-  'src/render/skyRenderer.js': 2,
+  'src/render/skyRenderer.js': 1,
   'src/render/snowfallGlsl.js': 2,
   'src/render/spellImpactFx.js': 2,
   'src/render/spoilsGlow.js': 2,
@@ -299,6 +300,7 @@ const HARDCODED = {
   'src/scenes/snowfallHost.js': 3,
   'src/scenes/spoilsPool.js': 7,
   'src/scenes/standingHost.js': 14,
+  'src/scenes/townEconHost.js': 1,   // AUDIT TOWN-ECON 2 SVC-1: the `/town strike` answer, a developer's
   'src/scenes/townTalk.js': 9,
   'src/scenes/travelView.js': 39,
   'src/scenes/treeHost.js': 3,
@@ -683,7 +685,7 @@ const HARDCODED = {
   'src/ui/pixelifyFive.js': 2,
   'src/ui/playerBadge.js': 35,   // SERPENT5: The Maelstrom's word, beside the other auras'; EG-E2: the Spire's thirteen titles and three auras in words; WIKIMAID: the Lilac Warren's word, beside the other auras'
   'src/ui/playerHistory.js': 1,
-  'src/ui/plus/plusPad.js': 19,
+  'src/ui/plus/plusPad.js': 18,
   'src/ui/plus/plusPadBinds.js': 30,
   'src/ui/prisonScreen.js': 1,
   'src/ui/professions/profPages.js': 30,

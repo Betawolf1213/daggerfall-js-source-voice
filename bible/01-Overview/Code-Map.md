@@ -189,6 +189,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 
 | Folder | What lives there |
 |---|---|
+| `src/characters/bodyMotion/` | The Morrowind body's own motion in third person (`04-Characters/Body-Motion.md`): the body measured, the gait, the carry, the blows, the solve, one per rig. |
 | `src/characters/enemy/` | Enemies: entity, motor, attacks, casting, sounds. |
 | `src/characters/mobile/` | DFU's mobile units: types, persons, factions. |
 | `src/characters/ownModels/` | The port's own 3D models: heads, armour, clothing, weapons. |
@@ -387,6 +388,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/world/eliteGates/` | The Elite Breach in the world (`11-Multiplayer/Elite-Gates.md`, `Elite-Gates-Look.md`, `Elite-Gates-Ascent.md`): the halls, the ground, the ruin, the vista and the underside, the platforms, the rooms, the kit and its art, the air and the lamps - its models and assembly. |
 | `src/world/gate/` | The Oblivion Gate in the world: the arena, the art, the boss, the model, the clearance and the spew. |
 | `src/world/interior/` | Interiors: layout, lights, glass - its models and assembly. |
+| `src/world/jungle/` | Bantha's jungle (`03-World/Bantha-Jungle.md`): where it is (the owner's area, `banthaArea.js`, and its field), the owner's trees and their measures, and its haze's law. |
 | `src/world/merchantYards/` | A town's Stable and Wagon Yard (`03-World/Merchant-Yards.md`) - its models and assembly. |
 | `src/world/road/` | Roads: the network, its painter, verges and clearance - its models and assembly. |
 | `src/world/ships/` | The port's own ships: the galleon, the carrack, the large boat - its models and assembly. |
@@ -408,14 +410,14 @@ folders are not a layer of `src/`:
 |---|---|
 | `test/server/` | The relay's and the account Worker's own tests (`server/`, `server-account/`, their migrations). |
 | `test/tooling/` | The tools, the scripts, the desktop shell and CI's workflows: the move tool (`tidy1_movetool.test.js`; the tree it left, `tidy1_codemap.test.js`), the shards, the release, the installers. |
-| `test/bible/` | The bible's own laws: `manifest.test.js` (the table in Testing.md), `audit18_bible_docs.test.js` (the docs' cites, counts and index), and the D1-NEAR record's pins. The other gates CLAUDE.md names run from the folder of what they read: `test/tooling/` (citeanchor, mutantdrift), `test/scenes/` (citedrift), `test/systems/` (ledger). |
+| `test/bible/` | The bible's own laws: `manifest.test.js` (unique test names, and Testing.md's closed file table, LEGIBLE 1b), `audit18_bible_docs.test.js` (the docs' cites, counts and index), and the D1-NEAR record's pins. The other gates CLAUDE.md names run from the folder of what they read: `test/tooling/` (citeanchor, mutantdrift), `test/scenes/` (citedrift), `test/systems/` (ledger). |
 | `test/tree/` | Laws over the whole tree: every module loads, no temporal dead zone, the shaders evaluate. |
 | `test/fixtures/` | Data the tests read. Not tests. |
 
 The shared helpers stay at the root - `test/*.mjs` (`importGraph.mjs`, `fakeRoom.mjs`, `bibleIndex.mjs`, ...) and
 `test/modsOff.js` - one import away from every folder. A file's NAME is unique across the tree
-(`test/bible/manifest.test.js` holds it): Testing.md's rows find a test by its name, so a row does not move with
-its test; `tools/testTimes.json` and the bible's paths spell its folder, and the move tool rewrites them.
+(`test/bible/manifest.test.js` holds it): the bible names a test by its file name alone, so a mention does not move
+with its test; `tools/testTimes.json` and the bible's paths spell its folder, and the move tool rewrites them.
 
 **A new test** goes in the folder of what it tests, by the same rule as a new module (below): its layer, then its
 feature's folder if the layer has one. Every list of tests - `npm test`, a CI shard, `test:changed`, the manifest, the

@@ -32,8 +32,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as acorn from 'acorn';
 import { OnlineSession, FOES_MS, FOES_FULL_MS } from '../../src/net/online.js';
-import { isWorldRoom, isCellRoom, actFrameFits, ACT_HZ_MAX, respawnDue, sharedClassicMinutes, validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX } from '../../src/net/wire.js';
+import { isWorldRoom, isCellRoom, actFrameFits, ACT_HZ_MAX, respawnDue, sharedClassicMinutes, validFoeRecord, FOE_HEALTH_MAX, FOE_LEVEL_MAX, FOES_FRAME_MAX, FOES_STALE_MS } from '../../src/net/wire.js';
 import { quietFoesGate } from '../../src/net/foesQuiet.js';
+import { createSeatClock } from '../../src/net/seatLive.js';   // PIN MOVED: FIELD BUGS 2026-10-18d SEAT-LIVE - onFoes tells the seat clock it heard the seat (world.js `seatClock`), where it stamped `_foesInAt`
 import { ARENA_PUPPET_OWNER } from '../../src/net/arena/arenaLaw.js';
 import { foeSeed, applyWireLook } from '../../src/characters/foeBodies.js';
 import { generateItems, addPileLootExtras, validLootList, LOOT_LIST_MAX, DUNGEON_LOOT_KEYS, LOOT_NEWER_TEXT } from '../../src/systems/loot/loot.js';
@@ -221,6 +222,7 @@ function dungeon(id, { authority, level, luck, renown, seed, foraging, partners,
     ${declSrc('FOES_FRAME_SLACK')} ${declSrc('FOE_MAX_PER_FRAME')} ${declSrc('_maxLeft')} ${declSrc('foeMaxOf')}
     ${['lootKeyOf', 'lootableBody', 'lootHolder', 'roomLootKey', 'lootRecords', 'publishLoot', 'sayRoomWord', 'applyLoot', 'applyActions'].map(fnSrc).join('\n')}
     ${BLOCK}
+    function grants() { return null; }   // FOE-BOUNDS: applyFoeRecord asks the grants' host - none open here (src/scenes/grantHost.js's own tests judge it)
     ${['_runsFoe', 'damageFoe', 'freeCorpse', 'setFoeDead', 'spawnCorpse', 'applyFoeRecord', 'fitMaxima', 'roomRecord', 'foesFrame', 'applyFoesFrame', 'applySharedRecords', 'applyFoes', 'rollPileItems'].map(fnSrc).join('\n')}
     let _respawnSweptAt = -Infinity;
     const RESPAWN_BURST = 4;
@@ -335,7 +337,7 @@ function player(id, net, o) {
     online.onAct = ${W.assigned('online.onAct')};
     online.onFoes = ${W.assigned('online.onFoes')};
     return { actSend, actFlush, foesStream, pending: () => [..._actPend] };
-  `, { online, _onlineKey: ROOM, modes, isWorldRoom, isCellRoom, actFrameFits, quietFoesGate, FOES_MS, FOES_FULL_MS, console,
+  `, { online, _onlineKey: ROOM, modes, isWorldRoom, isCellRoom, actFrameFits, quietFoesGate, FOES_MS, FOES_FULL_MS, console, seatClock: createSeatClock(FOES_STALE_MS),
     performance: { now: () => clock.t }, exteriorFoes: null, csaPeers: null, csaAboard: null, campToScene: null });
   // what the wire hands this player lands on its own dice, Renown and switches, as on its own machine
   for (const k of ['onAct', 'onFoes']) {

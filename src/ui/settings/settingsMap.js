@@ -99,7 +99,7 @@ export const CATEGORIES = Object.freeze([
     sec("weapons", "Weapons in hand", [
       "feat:weapon-glow", "feat:mod-weapon-widget", "feat:mod-shield-widget", "feat:mod-readied-spellcasting-hands", "feat:mod-diverse-weapons", "feat:bows-left-hand", "Enhancements/BowLeftHandWithSwitching"]),
     sec("morrowind", "With Morrowind data", [
-      "feat:mod-weapon-sheathing", "feat:steel-helm", "feat:mw-spell-effects", "feat:mw-npc-bodies", "feat:mw-billboard-look"]),
+      "feat:mod-weapon-sheathing", "feat:steel-helm", "feat:mw-spell-effects", "feat:mw-body-motion", "feat:mw-npc-bodies", "feat:mw-billboard-look"]),
     sec("aftermath", "Seeing & bleeding", [
       "feat:enhanced-combat-visuals", "feat:blood"]),
     sec("sea", "At sea", [
@@ -107,7 +107,7 @@ export const CATEGORIES = Object.freeze([
   ]),
   tab("world", "World", [
     sec("land", "Land", [
-      "feat:tamriel-land", "feat:landforms", "feat:real-forests", "feat:climate-blend", "feat:road-verges", "feat:mod-roads-hazelnut"]),
+      "feat:tamriel-land", "feat:landforms", "feat:real-forests", "feat:bantha-jungle", "feat:climate-blend", "feat:road-verges", "feat:mod-roads-hazelnut"]),
     sec("weather", "Weather & ambience", [
       "feat:weather-events", "feat:mod-better-ambience"]),
     sec("towns", "Towns & people", [

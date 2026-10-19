@@ -899,6 +899,11 @@
   "tr": "efc3cec39bf3",
   "by": "claude-in-session"
  },
+ "account.refusal.badTown": {
+  "en": "42bfe2c04ab8",
+  "tr": "dd87eb8ed53d",
+  "by": "claude-in-session"
+ },
  "account.refusal.badTribute": {
   "en": "1b50f4f7b7fc",
   "tr": "39e7a7d98222",
@@ -3207,6 +3212,26 @@
  "account.refusal.tooManySaves": {
   "en": "bfd57533eb6d",
   "tr": "59cbace0287b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townUnwalked": {
+  "en": "02aeb93da4e7",
+  "tr": "6012dc5b129d",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsClosed": {
+  "en": "3ac9fb4ca3e6",
+  "tr": "86172b754970",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsNeedAccount": {
+  "en": "9bb358900bd3",
+  "tr": "778b6bf8e331",
+  "by": "claude-in-session"
+ },
+ "account.refusal.townsRate": {
+  "en": "60938ad327a0",
+  "tr": "8eb4abea07fd",
   "by": "claude-in-session"
  },
  "account.refusal.tradeHeld": {
@@ -7989,6 +8014,11 @@
   "tr": "ae7f7100f27f",
   "by": "claude-in-session"
  },
+ "eg.hit.noFooting": {
+  "en": "36cafe71cf04",
+  "tr": "e282adcc0170",
+  "by": "claude-in-session"
+ },
  "eg.panel.noteTouch": {
   "en": "7a7fe891ec83",
   "tr": "23e4bb4af2ed",
@@ -8017,6 +8047,16 @@
  "eg.row.falls": {
   "en": "4b22cefe01d1",
   "tr": "0c98d73606e6",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelOpen": {
+  "en": "24025fba490a",
+  "tr": "c12c9218a749",
+  "by": "claude-in-session"
+ },
+ "eg.say.duelUnmet": {
+  "en": "4aa70c44cca8",
+  "tr": "c87c8106b3de",
   "by": "claude-in-session"
  },
  "eg.say.perches": {
@@ -8052,6 +8092,16 @@
  "eg.witness.watchingName": {
   "en": "ff0d32bced69",
   "tr": "744cb97c78cc",
+  "by": "claude-in-session"
+ },
+ "features.banthaJungle.note": {
+  "en": "2b2e15596f0e",
+  "tr": "bc1604546259",
+  "by": "claude-in-session"
+ },
+ "features.banthaJungle.title": {
+  "en": "af557fb81d4c",
+  "tr": "b835557f4061",
   "by": "claude-in-session"
  },
  "features.blood.effect": {
@@ -8647,6 +8697,16 @@
  "features.mwBillboardLook.title": {
   "en": "1ba578fcc93d",
   "tr": "3ff67d38507f",
+  "by": "claude-in-session"
+ },
+ "features.mwBodyMotion.note": {
+  "en": "7559b7458180",
+  "tr": "ffbab00efd80",
+  "by": "claude-in-session"
+ },
+ "features.mwBodyMotion.title": {
+  "en": "6fb981a99ca7",
+  "tr": "9ff85ac54734",
   "by": "claude-in-session"
  },
  "features.navalCombat.aimCamera": {
@@ -10044,6 +10104,66 @@
   "tr": "3c86eb9509e4",
   "by": "claude-in-session"
  },
+ "growth.swap.ask": {
+  "en": "194976e4e360",
+  "tr": "bdd6adc8fb0b",
+  "by": "claude-in-session"
+ },
+ "growth.swap.askGroup": {
+  "en": "57cc42866b1d",
+  "tr": "acca5f0c9afb",
+  "by": "claude-in-session"
+ },
+ "growth.swap.btn": {
+  "en": "653d05e50fe5",
+  "tr": "3debafb381e3",
+  "by": "claude-in-session"
+ },
+ "growth.swap.hintArcane": {
+  "en": "e3c6e337ba33",
+  "tr": "cced3064d681",
+  "by": "claude-in-session"
+ },
+ "growth.swap.hintMartial": {
+  "en": "9b856ce1bfe3",
+  "tr": "246d9ddecde5",
+  "by": "claude-in-session"
+ },
+ "growth.swap.in": {
+  "en": "b299df59cdeb",
+  "tr": "f10ee27038e6",
+  "by": "claude-in-session"
+ },
+ "growth.swap.lead": {
+  "en": "bfe1e1c66c0c",
+  "tr": "06bfe910e56b",
+  "by": "claude-in-session"
+ },
+ "growth.swap.lockOff": {
+  "en": "d62831062c25",
+  "tr": "dee0a9645895",
+  "by": "claude-in-session"
+ },
+ "growth.swap.lockOn": {
+  "en": "1bb1baa90134",
+  "tr": "33bb42173266",
+  "by": "claude-in-session"
+ },
+ "growth.swap.noSlots": {
+  "en": "87be34e1619e",
+  "tr": "51616d34f3d5",
+  "by": "claude-in-session"
+ },
+ "growth.swap.out": {
+  "en": "a29d0ff6010e",
+  "tr": "d48a057b0e10",
+  "by": "claude-in-session"
+ },
+ "growth.swap.title": {
+  "en": "c22ea397cde1",
+  "tr": "924a10e527b1",
+  "by": "claude-in-session"
+ },
  "guild.probation.comingRep": {
   "en": "eae43e35b6c7",
   "tr": "98f9f96eec50",
@@ -10534,6 +10654,11 @@
   "tr": "3949140f9bc4",
   "by": "claude-in-session"
  },
+ "leveling.classic.poolOnline": {
+  "en": "f395dbfad58e",
+  "tr": "6c2db8314596",
+  "by": "claude-in-session"
+ },
  "levelup.allMax": {
   "en": "acb222fdc26d",
   "tr": "c828ccd1f8c2",
@@ -10617,6 +10742,11 @@
  "levelup.blurb.endurance": {
   "en": "6379934ca003",
   "tr": "eedfa050e94a",
+  "by": "claude-in-session"
+ },
+ "levelup.blurb.enduranceOnline": {
+  "en": "d814c2458a55",
+  "tr": "c9fb536a63fe",
   "by": "claude-in-session"
  },
  "levelup.blurb.intelligence": {
@@ -10857,6 +10987,46 @@
  "lootBanner.honour.wear": {
   "en": "3b735704a781",
   "tr": "1b65dc4fb251",
+  "by": "claude-in-session"
+ },
+ "lw.econ.booming.a": {
+  "en": "4d71079574bd",
+  "tr": "aadd8be0ffcd",
+  "by": "claude-in-session"
+ },
+ "lw.econ.booming.b": {
+  "en": "63b2b0fe50b3",
+  "tr": "5a8ae25908ee",
+  "by": "claude-in-session"
+ },
+ "lw.econ.destitute.a": {
+  "en": "037c6a0947fd",
+  "tr": "6b90e9fa01d6",
+  "by": "claude-in-session"
+ },
+ "lw.econ.destitute.b": {
+  "en": "b5918851767c",
+  "tr": "85236a84d0fe",
+  "by": "claude-in-session"
+ },
+ "lw.econ.struggling.a": {
+  "en": "7a83adc425a6",
+  "tr": "db4f3c478b9c",
+  "by": "claude-in-session"
+ },
+ "lw.econ.struggling.b": {
+  "en": "403614126f6f",
+  "tr": "ceba79b3c96d",
+  "by": "claude-in-session"
+ },
+ "lw.econ.thriving.a": {
+  "en": "7d8beddca499",
+  "tr": "e08bd43f8e28",
+  "by": "claude-in-session"
+ },
+ "lw.econ.thriving.b": {
+  "en": "2d8ffddfef34",
+  "tr": "59ba7469cda1",
   "by": "claude-in-session"
  },
  "martial.about.title": {
@@ -17084,6 +17254,11 @@
   "tr": "917b0f1da160",
   "by": "claude-in-session"
  },
+ "net.gate.courtWatch": {
+  "en": "98f8568d319f",
+  "tr": "948299b7c96c",
+  "by": "claude-in-session"
+ },
  "net.mod.ambiguous": {
   "en": "fb38a201f710",
   "tr": "943ee2f84975",
@@ -17632,6 +17807,16 @@
  "notice.chapters.standing.words": {
   "en": "166c4b2f6ec4",
   "tr": "0f1c81f34171",
+  "by": "claude-in-session"
+ },
+ "notice.skills.improve": {
+  "en": "41e3abdbb040",
+  "tr": "0ddaed9b733e",
+  "by": "claude-in-session"
+ },
+ "notice.skills.improveSub": {
+  "en": "422d110b310c",
+  "tr": "f5286d0ddf9a",
   "by": "claude-in-session"
  },
  "passage.ask": {
@@ -18237,6 +18422,36 @@
  "pause.skills.showMisc": {
   "en": "ae8908eb22fa",
   "tr": "0d41ebe563c8",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tick": {
+  "en": "9ca6358ff26c",
+  "tr": "3a60cd47fcfb",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickCap": {
+  "en": "1772da4b1d4e",
+  "tr": "7e7e8674e003",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickLock": {
+  "en": "2c29ab460606",
+  "tr": "10ccd08887f8",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickMaster": {
+  "en": "7e86ccfbc6f4",
+  "tr": "4c03ca3a467e",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickReady": {
+  "en": "cd23b5fe25fa",
+  "tr": "1ff32c0fa824",
+  "by": "claude-in-session"
+ },
+ "pause.skills.tickReadyLater": {
+  "en": "116c0416db8e",
+  "tr": "21aa7e0002c3",
   "by": "claude-in-session"
  },
  "pause.skills.unknown": {
@@ -20429,6 +20644,16 @@
   "tr": "1edd20e4cedd",
   "by": "claude-in-session"
  },
+ "prof.craft.xpLimit": {
+  "en": "ebd9569af9a3",
+  "tr": "e5b9f9e47f9b",
+  "by": "claude-in-session"
+ },
+ "prof.craft.xpTop": {
+  "en": "bf5e8dd5fd87",
+  "tr": "09839a02b5c5",
+  "by": "claude-in-session"
+ },
  "prof.lode.legend": {
   "en": "80b1736b1dfb",
   "tr": "aeb4dffb83bd",
@@ -20595,8 +20820,8 @@
   "by": "claude-in-session"
  },
  "prof.page.anvil.odds": {
-  "en": "87ce4342dfe3",
-  "tr": "c829591cb8c3",
+  "en": "c1a325764f8d",
+  "tr": "a6c9847371ed",
   "by": "claude-in-session"
  },
  "prof.page.anvil.shop": {
@@ -20645,8 +20870,8 @@
   "by": "claude-in-session"
  },
  "prof.page.bench.odds": {
-  "en": "1b7ecbaafeb1",
-  "tr": "0ffd8070b5e2",
+  "en": "f042a02ce767",
+  "tr": "bc7b2e525a78",
   "by": "claude-in-session"
  },
  "prof.page.bench.ramKit": {
@@ -20769,9 +20994,19 @@
   "tr": "f00ac1175548",
   "by": "claude-in-session"
  },
+ "prof.page.craft.xpLimit": {
+  "en": "0a83e8c8e02b",
+  "tr": "730d9ee2ddd9",
+  "by": "claude-in-session"
+ },
  "prof.page.craft.xpShop": {
   "en": "78aff271f890",
   "tr": "566be60d07f4",
+  "by": "claude-in-session"
+ },
+ "prof.page.craft.xpTop": {
+  "en": "fb99bb33663b",
+  "tr": "c9264bc2965f",
   "by": "claude-in-session"
  },
  "prof.page.crafting": {
@@ -21004,6 +21239,11 @@
   "tr": "ac780aa1dda7",
   "by": "claude-in-session"
  },
+ "prof.page.fire.pansOnly": {
+  "en": "3f775f27b64d",
+  "tr": "82b1f4f219ac",
+  "by": "claude-in-session"
+ },
  "prof.page.fire.quick": {
   "en": "58361144a9ac",
   "tr": "7f9cff1a2d6d",
@@ -21105,8 +21345,18 @@
   "by": "claude-in-session"
  },
  "prof.page.how.alchemy": {
-  "en": "1df3a4158e86",
-  "tr": "f2d66466c0df",
+  "en": "010b4180e9a8",
+  "tr": "95fa90b9a01d",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.building": {
+  "en": "81a899fc68aa",
+  "tr": "f420e0f3109e",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.cooking": {
+  "en": "c132c8088fba",
+  "tr": "f98b9e033215",
   "by": "claude-in-session"
  },
  "prof.page.how.enchanting": {
@@ -21149,6 +21399,16 @@
   "tr": "7b26e1019e7e",
   "by": "claude-in-session"
  },
+ "prof.page.how.outfitting": {
+  "en": "833d2e70dbed",
+  "tr": "1e98958398fa",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.smithing": {
+  "en": "3cb5f680ad26",
+  "tr": "301307dbd7c7",
+  "by": "claude-in-session"
+ },
  "prof.page.jewel": {
   "en": "68155f24f371",
   "tr": "9d55c458a954",
@@ -21180,8 +21440,8 @@
   "by": "claude-in-session"
  },
  "prof.page.jewel.odds": {
-  "en": "4519e6329a41",
-  "tr": "b9561af48d38",
+  "en": "221374f8e4d8",
+  "tr": "f00e99cf5461",
   "by": "claude-in-session"
  },
  "prof.page.jewel.points": {
@@ -21259,6 +21519,11 @@
   "tr": "4057d5533550",
   "by": "claude-in-session"
  },
+ "prof.page.limit.rule": {
+  "en": "8074c8ae816c",
+  "tr": "d85dfb872a34",
+  "by": "claude-in-session"
+ },
  "prof.page.loom": {
   "en": "404d8103e0e4",
   "tr": "ada716294e0f",
@@ -21315,18 +21580,18 @@
   "by": "claude-in-session"
  },
  "prof.page.loom.odds": {
-  "en": "24b4454f928a",
-  "tr": "91828492de4c",
+  "en": "5f78a1cd2040",
+  "tr": "020ee7363a9a",
   "by": "claude-in-session"
  },
  "prof.page.loom.oddsLeather": {
-  "en": "00b6f3c4f090",
-  "tr": "e0a632477946",
+  "en": "1fd2bec1813b",
+  "tr": "947a776a8025",
   "by": "claude-in-session"
  },
  "prof.page.loom.oddsTailor": {
-  "en": "67e5b5ffb82c",
-  "tr": "adf6ce5f907a",
+  "en": "555fefee329f",
+  "tr": "870b1eaff377",
   "by": "claude-in-session"
  },
  "prof.page.loom.setDown": {
@@ -21425,8 +21690,8 @@
   "by": "claude-in-session"
  },
  "prof.page.mason.odds": {
-  "en": "0d311f608200",
-  "tr": "d8ef71cd47db",
+  "en": "73db5713e856",
+  "tr": "3db417856c73",
   "by": "claude-in-session"
  },
  "prof.page.mason.quick": {
@@ -22012,6 +22277,11 @@
  "prof.page.xp": {
   "en": "68e1984a6285",
   "tr": "68e1984a6285",
+  "by": "claude-in-session"
+ },
+ "prof.page.xpHeld": {
+  "en": "97f273d26381",
+  "tr": "b35d7bf2b722",
   "by": "claude-in-session"
  },
  "prof.page.xpMaster": {
@@ -25544,6 +25814,11 @@
   "tr": "c3ddcd0192cd",
   "by": "claude-in-session"
  },
+ "sea.exchange.band": {
+  "en": "c98b30481573",
+  "tr": "cda9f43a6bf9",
+  "by": "claude-in-session"
+ },
  "search.searchedBy": {
   "en": "e585f232c88f",
   "tr": "ed4999e4fe60",
@@ -25607,6 +25882,101 @@
  "settings.pack.replace": {
   "en": "64ca199c859e",
   "tr": "326ea2489fa5",
+  "by": "claude-in-session"
+ },
+ "skillswap.done": {
+  "en": "114b6c03eb67",
+  "tr": "8d7d361da2e0",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.career": {
+  "en": "29a0b5e10d8e",
+  "tr": "ef9324319b2a",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.gold": {
+  "en": "f35194723744",
+  "tr": "9b75a5473072",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.goldOffline": {
+  "en": "7e847e4d8f2f",
+  "tr": "9608cff0b9ad",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.in": {
+  "en": "effed572fbaa",
+  "tr": "f610eba22a63",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.mastered": {
+  "en": "883826534413",
+  "tr": "f62ec7fed64e",
+  "by": "claude-in-session"
+ },
+ "skillswap.refuse.out": {
+  "en": "3c53f6010767",
+  "tr": "a65115fe50b5",
+  "by": "claude-in-session"
+ },
+ "social.stores.noRoom": {
+  "en": "c46e4fc351ff",
+  "tr": "86026cb305c1",
+  "by": "claude-in-session"
+ },
+ "social.stores.noRoomAll": {
+  "en": "56eb82d806bf",
+  "tr": "ddac5f913c3e",
+  "by": "claude-in-session"
+ },
+ "social.stores.noRoomMine": {
+  "en": "456998c7eab5",
+  "tr": "33b903581e7a",
+  "by": "claude-in-session"
+ },
+ "social.stores.putAll": {
+  "en": "4fbe65aa14e6",
+  "tr": "48c7b5bd45e9",
+  "by": "claude-in-session"
+ },
+ "social.stores.putAllDone": {
+  "en": "bacedd3bd100",
+  "tr": "e5ce83eb0cf3",
+  "by": "claude-in-session"
+ },
+ "social.stores.putAllStopped": {
+  "en": "c89850781d13",
+  "tr": "ccca71068ea2",
+  "by": "claude-in-session"
+ },
+ "social.stores.units": {
+  "en": "c8968681d239",
+  "tr": "074672afe25a",
+  "by": "claude-in-session"
+ },
+ "social.vault.anItem": {
+  "en": "b5d4f5af9954",
+  "tr": "fa13f599629f",
+  "by": "claude-in-session"
+ },
+ "social.vault.find": {
+  "en": "f186ae97a924",
+  "tr": "ad51f73aa953",
+  "by": "claude-in-session"
+ },
+ "social.vault.noMatch": {
+  "en": "169b8843cbbd",
+  "tr": "5cc0e34864ad",
+  "by": "claude-in-session"
+ },
+ "social.vault.page": {
+  "en": "a6cab2d8156d",
+  "tr": "10b2a842e8a3",
+  "by": "claude-in-session"
+ },
+ "social.vault.rarity": {
+  "en": "2eb0674c7553",
+  "tr": "94b6c7aa8774",
   "by": "claude-in-session"
  },
  "spellbook.effect.chance": {
@@ -25989,6 +26359,151 @@
   "tr": "0cd9308e7866",
   "by": "claude-in-session"
  },
+ "town.econ.area.crownHeld": {
+  "en": "d931fe766a2a",
+  "tr": "72d7408952ce",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.crownUnheld": {
+  "en": "c4a235bfa4e3",
+  "tr": "55b4197efe1c",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.held": {
+  "en": "db534dbfa9db",
+  "tr": "325c555aac97",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.none": {
+  "en": "b7ce44497862",
+  "tr": "f5a1ba10c1fc",
+  "by": "claude-in-session"
+ },
+ "town.econ.area.unheld": {
+  "en": "0fb6bdb0b3f0",
+  "tr": "6f3df7c0f7a4",
+  "by": "claude-in-session"
+ },
+ "town.econ.band.booming": {
+  "en": "1fc351974c9d",
+  "tr": "b5ae6ecb5862",
+  "by": "claude-in-session"
+ },
+ "town.econ.band.destitute": {
+  "en": "99119825467e",
+  "tr": "233036336e11",
+  "by": "claude-in-session"
+ },
+ "town.econ.band.steady": {
+  "en": "b3012de005fd",
+  "tr": "9758a42dcfdb",
+  "by": "claude-in-session"
+ },
+ "town.econ.band.struggling": {
+  "en": "8c342034e722",
+  "tr": "a8e31d2de1b3",
+  "by": "claude-in-session"
+ },
+ "town.econ.band.thriving": {
+  "en": "03b1a4138231",
+  "tr": "bc101eeaf1dd",
+  "by": "claude-in-session"
+ },
+ "town.econ.line": {
+  "en": "2ceac3e8e2a7",
+  "tr": "ceb26236859e",
+  "by": "claude-in-session"
+ },
+ "town.econ.patrons": {
+  "en": "8117068de7a1",
+  "tr": "2c00a4ee2ab9",
+  "by": "claude-in-session"
+ },
+ "town.econ.patronsMore": {
+  "en": "317c55b45d75",
+  "tr": "4bc3643b5cee",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.askLess": {
+  "en": "b2bc89d82fc9",
+  "tr": "4dff66bb81e6",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.lessLess": {
+  "en": "07ba7d886be5",
+  "tr": "5a88c8e0b2b3",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.moreLess": {
+  "en": "90cdcdb29e26",
+  "tr": "89b64afcfa40",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.payLess": {
+  "en": "b8e2ac03f441",
+  "tr": "62d8ad51d382",
+  "by": "claude-in-session"
+ },
+ "town.econ.price.same": {
+  "en": "9b5208a5366b",
+  "tr": "b7c0448acfda",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.curfew": {
+  "en": "72b40285e78d",
+  "tr": "858bce83b098",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.festival": {
+  "en": "9fbe07c593f3",
+  "tr": "50c3206f9c91",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.harbour": {
+  "en": "b29764e02c6b",
+  "tr": "1a04b5631b00",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.levy": {
+  "en": "d5ddb81dac60",
+  "tr": "c1febdac57a5",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.marketDay": {
+  "en": "54cd4d08f75c",
+  "tr": "27b27f792916",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.openGates": {
+  "en": "9508a9a146f1",
+  "tr": "516bb18817ca",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.players": {
+  "en": "3c4005e74741",
+  "tr": "cd445af812dd",
+  "by": "claude-in-session"
+ },
+ "town.econ.reason.raid": {
+  "en": "ea8852b80d6b",
+  "tr": "dcf76b67fce2",
+  "by": "claude-in-session"
+ },
+ "town.econ.trend.falling": {
+  "en": "cc55e4b714a9",
+  "tr": "535d4b2e95b1",
+  "by": "claude-in-session"
+ },
+ "town.econ.trend.flat": {
+  "en": "666a6f702c24",
+  "tr": "d6d878a69405",
+  "by": "claude-in-session"
+ },
+ "town.econ.trend.rising": {
+  "en": "26b01983c6f4",
+  "tr": "cb8966a2631f",
+  "by": "claude-in-session"
+ },
  "trade.counter.cost.get": {
   "en": "53eb1352da0f",
   "tr": "5bd338f0f6c3",
@@ -26032,6 +26547,46 @@
  "tutorials.chapters.trigger": {
   "en": "365aec48fe12",
   "tr": "14fb3bab9a10",
+  "by": "claude-in-session"
+ },
+ "tutorials.characterSheet.skillRaise": {
+  "en": "81ca136336cd",
+  "tr": "330506d48f4b",
+  "by": "claude-in-session"
+ },
+ "tutorials.characterSheet.skillRaiseStats": {
+  "en": "681395dd0dfd",
+  "tr": "47cec82029c6",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.body": {
+  "en": "c5ba22688057",
+  "tr": "6997b80a85c3",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.more": {
+  "en": "7c91bad9f667",
+  "tr": "469fafc6ed59",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops1": {
+  "en": "c0fa00345614",
+  "tr": "93701242348f",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.shops2": {
+  "en": "b6ae4490b103",
+  "tr": "1a88362aa4da",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.title": {
+  "en": "ea78b34da11f",
+  "tr": "e1de692a7da6",
+  "by": "claude-in-session"
+ },
+ "tutorials.crafting.trigger": {
+  "en": "3c9c8044cdbd",
+  "tr": "cde083c35aa1",
   "by": "claude-in-session"
  },
  "tutorials.guilds.body1": {
