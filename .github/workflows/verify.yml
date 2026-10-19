@@ -43,7 +43,8 @@
 # EG6a (2026-10-12): and THE COURSE SWEEP - every Elite Breach course crossed
 # step by step by the real player motor, `sweep` seeds a band (25 here;
 # relay-deploy.yml asks 500), in eg-sweep.yml's four band jobs beside the
-# shards. test/tooling/eg6a_sweep.test.js holds the wiring.
+# shards (six parts a band past a hundred seeds - SWEEP-FAST).
+# test/tooling/eg6a_sweep.test.js holds the wiring.
 name: verify
 
 on:
