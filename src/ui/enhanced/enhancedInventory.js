@@ -65,7 +65,7 @@ import { CHAT_MAX } from '../../net/wire.js';   // CHAT-POST: a posted item is o
 import { itemIsIdentified } from '../../systems/tradeModes.js';   // PLUS10: MagicPowers' identified arm
 import { PACK_PAGES, PAGE_IDS, pageOf, filterByPage } from '../packPages.js';   // PX31: the pack's nine pages (the classic keeps DFU's four)
 import { isCardBinder, isIliacCard, binderDecks } from '../../systems/iliac/iliacItems.js';   // CARDS8: the binder holds the cards
-import { isWalletItem, walletContents, walletLedger, refreshWalletSilver, letterWorthGold } from '../../systems/walletItem.js';   // WALLET1: the wallet's sheet; WALLET-UI: its ledger
+import { isWalletItem, walletContents, walletLedger, refreshWalletSilver, letterWorthGold, walletKg } from '../../systems/walletItem.js';   // WALLET1: the wallet's sheet; WALLET-UI: its ledger; WALLET-WEIGHT: what it holds weighs
 import { useItem, isLightSource, usableItem, isPotionRecipe, toggleHood, HOOD_TEXT, nextDrape, drapeCount, DRAPE_TEXT } from '../../systems/useItem.js';   // PLUS10: isPotionRecipe, a recipe's second Info box   // HT2: the light source's own act; Mac: Use only where the law has an arm   // HOOD-SAID: the hood's button and its lines   // CLOAK-DRAPE: the drape's
 // QS2: the quickslot model (systems/quickslots.js). This screen is the ONE
 // place a slot is filled - Mac's own words, "in the enhanced menu through the
@@ -2720,7 +2720,7 @@ function itemRow(item, from = 'local') {
   const sub = [line.material, line.word, line.lit ? 'lit' : null].filter(Boolean).join(' · ');   // HT2: the classic list paints the lit row gold; this one says the word
   if (sub) mid.append(el('small', null, sub));
   row.append(mid);
-  row.append(el('span', 'itemwt', `${line.weight.toFixed(2)} kg`));
+  row.append(el('span', 'itemwt', walletKg(shownKg(item, line))));   // WALLET-WEIGHT: the wallet's row, what it holds
   // QS2: THE CHIP. A slot holds a KIND, so the row that answers to it is the
   // row that says so - otherwise the only way to learn what is in slot 1 is to
   // open every tooltip in the pack. LOCAL rows only: a slot resolves against
@@ -3351,7 +3351,7 @@ function infoCard(picked, side, ready = render, { body = false } = {}) {
     pair('Recipe for', line.recipe.potion);
     pair('Ingredients', line.recipe.ingredients.join(', ') || '(none)');
   }
-  pair('Weight', `${line.weight.toFixed(2)} kg`);
+  pair('Weight', walletKg(shownKg(picked, line)));   // WALLET-WEIGHT: the wallet's card, what it holds
   pair('Condition', line.condition != null ? `${line.word} · ${line.condition}%` : null);
   // HT2: a light source is never WORN - the honest line for one is
   // whether it is the lit one, which is the same fact the classic
@@ -3784,7 +3784,9 @@ function walletSheet(w) {
     for (const r of part.rows) {
       const row = el('div', `wallet-row${r.none ? ' none' : ''}`);
       row.dataset.key = r.key;
-      row.append(el('span', 'wallet-k', r.label), el('span', `wallet-v${r.figure == null ? ' why' : ''}`, r.figure ?? r.note));
+      const k = el('span', 'wallet-k', r.label);
+      if (r.weight) k.append(el('small', 'wallet-kg', r.weight));   // WALLET-WEIGHT: what a holding weighs, beside its name
+      row.append(k, el('span', `wallet-v${r.figure == null ? ' why' : ''}`, r.figure ?? r.note));
       box.append(row);
       if (r.figure != null && r.note) box.append(el('p', 'wallet-note', r.note));
     }
@@ -3825,6 +3827,12 @@ function binderBack(binder) {
   b.onclick = () => { picked = binder; side = 'local'; notice = null; render(); };
   return b;
 }
+/** WALLET-WEIGHT (2026-10-19, from play: "Are these supposed to be weighing us down even in the wallet? ... it might be
+ *  prudent to list the total weight of the wallet up top as the wallet's weight"): the weight a pack row and a card say
+ *  for a piece - the wallet's is its own (none) and what it holds, the pieces that left the pages for its sheet still
+ *  weighing what they always did (bible/06-Systems/Wallet.md WALLET-WEIGHT). The carry weight counts each piece once,
+ *  where it lies; this is the saying alone. */
+const shownKg = (item, line) => line.weight + (model?.wallet && item === model.wallet.item ? model.wallet.weight : 0);
 /** WALLET1: a held piece's way back to the wallet's sheet. */
 function walletBack(wallet) {
   const b = el('button', 'act', 'Wallet');
