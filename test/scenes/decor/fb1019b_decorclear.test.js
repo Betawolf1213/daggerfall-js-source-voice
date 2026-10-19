@@ -38,7 +38,10 @@ const LOW = box([-1, 0, -1], [1, 0.3, 1]);              // low enough that the b
 const HALL = box([-2, 0, -2], [2, 2.5, 2]);             // big enough that no face of it is near the body
 const SHELF = box([-1, 1.2, -1], [1, 1.7, 1]);          // over a crouched body's head, through a standing one's
 const CANOPY = (({ positions, indices }) => ({ positions, indices: indices.slice(6) }))(box([-1, 2, -1], [1, 2.5, 1]));   // hung over the head, open beneath (no bottom face, as Daggerfall's furniture has none)
-const MODELS = [[41000, WARDROBE], [41001, LOW], [41002, HALL], [41003, SHELF], [41004, CANOPY]];
+// its underside within the crouched capsule's box (0.9 m) and outside its skin (the head's sphere at 0.55 m, 0.33 m
+// reach), its top over a standing head's (1.45 m): only the parity, at the body's own height, tells them apart
+const SLAB = box([-1, 0.89, -1], [1, 1.7, 1]);
+const MODELS = [[41000, WARDROBE], [41001, LOW], [41002, HALL], [41003, SHELF], [41004, CANOPY], [41005, SLAB]];
 /** A closed room of ten metres by three high about the origin: floor, walls, ceiling. */
 function hall() {
   const col = new Collider(() => -Infinity);
@@ -136,6 +139,18 @@ test('DECOR-CLEAR a piece so big no face of it is near the body still closes on 
   room2.put(served('s1', 41003));
   await settle();
   assert.deepEqual({ withheld: lateSolidsOf(col2).withheld('decor:s1'), solid: solid(col2, 'decor:s1') }, { withheld: false, solid: 12 }, 'over the crouched body: solid at once');
+  // the slab: the crouched head under it, a standing one's in it
+  const slab = new Collider();
+  slab.addMesh('slab', SLAB.positions, SLAB.indices, trs(O[0], O[1], O[2], 0, 0, 0));
+  assert.deepEqual([heldInSolid(slab, feet), heldInSolid(slab, feet, CROUCH_HEIGHT), lateSolidCloses(slab, { pos: feet, height: CROUCH_HEIGHT })], [true, false, false]);
+  const col4 = hall();
+  const low2 = standing(col4);
+  low2.update(FIXED_DT, still({ crouch: true }), 0);
+  for (let f = 0; f < 60 && !low2.crouching; f++) low2.update(FIXED_DT, still(), 0);
+  const room4 = roomOf(col4, low2);
+  room4.put(served('s2', 41005));
+  await settle();
+  assert.deepEqual({ height: low2.height, withheld: lateSolidsOf(col4).withheld('decor:s2'), solid: solid(col4, 'decor:s2') }, { height: CROUCH_HEIGHT, withheld: false, solid: 12 }, 'over the crouched head: solid at once');
   // the canopy: the parity alone says the feet are in it; its box is over the capsule's
   const over = new Collider();
   over.addMesh('canopy', CANOPY.positions, CANOPY.indices, trs(O[0], O[1], O[2], 0, 0, 0));
