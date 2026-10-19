@@ -563,6 +563,17 @@ export const CREDITS = Object.freeze({
       get terms() { return t('credits.kingsGambit.terms', 'Ported from the shipped bundle, read off its compiled script method by method, with the permission the owner recorded (2026-10-13); the bundle names no author - see vendor/kings-gambit/README.md for the permission record.'); },
       vendor: Object.freeze(['kings-gambit']),
     }),
+    // DEX0 (bible/04-Characters/Enemy-Expansion.md): Kamer & Kab's fifty enemies and their encounter tables.
+    Object.freeze({
+      get title() { return t('credits.dex.title', 'Daggerfall Enemy Expansion'); },   // the mod's name as its manifest says it (L10N4)
+      version: '1.3.4',
+      author: 'Kamer & Kab',
+      get what() { return t('credits.dex.what', 'Fifty new enemies and the encounter tables they come from (DEX): goblins, trolls that get back up, minotaurs, golems, Dwarven centurions, mounted knights, necromancers, witches, the Vengeful King Lysandus and more, ported 1:1 from the authors’ own source, each in Kamer’s and Kab’s own art, and in Morrowind’s bodies where Morrowind has the creature.'); },
+      get terms() { return t('credits.dex.terms', 'Ported from the shipped bundle and the authors’ own source; their art carried byte for byte (Daggerfall’s own sprites among it rebuilt from your files) - see vendor/daggerfall-enemy-expansion/README.md for the permission record.'); },
+      get contact() { return t('credits.contact.nexus', '{author}, through the Nexus page ({page})', { author: 'Kamer & Kab', page: 'daggerfallunity mod 372' }); },
+      vendor: Object.freeze(['daggerfall-enemy-expansion']),
+      link: 'https://www.nexusmods.com/daggerfallunity/mods/372',
+    }),
   ]),
 });
 

@@ -361,6 +361,7 @@ const HARDCODED = {
   'src/systems/eliteGates/egSpoils.js': 8,
   'src/systems/enchanting.js': 7,
   'src/systems/enchantmentCatalogue.js': 65,
+  'src/systems/enemyExpansion/dexTableText.js': 5,   // DEX0: the mod's tables as text, verbatim (data, the enemies' names among it - read by its own parser, never shown)
   'src/systems/equip.js': 3,
   'src/systems/eventTimers.js': 50,
   'src/systems/faction/factionStanding.js': 3,

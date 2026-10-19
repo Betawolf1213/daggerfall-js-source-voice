@@ -864,6 +864,8 @@ test('doctrine: no raster of game data is tracked anywhere in the repo', () => {
 const VE4_DERIVED = "Port-Doctrine's one exception (Mac, 2026-10-05): Daggerfall's own textures, repainted by the mod's author, carried on Mac's approval";
 /** ALIKR1 / SNOWFALL1: the second exception's mark - the desert's and the winter's ground, its own approval. */
 const ENVIRONS_DERIVED = "Port-Doctrine's second exception (Mac, 2026-10-08): Daggerfall's own desert and winter ground tiles, repainted by the packs' authors, carried on Mac's approval";
+/** DEX0: the third exception's mark - Daggerfall's own enemy and class sprites under the authors' paint, its own approval. */
+const DEX_DERIVED = "Port-Doctrine's third exception (Mac, 2026-10-19): Daggerfall's own enemy and enemy-class sprites, repainted by the mods' authors, carried on Mac's approval";
 const BUNDLE_ART = new Map([
   // FORAGE1 (2026-09-28): Foraging's seven pictures - the author's own
   // pixel art (tools, a wood bundle, an egg), no Daggerfall record - taken
@@ -940,9 +942,14 @@ const BUNDLE_ART = new Map([
   // tools/classSkinsListing.mjs proves the bytes. The first cut of this slice ran the suite BEFORE `git add` and
   // shipped without this row - AUDIT-TO1 F3's trap again; the art is not ARENA2's (redrawn at twice the size, under
   // archive numbers past TEXTURE.511 that the mods' art uses).
+  // DEX0 (2026-10-19, Mac: "Bring under 3rd exception"): the row above said these were redrawn at twice the size and not
+  // ARENA2's. Measured silhouette for silhouette against every TEXTURE record (the way tools/dexExtract.mjs measures the
+  // enemy mod's), most of them are Daggerfall's own enemy-class sprites (TEXTURE.477-490) at their own size, under the
+  // artists' paint - the bounty hunter (1504) is the very sheet Daggerfall Enemy Expansion ships. So the row says what
+  // the pack is, and Port-Doctrine's third exception names its directory.
   ['vendor/class-skins/Textures/',
-    { manifest: 'vendor/class-skins/class-skins.files.json',
-      why: "THIRD-PARTY - Daggerfall class skins (Mac's ExistingClasses archive; the artists unnamed but the bounty hunter's, Kamer); twenty redrawn enemy-class sprite sheets, byte for byte from the archive under the names class-skins.files.json maps (see vendor/class-skins/README.md for the open permission record)" }],
+    { manifest: 'vendor/class-skins/class-skins.files.json', derived: DEX_DERIVED,
+      why: "THIRD-PARTY - Daggerfall class skins (Mac's ExistingClasses archive; the artists unnamed but the bounty hunter's, Kamer), carried on Mac's word of the artists' permission; twenty enemy-class sprite sheets, most of them Daggerfall's own class sprites under the artists' paint, byte for byte from the archive under the names class-skins.files.json maps (see vendor/class-skins/README.md for the open permission record)" }],
   ['public/art/diverse-weapons/',
     { manifest: 'vendor/diverse-weapons/diverse-weapons.dfmod.json',
       why: "THIRD-PARTY - Diverse Weapons 1.7.3 (RealAKP); the mod's own first-person weapon sprites - eighteen weapons x ten metals, plain and enchanted, every record and frame, Weapon Widget's double-scale idles and the icons - re-encoded from the bundle's Texture2D objects by tools/diverseWeaponsExtract.mjs as indexed PNG where the picture fits one (lossless for every drawn pixel; see the vendor README)" }],
@@ -986,6 +993,16 @@ const BUNDLE_ART = new Map([
   ['public/art/snowfall/',
     { manifest: 'vendor/snowfall/snowfall.files.json', derived: ENVIRONS_DERIVED,
       why: "THIRD-PARTY - Snowfall 1.0.5 (demifiend000), carried on Mac's word of the author's permission; the 168 winter ground records its bundle packages (TEXTURE.103, .303, .403 - Daggerfall's winter tiles under the author's snow), its snow albedo and its three surface masks, decoded losslessly from the bundle's Texture2D and TextAsset objects (see vendor/snowfall/README.md)" }],
+  // DEX0 (2026-10-19, Mac: "I want to implement this as our next mod 1:1"): DAGGERFALL ENEMY EXPANSION's pictures, in two
+  // directories by what they are, each answering to the listing tools/dexExtract.mjs writes (every name and its sha256)
+  // after measuring every picture against every TEXTURE record: the authors' own renders, and the repaints the third
+  // exception carries. The 858 that ARE Daggerfall's records are in neither - the player's own files rebuild them.
+  ['public/art/daggerfall-enemy-expansion/',
+    { manifest: 'vendor/daggerfall-enemy-expansion/daggerfall-enemy-expansion.files.json',
+      why: "THIRD-PARTY - Daggerfall Enemy Expansion 1.3.4 (Kamer & Kab), carried on Mac's word of the authors' permission; the authors' own enemy sprites and emission maps (Kamer's renders and his own drawings, Kab's classes, the 1995 demo's four), re-encoded from the bundle's Texture2D objects by tools/dexExtract.mjs as indexed PNG where the picture fits one, none of them a picture any TEXTURE record covers (see vendor/daggerfall-enemy-expansion/README.md)" }],
+  ['public/art/daggerfall-enemy-expansion-repainted/',
+    { manifest: 'vendor/daggerfall-enemy-expansion/repainted.files.json', derived: DEX_DERIVED,
+      why: "THIRD-PARTY - Daggerfall Enemy Expansion 1.3.4 (Kamer & Kab), carried on Mac's word of the authors' permission; Daggerfall's own sprites under the authors' paint - the city guard's spell records, the Bounty Hunter, the Druid, the Necromancer Acolyte, the Rogue Druid, the four riders' new sets and King Lysandus - byte for byte from the bundle (see vendor/daggerfall-enemy-expansion/README.md)" }],
   // WINDFALL1: the mod's own three pictures - leaves and a snowflake, the author's pixels (no Daggerfall record).
   ['vendor/windfall/Textures/',
     { manifest: 'vendor/windfall/windfall.files.json',
@@ -1082,19 +1099,21 @@ test('doctrine EOTB0: the derivation is not vacuous - a stranger and a loss both
 const DOCTRINE = 'bible/01-Overview/Port-Doctrine.md';
 /** The directories Port-Doctrine's exception paragraph names - every backticked `public/` path on its line. */
 function exceptionDirs() {
-  // ALIKR1/SNOWFALL1: every exception paragraph's line - THE ONE EXCEPTION (Vanilla Enhanced) and THE SECOND EXCEPTION
-  const lines = readFileSync(join(root, DOCTRINE), 'utf8').split('\n').filter((l) => /^\s+\*\*THE (?:ONE|SECOND) EXCEPTION\b/.test(l));
-  return lines.flatMap((line) => [...line.matchAll(/`(public\/[^`]+\/)`/g)].map((m) => m[1]));
+  // ALIKR1/SNOWFALL1: every exception paragraph's line - THE ONE EXCEPTION (Vanilla Enhanced) and THE SECOND EXCEPTION;
+  // DEX0: THE THIRD EXCEPTION, whose class skins live under vendor/ (the player body's sprite index reads them there)
+  const lines = readFileSync(join(root, DOCTRINE), 'utf8').split('\n').filter((l) => /^\s+\*\*THE (?:ONE|SECOND|THIRD) EXCEPTION\b/.test(l));
+  return lines.flatMap((line) => [...line.matchAll(/`((?:public|vendor)\/[^`]+\/)`/g)].map((m) => m[1]));
 }
 /** The mark each directory's approval gave it: Vanilla Enhanced's rows the first exception's, the environment packs' the
  *  second's - a row in one exception wearing the other's mark is a row approved by the wrong approval. */
-const markFor = (dir) => (dir.startsWith('public/art/vanilla-enhanced/') ? VE4_DERIVED : ENVIRONS_DERIVED);
+const markFor = (dir) => (dir.startsWith('public/art/vanilla-enhanced/') ? VE4_DERIVED
+  : dir.startsWith('public/art/daggerfall-enemy-expansion-repainted/') || dir.startsWith('vendor/class-skins/') ? DEX_DERIVED : ENVIRONS_DERIVED);
 /** The derived rows standing outside every directory the exception names. */
 const derivedOutside = (rows, dirs) => [...rows].filter(([dir, r]) => r.derived && !dirs.some((d) => dir.startsWith(d))).map(([dir]) => dir);
 
 test('doctrine VE4: a derived row stands inside the exception Port-Doctrine records, and every row inside it says it is derived', () => {
   const dirs = exceptionDirs();
-  assert.deepEqual(dirs, ['public/art/vanilla-enhanced/', 'public/art/sands-of-the-alikr/', 'public/art/snowfall/'], 'the doctrine names three directories, under two approvals');
+  assert.deepEqual(dirs, ['public/art/vanilla-enhanced/', 'public/art/sands-of-the-alikr/', 'public/art/snowfall/', 'public/art/daggerfall-enemy-expansion-repainted/', 'vendor/class-skins/Textures/'], 'the doctrine names five directories, under three approvals');
   assert.deepEqual(derivedOutside(BUNDLE_ART, dirs), [], 'repainted game data outside the approved directory');
   for (const d of dirs) assert.ok([...BUNDLE_ART].some(([dir, r]) => r.derived && dir.startsWith(d)), `${d} is approved and no row carries it`);
   // and inside it nothing passes as the port's own: every row there says what it is
