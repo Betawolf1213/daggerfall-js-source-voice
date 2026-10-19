@@ -99,7 +99,7 @@ test('AUDIT EG III RESONANCE SEEN (section 15: "Three different Vestiges of one 
   const rdoc = fakeDocument();
   destroyEgHud();
   drawEgPanel(null, { doc: rdoc, recap: { ...R, members: [], strip: [] }, words: EG_PRES_TEXT });
-  assert.ok(find(rdoc.body, 'eg-note').some((n) => n.textContent === 'Capstones: Rooted, Spellweave'), 'listed on the recap');
+  assert.ok(find(rdoc.body, 'eg-k-line').some((n) => n.textContent === 'Capstones: Rooted, Spellweave'), 'listed on the recap');
   destroyEgHud();
 });
 

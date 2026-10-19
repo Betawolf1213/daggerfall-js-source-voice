@@ -380,6 +380,7 @@ import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: 
 import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
 import { EG_SINK_EMBERS } from '../net/eliteGates/egPay.js';   // EG-E1: the sink's price
 import { openEgBoard, createEgBoardDoor } from '../ui/eliteGates/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
+import { egStartPanelDoors } from '../ui/eliteGates/egStartPanel.js';   // EG-PLUS: the start window on Enhanced Plus
 import { egRecapsKept } from '../ui/eliteGates/egHud.js';   // AUDIT EG V (c, L7-19): the last runs this device kept, on the boards' own tab
 import { registerEgFind, egFindThrow } from '../systems/eliteGates/egFind.js';   // EG-E3: the dungeon's find
 import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigil/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
@@ -24248,6 +24249,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     board: (onClosed) => egBoardDoor(onClosed),
     ...egStartListDoors({ ready: listPickerArtLoaded, slot: egWindowSlot, makeList: (items, onPick, onCancel) => new ListPickerWindow({ items, backdrop: 'none', onPick: (i) => onPick(i), onCancel: () => onCancel() }) }),
     ask: egStartAsk((w) => townTalk.showOverlay(w), (o) => new YesNoBoxWindow(o)),   // AUDIT EG III (lane4 #12): a box put out of its slot unanswered ends the window
+    panel: isEnhancedPlus() ? egStartPanelDoors({ slot: egWindowSlot }) : null,   // EG-PLUS: on Enhanced Plus, a breach window of its own (ui/eliteGates/egStartPanel.js)
   });
   const egClient = params.has('online') ? createEgClient({
     modes: () => modes, online: () => online, hub: () => socialLink(), account: { ..._accountEg, claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }, now: egNow, entity: playerEntity, player, cam,   // EG-E1: a claim carries the claiming character (its guild's deed) and its Weir Key restacks

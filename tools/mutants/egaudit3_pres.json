@@ -22,8 +22,8 @@
   {
     "name": "EGA3P-completes-undrawn",
     "file": "src/ui/eliteGates/egHud.js",
-    "old": "      if (c.completes) { const k",
-    "new": "      if (false) { const k",
+    "old": "      if (c.completes) b.append(",
+    "new": "      if (false) b.append(",
     "tests": [
       "test/net/eliteGates/egaudit3_pres.test.js"
     ],
