@@ -199,7 +199,7 @@ test('CRAFT-LIMIT-SAID one law: at every room the limit leaves - none, one, shor
   for (const [i, room] of rooms.entries()) {
     track('smithing', HELD - room);
     assert.equal((await book.refresh({ force: true })).ok, true);
-    const pay = pages.payOf?.(book, 'smithing') ?? {};
+    const pay = pages.craftPayOf?.(book, 'smithing') ?? {};
     const r0 = recipeById(`${patterns[i]}:silver`);
     const line = words.craftXpLine(r0, 50, 'Smithing', pay);
     const r = await book.craft(r0.id, { clean: false, name: 'Mac' }, (data) => mintPieces(data));
@@ -487,7 +487,7 @@ test('AUDIT FB1018f L5-4 Master\'s word: a Master\'s craft says "(+0 Smithing XP
   assert.equal((await book.refresh()).ok, true);
   const earned = craftXp(3, 99, false) + FIRST_CRAFT_XP;
   assert.ok(earned > 200, `a new Silver pattern earns ${earned}`);
-  assert.equal(words.craftXpLine(recipeById('dagger:silver'), 99, 'Smithing', pages.payOf(book, 'smithing')), 'At most 200 Smithing XP: Smithing stops at Master.');
+  assert.equal(words.craftXpLine(recipeById('dagger:silver'), 99, 'Smithing', pages.craftPayOf(book, 'smithing')), 'At most 200 Smithing XP: Smithing stops at Master.');
   const r = await book.craft('dagger:silver', { clean: false, name: 'Mac' }, (d) => mintPieces(d));
   assert.equal(r.ok, true, JSON.stringify(r));
   assert.deepEqual([r.data.xp, r.data.first, xpOf('smithing')], [200, true, PROF_XP_MAX], 'the top took the rest of the first');

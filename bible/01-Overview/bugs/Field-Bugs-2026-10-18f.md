@@ -354,7 +354,7 @@ Pins: `test/world/fb1018f_rocksmear.test.js` (5). Mutants: `tools/mutants/fb1018
 ## CRAFT-LIMIT-SAID: the crafter's limit said where it acts, and a station's XP the service's own (T7)
 
 `src/net/professionLaw.js` (craftLimit, craftLimitOf, creditedXp), `src/net/profBook.js` (limit), `src/ui/craftXpWords.js`
-(paidXp, capLine, limitRuleLine), `src/ui/professions/profPages.js` (payOf, every station's XP line, the tab),
+(paidXp, capLine, limitRuleLine), `src/ui/professions/profPages.js` (craftPayOf, every station's XP line, the tab),
 `src/scenes/world.js` (one line edited, none added), `locales/*`.
 
 FOUND. Reproduced in Node on the real Worker, book and Stores page: Smithing at 26,009 behind Building 60 and
@@ -374,7 +374,7 @@ first: true`.
 
 FIXED. The limit stands and is said; a station's figure is the Worker's credit, one law. Every station (anvil,
 workbench, loom, jeweller's, mason's works and carvings, fire, alchemy, enchanting, temper) reads
-`profPages.js:"export const payOf = (book, id) =>"` and says "No Smithing XP: Building and Provisioning stand above
+`profPages.js:"export const craftPayOf = (book, id) =>"` and says "No Smithing XP: Building and Provisioning stand above
 Journeyman, and the crafter's limit holds Smithing at rank 50." in place of a line the track cannot take ("At most 9
 ..." with a little room; "Smithing is at Master." at the top). The fire drops its pans' XP where none is paid; temper and
 enchant rows say "+0". The craft's word says the limit, never a bonus the limit ate. The tab: "26,009 / 26,009 XP - the

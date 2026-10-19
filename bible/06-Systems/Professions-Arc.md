@@ -4218,7 +4218,7 @@ time you make this piece at this tier.", and the word "You made a Fine Silver Da
     `dishFirstLine` and `masonWorksFirstLine`; `craftXpText` - "(+0 Smithing XP - Building and Provisioning stand above
     Journeyman, and the crafter's limit holds Smithing at rank 50)" where the craft left the track no room (it said
     "(+0 Smithing XP, with the first-time bonus)" for a first the limit ate); `limitRuleLine`.
-  - The stations (`src/ui/professions/profPages.js` `payOf` - the limit off the book's tracks, the Firmament's
+  - The stations (`src/ui/professions/profPages.js` `craftPayOf` - the limit off the book's tracks, the Firmament's
     percent in force, `systems/firmamentLive.js`): the anvil, the workbench, the loom, a Sculptor's carving and the
     jeweller's bench say `craftXpLine` with it; the mason's works; the fire (its pans' XP unsaid where none is paid -
     "3 pans." - and the limit's line for its first's); the alchemy station; the enchanting station and the temper (each

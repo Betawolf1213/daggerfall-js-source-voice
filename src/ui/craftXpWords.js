@@ -19,7 +19,7 @@
 // creditedXp): THE CRAFTER'S LIMIT (PROF0 3.2 - a craft that is not one of the character's two past Journeyman stops one
 // XP short of rank 51, professionLaw craftXpCap) or Master's top. A station's line read the act's own law alone (craftXp),
 // so at the limit the anvil promised "60 Smithing XP, and 500 more" and the craft paid none, and nothing in the game said
-// why. `pay` is what a station reads off the book (ui/professions/profPages.js payOf): the limit over its track
+// why. `pay` is what a station reads off the book (ui/professions/profPages.js craftPayOf): the limit over its track
 // (professionLaw craftLimit, from the service's ten tracks) and the Firmament's percent on its XP.
 // bible/06-Systems/Professions-Arc.md 41.10.
 import { t, intlLocale } from '../systems/textManager.js';

@@ -244,8 +244,8 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-pay-no-limit",
     "file": "src/ui/professions/profPages.js",
-    "old": "export const payOf = (book, id) => ({ limit: craftLimitOf(book?.state?.tracks?.values?.() ?? [], id), pct:",
-    "new": "export const payOf = (book, id) => ({ limit: null, pct:",
+    "old": "export const craftPayOf = (book, id) => ({ limit: craftLimitOf(book?.state?.tracks?.values?.() ?? [], id), pct:",
+    "new": "export const craftPayOf = (book, id) => ({ limit: null, pct:",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
     ],
@@ -274,7 +274,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-anvil-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "craftXpLine(r, rank, professionName('smithing'), payOf(book, 'smithing'))",
+    "old": "craftXpLine(r, rank, professionName('smithing'), craftPayOf(book, 'smithing'))",
     "new": "craftXpLine(r, rank, professionName('smithing'))",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
@@ -284,7 +284,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-bench-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "craftXpLine(r, rank, professionName('carpentry'), payOf(book, 'carpentry'))",
+    "old": "craftXpLine(r, rank, professionName('carpentry'), craftPayOf(book, 'carpentry'))",
     "new": "craftXpLine(r, rank, professionName('carpentry'))",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
@@ -294,7 +294,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-loom-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "craftXpLine(r, rank, professionName('outfitting'), payOf(book, 'outfitting'))",
+    "old": "craftXpLine(r, rank, professionName('outfitting'), craftPayOf(book, 'outfitting'))",
     "new": "craftXpLine(r, rank, professionName('outfitting'))",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
@@ -304,7 +304,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-jewel-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "craftXpLine(r, rank, professionName('jewelcrafting'), payOf(book, 'jewelcrafting'))",
+    "old": "craftXpLine(r, rank, professionName('jewelcrafting'), craftPayOf(book, 'jewelcrafting'))",
     "new": "craftXpLine(r, rank, professionName('jewelcrafting'))",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
@@ -314,7 +314,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-mason-works-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "masonWorksFirstLine(rank, professionName('masonry'), payOf(book, 'masonry'))",
+    "old": "masonWorksFirstLine(rank, professionName('masonry'), craftPayOf(book, 'masonry'))",
     "new": "masonWorksFirstLine(rank, professionName('masonry'))",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"
@@ -324,7 +324,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-mason-carving-unpaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'), payOf(book, 'masonry'))));",
+    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'), craftPayOf(book, 'masonry'))));",
     "new": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'))));",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"

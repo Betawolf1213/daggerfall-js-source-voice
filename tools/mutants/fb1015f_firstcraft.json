@@ -7,7 +7,7 @@
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-line-shop-always",
@@ -17,7 +17,7 @@
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-line-no-quarter",
@@ -27,7 +27,7 @@
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-line-more-whole",
@@ -37,7 +37,7 @@
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-dish-never",
@@ -93,77 +93,77 @@
       "test/net/fb1015f_firstcraft.test.js",
       "test/net/craft1_chain.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-anvil-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), payOf(book, 'smithing'))));   // CRAFT-FIRST-SHOWN; CRAFT-LIMIT-SAID: as the service credits it\n",
+    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), craftPayOf(book, 'smithing'))));   // CRAFT-FIRST-SHOWN; CRAFT-LIMIT-SAID: as the service credits it\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-anvil-past-rank",
     "file": "src/ui/professions/profPages.js",
-    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), payOf(book, 'smithing'))));",
-    "new": "    box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), payOf(book, 'smithing'))));",
+    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), craftPayOf(book, 'smithing'))));",
+    "new": "    box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('smithing'), craftPayOf(book, 'smithing'))));",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-bench-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "    if (!r.later && recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('carpentry'), payOf(book, 'carpentry'))));   // CRAFT-FIRST-SHOWN: Building's; CRAFT-LIMIT-SAID\n",
+    "old": "    if (!r.later && recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('carpentry'), craftPayOf(book, 'carpentry'))));   // CRAFT-FIRST-SHOWN: Building's; CRAFT-LIMIT-SAID\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-loom-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('outfitting'), payOf(book, 'outfitting'))));   // CRAFT-LIMIT-SAID\n",
+    "old": "    if (recipeOpen(r, rank)) box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('outfitting'), craftPayOf(book, 'outfitting'))));   // CRAFT-LIMIT-SAID\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-loom-named-smithing",
     "file": "src/ui/professions/profPages.js",
-    "old": "craftXpLine(r, rank, professionName('outfitting'), payOf(book, 'outfitting'))",
-    "new": "craftXpLine(r, rank, professionName('smithing'), payOf(book, 'outfitting'))",
+    "old": "craftXpLine(r, rank, professionName('outfitting'), craftPayOf(book, 'outfitting'))",
+    "new": "craftXpLine(r, rank, professionName('smithing'), craftPayOf(book, 'outfitting'))",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-mason-works-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "  detail.append(el('p', 'px-note', masonWorksFirstLine(rank, professionName('masonry'), payOf(book, 'masonry'))));   // CRAFT-FIRST-SHOWN: a work's first, the service's (smeltAtForge); CRAFT-LIMIT-SAID\n",
+    "old": "  detail.append(el('p', 'px-note', masonWorksFirstLine(rank, professionName('masonry'), craftPayOf(book, 'masonry'))));   // CRAFT-FIRST-SHOWN: a work's first, the service's (smeltAtForge); CRAFT-LIMIT-SAID\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-mason-carving-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'), payOf(book, 'masonry'))));   // CRAFT-FIRST-SHOWN; CRAFT-LIMIT-SAID\n",
+    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('masonry'), craftPayOf(book, 'masonry'))));   // CRAFT-FIRST-SHOWN; CRAFT-LIMIT-SAID\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-fire-unsaid",
@@ -177,12 +177,12 @@
   {
     "name": "FB1015C-jewel-unsaid",
     "file": "src/ui/professions/profPages.js",
-    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('jewelcrafting'), payOf(book, 'jewelcrafting'))));   // CRAFT-FIRST-SHOWN: its XP moved here, beside its first's; CRAFT-LIMIT-SAID\n",
+    "old": "      box.append(el('p', 'px-note', craftXpLine(r, rank, professionName('jewelcrafting'), craftPayOf(book, 'jewelcrafting'))));   // CRAFT-FIRST-SHOWN: its XP moved here, beside its first's; CRAFT-LIMIT-SAID\n",
     "new": "",
     "tests": [
       "test/net/fb1015f_firstcraft.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages payOf), the craft's XP the Firmament's percent, the 500 whole."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): re-aimed by content - the line takes the station's pay (profPages craftPayOf), the craft's XP the Firmament's percent, the 500 whole."
   },
   {
     "name": "FB1015C-alchemy-shop-unsaid",
