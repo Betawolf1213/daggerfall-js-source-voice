@@ -10244,6 +10244,11 @@
   "tr": "ab1e097acdc6",
   "by": "claude-in-session"
  },
+ "hud.status.unwell": {
+  "en": "64e010f7422a",
+  "tr": "8ab13f3dd171",
+  "by": "claude-in-session"
+ },
  "instance.door.holdLine": {
   "en": "7666de864a78",
   "tr": "4800709c5656",
@@ -25857,6 +25862,11 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "5c31be9f2a5c",
+  "by": "claude-in-session"
+ },
+ "status.health.unwell": {
+  "en": "a640de0c2ebd",
+  "tr": "e6f16c45ffec",
   "by": "claude-in-session"
  },
  "stolen.card": {
