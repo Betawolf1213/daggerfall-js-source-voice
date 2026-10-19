@@ -30,6 +30,7 @@ import { getMeleeWeaponAnimTime } from '../../characters/weaponStates.js';
 import { EOTB_FOOT_SET_COUNT } from '../../player/classSkins.js';   // PEERFX3: a class skin is a set past the mod's
 import { spriteFor, eotbSpriteUrl, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from '../../player/eyeOfTheBeholder/eotbSprite.js';
 import { decodePng } from '../../systems/textureReplacement.js';
+import { isLayeredKey, decodeLayered, outfitOfItems, layeredGenderOf } from '../../player/eyeOfTheBeholder/layeredArmor.js';   // WORN-ARMOUR: a walker in the armour it wears
 import { POSE_RIDE } from '../wire.js';
 import {
   isRearView, createLanternArt, loadLanternArt, createSpriteLantern, stepSpriteLantern, spriteStride, hangSpriteLantern,
@@ -55,6 +56,7 @@ export const RIDER_LOOKS_KEPT = 12;
 export const RIDER_LOOK_IDLE_MS = 2000;
 
 async function decodeUrl(url) {
+  if (isLayeredKey(url)) return worldOrderColors(await decodeLayered(url, decodePng), { owned: true });   // WORN-ARMOUR: composed from its strip
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${url}: ${res.status}`);
   return worldOrderColors(await decodePng(new Uint8Array(await res.arrayBuffer())), { owned: true });   // PERF-PEERS5: the decode is this door's alone - turned in its own bytes
@@ -401,7 +403,11 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
     for (const peer of on ? peers ?? [] : []) {
       const pose = peer?.shown;
       const set = peer?.look?.eo;
-      if (!pose || !Number.isInteger(set) || pose.rd || pose.wb || pose.dd || skip(peer.id)) continue;
+      // LAYERED-GEAR: a player who chose the On foot Layered Gearing Skin (their look's `lg`, net/wire.js validLook) is
+      // a walker in the armour they wear, in the body they chose - a set or none (remotePlayers.sync then skips them: a
+      // walker's height is their body's, world.js bodyHeight)
+      const lgBody = layeredGenderOf(peer?.look?.lg);
+      if (!pose || (!Number.isInteger(set) && !lgBody) || pose.rd || pose.wb || pose.dd || skip(peer.id)) continue;
       seen.add(peer.id);
       let r = walkers.get(peer.id);
       if (!r) { r = { table: null, frame: 0, clock: 0, shot: null, last: null, gather: {}, batch: null, batchKey: null, size: null, xml: null, mirror: false, lantern: null, pace: 0, paceFeet: null, veil: null }; walkers.set(peer.id, r); }   // PEER-ACTS: `gather` the act as last seen
@@ -447,7 +453,10 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
       // 10-14, the table class skins read for Death, player/classSkins.js). Eye Of The Beholder's sets carry no hurt
       // table (their Death is the fall), so they flinch by the red flash alone.
       const flinch = set >= EOTB_FOOT_SET_COUNT && hurt(peer.id);
-      const s = spriteFor(flinch ? 'Death' : r.table, view, flinch ? 0 : r.frame, { onFoot: set });
+      // LAYERED-GEAR: such a walker wears what its look says it wears - the helmet, chest and legs pieces (and a cloak's
+      // dye) its own client sent (net/wire.js look items) - in the body it chose; leather where it wears none
+      const worn = lgBody ? { wornArmour: true, outfit: outfitOfItems(peer.look?.items), gender: lgBody } : null;
+      const s = spriteFor(flinch ? 'Death' : r.table, view, flinch ? 0 : r.frame, worn ? { onFoot: set ?? 0, ...worn } : { onFoot: set });
       if (!s) continue;
       faceDrawn(r, view, yaw, feet, eye);   // SPRITE-FACE: the way it is drawn facing, for an aura on it
       const g = grow ? grow(feet) : 1;   // OW-PEERS: grown under the Overworld, as the traveller is
