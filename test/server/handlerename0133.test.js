@@ -1,12 +1,18 @@
 // HANDLE-RENAME (2026-10-19, Mac: "Change the name PROSTITUTE_STRANGLER to SanguinePanguine. This is an account").
 // Migration 0133 renames the one account - its handle, how it signs in, and the rows that keep its name as it was - and
-// leaves the moderation record as it was. Driven over the real worker and the real migrations: the account is made and
-// writes through the service's own routes, then the migration is applied again as the deploy applies it, once.
+// leaves the moderation record as it was. Driven over the real worker and the real migrations: the account's row is the
+// live one's (a handle issued before NAME-WORDS, which the service now refuses), its letters are sent through the
+// service's own route, then the migration is applied again as the deploy applies it, once.
+// NAME-WORDS (the same day, "Not sure how the filter didnt catch this" - then "Yes" to adding both words): net/nameFilter.js
+// reads `prostitute` and `strangler` ANYWHERE, so the handle is refused at entry and the words starred in a line.
 import '../modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService } from '../accountDb.mjs';
+import { checkName } from '../../src/net/nameFilter.js';
+import { sanitizeChat } from '../../src/net/wire.js';
+import { ACCEPTED } from '../../src/net/legalLaw.js';
 
 const MIGRATION = readFileSync(new URL('../../server-account/migrations/0133_handle_rename.sql', import.meta.url), 'utf8');
 const OLD = 'PROSTITUTE_STRANGLER', NEW = 'SanguinePanguine';
@@ -14,7 +20,11 @@ const OLD = 'PROSTITUTE_STRANGLER', NEW = 'SanguinePanguine';
 async function stand() {
   const s = await standService();
   const raw = s.env.DB._raw;
-  const old = await s.registered(OLD, { renown: 2 });
+  // the row as the live database holds it: the handle issued before the filter read its words, and the renown track it
+  // was written with
+  const old = await s.registered('Placeholder', { renown: 2 });
+  raw.prepare('UPDATE players SET handle = ?, handle_lc = ? WHERE id = ?').run(OLD, OLD.toLowerCase(), old.id);
+  raw.prepare('UPDATE renown_tracks SET name = ? WHERE player = ?').run(OLD, old.id);
   const friend = await s.registered('Bystander', { renown: 2 });
   assert.equal((await s.call('/v1/mail/send', { to: 'Bystander', subject: 'Hello', body: 'A letter.' }, old.secret)).status, 200);
   assert.equal((await s.call('/v1/mail/send', { to: OLD, subject: 'Hi', body: 'Back.' }, friend.secret)).status, 200);
@@ -51,4 +61,15 @@ test('HANDLE-RENAME 0133: where SanguinePanguine is another account\'s, nothing 
   assert.deepEqual(s.raw.prepare('SELECT from_name FROM letters ORDER BY from_name').all().map((l) => l.from_name), ['Bystander', OLD]);
   assert.equal(s.raw.prepare('SELECT name FROM renown_tracks WHERE player = ?').get(s.old.id).name, OLD);
   assert.equal((await s.login(OLD)).status, 200);
+});
+
+test('NAME-WORDS: the report\'s handle is refused at entry, naming the word; either word is caught glued to another or padded; a line stars them; SanguinePanguine and Stranglehold pass (mutants: either word left out)', async () => {
+  const s = await stand();
+  const g = await s.guest();
+  const reg = await s.call('/v1/auth/register', { handle: OLD, password: 'a good long one', ...ACCEPTED }, g.secret);
+  assert.deepEqual([reg.status >= 400, reg.body?.error], [true, 'handle-refused']);
+  assert.deepEqual([checkName(OLD).ok, checkName(OLD).word], [false, 'prostitute']);
+  assert.deepEqual([checkName('xXStranglerXx').ok, checkName('xXStranglerXx').word], [false, 'strangler']);
+  assert.equal(sanitizeChat('a prostitute and a strangler'), 'a ********** and a *********');
+  assert.deepEqual([NEW, 'Stranglehold'].map((n) => checkName(n).ok), [true, true]);
 });
