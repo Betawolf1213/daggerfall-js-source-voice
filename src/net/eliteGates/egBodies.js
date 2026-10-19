@@ -452,6 +452,12 @@ export function egStoreyApart(view, x, y, z, bx, by, bz, melee = true) {
   const sm = egStoreyY(view, x, H, z), sb = egStoreyY(view, bx, by, bz);
   return !egOneStorey(sm, sb) && (melee || egStacked(view, x, sm, z, bx, sb, bz));   // FB1018D BANNER-SHAFT: a shaft or a spell through a floor alone
 }
+/** AUDIT FB1018f (found merging FB1018D): A BLOW FROM OFF THE FIGHT FLOOR reaches only so far - the feet (x, y, z) on no piece of
+ *  hall `spec`'s own fight floor (a span's island or plate is the fight view's, never the floor's: egOnFight reads `spec.fl`) and
+ *  body `b`'s edge, at (bx, bz), past MELEE_REACH + POSE_SLACK + 4: the relay lands nothing (egHitBody), and every screen turns it
+ *  (egStrikeTurned) - a shaft from one island at a Harrier on another, 26 m off, was offered and leeched where the relay took
+ *  none. Pure. */
+export const egOutOfReach = (spec, x, y, z, b, bx, bz) => !egOnFight(spec, x, z, POSE_SLACK + 6, y) && dist(x, z, bx, bz) - (b?.r ?? 0.6) > MELEE_REACH + POSE_SLACK + 4;
 /** TURNED-BLOW: the flags a body takes no blow through, whatever the blow claims - a friend's and a vanished lord's
  *  (egHitBody refuses both) and a ward's (egHitBody lands nothing through it, a lord's with it). */
 export const EG_TURNS_FL = EG_FL.friend | EG_FL.hidden | EG_FL.ward;
@@ -467,11 +473,13 @@ export const egLordAsleep = (b) => b?.role === EG_ROLE.lord && !egHas(b, EG_FL.m
  * martial power - answers a blow the relay will refuse, and the blow is never sent. AUDIT FB1018f L3-6: and on a body a storey
  * over or under the feet (egStoreyApart, the relay's own rule in egHitBody), where it stands at `now` (its walk carried as the
  * relay carries it - egBodyAt, egWalkY; the word's own place with none). Pure.
- * @param {any} view @param {any} b @param {number} x @param {number} y @param {number} z @param {number} [now]
+ * @param {any} view @param {any} b @param {number} x @param {number} y @param {number} z @param {number} [now] @param {any} [spec] the
+ *  hall itself, whose own fight floor the reach off it is judged from (egOutOfReach); none, unjudged
  */
-export function egStrikeTurned(view, b, x, y, z, now = 0) {
+export function egStrikeTurned(view, b, x, y, z, now = 0, spec = null) {
   if (!b || ((b.fl | 0) & EG_TURNS_FL) !== 0 || egLordAsleep(b) || egStruckOff(view, b, x, y, z)) return true;
   const [bx, bz] = egBodyAt(b, now);
+  if (spec && egOutOfReach(spec, x, y, z, b, bx, bz)) return true;   // AUDIT FB1018f: off the hall's own floor, past reach (the relay's egHitBody)
   // by the shaft's and the spell's storey rule: a swing's reach is under EG_STACK_M, so no swing meets a body a storey away
   return egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz, false);
 }
@@ -488,8 +496,7 @@ export function egHitBody(F, spec, p, i, d, r, pose, now, seq = null, mult = 1, 
   if (!spendBlow(p, now, seq, `e${i}`)) return { got: 0, b: null };
   if (!pose || !Number.isFinite(pose.x) || !Number.isFinite(pose.z)) return { got: 0, b: null };
   const [bx, bz] = egBodyAt(b, now), gap = dist(pose.x, pose.z, bx, bz) - (b.r ?? 0.6);
-  const onFloor = egOnFight(spec, pose.x, pose.z, POSE_SLACK + 6, pose.y);   // THE ASCENT: by the member's feet
-  if (!onFloor && gap > MELEE_REACH + POSE_SLACK + 4) return { got: 0, b: null };
+  if (egOutOfReach(spec, pose.x, pose.y, pose.z, b, bx, bz)) return { got: 0, b: null };   // THE ASCENT: by the member's feet; AUDIT FB1018f: the one law every screen asks too
   // THE ASCENT (Elite-Gates-Ascent.md section 2): in a hall that judges by height, a blow reaches no body a storey over or under
   // the member (a lord on the floor stacked over the member's, over its plan, is out of its reach). FB1018D BANNER-SHAFT: a
   // swing reaches its own storey alone; a shaft or a spell crosses the open air to a body of another storey, and is refused

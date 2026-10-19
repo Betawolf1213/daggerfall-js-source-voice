@@ -399,7 +399,7 @@ test('THE ASCENT - HEIGHT (section 2): EVERY CALL SITE HANDS THE FEET - the rela
     'src/net/eliteGates/egBodies.js': ['egGroundAt(view, x, y, z, EG_STRIKE_PAD_M)', 'egGroundAt(view, b.x, egFeetY(view, b.y), b.z',
       // AUDIT FB1018f L3-6: the storey a hit's body stands in moved into egStoreyApart (the one law every screen asks too) - egHitBody
       // hands it the striker's feet and the body's, and egStrikeTurned the body's where its walk has carried it
-      'egStoreyApart(F.view ?? spec, pose.x, pose.y, pose.z, bx, b.y, bz)', 'egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz)'],
+      'egStoreyApart(F.view ?? spec, pose.x, pose.y, pose.z, bx, b.y, bz, r === HIT_KINDS.Melee)', 'egStoreyApart(view, x, y, z, bx, b.mv ? egWalkY(b.mv, now) : b.y, bz, false)', 'egOutOfReach(spec, pose.x, pose.y, pose.z, b, bx, bz)', 'egOutOfReach(spec, x, y, z, b, bx, bz)'],
     'src/net/eliteGates/egLegion.js': ['K.r, a.y);', 'egArchCut(spec, a.x, a.z, ex, ez, a.y)', 'egKeepOnFight(spec, mark.x, mark.z, 0.5, a.y)', 'egGroundAt(spec, a.x, egFeetY(spec, a.y), a.z, 0.5)', 'egOnFight(spec, n.m.x, n.m.z, -3, n.m.y)', "nm: 'Pyre', y: a.y", 'egAirKeep(view, gx, gz, a.y)', 'egAirNext(view, a.x, a.z, tx, tz, a.y)'],
     'src/net/eliteGates/egLords.js': ['regionOf(view, G, L.x, L.z, egFeetY(view, L.y), L.fr), to', 'egArchCut(view, L.x, L.z, to[0], to[1], L.y)', 'L.x + Math.sin(a) * 8, L.z + Math.cos(a) * 8, 1, L.y)', 'f.r * 0.7, 2, L.y)', 'L.z + Math.cos(yaw) * 8, L.r, L.y)', 'L.z + Math.cos(yaw) * 10, L.r, L.y)',
       'egHavenRouteM(havens, f), f.y)', 'egKeepOnFight(spec, G.x0 + (far % G.W) * g, G.z0 + Math.floor(far / G.W) * g, 3, y)', 'R, 1, f.y));', "{ r: 0.8, extra: { third: C.next }, y: by }", "zoneOut(F, 'void', shDisc(o.x, o.z, 11), o.stAt, o.stAt + 15_000, out, { y: o.y })", 'el: bl.el, y: bl.y }', 'spotY(spec, s) });', 'of the storey its feet stand in (the discs that bear them)'],
@@ -407,7 +407,7 @@ test('THE ASCENT - HEIGHT (section 2): EVERY CALL SITE HANDS THE FEET - the rela
     'src/scenes/eliteGates/egFight.js': ['onStorey(egBlowVerdict(bl, f[0], f[1], t, 400, me()), bl, f[0], fy, f[1], t)', 'onStorey(egBlowVerdict(bl, q[0], q[2], t, 400, sub), bl, q[0], q[1], q[2], t)', 'egBlowLandsOn(egFightView(spec), bl, x, y, z)', '(Number.isFinite(z.y) && !egBears(z.y, egFeetY(spec, fy)))', 'egRimCastsBack(F.zones, f[0], f[1], t, egFeetY(spec, fy))',
       'sh.by = Number.isFinite(bl.y) ? bl.y : NaN;   // THE ASCENT', "sh.style = TELEGRAPH_STYLE.weight; sh.by = Number.isFinite(bl.y) ? bl.y : NaN;", 'hv.by = sh.by;', 'sh.by = Number.isFinite(z.y) ? z.y : NaN;', 'sl.by = NaN;', '!!f && egOneStorey(st, bl.y) && bl.s.some', 'egStoreyY(egFightView(spec), f[0], fy, f[1])',
       // AUDIT FB1018f lane L3: the screen's strike rule is handed my feet's height (TURNED-BLOW's turnStandIn)
-      'egStruckOff(view, b, at[0], at[1], at[2])', 'egStrikeTurned(view, b, at[0], at[1], at[2], now())'],
+      'egStruckOff(view, b, at[0], at[1], at[2])', 'egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec)'],
   };
   for (const [file, want] of Object.entries(sites)) {
     const src = rd(file);

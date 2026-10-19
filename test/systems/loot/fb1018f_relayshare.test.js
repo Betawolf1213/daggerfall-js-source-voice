@@ -127,6 +127,10 @@ const T0 = 1_800_000_000_000;
 // AUDIT FB1018f L3-6: each stands on the fight ground under it, as the relay stands every body (net/eliteGates/egBodies.js egBodyNew -
 // egFeetAt): the hall's first disc is 18 m up, and a lord drawn at 0 under it is a storey below my feet there, turned
 const feetAt = (x, z) => egFeetAt(egFightView(egHallOf(12345, 5, 0)), x, z);
+// the hall's first fight piece as the generator lays it today (a disc, r 11), read off the hall, never written in - EG-SWEEP-RED
+// moved it
+const P0 = egFightView(egHallOf(12345, 5, 0)).fl[0];
+const on = (dx = 0) => ({ x: Math.round(P0.x) + dx, z: Math.round(P0.z) });
 const lordRow = (i, key, hp, max, { x = 0, z = 30 } = {}) => egBodyOf([i, EG_ROLE.lord, EG_BOSS_KEYS.indexOf(key), 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 1, 0, 0, Math.PI], T0);
 const addRow = (i, k, hp, max, { x = 6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.add, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
 const objRow = (i, k, hp, max, { x = -6, z = 30 } = {}) => egBodyOf([i, EG_ROLE.obj, k, 0, x, z, hp, max, 0, x, z, 0, 0, feetAt(x, z), feetAt(x, z), 0, 0, 0, Math.PI], T0);
@@ -187,9 +191,9 @@ test('RELAY-SHARE THE REPORT: a Rare imprinted at the Reforge with Sweet Mother\
   h.link.st = fight({ hp: 249, max: 1000 });
   assert.equal(weaponAttackDamage(me, warden, 0, sword(), ROLL), plain + Math.floor(plain / 2), 'the word read at the blow, not at his first sight');
   // an Elite Breach: every foe there is the relay's - a Court's lord at a fifth of the word
-  // both on the hall's first fight piece (a disc at -53.17, 53.34, r 11), struck from beside the first - off the fight
+  // both on the hall's first fight piece (P0, a disc of r 11), struck from beside the first - off the fight
   // ground the relay lands nothing and the screen turns the blow (TURNED-BLOW), so no power answers there
-  const B = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 }), lordRow(2, 'garoth', 900, 1000, { x: -47, z: 53 })]);
+  const B = breach([lordRow(1, 'hound', 200, 1000, on()), lordRow(2, 'garoth', 900, 1000, on(6))]);
   B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
   const lords = B.fight.hostTargets();
   const low = lords.find((q) => q.i === 1).entity, high = lords.find((q) => q.i === 2).entity;
@@ -326,7 +330,7 @@ test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018f L6-7, and lan
   fresh();
   const me = imprinted();
   const plain = weaponAttackDamage(me, bossStandIn({ mobile: 31 }, 'unread'), 0, sword(), ROLL);
-  const B = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 }), objRow(3, EG_OBJ.rift, 90, 120, { x: -50, z: 53 })], { feet: false });
+  const B = breach([lordRow(1, 'hound', 200, 1000, on()), objRow(3, EG_OBJ.rift, 90, 120, on(3))], { feet: false });
   B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
   const low = B.fight.hostTargets().find((q) => q.i === 1), rift = B.fight.hostTargets().find((q) => q.i === 3);
   assert.ok(low && rift, 'both still drawn, bodies a swing could meet');
@@ -339,7 +343,7 @@ test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018f L6-7, and lan
   assert.equal(healthShare(low.entity), 0.2, 'its word is under a quarter');
   assert.equal(weaponAttackDamage(me, low.entity, 0, sword(), ROLL), plain, 'and the Kiss gives nothing on a turned blow - the plain blow');
   // the same lord with my feet beside it: whole, the Kiss's +50%, the blow sent
-  const H = breach([lordRow(1, 'hound', 200, 1000, { x: -53, z: 53 })]);
+  const H = breach([lordRow(1, 'hound', 200, 1000, on())]);
   H.fight.frame(); await new Promise((r) => setTimeout(r, 0)); H.fight.frame();
   const whole = H.fight.hostTargets().find((q) => q.i === 1);
   assert.equal(whole.entity.warded, false);
@@ -348,11 +352,11 @@ test('RELAY-SHARE STANDING NOWHERE TURNS EVERY BLOW (AUDIT FB1018f L6-7, and lan
 
 test('RELAY-SHARE A STRUCK OBJECT READS ITS WORD AS IT FALLS (lane L3\'s survivor): an Elite Breach\'s rift at three quarters of its word, then a fifth - its stand-in\'s share each frame\'s, never the share it was first drawn at (mutants: the object\'s reader frozen at its first sight)', async () => {
   fresh();
-  const B = breach([objRow(3, EG_OBJ.rift, 90, 120, { x: -53, z: 53 })]);
+  const B = breach([objRow(3, EG_OBJ.rift, 90, 120, on())]);
   B.fight.frame(); await new Promise((r) => setTimeout(r, 0)); B.fight.frame();
   const share = () => healthShare(B.fight.hostTargets().find((q) => q.i === 3).entity);
   assert.equal(share(), 0.75);
-  B.E.fight.bodies = [objRow(3, EG_OBJ.rift, 24, 120, { x: -53, z: 53 })];
+  B.E.fight.bodies = [objRow(3, EG_OBJ.rift, 24, 120, on())];
   B.fight.frame();
   assert.equal(share(), 0.2, 'its word now');
 });

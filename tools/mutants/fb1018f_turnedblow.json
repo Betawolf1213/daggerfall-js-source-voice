@@ -92,7 +92,7 @@
   {
     "name": "TURNED-BLOW-turn-kept-off",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now());",
+    "old": "    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec);",
     "new": "    e.warded = false;",
     "tests": [
       "test/net/eliteGates/fb1018f_turnedblow.test.js"
@@ -102,7 +102,7 @@
   {
     "name": "TURNED-BLOW-flags-unasked",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now());",
+    "old": "    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec);",
     "new": "    e.warded = off;",
     "tests": [
       "test/net/eliteGates/fb1018f_turnedblow.test.js"
@@ -222,8 +222,8 @@
   {
     "name": "TURNED-BLOW-storey-instant-unhanded",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "egStrikeTurned(view, b, at[0], at[1], at[2], now());",
-    "new": "egStrikeTurned(view, b, at[0], at[1], at[2]);",
+    "old": "egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec);",
+    "new": "egStrikeTurned(view, b, at[0], at[1], at[2], undefined, spec);",
     "tests": [
       "test/net/eliteGates/law9_height.test.js"
     ],
@@ -382,7 +382,7 @@
   {
     "name": "TURNED-BLOW-standing-nowhere-turns-nothing",
     "file": "src/scenes/eliteGates/egFight.js",
-    "old": "    const off = !at || egStruckOff(view, b, at[0], at[1], at[2]);\n    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now());",
+    "old": "    const off = !at || egStruckOff(view, b, at[0], at[1], at[2]);\n    e.warded = off || egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec);",
     "new": "    const off = !!at && egStruckOff(view, b, at[0], at[1], at[2]);\n    e.warded = off || (!!at && egStrikeTurned(view, b, at[0], at[1], at[2], now()));",
     "tests": [
       "test/systems/loot/fb1018f_relayshare.test.js"
@@ -439,5 +439,25 @@
       "test/net/eliteGates/fb1018f_turnedblow.test.js"
     ],
     "why": "AUDIT FB1018f L3-2: a spell into the Warden's ward pops its claim as a number"
+  },
+  {
+    "name": "TURNED-BLOW-reach-unasked-on-screen",
+    "file": "src/net/eliteGates/egBodies.js",
+    "old": "  if (spec && egOutOfReach(spec, x, y, z, b, bx, bz)) return true;",
+    "new": "",
+    "tests": [
+      "test/net/eliteGates/fb1018f_turnedblow.test.js"
+    ],
+    "why": "AUDIT FB1018f (the merge with FB1018D): the screen offers a shaft from an island at a body past reach, which the relay refuses - a leech heals the claim"
+  },
+  {
+    "name": "TURNED-BLOW-reach-spec-unhanded",
+    "file": "src/scenes/eliteGates/egFight.js",
+    "old": "egStrikeTurned(view, b, at[0], at[1], at[2], now(), spec);",
+    "new": "egStrikeTurned(view, b, at[0], at[1], at[2], now());",
+    "tests": [
+      "test/net/eliteGates/fb1018f_turnedblow.test.js"
+    ],
+    "why": "AUDIT FB1018f: the screen hands its hall no spec, and the reach off the floor goes unjudged"
   }
 ]

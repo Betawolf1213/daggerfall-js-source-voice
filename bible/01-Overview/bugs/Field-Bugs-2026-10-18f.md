@@ -234,7 +234,7 @@ Court lord asleep in its ring.
 
 FIXED. One law: the relay's strike rule is `egBodies.js:"export function egStruckOff(view, b, x, y, z) {"`, called by
 `egBrain.js:"if (egStruckOff(view, body, p.x, p.y, p.z)) return out;"`, and the screen asks the same rule plus the
-flags the relay takes nothing through and a lord asleep (`egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0) {"`).
+flags the relay takes nothing through and a lord asleep (`egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0, spec = null) {"`).
 Each frame `egFight.js:"function turnStandIn(t, b) {"` marks a target's stand-in `warded` when the relay would refuse a
 blow from my feet; every heal and power already refuses a warded target, and Vampiric Effect now does too
 (VAMPIRIC-WARD). Nothing is sent, nothing bleeds, the swing and the shaft ring off as off the Warden's ward, and the hit
@@ -248,8 +248,13 @@ AUDIT FB1018f L3 found the screen and the relay still apart, and closed each:
 - **The storey** (L3-6): the relay lands nothing on a body a storey over or under me (`egOneStorey`), and the screen did
   not ask - a Harrier on an island 14 m up was offered, and a leech healed the claim. One law now,
   `egBodies.js:"export function egStoreyApart(view, x, y, z, bx, by, bz, melee = true) {"`, which egHitBody and
-  `egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0) {"` both call, the screen judging the body
+  `egBodies.js:"export function egStrikeTurned(view, b, x, y, z, now = 0, spec = null) {"` both call, the screen judging the body
   where its walk has carried it.
+- **Merged with FB1018D BANNER-SHAFT**: the storey law is one (a swing refused by the storey alone, a shaft or a spell only
+  through a floor), and the screen asks the shaft's rule - no swing reaches a body a storey away. Found at that merge: from
+  off the hall's own fight floor (a span's island or plate) the relay lands a blow only within reach, and the screen never
+  asked - a shaft at a Harrier on another island was offered and leeched; one law now, `egBodies.js` egOutOfReach, which
+  egHitBody and egStrikeTurned both call.
 - **An object's radius** (L3-4): the screen judged a struck object at 1 m; the relay's are their own (a spark 0.6, a
   rift 1.3, the Wellspring's spring - a rift - 2.2). Each body's radius now rides beside its row (`ead` and `efs` `r`,
   egRadiusWire; wire.js egRadii), outside the row, so a build before it drops the field and keeps the word.

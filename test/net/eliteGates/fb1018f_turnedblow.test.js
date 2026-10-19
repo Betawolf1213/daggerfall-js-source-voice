@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { egHallOf, EG_SEALED_MS } from '../../../src/net/eliteGates/egLaw.js';
 import { egBreachNew, egEnter, egStep, egBlow } from '../../../src/net/eliteGates/egBrain.js';
 import { EG_ROLE, EG_FL, egBodiesOf, egBodyWire, egStruckOff, egStrikeTurned, egLordAsleep, EG_TURNS_FL } from '../../../src/net/eliteGates/egBodies.js';
-import { egStoreyApart, egRisen, egRadiusWire, egFightState } from '../../../src/net/eliteGates/egBodies.js';   // AUDIT FB1018f L3-4, L3-6
+import { egStoreyApart, egOutOfReach, egRisen, egRadiusWire, egFightState } from '../../../src/net/eliteGates/egBodies.js';   // AUDIT FB1018f L3-4, L3-6
 import { EG_OBJ } from '../../../src/net/eliteGates/egLords.js';
 import { EG_KIND, egLegionRaise } from '../../../src/net/eliteGates/egLegion.js';
 import { egFightView, egGroundAt, EG_STRIKE_PAD_M } from '../../../src/net/eliteGates/egWalkGraph.js';
@@ -255,29 +255,35 @@ test('TURNED-BLOW THE STOREY (AUDIT FB1018f L3-6; Elite-Gates-Ascent.md section 
   const near = (p) => egBodiesOf(S.B.F, EG_ROLE.add).filter((x) => x.k === EG_KIND.harrier && Math.abs((x.y ?? 0) - (p.y ?? 0)) < 2).sort((u, v) => Math.hypot(u.x - p.x, u.z - p.z) - Math.hypot(v.x - p.x, v.z - p.z))[0];
   const up = near(hi), mine = near(lo);
   assert.ok(up && mine, 'a Harrier shadows each of us, on each island');
-  assert.equal(egStoreyApart(view, lo.x, lo.y ?? 0, lo.z, up.x, up.y, up.z), true, 'the law: a storey over me');
+  // FB1018D BANNER-SHAFT, one law with it (merged): a swing is refused by the storey alone, a shaft or a spell only through a
+  // floor - and two islands of a span stand in the open air, so a shaft from mine lands on the high one's Harrier, on both sides
+  assert.equal(egStoreyApart(view, lo.x, lo.y ?? 0, lo.z, up.x, up.y, up.z, true), true, 'the law: a storey over me, for a swing');
+  assert.equal(egStoreyApart(view, lo.x, lo.y ?? 0, lo.z, up.x, up.y, up.z, false), false, 'and no floor between us, for a shaft');
+  // but an island is no piece of the hall's own fight floor, and from off it a blow reaches only so far (egOutOfReach - the
+  // relay's egHitBody, found merging FB1018D: the storey had turned this one first, and the screen never asked the reach)
+  assert.equal(egOutOfReach(S.spec, lo.x, lo.y ?? 0, lo.z, up, up.x, up.z), true, 'off the floor, past reach');
   const t = S.target(up.i);
-  assert.ok(t, 'the screen still draws it, a body my swing could meet');
-  assert.equal(t.entity.warded, true, 'turned');
-  assert.equal(t.entity.wardText, null, 'in the ward\'s word - I stand on the fight ground');
-  assert.equal(numberFor({ hit: true, damage: 40, target: t.entity }).text, 'Warded');
+  assert.ok(t, 'the screen still draws it');
+  assert.equal(t.entity.warded, true, 'turned on the screen');
   const n = S.sent.length;
   assert.equal(S.fight.hostHit({ i: up.i, d: 40, r: HIT_KINDS.Shaft }), false, 'never sent');
   assert.equal(S.sent.length, n);
   let landed = 0;
   for (let k = 0; k < 5; k++) landed += S.relayBlow(up.i, HIT_KINDS.Shaft);
-  assert.equal(landed, 0, 'the relay: five shafts from my island land nothing');
+  assert.equal(landed, 0, 'as the relay lands nothing');
   assert.equal(S.target(mine.i).entity.warded, false, 'on my own storey: whole');
-  assert.ok(S.relayBlow(mine.i, HIT_KINDS.Shaft) > 0, 'and the relay lands it');
-  // where the body stands NOW: one walking up from my island to the high one, asked once its walk has carried it there
-  const walker = { i: 99, role: EG_ROLE.add, k: EG_KIND.harrier, x: lo.x, z: lo.z, y: lo.y ?? 0, fl: 0, mv: { x: lo.x, z: lo.z, y: lo.y ?? 0, tx: hi.x, tz: hi.z, ty: hi.y ?? 0, v: 5, at: 0 } };
-  assert.equal(egStrikeTurned(view, walker, lo.x, lo.y ?? 0, lo.z, 0), false, 'at its word: on my island');
-  assert.equal(egStrikeTurned(view, walker, lo.x, lo.y ?? 0, lo.z, 60_000), true, 'carried up: a storey over me');
-  assert.equal(egStrikeTurned(view, walker, hi.x, hi.y ?? 0, hi.z, 60_000), false, 'and on the high island\'s with it');
+  // where the body stands NOW, through a floor: two floors stacked over one plan, a body walking from the lower to the upper,
+  // asked once its walk has carried it there
+  const stacked = { ...S.spec, kind: 'court', fl: [{ t: 'd', x: 0, z: 0, r: 20, y: 0 }, { t: 'd', x: 0, z: 0, r: 20, y: 8 }] };
+  const walker = { i: 99, role: EG_ROLE.add, k: EG_KIND.harrier, x: 0, z: 0, y: 0, fl: 0, mv: { x: 0, z: 0, y: 0, tx: 1, tz: 0, ty: 8, v: 5, at: 0 } };
+  assert.equal(egStrikeTurned(stacked, walker, 0.5, 0, 0, 0), false, 'at its word: on my floor');
+  assert.equal(egStrikeTurned(stacked, walker, 0.5, 0, 0, 60_000), true, 'carried up: a floor between us');
+  assert.equal(egStrikeTurned(stacked, walker, 0.5, 8, 0, 60_000), false, 'and on the upper floor with it');
   // one law: both sides call it, and no copy of the storey rule stands in egHitBody
   const src = rd('src/net/eliteGates/egBodies.js');
-  assert.match(src, /if \(egStoreyApart\(F\.view \?\? spec, pose\.x, pose\.y, pose\.z, bx, b\.y, bz\)\) return \{ got: 0, b: null \};/, 'the relay asks the law');
-  assert.equal((src.match(/!egOneStorey\(egStoreyY\(/g) ?? []).length, 1, 'the rule written once');
+  assert.match(src, /if \(egStoreyApart\(F\.view \?\? spec, pose\.x, pose\.y, pose\.z, bx, b\.y, bz, r === HIT_KINDS\.Melee\)\) return \{ got: 0, b: null \};/, 'the relay asks the law, with the blow\'s kind');
+  assert.equal((src.match(/!egOneStorey\(sm, sb\)/g) ?? []).length, 1, 'the rule written once');
+  assert.equal((src.match(/!egOneStorey\(egStoreyY\(/g) ?? []).length, 0, 'and nowhere else');
 });
 
 test('TURNED-BLOW THE OBJECT\'S RADIUS (AUDIT FB1018f L3-4): an errand\'s object is struck from beside it off the floor by its own radius (egStruckOff) - a spark\'s 0.6, a chain\'s 0.8, an anchor\'s 0.9, a false wall\'s 1, a rift\'s 1.3, a Wellspring\'s spring 2.2 (a rift too: no kind says it) - and the screen now hears that radius, said beside each body\'s row of nineteen (`ead` and `efs`, through the real wire and link): at every gap off a floor\'s edge the screen judges a blow as the relay does; a word that says none (a relay before it) still folds, a malformed list is refused (mutants: the radius unsaid in a risen word or the whole fight; dropped by the wire; unfolded by the link; halved; a short or a negative list kept; one radius for every body)', () => {
