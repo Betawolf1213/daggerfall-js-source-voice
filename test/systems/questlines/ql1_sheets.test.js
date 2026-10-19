@@ -1,13 +1,14 @@
 // QL1/QL5-QL10 (bible/06-Systems/Questlines-Arc.md sections 2.5 and 3): THE SHEETS AND THE BRANCHES, HELD TO THEIR
 // SCRIPTS. Every sheet is checked against the quest it names, parsed as the game reads it (test/qlSources.mjs, the pack
 // loader's node twin): a binding of a kind the law reads, a task, item, clock or foe the script holds, a step it logs, a
-// choice task something in it can set (qlSheets.js sheetProblems). And the sets are exact: every quest a player can be
+// choice task something in it can set (tools/qlSheetLaw.mjs sheetProblems). And the sets are exact: every quest a player can be
 // given has one sheet, in its family's file; every flagship quest (the rule, section 3) has a branch; every branch patch
 // applies, numbers its words from QL_MESSAGE_BASE and names its tasks `_ql..._`, and reads as DFU's with the switch off.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SHEETS, SHEET_FAMILIES, sheetProblems } from '../../../src/systems/questlines/qlSheets.js';
+import { SHEETS, SHEET_FAMILIES } from '../../../src/systems/questlines/qlSheets.js';
+import { sheetProblems } from '../../../tools/qlSheetLaw.mjs';
 import { QL_FAMILY_NAMES, LIST_GROUP_FAMILY, UNLISTED_FAMILY } from '../../../src/systems/questlines/qlFamilies.js';
 import { lineQuestNames } from '../../../src/systems/questlines/qlLines.js';
 import { QL_PATCHES, QL_MESSAGE_BASE } from '../../../src/systems/questlines/qlPatches.js';

@@ -130,7 +130,7 @@ test('QL11 the kinds: ACT_IDS is the leaf\'s keys, frozen; each kind lower-case 
   assert.deepEqual(ACT_IDS, Object.keys(ACT_KINDS));
   assert.ok(Object.isFrozen(ACT_KINDS) && Object.isFrozen(ACT_IDS));
   for (const k of ACT_IDS) assert.match(k, /^[a-z]+(-[a-z]+)*$/, k);
-  for (const k of ACT_IDS) assert.ok(typeof ACT_KINDS[k] === 'string' && ACT_KINDS[k].length > 0, `${k} has its words`);
+  for (const k of ACT_IDS) assert.ok(typeof ACT_KINDS[k] === 'string' && ACT_KINDS[k].length > 0, `${k} has its family`);
   assert.equal(ACT_IDS.length, 23);
   assert.ok(!Object.hasOwn(ACT_KINDS, 'wagon-hauled'), 'no feature sells a wagon\'s load (qlActs.js says why)');
   assert.ok(Object.hasOwn(ACT_KINDS, 'valkynaz-felled'), 'the Weir Road\'s third step waits on it');

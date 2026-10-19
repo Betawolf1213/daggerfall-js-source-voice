@@ -12,7 +12,7 @@
 //   node tools/qlSheetDraft.mjs --family <Name>    every quest of a family, briefly (name, title, size, steps)
 import { isMain } from './lib/isMain.mjs';
 import { QUEST_FILES, parsedQuest, packMachine, questSource, classicRows } from '../test/qlSources.mjs';
-import { settable } from '../src/systems/questlines/qlSheets.js';
+import { settable } from './qlSheetLaw.mjs';
 import { LIST_GROUP_FAMILY, UNLISTED_FAMILY } from '../src/systems/questlines/qlFamilies.js';
 import { lineStepOf } from '../src/systems/questlines/qlLines.js';
 

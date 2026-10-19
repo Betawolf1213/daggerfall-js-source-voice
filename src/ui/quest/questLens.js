@@ -168,7 +168,8 @@ export function quietText(quest, text, key = null) {
       return String(tokens[0].text ?? raw).replace(/\s+/g, ' ').trim();
     });
   } catch (e) {
-    warnOnce(`${quest?.uid}:ql:${key ?? raw}`, `[quest lens] the line "${raw}" of ${quest?.questName ?? 'a quest'} does not expand (${e?.message ?? e}); it reads as written`);
+    const once = `${quest?.uid}:ql:${key ?? raw}`;   // warnOnce's own guard, its words a console line
+    if (!_warned.has(once)) { _warned.add(once); console.warn(`[quest lens] the line "${raw}" of ${quest?.questName ?? 'a quest'} does not expand (${e?.message ?? e}); it reads as written`); }
     return raw;
   }
 }

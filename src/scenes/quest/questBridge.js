@@ -699,7 +699,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       // (ui/quest/questRail.js) is what leaves them out.
       // AUDIT JOURNAL-CLEAN F3: an id hidden for a quest no longer running is dropped - whatever ended it
       notebook?.pruneHiddenQuests?.([...machine.quests.values()].filter((q) => !q.questComplete).map((q) => q.uid));
-      return { active, finished: notebook?.getFinishedQuests() ?? [], ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved, unlogged, lines: questlinesOn() ? questlines.lines() : [], ladders: questlinesOn() ? ladderRows() : [] };   // QL12: the questlines and the guilds' ladders - none while they are off
+      return { active, finished: notebook?.getFinishedQuests() ?? [], ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved, unlogged, lines: questlinesOn() ? questlines.lineRows() : [], ladders: questlinesOn() ? ladderRows() : [] };   // QL12: the questlines and the guilds' ladders - none while they are off
     },
 
     /**

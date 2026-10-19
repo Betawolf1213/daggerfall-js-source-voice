@@ -6,7 +6,8 @@
 //
 //   node tools/qlCheck.mjs <Family>        problems, one a line; exit 1 if any
 import { isMain } from './lib/isMain.mjs';
-import { SHEETS, SHEET_FAMILIES, sheetProblems } from '../src/systems/questlines/qlSheets.js';
+import { SHEETS, SHEET_FAMILIES } from '../src/systems/questlines/qlSheets.js';
+import { sheetProblems } from './qlSheetLaw.mjs';
 import { LIST_GROUP_FAMILY, UNLISTED_FAMILY } from '../src/systems/questlines/qlFamilies.js';
 import { lineQuestNames } from '../src/systems/questlines/qlLines.js';
 import { QL_PATCH_FAMILIES, QL_MESSAGE_BASE } from '../src/systems/questlines/qlPatches.js';

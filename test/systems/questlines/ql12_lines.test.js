@@ -153,37 +153,36 @@ function runnerWith({ level = 30, online = true, service = null } = {}) {
 test('QL12 the runner: a line opens, its first step starts once, the next an hour after it ends, the line done at its last', () => {
   const { runner, machine, clock, step } = runnerWith({ level: 2, online: false });
   step(); step();
-  assert.deepEqual(machine.scheduled.filter((n) => n.startsWith('QLIP')), ['QLIP01'], 'started once, not every tick');
+  assert.deepEqual(machine.scheduled.filter((n) => n.startsWith('QLIT')), ['QLIT01'], 'started once, not every tick');
   assert.ok(!machine.scheduled.includes('QLBD01'), 'the Burning Doors: level 10, online');
+  assert.ok(!machine.scheduled.includes('QLIP01'), 'the crafts: online - the Professions answer there');
   assert.ok(!machine.scheduled.includes('QLIS01'), 'the sea: level 5');
-  const q = machine.end('QLIP01');
-  assert.deepEqual(runner.ended(q, { id: 'done', failure: false }), { line: 'introCrafts', step: 0, moved: true, done: false });
+  const q = machine.end('QLIT01');
+  assert.deepEqual(runner.ended(q, { id: 'done', failure: false }), { line: 'introTables', step: 0, moved: true, done: false });
   step();
-  assert.ok(!machine.scheduled.includes('QLIP02'), 'not in the same breath');
+  assert.ok(!machine.scheduled.includes('QLIT02'), 'not in the same breath');
   clock.s += STEP_GAP_S;
   step();
-  assert.ok(machine.scheduled.includes('QLIP02'));
-  runner.ended(machine.end('QLIP02'), { id: 'done', failure: false });
-  clock.s += STEP_GAP_S; step();
-  const last = runner.ended(machine.end('QLIP03'), { id: 'done', failure: false });
+  assert.ok(machine.scheduled.includes('QLIT02'));
+  const last = runner.ended(machine.end('QLIT02'), { id: 'done', failure: false });
   assert.equal(last.done, true);
-  const row = runner.rows().find((r) => r.id === 'introCrafts');
+  const row = runner.rows().find((r) => r.id === 'introTables');
   assert.equal(row.state, 'done');
-  assert.deepEqual(row.steps.map((s) => s.state), ['done', 'done', 'done']);
-  assert.equal(row.outcome, 'QLIP03 ended', 'the last step\'s outcome is the line\'s');
+  assert.deepEqual(row.steps.map((s) => s.state), ['done', 'done']);
+  assert.equal(row.outcome, 'QLIT02 ended', 'the last step\'s outcome is the line\'s');
 });
 
 test('QL12 the runner: a step that ends badly is offered again a day later; a quest no line holds moves nothing', () => {
   const { runner, machine, clock, step } = runnerWith({ level: 2, online: false });
   step();
-  const r = runner.ended(machine.end('QLIP01', false), { id: 'failed', failure: true });
+  const r = runner.ended(machine.end('QLIT01', false), { id: 'failed', failure: true });
   assert.equal(r.moved, false);
   clock.s += RETRY_GAP_S - 1; step();
-  assert.equal(machine.scheduled.filter((n) => n === 'QLIP01').length, 1);
+  assert.equal(machine.scheduled.filter((n) => n === 'QLIT01').length, 1);
   clock.s += 1; step();
-  assert.equal(machine.scheduled.filter((n) => n === 'QLIP01').length, 2, 'again');
+  assert.equal(machine.scheduled.filter((n) => n === 'QLIT01').length, 2, 'again');
   assert.equal(runner.ended({ questName: 'M0B00Y06', questSuccess: true }, null), null);
-  assert.equal(runner.lineState('introCrafts').step, 0);
+  assert.equal(runner.lineState('introTables').step, 0);
 });
 
 test('QL12 the runner, the switch off: no line opens (its quests would not be stamped)', () => {

@@ -5506,7 +5506,10 @@ function pauseQuests(body) {
     rail.append(el('div', 'px-qarch', t('ql.journal.lines', 'Questlines')));
     for (const q of lines) {
       const state = q.line?.state ?? 'running';
-      const b = el('button', `px-qrow px-qlinerow${state === 'done' || state === 'locked' ? ' done' : ''}${q.key === questSel ? ' on' : ''}`);
+      const cls = ['px-qrow', 'px-qlinerow'];
+      if (state === 'done' || state === 'locked') cls.push('done');
+      if (q.key === questSel) cls.push('on');
+      const b = el('button', cls.join(' '));
       b.append(el('span', 'px-c', '\u25c6'), document.createTextNode(questTitleOf(q.name)));
       b.title = q.ladder ? t('ql.journal.ladderRow', 'Your guild\u2019s quests, rank by rank') : lineStateWords(state);
       b.onclick = () => { questSel = q.key; render(); };

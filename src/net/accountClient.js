@@ -1726,7 +1726,7 @@ export function accountLamp({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
 export function accountQuestlines({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
   return {
-    claim: async (body) => { const r = await post('/v1/ql/claim', body); if (r?.error === 'auth') forgetSession(storage); return r; },
+    claim: async (body) => { const a = await post('/v1/ql/claim', body); if (a?.error === 'auth') forgetSession(storage); return a; },
     account: () => storedSession(storage)?.id ?? null,   // whose the line's pay is: none signed in, none asked
   };
 }

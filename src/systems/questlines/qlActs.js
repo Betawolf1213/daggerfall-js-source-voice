@@ -13,41 +13,42 @@
 // test/systems/questlines/ql11_acts.test.js sweeps src/ both ways: every kind here has a producer, and every producer
 // names a kind here.
 
-/** Every act a feature says, by kind - what the player did, in the words an objective's writer reads. */
+/** Every act a feature says, by kind, and the family it is of (what the player did is each kind's comment - the words an
+ *  objective's writer reads, kept out of the game's own strings: the sheet that names the act says it to the player). */
 export const ACT_KINDS = Object.freeze({
   // gathering and making (Professions, Foraging, Deep Waters)
-  'fish-caught': 'a fish caught',
-  'herb-gathered': 'a plant gathered',
-  'ore-mined': 'ore or gems mined',
-  'wood-chopped': 'wood chopped',
-  'piece-crafted': 'a piece made at a crafting station',
+  'fish-caught': 'gather',   // a fish caught
+  'herb-gathered': 'gather',   // a plant gathered
+  'ore-mined': 'gather',   // ore or gems mined
+  'wood-chopped': 'gather',   // wood chopped
+  'piece-crafted': 'make',   // a piece made at a crafting station
   // the loot's own laws
-  'gem-socketed': 'a gem set in a socket',
-  'piece-reforged': 'a piece reforged',
+  'gem-socketed': 'loot',   // a gem set in a socket
+  'piece-reforged': 'loot',   // a piece reforged
   // the tavern's tables
-  'gambit-won': 'a game of the King\'s Gambit won',
-  'cards-won': 'a hand of cards won',
+  'gambit-won': 'tavern',   // a game of the King's Gambit won
+  'cards-won': 'tavern',   // a hand of cards won
   // the sea and the road
-  'port-reached': 'a port reached under sail',
-  'cargo-delivered': 'a cargo delivered',
-  'ship-struck': 'a ship made to strike her colours',
+  'port-reached': 'sea',   // a port reached under sail
+  'cargo-delivered': 'sea',   // a cargo delivered
+  'ship-struck': 'sea',   // a ship made to strike her colours
   // NOT HERE: section 4.5's "a wagon's load hauled (Merchant Yards)". Nothing in the game finishes one - the yards trade
   // horses and wagons (systems/merchantYards.js), no counter sells a wagon's load (the trade window's wagon button is a
   // consumed no-op, ui/native/nativeTrade.js `usingWagon`) - so no feature could say it, and an objective bound to it
   // could never close. It comes back with the feature that hauls one, and its producer.
   // the world's events
-  'raid-repelled': 'a raid on a town driven off',
-  'arena-won': 'a bout won in the Arena',
-  'revenant-knelt': 'a revenant made to kneel',
-  'star-taken': 'a star taken on the Firmament',
+  'raid-repelled': 'world',   // a raid on a town driven off
+  'arena-won': 'world',   // a bout won in the Arena
+  'revenant-knelt': 'world',   // a revenant made to kneel
+  'star-taken': 'world',   // a star taken on the Firmament
   // the endgame (each also a receipt the service holds - section 5.3)
-  'rite-broken': 'Dagon\'s Faithful\'s rite broken before the breach opened',
-  'breach-closed': 'a Dagon\'s Breach closed',
-  'elite-foe-slain': 'an elite foe slain in an Elite Dungeon',
-  'redoubt-taken': 'a Redoubt taken in an Elite Breach',
-  'valkynaz-felled': 'a Valkynaz\'s Redoubt taken in an Elite Breach',
-  'hour-broken': 'the Brass Remnant broken in the Shattered Hour',
-  'serpent-slain': 'the Sea Serpent slain',
+  'rite-broken': 'endgame',   // Dagon's Faithful's rite broken before the breach opened
+  'breach-closed': 'endgame',   // a Dagon's Breach closed
+  'elite-foe-slain': 'endgame',   // an elite foe slain in an Elite Dungeon
+  'redoubt-taken': 'endgame',   // a Redoubt taken in an Elite Breach
+  'valkynaz-felled': 'endgame',   // a Valkynaz's Redoubt taken in an Elite Breach
+  'hour-broken': 'endgame',   // the Brass Remnant broken in the Shattered Hour
+  'serpent-slain': 'endgame',   // the Sea Serpent slain
 });
 export const ACT_IDS = Object.freeze(Object.keys(ACT_KINDS));
 

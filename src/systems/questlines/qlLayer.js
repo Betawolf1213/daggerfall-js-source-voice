@@ -192,7 +192,7 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
     },
 
     /** QL12-QL16: the questlines, every one, as the window draws them (qlLineRunner.js rows). */
-    lines: () => runner.rows(),
+    lineRows: () => runner.rows(),
     /** QL12 (section 4.4): what this character finished well, by quest name (a copy). */
     history: () => ({ ...history }),
     /** The line runner, for the pins. */

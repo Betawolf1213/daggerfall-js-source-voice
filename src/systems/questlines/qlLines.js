@@ -104,7 +104,7 @@ export const QL_LINES = Object.freeze([
     title: () => t('ql.line.introCrafts', 'The Court Crafter'),
     lead: () => t('ql.line.introCrafts.lead', 'A crafter who works for the court wants an apprentice who can find their own materials.'),
     giver: () => t('ql.line.introCrafts.giver', 'a court crafter'),
-    opens: { level: 2 },
+    opens: { level: 2, online: true },   // the Professions' harvests and crafts are the account service's to answer
     steps: [
       { quest: 'QLIP01', title: () => t('ql.step.QLIP01', 'Of Rod and Root') },
       { quest: 'QLIP02', title: () => t('ql.step.QLIP02', 'Ore and Timber') },

@@ -291,116 +291,143 @@ never set `_victory_`, so it never paid), B0B71Y03 (putting the child down now p
 also wrote down every DFU script they found odd and left as shipped (a dead end, a clock with no task, a bare-named
 task); they are the QUESTLINES row's Ledger B list.
 
-## 4. The questlines
+## 4. The questlines (AS BUILT - `src/systems/questlines/qlLines.js`, `qlLineRunner.js`, `quests/`)
 
 Each line names its lore as `Elite-Gates.md` section 3 does: **canon** (UESP and Daggerfall's own data), and **the
-port's own**, said so wherever it is said. A line's quests are scripts on the machine (decision 2), their text in
-`systems/questlines/quests/` and read by the one loader. A questline's step done in an endgame place is witnessed by
-that place's receipt (section 5.3).
+port's own**, said so wherever it is said. A line is DATA (`qlLines.js` QL_LINES): its steps' quests and titles, its lead
+and giver, its tier, and when it OPENS - a level, another line finished, online. Its steps are scripts on DFU's machine
+(`src/systems/questlines/quests/<QUEST>.txt`, read by the one loader - `scenes/quest/questData.js`'s glob) with a sheet
+each (`sheets/questlines.json`), stamped as every quest is. A step's title is its quest's DisplayName in English, the
+pins holding the two to one word.
 
-### 4.1 THE DAGON CYCLE - three lines, one story (Dagon's Breach, Elite Dungeons, the Elite Breach)
+THE RUNNER (`qlLineRunner.js`, made by the layer): each tick after the machine's, a line whose gate holds begins and
+its step's quest is scheduled; a step that ends well starts the next an hour of the character's time later
+(STEP_GAP_S); one that ends badly is offered again a day later (RETRY_GAP_S) - a failure is never a dead end. The step's
+quest is found by NAME, so a restart or a quest set aside is still the step. A line the service pays waits, offline,
+where it stood. What the runner keeps rides the layer's save (the step, each step's outcome, when the next may start,
+what the service answered).
+
+GIVERS. A named giver is a Person of the script's own, named by `ql name` (DFU names a Person only from its name banks
+or FACTION.TXT's individuals). A Person is made fresh in each step's quest, so the scripts say "the Master Conjurer"
+and her name in the giver's own words rather than claim one body walks from quest to quest; the introductions' givers
+are unnamed townsfolk where the feature lives.
+
+### 4.1 THE DAGON CYCLE - three lines, one story (online)
 
 The breach, the covens and the Spire are already one story in the shipped lore: Dagon's mortal faithful open the
-breaches; "Dagon's covens hoard [the Weir Keys] in the deep places, which is why the hardest dungeons give them up
-likeliest" (`Elite-Gates.md` section 3); the keys open the road to the Spire's torn halls. The Cycle walks it in order.
+breaches; "Dagon's covens hoard [the Weir Keys] in the deep places" (`Elite-Gates.md` section 3); the keys open the road
+to the Spire's torn halls.
 
-**I. THE BURNING DOORS** (Dagon's Breach). Giver: Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest -
-already the author of the game's one breach book, already the one who sends it.
+**I. THE BURNING DOORS** (`burningDoors`, tier 3, level 10). Ysolde Marnhel, Master Conjurer of the Mages Guild of Wayrest
+- the author of *On the Burning Doors*, at a Mages Guild hall (`remote magery`).
 
-1. *A Letter from Wayrest* - the courier who brings *On the Burning Doors* now brings a letter too: with the first
-   ember, the first omen seen, or at level 10, whichever is first. Objective: speak with Ysolde in Wayrest.
-2. *The Faithful* - a coven of Dagon's Faithful in a dungeon near the player (a remote dungeon, as any guild quest's).
-   Objectives: find the coven; slay its Summoner; take the rite-book. Branch: read the rite-book (the next breach's
-   omen rings on the map a quarter hour early, this once) or bring it sealed (Mages Guild standing).
-3. *Breaking the Rite* - at a breach's omen, slay the Summoner before the opening. Witnessed: the gate's receipt
-   already records the rite broken.
-4. *Through the Burning Door* - close a breach. Witnessed: `r1`.
-5. *The Caged Broker* - free the Sigil Broker (every one of the faithful slain before the opening - the condition that
-   frees her today) and hear why they cage her. Branch, the line's outcome: the embers the player has carried go to
-   the Mages Guild for study (Ysolde; Mages Guild standing, a named staff), to the Order of the Hour, keepers of the
-   Covenant (the temple's standing, a blessing), or to the Broker (her standing, a Dagon's Brand piece).
-   - A player who has done Dagon's own summoning (`Y0C00Y00`, his day, his Razor) hears a line of Ysolde's for it;
-     the summoning stays the summoning.
-   - Canon: Dagon's summoning day; the Covenant of Akatosh and Alessia; the Dragonfires; Dagon gave the Dark Seducers
-     their wings (`Elite-Gates.md` section 3). The port's own: the faithful's rite, the breach, Valkynaz Ruhn, and why
-     the Broker - a Seducer whose wings are Dagon's gift - sells his sigils to his enemies, which is why his faithful
-     cage her.
+| Step | What the player does | Witness |
+|---|---|---|
+| QLBD01 A Letter from Wayrest | a courier's letter; meet Ysolde | |
+| QLBD02 The Faithful | find the coven in a dungeon, slay its Summoner, take the rite-book; read it (`read`, greater pay, the Guild -3) or bring it sealed (`sealed`, the Guild +5) | |
+| QLBD03 Breaking the Rite | break the faithful's rite before a breach opens (`ql act rite-broken 1`) | rite |
+| QLBD04 Through the Burning Door | close a breach (`ql act breach-closed 1`) - the line's title, Doorwarden | breach |
+| QLBD05 The Caged Broker | why the faithful cage the Sigil Broker; the embers to the Guild (`guild`, named "Ysolde's Ember-Rod"), to the Order of the Hour (`order`, "Covenant Seal of the Hour") or to the Broker (`broker`, greater pay, "Broker's Dusk-Wing Mantle") | |
 
-**II. THE COVENS' HOARD** (Elite Dungeons). Giver: Ysolde again, or the Order of the Hour, by I's outcome.
+**II. THE COVENS' HOARD** (`covensHoard`, tier 3, after I). Ysolde again (AS BUILT: the design let the Order give it after
+I's `order` ending; one giver keeps one voice, and the Order speaks in the Hour's line).
 
-1. *Gold-Lit* - the covens' champions glow gold (`eliteFoes.js`). Objective: slay three elite foes in Elite Dungeons.
-2. *The Lieutenant* - a named coven lieutenant holds a key in an Elite Dungeon of the player's own (an instance,
-   `Instances.md`, at the Elite tier). Objectives: find him; slay him; take the key. The key is a Weir Key paid by the
-   service once an account (section 5.3, and section 10).
-3. *What the Key Opens* - bring it to the giver. Objective: speak with them. Branch: keep the key (it is the player's,
-   as any Weir Key) or hand it to the Order to be sealed (no key - the Order's standing, and a named piece in its
-   place).
-   - Canon: the Spire's portal keys, surrendered by the Imperial Secretary in 3E 398. The port's own: the covens'
-     hoard, the lieutenant.
+| Step | What the player does | Witness |
+|---|---|---|
+| QLCH01 Gold-Lit | slay three elite foes in Elite Dungeons (`ql act elite-foe-slain 3`) | |
+| QLCH02 The Lieutenant | a coven lieutenant holds a Weir Key in a dungeon: slay them, take it (a quest item - a quest cannot mint the Spire's real key) | |
+| QLCH03 What the Key Opens | keep it (`keep` - the service pays a real Weir Key, once an account) or hand it to the Order to be sealed (`seal`, greater pay, the Order +5, "Hourkeeper's Linen Signet") - the line's title, Covenbane | (key) |
 
-**III. THE WEIR ROAD** (the Elite Breach). Giver: a Battlemage of the Spire's last class, living out 3E 398 in the Bay
-(the port's own, named in QL13).
+**III. THE WEIR ROAD** (`weirRoad`, tier 4, after II). Corvane Tull, a Battlemage of the Spire's last class (the port's
+own), in a tavern. Canon: Jagar Tharn gave the Spire to Dagon; the Imperial Secretary surrendered its portal keys.
 
-1. *The Weir Gate* - raise an Elite Breach and take its first Court. Witnessed: `e1` (the first Redoubt).
-2. *The Annals* - find three of the thirty Annals in the torn halls (the account's own `eg_annals`; the Annals stay out
-   of the journal, the objective only counts them).
-3. *The Last Spellmaster* - take the Court of a raised master of the Spire's council. Witnessed: `e1`.
-4. *A Warrior Duke* - take a Valkynaz Redoubt. Witnessed: `e1`. Branch, the line's outcome: what the Battlemage tells
-   the Empire of the Secretary who surrendered the keys - the truth (a Knightly Order's standing) or the mercy he
-   asks for (his last gift, a named piece).
-   - Canon: Jagar Tharn gave the Spire to Dagon; Imago Storm's legions; the Secretary's surrender; the apprentice; the
-     Kyn's ranks. The port's own: the torn halls, the Kyn's proving ground, the Battlemage.
+| Step | What the player does | Witness |
+|---|---|---|
+| QLWR01 The Weir Gate | raise an Elite Breach and take a Redoubt (`ql act redoubt-taken 1`) | redoubt |
+| QLWR02 The Torn Halls | take three Redoubts (`ql act redoubt-taken 3`) | redoubts3 |
+| QLWR03 A Warrior Duke | take a Valkynaz's Redoubt (`ql act valkynaz-felled 1`) - the line's title, Weirwalker | valkynaz |
+| QLWR04 The Battlemage's Account | what Corvane tells the Empire of the Secretary: the truth (`truth`, the Knights of the Dragon +5, "Oathkeeper's Dragon Helm") or the mercy he asks (`mercy`, greater pay, "Corvane's Spire-Blade") | |
 
-### 4.2 THE HOUR THAT WAS NOT (the Abyss Dungeon)
+AS BUILT against the design: the Annals step is gone (the Annals stay out of the journal by design, and the account's
+`eg_annals` is no receipt with a time); the Last Spellmaster's Court is "three Redoubts" (a Redoubt's receipt does not
+name its lord on every receipt - its `w` does say a Valkynaz's, every fifth Court: `net/eliteGates/egPay.js`
+egValkRedoubt); QLBD02's "the next omen a quarter hour early" is gone (a script cannot move the gate's clock).
 
-Giver: **the Order of the Hour** - Akatosh's own temple in the Bay (`Quests-Factions.txt` names it
-`The_Order_of_the_Hour`; `quest/person.js` `_ofQuestGuild` reads Akatosh's temples as it), the god of time, whose
-Covenant the breaches already break. The two give it different faction ids (93 and 92); QL14 reads which one the
-temples' halls carry before a line of it is written. Its priests feel the Hour as a wound in
-time. Offered once the main quest's letter has reached the player (`_BRISIEN`), so the Blades are a name they know.
+### 4.2 THE HOUR THAT WAS NOT (`hourThatWasNot`, tier 4, level 12, online)
 
-1. *Brass at Dusk* - a priest asks after the tavern talk (`sdOmen.js`'s rumours). Objective: find an Abyss Dungeon's
-   door (the hub's record of the Hollows open).
-2. *The Orrery of Endings* - reach the Orrery and turn it. Objective: the Hour's first stage done.
-3. *Six Futures* - the Orrery's six stones are the powers that will claim the Bay (Daggerfall, Sentinel, Wayrest,
-   Orsinium, the Underking, the Blades). Branch, the line's outcome: which power the player tells. Each tells it
-   differently, pays its own named piece and moves its own standing. It ends no main quest and says nothing of
-   which ending comes.
-4. *The Brass Remnant* - break an Hour. Witnessed: `h1`. The Remnant's Mantella-heart is the Hour's; the told power's
-   envoy names what the player saw.
-   - Canon: the Numidium and the Mantella; Kagrenac; the Warp in the West of 3E 417, a Dragon Break; the Order of the
-     Hour, Akatosh's. The port's own: the Hour, its Orrery and Remnant, and (decision 5) its reading as the Break's echo.
+Prior Anselm Vey of the Order of the Hour (`The_Order_of_the_Hour`, faction 93, at a `remote temple`). The design's
+question - the temples' halls carry 92, The_Akatosh_Chantry, and Quests-Factions.txt pairs each temple with its order -
+stands: the Prior is a guest of whatever temple the draw places him in, and his standing moves 93's.
 
-### 4.3 THE OLD COIL (the Sea Serpent) - proposed
+| Step | What the player does | Witness |
+|---|---|---|
+| QLHR01 Brass at Dusk | the Order's letter: a wound in time under the Bay, brass where there should be stone; meet the Prior | |
+| QLHR02 The Orrery of Endings | the Orrery's six stones are the powers that will claim the Bay: choose which the player will tell (two asks - Daggerfall, Sentinel, Wayrest, or another: Orsinium, the Underking, the Blades); break an Hour (`ql act hour-broken 1`); the told power's words, its standing, its named piece - the line's title, Witness of the Hour | hour |
 
-A short line from Sentinel's sailors: Satakal, the Redguard World-Skin, and Sethrakul, the skin it shed. Three
-quests: the sailors' tale, a voyage to the packet lanes, a serpent slain (witnessed: `l1`). Section 10.
+AS BUILT: two steps, not four - the Orrery's turning and the envoy are this step's words, because a quest cannot read
+which power the step before chose. It says nothing of which main-quest ending comes, and no line names 3E 417 (decision
+5: the Hour is the echo of a Break still to come). Canon: the Numidium, the Mantella, Kagrenac, a Dragon Break, the Order
+of the Hour is Akatosh's. The port's own: the Hour, its Orrery, its stones, its Remnant.
 
-### 4.4 THE GUILDS' LADDERS
+### 4.3 THE OLD COIL (`oldCoil`, tier 3, level 8, online)
 
-A guild's own quests are already a story told by rank. Each guild and order a player has joined shows in the window as
-a questline whose quests are its own, by rank, with its promotions as milestones and its flagship quests marked. No new
-content: it is how the window reads what the machine and the Roll already hold.
+Hamid al-Rasheen, a packet captain of Sentinel. Canon: Satakal, the Redguard World-Skin that sheds and devours itself;
+Tall Papa and the Walkabout. The port's own: Sethrakul, the skin it shed, still swimming.
+
+| Step | What the player does | Witness |
+|---|---|---|
+| QLOC01 The Sailors' Tale | meet Hamid; hear the tale | |
+| QLOC02 The Packet Lanes | sail the lanes (`ql act port-reached 2`) | |
+| QLOC03 The Shed Skin | slay the Sea Serpent (`ql act serpent-slain 1`); pour its blood to Satakal (`offering`, People of Sentinel +5, "Walkabout Charm") or keep its scale (`scale`, greater pay, "Sethrakul's Scale") - the line's title, Satakal's Witness | serpent |
+
+### 4.4 THE GUILDS' LADDERS (`src/systems/questlines/qlLadders.js`)
+
+Each guild the player is a member of shows under Questlines as its ladder: the classic list's member quests by the rank
+that opens them, each rank a rung (reached, or still ahead), each quest struck once finished well (the layer's record
+of what it saw finish, `history`, kept with its save) and marked where it holds a choice (a sheet with a branch). Read,
+never kept: the membership book, the list's rows, the sheets.
 
 ### 4.5 THE FEATURES
 
-The owner's fourth: "Tying all our newly integrated features into quests". Three ways in.
+**The acts** (`src/systems/questlines/qlActs.js`, QL11): a feature says what the player did in one line where it
+happens - `noteAct('fish-caught')` - on the player's own client, once, when the act is finished and certain; every
+running stamped quest hears it (an objective's `act` binding, a script's `ql act`). `test/systems/questlines/ql11_acts.test.js`
+sweeps `src/` both ways and pins where each is said:
 
-- **Acts an objective can bind to.** A feature says what a player did in one line (`questlineActs.note(kind, detail)`,
-  as a system says `noteFirstUse(id)` for the Tutorials), and an objective can ask for it: a fish caught and a herb
-  gathered (Professions, Foraging), a piece crafted at a station, a socket filled, a piece reforged, a King's Gambit
-  or an Iliac hand won, a port reached and a cargo delivered (Come Sail Away, harbour contracts), a ship made to strike
-  her colours, a wagon's load hauled (Merchant Yards), a town's raid driven off, a star taken on the Firmament, a set's
-  second bonus woken, an Arena tier won, a revenant made to kneel. A test sweeps the kinds as the Tutorials' sweep does:
-  every kind has its producer, and every producer's kind is read.
-- **Introductions.** A short line - two to four quests - for each of the Tutorials' groups (`tutorialCatalogue.js`),
-  from a giver where the feature lives: the harbourmaster for the sea, the stable master for the horse and the wagon,
-  a tavern regular for the cards and the King's Gambit, the Arena's Herald, a Court crafter for the professions. The
-  Tutorials stay what they are - they explain; an introduction gives a reason to go, and pays for it.
-- **Inside the flagship quests.** Where a flagship quest's story allows, a branch may be a feature: a Merchants'
-  delivery carried by sea or by wagon for a better outcome, a Thieves Guild fence who pays by the town's Prosperity.
-- **The work that is already work** - bounties, Notice Board writs, harbour contracts, revenant errands, caravans,
-  hall writs - stays its own system, and the window shows it (section 6).
+| Kind | Said where |
+|---|---|
+| fish-caught | Professions' net (`scenes/fishHost.js`), Foraging's net, Deep Waters' fish taken |
+| herb-gathered, ore-mined, wood-chopped | the gathering hosts' answered harvest (`herbHost.js`, `mineHost.js`, `treeHost.js`); Foraging's Basket and Wood-Axe |
+| piece-crafted | a station's craft minted (`net/profBook.js`) |
+| gem-socketed, piece-reforged | the Reforge (`systems/reforge.js`) |
+| gambit-won | The King's Gambit settled, the player's side won (`scenes/gambitTableGame.js`) |
+| cards-won | a Hold'em pot or an Iliac hand won, offline and at the relay's tables |
+| port-reached, cargo-delivered | the harbour office: a berth at another port after a quarter league under sail (PORT_VOYAGE_M); a delivery contract done (`scenes/harbourOffice.js`) |
+| ship-struck | an enemy ship strikes to the player (`naval/navalHost.js`, one line) |
+| raid-repelled | a raid the player fought, cleansed (`systems/raidingParties.js`) |
+| arena-won | a ladder bout won (`scenes/arena/arenaBouts.js`) |
+| revenant-knelt | a revenant yields (`systems/revenant/revenantFate.js`) |
+| star-taken | the Firmament's stars the service now holds (`net/firmament/firmamentBook.js`) |
+| rite-broken, breach-closed | a gate receipt counted (`net/gate/gateClaims.js`) - `rite`, or `r: 1`; `dealt` or `stood` |
+| elite-foe-slain | an elite foe killed in an Elite-tier dungeon (`dungeonContext.js`, one line) |
+| redoubt-taken, valkynaz-felled | a Redoubt receipt counted, Rehearsals excluded (`scenes/eliteGates/egClient.js`) |
+| hour-broken, serpent-slain | their receipts counted (`sdClaims.js`, `serpentClaims.js`) |
+
+AS BUILT: the design's "a wagon's load hauled (Merchant Yards)" is no act - nothing in the game finishes one (the
+yards trade horses and wagons; the trade window's wagon button does nothing), so an objective bound to it could never
+close. The road's introduction is DFU's own delivery instead. "A set's second bonus woken" waits for a producer too.
+
+**The introductions** (online where their feature is): THE COURT CRAFTER (`introCrafts` - fish and plants, ore and
+timber, a piece made; online: the Professions' harvests are the service's to answer), THE SMITH'S SECRETS (`introGear` -
+a gem socketed, a piece reforged), THE HARBOURMASTER'S WORD (`introSea` - a port reached, a cargo delivered, a ship
+struck), THE MERCHANT'S ROAD (`introRoad` - a load carried to a merchant and back), A SEAT AT THE TABLE (`introTables` -
+a hand of cards, the King's Gambit), THE HERALD'S CALL (`introArena`), THE BAY'S TROUBLES (`introBay` - a raid driven
+off, a revenant made to kneel), WRITTEN IN THE STARS (`introFirmament`). Two or three short steps each, an unnamed giver
+in the player's town, a named piece at the end. The Tutorials explain; an introduction gives a reason to go, and pays.
+No introduction for the groups that are the game itself (Getting Started, Combat, Your Character, Quests, Family).
+
+**The work that is already work** - bounties, writs, harbour contracts, revenant errands, caravans - stays its own
+system; the window's rail already holds its rows.
 
 ## 5. The rewards (AS BUILT - `src/systems/questlines/qlRewards.js`)
 
