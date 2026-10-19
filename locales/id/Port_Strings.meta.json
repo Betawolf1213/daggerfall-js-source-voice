@@ -8699,6 +8699,16 @@
   "tr": "80e116cea16a",
   "by": "claude-in-session"
  },
+ "features.mwBodyMotion.note": {
+  "en": "7559b7458180",
+  "tr": "2f479698d315",
+  "by": "claude-in-session"
+ },
+ "features.mwBodyMotion.title": {
+  "en": "6fb981a99ca7",
+  "tr": "fb177110e1a0",
+  "by": "claude-in-session"
+ },
  "features.navalCombat.aimCamera": {
   "en": "cfc12726e349",
   "tr": "6299646cc7b3",
