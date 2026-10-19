@@ -237,7 +237,10 @@ test('PROF12 pages: The Enchanting Station - away, the word; at a Mages Guild ha
   const { calls } = stubPages({ enchanter: { kind: 'shop', fee: ENCHANT_FEE }, enchantingTrack: { rank: 100, specs: { 50: 'efficient', 100: null } } });
   page = pageOf();
   assert.match(page.text(), /The guild's enchanter - 50 gold a piece\. Enchanting 100 \(Master\): the item maker's gold 25% less\./);
-  assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+7 Enchanting XP/, 'AUDIT PROF12 E2: the Iron sword\'s tier 1, quartered at a Master\'s 7 - 30 / 4');
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): a Master's track takes no more XP - the service credits
+  // MIN(earned, PROF_XP_MAX - held), none - so the piece says +0 and the station why (it said +7, which the Worker never
+  // paid); AUDIT PROF12 E2's quarter is pinned at an Expert's 90 below, where it is paid
+  assert.match(page.text(), /No Enchanting XP: Enchanting is at Master\.Iron Longsword600 points - 6 Arcane Essence, \+0 Enchanting XP/);
   assert.equal(enchantGoldPct(), 25, 'a Master\'s 20 and an Efficient\'s 5');
   // the item maker's window reads the share: its gold label and the gold it asks
   const player = { items: [], gold: 0, goldPieces: 0 };
@@ -387,9 +390,9 @@ test('PROF12 book: a brew is kept as a craft - a lost answer asked again with th
 test('PROF12 wiring: the alchemy station an Alchemist\'s (open for trade) or a home\'s; the enchanting station a Mages Guild hall or a home\'s; the world brews there through the book (its fee, the Apothecary\'s town), transmutes at it by the smelt, mints a brew\'s potions, disenchants the pack\'s pieces; the item maker reads Enchanting\'s share; the service\'s routes stand', () => {
   const m = src('src/scenes/worldModes.js');
   assert.match(m, /if \(interiorBuilding\.buildingType === BUILDING_TYPES\.Alchemist\) return interiorBuilding\.insideOpenShop === false \? null : \{ kind: 'shop', fee: ALCHEMY_FEE \};/);
-  assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'alchemy'\)\) return \{ kind: 'home', fee: 0 \};/);
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'alchemy'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018D HOME-BENCH, test/scenes/fb1018d_homebench.test.js): a home's stations serve its owner's account
   assert.match(m, /guildGroupOfFaction\(townTalk\?\.factionDict \?\? null, interiorBuilding\.factionId\) === GUILD_GROUPS\.MagesGuild\) return \{ kind: 'shop', fee: ENCHANT_FEE \};/);
-  assert.match(m, /if \(decorOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'enchant'\)\) return \{ kind: 'home', fee: 0 \};/);
+  assert.match(m, /if \(stationOwnerHere\(\) && interiorDecor\.list\(\)\.some\(\(p\) => p\?\.station === 'enchant'\)\) return \{ kind: 'home', fee: 0 \};/);   // PIN MOVED (FB1018D HOME-BENCH, test/scenes/fb1018d_homebench.test.js): a home's stations serve its owner's account
   assert.match(m, /goldDiscountPct: \(\) => enchantGoldPct\(\),/);
   assert.match(src('src/ui/item/itemMakerWindow.js'), /enchantDecision\(this\.selected, this\.powers, this\.sideEffects, \{ gold: this\.gold\(\), discountPct: this\.goldDiscountPct\(\) \}\)/);
   const w = hostText('src/scenes/world.js');
@@ -430,7 +433,7 @@ test('AUDIT PROF12 E1 client: the Stores page offers no Withdraw for Arcane Esse
   assert.match(accountRefusalText('prof-no-pack-form'), /stays in the Stores/);
 });
 
-test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its recipe\'s tier (a Gold ring\'s 3, a Master\'s Iron sword quartered, the counter\'s Linen none), and the streaming world hands each piece its recipe', async () => {
+test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its recipe\'s tier (a Gold ring\'s 3, an Expert\'s Iron sword quartered, the counter\'s Linen none), and the streaming world hands each piece its recipe', async () => {
   const pieces = [
     { provenance: 'aaaaaaaaaaaaaaaa', name: 'Gold Ruby Ring', points: 2160, essence: 21, recipe: 'ring:gold:ruby' },
     { provenance: 'bbbbbbbbbbbbbbbb', name: 'Linen Plain Robes', points: 700, essence: 7, recipe: 'garment-163:linen' },
@@ -442,9 +445,12 @@ test('AUDIT PROF12 E2 client: the Enchanting Station says a piece\'s XP by its r
   assert.match(page.text(), /Linen Plain Robes700 points - 7 Arcane Essence, \+0 Enchanting XP/);
   assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+30 Enchanting XP/);
   page.done();
-  stubPages({ enchanter: { kind: 'home', fee: 0 }, enchantingTrack: { rank: 100, specs: { 50: null, 100: null } }, over: { disenchantable: () => pieces } });
+  // PIN MOVED (FIELD BUGS 2026-10-18f CRAFT-LIMIT-SAID): the quarter at an Expert's 90 - the same top tier, 7, as a Master's,
+  // with room left to take it (a Master's track takes none: the service credits MIN(earned, PROF_XP_MAX - held))
+  stubPages({ enchanter: { kind: 'home', fee: 0 }, enchantingTrack: { rank: 90, specs: { 50: null, 100: null } }, over: { disenchantable: () => pieces } });
   page = pageOf();
-  assert.match(page.text(), /Gold Ruby Ring2,160 points - 21 Arcane Essence, \+78 Enchanting XP/, 'tier 3 at a Master\'s 7: quartered');
+  assert.match(page.text(), /Gold Ruby Ring2,160 points - 21 Arcane Essence, \+78 Enchanting XP/, 'tier 3 at an Expert\'s 7: quartered');
+  assert.match(page.text(), /Iron Longsword600 points - 6 Arcane Essence, \+7 Enchanting XP/, 'AUDIT PROF12 E2: the Iron sword\'s tier 1, quartered at 7 - 30 / 4');
   page.done();
   setProfessionsPages(null);
   assert.match(hostText('src/scenes/world.js'), /essence: essenceOf\(points, profBook\?\.track\('enchanting'\)\?\.specs\?\.\[50\] === DISENCHANTER\), recipe: it\.recipe \}/);

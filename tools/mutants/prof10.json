@@ -1261,8 +1261,8 @@
   {
     "name": "PROF10-modes-mason-station-a-jewellers",
     "file": "src/scenes/worldModes.js",
-    "old": "if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return",
-    "new": "if (decorOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return",
+    "old": "if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'jeweller')) return",
+    "new": "if (stationOwnerHere() && interiorDecor.list().some((p) => p?.station === 'mason')) return",
     "tests": [
       "test/systems/prof10_client.test.js"
     ]
