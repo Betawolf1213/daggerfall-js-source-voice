@@ -60,7 +60,8 @@ const resource = (quest, name, kind) => {
  * Whether binding `b` holds for `quest` now. `probe.carries(itemResource)` answers whether the player carries a quest
  * item (the bridge's ctx.carriesQuestItem); an absent probe reads every item as not carried. An unknown binding is
  * false - a sheet's typo can never open an objective (and sheetProblems refuses it before it ships).
- * @param {any} quest @param {any} b @param {{ carries?: (r: any) => boolean }} [probe]
+ * @param {any} quest @param {any} b @param {{ carries?: (r: any) => boolean, ending?: boolean }} [probe] ending: the quest's
+ * end is being told now (observe's `ending`)
  * @returns {boolean}
  */
 export function holds(quest, b, probe = {}) {
@@ -137,8 +138,8 @@ export function fallbackOutcome(quest, sheet) {
  * (the first choice task of each branch that holds), and (`settle`) the outcome. Answers what moved this look:
  * `{ done: [ids], failed: [ids], chose: [{ branch, choice }], outcome: id|null }`, so the herald can tell it. An
  * unstamped quest is never written.
- * @param {any} quest @param {any} sheet @param {{ carries?: (r: any) => boolean }} [probe]
- * @param {{ settle?: boolean }} [opts] settle: latch the outcome now (the reward's moment, the quest's end)
+ * @param {any} quest @param {any} sheet @param {{ carries?: (r: any) => boolean }} [probe0]
+ * @param {{ settle?: boolean, ending?: boolean }} [opts] settle: latch the outcome now (the reward's moment, the quest's end)
  */
 export function observe(quest, sheet, probe0 = {}, { settle = false, ending = false } = {}) {
   // `ending`: the caller is the quest's end itself (the layer's questEnding - an `end quest`, or a system's tombstone)

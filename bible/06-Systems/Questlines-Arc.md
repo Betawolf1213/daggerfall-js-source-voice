@@ -467,17 +467,37 @@ band (7, 14, 21); a questline's step by its line's own tier (its sheet's `tier`)
   every piece. The numbers of a played hour are owed to the first week of play (the Integrity arc's own measure,
   `realm_wealth_hours`), and TIER_FLOORS is the one constant to move.
 
-### 5.3 What the service pays (only what it witnessed)
+### 5.3 What the service pays (AS BUILT - only what it witnessed)
 
-Silver, embers, Weir Keys, titles, auras and tavern cards are the account service's (`Wallet.md`, `Sigil-Sets.md`).
-QL pays them through one module (`server-account/src/questlines.js`) and one route, `POST /v1/ql/claim {line, step}`:
+Weir Keys and titles are the account service's (`Wallet.md`, `Sigil-Sets.md`). QL pays them through one module,
+`server-account/src/questlines.js` (`claimQl`), and one route, `POST /v1/ql/claim { line, step, choice? }`, behind a
+session. The law both ends share is `src/net/questlineClaims.js`: `QL_SERVICE_LINES` names the five lines the service
+pays (the Cycle's three, the Hour, the Old Coil), each witnessed step's kind, the title and the step that pays it, and the
+Covens' Hoard's key. A step it pays nothing is answered `{ why: 'unpaid' }`; a guest's claim `{ why: 'guest' }`, nothing
+written.
 
-- A step done in an endgame place pays only if the service holds that place's receipt for the character after the
-  step was offered (`r1`, `h1`, `e1`, `l1`).
-- A questline pays its title once a character, on its last witnessed step; its Weir Key (II.2) once an account.
-- Nothing a classic quest does mints an account currency. A quest's silver, where an outcome pays any, is a capped claim
-  of the Chapters' shape (3.3).
-- Opened by `QUESTLINES_OPEN` (`off` | `dev` | `on`) in `server-account/wrangler.toml`, as every service feature is.
+- **A step is claimed twice.** Its first claim, sent by the line runner when it starts the step, opens it: one
+  `ql_steps` row (migration 0133), `opened_at` the service's clock - `{ opened: true }`, and a claim asked twice opens
+  once. Its later claim, sent at the step's end, reads the step's witness: the endgame place's own receipt row for the
+  account, written at or after `opened_at` (`QL_WITNESS_SQL`) - a receipt from before the line asked opens nothing.
+  Witnessed: `done_at` laid with the outcome's `choice`, `{ witnessed: true }`; else `{ witnessed: false }`, nothing
+  written, and the runner asks again (`CLAIM_RETRY_MS`, five tries, and on the next load).
+- **The witnesses.** `rite` a Dagon's Breach's rite broken (`gate_kills`, the rite's row or a fighter's two embers);
+  `breach` a Dagon's Breach closed (a kill's row); `redoubt` an Elite Breach's Redoubt taken, `redoubts3` three, and
+  `valkynaz` a Valkynaz's Redoubt (`eg_redoubts`, every fifth; never a Rehearsal's); `hour` an Hour broken (`sd_kills`);
+  `serpent` the Sea Serpent slain (`serpent_kills`). The Covens' Hoard's last step has no receipt of its own: it is
+  witnessed once the Cycle's first line is done through its breach on the same row.
+- **A title once a character, for good.** A line's bit on `players.ql_titles`, laid on the claim of its `titleAt`
+  step once that step and every witnessed step before it are done - asked on each of those claims, so a line witnessed
+  out of order still pays it when its last step lands. Doorwarden (the Burning Doors), Covenbane (the Covens' Hoard),
+  Weirwalker (the Weir Road), Hourwitness (the Hour), Satakalwitness (the Old Coil); the relay knows them from world224
+  (`src/net/identityToken.js` TITLES).
+- **The Weir Key once an account.** The Covens' Hoard's last step done with the choice `keep` pays it: `eg_keys` + 1 and
+  `ql_key` = 1 in one statement, only while `ql_key` is 0 - `{ key: true, keys }`.
+- Nothing a classic quest does mints an account currency; a questline's gold and gear are the client's (5.2).
+- Opened by `QUESTLINES_OPEN` (`off` | `dev` | `on`) in `server-account/wrangler.toml` - `on`; shut, the claim is
+  refused `ql-closed` (403). Deploy: the relay (world224) first, then the account service (acct159, migration 0133),
+  then the site.
 
 ## 6. The window: one place (AS BUILT)
 
