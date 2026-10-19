@@ -195,7 +195,7 @@ test('WB8b the trials, as numbers: Colossal a quarter larger and harder to fell 
   assert.deepEqual([G.threatPick, G.threatDecay], [0.85, 0]);
   assert.equal(fightProfile(['burning', 'soulhungry']).feed, 0.03);
   const F = fightProfile(['burning', 'favoured']);
-  assert.deepEqual(FAVOURED_PHASE, { hellfire: 1, meteor: 1, spokes: 2 });
+  assert.deepEqual(FAVOURED_PHASE, { hellfire: 1, meteor: 1, spokes: 2, brand: 1, torment: 1 });   // WB14a: the Brand and the Torment a phase early
   for (const A of ATTACK_BY_ID) assert.equal(F.atk[A.key].phase, FAVOURED_PHASE[A.key] ?? A.phase, A.key);
   assert.equal(fightProfile(['burning', 'echoing']).echo, true);
 });

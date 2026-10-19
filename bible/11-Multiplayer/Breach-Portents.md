@@ -154,58 +154,74 @@ three courts.
 
 ## 3. The Warden's new arsenal (WB14a) - every night
 
-Seven new attacks in ATTACKS (ids 11-18), five of them his to choose in the fight and two his turns' own. Each chosen
-one waits a cooldown of its own from its last use (`cd` - none of the old ones has one), needs a court of at least `nMin`
-living challengers where it says so, and is weighed in his choice with the old (`w`).
+Eight new attacks in ATTACKS (ids 11-18): six of them his to choose in the fight (WB14a), and two his turns' own (the
+Sundering's, WB14d). Each chosen one waits a cooldown of its own (`cd`) from its last use - the first from his wake
+(OPENING_MS after the fight began: he never opens on one) - needs a court of at least `nMin` living challengers where it
+says so, and is weighed in his choice with the old (`w`). None of the eleven before has a cooldown, and `attacksFor`
+offers none of the new six without the fight's word (`ctx` - `now`, `used`, `woke`, `n`), so every older pin's answer
+holds. The names are read through the text core (L10N4).
 
 | id | attack | phase | the ground | wind-up | lands for | what to do |
 |---|---|---|---|---|---|---|
-| 11 | **Chains of the Warden** | 1+ | a burning chain from him to one fighter within 14 m of him, following them | 3.0 s | the chained, 15% + 4, and dragged to his feet - then a Ground Slam | run: past CHAIN_HOLD_M (16 m) from him as it lands and the chain breaks |
-| 12 | **Brand of Dagon** | 2+ | a 5 m ring under 1-3 fighters, following each | 5.0 s | everyone else within 5 m of a branded one, 40% + 10 of his element; the branded, 15% + 4 | the branded run clear of everyone; everyone keeps clear of them |
-| 13 | **Shared Torment** | 2+ | a gold 4 m ring under one fighter, following them | 5.0 s | 90% + 24 of his element, SHARED among everyone inside: one takes it all, five take a fifth each | stand together on the marked one |
+| 11 | **Chains of the Warden** | 1+ | a burning chain from him to one fighter within 14 m of his body, following them | 3.0 s | the chained, 15% + 4, reeled to his feet - then a Ground Slam | run: past CHAIN_HOLD_M (16 m) from him as it lands and the chain breaks |
+| 12 | **Brand of Dagon** | 2+ | a 5 m ring under 1-3 fighters (brandCountFor: one for two or fewer, two to five, three from six), following each | 5.0 s | everyone else within 5 m of a branded one, 40% + 10 of his element; the branded, 15% + 4 | the branded run clear of everyone; everyone keeps clear of them |
+| 13 | **Shared Torment** | 2+ | a gold 4 m ring under one fighter, following them | 5.0 s | 80% + 20 of his element, SHARED among everyone inside: one takes it all, four take a quarter each | stand together on the marked one |
 | 14 | **Scything Wheel** | 3 | two blades from his feet, 16 m long and 3.5 m wide, turning about him 0.36 rad a second for 6 s | 2.2 s | 40% + 12 of his weight, once, to whoever a blade passes over | keep ahead of the blades, or past their reach |
-| 15 | **The Burning Gaze** | 3 | none - his eyes blaze white, the screen's rim pulses | 3.0 s | whoever's view holds him (within 50 degrees of the camera's heading, 60 m): 35% + 10, blinded 2 s | look away from him |
-| 16 | **The Unmaking** | 3 | half the court's eight wedges about its heart; then the other half | 3.0 s each | 45% + 12 of his weight | step into a dark wedge; then back |
+| 15 | **The Burning Gaze** | 3 | none - the screen's rim pulses white | 3.0 s | whoever's view holds him (within 50 degrees of the camera's heading, 60 m): 35% + 10, blinded 2 s | look away from him |
+| 16 | **The Unmaking** | 3 | every other one of the court's eight wedges about its heart; then the other half | 3.0 s each | 45% + 12 of his weight | step into a dark wedge; then back |
 | 17 | **The Sundering** | his turn (section 5) | an 8 m disc about him | 2.6 s | 30% + 8 | step out of it |
 | 18 | **The Rejoining** | his turn (section 5) | a 9 m disc at the first court's heart, where the halves fall back together | 3.2 s | 45% + 12 | keep off the heart |
 
-| attack | cooldown | needs | weight |
-|---|---|---|---|
-| Chains | 22 s | a fighter within 14 m | 1 |
-| Brand | 28 s | 2 in his court | 1 |
-| Torment | 28 s | 2 in his court | 1 |
-| Wheel | 30 s | - | 1 |
-| Gaze | 35 s | - | 1 |
-| Unmaking | 45 s | - | 1 |
+| attack | cooldown | needs | weight | the relay counts it |
+|---|---|---|---|---|
+| Chains | 22 s | a fighter within 14 m of his body | 1 | no - a pull (`relay: false`) |
+| Brand | 28 s | 2 in his court | 1 | no - his element |
+| Torment | 28 s | 2 in his court | 1 | no - his element, and a count it does not hold |
+| Wheel | 30 s | - | 1 | yes - down its turn, as the charge down its lane |
+| Gaze | 35 s | - | 1 | no - a camera (`relay: false`) |
+| Unmaking | 45 s | - | 1 | yes - its lit wedges |
 
 **The phases now.** The Warden - blade and weight: the Cleave, the Slam, the Charge and the Chains. The Burning Court -
 fire and reach: the Leap, Hellfire, the Meteor, the Nova, and the Brand and the Torment, which are the fire's own
 questions of a court (spread out; gather in). Dagon's Champion: the Spokes, the Wheel, the Gaze and the Unmaking beside
-the Reckoning. Dagon's Favoured (WB8b) brings the Brand and the Torment a phase early as it brings Hellfire.
+the Reckoning. Dagon's Favoured (WB8b) brings the Brand and the Torment a phase early as it brings Hellfire
+(FAVOURED_PHASE).
 
-**Chains.** The tether is the Spire's pull-apart grammar (`Elite-Gates.md` 25.5): a line from him to the chained, the
-danger edge while they stand inside CHAIN_HOLD_M, the safe edge once they are past it. At the landing the RELAY reads the
-chained fighter's pose: inside CHAIN_HOLD_M and its slack, it begins a Ground Slam at his feet one recovery later (1.0 s
-- the pull ends first); past it the chain breaks and nothing follows. The chained player's own screen pulls its body to
-4 m short of his (the motor's blow push, `player/motor.js blowPush` - the TELL6e law) and lands the 15%. A pull of at most
-12 m lasts 1.4 s; the Slam is said at 1.15 s and lands at 2.75 s (phase three: 2.43 s), so the reeled fighter has a second
-and more to run 4 m out of its 7.
+**Chains.** A path from him to the chained (the telegraph's `path` pool - dashes flowing to him), drawn to where this
+screen sees them now, in his blow's colour while they stand inside CHAIN_HOLD_M and the safe edge's past it. At the
+landing the RELAY reads the chained fighter's pose (the attack's `who`): inside CHAIN_HOLD_M and POSE_SLACK (3 m - the
+relay errs toward the Slam, which strikes at his feet, never at theirs), a Ground Slam is queued; past it the chain
+breaks and nothing follows. The chained player's own screen judges its own feet against the hold: inside it lands the
+15% + 4 and pulls its body toward him (the motor's blow push, `player/motor.js blowPush`, the TELL6e law) - a push of
+`sqrt(2 * BLOW_PUSH_DECAY * d)` carries it `d` = to CHAIN_PULL_TO_M (4 m) of him, CHAIN_PULL_MAX_M (12 m) at most, in
+1.4 s at the most. The Chains' span and recovery (150 ms and 1.0 s) and a turn's breath put the Slam's word 1.3 s after
+the landing and its landing 2.9 s after (phase three: 2.58 s), so a reeled fighter has a second and more to run the 3 m
+out of its 7.
 
 **Brand and Torment follow their fighter.** Their rings stand where the marked fighter stands NOW on each screen (the
-online frame's own places of the others - `scenes/gate/gateCourt.js stepsIn`, the crowd's cut or not), and at the landing
-each screen judges its own feet against them: the Brand's burst within 5 m of any OTHER branded fighter, the Torment's
-share by the count inside its ring as that screen sees it (itself included). The relay names the marked by their peer id
-(the atk word's `pk`) beside where they stood at the word (`tg` - the ring a screen draws for one it cannot see). Both are
-his element's, so the saving throw answers them, and neither is the relay's to count.
+online frame's own places of the others - `scenes/gate/gateCourt.js stepsIn` fills them each frame), and at the landing
+each screen judges its own feet against them (`net/gate/gateStrike.js` brandOn, tormentShare): the Brand's burst within
+5 m of any OTHER branded fighter, the Torment's share by the count inside its ring as that screen sees it (itself
+included). The relay names the marked by their peer id (the atk word's `pk` - the relay's bodies carry it, `id`) beside
+where they stood at the word (`tg` - the ring a screen draws for one it cannot see). Both are his element's, so the
+saving throw answers them.
 
-**The Wheel** is the Spokes' grammar with two lanes, turning: the ground draws the blades where they are at every frame;
-a blade's verdict is the charge's (it strikes as it passes, between the frame before and this one; a slow frame still
-sweeps what it missed) and the relay counts it the same way. The blades sweep 124 degrees each; at their tips (16 m) they
-move 5.8 m/s, under a run.
+**The Wheel** is the Spokes' grammar with two lanes, turning: the ground draws the blades where they are at every frame,
+lit through their whole turn; a blade's verdict is the charge's (`wheelStrikes` - it strikes as it passes, between the
+frame before and this one; a slow frame still sweeps what it missed) and the relay counts it the same way. Which way it
+turns is the attack's own number's (`i` odd, sunwise): nothing more on the wire. The blades sweep 124 degrees each; at
+their tips (16 m) they move 5.8 m/s, under a run.
 
-**The Unmaking** is new ground: EIGHT wedges about his court's heart (not about him), alternate wedges lit, then - one
-recovery and a breath later - the other four (its turn: a second cast turned a wedge on, the Spokes' own trick). From the
-middle of a wedge at the rim the dark wedge beside it is 9.2 m: 1.2 s at a run, under its wind-up's 2.4 s in phase three.
+**The Unmaking** is new ground - a telegraph kind of its own (TELEGRAPH_KIND.wedges, the shader's and `telegraphField`'s
+one reading, held point for point to the strike's `inWedges`): EIGHT wedges about his court's heart (`tg[0]`, wherever he
+stands), alternate wedges lit, then - his recovery and a breath later - the other four (its `echo`: a second cast turned
+one wedge, the Spokes' own trick, and never a third). From the middle of a wedge at the rim the dark wedge beside it is
+9.2 m: 1.2 s at a run, under its wind-up's 2.4 s in phase three.
+
+**The Gaze** has no ground. While it winds up every fighter's rim pulses white and the order stands under the crosshair
+(*Look away!*, its arrow the way to turn while they face him); as it lands, a screen whose camera holds him within
+GAZE_HALF_DEG of its heading and GAZE_RANGE_M of him is struck and washed white for GAZE_BLIND_MS (the ground view's
+blinding). The arc's one blow a step does not answer (answer 5).
 
 ## 4. The Vanguard (WB14c)
 
@@ -303,10 +319,13 @@ threat is each half's own. Echoing's second meteor is the Flame's.
   health (*The Vanguard - Bridgehead, wave 2 of 3*).
 - **The title cards** (WB13e): the Sundering's turn - *II · The Sundering · Bring both halves down together.*; the
   Rejoining - *III · Dagon's Champion · Back to the first court.*
-- **On me**: *Chained! Run from him!*; *Dagon's Brand is on you. Keep clear of the others!*; *Shared Torment on you.
-  Gather the others!*; *Shared Torment! Stand with Ann!*; *Look away!* - each said as its word comes, the ground view's
-  warning (`ui/gate/gateGroundView.js`) carrying the order while it stands, its arrow the way out (or, for the Gaze, the
-  way to turn).
+- **On me** (WB14a, `scenes/gate/gateArsenal.js` ARSENAL_TEXT): *Chained! Run from him!*; *Dagon's Brand is on you.
+  Keep clear of the others!* (and *Dagon's Brand - keep clear!* to one standing by a branded fighter); *Shared Torment on
+  you. Gather the others!*; *Shared Torment! Stand with Ann!* (*Stand in the gold!* for a marked fighter this screen
+  cannot name); *Look away!* - each in the ground view's warning (`ui/gate/gateGroundView.js` - `peril.order` in its
+  place) while it winds up, its arrow the way out (away from him, from the nearest other, toward the marked; for the
+  Gaze, the way to turn), and a sting as a blow names me. Never in the chat: the chat keeps the gate's moments (WB13b),
+  and an order said there would scroll past the fight it is for.
 
 ## 7. The Captive (WB14f)
 
@@ -387,7 +406,7 @@ The tithe (section 9) is the Tithe-Imp's alone, on its own seed, beside the rece
 
 | slice | what |
 |---|---|
-| WB14a | the Warden's new arsenal: the seven attacks, their ground, their verdicts, their words and sounds |
+| WB14a | the Warden's new arsenal: the six he chooses, their ground, their verdicts, their words and sounds |
 | WB14b | the portents' table and bag, the floor plan, the words; the Dire Breach |
 | WB14c | the Vanguard |
 | WB14d | the Sundering |
@@ -396,6 +415,35 @@ The tithe (section 9) is the Tithe-Imp's alone, on its own seed, beside the rece
 | WB14g | what it pays |
 
 Each slice's record is written below as it ships.
+
+**WB14b (2026-10-19) - shipped.** `net/gate/gateMods.js` GATE_PORTENTS (each row's words read through the text core -
+the relay's bundle gains `systems/textManager.js`, which imports nothing), gateDireLine, CAPTIVE_NAMES (each a reader);
+`net/gate/gateLaw.js` gatePortentsOf (the bag: every other carrier, a round of six), portentsLine, gateTitheOf,
+captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), floorPlan, liveFloors, plan-aware onFloor and
+clampToFloor, newFight's `pt`, xaWire; `world/gate/gateArena.js` planOfDay, arrivalOf and the plan's model, collider,
+slabs and lights; `scenes/gate/gateStand.js` (the court's builders out of `scenes/worldModes.js`, HOST-SPLIT); the
+words in the chat, the map's card, the marks card's rows (made the first night that has one) and the herald's omen
+post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world223 (world222 on its branch, renumbered past GATE-DOOR at the merge).
+Pins: `test/net/gate/wb14b_portents.test.js` (13); mutants: `tools/mutants/wb14b.json` (18, all dead). Found in it and
+fixed in WB14a's push: the court's `reset` had lost its first line of resets behind the night's arrival (a comment
+swallowed them) - a new night's attacks numbered as the last night's were never judged; pinned by a Slam that must land
+on both nights (WB14b-the-resets-lost-behind-the-arrival).
+
+**WB14a (2026-10-19) - shipped.** `net/gate/gateBrain.js` ATTACKS 11-16 (their names read through the text core),
+CHAIN_*, GAZE_*, attacksFor's `ctx` (the cooldowns from his wake, `nMin`), brandCountFor, the marked in `begin` (`tg`,
+`pk`), the Chains' hold read at its landing and its Slam, the Unmaking's second cast, screenJudged; `net/gate/gateStrike.js`
+wheelSpin, wheelAngle, wheelBlades, wheelStrikes, inWedges, markedOf, markedAt, markedMe, chainHolds, chainPull, brandOn,
+tormentShare, gazeHolds, markedVerdict; `net/bossRef.js` judgeGate (the Wheel's sweep; never the Chains or the Gaze);
+`net/wire.js` gateAtk's `pk` and GATE_ATK_ID_MAX (31); `server/src/index.js` the relay's bodies carry their peer id;
+`render/gate/gateTelegraph.js` the chain's path, the marked rings where they are seen, the turning blades, the wedges
+(TELEGRAPH_KIND.wedges - the shader and its JS mirror); `scenes/gate/gateArsenal.js` (new: the marked blows and the Gaze
+on my feet and my camera, the orders, the pull, the blinding), wired by `scenes/gate/gateCourt.js` (the others' places
+from stepsIn, `orderPeril`) and `scenes/world.js` (my peer id, the motor's push and its decay - one line);
+`ui/gate/gateGroundView.js` `peril.order` and the Gaze's white; `world/gate/gateBoss.js` each new attack's cues (pitched
+down, four semitones from the rest of their clip) and colours. Pins: `test/net/gate/wb14a_arsenal.test.js` (15) and the
+older ones the arsenal moved (WB3's ids, WB8b's FAVOURED_PHASE, WB8c's, WB9d's and WB13c's court lines, WB9e's count,
+WB13a's one edge - the Torment's gold and the Gaze's none); mutants: `tools/mutants/wb14a.json` (37: 35 dead, 2 recorded
+equivalent - the guards that keep the relay from counting a marked blow should one ever gain a ground).
 
 ## 13. What it does not do, said so
 

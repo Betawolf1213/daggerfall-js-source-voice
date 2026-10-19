@@ -76,8 +76,8 @@
   {
     "name": "WB13a-the-edge-his-aspect-s",
     "file": "src/render/gate/gateTelegraph.js",
-    "old": "color: attackColor(A, P), edge: telegraphEdge(A),",
-    "new": "color: attackColor(A, P), edge: attackColor(A, P),",
+    "old": "edge: torment ? TORMENT_EDGE : telegraphEdge(A),",
+    "new": "edge: torment ? TORMENT_EDGE : attackColor(A, P),",
     "tests": [
       "test/scenes/wb13a_telegraphs.test.js"
     ]
@@ -184,8 +184,8 @@
   {
     "name": "WB13a-the-grounds-warning-over-a-blow",
     "file": "src/ui/gate/gateGroundView.js",
-    "old": "warn: peril ? GROUND_VIEW_TEXT.peril(peril.name) : inside ? GROUND_VIEW_TEXT.warn(ground) : null",
-    "new": "warn: inside ? GROUND_VIEW_TEXT.warn(ground) : peril ? GROUND_VIEW_TEXT.peril(peril.name) : null",
+    "old": "warn: peril ? peril.order ?? GROUND_VIEW_TEXT.peril(peril.name) : inside ? GROUND_VIEW_TEXT.warn(ground) : null",
+    "new": "warn: inside ? GROUND_VIEW_TEXT.warn(ground) : peril ? peril.order ?? GROUND_VIEW_TEXT.peril(peril.name) : null",
     "tests": [
       "test/scenes/wb13a_telegraphs.test.js"
     ]

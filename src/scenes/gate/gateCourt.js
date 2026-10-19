@@ -37,6 +37,7 @@ import { bossBarModel, drawGateBossBar, BOSS_BAR_TEXT } from '../../ui/gate/gate
 import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../../ui/gate/gateTitleCard.js';   // WB13e: the fight's beats, large
 import { marksCardModel, drawGateMarksCard } from '../../ui/gate/gateMarksView.js';   // WB9a: the night's marks over the screen as a fighter steps in
 import { groundViewModel, drawGateGround } from '../../ui/gate/gateGroundView.js';   // WB9d: his ground and his element, felt
+import { createGateArsenal } from './gateArsenal.js';   // WB14a: the blows that strike by who they mark, and the Gaze
 import { damageChartModel, drawGateDamageChart } from '../../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../../net/gate/gateReceipt.js';
 import { bodySayer } from '../../net/bossBody.js';   // INT15: my body, said to the court's room
@@ -213,6 +214,14 @@ export function perilAt(s, t, P, fx, fz, yaw = null) {
   return { name: best.name, t: best.t, now: best.at - t <= TELEGRAPH_NOW_MS, color: best.color, arrow: out ? screenBearing(out.dir, /** @type {number} */ (yaw)) : null, way: out };
 }
 
+/** WB14a: an order of the new arsenal's as the ground view's peril (gateArsenal.js order): its name, its wind-up's share, its
+ *  last moment, its rim (the danger edge unless it says its own), its order, and its way as the screen turns it. */
+export function orderPeril(o, yaw = null) {
+  if (!o) return null;
+  const dir = o.dir && Math.hypot(o.dir[0], o.dir[1]) > 1e-6 ? o.dir : null;
+  return { name: o.name, t: o.t, now: !!o.now, color: o.color ?? TELEGRAPH_EDGE, order: o.order, arrow: dir && Number.isFinite(yaw) ? screenBearing(dir, /** @type {number} */ (yaw)) : null };
+}
+
 /** GATE-HEAL (2026-10-01, Mac: "Can we add a line on the damage round up showing the amount healed?" - each challenger's;
  *  "Like for healers" - allies only): what my mates' spells healed in me goes to the relay at most this often (a word for
  *  every caster since the last). */
@@ -247,6 +256,7 @@ export const HEAL_SEND_MS = 1000;
  *   me?: () => (string|null),
  *   yaw?: () => (number|null),
  *   shake?: (amount: number) => void,
+ *   myId?: () => (string|null), pull?: (vx: number, vz: number) => void, pullDecay?: number,
  *   wantBodies?: () => boolean,
  *   makeBodies?: (() => any) | null,
  * }} deps
@@ -269,6 +279,7 @@ export function createGateCourt({
   link, spoils = null, now, door = () => null, cam = () => null, feet = () => null, player = () => null, save = () => 100,
   strike = () => {}, say = () => {}, hudHidden = () => false, veiled = () => false, send = () => false, sendCrystal = () => false, sendHost = () => false, sendHeal = () => false, sendBody = () => false, rng = Math.random,
   portalDoor: layPortalDoor = () => {}, soulTrap = () => {}, me = () => null, yaw = () => null, shake = () => {},
+  myId = () => null, pull = () => {}, pullDecay = 0,   // WB14a: my peer id (the marked blows name it), my body's push (the Chains' reel) and its decay
   wantBodies = undefined, makeBodies = null,   // MWNPC10: the body lane's seams (a test's own)
 }) {
   // MWNPC10 (bible/04-Characters/Morrowind-NPCs.md section 15a): HIM AND HIS HOST IN THEIR MORROWIND BODIES, on a lane of
@@ -305,6 +316,18 @@ export function createGateCourt({
   let healSentAt = -Infinity;
   const healOwed = new Map();
   const sayBody = bodySayer((v) => !watching() && sendBody(v));   // INT15; COURT-WATCH: a watcher holds no fighter's body
+  /** WB14a: WHERE THIS SCREEN SEES THE OTHERS - each fighter of the online frame by peer id (the court's frame), their
+   *  names, and every place (stepsIn, each frame) - the marked blows' rings stand where they are, and the Torment's share
+   *  counts who stands in it. Mine is my feet. */
+  const _places = new Map(), _names = new Map(), _others = [];
+  const arsenal = createGateArsenal({
+    me: () => myId(), placeOf: (id) => _places.get(id) ?? null, nameOf: (id) => _names.get(id) ?? null, others: () => _others,
+    land: (atk, P, so) => land(atk, P, so), pull: (vx, vz) => !watching() && pull(vx, vz), pullDecay,   // COURT-WATCH: a watcher is never reeled
+    sting: (atk) => { const s = link.state(); if (s) sound(BOSS_CUES.sting, s, now(), atk, feet()); },
+  });
+  /** WB14a: my feet in the court's frame, or null; a marked blow's order on them as the ground view's peril. */
+  const mineXZ = () => { const f = feet(); return f ? [f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2]] : null; };
+  const arsenalPeril = (s, t, P, fp, y) => orderPeril(arsenal.order(s, t, P, [fp[0] - COURT_CENTRE[0], fp[2] - COURT_CENTRE[2]], y), y);
   const healLive = (s) => !!s && s.day !== null && !s.fell && s.wrath == null;
   /** What my mates healed in me, out as the wire's `heal`: whole points (the fractions kept for the next), each caster once. */
   function sendOwed(t) {
@@ -403,8 +426,9 @@ export function createGateCourt({
   let meteorNow = null, fxPass = null, fxTried = false;
 
   function reset(d) {
-    day = d;
-    arriveAt(d);   // WB14b judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;
+    day = d; judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;
+    arriveAt(d);   // WB14b: where the night's fighters arrive, and its way in
+    arsenal.reset();   // WB14a
     prevT = -Infinity; hurtAt = -Infinity; shape = null; standIn = null; spewed = false; spoilsSaid = false;
     stepFrom = null; strideRun = 0; growlAt = null; hpHeard = null; gruntAt = -Infinity; quaked = noMark(); thunderPhase = 0; thudCued = false;
     released = noMark(); courtFlashAt = -Infinity; hpFlashSeen = null;   // WB13d
@@ -553,6 +577,7 @@ export function createGateCourt({
     }
     // the Wrath's own word, when it overtook its attack's landing on this screen: it lands all the same
     if (s.wrath != null && !wrathLanded) { wrathLanded = true; if (standing) land({ a: ATTACKS.wrath.id }, P); }
+    arsenal.judge(s, t, P, f ? [f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2]] : null, yaw(), standing);   // WB14a: the marked blows and the Gaze
   }
 
   function cue(s, t, P) {
@@ -920,7 +945,7 @@ export function createGateCourt({
       drawBody(s, t, P);
       burst(s, t);
       spoils?.frame(onSpoilRest);   // WB9f: each piece's landing sparks
-      shape = s.fell ? null : telegraphShape(s.atk, s.phase, t, P);
+      { const mine = mineXZ(); shape = s.fell ? null : telegraphShape(s.atk, s.phase, t, P, (k) => arsenal.at(s.atk, k, mine)); }   // WB14a: a marked ring where this screen sees its fighter
       // WBX4: his mark under him, while he stands; WBX5: the burning ground (WB8b: his aspect's)
       if (_markOf !== P) { _markOf = P; const ember = emberColor(P); markEmber = ember === EMBER_COLOR ? MARK_COLOR : markColorOf(ember); _mark = markShape([0, 0], 0, markEmber, P.bossR); }
       if (s.fell || s.wrath != null || bossAct(s, t, hurtAt).act === 'gone') mark = null;
@@ -944,7 +969,8 @@ export function createGateCourt({
       drawGateDamageChart(chartAt !== null ? damageChartModel(s.fell, { boss: bossOf(s).name, me: me(), since: chartAt, now: t }) : null, { hidden: hudHidden() || veiled() });
       // WB9d: his ground under me and his element on me, felt - the screen's rim in its colour, the warning while I stand in
       // it; WB13a: and a blow still to come on my feet, over all of it, with the way out
-      drawGateGround(groundViewModel({ inside: inFire, ground: groundName, color: groundColor, biteAt, biteColor, now: t, peril }), { hidden: hudHidden() });
+      const order = alive ? arsenalPeril(s, t, P, fp, yaw()) : null;   // WB14a: a marked blow's order, over the ground's
+      drawGateGround(groundViewModel({ inside: inFire, ground: groundName, color: groundColor, biteAt, biteColor, now: t, peril: order ?? peril, blindAt: arsenal.blindAt() }), { hidden: hudHidden() });
       if (healOwed.size && t - healSentAt >= HEAL_SEND_MS) sendOwed(t);   // GATE-HEAL: what my mates healed in me, out
       // INT15: MY BODY, in my own word, while I stand alive in a fight that lives (net/bossBody.js bodySayer's pace)
       { const e = player(); if (alive && healLive(s) && e?.maxHealth > 0) sayBody(e.health / e.maxHealth, t); }
@@ -1179,15 +1205,17 @@ export function createGateCourt({
      * dungeon's frame): one here now and not last call, standing within WAY_IN_NEAR_M of where the players arrive, has
      * just stepped out of the way in - it opens for them. The first look after my arrival only learns who is here. The
      * relay's count of fighters it replaces came STATE_SEND_MS late, and never rose for a fighter walking back in.
-     * @param {Iterable<{id: string}>} list @param {(d: any) => (number[]|null)} at
+     * @param {Iterable<{id: string, name?: string}>} list @param {(d: any) => (number[]|null)} at
      */
     stepsIn(list, at) {
+      _places.clear(); _names.clear(); _others.length = 0;   // WB14a: where this screen sees each of them, this frame
       if (arrivedAt === null) return;
       const t = now();
       _peersNow.clear();
       for (const d of list) {
         if (!d) continue;
         _peersNow.add(d.id);
+        { const q = at(d); if (q && typeof d.id === 'string') { const c = [q[0] - COURT_CENTRE[0], q[2] - COURT_CENTRE[2]]; _places.set(d.id, c); _others.push(c); if (d.name) _names.set(d.id, d.name); } }
         if (!peersPrimed || _peersWere.has(d.id)) continue;
         const p = at(d);
         if (p && Math.hypot(p[0] - ARRIVAL[0], p[2] - ARRIVAL[2]) <= WAY_IN_NEAR_M) wayInHeld = Math.max(wayInHeld, t + WAY_IN_HOLD_MS);

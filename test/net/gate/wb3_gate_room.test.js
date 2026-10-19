@@ -167,7 +167,7 @@ test('WB3 brain: the attacks\' tables - every attack\'s wind-up long enough to r
   // WB9b/c: nor the bound's across the fire nor Dagon's Reckoning's - each is its turn's own, the same in every phase
   assert.equal(windupOf(ATTACKS.cross, 3), ATTACKS.cross.windup);
   assert.equal(windupOf(ATTACKS.reckon, 3), ATTACKS.reckon.windup);
-  assert.deepEqual(ATTACK_BY_ID.map((a) => a.id), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'WBX5: the leap, the meteor and the spokes join the six; WB9b/c: the bound and the Reckoning');
+  assert.deepEqual(ATTACK_BY_ID.map((a) => a.id), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'WBX5: the leap, the meteor and the spokes join the six; WB9b/c: the bound and the Reckoning; WB14a: the new arsenal\'s six (test/net/gate/wb14a_arsenal.test.js)');
   assert.deepEqual(attacksFor(1, 1, 0).map((a) => a.key), ['cleave'], 'phase one, close, nobody inside the slam');
   assert.deepEqual(attacksFor(1, -1, 1).map((a) => a.key), ['cleave', 'slam'], 'a player inside his body is in reach of everything close');
   assert.deepEqual(attacksFor(1, 1, 1).map((a) => a.key), ['cleave', 'slam']);

@@ -25,6 +25,7 @@
 // full-rate damage whatever anybody says.
 //
 // Not a DFU member. Ledger A (WB).
+import { t } from '../../systems/textManager.js';   // WB14a: the new arsenal's names in the player's language (L10N4)
 import { readGateMods, validGateMods, GATE_TRIALS, validGatePortents, hasPortent } from './gateMods.js';   // WB8b: the Warden's marks - the fight's profile is made from them; WB14b: the night's portents - its floor plan
 
 // ── the court and the body ─────────────────────────────────────────────
@@ -304,6 +305,17 @@ export const POOLS = Object.freeze({
   hellfire: Object.freeze({ r: 3, ms: 6000, pct: 0.08, base: 3 }),
   meteor: Object.freeze({ r: 5, ms: 9000, pct: 0.1, base: 4 }),
 });
+/** WB14a: THE CHAINS' HOLD - a chained fighter past CHAIN_HOLD_M of his centre as it lands breaks it; one inside it is
+ *  reeled to CHAIN_PULL_TO_M of him (CHAIN_PULL_MAX_M at most - the struck screen's own pull, the motor's blow push), and
+ *  a Ground Slam follows at his feet (the relay's reading of the pose, POSE_SLACK of slack). */
+export const CHAIN_HOLD_M = 16;
+export const CHAIN_PULL_TO_M = 4;
+export const CHAIN_PULL_MAX_M = 12;
+/** WB14a: THE BURNING GAZE - whoever's view holds him within GAZE_HALF_DEG of its heading and GAZE_RANGE_M of him as it
+ *  lands is struck, and blinded GAZE_BLIND_MS. */
+export const GAZE_HALF_DEG = 50;
+export const GAZE_RANGE_M = 60;
+export const GAZE_BLIND_MS = 2000;
 //
 // WB9e (2026-09-30, Mac: "Increase boss damage, further improve his telegraphs"): EVERY SHARE AND BASE RAISED AGAIN, by
 // about a third over WBX4's - two of his heavy landings now end anyone who has not healed between them, and the Meteor
@@ -332,11 +344,35 @@ export const ATTACKS = Object.freeze({
   // crystals of Oblivion grow across the floor (RECKON_*); break every one and the Reckoning breaks and stuns him (STUN_MS);
   // leave one standing and it lands on the whole arena - his fire answered by nothing (Dagon's, as the Wrath's)
   reckon: Object.freeze({ id: 10, key: 'reckon', name: "Dagon's Reckoning", windup: 22000, active: 600, recover: 1800, shape: 'all', pct: 9.99, base: 0, el: 'fire', aim: 'self', phase: 99, range: 999, w: 0, minGap: 0 }),
+  // WB14a (2026-10-19, Mac: "More diabolical boss movesets"; bible/11-Multiplayer/Breach-Portents.md section 3): THE
+  // WARDEN'S NEW ARSENAL - six more he chooses (each name read through the text core where it is read - L10N4), each waiting a cooldown of its own from its last use (`cd`, ms) and, where
+  // it asks a court of more than one, `nMin` living challengers in it. None of the eleven before has either. `relay: false`
+  // - a blow the relay cannot judge from the poses it holds (net/bossRef.js judgeGate): the struck screen's alone.
+  // CHAINS OF THE WARDEN: a burning chain from him to one fighter near him, following them; past CHAIN_HOLD_M as it lands
+  // it breaks, inside it they are struck and reeled to his feet - and a Ground Slam follows
+  chains: Object.freeze({ id: 11, key: 'chains', get name() { return t('gate.attack.chains', 'Chains of the Warden'); }, windup: 3000, active: 150, recover: 1000, shape: 'tether', r: CHAIN_HOLD_M, pct: 0.15, base: 4, el: null, aim: 'target', phase: 1, range: 14, w: 1, minGap: 0, cd: 22_000, relay: false }),
+  // DAGON'S BRAND: a ring under one to three fighters (`max`), following each; at its landing it bursts on everyone ELSE
+  // within its reach of a branded one, and the branded take `selfPct` and `selfBase` - the branded run clear of the rest
+  brand: Object.freeze({ id: 12, key: 'brand', get name() { return t('gate.attack.brand', 'Brand of Dagon'); }, windup: 5000, active: 200, recover: 900, shape: 'brand', r: 5, max: 3, pct: 0.40, base: 10, selfPct: 0.15, selfBase: 4, el: 'fire', aim: 'players', phase: 2, range: 40, w: 1, minGap: 0, cd: 28_000, nMin: 2 }),
+  // SHARED TORMENT: a gold ring under one fighter, following them - its blow shared among everyone inside it as it lands
+  torment: Object.freeze({ id: 13, key: 'torment', get name() { return t('gate.attack.torment', 'Shared Torment'); }, windup: 5000, active: 200, recover: 900, shape: 'torment', r: 4, pct: 0.80, base: 20, el: 'fire', aim: 'players', phase: 2, range: 40, w: 1, minGap: 0, cd: 28_000, nMin: 2 }),
+  // THE SCYTHING WHEEL: `n` blades from his feet, `len` long and `width` wide, turning about him `spin` radians a second over
+  // its whole span (`active`), striking whoever a blade passes over - once
+  wheel: Object.freeze({ id: 14, key: 'wheel', get name() { return t('gate.attack.wheel', 'Scything Wheel'); }, windup: 2200, active: 6000, recover: 900, shape: 'wheel', n: 2, width: 3.5, len: 16, spin: 0.36, pct: 0.40, base: 12, el: null, aim: 'self', phase: 3, range: 40, w: 1, minGap: 0, cd: 30_000 }),
+  // THE BURNING GAZE: no ground - whoever's view holds him as it lands (GAZE_*) is struck and blinded: the one blow a step
+  // does not answer, answered by turning away
+  gaze: Object.freeze({ id: 15, key: 'gaze', get name() { return t('gate.attack.gaze', 'The Burning Gaze'); }, windup: 3000, active: 200, recover: 900, shape: 'gaze', r: GAZE_RANGE_M, arc: 2 * GAZE_HALF_DEG, pct: 0.35, base: 10, el: null, aim: 'self', phase: 3, range: 40, w: 1, minGap: 0, cd: 35_000, relay: false }),
+  // THE UNMAKING: every other one of `n` wedges about his court's heart (`tg[0]`), the first centred on his facing, out to
+  // `r`; then - a recovery and a breath later - the other half (a second cast turned a wedge on, the Spokes' own trick)
+  unmake: Object.freeze({ id: 16, key: 'unmake', get name() { return t('gate.attack.unmake', 'The Unmaking'); }, windup: 3000, active: 300, recover: 1000, shape: 'wedges', n: 8, r: COURT_R + 1, pct: 0.45, base: 12, el: null, aim: 'point', phase: 3, range: 40, w: 1, minGap: 0, cd: 45_000 }),
 });
 /** The attacks by their wire id. */
 export const ATTACK_BY_ID = Object.freeze(Object.values(ATTACKS).sort((a, b) => a.id - b.id));
 /** The ones he chooses among (the wrath is the clock's, not his; WB9b/c: the bound and the Reckoning are his turns'). */
-const CHOSEN = Object.freeze([ATTACKS.cleave, ATTACKS.slam, ATTACKS.charge, ATTACKS.hellfire, ATTACKS.nova, ATTACKS.leap, ATTACKS.meteor, ATTACKS.spokes]);
+const CHOSEN = Object.freeze([ATTACKS.cleave, ATTACKS.slam, ATTACKS.charge, ATTACKS.hellfire, ATTACKS.nova, ATTACKS.leap, ATTACKS.meteor, ATTACKS.spokes,
+  ATTACKS.chains, ATTACKS.brand, ATTACKS.torment, ATTACKS.wheel, ATTACKS.gaze, ATTACKS.unmake]);   // WB14a: and the new six
+/** WB14a: the attacks only a fighter's own screen can judge (`relay: false`) - the relay counts none of them. */
+export const screenJudged = (A) => !!A && A.relay === false;
 /** WB9c: the attacks no ward, no stun and no phase shortens - the clock's Wrath and Dagon's Reckoning. */
 export const isDagons = (A) => A === ATTACKS.wrath || A === ATTACKS.reckon;
 /**
@@ -424,10 +460,11 @@ export const SCAR_POOLS = Object.freeze({
 /** An attack as the profile reads it - any of ATTACKS, each shape's own fields optional.
  * @typedef {{id: number, key: string, name: string, windup: number, active: number, recover: number, shape: string, pct: number,
  *   base: number, el: string|null, aim: string, phase: number, range: number, w: number, minGap: number, r?: number, arc?: number,
- *   width?: number, len?: number, n?: number, r0?: number, r1?: number, max?: number, pool?: {r: number, ms: number, pct: number, base: number}}} GateAttack
+ *   width?: number, len?: number, n?: number, r0?: number, r1?: number, max?: number, pool?: {r: number, ms: number, pct: number, base: number},
+ *   cd?: number, nMin?: number, relay?: boolean, selfPct?: number, selfBase?: number, spin?: number}} GateAttack   (WB14a: the new arsenal's own)
  */
 /** WB8b: Dagon's Favoured - the phases the Burning Court's arsenal comes in early. */
-export const FAVOURED_PHASE = Object.freeze({ hellfire: 1, meteor: 1, spokes: 2 });
+export const FAVOURED_PHASE = Object.freeze({ hellfire: 1, meteor: 1, spokes: 2, brand: 1, torment: 1 });   // WB14a: the fire's own questions of a court, a phase early
 
 /**
  * WB8b (2026-09-28, Mac: "give him unique and different modifers on every 2 hour spawn"): A FIGHT'S PROFILE - the
@@ -815,12 +852,19 @@ export const REPEAT_WALK_MS = 6000;
 /** The attacks this phase allows against a target `gap` metres past his body, with `near` living players inside his
  *  slam - the last one he used left out when anything else is open. WB8b: each attack's phase is its profile's (Dagon's
  *  Favoured brings the Burning Court's arsenal early). WB13f: and never a REPEAT_MAX+1th time running (`run` - how many
- *  times running the last was used): nothing, and he walks at his target. */
-export function attacksFor(phase, gap, near, lastA = -1, P = BASE_PROFILE, run = 1) {
-  const out = CHOSEN.filter((a) => P.atk[a.key].phase <= phase && gap <= a.range && (a.minGap <= 0 || gap >= a.minGap) && !(a === ATTACKS.slam && near < 1));   // a body inside his (a negative gap) is still in reach
+ *  times running the last was used): nothing, and he walks at his target. WB14a: an attack with a cooldown (`cd`) is
+ *  open only with the fight's own word (`ctx`: `now`, when each was last used - `used`, by key - his wake, `woke`, and
+ *  `n`, the living challengers in his court) - its cooldown passed since its last use (the first since his wake: he
+ *  never opens on one), and `nMin` of them at least. */
+export function attacksFor(phase, gap, near, lastA = -1, P = BASE_PROFILE, run = 1, ctx = null) {
+  const out = CHOSEN.filter((a) => P.atk[a.key].phase <= phase && gap <= a.range && (a.minGap <= 0 || gap >= a.minGap) && !(a === ATTACKS.slam && near < 1)   // a body inside his (a negative gap) is still in reach
+    && (!/** @type {GateAttack} */ (a).cd || cooled(a, ctx)));
   const fresh = out.filter((a) => a.id !== lastA);
   return fresh.length ? fresh : run >= REPEAT_MAX ? [] : out;
 }
+
+/** WB14a: is an attack with a cooldown open under the fight's word (attacksFor's `ctx`)? */
+const cooled = (a, ctx) => !!ctx && Number.isFinite(ctx.now) && ctx.now - (ctx.used?.[a.key] ?? ctx.woke ?? -Infinity) >= a.cd && (ctx.n ?? 0) >= (a.nMin ?? 1);
 
 /** One of `can` by weight. */
 export function chooseAttack(can, rng) {
@@ -932,6 +976,7 @@ export function stepBrain(f, now, bodies, rng) {
     }
     if (P.legion && A === ATTACKS.cross && f.court === f.atk.to) raiseBearers(f, now, bodies, rng, out);   // WB11b: his Ward-Bearers rise in the court he lands in (once a court)
     if (A === ATTACKS.reckon && now >= f.atk.at && f.cx) f.cx = null;   // WB9c: the Reckoning landed - the crystals are spent in it
+    if (A === ATTACKS.chains && now >= f.atk.at && f.atk.held == null) f.atk.held = chainHeld(f, bodies);   // WB14a: the chain holds, or breaks, as it lands
     if (now < f.atk.until) { hpFrame(f, now, out); cxFrame(f, now, out); stateFrame(f, now, out); return out; }
     const was = f.atk;
     f.runA = f.atk.a === f.lastA ? (f.runA ?? 0) + 1 : 1;   // WB13f
@@ -944,6 +989,10 @@ export function stepBrain(f, now, bodies, rng) {
     // WB8b: ECHOING - a meteor falls again, a breath after the first: on the one it fell for, where they stand now (and
     // alive), else where the first fell; an echo has none of its own, and a phase's turn clears it with the rest
     if (P.echo && ATTACK_BY_ID[was.a] === ATTACKS.meteor && !was.echo) f.queue.unshift({ a: 'meteor', echo: true, who: was.who ?? null, point: was.tg?.[0] ?? null });
+    // WB14a: a chain that held reels its fighter in to a Ground Slam at his feet; the Unmaking's first cast turns to the
+    // other half of the wedges (its `echo` - a second cast, never a third)
+    if (ATTACK_BY_ID[was.a] === ATTACKS.chains && was.held) f.queue.unshift({ a: 'slam' });
+    if (ATTACK_BY_ID[was.a] === ATTACKS.unmake && !was.echo) f.queue.unshift({ a: 'unmake', turn: (2 * Math.PI) / ATTACKS.unmake.n, echo: true });
     // WBX5: a turn still to come goes on from here, a breath later
     if (f.queue.length) { const next = f.queue.shift(); f.nextAt = now + TURN_BREATH_MS; f.pending = next; if (next.wait) f.waitUntil = now + CROSS_WAIT_MAX_MS; }
   }
@@ -1008,7 +1057,7 @@ export function stepBrain(f, now, bodies, rng) {
       const gap = dist(target.x, target.z, f.pos[0], f.pos[1]) - P.bossR;
       const near = here.filter((b) => dist(b.x, b.z, f.pos[0], f.pos[1]) <= P.atk.slam.r).length;   // WB8b: Colossal's slam reaches further
       if (now - (f.freeAt ?? 0) >= REPEAT_WALK_MS) f.runA = 0;   // WB13f: a walk-in that long breaks the run
-      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA);   // WB13f: never thrice running - he walks in
+      const can = attacksFor(f.phase, gap, near, f.lastA, P, f.runA, { now, used: f.used, n: here.length, woke: Number.isFinite(f.startedAt) ? f.startedAt + OPENING_MS : -Infinity });   // WB13f: never thrice running - he walks in; WB14a: the new six by their cooldowns
       if (can.length) { f.move = null; begin(f, chooseAttack(can, rng), now, target, here, rng, out); }
       else walkToward(f, target, now, out);
     } else if (f.move) {
@@ -1100,7 +1149,20 @@ function begin(f, atk, now, target, bodies, rng, out, point = null, echo = false
     // phase three: a second volley, scattered about the same feet
     if (f.phase >= 3) tg = tg.concat(first.map((b) => keepInCourt(b.x + (rng() - 0.5) * 6, b.z + (rng() - 0.5) * 6, COURT_R, C)));
   }
-  f.atk = { i: ++f.seq, a: atk.id, at, x: f.pos[0], z: f.pos[1], yw: f.yaw, tg, until: at + atk.active + atk.recover, ...(target ? { who: target.sub } : {}), ...(echo ? { echo: true } : {}), ...(Number.isInteger(to) ? { to } : {}) };
+  // WB14a: the marked - the chained (his target), the branded (brandCountFor of the living in his court, by the dice), the
+  // tormented (his target) - each where they stand at the word (`tg`, the ring a screen draws for one it cannot see) and
+  // by their peer id (`pk`: every screen draws the ring where it sees them now, and the marked know themselves)
+  let marked = null;
+  if (atk === ATTACKS.chains || atk === ATTACKS.torment) marked = target ? [target] : [];
+  else if (atk === ATTACKS.brand) {
+    const live = bodies.filter((b) => !b.dead && f.players[b.sub]);
+    for (let i = live.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)) % (i + 1); const t = live[i]; live[i] = live[j]; live[j] = t; }
+    marked = live.slice(0, brandCountFor(live.length));
+  } else if (atk === ATTACKS.unmake) tg = [[C[0], C[1]]];   // WB14a: its wedges about his court's heart
+  if (marked) tg = marked.map((b) => [b.x, b.z]);
+  const pk = marked && marked.length && marked.every((b) => typeof b.id === 'string' && b.id) ? marked.map((b) => b.id) : null;
+  if (/** @type {GateAttack} */ (atk).cd) (f.used ??= {})[atk.key] = now;   // WB14a: its cooldown from this word
+  f.atk = { i: ++f.seq, a: atk.id, at, x: f.pos[0], z: f.pos[1], yw: f.yaw, tg, until: at + atk.active + atk.recover, ...(pk ? { pk } : {}), ...(target ? { who: target.sub } : {}), ...(echo ? { echo: true } : {}), ...(Number.isInteger(to) ? { to } : {}) };
   out.push({ k: 'atk', ...atkFrame(f.atk) });
   if (atk === ATTACKS.reckon) growCrystals(f, now, bodies, rng, out);   // WB9c: the crystals rise as he calls it
 }
@@ -1555,7 +1617,17 @@ const r2 = (v) => Math.round(v * 100) / 100;
 /** An attack as the wire says it: its sequence, which, when it lands (the relay's clock), where he stood, his facing,
  *  its targets. */
 export function atkFrame(a) {
-  return { i: a.i, a: a.a, at: a.at, x: r2(a.x), z: r2(a.z), yw: r2(a.yw), tg: a.tg.map((p) => [r2(p[0]), r2(p[1])]) };
+  return { i: a.i, a: a.a, at: a.at, x: r2(a.x), z: r2(a.z), yw: r2(a.yw), tg: a.tg.map((p) => [r2(p[0]), r2(p[1])]), ...(Array.isArray(a.pk) ? { pk: [...a.pk] } : {}) };   // WB14a: and the marked, by peer id
+}
+/** WB14a: how many Dagon's Brand marks among `n` living challengers in his court - one for two or fewer, two to five,
+ *  three from six (ATTACKS.brand.max). */
+export const brandCountFor = (n) => Math.max(1, Math.min(ATTACKS.brand.max, 1 + Math.floor(Math.max(0, n) / 3)));
+/** WB14a: does the chain hold as it lands - the chained fighter (the attack's `who`) alive in the fight and within
+ *  CHAIN_HOLD_M of him, POSE_SLACK of slack for the pose's age (a fighter who ran is told so by their own screen, which
+ *  never pulls past the break; the relay errs toward the Slam, which strikes at his feet, never at theirs). */
+function chainHeld(f, bodies) {
+  const b = bodies.find((x) => x.sub === f.atk.who && !x.dead && f.players[x.sub]);
+  return !!b && dist(b.x, b.z, f.pos[0], f.pos[1]) <= CHAIN_HOLD_M + POSE_SLACK;
 }
 function hpFrame(f, now, out) {
   const h = Math.round(f.hp);

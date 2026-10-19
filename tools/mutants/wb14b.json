@@ -151,5 +151,14 @@
     "tests": [
       "test/net/gate/wb14b_portents.test.js"
     ]
+  },
+  {
+    "name": "WB14b-the-resets-lost-behind-the-arrival",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    day = d; judged = noMark(); cued = noMark(); landed = noMark(); phaseHeard = 0; fellCued = false; wrathLanded = false;\n    arriveAt(d);",
+    "new": "    day = d;\n    arriveAt(d);",
+    "tests": [
+      "test/net/gate/wb14b_portents.test.js"
+    ]
   }
 ]

@@ -161,6 +161,14 @@ export const ATTACK_COLORS = Object.freeze({
   // WB9b: the bound's landing, his weight's colour; WB9c: Dagon's Reckoning, the Wrath's blood-red deepened toward black
   cross: Object.freeze([1.0, 0.46, 0.12]),
   reckon: Object.freeze([0.95, 0.08, 0.16]),
+  // WB14a: the new arsenal - the chain's hot iron, Dagon's brand, the Torment's gold (render/gate/gateTelegraph.js
+  // TORMENT_COLOR draws its ring), the wheel's blades, the gaze's white, the Unmaking's void-violet
+  chains: Object.freeze([1.0, 0.34, 0.1]),
+  brand: Object.freeze([1.0, 0.24, 0.2]),
+  torment: Object.freeze([1.0, 0.8, 0.28]),
+  wheel: Object.freeze([1.0, 0.38, 0.16]),
+  gaze: Object.freeze([1.0, 0.97, 0.9]),
+  unmake: Object.freeze([0.78, 0.2, 0.62]),
 });
 /** WB9c: the crystals of Oblivion - their heart's glow (his aspect's colour where he wears one: CRYSTAL_ASPECT), and the
  *  stunned Warden's daze (a pale ember). */
@@ -178,9 +186,9 @@ export const POOL_COLOR = Object.freeze([1.0, 0.36, 0.05]);
  */
 const tint = (o) => Object.freeze(Object.fromEntries(Object.entries(o).map(([k, v]) => [k, Object.freeze(v)])));
 export const ASPECT_COLORS = Object.freeze({
-  rime: tint({ hellfire: [0.5, 0.78, 1.0], nova: [0.72, 0.9, 1.0], meteor: [0.4, 0.68, 1.0], spokes: [0.46, 0.56, 1.0], pool: [0.28, 0.6, 1.0], ember: [0.34, 0.6, 0.95] }),
-  storm: tint({ hellfire: [0.66, 0.52, 1.0], nova: [0.84, 0.8, 1.0], meteor: [0.96, 0.92, 0.5], spokes: [0.74, 0.46, 1.0], pool: [0.56, 0.4, 1.0], ember: [0.6, 0.42, 0.95] }),
-  venom: tint({ hellfire: [0.5, 1.0, 0.26], nova: [0.68, 1.0, 0.38], meteor: [0.38, 0.92, 0.16], spokes: [0.28, 1.0, 0.52], pool: [0.3, 0.86, 0.12], ember: [0.36, 0.8, 0.16] }),
+  rime: tint({ hellfire: [0.5, 0.78, 1.0], nova: [0.72, 0.9, 1.0], meteor: [0.4, 0.68, 1.0], spokes: [0.46, 0.56, 1.0], pool: [0.28, 0.6, 1.0], ember: [0.34, 0.6, 0.95], brand: [0.42, 0.62, 1.0] }),   // WB14a: the Brand his element's (the Torment keeps its gold)
+  storm: tint({ hellfire: [0.66, 0.52, 1.0], nova: [0.84, 0.8, 1.0], meteor: [0.96, 0.92, 0.5], spokes: [0.74, 0.46, 1.0], pool: [0.56, 0.4, 1.0], ember: [0.6, 0.42, 0.95], brand: [0.7, 0.4, 1.0] }),
+  venom: tint({ hellfire: [0.5, 1.0, 0.26], nova: [0.68, 1.0, 0.38], meteor: [0.38, 0.92, 0.16], spokes: [0.28, 1.0, 0.52], pool: [0.3, 0.86, 0.12], ember: [0.36, 0.8, 0.16], brand: [0.4, 0.95, 0.2] }),
 });
 /** An attack's colour under a profile (net/gate/gateBrain.js fightProfile): his aspect's where it names one - his elemental
  *  blows alone, never Dagon's Wrath - else the attack's own. */
@@ -367,6 +375,16 @@ export const BOSS_CUES = Object.freeze({
     // the deepest roar and the fire's cast under it, heard from anywhere in the arena
     cross: Object.freeze({ clip: B.barkSound, pitch: 0.46, volume: 1.9, reach: 160, at: 'him' }),
     reckon: Object.freeze({ clip: B.barkSound, pitch: 0.38, volume: 2.1, reach: 160, at: 'him' }),
+    // WB14a: the new arsenal - the chain thrown (his stride's own sound, higher than the Charge's), Dagon's brand called on
+    // the fire's cast under the Meteor's and the Unmaking's under that, the Torment on his attack's own cry, the Wheel's
+    // bark and the Gaze's under the Spokes' - each pitched down for his size, four semitones and more from the rest of its
+    // clip (WB13d)
+    chains: voice(B.moveSound, 0.9, 1.4),
+    brand: Object.freeze({ id: FIRE_CAST_ID, pitch: 0.39, volume: 1.4, reach: 60, at: 'him' }),
+    torment: voice(B.attackSound, 0.85, 1.4),
+    wheel: voice(B.barkSound, 0.37, 1.6),
+    gaze: voice(B.barkSound, 0.29, 1.8),
+    unmake: Object.freeze({ id: FIRE_CAST_ID, pitch: 0.305, volume: 1.7, reach: 80, at: 'him' }),
   }),
   // WB13d: the release - his blade's swing, his weight gathered as it comes down, his fire loosed (Dagon's too)
   release: Object.freeze({
@@ -381,6 +399,12 @@ export const BOSS_CUES = Object.freeze({
     spokes: fireLoosed(1.3, 50),
     wrath: fireLoosed(1.8, 120),
     reckon: fireLoosed(1.8, 160),
+    chains: Object.freeze({ clip: SWING_LOW, pitch: 0.7, volume: 1.4, reach: 40, at: 'him' }),   // WB14a
+    brand: fireLoosed(1.1, 40, 'targets'),
+    torment: fireLoosed(1.1, 40, 'targets'),
+    wheel: Object.freeze({ clip: SWING_LOW, pitch: 0.55, volume: 1.6, reach: 45, at: 'him' }),
+    gaze: fireLoosed(1.4, 70),
+    unmake: fireLoosed(1.5, 60),
   }),
   land: Object.freeze({
     cleave: voice(B.attackSound, 0.8),
@@ -394,6 +418,12 @@ export const BOSS_CUES = Object.freeze({
     spokes: Object.freeze({ clip: BURNING, pitch: 0.65, volume: 1.8, reach: 60, at: 'him' }),
     cross: Object.freeze({ clip: BODY_FALL, pitch: 0.24, volume: 2.2, reach: 160, at: 'him' }),
     reckon: Object.freeze({ clip: BURNING, pitch: 0.42, volume: 2.2, reach: 200, at: 'him' }),
+    chains: voice(B.attackSound, 0.9),   // WB14a
+    brand: Object.freeze({ clip: BURNING, pitch: 0.95, volume: 1.4, reach: 40, at: 'targets' }),
+    torment: Object.freeze({ clip: BURNING, pitch: 0.8, volume: 1.6, reach: 40, at: 'targets' }),
+    wheel: voice(B.attackSound, 0.66, 1.6),
+    gaze: Object.freeze({ clip: BURNING, pitch: 0.85, volume: 1.6, reach: 70, at: 'him' }),
+    unmake: Object.freeze({ clip: BURNING, pitch: 0.6, volume: 2, reach: 80, at: 'him' }),
   }),
   roar: voice(B.barkSound, 0.5, 1.8),
   fall: voice(B.barkSound, 0.4, 1.8),

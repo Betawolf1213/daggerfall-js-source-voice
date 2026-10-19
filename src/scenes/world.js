@@ -742,7 +742,7 @@ import { fetchBytes, loadMagicRegistries, seasonOverride, createSkyController, c
 import { getNearbyObjects } from '../systems/nearbyObjects.js';   // X9: the dispel sweep filters the same scan
 import { dispelNearby, liveBundles, attemptSoulTrap, SOUL_TRAP_TEXT } from '../systems/mysticism.js';   // X9: the destroy law (destroyed, not killed); WBX7: the kill's soul trap roll, for the court's boss
 import { climbRigInput } from '../player/climb/climbPose.js';   // CLIMB6: the body's limbs on the climb
-import { PlayerMotor, startRestGroundedCheck, motionBagOf, climbPoseOf, MAX_FRAME_DT, CAPSULE_HEIGHT, CAPSULE_RADIUS, RIDE_EYE_HEIGHT, afloatMessageStep, CANNOT_FLOAT_HUD_SECONDS } from '../player/motor.js';   // SPELLFX1: a peer's eye when its body has not said its height
+import { PlayerMotor, BLOW_PUSH_DECAY, startRestGroundedCheck, motionBagOf, climbPoseOf, MAX_FRAME_DT, CAPSULE_HEIGHT, CAPSULE_RADIUS, RIDE_EYE_HEIGHT, afloatMessageStep, CANNOT_FLOAT_HUD_SECONDS } from '../player/motor.js';   // SPELLFX1: a peer's eye when its body has not said its height
 import { travelDriveForward, travelLookaheadFor } from '../systems/travel/travelAutopilot.js';   // TO-FIELD / AUDIT-FIELD F8: the journey's ground gate, pure so the pins can drive it   // StartRestGroundedCheck's ONE home; WW2: the one motion bag
 import { createTravelSteer, createColliderProbe, steerDrive } from '../systems/travel/travelSteer.js';   // TRAVEL-NAV1: the journey goes round what is in its way, and stops short of what it cannot
 import { exteriorSurfaces, downProbe, rayDistanceFor, ON_EXTERIOR_WATER, exteriorSwimming, feetWaterCoverage, SWIM_COVERAGE } from '../player/exteriorSurface.js';   // ROAD-B (b3): PlayerMotor's three exterior surface methods; OT1: IsPlayerSwimming above ground
@@ -24245,6 +24245,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     },
     me: () => online?.name ?? null,   // GATE-UX: my row of the damage chart - the relay's name for me (ACC1g: the issued one)
     yaw: () => cam.yaw,   // WB13a: the way out of a blow on me, turned as the screen is
+    myId: () => online?.id ?? null, pull: (vx, vz) => player.blowPush(vx, vz), pullDecay: BLOW_PUSH_DECAY,   // WB14a: the marked blows name my peer id; the Chains reel my body (the motor's blow push)
     shake: (amount) => betterAmbience.weaponKick(amount),   // WB13d: his landings near me felt, under the player's own maxShake
   }) : null;
   // EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH ON THIS SCREEN (scenes/eliteGates/egClient.js) -

@@ -36,6 +36,7 @@ import { SIGIL_TOWER } from '../../../src/render/deadlands.js';
 import { createGateOmen, gateTip } from '../../../src/systems/gate/gateOmen.js';
 import { marksCardModel, drawGateMarksCard, destroyGateMarksCard, PORTENT_CSS } from '../../../src/ui/gate/gateMarksView.js';
 import { omenPost } from '../../../src/net/gate/gateHerald.js';
+import { createGateCourt } from '../../../src/scenes/gate/gateCourt.js';
 
 const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 const T0 = 1_000_000;
@@ -332,4 +333,21 @@ test('WB14b the night\'s portents said before the gate, everywhere his marks are
   // the screens ask the day's own: the court's card its fight's, the gate's its day's
   assert.match(read('src/scenes/gate/gateCourt.js'), /marksCardModel\(s\.md, bossOf\(s\), \{ mode: 'arrive', since: marksAt, now: t, pt: s\.pt \}\)/);
   assert.match(read('src/scenes/gate/gatePool.js'), /marksCardModel\(gateModsOf\(g\.day\), gateBossOf\(g\.day\), \{ mode: 'gate', pt: gatePortentsOf\(g\.day\) \}\)/);
+});
+
+test('WB14b a new night\'s fight is judged anew: the court\'s reset clears what it judged, heard and landed before it lays the night\'s arrival - a Slam numbered as the last night\'s lands again (mutants: the resets lost behind the arrival)', async () => {
+  const link = { st: GATE_STATE_EMPTY, state() { return this.st; } };
+  const clock = { t: 0 }, struck = [], me = { health: 1000, maxHealth: 1000 };
+  const renderer = { textures: new Set(), createBillboardBatch: (archive, record, size) => ({ archive, record, size, bounds: new Float32Array(4) }), destroyBillboardBatch: () => {} };
+  const c = createGateCourt({ renderer, gl: null, getTexture: async () => null, link, now: () => clock.t, feet: () => courtToDungeon(1, 0, 1), player: () => me, strike: (dmg) => { struck.push(dmg); } });
+  const night = (day, at) => ({ ...GATE_STATE_EMPTY, day, boss: 'ruhn', hp: 900, max: 1000, fighters: 1, wrathAt: 1e12, atk: { i: 5, a: ATTACKS.slam.id, at, x: 0, z: 0, yw: 0, tg: [] } });
+  const a = dayOf(null, 600), b = dayOf(null, a + 1);
+  for (const [day, at] of [[a, 10_000], [b, 20_000]]) {
+    link.st = night(day, at);
+    clock.t = at - 1000; c.frame(); await new Promise((r) => setImmediate(r));
+    clock.t = at + 5; c.frame(); await new Promise((r) => setImmediate(r));
+  }
+  assert.equal(struck.length, 2, 'each night\'s Slam on me, though both are its fight\'s fifth');
+  c.leave();
+  assert.match(read('src/scenes/gate/gateCourt.js'), /day = d; judged = noMark\(\); cued = noMark\(\); landed = noMark\(\); phaseHeard = 0; fellCued = false; wrathLanded = false;\n\s+arriveAt\(d\);/);
 });

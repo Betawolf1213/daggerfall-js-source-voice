@@ -33,8 +33,8 @@
 // one judge for every FULL shape stamp, per fight floor, on SHARED-TIME trails (net/eliteGates/egFair.js's time law - `[t, x, y, z, h]`,
 // `t` the pose's own send time on the relay's clock), and judgePlace, the hall's own hazards at their landing. The three
 // above keep their arrival-timed trails: their enforcement is off (BODY_DEFAULT.enforce), so their error was never paid.
-import { ATTACK_BY_ID, ATTACKS, profileOf, hostBlowUnder } from './gate/gateBrain.js';
-import { inAttack, chargeStrikes, blowOf } from './gate/gateStrike.js';
+import { ATTACK_BY_ID, ATTACKS, profileOf, hostBlowUnder, screenJudged } from './gate/gateBrain.js';
+import { inAttack, chargeStrikes, wheelStrikes, blowOf } from './gate/gateStrike.js';
 import { SD_BLOW_BY_ID, SD_BLOWS, SD_RESET_PCT, SD_END_PCT, SD_ARENA_SLACK, blowShape, pulsePctOf, handSwept, behindPillar, inArena } from './superDungeon/sdRemnant.js';
 import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, coilHolds, serpentShipsFighting, serpentOnShip } from './serpent/serpentBrain.js';
 import { shapeMeets, fleetShare } from '../systems/serpent/serpentStrike.js';
@@ -119,8 +119,9 @@ export function judgeGate(f, bodies, now) {
   const a = f.atk;
   if (a && !a.bj && now >= a.at) {
     const A = ATTACK_BY_ID[a.a], B = blowOf(a, P), share = B && !B.saved ? Math.min(1, B.pct) : 0;
-    if (!A || !(share > 0)) a.bj = true;
+    if (!A || !(share > 0) || screenJudged(A)) a.bj = true;   // WB14a: the Chains (a pull) and the Gaze (a camera) are the struck screen's alone
     else if (A === ATTACKS.charge) sweep(a, live, Math.max(prev, a.at), now, a.at + A.active, share, (x, z, t0, t1) => chargeStrikes(a, x, z, t1, t0, P), out);
+    else if (A === ATTACKS.wheel) sweep(a, live, Math.max(prev, a.at), now, a.at + A.active, share, (x, z, t0, t1) => wheelStrikes(a, x, z, t1, t0, P), out);   // WB14a: the Wheel down its turn, as the charge down its lane
     else if (A.shape === 'all' || now >= a.at + BODY_AFTER_MS) landing(a, live, share, (x, z) => inAttack(a, x, z, P), out);
   }
   for (const ad of f.lg?.ads ?? []) {
