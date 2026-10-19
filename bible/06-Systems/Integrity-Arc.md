@@ -714,6 +714,44 @@ Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/bugs/
    held by the service in escrow from the fall, the killer's when its collect lands, its fallen's again when nobody
    collects (INT9, the drop and the room).
 
+### Decisions (2026-10-19, FIELD BUGS DUEL-BAR)
+
+Mac, asked on a player's private report - in a duel, their own health bar did not drop when the other player hit them
+(`01-Overview/bugs/Field-Bugs-2026-10-19b.md` DUEL-BAR). It was the 2026-10-09 decision above working as built: the
+bar read the save's health, which a duel never touches, and the referee's vitality stood in a line of its own under the
+battles' readout ("Your vitality: n / m"). **"Bar shows duel vitality."**
+
+- **DISPLAY ONLY.** For the length of a duel the HUD's health bar, on both skins, reads the referee's vitality - my own
+  entry of its word, off the duel manager's live duel (duelBar.js:"export function duelVitality") - and the save's
+  again when the duel ends: won, lost, yielded, left, called off, or let go where no word of the referee's comes (a
+  socket gone: the manager's own windows, as the ring and the readout end). The save's health is never written, and
+  the 2026-10-09 decision stands whole: nobody is hurt or healed by a duel. The read is a leaf of the client's own:
+  `net/duel/duelSession.js` is in the relay's bundle (the arena's bout reaches it), where a byte is a relay version,
+  and the HUD is no relay law.
+- **ONE PAIR, BOTH SKINS.** The HUD reads one health (hudVitals.js:"export function hudHealth"): drawHud's
+  `healthBar`, which the world host hands it (world.js:"healthBar: duelVitality"), else the save's. The classic
+  bars and the large HUD's draw off its snapshot (hud.js:"const health = hudHealth"), the enhanced HUD's off the pair
+  drawHud hands on (enhancedHud.js:"const hp = opts.health"); and so does everything drawn off the HUD's health - the
+  trails, the near-death tint, the blow's recoil, the lens. The turn each way is no blow and no heal
+  (hudVitals.js:"if (_lastFrom !== null && _lastFrom !== from)"): the detector primes afresh, and the enhanced bar's
+  held loss and its heal reading start again.
+- **THE OTHER BARS, THE HEALS, THE DEATH.** The referee holds vitality alone - no fatigue, no magicka, and no heal
+  between the two (duelRef.js:"last believed places") - so the fatigue and magicka bars are the save's, and a heal of
+  the save's under a duel (a potion of the player's own) moves no part of the duel's bar and floats no "+N". The death
+  screen reads the save's health as ever: a duel's fall is a loss, never a death, and a foe's blow that kills under a
+  duel ends it (the manager's `dead`).
+- **THE ARENA IS NOT THIS.** A bout between players on the arena's sand (ARENA4) writes its referee's share into the
+  save's health and its healers come at the end (arenaBouts.js:"MY HEALTH IS THE"), so its bar already fell; it keeps
+  its own law. The open zone is not this either: its foes hurt the save, and a bar that read the zone's referee would
+  hide them.
+- **THE FOUR HOSTS.** `scenes/world.js` WIRED (one entry in its one drawHud call); `scenes/worldModes.js` and
+  `scenes/dungeonContext.js` NO DUEL on purpose (a duel is outdoors alone, INT8); `scenes/exterior.js` NOT WIRED on
+  purpose (offline, no other player).
+
+A departure from DFU, whose vitals read PlayerEntity alone (HUDVitals.Update) - DFU has no other player to duel.
+Pinned: `test/ui/fb1019b_duelbar.test.js` (the real relay refereeing the bout into the real duel manager, read by the
+real drawHud on both skins); `tools/mutants/duel_bar.json`.
+
 ### What lane 2 leaves open
 
 - A client may OPT OUT of the zone's fights (never say `zone`): it fights nobody and drops nothing to a player. It cannot
