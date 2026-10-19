@@ -64,9 +64,11 @@ test('SD4b the end: the marker farthest from the entrance across the floor plan 
   assert.deepEqual(marks, [{ x: 1, y: 0, z: 2 }]);
   assert.deepEqual(sdEndMarks([], ends), [{ x: 101, y: 3, z: 201 }]);
   const D = read('src/scenes/dungeonContext.js');
-  assert.match(D, /const far = dungeonEndOf\(from, marks\);/, 'RVN7d\'s lair stand');
+  // PIN MOVED (LAIR-REACH): RVN7d's lair stand and the Rift ask ONE end (dungeonEnd - test/systems/revenant/lair_reach.test.js)
+  assert.match(D, /const far = dungeonEnd\(\);/, 'RVN7d\'s lair stand');
+  assert.match(D, /const end = dungeonEnd\(\);/, 'a Super dungeon\'s end');
   // PIN MOVED (AUDIT SD IV F38): and the floor under each candidate - the end out of the water where any is
-  assert.match(D, /const end = dungeonEndOf\(dungeon\.enterMarker \?\? dungeon\.startMarker \?\? null, sdEndMarks\(_layoutEnemies, dungeon\.blocks, \(m\) => floorLanding\(collider, \[m\.x, m\.y \+ 0\.2, m\.z\]\)\[1\]\)\);/, 'a Super dungeon\'s end, from the same entrance');
+  assert.match(D, /return dungeonEndOf\(dungeon\.enterMarker \?\? dungeon\.startMarker \?\? null, sdEndMarks\(_layoutEnemies, dungeon\.blocks, \(m\) => floorLanding\(collider, \[m\.x, m\.y \+ 0\.2, m\.z\]\)\[1\]\)\);/, 'from the same entrance');
 });
 
 test('SD4b the Rift\'s size: 7 m at most, the hall\'s own less its air, never under 2.6 m - and in a cramped corner it moves a step or two to the widest hall on the end\'s own floor (mutants: the ring never fitted; never moved; moved through a wall; moved onto another floor)', () => {

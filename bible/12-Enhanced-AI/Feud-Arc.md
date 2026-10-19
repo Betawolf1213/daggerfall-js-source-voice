@@ -783,7 +783,10 @@ deed underground makes that dungeon its lair.
 
 - Entering the lair while it is living, unsworn and not out, and **due or known**, stands it at the layout marker
   farthest from the entrance once the layout has stood (`dungeonContext.js spawnLooseFoe`), with a new revenant arm in
-  `buildFoeAt` (`applyRevenant`, `grantRevenantLoot`, its taunt) and its band about it.
+  `buildFoeAt` (`applyRevenant`, `grantRevenantLoot`, its taunt) and its band about it. LAIR-REACH (FIELD BUGS
+  2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-19.md`): the farthest of SD-REACH's candidates - an interior block's
+  enemy marker, out of the water where any is (`dungeonContext.js` `dungeonEnd`, the Rift's own end) - never a border
+  cap's, where the raw markers stood it in a pocket no walk reaches.
 - **Found resting**: unaware (idle, not hunting) until it sees or hears the player, so a first blow may be a backstab
   (not on a Watchful one). Its drop's gold x1.25 (`LAIR_GOLD`).
 - **Gates**: REVENANT-DUNGEON's - a foe of the player's alone (offline; online, a loose foe of mine on the SUMMON-SYNC
@@ -2253,7 +2256,8 @@ and `dungeonContext.js`.
   x LAIR_GOLD when `lairStand`); `spawnLooseFoe` and `_spawnEncounter` carry the record (a returning person's gender and
   level - `revenantSpawnOptions`).
 - **The stand** - `standLairRevenant`, asked once a visit on the first frame (`_lairAsked`): at the layout marker
-  farthest from the entrance (`dungeon.enterMarker`, else the start marker), a loose foe of mine (online on the room's
+  farthest from the entrance (`dungeon.enterMarker`, else the start marker; LAIR-REACH: among SD-REACH's candidates,
+  `dungeonEnd`), a loose foe of mine (online on the room's
   SUMMON-SYNC lane, never a room's layout foe), FOUND RESTING (`detected` false, no target - a first blow may be a
   backstab, never on a Watchful one: RVN2's door), its band about it.
 - **Its band underground** - RVN6's law in the dungeon's pool: `standDungeonBand` (PlaceFoeFreely's ring, loose - the

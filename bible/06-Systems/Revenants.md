@@ -490,7 +490,8 @@ in the quest log ("Hunt: Grushnak the Butcher" - the way there from where the pl
 forgets the lair until it is heard of again.
 
 **The lair stand (RVN7d).** Enter its lair while it lives, unsworn, and is due or its lair known, and it is there - at
-the dungeon's far end, resting with its band (a first blow may be a backstab), its gold a quarter richer. Rest in its
+the dungeon's far end (LAIR-REACH, 2026-10-19: the farthest a walk reaches - never a border cap's pocket, where it once
+stood out of every player's reach; `01-Overview/bugs/Field-Bugs-2026-10-19.md`), resting with its band (a first blow may be a backstab), its gold a quarter richer. Rest in its
 lair while it is due and it wakes you, standing over you. Any rest underground may be a due revenant's return. The law:
 `bible/12-Enhanced-AI/Feud-Arc.md` section 18 and its RVN7a-d records.
 

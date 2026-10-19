@@ -1868,17 +1868,24 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     for (let i = 0; i < 4; i++) { const sp = placeFoeFreely(env, { minDistance: 1, maxDistance: max, lineOfSightCheck: false }); if (sp) return sp; }
     return null;
   }
-  /** ITS LAIR STAND - entering its lair while it is living, unsworn, not out, and due or known: it stands at the layout
-   *  marker farthest from the entrance, FOUND RESTING (unaware - it hunts nobody until it sees or hears me, so a first
+  /** LAIR-REACH (FIELD BUGS 2026-10-19, the Discord: "I swear i explored fully 2 caves already for this one rev and i
+   *  can't find him"): THE DUNGEON'S END A WALK REACHES - the marker farthest from the way in (dungeonEndOf) among
+   *  SD-REACH's candidates (sdEndMarks: an interior block's enemy markers, never a border cap's - the caps ring the
+   *  layout, so the farthest point all but always stood in one, a pocket no walk reaches - nor a block's start markers;
+   *  out of the water where any is, each candidate's floor the collider's). A Super dungeon's Rift and a revenant's lair
+   *  stand by it - one law; the lair read the raw markers, and stood its revenant in the cap. */
+  function dungeonEnd() {
+    return dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, sdEndMarks(_layoutEnemies, dungeon.blocks, (m) => floorLanding(collider, [m.x, m.y + 0.2, m.z])[1]));
+  }
+  /** ITS LAIR STAND - entering its lair while it is living, unsworn, not out, and due or known: it stands at the
+   *  dungeon's end a walk reaches (dungeonEnd), FOUND RESTING (unaware - it hunts nobody until it sees or hears me, so a first
    *  blow may be a backstab), its drop's gold x LAIR_GOLD, its band about it. A loose foe of mine (online, on the room's
    *  SUMMON-SYNC lane - never a room's layout foe). Answers the stand, or null. */
   async function standLairRevenant() {
     if (!foeDeps || !collider) return null;
     const r = revenantForLair(playerEntity, lairPixel());
     if (!r) return null;
-    const from = dungeon.enterMarker ?? dungeon.startMarker ?? null;
-    const marks = (_layoutEnemies ?? []).filter((m) => Number.isFinite(m?.x) && Number.isFinite(m?.z));
-    const far = dungeonEndOf(from, marks);   // SD4b: the law lifted to world/dungeon/dungeonEnd.js - a Super dungeon's Rift stands by it too
+    const far = dungeonEnd();   // LAIR-REACH: the end a walk reaches - SD-REACH's candidates, as the Rift's (SD4b lifted the law to world/dungeon/dungeonEnd.js)
     if (!far) { releaseRevenantStand(r); return null; }
     const sp = spotAbout([far.x, far.y, far.z], 4) ?? { x: far.x, y: far.y, z: far.z };
     const so = revenantSpawnOptions(r, effectiveLevel(playerEntity));
@@ -2038,7 +2045,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   function standSdEnd() {
     if (!sdEnd || !collider) return;
     if (_sdRealm) { sdEnd.stand({ rift: { at: realmToDungeon(0, 0, SD_WAY_BACK_Z), size: SD_WAY_BACK_SIZE }, retAt: null, dynamicDraws, hollow: true, probe: SD_THRESHOLD_RIM }); return; }   // AUDIT SD V (R2): its floor light's edge the Threshold's rim, never the void past it   // SD5a: the way back, at the Threshold's back - SD-LOOK S6: the Hollow behind it
-    const end = dungeonEndOf(dungeon.enterMarker ?? dungeon.startMarker ?? null, sdEndMarks(_layoutEnemies, dungeon.blocks, (m) => floorLanding(collider, [m.x, m.y + 0.2, m.z])[1]));   // AUDIT SD IV (F38): out of the water where any is
+    const end = dungeonEnd();   // SD-REACH, AUDIT SD IV (F38): an interior block's marker, out of the water where any is - the lair's end too (LAIR-REACH)
     if (!end) return;
     const probe = {
       floor: (at) => { const d = collider.raycast([at[0], at[1] + 1, at[2]], [0, -1, 0], 3); return Number.isFinite(d) ? at[1] + 1 - d : null; },
