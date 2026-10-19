@@ -62,6 +62,7 @@
 
 import { modSetting } from './modSettings.js';
 import { STAT_KEYS_ORDER, hitPointsPerLevelUp } from './chargen.js';
+import { refreshOnlineLayer } from './renownLayer.js';   // LEVEL-EVEN (systems/levelEven.js)
 
 /** The vendor key - the registry row, the Mods pane and the store. */
 export const ORL_VENDOR = 'oblivion-remaster-leveling';
@@ -518,6 +519,7 @@ export function commitVirtueLevelUp(entity, deltas, purse, s, rolls = Math.rando
     if (d > 0) entity.stats[key] = entity.stats[key] + d;
   }
   entity.level += 1;
+  refreshOnlineLayer(entity);   // LEVEL-EVEN: the online health floor over the new level and maximum
   rollOverLevelProgress(entity);
   entity.readyToLevelUp = false;
   entity.pendingLevel = null;

@@ -346,3 +346,20 @@ Audited the same day: `01-Overview/audits/Audit-Spec-Reset.md` (AUDIT SPEC-RESET
   pause window; and the audit's four (the Empire's account, the one ask, the mods, an older build's carry), with L5's gaps closed in them (the martial half whole, the 'ready' arm, the refusals' order, the lead's price, a new visit's note) and L3's fixes driven (the card modal and answered once, the note's status and focus, the reason read, the Closed states). Mutants:
   `tools/mutants/specreset.json` (72: 71 dead, judged serially, and one equivalent as recorded - AUDIT SPEC-RESET L5-8). Pins moved to the new words: `growth1_tab`, `schools_arcane`,
   `martial_paths`, `audit_schools`.
+
+## 11. SKILL-SWAP - a class skill changed, for gold
+
+The Discord's #suggestions, 2026-10-19 (Brother Frank: *"I'd very much like it if the team considered adding the ability
+(if it is possible) to either change one of our skills out or allow some of these specializations to work with just the
+one weapon skill"*), through Mac; asked, Mac: *"Paid skill swap"*. Record: `01-Overview/bugs/Field-Bugs-2026-10-19.md`.
+
+- **The law** (`systems/skillSwap.js`): one class skill the character has not mastered out, one miscellaneous skill in,
+  in the same group (the 2/2/1 slots stand); a mastered skill never leaves; the values stay; the career becomes the
+  character's own copy, saved whole. Both stored level sums move by what the swap moved the sum, so the level and the
+  progress to the next stand. `SKILL_SWAP_GOLD` 100,000, paid as section 10's reset is (coins, letters, online the
+  Empire's account).
+- **The page** (`ui/growth/specGuide.js` drawSkillSwap): under the Specialisations page's paths - *Change a class skill*,
+  the two picks, *Swap · 100,000 gold*, asked first, refused (the press disabled, saying why) short of the gold. A
+  family whose class can never meet a path says, under its headline, that a class skill can be changed below.
+- Pins: `test/systems/fb1019_skillswap.test.js`; `tools/mutants/fb1019_skillswap.json`.
+

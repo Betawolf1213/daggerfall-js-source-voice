@@ -2068,6 +2068,7 @@ ${badgeCss()}
   gap: 4px 26px; margin-bottom: 8px; }
 .px-skill { margin: 0 0 8px; }
 .px-skill .px-meter { height: 6px; border-width: 2px; }
+.px-skilltick { margin: 3px 0 0; color: #9c937d; font-size: 12px; letter-spacing: 0.04em; }   /* SKILL-TICK: the uses toward the next point, under the bar */
 .px-skill .px-mtop { margin-bottom: 3px; }
 .px-skill .px-mtop .v { font-size: 16px; }
 .px-disclose { width: auto; margin: 10px auto 0; }

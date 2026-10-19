@@ -115,3 +115,20 @@ OnEnemyDeath through the seam and at the three kills, the pane's
 choice keys against the shipped modsettings and their clamp, the
 credit, the vendor, the boot order, the world reader and the hosts'
 hand-off. Not run here: a game.
+
+## Departures (2026-10-19, `01-Overview/bugs/Field-Bugs-2026-10-19.md`)
+
+The mod stood 1:1 until the Discord's "Weapon/Armor Materials" thread ("any new character can wander outside, kill some
+easy orcs on the overworld, and get orcish gear right from the get-go"); SCOPE1 makes it ours to move, and two moves are
+named here and in Port-Ledger A.
+
+- **METAL-RAMP** (Mac: "Level ramp"). AddOrcish and AddDaedric read the killer's level: a drop the mod's roll grants is
+  its race's metal on a draw of `Range(0, 20)` under the level, else the level's middle metal (`rampMetal`: Elven 1-4,
+  Dwarven 5-8, Mithril 9-12, Adamantium 13-16, Ebony 17-19; plate of it for the armour arm). At 20 and up nothing
+  changes - no draw more. `unlevelDroppedLoot` reads the level once, the raiser's (a room's base the room's) or the
+  player's, for the drop and the gold alike.
+- **ASF-DEATH**. Both death drops leave the condition they roll as `foundCondition`, SELL-AS-FOUND's mark, so online a
+  mended drop sells as it fell. The rolls and the draws are the mod's.
+
+What stays the mod's: whether a corpse drops at all (the thresholds and Luck), the weapon-or-armour roll, the Seducer's
+weapon, the condition rolls, the gold's division, the world and shop material rolls, the Mods pane.

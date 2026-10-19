@@ -233,12 +233,17 @@ export function unleveledGoldLootPiles(lootItems, { rolls = Math.random, level =
 }
 
 // ── OnEnemyDeath ───────────────────────────────────────────────────
+// ASF-DEATH (2026-10-19, Discord #suggestions "Weapon/Armor Materials": "tens of thousands of gold by vendoring off the
+// daedric armor"): A DEPARTURE in both drops below - each leaves the condition it rolls as `foundCondition`, the mark
+// SELL-AS-FOUND (AUDIT ECON O1) gave Roleplay & Realism's rolls, so online a mended drop sells as it fell. The mod's own
+// rolls, and the draws they take, are unchanged.
 /** A weapon drop: CreateItem(Weapons, Range(Dagger, Long_Bow + 1)),
  *  ApplyWeaponMaterial(material), condition 30-75% of its own max,
  *  AddItem(Back). */
 function dropWeapon(loot, material, rolls) {
   const item = createWeapon(rangeInt(113, 131, rolls), material, rolls);
   item.currentCondition = int(F(rangeFloat(0.3, 0.75, rolls) * F(item.maxCondition ?? 0)));
+  item.foundCondition = item.currentCondition;   // ASF-DEATH: SELL-AS-FOUND's mark (tradeModes.js saleConditionPercentage)
   loot.push(item);
   return item;
 }
@@ -250,26 +255,44 @@ function dropArmor(loot, material, rolls) {
   const random = mintCondition(named(createRandomArmor(playerLevel(), rolls)));
   const item = mintCondition(named({ group: 'Armor', templateIndex: random.templateIndex, material, variant: 0 }));
   item.currentCondition = int(F(rangeFloat(0.3, 0.75, rolls) * F(random.maxCondition ?? 0)));
+  item.foundCondition = item.currentCondition;   // ASF-DEATH
   loot.push(item);
   return item;
 }
 const named = setItemFields;   // MAC-N1: was a second copy of loot.js's `named`; ONE DFU MEMBER, ONE EXPORT
+// METAL-RAMP (2026-10-19, Discord #suggestions "Weapon/Armor Materials": "any new character can wander outside, kill
+// some easy orcs on the overworld, and get orcish gear right from the get-go ... Newbies are skipping 90% of the gear
+// material progression"; Mac: "Level ramp"): A DEPARTURE from AddDaedric and AddOrcish, which ignore the level. A drop
+// the mod's roll grants is its race's metal at the killer's level over METAL_RAMP_FULL (`Range(0, 20) < level`, one draw
+// more, and none at 20 and up, where the mod stands as it was); a drop the ramp withholds is the level's own rung of the
+// middle metals instead (`rampMetal`: Elven at 1-4, Dwarven 5-8, Mithril 9-12, Adamantium 13-16, Ebony 17-19), so the
+// top two come later and the ones under them come more often. The drop's own rolls are the mod's either way.
+export const METAL_RAMP_FULL = 20;
+/** The middle metal a level's withheld drop takes (WeaponMaterialTypes: Elven 3 .. Ebony 7). */
+export const rampMetal = (level) => Math.min(7, 3 + Math.trunc((Math.max(1, level | 0) - 1) / 4));
+/** The metal a granted drop takes at `level`: `top` at METAL_RAMP_FULL and up, else on the ramp's draw. */
+function rampedMetal(top, level, rolls) {
+  if (level >= METAL_RAMP_FULL || rangeInt(0, METAL_RAMP_FULL, rolls) < level) return top;
+  return rampMetal(level);
+}
 /** AddDaedric: the Lord over 70, the Seducer over 75 (always a weapon),
  *  the Fire and Frost Daedra and the Daedroth over 80. */
-export function addDaedric(loot, enemyId, rolls) {
+export function addDaedric(loot, enemyId, rolls, level = playerLevel()) {
   const num = rangeInt(0, 101, rolls) + (luckMod - 5);
   const flag = (enemyId === 31 && num > 70) || (enemyId === 29 && num > 75) || ((enemyId === 26 || enemyId === 25) && num > 80) || (enemyId === 27 && num > 80);
   if (!flag) return null;
-  if (rangeInt(0, 100, rolls) > 50 || enemyId === 29) return dropWeapon(loot, 9, rolls);
-  return dropArmor(loot, 521, rolls);
+  const metal = rampedMetal(9, level, rolls);   // METAL-RAMP
+  if (rangeInt(0, 100, rolls) > 50 || enemyId === 29) return dropWeapon(loot, metal, rolls);
+  return dropArmor(loot, 0x0200 + metal, rolls);   // plate of the metal: 521 Daedric
 }
 /** AddOrcish: the Warlord over 80, the Shaman over 90, the Sergeant over 95, the Orc over 98. */
-export function addOrcish(loot, enemyId, rolls) {
+export function addOrcish(loot, enemyId, rolls, level = playerLevel()) {
   const num = rangeInt(0, 101, rolls) + (luckMod - 5);
   const flag = (enemyId === 24 && num > 80) || (enemyId === 21 && num > 90) || (enemyId === 12 && num > 95) || (enemyId === 7 && num > 98);
   if (!flag) return null;
-  if (rangeInt(0, 100, rolls) > 50) return dropWeapon(loot, 8, rolls);
-  return dropArmor(loot, 520, rolls);
+  const metal = rampedMetal(8, level, rolls);   // METAL-RAMP
+  if (rangeInt(0, 100, rolls) > 50) return dropWeapon(loot, metal, rolls);
+  return dropArmor(loot, 0x0200 + metal, rolls);   // 520 Orcish
 }
 /** UnlevelDroppedLoot_OnEnemyDeath: the corpse's collection - a Daedra
  *  (MobileAffinity.Daedra) or an Orc (MobileTeams.Orcs) may drop its
@@ -280,9 +303,9 @@ export function unlevelDroppedLoot(entity, { rolls = Math.random, r = null, luck
   luckMod = int((luck ?? playerLuck()) / 10);
   const b = entity.basics ?? {};
   const id = entity.mobileType;
-  if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls);
-  else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls);
   const level = levelIn != null ? Math.max(1, levelIn | 0) : playerLevel();
+  if (b.affinity === 'Daedra' && daedricDrops(r)) addDaedric(entity.items, id, rolls, level);
+  else if (b.team === 'Orcs' && orcishDrops(r)) addOrcish(entity.items, id, rolls, level);
   for (const item of entity.items) {
     if (item.group !== 'Currency' || item.templateIndex !== GOLD_TEMPLATE) continue;
     item.stackCount = int((item.stackCount ?? 0) / level);

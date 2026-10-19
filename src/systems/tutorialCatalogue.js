@@ -174,9 +174,13 @@ export const TUTORIALS = Object.freeze([
   }),
   page({
     id: 'character-sheet', group: 'character', title: 'Your Character', trigger: 'When you first open your character sheet.',
-    body: [
-      'This shows your attributes, skills and standing with each faction. Skills improve as you use them, and when your main skills have gone up enough, you level up.',
-    ],
+    get body() {
+      return [
+        'This shows your attributes, skills and standing with each faction. Skills improve as you use them, and when your main skills have gone up enough, you level up.',
+        // SKILL-TICK (systems/advancement.js skillAdvanceProgress): when a used skill goes up, and where to see how close
+        t('tutorials.characterSheet.skillRaise', 'A used skill goes up when you rest or travel, at most once every 6 hours. Your Stats page shows how close each skill is.'),
+      ];
+    },
   }),
   page({
     id: 'level-up', group: 'character', title: 'Level Up', trigger: 'When you first level up.',

@@ -27,6 +27,9 @@ import { SKILLS, setSkillRecentlyIncreased, levelUpSkillSum } from './skills.js'
 import { SKILL_SOFT_CAP, SKILL_HARD_CAP, softcapCostMultiplier, milestoneAt } from './skillSoftcap.js';
 import { masterSkillsActive, skillCanPassCap } from './masterSkills.js';   // SOFTCAP3: the climb past 100 and the lifted 95 lock are Master Skills'
 import { hitPointsPerLevelUp, spendPoolLowest } from './chargen.js';
+import { ONLINE_BONUS_POOL } from './levelEven.js';   // LEVEL-EVEN: online, every level's pool is 5
+import { refreshOnlineLayer } from './renownLayer.js';   // LEVEL-EVEN: the online health floor read again over the level's new maximum
+import { isOnlinePage } from './online/onlineLane.js';
 // ORL1: the ONE question this file asks the vendored mod - whose law
 // levels this character. Everything DFU below is untouched by the
 // answer; the two arms simply do not both run.
@@ -231,6 +234,40 @@ export function raiseSkills(entity, classicTimeMinutes, rolls = Math.random, onL
   return raised;
 }
 
+/**
+ * SKILL-TICK (2026-10-19, Discord #suggestions "Show current XP towards skill/next skill level up ticker", Cruor: "An
+ * EXP ticker when you mouse over a skill that shows out of whatever XP is needed for the skill, to improve it on rest
+ * ... 'your skills can be improved' notification to let players know they should probably rest, since XP does not hang
+ * over"). Where skill `i` stands against raiseSkills' own test, read the way the next pass will read it - the uses as
+ * Reflexes scales them, against GetSkillAdvancementRequirement's number (past 100 a mastered skill's banked progress and
+ * the ladder's price, MOVE-BANK's units). Answers `{ have, need, ready, held }`: `ready`, the next pass raises it; `held`,
+ * why a pass will not however many uses it counts - 'cap' (100 unmastered, or the hard cap) or 'lock' (DFU's 95 lock, a
+ * primary already at 100) - and a held skill's uses are spent by the pass all the same (`entity.skillUses[i] = 0`
+ * above), which is the thread's "does not hang over". Daggerfall shows none of it; the port's own sheet line.
+ */
+export function skillAdvanceProgress(entity, i) {
+  const value = entity.skills?.[i] ?? 0;
+  const needed = skillUsesForAdvancement(value, SKILL_ADVANCEMENT_MULTIPLIER[i], entity.career?.advancementMultiplier ?? 1, entity.level ?? 1);
+  const reflexesMod = 0x10000 - (((entity.reflexes ?? 2) - 2) << 13);
+  const tally = entity.skillUses?.[i] ?? 0;
+  if (value >= SKILL_SOFT_CAP && skillCanPassCap(entity, i)) {
+    if (value >= SKILL_HARD_CAP) return { have: 0, need: 0, ready: false, held: 'cap' };
+    const cost = needed * softcapCostMultiplier(value);
+    const uses = Math.floor((tally * reflexesMod) / 0x10000), banked = entity.skillProgress?.[i] ?? 0;
+    return { have: Math.floor(banked * cost) + uses, need: cost, ready: banked + uses / cost >= 1, held: null };   // the pass's own test
+  }
+  const have = (tally * reflexesMod) >> 16;
+  const held = value >= 100 ? 'cap' : value >= 95 && !masterSkillsActive(entity) && alreadyMasteredASkill(entity) ? 'lock' : null;
+  return { have, need: needed, ready: !held && have >= needed, held };
+}
+/** SKILL-TICK: the skills the next pass would raise - what the HUD's standing line counts. None before chargen is done. */
+export const skillsReadyToImprove = (entity) => {
+  if (!entity?.chargenDone || !Array.isArray(entity.skillUses)) return [];
+  const out = [];
+  for (let i = 0; i < entity.skillUses.length; i++) if (skillAdvanceProgress(entity, i).ready) out.push(i);
+  return out;
+};
+
 /** PlayerEntity.CheckForLevelUp (:1493-1501) verbatim: compare the
  *  stored sums' calculated level against the CURRENT level and raise
  *  readyToLevelUp while behind - however the gap opened (a fresh
@@ -274,9 +311,10 @@ export function checkForLevelUp(entity) {
  * about never drawing MORE (a shown pool must be the spent pool, so a
  * second discarded draw never burns a number). One level, one pool.
  */
-export function bonusPoolFor(entity, rolls = Math.random) {
+export function bonusPoolFor(entity, rolls = Math.random, { online = isOnlinePage() } = {}) {
   if (entity.pendingBonusPool == null) {
-    entity.pendingBonusPool = LEVELUP_BONUS_POOL_MIN + Math.floor(rolls() * (LEVELUP_BONUS_POOL_MAX + 1 - LEVELUP_BONUS_POOL_MIN));
+    // LEVEL-EVEN (systems/levelEven.js): online the pool is BonusPool's mean, drawn from no stream
+    entity.pendingBonusPool = online ? ONLINE_BONUS_POOL : LEVELUP_BONUS_POOL_MIN + Math.floor(rolls() * (LEVELUP_BONUS_POOL_MAX + 1 - LEVELUP_BONUS_POOL_MIN));
   }
   return entity.pendingBonusPool;
 }
@@ -302,6 +340,7 @@ export function applyLevelUp(entity, distribute, rolls = Math.random, prerolledP
   // DISC10-E L4: onto the RAW maximum - MaxHealth reads the lycanthrope's limiter now, and `+=` through it would bake the urge's ceiling into the level
   entity.maxHealth = (entity.rawMaxHealth ?? entity.maxHealth) + hitPointsPerLevelUp(entity.career, entity.stats.endurance, rolls);   // PERMANENT endurance, verbatim (audit F8 - DFU reads Stats.PermanentEndurance here, not the live value)
   entity.health = Math.min(entity.health, entity.maxHealth);
+  refreshOnlineLayer(entity);   // LEVEL-EVEN: the floor over the new maximum (systems/levelEven.js)
   // AUDIT 23 (ui-native-1): DFU rolls BonusPool() exactly ONCE, at the
   // level-up screen's setup - the UI hands its shown pool back here so
   // a second, discarded draw never burns a number from the stream.
