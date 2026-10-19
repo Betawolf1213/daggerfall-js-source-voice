@@ -582,8 +582,10 @@ export class HeldMapWindow {
     this._ticked = false;
 
     this._size = deps.mapSize ?? { width: MAP_WIDTH, height: MAP_HEIGHT };
-    const p = deps.getPlayerPixel?.() ?? { x: this._size.width >> 1, y: this._size.height >> 1 };
-    this._player = { x: p.x, y: p.y };
+    // FINDME-TOWN: my world pixel where the host hands one (the travel map's bag), and NONE where it does not (the town
+    // and dungeon doors hand no world position). The bay's middle stood in for it, and Find me read the stand-in as me.
+    const p = deps.getPlayerPixel?.() ?? null;
+    this._player = p ? { x: p.x, y: p.y } : null;
 
     // ── EM1: ONE MAP, THREE SHEETS ──────────────────────────────
     // The paper, the hands, the pan, the zoom and the held pose are
@@ -1246,6 +1248,7 @@ export class HeldMapWindow {
    * this shrinks to nothing and the contract does not move.
    */
   _worldSheet() {
+    const me = () => (this._player ? { x: this._player.x + 0.5, y: this._player.y + 0.5 } : null);   // FINDME-TOWN: my pixel's middle
     return {
       id: 'world',
       size: () => this._size,
@@ -1339,14 +1342,6 @@ export class HeldMapWindow {
         // map there the mark is behind the symbol"), so a flag set on a giant stands over it
         { const giants = this.deps.wildGiants?.() ?? []; if (giants.length) paintWildGiants(ctx, env.view, giants, { paperW: env.paperW, paperH: env.paperH, t: this._clock }); }
         this._paintWaypoints(ctx, env);   // WAYPOINTS: the flags over everything the sheet breathes
-        // FINDME: the red cross over me, blinking for three seconds (the owner's screenshot: a full-width red cross)
-        if (this._findMeT > 0 && this._player && Math.floor(this._clock * FINDME_BLINK_HZ) % 2 === 0) {
-          const fx = (this._player.x + 0.5 - env.view.ox) * env.view.scale, fy = (this._player.y + 0.5 - env.view.oy) * env.view.scale;
-          ctx.save();
-          ctx.strokeStyle = 'rgba(200,24,24,0.95)'; ctx.lineWidth = 3;
-          ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(env.paperW, fy); ctx.moveTo(fx, 0); ctx.lineTo(fx, env.paperH); ctx.stroke();
-          ctx.restore();
-        }
         // WILD1: my remains in the open zone, where they lie and for how long (net/wild/wildRemains.js, the host's word)
         const remains = this.deps.wildRemains?.() ?? [];
         if (remains.length) paintWildRemains(ctx, env.view, remains, { pulse: env.pulse, label: WILD_TEXT.mine });
@@ -1398,6 +1393,13 @@ export class HeldMapWindow {
       homeView: (lim) => (this._tamriel && lim
         ? viewCentredOn(this._size.width / 2, this._size.height / 2, this._bayFit(lim), lim)
         : null),
+      // FINDME-TOWN: where I stand on the bay (the cross goes through it), and Find me's view of it - my pixel at the
+      // find's zoom or nearer, the zone map at its own (FINDME's glide, as it was)
+      me,
+      findMe: (lim, view) => {
+        const p = me();
+        return p ? viewCentredOn(p.x, p.y, this._zoneMap ? view.scale : Math.max(view.scale, FOCUS_SCALE), lim) : null;
+      },
       // WILD2: the zone map is this sheet's - offered here, and its view held to the zone's box (and its band of the bay),
       // the legend's room left on the right
       zoneMap: true,
@@ -1698,13 +1700,19 @@ export class HeldMapWindow {
     return this._findMeFirst && !this._zoneMap && !this._openedOnPlace
       && !this.teleportationTravel && !this._it && !this._to?.isTravelActive && this._top !== 'resume';
   }
-  /** FINDME: glide to my pixel and blink a red cross over it for three seconds. */
+  /** FINDME: glide to me and blink a red cross over me for three seconds.
+   *  FINDME-TOWN (FIELD BUGS 2026-10-19b): ON THE SHEET THAT IS UP. Each sheet finds me in its own space - `findMe`, the
+   *  view on me (the bay's my pixel, the town's my caret on its streets, the dungeon's its own Me) - and `me` is where
+   *  the cross goes (`_paint`). It knew the bay alone: on a town map it aimed at the bay's middle pixel, read as a spot
+   *  on the streets, and every press of it landed on the town's right-hand edge. A sheet with no player on it finds
+   *  nothing - never a guessed place. */
   _findMe() {
-    const p = this.deps.getPlayerPixel?.() ?? this._player;
-    if (!p) return;
-    this._player = { x: p.x, y: p.y };
+    const p = this.deps.getPlayerPixel?.();
+    if (p) this._player = { x: p.x, y: p.y };
+    const at = this._sheet?.findMe?.(this._limits(), this._view) ?? null;
+    if (!at) return;
     this._findMeT = 3;
-    this._focusOn(p.x + 0.5, p.y + 0.5, this._zoneMap ? this._view.scale : FOCUS_SCALE);
+    this._goal = clampView(at, this._limits());   // the dungeon's Me may change the floor - the clamp is the new one's
     this._dirty = true;
   }
   /** PVPJOURNEY: on the zone map a journey is always Cautiously / By land / At inns - no choices. */
@@ -1841,6 +1849,18 @@ export class HeldMapWindow {
     }
     env.pulse = 0.5 + 0.5 * Math.sin(this._clock * 3);
     sheet.paintOverlay(ctx, env);
+    // FINDME: the red cross over me, blinking for three seconds (the owner's screenshot: a full-width red cross).
+    // FINDME-TOWN: the window's, over whichever sheet is up, through where that sheet says I stand - the bay's overlay
+    // drew it alone, so Find me on the streets marked nothing
+    const me = this._findMeT > 0 && Math.floor(this._clock * FINDME_BLINK_HZ) % 2 === 0 ? sheet.me?.() : null;
+    if (me) {
+      const [fx, fy] = toPaper(this._view, me.x, me.y);
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.strokeStyle = 'rgba(200,24,24,0.95)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(paperW, fy); ctx.moveTo(fx, 0); ctx.lineTo(fx, paperH); ctx.stroke();
+      ctx.restore();
+    }
     if (this._bandShown !== band) { this._bandShown = band; this._chrome.band.textContent = band; }
   }
 
