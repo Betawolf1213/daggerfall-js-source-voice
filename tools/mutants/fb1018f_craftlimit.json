@@ -425,7 +425,7 @@
   {
     "name": "CRAFT-LIMIT-SAID-pages-tab-rule-dropped",
     "file": "src/ui/professions/profPages.js",
-    "old": "  pane.append(el('p', 'px-note', limitRuleLine(craftsPastJourneyman(book.state.tracks))));\n",
+    "old": "  pane.append(el('p', 'prof-limit prof-rule', limitRuleLine(craftsPastJourneyman(book.state.tracks))));\n",
     "new": "",
     "tests": [
       "test/net/fb1018f_craftlimit.test.js"

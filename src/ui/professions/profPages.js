@@ -725,8 +725,9 @@ export function drawProfessionsPage(detail, rerender, kit) {
     }
   }
   pane.append(el('p', 'prof-limit', t('prof.page.limit', 'Crafts above Journeyman: {n} of {max}', { n: craftsAboveJourneyman(book.state.tracks), max: CRAFTS_ABOVE_JOURNEYMAN })));
-  // CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f): what the count does - which two, that the others stop at 50, and for good
-  pane.append(el('p', 'px-note', limitRuleLine(craftsPastJourneyman(book.state.tracks))));
+  // CRAFT-LIMIT-SAID (FIELD BUGS 2026-10-18f): what the count does - which two, that the others stop at 50, and for good; the
+  // count's own line, never a pane's how-to note (FB1018D CRAFT-HOWTO reads those)
+  pane.append(el('p', 'prof-limit prof-rule', limitRuleLine(craftsPastJourneyman(book.state.tracks))));
   // GENTLE ACTS (PROF0 5.1): the accessibility choice, beside the acts it changes
   const gentle = el('label', 'prof-gentle');
   const box = el('input');
