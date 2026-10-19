@@ -2,12 +2,12 @@
   {
     "name": "HOST-SPLIT-a-ceiling-under-its-host",
     "file": "test/scenes/hostceiling.test.js",
-    "old": "['src/scenes/world.js', 'bootWorld', 36_233, MODULE]",
+    "old": "['src/scenes/world.js', 'bootWorld', 36_225, MODULE]",
     "new": "['src/scenes/world.js', 'bootWorld', 35_900, MODULE]",
     "tests": [
       "test/scenes/hostceiling.test.js"
     ],
-    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out)."
+    "note": "PIN MOVED (FIELD BUGS 2026-10-16b GRAVE-PARTY): world.js's ceiling lowered 21,676 -> 21,638 on main's count (21,679 -> 21,641 on its branch before the merge; activateGrave out). Re-aimed by content (FIELD BUGS 2026-10-19b DISENCHANT-SAID): 36,233 -> 36,225 logical lines, the enchanting station's list out to profPages.js disenchantableOf."
   },
   {
     "name": "HOST-SPLIT-a-ceiling-left-high",

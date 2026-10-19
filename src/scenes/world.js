@@ -287,7 +287,7 @@ import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and school
 import { rollNoticeDoors } from './rollNoticeHost.js';   // SEAT-WORDS / STANDING-WORDS: what the Roll's tracker says
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
-import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
+import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine, disenchantableOf } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
 import { materialPicture, itemPicture } from '../ui/menu/menuPicture.js';   // MENU-ORDER: a material's and a piece's picture for the menus' rows
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: the saddle panel - the horse and the wagon on screen (Enhanced Plus)
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable and the Fleet pages on the pause menu's Holdings tab
@@ -595,7 +595,6 @@ import { QUALITY_NAMES } from '../net/recipeLaw.js';   // CRAFT4: a temper's wor
 import { reforgeableLines, affixLine } from '../systems/loot/lootRarity.js';   // CRAFT4: the lines an Enchanter reforges
 import { trackOf } from '../net/professionLaw.js';   // CRAFT4: the craft a piece's temper is
 import { brewItems, brewedText, BREW_KEPT_TEXT } from '../systems/alchemyItems.js';   // PROF12: a brew's potions, DFU's own, into the pack
-import { essenceOf, piecePoints, DISENCHANTER } from '../net/alchemyLaw.js';   // PROF12: a piece's Essence, as the enchanting station shows it
 import { facetBand } from '../net/recipeLaw.js';   // PROF10: the facet's attribute band
 import { panBand, DISH_LEVEL } from '../net/recipeLaw.js';   // PROF9: the pan's attribute band; a feast's level at the table
 import { COOK_FIRE } from '../net/professionLaw.js';   // PROF9: the fire Cooking is done at - any lit one, no fee
@@ -11797,15 +11796,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           return { ok: true, text: `${brewedText(r.data)} (+${r.data.xp} ${professionName('alchemy')} XP)${paid ? `, and paid the alchemist ${f.fee} gold` : ''}.` };
         },
         // PROF12: THE ENCHANTING STATION the player stands at (a Mages Guild hall, its fee a piece; a home's), the pack's crafted
-        // pieces it may take (in the pack, not worn, bound or locked, no market act kept on them) and a disenchant: the piece
-        // out of the pack on the service's answer, its Essence in the Stores
+        // pieces it lists (DISENCHANT-SAID: made by the page's module - profPages.js disenchantableOf - a piece under one
+        // Essence among them, greyed with its reason) and a disenchant: the piece out of the pack on the service's answer,
+        // its Essence in the Stores
         enchanter: () => modes?.enchantHere?.() ?? null,
-        disenchantable: () => (playerEntity.items ?? []).filter((it) => it?.provenance && typeof it.recipe === 'string' && !tradeRefusal(it) && !isLocked(it) && !pieceKept(it.provenance))
-          .map((it) => {
-            const r = recipeById(it.recipe);
-            const points = r?.kind === 'jewel' && Number.isSafeInteger(it.enchantmentPoints) ? it.enchantmentPoints : piecePoints(r);
-            return { provenance: it.provenance, name: itemLongName(it), points, essence: essenceOf(points, profBook?.track('enchanting')?.specs?.[50] === DISENCHANTER), recipe: it.recipe };   // AUDIT PROF12 E2: its recipe, the XP's tier
-          }).filter((x) => x.essence > 0),
+        disenchantable: () => disenchantableOf(playerEntity.items, { kept: pieceKept, book: profBook }),
         disenchant: async (provenance) => {
           const owner = characterIdOf(playerEntity), account = storedSession(appStorage())?.id;
           const pack = playerEntity.items;
