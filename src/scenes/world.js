@@ -298,6 +298,7 @@ import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the m
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
+import { createPassageHost } from './naval/passageHost.js';   // PASSAGE: a berth's friendly ship, booked and sailed
 import { createWardenShows } from './wagon/wagonWardenShow.js';   // WARDEN1: the town watch's throw, played
 import { createWagonWarden, wardenTownIn } from './wagon/wagonWardenHost.js';   // WARDEN1: the town watch - my wagon's stamp, the cell's words, the offline clock; AUDIT WARDEN1 D3: the town under a point, one pure home
 import { createWildEscrowHost } from './wildEscrowHost.js';   // PVP-ESCROW: the two-phase handoff's two sides, out of bootWorld (HOST-SPLIT)
@@ -9576,6 +9577,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     isWater: navalIsWater,
     harbourBook,   // SHIP-LIFE, HARBOUR-BOOK: the harbours near the player - this host sounds, moves and empties them
     shipName: (boat) => fleetHost?.nameOf(boat) ?? '',   // QUAYS: her name, in the gangway's word
+    passage: (ship) => passage?.offer(ship),   // PASSAGE: Activate on a berth's friendly ship - her master's ports (scenes/naval/passageHost.js)
     quayLaid: (key, index) => quays?.laid(key, index) ?? true,   // AUDIT HOLDINGS Q9: no gangway onto a quay not yet laid
     dockedPort: (boat, port) => { const r = boat?.uid ? fleetShip(boat.uid) : null; if (r && (r.port?.name ?? null) !== port) setShipPort(boat.uid, port == null ? null : { name: port }); },   // QUAYS: the Fleet's word of the port she lies made fast at
     groundY: (x, z) => surfaceAt(x, z),
@@ -9775,6 +9777,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // CAPT-LOG / CAPTAIN-TREE: the Captain page's host half (scenes/captainPageHost.js)
   const captainPage = createCaptainPageHost({ ledger: captainLedger, naval: () => naval, office: () => harbourOffice, minutes: () => playerTicker.ownMinutes,
     show: (w) => townTalk.showOverlay(w), changed: () => { fleetHost?.restat(); surfacePlayer(); } });
+  // PASSAGE (2026-10-19, bible/03-World/Passage.md): a berth's friendly ship booked to a port of my choosing and sailed
+  // there - her boat at her berth, the Overworld's crossing at her helm (OWS2) - and the passage over when I step off her
+  const passage = createPassageHost({ naval: () => (navalOn() ? naval : null), csa: () => (csaRuntime && csaOn() ? csaRuntime : null), ports: () => navalPortList(), here: () => navalPortHere(),
+    pixel: () => playerTravelPixel(), ether: () => { const p = playerTravelPixel(); return !!etherSea && inEther(p.x, p.y); }, place: (p) => tvPlaceSummary(p.px, p.py), canGo: () => travelViewCanGo(), route: (s) => travelViewRouteTo(s),
+    journeyLive: () => !!travelOptions?.isTravelActive, aboard: (b) => csaRuntime?.state?.CurrentBoat === b || csaStandsOn(b), feet: () => player.feetAt(), spawn: (f) => player.spawn(f[0], f[1], f[2]),
+    gold: () => totalGoldAmount(playerEntity), pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); }, pack: () => (playerEntity.items ??= []), forgetBoat: (uid) => naval?.forgetBoat?.(uid),
+    say: (l) => townTalk.say(l), show: (w) => townTalk.showOverlay(w) });
   setHoldingsProvider({
     ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasTransport(TRANSPORT_HORSE), hasCart: () => hasTransport(TRANSPORT_SMALL_CART), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [], onPainted: () => { _hccDirty = true; },
       upkeep, pass: upkeepPass }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it; STEED1/WAGONS4: and keeps them (a kit's hour a skip, as a camp meal's)
@@ -9933,6 +9942,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (etherSea && _mode() === 'exterior') { const p = playerTravelPixel(); if (inEther(p.x, p.y)) { etherHost.sight(p.x, p.y); captainSay(); } }   // ETHER-SEA: the isles in sight charted, the depth kept
     }
     if (!gamePaused() && !_loading) etherCrossStep(dt);   // ETHER-CROSSING: the helm's waters asked
+    passage.frame(dt, gamePaused() || _loading);   // PASSAGE: a booked ship's voyage sailed on, and over when I step off her - whatever the sea fight's switch
     const on = navalOn();
     if (on !== _navalWasOn) { _navalWasOn = on; naval.setEnabled(on); if (!on) { navalFlames.clear(); closeNavalPlunder(); closeNavalYard(); drawNavalHud(null); drawNavalTags([]); } }
     if (!on) return;
@@ -31021,7 +31031,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     const feet = player.pos;
     for (const b of csaRuntime.AllBoats) {
-      if (!b.GameObject?.activeSelf || b.inside || !tvSeaCrosses(tvSeaRig(b))) continue;
+      if (!b.GameObject?.activeSelf || b.inside || b.charter || !tvSeaCrosses(tvSeaRig(b))) continue;   // PASSAGE: a booked ship is boarded at her booking, never as mine moored
       const p = b.GameObject.position;
       if (Math.hypot(p[0] - feet[0], p[2] - feet[2]) <= TV_SEA_MOORED_M) return { start: 'sea', again: !!b.packable, boat: b, how: 'moored' };
     }
@@ -31181,7 +31191,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (!placedAshore) { tvSeaStop(TRAVEL_VIEW_TEXT.noShore); return; }
     if (tvSea.means?.again && boat.packable && csaPassengersOn(boat) === 0 && !csaRuntime.deedMissing(boat) && !csaRuntime.partsTooHeavy(boat)) csaCall(() => csaRuntime.PackBoat(boat, true));   // "You store the boat in your inventory" - SHIP-PACK: a ship with her deed in the pack; HOLD-WEIGHT: and parts her bearer can carry
     else {
-      tvSay(TRAVEL_VIEW_TEXT.leftMoored);
+      if (!boat.charter) tvSay(TRAVEL_VIEW_TEXT.leftMoored);   // PASSAGE: a booked ship is not mine to leave - she stands out to sea once I am off her (passageHost.js)
       if (tvSea.means) tvSea.means = { ...tvSea.means, again: false };
     }
   }

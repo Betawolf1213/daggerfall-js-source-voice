@@ -1,0 +1,119 @@
+[
+  {
+    "name": "BATCH-SALVAGE-a-piece-chosen-twice-breaks-twice",
+    "file": "src/systems/reforge.js",
+    "old": "for (const it of new Set(Array.isArray(pieces) ? pieces : []))",
+    "new": "for (const it of (Array.isArray(pieces) ? pieces : []))",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-refusal-unnamed",
+    "file": "src/systems/reforge.js",
+    "old": "if (r.ok) { count++; shards += r.shards; } else refused.push({ item: it, reason: r.reason });",
+    "new": "if (r.ok) { count++; shards += r.shards; }",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-what-would-break-by-shards-alone",
+    "file": "src/systems/reforge.js",
+    "old": "export const salvageable = (items) => (Array.isArray(items) ? items : []).filter((it) => !salvageRefusal(it));",
+    "new": "export const salvageable = (items) => (Array.isArray(items) ? items : []).filter((it) => salvageShards(it) > 0);",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-row-press-picks",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "    if (choosing) { chooseSalvage(item); return; }\n",
+    "new": "",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-refused-piece-ticked",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "  const why = salvageRefusal(item);\n  if (why) notice = batchRefusal(",
+    "new": "  const why = null;\n  if (why) notice = batchRefusal(",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-refused-piece-undimmed",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": ": choosing && salvageRefusal(item) ? ' salvno' : ''",
+    "new": ": ''",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-sweep-takes-a-Legendary",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "['All Rare', (it) => it.rarity === 'rare'],",
+    "new": "['All Rare', (it) => it.rarity === 'rare' || it.rarity === 'legendary'],",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-a-sweep-takes-the-worn-and-locked",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "  const open = salvageable(pack);\n  for (const [label, sweeps]",
+    "new": "  const open = pack.filter((it) => salvageShards(it) > 0);\n  for (const [label, sweeps]",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-Keep-breaks",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "  no.onclick = (e) => { e?.stopPropagation?.(); closeDismantle(); };   // every piece kept",
+    "new": "  no.onclick = (e) => ok.onclick(e);   // every piece kept",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-Back-keeps-choosing",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "if (overlayAction(e) === 'back' && salvageSel) { e.preventDefault(); e.stopPropagation(); if (!e.repeat) { salvageSel = null; notice = null; render(); } return; }",
+    "new": "if (overlayAction(e) === 'back' && salvageSel) { e.preventDefault(); e.stopPropagation(); return; }",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-the-break-unsaid",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "    notice = BATCH_DONE(r.count, r.shards, r.refused.length);",
+    "new": "    notice = null;",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-the-button-for-a-Common-pack",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "if (salvageSel || salvageable(deps.items?.() ?? []).length) {",
+    "new": "if (true) {",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  },
+  {
+    "name": "BATCH-SALVAGE-Cancel-keeps-choosing",
+    "file": "src/ui/enhanced/enhancedInventory.js",
+    "old": "  stop.onclick = () => { salvageSel = null; notice = null; render(); };",
+    "new": "  stop.onclick = () => { notice = null; render(); };",
+    "tests": [
+      "test/systems/batchsalvage.test.js"
+    ]
+  }
+]

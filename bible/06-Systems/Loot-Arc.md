@@ -680,6 +680,21 @@ says); the Salvage page lists it after every piece that breaks, its press "Class
 the reason its title; the pack card's Salvage, pressed, says why (`enhancedInventory.js` `SALVAGE_CLASSIC`) and asks
 nothing. `test/systems/fb1012d_salvageclassic.test.js` (4), `tools/mutants/fb1012d_salvageclassic.json` (11, all dead).
 
+**BATCH-SALVAGE (2026-10-19, the owner: "We need to add the ability to batch salvage in the inventory")**: the pack
+breaks many pieces at once. The enhanced pack's header gains Batch salvage, shown while any piece would break (or while
+it chooses); pressed, a pack row's press puts a tick on it instead of opening its card - ahead of Shift's stow and drop
+and the double click's wear, so no press of the choosing moves or wears a piece - and a piece that will not break is
+dimmed, and pressed says why in the card's own words where it has them (`enhancedInventory.js` `batchRefusal`: the
+lock's, the gems', classic magic's). A foot under the list counts the chosen and their shards and sweeps in every
+Magic, every Rare or every junk piece (LOOT18's mark) that would break now - never a Legendary, each one chosen by
+hand; Clear empties the choice, Cancel, Back or the button again stop it. Its Salvage asks once, in the one question's
+slot with the single piece's keys - the count, the shards and the first six names - and Keep keeps every piece with
+its tick. Yes breaks them through `reforge.js` `salvageMany`: each through `salvagePiece`, in order, so a refusal
+since the choice (worn, locked) costs only its own piece and is counted in the line it says ("Salvaged 3 pieces, for
+7 Welkynd Shards. 1 would not break and was kept."); a piece chosen twice breaks once. The law is LOOT9's unchanged.
+The classic pack has no card and no batch: the Reforge's Salvage page and its "Salvage every Magic" (LOOT18) stay its
+doors. `test/systems/batchsalvage.test.js` (5), `tools/mutants/batchsalvage.json` (13, all dead).
+
 ### LOOT10 - the codex, and the imprint (2026-10-01)
 
 **`systems/loot/lootCodex.js`** (new): the character's CODEX - every Legendary record and every Aetheric piece taken, with
