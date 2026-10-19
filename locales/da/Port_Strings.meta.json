@@ -8019,6 +8019,11 @@
   "tr": "1c3c2cc14bc0",
   "by": "claude-in-session"
  },
+ "eg.say.perches": {
+  "en": "419f5f081d80",
+  "tr": "b2313ea9be9a",
+  "by": "claude-in-session"
+ },
  "eg.touch.ping": {
   "en": "6b68e9797399",
   "tr": "6b68e9797399",
@@ -25812,6 +25817,21 @@
  "wagon.upkeep.boons.rickety": {
   "en": "8dcc1fe1e4b7",
   "tr": "3a4317629406",
+  "by": "claude-in-session"
+ },
+ "wild.death.burnt": {
+  "en": "bc8b28fb275b",
+  "tr": "a830b5cb0aa5",
+  "by": "claude-in-session"
+ },
+ "wild.death.burntLate": {
+  "en": "22380c1ebf90",
+  "tr": "8ea166623548",
+  "by": "claude-in-session"
+ },
+ "wild.death.letters": {
+  "en": "83c43a6db2b0",
+  "tr": "15ded84e667b",
   "by": "claude-in-session"
  },
  "wild.escrow.collectLate": {
