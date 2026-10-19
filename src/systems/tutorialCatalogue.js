@@ -17,6 +17,7 @@
 //   that changes how a system plays changes its page.
 
 import { t } from './textManager.js';   // KG3: a page's words read through the text core when shown
+import { isEnhanced } from './uiSkin.js';   // AUDIT SUGGESTIONS-1019 L6-4: a line only the enhanced skin's Stats page bears out
 import { ROLL_GAIN_DAY_MAX, ROLL_BOOK_RANK_MAX, SEAT_RANK } from '../net/npcChapterLaw.js';   // SEAT-WORDS: the Chapters page's numbers, the law's own
 
 /** @typedef {{ id: string, group: string, title: string, trigger: string, body: ReadonlyArray<string>, points?: ReadonlyArray<string> }} Tutorial */
@@ -174,9 +175,16 @@ export const TUTORIALS = Object.freeze([
   }),
   page({
     id: 'character-sheet', group: 'character', title: 'Your Character', trigger: 'When you first open your character sheet.',
-    body: [
-      'This shows your attributes, skills and standing with each faction. Skills improve as you use them, and when your main skills have gone up enough, you level up.',
-    ],
+    get body() {
+      return [
+        'This shows your attributes, skills and standing with each faction. Skills improve as you use them, and when your main skills have gone up enough, you level up.',
+        // SKILL-TICK (systems/advancement.js skillAdvanceProgress): when a used skill goes up, and where to see how close -
+        // AUDIT SUGGESTIONS-1019 L6-4: the Stats page's line is the enhanced skin's alone, so the classic skin is not sent to it
+        isEnhanced()
+          ? t('tutorials.characterSheet.skillRaiseStats', 'A used skill goes up when you rest or travel, at most once every 6 hours. Your Stats page shows how close each skill is.')
+          : t('tutorials.characterSheet.skillRaise', 'A used skill goes up when you rest or travel, at most once every 6 hours.'),
+      ];
+    },
   }),
   page({
     id: 'level-up', group: 'character', title: 'Level Up', trigger: 'When you first level up.',
@@ -431,10 +439,34 @@ export const TUTORIALS = Object.freeze([
     ],
   }),
   page({
+    // FB1018D CRAFT-HOWTO: the key opens the Professions page alone - the Stores page is the Holdings tab's since HOLDINGS
+    // (input.js's Professions lands `at: 'professions'`; AUDIT HOLDINGS C7 said so for the first harvest's line, not here).
+    // AUDIT FB1018D L1-6: and the Stores are reached from the window the key opens - "Menu > Holdings" is the Enhanced
+    // menu's alone: Escape on the Classic skin is DFU's pause, which has no tabs (ui/pauseDoor.js CLASSIC-PAGES)
     id: 'professions', group: 'livelihood', title: 'Professions', trigger: 'When you first gather something.',
     body: [
-      'Online, gathering, crafting and selling level up your professions. {Professions} opens them and your Stores, where your stored goods are kept.',
+      'Online, gathering, crafting and selling level up your professions. {Professions} opens them, and your stored goods are under Holdings > Stores in the same window.',
     ],
+  }),
+  page({
+    // FB1018D CRAFT-HOWTO (FIELD BUGS 2026-10-18d, MoonGeneral: "Write a bit more detailed piece about crafting in the
+    // tutorial (doesn't have to be step for step, but something that helps new players know where to look)"): where the
+    // stations stand - the shops the interior host's station questions answer (scenes/worldModes.js forgeHere ..
+    // enchantHere), a joinery's bench (scenes/world.js workbenchHere), any fire (net/professionLaw.js COOK_FIRE) - and
+    // that a station is worked on the Stores page - by the Professions key, the one door to it on either skin (AUDIT FB1018D
+    // L1-6). Each crafting profession's own page says the rest
+    // (ui/professions/profPages.js CRAFT_HOW). Pops with the first gather, after the two pages it follows.
+    id: 'crafting', group: 'livelihood',
+    get title() { return t('tutorials.crafting.title', 'Crafting'); },
+    get trigger() { return t('tutorials.crafting.trigger', 'When you first gather something.'); },
+    get body() { return [t('tutorials.crafting.body', 'Online, you craft at a station: stand at one, press {Professions} and open Holdings > Stores. Cook at any fire.')]; },
+    get points() {
+      return [
+        t('tutorials.crafting.shops1', 'Forge: Weaponsmiths, Armorers. Loom: Clothing Stores. Workbench: Furniture Stores, joineries.'),
+        t('tutorials.crafting.shops2', 'Jeweller\'s bench: Pawn Shops, Gem Stores. Mason\'s bench: General Stores. Alchemy: Alchemists. Enchanting: Mages Guild halls.'),
+        t('tutorials.crafting.more', 'Your home can hold stations too. Each crafting profession under {Professions} says more.'),
+      ];
+    },
   }),
   page({
     // AUDIT C&C S13: the words true - the page opens on the first need's tile of any kind (enhancedHud.js: the wet, the

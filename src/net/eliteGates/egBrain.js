@@ -79,6 +79,7 @@ import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT
 import { EG_LATE_HALLS, EG_LATE_ARRIVE_MS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from './egLaw.js';   // EG-ZI: the late wake and the pull's toll (sections 7 and 10.6)
 import { egCountRedoubt, egRedoubtHold, egCountOver, EG_OPEN_ENDS } from './egLaw.js';   // AUDIT EG III (lane2 #1, #2): the count's one law, the good ends
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightBind, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
+import { egStruckOff } from './egBodies.js';   // FIELD BUGS 2026-10-18f TURNED-BLOW: a blow from off the fight ground, the one law
 import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad } from './egLegion.js';
 import { egLegionRoom, egLegionCapOf, egEscortOf, egLurkerWake } from './egLegion.js';   // AUDIT EG III: the room under the legion's cap, a champion's escort, a struck Lurker's wake
 import { egLegionSummon, egBinderBroken, egSpotted } from './egLegion.js';   // AUDIT EG IV: a summons held to the room, a Binder's raise broken, a Spotter's arrow
@@ -1890,9 +1891,13 @@ function sapperGoal(F, spec, a) {
 const nearestClosed = (F, a) => (F.closedSpots ?? []).reduce((b, q) => (!b || dist(q[0], q[1], a.x, a.z) < dist(b[0], b[1], a.x, a.z) ? q : b), null);
 /** A Sapper at its objective: gone into it. AUDIT EG IV (lane1 #17; section 12: "heals it, the gate's law"): a lord drinks it
  *  as the gate's Warden does - SAP_HEAL of its health while its fight's feedings last (SAP_FEEDS_MAX), burnt out against it
- *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). */
+ *  after (net/gate/gateBrain.js sapperBeat); a closed rift opened again at a third of its own health (lane1 #27). FB1018D
+ *  TWIN-REKINDLE: only a lord STANDING drinks - the gate's Warden is fed only while he stands, and a lord of a fight of two
+ *  lies a body after its fall (a Twin in its window, the Twin Court's first, the Old Masters'), so a Sapper stood for it
+ *  before its fall burns out against the body: fed, the body stood again with its fall's flag still on - a lord on the
+ *  relay, throwing blows, that no screen's blow could meet, and that kept the pair's raise from ever coming. */
 function sapperReach(F, spec, a, now, out) {
-  const L = a.lordGoal ? egBodyById(F, a.lordGoal) : null, feeds = !!L && (F.mem.fed ?? 0) < SAP_FEEDS_MAX;
+  const L = a.lordGoal ? egBodyById(F, a.lordGoal) : null, feeds = !!L && L.hp > 0 && (F.mem.fed ?? 0) < SAP_FEEDS_MAX;
   egGone(F, [a], a.lordGoal && !feeds ? EG_GONE.crumbled : EG_GONE.fed, '', now, out);
   if (a.lordGoal) { if (feeds) { F.mem.fed = (F.mem.fed ?? 0) + 1; L.hp = Math.min(L.max, L.hp + L.max * SAP_HEAL); out.push({ k: 'esay', w: 'sapperfed' }); } return; }
   if (a.goal) { if (!(F.closedSpots ?? []).includes(a.goal)) return; F.closedSpots = F.closedSpots.filter((q) => q !== a.goal); egRaiseObj(F, 'rift', a.goal[0], a.goal[1], Math.round((a.goal[2] ?? egHpTeam(F, EG_RIFT_TEAM_S, 5)) / 3), now, out, { r: 1.3 }); out.push({ k: 'esay', w: 'reopened' }); return; }
@@ -1926,7 +1931,7 @@ export function egBlow(B, sub, m, pose, now) {
   // traversal ground (a step, a ledge, a side span, the top of an arch's wall over the floor) strikes nothing; an object
   // standing off it (a false wall in its alcove) is struck from beside it, as before (net/eliteGates/egBodies.js egHitBody)
   const view = egFightView(spec);
-  if (!egGroundAt(view, p.x, p.y, p.z, EG_STRIKE_PAD_M) && !(body.role === EG_ROLE.obj && !egGroundAt(view, body.x, egFeetY(view, body.y), body.z, body.r ?? 1))) return out;   // THE ASCENT: the object's own floor by its feet
+  if (egStruckOff(view, body, p.x, p.y, p.z)) return out;   // THE ASCENT: the object's own floor by its feet; FIELD BUGS 2026-10-18f TURNED-BLOW: the rule moved into egBodies.js egStruckOff, the one law every screen asks too
   const here = egPosedHere(B);   // AUDIT EG V (L2-2): the living company by its poses of this hall
   mm.pose = { x: p.x, z: p.z, h: B.h };   // AUDIT EG V (L3-22, L2-2): the hall it struck in, as egStep keeps a pose (a fall's Memento and egPosedHere read it)
   // AUDIT EG IV (lane1 #19): COUNTERSTROKE ARMED AT THE BLOW - a lord's blow landed within EG_COUNTER_M of this member since the

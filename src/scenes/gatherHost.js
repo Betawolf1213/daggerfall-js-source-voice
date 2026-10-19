@@ -1087,7 +1087,7 @@ export function createGatherHost(deps) {
       if (act) return !click;   // AUDIT 29 D3: E during an act is the act's - never a door's or a loot's behind it (a click is clickTaken's)
       if (!target || !live() || book.state.open !== true) return false;
       const t = target;
-      noteFirstUse('foraging'); noteFirstUse('professions');   // TUT1: the first gather, and the trades it feeds
+      noteFirstUse('foraging'); noteFirstUse('professions'); noteFirstUse('crafting');   // TUT1: the first gather, and the trades it feeds - FB1018D CRAFT-HOWTO: and where its goods are worked
       const rows = rowsFor(t);
       const lit = deps.lit?.(menuKey(t)) ?? null;
       const chosen = lit != null ? rows.find((r) => r.id === lit) ?? null : null;

@@ -2068,6 +2068,7 @@ ${badgeCss()}
   gap: 4px 26px; margin-bottom: 8px; }
 .px-skill { margin: 0 0 8px; }
 .px-skill .px-meter { height: 6px; border-width: 2px; }
+.px-skilltick { margin: 3px 0 0; color: #9c937d; font-size: 12px; letter-spacing: 0.04em; }   /* SKILL-TICK: the uses toward the next point, under the bar */
 .px-skill .px-mtop { margin-bottom: 3px; }
 .px-skill .px-mtop .v { font-size: 16px; }
 .px-disclose { width: auto; margin: 10px auto 0; }
@@ -2928,6 +2929,13 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
    FAMILY rather than for the window that was reported. */
 .sb-shell, .cr-shell { display: flex; align-items: center; justify-content: center; }
 .sb-shell .px-win { width: min(920px, 94vw); height: min(620px, 86dvh); }
+/* FB1018f SPELL-SCROLL: THE BOOK'S LIST SCROLLS IN ITS OWN COLUMN, as DFU's does (its ListBox in its own rect, the
+   chosen spell's panels standing beside it). The journal grew with its rows (min-height: 100%), so the one scroll was the
+   body's: a spell picked down the list had its page scrolled away above it, and a phone's page stood under every row.
+   The journal is held to the body; the list and the page scroll each on their own - the grimoire dress's book, worn plain. */
+.sb-shell .px-body { display: flex; flex-direction: column; overflow: hidden; }
+.sb-shell .px-journal { flex: 1 1 auto; min-height: 0; }
+.sb-shell .px-qrail, .sb-shell .px-qdetail { min-height: 0; overflow-y: auto; }
 .sb-shell .sb-top, .cr-shell .sb-top { display: grid; grid-template-columns: 1fr auto 1fr;
   align-items: center; padding: 12px 16px;
   border-bottom: 2px solid rgba(125,116,96,0.35); }
@@ -4694,6 +4702,7 @@ ${paceControlsCss('tview')}
 .pack-shell .walletsheet .wallet-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
   padding: 3px 0; font-size: 14px; line-height: 1.35; }
 .pack-shell .walletsheet .wallet-k { color: var(--dim); }
+.pack-shell .walletsheet .wallet-kg { margin-left: 4px; font-size: 12px; opacity: 0.75; font-variant-numeric: tabular-nums; white-space: pre; }
 .pack-shell .walletsheet .wallet-v { color: var(--bone); text-align: right; font-variant-numeric: tabular-nums; }
 .pack-shell .walletsheet .wallet-row.none .wallet-v, .pack-shell .walletsheet .wallet-v.why { color: var(--dim); opacity: 0.75; }
 .pack-shell .walletsheet .wallet-v.why { font-size: 12px; }
@@ -5625,6 +5634,7 @@ ${tierMarkCss({ wash: (k) => TIER_MARKS[k], washAlpha: 0.2, edge: '#0b0805', sel
 /* EVENT-TIP: a world event's card at the pointer - the gate's ring, a raided town (ui/eventMapMarks.js) - in the
    pixel home's plaque language; placed in viewport pixels over the root (ui/heldMap.js _showTip) */
 .hmtip { position: absolute; z-index: 3; display: none; pointer-events: none; max-width: min(320px, calc(100vw / var(--hm-ui, 1) - 16px));
+  max-height: calc(100vh / var(--hm-ui, 1) - 16px); overflow: hidden;   /* AUDIT TOWN-ECON UI-1: CARD-FIT's bound in height too - a card taller than a landscape phone is held on it */
   padding: 8px 12px; background: rgba(10,12,17,0.9); border: 2px solid rgba(216,207,174,0.7);
   outline: 2px solid rgba(125,116,96,0.35); outline-offset: 2px; color: #d8cfae; font-family: inherit;
   text-shadow: 2px 2px 0 rgba(0,0,0,0.85); }

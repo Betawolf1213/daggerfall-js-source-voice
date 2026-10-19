@@ -9,7 +9,7 @@
 //         12 s, its longest wait), the proof, the road's crossing at THE SPAN BUILD (fastest, median) and at THE FAST BUILD,
 //         and the crossing's bound (EG_CROSS_MIN, section 10.5)
 //
-//     node tools/egSpanSolve.mjs --sweep [--band <0-3>] [--seeds <n>] [--from <seed>] [--golden]
+//     node tools/egSpanSolve.mjs --sweep [--band <0-3>] [--seeds <n>] [--from <seed>] [--golden] [--part <p>/<k>]
 //         THE SWEEP (section 10.5): every course the generator lays in a circle of the band, for each seed, crossed STEP BY
 //         STEP BY THE REAL MOTOR - player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0, every gap
 //         a plain running jump; EG-PERFECT: the online page's parkour at skill 0 in every frame, as the game forces it, its
@@ -27,6 +27,10 @@
 //
 // CI runs 25 seeds a band on every pull request (.github/workflows/eg-sweep.yml, called by verify.yml), 500 nightly, and
 // 500 again before every relay deploy (relay-deploy.yml).
+//
+// SWEEP-FAST (2026-10-19, Mac: "Yes" - a relay deploy took an hour, ~53 minutes of it one band's 500 seeds):
+// `--part <p>/<k>` sweeps the p-th of k parts of the band's seeds - every k-th seed of the list from its p-th (sweepPart),
+// the golden ones among them - so k jobs sweep a band at once and every seed is swept by exactly one of them.
 //
 // THE ASCENT (LAW 9, 2026-10-16; bible/11-Multiplayer/Elite-Gates-Ascent.md section 6): A HALL OF THE ASCENT'S LAW IS WALKED
 // ALONG ITS ROUTE (sweepRoute), every road the route proves (net/eliteGates/egRouteProof.js egRouteRoads - the main way, THE FORK's
@@ -50,7 +54,7 @@
 import { egCircleSpecs, egFirstHallOf } from '../src/net/eliteGates/egLaw.js';
 import { egHallOf, egSpecForget } from '../src/net/eliteGates/egLaw.js';
 import { egSpanPairs, egPairWindows, egSpanProof, egRoadCross, egFastCross, egCrossMin, egCourseOf, egJumpLands, egJumpReach, egPieceAt, egPendHits,
-  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, egAlongOf, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
+  egSlagLane, egSlagState, egSlagX, egRouteCross, egRouteSolved, egAlongOf, egSpanBuildOf, EG_SPAN_RUN_MPS, EG_BODY_R, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/eliteGates/egSpanLaw.js';
 import { egRouted, egRouteRoads, egClimbPitches, egPitchWallS, EG_ROUTE_COURSE_RISE_M } from '../src/net/eliteGates/egRouteProof.js';   // THE ASCENT: the route's legs
 import { egRouteLen } from '../src/net/eliteGates/egRoute.js';
 import { egSynth9Give } from './lib/egLaw9Synth.mjs';   // THE ASCENT: synthetic LAW 9 halls, until THE ROOMS lays them
@@ -91,6 +95,11 @@ const LATE_S = 0.2;           // a landing looked ahead from comes this late, at
 const STILL = new Set(['still', 'ledge', 'drop', 'gust', 'vent', 'bone', 'crumble']);
 /** The pieces that keep time under a foot: gone off their beat (a Beat, a Moon branch, a crust) or falling after one. */
 const TIMED = new Set(['beat', 'moon', 'slag', 'crumble', 'bone', 'sink']);
+/** EG-SWEEP-RED: THE SPAN BUILD with no catch at the far edge - its reach one capsule's radius short (the solver's reach
+ *  counts the capsule over both edges: the landing's is a corner caught and stepped up onto, which a Rail's face moving
+ *  away from the body never gives - the 500-seed sweep before world219's deploy, two jumps 3.1-3.2 m onto a Rail running
+ *  away, the body pinned to its face and falling) */
+const UNCAUGHT = Object.freeze({ ...egSpanBuildOf(0), reach: (/** @type {number} */ h) => { const r = egJumpReach(h); return { reach: r.reach - EG_BODY_R, air: r.air }; } });
 const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 /** Still ground under me: the circle's floors, a Falling Wall's or a Collapsing Tube's segment, one of Grath's islands
@@ -277,7 +286,9 @@ function pilotOf(S, spec, road, t0, trace = null) {
   /** a piece where it stands at `u` - a slag crossing the spout's crust I stand on (`lane`), never the other's */
   const pieceAt = (q, u, lane = -1) => (q.kind === 'slag' && lane >= 0 ? { dx: egSlagX(q, lane) - q.x, dz: 0, solid: egSlagState(q, lane, u).st === 'crust' } : egPieceAt(q, u));
   const lzOf = (p, u, lane = -1) => (p.a ? p.a.z + pieceAt(p.a, u, lane).dz + p.a.d / 2 : p.edge);
-  const lands = (p, u) => egJumpLands(p, u - HOLD_S) && egJumpLands(p, u) && egJumpLands(p, u + HOLD_S);
+  /** EG-SWEEP-RED: what I land on runs away from me as I come down on it (a Rail, a Drum on its travel) - its edge's catch is none */
+  const recedes = (p, u) => { if (!p.b) return false; const T = u + airOf(p); return egPieceAt(p.b, T + 0.02).dz > egPieceAt(p.b, T).dz + 1e-6; };
+  const lands = (p, u) => egJumpLands(p, u - HOLD_S) && egJumpLands(p, u) && egJumpLands(p, u + HOLD_S) && (!recedes(p, u) || egJumpLands(p, u, UNCAUGHT));
   const goneAt = (q, since, lane = -1) => {
     if (!q || !TIMED.has(q.kind)) return Infinity;
     if (EG_CRUMBLE_KINDS.includes(q.kind)) return since + EG_CRUMBLE_DELAY_S - 0.06;
@@ -325,17 +336,24 @@ function pilotOf(S, spec, road, t0, trace = null) {
     const p = pairs[pi];
     return lands(p, u) && (turn || !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1, (p.b ?? p.a)?.x ?? null)) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);   // (a turned course keeps no Gust)
   };
+  /** the chain from pair `pi` launched at `u`: while what it lands on keeps time, the launch from THERE made in time too */
+  const follows = (pi, u, depth = 0) => {
+    const p = pairs[pi], nx = pairs[pi + 1];
+    if (!(p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8)) return true;
+    const land = u + airOf(p), kb = p.b.kind === 'slag' ? egSlagLane(p.b, land) : -1, key = `${pi + 1}:${Math.round(land * 50)}`;
+    if (!ahead.has(key)) ahead.set(key, launch(pi + 1, land + p.b.d / EG_SPAN_RUN_MPS + LATE_S, EG_CRUMBLE_KINDS.includes(p.b.kind) || p.b.kind === 'sink' ? land + LATE_S : land, depth + 1, kb) != null);
+    return ahead.get(key);
+  };
   const launch = (pi, ready, since, depth = 0, lane = -1) => {
-    const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p), nx = pairs[pi + 1];
+    const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p);
     let best = null, bestOv = -Infinity, first = null;
     for (let u = ready; u <= ready + EG_SOLVE_HORIZON_S && u + 0.05 < gone; u += 0.02) {
       if (first != null && u > first + WINDOW_LOOK_S) break;
       if (!takes(pi, u, lane)) continue;
-      if (p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8) {
-        const land = u + air, kb = p.b.kind === 'slag' ? egSlagLane(p.b, land) : -1, key = `${pi + 1}:${Math.round(land * 50)}`;
-        if (!ahead.has(key)) ahead.set(key, launch(pi + 1, land + p.b.d / EG_SPAN_RUN_MPS + LATE_S, EG_CRUMBLE_KINDS.includes(p.b.kind) || p.b.kind === 'sink' ? land + LATE_S : land, depth + 1, kb) != null);
-        if (!ahead.get(key)) continue;
-      }
+      // EG-SWEEP-RED: the chain held for a launch HOLD_S late too, as the launch itself is held - a plan whose next launch had no
+      // slack at all (the 500-seed sweep before world219's deploy: a Beat jumped onto 0.03 s late, a frame of the run-up's
+      // own, and no launch off it before it went)
+      if (!follows(pi, u, depth) || !follows(pi, u + HOLD_S, depth)) continue;
       // the window found: within its first WINDOW_LOOK_S, the moment the two tops line up best (a still pair: its first)
       first ??= u;
       const ov = overlap(p, u, air, lane);
@@ -583,6 +601,17 @@ export function sweepSynth9(seed, band) {
 /** The sweep's seeds: `n` from `from`, the law pin's beside them when asked. */
 export const sweepSeeds = (n, from = 1, golden = false) => [...new Set([...Array.from({ length: n }, (_, i) => from + i), ...(golden ? SWEEP_GOLDEN : [])])];
 
+/** SWEEP-FAST: `p/k` -> {p, k} (1 <= p <= k), or null. */
+export function sweepPartOf(s) {
+  const m = /^(\d+)\/(\d+)$/.exec(String(s ?? ''));
+  if (!m) return null;
+  const p = Number(m[1]), k = Number(m[2]);
+  return k >= 1 && p >= 1 && p <= k ? { p, k } : null;
+}
+/** SWEEP-FAST: the p-th of k parts of `seeds` - every k-th seed from its p-th, so each part's circles are the band's
+ *  mix (a seed's circle is its fifth) and every seed is in exactly one part. */
+export const sweepPart = (seeds, p, k) => seeds.filter((_, i) => i % k === p - 1);
+
 /** THE SOLVER'S READING of a hall: each road's pairs and their windows, its proof, its crossings, its bound. */
 export function solveReport(seed, hall, geo = 0) {
   const spec = egHallOf(seed, hall, geo), lines = [];
@@ -654,14 +683,19 @@ export function main(argv, log = console.log, sweep = sweepSeed) {
   const law9 = argv.includes('--law9');   // THE ASCENT: the synthetic LAW 9 halls (tools/lib/egLaw9Synth.mjs), given
   if (!argv.includes('--sweep')) {
     const [seed, hall, geo] = argv.filter((x, i) => !x.startsWith('--') && argv[i - 1] !== '--band').map(Number);
-    if (!Number.isSafeInteger(seed) || !Number.isSafeInteger(hall) || hall < 1) { log('usage: node tools/egSpanSolve.mjs <seed> <hall> [geo] [--law9 [--band 0-3]] | --sweep [--band 0-3] [--seeds n] [--from seed] [--golden] [--law9]'); return 2; }
+    if (!Number.isSafeInteger(seed) || !Number.isSafeInteger(hall) || hall < 1) { log('usage: node tools/egSpanSolve.mjs <seed> <hall> [geo] [--law9 [--band 0-3]] | --sweep [--band 0-3] [--seeds n] [--from seed] [--golden] [--part p/k] [--law9]'); return 2; }
     if (law9) egSynth9Give(seed, Math.ceil(hall / 5), geo || 0, Number(arg('--band', 0)));
     try { for (const l of solveReport(seed, hall, geo || 0)) log(l); } finally { if (law9) egSpecForget(); }
     return 0;
   }
   const bands = argv.includes('--band') ? [Number(arg('--band'))] : [0, 1, 2, 3];
   if (!bands.every((b) => [0, 1, 2, 3].includes(b))) { log('--band is 0, 1, 2 or 3'); return 2; }
-  const { bad } = runSweep(bands, sweepSeeds(Number(arg('--seeds', 25)), Number(arg('--from', 1)), argv.includes('--golden')), law9 && sweep === sweepSeed ? sweepSynth9 : sweep, log);
+  const part = argv.includes('--part') ? sweepPartOf(arg('--part')) : { p: 1, k: 1 };
+  if (!part) { log('--part is p/k, 1 <= p <= k'); return 2; }
+  const all = sweepSeeds(Number(arg('--seeds', 25)), Number(arg('--from', 1)), argv.includes('--golden'));
+  const seeds = sweepPart(all, part.p, part.k);
+  if (part.k > 1) log(`part ${part.p}/${part.k}: ${seeds.length} of the ${all.length} seeds`);
+  const { bad } = runSweep(bands, seeds, law9 && sweep === sweepSeed ? sweepSynth9 : sweep, log);
   return bad ? 1 : 0;
 }
 
