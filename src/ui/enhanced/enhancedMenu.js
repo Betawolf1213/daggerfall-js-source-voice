@@ -4620,7 +4620,7 @@ function pauseWindow() {
 
   const body = el('div', 'px-body');
   ({ quests: pauseQuests, stats: pauseStats, growth: pauseGrowth, holdings: pauseHoldings, family: pauseFamily, tutorials: drawTutorialsPane, system: pauseSystem })[pauseTab](body);   // TUT1 - GROWTH1
-  if (pauseTab === 'growth' && stageLive()) win.classList.add('px-win-wide');   // GROWTH3: a face on the stage - the window nearly the screen's
+  if (pauseTab === 'growth') win.classList.add('px-win-growth');   // GROWTH-BOOK: one size for every page of the tab (was GROWTH3's px-win-wide, a face up only)
   win.append(body);
   return win;
 }

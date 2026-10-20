@@ -732,6 +732,12 @@ ${q('.px-fill.blood')} { background: ${tube('Health')}, #8a1c18 !important; }
 ${q('.px-fill.verdigris')} { background: ${tube('Magicka')}, #2f5fb4 !important; }
 ${q('.px-meter:has(> .px-fill.thin)')} { height: ${px(3, 'gq')} !important; background: rgba(40,22,8,0.55) !important; box-shadow: 0 0 0 ${px(1, 'gq')} ${T.outline} !important; }
 ${q('.px-fill.thin')} { background: linear-gradient(180deg, #fff0a0 0 ${px(1, 'gq')}, ${T.goldLeaf} ${px(1, 'gq')} ${px(2, 'gq')}, #9a7420 ${px(2, 'gq')}) !important; }
+/* MASTERY-INK (2026-10-20, Dudey: "dont use those thick green bars for mastery make them red and the same thickness as
+   the yellow ones"): a mastered skill's climb past 100 is the thin bar's groove in red, not a Fatigue vial */
+${q('.px-meter.px-over')} { height: ${px(3, 'gq')} !important; background: rgba(40,22,8,0.55) !important; box-shadow: 0 0 0 ${px(1, 'gq')} ${T.outline} !important; }
+${q('.px-fill.px-overfill')} { background: linear-gradient(180deg, #e8705c 0 ${px(1, 'gq')}, ${T.redHi} ${px(1, 'gq')} ${px(2, 'gq')}, ${T.redDeep} ${px(2, 'gq')}) !important; }
+${q('.px-meter.px-over .px-tick')} { display: none; }
+${q('.px-skillmeter')} { gap: ${px(2, 'gq')} !important; }
 /* GRIM4 (Dudey: "the bars in the ascend and status screen also do not look like the player health/stam/mana bars"): a
    vital's row is the HUD's own vial; GRIM5 ("the vial bars are toooshort in the stat screen"): drawn out to the row's
    length - the vial's own head (cork and lit shoulder), its glass, and its own foot at the far end, each at the HUD's
