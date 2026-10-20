@@ -570,8 +570,8 @@
   {
     "name": "PORTAL1-enhanced-card-silent",
     "file": "src/ui/enhanced/enhancedInventory.js",
-    "old": "    ...(isPortalStone(item) || isStarglass(item) ? { survival: survivalInfoTokens(item).slice(2).map((r) => r.text) } : {}),",
-    "new": "    ...(isStarglass(item) ? { survival: survivalInfoTokens(item).slice(2).map((r) => r.text) } : {}),",
+    "old": "...(isPortalStone(item) || isStarglass",
+    "new": "...(isStarglass",
     "tests": [
       "test/systems/portal1_stone.test.js"
     ]

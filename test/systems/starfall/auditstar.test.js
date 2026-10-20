@@ -36,6 +36,7 @@ import { createWeapon } from '../../../src/combat/enemyEquipment.js';
 import { ARMOR_MATERIAL } from '../../../src/systems/armorMaterials.js';
 import { starglass, STARGLASS_ROW, STARGLASS_TEXT } from '../../../src/systems/starfall/starglass.js';
 import { survivalInfoTokens, itemInfoRows } from '../../../src/systems/item/itemInfo.js';
+import { itemLine } from '../../../src/ui/enhanced/enhancedInventory.js';
 import { RRI_TEMPLATES } from '../../../src/systems/roleplayRealismItems/rriItems.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -190,5 +191,5 @@ test('AUDIT STAR I1/I2: THE STAR\'S GLASS IS STARFALL GLASS - no custom row shar
   assert.deepEqual(survivalInfoTokens(g).map((r) => r.text), ['Starfall Glass', survivalInfoTokens(g)[1].text, ...STARGLASS_TEXT.lines()]);
   assert.deepEqual(STARGLASS_TEXT.lines(), ['Pale glass from a fallen star, still holding some of its light.', 'Any merchant pays well for it.']);
   assert.deepEqual(itemInfoRows(g, () => null).map((r) => r.text).slice(2), STARGLASS_TEXT.lines(), 'the classic info box');
-  assert.match(read('src/ui/enhanced/enhancedInventory.js'), /isPortalStone\(item\) \|\| isStarglass\(item\) \? \{ survival: survivalInfoTokens\(item\)/, 'and the enhanced card');
+  assert.deepEqual(itemLine(g).survival, STARGLASS_TEXT.lines(), 'and the enhanced card');
 });

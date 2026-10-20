@@ -29,6 +29,9 @@ import { wyrdRows, wyrdPress, mountWyrdWindow, WYRD_WATCH_MS, WYRD_CSS } from '.
 import { withDom } from '../../invdrag.mjs';
 import { mock } from 'node:test';
 import { TITLE_TEXT, AURA_TEXT } from '../../../src/ui/playerBadge.js';
+import { soulCakes, hearthOffering, SOUL_CAKE_TEXT } from '../../../src/systems/festival/soulCake.js';
+import { survivalInfoTokens, itemInfoRows } from '../../../src/systems/item/itemInfo.js';
+import { itemLine } from '../../../src/ui/enhanced/enhancedInventory.js';
 
 test('WITCH1 THE WYRD\'S RAIMENT: nine Aetheric pieces of Elven make in the Wyrd\'s set - the eight of a body and its shield, the Athame its weapon - each minted by its id alone', () => {
   assert.deepEqual(WYRD_SET_PIECES.map((r) => r.id), WYRD_PIECE_IDS);
@@ -251,3 +254,12 @@ test('WITCH1 THE WINDOW MOUNTED: the reason a press cannot be said (a guest\'s, 
   });
 });
 
+test('WITCH1 THE TWO ITEMS\' CARDS: a Soul Cake and a Hearth Offering say what each is and what it is for - in the classic info box and on the enhanced card alike (AUDIT STAR: the enhanced card said nothing of either) (mutants: WITCH1-AUDIT-the-enhanced-card-silent)', () => {
+  assert.deepEqual(SOUL_CAKE_TEXT.cake(), ['A spiced cake set out for the restless dead.', 'The Wyrd Sisters trade for them.']);
+  assert.deepEqual(SOUL_CAKE_TEXT.offering(), ['A bowl for Soul Cakes, under a tallow lantern.', 'Use it at your own door to set it out.']);
+  for (const [item, lines] of [[soulCakes(3), SOUL_CAKE_TEXT.cake()], [hearthOffering(), SOUL_CAKE_TEXT.offering()]]) {
+    assert.deepEqual(survivalInfoTokens(item).map((r) => r.text).slice(2), lines);
+    assert.deepEqual(itemInfoRows(item, () => null).map((r) => r.text).slice(2), lines, 'the classic info box');
+    assert.deepEqual(itemLine(item).survival, lines, 'the enhanced card');
+  }
+});

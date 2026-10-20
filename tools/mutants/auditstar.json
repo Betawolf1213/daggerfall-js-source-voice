@@ -234,8 +234,8 @@
  {
   "name": "AUDIT-STAR-I2-glass-enhanced-card",
   "file": "src/ui/enhanced/enhancedInventory.js",
-  "old": "...(isPortalStone(item) || isStarglass(item) ? { survival:",
-  "new": "...(isPortalStone(item) ? { survival:",
+  "old": "|| isStarglass(item) || isFestivalFace(item) ? { survival:",
+  "new": "|| isFestivalFace(item) ? { survival:",
   "tests": [
    "test/systems/starfall/auditstar.test.js"
   ]

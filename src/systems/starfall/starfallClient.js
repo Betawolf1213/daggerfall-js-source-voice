@@ -12,10 +12,9 @@ import { starMasterOf } from './starCoven.js';
 import { covenWitches } from './starfallCovens.js';
 import { heartStar } from './starfallNight.js';
 
-/** A player this near a fallen star springs its coven and may own it (the camp's reach - section 4). */
-export const STAR_SPRING_M = 80;
-/** A word is said from this near - inside the relay's reach (net/starfall/starfallLaw.js STAR_REACH_M, 60), so a pose a
- *  frame behind the feet is never refused at the edge (the rite's RITE_SAY_REACH_M). */
+/** A word is said from this near, and the coven sprung, stood and held from it (AUDIT STARFALL C2: one leash,
+ *  scenes/starfall/starfallHost.js leashSlipped) - inside the relay's reach (net/starfall/starfallLaw.js STAR_REACH_M,
+ *  60), so a pose a frame behind the feet is never refused at the edge (the rite's RITE_SAY_REACH_M). */
 export const STAR_SAY_M = 55;
 /** The tracker, the master's bar and the star's hum stand for a player this near. */
 export const STAR_HUD_M = 400;
