@@ -12,6 +12,7 @@ import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';
 import { LODE_COMPASS_CSS, lodeLabel } from '../ui/lodeMapMark.js';
 import { mapPixelToWorldCoords } from '../world/streamingWorld.js';
 import { markShown, travellerKin } from '../systems/travel/travelViewFilters.js';
+import { t } from '../systems/textManager.js';   // OW-FORECAST: a card's weather line in the player's language
 import { NAME_RANGE } from '../net/remotePlayers.js';
 import { pixelOfNative, RAIDER_LABEL } from '../systems/seaRaiders.js';
 import { playerEntity } from '../characters/playerEntity.js';
@@ -60,7 +61,7 @@ export function createTravelViewMarks(host) {
     const base = econ?.() ?? null;
     const sky = owForecast?.placeLine({ x, z }) ?? '';
     if (!sky) return base;
-    return { title: base?.title ?? name, lines: [`Weather: ${sky}`, ...(base?.lines ?? [])] };
+    return { title: base?.title ?? name, lines: [t('travelView.tip.weather', 'Weather: {sky}', { sky }), ...(base?.lines ?? [])] };
   };
   /** The readout's marks: the plates (the journey's own end hides its plate), and the end. World points - the view
    *  projects them through the frame's matrices. */

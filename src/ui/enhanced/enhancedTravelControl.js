@@ -34,6 +34,7 @@ import {
   JUNCTION_HERE_PT, junctionDirectionIndex, drawMapSection, DOT_SCALE, packRGBA,
 } from '../travel/travelPathsOverlay.js';
 import { TRAVEL_OPTIONS_TEXT as T } from '../../systems/travel/travelOptionsText.js';
+import { t } from '../../systems/textManager.js';
 import { buildPaceControls, paceControlsCss } from '../travel/travelPaceControls.js';   // PACE-DIALS: the journey's own dials again
 
 export const ENHANCED_TRAVEL_ID = 'enhanced-travel';
@@ -59,7 +60,7 @@ let last = null;
  *  and why. AUDIT OW5 G1: the load (TV2's governor), or the ground (AUDIT OW4 J5: an Overworld journey walks at x1 on the
  *  ground until the view can rise), which the load's words called loading while nothing was; OW6: or an enemy near
  *  (systems/travel/travelThreat.js). */
-export const TRAVEL_HELD_WHY = Object.freeze({ load: 'while the land loads', ground: 'until the Overworld rises', foes: 'with enemies near', town: 'in town' });   // OW-TOWN-WALK: a town's pace
+export const TRAVEL_HELD_WHY = Object.freeze({ load: 'while the land loads', ground: 'until the Overworld rises', foes: 'with enemies near', get town() { return t('travel.held.town', 'in town'); } });   // OW-TOWN-WALK: a town's pace (L10N4: its words the player's language's)
 export const TRAVEL_HELD_TEXT = (n, of, why = 'load') => `Held to ×${n} of ×${of} ${TRAVEL_HELD_WHY[why] ?? TRAVEL_HELD_WHY.load}`;
 
 /** enhancedHud.js:"FRAME1: the smallest" - write only on a change. */

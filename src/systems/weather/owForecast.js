@@ -21,13 +21,29 @@
 // The map's lane only (weatherMapOn: the enhanced skin's world weather map, forced on online). Off it the sky is DFU's
 // day roll per climate, which has no tomorrow to read - and nothing is said.
 //
-// PURE: points, minutes and a reader in; words out. The host (scenes/overworldForecastHost.js) reads the map, the
-// clock, the route and the pace.
+// PURE: points, minutes and a reader in; words out - the player's language's (L10N4: every word through the text core,
+// `t`, its English here). The host (scenes/overworldForecastHost.js) reads the map, the clock, the route and the pace.
 // ═══════════════════════════════════════════════════════════════════
+import { t } from '../textManager.js';
 
-/** The map's words as a traveller says them. */
+/** The map's words as a traveller says them (read in the player's language when read). */
 export const FORECAST_WORDS = Object.freeze({
-  sunny: 'Clear', cloudy: 'Cloudy', overcast: 'Overcast', fog: 'Fog', rain: 'Rain', thunder: 'Thunderstorm', snow: 'Snow', sandstorm: 'Sandstorm',
+  get sunny() { return t('forecast.word.sunny', 'Clear'); },
+  get cloudy() { return t('forecast.word.cloudy', 'Cloudy'); },
+  get overcast() { return t('forecast.word.overcast', 'Overcast'); },
+  get fog() { return t('forecast.word.fog', 'Fog'); },
+  get rain() { return t('forecast.word.rain', 'Rain'); },
+  get thunder() { return t('forecast.word.thunder', 'Thunderstorm'); },
+  get snow() { return t('forecast.word.snow', 'Snow'); },
+  get sandstorm() { return t('forecast.word.sandstorm', 'Sandstorm'); },
+});
+/** What a traveller meets, as said after another ("Rain - snow in 30 min") - its own words, never a lowercased one. */
+const FORECAST_TURNS = Object.freeze({
+  get fog() { return t('forecast.turn.fog', 'fog'); },
+  get rain() { return t('forecast.turn.rain', 'rain'); },
+  get thunder() { return t('forecast.turn.thunder', 'thunderstorm'); },
+  get snow() { return t('forecast.turn.snow', 'snow'); },
+  get sandstorm() { return t('forecast.turn.sandstorm', 'sandstorm'); },
 });
 /** What a traveller meets on the way - what falls, what blinds; the rest is the sky's look. */
 export const FORECAST_NOTABLE = Object.freeze(new Set(['fog', 'rain', 'thunder', 'snow', 'sandstorm']));
@@ -46,17 +62,17 @@ export const PACE_MIN_MPS = 0.5;
 /** A step faster than this (field metres a real second) is a jump - a teleport, a load - and starts the meter again. */
 export const PACE_JUMP_MPS = 20000;
 
-const say = (w) => FORECAST_WORDS[w] ?? 'Fair';
+const say = (w) => FORECAST_WORDS[w] ?? t('forecast.word.fair', 'Fair');
 const notable = (w) => FORECAST_NOTABLE.has(w);
 
 /** Game minutes as a traveller says them: "in 20 min" to the nearest five under the hour, "in about 3 h" past it. */
 export function etaWords(min) {
-  if (!(min > 0)) return 'now';
-  if (min < 57.5) return `in ${Math.max(5, Math.round(min / 5) * 5)} min`;
-  return `in about ${Math.round(min / 60)} h`;
+  if (!(min > 0)) return t('forecast.eta.now', 'now');
+  if (min < 57.5) return t('forecast.eta.min', 'in {n} min', { n: Math.max(5, Math.round(min / 5) * 5) });
+  return t('forecast.eta.hours', 'in about {n} h', { n: Math.round(min / 60) });
 }
 /** Field metres as a distance: tenths of a kilometre under ten, whole ones past. */
-export const kmWords = (m) => `${m < 9950 ? (m / 1000).toFixed(1) : Math.round(m / 1000)} km`;
+export const kmWords = (m) => t('forecast.km', '{n} km', { n: m < 9950 ? (m / 1000).toFixed(1) : String(Math.round(m / 1000)) });
 
 /**
  * The places along a line of points (field metres, the traveller first) the way ahead is asked at: every `step` from
@@ -103,11 +119,15 @@ export function routeForecast(samples, { nowWord, now, minuteAt, wordAt }) {
 
 /** The way ahead in words. `dest` the journey's end's name (a place's), or null. */
 export function routeLine(f, dest = null) {
-  if (f.kind === 'ahead') return `${say(f.word)} ahead - ${kmWords(f.d)}, ${etaWords(f.min)}`;
-  if (f.kind === 'clearing') return `${say(f.word)} clears ${kmWords(f.d)} ahead`;
-  const to = dest ? ` to ${dest}` : '';
-  if (notable(f.word)) return f.all ? `${say(f.word)} all the way${to}` : `${say(f.word)} for the next ${kmWords(f.d)}`;
-  return f.all ? `Fair weather all the way${to}` : 'Fair weather ahead';
+  const word = say(f.word), km = kmWords(f.d);
+  if (f.kind === 'ahead') return t('forecast.route.ahead', '{word} ahead - {km}, {eta}', { word, km, eta: etaWords(f.min) });
+  if (f.kind === 'clearing') return t('forecast.route.clears', '{word} clears {km} ahead', { word, km });
+  if (notable(f.word)) {
+    if (!f.all) return t('forecast.route.forNext', '{word} for the next {km}', { word, km });
+    return dest ? t('forecast.route.allTo', '{word} all the way to {dest}', { word, dest }) : t('forecast.route.all', '{word} all the way', { word });
+  }
+  if (!f.all) return t('forecast.route.fairAhead', 'Fair weather ahead');
+  return dest ? t('forecast.route.fairAllTo', 'Fair weather all the way to {dest}', { dest }) : t('forecast.route.fairAll', 'Fair weather all the way');
 }
 
 /** HERE in words, from forecastAt's answer ({ at, now, steps, next }): what falls now and when it clears, what comes and
@@ -116,11 +136,13 @@ export function hereLine(fc, hours = HERE_HOURS) {
   if (!fc?.now) return '';
   const nowWord = fc.now.word;
   if (notable(nowWord)) {
-    const clear = fc.steps.find((s) => s.word !== nowWord);
-    return clear ? `${say(nowWord)} - ${notable(clear.word) ? `${say(clear.word).toLowerCase()} ${etaWords(clear.at - fc.at)}` : `clearing ${etaWords(clear.at - fc.at)}`}` : `${say(nowWord)} for the next ${hours} h`;
+    const clear = fc.steps.find((s) => s.word !== nowWord), word = say(nowWord);
+    if (!clear) return t('forecast.here.forNext', '{word} for the next {hours} h', { word, hours });
+    const eta = etaWords(clear.at - fc.at);
+    return notable(clear.word) ? t('forecast.here.turns', '{word} - {next} {eta}', { word, next: FORECAST_TURNS[clear.word], eta }) : t('forecast.here.clearing', '{word} - clearing {eta}', { word, eta });
   }
   const comes = fc.steps.find((s) => notable(s.word));
-  return comes ? `${say(comes.word)} ${etaWords(comes.at - fc.at)}` : `Fair for the next ${hours} h`;
+  return comes ? t('forecast.here.comes', '{word} {eta}', { word: say(comes.word), eta: etaWords(comes.at - fc.at) }) : t('forecast.here.fair', 'Fair for the next {hours} h', { hours });
 }
 
 /**

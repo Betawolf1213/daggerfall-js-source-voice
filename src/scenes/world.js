@@ -5489,9 +5489,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  FAR-SEA1 L1: one home - Iliac Puddle No More's sea and the far ring's sea beside it take the same body. */
   function seaGroundArchive() {
     const here = playerTravelPixel();
-    let arch = here ? built.get(`${here.x},${here.y}`)?.groundArchive : null;   // the sea's water is the camera's climate's
-    if (arch == null) for (const p of built.values()) if (p.groundArchive != null) { arch = p.groundArchive; break; }
-    return arch;
+    let ga = here ? built.get(`${here.x},${here.y}`)?.groundArchive : null;   // the sea's water is the camera's climate's
+    if (ga == null) for (const p of built.values()) if (p.groundArchive != null) { ga = p.groundArchive; break; }
+    return ga;   // (never `arch`: the host's own Arch3dFile, a settled name its moved modules take - HOST-SPLIT's seam)
   }
   function drawDeepWatersSurfaces(nowMs, cells = null) {
     const f = _dwFrame;
