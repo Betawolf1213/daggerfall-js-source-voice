@@ -209,9 +209,10 @@ at that slot's radius and band; both are spent in the call.
 
 **What the flat is** (`scenes/pixelBuild.js`). A jungle tree is a flat of the rainforest's archive with one of its Tree
 records, in a group of its own (`J<species>`, and `J<species>y` for the young): it is **Logging's** (the pixel's forest -
-`scenes/treeHost.js standTrees` stands the day's trees at it; felled, it sinks and falls as its far picture; its node's
-glow stands out of its trunk or its hung curtains toward the eye, `jungleTreeMark` - AUDIT BANTHA1 TREE-3: the 0.6 m
-pull of an ordinary tree left it inside the banyan), **cover** at its own trunk and crown (`jungleCover`, TACT1's
+`scenes/treeHost.js standTrees` stands the day's trees at it; felled, it sinks and falls as its far picture; its node
+glints on its own picture - NODE-GLINT, Professions-Arc 47 - where its mark, `jungleTreeMark`, stood the glow's card out
+of its trunk or its hung curtains toward the eye until NODE-OUTLINE - AUDIT BANTHA1 TREE-3: the 0.6 m pull of an
+ordinary tree left it inside the banyan), **cover** at its own trunk and crown (`jungleCover`, TACT1's
 trunk-and-crown shape, the crown at TACT1's 0.7 of its reach - LAY-6), **flora** that sways, and the far rings (MAC1)
 stand a canopy tree by its own height - a young tree's group stands no far ring (PERF-5: 41% of the trees, under the
 canopy, drew to the horizon). **Its cover's cost** (TREE-1, PERF-1): a crown 7-15 m across was filed in every 4 m cell it

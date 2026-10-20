@@ -16,15 +16,18 @@
 //      fitted into its tile. The tile holds the node's silhouette, and at each of its texels the depth of the node there.
 //   2. THE LIGHT. Over the node's rectangle on screen, one quad, added onto the frame (ONE, ONE - it only ever brightens):
 //      - THE GLINTS: GLINT_COUNT sparkles, each living its own short life (GLINT_RATE, a step faster each) - born, at its
-//        brightest mid-life, gone dark - at a spot of the picture chosen afresh each life (the first of GLINT_TRIES spots
-//        inside the picture's box that the silhouette holds; none, and that life is dark): a white-hot core in a soft
-//        bloom, and four thin rays, a little turned, GLINT_PX long at most at GLINT_REF_ROWS rows, shorter on a small
-//        picture.
+//        brightest mid-life, gone dark - at a spot of the picture chosen afresh each life, once for the node in the
+//        vertex stage: the first of GLINT_TRIES points of the node's own pictures (GLINT_ANCHORS - a flat, a 3D tree's
+//        crown) in the plane each stands in, so it moves with the picture as the eye moves; a flat's judged by its own
+//        picture at its own texel, a crown's by the silhouette GLINT_HOLD_PX round; none, and that life is dark: a
+//        white-hot core in a soft bloom, and four thin rays, a little turned, GLINT_PX long at most at GLINT_REF_ROWS
+//        rows, shorter on a small picture.
 //      - THE SHEEN: a soft band of light crossing the silhouette, rising, once each 1 / GLINT_SHEEN_HZ seconds - the
 //        picture's own shape lit, only inside it; faded out as the node comes near (GLINT_SHEEN_NEAR_M to
-//        GLINT_SHEEN_FULL_M), so the tree under the axe never flashes.
+//        GLINT_SHEEN_FULL_M).
 //      Each at the depth of the picture where it stands, GLINT_PULL toward the eye, against the world's depth - so whatever
-//      stands before the node (a wall, a rock) hides it, and the node itself never does.
+//      stands before the node (a wall, a rock) hides it, and the node itself never does. The node an act works is quiet
+//      (AUDIT NODE-GLINT: the act's own glint is the one to watch - scenes/gatherHost.js marks' `quiet`, nodeGlows' law).
 // One draw a picture into the mask and one quad a node on screen; the frame's target, its viewport and the world's GL
 // baseline handed back as they were. Each node's light is nodeGlow.js's law (`nodeGlows`): it kindles as it first stands
 // near and fades out from NODE_GLOW_FADE_M to NODE_GLOW_M; under reduced motion the glints hold still at their places and
@@ -49,9 +52,18 @@ export const GLINT_MAX = GLINT_GRID * GLINT_GRID;
 export const GLINT_TREE_REACH = 0.75;
 /** A flat's six indices (u32) in its batch's index range - renderer.js BB_QUAD_INDEX_BYTES. */
 export const GLINT_QUAD_INDEX_BYTES = 24;
-/** The glints a node has, and the spots each life tries before it is dark (the first the silhouette holds). */
+/** The glints a node has, and the spots each life tries before it is dark (the first the silhouette holds round it). */
 export const GLINT_COUNT = 6;
-export const GLINT_TRIES = 3;
+export const GLINT_TRIES = 6;
+/** AUDIT NODE-GLINT: how far inside the silhouette a glint's spot stands on every side, in the drawn image's pixels (its
+ *  tile's texels where the tile holds the node a texel a pixel; one texel at the least) - so a picture swaying or the eye
+ *  moving a pixel never takes a glint off a leaf's edge mid-flash. */
+export const GLINT_HOLD_PX = 1.5;
+/** AUDIT NODE-GLINT: the most of a node's pictures its glints stand on - each flat, at its own base, width and height,
+ *  or a 3D tree's crown about its root - a life's spot a point of one of them, in the plane its picture stands in, so it
+ *  moves with the picture as the eye moves (a spot at a share of the screen's box was a different point of the picture
+ *  each frame, and came and went at a leaf's edge as the player walked). */
+export const GLINT_ANCHORS = 8;
 /** A glint's lives a second: the first's, and each next one's step over it (whole over the glow's 60 s clock). */
 export const GLINT_RATE = 0.35;
 export const GLINT_RATE_STEP = 0.05;
@@ -83,6 +95,12 @@ export const GLINT_SHEEN_HZ = 0.15;
 export const GLINT_SHEEN_SHARE = 0.5;
 export const GLINT_SHEEN_NEAR_M = 6;
 export const GLINT_SHEEN_FULL_M = 18;
+
+/** AUDIT NODE-GLINT: the clip w a box's corner must stand past to be before the eye - a node wholly behind it is none, and
+ *  one across its plane is bounded where its edges cross it; and the most of the screen beyond its edge a picture's own box
+ *  is kept to (NDC), so its glints' shares hold as it slides off the screen. */
+export const GLINT_NEAR_W = 1e-3;
+export const GLINT_OVERHANG = 2;
 
 if (GLINT_MAX !== NODE_GLOW_MAX) throw new Error('NODE-GLINT: the atlas holds the glow\'s budget');
 
@@ -136,24 +154,100 @@ void main() {
   o = vec4(0.0);
 }`;
 
-/** THE LIGHT'S VERTEX STAGE: the node's rectangle on screen (uRect: NDC centre, half size), its depth the fragment's. */
-export const NODE_GLINT_VS = `#version 300 es
-layout(location = 0) in vec2 aP;
-uniform vec4 uRect;
-void main() { gl_Position = vec4(uRect.xy + aP * uRect.zw, 0.0, 1.0); }`;
-
+/** Each glint's index, for the stages written out a glint at a time (an output array indexed in a loop is no law every
+ *  translator keeps). */
+const GLINT_SLOTS = Array.from({ length: GLINT_COUNT }, (_, i) => i);
 const f = (x) => x.toFixed(4);
+/** The hash both stages read: a node's seed, a glint's phase and its life's spot and turn. */
+const GLINT_HASH_GLSL = `uint glintHash(uint x) { x ^= x >> 16; x *= 0x7feb352du; x ^= x >> 15; x *= 0x846ca68bu; x ^= x >> 16; return x; }
+float glintRand(uint x) { return float(glintHash(x) >> 8) * (1.0 / 16777216.0); }
+float maskAt(vec2 at, ivec2 lo, ivec2 hi) { return texelFetch(uMask, clamp(ivec2(floor(at)), lo, hi), 0).r; }`;
+
+/** THE LIGHT'S VERTEX STAGE: the node's rectangle on screen (uRect: NDC centre, half size), its depth the fragment's - and,
+ *  once for the node (AUDIT NODE-GLINT: every fragment of the rectangle found them again), each glint this life: its life
+ *  numbered on the clock's own wrap (a glint's lives are whole over the 60 s period, so the life at the wrap is the one at
+ *  zero), its light, and the first of its tries the silhouette holds `uHold` texels round on every side: a point of one
+ *  of the node's pictures (`uAnchor` - a flat's base, width and height, or a 3D tree's crown about its root) in the
+ *  plane it stands in (the frame's billboard basis), so the spot is a point of the picture and moves with it as the eye
+ *  moves; on the screen, before the eye; none, a dark life. Handed to the fragment stage flat: its spot (the rectangle's
+ *  shares), the picture's depth there, its light; and its turn. */
+export const NODE_GLINT_VS = `#version 300 es
+precision highp float;
+precision highp int;
+layout(location = 0) in vec2 aP;
+uniform highp sampler2D uMask;   // the atlas (depth)
+uniform vec4 uRect;              // the rectangle's NDC centre (xy) and half size (zw)
+uniform vec4 uTile;              // its tile in the atlas: the corner (xy) and the size (zw), in texels
+uniform float uHold;             // how far inside the silhouette a spot must stand, in the tile's texels
+uniform float uSeed;             // the node's own (0..1)
+uniform float uTime;             // the glow's wrapped clock (s)
+uniform float uStill;            // 1 under reduced motion: every glint at its first life, steady
+uniform mat4 uVP;
+uniform vec3 uRight;             // the frame's billboard basis - the plane a picture stands in
+uniform vec3 uUp;
+uniform vec4 uAnchor[${2 * GLINT_ANCHORS}];   // each picture a glint may stand on: its base (xyz) and width (w); its height (x), and 1 (y) a flat its own picture judges
+uniform int uAnchors;
+uniform sampler2D uFlatTex;      // the node's flats' own picture (its first batch's)
+${GLINT_SLOTS.map((i) => `flat out vec4 vGlint${i};\nflat out float vTurn${i};`).join('\n')}
+const float PI = 3.141592653589793;
+${GLINT_HASH_GLSL}
+// a point of a flat its own picture holds - judged at the flat's own texel, so it holds as the eye moves (the mask's
+// pixels came and went under it a frame at a time)
+bool opaque(vec2 uv) { return textureLod(uFlatTex, uv, 0.0).a >= 0.5; }
+bool holds(vec2 at, ivec2 lo, ivec2 hi) {
+  return maskAt(at + vec2(uHold, 0.0), lo, hi) < 1.0 && maskAt(at - vec2(uHold, 0.0), lo, hi) < 1.0
+    && maskAt(at + vec2(0.0, uHold), lo, hi) < 1.0 && maskAt(at - vec2(0.0, uHold), lo, hi) < 1.0;
+}
+vec4 glintOf(int i, uint seed, float tm, out float turn) {
+  uint ui = uint(i);
+  float lives = ${f(GLINT_RATE * 60)} + float(i) * ${f(GLINT_RATE_STEP * 60)};   // a glint's lives a period - whole
+  float cyc = tm * lives / 60.0 + glintRand(seed ^ (ui * 0x9e3779b9u));
+  float c = mod(floor(cyc), lives);
+  float env = uStill > 0.5 ? ${f(GLINT_STILL)} : pow(max(sin(PI * fract(cyc)), 0.0), ${f(GLINT_FLASH)});
+  turn = 0.0;
+  if (env < 0.004) return vec4(0.0, 0.0, 1.0, 0.0);
+  if (uAnchors < 1) return vec4(0.0, 0.0, 1.0, 0.0);   // no picture to stand on
+  uint life = glintHash(seed + ui * 0x85ebca6bu + uint(c) * 0xc2b2ae35u);
+  turn = (glintRand(life ^ 0x5bd1e995u) - 0.5) * 0.6;
+  ivec2 lo = ivec2(uTile.xy), hi = ivec2(uTile.xy + uTile.zw) - 1;
+  for (int j = 0; j < ${GLINT_TRIES}; j++) {
+    uint h = glintHash(life + uint(j) * 0x27d4eb2fu), g = glintHash(h ^ 0x68e31da4u);
+    int k = int(h % uint(max(uAnchors, 1)));
+    vec4 a = uAnchor[2 * k], b = uAnchor[2 * k + 1];
+    vec2 uv = vec2(float(g & 0xffffu), float(g >> 16)) / 65535.0;   // a point of the picture, its own
+    vec4 cp = uVP * vec4(a.xyz + uRight * ((uv.x - 0.5) * a.w) + uUp * (uv.y * b.x), 1.0);
+    if (cp.w <= ${f(GLINT_NEAR_W)}) continue;   // behind the eye
+    vec2 spot = (cp.xy / cp.w - uRect.xy) / uRect.zw * 0.5 + 0.5;   // the rectangle's shares
+    if (spot.x < 0.0 || spot.y < 0.0 || spot.x > 1.0 || spot.y > 1.0) continue;   // off the screen
+    if (b.y > 0.5) {   // a flat: its own picture judges the point, and its depth is the point's own
+      if (opaque(uv)) return vec4(spot, cp.z / cp.w * 0.5 + 0.5, env);
+      continue;
+    }
+    vec2 at = uTile.xy + spot * uTile.zw;   // a 3D tree's crown: the silhouette judges it
+    float d = maskAt(at, lo, hi);
+    if (d < 1.0 && holds(at, lo, hi)) return vec4(spot, d, env);
+  }
+  return vec4(0.0, 0.0, 1.0, 0.0);   // no try held: this life is dark
+}
+void main() {
+  gl_Position = vec4(uRect.xy + aP * uRect.zw, 0.0, 1.0);
+  float tm = uTime * (1.0 - uStill);
+  uint seed = uint(uSeed * 1009.0 + 0.5) * 2654435761u;   // each node its own glints
+${GLINT_SLOTS.map((i) => `  vGlint${i} = glintOf(${i}, seed, tm, vTurn${i});`).join('\n')}
+}`;
+
 /** THE LIGHT'S FRAGMENT STAGE: where the fragment falls in the node's rectangle and its tile; the sheen where the
- *  silhouette holds it; each glint's spot this life (the first of its tries the silhouette holds) and its star about it;
- *  nothing lit, nothing drawn; else the light at the depth of the picture under its strongest part, pulled toward the eye,
- *  faded by the fog and the haze where that depth stands in the world (uInvVP). */
+ *  silhouette holds it; each glint's star about its spot (the vertex stage's); nothing lit, nothing drawn; else the light
+ *  at the nearer of the picture under the fragment and under its strongest glint (a 3D tree's front card never hides
+ *  its own light), pulled toward the eye, faded by the fog, the haze and the sea's murk where that depth stands in the
+ *  world (uInvVP). */
 export const NODE_GLINT_FS = `#version 300 es
 precision highp float;
 precision highp int;
 uniform highp sampler2D uMask;   // the atlas (depth)
 uniform vec4 uRect;              // the rectangle's NDC centre (xy) and half size (zw)
 uniform vec4 uTile;              // its tile in the atlas: the corner (xy) and the size (zw), in texels
-uniform vec4 uInner;             // the picture's own box in the rectangle, as its shares: x0, y0, x1, y1 - where a glint may stand
+uniform vec4 uInner;             // the picture's own box in the rectangle, as its shares: x0, y0, x1, y1
 uniform vec4 uViewport;          // the frame's viewport, in pixels
 uniform float uGlint;            // a glint's reach, in pixels
 uniform vec3 uColor;             // the light (glintTint)
@@ -168,19 +262,30 @@ uniform int uFogMode;
 uniform float uFogDensity;
 uniform vec2 uFogRange;
 uniform vec3 uCamPos;
+${GLINT_SLOTS.map((i) => `flat in vec4 vGlint${i};\nflat in float vTurn${i};`).join('\n')}
 out vec4 o;
 ${FOG_FACTOR_GLSL}
-const float PI = 3.141592653589793;
-uint glintHash(uint x) { x ^= x >> 16; x *= 0x7feb352du; x ^= x >> 15; x *= 0x846ca68bu; x ^= x >> 16; return x; }
-float glintRand(uint x) { return float(glintHash(x) >> 8) * (1.0 / 16777216.0); }
 float maskAt(vec2 at, ivec2 lo, ivec2 hi) { return texelFetch(uMask, clamp(ivec2(floor(at)), lo, hi), 0).r; }
+// a glint's star about its spot: a white-hot core in a soft bloom, and four thin rays turned by its own turn
+void glintAt(vec4 g, float th, vec2 q, vec2 rectPx, inout vec3 parts, inout float best, inout float bestDepth) {
+  if (g.w <= 0.0) return;   // a dark life
+  vec2 off = (q - g.xy) * rectPx;
+  if (dot(off, off) > uGlint * uGlint) return;
+  off = mat2(cos(th), sin(th), -sin(th), cos(th)) * off;
+  float w = max(0.75, 0.08 * uGlint), cr = max(1.0, 0.22 * uGlint), br = max(1.5, 0.4 * uGlint);
+  vec2 a = max(1.0 - abs(off) / uGlint, 0.0);
+  float co = exp(-dot(off, off) / (cr * cr)) * g.w;
+  float ry = (exp(-off.y * off.y / (w * w)) * a.x * a.x + exp(-off.x * off.x / (w * w)) * a.y * a.y) * g.w;
+  float bl = exp(-dot(off, off) / (br * br)) * g.w;
+  parts += vec3(co, ry, bl);
+  if (co + ry + bl > best) { best = co + ry + bl; bestDepth = g.z; }
+}
 void main() {
   vec2 ndc = (gl_FragCoord.xy - uViewport.xy) / uViewport.zw * 2.0 - 1.0;
   vec2 q = (ndc - uRect.xy) / uRect.zw * 0.5 + 0.5;
   ivec2 lo = ivec2(uTile.xy), hi = ivec2(uTile.xy + uTile.zw) - 1;
   vec2 rectPx = uRect.zw * uViewport.zw;
   float tm = uTime * (1.0 - uStill);
-  uint seed = uint(uSeed * 1009.0 + 0.5) * 2654435761u;
   float here = maskAt(uTile.xy + q * uTile.zw, lo, hi);
   // THE SHEEN: a soft band rising across the picture's own box, lit only where the silhouette is
   float sheen = 0.0;
@@ -190,55 +295,30 @@ void main() {
     float k = (qi.y * 0.8 + qi.x * 0.2 - pos) * 6.0;
     sheen = exp(-k * k) * uSheen;
   }
-  // THE GLINTS: each life its own spot on the picture, its own turn, born and gone dark
-  float core = 0.0, rays = 0.0, bloom = 0.0, best = 0.0, bestDepth = 1.0;
-  for (int i = 0; i < ${GLINT_COUNT}; i++) {
-    uint ui = uint(i);
-    float cyc = tm * (${f(GLINT_RATE)} + float(i) * ${f(GLINT_RATE_STEP)}) + glintRand(seed ^ (ui * 0x9e3779b9u));
-    float c = floor(cyc);
-    float env = uStill > 0.5 ? ${f(GLINT_STILL)} : pow(sin(PI * (cyc - c)), ${f(GLINT_FLASH)});
-    if (env < 0.004) continue;
-    uint life = glintHash(seed + ui * 0x85ebca6bu + uint(c) * 0xc2b2ae35u);
-    vec2 p = vec2(0.0);
-    float pd = 1.0;
-    for (int j = 0; j < ${GLINT_TRIES}; j++) {
-      uint h = glintHash(life + uint(j) * 0x27d4eb2fu);
-      vec2 spot = mix(uInner.xy, uInner.zw, vec2(float(h & 0xffffu), float(h >> 16)) / 65535.0);
-      float d = maskAt(uTile.xy + spot * uTile.zw, lo, hi);
-      if (d < 1.0) { p = spot; pd = d; break; }
-    }
-    if (pd >= 1.0) continue;   // no try fell on the picture: this life is dark
-    vec2 off = (q - p) * rectPx;
-    if (dot(off, off) > uGlint * uGlint) continue;
-    float th = (glintRand(life ^ 0x5bd1e995u) - 0.5) * 0.6;
-    off = mat2(cos(th), sin(th), -sin(th), cos(th)) * off;
-    float w = max(0.75, 0.08 * uGlint), cr = max(1.0, 0.22 * uGlint), br = max(1.5, 0.4 * uGlint);
-    vec2 a = max(1.0 - abs(off) / uGlint, 0.0);
-    float co = exp(-dot(off, off) / (cr * cr)) * env;
-    float ry = (exp(-off.y * off.y / (w * w)) * a.x * a.x + exp(-off.x * off.x / (w * w)) * a.y * a.y) * env;
-    float bl = exp(-dot(off, off) / (br * br)) * env;
-    core += co; rays += ry; bloom += bl;
-    if (co + ry + bl > best) { best = co + ry + bl; bestDepth = pd; }
-  }
-  float lit = sheen + ${f(GLINT_GAIN.ray)} * rays + ${f(GLINT_GAIN.bloom)} * bloom + ${f(GLINT_GAIN.core)} * core;
+  // THE GLINTS: each its star about the spot its life stands at
+  vec3 parts = vec3(0.0);   // core, rays, bloom
+  float best = 0.0, bestDepth = 1.0;
+${GLINT_SLOTS.map((i) => `  glintAt(vGlint${i}, vTurn${i}, q, rectPx, parts, best, bestDepth);`).join('\n')}
+  float lit = sheen + ${f(GLINT_GAIN.ray)} * parts.y + ${f(GLINT_GAIN.bloom)} * parts.z + ${f(GLINT_GAIN.core)} * parts.x;
   if (lit * uAlpha < 0.002) discard;   // nothing lit here
-  float dep = ${f(GLINT_GAIN.ray)} * best > sheen ? bestDepth : here;   // the picture under the strongest part
+  float dep = min(here, bestDepth);   // the nearer picture: the fragment's own, or its strongest glint's
   vec4 wp = uInvVP * vec4(ndc, dep * 2.0 - 1.0, 1.0);
   vec3 at3 = wp.xyz / wp.w;
   vec3 away = at3 - uCamPos;
   float far = length(away);
   vec4 cp = uVP * vec4(at3 - away * (min(${f(GLINT_PULL)}, 0.5 * far) / max(far, 1e-4)), 1.0);   // stood toward the eye, never past half its way
   gl_FragDepth = clamp(cp.z / cp.w * 0.5 + 0.5, 0.0, 1.0);
-  vec3 light = uColor * (sheen + ${f(GLINT_GAIN.ray)} * rays + ${f(GLINT_GAIN.bloom)} * bloom) + mix(uColor, vec3(1.0), ${f(GLINT_CORE_WHITE)}) * ${f(GLINT_GAIN.core)} * core;
-  o = vec4(light * uAlpha * fogFactorAt(at3), 1.0);
+  vec3 light = uColor * (sheen + ${f(GLINT_GAIN.ray)} * parts.y + ${f(GLINT_GAIN.bloom)} * parts.z) + mix(uColor, vec3(1.0), ${f(GLINT_CORE_WHITE)}) * ${f(GLINT_GAIN.core)} * parts.x;
+  o = vec4(dwWaterFogAdd(light * uAlpha * fogFactorAt(at3), at3), 1.0);   // AUDIT NODE-GLINT: and the sea's murk, as an added light takes it (render/duelWall.js)
 }`;
 
 const MASK_UNIFORMS = ['uProj', 'uView', 'uRight', 'uUp', 'uOrigin', 'uSize', 'uFlatWind', 'uSway', 'uWindfallSway', 'uWindfallAxis', 'uTip',
   'uFacePoint', 'uElitePad', 'uTex', 'uMesh', 'uMeshScale', 'uMeshColor', 'uMeshAlpha', 'uLptCut', 'uLptBand', 'uLptSun', 'uMaskRect'];
-const GLINT_UNIFORMS = ['uMask', 'uRect', 'uTile', 'uInner', 'uViewport', 'uGlint', 'uColor', 'uAlpha', 'uSeed', 'uSheen', 'uTime', 'uStill',
-  'uInvVP', 'uVP', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze'];
+const GLINT_UNIFORMS = ['uMask', 'uRect', 'uTile', 'uInner', 'uHold', 'uRight', 'uUp', 'uAnchor', 'uAnchors', 'uFlatTex', 'uViewport', 'uGlint', 'uColor', 'uAlpha', 'uSeed', 'uSheen', 'uTime', 'uStill',
+  'uInvVP', 'uVP', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos', 'uFocus', 'uJungleHaze', 'uDwFog'];
 const NO_FOG_RANGE = new Float32Array([0, 1]);
 const NO_FOCUS = new Float32Array(4);
+const NO_WATER_FOG = new Float32Array(20);   // DW-C: uDwFog off ([0].x 0)
 const ZERO4 = new Float32Array(4);
 const ZERO_ORIGIN = Object.freeze([0, 0, 0]);
 const isVec3 = (v) => v != null && typeof v === 'object' && v.length >= 3;
@@ -276,27 +356,43 @@ export function treeInstanceOf(pic, frames, rows, out) {
   return null;
 }
 
+/** A box's corners' clip x, y and w (8 x 3), filled a box at a time. */
+const _clip = new Float64Array(24);
+/** A box's twelve edges, as the corners they join (a corner's bits: x 1, y 2, z 4). */
+const BOX_EDGES = Object.freeze([0, 1, 2, 3, 4, 5, 6, 7].flatMap((c) => [1, 2, 4].filter((b) => !(c & b)).map((b) => [c, c | b])));
+
 /**
  * THE NODE'S PICTURE ON SCREEN: the first `count` of `boxes` (each [x0, y0, z0, x1, y1, z1], scene) through `vp`
- * (proj x view), as `[cx, cy, hx, hy]` in NDC, held to the screen; null off it. A box reaching behind the eye stands for
- * the whole screen. Pure but for `out`.
+ * (proj x view), as `[cx, cy, hx, hy]` in NDC, kept within GLINT_OVERHANG of the screen (not held to it - its glints'
+ * shares stand as it slides off), written into `out`; null off the screen. AUDIT NODE-GLINT: a box wholly behind the eye
+ * is none (it was the whole screen - every node behind the player a full-screen pass), and one across the eye's plane is
+ * bounded by its corners before the eye and where its edges cross GLINT_NEAR_W. Pure but for `out`.
  * @param {ReadonlyArray<ArrayLike<number>>} boxes @param {number} count @param {ArrayLike<number>} vp @param {number[]} out
  */
 export function screenRect(boxes, count, vp, out) {
-  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, whole = false;
-  for (let i = 0; i < count && !whole; i++) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  const take = (x, y, w) => {
+    const px = x / w, py = y / w;
+    if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
+  };
+  for (let i = 0; i < count; i++) {
     const b = boxes[i];
-    for (let c = 0; c < 8 && !whole; c++) {
+    for (let c = 0; c < 8; c++) {
       const x = c & 1 ? b[3] : b[0], y = c & 2 ? b[4] : b[1], z = c & 4 ? b[5] : b[2];
-      const w = vp[3] * x + vp[7] * y + vp[11] * z + vp[15];
-      if (!(w > 1e-3)) { whole = true; break; }
-      const px = (vp[0] * x + vp[4] * y + vp[8] * z + vp[12]) / w, py = (vp[1] * x + vp[5] * y + vp[9] * z + vp[13]) / w;
-      if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py;
+      _clip[c * 3] = vp[0] * x + vp[4] * y + vp[8] * z + vp[12];
+      _clip[c * 3 + 1] = vp[1] * x + vp[5] * y + vp[9] * z + vp[13];
+      _clip[c * 3 + 2] = vp[3] * x + vp[7] * y + vp[11] * z + vp[15];
+      if (_clip[c * 3 + 2] > GLINT_NEAR_W) take(_clip[c * 3], _clip[c * 3 + 1], _clip[c * 3 + 2]);
+    }
+    for (const [a, e] of BOX_EDGES) {
+      const wa = _clip[a * 3 + 2], we = _clip[e * 3 + 2];
+      if ((wa > GLINT_NEAR_W) === (we > GLINT_NEAR_W)) continue;   // both before the eye, or both behind it
+      const t = (GLINT_NEAR_W - wa) / (we - wa);
+      take(_clip[a * 3] + t * (_clip[e * 3] - _clip[a * 3]), _clip[a * 3 + 1] + t * (_clip[e * 3 + 1] - _clip[a * 3 + 1]), GLINT_NEAR_W);
     }
   }
-  if (whole) { x0 = -1; y0 = -1; x1 = 1; y1 = 1; }
-  x0 = Math.max(-1, x0); y0 = Math.max(-1, y0); x1 = Math.min(1, x1); y1 = Math.min(1, y1);
-  if (!(x1 > x0 && y1 > y0)) return null;
+  if (!(x1 > -1 && x0 < 1 && y1 > -1 && y0 < 1)) return null;   // behind the eye (nothing taken), or off the screen
+  x0 = Math.max(-GLINT_OVERHANG, x0); y0 = Math.max(-GLINT_OVERHANG, y0); x1 = Math.min(GLINT_OVERHANG, x1); y1 = Math.min(GLINT_OVERHANG, y1);
   out[0] = (x0 + x1) / 2; out[1] = (y0 + y1) / 2; out[2] = (x1 - x0) / 2; out[3] = (y1 - y0) / 2;
   return out;
 }
@@ -398,7 +494,7 @@ export class NodeGlintRenderer {
     this._rows = new WeakMap();
     // the frame's scratch: each node's picture's box and its rectangle on screen, its tile, its glint's reach, its
     // picture's share of the rectangle, its boxes; the matrices; the light's colour
-    this._nodes = Array.from({ length: GLINT_MAX }, () => ({ g: null, inner: [0, 0, 0, 0], rect: [0, 0, 0, 0], tile: [0, 0, 0, 0], share: [0, 0, 0, 0], glint: 1, boxes: /** @type {number[][]} */ ([]) }));
+    this._nodes = Array.from({ length: GLINT_MAX }, () => ({ g: null, inner: [0, 0, 0, 0], rect: [0, 0, 0, 0], tile: [0, 0, 0, 0], share: [0, 0, 0, 0], glint: 1, hold: 1, boxes: /** @type {number[][]} */ ([]), spans: /** @type {number[][]} */ ([]), anchors: new Float32Array(GLINT_ANCHORS * 8), anchorN: 0, flatTex: null }));
     this._vp = new Float32Array(16);
     this._inv = new Float32Array(16);
     this._pad = /** @type {[number, number]} */ ([0, 0]);
@@ -431,6 +527,12 @@ export class NodeGlintRenderer {
     return vao;
   }
 
+  /** A picture's span a slot of `spans` (grown as needed), written: its base, its width and its height. */
+  static _span(spans, i, x, y, z, w, h, own) {
+    const p = spans[i] ??= [0, 0, 0, 0, 0, 0];
+    p[0] = x; p[1] = y; p[2] = z; p[3] = w; p[4] = h; p[5] = own;
+  }
+
   /** A box a slot of `boxes` (grown as needed), written. */
   static _box(boxes, i, x0, y0, z0, x1, y1, z1) {
     const b = boxes[i] ??= [0, 0, 0, 0, 0, 0];
@@ -454,7 +556,7 @@ export class NodeGlintRenderer {
     const roomPx = glintPxMax(vh) + 2;
     this._pad[0] = (2 * roomPx) / vw; this._pad[1] = (2 * roomPx) / vh;
     const frames = r.lptDrawnFrames?.() ?? [];
-    // THE NODES' RECTANGLES: each picture's box - a flat's quad about each centre (its batch's size, the tallest it stands),
+    // THE NODES' RECTANGLES: each picture's box - a flat's quad about each centre (its batch's size at the flat's own scale),
     // a 3D tree's crown about its root - through the frame's camera, and the room a glint's rays reach into round it
     let n = 0;
     for (const g of list) {
@@ -463,25 +565,45 @@ export class NodeGlintRenderer {
       if (!pics?.length || !(g.alpha > 0.001)) continue;
       const s = this._nodes[n];
       let k = 0;
+      s.flatTex = null;
       for (const pic of /** @type {NodePicture[]} */ (pics)) {
         const b = pic.batch;
-        if (b?.size && pic.centers?.length) {
-          const o = b.origin || ZERO_ORIGIN, hw = b.size.w * 0.5, h = b.size.h;
-          for (const c of pic.centers) NodeGlintRenderer._box(s.boxes, k++, c[0] + o[0] - hw, c[1] + o[1], c[2] + o[2] - hw, c[0] + o[0] + hw, c[1] + o[1] + h, c[2] + o[2] + hw);
-        }
         const t = pic.center ? treeInstanceOf(pic, frames, this._rows, this._row) : null;
+        // AUDIT NODE-GLINT: the node's flats' own picture, its first batch's that has one - a flat of it is judged there
+        const tex = !t && b?.vao && !b._dead && pic.count > 0 ? r.textures?.get(billboardKey(b)) ?? null : null;
+        if (tex && !s.flatTex) s.flatTex = tex;
+        const own = tex && tex === s.flatTex ? 1 : 0;
+        // AUDIT NODE-GLINT: a far flat's own scale (a Low Poly Trees' or the jungle's batch is sized for its tallest tree - a
+        // small tree's glints fell outside it), none where its 3D tree stands (the flat has given way), and a batch the
+        // world's walk has not placed yet stands where its mark says (it stood pixel-local - a glint 800 m off)
+        if (!t && b?.size && pic.centers?.length) {
+          const o = b.origin || g.mark.origin || ZERO_ORIGIN;
+          for (let j = 0; j < pic.centers.length; j++) {
+            const c = pic.centers[j], fs = b._scales?.[pic.first + j] ?? 1, hw = b.size.w * 0.5 * fs, h = b.size.h * fs;
+            NodeGlintRenderer._span(s.spans, k, c[0] + o[0], c[1] + o[1], c[2] + o[2], 2 * hw, h, own);   // AUDIT NODE-GLINT: the flat its glints stand on
+            NodeGlintRenderer._box(s.boxes, k++, c[0] + o[0] - hw, c[1] + o[1], c[2] + o[2] - hw, c[0] + o[0] + hw, c[1] + o[1] + h, c[2] + o[2] + hw);
+          }
+        }
         if (t) {
           const row = this._row, reach = t.run.size[0] * GLINT_TREE_REACH * row[4], h = t.run.size[1] * row[4] * t.run.scale[1];
+          NodeGlintRenderer._span(s.spans, k, row[0], row[1], row[2], 2 * reach, h, 0);   // AUDIT NODE-GLINT: its crown, about its root
           NodeGlintRenderer._box(s.boxes, k++, row[0] - reach, row[1], row[2] - reach, row[0] + reach, row[1] + h, row[2] + reach);
         }
       }
       if (!k || !screenRect(s.boxes, k, vpm, s.inner)) continue;
+      // AUDIT NODE-GLINT: the pictures its glints stand on - GLINT_ANCHORS at most, taken evenly (base xyz, width; height)
+      s.anchorN = Math.min(k, GLINT_ANCHORS);
+      for (let i = 0; i < s.anchorN; i++) {
+        const sp = s.spans[Math.floor((i * k) / s.anchorN)], o = i * 8;
+        s.anchors[o] = sp[0]; s.anchors[o + 1] = sp[1]; s.anchors[o + 2] = sp[2]; s.anchors[o + 3] = sp[3]; s.anchors[o + 4] = sp[4]; s.anchors[o + 5] = sp[5];
+      }
       snapRect(widenRect(s.inner, this._pad, s.rect), vw, vh);   // whole pixels: a tile that holds the node whole holds it a texel a pixel
       innerShare(s.inner, s.rect, s.share);
       s.glint = glintPx(vh, Math.max(s.inner[2] * vw, s.inner[3] * vh));
-      const wPx = s.rect[2] * vw, hPx = s.rect[3] * vh, fit = Math.min(1, GLINT_TILE / Math.max(wPx, hPx));
+      const wPx = Math.round(s.rect[2] * vw), hPx = Math.round(s.rect[3] * vh), fit = Math.min(1, GLINT_TILE / Math.max(wPx, hPx));   // AUDIT NODE-GLINT: whole pixels, never one over
       s.tile[0] = (n % GLINT_GRID) * GLINT_TILE; s.tile[1] = Math.floor(n / GLINT_GRID) * GLINT_TILE;
       s.tile[2] = Math.max(1, Math.min(GLINT_TILE, Math.ceil(wPx * fit))); s.tile[3] = Math.max(1, Math.min(GLINT_TILE, Math.ceil(hPx * fit)));
+      s.hold = Math.max(1, GLINT_HOLD_PX * fit);
       s.g = g;
       n++;
     }
@@ -531,7 +653,7 @@ export class NodeGlintRenderer {
           gl.bindTexture(gl.TEXTURE_2D, tex);
           gl.uniform1f(U.uMesh, 0);
           gl.uniform2f(U.uSize, b.size.w, b.size.h);
-          const o = b.origin || ZERO_ORIGIN;
+          const o = b.origin || s.g.mark.origin || ZERO_ORIGIN;   // AUDIT NODE-GLINT: as its box stood
           gl.uniform3f(U.uOrigin, o[0], o[1], o[2]);
           gl.uniform1f(U.uSway, swayShare(b, wfLaw));
           const tp = b.tip;
@@ -574,9 +696,12 @@ export class NodeGlintRenderer {
     gl.useProgram(this.light);
     gl.bindTexture(gl.TEXTURE_2D, this.atlas);
     gl.uniform1i(L.uMask, 0);
+    gl.uniform1i(L.uFlatTex, 1);   // AUDIT NODE-GLINT: each node's flats' own picture, on unit 1
     gl.uniform4f(L.uViewport, view[0], view[1], vw, vh);
     gl.uniformMatrix4fv(L.uInvVP, false, invert4(vpm, this._inv) ?? this._inv);
     gl.uniformMatrix4fv(L.uVP, false, vpm);
+    gl.uniform3fv(L.uRight, r._bbRight);   // AUDIT NODE-GLINT: the plane each picture stands in, as the flats' call stood them
+    gl.uniform3fv(L.uUp, r._bbUp);
     gl.uniform1f(L.uTime, seconds);
     gl.uniform1f(L.uStill, still ? 1 : 0);
     gl.uniform1i(L.uFogMode, r._fogMode ?? 0);
@@ -585,6 +710,7 @@ export class NodeGlintRenderer {
     gl.uniform3fv(L.uCamPos, r._camPos);
     if (L.uFocus) gl.uniform4fv(L.uFocus, r._focus ?? NO_FOCUS);
     if (L.uJungleHaze) gl.uniform4fv(L.uJungleHaze, r._haze);   // BANTHA1: the jungle's haze, the frame's (renderer.setJungleHaze), as every fogged pass
+    if (L.uDwFog) gl.uniform4fv(L.uDwFog, r._dwFog ?? NO_WATER_FOG);   // AUDIT NODE-GLINT (DW-C): the sea's murk, the frame's (renderer.setWaterFog); none, off
     gl.bindVertexArray(this.quad);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
     gl.depthMask(false);
@@ -594,6 +720,10 @@ export class NodeGlintRenderer {
       gl.uniform4f(L.uRect, s.rect[0], s.rect[1], s.rect[2], s.rect[3]);
       gl.uniform4f(L.uTile, s.tile[0], s.tile[1], s.tile[2], s.tile[3]);
       gl.uniform4f(L.uInner, s.share[0], s.share[1], s.share[2], s.share[3]);
+      gl.uniform1f(L.uHold, s.hold);
+      gl.uniform4fv(L.uAnchor, s.anchors, 0, s.anchorN * 8);   // AUDIT NODE-GLINT: the pictures its glints stand on
+      gl.uniform1i(L.uAnchors, s.anchorN);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, s.flatTex); gl.activeTexture(gl.TEXTURE0);
       gl.uniform1f(L.uGlint, s.glint);
       const tint = glintTint(g.rgb, this._tint);
       gl.uniform3f(L.uColor, tint[0], tint[1], tint[2]);
@@ -604,6 +734,7 @@ export class NodeGlintRenderer {
       s.g = null;
     }
     gl.bindVertexArray(null);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null); gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.disable(gl.BLEND);
     gl.depthMask(true);
@@ -643,10 +774,11 @@ const idleCall = (fn) => (globalThis.requestIdleCallback ? globalThis.requestIdl
  * stand; a glint that will not build costs the glint, never the game (its marks go to the glow). A pass that ran is a
  * foreign pass. `draw(marks)` answers how many it lit; `marks` null forgets every node.
  * @param {any} renderer
- * @param {{ glow?: { draw: (marks: any) => number } | null, now?: () => number, build?: (gl: any) => NodeGlintRenderer,
+ * @param {{ glow?: { draw: (marks: any) => number, dispose?: () => void } | null, now?: () => number, build?: (gl: any) => NodeGlintRenderer,
  *   idle?: (fn: () => void) => void, reduced?: (nowS: number) => boolean }} [o]
  */
-export function createNodeGlintPass(renderer, { glow = createNodeGlowPass(renderer), now = () => performance.now() / 1000, build = (gl) => new NodeGlintRenderer(gl), idle = idleCall, reduced = reducedMotionReader() } = {}) {
+export function createNodeGlintPass(renderer, { glow: handed, now = () => performance.now() / 1000, build = (gl) => new NodeGlintRenderer(gl), idle = idleCall, reduced = reducedMotionReader() } = {}) {
+  const glow = handed === undefined ? createNodeGlowPass(renderer) : handed;   // the glow its own when the host hands none - and freed with it (AUDIT NODE-GLINT)
   const state = createNodeGlowState(), list = /** @type {any[]} */ ([]), bare = /** @type {any[]} */ ([]), pictured = /** @type {any[]} */ ([]);
   let pass = /** @type {NodeGlintRenderer|null} */ (null), asked = false, dead = false, failed = false;
   const make = () => {
@@ -667,7 +799,7 @@ export function createNodeGlintPass(renderer, { glow = createNodeGlowPass(render
       return n;
     },
     /** The pass's end - its programs and its atlas freed, and never built again. */
-    dispose() { dead = true; asked = true; pass?.dispose(); pass = null; },
+    dispose() { dead = true; asked = true; pass?.dispose(); pass = null; if (handed === undefined) glow?.dispose?.(); },
     /** For the tests and the probes. */
     get pass() { return pass; },
   };

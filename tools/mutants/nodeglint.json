@@ -119,8 +119,8 @@
   {
     "name": "NODE-OUTLINE-no-glow-of-its-own",
     "file": "src/render/nodeGlint.js",
-    "old": "{ glow = createNodeGlowPass(renderer), now",
-    "new": "{ glow = null, now",
+    "old": "handed === undefined ? createNodeGlowPass(renderer) : handed",
+    "new": "handed === undefined ? null : handed",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -180,9 +180,9 @@
     ]
   },
   {
-    "name": "NODE-GLINT-the-clamp-gone",
+    "name": "NODE-GLINT-the-overhang-unkept",
     "file": "src/render/nodeGlint.js",
-    "old": "x1 = Math.min(1, x1);",
+    "old": "x1 = Math.min(GLINT_OVERHANG, x1);",
     "new": "x1 = x1;",
     "tests": [
       "test/scenes/nodeglint.test.js"
@@ -308,8 +308,8 @@
   {
     "name": "NODE-GLINT-the-first-try-taken",
     "file": "src/render/nodeGlint.js",
-    "old": "      if (d < 1.0) { p = spot; pd = d; break; }",
-    "new": "      { p = spot; pd = d; break; }",
+    "old": "    if (d < 1.0 && holds(at, lo, hi)) return vec4(spot, d, env);",
+    "new": "    return vec4(spot, d, env);",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -317,17 +317,17 @@
   {
     "name": "NODE-GLINT-a-dark-life-lit",
     "file": "src/render/nodeGlint.js",
-    "old": "    if (pd >= 1.0) continue;   // no try fell on the picture: this life is dark\n",
-    "new": "",
+    "old": "  return vec4(0.0, 0.0, 1.0, 0.0);   // no try held: this life is dark",
+    "new": "  return vec4(0.0, 0.0, 1.0, env);   // no try held: this life is dark",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
   },
   {
-    "name": "NODE-GLINT-a-glint-off-the-picture-s-box",
+    "name": "NODE-GLINT-a-spot-off-its-picture",
     "file": "src/render/nodeGlint.js",
-    "old": "      vec2 spot = mix(uInner.xy, uInner.zw, ",
-    "new": "      vec2 spot = mix(vec2(0.0), vec2(1.0), ",
+    "old": "uUp * (uv.y * b.x)",
+    "new": "uUp * (uv.y * 0.0)",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -335,8 +335,8 @@
   {
     "name": "NODE-GLINT-the-still-glints-moving",
     "file": "src/render/nodeGlint.js",
-    "old": "  float tm = uTime * (1.0 - uStill);",
-    "new": "  float tm = uTime;",
+    "old": "  float tm = uTime * (1.0 - uStill);\n  uint seed",
+    "new": "  float tm = uTime;\n  uint seed",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -344,7 +344,7 @@
   {
     "name": "NODE-GLINT-a-life-never-dark",
     "file": "src/render/nodeGlint.js",
-    "old": ": pow(sin(PI * (cyc - c)), ${f(GLINT_FLASH)});",
+    "old": ": pow(max(sin(PI * fract(cyc)), 0.0), ${f(GLINT_FLASH)});",
     "new": ": 1.0;",
     "tests": [
       "test/scenes/nodeglint.test.js"
@@ -353,8 +353,8 @@
   {
     "name": "NODE-GLINT-every-glint-one-pace",
     "file": "src/render/nodeGlint.js",
-    "old": "+ float(i) * ${f(GLINT_RATE_STEP)})",
-    "new": "+ float(i) * 0.0)",
+    "old": "+ float(i) * ${f(GLINT_RATE_STEP * 60)};",
+    "new": "+ float(i) * 0.0;",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -380,8 +380,8 @@
   {
     "name": "NODE-GLINT-the-light-unfogged",
     "file": "src/render/nodeGlint.js",
-    "old": "  o = vec4(light * uAlpha * fogFactorAt(at3), 1.0);",
-    "new": "  o = vec4(light * uAlpha, 1.0);",
+    "old": "dwWaterFogAdd(light * uAlpha * fogFactorAt(at3), at3)",
+    "new": "dwWaterFogAdd(light * uAlpha, at3)",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -463,6 +463,421 @@
     "file": "src/render/nodeGlint.js",
     "old": "pass.draw(list, renderer, t % 60, reduced(t))",
     "new": "pass.draw(list, renderer, t % 60, false)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-behind-the-eye-taken",
+    "file": "src/render/nodeGlint.js",
+    "old": "      if (_clip[c * 3 + 2] > GLINT_NEAR_W) take(",
+    "new": "      take(",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-crossing-unclipped",
+    "file": "src/render/nodeGlint.js",
+    "old": "      take(_clip[a * 3] + t * (_clip[e * 3] - _clip[a * 3]), _clip[a * 3 + 1] + t * (_clip[e * 3 + 1] - _clip[a * 3 + 1]), GLINT_NEAR_W);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-wrap-unkept",
+    "file": "src/render/nodeGlint.js",
+    "old": "  float c = mod(floor(cyc), lives);",
+    "new": "  float c = floor(cyc);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-negative-flash",
+    "file": "src/render/nodeGlint.js",
+    "old": "pow(max(sin(PI * fract(cyc)), 0.0), ",
+    "new": "pow(sin(PI * fract(cyc)), ",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-hold-unasked",
+    "file": "src/render/nodeGlint.js",
+    "old": "if (d < 1.0 && holds(at, lo, hi)) return",
+    "new": "if (d < 1.0) return",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-spot-off-the-screen-taken",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (spot.x < 0.0 || spot.y < 0.0 || spot.x > 1.0 || spot.y > 1.0) continue;   // off the screen\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-every-node-one-seed",
+    "file": "src/render/nodeGlint.js",
+    "old": "  uint seed = uint(uSeed * 1009.0 + 0.5) * 2654435761u;",
+    "new": "  uint seed = 2654435761u;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-spot-never-chosen-afresh",
+    "file": "src/render/nodeGlint.js",
+    "old": "seed + ui * 0x85ebca6bu + uint(c) * 0xc2b2ae35u",
+    "new": "seed + ui * 0x85ebca6bu",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-depth-its-own-texel",
+    "file": "src/render/nodeGlint.js",
+    "old": "  float dep = min(here, bestDepth);",
+    "new": "  float dep = here;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-murk-ignored",
+    "file": "src/render/nodeGlint.js",
+    "old": "vec4(dwWaterFogAdd(light * uAlpha * fogFactorAt(at3), at3), 1.0)",
+    "new": "vec4(light * uAlpha * fogFactorAt(at3), 1.0)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-murk-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (L.uDwFog) gl.uniform4fv(L.uDwFog, r._dwFog ?? NO_WATER_FOG);",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-haze-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (L.uJungleHaze) gl.uniform4fv(L.uJungleHaze, r._haze);",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js",
+      "test/world/bantha1_jungle.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-hold-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "      gl.uniform1f(L.uHold, s.hold);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-flat-s-scale-unread",
+    "file": "src/render/nodeGlint.js",
+    "old": "fs = b._scales?.[pic.first + j] ?? 1",
+    "new": "fs = 1",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-far-flat-boxed-beside-its-tree",
+    "file": "src/render/nodeGlint.js",
+    "old": "        if (!t && b?.size && pic.centers?.length) {",
+    "new": "        if (b?.size && pic.centers?.length) {",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-tree-s-reach-unscaled",
+    "file": "src/render/nodeGlint.js",
+    "old": "reach = t.run.size[0] * GLINT_TREE_REACH * row[4]",
+    "new": "reach = t.run.size[0] * GLINT_TREE_REACH",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-mark-s-origin-unread-by-the-box",
+    "file": "src/render/nodeGlint.js",
+    "old": "          const o = b.origin || g.mark.origin || ZERO_ORIGIN;",
+    "new": "          const o = b.origin || ZERO_ORIGIN;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-mark-s-origin-unread-by-the-mask",
+    "file": "src/render/nodeGlint.js",
+    "old": "          const o = b.origin || s.g.mark.origin || ZERO_ORIGIN;",
+    "new": "          const o = b.origin || ZERO_ORIGIN;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-scissor-not-given-back",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (scissor) gl.enable(gl.SCISSOR_TEST);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-depth-written",
+    "file": "src/render/nodeGlint.js",
+    "old": "    gl.depthMask(false);\n    const eye = r._camPos;",
+    "new": "    gl.depthMask(true);\n    const eye = r._camPos;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-room-halved",
+    "file": "src/render/nodeGlint.js",
+    "old": "this._pad[0] = (2 * roomPx) / vw;",
+    "new": "this._pad[0] = roomPx / vw;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-handed-glow-freed",
+    "file": "src/render/nodeGlint.js",
+    "old": "if (handed === undefined) glow?.dispose?.();",
+    "new": "glow?.dispose?.();",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-its-own-glow-kept",
+    "file": "src/render/nodeGlint.js",
+    "old": " if (handed === undefined) glow?.dispose?.(); },",
+    "new": " },",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-end-forgotten",
+    "file": "src/render/nodeGlint.js",
+    "old": "    dispose() { dead = true; asked = true; pass?.dispose(); pass = null;",
+    "new": "    dispose() { asked = true; pass?.dispose(); pass = null;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-tile-one-over",
+    "file": "src/render/nodeGlint.js",
+    "old": "const wPx = Math.round(s.rect[2] * vw), hPx = Math.round(s.rect[3] * vh)",
+    "new": "const wPx = s.rect[2] * vw, hPx = s.rect[3] * vh",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-no-mark-quiet",
+    "file": "src/scenes/gatherHost.js",
+    "old": "        r.quiet = act?.node?.key === n.key;",
+    "new": "        r.quiet = false;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-every-mark-quiet",
+    "file": "src/scenes/gatherHost.js",
+    "old": "        r.quiet = act?.node?.key === n.key;",
+    "new": "        r.quiet = !!act;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-origin-unset",
+    "file": "src/scenes/gatherHost.js",
+    "old": "        r.origin[0] = ox; r.origin[1] = oy; r.origin[2] = oz;",
+    "new": "        r.origin[0] = 0; r.origin[1] = 0; r.origin[2] = 0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-quiet-mark-kindled",
+    "file": "src/render/nodeGlow.js",
+    "old": "m.quiet === true ? Math.max(0, n.kindle - dt / NODE_GLOW_KINDLE_S) :",
+    "new": "m.quiet === true ? Math.min(1, n.kindle + dt / NODE_GLOW_KINDLE_S) :",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-dimmed-at-once",
+    "file": "src/render/nodeGlow.js",
+    "old": "Math.max(0, n.kindle - dt / NODE_GLOW_KINDLE_S)",
+    "new": "0",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-one-picture-alone",
+    "file": "src/render/nodeGlint.js",
+    "old": "    int k = int(h % uint(max(uAnchors, 1)));",
+    "new": "    int k = 0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-spot-behind-the-eye-taken",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (cp.w <= ${f(GLINT_NEAR_W)}) continue;   // behind the eye\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-no-picture-glints-anyway",
+    "file": "src/render/nodeGlint.js",
+    "old": "  if (uAnchors < 1) return vec4(0.0, 0.0, 1.0, 0.0);   // no picture to stand on\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-anchors-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "      gl.uniform4fv(L.uAnchor, s.anchors, 0, s.anchorN * 8);",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-anchors-uncounted",
+    "file": "src/render/nodeGlint.js",
+    "old": "      gl.uniform1i(L.uAnchors, s.anchorN);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-basis-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "    gl.uniform3fv(L.uRight, r._bbRight);",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-flat-s-span-the-batch-s",
+    "file": "src/render/nodeGlint.js",
+    "old": "_span(s.spans, k, c[0] + o[0], c[1] + o[1], c[2] + o[2], 2 * hw, h, own)",
+    "new": "_span(s.spans, k, c[0] + o[0], c[1] + o[1], c[2] + o[2], b.size.w, b.size.h, own)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-crown-s-span-unscaled",
+    "file": "src/render/nodeGlint.js",
+    "old": "_span(s.spans, k, row[0], row[1], row[2], 2 * reach, h, 0)",
+    "new": "_span(s.spans, k, row[0], row[1], row[2], 2 * t.run.size[0], h, 0)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-anchors-the-first-few",
+    "file": "src/render/nodeGlint.js",
+    "old": "s.spans[Math.floor((i * k) / s.anchorN)]",
+    "new": "s.spans[i]",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-flats-judged-by-the-mask",
+    "file": "src/render/nodeGlint.js",
+    "old": "    if (b.y > 0.5) {   // a flat: its own picture judges the point",
+    "new": "    if (false) {   // a flat: its own picture judges the point",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-flat-s-hole-lit",
+    "file": "src/render/nodeGlint.js",
+    "old": "      if (opaque(uv)) return vec4(spot, cp.z / cp.w * 0.5 + 0.5, env);",
+    "new": "      if (true) return vec4(spot, cp.z / cp.w * 0.5 + 0.5, env);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-flat-s-depth-the-far-plane",
+    "file": "src/render/nodeGlint.js",
+    "old": "      if (opaque(uv)) return vec4(spot, cp.z / cp.w * 0.5 + 0.5, env);",
+    "new": "      if (opaque(uv)) return vec4(spot, 1.0, env);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-no-flat-its-own-picture-s",
+    "file": "src/render/nodeGlint.js",
+    "old": "const own = tex && tex === s.flatTex ? 1 : 0;",
+    "new": "const own = 0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-a-second-batch-judged-by-the-first",
+    "file": "src/render/nodeGlint.js",
+    "old": "const own = tex && tex === s.flatTex ? 1 : 0;",
+    "new": "const own = tex ? 1 : 0;",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-flats-picture-unbound",
+    "file": "src/render/nodeGlint.js",
+    "old": "      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, s.flatTex); gl.activeTexture(gl.TEXTURE0);\n",
+    "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-NODE-GLINT-the-flats-unit-unsent",
+    "file": "src/render/nodeGlint.js",
+    "old": "    gl.uniform1i(L.uFlatTex, 1);",
+    "new": "",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
