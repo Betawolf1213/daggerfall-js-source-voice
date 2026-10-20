@@ -520,10 +520,12 @@ export const QUAKE_ON = Object.freeze(['slam', 'charge', 'nova', 'wrath', 'leap'
 export const LAND_SHAKE = Object.freeze({
   slam: Object.freeze([2.5, 12]), leap: Object.freeze([2.5, 12]), cross: Object.freeze([4, 25]), meteor: Object.freeze([3.5, 15]),
   nova: Object.freeze([2, 24]), wrath: Object.freeze([6, 0]), reckon: Object.freeze([6, 0]),
-  sunder: Object.freeze([4, 25]), rejoin: Object.freeze([4, 25]),   // AUDIT WB14 (SCREEN-12): his tearing and his making whole are felt as his bound is - they quake and burst as it does
 });
+/** AUDIT WB14 (SCREEN-12): his tearing and his making whole are felt as his bound is - they quake and burst as it does -
+ *  through the bound's own shake, not two kinds more (SD16 holds the Hour to more kinds of shake than his court). */
+export const SHAKE_AS = Object.freeze({ sunder: 'cross', rejoin: 'cross' });
 /** The shake a landing of `A` gives feet `d` metres from it (a reach of none: everywhere). Pure. */
-export const landShake = (A, d) => { const w = LAND_SHAKE[A?.key]; return !w ? 0 : !(w[1] > 0) ? w[0] : w[0] * Math.max(0, 1 - d / w[1]); };
+export const landShake = (A, d) => { const w = LAND_SHAKE[SHAKE_AS[A?.key] ?? A?.key]; return !w ? 0 : !(w[1] > 0) ? w[0] : w[0] * Math.max(0, 1 - d / w[1]); };
 export const THUD_AT_MS = 1500;
 
 // ═══ WB11c: HIS HOST, SEEN AND HEARD ═══════════════════════════════════════════════════════════════════════════

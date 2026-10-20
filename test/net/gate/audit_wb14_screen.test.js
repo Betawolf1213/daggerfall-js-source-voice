@@ -163,7 +163,12 @@ test('AUDIT WB14 SCREEN-11 the night\'s arrival keeps its clearing - the Vanguar
 });
 
 test('AUDIT WB14 SCREEN-12 / SCREEN-13 the Sundering and the Rejoining are felt as his bound is; the Unmaking\'s fill meets the rim it is seen at (mutants: shaking nothing; the fill to its reach past the floor)', () => {
-  for (const k of ['sunder', 'rejoin']) { assert.ok(QUAKE_ON.includes(k)); assert.ok(landShake(ATTACKS[k], 0) > 0, k); assert.deepEqual(LAND_SHAKE[k], LAND_SHAKE.cross); }
+  for (const k of ['sunder', 'rejoin']) {
+    assert.ok(QUAKE_ON.includes(k));
+    assert.ok(landShake(ATTACKS[k], 0) > 0, k);
+    for (const d of [0, 10, 30]) assert.equal(landShake(ATTACKS[k], d), landShake(ATTACKS.cross, d), `${k} at ${d} m`);
+    assert.ok(!(k in LAND_SHAKE), 'the bound\'s shake, not a kind of its own');
+  }
   const atk = { i: 1, a: ATTACKS.unmake.id, at: 5000, x: 0, z: 0, yw: 0, tg: [[0, 0]] };
   const sh = telegraphShape(atk, 3, 4000, BASE_PROFILE);
   assert.ok(sh);

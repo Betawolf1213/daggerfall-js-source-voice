@@ -470,8 +470,8 @@
   {
     "name": "AUDIT-WB14-SCREEN-12-shaking-nothing",
     "file": "src/world/gate/gateBoss.js",
-    "old": "  sunder: Object.freeze([4, 25]), rejoin: Object.freeze([4, 25]),",
-    "new": "",
+    "old": "LAND_SHAKE[SHAKE_AS[A?.key] ?? A?.key]",
+    "new": "LAND_SHAKE[A?.key]",
     "tests": [
       "test/net/gate/audit_wb14_screen.test.js"
     ]

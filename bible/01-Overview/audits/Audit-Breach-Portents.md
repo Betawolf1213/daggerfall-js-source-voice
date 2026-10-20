@@ -91,7 +91,7 @@ PLAY-2), the night built by the day (WIRE-1, SCREEN-8), the Sundering's numbers 
 | SCREEN-9 MINOR | The arsenal told attacks apart by number alone (AUDIT WB B4's law: number and moment) | FIXED |
 | SCREEN-10 MINOR | New objects every frame: the chains, my feet's copies | FIXED: the chains' slots, one pair for my feet (the court, the Flame, the host) |
 | SCREEN-11 NIT | On a Vanguard night the arrival had no clearing - a brazier 1.8 m behind the way in | FIXED: the night's root keeps the bridge's clearing; the page's "fewer spires" corrected |
-| SCREEN-12 NIT | The Sundering and the Rejoining quaked and burst but shook nothing | FIXED: LAND_SHAKE as the bound's |
+| SCREEN-12 NIT | The Sundering and the Rejoining quaked and burst but shook nothing | FIXED: the bound's own shake (`SHAKE_AS`), not two kinds more - SD16 holds the Hour to more kinds of shake than his court |
 | SCREEN-13 NIT | The Unmaking's fill reached the rim 96-120 ms early | FIXED: to the rim it is seen at (shader and field) |
 | SCREEN-14 NIT | A hidden HUD hid the Gaze's blinding | FIXED: the white is the eye's |
 
