@@ -52,7 +52,7 @@ Not changed: the Discord herald names the record's own region. A Hollow the old 
 found, fallen or faded *in the High Rock sea coast*. This relay never raises another, so the post was not reworded
 for one record.
 
-The relay is `world226`, and no frame changes shape. The relay and the clients may deploy in either order.
+The relay is `world228` (`world226` on its branch, renumbered past LORD-SHARES' `world226` and PLAIN-SWEEP's `world227` at the merge), and no frame changes shape. The relay and the clients may deploy in either order.
 
 Pins: `test/net/superDungeon/fb1020_sdsea.test.js`; `tools/mutants/fb1020_sdsea.json` (5, all dead). The arc's record is
 `11-Multiplayer/Super-Dungeons.md` SD-SEA.

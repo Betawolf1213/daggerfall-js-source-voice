@@ -3340,7 +3340,7 @@ by (`sdCities` empty, logged as *"[sd] slot N: the world offers no Hollow (no si
 **Not changed.** The Discord herald still names the record's own region (`sdRegionName`). A Hollow the old relay raised
 at sea is announced *in the High Rock sea coast* when it is found, falls or fades. This relay never raises another.
 
-**The relay: `world226`** (NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
+**The relay: `world228`** (`world226` on its branch, renumbered past LORD-SHARES' `world226` and PLAIN-SWEEP's `world227` at the merge; NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
 order: until the relay deploys, this build's clients stand the sea's Hollows by the great cities.
 
 Pins: `test/net/superDungeon/fb1020_sdsea.test.js` (5: the list, the census, the hub's director over the real Room, the
@@ -3348,7 +3348,7 @@ client's fallback and, with ARENA2, the list against MAPS.BSA, every water pixel
 region the census can choose); `tools/mutants/fb1020_sdsea.json` (5, all dead). PIN MOVED: `sd1_sdlaw.test.js`'s
 census pins (Dwynnen, 5, for Yeorth Burrowland, 4, and Ilessan Hills, 60, for Cybiades, 61, as the last region with a
 town); `sd3_relay.test.js`'s census rest (Wayrest, 23, for High Rock bay coast, 30); RELAY_VERSION's pin in 42 files,
-disc7's list of versions and soc1.json's version record (world226).
+disc7's list of versions and soc1.json's version record (world228).
 
 THE FOUR HOSTS: none wired. `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and
 `scenes/exterior.js` are untouched. The fallback is `scenes/superDungeon/sdHost.js`'s, which `scenes/world.js` wires
