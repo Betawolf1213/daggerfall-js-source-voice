@@ -362,6 +362,7 @@ const HARDCODED = {
   'src/systems/enchanting.js': 7,
   'src/systems/enchantmentCatalogue.js': 65,
   'src/systems/enemyExpansion/dexTableText.js': 5,   // DEX0: the mod's tables as text, verbatim (data, the enemies' names among it - read by its own parser, never shown)
+  'src/systems/enemyExpansion/dexBodies.js': 8,   // DEX7: the census's miss and sprite reasons (creatureBodies.js's eight are the classic table's) - read by the tests, never shown to a player: a miss keeps its sprite
   'src/systems/enemyExpansion/dexSpells.js': 1,   // DEX4a: the mod's `[DEX] Unknown enemy spell table` Debug.LogError line, verbatim - through the install's `log` seam, never shown to a player
   'src/systems/enemyExpansion/dexTables.js': 29,   // DEX1 (24) and DEX3 (5, ParseEncounterTables' and the first Update's): the mod's `[DEX]` Debug.LogError lines, verbatim - console diagnostics through the reading's `log` seam (a test silences it), never shown to a player
   'src/systems/equip.js': 3,

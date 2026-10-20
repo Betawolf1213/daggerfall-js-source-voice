@@ -180,3 +180,7 @@ through the texture door these register on, so neither draws the other's.
   four arms that ready the mod's spells, the Skeletal Warrior's rule for the
   Skeletal Soldier, its fifty's groups and languages, the forced gender
   (`src/systems/enemyExpansion/dexCombat.js`). Section 9.
+- **DEX7** (2026-10-20): the Morrowind bodies, the port's own - each monster
+  in the Morrowind creature that is it and moves as it does, or a declared
+  miss; the lizard men Argonians; the riders their sprites
+  (`src/systems/enemyExpansion/dexBodies.js`). Section 10.

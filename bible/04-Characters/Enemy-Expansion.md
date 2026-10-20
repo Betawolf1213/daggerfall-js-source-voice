@@ -63,15 +63,17 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
-| DEX7 | the Morrowind bodies (section 4) | open |
+| DEX7 | the Morrowind bodies (section 4) | SHIPPED (section 10) |
 
 ## 4. Morrowind
 
 Planned under DEX7 against the rules the port already keeps (`bible/04-Characters/Morrowind-NPCs.md` section 14b,
 `src/characters/creatureBodies.js` CREATURE_MATCH): a new creature takes a Morrowind creature's body only where
 Morrowind has that creature and it moves the same way (a flyer a flyer, a swimmer a swimmer), its CREA id read off
-UESP, never recalled; a person-shaped class (the riders, the necromancers, the witches) is drawn as a person; and
-where Morrowind has no such creature the row says so, and the mod's own sprite stands.
+UESP, never recalled; a person-shaped class (the necromancers, the witches) is drawn as a person; and where Morrowind
+has no such creature the row says so, and the mod's own sprite stands. SHIPPED as section 10, which AMENDS this plan
+on the riders: the same law (it moves the same way) keeps their sprites - a rider's horse is its sprite's, and no
+person's body rides.
 
 ## 5. DEX1 - the enemy registry
 
@@ -331,3 +333,46 @@ C#'s chain read off the vendored source, the mod's arms against BestiaryEnemySpe
 whole, the skeletal rule, the groups and languages, the gender over the roll, the install), mutants
 `tools/mutants/dex4b.json`.
 
+## 10. DEX7 - the Morrowind bodies
+
+Mac, 2026-10-19: "We also need to ensure these get proper morrowind model replacements if applicable". The mod has no
+Morrowind half - DFU draws its sprites - so this is the port's own, on the law the classic table keeps
+(`Morrowind-NPCs.md` section 14b, AUDIT MW-NPC D4/D5): a monster takes a Morrowind creature's body where Morrowind has
+that creature and it moves as it does; a person stands as a person; anything else is a declared miss, and its sprite
+stands. `systems/enemyExpansion/dexBodies.js` holds the table, registered whatever the switch (the fifty's rows and
+pictures are there either way, and a body is how a row is drawn).
+
+- **The doors.** `characters/creatureBodies.js` registerCreatureMatches: a mod's rows past the classic ids, read by
+  creatureLook after CREATURE_MATCH, which stays the census of DFU's own. A row is refused where the classic audits
+  would refuse it - a match and a miss, ids not as the reader keeps them, a flyer without `flies`, any swimmer, a
+  class's mobile, a mobile named twice. `characters/foeBodies.js` registerPersonFoes: a monster that is a person
+  (`{ race }`, drawn in that race's body as an orc is in the Orc's - isPersonFoe, foeLook, rosterLook) or a class that
+  keeps its sprite (`{ sprite }`).
+- **Matched** (the ids read off the Elder Scrolls wiki's creature pages, 2026-10-20 - UESP refuses the container):
+  Goblin (`goblin_grunt`, Tribunal's), Wolf (`bm_wolf_grey`), Snow Wolf (`bm_wolf_snow_unique`, else the grey),
+  Troll (`bm_ice_troll`, the grahl - Morrowind's only troll), Boar (`bm_frost_boar`, the tusked bristleback), Mudcrab
+  (`mudcrab`), Ogre (`ogrim`), Dremora Churl (`dremora`), Stone Golem (`atronach_storm`), Dire Ghoul
+  (`bonewalker_greater`, else `bonewalker`), Scamp, Centurion Sphere and Steam Centurion (their own). Where a classic
+  monster is the same creature the row is the classic row: the Skeletal Soldier the Skeletal Warrior's, the Iron and
+  Ice Golems the Iron and Ice Atronachs', the Ghoul the zombie's bonewalker, the Gloom Wraith and the Faded Ghost the
+  veiled ancestor ghost (MWNPC13 - a wraith in another archive is a named spectral and keeps it).
+- **Declared misses**: the Homunculus and the Bat (flyers; no Morrowind one), the Will-o'-wisp, the Land Dreugh
+  (Morrowind's swims; this one walks), King Lysandus (a named spectral, MWNPC13), and every beast Morrowind has none
+  of - the Medusa, the Hell Hound, the Grotesque, the Dog, the Nymph, the Minotaur, the Blood Spider, the Fire Daemon,
+  the Mountain Lion (the classic nymph's, spider's and sabretooth's misses, word for word).
+- **The people.** The Lizard Man and the Lizard Warrior are Argonians - Morrowind's lizard folk are people - dressed
+  from their own equip table under the Bay's clothes, as an orc is; SetEnemyCareer's table arms no monster of the
+  mod's (`combat/enemyEquipment.js` equipmentVariantFor), so they stand bare-handed where the sprite shows a shield
+  and blade. The fifteen classes are people by the class law; the five RIDERS (Knight, Rogue, Thief, Spellsword and
+  Archer) keep their sprites.
+
+Departures (Port-Ledger A, the DEX row):
+
+- **The bodies are the port's.** DFU draws the mod's sprites; the port stands a Morrowind body where the rules above
+  find one - the arc's own ask.
+- **A lizard man stands unarmed.** Its sprite carries a shield and a blade that DFU's entity never holds; the body
+  wears what the foe wears (MWNPC5b), as every person's does.
+
+Tests: `test/systems/enemyExpansion/dex7_bodies.test.js` (the census by the mod's own names, the motion law, the people
+and the riders, the looks at the door with the switch either way, the doors' refusals, once a page), mutants
+`tools/mutants/dex7.json`.

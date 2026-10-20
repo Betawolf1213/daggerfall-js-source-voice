@@ -6,9 +6,11 @@
 // LOADED FOR THE GAME, AS DFU LOADS A MOD (modSettings.js latchModLoaded): the switch is read here, once, and the
 // mod's doors read the latch - a switch flipped mid-game waits for the next load, as the tile says.
 //   ALWAYS (whatever the switch): the fifty enemies join the table, their careers the custom career registry, their
-//     names the text provider and their pictures the texture door (DEX2, dexSprites.js). In DFU a disabled mod registers nothing - and a game saved with a Goblin in it and loaded
-//     with the mod off finds no row for it; here the row is still there and nothing that is the mod's reaches it (no
-//     table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is DFU's.
+//     names the text provider, their pictures the texture door (DEX2, dexSprites.js) and their Morrowind bodies the
+//     body doors (DEX7, dexBodies.js). In DFU a disabled mod registers nothing - and a game saved with a Goblin in it
+//     and loaded with the mod off finds no row for it; here the row is still there and nothing that is the mod's
+//     reaches it (no table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is
+//     DFU's.
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
 //     foe's mint over Meaner Monsters' and the overhaul's - DFU's order: their Init, then this Start), and the quest
 //     foes added, its encounter tables picked (DEX3), its spells and spellbooks (DEX4a), its combat hooks and forced
@@ -26,6 +28,7 @@ import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../..
 import { addIntoQuestTables } from '../quest/tables.js';
 import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
 import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
+import { installDexBodies } from './dexBodies.js';   // DEX7: the fifty's Morrowind bodies, whatever the switch
 import { registerFoeGhost } from '../../characters/enemy/foeLook.js';   // DEX2: the Transparent property's ghost shader
 import { registerSpellRecordsAsset } from '../spell/standardSpells.js';   // DEX4a: its SpellRecords.json, merged into the standard list
 import { registerEnemySpellbook } from '../enemySpells.js';
@@ -130,6 +133,7 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
   registerEnemyRows(rows);
   registerCustomEnemyName((id) => read.enemies.get(id)?.props.name || null);
   installDexSprites();   // DEX2: their pictures on the texture door, and the xml's scales
+  installDexBodies();   // DEX7: their Morrowind bodies - a creature's, a person's, or the sprite's
   const loaded = latchModLoaded(DEX_VENDOR, on);
   if (loaded) {
     // the classic rows edited, written into the table as EnemyBasics.Enemies is written (the originals kept, the revert's)
