@@ -24,6 +24,7 @@ import { MOBILE_BEHAVIOUR } from '../../characters/enemy/enemyBasics.js';
 import { ENEMY_GROUPS, GROUP_BITS } from '../../combat/formulas.js';
 import { EFFECT_FLAGS } from '../spellcast.js';
 import { SKILLS } from '../skills.js';
+import { DUNGEON_TYPES } from '../../formats/mapsFile.js';
 
 // ---- the enums Enum.Parse reads (DaggerfallUnityEnums.cs, DFCareer.cs, DFBlock.cs, ItemEnums.cs) ----------------------
 // MobileTeams, DFCareer.EnemyGroups, DFCareer.EffectFlags, DFCareer.Skills and WeaponMaterialTypes are the port's own
@@ -388,4 +389,88 @@ export function readEnemyTables(files, careers, { liveRow, isClassic, hasFoe = (
     }
   }
   return { enemies, classic, spellbooks, questFoes };   // a classic entry whose line failed keeps its props and no row, as the C# keeps them
+}
+
+// ---- the encounter tables (ParseEncounterTables, :1633-1726) and the first Update's defaults (:210-269) ---------------
+
+/** The defaults CreateDefaultTable names, by table index: `Default` and DFRegion.DungeonTypes' 19 (NoDungeon aside), the
+ *  water's (19) and the climates' 18 (20-37), in the C#'s order. */
+export const DEX_DEFAULT_TABLES = Object.freeze([
+  ...Object.entries(DUNGEON_TYPES).filter(([n]) => n !== 'NoDungeon').sort(([, a], [, b]) => a - b).map(([n]) => n),
+  'Underwater',
+  ...['Desert', 'Mountain', 'Rainforest', 'Subtropical', 'Woodlands', 'Haunted'].flatMap((c) => [`${c}CityNight`, `${c}Day`, `${c}Night`]),
+].map((n) => `Default${n}`));
+
+/**
+ * BestiaryMod.ParseEncounterTables (:1633-1726), line for line: `{ tables: name -> { name, tableIndices, enemyIds },
+ * byIndex: index -> [table] }`. A line naming a table already read replaces its ids (and moves it to other indices,
+ * where it names them and they differ); a new one needs its indices, and joins each index's list in reading order - before
+ * its ids are read, as the C# adds it, so a line whose ids will not parse leaves its table in the lists with none.
+ */
+export function readEncounterTables(files, log = () => {}) {
+  const tables = new Map(), byIndex = new Map();
+  const at = (i) => byIndex.get(i) ?? byIndex.set(i, []).get(i);
+  for (const [assetName, text] of files) {
+    const [header = '', ...lines] = csvLines(text);
+    const fields = splitCsvHeader(header);
+    if (fields.length < 21) {
+      log('error', `[DEX] Error while parsing ${assetName}: table database has invalid format (expected at least 21 columns)`);
+      continue;
+    }
+    const hasTableIndices = fields[1].toLowerCase() === 'table indices';   // Equals(..., InvariantCultureIgnoreCase)
+    let lineNumber = 1;
+    for (const line of lines) {
+      ++lineNumber;
+      try {
+        const tokens = splitCsvLine(line);
+        if (tokens.length < 21) {
+          log('error', `[DEX] Error while parsing ${assetName}:${lineNumber}: table database line has invalid format (expected at least 21 columns)`);
+          continue;
+        }
+        const name = tokens[0];
+        let table = tables.get(name);
+        if (table) {
+          // Table replacement
+          if (hasTableIndices) {
+            const tableIndices = parseArrayArg(tokens[1], `line=${lineNumber}, column=2`);
+            const same = tableIndices.length === table.tableIndices?.length && tableIndices.every((v, k) => v === table.tableIndices[k]);
+            if (tableIndices.length !== 0 && !same) {
+              for (const i of table.tableIndices ?? []) byIndex.set(i, at(i).filter((t) => t.name !== name));   // RemoveAll
+              table.tableIndices = tableIndices;
+              for (const i of tableIndices) at(i).push(table);
+            }
+          }
+          table.enemyIds = tokens.slice(hasTableIndices ? 2 : 1).map((id) => parseCsInt(id, `line=${lineNumber}`));
+        } else {
+          if (!hasTableIndices) {
+            log('error', '[DEX] Error while parsing new encounter tables: table indices not specified');
+            continue;
+          }
+          table = { name, tableIndices: parseArrayArg(tokens[1], `line=${lineNumber}, column=2`), enemyIds: null };
+          for (const i of table.tableIndices) at(i).push(table);
+          table.enemyIds = tokens.slice(2).map((id) => parseCsInt(id, `line=${lineNumber}`));
+          tables.set(name, table);
+        }
+      } catch (ex) {
+        log('error', `[DEX] Error while parsing ${assetName}:${lineNumber}: ${ex?.message ?? ex}`);
+      }
+    }
+  }
+  return { tables, byIndex };
+}
+
+/** The first Update (:210-269): a `Default<type>` table from `vanilla(index)` (RandomEncounters.EncounterTables[index]'s
+ *  enemies) for each index whose default the mod's tables did not name - or, where they named it, the C#'s complaint if
+ *  the index was left with none. In place; answers `read`. */
+export function addDefaultEncounterTables(read, vanilla, log = () => {}) {
+  DEX_DEFAULT_TABLES.forEach((name, index) => {
+    if (read.tables.has(name)) {
+      if (!(read.byIndex.get(index)?.length)) log('error', `[DEX] Encounter index '${name}' has no tables`);
+      return;
+    }
+    const table = { name, tableIndices: null, enemyIds: [...vanilla(index)] };
+    (read.byIndex.get(index) ?? read.byIndex.set(index, []).get(index)).push(table);
+    read.tables.set(name, table);
+  });
+  return read;
 }

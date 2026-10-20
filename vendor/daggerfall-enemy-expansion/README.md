@@ -158,7 +158,15 @@ through the texture door these register on, so neither draws the other's.
   (`src/characters/enemy/customEnemies.js`, `enemyBasics.js`,
   `enemyEntity.js` loadEnemyCareer). `bible/04-Characters/Enemy-Expansion.md`
   section 5.
-- **DEX2** (2026-10-20, in part): the pictures on the texture door as DFU
+- **DEX2** (2026-10-20): the pictures on the texture door as DFU
   imports them (`src/systems/enemyExpansion/dexSprites.js`) - each record's
   frames to the first missing (a picture past a gap ships and is never drawn),
-  the xml's scales, the emission maps. Section 6.
+  the xml's scales, the emission maps - and SetupDemoEnemy's renderer: the
+  ghost shader by a Spectral row, NoShadow (`src/characters/enemy/foeLook.js`);
+  the glow's light routed. Section 6.
+- **DEX3** (2026-10-20): the encounter tables - the table database read as
+  `ParseEncounterTables` reads it, a dungeon's tables picked by its seed and
+  the climates' on PlayerGPS's events
+  (`src/systems/enemyExpansion/dexEncounters.js`, `src/world/playerGps.js`),
+  on a door every reader asks (`src/characters/encounterTableDoor.js`).
+  Section 7.

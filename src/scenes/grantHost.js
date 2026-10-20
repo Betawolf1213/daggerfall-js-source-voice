@@ -47,7 +47,7 @@ import { importPublicKeyB64 } from '../net/identityToken.js';
 import { serviceBase } from '../net/accountClient.js';
 import { appStorage } from '../systems/appStorage.js';
 import { resolveEncounterTableIndex, chooseRandomEnemy } from '../systems/encounters.js';
-import { ENCOUNTER_TABLES } from '../characters/encounterTables.js';
+import { encounterTableChoices, encounterTableGeneration } from '../characters/encounterTableDoor.js';   // DEX3: every table a mod may pick, on any machine
 import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
 
 /** The reader's bounds: the verdicts it keeps (owner and grant), the members it has seen stand, the puppets it knows the
@@ -83,7 +83,9 @@ const LEVELLED_KINDS = new Set(['enc', 'camp', 'band', 'encr']);
  *  RandomEncounters.ChooseRandomEnemy) over climate `climate` (a map pixel's - every machine's own CLIMATE.PAK, the
  *  relay's never), in a location's rect or out of one, the grant's world minute's day or night and its owner's signed
  *  level (1 where it signs none), drawn from the member's own species die (net/grantLaw.js grantDice). -1 where the place
- *  rolls none. Pure. @param {{ s: number, m: number, l: number }} gr @param {number} i @param {number} climate @param {boolean} inRect */
+ *  rolls none. DEX3: a roll every machine agrees on, so where a mod offers more than one table for the place the die picks
+ *  one of them first (characters/encounterTableDoor.js) - never a table a machine's own events picked. Pure.
+ *  @param {{ s: number, m: number, l: number }} gr @param {number} i @param {number} climate @param {boolean} inRect */
 export function grantSpecies(gr, i, climate, inRect) {
   return chooseRandomEnemy({ climateIndex: climate, inLocationRect: inRect, isDay: !isNight(gr.m), playerLevel: gr.l > 0 ? gr.l : 1 }, grantDice(gr.s, i).species);
 }
@@ -94,11 +96,12 @@ const _speciesOf = new Map();
  *  seed's faction-mates out of the same table. Null for a climate with no band. Pure. @param {unknown} c */
 export function grantSpeciesOf(c) {
   if (!Number.isInteger(c)) return null;
-  if (_speciesOf.has(c)) return _speciesOf.get(c);
+  const key = `${c}:${encounterTableGeneration()}`;   // DEX3: kept per climate while the tables' selectors stand
+  if (_speciesOf.has(key)) return _speciesOf.get(key);
   const tables = [{ inLocationRect: true, isDay: false }, { inLocationRect: false, isDay: true }, { inLocationRect: false, isDay: false }]
     .map((o) => resolveEncounterTableIndex({ climateIndex: c, ...o })).filter((i) => i != null);
-  const set = tables.length ? new Set(tables.flatMap((i) => ENCOUNTER_TABLES[/** @type {number} */ (i)] ?? [])) : null;
-  _speciesOf.set(c, set);
+  const set = tables.length ? new Set(tables.flatMap((i) => encounterTableChoices(/** @type {number} */ (i)).flat())) : null;   // DEX3: every table any machine's mod may have picked
+  _speciesOf.set(key, set);
   return set;
 }
 

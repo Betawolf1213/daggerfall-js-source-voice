@@ -59,7 +59,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX0 | the record: the vendored files, the art in its three places, the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
-| DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' | open |
+| DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | open |
 | DEX5 | the Troll's corpse: up again after ten seconds unless struck, saved with the game, the cheat | open |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
@@ -189,3 +189,68 @@ never drawn either for a classic enemy:
 Tests: `test/systems/enemyExpansion/dex2_sprites.test.js` (every imported picture from its one place, none past a gap;
 the stand-in's frames; the xml ungated on a stand-in only; the emission's two sources), `dex0_record.test.js` (the
 index held to DFU's import).
+
+## 7. DEX3 - the encounter tables
+
+The mod ships one table database (`DefaultTableReplacement.tdb.csv`): a line for each of the 38 tables it has a default
+for - the 19 dungeon types, the water, the six climate families' city night, day and night - with its own monsters in
+them, and a second Laboratory table, `DwarvenLab`. `dexTables.js` reads it as `ParseEncounterTables` does
+(BestiaryMod.cs:1633-1726, line for line: a replacement moves only to other, named indices; a new table joins its
+indices before its ids parse; a short line, a short header, a new table with no indices refused) and adds the first
+Update's defaults (:210-269), DFU's own tables copied for an index the mod names no default for - none, for 1.3.4.
+
+**The door** (`characters/encounterTableDoor.js`). DFU's tables are an array a mod writes in place (`ref
+RandomEncounters.EncounterTables[index]`), and every reader rolls from what it wrote; the port's array is DFU's,
+generated and untouched, and a mod registers a selector that every reader asks through `encounterTable(index, place,
+rolls)`:
+
+- **The player's own rolls** - the encounter decision, the dungeon's rest, the camps' (`systems/encounters.js`
+  playerReading marks them `local`) - read the table as the mod's events wrote it, DFU's own where they wrote none.
+  DFU has no other kind of roll.
+- **A dungeon's population** (`characters/dungeonEnemies.js` collectDungeonEnemies, handed `dungeonPlace(dfLocation)` -
+  its LocationId and its seed) reads its type's table and the water's.
+- **Any other roll is one every machine must agree on** - a granted member's species (`scenes/grantHost.js`), a
+  roaming band's make, a road's trouble (`systems/livingWorld/trouble.js`). A machine's events are its own (the mod
+  picks a climate's table by `UnityEngine.Random` as its player walks), so such a roll reads none of them: it reads one
+  of the mod's tables for the index by its own die, and spends no draw where there is one (DFU's alone, or a mod's
+  single table) - the roll it always was. A reader bounding a granted species takes every table the mod may pick.
+  None of these readers is DFU's, so none is a departure from it; the shipped tables give every index but the
+  Laboratory's one table, so only a trouble on the road to a laboratory draws for it.
+
+**The picks** (`systems/enemyExpansion/dexEncounters.js`):
+
+- **A dungeon's** (SelectDungeonTable, :1728-1753): on `PlayerEnterExit.OnPreTransition` into it - a door and a load
+  alike (PlayerEnterExit.cs:914, :975) - one of its type's tables and one of the water's, each by
+  `DFRandom.srand((ushort)Unknown2 ^ ((byte)region << 8))` and one `rand() % count`: the same pick every visit, on every
+  machine. The transition always comes before the layout, and the population reads the two tables first, so the pick
+  is made at that read; the rest roll then reads what it wrote. Of MAPS.BSA's 190 laboratories, both tables are picked.
+  PreTransition's `Enum.IsDefined(DungeonTypes, ...)` guard has no arm: all 4,232 dungeons have a defined type.
+- **A climate's** (SelectClimateTables and the rect's handlers, :1784-1871): a climate change or leaving a location's
+  rect picks the climate's day and night tables, entering one its city night, on PlayerGPS's events.
+
+**PlayerGPS's events** (`world/playerGps.js`). DFU raises `OnClimateIndexChanged`, then `OnEnterLocationRect` or
+`OnExitLocationRect`, on the edges of the player's reading each frame (PlayerGPS.cs:561-576, :669-716), its trackers
+starting at climate 0 and out of a rect - so the first frame raises the climate, and its entry if the player stands in
+a town. The port's reading of the player's place is the encounter law's own: the decision and the camps' rolls raise
+the events from their place, every minute they run out of doors (the hosts already hand them the climate and the widened
+rect), so no host polls a second copy - bootWorld stands at its ceiling, and nothing about DFU's events needs a frame
+the rolls do not have.
+
+Departures (Port-Ledger A, the DEX row - SCOPE1's rule, each named):
+
+- **The generator is put back.** DFU leaves DFRandom where the dungeon's pick left it; the port's pick stands inside
+  the population, ahead of the fill's own srand, so it restores the shared stream.
+- **The events ride the rolls' minutes**, not every frame: events between two readings are seen as one edge. A load or
+  a fast travel resets PlayerGPS's rect flag (ResetState, :398-401), so DFU raises a second entry into a town it never
+  left and re-draws its city night; the port sees no edge there and keeps the draw it had. With 1.3.4's tables - one an
+  index outside the Laboratory - every such draw writes the same table.
+- **A table whose ids will not parse** stays in its index's list and a pick that lands on it writes nothing (the C#'s
+  `Select` throws before the write). Thrown in a PlayerGPS handler, DFU's throw also ends that frame's GPS update and
+  raises the event again next frame; the port does not copy that stall. No table of 1.3.4 fails to parse.
+- **The defaults are added at the read**, where DFU adds them at the mod's first Update, whose order against
+  PlayerGPS's first Update is Unity's. 1.3.4 names all 38, so none is added.
+
+Tests: `test/systems/enemyExpansion/dex3_encounters.test.js` (the reading line for line, the defaults, the dungeon's pick
+against the C#'s LCG and with ARENA2 over every dungeon, PlayerGPS's edges, the climates' picks, the door's two reads,
+every reader through it - the decision, the rest, the camps, a group's one table, a granted species, the population -
+and the install), mutants `tools/mutants/dex3.json`.

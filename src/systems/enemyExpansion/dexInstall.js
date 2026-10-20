@@ -11,10 +11,14 @@
 //     table rolls it, no quest names it, no hook of the mod's runs), so the save loads and the world is DFU's.
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
 //     foe's mint over Meaner Monsters' and the overhaul's - DFU's order: their Init, then this Start), and the quest
-//     foes added. (DEX3: the encounter tables; DEX4: the hooks; DEX5: the troll; DEX6: the equipment - each its own.)
+//     foes added, and its encounter tables picked (DEX3). (DEX4: the hooks; DEX5: the troll; DEX6: the equipment.)
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
-import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine } from './dexTables.js';
+import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine, readEncounterTables, addDefaultEncounterTables } from './dexTables.js';
+import { createDexEncounterSelector } from './dexEncounters.js';   // DEX3: the tables as the mod picks them
+import { ENCOUNTER_TABLES } from '../../characters/encounterTables.js';   // DEX3: DFU's own, the defaults' source
+import { registerEncounterTableSelector } from '../../characters/encounterTableDoor.js';
+import { onPlayerGpsEvents } from '../../world/playerGps.js';
 import { ENEMY_BASICS, registerEnemyRows, isClassicEnemyId, enemyDisplayName } from '../../characters/enemy/enemyBasics.js';
 import { registerCustomCareerTemplate, registerCustomEnemyName } from '../../characters/enemy/customEnemies.js';
 import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../../characters/enemy/enemyEntity.js';
@@ -48,7 +52,9 @@ export function dexRead({ log = consoleLog } = {}) {
     classicName: (id) => enemyDisplayName(id),
     log,
   });
-  _read = { careers, ...enemies };
+  // DEX3: the encounter tables (ParseEncounterTables, Start) and the first Update's defaults from DFU's own tables
+  const encounters = addDefaultEncounterTables(readEncounterTables(dbAssets('.tdb.csv'), log), (i) => ENCOUNTER_TABLES[i], log);
+  _read = { careers, ...enemies, encounters };
   return _read;
 }
 
@@ -133,6 +139,10 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     registerMintRowEditor((mobileType, row) => (read.classic.get(mobileType)?.row ? editedClassicRow(mobileType, row, read) : row));
     // EnemyEntity.OnLootSpawned's Transparent arm (:1394-1402): the ghost shader on a non-spectral enemy the mod marks
     registerFoeGhost((id) => dexProperties(id)?.isTransparent === true);
+    // DEX3: the encounter tables, picked on the dungeon's transition and PlayerGPS's events (BestiaryMod.cs:1728-1871)
+    const encounters = createDexEncounterSelector(read.encounters);
+    registerEncounterTableSelector(encounters);
+    onPlayerGpsEvents(encounters.gps);
     // QuestMachine.FoesTable.AddIntoTable (:1344): the new names the Foes table lacks, when it loads
     addIntoQuestTables({ foes: read.questFoes.map(([id, name]) => ({ line: `${id}, ${name}`, unlessKey: name })) });   // `if (!FoesTable.HasValue(questName))` - asked of the table as it stands when the rows land
   }
