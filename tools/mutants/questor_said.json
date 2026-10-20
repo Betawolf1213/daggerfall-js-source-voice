@@ -142,5 +142,15 @@
     "tests": [
       "test/systems/quest/fb1019f_questorsaid.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-FB1019f-F1-the-flow-box-unfitted",
+    "file": "src/ui/guildServiceWindows.js",
+    "old": "    this._box = layoutMessageBox(font, fitBoxRows(font, t.rows), buttons);",
+    "new": "    this._box = layoutMessageBox(font, t.rows, buttons);",
+    "tests": [
+      "test/systems/quest/fb1019f_questorsaid.test.js"
+    ],
+    "why": "the finding: on the classic skin the busy line naming a guild's quest runs past both edges of the 320-px panel"
   }
 ]

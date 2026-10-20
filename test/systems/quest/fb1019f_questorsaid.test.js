@@ -9,7 +9,8 @@
 // bridge stored), the boxes through the real ServiceFlowWindow.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { makeWorld } from '../../guideWorld.mjs';   // loads the vendored quest tables too
 import { createQuestBridge, questorBusyRows } from '../../../src/scenes/quest/questBridge.js';
 import { QUEST_MESSAGES } from '../../../src/systems/quest/machine.js';
@@ -18,6 +19,13 @@ import { GUILD_GROUPS, SOCIAL_GROUPS } from '../../../src/formats/factionFile.js
 import { serviceDestination } from '../../../src/systems/guild/guildServiceFlow.js';
 import { ServiceFlowWindow } from '../../../src/ui/guildServiceWindows.js';
 import * as tm from '../../../src/systems/textManager.js';
+import { layoutMessageBox, BOX_FIT_W } from '../../../src/ui/messageBox.js';
+import { measureText } from '../../../src/ui/text.js';
+import { FntFile } from '../../../src/formats/fntFile.js';
+import { TextRsc } from '../../../src/formats/textRsc.js';
+import { getPref, setPref } from '../../../src/systems/uiPrefs.js';
+import { TRAINING_OFFER_ID, TRAINING_TOO_SKILLED_ID, TRAINING_TOO_SOON_ID, TRAIN_SKILL_ID, NOT_ENOUGH_GOLD_ID, TOO_GENEROUS_ID, DONATION_THANKS_ID, NO_DISEASE_ID, TRADE_MESSAGE_BASE_ID } from '../../../src/systems/guild/guildServiceActions.js';
+import { TOO_MANY_DAYS_ID, OFFER_PRICE_ID, HOW_MANY_ADDITIONAL_DAYS_ID, HOW_MANY_DAYS_ID } from '../../../src/systems/tavern.js';
 
 const rd = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
 
@@ -156,4 +164,76 @@ test('QUESTOR-SAID: what still reaches "That service is not available yet." is a
   assert.match(modes, /return mountServiceWindow\(potionWin\);/);
   assert.match(modes, /return mountServiceWindow\(itemWin\);/);
   assert.doesNotMatch(modes, /mountServiceWindow\((?:potionWin|itemWin)\);\n\s*return null;/);
+});
+
+// ── AUDIT FB1019f F1: THE BUSY BOX STANDS ON THE SCREEN ───────────────────────────────────────────────────────────────
+// The busy line is one row, and the box it rides - ServiceFlowWindow, the one-box flow over the closed popup - laid its
+// rows as they came: on the classic skin, in the interior's shop font (FONT0003, worldModes.js `_shopFont`), the line
+// naming a guild's quest ran past both edges of the 320-px panel. The window wraps a long row now (SS5's fitBoxRows, as
+// the guild popup's own box does); a TEXT.RSC record's rows, which come broken to fit, are left as they are.
+
+/** The busy box as the classic skin lays it: the real ServiceFlowWindow drawn in `font`, its parchment in the panel's
+ *  own 320x200 pixels. */
+function classicBox(rows, font) {
+  const was = getPref('skin');
+  setPref('skin', 'classic');
+  try {
+    const win = new ServiceFlowWindow([{ rows }], { onClose() {} });
+    win.draw({ uploadTexture: () => 'tex', releaseTexture() {}, drawScreenQuad() {}, drawScreenQuadRun() {} }, { width: 1280, height: 720 }, font);
+    return win._box;
+  } finally { setPref('skin', was); }
+}
+/** Every guild quest's title - the classic quests whose giver is a Questor, by the DisplayName the journal gives it. */
+const questorTitles = () => {
+  const dir = new URL('../../../vendor/dfu-quests/Quests/', import.meta.url);
+  const out = [];
+  for (const f of readdirSync(dir)) {
+    const src = readFileSync(new URL(f, dir), 'utf8');
+    const m = /group Questor/i.test(src) ? /^\s*DisplayName:\s*(.+?)\s*$/mi.exec(src) : null;
+    if (m) out.push(m[1]);
+  }
+  return out;
+};
+
+test('QUESTOR-SAID AUDIT FB1019f F1: on the classic skin the busy box wraps its line on the screen - every word, in order, in its own alignment - and the parchment stands inside the 320-px panel (mutant: the flow\'s box unfitted)', () => {
+  const font = { fnt: { fixedHeight: 7, fixedWidth: 5, glyphWidth: () => 4 } };   // ss1_stones' five pixels a glyph, a space four
+  const rows = questorBusyRows({ displayName: 'An Unexpected Journey Part II' });
+  assert.ok(layoutMessageBox(font, rows).w > 320, 'left whole, the line runs past both edges');
+  const box = classicBox(rows, font);
+  assert.ok(box.x >= 0 && box.x + box.w <= 320, `the parchment ${box.w} wide at ${box.x}`);
+  assert.ok(box.rows.length >= 2, 'wrapped');
+  assert.equal(box.rows.map((r) => r.text).join(' '), rows[0].text, 'every word, in order');
+  assert.ok(box.rows.every((r) => r.center === true && measureText(font.fnt, r.text) <= BOX_FIT_W), 'centred, each row inside the fit');
+});
+
+const ARENA2 = process.env.ARENA2_PATH;
+const skipReal = !ARENA2 || !existsSync(ARENA2) ? 'ARENA2_PATH not set or missing - real-data validation skipped' : false;
+
+test('QUESTOR-SAID AUDIT FB1019f F1 in FONT0003: for every guild quest\'s title the classic busy box stands inside the 320-px panel (one of them all ran past it), and the service flows\' TEXT.RSC records - training, donation, the cure, the tavern - lay out row for row as they were (mutant: the flow\'s box unfitted)', { skip: skipReal }, () => {
+  const font = { fnt: new FntFile().load(new Uint8Array(readFileSync(join(ARENA2, 'FONT0003.FNT')))) };
+  const titles = questorTitles();
+  assert.ok(titles.length > 150, `the guild quests' titles (${titles.length})`);
+  let ran = 0;
+  for (const title of [...titles, null]) {
+    const rows = questorBusyRows(title == null ? null : { displayName: title });
+    const said = JSON.stringify(title);
+    if (layoutMessageBox(font, rows).w > 320) ran++;
+    const box = classicBox(rows, font);
+    assert.ok(box.x >= 0 && box.x + box.w <= 320, `${said}: the parchment ${box.w} wide at ${box.x}`);
+    assert.equal(box.rows.map((r) => r.text).join(' '), rows[0].text, `${said}: every word, in order`);
+  }
+  assert.equal(ran, titles.length - 1, 'left whole, all but one of the titled lines ran past the panel');
+  const rsc = new TextRsc().load(new Uint8Array(readFileSync(join(ARENA2, 'TEXT.RSC'))));
+  const ids = [TRAINING_OFFER_ID, TRAINING_TOO_SKILLED_ID, TRAINING_TOO_SOON_ID, TRAIN_SKILL_ID, NOT_ENOUGH_GOLD_ID, TOO_GENEROUS_ID, DONATION_THANKS_ID, NO_DISEASE_ID,
+    TRADE_MESSAGE_BASE_ID, TRADE_MESSAGE_BASE_ID + 1, TRADE_MESSAGE_BASE_ID + 2, TOO_MANY_DAYS_ID, OFFER_PRICE_ID, HOW_MANY_ADDITIONAL_DAYS_ID, HOW_MANY_DAYS_ID];
+  let records = 0;
+  for (const id of ids) {
+    for (let v = 0; v < Math.max(1, rsc.variantCount(id)); v++) {
+      const rows = rsc.linesById(id, v);
+      assert.ok(rows.length, `TEXT.RSC ${id}`);
+      assert.deepEqual(classicBox(rows, font).rows, layoutMessageBox(font, rows).rows, `TEXT.RSC ${id}.${v}: row for row as it was`);
+      records++;
+    }
+  }
+  assert.ok(records >= ids.length);
 });

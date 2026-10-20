@@ -6797,9 +6797,18 @@ sentence, which says the service is unbuilt.
   and the potion and item makers mounted their window and answered null, which pushed the sentence onto the popup they
   had just replaced - they hand the window back now, as the book and the repair list do. The host: three logical lines
   fewer.
+- **THE BOX STANDS ON THE SCREEN** (AUDIT FB1019f F1). The line is one row, and the flow's box laid its rows as they came:
+  on the classic skin, in the interior's shop font (FONT0003), the line naming a guild's quest ran past both edges of
+  the 320-px panel for 177 of the 178 guild quests' titles. ServiceFlowWindow wraps a long row now, as the guild popup's
+  own box does (SS5's fitBoxRows - AUDIT GUILD-WORDS II F-2): `guildServiceWindows.js:"this._box = layoutMessageBox(font, fitBoxRows(font, t.rows), buttons);"`.
+  A row that fits is left as it is: the service flows' TEXT.RSC records (training, donation, the cure, the tavern - 140
+  rows, the widest 251 px of the 288 a box holds) lay out row for row as they did. A quest's own box wraps a row past the
+  screen too, under SS5's departure (`01-Overview/Port-Ledger.md` section A, the MESSAGE BOX row).
 
-`test/systems/quest/fb1019f_questorsaid.test.js` (5) - through the real bridge on the guide world, the questor bound by
+`test/systems/quest/fb1019f_questorsaid.test.js` (7) - through the real bridge on the guide world, the questor bound by
 the machine at the accept: the guild's close and its box through the real ServiceFlowWindow, and the door open again once
 the quest is done; the unnamed quest; the coven's door the same and the social door's bare close; the words in French and
-every whole language's `{quest}`; what still reaches the sentence. PIN MOVED: `test/systems/quest/covenwindow.test.js`
-(the coven's close carries its reason and its quest). `tools/mutants/questor_said.json` (15), all dead.
+every whole language's `{quest}`; what still reaches the sentence; the classic box wrapped on the screen, and in the real
+FONT0003 for every guild quest's title, the service records unchanged (ARENA2, the suite's usual skip). PIN MOVED:
+`test/systems/quest/covenwindow.test.js` (the coven's close carries its reason and its quest).
+`tools/mutants/questor_said.json` (16), all dead.
