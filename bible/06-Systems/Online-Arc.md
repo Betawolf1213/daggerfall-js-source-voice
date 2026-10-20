@@ -10046,7 +10046,8 @@ a body under a piece 0.9 m tall or lower is thrown onto its top. The same for a 
   recentre) stands at once. A withheld piece stays withheld through a recentre, moved with it; one taken down or taken
   out while withheld is forgotten with it.
 - **The body** is the motor itself (`body: player` - never the eye's low-passed feet), handed by the hosts to the
-  room's placed pieces (`worldModes.js`) and to every yard (`world.js`, `homeYards.js`). The room's own furniture takes
+  room's placed pieces (`worldModes.js`). A yard's pool hands none since ROCK-CLEAR (`03-World/Player-Arc.md`): it goes by
+  the world collider's gate, which the world frame settles with the walking body. The room's own furniture takes
   none: the gate guards the body the placed pieces' draw last handed it, over the same collider - so `decorBase.js`
   and `interiorContext.js` are unchanged in their wiring, and createWorldModes grew by one entry, its last line of room.
   A gate no body has settled yet, and a host that hands none (a bench, a test), stand every piece at once, as before.
@@ -10054,7 +10055,7 @@ a body under a piece 0.9 m tall or lower is thrown onto its top. The same for a 
   moves this client's body alone. A placed door (HOME-DOORS) hangs through the action system, as the room's movers
   do, and is not this gate's. The decorator's flying eye keeps its own rule (AUDIT2 DECOR-SHELL 8, above).
 - Four hosts: `worldModes.js` WIRED (a home's placed pieces, and through their draw its own furniture); `world.js` WIRED
-  (the yards); `exterior.js` (the bench) and `dungeonContext.js` stand no placed piece - nothing late to gate.
+  (the yards, through ROCK-CLEAR's frame settle); `exterior.js` (the bench) and `dungeonContext.js` stand no placed piece - nothing late to gate.
 - **Why not hold the entry until the list answers.** The list can answer 30 s on, or after the homes' layouts land;
   every model then loads on its own; the owner puts a piece back, and a yard stands, with no entry at all. A held
   fade would bound one arrival of the five, and keep every visitor at the door for the service's round trip. The gate
@@ -10064,8 +10065,9 @@ Pinned: `test/scenes/decor/fb1019b_decorclear.test.js` (7, on the real motor and
 behind; a low piece round the feet and a piece stood again under them; a piece too big for any face to be near, and the
 crouched body's height, a canopy over the head; a recentre and a removal while withheld; the room's own put back; the
 gate's body laws; the hosts' wiring). PIN MOVED: `test/server/decor1.test.js` (the room's host's createDecorRoom call, and
-its `body: player`). `tools/mutants/decorclear.json` (28: 27 dead, 1 equivalent as recorded - the gate's box test first,
-which spares the probe's build alone); re-aimed by content: `basehide.json`'s two show/hide records,
+its `body: player`). `tools/mutants/decorclear.json` (26 since ROCK-CLEAR re-aimed it: 22 dead, 4 equivalent as recorded
+- the gate's box test first, which spares the probe's build alone, and three forgettings the collider's own hook now
+makes); re-aimed by content: `basehide.json`'s two show/hide records,
 `fb1001_yard.json`'s three recentre records, `unstuckout.json`'s UO-held-by-the-head-unasked.
 
 ### BASE-HIDE (2026-09-26, Mac: "Remove bought houses decor - the base game decor isnt easy to decorate around when u want more in depth house") - the room's own furniture, taken out

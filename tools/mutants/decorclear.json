@@ -2,8 +2,8 @@
   {
     "name": "DC-a-placed-piece-past-the-gate",
     "file": "src/scenes/decor/decorRoom.js",
-    "old": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, body);",
-    "new": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, null);",
+    "old": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, { body });",
+    "new": "late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, { body: null });",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -24,13 +24,15 @@
     "new": "    collider?.()?.removeBucket?.(decorKeyOf(entry.piece.id));",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019b_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-recentre-stands-it",
     "file": "src/scenes/decor/decorRoom.js",
-    "old": "        lateSolidsOf(c)?.add(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix, null);",
-    "new": "        c?.addMesh?.(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);",
+    "old": "      if (e.cpu) late()?.replace(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);",
+    "new": "      if (e.cpu) { const c = collider?.(); c?.removeBucket?.(decorKeyOf(e.piece.id)); c?.addMesh?.(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix); }",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -51,7 +53,9 @@
     "new": "collider?.removeBucket?.(baseBucketOf(key)); }",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019b_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-skin-past-the-radius",
@@ -101,8 +105,8 @@
   {
     "name": "DC-the-gate-asks-no-box-first",
     "file": "src/player/lateSolid.js",
-    "old": "  const closes = (h, body) => boxMeetsBody(h.box ??= transformedAabb(localAabb(h.positions), h.matrix), body.pos, body.height ?? CAPSULE_HEIGHT)\n    && lateSolidCloses(probeOf(h), body);",
-    "new": "  const closes = (h, body) => lateSolidCloses(probeOf(h), body);",
+    "old": "    return boxMeetsBody(BOX, body.pos, body.height ?? CAPSULE_HEIGHT) && lateSolidCloses(probeOf(h), body);",
+    "new": "    return lateSolidCloses(probeOf(h), body);",
     "equivalent": true,
     "why": "the gate's box first only spares the probe's build - the law (lateSolidCloses) asks the same box of the probe's own bounds, never wider than the box the gate asks (its triangles' own box, turned), so every answer is the same; it is there for the cost of a town's two thousand yard pieces, which no pin measures",
     "tests": [
@@ -140,8 +144,8 @@
   {
     "name": "DC-a-gate-an-asking",
     "file": "src/player/lateSolid.js",
-    "old": "  if (!gate) { gate = makeGate(collider); GATES.set(collider, gate); }",
-    "new": "  if (!gate) { gate = makeGate(collider); }",
+    "old": "    GATES.set(collider, gate);\n",
+    "new": "",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -149,7 +153,7 @@
   {
     "name": "DC-the-body-unguarded",
     "file": "src/player/lateSolid.js",
-    "old": "      guarded = body;\n",
+    "old": "      if (typeof body === 'function' || body?.pos) guarded = body;\n",
     "new": "",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
@@ -158,8 +162,8 @@
   {
     "name": "DC-a-solid-naming-none-unguarded",
     "file": "src/player/lateSolid.js",
-    "old": "    add(key, positions, indices, matrix, body = guarded) {",
-    "new": "    add(key, positions, indices, matrix, body = null) {",
+    "old": "    add(key, positions, indices, matrix, { body = guarded, translation = null } = {}) {",
+    "new": "    add(key, positions, indices, matrix, { body = null, translation = null } = {}) {",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -167,8 +171,8 @@
   {
     "name": "DC-a-withheld-one-not-kept",
     "file": "src/player/lateSolid.js",
-    "old": "      if (!held.has(key) && !(body?.pos && closes(h, body))) {",
-    "new": "      if (!(body?.pos && closes(h, body))) {",
+    "old": "      if (was) held.set(key, [h]); else stand(key, h);",
+    "new": "      stand(key, h);",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -176,8 +180,8 @@
   {
     "name": "DC-the-gate-stands-what-closes",
     "file": "src/player/lateSolid.js",
-    "old": "      if (!held.has(key) && !(body?.pos && closes(h, body))) {",
-    "new": "      if (!held.has(key)) {",
+    "old": "      if (!(now && closes(h, now))) { stand(key, h); return true; }",
+    "new": "      { stand(key, h); return true; }",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -185,8 +189,8 @@
   {
     "name": "DC-an-unknown-body-taken-as-clear",
     "file": "src/player/lateSolid.js",
-    "old": "      if (!body?.pos) return 0;\n      guarded = body;",
-    "new": "      guarded = body;",
+    "old": "      if (!held.size || !now) return 0;",
+    "new": "      if (!held.size) return 0;",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -194,8 +198,8 @@
   {
     "name": "DC-the-settle-stands-what-closes",
     "file": "src/player/lateSolid.js",
-    "old": "        if (closes(h, body)) continue;\n",
-    "new": "",
+    "old": "        const left = parts.filter((h) => closes(h, now));",
+    "new": "        const left = [];",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -203,8 +207,8 @@
   {
     "name": "DC-the-settle-stands-it-again",
     "file": "src/player/lateSolid.js",
-    "old": "        held.delete(key);\n        collider.addMesh?.(key, h.positions, h.indices, h.matrix);",
-    "new": "        collider.addMesh?.(key, h.positions, h.indices, h.matrix);",
+    "old": "        if (left.length) held.set(key, left); else held.delete(key);",
+    "new": "        if (left.length) held.set(key, left);",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -216,13 +220,15 @@
     "new": "    remove(key) {\n",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "ROCK-CLEAR: the port's Collider forgets a removed bucket's withheld parts itself (removeBucket asks the gate's forget - pinned by test/world/worldOfDaggerfall/fb1019b_rockclear.test.js and tools/mutants/rockclear.json RC-the-hook-gone), so the gate's own forgetting answers the same for every collider the game builds; it stands for a collider with no hook (a bench's, a test's)"
   },
   {
     "name": "DC-the-probe-where-the-model-is-made",
     "file": "src/player/lateSolid.js",
-    "old": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix);",
-    "new": "h.probe.addMesh(PROBE, h.positions, h.indices, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);",
+    "old": "h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix, h.translation);",
+    "new": "h.probe.addMesh(PROBE, h.positions, h.indices, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], h.translation);",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"
     ]
@@ -231,24 +237,6 @@
     "name": "DC-the-placed-pieces-given-no-body",
     "file": "src/scenes/worldModes.js",
     "old": "    body: player,   // DECOR-CLEAR: a piece landing round the body - or the room's own put back - is solid once it is clear (player/lateSolid.js)\n",
-    "new": "",
-    "tests": [
-      "test/scenes/decor/fb1019b_decorclear.test.js"
-    ]
-  },
-  {
-    "name": "DC-a-yard-given-no-body",
-    "file": "src/scenes/homeYards.js",
-    "old": "      body: deps.body ?? null,   // DECOR-CLEAR: a piece landing round a passer-by is solid once they are clear of it\n",
-    "new": "",
-    "tests": [
-      "test/scenes/decor/fb1019b_decorclear.test.js"
-    ]
-  },
-  {
-    "name": "DC-the-yards-given-no-body",
-    "file": "src/scenes/world.js",
-    "old": "    body: player,   // DECOR-CLEAR: the body a yard's late piece is withheld from - the motor's own feet, never the eye's low-passed ones\n",
     "new": "",
     "tests": [
       "test/scenes/decor/fb1019b_decorclear.test.js"

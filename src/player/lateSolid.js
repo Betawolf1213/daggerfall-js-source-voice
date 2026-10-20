@@ -33,6 +33,20 @@
 // The body is the local player's, the one body this client's collider
 // moves. Another player in the home walks on their own client, where their
 // own gate holds the same piece back from them.
+//
+// ROCK-CLEAR (FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Apply to rocks
+// too"): and the open world's. A pixel's statics - World of Daggerfall's
+// rocks, mountains scaled by hundreds that reach past their own pixel, the
+// town's models, its mills, the Hold's camp - go into ONE bucket a pixel,
+// part by part as its build runs, each riding the floating origin (a
+// translation provider, pixel-local triangles). A neighbour's mountain built
+// round a body already standing is the same hole: so `add` takes the
+// provider, a key holds as many parts as its bucket does (a withheld part
+// is one of them, the rest stand), a bucket removed anywhere forgets its
+// withheld parts with it (the collider's own removeBucket asks `forget`),
+// and the guard may be a getter - read the moment a part is asked, so a
+// jump whose landing is still building names no body and its pixel stands
+// whole for the landing's own law (enterExit.js heldInSolid, openGroundNear).
 // ═══════════════════════════════════════════════════════════════════
 
 import { Collider, SKIN } from './collider.js';
@@ -69,78 +83,122 @@ export function lateSolidCloses(probe, body) {
   return probe.capsuleContact(body.pos, height, -SKIN, null, HIT) !== null || heldInSolid(probe, body.pos, height);
 }
 
-/** @typedef {{ pos: number[], height?: number } | null | undefined} LateBody */
+
+/** @typedef {{ pos: number[], height?: number }} LateBodyShape */
+/** @typedef {LateBodyShape | (() => LateBodyShape | null | undefined) | null | undefined} LateBody a body, or a getter of one */
+
+/** The body a guard names now - a getter read, a body as it is; none for none. @param {LateBody} b */
+const bodyNow = (b) => {
+  const now = typeof b === 'function' ? b() : b;
+  return now?.pos ? now : null;
+};
 
 /** Each collider's gate, by the collider. @type {WeakMap<object, ReturnType<typeof makeGate>>} */
 const GATES = new WeakMap();
+/** ROCK-CLEAR: a model's own box, by its positions (one array a model, shared by every part that stands it). */
+const LOCAL_BOX = new WeakMap();
+const localBoxOf = (positions) => {
+  let b = LOCAL_BOX.get(positions);
+  if (!b) { b = localAabb(positions); LOCAL_BOX.set(positions, b); }
+  return b;
+};
 
 /**
  * DECOR-CLEAR: THE ONE GATE a collider's late solids go through - made on the collider's first asking, gone with it
  * (null for no collider). THE BODY IT GUARDS is the one its settle was last handed - the caller that holds the body
- * settles it every frame - so a late solid of any owner needs no body of its own to be held back from it.
- *   add(key, positions, indices, matrix, body) - stand `key`'s triangles (meshReader buffers; `matrix` into the
- *       collider's frame, as addMesh takes them) as a new bucket: at once where the body is clear of them, else
- *       WITHHELD (answers false). `body` left out is the body the gate guards; `null`, or a gate that guards none yet
- *       (a bench, a test, a collider no body has walked), stands it at once, as every solid always stood. A key
- *       withheld already stays withheld, its triangles these (a recentre's move - asked again at the next settle,
- *       with the body where the recentre put it).
- *   remove(key) - the key's bucket taken down, and its withheld triangles forgotten.
- *   settle(body) - the body guarded from now; every withheld solid it is clear of stands now. Answers how many. A
- *       settle handed no body stands none (a body unknown is not a body clear).
- *   withheld(key), size() - whether `key` is held back; how many are.
+ * settles it every frame - so a late solid of any owner needs no body of its own to be held back from it. ROCK-CLEAR:
+ * a getter may stand for the body, read whenever the gate asks it (the world's: none while a jump is under way).
+ *   add(key, positions, indices, matrix, { body, translation }) - stand the triangles (meshReader buffers; `matrix`
+ *       into the bucket's frame, `translation` the bucket's provider - addMesh's own arguments) as a PART of `key`'s
+ *       bucket, beside any it holds: at once where the body is clear of them, else WITHHELD (answers false) - the
+ *       key's other parts stand as they stood. `body` left out is the body the gate guards; `null`, or a gate that
+ *       guards none (a bench, a test, a collider no body has walked, a jump's landing), stands it at once, as every
+ *       solid always stood.
+ *   replace(key, positions, indices, matrix, translation) - a key of one solid stood again where it stands now (a
+ *       recentre): its bucket taken down, and the triangles stood at once - or, withheld, held still in its place, asked
+ *       again at the next settle with the body where the recentre put it.
+ *   remove(key) - the key's bucket taken down, and its withheld parts forgotten; forget(key) - the parts alone (the
+ *       collider's own removeBucket asks it, so a bucket dropped anywhere - a pixel streamed out - takes them along).
+ *   settle(body) - the body guarded from now; every withheld part it is clear of stands now. Answers how many. A settle
+ *       handed no body asks the one it guards; none guarded, or a getter answering none, stands none (a body unknown is
+ *       not a body clear).
+ *   withheld(key), size() - whether `key` has parts held back; how many parts are.
  * @param {any} collider the collider (addMesh / removeBucket)
  */
 export function lateSolidsOf(collider) {
   if (!collider || typeof collider !== 'object') return null;
   let gate = GATES.get(collider);
-  if (!gate) { gate = makeGate(collider); GATES.set(collider, gate); }
+  if (!gate) {
+    gate = makeGate(collider);
+    GATES.set(collider, gate);
+    if (collider instanceof Collider) collider.late = gate;   // ROCK-CLEAR: its removeBucket forgets a withheld part
+  }
   return gate;
 }
 
 /** @param {any} collider */
 function makeGate(collider) {
-  /** @type {Map<string, { positions: ArrayLike<number>, indices: ArrayLike<number>, matrix: ArrayLike<number>, probe: Collider | null, box: number[] | null }>} */
+  /** @typedef {{ positions: ArrayLike<number>, indices: ArrayLike<number>, matrix: ArrayLike<number>, translation: any, probe: Collider | null, box: number[] | null }} Part */
+  /** @type {Map<string, Part[]>} */
   const held = new Map();
   /** @type {LateBody} the body the gate guards - its last settle's */
   let guarded = null;
-  /** The withheld solid's own collider - made once, asked every settle until it stands. */
+  const partOf = (positions, indices, matrix, translation) => ({ positions, indices, matrix, translation: translation ?? null, probe: null, box: null });
+  /** The withheld part's own collider - made once, asked every settle until it stands; riding the bucket's own provider. */
   const probeOf = (h) => {
-    if (!h.probe) { h.probe = new Collider(); h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix); }
+    if (!h.probe) { h.probe = new Collider(); h.probe.addMesh(PROBE, h.positions, h.indices, h.matrix, h.translation); }
     return h.probe;
   };
-  // the law, its box first: a town's yards stand two thousand pieces, and one whose box (its triangles' own, turned
-  // into the collider's frame - never smaller than theirs) misses the body's needs no probe built to say so
-  const closes = (h, body) => boxMeetsBody(h.box ??= transformedAabb(localAabb(h.positions), h.matrix), body.pos, body.height ?? CAPSULE_HEIGHT)
-    && lateSolidCloses(probeOf(h), body);
+  // the law, its box first: a town's yards stand two thousand pieces and a pixel a thousand parts, and one whose box (its
+  // triangles' own, turned into its bucket's frame and moved by the bucket's translation - never smaller than theirs)
+  // misses the body's needs no probe built to say so
+  const BOX = [0, 0, 0, 0, 0, 0];
+  const closes = (h, body) => {
+    const b = h.box ??= transformedAabb(localBoxOf(h.positions), h.matrix);
+    const t = h.translation ? h.translation() : null;
+    for (let i = 0; i < 6; i++) BOX[i] = b[i] + (t ? t[i % 3] : 0);
+    return boxMeetsBody(BOX, body.pos, body.height ?? CAPSULE_HEIGHT) && lateSolidCloses(probeOf(h), body);
+  };
+  const stand = (key, h) => collider.addMesh?.(key, h.positions, h.indices, h.matrix, h.translation);
   return {
-    /** @param {string} key @param {ArrayLike<number>} positions @param {ArrayLike<number>} indices @param {ArrayLike<number>} matrix @param {LateBody} [body] */
-    add(key, positions, indices, matrix, body = guarded) {
-      const h = { positions, indices, matrix, probe: null, box: null };
-      if (!held.has(key) && !(body?.pos && closes(h, body))) { collider.addMesh?.(key, positions, indices, matrix); return true; }
-      held.set(key, h);
+    /** @param {string} key @param {ArrayLike<number>} positions @param {ArrayLike<number>} indices @param {ArrayLike<number>} matrix @param {{ body?: LateBody, translation?: any }} [o] */
+    add(key, positions, indices, matrix, { body = guarded, translation = null } = {}) {
+      const h = partOf(positions, indices, matrix, translation);
+      const now = bodyNow(body);
+      if (!(now && closes(h, now))) { stand(key, h); return true; }
+      const parts = held.get(key);
+      if (parts) parts.push(h); else held.set(key, [h]);
       return false;
+    },
+    /** @param {string} key @param {ArrayLike<number>} positions @param {ArrayLike<number>} indices @param {ArrayLike<number>} matrix @param {any} [translation] */
+    replace(key, positions, indices, matrix, translation = null) {
+      const h = partOf(positions, indices, matrix, translation);
+      const was = held.has(key);
+      collider.removeBucket?.(key);
+      if (was) held.set(key, [h]); else stand(key, h);
     },
     /** @param {string} key */
     remove(key) {
       held.delete(key);
       collider.removeBucket?.(key);
     },
+    /** @param {string} key */
+    forget(key) { held.delete(key); },
     /** @param {LateBody} body */
     settle(body) {
-      if (!body?.pos) return 0;
-      guarded = body;
-      if (!held.size) return 0;
+      if (typeof body === 'function' || body?.pos) guarded = body;
+      const now = bodyNow(guarded);
+      if (!held.size || !now) return 0;
       let n = 0;
-      for (const [key, h] of [...held]) {
-        if (closes(h, body)) continue;
-        held.delete(key);
-        collider.addMesh?.(key, h.positions, h.indices, h.matrix);
-        n++;
+      for (const [key, parts] of [...held]) {
+        const left = parts.filter((h) => closes(h, now));
+        for (const h of parts) if (!left.includes(h)) { stand(key, h); n++; }
+        if (left.length) held.set(key, left); else held.delete(key);
       }
       return n;
     },
     /** @param {string} key */
     withheld: (key) => held.has(key),
-    size: () => held.size,
+    size: () => { let n = 0; for (const parts of held.values()) n += parts.length; return n; },
   };
 }

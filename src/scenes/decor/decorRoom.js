@@ -279,15 +279,15 @@ export function decorMatrix(piece, origin) {
  *                  (decorLightLift's height; a mount's at its centre)
  *   merge         - YARD-MERGE: `{ take() -> boolean, now() -> ms }` - the host lets the pool's models merge (take: whether
  *                  its budget allows one this frame), or null: every piece its own draw, as a room's
- *   body          - DECOR-CLEAR: the player's body, live - the motor (its `pos` and `height`) - or null. A model's collider
+ *   body          - DECOR-CLEAR: the player's body, live - the motor (its `pos` and `height`) - or none. A model's collider
  *                  bucket goes through the collider's one gate (player/lateSolid.js): a piece landing round the body draws,
  *                  and is solid only once the body is clear of it, asked every frame by `draw` (the host's own per-frame
- *                  call), which hands the gate the body it guards. With no body, every piece is solid as it stands, as
- *                  before
+ *                  call), which hands the gate the body it guards. ROCK-CLEAR: with none (a yard's), the body the
+ *                  collider's gate guards - the world's frame settles it; none guarded, every piece solid as it stands
  */
 export function createDecorRoom({
   meshes, renderer, getTexture, uploadRecord, uploadRecordFrame, flatAnims = () => null, collider, origin, roomLights = () => null,
-  mwPicture = null, later = setTimeout, doors = null, prepareModel = null, standFlat = null, lampOf = null, merge = null, body = null,
+  mwPicture = null, later = setTimeout, doors = null, prepareModel = null, standFlat = null, lampOf = null, merge = null, body = undefined,
 }) {
   /** DECOR-CLEAR: the gate of the collider the room stands in now (the host's collider is a visit's), or none. */
   const late = () => lateSolidsOf(collider?.());
@@ -513,7 +513,7 @@ export function createDecorRoom({
           changed();
           // DECOR-CLEAR: solid through the collider's gate - a piece standing round the body draws, and is solid once the
           // body is clear of it (player/lateSolid.js; `draw` asks every frame)
-          if (m.cpu?.positions && m.cpu?.indices) { entry.cpu = m.cpu; late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, body); }
+          if (m.cpu?.positions && m.cpu?.indices) { entry.cpu = m.cpu; late()?.add(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix, { body }); }
         };
         // DECOR-OUTDOOR: the host's own law first (a yard's town's climate swaps) - the piece stands once it is in place,
         // never in the textures a moment and the town's the next
@@ -573,12 +573,9 @@ export function createDecorRoom({
       e.wbox = null;   // PERF-YARD: its box in the world, made again where it stands now
       if (e.batch) { const b = e.batch.origin ?? [0, 0, 0]; e.batch.origin = [b[0] + d[0], b[1] + d[1], b[2] + d[2]]; }
       if (e.light) { e.light.x += d[0]; e.light.y += d[1]; e.light.z += d[2]; }
-      if (e.cpu) {
-        const c = collider?.();
-        c?.removeBucket?.(decorKeyOf(e.piece.id));
-        // DECOR-CLEAR: a solid one stands again at once (the body moved with it); one withheld stays withheld, moved
-        lateSolidsOf(c)?.add(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix, null);
-      }
+      // DECOR-CLEAR: its bucket taken down and stood again - a solid one at once (the body moved with it), one withheld
+      // held still, moved (the gate's `replace`: the collider's own removeBucket would forget a withheld one)
+      if (e.cpu) late()?.replace(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);
     }
     // YARD-MERGE: the merges stand from the origin as their pieces now do - moved as one, nothing merged again
     if (merged) { merged.matrix = decorMergeMatrix(o); merged.wbox = null; }

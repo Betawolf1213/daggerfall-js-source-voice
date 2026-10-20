@@ -232,26 +232,26 @@ test('DECOR-CLEAR the gate: one a collider (none for no collider); a gate no bod
   const body = { pos: [O[0] + 2, O[1], O[2]] };
   assert.equal(gate.add('decor:a', WARDROBE.positions, WARDROBE.indices, at(2)), true, 'no body guarded yet: at once');
   assert.equal(solid(col, 'decor:a'), 12);
-  assert.equal(gate.add('decor:b', WARDROBE.positions, WARDROBE.indices, at(2), body), false, 'round the body named: withheld');
+  assert.equal(gate.add('decor:b', WARDROBE.positions, WARDROBE.indices, at(2), { body }), false, 'round the body named: withheld');
   assert.deepEqual([gate.settle(null), gate.size(), gate.withheld('decor:b')], [0, 1, true], 'no body known: none');
   assert.equal(gate.add('decor:c', WARDROBE.positions, WARDROBE.indices, at(2)), true, 'a settle handed none guards none');
   assert.equal(gate.settle(body), 0, 'the body still in it');
   assert.equal(gate.add('decor:d', WARDROBE.positions, WARDROBE.indices, at(2)), false, 'named none: the guarded body\'s');
   assert.equal(gate.settle(null), 0);
   assert.equal(gate.add('decor:e', WARDROBE.positions, WARDROBE.indices, at(2)), false, 'still guarded through a settle handed none');
-  assert.equal(gate.add('decor:f', WARDROBE.positions, WARDROBE.indices, at(2), null), true, 'null: at once');
+  assert.equal(gate.add('decor:f', WARDROBE.positions, WARDROBE.indices, at(2), { body: null }), true, 'null: at once');
   body.pos[0] = O[0] - 2;
   assert.deepEqual([gate.settle(body), gate.size(), solid(col, 'decor:b'), solid(col, 'decor:d'), solid(col, 'decor:e')], [3, 0, 12, 12, 12], 'clear: stood');
 });
 
-test('DECOR-CLEAR by source: the hosts hand the body - the motor itself, never the eye\'s low-passed feet - to the interior\'s placed pieces (worldModes.js; the room\'s own furniture is guarded through their draw) and to every yard (world.js, homeYards.js) (mutants: each wiring gone)', () => {
+test('DECOR-CLEAR by source: the interior host hands the body - the motor itself, never the eye\'s low-passed feet - to its placed pieces (worldModes.js; the room\'s own furniture is guarded through their draw); a yard\'s pool names none - ROCK-CLEAR: it goes by the world collider\'s gate, settled by the world frame (PIN MOVED: a yard\'s own body, DECOR-CLEAR\'s, is gone - its draw handing the gate a plain body wrote over the frame\'s, and a jump\'s landing was asked against the body where it had stood) (mutants: the wiring gone)', () => {
   const wm = rd('src/scenes/worldModes.js');
   const decor = wm.slice(wm.indexOf('  const interiorDecor = createDecorRoom({'), wm.indexOf('  let _decorVisit = 0;'));
   assert.ok(decor.includes('\n    body: player,   // DECOR-CLEAR'), 'the placed pieces');
   const y = rd('src/scenes/homeYards.js');
   const yard = y.slice(y.indexOf('    y.pool = createDecorRoom({'), y.indexOf('    yards.set(key, y);'));
-  assert.ok(yard.includes('\n      body: deps.body ?? null,   // DECOR-CLEAR'), 'every yard\'s pool');
+  assert.ok(yard.length > 0 && !/\bbody:/.test(yard), 'a yard\'s pool names no body of its own');
   const w = rd('src/scenes/world.js');
   const yards = w.slice(w.indexOf('createHomeYards({'), w.indexOf('outside: () => _mode() === \'exterior\''));
-  assert.ok(yards.includes('\n    body: player,   // DECOR-CLEAR'), 'the world\'s motor');
+  assert.ok(yards.length > 0 && !/\bbody:/.test(yards), 'nor the world\'s yards');
 });

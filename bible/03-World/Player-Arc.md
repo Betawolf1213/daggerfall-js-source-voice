@@ -2289,11 +2289,10 @@ UNSTUCK1, indoors and underground only - answered "There is nowhere to send you 
 - **THE FOUR HOSTS**: the streaming world's (`scenes/world.js`) alone - `scenes/exterior.js` is the fixed city (no WoD
   mountains, no fast travel); `scenes/worldModes.js` and `scenes/dungeonContext.js` have no fast-travel landing.
 
-OPEN for Mac (the investigation's, not built here): a body a neighbour pixel's rocks are built round after it stands is
-not ejected on its own - `/unstuck` (PVPUNSTUCK's walk to the nearest town) is its way out; the Overworld route no
-longer marks rock at all (MOUNTAINS WALKABLE, `11-Multiplayer/Wild-Zone.md` section 19), so its travel can walk into a
-massif; and the collider's floor is the bilinear read where the drawn landform ground is triangles, a gap that can reach
-metres on the steepest ridges. `test/player/unstuckout.test.js` (2) - the real collider over real closed rock meshes;
+The landing is this law's; after it, a rock built round the body is ROCK-CLEAR's (below - the owner, 2026-10-19: "Apply to
+rocks too"). OPEN for Mac (the investigation's, not built here): the collider's floor is the bilinear read where the drawn
+landform ground is triangles, a gap that can reach metres on the steepest ridges. `test/player/unstuckout.test.js` (2) - the
+real collider over real closed rock meshes;
 `tools/mutants/unstuckout.json` (7), all dead. AUDIT FIELD-BUGS 1008 (`01-Overview/Audit-Log.md`): `tvSeaY` declared
 beside `state`, before the boot's own load reads it (the outdoor arm's refusals that audit worded went with the arm).
 
@@ -2317,17 +2316,49 @@ was the port's one guard against a late arrival, a fast-travel landing's alone.
   that holds the body, makes that body the one the gate GUARDS and stands each withheld solid it is now clear of; a
   late solid goes in through `add` - at once where the body is clear of it, else WITHHELD - checked against the body
   it names, or, naming none, the body the gate guards (none guarded yet, or `null`: at once, as every solid always
-  stood); `remove` takes a bucket down and forgets one withheld; a key withheld stays withheld through a new `add` of
-  it (a recentre's move), asked again at the next settle. A settle handed no body stands nothing and guards on.
-- Its users: a home's placed pieces and a yard's (`scenes/decor/decorRoom.js` - the motor handed in by `worldModes.js`
-  and `world.js`, the room's draw settling every frame), and a home's own furniture put back (`decorBase.js`, naming
-  no body - the gate's). Another player's body is never this collider's: each client's gate guards its own. The same
-  class stands elsewhere, not through the gate yet - a mover's bucket (a lift, an action door, a placed door hung as
-  one) and a neighbour pixel's rocks built round a body (UNSTUCK-OUT's open note above); either can stand through it
-  with one `add`, where a frame of its collider settles it.
+  stood); `remove` takes a bucket down and forgets one withheld; `replace` stands a key's one solid again where a
+  recentre moved it - withheld, it stays withheld, asked again at the next settle. A settle handed no body asks the one
+  it guards; none guarded stands nothing. ROCK-CLEAR (below) widened it to the open world's buckets.
+- Its users: a home's placed pieces (`scenes/decor/decorRoom.js` - the motor handed in by `worldModes.js`, the room's
+  draw settling every frame), and a home's own furniture put back (`decorBase.js`, naming no body - the gate's); a
+  yard's pieces name none either since ROCK-CLEAR, held back from the body the world frame settles. Another player's
+  body is never this collider's: each client's gate guards its own. A mover's bucket (a lift, an action door, a placed
+  door hung as one) is MOVER-BODY's (below).
 
-`test/scenes/decor/fb1019b_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (28: 27
-dead, 1 equivalent as recorded); `tools/mutants/unstuckout.json`'s head record re-aimed to the height (7, all dead).
+`test/scenes/decor/fb1019b_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (26 since
+ROCK-CLEAR re-aimed it: 22 dead, 4 equivalent as recorded); `tools/mutants/unstuckout.json`'s head record re-aimed to the
+height (7, all dead).
+
+## ROCK-CLEAR - a rock built after the body stands never closes on it (FIELD BUGS 2026-10-19b)
+
+A player's private report: a fast travel left the character inside a mountain, and they could not leave. The landing
+pixel builds whole before the body stands (`_teleportToPixel` awaits it), and UNSTUCK-OUT's law reads it: a floor inside
+a rock stands the body on the nearest open ground. The pixels about it build after - and World of Daggerfall's mountains,
+meshes scaled by hundreds, reach past their own pixel, so a neighbour's rock was filed round a body already standing,
+held by its inner faces. The same for any pixel built round a body that outran the stream (a journey's, which since
+MOUNTAINS WALKABLE crosses massifs - `11-Multiplayer/Wild-Zone.md` section 19).
+
+- **The pixel build files every solid through the world collider's gate** (`scenes/pixelBuild.js`, `late.add`): the
+  mills, the town's models and gates, Gothway's boards, World of Daggerfall's pieces and the Hold's camp, each with its
+  bucket's own provider. The hill patch is ground, not a solid, and is filed directly. Trees carry no collider.
+- **The gate's three extensions** (`player/lateSolid.js`): `add` takes the bucket's translation, and the probe and its
+  box ride it (pixel-local triangles under the floating origin - a recentre moves a withheld part with the body); a
+  key holds as many parts as its bucket does, a withheld one beside the ones that stood; and the collider's own
+  `removeBucket` asks the gate to forget a bucket's withheld parts (`this.late?.forget`, beside TACT1's cover), so a
+  pixel streamed out (destroyPixel, releaseFailedBuild) stands none of them later.
+- **The body**: the world frame settles the gate after the motor's step (`world.js`, one line) with a getter - the motor
+  while it walks the world, none while a jump is under way (`worldMoveBusy`) - read the moment a part is asked. So the
+  landing's pixel, built while the jump runs, is filed whole and the landing's law sees all of it; a plain body handed
+  then would be the body where it stood before the jump, in the old frame. The yards' pools no longer hand their own.
+- Four hosts: `world.js` WIRED (the frame's settle; the pixel build is its module); `exterior.js` builds its one city
+  before the body stands (nothing late); `worldModes.js` and `dungeonContext.js` build their rooms and blocks before it
+  too (DECOR-CLEAR gates a home's pieces). Not through the gate: the city gates' dusk-and-dawn swap (a mover's) and
+  the open world's other placed solids - POIs, quays, the Oblivion Gate, merchant yards, shipyards, carts - each its
+  own module; each can stand through it with one `add`.
+
+`test/world/worldOfDaggerfall/fb1019b_rockclear.test.js` (6, the real motor, collider and streaming state, the build's
+own providers), `tools/mutants/rockclear.json` (16, all dead). PIN MOVED: `fb1001_wodrock`, `wod2_loader`, `wodbush`,
+`wod4_privateershold`, `arena1_model` (the pixel build's sites), `fb1019b_decorclear` (the yards name no body).
 
 ## MOVER-BODY - a mover never closes on the body (FIELD BUGS 2026-10-19b)
 

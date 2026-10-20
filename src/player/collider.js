@@ -615,6 +615,9 @@ export class Collider {
     this._broad = null;   // FB0930-FRAME: the buckets filed by broad cell (buildBroad), dropped by every addMesh and removeBucket
     /** @type {any} TACT1: the billboards' cover (ai/cover.js createCoverIndex) - beside the meshes, never in them; null for none */
     this.cover = null;
+    /** @type {any} ROCK-CLEAR: the gate its late solids go through (player/lateSolid.js lateSolidsOf, which sets it) - the
+     *  parts it holds back from the body are a bucket's not yet stood, and leave with the bucket; null for none */
+    this.late = null;
   }
 
   /** FB0930-FRAME: the buckets a query whose WORLD box is [x0, x1] x [z0, z1] (y unbounded) can reach, in the walk's
@@ -816,6 +819,7 @@ export class Collider {
   removeBucket(bucketKey) {
     if (this._buckets.delete(bucketKey)) this._broad = null;   // FB0930-FRAME: the filing is dropped with it
     this.cover?.remove(bucketKey);   // TACT1: a bucket's cover leaves with it
+    this.late?.forget(bucketKey);   // ROCK-CLEAR: and its parts held back from the body - a pixel streamed out stands none of them later
   }
 
   /** AUDIT CLIMB1 F5: where a bucket stands now - `{ t, r }`, its translation and its turn (r null for an unturned

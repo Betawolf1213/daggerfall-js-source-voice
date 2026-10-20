@@ -747,6 +747,7 @@ import { travelDriveForward, travelLookaheadFor } from '../systems/travel/travel
 import { createTravelSteer, createColliderProbe, steerDrive } from '../systems/travel/travelSteer.js';   // TRAVEL-NAV1: the journey goes round what is in its way, and stops short of what it cannot
 import { exteriorSurfaces, downProbe, rayDistanceFor, ON_EXTERIOR_WATER, exteriorSwimming, feetWaterCoverage, SWIM_COVERAGE } from '../player/exteriorSurface.js';   // ROAD-B (b3): PlayerMotor's three exterior surface methods; OT1: IsPlayerSwimming above ground
 import { isOnFoot } from '../systems/transport.js';   // TransportManager.IsOnFoot - the raycast's reach and the mounted footstep gate
+import { lateSolidsOf } from '../player/lateSolid.js';   // ROCK-CLEAR: the world collider's late solids, withheld from the walking body until it is clear
 import { floorLanding, doorWorldPosition, dungeonEntranceLanding, repositionFeetY, openGroundNear, heldInSolid } from '../player/enterExit.js';   // FixStanding for the exterior arrivals (2026-08-27); SD2b: where a Hollow's mouth stands, to find it at
 import { jumpSpeedMultiplier, isEnhancedJumping, tallySkill, SKILLS } from '../systems/skills.js';   // TO1: the avoid-encounter roll reads skillValue live (imported above) Stealth   // AUDIT 64 F2: CheckAirControl's IsEnhancedJumping disjunct
 import { playerEntity, surfacePlayer, hurtPlayer, forcePlayerDeath, playerBlowCameToNothing, setDeathPresenter, presentPlayerDeath, setDeathListener, setAvoidDeathHook, setStaffPowers, staffPowers, registerPlayerDamageMod, registerLevitateWard, registerFreeFlight } from '../characters/playerEntity.js';   // AUDIT-SEATS G5: a siege's ward on Levitate   // AUDIT-SEATS G4: a spectator's flight
@@ -12527,7 +12528,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const yards = homeDecor && onlineHomes ? createHomeYards({
     api: homeDecor, homes: onlineHomes, built: () => built, translation: (px, py) => state.pixelTranslation(px, py),
     feet: () => (walkMode && playerSpawned ? player.feetAt() : null),
-    body: player,   // DECOR-CLEAR: the body a yard's late piece is withheld from - the motor's own feet, never the eye's low-passed ones
     outside: () => _mode() === 'exterior' && playerSpawned && !player.riding,
     eye: () => cam.pos,
     cull: (box) => yardCull(box),   // PERF-YARD: the pieces culled as the town's own models are
@@ -33169,6 +33169,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           ? axes.forward * player.speed * worldTimeScale() * Math.min(dt, MAX_FRAME_DT) : 0;
         // TRAVEL-STRAFE: and the strafe it was given - a sidestep the steering keeps rather than pursues back
         travelNavFrame.strafe = _travelDrive && !_overlayHeld && !_seasonHeld && !paralyzed ? axes.strafe : 0;
+        lateSolidsOf(collider)?.settle(() => (walkMode && playerSpawned && !worldMoveBusy() ? player : null));   // ROCK-CLEAR: the world's late solids clear of the body stand - its body none while a jump's landing builds (the landing's own law reads that pixel whole)
         // C9: ReadyWeapon (Z) - the sheathe toggle, host parity.
         if (pressed(latch.edge, keys, 'ReadyWeapon')) weaponRig.readyWeapon();   // MAC-O1: the KEY takes WeaponManager.Update's arm (:229-269), not HUDLarge's raw ToggleSheath
         // a12: SwitchHand (H) - WeaponManager.cs:272 reads it through

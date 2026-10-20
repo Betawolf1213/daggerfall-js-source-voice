@@ -88,6 +88,7 @@ import { TownPopulation } from '../systems/town/townPopulation.js';
 import { windfallResponse } from '../systems/windfall.js';
 import { wodRockUvs } from '../world/worldOfDaggerfall/wodRockUv.js';
 import { WodSpawner } from '../world/worldOfDaggerfall/wodSpawner.js';
+import { lateSolidsOf } from '../player/lateSolid.js';   // ROCK-CLEAR: a pixel's statics built round a body already standing are withheld until it is clear
 
 /** @param {any} host */
 export function createPixelBuild(host) {
@@ -104,6 +105,11 @@ export function createPixelBuild(host) {
     townEcon, townPlacesFor, townSeats, verges, waterOn, waterSheetOf, wod, wodForgetPeerSites, wodOpened, wodPathsPoint,
     worldHeight
   } = host;
+  // ROCK-CLEAR (FIELD BUGS 2026-10-19b): the world collider's one gate - every solid the build files below goes through
+  // it, so a part standing round the body (a neighbour's mountain reaching into the body's pixel, a pixel built round a
+  // body that outran the stream) is drawn and solid only once the body is clear of it (player/lateSolid.js); the body
+  // is the world's, the one its frame settles the gate with (none while a jump's landing builds - its law reads it whole)
+  const late = lateSolidsOf(collider);
   async function buildPixelNow(px, py, { roadsRetry = false } = {}) {
     breather.reset();   // PERF7
     const key = `${px},${py}`, pipeline = holdPixel(key), { getGpuMesh, uploadRecord, uploadRecordFrame } = pipeline;   // FIELD BUGS 2026-10-04d PLACE-LRU: THE PIXEL'S HOLD, the host's three doors and `pipeline` itself shadowed for the whole build - its models, its flats and their frames, its climate's and its homes' swaps (remapSubMeshes / homeLookRemap take this `pipeline`) are held for THIS pixel, released by destroyPixel (or BUILD-FAIL1's ledger), and freed once no standing or kept place holds them. The mills' parts stay the host's (getWindmillMeshes, pinned): millParts outlives every pixel
@@ -376,8 +382,8 @@ export function createPixelBuild(host) {
             for (let i = 0; i < 3; i++) { box[i] -= MILL_SAIL_PAD; box[3 + i] += MILL_SAIL_PAD; }
             unionBox(box);
             models.push({ gpu: parts.body, local, _box: box, _order: -1 });   // EV6: the mills group together
-            collider.addMesh(key, BODY.positions, BODY.indices, local,
-              onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));   // BLOOD1 AUDIT 3: one array a bucket, not one a call - every ray asks every bucket; PERF-COL2: riding the floating origin, filed by place
+            late.add(key, BODY.positions, BODY.indices, local,
+              { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });   // BLOOD1 AUDIT 3: one array a bucket, not one a call - every ray asks every bucket; PERF-COL2: riding the floating origin, filed by place
             windmills.push({ local, state: { angle: rotorPhase(px + local[12], py + local[14]) } });
           }
         }
@@ -439,8 +445,8 @@ export function createPixelBuild(host) {
             }
           }
           const gateKey = isCityGate(placed.modelIdNum) ? `${key}:gate:${pixelGates.length}` : key;
-          collider.addMesh(gateKey, cpu.positions, cpu.indices, local,
-            onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));   // BLOOD1 AUDIT 3: the same; PERF-COL2: riding the floating origin
+          late.add(gateKey, cpu.positions, cpu.indices, local,
+            { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });   // BLOOD1 AUDIT 3: the same; PERF-COL2: riding the floating origin
           // THE BULLETIN BOARDS. RMBLayout stands model 41739
           // STANDALONE rather than combining it (:857, :935) for the
           // sole purpose of hanging DaggerfallBulletinBoard off it
@@ -624,7 +630,7 @@ export function createPixelBuild(host) {
             const entry = { gpu: gpuB, local, _box: box, _order: BULLETIN_BOARD_MODEL_ID };
             models.push(entry);
             if (cpuB.normals && cpuB.uvs) { staticBuilder.add(cpuB, local, resolveTexKey); entry._batched = true; }
-            collider.addMesh(key, cpuB.positions, cpuB.indices, local, onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])));   // PERF-COL2: riding the floating origin
+            late.add(key, cpuB.positions, cpuB.indices, local, { translation: onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0])) });   // PERF-COL2: riding the floating origin
             pixelBoards.push({ box, local, extra: true });
           }
         }
@@ -813,7 +819,7 @@ export function createPixelBuild(host) {
         const entry = { gpu, local: m.matrix, _box: box, _order: m.modelId };
         models.push(entry);
         if (cpu.normals && cpu.uvs) { staticBuilder.add(cpu, m.matrix, resolveTexKey, m.normalMatrix); entry._batched = true; }
-        collider.addMesh(key, cpu.positions, cpu.indices, m.matrix, wodBucket);   // CreateDaggerfallMeshGameObject's MeshCollider
+        late.add(key, cpu.positions, cpu.indices, m.matrix, { translation: wodBucket });   // CreateDaggerfallMeshGameObject's MeshCollider - ROCK-CLEAR: through the gate
         await breather.breathe();
       }
       for (const f of place.flats) {
@@ -913,7 +919,7 @@ export function createPixelBuild(host) {
           const entry = { gpu, local, _box: box, _order: hm.modelId };
           models.push(entry);
           if (cpu.normals && cpu.uvs) { staticBuilder.add(cpu, local, resolveTexKey); entry._batched = true; }
-          collider.addMesh(key, cpu.positions, cpu.indices, local, holdBucket);   // CreateDaggerfallMeshGameObject's MeshCollider
+          late.add(key, cpu.positions, cpu.indices, local, { translation: holdBucket });   // CreateDaggerfallMeshGameObject's MeshCollider - ROCK-CLEAR: through the gate
           await breather.breathe();
         }
         for (const hf of HOLD_FLATS) {
