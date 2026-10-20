@@ -276,6 +276,7 @@ on:
       - "src/systems/inventory.js"
       - "src/systems/inventorySession.js"
       - "src/systems/item/itemDye.js"
+      - "src/systems/item/foundMark.js"
       - "src/systems/item/itemFields.js"
       - "src/systems/item/itemLaw.js"
       - "src/systems/item/itemIds.js"

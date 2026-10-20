@@ -29,6 +29,7 @@ import { registerCustomTemplates, mintCondition, setItemFields, registerItemUseH
 import { registerUniqueFind } from './loot/lootRarity.js';
 import { isEnchanted } from './inventory.js';
 import { equipTableOf } from './equip.js';
+import { creditOwnMend } from './item/foundMark.js';
 
 export const WELKYND_STONE_TEMPLATE = 573;
 export const VARLA_STONE_TEMPLATE = 574;
@@ -81,7 +82,9 @@ export function useVarlaStone(item, list, entity) {
   if (!entity) return { kind: 'text', text: STONE_TEXT.nobody };
   const pieces = varlaMends(entity);
   if (!pieces.length) return { kind: 'text', text: STONE_TEXT.varlaWhole };
+  const was = pieces.map((it) => it.currentCondition);
   for (const it of pieces) it.currentCondition = it.maxCondition;
+  pieces.forEach((it, i) => creditOwnMend(it, was[i]));   // AUDIT MEND-THIRD L2-7: the stone is its user's own mend - a third of it past a found piece's mark sells
   spend(item, list);
   return { kind: 'text', text: STONE_TEXT.varla(pieces.length) };
 }
