@@ -43,9 +43,13 @@ const NO_DOORS = Object.freeze({ online: () => false, entity: () => null, say: (
 let _doors = NO_DOORS;
 /** @type {any} */
 let _api = null;
-/** The account's festival as the service last said it: its cakes and bowls (null unknown), its wares, given and taken,
- *  its own offerings standing, and whether the festival is open for it (null until it says). */
-let _state = { cakes: /** @type {number|null} */ (null), bowls: /** @type {number|null} */ (null), wares: /** @type {string[]} */ ([]), given: 0, taken: 0, offerings: /** @type {any[]} */ ([]), open: /** @type {boolean|null} */ (null) };
+/** @typedef {{ cakes: number|null, bowls: number|null, wares: string[], given: number|null, taken: number|null, offerings: any[], open: boolean|null }} FestivalState */
+/** What no answer has said: nothing known - every count null (unknown, never a known nought), nothing held or standing. */
+const UNHEARD = Object.freeze({ cakes: null, bowls: null, wares: [], given: null, taken: null, offerings: [], open: null });
+/** The account's festival as the service last said it: its cakes and bowls, its wares, given and taken, its own offerings
+ *  standing, and whether the festival is open for it - and the account it was said for (`_stateOf`): another signed in
+ *  hears nothing of it (AUDIT WITCH1 G2). */
+let _state = /** @type {FestivalState} */ (UNHEARD), _stateOf = /** @type {string|null} */ (null);
 const _hear = new Set();
 let _version = 0;
 const changed = () => { _version++; for (const fn of _hear) { try { fn(); } catch { /* a listener's throw is not ours */ } } };
@@ -66,7 +70,7 @@ export const festivalDoors = () => _doors;
 export function hearFestival(/** @type {() => void} */ fn) { _hear.add(fn); return () => { _hear.delete(fn); }; }
 export const festivalVersion = () => _version;
 /** The account's festival as last heard. */
-export const festivalState = () => _state;
+export const festivalState = () => (_stateOf === festivalAccount() ? _state : UNHEARD);
 /** The clock the festival's days are read by on this page. The decorations are the calendar's, so the device's own; what
  *  a find, a sale and an offering may do is the service's days, read off the shared clock (the host's `nowMs`). */
 export const festivalNowMs = () => _doors.nowMs();
@@ -77,7 +81,7 @@ export function festivalShut() {
   if (!_api || !_doors.online()) return 'offline';
   const s = storedSession(appStorage());
   if (!s || s.kind === 'guest') return 'guest';
-  if (!festivalOpen(festivalNowMs()) || _state.open === false) return 'closed';
+  if (!festivalOpen(festivalNowMs()) || festivalState().open === false) return 'closed';
   return null;
 }
 /** The account this page asks for (the stored session's), or null - a host clears what it stood when it changes. */
@@ -90,6 +94,8 @@ const refusalText = (/** @type {unknown} */ code) => (isFestivalRefusal(code) ||
 /** Lay an answer's counts on the state and the pack: `cakes` and `bowls` the account's, the pack's stacks their faces. */
 function learn(/** @type {any} */ d) {
   if (!d || typeof d !== 'object') return;
+  const who = festivalAccount();
+  if (who !== _stateOf) { _state = UNHEARD; _stateOf = who; }
   let moved = false;
   const items = _doors.entity()?.items;
   if (Number.isSafeInteger(d.cakes) && d.cakes >= 0) {
@@ -332,13 +338,13 @@ export async function offeringMove(/** @type {'set'|'fill'|'takeIn'|'take'} */ m
 export async function townOfferings(/** @type {number} */ mapId) {
   if (!_api || !_doors.online()) return null;
   const r = await _api.town(mapId).catch(() => null);
-  if (r?.ok && typeof r.data?.open === 'boolean' && r.data.open !== _state.open) learn({ open: r.data.open });   // the switch, as it stands
+  if (r?.ok && typeof r.data?.open === 'boolean' && r.data.open !== festivalState().open) learn({ open: r.data.open });   // the switch, as it stands
   return r?.ok ? r.data : null;
 }
 
 /** Tests only. */
 export function _resetFestivalClientForTests() {
   _doors = NO_DOORS; _api = null; _pending = null; _asking = null; _wardrobe = null; _chain = Promise.resolve(); _actTurn = null;
-  _state = { cakes: null, bowls: null, wares: [], given: 0, taken: 0, offerings: [], open: null };
+  _state = UNHEARD; _stateOf = null;
   _hear.clear(); _version = 0;
 }

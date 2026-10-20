@@ -190,6 +190,10 @@ test('WITCH1 THE WINDOW\'S ROWS AND PRESSES: the wares in their parts, the two t
   assert.deepEqual(wyrdPress(by('card:warlock'), live), { label: 'Buy', why: null });
   assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'offline' }), { label: 'Buy', why: 'The Wyrd cannot hear you right now.' });
   assert.deepEqual(wyrdPress(by('card:warlock'), { ...live, shut: 'guest' }), { label: 'Buy', why: 'Link an account to keep Soul Cakes.' }, 'a guest is told why (AUDIT WITCH1 F-M1)');
+  // the account unheard: its progress unknown, never a known nought (AUDIT WITCH1 G2)
+  const unheard = wyrdRows({ wares: [], given: null, taken: null }, null, () => null, (it) => it?.name ?? '?');
+  const of = (id) => unheard.find((r) => r.id === id);
+  assert.deepEqual([of('earned:hearthkeeper').owned, of('earned:hearthkeeper').progress, of('earned:soulcake').progress], [false, '?/25', '?/10']);
 });
 
 test('WITCH1 THE RAIMENT IS LEATHER, A CASTER\'S - the Athame Elven; and the Witchfire\'s candles wrap, one candle at the seam (AUDIT WITCH1 B4, E5)', () => {
@@ -214,6 +218,18 @@ test('WITCH1 THE WINDOW MOUNTED: the reason a press cannot be said (a guest\'s, 
       const btn = (id) => kidsOf(row(id), 'broker-buy')[0];
       const price = (id) => kidsOf(row(id), 'broker-price')[0];
       assert.equal(btn('earned:hearthkeeper').textContent, '3/25');
+      // why nothing can be bought, said before a press asks it (AUDIT WITCH1 G2)
+      const noteOf = () => kidsOf(host, 'broker-note')[0];
+      assert.equal(noteOf().textContent, 'Link an account to keep Soul Cakes.');
+      assert.equal(noteOf().getAttribute('hidden'), null);
+      const liveHost = document.createElement('div');
+      const liveView = mountWyrdWindow(liveHost, {
+        state: () => ({ cakes: 10, wares: [], given: 3, taken: 0 }), worn: () => null, shut: () => null,
+        lastDay: () => '7 November', night: () => false, itemOf: () => null, nameOf: (it) => it?.name ?? '?',
+        buy: async () => ({ ok: true, text: '' }), wear: async () => ({ ok: true, text: '' }),
+      });
+      assert.notEqual(kidsOf(liveHost, 'broker-note')[0].getAttribute('hidden'), null, 'live, nothing said until a press says it');
+      liveView.unmount();
       assert.equal(price('earned:hearthkeeper').textContent, '', 'its progress the press\'s word alone');
       assert.notEqual(kidsOf(row('item:offering'), 'broker-set')[0].textContent, kidsOf(row('item:offering'), 'broker-name')[0].textContent, 'the bowl\'s kind line is its own');
       btn('card:warlock').onclick?.({ stopPropagation() {} });

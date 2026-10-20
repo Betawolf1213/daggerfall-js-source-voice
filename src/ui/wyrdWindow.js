@@ -65,9 +65,9 @@ const INSIGNIA_WHAT = Object.freeze({
 
 /**
  * THE ROWS, off what the account holds: each ware (festivalLaw FESTIVAL_WARES) with its part and name, and the two the
- * festival gives (`earned` - their progress toward it in `progress`). `owned` an account ware the account holds,
- * `worn` the one worn of its kind. Pure.
- * @param {{ wares?: string[], given?: number, taken?: number }} state @param {{ title?: string|null, aura?: string|null, icon?: string|null } | null} worn
+ * festival gives (`earned` - their progress toward it in `progress`, `?` while the account's count is unheard). `owned`
+ * an account ware the account holds, `worn` the one worn of its kind. Pure.
+ * @param {{ wares?: string[], given?: number|null, taken?: number|null }} state @param {{ title?: string|null, aura?: string|null, icon?: string|null } | null} worn
  * @param {(w: any) => any} itemOf the pack's piece a ware mints (its picture and its card), or null
  * @param {(item: any) => string} nameOf
  */
@@ -83,14 +83,17 @@ export function wyrdRows(state, worn, itemOf, nameOf) {
       owned: accountWare(w) && wares.includes(w.id), worn: accountWare(w) && wearing(w.kind, w.key), earned: null, progress: null,
     };
   });
-  const gift = (/** @type {string} */ kind, /** @type {string} */ key, /** @type {number} */ have, /** @type {number} */ need, /** @type {string} */ how) => ({
-    id: `earned:${key}`, part: 'insignia', kind, key, price: null, item: null, name: insigniaName(kind, key),
-    owned: have >= need, worn: wearing(kind, key), earned: how, progress: `${Math.min(have, need)}/${need}`,
-  });
+  const gift = (/** @type {string} */ kind, /** @type {string} */ key, /** @type {number|null|undefined} */ have, /** @type {number} */ need, /** @type {string} */ how) => {
+    const heard = Number.isSafeInteger(have);
+    return {
+      id: `earned:${key}`, part: 'insignia', kind, key, price: null, item: null, name: insigniaName(kind, key),
+      owned: heard && Number(have) >= need, worn: wearing(kind, key), earned: how, progress: `${heard ? Math.min(Number(have), need) : '?'}/${need}`,
+    };
+  };
   const at = rows.findIndex((r) => r.part !== 'insignia');
   rows.splice(at, 0,
-    gift('title', 'hearthkeeper', state?.given ?? 0, HEARTHKEEPER_GIVEN, t('festival.window.earnGiven', 'Earned when others take Soul Cakes from your offerings.')),
-    gift('icon', 'soulcake', state?.taken ?? 0, SOULCAKE_TAKEN, t('festival.window.earnTaken', "Earned by taking Soul Cakes from others' offerings.")));
+    gift('title', 'hearthkeeper', state?.given, HEARTHKEEPER_GIVEN, t('festival.window.earnGiven', 'Earned when others take Soul Cakes from your offerings.')),
+    gift('icon', 'soulcake', state?.taken, SOULCAKE_TAKEN, t('festival.window.earnTaken', "Earned by taking Soul Cakes from others' offerings.")));
   return rows;
 }
 
@@ -162,7 +165,7 @@ function insigniaSign(/** @type {any} */ row, hero = false) {
  * Mount the window in the door's host.
  * @param {HTMLElement} host
  * @param {{
- *   state: () => { cakes: number|null, wares: string[], given: number, taken: number }, worn: () => any,
+ *   state: () => { cakes: number|null, wares: string[], given: number|null, taken: number|null }, worn: () => any,
  *   shut: () => string|null, lastDay: () => string, night: () => boolean,
  *   itemOf: (w: any) => any, nameOf: (item: any) => string, wearer?: any,
  *   buy: (id: string) => Promise<{ ok: boolean, text: string }>, wear: (row: any) => Promise<{ ok: boolean, text: string }>,
@@ -240,9 +243,11 @@ export function mountWyrdWindow(host, deps) {
     sub.textContent = t('festival.window.until', '{festival} - until {last}.', { festival: festivalName(), last: deps.lastDay() });
     night.textContent = deps.night() ? festivalNightText() : '';
     if (deps.night()) night.removeAttribute('hidden'); else night.setAttribute('hidden', '');
-    noteLine.textContent = note ? note.text : '';
-    noteLine.className = `broker-note${note?.ok ? ' ok' : ''}`;
-    if (!note) noteLine.setAttribute('hidden', ''); else noteLine.removeAttribute('hidden');
+    // why nothing can be bought here, said before a press asks it - offline, a guest, the festival shut (AUDIT WITCH1 G2)
+    const told = note ?? (s.shut ? { ok: false, text: festivalRefusalText(s.shut) } : null);
+    noteLine.textContent = told ? told.text : '';
+    noteLine.className = `broker-note${told?.ok ? ' ok' : ''}`;
+    if (!told) noteLine.setAttribute('hidden', ''); else noteLine.removeAttribute('hidden');
     purse.textContent = st.cakes == null ? t('festival.window.cakesUnknown', 'Soul Cakes: ?') : cakesText(st.cakes);
     for (const c of [...list.children]) c.remove();
     for (const part of PARTS) {

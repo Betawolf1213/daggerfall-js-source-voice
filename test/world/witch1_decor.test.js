@@ -19,6 +19,8 @@ const frame = (x, z, type) => ({ at: [x, 0, z - 5], box: [x - 5, 0, z - 10, x + 
 const TAVERN = 101, TEMPLE = 102;
 const town = (extra = {}) => new Map([[TAVERN, frame(0, 0, BUILDING_TYPES.Tavern)], [TEMPLE, frame(40, 0, BUILDING_TYPES.Temple)], ...Object.entries(extra).map(([k, v]) => [Number(k), v])]);
 const pic = (f) => `${f.archive}.${f.record}`;
+/** Whether a ray asked is a spot looked down on (straight down) - else it runs across from the door. */
+const down = (a, b) => a[0] === b[0] && a[2] === b[2];
 
 test('WITCH1 THE KITS: each people\'s pieces, by the town\'s climate and its region\'s people', () => {
   assert.equal(witchCulture(CLIMATES.HauntedWoodlands, 0), 'haunted');
@@ -93,12 +95,41 @@ test('WITCH1 A SPOT IS TAKEN ONLY WHERE IT IS CLEAR: a wall between it and the d
   // a flat where she would stand: she stands on the other side, the show where she stood
   const moved = witchesDressing({ frames: town(), taverns: [TAVERN], mapId: 7, nowMs: IN, taken: [[open.sisters[0].x, 0, open.sisters[0].z]] });
   assert.equal(Math.sign(moved.sisters[0].x), -side);
-  // the rays asked run from before the door at its foot to the spot's far edge, at a body's heights
+  // the rays asked run from before the door at its foot to the spot's far edge, at a body's heights - and each spot is
+  // looked down on, from downFrom to the lip over the street
   const asked = [];
   witchesDressing({ frames: town(), taverns: [TAVERN], nowMs: IN, floorY: 1, blocked: (a, b) => { asked.push([a, b]); return false; } });
-  assert.ok(asked.length > 0);
-  assert.ok(asked.every(([a]) => a[2] === WITCH_SPOTS.rayFrom && a[0] === 0), 'from the door\'s front');
-  assert.deepEqual([...new Set(asked.map(([a]) => Math.round((a[1] - 1) * 1000) / 1000))].sort(), [...WITCH_SPOTS.rayHeights].sort());
+  const across = asked.filter(([a, b]) => !down(a, b)), looks = asked.filter(([a, b]) => down(a, b));
+  assert.ok(across.length > 0 && looks.length === across.length, 'two rays across a spot, two looks down on it');
+  assert.ok(across.every(([a]) => a[2] === WITCH_SPOTS.rayFrom && a[0] === 0), 'from the door\'s front');
+  assert.deepEqual([...new Set(across.map(([a]) => Math.round((a[1] - 1) * 1000) / 1000))].sort(), [...WITCH_SPOTS.rayHeights].sort());
+  assert.ok(looks.every(([a, b]) => a[1] === 1 + WITCH_SPOTS.downFrom && b[1] === 1 + WITCH_SPOTS.lip), 'down to the lip over the street');
+});
+
+test('WITCH1 A SPOT ON A PLINTH OR A STEP IS NOT TAKEN: what stands under it above the street, lower than the rays across, refuses it - looked down on at its middle and at its edge nearest the door (AUDIT WITCH1 G1: a turnip lantern half sunk in a Daggerfall house\'s base)', () => {
+  // a house's plinth along its wall, 0.3 m high and 0.7 m deep: under every ray across, over a near spot's foot
+  const PLINTH = { z: 0.7, top: 0.3 };
+  const under = (a, b, z) => down(a, b) && z < PLINTH.z && b[1] < PLINTH.top && a[1] > PLINTH.top;
+  const plinth = (a, b) => under(a, b, a[2]);
+  const houses = {};
+  for (let k = 1; k <= 40; k++) houses[1000 + k] = frame(100 + k * 20, 0, BUILDING_TYPES.House1);
+  const open = witchesDressing({ frames: town(houses), taverns: [TAVERN], mapId: 9, nowMs: IN });
+  const on = witchesDressing({ frames: town(houses), taverns: [TAVERN], mapId: 9, nowMs: IN, blocked: plinth });
+  const steps = (d) => d.flats.filter((f) => f.c[0] > 100);
+  assert.ok(steps(open).length > 5, 'the street stands step pieces');
+  assert.deepEqual(steps(on), [], 'none on the plinth - a step\'s piece stands 0.45 m out, on it');
+  for (const [k, c] of on.homes) assert.deepEqual([c[0], c[2]], offeringSpot(houses[k], 9, k, true), 'the offering out before the door, off it');
+  assert.ok(on.flats.filter((f) => f.c[0] < 30).every((f) => f.c[2] >= PLINTH.z), 'the tavern\'s pieces stand off it');
+  // a foot whose middle is off a narrower plinth (0.45 m deep - the near spot's middle 0.55 m out) but whose edge nearest
+  // the door is on it is refused too
+  const edge = (a, b) => down(a, b) && a[2] < 0.45 && b[1] < PLINTH.top && a[1] > PLINTH.top;
+  const near = offeringSpot(frame(0, 0, BUILDING_TYPES.House2), 9, 5);
+  assert.ok(near[1] > 0.45, 'its middle is off it');
+  const half = witchesDressing({ frames: new Map([[5, frame(0, 0, BUILDING_TYPES.House2)]]), mapId: 9, nowMs: IN, blocked: edge });
+  assert.deepEqual([half.homes.get(5)[0], half.homes.get(5)[2]], offeringSpot(frame(0, 0, BUILDING_TYPES.House2), 9, 5, true), 'its edge is on it: the spot moves out');
+  // the street itself, at its own height, refuses nothing: a look stops at the lip
+  const street = witchesDressing({ frames: town(houses), taverns: [TAVERN], mapId: 9, floorY: 2, nowMs: IN, blocked: (a, b) => down(a, b) && b[1] < 2 });
+  assert.deepEqual(street, witchesDressing({ frames: town(houses), taverns: [TAVERN], mapId: 9, floorY: 2, nowMs: IN }));
 });
 
 test('WITCH1 A HOME\'S OFFERING SPOT kept clear before a step is stood; the step\'s piece on the other side, chosen by its town and its key', () => {
@@ -121,7 +152,7 @@ test('WITCH1 A HOME\'S OFFERING SPOT kept clear before a step is stood; the step
     assert.notEqual(Math.sign(spot[0] - (houses[k].door.a[0] + 0.6)), Math.sign(f.c[0] - (houses[k].door.a[0] + 0.6)), 'the offering and the step on either side');
   }
   // a house whose near side is walled keeps its spot out before the door
-  const far = witchesDressing({ frames: new Map([[5, frame(0, 0, BUILDING_TYPES.House2)]]), mapId: 9, nowMs: IN, blocked: (a, b) => b[2] < WITCH_SPOTS.offeringFarOut - 0.2 });
+  const far = witchesDressing({ frames: new Map([[5, frame(0, 0, BUILDING_TYPES.House2)]]), mapId: 9, nowMs: IN, blocked: (a, b) => !down(a, b) && b[2] < WITCH_SPOTS.offeringFarOut - 0.2 });
   assert.deepEqual([far.homes.get(5)[0], far.homes.get(5)[2]], offeringSpot(frame(0, 0, BUILDING_TYPES.House2), 9, 5, true));
 });
 
