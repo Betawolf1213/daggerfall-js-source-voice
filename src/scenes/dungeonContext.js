@@ -4314,7 +4314,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!f.dead || _ctxDead) return;
     // AUDIT 68 S19-retype-orphans-corpse: ...nor a record the pool no longer holds (a rebuild stood a new one at its
     // index, or the load's cut spliced it) - stand() marks it dead, and nothing could ever free a flat minted onto it.
-    if (!foes.includes(f)) return;
+    if (!foes.includes(f) || f.corpseDestroyed) return;   // DEX5b: ...nor a body a prefab destroyed while its art warmed (a copy told so at once)
     uploadRecord(ct.archive, ct.record);
     const size = eliteCorpseSize(billboardSize(t, ct.record), f.entity);   // ELITE FOES: an elite's body lies a quarter larger
     // The billboard shader BOTTOM-anchors (position = base): the old
@@ -5168,7 +5168,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // REST-SYNC: the room's encounters ride the same frame, numbered by the room (`i` their id); a full frame lists them
     // all (`xf`), so a joiner takes down the ones the host no longer has
     const shared = [];
-    for (const [id, f] of _sharedById) if ((f.dead && !f.corpse) || !foes.includes(f)) _sharedById.delete(id);   // Destroy()ed or gone: the room forgets it, and a full frame takes every puppet of it down
+    for (const [id, f] of _sharedById) if ((f.dead && !f.corpse && !f.corpseDestroyed) || !foes.includes(f)) _sharedById.delete(id);   // Destroy()ed or gone: the room forgets it, and a full frame takes every puppet of it down
     for (const f of [..._sharedById.values()].sort((a, b) => (a.dead ? 1 : 0) - (b.dead ? 1 : 0))) {   // the standing before the bodies
       if (shared.length >= SHARED_FOES_MAX) break;
       const r = roomRecord(f, f._encId, full, true);
@@ -5236,10 +5236,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (isClassEnemyId(f.mobileType) && Number.isInteger(f.entity?.level) && f.entity.level >= 0 && f.entity.level <= FOE_LEVEL_MAX) r.l = f.entity.level;
     if (!f.dead && _sharedFoe(f)) { const n = fightN(f); if (n > 1) r.n = n; }   // AUDIT PSCALE1: how many fight it - every joiner weighs its hits by the host's count
     if (f.dead && typeof f._trapBy === 'string' && performance.now() - (f._killedAt ?? -Infinity) <= KILLED_BY_MS) { r.j = f._trapBy; r.q = f._trapQ | 0; }   // STRIKE-SHARED: whose soul trap was on it as it fell, and its chance - for KILLED_BY_MS, as `v`
+    if (f.dead && f.corpseDestroyed) r.bg = f.corpseDestroyed;   // DEX5b: the body a mod's prefab destroyed (1 risen, 2 burnt) - every copy loses it too
     // FLAGGED (bible/12-Enhanced-AI/Feud-Arc.md 10.1, section 32): this stream carries none of the street record's z, nm, yd, ex or sp - FEUD adds its own fields alone (RVN13: so no band follower's rt either)
     if (!f.dead && f.ai._tac && !f.ai._tac.puppet) Object.assign(r, blowWire(f.ai, tacticsNow()));   // TELL8 (10.1): its wind-up, its stagger, its overreach (the room's own frame) - a foe with a brain
     if (f.entity?.revenant) Object.assign(r, feudWire(f.entity.revenant));   // RVN13 (Feud-Arc.md 25): its adaptations, its weakness, its last stand (no name rides here, so no follower's `rt` - the gap the line above names); AUDIT FEUD: a new authority's too
-    const key = `${r.f[0]},${r.f[1]},${r.f[2]},${r.y},${r.h},${r.d},${r.a},${r.m},${r.g},${r.c},${r.s},${r.n},${r.j},${r.v},${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}${r.wk !== undefined || r.ws !== undefined ? `,${blowWireKey(r)}` : ''}`;   // TELL8: and the wind-up's (never `wl`); RVN13: and a revenant's own
+    const key = `${r.f[0]},${r.f[1]},${r.f[2]},${r.y},${r.h},${r.d},${r.bg ?? 0},${r.a},${r.m},${r.g},${r.c},${r.s},${r.n},${r.j},${r.v},${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rb ?? 0}${r.wk !== undefined || r.ws !== undefined ? `,${blowWireKey(r)}` : ''}`;   // TELL8: and the wind-up's (never `wl`); RVN13: and a revenant's own
     // AUDIT SETS M1: the maximum - every full frame owes it again (and pays it, fitMaxima), a delta pays a few owed
     if (full) f._maxSent = undefined;
     const max = foeMaxOf(f);
@@ -5495,7 +5496,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const out = [], src = [];
     for (const f of foes) {
       if (f.dead && f._grant) grants?.()?.ended(f);   // GRANT4: its member gone - the grant's last frees it
-      if (f._ownFrom != null || (f.dead && !f.corpse)) continue;
+      if (f._ownFrom != null || (f.dead && !f.corpse && !f.corpseDestroyed)) continue;   // DEX5b: a body a prefab destroyed rides on, its `bg` every copy's word
       const qt = ownQuestTag(f);
       if (!qt && !ownLoose(f)) continue;   // SUMMON-SYNC: a shared quest's foe, or a loose stand - nothing else past the run
       if (f._ownSeq == null) f._ownSeq = ++_ownSeq;
@@ -5804,6 +5805,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!data || typeof data !== 'object' || (data.k != null && data.k !== _locationKey)) return false;
     const i = data.i | 0, dmg = Number(data.dmg);
     const f = foes.find((x) => x._ownFrom == null && x._ownSeq === i) ?? null;
+    if (f?.dead && data.cs === 1) { const s = hitSpellOf(data); return !!s && !!f.corpsePrefab?.struck(s.spell, s.level, null); }   // DEX5b: a copy's missile on my loose foe's prefab body
     // AUDIT CC-E1: a foe on another client mauled MY companion - the blow lands here, where he is real: the foe's, not a
     // player's (the knock-out arm his death); he turns on the striker when the striker rides the lane to me
     if (data.fb === 1) {
@@ -5888,6 +5890,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (idx >= 0 && idx < _layoutFoes && !_retyping.has(idx)) retypeFoe(idx, f.mobileType, f.gender ?? null).then((ok) => { if (ok && !_authority && foes[idx]) applyFoeRecord(foes[idx], r); }).catch((e) => console.error('[online] the rebuilt foe could not take the record - the foe stands as it is:', e));   // AUDIT ONCRASH1 A1
       else setFoeDead(f, false);
     }
+    if (r.d === 1 && r.bg) corpsePrefabs.told(f, r.bg);   // DEX5b: its runner's prefab took the body - this copy's goes too
   }
 
   /** WORLD2: a peer's blow on my foe, while I host - through the one damage door with the peer's number and kind
@@ -5922,6 +5925,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const i = data.i | 0, dmg = Number(data.dmg);
     const xs = data.xs === 1;   // REST-SYNC: a shared encounter, by the room's number - not a layout index
     const f = xs ? (_sharedById.get(i) ?? null) : foes[i];
+    if (f?.dead && data.cs === 1 && (xs || i < _layoutFoes)) { const s = hitSpellOf(data); return !!s && !!f.corpsePrefab?.struck(s.spell, s.level, null); }   // DEX5b: a copy's missile on a prefab's body (its bundle, the body's own entity)
     // AUDIT FOES FOE5: BOUNDED, as the exterior twin's applyHit is (exteriorFoes.js:"_owners.delete(from)"). The number is a peer's
     // word and the host trusts it without recomputing, so an unbounded one let any joiner one-shot every foe in the
     // room - and, through the kill door, empty it. 10000 is past anything a legal swing, shaft or blast can roll.
@@ -6313,14 +6317,21 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
   // dungeon's reach. Its runner counts down (the seat, a loose foe's owner); a RISE is a NEW loose foe of its kind where the
   // body lay - CreateEnemy's, no quest's and no slot's (spawnLooseFoe), while the dead one stays dead with no body, as DFU's
-  // stays; a BURN stands the ash, by its centre, as a flat the level keeps; a save keeps a layout body's time by its slot
+  // stays; the ASH stands by its centre, as a flat the level keeps; a save keeps a layout body's time by its slot. DEX5b: a
+  // copy's missile sends its bundle to the runner by the lane the foe rides (the seat's number, a shared encounter's, a
+  // loose foe's owner's - `cs`), and the record says a body gone (`bg`, roomRecord) to every copy (applyFoeRecord's told)
   const corpsePrefabs = createCorpsePrefabs({
     runs: (f) => !isPuppetFoe(f),
     body: (f) => (f.corpsePos ? { pos: f.corpsePos, size: f.corpseBatch?.size ?? null } : null),
-    rise: (f) => { const p = f.corpsePos ?? f.ai.feet; f.corpseDestroyed = true; freeCorpse(f); spawnLooseFoe(f.mobileType, [p[0], p[1], p[2]]); },
-    burn: (f, ash) => {
-      const p = f.corpsePos; f.corpseDestroyed = true; freeCorpse(f);
+    rise: (f) => { const p = f.corpsePos ?? f.ai.feet; f.corpseDestroyed = 1; freeCorpse(f); spawnLooseFoe(f.mobileType, [p[0], p[1], p[2]]); },
+    vanish: (f) => { f.corpseDestroyed = 1; freeCorpse(f); },
+    toAsh: (f, ash) => {
+      const p = f.corpsePos; f.corpseDestroyed = 2; freeCorpse(f);
       if (p) mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, corpseTexture: ash, feet: p, centre: ash.centre }).then((c) => { if (c) { if (_ctxDead) renderer.destroyBillboardBatch(c.batch); else billboardBatches.push(c.batch); } });
+    },
+    send: (f, spell, level) => {
+      const sp = hitSpellFields(spell, level), hit = { dmg: 0, kind: 'spell', ...sp, cs: 1 };
+      if (sp) opts.onFoeHit?.(f._ownFrom != null ? { own: 1, to: f._ownFrom, k: _locationKey, i: f._ownI, ...hit } : { ...(f._encId != null ? { i: f._encId, xs: 1 } : { i: f._surI ?? foes.indexOf(f) }), ...hit });
     },
     say: (line) => hudText.add(line),
     key: (f) => { const i = foes.indexOf(f); return i >= 0 && i < _layoutFoes ? `${_locationKey}|${i}` : null; },

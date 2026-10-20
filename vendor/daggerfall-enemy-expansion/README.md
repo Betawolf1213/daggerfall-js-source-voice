@@ -195,3 +195,6 @@ through the texture door these register on, so neither draws the other's.
   no loot, the rise after ten seconds, the cheat, a spell's missile burning it
   to ash, the save keeping its time (`src/systems/enemyExpansion/dexTroll.js`).
   Section 11.
+- **DEX5b** (2026-10-20): the troll's body online - the foe's runner counts,
+  rises and burns; a copy's missile goes to it, and its record says a body
+  gone to every copy. Section 11.

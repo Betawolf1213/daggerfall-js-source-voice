@@ -61,7 +61,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
-| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | DEX5a SHIPPED (section 11: the prefab door, the rise, the burn, the save, the cheat); DEX5b open (the room's: a burn on the stream, a joiner's spell to the runner) |
+| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world230 grown in place) |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
 | DEX7 | the Morrowind bodies (section 4) | SHIPPED (section 10) |
 
@@ -405,7 +405,7 @@ The port's half:
 
 - **The door** (`scenes/corpseMarker.js` registerCorpsePrefab, createCorpsePrefabs): a mod registers a prefab for a
   corpse's archive and record while it is loaded (AssetInjection reads a loaded mod's bundle alone); each foe host builds
-  one runner over its reach (`runs`, `body`, `rise`, `burn`, `say`, `key`), mints the prefab at its corpse mint on every
+  one runner over its reach (`runs`, `body`, `rise`, `vanish`, `toAsh`, `send`, `say`, `key`), mints the prefab at its corpse mint on every
   machine (a copy's body is its owner's), drives it on its foes' clock and its magic rounds (OnNewMagicRound - every
   EntityEffectManager), and drops it with itself. The player's missile meets a prefab's trigger after the living foes
   (`scenes/hostMagic.js`, `corpsePrefabStruck`); a peer's drawn missile stops where its caster's does. An executed
@@ -420,8 +420,22 @@ The port's half:
   body, as REVENANT-FATE's); the ash a flat the level keeps; a layout body's time saved by its slot. Its loot gate
   (`lootableBody`) honours a disabled body.
 - **The street, the interiors, exterior.js** (`scenes/exteriorFoes.js`): its owner counts; a rise a new foe by the
-  slot-neutral replacement (`spawnFoe`, `replacing`), the body gone as removeCorpse takes one; the ash a marker the pool
-  keeps beside its bodies.
+  slot-neutral replacement (`spawnFoe`, `replacing`), the body gone as removeCorpse takes one; the ash takes the body's
+  place as its marker (moved with the origin and the ground, collected with its pixel; it stands no Morrowind body).
+
+**Online (DEX5b).** The room is the mod's whole (DEX0's decision), and the body is its foe's runner's - the seat or a
+loose foe's owner underground, the foe's owner in the street:
+
+- **The runner alone counts, rises and burns.** A copy of the body is no loot either (it is the same prefab, minted at
+  every machine's corpse mint; the street's owner says no pile on it, `o` 0) and never counts.
+- **A copy's missile goes to the runner** (`send`): the bundle as STRIKE-SHARED carries a spell (`sp`, `lv`), marked
+  `cs`, by the lane its foe rides - the seat's number or a shared encounter's (applyHit), a loose foe's owner's
+  (applyOwnHit), the street owner's (applyHit) - and the runner lands it on its body's entity.
+- **The record says a body gone** (`bg` - 1 risen, 2 burnt; `net/wire.js` validFoeRecord, a dead record's alone), so
+  every copy loses the body as the runner did (`told`) and a late one too. Underground a destroyed body's record rides
+  on in every lane (a layout foe's always does; a shared encounter's and a loose foe's now do too), the ash a flat each
+  machine stands; in the street a risen body's record ends with it (removeCorpse - every copy pruned) and a burnt one's
+  rides on with the ash as its body. A body told gone while its art warmed never lands.
 
 Departures (Port-Ledger A, the DEX row):
 
@@ -434,8 +448,12 @@ Departures (Port-Ledger A, the DEX row):
   Underground the port matches DFU: a loose foe is no foe a boot load stands again.
 - **A loose troll's body underground keeps no time in a save** (its slot is no layout's) - a load lays none for it
   anyway.
+- **Online, the room's (no DFU half):** a copy's bundle lands at the runner with no caster of its own there (the striker
+  is in another world), so a Transfer's heal-back and a reflection reach nobody; and when the seat changes hands, the
+  new runner counts a body's ten seconds from its own start (its copy never counted).
 
 Tests: `test/systems/enemyExpansion/dex5_troll.test.js` (the prefab read off the bundle and the scripts, the body's
 entity against the troll's career, the street's rise and burn through a real pool, my real missile on the trigger, the
-door, the save, the hosts' wiring), mutants `tools/mutants/dex5.json`.
+door, the save, the hosts' wiring; DEX5b: the wire's bound, two real pools - a peer's missile burning the owner's body
+and its copy turning to ash, the rise taking the copy away - and the dungeon's lanes), mutants `tools/mutants/dex5.json`.
 

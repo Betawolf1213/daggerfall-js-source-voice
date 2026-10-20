@@ -18,7 +18,10 @@
 //     from its injuries." (the mod's own English, a C# literal - here a port string)
 //   - THE SAVE (BestiaryTrollCorpseSerializer, BestiarySaveInterface): every body still down, with its time left; a load
 //     sets each again (one with no time left stays down - it is skipped).
-// A LEAF over the door: the hosts' reach (`host` - runs, body, rise, burn, say, key; corpseMarker.js) does the standing.
+// ONLINE (DEX5b): the foe's runner counts, rises and burns; a copy's missile sends its bundle to the runner (`send`), and
+// the runner's record says the body is gone (`bg` - `gone(kind)`), so every machine loses it as the runner did.
+// A LEAF over the door: the hosts' reach (`host` - runs, body, rise, vanish, toAsh, send, say, key; corpseMarker.js) does
+// the standing.
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
 import { registerCorpsePrefab, sayEnemyDied } from '../../scenes/corpseMarker.js';
@@ -90,7 +93,8 @@ function makeTrollCorpse(f, host) {
     /** A missile's bundle, assigned to the body's entity (EntityEffectManager.AssignBundle - its saves against the troll's
      *  career, its first round now). */
     struck(spell, casterLevel, caster) {
-      if (ended || !host.runs(f)) return null;
+      if (ended) return null;
+      if (!host.runs(f)) { host.send(f, spell, casterLevel); return null; }   // DEX5b: a copy's - the bundle goes to the body its runner holds
       entity ??= trollCorpseEntity(f.entity?.career);
       const r = applySpell(spell, casterLevel, entity, sinks, Math.random, caster);
       if (entity.health <= 0) burn();
@@ -102,6 +106,13 @@ function makeTrollCorpse(f, host) {
       if (ended || !entity?.activeEffects.length || !host.runs(f)) return;
       runMagicRoundsFor(entity, from, to, { sinks });
       if (entity.health <= 0) burn();
+    },
+    /** DEX5b: the runner's record says the body is gone - a copy loses it as the runner did (1 risen, 2 burnt). */
+    gone(kind) {
+      if (ended) return;
+      end();
+      if (kind === 2) host.toAsh(f, TROLL_CORPSE.ash);
+      else host.vanish(f);
     },
   };
   /** BestiaryTrollCorpseEntity.SetHealth's damage: DecreaseHealth, the one sink a harmful effect reaches. */
@@ -115,7 +126,7 @@ function makeTrollCorpse(f, host) {
     if (ended) return;
     end();
     sayEnemyDied(host.say, f.mobileType);   // the corpse's entity knows its MobileID alone (GetLocalizedEnemyName(MobileID)) - no champion's name
-    host.burn(f, TROLL_CORPSE.ash);
+    host.toAsh(f, TROLL_CORPSE.ash);
   }
   if (key != null) {
     _down.set(key, c);

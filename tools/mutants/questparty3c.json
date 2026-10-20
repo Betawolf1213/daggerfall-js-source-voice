@@ -9,8 +9,8 @@
   {
     "name": "QP3C-puppet-rides-back",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      if (f._ownFrom != null || (f.dead && !f.corpse)) continue;\n      const qt = ownQuestTag(f);",
-    "new": "      if (f.dead && !f.corpse) continue;\n      const qt = f._ownFrom != null ? (ownShare()?.tagOf?.(f) ?? null) : ownQuestTag(f);",
+    "old": "      if (f._ownFrom != null || (f.dead && !f.corpse && !f.corpseDestroyed)) continue;   // DEX5b: a body a prefab destroyed rides on, its `bg` every copy's word\n      const qt = ownQuestTag(f);",
+    "new": "      if (f.dead && !f.corpse && !f.corpseDestroyed) continue;   // DEX5b: a body a prefab destroyed rides on, its `bg` every copy's word\n      const qt = f._ownFrom != null ? (ownShare()?.tagOf?.(f) ?? null) : ownQuestTag(f);",
     "tests": ["test/scenes/questparty3c.test.js"],
     "equivalent": true,
     "why": "ownQuestTag refuses a puppet twice over - a party member's foe stood here carries no quest behaviour (its word is `_pupQuest`, and adoptOwn clears `_ownFrom` as it binds one) - so the loop's own skip of a puppet is a belt to that brace; the skip stays, the one door a puppet could ever reach the lane through"

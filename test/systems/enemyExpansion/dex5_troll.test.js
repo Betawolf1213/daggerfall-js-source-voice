@@ -16,6 +16,7 @@ import { registerCorpsePrefab, createCorpsePrefabs, corpsePrefabStruck, _resetCo
 import { installEnemyExpansion, _resetEnemyExpansion, DEX_VENDOR } from '../../../src/systems/enemyExpansion/dexInstall.js';
 import { createExteriorFoes } from '../../../src/scenes/exteriorFoes.js';
 import { createPlayerMagic } from '../../../src/scenes/hostMagic.js';
+import { validFoeRecord } from '../../../src/net/wire.js';
 import { setModSetting, _resetModSettings } from '../../../src/systems/modSettings.js';
 import { setValue, _resetForTests as _resetSettings } from '../../../src/systems/settings/settings.js';
 import { modSaveRecords, restoreModSaveRecords } from '../../../src/systems/modSaveData.js';
@@ -168,7 +169,7 @@ test('DEX5-3 THE STREET: the troll\'s body is no loot from its first frame; ten 
   assert.equal(frozen.pool.foes.filter((f) => f.mobileType === TROLL && !f.dead).length, 1, 'the cheat off: the count goes on');
 });
 
-test('DEX5-4 THE BURN in the street: the death is said (DisableEnemyDeathAlert its gate), the body goes and the ash stands by its centre, 0.1 over the body\'s foot, as a marker the pool keeps; no troll rises after', async () => {
+test('DEX5-4 THE BURN in the street: the death is said (DisableEnemyDeathAlert its gate), the body goes and the ash stands in its place by its centre, 0.1 over the body\'s foot - the record\'s body now, a marker the pool keeps; no troll rises after', async () => {
   const { pool, troll, said } = await fallenTroll();
   const foot = [...troll.corpseMarker.pos];
   troll.entity.properName = 'the bridge troll';   // a troll with a name of its own (champions.js properName) - its body knows its MobileID alone
@@ -176,9 +177,12 @@ test('DEX5-4 THE BURN in the street: the death is said (DisableEnemyDeathAlert i
   withRandom(0, () => troll.corpsePrefab.struck(FIRE, 1, null));
   await settle();
   assert.deepEqual(said.slice(before), ['Troll just died.'], 'GetLocalizedEnemyName(MobileID) - the kind, never the foe\'s own name');
-  assert.equal(troll.corpse, false);
+  assert.equal(troll.corpseDestroyed, 2, 'the body burnt');
+  assert.ok(!pool.batches().some((b) => b.archive === TROLL_CORPSE.archive && b.record === TROLL_CORPSE.record), 'the body\'s picture gone');
   const ash = pool.batches().find((b) => b.archive === TROLL_CORPSE.ash.archive && b.record === TROLL_CORPSE.ash.record);
   assert.ok(ash, 'the ash stands');
+  assert.equal(troll.corpseMarker?.batch, ash, 'in the body\'s place - so its record rides on and says so');
+  assert.deepEqual(pool.lootTargets().filter((t) => t.key?.startsWith('foeCorpse')), [], 'an ash is no container');
   const [c] = ash.centers;
   assert.ok(Math.abs(c[1] + ash.size.h / 2 - (foot[1] + TROLL_CORPSE.ash.centre)) < 1e-9, `its centre 0.1 over the foot (${c[1]} + ${ash.size.h / 2})`);
   assert.deepEqual([c[0], c[2]], [foot[0], foot[2]]);
@@ -283,3 +287,98 @@ test('DEX5-8 THE HOSTS WIRE IT: the dungeon and the street mint a body\'s prefab
   assert.match(ext, /foes\.length = 0;\n\s*corpsePrefabs\.destroy\(\);/);
   assert.match(sh, /if \(f\?\.dead && !f\.puppet\) f\.corpsePrefab\?\.rounds\?\.\(from, to\);/);
 });
+
+/** DEX5b: two players in one cell - the troll's owner and a peer - each a real pool, their frames and hits carried by
+ *  hand (net/online.js's two lanes, as test/net/world6biiic.test.js carries them). */
+const netFor = (me, hits) => ({ room: () => 'world:3,12', inRoom: () => false, selfId: () => me, peers: () => [], now: () => 0, staleMs: 0, onPeerHit: (h, fate) => { hits.push(h); fate?.sent?.(); return true; }, toWire: (f) => [f[0], f[1], f[2]], toScene: (p) => [p[0], p[1], p[2]] });
+let _n = 0;
+const carry = (from, to, id) => { const frame = from.foesFrame(true); to.applyFoes(id, { ...frame, n: ++_n, k: 'world:3,12', full: 1 }); };
+async function cell() {
+  reset();
+  installEnemyExpansion({ on: true, log: silent });
+  const said = [], peerSaid = [], ownerHits = [], peerHits = [];
+  const owner = streetPool(said), peer = streetPool(peerSaid);
+  owner.setNet(netFor('own-0001', ownerHits)); peer.setNet(netFor('peer-0002', peerHits));
+  const troll = await owner.spawnFoe(TROLL, [5, 0, 5], { feetGiven: true });
+  troll.entity.items = [{ group: 'Weapons', templateIndex: 116, name: 'Shortsword', stackCount: 1 }];
+  carry(owner, peer, 'own-0001');   // the peer sees it standing...
+  await settle();
+  owner.damageFoe(troll, 100000, [0, 0, 0]);
+  await settle();
+  carry(owner, peer, 'own-0001');   // ...and fall where its owner's stream lets it
+  await settle();
+  const copy = peer.foes.find((f) => f.puppet === 'own-0001' && f.mobileType === TROLL);
+  return { owner, troll, said, peer, peerSaid, ownerHits, peerHits, copy };
+}
+
+test('DEX5-9 THE WIRE: a dead foe\'s record may say its body gone - `bg` 1 (it rose) or 2 (burnt to its ash), on a death\'s record alone; else the record is refused whole', () => {
+  for (const bg of [1, 2]) assert.deepEqual(validFoeRecord({ i: 3, d: 1, bg }), { i: 3, d: 1, bg });
+  for (const r of [{ i: 3, d: 1, bg: 0 }, { i: 3, d: 1, bg: 3 }, { i: 3, d: 1, bg: '2' }, { i: 3, d: 0, bg: 2 }, { i: 3, bg: 1 }]) assert.equal(validFoeRecord(r), null, JSON.stringify(r));
+});
+
+test('DEX5-10 ONLINE, THE BURN: a peer\'s copy of the body is no loot either (the owner\'s record says none on it); the peer\'s missile bundle goes to the owner (`cs`), whose body burns; the owner\'s record says `bg` 2 and the peer\'s copy turns to ash - its own count never ran', async () => {
+  const { owner, troll, peer, ownerHits, peerHits, copy } = await cell();
+  assert.ok(copy?.dead, 'the peer holds a copy of the body');
+  assert.equal(owner.foesFrame(true).f.find((r) => r.t === TROLL).o, 0, 'the owner says nothing lies on it');
+  assert.equal(copy.corpseDisabled, true);
+  assert.deepEqual(peer.lootTargets().filter((t) => t.key?.startsWith('foeCorpse')), [], 'no body to search on the peer');
+  withRandom(0, () => copy.corpsePrefab.struck(FIRE, 4, null));
+  assert.ok(copy.corpsePrefab && copy.corpse && !copy.corpseDestroyed, 'nothing burns on the copy');
+  const hit = peerHits.at(-1);
+  assert.deepEqual([hit.to, hit.i, hit.dmg, hit.kind, hit.cs, hit.lv], ['own-0001', troll.seq, 0, 'spell', 1, 4], 'the bundle, to the owner');
+  assert.equal(ownerHits.length, 0);
+  assert.equal(withRandom(0, () => owner.applyHit('peer-0002', hit)), true, 'the owner lands it on its body');
+  assert.equal(troll.corpseDestroyed, 2, 'and the body burns');
+  await settle();
+  const r = owner.foesFrame(true).f.find((x) => x.t === TROLL);
+  assert.equal(r.bg, 2, 'its record says so');
+  assert.deepEqual(validFoeRecord(r).bg, 2, 'through the wire\'s own door');
+  carry(owner, peer, 'own-0001');
+  await settle();
+  assert.equal(copy.corpseDestroyed, 2, 'the peer\'s copy burns too');
+  assert.equal(copy.corpseMarker?.record, TROLL_CORPSE.ash.record, 'to its ash');
+  assert.ok(!peer.batches().some((b) => b.archive === TROLL_CORPSE.archive && b.record === TROLL_CORPSE.record), 'its body\'s picture gone');
+  assert.equal(owner.applyHit('peer-0002', hit), false, 'a body gone takes no second bundle');
+});
+
+test('DEX5-11 ONLINE, THE RISE: the owner alone counts; its body goes with its record and the peer\'s copy with it; the new troll reaches the peer as any foe of the owner\'s', async () => {
+  const { owner, peer, copy } = await cell();
+  tick(peer, 12);
+  await settle();
+  assert.ok(copy.dead && copy.corpse, 'the peer\'s copy never rises by itself');
+  tick(owner, 10.25);
+  await settle();
+  const risen = owner.foes.find((f) => f.mobileType === TROLL && !f.dead);
+  assert.ok(risen, 'the owner\'s troll stands again');
+  carry(owner, peer, 'own-0001');
+  await settle();
+  assert.ok(!peer.foes.includes(copy) || !copy.corpse, 'the copy of the body is gone');
+  assert.ok(peer.foes.some((f) => f.puppet === 'own-0001' && f.mobileType === TROLL && !f.dead), 'and the new troll stands on the peer');
+});
+
+test('DEX5-12 ONLINE UNDERGROUND: the record says a body gone (`bg`, roomRecord) and every copy loses it (applyFoeRecord); a destroyed body rides on in a shared encounter\'s and a loose foe\'s lanes; a copy\'s missile goes by the lane its foe rides, and the seat and a loose foe\'s owner land it on the body', () => {
+  const dc = rd('src/scenes/dungeonContext.js');
+  assert.match(dc, /^\s*if \(f\.dead && f\.corpseDestroyed\) r\.bg = f\.corpseDestroyed;/m);
+  assert.match(dc, /\$\{r\.d\},\$\{r\.bg \?\? 0\},\$\{r\.a\}/, 'and a change of it is a change of the record (its key)');
+  assert.match(dc, /else setFoeDead\(f, false\);\n\s*\}\n\s*if \(r\.d === 1 && r\.bg\) corpsePrefabs\.told\(f, r\.bg\);/);
+  assert.match(dc, /if \(f\._ownFrom != null \|\| \(f\.dead && !f\.corpse && !f\.corpseDestroyed\)\) continue;/);
+  assert.match(dc, /if \(\(f\.dead && !f\.corpse && !f\.corpseDestroyed\) \|\| !foes\.includes\(f\)\) _sharedById\.delete\(id\);/);
+  assert.match(dc, /f\._ownFrom != null \? \{ own: 1, to: f\._ownFrom, k: _locationKey, i: f\._ownI, \.\.\.hit \} : \{ \.\.\.\(f\._encId != null \? \{ i: f\._encId, xs: 1 \} : \{ i: f\._surI \?\? foes\.indexOf\(f\) \}\), \.\.\.hit \}/);
+  assert.match(dc, /if \(f\?\.dead && data\.cs === 1 && \(xs \|\| i < _layoutFoes\)\) \{ const s = hitSpellOf\(data\); return !!s && !!f\.corpsePrefab\?\.struck\(s\.spell, s\.level, null\); \}/);
+  assert.match(dc, /if \(f\?\.dead && data\.cs === 1\) \{ const s = hitSpellOf\(data\); return !!s && !!f\.corpsePrefab\?\.struck\(s\.spell, s\.level, null\); \}/);
+  assert.match(dc, /if \(!foes\.includes\(f\) \|\| f\.corpseDestroyed\) return;/, 'a body told gone while its art warmed never lands');
+  const ext = rd('src/scenes/exteriorFoes.js');
+  assert.match(ext, /if \(npcLane\) for \(const f of foes\) if \(f\.dead && f\.corpse && !f\.corpseDestroyed && isBodyFoe\(f\) && f\.ai\)/, 'the street\'s ash stands no Morrowind body');
+  assert.match(ext, /if \(_corpseGen !== epoch \|\| f\._gone \|\| f\.corpseDestroyed\) \{ renderer\.destroyBillboardBatch\(c\.batch\); return; \}/, 'a body told gone while its art loaded never lands');
+  // the door's told, by itself: a copy with a prefab loses the body by the prefab's word, one with none by the host's
+  const seen = [];
+  const runner = createCorpsePrefabs({ vanish: (f) => seen.push(`vanish:${f.id}`) });
+  const withPrefab = { id: 'a', dead: true, corpse: true, corpsePrefab: { gone: (k) => seen.push(`gone:${k}`) } };
+  runner.told(withPrefab, 2);
+  runner.told({ id: 'b', dead: true, corpse: true }, 2);
+  runner.told({ id: 'c', dead: false }, 1);
+  runner.told({ id: 'd', dead: true, corpseDestroyed: 1 }, 1);
+  runner.told({ id: 'e', dead: true }, 7);
+  assert.deepEqual(seen, ['gone:2', 'vanish:b'], 'a live foe, a body already gone and a word of no law are nothing');
+});
+

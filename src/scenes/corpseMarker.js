@@ -158,11 +158,14 @@ export function raiseEnemyDeath(entity, opts = {}) {
  *     with `frame(dt)` (each frame of the foes' clock), `sphere()` (`{ center, radius }`, a trigger a spell's missile
  *     meets - or null) and `struck(spell, casterLevel, caster)` (that missile's bundle, assigned to it).
  *   createCorpsePrefabs(host) - one foe host's runner: `mint(f, corpseTexture)` at its corpse mint, on every machine (a
- *     copy's body is its owner's); `frame(foes, dt)`; `destroy()` with the host (the bodies' OnDestroy). `host` is the
- *     host's reach: `runs(f)` (this machine simulates the foe), `body(f)` (`{ pos, size }`, where the body lies and its
- *     flat's size, or null), `rise(f)` (stand a new foe of its kind where the body lies, and take the body away),
- *     `burn(f, ash)` (take the body away and stand `ash` - `{ archive, record, centre }` - where it lay), `say(line)` and
- *     `key(f)` (the body's place in a save, or null where a save keeps no body).
+ *     copy's body is its owner's); `frame(foes, dt)`; `told(f, kind)` - DEX5b: the runner's record says the body is gone
+ *     (`bg`: 1 taken away, 2 burnt to its ash) and this copy loses it too; `destroy()` with the host (the bodies'
+ *     OnDestroy). `host` is the host's reach: `runs(f)` (this machine simulates the foe), `body(f)` (`{ pos, size }`, where
+ *     the body lies and its flat's size, or null), `rise(f)` (stand a new foe of its kind where the body lies, and take the
+ *     body away), `vanish(f)` (take the body away), `toAsh(f, ash)` (take the body away and stand `ash` - `{ archive,
+ *     record, centre }` - where it lay), `send(f, spell, casterLevel)` (a copy's: a missile's bundle on it, to the foe's
+ *     runner), `say(line)` and `key(f)` (the body's place in a save, or null where a save keeps no body). A body a prefab
+ *     destroyed is marked `corpseDestroyed` (1 or 2) - what the hosts' records carry and their saves write as no body.
  */
 const _corpsePrefabs = new Map();   // `${archive}_${record}` -> make
 export function registerCorpsePrefab(archive, record, make) {
@@ -182,6 +185,11 @@ export function createCorpsePrefabs(host) {
       return f.corpsePrefab;
     },
     frame(foes, dt) { for (const f of foes) if (f.corpsePrefab && f.dead && f.corpse) f.corpsePrefab.frame?.(dt); },
+    told(f, kind) {
+      if (!f?.dead || f.corpseDestroyed || (kind !== 1 && kind !== 2)) return;
+      if (f.corpsePrefab?.gone) f.corpsePrefab.gone(kind);
+      else reach.vanish(f);   // a copy with no prefab of its own (none to name the ash): the body goes, as its runner's did
+    },
     destroy() { alive = false; },
   };
 }

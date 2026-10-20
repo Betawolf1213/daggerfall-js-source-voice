@@ -710,7 +710,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // would draw at the departure position for the session.
     // AUDIT WORLD6b B7: and a record that ENDED while the art loaded (a puppet swept by the prune or the room change)
     // takes its body with it - the marker landed in corpseBatches owned by nothing
-    if (_corpseGen !== epoch || f._gone) { renderer.destroyBillboardBatch(c.batch); return; }
+    if (_corpseGen !== epoch || f._gone || f.corpseDestroyed) { renderer.destroyBillboardBatch(c.batch); return; }   // DEX5b: ...or a body a prefab took while its art loaded (a copy told so at once)
     f.corpseMarker = c;   // the loot seam reads the GROUND position from here
     // TrackLooseObject's stamp: the streamer's pixel at the death,
     // not the corpse's own position.
@@ -2111,7 +2111,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     }
     // MWNPC5c: the dead from the kill until the corpse is collected, the corpse flat casting alone under the body
     for (const c of corpseBatches) c.batch.castOnly = false;
-    if (npcLane) for (const f of foes) if (f.dead && f.corpse && isBodyFoe(f) && f.ai) { npcLane.stand('foe', foeActor(f, idOf(f), { scale: (isEliteCorpse(f.entity) ? ELITE_FOE_SIZE : 1) * wildGiantSize(f.entity) }), null, 0, foeFx(f, f.corpseMarker?.batch)); _npcStood.push(f); }   // as large as its corpse (the marker's sizeScale)
+    if (npcLane) for (const f of foes) if (f.dead && f.corpse && !f.corpseDestroyed && isBodyFoe(f) && f.ai) { npcLane.stand('foe', foeActor(f, idOf(f), { scale: (isEliteCorpse(f.entity) ? ELITE_FOE_SIZE : 1) * wildGiantSize(f.entity) }), null, 0, foeFx(f, f.corpseMarker?.batch)); _npcStood.push(f); }   // as large as its corpse (the marker's sizeScale)
     return [...out, ...corpseBatches.map((c) => c.batch), ...portals.batches()];   // COMPANION-PORTAL: and the portals
   }
 
@@ -2163,17 +2163,26 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
   }
   // DEX5 (bible/04-Characters/Enemy-Expansion.md section 11): a mod's corpse prefab on a body (scenes/corpseMarker.js) - the
   // pool's reach. Its owner counts down; a RISE is a new foe of its kind where the body lay (spawnFoe, the slot-neutral
-  // replacement the Wabbajack takes) and the body goes as removeCorpse takes one; a BURN stands the ash, by its centre, as
-  // a marker the pool keeps beside the bodies (moved with the origin and the ground, collected with its pixel). The
-  // street saves no body (snapshotWorld - "Dead foes stay out"), so none is keyed.
+  // replacement the Wabbajack takes) and the body goes as removeCorpse takes one - its record ends, and every copy with
+  // it; the ASH takes the body's place as its marker (by its centre - moved with the origin and the ground, collected with
+  // its pixel), so the record rides on and says `bg` 2 to every copy, a late one too. DEX5b: a copy's missile sends its
+  // bundle to the owner (`cs`, applyHit). The street saves no body (snapshotWorld - "Dead foes stay out"), so none is keyed.
   const corpsePrefabs = createCorpsePrefabs({
     runs: (f) => !f.puppet,
     body: (f) => f.corpseMarker ?? null,
     rise: (f) => { const p = f.corpseMarker?.pos ?? f.ai.feet, at = [p[0], p[1], p[2]]; removeCorpse(f); spawnFoe(f.mobileType, at, { feetGiven: true, replacing: true }); },
-    burn: (f, ash) => {
-      const body = f.corpseMarker, pixelKey = f.corpsePixelKey, gen = epoch; removeCorpse(f);
-      if (body) mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, corpseTexture: ash, feet: body.pos, centre: ash.centre }).then((c) => { if (!c) return; if (gen !== epoch) renderer.destroyBillboardBatch(c.batch); else { c.pixelKey = pixelKey; corpseBatches.push(c); } });
+    vanish: (f) => { f.corpseDestroyed = 1; if (!f.puppet) removeCorpse(f); },   // a copy's goes with its owner's record
+    toAsh: (f, ash) => {
+      const body = f.corpseMarker, gen = epoch, pixelKey = f.corpsePixelKey ?? currentPixelKey();
+      f.corpseDestroyed = 2;
+      if (body) { const i = corpseBatches.indexOf(body); if (i >= 0) corpseBatches.splice(i, 1); renderer.destroyBillboardBatch(body.batch); f.corpseMarker = null; }
+      mintCorpseMarker({ renderer, getTexture, uploadRecordFrame, collider: body ? null : collider, corpseTexture: ash, feet: body?.pos ?? f.ai.feet, centre: ash.centre }).then((c) => {
+        if (!c) return;
+        if (gen !== epoch || f._gone || !f.corpse) { renderer.destroyBillboardBatch(c.batch); return; }
+        c.pixelKey = f.corpsePixelKey = pixelKey; f.corpseMarker = c; corpseBatches.push(c);
+      });
     },
+    send: (f, spell, level) => { const sp = hitSpellFields(spell, level); if (sp && f.puppet) _net?.onPeerHit?.({ to: f.puppet, k: _owners.get(f.puppet)?.k ?? _net.room?.() ?? null, i: f.seq, dmg: 0, kind: 'spell', ...sp, cs: 1 }); },
     say: (line) => say?.(line),
     key: () => null,
   });
@@ -2503,7 +2512,8 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (!onWatch && f.entity?.revenant) Object.assign(r, feudWire(f.entity.revenant));   // RVN13 (bible/12-Enhanced-AI/Feud-Arc.md 25): its adaptations, its weakness, its last stand (AUDIT FEUD: an heir's too - the name's own gate)
       if (!onWatch && f.retinueOf != null) { const m = foes.find((x) => !x.dead && !x.puppet && x.entity?.revenant?.id === f.retinueOf); if (m) r.rt = m.seq; }   // RVN13: a follower's master, for its name
       if (!onWatch && !f.dead && _sharedFoe(f)) { const n = fightN(f); if (n > 1) r.n = n; }   // AUDIT PSCALE1: how many fight it - every reader weighs its hits by the owner's count
-      if (!onWatch && f.dead && typeof f._trapBy === 'string') { r.j = f._trapBy; r.q = f._trapQ | 0; }   // STRIKE-SHARED: whose soul trap was on it as it fell, and the trap's chance
+      if (!onWatch && f.dead && typeof f._trapBy === 'string') { r.j = f._trapBy; r.q = f._trapQ | 0; }
+      if (!onWatch && f.dead && f.corpseDestroyed) r.bg = f.corpseDestroyed;   // DEX5b: the body a mod's prefab burnt to its ash - every copy's too   // STRIKE-SHARED: whose soul trap was on it as it fell, and the trap's chance
       if (heirOf && !onWatch && !f.dead) {
         // REVENANT-HEIR (Discord, 2026-10-07: "I got them to Elite Level V and I thought they'd kneel but they just keeled
         // over and died"): MY REVENANT IS NEVER HANDED ON - its record is this character's alone (revenantById), so an
@@ -2519,7 +2529,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // changed since it last went (a frame the trim below cut it from owes it again)
       const lk = foeWireLook(f);
       if (full || f._lkSent !== lk.key) { r.ls = lk.seed; if (lk.worn) r.lw = lk.worn; f._lkPend = lk.key; }
-      const key = `${lk.key}|${r.f[0]},${r.f[1]},${r.f[2]},${r.y},${r.h},${r.k},${r.d},${r.a},${r.b},${r.m},${r.g},${r.l},${wd ? wd.join('/') : '-'},${r.c},${r.s},${r.u},${r.o},${r.n},${r.z ?? 0},${r.nm ?? ''},${r.yd ?? 0},${r.ex ?? 0},${r.sp ?? 0},${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rt ?? -1},${r.rb ?? 0}${r.wk !== undefined || r.ws !== undefined ? `,${blowWireKey(r)}` : ''}`;   // TELL8: and the wind-up's (never `wl`)
+      const key = `${lk.key}|${r.f[0]},${r.f[1]},${r.f[2]},${r.y},${r.h},${r.k},${r.d},${r.a},${r.b},${r.m},${r.g},${r.l},${wd ? wd.join('/') : '-'},${r.c},${r.s},${r.u},${r.o},${r.n},${r.bg ?? 0},${r.z ?? 0},${r.nm ?? ''},${r.yd ?? 0},${r.ex ?? 0},${r.sp ?? 0},${r.ad ?? 0},${r.wq ?? -1},${r.p2 ?? 0},${r.rt ?? -1},${r.rb ?? 0}${r.wk !== undefined || r.ws !== undefined ? `,${blowWireKey(r)}` : ''}`;   // TELL8: and the wind-up's (never `wl`)
       const gkey = r.gr ? `${key}|${r.gr[0]}` : key;   // GRANT3: a grant carried into another cell is another number - said again
       const sent = gkey + body.keyFor(f);   // OUTDOOR-LOOT: and the body's takes digest, so a take re-sends the record
       if (!full && f._sentKey === sent) continue;
@@ -2855,6 +2865,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       if (r.j !== undefined) casterSoulTrap(f, r);
       const t = p.wire ? _net.toScene(p.wire) : null; if (t) { f.ai.feet[0] = t[0]; f.ai.feet[1] = t[1]; f.ai.feet[2] = t[2]; } puppetDie(f);
     }
+    if (r.d === 1 && r.bg) corpsePrefabs.told(f, r.bg);   // DEX5b: its owner's prefab took the body - mine goes too
   }
   /** STRIKE-SHARED (2026-09-29): MY SOUL TRAP WAS ON A PEER'S FOE AS IT FELL - the owner's record names me (`j`) with the
    *  trap's chance (`q`), and the soul is mine to roll for, into my own pack, as EnemyEntity.AttemptSoulTrap rolls it at
@@ -2986,8 +2997,9 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
     // WATCH1: the number names one of my foes or one of my watchmen (one counter, so never both); a watchman's blow
     // lands through the watch's own door below, with the ring, the blood, the pain and the dose landed here alike
     const f = foes.find((x) => !x.puppet && x.seq === (data.i | 0)) ?? watchOf(data.i | 0);
-    if (_questLike(f) && !_peerMayHit(from, f)) return false;   // QUEST-PARTY: a quest's foe takes a peer's blow only from the party it rides to - any peer's word used to land on one it could not even see
+    if (_questLike(f) && !_peerMayHit(from, f)) return false;
     const dmg = Number(data.dmg);
+    if (f?.dead && data.cs === 1 && foes.includes(f)) { const s = hitSpellOf(data); return !!s && !!f.corpsePrefab?.struck(s.spell, s.level, null); }   // DEX5b: a copy's missile on my foe's prefab body (its bundle, the body's own entity)   // QUEST-PARTY: a quest's foe takes a peer's blow only from the party it rides to - any peer's word used to land on one it could not even see
     if (!f || f.dead || !Number.isFinite(dmg) || dmg < 0 || dmg > 10000) return false;
     // AUDIT CC-E1: ANOTHER's foe mauled my companion where it stands - the blow lands here, where he is real: the foe's
     // blow, not a player's (the knock-out arm his death), and he turns on the striker's puppet
