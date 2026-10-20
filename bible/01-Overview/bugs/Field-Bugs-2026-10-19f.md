@@ -718,7 +718,13 @@ own zoom. The classic window keeps it whole (`exteriorAutomapWindow.js:"actionFo
 Find me departs from it as FINDME did on the bay, on the enhanced skin alone, under the held map's own Port-Ledger row
 (MAP1): it zooms in to the street, never out, and blinks the cross. No host was touched.
 
-- **Pinned**: `test/ui/town/fb1019f_findme_town.test.js` (6). Every window is built through its real door
+AUDIT FB1019f E4: from the fields outside the town's blocks Find me lands on the town's nearest edge, and the cross was
+drawn off the paper; it holds the paper's edge on the player's side
+(`heldMap.js:"const cx = clamp(fx, edge, paperW - edge), cy = clamp(fy, edge, paperH - edge);"`) - on their row or
+column, or the corner. A sheet with no player still answers nothing.
+
+- **Pinned**: `test/ui/town/fb1019f_findme_town.test.js` (7; AUDIT FB1019f E4's player off the paper, four ways and the
+  world map dragged away). Every window is built through its real door
   (`createTownMapWindow`, `createAutomapWindow`, the held map's constructor for the bay), on a town of real house bytes,
   and pressed through the chrome's own Find me button.
   - The town, 8x8 and 4x4, the player in the south-west corner, the north-east corner and the middle. The caret the plan
@@ -734,7 +740,7 @@ Find me departs from it as FINDME did on the bay, on the enhanced skin alone, un
 
   All but the bay's fail on main. PIN MOVED: none. `test/systems/fb1010_findfirst.test.js` (FIND-FIRST),
   `test/ui/grim1_dress.test.js` (FINDME-SHEET) and `test/ui/heldmap.test.js` (U61) stand unchanged and green.
-  `tools/mutants/findme_town.json` (20, all dead). Re-aimed by content: none - no record aimed at a moved line.
+  `tools/mutants/findme_town.json` (23, all dead). Re-aimed by content: none - no record aimed at a moved line.
 
 ## TOWN-EXIT: a journey from inside a walled town leaves by a gate - RETIRED at the merge of main
 
@@ -943,14 +949,19 @@ the two makers hand back the window they mounted (`return mountServiceWindow(pot
 and the repair list do. "That service is not available yet." still answers a service that is not there. The host's
 logical lines: -3 (`createWorldModes` 10,997 to 10,994; `test/scenes/hostceiling.test.js` holds). DEPARTURE (named in
 `offerFlow.js` and `06-Systems/Quest-Arc.md` QUESTOR-SAID): DFU's two GetQuest closes say nothing; the port says why.
+AUDIT FB1019f F1: on the classic skin in FONT0003 the busy line ran past both edges of the 320-pixel panel for 177 of
+178 guild-quest titles; the service flow wraps a long row
+(`guildServiceWindows.js:"this._box = layoutMessageBox(font, fitBoxRows(font, t.rows), buttons);"`), and the service
+flows' TEXT.RSC rows that fit are laid as before.
 
-- **Pinned**: `test/systems/quest/fb1019f_questorsaid.test.js` (5: through the real quest bridge on the guide world, the
+- **Pinned**: `test/systems/quest/fb1019f_questorsaid.test.js` (7: through the real quest bridge on the guide world, the
   questor bound by the machine at the accept off the click the bridge stored - the guild's close carries its reason and
   the very quest, its box through the real ServiceFlowWindow names it, and the door opens again once the quest is done;
   a quest with no DisplayName says the work alone; the coven's door the same, the social door's bare close boxed as
   nothing; the words in French and every whole language's `{quest}`; what still reaches "not available yet", the quest
-  door's silent close and the makers' hand-back). PIN MOVED: `test/systems/quest/covenwindow.test.js` (CW1 - the
-  coven's active-questor close carries its reason and its quest). `tools/mutants/questor_said.json` (15, all dead).
+  door's silent close and the makers' hand-back; AUDIT FB1019f F1's box inside the screen, in a synthetic font and in
+  the real FONT0003 for all 178 titles and the unnamed line). PIN MOVED: `test/systems/quest/covenwindow.test.js` (CW1 - the
+  coven's active-questor close carries its reason and its quest). `tools/mutants/questor_said.json` (16, all dead).
   Recorded in `06-Systems/Quest-Arc.md` (QUESTOR-SAID).
 
 ## HELD-CONCEAL: a worn item's concealment a blow broke comes back
@@ -1044,7 +1055,9 @@ go through the catalog (`hud.status.unwell` "Unwell", `status.health.unwell` "Yo
 drafted in-session for the thirteen whole languages (bg, cs, da, de, es, fr, id, it, ko, nb, pt-BR, ro, ru; the
 drafting languages owe them as they owe the rest). Checked: the classic skin keeps DFU's - no disease icon, named or not
 (it never drew from afflictionRows) - and its Status box, the same box, says unwell; the infections stay as they were
-(no tile, no line - the warnings leave them out too); the warnings are unchanged. Recorded in `10-UI/Slots-Hotbar-Status.md`
+(no tile, no line; the rest's warning leaves them out too, while the travel popup, the held map's travel confirm and
+the journey prompt's `unwell` count one through `diseaseCount`, as DFU's `DiseaseCount` does - AUDIT FB1019f F2); the
+warnings are unchanged. Recorded in `10-UI/Slots-Hotbar-Status.md`
 ("DISEASE-UNWELL").
 
 - **Pinned**: `test/ui/fb1019f_unwell.test.js` (5: on the real producer - startDisease on the real player, its own clock
@@ -1300,7 +1313,7 @@ a death records the size its dungeon was BUILT at (`world.js:"dungeon: dl ? { re
 `builtDungeonSize`, AUDIT FB1013d B1), and the remains stand and open only in a build of that size
 (`world.js:"const legacyInDungeonOf = (h, place) =>"` - another size is another layout). An instance is always the dungeon
 whole (`smallerDungeons.js:"if (online) return whole ? 'full' : onlineDungeonSize(dfLocation);"`), and the online world
-lays three dungeons in four small or medium in public (SD-ONLINE). The fallen died in another player's instance, so the
+draws three dungeons in four small or medium in public (SD-ONLINE), and builds 2,005 of the 4,232 smaller. The fallen died in another player's instance, so the
 row said `size: 'full'`; the heir's door offered an instance only where a quest of theirs named the place
 (`instanceOffer`'s `questHere`), and none did, so every visit was the public room - for a ruin laid medium, the door
 answered `{ instance: null, whole: false }`, the build was `medium`, and on the very spot `legacyAtPlace` was false and no
@@ -1325,21 +1338,32 @@ taken up, the public room laid whole, as an ended quest's). A whole build of one
 instance stands the remains on the floor under the recorded spot. Nothing else gains access: the relay is unchanged (the
 other player's room still refuses the heir; the heir's admits its owner and their party, the INSTANCES law), and only
 the heir's own line's rows reach their door. Unchanged: remains laid in the public room (any size - its own build stands
-them), a row from before the size was kept, and the reverse - a death in a smaller public room is not stood in a whole
+them; made true by AUDIT FB1019f B1), a row from before the size was kept, and the reverse - a death in a smaller public room is not stood in a whole
 build (its floor position is the other layout's), and Public stands it. Not a DFU member (DFU has one player and no
 rooms; Ledger A, INSTANCES); Project Legacy's remains are the port's own (Legacy-Arc section 7). The host: bootWorld
 +2 logical lines (36,190 to 36,192 under 36,233), the door's one dep; no relay or account file changed (net/instanceRoom.js
 untouched - RELAY_VERSION unmoved).
 
-- **Pinned**: `test/systems/legacy/fb1019f_heirwhole.test.js` (4: the report - the death in another player's instance of
+AUDIT FB1019f B1: `relaid` read the size the world draws (`dungeonSizeFor` online), not the size it builds, and a
+dungeon at or under its size's threshold is never laid anew, so its public room is the dungeon whole. At 1,128 dungeons
+(196 of five blocks drawn small, 391 of five and 541 of eight drawn medium) a death in the public room recorded `size:
+'full'`, the door offered the heir a private instance under "The shared dungeon is smaller and has none of it", and
+`entryFor` took them into it, while the public room stood the remains; QUEST-ELSEWHERE's line was false there too (the
+mount stood the quest's things). `relaid` is now the size built
+(`smallerDungeons.js:"export function builtSizeFor(dfLocation, deps = {}) {"`: no build and no DFRandom draw, off the
+build's own `laidAnew` test), so every one of the 4,232 sites agrees with its build.
+
+- **Pinned**: `test/systems/legacy/fb1019f_heirwhole.test.js` (7: the report - the death in another player's instance of
   a ruin laid medium, the heir's popup and its line, Public standing none, their own instance (their account, the
   remains' exact epoch) standing the body over the record's list on the floor under the spot and opening it there, Ann's
   room still refused to the heir and the heir's to Ann; the room kept while they lie - one room every entry, a save's,
   every other way in, a quest's room first and standing them too, the older relay's whole public room, the bones taken up
   and the offer gone; public-room remains as they were - medium, whole, a row with no size, another ruin, another line's
-  door, and a whole build standing none of a medium death; one whole layout whoever builds it). PIN MOVED: none (the
-  existing pins hold - `test/systems/fb1013d_remains.test.js` and `test/systems/quest/instances3_door.test.js` unchanged
-  and green). `tools/mutants/fb1019f_heirwhole.json` (13, all dead). Re-aimed by content: `fb1013d_remains.json`'s
+  door, and a whole build standing none of a medium death; one whole layout whoever builds it; AUDIT FB1019f B1's drawn-against-built table, a death in a five-block public room
+  offering nothing, and the whole MAPS.BSA corpus behind ARENA2). PIN MOVED: `test/systems/quest/instances3_door.test.js`
+  (QUEST-ELSEWHERE: a ruin of thirteen blocks, where it had none); `test/systems/fb1013d_remains.test.js` unchanged and
+  green. `tools/mutants/fb1019f_heirwhole.json` (16, all dead; re-aimed for B1: `dsize1.json`'s
+  DSIZE1-the-threshold-off-by-one and `fb1016c.json`'s QUEST-ELSEWHERE-relaid-never, re-run with their neighbours, 7 dead). Re-aimed by content: `fb1013d_remains.json`'s
   FB1013d-REMAINS-STAND-the-list-not-made-ready (onto `return remainsLying().map(...)`) and FB1013d-AUDIT-C3-every-row-stood
   (onto `remainsLying`'s `return openRemains().filter(...)`) - re-run, 64 dead, 2 equivalent as recorded.
 
