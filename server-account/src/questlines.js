@@ -166,15 +166,19 @@ export async function claimQl({ db, env = null }, player, body, nowS) {
       AND EXISTS (SELECT 1 FROM ql_steps WHERE account = ?1 AND line = ?2 AND step = ?3 AND done_at IS NOT NULL)
       RETURNING eg_keys`).bind(player.id, line, step));
   }
-  statements.push(db.prepare('SELECT s.done_at, p.ql_key FROM ql_steps s JOIN players p ON p.id = s.account WHERE s.account = ?1 AND s.line = ?2 AND s.step = ?3').bind(player.id, line, step));
+  statements.push(db.prepare('SELECT s.done_at, p.ql_key, p.ql_titles FROM ql_steps s JOIN players p ON p.id = s.account WHERE s.account = ?1 AND s.line = ?2 AND s.step = ?3').bind(player.id, line, step));
   const results = await db.batch(statements);
   const row = results.at(-1)?.results?.[0];
   if (row?.done_at == null) return { witnessed: false };
   const titled = titleAt >= 0 && Number(results[titleAt]?.meta?.changes ?? 0) > 0;
+  // AUDIT QUESTLINES SERVICE-7 (c): a title step's end answers the line's title held (`titleHeld`) when this claim did not
+  // lay it - an answer lost after the commit (a timeout) is asked again, and the retry is how the page hears it; the
+  // runner tells it only for a claim whose earlier answer was lost (qlLineRunner.js ask), so it is told once
+  const held = titleAt >= 0 && !titled && (Number(row.ql_titles) & qlTitleBit(law.title)) !== 0;
   const keyed = keyAt >= 0 ? results[keyAt]?.results?.[0] : null;
   return {
     witnessed: true,
-    ...(titled ? { title: law.title } : {}),
+    ...(titled ? { title: law.title } : held ? { titleHeld: law.title } : {}),
     ...(keyed ? { key: true, keys: Number(keyed.eg_keys) || 0 } : keyAt >= 0 && Number(row.ql_key) === 1 ? { keyHeld: true } : {}),
   };
 }

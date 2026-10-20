@@ -306,8 +306,10 @@ tier-4 choice, and a hand-built envelope any tier it liked). A received copy is 
 with a party, it asks nothing). A copy is read with the script its stamp read - its branch, or DFU's (`machine.js`
 parseQuestShape; AUDIT QUESTLINES BRANCH-12). A questline's step is never shared, at either end (`questShare.js`, reason
 `questline`; AUDIT QUESTLINES REWARD-2: the last step paid its named piece and gear to members who never began the line).
-The notebook keeps the outcome's line with the quest's finished entry (AUDIT QUESTLINES UI-5: PENDING-UI - it was a line
-of DFU's own entry in the classic logbook).
+The notebook keeps the outcome's line as the filed entry's side record - on its header, never a line of its tokens
+(`notebook.js` fileFinishedOutcome, saved port-only as `finishedQuestOutcomes` and restored with the notebook) - and the
+enhanced archive alone draws it, the pause tab's Archived and the chronicle (AUDIT QUESTLINES UI-5: it was a line of
+DFU's own entry, so the classic logbook was no longer DFU's verbatim).
 
 ### 2.5 The pins
 
@@ -334,13 +336,16 @@ of DFU's own entry in the classic logbook).
   ACTS-3).
 - `test/systems/questlines/ql12_lines.test.js`, `test/systems/questlines/ql12_ladders.test.js` - the questlines'
   scripts and their words, their witnesses, the runner's gates, stalls and order; the guilds' ladders.
-- `test/ui/questlines/ql2_journal.test.js` - the window's parts, and the Quest Guide's objective news; the Quests tab
-  drawn whole, `ql2_pause.test.js` (AUDIT QUESTLINES UI-9: PENDING-UI).
+- `test/ui/questlines/ql2_journal.test.js` - the window's parts, and the Quest Guide's objective news;
+  `test/ui/questlines/ql2_pause.test.js` (AUDIT QUESTLINES UI-9) - the Quests tab drawn whole in the real pause window:
+  the rewards waiting and their armed Take, an entryless row, the archive's outcome, a phone's press, the pause door's
+  Quests landing on either skin.
 - `test/server/ql12_claim.test.js` - the service's claim, and the runner driven through the real door into the Worker
   (AUDIT QUESTLINES SERVICE-3).
 
 The audit's mutant records: `tools/mutants/ql12_claim.json`, `tools/mutants/ql11_acts.json`,
-`tools/mutants/ql4_flow.json`, `tools/mutants/ql3_rewards.json` (`01-Overview/audits/Audit-Questlines.md`, Pinned).
+`tools/mutants/ql4_flow.json`, `tools/mutants/ql3_rewards.json`, `tools/mutants/ql2_ui.json`
+(`01-Overview/audits/Audit-Questlines.md`, Pinned).
 
 ## 3. The flagship 66
 
@@ -587,8 +592,8 @@ the holder's own stamp reads it at the receipt (AUDIT QUESTLINES REWARD-1: it wa
   way (RW1's pile, the pack opened over it), the others are gone. A host with no door for a taken piece (the
   `?exterior` bench) lists none and takes none - they wait in the save; with a door the piece is given first and the
   offer cut after (REWARD-13). The layer's row says whether a quest can still pay a choice of gear (`gear`: an outcome of
-  its sheet that pays gear, over a script that pays - REWARD-6); the window's promise by it is AUDIT QUESTLINES UI-4,
-  PENDING-UI.
+  its sheet that pays gear, over a script that pays - REWARD-6), and the window promises a choice of gear only then
+  (AUDIT QUESTLINES UI-4).
 - **A named piece** (AS BUILT: the questlines' endings alone). A line's last step's outcome may name one of its three
   cards (`named: { name, kind, base }` - the card of that kind is made FROM `base`, a template the roll makes for that
   kind, through the same fit, and takes the name with no metal before it: `itemInfo.js` withholdsMaterialPrefix, the
@@ -673,13 +678,19 @@ The pause window's Quests tab (`src/ui/enhanced/enhancedMenu.js` pauseQuests) is
 module both faces draw from (`src/ui/questlines/qlJournal.js` - the Chronicle on L draws the same objectives block).
 A window redesigned on purpose: it cites this page, not DFU (SCOPE1). The rail, in order:
 
-- **Rewards waiting** - while any wait: each ended quest's three pieces, one press from its Take (AUDIT QUESTLINES UI-6,
-  UI-10, UI-11: PENDING-UI).
+- **Rewards waiting** - while any wait: each ended quest's three pieces - each card saying what the piece is, its
+  damage or armour, its hands and its weight (AUDIT QUESTLINES UI-11) - and a Take that arms on its first press ("Click
+  again to take") and takes on the second, as Abandon, Remove and Clear do, the focus kept on that Take (UI-10: one
+  press gave a choice away, and the focus fell on the next reward's Take). A reward waiting is told in the HUD with the
+  way to it on the skin worn, and the pause door's Quests landing (`pauseDoor.js` `at: 'quests'`) opens the enhanced
+  pause on either skin (UI-6: a classic-skin player was sent to a tab the classic journal lacks).
 - **Main Quests**, **Side Quests** - as before; a stamped quest's page draws under its entry WHAT TO DO (its objectives
   as the machine opened them: done struck, failed crossed, optional marked, alternatives joined by "or"), YOUR
-  CHOICES, HOW IT ENDED, and what finishing it pays (the tier's floor in words, read off TIER_FLOORS; AUDIT QUESTLINES
-  UI-4: PENDING-UI - promised only where the row's `gear` says the quest can pay it). A stamped quest whose objectives
-  stand before its first journal entry is a row too (`unloggedRail`; AUDIT QUESTLINES UI-8: PENDING-UI).
+  CHOICES, HOW IT ENDED, and what finishing it pays (the tier's floor in words, read off TIER_FLOORS - only where the
+  row's `gear` says the quest can pay a choice of gear: AUDIT QUESTLINES UI-4). A stamped quest whose objectives stand
+  before its first journal entry is a row too (`unloggedRail`), with no Track, no Hide and no Abandon - the HUD's card and
+  the rail read entries, and abandoned it was lost (AUDIT QUESTLINES UI-8); on a phone a row pressed brings its page into
+  view (UI-14).
 - **Questlines** - every line, the ones under way first, then those waiting, those still to begin, the finished last;
   offline, a line that can only begin online is left out, and one begun shows "Continues online." (decision 1; AUDIT
   QUESTLINES UI-14). A line's state is one of: under way; waiting for its next step; its last step failed and it will be
@@ -692,10 +703,11 @@ A window redesigned on purpose: it cites this page, not DFU (SCOPE1). The rail, 
   "witnessed" stood on every done step whatever the service said). Then what it waits on ("Opens at level 10,
   online.", "Opens with Loot rarity on.", "Continues with a registered account.", "Its next step could not begin here:
   it will be offered again."), how it ended (the last step's outcome said once - UI-16) and the title it earns, which
-  waits until every deed the line asks has been seen. A claim the service refused for good, in the service's words:
-  AUDIT QUESTLINES UI-19, PENDING-UI. Then each guild the player is a member of, as its LADDER (section 4.4; what "a
-  choice" marks, said on its page: UI-12, PENDING-UI).
-- **Hidden**, **Abandoned**, **Archived** - as before; an archived entry carries its outcome's line.
+  waits until every deed the line asks has been seen. A step whose claim the service refused (`ql-closed`, `ql-body`)
+  says so under it in the service's words (AUDIT QUESTLINES UI-19: the runner swallowed the refusal). Then each guild the
+  player is a member of, as its LADDER (section 4.4), what "a choice" marks said once on its page (UI-12).
+- **Hidden**, **Abandoned**, **Archived** - as before; an archived entry carries its outcome's line, the filed entry's
+  side record (section 2.4; UI-5).
 
 The Quest Guide reads objectives (`src/ui/quest/questLens.js`): a view carries the objective asked now - the first open
 one the quest needs, an optional one only while nothing it needs is open, never a failed one (AUDIT QUESTLINES UI-1: 23
@@ -710,7 +722,9 @@ press away, and two doors to one module disagree about nothing. The design's "Wo
 bounties, revenant hunts and Legacy's quests are already its rows (`questLog`'s widened walk).
 
 The Tutorials' **Questlines** page (`src/systems/tutorialCatalogue.js`) pops the first time a quest with objectives
-starts (AUDIT QUESTLINES UI-13: that was at character creation, the main quest's first two - PENDING-UI). Every string through `t()`, drafted in the thirteen languages the catalog requires.
+starts that the player TAKES - never S0000977 or `_BRISIEN`, the quests a new character is started on, nor a list's
+start-up quest (`qlLayer.js` stamp; AUDIT QUESTLINES UI-13: it popped at character creation); it promises a choice of
+gear only for the quests whose page says so (UI-4). Every string through `t()`, drafted in the thirteen languages the catalog requires.
 
 ## 7. The hosts, and where the code goes (AS BUILT)
 
@@ -739,7 +753,7 @@ starts (AUDIT QUESTLINES UI-13: that was at character creation, the main quest's
 
 - DFU's machine and its 82 templates; the vendored scripts (patched as read, never edited).
 - The classic skin's logbook, verbatim (AUDIT QUESTLINES UI-5: it was not - every stamped quest's filed entry gained an
-  "Outcome:" line; PENDING-UI).
+  "Outcome:" line; the outcome is the entry's side record now, drawn by the enhanced archive alone).
 - Offline with the switch off: DFU's quests as DFU runs them - no stamp, no patch, no objective, no reward added.
 - The main quest's story and its endings. It gains objectives and rewards, no branch, and stays refused for sharing.
 - Every endgame place's rules, rates and drops.
@@ -757,7 +771,7 @@ starts (AUDIT QUESTLINES UI-13: that was at character creation, the main quest's
 | **QL5-QL10 THE WAVES** | 248 sheets in fourteen families; the 66 flagship branches | `ql1_sheets` (the sets exact) |
 | **QL11 THE ACTS** | the acts feed, its kinds and their producers | `ql11_acts` |
 | **QL12-QL16 THE QUESTLINES** | the registry and runner; thirty-five scripts in thirteen lines; the service's claim and its titles and key; `QUESTLINES_OPEN` | `ql12_lines`, `ql12_claim` |
-| **AUDIT QUESTLINES** (2026-10-19) | eight lanes' 151 findings, each fixed, decided or left and said (`01-Overview/audits/Audit-Questlines.md`) | `ql1_law`, `ql3_rewards`, `ql4_flow`, and the audit's pins in every file above; `ql2_pause` PENDING-UI |
+| **AUDIT QUESTLINES** (2026-10-19) | eight lanes' 151 findings, each fixed, decided or left and said (`01-Overview/audits/Audit-Questlines.md`) | `ql1_law`, `ql3_rewards`, `ql4_flow`, `ql2_pause`, and the audit's pins in every file above |
 
 ## 10. The owner's calls (taken at the record's defaults - "Develop this all")
 

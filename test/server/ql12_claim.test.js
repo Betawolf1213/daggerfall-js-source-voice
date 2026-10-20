@@ -146,8 +146,11 @@ test('QL12 THE BURNING DOORS: an `open` writes the step\'s opening; an `end` rea
   await gate(me, 'dealt');
   assert.deepEqual((await ql(me, 'burningDoors', 3)).body, { witnessed: true, title: 'doorwarden' }, 'the last witnessed step pays the title');
   assert.equal(row(me).ql_titles, qlTitleBit('doorwarden'));
-  assert.deepEqual((await ql(me, 'burningDoors', 3)).body, { witnessed: true }, 'told once');
-  assert.deepEqual((await ql(me, 'burningDoors', 2)).body, { witnessed: true }, 'and once on any step');
+  // PIN MOVED (AUDIT QUESTLINES SERVICE-7 (c)): laid once; a title step's later end answers it HELD, never paid again -
+  // a retry of an answer lost after the commit is how the page hears it (the runner tells it once)
+  assert.deepEqual((await ql(me, 'burningDoors', 3)).body, { witnessed: true, titleHeld: 'doorwarden' }, 'laid once, held after');
+  assert.deepEqual((await ql(me, 'burningDoors', 2)).body, { witnessed: true, titleHeld: 'doorwarden' }, 'on any of its steps');
+  assert.equal(row(me).ql_titles, qlTitleBit('doorwarden'), 'the bit laid once');
   assert.deepEqual(steps(me).map((s) => [s.step, s.done_at, s.seen_at]), [[2, T0 + 300, T0 + 300], [3, T0 + 400, T0 + 400]], 'each step the receipt that witnessed it');
   // A KILL AT THE LINE'S OPENING'S OWN SECOND IS AFTER IT
   const me2 = await S.registered('Doorward2');
@@ -315,7 +318,7 @@ test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burnin
   const paid = (await ql(me, 'covensHoard', 2, 'keep')).body;
   assert.deepEqual(paid, { witnessed: true, title: 'covenbane', key: true, keys: before + 1 }, 'kept: the key, its balance, and Covenbane');
   assert.deepEqual(row(me), { eg_keys: before + 1, ql_titles: qlTitleBit('doorwarden') | qlTitleBit('covenbane'), ql_key: 1 });
-  assert.deepEqual((await ql(me, 'covensHoard', 2, 'keep')).body, { witnessed: true, keyHeld: true }, 'once an account - and said so (AUDIT QUESTLINES LINES-4)');
+  assert.deepEqual((await ql(me, 'covensHoard', 2, 'keep')).body, { witnessed: true, titleHeld: 'covenbane', keyHeld: true }, 'once an account - and said so (AUDIT QUESTLINES LINES-4); the title held (SERVICE-7 (c), PIN MOVED)');
   assert.equal(row(me).eg_keys, before + 1, 'no second key');
   // SEALED: the title, no key - the step's record the first end's choice; and a later character of the account who keeps
   // it is the account's key (AUDIT QUESTLINES LINES-4: a first `seal` barred the key from every character for good)
@@ -325,14 +328,14 @@ test('QL12 THE COVENS\' HOARD: its last step is witnessed only behind the Burnin
   const k0 = row(seal).eg_keys;
   assert.deepEqual((await ql(seal, 'covensHoard', 2, 'seal')).body, { witnessed: true, title: 'covenbane' });
   assert.deepEqual([row(seal).eg_keys, row(seal).ql_key], [k0, 0], 'sealed: no key');
-  assert.deepEqual((await ql(seal, 'covensHoard', 2, 'keep')).body, { witnessed: true, key: true, keys: k0 + 1 }, 'a later keep: the account\'s key');
+  assert.deepEqual((await ql(seal, 'covensHoard', 2, 'keep')).body, { witnessed: true, titleHeld: 'covenbane', key: true, keys: k0 + 1 }, 'a later keep: the account\'s key (its title held - SERVICE-7 (c))');
   assert.equal(steps(seal).find((s) => s.line === 'covensHoard').choice, 'seal', 'the record keeps the first choice');
   // A STEP DONE BY AN END WITH NO CHOICE takes the next end's
   const late = await S.registered('LateKeeper');
   await doors(late, T0 + 400);
   const k1 = row(late).eg_keys;
   assert.deepEqual((await ql(late, 'covensHoard', 2)).body, { witnessed: true, title: 'covenbane' }, 'done, undecided - its opening never landed: the end opens it');
-  assert.deepEqual((await ql(late, 'covensHoard', 2, 'keep')).body, { witnessed: true, key: true, keys: k1 + 1 }, 'then kept');
+  assert.deepEqual((await ql(late, 'covensHoard', 2, 'keep')).body, { witnessed: true, titleHeld: 'covenbane', key: true, keys: k1 + 1 }, 'then kept');
 });
 
 test('QL12 THE REFUSALS: a guest\'s opening is written and its end refused, paying nothing; a bad body - a phase missing among them - is 400; a step the service pays nothing is `unpaid` at its end, and opened (its line\'s window); the switch shut is 403 for everyone, at `dev` for all but the developers (mutants: the guest; the phase; the switch; qlStepClaimed)', async (t) => {
