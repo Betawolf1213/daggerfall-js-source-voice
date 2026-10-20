@@ -3264,6 +3264,16 @@
   "tr": "4fe35f0dc1fe",
   "by": "claude-in-session"
  },
+ "credits.mudex.terms": {
+  "en": "e2ad3a44cdad",
+  "tr": "b7aea22f499f",
+  "by": "claude-in-session"
+ },
+ "credits.mudex.what": {
+  "en": "dab7ae5a1402",
+  "tr": "7c4f4b0464c0",
+  "by": "claude-in-session"
+ },
  "credits.oblivionLeveling.terms": {
   "en": "be5559b7f2d4",
   "tr": "7e05524b3d1c",
@@ -4325,8 +4335,8 @@
   "by": "claude-in-session"
  },
  "features.mod.meanerMonsters.effect": {
-  "en": "f290b3e84d7e",
-  "tr": "89f1ef12ccfa",
+  "en": "b2174b8fcf92",
+  "tr": "7c53563c4a87",
   "by": "claude-in-session"
  },
  "features.mod.oblivionRemasterLeveling.effect": {
@@ -8042,6 +8052,11 @@
  "mods.eyeOfTheBeholder.skin.thiefMale": {
   "en": "84aa42290a1c",
   "tr": "d9fbb5e1ebcf",
+  "by": "claude-in-session"
+ },
+ "mods.meanerMonsters.Enabled.description": {
+  "en": "0d3ed4997fe8",
+  "tr": "e9073044c5c4",
   "by": "claude-in-session"
  },
  "naval.yard.grogDrunk": {

@@ -3264,6 +3264,16 @@
   "tr": "25021371534b",
   "by": "claude-in-session"
  },
+ "credits.mudex.terms": {
+  "en": "e2ad3a44cdad",
+  "tr": "8bec17ee35d9",
+  "by": "claude-in-session"
+ },
+ "credits.mudex.what": {
+  "en": "dab7ae5a1402",
+  "tr": "1c5d52ea5ad9",
+  "by": "claude-in-session"
+ },
  "credits.oblivionLeveling.terms": {
   "en": "be5559b7f2d4",
   "tr": "6d92337539af",
@@ -4325,8 +4335,8 @@
   "by": "claude-in-session"
  },
  "features.mod.meanerMonsters.effect": {
-  "en": "f290b3e84d7e",
-  "tr": "207a1b50d417",
+  "en": "b2174b8fcf92",
+  "tr": "889a590df79f",
   "by": "claude-in-session"
  },
  "features.mod.oblivionRemasterLeveling.effect": {
@@ -8267,6 +8277,11 @@
  "mods.handheldTorches.Throwing.Duration.description": {
   "en": "1f7fcd4768e2",
   "tr": "8153c7c7fcbf",
+  "by": "claude-in-session"
+ },
+ "mods.meanerMonsters.Enabled.description": {
+  "en": "0d3ed4997fe8",
+  "tr": "9251f3dec968",
   "by": "claude-in-session"
  },
  "naval.yard.grogDrunk": {

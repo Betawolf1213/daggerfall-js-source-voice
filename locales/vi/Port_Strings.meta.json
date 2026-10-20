@@ -94,6 +94,16 @@
   "tr": "1282c0741433",
   "by": "claude-in-session"
  },
+ "credits.mudex.terms": {
+  "en": "e2ad3a44cdad",
+  "tr": "c1e2a779e62e",
+  "by": "claude-in-session"
+ },
+ "credits.mudex.what": {
+  "en": "dab7ae5a1402",
+  "tr": "d307df468afb",
+  "by": "claude-in-session"
+ },
  "dex.enemy.archerRider": {
   "en": "684bf52c59e7",
   "tr": "29a620cd0c21",
@@ -412,6 +422,11 @@
  "features.horseCare.title": {
   "en": "f30196f9a875",
   "tr": "5c709a7bb7e3",
+  "by": "claude-in-session"
+ },
+ "features.mod.meanerMonsters.effect": {
+  "en": "b2174b8fcf92",
+  "tr": "e42e8ecbc7e7",
   "by": "claude-in-session"
  },
  "features.mwBillboardLook.note": {
@@ -942,6 +957,11 @@
  "mods.eyeOfTheBeholder.skin.layeredOff": {
   "en": "e3de5ab0ca4c",
   "tr": "e149b2f3edfd",
+  "by": "claude-in-session"
+ },
+ "mods.meanerMonsters.Enabled.description": {
+  "en": "0d3ed4997fe8",
+  "tr": "4265b4ddb7ce",
   "by": "claude-in-session"
  },
  "naval.yard.grogDrunk": {

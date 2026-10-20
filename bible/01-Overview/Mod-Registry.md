@@ -4,9 +4,11 @@
 > left as it wrote them.** They were true of the fifteen rows that
 > existed on 2026-09-15 and they are the record of what putting those
 > rows side by side found. The live numbers are derived, not written:
-> `vendor/` holds 60 directories and 36 of their READMEs still carry an
+> `vendor/` holds 61 directories and 37 of their READMEs still carry an
 > unfilled permission line, each shown as `RECORD OPEN` in the table
-> (DEX0, 2026-10-19: Kamer & Kab's `daggerfall-enemy-expansion`, the sixtieth (the fifty-eighth on its branch,
+> (MUDEX1, 2026-10-20: Ralzar's `mudex`, the sixty-first - Meaner Monsters' own form beside DEX, vendored on Mac's
+> approval ("Approve MUDEX"), the author's own words not yet, so the open count rises by one;
+> DEX0, 2026-10-19: Kamer & Kab's `daggerfall-enemy-expansion`, the sixtieth (the fifty-eighth on its branch,
 > renumbered past LAYERED-GEAR's two at the merge) - Mac's word of permission recorded ("Yes, record my word"), the
 > authors' own words not yet, so the open count rises by one;
 > LAYERED-GEAR and the 2 and the Z, 2026-10-19: `pixelify-glyphs` and `layered-armor`, the fifty-eighth and the
@@ -181,6 +183,7 @@ not the date the slice shipped, where those differ.
 | `windfall` | manifest and settings verbatim, its console README verbatim, the compiled script byte for byte and its IL dump (`il/`, the port's law), its two shaders read back from DXBC as GLSL (`shaders/`), its three pictures byte for byte (`Textures/`, the author's own leaves and flake) and its 27 AudioClips remuxed losslessly from FSB5 Vorbis to Ogg (`Sound/`, with their lengths) | demifiend000 | 1.0.0 | shipped `.zip` `Windfall_1396_1.0.1_2026-09-14T23-37Z_gMVVlF1MJ` (one `.dfmod` and the console README), handed over by Mac 2026-10-08; `tools/environmentModsExtract.mjs` and `tools/dxbcGlsl.py` rebuild every vendored file but the README | granted (Mac handed the four archives over 2026-10-08: "We have permission to use and implement everything into the codebase") - **RECORD OPEN** | WINDFALL1 | 2026-10-08 | `07-Rendering/Windfall.md` |
 | `kings-gambit` | the bundle's manifest verbatim (its CRLF line ends kept), the compiled script byte for byte and its IL dump (`il/`, the port's law - the bundle carries no C# source); not the bundle itself, nor the C# a decompiler reads off the assembly | unknown (the bundle names no author) | 1 | the shipped `thekingsgambit.dfmod` (UnityFS 7, one LZ4HC block: the manifest and `TheKingsGambit.dll`), handed over by the owner 2026-10-13; `tools/ilDump.py` rebuilds the IL dump | granted (the owner, 2026-10-13: "We also have permission") - **RECORD OPEN** | KG1-KG3 | 2026-10-13 | `11-Multiplayer/Kings-Gambit.md` |
 | `daggerfall-enemy-expansion` | manifest, settings, the six tables, the spell records and the troll corpse prefab verbatim (CRLF kept), the 1,130 xml files as one name-to-text table, the eight scripts verbatim from the authors' repository and the compiled assembly byte for byte; 5,500 sprites - the authors' own under `public/art/daggerfall-enemy-expansion/`, the 774 Port-Doctrine's fourth exception carries (AUDIT DEX B1: the Royal Knight's sixty among them) under `public/art/daggerfall-enemy-expansion-repainted/`; the 858 that ARE Daggerfall's records (the five rider sets, the Will-o'-wisp) rebuilt from the player's ARENA2, never carried | Kamer & Kab | 1.3.4 | shipped `.7z` `Daggerfall Enemy Expansion-372-1-3-4-1708711071 (1)` (the bundle alone), split by `tools/dexExtract.mjs` against every TEXTURE record; scripts from `SquidKamer/DaggerfallBestiaryProject` @ `c187c97`, proved against the DLL; the tables are the bundle's, which no commit of the repository is (`vendor/daggerfall-enemy-expansion/README.md`) | granted (Mac handed the archive over 2026-10-19: "Yes, record my word") - **RECORD OPEN** | DEX0 | 2026-10-19 | `04-Characters/Enemy-Expansion.md` |
+| `mudex` | manifest and the two tables verbatim (CRLF kept): 35 monster lines over DEX's rows and 89 encounter tables, read by DEX's reader after DEX's own | Ralzar | 1.0.1 | `Ralzar81/MUDEX` @ `6b66655` (the repository is the manifest and its two files; the `.dfmod` is built from them) | approved (Mac, 2026-10-20: "Approve MUDEX"; the repository states no licence) - **RECORD OPEN** | MUDEX1 | 2026-10-20 | `04-Characters/Enemy-Expansion.md` |
 
 ## Known deviations, per row
 

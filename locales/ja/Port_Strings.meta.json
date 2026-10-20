@@ -3264,6 +3264,16 @@
   "tr": "64a949a55214",
   "by": "claude-in-session"
  },
+ "credits.mudex.terms": {
+  "en": "e2ad3a44cdad",
+  "tr": "c26927bf0fe4",
+  "by": "claude-in-session"
+ },
+ "credits.mudex.what": {
+  "en": "dab7ae5a1402",
+  "tr": "61709feebe28",
+  "by": "claude-in-session"
+ },
  "credits.oblivionLeveling.terms": {
   "en": "be5559b7f2d4",
   "tr": "2e8fbb2e523b",
@@ -4325,8 +4335,8 @@
   "by": "claude-in-session"
  },
  "features.mod.meanerMonsters.effect": {
-  "en": "f290b3e84d7e",
-  "tr": "1695eb229ead",
+  "en": "b2174b8fcf92",
+  "tr": "e917d4bde240",
   "by": "claude-in-session"
  },
  "features.mod.oblivionRemasterLeveling.effect": {
@@ -8605,8 +8615,8 @@
   "by": "claude-in-session"
  },
  "mods.meanerMonsters.Enabled.description": {
-  "en": "15461d48b69c",
-  "tr": "4801bfc44798",
+  "en": "0d3ed4997fe8",
+  "tr": "1d52527f3e88",
   "by": "claude-in-session"
  },
  "mods.oblivionRemasterLeveling.Enabled.description": {

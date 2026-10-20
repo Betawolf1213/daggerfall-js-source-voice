@@ -17,6 +17,9 @@
 //     gender (DEX4b), the troll's corpse prefab and its save record (DEX5), its equipment delegate (DEX6).
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
+import { MUDEX_TABLE_TEXT } from './mudexTableText.js';   // MUDEX1: Meaner Monsters' form beside this mod, read after it
+import { DEX_VENDOR, MUDEX_VENDOR, dexLoaded, mudexLoaded } from './dexSwitches.js';
+import { meanerMonstersEnabled } from '../../characters/meanerMonsters.js';
 import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine, readEncounterTables, addDefaultEncounterTables } from './dexTables.js';
 import { createDexEncounterSelector } from './dexEncounters.js';   // DEX3: the tables as the mod picks them
 import { ENCOUNTER_TABLES } from '../../characters/encounterTables.js';   // DEX3: DFU's own, the defaults' source
@@ -26,7 +29,7 @@ import { ENEMY_BASICS, registerEnemyRows, isClassicEnemyId, enemyDisplayName } f
 import { registerCustomCareerTemplate, registerCustomEnemyName } from '../../characters/enemy/customEnemies.js';
 import { loadMonsterCareer, loadClassCareer, registerMintRowEditor } from '../../characters/enemy/enemyEntity.js';
 import { addIntoQuestTables } from '../quest/tables.js';
-import { modSetting, latchModLoaded, modLatchedOn } from '../modSettings.js';
+import { modSetting, latchModLoaded } from '../modSettings.js';
 import { installDexSprites } from './dexSprites.js';   // DEX2: the fifty's pictures, whatever the switch
 import { dexEnemyNameText } from './dexNames.js';   // AUDIT DEX A6: the fifty's names in the player's language
 import { registerCustomEnemyNameText } from '../textManager.js';
@@ -42,37 +45,48 @@ import { installDexTroll } from './dexTroll.js';   // DEX5: the troll's corpse p
 import { createDexEquipmentAssigner } from './dexEquipment.js';   // DEX6: its copy of RRI's class arm
 import { setEnemyEquipmentAssigner, enemyEquipmentAssigner } from '../../combat/enemyEquipment.js';
 
-export const DEX_VENDOR = 'daggerfall-enemy-expansion';
-/** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
-export const dexLoaded = () => modLatchedOn(DEX_VENDOR) ?? modSetting(DEX_VENDOR, 'Enabled') === true;
+export { DEX_VENDOR, dexLoaded };   // MUDEX1: their home is dexSwitches.js, the leaves' own
 
-/** The files of one kind, in GetDBAssets' order (the manifest's, which DEX_TABLE_TEXT keeps). */
-const dbAssets = (extension) => Object.entries(DEX_TABLE_TEXT).filter(([n]) => n.endsWith(extension)).map(([n, text]) => [n.replace(/\.csv$/, ''), text]);
+/** The files of one kind, in GetDBAssets' order: the enabled mods' in their load order - this mod's (its manifest's,
+ *  which DEX_TABLE_TEXT keeps), then MUDEX's when it is loaded (it depends on this mod, so it loads after it). */
+const dbAssets = (extension, mudex) => [...Object.entries(DEX_TABLE_TEXT), ...(mudex ? Object.entries(MUDEX_TABLE_TEXT) : [])]
+  .filter(([n]) => n.endsWith(extension)).map(([n, text]) => [n.replace(/\.csv$/, ''), text]);
 
 /** `[DEX]` lines to the console, Debug.LogError / LogWarning's way. */
 const consoleLog = (level, message) => (level === 'error' ? console.error(message) : console.warn(message));
 
 let _read = null;
+/** MUDEX1: one read for each set of loaded mods - false, this mod's files alone; true, MUDEX's after them. */
+const _reads = new Map();
 const _classicOriginals = new Map();
 /** DEX6: the assigner the mod's took the delegate from (undefined: it took none) - the test seam's to put back. */
 let _replacedAssigner;
 
-/** The mod's read, made once: the careers (classic and its own), its enemies, the classic edits, the raw spellbooks and
- *  the quest foe lines. `liveRow` is read now - after the installs before this one. */
-export function dexRead({ log = consoleLog } = {}) {
-  if (_read) return _read;
+/** The mod's read, made once for each set of loaded mods: the careers (classic and its own), its enemies, the classic
+ *  edits, the raw spellbooks and the quest foe lines. `liveRow` is read now - after the installs before this one.
+ *  `mudex`: MUDEX's tables read after the mod's own (MUDEX1); left out, the game's - MUDEX as loaded - and that read
+ *  becomes the one the mod's doors answer from. */
+export function dexRead({ log = consoleLog, mudex } = {}) {
+  const game = mudex === undefined;
+  const key = game ? mudexLoaded() : mudex === true;
+  let read = _reads.get(key);
+  if (!read) { read = readMod(key, log); _reads.set(key, read); }
+  if (game) _read = read;
+  return read;
+}
+
+function readMod(mudex, log) {
   const careers = classicCareers();
-  for (const [name, text] of dbAssets('.cdb.csv')) readCareerTable(text, careers, name, log);
-  const enemies = readEnemyTables(dbAssets('.mdb.csv'), careers, {
+  for (const [name, text] of dbAssets('.cdb.csv', mudex)) readCareerTable(text, careers, name, log);
+  const enemies = readEnemyTables(dbAssets('.mdb.csv', mudex), careers, {
     liveRow: (id) => ENEMY_BASICS[id],
     isClassic: isClassicEnemyId,
     classicName: (id) => enemyDisplayName(id),
     log,
   });
   // DEX3: the encounter tables (ParseEncounterTables, Start) and the first Update's defaults from DFU's own tables
-  const encounters = addDefaultEncounterTables(readEncounterTables(dbAssets('.tdb.csv'), log), (i) => ENCOUNTER_TABLES[i], log);
-  _read = { careers, ...enemies, encounters };
-  return _read;
+  const encounters = addDefaultEncounterTables(readEncounterTables(dbAssets('.tdb.csv', mudex), log), (i) => ENCOUNTER_TABLES[i], log);
+  return { careers, ...enemies, encounters };
 }
 
 /** BestiaryMod.GetCustomProperties (:68-78): a classic id's properties (only while the mod is loaded - its edits are
@@ -119,16 +133,19 @@ function editedClassicRow(id, row, read) {
 
 /** A classic row as the mod's lines leave it, whatever the switch - the read alone (the relay's bounds are held to it:
  *  `net/foeBounds.js` FOE_BOUND_ROWS, the most a row stands at with the mod loaded too). `row` unchanged where the mod
- *  names no line for `id`. */
-export const dexClassicRow = (id, row) => editedClassicRow(id, row, dexRead());
+ *  names no line for `id`. `mudex`: MUDEX's lines after the mod's (MUDEX1), else the mod's alone. */
+export const dexClassicRow = (id, row, { mudex = false } = {}) => editedClassicRow(id, row, dexRead({ mudex }));
 
 let _installed = false;
 let _dropNameText = null;
-/** BestiaryMod.Start, once per page. `on` is the switch as this load reads it (the test seam). Answers what loaded. */
-export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') === true, log = consoleLog } = {}) {
-  if (_installed) return { loaded: dexLoaded(), enemies: _read?.enemies.size ?? 0 };
+/** BestiaryMod.Start, once per page. `on` is the switch as this load reads it, `meaner` Meaner Monsters' (the test
+ *  seams): both on, MUDEX loads beside the mod (MUDEX1). Answers what loaded. */
+export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') === true, meaner = meanerMonstersEnabled(), log = consoleLog } = {}) {
+  if (_installed) return { loaded: dexLoaded(), mudex: mudexLoaded(), enemies: _read?.enemies.size ?? 0 };
   _installed = true;
-  const read = dexRead({ log });
+  const mudex = latchModLoaded(MUDEX_VENDOR, !!on && !!meaner);   // MUDEX1: loaded for the game with the mod it depends on
+  const read = dexRead({ log, mudex });
+  _read = read;
   // ALWAYS: the fifty, their careers, their names (BestiaryTextProvider.GetCustomEnemyName answers the mod's own only)
   const rows = [];
   for (const [id, e] of read.enemies) {
@@ -185,7 +202,7 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     // QuestMachine.FoesTable.AddIntoTable (:1344): the new names the Foes table lacks, when it loads
     addIntoQuestTables({ foes: read.questFoes.map(([id, name]) => ({ line: `${id}, ${name}`, unlessKey: name })) });   // `if (!FoesTable.HasValue(questName))` - asked of the table as it stands when the rows land
   }
-  return { loaded, enemies: read.enemies.size };
+  return { loaded, mudex, enemies: read.enemies.size };
 }
 
 /** The test seam: the classic rows put back, every registration of the read let go. */
@@ -203,5 +220,7 @@ export function _resetEnemyExpansion() {
   _dropNameText?.();
   _dropNameText = null;
   _read = null;
+  _reads.clear();
+  latchModLoaded(MUDEX_VENDOR, false);
   _installed = false;
 }

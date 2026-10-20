@@ -76,6 +76,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | SHIPPED (section 12: the class by its table, the armor by the career, the unknown's longblade, the Assassin's poison) |
 | DEX7 | the Morrowind bodies (section 4); a NoShadow row's body casts none (AUDIT DEX B2) | SHIPPED (section 10) |
 | AUDIT DEX | the arc's cold audit (2026-10-20): five lanes over the frozen snapshot `d8db6d444`, every finding proven, then fixed and pinned with a mutant or recorded - `bible/01-Overview/audits/Audit-DEX.md`; its corrections are marked AUDIT DEX in each section | DONE |
+| MUDEX1 | Meaner Monsters beside DEX is MUDEX, its author's form of it for this mod (Ralzar, `vendor/mudex`): its two tables read after the mod's own, Meaner Monsters' rows, xml and PCAAO's edit of it standing aside (Mac, 2026-10-20: "We need to make everything compatible. No if ands or vutts", then "Approve MUDEX") | SHIPPED (section 13) |
 
 ## 4. Morrowind
 
@@ -127,8 +128,9 @@ port's enemy code that any mod could use, and the mod's reading through them.
   classic rows' levels and health into the live table - a client reading the gambit's module after the mod's Start would
   have built a roster the relay refuses.
 - **The relay's bounds** (`net/foeBounds.js` FOE_BOUND_ROWS): the most health and level a classic monster's row can
-  stand at, over six profiles now - vanilla, Meaner Monsters, Meaner Monsters with the overhaul's edit, and the mod's
-  classic lines over each (`dexInstall.js` dexClassicRow, the test's fold). Without it a room with the mod on would have
+  stand at, over seven profiles now - vanilla, Meaner Monsters, Meaner Monsters with the overhaul's edit, the mod's
+  classic lines over each (`dexInstall.js` dexClassicRow, the test's fold), and (MUDEX1, section 13) the mod's lines
+  with MUDEX's after them. Without it a room with the mod on would have
   had its Dragonling (146 health, the bound 60) and its Werewolf (level 9, the bound 8) refused as impossible. A row's
   third number is the level the progression share reads (`foeShare(basics.level)`, the table's row - vanilla or the
   mod's), so the relay reads no table at all and its bound is the same on every machine.
@@ -153,12 +155,11 @@ run once from `scenes/shared.js` right after Roleplay & Realism's install (its e
   Goblin in it and loaded with the mod off finds no row for it. Here the row stays and nothing of the mod's reaches it
   (no table rolls it, no quest names it, no hook runs), so the save loads and the world is DFU's. A peer in a room
   whose switch differs from its own draws the room's foes the same way.
-- *No warning that Meaner Monsters is incompatible* (AUDIT DEX A3). Meaner Monsters' own Init looks for this mod by its
-  GUID and, finding it, raises two boxes - "Please switch to MUDEX - Meaner Unleveled Daggerfall Enemy Expansion" and
-  "Meaner Monsters and Unleveled Mobs is incompatible with DEX." (MeanerMonsters.cs:24, :94, :159-164) - then applies its
-  edits all the same. The port composes the two as DFU does (Meaner Monsters' rows in its Init, this mod's classic edits
-  at Start, over them) and raises no box; both are on by default and the room forces both online. Whether to warn, or
-  to default Meaner Monsters off beside this mod, is the owner's call.
+- *Beside this mod, Meaner Monsters is MUDEX* (AUDIT DEX A3, MUDEX1 - section 13). Meaner Monsters' own Init looks for
+  this mod by its GUID and, finding it, raises two boxes - "Please switch to MUDEX - Meaner Unleveled Daggerfall Enemy
+  Expansion" and "Meaner Monsters and Unleveled Mobs is incompatible with DEX." (MeanerMonsters.cs:24, :94, :159-164) -
+  then applies its edits all the same. The port makes the switch the boxes ask for, so no box is raised: with this mod
+  loaded, Meaner Monsters' switch loads MUDEX, and its own rows, xml and PCAAO's edit of it stand aside.
 
 **Flags for the slices after** (not departures from DFU, which has neither system):
 
@@ -186,7 +187,7 @@ the install's two halves, DFU's mod order over Meaner Monsters, both build arms,
 borrowed from Daggerfall's files is a copy; the vanilla rows untouched by the install; AUDIT DEX: the Necromancer
 Assassin's two ranged attacks and the classic ranged classes' under the mod, the hosts' monster and class arms by
 SetupDemoEnemy's type, the revenant's blow class, a replacement career's error paths), the abyss's range with the
-mod's classes (`test/scenes/oh_abyss.test.js`), the bounds' six profiles (`test/net/foebounds_law.test.js`), the
+mod's classes (`test/scenes/oh_abyss.test.js`), the bounds' six profiles (`test/net/foebounds_law.test.js` - seven since MUDEX1), the
 wire's pins (`auditworld6b.test.js`, `oncrash1.test.js`), and the moved source pins and mutant records (`dex1.json`,
 whose arms had none until AUDIT DEX A5).
 
@@ -660,3 +661,46 @@ the spawn's real roll, the delegate taken and put back; AUDIT DEX: the second we
 rules, the poison before ConvertOrcish, and the id's own tests - the City Watch's item level, variant 1's fighter, the
 Ranger's longblade, the poison's fallback - pinned, E4), `test/systems/rri2_realism.test.js` (the hands and the poison
 under RRI's own arm), mutants `tools/mutants/dex6.json`, `rri2.json`.
+
+## 13. MUDEX1 - Meaner Monsters beside DEX is MUDEX
+
+The owner, 2026-10-20, of AUDIT DEX A3 (Meaner Monsters' boxes saying it is incompatible with this mod): "We need to make
+everything compatible. No if ands or vutts", then "Approve MUDEX". Meaner Monsters' author answered the incompatibility
+himself: MUDEX 1.0.1, "Meaner Unleveled Daggerfall Enemy Expansion" (Ralzar; `vendor/mudex`, from
+`github.com/Ralzar81/MUDEX` @ `6b66655`), the mod Meaner Monsters' boxes tell the player to switch to. It has no code: a
+manifest that requires this mod (1.3.4) and two tables in this mod's own formats, which this mod reads from every
+enabled mod (BestiaryMod.GetDBAssets - the enabled mods in load order, MUDEX after the mod it depends on):
+
+- `MUDEX_Monsters.mdb.csv` - 35 monster lines (ID, Name, Level, the first attack's damage, health, armor): 23 of
+  Daggerfall's monsters and 12 of this mod's. ParseCustomEnemies reads each as the replacement of the enemy as it finds
+  it, field by field, keeping every field the line has no column for - the Grizzly Bear takes MUDEX's 1-20, 50-100 and
+  armor 7 over this mod's 1-12, 13-34 and 6, keeping this mod's texture and attacks; the rat, which this mod leaves,
+  takes MUDEX's; the Goblin is restated (4-15 damage, 10-20 health). A classic line's Name ("Sabertooth Tiger") is the
+  row's property only, never a name shown.
+- `MUDEX_Tables.tdb.csv` - 89 tables: 51 themed, unleveled ones of its own beside each dungeon type's default (a crypt
+  draws one of six: `DefaultCrypt`, Lich, Vampire, Mummy, Necromancer, Spooky; a laboratory one of five), and this
+  mod's 38 `Default*` tables restated under their own names (ParseEncounterTables' replacement arm - the climates' day,
+  night and city-night tables are MUDEX's).
+
+THE SWITCH (`enemyExpansion/dexSwitches.js`). MUDEX has none of its own (MM1: no compatibility switches between
+mods): Meaner Monsters' switch beside this mod's IS MUDEX's. This mod's install latches MUDEX for the game when it loads
+this mod and Meaner Monsters is on (`installEnemyExpansion`'s `meaner`, the test seam), and reads MUDEX's two tables
+after its own (`dbAssets`, one read per set of loaded mods); with this mod latched, Meaner Monsters' own rows
+(`applyMeanerMonsters`), its xml (the werewolf's, the wereboar's and the dragonling's scales - MUDEX ships none) and
+PCAAO's edit of it (`meanerMonstersOn` - PCAAO asks for "Meaner Monsters" by name, which a DFU game that took the advice
+does not have) stand aside. Without this mod, Meaner Monsters is itself. Both mods are on by default and the room forces
+both online, so this is the game's composition by default. A switch flipped mid-game waits for the next load, as this
+mod's does - Meaner Monsters' Features row says so (`features.mod.meanerMonsters.effect`).
+
+THE RELAY'S BOUNDS (`net/foeBounds.js` FOE_BOUND_ROWS): the seventh profile, this mod's lines with MUDEX's after them,
+moves eight rows - the Flesh Atronach's health to 300, the Ice Atronach's level to 21, and six share levels (the Orc 6,
+the Orc Sergeant 9, the Mummy 15, the Orc Shaman 15, the Orc Warlord 19, the Daedra Lord 21), MUDEX's levels being
+written into the table. The relay re-hashed in place (world234).
+
+Departures (Port-Ledger A, the DEX row): the switch the boxes ask the player to make is made for them; no box is raised.
+
+Tests: `test/systems/enemyExpansion/mudex1.test.js` (the record byte for byte, the switch's four cases and its reset, the
+monsters field by field written and minted, the tables, Meaner Monsters standing aside and itself),
+`test/net/foebounds_law.test.js` (the seventh profile), `dex1_registry.test.js` (DEX alone, Meaner Monsters standing
+aside); mutants `tools/mutants/mudex1.json`, eleven, all dead.
+

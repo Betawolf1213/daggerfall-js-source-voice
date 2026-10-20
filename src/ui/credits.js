@@ -588,6 +588,16 @@ export const CREDITS = Object.freeze({
       vendor: Object.freeze(['daggerfall-enemy-expansion']),
       link: 'https://www.nexusmods.com/daggerfallunity/mods/372',
     }),
+    // MUDEX1 (bible/04-Characters/Enemy-Expansion.md, MUDEX): Meaner Monsters' own form beside DEX, by its author.
+    Object.freeze({
+      title: 'MUDEX',
+      version: '1.0.1',
+      author: 'Ralzar',
+      get what() { return t('credits.mudex.what', 'Meaner Unleveled Daggerfall Enemy Expansion: Meaner Monsters as its author made it for Daggerfall Enemy Expansion. With both on, it sets the stats of 35 monsters, old and new, and gives every kind of dungeon its own themed, unleveled encounter tables.'); },
+      get terms() { return t('credits.mudex.terms', 'Used with permission, on Mac\u2019s word; its two tables carried byte for byte. The repository states no license.'); },
+      vendor: Object.freeze(['mudex']),
+      link: 'https://github.com/Ralzar81/MUDEX',
+    }),
   ]),
 });
 

@@ -54,8 +54,11 @@ test('FOE-BOUNDS EACH MONSTER\'S ROW AT ITS MOST: the most health and the most l
     const t = +ts, mm = applyMeanerMonsters(t, b, true), both = meanerMonstersRow(t, mm, true);
     // DEX1: the mod loaded writes its lines into the table (d0), and at a foe's mint over the folds of that row
     const d0 = dexClassicRow(t, b), dmm = dexClassicRow(t, applyMeanerMonsters(t, d0, true)), dboth = dexClassicRow(t, meanerMonstersRow(t, applyMeanerMonsters(t, d0, true), true));
-    const all = [b, mm, both, d0, dmm, dboth];
-    return [t, [Math.max(...all.map((p) => p.maxHealth)), Math.max(...all.map((p) => p.level)), Math.max(b.level, d0.level)]];
+    // MUDEX1: Meaner Monsters beside the mod is MUDEX - its lines read after the mod's, written into the table (so its
+    // level is a share level too); Meaner Monsters' own rows and PCAAO's edit stand aside
+    const dx = dexClassicRow(t, b, { mudex: true });
+    const all = [b, mm, both, d0, dmm, dboth, dx];
+    return [t, [Math.max(...all.map((p) => p.maxHealth)), Math.max(...all.map((p) => p.level)), Math.max(b.level, d0.level, dx.level)]];
   });
   assert.deepEqual([...FOE_BOUND_ROWS], want);
   assert.equal(FOE_BOUND_ROWS.size, 42);

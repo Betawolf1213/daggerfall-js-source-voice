@@ -468,7 +468,8 @@ export const MOD_SETTINGS = Object.freeze({
         get description() {
           return t('mods.meanerMonsters.Enabled.description', 'Many monsters hit harder and take more to kill, while rats, bats and zombies are weaker. 20 monsters '
             + 'are changed, and werebeasts and the dragonling are bigger. With Physical Combat And Armor Overhaul '
-            + 'also on, that mod’s version of these changes is used.');
+            + 'also on, that mod’s version of these changes is used. With Daggerfall Enemy Expansion on, MUDEX, the '
+            + 'author’s version made for it, is used instead.');
         },
       }),
     }),
