@@ -306,7 +306,7 @@ const HARDCODED = {
   'src/scenes/travelView.js': 39,
   'src/scenes/treeHost.js': 3,
   'src/scenes/windfallHost.js': 5,
-  'src/scenes/world.js': 349,
+  'src/scenes/world.js': 348,   // FB1020c ONE-SAVE: the kept words moved to the Stores page (BAG_PAGE_WORDS.kept)
   'src/scenes/worldModes.js': 83,
   'src/systems/aetheric.js': 115,
   'src/systems/alchemyItems.js': 3,
@@ -689,7 +689,7 @@ const HARDCODED = {
   'src/ui/plus/plusPad.js': 18,
   'src/ui/plus/plusPadBinds.js': 30,
   'src/ui/prisonScreen.js': 1,
-  'src/ui/professions/profPages.js': 30,
+  'src/ui/professions/profPages.js': 31,   // FB1020c ONE-SAVE: the kept words, moved here from the world host
   'src/ui/profileBadge.js': 4,
   'src/ui/profileWindow.js': 14,
   'src/ui/provinceMap.js': 5,

@@ -289,7 +289,7 @@ import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and school
 import { rollNoticeDoors } from './rollNoticeHost.js';   // SEAT-WORDS / STANDING-WORDS: what the Roll's tracker says
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
-import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine, disenchantableOf } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
+import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine, disenchantableOf, BAG_PAGE_WORDS } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
 import { materialPicture, itemPicture } from '../ui/menu/menuPicture.js';   // MENU-ORDER: a material's and a piece's picture for the menus' rows
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: the saddle panel - the horse and the wagon on screen (Enhanced Plus)
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable and the Fleet pages on the pause menu's Holdings tab
@@ -2141,8 +2141,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  pack, the home's things, the purse or the Bank's accounts, on the service's answer - asks ONE checkpoint on the next
    *  task, as a trade saves at once; the checkpoint (onlineCheckpoint) is handed in once it is built (REALM P0.5). */
   const saveSoon = createSaveSoon();
-  /** BAG1: a deposit whose answer did not come - its goods stay out of the bag until the counting-house answers. */
-  const BAG_DEPOSIT_KEPT_TEXT = 'The counting-house is slow to answer. Your goods are on their way to the Stores.';
+  /** BAG1: a deposit whose answer did not come - its goods stay out of the bag until the counting-house answers.
+   *  FB1020c ONE-SAVE: the Stores page's own words (profPages.js BAG_PAGE_WORDS.kept), one home. */
+  const BAG_DEPOSIT_KEPT_TEXT = BAG_PAGE_WORDS.kept;
   /** PROF1: withdrawn from the Stores into the pack - the items the law names, minted as DFU mints them (law 3: they
    *  never go back). */
   const profMint = (key, n) => {
@@ -11701,11 +11702,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         settle: () => profBook.settle(profMint, profMintCraft),   // AUDIT 29 C4: a kept withdrawal asked again when the Stores page opens; PROF3: and a kept craft
         // BAG1 (bible/06-Systems/Materials-Bag.md): THE STORES PAGE'S OTHER HALF - what is carried put in (the bag's first,
         // then the pack's), in a town; the bag's load, and the room the bag and the pack have left
-        deposit: async (k, n, order = 'all') => {   // LOOT-LOOSE: the page's `work` puts a looted unit in as loose
-          const r = await profBook.deposit(k, n, { order });
-          if (r?.ok) return { ok: true, text: `${n} ${materialCountLabel(k, n)} put in the Stores.` };
-          return { ok: false, kept: r?.kept === true, text: r?.kept ? BAG_DEPOSIT_KEPT_TEXT : accountRefusalText(r?.error) };   // AUDIT BAG1: `kept` - Put everything in stops on it
-        },
+        // FB1020c ONE-SAVE: the page's put-ins as one batch (profBook.js depositMany: one save for them all, each its own
+        // `order` - LOOT-LOOSE's `work` puts a looted unit in as loose), each answered in its own words
+        deposit: async (plan) => (await profBook.depositMany(plan)).map((r, i) => (r?.ok ? { ok: true, text: `${plan[i].qty} ${materialCountLabel(plan[i].material, plan[i].qty)} put in the Stores.` }
+          : { ok: false, kept: r?.kept === true, text: r?.kept ? BAG_DEPOSIT_KEPT_TEXT : accountRefusalText(r?.error) })),   // AUDIT BAG1: `kept` - Put everything in stops on it
         inTown: () => _storesReached(),
         room: (k) => bagRoomFor(playerEntity, k),
         carriedHeld: (k) => bagHeldOf(playerEntity, k, { counter: false }),   // AUDIT TOWN-ECON 2 PRICE-2: the Stores page never puts a counter's piece in
