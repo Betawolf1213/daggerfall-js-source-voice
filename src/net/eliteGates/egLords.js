@@ -955,12 +955,12 @@ export const egGarothSig = (c) => ['ilthys', 'morvayn', 'seyth'][Math.floor(c / 
  * (`esay` 'phase', egLordsStep). Garoth's third is the signature he borrows (EG_GAROTH_SIG_CARDS, by EG_GAROTH_SIG_ORDERS).
  */
 export const EG_LORD_PHASES = Object.freeze({
-  hound: Object.freeze([['The Bridges Burn', 'Off a bridge before it burns.'], ['The Pack', 'The hunted run apart.']]),
+  hound: Object.freeze([['The Bridges Burn', 'Get off a bridge before it burns.'], ['The Pack', 'Run apart when hunted.']]),
   spellmaster: Object.freeze([['The Examination', 'Stand on the runes in order.'], ['The Final Examination', 'Break the seals.']]),
-  armsmaster: Object.freeze([['The Second Challenge', 'Answer the challenge.'], ['The Last Lesson', 'The ring of fire closes in.']]),
-  ilthys: Object.freeze([['The Conquest', 'Break her banners.'], ['The Last Charge', 'Leave the third that falls.']]),
-  cairnkeeper: Object.freeze([['The Cracked Gem', 'Three gems take every soul.'], ['The Double Tithe', 'Lay two souls each.']]),
-  twins: Object.freeze([['Rivalry', 'Strike the stronger twin.'], ['Both Courts Burn', 'Leave the thirds by the walkway.']]),
+  armsmaster: Object.freeze([['The Second Challenge', 'Answer the challenge.'], ['The Last Lesson', 'Stay inside the closing ring of fire.']]),
+  ilthys: Object.freeze([['The Conquest', 'Break her banners.'], ['The Last Charge', 'Get off the third of the floor that falls.']]),
+  cairnkeeper: Object.freeze([['The Cracked Gem', 'Lay your souls in the three gems left.'], ['The Double Tithe', 'Lay two souls each.']]),
+  twins: Object.freeze([['Rivalry', 'Strike the stronger twin.'], ['Both Courts Burn', 'Stay off the ground by the walkway.']]),
   morvayn: Object.freeze([['The Chaining', 'Stay close to your chain.'], ['The Last Rites', 'Chains of three. Stay together.']]),
   dusk: Object.freeze([['Wingbeat', 'Brace against the gusts.'], ['Moonfall', 'Break the anchors again.']]),
   stalker: Object.freeze([['Three Shadows', 'Find the shadow that glints.'], ['Blood Moon', 'Three are tethered. Stand apart.']]),
