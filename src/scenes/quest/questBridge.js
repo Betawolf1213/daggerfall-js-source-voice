@@ -64,7 +64,7 @@
 import { QuestMachine, TICKS_PER_SECOND } from '../../systems/quest/machine.js';
 import { clockCounts } from '../../systems/quest/clock.js';   // DEAD-CLOCK: a clock whose end changes nothing is no deadline
 import { repairActiveQuests, relayOnlineDungeons, relayMovedLayouts, relayBuiltDungeon } from '../../systems/quest/questRepair.js';   // QREPAIR: the Settings' repair (AUDIT DELVE E1: and a frozen size, crossing online)
-import { t, getLocalizedFactionName } from '../../systems/textManager.js';   // QUEST-RESET: the restart's words in the player's language (L10N4); QL12: a guild's name in it
+import { t, getLocalizedFactionName, textRevision } from '../../systems/textManager.js';   // QUEST-RESET: the restart's words in the player's language (L10N4); QL12: a guild's name in it, its quests' titles kept while the text stands
 import { isOnlinePage } from '../../systems/online/onlineLane.js';   // AUDIT DELVE E1: online, every dungeon is whole
 import { isShelved } from '../../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
 import { WA_RAID_QUESTS } from '../../systems/warmAshesShips.js';   // QUEST-SHELF: a raid the world runs is never set aside
@@ -86,7 +86,7 @@ import { QuestLens } from '../../ui/quest/questLens.js';   // GUIDE1: the modern
 import { questHerald, heraldOn } from '../../ui/quest/questHerald.js';   // GUIDE3: the news the lens sees, told
 import { questTracker, followOn } from '../../ui/quest/questTracker.js';   // GUIDE4: the quest the HUD follows (GUIDE5: the card's or the marks')
 import { createQuestlines } from '../../systems/questlines/qlLayer.js';   // QL1: the questlines' layer over this machine (bible/06-Systems/Questlines-Arc.md)
-import { questlineActionTemplates } from '../../systems/questlines/qlActions.js';   // QL4: ask, outcome, ql act - registered here, every host's machine
+import { questlineActionTemplates } from '../../systems/questlines/qlActions.js';   // QL4: ask, outcome, ql act, ql paid, ql name - registered here, every host's machine
 import { setActSink } from '../../systems/questlines/qlActs.js';   // QL11: the features' acts, heard by this bridge's layer
 import { questlineService, serviceReady } from './questlineHost.js';   // QL12: the endgame lines' claims - the account service's door, online alone
 import { TITLE_TEXT } from '../../ui/playerBadge.js';   // QL12: a line's title, in the badge's own words
@@ -97,6 +97,7 @@ import { ladders as guildLadders } from '../../systems/questlines/qlLadders.js';
 import { activeMemberships } from '../../systems/guild/guilds.js';   // QL12: the player's own book, for the ladders
 import { factionsTable } from '../../systems/quest/tables.js';   // QL12: a guild's name, by its faction
 import { quietText } from '../../ui/quest/questLens.js';   // QL1: a sheet's line read quietly, as the journal's entries are
+import { offerWaitingWords } from '../../ui/questlines/qlJournal.js';   // AUDIT QUESTLINES UI-6: a reward waiting, and the way to it on either skin
 
 // AUDIT 24 (wave 24): SetLayoutData's three overloads and
 // GetPositionHash now live in characters/staticNpc.js, next to the
@@ -440,11 +441,12 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     dropFace: (r) => ctx.dropFace?.(r),
     // Q4-iv: the tombstone filing lands in the notebook here
     // QL3: and a stamped quest's outcome filed with it - the archive says how it ended (the layer settled it a moment
-    // before, at the same `end quest`)
+    // before, at the same `end quest`). AUDIT QUESTLINES UI-5: as the entry's side record (notebook.js
+    // fileFinishedOutcome), never a line of DFU's classic logbook - the enhanced archive draws it
     addFinishedQuest: (messages) => {
       notebook.addFinishedQuest(messages);
       const line = questlines?.outcomeLine(messages?.[0]?.parentQuest, quietText);
-      if (line) notebook.appendFinishedLine?.(t('quest.outcome.filed', 'Outcome: {text}', { text: line }));
+      if (line) notebook.fileFinishedOutcome?.(line);
     },
     // the one-time recording IS the OnQuestStarted subscription
     onQuestStarted: (q) => { questLists.noteQuestStarted(q); ctx.onQuestStarted?.(q); },
@@ -454,7 +456,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     // later, never parsed again every tick
     onQuestEnded: (q) => { questlines?.runner?.dropped?.(q); ctx.onQuestEnded?.(q); },
   });
-  // QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): the questlines' three actions, after DFU's 82 - here, so every
+  // QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): the questlines' five actions, after DFU's 82 - here, so every
   // host's machine has them before a save or a script that says them is read (a first-match scan; none of DFU's claims
   // these lines - test/systems/questlines/ql4_actions.test.js).
   for (const template of questlineActionTemplates()) machine.registerAction(template);
@@ -505,12 +507,17 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       get playerEntity() { return ctx.playerEntity ?? null; },
       changeReputation: (fid, amount, propagate) => ctx.changeReputation?.(fid, amount, propagate),
       changeLegalRep: (amount) => ctx.changeLegalRep?.(amount),
-      offerReward: (q, item) => ctx.offerReward?.(q, item),
-      // a choice of gear waits: told in the host's own HUD line (every host has one), and to the host's own listener
+      // AUDIT QUESTLINES REWARD-13: the door a taken piece goes through, only where the host has one (the ?exterior host
+      // has none: its offers wait, untaken, for a host that does)
+      get offerReward() { return typeof ctx.offerReward === 'function' ? (q, item) => ctx.offerReward(q, item) : undefined; },
+      // a choice of gear waits: told in the host's own HUD line (every host has one), and to the host's own listener.
+      // AUDIT QUESTLINES UI-6 (REWARD-8): the line names the way to the Quests tab on the skin worn (qlJournal.js)
       onQuestlineOffer: (offer) => {
-        ctx.addHUDText?.(t('ql.reward.waiting', 'A reward waits for {title}: choose it in your journal\u2019s Quests tab.', { title: offer.title }));
+        ctx.addHUDText?.(offerWaitingWords(offer));
         ctx.onQuestlineOffer?.(offer);
       },
+      // AUDIT QUESTLINES REWARD-8: an offer the cap cut (qlLayer.js OFFERS_MAX) is said, never lost unsaid
+      onOfferDropped: (offer) => ctx.addHUDText?.(t('ql.reward.dropped', 'Too many rewards wait: the one for {title} is gone.', { title: offer.title })),
       // QL12: the lines - the character's clock, whether there is an account to claim for, and what the service paid
       nowSeconds: () => ctx.classicSeconds?.() ?? 0,
       online: () => serviceReady(qlService),
@@ -529,8 +536,11 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
 
   // QL12 (Questlines-Arc.md section 4.4): THE GUILDS' LADDERS, read for the window - each guild the player is a member of,
   // its list's quests by rank, named as the journal names them (the pack's DisplayName, a translation's where one is)
+  // AUDIT QUESTLINES UI-19: kept while the text stands - a locale switched, or its documents loaded, reads them again
   const ladderTitles = new Map();
+  let ladderTitlesAt = -1;
   const questTitle = (name) => {
+    if (ladderTitlesAt !== textRevision()) { ladderTitles.clear(); ladderTitlesAt = textRevision(); }
     if (!ladderTitles.has(name)) {
       const lines = ctx.data?.getQuestSourceLines?.(name) ?? [];
       const shipped = (lines.find((l) => /^\s*DisplayName:/i.test(l)) ?? '').replace(/^\s*DisplayName:\s*/i, '').trim();
@@ -635,7 +645,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
   // walk - THE ONE CONSTRUCTION SEAM: every host that has quests holds
   // the bridge, so no host builds a lens of its own - and a load resets
   // it (restore, below), so the loaded game's quests are its baseline.
-  const lens = new QuestLens({ questLog: () => bridge.questLog() });
+  const lens = new QuestLens({ questLog: () => bridge.questLog({ windows: false }) });   // AUDIT QUESTLINES LAW-11: a look a tick reads no line or ladder
 
   const bridge = {
     machine, questLists, offerFlow, notebook, lens, questlines,
@@ -661,8 +671,10 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
      * reader (the chronicle's Quests section, which is what the L key
      * opens), so the walk moved here instead - the bridge is the one
      * thing every host that has quests already holds.
+     * AUDIT QUESTLINES LAW-11: `windows: false` (the lens's look, a tick at 10 Hz) leaves out the questlines' and the
+     * guilds' ladders' rows - the windows' alone, each a walk of its own.
      */
-    questLog() {
+    questLog({ windows = true } = {}) {
       const active = [];
       // GUIDE1: a quest that has COMPLETED - its log is gone
       // (Quest.getLogMessages answers null) but it lingers a week as a
@@ -721,7 +733,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       // (ui/quest/questRail.js) is what leaves them out.
       // AUDIT JOURNAL-CLEAN F3: an id hidden for a quest no longer running is dropped - whatever ended it
       notebook?.pruneHiddenQuests?.([...machine.quests.values()].filter((q) => !q.questComplete).map((q) => q.uid));
-      return { active, finished: notebook?.getFinishedQuests() ?? [], ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved, unlogged, lines: questlinesOn() ? questlines.lineRows() : [], ladders: questlinesOn() ? ladderRows() : [] };   // QL12: the questlines and the guilds' ladders - none while they are off
+      return { active, finished: notebook?.getFinishedQuests() ?? [], ended, hidden: notebook?.getHiddenQuests?.() ?? [], shelved, unlogged, lines: windows && questlinesOn() ? questlines.lineRows() : [], ladders: windows && questlinesOn() ? ladderRows() : [] };   // QL12: the questlines and the guilds' ladders - none while they are off
     },
 
     /**

@@ -1,8 +1,9 @@
-// QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): THE QUESTLINES' ACTIONS - `ask` (a choice in the player's own
-// words), `outcome` (where a script decides how it ended) and `ql act` (a trigger on what the player did, QL11). They
-// are registered by the quest bridge after DFU's 82: a first-match scan, so the pins here are that no DFU template
-// claims a questlines line, that the questlines' templates claim no line of the shipped corpus, and that each acts as
-// it says through a real machine - saved and restored mid-flight.
+// QL4 (bible/06-Systems/Questlines-Arc.md section 2.3): THE QUESTLINES' FIVE ACTIONS - `ask` (a choice in the player's
+// own words), `outcome` (where a script decides how it ended), `ql act` (a trigger on what the player did, QL11), `ql
+// paid` (the quest paid, without GivePc's box) and `ql name` (a giver by their own name, QL12). They are registered by
+// the quest bridge after DFU's 82: a first-match scan, so the pins here are that no DFU template claims a questlines
+// line, that the questlines' templates claim no line of the shipped corpus, and that each acts as it says through a real
+// machine - saved and restored mid-flight. (AUDIT QUESTLINES DOC-29: this said three.)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -272,4 +273,23 @@ test('QL4 ask is complete only on its answer: a box closed unanswered (null) ask
   assert.equal(m2.quests.get(quest.uid).ql.outcome, 'loyal');
   m2.tick();
   assert.equal(asks.length, 3, 'answered: never asked again');
+});
+
+const NAME_QUEST = ['Quest: __QLNAME', 'DisplayName: A Name', 'QRC:', 'QuestorOffer:  [1000]', '<ce> Will you?', '', 'RefuseQuest:  [1001]', '<ce> No.', '', 'AcceptQuest:  [1002]', '<ce> Yes.', '',
+  'QBN:', 'Person _giver_ faction The_Mages_Guild female', '', '\tql name _giver_ Ysolde_Marnhel', '\tql name _nobody_ Anyone'];
+
+test('QL12 AUDIT QUESTLINES DOC-19 `ql name` names the person by the script\'s own words, underscores read as spaces, and the name rides a save; a symbol that is no person warns and is done (mutants: the underscores kept - "Ysolde_Marnhel")', () => {
+  const m = new QuestMachine({ nowSeconds: () => 0, getQuestSourceLines: () => NAME_QUEST, questlinesStamp: () => freshState() });
+  for (const t of questlineActionTemplates()) m.registerAction(t);
+  const quest = m.startQuestByName('__QLNAME');
+  const warn = console.warn; const warned = [];
+  console.warn = (s) => warned.push(String(s));
+  try { m.tick(); } finally { console.warn = warn; }
+  assert.equal(quest.getPerson({ name: 'giver' }).displayName, 'Ysolde Marnhel');
+  assert.ok(warned.some((s) => s.includes('ql name: no person _nobody_')), warned.join('\n'));
+  assert.ok([...quest.tasks.values()].flatMap((t) => t.actions).every((a) => !(a instanceof QlName) || a.isComplete), 'each done');
+  const m2 = new QuestMachine({ nowSeconds: () => 0, getQuestSourceLines: () => NAME_QUEST, questlinesStamp: () => freshState() });
+  for (const t of questlineActionTemplates()) m2.registerAction(t);
+  m2.restoreSaveData(m.getSaveData());
+  assert.equal(m2.quests.get(quest.uid).getPerson({ name: 'giver' }).displayName, 'Ysolde Marnhel', 'the name rides the save');
 });

@@ -21,6 +21,10 @@
 import { t } from '../../systems/textManager.js';
 import { TIER_FLOORS, REWARD_CHOICES } from '../../systems/questlines/qlRewards.js';
 import { affixLine } from '../../systems/loot/lootRarity.js';
+import { itemDamageLine, itemArmourLine, itemHandsLine, weightString } from '../../systems/item/itemInfo.js';   // AUDIT QUESTLINES UI-11: the pack card's own numbers
+import { getItemHands, ITEM_HANDS } from '../../characters/equipTable.js';   // UI-11: GetItemHands, the one home (itemHandsLine's own read)
+import { accountRefusalText } from '../../net/accountClient.js';   // AUDIT QUESTLINES UI-19: a refused claim, in the service's own words
+import { isEnhanced } from '../../systems/uiSkin.js';   // AUDIT QUESTLINES UI-6: the way to the Quests tab, on the skin worn
 
 /** @param {Document} doc @param {string} tag @param {string|null} [cls] @param {string|null} [text] */
 const el = (doc, tag, cls = null, text = null) => {
@@ -48,15 +52,24 @@ export function rewardWords(tier) {
   return t('ql.journal.reward', 'Finish it to choose one of {n} pieces of gear fitted to you ({floor}), beside its own reward.', { n: REWARD_CHOICES, floor: floorWords(tier) });
 }
 
+/** AUDIT QUESTLINES UI-6 (REWARD-8): THE HUD'S LINE for a reward waiting (scenes/quest/questBridge.js onQuestlineOffer) -
+ *  and the way to it on the skin worn. The enhanced pause opens on its tabs; the classic pause (DFU's OPTN00I0) has none,
+ *  and its Controls button opens the port's whole menu on its Settings (ui/pauseDoor.js DISC22-B), whose face - Escape -
+ *  holds the Quests tab. "Your journal's Quests tab" sent a classic player to a tab their logbook does not have. */
+export const offerWaitingWords = (offer) => (isEnhanced()
+  ? t('ql.reward.waitingPause', 'A reward waits for {title}: choose it under Quests in the pause menu.', { title: offer.title })
+  : t('ql.reward.waitingClassic', 'A reward waits for {title}: in the pause menu, press Controls, then Escape, and choose it under Quests.', { title: offer.title }));
+
 /** The objective's mark: done, failed, or still to do. */
 const MARK = Object.freeze({ done: '◆', failed: '✕', open: '◇' });
 
 /**
  * THE BLOCK under a quest's name: what to do, the choices taken, how it ended and what it pays - or null for a quest
- * that is DFU's (no `ql`) or one with nothing to say yet. `ended` draws a finished quest's (its outcome, no reward line).
- * @param {Document} doc @param {any} ql the questLog row's `ql` @param {{ ended?: boolean }} [opts]
+ * that is DFU's (no `ql`) or one with nothing to say yet. AUDIT QUESTLINES UI-18: the `ended` option no caller passed is
+ * gone - a quest that ended has its outcome, and an outcome draws no reward line.
+ * @param {Document} doc @param {any} ql the questLog row's `ql`
  */
-export function qlObjectivesBlock(doc, ql, { ended = false } = {}) {
+export function qlObjectivesBlock(doc, ql) {
   if (!ql || !doc) return null;
   const objectives = (ql.objectives ?? []).filter((o) => o.state !== 'hidden');
   const choices = ql.choices ?? [];
@@ -94,7 +107,9 @@ export function qlObjectivesBlock(doc, ql, { ended = false } = {}) {
   if (ql.outcome) {
     box.append(divider(doc, t('ql.journal.ended', 'How it ended')));
     box.append(el(doc, 'p', `px-qobj-outcome${ql.outcome.failure ? ' failed' : ''}`, ql.outcome.text));
-  } else if (!ended && ql.tier) {
+  } else if (ql.gear && ql.tier) {
+    // AUDIT QUESTLINES UI-4 (REWARD-6): the choice of gear is promised only where the quest can pay it (qlLayer.js rowOf
+    // `gear`) - 24 quests' outcomes pay none, and the line promised it under each
     box.append(el(doc, 'p', 'px-qobj-reward', rewardWords(ql.tier)));
   }
   return box;
@@ -104,12 +119,37 @@ export function qlObjectivesBlock(doc, ql, { ended = false } = {}) {
 const TIER_WORD = () => ({ magic: t('ql.journal.magic', 'Magic'), rare: t('ql.journal.rare', 'Rare'), legendary: t('ql.journal.legendary', 'Legendary') });
 const KIND_WORD = () => ({ weapon: t('ql.journal.weapon', 'Weapon'), armor: t('ql.journal.armour', 'Armour'), jewel: t('ql.journal.jewel', 'Jewellery') });
 
+/** A piece's hands, in the player's words: GetItemHands' answer (characters/equipTable.js), where itemHandsLine says
+ *  the piece is held at all. */
+const handsWords = (item) => (itemHandsLine(item) == null ? null
+  : getItemHands(item) === ITEM_HANDS.Both ? t('ql.journal.pieceTwoHanded', 'Two-handed') : t('ql.journal.pieceOneHanded', 'One-handed'));
+
 /**
- * A REWARD WAITING: its quest, how it ended, and its pieces as cards - each its name, tier, kind and magic, with its
- * Take. `take(index)` hands the piece over (the layer's take - it goes the reward's way, RW1's pile over the pack).
- * @param {Document} doc @param {any} offer the layer's offer @param {(index: number) => void} take
+ * AUDIT QUESTLINES UI-11: WHAT A PIECE IS, in one line - the enhanced pack card's own numbers (systems/item/itemInfo.js:
+ * the damage of a weapon or the armour of a piece, its hands, and its weight - the classic popup's `%kg`), never a second
+ * law; '' for a piece with no template (nothing to read).
+ * @param {any} item
  */
-export function qlOfferDetail(doc, offer, take) {
+export function pieceStatWords(item) {
+  if (!item || !Number.isInteger(item.templateIndex)) return '';
+  const damage = itemDamageLine(item), armour = itemArmourLine(item);
+  return [
+    damage != null ? t('ql.journal.pieceDamage', 'Damage {range}', { range: damage }) : null,
+    armour != null ? t('ql.journal.pieceArmour', 'Armour {mod}', { mod: armour }) : null,
+    handsWords(item),
+    t('ql.journal.pieceWeight', '{kg} kg', { kg: weightString(item) }),
+  ].filter(Boolean).join(' \u00b7 ');
+}
+
+/**
+ * A REWARD WAITING: its quest, how it ended, and its pieces as cards - each its name, tier, kind, what it is and its
+ * magic, with its Take. `take(index)` is each press of a Take (the window arms the first and hands the piece over on
+ * the second - the layer's take: it goes the reward's way, RW1's pile over the pack); `armed` the index whose Take is
+ * armed (AUDIT QUESTLINES UI-10: one press gave an unseen choice away - Abandon, Remove and Clear arm twice).
+ * @param {Document} doc @param {any} offer the layer's offer @param {(index: number) => void} take
+ * @param {{ armed?: number }} [opts]
+ */
+export function qlOfferDetail(doc, offer, take, { armed = -1 } = {}) {
   const box = el(doc, 'div', 'px-qoffer');
   box.append(el(doc, 'p', 'px-qobj-reward', t('ql.journal.offerLead', 'Choose one piece. The others are gone once you take it.')));
   const cards = el(doc, 'div', 'px-qoffer-cards');
@@ -120,10 +160,15 @@ export function qlOfferDetail(doc, offer, take) {
     card.append(el(doc, 'div', 'px-qpiece-name', p.item?.name ?? '?'));
     if (p.named) card.append(el(doc, 'div', 'px-qpiece-tier px-qpiece-named', t('ql.journal.named', 'This quest\u2019s own')));
     card.append(el(doc, 'div', 'px-qpiece-tier', `${tierWord[p.tier] ?? p.tier} · ${kindWord[p.kind] ?? p.kind}`));
+    const stat = pieceStatWords(p.item);   // AUDIT QUESTLINES UI-11
+    if (stat) card.append(el(doc, 'div', 'px-qpiece-stat', stat));
     const lines = el(doc, 'ul', 'px-qpiece-lines');
     (p.item?.affixes ?? []).forEach((_, j) => { const line = affixLine(p.item, j); if (line) lines.append(el(doc, 'li', null, line)); });
     if (lines.children.length) card.append(lines);
-    const b = el(doc, 'button', 'act', t('ql.journal.take', 'Take this'));
+    const b = el(doc, 'button', 'act', i === armed ? t('ql.journal.takeArmed', 'Click again to take') : t('ql.journal.take', 'Take this'));
+    // AUDIT QUESTLINES UI-10: each Take its own key - the redraw an arming press makes keeps the focus on THIS piece's
+    // Take (ui/domRepaint.js giveFocus finds it by its key), never the next reward's that stands where it stood
+    b.setAttribute('data-focus', `take:${offer.id}:${i}`);
     b.title = t('ql.journal.takeTitle', 'Take {name}: it is set at your feet and your pack opens over it', { name: p.item?.name ?? '' });
     b.onclick = () => take(i);
     card.append(b);
@@ -140,6 +185,9 @@ export const offerRowWords = (offer) => t('ql.journal.offerRow', 'Reward: {title
 export const lineStateWords = (state) => ({
   running: t('ql.journal.lineRunning', 'Under way'),
   waiting: t('ql.journal.lineWaiting', 'Waiting for its next step'),
+  // AUDIT QUESTLINES UI-7: a failed step offered again, and a step's quest set aside in the journal, each said
+  retry: t('ql.journal.lineRetry', 'Its last step failed: it will be offered again'),
+  shelved: t('ql.journal.lineShelved', 'Its step is set aside in your journal'),
   done: t('ql.journal.lineDone', 'Finished'),
   locked: t('ql.journal.lineLocked', 'Not begun'),
 })[state] ?? state;
@@ -175,24 +223,37 @@ export function qlLineDetail(doc, line, { titleText = (k) => k } = {}) {
     li.append(mark, words);
     const state = s.state === 'done' ? t('ql.journal.done', 'done') : s.state === 'current' ? t('ql.journal.stepNow', 'now') : null;
     if (state) li.append(el(doc, 'span', 'px-qobj-state', state));
+    // AUDIT QUESTLINES UI-7, ACTS-1: the mark is the service's answer - witnessed when it saw the deed, "not yet seen" when
+    // a done step's deed has not reached it; a step still to do says it needs a witness
     if (s.witnessed) {
-      const w = el(doc, 'span', 'px-qobj-tag', t('ql.journal.stepWitnessed', 'witnessed'));
-      w.title = t('ql.journal.stepWitnessedTitle', 'Done in an endgame place: the account service checks it against that place’s own record before it pays');
-      li.append(w);
+      const word = s.state !== 'done' ? t('ql.journal.stepWitnessNeeded', 'needs a witness')
+        : s.seen ? t('ql.journal.stepWitnessed', 'witnessed') : t('ql.journal.stepUnseen', 'not yet seen');
+      li.append(el(doc, 'span', `px-qobj-tag${s.state === 'done' && !s.seen ? ' failed' : ''}`, word));
     }
     list.append(li);
-    if (s.state === 'done' && s.outcome) list.append(el(doc, 'li', 'px-qline-said', s.outcome));
+    // UI-16: the last step's outcome is the line's - said once, under "How it ended"
+    const last = s === line.steps[line.steps.length - 1];
+    if (s.state === 'done' && s.outcome && !(last && line.outcome)) list.append(el(doc, 'li', 'px-qline-said', s.outcome));
+    // AUDIT QUESTLINES UI-19: a claim the service refused - its switch shut, a claim its law refuses - said under the step
+    // in the service's own words (net/accountClient.js), never swallowed (qlLineRunner.js rows: `refused`)
+    if (s.refused) list.append(el(doc, 'li', 'px-qline-said failed', accountRefusalText(s.refused)));
   }
   box.append(list);
+  // UI-12: what a witness is, said once on the page (a hover is no press, and a pad has none) - and what "not yet seen" asks
+  if ((line.steps ?? []).some((s) => s.witnessed)) box.append(el(doc, 'p', 'px-qline-what', t('ql.journal.stepWitnessedTitle', 'Done in an endgame place: the account service checks it against that place’s own record before it pays')));
+  const unseen = (line.steps ?? []).some((s) => s.unseen);
+  if (unseen) box.append(el(doc, 'p', 'px-qobj-reward', t('ql.journal.stepUnseenWhy', 'Not yet seen: the account service has no record of that deed since this questline began. Do it again and it will count.')));
   if (line.outcome) {
     box.append(divider(doc, t('ql.journal.ended', 'How it ended')));
     box.append(el(doc, 'p', 'px-qobj-outcome', line.outcome));
   }
   if (line.honour) {
     const words = titleText(line.honour);
-    box.append(el(doc, 'p', 'px-qobj-reward', line.state === 'done'
-      ? t('ql.journal.lineTitleEarned', 'This questline earns the title {title}, held by your account.', { title: words })
-      : t('ql.journal.lineTitle', 'Finish it to earn the title {title}, held by your account.', { title: words })));
+    // ACTS-1: a finished line's title is earned only once the service has seen its every witnessed deed
+    box.append(el(doc, 'p', 'px-qobj-reward', line.state !== 'done'
+      ? t('ql.journal.lineTitle', 'Finish it to earn the title {title}, held by your account.', { title: words })
+      : unseen ? t('ql.journal.lineTitleWaits', 'The title {title} waits until the account service has seen every deed this questline asks.', { title: words })
+        : t('ql.journal.lineTitleEarned', 'This questline earns the title {title}, held by your account.', { title: words })));
   }
   return box;
 }
@@ -204,7 +265,7 @@ export function qlLineDetail(doc, line, { titleText = (k) => k } = {}) {
  */
 export function qlLadderDetail(doc, ladder) {
   const box = el(doc, 'div', 'px-qline');
-  box.append(el(doc, 'p', 'px-qline-what', t('ql.journal.ladderWhat', 'A guild\u2019s own quests, by the rank that opens them. Each rank is a promotion; a quest marked with a choice ends more than one way.')));
+  box.append(el(doc, 'p', 'px-qline-what', t('ql.journal.ladderLead', 'A guild\u2019s own quests, by the rank that opens them. Each rank is a promotion.')));
   box.append(el(doc, 'p', 'px-qline-state running', t('ql.journal.ladderRank', 'Your rank: {title}', { title: ladder.rankTitle })));
   for (const rung of ladder.rungs ?? []) {
     box.append(divider(doc, rung.reached ? rung.title : t('ql.journal.ladderAhead', '{title} (not yet)', { title: rung.title })));
@@ -215,14 +276,15 @@ export function qlLadderDetail(doc, ladder) {
       mark.setAttribute('aria-hidden', 'true');
       li.append(mark, el(doc, 'span', 'px-qobj-text', q.title ?? q.name));
       if (q.done) li.append(el(doc, 'span', 'px-qobj-state', t('ql.journal.done', 'done')));
-      if (q.flagship) {
-        const tag = el(doc, 'span', 'px-qobj-tag', t('ql.journal.ladderChoice', 'a choice'));
-        tag.title = t('ql.journal.ladderChoiceTitle', 'This quest asks you to choose, and ends differently for each choice');
-        li.append(tag);
-      }
+      if (q.flagship) li.append(el(doc, 'span', 'px-qobj-tag', t('ql.journal.ladderChoice', 'a choice')));
       list.append(li);
     }
     box.append(list);
+  }
+  // AUDIT QUESTLINES UI-12: what the "a choice" mark means, said once on the page where one stands (a hover is no press, and
+  // a pad has none) - as the line's page says what "witnessed" means
+  if ((ladder.rungs ?? []).some((r) => (r.quests ?? []).some((q) => q.flagship))) {
+    box.append(el(doc, 'p', 'px-qline-what', t('ql.journal.ladderChoiceWhy', 'A quest marked \u201c{tag}\u201d asks you to choose, and ends differently for each choice.', { tag: t('ql.journal.ladderChoice', 'a choice') })));
   }
   return box;
 }

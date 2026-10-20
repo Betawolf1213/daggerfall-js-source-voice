@@ -225,7 +225,7 @@ export function useForagingTool(item, collection, { entity } = {}) {
     case FT.Basket: {
       const find = basketFind(basketDraw({ intelligence: s.intelligence, climate: w.climate, monthValue: _host?.monthValue?.() ?? 0 }, _random), cc);
       give(entity, find.templateIndex, find.count);
-      if (find.count > 0) noteAct('herb-gathered');   // QL11: a plant gathered - the Basket's find in the pack
+      if (find.count > 0 && find.templateIndex !== FT.Egg) noteAct('herb-gathered');   // QL11: a plant gathered - the Basket's find in the pack; AUDIT QUESTLINES ACTS-10: an egg is no plant (QLIP01: "Gather three plants")
       text = find.message;
       started = startQuest(TOOL_QUESTS[FT.Basket]);
       break;

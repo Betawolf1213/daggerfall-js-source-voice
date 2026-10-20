@@ -22764,9 +22764,19 @@
   "tr": "29132361b307",
   "by": "claude-in-session"
  },
+ "ql.journal.lineRetry": {
+  "en": "25cf82febee7",
+  "tr": "b637a3e9315e",
+  "by": "claude-in-session"
+ },
  "ql.journal.lineRunning": {
   "en": "1f73cdd2da46",
   "tr": "5ca3739c28b7",
+  "by": "claude-in-session"
+ },
+ "ql.journal.lineShelved": {
+  "en": "cd3732439f18",
+  "tr": "770a0a4c7a25",
   "by": "claude-in-session"
  },
  "ql.journal.lineSteps": {
@@ -22787,6 +22797,11 @@
  "ql.journal.lineTitleEarned": {
   "en": "44e3222fc4e0",
   "tr": "bb4b50668260",
+  "by": "claude-in-session"
+ },
+ "ql.journal.lineTitleWaits": {
+  "en": "3efc97e7e1c8",
+  "tr": "0048049b681c",
   "by": "claude-in-session"
  },
  "ql.journal.lineWaiting": {
@@ -22854,6 +22869,21 @@
   "tr": "1e12c874eb7f",
   "by": "claude-in-session"
  },
+ "ql.journal.stepUnseen": {
+  "en": "427d039177eb",
+  "tr": "89b8c96f1f0b",
+  "by": "claude-in-session"
+ },
+ "ql.journal.stepUnseenWhy": {
+  "en": "cf121fb52548",
+  "tr": "1a0562377a4b",
+  "by": "claude-in-session"
+ },
+ "ql.journal.stepWitnessNeeded": {
+  "en": "d85cea6388bf",
+  "tr": "7d042b0e7f4e",
+  "by": "claude-in-session"
+ },
  "ql.journal.stepWitnessed": {
   "en": "a23160a83a36",
   "tr": "58e253d9ba74",
@@ -22904,6 +22934,16 @@
   "tr": "a1f42da0ea4b",
   "by": "claude-in-session"
  },
+ "ql.line.continuesAccount": {
+  "en": "1273ecb0b1fb",
+  "tr": "a8a487b63a4d",
+  "by": "claude-in-session"
+ },
+ "ql.line.continuesOnline": {
+  "en": "1682ac8cab38",
+  "tr": "ff98277d0ab8",
+  "by": "claude-in-session"
+ },
  "ql.line.covensHoard": {
   "en": "fc8c73b3a5d3",
   "tr": "9e3af847452f",
@@ -22922,6 +22962,11 @@
  "ql.line.honourKey": {
   "en": "3188ef64faf8",
   "tr": "f2b914a86396",
+  "by": "claude-in-session"
+ },
+ "ql.line.honourKeyHeld": {
+  "en": "d0e4f82c1c0e",
+  "tr": "facb8ffbebba",
   "by": "claude-in-session"
  },
  "ql.line.honourTitle": {
@@ -23064,6 +23109,26 @@
   "tr": "4e67335b4bc4",
   "by": "claude-in-session"
  },
+ "ql.line.needs.kingsGambit": {
+  "en": "515ed4cebbdb",
+  "tr": "681b1a24fcc3",
+  "by": "claude-in-session"
+ },
+ "ql.line.needs.lootRarity": {
+  "en": "62a10cb22b29",
+  "tr": "a5d691b71fa5",
+  "by": "claude-in-session"
+ },
+ "ql.line.needs.naval": {
+  "en": "08d75a63f45e",
+  "tr": "5431c20e97b4",
+  "by": "claude-in-session"
+ },
+ "ql.line.needs.renown": {
+  "en": "7f53d153f4fe",
+  "tr": "a90f27c51ea3",
+  "by": "claude-in-session"
+ },
  "ql.line.oldCoil": {
   "en": "8a6c94f071be",
   "tr": "56f267c1cb93",
@@ -23076,12 +23141,17 @@
  },
  "ql.line.oldCoil.lead": {
   "en": "3f645c91ef76",
-  "tr": "7f45b163cce1",
+  "tr": "2e3c36491443",
   "by": "claude-in-session"
  },
  "ql.line.opens": {
   "en": "e45f1718d5b7",
   "tr": "35ab998c4668",
+  "by": "claude-in-session"
+ },
+ "ql.line.opensAccount": {
+  "en": "5979463ab29f",
+  "tr": "9d4ec0877920",
   "by": "claude-in-session"
  },
  "ql.line.opensAfter": {
@@ -23099,6 +23169,11 @@
   "tr": "2dbc2fd2358e",
   "by": "claude-in-session"
  },
+ "ql.line.stalled": {
+  "en": "c95d7bec1a17",
+  "tr": "7d0938b6eb7a",
+  "by": "claude-in-session"
+ },
  "ql.line.weirRoad": {
   "en": "4b4d896eeedc",
   "tr": "32cf08734e74",
@@ -23112,6 +23187,16 @@
  "ql.line.weirRoad.lead": {
   "en": "c1d3a2b041dd",
   "tr": "87c93b104b48",
+  "by": "claude-in-session"
+ },
+ "ql.reward.dropped": {
+  "en": "dc725594a4f0",
+  "tr": "00a08ae3234c",
+  "by": "claude-in-session"
+ },
+ "ql.reward.goldSettled": {
+  "en": "a99c7d9bc84e",
+  "tr": "487e4dac58ed",
   "by": "claude-in-session"
  },
  "ql.reward.waiting": {
@@ -23312,6 +23397,16 @@
  "quest.repair.elsewhere": {
   "en": "7cdb45177ed5",
   "tr": "7a5dcbcbe019",
+  "by": "claude-in-session"
+ },
+ "quest.share.questline": {
+  "en": "0e52880d3f25",
+  "tr": "44eb682a3eff",
+  "by": "claude-in-session"
+ },
+ "quest.share.questline.receiver": {
+  "en": "7eec42ec9002",
+  "tr": "7eec42ec9002",
   "by": "claude-in-session"
  },
  "realm.held.until": {

@@ -3,7 +3,8 @@
 // holds no decision of its own is given one where its reward is handed over: the questor asks how the player will be
 // paid, and the two answers end it differently (the sheet's outcomes - its own pay, standing, legal). The kit reads the
 // reward task's text exactly as the game reads the script (the port's patches first - test/qlSources.mjs baseText) and
-// writes the three patches (systems/questlines/qlPatches.js), each checked to occur exactly once before it is written:
+// writes the three patches (systems/questlines/qlPatches.js), each checked to occur exactly once in that text before it
+// is written (AUDIT QUESTLINES DOC-32: the first - the reward task's header and trigger - is counted too):
 //
 //   1. the reward task waits for the first answer - its trigger line becomes `when _qlkeep_`;
 //   2. the question and the two answers, messages QL_MESSAGE_BASE.. before `QBN:` - the question wrapped to ASK_ROW
@@ -30,6 +31,13 @@
 //                                         print the patches (and, --write, merge them into patches/<family>.json)
 //
 // A reward task whose trigger is not one `when` line is refused - that quest's branch is written by hand.
+//
+// A FILED BRANCH IS NOT ALWAYS THE KIT'S. Of the 17 the kit cut (Questlines-Arc.md section 2.3, pattern C), only
+// M0B50Y09's is pinned to be exactly what the kit cuts today (test/systems/questlines/ql4_branches.test.js); the others
+// were edited by hand after the kit - B0B40Y09, B0B70Y16, R0C11Y03, P0A01L00 and P0B10L08 from the start (DOC-32), and in
+// AUDIT QUESTLINES every one's words re-wrapped and reworded to the classic skin (BRANCH-8, BRANCH-16), the four knights'
+// "take it" given its gold (BRANCH-5) and the refusals whose box was the story given their own words (BRANCH-6). The
+// pins hold every branch to what it must do, whoever cut it (ql1_sheets.test.js, ql4_branches.test.js).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isMain } from './lib/isMain.mjs';
@@ -94,6 +102,7 @@ export function handinPatches(quest, task, { ask, keep, alt }, { readers = 'refu
   const m = head.exec(text);
   if (!m) throw new Error(`${quest}: no "${task} task:" whose first line is a "when" - write this branch by hand`);
   const header = m[2], whenLine = m[3];
+  if (count(text, `${header}${whenLine}\n`) !== 1) throw new Error(`${quest}: "${task} task:" and its trigger are not on lines of their own once - write this branch by hand`);
   const cond = whenLine.replace(/^\s*when\s+/, '').trimEnd();
   // the task's body after its trigger, up to the next task header or blank line
   const start = m.index + m[0].length;

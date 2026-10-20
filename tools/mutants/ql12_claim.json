@@ -1,30 +1,23 @@
 [
   {
-    "name": "QL12-rite-after-not-at",
+    "name": "QL12-window-at-the-opening",
     "file": "server-account/src/questlines.js",
-    "old": "rite: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.at >= ${SINCE}",
-    "new": "rite: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.at > ${SINCE}",
+    "old": "const WINDOW = (x) => `${x}.at >= ${SINCE}",
+    "new": "const WINDOW = (x) => `${x}.at > ${SINCE}",
     "tests": [
       "test/server/ql12_claim.test.js"
-    ]
+    ],
+    "why": "AUDIT QUESTLINES: a receipt written at the line's opening's own second counts"
   },
   {
-    "name": "QL12-breach-after-not-at",
+    "name": "QL12-window-floor-ignored",
     "file": "server-account/src/questlines.js",
-    "old": "breach: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.at >= ${SINCE}",
-    "new": "breach: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.at > ${SINCE}",
+    "old": "${x}.at >= ${SINCE} AND ${x}.at < ${UNTIL}",
+    "new": "${x}.at < ${UNTIL}",
     "tests": [
       "test/server/ql12_claim.test.js"
-    ]
-  },
-  {
-    "name": "QL12-breach-opening-ignored",
-    "file": "server-account/src/questlines.js",
-    "old": "breach: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.at >= ${SINCE} AND",
-    "new": "breach: `EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND",
-    "tests": [
-      "test/server/ql12_claim.test.js"
-    ]
+    ],
+    "why": "a receipt from before the line's first opening witnesses nothing"
   },
   {
     "name": "QL12-rite-no-fighter",
@@ -74,8 +67,8 @@
   {
     "name": "QL12-redoubts-two",
     "file": "server-account/src/questlines.js",
-    "old": "AND ${NOT_REHEARSAL}) >= 3`",
-    "new": "AND ${NOT_REHEARSAL}) >= 2`",
+    "old": "ORDER BY r.at, r.b, r.w LIMIT 1 OFFSET 2)",
+    "new": "ORDER BY r.at, r.b, r.w LIMIT 1 OFFSET 1)",
     "tests": [
       "test/server/ql12_claim.test.js"
     ]
@@ -92,8 +85,8 @@
   {
     "name": "QL12-hour-reads-serpents",
     "file": "server-account/src/questlines.js",
-    "old": "hour: `EXISTS (SELECT 1 FROM sd_kills d",
-    "new": "hour: `EXISTS (SELECT 1 FROM serpent_kills d",
+    "old": "hour: `(SELECT MIN(d.at) FROM sd_kills d",
+    "new": "hour: `(SELECT MIN(d.at) FROM serpent_kills d",
     "tests": [
       "test/server/ql12_claim.test.js"
     ]
@@ -101,8 +94,8 @@
   {
     "name": "QL12-serpent-reads-hours",
     "file": "server-account/src/questlines.js",
-    "old": "serpent: `EXISTS (SELECT 1 FROM serpent_kills z",
-    "new": "serpent: `EXISTS (SELECT 1 FROM sd_kills z",
+    "old": "serpent: `(SELECT MIN(z.at) FROM serpent_kills z",
+    "new": "serpent: `(SELECT MIN(z.at) FROM sd_kills z",
     "tests": [
       "test/server/ql12_claim.test.js"
     ]
@@ -146,11 +139,12 @@
   {
     "name": "QL12-key-any-choice",
     "file": "server-account/src/questlines.js",
-    "old": " AND done_at IS NOT NULL AND choice = ?4)",
-    "new": " AND done_at IS NOT NULL)",
+    "old": "const keyAt = key && key.at === step && choice === key.choice ? statements.length : -1;",
+    "new": "const keyAt = key && key.at === step ? statements.length : -1;",
     "tests": [
       "test/server/ql12_claim.test.js"
-    ]
+    ],
+    "why": "a seal never pays the key - this end's own choice is read"
   },
   {
     "name": "QL12-key-no-balance",
@@ -164,11 +158,12 @@
   {
     "name": "QL12-after-gate-open",
     "file": "server-account/src/questlines.js",
-    "old": ": after ? doneSql(5, 6) : '0';",
+    "old": ": after ? wholeSql(after) : '0';",
     "new": ": after ? '1' : '0';",
     "tests": [
       "test/server/ql12_claim.test.js"
-    ]
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-4: the Covens' Hoard's step behind the Burning Doors witnessed whole"
   },
   {
     "name": "QL12-choice-never-kept",
@@ -218,11 +213,12 @@
   {
     "name": "QL12-no-opening",
     "file": "server-account/src/questlines.js",
-    "old": "  if (Number(open?.meta?.changes ?? 0) > 0) return { opened: true };\n",
-    "new": "",
+    "old": "  if (phase === 'open') { await opening.run(); return { opened: true }; }",
+    "new": "  if (phase === 'open') { return { opened: true }; }",
     "tests": [
       "test/server/ql12_claim.test.js"
-    ]
+    ],
+    "why": "an `open` writes the opening - the line's window"
   },
   {
     "name": "QL12-titles-held-by-a-guest",
@@ -252,14 +248,43 @@
     ]
   },
   {
-    "name": "QL12-key-after-gate-twice",
+    "name": "QL12-guest-open-refused",
     "file": "server-account/src/questlines.js",
-    "old": "${after ? ` AND ${doneSql(5, 6)}` : ''}",
-    "new": "${after ? ' AND ?5 IS NOT NULL AND ?6 IS NOT NULL' : ''}",
+    "old": "  if (phase === 'open') { await opening.run(); return { opened: true }; }\n  if (!qlStepClaimed(line, step)) return { why: 'unpaid' };\n  if (!player?.handle) return { why: 'guest' };",
+    "new": "  if (!player?.handle) return { why: 'guest' };\n  if (phase === 'open') { await opening.run(); return { opened: true }; }\n  if (!qlStepClaimed(line, step)) return { why: 'unpaid' };",
     "tests": [
       "test/server/ql12_claim.test.js"
     ],
-    "equivalent": true,
-    "why": "belt and braces: the key's step is done only once its line's `after` held (the done statement's own witness), so the key's second reading of the after-gate cannot change the answer while the law's key step has no witness of its own"
+    "why": "AUDIT QUESTLINES SERVICE-1: a guest's opening is written"
+  },
+  {
+    "name": "QL12-one-receipt-two-steps",
+    "file": "server-account/src/questlines.js",
+    "old": "COALESCE((SELECT MAX(p.seen_at) + 1 FROM ql_steps p WHERE p.account = ?1 AND p.line = ?2 AND p.step < ?3), 0)",
+    "new": "0",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-5: newer than the receipt that witnessed an earlier step"
+  },
+  {
+    "name": "QL12-order-ceiling",
+    "file": "server-account/src/questlines.js",
+    "old": "${x}.at >= ${SINCE} AND ${x}.at < ${UNTIL}",
+    "new": "${x}.at >= ${SINCE}",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-5: older than the receipt that witnessed a later step"
+  },
+  {
+    "name": "QL12-step-window",
+    "file": "server-account/src/questlines.js",
+    "old": "(SELECT MIN(o.opened_at) FROM ql_steps o WHERE o.account = ?1 AND o.line = ?2)",
+    "new": "(SELECT MIN(o.opened_at) FROM ql_steps o WHERE o.account = ?1 AND o.line = ?2 AND o.step = ?3)",
+    "tests": [
+      "test/server/ql12_claim.test.js"
+    ],
+    "why": "AUDIT QUESTLINES SERVICE-2: the LINE's first opening is the window, never the step's own"
   }
 ]

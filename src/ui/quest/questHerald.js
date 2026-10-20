@@ -141,7 +141,8 @@ export class QuestHerald {
         type,
         title: event.title ?? was?.title ?? '',
         main: !!event.main,
-        line: lineOf(type, event, view),
+        // AUDIT QUESTLINES UI-2: a kept "Objective done" keeps its words - the entry the script writes a tick later is not one
+        line: keeps && type === 'objective' ? was.line : lineOf(type, event, view),
         left: HERALD_SECONDS,
         said: false,   // AUDIT GUIDE H3: spoken once, whole, on the first frame it shows - a merge is new words
       };

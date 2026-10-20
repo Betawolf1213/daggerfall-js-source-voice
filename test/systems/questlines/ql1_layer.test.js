@@ -11,6 +11,7 @@ import { loadQuestTables } from '../../../src/systems/quest/tables.js';
 import { createQuestBridge } from '../../../src/scenes/quest/questBridge.js';
 import { QuestMachine } from '../../../src/systems/quest/machine.js';
 import { setPref } from '../../../src/systems/uiPrefs.js';
+import { setLocale, BASE_LOCALE } from '../../../src/systems/textManager.js';
 import {
   QUESTLINES_PREF, QL_STAMP, questlinesOn, startStamp, isStamped, freshState, readState, writeState, holds, readObjectives,
   observe, outcomeNow, fallbackOutcome, questTierOf, rankTier, reputationTier, levelTier, symName,
@@ -21,6 +22,8 @@ import { FEATURES } from '../../../src/systems/features.js';
 import { FEATURE_PREF_ONLINE } from '../../../src/systems/features.js';
 import { questSource, loadTables as loadPackTables } from '../../qlSources.mjs';   // AUDIT QUESTLINES LAW-6: the pack as the game reads it
 import { goldStack } from '../../../src/systems/inventory.js';
+import { createQuestlines, OFFERS_MAX } from '../../../src/systems/questlines/qlLayer.js';
+import { filedOutcome } from '../../../src/systems/notebook.js';   // AUDIT QUESTLINES UI-5: the filed outcome, a side record
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');
@@ -257,9 +260,11 @@ test('QL1/QL3 the bridge makes the layer: M0B00Y06 stamped at its start, its obj
   assert.equal(rewards.length, 1, 'the script\'s gold reward, through RW1\'s door');
   assert.equal(quest.ql.outcome, 'done', 'settled at its own `end quest` - not at the reward: a quest may pay before it ends (M0B00Y16)');
   assert.equal(offers.length, 1, 'one choice of gear, at the end');
-  // filed with the notebook's entry: how it ended
-  const filed = bridge.notebook.getFinishedQuests().at(-1).map((tok) => tok.text).join(' ');
-  assert.match(filed, /Outcome: The beast is dead and the citizen's house is safe\./);
+  // filed with the notebook's entry: how it ended - AUDIT QUESTLINES UI-5 (PIN MOVED): as the entry's side record, never a
+  // line of DFU's classic logbook (the enhanced archive draws it)
+  const entry = bridge.notebook.getFinishedQuests().at(-1);
+  assert.equal(filedOutcome(entry), 'The beast is dead and the citizen\'s house is safe.');
+  assert.doesNotMatch(entry.map((tok) => tok.text).join(' '), /Outcome|citizen's house is safe/);
   for (let i = 0; i < 5; i++) bridge.machine.tick();
   assert.equal(quest.questTombstoned, true);
   assert.equal(offers.length, 1, 'once');
@@ -282,6 +287,64 @@ test('QL1/QL3 the bridge makes the layer: M0B00Y06 stamped at its start, its obj
   assert.equal(taken?.group, 'Armor');
   assert.equal(b2.questlines.offers().length, 0, 'taken once');
   assert.equal(b2.questlines.take(offer.id, 0), null);
+});
+
+test('QL1/QL3 the bridge\'s doors (AUDIT QUESTLINES REWARD-13, REWARD-8, LAW-11): the layer is handed the door a taken piece goes through only where the host has one - a doorless host lists and cuts nothing; an offer the cap cuts is said in the HUD; the lens\'s look (a tick) reads no line or ladder (mutants: the bridge\'s door always handed; the dropped offer unsaid; the lens reads the windows\' rows)', () => {
+  setPref(QUESTLINES_PREF, true);
+  const hud = [];
+  const bridge = makeBridge({ offerReward: () => {}, addHUDText: (s) => hud.push(s) });
+  const end = (uid) => {
+    const quest = bridge.machine.startQuestByName('M0B00Y06', 0);
+    quest.getTask({ name: 'mondead' }).start();
+    quest.getTask({ name: 'qgclicked' }).start();
+    bridge.machine.tick();
+    return quest;
+  };
+  end();
+  assert.equal(bridge.questlines.offers().length, 1);
+  const snap = bridge.snapshot();
+  const doorless = makeBridge();
+  doorless.restore(snap);
+  assert.deepEqual(doorless.questlines.offers(), [], 'no door: nothing listed to take');
+  assert.equal(doorless.questlines.take(snap.questlines.offers[0].id, 0), null, 'nor taken');
+  assert.equal(doorless.snapshot().questlines.offers.length, 1, 'kept in the save for a host that has one');
+  // the cap: twelve waiting, a thirteenth cuts the oldest and says so
+  const first = snap.questlines.offers[0];
+  const full = makeBridge({ offerReward: () => {}, addHUDText: (s) => hud.push(s) });
+  full.restore({ ...snap, questlines: { ...snap.questlines, offers: Array.from({ length: OFFERS_MAX }, (_, i) => ({ ...structuredClone(first), id: i + 1 })), nextOffer: OFFERS_MAX + 1 } });
+  hud.length = 0;
+  const quest = full.machine.startQuestByName('M0B00Y06', 0);
+  quest.getTask({ name: 'mondead' }).start();
+  quest.getTask({ name: 'qgclicked' }).start();
+  full.machine.tick();
+  assert.equal(full.questlines.offers().length, OFFERS_MAX);
+  assert.ok(hud.some((s) => /Too many rewards wait: the one for .+ is gone\./.test(s)), `said: ${hud.join(' | ')}`);
+  // the lens's look reads the walk with no line or ladder rows; the windows' walk has them
+  let windows = null;
+  const walk = full.questLog;
+  full.questLog = (o) => { windows = o?.windows ?? true; return walk.call(full, o); };
+  full.lens.look();
+  assert.equal(windows, false, 'a look a tick asks for no window rows');
+  assert.ok(full.questLog().lines.length > 0, 'the windows\' walk lists the lines');
+  assert.deepEqual(walk.call(full, { windows: false }).lines, []);
+});
+
+test('QL12 the ladders\' titles are kept while the text stands and read again when it moves - a locale switched (AUDIT QUESTLINES UI-19) (mutants: the titles kept for the page\'s life)', () => {
+  setPref(QUESTLINES_PREF, true);
+  let renamed = false;
+  const lines = (name) => (renamed && name === 'M0B00Y06' ? questLines(name).map((l) => (/^\s*DisplayName:/i.test(l) ? 'DisplayName: The Renamed Beast' : l)) : questLines(name));
+  const bridge = makeBridge({
+    data: { readListTable: (name) => { try { return read(join(VENDOR, 'Tables', `QuestList-${name}.txt`)); } catch { return null; } }, getQuestSourceLines: lines },
+    playerEntity: { name: 'Hero', level: 8, gender: 'male', career: { weaponArmorShieldsBitfield: 0, forbiddenMaterialsFlags: 0 }, skills: new Array(35).fill(10),
+      guildMemberships: { mortal: { 41: { guild: 'FightersGuild', rank: 1 } }, vampire: {} } },
+  });
+  const title = () => bridge.questLog().ladders.find((l) => l.key === 'FightersGuild').rungs.flatMap((r) => r.quests).find((q) => q.name === 'M0B00Y06').title;
+  const was = title();
+  assert.notEqual(was, 'The Renamed Beast');
+  renamed = true;
+  assert.equal(title(), was, 'kept while the text stands');
+  setLocale('de');
+  try { assert.equal(title(), 'The Renamed Beast', 'a locale switched reads it again'); } finally { setLocale(BASE_LOCALE); }
 });
 
 test('QL1 the bridge leaves a quest begun with the switch off as DFU\'s: no objectives, no reward added', () => {
@@ -331,7 +394,22 @@ function packBridge(over = {}) {
   return { bridge, rec, start, tick };
 }
 
-test('AUDIT QUESTLINES LAW-6: Nocturnal\'s summoning (40C00Y00) paid and ended an hour later settles `done` - the catch-all yields to DFU\'s word that it succeeded (mutants: the catch-all yield deleted)', () => {
+test('AUDIT QUESTLINES LAW-6: a success whose own row\'s binding no longer holds as it ends settles its success, never the catch-all failure - the catch-all yields to DFU\'s word that it succeeded (mutants: the catch-all yield deleted)', () => {
+  const layer = createQuestlines({ machine: { quests: new Map() }, ctx: {} });
+  const quest = (questSuccess) => ({
+    questName: 'M0B00Y06', uid: questSuccess ? 1 : 2, questStartTime: 0, questComplete: false, questSuccess, hooks: {},
+    tasks: new Map([['S.02', { getTriggerValue: () => false }]]), resources: new Map(), activeLogMessages: new Map(),
+    ql: { ...freshState(), paid: questSuccess },
+  });
+  const paid = quest(true);
+  layer.ending(paid);   // its reward task's `_S.02_` cleared again before `end quest`: only `{ ended: true }` holds
+  assert.equal(paid.ql.outcome, 'done', 'paid: its success');
+  const lapsed = quest(false);
+  layer.ending(lapsed);
+  assert.equal(lapsed.ql.outcome, 'failed', 'unpaid: the catch-all');
+});
+
+test('AUDIT QUESTLINES LAW-6: Nocturnal\'s summoning (40C00Y00) paid and ended an hour later settles `done`, never "lapsed unfulfilled"', () => {
   const { rec, start, tick } = packBridge();
   const q = start('40C00Y00');
   tick(2);
@@ -364,7 +442,10 @@ test('AUDIT QUESTLINES LAW-6: M0B00Y06 whose time runs out inside its hand-in\'s
   q.endQuest = () => { ends++; return end(); };
   tick(1);
   q.getTask({ name: 'mondead' }).start(); q.getTask({ name: 'qgclicked' }).start();
-  tick(1);   // the hand-in: gold, `end quest`
+  // the hand-in: gold, `end quest` - a tick, or two where the script's last task (the tiger, picked one in four) said its
+  // line and broke the next one whole (Quest.cs reads the break before each task)
+  for (let i = 0; i < 2 && !q.ql.paid; i++) tick(1);
+  assert.equal(q.ql.paid, true);
   const clock = q.resources.get('2dung');
   clock.remainingTimeInSeconds = 0; clock.clockEnabled = true;   // the time limit runs out inside the grace: its own `end quest`
   tick(5);

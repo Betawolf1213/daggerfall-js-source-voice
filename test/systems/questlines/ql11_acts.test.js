@@ -60,6 +60,7 @@ import * as RVN from '../../../src/systems/revenant/revenant.js';
 import { beginYield } from '../../../src/systems/revenant/revenantFate.js';
 import { MOBILE_TYPES } from '../../../src/characters/mobile/mobileTypes.js';
 import { sea } from '../../navalSea.mjs';
+import { hullBoxOf } from '../../../src/scenes/naval/navalHost.js';
 import { navalHitData, NAVAL_HIT_MAX } from '../../../src/systems/naval/navalWire.js';
 import { SHIP_STATES, STRUCK_AT } from '../../../src/systems/naval/navalDamage.js';
 import { setPref, _resetForTests } from '../../../src/systems/uiPrefs.js';
@@ -819,7 +820,7 @@ test('QL11 fish-caught (scenes/fishHost.js, the net\'s answered haul): every hau
   } finally { done(); }
 });
 
-test('QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingInstall.js useForagingTool, offline - Foraging\'s own): the Wood-Axe\'s bundles, the net\'s catch, the Basket\'s find, in the pack - once each; an empty swing, an empty net, an empty basket, none (mutants: ACTS M14 an empty net counted; an axe that gathered nothing counted; an empty basket counted)', () => {
+test('QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingInstall.js useForagingTool, offline - Foraging\'s own): the Wood-Axe\'s bundles, the net\'s catch, the Basket\'s find, in the pack - once each; an empty swing, an empty net, an empty basket, none (mutants: ACTS M14 an empty net counted; an axe that gathered nothing counted; an empty basket counted; ACTS-10 an egg counted a plant)', () => {
   const OPEN = { inside: false, insideDungeon: false, insideCastle: false, locationType: LOCATION_TYPES.None, inLocationRect: false, hour: 12, climate: CLIMATES.Woodlands, region: 17, enemiesNear: false, carriedWeight: 10, maxEncumbrance: 100, swimming: false, exteriorWater: 'None' };
   const WET = { ...OPEN, exteriorWater: 'WaterWalking' };
   // test/systems/forage2_tools.test.js: the draws, each the index wanted of a list of that length
@@ -841,7 +842,35 @@ test('QL11 wood-chopped, fish-caught, herb-gathered (systems/foraging/foragingIn
     assert.deepEqual(used(FT.FishingNet, WET, [0, 6]), [0, []], 'an empty net');
     assert.deepEqual(used(FT.Basket, OPEN, [3, 6], [1, 5]), [2, ['herb-gathered']]);
     assert.deepEqual(used(FT.Basket, OPEN, [0, 6], [0, 5]), [0, []], 'nothing to forage');
+    assert.deepEqual(used(FT.Basket, OPEN, [3, 6], [3, 5]), [2, []], 'AUDIT QUESTLINES ACTS-10: eggs in the basket - no plant');
   } finally { done(); _setForagingRandomForTests(null); setForagingHost(null); modsOff(); }
+});
+
+test('QL11 ship-struck online, the striker (scenes/naval/navalHost.js applyWord, AUDIT CC-E4; AUDIT QUESTLINES ACTS-11): a ship another captain stands, struck in her stander\'s word within SINK_CREDIT_S of my blow - mine, once; one I never struck, none (mutants: the act left out of the word\'s arm)', async () => {
+  const h = await sea({ hull: 2, online: { id: () => 'b-player', peers: () => [{ id: 'a-player', feet: [10, 0, 0] }], sendHit: () => true } });
+  const frames = (s) => { for (let t = 0; t < s - 1e-9; t += 0.1) h.host.frame(0.1); };
+  const cls = ['pirateSloop', 'pirateBrig', 'pirateGalley', 'pirateFlagship', 'merchantCoaster', 'merchantGalleon'].indexOf('merchantGalleon');
+  // test/systems/naval/nav_h_host.test.js's word: her number, class, place, heading, hull and state (WIRE_STATES: 1 struck)
+  const word = (n, z, state = 0, hull = 100) => ({ s: [[n, cls, 0, 70, 0, z, Math.PI / 2, 0, 1, hull, 100, 100, state, 0, 999, 0]], v: [], b: [] });
+  h.host.applyWord('a-player', word(4, 0), (p) => p);
+  const e = h.host._sea.get('a-player:4');
+  frames(0.3);
+  assert.ok(e?.boat, 'her puppet, on her hull');
+  const box = hullBoxOf(e.boat, h.pool.models);
+  h.host._shots.fireVolley({ id: 'acts11', shooter: 'me:42', launches: [{ gun: 'long', index: 0, p0: [box.c[0] - 40, 4, box.c[2]], v0: [80, 0.4, 0], delay: 0 }] });
+  frames(1);
+  assert.ok(Number.isFinite(e.myBlowAt), 'my blow on her');
+  listen();
+  try {
+    h.host.applyWord('a-player', word(4, 0, 1, 20), (p) => p);   // she strikes in a-player's world
+    assert.deepEqual(heard, [['ship-struck', 1]], 'mine, once');
+    h.host.applyWord('a-player', word(4, 0, 1, 20), (p) => p);
+    assert.deepEqual(heard, [['ship-struck', 1]], 'the same word again: nothing new');
+    h.host.applyWord('a-player', word(5, 400), (p) => p);
+    frames(0.3);
+    h.host.applyWord('a-player', word(5, 400, 1, 20), (p) => p);
+    assert.deepEqual(heard, [['ship-struck', 1]], 'one I never struck');
+  } finally { done(); }
 });
 
 test('QL11 revenant-knelt (systems/revenant/revenantFate.js beginYield): one of mine, beaten, its record answering the yield - once; a body whose record is none of mine (a stranger\'s, a forgotten one), none (mutants: ACTS M15 noted before the record answers)', () => {

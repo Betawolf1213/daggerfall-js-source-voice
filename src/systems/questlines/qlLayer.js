@@ -14,8 +14,7 @@ import { startStamp, isStamped, observe, readObjectives, outcomeOf, outcomeNow, 
 import { sheetFor } from './qlSheets.js';
 import { scaleGold, goldFactor, goldStillOwed, rewardTier, payProfileOf, rollRewardChoice, rewardSeed, standingMovesOf } from './qlRewards.js';
 import { isGoldPieces } from '../inventory.js';
-import { YOU_RECEIVE_GOLD_PIECES } from '../quest/actions.js';   // REWARD-3: the gold an ending settles lands in DFU's own line
-import { localizedText, textRevision } from '../textManager.js';   // LAW-11: a row read again when the words could read otherwise
+import { t, textRevision } from '../textManager.js';   // REWARD-3: the settled gold's line; LAW-11: a row read again when the words could read otherwise
 import { createLineRunner } from './qlLineRunner.js';
 import { noteFirstUse } from '../tutorials.js';   // QL2: the Tutorials' Questlines page, the first quest stamped
 
@@ -68,8 +67,9 @@ const PLAIN = (_q, text, _key) => text;
 
 /**
  * @param {{ machine: any, questLists?: any, ctx?: any, service?: any, nowMs?: () => number }} deps - `ctx` is the
- *   bridge's host context: carriesQuestItem, playerEntity, changeReputation, changeLegalRep, offerReward,
- *   onQuestlineOffer (the window's door), and for the lines (QL12): nowSeconds (the character's clock), online (an
+ *   bridge's host context: carriesQuestItem, playerEntity, changeReputation, changeLegalRep, offerReward (absent on a
+ *   host with no door for a taken piece - REWARD-13), onQuestlineOffer (the window's door), onOfferDropped (an offer the
+ *   cap cut - REWARD-8), and for the lines (QL12): nowSeconds (the character's clock), online (an
  *   account to claim for), onHonour (a title or key the service paid), expand (the window's quiet read of quest text);
  *   `service` the account service's door (scenes/quest/questlineHost.js), null offline.
  */
@@ -105,8 +105,11 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
     stamp(quest) {
       const st = startStamp();
       if (!st) return null;
-      if (sheetFor(quest?.questName)) noteFirstUse('questlines');   // QL2: the first quest that shows objectives
       const meta = questLists?.findQuestMeta?.(quest?.questName) ?? null;
+      // QL2: the Tutorials' Questlines page, at the first quest that shows objectives - AUDIT QUESTLINES UI-13: one the
+      // player TAKES, never one a new character is started on (scenes/quest/questBridge.js GAME_START_QUESTS, S0000977 and
+      // _BRISIEN, and the lists' init rows): the page popped at character creation, ahead of the Quests page itself
+      if (sheetFor(quest?.questName) && !['S0000977', '_BRISIEN'].includes(quest?.questName) && meta?.scope !== 'init') noteFirstUse('questlines');
       st.tier = questTierOf({
         minReq: meta?.scope === 'init' ? null : meta?.quest?.minReq ?? null,
         social: meta?.scope === 'social',
@@ -201,8 +204,8 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
      * quest that paid (its script's GivePc, or a success) and an outcome that pays gear, its choice of three rolled and
      * set waiting. Once a quest (a resync's second end changes nothing). Answers the offer made, or null.
      * AUDIT QUESTLINES REWARD-3: and the gold its GivePc paid before the outcome settled, settled - the coin the settled
-     * outcome's factor owes above the one applied then, through the quest's own gold door (GetItem's: hooks.addGold and
-     * DFU's "You receive" line); never taken back. M0B00Y16 pays at the questor's click and settles `rescued` (greater,
+     * outcome's factor owes above the one applied then, through the quest's own gold door (GetItem's: hooks.addGold) and
+     * a HUD line that says why; never taken back. M0B00Y16 pays at the questor's click and settles `rescued` (greater,
      * x1.25) on the merchant's walk home: its gold stood at x1.00 in either order.
      */
     ending(quest) {
@@ -217,12 +220,16 @@ export function createQuestlines({ machine, questLists = null, ctx = {}, service
       const paidGold = golds.get(quest.uid);
       golds.delete(quest.uid);
       if (!outcome) return null;
-      for (const st of standingMovesOf(outcome)) ctx.changeReputation?.(st.factionId, st.amount, false);
+      // AUDIT QUESTLINES REWARD-14: a failure's standing obeys QFAIL-FREE (quest.js endQuest) - online, where the clock
+      // spends a countdown on a journey, a quest that ends unfinished costs no faction anything; offline it stands.
+      // Moved flat, each named faction once - a sheet names every faction it moves (Port-Ledger: no propagation).
+      const failureFree = !!outcome.failure && !!quest.hooks?.sharedClock?.();
+      if (!failureFree) for (const st of standingMovesOf(outcome)) ctx.changeReputation?.(st.factionId, st.amount, false);
       if (Number.isSafeInteger(outcome.legal) && outcome.legal !== 0) ctx.changeLegalRep?.(outcome.legal);
       const owed = goldStillOwed(paidGold, outcome);   // REWARD-3
       if (owed > 0) {
         quest.hooks?.addGold?.(owed);
-        quest.hooks?.addHUDText?.(localizedText('youReceiveGoldPieces', YOU_RECEIVE_GOLD_PIECES).replaceAll('%s', String(owed)));
+        quest.hooks?.addHUDText?.(t('ql.reward.goldSettled', 'You receive {gold} more gold pieces for how it ended.', { gold: owed }));
       }
       if (!payProfileOf(outcome).gear || outcome.failure || !(quest.ql.paid || quest.questSuccess)) return null;
       const tier = rewardTier(quest.ql.tier, outcome);

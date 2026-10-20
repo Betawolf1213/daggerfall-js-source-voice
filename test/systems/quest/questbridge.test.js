@@ -551,7 +551,7 @@ test('MAC-K2: the bridge’s questLog is the ONE walk - and it is the arithmetic
   // retyped here - the bridge's own factory needs a world's worth of
   // deps, and what is under test is these thirty lines.
   const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '../src/scenes/quest/questBridge.js'), 'utf8');
-  const body = src.slice(src.indexOf('    questLog() {'), src.indexOf('\n    },', src.indexOf('    questLog() {')) + 6);
+  const body = src.slice(src.indexOf('    questLog({ windows = true } = {}) {'), src.indexOf('\n    },', src.indexOf('    questLog({ windows = true } = {}) {')) + 6);
   assert.ok(body.includes('remainingTimeInSeconds'), 'the slice really is the walk');
   // PIN MOVED (QL1/QL12): the walk asks the questlines' layer for each row's `ql`, and hands the lines and the ladders -
   // a DFU-only layer here (no row of its own, the switch off), so what is under test stays these lines' arithmetic

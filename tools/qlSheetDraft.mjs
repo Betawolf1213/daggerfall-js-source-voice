@@ -16,6 +16,7 @@ import { globalVarsTable } from '../src/systems/quest/tables.js';
 import { settable } from './qlSheetLaw.mjs';
 import { LIST_GROUP_FAMILY, UNLISTED_FAMILY } from '../src/systems/questlines/qlFamilies.js';
 import { lineStepOf } from '../src/systems/questlines/qlLines.js';
+import { familyQuests } from './qlCheck.mjs';
 
 /** The messages a script's QRC holds: id -> its lines (header words kept for the fixed ones). */
 export function qrcMessages(lines) {
@@ -49,6 +50,8 @@ export function qbnTasks(lines) {
     const head = /^\s*(_[A-Za-z0-9.]+_)\s+task:|^\s*until\s+(_[A-Za-z0-9.]+_)\s+performed:|^\s*variable\s+(_[A-Za-z0-9.]+_)/.exec(l);
     const linked = /^\s*([A-Za-z0-9_.]+)\s+(_[A-Za-z0-9.]+_)\s*$/.exec(l);
     if (!head && linked && globalVarsTable().hasValue(linked[1])) { cur = linked[2]; out.set(cur, []); continue; }
+    if (head?.[3]) { out.set(`variable ${head[3]}`, []); cur = null; continue; }
+    if (head) { cur = head[1] ?? `until ${head[2]}`; out.set(cur, []); continue; }   // AUDIT QUESTLINES DOC-35: a `variable` is above - no third arm
     if (cur && l.trim() && !/^\s*--/.test(l)) out.get(cur).push(l.trim());
   }
   return out;
@@ -120,8 +123,11 @@ export function brief(name, { on = false } = {}) {
 
 export function familyBrief(family) {
   const out = [];
+  // AUDIT QUESTLINES DOC-27: the family's quests as the checker counts them (qlCheck.mjs familyQuests) - familyOf's
+  // fall-through filed every unlisted quest (the demos, Foraging's tools, the sea's event) under Mods
+  const want = familyQuests(family);
   for (const f of [...QUEST_FILES.values()].sort((a, b) => a.name.localeCompare(b.name))) {
-    if (familyOf(f.name) !== family) continue;
+    if (!want.has(f.name.toUpperCase())) continue;
     const lines = questSource(f.name, false);
     const steps = lines.filter((l) => /\blog\s+\d+\s+step\s+\d+/i.test(l)).length;
     const dn = (lines.find((l) => /^\s*DisplayName:/i.test(l)) ?? '').replace(/^\s*DisplayName:\s*/i, '');
@@ -133,6 +139,7 @@ export function familyBrief(family) {
 if (isMain(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args[0] === '--family') console.log(familyBrief(args[1]));
+  else if (args[0] && !QUEST_FILES.has(args[0].toUpperCase())) { console.error(`${args[0]}: the pack holds no such quest`); process.exit(1); }   // DOC-35
   else if (args[0]) console.log(brief(args[0], { on: args.includes('--on') }));
   else { console.error('usage: node tools/qlSheetDraft.mjs <QUEST> [--on] | --family <Name>'); process.exit(1); }
 }

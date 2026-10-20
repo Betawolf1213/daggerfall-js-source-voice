@@ -2287,6 +2287,7 @@ ${badgeCss()}
 .px-qpiece[data-rarity="rare"] .px-qpiece-name { color: #e4c34f; }
 .px-qpiece[data-rarity="legendary"] .px-qpiece-name { color: #e07a2e; }
 .px-qpiece-tier { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+.px-qpiece-stat { font-size: 14px; line-height: 1.35; }   /* AUDIT QUESTLINES UI-11: what the piece is - damage or armour, hands, weight */
 .px-qpiece-lines { margin: 0; padding-left: 16px; font-size: 14px; line-height: 1.4; }
 .px-qpiece .act { margin-top: auto; }
 .px-qline-what { margin: 0 0 8px; font-size: 13px; color: var(--dim); text-align: center; }
@@ -2294,8 +2295,10 @@ ${badgeCss()}
 .px-qline-giver { margin: 0 0 6px; font-size: 15px; }
 .px-qline-state { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); }
 .px-qline-state.done, .px-qline-state.locked { color: var(--dim); }
+.px-qline-state.retry, .px-qobj-tag.failed { color: #d08a72; }   /* AUDIT QUESTLINES UI-7: a failed step offered again; a deed not yet seen */
 .px-qline-steps .px-qobj-row.next .px-qobj-text { color: var(--dim); }
 .px-qline-said { list-style: none; margin: -4px 0 8px 23px; font-size: 14px; font-style: italic; color: var(--dim); }
+.px-qline-said.failed { font-style: normal; color: #d08a72; }   /* AUDIT QUESTLINES UI-19: a claim the service refused */
 @media (max-width: 900px) {
   .px-tabs button { font-size: 18px; letter-spacing: 0.1em; text-indent: 0.1em; padding: 6px 10px; gap: 6px; }
 }

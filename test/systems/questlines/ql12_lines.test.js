@@ -405,7 +405,7 @@ test('QL12 the runner offline: an endgame line begun waits where it stood, and s
   assert.ok(!machine.scheduled.includes('QLBD02'));
   const row = runner.rows().find((r) => r.id === 'burningDoors');
   assert.equal(row.state, 'waiting');
-  assert.equal(row.opens, 'Opens online.');
+  assert.equal(row.opens, 'Continues online.', 'AUDIT QUESTLINES UI-7 (PIN MOVED): a line begun continues - it never "Opens" again');
   assert.equal(row.honour, 'doorwarden');
   online = true;
   runner.look(); machine.tick();
@@ -561,4 +561,36 @@ test('AUDIT QUESTLINES LINES-21: a claim answered after a load belongs to the re
   assert.equal(runner.lineState('burningDoors').claims[3], undefined, 'the loaded character\'s record untouched');
   assert.deepEqual(honours, [], 'nothing told over them');
   void clock;
+});
+
+test('AUDIT QUESTLINES UI-7, UI-14: the rows say a failed step is offered again (`retry`), a step set aside (`shelved`), a step between steps still to come (never "now"); offline a line that can only begin online is not drawn - one begun shows, continuing online (mutants: retry; shelved; the gap\'s `current`; the offline filter)', () => {
+  const { runner, machine, clock, step } = runnerWith({ level: 2, online: false });
+  step();
+  const row = () => runner.rows().find((l) => l.id === 'introTables');
+  assert.equal(row().state, 'running');
+  runner.ended(machine.end('QLIT01', false), { id: 'failed', failure: true });
+  assert.deepEqual([row().state, row().steps[0].state], ['retry', 'next'], 'failed: offered again, its step not under way');
+  clock.s += RETRY_GAP_S;
+  step();
+  assert.equal(row().state, 'running', 'offered again: under way');
+  runner.ended(machine.end('QLIT01'), { id: 'done', failure: false });
+  assert.deepEqual([row().state, row().steps[1].state], ['waiting', 'next'], 'between steps: the next is still to come');
+  clock.s += STEP_GAP_S;
+  step();
+  const q2 = [...machine.quests.values()].find((q) => q.questName === 'QLIT02');
+  q2.shelvedAt = 5;
+  assert.deepEqual([row().state, row().steps[1].state], ['shelved', 'current'], 'set aside in the journal');
+  // offline: the endgame lines and the online introductions are not drawn - unless begun
+  const ids = runner.rows().map((l) => l.id);
+  assert.ok(!ids.includes('burningDoors') && !ids.includes('introCrafts') && ids.includes('introTables') && ids.includes('introGear'));
+  const begun = runnerWith({ level: 30, online: false });
+  begun.runner.restore({ oldCoil: { step: 1, outcomes: {}, done: false, wait: 0, claims: {} } });
+  const coil = begun.runner.rows().find((l) => l.id === 'oldCoil');
+  assert.deepEqual([coil?.state, coil?.opens], ['waiting', 'Continues online.'], 'a line begun online, seen offline');
+});
+
+test('AUDIT QUESTLINES DOC-18, DOC-6, DOC-34: the Cycle is one story in order - the Covens\' Hoard after the Burning Doors, the Weir Road after the Hoard; and every step\'s sheet pays at its line\'s tier - the line\'s `tier` is the sheets\' (mutants: an `after` dropped; a sheet\'s tier drifted)', () => {
+  assert.equal(lineById('covensHoard').opens.after, 'burningDoors');
+  assert.equal(lineById('weirRoad').opens.after, 'covensHoard');
+  for (const l of QL_LINES) for (const s of l.steps) assert.equal(sheetFor(s.quest)?.tier, l.tier, `${s.quest}: its sheet's tier is ${l.id}'s`);
 });

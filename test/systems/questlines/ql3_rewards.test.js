@@ -18,9 +18,10 @@ import { setPref } from '../../../src/systems/uiPrefs.js';
 import { QUESTLINES_PREF, freshState } from '../../../src/systems/questlines/qlLaw.js';
 import { SHEETS, SHEET_FAMILIES, sheetFor } from '../../../src/systems/questlines/qlSheets.js';
 import {
-  PAY_PROFILES, TIER_FLOORS, goldFactor, scaleGold, rewardTier, pieceRarity, rollRewardChoice, fitsPlayer, namedBaseOf,
-  factionIdOf, goldStillOwed,
+  PAY_PROFILES, TIER_FLOORS, OUTCOME_GOLD_MIN, OUTCOME_GOLD_MAX, goldFactor, scaleGold, rewardTier, pieceRarity, rollRewardChoice,
+  fitsPlayer, namedBaseOf, factionIdOf, goldStillOwed, bestWeaponSkills, payProfileOf,
 } from '../../../src/systems/questlines/qlRewards.js';
+import { weaponSkillUsed } from '../../../src/characters/weapons.js';
 import { createQuestlines, OFFERS_MAX, trimOffers, sheetTextKey } from '../../../src/systems/questlines/qlLayer.js';
 import { seededRng } from '../../../src/systems/wind/wind.js';
 import { isForbiddenEquip } from '../../../src/systems/equip.js';
@@ -119,6 +120,10 @@ test('QL3 the pays, exact (section 5.2): each pay\'s gold factor, gear and step;
     none: { gold: 1, gear: false, step: 0 },
   });
   assert.deepEqual(['standard', 'lesser', 'greater', 'nosuch'].map((pay) => goldFactor({ pay })), [1, 0.75, 1.25, 1]);
+  assert.deepEqual([OUTCOME_GOLD_MIN, OUTCOME_GOLD_MAX], [0.75, 1.5]);
+  assert.deepEqual(['lesser', 'standard', 'greater'].map((pay) => scaleGold({ stackCount: 100 }, { pay }, true).after), [75, 100, 125]);
+  for (const pay of Object.keys(PAY_PROFILES)) assert.equal(payProfileOf({ pay }), PAY_PROFILES[pay], pay);
+  assert.equal(payProfileOf({ pay: 'nosuch' }), PAY_PROFILES.none, 'an unknown pay pays nothing extra');
   const g = { stackCount: 401 };
   assert.deepEqual(scaleGold(g, { pay: 'lesser' }, true), { before: 401, after: 301 });
   assert.deepEqual(scaleGold({ stackCount: 1 }, { pay: 'lesser' }, true), { before: 1, after: 1 }, 'at least a coin');
@@ -148,7 +153,13 @@ test('QL3 the roll is seeded: the same seed, level and player answer the same th
   assert.ok(others.size > 8, `seeds roll their own (${others.size} of 12 distinct)`);
 });
 
-test('QL3 the fit: never a piece the class may not equip, a weapon of the player\'s two best skills; a class barred from every armour is offered three - a weapon and two jewels (mutants: class fit removed; REWARD-10 the armour fallback)', () => {
+test('QL3 the fit: never a piece the class may not equip, a weapon of the player\'s two best skills; a class barred from every armour is offered three - a weapon and two jewels (mutants: class fit removed; REWARD-10 the armour fallback; the worst skills read as the best)', () => {
+  const blade = { level: 12, career: FREE, skills: skills({ LongBlade: 90, Axe: 80, Archery: 5 }) };
+  assert.deepEqual(bestWeaponSkills(blade), [SKILLS.LongBlade, SKILLS.Axe]);
+  for (let seed = 0; seed < 30; seed++) {
+    const w = rollRewardChoice({ seed, level: 12, tier: 1, entity: blade }).find((p) => p.kind === 'weapon');
+    assert.ok([SKILLS.LongBlade, SKILLS.Axe].includes(weaponSkillUsed(w.item.templateIndex)), `seed ${seed}: ${w.item.name} is a long blade or an axe`);
+  }
   for (const [who, e] of [['mage', MAGE], ['archer', ARCHER], ['fighter', FIGHTER]]) {
     for (let seed = 0; seed < 60; seed++) {
       const three = rollRewardChoice({ seed, level: e.level, tier: 2, entity: e });
@@ -216,13 +227,59 @@ function endedQuest(name, outcomeId, uid) {
   };
 }
 function fixtureLayer(over = {}) {
-  const rec = { offers: [], dropped: [], taken: [] };
+  const rec = { offers: [], dropped: [], taken: [], rep: [], legal: [] };
   const layer = createQuestlines({
     machine: { quests: new Map() },
-    ctx: { playerEntity: FIGHTER, onQuestlineOffer: (o) => rec.offers.push(o), onOfferDropped: (o) => rec.dropped.push(o), offerReward: (_q, item) => rec.taken.push(item), ...over },
+    ctx: {
+      playerEntity: FIGHTER, onQuestlineOffer: (o) => rec.offers.push(o), onOfferDropped: (o) => rec.dropped.push(o), offerReward: (_q, item) => rec.taken.push(item),
+      changeReputation: (fid, amount, propagate) => rec.rep.push([fid, amount, propagate]), changeLegalRep: (amount) => rec.legal.push(amount), ...over,
+    },
   });
   return { layer, rec };
 }
+
+test('QL3 an ending settles once and moves what its outcome names: standing (flat, each faction once) and the legal standing; a betrayal pays no piece; a failure is never struck done on a ladder; a reload never reuses an offer\'s id (DOC-7, DOC-12, DOC-13, DOC-14, DOC-11) (mutants: betrayal pays gear; the legal move dropped; the moved guard; history records a failure; nextOffer reset on restore)', () => {
+  const { layer, rec } = fixtureLayer();
+  const sold = endedQuest('N0B00Y09', 'sold', 1);
+  assert.equal(layer.ending(sold), null, 'the Mages Guild\'s quest sold to the Brotherhood: no piece of the betrayed guild\'s');
+  assert.equal(sold.ql.outcome, 'sold');
+  assert.deepEqual(rec.rep.map(([, n, p]) => [n, p]), [[5, false], [-5, false]], 'each faction the sheet names, once, flat');
+  assert.equal(layer.ending(sold), null);
+  assert.equal(rec.rep.length, 2, 'a second end moves nothing');
+  const released = endedQuest('B0B71Y03', 'released', 2);
+  assert.ok(layer.ending(released), 'lesser: a choice');
+  assert.deepEqual(rec.legal, [2], 'the legal standing, once');
+  assert.equal(layer.ending(released), null);
+  assert.deepEqual(rec.legal, [2]);
+  assert.equal(rec.offers.length, 1, 'one choice for one quest');
+  const lost = { ...endedQuest('M0B00Y06', 'done', 3), questSuccess: false, tasks: new Map(), ql: { ...freshState(), tier: 1 } };
+  assert.equal(layer.ending(lost), null);
+  assert.equal(lost.ql.outcome, 'failed');
+  assert.equal(layer.history().M0B00Y06, undefined, 'a failure is no rung done');
+  assert.equal(layer.history().B0B71Y03, 'released');
+  // a reload's ids go on from the save's
+  const { layer: two } = fixtureLayer();
+  two.ending(endedQuest('M0B00Y06', 'done', 10));
+  two.ending(endedQuest('M0B00Y06', 'done', 11));
+  const { layer: next } = fixtureLayer();
+  next.restore(two.snapshot());
+  assert.deepEqual(next.offers().map((o) => o.id), [1, 2]);
+  assert.equal(next.ending(endedQuest('M0B00Y06', 'done', 12)).id, 3);
+});
+
+test('QL3 a failure\'s standing obeys QFAIL-FREE (AUDIT QUESTLINES REWARD-14): online a quest that ends unfinished costs no faction anything, as quest.js\'s own -2 costs none; offline the sheet\'s cost stands (mutants: the failure\'s standing moved online)', () => {
+  const failed = (uid, online) => ({ ...endedQuest('N0B20Y02', 'slain', uid), questSuccess: false, ql: { ...freshState(), tier: 2 }, hooks: { sharedClock: () => online } });
+  const { layer, rec } = fixtureLayer();
+  const q1 = failed(1, true);
+  assert.equal(layer.ending(q1), null);
+  assert.equal(q1.ql.outcome, 'slain', 'the outcome settles as ever');
+  assert.deepEqual(rec.rep, [], 'online: the Mages Guild loses nothing for the talisman lost');
+  const { layer: off, rec: offRec } = fixtureLayer();
+  const q = failed(2, false);
+  assert.equal(off.ending(q), null);
+  assert.equal(q.ql.outcome, 'slain');
+  assert.deepEqual(offRec.rep.map(([, n, p]) => [n, p]), [[-5, false]], 'offline: DFU\'s cost, the sheet\'s -5');
+});
 
 test('QL3 a named piece is spent when TAKEN, never when rolled (AUDIT QUESTLINES LINES-20): a second ending names nothing once it is taken; a card chosen instead leaves the name for a later ending; one waiting offer holds a line\'s name at a time (mutants: named every time; the name spent on take deleted)', () => {
   const { layer } = fixtureLayer();
@@ -282,12 +339,12 @@ test('QL3 no door, no cut (AUDIT QUESTLINES REWARD-13): a host with no door for 
 
 // ---- the gold settled at the end (REWARD-3) ----
 
-test('QL3 the gold an ending settles (AUDIT QUESTLINES REWARD-3): M0B00Y16 pays at the questor\'s click and settles `rescued` (greater) on the walk home - in either order the player has x1.25, the rest added at the end in DFU\'s own words; a save between keeps the record (mutants: the settle deleted; the record not saved)', () => {
+test('QL3 the gold an ending settles (AUDIT QUESTLINES REWARD-3): M0B00Y16 pays at the questor\'s click and settles `rescued` (greater) on the walk home - in either order the player has x1.25, the rest added at the end, and said; a save between keeps the record (mutants: the settle deleted; the record not saved)', () => {
   for (const order of ['escort first', 'claim first']) {
     const r = giant(order);
     assert.equal(r.quest.ql.outcome, 'rescued', order);
     assert.equal(r.purse + r.added.reduce((n, x) => n + x, 0), Math.round(r.minted * 1.25), `${order}: x1.25 in all`);
-    if (r.added.length) assert.ok(r.hud.includes(`You receive ${r.added[0]} gold pieces.`), 'said as GetItem says it');
+    if (r.added.length) assert.ok(r.hud.includes(`You receive ${r.added[0]} more gold pieces for how it ended.`), 'said');
     assert.equal(r.offers.length, 1);
     assert.equal(r.offers[0].tier, 2, 'tier 1 a rung up');
   }
@@ -338,6 +395,21 @@ test('QL3 the row says whether the quest can pay gear (AUDIT QUESTLINES REWARD-6
   assert.equal(gear('M0B00Y06'), true);
   assert.equal(gear('M0B00Y16'), true);
   for (const name of ['40C00Y00', '$CUREWER', 'S0000008', 'S0000016', '_BRISIEN', 'S0000977']) assert.equal(gear(name), false, name);
+});
+
+test('QL3 the row\'s gear reads the script: a running quest whose sheet pays gear promises it only over a script that can pay - a `give pc` of no letter, `give pc nothing`, `ql paid`, `train pc` (REWARD-6) (mutants: the script\'s pay not read)', () => {
+  const { layer } = fixtureLayer();
+  const running = (uid, actions, item = null) => ({
+    ...endedQuest('M0B00Y06', 'done', uid), questSuccess: false, ql: { ...freshState(), tier: 1 },
+    tasks: new Map([['S.02', { getTriggerValue: () => false, actions }]]), getItem: () => item,
+  });
+  assert.equal(layer.rowOf(running(1, [])).gear, false, 'no payer: no promise');
+  assert.equal(layer.rowOf(running(2, [{ typeName: 'GivePc', itemSymbol: { name: 'letter' } }], { itemName: 'letter' })).gear, false, 'a letter is no pay');
+  assert.equal(layer.rowOf(running(3, [{ typeName: 'GivePc', itemSymbol: { name: 'gold' } }], { itemName: 'gold' })).gear, true);
+  assert.equal(layer.rowOf(running(4, [{ typeName: 'GivePc', isNothing: true }])).gear, true);
+  assert.equal(layer.rowOf(running(5, [{ typeName: 'QlPaid' }])).gear, true);
+  assert.equal(layer.rowOf(running(6, [{ typeName: 'TrainPc' }])).gear, true);
+  assert.equal(layer.rowOf({ ...running(7, []), ql: { ...freshState(), tier: 1, paid: true } }).gear, true, 'paid already');
 });
 
 test('QL3 a sheet\'s lines are keyed by kind (AUDIT QUESTLINES LAW-10): no two lines of one sheet share a translation key, and the row reads each by its own (mutants: the kind dropped from the key)', () => {

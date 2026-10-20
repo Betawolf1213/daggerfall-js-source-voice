@@ -163,7 +163,8 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
         if (!r?.ok && !UNHEARD.has(r?.error)) refused = r?.error ?? 'server';
       }
       const r = await door.state(who);
-      if (r?.ok) { apply(r.data); held(state.tree.keys); if (refused) state.error = refused; tell(); return true; }   // AUDIT QUESTLINES ACTS-5: the sky read, remembered uncounted
+      if (r?.ok) held(unpackTree(r.data?.tree ?? '').keys);   // AUDIT QUESTLINES ACTS-5: the sky read (the tree `apply` lays), remembered uncounted
+      if (r?.ok) { apply(r.data); if (refused) state.error = refused; tell(); return true; }
       state.error = r?.error ?? 'server';
       state.status = Number.isSafeInteger(r?.status) ? r.status : null;   // UI-CALM: the window says WHY no stars came (a 404 is a service without the Firmament)
       if (state.error === 'firm-closed' || state.error === 'no-session') state.open = false;

@@ -91,10 +91,11 @@
 
 import { fpArm, hasDaggerfallArrows } from '../../combat/fpArm.js';
 import { dressStanding } from '../../systems/clothingStanding.js';   // DRESS1 (2026-09-30, Discord): the Standing page's Dress line
-import { questRail, shelvedRail, unloggedRail, journalLines, questTitleOf, QUEST_URGENT_SECONDS, remainWords } from '../quest/questRail.js';
-import { qlObjectivesBlock, qlOfferDetail, offerRowWords, qlLineDetail, lineStateWords, qlLadderDetail } from '../questlines/qlJournal.js';
-import { TITLE_TEXT } from '../playerBadge.js';   // QL12: the title a questline earns, in the badge's own words   // QL2: a stamped quest's objectives, choices and outcome; the rewards waiting
-import { entryTarget, targetWords, WHERE_TEXT } from '../quest/questLens.js';   // GUIDE2: where a quest points, and the way there   // MAC-K2: the ONE quest walk, shared with the chronicle
+import { questRail, shelvedRail, unloggedRail, journalLines, questTitleOf, QUEST_URGENT_SECONDS, remainWords } from '../quest/questRail.js';   // MAC-K2: the ONE quest walk, shared with the chronicle
+import { qlObjectivesBlock, qlOfferDetail, offerRowWords, qlLineDetail, lineStateWords, qlLadderDetail } from '../questlines/qlJournal.js';   // QL2: a stamped quest's objectives, choices and outcome; the rewards waiting
+import { TITLE_TEXT } from '../playerBadge.js';   // QL12: the title a questline earns, in the badge's own words
+import { filedOutcome } from '../../systems/notebook.js';   // AUDIT QUESTLINES UI-5: an archived quest's outcome, the archive's alone to draw
+import { entryTarget, targetWords, WHERE_TEXT } from '../quest/questLens.js';   // GUIDE2: where a quest points, and the way there
 import { questTracker, followOn, trackButton } from '../quest/questTracker.js';   // GUIDE4: the HUD's card - the Track toggle, and the quest the journal opens on
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1: a tap on the scrim resumes
 import { drawTutorialsPane, releaseTutorialsPane } from '../tutorialsPane.js';   // TUT1: the Tutorials tab and section - every tutorial page, to read again
@@ -412,6 +413,7 @@ let questSel = null;        // PX4: the journal's selected row - 'a:<uid>' | 'f:
 let bountyAbandonArmed = null;   // BOUNTY1: the bounty whose Abandon was pressed once - the second press gives it up
 let journalCleanArmed = null;   // JOURNAL-CLEAN: 'f:<index>' (Remove) | 'clear' (Clear archive) pressed once - the second press acts
 let questShowHidden = false;    // JOURNAL-CLEAN: the rail's "Show hidden" - whether the hidden quests are drawn, in their own section
+let questReveal = false;   // AUDIT QUESTLINES UI-14: a row was just pressed - its page is brought into view on a phone
 let questShelfSaid = null;      // QUEST-SHELF: the last Abandon / Reclaim's words, said under the quest until the next press
 let statsSec = 'character'; // PX6: the Stats page's rail - character | attributes | skills | standing
 let famSec = 'tree';       // LEGACY3: the Family page's rail - tree | house | hall | guide
@@ -5443,7 +5445,7 @@ function pauseQuests(body) {
   // QL12 (Questlines-Arc.md section 6, the owner's fifth: "One unified place to view questlines"): THE QUESTLINES - every
   // line, begun or not, under its own heading (key `l:<id>`): the ones under way first, then those still to begin, the
   // finished last. None while the questlines are off (the bridge hands none).
-  const LINE_ORDER = { running: 0, waiting: 1, locked: 2, done: 3 };
+  const LINE_ORDER = { running: 0, retry: 1, shelved: 1, waiting: 1, locked: 2, done: 3 };   // AUDIT QUESTLINES UI-7: retry, shelved
   const lines = (log.lines ?? []).map((l) => ({ key: `l:${l.id}`, name: l.title, line: l }))
     .sort((a, b) => (LINE_ORDER[a.line.state] ?? 9) - (LINE_ORDER[b.line.state] ?? 9));
   // QL12 (section 4.4): and each guild the player is a member of, as its own ladder (key `g:<guild>`)
@@ -5470,7 +5472,7 @@ function pauseQuests(body) {
       const b = el('button', `px-qrow${cls}${q.key === questSel ? ' on' : ''}`);
       b.append(el('span', 'px-c', '\u25c6'), document.createTextNode(questTitleOf(q.name)));   // PX28
       if (q.clockSeconds != null) b.append(el('span', 'px-qtimed', '\u25c6'));
-      b.onclick = () => { questSel = q.key; render(); };
+      b.onclick = () => { questSel = q.key; questReveal = true; render(); };   // AUDIT QUESTLINES UI-14
       rail.append(b);
     }
   };
@@ -5512,7 +5514,7 @@ function pauseQuests(body) {
       const b = el('button', cls.join(' '));
       b.append(el('span', 'px-c', '\u25c6'), document.createTextNode(questTitleOf(q.name)));
       b.title = q.ladder ? t('ql.journal.ladderRow', 'Your guild\u2019s quests, rank by rank') : lineStateWords(state);
-      b.onclick = () => { questSel = q.key; render(); };
+      b.onclick = () => { questSel = q.key; questReveal = true; render(); };   // AUDIT QUESTLINES UI-14
       rail.append(b);
     }
   }
@@ -5553,7 +5555,16 @@ function pauseQuests(body) {
     // QL3: a reward waiting - its quest's name, and its three pieces, each with its Take
     const head2 = el('div', 'px-qname');
     head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.offer.title)), el('span', 'px-qwing px-flip'));
-    detail.append(head2, qlOfferDetail(document, sel.offer, (i) => { clean?.takeOffer?.(sel.offer.id, i); questSel = null; render(); }));
+    // AUDIT QUESTLINES UI-10: a Take ARMS on its first press and takes on the second - BOUNTY1's arming, as Abandon, Remove
+    // and Clear archive do here: one press gave a choice away, and the focus then stood on the next reward's Take, so a
+    // second Enter chose for a reward never looked at. Armed by the piece (`take:<offer>:<index>`, its button's own key)
+    const takeKey = (i) => `take:${sel.offer.id}:${i}`;
+    const armedTake = sel.offer.pieces.findIndex((_, i) => journalCleanArmed === takeKey(i));
+    detail.append(head2, qlOfferDetail(document, sel.offer, (i) => {
+      if (journalCleanArmed !== takeKey(i)) { journalCleanArmed = takeKey(i); render(); return; }
+      journalCleanArmed = null;
+      clean?.takeOffer?.(sel.offer.id, i); questSel = null; render();
+    }, { armed: armedTake }));
   } else if (sel?.line) {
     // QL12: a questline - its story, its steps as the path walked, what it waits on and what it earns
     const head2 = el('div', 'px-qname');
@@ -5586,7 +5597,9 @@ function pauseQuests(body) {
       }
       // GUIDE4: TRACK THIS QUEST on the HUD's card (ui/quest/questTracker.js), beside its clock - the card follows the quest
       // the journal last changed until the player chooses one here (or in the chronicle: the same toggle, one home).
-      if (followOn() && sel.id != null) meta.append(trackButton(document, sel.id, questTitleOf(sel.name)));   // AUDIT GUIDE T2; T5: changed in place, the tab not rebuilt
+      // AUDIT QUESTLINES UI-8: not on a stamped quest with no journal entry yet (unloggedRail) - the HUD's card reads the
+      // entries (ui/quest/questLens.js), so Track pinned a quest it never sees and the card went blank
+      if (followOn() && sel.id != null && sel.entries.length) meta.append(trackButton(document, sel.id, questTitleOf(sel.name)));   // AUDIT GUIDE T2; T5: changed in place, the tab not rebuilt
       if (meta.childNodes.length) detail.append(meta);   // PX22: an empty meta line is a gap the eye reads as a mistake
       // GUIDE2: WHERE THE QUEST POINTS NOW, and the way there - DFU's own logbook click (HandleQuestClicks), which
       // this journal never had: the latest entry's target through the quest lens, in the find-place box's words.
@@ -5647,7 +5660,9 @@ function pauseQuests(body) {
         // its audit: the selection follows the quest only where it went - a refusal is said under the quest it refused
         rc.onclick = () => { const out = clean.reclaim(sel.id); questShelfSaid = out?.text ?? null; if (out?.ok) questSel = `a:${sel.id}`; render(); };
         acts.append(rc);
-      } else if (sel.entries && sel.id != null && clean.abandon && clean.canAbandon?.(sel.id)) {
+      // AUDIT QUESTLINES UI-8: and not on a quest with no journal entry yet - set aside, it was no row at all (the bridge's walk
+      // lists a quest set aside by its entries), so no Reclaim could reach it
+      } else if (sel.entries?.length && sel.id != null && clean.abandon && clean.canAbandon?.(sel.id)) {
         const armed = journalCleanArmed === `ab:${sel.id}`;
         const ab = el('button', 'act', armed ? 'Click again to abandon' : 'Abandon quest');
         ab.onclick = () => {
@@ -5676,7 +5691,9 @@ function pauseQuests(body) {
         };
         acts.append(rs);
       }
-      if (sel.entries && sel.id != null && !isShelvedRow) {
+      // AUDIT QUESTLINES UI-8: Hide is an entry's - a row with none (unloggedRail) stayed drawn, still saying Hide, and the
+      // Show hidden toggle never named it (the rail hides only the logged rows, ui/quest/questRail.js questRail)
+      if (sel.entries?.length && sel.id != null && !isShelvedRow) {
         const isHidden = hidden.some((q) => q.key === sel.key);
         const hb = el('button', 'act', isHidden ? t('pause.journal.unhide', 'Unhide') : t('pause.journal.hide', 'Hide from journal'));
         hb.onclick = () => {
@@ -5736,11 +5753,22 @@ function pauseQuests(body) {
         if (line === '') { desc.append(el('div', 'px-qgap')); continue; }
         desc.append(el('p', null, line));
       }
+      // AUDIT QUESTLINES UI-5: how a stamped quest ended - the filed entry's side record (systems/notebook.js filedOutcome),
+      // the archive's alone to draw: DFU's classic logbook draws the entry as DFU filed it
+      const outcome = filedOutcome(log.finished?.[Number(String(sel.key).slice(2))]);
+      if (outcome) desc.append(el('p', 'px-qoutcome', t('quest.outcome.filed', 'Outcome: {text}', { text: outcome })));
       detail.append(desc);
     }
   }
   wrap.append(detail);
   body.append(wrap);
+  // AUDIT QUESTLINES UI-14: on a phone the journal stacks (enhancedStyle.js PX4: the rail a strip over the page, at 480px),
+  // and a row pressed below the fold drew its page out of sight - the page pressed for is brought into view, after the
+  // repaint has put the scroll back (ui/domRepaint.js), as the broker's card is (ui/brokerWindow.js)
+  if (questReveal) {
+    questReveal = false;
+    if (globalThis.matchMedia?.('(max-width: 480px)')?.matches) Promise.resolve().then(() => { if (detail.isConnected !== false) detail.scrollIntoView?.({ block: 'start' }); });
+  }
 }
 
 function render() {

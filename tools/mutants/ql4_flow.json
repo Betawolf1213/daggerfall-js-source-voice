@@ -21,7 +21,7 @@
     "name": "AUDIT-QL-FLOW-BRANCH-10-outcome-unchecked",
     "file": "src/systems/questlines/qlActions.js",
     "old": "      if (!sheet || (sheet.outcomes ?? []).some((o) => o.id === name)) quest.ql.outcome = name;",
-    "new": "      quest.ql.outcome = name;",
+    "new": "      if (name) quest.ql.outcome = name;",
     "tests": [
       "test/systems/questlines/ql4_actions.test.js"
     ]
@@ -276,6 +276,15 @@
     "new": "acts: {}, received: false, offer: null });",
     "tests": [
       "test/systems/questlines/ql4_flow.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-QL-FLOW-DOC-19-name-underscores-kept",
+    "file": "src/systems/questlines/qlActions.js",
+    "old": "action.given = match.groups.given.replace(/_/g, ' ');",
+    "new": "action.given = match.groups.given;",
+    "tests": [
+      "test/systems/questlines/ql4_actions.test.js"
     ]
   }
 ]

@@ -50,7 +50,9 @@ test('QL12 the ladder\'s page: what a ladder is, the rank held, each rung, the d
   assert.match(text, /Guardian \(not yet\)/);
   const rows = box.querySelectorAll('.px-qobj-row');
   assert.deepEqual(rows.map((r) => r.className.split(' ')[1]), ['done', 'next']);
-  assert.match(rows[1].querySelector('.px-qobj-tag').title, /ends differently/);
+  // AUDIT QUESTLINES UI-12 (PIN MOVED): the mark explained on a hover alone - no press, no pad; the page says it once
+  assert.equal(rows[1].querySelector('.px-qobj-tag').textContent, 'a choice');
+  assert.match(text, /A quest marked “a choice” asks you to choose, and ends differently for each choice\./);
 });
 
 test('AUDIT QUESTLINES LINES-5, LINES-14, LINES-15, LINES-16: a rung is reached while the guild OFFERS it - by level for the Mages Guild and the knightly orders (questRankFor), by rank for the rest; a knightly order\'s ladder; a temple\'s own divine\'s quests on its ladder; an adult row only while the setting allows one (mutants: the level; the orders\' prefix; the divine\'s rows; the adult filter)', () => {

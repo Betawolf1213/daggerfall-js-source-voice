@@ -640,7 +640,8 @@ export function itemLongName(item, opts) {
  *  REWARD-5: and a questline's named piece (`qlNamed`, systems/questlines/qlRewards.js rollRewardChoice) - its name is its
  *  own, as a record's is ("Steel Corvane's Spire-Blade" was the pack's). */
 function withholdsMaterialPrefix(item) {
-  return !itemIsIdentified(item) || !!item?.artifact || !!item?.legendary || !!item?.aetheric || !!item?.gilded || item?.qlNamed === true;
+  if (item?.qlNamed === true) return true;
+  return !itemIsIdentified(item) || !!item?.artifact || !!item?.legendary || !!item?.aetheric || !!item?.gilded;
 }
 
 /** RF6: THE LONG NAME IN ITS TWO PARTS - the material prefix and the

@@ -113,6 +113,10 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
       return;
     }
     if (d && c.phase === 'end') rec.claims[c.step] = d.why === 'guest' ? 'refused:guest' : 'unseen';
+    // AUDIT QUESTLINES UI-19: a claim the service REFUSED - its switch shut (`ql-closed`), a claim its law refuses
+    // (`ql-body`) - is the step's to say (rows: `refused`), never swallowed; kept on the claim (unsaved), asked again all the
+    // same (a shut switch opens), and gone with the claim once answered
+    c.refused = !a?.ok && (a?.error === 'ql-closed' || a?.error === 'ql-body') ? a.error : null;
     c.tries++;
     c.next = nowMs() + (c.tries < CLAIM_TRIES ? CLAIM_RETRY_MS : CLAIM_SLOW_MS);
   }
@@ -128,6 +132,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     // never every tick, and the window says it could not begin (LINES-19)
     if (!q) { rec.wait = now() + RETRY_GAP_S; rec.stalled = true; return; }
     rec.stalled = false;
+    rec.retry = false;
     queueClaim(l.id, rec.step, 'open');
   }
 
@@ -136,7 +141,9 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
   function waitingWords(l, rec) {
     if (rec.done) return null;
     const o = l.opens;
-    if ((o.online && !online()) || (o.account && !registered())) return opensWords({ ...l, opens: { online: o.online, account: o.account } }, probe, rec.step);
+    // UI-7: a line begun continues where it can - never "Opens" again
+    if (o.online && !online()) return t('ql.line.continuesOnline', 'Continues online.');
+    if (o.account && !registered()) return t('ql.line.continuesAccount', 'Continues with a registered account.');
     if (unmetNeeds(l, rec.step, probe).length) return opensWords({ ...l, opens: {} }, probe, rec.step);
     return rec.stalled ? t('ql.line.stalled', 'Its next step could not begin here: it will be offered again.') : null;
   }
@@ -177,7 +184,9 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
       const rec = lines[at.line.id];
       if (!rec || rec.done || rec.step !== at.index) return null;
       const good = outcome ? !outcome.failure : !!quest.questSuccess;
-      if (!good) { rec.wait = now() + RETRY_GAP_S; return { line: at.line.id, step: at.index, moved: false }; }
+      // AUDIT QUESTLINES UI-7: a failed step is the window's to say ("offered again"), not a quiet wait
+      if (!good) { rec.wait = now() + RETRY_GAP_S; rec.retry = true; return { line: at.line.id, step: at.index, moved: false }; }
+      rec.retry = false;
       rec.outcomes[at.index] = { id: outcome?.id ?? 'done', text: ctx.outcomeText?.(quest) ?? null };
       queueClaim(at.line.id, at.index, 'end', outcome?.id ?? null);
       rec.step++;
@@ -201,25 +210,35 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
     /**
      * The window's rows: every line, begun or not - `{ id, group, title, lead, giver, state, steps, opens, outcome, honour }`
      * (`honour` the title the line pays, or null).
-     * `state` 'done' | 'running' | 'waiting' (between steps, or offline for an endgame line) | 'locked'; each step
-     * `{ title, state: 'done'|'current'|'next', witnessed: bool, unseen: bool, outcome }` - the steps after the current one are named
+     * `state` 'done' | 'running' | 'waiting' (between steps, or offline for an endgame line) | 'retry' (a step failed,
+     * offered again) | 'shelved' (its step's quest set aside in the journal) | 'locked'; each step `{ title, state:
+     * 'done'|'current'|'next', witnessed: bool (a step the service witnesses), seen: bool (it did), unseen: bool (done,
+     * not yet witnessed), outcome, refused: the service's refusal of its claim (UI-19), or null }` - the steps after the current one are named
      * (a line is a story the player can see the shape of), their quests not yet given.
      */
     rows() {
-      return QL_LINES.map((l) => {
+      // AUDIT QUESTLINES UI-14 (decision 1): offline, a line that can only begin online is not drawn - one begun shows,
+      // "Continues online"
+      return QL_LINES.filter((l) => lines[l.id] || !l.opens.online || online()).map((l) => {
         const rec = lines[l.id];
+        const stepQuest = rec && !rec.done ? runningStep(l.steps[rec.step]?.quest) : null;
+        const shelved = stepQuest?.shelvedAt != null;
+        const running = !!stepQuest && !shelved;
         const steps = l.steps.map((s, i) => {
-          const state = !rec ? 'next' : rec.done || i < rec.step ? 'done' : i === rec.step ? 'current' : 'next';
-          // `unseen`: done, and its end not witnessed by the service yet (a later deed's receipt witnesses it)
+          // UI-7: the step at the line's place is `current` only while its quest runs - between steps it is still to come
+          const state = !rec ? 'next' : rec.done || i < rec.step ? 'done' : i === rec.step && (running || shelved) ? 'current' : 'next';
+          // `seen` the service witnessed it; `unseen` done, and not witnessed yet (a later deed's receipt witnesses it)
           const said = rec?.claims?.[i];
-          return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), unseen: state === 'done' && (said === 'unseen' || said === 'refused:guest'), outcome: rec?.outcomes?.[i]?.text ?? null };
+          // UI-19: `refused` the service's refusal of this step's claim (its error word), while the claim waits
+          const refused = pending.find((c) => c.line === l.id && c.step === i && c.refused)?.refused ?? null;
+          return { quest: s.quest, title: s.title(), state, witnessed: !!witnessOf(l, i), seen: said === 'witnessed', unseen: state === 'done' && !!witnessOf(l, i) && said !== 'witnessed', outcome: rec?.outcomes?.[i]?.text ?? null, refused };
         });
-        const running = !!rec && !rec.done && !!runningStep(l.steps[rec.step]?.quest);
-        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : 'waiting';
+        // UI-7: a failed step offered again (`retry`), a step's quest set aside in the journal (`shelved`)
+        const state = !rec ? 'locked' : rec.done ? 'done' : running ? 'running' : shelved ? 'shelved' : rec.retry ? 'retry' : 'waiting';
         const last = rec?.outcomes?.[l.steps.length - 1] ?? null;
         return {
           id: l.id, group: l.group, title: l.title(), lead: l.lead(), giver: l.giver(), state, steps,
-          opens: !rec ? opensWords(l, probe) : state === 'waiting' ? waitingWords(l, rec) : null,
+          opens: !rec ? opensWords(l, probe) : state === 'waiting' || state === 'retry' ? waitingWords(l, rec) : null,
           outcome: rec?.done ? last?.text ?? null : null,
           honour: lineServiceOf(l)?.title ?? null,
         };
@@ -243,7 +262,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const step = Math.max(0, Math.min(l.steps.length, Number.isSafeInteger(r.step) ? r.step : 0));
         lines[id] = {
           step, done: !!r.done || step >= l.steps.length, wait: Number.isFinite(r.wait) ? r.wait : 0,
-          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled,
+          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry,
           outcomes: r.outcomes && typeof r.outcomes === 'object' ? structuredClone(r.outcomes) : {},
           claims: r.claims && typeof r.claims === 'object' ? { ...r.claims } : {},
         };

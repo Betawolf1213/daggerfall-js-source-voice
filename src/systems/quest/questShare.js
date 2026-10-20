@@ -223,10 +223,10 @@ export function canReceiveSharedQuest(machine, questLists, questName, { membersh
   // GivePc/TrainPc a second time. (The tombstone only lives a week; the memory of having been paid outlives it.)
   // DISC22-F: by the COPY (the envelope's shareId), not the name - a new share of a repeatable quest is a new copy
   if (shareId !== undefined ? machine.hasFinishedSharedCopy?.(questName, shareId) : machine.hasFinishedSharedQuestNamed?.(questName)) return { ok: false, reason: 'done' };
+  if (lineStepOf(questName)) return { ok: false, reason: 'questline' };   // AUDIT QUESTLINES REWARD-2: a line's step, on receipt too (prepareShareData)
   // AUDIT DROPS A1: the main quest is refused on RECEIPT as well as on send - the sender's own gate is the sender's
   // client, and a hand-built envelope is not bound by it.
   if (isMainQuestName(questName)) return { ok: false, reason: 'mainQuest' };
-  if (lineStepOf(questName)) return { ok: false, reason: 'questline' };   // AUDIT QUESTLINES REWARD-2: and a line's step, on receipt too
   // QUEST-SHELF (2026-10-08): a copy I set aside takes no partner's share or step - reclaimed, it is as I left it
   if (isShelved(machine.sharedCandidateNamed?.(questName))) return { ok: false, reason: 'shelved' };
   if (machine.hasActiveQuestNamed(questName)) {
@@ -271,10 +271,10 @@ export function receiveSharedQuest(machine, questLists, questName, data, ctx = {
   // machine. The receiver's parse also supplies the ITEM resources' items (`takeLocalItems`): a reward is the
   // receiver's own roll, never a `daggerfallUnityItem` somebody typed.
   if (!data || typeof data !== 'object' || data.questName !== questName) return { ok: false, reason: 'mismatch' };
-  // AUDIT QUESTLINES BRANCH-12: the receiver's parse reads the script the copy was read with - its branch while the copy
-  // is stamped, DFU's while it is not (a quest begun before the deploy, or offline with the switch off): the read followed
-  // the receiver's switch, forced on online, and every share and resync of such a copy was refused as a forgery
   const local = machine.parseQuestShape?.(questName, data.factionId, { questlines: data.ql?.stamp === QL_STAMP }) ?? null;
+  // AUDIT QUESTLINES BRANCH-12 (above): the receiver's parse reads the script the copy was read with - its branch while
+  // the copy is stamped, DFU's while it is not (a quest begun before the deploy, or offline with the switch off): the read
+  // followed the receiver's switch, forced on online, and every share and resync of such a copy was refused as a forgery
   if (!local) return { ok: false, reason: 'unknown' };
   const why = shapeMismatch(local, data);
   if (why) return { ok: false, reason: 'mismatch' };

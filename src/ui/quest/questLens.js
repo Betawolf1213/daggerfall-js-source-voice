@@ -153,7 +153,8 @@ function quietly(quest, fn) {
  * QL1 (bible/06-Systems/Questlines-Arc.md section 2.2): A SHEET'S LINE, READ QUIETLY - an objective's, a branch's or an
  * outcome's words in DFU's own macros (`_house_` a resource's name, `__house_` its building, `___house_` its town), expanded
  * over the quest's resources exactly as a message's tokens are (questMacros.js expandQuestMessage) and with nothing moved
- * (the quiet read's law above). `key` (`<QUEST>.<id>`) finds a translation's words in the quest text's own table
+ * (the quiet read's law above). `key` (`<QUEST>.<kind>.<id>` - qlLayer.js sheetTextKey, AUDIT QUESTLINES LAW-10) finds a
+ * translation's words in the quest text's own table
  * (TextQuests, `QL.<key>` - the -LOC route a pack fills, as DFU's quest messages read theirs); none, the sheet's English.
  * A line that does not expand reads as written.
  */
@@ -346,6 +347,14 @@ function entryKey(row, step, message) {
  *  (P0B10L07 re-logs its step on every click; a shared quest's resync writes the partner's times) are not news. */
 const newsKey = (id, e) => (e.stepID != null ? `${id}|${e.stepID}|${e.messageID}` : `${id}|m${e.messageID}`);
 
+/** QL2: the objective a stamped quest asks now - the first opened and not yet done or failed - in its words, or null.
+ *  AUDIT QUESTLINES UI-1: the first one the quest NEEDS - an optional one only while nothing it needs is open (23 sheets
+ *  list an optional objective before a required one: the card said "Destroy the lich" for as long as it was skipped). */
+export const currentObjective = (ql) => {
+  const open = (ql?.objectives ?? []).filter((o) => o.state === 'open');
+  return (open.find((o) => !o.optional) ?? open[0])?.text ?? null;
+};
+
 /**
  * THE LENS. One per quest bridge: scenes/quest/questBridge.js makes it over
  * its own walk and resets it when a save is loaded.
@@ -380,8 +389,6 @@ const newsKey = (id, e) => (e.stepID != null ? `${id}|${e.stepID}|${e.messageID}
  * line, so a face that shows text calls rereadText() when it opens -
  * the moment DFU's logbook reads - and the next look reads them again.
  */
-/** QL2: the objective a stamped quest asks now - the first opened and not yet done or failed - in its words, or null. */
-export const currentObjective = (ql) => (ql?.objectives ?? []).find((o) => o.state === 'open')?.text ?? null;
 
 export class QuestLens {
   constructor({ questLog = null } = {}) {

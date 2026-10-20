@@ -120,7 +120,7 @@ test('QL12 THE LAW: every step the service pays is witnessable - by a kind this 
   }
 });
 
-test('QL12 THE BURNING DOORS: an `open` writes the step\'s opening; an `end` reads its witness - a receipt from before the LINE\'s first opening witnesses nothing, one at or after it does - the rite by a rite\'s own receipt or a fighter\'s that broke it, never a plain kill; the breach by a kill, never the rite alone; the Doorwarden once, on the step that completes the line\'s witnessed steps (mutants: `>=` for `>`; the rite\'s embers; the breach\'s rite; the title\'s steps; the title\'s guard)', async (t) => {
+test('QL12 THE BURNING DOORS: an `open` writes the step\'s opening; an `end` reads its witness - a receipt from before the LINE\'s first opening witnesses nothing, one at or after it does - the rite by a rite\'s own receipt or a fighter\'s that broke it, never a plain kill; the breach by a kill, never the rite alone; the Doorwarden once, on the step that completes the line\'s witnessed steps; the line\'s window, never a step\'s own; a later step\'s receipt its ceiling (mutants: `>=` for `>`; the rite\'s embers; the breach\'s rite; the title\'s steps; the title\'s guard; QL12-step-window; QL12-order-ceiling)', async (t) => {
   const { S, at, open, ql, gate, row, steps } = await stood(t);
   const me = await S.registered('Doorward');
   // A RECEIPT FROM BEFORE: a breach closed and a rite broken at T0, the line opened after
@@ -187,6 +187,30 @@ test('QL12 THE BURNING DOORS: an `open` writes the step\'s opening; an `end` rea
   const v = await verifyToken(tok, S.identityPublic, { subtle, nowS: T0 + 950 });
   assert.ok(v.ok, v.why);
   assert.equal(v.claims.t, 'doorwarden', 'the vocabulary signs it, and the relay\'s verifier keeps it');
+  // THE LINE'S WINDOW, NEVER THE STEP'S (AUDIT QUESTLINES SERVICE-2): a step whose own opening came late - its breach
+  // closed before it - is witnessed from the line's first opening, the rite's receipt its floor
+  const late = await S.registered('LateOpen');
+  at(T0 + 1000);
+  await open(late, 'burningDoors', 2);
+  at(T0 + 1010);
+  await gate(late, 'rite');
+  assert.deepEqual((await ql(late, 'burningDoors', 2)).body, { witnessed: true });
+  at(T0 + 1020);
+  await gate(late, 'dealt');
+  at(T0 + 1030);
+  assert.deepEqual((await open(late, 'burningDoors', 3)).body, { opened: true }, 'the breach\'s step opened after its breach closed');
+  assert.deepEqual((await ql(late, 'burningDoors', 3)).body, { witnessed: true, title: 'doorwarden' }, 'the line\'s window');
+  // THE CEILING (SERVICE-5's order): a step's witness is older than the receipt that witnessed a later step - a rite
+  // broken after the breach's receipt witnesses no step before it
+  const c = await S.registered('Ceiling');
+  at(T0 + 1100);
+  await open(c, 'burningDoors', 2);
+  await gate(c, 'dealt');
+  assert.deepEqual((await ql(c, 'burningDoors', 3)).body, { witnessed: true }, 'the breach first');
+  at(T0 + 1150);
+  await gate(c, 'rite');
+  assert.deepEqual((await ql(c, 'burningDoors', 2)).body, { witnessed: false }, 'a rite newer than the breach\'s receipt');
+  assert.equal(row(c).ql_titles, 0);
 });
 
 test('QL12 THE WEIR ROAD: a Redoubt\'s row witnesses `redoubt`, a Rehearsal\'s never (its stake says so, or its end where the stake is gone); three Redoubts newer than the one that witnessed the step before witness `redoubts3`; a Valkynaz\'s - every fifth - witnesses `valkynaz`; the Weirwalker after all three (mutants: the Rehearsal\'s stake; its end; the count; the fifth; the order)', async (t) => {
@@ -537,4 +561,23 @@ test('AUDIT QUESTLINES SERVICE-3/-7: the Covens\' Hoard kept through the real ru
   assert.deepEqual(R.wire.at(-1), ['covensHoard', 2, 'end', { witnessed: true, title: 'covenbane', key: true, keys: before + 1 }]);
   assert.deepEqual(R.honours, [{ line: 'covensHoard', title: 'covenbane', key: true, keys: before + 1, keyHeld: false }], 'the key\'s balance handed on, for the pack');
   assert.equal(H.row(me).ql_key, 1);
+});
+
+test('AUDIT QUESTLINES DOC-4: the door itself - accountQuestlines posts to the route the Worker answers, a refused session is forgotten, and with no session there is no account to claim for; guest() reads a guest\'s session (mutants: the route; the forgetting; account() always truthy; guest())', async (t) => {
+  const { S } = await stood(t);
+  const me = await S.registered('DoorKeeper');
+  const g = await S.guest();
+  const store = (sess) => { const kv = new Map([[SERVICE_KEY, 'https://accounts.invalid'], ...(sess ? [[SESSION_KEY, JSON.stringify(sess)]] : [])]); return { kv, getItem: (k) => kv.get(k) ?? null, setItem: (k, v) => kv.set(k, v), removeItem: (k) => kv.delete(k) }; };
+  const mine = store({ secret: me.secret, id: me.id, kind: 'account' });
+  const door = accountQuestlines({ fetch: S.fetch, storage: mine });
+  assert.deepEqual(await door.claim({ line: 'burningDoors', step: 3, phase: 'open' }), { ok: true, status: 200, data: { opened: true } }, 'the route the Worker answers');
+  assert.equal(door.account(), me.id);
+  assert.equal(door.guest(), false);
+  assert.equal(accountQuestlines({ fetch: S.fetch, storage: store({ secret: g.secret, id: g.id, kind: 'guest' }) }).guest(), true, 'a guest\'s session');
+  const none = accountQuestlines({ fetch: S.fetch, storage: store(null) });
+  assert.equal(none.account(), null, 'no session: no account to claim for');
+  const dead = store({ secret: 'not-a-session-secret-at-all-000000', id: me.id, kind: 'account' });
+  const a = await accountQuestlines({ fetch: S.fetch, storage: dead }).claim({ line: 'burningDoors', step: 3, phase: 'open' });
+  assert.equal(a.ok, false);
+  assert.equal(dead.kv.has(SESSION_KEY), false, 'a session the service refuses is forgotten');
 });

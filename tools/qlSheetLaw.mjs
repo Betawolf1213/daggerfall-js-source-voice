@@ -274,27 +274,35 @@ function individualFaction(name) {
 /**
  * Whether the quest can END A SUCCESS NO OUTCOME'S ROW IS SURE TO HOLD FOR - the case the success fallback is for (M0B11Y18:
  * the Queen pays at `_S.18_`, which no row names - a loyal player whose hunt ran out ended a success no row held, and was
- * filed as the traitor's man). Sure is a row that waits on one task that STAYS set: one a choice sets, or one with no
- * `when` that no line clears or unsets (a task a `when` sets stops holding when its condition does - 40C00Y00's `_S.06_`
- * unsets what it waits on). A task that makes the quest a success (GivePc's QuestComplete arm - `give pc nothing`, or an
+ * filed as the traitor's man). Sure is a row that waits on one task that STAYS set: one a choice sets, or one no line
+ * clears or unsets whose `when`, if it has one, needs only tasks that stay (a task a `when` sets stops holding when its
+ * condition does - 40C00Y00's `_S.06_` unsets what it waits on). A task that makes the quest a success (GivePc's QuestComplete arm - `give pc nothing`, or an
  * item given without `notify` or `silently` - `ql paid`, `train pc`) is covered when it is downstream (`downstreamOf`)
- * of such a row's task. The start-up is covered by nothing. Every quest the flagship hand-in (QL4's `ask`) gives two
- * rows is covered.
+ * of such a row's task, or of a task that says its outcome (`outcome _x_`). The start-up is covered by nothing. Every
+ * quest the flagship hand-in (QL4's `ask`) gives two rows is covered.
  */
 export function canSucceedUnnamed(sheet, quest, lines) {
   const chosen = choiceTasks(quest);
+  const memo = new Map();
   const stays = (name) => {
+    if (memo.has(name)) return memo.get(name);
+    memo.set(name, false);   // a cycle stays nowhere
     const task = quest.tasks?.get?.(name);
-    if (!task) return false;
-    if (chosen.has(name)) return true;
     const sym = new RegExp(`(^|[^A-Za-z0-9_.])_${name.replace(/\./g, '\\.')}_($|[^A-Za-z0-9_.])`);
-    return !task.actions.some((a) => a.typeName === 'WhenTask') && !(lines ?? []).some((l) => /^\s*(clear|unset)\b/i.test(l) && sym.test(l));
+    const when = task?.actions.find((a) => a.typeName === 'WhenTask');
+    const s = !!task && (chosen.has(name) || (!(lines ?? []).some((l) => /^\s*(clear|unset)\b/i.test(l) && sym.test(l))
+      && (!when || when.evaluations.every((e) => (e.op === 'when' || e.op === 'and') && stays(symName(e.task))))));
+    memo.set(name, s);
+    return s;
   };
   const roots = new Set();
   for (const o of sheet?.outcomes ?? []) {
     const keys = Object.keys(o?.on ?? {}).filter((k) => k !== 'n');
     if (!o?.failure && keys.length === 1 && keys[0] === 'task' && stays(symName(o.on.task))) roots.add(symName(o.on.task));
   }
+  // a task that says its outcome (`outcome _x_`, one of the sheet's) latches it there - no fallback is read after it
+  const ids = new Set((sheet?.outcomes ?? []).filter((o) => !o?.failure).map((o) => o.id));
+  for (const t of quest.tasks?.values?.() ?? []) if (t.actions.some((a) => a.typeName === 'QlOutcome' && ids.has(a.outcomeSymbol?.name))) roots.add(t.symbol?.name);
   const covered = downstreamOf(quest, lines, roots);
   for (const t of quest.tasks?.values?.() ?? []) {
     const succeeds = t.actions.some((a) => (a.typeName === 'GivePc' && (a.isNothing || (!a.textId && !a.silently))) || a.typeName === 'QlPaid' || a.typeName === 'TrainPc');

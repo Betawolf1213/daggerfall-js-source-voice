@@ -265,5 +265,6 @@ test('SHAM-TRAIL, the wiring: the browser\'s pack patches DFU\'s own quests as e
   assert.match(src, /if \(QUEST_PATCHES\[name\]\) patchable\.set\(name, text\);/);
   assert.match(src, /quests\.set\(name, patched\.split\(\/\\r\?\\n\/\)\); patchable\.delete\(name\);/);
   // PIN MOVED (QL4): the read is the questlines' too - a flagship quest's branch patched over it while their switch is on
-  assert.match(src, /getQuestSourceLines: \(name\) => questlineLines\(name, \(patchable\.has\(name\) \? patchedLines\(name, patchable\.get\(name\)\) : null\) \?\? quests\.get\(name\) \?\? null\),/);
+  // PIN MOVED (AUDIT QUESTLINES BRANCH-12): and a shared copy's shape read as its own stamp read it - the read's second argument
+  assert.match(src, /getQuestSourceLines: \(name, questlines\) => questlineLines\(name, \(patchable\.has\(name\) \? patchedLines\(name, patchable\.get\(name\)\) : null\) \?\? quests\.get\(name\) \?\? null, questlines\),/);
 });
