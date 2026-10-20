@@ -4858,6 +4858,7 @@ rvn.stars.unaccepted,"You have unaccepted changes. Press {accept} to keep them, 
 rvn.stars.unacceptedLeave,"You have unaccepted changes. Press {accept} to keep them, or leave again to discard them."
 rvn.stars.xp,"{xp} of {next} XP"
 rvn.sworn.gone,"It is no longer sworn to you."
+rvn.took.home,"{name} could not keep your {item} - it is yours again."
 rvn.unq.amb.mastery,"Mastery"
 rvn.unq.amb.masteryDo,"it trains while it waits, and grows bolder every two days, not three"
 rvn.unq.amb.plunder,"Plunder"

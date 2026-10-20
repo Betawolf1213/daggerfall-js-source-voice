@@ -521,6 +521,14 @@ it never takes one. "Gold" was read as the coin alone, so a letter - worth hundr
 valuable piece - was in every draw. A letter one took before is the player's again at the next load; a deserter's
 letter comes back with its gold.
 
+STEED-KEPT (FIELD BUGS 2026-10-19b, a player's private report - their horse gone after a death in a dungeon; the owner,
+2026-10-19: "Exclude, and return taken ones"): it never takes what never changes hands, as the open zone's death reads
+it - a horse or a cart (owning one is having it in the pack), a deed (Daggerfall's, and a ship's deed or her packed
+parts) or the spellbook (`revenant.js:"export const revenantMayTake = (item) =>"`); a bound piece stays its own (AUDIT
+625 W2). A stable's horse beside a worn longsword was drawn one death in six. One it took before comes home to the pack
+at the next load, from the save's own copy, and is said once ("Grushnak the Butcher could not keep your Horse - it is
+yours again."); a deserter's ship's deed comes back with the rest. The law: `12-Enhanced-AI/Feud-Arc.md` section 19.
+
 ## 25. Festering (FEUD RVN9, 2026-10-04)
 
 A revenant left alone grows angry. Three days past the day it was due, and every three days after, it gains a wrath -
