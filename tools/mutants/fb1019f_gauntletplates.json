@@ -87,7 +87,7 @@
     "tests": [
       "test/scenes/eliteGates/fb1019f_gauntletplates.test.js"
     ],
-    "why": "a screen facing a relay before world231 (world230 or older) marks nothing - the bug again"
+    "why": "a screen facing a relay before world232 (world231 or older) marks nothing - the bug again"
   },
   {
     "name": "GAUNTLET-PLATES-older-relay-none-left-marked",
@@ -97,7 +97,7 @@
     "tests": [
       "test/scenes/eliteGates/fb1019f_gauntletplates.test.js"
     ],
-    "why": "a screen facing a relay before world231 (world230 or older) marks every plate though no Caster is left"
+    "why": "a screen facing a relay before world232 (world231 or older) marks every plate though no Caster is left"
   },
   {
     "name": "GAUNTLET-PLATES-plateY-top-never-found",

@@ -16732,3 +16732,25 @@ dungeon's real doors and the real relay). Mutants: `tools/mutants/fb1018d_seatli
 equivalent). The relay is world220 (main's EG-PERFECT took world219; re-hashed in place while undeployed). Audited:
 `01-Overview/audits/Audit-Field-Bugs-2026-10-18d.md`.
 
+
+## NAME-WORDS and HANDLE-RENAME (2026-10-19, Mac: "Change the name PROSTITUTE_STRANGLER to SanguinePanguine. This is an account. Not sure how the filter didnt catch this", then "Yes" to adding both words)
+
+**Why the filter let it through.** NAME-F1's lists held neither word, and a list would not have been enough: stage 1
+drops the underscore, so the handle reads `prostitutestrangler`, where each word stands beside the other and never
+beside padding - `standsAlone` finds neither. **The fix:** `src/net/nameFilter.js` ANYWHERE reads `prostitute` and
+`strangler` anywhere inside a word, as it reads `fuck` in `motherfucker` (kind `crude`). A handle holding either is
+refused at entry (`handle-refused`, naming the word); a character's name holding either cannot be worn (NAME-AS); a
+line stars them (TEXT-F1's mask - "a prostitute and a strangler" reads "a ********** and a *********" in a chat line,
+a letter or a note). `Strangle`, `Stranglehold` and `SanguinePanguine` pass. RELAY_VERSION world231, ACCOUNT_VERSION acct162.
+
+**The account.** No route renames a player, so migration `server-account/migrations/0134_handle_rename.sql` does, once,
+at the account deploy: `players.handle` and `handle_lc` (the player signs in as SanguinePanguine, password and recovery
+codes unchanged), and every row that keeps the display name as it was - letters, board and guild notes, guild rosters
+and ledgers, homes and rooms, seat orders, renown tracks, POI documents - matched on the old name exactly (case aside).
+The moderation record (`mod_case_lines`, `mod_actions`, `mod_cases`, `private_reports`, `players.muted_by`) keeps it
+as it was. A character's name is the character's and is not touched. Where SanguinePanguine is already a handle,
+nothing is written.
+
+**Open.** A live handle other than this one that holds either word now fails the token's own law (identityToken.js
+claimsValid - `mintToken` throws), so its player cannot go online until it is renamed the same way; the live table was
+not read from here. Pinned by `test/server/handlerename0134.test.js`.
