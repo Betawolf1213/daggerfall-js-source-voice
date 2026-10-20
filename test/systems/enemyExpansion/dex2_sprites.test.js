@@ -12,7 +12,7 @@ import { DEX_ART } from '../../../src/systems/enemyExpansion/dexArt.js';
 import { dexSpriteEntries, dexXmlScales, installDexSprites, _resetDexSprites, DEX_OWN_ART, DEX_REPAINTED_ART } from '../../../src/systems/enemyExpansion/dexSprites.js';
 import { addVendorTextures, clearVendorTextures, vendorTextureStandIn, vendorFrameCount, isVendorArchive } from '../../../src/systems/textureReplacement.js';
 import { mobileBillboardSize } from '../../../src/world/rmbFlats.js';
-import { billboardXmlScale, unregisterBillboardXml } from '../../../src/world/billboardXml.js';
+import { billboardXmlScale, unregisterBillboardXml, registerBillboardXml } from '../../../src/world/billboardXml.js';
 import { setValue } from '../../../src/systems/settings/settings.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -108,6 +108,37 @@ test('DEX2 a stand-in\'s xml scale applies whatever AssetInjection says - its pi
   assert.ok(Math.abs(scaled.w - base.w * 1.3) < 1e-9 && Math.abs(scaled.h - base.h * 1.3) < 1e-9, 'the stand-in at 1.3, the switch off');
   setValue('Enhancements', 'AssetInjection', 'True');
   assert.ok(Math.abs(mobileBillboardSize(classic, 0).w - base.w * 1.3) < 1e-9, 'and a classic texture under the switch, as before');
+});
+
+test('DEX2 A STAND-IN\'S XML-SCALED SIZE IS ONE CACHED OBJECT (AUDIT DEX B7): mobileBillboardSize answers the same object for a texture\'s record frame after frame - it minted two a call, per foe per frame - and a new registration, a table registered again or a registrant\'s switch moves it (mutants: the cache never kept; blind to a switch; blind to a registration)', (t) => {
+  t.after(() => { unregisterBillboardXml('b7-later'); unregisterBillboardXml('daggerfall-enemy-expansion'); clearVendorTextures(); _resetDexSprites(); });
+  clearVendorTextures();
+  installDexSprites({ fetchBytes: async () => new Uint8Array(0) });
+  const standIn = { vendor: true, archive: 1530, getSize: () => ({ width: 100, height: 100 }), getScale: () => ({ width: 0, height: 0 }) };
+  const one = mobileBillboardSize(standIn, 0);
+  assert.equal(mobileBillboardSize(standIn, 0), one, 'the same object, asked again');
+  const base = { w: one.w / 1.3, h: one.h / 1.3 };
+  // a later registrant that names the record answers - a NEW registration moves it
+  let on = true;
+  const later = { 1530: { 0: [2, 3] } };
+  registerBillboardXml('b7-later', later, () => on);
+  const two = mobileBillboardSize(standIn, 0);
+  assert.notEqual(two, one);
+  assert.ok(Math.abs(two.w - base.w * 2) < 1e-9 && Math.abs(two.h - base.h * 3) < 1e-9, 'the later registrant\'s scale');
+  assert.equal(mobileBillboardSize(standIn, 0), two, 'and kept');
+  // its switch turned off: the mod's own scale again, with no registration between
+  on = false;
+  const three = mobileBillboardSize(standIn, 0);
+  assert.ok(Math.abs(three.w - base.w * 1.3) < 1e-9, 'the switch is read at every ask');
+  on = true;
+  assert.ok(Math.abs(mobileBillboardSize(standIn, 0).w - base.w * 2) < 1e-9, 'and on again');
+  // the same table registered again after an edit - its array the same, its numbers not
+  later[1530][0][0] = 4;
+  registerBillboardXml('b7-later', later, () => on);
+  assert.ok(Math.abs(mobileBillboardSize(standIn, 0).w - base.w * 4) < 1e-9, 'a registration moves it, whatever it holds');
+  // another record of the texture is its own entry
+  assert.notEqual(mobileBillboardSize(standIn, 1), mobileBillboardSize(standIn, 0));
+  assert.equal(mobileBillboardSize(standIn, 1), mobileBillboardSize(standIn, 1));
 });
 
 test('DEX2 the install registers the pictures at Start, whatever the switch; a frame\'s emission map rides beside it in the pipeline (by source)', () => {

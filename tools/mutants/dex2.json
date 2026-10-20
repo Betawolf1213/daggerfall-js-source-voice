@@ -22,8 +22,8 @@
  {
   "name": "DEX2-the-xml-gated-on-a-stand-in",
   "file": "src/world/rmbFlats.js",
-  "old": "  return textureReplacementEnabled() || t?.vendor === true ? applyBillboardXml(t?.archive, record, size) : size;",
-  "new": "  return textureReplacementEnabled() ? applyBillboardXml(t?.archive, record, size) : size;",
+  "old": "  if (!(textureReplacementEnabled() || t?.vendor === true)) return size;",
+  "new": "  if (!textureReplacementEnabled()) return size;",
   "why": "the mod's riders stand at their pictures' size with AssetInjection off",
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
@@ -105,6 +105,36 @@
   "old": "        r.batch = setupFoeLook(renderer?.createBillboardBatch?.(archive, rkey, size, [[0, 0, 0]]) ?? null, b.mobileType);",
   "new": "        r.batch = renderer?.createBillboardBatch?.(archive, rkey, size, [[0, 0, 0]]) ?? null;",
   "why": "AUDIT DEX B6: an Overworld band of a Spectral or NoShadow row drawn opaque and casting",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-xml-size-never-kept",
+  "file": "src/world/rmbFlats.js",
+  "old": "  if (!x || x.s !== s || x.gen !== gen) { x = {",
+  "new": "  if (true) { x = {",
+  "why": "AUDIT DEX B7: two objects minted per foe per frame for a stand-in the xml scales",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-xml-size-blind-to-a-switch",
+  "file": "src/world/rmbFlats.js",
+  "old": "  if (!x || x.s !== s || x.gen !== gen) { x = {",
+  "new": "  if (!x || x.gen !== gen) { x = {",
+  "why": "AUDIT DEX B7: a registrant's switch turned and the cached size kept",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-the-xml-size-blind-to-a-registration",
+  "file": "src/world/rmbFlats.js",
+  "old": "  if (!x || x.s !== s || x.gen !== gen) { x = {",
+  "new": "  if (!x || x.s !== s) { x = {",
+  "why": "AUDIT DEX B7: a table registered again and the cached size kept",
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
