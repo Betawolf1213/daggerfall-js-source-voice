@@ -427,6 +427,9 @@ export function createSpoilsPool({
   }
 
   return {
+    /** WB14e: a piece straight into the pack by this pool's own door (`take`, the host's takeGateSpoil) - a Tithe-Imp's
+     *  tithe, which never lies on the floor. */
+    take(piece) { take(piece); },
     /**
      * THE BURST: the spoils of `day` for this player (the receipt's `seed`, the player's `level`) leave his chest `at`
      * (the dungeon's frame) toward `bearing` (the angle from him to the player). Once a day, on this device: a day

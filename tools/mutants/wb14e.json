@@ -350,5 +350,23 @@
       "test/net/gate/wb14e_tithe.test.js"
     ],
     "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "WB14e-the-pool-s-door-shut",
+    "file": "src/scenes/spoilsPool.js",
+    "old": "    take(piece) { take(piece); },",
+    "new": "    take() {},",
+    "tests": [
+      "test/net/gate/wb14e_tithe.test.js"
+    ]
+  },
+  {
+    "name": "WB14e-the-court-past-the-pool",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "  takeSpoil = (piece) => spoils?.take?.(piece),",
+    "new": "  takeSpoil = () => {},",
+    "tests": [
+      "test/net/gate/wb14e_tithe.test.js"
+    ]
   }
 ]

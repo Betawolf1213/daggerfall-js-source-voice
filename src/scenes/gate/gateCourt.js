@@ -305,7 +305,7 @@ export function createGateCourt({
   renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null,
   link, spoils = null, now, door = () => null, cam = () => null, feet = () => null, player = () => null, save = () => 100,
   strike = () => {}, say = () => {}, hudHidden = () => false, veiled = () => false, send = () => false, sendCrystal = () => false, sendHost = () => false, sendHeal = () => false, sendBody = () => false, rng = Math.random,
-  takeSpoil = () => {},   // WB14e: a piece into my pack (scenes/world.js takeGateSpoil - the spoils' own door), for a Tithe-Imp's tithe
+  takeSpoil = (piece) => spoils?.take?.(piece),   // WB14e: a piece into my pack by the spoils' own door (scenes/spoilsPool.js take, the host's takeGateSpoil), for a Tithe-Imp's tithe
   portalDoor: layPortalDoor = () => {}, soulTrap = () => {}, me = () => null, yaw = () => null, shake = () => {},
   myId = () => null, pull = () => {}, pullDecay = 0,   // WB14a: my peer id (the marked blows name it), my body's push (the Chains' reel) and its decay
   wantBodies = undefined, makeBodies = null,   // MWNPC10: the body lane's seams (a test's own)

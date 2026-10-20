@@ -530,8 +530,8 @@ standing again, and caught again it paid a fresh seed). A catch the dice did not
 thing the next beat, before the kill's or the Wrath's return. It is never
 said again at a later `in`: a tithe is a surprise, and nothing on any ledger counts it.
 
-On the screen the tithe goes straight into the pack through the spoils' own door (`scenes/world.js takeGateSpoil`, on the
-court's existing line): gold at TITHE_GOLD_PER_LEVEL (60) a level, a fifth either way, and one gem of the classic eight
+On the screen the tithe goes straight into the pack through the spoils' own door (`scenes/spoilsPool.js` take, the host's
+`scenes/world.js takeGateSpoil`; the court is handed the pool alone): gold at TITHE_GOLD_PER_LEVEL (60) a level, a fifth either way, and one gem of the classic eight
 (ItemBuilder's own CreateRandomGem) - `systems/gate/gateSpoils.js titheList`, the seed's own - with a gold burst where it
 fell and *"You take its tithe of 594 gold and a Ruby."* (AUDIT WB14 TEXT-1: the gem with its article, the gold formatted -
 it said *"594 gold and Ruby"*). It is drawn as an Imp at TITHE_SCALE (1.3) burning gold (a light of
@@ -634,7 +634,7 @@ captiveNameOf; `net/gate/gateBrain.js` COURTS (six), WALKS (six), nightPlan, liv
 clampToFloor, newFight's `pt`, xaWire; `world/gate/gateArena.js` planOfDay, arrivalOf and the plan's model, collider,
 slabs and lights; `scenes/gate/gateStand.js` (the court's builders out of `scenes/worldModes.js`, HOST-SPLIT); the
 words in the chat, the map's card, the marks card's rows (made the first night that has one) and the herald's omen
-post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world227 (world222 on its branch, renumbered past GATE-DOOR, FOE-BOUNDS and GRANT-DOOR's world223, LAYERED-GEAR and VOICE2's world224, GAUNTLET-SLAIN's world225 and LORD-SHARES's world226 at the merges).
+post. GATE_BRAIN_V/MIN 6; RELAY_VERSION world228 (world222 on its branch, renumbered past GATE-DOOR, FOE-BOUNDS and GRANT-DOOR's world223, LAYERED-GEAR and VOICE2's world224, GAUNTLET-SLAIN's world225, LORD-SHARES's world226 and PLAIN-SWEEP's world227 at the merges).
 Pins: `test/net/gate/wb14b_portents.test.js` (13); mutants: `tools/mutants/wb14b.json` (18, all dead). Found in it and
 fixed in WB14a's push: the court's `reset` had lost its first line of resets behind the night's arrival (a comment
 swallowed them) - a new night's attacks numbered as the last night's were never judged; pinned by a Slam that must land
@@ -659,7 +659,7 @@ rollSpoils's `p` and `portent`, SPOILS_PORTENT_BITS; `scenes/spoilsPool.js` spoi
 last); `server-account/src/eg.js` EG_KEY_ODDS_PORTENT and egGateWeir's odds; `server-account/src/service.js` and
 `wrangler.toml` ACCOUNT_VERSION acct159 (every version pin moved with its note). Pins: `test/net/gate/wb14g_pays.test.js` (5);
 mutants: `tools/mutants/wb14g.json`, and the re-aimed version records (hackedgold, bal9, crafthold, nameas, br5,
-fb1004d_knight_house, tech1, gatekeys). RELAY_VERSION's LAW hash recomputed (world227 now). The arc is whole.
+fb1004d_knight_house, tech1, gatekeys). RELAY_VERSION's LAW hash recomputed (world228 now). The arc is whole.
 
 **WB14f (2026-10-19) - shipped.** `net/gate/gateBrain.js` HOST_KINDS 7 (the gaoler), HOST.gaoler, HOST_BLOWS 7 (its Pulse,
 the Ward-Bearer's), its rising's span, CAPTIVE_RING_R, newCaptive and newFight's `cp`, stepCaptive (the gaolers and the
@@ -683,7 +683,7 @@ phase's turn sending it into the fire before his host crumbles; `net/bossSeam.js
 the night's moment at the fight's birth and `_gateFan`'s `to`; `net/wire.js` GATE_HOST_KINDS 7, GATE_HOST_GONE 4, the
 `tithe` word; `net/gate/gateLink.js` the tithe on the state, kept through the fight; `systems/gate/gateSpoils.js`
 titheList, TITHE_GOLD_PER_LEVEL; `scenes/gate/gateCourt.js` the tithe into the pack once (the court's `takeSpoil` door,
-`scenes/world.js`'s takeGateSpoil on the court's line), its gold burst, COURT_TITHE_TEXT; `scenes/gate/gateHost.js` its
+the spoils pool's own `take` - the host's takeGateSpoil), its gold burst, COURT_TITHE_TEXT; `scenes/gate/gateHost.js` its
 words, its size and its gold; `world/gate/gateBoss.js` its look (TITHE_SCALE, TITHE_GOLD) and a fled body sinking;
 `ui/gate/gateBossBar.js` never counted his host. And the arc's own lines held to WB13b's style law (its scan now reads
 the Vanguard's, the arsenal's, the Sundering's and the tithe's tables): *Dagon's Brand! Keep clear!*, *The halves rejoin

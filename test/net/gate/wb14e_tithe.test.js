@@ -25,6 +25,7 @@ import { foldGate, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import { titheList, TITHE_GOLD_PER_LEVEL } from '../../../src/systems/gate/gateSpoils.js';
 import { ITEM_GROUPS } from '../../../src/systems/loot/loot.js';
 import { createGateCourt, COURT_TITHE_TEXT } from '../../../src/scenes/gate/gateCourt.js';
+import { createSpoilsPool } from '../../../src/scenes/spoilsPool.js';
 import { waveLine, COURT_HOST_TEXT } from '../../../src/scenes/gate/gateHost.js';
 import { hostLookOf, hostFallAct, TITHE_SCALE, TITHE_GOLD } from '../../../src/world/gate/gateBoss.js';
 import { bossBarModel } from '../../../src/ui/gate/gateBossBar.js';
@@ -254,7 +255,15 @@ test('WB14e the court: my tithe into my pack once (the spoils\' own door), its g
   const watcher = createGateCourt({ link: { state: () => st, watching: () => true }, now: () => 5100, feet: () => courtToDungeon(2, 0, 2), player: () => ({ health: 100, maxHealth: 100, level: 10 }), takeSpoil: (p) => w.push(p) });
   watcher.frame();
   assert.equal(w.length, 0);
-  assert.match(read('src/scenes/world.js'), /spoils: spoilsPool, takeSpoil: takeGateSpoil,/);
+  // the court's door is the spoils pool's own: its `take`, the host's takeGateSpoil (scenes/world.js hands the court the pool alone)
+  const viaPool = [];
+  const pool = createSpoilsPool({ ray: () => null, now: () => 5100, take: (p) => viaPool.push(p) });
+  createGateCourt({ link, spoils: pool, now: () => 5100, feet: () => courtToDungeon(2, 0, 2), player: () => ({ health: 100, maxHealth: 100, level: 10 }) }).frame();
+  assert.deepEqual(viaPool.map((p) => p.kind), want.map((p) => p.kind), 'through the pool\'s take, once');
+  const court = /const gateCourt = gateLink \? createGateCourt\(\{[\s\S]*?\n {2}\}\) : null;/.exec(read('src/scenes/world.js'))[0];
+  assert.match(court, /spoils: spoilsPool,/);
+  assert.doesNotMatch(court, /takeSpoil/, 'the court is handed the pool, its door with it');
+  assert.match(read('src/scenes/world.js'), /const spoilsPool = createSpoilsPool\(\{[\s\S]{0,600}?take: takeGateSpoil,/);
 });
 
 test('WB14e its words, its look and the bar: its bolt said as it rises, its catching by name, its escape; an Imp\'s sprite at TITHE_SCALE named the Tithe-Imp; sinking into the fire as it flees; never counted his host (mutants: no line at its rising; an escape said as a catch; counted on the bar)', () => {
