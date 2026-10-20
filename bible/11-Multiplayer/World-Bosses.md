@@ -2651,7 +2651,21 @@ languages that cover the catalog, and two pins that read the court's words moved
 GOLDEN FRAMES (the gate's hash - the two answers' `me`, every frame else word for word: taken out, the old hash to the
 byte) and `sd8c_remnant_page.test.js` (`me: 1` said in two answers, the court's beside the Hour's). Not a DFU member.
 
-## 25. A whole blow on a body the relay runs (STAND-IN-WHOLE, FIELD BUGS 2026-10-19f)
+## 25. The Breach's portents (WB14, 2026-10-19) - its own page
+
+Mac: *"adding the chance of a gate to spawn with platforms of wave based adds that need to be defeated before
+encountering the boss / More diabolical boss movesets / More unique, but not super hard mechanics. Like the boss
+splitting and players having to split and navigate to beat both sides and then merging at the end for its final stand
+(chance based encounter modifer)"*, then *"This is all yours to take on."* The record is
+`11-Multiplayer/Breach-Portents.md`: a third kind of mark beside his aspect and his trials (section 8 here, and section
+17's Legion-Lord, which carries none), the night's floor plan that grows this page's three courts (section 14, WB9b)
+into a graph of six floors and six walkways, the Warden's new arsenal, and the slices WB14a-g. A portent adds to the court;
+it never changes the gate's clock, its marks or its claim. Two of the arc's changes are every night's, named (AUDIT WB14
+RECORD-12, `01-Overview/audits/Audit-Breach-Portents.md`): the Warden's new arsenal is his on every night (Breach-Portents
+section 3), its Burning Gaze the one blow answered by turning, not by a step (section 5's escape law, Breach-Portents
+answer 5); and the Tithe-Imp may run on any night, the Legion-Lord's too (Breach-Portents section 9).
+
+## 26. A whole blow on a body the relay runs (STAND-IN-WHOLE, FIELD BUGS 2026-10-19f)
 
 A player's private report: a Disintegrate on an online breach's boss popped a huge number, and his bar never moved.
 
@@ -2698,7 +2712,7 @@ the fix is the stand-in's, as a duel's was (`combat/duelCombat.js` DUEL_STAND_IN
   condition, the health it removes (`MehrunesRazorEffect`), and on a body the relay runs nothing would pay it - a whole blow
   free on every failed save, its number the whole on top of the swing's.
 
-What it does not do: the serpent's door raises no number (BOSS-DOT, section 26, brought it into the module and tells its
+What it does not do: the serpent's door raises no number (BOSS-DOT, section 27, brought it into the module and tells its
 riders what a hand's purse can land); a swing's number is not capped (no swing reaches the cap but the Razor's, which stays passed by).
 A departure from DFU (`Disintegrate.MagicRound` kills outright): on a body the relay runs it is the most one blow lands.
 Pins: `test/net/gate/fb1019f_standinwhole.test.js` (5: the whole against the real constants, every wire and the purses;
@@ -2713,7 +2727,7 @@ dead). Re-aimed by content (13, all dead): `arena4b_blows.json`, `audit_schools.
 `fb1018f_turnedblow.json` (the host's number; the crystal's and the Warden's retired with the copies they named), `blood1.json`,
 `fb1018f_relayshare.json` (5).
 
-## 26. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Carry DoTs")
+## 27. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Carry DoTs")
 
 Section 25's door counted a spell on a stand-in and wiped the stand-in at once - "continuous families are not his to carry",
 WB4b's comment, never a decision (WBX7 named it, "his stand-in forgets every lasting effect", and carried the Soul Trap

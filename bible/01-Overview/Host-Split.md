@@ -494,7 +494,7 @@ records that named its text were re-aimed by content (`ow2.json`, `owwod.json`, 
 
 ## STAND-IN-WHOLE - the four spell doors out of buildDungeonContext (FIELD BUGS 2026-10-19f)
 
-Not a slice of the order above: a fix (`11-Multiplayer/World-Bosses.md` section 25) whose door stood in `buildDungeonContext`
+Not a slice of the order above: a fix (`11-Multiplayer/World-Bosses.md` section 26) whose door stood in `buildDungeonContext`
 four times - `spellOnBoss`, `spellOnCrystal`, `spellOnHost` and `spellOnRival` (and `tellStandIn`, `spellOnStandIn`), each
 counting a spell on a relay body's stand-in with its own copy of the counting sinks and popping its own number. The fix's
 number - what can land - belonged in one place, so the doors left as one rather than being edited four times.
@@ -519,7 +519,7 @@ number - what can land - belonged in one place, so the doors left as one rather 
 
 ## BOSS-DOT - the serpent's spell door out of bootWorld (FIELD BUGS 2026-10-19f)
 
-BOSS-DOT (`11-Multiplayer/World-Bosses.md` section 26) carries a spell's lasting harm on every body a relay runs, and the
+BOSS-DOT (`11-Multiplayer/World-Bosses.md` section 27) carries a spell's lasting harm on every body a relay runs, and the
 sea serpent's door - `serpentSpellOn`, the fifth copy of the stand-in's door, in `bootWorld` - was the one host copy left.
 It went into the module rather than growing there: `createSerpentSpell` in `src/scenes/gate/standInSpell.js` (the count,
 the riders, the claim to `serpentHost.handStruck`, its rounds), which `bootWorld` constructs where it stood and asks once
