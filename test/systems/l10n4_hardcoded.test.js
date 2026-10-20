@@ -98,7 +98,7 @@ const HARDCODED = {
   'src/net/firmament/firmamentLaw.js': 42,
   'src/net/firmament/firmamentTree.js': 113,
   'src/net/fortLaw.js': 21,
-  'src/net/gate/gateBrain.js': 9,
+  'src/net/gate/gateBrain.js': 7,   // AUDIT WB14 (TEXT-9): the phase names through the text core
   'src/net/gate/gateClaims.js': 5,
   'src/net/gate/gateHerald.js': 8,
   'src/net/gate/gateLaw.js': 4,
@@ -259,7 +259,7 @@ const HARDCODED = {
   'src/scenes/fishHost.js': 14,
   'src/scenes/fleetHost.js': 52,
   'src/scenes/foragingWait.js': 1,
-  'src/scenes/gate/gateCourt.js': 12,
+  'src/scenes/gate/gateCourt.js': 10,   // AUDIT WB14 (TEXT-9): the phase card's orders through the text core
   'src/scenes/gate/gateHost.js': 7,
   'src/scenes/gate/gatePool.js': 4,
   'src/scenes/gatherHost.js': 10,
@@ -683,7 +683,7 @@ const HARDCODED = {
   'src/ui/pickupFeed.js': 1,
   'src/ui/pixelDial.js': 3,
   'src/ui/pixelifyFive.js': 2,
-  'src/ui/playerBadge.js': 35,   // SERPENT5: The Maelstrom's word, beside the other auras'; EG-E2: the Spire's thirteen titles and three auras in words; WIKIMAID: the Lilac Warren's word, beside the other auras'
+  'src/ui/playerBadge.js': 36,   // QL12: the questlines' five titles in words ("Witness of the Hour" the one two-word phrase); SERPENT5: The Maelstrom's word, beside the other auras'; EG-E2: the Spire's thirteen titles and three auras in words; WIKIMAID: the Lilac Warren's word, beside the other auras'
   'src/ui/playerHistory.js': 1,
   'src/ui/plus/plusPad.js': 18,
   'src/ui/plus/plusPadBinds.js': 30,
