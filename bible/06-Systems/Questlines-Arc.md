@@ -680,7 +680,12 @@ nothing paid - and on the client a line the service pays opens only for a regist
   or after the LINE's first opening - an end whose own opening never landed is read against the line's (AUDIT QUESTLINES
   SERVICE-2) - and in the line's order: newer than the receipt that witnessed an earlier step, older than one that
   witnessed a later, so one receipt witnesses one step (`seen_at`; AUDIT QUESTLINES SERVICE-5: one rite-breaking fight
-  paid both of the Burning Doors' steps). A receipt row's `at` is the second it was CLAIMED (every producer writes its
+  paid both of the Burning Doors' steps). THE WITNESS-ORDER RULE (AUDIT STARFALL B2): an end is not witnessed while an
+  earlier WITNESSED step of its line is not done (`server-account/src/questlines.js:"export function qlStepsBefore(lineId, step) {"`):
+  the earlier step's receipt is the window's floor only once it is laid, and a later step's end asked first read its
+  window from the line's opening, so one receipt witnessed both (the Thirteenth of Frostfall's three stars took its
+  first, the Weir Road's three Redoubts took its first). Answered `{ witnessed: false }`, and the runner asks again; the
+  ceiling still reads a later step done before the rule (a row acct159-164 wrote). A receipt row's `at` is the second it was CLAIMED (every producer writes its
   own clock), so a receipt held unclaimed counts from its claim - a receipt lives a week. Witnessed: `done_at` and
   `seen_at` laid with the outcome's `choice` (the first an end carries) - `{ witnessed: true }`; else `{ witnessed:
   false }`, nothing written, and the runner files the step `unseen` (the window's to say, section 6) and asks again, as
@@ -697,7 +702,9 @@ nothing paid - and on the client a line the service pays opens only for a regist
 - **A title once an account, for good** (AUDIT QUESTLINES SERVICE-8, LINES-22: this said "once a character" - the titles
   and the steps are the account's, and a second character's witnessed steps answer off the first's rows). A line's bit
   on `players.ql_titles`, laid on the claim of its `titleAt` step once that step and every witnessed step before it are
-  done - asked on each of those claims, so a line witnessed out of order still pays it when its last step lands.
+  done - asked on each of those claims, so a line whose steps were done out of order before the witness-order rule
+  still pays it when its last step lands. The Starwarden's write also lays its purse of Soul Cakes while the festival is
+  open (`Witches-Festival.md`, "The Starwarden's purse").
   Doorwarden (the Burning Doors), Covenbane (the Covens' Hoard, at its end), Weirwalker (the Weir Road), Witness of the
   Hour (the Hour), Satakal's Witness (the Old Coil) and Starwarden (the Thirteenth of Frostfall, at its three stars -
   STAR8) - the badge's words (`ui/playerBadge.js` TITLE_TEXT; the vocabulary

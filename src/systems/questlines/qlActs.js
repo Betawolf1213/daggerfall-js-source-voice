@@ -51,6 +51,7 @@ export const ACT_KINDS = Object.freeze({
   'hour-broken': 'endgame',   // the Brass Remnant broken in the Shattered Hour
   'serpent-slain': 'endgame',   // the Sea Serpent slain
   'star-held': 'endgame',   // a fallen star held through its master's fall (the Starfall - STAR8)
+  'heart-star-held': 'endgame',   // the Heart-Star held - the Witches' Night's last star; said in the same turn as its `star-held`, so the festival's finds count one deed (festivalClient.js ONE DEED, ONE FIND)
 });
 export const ACT_IDS = Object.freeze(Object.keys(ACT_KINDS));
 

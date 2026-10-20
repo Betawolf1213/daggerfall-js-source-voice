@@ -6,7 +6,8 @@
 // bible/11-Multiplayer/Starfall.md section 6.
 //
 //   the receipts    net/starfall/starClaims.js - kept on the device with the character that held the star, offered to
-//                   `/v1/star/claim` until counted; a counted one notes the questline's act
+//                   `/v1/star/claim` until counted; a counted one notes the questline's act for that character alone
+//                   (`who` - owed it until it stands, AUDIT STARFALL 7)
 //   the spoils      scenes/spoilsPool.js under the star's own keys (systems/starfall/starSpoils.js STAR_SPOILS_KEYS) - no floor,
 //                   no word to the hub; into the pack through the world's one door (`takeSpoil`), one tab at a time
 //                   (spoilsLock); the crash's records cleared by the save that holds them (onSlotSaved, the realm's
@@ -73,7 +74,7 @@ export function createStarRewards(host) {
     if (a.announce !== null) host.renownRose?.(a.announce);
   }
   const claims = createStarClaims({
-    claim: account.claim, me: account.me,
+    claim: account.claim, me: account.me, who,   // AUDIT STARFALL 7: a star's act belongs to the character that held it, noted while it stands
     nowS: () => host.relayNowS?.() ?? null,
     store,
     say: (text) => host.chatNotice?.(text),

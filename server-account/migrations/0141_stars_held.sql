@@ -25,7 +25,10 @@
 --              day). `char_id` and `xp` are what the claim paid and to
 --              whom; `nonce` names the claim that wrote the row, so the
 --              one transaction that writes it credits by its own row
---              alone (raid_cleanses' law, migration 0016).
+--              alone (raid_cleanses' law, migration 0016). `cid` is the
+--              device's claim id that claim carried (NULL for none): a
+--              retry of an answer lost after the commit finds the row
+--              its own and is told what it paid (AUDIT STARFALL B3).
 -- star_spoils  A STAR'S SPOILS, GIVEN ONCE A (STAR, ACCOUNT): the device's
 --              claim id (`cid`) the first claim carried - a second browser
 --              is answered `spoils: false` (raid_spoils' law, 0017). A
@@ -40,6 +43,7 @@ CREATE TABLE IF NOT EXISTS stars_held (
   xp      INTEGER NOT NULL,
   nonce   TEXT NOT NULL,
   at      INTEGER NOT NULL,
+  cid     TEXT,
   PRIMARY KEY (star, account),
   FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
 );

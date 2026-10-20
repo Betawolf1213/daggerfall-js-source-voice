@@ -11,7 +11,8 @@ import { STAR_HOUR_MS, starTimes } from '../../../src/net/starfall/starfallLaw.j
 import { MARKS_FAUCETS, MARKS_COMBAT } from '../../../src/net/marksLaw.js';
 import { STAR_CLAIMS_DAY_MAX, starKeyOf, starDayOf } from '../../../server-account/src/stars.js';
 import { progressSpentOf } from '../../../server-account/src/progress.js';
-import { renownRaidXp } from '../../../src/net/renown.js';
+import { renownRaidXp, renownForXp } from '../../../src/net/renown.js';
+import { spoilsGrant } from '../../../server-account/src/budget.js';
 import { FESTIVALS } from '../../../src/net/festivalLaw.js';
 const FESTIVAL_FROM_MS = FESTIVALS[0].fromMs;   // the Witches' Festival's first day, the Starfall's own (net/festivalLaw.js)
 
@@ -116,6 +117,7 @@ test('STAR7 THE DAY\'S BOUND AND THE CAP: nine stars counted on the day they fel
 test('STAR7 THE MIGRATION AND THE DEPLOY: stars_held and star_spoils, one row a (star, account), cascading with their account; the route declared beside the raid\'s; the account Worker\'s deploy watches the star\'s law and receipt (mutants: the key; the cascade)', async () => {
   const sql = src('server-account/migrations/0141_stars_held.sql');
   assert.match(sql, /CREATE TABLE IF NOT EXISTS stars_held \([\s\S]*PRIMARY KEY \(star, account\),\s*FOREIGN KEY \(account\) REFERENCES players\(id\) ON DELETE CASCADE/);
+  assert.match(sql, /\n {2}cid {5}TEXT,\n {2}PRIMARY KEY \(star, account\)/, 'AUDIT STARFALL B3: the claim id that wrote the row');
   assert.match(sql, /CREATE TABLE IF NOT EXISTS star_spoils \([\s\S]*PRIMARY KEY \(star, account\),\s*FOREIGN KEY \(account\) REFERENCES players\(id\) ON DELETE CASCADE/);
   clock(T0);
   const s = await stand();
@@ -127,4 +129,46 @@ test('STAR7 THE MIGRATION AND THE DEPLOY: stars_held and star_spoils, one row a 
   const deploy = src('.github/workflows/account-deploy.yml');
   assert.match(deploy, /- "src\/net\/starfall\/starReceipt\.js"/);
   assert.match(deploy, /- "src\/net\/starfall\/starfallLaw\.js"/);
+});
+
+test('AUDIT STARFALL B3: AN ANSWER LOST AFTER THE BATCH - the fill (INT5) rides the claim\'s own batch, by its row alone; a 5xx past the batch keeps the row, the Renown, the silver and the fill, and the retry is `claimed` with what the lost answer said - the row is this device\'s own (its claim id), the count, the Renown the row credited its character - never to another device\'s claim, and paying nothing again (mutants: B3-the-fill-after-the-batch; B3-the-fill-unguarded; B3-own-for-every-device; B3-the-snapshot-unsaid; B3-the-row-unstamped)', async () => {
+  clock(T0);
+  const s = await stand();
+  const ann = await s.registered('Anna', { character: CH });
+  s.raw.prepare('INSERT INTO realm_characters (id, player, name, lease, created_at, updated_at, allowance, level_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run('rc-star', ann.id, 'Anna', 'lease-1', T0, T0, 1000, 1);
+  const allowance = () => s.raw.prepare('SELECT allowance FROM realm_characters WHERE id = ?').get('rc-star').allowance;
+  // the first claim: counted, and its fill in the same batch
+  const a = await s.star(ann, [N, 0], { cid: CID });
+  assert.equal(a.body.recorded, true);
+  assert.equal(allowance(), 1000 + spoilsGrant(1), 'the signed win\'s fill');
+  const again = await s.star(ann, [N, 0], { cid: CID });
+  assert.deepEqual([again.body.why, again.body.own, again.body.held], ['claimed', true, 1], 'this device\'s own row');
+  assert.deepEqual(again.body.renown, { character: CH, xp: renownRaidXp(1), level: renownForXp(renownRaidXp(1)), credited: renownRaidXp(1), rose: renownForXp(renownRaidXp(1)) > 1 }, 'what the row credited its character, the track as it stands');
+  assert.equal(allowance(), 1000 + spoilsGrant(1), 'a retry fills nothing');
+  assert.equal(s.balance(ann), 30, 'and strikes nothing');
+  const theirs = await s.star(ann, [N, 0], { cid: CID2 });
+  assert.deepEqual([theirs.body.why, 'own' in theirs.body, 'renown' in theirs.body], ['claimed', false, false], 'another device\'s claim: nothing of the row\'s to finish');
+  assert.equal(s.raw.prepare('SELECT cid FROM stars_held WHERE account = ?').get(ann.id).cid, CID, 'the row names the claim that wrote it');
+  // A 5xx PAST THE BATCH: the measure after it fails (its table gone) - the row, the Renown, the silver and the fill stand
+  const bo = await s.registered('Bors', { character: CH });
+  s.raw.prepare('INSERT INTO realm_characters (id, player, name, lease, created_at, updated_at, allowance, level_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run('rc-bors', bo.id, 'Bors', 'lease-2', T0, T0, 500, 1);
+  s.raw.exec('ALTER TABLE progress_hours RENAME TO progress_hours_gone');
+  const lost = await s.star(bo, [N, 1], { cid: CID });
+  s.raw.exec('ALTER TABLE progress_hours_gone RENAME TO progress_hours');
+  assert.ok(lost.status >= 500, `the answer lost (${lost.status})`);
+  assert.equal(s.raw.prepare('SELECT COUNT(*) AS n FROM stars_held WHERE account = ?').get(bo.id).n, 1, 'the row committed');
+  assert.equal(s.raw.prepare('SELECT allowance FROM realm_characters WHERE id = ?').get('rc-bors').allowance, 500 + spoilsGrant(1), 'and the fill with it');
+  assert.equal(s.balance(bo), 30, 'and the silver');
+  const retry = await s.star(bo, [N, 1], { cid: CID });
+  assert.deepEqual([retry.status, retry.body.recorded, retry.body.why, retry.body.own, retry.body.held, retry.body.renown.character, retry.body.renown.credited], [200, false, 'claimed', true, 1, CH, renownRaidXp(1)], 'the retry: what the lost answer said');
+  assert.equal(s.raw.prepare('SELECT allowance FROM realm_characters WHERE id = ?').get('rc-bors').allowance, 500 + spoilsGrant(1), 'filled once');
+  // a claim the day's bound refuses fills nothing: no row, no fill
+  const cy = await s.registered('Cyra', { character: CH });
+  s.raw.prepare('INSERT INTO realm_characters (id, player, name, lease, created_at, updated_at, allowance, level_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run('rc-cyra', cy.id, 'Cyra', 'lease-3', T0, T0, 700, 1);
+  for (let i = 0; i < STAR_CLAIMS_DAY_MAX; i++) s.raw.prepare('INSERT INTO stars_held (star, account, day, char_id, xp, nonce, at) VALUES (?, ?, ?, ?, 0, ?, ?)').run(`${N - 100 + i}.0`, cy.id, starDayOf(N, 0), CH, `n${i}`, T0);
+  assert.equal((await s.star(cy, [N, 0], { cid: CID })).body.why, 'day-full');
+  assert.equal(s.raw.prepare('SELECT allowance FROM realm_characters WHERE id = ?').get('rc-cyra').allowance, 700, 'no row, no fill');
+  const svc = src('server-account/src/index.js');
+  const route = svc.slice(svc.indexOf("if (path === '/v1/star/claim'"), svc.indexOf("if (path === '/v1/serpent/claim'"));
+  assert.ok(route.length > 0 && !route.includes('grantSpoils('), 'no fill after the batch');
 });

@@ -353,8 +353,8 @@
  {
   "name": "STAR7-no-act",
   "file": "src/net/starfall/starClaims.js",
-  "old": "          noteAct('star-held');",
-  "new": "          void 0;",
+  "old": "const noteStar = (heart) => { noteAct('star-held'); if (heart)",
+  "new": "const noteStar = (heart) => { if (heart)",
   "tests": [
    "test/net/starfall/star7_claims.test.js"
   ]
@@ -466,5 +466,145 @@
   "tests": [
    "test/net/silverways_client.test.js"
   ]
+ },
+ {
+  "name": "B3-the-fill-out-of-the-batch",
+  "file": "server-account/src/stars.js",
+  "old": "    spoilsGrantStatement(db, player.id, 0, `EXISTS (SELECT 1 FROM stars_held WHERE star = ?5 AND account = ?1 AND nonce = ?6)`, key, nonce),\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: INT5's fill rides the claim's own batch"
+ },
+ {
+  "name": "B3-the-fill-unguarded",
+  "file": "server-account/src/stars.js",
+  "old": "`EXISTS (SELECT 1 FROM stars_held WHERE star = ?5 AND account = ?1 AND nonce = ?6)`, key, nonce)",
+  "new": "`EXISTS (SELECT 1 FROM stars_held WHERE star = ?5 AND account = ?1 AND nonce = ?6) OR 1`, key, nonce)",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: the fill by this claim's row alone"
+ },
+ {
+  "name": "B3-own-for-every-device",
+  "file": "server-account/src/stars.js",
+  "old": "if (!thanks || had.cid !== cid) return",
+  "new": "if (!thanks) return",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: `own` is the row this device's claim id wrote"
+ },
+ {
+  "name": "B3-the-row-unstamped",
+  "file": "server-account/src/stars.js",
+  "old": "nowS, STAR_CLAIMS_DAY_MAX, thanks ? cid : null),",
+  "new": "nowS, STAR_CLAIMS_DAY_MAX, null),",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: the row carries the claim id that wrote it"
+ },
+ {
+  "name": "B3-the-snapshot-unsaid",
+  "file": "server-account/src/stars.js",
+  "old": "level: renownForXp(now.xp), credited: paid,",
+  "new": "level: renownForXp(now.xp), credited: 0,",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: the Renown the row credited"
+ },
+ {
+  "name": "B3-lost-never-marked",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "        if (unheard !== !!e.lost && (unheard || answer?.ok)) mark(e, unheard);\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: an attempt never answered marks its entry"
+ },
+ {
+  "name": "B3-own-unread",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "answer.data?.own === true && e.lost === true;",
+  "new": "e.lost === true;",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: another device's row has nothing of this attempt's to finish"
+ },
+ {
+  "name": "B3-finished-twice",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "        if (unheard !== !!e.lost && (unheard || answer?.ok)) mark(e, unheard);\n",
+  "new": "        if (unheard) mark(e, true);\n",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: the mark cleared as the entry finishes - never twice"
+ },
+ {
+  "name": "B3-a-refusal-marks",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "answer?.error !== 'no-session' && !(answer?.status >= 400 && answer?.status < 500);",
+  "new": "answer?.error !== 'no-session';",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL B3: a refusal the service made is no lost attempt"
+ },
+ {
+  "name": "STAR7-act-for-anyone",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "    if (ch && ch === e.ch) { noteStar(heart); return; }\n",
+  "new": "    { noteStar(heart); return; }\n",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL 7: a star's act is the character that held it"
+ },
+ {
+  "name": "STAR7-owed-dropped",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "    keepOwed([...owed(), { ch: e.ch, h: heart ? 1 : 0 }].slice(-STAR_ACTS_MAX));\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL 7: owed the holder, never dropped"
+ },
+ {
+  "name": "STAR7-owed-twice",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "    keepOwed(list.filter((_, j) => j !== i));\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL 7: an owed act noted once"
+ },
+ {
+  "name": "STAR7-owed-unpaid",
+  "file": "src/net/starfall/starClaims.js",
+  "old": "      payOwed();   // AUDIT STARFALL 7: an act owed the character standing now\n",
+  "new": "",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL 7: noted when the holder stands"
+ },
+ {
+  "name": "STAR7-who-unhanded",
+  "file": "src/scenes/starfall/starRewards.js",
+  "old": "claim: account.claim, me: account.me, who,",
+  "new": "claim: account.claim, me: account.me,",
+  "tests": [
+   "test/net/starfall/star7_claims.test.js"
+  ],
+  "why": "AUDIT STARFALL 7: the Starfall host hands the carrier the character standing"
  }
 ]

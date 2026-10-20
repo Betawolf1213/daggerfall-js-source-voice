@@ -392,7 +392,8 @@ device reads it off the receipt's night and star alike.
 relay's public half, counted once a (night, star, account), at most `STAR_CLAIMS_DAY_MAX` (9) a UTC day; pays the
 character three quests' Renown (the raid's `renownRaidXp` measure, for a fight about as long) and strikes
 `STAR_SILVER` (30) silver under the day's combat cap; the cards say *Stars held: N*. A guest is counted once it
-registers. On `recorded` the client notes the act `star-held` (the questline's witness, section 7).
+registers. On `recorded` the client notes the act `star-held` (the questline's witness, section 7) for the character that
+held the star, and `heart-star-held` beside it for the Heart-Star.
 
 **On the device**, rolled from the receipt's seed (`systems/starfall/starSpoils.js`, the spoils pool under keys of its
 own): gold (60 a level, a fifth either way); one to three pieces of **Starfall Glass** (a trade good of the port's own,
@@ -431,6 +432,32 @@ its own. No custom row's name may be another's (`test/systems/starfall/auditstar
 imported), but two mods' own fruit rows (Climates & Calories' and Foraging's Apple and Orange, their data verbatim). Its
 card says what it is and what it is for (*Pale glass from a fallen star, still holding some of its light.* *Any merchant
 pays well for it.*), the Soul Cake's shape, in the classic info box and on the enhanced card.
+
+**An answer lost after the batch (AUDIT STARFALL B3, AS BUILT).** The claim's one batch is the whole of its money: the
+row, the Renown, the silver and INT5's fill of the playing character's budget, which ran after the batch as the raid's
+does and was lost with any failure between the two (`server-account/src/budget.js:"export function spoilsGrantStatement(db, playerId, pieces = 0, guard = null, ...binds) {"`,
+held to the claim's own row by its nonce). What still runs after it is no credit: INT17's measure (a debit a lost answer
+only spares), the Renown order (signed again), the silver's answer (struck in the batch). The row carries the device's
+claim id (`stars_held.cid`, migration 0141), so a retry of an answer lost after the commit - a 5xx past the batch, a
+dropped line - is answered `claimed` with `own: true` where the row is that device's, and with what the lost answer
+said: the count and the Renown the row credited its character
+(`server-account/src/stars.js:"if (!thanks || had.cid !== cid) return { recorded: false, why: 'claimed', held, spoils };"`).
+The device marks a kept receipt whose attempt went unanswered (`lost`: no answer, and no refusal the service made) and,
+on such a `claimed`, finishes it once - the act owed, the line said, the Renown adopted by the character that held it -
+the mark cleared as it finishes, so an answer heard is never finished twice and another device's row never at all
+(`net/starfall/starClaims.js:"const found = !counted && answer?.ok && answer.data?.why === 'claimed' && answer.data?.own === true && e.lost === true;"`).
+
+**The act is the holder's (AUDIT STARFALL 7, AS BUILT).** A receipt is kept with the character that held the star, and
+its act is that character's quests': noted while it stands here (`createStarClaims`'s `who`, the Starfall host's
+`characterIdOf(playerEntity)`), else owed it on the device (`star7.acts`) and noted when it stands, one star a poll -
+never noted for another character, never dropped (`net/starfall/starClaims.js:"function owe(e) {"`). Its Renown was
+already the holder's alone.
+
+**The Heart-Star's act (T-A, AS BUILT).** A counted Heart-Star (`systems/starfall/starfallNight.js` `heartStar`, off the
+receipt's night and star) notes `heart-star-held` beside `star-held` in the same turn
+(`net/starfall/starClaims.js:"const noteStar = (heart) => { noteAct('star-held'); if (heart) noteAct('heart-star-held'); };"`),
+an act of the endgame family as its star's - so the festival's finds hear the two as one deed and ask one find
+(`systems/festival/festivalClient.js` ONE DEED, ONE FIND). The line's scripts may ask it as an optional objective.
 
 ## 7. The questline - The Thirteenth of Frostfall (AS BUILT, STAR8)
 
@@ -477,10 +504,20 @@ three are witnessed (`net/questlineClaims.js` QL_SERVICE_LINES).
 
 **THE WITNESSES** (`server-account/src/questlines.js` QL_WITNESS_SQL, over `stars_held` - STAR7's claim, `stars.js`):
 `star` the account's first star claimed in the step's window; `stars3` its third (`ORDER BY s.at, s.star LIMIT 1 OFFSET
-2`), each newer than the earlier witnessed step's `seen_at` - so QLTF01's star is never one of QLTF03's three.
+2`), each newer than the earlier witnessed step's `seen_at` - so QLTF01's star is never one of QLTF03's three. AUDIT
+STARFALL B2: that floor held only once QLTF01 was done, and QLTF03's end asked first read its window from the line's
+opening - the first star counted for both steps, and the Starwarden was paid on three stars, not four. An end now waits
+while an earlier witnessed step of its line is not done (`server-account/src/questlines.js:"export function qlInOrderSql(lineId, step) {"`):
+answered `witnessed: false`, and asked again by the runner as every unwitnessed end is.
+
+**THE STARWARDEN'S PURSE (T-B, AS BUILT).** The title's write lays 30 Soul Cakes (`net/festivalLaw.js:"export const QL_STARWARDEN_CAKES = 30;"`)
+on the account's count in the same statement, under the title's own guard - once an account - while the festival is
+open for the account at the claim's clock, never to a guest; answered `purse` (`06-Systems/Witches-Festival.md`, "The
+Starwarden's purse").
 
 **THE ACT.** `star-held` (`systems/questlines/qlActs.js` ACT_KINDS, the endgame family) is noted by the receipt's claim
-on `recorded` (`net/starfall/starClaims.js` - STAR7's), once a receipt.
+on `recorded` (`net/starfall/starClaims.js` - STAR7's), once a receipt, for the character that held the star (section 6,
+AUDIT STARFALL 7); `heart-star-held` beside it for the Heart-Star (T-A), for the line's optional objective.
 
 **WHAT THE MACHINE GAINED.** `ql name` names a Foe as well as a Person: `ql name _foe_ <Name> [female|male]`
 (`systems/questlines/qlActions.js` QlName) sets the foe's name, and the gender word sets a class enemy's
@@ -542,8 +579,9 @@ Pinned by `test/systems/questlines/star8_frostfall.test.js` (the line, the seaso
 scripts run on the machine over a rig of both covens, and the covens open air in ARENA2; the audit's: the coven called
 again and never twice, the letter's two ways, the Heart-Star, the step set aside, Arkay's temple, the words, and TEXT.RSC
 8392 in ARENA2), `test/scenes/witch1_host.test.js` and `test/systems/festival/witch1_client.test.js` (`wyrd-met`, and
-no find), `test/systems/festival/witch1_wares.test.js` (the Starwarden's row), `test/server/ql12_claim.test.js` STAR8
-(the witnesses and the title through the Worker), `tools/mutants/star8.json` and `tools/mutants/star8_audit.json`.
+no find), `test/systems/festival/witch1_wares.test.js` (the Starwarden's row), `test/server/ql12_claim.test.js`
+STAR8 (the witnesses and the title through the Worker; AUDIT STARFALL B2's out-of-order ends for this line and the Weir
+Road; T-B's purse, paid once, never closed, never a guest's, and heard on the page), `tools/mutants/star8.json` and `tools/mutants/star8_audit.json`.
 
 ## 8. What a player sees and hears
 
