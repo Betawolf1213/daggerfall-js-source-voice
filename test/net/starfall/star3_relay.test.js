@@ -75,7 +75,7 @@ async function defend({ say, step }, owner, others, { until = (st) => st.p === P
 
 // ═══ THE WIRE ═════════════════════════════════════════════════════════════════════════════════════
 
-test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell or the hub says, projected - a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Witches\' Festival is a live event of its own from world233 (mutants: the star\'s index unbounded; the light unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
+test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell or the hub says, projected - a receipt by its shape, the held list by its entries; the law\'s bounds written again and pinned equal; an older relay is said none; the Witches\' Festival is a live event of its own from world235 (mutants: the star\'s index unbounded; the light unbounded; a junk name hiding the held list\'s count; the relay floor off)', () => {
   assert.deepEqual(validStarIn({ ...word(), junk: 1 }), word(), 'projected: nothing the law does not read rides on');
   for (const bad of [{ n: 0 }, { n: 1.5 }, { k: STAR_PER_NIGHT }, { k: -1 }, { px: 1000 }, { py: 500 }, { lv: 0 }, { lv: STAR_LEVEL_MAX + 1 }, { s: 2 }, { o: -1 }, { mf: 2 }, { kn: STAR_KILLS_WIRE_MAX + 1 }, { wc: STAR_WAVES + 1 }, { hb: STAR_BLOWS_WIRE_MAX + 1 }]) {
     assert.equal(validStarIn(word(bad)), null, JSON.stringify(bad));
@@ -114,14 +114,14 @@ test('STAR3 THE WIRE: a star word projected whole and bounded; each word a cell 
   assert.equal(STAR_RECEIPT_WIRE_MAX, STAR_RECEIPT_MAX);
   assert.equal(STAR_RECEIPT_V, 'j1');
   // the relay that speaks it, and the live event
-  assert.equal(STAR_RELAY_MIN, 233);
+  assert.equal(STAR_RELAY_MIN, 235);   // world233 on the branch, renumbered past SD-SEA's world233 and DEX1's world234 at the merge - neither keeps a star
   assert.equal(relaySupportsStar(`world${STAR_RELAY_MIN - 1}`), false);
   assert.equal(relaySupportsStar(`world${STAR_RELAY_MIN}`), true);
   assert.equal(relaySupportsStar(RELAY_VERSION), true, 'this build\'s relay keeps a star');
   assert.equal(LIVE_EVENTS.at(-1), 'witchfest');
   assert.equal(LIVE_EVENT_RELAY_MIN.witchfest, STAR_RELAY_MIN);
-  assert.equal(relayKnowsLiveEvent('world232', 'witchfest'), false, 'an older relay would close the socket on the word');
-  assert.equal(relayKnowsLiveEvent('world233', 'witchfest'), true);
+  assert.equal(relayKnowsLiveEvent('world234', 'witchfest'), false, 'an older relay would close the socket on the word');
+  assert.equal(relayKnowsLiveEvent('world235', 'witchfest'), true);
 });
 
 test('STAR3 THE STORED LEDGER: a ledger is what the law made, read back - its star, pixel, phase, accounts and receipts - and nothing else under a star\'s key is read as one (a word makes the star anew) or kept (the sweep forgets a value under a key not its own); the held word is the wire\'s; a night\'s held stars stand until its last star is gone (mutants: a phase past the law\'s read; a ledger without its receipts read; a value under another star\'s key kept; the night gone with its first star)', async () => {

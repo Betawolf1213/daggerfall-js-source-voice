@@ -494,8 +494,8 @@ state, exteriorFoes, ... })` - its settled ones by value, every live one through
 is the adapter and one hook at each door: the frame, the lights, the draw, the sky, the flash, the senses' candidates,
 the compass, the held map, the Timers, the grass, the hub's event and the cell's words. The rewards (`starRewards.js`)
 are made by the host on the same adapter; `bootWorld` keeps three hooks for them (the crash's door at a stand-up and the
-realm save's two), and the spoils' one lock moved out of it to `scenes/spoilsPool.js` (`spoilsLock`). `bootWorld` stands at
-36,170 of its 36,183.
+realm save's two), and the spoils' one lock moved out of it to `scenes/spoilsPool.js` (`spoilsLock`). `bootWorld` stood at
+36,170 of its 36,183 on the branch, and at 36,174 of 36,187 with main merged (2026-10-20).
 
 ## 12. The merge seam with the Halloween event
 
@@ -508,9 +508,11 @@ tested before the merge. When the Halloween pull request is taken over, its word
 ## 13. Versions and deploy order
 
 Relay first (it signs), then the account service (its migration first), then the client. The relay's version moves for
-the frame, the live-event word, the receipt and the hub's door; the account service's for the claim and the questline's
-witness. The item law's version does not move: Starglass and the Starspun Weave are new records, never minted before
-this, so no finding a law made could be a finding to ask again (its leaf is read beside the registry from the first).
+the frame, the live-event word, the receipt and the hub's door - world235 (world233 on the branch, renumbered past
+SD-SEA's world233 and DEX1's world234 at the merge with main; `STAR_RELAY_MIN` and the `witchfest` floor with it, so
+neither of those relays is ever sent a star's word); the account service's moves to acct165 for the claim and the
+questline's witness. The item law's version does not move: Starglass and the Starspun Weave are new records, never
+minted before this, so no finding a law made could be a finding to ask again (its leaf is read beside the registry from the first).
 
 ## 14. The slices
 

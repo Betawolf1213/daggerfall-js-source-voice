@@ -11,14 +11,14 @@
 // the head first (MAP-POV's law).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { sheetHolderOf } from '../../../src/combat/weapon/weaponRig.js';
 import { createTownMapWindow } from '../../../src/ui/town/townMapDoor.js';
 import { createAutomapWindow } from '../../../src/ui/automap/automapDoor.js';
 import { HeldMapWindow } from '../../../src/ui/heldMap.js';
 import { setPref } from '../../../src/systems/uiPrefs.js';
+import { hostText } from '../../hostText.mjs';
 
-const rd = (p) => readFileSync(new URL('../../../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town map's door lives in scenes/exteriorAutomapToggle.js (STAR0)
 function fakeDocument() {
   const node = () => ({ children: [], style: {}, dataset: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false }, append() {}, appendChild() {}, remove() {}, replaceChildren() {}, setAttribute() {}, removeAttribute() {}, addEventListener() {}, removeEventListener() {}, querySelector: () => null, querySelectorAll: () => [], getBoundingClientRect: () => ({ width: 0, height: 0, left: 0, top: 0 }), focus() {}, blur() {}, getContext: () => null });
   const body = node();
