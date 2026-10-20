@@ -1,0 +1,162 @@
+[
+ {
+  "name": "DEX6-guard-unread",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  if (name === 'guard') return M.Knight_CityWatch;\n",
+  "new": "",
+  "why": "the Guard's table names no class - the mod's guard kitted as a class the arm does not know",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-no-table-unknown",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  if (!table) return mobileId;",
+  "new": "  if (!table) return null;",
+  "why": "a row with no table is no class - every classic class kitted as the unknown",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-citywatch-by-name",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "id >= M.Mage && id <= M.Knight && name !== 'Knight_CityWatch'",
+  "new": "id >= M.Mage && id <= M.Knight_CityWatch",
+  "why": "the City Watch answers to its own name - HasClassTable asks it by \"Guard\" alone",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-case-kept",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  const name = String(table).toLowerCase();",
+  "new": "  const name = String(table);",
+  "why": "the table read case and all - OrdinalIgnoreCase lost, and every capitalised table names no class",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-coin-for-plate",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "if (!rriModule('newArmor') || (forbidden & ARMOR_FLAG.Plate) === 0 || coinFlip(rolls)) return",
+  "new": "if (!rriModule('newArmor') || coinFlip(rolls)) return",
+  "why": "a career that allows plate throws the coin and wears chain",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-newarmor-unread",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "if (!rriModule('newArmor') || (forbidden",
+  "new": "if ((forbidden",
+  "why": "the custom sets worn with newArmor off",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-leather-first",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  if ((forbidden & ARMOR_FLAG.Chain) === 0) return CHAIN_PIECE[slot] ?? -1;",
+  "new": "  if ((forbidden & ARMOR_FLAG.Chain) === 0) return LEATHER_PIECE[slot] ?? -1;",
+  "why": "a career that allows chain wears leather",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-none-is-classic",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "  if ((forbidden & ARMOR_FLAG.Leather) === 0) return LEATHER_PIECE[slot] ?? -1;\n  return -1;",
+  "new": "  if ((forbidden & ARMOR_FLAG.Leather) === 0) return LEATHER_PIECE[slot] ?? -1;\n  return CLASSIC_PIECE[slot] ?? -1;",
+  "why": "a career that forbids all three wears the classic piece where the mod mints none",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-career-unread",
+  "file": "src/systems/enemyExpansion/dexEquipment.js",
+  "old": "dexArmorTemplateIndex(slot, career, rolls),",
+  "new": "dexArmorTemplateIndex(slot, null, rolls),",
+  "why": "the kit's armor reads no career - a class that forbids plate wears it",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-class-by-id",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "  const cls = read.classOf(entity);",
+  "new": "  const cls = mob;",
+  "why": "the copy's class read by the id - a Knight Rider holds nothing, as under RRI's own switch",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-unknown-unarmed",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "      if (read.unknownArmed) {",
+  "new": "      if (false) {",
+  "why": "the copy's unknown class unarmed, armored 100",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-barbarian-by-id",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "      if (cls === M.Barbarian) { armored = 30;",
+  "new": "      if (mob === M.Barbarian) { armored = 30;",
+  "why": "a table naming the Barbarian armored as a Barbarian's id alone is",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-material-only-for-a-piece",
+  "file": "src/combat/rriEnemyEquipment.js",
+  "old": "    const material = randomArmorMaterial(itemLevel, rolls);   // an argument of CreateArmor - rolled whether or not a piece is minted\n    if (templateIndex !== -1) add(mintArmor(templateIndex, material), true);",
+  "new": "    if (templateIndex !== -1) add(mintArmor(templateIndex, randomArmorMaterial(itemLevel, rolls)), true);",
+  "why": "a piece that is none rolls no material - every draw after it moves",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-poison-by-id",
+  "file": "src/scenes/hostCombat.js",
+  "old": "rollEnemyWeaponPoison(eq.poisonClass ?? mobileType, playerLevel, rolls)",
+  "new": "rollEnemyWeaponPoison(mobileType, playerLevel, rolls)",
+  "why": "the Bounty Hunter's poison at the 5% - the Assassin asked by the id, not the table",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-delegate-untaken",
+  "file": "src/systems/enemyExpansion/dexInstall.js",
+  "old": "    setEnemyEquipmentAssigner(createDexEquipmentAssigner(dexProperties));\n",
+  "new": "",
+  "why": "the mod loaded and RRI's own arm still kits its classes",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ },
+ {
+  "name": "DEX6-seam-keeps-it",
+  "file": "src/systems/enemyExpansion/dexInstall.js",
+  "old": "  if (_replacedAssigner !== undefined) setEnemyEquipmentAssigner(_replacedAssigner);\n",
+  "new": "",
+  "why": "the test seam leaves the mod's delegate standing",
+  "tests": [
+   "test/systems/enemyExpansion/dex6_equipment.test.js"
+  ]
+ }
+]

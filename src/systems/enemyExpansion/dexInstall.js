@@ -14,7 +14,7 @@
 //   WHILE LOADED: the sixteen classic rows and the two classic classes edited (written into the table, and again at a
 //     foe's mint over Meaner Monsters' and the overhaul's - DFU's order: their Init, then this Start), and the quest
 //     foes added, its encounter tables picked (DEX3), its spells and spellbooks (DEX4a), its combat hooks and forced
-//     gender (DEX4b), the troll's corpse prefab and its save record (DEX5). (DEX6: the equipment.)
+//     gender (DEX4b), the troll's corpse prefab and its save record (DEX5), its equipment delegate (DEX6).
 
 import { DEX_TABLE_TEXT } from './dexTableText.js';
 import { classicCareers, readCareerTable, readEnemyTables, careerFromSpec, writeEnemyLine, readEncounterTables, addDefaultEncounterTables } from './dexTables.js';
@@ -37,6 +37,8 @@ import { createDexCombatDoors } from './dexCombat.js';   // DEX4b: its FormulaHe
 import { registerFormulaOverride, registerSkeletalTarget, registerEnemyGroup, registerEnemyLanguage } from '../../combat/formulas.js';
 import { registerForcedGender } from '../../characters/mobile/mobileUnit.js';
 import { installDexTroll } from './dexTroll.js';   // DEX5: the troll's corpse prefab and its save record
+import { createDexEquipmentAssigner } from './dexEquipment.js';   // DEX6: its copy of RRI's class arm
+import { setEnemyEquipmentAssigner, enemyEquipmentAssigner } from '../../combat/enemyEquipment.js';
 
 export const DEX_VENDOR = 'daggerfall-enemy-expansion';
 /** The mod as loaded for this game: the latch its install set, else (before the install, or in a test) its switch. */
@@ -50,6 +52,8 @@ const consoleLog = (level, message) => (level === 'error' ? console.error(messag
 
 let _read = null;
 const _classicOriginals = new Map();
+/** DEX6: the assigner the mod's took the delegate from (undefined: it took none) - the test seam's to put back. */
+let _replacedAssigner;
 
 /** The mod's read, made once: the careers (classic and its own), its enemies, the classic edits, the raw spellbooks and
  *  the quest foe lines. `liveRow` is read now - after the installs before this one. */
@@ -163,6 +167,10 @@ export function installEnemyExpansion({ on = modSetting(DEX_VENDOR, 'Enabled') =
     registerEnemyGroup(combat.group);
     registerEnemyLanguage(combat.language);
     registerForcedGender(combat.gender);
+    // DEX6: EnemyEntity.AssignEnemyEquipment (:194) - its copy of RRI's class arm while realisticEnemyEquipment is on,
+    // ItemHelper's while it is off. Start writes it after RRI's Awake wrote its own, so the mod's is the one that stands
+    _replacedAssigner = enemyEquipmentAssigner();
+    setEnemyEquipmentAssigner(createDexEquipmentAssigner(dexProperties));
     // DEX5: the troll's corpse prefab (1618_20 - AssetInjection reads a loaded mod's bundle alone) and the record DFU's
     // mod save slot keeps for it (Init's SaveDataInterface, BestiarySaveInterface)
     installDexTroll(DEX_VENDOR);
@@ -184,6 +192,8 @@ export function _resetEnemyExpansion() {
     Object.assign(target, saved);
   }
   _classicOriginals.clear();
+  if (_replacedAssigner !== undefined) setEnemyEquipmentAssigner(_replacedAssigner);
+  _replacedAssigner = undefined;
   for (const id of _read ? _read.enemies.keys() : []) delete ENEMY_BASICS[String(id)];
   _careers.clear();
   _read = null;

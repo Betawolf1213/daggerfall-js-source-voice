@@ -238,7 +238,7 @@ export function equipEnemy(entity, mobileType, playerLevel, rolls = Math.random,
   // S19b: ItemHelper's poisoned-weapon roll rides the spawn -
   // class enemies + Orc/Centaur/OrcSergeant, 5% (Assassin 60%)
   if (entity.weapon) {
-    const pt = rollEnemyWeaponPoison(mobileType, playerLevel, rolls);   // PARTY-LOOT: and its poison
+    const pt = rollEnemyWeaponPoison(eq.poisonClass ?? mobileType, playerLevel, rolls);   // PARTY-LOOT: and its poison; DEX6: its Assassin asked as the kit's arm asks it (DEX_RRICompat: by the equipment table)
     if (pt != null) entity.weapon.poisonType = pt;
   }
   // AssignEnemyStartingEquipment adds every equipped piece to the

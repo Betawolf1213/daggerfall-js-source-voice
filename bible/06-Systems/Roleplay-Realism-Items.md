@@ -209,7 +209,13 @@ Read against the C#:
   runs ItemHelper's arm and then ConvertOrcish (:683-705): the Orcs
   team, 80%, Ebony and up (a Warlord's Mithril and up), the material
   re-applied over the template's weight, value and condition - which
-  the port's mint derives from the material alone.
+  the port's mint derives from the material alone. DEX6 (2026-10-20):
+  Daggerfall Enemy Expansion takes the delegate over with its own copy
+  of this arm, and the port runs this arm with the copy's reads - the
+  `read` argument (RRI_READ is RRI's own: the class the id, the armor
+  the class's preference, nothing for a class the switch does not
+  name); the answer's `poisonClass` is the class the poison roll asks
+  (`04-Characters/Enemy-Expansion.md` section 12).
 - **The starting kit** (:759-810) sets AssignStartingGear aside whole:
   no class weapon, no 100 gold; `Range(5, Luck)` gold, the iron dagger,
   the ebony dagger a biography answer gave at 20%, six torches and

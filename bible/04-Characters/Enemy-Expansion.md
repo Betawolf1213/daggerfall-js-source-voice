@@ -62,7 +62,7 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
 | DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world230 grown in place) |
-| DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | open |
+| DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | SHIPPED (section 12: the class by its table, the armor by the career, the unknown's longblade, the Assassin's poison) |
 | DEX7 | the Morrowind bodies (section 4) | SHIPPED (section 10) |
 
 ## 4. Morrowind
@@ -457,3 +457,47 @@ entity against the troll's career, the street's rise and burn through a real poo
 door, the save, the hosts' wiring; DEX5b: the wire's bound, two real pools - a peer's missile burning the owner's body
 and its copy turning to ash, the rise taking the copy away - and the dungeon's lanes), mutants `tools/mutants/dex5.json`.
 
+## 12. DEX6 - the equipment
+
+BestiaryMod.Start takes `EnemyEntity.AssignEnemyEquipment` over (BestiaryMod.cs:194, :2121-2131): while Roleplay &
+Realism: Items' `realisticEnemyEquipment` is on, the mod's own copy of RRI's class arm kits a foe
+(`Scripts/Compatibility/DEX_RRICompat.cs`), and ItemHelper's arm does while it is off. RRI writes the delegate in its
+Awake (inside its Init) and the mod in its Start (a frame later), so the mod's is the one that stands whichever loads
+first; DFU's ModManager unloads a disabled mod at its Init, so the copy finds no RRI then (`GetModFromGUID` null).
+
+The copy is RRI's arm with three reads of its own, and the port runs RRI's arm (`combat/rriEnemyEquipment.js`
+assignRriEnemyEquipment) with the mod's reads (`systems/enemyExpansion/dexEquipment.js`; RRI_READ is RRI's own):
+
+- **The class by its table** (HasClassTable, :77-93). A row's EquipmentTable names the class whose kit it takes -
+  "Guard" the City Watch's (the City Watch is asked by that name alone), any other a class's own name,
+  OrdinalIgnoreCase - and a row with no table is its own id. So the fifteen classes kit as their tables say: the Druid,
+  the Necromancer Acolyte as Mages; the Guard as the City Watch; the Knight Rider, the Royal Knight as Knights; the
+  Rogue Rider, the Rogue Druid as Rogues; the Bounty Hunter, the Necromancer Assassin, the Dark Slayer as Assassins; the
+  Thief Rider a Thief, the Necromancer Glaivier a Warrior, the Witch Defender a Healer, the Spellsword Rider a
+  Spellsword, the Archer Rider an Archer. Under RRI's own switch each held no weapon (no case names 384-398).
+- **The armor by the career** (GetArmorTemplateIndex, :120-163). The classic piece, unless newArmor is on, the career
+  forbids plate and the coin says otherwise - then the chain set where the career allows chain, else the leather set,
+  else none (`CreateArmor` mints nothing for -1, its material rolled all the same as an argument). RRI's reads the
+  class's preference (prefChain, prefLeather) instead. The mod's careers write no ForbiddenArmors, so its fourteen own
+  forbid nothing and wear the classic pieces; the Guard's is the City Watch's (CLASS18), and a classic class's its
+  CLASS file's.
+- **An arm for the unknown** (:388-393): a longblade worn, armored 50 - RRI's switch has no default, and a class it
+  does not name holds nothing.
+
+The id's own tests stay the id's in both (the City Watch's item level, the Ranger's longblade, the Barbarian's raised
+legs and head); the Barbarian's armored 30, the fighters' and the combat weapons are the table's. The poison's
+Assassin is the table's too (:432-433): the arm's answer carries the class it asks (`poisonClass`), and the spawn's one
+roll (`hostCombat.equipEnemy` -> `poisons.rollEnemyWeaponPoison`) reads it - the Bounty Hunter, the Necromancer
+Assassin and the Dark Slayer poison at 60%. The install takes the delegate over in the WHILE LOADED half, after DEX4b's
+doors (Start's order), and the test seam puts back the one it replaced.
+
+Departures (Port-Ledger A, the DEX row):
+
+- **RRI's settings read at the roll.** DEX_RRICompat.OnStart reads `realisticEnemyEquipment`, `newWeapons` and
+  `newArmor` once at the mod's start; the port's arm reads each at the call (`rriModule`), as RRI2's own does - a pane
+  toggle takes effect at the next foe.
+
+Tests: `test/systems/enemyExpansion/dex6_equipment.test.js` (the fifteen tables against the C#'s law, the armor by
+career set by set and the coin's place, the kit through the arm - a Knight Rider armed where RRI's own switch hands it
+nothing, the unknown's longblade, a Barbarian's table, a piece that is none rolling its material - the poison through
+the spawn's real roll, the delegate taken and put back), mutants `tools/mutants/dex6.json`.

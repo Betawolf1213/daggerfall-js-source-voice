@@ -198,3 +198,9 @@ through the texture door these register on, so neither draws the other's.
 - **DEX5b** (2026-10-20): the troll's body online - the foe's runner counts,
   rises and burns; a copy's missile goes to it, and its record says a body
   gone to every copy. Section 11.
+- **DEX6** (2026-10-20): the equipment - while Roleplay & Realism: Items'
+  realisticEnemyEquipment is on, the mod's copy of RRI's class arm
+  (`Scripts/Compatibility/DEX_RRICompat.cs`): the class by its
+  EquipmentTable, the armor by the career, the unknown's longblade, the
+  Assassin's poison by the table (`src/systems/enemyExpansion/dexEquipment.js`
+  over `src/combat/rriEnemyEquipment.js`). Section 12.

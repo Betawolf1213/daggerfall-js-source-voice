@@ -16,6 +16,12 @@
 // records as minted, worn and carried alike, the corpse's loot) and
 // `worn` (the subset the equip table takes). Rolls are Unity's uniform
 // slots on the caller's stream.
+//
+// DEX6: Daggerfall Enemy Expansion ships a copy of this arm
+// (DEX_RRICompat.cs, run in its place while realisticEnemyEquipment is
+// on) that reads a class otherwise - the mod's equipment table, the
+// career's forbidden armor, an arm for a class it does not know. The arm
+// is this one; a copy's reads are its `read` (RRI_READ, RRI's own).
 import {
   createWeapon, randomMaterial, randomArmorMaterial, rollEnemyEquipment, enemyArmorValues,
   WEAPONS_ENUM, ARMOR_ENUM, ARROW_TEMPLATE,
@@ -50,7 +56,7 @@ const newWeapons = () => rriModule('newWeapons');
 const newArmor = () => rriModule('newArmor');
 
 const range = (rolls, lo, hi) => lo + Math.floor(rolls() * (hi - lo));   // UnityEngine.Random.Range(lo, hi) - hi exclusive
-const coinFlip = (rolls) => range(rolls, 0, 2) === 0;
+export const coinFlip = (rolls) => range(rolls, 0, 2) === 0;
 const oneOf = (rolls, array) => array[range(rolls, 0, array.length)];
 const randomShield = (rolls) => range(rolls, A.Buckler, A.Round_Shield + 1);
 const randomLongblade = (rolls) => range(rolls, W.Broadsword, W.Longsword + 1);
@@ -140,11 +146,25 @@ function wornCondition(item, rolls) {
 }
 
 // ---- AssignEnemyStartingEquipment (:523-681) ----------------------------
+/** How the arm reads a class. RRI's own: the class IS the enemy's id
+ *  (`switch ((MobileTypes)enemyEntity.MobileEnemy.ID)`), its armor the
+ *  class's preference (GetArmorTemplateIndex), and a class the switch
+ *  does not name holds nothing. A copy's: `classOf(entity)` the class
+ *  its tests ask (null for none), `armorTemplate(slot, { prefChain,
+ *  prefLeather, career }, rolls)` the piece (-1 for none - CreateArmor
+ *  mints nothing), `unknownArmed` its arm for a class it does not know. */
+export const RRI_READ = Object.freeze({
+  classOf: (entity) => entity.mobileType,
+  armorTemplate: (slot, { prefChain, prefLeather }, rolls) => getArmorTemplateIndex(slot, prefChain, prefLeather, rolls),
+  unknownArmed: false,
+});
+
 /** The class arm. `entity` is the spawn's (mobileType, level, isClass);
  *  `player` the player entity (gender, race - the doll the armor is
  *  minted for). Answers null for a non-class enemy so the caller runs
- *  ItemHelper's own arm and ConvertOrcish (below). */
-export function assignRriEnemyEquipment(entity, variant, playerLevel, { player = null, rolls = Math.random } = {}) {
+ *  ItemHelper's own arm and ConvertOrcish (below). `read` is RRI_READ,
+ *  or a copy's (DEX6). */
+export function assignRriEnemyEquipment(entity, variant, playerLevel, { player = null, rolls = Math.random, read = RRI_READ } = {}) {
   if (!rriModule('realisticEnemyEquipment')) return null;
   const mob = entity.mobileType;
   if (!entity.isClass) {
@@ -173,8 +193,9 @@ export function assignRriEnemyEquipment(entity, variant, playerLevel, { player =
   let armored = 100;
   let prefChain = false;
   let prefLeather = false;
+  const cls = read.classOf(entity);   // what the class tests ask - the id itself in RRI's switch; the id tests below stay the id's in both
 
-  switch (mob) {
+  switch (cls) {
     // Ranged specialists:
     case M.Archer:
     case M.Ranger: {
@@ -196,17 +217,17 @@ export function assignRriEnemyEquipment(entity, variant, playerLevel, { player =
     case M.Warrior:
     case M.Rogue:
       if (variant === 0) {
-        add(mintWeapon(getCombatClassWeapon(mob, rolls), randomMaterial(itemLevel, rolls), rolls), true);
+        add(mintWeapon(getCombatClassWeapon(cls, rolls), randomMaterial(itemLevel, rolls), rolls), true);
         // Left hand shield?
         if (dice100(chance, rolls())) add(mintArmor(randomShield(rolls), randomArmorMaterial(itemLevel, rolls)), true);
         // left-hand weapon?
         else if (dice100(chance, rolls())) add(mintWeapon(secondaryWeapon(rolls), randomMaterial(itemLevel, rolls), rolls));
-        if (!isFighter(mob)) armored = 80;
+        if (!isFighter(cls)) armored = 80;
       } else {
         add(mintWeapon(randomBigWeapon(rolls), randomMaterial(itemLevel, rolls), rolls), true);
-        if (!isFighter(mob)) { prefChain = true; armored = 90; }
+        if (!isFighter(cls)) { prefChain = true; armored = 90; }
       }
-      if (mob === M.Barbarian) { armored = 30; prefLeather = true; }   // "Barbies tend to forgo armor or use leather"
+      if (cls === M.Barbarian) { armored = 30; prefLeather = true; }   // "Barbies tend to forgo armor or use leather"
       break;
     // Mage classes:
     case M.Mage:
@@ -243,10 +264,20 @@ export function assignRriEnemyEquipment(entity, variant, playerLevel, { player =
       prefLeather = true;
       if (mob === M.Nightblade) prefChain = true;
       break;
-    default: break;
+    // Unknown (DEX_RRICompat's last else - RRI's switch has no default)
+    default:
+      if (read.unknownArmed) {
+        add(mintWeapon(randomLongblade(rolls), randomMaterial(itemLevel, rolls), rolls), true);
+        armored = 50;
+      }
+      break;
   }
 
-  const armor = (slot) => add(mintArmor(getArmorTemplateIndex(slot, prefChain, prefLeather, rolls), randomArmorMaterial(itemLevel, rolls)), true);
+  const armor = (slot) => {
+    const templateIndex = read.armorTemplate(slot, { prefChain, prefLeather, career: entity.career ?? null }, rolls);
+    const material = randomArmorMaterial(itemLevel, rolls);   // an argument of CreateArmor - rolled whether or not a piece is minted
+    if (templateIndex !== -1) add(mintArmor(templateIndex, material), true);
+  };
   // Torso
   if (dice100(armored, rolls())) armor('ChestArmor');
   armored -= 10;
@@ -266,8 +297,9 @@ export function assignRriEnemyEquipment(entity, variant, playerLevel, { player =
   }
   // The poisoned-weapon chance (:660-680) is the same roll as ItemHelper's
   // (5%, the Assassin's 60%, past player level 1) and rides the port's
-  // one home for it - poisons.rollEnemyWeaponPoison, at the spawn seam.
-  return { rightHand, leftHand, armorPieces, armorValues: enemyArmorValues(entity, armorPieces), items, worn };
+  // one home for it - poisons.rollEnemyWeaponPoison, at the spawn seam,
+  // over `poisonClass`: the class its Assassin test asks (a copy's read).
+  return { rightHand, leftHand, armorPieces, armorValues: enemyArmorValues(entity, armorPieces), items, worn, poisonClass: cls };
 }
 
 // ---- ConvertOrcish (:683-705) -----------------------------------------
