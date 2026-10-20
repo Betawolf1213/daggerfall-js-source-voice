@@ -98,5 +98,15 @@
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
+ },
+ {
+  "name": "DEX2-the-band-undressed",
+  "file": "src/world/bandSprites.js",
+  "old": "        r.batch = setupFoeLook(renderer?.createBillboardBatch?.(archive, rkey, size, [[0, 0, 0]]) ?? null, b.mobileType);",
+  "new": "        r.batch = renderer?.createBillboardBatch?.(archive, rkey, size, [[0, 0, 0]]) ?? null;",
+  "why": "AUDIT DEX B6: an Overworld band of a Spectral or NoShadow row drawn opaque and casting",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
  }
 ]

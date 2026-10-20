@@ -191,6 +191,33 @@ test('DEX2 THE BILLBOARD PASS DRAWS A SPECTRAL ROW\'S MOBILE AS ITS GHOST (AUDIT
   assert.equal(draws.length, 2);
 });
 
+test('DEX2 AN OVERWORLD BAND WEARS ITS LEAD\'S LOOK (AUDIT DEX B6): world/bandSprites.js dresses the batch it makes as SetupDemoEnemy does - a Spectral row\'s band its ghost, a NoShadow row\'s casting none, a General row\'s plain (mutant: the batch undressed)', async (t) => {
+  const { createBandSprites } = await import('../../../src/world/bandSprites.js');
+  const { ENEMY_BASICS } = await import('../../../src/characters/enemy/enemyBasics.js');
+  const { installEnemyExpansion, _resetEnemyExpansion } = await import('../../../src/systems/enemyExpansion/dexInstall.js');
+  const { clearCustomEnemies } = await import('../../../src/characters/enemy/customEnemies.js');
+  const { _resetMintRowEditors } = await import('../../../src/characters/enemy/enemyEntity.js');
+  const { _resetFoeGhosts } = await import('../../../src/characters/enemy/foeLook.js');
+  t.after(() => { _resetFoeGhosts(); _resetEnemyExpansion(); clearCustomEnemies(); _resetMintRowEditors(); clearVendorTextures(); _resetDexSprites(); unregisterBillboardXml('daggerfall-enemy-expansion'); });
+  installEnemyExpansion({ on: true, log: () => {} });
+  const made = new Map();   // archive -> the batch the band made
+  const renderer = { textures: new Map(), createBillboardBatch: (archive, record, size) => { const b = { archive, record, size }; made.set(archive, b); return b; }, destroyBillboardBatch() {} };
+  const tex = { getFrameCount: () => 1, getSize: () => ({ width: 64, height: 64 }), getScale: () => ({ width: 0, height: 0 }) };
+  const bands = createBandSprites({ renderer, getTexture: async () => tex, uploadRecordFrame: () => {} });
+  const lead = [[283, 'the Will-o\'-wisp'], [274, 'the Faded Ghost'], [28, 'the Vampire'], [7, 'an Orc']];
+  const list = lead.map(([mobileType], i) => ({ id: `b${i}`, mobileType, feet: [i * 3, 0, -10], distM: 50 }));
+  bands.sync(list, { dt: 0 });
+  await new Promise((r) => setTimeout(r, 0));
+  for (let i = 0; i < 4; i++) bands.sync(list, { dt: 1 });
+  const look = ([id, name]) => { const b = made.get(ENEMY_BASICS[id].maleTexture); assert.ok(b, `${name}'s band stands`); return [b.ghost, b.noShadow]; };
+  assert.deepEqual(look(lead[0]), [true, true], 'Spectral, NoShadow: the ghost, casting none');
+  assert.deepEqual(look(lead[1]), [true, true]);
+  assert.deepEqual(look(lead[2]), [undefined, true], 'NoShadow alone');
+  assert.deepEqual(look(lead[3]), [undefined, undefined], 'General: plain, casting');
+  assert.equal(bands.batches().length, 4);
+  bands.clear();
+});
+
 test('DEX2 the hosts wear the look where they make the batch, and the shadow pass casts no ghost (by source)', () => {
   for (const [f, n] of [['src/scenes/dungeonContext.js', 2], ['src/scenes/exteriorFoes.js', 1]]) {
     assert.equal(rd(f).match(/const batch = setupFoeLook\(renderer\.createBillboardBatch\(archive, 0, \{ w: 1, h: 1 \}, \[\[0, 0, 0\]\]\), (?:e\.)?mobileType\);/g)?.length, n, `${f}: its mobile arms`);
