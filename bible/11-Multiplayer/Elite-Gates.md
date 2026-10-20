@@ -886,6 +886,11 @@ The Battlemages' library, its heart an **Orrery** drawn by `orreryOf` (`src/net/
   every five Redoubts) and four at rank II, never past the default.
 - **The judge**: EG4 extracts the pure judge, `orreryJudge`, out of `_sdTurn` in `server/src/index.js` (reach,
   settle, rights, `orreryStep`). The Hour's room and the Spire's both call it.
+- **The stones on the screen** (FIELD BUGS 2026-10-20d ORRERY-STONES, `scenes/eliteGates/egOrrery.js`): the law lays the six
+  stones at the Hour's own ring and bearings (11 m; 30 to 330 degrees), so each stands as the Hour's own stone j - its
+  relief, dial and hand, its crown gear, its two levers - carried to its spot by a translation, on its own floor, solid.
+  Its levers ARE the handles (forward on the right as one faces it), and its hand shows the room's hours. The handles
+  were boxes in the air beside a gold disc, with nothing drawn there.
 - **Pressure**: `ceil(n/4)` Harriers rise every 15 s while the lock stands, so the members off the stones guard the
   members on them. The wave is Harriers alone (`egWaveKinds`' `only`), with Swarm-Mother's Binder beside them.
 - **Everyone works**: any member in reach may turn any stone, and the company is one thread: the Spire's judge keeps
@@ -3139,7 +3144,11 @@ everything"*.)
 The gate's trust law, kept whole, and where it was not enough for one life, widened:
 
 - **Blows on lords and the legion**: `applyHit`'s hand and purse, the bucket by the level claim times the Vestiges'
-  capped factor, a melee pose within reach, from a pose on a fight floor of the current fight (section 11.7). The
+  capped factor, a melee pose within reach, from a pose on a fight floor of the current fight (section 11.7). What
+  each blow landed is told to its striker alone (`eland`, `net/eliteGates/egBrain.js` egBlow - a refused blow lands 0), and
+  the striker's screen shows that number, never its claim: a blow's number is the room's word, as a duel's is the
+  referee's (FIELD BUGS 2026-10-20d LANDED-WORD). A lord an errand holds at a threshold answers what it lost
+  (`egLordHit`), so the word, the recap and a Court's chart count that. The
   blow's kind `r` is the client's word (`HIT_KINDS`), so a Vestige that reads it must not gain from a lie. Sweeping
   Arc, Bladestorm and Counterstroke read melee, and the relay already checks a melee blow's reach. Long Sight, Hunter's
   Mark, Spotter and Deadeye read arrows and spells, and also need more than 12 m between the poses, where a forged kind
@@ -3182,7 +3191,9 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
   - **speed**: no step faster than the fast build's run times 1.1, plus a push;
   - **air**: no airborne stretch past `EG_AIR_MAX_S` (2.5 s);
   - **blindness**: a `ts` gap over 0.4 s is BLIND and judges nothing either way. A crossing more than 30% blind opens
-    no door, and records `m.blind`;
+    no door, and records `m.blind`. A gap from held ground to held ground within `EG_FAIR_SNAP_M` (2.5 m) is a member
+    STANDING STILL and is never blind (`egStillGap` - FIELD BUGS 2026-10-20d FAIR-STILL): a client says no pose while
+    nothing about it changes, and a crossing waited out at its timed pieces read as unseen, so its door never opened;
   - **the crossing**: its time against `EG_CROSS_MIN(spec, road)` (section 10.5) rides the receipt's `m`, and gates
     nothing until EG21;
   - **after a restart**: the accumulator is saved to storage. After the room is re-woken, a member at the end plate
@@ -3190,7 +3201,9 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
     recorded as `m.wake`. A hall woken after every member passed the last island never deadlocks;
   - **repeats**: a member whose trail breaks the law again within a hall has their hits refused for 5 s;
   - poses between a member's `down` and their next `here` are never judged; a pose sent mid-stair belongs to no hall;
-  - an unfair trail opens no door, and its measures ride the receipt (`m`).
+  - an unfair trail opens no door, and its measures ride the receipt (`m`). A member at the door on a trail it refuses
+    is told why, once a hall, to it alone (`efair`: the break's reason - `speed`, `air`, `void` - else `blind`;
+    `net/eliteGates/egBrain.js` doorWord - FIELD BUGS 2026-10-20d DOOR-WORD). It had been refused in silence.
 - **Every pose-gated credit needs a fair trail** from the last island: the door, `down`, a cache, THE GOLD RUN, a
   niche, a Memento carried, the Reliquary Vault, the High Road's cache.
 - **A hall cleared**: only the relay says so (the legion broken, the lock solved, the champion or the lord fallen, a
@@ -3445,6 +3458,8 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `ask`, `asked`, `tally` | room -> all | the company's word: asked, answered, counted |
 | `egot`, `run`, `rise`, `eping`, `pz`, `eheal` | room -> all (a gift to one) | a gift (a shard, a tonic, a Cantrip, lumen, a Reliquary, a page, Long Step's word), a member's run, a recall's rise, a ping, the Orrery, the room's heals |
 | `{k:'toll', q, h}` | room -> one | the pull's toll (section 10.6) |
+| `{k:'eland', i, d}` | room -> one | what my blow on body `i` landed, whole points - the striker's number (section 21; FIELD BUGS 2026-10-20d LANDED-WORD; world236, `EG_LAND_RELAY_MIN`) |
+| `{k:'efair', w}` | room -> one | why the door will not take me: `speed`, `air`, `void` or `blind` (section 21; FIELD BUGS 2026-10-20d DOOR-WORD) |
 | `{k:'end', why, at, ds, dm}` | room -> all | why: `'tear'` (the count spent), `'gone'` (every member out: fallen twice, forsaken or home), `'wipe'` (no living member), `'home'` (THE COVENANT'S PATIENCE), `'seal'` (THE SEAL), `'rehearsal'` (a Rehearsal's end), `'last'` (the last word) or `'void'` (a force deploy, an unknown `egv`, no hall ever woken); each member's part (`ds`) and a lord's fall's chart (`dm`) |
 
 The hub's own three (`open`, `void`, `claimed`) spend a bucket of their own at the social acts' rate (`egHubGate`:
