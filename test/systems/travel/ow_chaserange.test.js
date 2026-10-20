@@ -2,7 +2,7 @@
 // OW-CHASE-RANGE): A CHASE SEEN AS FAR AS ITS BAND IS DRAWN. The relay fans a cell's foes frame - TV7b's chase word on it
 // - RANGE_PIXELS (3) about its sender, and the Overworld draws the bands BAND_REACH_PX (6) about the viewer: a player three
 // to six pixels off saw a chased band at its own wander. The chaser's region mark (TV3) now carries the word (`bd`,
-// world224). Pinned on the wire (net/wire.js: the eighth key, checked whole, its gate), the relay over a real Room (kept,
+// world225). Pinned on the wire (net/wire.js: the eighth key, checked whole, its gate), the relay over a real Room (kept,
 // fanned, the widest mark inside the runtime's 2 KiB), the session (never `bd` to an older relay), the client's own law
 // (systems/travellerMarks.js: said on a change, again while a chase runs), the region's word and its hearing
 // (systems/travel/regionChase.js), a word carried end to end through the real laws, and the world host's half (its band
@@ -43,9 +43,9 @@ test('OW-CHASE-RANGE the wire: the mark\'s eighth key, `bd` - a chase word check
   ]) assert.equal(validTravellerMark({ ...MARK, bd }), null, why);
   assert.deepEqual(parseClient(JSON.stringify({ t: 'trav', p: { ...MARK, bd: CHASE } }), { hasHello: true }), { t: 'trav', p: { ...MARK, bd: CHASE } });
   assert.equal(validTravellerFrame({ t: 'trav', id: 'peer-0002', name: 'Bran', p: { ...MARK, bd: CHASE } }).p.bd.length, 2, 'heard through the reader\'s own door');
-  assert.equal(TRAV_BANDS_RELAY_MIN, 224);
-  assert.equal(relaySupportsTravBands('world223'), false, 'an older relay refuses the mark whole');
-  assert.equal(relaySupportsTravBands('world224'), true);
+  assert.equal(TRAV_BANDS_RELAY_MIN, 225);   // world224 on its branch, renumbered past LAYERED-GEAR's world224 at the merge
+  assert.equal(relaySupportsTravBands('world224'), false, 'an older relay refuses the mark whole');
+  assert.equal(relaySupportsTravBands('world225'), true);
   assert.equal(relaySupportsTravBands(RELAY_VERSION), true, 'this relay knows it');
 });
 

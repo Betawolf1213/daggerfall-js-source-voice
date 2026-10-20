@@ -63,10 +63,10 @@
     ]
   },
   {
-    "name": "OCR-gate-223",
+    "name": "OCR-gate-224",
     "file": "src/net/wire.js",
-    "old": "export const TRAV_BANDS_RELAY_MIN = 224;",
-    "new": "export const TRAV_BANDS_RELAY_MIN = 223;",
+    "old": "export const TRAV_BANDS_RELAY_MIN = 225;",
+    "new": "export const TRAV_BANDS_RELAY_MIN = 224;",
     "tests": [
       "test/systems/travel/ow_chaserange.test.js"
     ]

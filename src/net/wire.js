@@ -728,7 +728,7 @@ export const SEAT_ELSEWHERE = 'online in another tab, window or device';
 // close; a realm-era tab knows them (systems/realmSaves.js realmDoorShut) and goes to the Online door with the realm's
 // own. A close reason is at most 123 bytes.
 /** REALM-DOOR: the word a hello is refused with when its token names no realm character of its account. */
-export const REALM_DOOR_WORD = 'this game is out of date - update it to play online (restart the app, or reload the page)';
+export const REALM_DOOR_WORD = 'this game is out of date. Update it to play online (restart the app, or reload the page)';
 /** The hub: the room whose object keeps the social state. The World channel - the one room everyone online is in. */
 export const SOCIAL_ROOM = CHAT_WORLD_ROOM;
 /** Is this key the hub's. */
@@ -1520,7 +1520,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world224';   // OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; NOT YET DEPLOYED): a traveller mark carries an eighth key, `bd` - TV7b's chase word (the bands and the raiders chasing its traveller, where they run, and those spent there: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX) - checked whole by validTravellerMark (a band's or a raider's id, a place on the world's pixels), kept on the attachment and fanned with the mark; a client hands `bd` only to a relay at world224 or later (TRAV_BANDS_RELAY_MIN)
+export const RELAY_VERSION = 'world225';   // OW-CHASE-RANGE (2026-10-19, the owner, of the Overworld's gaps: "4. Fix it"; bible/06-Systems/Travel-View.md OW-CHASE-RANGE; world224 on its branch, renumbered past LAYERED-GEAR's world224 at the merge; NOT YET DEPLOYED): a traveller mark carries an eighth key, `bd` - TV7b's chase word (the bands and the raiders chasing its traveller, where they run, and those spent there: [[id, x, z, 1|2]], at most TRAV_BANDS_MAX) - checked whole by validTravellerMark (a band's or a raider's id, a place on the world's pixels), kept on the attachment and fanned with the mark; a client hands `bd` only to a relay at world225 or later (TRAV_BANDS_RELAY_MIN)
+// world224: LAYERED-GEAR and VOICE2 (2026-10-18; world218 in the package, renumbered past GRANT2's world218, EG-PERFECT's world219, FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221, GATE-DOOR's world222 and FOE-BOUNDS's world223 at the merge; NOT YET DEPLOYED; the owner: "add a option between those two thats also called On foot Layered Gearing Skin (WIP) Female and Male"; player/eyeOfTheBeholder/layeredArmor.js): validLook keeps a look's `lg` - the On foot Layered Gearing Skin the player chose, 1 female, 2 male, OMITTED when off (`class`'s law) - so a peer is drawn in the armor their items say they wear, in the body they chose; and the voice pass's words in the relay's own text (VOICE1, bible/10-UI/Voice.md). Deploy relay before clients - an older relay drops `lg`, and the player is seen in their set or class, as before.
 // world223: FOE-BOUNDS and GRANT-DOOR (2026-10-19, world219 on its branch, renumbered past EG-PERFECT's world219, FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221, and GATE-DOOR's world222, at the merges; Mac: a hand-off spec, "REJECT AND REMOVE INVALID ENEMY HANDOFFS; DO NOT RESCALE", then "Spec + B + A"; bible/11-Multiplayer/Spawn-Grants.md sections 19-21; NOT YET DEPLOYED): a reader's tally takes `stats` - a record whose health no builder could give it (net/foeBounds.js foeStatsRefusal) - and it is a case's reason (net/grantLaw.js GRANT_CASE_REASONS); while `grantStrip` is on the relay drops such a record from a cell's and a world room's own frames and counts it under its own name (net/grantMeasure.js GRANT_RELAY_READER, the worst one's evidence beside it); a foes room's hello says the spawn grants its build stands on (`gv`, GRANT_HELLO_LAW), the relay keeps it on the socket, holds such a socket to grants in its strip, and vouches for it on every foes frame it fans (`g` 1); the setting `grantDoor` (off unset) refuses a foes room's hello that does not say it (GRANT_OLD_REASON, GROUND-GATE's words). A client hands `stats` only to a relay at world220 or later (GRANT_STATS_RELAY_MIN)
 // world222: GATE-DOOR and COURT-WATCH (world218 on its branch, renumbered past GRANT2's world218, EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 and 2026-10-18f's world221 at the merge; NOT YET DEPLOYED; bible/11-Multiplayer/Scale-Arc.md THE PLAN PAST 1,000; from play at a thousand online, "Server is kinda breaking down near oblivion gate cause so many ppl lol"): a gate's court and its copies admit GATE_HELLO_HZ_MAX hellos a second, its opening's crowd, where every room admitted HELLO_HZ_MAX - still spent before the token is read, a busy refusal leaving it unspent; and COURT-WATCH (bible/11-Multiplayer/World-Bosses.md section 24): the answer to an `in` that seats a fighter says so (`me`), so a client the full court kept as its watcher knows when it fights. Deploy relay before clients (a client from before it waits at a deeper door, and a full court still casts it out, as it did).
 // world221: FIELD BUGS 2026-10-18f (bible/01-Overview/bugs/Field-Bugs-2026-10-18f.md TURNED-BLOW; bible/01-Overview/audits/Audit-Field-Bugs-2026-10-18f.md L3; world219 on its branch, renumbered past EG-PERFECT's world219 and FIELD BUGS 2026-10-18d's world220 at the merge; NOT YET DEPLOYED): THE STRIKE RULE ONE LAW ON BOTH ENDS - the relay's refusal of a blow struck from traversal ground (net/eliteGates/egBodies.js egStruckOff) is the one the screen asks, and the storey (egStoreyApart) the same; a woken lord's first phase said in the beat that wakes it (`eph`, egLordsWake), so no screen holds it asleep until the fight's next whole word; each body's radius said beside its row (`ead` and `efs` carry `r`, net/eliteGates/egBodies.js egRadiusWire - outside the 19-element row, so a client before it drops the field and keeps the word, and a client after it with an older relay judges as it did). Either end may deploy first.
@@ -1982,7 +1983,12 @@ export function validLook(look) {
   // SKIN2 (2026-09-25): and past the mod's sixteen, Daggerfall's own classes (player/classSkins.js) - the bound is every
   // on-foot skin the build carries.
   const eo = uint(look.eo, FOOT_SKINS - 1);
-  return { race, gender, faceIndex, ...(klass ? { class: klass } : {}), ...(eo != null ? { eo } : {}), items };
+  // LAYERED-GEAR (2026-10-18): `lg` - the On foot Layered Gearing Skin the player chose on the profile (1 female, 2 male;
+  // Graphics.LayeredGear), so a peer is drawn in the helmet, chest and legs armor their items say they wear
+  // (net/peer/peerRiders.js createPeerWalkers). OMITTED when off, `class`'s law. A relay before this one drops it: the
+  // player is then seen in their set or class, as before.
+  const lg = uint(look.lg, 2);
+  return { race, gender, faceIndex, ...(klass ? { class: klass } : {}), ...(eo != null ? { eo } : {}), ...(lg ? { lg } : {}), items };
 }
 /** DISC23-B's `eo` bound, widened by SKIN2: every on-foot skin - Eye Of The Beholder's sixteen sets (archives
  *  112364-112379) and Daggerfall's twenty classes after them. A literal, because the relay imports this file and not the skin table (test/net/skin2_class_skins.test.js pins it equal to
@@ -3183,7 +3189,7 @@ export function validPartyFrame(m) {
 }
 
 /** TV3: the mark's seven keys - and no other: a mark with an eighth is refused whole, so nothing rides it. OW-CHASE-RANGE
- *  (world224): the eighth, `bd`, a chase word - "a later field is a new relay version and a new key" (TV5's own words). */
+ *  (world225): the eighth, `bd`, a chase word - "a later field is a new relay version and a new key" (TV5's own words). */
 export const TRAV_KEYS = Object.freeze(['px', 'py', 'fx', 'fy', 'h', 'm', 'tv', 'bd']);
 /** OW-CHASE-RANGE: the most entries a mark's chase word holds - the foes frame's own (systems/travel/travelBands.js
  *  BANDS_WIRE_MAX, pinned equal: the relay's graph stays flat). */
@@ -3398,7 +3404,7 @@ export const relaySupportsPartyLead = (v) => { const m = /^world(\d+)$/.exec(typ
  *  message') and keeps and fans a region's marks; against an older one the client sends none and shows none. */
 export const TRAVELLER_RELAY_MIN = 122;
 /** OW-CHASE-RANGE: the first relay that knows a mark's chase word - an older one refuses the mark whole (an eighth key). */
-export const TRAV_BANDS_RELAY_MIN = 224;
+export const TRAV_BANDS_RELAY_MIN = 225;
 export const relaySupportsTravBands = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= TRAV_BANDS_RELAY_MIN; };
 export const relaySupportsTravellers = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= TRAVELLER_RELAY_MIN; };
 /** PARTY-MAP: the first relay that knows the `amap` frame (an older one CLOSES the socket on it - parseClient's 'unknown

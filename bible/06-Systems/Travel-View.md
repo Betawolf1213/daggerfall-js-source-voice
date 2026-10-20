@@ -2325,6 +2325,35 @@ The owner: *"fix a pre existing issue where AI can actually use the overworld as
 
 `test/systems/naval/timedilation.test.js` (3), `tools/mutants/timedilation.json` (16, all dead).
 
+## OW-RISE - the Overworld rises over a foe that has not noticed the traveller (2026-10-17)
+
+*"the overworld travel randomly slows down from speed multiplier even without enemies nearby"*. The view down under an
+Overworld journey walks it at x1 until `tvJourneyUp` raises the view again (AUDIT OW4 J5) - and the rise asked every
+hostile foe in classic spawn reach (`areEnemiesNearby(exteriorFoePool())`), where the view's own `danger` asks only the
+foes WILD-ALERT lets through (`wildSeen`). So once the view came down (a window, an alerted foe passed), an unaware camp
+beside the road kept it down and the journey at x1 with nothing coming. The rise asks the danger's pool now.
+`test/systems/travel/ow_rise.test.js` (1). PIN MOVED: `tv2_click_to_move` (the rise's gate), the rise's stubs in `ow_toggle`,
+`fb0929_overworld_mouse` and `fb0929d_toroads`.
+
+## OW-LEAD - the land's hold is how near the hole is, not how long it has stood (2026-10-17)
+
+*"iam 100% sure it even slowed down to 1x without enemies in 500m nearby ... it almost always [goes] down to 1x and
+after a while it goes up again"*. After LOAD-OWED and BUILD-RETRY the land's hold still did it with every build
+standing: TV2's halving cut again every TV_GOV_SETTLE_S while ANY pixel of the counted grid was building, and a slower
+clock builds nothing faster - a crossing's row the pump took eight seconds over (a town or two in it) took the journey
+50, 25, 10, 5, 1; the climb back was a step every TV_GOV_CLEAR_S, eighty seconds to x100; and at x100 the next crossing's
+row did it again. What slowing buys is the traveller NOT REACHING a pixel before it stands. So the host hands the
+governor the owed pixels themselves (`unbuiltAround`'s `out`, `uc.owed`), the feet (native) and the motor's pace, and
+the clock is held to the rate at which the traveller takes TV_GOV_LEAD_S of real time to reach the nearest owed pixel's
+square (travelGovernor.js `owedMetres`, `leadCap`; OW6's law for an enemy's reach, with the stream's books for the
+enemies), on the spinner's ladder, never under walking pace, and let go the frame the last build stands. The halving
+still answers a bare count (no host hands one now). TV_GOV_LEAD_S = 4, from the host's own code over builds of 0.3 - 3 s
+a pixel, rider and walker: nearly all of 2's pace where builds are quick, and where they are slow a deep queue held off
+the traveller (a few seconds at x1 where 2 had most of a minute). A rider at x100, every build a second: the halving
+31 s of 120 at x1, this none, and further on. `test/systems/travel/ow_lead.test.js` (2). PIN MOVED: `ow_loadowed` (P in flight
+held by its nearness, never entered), `tv_wasd` (a hole half a pixel off holds the keys at x20 from the first frame),
+`ow6_slowdown` (the hole underfoot), `ether_ow` and `tv2_click_to_move` (the count's line hands `uc.owed`).
+
 ## THE OVERWORLD REVISITED - six slices (2026-10-19, the owner)
 
 Asked how the Overworld could be improved ("Its been awhile since we've touched it"), six gaps were laid out from this
@@ -2392,7 +2421,9 @@ out again every FORECAST_EVERY_MS (2 s; a pass reads ~26 places, ~3 ms). Off the
 classic skin, `?wxmap=off`) the sky is DFU's day roll per climate, which has no tomorrow to read - and nothing is said.
 Proof: `test/systems/weather/ow_forecast.test.js` (9 - among them a traveller flown at a steady pace over the REAL map,
 told the first weather it will meet, and the forecast COMING TRUE where and when it said); `tools/mutants/ow_forecast.json`
-(24, all dead).
+(26, all dead). Every word is the player's language's (L10N4: `t`, `forecast.*` in Port_Strings - a weather word said after
+another its own row, `forecast.turn.*`, never a lowercased one; drafted in-session for the 25 languages, machine-made until a
+person's lands).
 
 ### OW-CHASE-RANGE - a chase seen as far as its band is drawn (4)
 
@@ -2408,17 +2439,18 @@ and fanned with the mark. The client says it (`systems/travellerMarks.js travell
 band is spent (`chaseWordKey`: who, never where), and again every TRAV_CHASE_REFRESH_MS (the session's own floor) while
 one runs; a reader hears it (`scenes/world.js regionChaseHear`) only from a traveller past the cell's reach - inside it
 the foes frame says the same every frame - through the bands' and the raiders' own hearing, the word standing
-TRAV_BAND_HOLD_MS (25 s, a missed refresh and still drawn). RELAY_VERSION **world224**: a client hands `bd` only to a
-relay that knows it (`relaySupportsTravBands`, TRAV_BANDS_RELAY_MIN 224); to an older one the mark goes without it. The
+TRAV_BAND_HOLD_MS (25 s, a missed refresh and still drawn). RELAY_VERSION **world225** (world224 on its branch, renumbered
+past LAYERED-GEAR's world224 at the merge): a client hands `bd` only to a relay that knows it (`relaySupportsTravBands`,
+TRAV_BANDS_RELAY_MIN 225); to an older one the mark goes without it. The
 widest mark (eight chases at the longest ids, the longest name) fits the runtime's 2 KiB attachment.
 - **What it is not.** A mark is said only by a traveller who shows themselves to the region ("Show me to travellers",
   on by default) and only in their region's channel: a chaser who hides, or one across a region's border, is heard as
   before, within the cell's three pixels. A chase's place is the mark's, refreshed at most once a TRAV_CHASE_REFRESH_MS.
-- **Deploy.** The relay at world224 before the clients that say `bd` matter; nothing breaks in either order.
+- **Deploy.** The relay at world225 before the clients that say `bd` matter; nothing breaks in either order.
 Proof: `test/systems/travel/ow_chaserange.test.js` (7: the wire, the relay over a real Room, the session, the client's law,
 the region's word, a word end to end through the real doors, the host's hearing lifted and run); the TV3 pins moved
-(`test/scenes/tv3_travellers.test.js`: the eighth key); `test/net/relayversion.test.js` (the world224 law); every
-`RELAY_VERSION` pin moved to world224; `tools/mutants/ow_chaserange.json` (22, all dead).
+(`test/scenes/tv3_travellers.test.js`: the eighth key); `test/net/relayversion.test.js` (the world225 law); every
+`RELAY_VERSION` pin moved to world225; `tools/mutants/ow_chaserange.json` (22, all dead).
 
 ### OW-ROAD-TRUE - a planned road is walked on the road (5)
 

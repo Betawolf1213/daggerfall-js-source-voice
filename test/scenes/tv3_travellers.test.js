@@ -39,7 +39,7 @@ const MARK = Object.freeze({ px: 207, py: 213, fx: 12, fy: 250, h: 64, m: 1, tv:
 
 // ── THE WIRE ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0 (OW-CHASE-RANGE, world224: the eighth is `bd`, its chase word - test/systems/travel/ow_chaserange.test.js)', () => {
+test('TV3 wire: a mark is seven keys and no eighth, each in its range - refused WHOLE otherwise; `tv` absent reads 0 (OW-CHASE-RANGE, world225: the eighth is `bd`, its chase word - test/systems/travel/ow_chaserange.test.js)', () => {
   assert.deepEqual(TRAV_KEYS, ['px', 'py', 'fx', 'fy', 'h', 'm', 'tv', 'bd']);   // PIN MOVED (OW-CHASE-RANGE): "a later field is a new relay version and a new key" - this is that
   assert.deepEqual(validTravellerMark(MARK), MARK);
   assert.deepEqual(validTravellerMark({ ...MARK, tv: undefined }), { ...MARK, tv: 0 });
@@ -450,10 +450,10 @@ test('TV3 map: the travellers are marks placed to their 256th (the fraction turn
 
 // ── THE SWITCH AND THE HOST ─────────────────────────────────────────────────────────────────────────────────────────
 
-test('TV3 switch: "Show me to travellers in my region" - on by default, the player\'s own say online, on the Other players card', () => {
+test('TV3 switch: "Show me to travelers in my region" - on by default, the player\'s own say online, on the Other players card', () => {
   assert.equal(PREF_DEFAULTS.showToTravellers, true);
   assert.ok(ONLINE_PLAYERS_OWN_PREFS.includes('showToTravellers'), 'the room never forces it');
-  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /prefRow\('showToTravellers', t\('menu\.peers\.show', 'Show me to travellers in my region'\),/);
+  assert.match(rd('src/ui/enhanced/enhancedMenu.js'), /prefRow\('showToTravellers', t\('menu\.peers\.show', 'Show me to travelers in my region'\),/);
 });
 
 test('TV3 host wiring: the book hoisted above its readers, filled by the Region tab\'s own link; my mark sent when due, on that link, from the open air alone and with the switch on; the view and the map draw the book', () => {
