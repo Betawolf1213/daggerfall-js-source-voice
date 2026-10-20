@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { unplacedStars, advanceReach, askBookWhenDue, _resetAdvanceForTests, ADV_GAP, ADV_WORDS } from '../../../src/ui/hud/hudAdvance.js';
-import { statusTip, spellLines, diseaseLines } from '../../../src/ui/hud/statusTips.js';
+import { statusTip, spellTipLines, diseaseLines } from '../../../src/ui/hud/statusTips.js';
 import { hudTipPlace } from '../../../src/ui/hud/hudTip.js';
 import { STATUS_GLYPHS } from '../../../src/ui/hud/hudStatus.js';
 import { HUD_PIECES } from '../../../src/ui/hud/hudLayout.js';
@@ -60,7 +60,7 @@ test('STATUS-TIPS: a spell says what its effects do, a disease what it wears dow
     { kind: 'regenerate', bundleId: 1, roundsRemaining: 5 },
     { kind: 'survival', statMods: { strength: -2 } },
   ] };
-  assert.deepEqual(spellLines(e, 1), ['Raises Strength by 10.', 'Restores health every round.']);
+  assert.deepEqual(spellTipLines(e, 1), ['Raises Strength by 10.', 'Restores health every round.']);
   const tip = statusTip({ key: 'spell0', kind: 'buff', name: 'Ox', foot: '5', bundle: 1, endable: true }, e, { endHint: 'Right-click to end this spell' });
   assert.equal(tip.meta, 'Buff');
   assert.equal(tip.foot, '5 rounds left');

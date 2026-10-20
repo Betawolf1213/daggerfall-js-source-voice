@@ -69,7 +69,7 @@ export const kindSaid = (kind) => {
 };
 
 /** The sentences a spell's live entries say - each once, in their order. */
-export function spellLines(entity, bundleId) {
+export function spellTipLines(entity, bundleId) {
   const out = [];
   if (bundleId == null) return out;
   for (const a of entity?.activeEffects ?? []) {
@@ -177,7 +177,7 @@ export function statusTip(tile, entity, extra = {}) {
     return { title, meta: tile.set === 'technique' ? 'Weapon technique' : meta, lines, foot: tile.foot ? (tile.recovering ? `Ready in ${tile.foot}` : tile.foot) : null };
   }
   if (String(tile.key).startsWith('spell')) {
-    lines.push(...spellLines(entity, tile.bundle));
+    lines.push(...spellTipLines(entity, tile.bundle));
     if (!lines.length) lines.push(tile.kind === 'buff' ? 'A spell on you.' : 'A spell cast on you.');
     if (tile.item) foot = 'Lasts while you wear the item.';
     else if (tile.foot) foot = `${tile.foot} ${tile.foot === '1' ? 'round' : 'rounds'} left`;
