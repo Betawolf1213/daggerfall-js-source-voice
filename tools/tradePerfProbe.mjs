@@ -250,9 +250,9 @@ try {
       await ctx.close();
     }
   }
+  if (process.env.OUT) await writeFile(process.env.OUT, JSON.stringify(out, null, 1));
 } finally {
   await unlink(join(ROOT, `tools/${PAGE_NAME}`)).catch(() => {});
   await browser.close(); await server.close();
-  if (process.env.OUT) await writeFile(process.env.OUT, JSON.stringify(out, null, 1));
 }
 if (failed.length) throw new Error(`tradePerfProbe: ${failed.join(' | ')}`);
