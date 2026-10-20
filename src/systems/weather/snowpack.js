@@ -271,6 +271,8 @@ export class SnowpackLattice {
     this.stepsRun = 0;
     this.stepsSkipped = 0;
     this.spinsRun = 0;
+    /** SNOW-BUDGET: the step a call left part-way (`m` a main step, `s` a spin's, and its minute), or null */
+    this._partial = null;
   }
   /** The lattice index of the point nearest map pixel (px, py)'s middle. */
   indexOf(px, py) { return [Math.round((px + 0.5) / this.spacing), Math.round((py + 0.5) / this.spacing)]; }
@@ -378,6 +380,12 @@ export class SnowpackLattice {
    * Integrate every point of `pts` to the first step at or after event minute `t` (one ahead: the pack now is the blend
    * of the two about it), its year-before spin first, earliest step first, for at most `budgetMs` of the clock (`now`
    * the clock: performance.now's). Answers true when every point stands there.
+   *
+   * SNOW-BUDGET (2026-10-20, a player via the owner: "something about our weather system affecting fps"): THE BUDGET IS
+   * KEPT. The deadline was read only after a whole step of the window - 121 points' air and pack, ~10 ms - so a 3 ms
+   * frame's integration ran a step at the least, and each of a frame's readers ran its own. Now a step's points stop at
+   * it (`_step`): the rest carry on in the next call, each point's history its own, so every pack is the one it was. A
+   * call still moves at least one point (a build's wait with no slice left goes on), so a spent budget costs a point.
    */
   advance(pts, t, budgetMs = Infinity, now = () => performance.now()) {
     const S = SNOWPACK.stepMinutes, target = Math.ceil(t / S) * S;
@@ -413,7 +421,9 @@ export class SnowpackLattice {
   /** One step from event minute `t0` to `t1` for `due` (every one standing at `t0`; `spin` their year-before spin's).
    *  A step that cannot lay snow on any of them - each holding none, and its air at its highest level held warmer than
    *  RAIN_ALL_C however cold the fall's chill and the cloud make it - moves nothing, and asks the weather nothing
-   *  (`stepsSkipped`): the same packs exactly. False when the step's systems are still being found (`deadline`). */
+   *  (`stepsSkipped`): the same packs exactly. False when the step's systems are still being found (`deadline`), and
+   *  (SNOW-BUDGET) when the deadline comes between its points: those stepped stand at `t1`, the rest at `t0` for the next
+   *  call (`_partial` the step so left) - counted once, by the call that steps its last point. */
   _step(due, t0, t1, deadline, now, spin) {
     const of = (pt) => (spin ? pt.spin : pt);
     let quiet = true;
@@ -429,7 +439,9 @@ export class SnowpackLattice {
     const systems = this.systemsFor(t1, due, deadline, now);
     if (systems === null) return false;
     const hours = (t1 - t0) / 60;
-    for (const pt of due) {
+    for (let k = 0; k < due.length; k++) {
+      if (k > 0 && now() >= deadline) { this._partial = `${spin ? 's' : 'm'}${t0}`; return false; }   // SNOW-BUDGET: the rest the next call's
+      const pt = due[k];
       const fall = systems.length ? wornAmong(systems, pt.x, pt.z).fall : NO_FALL;
       const rate = fallRateOf(fall);
       stepAir(pt.p, pt.x, pt.z, t0, t1, fall, _air);
@@ -438,6 +450,7 @@ export class SnowpackLattice {
       st.empty = !stepPack(st.swe, _air, rate, hours, pt.n);
       st.step = t1;
     }
+    this._partial = null;
     if (spin) this.spinsRun++; else this.stepsRun++;
     return true;
   }

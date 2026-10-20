@@ -54,7 +54,8 @@ once), WD-OWNED (a town file's edits laid on its own base, and a kept base copie
 region's records read where MAPS.BSA holds them) and FIT-BITS (the Bay's fit on the picture counted 32 cells a word).
 Their sections are after TRIP-PICKS'. The same pass took two reports the owner handed on: TRADE-VIRT (a player's audit of
 the trading windows: the rows on screen drawn, a picture into its tile) and SHADER-STALL (a player's capture: a pass
-built in play never waits on its compile). Their sections are after FIT-BITS'.
+built in play never waits on its compile), and SNOW-BUDGET (its second word: the snow the ground keeps holds to its
+frame budget). Their sections are after FIT-BITS'.
 
 ## How the pass was run
 
@@ -1390,6 +1391,59 @@ Pins: `test/render/shaderstall.test.js` (11), the snow's in `test/systems/audit_
 `test/net/gate/gatemix_targets.test.js`. Mutants: `tools/mutants/shaderstall.json`, 17, all dead; `gatemix.json`'s three
 warm records re-aimed at the doors, dead. Source pins moved with the code: `wbx_gate_fixes` (the court's portal),
 `eglook_lines` (the Spire's telegraph).
+
+## SNOW-BUDGET — the snow the ground keeps holds to its frame budget
+
+*The same capture, handed on by the owner (2026-10-20): "something about our weather system affecting fps".*
+
+**Found.** The real game's frames after the arrival (the profile of `compileStallProbe.mjs knight` with PROFILE) were led
+by the snowpack (PRECIP3/PRECIP4, `bible/07-Rendering/Biome-Precipitation.md`, two days old). In one run, over 43 s:
+- `snowCoverHost.js at` -> `snowpack.js advance` -> `_step`: 525 ms;
+- the feet's `winterAt`: 273 ms;
+- the grass's `buries`: 175 ms;
+
+of a world frame of 1,353 ms. `SNOW_COVER.budgetMs` is 3 ms a frame, but it was not kept, for three reasons:
+- `advance` read its deadline only after a whole step of the window (121 points), so a frame ran a step at the least.
+- Every reader in a frame ran a budget of its own: the tick, the feet three times (`winterAt`, called before the tick),
+  and the Snowfall mod's `winterNear`.
+- The drawn cover read the ground's slope (`normalY`, four of the stream's heights) for every grass blade and every
+  footstep, before asking whether the snowline laid any snow there at all.
+
+**The fix.** Three changes, and no pack moved:
+- `snowpack.js _step` stops at the deadline between points. The rest carry on in the next call, and each point's
+  history is its own, so every pack is the one one call makes. A call still moves at least one point, so a build's wait
+  with no slice left goes on.
+- `snowCoverHost.js budgetFor` gives the asks within `SNOW_COVER.frameMs` (12) one budget between them; a build's
+  `settle` keeps the breather's own.
+- `drawnCover` reads the slope only where the cover is above nothing. `snowCoverAt` answers 0 for no cover whatever the
+  slope.
+
+**Measured.** In node, over the real law (`snowCoverHost.js` and `snowpack.js` from this branch and from its base,
+Woodlands in late winter, an 11 x 11 window caught up while a frame asks as the world frame does - the feet three
+times, the tick, the mod's winter; two runs each):
+
+| | base | SNOW-BUDGET |
+|---|---|---|
+| the snow a frame, median | 18.3 / 18.9 ms | 0.24 / 0.27 ms |
+| p99 | 61 / 66 ms | 5.9 / 6.2 ms |
+| frames over 8 ms | 120 of 121 / 142 of 142 | 6 / 5 |
+
+The window stands in more frames: the year's integration is the same work, spread at the budget the law always named.
+In the real game's minute after the arrival (`compileStallProbe.mjs knight` with PROFILE, two runs a tree) the
+catch-up had finished inside the boot (`settle`, the arrival's budget), so the two trees spent the same there. The
+snow's share of that minute was the grass's `buries`: 394-457 ms. Of its 410 ms on this branch, 231 are still the
+slope's heights, because snow lay in that run. Settled (`frameProbe.mjs knight`, 930 s in), the snow is 0.08 ms of a
+25 ms world frame.
+
+**What it still pays, ranked.**
+1. The weather map's births (`weatherMap.js systemsSpanWalk` -> `birthsIn`): one node of the walk took 65 ms in node,
+   paid once (memoized), and the walk reads its deadline only between nodes. These are the 5-6 frames still over 8 ms.
+2. The grass's slope under snow: `buries` asks the world's `heightAt` four times a blade, a pixel found by a string key
+   each time. The blade's own pixel holds the same samples (a read inside `bootWorld`, under its ceiling).
+3. A ground set's winter twin (`snowCoverHost.js twinLayers` -> `fit`): 88-173 ms of the minute.
+
+Pins: `test/systems/weather/snowbudget.test.js` (5). Mutants: `tools/mutants/snowbudget.json`, 4, all dead. Tooling:
+`tools/frameAb.mjs` reads the snow's and the falling weather's share of a frame.
 
 ## For the owner
 
