@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { d1, T0 } from '../accountDb.mjs';
-import { arenaBoardOf, arenaShared, arenaSharedOf, ARENA_BOARD_READ, ARENA_BOARD_MAX_CHARS } from '../../server-account/src/arena.js';
+import { arenaBoardOf, arenaShared, arenaSharedOf, ARENA_BOARD_READ, ARENA_BOARD_KEEP, ARENA_BOARD_SHAPE } from '../../server-account/src/arena.js';
 import { arenaSeasonOf } from '../../src/net/arena/arenaLaw.js';
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
@@ -30,6 +30,7 @@ async function both(db, raw, player, nowS) {
   await arenaShared({ db }, season);   // kept
   const kept = await arenaBoardOf({ db, nowS }, player, ENV);
   const row = raw.prepare('SELECT built FROM arena_boards WHERE season = ?').get(season);
+  assert.equal(row?.built, raw.prepare('SELECT ver FROM arena_board_ver').get().ver, 'kept at the arena\'s version');
   raw.prepare('UPDATE arena_boards SET built = -1 WHERE season = ?').run(season);
   const fresh = await arenaBoardOf({ db, nowS }, player, ENV);
   return { kept, fresh, row };
@@ -96,41 +97,70 @@ test('ARENA-BOARD each count where the board says it, hand-counted: this season\
   assert.equal(b.pvp.total, 2, 'the season\'s rated board');
 });
 
-test('ARENA-BOARD a kept season is one statement for its counts; a bout moves it and the next caller counts again and keeps it; a slow count never stands over a newer one (mutants: the keep unguarded, the counts read through a write)', async () => {
+test('ARENA-BOARD a kept season is one statement for its counts; a bout moves the arena\'s one version and the next caller counts again and keeps it; a slow count never stands over a newer one; callers that missed together write it once; a row of another shape is counted again; the board\'s keep runs after the caller\'s own reads (AUDIT LEAN-READS B1, B2, D4, D5; mutants: the keep unguarded, the counts read through a write, the shape unread, the keep rewriting a kept board, the keep before the caller\'s reads)', async () => {
   const { db, raw } = world();
   const season = arenaSeasonOf(T0);
   const bout = (id, p) => raw.prepare("INSERT INTO arena_pve (bout, player, season, tier, step, won, how, banner, at) VALUES (?, ?, ?, 1, 0, 1, 'k', 'red', ?)").run(id, p, season, T0);
+  const ver = () => raw.prepare('SELECT ver FROM arena_board_ver WHERE id = 1').get().ver;
+  const built = (s = season) => raw.prepare('SELECT built FROM arena_boards WHERE season = ?').get(s)?.built;
   bout('x1', 'p-ana');
   await arenaShared({ db }, season);
-  const row = () => raw.prepare('SELECT ver, built FROM arena_boards WHERE season = ?').get(season);
-  assert.equal(row().built, row().ver);
+  assert.equal(built(), ver());
   const asked = [];
   const counted = Object.create(db);
   counted.prepare = (sql) => { asked.push(sql); return db.prepare(sql); };
   counted.batch = (l) => { asked.push(`BATCH(${l.length})`); return db.batch(l); };
   await arenaShared({ db: counted }, season);
   assert.deepEqual(asked, [ARENA_BOARD_READ], 'kept: one statement');
+  // D4: the arena's one version - a bout moves it, and no season's board row is written
+  await arenaShared({ db }, season - 1);
+  const lastText = raw.prepare('SELECT rows FROM arena_boards WHERE season = ?').get(season - 1).rows;
+  const changes = raw.prepare('SELECT total_changes() AS n').get().n;
   bout('x2', 'p-bo');
-  assert.equal(row().ver, row().built + 1, 'a bout moves it');
+  assert.equal(raw.prepare('SELECT total_changes() AS n').get().n - changes, 2, 'the bout and the version - no board row rewritten');
+  assert.equal(ver(), built() + 1, 'a bout moves it');
   asked.length = 0;
   const after = await arenaShared({ db: counted }, season);
   assert.ok(asked.includes('BATCH(12)'), 'counted again');
-  assert.equal(row().built, row().ver, 'and kept');
+  assert.equal(built(), ver(), 'and kept');
   assert.equal(after.rosters.red.length, 2);
+  assert.equal(raw.prepare('SELECT rows FROM arena_boards WHERE season = ?').get(season - 1).rows, lastText);
   // a slow count: another caller counts and keeps the newer board while it is out - the slow one's is not put over it
   const slow = Object.create(db);
   slow.batch = async (l) => { const out = await db.batch(l); bout('x3', 'p-cy'); await arenaShared({ db }, season); return out; };
   raw.prepare('UPDATE arena_boards SET built = -1 WHERE season = ?').run(season);
   await arenaShared({ db: slow }, season);
-  assert.equal(row().built, row().ver, 'the newer stands');
+  assert.equal(built(), ver(), 'the newer stands');
   assert.equal(arenaSharedOf(raw.prepare('SELECT rows FROM arena_boards WHERE season = ?').get(season).rows).rosters.red.length, 3, 'with the bout the slow count missed');
-  assert.equal(ARENA_BOARD_MAX_CHARS, 1_500_000);
+  // B2: five callers miss together - written once
+  bout('x4', 'p-di');
+  let writes = 0;
+  const keeps = Object.create(db);
+  keeps.prepare = (sql) => {
+    const st = db.prepare(sql);
+    if (sql !== ARENA_BOARD_KEEP) return st;
+    return { bind: (...a) => ({ run: async () => { const res = await st.bind(...a).run(); writes += res.meta.changes; return res; } }) };
+  };
+  await Promise.all(Array.from({ length: 5 }, () => arenaShared({ db: keeps }, season)));
+  assert.equal(writes, 1, 'one write for the five');
+  // B1: a row of another shape is no board
+  raw.prepare("UPDATE arena_boards SET shape = 'an older deploy', rows = ? WHERE season = ?").run(JSON.stringify({ ...after, rosters: { red: [], blue: [] } }), season);
+  assert.equal((await arenaShared({ db }, season)).rosters.red.length, 4, 'another shape: counted again');
+  assert.equal(raw.prepare('SELECT shape FROM arena_boards WHERE season = ?').get(season).shape, ARENA_BOARD_SHAPE, 'and kept in this one');
+  // D5: the board's keep after the caller's own reads
+  bout('x5', 'p-ed');
+  const order = [];
+  const seen = Object.create(db);
+  seen.prepare = (sql) => { order.push(sql === ARENA_BOARD_KEEP ? 'KEEP' : /arena_members WHERE player|FROM arena_pvp\s+WHERE a = \?1/.test(sql) ? 'MINE' : 'OTHER'); return db.prepare(sql); };
+  await arenaBoardOf({ db: seen, nowS: T0 + 10 }, { id: 'p-ana', handle: 'ana', registered_at: 0 }, ENV);
+  assert.ok(order.includes('MINE') && order.lastIndexOf('MINE') < order.indexOf('KEEP'), `the caller's reads, then the keep: ${order.join(' ')}`);
   assert.equal(arenaSharedOf('{"grandRows":[]}'), null, 'not a board');
 });
 
 test('ARENA-BOARD the writes that move a season are the database\'s own - every ladder bout, players\' bout and banner membership written, voided or deleted, by any route or cascade - and stand after every migration (mutant: a trigger dropped)', () => {
   const { raw } = world();
   const triggers = raw.prepare("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'arena_board_%' ORDER BY name").all().map((t) => t.name);
+  assert.ok(raw.prepare("SELECT sql FROM sqlite_master WHERE name = 'arena_board_pve_in'").get().sql.includes('UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1'), 'the arena\'s one version');
   assert.deepEqual(triggers, ['arena_board_member_in', 'arena_board_member_out', 'arena_board_member_up', 'arena_board_pve_in', 'arena_board_pve_out', 'arena_board_pve_up', 'arena_board_pvp_in', 'arena_board_pvp_out', 'arena_board_pvp_up']);
-  assert.match(src('server-account/src/arena.js'), /const \{ grandRows, pvpAll, pveAll, fastAll, standings, last, rosters, counts \} = await arenaShared\(ctx, season\);/, 'the board reads its counts off the kept row');
+  assert.match(src('server-account/src/arena.js'), /const \{ grandRows, pvpAll, pveAll, fastAll, standings, last, rosters, counts \} = await arenaShared\(ctx, season, later\);/, 'the board reads its counts off the kept row');
 });

@@ -1025,9 +1025,12 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
     // WORD - its reads stand back as an overload answer stands them back. In the 18:05 overload the database answered
     // slowly and refused almost nothing: each tab's read timed out, was `offline` to the gate, and was asked again, and
     // the region's traders were asked four times as often. A write, a sign-in or an act that times out holds nothing.
-    if (e?.name === 'TimeoutError' && busyRead(path, method)) {
+    // AUDIT LEAN-READS C3: ONE STALL IS ONE WORD - the reads out together when the line stalls all time out together, and
+    // counted each they held the page a minute for one stall; a timeout while a hold already runs counts nothing, so a
+    // stall holds the first wait (BUSY_BASE_MS's), and the wait doubles only while the reads keep timing out after it.
+    if (e?.name === 'TimeoutError' && busyRead(path, method) && now() >= _busy.until) {
       const n = _busy.n + 1;
-      _busy = { n, until: Math.max(_busy.until, now() + busyWaitMs(n, rand())) };
+      _busy = { n, until: now() + busyWaitMs(n, rand()) };
     }
     return { ok: false, error: 'offline' };
   }

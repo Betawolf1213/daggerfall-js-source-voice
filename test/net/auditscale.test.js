@@ -214,7 +214,7 @@ test('AUDIT SCALE D2: the clock\'s moment in seconds - scheduled() hands runCron
   assert.equal(svc.env.DB._raw.prepare('SELECT COUNT(*) AS n FROM sessions WHERE player_id = ?').get(g.id).n, 1);
 });
 
-test('AUDIT SCALE D7: on a quiet world the clock is eleven statements a minute and thirty an hour (AUDIT LW-II-2 S3; EG-ZM; REZ-BLOODLINE AUDIT R1) - each job asks once and, its page short, never again; the Motherlodes are not picked behind `dev`; a metrics write that throws costs no job (mutants: TOWNECON-AUDIT2-SVC3-kept-read-each-minute)', async () => {
+test('AUDIT SCALE D7: on a quiet world the clock is eleven statements a minute and thirty-four an hour (AUDIT LW-II-2 S3; EG-ZM; REZ-BLOODLINE AUDIT R1) - each job asks once and, its page short, never again; the Motherlodes are not picked behind `dev`; a metrics write that throws costs no job (mutants: TOWNECON-AUDIT2-SVC3-kept-read-each-minute)', async () => {
   clock(T0);
   const svc = await standService({ SEATS_OPEN: 'on', PROFESSIONS_OPEN: 'on' });
   _resetCronForTests();

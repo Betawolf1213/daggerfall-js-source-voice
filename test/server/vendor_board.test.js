@@ -7,13 +7,16 @@
 // The proof is an oracle: the board's two statements as they stood before this slice (their text kept here, its caller's
 // door asked in SQL of every row), against the service's answer, through listings put up, bought, cancelled and run
 // out, traders made and moved off their station, houses changing hands, doors, guilds and regions, houses released,
-// guilds joined and left, rooms rented and patrons' sales - every caller of every region, each read kept or not.
+// guilds joined and left, rooms rented and patrons' sales - every caller of every region, each read kept or not; and
+// (AUDIT LEAN-READS B5) every answer off a kept row held whole to the answer read afresh at the same second.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 
 import { d1, T0 } from '../accountDb.mjs';
-import { marketVendors, vendorBoard, vendorBoardOf, VENDOR_BOARD_READ, VENDOR_BOARD_MAX_CHARS, VENDOR_BOARD_KEPT_S, PATRON_TOLD_S, PATRON_TOLD_SQL } from '../../server-account/src/market.js';
+import { marketVendors, vendorBoard, vendorBoardOf, VENDOR_BOARD_READ, VENDOR_BOARD_KEEP, VENDOR_BOARD_SHAPE, VENDOR_BOARD_KEPT_S, VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL,
+  PATRON_TOLD_S, PATRON_TOLD_SQL } from '../../server-account/src/market.js';
+import { shapeOf, keptFits, KEPT_BOARD_MAX_BYTES } from '../../server-account/src/keptBoard.js';
 import { VENDOR_STATION, VENDOR_BOARD_SHOWN } from '../../src/net/vendorLaw.js';
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
@@ -50,14 +53,24 @@ async function before(db, player, region, me, nowS) {
   const shown = new Set(newest.map(traderOf));
   const results = [...newest, ...houses.filter((l) => !shown.has(traderOf(l)))];
   const { results: patrons = [] } = await db.prepare(PATRON_TOLD_SQL('s.region = ?2')).bind(nowS - PATRON_TOLD_S, region).all();
+  // AUDIT LEAN-READS B5: every field the answer gives, as market.js's listingView and patronView make them from the rows
+  const good = (text) => { try { const v = JSON.parse(text); return v && typeof v === 'object' && !Array.isArray(v) ? v : null; } catch { return null; } };
   return {
-    patrons: patrons.map((r) => [r.listing, Number(r.at)]),
+    patrons: patrons.map((r) => [r.listing, Number(r.map), r.vendor_id, r.building_key == null ? null : Number(r.building_key), Number(r.hour), Number(r.minute),
+      Number(r.seed), Number(r.price), Number(r.at), String(good(r.item)?.name ?? '')]),
     rows: results.map((l) => [l.id, Number(l.v_map), Number(l.v_key), l.v_id, l.v_owner, {
       owner: l.v_owner, entry: l.v_entry, mine: Number(l.v_mine) === 1,
-      ...(Number(l.v_guildmate) === 1 ? { guildmate: true } : {}), ...(Number.isSafeInteger(l.v_tenancy) && l.v_tenancy > nowS ? { tenant: Number(l.v_tenancy) } : {}) }]),
+      ...(Number(l.v_guildmate) === 1 ? { guildmate: true } : {}), ...(Number.isSafeInteger(l.v_tenancy) && l.v_tenancy > nowS ? { tenant: Number(l.v_tenancy) } : {}) },
+    { kind: l.kind, region: Number(l.region), material: l.material || null, item: l.kind === 'item' ? good(l.item) : null, units: Number(l.own) + Number(l.bought),
+      listed: Number(l.units), price: Number(l.price), fee: Number(l.fee), wear: l.wear != null ? Number(l.wear) : null, at: Number(l.at), expiresAt: Number(l.expires_at),
+      state: l.state, currency: l.currency === 'gold' ? 'gold' : 'marks', mine: l.seller === player.id }]),
   };
 }
-const after = (a) => ({ patrons: a.patrons.map((p) => [p.listing, p.at]), rows: a.rows.map((r) => [r.id, r.map, r.buildingKey, r.vendor.id, r.owner, r.home]) });
+const after = (a) => ({
+  patrons: a.patrons.map((p) => [p.listing, p.map, p.vendor, p.buildingKey, p.hour, p.minute, p.seed, p.price, p.at, p.name]),
+  rows: a.rows.map((r) => [r.id, r.map, r.buildingKey, r.vendor.id, r.owner, r.home, { kind: r.kind, region: r.region, material: r.material ?? null, item: r.item ?? null,
+    units: r.units, listed: r.listed, price: r.price, fee: r.fee, wear: r.wear ?? null, at: r.at, expiresAt: r.expiresAt, state: r.state, currency: r.currency, mine: r.mine }]),
+});
 
 /** A world: four people with two characters each, two guilds, houses in both regions with traders and chairs. */
 function world() {
@@ -73,8 +86,10 @@ const put = (raw, s, r) => {
     pick,
     home(map, key) {
       const owner = pick(PEOPLE);
-      raw.prepare("INSERT OR REPLACE INTO homes (map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at, guild_id) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1, ?)")
-        .run(map, key, owner, pick(CHARS(owner)), owner.slice(2), pick(REGIONS), pick(['public', 'public', 'guild', 'private']), r() < 0.15 ? 'g1' : null);
+      raw.prepare('DELETE FROM homes WHERE map_id = ? AND building_key = ?').run(map, key);   // released, then bought - no route replaces a house (AUDIT LEAN-READS B6)
+      raw.prepare("INSERT INTO homes (map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at, guild_id) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1, ?)")
+        .run(map, key, owner, pick(CHARS(owner)), owner.slice(2), pick(REGIONS), pick(['public', 'public', 'guild', 'private']),
+          r() < 0.15 && !raw.prepare("SELECT 1 FROM homes WHERE guild_id = 'g1'").get() ? 'g1' : null);   // a guild holds one hall
       raw.prepare('INSERT OR IGNORE INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, ?, ?, 41000, ?, 1, 0, 0)').run(map, key, `t${key}`, place(VENDOR_STATION));
       raw.prepare('INSERT OR IGNORE INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, ?, ?, 41000, ?, 1, 0, 0)').run(map, key, `chair${key}`, place(null));
     },
@@ -90,7 +105,7 @@ const put = (raw, s, r) => {
   };
 };
 
-test('VENDOR-BOARD the oracle: through listings put up, bought, cancelled and run out, traders made and moved off their station, houses changing hands, doors, guilds and regions, houses released, guilds joined and left, rooms rented and patrons\' sales, every caller\'s board is the board the two statements read, kept or read again (mutants: each write that moves a board unmoved, a run-out board kept, a patron\'s sale kept past its day, the caller\'s door)', async () => {
+test('VENDOR-BOARD the oracle: through listings put up, bought, cancelled and run out, traders made and moved off their station, houses changing hands, doors, guilds and regions, houses released, guilds joined and left, rooms rented and patrons\' sales, every caller\'s board is the board the two statements read, kept or read again (mutants: each write that moves a board unmoved, a run-out board kept, a patron\'s sale kept past its day, the caller\'s door, a kept column read off another)', async () => {
   for (let seed = 1; seed <= 12; seed++) {
     const { db, raw } = world();
     const r = lcg(seed * 15485863);
@@ -136,12 +151,14 @@ test('VENDOR-BOARD the oracle: through listings put up, bought, cancelled and ru
         const got = await marketVendors({ db, nowS }, player, ENV, { region, character: me });
         assert.equal(got.ok, true, JSON.stringify(got));
         assert.deepEqual(after(got), await before(db, player, region, me ?? '', nowS), `seed ${seed} op ${op} region ${region}`);
+        raw.prepare('UPDATE market_vendor_boards SET built = -1 WHERE region = ?').run(region);
+        assert.deepEqual(got, await marketVendors({ db, nowS }, player, ENV, { region, character: me }), `seed ${seed} op ${op} region ${region}: whole, as read afresh`);
       }
     }
   }
 });
 
-test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows; a write moves it, and the next caller reads it again and keeps it; a board whose first listing has run out is read again; a version moved while it was read is not kept (mutants: the version unread, the run-out unread, the keep unguarded)', async () => {
+test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows; a first read writes nothing before its reads and keeps its board last, after the caller\'s own (AUDIT LEAN-READS D5); a write moves it, and the next caller reads it again and keeps it; a board whose first listing has run out is read again; a version moved while it was read is not kept (mutants: the version unread, the run-out unread, the keep unguarded, the caller\'s rows read after the keep)', async () => {
   const { db, raw } = world();
   const r = lcg(7);
   const w = put(raw, 0, r);
@@ -154,14 +171,17 @@ test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows;
   counted.batch = (list) => { asked.push(`BATCH(${list.length})`); return db.batch(list); };
   const player = { id: 'p-ana', handle: 'ana', registered_at: 0 };
   await marketVendors({ db: counted, nowS: T0 }, player, ENV, { region: 17, character: 'p-ana-c1' });
-  assert.ok(asked.some((s) => s.startsWith('INSERT OR IGNORE INTO market_vendor_boards')), 'the region\'s first read makes its row');
-  const row = () => raw.prepare('SELECT ver, built, until FROM market_vendor_boards WHERE region = 17').get();
-  assert.equal(row().built, row().ver, 'and keeps the board');
+  const steps = asked.map((x) => (x === VENDOR_BOARD_READ ? 'READ' : x === VENDOR_BOARD_KEEP ? 'KEEP' : /^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i.test(x) ? 'WRITE' : x.startsWith('BATCH') ? x : null)).filter(Boolean);
+  assert.deepEqual(steps, ['BATCH(2)', 'READ', 'BATCH(5)', 'KEEP'], 'the caller\'s own rows, the row, the board\'s reads - and its one write last');
+  const row = () => raw.prepare('SELECT ver, built, shape, built_at, until FROM market_vendor_boards WHERE region = 17').get();
+  assert.equal(row().built, row().ver, 'kept');
+  assert.equal(row().shape, VENDOR_BOARD_SHAPE);
+  assert.equal(row().built_at, T0, 'at the second it was read');
   const next = raw.prepare("SELECT MIN(expires_at) AS n FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = 17 AND expires_at > ?").get(T0).n;
   assert.equal(row().until, next, 'until its first listing runs out');
   asked.length = 0;
   await marketVendors({ db: counted, nowS: T0 + 1 }, player, ENV, { region: 17, character: 'p-ana-c1' });
-  assert.deepEqual(asked.filter((s) => !/guild_members|home_rooms/.test(s)), [VENDOR_BOARD_READ, 'BATCH(2)'], 'kept: the row, and the caller\'s own two rows in one batch');
+  assert.deepEqual(asked.filter((s) => !/guild_members|home_rooms/.test(s)), ['BATCH(2)', VENDOR_BOARD_READ], 'kept: the row, and the caller\'s own two rows in one batch');
   asked.length = 0;
   await marketVendors({ db: counted, nowS: T0 + 1 }, player, ENV, { region: 17, character: null });
   assert.deepEqual(asked, [VENDOR_BOARD_READ], 'no character: no door to read');
@@ -183,6 +203,9 @@ test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows;
   const v2 = row().ver;
   raw.prepare('UPDATE home_decor SET place = ? WHERE id = ?').run(place(null), 't300');
   assert.equal(row().ver, v2 + 1, 'off its station: moved');
+  const h = raw.prepare('SELECT map_id, building_key FROM homes WHERE region = 17 LIMIT 1').get();
+  raw.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, ?, ?, 41000, ?, 1, 0, 0)').run(h.map_id, h.building_key, 'tnew', place(VENDOR_STATION));
+  assert.equal(row().ver, v2 + 2, 'a trader set down in a house that stands: moved');
   // a version moved between the read and the keep: kept at the version read, so the next caller reads again; and a slow
   // reader's board never stands over the newer one another reader kept meanwhile
   raw.prepare("UPDATE market_listings SET region = 17 WHERE id IN ('L4', 'L5')").run();
@@ -202,16 +225,84 @@ test('VENDOR-BOARD a kept board is one statement and the caller\'s own two rows;
   raw.prepare('UPDATE market_vendor_boards SET built = -1 WHERE region = 17').run();
   assert.deepEqual(JSON.parse(keptText), JSON.parse(JSON.stringify(await vendorBoard({ db, nowS: T0 + 3 }, 17))), 'and it is the board after the write');
   // bounds
-  assert.equal(VENDOR_BOARD_MAX_CHARS, 1_500_000);
   assert.equal(VENDOR_BOARD_KEPT_S, 86_400);
   assert.equal(vendorBoardOf('{"newest":[],"houses":[]}'), null, 'not a board');
   assert.deepEqual(vendorBoardOf('{"newest":[],"houses":[],"patrons":[]}'), { newest: [], houses: [], patrons: [] });
 });
 
+test('VENDOR-BOARD AUDIT LEAN-READS: a row of another shape is no board (B1); a caller whose second came before the board\'s read is told the listings open at its own, and the newer board stays kept (B3); callers that missed together write it once (B2); a region no write has touched reads as version 0, and a write landing before the keep leaves it unkept; bookkeeping moves no board (B7); the bound is in bytes (B10) (mutants: the shape unread, the second\'s floor unread, the keep rewriting a board that serves, the bookkeeping moving it, the bound in characters)', async () => {
+  const { db, raw } = world();
+  const w = put(raw, 0, lcg(11));
+  for (let k = 0; k < 6; k++) w.home(1000 + (k % 3), 300 + k);
+  raw.prepare('UPDATE homes SET region = 17, entry = \'public\', guild_id = NULL').run();
+  for (let i = 0; i < 20; i++) w.listing(`L${i}`, T0);
+  const row = () => raw.prepare('SELECT ver, built, shape, built_at, until FROM market_vendor_boards WHERE region = 17').get();
+  const ids = (b) => [...b.newest, ...b.houses].map((l) => l.id).sort();
+  // B1: the shape is the reads' own, and a row of another is read again and kept in this one
+  assert.equal(VENDOR_BOARD_SHAPE, shapeOf('vendor-board: newest, houses, patrons', VENDOR_NEWEST_SQL, VENDOR_HOUSES_SQL, PATRON_TOLD_SQL('s.region = ?2'), PATRON_TOLD_S));
+  await vendorBoard({ db, nowS: T0 }, 17);
+  raw.prepare("UPDATE market_vendor_boards SET shape = 'an older deploy', rows = '{\"newest\":[],\"houses\":[],\"patrons\":[]}' WHERE region = 17").run();
+  assert.ok(ids(await vendorBoard({ db, nowS: T0 }, 17)).length > 0, 'another shape: read again');
+  assert.equal(row().shape, VENDOR_BOARD_SHAPE, 'and kept in this one');
+  // B3: a listing open at T0 and run out by T0 + 10
+  raw.prepare("UPDATE market_listings SET expires_at = ? WHERE id = 'L0'").run(T0 + 5);
+  raw.prepare("UPDATE market_listings SET expires_at = ? WHERE id <> 'L0' AND expires_at <= ?").run(T0 + 500, T0 + 10);
+  const later = await vendorBoard({ db, nowS: T0 + 10 }, 17);
+  assert.equal(row().built_at, T0 + 10);
+  const kept = row();
+  const early = await vendorBoard({ db, nowS: T0 }, 17);
+  raw.prepare('UPDATE market_vendor_boards SET built = -1 WHERE region = 17').run();
+  const live = await vendorBoard({ db, nowS: T0 }, 17);
+  raw.prepare('UPDATE market_vendor_boards SET built = ?, built_at = ?, until = ? WHERE region = 17').run(kept.built, kept.built_at, kept.until);
+  assert.deepEqual(ids(early), ids(live), 'the earlier caller is told the board at its own second');
+  assert.ok(ids(early).includes('L0') && !ids(later).includes('L0'));
+  // B2: five callers miss together - the board written once
+  raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run();
+  let writes = 0;
+  const keeps = Object.create(db);
+  keeps.prepare = (sql) => {
+    const st = db.prepare(sql);
+    if (sql !== VENDOR_BOARD_KEEP) return st;
+    return { bind: (...a) => ({ run: async () => { const res = await st.bind(...a).run(); writes += res.meta.changes; return res; } }) };
+  };
+  await Promise.all(Array.from({ length: 5 }, () => vendorBoard({ db: keeps, nowS: T0 + 20 }, 17)));
+  assert.equal(writes, 1, 'one write for the five');
+  assert.equal(row().built, row().ver);
+  // a region no write has touched: version 0, kept by its first read; a write landing between the read and the keep makes
+  // its row at version 1 - the keep, at 0, is not put over it
+  raw.prepare('DELETE FROM market_vendor_boards WHERE region = 17').run();
+  await vendorBoard({ db, nowS: T0 + 20 }, 17);
+  assert.deepEqual([row().ver, row().built], [0, 0], 'version 0, kept');
+  raw.prepare('DELETE FROM market_vendor_boards WHERE region = 17').run();
+  const racing = Object.create(db);
+  racing.batch = async (list) => { const out = await db.batch(list); raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run(); return out; };
+  await vendorBoard({ db: racing, nowS: T0 + 20 }, 17);
+  assert.deepEqual([row().ver, row().built], [1, 0], 'the write\'s version stands unkept');
+  // B7: the hour's reckoning and the board's pixel move no board; the price does
+  await vendorBoard({ db, nowS: T0 + 20 }, 17);
+  const v = row().ver;
+  raw.prepare('UPDATE market_listings SET patron_hour = 99, board_x = 1, board_y = 2 WHERE vendor_id IS NOT NULL').run();
+  assert.equal(row().ver, v, 'bookkeeping: unmoved');
+  raw.prepare("UPDATE market_listings SET price = price + 1 WHERE id = 'L2'").run();
+  assert.equal(row().ver, v + 1, 'a price: moved');
+  // B6: a house replaced - its implied delete fires no trigger, its insert does
+  const v6 = row().ver;
+  raw.prepare("INSERT OR REPLACE INTO homes (map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at) SELECT map_id, building_key, player, char_id, owner_name, region, entry, price, bought_at FROM homes WHERE region = 17 LIMIT 1").run();
+  assert.ok(row().ver > v6, 'a replaced house moves its region\'s board');
+  // B8: the next listing to run out found by its index
+  const plan = raw.prepare("EXPLAIN QUERY PLAN SELECT MIN(expires_at) AS next FROM market_listings WHERE state = 'open' AND vendor_id IS NOT NULL AND region = ?1 AND expires_at > ?2").all(17, T0).map((x) => x.detail).join(' | ');
+  assert.match(plan, /idx_market_vendor_expiry \(region=\? AND expires_at>\?\)/, plan);
+  // B10: bytes, not characters
+  assert.equal(KEPT_BOARD_MAX_BYTES, 1_500_000);
+  assert.equal(keptFits('a'.repeat(KEPT_BOARD_MAX_BYTES), 'test'), true);
+  assert.equal(keptFits('é'.repeat(KEPT_BOARD_MAX_BYTES / 2 + 1), 'test'), false, 'two bytes a character: past the bound');
+  assert.equal(keptFits('é'.repeat(KEPT_BOARD_MAX_BYTES / 2), 'test'), true);
+});
+
 test('VENDOR-BOARD the writes that move a board are the database\'s own - every listing, trader, house and patron write of the region, by any route, a cascade or a sweep - and stand after every migration (mutant: a trigger dropped)', () => {
   const { raw } = world();
   const triggers = raw.prepare("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'vendor_board_%' ORDER BY name").all().map((t) => t.name);
-  assert.deepEqual(triggers, ['vendor_board_house', 'vendor_board_house_gone', 'vendor_board_listed', 'vendor_board_listing', 'vendor_board_patron', 'vendor_board_trader', 'vendor_board_trader_in', 'vendor_board_trader_out', 'vendor_board_unlisted']);
+  assert.deepEqual(triggers, ['vendor_board_house', 'vendor_board_house_gone', 'vendor_board_house_in', 'vendor_board_listed', 'vendor_board_listing', 'vendor_board_patron', 'vendor_board_trader', 'vendor_board_trader_in', 'vendor_board_trader_out', 'vendor_board_unlisted']);
   assert.match(src('server-account/migrations/0135_vendor_board.sql'), new RegExp(`'\\$\\.station'\\) END = '${VENDOR_STATION}'`), 'the station the board reads');
   // a piece whose place is not JSON is no piece (decor.js) - its write is never refused by a trigger asking its station
   raw.prepare("INSERT INTO homes (map_id, building_key, player, char_id, owner_name, region, price, bought_at) VALUES (5, 5, 'p-ana', 'c', 'Ana', 17, 1, 1)").run();

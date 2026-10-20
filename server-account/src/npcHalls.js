@@ -55,7 +55,7 @@ import { witnessOf } from './townSeats.js';
 import { chaptersOpenFor } from './npcRoll.js';
 import { witnessedFact, factConfirmed, regionOk } from '../../src/net/nodeLaw.js';
 import { seatIgnoredAccounts, SEAT_WITNESSES_AUDIT } from '../../src/net/townSeatLaw.js';
-import { exactRows, mayBeIgnored, witnessRow, strikeLate, strikeConfirmed } from './leanWitness.js';   // LEAN-WITNESS
+import { exactRows, mayBeIgnored, witnessRow, LEAN_ROWS } from './leanWitness.js';   // LEAN-WITNESS
 import {
   HALL_WITNESS_KIND, HALL_WITNESS_HOUR, HALL_REPORT_V, hallReportOf, hallReportText, parseHallReport, hallWitnessKey,
 } from '../../src/net/npcChapterLaw.js';
@@ -74,18 +74,18 @@ export const forgetChapters = () => _kept.clear();
 // HALL-PLAN (2026-10-16, bible/11-Multiplayer/Scale-Arc.md HALL-PLAN): `+region` - SQLite answered `DISTINCT region` off
 // the (kind, region) index, walking every hall report of every town (some 19,000 rows a witness on the live database)
 // where the key's own rows are a handful; the unary plus leaves the index on (kind, key) the planner's, the answer the same
-// LEAN-WITNESS: and the rows that are not late alone - a late row names its confirmation's region, which its town's
-// confirmers name already (idx_world_witness_lean_key; the town's whole rows were up to 1,516 on the day). `binds` past
-// ?1 and ?2, for a guard that asks them.
+// (the key's whole rows - a late row names its confirmation's region, which its confirmers name already; AUDIT LEAN-READS
+// A1: asked for its rows that are not late, the planner took the lean region index on its kind alone and walked every
+// town's). `binds` past ?1 and ?2, for a guard that asks them.
 const bumpRegions = (/** @type {any} */ db, /** @type {string} */ keySql, /** @type {string} */ key, /** @type {number} */ nowS, guard = '1', ...binds) => db.prepare(
   `INSERT INTO npc_hall_regions (region, ver, done, at) SELECT DISTINCT +region, 1, 0, ?2 FROM world_witness
-    WHERE kind = '${HALL_WITNESS_KIND}' AND ${keySql} AND late = 0 AND ${guard}
+    WHERE kind = '${HALL_WITNESS_KIND}' AND ${keySql} AND ${guard}
     ON CONFLICT (region) DO UPDATE SET ver = npc_hall_regions.ver + 1`).bind(key, nowS, ...binds);
 
 /** A region's towns' reports at this version: each town read over ALL its reports (a town one early report named for
  *  this region and three confirmed for another is the other's, as a pixel is - professions.js regionGround, AUDIT 29
  *  A11). LEAN-WITNESS: the audit list's read alone - it counts every witness. */
-async function regionRows(/** @type {any} */ db, /** @type {number} */ region) {
+export async function regionRows(/** @type {any} */ db, /** @type {number} */ region) {
   const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}'
     AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();
   return results.map(witnessRow);
@@ -94,9 +94,9 @@ async function regionRows(/** @type {any} */ db, /** @type {number} */ region) {
 /** LEAN-WITNESS: A REGION'S TOWNS AS THE LAW JUDGES THEM - the same towns (a late row names the region its confirmers
  *  name), each read over its rows that are not late, and whole where an account the region's law ignores answered it
  *  (leanWitness.js exactRows). The facts and the ignored are regionRows' own; the witnesses' counts are not. */
-async function judgedRows(/** @type {any} */ db, /** @type {number} */ region, /** @type {number} */ nowS) {
-  const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND late = 0
-    AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND late = 0 AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();
+export async function judgedRows(/** @type {any} */ db, /** @type {number} */ region, /** @type {number} */ nowS) {
+  const { results = [] } = await db.prepare(`SELECT key, account, report, at FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS}
+    AND key IN (SELECT key FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(region, `${HALL_REPORT_V}:%`).all();
   return exactRows(db, HALL_WITNESS_KIND, results.map(witnessRow), (rows) => hallFacts(rows, nowS).ignored);
 }
 
@@ -257,13 +257,12 @@ export async function listHalls({ db, nowS }, dev, env, { region } = {}) {
 export async function strikeHall({ db, nowS }, dev, env, { key } = {}) {
   if (!isDeveloper(dev, env)) return { error: 'not-developer' };
   if (!Number.isSafeInteger(key) || key < 0 || key > 0xffffffff) return { error: 'bad-hall' };
-  const [, , , gone] = await db.batch([
+  const [, , gone] = await db.batch([
     db.prepare('INSERT OR IGNORE INTO npc_hall_strikes (map_id, by, at) VALUES (?, ?, ?)').bind(key, dev.handle ?? null, nowS),
     // AUDIT CHAP3 S3/S5: the regions its reports named told first, while the reports stand to name them
     bumpRegions(db, 'key LIKE ?1', `%:${key}`, nowS),
-    strikeLate(db, HALL_WITNESS_KIND, 'key LIKE ?1', `%:${key}`),   // LEAN-WITNESS: deleted late, each settles nothing
+    // LEAN-WITNESS: the town's confirmation goes with its rows - migration 0133's triggers, a confirmer at a time
     db.prepare(`DELETE FROM world_witness WHERE kind = '${HALL_WITNESS_KIND}' AND key LIKE ?`).bind(`%:${key}`),
-    strikeConfirmed(db, HALL_WITNESS_KIND, 'key LIKE ?1', `%:${key}`),
   ]);
   forgetChapters();
   return { ok: true, key, reports: Number(gone?.meta?.changes ?? 0) };

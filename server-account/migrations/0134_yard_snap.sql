@@ -14,23 +14,30 @@
 -- times an hour).
 --
 --   home_yards   one row a town that ever stood a yard piece: `ver`, moved by the database itself on every yard row
---                written; `built`, the version `rows` was read at; `rows`, the town's yard rows as yardsOf reads them
---                (each a JSON array of the columns decor.js YARD_SNAP_COLS names, in its order) - so a read is one row
---                where `built` is `ver`, and the rows as before where it is not. A decor route's write builds its town's
---                row again at once; the minute's clock builds any other (a home released, an account gone, a sweep).
+--                written; `built`, the version `rows` was read at; `shape`, the build that read it (decor.js
+--                YARD_SNAP_SHAPE: its columns, order and bound - a deploy that changes them reads the rows as they stand
+--                until the clock builds the town again; AUDIT LEAN-READS B1); `rows`, the town's yard rows as yardsOf
+--                reads them (each a JSON array of the columns decor.js YARD_SNAP_COLS names, in its order) - so a read is
+--                one row where `built` is `ver` and the shape is the code's, and the rows as before where it is not. A
+--                decor route's write builds its town's row again at once; the minute's clock builds any other (a home
+--                released, an account gone, a sweep, another shape).
 CREATE TABLE IF NOT EXISTS home_yards (
   map_id INTEGER PRIMARY KEY,
   ver    INTEGER NOT NULL DEFAULT 1,
   built  INTEGER NOT NULL DEFAULT 0,
+  shape  TEXT,
   rows   TEXT
 );
 
 -- The read a row is built from, in its own order: the town's yard pieces by building, then placing, then id - no sort.
 CREATE INDEX IF NOT EXISTS idx_home_decor_yard_order ON home_decor (map_id, yard, building_key, placed_at, id);
+-- 0039's (map_id, yard) is that index's prefix - every read it answered, the new one answers, and every decor write paid
+-- both (AUDIT LEAN-READS B8).
+DROP INDEX IF EXISTS idx_home_decor_yard;
 
--- Every town that stands a yard piece now, built now.
+-- Every town that stands a yard piece now, built now - in the shape the code reads today (decor.js YARD_SNAP_SHAPE).
 INSERT OR IGNORE INTO home_yards (map_id, ver, built) SELECT DISTINCT map_id, 1, 0 FROM home_decor WHERE yard = 1;
-UPDATE home_yards SET built = ver, rows = (SELECT json_group_array(json_array(map_id, building_key, id, model, flat_archive, flat_record, place, placed_at, item, paid, yard))
+UPDATE home_yards SET built = ver, shape = '07a44e1f', rows = (SELECT json_group_array(json_array(map_id, building_key, id, model, flat_archive, flat_record, place, placed_at, item, paid, yard))
   FROM (SELECT map_id, building_key, id, model, flat_archive, flat_record, place, placed_at, item, paid, yard FROM home_decor
     WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT 2000));
 

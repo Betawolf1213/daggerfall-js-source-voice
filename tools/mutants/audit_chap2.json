@@ -1913,8 +1913,8 @@
   {
     "name": "AUDIT-CHAP2-E7-VERSION-READ",
     "file": "server-account/src/npcHalls.js",
-    "old": "AND late = 0 AND region = ? AND key LIKE ?)`).bind(",
-    "new": "AND late = 0 AND region = ? AND ? IS NOT NULL)`).bind(",
+    "old": "AND ${LEAN_ROWS} AND region = ? AND key LIKE ?)`).bind(",
+    "new": "AND ${LEAN_ROWS} AND region = ? AND ? IS NOT NULL)`).bind(",
     "tests": [
       "test/net/audit_chap1.test.js",
       "test/net/audit_chap2.test.js",

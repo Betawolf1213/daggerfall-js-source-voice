@@ -35,6 +35,10 @@ import { SEAT_WITNESS_UNMATCHED_MAX, SEAT_WITNESS_IGNORED_S } from '../../src/ne
 /** The kinds migration 0133 keeps lean (its triggers' `kind IN (...)`). */
 export const LEAN_KINDS = Object.freeze(['npchall', 'seat']);
 
+/** THE ROWS THAT ARE NOT LATE, as a read asks them: migration 0133's lean indexes hold those two kinds' alone, and SQLite
+ *  takes a partial index only for a read that repeats its condition term for term (AUDIT LEAN-READS A4). */
+export const LEAN_ROWS = "kind IN ('npchall', 'seat') AND late = 0";
+
 /** A key read whole asks this many keys a statement - D1 binds 100 parameters at most, one is the kind. */
 export const LEAN_KEYS_A_STATEMENT = 99;
 
@@ -85,13 +89,3 @@ export async function mayBeIgnored(/** @type {any} */ db, /** @type {string} */ 
   const row = await unmatchedRead(db, kind, account, nowS).first();
   return Number(row?.n ?? 0) >= SEAT_WITNESS_UNMATCHED_MAX;
 }
-
-/**
- * A STRIKE'S TWO STATEMENTS about the rows it deletes (`keySql` the key's test, ?1 its value): its rows let go late
- * BEFORE the delete - so deleting them settles nothing, one by one (migration 0133's witness_lean_out) - and its
- * confirmation dropped after.
- * @param {any} db @param {string} kind @param {string} keySql @param {string} key
- */
-export const strikeLate = (db, kind, keySql, key) => db.prepare(`UPDATE world_witness SET late = 1 WHERE kind = '${kind}' AND ${keySql} AND late = 0`).bind(key);
-export const strikeConfirmed = (/** @type {any} */ db, /** @type {string} */ kind, /** @type {string} */ keySql, /** @type {string} */ key) =>
-  db.prepare(`DELETE FROM witness_confirmed WHERE kind = '${kind}' AND ${keySql}`).bind(key);

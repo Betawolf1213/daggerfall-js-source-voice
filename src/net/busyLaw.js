@@ -15,7 +15,9 @@
 // these reads the same way for a moment without asking the database, for the clients that predate the gate.
 //
 // THE READS ARE ONLY READS. Each route below answers what stands and writes nothing (its handler checked statement by
-// statement), so a read held back loses nothing: its book keeps the last good view and asks again. Writes, sign-ins
+// statement), so a read held back loses nothing: its book keeps the last good view and asks again. (BUSY-HEART's two
+// write what a missed ask loses anyway, below; VENDOR-BOARD's region's traders keep their board once a version, a write a
+// held read only defers - AUDIT LEAN-READS C9.) Writes, sign-ins
 // and every act are never held - each keeps its own retry, and an act is never dropped (`call` sends it). Left out on
 // purpose: a read that may settle something on its way (the market's read, the chapters' list), the arena's board, and
 // the mint and the account's own state.

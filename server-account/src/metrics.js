@@ -149,7 +149,7 @@ function timedStatement(/** @type {any} */ stmt, /** @type {any} */ tally, /** @
             const r = await v.apply(target, args);
             if (key === 'all' || key === 'run') noteMeta(r, tally, sql);   // rows (`raw`), or a column (`first('c')`), carry no meta
             return r;
-          } finally { add(tally, 'ms', Date.now() - started); }
+          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'trips', 1); }   // SLOW-SHED (AUDIT LEAN-READS C1): a statement awaited is a trip
         };
       }
       return v.bind(target);
@@ -180,7 +180,7 @@ export function countedDb(/** @type {any} */ db, /** @type {{ n: number }} */ ta
             const rs = await batch.call(target, Array.isArray(list) ? list.map((st) => REAL.get(st) ?? st) : list, ...rest);
             if (Array.isArray(rs)) rs.forEach((r, i) => noteMeta(r, tally, Array.isArray(list) ? SQL.get(list[i]) : null));
             return rs;
-          } finally { add(tally, 'ms', Date.now() - started); }
+          } finally { add(tally, 'ms', Date.now() - started); add(tally, 'trips', 1); }   // SLOW-SHED (AUDIT LEAN-READS C1): and a batch one, whatever it carries
         };
       }
       if (key === 'withSession') {
@@ -215,10 +215,10 @@ export async function measured(request, env, serve, exec = null) {
   const said = { parts: '' };
   if (!sink || typeof sink.writeDataPoint !== 'function') return serve(request, env, said, exec);   // AUDIT SAFE DISCORD-4: the Worker's ExecutionContext, for what follows an answer
   const started = Date.now();
-  const tally = { n: 0, ms: 0, rr: 0, rw: 0, replica: 0, tables: /** @type {Record<string, number>} */ ({}) };
+  const tally = { n: 0, ms: 0, trips: 0, rr: 0, rw: 0, replica: 0, tables: /** @type {Record<string, number>} */ ({}) };
   const counted = env.DB ? { ...env, DB: countedDb(env.DB, tally) } : env;
   const res = await serve(request, counted, said, exec);
-  noteD1Wait(tally.ms, tally.n, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait
+  noteD1Wait(tally.ms, tally.trips, Date.now());   // SLOW-SHED: the isolate's shed hears how long the database made it wait, a trip at a time
   const parts = typeof said.parts === 'string' ? said.parts : '';   // AUDIT SCALE II A-3: the service's own word on the body it read
   try {
     const route = routeLabel(new URL(request.url).pathname);

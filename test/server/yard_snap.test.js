@@ -14,8 +14,9 @@ import { DatabaseSync } from 'node:sqlite';
 
 import { d1, standService, T0 } from '../accountDb.mjs';
 import {
-  yardsOf, settleYards, settleStaleYards, yardRowsOf, YARD_SNAP_COLS, YARD_SNAP_READ, YARDS_SETTLE_A_MINUTE, _resetYardsKept,
+  yardsOf, settleYards, settleStaleYards, yardRowsOf, YARD_SNAP_COLS, YARD_SNAP_READ, YARD_SNAP_SHAPE, YARDS_SETTLE_A_MINUTE, _resetYardsKept,
 } from '../../server-account/src/decor.js';
+import { shapeOf } from '../../server-account/src/keptBoard.js';
 import { DECOR_YARDS_TOWN_MAX } from '../../src/net/decorLaw.js';
 import { MINUTE_JOBS } from '../../server-account/src/cron.js';
 
@@ -33,7 +34,7 @@ function world(db = d1()) {
   for (const t of TOWNS) for (const k of KEYS) home.run(t, k);
   return { db, raw, home };
 }
-const put = (raw, t, k, id, yard, at, x = 4) => raw.prepare('INSERT OR REPLACE INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, ?, ?, 41000, ?, ?, 0, ?)')
+const put = (raw, t, k, id, yard, at, x = 4) => raw.prepare('INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (?, ?, ?, 41000, ?, ?, 0, ?)')
   .run(t, k, id, place(x), at, yard);
 /** A town's answer as the rows give it: its built row made stale for the one read, then put back. */
 async function fromRows(db, raw, t) {
@@ -41,7 +42,7 @@ async function fromRows(db, raw, t) {
   if (was) raw.prepare('UPDATE home_yards SET built = -1 WHERE map_id = ?').run(t);
   try { return await yardsOf({ db }, null, { mapId: t }); } finally { if (was) raw.prepare('UPDATE home_yards SET built = ? WHERE map_id = ?').run(was.built, t); }
 }
-const stale = (raw, t) => { const r = raw.prepare('SELECT ver, built FROM home_yards WHERE map_id = ?').get(t); return !!r && r.ver !== r.built; };
+const stale = (raw, t) => { const r = raw.prepare('SELECT ver, built, shape FROM home_yards WHERE map_id = ?').get(t); return !!r && (r.ver !== r.built || r.shape !== YARD_SNAP_SHAPE); };
 
 test('YARD-SNAP the oracle: through yard and room pieces placed, moved within and between towns, in and out of a yard, taken away and their homes released, every town\'s answer off its built row is its answer off its rows, a stale row is never answered, and a room piece moves no town (mutants: a delete unmoved, a move between towns moving one, a room piece moving its town, the build\'s order, the stale row answered)', async () => {
   for (let seed = 1; seed <= 25; seed++) {
@@ -148,8 +149,31 @@ test('YARD-SNAP the migration\'s backfill: the towns standing yards when 0134 is
   put(raw, 7, 300, 'one', 1, 1);
   for (const f of files.filter((f) => f >= '0134')) raw.exec(src(`server-account/migrations/${f}`));
   for (const t of [7, 8]) {
-    const r = raw.prepare('SELECT ver, built FROM home_yards WHERE map_id = ?').get(t);
+    const r = raw.prepare('SELECT ver, built, shape FROM home_yards WHERE map_id = ?').get(t);
     assert.equal(r.built, r.ver, `town ${t} built`);
-    assert.deepEqual(await yardsOf({ db }, null, { mapId: t }), await fromRows(db, raw, t));
+    assert.equal(r.shape, YARD_SNAP_SHAPE, `town ${t} built in the shape the code reads (the deploy reads it at once)`);
+    const asked = [];
+    assert.deepEqual(await yardsOf({ db: { prepare: (sql) => { asked.push(sql); return db.prepare(sql); } } }, null, { mapId: t }), await fromRows(db, raw, t));
+    assert.deepEqual(asked, [YARD_SNAP_READ], 'off its built row');
   }
+  // AUDIT LEAN-READS B8: 0039's (map_id, yard) is the order index's prefix - gone
+  assert.equal(raw.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name = 'idx_home_decor_yard'").get().n, 0);
+});
+
+test('YARD-SNAP AUDIT LEAN-READS B1: a town built by another deploy\'s read - another shape - is read as its rows stand and built again by the minute\'s clock, however quiet the town; the shape is the build\'s columns, order and bound (mutants: the shape unread, the clock blind to it, the shape\'s parts)', async () => {
+  const { db, raw } = world();
+  put(raw, 7, 300, 'a', 1, 1);
+  put(raw, 8, 300, 'b', 1, 1);
+  await settleYards(db, 7);
+  await settleYards(db, 8);
+  assert.equal(YARD_SNAP_SHAPE, shapeOf('yards', YARD_SNAP_COLS.join(', '), 'building_key, placed_at, id', DECOR_YARDS_TOWN_MAX));
+  raw.prepare("UPDATE home_yards SET shape = 'an older deploy', rows = '[]' WHERE map_id = 7").run();
+  const asked = [];
+  const got = await yardsOf({ db: { prepare: (sql) => { asked.push(sql); return db.prepare(sql); } } }, null, { mapId: 7 });
+  assert.equal(asked.length, 2, 'another shape: the rows read as they stand');
+  assert.equal(got.yards.length, 1, 'never the older deploy\'s rows');
+  assert.equal(await settleStaleYards(db), 1, 'the clock builds it - no write to the town needed');
+  assert.equal(raw.prepare('SELECT shape FROM home_yards WHERE map_id = 7').get().shape, YARD_SNAP_SHAPE);
+  assert.equal(await settleStaleYards(db), 0);
+  assert.deepEqual(await yardsOf({ db }, null, { mapId: 7 }), await fromRows(db, raw, 7));
 });

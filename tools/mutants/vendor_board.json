@@ -12,18 +12,38 @@
  {
   "name": "VENDORB-listing-unmoved",
   "file": "server-account/migrations/0135_vendor_board.sql",
-  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings WHEN OLD.vendor_id IS NOT NULL OR NEW.vendor_id IS NOT NULL",
-  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings WHEN 0",
+  "old": "  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings WHEN OLD.vendor_id IS NOT NULL OR NEW.vendor_id IS NOT NULL",
+  "new": "  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings WHEN 0",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
   "note": "a listing bought or cancelled stays on the kept board"
  },
  {
+  "name": "VENDORB-listing-price-unwatched",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, price, fee, wear, at,",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, fee, wear, at,",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B7: a column the board reads (the price) left out of the trigger's - a repriced piece stays at its old price"
+ },
+ {
+  "name": "VENDORB-listing-every-column",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, price, fee, wear, at,\n  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B7: the hour's patron bookkeeping and the board's pixel move every board of the region"
+ },
+ {
   "name": "VENDORB-listing-old-region",
   "file": "server-account/migrations/0135_vendor_board.sql",
-  "old": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (OLD.region, NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
-  "new": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
+  "old": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
+  "new": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
@@ -62,18 +82,28 @@
  {
   "name": "VENDORB-house-old-region",
   "file": "server-account/migrations/0135_vendor_board.sql",
-  "old": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (OLD.region, NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_gone",
-  "new": "  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region IN (NEW.region);\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_gone",
+  "old": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_in",
+  "new": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_in",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
   "note": "a house moved to another region stays on the old region's board"
  },
  {
+  "name": "VENDORB-house-in-unmoved",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_in AFTER INSERT ON homes\nBEGIN",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_in AFTER INSERT ON homes WHEN 0\nBEGIN",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B6: a house replaced - its implied delete fires nothing - leaves its pieces on the kept board"
+ },
+ {
   "name": "VENDORB-house-gone-unmoved",
   "file": "server-account/migrations/0135_vendor_board.sql",
-  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  UPDATE market_vendor_boards SET ver = ver + 1 WHERE region = OLD.region;",
-  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  UPDATE market_vendor_boards SET ver = ver + 1 WHERE 0;",
+  "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE OLD.region IS NOT NULL",
+  "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE 0",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
@@ -90,10 +120,20 @@
   "note": "a patron's sale missing from the kept board"
  },
  {
+  "name": "VENDORB-expiry-unindexed",
+  "file": "server-account/migrations/0135_vendor_board.sql",
+  "old": "CREATE INDEX IF NOT EXISTS idx_market_vendor_expiry ON market_listings (region, expires_at) WHERE state = 'open' AND vendor_id IS NOT NULL;\n",
+  "new": "",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B8: the board's next listing to run out found by every open trader listing of the region"
+ },
+ {
   "name": "VENDORB-runout-kept",
   "file": "server-account/src/market.js",
-  "old": "  const board = kept && Number(kept.built) === Number(kept.ver) && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
-  "new": "  const board = kept && Number(kept.built) === Number(kept.ver) ? vendorBoardOf(kept.rows) : null;",
+  "old": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS ? vendorBoardOf(kept.rows) : null;",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
@@ -102,22 +142,102 @@
  {
   "name": "VENDORB-version-unread",
   "file": "server-account/src/market.js",
-  "old": "  const board = kept && Number(kept.built) === Number(kept.ver) && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
-  "new": "  const board = kept && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "old": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const fresh = kept && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
   "note": "a board kept through every write"
  },
  {
+  "name": "VENDORB-shape-unread",
+  "file": "server-account/src/market.js",
+  "old": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const fresh = kept && Number(kept.built) === Number(kept.ver)\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B1: another deploy's board served by this one's reads"
+ },
+ {
+  "name": "VENDORB-floor-unread",
+  "file": "server-account/src/market.js",
+  "old": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && Number(kept.built_at) <= nowS && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "new": "  const fresh = kept && Number(kept.built) === Number(kept.ver) && kept.shape === VENDOR_BOARD_SHAPE\n    && nowS < Number(kept.until) ? vendorBoardOf(kept.rows) : null;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B3: a caller whose second came before the board's read is told the listings run out by its reader's"
+ },
+ {
   "name": "VENDORB-keep-unguarded",
   "file": "server-account/src/market.js",
-  "old": "WHERE region = ?4 AND ver = ?2')",
-  "new": "WHERE region = ?4 AND ?2 IS NOT NULL')",
+  "old": "  WHERE ver = ?2 AND NOT (built = ?2 AND shape IS ?3 AND until > ?4)`;",
+  "new": "  WHERE ?2 IS NOT NULL AND NOT (built = ?2 AND shape IS ?3 AND until > ?4)`;",
   "tests": [
    "test/server/vendor_board.test.js"
   ],
   "note": "a board read before a write kept as the board after it"
+ },
+ {
+  "name": "VENDORB-keep-rewrites",
+  "file": "server-account/src/market.js",
+  "old": "  WHERE ver = ?2 AND NOT (built = ?2 AND shape IS ?3 AND until > ?4)`;",
+  "new": "  WHERE ver = ?2`;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B2: every caller that missed rewrites the region's board"
+ },
+ {
+  "name": "VENDORB-missing-row-versioned",
+  "file": "server-account/src/market.js",
+  "old": "VALUES (?1, 0, 0, ?3, ?4, ?5, ?6)",
+  "new": "VALUES (?1, 1, 1, ?3, ?4, ?5, ?6)",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "a region no write touched kept at a version a write will make - its first write leaves it kept"
+ },
+ {
+  "name": "VENDORB-read-writes-first",
+  "file": "server-account/src/market.js",
+  "old": "  if (fresh) return fresh;\n  const [v, newest, houses, patrons, next] = await db.batch([",
+  "new": "  if (fresh) return fresh;\n  if (!kept) await db.prepare('INSERT OR IGNORE INTO market_vendor_boards (region) VALUES (?1)').bind(region).run();\n  const [v, newest, houses, patrons, next] = await db.batch([",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS D5: a read writes before its reads - on a replica's session, its reads wait for the write"
+ },
+ {
+  "name": "VENDORB-keep-before-caller",
+  "file": "server-account/src/market.js",
+  "old": "  const me = typeof character === 'string' && CHAR_ID_RE.test(character) ? character : '';\n  const [mates, rooms] = me ? await db.batch([",
+  "new": "  const me = typeof character === 'string' && CHAR_ID_RE.test(character) ? character : '';\n  const early = await vendorBoard(ctx, region);\n  const [mates, rooms] = me ? await db.batch([",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS D5: the board kept before the caller's own rows are read - those wait for the keep's position"
+ },
+ {
+  "name": "VENDORB-column-dropped",
+  "file": "server-account/src/market.js",
+  "old": "const VENDOR_COLUMNS = `l.id, l.kind, l.region, l.material, l.item, l.own, l.bought, l.units, l.price, l.fee,",
+  "new": "const VENDOR_COLUMNS = `l.id, l.kind, l.region, l.material, l.item, l.own, l.bought, l.units, l.fee,",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B5: a column the answer shows left out of the board"
+ },
+ {
+  "name": "VENDORB-bytes-as-chars",
+  "file": "server-account/src/keptBoard.js",
+  "old": "  if (text.length <= KEPT_BOARD_MAX_BYTES / 3 || encoder.encode(text).length <= KEPT_BOARD_MAX_BYTES) return true;",
+  "new": "  if (text.length <= KEPT_BOARD_MAX_BYTES) return true;",
+  "tests": [
+   "test/server/vendor_board.test.js"
+  ],
+  "note": "AUDIT LEAN-READS B10: the bound in characters - a board of names past ASCII fails its keep under it"
  },
  {
   "name": "VENDORB-patrons-past-day",

@@ -50,7 +50,7 @@ import {
 import { utcDay, MARKS_MAX } from '../../src/net/marksLaw.js';   // AUDIT-SEATS S4: a struck Charter's fee refunded
 import { fortsLapsedStatements } from './seatForts.js';   // AUDIT SEATS-2 S5: a struck Charter's building projects fall with it
 import { DB_ROOT, replicaDb, d1Overloaded, bookmarkOf } from './service.js';   // STORM-SHED: the binding a request's counted Proxy wraps; SEAT-REPLICA: the kept read's session
-import { exactRows, witnessRow, strikeLate, strikeConfirmed } from './leanWitness.js';   // LEAN-WITNESS
+import { exactRows, witnessRow, LEAN_ROWS } from './leanWitness.js';   // LEAN-WITNESS
 
 /** Whether the seats are open to this account: the switch, and at `dev` the developers alone. */
 export function seatsOpenFor(player, env) {
@@ -103,7 +103,7 @@ export function seatFacts(rows, nowS) {
 
 /** Every seat row's read, and (LEAN-WITNESS) the read of the rows that are not late - one text each, the pins' too. */
 export const SEAT_ROWS_SQL = "SELECT key, account, report, at FROM world_witness WHERE kind = 'seat'";
-export const SEAT_JUDGED_SQL = `${SEAT_ROWS_SQL} AND late = 0`;
+export const SEAT_JUDGED_SQL = `${SEAT_ROWS_SQL} AND ${LEAN_ROWS}`;
 /** Every seat row - LEAN-WITNESS: a developer's list alone, whose audit counts every witness. */
 async function allSeatRows(db) {
   const { results = [] } = await db.prepare(SEAT_ROWS_SQL).all();
@@ -114,7 +114,7 @@ async function allSeatRows(db) {
  *  (leanWitness.js exactRows). seatFacts' facts and ignored over them are its facts over every row; its witnesses' counts
  *  and audit are not, and nothing but a developer's list reads those. 32,775 rows a read on the day, one seat in 27
  *  late's worth. */
-async function judgedSeatRows(db, nowS) {
+export async function judgedSeatRows(db, nowS) {
   const { results = [] } = await db.prepare(SEAT_JUDGED_SQL).all();
   return exactRows(db, 'seat', results.map(witnessRow), (rows) => seatFacts(rows, nowS).ignored);
 }
@@ -347,7 +347,7 @@ export async function strikeSeat({ db, nowS }, dev, env, { key } = {}) {
   // through it, and the guild may pledge in the region again
   const h = await db.prepare('SELECT h.guild_id, g.name, g.tag FROM town_seat_holds h LEFT JOIN guilds g ON g.id = h.guild_id WHERE h.key = ?').bind(key).first();
   const rid = `strike-${key}`;
-  const [, , , , , gone] = await db.batch([
+  const [, , , , gone] = await db.batch([
     db.prepare(`INSERT INTO marks_ledger (src_kind, src_id, dst_kind, dst_id, kind, amount, day, at, actor, who, rid)
       SELECT 'mint', NULL, 'guild', h.guild_id, 'seat-strike-refund', MIN(l.amount, ${MARKS_MAX} - COALESCE((SELECT balance FROM guild_marks WHERE guild_id = h.guild_id), 0)),
         ?2, ?3, 'seats', 'The registry', ?4
@@ -359,9 +359,7 @@ export async function strikeSeat({ db, nowS }, dev, env, { key } = {}) {
     db.prepare("UPDATE town_seat_edicts SET state = 'void' WHERE key = ? AND state = 'proclaimed'").bind(key),
     db.prepare("UPDATE town_seat_battles SET state = 'void' WHERE key = ? AND week >= ? AND state = 'scheduled'").bind(key, week),
     db.prepare('DELETE FROM town_seat_holds WHERE key = ?').bind(key),
-    strikeLate(db, 'seat', 'key = ?1', String(key)),   // LEAN-WITNESS: deleted late, each settles nothing
-    db.prepare("DELETE FROM world_witness WHERE kind = 'seat' AND key = ?").bind(String(key)),
-    strikeConfirmed(db, 'seat', 'key = ?1', String(key)),
+    db.prepare("DELETE FROM world_witness WHERE kind = 'seat' AND key = ?").bind(String(key)),   // LEAN-WITNESS: its confirmation with it (0133's triggers)
     db.prepare(`INSERT INTO town_seat_history (key, week, kind, data, at)
       SELECT ?1, ?2, 'strike', json_set(?3, '$.refund', COALESCE((SELECT amount FROM marks_ledger WHERE actor = 'seats' AND rid = ?5), 0)), ?4`)
       .bind(key, week, JSON.stringify({ by: dev.handle ?? null, ...(h ? { guild: { name: h.name ?? '', tag: h.tag ?? '' } } : {}) }), nowS, rid),

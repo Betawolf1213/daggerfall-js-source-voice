@@ -13,7 +13,9 @@
 -- its own: some 10,000 rows a read on the day, 22-41 ms. And a member's writs posted for the day (postMemberWrits) asked
 -- `day` and `owner` with no region - every writ of the day, every region's.
 --
---   idx_writs_board   a region's day by owner: the board's two owners ('' and the caller's) sought apart
---   idx_writs_owner   a day's writs by owner and kind: a member's own, every region's, found by the member
-CREATE INDEX IF NOT EXISTS idx_writs_board ON writs (day, region, owner);
-CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, kind, faction);
+--   idx_writs_owner   a day's writs by owner, then region (and the member's kind and faction, so its read is the
+--                     index's alone): the board's two owners ('' and the caller's) each sought to
+--                     its region, and a member's own writs of the day, every region's, found by the member - one index
+--                     for both (AUDIT LEAN-READS D2: built on the live table's some 860,000 rows, it holds the primary for
+--                     the build - one build, not two)
+CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, region, kind, faction);

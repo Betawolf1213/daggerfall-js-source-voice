@@ -90,12 +90,15 @@ test('HOME2 the deploy: a smoke call that 404s is asked again, seven times five 
   // PIN MOVED (SMOKE-LOST, 2026-10-18): `ask` clears and leaves `<out>.lost` - a try that went unanswered, which the first
   // beat's and the first report's checks read (test/server/smoke_lost.test.js runs them) - the retry's law unchanged
   assert.match(wf, /ask\(\) \{\n\s*local out=\$1 url=\$2 got=404\n\s*shift 2\n\s*rm -f "\$out\.lost"\n\s*for i in \$\(seq 1 7\); do\n\s*got=\$\(curl -sS --max-time 15 -o "\$out" -w '%\{http_code\}' "\$@" "\$url"\) \|\| got=000\n\s*if \[ "\$got" != "404" \] && \[ "\$got" != "000" \] && \[ "\$\{got#5\}" = "\$got" \]; then break; fi\n\s*if \[ "\$got" = "000" \]; then : > "\$out\.lost"; fi\n[^\n]*\n\s*sleep 5\n\s*done\n\s*echo "\$got"\n\s*\}/, 'DEPLOY-FLAKE: a 404 and a 5xx are asked again - PR #592\'s deploy read renown/xp -> 500 in the platform\'s first moments after its migration; SMOKE-HANG: no answer (000) too - #950\'s and #947\'s read homes/town and homes/decor as 15 s with nothing');
-  for (const route of ['/v1/account/played', '/v1/mod/mute', '/v1/renown/xp', '/v1/homes/town', '/v1/homes/claim', '/v1/homes/decor', '/v1/homes/decor/place']) {
+  for (const route of ['/v1/account/played', '/v1/mod/mute', '/v1/renown/xp', '/v1/homes/town', '/v1/homes/claim', '/v1/homes/decor', '/v1/homes/decor/place',
+    '/v1/homes/yards', '/v1/arena/board', '/v1/market/vendors']) {
     assert.match(wf, new RegExp(`code=\\$\\(post /tmp/[a-z0-9]+\\.json "\\$base${route.replace(/\//g, '\\/')}" `), route);
   }
   // PIN MOVED (INT16, Integrity-Arc section 7): a Renown report is its seat's - the smoke's guest takes a realm character
   // first (realm/create, a ninth post) and its first save through the same retry, a PUT (`put`)
-  assert.equal((wf.match(/code=\$\(post /g) ?? []).length, 9, 'the nine smoke calls, the repeated report and the realm character among them');
+  // PIN MOVED (AUDIT LEAN-READS D7, 2026-10-20): the kept boards read on D1 itself - a town's yards, the arena's board and
+  // the region's traders - three more posts, each through the retry
+  assert.equal((wf.match(/code=\$\(post /g) ?? []).length, 12, 'the twelve smoke calls, the repeated report, the realm character and the kept boards among them');
   assert.equal((wf.match(/code=\$\(put /g) ?? []).length, 1, 'and the realm character\'s first save, asked again as a post is');
   assert.match(wf, /\n\s*post\(\) \{ ask "\$1" "\$2" -X POST -H 'content-type: application\/json' -d "\$3"; \}\n/, 'a post is the retry\'s');
   assert.match(wf, /\n\s*put\(\) \{ ask "\$1" "\$2" -X PUT -H "authorization: Bearer \$secret" -H "x-realm-lease: \$4" -H 'x-realm-seq: 1' -d "\$3"; \}\n/, 'and so is the first save');

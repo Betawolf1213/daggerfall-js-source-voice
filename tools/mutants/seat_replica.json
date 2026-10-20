@@ -7,7 +7,7 @@
   "tests": [
    "test/server/seat_replica.test.js"
   ],
-  "note": "the kept read on the request's database - the primary's queue again LEAN-READS: re-aimed by content at the code the slice moved."
+  "note": "the kept read on the request's database - the primary's queue again (LEAN-READS: re-aimed by content at the code the slice moved)"
  },
  {
   "name": "SEATREPLICA-first-primary",

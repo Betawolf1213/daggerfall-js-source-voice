@@ -27,7 +27,7 @@
   "tests": [
    "test/net/busy_gate.test.js"
   ],
-  "note": "every overload answer the first - the wait never doubles LEAN-READS: re-aimed by content at the code the slice moved."
+  "note": "every overload answer the first - the wait never doubles (LEAN-READS: re-aimed by content at the code the slice moved)"
  },
  {
   "name": "BUSYGATE-retry-after-unread",

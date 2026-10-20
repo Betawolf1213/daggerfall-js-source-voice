@@ -1,23 +1,33 @@
 [
  {
-  "name": "WRITB-board-unindexed",
-  "file": "server-account/migrations/0136_writ_board.sql",
-  "old": "CREATE INDEX IF NOT EXISTS idx_writs_board ON writs (day, region, owner);\n",
-  "new": "",
-  "tests": [
-   "test/server/writ_board.test.js"
-  ],
-  "note": "the board's owners walked again"
- },
- {
   "name": "WRITB-owner-unindexed",
   "file": "server-account/migrations/0136_writ_board.sql",
-  "old": "CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, kind, faction);\n",
+  "old": "CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, region, kind, faction);\n",
   "new": "",
   "tests": [
    "test/server/writ_board.test.js"
   ],
-  "note": "a member's own writs found over every region's day"
+  "note": "the board and the member's own read walk a region's day, every region's, again"
+ },
+ {
+  "name": "WRITB-owner-regionless",
+  "file": "server-account/migrations/0136_writ_board.sql",
+  "old": "ON writs (day, owner, region, kind, faction);",
+  "new": "ON writs (day, owner, kind, faction);",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "the board's owners sought with no region - every region's public writs of the day walked"
+ },
+ {
+  "name": "WRITB-member-uncovered",
+  "file": "server-account/migrations/0136_writ_board.sql",
+  "old": "ON writs (day, owner, region, kind, faction);",
+  "new": "ON writs (day, owner, region);",
+  "tests": [
+   "test/server/writ_board.test.js"
+  ],
+  "note": "the member's read answered by the table's UNIQUE index, covering, on its day alone"
  },
  {
   "name": "WRITB-order-indexed",

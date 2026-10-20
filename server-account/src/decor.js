@@ -38,6 +38,7 @@ import { HALL_POWERS } from '../../src/net/hallLaw.js';   // GUILD1d: a hall's k
 import { SEAT_HALL_DECOR_CAP } from '../../src/net/townSeatLaw.js';   // SEAT-HALL: the Charter Room's pieces
 import { homeShownRead, homeShownOf } from './homeVotes.js';   // AUDIT HOME-VOTE A3: a shunned home's room, its insiders' alone; DECOR-BATCH: its read in the room's one request
 import { decorStaysShunned } from '../../src/net/homeVoteLaw.js';   // AUDIT HOME-VOTE B2: its hired trader stands
+import { shapeOf } from './keptBoard.js';   // AUDIT LEAN-READS B1: a built town's shape
 
 /**
  * REALM P2.2b: WHAT A PIECE'S CHANGE COSTS, as the client's wallet pays it - placed: what it cost (`paid`); grown: the
@@ -267,10 +268,11 @@ export async function decorOf({ db }, player, { mapId, buildingKey, seat = false
  */
 export async function yardsOf({ db }, _player, { mapId } = {}) {
   if (!homeMapIdOk(mapId)) return { error: 'bad-home' };
-  // YARD-SNAP: the town's built row where it is its version's; the rows, as they stand, where it is not; no row, no yard
+  // YARD-SNAP: the town's built row where it is its version's and its shape's (AUDIT LEAN-READS B1); the rows, as they
+  // stand, where it is not; no row, no yard
   const snap = await db.prepare(YARD_SNAP_READ).bind(mapId).first();
   if (!snap) return { mapId, yards: [] };
-  const built = Number(snap.built) === Number(snap.ver) ? yardRowsOf(snap.rows) : null;
+  const built = Number(snap.built) === Number(snap.ver) && snap.shape === YARD_SNAP_SHAPE ? yardRowsOf(snap.rows) : null;
   const results = built ?? (await db.prepare(`SELECT * FROM home_decor WHERE map_id = ? AND yard = 1
     ORDER BY building_key, placed_at, id LIMIT ?`).bind(mapId, DECOR_YARDS_TOWN_MAX).all()).results ?? [];
   const by = new Map();
@@ -290,28 +292,37 @@ export async function yardsOf({ db }, _player, { mapId } = {}) {
  * rows as this read takes them, built at a version the database moves on every yard row written - by a route, a cascade
  * or a sweep alike (the migration's triggers) - so a read is one row while it is its version's, and the rows as they
  * stand while it is not (never an answer older than the rows). A decor route builds its town again as it answers
- * (settleYards); the minute's clock builds what anything else left (settleStaleYards).
+ * (settleYards); the minute's clock builds what anything else left (settleStaleYards) - and (AUDIT LEAN-READS B1) a row
+ * built by another deploy's read, of another shape (keptBoard.js), which yardsOf reads as stale.
  */
 /** The columns a built row keeps, in order - `SELECT *`'s, which pieceOfRow reads. */
 export const YARD_SNAP_COLS = Object.freeze(['map_id', 'building_key', 'id', 'model', 'flat_archive', 'flat_record', 'place', 'placed_at', 'item', 'paid', 'yard']);
 /** A town's built row. */
-export const YARD_SNAP_READ = 'SELECT ver, built, rows FROM home_yards WHERE map_id = ?';
+export const YARD_SNAP_READ = 'SELECT ver, built, shape, rows FROM home_yards WHERE map_id = ?';
+/** The order a town's rows are built and read in. */
+const YARD_SNAP_ORDER = 'building_key, placed_at, id';
+/** YARD-SNAP (AUDIT LEAN-READS B1): the build's shape - its columns, its order and its bound. Migration 0134 built every
+ *  town in today's (its literal is pinned to this); a deploy that changes one reads every town's rows as they stand
+ *  until the clock builds it again. */
+export const YARD_SNAP_SHAPE = shapeOf('yards', YARD_SNAP_COLS.join(', '), YARD_SNAP_ORDER, DECOR_YARDS_TOWN_MAX);
 /** How many stale towns the minute's clock builds a firing. */
 export const YARDS_SETTLE_A_MINUTE = 50;
 /** The build: every stale town `where` names, its rows read in their own order (idx_home_decor_yard_order) and kept at the
  *  version it read them at - in one statement, so no write lands between the read and the version. */
 const yardsBuildSql = (/** @type {string} */ where) => {
   const cols = YARD_SNAP_COLS.join(', ');
-  return `UPDATE home_yards SET built = ver, rows = (SELECT json_group_array(json_array(${cols}))
-    FROM (SELECT ${cols} FROM home_decor WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT ${DECOR_YARDS_TOWN_MAX}))
-    WHERE built != ver AND ${where}`;
+  return `UPDATE home_yards SET built = ver, shape = '${YARD_SNAP_SHAPE}', rows = (SELECT json_group_array(json_array(${cols}))
+    FROM (SELECT ${cols} FROM home_decor WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY ${YARD_SNAP_ORDER} LIMIT ${DECOR_YARDS_TOWN_MAX}))
+    WHERE ${YARD_STALE_SQL} AND ${where}`;
 };
+/** A town whose row is no answer: written since it was built, or built in another shape. */
+const YARD_STALE_SQL = `(built != ver OR shape IS NOT '${YARD_SNAP_SHAPE}')`;
 /** A town's row built again, if a write left it stale - after a decor route's write (index.js). */
 export const settleYards = (/** @type {any} */ db, /** @type {unknown} */ mapId) =>
   (homeMapIdOk(mapId) ? db.prepare(yardsBuildSql('map_id = ?1')).bind(mapId).run() : Promise.resolve(null));
 /** The minute's clock (cron.js `yard-snap`): the stale towns built, YARDS_SETTLE_A_MINUTE a firing; how many. */
 export async function settleStaleYards(/** @type {any} */ db) {
-  const r = await db.prepare(yardsBuildSql(`map_id IN (SELECT map_id FROM home_yards WHERE built != ver LIMIT ${YARDS_SETTLE_A_MINUTE})`)).run();
+  const r = await db.prepare(yardsBuildSql(`map_id IN (SELECT map_id FROM home_yards WHERE ${YARD_STALE_SQL} LIMIT ${YARDS_SETTLE_A_MINUTE})`)).run();
   return Number(r?.meta?.changes ?? 0);
 }
 /** A built row's rows as `SELECT *` answers them, in the read's own order - or null for a text that is not one. */

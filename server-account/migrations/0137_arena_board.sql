@@ -14,25 +14,34 @@
 -- (its ladder, its rating, its banner, its bouts). It moves only when a bout is recorded, voided or an account's goes,
 -- or a banner is joined or left.
 --
---   arena_boards   one row a season read: `ver`, moved by the database itself on every such write; `built`, the version
---                  `rows` was counted at; `rows`, the board's counts as every caller reads them (arena.js arenaShared).
---                  A read is the row while it is its version's; else it counts as before and keeps it, written only where
---                  the version has not moved since it counted.
+--   arena_board_ver   the arena's one version, moved by the database itself on every such write (AUDIT LEAN-READS D4:
+--                     moved on each season's own row, every bout rewrote every season's board - two of 800 KB cost an
+--                     arena write half a millisecond; the board is the current season's alone).
+--   arena_boards      one row a season read: `built`, the version `rows` was counted at; `shape`, the counts that counted
+--                     it (keptBoard.js shapeOf - a deploy that changes them counts it again); `rows`, the board's counts as
+--                     every caller reads them (arena.js arenaShared). A read is the row while it is the version's and the
+--                     shape's; else it counts as before and keeps it - after the caller's own reads - written only where
+--                     the version has not moved since it counted and no board of it is kept already.
+CREATE TABLE IF NOT EXISTS arena_board_ver (
+  id  INTEGER PRIMARY KEY CHECK (id = 1),
+  ver INTEGER NOT NULL
+);
+INSERT OR IGNORE INTO arena_board_ver (id, ver) VALUES (1, 1);
 CREATE TABLE IF NOT EXISTS arena_boards (
   season INTEGER PRIMARY KEY,
-  ver    INTEGER NOT NULL DEFAULT 1,
   built  INTEGER NOT NULL DEFAULT 0,
+  shape  TEXT,
   rows   TEXT
 );
 
 -- Every write the board counts, by any route, a cascade (an account gone: its ladder bouts deleted, its side of a
--- players' bout set NULL) or a sweep - every season's row, the climb and the Hall being every season's.
-CREATE TRIGGER IF NOT EXISTS arena_board_pve_in AFTER INSERT ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_pve_up AFTER UPDATE ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_pve_out AFTER DELETE ON arena_pve BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_pvp_in AFTER INSERT ON arena_pvp BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_pvp_up AFTER UPDATE ON arena_pvp BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_pvp_out AFTER DELETE ON arena_pvp BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_member_in AFTER INSERT ON arena_members BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_member_up AFTER UPDATE ON arena_members BEGIN UPDATE arena_boards SET ver = ver + 1; END;
-CREATE TRIGGER IF NOT EXISTS arena_board_member_out AFTER DELETE ON arena_members BEGIN UPDATE arena_boards SET ver = ver + 1; END;
+-- players' bout set NULL) or a sweep - the climb and the Hall being every season's.
+CREATE TRIGGER IF NOT EXISTS arena_board_pve_in AFTER INSERT ON arena_pve BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_pve_up AFTER UPDATE ON arena_pve BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_pve_out AFTER DELETE ON arena_pve BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_pvp_in AFTER INSERT ON arena_pvp BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_pvp_up AFTER UPDATE ON arena_pvp BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_pvp_out AFTER DELETE ON arena_pvp BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_member_in AFTER INSERT ON arena_members BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_member_up AFTER UPDATE ON arena_members BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
+CREATE TRIGGER IF NOT EXISTS arena_board_member_out AFTER DELETE ON arena_members BEGIN UPDATE arena_board_ver SET ver = ver + 1 WHERE id = 1; END;
