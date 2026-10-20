@@ -234,10 +234,16 @@ HOURS_FIRST_HANDLES = "aether,ArtemisGodfrey,CycleD0se,Duck,Kobakk,MackyWackyDee
 # EG-E2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19, THE
 # HONOURS): FIRST OF THE SPIRE - the first company ever to take Redoubt 10
 # of the Elite Breach, by name, granted as Hour's First is. The title First
-# of the Spire and its aura, Firstlight (titles.js isSpireFirst). EMPTY until
-# that company comes: its Redoubt 10 receipts' accounts go here (and the
-# mailbox, as Hour's First's did). Comma-separated handles, case-insensitive.
-EG_FIRST_HANDLES = ""
+# of the Spire and its aura, Firstlight (titles.js isSpireFirst). Its Redoubt
+# 10 receipts' accounts go here (and the mailbox, as Hour's First's did).
+# Comma-separated handles, case-insensitive. SPIRE-FIRST (2026-10-20): the
+# company came - Severide, alone, in 1:17:40 (the herald's post, and the
+# Descent's Alone bracket; "Saturday night", 2026-10-17, on the player's
+# own word) - and the owner: "Since hes world first. He should get this
+# title plus a custom aura". Firstlight was rebuilt as that aura
+# (render/auraRing.js SPIRE-FIRST). The list is closed with him: there is
+# one first company.
+EG_FIRST_HANDLES = "Severide"
 # TITLE-N (2026-09-24, Mac): the Dungeon Master - the orange title, the
 # die beside the name, and /dm's orange line (the relay reads the right
 # off the `dm` glyph in the signed token, as /red reads `dev`). "This
