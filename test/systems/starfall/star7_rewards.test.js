@@ -221,7 +221,7 @@ test('STAR7 MEPHALA\'S VEIL (6): a foe\'s blow that takes me under VEIL_BELOW of
   assert.deepEqual(d.casts[0], veilBundle(2));
   assert.equal(d.casts[0].name, "Mephala's Veil");
   assert.deepEqual([d.casts[0].effects[0].type, d.casts[0].effects[0].subType, d.casts[0].effects[0].durationBase], [23, 0, 3], 'Chameleon, its rounds and one more');
-  assert.deepEqual(v.said, ["Mephala's Veil! The web hides you."]);
+  assert.deepEqual(v.said, ["Mephala's Veil! Chameleon for 10 s."]);   // PIN MOVED (AUDIT STAR W6): the effect and how long, never a feeling
   assert.deepEqual(v.sounds, ['veil']);
   assert.deepEqual(setHudChips(e, 10).map((c) => [c.key, c.set, c.state, c.text]), [['veil', 'starspun', 'recovering', '4:00']]);
   assert.equal(setPowerStates(10).veilRecoverLeft, 240);
@@ -265,7 +265,7 @@ test('STAR7 STARGLASS: template 576, its row a leaf the law reads headless - lig
   assert.deepEqual(STARGLASS_LAW_ROW, { index: 576, baseWeight: 0.1, hitPoints: 1000, basePrice: 400, rarity: 20, stackable: true });
   assert.ok(!('bound' in STARGLASS_LAW_ROW), 'never bound - the holder\'s to sell or give');
   assert.equal(lawTemplate(576)?.index, 576, 'the law knows it');
-  assert.equal(templateByIndex(576)?.name, 'Starglass');
+  assert.equal(templateByIndex(576)?.name, 'Starfall Glass');   // PIN MOVED (AUDIT STAR I1): the sea's trade good is Starglass
   assert.equal(STARGLASS_ROW.worldTextureArchive, STARGLASS_ARCHIVE);
   const s = starglass(3);
   assert.deepEqual([s.group, s.templateIndex, s.stackCount], ['UselessItems2', 576, 3]);
@@ -335,7 +335,7 @@ test('STAR7 THE SPOILS: off the receipt\'s seed - gold 60 a level a fifth either
   assert.equal(starSpoilsDay(n, k), `star:${n}.${k}`);
   assert.notDeepEqual(STAR_SPOILS_KEYS, RAID_SPOILS_KEYS);
   assert.notDeepEqual(STAR_SPOILS_KEYS, SERPENT_SPOILS_KEYS);
-  assert.equal(STAR_SPOILS_TEXT.granted(), 'Starglass from the fallen star is in your pack.');
+  assert.equal(STAR_SPOILS_TEXT.granted(), 'The star\'s spoils are in your pack.');   // PIN MOVED (AUDIT STAR W5): gold, glass and a piece, never the glass alone
   assert.equal(STAR_SPOILS_TEXT.kept('Ann'), 'A fallen star\'s spoils wait for Ann.');
   assert.equal(STAR_SPOILS_TEXT.kept(null), 'A fallen star\'s spoils wait for the one who held it.');
 });

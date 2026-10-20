@@ -43,7 +43,7 @@ export const STAR_SPOILS_RECORDS_MAX = 32;
 export const starSpoilsDay = (n, k) => `star:${n}.${k}`;
 /** The words. */
 export const STAR_SPOILS_TEXT = Object.freeze({
-  granted: () => t('starfall.spoils.granted', 'Starglass from the fallen star is in your pack.'),
+  granted: () => t('starfall.spoils.granted', 'The star\'s spoils are in your pack.'),   // AUDIT STAR (W5): gold, Starfall Glass and a piece, never the glass alone
   recovered: () => t('starfall.spoils.recovered', 'A fallen star\'s spoils are in your pack.'),
   kept: (name) => (name ? t('starfall.spoils.keptFor', 'A fallen star\'s spoils wait for {name}.', { name }) : t('starfall.spoils.kept', 'A fallen star\'s spoils wait for the one who held it.')),
 });

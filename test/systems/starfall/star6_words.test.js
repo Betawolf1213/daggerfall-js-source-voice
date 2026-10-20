@@ -15,7 +15,7 @@ import { STAR_COVENS, covenWitches } from '../../../src/systems/starfall/starfal
 import { eventTimerRows } from '../../../src/systems/eventTimers.js';
 import { TIMER_KINDS } from '../../../src/ui/enhanced/enhancedTimers.js';
 import { starBarModel, STAR_BAR_FELL_HOLD_MS, STAR_BAR_FELL_FADE_MS } from '../../../src/ui/starfall/starBar.js';
-import { drawStarTracker, destroyStarTracker, STAR_TRACKER_KEYS, isStarTrackerSelector } from '../../../src/ui/starfall/starTracker.js';
+import { drawStarTracker, destroyStarTracker, STAR_TRACKER_KEYS, isStarTrackerSelector, STAR_TRACKER_CSS, STAR_TRACKER_HEIGHT_VAR, STAR_TRACKER_GAP } from '../../../src/ui/starfall/starTracker.js';
 import { STAR_VIOLET_CSS } from '../../../src/ui/starfall/starMapMark.js';
 import { readRaidMarks } from '../../../src/ui/eventMapMarks.js';
 import { FESTIVALS } from '../../../src/net/festivalLaw.js';
@@ -38,15 +38,15 @@ function lines() {
   add('region.heldBy', STAR_REGION_TEXT.held('Gothway Garden', ['Ann', 'Bran'], 4));
   for (let w = 1; w <= 4; w++) add(`at.wave${w}`, STAR_AT_TEXT.wave(w));
   for (const k of ['breath', 'low', 'held', 'heldHeart', 'lost', 'dawn']) add(`at.${k}`, STAR_AT_TEXT[k]());
-  for (const her of [true, false]) { add(`at.circle.${her}`, STAR_AT_TEXT.circle('The Coven Mother', her)); add(`at.broken.${her}`, STAR_AT_TEXT.circleBroken(her)); }
-  for (const m of Object.values(STAR_MASTERS)) { add(`master.${m.id}.name`, m.name()); add(`master.${m.id}.call`, m.call()); }
+  for (const her of [true, false]) add(`at.broken.${her}`, STAR_AT_TEXT.circleBroken(her));
+  for (const m of Object.values(STAR_MASTERS)) { add(`master.${m.id}.name`, m.name()); add(`master.${m.id}.call`, m.call()); add(`master.${m.id}.circle`, m.circle()); }   // AUDIT STAR W1: each master's circle its own line
   const C = STAR_CARD_TEXT;
   for (const [k, v] of Object.entries({
     name: C.name(false), heart: C.name(true), near: C.near('Gothway Garden'), wave: C.wave(2, 4), waits: C.waits(), gathers: C.gathers(),
     breath: C.breath(), held: C.held(), heldBy: C.heldBy(['Ann'], 3), lost: C.lost(), light: C.light(), left: C.left('4:07'),
     falls: C.falls('21:00'), falling: C.falling(), master: C.master(false), masterHeart: C.master(true), circle1: C.circle(1, true),
     circle3: C.circle(3, false), defenders: C.defenders(5), legend: C.legend(), takes: C.takes(), comes: C.comes(false),
-    comesHeart: C.comes(true), rite: C.rite(W),
+    comesHeart: C.comes(true), rite: C.rite(W), warded: C.warded(), felled: C.felled(),   // AUDIT STAR U3: the bar's own words
   })) add(`card.${k}`, v);
   return out;
 }
@@ -70,7 +70,7 @@ test('STAR6 THE STYLE, WB13b\'s law over every line: each a string with words in
   assert.equal(STAR_REGION_TEXT.omen('Gothway Garden', 'The Daggerfall Witches'), 'A star is falling toward Gothway Garden. The Daggerfall Witches are at their rite.');
   assert.equal(STAR_REGION_TEXT.fell('Gothway Garden'), 'A star has fallen near Gothway Garden.');
   assert.equal(STAR_REGION_TEXT.held('Gothway Garden', ['Ann', 'Bran'], 4), 'The star near Gothway Garden is held by Ann, Bran and 2 others.');
-  assert.equal(STAR_AT_TEXT.circle('The Coven Mother', true), 'The Coven Mother calls her circle. Break it!');
+  assert.equal(STAR_MASTERS.mother.circle(), 'The Coven Mother calls her circle. Break it!');   // PIN MOVED (AUDIT STAR W1): the master's own line, never a name dropped into a shared one
   assert.equal(STAR_AT_TEXT.circleBroken(false), 'Its circle is broken.');
   assert.equal(STAR_CARD_TEXT.circle(2, true), '2 of her circle stand');
   assert.equal(STAR_CARD_TEXT.circle(1, false), '1 of its circle stands');
@@ -194,6 +194,9 @@ test('STAR6 THE MASTER\'S BAR: the gate\'s bar in the star\'s theme - its name a
   assert.deepEqual(starBarModel({ ...b, hp: 200 }, 0).spent, [true, true]);
   assert.deepEqual(starBarModel({ ...b, hp: 900 }, 0).spent, [false, false]);
   assert.equal(m.warded, true);
+  assert.deepEqual([m.wardedText, m.fallenText], ['Warded', 'Felled'], 'AUDIT STAR U3: its own words, through the text core - the gate\'s were English alone');
+  assert.deepEqual([m.wardedText, m.fallenText], [STAR_CARD_TEXT.warded(), STAR_CARD_TEXT.felled()]);
+  assert.match(read('src/ui/gate/gateBossBar.js'), /model\.warded \? model\.wardedText \?\? BOSS_BAR_TEXT\.warded/, 'the bar says the model\'s ward');
   assert.equal(m.host, '3 of her circle stand');
   assert.equal(m.fightersLine, '4 defenders');
   const open = starBarModel({ ...b, circle: 0 }, 0);
@@ -227,7 +230,7 @@ function trackerDoc() {
 }
 const all = (n, out = []) => { out.push(n); for (const c of n.children) all(c, out); return out; };
 
-test('STAR6 THE TRACKER\'S PLATE: made once, its parts in their order, each written only when what it says changes; its classes held, low and the Heart-Star\'s; the light as a fill; hidden and shown without a rebuild; taken down whole; its classic rules cut to it alone (mutants: the write guard, a class, the fill)', () => {
+test('STAR6 THE TRACKER\'S PLATE: made once, its parts in their order, each written only when what it says changes; its classes held, low and the Heart-Star\'s; the light as a fill, named; the phase alone spoken; hidden and shown without a rebuild; taken down whole; its classic rules cut to it alone (mutants: the write guard, a class, the fill, the live region)', () => {
   destroyStarTracker();
   const doc = trackerDoc();
   const model = { title: 'Fallen Star', near: 'Near Gothway Garden', coven: 'The Daggerfall Witches', phase: 'Wave 1 of 4', light: 0.8, low: false, left: '14:00 left', heart: false, held: false };
@@ -235,25 +238,31 @@ test('STAR6 THE TRACKER\'S PLATE: made once, its parts in their order, each writ
   assert.equal(doc.body.children.length, 0, 'nothing made for nothing');
   drawStarTracker(model, { doc });
   const root = doc.body.children[0];
-  assert.equal(root.className, 'star-hud');
+  assert.equal(root.className, 'star-hud on');   // PIN MOVED (AUDIT STAR U1): `on` while it stands - the party list steps under it
   assert.deepEqual(root.children.map((c) => c.className), ['star-hud-title', 'star-hud-near', 'star-hud-coven', 'star-hud-phase', 'star-hud-light', 'star-hud-left']);
   assert.deepEqual(STAR_TRACKER_KEYS.map((k) => root.children.find((c) => c.className === `star-hud-${k}`).textContent), [model.title, model.near, model.coven, model.phase, model.left]);
   const fill = all(root).find((n) => n.className === 'star-hud-fill');
   assert.equal(fill.style.width, '80%');
+  // AUDIT STAR W7: the bar named, its light; U2: the phase alone is live - on the whole plate the countdown was read out
+  // every second
+  assert.equal(all(root).find((n) => n.className === 'star-hud-gauge').textContent, STAR_CARD_TEXT.light());
+  assert.deepEqual(all(root).filter((n) => n.attrs['aria-live']).map((n) => [n.className, n.attrs['aria-live']]), [['star-hud-phase', 'polite']]);
   const w0 = { ...doc.writes };
   drawStarTracker({ ...model }, { doc });
   assert.deepEqual(doc.writes, w0, 'the same reading writes nothing');
   drawStarTracker({ ...model, left: '13:59 left' }, { doc });
   assert.equal(doc.writes.text, w0.text + 1, 'one part changed, one write');
   drawStarTracker({ ...model, low: true, heart: true }, { doc });
-  assert.equal(root.className, 'star-hud heart low');
+  assert.equal(root.className, 'star-hud on heart low');
   drawStarTracker({ ...model, held: true, light: 0.3 }, { doc });
-  assert.equal(root.className, 'star-hud held');
+  assert.equal(root.className, 'star-hud on held');
   assert.equal(fill.style.width, '30%');
   drawStarTracker(model, { doc, hidden: true });
   assert.equal(root.style.display, 'none');
+  assert.equal(root.className, 'star-hud', 'hidden: the party list\'s own line again');
   drawStarTracker(model, { doc });
   assert.equal(root.style.display, '');
+  assert.equal(root.className, 'star-hud on');
   assert.equal(doc.body.children.length, 1, 'never rebuilt');
   assert.ok(doc.head.children.some((n) => n.id === 'dagger-star-tracker-style'));
   destroyStarTracker();
@@ -262,6 +271,38 @@ test('STAR6 THE TRACKER\'S PLATE: made once, its parts in their order, each writ
   assert.equal(isStarTrackerSelector('.star-hud-title'), false, 'the kit dresses the plate, never its parts');
   assert.equal(isStarTrackerSelector('.star-hudson'), false);
   assert.equal(isStarTrackerSelector('.wb-boss-bar'), false);
+});
+
+test('AUDIT STAR U1 THE COLUMN: the plate stands under the quest card by the height the card publishes, on the party list\'s line where there is none (a touch screen\'s too), and under the master\'s bar where the two share the width; it publishes its bottom as the card does - its height and the gap where a page cannot say where it stands, nothing hidden or gone - and the party list steps under the lower of the two while it stands (mutants: the card\'s height unread, the party unstepped, the bottom unpublished)', () => {
+  const css = STAR_TRACKER_CSS.replace(/\s+/g, ' ');
+  assert.match(css, /\.star-hud \{ --star-floor: 0px; position: fixed; right: calc\(8px \+ env\(safe-area-inset-right, 0px\)\); top: max\(var\(--star-floor\), calc\(92px \+ var\(--dfquest-h, 0px\) \+ env\(safe-area-inset-top, 0px\)\)\);/);
+  assert.match(css, /\.star-hud\.touch \{ top: max\(var\(--star-floor\), calc\(76px \+ var\(--dfquest-h, 0px\)/);
+  assert.match(css, /@media \(max-width: 1100px\) \{ \.star-hud \{ --star-floor: 24%; \} body:has\(\.wb-boss-bar\.star:not\(\[style\*="display: none"\]\)\) \.star-hud \{ --star-floor: max\(24%, 162px\); \}/, 'under the compass, the foe\'s frame and the master\'s bar where they share the width');
+  assert.match(css, /@media \(max-width: 640px\) \{ [^}]*\} body:has\(\.wb-boss-bar\.star[^)]*\)\) \.star-hud \{ --star-floor: max\(16%, 176px\); \}/, 'a phone: under the bar at its 72');
+  assert.match(css, /@media \(max-width: 1000px\) \{ body:has\(\.wb-boss-bar\.star:not\(\[style\*="display: none"\]\)\):has\(\.star-hud\.on\) \.qtrack \{ visibility: hidden; \} \}/, 'the quest card steps aside while the master\'s bar stands over its corner');
+  assert.match(css, /body:has\(\.star-hud\.on\) \.dfparty \{ top: calc\(92px \+ max\(var\(--dfquest-h, 0px\), var\(--dfstar-h, 0px\)\)/);
+  assert.match(css, /body:has\(\.star-hud\.on\) \.dfparty\.touch \{ top: calc\(76px \+ max\(var\(--dfquest-h, 0px\), var\(--dfstar-h, 0px\)\)/);
+  assert.equal(STAR_TRACKER_HEIGHT_VAR, '--dfstar-h');
+  destroyStarTracker();
+  const doc = trackerDoc();
+  const vars = {};
+  doc.documentElement = { style: { setProperty: (k, v) => { vars[k] = v; }, getPropertyValue: (k) => vars[k] ?? '' } };
+  const model = { title: 'Fallen Star', near: 'Near Gothway Garden', coven: 'The Daggerfall Witches', phase: 'Wave 1 of 4', light: 0.8, low: false, left: '14:00 left', heart: false, held: false };
+  drawStarTracker(model, { doc });
+  const root = doc.body.children[0];
+  assert.equal(vars[STAR_TRACKER_HEIGHT_VAR], '0px', 'a page that cannot say its height: nothing to step under');
+  root.offsetHeight = 120;
+  drawStarTracker({ ...model, left: '13:59 left' }, { doc });
+  assert.equal(vars[STAR_TRACKER_HEIGHT_VAR], `${120 + STAR_TRACKER_GAP}px`, 'its height and the gap');
+  root.getBoundingClientRect = () => ({ top: 200, bottom: 330 });
+  vars['--dfquest-h'] = '60px';
+  drawStarTracker({ ...model, left: '13:59 left' }, { doc });
+  assert.equal(vars[STAR_TRACKER_HEIGHT_VAR], `${330 - 92 + STAR_TRACKER_GAP}px`, 'the card above it grew: measured again, its bottom against the party list\'s line');
+  drawStarTracker(null, { doc });
+  assert.equal(vars[STAR_TRACKER_HEIGHT_VAR], '0px', 'hidden: the party list\'s line back');
+  drawStarTracker(model, { doc });
+  assert.equal(vars[STAR_TRACKER_HEIGHT_VAR], `${330 - 92 + STAR_TRACKER_GAP}px`);
+  destroyStarTracker();
 });
 
 test('STAR6 THE REGION HEARS A HOLD where this screen found the night\'s stars, its town named; elsewhere nothing (mutants: the site guard)', () => {

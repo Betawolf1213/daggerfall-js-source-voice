@@ -62,7 +62,7 @@ test('STAR7 THE CARRIER: a signed receipt kept with the character that held it a
     assert.deepEqual([asked[0].ch, asked[0].nm], [CH, 'Ann']);
     assert.match(asked[0].cid, /^[0-9a-f]{16}$/);
     assert.deepEqual(said, [STAR_CLAIM_TEXT.recorded(3, 70)]);
-    assert.equal(said[0], 'The star is on your record. Stars held: 3. +70 toward your Renown.');
+    assert.equal(said[0], 'Star recorded. Stars held: 3. +70 toward your Renown.');   // PIN MOVED (AUDIT STAR W5): the gate's claim's shape
     assert.deepEqual(acts, [['star-held', 1]], 'the act, once');
     assert.equal(c.kept().length, 0, 'let go');
     assert.deepEqual(store.get(STAR_SETTLED_KEY), [`${N}.1|${A}`], 'remembered');
@@ -158,7 +158,7 @@ test('STAR7 THE REWARDS ON THIS DEVICE: a receipt the relay hands is kept with t
   await settle();
   assert.ok(took.some((p) => p.kind === 'item' && p.item.templateIndex === 576), 'the Starglass into the pack');
   assert.ok(took.some((p) => p.kind === 'gold' && p.gold > 0), 'the gold');
-  assert.ok(said.some((t) => t.startsWith('The star is on your record.')));
+  assert.ok(said.some((t) => t.startsWith('Star recorded.')));   // PIN MOVED (AUDIT STAR W5)
   assert.ok(said.includes('30 silver (star)'), 'the silver, the star\'s kind');
   assert.deepEqual(xp, [600], 'the Renown, the holding character\'s');
   const takenOnce = took.length;

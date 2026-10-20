@@ -39,7 +39,7 @@ const WAVE_CALLS = Object.freeze([
   () => t('starfall.wave.1', 'The coven comes for the star!'),
   () => t('starfall.wave.2', 'What the coven called comes out of the dark.'),
   () => t('starfall.wave.3', 'What the coven made comes for the star.'),
-  () => t('starfall.wave.4', 'Mephala\'s own come for the star.'),
+  () => t('starfall.wave.4', 'Mephala\'s own join the fight.'),
 ]);
 
 /** THE WORDS AT THE STAR: said to the players standing at it as its ledger moves. */
@@ -48,8 +48,7 @@ export const STAR_AT_TEXT = Object.freeze({
   wave: (w) => (WAVE_CALLS[Math.max(1, Math.min(WAVE_CALLS.length, w | 0)) - 1])(),
   breath: () => t('starfall.at.breath', 'The star\'s light steadies.'),
   low: () => t('starfall.at.low', 'The star is going dark!'),
-  /** The master's call - its own line (systems/starfall/starCoven.js STAR_MASTERS `call`). */
-  circle: (master, her) => t('starfall.at.circle', '{master} calls {her, select, yes {her} other {its}} circle. Break it!', { master, her: her ? 'yes' : 'no' }),
+  /** The master's call and its circle's are its own lines (systems/starfall/starCoven.js STAR_MASTERS `call`, `circle`). */
   circleBroken: (her) => t('starfall.at.circleBroken', '{her, select, yes {Her} other {Its}} circle is broken.', { her: her ? 'yes' : 'no' }),
   held: () => t('starfall.at.held', 'The star is held. Its thread burns away.'),
   heldHeart: () => t('starfall.at.heldHeart', 'The Heart-Star is held. Its thread burns away.'),
@@ -76,6 +75,10 @@ export const STAR_CARD_TEXT = Object.freeze({
   master: (heart) => (heart ? t('starfall.bar.heart', 'Heart of the Web') : t('starfall.bar.master', 'Master of the Fallen Star')),
   /** While the ward holds: how many of the circle stand. */
   circle: (n, her) => t('starfall.bar.circle', '{n} of {her, select, yes {her} other {its}} circle {n, plural, one {stands} other {stand}}', { n, her: her ? 'yes' : 'no' }),
+  /** The bar's word while the circle wards it, and at its fall (AUDIT STAR U3: the gate's own words were English alone) -
+   *  the ward the gate's half's own key. */
+  warded: () => t('gate.bar.halfWarded', 'Warded'),
+  felled: () => t('starfall.bar.felled', 'Felled'),
   /** The defenders at the star, on the master's bar. */
   defenders: (n) => t('starfall.bar.defenders', '{n, plural, one {1 defender} other {# defenders}}', { n }),
   /** The map's legend. */

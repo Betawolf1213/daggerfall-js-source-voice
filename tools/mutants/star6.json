@@ -137,8 +137,8 @@
  {
   "name": "STAR6-written-every-frame",
   "file": "src/ui/starfall/starTracker.js",
-  "old": "if (v !== shown[k]) { shown[k] = v; parts[k].textContent = v; }",
-  "new": "{ shown[k] = v; parts[k].textContent = v; }",
+  "old": "if (v !== shown[k]) { shown[k] = v; parts[k].textContent = v; moved = true; }",
+  "new": "{ shown[k] = v; parts[k].textContent = v; moved = true; }",
   "tests": [
    "test/systems/starfall/star6_words.test.js"
   ]
@@ -146,8 +146,8 @@
  {
   "name": "STAR6-held-unclassed",
   "file": "src/ui/starfall/starTracker.js",
-  "old": "${model.low ? ' low' : ''}${model.held ? ' held' : ''}`;",
-  "new": "${model.low ? ' low' : ''}`;",
+  "old": "model.low && 'low', model.held && 'held'].filter(Boolean).join(' ');",
+  "new": "model.low && 'low'].filter(Boolean).join(' ');",
   "tests": [
    "test/systems/starfall/star6_words.test.js"
   ]

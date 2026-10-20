@@ -245,7 +245,7 @@ test('STAR5 THE MASTER AND ITS CIRCLE: the ledger\'s master stood an elite by it
   assert.deepEqual(circle.map((f) => f.mobileType), starCircleFoes(N, 2, 0, starCircleSize(4, false), 2));
   w.frame();
   assert.equal(master.circleWard(), true, 'warded');
-  assert.ok(mids.includes(STAR_AT_TEXT.circle(M.name(), M.female)));
+  assert.ok(mids.includes(M.circle()));   // AUDIT STAR (W1): the master's own circle line, its name with its article
   for (const f of circle) { f.dead = true; f.corpse = true; }
   w.frame();
   assert.equal(master.circleWard(), false, 'broken');

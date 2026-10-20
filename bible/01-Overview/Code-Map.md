@@ -327,7 +327,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/sigil/` | Sigil Sets (`11-Multiplayer/Sigil-Sets.md`) - the law. |
 | `src/systems/song/` | Music: the songs, their player and manager - the law. |
 | `src/systems/spell/` | Spells: effects, the spell maker, power and the impact's sound. |
-| `src/systems/starfall/` | The Starfall (`11-Multiplayer/Starfall.md`) - the law: the covens and the night's coven, the night's stars over the gate's scan, the Witches' Night; the coven's waves, masters and circles, the star's law on a player's screen, every word it says and its sounds; Starglass and a held star's spoils. |
+| `src/systems/starfall/` | The Starfall (`11-Multiplayer/Starfall.md`) - the law: the covens and the night's coven, the night's stars over the gate's scan, the Witches' Night; the coven's waves, masters and circles, the star's law on a player's screen, every word it says and its sounds; Starfall Glass and a held star's spoils. |
 | `src/systems/studioArt/` | The studio (`07-Rendering/Studio-Art.md`): the game's artists' own pictures (`public/art/studio/`) on the texture door, and the slots they paint. |
 | `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils, the rift's sound and the slots kept on the device. |
 | `src/systems/survival/` | Survival: needs, camping, food, rest, exposure. |
@@ -403,7 +403,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/world/merchantYards/` | A town's Stable and Wagon Yard (`03-World/Merchant-Yards.md`) - its models and assembly. |
 | `src/world/road/` | Roads: the network, its painter, verges and clearance - its models and assembly. |
 | `src/world/ships/` | The port's own ships: the galleon, the carrack, the large boat - its models and assembly. |
-| `src/world/starfall/` | The Starfall in the world: the star's art, its crater and stone, and Starglass's picture. |
+| `src/world/starfall/` | The Starfall in the world: the star's art, its crater and stone, and Starfall Glass's picture. |
 | `src/world/superDungeon/` | The Abyss Dungeon in the world: the halls, the steps, the rift, the realm and its sky, the Remnant, and their art. |
 | `src/world/tamriel/` | The continent's ground: geography, frame, raster - its models and assembly. |
 | `src/world/terrain/` | Terrain generation, its worker and sampler - its models and assembly. |

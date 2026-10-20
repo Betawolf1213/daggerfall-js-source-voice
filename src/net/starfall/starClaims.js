@@ -45,13 +45,14 @@ export const STAR_CLAIM_RETRY_MS = 10 * 60 * 1000;
 /** How often a frame asks who is signed in (AUDIT WBX W4's law). */
 export const STAR_ME_POLL_MS = 1000;
 
-/** The words. */
+/** The words - the gate's claim's shape (net/gate/gateClaims.js: "Breach recorded.", "Breach not recorded. ..."), and the
+ *  day's bound in the festival's own voice (systems/festival/festivalWords.js `capped`). AUDIT STAR (W3, W5). */
 export const STAR_CLAIM_TEXT = Object.freeze({
   recorded: (n, xp) => (xp > 0
-    ? t('starfall.claim.recordedXp', 'The star is on your record. Stars held: {n}. +{xp} toward your Renown.', { n, xp })
-    : t('starfall.claim.recorded', 'The star is on your record. Stars held: {n}.', { n })),
-  guest: () => t('starfall.claim.guest', 'This star is not on your record yet. Only registered accounts keep one. Add a username this week and it counts.'),
-  dayFull: () => t('starfall.claim.dayFull', 'You have been counted for every star one day allows.'),
+    ? t('starfall.claim.recordedXp', 'Star recorded. Stars held: {n}. +{xp} toward your Renown.', { n, xp })
+    : t('starfall.claim.recorded', 'Star recorded. Stars held: {n}.', { n })),
+  guest: () => t('starfall.claim.guest', 'Star not recorded. Add a username within a week to keep it.'),
+  dayFull: () => t('starfall.claim.dayFull', 'You have held enough stars for today.'),
 });
 
 /** The refusals of a receipt the service can mend (the gate's GATE_CLAIM_MENDABLE): kept for the week it carries. */
