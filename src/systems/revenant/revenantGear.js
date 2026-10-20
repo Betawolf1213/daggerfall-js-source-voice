@@ -41,7 +41,7 @@ import { plateMetal, SHIELD_VALUES } from '../armorMaterials.js';
 import { rarityOf } from '../loot/lootRarity.js';
 import { computeEntityMods } from '../entityMods.js';
 import { t } from '../textManager.js';   // L10N4: the page's words through the text core
-import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 /** The slots, in the page's order: `key` the record's, `label` the page's, `slot` the equip table's (a charm's is
  *  whichever jewellery slot the piece takes - null here). */

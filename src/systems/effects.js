@@ -50,7 +50,7 @@ import { markPlayerHarm } from './harmMark.js';   // REVENANT-HARM: a lingering 
 import { regenBarred } from './courtRules.js';   // WBX6: the Burning Court keeps no regeneration
 import { localizedText, localizedTable } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { HEAL_SPELL_POINTS_KEY } from './potionRecipes.js';   // PROF12: Heal-SpellPoints' key, beside the one recipe that names it
-import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 export { breakNormalPowerConcealment, handleAttackFromSource, NORMAL_POWER_CONCEALMENTS } from './concealment.js';
 

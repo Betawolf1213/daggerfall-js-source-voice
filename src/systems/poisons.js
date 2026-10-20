@@ -44,7 +44,7 @@ import { FATIGUE_MULTIPLIER } from './statMods.js';
 import { dice100 } from '../combat/formulas.js';
 import { MOBILE_TYPES } from '../characters/mobile/mobileTypes.js';
 import { youFeelSomewhatBadText } from './diseases.js';
-import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 // ---- ItemEnums.Poisons, verbatim (0-7 weapon poisons, 8-11 drugs) ----
 export const POISONS = Object.freeze({

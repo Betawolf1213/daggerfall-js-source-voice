@@ -23,7 +23,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import { WILD_RINGS } from './wildZone.js';
 import { WATER_SPECIES } from '../../characters/dungeonEnemies.js';   // SLAUGHTER-BOX: RDBLayout's water species, one home
-import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 export const WILD_DUNGEONS_PER_RING = Object.freeze([10, 8, 6, 4]);
 /** A hall keeps at least this many pixels from every other hall (they never crowd one valley). */

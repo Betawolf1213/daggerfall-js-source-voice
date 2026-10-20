@@ -1,0 +1,42 @@
+[
+ {
+  "name": "AUDIT-DEX-A4-M12-a-chance-not-the-dlls",
+  "file": "vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs",
+  "old": "                                mobile.ChanceForAttack2 = 50;",
+  "new": "                                mobile.ChanceForAttack2 = 33;",
+  "why": "the carried C# says a monster's second attack is 33% where the DLL stores 50: the record no longer what shipped",
+  "tests": [
+   "test/systems/enemyExpansion/dex0_record.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A4-M13-the-ranged-frames-moved",
+  "file": "vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs",
+  "old": "mobile.RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 3 };",
+  "new": "mobile.RangedAttackAnimFrames = new int[] { 3, 2, 0, 0, 0, -1, 1, 1, 2, 2 };",
+  "why": "the default ranged frames edited in the carried C# (an array initializer the IL keeps in a data blob)",
+  "tests": [
+   "test/systems/enemyExpansion/dex0_record.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A4-M14-a-continue-gone",
+  "file": "vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs",
+  "old": "has unknown career '{careerName}'\");\n                            continue;\n",
+  "new": "has unknown career '{careerName}'\");\n",
+  "why": "the carried C# reads on past an unknown career - control flow the literal and member checks never see",
+  "tests": [
+   "test/systems/enemyExpansion/dex0_record.test.js"
+  ]
+ },
+ {
+  "name": "AUDIT-DEX-A4-M15-a-literal-cut-short",
+  "file": "vendor/daggerfall-enemy-expansion/Scripts/BestiaryMod.cs",
+  "old": "Defaulting to 100\");",
+  "new": "Defaulting to 1\");",
+  "why": "a literal cut to a prefix of the DLL's - held by a substring, never by the heap's own string",
+  "tests": [
+   "test/systems/enemyExpansion/dex0_record.test.js"
+  ]
+ }
+]

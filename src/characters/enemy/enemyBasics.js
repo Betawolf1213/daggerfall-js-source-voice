@@ -41,7 +41,7 @@ export const ENEMY_NAMES = Object.freeze([
  *  ints (world/oceanHoles.js enemyRow). One home: the mods' readers parse by it (systems/enemyExpansion/dexTables.js). */
 export const MOBILE_BEHAVIOUR = Object.freeze({ General: 0, Flying: 1, Aquatic: 2, Spectral: 3, Guard: 4 });
 
-/** EnemyBasics.IsClassEnemyId: the 128 bit. */
+/** DaggerfallEntity.IsClassEnemyId (DaggerfallEntity.cs:974-977): the 128 bit. */
 export const isClassEnemyId = (id) => (id & 128) !== 0;
 
 /** A MobileTypes member that is an enemy: 0-42, 128-146 (Enum.IsDefined, None aside). */

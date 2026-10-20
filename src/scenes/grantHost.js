@@ -48,7 +48,7 @@ import { serviceBase } from '../net/accountClient.js';
 import { appStorage } from '../systems/appStorage.js';
 import { resolveEncounterTableIndex, chooseRandomEnemy } from '../systems/encounters.js';
 import { encounterTableChoices, encounterTableGeneration } from '../characters/encounterTableDoor.js';   // DEX3: every table a mod may pick, on any machine
-import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 /** The reader's bounds: the verdicts it keeps (owner and grant), the members it has seen stand, the puppets it knows the
  *  grant of. */

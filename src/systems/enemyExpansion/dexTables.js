@@ -143,27 +143,30 @@ export function readCareerTable(text, careers, assetName, log = () => {}) {
     const lineNumber = i + 1;
     try {
       const tokens = splitCsvLine(lines[i]);
-      const careerName = tokens[nameIndex];
+      // AUDIT DEX A10: `tokens[i]` past a short line throws (IndexOutOfRangeException) and the catch ends the line - a cell
+      // is never read as empty for being missing (writeEnemyLine's `cell`)
+      const cell = (c) => { if (c >= tokens.length) throw new RangeError('Index was outside the bounds of the array.'); return tokens[c]; };
+      const careerName = cell(nameIndex);
       const existing = careers.get(careerName) ?? [...careers.values()].find((c) => c.name.toLowerCase() === String(careerName).toLowerCase());   // OrdinalIgnoreCase
       const replacement = !!existing;
+      // a replacement is written IN PLACE as the line reads (`career = existingCustomCareer.dfCareer`), so a throw later
+      // in the line keeps what it wrote; a new career is added only at the line's end (:575-581), so a throw keeps none
       const spec = existing ?? { name: careerName, base: null, edits: [] };
-      const edits = [];
       let dropped = false;
       for (const [col, key] of STAT_COLUMNS) {
         const c = cols[col];
-        if (c != null && tokens[c]) { const v = parseCsInt(tokens[c], `line=${lineNumber}`); edits.push((career) => { career[key] = v; }); }
+        if (c != null && cell(c)) { const v = parseCsInt(cell(c), `line=${lineNumber}`); spec.edits.push((career) => { career[key] = v; }); }
         else if (!replacement) { log('error', `[DEX] Career '${careerName}' did not have ${STAT_MISSING[col]} specified`); dropped = true; break; }
       }
       if (dropped) continue;
       for (const effect of ['Magic', 'Fire', 'Frost', 'Shock', 'Poison', 'Paralysis']) {
         const c = cols[effect];
-        if (c != null && tokens[c]) { const t = parseEnum(TOLERANCE, tokens[c], { what: 'Tolerance' }); edits.push((career) => setTolerance(career, effect, t)); }
+        if (c != null && cell(c)) { const t = parseEnum(TOLERANCE, cell(c), { what: 'Tolerance' }); spec.edits.push((career) => setTolerance(career, effect, t)); }
       }
       for (const group of ['Undead', 'Daedra', 'Humanoid', 'Animals']) {
         const c = cols[`${group}AttackModifier`];
-        if (c != null && tokens[c]) { const m = parseEnum(ATTACK_MODIFIER, tokens[c], { what: 'AttackModifier' }); edits.push((career) => setAttackModifier(career, group, m)); }
+        if (c != null && cell(c)) { const m = parseEnum(ATTACK_MODIFIER, cell(c), { what: 'AttackModifier' }); spec.edits.push((career) => setAttackModifier(career, group, m)); }
       }
-      spec.edits.push(...edits);   // a replacement edits the career already there; a new one is added below
       if (!replacement) careers.set(careerName, spec);
     } catch (ex) {
       log('error', `[DEX] Error while parsing ${assetName}:${lineNumber}: ${ex?.message ?? ex}`);

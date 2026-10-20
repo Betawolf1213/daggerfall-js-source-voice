@@ -39,8 +39,8 @@ test('DEX0 the manifest is the bundle\'s: Kamer & Kab\'s 1.3.4, its GUID, its 8,
 });
 
 /** The string literals of the carried C#, as the compiler stores them: an interpolation's holes renumbered {0}, {1}...
- *  (string.Format's form) - a one-hole interpolation is compiled to a concatenation instead, so each literal piece
- *  between holes is what the heap must hold. Comments and the attribute version strings ("v1", in the custom
+ *  (string.Format's form, `format`), or - a one-hole interpolation is compiled to a concatenation instead - each literal
+ *  piece between holes a string of its own (`pieces`). Comments and the attribute version strings ("v1", in the custom
  *  attribute blob, not the heap) are not code literals. */
 function scriptLiterals() {
   const out = [];
@@ -50,21 +50,26 @@ function scriptLiterals() {
       for (const m of line.matchAll(/(\$?)"((?:[^"\\]|\\.)*)"/g)) {
         const text = m[2].replace(/\\(["\\])/g, '$1').replace(/\\n/g, '\n');
         if (text.length < 2) continue;
-        out.push({ script: s, pieces: m[1] ? text.split(/\{[^}]*\}/).filter((p) => p.length) : [text] });
+        let hole = 0;
+        out.push(m[1]
+          ? { script: s, pieces: text.split(/\{[^}]*\}/).filter((p) => p.length), format: text.replace(/\{[^}:,]*([,:][^}]*)?\}/g, (_, spec) => `{${hole++}${spec ?? ''}}`) }
+          : { script: s, pieces: [text], format: text });
       }
     }
   }
   return out;
 }
-const heldBy = (heap, pieces) => pieces.every((p) => heap.some((u) => u.includes(p)));
+/** AUDIT DEX A4: held EXACTLY - the literal one string of the heap, an interpolation its format string or each piece one
+ *  (a substring of a longer string is not the literal: "Defaulting to 1" is no piece of "Defaulting to 100"). */
+const heldBy = (heap, lit) => heap.has(lit.format) || lit.pieces.every((p) => heap.has(p));
 
 test('DEX0 the C# is what the DLL was built from: every literal is in its user-string heap and every declared member in its metadata', () => {
   const dll = read('Daggerfall Enemy Expansion.dll');
   assert.equal(sha(dll), '666ae571d62164abcc0b3d0ba3669ff46e88addf6a6bd23b01f3d2e48366da80', 'the assembly, byte for byte');
-  const heap = userStrings(dll);
+  const heap = new Set(userStrings(dll));
   const lits = scriptLiterals();
   assert.ok(lits.length > 200, `${lits.length} literals - the read is reading the scripts`);
-  const missing = lits.filter((l) => !heldBy(heap, l.pieces)).map((l) => `${l.script}: ${l.pieces.join(' | ')}`);
+  const missing = lits.filter((l) => !heldBy(heap, l)).map((l) => `${l.script}: ${l.format}`);
   assert.deepEqual(missing, []);
   // the #Strings heap holds every type, field and method name - every method the scripts declare is one. Roslyn shares
   // suffixes there (`Start` is the tail of `OnStart\0`, `Spellbook` of `GetSpellbook\0`), so a name is held when it
@@ -81,11 +86,91 @@ test('DEX0 the C# is what the DLL was built from: every literal is in its user-s
   assert.deepEqual([...declared].filter((n) => !names.has(n)), []);
   assert.ok(declared.has('Start') && declared.has('SelectDungeonTable'), 'the read finds the members');
   // A PIN MUST FAIL: a literal one character off, or a member the authors never wrote, is not held
-  assert.equal(heldBy(heap, ['[DEX] Unknown enemy spell table \'X']), false);
-  assert.equal(heldBy(heap, ['The ', ' has recovered from its injuries.']), true);
-  assert.equal(heldBy(heap, ['The ', ' has recovered from its injuries!']), false);
+  const lit = (pieces) => ({ pieces, format: pieces.join('{0}') });
+  assert.equal(heldBy(heap, lit(['[DEX] Unknown enemy spell table \'X'])), false);
+  assert.equal(heldBy(heap, lit(['The ', ' has recovered from its injuries.'])), true);
+  assert.equal(heldBy(heap, lit(['The ', ' has recovered from its injuries!'])), false);
+  assert.equal(heldBy(heap, lit(['The ', ' has recovered from its injuries'])), false, 'a piece cut short is not held (AUDIT DEX A4)');
   assert.equal(names.has('SelectDungeonTable'), true);
   assert.equal(names.has('SelectDungeonTables'), false);
+});
+
+/** AUDIT DEX A4: the eight scripts' git blob ids in the authors' tree at c187c97 ("Updated to 1.3.4",
+ *  github.com/SquidKamer/DaggerfallBestiaryProject, `git ls-tree -r c187c972787d8ca3f5b77aa127694e72f4eb2705 Scripts`). */
+const UPSTREAM_BLOBS = {
+  BestiaryEnemySpells: 'cf6371f89363458188e2e1223745ad8898fca3a4',
+  BestiaryMod: 'bde1ccab7541b4b364bb81a398eb771deab6ff4c',
+  BestiarySaveInterface: '8c122a8fbec77a6cffb6f924e5f8152067b8fc87',
+  BestiaryTextProvider: '14d872724453ef40ff0276d12ba3af29f3e43557',
+  BestiaryTrollCorpseBillboard: 'cb0f55a01889dc956018f93a2c5a0e3c49fd3039',
+  BestiaryTrollCorpseEntity: 'a308c016d9f464c7965ee32273caa1a10b2fc7b8',
+  BestiaryTrollCorpseSerializer: 'd0340fea773c3b2e361c2e06c8f19931635510a3',
+  'Compatibility/DEX_RRICompat': '93e59526c870e3cc27b7f281cd5d45093d751c2c',
+};
+const gitBlob = (b) => createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${b.length}\0`), b])).digest('hex');
+
+test('AUDIT DEX A4 the scripts are the authors\' c187c97, blob for blob - no line of the C# the port reads has moved since it was carried', () => {
+  assert.deepEqual(Object.keys(UPSTREAM_BLOBS).sort(), [...SCRIPTS].sort());
+  for (const s of SCRIPTS) assert.equal(gitBlob(read(`Scripts/${s}.cs`)), UPSTREAM_BLOBS[s], `${s}.cs`);
+});
+
+/** The DLL's IL (vendor/daggerfall-enemy-expansion/il/, tools/ilDump.py's dump): each method's integer loads - a switch
+ *  table's cases among them (`ldc B; sub; switch [n targets]` is cases B..B+n-1) - and each constant stored to a field. */
+function ilReading() {
+  const lines = read('il/Daggerfall_Enemy_Expansion.il.txt').toString('utf8').split('\n');
+  const ldc = (ins = '') => {
+    let m = /: ldc\.i4\.(m1|\d)\s*$/.exec(ins); if (m) return m[1] === 'm1' ? -1 : Number(m[1]);
+    m = /: ldc\.i4(?:\.s)?\s+(-?\d+)\s*$/.exec(ins); return m ? Number(m[1]) : null;
+  };
+  const methods = new Map(), stores = new Set(), strings = new Set();
+  let cur = null, prev = [];
+  for (const line of lines) {
+    const h = /^---- (\w+)::(\S+) rva=/.exec(line);
+    if (h) { cur = `${h[1]}::${h[2]}`; if (!methods.has(cur)) methods.set(cur, []); prev = []; continue; }
+    if (!cur) continue;
+    const v = ldc(line);
+    if (v != null) methods.get(cur).push(v);
+    const sw = /: switch\s+\[([^\]]*)\]/.exec(line);
+    if (sw) { const base = /: sub\s*$/.test(prev[0] ?? '') ? (ldc(prev[1]) ?? 0) : 0; sw[1].split(',').forEach((_, c) => methods.get(cur).push(base + c)); }
+    const st = /: st(?:s)?fld\s+\S*::(\w+)/.exec(line);
+    if (st && ldc(prev[0]) != null) stores.add(`${st[1]}=${ldc(prev[0])}`);
+    const str = /: ldstr\s+"(.*)"\s*$/.exec(line);
+    if (str) strings.add(str[1]);
+    prev = [line, ...prev].slice(0, 2);
+  }
+  return { methods, stores, strings };
+}
+
+test('AUDIT DEX A4 the C#\'s constants are the DLL\'s: every integer the C# stores in a field is stored so in the IL, and every integer past 8 a method names is one its IL loads (or a case of its switch table)', () => {
+  const il = ilReading();
+  const heap = new Set(userStrings(read('Daggerfall Enemy Expansion.dll')));
+  assert.ok(il.strings.size > 150 && [...il.strings].every((x) => heap.has(x)), 'the dump is the DLL\'s: its strings, as it prints them (verbatim), are the heap\'s');
+  const stores = [], misses = [];
+  let methods = 0;
+  for (const s of SCRIPTS) {
+    const type = s.split('/').pop();
+    const lines = readFileSync(join(V, 'Scripts', `${s}.cs`), 'utf8').split('\n');
+    const code = (l) => l.replace(/\/\/.*$/, '').replace(/"(?:[^"\\]|\\.)*"/g, '""').replace(/'(?:[^'\\]|\\.)'/g, "''");
+    for (const [n, line] of lines.entries()) {
+      for (const m of code(line).matchAll(/\.(\w+)\s*=\s*(-?\d+)\s*;/g)) stores.push(`${type}.cs:${n + 1} ${m[1]}=${Number(m[2])}`);
+    }
+    for (let i = 0; i < lines.length; i++) {
+      const m = /^\s{8}(?:(?:public|private|protected|internal|static|override|virtual|async)\s+)*[\w<>[\],. ]+\s+(\w+)\s*\([^;]*$/.exec(lines[i]);
+      if (!m || /^(if|while|for|foreach|switch|return|new)\b/.test(lines[i].trim()) || !il.methods.has(`${type}::${m[1]}`)) continue;
+      let j = i + 1; while (j < lines.length && !/^\s{8}\{/.test(lines[j])) j++;
+      let k = j + 1; while (k < lines.length && !/^\s{8}\}/.test(lines[k])) k++;
+      const loads = new Set([...il.methods].filter(([key]) => key === `${type}::${m[1]}` || key.includes(`<${m[1]}>`)).flatMap(([, v]) => v));
+      methods++;
+      for (const x of lines.slice(j, k).map(code).join('\n').matchAll(/(?<![\w.])(\d+)(?![\w.])/g)) {
+        if (Number(x[1]) > 8 && !loads.has(Number(x[1]))) misses.push(`${type}::${m[1]} ${x[1]}`);
+      }
+    }
+  }
+  assert.ok(stores.length >= 18 && methods >= 90, `${stores.length} stores, ${methods} methods - the read is reading`);
+  assert.deepEqual(stores.filter((x) => !il.stores.has(x.split(' ')[1])), [], 'each `.Field = n;` an `ldc n; stfld Field` of the IL');
+  assert.deepEqual(misses, []);
+  assert.ok(il.stores.has('ChanceForAttack2=50') && il.stores.has('ChanceForAttack3=25') && il.stores.has('ChanceForAttack4=12') && il.stores.has('ChanceForAttack5=6'), 'the monster attack chances the port reads (dexTables.js)');
+  assert.ok(!il.stores.has('ChanceForAttack2=33'), 'A PIN MUST FAIL: a constant the authors never wrote is not held');
 });
 
 /** The bundle's text, byte for byte (tools/dexExtract.mjs writes each from its TextAsset and checks the tree

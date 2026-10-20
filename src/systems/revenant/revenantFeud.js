@@ -16,7 +16,7 @@ import { SKILLS } from '../skills.js';
 import { setItemFields } from '../item/itemTemplates.js';
 import { FEUD_CLASSES } from '../feudLedger.js';
 import { possessive } from './revenantPersonality.js';   // RVN5: a signature's name
-import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 // ── the numbers (section 27) ────────────────────────────────────────
 /** RVN1: a fight's leading source - this share of the damage dealt or more - is a scar. */
@@ -626,7 +626,7 @@ export function adaptEdge(learned, weak = null) {
 export function adaptBlowClass(attacker, weapon, kind) {
   if (kind === 'arrow') return 'arrow';
   if (weapon) return weaponFeudClass(weapon).cls;
-  return attacker?.isPlayer || (attacker?.mobileType ?? -1) >= 128 ? 'h2h' : 'other';
+  return attacker?.isPlayer || isClassEnemyId(attacker?.mobileType ?? 0) ? 'h2h' : 'other';   // AUDIT DEX A2: the class bit - a mod's monster past 255 has no person's hands
 }
 
 // ── the record, whole (section 26) ──────────────────────────────────

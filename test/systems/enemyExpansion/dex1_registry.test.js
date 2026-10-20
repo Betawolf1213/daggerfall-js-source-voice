@@ -24,6 +24,8 @@ import { applyMeanerMonsters, MEANER_MONSTERS_EDIT } from '../../../src/characte
 import { meanerMonstersRow as pcaaoMeanerMonstersRow } from '../../../src/combat/pcaaoMeanerMonsters.js';
 import { KG_ROSTER, makeUnit } from '../../../src/net/kingsGambit.js';
 import { loadQuestTables, foesTable, addIntoQuestTables, _resetExtraQuestRows } from '../../../src/systems/quest/tables.js';
+import { adaptBlowClass } from '../../../src/systems/revenant/revenantFeud.js';   // AUDIT DEX A2
+import { MOBILE_TYPES } from '../../../src/characters/mobile/mobileTypes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const ARENA2 = process.env.ARENA2_PATH;
@@ -143,6 +145,19 @@ test('DEX1 the careers: a new one is a new DFCareer, its tolerances and attack m
   assert.deepEqual(careers.get('Guard').base, { kind: 'class', index: 18 });
 });
 
+test('AUDIT DEX A10 a replacement career is written in place as its line reads: a throw keeps what it wrote before it, a cell past a short line throws (IndexOutOfRange) - and a new career is added only at its line\'s end', () => {
+  const run = (text) => { const careers = classicCareers(), log = []; readCareerTable(text, careers, 'X', (l, m) => log.push(m)); return { careers, log }; };
+  const applied = (spec) => { const c = newCareer(spec.name); for (const e of spec.edits) e(c); return c; };
+  const a = run('Name,Strength,Fire\nRat,99,Bogus');
+  assert.equal(applied(a.careers.get('Rat')).strength, 99, 'Strength written (:435-438) before Fire\'s Enum.Parse threw (:530-533)');
+  assert.match(a.log[0], /Error while parsing X:2/);
+  const b = run('Name,Luck,Speed,Strength\nRat,40');
+  assert.equal(b.careers.get('Rat').edits.length, 0, 'tokens[Strength] past the line threw before Luck was read: nothing written');
+  assert.match(b.log[0], /Error while parsing X:2: Index was outside the bounds of the array\./);
+  const c = run('Name,HitPointsPerLevel,Strength,Intelligence,Willpower,Agility,Endurance,Personality,Speed,Luck,Fire\nNewOne,5,5,5,5,5,5,5,5,5,Bogus');
+  assert.equal(c.careers.has('NewOne'), false, 'a new career that threw is never added');
+});
+
 test('DEX1 Enum.Parse as the mod calls it: a name, any case only where it asks, a number, else the line goes', () => {
   assert.equal(parseEnum(MOBILE_TEAMS, 'orcs', { ignoreCase: true }), 'Orcs');
   assert.throws(() => parseEnum(MOBILE_TEAMS, 'orcs'), /not found/);
@@ -167,6 +182,28 @@ test('DEX1 the install: the fifty in the table, a career each, DFU\'s entity typ
   assert.equal(enemyDisplayName(256), 'Goblin'); assert.equal(enemyDisplayName(275), 'Vengeful King Lysandus');
   assert.equal(customCareerTemplate(258).name, 'Lizardman');
   assert.equal(dexEnemyIds().length, 50);
+});
+
+test('AUDIT DEX A5 the reading\'s reachable arms: a caster that shoots keeps both ranged attacks (the Necromancer Assassin), a classic class that starts with a ranged attack keeps it under the mod (the Monk); A2 a blow\'s class asks the class bit', (t) => {
+  t.after(() => { _resetEnemyExpansion(); clearCustomEnemies(); _resetMintRowEditors(); _resetExtraQuestRows(); });
+  installEnemyExpansion({ on: true, log: silent });
+  const r394 = ENEMY_BASICS[394];
+  assert.deepEqual([r394.castsMagic, r394.hasRangedAttack1, r394.hasRangedAttack2, r394.hasSpellAnimation], [true, true, true, true], 'casts and shoots (:964-994): both ranged attacks, its spell frames');
+  assert.equal(ENEMY_BASICS[MOBILE_TYPES.Monk].hasRangedAttack1, true, 'HasClassicRangedAttack (:2138-2160) names the Monk');
+  for (const n of ['Battlemage', 'Nightblade', 'Bard', 'Burglar', 'Rogue', 'Acrobat', 'Thief', 'Assassin', 'Monk', 'Archer', 'Ranger', 'Barbarian', 'Warrior', 'Knight']) {
+    assert.equal(ENEMY_BASICS[MOBILE_TYPES[n]].hasRangedAttack1, true, `${n} keeps its ranged attack`);
+  }
+  for (const n of ['Mage', 'Spellsword', 'Healer', 'Sorcerer']) assert.equal(ENEMY_BASICS[MOBILE_TYPES[n]].hasRangedAttack2 ?? false, false, `${n}: no bow`);
+  assert.deepEqual([7, 256, 290, 384, 394].map((mobileType) => adaptBlowClass({ mobileType }, null, 'melee')), ['other', 'other', 'other', 'h2h', 'h2h'], 'a monster\'s body, the mod\'s too, is no person\'s hands; a class\'s are');
+  assert.equal(adaptBlowClass({ isPlayer: true }, null, 'melee'), 'h2h');
+});
+
+test('AUDIT DEX A5 the hosts\' arms by SetupDemoEnemy\'s entity type: a dungeon\'s marker foe takes the monster arm or the class arm, the street\'s mint and its knockback read the same - a mod\'s monster (256-290) is no class, its class (384-398) no monster', () => {
+  const dc = readFileSync(join(ROOT, 'src/scenes/dungeonContext.js'), 'utf8'), xf = readFileSync(join(ROOT, 'src/scenes/exteriorFoes.js'), 'utf8');
+  assert.equal(dc.split("if (foeDeps && enemyEntityType(e.mobileType) === 'class' && basics.maleTexture) {").length, 2, 'the dungeon\'s class arm');
+  assert.equal(dc.split("if (foeDeps && enemyEntityType(e.mobileType) === 'monster' && basics.maleTexture) {").length, 2, 'the dungeon\'s monster arm');
+  assert.match(xf, /const isClass = enemyEntityType\(mobileType\) === 'class', career = loadEnemyCareer\(mobileType, fetchBytes\);/, 'the street\'s mint');
+  assert.match(xf, /const isClass = enemyEntityType\(f\.mobileType\) === 'class';/, 'the street\'s knockback weight');
 });
 
 test('DEX1 loaded: the classic rows written in the table, and at a foe\'s mint over Meaner Monsters\' - DFU\'s order, their Init then this Start', (t) => {

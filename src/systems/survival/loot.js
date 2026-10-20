@@ -8,7 +8,7 @@ import { registerEnemyDeathHandler } from '../../scenes/corpseMarker.js';
 import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { TEMPLATE } from './food.js';
 import { createSurvivalItem, spoilFood } from './items.js';
-import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { isClassEnemyId } from '../../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (DaggerfallEntity.IsClassEnemyId) - a mod's monster past 255 is no class
 
 export const SURVIVAL_LOOT_HANDLER = 'survival';
 /** [min, max] raw meat by mobile type; the max grows by the luck mod. */

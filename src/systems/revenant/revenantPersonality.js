@@ -423,7 +423,7 @@ const LEANS = deepFreeze({
   other: ['brutal', 'witty', 'humorous', 'arrogant', 'unhinged', 'craven', 'honourable', 'weary', 'zealous'],
   person: PERSONALITY_IDS,
 });
-// DEX1: EnemyBasics.IsClassEnemyId's 128 bit, written here because a leaf imports nothing (enemy/enemyBasics.js
+// DEX1: DaggerfallEntity.IsClassEnemyId's 128 bit, written here because a leaf imports nothing (enemy/enemyBasics.js
 // isClassEnemyId is the export) - so a mod's monster past 255 leans as a monster, a mod's class as a person
 const leanOf = (mobileType) => ((mobileType & 128) !== 0 ? 'person' : BEASTS.has(mobileType) || MUTE_KINDS.has(mobileType) ? 'beast' : UNDEAD.has(mobileType) ? 'undead'
   : DAEDRA.has(mobileType) ? 'daedra' : ORCISH.has(mobileType) ? 'orcish' : 'other');

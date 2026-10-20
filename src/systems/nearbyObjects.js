@@ -65,7 +65,7 @@
 
 /** PlayerGPS.NearbyObjectFlags (:112-123), verbatim. */
 import { LOCATION_TYPES } from '../formats/mapsFile.js';   // V5: IsPlayerInTown's seven town types
-import { enemyCareerIndex } from '../characters/enemy/enemyBasics.js';   // DEX1: DFU's class test (EnemyBasics.IsClassEnemyId) - a mod's monster past 255 is no class
+import { enemyCareerIndex } from '../characters/enemy/enemyBasics.js';   // DEX1: SetEnemyCareer's careerIndex - a class's ID - 128, a mod's id its own
 import { ENEMY_GROUPS, enemyEntityGroup } from '../combat/enemyGroups.js';   // AUDIT DEX C3: GetEnemyGroup's one home, a mod's door with it
 
 export const NEARBY = Object.freeze({

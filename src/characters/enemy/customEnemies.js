@@ -3,7 +3,7 @@
 // Daggerfall Unity's enemies are MobileTypes 0-42 and 128-146, and any other id is an enemy exactly when a mod has
 // registered a career for it: SetupDemoEnemy.ApplyEnemySettings (:160-185) makes 0-42 a monster and 128-146 a class,
 // and otherwise asks DaggerfallEntity.GetCustomCareerTemplate - a template there makes the id an enemy, a monster or a
-// class by EnemyBasics.IsClassEnemyId's 128 bit, and no template makes it EntityTypes.None. EnemyEntity.SetEnemyCareer
+// class by DaggerfallEntity.IsClassEnemyId's 128 bit, and no template makes it EntityTypes.None. EnemyEntity.SetEnemyCareer
 // (:248-276) reads the same template first, and TextManager.GetLocalizedEnemyName (:432-461) names such an id by the
 // text provider's GetCustomEnemyName, else the template's own Name. This module is those two registries
 // (DaggerfallEntity.CustomCareerTemplates :935-962, the TextProvider's GetCustomEnemyName chain) and nothing else: a

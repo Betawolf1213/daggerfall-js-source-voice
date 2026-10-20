@@ -7,7 +7,7 @@
 // Without --write it checks: everything below is computed and compared, byte for byte, with what the tree carries,
 // and a difference is an error. With --write it writes. What it writes, and why each is what it is:
 //
-// - vendor/daggerfall-enemy-expansion/: the bundle's own text, verbatim - the manifest, modsettings.json, the five
+// - vendor/daggerfall-enemy-expansion/: the bundle's own text, verbatim - the manifest, modsettings.json, the six
 //   tables, SpellRecords.json, the troll corpse prefab's imported components, the 1,130 xml files (as one
 //   `Textures/xml.json`, name -> text) - and the compiled assembly, byte for byte (the C# beside it is the authors'
 //   repository at the commit the README names; test/systems/dex0_record.test.js proves the two agree).
