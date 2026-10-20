@@ -16,13 +16,20 @@ export const CABIN_REFUSAL = Object.freeze({
   helm: 'Leave the helm before entering the cabin.',
   aboard: 'Board your ship before entering the cabin.',
   unavailable: 'This ship\'s cabin is unavailable.',
+  enemies: 'You cannot enter the cabin with enemies nearby.',   // FB1020c CABIN-FOES, the house's own shape (portalStone.js, travelView.js)
 });
 
 // Rechecked on press: a picker may have been open while the boat or player moved.
-export function cabinEntryRefusal(boat, { boats = [], sailing = false, disembarking = false, aboard = false } = {}) {
+// FB1020c CABIN-FOES (the field, 2026-10-20: "you can despawn pirates by entering your cabin on a ship"): `hostile` - a
+// hostile ship within the sea's reach of the player on her deck (scenes/naval/navalHost.js hostileNear, HOSTILE_NEAR_M).
+// The cabin is an interior, and every interior transition empties the sea (scenes/world.js navalTransition - NAV-H: "a
+// building has no sea"): its ships dropped, a boarding's raid withdrawn. The door was the one way off the sea that never
+// asked what the rest, the journey, the time scale and the yard ask, so it took every pirate from the sea for good.
+export function cabinEntryRefusal(boat, { boats = [], sailing = false, disembarking = false, aboard = false, hostile = false } = {}) {
   if (!boats.includes(boat) || !hasSailingCabin(boat) || !boat.GameObject?.activeSelf) return CABIN_REFUSAL.unavailable;
   if (sailing || disembarking) return CABIN_REFUSAL.helm;
   if (!aboard) return CABIN_REFUSAL.aboard;
+  if (hostile) return CABIN_REFUSAL.enemies;
   return null;
 }
 

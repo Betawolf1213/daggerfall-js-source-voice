@@ -308,7 +308,7 @@ import { WARDEN_VENDOR } from '../systems/wagon/wagonWarden.js';   // WARDEN1: t
 import { townGroundOf, yardSitesOn, craftYardSitesOn, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYards/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
 import { isPortTown, isPortTownType, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
-import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
+import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea, SEA_RING } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
 import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
 import { createHarbourBook } from '../systems/naval/harbourBook.js';   // HARBOUR-BOOK: the harbours near the player, the quays' and the sea's
@@ -619,7 +619,7 @@ import { createComeSailAwayAboard, CSA_ABOARD_GRACE, deckPose as csaDeckPose, he
 import { csaWireRecord, csaRecordKey } from '../systems/comeSailAway/comeSailAwayWire.js';   // CSA-J: my boats, said
 import { boatTriggers, boatMenuRows, boatMenuStart, pressBoatVerb, BOAT_VERB } from '../systems/comeSailAway/csaBoatMenu.js';   // BOAT-MENU: a boat of mine's verbs on the plaque
 import { linkBankCabin, readBankCabinLink, bankCabinCandidates } from '../systems/boatCabinOwnership.js';
-import { hasSailingCabin, savedCabinBoat, cabinSceneName } from '../systems/sailingCabin.js';
+import { hasSailingCabin, savedCabinBoat, cabinSceneName, CABIN_REFUSAL } from '../systems/sailingCabin.js';
 import { createSailingCabinAccess } from './sailingCabin.js';
 import { createCaravanAccess, parkedCaravanAt } from './caravanRoom.js';   // WAGONS1: the caravan's room
 import { createWagonRiders, GO_LEAD_MS } from './wagon/wagonRiders.js';   // WAGONS1: the seats in the back
@@ -8057,7 +8057,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const sailingCabins = createSailingCabinAccess({
     available: () => !!csaRuntime && csaOn(),
     boats: () => csaRuntime?.AllBoats ?? [], mode: () => modes?.mode ?? 'exterior', busy: () => worldMoveBusy(),
-    sailing: () => !!csaRuntime?.isSailing(), disembarking: () => !!csaRuntime?.state.disembarking,
+    csa: () => csaRuntime, hostile: navalHostileNear,   // FB1020c CABIN-FOES: the helm read off the runtime; no cabin with a hostile ship near (scenes/sailingCabin.js)
     aboard: csaStandsOn,
     peerBoat: (owner, uid) => csaPeers.boatByUid(owner, uid),
     boardPeer: (boat) => csaAboard.board(boat, CSA_ABOARD_GRACE),
@@ -9166,7 +9166,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _navalPortList = [...out.values()];
     return _navalPortList;
   };
-  /** CAPT-BOARD: the map's port within a pixel of the player (the nearest), or null - asked once a pixel. */
+  /** CAPT-BOARD: the map's port within a pixel of the player (the nearest), or null - asked once a pixel. FB1020c
+   *  BERTH-RING (the field: the tutorial's "sail from one harbor to another" never registered): WITHIN SEA_RING - the
+   *  ring the port law itself reads (world/portSites.js seaBears: a port town is one the open sea bears on within it).
+   *  One pixel was the berth's ring, and the shore DFU's kernel builds lies past it at twelve of the board's ports - no
+   *  water a Small Ship lies in within a pixel (Wayrest among them; Daggerfall, Holwych, Ripmore, Isfakabi, Pencart,
+   *  Aldbrugh and Gallocart have none at all): no berth ever named them - a voyage into or out of one, a cargo for one, a
+   *  shipwright there. Within SEA_RING every one of the 106 has it; the nearest port within it names each. */
   let _navalPortHereAt = null;
   const navalPortHere = () => {
     const p = playerTravelPixel(), key = `${p.x},${p.y}`;
@@ -9177,7 +9183,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       _navalPortHereAt = { key, port: isle ? etherPortOf(isle) : null };
       return _navalPortHereAt.port;
     }
-    for (const q of navalPortList()) { const d = Math.max(Math.abs(q.px - p.x), Math.abs(q.py - p.y)); if (d <= 1 && d < best) { best = d; port = q; } }
+    for (const q of navalPortList()) { const d = Math.max(Math.abs(q.px - p.x), Math.abs(q.py - p.y)); if (d <= SEA_RING && d < best) { best = d; port = q; } }
     _navalPortHereAt = { key, port };
     return port;
   };
@@ -9221,8 +9227,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // not built reads as land, so a harbour sounded early found its shore at the streamed world's edge and two players
     // arriving by different roads found different berths and stood different quays; asked only before it is sounded
     const reach = t.reach ?? HARBOUR_REACH;   // AUDIT CAPTAIN'S SEA H1: an isle port's sounding reaches its shore
-    const ready = () => {
-      const x0 = rect.minX - reach, z0 = rect.minZ - reach, sx = rect.maxX - rect.minX + 2 * reach, sz = rect.maxZ - rect.minZ + 2 * reach;
+    const ready = (r = reach) => {   // FB1020c HARBOUR-REACH: or the port law's ring's (systems/naval/harbourBook.js portRingReach)
+      const x0 = rect.minX - r, z0 = rect.minZ - r, sx = rect.maxX - rect.minX + 2 * r, sz = rect.maxZ - rect.minZ + 2 * r;
       const nx = Math.ceil(sx / 400), nz = Math.ceil(sz / 400);   // under 400 m apart, both edges read: no pixel (819.2 m) between two
       for (let i = 0; i <= nx; i++) for (let k = 0; k <= nz; k++) if (!csaPixelAt(x0 + (sx * i) / nx, z0 + (sz * k) / nz)) return false;
       return true;
@@ -9579,7 +9585,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       dir: [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)],
     }),
     level: () => playerEntity.level ?? 1,
-    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: nearPort ? navalPortHere() : null, waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Eltheric Ocean's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
+    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: navalPortHere(), waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Eltheric Ocean's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at (FB1020c BERTH-RING: a board port within SEA_RING, nearPort or not - navalHost.js inPortWaters)   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
     say: (text, seconds) => townTalk.say(text, seconds),
     mid: (text, seconds) => setMidScreenText(text, seconds),
     shake: (amount) => betterAmbience.weaponKick(amount),   // FIELD-GUN6's door: a shake that is not a wound, under the player's own maxShake
@@ -14090,7 +14096,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (link.type !== playerEntity.ownedShip) return false;
     const boat = csaRuntime.AllBoats.find((b) => b.uid === link.uid && b.hull === link.hull && !b.inside);
     if (!boat?.MapPixel) { townTalk.say('Summon your linked ship from Holdings > Fleet, or place its parts, first.'); return true; }
-    if (csaRuntime.isSailing()) { townTalk.say('Leave the helm before entering the cabin.'); return true; }
+    if (csaRuntime.isSailing() || navalHostileNear()) { townTalk.say(csaRuntime.isSailing() ? CABIN_REFUSAL.helm : CABIN_REFUSAL.enemies); return true; }   // FB1020c CABIN-FOES: nor below from a deck a hostile ship is near - the door's own law (systems/sailingCabin.js)
     modes?.forceExitToExterior({ cacheScene: !loading });
     cabinLink.close();
     const wasMoving = _teleporting; _teleporting = true;
