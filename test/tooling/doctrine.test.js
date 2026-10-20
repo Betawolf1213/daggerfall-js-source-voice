@@ -765,6 +765,27 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/grass/source/flowers.png', "SUPPLIED - Mac's flower tuft for the meadow grass (MEADOW1, 2026-10-06), 32x32 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
   ['src/assets/grass/source/tuft-dry.png', "SUPPLIED - Mac's dry grass tuft for the meadow grass (MEADOW1, 2026-10-06), 32x32 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
   ['src/assets/grass/source/bush.png', "SUPPLIED - Mac's bush for the meadow grass (MEADOW1, 2026-10-06), 64x64 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
+  // BANTHA1 (2026-10-18, the owner: "Using the attached file, populate the area in a dense jungle like format"): THE
+  // JUNGLE'S FIVE TREES, supplied as jungle_trees.zip - each a Blender 5.2 OBJ, its MTL and its one 252x164 picture -
+  // committed as the owner handed them over, byte for byte. They ship as they are: systems/jungleTreesAssets.js fetches
+  // them and world/jungle/jungleModels.js reads them at run time (no bake), and test/world/bantha1_jungle.test.js reads
+  // the same bytes. The owner's own art for their biome - the pictures included, recorded 2026-10-18 at the audit's
+  // opening (the owner: "These textures are ours"; bible/03-World/Bantha-Jungle.md): no pixel of them is ARENA2's.
+  ['src/assets/jungle/source/jungle_tree.obj', "SUPPLIED - the owner's banyan for the Jungle of Bantha (BANTHA1, 2026-10-18), the owner's Blender 5.2 OBJ export as handed over - geometry only, read at run time by world/jungle/jungleModels.js"],
+  ['src/assets/jungle/source/jungle_tree.mtl', "SUPPLIED - the owner's banyan's material (BANTHA1, 2026-10-18), as handed over - it names the picture its tree is cut from"],
+  ['src/assets/jungle/source/jungle_tree_252w.png', "SUPPLIED - the owner's banyan picture for the Jungle of Bantha (BANTHA1, 2026-10-18), 252x164 RGBA cut by its alpha, the owner's own PNG bytes as handed over - the owner's art (the owner, 2026-10-18: \"These textures are ours\" - no ARENA2 pixel)"],
+  ['src/assets/jungle/source/jungle_tree2.obj', "SUPPLIED - the owner's kapok for the Jungle of Bantha (BANTHA1, 2026-10-18), the owner's Blender 5.2 OBJ export as handed over - geometry only, read at run time by world/jungle/jungleModels.js"],
+  ['src/assets/jungle/source/jungle_tree2.mtl', "SUPPLIED - the owner's kapok's material (BANTHA1, 2026-10-18), as handed over - it names the picture its tree is cut from"],
+  ['src/assets/jungle/source/jungle_tree2_252w.png', "SUPPLIED - the owner's kapok picture for the Jungle of Bantha (BANTHA1, 2026-10-18), 252x164 RGBA cut by its alpha, the owner's own PNG bytes as handed over - the owner's art (the owner, 2026-10-18: \"These textures are ours\" - no ARENA2 pixel)"],
+  ['src/assets/jungle/source/jungle_tree3.obj', "SUPPLIED - the owner's fig for the Jungle of Bantha (BANTHA1, 2026-10-18), the owner's Blender 5.2 OBJ export as handed over - geometry only, read at run time by world/jungle/jungleModels.js"],
+  ['src/assets/jungle/source/jungle_tree3.mtl', "SUPPLIED - the owner's fig's material (BANTHA1, 2026-10-18), as handed over - it names the picture its tree is cut from"],
+  ['src/assets/jungle/source/jungle_tree3_252w.png', "SUPPLIED - the owner's fig picture for the Jungle of Bantha (BANTHA1, 2026-10-18), 252x164 RGBA cut by its alpha, the owner's own PNG bytes as handed over - the owner's art (the owner, 2026-10-18: \"These textures are ours\" - no ARENA2 pixel)"],
+  ['src/assets/jungle/source/jungle_tree4.obj', "SUPPLIED - the owner's flame tree for the Jungle of Bantha (BANTHA1, 2026-10-18), the owner's Blender 5.2 OBJ export as handed over - geometry only, read at run time by world/jungle/jungleModels.js"],
+  ['src/assets/jungle/source/jungle_tree4.mtl', "SUPPLIED - the owner's flame tree's material (BANTHA1, 2026-10-18), as handed over - it names the picture its tree is cut from"],
+  ['src/assets/jungle/source/jungle_tree4_252w.png', "SUPPLIED - the owner's flame tree picture for the Jungle of Bantha (BANTHA1, 2026-10-18), 252x164 RGBA cut by its alpha, the owner's own PNG bytes as handed over - the owner's art (the owner, 2026-10-18: \"These textures are ours\" - no ARENA2 pixel)"],
+  ['src/assets/jungle/source/jungle_tree5.obj', "SUPPLIED - the owner's mahogany for the Jungle of Bantha (BANTHA1, 2026-10-18), the owner's Blender 5.2 OBJ export as handed over - geometry only, read at run time by world/jungle/jungleModels.js"],
+  ['src/assets/jungle/source/jungle_tree5.mtl', "SUPPLIED - the owner's mahogany's material (BANTHA1, 2026-10-18), as handed over - it names the picture its tree is cut from"],
+  ['src/assets/jungle/source/jungle_tree5_252w.png', "SUPPLIED - the owner's mahogany picture for the Jungle of Bantha (BANTHA1, 2026-10-18), 252x164 RGBA cut by its alpha, the owner's own PNG bytes as handed over - the owner's art (the owner, 2026-10-18: \"These textures are ours\" - no ARENA2 pixel)"],
   // COATS3D (2026-10-11, the owner: "The first image is for the horse itself and the second is for the tail"): THE
   // COURSER, a rigged horse supplied as five saves of one Blender rig and two pictures painted for its own UV layout -
   // the newest whole save committed, as the ships' and the wagons' scenes are. tools/bakeHorse.mjs re-makes
@@ -843,6 +864,8 @@ test('doctrine: no raster of game data is tracked anywhere in the repo', () => {
 const VE4_DERIVED = "Port-Doctrine's one exception (Mac, 2026-10-05): Daggerfall's own textures, repainted by the mod's author, carried on Mac's approval";
 /** ALIKR1 / SNOWFALL1: the second exception's mark - the desert's and the winter's ground, its own approval. */
 const ENVIRONS_DERIVED = "Port-Doctrine's second exception (Mac, 2026-10-08): Daggerfall's own desert and winter ground tiles, repainted by the packs' authors, carried on Mac's approval";
+/** LAYERED-GEAR: the third exception's mark - the game's own worn armor, drawn from Daggerfall's sprites, its own approval. */
+const LAYERED_DERIVED = "Port-Doctrine's third exception (the owner, 2026-10-19): the Layered Gearing look's armor, drawn for the game from Daggerfall's own class and enemy sprites, carried on the owner's approval";
 const BUNDLE_ART = new Map([
   // FORAGE1 (2026-09-28): Foraging's seven pictures - the author's own
   // pixel art (tools, a wood bundle, an egg), no Daggerfall record - taken
@@ -965,6 +988,12 @@ const BUNDLE_ART = new Map([
   ['public/art/snowfall/',
     { manifest: 'vendor/snowfall/snowfall.files.json', derived: ENVIRONS_DERIVED,
       why: "THIRD-PARTY - Snowfall 1.0.5 (demifiend000), carried on Mac's word of the author's permission; the 168 winter ground records its bundle packages (TEXTURE.103, .303, .403 - Daggerfall's winter tiles under the author's snow), its snow albedo and its three surface masks, decoded losslessly from the bundle's Texture2D and TextAsset objects (see vendor/snowfall/README.md)" }],
+  // LAYERED-GEAR (2026-10-19, the owner: "Approve as an exception"): THE THIRD EXCEPTION - the worn-armor strips, the
+  // cloak layer and the hood fixes, DFO's own work but drawn from Daggerfall's sprites, so derived. No bundle ships a
+  // manifest for them: the folder answers to the listing tools/layered-armor/listing.mjs writes (every picture, its sha256).
+  ['vendor/layered-armor/',
+    { manifest: 'vendor/layered-armor/layered-armor.files.json', derived: LAYERED_DERIVED,
+      why: "OURS - Layered Gearing (DFO, made for the game), carried under the owner's third exception; the worn-armor strips of both bodies, the cloak layer and the hood fixes, drawn from Daggerfall's class sprites 1540/1541 and the enemy frames of TEXTURE.475-490 - the 7,369 PNGs its listing names (see vendor/layered-armor/README.md)" }],
   // WINDFALL1: the mod's own three pictures - leaves and a snowflake, the author's pixels (no Daggerfall record).
   ['vendor/windfall/Textures/',
     { manifest: 'vendor/windfall/windfall.files.json',
@@ -1017,7 +1046,7 @@ test('doctrine EOTB0: a vendored bundle\u2019s art is the art its own manifest n
     const names = bundleNames(dir);
     const here = tracked('.').filter((f) => f.startsWith(dir));
     assert.ok(here.length > 0, `${dir} has a row and no files - a claim about art that is not there`);
-    assert.ok(rec.why.startsWith('THIRD-PARTY'), `${dir} must say whose art it is`);
+    assert.match(rec.why, /^(THIRD-PARTY|OURS) - /, `${dir} must say whose art it is`);   // LAYERED-GEAR: the game's own, derived
 
     // Nothing under the directory that the bundle did not ship. This is
     // the arm that makes the directory row safe: it is not "anything
@@ -1059,21 +1088,24 @@ test('doctrine EOTB0: the derivation is not vacuous - a stranger and a loss both
 // approved: the doctrine's exception paragraph names the directory, and a
 // derived row anywhere else, or a named directory with no row, reddens.
 const DOCTRINE = 'bible/01-Overview/Port-Doctrine.md';
-/** The directories Port-Doctrine's exception paragraph names - every backticked `public/` path on its line. */
+/** The directories Port-Doctrine's exception paragraphs name - every backticked `public/` or `vendor/` path on their lines. */
 function exceptionDirs() {
-  // ALIKR1/SNOWFALL1: every exception paragraph's line - THE ONE EXCEPTION (Vanilla Enhanced) and THE SECOND EXCEPTION
-  const lines = readFileSync(join(root, DOCTRINE), 'utf8').split('\n').filter((l) => /^\s+\*\*THE (?:ONE|SECOND) EXCEPTION\b/.test(l));
-  return lines.flatMap((line) => [...line.matchAll(/`(public\/[^`]+\/)`/g)].map((m) => m[1]));
+  // ALIKR1/SNOWFALL1: every exception paragraph's line - THE ONE EXCEPTION (Vanilla Enhanced) and THE SECOND EXCEPTION;
+  // LAYERED-GEAR: and THE THIRD, whose art sits under vendor/ (the build reaches it through a glob, as Eye of the Beholder's)
+  const lines = readFileSync(join(root, DOCTRINE), 'utf8').split('\n').filter((l) => /^\s+\*\*THE (?:ONE|SECOND|THIRD) EXCEPTION\b/.test(l));
+  return lines.flatMap((line) => [...line.matchAll(/`((?:public|vendor)\/[^`]+\/)`/g)].map((m) => m[1]));
 }
 /** The mark each directory's approval gave it: Vanilla Enhanced's rows the first exception's, the environment packs' the
- *  second's - a row in one exception wearing the other's mark is a row approved by the wrong approval. */
-const markFor = (dir) => (dir.startsWith('public/art/vanilla-enhanced/') ? VE4_DERIVED : ENVIRONS_DERIVED);
+ *  second's, Layered Gearing's the third's - a row in one exception wearing another's mark is a row approved by the wrong
+ *  approval. */
+const markFor = (dir) => (dir.startsWith('public/art/vanilla-enhanced/') ? VE4_DERIVED
+  : dir.startsWith('vendor/layered-armor/') ? LAYERED_DERIVED : ENVIRONS_DERIVED);
 /** The derived rows standing outside every directory the exception names. */
 const derivedOutside = (rows, dirs) => [...rows].filter(([dir, r]) => r.derived && !dirs.some((d) => dir.startsWith(d))).map(([dir]) => dir);
 
 test('doctrine VE4: a derived row stands inside the exception Port-Doctrine records, and every row inside it says it is derived', () => {
   const dirs = exceptionDirs();
-  assert.deepEqual(dirs, ['public/art/vanilla-enhanced/', 'public/art/sands-of-the-alikr/', 'public/art/snowfall/'], 'the doctrine names three directories, under two approvals');
+  assert.deepEqual(dirs, ['public/art/vanilla-enhanced/', 'public/art/sands-of-the-alikr/', 'public/art/snowfall/', 'vendor/layered-armor/'], 'the doctrine names four directories, under three approvals');
   assert.deepEqual(derivedOutside(BUNDLE_ART, dirs), [], 'repainted game data outside the approved directory');
   for (const d of dirs) assert.ok([...BUNDLE_ART].some(([dir, r]) => r.derived && dir.startsWith(d)), `${d} is approved and no row carries it`);
   // and inside it nothing passes as the port's own: every row there says what it is
