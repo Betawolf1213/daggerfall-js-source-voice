@@ -1988,7 +1988,8 @@ first cut that set the body on any floor the head grounded on
 teleported the F5 stand onto its ceiling and was dropped). The swim
 stance's zero axis makes the two spheres one, and that one is the
 lower. `ridePlatform` (`scenes/shared.js`) resolves the rider with
-`player.height`, not the standing default. Measured after: feet 0.36
+`player.height`, not the standing default (MOVER-BODY, below, retired
+it: the mover carries the body itself, its own stance). Measured after: feet 0.36
 and 0.60 below a floor are on it within two steps; a lift at 0.40 and
 0.60 a frame carries its rider. Left open, its own slice: a body
 already a whole capsule deep (a load inside geometry, a mover past 0.7
@@ -2327,3 +2328,68 @@ was the port's one guard against a late arrival, a fast-travel landing's alone.
 
 `test/scenes/decor/fb1019b_decorclear.test.js` (7, the real motor and collider), `tools/mutants/decorclear.json` (28: 27
 dead, 1 equivalent as recorded); `tools/mutants/unstuckout.json`'s head record re-aimed to the height (7, all dead).
+
+## MOVER-BODY - a mover never closes on the body (FIELD BUGS 2026-10-19b)
+
+Two players' private reports: stuck in a dungeon's lift; out of the map when a floor lowered onto them while they swam
+in a dungeon's water. A mover (`world/actionSystem.js`, DaggerfallAction's Move tween) stood its collider bucket again at
+every frame's pose and asked nothing of the body. The ride was the host's (`ridePlatform`, PH1 above): a body STANDING
+on the mover moved the next frame by its last delta, through a sweep that stops at whatever blocks it - while the mover
+itself never stopped. A rider whose head met a lip stopped; its lift rose on into it, and the rider was left inside the
+lift and the floor above, held by both their inner faces (the collider is two-sided): measured, feet 2.72 with the
+lift's top at 4, every walk and jump moving it nothing. A swimmer under a lowering floor stood on nothing of it, so the
+floor came down through the body (feet -0.35 under a floor whose top is 0) and a stroke down from there left the world.
+
+DFU is the reference and has no rule here: TweenToEnd/TweenToStart hand iTween a linear MoveTo and RotateBy and the tween
+plays out whatever is in the way (DaggerfallAction.cs); PlayerGroundMotor.MoveWithMovingPlatform carries the body its
+controller last landed on - the platform's point under it, moved (`activePlatform.TransformPoint`), through one
+CharacterController.Move - and a body the mover meets otherwise is PhysX's overlap recovery's. The port's law
+(`player/moverBody.js`, `world/actionSystem.js _standMover`), the mover's every step:
+
+- **Met where it steps.** The action system takes the body (`update(dt, body)`: worldModes hands it the player for the
+  dungeon's movers and the building's, the standalone dungeon its walking player) and meets it as each mover's bucket
+  is stood at its new pose. A body standing on the mover (`groundKey`) or pressed by the new pose (`moverPresses`: a face
+  more than `MOVER_PRESS`, 1 mm, inside the capsule's chain) is carried by the mover's own motion at its centre
+  (`carriedBy` - MoveWithMovingPlatform's adhesion, a turn's sweep as well as a slide, from any side: pushed up, down or
+  aside), in one bare Move through everything but the mover (no ground snap: a snap to the floor under a plate coming
+  down flush took the rider off it), the body's own stance (`body.height`), its render span and its fall with it
+  (`carryBy`, the deck's and the Steps' carry).
+- **Held where it pins.** If the pose still presses the body after the carry - the sweep stopped short, the body
+  between the mover and the world - the mover HOLDS at its last pose that closed on nobody, its `t` with it: the tween
+  waits, and plays on once the body is clear (a step off the lift, a stroke out from under the slab). A DEPARTURE from
+  DaggerfallAction's tween, which never stops (Port-Ledger A, MOVER-BODY). A body the mover already pressed where it
+  stood - a load, a snap - is no reason to hold it (`before`).
+- **In steps.** A frame's tween is met in pieces no longer than `MOVER_STEP` (half the capsule's radius) of its motion
+  at the body (`moverSteps`, at most `MOVER_STEPS_MAX`), so a fast mover in a starved frame crosses no body unmet; a body
+  nowhere its step could reach costs the mover nothing past its own stand.
+
+The host-side ride is gone (`ridePlatform`, and the `frameDelta` it read): the carry happens where the mover moves, in
+either host's order, the render eye with it. Measured through the real motor: a rider carried up, down and aside to
+the bit and grounded at every frame (60 Hz and 0.1 s frames, either order); the lift under a 0.6 m lip holds with the
+rider's head at the lip and finishes, carrying it, once it steps toward the shaft's middle; the slab holds over the
+swimmer's head (0.9) and over a walker's (1.8), and settles once they are clear. Left as it was: a door is not met (its
+swing is a trigger while it moves and solid only closed, DFU's MakeTrigger; a Move-flagged door's record carries its
+closed bucket as before), a zero-duration flip and a load's or a peer's snap are placements, not motion, and a foe is
+neither carried nor holds a mover (EnemyMotor rides no platform). THE FOUR HOSTS: `scenes/worldModes.js` wired (the
+dungeon's movers and the building's, for `world.js` and `exterior.js` alike), `scenes/dungeon.js` (the standalone
+dungeon) wired; `scenes/dungeonContext.js` and `scenes/interiorContext.js` build the action systems and need nothing.
+
+Pinned: `test/world/fb1019b_moverbody.test.js` (with VOID-DUNGEON below; the movers minted by `layoutRdbBlock`, the real
+Collider and motor). PIN MOVED: `test/scenes/audit18_hosts_outer.test.js` (the ride is the movers' own; both hosts
+hand them the body), `test/player/ph1_physics.test.js` (the carry's own stance), `test/scenes/waveD_dungeonHost.test.js`
+(a flat is no platform: no bucket), `test/world/superDungeon/sd7b_steps.test.js` (the Steps ride before the motor).
+
+## VOID-DUNGEON - the dungeon's failsafe (FIELD BUGS 2026-10-19b)
+
+VOID-ENTRY (FIELD BUGS 2026-10-04d) stood a body that fell below everything a building stands on back at its door; a
+dungeon had nothing. Its collider has no ground (`heightAt` -Infinity), so a body out of its floor - the lowering
+floor's swimmer above, a save made there - fell or swam on for good, and `/unstuck`, which leaves by the door
+underground, waits out its cooldown (PVPUNSTUCK's). Now the context keeps VOID-ENTRY's record (`voidRescue`,
+`player/enterExit.js dungeonVoidRescue`), made the first time a frame asks - so the floors a host stands into the dungeon
+after its build (the Burning Court's) are under it - and kept: where the dungeon stands a body it places (its start
+marker's landing, by the way in, else its enter marker's: `startSpawn`), and `INTERIOR_VOID_DROP` (10 m) under its
+lowest triangle. Both dungeon hosts' frames ask it (`worldModes.js`, the else of the dungeon arm's drain, VOID-ENTRY's
+shape; `dungeon.js`, where the motor walks) and stand such a body there, its fall cleared, with a line of the port's own
+in the player's language (`player.dungeonVoid`, "There was no floor beneath you. You are back at the entrance."). A
+realm that casts its own void back keeps no record - the Hour's Unmoored Steps (SD7b) and an Elite Breach's spans (EG
+section 8) cost what their own laws say. DFU has no failsafe. Pinned by `test/world/fb1019b_moverbody.test.js`.

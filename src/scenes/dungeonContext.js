@@ -244,7 +244,7 @@ import {
   RANDOM_TREASURE_MARKER_RECORD, DUNGEON_LOOT_KEYS, shownSpellName,   // L10N3e: a spell's name as shown
 } from '../systems/loot/loot.js';
 import { peerHanded, notCarried } from '../systems/peerWord.js';   // SS3: a bound piece in the room's containers, or on a body, never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
-import { floorLanding, closestDoorTo } from '../player/enterExit.js';   // DE1: TransitionDungeonInterior orients away from the door it came through
+import { floorLanding, closestDoorTo, dungeonVoidRescue } from '../player/enterExit.js';   // DE1: TransitionDungeonInterior orients away from the door it came through; VOID-DUNGEON: the failsafe's record
 import { trs, multiply, identity, UP_Y } from '../world/mat4.js';
 import { StaticBatchBuilder, keyResolver, SHADOW_CELL_SIZE } from '../render/staticBatch.js';   // PERF5: the level's static models as one mesh; LA-AUDIT A1: with its shadow cells
 import { Collider } from '../player/collider.js';
@@ -9412,6 +9412,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (!m) return null;
       return floorLanding(collider, [m.x, m.y + 1.08, m.z]);
     },
+    /** FIELD BUGS 2026-10-19b VOID-DUNGEON (player/enterExit.js dungeonVoidRescue): VOID-ENTRY's failsafe record for this
+     *  dungeon, asked by the hosts' frames - where it stands a body that fell below everything it stands on (the start
+     *  marker's landing, by the way in, else the enter marker's); none in a realm that casts its own void back. */
+    voidRescue: dungeonVoidRescue(collider, () => api.startSpawn({ preferEnterMarker: false }) ?? api.startSpawn(), _sdRealm || _egHall),
     /** Verbatim TransitionDungeonInterior's orientation half
      *  (:936-952): the player faces the NORMAL of the nearest dungeon
      *  exit door, which points into the dungeon - so you come through
