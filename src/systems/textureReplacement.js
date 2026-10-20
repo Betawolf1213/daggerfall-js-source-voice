@@ -378,16 +378,20 @@ const measuredOf = (archive, record) => {
  *  Clear, 1x1, and `pending`: the renderer uploads nothing for it and keeps nothing at the key (render/renderer.js
  *  uploadTexture), so the draw that wanted it asks again, and calls `pending()` - the decode, asked once the key is found
  *  empty, never for a key the GPU still holds - the frame's emission map first, so the albedo never lands without it
- *  (the pipeline uploads a frame's map beside its albedo only, scenes/dataPipeline.js uploadRecordFrame). One a frame. */
+ *  (the pipeline uploads a frame's map beside its albedo only, scenes/dataPipeline.js uploadRecordFrame). One a frame,
+ *  one ask at a time; a picture that will not decode is asked no more until the tiers move (tierChanged). */
 const _pending = new Map();   // textureKey -> its placeholder
 const CLEAR_TEXEL = new Uint8ClampedArray(4);
 function pendingPicture(archive, record, frame) {
   const key = textureKey(archive, record, frame);
   let p = _pending.get(key);
   if (!p) {
+    let asking = false;
     p = Object.freeze({ width: 1, height: 1, colors: CLEAR_TEXEL, pending: () => {
+      if (asking) return;
+      asking = true;
       const lit = _vendor.has(textureKey(archive, record, frame, 'Emission')) ? preloadTextureRecord(archive, record, frame, 'Emission') : Promise.resolve(null);
-      lit.then(() => preloadTextureRecord(archive, record, frame));
+      lit.then(() => preloadTextureRecord(archive, record, frame)).then((c32) => { if (c32) asking = false; });
     } });
     _pending.set(key, p);
   }
@@ -584,6 +588,7 @@ function tierChanged() {
   _tierGen++;
   for (const [k, src] of [..._decodedFrom]) if (!sourceRegistered(k, src)) dropDecoded(k);
   for (const [k, r] of [..._released]) if (!sourceRegistered(k, r.src)) _released.delete(k);   // AUDIT DEX B5
+  _pending.clear();   // AUDIT DEX B5: a picture that would not decode is asked again under the new tiers
 }
 /** AUDIT VE R1: what a scene's decoded archives are current with - every tier's registrations and Replace Game Artwork.
  *  A scene preloads an archive's pictures once; when this moves, its next ask of the archive decodes what answers now,

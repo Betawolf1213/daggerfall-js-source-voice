@@ -219,6 +219,25 @@ test('DEX2 A MOBILE\'S PICTURES ARE THE GPU\'S ONCE UPLOADED (AUDIT DEX B5): the
   assert.equal(decodedTextureBytes() - before, 0);
 });
 
+test('DEX2 a readOnly picture on its way is asked once at a time, and one that will not decode is asked no more until the tiers move (AUDIT DEX B5; mutant: asked every frame)', async (t) => {
+  t.after(() => clearVendorTextures());
+  clearVendorTextures();
+  let loads = 0;
+  addVendorTextures([{ archive: 9701, record: 0, frame: 0, standIn: true, readOnly: true, load: async () => { loads++; return new Uint8Array(0); } }]);   // a file that will not decode
+  await preloadTextureArchive(9701);
+  assert.equal(loads, 1, 'the archive\'s load');
+  const stand = vendorTextureStandIn(9701);
+  const p = stand.getColor32(stand.getDFBitmap(0, 0));
+  assert.equal(typeof p.pending, 'function', 'a picture on its way');
+  assert.deepEqual([p.width, p.height, [...p.colors]], [1, 1, [0, 0, 0, 0]], 'clear');
+  for (let i = 0; i < 5; i++) { p.pending(); await landed(); }   // five frames, each finding its key empty
+  assert.equal(loads, 2, 'asked once, and not again when it would not decode');
+  addVendorTextures([{ archive: 9701, record: 1, frame: 0, standIn: true, load: async () => new Uint8Array(0) }]);   // the tiers move
+  stand.getColor32(stand.getDFBitmap(0, 0)).pending();
+  await landed();
+  assert.equal(loads, 3, 'asked again under the new tiers');
+});
+
 test('DEX2 the install registers the pictures at Start, whatever the switch; a frame\'s emission map rides beside it in the pipeline (by source)', () => {
   assert.match(rd('src/systems/enemyExpansion/dexInstall.js'), /registerCustomEnemyName\([^\n]*\n {2}installDexSprites\(\);/, 'in the ALWAYS half, beside the names');
   const pipe = rd('src/scenes/dataPipeline.js');

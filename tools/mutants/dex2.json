@@ -202,8 +202,8 @@
  {
   "name": "DEX2-the-map-after-its-albedo",
   "file": "src/systems/textureReplacement.js",
-  "old": "      lit.then(() => preloadTextureRecord(archive, record, frame));",
-  "new": "      preloadTextureRecord(archive, record, frame);",
+  "old": "      lit.then(() => preloadTextureRecord(archive, record, frame)).then(",
+  "new": "      preloadTextureRecord(archive, record, frame); lit.then(() => null).then(",
   "why": "AUDIT DEX B5: an evicted frame's albedo lands before its emission map and is uploaded unlit for good",
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
@@ -215,6 +215,16 @@
   "old": "      if (_vendor.get(key)?.readOnly) return _decoded.get(key) ?? pendingPicture(archive, r, f);\n",
   "new": "",
   "why": "AUDIT DEX B5: a readOnly frame asked again answers another record's picture (or nothing, and the upload throws)",
+  "tests": [
+   "test/systems/enemyExpansion/dex2_sprites.test.js"
+  ]
+ },
+ {
+  "name": "DEX2-a-pending-picture-asked-every-frame",
+  "file": "src/systems/textureReplacement.js",
+  "old": "      if (asking) return;\n",
+  "new": "",
+  "why": "AUDIT DEX B5: a readOnly picture that will not decode is fetched and decoded again every frame a foe draws it",
   "tests": [
    "test/systems/enemyExpansion/dex2_sprites.test.js"
   ]
