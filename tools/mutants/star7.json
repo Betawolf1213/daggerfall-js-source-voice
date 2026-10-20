@@ -1,0 +1,110 @@
+[
+ {
+  "name": "STAR7-the-amount",
+  "file": "src/net/marksLaw.js",
+  "old": "star: Object.freeze({ amount: 30 }),",
+  "new": "star: Object.freeze({ amount: 40 }),",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-caps-kinds",
+  "file": "src/net/marksLaw.js",
+  "old": "kinds: Object.freeze(['gate', 'raid', 'serpent', 'eg', 'star'])",
+  "new": "kinds: Object.freeze(['gate', 'raid', 'serpent', 'eg'])",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-day-the-claims",
+  "file": "server-account/src/stars.js",
+  "old": "const day = starDayOf(n, k);",
+  "new": "const day = Math.floor(nowS / 86400);",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-account-unchecked",
+  "file": "server-account/src/stars.js",
+  "old": "if (c.s !== player.id) return { error: 'not-yours' };\n  const [n, k] = c.sf;",
+  "new": "const [n, k] = c.sf;",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-a-guest-counted",
+  "file": "server-account/src/stars.js",
+  "old": "if (!player.handle) {   // a guest",
+  "new": "if (false) {   // a guest",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-spoils-unkeyed",
+  "file": "server-account/src/stars.js",
+  "old": "const spoils = thanks ? spoilsAnswer(res[8], cid) : false;",
+  "new": "const spoils = thanks;",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-day-bound-dropped",
+  "file": "server-account/src/stars.js",
+  "old": "WHERE (SELECT COUNT(*) FROM stars_held WHERE account = ?2 AND day = ?3) < ?8",
+  "new": "WHERE (SELECT COUNT(*) FROM stars_held WHERE account = ?2 AND day = ?3) < ?8 + 1",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-silver-unguarded",
+  "file": "server-account/src/marks.js",
+  "old": "star: (p) => `EXISTS (SELECT 1 FROM stars_held WHERE star = ?${p} AND account = ?1 AND nonce = ?${p + 1})`,",
+  "new": "star: (p) => `(?${p} IS NOT NULL OR ?${p + 1} IS NOT NULL)`,",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-cards-silent",
+  "file": "server-account/src/index.js",
+  "old": "sds: await sdRecordOf(ctx, who.player.id), stars: await starRecordOf(ctx, who.player.id), renown:",
+  "new": "sds: await sdRecordOf(ctx, who.player.id), renown:",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-public-card-silent",
+  "file": "server-account/src/index.js",
+  "old": "sds: await sdRecordOf(ctx, body.id), stars: await starRecordOf(ctx, body.id) }",
+  "new": "sds: await sdRecordOf(ctx, body.id) }",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-renown-unspent",
+  "file": "server-account/src/progress.js",
+  "old": "case '/v1/star/claim': if (a.recorded === true) add('renown', n(a.renown?.credited)); break;",
+  "new": "case '/v1/star/claim': break;",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ },
+ {
+  "name": "STAR7-the-cascade",
+  "file": "server-account/migrations/0140_stars_held.sql",
+  "old": "  PRIMARY KEY (star, account),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\n-- the day's bound",
+  "new": "  PRIMARY KEY (star, account),\n  FOREIGN KEY (account) REFERENCES players(id)\n);\n-- the day's bound",
+  "tests": [
+   "test/net/starfall/star7_service.test.js"
+  ]
+ }
+]
