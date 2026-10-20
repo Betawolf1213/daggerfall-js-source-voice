@@ -89,5 +89,29 @@
     "old": "  return (rows ?? []).filter((r) => r?.place?.dungeon?.size === 'full' && r.place.mapId === site.mapId);",
     "new": "  return (rows ?? []).filter((r) => r?.place?.dungeon?.size === 'full');",
     "tests": ["test/systems/legacy/fb1019f_heirwhole.test.js"]
+  },
+  {
+    "name": "AUDIT-FB1019f-B1-the-drawn-size",
+    "file": "src/world/smallerDungeons.js",
+    "old": "  return size !== 'full' && laidAnew(dfLocation, SIZE_THRESHOLD[size]) ? size : 'full';",
+    "new": "  return size;",
+    "tests": ["test/systems/legacy/fb1019f_heirwhole.test.js", "test/systems/quest/instances3_door.test.js"],
+    "why": "the finding: a site re-laid where the world only draws it smaller - a public room built whole offered an instance, its line false"
+  },
+  {
+    "name": "AUDIT-FB1019f-B1-the-thresholds-swapped",
+    "file": "src/world/smallerDungeons.js",
+    "old": "const SIZE_THRESHOLD = Object.freeze({ small: SMALLER_DUNGEON_THRESHOLD, medium: MEDIUM_DUNGEON_THRESHOLD });",
+    "new": "const SIZE_THRESHOLD = Object.freeze({ small: MEDIUM_DUNGEON_THRESHOLD, medium: SMALLER_DUNGEON_THRESHOLD });",
+    "tests": ["test/systems/legacy/fb1019f_heirwhole.test.js"],
+    "why": "a six-block dungeon drawn small called whole, an eight-block one drawn medium called re-laid"
+  },
+  {
+    "name": "AUDIT-FB1019f-B1-the-threshold-off-by-one",
+    "file": "src/world/smallerDungeons.js",
+    "old": "laidAnew(dfLocation, SIZE_THRESHOLD[size]) ? size",
+    "new": "laidAnew(dfLocation, SIZE_THRESHOLD[size] - 1) ? size",
+    "tests": ["test/systems/legacy/fb1019f_heirwhole.test.js"],
+    "why": "the plus and the eight-block shape, built whole, called re-laid"
   }
 ]

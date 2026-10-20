@@ -66,10 +66,12 @@ export function questInstanceEpoch(quest, random = randomEpoch) {
 }
 
 /**
- * HEIR-WHOLE (FIELD BUGS 2026-10-19f): THE LINE'S REMAINS THAT LIE IN THIS DUNGEON WHOLE, where the world lays its public
- * room smaller. A death records the size its dungeon was BUILT at (world.js legacyHere's `dungeon.size`), and the remains
- * stand only in a build of that size (legacyInDungeonOf: another size is another layout). A death in an instance - or in
- * a quest's dungeon entered whole - lies in the dungeon whole, which the public room of a re-laid dungeon never is, and
+ * HEIR-WHOLE (FIELD BUGS 2026-10-19f): THE LINE'S REMAINS THAT LIE IN THIS DUNGEON WHOLE, where the world builds its
+ * public room smaller (AUDIT FB1019f B1: `relaid` is the size built - a dungeon the world draws smaller but whose blocks
+ * are at or under that size's threshold is built whole in public, and its public room stands them). A death records the
+ * size its dungeon was BUILT at (world.js legacyHere's `dungeon.size`), and the remains stand only in a build of that size
+ * (legacyInDungeonOf: another size is another layout). A death in an instance - or in a quest's dungeon entered whole -
+ * lies in the dungeon whole, which the public room of a re-laid dungeon never is, and
  * another player's instance admits only its owner's party: so the death quest's place is "a dungeon with your quest", and
  * its door offers the heir an instance of their own - the dungeon whole, which stands them where they fell. `rows` are the
  * line's lying remains (scenes/legacyHost.js remainsWhere: `{ line, id, place }`; a place has a `dungeon` underground

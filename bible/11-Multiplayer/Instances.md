@@ -104,8 +104,13 @@ THE LAW is pure (instancePlaces.js):
   none.
 - **remainsWholeAt** (HEIR-WHOLE, FIELD BUGS 2026-10-19f, `01-Overview/bugs/Field-Bugs-2026-10-19f.md`; a player's
   ancestor died in another player's instance, and the inheritance never appeared at the spot): the line's remains still
-  lying (`scenes/legacyHost.js` remainsWhere) whose dungeon was built whole, at a dungeon the world lays smaller in public
-  (`dungeonSite`'s `relaid`), by its map id. A death records the size its dungeon was built at and its remains stand only
+  lying (`scenes/legacyHost.js` remainsWhere) whose dungeon was built whole, at a dungeon the world builds smaller in
+  public (`dungeonSite`'s `relaid`), by its map id. `relaid` is the size BUILT (AUDIT FB1019f B1,
+  `smallerDungeons.js:"export function builtSizeFor(dfLocation, deps = {}) {"`): it read the size the world draws, and a
+  dungeon at or under its size's threshold - the five-block plus, the eight-block shape - is never laid anew, so its
+  public room is the dungeon whole. Online the world draws 3,133 of MAPS.BSA's 4,232 dungeons smaller and builds 2,005
+  of them smaller; at the other 1,128 a death in the public room was offered an instance, under a line that said the
+  shared dungeon had none of it. A death records the size its dungeon was built at and its remains stand only
   in a build of that size (`06-Systems/Legacy-Arc.md` section 7, AUDIT FB1013d B1), so a death in an instance lies in
   the dungeon whole, which that public room never is - and the instance it fell in admits only its owner's party. The
   door counts the death quest's place as a quest's (the instance door's `questHere`): its popup, its line before the
@@ -243,7 +248,8 @@ stands in.
 - **A re-laid public room's own quests.** A player who chooses Public at a quest's dungeon finds its things in the
   instance only. The choice is theirs; QUEST-ELSEWHERE (2026-10-16, `01-Overview/bugs/Field-Bugs-2026-10-16c.md` - MD-Geist:
   "the Objective just did not want to spawn (I tried the dungeon in 'Public' mode) even after 'Quest Repair'") says it
-  BEFORE the choice, in the popup, where the world lays the public room smaller (`dungeonSite`'s `relaid`), and Quest
+  BEFORE the choice, in the popup, where the world builds the public room smaller (`dungeonSite`'s `relaid` - the size
+  built, which the mount reads too; AUDIT FB1019f B1), and Quest
   Repair in that room says where the things are instead of "Nothing was missing". The automap keeps each layout's map
   (LAYOUT-KEEP): exploring one room no longer wipes the other's.
 - **Reachability.** The public world's re-laid dungeons can still seal an area from their entrance - the Hold of

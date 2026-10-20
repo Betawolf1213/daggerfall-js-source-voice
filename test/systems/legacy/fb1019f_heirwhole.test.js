@@ -2,8 +2,9 @@
 // dungeon - an instance - and the inheritance never appeared when they went to the death spot).
 //
 // A death records the size its dungeon was BUILT at (AUDIT FB1013d B1), and the remains stand only in a build of that
-// size - another size is another layout. An instance is the dungeon whole, and the world lays three dungeons in four
-// smaller in public (SD-ONLINE); another player's instance admits only its owner's party. So the heir's every visit was
+// size - another size is another layout. An instance is the dungeon whole, and the world builds about half its dungeons
+// smaller in public (SD-ONLINE: it draws three in four smaller, and 2,005 of MAPS.BSA's 4,232 have the blocks to be laid
+// anew - AUDIT FB1019f B1); another player's instance admits only its owner's party. So the heir's every visit was
 // the public room's smaller layout, which stands none, and no door offered them a build that would. Now the death
 // quest's place is "a dungeon with your quest": where the line's remains lie whole and the public room is laid smaller,
 // the door offers the heir an instance of their own (systems/instancePlaces.js remainsWholeAt, remainsInstanceEpoch;
@@ -18,19 +19,20 @@
 // pool (createDroppedLoot); the relay's own door (instanceAdmission).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { createLegacyHost, REMAINS_FLAT, LEGACY_TEXT } from '../../../src/scenes/legacyHost.js';
 import { createRemainsStand } from '../../../src/scenes/legacyRemainsStand.js';
 import { createDroppedLoot } from '../../../src/scenes/droppedLoot.js';
 import { MODELS, familyRng } from '../../../src/systems/legacy/family.js';
 import { _resetModSaveData } from '../../../src/systems/modSaveData.js';
-import { LOCATION_TYPES, REGION_NAMES } from '../../../src/formats/mapsFile.js';
+import { LOCATION_TYPES, REGION_NAMES, MapsFile } from '../../../src/formats/mapsFile.js';
 import { floorLanding } from '../../../src/player/enterExit.js';
 import { hurtPlayer, setDeathListener } from '../../../src/characters/playerEntity.js';
 import { planTake, applyTransfer } from '../../../src/systems/item/itemTransfer.js';
 import { isRemainsItem } from '../../../src/systems/legacy/heirloom.js';
-import { builtDungeonSize, dungeonLocationFor, onlineDungeonSize } from '../../../src/world/smallerDungeons.js';
+import { builtDungeonSize, dungeonLocationFor, onlineDungeonSize, dungeonSizeFor, builtSizeFor } from '../../../src/world/smallerDungeons.js';
 import { createInstanceDoor, INSTANCE_TEXT, dungeonSite, siteBase } from '../../../src/scenes/instanceDoor.js';
 import { remainsWholeAt, remainsInstanceEpoch } from '../../../src/systems/instancePlaces.js';
 import { instanceRoomOf, instanceWord, instanceAdmission } from '../../../src/net/instanceRoom.js';
@@ -362,4 +364,108 @@ test('HEIR-WHOLE a whole build of one dungeon is one layout, whoever builds it: 
   assert.equal(builtDungeonSize(m1), 'medium');
   assert.deepEqual(m1.dungeon.blocks, m2.dungeon.blocks, 'the medium build: one layout every build');
   assert.notDeepEqual(m1.dungeon.blocks, RUINS.dungeon.blocks, 'and another layout than the whole');
+});
+
+// ── AUDIT FB1019f B1: `relaid` IS THE SIZE BUILT ──────────────────────────────────────────────────────────────────────
+// A dungeon site's `relaid` (scenes/instanceDoor.js dungeonSite) read the size the world DRAWS (dungeonSizeFor online),
+// and a dungeon at or under its size's threshold is never laid anew: its public room is the dungeon whole. A death there
+// recorded `size: 'full'`, and the door offered the heir an instance with QUEST-ELSEWHERE's line - "The shared dungeon is
+// smaller and has none of it" - over a public room that stood her; every other way in took the heir into the instance.
+// It reads the size BUILT now (world/smallerDungeons.js builtSizeFor), the size the build an entry makes says.
+
+/** A ruin of `n` blocks - its first `interior` interior (the first the starting block), the rest border - at the first
+ *  map id from `from` the world draws `size`. */
+const ruinOf = (size, n, interior, locationId, from = 52646491) => {
+  const blocks = Array.from({ length: n }, (_, i) => ({ blockName: `${i < interior ? 'N' : 'B'}${String(i).padStart(7, '0')}.RDB`, x: i, z: 0, isStartingBlock: i === 0 }));
+  const at = ruinAt(idOfSize(size, from), locationId);
+  return { ...at, dungeon: { ...at.dungeon, blocks } };
+};
+
+test('HEIR-WHOLE AUDIT FB1019f B1: a dungeon site is re-laid where the world BUILDS its public room smaller - the size the entry\'s own build says - never where it only draws it smaller: the plus and the eight-block shape are already that small and are built whole (mutants: the drawn size; the thresholds swapped; the threshold off by one at either size)', () => {
+  const cases = [
+    // [drawn, blocks, interior, built]
+    ['small', 5, 1, 'full'],    // The Tombs of Klerd's shape (below, on MAPS.BSA): the plus already
+    ['small', 6, 2, 'small'],
+    ['small', 8, 2, 'small'],
+    ['medium', 5, 1, 'full'],
+    ['medium', 8, 2, 'full'],   // the commonest shape a dungeon has (AUDIT DELVE): the medium size itself
+    ['medium', 9, 3, 'medium'],
+    ['full', 13, 9, 'full'],
+  ];
+  for (const [drawn, n, interior, built] of cases) {
+    const loc = ruinOf(drawn, n, interior, 9000 + n);
+    const what = `${n} blocks drawn ${drawn}`;
+    assert.equal(dungeonSizeFor(loc, { online: true }), drawn, `${what}: the world's draw`);
+    assert.equal(builtDungeonSize(buildOf(loc, PUBLIC)), built, `${what}: the public room's build, off worldModes.js's own entry`);
+    assert.equal(builtSizeFor(loc, { online: true }), built, `${what}: the size built, asked without building`);
+    assert.equal(dungeonSite(loc).relaid, built !== 'full', `${what}: re-laid where it is built smaller`);
+  }
+  assert.equal(builtSizeFor(ruinOf('medium', 13, 9, 9013), { online: true, whole: true }), 'full', 'an instance\'s build: the dungeon whole');
+  assert.equal(builtSizeFor(null), 'full');
+});
+
+test('HEIR-WHOLE AUDIT FB1019f B1: a death in the public room of a ruin drawn smaller but built whole is the public room\'s - no popup and no line, every other way in its public room, and the public room stands her where she fell; a death there in Ann\'s instance too; a quest there is offered its instance without the line that the shared dungeon has none of it (mutant: the drawn size)', async () => {
+  const TINY = ruinOf('small', 5, 1, 9005);
+  const t = fallenIn(TINY, PUBLIC);
+  assert.equal(builtDungeonSize(t.w.dungeonLoc), 'full', 'the public room: the dungeon whole');
+  assert.equal(t.row.place.dungeon.size, 'full', 'so the death records it whole');
+  const door = doorOf(t);
+  const site = door.d.dungeonSite(TINY);
+  assert.equal(site.relaid, false);
+  assert.deepEqual(remainsWholeAt(t.host.remainsWhere(), site), [], 'no remains its public room cannot stand');
+  assert.deepEqual(await take(door, site), PUBLIC, 'no popup: the door opens as it always did');
+  assert.equal(door.shown.length, 0);
+  assert.deepEqual(await door.d.entryFor(site), PUBLIC, 'every other way in: the public room, never an instance of the heir\'s');
+  assert.equal(enter(t, TINY, PUBLIC), 1, 'and the public room stands her');
+  assert.deepEqual(pileOf(t).pos, [10, t.w.floorY, 30], 'on the floor under where she fell');
+  // fallen in Ann's instance of it: the dungeon whole, the layout its public room lays - nothing to offer either
+  const a = fallenIn(TINY, ANN_ENTRY);
+  const ad = doorOf(a);
+  assert.deepEqual(await take(ad, ad.d.dungeonSite(TINY)), PUBLIC);
+  assert.equal(ad.shown.length, 0);
+  assert.equal(enter(a, TINY, PUBLIC), 1, 'the public room stands a death in another\'s instance of it');
+  // a quest of the heir's at an eight-block ruin drawn medium: its instance offered, as every quest's place - but the
+  // shared dungeon is the dungeon whole and holds the quest's things (questMountsHere on the build), so no line says it
+  const EIGHT = ruinOf('medium', 8, 2, 9008);
+  const quested = doorOf(t);
+  questAt(quested.m, EIGHT.mapTableData.mapId);
+  const n = quested.shown.length;
+  const pending = quested.d.choose(quested.d.dungeonSite(EIGHT));
+  await until(() => quested.shown.length > n);
+  assert.deepEqual(quested.shown[n].win.lines, ['Ruins of The Hold of Coppering', INSTANCE_TEXT.line()], 'the popup, without the line');
+  quested.shown[n].win.input('Escape');
+  await pending;
+});
+
+const ARENA2 = process.env.ARENA2_PATH;
+const skipReal = !ARENA2 || !existsSync(ARENA2) ? 'ARENA2_PATH not set or missing - real-data validation skipped' : false;
+
+test('HEIR-WHOLE AUDIT FB1019f B1 on MAPS.BSA: every one of the 4,232 dungeons\' sites is re-laid exactly where the public room\'s build is smaller - 2,005 of them, of the 3,133 the world draws smaller; at The Tombs of Klerd (five blocks, drawn medium, built whole) a death in the public room is offered nothing and stands there (mutants: the drawn size; the thresholds swapped; the threshold off by one)', { skip: skipReal }, async () => {
+  const maps = new MapsFile();
+  maps.load(new Uint8Array(readFileSync(join(ARENA2, 'MAPS.BSA'))), new Uint8Array(readFileSync(join(ARENA2, 'CLIMATE.PAK'))), new Uint8Array(readFileSync(join(ARENA2, 'POLITIC.PAK'))));
+  let dungeons = 0, drawn = 0, built = 0, wrong = 0;
+  for (let r = 0; r < maps.regionCount; r++) {
+    const region = maps.getRegion(r);
+    for (let l = 0; region && l < region.locationCount; l++) {
+      const loc = maps.getLocation(r, l);
+      if (!loc?.hasDungeon) continue;
+      dungeons++;
+      const size = builtDungeonSize(buildOf(loc, PUBLIC));
+      if (dungeonSizeFor(loc, { online: true }) !== 'full') drawn++;
+      if (size !== 'full') built++;
+      if (dungeonSite(loc).relaid !== (size !== 'full') || builtSizeFor(loc, { online: true }) !== size) wrong++;
+    }
+  }
+  assert.deepEqual({ dungeons, drawn, built, wrong }, { dungeons: 4232, drawn: 3133, built: 2005, wrong: 0 });
+  const KLERD = maps.getLocationByName("Alik'r Desert", 'The Tombs of Klerd');
+  assert.deepEqual([KLERD.dungeon.blocks.length, onlineDungeonSize(KLERD), builtDungeonSize(buildOf(KLERD, PUBLIC))], [5, 'medium', 'full']);
+  const t = fallenIn(KLERD, PUBLIC);
+  assert.equal(t.row.place.dungeon.size, 'full');
+  const door = doorOf(t);
+  const site = door.d.dungeonSite(KLERD);
+  assert.equal(site.relaid, false);
+  assert.deepEqual(await take(door, site), PUBLIC, 'no popup');
+  assert.equal(door.shown.length, 0);
+  assert.deepEqual(await door.d.entryFor(site), PUBLIC);
+  assert.equal(enter(t, KLERD, PUBLIC), 1, 'the public room stands her');
 });
