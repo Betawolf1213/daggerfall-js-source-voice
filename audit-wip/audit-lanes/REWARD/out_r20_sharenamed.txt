@@ -1,3 +1,0 @@
-QLBD05 shareable: true
-member A (never began the line): outcome guild; offer tier 3: [NAMED] Ysolde's Ember-Rod (rare) | Guardian's Helm of the Ward (rare) | Mule's Bracer of Winter (rare); their Burning Doors line: locked
-member B (never began the line): outcome guild; offer tier 3: [NAMED] Ysolde's Ember-Rod (rare) | Guardian's Kite Shield of Storms (rare) | Mule's Bracelet of Flame (rare); their Burning Doors line: locked

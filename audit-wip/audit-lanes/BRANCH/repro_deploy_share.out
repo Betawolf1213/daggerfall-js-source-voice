@@ -1,4 +1,0 @@
-R0C11Y26: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":false,"reason":"mismatch"}; with it off: {"ok":true,"reason":null}
-M0B50Y09: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":false,"reason":"guild"}; with it off: {"ok":false,"reason":"guild"}
-[books] no BOOKS prices registered - book values fall back to the template basePrice (loud interim: warm them with preloadBookPrices)
-A0C01Y03: sharer's copy DFU's (ql=null) -> receiver with the switch on: {"ok":false,"reason":"mismatch"}; with it off: {"ok":false,"reason":"mismatch"}

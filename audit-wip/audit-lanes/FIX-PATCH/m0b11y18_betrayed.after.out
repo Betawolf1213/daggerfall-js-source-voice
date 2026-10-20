@@ -1,4 +1,0 @@
-after the Queen: success true, choices {"letter":"queen","hunt":"hunt"}
-ended: complete true, DFU success true, choices {"letter":"queen","hunt":"hunt"}
-outcome rows holding at the end: ["outrun","failed"] -> settled "outrun": "The Queen has the letter, but _traitor_ was never run to ground."
-the layer's standing moves (propagate false): [{"fid":380,"amount":2,"propagate":false}]; gear offers: 1

@@ -1,4 +1,0 @@
-L0B40Y04 (a) saved under the question: asked before save=1, asked after load=1, ended=true, outcome=debt, choices={"payment":"alt"}, gold=[]
-L0B40Y04 (b) answered then saved at once: asked after load=0, ended=true, outcome=fee, gold=["Gold Piecesx634"]
-R0C11Y26 (a) saved under the question: asked before save=1, asked after load=1, ended=true, outcome=given, choices={"payment":"alt"}, gold=[]
-R0C11Y26 (b) answered then saved at once: asked after load=0, ended=true, outcome=paid, gold=["Gold Piecesx607"]

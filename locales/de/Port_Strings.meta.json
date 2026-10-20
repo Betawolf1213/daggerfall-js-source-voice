@@ -22724,9 +22724,14 @@
   "tr": "6e8d5b0d4910",
   "by": "claude-in-session"
  },
- "ql.journal.ladderChoiceTitle": {
-  "en": "6c15d95850a3",
-  "tr": "59c0f45c2826",
+ "ql.journal.ladderChoiceWhy": {
+  "en": "95245f7ec59a",
+  "tr": "951af6200aaa",
+  "by": "claude-in-session"
+ },
+ "ql.journal.ladderLead": {
+  "en": "c317b5a7f783",
+  "tr": "83342cc1c94a",
   "by": "claude-in-session"
  },
  "ql.journal.ladderRank": {
@@ -22737,11 +22742,6 @@
  "ql.journal.ladderRow": {
   "en": "81997aa3eb77",
   "tr": "5e0fc9339bf7",
-  "by": "claude-in-session"
- },
- "ql.journal.ladderWhat": {
-  "en": "f6278c831c1a",
-  "tr": "af4ae52e7e2e",
   "by": "claude-in-session"
  },
  "ql.journal.legendary": {
@@ -22849,6 +22849,31 @@
   "tr": "4b937dbc6178",
   "by": "claude-in-session"
  },
+ "ql.journal.pieceArmour": {
+  "en": "7037a516af74",
+  "tr": "c7dc89dd3bc0",
+  "by": "claude-in-session"
+ },
+ "ql.journal.pieceDamage": {
+  "en": "8d28c6a569cd",
+  "tr": "c1b77e3a666b",
+  "by": "claude-in-session"
+ },
+ "ql.journal.pieceOneHanded": {
+  "en": "7ec4211fda0d",
+  "tr": "63bf5371106d",
+  "by": "claude-in-session"
+ },
+ "ql.journal.pieceTwoHanded": {
+  "en": "ce1649348ab2",
+  "tr": "060ee7b78cd5",
+  "by": "claude-in-session"
+ },
+ "ql.journal.pieceWeight": {
+  "en": "6c8307b99358",
+  "tr": "6c8307b99358",
+  "by": "claude-in-session"
+ },
  "ql.journal.rare": {
   "en": "cce370d2f978",
   "tr": "b21ec592bce9",
@@ -22897,6 +22922,11 @@
  "ql.journal.take": {
   "en": "ebbb81ae402c",
   "tr": "405e63bc9151",
+  "by": "claude-in-session"
+ },
+ "ql.journal.takeArmed": {
+  "en": "dd2773e43018",
+  "tr": "62eb3dba0ffd",
   "by": "claude-in-session"
  },
  "ql.journal.takeTitle": {
@@ -23199,9 +23229,14 @@
   "tr": "4727c29213e4",
   "by": "claude-in-session"
  },
- "ql.reward.waiting": {
-  "en": "c8bc9932bab0",
-  "tr": "9240292ca6cb",
+ "ql.reward.waitingClassic": {
+  "en": "f10c6fd9c700",
+  "tr": "e103e1bb9441",
+  "by": "claude-in-session"
+ },
+ "ql.reward.waitingPause": {
+  "en": "57e54384722f",
+  "tr": "660567de639c",
   "by": "claude-in-session"
  },
  "ql.step.QLBD01": {
@@ -26894,9 +26929,9 @@
   "tr": "a9e2b3bdc593",
   "by": "claude-in-session"
  },
- "tutorials.questlines.body2": {
-  "en": "cd075f313fd9",
-  "tr": "46fedfdcb7a4",
+ "tutorials.questlines.gearBody": {
+  "en": "f183c78d1f73",
+  "tr": "864a57699d72",
   "by": "claude-in-session"
  },
  "tutorials.questlines.title": {

@@ -1,5 +1,0 @@
-member received: true
-sharer asked: 1
-resync: {"ok":true,"resync":true,"reason":null}
-member asked (no click of theirs): 1
-sharer: outcome=paid gold=["Gold Piecesx617"] | member: ended=true outcome=given gold=[] rep=[[512,5]]

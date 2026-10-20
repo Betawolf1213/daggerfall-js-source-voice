@@ -15,7 +15,11 @@ import { QuestJournalWindow } from '../../../src/ui/quest/questJournal.js';
 import { createQuestlines } from '../../../src/systems/questlines/qlLayer.js';
 import { createLineRunner } from '../../../src/systems/questlines/qlLineRunner.js';
 import { QUESTLINES_PREF } from '../../../src/systems/questlines/qlLaw.js';
-import { GAME_START_QUESTS } from '../../../src/scenes/quest/questBridge.js';
+import { GAME_START_QUESTS, createQuestBridge } from '../../../src/scenes/quest/questBridge.js';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { questSource, loadTables, ROOT } from '../../qlSources.mjs';   // the pack as the game reads it
+import { questlinesOn } from '../../../src/systems/questlines/qlLaw.js';
 import { tutorialById, setTutorialHandler, markTutorialSeen, forgetTutorialsSeen, _resetTutorialTriggerForTests } from '../../../src/systems/tutorials.js';
 import { setPref } from '../../../src/systems/uiPrefs.js';
 
@@ -342,4 +346,45 @@ test('AUDIT QUESTLINES UI-6 (REWARD-8): the HUD\'s line for a reward waiting nam
     setPref('skin', 'classic');
     assert.equal(offerWaitingWords({ title: 'Wild Animal' }), 'A reward waits for Wild Animal: in the pause menu, press Controls, then Escape, and choose it under Quests.');
   } finally { setPref('skin', 'enhanced'); }
+});
+
+test('AUDIT QUESTLINES UI-5, UI-6: through the real bridge - M0B50Y09 run to its end with the switch on: DFU\'s classic logbook files the entry as DFU does, the outcome its side record; the HUD\'s line names the way to the reward on the skin worn (mutants: the bridge files no outcome; the bridge\'s old line)', () => {
+  loadTables();
+  setPref(QUESTLINES_PREF, true);
+  for (const skin of ['enhanced', 'classic']) {
+    setPref('skin', skin);
+    const hud = [];
+    const bridge = createQuestBridge({
+      data: {
+        readListTable: (name) => { try { return readFileSync(join(ROOT, 'vendor/dfu-quests/Tables', `QuestList-${name}.txt`), 'utf8'); } catch { return null; } },
+        getQuestSourceLines: (n) => questSource(n, questlinesOn()),
+      },
+      classicSeconds: () => 0,
+      playerEntity: { name: 'Hero', level: 12, gender: 'female', career: { weaponArmorShieldsBitfield: 0, forbiddenMaterialsFlags: 0 }, skills: new Array(35).fill(30) },
+      showChoice: (q, m, choices, respond) => respond(0),
+      addHUDText: (line) => hud.push(line),
+      offerReward: () => {}, showPopup: () => {},
+    });
+    const quiet = console.warn, info = console.info, log = console.log;
+    console.warn = () => {}; console.info = () => {}; console.log = () => {};
+    try {
+      const quest = bridge.machine.startQuestByName('M0B50Y09', 41);
+      for (const task of quest.tasks.values()) for (const a of task.actions) if (a.typeName === 'PlaceFoe') a.isComplete = true;
+      quest.getTask({ name: 'S.01' }).start();
+      quest.getTask({ name: 'qgclicked' }).start();
+      for (let i = 0; i < 5; i++) bridge.machine.tick();
+      quest.getClock({ name: 'end' })?.endTimer?.();
+      quest.getTask({ name: 'end' })?.start();
+      for (let i = 0; i < 6; i++) bridge.machine.tick();
+    } finally { console.warn = quiet; console.info = info; console.log = log; }
+    const classic = new QuestJournalWindow({ questMessages: () => [], notebook: () => bridge.notebook, mode: 'finishedQuests' });
+    const drawn = classic.entries().flat().map((tok) => tok.text).join(' ');
+    assert.match(drawn, /Hunt for a Gargoyle completed/);
+    assert.doesNotMatch(drawn, /Outcome|rubble/, `${skin}: DFU's logbook, verbatim`);
+    assert.equal(filedOutcome(bridge.notebook.getFinishedQuests().at(-1)), 'The gargoyle is rubble and the fee is paid.');
+    const offerLine = hud.find((l) => l.startsWith('A reward waits for Hunt for a Gargoyle'));
+    assert.equal(offerLine, offerWaitingWords({ title: 'Hunt for a Gargoyle' }), `${skin}: the skin's own words`);
+    assert.doesNotMatch(offerLine, /journal.s Quests tab/);
+  }
+  setPref('skin', 'enhanced');
 });

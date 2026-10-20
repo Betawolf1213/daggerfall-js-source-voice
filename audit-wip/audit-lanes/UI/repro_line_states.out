@@ -1,5 +1,0 @@
-(a) step FAILED, offered again in a day: state "Waiting for its next step" | opens null | steps A Wagon’s Load=current, The Long Haul=next 
-    page: A stable master knows a merchant yard that pays well for a wagon’s load, if someone will haul it.Given by a stable masterWaiting for its next stepThe steps◈A Wagon’s Loadnow◇The Long Haul
-(b) between steps (next not yet given): state "Waiting for its next step" | opens null | steps A Wagon’s Load=done, The Long Haul=current
-(c) begun online, now offline: state "Waiting for its next step" | opens "Opens online." | steps A Letter from Wayrest=done, The Faithful=done, Breaking the Rite=current, Through the Burning Door=next, The Caged Broker=next
-(d) the step's quest abandoned: state "Under way" | opens null | steps A Wagon’s Load=current, The Long Haul=next

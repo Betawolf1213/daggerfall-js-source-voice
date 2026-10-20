@@ -1,2 +1,0 @@
-HUD: [ "Your share of the party's reward: 309 gold." ]
-the pile holds: 386 gold; outcome mercy

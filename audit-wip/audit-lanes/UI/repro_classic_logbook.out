@@ -1,6 +1,0 @@
-switch OFF - the classic logbook's Finished Quests entry:
-    ["Hunt for a Gargoyle completed at :","On Sundas the 1st of Morning Star,"," The Fighters Guild of BLANK"," charged me with the duty of destroying a"," gargoyle that lairs in ___dungeon_."," I have 0 days to finish the task."]
-    HUD lines: []
-switch ON  - the classic logbook's Finished Quests entry:
-    ["Hunt for a Gargoyle completed at :","On Sundas the 1st of Morning Star,"," The Fighters Guild of BLANK"," charged me with the duty of destroying a"," gargoyle that lairs in ___dungeon_."," I have 0 days to finish the task.","Outcome: The gargoyle is rubble and the fee is paid."]
-    HUD lines: ["A reward waits for Hunt for a Gargoyle: choose it in your journal’s Quests tab."]

@@ -1,8 +1,0 @@
-rungs: [
-  'Novice: C0B00Y00 C0B00Y01 C0B00Y02 C0B00Y03 C0B00Y04 C0B00Y14',
-  'Initiate: C0B10Y05 C0B10Y06 C0B10Y07 C0B10Y15',
-  'Acolyte: C0B20Y08',
-  'Adept: C0B3XY09'
-]
-Temple of Arkay ladder holds 12 quests; DFU offers an Arkay member 13
-missing from the ladder: [ 'E0B00Y00' ]

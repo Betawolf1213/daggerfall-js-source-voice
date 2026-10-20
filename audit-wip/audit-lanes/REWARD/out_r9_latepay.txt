@@ -1,3 +1,0 @@
-scaled outcomes that can never hold at GivePc (their gold factor is never applied): 1
-   M0B00Y16.rescued (greater, x1.25) on {"task":"_S.17_"}; gold given in task(s) success
-outcomes started by the gold task after its give: 0 []

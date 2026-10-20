@@ -1,6 +1,0 @@
-QLIW02 complete: false success: false | letter in the pack: false
-boxes the player saw: []
-gold paid: 0
-back in town, more boxes: 0
-in town 600 ticks: complete true success true outcome done | letter in the pack: true | gold paid: 1
-boxes in town: ["A watchman, out of breath, finds you and presses a letter an","The watch's purse holds 399 gold."]

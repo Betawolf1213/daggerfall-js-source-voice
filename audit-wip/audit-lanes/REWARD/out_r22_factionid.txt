@@ -1,7 +1,0 @@
-factionIdOf("Noble") = 16 - which is Azura
-factionIdOf("Smith") = 13 - which is Vaernima
-factionIdOf("Group_1") = 1 - which is Clavicus_Vile
-factionIdOf("Questor") = 21 - which is Arkay
-factionIdOf("The_Mage_Guild") = null
-the sheet law on {Noble: 5, The_Mage_Guild: 5}: []
-what the outcome moves: [{"factionId":16,"name":"Noble","amount":5}]

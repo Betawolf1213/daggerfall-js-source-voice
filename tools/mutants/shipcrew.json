@@ -214,7 +214,7 @@
     "name": "SCH-win-unfelt",
     "file": "src/scenes/naval/navalHost.js",
     "old": "if (by === myId()) struckToMe();   // SHIP-CREW: she struck to us",
-    "new": "if (by === myId()) noteAct('ship-struck');",
+    "new": "if (by === myId()) noteAct('ship-struck');   // SHIP-CREW: she struck to us",
     "tests": [
       "test/systems/naval/shipcrew.test.js"
     ]

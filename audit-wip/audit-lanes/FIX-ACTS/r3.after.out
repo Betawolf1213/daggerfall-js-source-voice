@@ -1,3 +1,0 @@
-stew:north is {"profession":"cooking","kind":"dish","name":"Hunter's Stew (northern Root Bulb)"}
-a stew cooked -> acts heard: []
-a potion brewed -> acts heard: []

@@ -1,6 +1,0 @@
-M1 observe's catch-all yield deleted: # pass 78 # fail 0 
-M2 tombstoneQuest's ended settle deleted: # pass 78 # fail 0 
-M3 reward's letter rule deleted: # pass 78 # fail 0 
-M4 ending's moved guard deleted: # pass 78 # fail 0 
-M5 reward's paid guard on the gold deleted: # pass 78 # fail 0 
-M6 (control) act's shelved skip deleted: # pass 77 # fail 1 

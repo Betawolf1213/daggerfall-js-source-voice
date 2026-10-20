@@ -1,8 +1,0 @@
-A0C01Y01 choice 0: ended=true success=true outcome=paid gold/items=["Gold Piecesx657"] rep=[[41,5]] legal=[] offers=1 popups=["You have saved my life, Hero. I will  gladly pay y"]
-A0C01Y01 choice 1: ended=true success=true outcome=waived gold/items=[] rep=[[41,5]] legal=[] offers=1 popups=[]
-A0C01Y06 choice 0: ended=true success=true outcome=bought gold/items=["Gold Piecesx637"] rep=[[41,5]] legal=[] offers=1 popups=[" is dead.  Your enemies will  think twice before a"]
-A0C01Y06 choice 1: ended=true success=true outcome=reported gold/items=[] rep=[[41,5]] legal=[3] offers=1 popups=[" goes pale. \"You wouldn't...\" But you would, and  "," is dead.  Your enemies will  think twice before a"]
-A0C01Y06 choice never-asked: ended=true success=true outcome=slain gold/items=[] rep=[[41,5]] legal=[] offers=1 popups=[" is dead.  Your enemies will  think twice before a"]
-A0C41Y18 choice 0: ended=true success=true outcome=destroyed gold/items=[] rep=[[41,5]] legal=[] offers=1 popups=[" hands you a letter wrapped  around a small object","With  dead, you know you have  rid yourself of his"]
-C0B00Y02 choice 0: ended=true success=true outcome=spared gold/items=["Common Symbolx1"] rep=[[41,5]] legal=[] offers=1 popups=[" presses the Holy Water into your hands  and is go","Thank Arkay that situation's  resolved. You can ne"]
-C0B00Y02 choice 1: ended=true success=true outcome=exposed gold/items=["Holy Waterx1"] rep=[[450,3],[41,5]] legal=[] offers=1 popups=[" hands over the Talisman and slinks out into  the ","Thank Arkay that situation's  resolved. You can ne"]

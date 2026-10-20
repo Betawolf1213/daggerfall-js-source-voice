@@ -5580,7 +5580,9 @@ function pauseQuests(body) {
     head2.append(el('span', 'px-qwing'), el('h3', null, questTitleOf(sel.name)), el('span', 'px-qwing px-flip'));   // PX28
     detail.append(head2);
     const isShelvedRow = String(sel.key).startsWith('s:');   // QUEST-SHELF: a quest set aside - its clock stopped, nothing to track
-    if (sel.entries && !isShelvedRow) {
+    // AUDIT QUESTLINES UI-8: nor a stamped quest with no journal entry yet (unloggedRail) - no clock, no place, and no Track:
+    // the HUD's card reads the entries (ui/quest/questLens.js), so Track pinned a quest it never sees and the card went blank
+    if (sel.entries?.length && !isShelvedRow) {
       // PX22: NO KIND TAG. PX5 put "Main Quest" / "Side Quest" beside
       // the timer; with the rail always showing three named sections
       // that is the same fact twice, and a quest is not TITLED by its
@@ -5597,9 +5599,7 @@ function pauseQuests(body) {
       }
       // GUIDE4: TRACK THIS QUEST on the HUD's card (ui/quest/questTracker.js), beside its clock - the card follows the quest
       // the journal last changed until the player chooses one here (or in the chronicle: the same toggle, one home).
-      // AUDIT QUESTLINES UI-8: not on a stamped quest with no journal entry yet (unloggedRail) - the HUD's card reads the
-      // entries (ui/quest/questLens.js), so Track pinned a quest it never sees and the card went blank
-      if (followOn() && sel.id != null && sel.entries.length) meta.append(trackButton(document, sel.id, questTitleOf(sel.name)));   // AUDIT GUIDE T2; T5: changed in place, the tab not rebuilt
+      if (followOn() && sel.id != null) meta.append(trackButton(document, sel.id, questTitleOf(sel.name)));   // AUDIT GUIDE T2; T5: changed in place, the tab not rebuilt
       if (meta.childNodes.length) detail.append(meta);   // PX22: an empty meta line is a gap the eye reads as a mistake
       // GUIDE2: WHERE THE QUEST POINTS NOW, and the way there - DFU's own logbook click (HandleQuestClicks), which
       // this journal never had: the latest entry's target through the quest lens, in the find-place box's words.
@@ -6124,6 +6124,7 @@ export function mountEnhancedMenu(host, {
   bountyAbandonArmed = null;   // AUDIT 28 B11: an armed Abandon never outlives the visit it was armed on
   journalCleanArmed = null;   // JOURNAL-CLEAN: ...nor an armed Remove or Clear archive
   questShowHidden = false;
+  questReveal = false;   // AUDIT QUESTLINES UI-14: a press is this visit's
   statsSec = 'character';
   resetProfPages();   // PROF1: an armed change of specialisation never outlives the visit
   resetCompanionRoster();   // COMPANION-ROSTER: nor an armed Release
