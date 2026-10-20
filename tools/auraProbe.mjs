@@ -54,7 +54,7 @@ import { chromium } from 'playwright';
 // whole in the lilac inside the rabbits' lane, the amethyst light within it, dark past the ground, and their tracks where they
 // landed; no jump at the wrap; nothing before it kindles.
 //
-// SPIRE-FIRST (2026-10-20): and FIRSTLIGHT, rebuilt as Severide's own - from above its ring whole in the dawn's white, the
+// SPIRE-FIRST (2026-10-20): and FIRSTLIGHT, rebuilt as Serveride's own - from above its ring whole in the dawn's white, the
 // climb's lane lit behind the climb and dark ahead of it (node's law, dawnClimb); from X's side its spire standing whole once
 // taken and a third before, and the shaft of first light past the head as it is taken; no seam where the ring closes, no
 // jump at the wrap, nothing before it kindles.
