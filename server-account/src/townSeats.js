@@ -110,7 +110,7 @@ async function allSeatRows(db) {
   const { results = [] } = await db.prepare(SEAT_ROWS_SQL).all();
   return results.map(witnessRow);
 }
-/** LEAN-WITNESS (2026-10-19, migration 0134; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS): THE SEAT ROWS THE LAW
+/** LEAN-WITNESS (2026-10-19, migration 0135; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS): THE SEAT ROWS THE LAW
  *  JUDGES BY - the rows that are not late (idx_world_witness_lean_key), a seat an ignored account answered read whole
  *  (leanWitness.js exactRows). seatFacts' facts and ignored over them are its facts over every row; its witnesses' counts
  *  and audit are not, and nothing but a developer's list reads those. 32,775 rows a read on the day, one seat in 27
@@ -360,7 +360,7 @@ export async function strikeSeat({ db, nowS }, dev, env, { key } = {}) {
     db.prepare("UPDATE town_seat_edicts SET state = 'void' WHERE key = ? AND state = 'proclaimed'").bind(key),
     db.prepare("UPDATE town_seat_battles SET state = 'void' WHERE key = ? AND week >= ? AND state = 'scheduled'").bind(key, week),
     db.prepare('DELETE FROM town_seat_holds WHERE key = ?').bind(key),
-    ...strikeWitness(db, 'seat', 'key = ?1', String(key)),   // LEAN-WITNESS: its rows and its confirmation (0134's triggers take the key's row with its last answer)
+    ...strikeWitness(db, 'seat', 'key = ?1', String(key)),   // LEAN-WITNESS: its rows and its confirmation (0135's triggers take the key's row with its last answer)
     db.prepare(`INSERT INTO town_seat_history (key, week, kind, data, at)
       SELECT ?1, ?2, 'strike', json_set(?3, '$.refund', COALESCE((SELECT amount FROM marks_ledger WHERE actor = 'seats' AND rid = ?5), 0)), ?4`)
       .bind(key, week, JSON.stringify({ by: dev.handle ?? null, ...(h ? { guild: { name: h.name ?? '', tag: h.tag ?? '' } } : {}) }), nowS, rid),

@@ -1,5 +1,5 @@
 // YARD-SNAP (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md YARD-SNAP; migration
-// 0135) - A TOWN'S YARDS READ AS ONE ROW: `home_yards` keeps each town's yard rows as yardsOf reads them, built at a
+// 0136) - A TOWN'S YARDS READ AS ONE ROW: `home_yards` keeps each town's yard rows as yardsOf reads them, built at a
 // version the database moves on every yard row written (a route, a home released, an account gone, a sweep); a read is
 // that row while it is its version's and the rows as they stand while it is not; a decor route builds its town again as
 // it answers and the minute's clock builds what anything else left stale.
@@ -139,16 +139,16 @@ test('YARD-SNAP a decor route builds its town as it answers; the minute\'s clock
   _resetYardsKept();
 });
 
-test('YARD-SNAP the migration\'s backfill: the towns standing yards when 0135 is applied are built, their answers their rows\' (mutant: the backfill\'s bound)', async () => {
+test('YARD-SNAP the migration\'s backfill: the towns standing yards when 0136 is applied are built, their answers their rows\' (mutant: the backfill\'s bound)', async () => {
   const raw = new DatabaseSync(':memory:');
   raw.exec('PRAGMA foreign_keys = ON');
   const files = readdirSync(new URL('../../server-account/migrations', import.meta.url)).filter((f) => f.endsWith('.sql')).sort();
-  for (const f of files.filter((f) => f < '0135')) raw.exec(src(`server-account/migrations/${f}`));
+  for (const f of files.filter((f) => f < '0136')) raw.exec(src(`server-account/migrations/${f}`));
   const db = { _raw: raw, prepare: (sql) => { const st = raw.prepare(sql); let a = []; const api = { bind: (...x) => { a = x; return api; }, first: async () => st.get(...a) ?? null, all: async () => ({ results: st.all(...a) }) }; return api; } };
   world({ _raw: raw });
   for (let i = 0; i < DECOR_YARDS_TOWN_MAX + 5; i++) put(raw, 8, KEYS[i % 3], `b${i}`, 1, 1, i % 8);
   put(raw, 7, 300, 'one', 1, 1);
-  for (const f of files.filter((f) => f >= '0135')) raw.exec(src(`server-account/migrations/${f}`));
+  for (const f of files.filter((f) => f >= '0136')) raw.exec(src(`server-account/migrations/${f}`));
   for (const t of [7, 8]) {
     const r = snapOf(raw, t);
     assert.equal(r.built, r.ver, `town ${t} built`);

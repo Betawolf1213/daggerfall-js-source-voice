@@ -556,7 +556,7 @@ const MEMBERS_SQL = 'SELECT banner, COUNT(*) AS n FROM arena_members WHERE banne
 
 /**
  * ARENA-BOARD (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md ARENA-BOARD;
- * migration 0138): THE BOARD'S COUNTS, EVERY CALLER'S ALIKE, ONE ROW A SEASON - the Grand Champions, the season's rated
+ * migration 0139): THE BOARD'S COUNTS, EVERY CALLER'S ALIKE, ONE ROW A SEASON - the Grand Champions, the season's rated
  * board, the climb, the fastest, two seasons' standings, both rosters and the banners' members. Ten aggregates over the
  * arena's whole record on every open (28,586 on the day); now the season's kept row while it is the arena's version's
  * (the database moves it on every bout, void, account gone and banner joined or left) and its shape's (these counts' -

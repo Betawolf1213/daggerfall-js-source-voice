@@ -155,5 +155,5 @@ END;
 CREATE TRIGGER IF NOT EXISTS witness_lean_fixed BEFORE UPDATE OF kind, key, account, report, at ON world_witness
   WHEN OLD.kind IN ('npchall', 'seat') OR NEW.kind IN ('npchall', 'seat')
 BEGIN
-  SELECT RAISE(ABORT, 'a hall''s or a seat''s answer is never rewritten: delete it and give it again (migration 0134)');
+  SELECT RAISE(ABORT, 'a hall''s or a seat''s answer is never rewritten: delete it and give it again (migration 0135)');
 END;

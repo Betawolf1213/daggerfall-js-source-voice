@@ -289,7 +289,7 @@ export async function yardsOf({ db }, _player, { mapId } = {}) {
 
 /**
  * YARD-SNAP (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md YARD-SNAP; migration
- * 0135): A TOWN'S YARDS, ONE ROW. 673,882 yards reads on the day read some 1,400 rows each, sorted (9.1% of the
+ * 0136): A TOWN'S YARDS, ONE ROW. 673,882 yards reads on the day read some 1,400 rows each, sorted (9.1% of the
  * database's statement time) for an answer that moves only when a yard piece is written. `home_yards` holds each town's
  * rows as this read takes them, built at the version `home_yards_ver` holds - a number the database moves on every yard
  * row written, by a route, a cascade or a sweep alike (the migration's triggers), in a row of its own (AUDIT LEAN-READS 2
@@ -310,9 +310,9 @@ const YARD_ROWS_SQL = yardRowsSql('?1');
  *  piece all the same - one index probe, asked only for such a town. */
 export const YARD_SNAP_READ = `SELECT v.ver, y.built, y.shape, y.rows, v.map_id IS NULL AND EXISTS (SELECT map_id FROM home_decor WHERE map_id = ?1 AND yard = 1) AS orphan
   FROM (SELECT ?1 AS m) q LEFT JOIN home_yards_ver v ON v.map_id = q.m LEFT JOIN home_yards y ON y.map_id = q.m`;
-/** YARD-SNAP (AUDIT LEAN-READS B1, 2 B5): the build's shape - its read whole and its bound. Migration 0135 built every
+/** YARD-SNAP (AUDIT LEAN-READS B1, 2 B5): the build's shape - its read whole and its bound. Migration 0136 built every
  *  town in today's (its literal is pinned to this); a deploy that changes either reads every town's rows as they stand
- *  until the clock builds it again (re-backfill the towns in that change's own migration, as 0135 did, where that is
+ *  until the clock builds it again (re-backfill the towns in that change's own migration, as 0136 did, where that is
  *  too slow). */
 export const YARD_SNAP_SHAPE = shapeOf('yards: [columns...] each, NULL past the bound', yardRowsSql('?'), KEPT_BOARD_MAX_BYTES);
 /** How many stale towns the minute's clock builds a firing. */

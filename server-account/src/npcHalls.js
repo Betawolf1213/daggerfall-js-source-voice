@@ -36,7 +36,7 @@
 // the strike is asked inside the witness's own write, so a report racing a
 // strike lands nowhere.
 //
-// LEAN-WITNESS (2026-10-19, migration 0134, leanWitness.js): A REGION READ
+// LEAN-WITNESS (2026-10-19, migration 0135, leanWitness.js): A REGION READ
 // AS FAR AS IT CAN MATTER. A witness read every report of its region's towns
 // to ask whether its account was ignored (24,327 in the Daggerfall region,
 // some 48,000 rows a witness), and every counted report moved the region's
@@ -274,7 +274,7 @@ export async function strikeHall({ db, nowS }, dev, env, { key } = {}) {
     db.prepare('INSERT OR IGNORE INTO npc_hall_strikes (map_id, by, at) VALUES (?, ?, ?)').bind(key, dev.handle ?? null, nowS),
     // AUDIT CHAP3 S3/S5: the regions its reports named told first, while the reports stand to name them
     bumpRegions(db, 'key LIKE ?1', `%:${key}`, nowS),
-    // LEAN-WITNESS: the town's rows and its confirmation go (0134's triggers take the key's row with its last answer)
+    // LEAN-WITNESS: the town's rows and its confirmation go (0135's triggers take the key's row with its last answer)
     ...strikeWitness(db, HALL_WITNESS_KIND, 'key LIKE ?1', `%:${key}`),
   ]);
   forgetChapters();

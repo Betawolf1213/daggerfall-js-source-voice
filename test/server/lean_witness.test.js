@@ -1,5 +1,5 @@
 // LEAN-WITNESS (2026-10-19, the account database overloaded again: "D1 DB is overloaded. Requests queued for too long."
-// on the harvest and the pixels; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS; migration 0134) - A WITNESSED KEY'S
+// on the harvest and the pixels; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS; migration 0135) - A WITNESSED KEY'S
 // ANSWERS READ AS FAR AS THEY CAN MATTER: the database keeps each hall's and seat's confirmation and lets every agreeing
 // answer of a later second go LATE; the reads that judge (a hall witness's ignored, a region's chapters, the seats' kept
 // facts) read the rows that are not late, a key an ignored account answered whole; a witness whose own answers could not
@@ -27,7 +27,7 @@ import { LEAN_KINDS, LEAN_ROWS, LEAN_KEYS_A_STATEMENT, exactRows, keyRows, unmat
 import { parseSeatReport } from '../../src/net/townSeatLaw.js';
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
-const MIGRATION = 'server-account/migrations/0134_lean_witness.sql';
+const MIGRATION = 'server-account/migrations/0135_lean_witness.sql';
 const DAY = 86_400;
 
 /** A seeded generator (Park-Miller), so a failing seed is a failing seed again. */
@@ -99,7 +99,7 @@ test('LEAN-WITNESS the schema: world_witness carries `late`, witness_confirmed k
   const db = d1();
   const raw = db._raw;
   assert.ok(raw.prepare('PRAGMA table_info(world_witness)').all().some((c) => c.name === 'late' && c.notnull === 1 && c.dflt_value === '0'),
-    'a later rebuild of world_witness carries `late` (migration 0134\'s header)');
+    'a later rebuild of world_witness carries `late` (migration 0135\'s header)');
   const triggers = Object.fromEntries(raw.prepare("SELECT name, sql FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'world_witness'").all().map((t) => [t.name, t.sql]));
   assert.deepEqual(Object.keys(triggers).sort(), ['witness_lean_fixed', 'witness_lean_in', 'witness_lean_out']);
   assert.deepEqual(raw.prepare("SELECT name FROM sqlite_master WHERE type = 'trigger' AND tbl_name = 'witness_confirmed' ORDER BY name").all().map((t) => t.name),
@@ -151,11 +151,11 @@ test('LEAN-WITNESS the schema: world_witness carries `late`, witness_confirmed k
   assert.equal(LEAN_KEYS_A_STATEMENT, 99, 'one parameter is the kind: D1 binds 100');
 });
 
-test('LEAN-WITNESS the migration\'s backfill: the answers standing when 0134 is applied are confirmed and let go late by the triggers\' own law - seconds shared, answers split, a pixel\'s rows left alone (mutants: the backfill unlate, its count moved)', () => {
+test('LEAN-WITNESS the migration\'s backfill: the answers standing when 0135 is applied are confirmed and let go late by the triggers\' own law - seconds shared, answers split, a pixel\'s rows left alone (mutants: the backfill unlate, its count moved)', () => {
   const raw = new DatabaseSync(':memory:');
   raw.exec('PRAGMA foreign_keys = ON');
   const files = readdirSync(new URL('../../server-account/migrations', import.meta.url)).filter((f) => f.endsWith('.sql')).sort();
-  for (const f of files.filter((f) => f < '0134')) raw.exec(src(`server-account/migrations/${f}`));
+  for (const f of files.filter((f) => f < '0135')) raw.exec(src(`server-account/migrations/${f}`));
   for (const a of ACCOUNTS) addAccount(raw, a);
   const ins = raw.prepare('INSERT OR IGNORE INTO world_witness (kind, key, account, report, region, at) VALUES (?, ?, ?, ?, ?, ?)');
   const r = lcg(424242);
@@ -165,7 +165,7 @@ test('LEAN-WITNESS the migration\'s backfill: the answers standing when 0134 is 
     ins.run(kind, KINDS[kind].keyOf(k), ACCOUNTS[Math.floor(r() * ACCOUNTS.length)], KINDS[kind].report(k, 21, y < 0.7 ? 40 : y < 0.9 ? 41 : 42), 21, T0 + Math.floor(r() * 40));
     ins.run('pixel', `${k},${i % 7}`, ACCOUNTS[i % ACCOUNTS.length], '[1,2]', 21, T0 + i);
   }
-  for (const f of files.filter((f) => f >= '0134')) raw.exec(src(`server-account/migrations/${f}`));
+  for (const f of files.filter((f) => f >= '0135')) raw.exec(src(`server-account/migrations/${f}`));
   assertKept(raw, HALL_WITNESS_KIND, 'the backfill');
   assertKept(raw, 'seat', 'the backfill');
   assert.ok(raw.prepare("SELECT COUNT(*) AS n FROM world_witness WHERE late = 1 AND kind IN ('npchall', 'seat')").get().n > 40, 'late rows stood');

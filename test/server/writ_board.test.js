@@ -1,5 +1,5 @@
 // WRIT-BOARD (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md WRIT-BOARD; migration
-// 0137) - A REGION'S WRITS READ BY THEIR OWNER: the board's two owners ('' and the caller's) each sought to its region on
+// 0138) - A REGION'S WRITS READ BY THEIR OWNER: the board's two owners ('' and the caller's) each sought to its region on
 // idx_writs_owner, where the table's UNIQUE index walked every member's own writs of the region's day; and a member's own
 // writs of the day found by the member on the same index, where every region's writs of the day were walked - one index
 // built for both (AUDIT LEAN-READS D2).

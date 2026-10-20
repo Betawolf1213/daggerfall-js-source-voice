@@ -1,7 +1,7 @@
 [
   {
     "name": "YARDSNAP-delete-unmoved",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 1",
     "new": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 9",
     "tests": [
@@ -11,7 +11,7 @@
   },
   {
     "name": "YARDSNAP-move-one-town",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "  INSERT INTO home_yards_ver (map_id, ver) SELECT OLD.map_id, COALESCE((SELECT built FROM home_yards WHERE map_id = OLD.map_id), 0) + 1 WHERE OLD.yard = 1\n    ON CONFLICT (map_id) DO UPDATE SET ver = ver + 1;\n",
     "new": "",
     "tests": [
@@ -21,7 +21,7 @@
   },
   {
     "name": "YARDSNAP-room-moves-town",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard = 1",
     "new": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard >= 0",
     "tests": [
@@ -91,7 +91,7 @@
   },
   {
     "name": "YARDSNAP-backfill-shape",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "  SELECT v.map_id, v.ver, '92826ba1', (SELECT CASE",
     "new": "  SELECT v.map_id, v.ver, 'none', (SELECT CASE",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "YARDSNAP-old-index-kept",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "DROP INDEX IF EXISTS idx_home_decor_yard;\n",
     "new": "",
     "tests": [
@@ -173,7 +173,7 @@
   },
   {
     "name": "YARDSNAP-backfill-bound",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "      WHERE map_id = v.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT 2000)))",
     "new": "      WHERE map_id = v.map_id AND yard = 1 ORDER BY building_key, placed_at, id)))",
     "tests": [
@@ -183,7 +183,7 @@
   },
   {
     "name": "YARDSNAP2-out-version-unmade",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 1\nBEGIN\n  INSERT INTO home_yards_ver (map_id, ver) VALUES (OLD.map_id, COALESCE((SELECT built FROM home_yards WHERE map_id = OLD.map_id), 0) + 1) ON CONFLICT (map_id) DO UPDATE SET ver = ver + 1;",
     "new": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 1\nBEGIN\n  UPDATE home_yards_ver SET ver = ver + 1 WHERE map_id = OLD.map_id;",
     "tests": [
@@ -223,7 +223,7 @@
   },
   {
     "name": "YARDSNAP2-version-made-at-one",
-    "file": "server-account/migrations/0135_yard_snap.sql",
+    "file": "server-account/migrations/0136_yard_snap.sql",
     "old": "  INSERT INTO home_yards_ver (map_id, ver) VALUES (OLD.map_id, COALESCE((SELECT built FROM home_yards WHERE map_id = OLD.map_id), 0) + 1) ON CONFLICT (map_id) DO UPDATE SET ver = ver + 1;",
     "new": "  INSERT INTO home_yards_ver (map_id, ver) VALUES (OLD.map_id, 1) ON CONFLICT (map_id) DO UPDATE SET ver = ver + 1;",
     "tests": [
