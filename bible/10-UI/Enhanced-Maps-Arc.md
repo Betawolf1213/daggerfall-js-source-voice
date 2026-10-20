@@ -327,10 +327,33 @@ that inks nothing.
   > system. So for now the town key opens the streets and the travel key
   > opens the bay, each with its own ladder, and the one window still
   > holds both sheets the moment that call is taken.
+
+  **FB1020c STAR-PLATE (2026-10-20): A PLATE THE SOLVER GIVES UP ON IS
+  DFU'S "*", NEVER NOTHING.** A player's report: "citizens who mark
+  locations on your map don't leave a mark". The mark itself was whole
+  (a 7332 answer's `%loc` discovers the building, and the sheet's ladder
+  names it - driven over every Where-is row of 701 towns), but the sheet
+  DROPPED a plate the collision solver surrendered, where DFU letters it
+  "*" with its building's name as a zero-delay tooltip
+  (`DaggerfallExteriorAutomapWindow.cs` :870-878, :900-904;
+  `ExteriorAutomap.cs` :1365-1376) and the classic window always did. So
+  a building an NPC marked on a crowded plan had no mark at all: with
+  both town packs, Daggerfall with 152 others found lettered 85 of its
+  153 names at rest and not the marked one. Now the surrendered plate is
+  lettered `nameplateLayout.js:"export const STAR_PLATE = '*';"` - one
+  word both maps read - where the solver left it
+  (`townSheet.js:"          text: s.replaced ? STAR_PLATE : n.text, name: n.text,"`),
+  ticked and inked as any name, and the pointer over it reads its
+  building's name. Not a departure: DFU's own law, which this sheet had
+  left. Pins `test/ui/ink/fb1020c_starplate.test.js` (4); mutants
+  `tools/mutants/fb1020c_starplate.json`. `em34.json`'s EM4-20 (below,
+  one of the three recorded equivalent) is re-aimed by content at the
+  star and dies now.
 - **EM5 — the campaigns, and what only a browser can answer.** The
   campaigns are run: `tools/mutants/em1.json` (34, all dead),
   `em2.json` (29, 27 dead and 2 recorded equivalent) and `em34.json`
-  (47, 44 dead and 3 recorded equivalent). Six pins in the two ink
+  (47, 44 dead and 3 recorded equivalent; FB1020c STAR-PLATE re-aimed
+  one of the three, EM4-20, at the star, and it dies now). Six pins in the two ink
   modules exist because a mutant walked past the first version of them,
   and two of the six taught the code something rather than the test:
   the FLD ground flat is in DFU's SHOWALL set (so folding that set into
