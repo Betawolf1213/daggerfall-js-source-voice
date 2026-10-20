@@ -488,6 +488,9 @@ const PULSE_HZ = 10;
 /** FINDME: the red cross's half-beats a second - on, off, twice a second (a named rate: test/ui/heldmap.test.js U61 keeps
  *  travel-law fragments such as `* 4)` out of this window's code). */
 const FINDME_BLINK_HZ = 4;
+/** FINDME: the red cross's stroke, in paper pixels. AUDIT FB1019f E4: a cross held at the paper's edge stands half a
+ *  stroke inside it, so all of its line is on the paper. */
+const FINDME_STROKE = 3;
 const HANDS_LOST_TICKS = 45;   // AUDIT-MAP2: ticks without corners before the hands lane gives the sheet back to the sprite
 /** MAP-FIT1: how far past the screen's edges the arm's sheet may hang, as
  *  a fraction of each dimension, before the window gives it back to the
@@ -1855,10 +1858,16 @@ export class HeldMapWindow {
     const me = this._findMeT > 0 && Math.floor(this._clock * FINDME_BLINK_HZ) % 2 === 0 ? sheet.me?.() : null;
     if (me) {
       const [fx, fy] = toPaper(this._view, me.x, me.y);
+      // AUDIT FB1019f E4: I may stand off the paper - outside the town's blocks (the town map opens anywhere in the
+      // location's pixel, and the view keeps the town on the paper), or the sheet dragged away while the cross blinks.
+      // The cross stands at the paper's edge on my side of it, on my row or my column where that one is on the paper,
+      // in the corner when neither is - it drew off the paper, one line of it or both
+      const edge = FINDME_STROKE / 2;
+      const cx = clamp(fx, edge, paperW - edge), cy = clamp(fy, edge, paperH - edge);
       ctx.save();
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.strokeStyle = 'rgba(200,24,24,0.95)'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(paperW, fy); ctx.moveTo(fx, 0); ctx.lineTo(fx, paperH); ctx.stroke();
+      ctx.strokeStyle = 'rgba(200,24,24,0.95)'; ctx.lineWidth = FINDME_STROKE;
+      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(paperW, cy); ctx.moveTo(cx, 0); ctx.lineTo(cx, paperH); ctx.stroke();
       ctx.restore();
     }
     if (this._bandShown !== band) { this._bandShown = band; this._chrome.band.textContent = band; }

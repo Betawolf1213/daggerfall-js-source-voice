@@ -679,6 +679,17 @@ sheet, where every dress but the grimoire's shows the button, did the same.
   through that point (`heldMap.js:"const me = this._findMeT > 0"`), so it crosses the caret on the streets and on the
   floor as it crossed the pixel on the bay. It draws over the wild zone's crows and flames, where it drew under them.
 
+**Off the paper, the cross holds its edge** (AUDIT FB1019f E4). The town map opens anywhere in the location's pixel, and
+the town's blocks are not all of it: a player in the fields round the walls stands off the town's grid. Find me glides
+there as anywhere, the view keeps the town on the paper, and so it lands on the town's edge nearest them - the streets
+they would walk in by. The cross was drawn through their caret, off the paper: one of its lines off it, or both off a
+corner. It stands at the paper's edge on their side now, on their row west or east of the town, on their column north
+or south of it, in the corner off a corner, half its stroke inside the edge so all of the line shows
+(`heldMap.js:"const cx = clamp(fx, edge, paperW - edge), cy = clamp(fy, edge, paperH - edge);"`). On the paper nothing moves: it goes through the caret, the pixel and
+the dungeon's Me as before. A sheet dragged away while the cross blinks holds it the same way. Find me still answers
+there: a player stands on the sheet, only off its blocks, so "no answer, nothing moved and nothing blinked" stays the
+case with no player at all.
+
 **A missing position is never read as one.** A window whose host hands no pixel holds none
 (`heldMap.js:"const p = deps.getPlayerPixel?.() ?? null;"`), and a sheet with no player answers null: Find me moves
 nothing and blinks nothing. The bay's middle stood in nowhere else that a player reaches - the pixel's other readers
@@ -692,5 +703,5 @@ the bay, on the enhanced skin alone (the held map's own row, `01-Overview/Port-L
 street, never out, and blinks the cross.
 
 Code: `ui/heldMap.js` (`_findMe`, `_paint`, the world sheet's `me`/`findMe`), `ui/town/townSheet.js`,
-`ui/automap/automapSheet.js`. Pins: `test/ui/town/fb1019f_findme_town.test.js` (6). Mutants:
-`tools/mutants/findme_town.json` (20, all dead). The record is `01-Overview/bugs/Field-Bugs-2026-10-19f.md` FINDME-TOWN.
+`ui/automap/automapSheet.js`. Pins: `test/ui/town/fb1019f_findme_town.test.js` (7). Mutants:
+`tools/mutants/findme_town.json` (23, all dead). The record is `01-Overview/bugs/Field-Bugs-2026-10-19f.md` FINDME-TOWN.

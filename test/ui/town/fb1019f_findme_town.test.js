@@ -264,3 +264,55 @@ test('FINDME-TOWN: on the 3D dungeon map Find me, the Me button and the Home key
     win.dispose();
   }
 }));
+
+// AUDIT FB1019f E4: the town map opens anywhere in the location's pixel, and the town's blocks are not all of it - a
+// player in the fields round the walls stands off the town's grid. Find me glides there as anywhere, and the view keeps
+// the town on the paper, so it lands on the town's edge nearest them; the cross was drawn through their caret, off the
+// paper - one of its lines off it, or both. It stands at the paper's edge on their side now.
+/** The cross as two quarter-second paints show it: the one it is lit in. */
+const litCross = (win) => { const a = crossOf(paintOf(win)); win.tick(0.25); const b = crossOf(paintOf(win)); assert.equal([a, b].filter(Boolean).length, 1, 'the cross blinks'); return a ?? b; };
+
+test('FINDME-TOWN AUDIT FB1019f E4: from the fields outside the town\'s blocks Find me glides to the town\'s edge nearest the player, and the cross stands at the paper\'s edge on their side - on their row west of the town, on their column north of it, in the corner off a corner - its stroke whole on the paper; on the paper it goes through the caret as before; dragged off the bay while it blinks, the same (mutants: the cross off the paper; its stroke half off; the edges crossed)', () => withDocument((doc) => {
+  const W = 8 * BLOCK_PX * WORLD_PER_PX, H = 8 * BLOCK_PX * WORLD_PER_PX;
+  const half = 1.5;   // the cross's stroke is three paper pixels
+  for (const [where, at, expect] of [
+    ['west, on the town\'s middle row', [-60, H / 2], (c) => ({ x: half, y: c.y })],
+    ['north, on its middle column', [W / 2, H + 60], (c) => ({ x: c.x, y: half })],
+    ['north-east, off its corner', [W + 80, H + 80], (c, lim) => ({ x: lim.paperW - half, y: half })],
+    ['south-west, off its corner', [-80, -80], (c, lim) => ({ x: half, y: lim.paperH - half })],
+    ['inside, the south-west corner', [10, 10], (c) => ({ x: c.x, y: c.y })],
+  ]) {
+    doc.made.length = 0;
+    const win = raise(town(8, 8, at));
+    pressFindMe(doc);
+    assert.equal(win._findMeT, 3, `${where}: Find me answers - a player stands on the sheet`);
+    win.tick(0.25);
+    const lim = win._limits();
+    const caret = caretOf(paintOf(win));
+    const inside = caret.x >= 0 && caret.x <= lim.paperW && caret.y >= 0 && caret.y <= lim.paperH;
+    assert.equal(inside, where.startsWith('inside'), `${where}: the caret ${inside ? 'on' : 'off'} the paper (${caret.x.toFixed(1)}, ${caret.y.toFixed(1)})`);
+    // the glide: street zoom, the view against the town's own edge on each side the player stands off the paper
+    const g = win._goal, visW = lim.paperW / g.scale, visH = lim.paperH / g.scale;
+    assert.ok(Math.abs(Math.min(lim.paperW, lim.paperH) / g.scale - 2 * win._sheet.blockPx) < 1e-9, `${where}: street zoom`);
+    if (caret.x < 0) assert.ok(Math.abs(g.ox) < 1e-6, `${where}: the town's west edge on the paper's`);
+    if (caret.x > lim.paperW) assert.ok(Math.abs(g.ox - (lim.mapW - visW)) < 1e-6, `${where}: the town's east edge on the paper's`);
+    if (caret.y < 0) assert.ok(Math.abs(g.oy) < 1e-6, `${where}: the town's north edge on the paper's`);
+    if (caret.y > lim.paperH) assert.ok(Math.abs(g.oy - (lim.mapH - visH)) < 1e-6, `${where}: the town's south edge on the paper's`);
+    assert.deepEqual(litCross(win), expect(caret, lim), `${where}: the cross`);
+    win.dispose();
+  }
+  // the bay, dragged away from me while the cross blinks: it holds the edge on my side
+  doc.made.length = 0;
+  const bay = raise(new HeldMapWindow({
+    getPlayerPixel: () => ({ x: 700, y: 300 }), getClimateIndex: () => CLIMATES.Woodlands, woods: { heightMapBuffer: new Uint8Array(500000).fill(10) }, mapSize: { width: 1000, height: 500 },
+    gold: () => 0, goldPieces: () => 0, hasHorse: false, hasCart: false, hasShip: false, diseaseCount: () => 0, poisonCount: () => 0,
+  }));
+  pressFindMe(doc);
+  bay.tick(0.25);
+  bay._setView({ ...bay._view, ox: 100 });   // the west of the bay on the paper, me far east of it
+  const lim = bay._limits();
+  const [mx, my] = toPaper(bay._view, 700.5, 300.5);
+  assert.ok(mx > lim.paperW && my > 0 && my < lim.paperH, 'my pixel east of the paper, on its rows');
+  assert.deepEqual(litCross(bay), { x: lim.paperW - half, y: my }, 'the cross at the east edge, on my row');
+  bay.dispose();
+}));

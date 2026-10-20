@@ -185,5 +185,35 @@
       "test/ui/disc22g_automap.test.js",
       "test/ui/ink/em3_3d_dungeon.test.js"
     ]
+  },
+  {
+    "name": "AUDIT-FB1019f-E4-the-cross-off-the-paper",
+    "file": "src/ui/heldMap.js",
+    "old": "      const cx = clamp(fx, edge, paperW - edge), cy = clamp(fy, edge, paperH - edge);\n",
+    "new": "      const cx = fx, cy = fy;\n",
+    "tests": [
+      "test/ui/town/fb1019f_findme_town.test.js"
+    ],
+    "why": "the finding: outside the town's blocks the cross is drawn through a caret off the paper - one line of it or both"
+  },
+  {
+    "name": "AUDIT-FB1019f-E4-the-cross-half-off-the-edge",
+    "file": "src/ui/heldMap.js",
+    "old": "      const edge = FINDME_STROKE / 2;\n",
+    "new": "      const edge = 0;\n",
+    "tests": [
+      "test/ui/town/fb1019f_findme_town.test.js"
+    ],
+    "why": "a cross held at the paper's edge with half its stroke off it"
+  },
+  {
+    "name": "AUDIT-FB1019f-E4-the-edges-crossed",
+    "file": "src/ui/heldMap.js",
+    "old": "clamp(fx, edge, paperW - edge)",
+    "new": "clamp(fx, edge, paperH - edge)",
+    "tests": [
+      "test/ui/town/fb1019f_findme_town.test.js"
+    ],
+    "why": "a player east of the paper crossed at its height, not its width"
   }
 ]
