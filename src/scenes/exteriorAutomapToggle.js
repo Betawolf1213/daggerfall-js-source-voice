@@ -4,7 +4,7 @@
 // use as `host.<name>` - as the code read them where it was.
 import { arenaTownLandmark } from '../world/arena/arenaCity.js';
 import { buildingSummaries } from '../world/buildingSummaries.js';
-import { createTownMapWindow, townMapDoorReady } from '../ui/town/townMapDoor.js';
+import { createTownMapWindow, townMapDoorReady, townSheetBag } from '../ui/town/townMapDoor.js';   // FB1020c STREETS-TAB: the streets' one bag
 import { discoveredBuildings, restampQuestNames } from '../systems/discovery.js';
 import { getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js';
 import { hasCustomLocationPosition } from '../world/locationLayout.js';
@@ -24,17 +24,15 @@ export function createExteriorAutomapToggle(host) {
     built, cam, cpuModels, getGpuMesh, locationIndex, maps, onlineHomes, player, playerTravelPixel,
     questBuildingSource, state, townTalk, walkMode, weaponRig
   } = host;
-  // A2: the exterior automap's own dispatch half (DaggerfallUI.cs
-  // :633-650): M outside opens the TOWN map only when the current
-  // map pixel carries a location - empty wilderness opens nothing.
-  // (Inside, routeKey's 'automap' arm opens the dungeon map instead.)
-  const toggleExteriorAutomap = () => {
-    if (townTalk.overlayActive) return;
+  /** FB1020c STREETS-TAB: the town the player stands in, as the town key's window takes it - `{ deps, mapId }`, the bag
+   *  createTownMapWindow reads and the town's MapId - or null where the pixel carries no built location. Its quest names
+   *  stamped as the plan is built (DFU's once per open, below), for whichever key asked. */
+  const townHere = () => {
     const px = playerTravelPixel();
     const key = `${px.x},${px.y}`;
     const dfLoc = locationIndex.get(key);
     const b = built.get(key);
-    if (!dfLoc || !b?.locBlocks || !b.locOrigin) return;
+    if (!dfLoc || !b?.locBlocks || !b.locOrigin) return null;
     const feet = walkMode ? player.pos : cam.pos;
     const t = state.pixelTranslation(px.x, px.y);
     // location-local player frame - the Where-is directory's own
@@ -70,9 +68,7 @@ export function createExteriorAutomapToggle(host) {
       getQuest: (questID) => host.questBridge?.machine.getQuest(questID) ?? null,
       isBuildingQuestResource: (mapID, key) => host.topicTree.isBuildingQuestResource(mapID, key),
     }, dfLoc.mapTableData?.mapId ?? 0);
-    if (!townMapDoorReady()) return;   // EM4: the skin fork's gate
-    mwViewFirstPerson();   // MW-MAP1: MAP-POV's law for this sheet too - the town plan is read in the head, and the arm must be first-person before the window's first tick asks
-    townTalk.showOverlay(createTownMapWindow({
+    return { mapId: dfLoc.mapTableData?.mapId, deps: {
       holder: sheetHolderOf(() => weaponRig),   // MW-MAP1: the Morrowind hands lane on the M key, as on V
       locationName: shownLocation,   // L10N3e: the title, as shown - the key is locationId
       locationId: locId,
@@ -109,6 +105,9 @@ export function createExteriorAutomapToggle(host) {
       // change to a ported, audited system. Mac's call, recorded in
       // 10-UI/Enhanced-Maps-Arc.md; until he takes it, the travel key
       // is the way to the bay and it keeps its ladder.
+      // FB1020c STREETS-TAB: the other way round needs none of them - the
+      // travel key's window holds these streets too (travelTown, below),
+      // handed over AFTER that door's ladder has passed.
       where: () => ({ inLocation: true }),
       townPlayer: () => ({ x: local[0] / WORLD_PER_PX, y: local[2] / WORLD_PER_PX, yaw: cam.yaw }),
       // DISC23-A: the party in these streets, their feet taken into the location's frame by the SAME subtraction the
@@ -128,8 +127,34 @@ export function createExteriorAutomapToggle(host) {
         } : null,
       }),
       townHomesVersion: () => (onlineHomes?.version() ?? 0) + vendorWaypointVersion() * 100_000,   // HOME-VENDOR: a waypoint moved repaints
-    }));
-    onlineHomes?.ensure(dfLoc.mapTableData?.mapId);   // TOWN-MARKS: a town heard from long ago is asked again, and its homes mark when it answers
+    } };
   };
-  return { toggleExteriorAutomap };
+  // A2: the exterior automap's own dispatch half (DaggerfallUI.cs
+  // :633-650): M outside opens the TOWN map only when the current
+  // map pixel carries a location - empty wilderness opens nothing.
+  // (Inside, routeKey's 'automap' arm opens the dungeon map instead.)
+  const toggleExteriorAutomap = () => {
+    if (townTalk.overlayActive) return;
+    const here = townHere();
+    if (!here) return;
+    if (!townMapDoorReady()) return;   // EM4: the skin fork's gate
+    mwViewFirstPerson();   // MW-MAP1: MAP-POV's law for this sheet too - the town plan is read in the head, and the arm must be first-person before the window's first tick asks
+    townTalk.showOverlay(createTownMapWindow(here.deps));
+    onlineHomes?.ensure(here.mapId);   // TOWN-MARKS: a town heard from long ago is asked again, and its homes mark when it answers
+  };
+  /** FB1020c STREETS-TAB: what the travel key's window adds while the player stands in a town - the M key's streets
+   *  (ui/town/townMapDoor.js townSheetBag over townHere's bag, the same building summaries and discovery record, so a
+   *  townsperson's mark is on both), the town's context (systems/map/mapTabs.js: the streets and the bay), and the bay
+   *  to open on, so the key opens where it always has and the streets are one tab away. `{}` anywhere else - indoors,
+   *  in a dungeon, in the wild - and the window is the bay alone, as before. Spread into the travel door's bag by
+   *  scenes/world.js toggleTravelMap, past its ladder (IsPlayerInside, the enemies, the offer, the sun): the streets
+   *  need none of it, the bay keeps all of it. The classic skin's window takes no `town` and draws DFU's map. */
+  const travelTown = () => {
+    if ((host.modes?.mode ?? 'exterior') !== 'exterior') return {};
+    const here = townHere();
+    if (!here) return {};
+    onlineHomes?.ensure(here.mapId);   // TOWN-MARKS: as at the town key
+    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };
+  };
+  return { toggleExteriorAutomap, travelTown };
 }

@@ -444,7 +444,7 @@ import { ItemMakerWindow, preloadItemMakerArt, itemMakerArtLoaded, ITEM_RECTS, r
 import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT, shownSpellName } from '../systems/loot/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry; L10N3e: a spell's name as shown
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { personOwnName } from '../systems/quest/person.js';   // QUEST-NAME-ONE: a quest stand answers to its Person's own name
-import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
+import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, buildingStandSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop; FB1020c CROWD-CLEAR: a Person clear of the room's people
 import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
 import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './quest/questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
@@ -2870,8 +2870,8 @@ export function createWorldModes(host) {
       // or thing at the site's nearest marker with one, else the room's nearest enter marker (sceneMount.js standSpot) -
       // the floor asked as each law below asks it: the person's ray from its centre, the item's from just over it
       if (fallback) {
-        const lift = isItem ? 0.2 : size.h / 2 + 0.2;
-        [x, y, z] = standSpot([x, y, z], fallback(ctx), (p) => Number.isFinite(ctx.collider?.raycast?.([p[0], p[1] + lift, p[2]], [0, -1, 0], MARKER_FLOOR_REACH)));
+        [x, y, z] = buildingStandSpot([x, y, z], fallback(ctx), ctx.collider, isItem ? 0.2 : size.h / 2 + 0.2,
+          isItem ? null : size.w, ctx.people);   // FB1020c CROWD-CLEAR: and a Person never in a standing person's pick box (sceneMount.js)
         stand.x = x; stand.z = z;
       }
       // AUDIT 26 F068: an ITEM and an NPC are stood by DIFFERENT laws.
@@ -3049,7 +3049,10 @@ export function createWorldModes(host) {
     const [ox, oy, oz] = ctx.parentPt(own.x, own.y, own.z);
     const d2 = (p) => (p[0] - ox) ** 2 + (p[1] - oy) ** 2 + (p[2] - oz) ** 2;
     const others = siteMarkerSpots(quest?.getPlace?.(marker.placeSymbol)?.siteDetails, marker).map((p) => ctx.parentPt(p.x, p.y, p.z));
-    return [...others, ...[...(ctx.enterMarkers ?? [])].sort((a, b) => d2(a) - d2(b))];
+    // FB1020c CROWD-CLEAR: and the site's other spawn markers apart - where a Person crowded on its own marker stands
+    return Object.assign([...others, ...[...(ctx.enterMarkers ?? [])].sort((a, b) => d2(a) - d2(b))], {
+      spawns: siteMarkerSpots(quest?.getPlace?.(marker.placeSymbol)?.siteDetails, marker, false).map((p) => ctx.parentPt(p.x, p.y, p.z)),
+    });
   };
   const questAdapter = {
     // PlayerGPS.CurrentMapID through the host's scene-context closure.

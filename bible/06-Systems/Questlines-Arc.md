@@ -426,8 +426,18 @@ each (`sheets/questlines.json`), stamped as every quest is. A step's title is it
 pins holding the two to one word.
 
 THE RUNNER (`qlLineRunner.js`, made by the layer): each tick after the machine's, a line whose gate holds begins - one
-new line an hour of the character's time at most (AUDIT QUESTLINES LINES-17: every eligible line began on one tick) -
-and its step's quest is scheduled; a step that ends well starts the next an hour of the character's time later
+new line an hour of the character's time at most (AUDIT QUESTLINES LINES-17: every eligible line began on one tick),
+counted from the last letter a line handed the player as well as from the last line begun, and none while a begun
+line's first letter is still on its way (FB1020c LETTER-PACE, FIELD BUGS 2026-10-20c: "4 different notes from
+townsfolk ... while in a town for 5 minutes"; `qlLineRunner.js:"export function letterOnItsWay(quest) {"`, heard at
+GivePc's moment through `qlLayer.js:"if (resource?.itemName === 'letter') { runner.lettered(quest); return; }"`).
+Every line opens with a courier's letter, and GivePc holds a letter until the player stands in a town, outdoors, by day
+(GivePc.cs:78-97), then hands each over 40 to 500 ticks later: LINES-17 spaced the STARTS, so the letters of every line
+begun at night (online the sky's night is half of every real hour), indoors or in the wild landed together, six in 36
+seconds at a dawn on the real bridge. Now they come an hour of the character's time and the courier's wait apart - online
+about seven real minutes - and no two lines' first letters are ever held at once. Pinned by `test/systems/questlines/fb1020c_letterpace.test.js`
+(`tools/mutants/fb1020c_letterpace.json`). A line begun has its step's quest scheduled; a step that ends well starts the
+next an hour of the character's time later
 (STEP_GAP_S); one that ends badly is offered again a day later (RETRY_GAP_S) - a failure is never a dead end. A step's
 quest that will not begin here (its script will not parse - a place this region lacks), or one gone without its end
 (an error terminated it), is offered again a day later as well, never every tick, and the window says it could not

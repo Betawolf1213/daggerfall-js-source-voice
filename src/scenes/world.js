@@ -288,7 +288,7 @@ import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and school
 import { rollNoticeDoors } from './rollNoticeHost.js';   // SEAT-WORDS / STANDING-WORDS: what the Roll's tracker says
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
-import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine, disenchantableOf } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
+import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine, disenchantableOf, BAG_PAGE_WORDS } from '../ui/professions/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
 import { materialPicture, itemPicture } from '../ui/menu/menuPicture.js';   // MENU-ORDER: a material's and a piece's picture for the menus' rows
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: the saddle panel - the horse and the wagon on screen (Enhanced Plus)
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable and the Fleet pages on the pause menu's Holdings tab
@@ -308,7 +308,7 @@ import { WARDEN_VENDOR } from '../systems/wagon/wagonWarden.js';   // WARDEN1: t
 import { townGroundOf, yardSitesOn, craftYardSitesOn, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYards/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
 import { isPortTown, isPortTownType, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
-import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
+import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea, SEA_RING } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
 import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
 import { createHarbourBook } from '../systems/naval/harbourBook.js';   // HARBOUR-BOOK: the harbours near the player, the quays' and the sea's
@@ -621,7 +621,7 @@ import { createComeSailAwayAboard, CSA_ABOARD_GRACE, deckPose as csaDeckPose, he
 import { csaWireRecord, csaRecordKey } from '../systems/comeSailAway/comeSailAwayWire.js';   // CSA-J: my boats, said
 import { boatTriggers, boatMenuRows, boatMenuStart, pressBoatVerb, BOAT_VERB } from '../systems/comeSailAway/csaBoatMenu.js';   // BOAT-MENU: a boat of mine's verbs on the plaque
 import { linkBankCabin, readBankCabinLink, bankCabinCandidates } from '../systems/boatCabinOwnership.js';
-import { hasSailingCabin, savedCabinBoat, cabinSceneName } from '../systems/sailingCabin.js';
+import { hasSailingCabin, savedCabinBoat, cabinSceneName, CABIN_REFUSAL } from '../systems/sailingCabin.js';
 import { createSailingCabinAccess } from './sailingCabin.js';
 import { createCaravanAccess, parkedCaravanAt } from './caravanRoom.js';   // WAGONS1: the caravan's room
 import { createWagonRiders, GO_LEAD_MS } from './wagon/wagonRiders.js';   // WAGONS1: the seats in the back
@@ -2149,8 +2149,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  pack, the home's things, the purse or the Bank's accounts, on the service's answer - asks ONE checkpoint on the next
    *  task, as a trade saves at once; the checkpoint (onlineCheckpoint) is handed in once it is built (REALM P0.5). */
   const saveSoon = createSaveSoon();
-  /** BAG1: a deposit whose answer did not come - its goods stay out of the bag until the counting-house answers. */
-  const BAG_DEPOSIT_KEPT_TEXT = 'The counting-house is slow to answer. Your goods are on their way to the Stores.';
+  /** BAG1: a deposit whose answer did not come - its goods stay out of the bag until the counting-house answers.
+   *  FB1020c ONE-SAVE: the Stores page's own words (profPages.js BAG_PAGE_WORDS.kept), one home. */
+  const BAG_DEPOSIT_KEPT_TEXT = BAG_PAGE_WORDS.kept;
   /** PROF1: withdrawn from the Stores into the pack - the items the law names, minted as DFU mints them (law 3: they
    *  never go back). */
   const profMint = (key, n) => {
@@ -8064,7 +8065,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const sailingCabins = createSailingCabinAccess({
     available: () => !!csaRuntime && csaOn(),
     boats: () => csaRuntime?.AllBoats ?? [], mode: () => modes?.mode ?? 'exterior', busy: () => worldMoveBusy(),
-    sailing: () => !!csaRuntime?.isSailing(), disembarking: () => !!csaRuntime?.state.disembarking,
+    csa: () => csaRuntime, hostile: navalHostileNear,   // FB1020c CABIN-FOES: the helm read off the runtime; no cabin with a hostile ship near (scenes/sailingCabin.js)
     aboard: csaStandsOn,
     peerBoat: (owner, uid) => csaPeers.boatByUid(owner, uid),
     boardPeer: (boat) => csaAboard.board(boat, CSA_ABOARD_GRACE),
@@ -9173,7 +9174,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _navalPortList = [...out.values()];
     return _navalPortList;
   };
-  /** CAPT-BOARD: the map's port within a pixel of the player (the nearest), or null - asked once a pixel. */
+  /** CAPT-BOARD: the map's port within a pixel of the player (the nearest), or null - asked once a pixel. FB1020c
+   *  BERTH-RING (the field: the tutorial's "sail from one harbor to another" never registered): WITHIN SEA_RING - the
+   *  ring the port law itself reads (world/portSites.js seaBears: a port town is one the open sea bears on within it).
+   *  One pixel was the berth's ring, and the shore DFU's kernel builds lies past it at twelve of the board's ports - no
+   *  water a Small Ship lies in within a pixel (Wayrest among them; Daggerfall, Holwych, Ripmore, Isfakabi, Pencart,
+   *  Aldbrugh and Gallocart have none at all): no berth ever named them - a voyage into or out of one, a cargo for one, a
+   *  shipwright there. Within SEA_RING every one of the 106 has it; the nearest port within it names each. */
   let _navalPortHereAt = null;
   const navalPortHere = () => {
     const p = playerTravelPixel(), key = `${p.x},${p.y}`;
@@ -9184,7 +9191,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       _navalPortHereAt = { key, port: isle ? etherPortOf(isle) : null };
       return _navalPortHereAt.port;
     }
-    for (const q of navalPortList()) { const d = Math.max(Math.abs(q.px - p.x), Math.abs(q.py - p.y)); if (d <= 1 && d < best) { best = d; port = q; } }
+    for (const q of navalPortList()) { const d = Math.max(Math.abs(q.px - p.x), Math.abs(q.py - p.y)); if (d <= SEA_RING && d < best) { best = d; port = q; } }
     _navalPortHereAt = { key, port };
     return port;
   };
@@ -9228,8 +9235,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // not built reads as land, so a harbour sounded early found its shore at the streamed world's edge and two players
     // arriving by different roads found different berths and stood different quays; asked only before it is sounded
     const reach = t.reach ?? HARBOUR_REACH;   // AUDIT CAPTAIN'S SEA H1: an isle port's sounding reaches its shore
-    const ready = () => {
-      const x0 = rect.minX - reach, z0 = rect.minZ - reach, sx = rect.maxX - rect.minX + 2 * reach, sz = rect.maxZ - rect.minZ + 2 * reach;
+    const ready = (r = reach) => {   // FB1020c HARBOUR-REACH: or the port law's ring's (systems/naval/harbourBook.js portRingReach)
+      const x0 = rect.minX - r, z0 = rect.minZ - r, sx = rect.maxX - rect.minX + 2 * r, sz = rect.maxZ - rect.minZ + 2 * r;
       const nx = Math.ceil(sx / 400), nz = Math.ceil(sz / 400);   // under 400 m apart, both edges read: no pixel (819.2 m) between two
       for (let i = 0; i <= nx; i++) for (let k = 0; k <= nz; k++) if (!csaPixelAt(x0 + (sx * i) / nx, z0 + (sz * k) / nz)) return false;
       return true;
@@ -9586,7 +9593,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       dir: [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)],
     }),
     level: () => playerEntity.level ?? 1,
-    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: nearPort ? navalPortHere() : null, waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Eltheric Ocean's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
+    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: navalPortHere(), waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Eltheric Ocean's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at (FB1020c BERTH-RING: a board port within SEA_RING, nearPort or not - navalHost.js inPortWaters)   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
     say: (text, seconds) => townTalk.say(text, seconds),
     mid: (text, seconds) => setMidScreenText(text, seconds),
     shake: (amount) => betterAmbience.weaponKick(amount),   // FIELD-GUN6's door: a shake that is not a wound, under the player's own maxShake
@@ -11710,11 +11717,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         settle: () => profBook.settle(profMint, profMintCraft),   // AUDIT 29 C4: a kept withdrawal asked again when the Stores page opens; PROF3: and a kept craft
         // BAG1 (bible/06-Systems/Materials-Bag.md): THE STORES PAGE'S OTHER HALF - what is carried put in (the bag's first,
         // then the pack's), in a town; the bag's load, and the room the bag and the pack have left
-        deposit: async (k, n, order = 'all') => {   // LOOT-LOOSE: the page's `work` puts a looted unit in as loose
-          const r = await profBook.deposit(k, n, { order });
-          if (r?.ok) return { ok: true, text: `${n} ${materialCountLabel(k, n)} put in the Stores.` };
-          return { ok: false, kept: r?.kept === true, text: r?.kept ? BAG_DEPOSIT_KEPT_TEXT : accountRefusalText(r?.error) };   // AUDIT BAG1: `kept` - Put everything in stops on it
-        },
+        // FB1020c ONE-SAVE: the page's put-ins as one batch (profBook.js depositMany: one save for them all, each its own
+        // `order` - LOOT-LOOSE's `work` puts a looted unit in as loose), each answered in its own words
+        deposit: async (plan) => (await profBook.depositMany(plan)).map((r, i) => (r?.ok ? { ok: true, text: `${plan[i].qty} ${materialCountLabel(plan[i].material, plan[i].qty)} put in the Stores.` }
+          : { ok: false, kept: r?.kept === true, text: r?.kept ? BAG_DEPOSIT_KEPT_TEXT : accountRefusalText(r?.error) })),   // AUDIT BAG1: `kept` - Put everything in stops on it
         inTown: () => _storesReached(),
         room: (k) => bagRoomFor(playerEntity, k),
         carriedHeld: (k) => bagHeldOf(playerEntity, k, { counter: false }),   // AUDIT TOWN-ECON 2 PRICE-2: the Stores page never puts a counter's piece in
@@ -14101,7 +14107,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (link.type !== playerEntity.ownedShip) return false;
     const boat = csaRuntime.AllBoats.find((b) => b.uid === link.uid && b.hull === link.hull && !b.inside);
     if (!boat?.MapPixel) { townTalk.say('Summon your linked ship from Holdings > Fleet, or place its parts, first.'); return true; }
-    if (csaRuntime.isSailing()) { townTalk.say('Leave the helm before entering the cabin.'); return true; }
+    if (csaRuntime.isSailing() || navalHostileNear()) { townTalk.say(csaRuntime.isSailing() ? CABIN_REFUSAL.helm : CABIN_REFUSAL.enemies); return true; }   // FB1020c CABIN-FOES: nor below from a deck a hostile ship is near - the door's own law (systems/sailingCabin.js)
     modes?.forceExitToExterior({ cacheScene: !loading });
     cabinLink.close();
     const wasMoving = _teleporting; _teleporting = true;
@@ -16194,7 +16200,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // PARTY-TRAVEL (2026-09-25, Mac: "Implementing a prompt for online to travel to party leader"): a member away from
     // the leader is asked first whether the journey is to the leader - No opens the map (systems/party/partyTravel.js mapOffer)
     if (!gotoPlace && partyTravel?.mapOffer()) return false;
-    _travelMap = buildTravelMapWindow({ onTravel: (pick, opts, computed) => {
+    // FB1020c STREETS-TAB (scenes/exteriorAutomapToggle.js travelTown): in a town the window holds its streets too, opening on the bay
+    _travelMap = buildTravelMapWindow({ ...travelTown(), onTravel: (pick, opts, computed) => {
       if (TEST_GODMODE && staffPowers().god && pick?.pixel) { teleportTo(pick); return; }   // TESTBUILD: god mode - the map's journey is instant, from anywhere to anywhere
       // HALL-HERE (the owner: "happens only when youre already on the dungeon and press begin journey on the pixel where
       // you are"): a journey to the zone hall I already stand at is no journey - said, and nothing begun
@@ -17035,11 +17042,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       }
     }).catch(() => {});
   };
-  const { toggleExteriorAutomap } = createExteriorAutomapToggle({   // HOST-SPLIT: src/scenes/exteriorAutomapToggle.js
+  // FB1020c STREETS-TAB: and the streets the travel key's window holds in a town (`travelTown`, spread at
+  // toggleTravelMap's door) - one bag with the M key's
+  const { toggleExteriorAutomap, travelTown } = createExteriorAutomapToggle({   // HOST-SPLIT: src/scenes/exteriorAutomapToggle.js
     built, cam, cpuModels, getGpuMesh, locationIndex, maps, onlineHomes, player, playerTravelPixel,
     questBuildingSource, state, townTalk, walkMode, weaponRig,
     get activeQuestIds() { return activeQuestIds; },
     get hudArt() { return hudArt; },
+    get modes() { return modes; },
     get partyOnMaps() { return partyOnMaps; },
     get questBridge() { return questBridge; },
     get renameMapBuilding() { return renameMapBuilding; },
