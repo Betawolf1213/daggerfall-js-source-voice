@@ -98,7 +98,7 @@ function constBlock(name) {
 /** A piece the host hands the view or the map, by its own shape. */
 function grab(re, what) { const m = re.exec(WORLD); assert.ok(m, `world.js: ${what}`); return m[1]; }
 const ON_LOWER = grab(/\n\s*onLower: (\(why\) => \{[^\n]*\}),\n/, 'the view\'s onLower');
-const ON_TRAVEL = grab(/buildTravelMapWindow\(\{ \.\.\.townMap\.travelTown\(\), onTravel: (\(pick, opts, computed\) => \{\n[\s\S]*?\n {4}\}) \}\);/, 'the map\'s onTravel');   // PIN MOVED (FB1020c STREETS-TAB): the travel key's bag takes the town's streets first
+const ON_TRAVEL = grab(/buildTravelMapWindow\(\{ \.\.\.travelTown\(\), onTravel: (\(pick, opts, computed\) => \{\n[\s\S]*?\n {4}\}) \}\);/, 'the map\'s onTravel');   // PIN MOVED (FB1020c STREETS-TAB): the travel key's bag takes the town's streets; PIN MOVED (main's STAR0 HOST-SPLIT, crossed with STREETS-TAB at the merge): the town map left bootWorld for scenes/exteriorAutomapToggle.js, its travelTown handed back by name first
 const ON_COORDS = grab(/\n\s*onTravelToCoords: (\(pick, opts\) => \{ [^\n]*? \}),/, 'the map\'s onTravelToCoords');
 const HOST = [
   lineSource('const TV_SEA_EPS_M = '), lineSource('const tvQuiet = '), lineSource('const tvTrip = '), lineSource('const tvWater = '),
