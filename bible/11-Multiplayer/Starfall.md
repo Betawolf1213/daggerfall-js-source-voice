@@ -266,29 +266,52 @@ and Room methods of its own, the raid's and the rite's shape:
 
 - **Where.** A star's ledger lives in the CELL its pixel stands in (`worldRoom(px, py)`), in storage
   `star:<N>.<k>@<px>,<py>` (its whole tuple, `starLedgerId`), from the first word at it to its deadline and
-  `STAR_KEEP_MS` (10 min) past it. A cell keeps `STAR_LEDGERS_MAX` (4), and one account makes `STAR_LEDGERS_BY_MAX` (2)
-  of them. Full, a new star takes the place of the one stood at least lately, nobody at it for `STAR_IDLE_MS` (60 s);
-  a star held or lost keeps its place to its end, so its receipts are never minted twice nor its fight run again. A
-  layer keeps none (SCALE5d's law).
-- **The word** (client to cell, every `STAR_WORD_MS` (2 s) within `STAR_SAY_M` (55 m), at once on a change):
-  `{t:'star', n, k, px, py, lv, s, o, kn, wc, hb, mf}` - the night and the star, its pixel, my level, whether I struck
-  one of its foes, whether I own them, the deaths I saw of this wave, the wave I saw cleared, the blows I saw land on
-  the star (the owner's count), whether I saw the master fall.
+  `STAR_KEEP_MS` (10 min) past it. A layer keeps none (SCALE5d's law).
+- **The cell's places** (`starPlaceFor`, the law's, the relay's `_starMakeRoom` calls it). A LIVE star - not held or
+  lost, short of its deadline - costs a place: a cell keeps `STAR_LEDGERS_MAX` (4) live, and one account makes
+  `STAR_LEDGERS_BY_MAX` (2) of them. A star OVER costs no place and counts to no account: it is kept to its end so its
+  receipts are never minted twice nor its fight run again, and what a cell keeps is bounded without a cap - a ledger is
+  made once, from its star's landing to its deadline, so a cell's 256 pixels by a night's three stars, one night at a
+  time (a night's last is forgotten 25 minutes past its midnight, the next night's first falls 45 minutes on): 768 at
+  the most, a forged pixel's holding the one or two accounts that spoke at it. The relay holds none of them in hand
+  (`starSettled`: lost, or held, minted and told), so they never push a live star's copy out of its cache. Full, a new
+  star takes the place of the live one stood at least lately that NOBODY STANDS AT (`starStoodAt`): an account stands
+  at the star its most recent word in the cell came from, if that word came from the star within `STAR_IDLE_MS`
+  (60 s) - one star an account, and the account making the new star at that one. A star somebody stands at is never put
+  out, so N accounts hold at most N places, and a real star with a defender at it keeps its place; with none to give,
+  the new star waits. (The Starfall's audit, 2026-10-20, its first finding: the over stars counted against both caps,
+  so two accounts whose four forged stars went dark in eleven seconds held the cell from the real star for twenty-five
+  minutes, and one player's two finished stars kept it from the night's third.)
+- **The word** (client to cell, every `STAR_WORD_MS` (2 s) within `STAR_SAY_M` (55 m), at once on a change, never past
+  the deadline): `{t:'star', n, k, px, py, lv, s, o, kw, kn, wc, hb, mf}` - the night and the star, its pixel, my
+  level, whether I struck one of its foes, whether I own them, the wave I stood and am counting (`kw`, 0 none) and the
+  deaths I saw of it (0 without one), the wave I saw cleared, the blows I saw land on the star (the owner's count),
+  whether I saw the master fall.
 - **What the relay checks.** A word for another cell is junk. One outside the window, the night's stars (`starTimes`)
   or its star's life is nothing. One from a pose further than `STAR_REACH_M` (60 m) from the star the law places in that
   pixel is heard as present but counts nothing. The ledger is made by a word from the star (its tuple: the night, the
-  star, the pixel - a forged pixel makes a ledger of its own and stands in no other's way).
+  star, the pixel - a forged pixel makes a ledger of its own and stands in no other's way: the cell's places, above),
+  and only before its deadline (`starMayMake`): `STAR_GRACE_MS` (2 s) past it the relay still hears a ledger's last
+  words in flight, but makes none - a first word then would make a star already lost.
 - **The owner.** The relay keeps who says they own the foes: the first `o: 1`, until that account has said nothing for
   `STAR_ORPHAN_MS`. A wave cleared, a blow count and the master's fall are believed from the owner alone.
 - **The machine.** `stepStar(led, now)` moves the ledger on every word: the gathering, each wave and its breath, the
   master. The light falls by the owner's blow count, credited no faster than `STAR_BLOWS_BURST` (6) and
   `STAR_BLOWS_HZ` (9) a second; the breath's light is added once a breath. The wave's size is fixed when it starts.
+  The owner's deaths are credited to the wave its word names (`kw`) alone, and a wave cleared (`wc`) likewise: the
+  owner's screen says the last wave's deaths through the breath, and the word that ends the breath starts the next -
+  credited there, the new wave would stand already dead and run its hundred seconds empty (the audit's second).
 - **The fan.** A ledger that moved says `{t:'star', k:'st', ...}` to the cell (`starLedgerState`): the phase, the wave,
   its size and the deaths said of it, the time left in the phase on the encounter clock, the light, the defenders and
   their band, whether an owner holds the foes and the blows credited to it (an owner whose page reloads counts on from
-  them), held or lost and why. A word that moved nothing is answered with the same, to its speaker alone.
-- **Dawn.** The cell's alarm is armed for the deadline: a star unheld by then is lost with nobody there to step it, and
-  said to the cell. A cell keeping a star forgets nothing else until the star is forgotten.
+  them), held or lost and why. A word that moved nothing is answered with the same, to its speaker alone. The copy the
+  SPEAKING socket gets - in the fan and in that answer - carries its own account's credited blows (`hm`), so a
+  reloaded or new device counts on from what the relay credited it, owner or not; everyone else's copy has none.
+- **Dawn.** A star unheld by its deadline and `STAR_GRACE_MS` (`starLostAt`) is lost - so a master's fall said as the
+  deadline came, still in flight, holds it (the audit's third: the grace let such a word in, and the star was lost at
+  the deadline all the same). The cell's alarm is armed there: a star unheld by then is lost with nobody there to step
+  it, and said to the cell. A cell keeping a star forgets nothing else until the star is forgotten. The client says its
+  last word at the deadline (its star leaves `fallen` then - `starClockPhase`); the grace is the flight's alone.
 - **Held, said once.** The master's fall mints a receipt for each account that EARNED it - struck one of the star's
   foes and said so from the star within `STAR_PRESENT_MS` (15 s) of the fall - writes the ledger with them (kept before
   it is said, AUDIT WB A10), fans `hd` to the cell, hands each earner's receipt to its account's newest socket there,
@@ -452,8 +475,8 @@ burning, the dark.
 
 | frame | way | what |
 |---|---|---|
-| `{t:'star', n, k, px, py, lv, s, o, kn, wc, hb, mf}` | client -> cell | the star's word (section 5) |
-| `{t:'star', k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why}` | cell -> cell, cell -> a speaker | the ledger: phase, wave, its size and deaths, the time left in the phase, light, defenders, band, an owner and its credited blows, held, lost and why |
+| `{t:'star', n, k, px, py, lv, s, o, kw, kn, wc, hb, mf}` | client -> cell | the star's word (section 5) - `kw` the wave its deaths `kn` belong to, 0 to `STAR_WAVES` like `wc` |
+| `{t:'star', k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why, hm?}` | cell -> cell, cell -> a speaker | the ledger: phase, wave, its size and deaths, the time left in the phase, light, defenders, band, an owner and its credited blows, held, lost and why; `hm` on the speaking socket's copy alone - its own account's credited blows, a count bounded like `hb` (`STAR_BLOWS_WIRE_MAX`) |
 | `{t:'star', k:'hd', n, s, px, py, at, top, c}` | cell -> cell, hub -> everyone | held, by whom (the first `STAR_TOP_MAX` named, `c` how many) |
 | `{t:'star', k:'rc', r}` | cell or hub -> one | an earner's receipt |
 | `{t:'star', k:'hds', l: [...]}` | hub -> a hello | the night's held stars |
@@ -475,8 +498,12 @@ holds what it can check: the window, the cell, the pose, the order of the waves,
 word moves the waves, the light and the master's fall. A modified owner could clear a wave early (never sooner than
 2.5 s a foe), drain the star (never faster than 9 blows a second) or call the master fallen (never sooner than 45 s
 after it stood). The last pays the defenders who struck and stood there; the service bounds what a receipt is worth
-(once a star, nine a day). A word for a forged pixel is a ledger of its own and stands in no other's way. The relay does
-not know whether the live event is staged; the dated window bounds what it pays.
+(once a star, nine a day). A word for a forged pixel is a ledger of its own and stands in no other's way: once over it
+costs no place, and while live it keeps one against a new star only while somebody stands at it - an account stands
+at one star at a time, so N accounts hold at most N of a cell's four places, and never the place of a star a defender
+stands at (section 5, the cell's places). Four accounts standing at four forged stars in one cell can still make a
+fifth, real star there wait while they stand; that is the bound, said. The relay does not know whether the live event
+is staged; the dated window bounds what it pays.
 
 ## 11. The hosts, and the room made in bootWorld
 

@@ -19,7 +19,7 @@
 // PURE, and the relay's too: it imports the wire's and the gate's law (both already the relay's) and the festival's
 // calendar (net/festivalLaw.js, a leaf but for the holiday tables). An edit here is an
 // edit to the relay's law (test/net/relayversion.test.js). Not a DFU member. Ledger A (STARFALL).
-import { PIXEL_UNITS } from '../wire.js';
+import { PIXEL_UNITS, STAR_LEDGERS_MAX, STAR_LEDGERS_BY_MAX, STAR_IDLE_MS } from '../wire.js';
 import { gateHash, PIXEL_M, GATE_SPOT_SPREAD_M } from '../gate/gateLaw.js';
 import { festivalOpen } from '../festivalLaw.js';   // the festival's one calendar (a leaf beside the holiday tables)
 
@@ -44,7 +44,8 @@ export const STAR_OMEN_MS = 90_000;
 export const STAR_STREAK_MS = 8_000;
 /** A star stands this long after it lands; unheld by then, the coven takes it. The night's last is dawn's. */
 export const STAR_LIFE_MS = 900_000;
-/** A word said in a star's last moment reaches the relay a moment after it (the rite's RITE_GRACE_MS). */
+/** A word said in a star's last moment reaches the relay a moment after it (the rite's RITE_GRACE_MS): a ledger's words
+ *  are heard this long past its deadline, and it is lost only then (starLostAt). */
 export const STAR_GRACE_MS = 2_000;
 /** A held or lost star still stands this long after its end - the thread burnt, the stone gold or dark. */
 export const STAR_AFTER_MS = 120_000;
@@ -73,6 +74,12 @@ export function starHeard(n, k, nowMs) {
   const t = starTimes(n, k);
   return nowMs >= t.fallAt && nowMs < t.endAt + STAR_GRACE_MS;
 }
+/** Whether a word at `nowMs` may MAKE star (n, k)'s ledger: heard, and before its deadline. The grace hears a ledger's
+ *  last words in flight; it never makes one (a first word then would make a star already lost). */
+export const starMayMake = (n, k, nowMs) => starHeard(n, k, nowMs) && nowMs < starTimes(n, k).endAt;
+/** When an unheld star is lost: its deadline and the grace, so a master's fall said as the deadline came, still in
+ *  flight, holds it. The relay's alarm is armed here (server/src/index.js `_starDueOf`). */
+export const starLostAt = (n, k) => starTimes(n, k).endAt + STAR_GRACE_MS;
 
 // ═══ THE ROLLS ════════════════════════════════════════════════════════════════════════════════════════════════════════
 /** The Starfall's salt - its rolls never share the gate's (GATE_SALT) stream. */
@@ -193,7 +200,7 @@ export const STAR_LOST_DARK = 1, STAR_LOST_DAWN = 2;
  *   the wall ms of the last word from the star; gatherAt, ws, bs, ma on the encounter clock; kn the deaths the owner said
  *   of this wave; lt the light; bt/btAt the blow bucket; hd/lo the wall ms it was held or lost; b the band of the wave or
  *   the master standing (fixed as it starts); nd the defenders standing; top/hn who held it, and how many; by the account
- *   whose word made it (a cell's place for it - server/src/index.js _starMakeRoom); said once its receipts are minted and
+ *   whose word made it (an account's live stars are bounded - starPlaceFor); said once its receipts are minted and
  *   kept (the hold said, AUDIT WB A10's order); rc the receipts by account; told once the hub has answered
  */
 
@@ -215,6 +222,9 @@ export const starLedgerSane = (v) => !!v && typeof v === 'object' && starOk(v.n,
 export const starLedgerId = (w) => `${w.n}.${w.k}@${w.px},${w.py}`;
 /** Whether a ledger is over: held or lost. */
 export const starOver = (led) => led.p === P_HELD || led.p === P_LOST;
+/** Whether nothing moves a ledger again: lost, or held with its receipts minted and its hub told. The relay keeps no copy
+ *  of one in hand: a cell may keep hundreds (starPlaceFor), and they would push its live stars out. */
+export const starSettled = (led) => led.p === P_LOST || (led.p === P_HELD && led.said && led.told);
 
 /** The defenders standing at `nowMs`: the accounts whose last word came from the star within STAR_PRESENT_MS. */
 export function starDefenders(led, nowMs) {
@@ -257,7 +267,7 @@ function lose(led, nowMs, why) { if (starOver(led)) return; led.p = P_LOST; led.
 export function stepStar(led, nowMs) {
   if (starOver(led)) return false;
   const before = `${led.p}.${led.w}.${led.lt}`;
-  if (nowMs >= starTimes(led.n, led.k).endAt) { lose(led, nowMs, STAR_LOST_DAWN); return true; }
+  if (nowMs >= starLostAt(led.n, led.k)) { lose(led, nowMs, STAR_LOST_DAWN); return true; }
   clockTo(led, nowMs);
   for (let i = 0; i < 2 * STAR_WAVES + 4; i++) {   // at most every transition of a star in one step
     if (led.p === P_GATHER && led.ec >= led.gatherAt + STAR_GATHER_MS) waveStarts(led, led.gatherAt + STAR_GATHER_MS, nowMs);
@@ -272,11 +282,11 @@ export function stepStar(led, nowMs) {
 
 /**
  * ONE WORD FOLDED IN: the account's record (its name, level, strike, presence), the owner, then - from the owner alone -
- * the deaths of this wave, the wave cleared, the blows on the star and the master's fall, each by its bound. Answers
- * whether the ledger moved (a word that moves only its speaker's moment moves nothing worth saying). Nothing after the
- * star is over. Pure but for the ledger.
+ * the deaths of this wave (the word names the wave they belong to, `kw`), the wave cleared, the blows on the star and the
+ * master's fall, each by its bound. Answers whether the ledger moved (a word that moves only its speaker's moment moves
+ * nothing worth saying). Nothing after the star is over. Pure but for the ledger.
  * @param {StarLedger} led @param {string} acct the verified account @param {string} name its verified name
- * @param {{lv: number, s: number, o: number, kn: number, wc: number, hb: number, mf: number}} w the word (net/wire.js validStarIn)
+ * @param {{lv: number, s: number, o: number, kw: number, kn: number, wc: number, hb: number, mf: number}} w the word (net/wire.js validStarIn)
  * @param {boolean} near whether the speaker's pose stands at the star (starNear) @param {number} nowMs
  */
 export function foldStarWord(led, acct, name, w, near, nowMs) {
@@ -304,8 +314,10 @@ export function foldStarWord(led, acct, name, w, near, nowMs) {
   const nd = starDefenders(led, nowMs).length;
   if (nd !== led.nd) { led.nd = nd; moved = true; }
   if (led.own !== acct) return moved;
-  // the owner's: the deaths of this wave, the wave cleared, the blows on the star, the master's fall
-  if (led.p === P_WAVE && w.kn > led.kn) { led.kn = Math.min(w.kn, led.wz); moved = true; }
+  // the owner's: the deaths of this wave, the wave cleared, the blows on the star, the master's fall. The deaths are
+  // credited only to the wave the word names: the owner's screen says the last wave's through the breath, and the word
+  // that ends the breath starts the next (stepped above) - credited there, the new wave would stand already dead
+  if (led.p === P_WAVE && w.kw === led.w && w.kn > led.kn) { led.kn = Math.min(w.kn, led.wz); moved = true; }
   if (led.p === P_WAVE && w.wc === led.w && led.ec - led.ws >= led.wz * STAR_KILL_MIN_MS) { breathStarts(led, led.ec); moved = true; }
   if (w.hb > rec.hb) {
     led.bt = Math.min(STAR_BLOWS_BURST, led.bt + ((nowMs - led.btAt) / 1000) * STAR_BLOWS_HZ);
@@ -342,13 +354,62 @@ export function starPhaseLeft(led) {
 export const starOwnerBlows = (led) => (led.own ? led.a[led.own]?.hb ?? 0 : 0);
 /** The ledger as the cell says it (net/wire.js validStarOut `st`): the star, its phase and wave, the wave's size and the
  *  deaths said of it, the ms left in the phase, the light (whole), the defenders and their band, whether an owner holds
- *  the foes and its credited blows, held or lost and why. */
-export const starLedgerState = (led) => ({
+ *  the foes and its credited blows, held or lost and why. Said to the account `acct` that spoke, it carries that
+ *  account's own credited blows (`hm`): a reloaded or new device counts on from them, owner or not. */
+export const starLedgerState = (led, acct) => ({
   k: 'st', n: led.n, s: led.k, px: led.px, py: led.py, p: led.p, w: led.w, wz: led.wz, kn: led.kn, wl: starPhaseLeft(led),
   lt: Math.ceil(led.lt), nd: led.nd, b: led.b, ow: led.own ? 1 : 0, hc: starOwnerBlows(led), hd: led.hd, lo: led.lo, why: led.why,
+  ...(typeof acct === 'string' ? { hm: Object.hasOwn(led.a, acct) ? led.a[acct].hb : 0 } : {}),
 });
 /** A held star as the cell and the hub say it (net/wire.js validStarOut `hd`): the star, the moment, its earners' first
  *  names and how many earned it. */
 export const starHeldWord = (led) => ({ k: 'hd', n: led.n, s: led.k, px: led.px, py: led.py, at: led.hd, top: led.top, c: led.hn });
 /** When the last of night `n`'s stars is gone: the hub keeps a night's held stars until then. */
 export const starNightGoneAt = (n) => starTimes(n, STAR_PER_NIGHT - 1).goneAt;
+
+// ═══ THE CELL'S PLACES ════════════════════════════════════════════════════════════════════════════════════════════════
+/** Whether a ledger holds a place in its cell: not over, and short of its deadline - past it, it only hears its last
+ *  words in flight (STAR_GRACE_MS), so the night's third star, falling on the first's deadline, finds its place. */
+export const starLive = (led, nowMs) => !starOver(led) && nowMs < starTimes(led.n, led.k).endAt;
+/**
+ * WHO STANDS WHERE: each account at the ledger its most recent word in the cell landed at, if that word came from the
+ * star within STAR_IDLE_MS - one star an account, however many it made or spoke at. Answers the ledgers someone stands
+ * at; `but` stands at none of them (the account making a new star stands at that one). Pure.
+ * @param {StarLedger[]} leds @param {number} nowMs @param {string} [but]
+ */
+export function starStoodAt(leds, nowMs, but = '') {
+  /** @type {Map<string, { r: StarAccount, led: StarLedger }>} */
+  const latest = new Map();
+  for (const led of leds) {
+    for (const [acct, r] of Object.entries(led.a)) {
+      const had = latest.get(acct);
+      if (!had || r.last > had.r.last) latest.set(acct, { r, led });
+    }
+  }
+  /** @type {Set<StarLedger>} */
+  const at = new Set();
+  for (const [acct, { r, led }] of latest) if (acct !== but && r.near && nowMs - r.last <= STAR_IDLE_MS) at.add(led);
+  return at;
+}
+/**
+ * A NEW STAR'S PLACE in a cell (section 5), for the ledger `by` would make, among the ledgers the cell keeps (`leds`).
+ * A star over costs no place and counts to no account. It is kept to its end and STAR_KEEP_MS (the relay's) so its fight
+ * is never run again nor its receipts minted twice, and what is kept is bounded without a cap: a ledger is its tuple,
+ * made once, from its star's landing to its deadline - a cell's 256 pixels by a night's three stars, one night at a time
+ * (its last forgotten 25 minutes past its midnight, the next night's first falling 45 minutes on), 768 at the most.
+ * A live star costs a place: STAR_LEDGERS_MAX a cell, STAR_LEDGERS_BY_MAX of them made by one account. Full, the new
+ * star takes the place of the live one stood at least lately (`nearAt`) that NOBODY stands at (starStoodAt). A star
+ * someone stands at is never put out, so N accounts hold at most N places against a real star and its defenders - a
+ * forged pixel's ledger stands in no other's way. Answers whether there is a place, and the ledger whose place it takes
+ * (null for a free one). Pure.
+ * @param {StarLedger[]} leds @param {string} by @param {number} nowMs
+ * @returns {{ ok: boolean, out: StarLedger | null }}
+ */
+export function starPlaceFor(leds, by, nowMs) {
+  const live = leds.filter((led) => starLive(led, nowMs));
+  if (live.filter((led) => led.by === by).length >= STAR_LEDGERS_BY_MAX) return { ok: false, out: null };
+  if (live.length < STAR_LEDGERS_MAX) return { ok: true, out: null };
+  const at = starStoodAt(leds, nowMs, by);
+  const out = live.filter((led) => !at.has(led)).sort((x, y) => x.nearAt - y.nearAt)[0] ?? null;
+  return { ok: !!out, out };
+}

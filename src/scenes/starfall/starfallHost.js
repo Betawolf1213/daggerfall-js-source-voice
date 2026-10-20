@@ -394,7 +394,7 @@ export function createStarfallHost(host) {
   function word(S, t) {
     const s = session();
     if (!s?.starReady?.(S.cell)) return;
-    const w = starWordOf(S.site, { struck: S.struck, own: S.own, kn: S.kn, wc: S.wc, hb: S.hb, mf: S.mf }, playerEntity.level ?? 1);
+    const w = starWordOf(S.site, { struck: S.struck, own: S.own, kw: S.stoodWave, kn: S.kn, wc: S.wc, hb: S.hb, mf: S.mf }, playerEntity.level ?? 1);   // kw: the wave S.kn counts
     const key = starWordKey(w), changed = key !== S.saidKey;
     if (!changed && t - S.wordAt < STAR_WORD_MS && t < S.resayAt) return;
     if (!s.sendStar(w, S.cell)) return;

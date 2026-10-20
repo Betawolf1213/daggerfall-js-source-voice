@@ -58,18 +58,22 @@ export const starCirclePlaces = (count) => Array.from({ length: count }, (_, i) 
 
 /**
  * THE WORD THIS PLAYER SAYS AT A STAR (net/wire.js validStarIn): its star and pixel, the level, and - from `mine` (this
- * player's own record of the star) - whether it struck one of its foes, whether it owns them, the deaths of this wave it
- * saw, the wave it saw cleared, its foes' blows on the star, the master's fall. Pure.
+ * player's own record of the star) - whether it struck one of its foes, whether it owns them, the wave it stood and is
+ * counting (`kw`) and the deaths it saw of that wave (none without one: the cell credits them to that wave alone), the
+ * wave it saw cleared, its foes' blows on the star, the master's fall. Pure.
  * @param {{ n: number, k: number, px: number, py: number }} star
- * @param {{ struck: boolean, own: boolean, kn: number, wc: number, hb: number, mf: boolean }} mine @param {number} level
+ * @param {{ struck: boolean, own: boolean, kw?: number, kn: number, wc: number, hb: number, mf: boolean }} mine @param {number} level
  */
-export const starWordOf = (star, mine, level) => ({
-  n: star.n, k: star.k, px: star.px, py: star.py, lv: Math.max(1, Math.min(60, level | 0)),
-  s: mine.struck ? 1 : 0, o: mine.own ? 1 : 0, kn: Math.max(0, Math.min(99, mine.kn | 0)), wc: Math.max(0, Math.min(STAR_WAVES, mine.wc | 0)),
-  hb: Math.max(0, Math.min(9999, mine.hb | 0)), mf: mine.mf ? 1 : 0,
-});
+export const starWordOf = (star, mine, level) => {
+  const kw = Math.max(0, Math.min(STAR_WAVES, mine.kw | 0));
+  return {
+    n: star.n, k: star.k, px: star.px, py: star.py, lv: Math.max(1, Math.min(60, level | 0)),
+    s: mine.struck ? 1 : 0, o: mine.own ? 1 : 0, kw, kn: kw ? Math.max(0, Math.min(99, mine.kn | 0)) : 0, wc: Math.max(0, Math.min(STAR_WAVES, mine.wc | 0)),
+    hb: Math.max(0, Math.min(9999, mine.hb | 0)), mf: mine.mf ? 1 : 0,
+  };
+};
 /** A word's fields as a key, to say it again at once when it changes. */
-export const starWordKey = (w) => `${w.s}.${w.o}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;
+export const starWordKey = (w) => `${w.s}.${w.o}.${w.kw}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;
 
 /** The ledger's phase as the tracker says it - the master by its name. */
 export function starPhaseLine(led, masterName) {

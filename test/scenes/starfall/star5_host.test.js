@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { createStarfallHost, STAR_BLOWS_STORE } from '../../../src/scenes/starfall/starfallHost.js';
 import {
   starNightAt, starTimes, starCircleSize, STAR_ORPHAN_MS, STAR_CIRCLE_AT, STAR_LOST_DARK,
-  P_WAVE, P_MASTER, P_HELD, P_LOST,
+  P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST,
 } from '../../../src/net/starfall/starfallLaw.js';
 import { starCovenOf, covenWitches, STAR_COVENS } from '../../../src/systems/starfall/starfallCovens.js';
 import { findStarSites } from '../../../src/systems/starfall/starfallSites.js';
@@ -170,7 +170,7 @@ test('STAR5 THE DEFENSE: at the fallen star this player springs its coven - its 
   const [a, b, c] = w.foes.stood;
   for (const f of [a, b]) { f.dead = true; f.corpse = true; }
   w.frame(); w.t += 2100; w.frame();
-  assert.deepEqual([w.words.at(-1).kn, w.words.at(-1).wc], [2, 0], 'two down, the wave stands');
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn, w.words.at(-1).wc], [1, 2, 0], 'two down of the first wave, the wave stands');
   c.dead = true;
   w.frame(); w.t += 2100; w.frame();
   assert.equal(w.words.at(-1).kn, 2, 'gone without a body: walked off, no fall');
@@ -179,10 +179,16 @@ test('STAR5 THE DEFENSE: at the fallen star this player springs its coven - its 
   assert.equal(w.host.state().find((s) => s.key.startsWith(`${N}.1@`)).kn, 3);
   assert.equal(w.words.at(-1).kn, 3);
   assert.equal(w.words.at(-1).wc, 1, 'the wave seen cleared');
+  // the breath: the word still names the wave its deaths are (the cell credits them to that wave alone)
+  w.st(1, { p: P_BREATH, w: 1, wz: 3, kn: 3, b: 1 });
+  w.frame(); w.t += 2100; w.frame();
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn], [1, 3], 'the first wave\'s deaths, named by it');
   // wave 2, taken over mid-wave: only what is left of it stands
   w.st(1, { p: P_WAVE, w: 2, wz: 5, kn: 2, b: 1 });
   await w.beat();
   assert.deepEqual(w.foes.stood.slice(3).map((f) => f.mobileType), starWaveFoes(N, 1, 2, 3, 1));
+  w.frame(); w.t += 2100; w.frame();
+  assert.deepEqual([w.words.at(-1).kw, w.words.at(-1).kn], [2, 2], 'the second wave\'s word counts on from the deaths the cell said of it');
   assert.ok(starWaveFoes(N, 1, 2, 3, 1).every((c) => STAR_ROSTERS[1][1].includes(c)));
   Date.now = realNow;
 });

@@ -266,9 +266,9 @@ import { mintRaidReceipt, readRaidReceipt } from '../../src/net/raid/raidReceipt
 // net/starfall/starfallLaw.js (when a star falls, where in its pixel, and the ledger its cell keeps - pure law, it imports
 // wire.js and gateLaw.js, both here) and net/starfall/starReceipt.js (a star held, the relay's signature again under the
 // gate's one key - it imports identityToken.js and starfallLaw.js). bible/11-Multiplayer/Starfall.md section 5.
-import { starOk, starHeard, starNear, starTimes, newStarLedger, starLedgerSane, foldStarWord, stepStar, starOver, starEarned, starTop, starLedgerState, starLedgerId, starHeldWord, starNightGoneAt, P_HELD } from '../../src/net/starfall/starfallLaw.js';
+import { starOk, starHeard, starMayMake, starLostAt, starNear, starTimes, newStarLedger, starLedgerSane, foldStarWord, stepStar, starOver, starSettled, starPlaceFor, starEarned, starTop, starLedgerState, starLedgerId, starHeldWord, starNightGoneAt, P_HELD } from '../../src/net/starfall/starfallLaw.js';
 import { mintStarReceipt, readStarReceipt } from '../../src/net/starfall/starReceipt.js';
-import { starRelayGate, validStarOut, STAR_INTERNAL_HELD, STAR_TELL_RETRY_MS, STAR_LEDGER_PREFIX, starLedgerKey, STAR_LEDGERS_MAX, STAR_LEDGERS_BY_MAX, STAR_IDLE_MS, STAR_SAVE_MS, STAR_KEEP_MS, STAR_HELD_KEY, STAR_HELD_MAX, STAR_RC_PREFIX, starReceiptKeyOf, STAR_RC_KEEP, STAR_RC_KEEP_MS, STAR_COUNT_MAX } from './relay.js';
+import { starRelayGate, validStarOut, STAR_INTERNAL_HELD, STAR_TELL_RETRY_MS, STAR_LEDGER_PREFIX, starLedgerKey, STAR_LEDGERS_MAX, STAR_SAVE_MS, STAR_KEEP_MS, STAR_HELD_KEY, STAR_HELD_MAX, STAR_RC_PREFIX, starReceiptKeyOf, STAR_RC_KEEP, STAR_RC_KEEP_MS, STAR_COUNT_MAX } from './relay.js';
 import { mintWatchReceipt, watchDue, watchPixelOk } from '../../src/net/watchReceipt.js';
 import { newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick as iliacTableTick, iliacNextAt, iliacEmpty, iliacLook, iliacSeatOf, iliacSitRefusal, iliacVouch, iliacGone, iliacBack, iliacVoid } from '../../src/net/iliac/iliacTable.js';   // CARDS10: THE RELAY DEALS ILIAC HAND - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds; AUDIT CARDS-6: a sit's refusal asked first, a vouch again, a seat kept for a blink
 import { newGambitTable, gambitSit, gambitSitRefusal, gambitReady, gambitReadyRefusal, gambitUnready, gambitCommand, gambitForfeit, gambitStand, gambitVoid, gambitTick as gambitTableTick, gambitNextAt, gambitEmpty, gambitLook, gambitSeatOf, gambitTableValid } from '../../src/net/gambit/gambitTable.js';   // KG5: THE RELAY RUNS THE KING'S GAMBIT - gambitTable.js imports the law (kingsGambit.js, which brings enemyBasics.js and mathf.js) and Hold'em's bounds
@@ -979,7 +979,7 @@ export class Room {
     this._raidDays = new Map();     // RAID-ROLL: a cell's copy of each day's whole roll from the hub - day -> { ids: Set|null, at }
     this._raidTownsKept = undefined; // RAID-ROLL: the hub's towns table - undefined unread, null none kept, else the regions
     this._raidDayRolls = new Map(); // RAID-ROLL: the hub's day -> [raid identity] off the kept table - a few days at most
-    this._stars = new Bounded(4 * STAR_LEDGERS_MAX);   // STAR3: a cell's star ledgers read so far (net/starfall/starfallLaw.js), identity -> ledger|null; storage is the truth
+    this._stars = new Bounded(4 * STAR_LEDGERS_MAX);   // STAR3: a cell's star ledgers read so far (net/starfall/starfallLaw.js), identity -> ledger|null - never a settled one (`_starKeep`); storage is the truth
     this._starSavedAt = new Bounded(4 * STAR_LEDGERS_MAX);   // STAR3: when each was last written (a word that moves nothing writes at most every STAR_SAVE_MS)
     this._starHolding = new Set();  // STAR3: the stars whose hold is being minted - a word that lands meanwhile is not heard (the raid's _raidCleaning)
     this._starHeld = undefined;     // STAR3: the hub's held stars of the nights still standing, [n, s, px, py, at] - undefined: not read yet
@@ -9707,11 +9707,12 @@ export class Room {
   /**
    * THE WORD, JUDGED AND FOLDED (the raid's law and the rite's): heard in the star's own cell alone and never in a layer,
    * inside the star's life (net/starfall/starfallLaw.js starHeard - its landing to its deadline and the grace, inside the
-   * window). A star is its whole tuple - the night, the star, its pixel - and its ledger is made only by a word whose
-   * socket's pose stands at the star the law places in that pixel (starNear), in a place the cell can give. A word from
-   * off the star is heard (its speaker stands there no longer) and counts nothing. A ledger that moved is written and said
-   * to the cell, else the speaker is answered with it; the master's fall holds it (`_starHold`), and a word on a star held
-   * from an account that earned it is answered with its receipt again (a reconnect that missed it).
+   * window). A star is its whole tuple - the night, the star, its pixel - and its ledger is made only before its deadline
+   * (starMayMake) by a word whose socket's pose stands at the star the law places in that pixel (starNear), in a place the
+   * cell can give. A word from off the star is heard (its speaker stands there no longer) and counts nothing. A ledger that
+   * moved is written and said to the cell, else the speaker is answered with it - the speaker's copy with its own
+   * account's credited blows (`hm`); the master's fall holds it (`_starHold`), and a word on a star held from an account
+   * that earned it is answered with its receipt again (a reconnect that missed it).
    */
   async _starWord(ws, a, m, now) {
     if (worldRoom(m.px, m.py) !== a.key) { this._junk(ws); return; }
@@ -9727,6 +9728,7 @@ export class Room {
     const fresh = !led;
     if (!led) {
       if (!here) return;   // made only at the star
+      if (!starMayMake(m.n, m.k, now)) return;   // never past its deadline: the grace hears a ledger's last words, it makes none
       if (!(await this._starMakeRoom(now, acct))) return;   // no place for it now
       led = newStarLedger(m, now, acct);
       this._stars.set(id, led);
@@ -9734,8 +9736,9 @@ export class Room {
     const moved = foldStarWord(led, acct, a.name ?? '', m, here, now);
     if (led.p === P_HELD && !led.said) { await this._starHold(led, now); return; }   // held: said once its receipts are minted - a word that lands mid-mint is said nothing until then
     if (fresh || moved || (!starOver(led) && now - (this._starSavedAt.get(id) ?? 0) >= STAR_SAVE_MS)) await this._starSave(led, now);
-    if (moved) this._starFan(starLedgerState(led));
-    else this._send(ws, JSON.stringify({ t: 'star', ...starLedgerState(led) }));
+    const mine = starLedgerState(led, acct);   // the speaker's: its own account's credited blows ride it (`hm`)
+    if (moved) this._starFan(starLedgerState(led), ws, mine);
+    else this._send(ws, JSON.stringify({ t: 'star', ...mine }));
     const r = led.said && typeof a.sub === 'string' ? led.rc[a.sub] : null;
     if (r) this._send(ws, JSON.stringify({ t: 'star', k: 'rc', r }));
   }
@@ -9745,9 +9748,12 @@ export class Room {
     if (this._stars.has(id)) return this._stars.get(id);
     const v = await this.state.storage.get(starLedgerKey(id));
     const led = starLedgerSane(v) && starLedgerId(v) === id ? v : null;
-    this._stars.set(id, led);
+    this._starKeep(id, led);
     return led;
   }
+  /** A ledger read, kept in hand - or not, once settled (starfallLaw.js starSettled): nothing moves it again, and a cell
+   *  may keep hundreds over (starPlaceFor), which would push its live stars' copies out of `_stars`. */
+  _starKeep(id, led) { if (!led || !starSettled(led)) this._stars.set(id, led); }
   /** A listed ledger (`k` its key, `v` what storage holds) as the instance holds it - its copy, else the one read, kept
    *  then - or null for a value that is no ledger of the law's under its own key. */
   _starListed(k, v) {
@@ -9755,15 +9761,16 @@ export class Room {
     const id = starLedgerId(v);
     const had = this._stars.get(id);
     if (had) return had;
-    this._stars.set(id, v);
+    this._starKeep(id, v);
     return v;
   }
   /** When a ledger is forgotten, on the relay's clock: its deadline, and STAR_KEEP_MS past it. */
   _starEndsAt(led) { return starTimes(led.n, led.k).endAt + STAR_KEEP_MS; }
-  /** The soonest thing a ledger owes: its hold minted or its hub told (again), its deadline, else its forgetting. */
+  /** The soonest thing a ledger owes: its hold minted or its hub told (again), its loss at its deadline and the grace
+   *  (starLostAt), else its forgetting. */
   _starDueOf(led, now) {
     if (led.p === P_HELD && !led.told) return now + STAR_TELL_RETRY_MS;
-    return starOver(led) ? this._starEndsAt(led) : starTimes(led.n, led.k).endAt;
+    return starOver(led) ? this._starEndsAt(led) : starLostAt(led.n, led.k);
   }
   /** This cell's alarm, armed for `at` unless it already is, sooner. */
   async _starArm(at) {
@@ -9778,30 +9785,26 @@ export class Room {
     await this._starArm(this._starDueOf(led, now));
   }
   /** A NEW STAR'S PLACE in this cell, for a ledger `by` would make - answers whether there is one. Every ledger past its end
-   *  is forgotten first, and one account makes STAR_LEDGERS_BY_MAX at most. Past STAR_LEDGERS_MAX a place is given only by
-   *  the ledger stood at least lately, nobody at it for STAR_IDLE_MS, and never by one over: a star held or lost keeps its
-   *  place to its end, so its receipts are never minted twice nor its fight run again (the raid's AUDIT RAID R3). With
-   *  none, the new star waits. */
+   *  is forgotten first; then the law's place (net/starfall/starfallLaw.js starPlaceFor): a star over costs none and is
+   *  kept to its end, so its receipts are never minted twice nor its fight run again (the raid's AUDIT RAID R3); a live
+   *  one costs one, and gives it up only when nobody stands at it. With none, the new star waits. */
   async _starMakeRoom(now, by) {
     const m = await this.state.storage.list({ prefix: STAR_LEDGER_PREFIX });
-    const live = [], dead = [];
+    const kept = [];
     for (const [k, v] of m) {
       const led = this._starListed(k, v);
-      (led && now < this._starEndsAt(led) ? live : dead).push([k, led]);
+      if (led && now < this._starEndsAt(led)) { kept.push(led); continue; }
+      await this.state.storage.delete(k);
+      if (led) this._stars.delete(starLedgerId(led));
     }
-    for (const [k, led] of dead) { await this.state.storage.delete(k); if (led) this._stars.set(starLedgerId(led), null); }
-    if (live.filter(([, led]) => led.by === by).length >= STAR_LEDGERS_BY_MAX) return false;
-    if (live.length < STAR_LEDGERS_MAX) return true;
-    const out = live.filter(([, led]) => !starOver(led) && now - led.nearAt >= STAR_IDLE_MS).sort(([, x], [, y]) => x.nearAt - y.nearAt)[0];
-    if (!out) return false;
-    await this.state.storage.delete(out[0]);
-    this._stars.set(starLedgerId(out[1]), null);
-    return true;
+    const { ok, out } = starPlaceFor(kept, by, now);
+    if (out) { const id = starLedgerId(out); await this.state.storage.delete(starLedgerKey(id)); this._stars.set(id, null); }
+    return ok;
   }
-  /** A star word to everyone hello'd in the cell. */
-  _starFan(o) {
-    const s = JSON.stringify({ t: 'star', ...o });
-    for (const [ws, b] of [...this._all()]) if (b.id) this._send(ws, s);
+  /** A star word to everyone hello'd in the cell - `mine` in its place to the socket `from` that spoke. */
+  _starFan(o, from = null, mine = null) {
+    const s = JSON.stringify({ t: 'star', ...o }), own = mine ? JSON.stringify({ t: 'star', ...mine }) : s;
+    for (const [ws, b] of [...this._all()]) if (b.id) this._send(ws, ws === from ? own : s);
   }
   /** Each account's newest hello'd socket here, of the accounts `rc` holds a receipt for (AUDIT WBX S4: one tab an
    *  account). */
@@ -9864,7 +9867,7 @@ export class Room {
     let next = Infinity;
     for (const [k, v] of m) {
       const led = this._starListed(k, v);
-      if (!led || now >= this._starEndsAt(led)) { await this.state.storage.delete(k); if (led) this._stars.set(starLedgerId(led), null); continue; }
+      if (!led || now >= this._starEndsAt(led)) { await this.state.storage.delete(k); if (led) this._stars.delete(starLedgerId(led)); continue; }
       if (stepStar(led, now)) { await this._starSave(led, now); this._starFan(starLedgerState(led)); }
       if (led.p === P_HELD && !led.said) await this._starHold(led, now);
       else await this._starTellHubOnce(led, now);

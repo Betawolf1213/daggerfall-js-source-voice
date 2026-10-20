@@ -371,8 +371,8 @@
  {
   "name": "STAR5-the-blows-no-news",
   "file": "src/systems/starfall/starfallClient.js",
-  "old": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;",
-  "new": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kn}.${w.wc}.${w.mf}`;",
+  "old": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kw}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;",
+  "new": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kw}.${w.kn}.${w.wc}.${w.mf}`;",
   "tests": [
    "test/systems/starfall/star5_defense.test.js"
   ]
@@ -391,6 +391,33 @@
   "file": "src/scenes/starfall/starfallHost.js",
   "old": "L.lost ? 0 : Math.min(1, since / 3000) * dim;",
   "new": "Math.min(1, since / 3000) * dim;",
+  "tests": [
+   "test/scenes/starfall/star5_host.test.js"
+  ]
+ },
+ {
+  "name": "STAR5-the-wave-no-news",
+  "file": "src/systems/starfall/starfallClient.js",
+  "old": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kw}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;",
+  "new": "export const starWordKey = (w) => `${w.s}.${w.o}.${w.kn}.${w.wc}.${w.hb}.${w.mf}`;",
+  "tests": [
+   "test/systems/starfall/star5_defense.test.js"
+  ]
+ },
+ {
+  "name": "STAR5-deaths-of-no-wave-said",
+  "file": "src/systems/starfall/starfallClient.js",
+  "old": "kn: kw ? Math.max(0, Math.min(99, mine.kn | 0)) : 0",
+  "new": "kn: Math.max(0, Math.min(99, mine.kn | 0))",
+  "tests": [
+   "test/systems/starfall/star5_defense.test.js"
+  ]
+ },
+ {
+  "name": "STAR5-the-word-names-no-wave",
+  "file": "src/scenes/starfall/starfallHost.js",
+  "old": "kw: S.stoodWave, kn: S.kn",
+  "new": "kw: 0, kn: S.kn",
   "tests": [
    "test/scenes/starfall/star5_host.test.js"
   ]

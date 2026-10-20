@@ -5297,15 +5297,16 @@ const STAR_NIGHT_MAX = 2 ** 31;
 const nightOk = (n) => Number.isSafeInteger(n) && n > 0 && n < STAR_NIGHT_MAX;
 const flag = (v) => v === 0 || v === 1;
 /**
- * A client's star word, projected: `{n, k, px, py, lv, s, o, kn, wc, hb, mf}` - the night and the star, its pixel, the
- * speaker's level, 1 once it struck one of the star's foes, 1 while it owns them, the deaths it saw of this wave, the
- * wave it saw cleared (0 none), the blows its foes have landed on the star, 1 once it saw the master fall - or null.
+ * A client's star word, projected: `{n, k, px, py, lv, s, o, kw, kn, wc, hb, mf}` - the night and the star, its pixel,
+ * the speaker's level, 1 once it struck one of the star's foes, 1 while it owns them, the wave its deaths belong to (0
+ * none) and the deaths it saw of it, the wave it saw cleared (0 none), the blows its foes have landed on the star, 1 once
+ * it saw the master fall - or null.
  */
 export function validStarIn(m) {
   if (!m || typeof m !== 'object' || !nightOk(m.n) || !intIn(m.k, 0, STAR_STARS_MAX - 1)) return null;
   if (!intIn(m.px, 0, 999) || !intIn(m.py, 0, 499) || !intIn(m.lv, 1, STAR_LEVEL_WIRE_MAX)) return null;
-  if (!flag(m.s) || !flag(m.o) || !flag(m.mf) || !intIn(m.kn, 0, STAR_KILLS_MAX) || !intIn(m.wc, 0, STAR_WAVES_MAX) || !intIn(m.hb, 0, STAR_BLOWS_MAX)) return null;
-  return { n: m.n, k: m.k, px: m.px, py: m.py, lv: m.lv, s: m.s, o: m.o, kn: m.kn, wc: m.wc, hb: m.hb, mf: m.mf };
+  if (!flag(m.s) || !flag(m.o) || !flag(m.mf) || !intIn(m.kw, 0, STAR_WAVES_MAX) || !intIn(m.kn, 0, STAR_KILLS_MAX) || !intIn(m.wc, 0, STAR_WAVES_MAX) || !intIn(m.hb, 0, STAR_BLOWS_MAX)) return null;
+  return { n: m.n, k: m.k, px: m.px, py: m.py, lv: m.lv, s: m.s, o: m.o, kw: m.kw, kn: m.kn, wc: m.wc, hb: m.hb, mf: m.mf };
 }
 /** What a cell or the hub says of a star: `st` its ledger, `hd` held, `rc` an earner's receipt, `hds` the night's held. */
 export const STAR_OUT_KINDS = Object.freeze(['st', 'hd', 'rc', 'hds']);
@@ -5320,7 +5321,8 @@ const msOk = (v) => Number.isSafeInteger(v) && v >= 0;
 const starTopOf = (top) => (Array.isArray(top) ? top.filter((x) => typeof x === 'string' && x).slice(0, STAR_TOP_WIRE_MAX).map(sanitizeName) : []);
 /**
  * A cell's or the hub's star word, projected for the client - or null:
- *   `{k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why}` the ledger (starfallLaw.js starLedgerState);
+ *   `{k:'st', n, s, px, py, p, w, wz, kn, wl, lt, nd, b, ow, hc, hd, lo, why, hm?}` the ledger (starfallLaw.js
+ *   starLedgerState) - `hm`, to the socket that spoke alone, its own account's credited blows;
  *   `{k:'hd', n, s, px, py, at, top, c}` held, by whom (the first few named, `c` how many);
  *   `{k:'rc', r}` an earner's receipt; `{k:'hds', l: [[n, s, px, py, at], ...]}` the held stars the hub keeps.
  */
@@ -5341,22 +5343,25 @@ export function validStarOut(m) {
   if (!intIn(m.p, 0, STAR_PHASE_MAX) || !intIn(m.w, 0, STAR_WAVES_MAX) || !intIn(m.wz, 0, 9) || !intIn(m.kn, 0, STAR_KILLS_MAX)) return null;
   if (!(Number.isSafeInteger(m.wl) && m.wl >= -1) || !intIn(m.lt, 0, STAR_LIGHT_MAX) || !intIn(m.nd, 0, STAR_COUNT_MAX) || !intIn(m.b, 1, 3)) return null;
   if (!flag(m.ow) || !intIn(m.hc, 0, STAR_BLOWS_MAX) || !msOk(m.hd) || !msOk(m.lo) || !intIn(m.why, 0, 2)) return null;
-  return { k: 'st', n: m.n, s: m.s, px: m.px, py: m.py, p: m.p, w: m.w, wz: m.wz, kn: m.kn, wl: m.wl, lt: m.lt, nd: m.nd, b: m.b, ow: m.ow, hc: m.hc, hd: m.hd, lo: m.lo, why: m.why };
+  if (m.hm !== undefined && !intIn(m.hm, 0, STAR_BLOWS_MAX)) return null;
+  const st = { k: 'st', n: m.n, s: m.s, px: m.px, py: m.py, p: m.p, w: m.w, wz: m.wz, kn: m.kn, wl: m.wl, lt: m.lt, nd: m.nd, b: m.b, ow: m.ow, hc: m.hc, hd: m.hd, lo: m.lo, why: m.why };
+  return m.hm === undefined ? st : { ...st, hm: m.hm };
 }
 /** The door from a star's cell to the hub: a star held, its earners' receipts riding it (the raid's door). */
 export const STAR_INTERNAL_HELD = '/internal/star/held';
 /** How soon a cell whose hub did not answer tells it again (the raid's number). */
 export const STAR_TELL_RETRY_MS = 5000;
-/** Where a cell keeps its stars' ledgers (never `world:` or `raid:` - those prefixes are swept), and how many at once:
- *  a cell is sixteen pixels square, and a night's three stars may fall in one. */
+/** Where a cell keeps its stars' ledgers (never `world:` or `raid:` - those prefixes are swept), and how many LIVE at once:
+ *  a cell is sixteen pixels square, and a night's three stars may fall in one. A star over costs no place (starfallLaw.js
+ *  starPlaceFor, which bounds what is kept). */
 export const STAR_LEDGER_PREFIX = 'star:';
 export const starLedgerKey = (id) => `${STAR_LEDGER_PREFIX}${id}`;
 export const STAR_LEDGERS_MAX = 4;
-/** One account makes at most this many of a cell's ledgers at once (the raid's RAID_LEDGERS_BY_MAX): the star it stands
- *  at and the next, never every place a cell has. */
+/** One account makes at most this many of a cell's live ledgers at once (the raid's RAID_LEDGERS_BY_MAX): the star it
+ *  stands at and the next, never every place a cell has. Its stars over count to nothing - a night's third is its own. */
 export const STAR_LEDGERS_BY_MAX = 2;
-/** A full cell gives a new ledger the place of one nobody has stood at for this long and that is not over. A star held
- *  or lost keeps its place to its end: its receipts are never minted twice, nor its fight run again. */
+/** An account stands at the star its last word in the cell came from for this long after it (starfallLaw.js
+ *  starStoodAt). A full cell gives a new ledger the place of a live one nobody stands at - never one somebody does. */
 export const STAR_IDLE_MS = 60_000;
 /** A word that moves nothing but its speaker's moment is written at most this often (the raid's RAID_SAVE_MS). */
 export const STAR_SAVE_MS = 5_000;
