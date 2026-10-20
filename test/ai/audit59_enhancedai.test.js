@@ -118,7 +118,7 @@ test('AUDIT 59 F3: the Enhanced tab row says what ships - dungeons, the motor li
   assert.ok(!/each dungeon, town and interior/.test(row), 'no promise of hosts the arc has not reached');
   assert.match(row, /Pathfinding works in dungeons only for now/);
   assert.match(row, /Takes effect at once; pathfinding from the next dungeon you enter\./, 'a foe keeps the motor it was born with (AUDIT TACT D7: the rest is at once)');
-  assert.match(row, /Off keeps the classic behaviour\./);
+  assert.match(row, /Off keeps the classic behavior\./);
 });
 
 test('AUDIT 59 F4: the route\'s vertical is never steered at, whatever y findPath answers', () => {
