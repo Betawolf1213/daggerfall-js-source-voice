@@ -311,7 +311,8 @@ test('NODE-OUTLINE the wiring: the world host rings the marks through the outlin
   assert.match(w, /const nodeOutlinePass = createNodeOutlinePass\(renderer, \{ glow: createNodeGlowPass\(renderer\) \}\);/);
   assert.match(w, /const drawVeiledPeerBodies = \(\) => \{ peerBodies\?\.drawVeiled\(\); drawAuras\(\); nodeOutlinePass\.draw\(travelView\?\.active \? null : nodeMarksAt\(enchantFeet\(\)\)\); \};/);
   assert.doesNotMatch(w, /nodeGlowPass/, 'the glow is the outline\'s fallback alone');
-  assert.match(r, /\(this\._bbRight \?\?= new Float32Array\(3\)\)\.set\(camRight\);/);
+  // PIN MOVED (the seams review's matrix-for-a-basis test): the three components the vec3 uniforms read, never a copy whole
+  assert.match(r, /const bbR = \(this\._bbRight \?\?= new Float32Array\(3\)\), bbU = \(this\._bbUp \?\?= new Float32Array\(3\)\);\n\s*bbR\[0\] = camRight\[0\]; bbR\[1\] = camRight\[1\]; bbR\[2\] = camRight\[2\];\n\s*bbU\[0\] = camUp\[0\]; bbU\[1\] = camUp\[1\]; bbU\[2\] = camUp\[2\];/);
   assert.match(r, /for \(let i = 0; i < slots\.length; i\+\+\) drawn\[i\] = slots\[i\]\?\.runs\.length \? slots\[i\] : null;/);
   assert.match(r, /this\._lptDrawn\?\.fill\(null\);   \/\/ NODE-OUTLINE: and the 3D trees a frame drew/);
   assert.match(r, /lptDrawnFrames\(\) \{ return this\._lptDrawn \?\? \[\]; \}/);

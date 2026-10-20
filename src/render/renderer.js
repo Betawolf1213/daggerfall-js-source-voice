@@ -8282,8 +8282,11 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // and the wind, which the host sets for its flats' call and not with the frame
     gl.uniform3fv(this.bbURight, camRight);
     gl.uniform3fv(this.bbUUp, camUp);
-    (this._bbRight ??= new Float32Array(3)).set(camRight);   // NODE-OUTLINE: kept for the nodes' outline (render/nodeOutline.js)
-    (this._bbUp ??= new Float32Array(3)).set(camUp);
+    // NODE-OUTLINE: kept for the nodes' outline (render/nodeOutline.js) - the three components the vec3 uniforms read, as
+    // they read them: a caller's longer array (a seam test hands a matrix) is no basis to copy whole
+    const bbR = (this._bbRight ??= new Float32Array(3)), bbU = (this._bbUp ??= new Float32Array(3));
+    bbR[0] = camRight[0]; bbR[1] = camRight[1]; bbR[2] = camRight[2];
+    bbU[0] = camUp[0]; bbU[1] = camUp[1]; bbU[2] = camUp[2];
     if (this.bbUFlatWind) gl.uniform4fv(this.bbUFlatWind, this._flatWind ?? ZERO_FLAT_WIND);   // WIND3: one upload a call; uSway is the batch's
     if (this.bbUWindfallAxis) { gl.uniform4fv(this.bbUWindfallSway, this._windfallSway); gl.uniform4fv(this.bbUWindfallAxis, this._windfallAxis); }   // WINDFALL1: the mod's law, one upload a call
     const wfLaw = windfallLawOn(this._windfall);   // WINDFALL1: a batch's share is its mask under the mod's law
