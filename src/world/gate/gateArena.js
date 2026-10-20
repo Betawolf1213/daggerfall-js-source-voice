@@ -174,14 +174,14 @@ export function courtOpenings(k, plan = PLAN_PLAIN) {
     if (w.a === k) out.push(Math.atan2(w.uz, w.ux));
     if (w.b === k) out.push(Math.atan2(-w.uz, -w.ux));
   }
-  if (k === 0) out.push(Math.PI / 2);   // the bridge the players came by
+  if (k === 0 || k === plan.root) out.push(Math.PI / 2);   // the bridge the players came by - AUDIT WB14 (SCREEN-11): and the night's arrival (the Vanguard's Bridgehead: no brazier behind its way in)
   return out;
 }
 const angleOff = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
 /** How wide a clearing each keeps about an opening, radians: a leaning spire the more (it leans out 3.5 m), a brazier's
  *  bowl the less (the walkway's half-width at the rim is 0.13). The bridge's own clearing is WB3b's 0.35. */
 const SPIRE_CLEAR = 0.3, BRAZIER_CLEAR = 0.16, BRIDGE_CLEAR = 0.35;
-const clearOf = (k, a, w, plan = PLAN_PLAIN) => courtOpenings(k, plan).every((o, i, all) => angleOff(a, o) > (k === 0 && i === all.length - 1 ? BRIDGE_CLEAR : w));
+const clearOf = (k, a, w, plan = PLAN_PLAIN) => courtOpenings(k, plan).every((o, i, all) => angleOff(a, o) > ((k === 0 || k === plan.root) && i === all.length - 1 ? BRIDGE_CLEAR : w));
 /** The spires' square base's half-width, metres (a spike's own - world/gate/gateModel.js spike). */
 export const SPIRE_BASE_W = 1.6;
 /**

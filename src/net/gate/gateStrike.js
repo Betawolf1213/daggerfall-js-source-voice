@@ -69,14 +69,22 @@ export function wheelStrikes(atk, px, pz, now, prev = -Infinity, P = BASE_PROFIL
   if (ATTACK_BY_ID[atk?.a] !== A || now < atk.at || prev > atk.at + A.active || !Number.isFinite(px) || !Number.isFinite(pz)) return false;
   const dx = px - atk.x, dz = pz - atk.z, d = Math.hypot(dx, dz), half = A.width / 2;
   if (d > A.len + half) return false;
-  if (d <= Math.max(half, P.bossR)) return true;
+  if (d <= half) return true;   // AUDIT WB14 (SCREEN-6): the blades' roots - his body no wider than they are drawn
   const a0 = wheelAngle(atk, Math.max(prev, atk.at)), a1 = wheelAngle(atk, Math.min(now, atk.at + A.active));
-  const slack = Math.asin(Math.min(1, half / d)), phi = Math.atan2(dx, dz);
+  const slack = wheelSlack(d, A.len, half), phi = Math.atan2(dx, dz);
   for (let k = 0; k < A.n; k++) {
     const off = (k * TAU) / A.n, lo = Math.min(a0, a1) + off - slack, span = Math.abs(a1 - a0) + 2 * slack;
     if (wrap0(phi - lo) <= span) return true;
   }
   return false;
+}
+/** AUDIT WB14 (SCREEN-6): how far either side of a blade's line a point `d` from its root stands inside the blade drawn - a
+ *  capsule `len` long and `half` wide each side: its side out to its length, its round tip past it (where the side's own
+ *  slack overstated it - up to 0.68 m struck past the drawn edge). Radians. Pure. */
+export function wheelSlack(d, len, half) {
+  const side = d <= Math.hypot(len, half) ? Math.asin(Math.min(1, half / d)) : 0;   // its side (the point's foot on the blade)
+  const tip = d > len ? Math.acos(Math.max(-1, Math.min(1, (d * d + len * len - half * half) / (2 * d * len)))) : 0;   // its tip's round end
+  return Math.max(side, tip);
 }
 /** WB14a: is (px, pz) in a lit wedge of the Unmaking - every other one of `n` about its heart (tg[0]), the first centred on
  *  its facing, out to `r`? Pure. */
@@ -117,7 +125,7 @@ export function inAttack(atk, px, pz, P = BASE_PROFILE) {
     case 'lane': { const e = atk.tg?.[0]; return !!e && segmentDistance(px, pz, atk.x, atk.z, e[0], e[1]) <= Math.max(A.width / 2, P.bossR); }   // AUDIT WBX F7: as wide as his body - the charge's own sweep (chargeStrikes), and the telegraph's
     case 'ring': return d >= A.r0 && d <= A.r1;
     case 'spokes': return spokeLanes(atk).some((l) => segmentDistance(px, pz, l[0], l[1], l[2], l[3]) <= A.width / 2);
-    case 'wheel': return d <= Math.max(A.width / 2, P.bossR) || wheelBlades(atk, atk.at).some((l) => segmentDistance(px, pz, l[0], l[1], l[2], l[3]) <= A.width / 2);
+    case 'wheel': return d <= A.width / 2 || wheelBlades(atk, atk.at).some((l) => segmentDistance(px, pz, l[0], l[1], l[2], l[3]) <= A.width / 2);   // AUDIT WB14 (SCREEN-6): as drawn - no body disc
     case 'wedges': return inWedges(atk, px, pz, r);
     case 'all': return true;
     default: return false;

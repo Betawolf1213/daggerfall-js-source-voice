@@ -11,11 +11,12 @@
   {
     "name": "WB14f-a-captive-on-a-plain-night",
     "file": "src/net/gate/gateBrain.js",
-    "old": "cp: hasPortent(pt, 'captive') ? newCaptive() : null,",
+    "old": "cp: hasPortent(night, 'captive') ? newCaptive() : null,",
     "new": "cp: newCaptive(),",
     "tests": [
       "test/net/gate/wb14f_captive.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14f-risen-at-the-fight-s-birth",
@@ -38,11 +39,12 @@
   {
     "name": "WB14f-one-body-sized-whole",
     "file": "src/net/gate/gateBrain.js",
-    "old": "hostTeamHpFor(BEARER_TEAM_S, fighters.map((b) => f.players[b.sub].lv), n), now, out);\n    K.at = now;",
-    "new": "hostTeamHpFor(BEARER_TEAM_S, fighters.map((b) => f.players[b.sub].lv), 1), now, out);\n    K.at = now;",
+    "old": "hostTeamHpFor(BEARER_TEAM_S, living.map((b) => f.players[b.sub].lv), n), now, out);\n    K.n = n;",
+    "new": "hostTeamHpFor(BEARER_TEAM_S, living.map((b) => f.players[b.sub].lv), 1), now, out);\n    K.n = n;",
     "tests": [
       "test/net/gate/wb14f_captive.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14f-the-ring-about-his-court",

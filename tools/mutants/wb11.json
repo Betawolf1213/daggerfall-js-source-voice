@@ -272,8 +272,8 @@
   {
     "name": "WB11-targets-from-anywhere",
     "file": "src/scenes/gate/gateCourt.js",
-    "old": "if (k >= 0) for (const T of host.targets()) if (nearestCourt(T.feet[0] - COURT_CENTRE[0], T.feet[2] - COURT_CENTRE[2]) === k) _hostMine.push(T);",
-    "new": "if (k >= 0) for (const T of host.targets()) _hostMine.push(T);",
+    "old": "if (k >= 0 && s.lg) for (const T of host.targets()) if (nearestCourt(T.feet[0] - COURT_CENTRE[0], T.feet[2] - COURT_CENTRE[2]) === k) _hostMine.push(T);",
+    "new": "if (k >= 0 && s.lg) for (const T of host.targets()) _hostMine.push(T);",
     "tests": [
       "test/net/gate/wb11_gate_host.test.js",
       "test/net/gate/wb14f_captive.test.js"

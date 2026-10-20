@@ -17,7 +17,7 @@
 //
 // Not a DFU member. Ledger A (WB).
 import { ATTACK_BY_ID, ATTACKS, COURT_CENTRE, COURTS, COURT_R, HIT_KINDS, POOL_TICK_MS, PHASE_NAMES, profileOf, nearestCourt, windupOf, CRYSTAL_R, CRYSTAL_H, inCourt, POSE_SLACK, RECKON_CLOSE_MS, WALKS, walkFormed, HOST_BLOWS, hostBlowUnder, planOf, HOST, HOST_GONE, hostAt, wardTakes } from '../../net/gate/gateBrain.js';
-import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance } from '../../net/gate/gateStrike.js';
+import { strikeVerdict, blowOf, strikeDamage, savedShare, landingPools, poolUnder, inAttack, chargeHead, segmentDistance, wheelStrikes } from '../../net/gate/gateStrike.js';
 import { GATE_BOSSES, gateBossOf, gateTimes, GATE_COLLAPSE_MS } from '../../net/gate/gateLaw.js';   // GATE-FBX: and when the court comes apart
 import { COURT_WATCH_ASK_MS } from '../../net/gate/gateBrain.js';   // COURT-WATCH: a watcher's ask for a seat, this often
 import { bossAct, bossFrame, bossGlow, bossPlace, bossHop, bossLookOf, bossStandIn, bossCue, BOSS_CUES, BOSS_STRIDE_M, GROWL_EVERY_MS, HURT_GAP_MS, HURT_SHARE, QUAKE_ON, THUD_AT_MS, WARD_COLOR, EMBER_COLOR, poolColor, emberColor, attackColor, crystalStandIn, crystalColor, groundStepCue, hostPulseColor, gateHitFlash, GATE_FLASH_SHARE, RELEASE_LEAD_MS, landShake, LANDING_LIGHT_Y, CORPSE_SCALE, WAKE_LEAD_MS, LOW_HEALTH } from '../../world/gate/gateBoss.js';
@@ -70,7 +70,7 @@ export const COURT_STRIKE_TEXT = Object.freeze({
  *  and what it asks. WB13e (2026-10-01, Mac: "AAA grade polish"): a title card (ui/gate/gateTitleCard.js) - its numeral, its
  *  name, and its one order under it until he lands (WB9b/c: the turn crosses to the next court); nothing said beside it. */
 export const PHASE_NUMERALS = Object.freeze(['I', 'II', 'III']);
-export const courtPhaseOrder = (n) => (n === 2 ? 'Follow him over the walkway.' : n === 3 ? 'Follow him to the last court.' : null);
+export const courtPhaseOrder = (n) => (n === 2 ? t('gate.phase.follow2', 'Follow him over the walkway.') : n === 3 ? t('gate.phase.follow3', 'Follow him to the last court.') : null);   // AUDIT WB14 (TEXT-9): in the player's language, as the Sundering's are
 /** WB14d: a Sundering night's turns, carded - the Sundering itself, and the Rejoining's last stand back in the first court
  *  (read through the text core - L10N4). */
 /** WB14e: what a Tithe-Imp's tithe paid me (read through the text core - L10N4). */
@@ -204,6 +204,8 @@ export function wayOut(inside, fx, fz, court) {
 /** WB13a: a bearing in the court's frame as the screen turns it, degrees - 0 ahead, 90 to the right - for a camera of
  *  `yaw` (scenes/world.js cam.yaw: ahead [sin, cos], right [cos, -sin]). */
 export const screenBearing = (dir, yaw) => (Math.atan2(dir[0] * Math.cos(yaw) - dir[1] * Math.sin(yaw), dir[0] * Math.sin(yaw) + dir[1] * Math.cos(yaw)) * 180) / Math.PI;
+/** AUDIT WB14 (SCREEN-7): how far ahead the Wheel's peril looks down its blades' turn. */
+export const WHEEL_PERIL_MS = 1000;
 /**
  * WB13a (2026-10-01, Mac: "hone in telegraphs"): A BLOW STILL TO COME ON MY FEET - in first person at sword reach the
  * ground under me is out of sight (his Cleave's shape is none of the frame). The one landing soonest of his blow in
@@ -216,12 +218,15 @@ export function perilAt(s, t, P, fx, fz, yaw = null) {
   let best = null, inside = null;
   const atk = s.atk, A = atk ? ATTACK_BY_ID[atk.a] : null;
   if (A && A.shape !== 'all' && Number.isFinite(atk.at)) {
-    const w = windupOf(A, s.phase), run = A === ATTACKS.charge ? Math.max(A.active, 1) : 0, end = atk.tg?.[0];
+    const w = windupOf(A, s.phase), run = A === ATTACKS.charge || A === ATTACKS.wheel ? Math.max(A.active, 1) : 0, end = atk.tg?.[0];
     if (t >= atk.at - w && t < atk.at + run) {
       // the charge's run: the lane ahead of his head - the ground behind him is safe once he has passed
-      const head = run && t >= atk.at ? chargeHead(atk, t) : null;
-      const on = head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);
-      if (on) { best = { at: atk.at, name: P.atk[A.key].name, t: w > 0 ? Math.max(0, Math.min(1, (t - (atk.at - w)) / w)) : 1, color: telegraphEdge(A) }; inside = (x, z) => inAttack(atk, x, z, P); }
+      const head = A === ATTACKS.charge && t >= atk.at ? chargeHead(atk, t) : null;
+      // AUDIT WB14 (SCREEN-7): the Wheel's blades the whole of their turn - the ground a blade sweeps over within
+      // WHEEL_PERIL_MS of now (of its first turning, while it winds up)
+      const from = Math.max(t, atk.at), soon = (x, z) => wheelStrikes(atk, x, z, from + WHEEL_PERIL_MS, from, P);
+      const on = A === ATTACKS.wheel ? soon(fx, fz) : head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);
+      if (on) { best = { at: A === ATTACKS.wheel ? from : atk.at, name: P.atk[A.key].name, t: w > 0 ? Math.max(0, Math.min(1, (t - (atk.at - w)) / w)) : 1, color: telegraphEdge(A) }; inside = A === ATTACKS.wheel ? soon : (x, z) => inAttack(atk, x, z, P); }
     }
   }
   for (const a of s.lg?.ads ?? NONE) {
@@ -347,6 +352,7 @@ export function createGateCourt({
     me: () => myId(), placeOf: (id) => _places.get(id) ?? null, nameOf: (id) => _names.get(id) ?? null, others: () => _others,
     land: (atk, P, so) => land(atk, P, so), pull: (vx, vz) => !watching() && pull(vx, vz), pullDecay,   // COURT-WATCH: a watcher is never reeled
     sting: (atk) => { const s = link.state(); if (s) sound(BOSS_CUES.sting, s, now(), atk, feet()); },
+    watching: () => watching(),   // AUDIT WB14 (SCREEN-5): nor blinded, nor told to look away
   });
   /** WB14d: HIS FLAME (scenes/gate/gateFlame.js) - the Sundering's second body, through the court's own doors: its sounds, its
    *  blows on me, its bursts and felt landings, its burning ground among his, my blows on it as the `hit` word's `b` 1, and a
@@ -360,6 +366,7 @@ export function createGateCourt({
       me: () => myId(), placeOf: (id) => _places.get(id) ?? null, nameOf: (id) => _names.get(id) ?? null, others: () => _others,
       land: (atk, P, so) => land(atk, P, so), pull: (vx, vz) => !watching() && pull(vx, vz), pullDecay,
       sting: (atk) => { const F = flameOf(link.state()); if (F) sound(BOSS_CUES.sting, F, now(), atk, feet()); },
+      watching: () => watching(),
     }),
     bossName: (st) => bossOf(st).name,
   });
@@ -611,7 +618,7 @@ export function createGateCourt({
     const f = feet(), e = player();
     const standing = !!f && !!e && e.health > 0;
     if (atk && !marked(judged, atk) && standing) {
-      const v = strikeVerdict(atk, f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2], t, prevT, P);
+      const v = strikeVerdict(atk, f[0] - COURT_CENTRE[0], f[2] - COURT_CENTRE[2], t, Number.isFinite(prevT) ? prevT : t, P);   // AUDIT WB14 (SCREEN-2): a court I have just stepped into is judged from this frame - never the sweep of a charge or a Wheel that passed where I stand before I stood there
       if (v !== 'wait') {
         setMark(judged, atk);
         if (v === 'hit' && !wardTakes(s.cp, atk)) { if (ATTACK_BY_ID[atk.a] === ATTACKS.wrath) wrathLanded = true; land(atk, P); }   // WB14f: the Reckoning the Covenant's ward takes lands on none of us
@@ -1156,13 +1163,14 @@ export function createGateCourt({
     hostTargets() {
       const s = link.state(), t = now();
       if (!s || s.day === null || s.fell || s.wrath != null) return NONE;
-      if (s.sd) return flame.targets();   // WB14d: his Flame, from its own court (no host stands on a Sundering's night by then)
-      if (!s.lg) return NONE;
+      if (!s.lg && !s.sd) return NONE;
       // WB14f (AUDIT of WB14c): from the floor I stand on, each body on it - the relay takes a blow on one from the floor its
-      // body stands on (net/gate/gateBrain.js applyHostHit): his court, a Vanguard's platform, the Captive's Pen
+      // body stands on (net/gate/gateBrain.js applyHostHit): his court, a Vanguard's platform, the Captive's Pen. WB14d: his
+      // Flame, from its own court - AUDIT WB14 (SCREEN-1): beside the host (a Tithe-Imp rises in the Blade's court sundered)
       const k = myFloor();
       _hostMine.length = 0;
-      if (k >= 0) for (const T of host.targets()) if (nearestCourt(T.feet[0] - COURT_CENTRE[0], T.feet[2] - COURT_CENTRE[2]) === k) _hostMine.push(T);
+      if (s.sd) for (const T of flame.targets()) _hostMine.push(T);
+      if (k >= 0 && s.lg) for (const T of host.targets()) if (nearestCourt(T.feet[0] - COURT_CENTRE[0], T.feet[2] - COURT_CENTRE[2]) === k) _hostMine.push(T);
       return _hostMine;
     },
     /**

@@ -337,11 +337,11 @@ export function telegraphField(sh, px, pz) {
     }
     case TELEGRAPH_KIND.wedges: {
       // WB14a: the Unmaking's lit wedges - `n` about its heart, the first centred on its facing, `halfArc` each side
-      const per = (2 * Math.PI) / Math.max(1, sh.n), a = Math.atan2(rx, rz) - sh.yaw;
+      const per = (2 * Math.PI) / Math.max(1, sh.n), a = Math.atan2(rx, rz) - sh.yaw, C = COURTS[sh.court] ?? COURTS[0];
       const off = Math.abs(a - per * Math.floor(a / per + 0.5)) - sh.halfArc;
       const across = d * Math.sin(Math.min(Math.abs(off), Math.PI / 2));
       const inside = d <= sh.r && off <= 0;
-      return { inside, edge: inside ? Math.min(across, sh.r - d) : Math.max(off > 0 ? across : 0, d - sh.r), s: d / sh.r };
+      return { inside, edge: inside ? Math.min(across, sh.r - d) : Math.max(off > 0 ? across : 0, d - sh.r), s: d / Math.min(sh.r, rimDist(sh.origin[0], sh.origin[1], rx / (d || 1), rz / (d || 1), C[0], C[1])) };   // AUDIT WB14 (SCREEN-13): the fill meets the rim it is seen at (the Nova's and the Spokes' law)
     }
     case TELEGRAPH_KIND.mark: {
       const fx = Math.sin(sh.yaw), fz = Math.cos(sh.yaw), along = rx * fx + rz * fz, side = rx * fz - rz * fx;
@@ -491,7 +491,7 @@ void main() {
     float across = d * sin(min(abs(off), 1.5707963));
     inside = d <= uR && off <= 0.0;
     edge = inside ? min(across, uR - d) : max(off > 0.0 ? across : 0.0, d - uR);
-    s = d / uR;
+    s = d / min(uR, rimDist(uOrigin, rel / max(d, 1e-4), uCourt, uFloorR));   // AUDIT WB14 (SCREEN-13): to the rim it is seen at
   } else if (uKind == 7) {
     // WBX4: his mark - a ring about his feet (uR), a faint floor inside it, and a chevron before it where he faces (uR1
     // long, uHalfW wide at the ring), steady: it is where he is, not what he does. WB13a: dashed and dim - it was the

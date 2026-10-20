@@ -166,8 +166,9 @@ export function validGatePortents(pt) {
 }
 /** Does a night's portents (the state's `pt`, validated or not) hold `id`? */
 export const hasPortent = (pt, id) => Array.isArray(pt) && pt.includes(id);
-/** The portents in words, for a card, a banner or a herald: "The Vanguard", "The Vanguard, The Sundering" - '' for none. */
-export const gatePortentsWords = (pt) => (validGatePortents(pt) ?? []).map((id) => PORTENT_BY_ID.get(id).name).join(', ');
+/** The portents in words, for a card, a banner or a herald: "The Vanguard", "The Vanguard · The Sundering" - '' for none
+ *  (AUDIT WB14 TEXT-16: each a name of its own - a comma read a capital "The" mid-list). */
+export const gatePortentsWords = (pt) => (validGatePortents(pt) ?? []).map((id) => PORTENT_BY_ID.get(id).name).join(' · ');
 /** WB14f: THE CAPTIVE'S NAME, by the day (net/gate/gateLaw.js captiveNameOf) - a knight of the Covenant, Daggerfall's Bay in
  *  its names: each a reader of it. */
 export const CAPTIVE_NAMES = Object.freeze([

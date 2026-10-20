@@ -20,29 +20,32 @@
   {
     "name": "WB14e-outrunning-a-runner",
     "file": "src/net/gate/gateBrain.js",
-    "old": "Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.2 }),",
+    "old": "Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 6.8 }),",
     "new": "Object.freeze({ id: 6, key: 'tithe', r: 0.65, h: 1.95, speed: 8 }),",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-a-tithe-at-the-fight-s-birth",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    if (!Number.isFinite(woke) || now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj) return;",
-    "new": "    if (!Number.isFinite(woke) || f.phase > 2 || !here.length || f.sd?.rj) return;",
+    "old": "    if (!Number.isFinite(woke) || now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj || f.atk?.a === ATTACKS.cross.id) return;",
+    "new": "    if (!Number.isFinite(woke) || f.phase > 2 || !here.length || f.sd?.rj || f.atk?.a === ATTACKS.cross.id) return;",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-risen-to-an-empty-court",
     "file": "src/net/gate/gateBrain.js",
-    "old": "now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj) return;",
-    "new": "now < woke + OPENING_MS + f.ti || f.phase > 2 || f.sd?.rj) return;",
+    "old": "now < woke + OPENING_MS + f.ti || f.phase > 2 || !here.length || f.sd?.rj ||",
+    "new": "now < woke + OPENING_MS + f.ti || f.phase > 2 || f.sd?.rj ||",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-risen-in-his-last-phase",
@@ -74,29 +77,32 @@
   {
     "name": "WB14e-risen-twice",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    T.at = now; T.i = H.n;\n",
-    "new": "    T.i = H.n;\n",
+    "old": "    T.at = now; T.i = H.n; T.ct = f.court | 0;\n",
+    "new": "    T.i = H.n; T.ct = f.court | 0;\n",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-the-tithe-paid-twice",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    T.paid = true; T.c = {};",
-    "new": "    T.c = {};",
+    "old": "  T.paid = true; T.c = {};",
+    "new": "  T.c = {};",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-the-tithe-to-everyone",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    for (const sub of T.by) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }",
-    "new": "    for (const sub of Object.keys(f.players)) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }",
+    "old": "  for (const sub of T.by) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }",
+    "new": "  for (const sub of Object.keys(f.players)) { const c = Math.floor(rng() * 0x100000000) >>> 0; T.c[sub] = c; out.push({ k: 'tithe', to: sub, c, at: now }); }",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-a-struck-for-nothing-paid",
@@ -110,20 +116,22 @@
   {
     "name": "WB14e-never-caught",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (a.k === HOST.tithe) f.tt = { ...(f.tt ?? {}), by: [...a.by], caughtAt: now };",
+    "old": "  if (a.k === HOST.tithe) { f.tt = { ...(f.tt ?? {}), by: [...a.by], caughtAt: now }; payTithe(f, now, rng, out); }",
     "new": "  void 0;",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-it-never-leaves",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (now >= T.at + TITHE_LIFE_MS) { hostGone(f, now, out, HOST_GONE.fled, (o) => o === a); return; }",
-    "new": "  void 0;",
+    "old": "  if (now >= T.at + TITHE_LIFE_MS || ct !== (f.court | 0)) { hostGone(f, now, out, HOST_GONE.fled, (o) => o === a); return; }",
+    "new": "  void ct;",
     "tests": [
       "test/net/gate/wb14e_tithe.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14e-it-crumbles-at-the-turn",

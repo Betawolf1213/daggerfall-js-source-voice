@@ -158,7 +158,8 @@ export function portentRowsOf(pt) {
   if (!ok) return NO_PORTENTS;
   const key = ok.join(',');
   let rows = _portentRows.get(key);
-  if (!rows) { rows = Object.freeze(ok.map((id) => { const p = portentOf(id); return Object.freeze({ kind: 'portent', id, name: p.name, text: p.line, tip: p.tip }); })); _portentRows.set(key, rows); }
+  // AUDIT WB14 (TEXT-8): each row's words read as it is written - in the player's language now, never the one it was made in
+  if (!rows) { rows = Object.freeze(ok.map((id) => { const p = portentOf(id); return Object.freeze({ kind: 'portent', id, get name() { return p.name; }, get text() { return p.line; }, get tip() { return p.tip; } }); })); _portentRows.set(key, rows); }
   return rows;
 }
 const NO_PORTENTS = Object.freeze([]);

@@ -441,7 +441,7 @@ import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   //
 import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
 import { itemIconColor32 } from '../ui/item/itemIconColor32.js';   // WBX3: a spoil's own picture on the court's floor
 import { setCourtRules } from '../systems/courtRules.js';   // WBX6: the court's laws, switched by the frame
-import { gateRoomKey, isGateRoom, gateBossOf, gateTimes, gateAdmits, gateAt, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';   // WB3b: the court's room, and its day's end
+import { gateRoomKey, isGateRoom, gateBossOf, gateTimes, gateAdmits, gateAt, gatePortentsOf, GATE_COLLAPSE_MS } from '../net/gate/gateLaw.js';   // WB3b: the court's room, and its day's end
 import { createGateCrowd, gateCrowdMax } from '../net/gate/gateCrowd.js';   // GATE-CROWD: a gate's court draws the nearest of a crowd
 import { createPeerRange, peerRangeOf } from '../net/peer/peerRange.js';   // PEER-RANGE: the others drawn out to the distance on the Other players card
 import { gateLandingFor, courtRing, courtArena, courtArenaAt, courtToDungeon, courtBraziers, COURT_TEXT, COURT_FOG, LAVA_Y } from '../world/gate/gateArena.js';   // WB3b: the Burning Court's way home, its ring and its words   // WB2: the gate's countdown over the screen, near it
@@ -29528,7 +29528,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     gateVeil: () => gateVeil,   // WB6c: the step through the gate's fire, both ways
     // AUDIT WB B5: why the gate's door refuses the step now it has closed, or null - no relay to hold the court, its
     // master fallen, or sealed while the fire burned (the pool's own words where it has them)
-    gateRefusal: (g) => (!online?.gateOk || online?.terminal ? GATE_TEXT.notYet
+    gateRefusal: (g) => (!online?.gateOk || online?.terminal || (!!gatePortentsOf(g.day) && !online?.portentsOk) ? GATE_TEXT.notYet   // AUDIT WB14 (WIRE-1): a portent night on a relay from before them
       : Number.isFinite(gateLink?.fellAt(g.day)) ? GATE_NO_TEXT['the gate is closing']
         : !gateAdmits(g.day, Date.now() + _sharedOffsetMs) ? GATE_TEXT.sealed : null),
     drawPeerNames: ({ proj, view, eye }) => drawPeerNames(proj, view, eye),

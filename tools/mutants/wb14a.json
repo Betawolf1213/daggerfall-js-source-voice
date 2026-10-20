@@ -29,11 +29,12 @@
   {
     "name": "WB14a-the-use-never-stamped",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  if (/** @type {GateAttack} */ (atk).cd) (f.used ??= {})[atk.key] = now;",
-    "new": "  if (/** @type {GateAttack} */ (atk).cd) (f.used ??= {});",
+    "old": "  if (/** @type {GateAttack} */ (atk).cd && !echo) (f.used ??= {})[atk.key] = now;",
+    "new": "  if (/** @type {GateAttack} */ (atk).cd && !echo) (f.used ??= {});",
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14a-the-ids-dropped",
@@ -276,11 +277,12 @@
   {
     "name": "WB14a-judged-twice",
     "file": "src/scenes/gate/gateArsenal.js",
-    "old": "    judged = atk.i;\n",
+    "old": "    setMark(judged, atk);\n",
     "new": "\n",
     "tests": [
       "test/net/gate/wb14a_arsenal.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14a-the-pull-never-sent",

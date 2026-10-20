@@ -272,7 +272,14 @@ export const PHASE3_WINDUP = 0.8;
  *  far off); Dagon's Champion adds the Spokes of Dagon - four lanes of fire from his feet, and then the four between
  *  them. Not faster: Mac, of a player's ask for mechanics half again as fast, "I dont think making mechanics faster is
  *  the play". The names are the bar's (ui/gate/gateBossBar.js) and the turn's words (scenes/gate/gateCourt.js). */
-export const PHASE_NAMES = Object.freeze(['The Warden', 'The Burning Court', "Dagon's Champion"]);
+// AUDIT WB14 (TEXT-9): read through the text core as each card is made (L10N4) - the Sundering's card said its order in the
+// player's language beside a phase's name in English
+export const PHASE_NAMES = Object.freeze(Object.defineProperties([], {
+  0: { get: () => t('gate.phase.warden', 'The Warden'), enumerable: true },
+  1: { get: () => t('gate.phase.court', 'The Burning Court'), enumerable: true },
+  2: { get: () => t('gate.phase.champion', "Dagon's Champion"), enumerable: true },
+  length: { value: 3 },
+}));
 
 // ── the attacks ────────────────────────────────────────────────────────
 // `shape` is what the ground shows and what a struck player's machine tests its own feet against:
@@ -542,7 +549,7 @@ export function fightProfile(md) {
       // "its cone of 9 always reached" - for every body he wears)
       r: A === ATTACKS.slam && colossal ? colossal.slamR : A.shape === 'cone' ? A.r + BOSS_R * (size - 1) : A.r,
       phase: T('favoured') && FAVOURED_PHASE[A.key] != null ? FAVOURED_PHASE[A.key] : A.phase,
-      el, name: aspect.names[A.key] ?? A.name,
+      el, get name() { return aspect.names[A.key] ?? A.name; },   // AUDIT WB14 (TEXT-8): read at each word - the new arsenal's in the player's language now, never the one the profile was made in
       pool: ground(A.pool ?? (scarring ? SCAR_POOLS[A.key] : null)),
       pct: A.pct * dmgX, base: (A.base ?? 0) * dmgX,
     });

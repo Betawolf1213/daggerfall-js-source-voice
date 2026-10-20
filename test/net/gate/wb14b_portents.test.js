@@ -65,7 +65,7 @@ test('WB14b the portents: three, each its name, its one line, its tip and its re
   assert.equal(portentBits(['captive']), 4);
   assert.equal(portentBits(null), 0);
   assert.ok(hasPortent(['vanguard', 'sunder'], 'sunder') && !hasPortent(null, 'sunder') && !hasPortent(['captive'], 'sunder'));
-  assert.equal(gatePortentsWords(['vanguard', 'sunder']), 'The Vanguard, The Sundering');
+  assert.equal(gatePortentsWords(['vanguard', 'sunder']), 'The Vanguard · The Sundering');   // PIN MOVED (AUDIT WB14 TEXT-16): each a name of its own
   assert.equal(gatePortentsWords(null), '');
   assert.equal(portentsLine(['vanguard']), 'His vanguard holds the approach.');
   assert.equal(portentsLine(['vanguard', 'sunder']), `${gateDireLine()} His vanguard holds the approach. He tears in two at the second phase.`);
@@ -303,7 +303,7 @@ test('WB14b the night\'s portents said before the gate, everywhere his marks are
   assert.deepEqual(chat(plain).at(-1), marksLine({ boss, md: gateModsOf(plain) }), 'a plain night: the marks, and nothing after them');
   const tip = (day) => gateTip({ site: SITE, phase: 'open', t: { day } }, { to: 'seal', ms: 60_000 }).lines;
   assert.equal(tip(van).at(-1), 'The Vanguard');
-  assert.equal(tip(dire).at(-1), 'The Vanguard, The Sundering');
+  assert.equal(tip(dire).at(-1), 'The Vanguard · The Sundering');   // PIN MOVED (AUDIT WB14 TEXT-16)
   assert.equal(tip(plain).length, tip(van).length - 1, 'a plain night: no line for them');
   const card = marksCardModel(gateModsOf(dire), { name: boss }, { mode: 'gate', pt: gatePortentsOf(dire) });
   assert.deepEqual(card.portents.map((p) => [p.kind, p.id, p.name, p.text]), [['portent', 'vanguard', 'The Vanguard', GATE_PORTENTS[0].line], ['portent', 'sunder', 'The Sundering', GATE_PORTENTS[1].line]]);

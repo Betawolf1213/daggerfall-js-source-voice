@@ -4593,6 +4593,13 @@ export const relaySupportsGateHeal = (v) => { const m = /^world(\d+)$/.exec(type
  *  court refuses as it did. */
 export const COURT_WATCH_RELAY_MIN = 222;   // world222 - GATE-DOOR's and COURT-WATCH's (world218 on their branch; main's GRANT2, EG-PERFECT and FIELD BUGS 2026-10-18d and 18f took world218 to world221)
 export const relaySupportsCourtWatch = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= COURT_WATCH_RELAY_MIN; };
+/** AUDIT WB14 (WIRE-1; bible/11-Multiplayer/Breach-Portents.md): THE PORTENTS' RELAY - the first that draws a night's portents
+ *  with its fight. A screen builds a portent night's court by its day (world/gate/gateArena.js planOfDay); an older relay
+ *  fights it plain, on floors that are not the screen's (the Vanguard's Bridgehead a floor it never lays a walkway from: a
+ *  fighter held there till midnight), so before it the gate's door refuses a portent night ("not yet") and a plain night
+ *  is fought as ever. Pinned to the relay version that says WB14b (test/net/gate/audit_wb14_screen.test.js). */
+export const GATE_PORTENTS_RELAY_MIN = 225;   // world225 - WB14's (world222 on its branch, renumbered past GATE-DOOR's, FOE-BOUNDS's and LAYERED-GEAR's at the merges)
+export const relaySupportsPortents = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= GATE_PORTENTS_RELAY_MIN; };
 export const GATE_HEAL_ROWS_MAX = 8;
 export const GATE_HEAL_WIRE_MAX = 100_000;
 /** DISCORD-GATES: a gate's place on the wire - "Copperham, Wrothgarian Mountains" (gateSite.js `place`) - and its law:

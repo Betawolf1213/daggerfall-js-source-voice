@@ -9,7 +9,7 @@
 // (scenes/gate/gateCourt.js judge).
 //
 // Not a DFU member. Ledger A (WB).
-import { ATTACKS, COURTS, FLOOR, HOST, HOST_GONE, hostAt, captiveSpent, wardTakes } from '../../net/gate/gateBrain.js';
+import { ATTACKS, COURTS, FLOOR, HOST, HOST_GONE, captiveSpent, wardTakes } from '../../net/gate/gateBrain.js';
 import { captiveIndexOf, captiveNameOf } from '../../net/gate/gateLaw.js';
 import { CAPTIVE_DAMES } from '../../net/gate/gateMods.js';
 import { attackColor, bossFrame, knightAct, knightLookOf, WARD_COLOR } from '../../world/gate/gateBoss.js';
@@ -58,18 +58,22 @@ export function captiveChains(s, now, out = [], max = 4) {
   const K = s?.cp;
   if (!K || !(K.at > 0) || K.f > 0 || s.fell || s.wrath != null) return out;
   const color = attackColor(ATTACKS.reckon, null), seethe = (now % 60_000) / 1000;
+  let slots = CHAIN_SLOTS.get(out);
+  if (!slots) CHAIN_SLOTS.set(out, (slots = []));
   for (const a of s.lg?.ads ?? []) {
     if (out.length >= max) break;
     if (a.k !== HOST.gaoler) continue;
-    const [x, z] = hostAt(a, now);
-    out.push({
-      kind: TELEGRAPH_KIND.lane, origin: [x, z], yaw: 0, r: 0, halfArc: 0, body: 0, end: [CAPTIVE_AT[0], CAPTIVE_AT[1]], halfW: CAPTIVE_CHAIN_HALF_W,
+    // AUDIT WB14 (SCREEN-10): each chain its slot, refilled whole (gateHost's law - AUDIT WB11 C8)
+    const sh = (slots[out.length] ??= { kind: TELEGRAPH_KIND.lane, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [CAPTIVE_AT[0], CAPTIVE_AT[1]], halfW: CAPTIVE_CHAIN_HALF_W,
       r0: 0, r1: 0, points: [], n: 0, t: 1, flash: 0, alpha: CAPTIVE_CHAIN_ALPHA, color, edge: color, court: FLOOR.pen, style: TELEGRAPH_STYLE.weight,
-      since: seethe, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.path,
-    });
+      since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.path });
+    sh.origin[0] = a.x; sh.origin[1] = a.z; sh.color = color; sh.edge = color; sh.since = seethe;   // (a gaoler never walks)
+    out.push(sh);
   }
   return out;
 }
+/** AUDIT WB14 (SCREEN-10): the chains' slots, by the list the court refills. */
+const CHAIN_SLOTS = new WeakMap();
 
 /**
  * @param {{ renderer?: any, getTexture?: any, uploadRecordFrame?: any, cam?: () => any, say?: (text: string) => void,
@@ -90,6 +94,7 @@ export function createGateCaptive({ renderer = null, getTexture = null, uploadRe
     goneSeen.clear();
     if (batch) { renderer?.destroyBillboardBatch?.(batch); batch = null; }
     shown = false;
+    _batches.length = 0; _lights.length = 0; _shapes.length = 0;   // AUDIT WB14 (SCREEN-4): nothing of his handed on after the court - the host asks for them every frame, and no frame of the court's refills them once I have left
   }
   /** The knight's look for the day - a Dame drawn as Daggerfall's woman knight, her own archive. */
   function loadBody(d) {

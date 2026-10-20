@@ -110,11 +110,12 @@
   {
     "name": "WB14b-the-fight-forgetting-its-portents",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    pt: validGatePortents(pt) ? [...validGatePortents(pt)] : null,",
+    "old": "    pt: night,",
     "new": "    pt: null,",
     "tests": [
       "test/net/gate/wb14b_portents.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14b-the-state-silent-on-them",

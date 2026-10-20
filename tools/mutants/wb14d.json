@@ -65,11 +65,12 @@
   {
     "name": "WB14d-the-flame-choosing-his-whole-arsenal",
     "file": "src/net/gate/gateBrain.js",
-    "old": "const inKit = (f, can) => (f.sd ? can.filter(",
-    "new": "const inKit = (f, can) => (f.sd && f.half !== HALF.flame ? can.filter(",
+    "old": "const kitOf = (f) => (f.sd ? SUNDER_KITS[",
+    "new": "const kitOf = (f) => (f.sd && f.half !== HALF.flame ? SUNDER_KITS[",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-the-flame-s-words-unnamed",
@@ -155,11 +156,12 @@
   {
     "name": "WB14d-the-kneel-keeps-its-blow",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  B.atk = null; B.move = null; B.target = null; B.queue = []; B.pending = null;\n  B.stunUntil = now + SUNDER_PAIR_MS;",
-    "new": "  B.stunUntil = now + SUNDER_PAIR_MS;",
+    "old": "  if (B.atk?.a !== ATTACKS.wrath.id) B.atk = null;   // AUDIT WB14 (LAW-4)",
+    "new": "  // AUDIT WB14 (LAW-4)",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-the-kneel-never-said",
@@ -182,20 +184,22 @@
   {
     "name": "WB14d-the-rise-at-its-whole-pool",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  H.h = SUNDER_RISE * S.m;",
-    "new": "  H.h = S.m;",
+    "old": "  H.h = Math.min(SUNDER_RISE * S.m, Math.max(O.h, SUNDER_RISE_MIN * S.m));",
+    "new": "  H.h = S.m; void O;",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-the-rise-heals-him-nothing",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  H.h = SUNDER_RISE * S.m;\n  f.hp += H.h * f.max;",
-    "new": "  H.h = SUNDER_RISE * S.m;",
+    "old": "  credit(f, H.h);\n  B.stunUntil = 0;",
+    "new": "  B.stunUntil = 0;",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-never-rises",
@@ -209,11 +213,12 @@
   {
     "name": "WB14d-the-rejoining-at-his-health",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  f.hp = f.max * SUNDER_LAST;\n  for (const B of [f, S.fl])",
-    "new": "  for (const B of [f, S.fl])",
+    "old": "  f.hp = f.max * SUNDER_LAST;\n  if (!(f.max > 0)) f.idle = SUNDER_LAST;",
+    "new": "  if (!(f.max > 0)) f.idle = SUNDER_LAST;",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-the-flame-lands-on-him",
@@ -254,11 +259,12 @@
   {
     "name": "WB14d-a-mend-at-once",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    H.mend = now - H.lone >= SUNDER_LONE_MS;",
-    "new": "    H.mend = true;",
+    "old": "    else { H.lone ??= now; H.mend = now - H.lone >= SUNDER_LONE_MS; }",
+    "new": "    else { H.lone ??= now; H.mend = true; }",
     "tests": [
       "test/net/gate/wb14d_sundering.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14d-a-mend-past-its-pool",

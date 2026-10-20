@@ -2,11 +2,12 @@
   {
     "name": "WB14c-the-vanguard-on-every-night",
     "file": "src/net/gate/gateBrain.js",
-    "old": "    vg: hasPortent(pt, 'vanguard') ? newVanguard() : null,",
+    "old": "    vg: hasPortent(night, 'vanguard') ? newVanguard() : null,",
     "new": "    vg: newVanguard(),",
     "tests": [
       "test/net/gate/wb14c_vanguard.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14c-his-wake-said-while-it-holds",
@@ -137,11 +138,12 @@
   {
     "name": "WB14c-his-patience-said-every-time",
     "file": "src/net/gate/gateBrain.js",
-    "old": "      if (V.pat === V.first + VG_PATIENCE_MS) out.push({ k: 'vgw', e: VG_WORD.patience",
-    "new": "      if (true) out.push({ k: 'vgw', e: VG_WORD.patience",
+    "old": "      if (!V.said) { V.said = true; out.push({ k: 'vgw', e: VG_WORD.patience",
+    "new": "      if (true) { V.said = true; out.push({ k: 'vgw', e: VG_WORD.patience",
     "tests": [
       "test/net/gate/wb14c_vanguard.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14c-no-patience",

@@ -504,11 +504,12 @@
   {
     "name": "AUDIT-WB11-D7-its-fall-to-the-striker-alone",
     "file": "server/src/index.js",
-    "old": "else if (m.k === 'ahit') this._gateFan(applyHostHit(",
-    "new": "else if (m.k === 'ahit') void (applyHostHit(",
+    "old": "else if (m.k === 'ahit') await this._gateFanKept(f, applyHostHit(",
+    "new": "else if (m.k === 'ahit') void (0, applyHostHit(",
     "tests": [
       "test/net/gate/wb11_gate_host.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "AUDIT-WB11-D7-a-stale-landing-struck",

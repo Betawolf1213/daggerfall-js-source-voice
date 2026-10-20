@@ -84,11 +84,12 @@
   {
     "name": "WB8b-colossal-share-unscaled",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX;",
-    "new": "  const share = BOSS_TTK_S * dpsRef(level);",
+    "old": "  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX * (f.vg ? VG_SHARE_X : 1);",
+    "new": "  const share = BOSS_TTK_S * dpsRef(level) * (f.vg ? VG_SHARE_X : 1);",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB8b-the-gap-from-the-old-body",
@@ -102,11 +103,12 @@
   {
     "name": "WB8b-unyielding-blow-whole",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  const want = d * P.hitX * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
-    "new": "  const want = d * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
+    "old": "  const want = d * P.hitX * (!H && now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
+    "new": "  const want = d * (!H && now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
     "tests": [
       "test/net/gate/wb8b_gate_marks.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB8b-the-ward-counted-as-clipped",

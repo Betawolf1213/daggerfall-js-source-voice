@@ -56,20 +56,22 @@
   {
     "name": "WB14g-a-Common-piece",
     "file": "src/systems/gate/gateSpoils.js",
-    "old": "pieces.push(graded(spoilsBase(lv, rolls), magicOrBetter(rolls), rolls)); portent++;",
-    "new": "pieces.push(graded(spoilsBase(lv, rolls), 'common', rolls)); portent++;",
+    "old": "if ((p & bit) !== 0) more.push(graded(spoilsBase(lv, rolls), magicOrBetter(rolls), rolls));",
+    "new": "if ((p & bit) !== 0) more.push(graded(spoilsBase(lv, rolls), 'common', rolls));",
     "tests": [
       "test/net/gate/wb14g_pays.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14g-a-bit-paying-nothing",
     "file": "src/systems/gate/gateSpoils.js",
-    "old": "if ((p & bit) !== 0) {",
-    "new": "if ((p & bit) !== 0 && bit !== 4) {",
+    "old": "if ((p & bit) !== 0) more.push(",
+    "new": "if ((p & bit) !== 0 && bit !== 4) more.push(",
     "tests": [
       "test/net/gate/wb14g_pays.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB14g-the-claims-p-unread",

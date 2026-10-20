@@ -6710,7 +6710,14 @@ export class Room {
   /** The fight this gate room holds, or null - the instance's while it is awake, storage's (the last checkpoint) after
    *  a wake. */
   async _gateFightOf() {
-    if (this._fight === undefined) { const v = await this.state.storage.get('gatefight'); this._fight = v && typeof v === 'object' ? v : null; }
+    if (this._fight === undefined) {
+      const v = await this.state.storage.get('gatefight');
+      this._fight = v && typeof v === 'object' ? v : null;
+      // AUDIT WB14 (WIRE-1): A FIGHT FROM BEFORE THE PORTENTS woken on a portent night (a deploy while its gate burned) was
+      // fought on floors the screens no longer build (they build the night's plan - the Vanguard's Bridgehead its arrival),
+      // so it is let go unfallen and the next `in` begins the night's own; a fallen one keeps its receipts
+      if (this._fight && !('pt' in this._fight) && !this._fight.fell && !this._fight.wrath && gatePortentsOf(this._fight.day)) { this._fight = null; await this.state.storage.delete('gatefight'); }
+    }
     return this._fight;
   }
   /** Why a hello into a gate's room is refused, or null to admit it (the hello's own note says when). */

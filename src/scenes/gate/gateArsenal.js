@@ -43,24 +43,30 @@ const NONE = Object.freeze([]);
 /**
  * @param {{ me: () => (string|null), placeOf: (id: string) => (number[]|null), nameOf?: (id: string) => (string|null),
  *   others: () => ReadonlyArray<number[]>, land: (atk: any, P: any, so: any) => void, pull?: (vx: number, vz: number) => void,
- *   pullDecay?: number, sting?: (atk: any) => void }} deps
+ *   pullDecay?: number, sting?: (atk: any) => void, watching?: () => boolean }} deps
  *   `me` my peer id; `placeOf` another's place on my screen (the court's frame) by peer id; `nameOf` their name; `others`
  *   every other fighter's place; `land` the court's strike on me; `pull` my body pushed (the motor's blow push, metres a
- *   second in the court's frame) against its `pullDecay`; `sting` a blow named me, as it is called.
+ *   second in the court's frame) against its `pullDecay`; `sting` a blow named me, as it is called; `watching` whether I
+ *   only watch the fight (COURT-WATCH - AUDIT WB14 SCREEN-5: no blow of theirs is mine, the Gaze's blinding and its order
+ *   none of them).
  */
-export function createGateArsenal({ me, placeOf, nameOf = () => null, others, land, pull = () => {}, pullDecay = 0, sting = () => {} }) {
-  let judged = -1, stung = -1, blindAt = -Infinity;
+export function createGateArsenal({ me, placeOf, nameOf = () => null, others, land, pull = () => {}, pullDecay = 0, sting = () => {}, watching = () => false }) {
+  // AUDIT WB14 (SCREEN-9): an attack is its number AND its moment (AUDIT WB B4's law - a room woken from its checkpoint
+  // numbers again: the court's own noMark / marked / setMark)
+  const judged = { i: -1, at: NaN }, stung = { i: -1, at: NaN };
+  const marked = (m, atk) => m.i === atk.i && m.at === atk.at, setMark = (m, atk) => { m.i = atk.i; m.at = atk.at; };
+  let blindAt = -Infinity;
   /** Where the k-th marked of `atk` stands on my screen, `mine` my feet. */
   const at = (atk, k, mine) => markedAt(atk, k, me(), mine, placeOf);
 
   /** At the landing: the blow weighed on me, once an attack. `mine` my feet (the court's frame), `yaw` my camera's. */
   function judge(s, now, P, mine, yaw, standing) {
     const atk = s?.atk, A = atk ? ATTACK_BY_ID[atk.a] : null;
-    if (!A || !isMarkedBlow(A) || atk.i === judged) return;
+    if (!A || !isMarkedBlow(A) || marked(judged, atk)) return;
     const v = markedVerdict(atk, now);
     if (v === 'wait') return;
-    judged = atk.i;
-    if (v !== 'judge' || !standing || !mine) return;
+    setMark(judged, atk);
+    if (v !== 'judge' || !standing || !mine || watching()) return;
     const [px, pz] = mine, L = P.atk[A.key], so = blowOf(atk, P);
     if (A === ATTACKS.chains) {
       if (!markedMe(atk, me()) || !chainHolds(atk, px, pz)) return;
@@ -87,12 +93,12 @@ export function createGateArsenal({ me, placeOf, nameOf = () => null, others, la
    */
   function order(s, now, P, mine, yaw) {
     const atk = s?.atk, A = atk ? ATTACK_BY_ID[atk.a] : null;
-    if (!A || !isMarkedBlow(A) || !mine || !Number.isFinite(atk.at) || s.fell || s.wrath != null) return null;
+    if (!A || !isMarkedBlow(A) || !mine || !Number.isFinite(atk.at) || s.fell || s.wrath != null || watching()) return null;
     const w = windupOf(A, s.phase);
     if (!(now >= atk.at - w && now < atk.at)) return null;
     const share = w > 0 ? Math.max(0, Math.min(1, (now - (atk.at - w)) / w)) : 1, last = atk.at - now <= NOW_MS;
     const [px, pz] = mine, id = me(), mineMarked = markedMe(atk, id);
-    if (mineMarked && atk.i !== stung) { stung = atk.i; sting(atk); }
+    if (mineMarked && !marked(stung, atk)) { setMark(stung, atk); sting(atk); }
     const name = P.atk[A.key].name;
     const from = (x, z) => [px - x, pz - z];
     if (A === ATTACKS.chains) {
@@ -134,6 +140,6 @@ export function createGateArsenal({ me, placeOf, nameOf = () => null, others, la
     /** When the Gaze last blinded me (the court's clock). */
     blindAt: () => blindAt,
     /** A new fight, or out of the court. */
-    reset() { judged = -1; stung = -1; blindAt = -Infinity; },
+    reset() { judged.i = -1; judged.at = NaN; stung.i = -1; stung.at = NaN; blindAt = -Infinity; },
   };
 }

@@ -139,20 +139,22 @@
   {
     "name": "WB13a-the-peril-never-said",
     "file": "src/scenes/gate/gateCourt.js",
-    "old": "      const on = head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);",
-    "new": "      const on = head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : false;",
+    "old": "head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);",
+    "new": "head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : false;",
     "tests": [
       "test/scenes/wb13a_telegraphs.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB13a-the-charge-behind-him-a-peril",
     "file": "src/scenes/gate/gateCourt.js",
-    "old": "      const on = head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);",
-    "new": "      const on = inAttack(atk, fx, fz, P);",
+    "old": "      const on = A === ATTACKS.wheel ? soon(fx, fz) : head && end ? segmentDistance(fx, fz, head[0], head[1], end[0], end[1]) <= Math.max(ATTACKS.charge.width / 2, P.bossR) : inAttack(atk, fx, fz, P);",
+    "new": "      const on = A === ATTACKS.wheel ? soon(fx, fz) : inAttack(atk, fx, fz, P);",
     "tests": [
       "test/scenes/wb13a_telegraphs.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB13a-the-way-out-turned-the-wrong-way",

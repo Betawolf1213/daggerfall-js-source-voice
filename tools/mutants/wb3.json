@@ -2,11 +2,12 @@
   {
     "name": "WB3-the-share-off-the-claim",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX;",
-    "new": "  const share = BOSS_TTK_S * dpsRef(LV_MAX) * profileOf(f).hpX;",
+    "old": "  const share = BOSS_TTK_S * dpsRef(level) * profileOf(f).hpX * (f.vg ? VG_SHARE_X : 1);",
+    "new": "  const share = BOSS_TTK_S * dpsRef(LV_MAX) * profileOf(f).hpX * (f.vg ? VG_SHARE_X : 1);",
     "tests": [
       "test/net/gate/wb3_gate_room.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB3-the-bucket-rate-off-the-claim",
@@ -473,11 +474,12 @@
   {
     "name": "WB3-the-wake-forgets",
     "file": "server/src/index.js",
-    "old": "    if (this._fight === undefined) { const v = await this.state.storage.get('gatefight');",
-    "new": "    if (this._fight === undefined) { const v = await this.state.storage.get('gatefight-not');",
+    "old": "      const v = await this.state.storage.get('gatefight');\n      this._fight = v && typeof v === 'object' ? v : null;",
+    "new": "      const v = await this.state.storage.get('gatefight-not');\n      this._fight = v && typeof v === 'object' ? v : null;",
     "tests": [
       "test/net/gate/wb3_gate_room.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB3-the-storage-kept",
@@ -518,8 +520,8 @@
   {
     "name": "WB3-the-session-ignores-the-version",
     "file": "src/net/online.js",
-    "old": "      if (primary) this.gateOk = relaySupportsGate(relayV);   // WB3",
-    "new": "      if (primary) this.gateOk = true;   // WB3",
+    "old": "      if (primary) { this.gateOk = relaySupportsGate(relayV); this.portentsOk",
+    "new": "      if (primary) { this.gateOk = true; this.portentsOk",
     "tests": [
       "test/net/gate/wb3_gate_room.test.js"
     ]

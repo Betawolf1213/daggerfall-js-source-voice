@@ -85,11 +85,12 @@
   {
     "name": "WB9c-the-blow-unscaled",
     "file": "src/net/gate/gateBrain.js",
-    "old": "  const want = d * P.hitX * (now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
+    "old": "  const want = d * P.hitX * (!H && now < (f.stunUntil ?? 0) ? STUN_HIT_X : 1);",
     "new": "  const want = d * P.hitX;",
     "tests": [
       "test/net/gate/wb9c_gate_reckoning.test.js"
-    ]
+    ],
+    "note": "AUDIT WB14 (PIN MOVED): re-aimed by content at the audit's change of this text."
   },
   {
     "name": "WB9c-a-saving-throw-answering-it",

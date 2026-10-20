@@ -360,6 +360,231 @@
     ]
   },
   {
+    "name": "AUDIT-WB14-SCREEN-1-the-flame-alone-sundered",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "      if (s.sd) for (const T of flame.targets()) _hostMine.push(T);\n      if (k >= 0 && s.lg) for",
+    "new": "      if (s.sd) for (const T of flame.targets()) _hostMine.push(T);\n      if (k >= 0 && s.lg && !s.sd) for",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-2-the-sweep-from-its-landing",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "t, Number.isFinite(prevT) ? prevT : t, P);",
+    "new": "t, prevT, P);",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-3-drawn-in-body-order",
+    "file": "src/scenes/gate/gateHost.js",
+    "old": "  if (mine && _blowOrder.length > HOST_SHAPES_MAX) _blowOrder.sort(",
+    "new": "  if (false) _blowOrder.sort(",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-4-the-lists-kept",
+    "file": "src/scenes/gate/gateCaptive.js",
+    "old": "    _batches.length = 0; _lights.length = 0; _shapes.length = 0;   // AUDIT WB14 (SCREEN-4)",
+    "new": "    // AUDIT WB14 (SCREEN-4)",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-10-a-new-chain-a-frame",
+    "file": "src/scenes/gate/gateCaptive.js",
+    "old": "    const sh = (slots[out.length] ??= {",
+    "new": "    const sh = (void slots, {",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-5-the-watcher-blinded",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "    if (v !== 'judge' || !standing || !mine || watching()) return;",
+    "new": "    if (v !== 'judge' || !standing || !mine) return;",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-5-the-watcher-told-to-look-away",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "s.fell || s.wrath != null || watching()) return null;",
+    "new": "s.fell || s.wrath != null) return null;",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-9-the-number-alone",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "if (!A || !isMarkedBlow(A) || marked(judged, atk)) return;",
+    "new": "if (!A || !isMarkedBlow(A) || judged.i === atk.i) return;",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-6-the-side-s-slack-past-the-tip",
+    "file": "src/net/gate/gateStrike.js",
+    "old": "  const slack = wheelSlack(d, A.len, half), phi",
+    "new": "  const slack = Math.asin(Math.min(1, half / d)), phi",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-6-his-body-s-ring",
+    "file": "src/net/gate/gateStrike.js",
+    "old": "  if (d <= half) return true;   // AUDIT WB14 (SCREEN-6)",
+    "new": "  if (d <= Math.max(half, P.bossR)) return true;   // AUDIT WB14 (SCREEN-6)",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-7-the-peril-gone-as-it-lands",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "run = A === ATTACKS.charge || A === ATTACKS.wheel ? Math.max(A.active, 1) : 0",
+    "new": "run = A === ATTACKS.charge ? Math.max(A.active, 1) : 0",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-11-the-first-court-s-alone",
+    "file": "src/world/gate/gateArena.js",
+    "old": "  if (k === 0 || k === plan.root) out.push(Math.PI / 2);",
+    "new": "  if (k === 0) out.push(Math.PI / 2);",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-12-shaking-nothing",
+    "file": "src/world/gate/gateBoss.js",
+    "old": "  sunder: Object.freeze([4, 25]), rejoin: Object.freeze([4, 25]),",
+    "new": "",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-13-the-fill-to-its-reach",
+    "file": "src/render/gate/gateTelegraph.js",
+    "old": "s: d / Math.min(sh.r, rimDist(sh.origin[0], sh.origin[1], rx / (d || 1), rz / (d || 1), C[0], C[1])) };",
+    "new": "s: d / sh.r + 0 * C[0] };",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-SCREEN-14-the-white-hidden-with-the-hud",
+    "file": "src/ui/gate/gateGroundView.js",
+    "old": "    if ((!want && !(blind > 0)) || !doc?.createElement) return;",
+    "new": "    if (!want || !doc?.createElement) return;",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-TEXT-8-the-names-frozen",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "      el, get name() { return aspect.names[A.key] ?? A.name; },",
+    "new": "      el, name: aspect.names[A.key] ?? A.name,",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-TEXT-8-the-rows-frozen",
+    "file": "src/ui/gate/gateMarksView.js",
+    "old": "get name() { return p.name; }, get text() { return p.line; }, get tip() { return p.tip; } }",
+    "new": "name: p.name, text: p.line, tip: p.tip }",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-TEXT-9-the-phase-s-name-in-english",
+    "file": "src/net/gate/gateBrain.js",
+    "old": "  1: { get: () => t('gate.phase.court', 'The Burning Court'), enumerable: true },",
+    "new": "  1: { value: 'The Burning Court', enumerable: true },",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-TEXT-9-the-order-in-english",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "(n === 2 ? t('gate.phase.follow2', 'Follow him over the walkway.')",
+    "new": "(n === 2 ? 'Follow him over the walkway.'",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-TEXT-15-a-wave-before-any",
+    "file": "src/ui/gate/gateBossBar.js",
+    "old": "s.vg[0] < 2 ? (s.vg[1] > 0 ?",
+    "new": "s.vg[0] < 2 ? (true ?",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-WIRE-1-the-door-open-on-an-old-relay",
+    "file": "src/net/online.js",
+    "old": "this.portentsOk = relaySupportsPortents(relayV); }",
+    "new": "this.portentsOk = true; }",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-WIRE-1-the-version-off",
+    "file": "src/net/wire.js",
+    "old": "export const GATE_PORTENTS_RELAY_MIN = 225;",
+    "new": "export const GATE_PORTENTS_RELAY_MIN = 224;",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-WIRE-1-the-door-never-asks",
+    "file": "src/scenes/world.js",
+    "old": "online?.terminal || (!!gatePortentsOf(g.day) && !online?.portentsOk) ? GATE_TEXT.notYet",
+    "new": "online?.terminal || (!!gatePortentsOf(g.day) && false) ? GATE_TEXT.notYet",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-WIRE-1-the-old-fight-kept",
+    "file": "server/src/index.js",
+    "old": "gatePortentsOf(this._fight.day)) { this._fight = null; await this.state.storage.delete('gatefight'); }",
+    "new": "gatePortentsOf(this._fight.day)) { void 0; }",
+    "tests": [
+      "test/net/gate/audit_wb14_screen.test.js"
+    ]
+  },
+  {
+    "name": "AUDIT-WB14-RECORD-5-the-arrow-the-wrong-way",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "arrow: dir && Number.isFinite(yaw) ? screenBearing(dir, /** @type {number} */ (yaw)) : null",
+    "new": "arrow: dir && Number.isFinite(yaw) ? screenBearing([-dir[0], -dir[1]], /** @type {number} */ (yaw)) : null",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ]
+  },
+  {
     "name": "AUDIT-WB14-LAW-3-a-fall-sundered",
     "file": "src/net/gate/gateBrain.js",
     "old": "  if (f.hp <= 1e-6 && f.max > 0 && !f.sd) {",

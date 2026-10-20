@@ -71,9 +71,10 @@ const SHAPE_SLOTS = new WeakMap();
  * frame): each blow in flight its disc, wound up as his are (the line whole from the word, the fill, the flash at its
  * landing - WB13a: in the same danger edge as his); while his ward holds, each Ward-Bearer's tether to him in the ward's
  * gold; each Sapper's path to him in his ember - WB13a: dashes flowing to him (they were drawn as burning ground). Blows
- * first, at most HOST_SHAPES_MAX. Pure.
+ * first, at most HOST_SHAPES_MAX - AUDIT WB14 (SCREEN-3): the nearest to my feet (`mine`, the court's frame) first, so a blow
+ * that lands on me is drawn whatever the Vanguard's twelve wind up about the platform. Pure.
  * @param {any} s the court's state (net/gate/gateLink.js) @param {number} now @param {any} P the fight's profile
- * @param {any[]} [out] refilled
+ * @param {any[]} [out] refilled @param {ReadonlyArray<number>|null} [mine]
  */
 /** WB14c: the line a wave of his host's says as it rises - none for the Vanguard's (its stages say themselves: the court's
  *  `vgw` words), and none for its own kinds. Pure. */
@@ -83,7 +84,10 @@ export function waveLine(s, k, boss, plural) {
     : k === HOST.tithe ? COURT_HOST_TEXT.tithe() : null;   // WB14e
 }
 
-export function hostShapes(s, now, P, out = []) {
+/** AUDIT WB14 (SCREEN-3): the blows in flight a frame, nearest first - one list, refilled. */
+const _blowOrder = [];
+const blowGap = (a, mine) => (mine ? Math.hypot(a.atk.x - mine[0], a.atk.z - mine[1]) - HOST_BLOWS[a.k].r : 0);
+export function hostShapes(s, now, P, out = [], mine = null) {
   out.length = 0;
   const ads = s?.lg?.ads;
   if (!ads?.length || s.fell || s.wrath != null) return out;
@@ -97,9 +101,12 @@ export function hostShapes(s, now, P, out = []) {
     return sh;
   };
   const [bx, bz] = bossPlace(s, now);
-  for (const a of ads) {
+  _blowOrder.length = 0;
+  for (const a of ads) if (a.atk && HOST_BLOWS[a.k]) _blowOrder.push(a);
+  if (mine && _blowOrder.length > HOST_SHAPES_MAX) _blowOrder.sort((p, q) => blowGap(p, mine) - blowGap(q, mine));
+  for (const a of _blowOrder) {
     if (out.length >= HOST_SHAPES_MAX) break;
-    const B = HOST_BLOWS[a.k], tel = a.atk && B ? hostTelegraphAt(a.atk, a.k, now) : null;
+    const B = HOST_BLOWS[a.k], tel = hostTelegraphAt(a.atk, a.k, now);
     if (!tel || tel.since >= Math.max(B.active, 1) + TELEGRAPH_FLASH_MS) continue;
     const start = a.atk.at - B.windup, span = Math.max(B.active, 1);
     const fadeOut = tel.since > span ? 1 - (tel.since - span) / TELEGRAPH_FLASH_MS : 1;
@@ -145,7 +152,7 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
   /** the sprites' textures by archive (the promise while it loads, `{failed}` for one that would not) */
   const textures = new Map();
   /** AUDIT WB D10's law: the frame's lists, refilled, never made (AUDIT WB11 C8: the standing ones' numbers too) */
-  const _targets = [], _batches = [], _lights = [], _shapes = [], _live = new Set();
+  const _targets = [], _batches = [], _lights = [], _shapes = [], _live = new Set(), _mine = [0, 0];
   let blowSeq = 0;
   const seqOf = blowQ ?? (() => ++blowSeq);
 
@@ -310,7 +317,9 @@ export function createGateHost({ renderer = null, getTexture = null, uploadRecor
         draw(b, act, b.g.x, b.g.z, b.yaw ?? 0, t);   // AUDIT WB11 C2: falling as it last faced (it turned to +z)
         if (b.shown && b.batch) _batches.push(b.batch);
       }
-      hostShapes(s, t, P, _shapes);
+      const fp = feet();
+      if (fp) { _mine[0] = fp[0] - COURT_CENTRE[0]; _mine[1] = fp[2] - COURT_CENTRE[2]; }
+      hostShapes(s, t, P, _shapes, fp ? _mine : null);   // AUDIT WB14 (SCREEN-3): the nearest to me first
     },
     /** His host as bodies my blows meet - one list, refilled each frame (read, never written). */
     targets: () => _targets,

@@ -68,6 +68,7 @@ export const BOSS_BAR_TEXT = Object.freeze({
   host: (n) => `His host: ${n}`,
   // WB14c: his Vanguard holding the approach - its platform and its wave (read through the text core - L10N4)
   vanguard: (stage, w, of) => t('gate.bar.vanguard', 'The Vanguard - {stage}, wave {w} of {of}', { stage, w, of }),
+  vanguardHolds: (stage) => t('gate.bar.vanguardHolds', 'The Vanguard - {stage}', { stage }),   // AUDIT WB14 (TEXT-15): a platform before its first wave
   stages: () => [t('gate.bar.bridgehead', 'Bridgehead'), t('gate.bar.muster', 'Muster')],
   // WB14d: a half's line on its own track - kneeling and its seconds, warded, or alone (and mending)
   kneels: (secs) => t('gate.bar.kneels', 'Kneels - {secs}s', { secs }),
@@ -249,7 +250,7 @@ export function bossBarModel(s, now, boss, aimed = null, { flame = null, flameMi
     wrathNear: !s.fell && s.wrath == null && toWrath <= WRATH_NEAR_MS,
     fighters: s.fighters | 0,
     reckonIn: toReckon !== null ? BOSS_BAR_TEXT.reckonIn(countdownText(toReckon)) : null,   // WB9c
-    host: !s.fell && s.wrath == null && s.vg && s.vg[0] < 2 ? BOSS_BAR_TEXT.vanguard(BOSS_BAR_TEXT.stages()[s.vg[0]], Math.max(1, s.vg[1]), VG_STAGES[s.vg[0]].waves.length)
+    host: !s.fell && s.wrath == null && s.vg && s.vg[0] < 2 ? (s.vg[1] > 0 ? BOSS_BAR_TEXT.vanguard(BOSS_BAR_TEXT.stages()[s.vg[0]], s.vg[1], VG_STAGES[s.vg[0]].waves.length) : BOSS_BAR_TEXT.vanguardHolds(BOSS_BAR_TEXT.stages()[s.vg[0]]))   // AUDIT WB14 (TEXT-15): no wave counted before one has risen
       : !s.fell && s.wrath == null && gaolers > 0 ? BOSS_BAR_TEXT.gaolers(gaolers)   // WB14f: the Captive's gaolers, then his ward over the court
       : !s.fell && s.wrath == null && s.cp?.f > 0 && !captiveSpent(s.cp, s.atk, now) ? BOSS_BAR_TEXT.ward()
       : !s.fell && s.wrath == null && others > 0 ? BOSS_BAR_TEXT.host(others) : null,   // WB11c: the rest of his host standing; WB14c: his Vanguard's progress in its place

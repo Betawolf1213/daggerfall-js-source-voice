@@ -124,17 +124,20 @@ function build(doc) {
   (doc.body ?? doc.documentElement)?.append(edgeNode, warnNode, arrowNode, blindNode);
 }
 
-/** Draw the rim and the warning for a model (null hides them); `hidden` is the HUD's own hide. */
+/** Draw the rim and the warning for a model (null hides them); `hidden` is the HUD's own hide (never the Gaze's white). */
 export function drawGateGround(model, { hidden = false, doc = globalThis.document } = {}) {
   const want = !hidden && !!model;
+  // AUDIT WB14 (SCREEN-14): the Gaze's white is the eye's, never the HUD's - it washes the screen through the HUD's hide
+  const blind = model?.blind ?? 0;
   if (!edgeNode) {
-    if (!want || !doc?.createElement) return;
+    if ((!want && !(blind > 0)) || !doc?.createElement) return;
     build(doc);
   }
+  if (blind !== shown.blind) { shown.blind = blind; blindNode.style.opacity = String(blind); }   // WB14a
   const vis = want ? 'on' : 'off';
   if (vis !== shown.vis) {
     shown.vis = vis;
-    if (!want) { edgeNode.style.opacity = '0'; warnNode.style.display = 'none'; arrowNode.style.display = 'none'; blindNode.style.opacity = '0'; shown.edge = 0; shown.warn = null; shown.arrow = null; shown.blind = 0; }
+    if (!want) { edgeNode.style.opacity = '0'; warnNode.style.display = 'none'; arrowNode.style.display = 'none'; shown.edge = 0; shown.warn = null; shown.arrow = null; }
   }
   if (!want || !model) return;
   if (model.rgb !== shown.rgb) {
@@ -144,8 +147,6 @@ export function drawGateGround(model, { hidden = false, doc = globalThis.documen
     arrowNode.style.color = `rgb(${model.rgb})`;
   }
   if (model.edge !== shown.edge) { shown.edge = model.edge; edgeNode.style.opacity = String(model.edge); }
-  const blind = model.blind ?? 0;
-  if (blind !== shown.blind) { shown.blind = blind; blindNode.style.opacity = String(blind); }   // WB14a
   if (model.warn !== shown.warn) {
     shown.warn = model.warn;
     warnNode.style.display = model.warn ? '' : 'none';

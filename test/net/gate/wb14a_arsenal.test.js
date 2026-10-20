@@ -395,7 +395,8 @@ test('WB14a the order under the crosshair, while it winds up: chained - run from
   assert.deepEqual(stung, [1, 2, 3], 'a sting for each that names me, once');
   const pr = orderPeril(ch, 0);
   assert.equal(pr.order, ARSENAL_TEXT.chained());
-  assert.ok(Math.abs(Math.abs(pr.arrow) - 0) < 1e-9 || Math.abs(Math.abs(pr.arrow) - 180) < 1e-9);
+  assert.ok(Math.abs(pr.arrow) < 1e-9, 'away from him, ahead as I face away');   // AUDIT WB14 (RECORD-5): either way passed - the arrow the wrong way survived
+  assert.ok(Math.abs(Math.abs(orderPeril(ch, Math.PI).arrow) - 180) < 1e-9, 'behind me as I face him');
   const g = groundViewModel({ now: T0, peril: pr });
   assert.equal(g.warn, ARSENAL_TEXT.chained(), 'its own order');
   assert.equal(groundViewModel({ now: T0, peril: { name: 'Cleave', t: 0.5, color: [1, 0, 0] } }).warn, 'Cleave - move!', 'the rest as they were');

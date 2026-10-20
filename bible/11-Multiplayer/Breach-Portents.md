@@ -104,7 +104,7 @@ hosts in one fight and the Sundering two of him for the Sappers to walk at. Eith
 every state (`pt`), as the marks are (`md`) - every screen fights the fight's own, whatever the day's draw would say.
 
 **Said.** The omen's chat line gains the portent's line after the marks' (`systems/gate/gateOmen.js`); the map's card
-(`gateTip`) names it in a line of its own under the marks (*The Vanguard, The Sundering*); the marks' card stands a row for it with its sign, name, line and tip; the
+(`gateTip`) names it in a line of its own under the marks (*The Vanguard · The Sundering* - AUDIT WB14 TEXT-16); the marks' card stands a row for it with its sign, name, line and tip; the
 herald's omen post says it (`net/gate/gateHerald.js omenPost`). One sentence each, WB13b's rule.
 
 ## 2. The floor plan - every floor the night may stand (WB14b)
