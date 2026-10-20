@@ -76,7 +76,7 @@ Starglass.
             the OMEN (90 s before each fall) ─► the FALL (a streak, the impact) ─► the FALLEN STAR ─┘
               a new star in the sky, the map mark       the crater, the stone, its thread, the beacon
                                                                  │
-   a player within 80 m springs the coven's foes (the camp law) ─┤ every player within 60 m says the star's word
+   a player within 55 m springs the coven's foes (the camp law) ─┤ every player within 55 m says the star's word
                                                                  ▼
           the CELL ROOM the star stands in keeps its LEDGER (net/starfall/starfallLaw.js): the wave, the light, the master
           WAVE 1 ─ breath ─ WAVE 2 ─ breath ─ WAVE 3 ─ breath ─ WAVE 4 ─ breath ─ THE MASTER ─► HELD (or LOST: light 0, or dawn)
@@ -191,13 +191,39 @@ ground under it is built finer (`scenes/starfall/starfallHost.js`). The sky is o
 beacon, each drawn scaled about the eye to `STAR_SKY_R` (4200 m) so the far plane (6000 m) never cuts a star that burns
 9 km up. The sounds are DAGGER.SND's own records, pitched (`systems/starfall/starSounds.js`).
 
+**As built (AUDIT STARFALL, 2026-10-20).** The audit found the crater and the sky's things where the frame moved under
+them, and fixed each where it lives:
+
+- **The crater stands where its heart is.** A floating origin's recentre moves every heart and none of the ground's
+  relative heights, so the model kept its key and its stone's collider stayed at the old place; and between the build
+  (1500 m) and the letting go (1800 m) the crater's matrix was never placed again. Its matrix is made again whenever the
+  heart moves, for every star whose crater stands, and the stone's collider stood again at every matrix that moved (the
+  gate's own law, `scenes/gate/gatePool.js` standCollider) (R1).
+- **The floor drawn pulled toward the eye.** The floor and its rim are a mesh of their own, drawn under the ground marks'
+  polygon offset (`STAR_FLOOR_OFFSET`, `render/auraRing.js`'s fire on the stone): a hand over the land alone fought its
+  depth at range (R4). The rim's stones sink from the LOWEST earth under their base's corners, their crown over the earth
+  at their middle - one taken at its middle hung over the rim's outer slope (R6).
+- **The beacon is a sky thing.** Its column is clamped about the eye to `STAR_SKY_R` as the omen, the streak and the
+  flash are, its width, its foot and its height scaled with it: past about 6 km the far plane cut it (R2).
+- **The ring of shock rides the land.** It was a flat square 0.6 m over the heart out to 98 m, and the land rises over
+  that plane within 90 m of most of the map's ground (the audit's probe over WOODS.WLD: 63.5% of its land pixels). It is
+  a strip of `STAR_RING_SEGS` (32) bearings now, each edge lifted to its own ground: the host reads the ground at the
+  ring's inner and outer edge at each bearing, the crater's rim on it, while the ring runs (its 1.8 s alone), and hands
+  them to the pass as one uniform array (`uGround`, `render/starfall/starfallPass.js` STAR_RING_VS) (R3).
+- **The fog's focus.** The sky's and the ring's programs are handed the travel view's focus and the jungle's haze, as the
+  beacon's always was (R5).
+- **What it costs.** The coarse ground under a star on an unbuilt pixel is read once a star and again only every
+  `STAR_COARSE_EVERY` (600) frames - the world's kernel is one for the gate's pixel, and three stars and a gate asking it
+  in turn each frame made it again at every ask; and the pass's three programs are built at idle while the festival
+  stands (PERF-COMPILE1's law, `render/warmPrograms.js`), never inside the frame of the first omen (R9).
+
 ## 4. The defense - waves, the light, the master
 
-**Springing it.** The first player within `STAR_SPRING_M` (80 m) of a fallen star springs its coven and owns their foes
+**Springing it.** The first player within `STAR_SAY_M` (55 m) of a fallen star springs its coven and owns their foes
 (the camp law of the World of Daggerfall, `world/worldOfDaggerfall/wodShared.js`: site `px,py:star.<N>.<k>`); every
 other player sees the owner's foes and fights them through the owner. An owner who leaves hands them to the next
 player at the star after `STAR_ORPHAN_MS` (10 s). The relay starts the first wave `STAR_GATHER_MS` (10 s) after the
-first word from the star.
+first word from the star. (The first build sprang it from `STAR_SPRING_M`, 80 m - the audit's C2, below.)
 
 **The waves** (`STAR_WAVES` 4). The relay says each wave's start and its size (`starWaveSize(k, n)` -
 `clamp(2 + n + (k >= 3 ? 1 : 0), 3, 9)`, `n` the defenders standing at the star when it starts), so every screen
@@ -257,6 +283,39 @@ master an elite under `.m` with its circle's ward on it (`f.circleWard`); its ci
 monsters land on the star are counted on the owner's device per character (`STAR_BLOWS_STORE`), so a reloaded owner
 counts on from its own and the relay credits only past its last. A hunter turns on a defender once a defender's blow
 lands on it (`starTurned`); until then it weighs the star `STAR_HUNT_PRIORITY` (40) over anyone beside it.
+
+**As built (AUDIT STARFALL, 2026-10-20).** The audit found the owner's machine and the relay disagreeing, and fixed it on
+the client (`scenes/starfall/starfallHost.js`):
+
+- **The foes handed over are the star's (C1).** An owner who reloads, closes its page, goes through a door or dies hands
+  its live foes to a defender beside them (`scenes/world.js` handOverSiteFoes, handOverFoes), and they came to that
+  defender as its own with their site and nothing else - nothing hunted the star, the master stood unwarded, and the new
+  owner stood a whole wave or a second full-health master over them. The new owner now claims them first, as the rite
+  does (`scenes/riteHost.js` `if (C.ownLive) return;`): each live one under the star's three sites made the star's again
+  (its hunters' star, the camp's one number, the wave standing or the next it stands), a `.m` foe taken as THE master -
+  its circle's ward, its name, its calls as its health has passed them - and only what is missing stands.
+- **One leash, the relay's (C2).** The relay believes a word from `STAR_REACH_M` and forgets an owner silent
+  `STAR_ORPHAN_MS`; the owner's machine sprang the coven from 80 m, stood its waves to 80 m and kept the camp to 400 m, but
+  said its word from 55 m alone. An owner standing off 80 to 400 m kept a camp no word moved and no peer could take (the
+  star was lost at dawn), and one between 55 and 80 m stood waves the relay never heard. Now the coven is sprung, stood
+  and held within `STAR_SAY_M` (55 m), where the word is said, and an owner outside it for `STAR_ORPHAN_MS` gives its
+  foes up (its sites nobody's, its foes taken down) so the next defender's screen takes the star and stands only what is
+  left of the wave. A master given up that way is stood again whole by the next owner.
+- **A master that never stood is stood again (C4)**, `STAR_RESTAND_MS` on, as a wave is - none standing, none on its way.
+- **The blows are an account's (C6).** The count is kept under the signed-in account and the character
+  (`<account>|<character>|<star>`), so another account on the device counts from its own; and the cell's word of what this
+  account was credited on the star (`hm`, on the copy of the ledger said to its speaker alone - the relay's half) raises
+  the count and never lowers it, so a page that kept none (a private window) counts on from it and its next blow is
+  credited. Never the ledger's `hc`: that is the current owner's count, and on any other screen it would credit blows
+  nobody saw.
+- **A star's allowance the size of its law (C7).** A star's foes can outnumber a camp's: a wave of nine, the master and two
+  calls of the Heart-Star's circle of ten. Its owner never stands past `STAR_LIVE_MAX` (30) of them at once, and a reader
+  stands one owner's star foes under `WOD_STAR_PUPPETS_MAX` (30), apart from its camps' sixteen
+  (`scenes/exteriorFoes.js` applyFoes): under the camps' allowance the excess of a master's circle stood on its owner's
+  screen alone, and warded the master still.
+- **The master is a world boss.** Its body carries `entity.worldBoss` on every screen - the owner's, a handed one, a
+  peer's copy - and no witch of its coven does: its fall is the star's own deed, which the festival's finds pay once as a
+  held star (section 12, "one deed, one find"), never again as an elite's body.
 
 ## 5. The relay holds the star
 
@@ -448,6 +507,15 @@ forwards them now, and the star's beside them (`ui/hud/hud.js`). The star's colo
 whine, the fall's roar, the impact's thunder at its distance, the star's hum near it, a blow on the star, the thread
 burning, the dark.
 
+**As built (AUDIT STARFALL, 2026-10-20).** The stone's strike is heard its distance late with its thunder
+(`starHeardAfterMs`, the storms' own speed of sound), never with the flash, and both are played from the heart as it
+stands when they arrive - a recentre between the landing and its thunder moved it (R7). A first ledger is taken in
+silently: a page that comes to a star mid-fight hears what moves from then on, never a wave, a loss or a hold that
+happened before it came as though it happened now (R8). And the festival's last stars stand to their end: a star that
+LANDED inside the festival is drawn, timed on the Timers and marked on the map past the festival's close until it is
+gone (`starfallStands` - the festival open `STAR_LIFE_MS` and `STAR_AFTER_MS` ago), as the relay keeps its ledger to its
+deadline; the first build tore them off every screen mid-fight at the close (C5).
+
 ## 9. The wire
 
 | frame | way | what |
@@ -496,6 +564,13 @@ the compass, the held map, the Timers, the grass, the hub's event and the cell's
 are made by the host on the same adapter; `bootWorld` keeps three hooks for them (the crash's door at a stand-up and the
 realm save's two), and the spoils' one lock moved out of it to `scenes/spoilsPool.js` (`spoilsLock`). `bootWorld` stood at
 36,170 of its 36,183 on the branch, and at 36,174 of 36,187 with main merged (2026-10-20).
+
+**AUDIT STARFALL (2026-10-20).** Every fix above is the Starfall host's own (`scenes/starfall/starfallHost.js`, its pass,
+its model and its sounds) and not a line of `bootWorld`: the world's handovers are read as they are (the host claims
+what they hand), and the ring's ground, the coarse ground and the blows' account come through the bindings it already
+had (`surfaceAt`, `gateGroundAt`, `storage`). The one change outside it is the star's own allowance in the foe pool's
+reader (`scenes/exteriorFoes.js` livePuppetsOf, a kind of its own beside the camps', under
+`world/worldOfDaggerfall/wodShared.js` WOD_STAR_PUPPETS_MAX).
 
 ## 12. The festival it belongs to (WITCH1)
 

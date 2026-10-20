@@ -130,10 +130,15 @@ export function buildStarModel(n, k, heightAt = () => 0, { ground = true, stone 
         else f.quad(rec, a.p, d.p, c.p, b.p, a.uv, d.uv, c.uv, b.uv);
       }
     }
-    // the stones on the rim: low lumps of the thrown earth's stone, sunk into it
+    // the stones on the rim: low lumps of the thrown earth's stone, sunk into it - AUDIT STARFALL R6: sunk from the
+    // LOWEST of the earth under their base's corners, so a stone on the rim's outer slope never hangs over its foot; its
+    // crown over the earth at its middle, as it stood
     for (const s of L.stones) {
-      const r = Math.hypot(s.x, s.z), y0 = h(s.x, s.z) + rimAt(r) - s.s * 0.4, top = [s.x, y0 + s.s * 1.1, s.z], c = [s.x, y0 + s.s * 0.4, s.z];
-      const ring = Array.from({ length: 5 }, (_, j) => { const a = (j / 5) * 2 * Math.PI + s.s; return [s.x + Math.sin(a) * s.s, y0, s.z + Math.cos(a) * s.s]; });
+      const earth = (x, z) => h(x, z) + rimAt(Math.hypot(x, z));
+      const base = Array.from({ length: 5 }, (_, j) => { const a = (j / 5) * 2 * Math.PI + s.s; return [s.x + Math.sin(a) * s.s, s.z + Math.cos(a) * s.s]; });
+      const y0 = Math.min(...base.map(([x, z]) => earth(x, z))) - s.s * 0.4;
+      const top = [s.x, earth(s.x, s.z) + s.s * 0.7, s.z], c = [s.x, (y0 + top[1]) / 2, s.z];
+      const ring = base.map(([x, z]) => [x, y0, z]);
       for (let j = 0; j < 5; j++) outward(f, STAR_RIM_RECORD, ring[j], ring[(j + 1) % 5], top, c);
     }
   }
