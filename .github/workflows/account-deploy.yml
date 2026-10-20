@@ -233,6 +233,7 @@ on:
       - "src/formats/worldData/worldDataDoor.js"
       - "src/net/duel/duelSession.js"
       - "src/net/iliac/iliacCards.js"
+      - "src/player/bodyClamp.js"
       - "src/player/classSkins.js"
       - "src/player/climbing.js"
       - "src/player/exteriorSurface.js"
