@@ -388,5 +388,23 @@
       "test/net/gate/wb14a_arsenal.test.js"
     ],
     "note": "AUDIT WB14 (RECORD-6): a claim its test's title makes, committed (the RECORD lane wrote and ran it)."
+  },
+  {
+    "name": "WB14a-the-seams-past-the-motor",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "pull: (vx, vz) => motor.blowPush(vx, vz), pullDecay };",
+    "new": "pull: () => {}, pullDecay };",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ]
+  },
+  {
+    "name": "WB14a-the-seams-read-once",
+    "file": "src/scenes/gate/gateArsenal.js",
+    "old": "myId: () => online()?.id ?? null,",
+    "new": "myId: ((v) => () => v)(online()?.id ?? null),",
+    "tests": [
+      "test/net/gate/wb14a_arsenal.test.js"
+    ]
   }
 ]

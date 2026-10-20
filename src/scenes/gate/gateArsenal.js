@@ -40,6 +40,13 @@ export const CHAIN_FREE_RIM = Object.freeze([0.72, 0.95, 1.0]);
 const NOW_MS = 180;
 const NONE = Object.freeze([]);
 
+/** WB14a: THE HOST'S SEAMS FOR THE ARSENAL, made here so the host wires them in one entry (HOST-SPLIT): my peer id
+ *  off the online link (`online` read at each ask - it is made after the court), my body's push (the motor's blow push,
+ *  the Chains' reel) and its decay (player/motor.js BLOW_PUSH_DECAY, handed in - the motor is not this module's import). */
+export function arsenalSeams(motor, online, pullDecay) {
+  return { myId: () => online()?.id ?? null, pull: (vx, vz) => motor.blowPush(vx, vz), pullDecay };
+}
+
 /**
  * @param {{ me: () => (string|null), placeOf: (id: string) => (number[]|null), nameOf?: (id: string) => (string|null),
  *   others: () => ReadonlyArray<number[]>, land: (atk: any, P: any, so: any) => void, pull?: (vx: number, vz: number) => void,

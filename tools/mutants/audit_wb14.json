@@ -551,12 +551,12 @@
   {
     "name": "AUDIT-WB14-WIRE-1-the-version-off",
     "file": "src/net/wire.js",
-    "old": "export const GATE_PORTENTS_RELAY_MIN = 228;",
-    "new": "export const GATE_PORTENTS_RELAY_MIN = 227;",
+    "old": "export const GATE_PORTENTS_RELAY_MIN = 229;",
+    "new": "export const GATE_PORTENTS_RELAY_MIN = 228;",
     "tests": [
       "test/net/gate/audit_wb14_screen.test.js"
     ],
-    "note": "re-aimed by content at the merges that took WB14 to world226, world227, then world228 (GAUNTLET-SLAIN's world225, LORD-SHARES's world226 and PLAIN-SWEEP's world227 fight a portent night plain)"
+    "note": "re-aimed by content at the merges that took WB14 to world226, world227, world228, then world229 (GAUNTLET-SLAIN's world225, LORD-SHARES's world226, PLAIN-SWEEP's world227 and QL12's world228 fight a portent night plain)"
   },
   {
     "name": "AUDIT-WB14-WIRE-1-the-door-never-asks",

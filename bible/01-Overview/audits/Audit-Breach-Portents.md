@@ -71,10 +71,10 @@ PLAY-2), the night built by the day (WIRE-1, SCREEN-8), the Sundering's numbers 
 | WIRE-3 MAJOR | The Rejoining's ward never reached a screen that heard every word: `rj` carried no ward and forced no state; both halves were drawn unwarded for up to 4.5 s | FIXED: `rejoin` says the state in its beat |
 | WIRE-4 MINOR | = LAW-5 | FIXED |
 | WIRE-5 MINOR | A half's mending was carried only in the whole state - unsaid up to 4.75 s | FIXED: a change of it forces the state |
-| WIRE-6 MINOR | The wealth budget filled a portent receipt as a plain one, though it pays up to three pieces more | FIXED: SPOILS_GRANT_PIECE (10,000) for each portent (`portentPieces`), the claim carrying its portents to the fill and never in its answer - acct159, before it shipped. The tithe KEPT off the fill, named: 60 gold a level and one gem, inside the grant's room past the mean and an hour's rate |
+| WIRE-6 MINOR | The wealth budget filled a portent receipt as a plain one, though it pays up to three pieces more | FIXED: SPOILS_GRANT_PIECE (10,000) for each portent (`portentPieces`), the claim carrying its portents to the fill and never in its answer - acct160, before it shipped. The tithe KEPT off the fill, named: 60 gold a level and one gem, inside the grant's room past the mean and an hour's rate |
 | WIRE-7 NIT | The fold's `sd.fl.ct` and `cp.w` go stale between states | KEPT: nothing reads `ct`; every reader of `w` asks `wardTakes`, which needs that attack's number |
 | WIRE-8 NIT | A striker not connected at the catch's word loses the tithe | KEPT, as designed: a moment's prize said once to whoever struck it and stands there - never on a ledger, never said again at an `in` (section 9) |
-| WIRE-9 NIT | The RELAY_VERSION note named neither the Captive nor its host kind | FIXED (at the merges that renumbered it - world228 now - and the audit's own line) |
+| WIRE-9 NIT | The RELAY_VERSION note named neither the Captive nor its host kind | FIXED (at the merges that renumbered it - world229 now - and the audit's own line) |
 
 ### SCREEN - the client
 
@@ -151,7 +151,7 @@ Tests: `test/net/gate/audit_wb14.test.js` (21) and `audit_wb14_screen.test.js` (
 (each a PIN MOVED note - WB3b, WB9b, WB11, WB13b, WB14a-f, AUDIT WB). Mutants: `tools/mutants/audit_wb14.json` (66 - 65
 dead, one recorded equivalent), the RECORD lane's 35 records of the titles' claims in wb14a-f's lists (32 dead, 3
 recorded equivalent), and 34 older records re-aimed by content at the text the fixes moved (all dead with their lists).
-The relay's law moved (RELAY_VERSION world228's LAW hash - renumbered past GAUNTLET-SLAIN's world225, LORD-SHARES's world226, then PLAIN-SWEEP's world227 at the merges, GATE_PORTENTS_RELAY_MIN with it - unshipped); the account's acct159, unshipped, carries the fill.
+The relay's law moved (RELAY_VERSION world229's LAW hash - renumbered past GAUNTLET-SLAIN's world225, LORD-SHARES's world226, PLAIN-SWEEP's world227, then QL12's world228 at the merges, GATE_PORTENTS_RELAY_MIN with it - unshipped); the account's acct160 (acct159 before QL12's), unshipped, carries the fill.
 Found and not fixed: the three ARENA2 failures the whole suite shows on main too (IT1 `it1_worlddata`, WD1
 `wd1_worlddata`, CRATE-FREE `fb1004d_cratefree` - not this arc's), the old phase-three Cleave's and Leap's margins under a
 reaction (PLAY context), and the marks' English (TEXT-9).

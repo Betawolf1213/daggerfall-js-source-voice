@@ -430,6 +430,7 @@ import { egReliquaryGrant } from '../systems/eliteGates/egSpoils.js';   // AUDIT
 import { createSdSpoils, clearOfPillars } from './superDungeon/sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpent/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gate/gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
+import { arsenalSeams } from './gate/gateArsenal.js';   // WB14a: the arsenal's seams on my peer id and my body, wired in one entry
 import { DeadlandsRenderer, skyGain, anchoredClock } from '../render/deadlands.js';   // WB6a: the Deadlands' sky and sea round the Burning Court
 import { createDeadlandsAir } from './deadlandsAir.js';   // WB6b: and their air - the wind, the fire, the thunder of the sky's strikes
 import { createGateVeil } from '../ui/gate/gateVeil.js';   // WB6c: the step through the gate - a vortex of fire in and out
@@ -962,7 +963,7 @@ import { relayVersionSeen, buildUpdateSeen, fetchLiveBuildTag, relayRestartText,
 import { BUILD_TAG } from '../buildTag.js';   // SRV-N: which build this tab is actually running
 import { morrowindDataCount, morrowindDataGeneration, getBytes } from './dataSource.js';   // MWBODY1: the bodies' gate - Morrowind data attached - and its generation
 // Q4-v: THE QUEST BRIDGE - the machine goes live in this host.
-import { createQuestBridge, tokensToRows } from './quest/questBridge.js';
+import { createQuestBridge, tokensToRows, choiceDoor } from './quest/questBridge.js';
 import { loadQuestPack } from './quest/questData.js';
 import { ensureFactionRep, getReputation, changeReputation } from '../systems/faction/factionRep.js';
 import { changeLegalRep, legalRepOf, CRIMES, setCrimeCommitted, lowerRepForCrime, setCrimeRepFactor } from '../systems/court.js';   // the region's LegalRep: the status box, the quest actions, the crimes (REP1 retired :498-511's levy)
@@ -19913,6 +19914,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       buttonsMulti: buttons,
       onButton: (b) => { respond(b); return []; },
     }),
+    showChoice: choiceDoor(showQuestBox),   // QL4: the questlines' `ask` (questBridge.js choiceBoxes, through choiceDoor - HOST-SPLIT)
     // QV1: PlayVideo's door, live - ten corpus quests write `play
     // video N` (the main-quest ANIMs) and the line warned-and-dropped.
     // The player is the infection lane's own mount (ui/videoPlayer,
@@ -20191,12 +20193,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     activeQuestNames: () => [...questBridge.machine.quests.values()].filter((q) => !q.questComplete && !q.questTombstoned).map((q) => q.questName), // REST8: the curse arms' idle check (racialArmIdle)
     tombstoneQuestsByName: (name) => {
       for (const q of [...questBridge.machine.quests.values()]) {
-        if (q.questName === name && !q.questTombstoned) questBridge.machine.tombstoneQuest(q);
+        if (q.questName === name && !q.questTombstoned) questBridge.machine.tombstoneQuest(q, { ended: true });   // QL1: the cure ends it - its outcome settled
       }
     },
     tombstoneQuestsByPrefix: (prefix) => {
       for (const q of [...questBridge.machine.quests.values()]) {
-        if (!q.questComplete && !q.questTombstoned && q.questName?.startsWith(prefix)) questBridge.machine.tombstoneQuest(q);
+        if (!q.questComplete && !q.questTombstoned && q.questName?.startsWith(prefix)) questBridge.machine.tombstoneQuest(q, { ended: true });   // AUDIT QUESTLINES LAW-12: the cure's sweep settles what it ends
       }
     },
     // VampirismEffect.StartQuest:243-255 - the clan IS the faction id,
@@ -24182,7 +24184,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     },
     me: () => online?.name ?? null,   // GATE-UX: my row of the damage chart - the relay's name for me (ACC1g: the issued one)
     yaw: () => cam.yaw,   // WB13a: the way out of a blow on me, turned as the screen is
-    myId: () => online?.id ?? null, pull: (vx, vz) => player.blowPush(vx, vz), pullDecay: BLOW_PUSH_DECAY,   // WB14a: the marked blows name my peer id; the Chains reel my body (the motor's blow push)
+    ...arsenalSeams(player, () => online, BLOW_PUSH_DECAY),   // WB14a: the marked blows name my peer id; the Chains reel my body (the motor's blow push)
     shake: (amount) => betterAmbience.weaponKick(amount),   // WB13d: his landings near me felt, under the player's own maxShake
   }) : null;
   // EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH ON THIS SCREEN (scenes/eliteGates/egClient.js) -

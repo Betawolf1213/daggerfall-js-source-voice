@@ -9,7 +9,7 @@
 //   the relay        server/src/index.js the mint's `p`
 //   the spoils       systems/gate/gateSpoils.js rollSpoils's `p`, SPOILS_PORTENT_BITS; scenes/spoilsPool.js spoilsList (the
 //                    claims' `p`, the pieces' pictures last)
-//   the account      server-account/src/eg.js EG_KEY_ODDS_PORTENT, egGateWeir; ACCOUNT_VERSION acct159
+//   the account      server-account/src/eg.js EG_KEY_ODDS_PORTENT, egGateWeir; ACCOUNT_VERSION acct160 (acct159 on its branch, renumbered past QL12's at the merge)
 //
 // Design: bible/11-Multiplayer/Breach-Portents.md section 11.
 import { test } from 'node:test';
@@ -89,7 +89,7 @@ test('WB14g the floor: a portent receipt\'s pieces leave him with the rest, each
   assert.equal(spoilsList(5, 20, { x: 'rite', p: 3 }).length, 1, 'the rite\'s ember alone');
 });
 
-test('WB14g the Weir Key: a portent night\'s receipt rolls at the rite\'s odds - a quarter - where a plain one rolls one in six; acct159 (mutants: a portent receipt at the plain odds; the version unmoved)', () => {
+test('WB14g the Weir Key: a portent night\'s receipt rolls at the rite\'s odds - a quarter - where a plain one rolls one in six; acct160 (mutants: a portent receipt at the plain odds; the version unmoved)', () => {
   assert.equal(EG_KEY_ODDS_PORTENT, EG_KEY_ODDS_RITE);
   assert.equal(EG_KEY_ODDS_PORTENT, 1 / 4);
   assert.ok(EG_KEY_ODDS < EG_KEY_ODDS_PORTENT);
@@ -101,6 +101,6 @@ test('WB14g the Weir Key: a portent night\'s receipt rolls at the rite\'s odds -
   roll(claims({ p: 1 }));
   roll(claims({ r: 1 }));
   assert.deepEqual(binds.map((a) => a[2]), [0, 1, 1], 'plain, a portent night\'s, the rite\'s');
-  assert.equal(ACCOUNT_VERSION, 'acct159');
-  assert.match(read('server-account/wrangler.toml'), /^ACCOUNT_VERSION = "acct159"$/m);
+  assert.equal(ACCOUNT_VERSION, 'acct160');   // PIN MOVED: acct160 - acct159 on its branch, renumbered past the acct159 of QL12 at the merge
+  assert.match(read('server-account/wrangler.toml'), /^ACCOUNT_VERSION = "acct160"$/m);
 });

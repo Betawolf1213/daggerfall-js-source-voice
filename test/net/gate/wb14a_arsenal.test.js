@@ -31,7 +31,7 @@ import { judgeGate } from '../../../src/net/bossRef.js';
 import { validGateOut, GATE_ATK_ID_MAX } from '../../../src/net/wire.js';
 import { foldGate, GATE_STATE_EMPTY } from '../../../src/net/gate/gateLink.js';
 import { telegraphShape, telegraphField, TELEGRAPH_KIND, TELEGRAPH_POOL, TELEGRAPH_FS, TELEGRAPH_CHAIN_HALF_W, TORMENT_COLOR, TELEGRAPH_EDGE_SAFE } from '../../../src/render/gate/gateTelegraph.js';
-import { createGateArsenal, ARSENAL_TEXT, GAZE_COLOR } from '../../../src/scenes/gate/gateArsenal.js';
+import { createGateArsenal, arsenalSeams, ARSENAL_TEXT, GAZE_COLOR } from '../../../src/scenes/gate/gateArsenal.js';
 import { orderPeril } from '../../../src/scenes/gate/gateCourt.js';
 import { groundViewModel, BLIND_PEAK } from '../../../src/ui/gate/gateGroundView.js';
 import { BOSS_CUES, ATTACK_COLORS } from '../../../src/world/gate/gateBoss.js';
@@ -413,7 +413,16 @@ test('WB14a the court wires it: the arsenal judged beside his own blows, the rin
   assert.match(gc, /peril: order \?\? onMe, blindAt: arsenal\.blindAt\(\)/);   // PIN MOVED (WB14d): the blow on my feet his or his Flame's (onMe)
   assert.match(gc, /pull: \(vx, vz\) => !watching\(\) && pull\(vx, vz\)/, 'a watcher is never reeled');
   const w = read('src/scenes/world.js');
-  assert.match(w, /myId: \(\) => online\?\.id \?\? null, pull: \(vx, vz\) => player\.blowPush\(vx, vz\), pullDecay: BLOW_PUSH_DECAY,/);
+  assert.match(w, /\.\.\.arsenalSeams\(player, \(\) => online, BLOW_PUSH_DECAY\),/);   // PIN MOVED (HOST-SPLIT, at the merge of QUESTLINES): the three seams in one entry, made in the arsenal's module
+  let on = null;
+  const pushed = [];
+  const S = arsenalSeams({ blowPush: (vx, vz) => pushed.push([vx, vz]) }, () => on, 12);
+  assert.equal(S.myId(), null, 'offline');
+  on = { id: 'p7' };
+  assert.equal(S.myId(), 'p7', 'read at each ask - the link is made after the court');
+  S.pull(3, -4);
+  assert.deepEqual(pushed, [[3, -4]], 'the motor\'s blow push');
+  assert.equal(S.pullDecay, 12);
   for (const k of NEW) {
     assert.ok(BOSS_CUES.windup[k] && BOSS_CUES.release[k] && BOSS_CUES.land[k], `${k} heard`);
     assert.ok(ATTACK_COLORS[k], `${k} coloured`);
