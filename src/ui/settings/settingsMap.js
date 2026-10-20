@@ -153,7 +153,7 @@ export const CATEGORIES = Object.freeze([
   ]),
   tab("audio", "Audio", [
     sec("volume", "Volume", [
-      "Controls/SoundVolume", "Controls/MusicVolume"]),
+      "Controls/SoundVolume", "Controls/MusicVolume", "port:monsterVolume"]),
     sec("music", "Music", [
       "Audio/AlternateMusic", "Audio/SoundFont", "port:midiOut"]),
     sec("sounds", "Sounds", [

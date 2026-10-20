@@ -10709,6 +10709,11 @@
   "tr": "84e87f7afd75",
   "by": "claude-in-session"
  },
+ "growth.level.owedHead": {
+  "en": "37d027bb516d",
+  "tr": "f2f8fc27e66c",
+  "by": "claude-in-session"
+ },
  "growth.level.title": {
   "en": "7c7f5d049fad",
   "tr": "058818ff083b",
@@ -10719,9 +10724,19 @@
   "tr": "cb1f05799cdb",
   "by": "claude-in-session"
  },
+ "growth.level.viewHead": {
+  "en": "3b8addd02c9b",
+  "tr": "4dac2505b754",
+  "by": "claude-in-session"
+ },
  "growth.rail.captain": {
   "en": "01c3eea35cd8",
   "tr": "3b63d0647aed",
+  "by": "claude-in-session"
+ },
+ "growth.rail.captainSub": {
+  "en": "ecdf47829b66",
+  "tr": "d8eedc6f511b",
   "by": "claude-in-session"
  },
  "growth.rail.firmament": {
@@ -10729,14 +10744,29 @@
   "tr": "18076f0aaea8",
   "by": "claude-in-session"
  },
+ "growth.rail.firmamentSub": {
+  "en": "3ab774006ece",
+  "tr": "3ac4be87bbfe",
+  "by": "claude-in-session"
+ },
  "growth.rail.level": {
   "en": "7c7f5d049fad",
   "tr": "058818ff083b",
   "by": "claude-in-session"
  },
+ "growth.rail.levelSub": {
+  "en": "93fa8f69f6ba",
+  "tr": "18455629fee9",
+  "by": "claude-in-session"
+ },
  "growth.rail.specs": {
   "en": "e6e6a1cdf4ed",
   "tr": "15881bafe2d3",
+  "by": "claude-in-session"
+ },
+ "growth.rail.specsSub": {
+  "en": "b4f1e5cc9df6",
+  "tr": "6e0bcdae3f3b",
   "by": "claude-in-session"
  },
  "growth.spec.arcane": {
@@ -12739,6 +12769,16 @@
   "tr": "d9cb4f357b21",
   "by": "claude-in-session"
  },
+ "menu.audio.monsterVolume": {
+  "en": "b2bcaf061bd9",
+  "tr": "e17e2c466168",
+  "by": "claude-in-session"
+ },
+ "menu.audio.monsterVolumeNote": {
+  "en": "5f135fa9ad51",
+  "tr": "cc8e6ed292ab",
+  "by": "claude-in-session"
+ },
  "menu.begin.blurb": {
   "en": "e4e4d4d671eb",
   "tr": "de5c9025a190",
@@ -13287,6 +13327,16 @@
  "menu.hud.piece.saddle": {
   "en": "9695262a7229",
   "tr": "a3b3bf4df20e",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.skillsReady": {
+  "en": "6be87c9a1330",
+  "tr": "c527a4807c17",
+  "by": "claude-in-session"
+ },
+ "menu.hud.piece.starsUnspent": {
+  "en": "40186414de6a",
+  "tr": "a0a4eeb24027",
   "by": "claude-in-session"
  },
  "menu.hud.preview.helm": {

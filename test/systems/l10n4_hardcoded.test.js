@@ -534,7 +534,7 @@ const HARDCODED = {
   'src/systems/travel/travelOptionsText.js': 30,
   'src/systems/travel/travelPace.js': 5,
   'src/systems/travel/travelPathMode.js': 3,
-  'src/systems/travel/travelViewFilters.js': 6,
+  'src/systems/travel/travelViewFilters.js': 7,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (MAP-PLAYERS: +1, the Players switch's tip)
   'src/systems/tutorialCatalogue.js': 214,
   'src/systems/uiSkin.js': 1,
   'src/systems/upkeep/upkeepItemRows.js': 2,
@@ -611,8 +611,8 @@ const HARDCODED = {
   'src/ui/enhanced/enhancedFrame.js': 2,
   'src/ui/enhanced/enhancedHelm.js': 16,
   'src/ui/enhanced/enhancedHotbar.js': 13,
-  'src/ui/enhanced/enhancedHud.js': 6,
-  'src/ui/enhanced/enhancedInventory.js': 84,
+  'src/ui/enhanced/enhancedHud.js': 9,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (SKILL-READY, FIRM-STARS: +3, the two tiles' names and their cell's class)
+  'src/ui/enhanced/enhancedInventory.js': 89,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (BELT-LANTERN: +5, the lantern slot's acts)
   'src/ui/enhanced/enhancedLevelingChoice.js': 6,
   'src/ui/enhanced/enhancedMenu.js': 62,   // AUDIT EG V (c, L7-10): the Spire's three accessibility rows routed; UI-CALM's doors at the merge of main
   'src/ui/enhanced/enhancedMerchantPanel.js': 1,
@@ -642,6 +642,7 @@ const HARDCODED = {
   'src/ui/gate/gateMarksView.js': 18,
   'src/ui/gate/gateTitleCard.js': 1,
   'src/ui/grimoireDress.js': 13,
+  'src/ui/growth/growthStage.js': 1,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (GROWTH-BOOK)
   'src/ui/guildServiceWindow.js': 1,
   'src/ui/guildServiceWindows.js': 8,
   'src/ui/hallOfRecords.js': 4,
@@ -651,8 +652,10 @@ const HARDCODED = {
   'src/ui/hitNumbers.js': 1,
   'src/ui/holdingsPages.js': 59,
   'src/ui/howManyField.js': 1,
+  'src/ui/hud/hudAdvance.js': 8,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (SKILL-READY, FIRM-STARS: ADV_WORDS, the tiles' hover card)
   'src/ui/hud/hudLayout.js': 28,
   'src/ui/hud/hudStatus.js': 1,
+  'src/ui/hud/statusTips.js': 53,   // HUD/GROWTH PATCHES (2026-10-20): counted as they arrived at their merge with main - English until a slice routes them through t() (STATUS-TIPS: what each status tile says under the pointer)
   'src/ui/iliacTableHud.js': 63,
   'src/ui/ink/inkDungeonGL.js': 1,
   'src/ui/ink/inkDungeonSolid.js': 6,
