@@ -152,8 +152,8 @@
   {
     "name": "OW-TOWN-RING-host-no-ring",
     "file": "src/scenes/world.js",
-    "old": "ringAt: tvRingAt, exitAt:",
-    "new": "exitAt:",
+    "old": "    const legs = routeLegs(plan.pixels, plan.kinds, { ringAt: tvRingAt });",
+    "new": "    const legs = routeLegs(plan.pixels, plan.kinds);",
     "tests": [
       "test/world/worldOfDaggerfall/ow_wod.test.js"
     ],

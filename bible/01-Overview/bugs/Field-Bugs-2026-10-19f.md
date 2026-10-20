@@ -13,11 +13,12 @@ Renumbered 19f at the merges of main: main's FIELD BUGS 2026-10-19b (the #sugges
 At the second merge, main's PLAIN-SWEEP (`10-UI/Plain-Words.md` section 6, its law 6) was in force: the nine lines
 this record added that hung a clause off a dash or spoke in the house's words were said plainly - the staff mend's three
 refusals (`account.refusal.mendNotNegative`, `mendMoved`, `repairTicket`), DISENCHANT-SAID's reason
-(`prof.page.enchant.under`), STEED-KEPT's line (`rvn.took.home`), TOWN-EXIT's shut gates (`travel.gatesShut`) and
+(`prof.page.enchant.under`), STEED-KEPT's line (`rvn.took.home`), TOWN-EXIT's shut gates (`travel.gatesShut`, retired since with TOWN-EXIT) and
 COMPANION-DROP's three (`wild.companion.stays`, `away`, `left`) - drafted again in every language that holds them,
 their pins moved to the new words and their mutants re-run dead. The quotes below are the words as they now stand.
 
-Twenty-two fixes, below. Eight of them are the owner's calls, asked and answered on 2026-10-19 (each section says so):
+Twenty-two fixes, below - twenty-one standing: TOWN-EXIT was retired at the fifth merge of main for main's OW-TOWN-WALK,
+which walks the same way out (its section says so). Eight of them are the owner's calls, asked and answered on 2026-10-19 (each section says so):
 SIDE-ONCE, DISENCHANT-SAID, COMPANION-DROP, STEED-KEPT, BOSS-DOT, DUEL-BAR, DISEASE-UNWELL and ROCK-CLEAR. What is
 not fixed here - not proven, the design as chosen, or a restore only staff can make - is under "What is not fixed
 here", with what would prove each.
@@ -33,7 +34,7 @@ here", with what would prove each.
 | 7 | A Legendary bow's power shows nothing | Chain Lightning's arc hurt its foe silently; Cast When Strikes is DFU's spell on the target, with no missile | CHAIN-SEEN; an element's colour and a strike's visual are requests (below) |
 | 8 | The Gauntlet ("Silence the casters") stuck at three though every caster was silenced and killed | A caster was silenced by standing on its plate alone; nothing marked the plates or named them (WINCH-PLATES fixed the Winch, not this) | GAUNTLET-PLATES; and main's GAUNTLET-SLAIN (`Field-Bugs-2026-10-19d.md`) made a slain caster silenced |
 | 9 | The town map's Find me goes to the town's lower right, wherever the player stands | Find me knew the world map only: the town map got the world map's middle pixel as the player | FINDME-TOWN |
-| 10 | Pathfinding out of a walled town traps the player in a corner | A journey from inside the start pixel's town had no leg out by a gate: it aimed through the wall | TOWN-EXIT |
+| 10 | Pathfinding out of a walled town traps the player in a corner | A journey from inside the start pixel's town had no leg out by a gate: it aimed through the wall | TOWN-EXIT, retired for main's OW-TOWN-WALK (below) |
 | 11 | Stuck in a lift; /unstuck on its cooldown | A mover re-placed every frame carries only a body standing on it, and only as far as the world lets it - a rider meeting a lip is left inside the lift | MOVER-BODY; the cooldown is PVPUNSTUCK's (below) |
 | 12 | Clipped out of a dungeon when a floor lowered onto them underwater | The same mover law: a swimmer is never "on" it and is driven through the floor; a dungeon had no void rescue | MOVER-BODY, VOID-DUNGEON |
 | 13 | Fast travel left the character inside a mountain | UNSTUCK-OUT's open question: rocks built after the body stands are not pushed off it | ROCK-CLEAR (the owner's call) |
@@ -728,74 +729,27 @@ Find me departs from it as FINDME did on the bay, on the enhanced skin alone, un
   `test/ui/grim1_dress.test.js` (FINDME-SHEET) and `test/ui/heldmap.test.js` (U61) stand unchanged and green.
   `tools/mutants/findme_town.json` (20, all dead). Re-aimed by content: none - no record aimed at a moved line.
 
-## TOWN-EXIT: a journey from inside a walled town leaves by a gate
+## TOWN-EXIT: a journey from inside a walled town leaves by a gate - RETIRED at the merge of main
 
-`src/systems/travel/townExit.js` (new: `journeyLegs`, `townGateExit`, `gatesOf`, `streetsFrom`, `ringRound`),
-`src/scenes/world.js` (`tvJoinedLegs`, moved out to one call; the two journeys' guards), `src/scenes/travelView.js`
-(`TRAVEL_VIEW_TEXT.gatesShut`), `src/systems/travel/travelOptions.js` (`ringPoints`, ringPassPoints' table, shared).
+FOUND, on the code (kept for the record). A player's private report: leaving a town by the Overworld's journey, the way
+out failed wherever the traveller stood far from a gate, and left them caught in a corner of the wall. A route's legs are
+its pixels after the first, and OW-TOWN-RING rings only a town the route passes THROUGH - the start pixel never gets the
+ring (travelRoute.js:"const rings = pixels.map"). So the first leg aimed at the next pixel's middle, or at OW-ROADSIDE's
+join on the line from the town's own middle - straight across the town and through its wall - with only TRAVEL-NAV1's
+local steering between the traveller and the wall. Flown over Kaloguja's own walls: reproduced.
 
-FOUND, on the code. A player's private report: leaving a town by the Overworld's journey, or walking through one, the
-way out failed wherever the traveller stood far from a gate, and left them caught in a corner of the wall. A route's
-legs are its pixels after the first, and OW-TOWN-RING rings only a town the route passes THROUGH - the start pixel never
-gets the ring (travelRoute.js:"const rings = pixels.map"). So the first leg aimed at the next pixel's middle, or, where
-the first step was a road's or a track's, at OW-ROADSIDE's join on the line from the town's own middle
-(townExit.js:"|| (plan.kinds[0] !== 'road' && plan.kinds[0] !== 'track')", then in `tvJoinedLegs`) - straight across
-the town and through its wall. Between the traveller and the wall stood only TRAVEL-NAV1's steering: local feelers and
-a detour of two hundred metres (travelSteer.js:"if (s.walked - (f.along - s.sStart) > P.detourBudget)"), which a
-city's wall outlasts - and the notches its walls make (a WALLAA12-15 inner corner: about a tenth of the box the four
-gates stand on, up to 28% of it, over the 65 Beautiful Cities towns whose grid and width the pack names). Flown over
-Kaloguja's own walls, the walk from the west of the town toward the pixel north of it met the notch's wall, was turned
-along the walls - past the north gate's passage at the journey's pace - and stopped inside them, "blocked": reproduced.
-The report's other claims, checked: the gates are kept by the pixel build (pixelBuild.js:"made.cityGates ="); a resume
-skips no `ring` leg in the town's pixel (travelOptions.js:"if (cur && !cur.ring && cur.x === mp.x && cur.y === mp.y)")
-and the leg copy keeps the mark (travelOptions.js:"...(l.ring ? { ring: true } : {})"); offline a gate DOES shut at night
-- DaggerfallCityGate.Update shuts every one at dusk and SetOpen swaps its MeshCollider, so a shut gate is a wall
-(cityGate.js:"export function updateCityGate", AUDIT 64 F14), and online none shuts (OL5). Not taken: the block-name
-fallback for an unbuilt pixel (a pixel the traveller can walk in is built - the ground holds the drive until it is) and
-a new leg flag (`ring`'s four readings fit a way out as they fit a ring).
-
-THE FIX. `tvJoinedLegs`' body left `bootWorld` whole for `journeyLegs` (townExit.js:"export function journeyLegs"),
-OW-ROADSIDE's join as it was, and the host hands it the way out: `townGateExit` (townExit.js:"export function townGateExit")
-over the start pixel as its build keeps it - its gates and its town's navgrid.
-- ON THE STREETS: the navgrid (DFU's CityNavigation, every block's automap carved out of it, a wall's and a gate's model
-  among them) parts a walled town's streets from the fields - a piece of the grid that never reaches its edge
-  (LW-WALLS). A traveller in the fields, a notch among them, a yard no gate opens onto, an open town (no gates), no
-  navgrid or no pixel built: none (townExit.js:"if (streets.open"), and the journey leaves as it always has.
-- THE GATE: each where its model stands, on the side its model's +z faces (away from its town - all 260 gates of those
-  65 towns; each of the 283 towns the pack names whole stands four, one to a side), open as its MODEL stands. The way
-  out: the gate's inner point, its outer point (`GATE_IN`, one path's width either side of its wall, on its own line:
-  each arrival square off the wall, the walk between straight through the passage), the ring's band straight out, round
-  the ring the shorter way by length (`ringRound`), to where the route's own line leaves the ring - by the gate whose
-  whole walk is shortest (the streets' steps to it, then the points): the departing side's, unless another's ring is
-  the shorter way.
-- THE LEGS: each point a leg in its OWN pixel (townExit.js:"...worldCoordToMapPixel" - the ring of a town eight blocks
-  across runs in the next pixel, and the autopilot asks a leg's arrival only there), marked `ring`; the three to the
-  ring on foot, the ring's on the ground the route leaves by; then the route's own legs, no join.
-- THE GATES SHUT: offline by night, no gate the streets reach open (townExit.js:"if (!ways.some((w) => w.g.open)) return { shut: true };"):
-  no legs, "The town gates are shut for the night. Wait until morning to leave." said once
-  (world.js:"if (!legs) tvSay"; the text core's `travel.gatesShut`, drafted in-session for the catalog's languages), and
-  neither journey begins. DFU's own night, kept; no DFU member departed from (the Overworld's route is TV2's Ledger A row
-  already). The four hosts: `world.js` wired; `exterior.js` plans no route; `worldModes.js` and `dungeonContext.js`
-  begin no journey indoors. `bootWorld` 36,190 -> 36,184 logical lines, its ceiling 36,233 -> 36,227
-  (`01-Overview/Host-Split.md` TOWN-EXIT).
-
-Left as it is: a route that never leaves the traveller's own pixel (a spot in the town's own fields) is not asked for a
-way out; the walk to the gate is the steering's (the navgrid finds the gate, it does not walk the cells); a gate that
-shuts while the traveller walks to it stops the walk as any blocked way does; the gate's passage is no ARENA2 reading
-here (the flights stand it at 4 m, a narrow guess). `06-Systems/Travel-View.md` TOWN-EXIT; `06-Systems/Travel-Options.md`
-TRAVEL-NAV.
-
-- **Pinned**: `test/systems/travel/fb1019f_townexit.test.js` (8: Kaloguja and Mesajer as the pixel's build mints them -
-  the pack's wall blocks through blockFromJson and layoutRmbBlock, `makeCityGate` and the block's origin matrix, the
-  location frame and rects by getLocationTerrainTileOrigin, setLocationTiles and locationRectsOf, the navgrid carved by
-  setBlockData; the gates, the streets, the way out, the gates shut, the legs, Travel Options walking them and resuming in
-  the town, world.js's own `tvJoinedLegs` lifted and run, and the steering flown over the real walls - REPRODUCED, then
-  out by the gate at x60 and at x100 with a hitching frame). PIN MOVED: `test/systems/travel/tv2_click_to_move.test.js`
-  (OW-ROADSIDE's join pinned by what `journeyLegs` makes; both journeys' guard), `test/world/worldOfDaggerfall/ow_wod.test.js`
-  (the ring handed through `journeyLegs`), `test/systems/travel/fb0929d_toroads.test.js` (its lifted host given the module),
-  `test/scenes/hostceiling.test.js` (the lowered ceiling). `tools/mutants/fb1019f_townexit.json` (22, all dead).
-  Re-aimed by content: `ow2.json` OW-ROADSIDE-alongside, `owwod.json` OW-TOWN-RING-host-no-ring, `ow3j.json`
-  OW3-J8-roadside-reverted (the three lists: 63 dead), `hostsplit.json` HOST-SPLIT-a-ceiling-under-its-host (8 dead).
+RETIRED. While this record was out, main took THE OVERWORLD REVISITED (#1074) and its OW-TOWN-WALK
+(`06-Systems/Travel-View.md` OW-TOWN-WALK, read cold by its own AUDIT OW-REVISITED): a journey in a town walks the
+town's own grid - each open gate's passage carved through it, its way asked of the piece of the grid the traveller
+stands in - and stops with its own word at a gate shut for the night (`travel.nav.gatesShut`). That is this report's
+way out, and one way out has one home, so TOWN-EXIT was retired at the fifth merge of main (AUDIT FB1019f G1): its
+module (`townExit.js`), pins (`fb1019f_townexit.test.js`), mutants, shut-gate word (`travel.gatesShut`, in the 25
+languages that held it) and its move of `tvJoinedLegs` out of `bootWorld` went back to main's, with the travel pins and
+mutant records it had re-aimed (`tv2_click_to_move`, `ow_wod`, `fb0929d_toroads`, `ow2.json`, `ow3j.json`,
+`owwod.json`) and its Host-Split section. AUDIT FB1019f lane E's findings against it (a start in the town's fields or
+in a gate's passage still walked through the town, E1; its pin gaps and two doc claims, E2 and E3) went with it: the
+first is a question of the town walk's own now, which plans from the traveller's piece of the grid (its pins:
+`ow_townwalk.test.js` THE WALLS AND THEIR GATES, `audit_owrevisited_walk.test.js` L1-4).
 
 ## MOVER-BODY: a lift or a lowering floor never closes on the player
 

@@ -482,16 +482,6 @@ the naval host's boat in play; and the voyage the planner is asked for rides the
 which stays. The pins that read the wiring by source moved with it (`passagehost.test.js`, `passageaudit.test.js`,
 `ows2_crossing.test.js`), the boat in play now held by behaviour, and 21 mutant records re-aimed and dead.
 
-## TOWN-EXIT - tvJoinedLegs out (FIELD BUGS 2026-10-19f)
-
-Not a slice of the order: a fix whose function had to change past its wiring. `tvJoinedLegs` - the Overworld's legs,
-OW-TOWN-RING's ring handed to the route and OW-ROADSIDE's join - left `bootWorld` whole for
-`src/systems/travel/townExit.js` `journeyLegs`, with the way out of a walled town beside it (`06-Systems/Travel-View.md`
-TOWN-EXIT). The host keeps one call (the traveller, the ring and the way out over the built pixel handed in) and the shut
-town's word, and each of its two journeys a guard. `bootWorld` 36,190 -> 36,184 logical lines; its ceiling 36,233 ->
-36,219 with DISENCHANT-SAID's eight (`profPages.js disenchantableOf`, `06-Systems/Professions-Arc.md` 37). The pins that read the moved body read the module (`tv2_click_to_move`, `ow_wod`, `fb0929d_toroads`), and the
-records that named its text were re-aimed by content (`ow2.json`, `owwod.json`, `ow3j.json`, `hostsplit.json`).
-
 ## STAND-IN-WHOLE - the four spell doors out of buildDungeonContext (FIELD BUGS 2026-10-19f)
 
 Not a slice of the order above: a fix (`11-Multiplayer/World-Bosses.md` section 26) whose door stood in `buildDungeonContext`
@@ -526,3 +516,20 @@ the riders, the claim to `serpentHost.handStruck`, its rounds), which `bootWorld
 a frame of the serpent's fight (`serpentSpell.frame(fight)`). `bootWorld` 36,181 -> 36,157 logical lines, its ceiling
 36,219 -> 36,195. `buildDungeonContext` grew by its wiring alone - the rounds' frame destructured and asked in `drawFoes`,
 8,315 -> 8,317, under its 8,463. Pins moved by hand (`serpent4.test.js`, `audit_schools.test.js`).
+
+## OW-DUNGEON-SIZE's move - the dungeons' models out of bootWorld (2026-10-19)
+
+THE OVERWORLD REVISITED (`06-Systems/Travel-View.md`) wires six slices into the streaming host, and `bootWorld` stood at
+36,230 of its 36,233 logical lines. The slice that changes OW-DUNGEONS' grow moved OW-DUNGEONS' own host code out first:
+`tvDungeonModelList`, `tvDungeonModelLoad`, `_tvDngAt`, `drawTvDungeonModels` and `dropTvDungeonModels` - contiguous
+members - to `src/scenes/travelViewDungeonModels.js` (`createTravelViewDungeonModels(host)`) by `tools/hostMove.mjs`:
+23 names by value, four live (`_locIndexGen`, `_tvListsReady`, `season`, `tvDngModels` - written, so a getter and a
+setter), the two the host draws and drops by returned. 86 logical lines freed (36,230 -> 36,144); the six slices'
+wiring took 39 of them back (`bootWorld` 36,183; 36,181 after the merge with main), each slice's behaviour a module of its own
+(`scenes/townWalkHost.js`, `scenes/overworldForecastHost.js`, `systems/travel/regionChase.js`, `systems/travel/townWalk.js`,
+`systems/weather/owForecast.js`). The ceiling stays. The three pins that lifted the moved code read the host whole now
+(`test/hostText.mjs`: `owdungeons`, `fb1009_travelperf`, `ether_ow`), their lifted functions handed `host` for the live
+names; 24 mutant records re-aimed by the tool, every one dead. AUDIT OW-REVISITED (2026-10-20, `01-Overview/audits/Audit-Overworld-Revisited.md`): its fixes grew the region's
+chase hearing past three lines, so it moved out too - `src/scenes/regionChaseHost.js` (`createRegionChaseHearing`), the
+host wiring it in one statement; with the forecast's new inputs and the bands' and raiders' preference for a fresh cell
+word, `bootWorld` 36,205 of its 36,233 (36,209 with main merged in the same day).

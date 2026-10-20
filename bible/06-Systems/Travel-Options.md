@@ -1025,17 +1025,6 @@ five degrees in one update is an arrival) can end a LEG early while a
 detour turns hard close to its target at high acceleration; the next leg
 starts from where the body is, which is the mod's own answer.
 
-**Out of a walled town (TOWN-EXIT, FIELD BUGS 2026-10-19f).** A city's wall
-is longer than the detour's budget, and the notches its walls make are
-corners the feelers cannot see out of: a planned journey begun on a walled
-town's streets toward a pixel beyond it was stopped, the way ahead blocked,
-wherever its line met the wall far from a gate - a player's private report,
-reproduced by flying this steering over a real town's walls. The steering is
-unchanged. The Overworld's route leaves such a town by a gate and its ring
-now (`06-Systems/Travel-View.md` TOWN-EXIT), so no leg of it asks the feelers
-to find a way through a wall; the mod's own straight journey still meets it,
-as it does in DFU.
-
 Pinned by execution in `test/systems/travel/travelnav.test.js` (19 of its 22 - TRAVEL-NAV2
 added three): every layout the
 request named - a building across the line, a wall with no gap, a U-shaped

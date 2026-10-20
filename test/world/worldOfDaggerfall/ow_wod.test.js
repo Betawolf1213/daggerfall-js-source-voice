@@ -241,8 +241,11 @@ test('OW-TOWN-RING: the ring a route walks - in on the side it arrives from, rou
   const sides = (from, to) => ringPassPoints(TOWN.locationRect, TOWN.locationBorderRect, from, to, MID);
   // Daggerfall's own byte (207,213): N|SE|W - a route in from the north and out to the south-east
   const ns = sides([0, -1], [1, 1]);
-  assert.equal(ns.length, 3, 'north side, the north-east corner, the south-east corner');
-  assert.ok(ns[0].z > TOWN.locationRect.zMax && ns[1].x > TOWN.locationRect.xMax && ns[2].z < TOWN.locationRect.zMin, 'n, ne, se');
+  // PIN MOVED (AUDIT OW-REVISITED L2-3): the south-east road leaves the ring where ITS diagonal crosses the band - Daggerfall
+  // is no square, so that is in the south band past the corner: the corner's square passed, then the road's own point
+  assert.equal(ns.length, 4, 'north side, the north-east corner, the south-east corner, the south-east road');
+  assert.ok(ns[0].z > TOWN.locationRect.zMax && ns[1].x > TOWN.locationRect.xMax && ns[2].z < TOWN.locationRect.zMin && ns[2].x > TOWN.locationRect.xMax, 'n, ne, se');
+  assert.ok(ns[3].z < TOWN.locationRect.zMin && Math.abs((ns[3].x - MID.x) + (ns[3].z - MID.z)) < 1e-6, 'on the road\'s own south-east diagonal through the middle');
   // straight through, west to east: round the north (the tie goes clockwise)
   const we = sides([-1, 0], [1, 0]);
   assert.equal(we.length, 4);
@@ -279,10 +282,7 @@ test('OW-TOWN-RING: a route through a town\'s pixel walks its ring - no leg aime
 
 test('OW-TOWN-RING: the host rings every location on the way (the build\'s own tile rect, from the blocks when the pixel is not built), and Travel Options walks the ring point to point - no ring point skipped on a resume, none taken for a road join', () => {
   const w = hostText('src/scenes/world.js');
-  // PIN MOVED (TOWN-EXIT, test/systems/travel/fb1019f_townexit.test.js): tvJoinedLegs' body is systems/travel/townExit.js
-  // journeyLegs - the host hands it the ring, and it hands routeLegs the ring
-  assert.match(w, /const legs = journeyLegs\(from, tvFreePull\(plan, roads\), \{ me: state\.worldCoords\(player\.pos\), ringAt: tvRingAt, exitAt: /);
-  assert.match(rd('src/systems/travel/townExit.js'), /const legs = routeLegs\(plan\.pixels, plan\.kinds, \{ ringAt \}\);/);
+  assert.match(w, /const legs = routeLegs\(plan\.pixels, plan\.kinds, \{ ringAt: tvRingAt \}\);/);
   assert.match(w, /const r = built\.get\(key\)\?\.locationRect \?\? setLocationTiles\(loc, maps, blocks, new Uint8Array\(128 \* 128\)\);/, 'the build\'s rect, or the same law over the location\'s blocks');
   assert.match(w, /rects = locationRectsOf\(o\.x, o\.z, \{ x: r\.xMin, y: r\.yMin, width: r\.xMax - r\.xMin, height: r\.yMax - r\.yMin \}, loc\.mapTableData\.locationType === LOCATION_TYPES\.TownCity, hasCustomLocationPosition\(loc\)\);/, 'Travel Options\' own rects');
   const t = rd('src/systems/travel/travelOptions.js');
