@@ -4933,7 +4933,7 @@ NOT CHANGED, named:
   midnight in a wood or in a black corridor each node near carries the brightest point in view, many times its picture's
   own light, and every 6.7 s the sheen lifts the whole far silhouette. The glow and the ring were the same. Scaling it by
   the frame's light with a floor (`renderer.flatLightAt`; TELL2's `glintLit` is the precedent) trades the night's
-  findability for its immersion: put to the owner.
+  findability for its immersion: put to the owner. ANSWERED - "Follow the light": GLINT-LIGHT, below.
 - **The tint separates Mining and Logging by 0.12, on green alone** (the world lane - DESIGN, LOW): the picture itself
   tells the kind; the compass carries the colour whole.
 - **A flat's spot stands on its unswayed plane**: in a gale the picture leans under it (a tall crown's top by a few
@@ -4957,6 +4957,62 @@ under 3 Hz over small areas; the shapes the tests feed the pass the producers'.
 Counts after the audit: `test/scenes/nodeglint.test.js` 15; `tools/nodeGlintProbe.mjs` 26 checks;
 `tools/mutants/nodeglint.json` 98, all dead; NODE-MARKS' two records the audit moved (`nodemarks.json`) re-aimed, dead;
 `test/world/bantha1_jungle.test.js`'s haze sweep reads the glint's own upload.
+
+### GLINT-LIGHT - the glints follow the light (2026-10-20, the owner: "Follow the light")
+
+The audit's design question, put to the owner: at night and underground, should the glints follow the scene's light? The
+answer, the option as it was put: "Scale glints by the light where the node stands, with a floor so nodes stay findable
+at night. The sheen goes away in the dark."
+
+THE LIGHT is the one the node's own flat takes where it stands - `renderer.flatLightAt` (MAC-I: the billboard program's
+composition - the ambient with the moons' lift, the sun's half, the Masser's half, every lamp at the flats' falloff, the
+indirect light), asked once a node a frame at the node's place, into the pass's one array (`flatLightAt` takes an `out`
+for it now). Its LEVEL is its luma by the 601 weights (`glintLightLevel`, written so a grey light's level is that grey
+exactly), in the display space `flatLightAt` answers in - the frame's own on both lanes, since the Enhanced Lighting
+lane encodes each fragment back to display space itself (`enhancedLighting.js` `elFinish`); the first-person hand's tint
+reads the same answer the same way. A renderer that answers none (a probe, a test's stand-in) lights it as the day.
+- **The glints are as bright as that level** (`uAlpha` is the kindling times it): a clear day's 1, the light whole.
+- **THE FLOOR is the flats' own**, `FLAT_LIGHT_FLOOR` (0.25 - MAC-I's: dark enough to read as unlit, bright enough to
+  keep a silhouette), asked of `flatLightAt` itself. It is also the clock's own night ambient (`EXTERIOR_NIGHT_AMBIENT`),
+  so outdoors at night the glint simply takes the night's light, a quarter of the day's. The floor reaches only under
+  that: a dungeon's 0.12, a room's 0.18, a mine with no lamp near. TELL2's floor (`glintLit`: 0.35 plus 0.8 of the
+  albedo's luma) was weighed and not taken: it is a warning's, which must read before a blow lands, and a node's glint
+  is a find. If night nodes read too faint in play, the floor is the one number to raise, and TELL2's 0.35 is the next
+  precedent.
+- **The sheen goes out in the dark** (`glintSheenLight`, a smoothstep from `GLINT_SHEEN_DARK` 0.4 to `GLINT_SHEEN_LIT`
+  0.55, times the sheen's distance gain). The edges are set from the clock's own light at a node, measured through
+  `flatLightAt` over the world's own terms (`exteriorAmbient`, `sunScale`, the weather's scale, EV5's moons):
+
+  | Light at the node | Level | Sheen |
+  |---|---|---|
+  | a moonless night | 0.25 | none |
+  | a night under both full moons | 0.39 | none |
+  | a storm's noon ("a storming noon reads near-night", `worldClock.js`) | 0.35 | none |
+  | a rainy noon | 0.48 | part |
+  | a clear day's first hour (07:00) | 0.59 | whole |
+  | an overcast noon | 0.66 | whole |
+  | a clear noon | 1 | whole |
+
+  So every night is dark to the sheen, as the owner's "the sheen goes away in the dark" reads at night and underground.
+  A vein beside a lamp in a mine is lit, and its sheen crosses it: the light decides, not the clock.
+- **Not a DFU member**, as the glint is not. The light it follows is DFU's billboard composition (MAC-I's own citations).
+
+NOT CHANGED, named:
+- **The glint's colour stays the warm daylight's** (`GLINT_LIGHT` with its profession's 35%). It is scaled by the
+  light's level, not tinted by its colour: a moonlit or a torchlit glint is the daylight's colour, dimmer. The node's
+  own picture takes the light's colour.
+- **The glow does not follow the light** (a body's, SENSE1's finds - `render/nodeGlow.js`), as the audit named.
+- **The sun's shadow is not in the level**: `flatLightAt` reads no texture, so neither the lane's shadow map nor the
+  clouds' shadow reaches it (the clouds' is MAC-I's own recorded departure, in `flatLightAt`'s comment). A node in a wall's shadow at noon glints as one in the
+  sun, while its picture is shaded.
+- **The lane's eye adaptation is not in the level**: `flatLightAt` is the light before the lane's exposure, as the hand's
+  tint reads it.
+
+Counts after GLINT-LIGHT: `test/scenes/nodeglint.test.js` 18 (the level and the sheen's edges against the clock's own
+hours; `flatLightAt`'s `out`; the draw asking each node's light at its place and the floor); `tools/nodeGlintProbe.mjs`
+30 checks (a clear noon's light whole; at night a quarter, its brightest still clear on the picture; a black mine's held
+at the night's by the floor; far, at night, no sheen at any moment it crossed by day - `renderer.flatLightAt` itself
+over the probe's scene); `tools/mutants/nodeglint.json` 107, all dead.
 
 ## Appendix A - a day of a gatherer
 

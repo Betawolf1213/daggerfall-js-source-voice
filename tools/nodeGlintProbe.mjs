@@ -10,7 +10,9 @@
 // the sheen crossing a far picture from its foot to its crown but never a near one; and the frame's target and GL
 // baseline handed back. AUDIT NODE-GLINT: and a node behind the eye costs nothing, the rays reach past the picture at
 // their glint's depth, no glint moves across the clock's wrap, two nodes of one picture glint apart, and on a leafy
-// picture a glint holds its place as the eye moves a pixel at a time. So: the repo's own modules served as they are (no bundler), a floor, the node's own picture
+// picture a glint holds its place as the eye moves a pixel at a time. GLINT-LIGHT: and it is as bright as the light where
+// the node stands (the renderer's own flatLightAt) - whole at a clear noon, a quarter at night and still clear, held at the
+// night's by the flats' floor in a black mine, and no sheen crossing the far picture at night. So: the repo's own modules served as they are (no bundler), a floor, the node's own picture
 // drawn by a stand-in of the billboard placement (depth written, cut at a half), the pass drawn by its own class over
 // them, and the frame read back.
 //
@@ -28,6 +30,7 @@ const out = []; const check = (n, ok, d = '') => { out.push(ok); console.log(`${
 
 const PAGE = `<!doctype html><html><body style="margin:0;background:#000"><canvas id=c width=640 height=480></canvas><script type=module>
 import { NodeGlintRenderer, glintPx, glintPxMax, GLINT_SHEEN_HZ } from '/src/render/nodeGlint.js';
+import { Renderer } from '/src/render/renderer.js';
 import { nodeMarkRgb } from '/src/ui/nodeMarks.js';
 const W = 640, H = 480;
 const gl = document.getElementById('c').getContext('webgl2', { alpha: false, preserveDrawingBuffer: true, antialias: false });
@@ -92,7 +95,7 @@ gl.bindFramebuffer(gl.FRAMEBUFFER, null);   // the atlas's status asked: the can
 /** The floor, the node's own pictures (and \`walled\` the wall), then (\`lit\`) the pass over them at \`alpha\`, its clock
  *  \`seconds\` (\`still\` reduced motion), seen from \`far\` (25 m off, a long lens on the herb) or near; the whole frame read
  *  back, row 0 at the bottom, with the pass's count, the glints' reach on the herb and the GL state it left. */
-window.draw = ({ walled = false, lit = true, alpha = 1, lpt = true, seconds = 0, still = false, far = false, leafy = false, strafe = 0, twin = false, behind = false } = {}) => {
+window.draw = ({ walled = false, lit = true, alpha = 1, lpt = true, seconds = 0, still = false, far = false, leafy = false, strafe = 0, twin = false, behind = false, ambient = null } = {}) => {
   const eye = far ? [-0.4, 1.0, 25] : [strafe, 1.0, 5.5];
   const proj = persp(far ? 0.1 : 0.9, W / H, 0.05, 100), view = look(eye, far ? [-0.4, 0.5, 0] : [strafe, 0.8, 0]), vp = mul(proj, view);
   const herbTex = leafy ? leafyTex : tex;
@@ -116,6 +119,10 @@ window.draw = ({ walled = false, lit = true, alpha = 1, lpt = true, seconds = 0,
     frame.eye = eye;
     const r = { gl, _proj: proj, _view: view, _camPos: new Float32Array(eye), _bbRight: right, _bbUp: new Float32Array([0, 1, 0]), _fogMode: 0, _fogDensity: 0, _haze: new Float32Array(8),
       _fogRange: new Float32Array([0, 1]), textures: new Map([['500_9', herbTex]]), lptDrawnFrames: () => (lpt ? [frame, null] : []) };
+    // GLINT-LIGHT: \`ambient\` a scene lit by that alone (the clock's, no sun, no lamp) - the renderer's own flatLightAt over it
+    if (ambient) Object.assign(r, { flatLightAt: Renderer.prototype.flatLightAt, _pointColorData: Renderer.prototype._pointColorData, _clockLit: true, _ambient: ambient,
+      _moonColor: [0, 0, 0], _moonScale: 0, _sunColor: [0, 0, 0], _sunScale: 0, _pointLights: new Float32Array(0), _pointColors: null, _pointColor: [1, 1, 1],
+      _pointColorScratch: new Float32Array(48), _lane: null, _indirect: [0, 0, 0, 0], _indirectColor: [0, 0, 0] });
     const list = [
       { alpha, seed: 0.37, at: centers[1], rgb: nodeMarkRgb('herbalism'), mark: { pictures: [{ batch, first: 1, count: 1, centers: [centers[1]] }] } },
       { alpha, seed: 0.61, at: root, rgb: nodeMarkRgb('logging'), mark: { pictures: [{ batch: { ...batch, vao: null }, first: 0, count: 0, center: root, entry: { lowPolyTrees: tset } }] } },
@@ -207,6 +214,19 @@ try {
   let sumFull = 0, sumHalf = 0;
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { sumFull += Math.max(0, rise(bare.pix, full.pix, x, y)); sumHalf += Math.max(0, rise(bare.pix, half.pix, x, y)); }
   check('half kindled, half the light', sumFull > 0 && sumHalf / sumFull > 0.4 && sumHalf / sumFull < 0.65, `${sumHalf} of ${sumFull} (${(sumHalf / sumFull).toFixed(3)})`);
+  // GLINT-LIGHT: the light where the node stands, through the renderer's own flatLightAt - a clear noon's (whole), the
+  // night's (the clock's own night ambient, 0.25: a quarter, and its brightest still clear on the picture) and a black
+  // mine's (no light at all: the flats' floor holds it at the night's)
+  const noon = await draw({ seconds: 1.5, ambient: [1, 1, 1] }), night = await draw({ seconds: 1.5, ambient: [0.25, 0.25, 0.25] }), mine = await draw({ seconds: 1.5, ambient: [0, 0, 0] });
+  let sumNoon = 0, sumNight = 0, sumMine = 0, peakFull = 0, peakNight = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const n = rise(bare.pix, night.pix, x, y);
+    sumNoon += Math.max(0, rise(bare.pix, noon.pix, x, y)); sumNight += Math.max(0, n); sumMine += Math.max(0, rise(bare.pix, mine.pix, x, y));
+    peakFull = Math.max(peakFull, rise(bare.pix, full.pix, x, y)); peakNight = Math.max(peakNight, n);
+  }
+  check('a clear noon\'s light: the glints whole', sumNoon === sumFull, `${sumNoon} of ${sumFull}`);
+  check('at night a quarter of the light, its brightest still clear on the picture', sumNight / sumFull > 0.18 && sumNight / sumFull < 0.32 && peakNight >= 120, `${sumNight} of ${sumFull} (${(sumNight / sumFull).toFixed(3)}), brightest ${peakNight} of the day's ${peakFull}`);
+  check('in a black mine the flats\' floor holds it at the night\'s', sumMine === sumNight, `${sumMine} against the night's ${sumNight}`);
   // reduced motion: still - the same frame at any moment, and a lit one; without it, the glints move
   const s0 = await draw({ seconds: 0.5, still: true }), s1 = await draw({ seconds: 3.75, still: true });
   const m0 = await draw({ seconds: 0.5 }), m1 = await draw({ seconds: 3.75 });
@@ -327,6 +347,18 @@ try {
   check('rising, from its foot toward its crown', up >= 3 && down <= 1, `${up} steps up, ${down} down`);
   const dark = peaks.filter((k) => k.best <= 8).length;
   check('and dark between crossings', dark >= peaks.length * 0.3, `${dark} of ${peaks.length} moments unlit`);
+  // GLINT-LIGHT: the same far herb at night - no sheen crosses it at any moment (the glints are a few pixels of a row)
+  let nightBest = 0;
+  for (const k of crossing) {
+    const f = await draw({ seconds: k.t, far: true, ambient: [0.25, 0.25, 0.25] });
+    for (const y of rows) {
+      const v = [];
+      for (let x = 0; x < W; x++) if (herbFar(x) && fPic(x, y)) v.push(rise(fbare.pix, f.pix, x, y));
+      v.sort((a, b) => a - b);
+      nightBest = Math.max(nightBest, v[v.length >> 1]);
+    }
+  }
+  check('far, at night, no sheen crosses it (at every moment it crossed by day)', crossing.length >= 4 && nightBest <= 8, `the most lit row's median ${nightBest} over the day's ${crossing.length} crossing moments`);
   check('no page error', errs.length === 0, errs.join('; '));
   if (process.env.DEBUG) writeFileSync('/dev/stderr', JSON.stringify(peaks) + '\n');
 } finally {

@@ -38,11 +38,14 @@ import * as NG from '../../src/render/nodeGlint.js';
 import {
   GLINT_MAX, GLINT_TILE, GLINT_GRID, GLINT_QUAD_INDEX_BYTES, GLINT_COUNT, GLINT_TRIES, GLINT_RATE, GLINT_RATE_STEP, GLINT_FLASH, GLINT_STILL,
   GLINT_PX, GLINT_PX_MIN, GLINT_PX_FLOOR, GLINT_REF_ROWS, GLINT_SHARE, GLINT_GAIN, GLINT_LIGHT, GLINT_TINT, GLINT_CORE_WHITE, GLINT_PULL,
-  GLINT_SHEEN_HZ, GLINT_SHEEN_SHARE, GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M, GLINT_TREE_REACH,
-  glintPx, glintPxMax, glintTint, glintSheen, glintRatesWhole, screenRect, widenRect, snapRect, innerShare, treeInstanceOf,
+  GLINT_SHEEN_HZ, GLINT_SHEEN_SHARE, GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M, GLINT_TREE_REACH, GLINT_SHEEN_DARK, GLINT_SHEEN_LIT,
+  glintPx, glintPxMax, glintTint, glintSheen, glintRatesWhole, glintLightLevel, glintSheenLight, screenRect, widenRect, snapRect, innerShare, treeInstanceOf,
   NODE_MASK_VS, NODE_MASK_FS, NODE_GLINT_VS, NODE_GLINT_FS, NodeGlintRenderer, createNodeGlintPass,
 } from '../../src/render/nodeGlint.js';
 import { HEIGHTMAP_DIMENSION, TERRAIN_SIZE } from '../../src/world/terrain/terrainSampler.js';
+import { Renderer, FLAT_LIGHT_FLOOR } from '../../src/render/renderer.js';
+import { exteriorAmbient, sunScale, SUN_RIG_COLOR } from '../../src/world/worldClock.js';
+import { MOONS, moonlightTerm, withMoonAmbient } from '../../src/render/enhancedSky.js';
 
 const src = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
 const noWait = () => Promise.resolve();
@@ -203,12 +206,13 @@ test('AUDIT NODE-GLINT the act\'s node is quiet, as the host marks it: a Pick-Ax
 test('AUDIT NODE-GLINT the record\'s numbers, by value: every constant the record states (mutants: any one moved)', () => {
   const pick = Object.fromEntries(['GLINT_TILE', 'GLINT_GRID', 'GLINT_MAX', 'GLINT_TREE_REACH', 'GLINT_QUAD_INDEX_BYTES', 'GLINT_COUNT', 'GLINT_TRIES', 'GLINT_HOLD_PX',
     'GLINT_RATE', 'GLINT_RATE_STEP', 'GLINT_FLASH', 'GLINT_STILL', 'GLINT_PX', 'GLINT_PX_MIN', 'GLINT_PX_FLOOR', 'GLINT_REF_ROWS', 'GLINT_SHARE', 'GLINT_TINT',
-    'GLINT_CORE_WHITE', 'GLINT_PULL', 'GLINT_SHEEN_HZ', 'GLINT_SHEEN_SHARE', 'GLINT_SHEEN_NEAR_M', 'GLINT_SHEEN_FULL_M', 'GLINT_NEAR_W', 'GLINT_OVERHANG', 'GLINT_ANCHORS'].map((k) => [k, NG[k]]));
+    'GLINT_CORE_WHITE', 'GLINT_PULL', 'GLINT_SHEEN_HZ', 'GLINT_SHEEN_SHARE', 'GLINT_SHEEN_NEAR_M', 'GLINT_SHEEN_FULL_M', 'GLINT_NEAR_W', 'GLINT_OVERHANG', 'GLINT_ANCHORS',
+    'GLINT_SHEEN_DARK', 'GLINT_SHEEN_LIT'].map((k) => [k, NG[k]]));
   assert.deepEqual(pick, {
     GLINT_TILE: 256, GLINT_GRID: 4, GLINT_MAX: 16, GLINT_TREE_REACH: 0.75, GLINT_QUAD_INDEX_BYTES: 24, GLINT_COUNT: 6, GLINT_TRIES: 6, GLINT_HOLD_PX: 1.5,
     GLINT_RATE: 0.35, GLINT_RATE_STEP: 0.05, GLINT_FLASH: 3, GLINT_STILL: 0.6, GLINT_PX: 14, GLINT_PX_MIN: 4, GLINT_PX_FLOOR: 1.5, GLINT_REF_ROWS: 1080, GLINT_SHARE: 0.35,
     GLINT_TINT: 0.35, GLINT_CORE_WHITE: 0.6, GLINT_PULL: 0.3, GLINT_SHEEN_HZ: 0.15, GLINT_SHEEN_SHARE: 0.5, GLINT_SHEEN_NEAR_M: 6, GLINT_SHEEN_FULL_M: 18,
-    GLINT_NEAR_W: 1e-3, GLINT_OVERHANG: 2, GLINT_ANCHORS: 8,
+    GLINT_NEAR_W: 1e-3, GLINT_OVERHANG: 2, GLINT_ANCHORS: 8, GLINT_SHEEN_DARK: 0.4, GLINT_SHEEN_LIT: 0.55,
   });
   assert.deepEqual({ ...GLINT_GAIN }, { core: 0.9, ray: 0.5, bloom: 0.3, sheen: 0.14 });
   assert.deepEqual([...GLINT_LIGHT], [1, 0.95, 0.84]);
@@ -246,6 +250,54 @@ test('NODE-GLINT the sheen: none within GLINT_SHEEN_NEAR_M, rising smoothly to G
   assert.ok(Math.abs(glintSheen((GLINT_SHEEN_NEAR_M + GLINT_SHEEN_FULL_M) / 2) - GLINT_GAIN.sheen / 2) < 1e-12, 'half way, half');
   assert.equal(glintRatesWhole(), true);
   assert.deepEqual([GLINT_SHEEN_HZ, GLINT_RATE, GLINT_RATE_STEP].map((r) => Math.round(r * 60)), [9, 21, 3]);
+});
+
+/** The state renderer.flatLightAt reads (test/systems/machij_sprites_and_chat.test.js's lightState): the world's own terms. */
+const lightState = (over = {}) => ({
+  _clockLit: true, _ambient: [0, 0, 0], _moonColor: [0, 0, 0], _moonScale: 0, _sunColor: [0, 0, 0], _sunScale: 0, _camPos: [0, 0, 0],
+  _pointLights: new Float32Array(0), _pointColors: null, _pointColor: [1, 1, 1], _pointColorScratch: new Float32Array(48), _lane: null,
+  _indirect: [0, 0, 0, 0], _indirectColor: [0, 0, 0], _pointColorData: Renderer.prototype._pointColorData, ...over,
+});
+const hex3 = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+
+test('GLINT-LIGHT the light where a node stands (the owner, at night and underground: "Follow the light"): its level the 601 luma of the light its flat takes; the sheen none at GLINT_SHEEN_DARK and under, whole from GLINT_SHEEN_LIT - and the clock\'s own hours where the record puts them: every night and a storm\'s noon dark, a moonless one at the flats\' floor; a clear day whole from its first hour (mutants: the weights; the dark edge; the lit edge)', () => {
+  assert.equal(glintLightLevel([1, 1, 1]), 1);
+  assert.deepEqual([[1, 0, 0], [0, 1, 0], [0, 0, 1]].map((c) => +glintLightLevel(c).toFixed(12)), [0.299, 0.587, 0.114], 'the 601 weights');
+  for (const g of [0, FLAT_LIGHT_FLOOR, 0.5, 1]) assert.equal(glintLightLevel([g, g, g]), g, 'a grey light\'s level that grey exactly');
+  assert.equal(glintSheenLight(0), 0);
+  assert.equal(glintSheenLight(GLINT_SHEEN_DARK), 0);
+  assert.equal(glintSheenLight(GLINT_SHEEN_LIT), 1);
+  assert.equal(glintSheenLight(1), 1);
+  assert.ok(Math.abs(glintSheenLight((GLINT_SHEEN_DARK + GLINT_SHEEN_LIT) / 2) - 0.5) < 1e-12, 'half way, half');
+  // the clock's light at a node: its ambient (and the moons' - EV5), the sun's key at its weather's scale, through the
+  // renderer's own composition at the floor the pass asks it at
+  const level = (minute, wx = 1, moons = null) => glintLightLevel(Renderer.prototype.flatLightAt.call(lightState({
+    _ambient: withMoonAmbient(exteriorAmbient(minute, 1, wx), moons), _sunColor: SUN_RIG_COLOR, _sunScale: sunScale(minute) * wx,
+    _moonColor: moons?.color ?? [0, 0, 0], _moonScale: moons?.scale ?? 0,
+  }), [0, 0, 0], FLAT_LIGHT_FLOOR, [0, 0, 0]));
+  const full = moonlightTerm({ daylight: 0, masser: { phase: 4, vis: 1, dir: [0, 1, 0], color: hex3(MOONS.masser.color) }, secunda: { phase: 4, vis: 1, color: hex3(MOONS.secunda.color) } });
+  const hours = { moonless: level(0), moonlit: level(0, 1, full), storm: level(720, 0.25), rain: level(720, 0.45), firstHour: level(420), overcast: level(720, 0.65), noon: level(720) };
+  assert.deepEqual(Object.fromEntries(Object.entries(hours).map(([k, v]) => [k, +v.toFixed(2)])),
+    { moonless: 0.25, moonlit: 0.39, storm: 0.35, rain: 0.48, firstHour: 0.59, overcast: 0.66, noon: 1 }, 'the record\'s numbers are the clock\'s');
+  assert.equal(hours.moonless, FLAT_LIGHT_FLOOR, 'a moonless night: the flats\' floor - its glints a quarter of the day\'s, never less');
+  for (const k of ['moonless', 'moonlit', 'storm']) assert.equal(glintSheenLight(hours[k]), 0, `${k}: no sheen`);
+  for (const k of ['firstHour', 'overcast', 'noon']) assert.equal(glintSheenLight(hours[k]), 1, `${k}: the sheen whole`);
+  assert.ok(glintSheenLight(hours.rain) > 0 && glintSheenLight(hours.rain) < 1, 'a rainy noon between');
+  // a mine with no lamp near: the floor; a lamp beside the vein: lit (renderer.flatLightAt's own falloff)
+  const mine = lightState({ _ambient: [0.12, 0.12, 0.12] });
+  assert.equal(glintLightLevel(Renderer.prototype.flatLightAt.call(mine, [0, 0, 0], FLAT_LIGHT_FLOOR, [0, 0, 0])), FLAT_LIGHT_FLOOR);
+  const lamp = lightState({ _ambient: [0.12, 0.12, 0.12], _pointLights: new Float32Array([0.5, 0, 0, 8]), _pointColors: new Float32Array([1, 0.8, 0.5]) });
+  assert.equal(glintSheenLight(glintLightLevel(Renderer.prototype.flatLightAt.call(lamp, [0, 0, 0], FLAT_LIGHT_FLOOR, [0, 0, 0]))), 1, 'a vein beside a lamp catches it whole');
+});
+
+test('GLINT-LIGHT renderer.flatLightAt writes into the `out` it is handed (one a pass, no array a node a frame) - white in a scene with no clock, its own answer otherwise, the same numbers a new array holds (mutants: the clockless light a new array)', () => {
+  const out = [9, 9, 9];
+  assert.equal(Renderer.prototype.flatLightAt.call(lightState({ _clockLit: false }), [0, 0, 0], FLAT_LIGHT_FLOOR, out), out);
+  assert.deepEqual(out, [1, 1, 1]);
+  const st = lightState({ _ambient: [0.4, 0.3, 0.2], _sunColor: [0.6, 0.6, 0.6], _sunScale: 1 });
+  assert.equal(Renderer.prototype.flatLightAt.call(st, [0, 0, 0], FLAT_LIGHT_FLOOR, out), out);
+  assert.deepEqual(out, Renderer.prototype.flatLightAt.call(st, [0, 0, 0]));
+  assert.deepEqual(out.map((v) => +v.toFixed(9)), [0.7, 0.6, 0.5]);
 });
 
 test('NODE-GLINT screenRect, widenRect, snapRect and innerShare: a node\'s boxes through the camera to its picture on screen, kept within GLINT_OVERHANG past the screen (its glints\' shares stand as it slides off); off it, none; AUDIT NODE-GLINT: a box wholly behind the eye none (it was the whole screen), one across the eye\'s plane bounded where its edges cross it - beside the eye, none; widened by the room its rays take and held to the screen; snapped out to whole pixels; the picture\'s box as its shares of that rectangle (mutants: a corner skipped; the overhang unkept; behind the eye taken; the crossing unclipped; the widening unapplied; the widening unheld; the snap rounding in; the share off its corner)', () => {
@@ -463,6 +515,26 @@ test('NODE-GLINT the draw over a fake GL: nothing to light touches nothing; each
   assert.ok(far[0] < glintPxMax(480) - 0.5 && Math.abs(far[0] - GLINT_SHARE * side) < 1e-9, `its share of its picture (${far[0]} px of a ${side} px picture)`);
   r.dispose();
   assert.ok(calls.some((x) => x[0] === 'deleteFramebuffer') && calls.some((x) => x[0] === 'deleteTexture') && calls.filter((x) => x[0] === 'deleteProgram').length === 2, 'EVERY ALLOCATION HAS AN OWNER');
+});
+
+test('GLINT-LIGHT the draw: each node\'s light asked where it stands, at the flats\' floor, into the pass\'s one array - its glints as bright as that light, its sheen out in the dark and part in a dim one; a renderer that answers none lights it as the day (the draw above) (mutants: the light unread; the sheen lit in the dark; the floor not asked; the node\'s place not handed; an array a node)', () => {
+  const { gl, calls } = fakeGl();
+  const r = new NodeGlintRenderer(/** @type {any} */ (gl));
+  const batch = { archive: 500, record: 9, frame: null, vao: 'herb-vao', _ibOff: 0, size: { w: 1, h: 1 }, origin: [0, 0, 0] };
+  const night = [0.25, 0.25, 0.25], rain = [0.5, 0.45, 0.4], asked = [];
+  const renderer = { ...fakeRenderer(gl), flatLightAt: (pos, floor, out) => { asked.push([pos, floor, out]); const l = pos[2] === -30 ? night : rain; out[0] = l[0]; out[1] = l[1]; out[2] = l[2]; return out; } };
+  const dark = [0, 0, -30], dim = [2, 0, -40];
+  const node = (at, alpha) => ({ alpha, seed: 0.5, at, rgb: nodeMarkRgb('herbalism'), mark: { pictures: [{ batch, first: 0, count: 1, centers: [at] }] } });
+  assert.equal(r.draw([node(dark, 1), node(dim, 0.5)], renderer, 0), 2);
+  assert.deepEqual(asked.map(([pos, floor]) => [pos, floor]), [[dark, FLAT_LIGHT_FLOOR], [dim, FLAT_LIGHT_FLOOR]], 'where each stands, at the flats\' floor');
+  assert.ok(asked[0][2] === asked[1][2] && asked[0][2] === r._lit, 'into the pass\'s one array');
+  const u = (name) => calls.filter((x) => x[0] === 'uniform1f' && x[1] === name).map((x) => +x[2].toFixed(9));
+  const dimLevel = glintLightLevel(rain);
+  assert.deepEqual(u('uAlpha'), [FLAT_LIGHT_FLOOR, 0.5 * dimLevel].map((v) => +v.toFixed(9)), 'its kindling times the light where it stands');
+  const eye = renderer._camPos, far = (p) => glintSheen(Math.hypot(p[0] - eye[0], p[1] - eye[1], p[2] - eye[2]));
+  assert.ok(far(dark) === GLINT_GAIN.sheen && far(dim) === GLINT_GAIN.sheen, 'both far enough for the whole sheen by day');
+  assert.deepEqual(u('uSheen'), [0, +(GLINT_GAIN.sheen * glintSheenLight(dimLevel)).toFixed(9)], 'none in the dark; part in a dim light');
+  assert.ok(glintSheenLight(dimLevel) > 0 && glintSheenLight(dimLevel) < 1);
 });
 
 test('AUDIT NODE-GLINT the boxes: a node behind the eye draws nothing (it was a full-screen pass); a far tree\'s flat at its own scale (its batch sized for its tallest tree), none where its 3D tree stands; the 3D tree\'s crown scaled by its row; a batch the walk has not placed stands where its mark says; a scissor in force put aside for the atlas and given back (mutants: behind the eye taken; the flat\'s scale unread; the far flat boxed beside its 3D tree; the tree\'s reach unscaled; the mark\'s origin unread; the scissor not given back)', () => {

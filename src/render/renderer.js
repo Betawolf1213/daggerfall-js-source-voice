@@ -6719,17 +6719,17 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    *
    * @param {number[]|null} pos scene-space point; the camera by default,
    *        which is where a first-person sprite is
-   * @returns {number[]} [r, g, b], each at or above FLAT_LIGHT_FLOOR
+   * @param {number} [floor] the least each channel answers
+   * @param {number[]} [out] where to write it (GLINT-LIGHT: a pass asking it a node a frame makes none of its own)
+   * @returns {number[]} [r, g, b], each at or above `floor`
    */
-  flatLightAt(pos = null, floor = FLAT_LIGHT_FLOOR) {
-    if (!this._clockLit) return [1, 1, 1];
+  flatLightAt(pos = null, floor = FLAT_LIGHT_FLOOR, out = [0, 0, 0]) {
+    if (!this._clockLit) { out[0] = 1; out[1] = 1; out[2] = 1; return out; }
     const p = pos ?? this._camPos;
     const am = this._ambient, mc = this._moonColor, sc = this._sunColor;
-    const out = [
-      am[0] + mc[0] * this._moonScale * 0.5 + sc[0] * this._sunScale * 0.5,
-      am[1] + mc[1] * this._moonScale * 0.5 + sc[1] * this._sunScale * 0.5,
-      am[2] + mc[2] * this._moonScale * 0.5 + sc[2] * this._sunScale * 0.5,
-    ];
+    out[0] = am[0] + mc[0] * this._moonScale * 0.5 + sc[0] * this._sunScale * 0.5;
+    out[1] = am[1] + mc[1] * this._moonScale * 0.5 + sc[1] * this._sunScale * 0.5;
+    out[2] = am[2] + mc[2] * this._moonScale * 0.5 + sc[2] * this._sunScale * 0.5;
     const count = this._pointLights.length >> 2;
     if (count > 0) {
       const colors = this._pointColorData(count, true);   // EL1: the classic-space read, as the water takes

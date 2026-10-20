@@ -416,8 +416,8 @@
   {
     "name": "NODE-GLINT-the-sheen-by-no-distance",
     "file": "src/render/nodeGlint.js",
-    "old": "isVec3(g.at) ? glintSheen(Math.hypot(g.at[0] - eye[0], g.at[1] - eye[1], g.at[2] - eye[2])) : 0",
-    "new": "GLINT_GAIN.sheen",
+    "old": "isVec3(g.at) ? glintSheen(Math.hypot(g.at[0] - eye[0], g.at[1] - eye[1], g.at[2] - eye[2])) * glintSheenLight(level) : 0",
+    "new": "GLINT_GAIN.sheen * glintSheenLight(level)",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]
@@ -878,6 +878,87 @@
     "file": "src/render/nodeGlint.js",
     "old": "    gl.uniform1i(L.uFlatTex, 1);",
     "new": "",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-weights",
+    "file": "src/render/nodeGlint.js",
+    "old": "rgb[1] + 0.299 * (rgb[0] - rgb[1]) + 0.114 * (rgb[2] - rgb[1])",
+    "new": "rgb[1] + 0.333 * (rgb[0] - rgb[1]) + 0.333 * (rgb[2] - rgb[1])",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-dark-edge",
+    "file": "src/render/nodeGlint.js",
+    "old": "smooth(GLINT_SHEEN_DARK, GLINT_SHEEN_LIT, level)",
+    "new": "smooth(0, GLINT_SHEEN_LIT, level)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-lit-edge",
+    "file": "src/render/nodeGlint.js",
+    "old": "smooth(GLINT_SHEEN_DARK, GLINT_SHEEN_LIT, level)",
+    "new": "smooth(GLINT_SHEEN_DARK, 1, level)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-light-unread",
+    "file": "src/render/nodeGlint.js",
+    "old": "gl.uniform1f(L.uAlpha, Math.min(1, g.alpha) * level);",
+    "new": "gl.uniform1f(L.uAlpha, Math.min(1, g.alpha));",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-sheen-lit-in-the-dark",
+    "file": "src/render/nodeGlint.js",
+    "old": " * glintSheenLight(level) : 0);",
+    "new": " : 0);",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-floor-not-asked",
+    "file": "src/render/nodeGlint.js",
+    "old": "FLAT_LIGHT_FLOOR, this._lit)",
+    "new": "0, this._lit)",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-node-s-place-not-handed",
+    "file": "src/render/nodeGlint.js",
+    "old": "r.flatLightAt(isVec3(g.at) ? g.at : null,",
+    "new": "r.flatLightAt(null,",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-an-array-a-node",
+    "file": "src/render/nodeGlint.js",
+    "old": "FLAT_LIGHT_FLOOR, this._lit)",
+    "new": "FLAT_LIGHT_FLOOR, [0, 0, 0])",
+    "tests": [
+      "test/scenes/nodeglint.test.js"
+    ]
+  },
+  {
+    "name": "GLINT-LIGHT-the-clockless-light-a-new-array",
+    "file": "src/render/renderer.js",
+    "old": "if (!this._clockLit) { out[0] = 1; out[1] = 1; out[2] = 1; return out; }",
+    "new": "if (!this._clockLit) return [1, 1, 1];",
     "tests": [
       "test/scenes/nodeglint.test.js"
     ]

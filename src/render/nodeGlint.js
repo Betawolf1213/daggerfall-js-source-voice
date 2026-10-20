@@ -31,8 +31,9 @@
 // One draw a picture into the mask and one quad a node on screen; the frame's target, its viewport and the world's GL
 // baseline handed back as they were. Each node's light is nodeGlow.js's law (`nodeGlows`): it kindles as it first stands
 // near and fades out from NODE_GLOW_FADE_M to NODE_GLOW_M; under reduced motion the glints hold still at their places and
-// no sheen crosses; the fog and the jungle's haze fade it as they fade the node. Not a DFU member.
-import { bbVertexShader } from './renderer.js';
+// no sheen crosses; the fog and the jungle's haze fade it as they fade the node; and it is as bright as the light where
+// the node stands, never under the flats' own floor, its sheen out in the dark (GLINT-LIGHT). Not a DFU member.
+import { bbVertexShader, FLAT_LIGHT_FLOOR } from './renderer.js';
 import { buildProgram } from './glProgram.js';
 import { BAYER_GLSL } from './orderedDither.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
@@ -95,6 +96,13 @@ export const GLINT_SHEEN_HZ = 0.15;
 export const GLINT_SHEEN_SHARE = 0.5;
 export const GLINT_SHEEN_NEAR_M = 6;
 export const GLINT_SHEEN_FULL_M = 18;
+/** GLINT-LIGHT (the owner, 2026-10-20, at night and underground: "Follow the light"): the light levels (glintLightLevel of
+ *  the light a node's flat takes) the sheen goes out over - none at GLINT_SHEEN_DARK and under: every night (a moonless
+ *  one 0.25, both moons full 0.39), a storm's noon (0.35 - "a storming noon reads near-night", world/worldClock.js
+ *  exteriorAmbient), a mine with no lamp near; whole from GLINT_SHEEN_LIT: a clear day's from its first hour (0.59), an
+ *  overcast noon (0.66); a rainy noon (0.48) between. */
+export const GLINT_SHEEN_DARK = 0.4;
+export const GLINT_SHEEN_LIT = 0.55;
 
 /** AUDIT NODE-GLINT: the clip w a box's corner must stand past to be before the eye - a node wholly behind it is none, and
  *  one across its plane is bounded where its edges cross it; and the most of the screen beyond its edge a picture's own box
@@ -120,6 +128,12 @@ export const glintTint = (rgb, out) => {
 };
 /** The sheen's gain for a node `d` metres from the eye: none near, GLINT_GAIN.sheen from GLINT_SHEEN_FULL_M. Pure. */
 export const glintSheen = (d) => GLINT_GAIN.sheen * smooth(GLINT_SHEEN_NEAR_M, GLINT_SHEEN_FULL_M, d);
+/** GLINT-LIGHT: how bright a light `rgb` is - its luma by the 601 weights (0.299, 0.587, 0.114), in the display space
+ *  renderer.flatLightAt answers in (the frame's own: the lane encodes each fragment back to it, enhancedLighting.js
+ *  elFinish); written about its green so a grey light's level is that grey exactly (white 1, the floor the floor). Pure. */
+export const glintLightLevel = (rgb) => rgb[1] + 0.299 * (rgb[0] - rgb[1]) + 0.114 * (rgb[2] - rgb[1]);
+/** GLINT-LIGHT: the sheen's share at a light `level`: none in the dark, whole in a lit hour. Pure. */
+export const glintSheenLight = (level) => smooth(GLINT_SHEEN_DARK, GLINT_SHEEN_LIT, level);
 /** Every rate is whole over the glow's 60 s clock - the last glint's and the sheen's included. Pure. */
 export const glintRatesWhole = () => [GLINT_SHEEN_HZ, ...Array.from({ length: GLINT_COUNT }, (_, i) => GLINT_RATE + i * GLINT_RATE_STEP)]
   .every((r) => Math.abs(r * 60 - Math.round(r * 60)) < 1e-9);
@@ -251,9 +265,9 @@ uniform vec4 uInner;             // the picture's own box in the rectangle, as i
 uniform vec4 uViewport;          // the frame's viewport, in pixels
 uniform float uGlint;            // a glint's reach, in pixels
 uniform vec3 uColor;             // the light (glintTint)
-uniform float uAlpha;            // its kindling and its distance's fade
+uniform float uAlpha;            // its kindling, its distance's fade and the light where it stands (GLINT-LIGHT)
 uniform float uSeed;             // the node's own (0..1)
-uniform float uSheen;            // the sheen's gain (glintSheen - none near)
+uniform float uSheen;            // the sheen's gain (glintSheen - none near; glintSheenLight - none in the dark)
 uniform float uTime;             // the glow's wrapped clock (s)
 uniform float uStill;            // 1 under reduced motion: the glints held, no sheen
 uniform mat4 uInvVP;
@@ -499,6 +513,7 @@ export class NodeGlintRenderer {
     this._inv = new Float32Array(16);
     this._pad = /** @type {[number, number]} */ ([0, 0]);
     this._tint = [0, 0, 0];
+    this._lit = [1, 1, 1];   // GLINT-LIGHT: the light where the node stands, asked a node at a time
     /** how many nodes the last draw lit, and how many of their pictures were 3D trees - for the stats and the tests */
     this.drawn = 0;
     this.trees = 0;
@@ -727,9 +742,13 @@ export class NodeGlintRenderer {
       gl.uniform1f(L.uGlint, s.glint);
       const tint = glintTint(g.rgb, this._tint);
       gl.uniform3f(L.uColor, tint[0], tint[1], tint[2]);
-      gl.uniform1f(L.uAlpha, Math.min(1, g.alpha));
+      // GLINT-LIGHT: the light the node's own flat takes where it stands (the sun's half, the moons', the lamps', the
+      // ambient), under the floor that keeps a picture readable in a black room - so a node stays findable at night and
+      // underground, its glints as bright as that light, its sheen out in the dark. A renderer that answers none: day.
+      const level = r.flatLightAt ? glintLightLevel(r.flatLightAt(isVec3(g.at) ? g.at : null, FLAT_LIGHT_FLOOR, this._lit)) : 1;
+      gl.uniform1f(L.uAlpha, Math.min(1, g.alpha) * level);
       gl.uniform1f(L.uSeed, Number.isFinite(g.seed) ? g.seed : 0);
-      gl.uniform1f(L.uSheen, isVec3(g.at) ? glintSheen(Math.hypot(g.at[0] - eye[0], g.at[1] - eye[1], g.at[2] - eye[2])) : 0);
+      gl.uniform1f(L.uSheen, isVec3(g.at) ? glintSheen(Math.hypot(g.at[0] - eye[0], g.at[1] - eye[1], g.at[2] - eye[2])) * glintSheenLight(level) : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       s.g = null;
     }
