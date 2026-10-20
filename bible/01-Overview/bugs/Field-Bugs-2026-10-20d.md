@@ -83,7 +83,7 @@ NOT CHANGED, AND THE OWNER'S TO DECIDE.
 - **The law.** A company of one is still a company to the Spire's law (section 13.2, THE ERRAND FLOOR: "a party of one
   is a company, and the Alone board is real"; section 6.1). Only the words and the tracker's count changed.
 
-The relay is `world235`. The room-to-hub tell gains one field (`n`). No frame a client reads changes shape, so the
+The relay is `world236` (`world235` on its branch, renumbered past the Witches' Festival and the Starfall's `world235` at the merge of main). The room-to-hub tell gains one field (`n`). No frame a client reads changes shape, so the
 relay and the clients may deploy in either order. A tell with no size is posted with the company's words, as before.
 The herald runs on the relay, so the posts change once the relay is deployed by hand. The tracker and the letter ship
 with the client and the account service.

@@ -77,5 +77,6 @@ Every finding was checked against the code before anything was fixed:
 - `tools/mutants/fb1020d_loneherald.json`: 22 mutants, all dead. With `soc1.json`, `egaudit5_a2.json`,
   `egeco_relay.json` and `egz_recap.json`: 281 dead, 0 survived, 1 equivalent as recorded (`soc1.json`'s S13, before
   this slice), 0 stale.
-- The relay is still `world235`, never deployed. Its row was re-hashed in place for L1-1's change to `egBrain.js`, with
-  the hash it carried before written beside it, as the table's undeployed rows are.
+- The relay was still `world235` on its branch, never deployed. Its row was re-hashed in place for L1-1's change to
+  `egBrain.js`, with the hash it carried before written beside it, as the table's undeployed rows are. Then the merge of
+  main renumbered it `world236`, past the Witches' Festival and the Starfall's `world235`.

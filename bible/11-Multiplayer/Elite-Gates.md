@@ -3039,7 +3039,7 @@ says *You were the first ever...* (L1-4). Unchanged:
 - the boards rank as they did - a breach begun past Hall 1 is on the Depths, never the Descent's Alone, and a companion
   who came and went still makes a company of two.
 
-Relay `world235`.
+Relay `world236` (`world235` on its branch, renumbered past the Starfall's at the merge).
 
 **EG-E2 record (2026-10-12): the feats, the Annals, the honours and the boards.** The account's half of section 19's
 honours and this section's boards, in `server-account/src/egHonours.js` (claim-time logic apart from `claimEg`, one seam
