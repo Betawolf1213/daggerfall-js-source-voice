@@ -96,8 +96,8 @@ stand reads `buildingStandSpot`, and its `QUEST-MARKERS-enter-markers-unsorted` 
 ## STAR-PLATE and STREETS-TAB: a marked building shows on the map the player opens (10)
 
 `src/ui/town/townSheet.js`, `src/ui/nameplateLayout.js` (STAR_PLATE), `src/ui/exteriorAutomapWindow.js`. STREETS-TAB:
-`src/scenes/townMapHost.js` (new - travelTown), `src/ui/town/townMapDoor.js` (townSheetBag), `src/scenes/world.js`
-(toggleTravelMap's door).
+`src/scenes/exteriorAutomapToggle.js` (townHere, travelTown), `src/ui/town/townMapDoor.js` (townSheetBag),
+`src/scenes/world.js` (toggleTravelMap's door).
 
 FOUND. The mark itself is whole. An answer's record 7332 carries `%loc`, which discovers the building
 (TalkManager.MarkKeySubjectLocationOnMap, PlayerGPS.DiscoverBuilding; `answerPipeline.js`, `discovery.js`), and the
@@ -120,15 +120,17 @@ FIXED.
 - **STAR-PLATE**, DFU's own law, which the sheet had left. A surrendered plate is lettered `STAR_PLATE` - one home, in
   `nameplateLayout.js`, which both town maps read - where the solver left it, ticked and inked as any name. The pointer
   over it reads its building's name.
-- **STREETS-TAB**, the Enhanced skin's own (DFU's travel map holds no town plan). The town map's group left `bootWorld`
-  for `scenes/townMapHost.js`, where `townHere` builds the town the player stands in once, for either key: `open` is the
-  M key as before, and `travelTown` hands the travel key's window the streets. `toggleTravelMap` spreads it after its
+- **STREETS-TAB**, the Enhanced skin's own (DFU's travel map holds no town plan). In the town key's module
+  (`scenes/exteriorAutomapToggle.js`, which main's STAR0 moved out of `bootWorld`), `townHere` builds the town the player
+  stands in once, for either key: `toggleExteriorAutomap` is the M key as before, and `travelTown` hands the travel
+  key's window the streets. `toggleTravelMap` spreads it after its
   whole ladder (indoors, enemies, an offer, the sun), so the bay keeps every guard and the streets need none. Both keys'
   streets are one bag (`ui/town/townMapDoor.js` townSheetBag): the same summaries, the same discovery record, the same
   yards laid on. The window opens on the bay with the streets one tab away. In the wild, indoors and in a dungeon it is
   the bay alone, and the classic travel window takes no streets and stays DFU's. The bay from the town key stays EM4's
-  open call. `bootWorld` fell from 36,183 to 36,101 logical lines and its ceiling with it (HOST-SPLIT,
-  `01-Overview/Host-Split.md`).
+  open call. The slice first moved the town map's group out of `bootWorld` itself. At the merge of main, STAR0 had
+  moved the same toggle to `scenes/exteriorAutomapToggle.js`, so the streets were built on that one home instead of a
+  second module: `bootWorld` gains one live getter (`modes`), within its ceiling.
 
 PINS. `test/ui/ink/fb1020c_starplate.test.js` (4): three names on one anchor, the third a painted, haloed "*" whose
 hover names its building; the sheet, the classic window and the one home read by source; and, with ARENA2, classic
@@ -140,8 +142,8 @@ the solver, was re-aimed by content at the star and dies now. STREETS-TAB: `test
 marked through `discoverBuilding` stands on both keys' streets with the same plates; the door by source and THE FOUR
 HOSTS (`bootWorld` wired - every travel-map press goes through its door; `bootExterior` mounts no travel map; the
 interior and dungeon hosts refuse the travel key); with ARENA2, Daggerfall's travel-key streets match the M key's plate
-for plate before and after a mark. Mutants `tools/mutants/fb1020c_streetstab.json` (12, all dead). The move re-aimed
-fifteen pin files and thirteen mutant records by content (`tools/hostMove.mjs`), each re-run dead.
+for plate before and after a mark. Mutants `tools/mutants/fb1020c_streetstab.json` (12, all dead), re-aimed at STAR0's
+module at the merge.
 
 ## TRUNK-FIT: a town's tree fits its trunk's room (2)
 

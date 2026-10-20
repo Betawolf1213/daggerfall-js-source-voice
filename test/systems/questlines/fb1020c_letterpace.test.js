@@ -19,6 +19,7 @@ import { LOOT_RARITY_KEY } from '../../../src/systems/loot/lootRarity.js';
 import { KINGS_GAMBIT_KEY } from '../../../src/systems/features.js';
 import { setPref } from '../../../src/systems/uiPrefs.js';
 import { questSource, loadTables, packMachine, parsedQuest } from '../../qlSources.mjs';
+import { starfallRuns } from '../../../src/net/starfall/starfallLaw.js';   // the run's wall clock held out of the festival
 
 loadTables();
 for (const k of [QUESTLINES_PREF, LOOT_RARITY_KEY, KINGS_GAMBIT_KEY, 'naval']) setPref(k, true);
@@ -29,10 +30,19 @@ const letterGives = (quest) => [...quest.tasks.values()].flatMap((t) => t.action
 
 test('FB1020c LETTER-PACE: every line\'s first step hands its giver\'s word over as a letter - `give pc <Item ... letter> notify` - so the runner\'s wait reads every line; held, it is on its way, given or set aside it is not (mutants: textId, isComplete, the item\'s kind, the shelf)', () => {
   const machine = packMachine();
-  assert.equal(QL_LINES.length, 13);
+  // PIN MOVED (the merge of main's STAR8): fourteen lines. The Thirteenth of Frostfall opens IN PERSON - a Wyrd Sister
+  // hands her letter as she is met (QLTF01 `get item _letter_`), no courier and nothing GivePc holds for a town by day -
+  // so its first step holds no other line back; a courier's letter added to it fails here, and joins the wait
+  const IN_PERSON = new Set(['thirteenthFrostfall']);
+  assert.equal(QL_LINES.length, 14);
   for (const l of QL_LINES) {
     const { quest } = parsedQuest(l.steps[0].quest, machine);
     const gives = letterGives(quest);
+    if (IN_PERSON.has(l.id)) {
+      assert.equal(gives.length, 0, `${l.steps[0].quest}: opened in person, no courier's letter`);
+      assert.equal(letterOnItsWay(quest), false, `${l.steps[0].quest}: nothing on its way`);
+      continue;
+    }
     assert.equal(gives.length, 1, `${l.steps[0].quest}: one letter`);
     assert.equal(letterOnItsWay(quest), true, `${l.steps[0].quest}: on its way until given`);
     quest.shelvedAt = 5;
@@ -48,6 +58,21 @@ test('FB1020c LETTER-PACE: every line\'s first step hands its giver\'s word over
   assert.equal(letterOnItsWay(quest), false, 'the purse is no letter');
   assert.equal(letterOnItsWay(null), false);
 });
+
+/** A day the Witches' Festival is not running (net/starfall/starfallLaw.js starfallRuns). */
+const OUT_OF_FESTIVAL_MS = Date.UTC(2026, 6, 1);
+
+/** A quest's own dice, the same every run: mulberry32 seeded by an FNV-1a of its name. */
+function seededRolls(name) {
+  let a = 2166136261;
+  for (const ch of String(name)) a = Math.imul(a ^ ch.charCodeAt(0), 16777619);
+  return () => {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 /** The runner over a fake machine whose quests are the real scripts' (parsed headless): level 30 offline - the four
  *  introductions that open offline (Loot rarity, the sea, The King's Gambit on). */
@@ -119,8 +144,12 @@ test('FB1020c LETTER-PACE, the runner: the save keeps when the last letter came 
 function play(ticks) {
   const st = { s: 400 * 86400, sky: 400 * 86400 + 3600, letters: [] };
   const service = { account: () => 'acct', guest: () => false, claim: async () => ({ ok: true, data: { opened: true } }) };
-  const warn = console.warn;
+  const warn = console.warn, realNow = Date.now;
   console.warn = () => {};
+  // the wall clock the runner reads (qlLineRunner.js nowMs - the bridge hands it none) held out of the Witches' Festival
+  // (2026-07-01: starfallRuns false): on a festival day The Thirteenth of Frostfall opens among the lines, in person and
+  // with no courier's letter, and this run's count was the calendar's (star8_frostfall.test.js holds that line)
+  Date.now = () => OUT_OF_FESTIVAL_MS;
   try {
     const bridge = createQuestBridge({
       data: { readListTable: () => null, getQuestSourceLines: (n) => questSource(n, questlinesOn()) },
@@ -130,15 +159,21 @@ function play(ticks) {
       giveItemToPlayer: () => {}, offerReward: () => {},
       // the courier's word (GivePc's notify box), once a step's quest
       showPopup: (q) => { if (lineStepOf(q?.questName) && !st.letters.some((l) => l.quest === q.questName)) st.letters.push({ quest: q.questName, s: st.s }); },
-      // the world's own part of `place npc` (no building to stand them in here), as ql12_lines' bridge does it
-      onQuestStarted: (q) => { for (const task of q.tasks.values()) for (const a of task.actions) if (a.typeName === 'PlaceNpc') a.isComplete = true; },
+      // the world's own part of `place npc` (no building to stand them in here), as ql12_lines' bridge does it; and each
+      // quest's own dice (`rolls`, the machine's seam - GivePc's 40 to 500 ticks), seeded by its name: on Math.random the
+      // letters a day holds ran from three to six, and the count below was a coin's
+      onQuestStarted: (q) => {
+        q.rolls = seededRolls(q.questName);
+        for (const task of q.tasks.values()) for (const a of task.actions) if (a.typeName === 'PlaceNpc') a.isComplete = true;
+      },
     });
     for (let i = 0; i < ticks; i++) { st.s += 12; st.sky += 24; bridge.tick(0.1); }
-  } finally { console.warn = warn; }
+  } finally { console.warn = warn; Date.now = realNow; }
   return st.letters;
 }
 
 test('FB1020c LETTER-PACE, the real bridge online: the lines that begin while the town\'s letters wait (the sky\'s night) never land in one breath at dawn - an hour of the character\'s clock and more between any two questline letters - and the lines still begin, one after another (mutants: the wait unread; the hour from the letter; the layer\'s arm; textId; isComplete)', () => {
+  assert.equal(starfallRuns(OUT_OF_FESTIVAL_MS), false, 'the run\'s day is out of the Witches\' Festival');
   const letters = play(900 + 2400);   // six sky hours to dawn, then 2,400 real seconds of day (eight hours of the character's)
   const gaps = letters.slice(1).map((l, i) => l.s - letters[i].s);
   assert.ok(letters.length >= 4, `the lines still begin: ${letters.map((l) => l.quest).join(', ')}`);

@@ -35,9 +35,10 @@ import { questShareTag, sharedQuestFoe, questPrivateTag, partyQuestFoe, questBeh
 import { ExteriorAutomapWindow, stampResidenceQuestNames } from '../../../src/ui/exteriorAutomapWindow.js';
 import { buildingSummaries } from '../../../src/world/buildingSummaries.js';
 import { fakeSocketClass } from '../../fakeSocket.mjs';
+import { hostText } from '../../hostText.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
+const rd = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town plan's open lives in scenes/exteriorAutomapToggle.js
 const VENDOR = join(ROOT, 'vendor', 'dfu-quests');
 const readQ = (p) => readFileSync(p, 'utf8').replace(/^﻿/, '');
 {
@@ -626,19 +627,17 @@ test('AUDIT DISC28 QS-K2: the town plan opened on arrival names the house for th
     ? { isQuestResource: true, pcLearnedAboutExistence: true, locationWasMarkedOnMapByNPC: false, overrideBuildingName: name } : { isQuestResource: false }) });
   discovery.discoverBuilding(LOC, { buildingKey: KEY, name: 'Residence', buildingType: 17 }, null, job('The Selvani Residence'));   // the job before
   const live = job('The Direnni Residence');   // the live job, learned in the guild's town; the player arrives and opens the plan
-  discovery.restampQuestNames?.(LOC, live);   // scenes/townMapHost.js townHere - the plan's build, for either key
+  discovery.restampQuestNames?.(LOC, live);   // world.js toggleExteriorAutomap's open
   const w = new ExteriorAutomapWindow({ locationName: 'T', locationId: LOC, gridW: 2, gridH: 2, blocks: [], playerPos: () => [102.4, 0, 102.4], playerYaw: () => 0,
     locOrigin: [0, 0, 0], isCustomLocation: false, arrowMesh: () => null, compassArt: null,
     buildings: () => stampResidenceQuestNames(summaries.map((s) => ({ ...s })), discovery.discoveredBuildings(LOC), { getAllActiveQuestIds: () => [] }, MAP),
     directory: () => [], discovered: () => discovery.discoveredBuildings(LOC) });
   const plate = quiet(() => w.buildPlates({ fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } }, { s: 3, ox: 0, oy: 0 })).find((p) => p.buildingKey === KEY);
   assert.equal(plate?.text, 'The Direnni Residence');
-  // PIN MOVED (FB1020c STREETS-TAB): the M key's open left world.js for scenes/townMapHost.js, whose `townHere` builds the
-  // plan for the town key and the travel key's streets alike - the re-stamp still before the plates
-  const TM = rd('src/scenes/townMapHost.js');
-  const open = TM.indexOf('  const townHere = () => {');
-  const stamp = TM.indexOf('    restampQuestNames(locId, { ...questBuildingSource, currentMapID: () => dfLoc.mapTableData?.mapId ?? 0 });', open);
-  assert.ok(open > 0 && stamp > open && stamp < TM.indexOf('    stampResidenceQuestNames(summaries, discoveredBuildings(locId), {', open), 'the host re-stamps before the plates are built');
+  // PIN MOVED (FB1020c STREETS-TAB, at the merge of STAR0's move): the plan is built by `townHere`, for the town key and the travel key's streets alike
+  const open = W.indexOf('  const townHere = () => {');
+  const stamp = W.indexOf('    restampQuestNames(locId, { ...questBuildingSource, currentMapID: () => dfLoc.mapTableData?.mapId ?? 0 });', open);
+  assert.ok(open > 0 && stamp > open && stamp < W.indexOf('    stampResidenceQuestNames(summaries, discoveredBuildings(locId), {', open), 'the host re-stamps before the plates are built');
 });
 
 test('AUDIT DISC28 QS-D: the lock ladder\'s contract names DFU\'s rung - every Place of every incomplete quest, not the site links', () => {

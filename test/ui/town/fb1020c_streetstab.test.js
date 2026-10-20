@@ -5,8 +5,9 @@
 // the town map) - and it is a building on the TOWN'S plan. The map a player opens most, the travel key's (the dial's Map
 // opens it too), held the bay alone, so a player who looked there found no mark. The Enhanced map's tab law already
 // offered a town's streets beside the bay (systems/map/mapTabs.js, EM4) and the held window already holds both sheets;
-// only the travel key's door handed no streets. Now the town map's host half (scenes/townMapHost.js, out of bootWorld)
-// builds the town the player stands in once, for either key: the M key's window as before (`open`), and the travel
+// only the travel key's door handed no streets. Now the town key's module (scenes/exteriorAutomapToggle.js, out of
+// bootWorld by STAR0) builds the town the player stands in once, for either key: the M key's window as before
+// (`toggleExteriorAutomap`), and the travel
 // key's streets (`travelTown`, spread at scenes/world.js toggleTravelMap past its ladder) - from ONE bag
 // (ui/town/townMapDoor.js townSheetBag) - the window opening on the bay, the streets one tab away.
 //
@@ -18,7 +19,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { createTownMapHost } from '../../../src/scenes/townMapHost.js';
+import { createExteriorAutomapToggle } from '../../../src/scenes/exteriorAutomapToggle.js';
 import { createTravelMapWindow } from '../../../src/ui/travel/travelMapDoor.js';
 import { townSheetBag } from '../../../src/ui/town/townMapDoor.js';
 import * as D from '../../../src/systems/discovery.js';
@@ -64,7 +65,7 @@ const TOWN = { regionIndex: 17, name: 'Testbury', locationIndex: 0, mapTableData
 const YARD = { kind: 'stable', gx: 8, gy: 8, nx: 3, nz: 3, x: 15, z: 15, keeper: { name: 'Orla' } };
 const LOC_ID = `${TOWN.regionIndex}:${TOWN.name}`;   // the talk seam's key and both maps' (systems/discovery.js)
 
-/** The host's handles, as bootWorld hands them (scenes/world.js createTownMapHost): the player at `at`, in `mode`. */
+/** The host's handles, as bootWorld hands them (scenes/world.js createExteriorAutomapToggle): the player at `at`, in `mode`. */
 function townHost({ dfLoc = TOWN, blocks = [block()], yards = [YARD] } = {}) {
   const h = {
     at: { x: 5, y: 5 }, shown: [], asked: [], mode: 'exterior',
@@ -76,7 +77,7 @@ function townHost({ dfLoc = TOWN, blocks = [block()], yards = [YARD] } = {}) {
     state: { pixelTranslation: () => [0, 0, 0] },
     townTalk: { overlayActive: false, showOverlay: (w) => h.shown.push(w), directory: [] },
     walkMode: true, weaponRig: null, activeQuestIds: () => [], hudArt: null, partyOnMaps: () => [], questBridge: null,
-    topicTree: { isBuildingQuestResource: () => false },
+    topicTree: { isBuildingQuestResource: () => false }, townBoardMarks: () => [], renameMapBuilding: () => {},
     get modes() { return { mode: h.mode }; },
   };
   return h;
@@ -93,7 +94,7 @@ const plates = (sheet) => sheet.platesAt(VIEW, 400, 300, null).map((r) => [r.tex
 
 test('STREETS-TAB: standing in a town, the travel key\'s window holds the town\'s streets beside the bay and opens on the bay - the streets one press away; in the wild, indoors and in a dungeon it is the bay alone, as it was (mutants: the travel door hands no streets; no town handed; opened on the streets; no ask; no place; handed indoors)', () => enhanced(() => {
   const h = townHost();
-  const town = createTownMapHost(h);
+  const town = createExteriorAutomapToggle(h);
   const bag = town.travelTown();
   assert.deepEqual(Object.keys(bag).sort(), ['openOnSheet', 'town', 'where']);
   assert.deepEqual(bag.where(), { inLocation: true }, 'a town (systems/map/mapTabs.js mapContextOf)');
@@ -122,19 +123,19 @@ test('STREETS-TAB: standing in a town, the travel key\'s window holds the town\'
 
 test('STREETS-TAB ONE BAG: the streets on the travel key\'s window are the M key\'s - a building a townsperson marks (DiscoverBuilding, the talk seam\'s record) stands on both, the same plates, the yard laid on both; the town\'s homes asked at either open; the M key opens nothing off a location (mutants: the travel key\'s own bag; the M key\'s own bag; the homes not asked at the travel key)', () => enhanced(() => {
   const h = townHost();
-  const town = createTownMapHost(h);
+  const town = createExteriorAutomapToggle(h);
   const shops = town.travelTown().town.buildings();
   assert.equal(shops.length, 3, 'the town\'s three shops, off the real summaries walk');
   const marked = shops.find((b) => b.buildingType === BUILDING_TYPES.Tavern);
   h.asked.length = 0;
   D.restoreDiscovery(null);
   // before the mark: neither key's streets letter the tavern
-  town.open();
+  town.toggleExteriorAutomap();
   const mBefore = h.shown.pop()._sheets.get('town');
   assert.ok(!plates(mBefore).some(([, n]) => n === marked.name), 'not yet marked: no plate on the M key\'s sheet');
   // the mark, as the talk writes it (answerPipeline's MarkKeySubjectLocationOnMap -> discoverBuilding)
   D.discoverBuilding(LOC_ID, { buildingKey: marked.buildingKey, name: marked.name, buildingType: marked.buildingType, factionId: 0, quality: 10 });
-  town.open();
+  town.toggleExteriorAutomap();
   assert.equal(h.shown.length, 1, 'the M key\'s window');
   const mSheet = h.shown[0]._sheets.get('town');
   assert.deepEqual(h.shown[0]._slot.ids, ['town'], 'the M key\'s window: the streets alone (the bay is the travel key\'s - its ladder)');
@@ -152,29 +153,29 @@ test('STREETS-TAB ONE BAG: the streets on the travel key\'s window are the M key
   assert.deepEqual(Object.keys(townSheetBag({})).sort(), ['blocks', 'boards', 'buildings', 'discovered', 'gridH', 'gridW', 'homes', 'homesVersion', 'party', 'player', 'questBuildings', 'revealAll', 'title']);
   // the wild: the M key opens nothing, as DFU's (DaggerfallUI.cs:633-650)
   h.at = { x: 6, y: 5 };
-  town.open();
+  town.toggleExteriorAutomap();
   assert.equal(h.shown.length, 1, 'nothing opened off a location');
 }));
 
 test('STREETS-TAB by source: bootWorld constructs the town map\'s module and hands the M key to `open`; the travel key\'s door - and that door alone - spreads `travelTown` into its window, past its whole ladder; the town key\'s door and the travel key\'s build the streets from townSheetBag; THE FOUR HOSTS (mutants: the travel door hands no streets)', () => {
   const w = src('src/scenes/world.js');
-  assert.match(w, /const townMap = createTownMapHost\(\{   \/\/ HOST-SPLIT: src\/scenes\/townMapHost\.js\n[^]*?\n\s+get modes\(\) \{ return modes; \},[^]*?\n\s+\}\);/, 'constructed once, the mode read live');
-  assert.match(w, /toggleAutomap: \(\) => townMap\.open\(\),/, 'the M key');
-  assert.equal((w.match(/townMap\.travelTown\(\)/g) ?? []).length, 1, 'one door spreads the streets: the teleport, the portal stone, the driver\'s map and the editor\'s jump are armed windows, not the player\'s map');
+  assert.match(w, /const \{ toggleExteriorAutomap, travelTown \} = createExteriorAutomapToggle\(\{   \/\/ HOST-SPLIT: src\/scenes\/exteriorAutomapToggle\.js\n[^]*?\n\s+get modes\(\) \{ return modes; \},[^]*?\n\s+\}\);/, 'constructed once, the mode read live');
+  assert.match(w, /toggleAutomap: \(\) => toggleExteriorAutomap\(\),/, 'the M key');
+  assert.equal((w.match(/\.\.\.travelTown\(\)/g) ?? []).length, 1, 'one door spreads the streets: the teleport, the portal stone, the driver\'s map and the editor\'s jump are armed windows, not the player\'s map');
   const door = w.slice(w.indexOf('const toggleTravelMap = (gotoPlace = null) => {'), w.indexOf('const showQuestPlace = (find) =>'));
-  const spread = door.indexOf('_travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel: (pick, opts, computed) => {');
+  const spread = door.indexOf('_travelMap = buildTravelMapWindow({ ...travelTown(), onTravel: (pick, opts, computed) => {');
   assert.ok(spread > 0, 'the travel key\'s window takes the streets');
   for (const rung of ["if ((modes?.mode ?? 'exterior') !== 'exterior') {", 'if (giveOffer()) return false;', 'const cfb = careerFastTravelBlock(playerEntity, nowMin);', 'const ftb = racialFastTravelBlock(playerEntity, nowMin);', 'if (!gotoPlace && partyTravel?.mapOffer()) return false;']) {
     const at = door.indexOf(rung);
     assert.ok(at > 0 && at < spread, `past the ladder: ${rung}`);
   }
   assert.ok(door.indexOf('areEnemiesNearby(') > 0 && door.indexOf('areEnemiesNearby(') < spread, 'past the enemies');
-  const m = src('src/scenes/townMapHost.js');
+  const m = src('src/scenes/exteriorAutomapToggle.js');
   assert.match(m, /^\/\/ HOST-SPLIT: moved verbatim out of src\/scenes\/world\.js's bootWorld /, 'read whole with its host (test/hostText.mjs)');
   assert.ok(hostText('src/scenes/world.js').includes('const travelTown = () => {'), '...and so read');
   assert.match(m, /return \{ town: townSheetBag\(here\.deps\), where: here\.deps\.where, openOnSheet: 'world' \};/);
   assert.match(m, /if \(\(host\.modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) return \{\};/);
-  assert.match(m, /return \{ open: toggleExteriorAutomap, travelTown \};/);
+  assert.match(m, /return \{ toggleExteriorAutomap, travelTown \};/);
   const td = src('src/ui/town/townMapDoor.js');
   assert.match(td, /town: townSheetBag\(deps\),/, 'the town key\'s door builds its streets there too');
   assert.equal((td.match(/gridW: deps\.gridW \?\? 0,/g) ?? []).length, 1, 'one bag, one home');
@@ -206,7 +207,7 @@ test('STREETS-TAB with ARENA2: in Daggerfall the building a townsperson marks st
   try { lay = layoutLocation(loc, maps, blocks, { enhanced: true, windmills: true }); } finally { console.log = log; }
   const h = townHost({ dfLoc: loc, blocks: lay.blocks, yards: null });
   h.maps = maps;
-  const town = createTownMapHost(h);
+  const town = createExteriorAutomapToggle(h);
   const shops = town.travelTown().town.buildings().filter((b) => !b.isResidence && b.name);
   assert.ok(shops.length > 100, `a city's worth of named buildings (${shops.length})`);
   const id = `${loc.regionIndex}:${loc.name}`;
@@ -216,7 +217,7 @@ test('STREETS-TAB with ARENA2: in Daggerfall the building a townsperson marks st
   const at = (s) => s.platesAt({ ox: 0, oy: 0, scale: 1 }, 1600, 900, null).map((r) => [r.text, r.name, Math.round(r.x), Math.round(r.y)]).sort();
   /** Both keys' streets, opened as the player opens them: the M key's window, and the travel key's (on the bay). */
   const both = () => {
-    town.open();
+    town.toggleExteriorAutomap();
     const m = h.shown.pop();
     const travel = travelWindow(town.travelTown());
     assert.deepEqual(travel._slot.ids, ['town', 'world']);

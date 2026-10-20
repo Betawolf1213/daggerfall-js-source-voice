@@ -43,9 +43,10 @@ import {
   snapshotDiscovery, restoreDiscovery,
 } from '../../src/systems/discovery.js';
 import { setValue, _resetForTests } from '../../src/systems/settings/settings.js';
+import { hostText } from '../hostText.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const src = (p) => readFileSync(join(ROOT, p), 'utf8');
+const src = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the M-outside dispatch lives in scenes/exteriorAutomapToggle.js
 
 const COLOURS = { temple: 0xffc37d45, shop: 0xff1855be, tavern: 0xff307555, house: 0xff283c45 };
 const at = (bmp, x, yTop) => bmp.colors[yTop * bmp.width + x];
@@ -715,12 +716,10 @@ test('A2 wiring pins: the M-outside dispatch in both exterior hosts, gated on a 
     const arm = h.indexOf("if (act === 'AutoMap') { hudCtx.toggleAutomap(); return true; }");
     assert.ok(arm > g, `${host}: and M-outside sits inside that gate`);
   }
-  // PIN MOVED (FB1020c STREETS-TAB): the streaming host's M key is scenes/townMapHost.js's `open` now - the town it stands
-  // in built by `townHere` (null off a location), and nothing opened without one
-  const w = src('src/scenes/townMapHost.js');
-  assert.match(w, /if \(!dfLoc \|\| !b\?\.locBlocks \|\| !b\.locOrigin\) return null;/, 'empty wilderness opens nothing');
-  assert.match(w, /const toggleExteriorAutomap = \(\) => \{\n\s*if \(townTalk\.overlayActive\) return;\n\s*const here = townHere\(\);\n\s*if \(!here\) return;/, '...from the M key');
-  assert.match(src('src/scenes/world.js'), /toggleAutomap: \(\) => townMap\.open\(\),/, 'the world host\'s AutoMap action');
+  const w = src('src/scenes/world.js');
+  // PIN MOVED (FB1020c STREETS-TAB, at the merge of STAR0's move): `townHere` answers null off a location, and the M key opens nothing without one
+  assert.match(w, /if \(!dfLoc \|\| !b\?\.locBlocks \|\| !b\.locOrigin\) return null;/, 'empty wilderness builds nothing');
+  assert.match(w, /const here = townHere\(\);\n\s+if \(!here\) return;/, 'empty wilderness opens nothing');
   // EM4: the town map is behind a SKIN DOOR now - the classic skin
   // still gets `new ExteriorAutomapWindow(...)`, from inside
   // ui/town/townMapDoor.js, and the host opens whichever the skin wears.
@@ -730,7 +729,7 @@ test('A2 wiring pins: the M-outside dispatch in both exterior hosts, gated on a 
   assert.match(e, /createTownMapWindow\(/, 'the host opens a town map');
   assert.match(src('src/ui/town/townMapDoor.js'), /new ExteriorAutomapWindow\(/,
     'and the classic arm of that door still builds DFU\'s own window');
-  assert.match(w, /createTownMapWindow\(/, 'both exterior hosts, one door');
+  assert.match(src('src/scenes/world.js'), /createTownMapWindow\(/, 'both exterior hosts, one door');
   assert.match(src('src/systems/inputActions.js'), /\['KeyM', 'AutoMap'\]/, 'and M is that action\'s default');
 });
 
@@ -1246,12 +1245,11 @@ test('D5 the residence-with-active-quest plate arm: ExteriorAutomap.cs:693-709\'
     // quest-marked residence was silently plateless. The stamp lives in
     // the M-outside door of the host that HAS a quest machine, between
     // the summaries walk and the window, on DFU's own three inputs.
-    // PIN MOVED (FB1020c STREETS-TAB): the M-outside door's build is scenes/townMapHost.js `townHere` now - the plan of
-    // either key - its two live reads off the host
-    const wsrc = src('src/scenes/townMapHost.js');
-    const door = wsrc.slice(wsrc.indexOf('const townHere'), wsrc.indexOf('SetCustomBuildingName (ExteriorAutomap.cs:867-899)'));
+    const wsrc = src('src/scenes/world.js');
+    // PIN MOVED (FB1020c STREETS-TAB, at the merge of STAR0's move): the plates are built in `townHere`
+    const at = wsrc.indexOf('const townHere'), door = wsrc.slice(at, wsrc.indexOf('\n  };\n', at));   // HOST-SPLIT 2: the toggle, wherever it lives (scenes/exteriorAutomapToggle.js)
     assert.match(door, /\n {4}stampResidenceQuestNames\(summaries, discoveredBuildings\(locId\), \{/);
-    assert.match(door, /getAllActiveQuestIds: host\.activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');
+    assert.match(door, /getAllActiveQuestIds: host\.activeQuestIds,/, 'QuestMachine.GetAllActiveQuests, the tree\'s own definition');   // HOST-SPLIT 2: a live name, read through the handle
     assert.match(door, /isBuildingQuestResource: \(mapID, key\) => host\.topicTree\.isBuildingQuestResource\(mapID, key\),/);
     assert.match(door, /\}, dfLoc\.mapTableData\?\.mapId \?\? 0\);/, 'PlayerGPS.CurrentMapID');
     // ...and QX1 gave the OTHER host a machine, so it stamps too - the

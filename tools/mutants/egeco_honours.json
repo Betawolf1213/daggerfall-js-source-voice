@@ -397,14 +397,24 @@
     ]
   },
   {
-    "name": "SPIRE-FIRST-severide-not-granted",
+    "name": "SPIRE-FIRST-serveride-not-granted",
     "file": "server-account/wrangler.toml",
-    "old": "EG_FIRST_HANDLES = \"Severide\"",
+    "old": "EG_FIRST_HANDLES = \"Serveride\"",
     "new": "EG_FIRST_HANDLES = \"\"",
     "tests": [
       "test/net/eliteGates/egeco_honours.test.js"
     ],
-    "note": "SPIRE-FIRST (the owner: \"Since hes world first. He should get this title plus a custom aura\"): Severide left off the list holds neither First of the Spire nor Firstlight."
+    "note": "SPIRE-FIRST (the owner: \"Since hes world first. He should get this title plus a custom aura\"): Serveride left off the list holds neither First of the Spire nor Firstlight."
+  },
+  {
+    "name": "SPIRE-FIRST-NAME-the-character-listed",
+    "file": "server-account/wrangler.toml",
+    "old": "EG_FIRST_HANDLES = \"Serveride\"",
+    "new": "EG_FIRST_HANDLES = \"Severide\"",
+    "tests": [
+      "test/net/eliteGates/egeco_honours.test.js"
+    ],
+    "note": "SPIRE-FIRST-NAME (the owner: \"Its Serveride. You did the wrong name\"): the list naming his character's name, as the herald read it, grants the account nothing."
   },
   {
     "name": "SPIRE-FIRST-law-taken-at-once",

@@ -2,7 +2,7 @@
   {
     "name": "STREETS-TAB-the-door-hands-no-streets",
     "file": "src/scenes/world.js",
-    "old": "    _travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel: (pick, opts, computed) => {",
+    "old": "    _travelMap = buildTravelMapWindow({ ...travelTown(), onTravel: (pick, opts, computed) => {",
     "new": "    _travelMap = buildTravelMapWindow({ onTravel: (pick, opts, computed) => {",
     "tests": [
       "test/ui/town/fb1020c_streetstab.test.js"
@@ -22,7 +22,7 @@
   {
     "name": "STREETS-TAB-the-M-key-unwired",
     "file": "src/scenes/world.js",
-    "old": "    toggleAutomap: () => townMap.open(),",
+    "old": "    toggleAutomap: () => toggleExteriorAutomap(),",
     "new": "    toggleAutomap: () => {},",
     "tests": [
       "test/ui/town/fb1020c_streetstab.test.js"
@@ -31,7 +31,7 @@
   },
   {
     "name": "STREETS-TAB-no-town-handed",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };",
     "new": "    return {};",
     "tests": [
@@ -41,7 +41,7 @@
   },
   {
     "name": "STREETS-TAB-opened-on-the-streets",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "where: here.deps.where, openOnSheet: 'world' };",
     "new": "where: here.deps.where, openOnSheet: 'town' };",
     "tests": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "STREETS-TAB-no-ask",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "where: here.deps.where, openOnSheet: 'world' };",
     "new": "where: here.deps.where, openOnSheet: null };",
     "tests": [
@@ -61,7 +61,7 @@
   },
   {
     "name": "STREETS-TAB-no-place",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };",
     "new": "    return { town: townSheetBag(here.deps), openOnSheet: 'world' };",
     "tests": [
@@ -71,7 +71,7 @@
   },
   {
     "name": "STREETS-TAB-handed-indoors",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    if ((host.modes?.mode ?? 'exterior') !== 'exterior') return {};\n",
     "new": "",
     "tests": [
@@ -81,7 +81,7 @@
   },
   {
     "name": "STREETS-TAB-the-travel-key-own-bag",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    return { town: townSheetBag(here.deps), where:",
     "new": "    return { town: townSheetBag({ ...here.deps, discovered: () => [] }), where:",
     "tests": [
@@ -101,7 +101,7 @@
   },
   {
     "name": "STREETS-TAB-homes-unasked-at-the-travel-key",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    onlineHomes?.ensure(here.mapId);   // TOWN-MARKS: as at the town key",
     "new": "    void 0;   // TOWN-MARKS: as at the town key",
     "tests": [
@@ -111,7 +111,7 @@
   },
   {
     "name": "STREETS-TAB-the-M-key-in-the-wild",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    if (!here) return;\n",
     "new": "",
     "tests": [

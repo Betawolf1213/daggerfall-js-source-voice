@@ -8,7 +8,6 @@
 // bible/03-World/Delve-Arc.md, GUIDE8.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 
 import { GUIDANCE_PREF, GUIDANCE_TIERS, guidanceTier, townTierOn, dungeonQuestMarks, questCompassPick, townQuestBuildings, townBuildingLocal } from '../../../src/systems/quest/questGuidance.js';
 import { createTownSheet } from '../../../src/ui/town/townSheet.js';
@@ -23,8 +22,9 @@ import { createAutomapSheet } from '../../../src/ui/automap/automapSheet.js';
 import { floorStripLayout, paintFloorStrip, MARK_R, PLAN_PEN } from '../../../src/ui/ink/inkAutomap.js';
 import { QUEST_MARK_CSS } from '../../../src/ui/quest/questMarks.js';
 import { FEATURES, FEATURE_PREF_DEFAULTS } from '../../../src/systems/features.js';
+import { hostText } from '../../hostText.mjs';
 
-const src = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
+const src = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town map's door lives in scenes/exteriorAutomapToggle.js (STAR0)
 
 test('GUIDE8: the tier - Exact only on the enhanced skin and only when asked for', () => {
   const skin = uiSkin(), pref = getPref(GUIDANCE_PREF);
@@ -295,15 +295,14 @@ test('GUIDE8 TOWN TIER (AUDIT DELVE): the town map rings a building the journal 
   assert.equal(mk(null).quests().length, 0);
   assert.match(src('src/ui/town/townMapDoor.js'), /questBuildings: deps\.townQuestBuildings \?\? null,/);
   const w = src('src/scenes/world.js');
-  // PIN MOVED (FB1020c STREETS-TAB): the town map's bag is scenes/townMapHost.js's now (townHere, either key)
-  assert.match(src('src/scenes/townMapHost.js'), /townQuestBuildings: \(\) => \(townTierOn\(\) \? townQuestBuildings\(questTracker\.views, dfLoc\.mapTableData\?\.mapId, questTracker\.tracked\(\)\?\.id \?\? null\) : \[\]\),/);
+  assert.match(w, /townQuestBuildings: \(\) => \(townTierOn\(\) \? townQuestBuildings\(questTracker\.views, dfLoc\.mapTableData\?\.mapId, questTracker\.tracked\(\)\?\.id \?\? null\) : \[\]\),/);
   assert.match(w, /quest: vendorCompassMark\(\) \?\? townQuestCompassMark\(\) \?\? questCompassMark\(\),/);
   const fn = w.slice(w.indexOf('const townQuestCompassMark = () => {'), w.indexOf('const gateCompassMark = () => {'));
   assert.match(fn, /if \(!townTierOn\(\) \|\| \(modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) return null;/, 'the tier, on the street');
   assert.match(fn, /const bld = questTracker\.tracked\(\)\?\.target\?\.building;/, 'the tracked quest\'s named building');
   assert.match(fn, /\(\(dfLoc\.mapTableData\?\.mapId \?\? -1\) >>> 0\) !== \(Number\(bld\.mapId\) >>> 0\)\) return null;/, 'only in its town');
   assert.match(fn, /return \[_townQuestAt\.at\[0\] \+ t\[0\] \+ b\.locOrigin\[0\], _townQuestAt\.at\[1\] \+ t\[2\] \+ b\.locOrigin\[2\]\];/, 'the town map\'s frame turned back: local + translation + origin, as `local` is taken');
-  assert.match(src('src/scenes/townMapHost.js'), /const local = \[feet\[0\] - t\[0\] - b\.locOrigin\[0\], feet\[1\] - t\[1\] - b\.locOrigin\[1\], feet\[2\] - t\[2\] - b\.locOrigin\[2\]\];/, 'the frame it is the inverse of');   // PIN MOVED (FB1020c STREETS-TAB): the town map's `local`, in its module
+  assert.match(w, /const local = \[feet\[0\] - t\[0\] - b\.locOrigin\[0\], feet\[1\] - t\[1\] - b\.locOrigin\[1\], feet\[2\] - t\[2\] - b\.locOrigin\[2\]\];/, 'the frame it is the inverse of');
 });
 
 test('GUIDE8 EXACT INDOORS (AUDIT DELVE): the interior hands its quest marks to its map and its compass', () => {

@@ -550,30 +550,27 @@ roads' harness reads it too (its own copy still asked `>= 128` after DEX1 gave t
 36,183 logical lines, at its ceiling, which stays; the relay re-hashed in place (world233 then, world234 since SD-SEA's merge; enemyBasics.js is in its
 bundle); the C1 pin and its mutants re-aimed, two more for the subscriptions.
 
-## STREETS-TAB's move - the town map's group out of bootWorld (FIELD BUGS 2026-10-20c)
+## STAR0's move - the exterior town map's door out of bootWorld (2026-10-20)
 
-Not a slice of the order above: a fix (`10-UI/Enhanced-Maps-Arc.md` FB1020c STREETS-TAB) whose code was the town map's
-group in `bootWorld` - the travel key's window had to take the town's streets from the bag the M key built there, and the
-fix belonged beside that bag, not in the host.
+THE STARFALL (`11-Multiplayer/Starfall.md`) wires a new world event into the streaming host, and `bootWorld` stood at
+its ceiling with no room (36,183 of 36,183 logical lines). Its own wiring comes after a move, OW-DUNGEON-SIZE's way:
+`toggleExteriorAutomap` - the M key's town map outside (DFU's `DaggerfallUI.cs:633-650`), one member that writes nothing
+of the host's - went to `src/scenes/exteriorAutomapToggle.js` (`createExteriorAutomapToggle(host)`) by
+`tools/hostMove.mjs`: fourteen names by value, seven live (`activeQuestIds`, `hudArt`, `partyOnMaps`, `questBridge`,
+`renameMapBuilding`, `topicTree`, `townBoardMarks` - consts made below it, read at their use), the toggle returned.
+67 logical lines freed (36,183 -> 36,116). The ceiling stays; the Starfall's wiring takes its share back (section
+STAR5 of its page). Three pin files read the host whole now (`test/hostText.mjs`: `auditdisc28_quests`, `automap_ext`,
+`town_marks`), two of their quotes in the moved spelling (`host.activeQuestIds`, `host.topicTree`,
+`host.townBoardMarks`); eleven mutant records re-aimed by the tool.
 
-- THE MAP: `node tools/hostScope.mjs src/scenes/world.js --group toggleExteriorAutomap,townBoardMarks,renameMapBuilding`
-  measured 3 contiguous members, 116 lines; reads 23 host names, writes none; used by `hudCtx` alone.
-- THE MOVE, by `tools/hostMove.mjs`: to `src/scenes/townMapHost.js` (`createTownMapHost(host)`), 17 names by value, five
-  live (`activeQuestIds`, `hudArt`, `partyOnMaps`, `questBridge`, `topicTree`), 12 imports the host no longer read
-  dropped, 13 mutant records and one doc anchor pointed at the module. THEN, by hand and said so: the M key's member
-  split in two - `townHere` (the bag, built once per open for either key) and `open` (the door, its gate and its window,
-  as before) - and `travelTown` added beside them, the one new behaviour, with one more live name (`modes`) for its
-  street-only answer. The host constructs it where the group stood and keeps `townMap`: `hudCtx.toggleAutomap` calls
-  `townMap.open()`, and `toggleTravelMap` - above it, called only after the host is built - spreads
-  `townMap.travelTown()` into its window. The streets' bag has its own one home at the door
-  (`ui/town/townMapDoor.js` `townSheetBag`), which both keys' windows read.
-- THE FOUR HOSTS: `bootWorld` wired; `bootExterior` has no travel map (its M builds through the same door, so the same
-  bag); `createWorldModes` and `buildDungeonContext` - the travel key is refused indoors and in a dungeon, and their M
-  opens their own plans.
-- THE PINS, by hand (`PIN MOVED`): twelve test files that quoted the group from `world.js` read the module (or the host
-  whole) - `invisnet`, `disc23a_party_plans`, `l10n3e_scenes` (its lifted statements run from the module), `proffound1`,
-  `yardsfound1`, `guide8_questguidance`, `arena_townmap`, `auditdisc28_quests`, `automap_ext` (A2 and D5), `mwmap1`,
-  `town_marks`, `fb0929d_toroads` (the travel door's lift, which now opens on the spread). Six mutant records re-aimed by
-  content by hand (`town_marks` four, `disc23a` one - the bag's re-indented lines and the homes' ask - and `hostsplit`'s
-  ceiling), and two test anchors.
-- `bootWorld` 36,183 -> 36,101 logical lines; its ceiling 36,187 -> 36,101, the host's own count.
+## The Starfall's wiring in bootWorld (STAR4-STAR7, 2026-10-20)
+
+STAR0's 67 lines bought the room; the Starfall spends 54 of them (36,116 -> 36,170 of 36,183). Its host
+(`src/scenes/starfall/starfallHost.js`) and its rewards (`starRewards.js`, made by the host) read the world's bindings by
+name - one adapter object, its settled bindings by value and every live one through a getter (TDZ: `chatNotice` is made
+below the construction) - so the host's scope holds the adapter and one hook at each door it uses: the frame, the
+lights, the draw, the sky, the flash, the senses' candidates, the compass, the held map, the Timers, the grass, the
+hub's event, the cell's words, the spoils' crash door and the realm save's two hooks, and one sound in the set powers'
+voice. The spoils' one lock moved OUT of the host to its pool's own home (`src/scenes/spoilsPool.js` `spoilsLock`), so
+every pool's host takes the same one. At the merge with main (2026-10-20) - main's FIRM-STARS had raised the ceiling to 36,187 for its
+one statement, and DEX's audit had brought `bootWorld` down to its ceiling - the host stands at 36,174 of 36,187.

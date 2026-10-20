@@ -247,10 +247,8 @@ test('L10N3e scenes: the town map\'s plates carry the shown pair beside the cano
     return [BUILDING_TYPES.Bank, BUILDING_TYPES.GeneralStore, BUILDING_TYPES.Palace]
       .map((t) => generateBuildingName(t === BUILDING_TYPES.GeneralStore ? cnSeed : 9, t, { ...o, palaceName: palace }));
   };
-  // PIN MOVED (FB1020c STREETS-TAB): the streaming host's town map group left world.js for scenes/townMapHost.js, whose
-  // `townHere` builds the plates' bag for either key - the same statements, run there
   const show = () => ({
-    world: plates(opts('townMapHost.js', { dfLoc: DAGGERFALL, b: { locBlocks: [] } })),
+    world: plates(opts('exteriorAutomapToggle.js', { dfLoc: DAGGERFALL, b: { locBlocks: [] } })),   // PIN MOVED (STAR0): the world host's town map door, moved out of bootWorld by tools/hostMove.mjs (bible/01-Overview/Host-Split.md)
     exterior: plates(opts('exterior.js', { dfLocation: DAGGERFALL, loc: { blocks: [] }, locationName: 'Daggerfall' })),
   });
   const { en, fr } = inFrench(PLACES, show);
@@ -261,7 +259,7 @@ test('L10N3e scenes: the town map\'s plates carry the shown pair beside the cano
   assert.deepEqual(fr.exterior, fr.world);
   // the title: the window's `locationName` is the name as shown, its key the locationId - by source, since the window's
   // bag is built inside the M key's whole arm
-  for (const file of ['townMapHost.js', 'exterior.js']) {   // PIN MOVED (FB1020c STREETS-TAB): world.js's M key, in its module
+  for (const file of ['exteriorAutomapToggle.js', 'exterior.js']) {   // PIN MOVED (STAR0): the world host's half in its moved module
     assert.match(host(file).text, /locationName: shownLocation,   \/\/ L10N3e: the title, as shown - the key is locationId\n\s*locationId: locId,/, `${file}'s title`);
   }
 });

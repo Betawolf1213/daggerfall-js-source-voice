@@ -21,9 +21,9 @@
 // FB1020c STREETS-TAB: the travel key's half is built now - its window
 // (ui/travel/travelMapDoor.js) holds the streets too while the player
 // stands in a town, their bag the one `townSheetBag` below builds for
-// the town key's, and it opens on the bay (scenes/townMapHost.js
+// the town key's, and it opens on the bay (scenes/exteriorAutomapToggle.js
 // travelTown). The town key's bay is still not handed over (the travel
-// guards; scenes/townMapHost.js says why).
+// guards; scenes/exteriorAutomapToggle.js says why).
 //
 // Static on both arms, for the reason ui/travel/travelMapDoor.js gives: the
 // host drops the result into its overlay slot in the same breath, and
@@ -97,7 +97,7 @@ function laidOn(deps) {
  * key's own bag (createTownMapWindow's, above); the answer is what ui/town/townSheet.js createTownSheet takes - the
  * block rows with the town's yards and port sites laid on them, the building summaries and the discovery record the
  * talk's mark writes to, the player and the party in the location's frame, the marks. Both doors build the streets
- * from here: the town key's window (createTownMapWindow) and the travel key's (scenes/townMapHost.js travelTown, which
+ * from here: the town key's window (createTownMapWindow) and the travel key's (scenes/exteriorAutomapToggle.js travelTown, which
  * hands it to ui/travel/travelMapDoor.js as `town`) - so the streets one tab away on the travel map are the M key's,
  * mark for mark.
  */

@@ -2,38 +2,27 @@
 // The host constructs it where the code stood. What it reads of the host's scope comes through `host`: the
 // settled names by value at construction, every live one (a `let` someone writes, a `const` made below) read at its
 // use as `host.<name>` - as the code read them where it was.
-//
-// FB1020c STREETS-TAB (2026-10-20, a player's report: "citizens who mark locations on your map don't leave a mark"):
-// THE TOWN MAP'S HOST HALF - the town the player stands in, built once per open for EITHER key. The talk's mark is a
-// building on the town's plan (systems/discovery.js discoverBuilding), and only the town key's window held the plan: the
-// travel key's - which the dial's Map opens too - held the bay alone, so a player who looked there found no mark. Now
-// `townHere` builds the M key's bag; `open` (the town key, DaggerfallUI.cs:633-650) shows it as it always did, and
-// `travelTown` hands its streets to the travel key's window as a second tab (ui/town/townMapDoor.js townSheetBag, the
-// one home of that bag) - the window opening on the bay, as the key always has (systems/map/mapTabs.js openOn), the
-// streets one tab away. A departure from DFU, whose travel map holds no town plan: the Enhanced map's tab law
-// (10-UI/Enhanced-Maps-Arc.md EM4), the town tab the classic skin never draws.
 import { arenaTownLandmark } from '../world/arena/arenaCity.js';
 import { buildingSummaries } from '../world/buildingSummaries.js';
 import { createTownMapWindow, townMapDoorReady, townSheetBag } from '../ui/town/townMapDoor.js';   // FB1020c STREETS-TAB: the streets' one bag
-import { discoveredBuildings, restampQuestNames, setDiscoveredBuildingCustomName } from '../systems/discovery.js';
-import { getLocalizedLocationName, getLocalizedRegionName, localizedText } from '../systems/textManager.js';
+import { discoveredBuildings, restampQuestNames } from '../systems/discovery.js';
+import { getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js';
 import { hasCustomLocationPosition } from '../world/locationLayout.js';
 import { isVendorWaypoint, vendorWaypointLabel, vendorWaypointVersion } from '../systems/vendorWaypoint.js';
 import { mwViewFirstPerson } from '../player/mwView.js';
 import { playerEntity } from '../characters/playerEntity.js';
 import { questTracker } from '../ui/quest/questTracker.js';
-import { ServiceFlowWindow } from '../ui/guildServiceWindows.js';
 import { sheetHolderOf } from '../combat/weapon/weaponRig.js';
 import { stampResidenceQuestNames } from '../ui/exteriorAutomapWindow.js';
-import { townBoardRows, townHomeRows } from '../ui/town/townMapMarks.js';
+import { townHomeRows } from '../ui/town/townMapMarks.js';
 import { townQuestBuildings, townTierOn } from '../systems/quest/questGuidance.js';
 import { WORLD_PER_PX } from '../ui/ink/inkTown.js';
 
 /** @param {any} host */
-export function createTownMapHost(host) {
+export function createExteriorAutomapToggle(host) {
   const {
-    boardSplitOf, built, cam, cpuModels, getGpuMesh, locationIndex, maps, noticeBook, noticeTownOf, onlineHomes,
-    player, playerTravelPixel, questBuildingSource, state, townTalk, walkMode, weaponRig
+    built, cam, cpuModels, getGpuMesh, locationIndex, maps, onlineHomes, player, playerTravelPixel,
+    questBuildingSource, state, townTalk, walkMode, weaponRig
   } = host;
   /** FB1020c STREETS-TAB: the town the player stands in, as the town key's window takes it - `{ deps, mapId }`, the bag
    *  createTownMapWindow reads and the town's MapId - or null where the pixel carries no built location. Its quest names
@@ -98,7 +87,7 @@ export function createTownMapHost(host) {
       buildings: () => summaries,
       directory: () => townTalk.directory,
       discovered: () => discoveredBuildings(locId),
-      rename: (buildingKey, name) => renameMapBuilding(locId, buildingKey, name),
+      rename: (buildingKey, name) => host.renameMapBuilding(locId, buildingKey, name),
       // EM4: what the enhanced sheet needs beyond the classic bag. The
       // context is DERIVED off the flags every host already keeps.
       //
@@ -126,7 +115,7 @@ export function createTownMapHost(host) {
       townParty: () => host.partyOnMaps().map((m) => ({ ...m, feet: [m.feet[0] - t[0] - b.locOrigin[0], m.feet[1] - t[1] - b.locOrigin[1], m.feet[2] - t[2] - b.locOrigin[2]] })),
       // TOWN-MARKS (ui/town/townMapMarks.js): the town's Notice Boards, while the board is open (the boards noticeCountPoints
       // counts over), with its unread count; and its player housing - the online homes and the bank's house
-      townBoards: () => townBoardMarks(b),
+      townBoards: () => host.townBoardMarks(b),
       // GUIDE8's Town tier (AUDIT DELVE, systems/quest/questGuidance.js): the buildings a quest's journal names in this town
       townQuestBuildings: () => (townTierOn() ? townQuestBuildings(questTracker.views, dfLoc.mapTableData?.mapId, questTracker.tracked()?.id ?? null) : []),
       townHomes: () => townHomeRows({
@@ -167,30 +156,5 @@ export function createTownMapHost(host) {
     onlineHomes?.ensure(here.mapId);   // TOWN-MARKS: as at the town key
     return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };
   };
-  /** TOWN-MARKS: a built pixel's Notice Boards for the town map - none while the board is closed (the town's boards are
-   *  then Daggerfall's rumour boards) or off a location. */
-  const townBoardMarks = (p) => {
-    if (!noticeBook || noticeBook.open !== true || !p?.boards?.length || !p.location) return [];
-    const bountyAt = boardSplitOf(p);
-    const town = noticeTownOf(p.px, p.py, bountyAt.size > 0);
-    return town ? townBoardRows(p, bountyAt, noticeBook.unseen(town.mapId)) : [];
-  };
-  /** SetCustomBuildingName (ExteriorAutomap.cs:867-899): the plate's
-   *  double-click raises DFU's DaggerfallInputMessageBox over the open
-   *  map (a PUSH, not a replace - the map is still there underneath),
-   *  pre-filled with the name the player is LOOKING AT - `mb.TextBox
-   *  .Text = renamingLabelRef.Text` (:888), the custom name whenever
-   *  one is set - and the answer lands on the discovery record. The
-   *  canonical is only TextBox.Name/DefaultText (:887, :889), the
-   *  fallback for an emptied box, which the port reaches by storing ''.
-   *  MaxCharacters 80, WidthOverride 306 (:893-894); the
-   *  "Custom name: " label is Internal_Strings' `customName`. */
-  const renameMapBuilding = (locId, buildingKey, displayed) => {
-    townTalk.pushOverlay(new ServiceFlowWindow([{
-      rows: [localizedText('customName', 'Custom name: ')],
-      field: { numeric: false, maxCharacters: 80, initial: displayed ?? '' },
-      onInput: (text) => { setDiscoveredBuildingCustomName(locId, buildingKey, text); return null; },
-    }]));
-  };
-  return { open: toggleExteriorAutomap, travelTown };
+  return { toggleExteriorAutomap, travelTown };
 }

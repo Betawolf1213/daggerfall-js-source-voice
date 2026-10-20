@@ -217,9 +217,9 @@ import { careerSunAverse } from '../systems/passiveSpecials.js';   // AUDIT 64 F
 import { buildMapDict, locationSummaryAt as travelLocationSummaryAt } from '../systems/map/mapDirectory.js';   // W1: ContentReader's map dict; TO1: the junction map's own reads
 import { dilateCoastalClimate, smoothLocationNeighbourhood } from '../world/terrain/terrainHelper.js';   // AUDIT 58 F4
 import { registerExteriorAutomapConsoleCommands } from '../ui/exteriorAutomapWindow.js';   // D5: the quest-residence plate name; E3: ExteriorAutoMapConsoleCommands
-// EM4: the skin fork - the town map's door (ui/town/townMapDoor.js) is
-// scenes/townMapHost.js's import since FB1020c STREETS-TAB moved the
-// town map's group there.
+// EM4: the skin fork. The classic skin keeps DFU's rotating town map
+// whole; the enhanced one gets the held sheet with the town's plan
+// traced onto it and its names in the Iliac Bay's own hand.
 import { buildingSummaries } from '../world/buildingSummaries.js';   // ROAD-C c2/S10: the plate anchor's Position-bearing walk
 import { townTierOn, townBuildingLocal } from '../systems/quest/questGuidance.js';   // GUIDE8's Town tier (AUDIT DELVE): the building a quest's journal names, in its town
 import { hasCustomLocationPosition } from '../world/locationLayout.js';   // ROAD-C c2/S10: the marker's custom-location offsets
@@ -264,7 +264,7 @@ import { createMotherlodeBook } from '../net/motherlodeBook.js';   // PROF2b: th
 import { createProfHud } from '../ui/professions/profHud.js';   // PROF1: the prompt, the act's meter, the toasts, the day's chip, the rank's banner
 import { createGatherHost } from './gatherHost.js'; // PROF1/PROF2: the gathering professions in the streaming world - the nodes, the target, the act
 import { herbKind } from './herbHost.js';   // PROF1: Herbalism's patches, a kind in it
-import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../ui/nodeMarks.js'; import { createNodeOutlinePass } from '../render/nodeOutline.js';   // PROF2: Mining's veins and Quarrying's boulders, a kind in it; NODE-MARKS: every profession's nodes on the compass in its colour, and lit where they stand; NODE-OUTLINE: ringed along their own pictures
+import { mineKind } from './mineHost.js'; import { nodeCompassPoints } from '../ui/nodeMarks.js'; import { createNodeGlintPass } from '../render/nodeGlint.js';   // PROF2: Mining's veins and Quarrying's boulders, a kind in it; NODE-MARKS: every profession's nodes on the compass in its colour, and lit where they stand; NODE-GLINT: glinting on their own pictures
 import { treeKind } from './treeHost.js';   // PROF4: Logging's trees - the forest's own - a kind in it
 import { createTreesHost } from './treesHost.js';   // LPT1 / BANTHA1 (HOST-SPLIT): the near 3D trees - Low Poly Trees' door and the jungle's, and their frame
 import { createJungleHost } from './jungleHost.js';   // BANTHA1: Bantha's jungle - its field, its trees' door, its haze
@@ -297,6 +297,7 @@ import { createFleetHost } from './fleetHost.js';   // HOLDINGS: the Fleet page'
 import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, stood off its berths, and the gangways
 import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay outside Privateer's Hold (HOLD-MONUMENT), and the flowers laid at it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
+import { createWitchesHost } from './witchesHost.js';   // WITCH1: the Witches' Festival in the streets - the Hearth Offerings, the Wyrd Sister's window, the festival's doors
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
 import { createPassageHost } from './naval/passageHost.js';   // PASSAGE: a berth's friendly ship, booked and sailed
@@ -338,6 +339,7 @@ import { WORLD_SALT, spawnsDungeon, spawnedMapId, pathFreePixel, createSpawnGrou
 import { createGateOmen, insideGateRing, gateSceneXZ, fellLine, OMEN_SETTLE_MS, GATE_STORM_RING } from '../systems/gate/gateOmen.js';   // WB1 (Mac: "on the timer, a large area would be shown on the map, also in chat"): the Oblivion Gate's omen - its lines, its ring, its compass mark
 import { gateScanner, findGateSite, gateSeaPixel, politicClaimed } from '../systems/gate/gateSite.js';   // WB1: where the day's gate stands, over the map files every client holds alike
 import { createGatePool, GATE_TEXT } from './gate/gatePool.js';   // WB2: the gate the world stands - its stone, its fire and beacon, its collider and its door
+import { createStarfallHost } from './starfall/starfallHost.js';   // STAR4-STAR6: the Witches' Festival's fallen stars - in the sky, in the world, defended
 import { createRiteHost, RITE_TEXT } from './riteHost.js';   // WB12d: the faithful's rite - its circle, its smoke, its faithful, its word and its chest
 import { createSdHost } from './superDungeon/sdHost.js';   // SD2b: the Hollow in the world - the hub's record in, the Hollow stood at its pixel, the find, the lines
 import { sdOmenSeen, sdNoticeCard, SD_COMPASS_M, sdAirWeight, sdBrassLight, sdBannerText, SD_BANNER_M } from '../systems/superDungeon/sdOmen.js';   // SD2c: the Hollow seen and heard of - its column, its note, its compass's reach
@@ -371,7 +373,8 @@ import { SD_STEPS_TEXT } from './superDungeon/sdSteps.js';   // SD7b: the cast-b
 import { inOrreryHall, dungeonToRealm as sdDungeonToRealm, SD_FRAY_LASH, SD_ARENA, realmToDungeon as sdRealmToDungeon, SD_TURN_WAIT_LINE } from '../net/superDungeon/sdBrain.js';   // SD6c: the snap's lash, on whoever stands in the hall; SD10: the arena, where the way home stands; AUDIT SD II (L7 H2): a turn the stones refused
 import { SD_REM_SINK_MS } from './superDungeon/sdRemnant.js';   // SD10: the way home rises once the Remnant's body has sunk
 import { SD_HOME_TEXT, SD_HOME_SAY_MS, SD_HOME_RISE_MS, SD_HOME_SCALE } from './superDungeon/sdEnd.js';   // SD10: the way home's words; AUDIT SD II (L6 F16): said as it rises
-import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
+import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
+import { sdSlotsKept } from '../systems/superDungeon/sdSlots.js';   // SD-ONELIFE: the Hollows' slots kept on the device, by the account
 import { sdCities, sdTemplates } from '../systems/superDungeon/sdSite.js';   // SD2b: the Hollow's cities and templates, over the game's own rows
 import { RANDOM_TREASURE_ARCHIVE } from '../systems/loot/lootDataTables.js';   // WB12d: the casket's pile, undrawn
 import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil Broker - her body, her box and name, her press; BROKER-CAGE: caged at the faithful's circle
@@ -437,7 +440,7 @@ import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/superDungeon/sdScore.js';   // SD13: the Hour's own score
 import { createSpireScoreHost } from '../systems/eliteGates/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
 import { egHallFog } from '../world/eliteGates/egHall.js';   // EG-G2: the Spire's haze, its sky's gain (EG-LOOK: its band's own)
-import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
+import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, spoilsLock, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';   // STAR7: the spoils' one lock, the pool's own home
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
 import { bossPlace } from '../world/gate/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
 import { itemIconColor32 } from '../ui/item/itemIconColor32.js';   // WBX3: a spoil's own picture on the court's floor
@@ -818,6 +821,7 @@ import { hasCarriageGate } from '../world/immersiveTravelGates.js';   // OW-HUBS
 import { seatArrivalLine, seatHallOf, seatBannerOf, boardTithePct } from '../net/townSeatLaw.js';   // SEAT1a: the seat's arrival line; SEAT-HALL: whose hall a palace is; CROWN-HALL: the throne room's banners; AUDIT SEATS-3 D3: a board's Tithe
 import { hallMay } from '../net/hallLaw.js';   // SEAT-HALL: a palace's keepers are a hall's
 import { createOnlineHomes, moveArenaHomes, homeSceneName, homeTownBlocks, holdRealmDeeds, homeClaimLayout, checkpointLanded, HOME_RETRY_MS } from '../systems/online/onlineHomes.js';   // HOME1: the account service's homes, one town at a time; ARENA4b: the ones the arena displaced, moved; HOME-PRICE: a town's size; FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed the realm gave, held
+import { townBoardRows } from '../ui/town/townMapMarks.js';   // TOWN-MARKS: the Notice Boards and the player housing on the town map
 import { setVendorWaypoint, clearVendorWaypoint, vendorWaypoint, vendorWaypointKey, isVendorWaypoint } from '../systems/vendorWaypoint.js';   // HOME-VENDOR: the trader's waypoint
 import { setVendorPage } from '../ui/vendor/vendorPage.js';   // HOME-VENDOR: the Vendor page, under the Professions
 import { goldText as vendorGoldText } from '../net/marketLaw.js';   // HOME-VENDOR: a trader's price in words
@@ -1003,7 +1007,7 @@ const RACE_BY_NAME_BANK = Object.freeze(Object.fromEntries(
   Object.entries(BANK_TYPES).map(([race, bank]) => [bank, race])));
 import { startDisease, endDisease, diseaseCount } from '../systems/diseases.js';   // AUDIT 24: the quest bridge's MakePcDiseased / CurePcDisease seams; U41: the popup's diseased warning
 import { poisonCount } from '../systems/poisons.js';   // U41: the warning's other half
-import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, getDiscoveredBuilding, discoveryGeneration, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
+import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, setDiscoveredBuildingCustomName, getDiscoveredBuilding, discoveryGeneration, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
 import { scryRows } from '../systems/loot/lootScry.js';   // LOOT19: the region a scrying reads
 import {
   WEATHER_TYPES, fogForWeather, scaleFogForDistance, skyOffsetForWeather, weatherSunlightScale,
@@ -1147,8 +1151,8 @@ import { createOverworldForecast } from './overworldForecastHost.js';   // OW-FO
 import { regionChaseWords } from '../systems/travel/regionChase.js';   // OW-CHASE-RANGE: a chase seen as far as its band is drawn
 import { createRegionChaseHearing } from './regionChaseHost.js';   // OW-CHASE-RANGE: the region's chase words heard (AUDIT OW-REVISITED L4-2, L4-3)
 import { TOWN_PACE_MAX } from '../systems/travel/townWalk.js';   // OW-TOWN-WALK: the keys' travel in a town, held to a town's pace
+import { createExteriorAutomapToggle } from './exteriorAutomapToggle.js';   // HOST-SPLIT
 import { monsterVolume } from '../systems/monsterVolume.js';   // MONSTER-VOL: a monster's pain cry rides the Audio tab's Monster Volume
-import { createTownMapHost } from './townMapHost.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -1310,6 +1314,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     else if (name === 'gear') audio.playOneShot(SD_HALL_SOUNDS.clunk, 1);   // SD9d: Gearward - the gear catching the blow (the Orrery's own clunk)
     else if (name === 'hour') audio.playOneShot(SD_HALL_SOUNDS.toll, 1);   // SD9d: The Hour Turns - the Hour's bell, turned back
     else if (name === 'reprieve') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // EG15: Battlemage's Reprieve - a Shield spell's own cast (its element, Magic)
+    else if (name === 'harvest') audio.playOneShotId(SPELL_CAST_SOUND[2], 1);   // WITCH1: Soul Harvest - a drain's own cast, the witchfire's green
+    else if (name === 'veil') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // STAR7: Mephala's Veil - its Chameleon's own cast, Eventide's (Illusion, Magic)
   } });
   // A1: THE TEXTURE SEASON IS THE CALENDAR'S, NOT A URL PARAM.
   // Every production site in the reference reads the world clock -
@@ -1677,6 +1683,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let poiEditorLeave = null;   // AUDIT POI E14: its door out (mountPoiEditor's exit) - a death leaves it, read late as the editor is
   let merchantYards = null;   // MERCHANT-YARDS: the towns' Stables and Wagon Yards (scenes/merchantYardsHost.js), made beside the monument; read late as it is
   let portHost = null;   // SHIPYARDS: the port towns' shipyards and lighthouses (scenes/portHost.js), made beside the yards; read late as they are
+  let witches = null;   // WITCH1: the Witches' Festival in the streets (scenes/witchesHost.js), made before the modes host; read late as it is
   let wardenShows = null, wagonWarden = null;   // WARDEN1: the town watch's throws (scenes/wagon/wagonWardenShow.js) and its host (scenes/wagon/wagonWardenHost.js), made beside the yards; read late as they are
   const _bountyFarmLocs = [];   // BOUNTY-FARM: the game's own farmsteads - the nearest lends a farm bounty its buildings
   const _bountyDungeonPixels = new Map();   // BOUNTY1: the game's own dungeons, by pixel -> name, for a board's underground hunts
@@ -10774,6 +10781,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     (key) => lefay?.hoverName(key) ?? null,
     (key) => merchantYards?.hoverName(key) ?? null,   // MERCHANT-YARDS: a yard by its name and its keeper's, a horse or a wagon on show by its own
     (key) => portHost?.hoverName(key) ?? null,   // SHIPYARDS: a port's shipyard, crew hall and lighthouse by their names and keepers', and their rows
+    (key) => witches?.hoverName(key) ?? null,   // WITCH1: a Hearth Offering by its owner and its cakes, and its rows
     // PEER-PLAQUE1: another player, by the session's own name - the port's
     // own family (DFU has no other players), so it sits with the cart and
     // the camps ABOVE the mod's switch, as the names over heads already do.
@@ -12821,7 +12829,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // getter (not the array) keeps one live view per frame with no
     // pool importing the other.
     // WATCH-PROTECTS: and the street's people, the living world's (livingQuarry, above)
-    candidates: () => [...cityGuards.guards, ...exteriorFoes.foes, ...livingQuarry()].filter((f) => !f.dead && !f.puppet),   // AUDIT WORLD6b B8: a puppet is nobody's target here - it lands no blow and takes none of mine (a foe hunting a peer is 6b-ii's)
+    candidates: () => [...cityGuards.guards, ...exteriorFoes.foes, ...livingQuarry(), ...(starfall?.wards() ?? [])].filter((f) => !f.dead && !f.puppet),   // STAR5: a fallen star, its own coven's quarry   // AUDIT WORLD6b B8: a puppet is nobody's target here - it lands no blow and takes none of mine (a foe hunting a peer is 6b-ii's)
     playerEntity,
     wildUnaware: (f) => wildGated(f),   // WILD-ALERT: a wilderness foe that has not noticed a fast traveller leaves them off its list
   });
@@ -13824,6 +13832,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     portHost?.destroyAll();   // SHIPYARDS: and the shipyards and lighthouses, the same
     wardenShows?.destroyAll();   // WARDEN1: and a throw in flight - its team set down where it landed
     riteHost?.destroyAll();   // WB12d: and the faithful's circle - its faithful went with the live pools; it stands again the next frame
+    starfall?.destroyAll();   // STAR4: and the Starfall's stars - its coven went with the live pools; they stand again the next frame
     csaReanchor(state.initOffset);   // FIELD-CSA1: and every placed boat with it
     // AUDIT ENVIRONS I2: AND THE SNOW, THE WIND AND THE HAZE, by the same move. Each keeps scene places a recentre
     // carries (their offsetOrigin), and `state.init` gives none to ride: the snow's window and ring held the old place's
@@ -16191,8 +16200,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // PARTY-TRAVEL (2026-09-25, Mac: "Implementing a prompt for online to travel to party leader"): a member away from
     // the leader is asked first whether the journey is to the leader - No opens the map (systems/party/partyTravel.js mapOffer)
     if (!gotoPlace && partyTravel?.mapOffer()) return false;
-    // FB1020c STREETS-TAB (scenes/townMapHost.js travelTown): in a town the window holds its streets too, opening on the bay
-    _travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel: (pick, opts, computed) => {
+    // FB1020c STREETS-TAB (scenes/exteriorAutomapToggle.js travelTown): in a town the window holds its streets too, opening on the bay
+    _travelMap = buildTravelMapWindow({ ...travelTown(), onTravel: (pick, opts, computed) => {
       if (TEST_GODMODE && staffPowers().god && pick?.pixel) { teleportTo(pick); return; }   // TESTBUILD: god mode - the map's journey is instant, from anywhere to anywhere
       // HALL-HERE (the owner: "happens only when youre already on the dungeon and press begin journey on the pixel where
       // you are"): a journey to the zone hall I already stand at is no journey - said, and nothing begun
@@ -16896,6 +16905,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       raids: () => (raidingPartiesOn() ? raidMapMarks(raidState().raids, worldMinutes(), { regionName: (r) => REGION_NAMES[r] ?? '', localTime: sharedClockOn() ? eventLocalTime : null, relay: raidRelayState }) : []),   // TIME1: online the withdrawal in local time
       serpent: () => serpentOmen?.mapMark() ?? null,   // SERPENT1: the sea serpent's ring, in the sea's colours - the held map alone draws it
       sd: () => sdHost?.mapMark() ?? null,   // SD2c: a found Super dungeon's ring, in its omen's brass - the held map alone draws it
+      stars: () => starfall?.mapMarks() ?? [],   // STAR6: the night's fallen stars, each its card
       arch: () => egClient?.archMapMark() ?? null,   // EG-F: my company's Elite arch while it stands, in its gold - the held map alone draws it
       // GUIDE5: WHERE THE QUESTS POINT - every active quest's place the player's map holds, the followed one filled
       // (ui/quest/questMarks.js); a function for the gate's reason (a step logged while the map stands open). The enhanced
@@ -17032,18 +17042,45 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       }
     }).catch(() => {});
   };
-  // FB1020c STREETS-TAB: the town map's host half - the M key's window (`open`) and the streets the travel key's holds
-  // in a town (`travelTown`, spread at toggleTravelMap's door), one bag
-  const townMap = createTownMapHost({   // HOST-SPLIT: src/scenes/townMapHost.js
-    boardSplitOf, built, cam, cpuModels, getGpuMesh, locationIndex, maps, noticeBook, noticeTownOf, onlineHomes,
-    player, playerTravelPixel, questBuildingSource, state, townTalk, walkMode, weaponRig,
+  // FB1020c STREETS-TAB: and the streets the travel key's window holds in a town (`travelTown`, spread at
+  // toggleTravelMap's door) - one bag with the M key's
+  const { toggleExteriorAutomap, travelTown } = createExteriorAutomapToggle({   // HOST-SPLIT: src/scenes/exteriorAutomapToggle.js
+    built, cam, cpuModels, getGpuMesh, locationIndex, maps, onlineHomes, player, playerTravelPixel,
+    questBuildingSource, state, townTalk, walkMode, weaponRig,
     get activeQuestIds() { return activeQuestIds; },
     get hudArt() { return hudArt; },
     get modes() { return modes; },
     get partyOnMaps() { return partyOnMaps; },
     get questBridge() { return questBridge; },
+    get renameMapBuilding() { return renameMapBuilding; },
     get topicTree() { return topicTree; },
+    get townBoardMarks() { return townBoardMarks; },
   });
+  /** TOWN-MARKS: a built pixel's Notice Boards for the town map - none while the board is closed (the town's boards are
+   *  then Daggerfall's rumour boards) or off a location. */
+  const townBoardMarks = (p) => {
+    if (!noticeBook || noticeBook.open !== true || !p?.boards?.length || !p.location) return [];
+    const bountyAt = boardSplitOf(p);
+    const town = noticeTownOf(p.px, p.py, bountyAt.size > 0);
+    return town ? townBoardRows(p, bountyAt, noticeBook.unseen(town.mapId)) : [];
+  };
+  /** SetCustomBuildingName (ExteriorAutomap.cs:867-899): the plate's
+   *  double-click raises DFU's DaggerfallInputMessageBox over the open
+   *  map (a PUSH, not a replace - the map is still there underneath),
+   *  pre-filled with the name the player is LOOKING AT - `mb.TextBox
+   *  .Text = renamingLabelRef.Text` (:888), the custom name whenever
+   *  one is set - and the answer lands on the discovery record. The
+   *  canonical is only TextBox.Name/DefaultText (:887, :889), the
+   *  fallback for an emptied box, which the port reaches by storing ''.
+   *  MaxCharacters 80, WidthOverride 306 (:893-894); the
+   *  "Custom name: " label is Internal_Strings' `customName`. */
+  const renameMapBuilding = (locId, buildingKey, displayed) => {
+    townTalk.pushOverlay(new ServiceFlowWindow([{
+      rows: [localizedText('customName', 'Custom name: ')],
+      field: { numeric: false, maxCharacters: 80, initial: displayed ?? '' },
+      onInput: (text) => { setDiscoveredBuildingCustomName(locId, buildingKey, text); return null; },
+    }]));
+  };
   // Edge-detect latch shared with the mode machine: a held key must not
   // re-trigger across a mode switch.
   // MWCROUCH: the four press latches this host kept - the crouch
@@ -17134,6 +17171,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         serpent: { place: serpentOmen?.current?.()?.site?.near ?? null, fellAt: (day) => { const site = serpentOmen?.current?.()?.site; return site && site.day === day ? serpentLink?.fellAt?.(day, site) ?? null : null; } },
         // SD2c: the Super dungeon - the hub's record, its name and its city (the row's own law asks the phase: a row once found)
         sd: sdHost ? { rec: sdHost.record(), name: sdHost.hollow()?.loc?.name ?? null, place: sdHost.hollow()?.site?.cityName ?? null } : null,
+        stars: starfall?.timerRows() ?? null,   // STAR6: each fallen star's deadline, the next fall and the night's coven
         elite: egClient?.timers() ?? null,   // EG-F: my company's Elite Breach - its opening, its window, its hall and count
         doors: egClient ? { board: () => egBoardDoor() } : null,   // EG-ZM (Elite-Gates.md section 20): the boards' door on the Elite rows
         seatsOpen: seatBook?.open === true,   // AUDIT TIMERS1 D5: the seat week's rows are for an account the seats are open to
@@ -17249,7 +17287,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (w) townTalk.showOverlay(w);
     },
     toggleSpellbook: () => toggleSpellbook(),
-    toggleAutomap: () => townMap.open(),
+    toggleAutomap: () => toggleExteriorAutomap(),
     openTravelMap: () => toggleTravelMap(),
     /** AUDIT 58 (f2/hosts): THE SHEATH PANEL'S DOOR - the eleventh
      *  panel of the large HUD (ui/hud/hudLarge.js:"key: 'spellbook',"), which until now
@@ -21229,6 +21267,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onSerpent = (w) => { if (w?.k === 'bd') serpentHost?.wrecked?.(w); else serpentLink?.word(w); };   // SERPENT1: the sea serpent's cell's word (on my cell's socket or a halo's) - its fight, its swim, its blows, my receipt
     online.onRaid = (f, room) => raidRelayWord(f, room);   // RAID3: a town cell's word about its raid - the ledger, the cleanse, my receipt
     online.onRite = (w) => riteHost?.onBroken(w);   // WB12d: the hub's broken rite
+    online.onStar = (w) => starfall?.onStar(w);   // STAR3: a star's cell's ledger, its hold and my receipt
     online.onGrant = (g) => grants.answer(g);   // GRANT3: my cell's answer to a grant ask, or an heir's grant
     online.onWatch = (r) => { seatBook?.keepWatch(r); motherlodeBook?.watch(r); townEcon.keepWatch(r); };   // SEAT1b: the Watch's tick, kept where it stands in a seat's pixel; PROF2b: and where it stands on a Motherlode's; TOWN-ECON TE2: and in any town's
     // SEAT2a part four: A SIEGE'S BATTLE - its words to the session; a step refused or a rise at the camp moves me there
@@ -21392,7 +21431,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (tab.room === SOCIAL_ROOM) link.onGate = (g) => gateLink?.word(g);   // WB3b: the hub's word of a kill, and a fighter's receipt outside the court
       if (tab.room === SOCIAL_ROOM) link.onEg = (w, room) => egClient?.word(w, room);   // EG-PLAY: the hub's call to my company, and its refusal of an open
       if (tab.room === SOCIAL_ROOM) link.onSerpent = (w) => serpentLink?.word(w);   // SERPENT1: the hub's word of a sea serpent's kill, Bay-wide, and the day's at my hello
-      if (tab.room === SOCIAL_ROOM) link.onRite = (w) => riteHost?.onBroken(w);   // WB12d: the hub's word of a broken rite, and at my hello
+      if (tab.room === SOCIAL_ROOM) { link.onRite = (w) => riteHost?.onBroken(w); link.onStar = (w) => starfall?.onStar(w); }   // WB12d: the hub's word of a broken rite, and at my hello; STAR3: a star held anywhere, the night's held stars and my receipts
       if (tab.room === SOCIAL_ROOM) link.onSd = (w) => sdHost?.heard(w);   // SD2b: the hub's record of the Super dungeon - at my hello and at every move
       if (tab.room === SOCIAL_ROOM) link.onSdReceipt = (r, room) => { sdClaims?.add(r); sdSpoilsReceipt(r, room); };   // AUDIT SD: the hub's hand of my Hour receipt - at the kill when I stood outside its realm, and at my hello - to the account service and the spoils, as the realm's is
       if (tab.room === SOCIAL_ROOM) link.onRaid = (f, room) => (f.k === 'tw' ? offerRaidTowns(link, f.h) : raidRelayWord(f, room));   // RAID3: the hub's word of a cleanse anywhere, and the day's at my hello; RAID-ROLL: its ask for the towns table
@@ -23866,11 +23905,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   onSlotSaved((characterId) => { try { spoilsPool.saved(characterId); } catch (e) { console.warn('[gate] spoils', e?.message ?? e); } });
   // REALM P1.3: a realm checkpoint's spoils. AUDIT REALM2 C1: a town's thanks with them - RAID4b's own pool was cleared by a
   // slot's save alone (onSlotSaved, below), which a realm character never writes, so every join handed the thanks back
-  _realmSaveHooks.held = (who) => { try { return [...(spoilsPool?.heldIds?.(who) ?? []), ...(raidSpoils?.heldIds?.(who) ?? []), ...(serpentSpoils?.heldIds?.(who) ?? []), ...(sdSpoilsPool?.heldIds?.(who) ?? [])]; } catch { return null; } };   // SERPENT1: and the Old Coil's hoard; SD9e: and the Brass Remnant's spoils
+  _realmSaveHooks.held = (who) => { try { return [...(spoilsPool?.heldIds?.(who) ?? []), ...(raidSpoils?.heldIds?.(who) ?? []), ...(serpentSpoils?.heldIds?.(who) ?? []), ...(sdSpoilsPool?.heldIds?.(who) ?? []), ...(starfall?.spoilsHeld(who) ?? [])]; } catch { return null; } };   // SERPENT1: and the Old Coil's hoard; SD9e: and the Brass Remnant's spoils; STAR7: and a held star's
   // INT3: the judge's hold, said to the player each time a landed checkpoint moves it (systems/realmSaves.js); AUTO-HOLD: and
   // the pieces the ledger locked, named (scenes/realmHoldHost.js)
   wireRealmHolds(realmSession, { say: (t) => townTalk.say(t), entity: playerEntity });
-  _realmSaveHooks.landed = (who, ids) => { try { spoilsPool?.saved(who, ids); } catch (e) { console.warn('[gate] spoils', e?.message ?? e); } try { raidSpoils?.saved(who, ids); } catch (e) { console.warn('[raid] spoils', e?.message ?? e); } try { serpentSpoils?.saved(who, ids); } catch (e) { console.warn('[serpent] spoils', e?.message ?? e); } try { sdSpoilsPool?.saved(who, ids); } catch (e) { console.warn('[sd] spoils', e?.message ?? e); } };
+  _realmSaveHooks.landed = (who, ids) => { try { spoilsPool?.saved(who, ids); } catch (e) { console.warn('[gate] spoils', e?.message ?? e); } try { raidSpoils?.saved(who, ids); } catch (e) { console.warn('[raid] spoils', e?.message ?? e); } try { serpentSpoils?.saved(who, ids); } catch (e) { console.warn('[serpent] spoils', e?.message ?? e); } try { sdSpoilsPool?.saved(who, ids); } catch (e) { console.warn('[sd] spoils', e?.message ?? e); } starfall?.spoilsSaved(who, ids); };   // STAR7: and a held star's (its own catch)
   onSlotSaved((characterId) => { try { raidSpoils.saved(characterId); } catch (e) { console.warn('[raid] spoils', e?.message ?? e); } });   // RAID4b
   /** SERPENT1: THE OLD COIL'S HOARD (systems/serpent/serpentSpoils.js) - the raids' door, under keys of its own: no floor, no word
    *  to the hub, the crash's records a save clears. Made online or not, as the pools are. */
@@ -23919,9 +23958,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     itemName: (item) => lootPileName([item]), gathered: SD_SPOILS_TEXT.gathered,
   });
   onSlotSaved((characterId) => { try { sdSpoilsPool.saved(characterId); } catch (e) { console.warn('[sd] spoils', e?.message ?? e); } });   // SD9e
-  /** AUDIT WBX S4: the spoils given outside a court, one tab at a time - two tabs of one account on one device each
-   *  checked the store before the other had written it, and both gave them (the Web Locks API; without it, at once). */
-  const spoilsLock = (fn) => { const locks = globalThis.navigator?.locks; return locks?.request ? locks.request('wb5.spoils', () => fn()) : Promise.resolve().then(fn); };
   /** AUDIT WB A2: THE SPOILS WITH NO FLOOR - a receipt that comes while this player is not in its court (cast out before
    *  the kill, gone, handed it by the hub's next hello) is its spoils straight into the pack; in its court the burst
    *  gives them. Once a receipt either way - the pool keeps which are spent. */
@@ -24029,6 +24065,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     try { if (recoverSpoils(_spoilsStore, takeSpoil, { who, saves: enumerateSaves().info.values(), onHanded: (rec) => raidSpoils.adopt(rec), key: RAID_SPOILS_KEYS.store, inSave: _spoilsInSave })) setMidScreenText(RAID_SPOILS_TEXT.recovered); } catch (e) { console.warn('[raid] spoils', e?.message ?? e); }   // RAID4b: a town's thanks, the same door
     try { if (recoverSpoils(_spoilsStore, takeGateSpoil, { who, saves: enumerateSaves().info.values(), onHanded: (rec) => serpentSpoils.adopt(rec), key: SERPENT_SPOILS_KEYS.store, inSave: _spoilsInSave })) setMidScreenText(SERPENT_SPOILS_TEXT.recovered); } catch (e) { console.warn('[serpent] spoils', e?.message ?? e); }   // SERPENT1: the Old Coil's hoard, the same door; SERPENT-SET: its embers by the gate's
     try { if (recoverSpoils(_spoilsStore, takeSpoil, { who, saves: enumerateSaves().info.values(), onHanded: (rec) => sdSpoilsPool.adopt(rec), key: SD_SPOILS_KEYS.store, inSave: _spoilsInSave })) setMidScreenText(SD_SPOILS_TEXT.recovered); } catch (e) { console.warn('[sd] spoils', e?.message ?? e); }   // SD9e: the Brass Remnant's spoils, the same door
+    starfall?.recoverSpoils(who, _spoilsInSave);   // STAR7: a held star's spoils, the same door (scenes/starfall/starRewards.js)
     _spoilsInSave = null;   // AUDIT RESCUE-SAVE A1: the boot's load alone - a load in the session is its own pack
   };
   // AUDIT ONLINE2 F3 (AUDIT RAID R8d): A LOAD IN THE SESSION IS A STAND-UP - the pack is the loaded save's, so the pools
@@ -24644,6 +24681,19 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     loot: { seed: (items, feet, pixelKey) => droppedLoot.seedPile(items, feet, { archive: RANDOM_TREASURE_ARCHIVE, record: 0 }, null, pixelKey, { unsaved: true, drawn: false }), keyOf: (p) => `droppedLoot:${p.id}` },   // the casket is its picture, and its name
     level: () => playerEntity.level ?? 1,
   }) : null;
+  /** STAR4-STAR6: THE STARFALL (scenes/starfall/starfallHost.js) - online alone, on the Witches' Festival's own days (its
+   *  calendar, net/festivalLaw.js - starfallStands, to the last star it saw land): a coven's three stars a night in its region's wilds, found over the gate's scan; each one's omen, fall and
+   *  crater; its coven's waves and master on the camp law (`px,py:star.<night>.<k>`), its cell's ledger and receipts; the
+   *  tracker, the bar, the map, the compass and the timers. It reads what it needs of this scope by name. */
+  const starfall = params.has('online') ? createStarfallHost({
+    renderer, state, exteriorFoes, gateScanOf, warmGateScan, surfaceAt, gateGroundAt, player, gamePaused, townTalk,
+    _wodPeerSprung, wodPeerHeldAgo, wodForgetPeer, wodSprang, wodUnsprang, _questRegionIndex,
+    get chatNotice() { return chatNotice; },   // made below
+    get collider() { return collider; }, get online() { return online; }, get walkMode() { return walkMode; }, get playerSpawned() { return playerSpawned; },
+    get labGrassField() { return labGrassField; }, get _sharedOffsetMs() { return _sharedOffsetMs; },
+    // STAR7: the rewards' (scenes/starfall/starRewards.js) - the pack's door, the relay's clock, the silver, the Renown
+    takeSpoil, relayNowS, marksBook, renownXpAdopt, renownAdopt, renownRose, get renownSaid() { return renownSaid; },
+  }) : null;
   /** SD2b: THE HOLLOW IN THE WORLD (scenes/superDungeon/sdHost.js) - online alone: the hub's record of the Super dungeon (its hub link's
    *  onSd), the Hollow it names found over this client's own map files (the gate's scan, the game's own rows) and stood in
    *  the index at its pixel while its phase stands - built there as a spawned dungeon is, its pixel built again when it
@@ -24774,48 +24824,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  Rift's own word off the hub's record for the Hollow's slot `s` (null: step through), whether the Return still stands
    *  (until the boss falls), and the realm's door (SD5a: the step through to the Shattered Hour, taken under the veil).
    *  Null offline - no Hollow stands there. */
-  /** A set of Hollows' slots kept on the device under `key`, its last SD_ENTERED_MAX (a store that refuses: the session's).
-   *  AUDIT SD III (H1): ONE ACCOUNT'S - under the signed-in account's own key (`<key>:<id>`; with none, the device's, as it
-   *  was), as the realm keeps its dead by the token's account (SD_NO_FALLEN): one account's death refused another on the
-   *  same device a Hollow its realm would admit. And READ AS IT IS ASKED - a second tab's write merged, never written
-   *  over: each tab wrote its own boot-time copy back over the other's. A read the store has not changed is not parsed
-   *  again. */
-  const sdSlotsKept = (key) => {
-    const read = new Map(), own = new Map();   // per key: the store's last read ({ raw, set }), and this session's own adds
-    const keyNow = () => { const me = _accountSds.me(); return me ? `${key}:${me}` : key; };
-    const stored = (k) => {
-      let raw = null;
-      try { raw = appStorage()?.getItem?.(k) ?? null; } catch { raw = null; }
-      let r = read.get(k);
-      if (!r || r.raw !== raw) {
-        let list = [];
-        try { const v = JSON.parse(raw ?? '[]'); if (Array.isArray(v)) list = v.filter(Number.isSafeInteger); } catch { list = []; }
-        r = { raw, set: new Set(list) };
-        read.set(k, r);
-      }
-      return r.set;
-    };
-    return {
-      has: (s) => { const k = keyNow(); return stored(k).has(s) || !!own.get(k)?.has(s); },
-      add: (s) => {
-        const k = keyNow();
-        if (!own.has(k)) own.set(k, new Set());
-        own.get(k).add(s);
-        const now = stored(k);
-        if (now.has(s)) return;
-        try { appStorage()?.setItem?.(k, JSON.stringify([...now, s].slice(-SD_ENTERED_MAX))); } catch { /* this session's memory holds it */ }
-      },
-    };
-  };
+
   /** AUDIT SD: the Hollows' slots whose Hour I went through - during its collapse the Rift admits me again
    *  (world/superDungeon/sdDungeon.js sdRiftWord's `entered`; the realm keeps me as it does - SD4b, section 6). AUDIT SD II (L6 F17):
    *  kept on the device, the last few slots (SD_ENTERED_KEY) - a reload forgot it, and the Rift said "The Hour has
    *  closed." to a fighter its realm would have admitted. */
-  const _sdEntered = sdSlotsKept(SD_ENTERED_KEY);
+  const _sdEntered = sdSlotsKept(SD_ENTERED_KEY, () => _accountSds.me());
   /** SD-ONELIFE (Mac: "A death within the rift casts you out and youre unable to re enter. You get one life to prove your
    *  worth"): the Hollows' slots whose Hour I died in - their Rift refuses me for good (the realm's door refuses the
    *  account too: SD_NO_FALLEN). */
-  const _sdFallen = sdSlotsKept(SD_FALLEN_KEY);
+  const _sdFallen = sdSlotsKept(SD_FALLEN_KEY, () => _accountSds.me());
   const sdRiftOf = (s) => {
     if (!sdHost) return null;
     const rec = sdHost.record(), now = Date.now() + _sharedOffsetMs;
@@ -26144,7 +26162,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const near = nodeMarksAt(feet), far = motherlodeMarks();
     return nodeCompassPoints(far.length ? [...far, ...(near ?? [])] : near, trackerAnimals());   // PROF2b: the far Motherlodes beside the near nodes - LODE-MARK: drawn over them
   };
-  const nodeOutlinePass = createNodeOutlinePass(renderer);   // NODE-MARKS: kindled node by node, built at idle; never in a building (nodeMarksAt) nor under the travel view (the hook's own gate); NODE-OUTLINE: ringed along its own picture - the glow a node with none
+  const nodeGlintPass = createNodeGlintPass(renderer);   // NODE-MARKS: kindled node by node, built at idle; never in a building (nodeMarksAt) nor under the travel view (the hook's own gate); NODE-GLINT: glinting on its own picture - the glow a node with none
   /** COMPASS-PARTY (2026-09-27, Discord - Ashley: "being able to see where party members are on compass? - just lil
    *  green marks that point in that direction"): the party on MY compass, in this scene's XZ (ui/partyMapMarks.js
    *  partyCompassPoints) - the bodies the maps mark where they stand, and the rest where their poses say: the leader's
@@ -29052,7 +29070,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const drawPeerBodies = (proj, view, eye, face = null) => { if (peerBodies) peerBodies.draw(canvas, { proj, view, eye, flashOf: peerFlashOf, grow: face ? peerGrow : null, up: face?.up ?? null }); peerWalkers?.drawLanterns(); (_mode() === 'interior' ? familyRoom : _mode() === 'exterior' ? familyStreet : null)?.draw(canvas, { proj, view, eye }); };   // LEGACY7 part four: and the line's own bodies, in the place they stood   // OW-PEERS: under the Overworld the bodies grown and leaned as the traveller's own   // HT-WAIST-BACK: the walkers' lanterns, each on its own tilted basis, beside the bodies - every mode's pass calls this after the player's own body (the exterior here, the dungeon and the interior through host.drawPeerBodies)
   /** INVIS-LOOK: the concealed peers' Morrowind bodies, translucent - blended with no depth write, so every mode's pass
    *  calls this AFTER its opaque world (net/peer/peerBodies.js drawVeiled), with the camera its body pass took. */
-  const drawVeiledPeerBodies = () => { peerBodies?.drawVeiled(); drawAuras(); nodeOutlinePass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet())); };   // WB9g: and the auras, after the opaque world as the veiled are; NODE-MARKS: and the nodes' glow
+  const drawVeiledPeerBodies = () => { peerBodies?.drawVeiled(); drawAuras(); nodeGlintPass.draw(travelView?.active ? null : nodeMarksAt(enchantFeet())); };   // WB9g: and the auras, after the opaque world as the veiled are; NODE-MARKS: and the nodes' light - NODE-GLINT's glints, the glow a node with no picture
   /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"):
    *  DAGON'S FIRE AT THE FEET (render/auraRing.js) - mine, as the service signed it (the session's `au`, adopted at each
    *  mint), and every peer's the relay vouched for (their hello's `au`), each kindling as it first stands. Gathered with
@@ -29232,6 +29250,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const instanceDoor = createInstanceDoor({ online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk), account: () => social?.acct ?? null, character: () => realmSession?.id ?? null,
     members: () => social?.others() ?? [], questMachine: () => questBridge?.machine ?? null, openOverlay: (w, onClosed) => townTalk.pushOverlay(w, onClosed), say: (l) => townTalk.say(l), wild: () => { const m = wildMapMask(), p = playerTravelPixel(); return !!m && wildInside(m, p.x, p.y); },   // `wild`: inside the open zone nothing keeps an instance - its dungeons sealed, its halls the relay's to refuse
     remains: () => legacyHost?.remainsWhere() ?? [] });   // HEIR-WHOLE: where the line's remains lie - a dungeon they lie in whole is the death quest's place
+  // WITCH1 (bible/06-Systems/Witches-Festival.md): THE WITCHES' FESTIVAL IN THE STREETS (scenes/witchesHost.js) - the town
+  // underfoot's Hearth Offerings stood at their doors, taken from and filled; the Wyrd Sisters' window; the finds' doors.
+  // The dressing and the Sisters themselves are the build's (scenes/pixelBuild.js, world/witchesDecor.js)
+  witches = createWitchesHost({ built, renderer, pipeline, onlineHomes, townTalk, state, player, saveSoon, chatNotice, mode: _mode, get online() { return online; } });
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
@@ -30078,6 +30100,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     activateYard: (key, mode, verb) => merchantYards?.activate(key, mode, verb) ?? false,   // MERCHANT-YARDS: buy from a yard, or sell to it
     portTargets: () => portHost?.targets() ?? [],   // SHIPYARDS: the shipyards' people, boards and hulls, the lighthouses' keeper, door, hatch and lamp, in the street's one ray
     activatePort: (key, mode, verb) => portHost?.activate(key, mode, verb) ?? false,   // SHIPYARDS: the shipmaster's window on its page, the crew hall's, the tower's stair
+    witches,   // WITCH1: a Wyrd Sister's press and the Hearth Offerings', in the street's one ray (scenes/witchesHost.js)
     boardTargets: () => {
       const out = [];
       for (const p of built.values()) {
@@ -33980,6 +34003,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (gatePool || sdHost) presenceFrame();   // SD19: the banner and the card - the gate's, else a Hollow's door's
     try { sigilBroker?.frame(dt); } catch (e) { console.warn('[broker] pool', e?.message ?? e); }   // SET7: the Broker stands where the clock stands her - BROKER-CAGE: in her cage at the faithful's circle
     try { riteHost?.frame(); } catch (e) { console.warn('[rite] host', e?.message ?? e); }   // WB12d: the faithful's circle, before the lights (its braziers light the ground)
+    if (_mode() === 'exterior') starfall?.frame();   // STAR4-STAR6: the night's stars, before the lights (a stone's glow, a landing's flash) - its own catch
     try { if (_mode() === 'exterior' && !_loading) harbourBook.step(now / 1000); } catch (e) { console.warn('[harbours] book', e?.message ?? e); }   // HARBOUR-BOOK: the port near the player sounded, before its quays stand
     if (_mode() === 'exterior') camps.ride(dt);   // DECK-CAMP: the camps on a boat's deck posed off her - after she moved, before the lights (a fire's) and the world pass
     try { quays?.frame(); } catch (e) { console.warn('[quays] pool', e?.message ?? e); }   // QUAYS: the harbours' quays stood or taken down, before the lights (their lanterns) and the world pass
@@ -33987,6 +34011,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { poiEditor?.frame(); poiHost?.frame(); } catch (e) { console.warn('[poi] host', e?.message ?? e); }   // POI-3: the editor's drafts laid over the feed first   // POI-2: the approved POIs on the built pixels - stood, placed, collided; the feed asked each minute
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
     portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
+    witches?.frame();   // WITCH1: the town underfoot's Hearth Offerings stood, before the lights (their lanterns)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights
     // placed under the current compensation, nearest 16 to the camera.
     // WOD2: the mod's lights burn at every hour and each carries its own
@@ -34034,7 +34059,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // DW-D: UnderwaterPresentationEffects.SuppressPlayerTorch - EnablePlayerTorch's light dark under the fog (the fuel burns on, the light is the only thing it takes)
       meterFor(renderer.gl)?.markCpu('lightset');   // PERF-SIM3: the hand lights, the peers' torches, the camps' fires added, the set handed to the renderer
       const lit = withPlayerLights(wodSel ? wodSel.data : _lanterns,   // EL1: the installed set's cap (16 classic, 48 on the lane); PERF-LIGHTS: `n` is how much of the pool is live
-        magic?.candleLight(), _dwFogP?.under ? null : playerTorchLight(playerEntity, player.feetAt(), cam.yaw), thunderlockMuzzleLight(playerEntity, player.feetAt(), cam.yaw), ...(naval?.enabled ? naval.lights() : []), ...peerTorchLights(), ...(gatePool?.lights() ?? []), ...(riteHost?.lights() ?? []), ...camps.lights(), ...droppedTorches.lights());   // PEERLIGHT1: the others' torches, right after my own hand lights   // X11 candle; T1 torch; HT1 the dropped lights; FIELD-GUN13 the muzzle flash; DISC13-A the hand lights ride the render feet (feetAt), as the camera does; NAV-B the broadsides' flashes and the burning decks beside the Thunderlock's own flash - the brightest things for a frame, cut last by the cap
+        magic?.candleLight(), _dwFogP?.under ? null : playerTorchLight(playerEntity, player.feetAt(), cam.yaw), thunderlockMuzzleLight(playerEntity, player.feetAt(), cam.yaw), ...(naval?.enabled ? naval.lights() : []), ...peerTorchLights(), ...(gatePool?.lights() ?? []), ...(riteHost?.lights() ?? []), ...(starfall?.lights() ?? []), ...camps.lights(), ...droppedTorches.lights());   // PEERLIGHT1: the others' torches, right after my own hand lights   // X11 candle; T1 torch; HT1 the dropped lights; FIELD-GUN13 the muzzle flash; DISC13-A the hand lights ride the render feet (feetAt), as the camera does; NAV-B the broadsides' flashes and the burning decks beside the Thunderlock's own flash - the brightest things for a frame, cut last by the cap
       if (wodSel) _wodSetLights(lit, wodSel);
       else renderer.setPointLights(lit, CITY_LIGHT_COLOR_F32, renderer.lightingLane ? capFadeColors(lit, lit.length / 4 - _lanterns.length / 4, cam.pos, renderer.maxPointLights, CITY_LIGHT_COLOR_F32) : null);   // LA-LIGHTS2
     } else {
@@ -34045,7 +34070,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // WOD2: ...and the mod's lights, which burn at every hour.
       const wodSel = wodLit || csaLit.length ? _wodSelect(0, _csaFill(wodLit ? _wodFill(0) : 0, csaLit)) : null;   // AUDIT PRE-MERGE 0928 R2: the boats' lanterns by day too (DungeonLightHandler lights them near)
       const lit = withPlayerLights(wodSel ? wodSel.data : new Float32Array(0),
-        magic?.candleLight(), _dwFogP?.under ? null : playerTorchLight(playerEntity, player.feetAt(), cam.yaw), thunderlockMuzzleLight(playerEntity, player.feetAt(), cam.yaw), ...(naval?.enabled ? naval.lights() : []), ...peerTorchLights(), ...(gatePool?.lights() ?? []), ...(riteHost?.lights() ?? []), ...camps.lights(), ...droppedTorches.lights());   // PEERLIGHT1: the others' torches, right after my own hand lights   // HT1; FIELD-GUN13 the muzzle flash; DISC13-A the hand lights ride the render feet (feetAt), as the camera does; NAV-B the flashes by day too
+        magic?.candleLight(), _dwFogP?.under ? null : playerTorchLight(playerEntity, player.feetAt(), cam.yaw), thunderlockMuzzleLight(playerEntity, player.feetAt(), cam.yaw), ...(naval?.enabled ? naval.lights() : []), ...peerTorchLights(), ...(gatePool?.lights() ?? []), ...(riteHost?.lights() ?? []), ...(starfall?.lights() ?? []), ...camps.lights(), ...droppedTorches.lights());   // PEERLIGHT1: the others' torches, right after my own hand lights   // HT1; FIELD-GUN13 the muzzle flash; DISC13-A the hand lights ride the render feet (feetAt), as the camera does; NAV-B the flashes by day too
       if (wodSel) _wodSetLights(lit, wodSel);
       else renderer.setPointLights(lit, CITY_LIGHT_COLOR_F32);
     }
@@ -34058,7 +34083,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     crewAshoreTick();   // CREW-COMPANIONS: the party stood on the street
     revenantAshoreTick();   // REVENANT-COMPANION: and the sworn
     renderer.setClearColor(SKY_CLEAR);   // INCIDENT 2026-09-04 / REVIEW 2026-09-05: this frame is the EXTERIOR's (the mode frames returned above and clear black in worldModes) - CameraClearManager.cs:51-57
-    renderer.setFlashLight(sky.lightningLight() ?? boltFrame.flash);   // DS1: Dynamic Skies' LightningFlash, composed first on the point-light channel just stored; BOLT: else a near ground strike's own light, from where it struck
+    renderer.setFlashLight(sky.lightningLight() ?? boltFrame.flash ?? starfall?.flash() ?? null);   // STAR4: else a star's landing   // DS1: Dynamic Skies' LightningFlash, composed first on the point-light channel just stored; BOLT: else a near ground strike's own light, from where it struck
     renderer.setWorldViewport(worldViewportRect(canvas.clientWidth, canvas.clientHeight));   // E5: ViewportChanger.Update, every frame
     meterFor(renderer.gl)?.markCpu('begin');   // PERF-SIM1: the renderer's frame open
     renderer.beginFrame(proj, view, sunDirection(minute), WORLD_FRAME);   // AUDIT-EL F5: a WORLD frame - the lane replays its records for this one
@@ -34079,6 +34104,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     mwViewDrawWagon(renderer, null, yardCull);   // EOTB-IL: the cart, when the transport is the cart; PERF-WAGON: by the street's view test
     riteHost?.draw(renderer, null, mwv.eye);   // WB12d: the faithful's circle and their tents - AUDIT WB12d (G6): its sigil from near the eye alone
     sigilBroker?.draw(renderer);   // BROKER-CAGE: the Sigil Broker's cage beside it, and its door
+    starfall?.draw(renderer);   // STAR4: the craters and their stones
     gatePool?.draw(renderer);   // WB2: the Oblivion Gate's stone
     camps.draw(renderer, null, yardCull);   // SURV3: the tents, the cart's own pass; PERF-WAGON: by the street's view test
     hcc.draw(renderer, null, tvf ? { selfGrow: tvf.grow, grow: peerGrow } : undefined, yardCull);   // PERF-TEAMS: each wagon culled as the town's own models are; HCC: the trailing / parked / following wagon and its cargo, mine and the peers' (the horses ride the flats' pass); WAGON-HITCH x OW-BIG: a cart's wagon grown with its rider under the Overworld
@@ -34844,7 +34870,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // expensive because of the string it built; the arithmetic it
       // repeats is free. A stash here would be mutable state and a
       // coordinate guard bought for no measured gain.
-      const _bare = riteHost?.clearing() ?? null;   // AUDIT WB12d (G2): the faithful's burned earth, this frame
+      const _bare = riteHost?.clearing() ?? starfall?.clearing() ?? null;   // AUDIT WB12d (G2): the faithful's burned earth, this frame; STAR4: or a star's crater (a star never falls beside the gate)
       const keep = (x, z, floor = false) => {   // BANTHA2: `floor` the jungle floor's keep - its records (grass and dirt), and the meadow kept out of every point it claims
         const hit = pieceAt(x, z);
         if (!hit) return null;
@@ -35044,6 +35070,8 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     const sdo = sdHost ? sdOmenNow() : null;
     if (sdo && sdOmenPassOf()?.draw([sdo], proj, view, new Float32Array(mwv.eye), now / 1000,
       { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, focus: renderer._focus, haze: renderer._haze })) renderer.markForeignPass();
+    // STAR4: THE STARFALL'S SKY - the omens, the falls, the flashes and their rings, the beacons - the same eye and fog
+    if (starfall?.showing() && starfall.drawSky(proj, view, new Float32Array(mwv.eye), now / 1000)) renderer.markForeignPass();
     // LOOT11 (the Loot arc): THE LINES OF LIGHT over my bodies and the street's piles holding a Rare or better - after the
     // gate's fire, the same eye and fog (scenes/lootLines.js: the nearest eight within 40 m)
     if (lootLines.draw(() => [...exteriorFoes.lootFinds(), ...droppedLoot.lootFinds()], proj, view, new Float32Array(mwv.eye), now / 1000,
@@ -35374,6 +35402,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           gate: gateCompassMark(),   // WB1: the Oblivion Gate on the compass, while the player stands in its ring
           arch: egClient?.archCompass() ?? null,   // EG-F: my company's Elite arch on the compass, while it stands
           serpent: serpentCompassMark(),   // SERPENT1: the sea serpent on the compass, while the player sails in its ring
+          star: starfall?.compassMark() ?? null,   // STAR6: the nearest of the night's stars in the player's region
           sd: sdCompassMark(),   // SD2c: a found Super dungeon on the compass, while the player stands within SD_COMPASS_M of it
           quest: vendorCompassMark() ?? townQuestCompassMark() ?? questCompassMark(),   // GUIDE5: the tracker's quest's place on the compass, on the street; HOME-VENDOR: a trader's waypoint first, while it is set; GUIDE8: the Town tier's building, in its town
           party: partyCompass(),   // COMPASS-PARTY: the party's marks - the bodies drawn here, the rest where their poses say

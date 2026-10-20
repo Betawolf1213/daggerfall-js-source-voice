@@ -8,7 +8,6 @@
 // here is the producer's own (world/merchantYards/merchantYardSites.js yardSitesOn, the host's keeper beside it).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import {
   YARD_KIND_ORDER, YARD_QUALITY, YARD_KEY_BASE, YARD_TALK_GROUPS, yardBuildingKey, yardDirectoryRows, yardKeeper, yardName,
 } from '../../src/systems/merchantYards.js';
@@ -29,8 +28,9 @@ import { _resetForTests } from '../../src/systems/settings/settings.js';
 import { createMerchantYards, YARD_MARK_LIFT } from '../../src/scenes/merchantYardsHost.js';
 import { markGroup, markShown, countGroups, isYardMark } from '../../src/systems/travel/travelViewFilters.js';
 import { yardGlyph, TV_YARD_R } from '../../src/ui/travel/travelViewHud.js';
+import { hostText } from '../hostText.mjs';
 
-const read = (p) => readFileSync(new URL(`../../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town map's door lives in scenes/exteriorAutomapToggle.js (STAR0)
 const FONT = { fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } };
 
 /** A town of two blocks by two, open ground with a road along row 64, its yards placed by the producer and handed the
@@ -221,7 +221,7 @@ test('YARDS-FOUND THE OVERWORLD: each yard standing is a mark - its name over it
 
 test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map (laid on the rows once, at the door both maps share), to the talk directory and to the Overworld\'s marks; townTalk joins them to its directory and, with no engine, groups them after the shops; the bench stands no yard, and the interiors and the dungeon open no town map (mutants: each hand dropped)', () => {
   const w = read('src/scenes/world.js');
-  assert.match(read('src/scenes/townMapHost.js'), /\n\s+yards: b\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the town map');   // PIN MOVED (FB1020c STREETS-TAB): the M key's bag, built in scenes/townMapHost.js for either key
+  assert.match(w, /\n\s+yards: b\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the town map');
   assert.match(w, /\n\s+yards: cur\.merchantYards \?\? null,   \/\/ YARDS-FOUND/, 'the talk directory');
   // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js, the yards
   // read live off the host that hands them over
@@ -230,8 +230,7 @@ test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map 
   assert.ok(tvm.indexOf('merchantYards?.overworldMarks()') > tvm.indexOf('function travelViewMarks()'), 'in the Overworld\'s marks');
   assert.match(w, /createTravelViewMarks\(\{[^]*?\n\s+get merchantYards\(\) \{ return merchantYards; \},[^]*?\n\s+\}\);/, 'handed over live');
   const door = read('src/ui/town/townMapDoor.js');
-  // PIN MOVED (FB1020c STREETS-TAB): laid in the door's `laidOn`, which both arms read - the classic window's rows and
-  // the held sheet's bag (townSheetBag, the travel key's streets too)
+  // PIN MOVED (FB1020c STREETS-TAB, at the merge of STAR0's move): laid in the door's `laidOn`, which both arms read - the classic window's rows and the held sheet's
   assert.match(door, /if \(deps\.yards\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.yards\) \};\n\s+return deps;/, 'laid before either map is built');
   assert.match(door, /return exteriorAutomapArtLoaded\(\) \? new ExteriorAutomapWindow\(laidOn\(deps\)\) : null;/, 'the classic window\'s rows');
   assert.match(door, /export function townSheetBag\(deps = \{\}\) \{\n\s+deps = laidOn\(deps\);/, 'the held sheet\'s');

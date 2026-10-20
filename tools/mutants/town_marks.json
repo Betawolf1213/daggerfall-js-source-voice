@@ -217,7 +217,7 @@
   },
   {
     "name": "TOWN-MARKS-the-board-marked-while-closed",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/world.js",
     "old": "    if (!noticeBook || noticeBook.open !== true || !p?.boards?.length || !p.location) return [];",
     "new": "    if (!noticeBook || !p?.boards?.length || !p.location) return [];",
     "tests": [
@@ -226,7 +226,7 @@
   },
   {
     "name": "TOWN-MARKS-the-homes-never-asked",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "    onlineHomes?.ensure(here.mapId);   // TOWN-MARKS: a town heard",
     "new": "    void 0;   // TOWN-MARKS: a town heard",
     "tests": [
@@ -235,7 +235,7 @@
   },
   {
     "name": "TOWN-MARKS-the-registry-never-read",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "          const h = onlineHomes.homeAt(mapId, buildingKey);",
     "new": "          const h = null;",
     "tests": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "TOWN-MARKS-the-bank-house-unread",
-    "file": "src/scenes/townMapHost.js",
+    "file": "src/scenes/exteriorAutomapToggle.js",
     "old": "regionIndex: dfLoc.regionIndex, houses: playerEntity.houses ?? null,",
     "new": "regionIndex: dfLoc.regionIndex, houses: null,",
     "tests": [

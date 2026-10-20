@@ -363,14 +363,14 @@ that inks nothing.
   bay alone, so a player who looked there found no mark, however whole
   it was. This arc's tab law already offered a town's streets beside the
   bay and the window already held both sheets; only the travel key's door
-  handed no streets. The town map's host half left `bootWorld` for
-  `scenes/townMapHost.js` (`createTownMapHost`, by `tools/hostMove.mjs`;
-  `01-Overview/Host-Split.md`), where `townHere` builds the town the
-  player stands in once for either key: the M key's window as before
-  (`open`), and the travel key's streets
-  (`townMapHost.js:"    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };"`),
+  handed no streets. In the town key's module
+  (`scenes/exteriorAutomapToggle.js`, out of `bootWorld` by STAR0 -
+  `01-Overview/Host-Split.md`), `townHere` builds the town the player
+  stands in once for either key: the M key's window as before
+  (`toggleExteriorAutomap`), and the travel key's streets
+  (`exteriorAutomapToggle.js:"    return { town: townSheetBag(here.deps), where: here.deps.where, openOnSheet: 'world' };"`),
   spread into its window at the door past the whole ladder
-  (`world.js:"_travelMap = buildTravelMapWindow({ ...townMap.travelTown(), onTravel"`),
+  (`world.js:"_travelMap = buildTravelMapWindow({ ...travelTown(), onTravel"`),
   `{}` in the wild, indoors and in a dungeon. One bag, one home: both
   keys' streets come off `ui/town/townMapDoor.js` `townSheetBag` - the
   same summaries, the same discovery record, the yards laid the same -
@@ -717,7 +717,7 @@ all.
   the party. The `?exterior` probe host hands none.
 
 Code: `ui/town/townMapMarks.js` (the rows and the reading), `ui/ink/inkTown.js` (`paintBoardMark`, `paintHomeMark`),
-`ui/town/townSheet.js`, `ui/town/townMapDoor.js`, `scenes/townMapHost.js` (`townBoardMarks`, `townHomes`; out of `scenes/world.js` with STREETS-TAB). Pins:
+`ui/town/townSheet.js`, `ui/town/townMapDoor.js`, `scenes/world.js` (`townBoardMarks`), `scenes/exteriorAutomapToggle.js` (`townHomes`). Pins:
 `test/ui/town/town_marks.test.js` (9). Mutants: `tools/mutants/town_marks.json` (35, all dead); `disc23a.json`'s breathing
 record and `survtiers3.json`'s two cite records re-aimed.
 

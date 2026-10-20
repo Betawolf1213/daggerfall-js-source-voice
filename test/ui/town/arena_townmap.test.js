@@ -6,7 +6,6 @@
 // on the tree before the fix (the served block carried the vendored bytes, and no row carried a landmark).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import {
   installArena, _resetArena, arenaAutoMap, arenaTownLandmark, arenaColosseumAt, ARENA_BLOCK, ARENA_BLOCK_INDEX,
   ARENA_MAP_BYTE, ARENA_MAP_NAME,
@@ -22,8 +21,9 @@ import { ExteriorAutomapWindow, buildExteriorLayout, toPanelScreen, _resetZoomFo
 import { nameplateAnchor } from '../../../src/ui/nameplateLayout.js';
 import { _resetForTests } from '../../../src/systems/settings/settings.js';
 import VENDORED from '../../../vendor/daggerfall-arena/Arena/ARENADAG.RMB.json' with { type: 'json' };
+import { hostText } from '../../hostText.mjs';
 
-const read = (p) => readFileSync(new URL(`../../../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);   // HOST-SPLIT 2: a host read whole - the town map's door lives in scenes/exteriorAutomapToggle.js (STAR0)
 const KAMER = VENDORED.RmbBlock.FldHeader.AutoMapData;
 const COLOURS = { temple: 0xffc37d45, shop: 0xff1855be, tavern: 0xff307555, house: 0xff283c45 };
 const FONT = { fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } };
@@ -129,7 +129,7 @@ test('ARENA-MAP: the name - "Arena" at the colosseum\'s place on both maps, alwa
 });
 
 test('ARENA-MAP: both exterior hosts hand the landmark on the town map\'s block rows; the interior and dungeon hosts open no town map', () => {
-  for (const host of ['src/scenes/townMapHost.js', 'src/scenes/exterior.js']) {   // PIN MOVED (FB1020c STREETS-TAB): world.js's M key, in its module
+  for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = read(host);
     assert.match(s, /import \{[^}]*\barenaTownLandmark\b[^}]*\} from '\.\.\/world\/arena\/arenaCity\.js';/, `${host} imports it`);
     assert.match(s, /blocks: (?:b\.locBlocks|loc\.blocks)\.map\(\(bl\) => \(\{ x: bl\.x, y: bl\.y, autoMap: bl\.dfBlock\?\.rmbBlock\?\.fldHeader\?\.autoMapData, landmark: arenaTownLandmark\(bl\.dfBlock\) \}\)\),/, `${host}'s town map rows`);
