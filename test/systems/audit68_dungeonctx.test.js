@@ -35,6 +35,7 @@ import { feudWeakBlow } from '../../src/systems/feudLedger.js';   // AUDIT FEUD:
 import { ARENA_PUPPET_OWNER } from '../../src/net/arena/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
 import { markOutCold } from '../../src/systems/survival/needs.js';   // AUDIT C&C N2: the dungeon's collapse marks its hour
 import { ROOM_LOOT_OFF } from '../roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
+import { isClassEnemyId, enemyEntityType } from '../../src/characters/enemy/enemyBasics.js';   // DEX1: the hosts' class test and entity type (the mount's free names)
 
 const D = readFileSync(new URL('../../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
@@ -109,7 +110,7 @@ function killHarness({ foes, foeDeps = null, getTexture = async () => ({ recordC
     damageShieldPool: (e, n) => n, attemptSoulTrap, peerSoulTrapOf, fillEmptyTrap, isAzurasStarEquipped: () => false,
     hudText: { add: (l) => log.hud.push(l) }, sayEnemyDied, SOUL_TRAP_TEXT: { trapSuccess: 'ok', trapFail: 'fail', trapNoneEmpty: 'none' },   // LOOT7-CHECK DUNGEON-DIED: the notice, onto the harness's line
     setEnemyAlert, playRareDrop: () => { log.chimes++; }, raiseEnemyDeath: () => { log.deaths++; }, liveStat: () => 50, stampWonWeapons, rollCorpseKit,
-    audio: {}, ENEMY_BASICS, weaponKnockbackApplies: () => false, maxFatigue: () => 100, q2: (x) => x, q3: (x) => x,
+    isClassEnemyId, enemyEntityType, audio: {}, ENEMY_BASICS, weaponKnockbackApplies: () => false, maxFatigue: () => 100, q2: (x) => x, q3: (x) => x,
     _wallNow: () => null, floorLanding: (c, p) => p, collider: null, getTexture,
     uploadRecord: () => {}, billboardSize: () => ({ w: 1, h: 1 }), armFlatAnim: () => {}, flatAnims: { remove: () => {} }, uploadRecordFrame: () => {},
     eliteCorpseSize, isEliteCorpse, markEliteCorpseBatch,   // ELITE FOES: spawnCorpseNow's
@@ -471,7 +472,7 @@ test('AUDIT SET P-M3: a joiner\'s killing blow, applied at the host, is named on
   await tick();
   assert.equal(bat._killedBy, null, 'my own blow: nobody to tell');
   // the record: `v` on the dead foe's, and on its key
-  const rec = mount(`${declSrc('foeMaxOf')} ${fnSrc('roomRecord')} return { roomRecord };`, { q2: (x) => x, q3: (x) => x, FOE_HEALTH_MAX, FOE_LEVEL_MAX, KILLED_BY_MS, _sharedFoe: () => false, fightN: () => 1 });
+  const rec = mount(`${declSrc('foeMaxOf')} ${fnSrc('roomRecord')} return { roomRecord };`, { q2: (x) => x, q3: (x) => x, FOE_HEALTH_MAX, FOE_LEVEL_MAX, KILLED_BY_MS, _sharedFoe: () => false, fightN: () => 1, isClassEnemyId });
   const r = rec.roomRecord(rat, 0, true);
   assert.equal(r.v, 'peer-7');
   assert.ok(rat._sentKey.split(',').includes('peer-7'), 'the name rides the key');   // PIN MOVED (RVN13, Feud-Arc.md 25: a revenant's own ride the key after it)
