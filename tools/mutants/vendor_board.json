@@ -1,7 +1,7 @@
 [
  {
   "name": "VENDORB-listed-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listed AFTER INSERT ON market_listings WHEN NEW.vendor_id IS NOT NULL",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listed AFTER INSERT ON market_listings WHEN 0",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "VENDORB-listing-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings WHEN OLD.vendor_id IS NOT NULL OR NEW.vendor_id IS NOT NULL",
   "new": "  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings WHEN 0",
   "tests": [
@@ -21,7 +21,7 @@
  },
  {
   "name": "VENDORB-listing-price-unwatched",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, price, fee, wear, at,",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, fee, wear, at,",
   "tests": [
@@ -31,7 +31,7 @@
  },
  {
   "name": "VENDORB-listing-every-column",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE OF id, kind, region, material, item, own, bought, units, price, fee, wear, at,\n  expires_at, state, currency, seller, vendor_map, vendor_id ON market_listings",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_listing AFTER UPDATE ON market_listings",
   "tests": [
@@ -41,7 +41,7 @@
  },
  {
   "name": "VENDORB-listing-old-region",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
   "new": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_unlisted",
   "tests": [
@@ -51,7 +51,7 @@
  },
  {
   "name": "VENDORB-trader-in-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "  WHEN NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor'\nBEGIN",
   "new": "  WHEN 0\nBEGIN",
   "tests": [
@@ -61,7 +61,7 @@
  },
  {
   "name": "VENDORB-trader-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "  WHEN (OLD.yard = 0 AND CASE WHEN json_valid(OLD.place) THEN json_extract(OLD.place, '$.station') END = 'vendor') OR (NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor')",
   "new": "  WHEN (NEW.yard = 0 AND CASE WHEN json_valid(NEW.place) THEN json_extract(NEW.place, '$.station') END = 'vendor')",
   "tests": [
@@ -71,7 +71,7 @@
  },
  {
   "name": "VENDORB-house-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house AFTER UPDATE OF player, char_id, owner_name, region, entry, guild_id ON homes",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house AFTER UPDATE OF price ON homes",
   "tests": [
@@ -81,7 +81,7 @@
  },
  {
   "name": "VENDORB-house-old-region",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT OLD.region AS r UNION SELECT NEW.region) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_in",
   "new": "BEGIN\n  INSERT INTO market_vendor_boards (region) SELECT r FROM (SELECT NEW.region AS r) WHERE r IS NOT NULL\n    ON CONFLICT (region) DO UPDATE SET ver = ver + 1;\nEND;\nCREATE TRIGGER IF NOT EXISTS vendor_board_house_in",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "VENDORB-house-in-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_in AFTER INSERT ON homes\nBEGIN",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_in AFTER INSERT ON homes WHEN 0\nBEGIN",
   "tests": [
@@ -101,7 +101,7 @@
  },
  {
   "name": "VENDORB-house-gone-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE OLD.region IS NOT NULL",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_house_gone AFTER DELETE ON homes\nBEGIN\n  INSERT INTO market_vendor_boards (region) SELECT OLD.region WHERE 0",
   "tests": [
@@ -111,7 +111,7 @@
  },
  {
   "name": "VENDORB-patron-unmoved",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS vendor_board_patron AFTER INSERT ON market_patron_sales\nBEGIN",
   "new": "CREATE TRIGGER IF NOT EXISTS vendor_board_patron AFTER INSERT ON market_patron_sales WHEN 0\nBEGIN",
   "tests": [
@@ -121,7 +121,7 @@
  },
  {
   "name": "VENDORB-expiry-unindexed",
-  "file": "server-account/migrations/0135_vendor_board.sql",
+  "file": "server-account/migrations/0136_vendor_board.sql",
   "old": "CREATE INDEX IF NOT EXISTS idx_market_vendor_expiry ON market_listings (region, expires_at) WHERE state = 'open' AND vendor_id IS NOT NULL;\n",
   "new": "",
   "tests": [

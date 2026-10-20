@@ -1,7 +1,7 @@
 [
  {
   "name": "WRITB-owner-unindexed",
-  "file": "server-account/migrations/0136_writ_board.sql",
+  "file": "server-account/migrations/0137_writ_board.sql",
   "old": "CREATE INDEX IF NOT EXISTS idx_writs_owner ON writs (day, owner, region, kind, faction);\n",
   "new": "",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "WRITB-owner-regionless",
-  "file": "server-account/migrations/0136_writ_board.sql",
+  "file": "server-account/migrations/0137_writ_board.sql",
   "old": "ON writs (day, owner, region, kind, faction);",
   "new": "ON writs (day, owner, kind, faction);",
   "tests": [
@@ -21,7 +21,7 @@
  },
  {
   "name": "WRITB-member-uncovered",
-  "file": "server-account/migrations/0136_writ_board.sql",
+  "file": "server-account/migrations/0137_writ_board.sql",
   "old": "ON writs (day, owner, region, kind, faction);",
   "new": "ON writs (day, owner, region);",
   "tests": [

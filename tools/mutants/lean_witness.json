@@ -1,7 +1,7 @@
 [
  {
   "name": "LEANW-kind-dropped",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS witness_lean_in AFTER INSERT ON world_witness WHEN NEW.kind IN ('npchall', 'seat')",
   "new": "CREATE TRIGGER IF NOT EXISTS witness_lean_in AFTER INSERT ON world_witness WHEN NEW.kind IN ('npchall')",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "LEANW-confirm-count-moved",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1\n          AND at = (SELECT MIN(at) FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1)))\n    WHERE n = 3 ORDER BY at, account LIMIT 1)",
   "new": "        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1\n          AND at = (SELECT MIN(at) FROM world_witness WHERE kind = NEW.kind AND key = NEW.key AND late = 1)))\n    WHERE n = 2 ORDER BY at, account LIMIT 1)",
   "tests": [
@@ -21,7 +21,7 @@
  },
  {
   "name": "LEANW-confirm-order-moved",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE witness_confirmed SET (report, at) = (\n    SELECT report, at FROM (\n      SELECT report, account, at, ROW_NUMBER() OVER (PARTITION BY report ORDER BY at, account) AS n FROM (\n        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind",
   "new": "  UPDATE witness_confirmed SET (report, at) = (\n    SELECT report, at FROM (\n      SELECT report, account, at, ROW_NUMBER() OVER (PARTITION BY report ORDER BY at, account DESC) AS n FROM (\n        SELECT report, account, at FROM world_witness WHERE kind = NEW.kind",
   "tests": [
@@ -31,7 +31,7 @@
  },
  {
   "name": "LEANW-earlier-answer-unsettled",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    WHERE kind = NEW.kind AND key = NEW.key AND (report IS NULL OR NEW.at <= at);",
   "new": "    WHERE kind = NEW.kind AND key = NEW.key AND (report IS NULL OR NEW.at < at);",
   "tests": [
@@ -41,7 +41,7 @@
  },
  {
   "name": "LEANW-unconfirmed-unsettled",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    WHERE kind = NEW.kind AND key = NEW.key AND (report IS NULL OR NEW.at <= at);",
   "new": "    WHERE kind = NEW.kind AND key = NEW.key AND (NEW.at <= at);",
   "tests": [
@@ -51,7 +51,7 @@
  },
  {
   "name": "LEANW-insert-settle-ungated",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    WHERE kind = NEW.kind AND key = NEW.key AND (report IS NULL OR NEW.at <= at);",
   "new": "    WHERE kind = NEW.kind AND key = NEW.key;",
   "tests": [
@@ -63,7 +63,7 @@
  },
  {
   "name": "LEANW-late-of-confirming-second",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    AND report = NEW.report AND at > NEW.at;\nEND;",
   "new": "    AND report = NEW.report AND at >= NEW.at;\nEND;",
   "tests": [
@@ -73,7 +73,7 @@
  },
  {
   "name": "LEANW-dissent-late",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND account = NEW.account AND late = 0\n    AND EXISTS (SELECT 1 FROM witness_confirmed c WHERE c.kind = NEW.kind AND c.key = NEW.key AND c.report = NEW.report AND NEW.at > c.at);",
   "new": "  UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND account = NEW.account AND late = 0\n    AND EXISTS (SELECT 1 FROM witness_confirmed c WHERE c.kind = NEW.kind AND c.key = NEW.key AND NEW.at > c.at);",
   "tests": [
@@ -83,7 +83,7 @@
  },
  {
   "name": "LEANW-late-answer-kept",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND account = NEW.account AND late = 0\n    AND EXISTS",
   "new": "  UPDATE world_witness SET late = 1 WHERE kind = NEW.kind AND key = NEW.key AND account = NEW.account AND late = 9\n    AND EXISTS",
   "tests": [
@@ -93,7 +93,7 @@
  },
  {
   "name": "LEANW-deletion-unsettled",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    WHERE kind = OLD.kind AND key = OLD.key AND report = OLD.report AND OLD.at <= at;",
   "new": "    WHERE kind = OLD.kind AND key = OLD.key AND report = OLD.report AND OLD.at < at;",
   "tests": [
@@ -103,7 +103,7 @@
  },
  {
   "name": "LEANW-deletion-earliest-late-unread",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "        SELECT report, account, at FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1\n          AND at = (SELECT MIN(at) FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1)))",
   "new": "        SELECT report, account, at FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1\n          AND at = (SELECT MAX(at) FROM world_witness WHERE kind = OLD.kind AND key = OLD.key AND late = 1)))",
   "tests": [
@@ -113,7 +113,7 @@
  },
  {
   "name": "LEANW-key-row-kept",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  DELETE FROM witness_confirmed WHERE kind = OLD.kind AND key = OLD.key AND report IS NULL\n    AND NOT EXISTS",
   "new": "  DELETE FROM witness_confirmed WHERE kind = OLD.kind AND key = OLD.key AND report IS NULL AND 0\n    AND NOT EXISTS",
   "tests": [
@@ -123,7 +123,7 @@
  },
  {
   "name": "LEANW-moved-confirmers-late",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report AND at <= NEW.at;",
   "new": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report AND at < NEW.at;",
   "tests": [
@@ -133,7 +133,7 @@
  },
  {
   "name": "LEANW-settle-every-late-back",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report AND at <= NEW.at;",
   "new": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report = NEW.report;",
   "tests": [
@@ -143,7 +143,7 @@
  },
  {
   "name": "LEANW-turned-kept-late",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report IS NOT NEW.report;",
   "new": "  UPDATE world_witness SET late = 0 WHERE kind = NEW.kind AND key = NEW.key AND late = 1 AND report IS NOT NEW.report AND 0;",
   "tests": [
@@ -153,7 +153,7 @@
  },
  {
   "name": "LEANW-backfill-unlate",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "    WHERE c.kind = world_witness.kind AND c.key = world_witness.key AND c.report = world_witness.report AND world_witness.at > c.at);",
   "new": "    WHERE c.kind = world_witness.kind AND c.key = world_witness.key AND c.report = world_witness.report AND world_witness.at > c.at AND 0);",
   "tests": [
@@ -163,7 +163,7 @@
  },
  {
   "name": "LEANW-backfill-count-moved",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "      FROM world_witness WHERE kind IN ('npchall', 'seat'))\n    WHERE n = 3)",
   "new": "      FROM world_witness WHERE kind IN ('npchall', 'seat'))\n    WHERE n = 2)",
   "tests": [
@@ -173,7 +173,7 @@
  },
  {
   "name": "LEANW-lean-index-every-kind",
-  "file": "server-account/migrations/0133_lean_witness.sql",
+  "file": "server-account/migrations/0134_lean_witness.sql",
   "old": "CREATE INDEX IF NOT EXISTS idx_world_witness_lean_key ON world_witness (kind, key) WHERE kind IN ('npchall', 'seat') AND late = 0;",
   "new": "CREATE INDEX IF NOT EXISTS idx_world_witness_lean_key ON world_witness (kind, key) WHERE late = 0;",
   "tests": [

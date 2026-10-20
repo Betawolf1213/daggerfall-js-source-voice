@@ -2,7 +2,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // LEAN-WITNESS (2026-10-19, the account database overloaded again: "D1 DB
 // is overloaded. Requests queued for too long." on the harvest and the
-// pixels; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS; migration 0133)
+// pixels; bible/11-Multiplayer/Scale-Arc.md LEAN-WITNESS; migration 0134)
 // - A WITNESSED KEY'S ANSWERS, READ AS FAR AS THEY CAN MATTER.
 //
 // A hall's and a seat's facts are the first answer three accounts agree on
@@ -11,7 +11,7 @@
 // answer: a hall witness read all 24,327 of its region's (npcHalls.js), the
 // seats' clock all 32,775 seat answers a minute (townSeats.js). An answer
 // that agrees with its key's confirmation and came in a later second than
-// it - LATE, kept by the database itself (migration 0133's
+// it - LATE, kept by the database itself (migration 0134's
 // witness_confirmed and its triggers) - changes nothing those reads judge:
 //
 //   - witnessedFact: after the confirmation it counts the answers that
@@ -32,10 +32,10 @@
 
 import { SEAT_WITNESS_UNMATCHED_MAX, SEAT_WITNESS_IGNORED_S } from '../../src/net/townSeatLaw.js';
 
-/** The kinds migration 0133 keeps lean (its triggers' `kind IN (...)`). */
+/** The kinds migration 0134 keeps lean (its triggers' `kind IN (...)`). */
 export const LEAN_KINDS = Object.freeze(['npchall', 'seat']);
 
-/** THE ROWS THAT ARE NOT LATE, as a read asks them: migration 0133's lean indexes hold those two kinds' alone, and SQLite
+/** THE ROWS THAT ARE NOT LATE, as a read asks them: migration 0134's lean indexes hold those two kinds' alone, and SQLite
  *  takes a partial index only for a read that repeats its condition term for term (AUDIT LEAN-READS A4). */
 export const LEAN_ROWS = "kind IN ('npchall', 'seat') AND late = 0";
 

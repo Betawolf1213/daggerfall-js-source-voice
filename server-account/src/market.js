@@ -2064,7 +2064,7 @@ export async function marketVendors(ctx, player, env, { region, character = null
   const closed = shut(player, env);
   if (closed) return closed;
   if (!regionOk(region)) return { error: 'bad-region' };
-  // VENDOR-BOARD (2026-10-19; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD; migration 0135): THE REGION'S BOARD, EVERY
+  // VENDOR-BOARD (2026-10-19; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD; migration 0136): THE REGION'S BOARD, EVERY
   // CALLER'S ALIKE, IS ONE ROW (vendorBoard), and the caller's own door - its own house, its guild's, a room it rents -
   // is read off two of its own rows, where the board's two statements asked them of every listing
   // AUDIT LEAN-READS D5: the caller's own rows read first - the board may keep its row last, and on a replica's session a
@@ -2101,7 +2101,7 @@ export async function marketVendors(ctx, player, env, { region, character = null
 /**
  * VENDOR-BOARD (2026-10-19, the account database overloaded again: the region's traders the read most asked again in
  * the 18:05 overload - 1,517 asks in five minutes where 330 was the rate; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD;
- * migration 0135): THE REGION'S TRADERS AS EVERY CALLER READS THEM - `{ newest, houses, patrons }`, the rows the board's
+ * migration 0136): THE REGION'S TRADERS AS EVERY CALLER READS THEM - `{ newest, houses, patrons }`, the rows the board's
  * three reads answer, before any caller's own door. Its kept row while it is its version's (the database moves it on
  * every trader listing, trader, trader's house and patron sale written), its shape's (these reads' - keptBoard.js) and
  * the caller's second is between the second it was read at and `until` (the first of its listings to run out; AUDIT
@@ -2244,7 +2244,7 @@ export const PATRON_TOLD_SQL = (/** @type {string} */ where) => `SELECT s.listin
   FROM market_patron_sales s JOIN market_listings l ON l.id = s.listing WHERE ${where} AND s.at > ?1 ORDER BY s.at DESC LIMIT ${VENDOR_BOARD_SHOWN}`;
 
 /** VENDOR-BOARD: a trader listing's columns as the board keeps them - the ones listingView reads (AUDIT LEAN-READS B7: its
- *  bookkeeping is none of the board's, and migration 0135's trigger moves the board on these alone) - and its trader's. */
+ *  bookkeeping is none of the board's, and migration 0136's trigger moves the board on these alone) - and its trader's. */
 const VENDOR_COLUMNS = `l.id, l.kind, l.region, l.material, l.item, l.own, l.bought, l.units, l.price, l.fee, l.wear, l.at, l.expires_at, l.state,
       l.currency, l.seller, d.map_id AS v_map, d.id AS v_id, h.building_key AS v_key, h.owner_name AS v_owner, h.player AS v_player,
       h.char_id AS v_char, h.entry AS v_entry`;

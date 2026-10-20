@@ -1,5 +1,5 @@
 // VENDOR-BOARD (2026-10-19, the account database overloaded again: the region's traders the read most asked again in the
-// 18:05 overload; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD; migration 0135) - A REGION'S TRADERS READ AS ONE ROW:
+// 18:05 overload; bible/11-Multiplayer/Scale-Arc.md VENDOR-BOARD; migration 0136) - A REGION'S TRADERS READ AS ONE ROW:
 // the board every caller reads alike is kept in `market_vendor_boards` at a version the database moves on every trader
 // listing, trader, trader's house and patron sale written, until its first listing runs out; the caller's own door (its
 // own house, its guild's, a room it rents) is read off its own rows.
@@ -303,12 +303,12 @@ test('VENDOR-BOARD the writes that move a board are the database\'s own - every 
   const { raw } = world();
   const triggers = raw.prepare("SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'vendor_board_%' ORDER BY name").all().map((t) => t.name);
   assert.deepEqual(triggers, ['vendor_board_house', 'vendor_board_house_gone', 'vendor_board_house_in', 'vendor_board_listed', 'vendor_board_listing', 'vendor_board_patron', 'vendor_board_trader', 'vendor_board_trader_in', 'vendor_board_trader_out', 'vendor_board_unlisted']);
-  assert.match(src('server-account/migrations/0135_vendor_board.sql'), new RegExp(`'\\$\\.station'\\) END = '${VENDOR_STATION}'`), 'the station the board reads');
+  assert.match(src('server-account/migrations/0136_vendor_board.sql'), new RegExp(`'\\$\\.station'\\) END = '${VENDOR_STATION}'`), 'the station the board reads');
   // a piece whose place is not JSON is no piece (decor.js) - its write is never refused by a trigger asking its station
   raw.prepare("INSERT INTO homes (map_id, building_key, player, char_id, owner_name, region, price, bought_at) VALUES (5, 5, 'p-ana', 'c', 'Ana', 17, 1, 1)").run();
   assert.doesNotThrow(() => raw.prepare("INSERT INTO home_decor (map_id, building_key, id, model, place, placed_at, paid, yard) VALUES (5, 5, 'bad', 1, 'not json', 1, 0, 0)").run());
   assert.doesNotThrow(() => raw.prepare("UPDATE home_decor SET place = 'still not' WHERE id = 'bad'").run());
   assert.doesNotThrow(() => raw.prepare("DELETE FROM home_decor WHERE id = 'bad'").run());
-  const files = readdirSync(new URL('../../server-account/migrations', import.meta.url)).filter((f) => f > '0135');
+  const files = readdirSync(new URL('../../server-account/migrations', import.meta.url)).filter((f) => f > '0136');
   for (const f of files) assert.doesNotMatch(src(`server-account/migrations/${f}`), /DROP TABLE (market_listings|home_decor|homes|market_patron_sales)\b/, `${f} rebuilds a table the board's triggers stand on - make them again in it`);
 });

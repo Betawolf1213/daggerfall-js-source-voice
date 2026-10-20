@@ -1,7 +1,7 @@
 [
  {
   "name": "YARDSNAP-delete-unmoved",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 1",
   "new": "CREATE TRIGGER IF NOT EXISTS home_yards_out AFTER DELETE ON home_decor WHEN OLD.yard = 9",
   "tests": [
@@ -11,7 +11,7 @@
  },
  {
   "name": "YARDSNAP-move-one-town",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "  UPDATE home_yards SET ver = ver + 1 WHERE map_id = OLD.map_id AND OLD.yard = 1;\n",
   "new": "",
   "tests": [
@@ -21,7 +21,7 @@
  },
  {
   "name": "YARDSNAP-room-moves-town",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard = 1",
   "new": "CREATE TRIGGER IF NOT EXISTS home_yards_in AFTER INSERT ON home_decor WHEN NEW.yard >= 0",
   "tests": [
@@ -91,7 +91,7 @@
  },
  {
   "name": "YARDSNAP-backfill-shape",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "UPDATE home_yards SET built = ver, shape = '07a44e1f', rows = (",
   "new": "UPDATE home_yards SET built = ver, rows = (",
   "tests": [
@@ -101,7 +101,7 @@
  },
  {
   "name": "YARDSNAP-old-index-kept",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "DROP INDEX IF EXISTS idx_home_decor_yard;\n",
   "new": "",
   "tests": [
@@ -173,7 +173,7 @@
  },
  {
   "name": "YARDSNAP-backfill-bound",
-  "file": "server-account/migrations/0134_yard_snap.sql",
+  "file": "server-account/migrations/0135_yard_snap.sql",
   "old": "    WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id LIMIT 2000));",
   "new": "    WHERE map_id = home_yards.map_id AND yard = 1 ORDER BY building_key, placed_at, id));",
   "tests": [

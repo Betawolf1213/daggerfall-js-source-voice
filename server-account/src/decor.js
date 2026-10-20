@@ -287,7 +287,7 @@ export async function yardsOf({ db }, _player, { mapId } = {}) {
 
 /**
  * YARD-SNAP (2026-10-19, the account database overloaded again; bible/11-Multiplayer/Scale-Arc.md YARD-SNAP; migration
- * 0134): A TOWN'S YARDS, ONE ROW. 673,882 yards reads on the day read some 1,400 rows each, sorted (9.1% of the
+ * 0135): A TOWN'S YARDS, ONE ROW. 673,882 yards reads on the day read some 1,400 rows each, sorted (9.1% of the
  * database's statement time) for an answer that moves only when a yard piece is written. `home_yards` holds each town's
  * rows as this read takes them, built at a version the database moves on every yard row written - by a route, a cascade
  * or a sweep alike (the migration's triggers) - so a read is one row while it is its version's, and the rows as they
@@ -301,7 +301,7 @@ export const YARD_SNAP_COLS = Object.freeze(['map_id', 'building_key', 'id', 'mo
 export const YARD_SNAP_READ = 'SELECT ver, built, shape, rows FROM home_yards WHERE map_id = ?';
 /** The order a town's rows are built and read in. */
 const YARD_SNAP_ORDER = 'building_key, placed_at, id';
-/** YARD-SNAP (AUDIT LEAN-READS B1): the build's shape - its columns, its order and its bound. Migration 0134 built every
+/** YARD-SNAP (AUDIT LEAN-READS B1): the build's shape - its columns, its order and its bound. Migration 0135 built every
  *  town in today's (its literal is pinned to this); a deploy that changes one reads every town's rows as they stand
  *  until the clock builds it again. */
 export const YARD_SNAP_SHAPE = shapeOf('yards', YARD_SNAP_COLS.join(', '), YARD_SNAP_ORDER, DECOR_YARDS_TOWN_MAX);
