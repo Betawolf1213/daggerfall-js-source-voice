@@ -43,6 +43,10 @@ export function numberFor(r) {
   // 2026-10-18f TURNED-BLOW: in the Spire the ground can turn it too (a blow from traversal ground strikes nothing), and the
   // stand-in says which (scenes/eliteGates/egFight.js turnStandIn, `wardText` - "No footing")
   if (r.target?.warded) return { kind: 'warded', text: r.target.wardText || 'Warded', tag: null };
+  // FIELD BUGS 2026-10-20d LANDED-WORD: a body whose room says what a blow LANDED (an Elite Breach's - scenes/eliteGates/egFight.js
+  // `landsByWord`) shows no claim: its number is the room's word (`eland`), a moment later, as a duel's is the referee's. The
+  // claim was the number - a Redoubt 16 lord "took a literal million" on the screen and 31k by the room's count
+  if (r.target?.landsByWord) return null;
   const dmg = Math.max(0, Math.round(r.damage || 0));
   if (dmg === 0) return { kind: 'absorbed', text: '0', tag: null };
   if (r.backstab) return { kind: 'crit', text: String(dmg), tag: 'Backstab' };
