@@ -65,13 +65,14 @@ export function starWaveFoes(n, k, w, size, band) {
   return Array.from({ length: Math.max(0, size | 0) }, (_, i) => pick(roster, starRoll(n, k, 300 + w * 32 + i)));
 }
 
-/** The masters - each its career, whether it stands as a woman, its name and its coming's call. */
+/** The masters - each its career, whether it stands as a woman, its name, its coming's call and its circle's call (its
+ *  own line: a name with its article, "The Daedra Lord calls its circle", never a name dropped into one shared line). */
 export const STAR_MASTERS = Object.freeze({
-  mother: Object.freeze({ id: 'mother', career: M.Sorcerer, female: true, name: () => t('starfall.master.mother', 'The Coven Mother'), call: () => t('starfall.master.mother.call', 'The Coven Mother comes for the star!') }),
-  flesh: Object.freeze({ id: 'flesh', career: M.FleshAtronach, female: false, name: () => getLocalizedEnemyName(M.FleshAtronach, enemyDisplayName(M.FleshAtronach)), call: () => t('starfall.master.flesh.call', 'What the coven made rises from the crater!') }),
-  lord: Object.freeze({ id: 'lord', career: M.DaedraLord, female: false, name: () => getLocalizedEnemyName(M.DaedraLord, enemyDisplayName(M.DaedraLord)), call: () => t('starfall.master.lord.call', 'A Daedra Lord answers the coven!') }),
-  seducer: Object.freeze({ id: 'seducer', career: M.DaedraSeducer, female: true, name: () => getLocalizedEnemyName(M.DaedraSeducer, enemyDisplayName(M.DaedraSeducer)), call: () => t('starfall.master.seducer.call', 'A Daedra Seducer comes for the star!') }),
-  lich: Object.freeze({ id: 'lich', career: M.AncientLich, female: false, name: () => getLocalizedEnemyName(M.AncientLich, enemyDisplayName(M.AncientLich)), call: () => t('starfall.master.lich.call', 'The chant wakes an Ancient Lich!') }),
+  mother: Object.freeze({ id: 'mother', career: M.Sorcerer, female: true, name: () => t('starfall.master.mother', 'The Coven Mother'), call: () => t('starfall.master.mother.call', 'The Coven Mother comes for the star!'), circle: () => t('starfall.master.mother.circle', 'The Coven Mother calls her circle. Break it!') }),
+  flesh: Object.freeze({ id: 'flesh', career: M.FleshAtronach, female: false, name: () => getLocalizedEnemyName(M.FleshAtronach, enemyDisplayName(M.FleshAtronach)), call: () => t('starfall.master.flesh.call', 'A Flesh Atronach rises from the crater!'), circle: () => t('starfall.master.flesh.circle', 'The Flesh Atronach calls its circle. Break it!') }),
+  lord: Object.freeze({ id: 'lord', career: M.DaedraLord, female: false, name: () => getLocalizedEnemyName(M.DaedraLord, enemyDisplayName(M.DaedraLord)), call: () => t('starfall.master.lord.call', 'A Daedra Lord answers the coven!'), circle: () => t('starfall.master.lord.circle', 'The Daedra Lord calls its circle. Break it!') }),
+  seducer: Object.freeze({ id: 'seducer', career: M.DaedraSeducer, female: true, name: () => getLocalizedEnemyName(M.DaedraSeducer, enemyDisplayName(M.DaedraSeducer)), call: () => t('starfall.master.seducer.call', 'Mephala sends a Daedra Seducer!'), circle: () => t('starfall.master.seducer.circle', 'The Daedra Seducer calls her circle. Break it!') }),
+  lich: Object.freeze({ id: 'lich', career: M.AncientLich, female: false, name: () => getLocalizedEnemyName(M.AncientLich, enemyDisplayName(M.AncientLich)), call: () => t('starfall.master.lich.call', 'The chant wakes an Ancient Lich!'), circle: () => t('starfall.master.lich.circle', 'The Ancient Lich calls its circle. Break it!') }),
 });
 /** Which master comes, by band and star (section 4): the Coven Mother; the second star's, in the second band, what the
  *  coven made; in the third, a Daedra Lord the demonologists bound, Mephala's own Seducer, an Ancient Lich the chant

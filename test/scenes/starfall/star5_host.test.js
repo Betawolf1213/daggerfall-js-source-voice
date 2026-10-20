@@ -287,7 +287,7 @@ test('STAR5 THE MASTER AND ITS CIRCLE: the ledger\'s master stood an elite by it
   w.frame();
   assert.ok(circle.every((f) => f.entity.worldBoss === undefined), 'its circle\'s witches no world boss');
   assert.equal(master.circleWard(), true, 'warded');
-  assert.ok(mids.includes(STAR_AT_TEXT.circle(M.name(), M.female)));
+  assert.ok(mids.includes(M.circle()));   // AUDIT STAR (W1): the master's own circle line, its name with its article
   for (const f of circle) { f.dead = true; f.corpse = true; }
   w.frame();
   assert.equal(master.circleWard(), false, 'broken');

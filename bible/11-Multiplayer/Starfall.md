@@ -65,7 +65,7 @@ Each piece says which it is, as `Elite-Gates.md` section 3 does.
 **The port's own:** that on Mephala's day the covens spin a rite to snare a star; that the stars come down bound in black
 thread; that the coven's summoned drink a star's light, and a star drunk dark leaves what drank it in Tamriel; that a
 star held until its thread burns sends them home; the masters' titles; Morwen of Glenmoril; the Starspun Weave;
-Starglass.
+Starfall Glass.
 
 ## The shape, end to end
 
@@ -83,7 +83,7 @@ Starglass.
                                                                                               │
    the account ◄── claim ◄── RECEIPT `j1` ◄── the cell mints, to each who struck and stood ◄──┘──► the hub ──► everyone
    service           │                                                                                 online hears it
-                     └──► Renown, silver, "Stars held"; on the device: gold, Starglass, a piece, the Starspun Weave
+                     └──► Renown, silver, "Stars held"; on the device: gold, Starfall Glass, a piece, the Starspun Weave
 ```
 
 ## 1. When - the festival's window, the night, the stars
@@ -395,11 +395,11 @@ character three quests' Renown (the raid's `renownRaidXp` measure, for a fight a
 registers. On `recorded` the client notes the act `star-held` (the questline's witness, section 7).
 
 **On the device**, rolled from the receipt's seed (`systems/starfall/starSpoils.js`, the spoils pool under keys of its
-own): gold (60 a level, a fifth either way); one to three pieces of **Starglass** (a trade good of the port's own, item
-template 576 - pale glass that still holds some of the star's light; it sells well); one piece Magic or better, known;
+own): gold (60 a level, a fifth either way); one to three pieces of **Starfall Glass** (a trade good of the port's own,
+item template 576 - pale glass that still holds some of the star's light; it sells well); one piece Magic or better, known;
 and a quarter of the time a piece of **the Starspun Weave** - the Starfall's own Aetheric set (Mephala's, `sigilSets.js`
 `starspun`, its powers through SET2's seams, `11-Multiplayer/Sigil-Sets.md` 6f). The Heart-Star doubles the gold and
-the Starglass, and always gives a Starspun piece.
+the glass, and always gives a Starspun piece.
 
 **As built (STAR7).** The service (`server-account/src/stars.js`, migration 0141, acct165) counts a (night, star,
 account) once in `stars_held`, at most 9 on the UTC day the star FELL (a receipt claimed a day late counts on its own
@@ -411,7 +411,7 @@ is theirs (`systems/starfall/starSpoils.js` - the raid's thanks' measure: the so
 ladder; the set piece LAST, the ladder's last pass and the technique pass after it), give them into the pack through the
 world's one door under the star's own pool keys (`star7.spoils`), keep the crash's record until a save holds them (its
 stand-up door and the realm save's hooks), adopt the Renown for the character that held the star alone, and say the
-silver's lines and cards (`Star held`). **Starglass** is template 576 (`systems/starfall/starglassRow.js`, the leaf the
+silver's lines and cards (`Star held`). **Starfall Glass** is template 576 (`systems/starfall/starglassRow.js`, the leaf the
 item law reads headless as it reads the Weir Key's - the account service loads none of the game; `starglass.js` its name
 and picture): miscellany, 0.1 kg, 400 gold, stacked, traded freely, its own painted sliver under pseudo-archive 38302
 (`world/starfall/starglassArt.js`). **The Starspun Weave** is nine Elven pieces at the Legendary band's floor (the raiding
@@ -422,6 +422,15 @@ on the same foe deals 60 to 140% more, the count each foe's own and falling away
 Veil** (6), a foe's blow that takes the wearer under 30% health hides them - Chameleon for two to four rounds - recovering
 in 240 to 120 s (never one of the Spire's death saves: it saves no life). The cards say *Stars held* (`enhancedAccount.js`,
 `profileWindow.js`).
+
+**AUDIT STAR (2026-10-20) - the glass's name.** STAR7 named it Starglass, the name the Eltheric Ocean's trade good already
+wore (`systems/naval/tradeGoods.js`, template 1340, a ship's cargo). The harbour's exchange counts a good by its template,
+so a captain carrying the star's glass read *have 0* beside a row of the same name. The star's is **Starfall Glass** now,
+wherever a player reads it (its row, its card, its lines); the code keeps its `starglass` names, and the sea's good keeps
+its own. No custom row's name may be another's (`test/systems/starfall/auditstar.test.js`, every home of a custom row
+imported), but two mods' own fruit rows (Climates & Calories' and Foraging's Apple and Orange, their data verbatim). Its
+card says what it is and what it is for (*Pale glass from a fallen star, still holding some of its light.* *Any merchant
+pays well for it.*), the Soul Cake's shape, in the classic info box and on the enhanced card.
 
 ## 7. The questline - The Thirteenth of Frostfall (AS BUILT, STAR8)
 
@@ -547,17 +556,20 @@ STAR6's words test holds every line.
 | the omen | everyone online in the region | *A star is falling toward Gothway Garden. The Daggerfall Witches are at their rite.* |
 | the fall | everyone online in the region | *A star has fallen near Gothway Garden.* |
 | the first wave | at the star | *The coven comes for the star!* |
-| waves 2, 3, 4 | at the star | *What the coven called comes out of the dark.* / *What the coven made comes for the star.* / *Mephala's own come for the star.* |
+| waves 2, 3, 4 | at the star | *What the coven called comes out of the dark.* / *What the coven made comes for the star.* / *Mephala's own join the fight.* |
 | a breath | at the star | *The star's light steadies.* |
 | a quarter of its light left | at the star | *The star is going dark!* |
-| the master | at the star | *The Coven Mother comes for the star!* (each master its own) |
-| its circle | at the star | *The Coven Mother calls her circle. Break it!* |
+| the master | at the star | *The Coven Mother comes for the star!* (each master its own: *A Flesh Atronach rises from the crater!*, *A Daedra Lord answers the coven!*, *Mephala sends a Daedra Seducer!*, *The chant wakes an Ancient Lich!*) |
+| its circle | at the star | *The Coven Mother calls her circle. Break it!* (each master its own: *The Daedra Lord calls its circle. Break it!*) |
 | the circle broken | at the star | *Her circle is broken.* |
 | held | at the star | *The star is held. Its thread burns away.* |
 | held | everyone online | *The star near Gothway Garden is held by Ann, Bran and 2 others.* |
 | lost | at the star | *The coven has taken the star.* |
 | dawn | at the star | *Dawn. The coven pulls the last light home.* |
-| spoils | the claimant | *Starglass from the fallen star is in your pack.* |
+| spoils | the claimant | *The star's spoils are in your pack.* |
+| the claim | the claimant | *Star recorded. Stars held: 3.* / a guest's *Star not recorded. Add a username within a week to keep it.* / *You have held enough stars for today.* |
+| the day's silver met | the claimant | *No silver for this star. Today's cap of 150 silver is reached.*, and the card's *Daily silver cap reached* |
+| the Veil | its wearer | *Mephala's Veil! Chameleon for 10 s.* |
 
 **The tracker** (`ui/starfall/starTracker.js`, a readout made once and updated, never rebuilt; Enhanced Plus's kit by
 role, and in every skin, as the gate's bar is - a fight is read whatever skin is worn): within `STAR_HUD_M` (400 m) of a
@@ -578,6 +590,37 @@ held map's cards ride the raids' reader and a violet four-pointed star of its ow
 compass marks since SERPENT1 and SD2c, and `drawHud` dropped both - neither ever showed on the enhanced strip. It
 forwards them now, and the star's beside them (`ui/hud/hud.js`). The star's colours are one leaf
 (`ui/starfall/starMapMark.js`), so the Timers sheet imports nothing that imports it.
+
+**AUDIT STAR (2026-10-20; the owner: text and UI "enhanced plus + not AI-like and overexplanatory").** The words and the
+plate read again, each finding fixed:
+- **Each master's circle is its own line** (`systems/starfall/starCoven.js` STAR_MASTERS `circle`, beside its `call`). One
+  shared line dropped a name in, and four of five read *Flesh Atronach calls its circle.*, no article.
+- **The fight's calls say their own things.** *comes for the star* stood five times; it stands three (the first wave, the
+  third, the Coven Mother).
+- **The claim says it in the gate's shape** (*Star recorded.*, *Star not recorded. Add a username within a week to keep
+  it.*), the day's bound in the festival's voice (*You have held enough stars for today.*, beside its *You have found enough
+  for today.*), and the spoils' line says the spoils, gold and a piece as well as the glass.
+- **The cap's line hands the language its number** (`{cap, number}` - it had handed every translation the English *150
+  silver*) and stops; the haul card's cap is a label through the text core (`ui/haulCards.js` haulCappedText), its colon
+  gloss gone.
+- **The Veil says its effect** (`systems/sigil/sigilSetPowers.js` VEIL_TEXT): *Chameleon for 10 s.*, never *The web hides
+  you.* Its spell's name and its chip's go through the text core, as Soul Harvest's do.
+- **The light bar is named** *Light* (the tracker's gauge; the key was translated and never shown).
+- **The plate stands in the column, not over it.** It had stood at 24% over the quest card and the party list, the same
+  right-upper column. It stands under the quest card now (`--dfquest-h`), publishes its own bottom as the card does
+  (`--dfstar-h`), and while it stands the party list steps under the lower of the two (`ui/starfall/starTracker.js`
+  STAR_TRACKER_CSS - the party list's own rule untouched). Under 1100 wide, where the compass, the foe's frame and the
+  master's bar (460, centred, from 58) share the width, it keeps its 24%, and under the bar itself while the bar stands
+  (176 on a phone, 148 on a short screen); a phone keeps 16% and its list at the foot, kept under the plate. 1000 wide and
+  under, the quest card steps aside while the master's bar stands over its corner, keeping its line, as it does for a
+  bout's bar. Measured in
+  Chromium over the real sheets (`tools/starHudProbe.mjs`), classic and Enhanced Plus, at 1920, 1280, 1024, a landscape
+  phone and a portrait one: nothing in the column covers another.
+- **The countdown is not read out every second**: the phase line alone is `aria-live`.
+- **The master's bar says *Warded* and *Felled* in the player's language** (`model.wardedText`, `fallenText`; the ward the
+  gate's half's own key).
+
+Pinned by `test/systems/starfall/auditstar.test.js` and the STAR6 words test's column law; `tools/mutants/auditstar.json`.
 
 **The sound** (`systems/starfall/starSounds.js`, DAGGER.SND's own records, pitched - no new clip): the omen's rising
 whine, the fall's roar, the impact's thunder at its distance, the star's hum near it, a blow on the star, the thread
@@ -688,7 +731,7 @@ Relay first (it signs), then the account service (its migration first), then the
 the frame, the receipt and the hub's door - world235 (world233 on the branch, renumbered past SD-SEA's world233 and
 DEX1's world234 at the merge with main, `STAR_RELAY_MIN` with it, so neither of those relays is ever sent a star's word;
 then one release with WITCH1's world235); the account service's moves to acct165 for the claim and the questline's
-witness (one release with WITCH1's acct165; the stars' migration 0141, after the festival's 0140). The item law's version does not move: Starglass and the Starspun Weave are new records, never
+witness (one release with WITCH1's acct165; the stars' migration 0141, after the festival's 0140). The item law's version does not move: Starfall Glass and the Starspun Weave are new records, never
 minted before this, so no finding a law made could be a finding to ask again (its leaf is read beside the registry from the first).
 
 ## 14. The slices
@@ -702,8 +745,9 @@ minted before this, so no finding a law made could be a finding to ask again (it
 | STAR4 | the world: the star's art, model and pass; the fall; the crater; the beacon; the sounds |
 | STAR5 | the defense on the client: the camp, the waves, the ward, the master, the circle, the words to the cell |
 | STAR6 | what a player sees: the tracker, the bar, the map, the compass, the timers, the words |
-| STAR7 | the rewards: the claim, the service, the spoils, Starglass, the Starspun Weave |
+| STAR7 | the rewards: the claim, the service, the spoils, Starglass (Starfall Glass since AUDIT STAR), the Starspun Weave |
 | STAR8 | the questline: The Thirteenth of Frostfall - four scripts and sheets, the `festival` group, `opens.event`, the `starfall` need on the festival's calendar, the `star-held` act, the `star`/`stars3` witnesses, Starwarden; `ql name` names a foe (`star8_frostfall`, `ql12_claim`) |
+| AUDIT STAR | the words, the plate, the glass's name and the Weave's powers read again (sections 6 and 8; `Sigil-Sets.md` 6f) |
 
 ## 15. Not done, and why
 

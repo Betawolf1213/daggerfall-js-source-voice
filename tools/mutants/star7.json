@@ -200,8 +200,8 @@
  {
   "name": "STAR7-silk-never-cut",
   "file": "src/systems/sigil/sigilSetPowers.js",
-  "old": "  if (n >= STRAND_HITS) _s.strands.delete(target);\n  else _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
-  "new": "  _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
+  "old": "  if (had >= STRAND_HITS - 1) _s.strands.delete(target);   // the held blow landed\n  else if (whole) _s.strands.set(target, { n: had + 1, until: now + STRAND_SECONDS });",
+  "new": "  if (whole) _s.strands.set(target, { n: had + 1, until: now + STRAND_SECONDS });",
   "tests": [
    "test/systems/starfall/star7_rewards.test.js"
   ]
@@ -209,8 +209,8 @@
  {
   "name": "STAR7-silk-forever",
   "file": "src/systems/sigil/sigilSetPowers.js",
-  "old": "else _s.strands.set(target, { n, until: now + STRAND_SECONDS });",
-  "new": "else _s.strands.set(target, { n, until: Infinity });",
+  "old": "else if (whole) _s.strands.set(target, { n: had + 1, until: now + STRAND_SECONDS });",
+  "new": "else if (whole) _s.strands.set(target, { n: had + 1, until: Infinity });",
   "tests": [
    "test/systems/starfall/star7_rewards.test.js"
   ]
@@ -218,8 +218,8 @@
  {
   "name": "STAR7-one-count-moved",
   "file": "src/systems/sigil/sigilSetPowers.js",
-  "old": "const now = _now(), n = strandsAt(target, now) + 1;",
-  "new": "const now = _now(), n = strandsAt(_s.strandFoe === target ? target : null, now) + 1;",
+  "old": "const now = _now(), had = strandsAt(target, now);",
+  "new": "const now = _now(), had = strandsAt(_s.strandFoe === target ? target : null, now);",
   "tests": [
    "test/systems/starfall/star7_rewards.test.js"
   ]

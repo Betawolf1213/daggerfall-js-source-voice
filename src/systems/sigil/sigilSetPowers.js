@@ -69,15 +69,21 @@
 //                              applying it
 //   (the Spire's recovery below)
 //
-// STAR7 (2026-10-20) - THE STARSPUN WEAVE, the Witches' Festival's own (bible/11-Multiplayer/Starfall.md section 6), through
-// the same seams:
+// WITCH1 (2026-10-20) - THE WYRD'S RAIMENT, the Witches' Festival's own (bible/06-Systems/Witches-Festival.md), through the
+// same seams: Wyrd-Sight the FOLD, Tallow-Ward the BLOW, Soul Harvest the KILL listener.
+//
+// STAR7 (2026-10-20) - THE STARSPUN WEAVE, the Starfall's own (bible/11-Multiplayer/Starfall.md section 6), through the same
+// seams:
 //   Spinner's Thread           the FOLD (poison resistance and Agility)
 //   Bound in Silk              the STRIKE listener lays a strand on the foe my weapon blow LANDED on (each foe its own
-//                              count, Constrict's law); the BLOW reads it - the blow after STRAND_HITS - 1 strands is the
-//                              one the web holds, and the landing of that blow cuts the count back to none
+//                              count, Constrict's law) - a blow that counts whole alone; the BLOW reads it - the blow
+//                              after STRAND_HITS - 1 strands is the one the web holds, and the landing of that blow cuts
+//                              the count back to none, whatever its weight (AUDIT STAR S1)
 //   Mephala's Veil             the HURT listener (Shed Skin's crossing, at its own line) casts Chameleon on me through
 //                              the door Eventide's shadow takes (playerDoor castOnPlayer); a timer of its own, never one
-//                              of the Spire's death saves (it hides; it saves no life)
+//                              of the Spire's death saves (it hides; it saves no life). A blow the full-health guard
+//                              leaves me standing at 1 from does wake it, as it wakes Shed Skin: the guard is no death
+//                              save, and hiding at 1 is what the Veil is for (AUDIT STAR S3)
 //
 //   THE SPIRE'S RECOVERY       in an Elite Breach (setSpireRecovery - an `eg:` room) every death save here recovers at the
 //                              next Redoubt taken (spireRedoubtTaken), never on its timer: Unbroken, The Hour Turns,
@@ -294,7 +300,7 @@ export function setBlow(weapon, damage, attacker, target, info) {
 export function setStrike(attacker, target, damage, weapon, info = null) {
   if (!(damage > 0) || !weapon || target?.warded) return;   // AUDIT FB1018f L3-3: a blow its referee turns whole landed nothing - no Discipline's return, no coil, no Cleave off it (setBlow's own AUDIT SETS L4)
   if (info?.blow !== false) coiled(attacker, target);   // TWO-HANDS (AUDIT 2): a stack a blow, from a blow that counts whole (formulas.js `blow`)
-  if (info?.blow !== false) stranded(attacker, target);   // STAR7: Bound in Silk - a strand a blow that counts whole
+  stranded(attacker, target, info?.blow !== false);   // STAR7: Bound in Silk - a strand a blow that counts whole; AUDIT STAR S1: the held blow's landing cuts the count whatever its weight
   if (info?.blow !== false) returned(attacker);   // EG15: the Discipline's return - a bow's blow too (a weapon blow); TWO-HANDS (AUDIT 2): a per-blow charge, so a blow that counts whole alone
   if (ranged(weapon)) return;
   const v = tierOf(attacker, 'ruhn', 1);
@@ -313,12 +319,17 @@ function coiled(attacker, target) {
 
 /** STAR7, BOUND IN SILK: a weapon blow of mine that LANDED on a foe lays a strand on it, its window renewed to
  *  STRAND_SECONDS - and the STRAND_HITS-th, the blow the web held (setBlow), cuts the count back to none. Each foe its
- *  own count (Constrict's law). Never on a player, and only while the tier is awake on me. */
-function stranded(attacker, target) {
+ *  own count (Constrict's law). Never on a player, and only while the tier is awake on me.
+ *  AUDIT STAR S1: `whole` - whether the blow counts whole (formulas.js `blow`, TWO-HANDS) - decides only whether a strand
+ *  is LAID. The held blow is the BLOW's whatever its weight (setBlow reads the strands alone), so its landing cuts the
+ *  count whatever its weight too: an off hand's part-blow on three strands took the bonus and left the three standing,
+ *  and the next blow took it again. */
+function stranded(attacker, target, whole = true) {
   if (!target || target.isPlayer || !tierOf(attacker, 'starspun', 1)) return;
-  const now = _now(), n = strandsAt(target, now) + 1;
-  if (n >= STRAND_HITS) _s.strands.delete(target);
-  else _s.strands.set(target, { n, until: now + STRAND_SECONDS });
+  const now = _now(), had = strandsAt(target, now);
+  if (had >= STRAND_HITS - 1) _s.strands.delete(target);   // the held blow landed
+  else if (whole) _s.strands.set(target, { n: had + 1, until: now + STRAND_SECONDS });
+  else return;   // a part-blow lays nothing
   _s.strandFoe = target;
 }
 
@@ -614,9 +625,18 @@ function shed(entity, before, after, saved = false) {
   sound('shed');
 }
 
+/** STAR7, MEPHALA'S VEIL'S WORDS, in the player's language, each read where it is said: its spell's name (the HUD's spell
+ *  list and the sheet show it), its chip's (Soul Harvest's is HARVEST_TEXT.name), its proc - the effect and how long, as
+ *  its card says (AUDIT STAR W6) - and its recovery's end. */
+export const VEIL_TEXT = Object.freeze({
+  spell: () => t('starfall.set.veilSpell', 'Mephala\'s Veil'),
+  chip: () => t('starfall.set.veilChip', 'Veil'),
+  proc: (/** @type {number} */ s) => t('starfall.set.veil', 'Mephala\'s Veil! Chameleon for {s} s.', { s }),
+  ready: () => t('starfall.set.veilReady', 'Mephala\'s Veil is ready again.'),
+});
 /** STAR7, MEPHALA'S VEIL: the Veil's Chameleon (classic 23,0 - it breaks when I strike) for `rounds` magic rounds,
  *  Eventide's own spell under its own name, its round MORE (AUDIT SET M5). */
-export const veilBundle = (rounds) => ({ ...eventideBundle(rounds), name: "Mephala's Veil" });
+export const veilBundle = (rounds) => ({ ...eventideBundle(rounds), name: VEIL_TEXT.spell() });
 /** STAR7, MEPHALA'S VEIL: a foe's blow that takes me under VEIL_BELOW of my health - from at or over it, still standing,
  *  never a killing blow a death save turned aside (Shed Skin's crossing and its guards) - while it is ready hides me in
  *  the web: Chameleon on me through the player's own door, and it must recover. Its own timer, in a breach as anywhere. */
@@ -633,7 +653,7 @@ function veil(entity, before, after, saved = false) {
   _s.veilReady = now + v.recover;
   _s.recovering.add('veil');
   door.castOnPlayer(veilBundle(v.rounds));
-  say(t('starfall.set.veil', 'Mephala\'s Veil! The web hides you.'));
+  say(VEIL_TEXT.proc(v.rounds * ROUND_SECONDS));   // AUDIT STAR (W6): the effect and how long, as the card says it
   sound('veil');
 }
 
@@ -853,7 +873,7 @@ const READY = Object.freeze({
   hour: { at: () => _s.hourReady, line: 'The Hour Turns is ready again.', set: 'numidium', tier: 2 },   // SD9d
   reprieve: { at: () => _s.reprieveReady, line: 'Battlemage\'s Reprieve is ready again.', set: 'panoply', tier: 2 },   // EG15
   harvest: { at: () => _s.harvestReady, get line() { return HARVEST_TEXT.ready(); }, set: 'wyrd', tier: 2 },   // WITCH1
-  veil: { at: () => _s.veilReady, get line() { return t('starfall.set.veilReady', 'Mephala\'s Veil is ready again.'); }, set: 'starspun', tier: 2 },   // STAR7: through the text core, read where it is said
+  veil: { at: () => _s.veilReady, get line() { return VEIL_TEXT.ready(); }, set: 'starspun', tier: 2 },   // STAR7: through the text core, read where it is said
 });
 export function setRound(entity) {
   if (!entity?.isPlayer || entity.peer || !_s.recovering.size) return;
@@ -909,6 +929,8 @@ export function setPowerStates(now = _now()) {
   };
 }
 
+/** AUDIT STAR S2: the tier every chip is - a set's 6-piece, its third (`tiers[2]`). */
+export const CHIP_TIER = 2;
 /** SET5: THE HUD'S CHIPS for the set powers now - each `{ key, set, name, text, state }`: a window running
  *  (`state` 'active' - the Rampage's stacks and seconds, Unbroken's halving, the Wrath's fury) or, while I wear the
  *  power awake, its recovery ('recovering'). Only a power whose 6-piece tier is awake on me shows (a stack or a window
@@ -950,7 +972,11 @@ export function setHudChips(entity, now = _now()) {
   // WITCH1: Soul Harvest's recovery, while it recovers
   if (t.get('wyrd')?.[2] && st.harvestRecoverLeft) out.push({ key: 'harvest', set: 'wyrd', name: HARVEST_TEXT.name(), text: time(st.harvestRecoverLeft), state: 'recovering' });
   // STAR7: Mephala's Veil's recovery, while it recovers
-  if (t.get('starspun')?.[2] && st.veilRecoverLeft) out.push({ key: 'veil', set: 'starspun', name: 'Veil', text: time(st.veilRecoverLeft), state: 'recovering' });
+  if (t.get('starspun')?.[2] && st.veilRecoverLeft) out.push({ key: 'veil', set: 'starspun', name: VEIL_TEXT.chip(), text: time(st.veilRecoverLeft), state: 'recovering' });
+  // AUDIT STAR S2: each chip carries its tier's index - every one above is its set's 6-piece tier (the law of this
+  // function) - so the HUD's card reads the tier by it, never by a name: 'Veil' and 'Reprieve' begin no tier's
+  // name, and a name in the player's language begins none of them
+  for (const c of out) c.tier = CHIP_TIER;
   return out;
 }
 

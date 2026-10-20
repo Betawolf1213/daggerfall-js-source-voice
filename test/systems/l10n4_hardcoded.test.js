@@ -513,6 +513,7 @@ const HARDCODED = {
   'src/systems/spell/spellEffects.js': 29,
   'src/systems/eliteGates/spireKit.js': 1,
   'src/systems/staleChunk.js': 6,
+  'src/systems/starfall/starglass.js': 1,   // AUDIT STAR I1: Starfall Glass's name - an item's canonical name is its row's, as the Soul Cake's and the Weir Key's
   'src/systems/startDungeon.js': 1,
   'src/systems/statusReadout.js': 2,
   'src/systems/steedCare.js': 16,
@@ -648,7 +649,7 @@ const HARDCODED = {
   'src/ui/guildServiceWindow.js': 1,
   'src/ui/guildServiceWindows.js': 8,
   'src/ui/hallOfRecords.js': 4,
-  'src/ui/haulCards.js': 15,
+  'src/ui/haulCards.js': 14,   // AUDIT STAR W2: the cap's card through the text core
   'src/ui/heldMap.js': 42,
   'src/ui/heraldryArt.js': 4,
   'src/ui/hitNumbers.js': 1,

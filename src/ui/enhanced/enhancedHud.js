@@ -1537,12 +1537,19 @@ function bindStatEnding(stat) {
 }
 
 let _setPowers = null;   // STATUS-TIPS: systems/sigil/sigilSetPowers.js, once a card has asked
-/** STATUS-TIPS: a set power's tier in its worn numbers ("Each kill adds 6% weapon damage..."), by the chip's name. */
-function setPowerLine(tile) {
+/** AUDIT STAR S2: a set power's tile's set and tier - the tier its chip carries (systems/sigil/sigilSetPowers.js
+ *  setHudChips), never found by the chip's name: 'Veil' and 'Reprieve' begin no tier's name, nor does any name
+ *  in the player's language. Null for a tile of no set (a technique's, a Legendary power's) or no tier. */
+export function setTileTier(tile) {
   const set = setById(tile?.set);
-  if (!set) return null;
-  const i = set.tiers.findIndex((x) => String(tile.name ?? '').startsWith(x.name));
-  if (i < 0) return null;
+  const i = tile?.tier;
+  return set && Number.isInteger(i) && i >= 0 && i < set.tiers.length ? { set, i } : null;
+}
+/** STATUS-TIPS: a set power's tier in its worn numbers ("Each kill adds 6% weapon damage..."), by the tier its chip carries. */
+function setPowerLine(tile) {
+  const at = setTileTier(tile);
+  if (!at) return null;
+  const { set, i } = at;
   // the set powers' module is read when a card first asks (a static edge from the HUD into it closes a ring through the
   // world clock at load - sigilSetPowers registers a round hook as it loads)
   if (!_setPowers) { import('../../systems/sigil/sigilSetPowers.js').then((m) => { _setPowers = m; }).catch(() => {}); return null; }

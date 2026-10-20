@@ -493,7 +493,7 @@ export function createStarfallHost(host) {
     // THE CIRCLE, SAID ON EVERY SCREEN: its calls by the master's health (the owner's, or its copy's), its breaking when the
     // last of a call falls
     const me = master?.entity;
-    if (me && !master.dead && me.maxHealth > 0) STAR_CIRCLE_AT.forEach((at, i) => { if (me.health / me.maxHealth <= at) sayAt(S, `circle${i}`, STAR_AT_TEXT.circle(M.name(), M.female)); });
+    if (me && !master.dead && me.maxHealth > 0) STAR_CIRCLE_AT.forEach((at, i) => { if (me.health / me.maxHealth <= at) sayAt(S, `circle${i}`, M.circle()); });
     if (circle > 0) S.circleSeen = circle;
     else if (S.circleSeen > 0) { S.circleSeen = 0; S.broken++; sayAt(S, `broken${S.broken}`, STAR_AT_TEXT.circleBroken(M.female)); playStarSound(audio, 'circle', S.heart); }
     S.circle = circle;

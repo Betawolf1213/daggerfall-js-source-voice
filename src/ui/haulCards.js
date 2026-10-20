@@ -32,8 +32,9 @@ import { lootRarityOn } from '../systems/loot/lootRarity.js';
 import { MARKS_COMBAT, MARKS_FAUCETS } from '../net/marksLaw.js';
 
 /** A strike the day's combat cap refused, as its muted card says it - the chat's own line keeps the whole of it.
- *  SERPENT-SET: the serpents strike under the same cap; EG-E1: and the Spire's Redoubts. */
-export const HAUL_CAPPED_TEXT = `No silver: you've reached today's ${MARKS_COMBAT.perDay} for breaches, towns, serpents, Redoubts and stars`;   // STAR7: the held stars strike under the same cap
+ *  SERPENT-SET: the serpents strike under the same cap; EG-E1: and the Spire's Redoubts; STAR7: and the held stars.
+ *  AUDIT STAR (W2): a label, through the text core, read when the card is made - the chat's line names the cap. */
+export const haulCappedText = () => t('haul.capped', 'Daily silver cap reached');
 /** A gather card holds a little longer than a pickup's (ui/pickupFeed.js PICKUP_FEED_HOLD_MS) - it says more. */
 export const HAUL_HOLD_MS = 3200;
 /** A Motherlode's card stands longer still - the day's one. */
@@ -183,7 +184,7 @@ export const CLAIM_SOURCE = Object.freeze({ gate: 'Breach closed', raid: 'Town d
 export function claimHauls(data, kind = 'gate') {
   if (!data || typeof data !== 'object') return [];
   const out = [];
-  const strike = silverHaul(data.marks, { source: CLAIM_SOURCE[kind] ?? CLAIM_SOURCE.gate, combat: true, cappedText: HAUL_CAPPED_TEXT });
+  const strike = silverHaul(data.marks, { source: CLAIM_SOURCE[kind] ?? CLAIM_SOURCE.gate, combat: true, cappedText: haulCappedText() });
   if (strike) out.push(strike);
   const deed = data.deed;
   if (deed && Number.isSafeInteger(deed.struck) && deed.struck > 0) {

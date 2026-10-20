@@ -2,7 +2,8 @@
 // STAR6 (2026-10-20): THE MASTER'S BAR - the gate's boss bar (ui/gate/gateBossBar.js) in the star's colours (its
 // `star` theme): the master's name, *Master of the Fallen Star* (the Heart-Star's: *Heart of the Web*), its health, its
 // circle's calls as the bar's two marks (net/starfall/starfallLaw.js STAR_CIRCLE_AT), *Warded* and how many of its circle
-// stand while they do, and the defenders at the star. Design: bible/11-Multiplayer/Starfall.md section 8.
+// stand while they do, the defenders at the star, and *Felled* - its words its own, through the text core (AUDIT STAR U3).
+// Design: bible/11-Multiplayer/Starfall.md section 8.
 //
 // Pure: a model the bar draws. Not a DFU member. Ledger A (STARFALL).
 import { STAR_CIRCLE_AT } from '../../net/starfall/starfallLaw.js';
@@ -29,6 +30,7 @@ export function starBarModel(b, now) {
     name: b.name, title: STAR_CARD_TEXT.master(!!b.heart), epithet: '', epithetColor: null, marksView: null, trials: '',
     frac, marks: [...STAR_CIRCLE_AT], spent: STAR_CIRCLE_AT.map((at) => frac < at),
     warded: circle > 0, fallen: fell, callout: null,
+    wardedText: STAR_CARD_TEXT.warded(), fallenText: STAR_CARD_TEXT.felled(),   // AUDIT STAR U3: the bar's words in the player's language
     wrath: null, wrathNear: false,
     fighters: b.defenders | 0, fightersLine: STAR_CARD_TEXT.defenders(b.defenders | 0),
     host: circle > 0 ? STAR_CARD_TEXT.circle(circle, !!b.her) : null,

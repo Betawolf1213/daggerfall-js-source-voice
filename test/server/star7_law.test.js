@@ -12,9 +12,10 @@ import { seatRealm, freshSave } from '../realmSeat.mjs';
 import { STARGLASS_LAW_ROW } from '../../src/systems/starfall/starglassRow.js';
 import { STARSPUN_SET_PIECES, mintAetheric } from '../../src/systems/aetheric.js';
 
-/** A Starglass stack as the client mints it (systems/starfall/starglass.js starglass) - written out, since this process must
- *  not import its home: the service never does, and the registry would answer for the row. */
-const glass = (n) => ({ group: 'UselessItems2', templateIndex: STARGLASS_LAW_ROW.index, name: 'Starglass', value: STARGLASS_LAW_ROW.basePrice, maxCondition: 1000, currentCondition: 1000, stackCount: n });
+/** A Starfall Glass stack as the client mints it (systems/starfall/starglass.js starglass) - written out, since this process
+ *  must not import its home: the service never does, and the registry would answer for the row. AUDIT STAR I1: its name the
+ *  star's own now (the sea's good is Starglass). */
+const glass = (n) => ({ group: 'UselessItems2', templateIndex: STARGLASS_LAW_ROW.index, name: 'Starfall Glass', value: STARGLASS_LAW_ROW.basePrice, maxCondition: 1000, currentCondition: 1000, stackCount: n });
 
 test('STAR7 THE LAW ON THE SERVICE: a realm checkpoint carrying Starglass and a Starspun piece holds nothing and finds nothing, as the service loads the law (mutants: the leaf unread)', async () => {
   const now = T0;
