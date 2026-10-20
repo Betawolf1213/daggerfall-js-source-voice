@@ -44,6 +44,7 @@ import { createGateCaptive } from './gateCaptive.js';   // WB14f: the Captive - 
 import { hasPortent } from '../../net/gate/gateMods.js';   // WB14d: a Sundering night's own cards
 import { titheList } from '../../systems/gate/gateSpoils.js';   // WB14e: a Tithe-Imp's tithe, off its seed
 import { TITHE_GOLD } from '../../world/gate/gateBoss.js';   // WB14e: its gold
+import { cueTargetPlaces } from '../../world/gate/gateBoss.js';   // GATE-MIX: a cue at its targets, thinned
 import { t } from '../../systems/textManager.js';   // WB14d: its words in the player's language (L10N4)
 import { damageChartModel, drawGateDamageChart } from '../../ui/gate/gateDamageChart.js';   // GATE-UX: every challenger's damage, ranked, once he has fallen
 import { readReceipt } from '../../net/gate/gateReceipt.js';
@@ -526,11 +527,35 @@ export function createGateCourt({
   /** The court's fire - the gate's own pass (made the first time a portal stands) on the arch's opening, and its turn. */
   function firePass(dt) {
     profile ??= gateArchProfile();   // the arch's opening - the fire's shape and the step's bound, with or without a GL
-    if (!portalTried && gl) {
-      portalTried = true;
-      try { portalPass = new GatePassRenderer(gl, profile); } catch (e) { console.warn('[gate] the portal would not build', e?.message ?? e); portalPass = null; }
-    }
+    makePortalPass();
     spin = (spin + gateSpinRate(1) * Math.max(0, dt)) % 1;
+  }
+  function makePortalPass() {
+    if (portalTried || !gl) return;
+    portalTried = true;
+    profile ??= gateArchProfile();
+    try { portalPass = new GatePassRenderer(gl, profile); } catch (e) { console.warn('[gate] the portal would not build', e?.message ?? e); portalPass = null; }
+  }
+  function makeCrystalPass() {
+    if (crystalTried || !gl) return;
+    crystalTried = true;
+    try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[gate] the crystals would not build', e?.message ?? e); crystalPass = null; }
+  }
+  function makeFxPass() {
+    if (fxTried || !gl) return;
+    fxTried = true;
+    try { fxPass = new GateFxRenderer(gl); } catch (e) { console.warn('[gate] his effects would not build', e?.message ?? e); fxPass = null; }
+  }
+  /** GATE-MIX (2026-10-20, the owner: "the game hitches"): THE PASSES MADE BEFORE THEY ARE WANTED. His landings' sparks,
+   *  the Reckoning's crystals and the way home's fire were each compiled in the frame that first drew them - the first
+   *  landing of the fight, the first Reckoning, his fall - and a compile is a frame's hitch. Now each is made as I stand
+   *  in the court, one a frame (the step's veil is over the screen for the first of them), so the fight never waits on
+   *  one. A pass that would not build is tried once, as before. */
+  function warmPasses() {
+    if (!gl || !feet()) return;
+    if (!fxTried) makeFxPass();
+    else if (!crystalTried) makeCrystalPass();
+    else if (!portalTried) makePortalPass();
   }
 
   /** GATE-FBX (2026-10-09, Mac: "remove the portal that players walk through on the inside and just use a portal that
@@ -561,7 +586,7 @@ export function createGateCourt({
   function sound(cue, s, t, atk, point = null) {
     if (!cue || !audio) return;
     const where = cue.at === 'point' && point ? [point]   // WB9c: a crystal's own place (the dungeon's frame)
-      : cue.at === 'targets' && atk?.tg?.length ? atk.tg.map((p) => courtToDungeon(p[0], 0.5, p[1]))
+      : cue.at === 'targets' && atk?.tg?.length ? cueTargetPlaces(atk.tg.map((p) => courtToDungeon(p[0], 0.5, p[1])), audio.listenerPosition?.())   // GATE-MIX: nearest my ear, never two on one spot
       : [(() => { const [x, z] = bossPlace(s, t); return courtToDungeon(x, 2.5, z); })()];
     const opts = { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch };
     for (const p of where) {
@@ -1018,6 +1043,7 @@ export function createGateCourt({
       blowMet.clear();   // AUDIT WB11 W3: a frame ends my blow
       const s = link.state(), t = now();
       courtWatch(s, t);   // AUDIT GATE-FBX C1/C4: my arrival and the fight's silence, state or none
+      warmPasses();   // GATE-MIX: his passes compiled as I come in, not at his first landing
       if (!s || s.day === null) { if (day !== null) this.leave(); return; }
       if (s.day !== day) reset(s.day);
       // AUDIT GATE-FBX C5: the court's one door first - before any of the fight's own steps, whose throw (swallowed by
@@ -1248,7 +1274,7 @@ export function createGateCourt({
     drawPass(proj, view, eye, seconds, fog = null) {
       let drew = false;
       if (_crystalDraw.length) {   // WB9c: the crystals first - opaque, their depth written, so his ground's glow sits behind them
-        if (!crystalTried && gl) { crystalTried = true; try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[gate] the crystals would not build', e?.message ?? e); crystalPass = null; } }
+        makeCrystalPass();   // GATE-MIX: made as I came in (warmPasses) - here only if it was not
         if (crystalPass) { crystalPass.draw(_crystalDraw, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
       if (pass) {
@@ -1260,7 +1286,7 @@ export function createGateCourt({
         for (const cs of captive.shapes()) { pass.draw(cs, proj, view, eye, seconds, fog, COURT_CENTRE, _walked, _floors); drew = true; }   // WB14f: the Captive's chains
       }
       if (_fxLive.length || meteorNow) {   // WB9e: his blows landing - the sparks and the meteor's fall, over the telegraph
-        if (!fxTried && gl) { fxTried = true; try { fxPass = new GateFxRenderer(gl); } catch (e) { console.warn('[gate] his effects would not build', e?.message ?? e); fxPass = null; } }
+        makeFxPass();   // GATE-MIX: made as I came in (warmPasses) - here only if it was not
         if (fxPass) { fxPass.draw(_fxLive, meteorNow, proj, view, eye, seconds, fog); drew = drew || fxPass.bursts > 0 || fxPass.meteors > 0; }
       }
       _fires.length = 0;

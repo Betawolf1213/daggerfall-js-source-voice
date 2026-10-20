@@ -2778,6 +2778,37 @@ dead - AUDIT FB1019f's three among them: the ward read off the record alone, a r
 re-aimed by content (all dead): `fb1019f_standinwhole.json`'s the-claim-clipped and the-count-takes, `egz_vestiges.json`'s
 EGZR-stacks-any-body.
 
+## 28. Heard without the clip, drawn without the wait (GATE-MIX, 2026-10-20)
+
+The owner: "in oblivion gates ... while performance is overall good, the game hitches, audio becomes super loud and even
+distorts". Two causes, landing in the same frames - his big landings:
+
+- **A cue at its targets, thinned** (`gateBoss.js:"export function cueTargetPlaces(points, ear) {"`). A cue `at: 'targets'`
+  (the Hellfire's release and landing, the Meteor's, the Brand's, the Torment's) played one copy at every target: a
+  Hellfire on five players was five of the fire's full-scale cast in one frame, ten in his third phase (its second volley
+  within 3 m of the first), and over a reach of 40 to 80 m with a linear fall every copy near a group came in at nearly
+  its whole level. Now the court's `sound` plays the target nearest my ear first, then the next standing
+  CUE_TARGET_APART_M (10 m) from every one kept, at most CUE_TARGET_COPIES (2): where it lands on me is still heard at my
+  feet, a fall across the court still from across it, and no two copies of one clip stand on one spot. What was left of
+  the overload - one cue at 2.2, a landing and its quake together, the pressed score under them - the limiter at the
+  speakers now holds (`08-Audio/Audio.md`, GATE-MIX). No cue's level moved.
+- **The passes made before they are wanted** (`gateCourt.js:"  function warmPasses() {"`). His landings' sparks and the
+  meteor (`render/gate/gateFx.js` GateFxRenderer), the Reckoning's crystals (`render/courtCrystals.js`) and the way home's
+  fire (`render/gate/gatePass.js` GatePassRenderer) were each compiled in the frame that first drew them - the first
+  landing of the fight, the first Reckoning, his fall - two programs each, and a compile is a frame's hitch. Now each is
+  made as I stand in the court, one pass a frame (the step's veil is over the screen for the first of them); the draws
+  still make one that was not, and a pass that would not build is tried once, as before.
+
+Left for later, named: a body's frames (his host's, his, his Flame's) are still decoded and uploaded the first time each
+is drawn (`gateHost.js` draw, `scenes/dataPipeline.js` uploadRecordFrame) and a host kind's archive loads with its first
+wave; a landing's burst light takes a shadow slot by distance alone (`render/shadowPass.js` pickShadowCasters) and rebuilds
+a cube under Enhanced Lighting's shadows; and a hit's splash decodes its frames again on every hit (`hitEffects.js`, ahead
+of the renderer's cache) - each an upload-path or shadow-path change wider than the court, measured by none of this.
+Pins: `test/net/gate/gatemix_targets.test.js` (3: the thinning's law; a phase-three Hellfire on five players heard twice
+at most, at my feet first; the passes compiled on arrival, one a frame, and nothing compiled at his first landing). PIN
+MOVED: `wb4_gate_boss` (its Hellfire's two marks now stand 12 m apart - the 8 m it had are one copy now).
+`tools/mutants/gatemix.json` (17, all dead, with the limiter's).
+
 ## Shipped
 
 **WB1 (2026-09-25) - the omen.** `net/gate/gateLaw.js` (the schedule, the room's key and window, the rolls, the boss table,
