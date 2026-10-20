@@ -498,3 +498,11 @@ names; 24 mutant records re-aimed by the tool, every one dead. AUDIT OW-REVISITE
 chase hearing past three lines, so it moved out too - `src/scenes/regionChaseHost.js` (`createRegionChaseHearing`), the
 host wiring it in one statement; with the forecast's new inputs and the bands' and raiders' preference for a fresh cell
 word, `bootWorld` 36,205 of its 36,233 (36,209 with main merged in the same day).
+
+AUDIT DEX (2026-10-20, `01-Overview/audits/Audit-DEX.md` D11): DEX5 had put the Troll corpse prefab's reach - the rise,
+the ash mint and its batch bookkeeping, the `cs` hit's composition - into `buildDungeonContext` (+66 logical lines) and
+`createExteriorFoes` (+65), under their ceilings but against this page's rule (the host gains the wiring, not the
+feature). It is `src/scenes/corpsePrefabHost.js` now (`createDungeonCorpsePrefabs(h)`, `createStreetCorpsePrefabs(h)`),
+each host handing it its doors - its pools, its renderer, its spawn, its hit sender - and nothing more
+(`dex5_audit.test.js` holds the hosts to the wiring). C1 added one statement to `bootWorld`'s jump core, where the host's
+own ResetState already stood (PlayerGPS's flag beside the host's): within the room the ceiling leaves for a fix.

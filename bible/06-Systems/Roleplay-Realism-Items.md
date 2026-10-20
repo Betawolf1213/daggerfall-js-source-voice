@@ -216,6 +216,19 @@ Read against the C#:
   the class's preference, nothing for a class the switch does not
   name); the answer's `poisonClass` is the class the poison roll asks
   (`04-Characters/Enemy-Expansion.md` section 12).
+- **AUDIT DEX E2/E3 (2026-10-20), this arm's own, found through the copy.**
+  The kit filled the hands in order and took nothing off, so a Barbarian,
+  a Knight, a Monk or the City Watch with a two-hander and a shield swung
+  both: every piece is laid on a stand-in equip table through EquipItem's
+  rules (ItemEquipTable.cs:94-154 - GetEquipSlot's slot, then what
+  `systems/equip.js` wearLeavers takes off), and `worn` and the hands are
+  that table's; what comes off stays in `items`. A foe left with no
+  right-hand weapon fights bare-handed and rolls no poison (DFU's
+  `mainWeapon != null`). And ItemHelper's arm rolls a monster's poison
+  inside itself (ItemHelper.cs:1460-1474), before ConvertOrcish
+  (:528-529); the port had drawn ConvertOrcish's Dice100 first - the
+  monster branch now rolls it before, and answers `poisonRolled` so the
+  spawn does not roll again.
 - **The starting kit** (:759-810) sets AssignStartingGear aside whole:
   no class weapon, no 100 gold; `Range(5, Luck)` gold, the iron dagger,
   the ebony dagger a biography answer gave at 20%, six torches and

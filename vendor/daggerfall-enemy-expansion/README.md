@@ -87,14 +87,19 @@ Fifty new enemies and a new law for where enemies come from:
   `c187c972787d8ca3f5b77aa127694e72f4eb2705`, "Updated to 1.3.4", 2024-02-23;
   no script has changed since). The bundle carries the DLL and no source:
   every string literal of the scripts is in the DLL's user-string heap and
-  every member they declare is in its metadata
-  (`test/systems/enemyExpansion/dex0_record.test.js` proves both against the DLL), so the
-  repository's source at that commit is taken as the shipped 1.3.4. **The
+  every member they declare is in its metadata, and every integer a method
+  names is one its IL loads (`test/systems/enemyExpansion/dex0_record.test.js`
+  proves all three against the DLL and the dump below, and each script's git
+  blob id against the commit's tree), so the repository's source at that
+  commit is taken as the shipped 1.3.4. **The
   bundle's tables are not the repository's at any commit**: its
   `DefaultTableReplacement.tdb.csv` is `d28793f`'s with two lines changed
   (the Rainforest's and the Haunted Woodlands' day tables trade the Archer and
   Spellsword Riders for classic classes) and seven lines from `c187c97`'s -
   the build was made from a working copy. What shipped is what is carried.
+- `il/Daggerfall_Enemy_Expansion.il.txt` - the DLL's every method body as CIL,
+  written by `python3 tools/ilDump.py "vendor/daggerfall-enemy-expansion/Daggerfall Enemy Expansion.dll"`
+  (AUDIT DEX A4): what the record's constants are held to.
 - `derived.json`, `daggerfall-enemy-expansion.files.json`,
   `repainted.files.json` - written by `tools/dexExtract.mjs` (below).
 

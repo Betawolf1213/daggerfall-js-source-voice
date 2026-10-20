@@ -13,22 +13,27 @@ page is the port's.
 
 The bundle carries the compiled `Daggerfall Enemy Expansion.dll` and no C#; the authors publish their source
 (`github.com/SquidKamer/DaggerfallBestiaryProject`), and the commit "Updated to 1.3.4" (`c187c97`, 2024-02-23) is the
-shipped assembly - every string literal of its eight scripts is in the DLL's user-string heap, every member they
-declare in its metadata, and no script changed after it (`test/systems/enemyExpansion/dex0_record.test.js`). The
+shipped assembly - every string literal of its eight scripts is in the DLL's user-string heap, exactly, every member
+they declare in its metadata, and every integer they name in the IL of the method that names it (AUDIT DEX A4: the
+literals had been held by substring, and nothing read a constant or a branch). The eight carried are that commit's
+blob for blob, so no line of them moved after it (`test/systems/enemyExpansion/dex0_record.test.js`, over the DLL and
+its IL dump, `vendor/daggerfall-enemy-expansion/il/`). The
 TABLES are another matter: the bundle's `DefaultTableReplacement.tdb.csv` is no commit's (`d28793f`'s with two rows
 changed - a working copy was built), so the port reads the bundle's, verbatim.
 
 The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 
-- **Start** (:172-197): a text provider for the custom names, then the five tables parsed - the careers
+- **Start** (:172-197): a text provider for the custom names, then the six tables parsed - the careers
   (`.cdb.csv`, :326-589: a DFCareer per row, its eight stats, HP per level, six tolerances and four attack
   modifiers, a row naming a classic career replacing its fields), the enemies (`.mdb.csv`, :663-1345: a MobileEnemy
   per row appended to `EnemyBasics.Enemies`, or a classic one's fields replaced; a quest foe name for each new one),
-  the encounter tables (`.tdb.csv`, :1633-1726) and the spellbook tables (:1884-1954) - and five hooks:
-  `EnemyEntity.OnLootSpawned` (spells, forced gender, the ghost shader), FormulaHelper's `OnMonsterHit`,
-  `CalculateWeaponAttackDamage`, `GetEnemyEntityEnemyGroup` and `GetEnemyEntityLanguageSkill`, the dungeon and
-  climate events that pick a table, `EnemyDeath.OnEnemyDeath` (the Troll's corpse) and
-  `EnemyEntity.AssignEnemyStartingEquipment` (DEX_RRICompat's).
+  the encounter tables (`.tdb.csv`, :1633-1726) and the spellbook tables (:1884-1954) - and its hooks:
+  `EnemyEntity.OnLootSpawned` (spells, forced gender, the ghost shader), four FormulaHelper overrides (`OnMonsterHit`,
+  `CalculateWeaponAttackDamage`, `GetEnemyEntityEnemyGroup`, `GetEnemyEntityLanguageSkill`), the dungeon's
+  transition and PlayerGPS's three events that pick a table, `EnemyDeath.OnEnemyDeath` (the Troll's corpse) and the
+  `EnemyEntity.AssignEnemyEquipment` delegate (EnemyEntity.cs:133), which it sets to its own AssignEnemyStartingEquipment
+  - DEX_RRICompat's arm or ItemHelper's (:2121-2131). (AUDIT DEX A11/E9: this said "five hooks" and named the mod's
+  method as DFU's delegate.)
 - **The first Update** (:210-269): a `Default<type>` table for each of the 19 dungeon types, the water (19) and the 18
   climate tables (20-37), built from DFU's own `RandomEncounters.EncounterTables` unless the mod's tables named one.
 - **A dungeon's table** (:1728-1753, :1768-1782): on the transition into a dungeon, one of the tables for its type,
@@ -43,10 +48,16 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 - **The art** (`vendor/daggerfall-enemy-expansion/README.md`, Where the art is): every one of the 6,358 pictures the
   tables draw was measured against every TEXTURE record (`tools/dexExtract.mjs`). 858 ARE Daggerfall's records - the
   five unused rider sets, TEXTURE.491-495, and the Will-o'-wisp, TEXTURE.379 - and are rebuilt from the player's own
-  files, never carried. 714 are Daggerfall's sprites under the authors' paint, and Mac approved them on
+  files, never carried. 774 are Daggerfall's sprites under the authors' paint (AUDIT DEX B1, 2026-10-20: 714 until the
+  Royal Knight's sixty, 1505 - TEXTURE.482's Barbarian in the authors' armour, IoU 0.63-0.89 on every one - moved over
+  from the authors' own directory, where the colour measure and the hand list had let them pass), and Mac approved them on
   **Port-Doctrine's fourth exception** ("Approve 3rd exception" - asked as the third, numbered the fourth past LAYERED-GEAR's at the merge, then "Yes, cover all of them" once the measure found
   four more than the first count). The 1995 demo's four (Bat, Gargoyle, Nymph, Skeleton) are the mod's own art: the
-  doctrine names the retail ARENA2 ("Mod art, ship it").
+  doctrine names the retail ARENA2 ("Mod art, ship it"). Since AUDIT DEX B1 the extractor measures every picture's
+  outline too (the silhouette guard: its alpha mask against every TEXTURE frame's, IoU 0.6 a picture, a quarter of an
+  archive) and refuses an archive that follows Daggerfall's outlines unless the exception carries it
+  (`REPAINTED_ARCHIVES`) or this decision allows it (`SILHOUETTE_ALLOWED`: the demo's Bat, 1603, whose outline is the
+  retail bat's, TEXTURE.289, on 24 of its 45 pictures) - and a listed archive the measure does not find.
 - **The class skins** (SKIN2): the same measure, run on `vendor/class-skins/`, found most of its sheets to be
   Daggerfall's class sprites at their own size, not drawings at twice it - "Bring under 3rd exception": the
   exception names its directory too, and its doctrine row and README say what it is.
@@ -56,14 +67,15 @@ The mod in DFU's terms (`BestiaryMod.cs`, cited below by line):
 
 | Slice | What | State |
 |---|---|---|
-| DEX0 | the record: the vendored files, the art in its three places, the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
+| DEX0 | the record: the vendored files, the art in its three places (the Royal Knight among the repaints, and the extractor's silhouette guard - AUDIT DEX B1), the C# held to the DLL blob for blob and constant for constant (AUDIT DEX A4), the doctrine's fourth exception, the registry row, the credit, the switch (on), the online decision (the room's, whole: Meaner Monsters' reading) | SHIPPED |
 | DEX1 | the enemy registry: rows past the classic 0-42 and 128-146, the careers, the classic replacements, the names, the quest foes | SHIPPED (section 5) |
-| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too) - section 6 | SHIPPED (the glow's light routed, Ledger C) |
+| DEX2 | the sprites on the texture door: a non-classic archive's real frame counts, the xml scales, the emission maps, NoShadow and the ghost shader by behaviour (DFU's own rows too); its pictures on the GPU alone once uploaded, as DFU imports them; the Overworld's bands dressed too - section 6 | SHIPPED (the glow's light routed, Ledger C) |
 | DEX3 | the encounter tables in all four hosts: the dungeon's seeded choice, the water's, the climates' - on a door every reader asks, the climates' on PlayerGPS's events | SHIPPED (section 7) |
 | DEX4 | combat: the on-hit effects, spells 500-503 and the spellbook tables, the skeletal rule, groups and languages, forced gender, ranged | SHIPPED - DEX4a (section 8: the spells, the spellbooks), DEX4b (section 9: the hit's effects, the skeletal rule, groups and languages, forced gender); ranged rode DEX1's rows |
-| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world230 grown in place) |
+| DEX5 | the Troll's corpse: up again after ten seconds unless a spell's missile burns it, saved with the game, the cheat | SHIPPED - DEX5a (section 11: the prefab door, the rise, the burn, the save, the cheat), DEX5b (section 11, Online: a body gone on the record, a copy's missile to the runner; relay world231 grown in place) |
 | DEX6 | DEX_RRICompat: the new classes equipped by their tables under Roleplay & Realism: Items | SHIPPED (section 12: the class by its table, the armor by the career, the unknown's longblade, the Assassin's poison) |
-| DEX7 | the Morrowind bodies (section 4) | SHIPPED (section 10) |
+| DEX7 | the Morrowind bodies (section 4); a NoShadow row's body casts none (AUDIT DEX B2) | SHIPPED (section 10) |
+| AUDIT DEX | the arc's cold audit (2026-10-20): five lanes over the frozen snapshot `d8db6d444`, every finding proven, then fixed and pinned with a mutant or recorded - `bible/01-Overview/audits/Audit-DEX.md`; its corrections are marked AUDIT DEX in each section | DONE |
 
 ## 4. Morrowind
 
@@ -98,10 +110,17 @@ port's enemy code that any mod could use, and the mod's reading through them.
   MonoBehaviour's Start (this one's) - the order the dungeon reads.
 - **The class test is DFU's.** The sites across the hosts, the revenants, the elites, the wild, the loot, the quest
   foe and the effects that wrote `mobileType >= 128` (or `< 128`, or `<= 146`) for "a class". DFU's test is
-  `EnemyBasics.IsClassEnemyId`, the 128 bit, which is why the mod numbers its monsters 256-290 and its classes 384-398;
-  read as `>= 128`, every one of its monsters would have been a person. Each site now asks `isClassEnemyId`,
-  `enemyEntityType` or `enemyCareerIndex`; the two leaves that import nothing (`ai/blowShapes.js`,
-  `systems/revenant/revenantPersonality.js`) write the bit and say so.
+  `DaggerfallEntity.IsClassEnemyId` (DaggerfallEntity.cs:974-977), the 128 bit, which is why the mod numbers its
+  monsters 256-290 and its classes 384-398; read as `>= 128`, every one of its monsters would have been a person. Each
+  site a mod's id reaches now asks `isClassEnemyId`, `enemyEntityType` or `enemyCareerIndex`; the two leaves that import
+  nothing (`ai/blowShapes.js`, `systems/revenant/revenantPersonality.js`) write the bit and say so. AUDIT DEX: the
+  revenant's blow class (`revenantFeud.js` adaptBlowClass) was a site the sweep missed - a mod's monster's bare blow read
+  as a person's hands to a revenant's adaptation (A2) - and three stay as they are because no mod id reaches them
+  (`arenaFighters.js`, King's Gambit's vanilla rows, `revenantGear.js`'s career index, the same for 384-398). One site
+  was never DFU's test: Ocean Holes' abyss asks its OWN range, `EntityType == EnemyClass` and an ID of 128-146
+  (`scenes/oceanHolesAbyss.js` processAbyssEnemy, read off its IL), and DEX1 had widened it to the bit - so the abyss
+  took every one of the mod's classes, always, for an undead marked WasHumanoid; it is the mod's range again (C4), and
+  the mod's classes are monsters to it.
 - **The vanilla rows by name** (`enemyBasics.js` VANILLA_ENEMY_BASICS): the table as DFU ships it, copied before any
   mod writes a row and frozen. King's Gambit's roster reads it (`net/kingsGambit.js`): the port DECIDED its roster is
   the vanilla rows, one for every client and the relay (`11-Multiplayer/Kings-Gambit.md`), and the mod writes sixteen
@@ -113,11 +132,13 @@ port's enemy code that any mod could use, and the mod's reading through them.
   had its Dragonling (146 health, the bound 60) and its Werewolf (level 9, the bound 8) refused as impossible. A row's
   third number is the level the progression share reads (`foeShare(basics.level)`, the table's row - vanilla or the
   mod's), so the relay reads no table at all and its bound is the same on every machine.
-- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world229 - world225 on its branch): a streamed foe's kind was bounded at 255, which refused
+- **The wire** (`net/wire.js` FOE_TYPE_MAX, relay world231 - world225 on its branch, renumbered past main's world225-world230 at two merges; AUDIT DEX A8/E6: this said world229): a streamed foe's kind was bounded at 255, which refused
   every record of a mod's foe whole; it is MobileTypes' own u16. A peer has the rows whatever its switch (below).
 
 **The reading** (`systems/enemyExpansion/dexTables.js`, line for line as the C# reads, every column, default, `continue`
-and `[DEX]` message): 43 careers of the mod's own beside DFU's 62, the fifty enemies, the classic edits, the spellbook
+and `[DEX]` message - a replacement career written in place as its line reads, so a throw keeps what it wrote, and a
+cell past a short line a throw, not an empty cell: AUDIT DEX A10, where the port had held a row's edits to its end):
+43 careers of the mod's own beside DFU's 62, the fifty enemies, the classic edits, the spellbook
 tables kept raw for DEX4, and a quest foe name for each new enemy. `systems/enemyExpansion/dexInstall.js` is Start,
 run once from `scenes/shared.js` right after Roleplay & Realism's install (its enemy appearance is an Init):
 
@@ -132,6 +153,12 @@ run once from `scenes/shared.js` right after Roleplay & Realism's install (its e
   Goblin in it and loaded with the mod off finds no row for it. Here the row stays and nothing of the mod's reaches it
   (no table rolls it, no quest names it, no hook runs), so the save loads and the world is DFU's. A peer in a room
   whose switch differs from its own draws the room's foes the same way.
+- *No warning that Meaner Monsters is incompatible* (AUDIT DEX A3). Meaner Monsters' own Init looks for this mod by its
+  GUID and, finding it, raises two boxes - "Please switch to MUDEX - Meaner Unleveled Daggerfall Enemy Expansion" and
+  "Meaner Monsters and Unleveled Mobs is incompatible with DEX." (MeanerMonsters.cs:24, :94, :159-164) - then applies its
+  edits all the same. The port composes the two as DFU does (Meaner Monsters' rows in its Init, this mod's classic edits
+  at Start, over them) and raises no box; both are on by default and the room forces both online. Whether to warn, or
+  to default Meaner Monsters off beside this mod, is the owner's call.
 
 **Flags for the slices after** (not departures from DFU, which has neither system):
 
@@ -142,13 +169,21 @@ run once from `scenes/shared.js` right after Roleplay & Realism's install (its e
   none, as an unnamed kind throws none, until a slice gives them families.
 - King's Gambit's roster takes a monster below 128 or one of its ranged classes, by its own rule - with both mods
   loaded in DFU its roster has none of the mod's either.
+- *The fifty names are English in every language* (AUDIT DEX A6) - as in DFU, whose text provider answers a custom
+  enemy's name with the mod's own (BestiaryTextProvider.GetCustomEnemyName) and whose enemyNames lists have no row
+  past the classic ids (`textManager.js` getLocalizedEnemyName answers the fallback). The HUD's death line, a quest's
+  foe and the troll's recovery line show them so. A translatable table of a mod's names is a slice of its own (the
+  English catalog is read off the code's `t()` calls, and these are a table's).
 
 Tests: `test/systems/enemyExpansion/dex1_registry.test.js` (the reading column by column, the C#'s slips kept - a new
 class's attack sound written to its bark - the careers' tolerances and attack modifiers read back, Enum.Parse's rules,
 the install's two halves, DFU's mod order over Meaner Monsters, both build arms, the quest foes; with ARENA2, a career
-borrowed from Daggerfall's files is a copy; the vanilla rows untouched by the install), the bounds' six profiles
-(`test/net/foebounds_law.test.js`), the wire's pins (`auditworld6b.test.js`, `oncrash1.test.js`), and the moved source
-pins and mutant records.
+borrowed from Daggerfall's files is a copy; the vanilla rows untouched by the install; AUDIT DEX: the Necromancer
+Assassin's two ranged attacks and the classic ranged classes' under the mod, the hosts' monster and class arms by
+SetupDemoEnemy's type, the revenant's blow class, a replacement career's error paths), the abyss's range with the
+mod's classes (`test/scenes/oh_abyss.test.js`), the bounds' six profiles (`test/net/foebounds_law.test.js`), the
+wire's pins (`auditworld6b.test.js`, `oncrash1.test.js`), and the moved source pins and mutant records (`dex1.json`,
+whose arms had none until AUDIT DEX A5).
 
 ## 6. DEX2 - the sprites on the texture door
 
@@ -163,14 +198,35 @@ own, the fourth exception's repaints, or rebuilt from the player's files (`deriv
   as in DFU. `emissive` is by frame (record -> frames): 1614's record 20 has no map for its frame 2.
 - **A stand-in's frames** (`textureReplacement.js` vendorFrameCount): the stand-in answered one frame for every record,
   which no vendored art had needed until a mod's enemies walked - every mobile drawn from a stand-in stood on its first
-  frame. It answers the registry's frames now, frame 0 to the first missing, cached until a registration moves the tiers.
+  frame. It answers the registry's frames now, frame 0 to the first missing, cached until a registration moves the tiers
+  (pinned at AUDIT DEX B10).
 - **The xml's scale** (`world/rmbFlats.js` mobileBillboardSize): DFU's mobile unit lays it on every record under
   AssetInjection, and DFU draws a mod's enemy only under AssetInjection. The port's vendored art draws ungated, so a
   stand-in's xml applies whatever the switch (the riders at 1.3, the Barbarian at 0.385 x 0.365); a classic sprite's
-  still waits for the switch (Meaner Monsters' werewolf).
+  still waits for the switch (Meaner Monsters' werewolf). The xml-applied size is one cached object per texture and
+  record (AUDIT DEX B7: two were minted per foe per frame), kept while the same live table entry answers under the same
+  registrations (`world/billboardXml.js` billboardXmlScaleOf, billboardXmlGeneration); a registrant's switch is still
+  read at every ask.
 - **The emission** (`scenes/dataPipeline.js` uploadRecordFrame): an imported frame's `_Emission` map is uploaded under
   the frame's own key and lit white, as DFU's material is; an archive whose xml asks for emission lights a frame with no
-  map of its own by its albedo (1614_20-2) - the registration hands the albedo in as the map.
+  map of its own by its albedo (1614_20-2, the Hell Hound's corpse - a flat, so GetStaticBillboardMaterial's
+  `emission ?? albedo`, TextureReplacement.cs:541; AUDIT DEX B9: this cited the mobile's material, whose fallback is the
+  record's whole - frame 0's map missing, every frame its albedo, :633-640 - and no mobile record of 1.3.4 lacks a
+  frame's map) - the registration hands the albedo in as the map.
+- **The pictures are the GPU's once uploaded** (AUDIT DEX B5; TextureReplacement.cs:574, :609 import a mobile's pictures
+  `readOnly: true`): every DEX entry registers `readOnly`. An archive is decoded whole at its first load, as DFU imports
+  it, and each picture's CPU copy is let go as the upload takes it (`textureReplacement.js` decodedTexture), its size kept
+  for the stand-in; the 5,500 pictures are ~350 MB of RGBA, and the Barbarian's 1507 and 1508 held 86.2 MB for the
+  session - now none once drawn. A frame whose GPU copy PLACE-LRU evicted draws nothing for the moment its decode takes
+  (a pending picture the renderer keeps nothing for; the decode asked only for an empty key, its emission map first, a
+  failed one not again until the tiers move).
+- **The corpse's picture by gender** (AUDIT DEX A1; EnemyDeath.cs:86-93): a female's corpse is the row's
+  FemaleCorpseTexture where it names one - the riders' 1530, the Dark Slayer's 1514, every Thief Rider (its gender
+  forced) - and its CorpseTexture otherwise (`scenes/corpseMarker.js` corpseTextureOf, at every corpse mint). The
+  reading wrote the field and no mint read it: the female riders died as the male corpse.
+- **A corpse of more than one frame animates out of doors** (AUDIT DEX B3): the street's and the interiors' corpse marker
+  carries its clock (`corpseMarker.js` tickCorpseMarkers), as the dungeon's flats always did - the Hell Hound's
+  burning corpse had stood on its first frame outside a dungeon.
 
 **SetupDemoEnemy's renderer** (`SetupDemoEnemy.cs` :129-151), for DFU's own rows as much as the mod's - the port had
 never drawn either for a classic enemy:
@@ -181,16 +237,20 @@ never drawn either for a classic enemy:
   own - never matched. The classic Ghost and Wraith are the only Spectral rows, on exactly those archives, so nothing
   classic moves. The mod's `Transparent` property lays it on a non-spectral enemy (BestiaryMod.cs:1394-1402, while the
   mod is loaded - `registerFoeGhost`); no row of 1.3.4 sets it. The shadow pass casts no ghost, as it cast no classic one.
-- **NoShadow**: the mobile's batch casts none (the shadow pass's own `noShadow`).
+- **NoShadow**: the mobile's batch casts none (the shadow pass's own `noShadow`), nor its Morrowind body where one
+  stands (section 10, AUDIT DEX B2).
 - The hosts wear both where they make the batch (`setupFoeLook(renderer.createBillboardBatch(...))`, the dungeon's two
-  arms and the street's pool) - an expression, so no host grows.
+  arms and the street's pool, and the Overworld's bands - `world/bandSprites.js`, AUDIT DEX B6: a band of the
+  Will-o'-wisp, the Faded Ghost or the classic vampires stood opaque and cast) - an expression, so no host grows.
 - **GlowColor's light is routed** (Port-Ledger C, AN ENEMY'S GLOW): a `LightAura` light at (0, 0.3, 0.2) in the row's
   colour, whose range and intensity are the prefab's - the editor asset, which no copy of DFU this work could reach
   carries. It is read before it is built, never guessed.
 
 Tests: `test/systems/enemyExpansion/dex2_sprites.test.js` (every imported picture from its one place, none past a gap;
-the stand-in's frames; the xml ungated on a stand-in only; the emission's two sources), `dex0_record.test.js` (the
-index held to DFU's import).
+the stand-in's frames; the xml ungated on a stand-in only; the emission's two sources; the billboard pass drawing a
+Spectral row's mobile as its ghost at both sites (AUDIT DEX B4); the bands' look; the cached xml size; the pictures let
+go once uploaded (1507: 45,979,280 bytes to none)), `dex0_record.test.js` (the index held to DFU's import), the
+corpse's picture by gender and its clock (`dex5_audit.test.js`), mutants `tools/mutants/dex2.json`, `dex0.json`.
 
 ## 7. DEX3 - the encounter tables
 
@@ -198,8 +258,9 @@ The mod ships one table database (`DefaultTableReplacement.tdb.csv`): a line for
 for - the 19 dungeon types, the water, the six climate families' city night, day and night - with its own monsters in
 them, and a second Laboratory table, `DwarvenLab`. `dexTables.js` reads it as `ParseEncounterTables` does
 (BestiaryMod.cs:1633-1726, line for line: a replacement moves only to other, named indices; a new table joins its
-indices before its ids parse; a short line, a short header, a new table with no indices refused) and adds the first
-Update's defaults (:210-269), DFU's own tables copied for an index the mod names no default for - none, for 1.3.4.
+indices before its ids parse; a short line, a short header, a new table with no indices refused; a table's name in any
+case, the C#'s dictionary being OrdinalIgnoreCase (:88), while its RemoveAll stays ordinal - AUDIT DEX C8) and adds the
+first Update's defaults (:210-269), DFU's own tables copied for an index the mod names no default for - none, for 1.3.4.
 
 **The door** (`characters/encounterTableDoor.js`). DFU's tables are an array a mod writes in place (`ref
 RandomEncounters.EncounterTables[index]`), and every reader rolls from what it wrote; the port's array is DFU's,
@@ -233,19 +294,32 @@ rolls)`:
 **PlayerGPS's events** (`world/playerGps.js`). DFU raises `OnClimateIndexChanged`, then `OnEnterLocationRect` or
 `OnExitLocationRect`, on the edges of the player's reading each frame (PlayerGPS.cs:561-576, :669-716), its trackers
 starting at climate 0 and out of a rect - so the first frame raises the climate, and its entry if the player stands in
-a town. The port's reading of the player's place is the encounter law's own: the decision and the camps' rolls raise
-the events from their place, every minute they run out of doors (the hosts already hand them the climate and the widened
-rect), so no host polls a second copy - bootWorld stands at its ceiling, and nothing about DFU's events needs a frame
-the rolls do not have.
+a town; and ResetState (:398-401), raised on a new game, a load's start and a fast travel's end (:301-303), drops the
+rect flag again, raising nothing. The port's reading of the player's place is the encounter law's own: the decision and
+the camps' rolls raise the events from their place, every minute they run out of doors (the hosts already hand them the
+climate and the widened rect), so no host polls a second copy - bootWorld stands at its ceiling, and nothing about
+DFU's events needs a frame the rolls do not have. Two corrections at AUDIT DEX:
+
+- **ResetState is carried** (C1, `playerGps.js` resetPlayerGpsState): the jump core drops the GPS's flag where it drops
+  the host's own (`scenes/world.js` _teleportToPixel), on the two jumps that name a DFU event - a load and a fast travel
+  (`modEvent`); a Recall, a guild's teleport or a respawn names none and keeps it, as DFU does. A new game is the page's
+  boot, where the trackers start. Without it, a fast travel from one town into another climate's raised no entry, and
+  the mod's city night for that climate was never drawn - the town's night rolled DFU's table, or the one the index
+  last held.
+- **One reading of the rect** (C7): the chunk-load camps (`campEncounters.js` rollCampEncountersOnChunkLoad) hand
+  PlayerGPS their pixel's climate and no rect. Their `inLocationRect` is the camp gate's ring of any town about the pixel
+  just entered (DISC19-F), not PlayerGPS's rect of the pixel's own location, which the minute's roll reads - fed both,
+  the one tracker edged between two readings: an entry, then an exit, the player never made.
 
 Departures (Port-Ledger A, the DEX row - SCOPE1's rule, each named):
 
 - **The generator is put back.** DFU leaves DFRandom where the dungeon's pick left it; the port's pick stands inside
   the population, ahead of the fill's own srand, so it restores the shared stream.
-- **The events ride the rolls' minutes**, not every frame: events between two readings are seen as one edge. A load or
-  a fast travel resets PlayerGPS's rect flag (ResetState, :398-401), so DFU raises a second entry into a town it never
-  left and re-draws its city night; the port sees no edge there and keeps the draw it had. With 1.3.4's tables - one an
-  index outside the Laboratory - every such draw writes the same table.
+- **The events ride the rolls' minutes**, not every frame: events between two readings are seen as one edge - a town
+  walked into and out of inside one minute raises neither, where DFU re-draws its city night and then its day and night.
+  With 1.3.4's tables - one an index outside the Laboratory - every such draw writes the same table. (AUDIT DEX C1
+  struck this item's second half: it said a load or a fast travel raised no second entry and that the draw was the same
+  either way, which held only for the town left, never for another climate's.)
 - **A table whose ids will not parse** stays in its index's list and a pick that lands on it writes nothing (the C#'s
   `Select` throws before the write). Thrown in a PlayerGPS handler, DFU's throw also ends that frame's GPS update and
   raises the event again next frame; the port does not copy that stall. No table of 1.3.4 fails to parse.
@@ -255,7 +329,9 @@ Departures (Port-Ledger A, the DEX row - SCOPE1's rule, each named):
 Tests: `test/systems/enemyExpansion/dex3_encounters.test.js` (the reading line for line, the defaults, the dungeon's pick
 against the C#'s LCG and with ARENA2 over every dungeon, PlayerGPS's edges, the climates' picks, the door's two reads,
 every reader through it - the decision, the rest, the camps, a group's one table, a granted species, the population -
-and the install), mutants `tools/mutants/dex3.json`.
+and the install; AUDIT DEX: ResetState at the jump core and the city night it draws, the chunk's climate-only reading,
+the camps' two called rolls (C5: the pin had read an export nothing calls), the dungeon's place handed to its
+population, the names in any case), mutants `tools/mutants/dex3.json`.
 
 ## 8. DEX4a - the spells and the spellbooks
 
@@ -282,7 +358,7 @@ the Snow Wolf, the Hell Hound, King Lysandus (503, the Bolt of Vengeance), the D
 books; the Fire Daemon the FireDaedra table; the six spellcasting classes the ladder, which casts what DFU's would.
 
 **The wire** (`net/wire.js` SPELL_INDEX_MAX): a cast's spell index rode as a u8, SPELLS.STD's; a foe casting one of
-the mod's spells was refused whole. It is a u16 now - relay world230, grown in place (not yet deployed).
+the mod's spells was refused whole. It is a u16 now - relay world231, grown in place (not yet deployed; world230 until main's OW-CHASE-RANGE took that number at the merge).
 
 Departures (Port-Ledger A, the DEX row):
 
@@ -315,9 +391,19 @@ a row's gender. `systems/enemyExpansion/dexCombat.js` holds them; each rides a d
   Warrior's blunt halving and silver doubling. The port takes the test as a door in the stock formula, so its own
   terms (a weapon's modifiers, the blow modifiers) stand under the mod. PCAAO's core - on by default - runs its own
   copy and never asks it, as DFU's PCAAO, replacing CalculateAttackDamage whole, never calls the overridden one.
+  AUDIT DEX C2: the mod's test REPLACES DFU's, never widens it. Its override asks the enemy's ID (`MobileEnemy.ID ==
+  SkeletalWarrior`, :1594) where DFU asks its career (`CareerIndex`, FormulaHelper.cs:740), whose class collision makes
+  a Barbarian (143, career 15) a skeleton; the door answered only true, so DFU's career test stood beside it and the
+  Barbarian kept the rule under the mod. A door's answer now stands alone (null leaves DFU's), and the mod's is its own
+  whole test - the Skeletal Warrior by its ID, or a Skeletal row.
 - **Groups and languages** (`combat/formulas.js` registerEnemyGroup, registerEnemyLanguage). The fifty's from their
   rows - None included, over DFU's Etiquette for a class - and DFU's switch, which the C# restates, for every other.
-  A mod enemy's career index is its id, so the door keys on it.
+  A mod enemy's career index is its id, so the door keys on it. AUDIT DEX C3: every reader asks the one door.
+  EnemyEntity.GetEnemyGroup IS this member (EnemyEntity.cs:486-489), and PlayerGPS.GetEntityFlags (:788) and
+  PacifyEffect.IsGroupMatch (:132) read it - but `systems/nearbyObjects.js` held a copy of DFU's switch, so the mod's
+  enemies took no group there: no Detect Undead found its Dire Ghoul, no Pacify Animal calmed its Blood Spider, no
+  Dispel Daedra banished its Fire Daemon. The switch and its door are one leaf now (`combat/enemyGroups.js`;
+  `formulas.js` re-exports them), and the scan's flag is read through it.
 - **The forced gender** (`characters/mobile/mobileUnit.js` registerForcedGender). Over whatever the unit resolved,
   after its DFRandom roll - never instead of it, so the stream moves as it did. Of 1.3.4 ten rows force one; each
   draws one picture for both genders, so the voice is all it moves.
@@ -330,8 +416,9 @@ Departures (Port-Ledger A, the DEX row):
 
 Tests: `test/systems/enemyExpansion/dex4b_combat.test.js` (every arm told apart by its transcript, DFU's switch and the
 C#'s chain read off the vendored source, the mod's arms against BestiaryEnemySpells.cs, the override replacing the
-whole, the skeletal rule, the groups and languages, the gender over the roll, the install), mutants
-`tools/mutants/dex4b.json`.
+whole, the skeletal rule, the groups and languages, the gender over the roll, the install; AUDIT DEX: no Barbarian a
+skeleton under the mod, the mod's groups through Detect's scan and a Pacify, both hosts' rider spells read from the
+merged spell list - C6), mutants `tools/mutants/dex4b.json`.
 
 ## 10. DEX7 - the Morrowind bodies
 
@@ -366,6 +453,12 @@ pictures are there either way, and a body is how a row is drawn).
   and blade. The fifteen classes are people by the class law; the five RIDERS (Knight, Rogue, Thief, Spellsword and
   Archer) keep their sprites.
 
+- **A NoShadow row's body casts none** (AUDIT DEX B2; SetupDemoEnemy.cs:137-140): the flat's `noShadow` (setupFoeLook)
+  rides `characters/foeBodies.js` foeFx to the body, and `net/peer/peerBodies.js` cast reads it - the classic vampires
+  (28, 30), the frost and fire daedra (25, 26) and the fire atronach (35) threw their bodies' shadows while their
+  billboards, cast-only, were passed over. A corpse's flat carries none of the row's: DFU's NoShadow is the mobile's
+  renderer, and a corpse is another billboard.
+
 Departures (Port-Ledger A, the DEX row):
 
 - **The bodies are the port's.** DFU draws the mod's sprites; the port stands a Morrowind body where the rules above
@@ -374,8 +467,8 @@ Departures (Port-Ledger A, the DEX row):
   wears what the foe wears (MWNPC5b), as every person's does.
 
 Tests: `test/systems/enemyExpansion/dex7_bodies.test.js` (the census by the mod's own names, the motion law, the people
-and the riders, the looks at the door with the switch either way, the doors' refusals, once a page), mutants
-`tools/mutants/dex7.json`.
+and the riders, the looks at the door with the switch either way, the doors' refusals, once a page; a NoShadow row's
+body casting none, DEX7-7), mutants `tools/mutants/dex7.json`.
 
 ## 11. DEX5 - the Troll that gets back up
 
@@ -422,6 +515,28 @@ The port's half:
 - **The street, the interiors, exterior.js** (`scenes/exteriorFoes.js`): its owner counts; a rise a new foe by the
   slot-neutral replacement (`spawnFoe`, `replacing`), the body gone as removeCorpse takes one; the ash takes the body's
   place as its marker (moved with the origin and the ground, collected with its pixel; it stands no Morrowind body).
+- **The hosts wire the reach** (AUDIT DEX D11, HOST-SPLIT): what a body's prefab asks of its host - stand a new foe,
+  take the body away, stand the ash, send a copy's missile - is `scenes/corpsePrefabHost.js` (createDungeonCorpsePrefabs,
+  createStreetCorpsePrefabs); the hosts hand it their doors and nothing more.
+
+**What AUDIT DEX found the body owed** (`bible/01-Overview/audits/Audit-DEX.md`, lane D):
+
+- **The rise stands first** (D8): the new troll is asked for, and only once it stands is the body taken and the HUD
+  told - a stand refused (an online grant withheld, a build that failed) leaves the body lying, to try again after its
+  time; no missile meets a rising body. The body had gone before the stand was certain.
+- **A body's fate is saved and remembered** (D3, D4): the dungeon's save writes a destroyed body's kind (`bg`, 1 risen,
+  2 burnt) and the room's memory keeps it on a dead record (`net/wire.js` validSharedFoe - world231 grown in place, not
+  yet deployed), so a burnt troll no longer stood again for an arrival; the seat loading a save of a gone body settles
+  every copy's (`settle`) rather than lay a ghost body on them.
+- **A load lays the save's body again** (D1): a same-dungeon quickload after a rise or a burn lays the body the save
+  holds, its time the save's (`forget`, then the corpse mint), and the rebuild takes every ash flat (`clearAsh`) - the
+  ash is no saved object (BestiaryTrollCorpseEntity.cs:65-66); a load had laid no body at all.
+- **Un-death forgets** (D2): a foe standing up again (SL2's rewind) forgets its body's fate, so its next death lays a
+  body; it had lain invisible and risen anyway.
+- **A street copy goes at its owner's word** (D6): a copy with no prefab of its own drops its marker when told the body
+  is gone. **The own lane's `cs` takes a living blow's gate** (D7): the loose foe's owner checks a copy's missile as it
+  checks a copy's blow. **A destroyed host lets its prefabs go** (D12): their foe records and the host's reach no longer
+  wait in the runner until the next save.
 
 **Online (DEX5b).** The room is the mod's whole (DEX0's decision), and the body is its foe's runner's - the seat or a
 loose foe's owner underground, the foe's owner in the street:
@@ -434,8 +549,11 @@ loose foe's owner underground, the foe's owner in the street:
 - **The record says a body gone** (`bg` - 1 risen, 2 burnt; `net/wire.js` validFoeRecord, a dead record's alone), so
   every copy loses the body as the runner did (`told`) and a late one too. Underground a destroyed body's record rides
   on in every lane (a layout foe's always does; a shared encounter's and a loose foe's now do too), the ash a flat each
-  machine stands; in the street a risen body's record ends with it (removeCorpse - every copy pruned) and a burnt one's
-  rides on with the ash as its body. A body told gone while its art warmed never lands.
+  machine stands - for a late joiner, a layout foe's alone: a shared encounter's and a loose foe's dead record is never
+  stood for a machine that never saw it standing (`dungeonContext.js` - `if (r.d === 1 || ...) continue;`), so it
+  stands no ash for one (AUDIT DEX D13: this said every lane's); in the street a risen body's record ends with it
+  (removeCorpse - every copy pruned) and a burnt one's rides on with the ash as its body. A body told gone while its art
+  warmed never lands.
 
 Departures (Port-Ledger A, the DEX row):
 
@@ -450,12 +568,24 @@ Departures (Port-Ledger A, the DEX row):
   anyway.
 - **Online, the room's (no DFU half):** a copy's bundle lands at the runner with no caster of its own there (the striker
   is in another world), so a Transfer's heal-back and a reflection reach nobody; and when the seat changes hands, the
-  new runner counts a body's ten seconds from its own start (its copy never counted).
+  new runner counts a body's ten seconds from its own start (its copy never counted) and its body's entity is fresh - a
+  lasting effect on the old runner's (a Frost Rot's rounds) goes with the old seat. The HUD's two lines ("... has
+  recovered from its injuries.", "Troll just died.") are the runner's alone (`host.say`): a copy whose missile burnt the
+  body hears nothing, and the runner, wherever it stands, is told (AUDIT DEX D9 named these two).
+- **The restored body is the troll's** (AUDIT DEX D10 named it): the mod's body after a load is built from a default
+  BestiaryTrollProperties (MobileID 0, ash 0/0 - BestiaryTrollCorpseBillboard.cs:37, :284-287), so SetEntityDefaults finds
+  no custom enemy 0 and its career stays a blank DFCareer, and RestoreSaveData puts back the MobileID and the heights
+  alone (BestiaryTrollCorpseEntity.cs:105-111): in DFU a reloaded body has no fire weakness and no resistances, and
+  burns to billboard 0/0. The port's restored body keeps the troll's career and the 1618/21 ash - the mod's slip
+  corrected.
 
 Tests: `test/systems/enemyExpansion/dex5_troll.test.js` (the prefab read off the bundle and the scripts, the body's
 entity against the troll's career, the street's rise and burn through a real pool, my real missile on the trigger, the
 door, the save, the hosts' wiring; DEX5b: the wire's bound, two real pools - a peer's missile burning the owner's body
-and its copy turning to ash, the rise taking the copy away - and the dungeon's lanes), mutants `tools/mutants/dex5.json`.
+and its copy turning to ash, the rise taking the copy away - and the dungeon's lanes), `dex5_audit.test.js` (AUDIT
+DEX, over the dungeon's real corpse chain: the rise that asks, un-death, a load's body and its ash, the fate saved and
+remembered, a street copy's marker, the corpse's picture by gender and its clock, the hosts' wiring), mutants
+`tools/mutants/dex5.json`.
 
 ## 12. DEX6 - the equipment
 
@@ -465,7 +595,7 @@ Realism: Items' `realisticEnemyEquipment` is on, the mod's own copy of RRI's cla
 Awake (inside its Init) and the mod in its Start (a frame later), so the mod's is the one that stands whichever loads
 first; DFU's ModManager unloads a disabled mod at its Init, so the copy finds no RRI then (`GetModFromGUID` null).
 
-The copy is RRI's arm with three reads of its own, and the port runs RRI's arm (`combat/rriEnemyEquipment.js`
+The copy is RRI's arm with four reads of its own (AUDIT DEX E1: the fourth, the second weapon, had been missed), and the port runs RRI's arm (`combat/rriEnemyEquipment.js`
 assignRriEnemyEquipment) with the mod's reads (`systems/enemyExpansion/dexEquipment.js`; RRI_READ is RRI's own):
 
 - **The class by its table** (HasClassTable, :77-93). A row's EquipmentTable names the class whose kit it takes -
@@ -483,6 +613,25 @@ assignRriEnemyEquipment) with the mod's reads (`systems/enemyExpansion/dexEquipm
   CLASS file's.
 - **An arm for the unknown** (:388-393): a longblade worn, armored 50 - RRI's switch has no default, and a class it
   does not name holds nothing.
+- **The second weapon put on** (AUDIT DEX E1; :333, :385): a combat class's left-hand weapon and a sneaky class's second
+  are worn (AddAndEquipWornItem), where RRI's arm carries them only (:573, :626). The arm's read `equipsSecondary` -
+  RRI_READ false, the mod's true.
+
+**The hands, as EquipItem keeps them** (AUDIT DEX E2 - RRI2's own, inherited here). The arm filled the hands in order and
+took nothing off, so a Barbarian, a Knight, a Monk or the City Watch with a two-hander and a shield swung both. Every
+piece the arm puts on is laid on a stand-in equip table through EquipItem's rules (ItemEquipTable.cs:94-154: the slot
+GetEquipSlot answers, then what `systems/equip.js` wearLeavers says that wear takes off), and the answer is that table -
+the hands, the worn set in AddItem order, the armor pieces; what comes off stays in Items (the corpse's loot). A foe left
+with no right-hand weapon fights bare-handed and rolls no poison, as DFU's `mainWeapon != null` does. **The monster's
+poison before ConvertOrcish** (E3, inherited by the mod's monster arm): ItemHelper's arm rolls its poison inside itself
+(ItemHelper.cs:1460-1474) and both mods call ConvertOrcish after it (RRI :528-529, DEX :291-292); the port had drawn
+ConvertOrcish's Dice100 first. The monster branch rolls the poison on its right hand before ConvertOrcish and answers
+`poisonRolled`, so the spawn does not roll it again.
+
+**Every class, not the new ones alone** (AUDIT DEX E5). The copy kits the classic classes too, and its armor reads the
+career where RRI's reads the class's preference: a Monk (CLASS12 forbids leather, chain and plate) wears its classic
+plate on a coin and nothing otherwise - about half RRI's own count of pieces - and a Ranger or a Burglar, whose careers
+forbid nothing, wear the classic pieces where RRI dresses half of them in chain or leather.
 
 The id's own tests stay the id's in both (the City Watch's item level, the Ranger's longblade, the Barbarian's raised
 legs and head); the Barbarian's armored 30, the fighters' and the combat weapons are the table's. The poison's
@@ -500,4 +649,7 @@ Departures (Port-Ledger A, the DEX row):
 Tests: `test/systems/enemyExpansion/dex6_equipment.test.js` (the fifteen tables against the C#'s law, the armor by
 career set by set and the coin's place, the kit through the arm - a Knight Rider armed where RRI's own switch hands it
 nothing, the unknown's longblade, a Barbarian's table, a piece that is none rolling its material - the poison through
-the spawn's real roll, the delegate taken and put back), mutants `tools/mutants/dex6.json`.
+the spawn's real roll, the delegate taken and put back; AUDIT DEX: the second weapon worn, the hands by EquipItem's
+rules, the poison before ConvertOrcish, and the id's own tests - the City Watch's item level, variant 1's fighter, the
+Ranger's longblade, the poison's fallback - pinned, E4), `test/systems/rri2_realism.test.js` (the hands and the poison
+under RRI's own arm), mutants `tools/mutants/dex6.json`, `rri2.json`.

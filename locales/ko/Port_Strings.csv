@@ -1484,7 +1484,7 @@ credits.detailedShips.terms,"출처 표기만 요구하는 조건으로 작가�
 credits.detailedShips.what,"소유할 수 있는 배 두 척을 안팎으로 새로 꾸몄습니다. 갑판에는 삭구, 상자와 통, 보트, 키, 난간이 있고, 아래에는 당신의 선실, 선원 숙소, 주방, 화물칸, 무기고, 키나레스의 사당과 말을 걸 수 있는 선원들이 있습니다. 키나레스 조각상은 작가의 readme가 밝힌 대로 King of Worms와 Zoran의 작품입니다. 모드가 Ninelan의 Daggerfall Expanded Textures에서 빌린 것들은 이 게임을 위해 만든 대체물로 바꿨습니다."
 credits.dex.terms,"배포된 번들과 제작자들의 원본 소스에서 이식했으며, 그들의 그림은 바이트 단위 그대로 담았습니다(그중 Daggerfall 원본 스프라이트는 당신의 파일에서 다시 만듭니다). 허가 기록은 vendor/daggerfall-enemy-expansion/README.md에서 볼 수 있습니다."
 credits.dex.title,"Daggerfall Enemy Expansion"
-credits.dex.what,"새로운 적 50종과 그들이 등장하는 조우 표(DEX): 고블린, 다시 일어서는 트롤, 미노타우로스, 골렘, 드워머 센추리온, 기마 기사, 강령술사, 마녀, 복수의 왕 리산더스 등을 제작자들의 원본 소스에서 1:1로 이식했습니다. 모두 Kamer와 Kab의 원래 그림으로, Morrowind에 같은 생물이 있으면 Morrowind의 몸으로 나타납니다."
+credits.dex.what,"새로운 적 50종과 그들이 등장하는 조우 표(DEX): 고블린, 다시 일어서는 트롤, 미노타우로스, 골렘, 드워머 센추리온, 기마 기사, 강령술사, 마녀, 복수의 왕 리산더스 등을 제작자들의 원본 소스에서 이식했습니다. Kamer와 Kab의 그림으로 - 그 가운데에는 Daggerfall 고유의 스프라이트도 있으며 일부는 그들의 채색이 입혀져 있습니다 - Morrowind에 같은 생물이 있으면 Morrowind의 몸으로 나타납니다."
 credits.dfu.what,"이 게임은 Daggerfall Unity를 새로 쓰는 것으로 시작했고 지금도 그것을 기준으로 삼습니다. 퀘스트 스크립트, 책 색인, 설정 표, 게임 텍스트 표, 상호작용 모드 아이콘, 마우스 커서를 그대로 포함했습니다(MIT 라이선스)."
 credits.diverseWeapons.terms,"작가의 허가를 받아 사용합니다. 스크립트는 MIT 라이선스이며, 스프라이트는 작가가 직접 그린 것입니다."
 credits.diverseWeapons.what,"원작은 무기 계열마다 스프라이트가 하나지만, 여기서는 무기 열여덟 가지를 모든 금속으로, 일반과 마법 부여 상태 모두에 대해 1인칭 스프라이트로 그렸습니다. Weapon Widget용 두 배 크기 대기 스프라이트와 그에 맞는 인벤토리 아이콘도 포함합니다."
