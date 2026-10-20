@@ -51,6 +51,9 @@ import { readReceipt } from '../../net/gate/gateReceipt.js';
 import { bodySayer } from '../../net/bossBody.js';   // INT15: my body, said to the court's room
 import { wordShare } from '../../combat/healthShare.js';   // FIELD BUGS 2026-10-18f RELAY-SHARE: his health's share, the relay's word
 import { createGateHost } from './gateHost.js';   // WB11c: the Legion-Lord's host - its bodies, blows, words and sounds
+import { createSpriteWarm } from './gateSpriteWarm.js';   // GATE-MIX: the night's bodies' sprites made ready as I come in
+import { EG_MIX, egDbGain } from '../../systems/eliteGates/egMix.js';   // GATE-MIX: the Spire's level for the peers' sounds, the court's too
+import { setPeerSoundScope, peerSoundScope } from '../../net/peer/peerFx.js';   // GATE-MIX: the peers' sounds' one scope
 import { createPopulationLane } from '../../characters/npcBodies.js'; import { creatureLook } from '../../characters/creatureBodies.js'; import { rosterActor } from '../../characters/rosterBodies.js';   // MWNPC10: the court's creatures in their Morrowind bodies
 import { ENEMY_BASICS } from '../../characters/enemy/enemyBasics.js';
 import { mobileBillboardSize, billboardSize } from '../../world/rmbFlats.js';
@@ -323,6 +326,9 @@ export function createGateCourt({
   try { if (gl) pass = new GateTelegraphRenderer(gl); } catch (e) { console.warn('[gate] the telegraph would not build', e?.message ?? e); pass = null; }
   /** WB11c: HIS HOST (scenes/gate/gateHost.js) - its blows land on me through the door his own do (`land`), each its share,
    *  its base and its element through my saving throw; a Ward-Bearer's Pulse flares the rim in his element's colour */
+  /** GATE-MIX: the night's bodies' sprites - its archives asked for and their frames uploaded a few a frame while I stand
+   *  in the court, before a wave, an angle or the Sundering first shows them */
+  const sprites = createSpriteWarm({ getTexture, uploadRecordFrame, has: (archive, rkey) => !!renderer?.textures?.has?.(`${archive}_${rkey}`) });
   const host = createGateHost({
     renderer, getTexture, uploadRecordFrame, audio, cam, feet, player, say, send: (x) => !watching() && sendHost(x), blowQ: (who) => blowQ(who),   // AUDIT WB11 W3: my blows' one sequence; COURT-WATCH: a watcher's none
     land: (B) => { const P = profileOf(link.state()); land(null, P, { pct: B.pct, base: B.base, el: B.el, name: B.name, saved: B.el != null }, B.el ? hostPulseColor(P) : null); },
@@ -473,7 +479,9 @@ export function createGateCourt({
   const _bursts = [], _fxLive = [], _meteor = { at: [0, 0, 0], color: null };   // WB13d: a light a burst's slot (its `light`, LIGHT-ID: relit when the slot is the next burst's)
   const _glow = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };   // LIGHT-ID: his glow, ONE light that follows him - refilled, never re-minted (render/lightId.js)
   /** WB13e: the fall's white and the Wrath's light - one each, refilled (AUDIT WB D10's law) */
-  const _fallLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }, _wrathLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };
+  // GATE-MIX: a flash casts no shadow - `carried`, the mask a spell's impact light wears (render/spellImpactFx.js), keeps it out
+  // of the shadow pick, where it took a caster slot by its nearness alone and rebuilt a cube map for half a second of light
+  const _fallLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], carried: true }, _wrathLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], carried: true };
   const flash = (L, at, c, k, range) => { L.x = at[0]; L.y = at[1]; L.z = at[2]; L.range = range; L.color[0] = c[0] * k; L.color[1] = c[1] * k; L.color[2] = c[2] * k; return L; };
   let meteorNow = null, fxPass = null, fxTried = false;
 
@@ -551,6 +559,16 @@ export function createGateCourt({
    *  landing of the fight, the first Reckoning, his fall - and a compile is a frame's hitch. Now each is made as I stand
    *  in the court, one a frame (the step's veil is over the screen for the first of them), so the fight never waits on
    *  one. A pass that would not build is tried once, as before. */
+  /** GATE-MIX: THE PEERS DOWN IN THE COURT - every other player's sound (net/peer/peerFx.js peerHeard: their blows, steps,
+   *  swings and cries) EG_MIX.peerDb under itself while I stand here, as THE SPIRE MIX has it (systems/eliteGates/egMix.js
+   *  `peers`), so a crowd's blows sit under his cues rather than summing with them. The scope is handed in only when
+   *  no place holds it, and taken back only while it is still this one: the Spire's is never touched. */
+  const peersDown = (run) => (typeof audio?.scaled === 'function' ? audio.scaled(egDbGain(EG_MIX.peerDb), run) : run());
+  function peersHeard(inCourt) {
+    const held = peerSoundScope();
+    if (inCourt && held === null) setPeerSoundScope(peersDown);
+    else if (!inCourt && held === peersDown) setPeerSoundScope(null);
+  }
   function warmPasses() {
     if (!gl || !feet()) return;
     if (!fxTried) makeFxPass();
@@ -1044,12 +1062,14 @@ export function createGateCourt({
       const s = link.state(), t = now();
       courtWatch(s, t);   // AUDIT GATE-FBX C1/C4: my arrival and the fight's silence, state or none
       warmPasses();   // GATE-MIX: his passes compiled as I come in, not at his first landing
+      peersHeard(!!feet());   // GATE-MIX: the peers' sounds down while I stand in the court
       if (!s || s.day === null) { if (day !== null) this.leave(); return; }
       if (s.day !== day) reset(s.day);
       // AUDIT GATE-FBX C5: the court's one door first - before any of the fight's own steps, whose throw (swallowed by
       // the host each frame) would leave it never laid
       portalFrame(s, t, Number.isFinite(prevT) ? Math.max(0, t - prevT) / 1000 : 0);   // WBX2: the way home, once he has fallen
       const P = profileOf(s);   // WB8b: the fight's marks, as law - the relay's word of them
+      if (feet()) { sprites.want(s, P); sprites.step(); }   // GATE-MIX: the night's sprites, a few frames a frame
       judge(s, t, P);
       judgeTrap(s);   // WBX7: a soul trap of mine on him, rolled at his fall
       burn(s, t, P);   // WBX5: the ground his landings left burning
@@ -1258,7 +1278,7 @@ export function createGateCourt({
       for (let k = 0; k < _bursts.length; k++) {
         const b = _bursts[k], L0 = b.kind?.light, age = t - b.at0;
         if (!L0 || !(age >= 0) || age >= FX_LIGHT_MS) continue;
-        const L = (b.light ??= { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }), kk = L0[0] * (1 - age / FX_LIGHT_MS);
+        const L = (b.light ??= { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0], carried: true }), kk = L0[0] * (1 - age / FX_LIGHT_MS);   // GATE-MIX: a flash casts no shadow
         L.x = b.at[0]; L.y = b.at[1] + LANDING_LIGHT_Y; L.z = b.at[2]; L.range = L0[1];
         L.color[0] = b.color[0] * kk; L.color[1] = b.color[1] * kk; L.color[2] = b.color[2] * kk;
         _lights.push(L);
@@ -1399,6 +1419,8 @@ export function createGateCourt({
       host.leave();   // WB11c: his host's bodies put away
       flame.leave();   // WB14d: and his Flame's
       captive.leave();   // WB14f: and the Captive's
+      sprites.clear();   // GATE-MIX: the warm-up forgotten with the court
+      peersHeard(false);   // GATE-MIX: and the peers' sounds as they were
       reset(null);
     },
   };

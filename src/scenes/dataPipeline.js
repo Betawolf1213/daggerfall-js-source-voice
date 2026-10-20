@@ -278,6 +278,9 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
     const key = `${record}#${frame}`;
     const t = textureFiles.get(archive); freshen(archive);   // AUDIT VE R1
     if (!t) return;
+    // GATE-MIX: a frame already on the GPU is not decoded again only for uploadTexture to turn it away - held for the
+    // place asking as that hit would hold it. Not a spectral or self-lit frame: those carry a second picture of their own.
+    if (!TextureFile.isSpectralArchive(archive) && !isEmissive(archive, record) && renderer.heldTexture?.(archive, key)) return;
     const bitmap = t.getDFBitmap(record, frame);
     if (TextureFile.isSpectralArchive(archive)) {
       const spec = { ...bitmap, data: bitmap.data.slice() };

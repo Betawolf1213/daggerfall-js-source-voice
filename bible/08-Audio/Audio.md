@@ -900,7 +900,8 @@ at full scale in DAGGER.SND (measured: his bark and attack, records 208 and 209,
 all at 0 dBFS; the burning loop, 420, at -8.9), his cues play them at 1.3 to 2.2 (`gateBoss.js:"export const BOSS_CUES = Object.freeze({"`),
 a landing sounds two of them in one frame (the slam's land and the quake), and the court's score is pressed to a decibel
 under the clip (WB10a). At the default SoundVolume of 0.5 a single cue at 2.2 already passed 1; at a higher one, most of
-his heavy blows did. The per-target copies that made it worse are `11-Multiplayer/World-Bosses.md` section 28.
+his heavy blows did. The per-target copies that made it worse, and the other players' sounds now 4 dB down in the
+court as in the Spire, are `11-Multiplayer/World-Bosses.md` section 28.
 
 - **The stage** (`audio.js:"  _limiter() {"`): the listener's bus into a DynamicsCompressorNode run as a limiter (LIMITER:
   -3 dB, no knee, 20:1, 1 ms in, 120 ms out), a trim, and a soft ceiling - a WaveShaper whose curve (`limitAmplitude`) is
@@ -918,4 +919,4 @@ his heavy blows did. The per-target copies that made it worse are `11-Multiplaye
 
 Pins: `test/systems/gatemix_limiter.test.js` (4: the ceiling's law; the curve as the WaveShaper reads it; the trim
 against the spec's make-up; the graph - the listener into the limiter, the low-pass before it, an old context straight
-through). `tools/mutants/gatemix.json` (17, all dead, with section 28's).
+through). `tools/mutants/gatemix.json` (with section 28's: 36 dead, one equivalent as recorded).

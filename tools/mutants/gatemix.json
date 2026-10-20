@@ -168,5 +168,206 @@
       "test/net/gate/gatemix_targets.test.js"
     ],
     "why": "compiled before I am in the court - out on the road"
+  },
+  {
+    "name": "GATE-MIX-sprites-host-every-night",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "  if (P?.legion) for (const k of [HOST.harrier, HOST.sapper, HOST.bearer])",
+    "new": "  if (true) for (const k of [HOST.harrier, HOST.sapper, HOST.bearer])",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "a night with no host warms one"
+  },
+  {
+    "name": "GATE-MIX-sprites-sunder-unread",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "  if (hasPortent(s.pt, 'sunder')) m.add(flameLookOf(a).mobile);",
+    "new": "",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "his Flame's sprite fetched at the Sundering again"
+  },
+  {
+    "name": "GATE-MIX-sprites-no-budget",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "        while (up < SPRITE_WARM_UPLOADS && looked < SPRITE_WARM_LOOKS) {",
+    "new": "        while (looked < SPRITE_WARM_LOOKS) {",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "every frame of an archive in one frame"
+  },
+  {
+    "name": "GATE-MIX-sprites-look-unbounded",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "        while (up < SPRITE_WARM_UPLOADS && looked < SPRITE_WARM_LOOKS) {",
+    "new": "        while (up < SPRITE_WARM_UPLOADS) {",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "a night all standing walked whole each frame"
+  },
+  {
+    "name": "GATE-MIX-sprites-standing-uploaded",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "          if (!has(archive, `${e.r}#${e.f}`)) {",
+    "new": "          if (true) {",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "a frame already standing uploaded again"
+  },
+  {
+    "name": "GATE-MIX-sprites-night-every-frame",
+    "file": "src/scenes/gate/gateSpriteWarm.js",
+    "old": "      if (key === night) return;",
+    "new": "",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "kept alive on purpose: the archives' own map already asks each once - the night's key spares the frame its walk of nightMobiles, a cost and not a law",
+    "equivalent": true
+  },
+  {
+    "name": "GATE-MIX-sprites-unwired",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "      if (feet()) { sprites.want(s, P); sprites.step(); }",
+    "new": "",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "the bug: each body's sprite at its first draw"
+  },
+  {
+    "name": "GATE-MIX-sprites-off-court",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "      if (feet()) { sprites.want(s, P); sprites.step(); }",
+    "new": "      { sprites.want(s, P); sprites.step(); }",
+    "tests": [
+      "test/net/gate/gatemix_sprites.test.js"
+    ],
+    "why": "warmed on the road, out of the court"
+  },
+  {
+    "name": "GATE-MIX-held-placeholder-real",
+    "file": "src/render/renderer.js",
+    "old": "    if (!this.textures.has(key) || this._placeholders?.has(key)) return false;\n    this._uploadSink?.(false, key);\n    return true;",
+    "new": "    if (!this.textures.has(key)) return false;\n    this._uploadSink?.(false, key);\n    return true;",
+    "tests": [
+      "test/scenes/gatemix_frames.test.js"
+    ],
+    "why": "a stand-in's placeholder taken for the picture"
+  },
+  {
+    "name": "GATE-MIX-held-not-held",
+    "file": "src/render/renderer.js",
+    "old": "    if (!this.textures.has(key) || this._placeholders?.has(key)) return false;\n    this._uploadSink?.(false, key);\n    return true;",
+    "new": "    if (!this.textures.has(key) || this._placeholders?.has(key)) return false;\n    return true;",
+    "tests": [
+      "test/scenes/gatemix_frames.test.js"
+    ],
+    "why": "a hit not held for the place asking - PLACE-LRU lets it go under a live draw"
+  },
+  {
+    "name": "GATE-MIX-frame-check-unasked",
+    "file": "src/scenes/dataPipeline.js",
+    "old": "    if (!TextureFile.isSpectralArchive(archive) && !isEmissive(archive, record) && renderer.heldTexture?.(archive, key)) return;",
+    "new": "",
+    "tests": [
+      "test/scenes/gatemix_frames.test.js"
+    ],
+    "why": "the bug: a splash's frames decoded again every hit"
+  },
+  {
+    "name": "GATE-MIX-lights-mask-unread",
+    "file": "src/world/gate/gateArena.js",
+    "old": " if (l.carried) carried[n + i] = 1; });",
+    "new": " });",
+    "tests": [
+      "test/world/gatemix_lights.test.js"
+    ],
+    "why": "the bug: a flash takes a shadow caster's slot"
+  },
+  {
+    "name": "GATE-MIX-lights-all-masked",
+    "file": "src/world/gate/gateArena.js",
+    "old": " if (l.carried) carried[n + i] = 1; });",
+    "new": " carried[n + i] = 1; });",
+    "tests": [
+      "test/world/gatemix_lights.test.js"
+    ],
+    "why": "the braziers and his glow cast no shadow either"
+  },
+  {
+    "name": "GATE-MIX-lights-burst-unmasked",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "color: [0, 0, 0], carried: true }), kk = L0[0]",
+    "new": "color: [0, 0, 0] }), kk = L0[0]",
+    "tests": [
+      "test/world/gatemix_lights.test.js"
+    ],
+    "why": "a landing's light casts again"
+  },
+  {
+    "name": "GATE-MIX-peers-never-in",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    if (inCourt && held === null) setPeerSoundScope(peersDown);",
+    "new": "    if (false) setPeerSoundScope(peersDown);",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "the court's crowd at full level"
+  },
+  {
+    "name": "GATE-MIX-peers-never-out",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    else if (!inCourt && held === peersDown) setPeerSoundScope(null);",
+    "new": "",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "the street heard 4 dB down after the court"
+  },
+  {
+    "name": "GATE-MIX-peers-taken-over",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    if (inCourt && held === null) setPeerSoundScope(peersDown);",
+    "new": "    if (inCourt) setPeerSoundScope(peersDown);",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "the Spire's scope taken over"
+  },
+  {
+    "name": "GATE-MIX-peers-other-cleared",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "    else if (!inCourt && held === peersDown) setPeerSoundScope(null);",
+    "new": "    else if (!inCourt) setPeerSoundScope(null);",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "another place's scope cleared"
+  },
+  {
+    "name": "GATE-MIX-peers-level",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "audio.scaled(egDbGain(EG_MIX.peerDb), run)",
+    "new": "audio.scaled(egDbGain(-6), run)",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "not the Spire's level"
+  },
+  {
+    "name": "GATE-MIX-peers-unwired",
+    "file": "src/scenes/gate/gateCourt.js",
+    "old": "      peersHeard(!!feet());   // GATE-MIX",
+    "new": "      // peersHeard(!!feet());   // GATE-MIX",
+    "tests": [
+      "test/net/gate/gatemix_peers.test.js"
+    ],
+    "why": "never handed in"
   }
 ]
