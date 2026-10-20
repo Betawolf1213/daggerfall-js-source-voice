@@ -65,6 +65,8 @@
 // FB1018D (2026-10-18, FIELD BUGS 2026-10-18d; Boar, #bug-reports): THE CHALLENGE'S RING OF FIRE drawn where the room stands it
 // (duelRing - only the motor was kept to it), A WINCH'S PLATES marked as the stood-on errands are (winchPlates), the open duel
 // said as one at n = 1, the Conquest's word saying what its banners do, and every beat's word past the fold's twelve (beats).
+// FIELD BUGS 2026-10-19b GAUNTLET-PLATES (2026-10-19, a player's private report): A GAUNTLET'S PLATES marked as the Winch's are,
+// on their pillars' tops, each dimmed once its Caster is silenced (gauntletPlates, egPlateY).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../../net/gate/gateBrain.js';
@@ -119,7 +121,7 @@ import { createSpireMix } from '../../systems/eliteGates/egMix.js';   // EG-G2: 
 import { EG_LOOK_BIT } from '../../world/eliteGates/egLook.js';   // EG-ZD: a cut feint's dashed fade
 import { TELL_FEINT_FADE } from '../../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
 import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../../net/eliteGates/egBrain.js';   // EG-ZP (sections 15 and 21): THE CENSUS'S VESTIGES, the relay's own law; Lifeline's window
-import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018D WINCH-PLATES: the reach the room counts a member on a winch plate within
+import { EG_TOUCH_M } from '../../net/eliteGates/egBrain.js';   // FB1018D WINCH-PLATES: the reach the room counts a member on a winch plate within (FIELD BUGS 2026-10-19b GAUNTLET-PLATES: and on a Gauntlet's)
 import { EG_TRAIL_MS } from '../../net/eliteGates/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
 import { egBlowLandsOn } from '../../net/eliteGates/egFair.js';   // THE ASCENT - HEIGHT: a blow lands on its own storey, on every screen as on the relay
 import { egFightView } from '../../net/eliteGates/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
@@ -228,6 +230,25 @@ export const EG_SAY = Object.freeze({
   hornfoul: () => 'Another steps into the ring - the crowd throws fire! Ashfall in the Pit.', niche: (n) => `${n || 'Someone'} rests at the Battlemage's niche.`,
   hcache: (n) => `${n || 'Someone'} takes the High Road's cache - a Reliquary.`, lowroad: () => 'Something stirs on the Low Road.',
 });
+
+/**
+ * FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the height (m) of the ground under a Gauntlet's plate - `q` a pillar's spot, its plate
+ * `[x, z]` in the hall's frame (net/eliteGates/egLaw.js rampartWalk): the top of the pillar it stands on (from spec law 10,
+ * THE BROKEN WAY, beside its stair's head), else its stair's height under it (laws 8 and 9 laid it 3 m up the stair - a flat
+ * mark there crosses the slope at its middle), else the walkway's floor (the laws before laid the side span flat, and every
+ * Rampart's walkway lies at the hall's floor). Pure.
+ * @param {any} spec @param {any} q
+ */
+export function egPlateY(spec, q) {
+  const [x, z] = q.plate;
+  const top = (spec.discs ?? []).find((d) => d.role === 'pillar' && Math.hypot(x - d.x, z - d.z) <= d.r);
+  if (top) return top.y ?? 0;
+  for (const r of spec.ramps ?? []) {
+    const dx = r.bx - r.ax, dz = r.bz - r.az, u = ((x - r.ax) * dx + (z - r.az) * dz) / (dx * dx + dz * dz || 1);
+    if (u >= 0 && u <= 1 && Math.hypot(x - r.ax - u * dx, z - r.az - u * dz) <= r.hw) return r.y0 + (r.y1 - r.y0) * u;   // along its run, within its width
+  }
+  return 0;
+}
 
 /**
  * EG-G2 (sections 25.2, 25.4 and 25.7): THE LOOK LAID ON a frame's shapes - every danger line in the shelf's palette's
@@ -775,6 +796,25 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       _shapes.push(sh);
     }
   }
+  /** FIELD BUGS 2026-10-19b GAUNTLET-PLATES (section 8.3, the Gauntlet: "each silenced by standing 3 s on its plate"): each
+   *  caster's plate the room counts (net/eliteGates/egBrain.js trialStep's Gauntlet - a member within EG_TOUCH_M of
+   *  `spots.pillar[j].plate`, EG_SILENCE_MS unbroken) drawn as the winch's are (winchPlates - gold, EG_TOUCH_M, its own surface)
+   *  through the trial, at its ground's height (egPlateY); one whose Caster is silenced (the room's `pg.silenced[j]`) dimmed as
+   *  an unlit rune is - done. A relay before world224 says no plate's word: every plate the hall lays is drawn while a Caster is
+   *  left (`pg.left`). A blow or a spell silences no Caster, and the plates the objective now names were marked by nothing. */
+  function gauntletPlates(F, t) {
+    if (stageNow !== 'trial' || F.pg?.obj !== 'gauntlet') return;
+    const pillars = spec.spots?.pillar ?? [], said = Array.isArray(F.pg.silenced) ? F.pg.silenced : null;
+    if (!said && !(F.pg.left > 0)) return;
+    for (let j = 0; j < (said ? Math.min(said.length, pillars.length) : pillars.length); j++) {
+      const q = pillars[j], sh = (_slots[_shapes.length] ??= slot());
+      sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = q.plate[0]; sh.origin[1] = q.plate[1]; sh.r = EG_TOUCH_M; sh.points.length = 0; sh.n = 0;
+      sh.color = GROUND_COLORS.plate; sh.edge = TELEGRAPH_EDGE_SAFE; sh.pool = TELEGRAPH_POOL.ground; sh.t = 1; sh.flash = 0; sh.alpha = said?.[j] ? 0.35 : 0.85;
+      sh.style = TELEGRAPH_STYLE.weight; sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
+      sh.y = egPlateY(spec, q);
+      _shapes.push(sh);
+    }
+  }
   /** A stood-on object on the floor: its disc in its colour (a rune lit, a gem's souls). */
   /** EG-PERFECT (section 13.3, Wingbeat "told 1 s"): a gust's tell on my feet - the lane it will push me along, as far as it
    *  pushes, filling to its landing and pulsing in its last half; its wind heard once a gust. */
@@ -1188,6 +1228,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const b of F.bodies) liveBody(b, t);
       for (const g of F.gone) if (t - g.goneAt < FALL_MS) liveBody(g, t);
       winchPlates(F, t);   // FB1018D WINCH-PLATES: the stood-on plates that are no body
+      gauntletPlates(F, t);   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: and the Gauntlet's, each caster's
       for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
       for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first

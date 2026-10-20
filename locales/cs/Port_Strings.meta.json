@@ -8034,6 +8034,11 @@
   "tr": "6a4bf12ee803",
   "by": "claude-in-session"
  },
+ "eg.objective.gauntlet": {
+  "en": "8f3eee6be573",
+  "tr": "ff5d99340ed5",
+  "by": "claude-in-session"
+ },
  "eg.panel.noteTouch": {
   "en": "7a7fe891ec83",
   "tr": "c8eccb8cb5f3",
@@ -8042,6 +8047,11 @@
  "eg.ping.wait": {
   "en": "07e0ce65e7b1",
   "tr": "b0964f79b452",
+  "by": "claude-in-session"
+ },
+ "eg.progress.gauntlet": {
+  "en": "0600bcb888f2",
+  "tr": "2b7af91d6878",
   "by": "claude-in-session"
  },
  "eg.recap.close": {

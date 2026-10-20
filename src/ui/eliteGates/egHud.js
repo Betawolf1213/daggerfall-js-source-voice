@@ -5,7 +5,7 @@
 //   THE TRACKER (a readout, no click): outside the Spire the call; inside, THE COUNT CHIP (gold above 10:00, white to
 //     2:00, red below and pulsing in the last 30 s; *Held* while it holds; the last word's seal when it is nearer), the
 //     circle and hall by name with its band, the objective and its progress (rifts 3 of 5, the hold's seconds, the winch,
-//     the casters left), the decrees in force, my run (Reliquaries, lumen, shards, tonics, Cantrips, THE POTION LAW's
+//     the Gauntlet's plates left), the decrees in force, my run (Reliquaries, lumen, shards, tonics, Cantrips, THE POTION LAW's
 //     pip), the marks on me, the company's rows (numerals, a cracked recall, a witness's eye, home, forsaken), a
 //     witness's own line;
 //   THE PANEL (clicked, or answered by keys and `/breach` words): the Vestige offer (each card its name, rank and line;
@@ -29,6 +29,7 @@ import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, 
 import { EG_OPEN_ENDS } from '../../net/eliteGates/egLaw.js';   // AUDIT EG III (section 16.3): the ends that open the Reliquaries
 import { egBossOf, egLordCard } from '../../net/eliteGates/egLaw.js';   // AUDIT EG V (L2-11): the next Court's lord, the law's
 import { egStrataSecond } from '../../net/eliteGates/egBrain.js';   // AUDIT EG V (L2-11): and the second lord its strata stand beside it
+import { EG_SILENCE_MS } from '../../net/eliteGates/egBrain.js';   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: how long a Gauntlet's plate is held
 import { egPanoplyIn, egValkRedoubt } from '../../net/eliteGates/egPay.js';   // AUDIT EG III: the rest's stake line - a Reliquary's Panoply odds
 import { EG_RELIQUARY_PANOPLY_X } from '../../systems/eliteGates/egSpoils.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../../net/eliteGates/egLink.js';
@@ -99,12 +100,17 @@ export function egProgressText(spec, pg) {
   if (pg.obj === 'wellspring') return pg.anchors > 0 ? `Anchors standing: ${pg.anchors}` : 'The Wellspring is open to blows';
   if (pg.obj === 'holdfast') return `Hold ${ms(75_000 - (pg.hold ?? 0))} - the relic ${pg.relic ?? 100}%`;
   if (pg.obj === 'winch') return `The winch ${Math.round(((pg.winch ?? 0) / 60_000) * 100)}%`;
-  if (pg.obj === 'gauntlet') return `Casters left: ${pg.left ?? 0}`;
+  if (pg.obj === 'gauntlet') return t('eg.progress.gauntlet', 'Plates left: {n} - stand on each for {s} s', { n: pg.left ?? 0, s: EG_SILENCE_MS / 1000 });   // FIELD BUGS 2026-10-19b GAUNTLET-PLATES: the plates named ("Casters left" read as a body count - a slain Caster's plate still asks)
   if (pg.obj === 'engine') return `Hold the engine ${ms(45_000 - (pg.hold ?? 0))}`;
   if (pg.obj === 'orrery' && Array.isArray(pg.st)) return `Stones true: ${pg.lit ?? 0} of 6 - fray ${pg.f ?? 0}`;
   if (pg.obj === 'quiet') return `The door opens in ${ms(pg.quiet ?? 0)}`;
   return '';
 }
+/** FIELD BUGS 2026-10-19b GAUNTLET-PLATES: a hall's objective as the screen says it (this tracker's line, ui/eliteGates/egSpireHud.js's
+ *  chip and arrival card) - the Gauntlet's naming its plates, in the player's language, in place of the law's "Silence the
+ *  casters." (net/eliteGates/egLaw.js EG_OBJECTIVES - a hall's bytes, kept as laid: section 22's law pin); every other hall's
+ *  the law's words as they stand. */
+export const egObjectiveText = (spec) => (spec?.variant === 'gauntlet' ? t('eg.objective.gauntlet', "Stand on each caster's plate to silence it.") : egObjectiveOf(spec));
 /** A stage's words, by the hall's kind where it matters. */
 function stageLines(E, spec, now) {
   const left = E.su > 0 ? E.su - now : 0;
@@ -112,7 +118,7 @@ function stageLines(E, spec, now) {
     case 'wait': return { line: EG_TEXT.sealed(ms(left)), sub: 'Gather your company.' };
     case 'arrive': return { line: 'Gather on the arrival plate.', sub: left > 0 ? `The hall wakes in ${ms(left)}.` : '' };
     case 'trial': {
-      const obj = egObjectiveOf(spec), prog = egProgressText(spec, E.fight?.pg);
+      const obj = egObjectiveText(spec), prog = egProgressText(spec, E.fight?.pg);
       const lordAsleep = spec?.kind === 'court' && !(E.fight?.bodies ?? []).some((b) => b.role === 0 && b.ph);
       return { line: obj, sub: prog || (spec?.kind === 'court' && lordAsleep && !(E.fight?.says ?? []).some((s) => s.w === 'wake') ? 'Step into the ring to wake its lord.' : egTwistShown(spec, E.dc) ? EG_TWIST_NAMES[spec.twist] : '') };
     }
