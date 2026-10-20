@@ -20,6 +20,7 @@ import { pathChoices } from '../../systems/arcanePaths.js';
 import { martialChoices } from '../../systems/martialPaths.js';
 import { drawStage, dropStage, stageBack, stageAsks, stageLive, STAGE_CSS } from './growthStage.js';
 import { firmamentBook } from '../../net/firmament/firmamentBook.js';
+import { pointsLeft } from '../../net/firmament/firmamentLaw.js';   // FIRM-STARS: the stars not yet placed, on the rail
 import { t } from '../../systems/textManager.js';
 import { usesVirtueLeveling } from '../../systems/oblivionLeveling.js';   // ORL1: which bar the view of the stars reads
 import { GROWTH_PAGE_SECTIONS, SPEC_LANDINGS, growthPageAt } from './growthPages.js';   // the leaf the boot doors read
@@ -67,6 +68,10 @@ export function growthDue(ctx) {
   const e = ctx?.entity;
   const due = { level: e?.readyToLevelUp ? 1 : 0, specs: 0, firmament: 0, captain: 0 };
   if (e) due.specs = (pathChoices(e).length ? 1 : 0) + (martialChoices(e).length ? 1 : 0);
+  // FIRM-STARS: the Firmament's stars not yet placed, as the book last said its purses (the HUD's tile beside the Renown bar
+  // says the same number)
+  const fb = firmamentBook()?.state;
+  if (fb?.open === true) { const left = pointsLeft(fb.sending?.keys ?? fb.tree?.keys ?? [], Number(fb.stars) || 0, Number(fb.craft) || 0); due.firmament = Math.max(0, left.stars | 0) + Math.max(0, left.craft | 0); }
   const s = ctx?.captain?.model?.()?.stars;
   if (s) due.captain = Math.max(0, (s.points ?? 0) - (s.set ?? 0));
   return due;

@@ -1435,6 +1435,15 @@ ${G} :is(.tview-pace-num, .travelpanel-pace-num, .pbox-pace-num) + :is(.tview-pa
    way its death screen writes "Welcome Adventurer" */
 ${G} .notice.notice-toast, ${G} .lv-note.lv-note-skill .lv-note-title, ${G} .lv-note.lv-note-skill .lv-note-sub, ${G} .hud-modeword {
   color: ${T.yellow}; text-shadow: -1px 0 0 ${T.outline}, 1px 0 0 ${T.outline}, 0 -1px 0 ${T.outline}, 0 1px 0 ${T.outline}, 2px 2px 0 rgba(0,0,0,0.6); }
+/* LEVEL-INK (2026-10-20, Dudey: "when leveling up the black fonts are hard to read"): the level strip's plates (a level
+   risen or awaited, a Renown risen, a quest's word) are scraps of the page, so they are written in the page's full ink -
+   the title in the pack's red, the line under it in the darkest ink (the key keeps its wooden box and its light word) -
+   never the gold, the faint ink or a shadow the stone skins give them; and a hand big enough to read over a fight */
+${G} .lv-note:not(.lv-note-skill) .lv-note-title, ${G} .lv-note:not(.lv-note-skill) .lv-note-gem { color: ${T.red} !important; text-shadow: none !important; opacity: 1 !important; }
+${G} .lv-note:not(.lv-note-skill) .lv-note-title { font-size: 16px !important; letter-spacing: 0.08em !important; text-indent: 0.08em !important; }
+${G} .lv-note:not(.lv-note-skill) .lv-note-sub { color: ${T.ink} !important; text-shadow: none !important; opacity: 1 !important; font-size: 18px !important; }
+${G} .lv-note.lv-standing:not(.lv-note-skill) .lv-note-title { font-size: 14px !important; }
+${G} .lv-note.lv-standing:not(.lv-note-skill) .lv-note-sub { font-size: 15px !important; }
 ${G} .hud-cross { filter: sepia(0.6) saturate(1.4); }
 /* the crosshair's world plaque - a scrap of page held over the world, never a slab */
 ${G} .wplaque, ${G} .wplaque-stats { background: ${v('page')} 0 0 / 355px auto repeat, rgba(227,201,149,0.92); color: ${T.ink};
@@ -1881,6 +1890,15 @@ ${G} .px-home:not(.px-over):not(.lv-sky) .px-wordmark { background: radial-gradi
   ${G} .pack-shell .wornshelf { grid-area: shelf; flex-direction: column; justify-content: space-between; gap: 6px; margin: 0; padding: 4px 0; }
   ${G} .pack-shell .shelfgrp { flex: 0 0 auto; gap: 2px; }
   ${G} .pack-shell .shelflabel { font-size: 14px; color: #e3c27a; text-shadow: 1px 1px 0 ${T.outline}, 2px 2px 0 rgba(0,0,0,0.5); }
+  /* BELT-LANTERN: the column holds seven groups now (the Lantern's under the Crystals) - each socket is the column's height
+     shared out (--shelf-n, the groups drawn: the shelf's own count) less the names, never past the 56px box it was, so
+     the column never runs under the band at any window's height */
+  ${G} .pack-shell .wornshelf { container-type: size; gap: 2px; padding: 2px 0; }
+  ${G} .pack-shell .wornshelf { --sock: min(56px, calc((100cqh - var(--shelf-n, 6) * 19px - (var(--shelf-n, 6) - 1) * 2px) / var(--shelf-n, 6))); }
+  ${G} .pack-shell .shelfpair { width: auto; max-width: none; grid-template-columns: repeat(2, var(--sock)); justify-content: center; }
+  ${G} .pack-shell .shelfpair.shelfone { grid-template-columns: var(--sock); }
+  ${G} .pack-shell .wornsock { width: var(--sock); height: var(--sock); max-height: none; aspect-ratio: auto; }
+  ${G} .pack-shell .shelflabel { line-height: 17px; }
   ${G} .pack-shell .packlists { grid-area: list; min-height: 0; padding: 8px; background: rgba(14,8,3,0.55);
     border: 2px solid; border-color: ${T.outline} ${T.woodLit} ${T.woodLit} ${T.woodMid}; box-shadow: inset 2px 3px 8px rgba(0,0,0,0.55); }
   ${G} .pack-shell .charcol > :not(.equipped):not(.wornshelf), ${G} .pack-shell .pack-dock > :not(.packcats):not(.packlists) { grid-column: 2 / 4; }
@@ -1969,6 +1987,12 @@ ${G} .pack-shell .packtip > .card .acts .act:hover, ${G} .pack-shell .packtip > 
 ${G} .inv-menu button:hover, ${G} .inv-menu button:focus-visible, ${G} .inv-info > .card .acts .act:hover { color: ${T.redHi} !important; background: none !important; }
 ${G} .pack-shell .packtip > .card .acts .act:disabled, ${G} .inv-menu button:disabled { color: rgba(43,26,12,0.35) !important; }
 ${G} .pack-shell .packtip > .card h3, ${G} .inv-tip > .card h3 { font-size: 32px !important; color: ${T.red} !important; text-shadow: none !important; }
+/* HUD-TIP / STATUS-TIPS: the HUD's hover card is the pack's scroll - its name in red, a smaller hand than an item's; what
+   it does in ink, the time left in the softer ink under a rule */
+${G} .inv-tip.hud-tip > .card h3 { font-size: 22px !important; }
+${G} .inv-tip.hud-tip .meta { color: ${T.inkSoft} !important; text-shadow: none !important; }
+${G} .inv-tip.hud-tip .hud-tip-line { color: ${T.ink} !important; text-shadow: none !important; font-size: 15px; }
+${G} .inv-tip.hud-tip .hud-tip-foot { color: ${T.inkSoft} !important; text-shadow: none !important; border-top-color: rgba(92,56,24,0.55) !important; box-shadow: none !important; }
 
 /* THE SCROLLS - a question or a short choice (the rest window, a yes or no) is the pack's list-picker scroll, its two
    rods top and foot; the rest's three ways to rest are written across it in a row, as the pack's Rest scroll writes

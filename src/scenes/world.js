@@ -937,6 +937,7 @@ import { WILD_REMAINS_MS, WDUN_SALT, WDUN_DAY_MS, WDUN_LOCK_MS, WDUN_HERE_MS, sp
 import { validLootList } from '../systems/loot/loot.js';
 import { stacksWith } from '../systems/inventory.js';
 import { setHudZone } from '../ui/enhanced/enhancedHud.js';
+import { setHudPauseAt } from '../ui/hud/hudAdvance.js';   // FIRM-STARS: the stars' tile beside the Renown bar opens the Firmament page
 import { setZoneEntity } from '../ui/hud/hudActiveSpells.js';   // WILD1: the classic row's zone glyph
 import { createWedManager, wedWhyText, wedMineText } from '../net/wedSession.js';   // LEGACY7 part three: two players wed - the handshake's state machine (pure)
 import { createFamilyBodies, familyRoomSprites } from '../world/familyBodies.js';
@@ -1148,6 +1149,7 @@ import { createOverworldForecast } from './overworldForecastHost.js';   // OW-FO
 import { regionChaseWords } from '../systems/travel/regionChase.js';   // OW-CHASE-RANGE: a chase seen as far as its band is drawn
 import { createRegionChaseHearing } from './regionChaseHost.js';   // OW-CHASE-RANGE: the region's chase words heard (AUDIT OW-REVISITED L4-2, L4-3)
 import { TOWN_PACE_MAX } from '../systems/travel/townWalk.js';   // OW-TOWN-WALK: the keys' travel in a town, held to a town's pace
+import { monsterVolume } from '../systems/monsterVolume.js';   // MONSTER-VOL: a monster's pain cry rides the Audio tab's Monster Volume
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -11476,7 +11478,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     hurtGuard: (f, damage, feet) => cityGuards.hurtGuard?.(f, damage, feet, null),
     damageFoe: (f, damage, feet) => exteriorFoes.damageFoe(f, damage, feet, null, { kind: 'melee' }),
     voice: (f) => enemyHeavyPainVoice(f),
-    playVoice: (f, v) => audio.play3d(v.clip, [f.ai.feet[0], f.ai.feet[1] + 0.9, f.ai.feet[2]], 1, { maxDistance: 16, pitch: 1 + v.pitchLift }),   // AUDIT-RR2 G5: EnemySounds.cs:172-175
+    playVoice: (f, v) => audio.play3d(v.clip, [f.ai.feet[0], f.ai.feet[1] + 0.9, f.ai.feet[2]], monsterVolume(), { maxDistance: 16, pitch: 1 + v.pitchLift }),   // AUDIT-RR2 G5: EnemySounds.cs:172-175
   });
   function rrRidingContacts() { rrRiding.contacts(); }
   function _spawnGuards(immediate) {
@@ -23629,6 +23631,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     collect: (cr, at) => wildEscrow.collectHeard(cr, at),   // MAC (2026-10-14): the room's collect of my piece in escrow, carried to the service
   });
   setHudZone(() => (wildHere() ? { name: `${WILD_TEXT.chip} - ${wildRingName(wildRing())}, ${wildRingBonus(wildRing())}`, foot: `${wildRing()}/${WILD_RINGS}` } : null));   // WILD1: the HUD's glyph, on the enhanced skin...
+  setHudPauseAt((at) => { if (!modes?.openPauseAt?.(at)) hudCtx.togglePause({ at }); });   // FIRM-STARS: a pause page by name, wherever the player stands (the /mail door's)
   setZoneEntity(playerEntity);   // ...and on the classic row
   /** The duel's rows on a peer (ui/socialMenu.js): 'Accept duel' + 'Decline duel' while their challenge waits, 'Yield the
    *  duel' while we fight - nothing else (the challenge itself is the Inspect card's). */
