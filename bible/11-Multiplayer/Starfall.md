@@ -661,11 +661,19 @@ another session and folded into this pull request (2026-10-20), so the event and
 they meet:
 
 - **The days.** The Starfall keeps the festival's own calendar (`net/festivalLaw.js` `FESTIVALS`, `festivalOpen`) - the
-  relay, the host and the questline's need read it; the first build's staged `witchfest` live event, its own two dates
-  and the leaf that carried the hub's word to the questline were taken out with the merge (no build shipped them).
+  relay, the host and the questline's need read it (the host to the last star that landed inside it - `starfallStands`,
+  section 11); the first build's staged `witchfest` live event, its own two dates and the leaf that carried the hub's word
+  to the questline were taken out with the merge (no build shipped them).
+- **The switch.** The account service's `FESTIVAL_OPEN` (`server-account/wrangler.toml`) shuts the festival's economy -
+  its finds, sales, set-outs, fills and takes - and nothing of the Starfall: the stars fall, are fought and held on the
+  calendar alone, and a held star's spoils and claim are the Starfall's own (section 7). Shut, a held star's `star-held`
+  asks no find (the client has heard the switch - `festivalShut`, `closed`), as no deed does; the hold itself stands. To stop the stars, the calendar is the
+  lever (a release that changes `FESTIVALS`), never the switch.
 - **The Soul Cakes.** A held star is the act `star-held`, of the endgame family (`systems/questlines/qlActs.js` - each a
   receipt the service holds), so the festival's finds hear it as they hear a breach closed: the service's die, the
-  endgame's four cakes, twice on the nights the dead walk (`FIND_SOURCES.endgame`, `deadWalk`). One deed, one find.
+  endgame's four cakes, twice on the nights the dead walk (`FIND_SOURCES.endgame`, `deadWalk`). One deed, one find: the
+  master's body is a world boss's (`entity.worldBoss`, set by the host's `masterOf`), which asks no find of its own
+  (`systems/festival/festivalFoes.js` `foeFindSource` - its elite's find beside its star's would be two for one deed).
 - **The night.** The Heart-Star falls on the sky's 13th of Frostfall - the festival's own day in Daggerfall, and one of
   the two nights its finds give twice (`FESTIVAL_NIGHTS`).
 - **The Glenmoril Wyrd.** The questline's giver, Morwen, is a witch of the Glenmoril Wyrd, the coven whose sisters stand

@@ -149,11 +149,14 @@ export function festivalQuestEnded(/** @type {any} */ q) { if (q?.questSuccess) 
 /** A bounty of mine paid (scenes/bountyHost.js): the same. */
 export const festivalBountyPaid = () => askFind('world');
 
-/** A kill my blow made: one find by the foe's kind - once a body, whichever pool says it. */
+/** A kill my blow made: one find by the foe's kind - once a body, whichever pool says it; a world boss's none (its
+ *  deed's act is its find - foeFindSource). */
 registerPlayerKillListener(FESTIVAL_FIND, (/** @type {any} */ entity) => {
   if (!entity || typeof entity !== 'object' || neverPays(entity) || _asked.has(entity)) return;
+  const source = foeFindSource(entity);
+  if (!source) return;
   _asked.add(entity);
-  askFind(foeFindSource(entity));
+  askFind(source);
 });
 /** ONE DEED, ONE FIND: an elite foe's fall is its kill's find (`elite`, above), never its act's too; and the acts one
  *  receipt says together - a breach closed with its rite broken, a Valkynaz's Redoubt taken - ask one find of their family,

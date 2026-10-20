@@ -580,5 +580,16 @@
       "test/world/witch1_decor.test.js"
     ],
     "note": "D7: a painted stand-in's foot its whole picture's cover - a ward-staff's invisible wall."
+  },
+  {
+    "name": "WITCH1-AUDIT-the-world-boss-finds-twice",
+    "file": "src/systems/festival/festivalFoes.js",
+    "old": "  if (e?.worldBoss === true) return null;\n",
+    "new": "",
+    "tests": [
+      "test/systems/festival/witch1_wares.test.js",
+      "test/systems/festival/witch1_client.test.js"
+    ],
+    "note": "A Starfall master's body asks an elite's find beside the endgame find its held star gives: one deed, two finds."
   }
 ]

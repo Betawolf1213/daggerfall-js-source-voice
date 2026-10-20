@@ -15,9 +15,12 @@ export const FESTIVAL_SUMMONED = Object.freeze([M.FrostDaedra, M.FireDaedra, M.D
 /** Whether a foe is one the festival's night belongs to - the dead or the summoned. */
 export const hallowedFoe = (/** @type {any} */ e) => FESTIVAL_UNDEAD.includes(e?.mobileType) || FESTIVAL_SUMMONED.includes(e?.mobileType);
 /** A foe's find source (festivalLaw FIND_SOURCES): an elite (`eliteFoe`, systems/eliteFoes.js; or a champion - its
- *  trait's id, systems/champions.js), the undead, the summoned, or any other foe. A world boss's fall is the act's
- *  (`breach-closed`, `serpent-slain`: festivalLaw's `endgame`), never a body's. */
+ *  trait's id, systems/champions.js), the undead, the summoned, or any other foe - or null for a world boss's body
+ *  (`worldBoss`, the Starfall's master - scenes/starfall/starfallHost.js masterOf): its fall is the act's (`star-held`,
+ *  `breach-closed`, `serpent-slain`: festivalLaw's `endgame`), never a body's too.
+ *  @returns {string|null} */
 export function foeFindSource(/** @type {any} */ e) {
+  if (e?.worldBoss === true) return null;
   if (e?.eliteFoe === true || (typeof e?.champion === 'string' && e.champion !== '')) return 'elite';
   if (FESTIVAL_UNDEAD.includes(e?.mobileType)) return 'undead';
   if (FESTIVAL_SUMMONED.includes(e?.mobileType)) return 'daedra';

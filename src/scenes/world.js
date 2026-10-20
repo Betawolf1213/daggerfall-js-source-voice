@@ -24671,8 +24671,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     loot: { seed: (items, feet, pixelKey) => droppedLoot.seedPile(items, feet, { archive: RANDOM_TREASURE_ARCHIVE, record: 0 }, null, pixelKey, { unsaved: true, drawn: false }), keyOf: (p) => `droppedLoot:${p.id}` },   // the casket is its picture, and its name
     level: () => playerEntity.level ?? 1,
   }) : null;
-  /** STAR4-STAR6: THE STARFALL (scenes/starfall/starfallHost.js) - online alone, while the hub's live event says the Witches'
-   *  Festival: a coven's three stars a night in its region's wilds, found over the gate's scan; each one's omen, fall and
+  /** STAR4-STAR6: THE STARFALL (scenes/starfall/starfallHost.js) - online alone, on the Witches' Festival's own days (its
+   *  calendar, net/festivalLaw.js - starfallStands, to the last star it saw land): a coven's three stars a night in its region's wilds, found over the gate's scan; each one's omen, fall and
    *  crater; its coven's waves and master on the camp law (`px,py:star.<night>.<k>`), its cell's ledger and receipts; the
    *  tracker, the bar, the map, the compass and the timers. It reads what it needs of this scope by name. */
   const starfall = params.has('online') ? createStarfallHost({

@@ -92,7 +92,7 @@ test('WITCH1 THE SET\'S POWERS through the real seam: Wyrd-Sight\'s Willpower, T
   _resetSetPowersForTests(); _resetSigilForTests(); _resetSigilSetsForTests();
 });
 
-test('WITCH1 WHAT A FOE IS TO THE FESTIVAL: the dead and the summoned hallowed; an elite or a champion finds as an elite', () => {
+test('WITCH1 WHAT A FOE IS TO THE FESTIVAL: the dead and the summoned hallowed; an elite or a champion finds as an elite; a world boss\'s body not at all', () => {
   assert.equal(hallowedFoe({ mobileType: MOBILE_TYPES.Lich }), true);
   assert.equal(hallowedFoe({ mobileType: MOBILE_TYPES.DaedraLord }), true);
   assert.equal(hallowedFoe({ mobileType: MOBILE_TYPES.Rat }), false);
@@ -101,6 +101,7 @@ test('WITCH1 WHAT A FOE IS TO THE FESTIVAL: the dead and the summoned hallowed; 
   assert.equal(foeFindSource({ mobileType: MOBILE_TYPES.Rat }), 'foe');
   assert.equal(foeFindSource({ mobileType: MOBILE_TYPES.Rat, eliteFoe: true }), 'elite');
   assert.equal(foeFindSource({ mobileType: MOBILE_TYPES.Zombie, champion: 'vampiric' }), 'elite');
+  assert.equal(foeFindSource({ mobileType: MOBILE_TYPES.Lich, eliteFoe: true, worldBoss: true }), null, 'a world boss\'s body: its deed\'s act is its find');
   assert.equal(foeFindSource(null), 'foe');
 });
 

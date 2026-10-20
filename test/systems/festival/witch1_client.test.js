@@ -64,7 +64,7 @@ test('WITCH1 NOT LIVE, NOTHING ASKED - AND SAID WHY: unbound or offline (`offlin
   assert.deepEqual(asked.filter(([n]) => n === 'find'), []);
 });
 
-test('WITCH1 A KILL\'S FIND: my own blow\'s kill (every pool\'s word, playerKills.js) asks by the foe\'s kind, once a body; the cakes land in the pack, the count\'s face; the watch and an ally never (AUDIT WITCH1 C1)', async () => {
+test('WITCH1 A KILL\'S FIND: my own blow\'s kill (every pool\'s word, playerKills.js) asks by the foe\'s kind, once a body; the cakes land in the pack, the count\'s face; the watch, an ally and a world boss\'s body never (AUDIT WITCH1 C1; AUDIT STARFALL: the master\'s find is its held star\'s)', async () => {
   const { api, asked } = fakeApi({ mine: { ok: true, data: { cakes: 3 } }, find: () => ({ ok: true, data: { found: 2, cakes: 5 } }) });
   bind(api);
   await refreshFestival();
@@ -74,8 +74,9 @@ test('WITCH1 A KILL\'S FIND: my own blow\'s kill (every pool\'s word, playerKill
   reportPlayerKill(skeleton, { kind: 'remote' });   // a body asks once, whichever pool says it
   reportPlayerKill({ mobileType: MOBILE_TYPES.Knight_CityWatch, items: [] }, {});   // the watch never pays
   reportPlayerKill({ mobileType: 1001, items: [], team: 'PlayerAlly' }, {});   // nor my own ally
+  reportPlayerKill({ mobileType: MOBILE_TYPES.Lich, items: [], eliteFoe: true, worldBoss: true }, {});   // a Starfall's master: its held star is its find
   await askFind('world');   // the queue drains in order
-  assert.deepEqual(asked.filter(([n]) => n === 'find').map(([, s]) => s), ['undead', 'world'], 'the dead walk: the skeleton\'s find is the undead\'s');
+  assert.deepEqual(asked.filter(([n]) => n === 'find').map(([, s]) => s), ['undead', 'world'], 'the dead walk: the skeleton\'s find is the undead\'s; a world boss\'s body asks none');
   assert.equal(skeleton.items.length, 0, 'nothing thrown on a body - a face there is one the count cannot see');
   assert.equal(soulCakesHeld(entity.items), 5, 'the pack is the count');
   assert.ok(said.some((l) => /\+2 Soul Cakes/.test(l)));
