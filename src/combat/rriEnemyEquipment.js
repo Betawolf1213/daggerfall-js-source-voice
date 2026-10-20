@@ -56,7 +56,7 @@ const newWeapons = () => rriModule('newWeapons');
 const newArmor = () => rriModule('newArmor');
 
 const range = (rolls, lo, hi) => lo + Math.floor(rolls() * (hi - lo));   // UnityEngine.Random.Range(lo, hi) - hi exclusive
-export const coinFlip = (rolls) => range(rolls, 0, 2) === 0;
+const coinFlip = (rolls) => range(rolls, 0, 2) === 0;
 const oneOf = (rolls, array) => array[range(rolls, 0, array.length)];
 const randomShield = (rolls) => range(rolls, A.Buckler, A.Round_Shield + 1);
 const randomLongblade = (rolls) => range(rolls, W.Broadsword, W.Longsword + 1);

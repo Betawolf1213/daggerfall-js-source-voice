@@ -16,7 +16,7 @@
 // head); the poison's Assassin is the table's (:432-433 - the arm's answer carries it, hostCombat.equipEnemy reads it).
 // RRI's newWeapons and newArmor are read as its arm reads them (rriModule) - DEX_RRICompat reads the same two settings.
 
-import { assignRriEnemyEquipment, coinFlip, RRI_ITEM } from '../../combat/rriEnemyEquipment.js';
+import { assignRriEnemyEquipment, RRI_ITEM } from '../../combat/rriEnemyEquipment.js';
 import { ARMOR_ENUM as A } from '../../combat/enemyEquipment.js';
 import { rriModule } from '../roleplayRealismItems/rriItems.js';
 import { MOBILE_TYPES as M } from '../../characters/mobile/mobileTypes.js';
@@ -40,6 +40,8 @@ export function dexClassTable(mobileId, propsOf) {
 /** DFCareer.ArmorFlags (DFCareer.cs:302-307) over ForbiddenArmors, `(WeaponArmorShieldsBitfield >> 6) & 0x07` (:605). */
 const ARMOR_FLAG = Object.freeze({ Leather: 1, Chain: 2, Plate: 4 });
 const forbiddenArmors = (career) => ((career?.weaponArmorShieldsBitfield ?? 0) >>> 6) & 0x07;
+/** DEX_RRICompat.CoinFlip (:47-50), the copy's own: `Random.Range(0, 2) == 0` on the caller's stream. */
+const coinFlip = (rolls) => Math.floor(rolls() * 2) === 0;
 
 const CLASSIC_PIECE = Object.freeze({ ChestArmor: A.Cuirass, LegsArmor: A.Greaves, LeftArm: A.Left_Pauldron, RightArm: A.Right_Pauldron, Feet: A.Boots, Gloves: A.Gauntlets, Head: A.Helm });
 const CHAIN_PIECE = Object.freeze({ ChestArmor: RRI_ITEM.Hauberk, LegsArmor: RRI_ITEM.Chausses, LeftArm: RRI_ITEM.LeftSpaulder, RightArm: RRI_ITEM.RightSpaulder, Feet: RRI_ITEM.Sollerets, Gloves: RRI_ITEM.Gloves, Head: RRI_ITEM.Helmet });
