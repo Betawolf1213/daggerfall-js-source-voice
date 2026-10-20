@@ -5,7 +5,8 @@
 // decides a quest: each step is a script on the machine like any other, its objectives a sheet like any other's.
 //
 // WHAT IT KEEPS (the layer's save, beside the rewards waiting): each line begun - the step it stands at, the outcome
-// each step ended on, whether it is done, and when its next step may start. A step's quest is found by NAME on the
+// each step ended on, whether it is done, when its next step may start, and when its last letter came (FB1020c
+// LETTER-PACE: the next line's hour counts from it). A step's quest is found by NAME on the
 // machine, never by uid, so a restart (QUEST-RESET - a new copy) or a quest set aside (QUEST-SHELF) is still the step.
 //
 // THE SERVICE'S PART (decision 8; net/questlineClaims.js). A step the service pays - a witnessed one, a title's, the
@@ -55,8 +56,22 @@ export const CLAIM_TRIES = 5;
 export const CLAIM_SLOW_MS = 600_000;
 
 /** A line's record, fresh - `begun` the character's second it began (AUDIT QUESTLINES LINES-17: one new line an hour);
- *  `aside` its running step's quest set aside by the runner itself for a need that stopped holding (AUDIT STAR8 S2). */
-const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun, aside: false });
+ *  `lettered` the second one of its steps' letters reached the player (FB1020c LETTER-PACE), 0 before any; `aside` its
+ *  running step's quest set aside by the runner itself for a need that stopped holding (AUDIT STAR8 S2). */
+const freshLine = (begun = 0) => ({ step: 0, outcomes: {}, done: false, wait: 0, claims: {}, begun, lettered: 0, aside: false });
+
+/** FB1020c LETTER-PACE: whether a step's quest still holds its letter back - running, not set aside (QUEST-SHELF), with a
+ *  `give pc <letter> notify` not yet done. GivePc waits for a town, outdoors, by day (GivePc.cs:78-97, quest/actions.js
+ *  GivePc), so every letter whose courier ran while the player was elsewhere lands at once, 40 to 500 ticks apart. */
+export function letterOnItsWay(quest) {
+  if (!quest || quest.questComplete || quest.shelvedAt != null) return false;
+  for (const task of quest.tasks?.values?.() ?? []) {
+    for (const a of task?.actions ?? []) {
+      if (a.typeName === 'GivePc' && a.textId && !a.isComplete && quest.getItem?.(a.itemSymbol)?.itemName === 'letter') return true;
+    }
+  }
+  return false;
+}
 
 /**
  * @param {{ machine: any, ctx?: any, service?: any, nowMs?: () => number }} deps
@@ -180,8 +195,11 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
   }
 
   /** LINES-17: a line may begin when no other began within STEP_GAP_S - a character's first page with a dozen lines open
-   *  gets their letters an hour apart, never in one breath. */
-  const mayBegin = (s) => Object.values(lines).every((r) => !(r.begun > s - STEP_GAP_S));
+   *  gets their letters an hour apart, never in one breath. FB1020c LETTER-PACE: and when no letter of a line reached the
+   *  player within it, and no begun line's first letter is still on its way - the pace was the starts', and the letters
+   *  of every line begun at night, indoors or in the wild landed together at the next town by day. */
+  const mayBegin = (s) => Object.entries(lines).every(([id, r]) => !(r.begun > s - STEP_GAP_S) && !(r.lettered > s - STEP_GAP_S)
+    && !(r.step === 0 && !r.done && letterOnItsWay(runningStep(lineById(id)?.steps[0]?.quest ?? ''))));
 
   const runner = {
     /** Each tick after the machine's: open what may open, start each line's step that is due, ask the service what is
@@ -281,6 +299,14 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
       });
     },
 
+    /** FB1020c LETTER-PACE: the layer's letter arm (qlLayer.js reward - GivePc's moment): a line's step handed the player
+     *  its letter, and the next line waits STEP_GAP_S from it. */
+    lettered(quest) {
+      const at = lineStepOf(quest?.questName);
+      const rec = at ? lines[at.line.id] : null;
+      if (rec && !rec.done && rec.step === at.index) rec.lettered = Math.max(1, now());
+    },
+
     /** The record of a line, for the pins. */
     lineState: (id) => (lines[id] ? structuredClone(lines[id]) : null),
 
@@ -298,7 +324,7 @@ export function createLineRunner({ machine, ctx = {}, service = null, nowMs = ()
         const step = Math.max(0, Math.min(l.steps.length, Number.isSafeInteger(r.step) ? r.step : 0));
         lines[id] = {
           step, done: !!r.done || step >= l.steps.length, wait: Number.isFinite(r.wait) ? r.wait : 0,
-          begun: Number.isFinite(r.begun) ? r.begun : 0, stalled: !!r.stalled, retry: !!r.retry, aside: !!r.aside,
+          begun: Number.isFinite(r.begun) ? r.begun : 0, lettered: Number.isFinite(r.lettered) ? r.lettered : 0, stalled: !!r.stalled, retry: !!r.retry, aside: !!r.aside,
           outcomes: r.outcomes && typeof r.outcomes === 'object' ? structuredClone(r.outcomes) : {},
           claims: r.claims && typeof r.claims === 'object' ? { ...r.claims } : {},
         };

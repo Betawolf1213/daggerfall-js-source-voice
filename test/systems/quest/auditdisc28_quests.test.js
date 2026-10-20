@@ -634,7 +634,8 @@ test('AUDIT DISC28 QS-K2: the town plan opened on arrival names the house for th
     directory: () => [], discovered: () => discovery.discoveredBuildings(LOC) });
   const plate = quiet(() => w.buildPlates({ fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } }, { s: 3, ox: 0, oy: 0 })).find((p) => p.buildingKey === KEY);
   assert.equal(plate?.text, 'The Direnni Residence');
-  const open = W.indexOf('  const toggleExteriorAutomap = () => {');
+  // PIN MOVED (FB1020c STREETS-TAB, at the merge of STAR0's move): the plan is built by `townHere`, for the town key and the travel key's streets alike
+  const open = W.indexOf('  const townHere = () => {');
   const stamp = W.indexOf('    restampQuestNames(locId, { ...questBuildingSource, currentMapID: () => dfLoc.mapTableData?.mapId ?? 0 });', open);
   assert.ok(open > 0 && stamp > open && stamp < W.indexOf('    stampResidenceQuestNames(summaries, discoveredBuildings(locId), {', open), 'the host re-stamps before the plates are built');
 });

@@ -3479,6 +3479,11 @@
   "tr": "871ec4f27efc",
   "by": "claude-in-session"
  },
+ "cabin.refusal.enemies": {
+  "en": "d1fec018f418",
+  "tr": "421cc244ad89",
+  "by": "claude-in-session"
+ },
  "captain.half.commander": {
   "en": "4de3476e43a9",
   "tr": "b023a2cc5b3b",
@@ -22910,8 +22915,8 @@
   "by": "claude-in-session"
  },
  "prof.page.fire.sources": {
-  "en": "a7051497a442",
-  "tr": "3769c4966c57",
+  "en": "e66022046439",
+  "tr": "5df86b2e370a",
   "by": "claude-in-session"
  },
  "prof.page.fire.take": {
