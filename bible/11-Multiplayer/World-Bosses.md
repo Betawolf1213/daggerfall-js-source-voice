@@ -2683,7 +2683,7 @@ the fix is the stand-in's, as a duel's was (`combat/duelCombat.js` DUEL_STAND_IN
 - **THE DOOR** is one: the court's four spell doors (him, his crystals, his host, my opponent - each its own copy in
   `buildDungeonContext`) left the host for `scenes/gate/standInSpell.js`
   (`standInSpell.js:"export function createStandInSpell(host) {"`), which the context wires where they stood
-  (`dungeonContext.js:"const { spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn } = createStandInSpell({"`;
+  (`dungeonContext.js:"} = createStandInSpell({"`;
   `01-Overview/Host-Split.md` STAND-IN-WHOLE).
 - **NOTHING LOCAL READS IT AS A BODY.** With the whole finite, every reader of a stand-in's health was read again: the
   spell doors' sinks only count, a swing's and a shaft's formula takes nothing (the number is sent, never subtracted), and
@@ -2698,8 +2698,8 @@ the fix is the stand-in's, as a duel's was (`combat/duelCombat.js` DUEL_STAND_IN
   condition, the health it removes (`MehrunesRazorEffect`), and on a body the relay runs nothing would pay it - a whole blow
   free on every failed save, its number the whole on top of the swing's.
 
-What it does not do: the serpent's own spell door (`scenes/world.js serpentSpellOn`) raises no number and tells its riders
-the claim, as before; a swing's number is not capped (no swing reaches the cap but the Razor's, which stays passed by).
+What it does not do: the serpent's door raises no number (BOSS-DOT, section 26, brought it into the module and tells its
+riders what a hand's purse can land); a swing's number is not capped (no swing reaches the cap but the Razor's, which stays passed by).
 A departure from DFU (`Disintegrate.MagicRound` kills outright): on a body the relay runs it is the most one blow lands.
 Pins: `test/net/gate/fb1019b_standinwhole.test.js` (5: the whole against the real constants, every wire and the purses;
 a real Disintegrate on every factory's stand-in, out through the real court to the brain; the number on each door at two
@@ -2712,6 +2712,52 @@ door), `audit_wb11.test.js`, `wb9c_gate_reckoning.test.js`, `wb8a_never_swayed.t
 dead). Re-aimed by content (13, all dead): `arena4b_blows.json`, `audit_schools.json`, `audit_wb11.json`, `wb8a.json` (3),
 `fb1018f_turnedblow.json` (the host's number; the crystal's and the Warden's retired with the copies they named), `blood1.json`,
 `fb1018f_relayshare.json` (5).
+
+## 26. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19b; the owner, 2026-10-19: "Carry DoTs")
+
+Section 25's door counted a spell on a stand-in and wiped the stand-in at once - "continuous families are not his to carry",
+WB4b's comment, never a decision (WBX7 named it, "his stand-in forgets every lasting effect", and carried the Soul Trap
+alone). So a Continuous Damage spell on any body a relay runs landed its cast's round and nothing after: a level-20 Burn of
+10 a round dealt one round of its 25. Now its rounds are carried:
+
+- **What is carried** (`standInSpell.js:"export const carriedOnStandIn = (a) =>"`): Continuous Damage on health (1,0 - DFU's
+  ContinuousDamageHealth), a round still to run. Its siblings on fatigue and magicka (1,1 and 1,2) have nothing to fall on -
+  a relay body is health alone - and the duel's other lasting families (Paralyze, Silence, Drain) are the relay brain's to
+  know, never a claim: none of those is.
+- **Kept a body** (`standInSpell.js:"export function createStandInRounds({ now = Date.now, rolls = Math.random } = {}) {"`):
+  him, one of his host, a crystal (the Remnant, its Echoes and Hearts in the Hour; an Elite Breach's lords, legion and struck
+  objects through the host seam). A cast on the body lays its running rounds on the stand-in first, as copies - the
+  incumbent a recast RENEWS (STACK-CAP's renewRounds; a renewal fires no first round, as DFU's AddState does) - and keeps
+  what the cast leaves when its claim went: a spell the ward or the ground turns, or whose claim is refused, lays nothing.
+- **Ticked on the court's clock** (COURT_ROUND_MS, the soul trap's: one game minute online, five seconds), every body on the
+  same round as DFU's broker raises one round for every entity - never this machine's magic round, which a rest, a wait or
+  a court sentence moves in a burst. A round runs the entries against the body's stand-in by the one law every round runs
+  by (`tickActiveEffects` - the save rolled fresh each round, its caster's power) and sends the sum through the door a
+  spell's claim takes (`dungeonContext.js:"standInRound();"`, beside the foes' own rounds): a spell's claim, the relay's caps
+  and its blow rate deciding what lands. Every body's round leaves in the same frame - one blow's sequence where the court
+  groups them (AUDIT WB11 W3), one token of the hand. A round into his ward is lost, as any blow is, and the rest run on;
+  a stalled frame's rounds go as one claim.
+- **They end** with the body (fallen, withdrawn, the fight over, out of the screen's offer), my death, and the context
+  (the court left). A walk to another of his courts: the court refuses every claim from there (AUDIT WB9 brain F1) - its
+  rounds are lost while I stand there, as my blows would be.
+- **An Elite Breach** weighs a round as no blow: the host door carries its mark (`tick`) to `egFight.js` hostHit, where it
+  takes no Momentum, builds none and rolls no Arcane Echo; the relay's own factors weigh it as any spell's claim.
+- **The sea serpent's** door left bootWorld for the module (`createSerpentSpell`): its Continuous Damage carried the same,
+  each round to the segment it last met through the host's hand door (`serpentHost.js` handStruck), ended with the fight;
+  its riders told what a hand's purse can land (STAND-IN-WHOLE's law).
+- **A bout carries none** (BAL8: the referee's blow alone - every spell claim it counts a cast, and OPEN-HAND drops what a
+  follow-up owes a player).
+
+A departure from DFU, which has no relay: its ContinuousDamageHealth runs on the target's own manager each magic round and
+takes the health there; on a body the relay runs it runs on this machine against the stand-in, and each round is a claim
+the relay's caps decide. No relay or wire change: a round is a spell's claim on the wire as it stands.
+Pins: `test/net/gate/fb1019b_bossdot.test.js` (7: round for round what DoMagicRound deals; the round's law - a stall, a
+renewal, the ward, a refused claim, a body gone, my death, health alone, the bout; the keeper's clock; the real court -
+him and his host in one sequence, the wire, his fall; the serpent; an Elite Breach's real fight - no Momentum, no Echo; the
+hosts by source). PIN MOVED: `arena4b_blows`, `audit_wb11`, `fb1019b_standinwhole`, `wb11_gate_host`, `fb1012g_openhand`,
+`wb4b_gate_blows`, `wb9c_gate_reckoning`, `audit_schools` (the serpent's riders), `serpent4`. `tools/mutants/fb1019b_bossdot.json`
+(23, all dead); re-aimed by content (all dead): `fb1019b_standinwhole.json`'s the-claim-clipped and the-count-takes,
+`egz_vestiges.json`'s EGZR-stacks-any-body.
 
 ## Shipped
 

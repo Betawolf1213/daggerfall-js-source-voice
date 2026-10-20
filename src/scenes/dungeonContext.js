@@ -4400,7 +4400,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     return out;
   }
   /** A blow's number on one of his host, out to the relay through the court's door; answers whether it went. */
-  const landOnHost = (hb, damage, r) => { damage += takeOwed(hb.entity); return sdRemnant ? sdRemnant.echoHit({ i: hb.host, d: damage, r }) : !!opts.onHostHit?.({ i: hb.host, d: damage, r }); };   // SD8c: an Echo's, to the realm; OPEN-HAND: and the follow-up the blow owes
+  const landOnHost = (hb, damage, r, tick = false) => { damage += takeOwed(hb.entity); return sdRemnant ? sdRemnant.echoHit({ i: hb.host, d: damage, r }) : !!opts.onHostHit?.({ i: hb.host, d: damage, r, tick }); };   // SD8c: an Echo's, to the realm; OPEN-HAND: and the follow-up the blow owes
   /** Its middle, where a blow on it sounds and splashes. */
   const hostChest = (hb) => [hb.ai.feet[0], hb.ai.feet[1] + hb.ai.centreOffset, hb.ai.feet[2]];
   /** A swing of mine that met one of his host (resolveHit's own verdict and number): a zero blow's parry as its mobile
@@ -4490,8 +4490,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // FIELD BUGS 2026-10-19b STAND-IN-WHOLE (HOST-SPLIT): MY HARMFUL SPELL ON A BODY THE RELAY RUNS - him, his crystals, his
   // host (the Remnant's in the Hour, an Elite Breach's bodies) and my opponent on the sand - by one door, counted on its
   // stand-in, its number what can land (scenes/gate/standInSpell.js); its four copies stood here. The cast engine's seams
-  // and the enchant door ask them only once the context is built.
-  const { spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn } = createStandInSpell({
+  // and the enchant door ask them only once the context is built. BOSS-DOT: its lasting harm carried, a round a frame
+  // asked (standInRound, in drawFoes beside the foes' own rounds).
+  const { spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn, standInRound } = createStandInSpell({
     player: playerEntity, say: (line) => hudText.add(line),
     boss: gateBossBody, crystals: gateCrystalBodies, host: gateHostBodies, rival: arenaRivalBody,
     landOnBoss, landOnCrystal, landOnHost, landOnRival, nextArenaQ,
@@ -7534,6 +7535,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (f.dead) continue;
       runMagicRoundsFor(f.entity, _tick.magicRoundWindow.from, _tick.magicRoundWindow.to, { sinks: foeSinks(f, false) });   // AUDIT 68 S19-round-ticks-player-provenance: as the rest window's
     }
+    standInRound();   // FIELD BUGS 2026-10-19b BOSS-DOT: and the relay's bodies' rounds, on the shared world's (scenes/gate/standInSpell.js)
     // AUDIT 24 (wave 31): every entity has an EntityEffectManager, so the
     // stat-zero kill is a FOE law too - a drained-to-zero Strength kills
     // the thing you drained. Off the frame's dt, not the minute loop.

@@ -1321,7 +1321,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     hit: () => false,
     /** Every body my blows meet - lords, the legion, the struck objects - and a blow of mine on one (`hit` by number). */
     hostTargets: () => _targets,
-    hostHit({ i, d, r } = /** @type {any} */ ({})) {
+    hostHit({ i, d, r, tick = false } = /** @type {any} */ ({})) {
       if (!Number.isInteger(i) || !(Math.round(d) >= 1) || !Object.values(HIT_KINDS).includes(r)) return false;
       const E = link.state(), b = E.fight.bodies.find((q) => q.i === i);
       if (!b || (drawn.get(i)?.target ?? crystalSlots.get(i)?.target)?.entity?.warded) return false;   // FIELD BUGS 2026-10-18f TURNED-BLOW: a blow the relay will refuse is never sent, nor flashes it
@@ -1330,8 +1330,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       // this body, Bloodied Fury under half my health, Overcharge on a spell (egHolderBlow); the relay's bucket grown by
       // their declared factor takes the claim
       const vs = egRunOfMember(E, me()).vs, e = player(), q = blowQ(`e${i}`);
-      const dmg = Math.round(egHolderBlow(vs, d, r, { stacks: mom.i === i ? mom.n : 0, low: !!e && e.health < e.maxHealth * EG_BLOODIED_UNDER }));
+      const dmg = Math.round(egHolderBlow(vs, d, r, { stacks: !tick && mom.i === i ? mom.n : 0, low: !!e && e.health < e.maxHealth * EG_BLOODIED_UNDER }));
       if (!sendHit({ i, q, d: dmg, r })) return false;
+      if (tick) return true;   // FIELD BUGS 2026-10-19b BOSS-DOT: a round of my lasting harm (`tick`) is no blow - it takes no Momentum, builds none and rolls no Echo
       if (q !== mom.q) mom = { i, n: mom.i === i ? mom.n + 1 : 1, q };   // a blow builds one stack, on the first body it met
       // ARCANE ECHO: a damage spell repeats, its share of casts - one roll a cast, a blow of its own on each body. EG-ZS: claimed
       // at the cast's whole; the relay takes its share - half, or the whole in War-Chorus (net/eliteGates/egRun.js egEchoShare)

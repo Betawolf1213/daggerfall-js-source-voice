@@ -130,9 +130,9 @@ test('WB4b the seams, by source: the dungeon context meets him as a foe-shaped b
   // (one door for him, his crystals, his host and my opponent), wired with his body and his door
   assert.match(dc, /createStandInSpell\(\{[^]*?boss: gateBossBody,[^]*?landOnBoss, landOnCrystal, landOnHost, landOnRival, nextArenaQ,/);
   const sis = read('src/scenes/gate/standInSpell.js');
-  assert.match(sis, /try \{ r = applySpell\(harm, level, entity, sinks, rolls, \{ entity: caster \}\); \} finally \{ entity\.activeEffects = \[\]; \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): its answer kept, for the paths' riders
-  assert.match(sis, /if \(!harm\) return laid \|\| sways;\n\s*return onBody\(sp, boss, harm, caster, host\.landOnBoss\);/);
-  assert.match(sis, /return land\(body, dealt, HIT_KINDS\.Spell\);/);
+  assert.match(sis, /try \{\n\s*r = applySpell\(harm, level, entity, counting\(got\), rolls, \{ entity: caster \}\);\n\s*kept = \(entity\.activeEffects \?\? \[\]\)\.filter\(carriedOnStandIn\);\n\s*\} finally \{ entity\.activeEffects = \[\]; \}/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): its answer kept, for the paths' riders; PIN MOVED (FIELD BUGS 2026-10-19b BOSS-DOT): and his lasting harm lifted off before the wipe
+  assert.match(sis, /if \(!harm\) return laid \|\| sways;\n\s*return onBody\(sp, boss, harm, caster, host\.landOnBoss, 'b'\);/);   // PIN MOVED (FIELD BUGS 2026-10-19b BOSS-DOT): his rounds' key
+  assert.match(sis, /const went = land\(body, dealt, HIT_KINDS\.Spell\);/);   // PIN MOVED (FIELD BUGS 2026-10-19b BOSS-DOT)
   assert.match(dc, /castAtBoss: opts\.gateBoss \? \(sp, caster\) => spellOnBoss\(sp, caster\) : null,/);   // PIN MOVED (AUDIT SCHOOLS L2 F4): and the cast's wrapper
   // PIN MOVED (FIELD BUGS 2026-10-12g OPEN-HAND): a follow-up the blow owes him rides its one claim, taken first
   assert.match(dc, /function landOnBoss\(boss, damage, r\) \{\n\s*damage \+= takeOwed\(boss\.entity\);[^\n]*\n\s*if \(boss\.warded\) \{ wardTurns\(boss\); return false; \}\n\s*return sdRemnant \? sdRemnant\.hit\(\{ d: damage, r \}\) : !!opts\.onBossHit\?\.\(\{ d: damage, r \}\);/);   // PIN MOVED (SD8c): the Remnant's in the Hour

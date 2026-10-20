@@ -97,7 +97,7 @@ test('ARENA4b the dungeon\'s host numbers its blows and routes a spell on my opp
   assert.match(D, /castAtDuel: opts\.arenaRival \? \(_id, sp\) => spellOnRival\(sp\) : \(opts\.wildSpellOut \? \(id, sp\) => opts\.wildSpellOut\(id, sp\) : null\),/);
   // PIN MOVED (FIELD BUGS 2026-10-19b STAND-IN-WHOLE, HOST-SPLIT): the spell door left the host for scenes/gate/standInSpell.js,
   // which the host wires with the rival's body, its door and the sequence
-  assert.match(D, /const \{ spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn \} = createStandInSpell\(\{[^]*?rival: arenaRivalBody,[^]*?landOnRival, nextArenaQ,/);
+  assert.match(D, /const \{ spellOnBoss, spellOnCrystal, spellOnHost, spellOnRival, spellOnStandIn, standInRound \} = createStandInSpell\(\{[^]*?rival: arenaRivalBody,[^]*?landOnRival, nextArenaQ,/);
   const S = readFileSync(new URL('../../../src/scenes/gate/standInSpell.js', import.meta.url), 'utf8');
   const fn = S.slice(S.indexOf('function spellOnRival(sp) {'), S.indexOf('function spellOnRival(sp) {') + 900);
   assert.match(fn, /countOnStandIn\(harm, rb\.entity, player\.level, player, rolls\)/, 'the one door every spell lands through, against their stand-in');

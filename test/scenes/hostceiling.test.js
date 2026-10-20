@@ -52,7 +52,7 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
  *  the reason written beside it: the ceiling is the line between wiring a module in and growing the knot. Each row's
  *  history, and the code-line ceilings these replaced, are in bible/01-Overview/Host-Split.md and Readability-Arc.md. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 36_219, MODULE],   // FIELD BUGS 2026-10-19b: DISENCHANT-SAID's list out to profPages.js disenchantableOf (8 logical lines) and TOWN-EXIT's tvJoinedLegs body out to systems/travel/townExit.js journeyLegs (6) - the ceiling lowered by both
+  ['src/scenes/world.js', 'bootWorld', 36_195, MODULE],   // FIELD BUGS 2026-10-19b: DISENCHANT-SAID's list out to profPages.js disenchantableOf (8 logical lines) and TOWN-EXIT's tvJoinedLegs body out to systems/travel/townExit.js journeyLegs (6) - the ceiling lowered by both; BOSS-DOT's serpent door out to scenes/gate/standInSpell.js createSerpentSpell (24), 36,219 -> 36,195
   ['src/scenes/worldModes.js', 'createWorldModes', 10_998, MODULE],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 8_463, MODULE],   // FIELD BUGS 2026-10-19b STAND-IN-WHOLE: 8,601 -> 8,463, its four spell doors out (scenes/gate/standInSpell.js)
   ['src/scenes/exterior.js', 'bootExterior', 5_441, MODULE],

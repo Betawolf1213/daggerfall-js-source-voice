@@ -495,10 +495,20 @@ number - what can land - belonged in one place, so the doors left as one rather 
   the seams above it call them only inside arrows the built context runs, never during the build's awaits.
 - THE FOUR HOSTS: `dungeonContext.js` wired (the court, the Abyss's Hour, an Elite Breach's halls and a bout all run in a
   dungeon context); `world.js` and `exterior.js` unchanged - their `bossSpell` mounts call `modes.dungeonCtx.spellOnBoss`,
-  the same api; `worldModes.js` unchanged (it hands the opts through). FLAGGED: `world.js serpentSpellOn`, the serpent's
-  own copy of the door, stays in `bootWorld` - it pops no number, and its claim is held to 5,000 at its send.
+  the same api; `worldModes.js` unchanged (it hands the opts through). The serpent's own copy of the door followed with
+  BOSS-DOT, below.
 - THE PINS, by hand (`PIN MOVED`): the source pins that quoted the doors read the module, and two that quoted three
   copies of one line now drive the one door on the real stand-ins (`fb1018f_turnedblow.test.js`'s numbers by the body
   they met). The mutant records re-aimed by content; the two whose copies are gone retired with them.
 - `buildDungeonContext` 8,450 -> 8,312 logical lines; its ceiling 8,601 -> 8,463 (the 151 of room it had, not the
   standard 400 over the new length, which would have raised it - OUTDOOR-LOOT's precedent).
+
+## BOSS-DOT - the serpent's spell door out of bootWorld (FIELD BUGS 2026-10-19b)
+
+BOSS-DOT (`11-Multiplayer/World-Bosses.md` section 26) carries a spell's lasting harm on every body a relay runs, and the
+sea serpent's door - `serpentSpellOn`, the fifth copy of the stand-in's door, in `bootWorld` - was the one host copy left.
+It went into the module rather than growing there: `createSerpentSpell` in `src/scenes/gate/standInSpell.js` (the count,
+the riders, the claim to `serpentHost.handStruck`, its rounds), which `bootWorld` constructs where it stood and asks once
+a frame of the serpent's fight (`serpentSpell.frame(fight)`). `bootWorld` 36,181 -> 36,157 logical lines, its ceiling
+36,219 -> 36,195. `buildDungeonContext` grew by its wiring alone - the rounds' frame destructured and asked in `drawFoes`,
+8,315 -> 8,317, under its 8,463. Pins moved by hand (`serpent4.test.js`, `audit_schools.test.js`).

@@ -90,8 +90,8 @@
   {
     "name": "STAND-IN-WHOLE-the-claim-clipped",
     "file": "src/scenes/gate/standInSpell.js",
-    "old": "    return land(body, dealt, HIT_KINDS.Spell);",
-    "new": "    return land(body, shown, HIT_KINDS.Spell);",
+    "old": "    const went = land(body, dealt, HIT_KINDS.Spell);",
+    "new": "    const went = land(body, shown, HIT_KINDS.Spell);",
     "tests": ["test/net/gate/fb1019b_standinwhole.test.js"],
     "why": "the claim clipped on this machine - the relay's stun and ward weigh the claim before its cap"
   },
@@ -114,8 +114,8 @@
   {
     "name": "STAND-IN-WHOLE-the-count-takes",
     "file": "src/scenes/gate/standInSpell.js",
-    "old": "  const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}",
-    "new": "  const sinks = { hurt: (n) => { dealt += Math.max(0, n); entity.health -= n; }, heal() {}",
+    "old": "    r = applySpell(harm, level, entity, counting(got), rolls, { entity: caster });",
+    "new": "    r = applySpell(harm, level, entity, { ...counting(got), hurt: (n) => { got.n += Math.max(0, n); entity.health -= n; } }, rolls, { entity: caster });",
     "tests": ["test/net/gate/fb1019b_standinwhole.test.js"],
     "why": "a count that takes from the stand-in: its finite whole emptied locally, the next Disintegrate nothing"
   },

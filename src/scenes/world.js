@@ -571,8 +571,8 @@ import { buildingDataForDoor, locationBuildings, BUILDING_KEY_0, blockBuildingCo
 import { hitSoundFor, swingSoundFor, ENEMY_HIT_VOLUME, PLAYER_HIT_VOLUME } from '../systems/soundClips.js';   // AUDIT 58: DFU's two hit volumes
 import { isInvisible, entityIsParalyzed, concealBits } from '../systems/effects.js';   // AUDIT 39: the S19 gate is host-agnostic in DFU
 import { concealmentFlags } from '../systems/effects.js';   // INVIS-SWING: the traveller's concealment, the wild gate's notice
-import { tellSpellLanded } from '../systems/spell/spellPower.js';   // AUDIT SCHOOLS L2 F4: my spell on the serpent's hide, told to the paths' riders
-import { hasActiveEffect, applySpell } from '../systems/effects.js';   // PEERLIGHT2: my Light spell, for the pose; SERPENT4: a hand's spell on the sea serpent's stand-in
+import { createSerpentSpell } from './gate/standInSpell.js';   // FIELD BUGS 2026-10-19b BOSS-DOT: my spell on the serpent's hide, its door (AUDIT SCHOOLS L2 F4's telling and its lasting harm with it)
+import { hasActiveEffect } from '../systems/effects.js';   // PEERLIGHT2: my Light spell, for the pose
 import { combatVisualsOn, peerDraw } from '../systems/combatVisuals.js';   // INVIS-LOOK: a concealed peer, drawn as the enhanced lane draws a concealed foe
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND } from '../systems/effects.js';   // CSA-I: the boat's water walk
 import { pointNearPath, UNITS_PER_METRE, CAMP_ROAD_CLEAR_M } from '../world/road/roadClearance.js';   // FOREST1: and which picks are sites, and a site's footprint   // ROADS-CLEAR: WoD sites and pieces, and the camps, off the painted roads
@@ -949,7 +949,7 @@ import { createFestivalStage } from './seatFestival.js';   // FESTIVAL-STAGE: a 
 import { drawBanner } from '../ui/heraldryArt.js';   // GUILD1d: ...its heraldry painted on it
 import { heraldryLookup } from '../ui/heraldrySwatch.js';   // HERALDRY-SHOWN: a guild's heraldry by its tag, off what this client holds
 import { AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S } from '../render/auraRing.js'; import { peerBodyYaw } from '../net/peer/peerClimb.js';   // WB9g: Dagon's Fire at a wearer's feet; SHADOW-CLOAK: a peer's facing, the cloak's front (on this line, so no cite below it moves)
-import { duelAttackerOf, duelWeaponOf, duelSwingOf, resolveDuelStrike, duelWearDamage, duelStandIn, duelSpellOf } from '../combat/duelCombat.js';   // DUEL1: the blow between two duellists - INT8/INT9: the striker's half alone, the relay referees (AUDIT C&C H5: against the neutral stand-in)
+import { duelAttackerOf, duelWeaponOf, duelSwingOf, resolveDuelStrike, duelWearDamage, duelStandIn } from '../combat/duelCombat.js';   // DUEL1: the blow between two duellists - INT8/INT9: the striker's half alone, the relay referees (AUDIT C&C H5: against the neutral stand-in)
 import { createPageWindow, pageView } from '../ui/pageWindow.js';   // JOURNAL1: a page another player holds out, read and kept
 import { PageOffers, pageOfferText, pageShownText, pageTooFarText, keptPageTokens, keptLetterTokens, letterOfPage, PAGE_UNSUPPORTED_TEXT, PAGE_NO_READERS_TEXT, PAGE_GONE_TEXT } from '../net/journalPage.js';   // JOURNAL1: a page of the journal shown, and one shown to me kept
 import { quickslotTag, quickslotHand, tagText, actionKeyWord } from '../ui/quickslotTags.js';   // JOURNAL1: the F-menu's own key, named off the live bindings
@@ -7678,21 +7678,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const dmg = shaftOnRelayBody(m, serpentStandIn(), calculateAttackDamage(playerEntity, serpentStandIn(), { weapon: m.weapon ?? null, rolls: Math.random }));
     if (dmg > 0) serpentHost?.handStruck?.(target, dmg);
   }
-  /** SERPENT4: a harmful missile of mine on its hide (hostMagic.js boxMarks) - its harmful families landed on the stand-in
-   *  through the one door every spell lands by (applySpell), the hurt summed and handed to the host; the stand-in forgets
-   *  every lasting family at once, as the gate's does. */
-  function serpentSpellOn(sp, target, caster = null) {
-    const harm = duelSpellOf(sp), e = serpentStandIn();
-    if (!harm) return false;
-    let dealt = 0, r = null;
-    const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}, drainFatigue() {}, restoreFatigue() {}, drainMagicka() {}, restoreMagicka() {} };
-    try { r = applySpell(harm, playerEntity.level, e, sinks, Math.random, { entity: playerEntity }); } finally { e.activeEffects = []; }
-    if (!(dealt >= 1)) return false;
-    // AUDIT SCHOOLS L2 F4: told to the paths' riders as any landing of mine - no foe record (the hand's door holds it)
-    tellSpellLanded({ caster: playerEntity, target: e, foe: null, spell: sp, r, self: false, took: dealt, cast: caster?.cast ?? null });
-    serpentHost?.handStruck?.(target, dealt);
-    return true;
-  }
+  /** SERPENT4: a harmful missile of mine on its hide (hostMagic.js boxMarks) - its door, the hurt counted on the stand-in and
+   *  handed to the host (FIELD BUGS 2026-10-19b BOSS-DOT: out of bootWorld to scenes/gate/standInSpell.js createSerpentSpell,
+   *  its Continuous Damage carried on the shared round, a frame of the serpent's fight asking it - serpentFrame). */
+  const serpentSpell = createSerpentSpell({ player: playerEntity, standIn: serpentStandIn, land: (box, d) => serpentHost?.handStruck?.(box, d) });
   /** NAV-H: every boat that stands in the mode's collider - mine, and the sea's ships near enough to strike and walk. */
   const csaColliderBoats = () => (naval?.enabled ? [...csa.boats, ...naval.collidable()] : csa.boats);
   /** NAV-H: a hostile ship in reach (navalHost.js HOSTILE_NEAR_M) is an enemy nearby wherever the game asks it outdoors,
@@ -12023,7 +12012,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     duelMark: () => { if (!duelMgr.fighting) return siegeSpellMarks(); const b = duelBody(duelMgr.opponent); return b ? { ...b, name: peerName(b.id) ?? 'your opponent' } : null; },   // AUDIT-SEATS G5: outside a duel, a siege's foes (WILD1: and past them the open zone's fair players)
     castAtDuel: (id, sp) => duelSpellOut(id, sp),
     boxMarks: () => serpentHost?.handBoxes?.() ?? null,   // SERPENT4: the sea serpent's hide, a hand's harmful missile's mark
-    castAtBox: (sp, q, caster) => serpentSpellOn(sp, q, caster),
+    castAtBox: (sp, q, caster) => serpentSpell.cast(sp, q, caster),
     castRefusal: () => modes?.castRefusal?.() ?? null,   // HOME-MAGIC: a visitor casts nothing in another's online home (worldModes.js visitorMagicRefusal)
     spellRefusal: (sp) => battleSpellRefusal(sp),   // AUDIT-SEATS G5: Teleport, Recall and Levitate do nothing in a siege's room
     collider: { raycast: (o, d, m) => ((modes?.mode === 'interior' && modes?.interiorCollider) ? modes?.interiorCollider : collider).raycast(o, d, m) },
@@ -24640,6 +24629,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     let fight = false;
     try { fight = street && serpentHost.frame(); } catch (e) { console.warn('[serpent] frame', e?.message ?? e); }
     _serpentFight = !!fight;
+    serpentSpell.frame(fight);   // BOSS-DOT: its lasting harm's rounds - none past the fight, off the street or dead
     const bar = fight ? serpentHost.bar() : null;
     if (bar || _serpentBarUp) {
       drawGateBossBar(bar ? serpentBarModel(bar) : null, { hidden: gamePaused() || !!townTalk.hudHidden });
