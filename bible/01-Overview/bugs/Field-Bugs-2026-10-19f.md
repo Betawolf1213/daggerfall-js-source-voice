@@ -483,8 +483,10 @@ THE FIX - ONE WHOLE, ONE DOOR.
   failed save, its number the whole on top of the swing's.
 
 THE FOUR HOSTS: `dungeonContext.js` wired; `world.js` and `exterior.js` unchanged (their `bossSpell` mounts call the context's
-`spellOnBoss`, the same api); `worldModes.js` unchanged. FLAGGED, left: the serpent's own spell door (`world.js serpentSpellOn`,
-`bootWorld`) pops no number and tells its riders the claim - its whole is 975 now (its send held it to 5,000 already). A
+`spellOnBoss`, the same api); `worldModes.js` unchanged. The serpent's own spell door (once `world.js serpentSpellOn` in
+`bootWorld`; since BOSS-DOT `standInSpell.js` `createSerpentSpell`) pops no number, as it never did, and tells its riders what a
+hand's purse can land (SERPENT_HIT_CAP_X of SERPENT_HAND_REF, 21; AUDIT FB1019f C3) - its whole is 975 now (its send held it
+to 5,000 already). A
 departure from DFU (`Disintegrate.MagicRound`: `SetHealth(0)`): on a body the relay runs it is the most one blow lands.
 
 - **Pinned**: `test/net/gate/fb1019f_standinwhole.test.js` (5: the whole against the real constants - every relay's cap under
@@ -551,14 +553,16 @@ THE FOUR HOSTS: `dungeonContext.js` wired (the round's frame, the host door's ma
 and frame); `exterior.js` and `worldModes.js` unchanged (they hand the opts and the `bossSpell` mount through). No relay or
 wire change: a round is a spell's claim on the wire as it stands.
 
-- **Pinned**: `test/net/gate/fb1019f_bossdot.test.js` (7: round for round what DoMagicRound deals the same body; the round's
+- **Pinned**: `test/net/gate/fb1019f_bossdot.test.js` (8: round for round what DoMagicRound deals the same body; the round's
   law - a stall, a renewal claiming nothing at its cast, a turned recast and a refused claim laying nothing, the ward's round
-  lost, a body gone and back carrying none, my death, health alone, the bout, a bolt over a running Burn; the keeper's clock;
+  lost, a body gone and back carrying none, my death, health alone, the bout, a bolt over a running Burn; the keeper's clock,
+  and a round of one sent (AUDIT FB1019f G7); a turned recast on a Spire body, whose ward rides on its stand-in alone
+  (`egFight.js` turnStandIn), renewing nothing (C4); the Burn's figure, 8 of its 200 at even dice (C3);
   the real court - him and his host in one sequence, the wire, his fall; the serpent; an Elite Breach's real fight - a round
   takes no Momentum and rolls no Echo; the hosts by source). PIN MOVED: `arena4b_blows.test.js`, `audit_wb11.test.js`,
   `fb1019f_standinwhole.test.js` (the context's destructure), `wb11_gate_host.test.js`, `fb1012g_openhand.test.js` (landOnHost's
   mark), `wb4b_gate_blows.test.js`, `wb9c_gate_reckoning.test.js` (the count and the doors' keys), `audit_schools.test.js` and
-  `serpent4.test.js` (the serpent's door). `tools/mutants/fb1019f_bossdot.json` (23, all dead). Re-aimed by content (4, all
+  `serpent4.test.js` (the serpent's door). `tools/mutants/fb1019f_bossdot.json` (26, all dead). Re-aimed by content (4, all
   dead): `fb1019f_standinwhole.json`'s the-claim-clipped and the-count-takes, `egz_vestiges.json`'s EGZR-stacks-any-body,
   `hostsplit.json`'s HOST-SPLIT-a-ceiling-under-its-host.
 
