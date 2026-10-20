@@ -29,6 +29,7 @@ import {
   STAR_CIRCLE_AT, STAR_LOW_LIGHT, STAR_LIGHT, STAR_GRACE_MS, P_WAVE, P_BREATH, P_MASTER, P_HELD, P_LOST, STAR_LOST_DARK,
 } from '../../net/starfall/starfallLaw.js';
 import { worldRoom } from '../../net/wire.js';
+import { appStorage } from '../../systems/appStorage.js';
 import { findStarSites } from '../../systems/starfall/starfallSites.js';
 import { heartStar } from '../../systems/starfall/starfallNight.js';
 import { covenWitches } from '../../systems/starfall/starfallCovens.js';
@@ -135,7 +136,7 @@ export function createStarfallHost(host) {
   const two = (v) => String(v).padStart(2, '0');
   const localTime = (ms) => { const d = new Date(ms); return Number.isFinite(ms) ? `${two(d.getHours())}:${two(d.getMinutes())}` : ''; };
   const rewards = createStarRewards(host);   // STAR7: the receipts carried, the spoils given, the Renown adopted
-  const storage = host.storage !== undefined ? host.storage : globalThis.localStorage ?? null;
+  const storage = host.storage !== undefined ? host.storage : appStorage();   // the desktop app's file store, or the browser's
   const audio = host.audio ?? defaultAudio;
   /** The frame's fog, as the gate's pass is handed it. */
   const fogOf = () => (renderer ? { mode: renderer._fogMode, density: renderer._fogDensity, range: renderer._fogRange, color: renderer._fogColor, camPos: renderer._camPos, focus: renderer._focus, haze: renderer._haze } : null);

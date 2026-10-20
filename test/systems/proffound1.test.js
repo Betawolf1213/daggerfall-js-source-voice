@@ -136,7 +136,9 @@ test('PROF-FOUND THE HOSTS: townTalk\'s own grouping (no engine) lays the opened
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = read(host);
     assert.match(s, /createTownTalk\(\{/, `${host}: the shared talk`);
-    assert.match(s, /createTownMapWindow\(\{/, `${host}: the shared town map`);
+    // PIN MOVED (STAR0): the world host's town map opens from its automap toggle's module (scenes/exteriorAutomapToggle.js)
+    const map = host === 'src/scenes/world.js' ? read('src/scenes/exteriorAutomapToggle.js') : s;
+    assert.match(map, /createTownMapWindow\(\{/, `${host}: the shared town map`);
   }
   assert.doesNotMatch(read('src/scenes/dungeonContext.js'), /createTownMapWindow/, 'the dungeon opens no town map');
 });
