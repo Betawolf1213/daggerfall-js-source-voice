@@ -1,4 +1,4 @@
-// SD-SEA (FIELD BUGS 2026-10-20, bible/01-Overview/bugs/Field-Bugs-2026-10-20.md; the owner: "Abyss Dungeons dont seem to
+// SD-SEA (FIELD BUGS 2026-10-20b, bible/01-Overview/bugs/Field-Bugs-2026-10-20b.md; the owner: "Abyss Dungeons dont seem to
 // be spawning anymore"): A HOLLOW NEVER RISES WHERE NO TOWN STANDS. The director raised a Hollow in the region whose
 // channel held the most accounts (net/superDungeon/sdLaw.js pickSdRegion), and every client stood it by that region's
 // cities (systems/superDungeon/sdSite.js sdCities). The sea is one region to the port - politic 64, every water pixel,
@@ -6,7 +6,7 @@
 // that stood by no city on any client ("[sd] slot N: the world offers no Hollow (no site)"), unseen for its two days and
 // the rest after them. The census now never chooses a region with no town (SD_TOWNLESS_REGIONS), and a client stands a
 // record that names one (a relay before SD-SEA) by the Bay's great cities, as one whose census counted nobody.
-// tools/mutants/fb1020_sdsea.json.
+// tools/mutants/fb1020b_sdsea.json.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';

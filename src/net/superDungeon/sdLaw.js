@@ -37,13 +37,13 @@ export const SD_FIRST_RISE_MS = 10 * 60 * 1000;
 export const SD_FADE_GRACE_MS = 15_000;
 /** A region needs this many distinct verified accounts in it for the census to choose it. */
 export const SD_CENSUS_MIN = 2;
-/** SD-SEA (FIELD BUGS 2026-10-20, bible/01-Overview/bugs/Field-Bugs-2026-10-20.md): THE REGIONS NO HOLLOW CAN RISE IN -
+/** SD-SEA (FIELD BUGS 2026-10-20b, bible/01-Overview/bugs/Field-Bugs-2026-10-20b.md): THE REGIONS NO HOLLOW CAN RISE IN -
  *  those MAPS.BSA gives no city, town or village to rise by (systems/superDungeon/sdSite.js sdCities finds none), by index,
  *  which the census never chooses. 31 is the sea's: formats/mapsFile.js getRegionIndexAt reads politic 64 - every water
  *  pixel of the Bay and the ocean, PlayerGPS.cs's own law - as High Rock sea coast, so every player aboard a ship stands
  *  in its channel, and a crowd at sea raised a Hollow that stood by no city on any client. Cybiades (61) has one place
  *  and no town; the rest have no place at all. The relay holds no map files, so the list is written here and pinned
- *  against them (test/net/superDungeon/fb1020_sdsea.test.js). */
+ *  against them (test/net/superDungeon/fb1020b_sdsea.test.js). */
 export const SD_TOWNLESS_REGIONS = Object.freeze([2, 3, 4, 6, 7, 8, 10, 12, 13, 14, 15, 24, 25, 27, 28, 29, 30, 31, 61]);
 const TOWNLESS = new Set(SD_TOWNLESS_REGIONS);
 /** The one salt every client and the relay roll a Hollow's choices with. */

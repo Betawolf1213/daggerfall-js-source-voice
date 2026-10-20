@@ -74,7 +74,7 @@ import {
   parseNodeKey, nodeCount, herbPatch, herbSeasonMult, daySeason, HERB_TABLES, HERB_YIELD, FOOD_YIELD, herbYield, foodYield,
   basketFood, isMarch, regionOk, pixelOk, pixelKey, pixelReport, witnessedFact, factConfirmed, WITNESS, material,
   regionWritTable, courtWrits, VEIN_TABLES, vein, boulder, dungeonVein, dungeonOk, veinYield, boulderYield, VEIN_YIELD,
-  BOULDER_YIELD, veinGem, veinSlots, WOOD_TABLES, tree, TREE_YIELD, treeYield, treeFinds, hideYield, bodyFinds,
+  BOULDER_YIELD, veinGem, veinSlots, treeSlots, WOOD_TABLES, tree, TREE_YIELD, treeYield, treeFinds, hideYield, bodyFinds,
   haulYield, haulFinds, haulAtSea,   // PROF8
 } from '../../src/net/nodeLaw.js';
 import { CLIMATES } from '../../src/formats/mapsTables.js';
@@ -558,9 +558,10 @@ export async function harvestNode(ctx, player, env, body = {}) {
     }
     return { error: 'prof-pixel' };
   }
-  // a vein's slots are its climate's and, on confirmed ground, its region's signature beside them (AUDIT 29 A6); a body
-  // has none (AUDIT 32 S2: its unchecked ground is never read)
-  if (!deep && !isBody && !isHaul && n.slot >= (n.kind === 'vein' ? veinSlots({ climate, region, confirmed }) : nodeCount(climate, n.kind))) return { error: 'bad-node' };
+  // a vein's slots are its climate's and, on confirmed ground, its region's signature beside them (AUDIT 29 A6); a tree's
+  // its climate's, and the jungle's in the owner's area (JUNGLE-WOODS); a body has none (AUDIT 32 S2: its unchecked
+  // ground is never read)
+  if (!deep && !isBody && !isHaul && n.slot >= (n.kind === 'vein' ? veinSlots({ climate, region, confirmed }) : n.kind === 'tree' ? treeSlots({ x: n.x, y: n.y, climate }) : nodeCount(climate, n.kind))) return { error: 'bad-node' };
 
   // THE TRACK it is worked under
   const row = trackRows[0] ?? null;
@@ -1703,7 +1704,9 @@ export async function listWrits({ db, nowS }, player, env, { character, region }
   await postMemberWrits(db, day, region, nowS, character, members, zero);
   // CHAP3a: a member's own writ to its owner alone - never another's, never another character's of the account - and only
   // while it is the guild's member (or once it filled it)
-  const { results = [] } = await db.prepare("SELECT * FROM writs WHERE day = ?1 AND region = ?2 AND (owner = '' OR owner = ?3) ORDER BY kind, faction, slot")
+  // WRIT-BOARD (migration 0138): the two owners each sought to its region on idx_writs_owner - `+kind` keeps the table's UNIQUE index
+  // from being chosen for its order, which walked every member's own writs of the region's day to keep the caller's
+  const { results = [] } = await db.prepare("SELECT * FROM writs WHERE day = ?1 AND region = ?2 AND owner IN ('', ?3) ORDER BY +kind, faction, slot")
     .bind(day, region, character).all();
   // and a hidden guild's to its members alone (and the one who filled it)
   const hidden = halls && results.some((w) => w.kind === 'hall' && hallHidden(Number(w.faction))) ? await hiddenMemberships(db, player.id, character) : null;

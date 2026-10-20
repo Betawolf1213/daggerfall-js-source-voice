@@ -98,7 +98,7 @@ const HARDCODED = {
   'src/net/firmament/firmamentLaw.js': 42,
   'src/net/firmament/firmamentTree.js': 113,
   'src/net/fortLaw.js': 21,
-  'src/net/gate/gateBrain.js': 9,
+  'src/net/gate/gateBrain.js': 7,   // AUDIT WB14 (TEXT-9): the phase names through the text core
   'src/net/gate/gateClaims.js': 5,
   'src/net/gate/gateHerald.js': 8,
   'src/net/gate/gateLaw.js': 4,
@@ -202,6 +202,7 @@ const HARDCODED = {
   'src/render/lightningBolts.js': 2,
   'src/render/navalRender.js': 2,
   'src/render/nodeGlow.js': 1,
+  'src/render/nodeOutline.js': 3,
   'src/render/oceanHolesRender.js': 4,
   'src/render/orderedDither.js': 1,
   'src/render/precipitation.js': 6,
@@ -259,7 +260,7 @@ const HARDCODED = {
   'src/scenes/fishHost.js': 14,
   'src/scenes/fleetHost.js': 52,
   'src/scenes/foragingWait.js': 1,
-  'src/scenes/gate/gateCourt.js': 12,
+  'src/scenes/gate/gateCourt.js': 10,   // AUDIT WB14 (TEXT-9): the phase card's orders through the text core
   'src/scenes/gate/gateHost.js': 7,
   'src/scenes/gate/gatePool.js': 4,
   'src/scenes/gatherHost.js': 10,
@@ -591,7 +592,7 @@ const HARDCODED = {
   'src/ui/eliteGates/egArchMapMark.js': 1,
   'src/ui/eliteGates/egBeats.js': 85,
   'src/ui/eliteGates/egBoardWindow.js': 15,
-  'src/ui/eliteGates/egHud.js': 33,   // AUDIT EG V (a1): +2, the rest's beacon - *The next circle bears: ...* and *The next Court: ...* (egNextCircleText) - the arc's English, owed its localization wave with the rest; EG-PLUS: -6, the panel's heads, the asks' lines and its foot through the text core
+  'src/ui/eliteGates/egHud.js': 32,   // FIELD BUGS 2026-10-19f GAUNTLET-PLATES: -1, the Gauntlet's line routed (eg.progress.gauntlet). AUDIT EG V (a1): +2, the rest's beacon - *The next circle bears: ...* and *The next Court: ...* (egNextCircleText) - the arc's English, owed its localization wave with the rest; EG-PLUS: -6, the panel's heads, the asks' lines and its foot through the text core
   'src/ui/eliteGates/egSpireHud.js': 15,   // AUDIT EG IV (the lords' group): +1, an errand's numerals' markup (egSigilHtml's `given` - a template the scan counts; its words are the company's numerals and names)
   'src/ui/eliteGates/egStartWindow.js': 5,
   'src/ui/enhanced/enhancedAccount.js': 8,
@@ -623,7 +624,7 @@ const HARDCODED = {
   'src/ui/enhanced/enhancedTavern.js': 9,
   'src/ui/enhanced/enhancedTimers.js': 6,
   'src/ui/enhanced/enhancedTrade.js': 19,
-  'src/ui/enhanced/enhancedTravelControl.js': 6,
+  'src/ui/enhanced/enhancedTravelControl.js': 3,
   'src/ui/eventMapMarks.js': 6,
   'src/ui/exteriorAutomapWindow.js': 6,
   'src/ui/familyPages.js': 110,

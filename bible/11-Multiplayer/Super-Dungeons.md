@@ -1367,8 +1367,9 @@ player sees the same step in the same place; what a foot breaks is its own.
   it at the realm's now: the Drift swinging; a Beat step there or gone - its bucket sunk far under the void
   (`SD_STEP_GONE_Y`), its draw hidden - and blinking its last 0.4 s; a Crumble step shuddering from the moment my own foot
   first stands on it (its grind heard), then its bucket gone and its draw falling, whole again 5 s after.
-- **Ridden BEFORE the motor**: the mode machine asks the set every frame of the dungeon, right after the action movers'
-  ride (`ridePlatform`) and before the motor - so the motor sweeps against the steps where they now are - and a body
+- **Ridden BEFORE the motor**: the mode machine asks the set every frame of the dungeon, before the motor - so the motor
+  sweeps against the steps where they now are (the action movers' ride, `ridePlatform` beside it then, is the movers'
+  own update since MOVER-BODY, FIELD BUGS 2026-10-19f: they carry the body as they step) - and a body
   standing on a step (`groundKey`) is carried with the step's own move, as a deck carries one (`player.carryBy`: the
   body and both ends of its render span, so a swing is no lerp). A step that went or came back carries nothing; a frame's
   hitch, or the clock put right, carries the body the step's whole move - it stays on its step.
@@ -3318,7 +3319,7 @@ THE FOUR HOSTS: none wired - the herald is the relay's alone. `scenes/world.js`,
 ### SD-SEA - 2026-10-20 (no Hollow rises at sea)
 
 The owner, 2026-10-20: *"Abyss Dungeons dont seem to be spawning anymore"*. The record is
-`01-Overview/bugs/Field-Bugs-2026-10-20.md`.
+`01-Overview/bugs/Field-Bugs-2026-10-20b.md`.
 
 **Found.** The census (section 3) counts each region's channel, and a channel is the region a client stands in by the
 politic map (`formats/mapsFile.js` `getRegionIndexAt`, DFU's `PlayerGPS.CurrentRegionIndex`). Politic 64 covers every
@@ -3342,15 +3343,15 @@ by (`sdCities` empty, logged as *"[sd] slot N: the world offers no Hollow (no si
 **Not changed.** The Discord herald still names the record's own region (`sdRegionName`). A Hollow the old relay raised
 at sea is announced *in the High Rock sea coast* when it is found, falls or fades. This relay never raises another.
 
-**The relay: `world229`** (`world226` on its branch, renumbered past LORD-SHARES' `world226`, PLAIN-SWEEP's `world227` and QL12's `world228` at the merges; NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
+**The relay: `world233`** (`world226` on its branch, renumbered past `world226`-`world232` at the merges; NOT YET DEPLOYED). No frame changes shape. The relay and the clients can deploy in either
 order: until the relay deploys, this build's clients stand the sea's Hollows by the great cities.
 
-Pins: `test/net/superDungeon/fb1020_sdsea.test.js` (5: the list, the census, the hub's director over the real Room, the
+Pins: `test/net/superDungeon/fb1020b_sdsea.test.js` (5: the list, the census, the hub's director over the real Room, the
 client's fallback and, with ARENA2, the list against MAPS.BSA, every water pixel's region and a Hollow placed for every
-region the census can choose); `tools/mutants/fb1020_sdsea.json` (5, all dead). PIN MOVED: `sd1_sdlaw.test.js`'s
+region the census can choose); `tools/mutants/fb1020b_sdsea.json` (5, all dead). PIN MOVED: `sd1_sdlaw.test.js`'s
 census pins (Dwynnen, 5, for Yeorth Burrowland, 4, and Ilessan Hills, 60, for Cybiades, 61, as the last region with a
 town); `sd3_relay.test.js`'s census rest (Wayrest, 23, for High Rock bay coast, 30); RELAY_VERSION's pin in 42 files,
-disc7's list of versions and soc1.json's version record (world229).
+disc7's list of versions and soc1.json's version record (world233).
 
 THE FOUR HOSTS: none wired. `scenes/world.js`, `scenes/worldModes.js`, `scenes/dungeonContext.js` and
 `scenes/exterior.js` are untouched. The fallback is `scenes/superDungeon/sdHost.js`'s, which `scenes/world.js` wires

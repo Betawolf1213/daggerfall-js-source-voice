@@ -118,7 +118,7 @@ export function createSdHost({ now, scan, warmScan = () => {}, cities, templates
     if (memo && memo.s === r.s) return memo.none ? null : memo;
     const sc = scan();
     if (!sc) { warmScan(); return null; }
-    // SD-SEA (FIELD BUGS 2026-10-20): a region with no town to rise by - a relay before SD-SEA raised one where a crowd
+    // SD-SEA (FIELD BUGS 2026-10-20b): a region with no town to rise by - a relay before SD-SEA raised one where a crowd
     // stood at sea (net/superDungeon/sdLaw.js SD_TOWNLESS_REGIONS) - rises by the Bay's great cities, as one whose census
     // counted nobody does: the same city and pixel on every client, where it stood by none
     let at = r, near = cities(r.r);

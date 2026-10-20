@@ -5,7 +5,7 @@
     "old": "if (Number(counts?.[r] ?? 0) >= SD_CENSUS_MIN && !TOWNLESS.has(r)) qual.push(r);",
     "new": "if (Number(counts?.[r] ?? 0) >= SD_CENSUS_MIN) qual.push(r);",
     "tests": [
-      "test/net/superDungeon/fb1020_sdsea.test.js"
+      "test/net/superDungeon/fb1020b_sdsea.test.js"
     ],
     "why": "the report: a crowd at sea raises the Hollow in High Rock sea coast, and it stands by no city on any client"
   },
@@ -15,7 +15,7 @@
     "old": "24, 25, 27, 28, 29, 30, 31, 61]);",
     "new": "24, 25, 27, 28, 29, 30, 61]);",
     "tests": [
-      "test/net/superDungeon/fb1020_sdsea.test.js"
+      "test/net/superDungeon/fb1020b_sdsea.test.js"
     ],
     "why": "the sea's region chosen again - every water pixel reads as it, and it has no town"
   },
@@ -25,7 +25,7 @@
     "old": "export const SD_TOWNLESS_REGIONS = Object.freeze([2, 3, 4, 6,",
     "new": "export const SD_TOWNLESS_REGIONS = Object.freeze([2, 3, 4, 5, 6,",
     "tests": [
-      "test/net/superDungeon/fb1020_sdsea.test.js"
+      "test/net/superDungeon/fb1020b_sdsea.test.js"
     ],
     "why": "a region with towns (Dwynnen) never chosen, however full"
   },
@@ -35,7 +35,7 @@
     "old": "    if (!near.length && r.r >= 0) { at = { ...r, r: -1 }; near = cities(-1); }\n",
     "new": "",
     "tests": [
-      "test/net/superDungeon/fb1020_sdsea.test.js"
+      "test/net/superDungeon/fb1020b_sdsea.test.js"
     ],
     "why": "a record an older relay raised at sea stands by no city - the Hollow unseen for its two days"
   },
@@ -45,7 +45,7 @@
     "old": "{ at = { ...r, r: -1 }; near = cities(-1); }",
     "new": "{ near = cities(-1); }",
     "tests": [
-      "test/net/superDungeon/fb1020_sdsea.test.js"
+      "test/net/superDungeon/fb1020b_sdsea.test.js"
     ],
     "why": "the great cities read from the top every time: every sea Hollow by one city, not where a nobody-counted slot stands"
   }

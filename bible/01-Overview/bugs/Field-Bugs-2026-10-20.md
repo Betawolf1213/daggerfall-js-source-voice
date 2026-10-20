@@ -1,58 +1,59 @@
-# FIELD BUGS 2026-10-20 - no Abyss Dungeon at sea
+# FIELD BUGS 2026-10-20 - the questlines' givers: "the name mentioned in the quest text doesn't match"
 
-One report from the owner, read on the code as it stands at main's `6906e5672`. The Abyss Dungeon is the port's own
-(`11-Multiplayer/Super-Dungeons.md`). DFU has no Super dungeon, so there is no DFU member to depart from. The region a
-player stands in is DFU's own reading (`PlayerGPS.CurrentRegionIndex`, `formats/mapsFile.js` `getRegionIndexAt`), and
-it is unchanged.
+A player's report on the Discord's bug-reports, handed over by the owner on 2026-10-20 (Harlander, "NPC names in new
+quests don't match the NPCs you talk to in the world"):
+
+1. *"I've been trying out the new quests that just appeared, and for some of them, the name mentioned in the quest text
+   doesn't match the name of the NPC you talk to to progress it."*
+
+Read on main at `016dba12d` (#1063's merge), under the owner's standing word on these threads: no band aids, the root
+cause. The "new quests" are QUESTLINES' (#1047, #1073, `06-Systems/Questlines-Arc.md`). The pin is
+`test/systems/fb1020_questnameone.test.js`, the mutants `tools/mutants/questnameone.json`.
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | Mac: "Abyss Dungeons dont seem to be spawning anymore" | The census chose the region whose channel held the most accounts, and the sea is one region (31, High Rock sea coast) with no town. A crowd at sea raised a Hollow that no client could stand by any city, so it stood nowhere for its 48 hours | fixed (SD-SEA) |
+| 1 | "the name mentioned in the quest text doesn't match the name of the NPC you talk to" | `ql name` (QL12) renamed four givers' Persons over the name their seed drew. The NPC stood for a quest Person names itself as every static NPC does, drawing its name again from the seed (StaticNPC.GetDisplayName), so it answered to the drawn stranger | QUEST-NAME-ONE: the stand answers to its Person's own name |
 
-## SD-SEA: a Hollow never rises where no town stands
+## QUEST-NAME-ONE: the NPC stood for a quest Person answers to the Person's own name (1)
 
-`src/net/superDungeon/sdLaw.js` `pickSdRegion`, `src/scenes/superDungeon/sdHost.js` `hollowOf`.
+`src/systems/quest/person.js` (personOwnName), `src/characters/staticNpc.js` (staticNpcName),
+`src/scenes/worldModes.js` (questStandNpcData, one entry).
 
-THE REPORT. No Abyss Dungeon to be seen in the world.
+FOUND. A quest Person is named twice, by two derivations that DFU only ever lets agree:
 
-READ FIRST. The relay was checked before the client. The live relay answers `world225` on `/health`. Over the pins'
-fake objects the hub's alarm, its director and its fan behave as designed: a player's hello through a hub shard arms
-the hub, the first beat and the rise come on time, and the record reaches the shard's socket. Every Super Dungeons test
-passes. So the director does raise Hollows. The question was where.
+- **The Person** draws its name at the quest's setup: its seed, the bank of the region the quest began in
+  (`Person.cs:579`, `:626-627`; `person.js` _assignDisplayName). The words (`_corvane_` and the messages' own
+  "Corvane Tull"), the journal, the Quest Guide and the topic tree read this one.
+- **The NPC stood for it** (`place npc`) is laid out from the Person - its seed and faction, the marker's hash
+  (`StaticNPC.cs:245-255` SetLayoutData; the host's one builder, `questStandNpcData`) - and names itself as every static
+  NPC does: the seed drawn again, with the bank of the region it stands in (`StaticNPC.cs` GetDisplayName). The plate,
+  the Info line, World Tooltips' plaque and the talk partner's `nameNPC` - the topic tree's same-person key
+  (TalkManager.cs:3159) - read this one.
 
-FOUND. The director raises a Hollow in the region whose channel holds the most distinct verified accounts
-(`pickSdRegion`, section 3 of the arc). A client's channel is the region of the pixel it stands on by the politic map.
-On the freeware's data (`tools/fetch-data.sh`):
+In DFU the two meet, because nothing renames a Person and a quest's places are in the region it began in. The
+questlines' `ql name` (QL12, `systems/questlines/qlActions.js` QlName) writes the Person's `displayName` after the draw:
+Ysolde Marnhel (the Dagon Cycle's Breach Diaries and Children of the Hour), Prior Anselm Vey (The Hour That Was Not),
+Hamid al-Rasheen (The Old Coil) and Corvane Tull (The Weir Road) - sixteen steps in all. Their NPCs answered to the
+seed's name. The talk partner's name did not match the Person's either, so the giver could speak of themselves as
+someone else.
 
-- politic 64 marks every water pixel of the Bay and the ocean, 180,215 of the map's 500,000 pixels, and
-  `getRegionIndexAt` reads it as region 31, High Rock sea coast. Every player out on the water stands in region 31's
-  channel.
-- Region 31 has three places and no city, town or village. Of the 62 regions, 19 have no populated place: 31, Cybiades
-  (61, one place) and seventeen with no place at all.
-- Every client stands the Hollow by the record's region's cities (`systems/superDungeon/sdSite.js` `sdCities`). For
-  region 31 that list is empty, so `findSdSite` finds nothing, and the host logs *"[sd] slot N: the world offers no
-  Hollow (no site)"* and stands nothing.
+FIXED. The stand's one builder carries its Person's own name (`personOwnName`: the Person's name, drawn or given; none
+for a Person named after their faction record - an Individual or a Daedra - whom DFU's faction path names, its
+translation shown as L10N3e shows it), and `staticNpcName` answers it. Every reader downstream of the layout data - the
+plate, the Info line, the plaque, the talk partner - now says what the words say. The seed's draw still runs before the
+answer, so DFRandom stands where GetDisplayName leaves it and every roll after a naming is DFU's (CAT-MEOW's lesson).
+A departure from GetDisplayName, recorded as departure 11 of Port-Ledger's QUESTLINES row. It also closes the case
+DFU leaves open: a Person who drew their name in one region's bank, stood where another region's bank names them -
+a received copy of a shared quest, for one.
 
-Each region with a town placed a Hollow for every slot tried. So whenever the crowd at sea was the largest, the Hollow
-the hub raised was in region 31 and stood nowhere: no omen, no rumour, no door. The Timers show no row for a Hollow
-that has only risen, so the panel showed nothing for its 48 hours and then counted the 2-hour rest. The next rise
-asked the same census. The more of the game took place at sea, the likelier that was.
+PINS. `fb1020_questnameone.test.js` (5): every `ql name` the questline scripts hold (16, four names) is run through the
+real quest machine with its own Person line, and its stand is laid out by the host's builder as written. The NPC's name
+and the shown name are the given one in two banks, and DFU's re-draw is a stranger (the bug, held as a fact). A drawn
+Person keeps their name in three banks. An Individual and a Daedra carry no name of their own, and anything that is no
+Person carries none. The stream after a naming is the re-draw's. The host's builder carries the name and both namers read
+its data. Mutants: `questnameone.json` 5/5 dead (the namer re-draws, the name returned before the draw, the stand
+carries no name, the faction test dropped, a non-Person carries a name).
 
-CHANGED.
-
-- **The census never chooses a region with no town.** `SD_TOWNLESS_REGIONS` lists the 19, and `pickSdRegion` qualifies
-  only regions outside it. A crowd at sea is not counted. The fullest region with a town gets the Hollow, the last
-  region's rest and the slot's tie roll as before, and with none the Hollow rises by the Bay's great cities (`-1`). The
-  relay holds no map files, so the list is written in the law, and the ARENA2 pin holds it to MAPS.BSA.
-- **A client stands a record that names such a region** as it stands `-1`: by the great cities, by the slot's roll,
-  the same pixel on every client of this build. This covers a Hollow the old relay raised at sea before this one
-  deploys.
-
-Not changed: the Discord herald names the record's own region. A Hollow the old relay raised at sea is posted as
-found, fallen or faded *in the High Rock sea coast*. This relay never raises another, so the post was not reworded
-for one record.
-
-The relay is `world229` (`world226` on its branch, renumbered past LORD-SHARES' `world226`, PLAIN-SWEEP's `world227` and QL12's `world228` at the merges), and no frame changes shape. The relay and the clients may deploy in either order.
-
-Pins: `test/net/superDungeon/fb1020_sdsea.test.js`; `tools/mutants/fb1020_sdsea.json` (5, all dead). The arc's record is
-`11-Multiplayer/Super-Dungeons.md` SD-SEA.
+NOT VERIFIED HERE. Talking to a named giver in the running game: the four lines that name one open online, for a
+registered account, after an Elite Breach or a Weir Key. The tests drive the real machine, the real `ql name`, the real
+SetLayoutData and the host's own builder instead.
