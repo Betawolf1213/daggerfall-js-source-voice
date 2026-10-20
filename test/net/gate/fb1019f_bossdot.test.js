@@ -47,6 +47,8 @@ const SETTINGS = { durationBase: 5, durationMod: 1, durationPerLevel: 1, chanceB
 const spell = (type, subType, name) => buildCustomSpell({ slots: [{ type, subType, settings: SETTINGS }], rangeType: 1, element: 4, name });
 const BURN = spell(1, 0, 'Burn'), WEARY = spell(1, 1, 'Weary'), DRAIN = spell(1, 2, 'Drain'), BOLT = spell(4, 0, 'Bolt');
 const BIG = buildCustomSpell({ slots: [{ type: 4, subType: 0, settings: { ...SETTINGS, magnitudeBaseLow: 200, magnitudeBaseHigh: 200 } }], rangeType: 1, element: 4, name: 'Big' });
+/** AUDIT FB1019f G7: a Continuous Damage of 2 a round - at even dice his save lets 1 of each through. */
+const EMBER = buildCustomSpell({ slots: [{ type: 1, subType: 0, settings: { ...SETTINGS, magnitudeBaseLow: 2, magnitudeBaseHigh: 2 } }], rangeType: 1, element: 4, name: 'Ember' });
 /** At level 20: a Burn of 25 rounds (5 + 20) - its first at the cast, 24 carried. */
 const ROUNDS = 25;
 const atLevel = (lv, fn) => { const was = [playerEntity.level, playerEntity.health]; playerEntity.level = lv; playerEntity.health = Math.max(1, playerEntity.health || 1); try { return fn(); } finally { [playerEntity.level, playerEntity.health] = was; } };
@@ -66,7 +68,7 @@ function doorsOver(bodies, { now }) {
   return { doors, landed };
 }
 
-test('BOSS-DOT THE ROUNDS ARE CARRIED, AS DFU RUNS THEM: a Burn on his stand-in - its first round at the cast, and every round after on the shared world\'s round, each one claim of its own (a spell\'s, marked a round) - deals over its rounds exactly what DoMagicRound deals a body that keeps it (effects.js applySpell then tickActiveEffects, the save each round); the stand-in itself holds nothing between (mutants: the rounds wiped; never ticked; the count keeping nothing; a round not marked)', () => {
+test('BOSS-DOT THE ROUNDS ARE CARRIED, AS DFU RUNS THEM: a Burn on his stand-in - its first round at the cast, and every round after on the shared world\'s round, each one claim of its own (a spell\'s, marked a round) - deals over its rounds exactly what DoMagicRound deals a body that keeps it (effects.js applySpell then tickActiveEffects, the save each round); the stand-in itself holds nothing between; a level-20 Burn 8 of its 200 at even dice, as the pages say (mutants: the rounds wiped; never ticked; the count keeping nothing; a round not marked; the figure moved)', () => {
   atLevel(20, () => {
     // DFU's law on a body that keeps its effects: the same stand-in, the same dice
     const ref = bossStandIn(bossLookOf('ruhn'), 'Valkynaz Ruhn');
@@ -77,6 +79,9 @@ test('BOSS-DOT THE ROUNDS ARE CARRIED, AS DFU RUNS THEM: a Burn on his stand-in 
     per.push(n);
     while ((ref.activeEffects ?? []).some(carriedOnStandIn)) { n = 0; tickActiveEffects(ref, sinks, HALF); per.push(n); }
     assert.equal(per.length, ROUNDS, 'twenty-five rounds, the first at the cast');
+    // AUDIT FB1019f C3: the figure World-Bosses.md section 27 and standInSpell.js's header say - 10 a round, 8 of each
+    // through his save at even dice, 200 in all
+    assert.deepEqual([per[0], per.reduce((a, b) => a + b, 0)], [8, 200], 'the Burn\'s first round, and its whole');
     // the record of the bug: the count alone leaves nothing on the stand-in, and what it carries is the other 24
     const e = bossStandIn(bossLookOf('ruhn'), 'Valkynaz Ruhn');
     const c = countOnStandIn(duelSpellOf(BURN), e, 20, playerEntity, HALF);
@@ -168,7 +173,7 @@ test('BOSS-DOT THE ROUND\'S LAW: a frame that stalled runs every round missed as
   });
 });
 
-test('BOSS-DOT THE KEEPER (createStandInRounds): a body\'s rounds tick against its own stand-in as it stands, the clock standing still while none run, a body laid in a round ticking from the next (mutants: the clock run while idle; a stalled round lost)', () => {
+test('BOSS-DOT THE KEEPER (createStandInRounds): a body\'s rounds tick against its own stand-in as it stands, the clock standing still while none run, a body laid in a round ticking from the next, a round of one sent (mutants: the clock run while idle; a stalled round lost; a round of one dropped)', () => {
   let t = 10 * COURT_ROUND_MS + 4000;
   const R = createStandInRounds({ now: () => t, rolls: HALF });
   const e = bossStandIn(bossLookOf('ruhn'), 'x');
@@ -190,6 +195,13 @@ test('BOSS-DOT THE KEEPER (createStandInRounds): a body\'s rounds tick against i
   Q.keep('b', atLevel(20, () => countOnStandIn(duelSpellOf(BURN), e, 20, playerEntity, HALF)).kept);
   Q.frame(() => ({ entity: e, land: (d) => got2.push(d) }));
   assert.deepEqual(got2, [], 'none owed for the rounds before it was laid');
+  // AUDIT FB1019f G7: a round that deals exactly one is a claim - an Ember of 2 a round, 1 of each through his save at even dice
+  const one = atLevel(20, () => countOnStandIn(duelSpellOf(EMBER), e, 20, playerEntity, HALF)), P = createStandInRounds({ now: () => t, rolls: HALF }), got3 = [];
+  assert.deepEqual([one.dealt, one.kept.length], [1, 1], 'its cast\'s round: one, its rounds kept');
+  P.keep('b', one.kept);
+  t += COURT_ROUND_MS; P.frame(() => ({ entity: e, land: (d) => got3.push(d) }));
+  t += COURT_ROUND_MS; P.frame(() => ({ entity: e, land: (d) => got3.push(d) }));
+  assert.deepEqual(got3, [1, 1], 'a round of one: sent, each');
 });
 
 /** The court and its host driver over a link the test writes (scenes/gate/gateCourt.js), standing in his court. */
@@ -297,7 +309,7 @@ async function spanFight() {
   E = { ...E, ms: egStateOf(B, now).ms };   // my run as the room's state word says it - my Vestiges
   fight.frame();
   const by = egBodiesOf(B.F, EG_ROLE.add).filter((b) => b.k === EG_KIND.harrier).sort((p, r) => Math.hypot(p.x - isle.x, p.z - isle.z) - Math.hypot(r.x - isle.x, r.z - isle.z))[0];
-  return { fight, sent, i: by.i, target: () => fight.hostTargets().find((q) => q.i === by.i) };
+  return { fight, sent, i: by.i, target: () => fight.hostTargets().find((q) => q.i === by.i), at, isle };
 }
 
 test('BOSS-DOT AN ELITE BREACH: a round of my lasting harm on a Spire body is no blow - sent as a spell\'s claim, it takes no Momentum, builds none and rolls no Arcane Echo, where a cast\'s claim does all three (mutants: a round takes the stacks; a round builds them; a round echoes)', async () => {
@@ -312,6 +324,32 @@ test('BOSS-DOT AN ELITE BREACH: a round of my lasting harm on a Spire body is no
   const j = n();
   S.fight.hostHit({ i: S.i, d: 100, r: HIT_KINDS.Spell });
   assert.equal(S.sent[j].d, Math.round(100 * (1 + EG_MOMENTUM_STEP)), 'the next cast takes the one stack the cast built - the round built none');
+});
+
+test('BOSS-DOT A TURNED RECAST ON A SPIRE BODY (AUDIT FB1019f C4): an Elite Breach body\'s ward rides on its stand-in alone (egFight.js turnStandIn - the host record the dungeon context hands the doors carries none) - a Burn on a Harrier struck from the fight ground lays its rounds; recast from no footing, it renews none and answers so, and its rounds run out as first laid (mutant: the ward read off the record alone)', async () => {
+  const S = await spanFight();
+  let t = 900 * COURT_ROUND_MS, rounds = 0;
+  // the host seam as dungeonContext.js gateHostBodies hands it: `{ host, entity, ... }`, no ward of the record's own
+  const doors = createStandInSpell({
+    player: playerEntity, say: NOOP, rolls: HALF, now: () => t,
+    boss: () => null, crystals: () => [], rival: () => null, host: () => S.fight.hostTargets().map((q) => ({ host: q.i, entity: q.entity })),
+    landOnBoss: () => false, landOnCrystal: () => false, landOnRival: () => false,
+    landOnHost: (hb, d, r, tick = false) => { const went = S.fight.hostHit({ i: hb.host, d, r, tick }); if (went && tick) rounds++; return went; },
+    nextArenaQ: NOOP, trapNow: () => null, onTrap: () => false,
+  });
+  const stand = (dx, dz) => { S.at(S.isle.x + dx, S.isle.z + dz, S.isle.y ?? 0); S.fight.frame(); };
+  atLevel(20, () => {
+    assert.equal(S.target()?.entity.warded, false, 'on the fight ground: whole');
+    assert.equal(doors.spellOnHost(BURN, S.i), true, 'struck whole: its rounds laid');
+    for (let k = 0; k < 3; k++) { t += COURT_ROUND_MS; doors.standInRound(); }
+    assert.equal(rounds, 3, 'three rounds landed');
+    stand(1e4, 1e4);
+    assert.deepEqual([S.target()?.entity.warded, doors.spellOnHost(BURN, S.i)], [true, false], 'from no footing: its stand-in turned, and a recast renews nothing');
+    stand(0, 0);
+    assert.equal(S.target()?.entity.warded, false, 'back on the fight ground: whole');
+    for (let k = 0; k < 40; k++) { t += COURT_ROUND_MS; doors.standInRound(); }
+    assert.equal(rounds, ROUNDS - 1, 'its 24 ran as first laid - never renewed by the turned recast');
+  });
 });
 
 test('BOSS-DOT THE HOSTS (by source - buildDungeonContext and bootWorld do not run in Node): the dungeon context asks a round each frame beside the foes\' own rounds and hands its host door the round\'s mark; the world hands the serpent\'s door its fight each frame and keeps no copy of it (mutants: the round never asked; the serpent\'s fight never told)', () => {

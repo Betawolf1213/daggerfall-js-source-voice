@@ -182,5 +182,29 @@
     "new": "",
     "tests": ["test/net/gate/fb1019f_bossdot.test.js"],
     "why": "the serpent's rounds never run"
+  },
+  {
+    "name": "AUDIT-FB1019f-C4-turned-reads-the-record-alone",
+    "file": "src/scenes/gate/standInSpell.js",
+    "old": "const turned = (body) => !!(body.warded || body.entity?.warded);",
+    "new": "const turned = (body) => !!body.warded;",
+    "tests": ["test/net/gate/fb1019f_bossdot.test.js"],
+    "why": "an Elite Breach body's ward (and the Flame's) rides on its stand-in alone - read off the record, a recast from no footing renews its rounds"
+  },
+  {
+    "name": "AUDIT-FB1019f-G7-a-round-of-one-dropped",
+    "file": "src/scenes/gate/standInSpell.js",
+    "old": "        if (got.n >= 1) body.land(got.n);",
+    "new": "        if (got.n > 1) body.land(got.n);",
+    "tests": ["test/net/gate/fb1019f_bossdot.test.js"],
+    "why": "a round that deals exactly 1 is never claimed"
+  },
+  {
+    "name": "AUDIT-FB1019f-C3-the-burns-figure-moved",
+    "file": "src/systems/spellcast.js",
+    "old": "    percent = saving - 20 <= roll ? 100 - 5 * (saving - roll) : 0;",
+    "new": "    percent = saving - 20 <= roll ? 100 - 6 * (saving - roll) : 0;",
+    "tests": ["test/net/gate/fb1019f_bossdot.test.js"],
+    "why": "his save prorated otherwise: the level-20 Burn's figure the pages quote (8 a round, 200 in all) is no longer the producers'"
   }
 ]

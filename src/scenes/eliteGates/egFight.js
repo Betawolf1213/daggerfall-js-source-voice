@@ -800,8 +800,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  caster's plate the room counts (net/eliteGates/egBrain.js trialStep's Gauntlet - a member within EG_TOUCH_M of
    *  `spots.pillar[j].plate`, EG_SILENCE_MS unbroken) drawn as the winch's are (winchPlates - gold, EG_TOUCH_M, its own surface)
    *  through the trial, at its ground's height (egPlateY); one whose Caster is silenced (the room's `pg.silenced[j]`) dimmed as
-   *  an unlit rune is - done. A relay before world224 says no plate's word: every plate the hall lays is drawn while a Caster is
-   *  left (`pg.left`). A blow or a spell silences no Caster, and the plates the objective now names were marked by nothing. */
+   *  an unlit rune is - done, by its plate held or by its Caster slain (GAUNTLET-SLAIN, the same trialStep: a blow or a spell
+   *  that kills a Caster silences it). A relay before world231 (world230 or older) says no plate's word: every plate the hall
+   *  lays is drawn while a Caster is left (`pg.left`). Before it the plates the objective now names were marked by nothing. */
   function gauntletPlates(F, t) {
     if (stageNow !== 'trial' || F.pg?.obj !== 'gauntlet') return;
     const pillars = spec.spots?.pillar ?? [], said = Array.isArray(F.pg.silenced) ? F.pg.silenced : null;

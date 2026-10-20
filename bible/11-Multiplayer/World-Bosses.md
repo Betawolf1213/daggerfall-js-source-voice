@@ -2729,10 +2729,12 @@ dead). Re-aimed by content (13, all dead): `arena4b_blows.json`, `audit_schools.
 
 ## 27. A spell's lasting harm, carried (BOSS-DOT, FIELD BUGS 2026-10-19f; the owner, 2026-10-19: "Carry DoTs")
 
-Section 25's door counted a spell on a stand-in and wiped the stand-in at once - "continuous families are not his to carry",
+Section 26's door counted a spell on a stand-in and wiped the stand-in at once - "continuous families are not his to carry",
 WB4b's comment, never a decision (WBX7 named it, "his stand-in forgets every lasting effect", and carried the Soul Trap
-alone). So a Continuous Damage spell on any body a relay runs landed its cast's round and nothing after: a level-20 Burn of
-10 a round dealt one round of its 25. Now its rounds are carried:
+alone). So a Continuous Damage spell on any body a relay runs landed its cast's round and nothing after: a level-20 Burn
+(the spell maker's Continuous Damage, 10 a round for five rounds and one a level - 25 rounds; his save lets 8 of each
+through at even dice) dealt its first round alone, 8 of its 200, and the other 24 rounds went nowhere. Now its rounds are
+carried:
 
 - **What is carried** (`standInSpell.js:"export const carriedOnStandIn = (a) =>"`): Continuous Damage on health (1,0 - DFU's
   ContinuousDamageHealth), a round still to run. Its siblings on fatigue and magicka (1,1 and 1,2) have nothing to fall on -
@@ -2765,13 +2767,16 @@ alone). So a Continuous Damage spell on any body a relay runs landed its cast's 
 A departure from DFU, which has no relay: its ContinuousDamageHealth runs on the target's own manager each magic round and
 takes the health there; on a body the relay runs it runs on this machine against the stand-in, and each round is a claim
 the relay's caps decide. No relay or wire change: a round is a spell's claim on the wire as it stands.
-Pins: `test/net/gate/fb1019f_bossdot.test.js` (7: round for round what DoMagicRound deals; the round's law - a stall, a
-renewal, the ward, a refused claim, a body gone, my death, health alone, the bout; the keeper's clock; the real court -
-him and his host in one sequence, the wire, his fall; the serpent; an Elite Breach's real fight - no Momentum, no Echo; the
-hosts by source). PIN MOVED: `arena4b_blows`, `audit_wb11`, `fb1019f_standinwhole`, `wb11_gate_host`, `fb1012g_openhand`,
-`wb4b_gate_blows`, `wb9c_gate_reckoning`, `audit_schools` (the serpent's riders), `serpent4`. `tools/mutants/fb1019f_bossdot.json`
-(23, all dead); re-aimed by content (all dead): `fb1019f_standinwhole.json`'s the-claim-clipped and the-count-takes,
-`egz_vestiges.json`'s EGZR-stacks-any-body.
+Pins: `test/net/gate/fb1019f_bossdot.test.js` (8: round for round what DoMagicRound deals, and the Burn's figure above;
+the round's law - a stall, a renewal, the ward, a refused claim, a body gone, my death, health alone, the bout; the keeper's
+clock, and a round of one sent; the real court - him and his host in one sequence, the wire, his fall; the serpent; an
+Elite Breach's real fight - no Momentum, no Echo; a turned recast on a Spire body, whose ward rides on its stand-in alone
+(`egFight.js` turnStandIn; the Flame's the same, `gateFlame.js`) - it renews nothing; the hosts by source). PIN MOVED:
+`arena4b_blows`, `audit_wb11`, `fb1019f_standinwhole`, `wb11_gate_host`, `fb1012g_openhand`, `wb4b_gate_blows`,
+`wb9c_gate_reckoning`, `audit_schools` (the serpent's riders), `serpent4`. `tools/mutants/fb1019f_bossdot.json` (26, all
+dead - AUDIT FB1019f's three among them: the ward read off the record alone, a round of one dropped, the figure moved);
+re-aimed by content (all dead): `fb1019f_standinwhole.json`'s the-claim-clipped and the-count-takes, `egz_vestiges.json`'s
+EGZR-stacks-any-body.
 
 ## Shipped
 

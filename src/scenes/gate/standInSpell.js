@@ -19,7 +19,8 @@
 //
 // FIELD BUGS 2026-10-19f BOSS-DOT (the owner, 2026-10-19: "Carry DoTs"): ITS LASTING HARM IS CARRIED. The stand-in forgot
 // every lasting family the moment the count was done, so a Continuous Damage spell landed its cast's round alone (a level-20
-// Burn: 16 of its 400; the other 24 rounds gone) - WB4b's comment, never a decision; WBX7 carried the Soul Trap alone. A
+// Burn - 10 a round for 25 rounds, 8 of each through his save at even dice: 8 of its 200; the other 24 rounds gone) - WB4b's
+// comment, never a decision; WBX7 carried the Soul Trap alone. A
 // relay body's Continuous Damage on its health (carriedOnStandIn) is lifted off the stand-in before the wipe and kept a body
 // (createStandInRounds), fed back as the incumbent so a recast renews it (systems/effects.js renewRounds, STACK-CAP), and
 // ticked on the shared world's round (gateCourt.js COURT_ROUND_MS - the court's trap's clock) by the one law every entity's

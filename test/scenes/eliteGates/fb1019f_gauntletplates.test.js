@@ -122,7 +122,7 @@ test('GAUNTLET-PLATES (FIELD BUGS 2026-10-19f): A GAUNTLET\'S PLATES ARE MARKED,
   }
 });
 
-test('GAUNTLET-PLATES - AN OLDER RELAY: one before world224 says no plate\'s word, so the screen draws every plate the hall lays, bright, while a Caster is left - and none once the line says none (mutants: nothing drawn without the word; drawn with none left)', () => {
+test('GAUNTLET-PLATES - AN OLDER RELAY: one before world231 (world230 or older) says no plate\'s word, so the screen draws every plate the hall lays, bright, while a Caster is left - and none once the line says none (mutants: nothing drawn without the word; drawn with none left)', () => {
   const [{ seed, h, spec }] = gauntlets(1), R = woken(seed, h, spec, 1), E = R.screen(), pillars = spec.spots.pillar;
   const { silenced: _s, ...old } = E.fight.pg;
   const shapes = frameOf(spec, { ...E, fight: { ...E.fight, pg: old } }, R.now(), pillars[0]);
