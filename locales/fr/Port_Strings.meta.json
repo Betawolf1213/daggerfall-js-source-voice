@@ -9859,6 +9859,11 @@
   "tr": "738cc2ddfde1",
   "by": "claude-in-session"
  },
+ "festival.window.earnStarwarden": {
+  "en": "2145c1f09ee2",
+  "tr": "b6c8786b4396",
+  "by": "claude-in-session"
+ },
  "festival.window.earnTaken": {
   "en": "b05ccc361a5e",
   "tr": "b851b53e3a3b",
@@ -9897,6 +9902,11 @@
  "festival.window.need": {
   "en": "84ab0eecfadb",
   "tr": "71ef86287e4b",
+  "by": "claude-in-session"
+ },
+ "festival.window.notYet": {
+  "en": "8de95fd5b412",
+  "tr": "2a346c6ad913",
   "by": "claude-in-session"
  },
  "festival.window.offering": {
@@ -11834,6 +11844,11 @@
   "tr": "e543fca1f602",
   "by": "claude-in-session"
  },
+ "haul.capped": {
+  "en": "a2549d3d4b2d",
+  "tr": "e8f1acb815df",
+  "by": "claude-in-session"
+ },
  "holdings.horse.boons.hungry": {
   "en": "11b471ca7d1e",
   "tr": "80e76336d801",
@@ -12580,8 +12595,8 @@
   "by": "claude-in-session"
  },
  "marks.capped.star": {
-  "en": "5182a8b7f885",
-  "tr": "1739076b274b",
+  "en": "e77a901d5d64",
+  "tr": "9ebf34a27738",
   "by": "claude-in-session"
  },
  "martial.about.title": {
@@ -25151,7 +25166,7 @@
  },
  "ql.line.needs.starfall": {
   "en": "651e2789e125",
-  "tr": "4d5c23cac4d3",
+  "tr": "3afaa8abeb8d",
   "by": "claude-in-session"
  },
  "ql.line.oldCoil": {
@@ -25205,13 +25220,13 @@
   "by": "claude-in-session"
  },
  "ql.line.thirteenthFrostfall.giver": {
-  "en": "a1a66c0cb59e",
-  "tr": "81d5b7a476e5",
+  "en": "e4533e43e013",
+  "tr": "156fb2551204",
   "by": "claude-in-session"
  },
  "ql.line.thirteenthFrostfall.lead": {
-  "en": "8ab02fe9f268",
-  "tr": "4a19687ed89f",
+  "en": "186bcb4e1d9c",
+  "tr": "20961e87bfcd",
   "by": "claude-in-session"
  },
  "ql.line.weirRoad": {
@@ -28509,11 +28524,6 @@
   "tr": "bfec1e597c54",
   "by": "claude-in-session"
  },
- "starfall.at.circle": {
-  "en": "92cb9edb5ffe",
-  "tr": "b28d583fb826",
-  "by": "claude-in-session"
- },
  "starfall.at.circleBroken": {
   "en": "306e0822d437",
   "tr": "79ab38e918fd",
@@ -28552,6 +28562,11 @@
  "starfall.bar.defenders": {
   "en": "eeac19ecbbde",
   "tr": "2cea991b570b",
+  "by": "claude-in-session"
+ },
+ "starfall.bar.felled": {
+  "en": "874df1195e24",
+  "tr": "2bcd81a1e9f8",
   "by": "claude-in-session"
  },
  "starfall.bar.heart": {
@@ -28660,13 +28675,13 @@
   "by": "claude-in-session"
  },
  "starfall.claim.dayFull": {
-  "en": "54077764c491",
-  "tr": "74a344417962",
+  "en": "d86837a947b8",
+  "tr": "fa974d027246",
   "by": "claude-in-session"
  },
  "starfall.claim.guest": {
-  "en": "ad5798d92c80",
-  "tr": "97fc250d1389",
+  "en": "255fb264f094",
+  "tr": "ba147e1302db",
   "by": "claude-in-session"
  },
  "starfall.claim.noneYet": {
@@ -28675,13 +28690,13 @@
   "by": "claude-in-session"
  },
  "starfall.claim.recorded": {
-  "en": "3e32c1f38f30",
-  "tr": "e190b718a1b3",
+  "en": "b1a570ff7b71",
+  "tr": "dbd010d10a99",
   "by": "claude-in-session"
  },
  "starfall.claim.recordedXp": {
-  "en": "ef43a68aaf16",
-  "tr": "bb8ebe962158",
+  "en": "2305c6af0b18",
+  "tr": "733d4ce939d0",
   "by": "claude-in-session"
  },
  "starfall.haul.source": {
@@ -28689,9 +28704,24 @@
   "tr": "cdc09c494ab6",
   "by": "claude-in-session"
  },
+ "starfall.item.glass.use": {
+  "en": "efc39d1864e8",
+  "tr": "29e6587ba2ff",
+  "by": "claude-in-session"
+ },
+ "starfall.item.glass.what": {
+  "en": "22308c2863a3",
+  "tr": "af67178b13f1",
+  "by": "claude-in-session"
+ },
  "starfall.master.flesh.call": {
-  "en": "9b3d63c00e64",
-  "tr": "4406a501fabf",
+  "en": "5e08f5e938d1",
+  "tr": "3b17bf3dcff2",
+  "by": "claude-in-session"
+ },
+ "starfall.master.flesh.circle": {
+  "en": "de9437f953ae",
+  "tr": "5d2abadf8b80",
   "by": "claude-in-session"
  },
  "starfall.master.lich.call": {
@@ -28699,9 +28729,19 @@
   "tr": "a6354a0f2508",
   "by": "claude-in-session"
  },
+ "starfall.master.lich.circle": {
+  "en": "5ff671413edb",
+  "tr": "cb37d82f72eb",
+  "by": "claude-in-session"
+ },
  "starfall.master.lord.call": {
   "en": "9d700c06151f",
   "tr": "d0b9de35da7c",
+  "by": "claude-in-session"
+ },
+ "starfall.master.lord.circle": {
+  "en": "04e4f0428d50",
+  "tr": "ee4fd04f0dcf",
   "by": "claude-in-session"
  },
  "starfall.master.mother": {
@@ -28714,9 +28754,19 @@
   "tr": "bbcf72a7c069",
   "by": "claude-in-session"
  },
+ "starfall.master.mother.circle": {
+  "en": "e322eede0a81",
+  "tr": "11b25d1d3519",
+  "by": "claude-in-session"
+ },
  "starfall.master.seducer.call": {
-  "en": "d0e92f866a59",
-  "tr": "5939ff82533d",
+  "en": "167f15bfce26",
+  "tr": "db1e8390a20d",
+  "by": "claude-in-session"
+ },
+ "starfall.master.seducer.circle": {
+  "en": "caee330ca864",
+  "tr": "37311aec68de",
   "by": "claude-in-session"
  },
  "starfall.member.alcaire": {
@@ -28805,8 +28855,13 @@
   "by": "claude-in-session"
  },
  "starfall.set.veil": {
-  "en": "b8bacb7c7992",
-  "tr": "41e34801ce96",
+  "en": "c8c7704bf406",
+  "tr": "d5b087043d32",
+  "by": "claude-in-session"
+ },
+ "starfall.set.veilChip": {
+  "en": "3a35139c550b",
+  "tr": "f71fd171ca38",
   "by": "claude-in-session"
  },
  "starfall.set.veilReady": {
@@ -28814,9 +28869,14 @@
   "tr": "c4afb43b5490",
   "by": "claude-in-session"
  },
+ "starfall.set.veilSpell": {
+  "en": "92535b0cf4fd",
+  "tr": "df3809e81657",
+  "by": "claude-in-session"
+ },
  "starfall.spoils.granted": {
-  "en": "8d8e4dcdb20d",
-  "tr": "adf38e2261f4",
+  "en": "a70384a55dd0",
+  "tr": "7fa14ee139a4",
   "by": "claude-in-session"
  },
  "starfall.spoils.kept": {
@@ -28870,8 +28930,8 @@
   "by": "claude-in-session"
  },
  "starfall.wave.4": {
-  "en": "e40372257bbc",
-  "tr": "6017779149ab",
+  "en": "6f17fae89eee",
+  "tr": "77b05ef92e78",
   "by": "claude-in-session"
  },
  "stats.attributes": {
