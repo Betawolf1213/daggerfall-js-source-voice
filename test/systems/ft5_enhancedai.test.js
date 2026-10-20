@@ -40,7 +40,7 @@ test('FT5: the note says what ships and names what it is not', () => {
   assert.equal(f.note, 'Enemies take turns, back off when hurt, and archers keep their distance. Big attacks are marked on the '
     + 'ground: hit hard to stagger them or dodge. Red, hatched attacks can’t be stopped. Trees, rocks and crates block '
     + 'sight and missiles. Pathfinding works in dungeons only for now; towns, interiors and doors come later. Off keeps '
-    + 'the classic behaviour.');   // PIN MOVED (PLAIN TEXT SWEEP): the note in plain words; DFU's "Smarter Enemies" stays unrowed below
+    + 'the classic behavior.');   // PIN MOVED (PLAIN TEXT SWEEP): the note in plain words; DFU's "Smarter Enemies" stays unrowed below
   // ...and the DFU key it names IS unavailable, in Settings, under that label
   assert.equal(tierOf('Enhancements/EnhancedCombatAI'), 'unavailable');
   assert.match(read('src/ui/settings/settingsCopy.js'), /"Enhancements\/EnhancedCombatAI": "Smarter Enemies",/);
