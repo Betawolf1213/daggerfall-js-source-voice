@@ -113,15 +113,21 @@ places:
   rebuilds it from the player's own file when the archive loads
   (`formats/derivedTexture.js`) - a render of game data is game data
   (`bible/01-Overview/Port-Doctrine.md`).
-- **714 are Daggerfall's sprites under the authors' paint** - the Bounty
-  Hunter (1504, TEXTURE.482), the Druid and
+- **774 are Daggerfall's sprites under the authors' paint** - the Bounty
+  Hunter (1504, TEXTURE.482), the Royal Knight (1505, from 482), the Druid and
   the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid (1512, from
   490), the Knight, Spellsword and Archer Riders' new sets (1530-1533, from 491
   and 495) and King Lysandus (1609, from 473) - carried byte for byte under
   `public/art/daggerfall-enemy-expansion-repainted/` on **Port-Doctrine's fourth
   exception** (Mac, 2026-10-19: "Approve 3rd exception", then "Yes, cover all
   of them"). A picture there that IS a record, exactly, is rebuilt instead.
-- **4,786 are the authors' own** - Kamer's renders (out of Arena's, Oblivion's,
+  The Royal Knight's sixty shipped as the authors' own until AUDIT DEX B1
+  measured their outlines (TEXTURE.482's Barbarian, 0.63-0.89 of the union on
+  every one); the tool now measures every picture's outline against every
+  TEXTURE frame's and refuses an archive that follows Daggerfall's outlines
+  unless the exception carries it or the owner has allowed it (the demo's Bat,
+  1603, below) - and a listed archive the measure does not find.
+- **4,726 are the authors' own** - Kamer's renders (out of Arena's, Oblivion's,
   Morrowind's and Battlespire's monsters, and his own), Kab's classes, and the
   1995 demo's Bat, Gargoyle, Nymph and Skeleton (Mac, 2026-10-19: the demo's
   art is the mod's, not the retail ARENA2 the doctrine names) - under

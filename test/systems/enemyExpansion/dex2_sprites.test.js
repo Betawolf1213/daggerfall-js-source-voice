@@ -48,22 +48,24 @@ test('DEX2 every picture DFU imports is one entry, from its one place - the own,
   // the emission: a frame's own map, or its albedo where the archive's xml asks for emission and it has none (1614_20-2)
   const lit = entries.filter((e) => e.map === 'Emission');
   for (const e of lit) assert.ok(DEX_ART[e.archive].emission, `${e.fileName}: an emissive archive's`);
-  const wisp = lit.find((e) => e.archive === 1614 && e.record === 20 && e.frame === 2);
-  assert.ok(wisp && typeof wisp.load === 'function', '1614_20-2 is lit');
-  return wisp.load().then(() => assert.match(asked.at(-1), new RegExp(`${DEX_OWN_ART}1614_20-2\\.png$`), 'by its albedo, having no map of its own'));
+  const hound = lit.find((e) => e.archive === 1614 && e.record === 20 && e.frame === 2);   // the Hell Hound's (1614)
+  assert.ok(hound && typeof hound.load === 'function', '1614_20-2 is lit');
+  return hound.load().then(() => assert.match(asked.at(-1), new RegExp(`${DEX_OWN_ART}1614_20-2\\.png$`), 'by its albedo, having no map of its own'));
 });
 
-test('DEX2 a file is fetched from its own directory - a repaint from the fourth exception\'s, the authors\' own from theirs', async () => {
+test('DEX2 a file is fetched from its own directory - a repaint from the fourth exception\'s (the Royal Knight\'s among them, AUDIT DEX B1), the authors\' own from theirs', async () => {
   const asked = [];
   const entries = dexSpriteEntries({ fetchBytes: async (url) => { asked.push(url); return new Uint8Array(0); } });
   const one = (name) => entries.find((e) => e.fileName === name);
   await one('1504_0-0').load();
   await one('1505_0-0').load();
+  await one('1507_0-0').load();
   await one('1614_0-0_Emission').load();
   assert.match(asked[0], new RegExp(`${DEX_REPAINTED_ART}1504_0-0\\.png$`));
-  assert.match(asked[1], new RegExp(`${DEX_OWN_ART}1505_0-0\\.png$`));
-  assert.match(asked[2], new RegExp(`${DEX_OWN_ART}1614_0-0_Emission\\.png$`));
-  for (const [dir, file] of [[DEX_REPAINTED_ART, '1504_0-0.png'], [DEX_OWN_ART, '1505_0-0.png'], [DEX_OWN_ART, '1614_0-0_Emission.png']]) {
+  assert.match(asked[1], new RegExp(`${DEX_REPAINTED_ART}1505_0-0\\.png$`));
+  assert.match(asked[2], new RegExp(`${DEX_OWN_ART}1507_0-0\\.png$`));
+  assert.match(asked[3], new RegExp(`${DEX_OWN_ART}1614_0-0_Emission\\.png$`));
+  for (const [dir, file] of [[DEX_REPAINTED_ART, '1504_0-0.png'], [DEX_REPAINTED_ART, '1505_0-0.png'], [DEX_OWN_ART, '1507_0-0.png'], [DEX_OWN_ART, '1614_0-0_Emission.png']]) {
     assert.ok(existsSync(join(root, 'public', dir, file)), `public/${dir}${file} ships`);
   }
 });

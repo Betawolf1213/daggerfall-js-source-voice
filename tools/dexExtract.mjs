@@ -25,6 +25,9 @@
 //       is no licence to ship the record itself.
 //     OWN - everything else: the authors' own renders, re-encoded as indexed PNG where the picture fits one (RGBA
 //       where not) under public/art/daggerfall-enemy-expansion/, each read back against its texel.
+//   AUDIT DEX B1: and every shipped picture is measured by its OUTLINE as well (the silhouette guard, below): an
+//   archive that follows Daggerfall's sprites' outlines and is in neither REPAINTED_ARCHIVES nor SILHOUETTE_ALLOWED
+//   is refused - nothing is written and the check fails - as is a listed archive the measure does not find.
 //   Each directory answers to its own listing (`*.files.json`: every name and its sha256 - the authority
 //   test/tooling/doctrine.test.js reads for what may stand there), and src/systems/enemyExpansion/dexArt.js is
 //   generated beside them: per archive, where its pictures come from, how many frames each record has, which carry an
@@ -59,10 +62,122 @@ export const OWN_DIR = 'public/art/daggerfall-enemy-expansion';
 export const REPAINT_DIR = 'public/art/daggerfall-enemy-expansion-repainted';
 export const ART_INDEX = 'src/systems/enemyExpansion/dexArt.js';
 export const TABLE_TEXT = 'src/systems/enemyExpansion/dexTableText.js';
-/** The archives Port-Doctrine's fourth exception carries (Mac, 2026-10-19): the Bounty Hunter (1504, from TEXTURE.482), the Druid and the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid
- *  (1512, from 490), the four new riders (1530-1533, from 491 and 495) and King Lysandus (1609, from 473) - measured
- *  silhouette for silhouette against the player's own sprites before the exception was asked for. */
-export const REPAINTED_ARCHIVES = Object.freeze([1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609]);
+/** The archives Port-Doctrine's fourth exception carries (Mac, 2026-10-19): the Bounty Hunter (1504, from TEXTURE.482), the
+ *  Royal Knight (1505, from 482), the Druid and the Necromancer Acolyte (1509, 1511, from 486), the Rogue Druid (1512, from
+ *  490), the four new riders (1530-1533, from 491 and 495) and King Lysandus (1609, from 473) - measured silhouette for
+ *  silhouette against the player's own sprites before the exception was asked for. AUDIT DEX B1: the first count left the
+ *  Royal Knight out - TEXTURE.482's Barbarian in the authors' armour, every one of its sixty pictures - and it shipped as
+ *  the authors' own; the exception covers the repaints as a class ("Yes, cover all of them"), and the silhouette guard
+ *  below now holds this list to the measure. */
+export const REPAINTED_ARCHIVES = Object.freeze([1504, 1505, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609]);
+
+// ---- AUDIT DEX B1: THE SILHOUETTE GUARD -----------------------------------------------------------------------------
+// A copy is found by its colours (a record's pixels exactly, or DERIVED_SHARE of them - DS1's search) and a repaint was
+// found by the hand list above alone, so a repaint the list missed passed as the authors' own art. Paint changes a
+// sprite's colours and keeps its outline, so every picture the tool would ship is measured by its outline too - its
+// alpha mask against every TEXTURE frame's of its size (or of half it, a sprite drawn at twice), either way round, as
+// the share of their union both cover (IoU) - and an archive whose pictures follow Daggerfall's outlines is refused
+// unless REPAINTED_ARCHIVES carries it (the fourth exception) or SILHOUETTE_ALLOWED does, with the owner's reason.
+// Both ways, as doctrine.test.js holds its rows: a listed archive the measure does not find is refused too, so neither
+// list says more than the measure. On the 1.3.4 bundle the repaints trace a frame on 77-100% of their pictures (1505,
+// the archive the list missed, on all sixty, at 0.63-0.89 - 56 of them over TEXTURE.482); the demo's Bat on 53% (it is
+// allowed, below); the most any of the authors' own archives does is 8% (1520's: two drawings of a body at one size
+// meet on a frame or two).
+
+/** A picture traces a TEXTURE frame when their outlines overlap by this share of their union or more. */
+export const SILHOUETTE_IOU = 0.6;
+/** An archive follows Daggerfall's outlines when this share of its measured pictures trace a frame or more. */
+export const SILHOUETTE_TRACED = 0.25;
+/** The archives the measure finds that are not the fourth exception's repaints, each with the owner's reason. */
+export const SILHOUETTE_ALLOWED = Object.freeze({
+  1603: "the Bat (mobile 260), the 1995 demo's: its outline is the retail bat's, TEXTURE.289, on 24 of its 45 pictures. The demo's art is the mod's own, not the retail ARENA2 the doctrine names (Mac, 2026-10-19: \"Mod art, ship it\"; bible/04-Characters/Enemy-Expansion.md section 2)",
+});
+
+/** A picture's outline - its alpha mask (a clear pixel is clear whatever colour Unity bled under it) - or null when it
+ *  has none to trace: all clear, or all drawn (a full rectangle is every picture's of its size). */
+export function outlineOf(pic) {
+  const { width: w, height: h, data } = pic;
+  const m = new Uint8Array(w * h);
+  let n = 0;
+  for (let i = 0; i < m.length; i++) if (data[i * 4 + 3] !== 0) { m[i] = 1; n++; }
+  return n === 0 || n === m.length ? null : { w, h, m };
+}
+
+/** Every TEXTURE frame with an outline, by its size: `WxH` -> [{ archive, record, frame, o }]. */
+export function outlinesBySize(records) {
+  const out = new Map();
+  for (const r of records) {
+    const o = outlineOf(r.rgba);
+    if (!o) continue;
+    const k = `${o.w}x${o.h}`;
+    (out.get(k) ?? out.set(k, []).get(k)).push({ archive: r.archive, record: r.record, frame: r.frame, o });
+  }
+  return out;
+}
+
+/** The share of their union two outlines both cover - `a` over `b` drawn `scale` times as large (1 or 2), `mirrored` or not. */
+function overlap(a, b, scale, mirrored) {
+  let both = 0, either = 0;
+  for (let y = 0; y < a.h; y++) {
+    const row = ((y / scale) | 0) * b.w;
+    for (let x = 0; x < a.w; x++) {
+      const bx = (x / scale) | 0;
+      const p = a.m[y * a.w + x], q = b.m[row + (mirrored ? b.w - 1 - bx : bx)];
+      if (p | q) { either++; if (p & q) both++; }
+    }
+  }
+  return either ? both / either : 0;
+}
+
+/** The TEXTURE frame a picture's outline follows best: `{ iou, from: [archive, record, frame], scale, mirrored }` - `iou` 0
+ *  and `from` null where no frame is of its size - or null when the picture has no outline to measure. */
+export function bestTrace(pic, outlines) {
+  const a = outlineOf(pic);
+  if (!a) return null;
+  let best = { iou: 0, from: null, scale: 1, mirrored: false };
+  for (const scale of [1, 2]) {
+    if (a.w % scale || a.h % scale) continue;
+    for (const c of outlines.get(`${a.w / scale}x${a.h / scale}`) ?? []) {
+      for (const mirrored of [false, true]) {
+        const iou = overlap(a, c.o, scale, mirrored);
+        if (iou > best.iou) best = { iou, from: [c.archive, c.record, c.frame], scale, mirrored };
+      }
+    }
+  }
+  return best;
+}
+
+/** The measure, archive by archive: `measure(archive, name, pic)` each picture the tool would ship, then `traced()` - the
+ *  archives at SILHOUETTE_TRACED or more, each `{ archive, of, traced, best }` - and `refusals(...)` - what the two lists
+ *  and the measure disagree on, one sentence each (none: the lists are the measure's). */
+export function silhouetteLedger(records) {
+  const outlines = outlinesBySize(records);
+  const by = new Map();   // archive -> { archive, of, traced, best }
+  const traced = () => [...by.values()].filter((e) => e.of > 0 && e.traced >= SILHOUETTE_TRACED * e.of).sort((x, y) => x.archive - y.archive);
+  return {
+    measure(archive, name, pic) {
+      const t = bestTrace(pic, outlines);
+      if (!t) return;
+      const e = by.get(archive) ?? by.set(archive, { archive, of: 0, traced: 0, best: null }).get(archive);
+      e.of++;
+      if (t.iou >= SILHOUETTE_IOU) e.traced++;
+      if (!e.best || t.iou > e.best.iou) e.best = { name, ...t };   // every picture with an outline counts, a frame of its size or none
+    },
+    traced,
+    refusals({ repainted = REPAINTED_ARCHIVES, allowed = SILHOUETTE_ALLOWED } = {}) {
+      const found = traced(), out = [];
+      const said = (e) => `${e.traced} of its ${e.of} pictures trace a TEXTURE frame's outline (${e.best.from ? `${e.best.name} follows TEXTURE.${String(e.best.from[0]).padStart(3, '0')} record ${e.best.from[1]} frame ${e.best.from[2]}${e.best.scale > 1 ? ' at twice its size' : ''}, IoU ${e.best.iou.toFixed(3)}` : 'no frame is of any of their sizes'})`;
+      for (const e of found) {
+        if (repainted.includes(e.archive) || Object.hasOwn(allowed, e.archive)) continue;
+        out.push(`${e.archive}: ${said(e)} - Daggerfall's sprite under the authors' paint, which ships only as Port-Doctrine's fourth exception carries it (REPAINTED_ARCHIVES) or as the owner allows it (SILHOUETTE_ALLOWED, with the reason)`);
+      }
+      const at = new Set(found.map((e) => e.archive));
+      for (const a of repainted) if (!at.has(a)) out.push(`${a}: REPAINTED_ARCHIVES names it and the measure finds no repaint (${by.has(a) ? said(by.get(a)) : 'no picture of it measured'}) - the exception names what the measure finds`);
+      for (const a of Object.keys(allowed).map(Number)) if (!at.has(a)) out.push(`${a}: SILHOUETTE_ALLOWED names it and the measure finds nothing to allow (${by.has(a) ? said(by.get(a)) : 'no picture of it measured'})`);
+      return out;
+    },
+  };
+}
 
 /** An archive whose pictures a mobile wears in DFU: a mod's own archive (no TEXTURE file - its records import from 0 up),
  *  or a classic one whose record 0, frame 0 the bundle replaces (GetMobileBillboardMaterial's gate). */
@@ -227,6 +342,7 @@ export function dexAssets(arena2, bundleBytes) {
   const derived = {}, own = {}, repainted = {}, index = {};
   const held = {}, lit = {};   // archive -> record -> the frames its pictures (and its emission maps) are of
   const shipped = { own: 0, repainted: 0, indexed: 0, bytes: 0 };
+  const outlines = silhouetteLedger(records);   // AUDIT DEX B1: every shipped picture by its outline too
   for (const t of carried) {
     const [, a, r, f, map] = NAME.exec(t.name);
     const archive = Number(a), record = Number(r), frame = Number(f);
@@ -243,12 +359,16 @@ export function dexAssets(arena2, bundleBytes) {
       entry.derived = (entry.derived ?? 0) + 1;
       continue;
     }
+    if (!map) outlines.measure(archive, t.name, pic);   // a map follows its albedo's outline
     const { png, indexed } = encodeSprite(pic);
     if (!sameOnScreen(pic, readPng(png))) throw new Error(`${t.name}: the PNG read back differs from the texel`);
     (repaint ? repainted : own)[`${t.name}.png`] = sha(png);
     out[`${repaint ? REPAINT_DIR : OWN_DIR}/${t.name}.png`] = png;
     shipped[repaint ? 'repainted' : 'own']++; shipped.indexed += indexed ? 1 : 0; shipped.bytes += png.length;
   }
+  // AUDIT DEX B1: nothing is written, or found to be what the tree holds, while a list and the measure disagree
+  const refused = outlines.refusals();
+  if (refused.length) throw new Error(`the silhouette guard refuses ${refused.length}:\n${refused.join('\n')}`);
   for (const [a, e] of Object.entries(index)) {
     const total = textures.filter((t) => Number(NAME.exec(t.name)[1]) === Number(a)).length;
     e.from = e.derived === total ? 'derived' : REPAINTED_ARCHIVES.includes(Number(a)) ? 'repainted' : 'own';
@@ -272,7 +392,7 @@ export function dexAssets(arena2, bundleBytes) {
   out[ART_INDEX] = renderArtIndex(index, v);
   const decode = (b) => new TextDecoder('utf-8').decode(b);
   out[TABLE_TEXT] = renderTableText(tableFilesInManifestOrder(manifest).map((f) => [f, decode(out[`${VENDOR_DIR}/${f}`])]), v);
-  return { out, report: { carried: carried.length, derived: Object.keys(derived).length, ...shipped, notCarried, archives: Object.keys(index).length } };
+  return { out, report: { carried: carried.length, derived: Object.keys(derived).length, ...shipped, notCarried, archives: Object.keys(index).length, traced: outlines.traced() } };
 }
 
 if (isMain(import.meta.url)) {
@@ -282,6 +402,7 @@ if (isMain(import.meta.url)) {
   const t0 = Date.now();
   const { out, report } = dexAssets(arena2, new Uint8Array(readFileSync(src)));
   console.log(`${report.carried} pictures of ${report.archives} archives: ${report.derived} derived from the player's records, ${report.own} own and ${report.repainted} repainted shipped (${report.indexed} indexed), ${(report.bytes / 1e6).toFixed(1)} MB; not carried (no table draws them, or DFU never wears them): ${report.notCarried.join(', ')}; ${Date.now() - t0} ms`);
+  console.log(`following Daggerfall's outlines (the silhouette guard): ${report.traced.map((e) => `${e.archive} ${e.traced}/${e.of}${Object.hasOwn(SILHOUETTE_ALLOWED, e.archive) ? ' (allowed)' : ''}`).join(', ')}`);
   const wanted = new Set(Object.keys(out));
   if (write) {
     for (const dir of [OWN_DIR, REPAINT_DIR]) {

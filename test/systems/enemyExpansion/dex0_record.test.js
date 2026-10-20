@@ -18,6 +18,10 @@ import { DEX_ART } from '../../../src/systems/enemyExpansion/dexArt.js';
 import { DEX_TABLE_TEXT } from '../../../src/systems/enemyExpansion/dexTableText.js';
 import { MOD_SETTINGS } from '../../../src/systems/modSettings.js';
 import { splitCsvLine, parseArrayArg, parseBool, readCsvTable } from '../../../src/systems/enemyExpansion/dexCsv.js';
+import { REPAINTED_ARCHIVES, SILHOUETTE_ALLOWED, SILHOUETTE_IOU, SILHOUETTE_TRACED, silhouetteLedger, outlinesBySize, bestTrace } from '../../../tools/dexExtract.mjs';
+import { classicRecords } from '../../../tools/detailedShipsAssets.mjs';
+import { readPng } from '../../../tools/pngIO.mjs';
+import { DFPalette } from '../../../src/formats/dfPalette.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const V = join(ROOT, 'vendor/daggerfall-enemy-expansion');
@@ -239,9 +243,98 @@ test('DEX0 the art: every shipped picture is in its listing by sha256 and every 
     for (const f of l.Files) assert.equal(sha(readFileSync(join(ROOT, dir, f))), l.Sha256[f], `${dir}/${f}`);
   }
   const repainted = listingOf('repainted.files.json').Files.map((f) => Number(f.split('_')[0]));
-  assert.deepEqual([...new Set(repainted)].sort((a, b) => a - b), [1504, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609], 'the fourth exception\'s archives, no more');
+  assert.deepEqual([...new Set(repainted)].sort((a, b) => a - b), [1504, 1505, 1509, 1511, 1512, 1530, 1531, 1532, 1533, 1609], 'the fourth exception\'s archives, no more (AUDIT DEX B1: the Royal Knight, 1505, among them)');
+  assert.deepEqual([...REPAINTED_ARCHIVES], [...new Set(repainted)].sort((a, b) => a - b), 'the extractor\'s list is the directory\'s');
+  assert.equal(listingOf('daggerfall-enemy-expansion.files.json').Files.length, 4726, 'the authors\' own');
+  assert.equal(listingOf('repainted.files.json').Files.length, 774, 'the repaints');
   assert.equal(listingOf('daggerfall-enemy-expansion.files.json').Files.length + listingOf('repainted.files.json').Files.length, 5500);
   assert.equal(DEX_ART[399], undefined, 'the guard\'s 399: DFU never wears it (no 399_0-0, and TEXTURE.399 ends at record 19)');
+});
+
+// AUDIT DEX B1: THE SILHOUETTE GUARD (tools/dexExtract.mjs). The extractor found a copy by its colours and a repaint by
+// its hand list alone, so the Royal Knight (1505) - TEXTURE.482's Barbarian under the authors' armour, all sixty pictures
+// - shipped as the authors' own. Paint keeps an outline, so every picture is measured by its outline too, and an archive
+// that follows Daggerfall's is refused unless the fourth exception (REPAINTED_ARCHIVES) or the owner (SILHOUETTE_ALLOWED)
+// carries it; both ways - a listed archive the measure does not find is refused as well.
+/** A picture `w` x `h`, drawn where `inside(x, y)` says, in one colour. */
+const drawn = (w, h, inside, rgb = [200, 40, 40]) => {
+  const data = new Uint8ClampedArray(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (inside(x, y)) data.set([...rgb, 255], (y * w + x) * 4);
+  return { width: w, height: h, data };
+};
+/** "Daggerfall's" frame: a body - a head, a torso, a leg forward, one back (not its own mirror). */
+const BODY = (x, y) => (y < 6 && x >= 7 && x < 13) || (y >= 6 && y < 20 && x >= 4 && x < 15) || (y >= 20 && ((x >= 2 && x < 7) || (x >= 11 && x < 14)));
+const CLASSIC = [
+  { archive: 482, record: 0, frame: 0, rgba: drawn(20, 30, BODY, [90, 60, 30]) },
+  { archive: 1, record: 0, frame: 0, rgba: drawn(20, 30, () => true) },   // a wall: a full rectangle, no outline
+];
+const REPAINT = drawn(20, 30, (x, y) => BODY(x, y) || (y >= 8 && y < 13 && x >= 15 && x < 17));   // the body, a cape painted on
+const MIRRORED = drawn(20, 30, (x, y) => BODY(19 - x, y));
+const TWICE = drawn(40, 60, (x, y) => BODY(x >> 1, y >> 1));
+const OWN = drawn(20, 30, (x, y) => y >= 15 && x >= 1 && x < 19);   // another drawing at the same size
+
+test('DEX0 the silhouette guard\'s measure: a picture traces the TEXTURE frame whose outline it follows - painted over, mirrored, at twice its size - and not another drawing of its size; a full rectangle has no outline to trace (mutants: no mirror, no twice, a rectangle traced)', () => {
+  const outlines = outlinesBySize(CLASSIC);
+  assert.deepEqual([...outlines.keys()], ['20x30'], 'the wall carries no outline');
+  assert.equal(outlines.get('20x30').length, 1);
+  const t = bestTrace(REPAINT, outlines);
+  assert.deepEqual([t.from, t.scale, t.mirrored], [[482, 0, 0], 1, false]);
+  assert.ok(t.iou > 0.95 && t.iou < 1, `the cape costs a little of the union (${t.iou})`);
+  assert.deepEqual(bestTrace(drawn(20, 30, BODY, [1, 2, 3]), outlines).iou, 1, 'recoloured: its outline exactly');
+  assert.deepEqual([bestTrace(MIRRORED, outlines).iou, bestTrace(MIRRORED, outlines).mirrored], [1, true], 'the other way round');
+  assert.deepEqual([bestTrace(TWICE, outlines).iou, bestTrace(TWICE, outlines).scale], [1, 2], 'drawn at twice its size');
+  assert.ok(bestTrace(OWN, outlines).iou < SILHOUETTE_IOU, 'another drawing of a body at its size does not');
+  assert.equal(bestTrace(drawn(20, 30, () => true), outlines), null, 'a full picture: no outline to measure (the wall would be its twin)');
+  assert.deepEqual(bestTrace(drawn(21, 30, BODY), outlines), { iou: 0, from: null, scale: 1, mirrored: false }, 'no frame of its size: measured, tracing none');
+});
+
+test('DEX0 THE SILHOUETTE GUARD REFUSES A PLANTED REPAINT - an archive whose pictures follow a TEXTURE frame\'s outline, on neither list, is refused by name; carried by the exception or allowed by the owner it passes; and a listed archive the measure does not find is refused too (mutants: the threshold unread, the allowance unread, either list unheld)', () => {
+  const ledger = silhouetteLedger(CLASSIC);
+  const plant = (archive, pics) => pics.forEach((p, i) => ledger.measure(archive, `${archive}_${i}-0`, p));
+  plant(9001, [REPAINT, REPAINT, MIRRORED, TWICE]);   // a repaint the list missed
+  plant(9002, [OWN, OWN, OWN, OWN]);                  // the authors' own
+  plant(9003, [REPAINT, OWN, OWN, OWN, OWN]);         // one in five meets a frame: two drawings of a body, by chance
+  plant(9004, [REPAINT, REPAINT, OWN, OWN, OWN]);     // two in five: past SILHOUETTE_TRACED
+  plant(9005, [drawn(20, 30, () => true)]);           // nothing with an outline: unmeasured
+  assert.equal(SILHOUETTE_TRACED, 0.25);
+  assert.deepEqual(ledger.traced().map((e) => [e.archive, e.traced, e.of]), [[9001, 4, 4], [9004, 2, 5]]);
+  const refused = ledger.refusals({ repainted: [], allowed: {} });
+  assert.equal(refused.length, 2);
+  assert.match(refused[0], /^9001: 4 of its 4 pictures trace a TEXTURE frame's outline \(9001_\d-0 follows TEXTURE\.482 record 0 frame 0/);
+  assert.match(refused[0], /REPAINTED_ARCHIVES\) or as the owner allows it \(SILHOUETTE_ALLOWED/);
+  assert.match(refused[1], /^9004: 2 of its 5 pictures/);
+  assert.deepEqual(ledger.refusals({ repainted: [9001], allowed: { 9004: 'the owner\'s word' } }), [], 'carried, or allowed: passed');
+  assert.match(ledger.refusals({ repainted: [9001] , allowed: {} })[0], /^9004:/, 'the allowance is per archive');
+  // both ways
+  const listed = ledger.refusals({ repainted: [9001, 9002], allowed: { 9004: 'x' } });
+  assert.equal(listed.length, 1);
+  assert.match(listed[0], /^9002: REPAINTED_ARCHIVES names it and the measure finds no repaint \(0 of its 4 pictures/);
+  const stale = ledger.refusals({ repainted: [9001], allowed: { 9004: 'x', 9003: 'y' } });
+  assert.equal(stale.length, 1);
+  assert.match(stale[0], /^9003: SILHOUETTE_ALLOWED names it and the measure finds nothing to allow \(1 of its 5 pictures/);
+  assert.match(ledger.refusals({ repainted: [9001, 9004, 9005], allowed: {} })[0], /^9005: .*no picture of it measured/);
+});
+
+const ARENA2 = process.env.ARENA2_PATH && existsSync(join(process.env.ARENA2_PATH, 'ART_PAL.COL')) ? process.env.ARENA2_PATH : null;
+test('DEX0 THE SILHOUETTE GUARD ON THE SHIPPED ART (ARENA2): the archives whose pictures follow Daggerfall\'s outlines are the fourth exception\'s and the owner\'s one allowance, exactly - the Royal Knight among the repaints, all sixty over TEXTURE.482\'s Barbarian', { skip: !ARENA2 && 'ARENA2_PATH not set' }, () => {
+  const palette = new DFPalette();
+  palette.load(new Uint8Array(readFileSync(join(ARENA2, 'ART_PAL.COL'))), 'ART_PAL.COL');
+  const ledger = silhouetteLedger([...classicRecords(ARENA2, palette)]);
+  for (const dir of ['public/art/daggerfall-enemy-expansion', 'public/art/daggerfall-enemy-expansion-repainted']) {
+    for (const f of pngsIn(dir).filter((n) => !/_[A-Za-z]+\.png$/.test(n))) ledger.measure(Number(f.split('_')[0]), f.replace(/\.png$/, ''), readPng(readFileSync(join(ROOT, dir, f))));
+  }
+  assert.deepEqual(ledger.refusals(), [], 'the lists are the measure\'s');
+  assert.deepEqual(ledger.traced().map((e) => e.archive), [...REPAINTED_ARCHIVES, ...Object.keys(SILHOUETTE_ALLOWED).map(Number)].sort((a, b) => a - b));
+  const knight = ledger.traced().find((e) => e.archive === 1505);
+  assert.deepEqual([knight.traced, knight.of, knight.best.from[0]], [60, 60, 482]);
+  assert.deepEqual(Object.keys(SILHOUETTE_ALLOWED), ['1603'], 'the demo\'s Bat alone');
+});
+
+test('DEX0 the fourth exception\'s paragraph names every archive the extractor carries under it', () => {
+  const para = readFileSync(join(ROOT, 'bible/01-Overview/Port-Doctrine.md'), 'utf8').split('\n').find((l) => l.includes('**THE FOURTH EXCEPTION'));
+  for (const a of REPAINTED_ARCHIVES) assert.ok(new RegExp(`\\b${a}\\b`).test(para) || (a >= 1530 && a <= 1533 && para.includes('1530-1533')), `${a} named`);
+  assert.match(para, /the Royal Knight \(1504 and 1505, over TEXTURE\.482\)|Royal Knight[^.]*1505/);
+  assert.match(para, /The mod's 774 ship under `public\/art\/daggerfall-enemy-expansion-repainted\/`/);
 });
 
 test('DEX0 the pictures that ARE Daggerfall\'s records are specs naming the record and nothing else - no pixel of them is carried', () => {
@@ -281,6 +374,7 @@ test('DEX0 the generated index counts the frames the three places hold as DFU im
   assert.equal(DEX_ART[1610].from, 'derived');
   assert.equal(DEX_ART[1500].from, 'own', 'the riders\' corpse (1500_20-0) is the authors\' own; the rest of the set is derived');
   assert.equal(DEX_ART[1609].from, 'repainted');
+  assert.equal(DEX_ART[1505].from, 'repainted', 'AUDIT DEX B1: the Royal Knight, TEXTURE.482 under the authors\' armour');
   assert.equal(DEX_ART[1618].from, 'own');
   assert.deepEqual(DEX_ART[1611].scale[1], [0.8, 0.8], 'the Medusa\'s scale, out of 1611_1-0.xml');
   assert.equal(DEX_ART[1610].emission, true, '1610.xml: <emission>True</emission>');
