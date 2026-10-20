@@ -5887,3 +5887,19 @@ accounts, titles, glyphs or auras, so there is no DFU member to read or depart f
   rabbits are upright cards leaning back toward the eye, so straight down from overhead they are foreshortened to half
   their height; like every aura they stand on a wearer turned beast and on a rider; one program draws all twelve
   looks, so a compile failure would take them all (the probe and `shadowcloak.test.js`'s eager compile are the guard).
+
+## SPIRE-FIRST — Severide: First of the Spire, and Firstlight his own (2026-10-20)
+
+Severide took Redoubt 10 of the Battlespire first, alone, in 1:17:40, and asked for the title; the owner: "Since hes world
+first. He should get this title plus a custom aura". `server-account/wrangler.toml` reads `EG_FIRST_HANDLES = "Severide"`
+(it was empty until the first company came). The list is read fresh at every token and every call (ACC3), so once the
+account worker deploys, Severide holds `spirefirst` First of the Spire and `firstlight` Firstlight (`titles.js`
+`isSpireFirst`), and the next balance's read writes First of the Spire's letter to the account once (EG-ZF, `egFirstPost`).
+Case-folded as every list is; a near name is another account. No column, no migration, no relay or account version: both
+ids have been in the token's vocabulary since EG-E2. The custom aura is Firstlight itself, rebuilt as his own - held only
+by the first company, which is Severide - rather than a second aura for the same honour (a new id would have taken a relay
+version and the hello's body bound for nothing the player would see differently): the ten Redoubts climbed round a dial
+at the feet, ten graduated spires rising one after another, the dawn breaking in a sunburst and a shaft of first light
+when the tenth is taken (`bible/11-Multiplayer/Elite-Gates.md` section 31, SPIRE-FIRST, the whole record). Pins:
+`test/net/eliteGates/egeco_honours.test.js` (the list reads Severide - PIN MOVED, it read empty; any case; near names
+refused) and `tools/mutants/egeco_honours.json` SPIRE-FIRST-severide-not-granted (dead).
