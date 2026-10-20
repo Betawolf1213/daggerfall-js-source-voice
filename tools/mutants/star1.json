@@ -281,7 +281,7 @@
   {
     "name": "STAR1-the-deadline-ignored",
     "file": "src/net/starfall/starfallLaw.js",
-    "old": "if (nowMs >= starTimes(led.n, led.k).endAt) { lose(led, nowMs, STAR_LOST_DAWN); return true; }",
+    "old": "if (nowMs >= starLostAt(led.n, led.k)) { lose(led, nowMs, STAR_LOST_DAWN); return true; }",
     "new": "if (false) { lose(led, nowMs, STAR_LOST_DAWN); return true; }",
     "tests": [
       "test/net/starfall/star1_law.test.js"
@@ -346,6 +346,33 @@
     "file": "src/net/starfall/starReceipt.js",
     "old": "!starOk(c.sf[0], c.sf[1])",
     "new": "!Number.isSafeInteger(c.sf[0])",
+    "tests": [
+      "test/net/starfall/star1_law.test.js"
+    ]
+  },
+  {
+    "name": "STAR1-the-grace-unheld",
+    "file": "src/net/starfall/starfallLaw.js",
+    "old": "export const starLostAt = (n, k) => starTimes(n, k).endAt + STAR_GRACE_MS;",
+    "new": "export const starLostAt = (n, k) => starTimes(n, k).endAt;",
+    "tests": [
+      "test/net/starfall/star1_law.test.js"
+    ]
+  },
+  {
+    "name": "STAR1-a-star-made-in-the-grace",
+    "file": "src/net/starfall/starfallLaw.js",
+    "old": "starHeard(n, k, nowMs) && nowMs < starTimes(n, k).endAt;",
+    "new": "starHeard(n, k, nowMs);",
+    "tests": [
+      "test/net/starfall/star1_law.test.js"
+    ]
+  },
+  {
+    "name": "STAR1-the-deaths-on-any-wave",
+    "file": "src/net/starfall/starfallLaw.js",
+    "old": "if (led.p === P_WAVE && w.kw === led.w && w.kn > led.kn)",
+    "new": "if (led.p === P_WAVE && w.kn > led.kn)",
     "tests": [
       "test/net/starfall/star1_law.test.js"
     ]
