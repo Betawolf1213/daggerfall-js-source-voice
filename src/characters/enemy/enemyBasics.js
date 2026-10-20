@@ -37,6 +37,10 @@ export const ENEMY_NAMES = Object.freeze([
   'Knight', 'City Watch',
 ]);
 
+/** MobileBehaviour (DaggerfallUnityEnums.cs), by name and number - a row's `behaviour` is its name; the C# compares the
+ *  ints (world/oceanHoles.js enemyRow). One home: the mods' readers parse by it (systems/enemyExpansion/dexTables.js). */
+export const MOBILE_BEHAVIOUR = Object.freeze({ General: 0, Flying: 1, Aquatic: 2, Spectral: 3, Guard: 4 });
+
 /** EnemyBasics.IsClassEnemyId: the 128 bit. */
 export const isClassEnemyId = (id) => (id & 128) !== 0;
 

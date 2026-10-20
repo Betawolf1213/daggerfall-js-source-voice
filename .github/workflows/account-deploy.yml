@@ -199,6 +199,7 @@ on:
       - "src/ai/tactics.js"
       - "src/ai/tacticsClock.js"
       - "src/ai/tells.js"
+      - "src/characters/enemy/customEnemies.js"
       - "src/characters/enemy/enemyBasics.js"
       - "src/characters/enemy/enemyMotor.js"
       - "src/characters/equipRules.js"

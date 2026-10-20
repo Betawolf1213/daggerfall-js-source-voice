@@ -7404,6 +7404,21 @@
   "tr": "cc479ed214a3",
   "by": "claude-in-session"
  },
+ "credits.dex.terms": {
+  "en": "a80c92201a98",
+  "tr": "21ab1d821d56",
+  "by": "claude-in-session"
+ },
+ "credits.dex.title": {
+  "en": "b7c44fa76f13",
+  "tr": "b7c44fa76f13",
+  "by": "claude-in-session"
+ },
+ "credits.dex.what": {
+  "en": "df73e6ddeb45",
+  "tr": "43a4d6aacd2b",
+  "by": "claude-in-session"
+ },
  "credits.dfu.what": {
   "en": "017001ef7ea7",
   "tr": "669a52ddd8f6",
@@ -14202,6 +14217,21 @@
  "mods.comeSailAway.unread.description": {
   "en": "7a374a732785",
   "tr": "702c6b032cc6",
+  "by": "claude-in-session"
+ },
+ "mods.daggerfallEnemyExpansion.DisableTrollRespawn.description": {
+  "en": "2f199fadc63d",
+  "tr": "9fd866686925",
+  "by": "claude-in-session"
+ },
+ "mods.daggerfallEnemyExpansion.Enabled.description": {
+  "en": "08d1f5db7be6",
+  "tr": "39f3d577ea9d",
+  "by": "claude-in-session"
+ },
+ "mods.daggerfallEnemyExpansion.title": {
+  "en": "b7c44fa76f13",
+  "tr": "b7c44fa76f13",
   "by": "claude-in-session"
  },
  "mods.detailedShips.Enabled.description": {

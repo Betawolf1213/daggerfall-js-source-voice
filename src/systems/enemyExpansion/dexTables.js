@@ -20,16 +20,17 @@ import { readCsvTable, splitCsvLine, parseArrayArg, parseFloatArrayArg, parseBoo
 import { MOBILE_TYPES } from '../../characters/mobile/mobileTypes.js';
 import { WEAPON_MATERIALS } from '../../characters/weapons.js';
 import { MOBILE_TEAMS } from '../../characters/enemy/enemyTargets.js';
+import { MOBILE_BEHAVIOUR } from '../../characters/enemy/enemyBasics.js';
 import { ENEMY_GROUPS, GROUP_BITS } from '../../combat/formulas.js';
 import { EFFECT_FLAGS } from '../spellcast.js';
 import { SKILLS } from '../skills.js';
 
 // ---- the enums Enum.Parse reads (DaggerfallUnityEnums.cs, DFCareer.cs, DFBlock.cs, ItemEnums.cs) ----------------------
 // MobileTeams, DFCareer.EnemyGroups, DFCareer.EffectFlags, DFCareer.Skills and WeaponMaterialTypes are the port's own
-// tables already (ONE DFU MEMBER, ONE EXPORT); MobileBehaviour and MobileAffinity the port keeps as strings, and lists here.
+// tables already (ONE DFU MEMBER, ONE EXPORT); MobileBehaviour has its home with the rows (enemyBasics.js), and
+// MobileAffinity the port keeps as strings and lists here.
 
-/** MobileBehaviour and MobileAffinity (DaggerfallUnityEnums.cs), by value. */
-export const MOBILE_BEHAVIOUR = Object.freeze(['General', 'Flying', 'Aquatic', 'Spectral', 'Guard']);
+/** MobileAffinity (DaggerfallUnityEnums.cs), by value; MobileBehaviour is enemyBasics.js MOBILE_BEHAVIOUR. */
 export const MOBILE_AFFINITY = Object.freeze(['None', 'Daylight', 'Darkness', 'Undead', 'Animal', 'Daedra', 'Golem', 'Water', 'Human']);
 export { MOBILE_TEAMS, ENEMY_GROUPS };
 /** DFCareer.Skills as Enum.Parse knows it: the port's SKILLS with the enum's None (-1) and Count (35, "not a valid skill"). */
