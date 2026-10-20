@@ -39,7 +39,7 @@ const near = (a, b, eps = 1e-6) => a.every((v, i) => Math.abs(v - b[i]) < eps);
 
 test('SUNBABY1 wire: the sun baby is a live event word, appended after the dread - a stage frame takes it and a live event names it (mutants: the word dropped)', () => {
   assert.equal(SUNBABY_EVENT, 'sunbaby', 'the look draws the word the relay carries');
-  assert.deepEqual(LIVE_EVENTS, ['dread', 'sunbaby', 'witchfest'], 'appended, never reordered - an old build knows the dread at index 0');   // PIN MOVED: STAR3 appended the Witches' Festival (its own pins: test/net/starfall/star3_relay.test.js)
+  assert.deepEqual(LIVE_EVENTS, ['dread', 'sunbaby'], 'appended, never reordered - an old build knows the dread at index 0');
   assert.deepEqual(parseClient(stage('sunbaby'), { hasHello: true }), { t: 'stage', kind: 'sunbaby' });
   assert.deepEqual(parseClient(stage('SUNBABY'), { hasHello: true }), { error: 'bad stage' });
   assert.equal(validLiveEvent({ kind: 'sunbaby', at: 1_700_000_000_000 }), true);
@@ -110,7 +110,7 @@ test('SUNBABY1 command: /event sunbaby [on|off] - the usage names it (mutants: n
   assert.deepEqual(parseEventCommand('/event sunbaby'), { kind: 'sunbaby' });
   assert.deepEqual(parseEventCommand('/Event SunBaby ON'), { kind: 'sunbaby' });
   assert.deepEqual(parseEventCommand('/event sunbaby off'), { kind: '' });
-  assert.match(parseEventCommand('/event teletubbies').error, /\/event <dread\|sunbaby\|witchfest> \[on\|off\]/);   // PIN MOVED: STAR3's witchfest joins the usage
+  assert.match(parseEventCommand('/event teletubbies').error, /\/event <dread\|sunbaby> \[on\|off\]/);
 });
 
 // ── THE LOOK ─────────────────────────────────────────────────────────
@@ -238,7 +238,7 @@ test('SUNBABY1 host: world.js hears the sun baby on the hub\'s one onEvent, SHOW
   assert.equal((world.match(/applyWeather\(currentWeather\(\)\)/g) ?? []).length, 0, 'no door applies the sim\'s word past the event');
   assert.match(world, /const weatherStale = \(\) => shownWeather\(\) !== weather \|\| weatherSystemStamp\(\) !== seenSystem;/, 'stale is the SHOWN word moved (or the system under it)');   // AUDIT PRECIP FALL-2 (PIN MOVED): one test for the three doors
   assert.equal((world.match(/if \(weatherStale\(\)\) applyWeather\(shownWeather\(\)\);/g) ?? []).length, 3, 'the frame\'s drain, the teleport\'s and the travel\'s');
-  assert.match(world, /link\.onEvent = \(ev, o\) => \{ dread\.set\(ev, o\); sunbaby\.set\(ev, o\); starfall\?\.setEvent\(ev\); \};/);
+  assert.match(world, /link\.onEvent = \(ev, o\) => \{ dread\.set\(ev, o\); sunbaby\.set\(ev, o\); \};/);
   assert.match(world, /const sunbabyW = sunbaby\.tick\(dt\);/);
   assert.match(world, /if \(isEnhanced\(\) && !weatherOverride && !sunbaby\.on\) \{[^\n]*\n\s*const ds = distantStorms\.tick\(/);
   assert.match(world, /sunbabyLight\(dreadLight\(withMoonAmbient\(exteriorAmbient\([\s\S]*?\), moonNow\), skyDreadW\), sunbabyW, sunbabyFace\.evil\), sdAirW\), etherAirW\), sunScale\(minute\)/);   // SUNBABY2 moved it: the wrath; SD19 (PIN MOVED): leaning brass near a Hollow; ETHER-LIGHT (PIN MOVED): leaned once more past the Veil

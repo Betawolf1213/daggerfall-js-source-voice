@@ -297,6 +297,7 @@ import { createFleetHost } from './fleetHost.js';   // HOLDINGS: the Fleet page'
 import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, stood off its berths, and the gangways
 import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay outside Privateer's Hold (HOLD-MONUMENT), and the flowers laid at it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
+import { createWitchesHost } from './witchesHost.js';   // WITCH1: the Witches' Festival in the streets - the Hearth Offerings, the Wyrd Sister's window, the festival's doors
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
 import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
 import { createPassageHost } from './naval/passageHost.js';   // PASSAGE: a berth's friendly ship, booked and sailed
@@ -372,7 +373,8 @@ import { SD_STEPS_TEXT } from './superDungeon/sdSteps.js';   // SD7b: the cast-b
 import { inOrreryHall, dungeonToRealm as sdDungeonToRealm, SD_FRAY_LASH, SD_ARENA, realmToDungeon as sdRealmToDungeon, SD_TURN_WAIT_LINE } from '../net/superDungeon/sdBrain.js';   // SD6c: the snap's lash, on whoever stands in the hall; SD10: the arena, where the way home stands; AUDIT SD II (L7 H2): a turn the stones refused
 import { SD_REM_SINK_MS } from './superDungeon/sdRemnant.js';   // SD10: the way home rises once the Remnant's body has sunk
 import { SD_HOME_TEXT, SD_HOME_SAY_MS, SD_HOME_RISE_MS, SD_HOME_SCALE } from './superDungeon/sdEnd.js';   // SD10: the way home's words; AUDIT SD II (L6 F16): said as it rises
-import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_ENTERED_MAX, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
+import { sdRiftWord, sdReturnStands, sdRiftCount, riftLook, SD_ENTERED_KEY, SD_FALLEN_KEY, SD_NO_MARK, SD_RETURN_SIZE } from '../world/superDungeon/sdDungeon.js';   // SD4b: a Super dungeon's Rift and Return, off the hub's record
+import { sdSlotsKept } from '../systems/superDungeon/sdSlots.js';   // SD-ONELIFE: the Hollows' slots kept on the device, by the account
 import { sdCities, sdTemplates } from '../systems/superDungeon/sdSite.js';   // SD2b: the Hollow's cities and templates, over the game's own rows
 import { RANDOM_TREASURE_ARCHIVE } from '../systems/loot/lootDataTables.js';   // WB12d: the casket's pile, undrawn
 import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil Broker - her body, her box and name, her press; BROKER-CAGE: caged at the faithful's circle
@@ -1312,6 +1314,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     else if (name === 'gear') audio.playOneShot(SD_HALL_SOUNDS.clunk, 1);   // SD9d: Gearward - the gear catching the blow (the Orrery's own clunk)
     else if (name === 'hour') audio.playOneShot(SD_HALL_SOUNDS.toll, 1);   // SD9d: The Hour Turns - the Hour's bell, turned back
     else if (name === 'reprieve') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // EG15: Battlemage's Reprieve - a Shield spell's own cast (its element, Magic)
+    else if (name === 'harvest') audio.playOneShotId(SPELL_CAST_SOUND[2], 1);   // WITCH1: Soul Harvest - a drain's own cast, the witchfire's green
     else if (name === 'veil') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // STAR7: Mephala's Veil - its Chameleon's own cast, Eventide's (Illusion, Magic)
   } });
   // A1: THE TEXTURE SEASON IS THE CALENDAR'S, NOT A URL PARAM.
@@ -1680,6 +1683,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let poiEditorLeave = null;   // AUDIT POI E14: its door out (mountPoiEditor's exit) - a death leaves it, read late as the editor is
   let merchantYards = null;   // MERCHANT-YARDS: the towns' Stables and Wagon Yards (scenes/merchantYardsHost.js), made beside the monument; read late as it is
   let portHost = null;   // SHIPYARDS: the port towns' shipyards and lighthouses (scenes/portHost.js), made beside the yards; read late as they are
+  let witches = null;   // WITCH1: the Witches' Festival in the streets (scenes/witchesHost.js), made before the modes host; read late as it is
   let wardenShows = null, wagonWarden = null;   // WARDEN1: the town watch's throws (scenes/wagon/wagonWardenShow.js) and its host (scenes/wagon/wagonWardenHost.js), made beside the yards; read late as they are
   const _bountyFarmLocs = [];   // BOUNTY-FARM: the game's own farmsteads - the nearest lends a farm bounty its buildings
   const _bountyDungeonPixels = new Map();   // BOUNTY1: the game's own dungeons, by pixel -> name, for a board's underground hunts
@@ -10770,6 +10774,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     (key) => lefay?.hoverName(key) ?? null,
     (key) => merchantYards?.hoverName(key) ?? null,   // MERCHANT-YARDS: a yard by its name and its keeper's, a horse or a wagon on show by its own
     (key) => portHost?.hoverName(key) ?? null,   // SHIPYARDS: a port's shipyard, crew hall and lighthouse by their names and keepers', and their rows
+    (key) => witches?.hoverName(key) ?? null,   // WITCH1: a Hearth Offering by its owner and its cakes, and its rows
     // PEER-PLAQUE1: another player, by the session's own name - the port's
     // own family (DFU has no other players), so it sits with the cart and
     // the camps ABOVE the mod's switch, as the names over heads already do.
@@ -24809,48 +24814,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  Rift's own word off the hub's record for the Hollow's slot `s` (null: step through), whether the Return still stands
    *  (until the boss falls), and the realm's door (SD5a: the step through to the Shattered Hour, taken under the veil).
    *  Null offline - no Hollow stands there. */
-  /** A set of Hollows' slots kept on the device under `key`, its last SD_ENTERED_MAX (a store that refuses: the session's).
-   *  AUDIT SD III (H1): ONE ACCOUNT'S - under the signed-in account's own key (`<key>:<id>`; with none, the device's, as it
-   *  was), as the realm keeps its dead by the token's account (SD_NO_FALLEN): one account's death refused another on the
-   *  same device a Hollow its realm would admit. And READ AS IT IS ASKED - a second tab's write merged, never written
-   *  over: each tab wrote its own boot-time copy back over the other's. A read the store has not changed is not parsed
-   *  again. */
-  const sdSlotsKept = (key) => {
-    const read = new Map(), own = new Map();   // per key: the store's last read ({ raw, set }), and this session's own adds
-    const keyNow = () => { const me = _accountSds.me(); return me ? `${key}:${me}` : key; };
-    const stored = (k) => {
-      let raw = null;
-      try { raw = appStorage()?.getItem?.(k) ?? null; } catch { raw = null; }
-      let r = read.get(k);
-      if (!r || r.raw !== raw) {
-        let list = [];
-        try { const v = JSON.parse(raw ?? '[]'); if (Array.isArray(v)) list = v.filter(Number.isSafeInteger); } catch { list = []; }
-        r = { raw, set: new Set(list) };
-        read.set(k, r);
-      }
-      return r.set;
-    };
-    return {
-      has: (s) => { const k = keyNow(); return stored(k).has(s) || !!own.get(k)?.has(s); },
-      add: (s) => {
-        const k = keyNow();
-        if (!own.has(k)) own.set(k, new Set());
-        own.get(k).add(s);
-        const now = stored(k);
-        if (now.has(s)) return;
-        try { appStorage()?.setItem?.(k, JSON.stringify([...now, s].slice(-SD_ENTERED_MAX))); } catch { /* this session's memory holds it */ }
-      },
-    };
-  };
+
   /** AUDIT SD: the Hollows' slots whose Hour I went through - during its collapse the Rift admits me again
    *  (world/superDungeon/sdDungeon.js sdRiftWord's `entered`; the realm keeps me as it does - SD4b, section 6). AUDIT SD II (L6 F17):
    *  kept on the device, the last few slots (SD_ENTERED_KEY) - a reload forgot it, and the Rift said "The Hour has
    *  closed." to a fighter its realm would have admitted. */
-  const _sdEntered = sdSlotsKept(SD_ENTERED_KEY);
+  const _sdEntered = sdSlotsKept(SD_ENTERED_KEY, () => _accountSds.me());
   /** SD-ONELIFE (Mac: "A death within the rift casts you out and youre unable to re enter. You get one life to prove your
    *  worth"): the Hollows' slots whose Hour I died in - their Rift refuses me for good (the realm's door refuses the
    *  account too: SD_NO_FALLEN). */
-  const _sdFallen = sdSlotsKept(SD_FALLEN_KEY);
+  const _sdFallen = sdSlotsKept(SD_FALLEN_KEY, () => _accountSds.me());
   const sdRiftOf = (s) => {
     if (!sdHost) return null;
     const rec = sdHost.record(), now = Date.now() + _sharedOffsetMs;
@@ -29267,6 +29240,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const instanceDoor = createInstanceDoor({ online: () => onlineOn, instanceOk: () => !!(online?.instanceOk || chatLinks?.get('world')?.instanceOk), account: () => social?.acct ?? null, character: () => realmSession?.id ?? null,
     members: () => social?.others() ?? [], questMachine: () => questBridge?.machine ?? null, openOverlay: (w, onClosed) => townTalk.pushOverlay(w, onClosed), say: (l) => townTalk.say(l), wild: () => { const m = wildMapMask(), p = playerTravelPixel(); return !!m && wildInside(m, p.x, p.y); },   // `wild`: inside the open zone nothing keeps an instance - its dungeons sealed, its halls the relay's to refuse
     remains: () => legacyHost?.remainsWhere() ?? [] });   // HEIR-WHOLE: where the line's remains lie - a dungeon they lie in whole is the death quest's place
+  // WITCH1 (bible/06-Systems/Witches-Festival.md): THE WITCHES' FESTIVAL IN THE STREETS (scenes/witchesHost.js) - the town
+  // underfoot's Hearth Offerings stood at their doors, taken from and filled; the Wyrd Sisters' window; the finds' doors.
+  // The dressing and the Sisters themselves are the build's (scenes/pixelBuild.js, world/witchesDecor.js)
+  witches = createWitchesHost({ built, renderer, pipeline, onlineHomes, townTalk, state, player, saveSoon, chatNotice, mode: _mode, get online() { return online; } });
   // VAR, not const: the pointer and wheel listeners far above close over
   // this binding and are live before it is assigned, so it must exist
   // and read undefined rather than throw a TDZ ReferenceError. Every
@@ -30113,6 +30090,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     activateYard: (key, mode, verb) => merchantYards?.activate(key, mode, verb) ?? false,   // MERCHANT-YARDS: buy from a yard, or sell to it
     portTargets: () => portHost?.targets() ?? [],   // SHIPYARDS: the shipyards' people, boards and hulls, the lighthouses' keeper, door, hatch and lamp, in the street's one ray
     activatePort: (key, mode, verb) => portHost?.activate(key, mode, verb) ?? false,   // SHIPYARDS: the shipmaster's window on its page, the crew hall's, the tower's stair
+    witches,   // WITCH1: a Wyrd Sister's press and the Hearth Offerings', in the street's one ray (scenes/witchesHost.js)
     boardTargets: () => {
       const out = [];
       for (const p of built.values()) {
@@ -34023,6 +34001,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { poiEditor?.frame(); poiHost?.frame(); } catch (e) { console.warn('[poi] host', e?.message ?? e); }   // POI-3: the editor's drafts laid over the feed first   // POI-2: the approved POIs on the built pixels - stood, placed, collided; the feed asked each minute
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
     portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
+    witches?.frame();   // WITCH1: the town underfoot's Hearth Offerings stood, before the lights (their lanterns)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights
     // placed under the current compensation, nearest 16 to the camera.
     // WOD2: the mod's lights burn at every hour and each carries its own

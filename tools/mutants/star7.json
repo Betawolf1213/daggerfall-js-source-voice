@@ -100,7 +100,7 @@
  },
  {
   "name": "STAR7-the-cascade",
-  "file": "server-account/migrations/0140_stars_held.sql",
+  "file": "server-account/migrations/0141_stars_held.sql",
   "old": "  PRIMARY KEY (star, account),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\n-- the day's bound",
   "new": "  PRIMARY KEY (star, account),\n  FOREIGN KEY (account) REFERENCES players(id)\n);\n-- the day's bound",
   "tests": [

@@ -195,7 +195,7 @@
   {
     "name": "HACKED-GOLD-the-law-version-unmoved",
     "file": "src/systems/item/itemLaw.js",
-    "old": "export const ITEM_LAW_VERSION = 7;",
+    "old": "export const ITEM_LAW_VERSION = 8;",
     "new": "export const ITEM_LAW_VERSION = 3;",
     "tests": [
       "test/systems/item/int1_itemlaw.test.js",

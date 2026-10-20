@@ -100,6 +100,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | Enhanced skin | `ui/enhanced/` |
 | Eye Of The Beholder | `player/eyeOfTheBeholder/` |
 | Factions | `systems/faction/` |
+| Festival (the Witches' Festival, a live event) | `systems/festival/` - and loose: `net/festivalLaw.js`, `scenes/witchesHost.js`, `world/witchesDecor.js`, `world/festivalArt.js`, `ui/wyrdDoor.js`, `ui/wyrdWindow.js`, `ui/profileIcons.js` |
 | Firmament | `net/firmament/` |
 | First-person weapon | `combat/weapon/` |
 | Foraging | `systems/foraging/` |
@@ -296,6 +297,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/eliteGates/` | The Elite Breach's law on this screen (`11-Multiplayer/Elite-Gates.md`, `Elite-Gates-Look.md`, `Elite-Gates-Ascent.md`): the Weir Key and its find, the Spire's kit and Vestiges, the lords' arms, the spoils, the score and its mix and echo. |
 | `src/systems/enemyExpansion/` | Daggerfall Enemy Expansion (Kamer & Kab), the mod's own (`04-Characters/Enemy-Expansion.md`): its CSV reading, its tables and art index as generated text, the tables read as BestiaryMod reads them, its pictures on the texture door, its encounter tables as it picks them, its equipment as its copy of RRI's class arm reads a class (`dexEquipment.js`), and its install - the fifty enemies on DFU's custom-enemy doors. |
 | `src/systems/faction/` | The factions' relations, reputation and standing - the law. |
+| `src/systems/festival/` | The Witches' Festival on this screen (`06-Systems/Witches-Festival.md`): the Soul Cakes and the Hearth Offering, the finds, the Wyrd Sister's sales, the wearing, the offerings' moves and every word. |
 | `src/systems/foraging/` | The Foraging mod - the law. |
 | `src/systems/gambit/` | The King's Gambit (`11-Multiplayer/Kings-Gambit.md`) - the law. |
 | `src/systems/gate/` | The Oblivion Gate's law (`11-Multiplayer/World-Bosses.md`): the site, the omen, the score and the spoils. |
@@ -327,7 +329,7 @@ wiring in `src/scenes/`. A feature with one or two modules in a layer keeps them
 | `src/systems/spell/` | Spells: effects, the spell maker, power and the impact's sound. |
 | `src/systems/starfall/` | The Starfall (`11-Multiplayer/Starfall.md`) - the law: the covens and the night's coven, the night's stars over the gate's scan, the Witches' Night; the coven's waves, masters and circles, the star's law on a player's screen, every word it says and its sounds; Starglass and a held star's spoils. |
 | `src/systems/studioArt/` | The studio (`07-Rendering/Studio-Art.md`): the game's artists' own pictures (`public/art/studio/`) on the texture door, and the slots they paint. |
-| `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils and the rift's sound. |
+| `src/systems/superDungeon/` | The Abyss Dungeon's law (`11-Multiplayer/Super-Dungeons-Look.md`): the site, the omen, the score, the spoils, the rift's sound and the slots kept on the device. |
 | `src/systems/survival/` | Survival: needs, camping, food, rest, exposure. |
 | `src/systems/talk/` | Talking to people: topics, sessions, macros - the law. |
 | `src/systems/town/` | A town's population, seats and watch. |

@@ -57,11 +57,18 @@ let _sink = null;
 /** The bridge's registration: `fn(kind, n)` hears every act (the layer's act). Null unregisters. */
 export function setActSink(fn) { _sink = typeof fn === 'function' ? fn : null; }
 
+/** WITCH1 (bible/06-Systems/Witches-Festival.md): THE OTHER HEARERS - a feature that answers every act as it is said
+ *  (the Witches' Festival's finds, systems/festival/festivalClient.js), beside the one sink, by name; null unregisters. A
+ *  hearer moves no quest and is answered nothing: the count noteAct answers is still the quests'. */
+const _hearers = new Map();
+export function hearActs(name, fn) { if (typeof fn === 'function') _hearers.set(name, fn); else _hearers.delete(name); }
+
 /** A feature's word: the player did `kind` (`n` times). Answers how many running quests heard it (0: none - or no
  *  quests on this page). A kind this file does not name is refused with a warning, never counted. */
 export function noteAct(kind, n = 1) {
   if (!Object.hasOwn(ACT_KINDS, kind)) { console.warn(`[questlines] no act "${kind}"`); return 0; }
   const count = Math.floor(Number(n) || 0);
+  if (count > 0) for (const fn of _hearers.values()) { try { fn(kind, count); } catch (e) { console.warn(`[questlines] a hearer of "${kind}" threw (${e?.message ?? e})`); } }
   if (count <= 0 || !_sink) return 0;
   try { return _sink(kind, count) | 0; } catch (e) { console.warn(`[questlines] the act "${kind}" was not heard (${e?.message ?? e})`); return 0; }
 }

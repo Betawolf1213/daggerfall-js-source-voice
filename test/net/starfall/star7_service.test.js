@@ -112,7 +112,7 @@ test('STAR7 THE DAY\'S BOUND AND THE CAP: nine stars counted on the day they fel
 });
 
 test('STAR7 THE MIGRATION AND THE DEPLOY: stars_held and star_spoils, one row a (star, account), cascading with their account; the route declared beside the raid\'s; the account Worker\'s deploy watches the star\'s law and receipt (mutants: the key; the cascade)', async () => {
-  const sql = src('server-account/migrations/0140_stars_held.sql');
+  const sql = src('server-account/migrations/0141_stars_held.sql');
   assert.match(sql, /CREATE TABLE IF NOT EXISTS stars_held \([\s\S]*PRIMARY KEY \(star, account\),\s*FOREIGN KEY \(account\) REFERENCES players\(id\) ON DELETE CASCADE/);
   assert.match(sql, /CREATE TABLE IF NOT EXISTS star_spoils \([\s\S]*PRIMARY KEY \(star, account\),\s*FOREIGN KEY \(account\) REFERENCES players\(id\) ON DELETE CASCADE/);
   clock(T0);

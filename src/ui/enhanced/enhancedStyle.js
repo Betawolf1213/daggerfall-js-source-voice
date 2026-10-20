@@ -1243,6 +1243,9 @@ ${badgeCss()}
 .card .acctportrait canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%;
   image-rendering: pixelated; }
 .card .acctportrait.hasface { background: #0a0c11; }   /* the face fills the well - no night glow behind it */
+.card .acctportrait svg.accticon { position: absolute; inset: 0; width: 100%; height: 100%; }   /* WITCH1: a profile icon worn fills the well */
+.card .acticon { display: inline-flex; align-items: center; gap: 6px; }   /* WITCH1: an icon's button - its picture, then its word */
+.card .acticon svg.acticonart { flex: none; width: 22px; height: 22px; }
 .card .acctsilhouette { position: absolute; inset: 0; }
 .card .acctsilhouette::before { content: ''; position: absolute; left: 31%; top: 16%; width: 38%; height: 40%;
   border-radius: 48% 48% 44% 44%; background: #3a424d; }
@@ -2456,6 +2459,7 @@ ${badgeCss()}
   box-shadow: 0 0 0 2px var(--iron), 0 3px 10px rgba(0,0,0,0.65);
   transition: border-color 120ms, box-shadow 120ms, transform 120ms;
 }
+.px-portrait svg.px-icon { position: absolute; inset: 0; width: 100%; height: 100%; }   /* WITCH1: a profile icon worn, in the face's place */
 .px-portrait canvas {
   position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%;
   object-fit: cover; object-position: 50% 20%;

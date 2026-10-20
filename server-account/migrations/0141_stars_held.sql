@@ -1,9 +1,9 @@
--- STAR7 (2026-10-20) - THE FALLEN STARS HELD.
+-- STAR7 (2026-10-20) - THE FALLEN STARS HELD. (0140 on its branch, renumbered past WITCH1's 0140_festival when the festival was folded in.)
 --
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --
 -- Applied exactly once through the `d1_migrations` ledger, which the
--- deploy runs (ACC1-CI). Deploy the relay (world233) first: it signs the
+-- deploy runs (ACC1-CI). Deploy the relay (world235) first: it signs the
 -- receipts this service counts.
 --
 -- The owner: "a lore accurate world encounter defense mission ... a boss

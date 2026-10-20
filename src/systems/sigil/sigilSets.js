@@ -302,6 +302,25 @@ export const SIGIL_SETS = Object.freeze({
         (v) => `Under ${Math.round(REPRIEVE_BELOW * 100)}%: shield ${v.shield}% of HP`),
     ]),
   }),
+  // WITCH1 (2026-10-20, the owner: "A new armor set, a new weapon"; bible/06-Systems/Witches-Festival.md): THE WYRD'S
+  // RAIMENT - what the Glenmoril Wyrd wear to the Witches' Festival, sold by the Wyrd Sisters at the taverns' doors for
+  // Soul Cakes (systems/aetheric.js WYRD_SET_PIECES), never a drop. Its tiers answer the festival's night: the sight that
+  // sees the summoned, the tallow that wards off the dead, and the souls a kill sends home.
+  wyrd: Object.freeze({
+    id: 'wyrd', name: "The Wyrd's Raiment", prince: 'The Glenmoril Wyrd', colour: '#8fd16a', aetheric: true,
+    role: 'What the Wyrd wear to the Witches\' Festival',
+    tiers: Object.freeze([
+      tier(2, 'wyrd-sight', 'Wyrd-Sight', { willpower: [2, 6], magic: [5, 15] },
+        (v) => `+${v.willpower} Willpower, +${v.magic} magic resistance`,
+        (v) => `+${v.willpower} Willpower, +${v.magic} magic resist`),
+      tier(4, 'tallow-ward', 'Tallow-Ward', { more: [10, 30] },
+        (v) => `Your weapon deals ${v.more}% more damage to the undead, the Daedra and the atronachs`,
+        (v) => `+${v.more}% vs undead and summoned`),
+      tier(6, 'soul-harvest', 'Soul Harvest', { heal: [8, 20], recover: [40, 20] },
+        (v) => `A kill restores ${v.heal}% of your health and magicka. Recovers in ${v.recover} s`,
+        (v) => `A kill: +${v.heal}% health, magicka`),
+    ]),
+  }),
   // STAR7 (2026-10-20, bible/11-Multiplayer/Starfall.md section 6): THE STARSPUN WEAVE - an Aetheric set no world drop,
   // shelf or Broker rolls; a held star's spoils carry a piece a quarter of the time, the Heart-Star's every time
   // (systems/starfall/starSpoils.js). Its patron Mephala, the Webspinner, whose covens wind their black thread about a fallen

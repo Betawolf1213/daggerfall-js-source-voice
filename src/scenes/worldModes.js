@@ -464,6 +464,7 @@ import { bedSleepingOn, rrDouseOnDungeonExit, rrRefinedTrainingOn, rrSetting } f
 import { rrVariantPerson } from '../systems/roleplayRealism/rrVariants.js';   // RR2: the variant keepers and residents
 import { chairSeatOf, chairProbeOver, CHAIR_KIND, CHAIR_FLOOR_STEP } from '../world/chairSeat.js';   // SIT1: where on a chair the sitter's body goes
 import { isLampKeeper, lampLines, LAMP_TEXT, createLampTitle } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a shop's keeper standing as the lamp, its words and its title
+import { vendorOffice } from '../systems/festival/festivalWords.js';   // WITCH1: a Wyrd Sister is named by her office
 import { announceHonour } from '../ui/lootBanner.js';   // LAMP-KEEPER II: I Love Lamp, as a loot banner
 import { setRrHostSeams } from '../systems/roleplayRealism/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
 import { createSwimMovement } from './deepWater/deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
@@ -2574,7 +2575,7 @@ export function createWorldModes(host) {
   /** ARENA-FIX 2: A STOOD PERSON'S OFFICE - the arena gate's people (world/arena/arenaCity.js arenaGatePersonName: "The Herald
    *  of the Arena", "Red Banner Recruiter", ...) and the undercroft's (the Pit Master, the Keeper of the Hall), or null:
    *  the plaque, the Info click and the talk door ask it before StaticNPC.DisplayName, so the three never disagree. */
-  const officeName = (pn) => arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null) ?? (pn?.lamp ? LAMP_TEXT.name() : null);   // ARENA-FIX 4: the undercroft's people with an office; LAMP-KEEPER II: a keeper standing as the lamp is the Lamp
+  const officeName = (pn) => arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null) ?? (pn?.lamp ? LAMP_TEXT.name() : null) ?? (pn?.witch ? vendorOffice() : null);   // ARENA-FIX 4: the undercroft's people with an office; LAMP-KEEPER II: a keeper standing as the lamp is the Lamp; WITCH1: a Wyrd Sister
   /** FIELD BUGS 2026-10-11g QUEST-NAME ("Quest NPCs are inactive": "not being able to interact with the quest NPCs"): a
    *  quest PERSON stand named on World Tooltips' plaque as the room's own people are. The mod asks its StaticNPC arm
    *  (Modded_HUDTooltipWindow.cs:325-393, `ret = npc.DisplayName`) before its quest-resource arm, and AddQuestNPC gives a
@@ -4351,6 +4352,7 @@ export function createWorldModes(host) {
     if (gateRole === 'bookmaker' && host.arenaBookmaker?.()) return;   // ARENA3: the bookmaker's stall (scenes/arena/arenaGate.js)
     // ARENA-FIX 4: THE FIGHTERS' HALL - the Pit Master offers the training pit, the Keeper of the Hall reads its wall
     if (!info && pn?.lamp) { lampChoice(pn); return; }   // LAMP-KEEPER II: the lamp's own words, its shop, and its title
+    if (!info && pn?.witch && host.witches?.shop()) return;   // WITCH1: a Wyrd Sister's window (scenes/witchesHost.js) - a host with none lets her talk
     if (!info && pn?.arenaRole === 'pitMaster') { pitMasterChoice(); return; }
     if (!info && pn?.arenaRole === 'hallKeeper' && host.arenaHall?.()) return;   // ARENA4b: online she reads the realm's wall (scenes/arena/arenaGate.js hall)
     if (!info && pn?.arenaRole === 'hallKeeper') { townTalk?.showOverlay?.(new ActionTextBox(hallOfChampions(playerEntity.arenaLadder, playerEntity.name || 'You', rosterGrandChampions(playerEntity.arenaLeague, Math.floor(worldMinutes()))))); return; }   // ARENA3: and the banners' Grand Champions this save has seen
@@ -7353,6 +7355,8 @@ export function createWorldModes(host) {
     // bench stands none): the shipmaster, the crewmaster, the sailors and shipwrights, the boards and the hull on the
     // stocks; the lightkeeper, the tower's door, its hatch and its lamp - each its own box
     for (const t of host.portTargets?.() ?? []) targets.push(t);
+    // WITCH1 (scenes/witchesHost.js): the Hearth Offerings at the homes' doors - the streaming host's (the bench stands none)
+    for (const t of host.witches?.targets() ?? []) targets.push(t);
     _extList = { entries, npcs, boards, graves, targets };
     _extMark = mark;
     return _extList;
@@ -7893,6 +7897,10 @@ export function createWorldModes(host) {
     if (typeof key === 'string' && key.startsWith('port:')) {   // SHIPYARDS: a port's place - too far speaks the refusal; the plaque's lit row (a page of the shipmaster's, the crew hall's, the stair) is the verb
       if (_hitDist > _hitReach) { setMidScreenText(tooFarAwayText()); return true; }
       return host.activatePort?.(key, getInteractionMode(), plaqueActionFor(key)) ?? true;
+    }
+    if (typeof key === 'string' && key.startsWith('witch:')) {   // WITCH1: a Hearth Offering - too far speaks the refusal; the plaque's lit row (Take, Fill, Take in) is the verb
+      if (_hitDist > _hitReach) { setMidScreenText(tooFarAwayText()); return true; }
+      return host.witches?.activate(key, getInteractionMode(), plaqueActionFor(key)) ?? true;
     }
     if (_hitDist > _hitReach) { setMidScreenText(tooFarAwayText()); return true; }   // AUDIT 65 MC-2: ActivateStaticDoor's OWN first statement (:501-504), before the bash sound and the lock ladder; the board arm keeps its gate inside activateBulletinBoard (:709-712), as C# does
     return activateStaticDoor(entries[key], entries, false, { verb: plaqueActionFor(key) });   // HOME2: the verb the door's plaque lit, if it listed any
