@@ -28,7 +28,7 @@
 //     - AIR: no airborne stretch past EG_AIR_MAX_S that is not a fall (a body dropping past EG_FALL_M under its last
 //       support is cast back, not flying);
 //     - BLINDNESS: a `ts` gap over EG_BLIND_MS is BLIND and judges nothing either way; a crossing more than
-//       EG_FAIR_BLIND_MAX blind opens no door, and its measure says so. FIELD BUGS 2026-10-20d FAIR-STILL: a gap from
+//       EG_FAIR_BLIND_MAX blind opens no door, and its measure says so. FIELD BUGS 2026-10-20f FAIR-STILL: a gap from
 //       held ground to held ground within EG_FAIR_SNAP_M is a member STANDING STILL, never blind - a client says no pose
 //       while nothing about it changes (net/online.js sendPose: every HEARTBEAT_MS, 20 s, else on a change), so a crossing
 //       waited out at its timed pieces read as unseen and its door never opened (egStillGap);
@@ -435,7 +435,7 @@ export const EG_FALL_M = 3;
 export const EG_BLIND_MS = 400;
 export const EG_FAIR_BLIND_MAX = 0.3;
 /**
- * FIELD BUGS 2026-10-20d (FAIR-STILL; bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md, ilovemybonk: "the game doesnt register i made
+ * FIELD BUGS 2026-10-20f (FAIR-STILL; bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md, ilovemybonk: "the game doesnt register i made
  * it to the end") - IS A GAP A MEMBER STANDING STILL? A client says a pose when something about it changes - a step, a turn of
  * the head, a draw - and otherwise one every HEARTBEAT_MS (20 s; net/online.js sendPose, wire.js poseChanged), so silence is
  * the protocol's own word for "unchanged", the reading the census already gives it (server/src/index.js _egTrails, AUDIT EG V
@@ -448,7 +448,7 @@ export const EG_FAIR_BLIND_MAX = 0.3;
  * @param {ReturnType<typeof egFairNew>} A @param {number[]} L the last pose `[t, x, y, z]` @param {{x: number, y: number, z: number}} p @param {number} hold
  */
 export const egStillGap = (A, L, p, hold) => !!hold && !!A.sup && A.sup[0] === L[0] && Math.hypot(p.x - L[1], p.y - L[2], p.z - L[3]) <= EG_FAIR_SNAP_M;
-/** FIELD BUGS 2026-10-20d DOOR-WORD: what the door says to a member it will not take (net/eliteGates/egBrain.js doorWord) - a break's
+/** FIELD BUGS 2026-10-20f DOOR-WORD: what the door says to a member it will not take (net/eliteGates/egBrain.js doorWord) - a break's
  *  own reason (broke's `why`), else `blind`; net/wire.js EG_FAIR_WIRE_WORDS carries them, pinned equal (the wire imports no
  *  law of the Spire's). */
 export const EG_FAIR_WORDS = Object.freeze(['blind', 'speed', 'air', 'void']);
@@ -501,7 +501,7 @@ export function egFairPose(A, spec, p, t, bridges = null) {
   if (!(dt > 0)) return;
   A.span += dt;
   let fair = true;
-  if (dt > EG_BLIND_MS && !egStillGap(A, L, p, hold)) {   // FIELD BUGS 2026-10-20d FAIR-STILL: a member standing still is seen standing
+  if (dt > EG_BLIND_MS && !egStillGap(A, L, p, hold)) {   // FIELD BUGS 2026-10-20f FAIR-STILL: a member standing still is seen standing
     // BLIND: the stretch judges nothing either way - its speed unknown, its air begun again here (EG-PERFECT: and a fall's
     // passage over a void zone forgotten - where the body went in it is not known)
     A.blind += dt; A.win = null; A.airAt = hold ? 0 : t; A.airBrk = 0; A.vp = null;

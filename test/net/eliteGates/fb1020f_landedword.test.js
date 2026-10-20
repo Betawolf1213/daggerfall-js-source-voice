@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-20d - LANDED-WORD (bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md; ilovemybonk in #general, of the Elite
+// FIELD BUGS 2026-10-20f - LANDED-WORD (bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md; ilovemybonk in #general, of the Elite
 // Breach: "i cant tell how much and when my spells do as much damage as they do ... It just feels weird when i know ive dumped a
 // literal million damage into a redoubt 16 boss and it says at the end it only took 31k damage"). A blow on a body the relay
 // runs said its CLAIM on the striker's screen (the formula's number, a spell's held to one blow's cap) while the room landed what
@@ -63,7 +63,7 @@ function court(seed, c) {
 }
 const words = (out) => out.filter((f) => f.k === 'eland');
 
-test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE REPORT: at circle 16\'s Court a solo level-60 member pours big spells on its lord - a million and more claimed - and every blow\'s word, to the member alone, says what the lord lost: their sum is its health gone, the member\'s damage and its chart\'s, all under the lord\'s whole (mutants: no word; the word the claim; the word to everyone; a refusal said nothing)', () => {
+test('LANDED-WORD (FIELD BUGS 2026-10-20f) THE REPORT: at circle 16\'s Court a solo level-60 member pours big spells on its lord - a million and more claimed - and every blow\'s word, to the member alone, says what the lord lost: their sum is its health gone, the member\'s damage and its chart\'s, all under the lord\'s whole (mutants: no word; the word the claim; the word to everyone; a refusal said nothing)', () => {
   const C = court(C16.seed, C16.c), L = C.lord, hp0 = L.hp;
   assert.ok(Math.abs(L.max - egTtkRef(16) * dpsRef(LV)) < 1, `the lord holds circle 16's ${egTtkRef(16).toFixed(1)} s of the member's reference (${L.max})`);
   let claimed = 0, said = 0, n = 0;
@@ -90,7 +90,7 @@ test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE REPORT: at circle 16\'s Court a s
   assert.deepEqual(r, [{ k: 'eland', i: D.lord.i, d: 0, to: 'acct-0' }], 'the room refused it: 0');
 });
 
-test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE HELD LINE: a lord an errand holds at a threshold loses only what stands above it - the word, the member\'s damage and its chart count that, never the purse\'s whole (mutant: the seam answering the purse\'s whole)', () => {
+test('LANDED-WORD (FIELD BUGS 2026-10-20f) THE HELD LINE: a lord an errand holds at a threshold loses only what stands above it - the word, the member\'s damage and its chart count that, never the purse\'s whole (mutant: the seam answering the purse\'s whole)', () => {
   const C = court(C16.seed, C16.c), L = C.lord;
   C.tick(5000);   // the purse full
   L.hold = 0.5; L.hpFloor = L.hp - 10;   // an errand's held line, ten points under it (net/eliteGates/egLords.js egHoldHp's)
@@ -101,7 +101,7 @@ test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE HELD LINE: a lord an errand holds
   assert.ok(Math.abs(C.B.mem['acct-0'].dh - dh0 - 10) < 1e-9, 'the member\'s damage grew by ten');
 });
 
-test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE SCREEN: a hit on a body whose room says what lands shows no claim, a miss and a turned blow still say theirs; the fight marks its stand-ins while its relay says the word and shows each word as a blow\'s number - 0 included; a relay before it keeps the claim; the breach client hands the word to the fight and tells it whether its relay says it (mutants: the claim shown beside the word; the stand-ins never marked; the word dropped; the client never asking its relay)', async () => {
+test('LANDED-WORD (FIELD BUGS 2026-10-20f) THE SCREEN: a hit on a body whose room says what lands shows no claim, a miss and a turned blow still say theirs; the fight marks its stand-ins while its relay says the word and shows each word as a blow\'s number - 0 included; a relay before it keeps the claim; the breach client hands the word to the fight and tells it whether its relay says it (mutants: the claim shown beside the word; the stand-ins never marked; the word dropped; the client never asking its relay)', async () => {
   assert.equal(numberFor({ hit: true, damage: 780, target: { landsByWord: true } }), null, 'no claim');
   assert.equal(numberFor({ hit: false, target: { landsByWord: true } }).text, 'Miss');
   assert.equal(numberFor({ hit: true, damage: 780, target: { landsByWord: true, warded: true, wardText: 'No footing' } }).text, 'No footing');
@@ -145,19 +145,19 @@ test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE SCREEN: a hit on a body whose roo
   assert.deepEqual(calls.find((c) => c[0] === 'word'), ['word', true], 'and whether the relay says it');
 });
 
-test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE WIRE: `eland` is a body\'s number and whole points from nought, nothing else; the first relay that says it is world236, and the relay this tree builds says it (mutants: a fraction carried; the relay before it trusted)', () => {
+test('LANDED-WORD (FIELD BUGS 2026-10-20f) THE WIRE: `eland` is a body\'s number and whole points from nought, nothing else; the first relay that says it is world237, and the relay this tree builds says it (mutants: a fraction carried; the relay before it trusted)', () => {
   assert.ok(EG_RUN_KINDS.includes('eland'));
   assert.deepEqual(validEgOut({ t: 'eg', k: 'eland', i: 7, d: 780 }), { k: 'eland', i: 7, d: 780 });
   assert.deepEqual(validEgOut({ t: 'eg', k: 'eland', i: 7, d: 0 }), { k: 'eland', i: 7, d: 0 });
   for (const bad of [{ i: 7, d: -1 }, { i: 7, d: 1.5 }, { i: 0, d: 5 }, { i: 7 }, { i: 7, d: 2e8 }]) assert.equal(validEgOut({ t: 'eg', k: 'eland', ...bad }), null, JSON.stringify(bad));
-  assert.equal(EG_LAND_RELAY_MIN, 236);
-  assert.deepEqual([relaySupportsEgLand('world236'), relaySupportsEgLand('world235'), relaySupportsEgLand(''), relaySupportsEgLand(null)], [true, false, false, false]);
+  assert.equal(EG_LAND_RELAY_MIN, 237);
+  assert.deepEqual([relaySupportsEgLand('world237'), relaySupportsEgLand('world236'), relaySupportsEgLand(''), relaySupportsEgLand(null)], [true, false, false, false]);
   assert.ok(relaySupportsEgLand(RELAY_VERSION), 'the relay this tree builds says the word');
   // the page reads it off its relay's welcome, as every relay's word is read (net/online.js - courtwatch.test.js's pin's shape)
   assert.match(readFileSync(new URL('../../../src/net/online.js', import.meta.url), 'utf8'), /if \(primary\) this\.egLandOk = relaySupportsEgLand\(relayV\);/, 'read off the welcome');
 });
 
-test('LANDED-WORD (FIELD BUGS 2026-10-20d) THE FOLLOW-UP: a follow-up blow on a body whose room says what lands (Many Endings\' echo, owed to the blow\'s one claim - systems/playerDoor.js oweFoe) raises no claim of its own: the room\'s word for that blow is its number; on a body the room does not answer for, it rises as before (mutants: the follow-up\'s claim shown on a breach body; the loot\'s or the martial path\'s target never handed over)', async () => {
+test('LANDED-WORD (FIELD BUGS 2026-10-20f) THE FOLLOW-UP: a follow-up blow on a body whose room says what lands (Many Endings\' echo, owed to the blow\'s one claim - systems/playerDoor.js oweFoe) raises no claim of its own: the room\'s word for that blow is its number; on a body the room does not answer for, it rises as before (mutants: the follow-up\'s claim shown on a breach body; the loot\'s or the martial path\'s target never handed over)', async () => {
   const LR = await import('../../../src/systems/loot/lootRarity.js');
   const LP = await import('../../../src/systems/loot/lootPowers.js');
   const { setPref, _resetForTests } = await import('../../../src/systems/uiPrefs.js');

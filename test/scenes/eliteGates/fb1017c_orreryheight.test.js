@@ -25,7 +25,7 @@ function findAthenaeum(law, want) {
   }
   throw new Error('no such Athenaeum');
 }
-/** The span stood; answers the stones' solids it added to the collider (FIELD BUGS 2026-10-20d ORRERY-STONES: they stand). */
+/** The span stood; answers the stones' solids it added to the collider (FIELD BUGS 2026-10-20f ORRERY-STONES: they stand). */
 const stand = (span) => { const solids = []; span.stand({ dynamicDraws: [], collider: { addMesh: (key, p) => { if (key.startsWith('eg:orrery:')) solids.push(...p); } } }); return solids; };
 /** Does a level triangle of the collider lie under (x, z) at height y (the dungeon's frame)? */
 function floorUnder(tris, x, y, z) {
@@ -56,7 +56,7 @@ const colliderOf = (tris) => ({
   },
 });
 /** Every stone's two handles, each picked by the real ray over the circle's own collider (and the stones' solids) from an eye
- *  1.6 m over the stone's floor, 1.55 m before its face, aimed at its handle - PIN MOVED (FIELD BUGS 2026-10-20d,
+ *  1.6 m over the stone's floor, 1.55 m before its face, aimed at its handle - PIN MOVED (FIELD BUGS 2026-10-20f,
  *  ORRERY-STONES): the handle is its stone's lever, SD_HANDLE.y over that floor (it was a box a metre up, 0.9 m beside the
  *  stone's middle, with nothing drawn there; the eye stood at that middle, inside the stone it is now): the handle's key,
  *  inside its reach. */

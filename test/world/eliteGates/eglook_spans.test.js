@@ -19,7 +19,7 @@ import { SD_STEPS_RECORD, SD_STEPS_ATLAS, SD_STEPS_GLOW, SD_STEP_BEVEL, crackDis
 import { SD_STEP_THICK, SD_RISER_H, SD_CRUMBLE_SIZE, SD_BEAT_SOLID, SD_BEAT_BLINK } from '../../../src/world/superDungeon/sdSteps.js';
 import { SD_BEAT_OUT_STAGE_S } from '../../../src/scenes/superDungeon/sdSteps.js';
 import { SD_REALM_ARCHIVE, SD_ISLAND_SIDES } from '../../../src/world/superDungeon/sdRealm.js';
-import { SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD } from '../../../src/world/superDungeon/sdHallArt.js';   // FIELD BUGS 2026-10-20d ORRERY-STONES: an Athenaeum's stones, the Hour's own
+import { SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD } from '../../../src/world/superDungeon/sdHallArt.js';   // FIELD BUGS 2026-10-20f ORRERY-STONES: an Athenaeum's stones, the Hour's own
 import { BAYER4 } from '../../../src/world/superDungeon/sdPixelKit.js';
 import { createEgSpan, egSlabTris, egDropTris, EG_SPAN_KINDS_MAX, EG_SPAN_MOVERS } from '../../../src/scenes/eliteGates/egSpan.js';
 import { createEgPieceBatch, EG_BATCH_HIDE_Y } from '../../../src/scenes/eliteGates/egPieceBatch.js';
@@ -206,7 +206,7 @@ test('EG-LOOK NO HOUR\'S CLOCK BUT A BEAT\'S, EVERY PIECE IN ITS BAND\'S DRESS (
     const R = { createMesh: (m) => { made.push(m); return { subMeshes: m.subMeshes }; }, destroyMesh: () => {}, updateMeshVertices: () => {} };
     const span = createEgSpan({ renderer: R, seed, c });
     span.stand({ dynamicDraws: [], collider: null });
-    // PIN MOVED (FIELD BUGS 2026-10-20d ORRERY-STONES, scenes/eliteGates/egOrrery.js): an Athenaeum's stones are the Hour's Orrery's own -
+    // PIN MOVED (FIELD BUGS 2026-10-20f ORRERY-STONES, scenes/eliteGates/egOrrery.js): an Athenaeum's stones are the Hour's Orrery's own -
     // their dials, kingdoms' reliefs and hands wear the Hour's hall pictures (world/superDungeon/sdHallArt.js), and only theirs; their brass
     // the band's
     const athenaeum = egCircleSpecs(seed, c).some((q) => q.kind === 'athenaeum'), hall = [SD_HALL_ATLAS_RECORD, SD_HALL_GLOW_RECORD.brass];

@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-20d - ORRERY-STONES (bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md; ilovemybonk in #general, of the
+// FIELD BUGS 2026-10-20f - ORRERY-STONES (bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md; ilovemybonk in #general, of the
 // Elite Breach: "the clocks that do the time in the orrery task halls do not have models showing you where to interact with
 // them. You have to search around an empty area for the 'rewind back, move forward' options while imps hit you"): AN
 // ATHENAEUM'S STONES STAND, AND THEIR LEVERS ARE THE HANDLES. The Spire drew each stone as a gold disc on the floor and offered
@@ -123,13 +123,13 @@ function eachStoneStands(seed, c, s, floorY) {
   return span;
 }
 
-test('ORRERY-STONES (FIELD BUGS 2026-10-20d): an Athenaeum\'s six stones stand as the Hour\'s own on their spots and their court\'s floor, facing its heart, solid; each handle holds its stone\'s drawn lever, forward on the right, and the real ray from a body before the stone finds it (mutants: the floor unread; the shift unread; a box left at the Hour\'s place; forward and back swapped; the stones not solid; a stone drawn at the Hour\'s place)', () => {
+test('ORRERY-STONES (FIELD BUGS 2026-10-20f): an Athenaeum\'s six stones stand as the Hour\'s own on their spots and their court\'s floor, facing its heart, solid; each handle holds its stone\'s drawn lever, forward on the right, and the real ray from a body before the stone finds it (mutants: the floor unread; the shift unread; a box left at the Hour\'s place; forward and back swapped; the stones not solid; a stone drawn at the Hour\'s place)', () => {
   const { seed, c, s } = findAthenaeum(EG_SPEC, (q) => Math.abs(q.spots.stone?.[0]?.y ?? 0) >= 400);
   assert.ok((s.law ?? 0) >= 9, 'THE ASCENT\'s court, off the 0 floor');
   eachStoneStands(seed, c, s, s.spots.stone[0].y / 100);
 });
 
-test('ORRERY-STONES (FIELD BUGS 2026-10-20d): the laws before THE ASCENT stand the Athenaeum\'s court at 0, and its stones on it (mutant: a spot with no height read as no number)', () => {
+test('ORRERY-STONES (FIELD BUGS 2026-10-20f): the laws before THE ASCENT stand the Athenaeum\'s court at 0, and its stones on it (mutant: a spot with no height read as no number)', () => {
   const { seed, c, s } = findAthenaeum(8, () => true);
   assert.equal(s.spots.stone[0].y, undefined, 'law 8 lays no spot height');
   egGive8(seed, [c], 0);
@@ -138,7 +138,7 @@ test('ORRERY-STONES (FIELD BUGS 2026-10-20d): the laws before THE ASCENT stand t
   } finally { egSpecForget(); }
 });
 
-test('ORRERY-STONES (FIELD BUGS 2026-10-20d): THE HANDS - at the relay\'s start before the trial, going to the room\'s word in it at the Hour\'s pace the short way, at the true hours once the hall is behind the company; each crown gear with its hand (mutants: the hands never posed a frame; the truth unread; a hand drawn at the Hour\'s place)', () => {
+test('ORRERY-STONES (FIELD BUGS 2026-10-20f): THE HANDS - at the relay\'s start before the trial, going to the room\'s word in it at the Hour\'s pace the short way, at the true hours once the hall is behind the company; each crown gear with its hand (mutants: the hands never posed a frame; the truth unread; a hand drawn at the Hour\'s place)', () => {
   const { seed, c, s } = findAthenaeum(EG_SPEC, () => true);
   const o = spireOrreryOf(seed, s), { span } = stood(seed, c);
   const carried = (j, hour, fn) => { const st = span.orrery.find((x) => x.h === s.h && x.j === j), m = fn(j, hour); m[12] += st.d[0]; m[13] += st.d[1]; m[14] += st.d[2]; return [...m].map((v) => +v.toFixed(4)); };
@@ -171,7 +171,7 @@ test('ORRERY-STONES (FIELD BUGS 2026-10-20d): THE HANDS - at the relay\'s start 
   } finally { registerSpireObjs(null); }
 });
 
-test('ORRERY-STONES (FIELD BUGS 2026-10-20d): THE WORDS - in an Athenaeum\'s trial each stone\'s name and hour stand over its crown gear, never across its sign (mutant: the words at an errand\'s height, on the stone\'s face)', () => {
+test('ORRERY-STONES (FIELD BUGS 2026-10-20f): THE WORDS - in an Athenaeum\'s trial each stone\'s name and hour stand over its crown gear, never across its sign (mutant: the words at an errand\'s height, on the stone\'s face)', () => {
   // the director's own breach, woken in the hall, its word folded as a member's screen holds it (fb1017e_orrerysight's)
   const T0 = 1_800_000_000_000, SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
   const wire = (f) => { const { to: _to, ...rest } = f; const v = validEgOut(JSON.parse(JSON.stringify(rest))); assert.ok(v, `the wire refuses ${f.k}`); return v; };

@@ -1,5 +1,5 @@
 // @ts-check
-// FIELD BUGS 2026-10-20d ORRERY-STONES (bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md; ilovemybonk in #general: "the clocks
+// FIELD BUGS 2026-10-20f ORRERY-STONES (bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md; ilovemybonk in #general: "the clocks
 // that do the time in the orrery task halls do not have models showing you where to interact with them. You have to search
 // around an empty area for the 'rewind back, move forward' options"): AN ATHENAEUM'S STONES, STOOD. The Spire's Athenaeum is
 // the Hour's Orrery (Elite-Gates.md section 8.4): six stones at the Hour's own bearings, on a ring of the Hour's 11 m about its

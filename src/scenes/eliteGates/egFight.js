@@ -86,8 +86,8 @@ import { egFightFloors, egFloorPlan, egFloorPlanKeep, egHazardSurface, egPerilOf
 import { EG_SHADE_BAND } from '../../world/eliteGates/egTelegraph.js';   // AUDIT EG V (lane1 #13): in the dark every foe keeps the Shade's rim light
 import { drawEgSigils } from '../../ui/eliteGates/egSpireHud.js';   // EG-ZG: the marks over heads
 import { spireStoneWords } from '../../systems/eliteGates/spireOrrery.js';   // FIELD BUGS 2026-10-17e (ORRERY-SIGHT): a stone's name and hour, over it
-import { EG_STONE_TOP_M } from './egOrrery.js';   // FIELD BUGS 2026-10-20d (ORRERY-STONES): a stone stands, its words over its crown
-import { reportPlayerAttack } from '../../combat/formulas.js';   // FIELD BUGS 2026-10-20d (LANDED-WORD): the number, at the room's word
+import { EG_STONE_TOP_M } from './egOrrery.js';   // FIELD BUGS 2026-10-20f (ORRERY-STONES): a stone stands, its words over its crown
+import { reportPlayerAttack } from '../../combat/formulas.js';   // FIELD BUGS 2026-10-20f (LANDED-WORD): the number, at the room's word
 import { EG_NUMERALS } from '../../ui/eliteGates/egParty.js';   // AUDIT EG IV (lane1 #15): the company's numerals, an errand's member drawn by its
 import { egMemberOf } from '../../net/eliteGates/egLink.js';
 import { multiply } from '../../world/mat4.js';
@@ -576,7 +576,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  sets' and the martial powers), the door that sends it (hostHit) and the swing's ring (scenes/dungeonContext.js swingOnHost). */
   let strikeAt = /** @type {number[]|null} */ (null);
   const _strikeAt = [0, 0, 0];
-  /** FIELD BUGS 2026-10-20d (LANDED-WORD): whether my relay says what each of my blows landed (`eland` - net/wire.js
+  /** FIELD BUGS 2026-10-20f (LANDED-WORD): whether my relay says what each of my blows landed (`eland` - net/wire.js
    *  relaySupportsEgLand, told each frame by the breach client) - then a blow's number is the room's word, never the claim */
   let landWord = false;
   function turnStandIn(t, b) {
@@ -1336,7 +1336,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     hit: () => false,
     /** Every body my blows meet - lords, the legion, the struck objects - and a blow of mine on one (`hit` by number). */
     hostTargets: () => _targets,
-    /** FIELD BUGS 2026-10-20d (LANDED-WORD): whether my relay says what my blows land (the breach client, each frame). */
+    /** FIELD BUGS 2026-10-20f (LANDED-WORD): whether my relay says what my blows land (the breach client, each frame). */
     landsWord(on) { landWord = !!on; },
     /** LANDED-WORD: the room's word that a blow of mine on body `i` landed `d` - its number (HN1's seam), the duel's law (INT8:
      *  a miss said at once, a hit at the referee's word). A blow the room refused or the purse emptied lands 0, and says so. */

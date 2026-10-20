@@ -345,7 +345,7 @@ function doorOpener(B, spec, inHall) {
   return at[0];
 }
 /**
- * FIELD BUGS 2026-10-20d (DOOR-WORD; bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md, ilovemybonk: "it seemed the game doesnt
+ * FIELD BUGS 2026-10-20f (DOOR-WORD; bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md, ilovemybonk: "it seemed the game doesnt
  * register i made it to the end") - A MEMBER THE DOOR WILL NOT TAKE IS TOLD WHY: standing at the door in the hall it was heard
  * arriving in, on a trail the door refuses (fairOf - broken since the last island, or crossed too much unseen), it is told
  * once a hall (`efair`, to it alone: `w` the break's own word - `speed`, `air`, `void` - else `blind`). The door, `down` and
@@ -505,6 +505,10 @@ function heraldOwe(B, now, ev) {
 }
 /** The company's entrants, in its order: `[sub, m]`. */
 const entrants = (B) => B.co.map((c) => [c.sub, B.mem[c.sub]]).filter(([, m]) => m?.in);
+/** FIELD BUGS 2026-10-20d LONE-HERALD: the company a Redoubt's news names - its entrants (`n`, the Descent's count, section 20)
+ *  and the name its post leads with (`o`): the opener's where the opener entered, else the first entrant's - an opener who never
+ *  stepped in (AUDIT EG IV lane3 #11) is not of the company that went, alone or not (AUDIT FB1020d L1-1). */
+const heraldCompany = (B) => { const E = entrants(B), opener = E.some(([sub]) => sub === B.s); return { n: E.length, o: opener || !E.length ? B.o ?? '' : E[0][1].name ?? '' }; };
 
 /**
  * A MEMBER FALLS (section 16.5): a death, or EG_ABSENT_TRIAL_MS gone in a trial. Their Reliquaries are lost; they become a
@@ -1323,8 +1327,9 @@ function redoubt(B, now, rng, out) {
   // EG-E3: THE HERALD'S NEWS - a Valkynaz's Redoubt (the hub says every tenth, the first tenth ever as First of the Spire,
   // and a band passed whose seal a deploy lifted), and a Court felled alone, once a member a breach
   // AUDIT EG V (L8-7): its seconds are from the breach's first wake - Hall 1's only for a breach begun there, so the start (`ew`)
-  // rides with them and the post says it
-  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), ew: B.ew ?? 0, o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
+  // rides with them and the post says it. FIELD BUGS 2026-10-20d LONE-HERALD: and the company's size, so a company of one is
+  // posted as one ("Mara took Redoubt 20 ... alone"), never as "<name>'s company"
+  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), ew: B.ew ?? 0, ...heraldCompany(B), by: earners.map(([, m]) => m.name ?? '') });
   if (lone && !L[0][1].lbSaid) { L[0][1].lbSaid = 1; heraldOwe(B, now, { k: 'lb', n: L[0][1].name ?? '', lk, c: entrants(B).length }); }
   if (valk) B.resp += EG_RESPITE_VALK_MS;
   // AUDIT EG V (L3-3, L8-3; section 16.1 - "an earner, in that circle"): the circle's damage and parts begun again for EVERY
@@ -1478,7 +1483,7 @@ export function egStep(B, now, bodies, rng) {
     if (B.F) fragStep(B, B.F, spec, now, inHall, inHall, rng, out);   // LAYER THREE: an alcove, a cache, a niche taken in the closing too
     if (spec.fork && forkClosing(B, spec, inHall, now)) out.push(egStageWord(B, now));   // EG-ZC: the Low Road's closing on either road
     goldRun(B, spec, now, out);
-    doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20d DOOR-WORD: a step through it refused (egDown) is told why
+    doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20f DOOR-WORD: a step through it refused (egDown) is told why
     const L = living(B);
     if (now >= B.su || (L.length && L.every(([, m]) => m.downH === B.h))) pull(B, now, out);
     return out;
@@ -1604,7 +1609,7 @@ function trial(B, spec, now, inHall, rng, out) {
     captiveStep(B, F, rng, out);   // AUDIT EG V (L3-19): a span's Captive freed
     const first = doorOpener(B, spec, inHall);
     if (first) door(B, spec, now, out, inHall, first.sub);   // EG-H1: a fair arrival opens it (section 21) - AUDIT EG V (h): and is named, THE TRAIL's
-    else doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20d DOOR-WORD: an arrival it will not take is told why
+    else doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20f DOOR-WORD: an arrival it will not take is told why
     if (span) { egBlowsStep(F, view, now, here, out, egWatchOf(B)); fightTail(F, now, out); }
     else egMovesOut(F, out);
     return;
@@ -1751,7 +1756,7 @@ function trial(B, spec, now, inHall, rng, out) {
   if (kind !== 'court' && egLordsOf(F).length) out.push(...EG_SEAM.step(egLordsFight(F, spec, lordCtx, now), now, here, rng));
   if (kind === 'deepway' && F.chamberDone && !F.saidDone) { F.saidDone = 1; out.push({ k: 'esay', w: 'chamberdone' }); }
   if (kind === 'deepway' && F.chamberDone && doorOpener(B, spec, inHall)) { door(B, spec, now, out); return; }   // EG-H1: a fair arrival
-  if (kind === 'deepway' && F.chamberDone) doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20d DOOR-WORD
+  if (kind === 'deepway' && F.chamberDone) doorWord(B, spec, inHall, out);   // FIELD BUGS 2026-10-20f DOOR-WORD
   captiveStep(B, F, rng, out);
   hazards(B, F, spec, now, here, rng, out);
   legionCtx.hunted = huntStep(B, F, view, spec, now, inHall, out);   // EG-ZB (section 11.7): off the floors past six seconds, hunted
@@ -1956,7 +1961,7 @@ export function egBlow(B, sub, m, pose, now) {
   const spec = specOf(B), p = local(spec, { sub, sx: pose.sx, y: pose.y, z: pose.z, dead: false });
   const body = p ? egBodyById(F, m.i) : null;
   if (!body) return out;
-  // FIELD BUGS 2026-10-20d (LANDED-WORD; bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md, ilovemybonk: "ive dumped a literal
+  // FIELD BUGS 2026-10-20f (LANDED-WORD; bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md, ilovemybonk: "ive dumped a literal
   // million damage into a redoubt 16 boss and it says at the end it only took 31k"): WHAT THE BLOW LANDED, TO ITS STRIKER ALONE
   // (`eland`) - its screen's number, the duel's law (INT8: a miss said at once, a hit at the referee's word). The screen said
   // the claim, and the purse, the lord's weight and its health decide what lands: a refused blow lands nothing and says so

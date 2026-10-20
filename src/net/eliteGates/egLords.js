@@ -900,7 +900,7 @@ export function egLordHitX(F, L, sub, pose, r, now) {
 /**
  * A BLOW ON A LORD LANDED (`got` what the purse let through): its threat, an errand's hold on the next threshold, the
  * Armsmaster's Riposte, the Spellmaster's images, a mirror's crack, a fall (the Twins' fifteen seconds, the survivor's
- * raise). Its frames into `out`; answers what the lord LOST - FIELD BUGS 2026-10-20d LANDED-WORD: an errand's held line takes
+ * raise). Its frames into `out`; answers what the lord LOST - FIELD BUGS 2026-10-20f LANDED-WORD: an errand's held line takes
  * back what fell past it, and the seam answered the purse's whole, so the recap, a Court's chart and the earned share counted
  * blows the lord never felt while it was held.
  */
@@ -1918,7 +1918,7 @@ export const EG_SEAM = bossSeam('eg', {
     const L = egBodyById(f.F, o.i);
     if (!L || L.role !== EG_ROLE.lord) return { got: 0, b: null };
     const res = egHitBody(f.F, f.spec, o.p, o.i, d, r, pose, now, seq, (o.x ?? 1) * egLordHitX(f.F, L, sub, pose, r, now), o.bx ?? 1);
-    if (res.got && res.b) return { ...res, got: egLordHit(f.F, f.spec, res.b, sub, o.name ?? '', res.got, pose, now, o.here ?? [], o.out ?? [], { threatX: o.threatX ?? 1 }) };   // FIELD BUGS 2026-10-20d LANDED-WORD: what the lord lost, a held line's part taken back
+    if (res.got && res.b) return { ...res, got: egLordHit(f.F, f.spec, res.b, sub, o.name ?? '', res.got, pose, now, o.here ?? [], o.out ?? [], { threatX: o.threatX ?? 1 }) };   // FIELD BUGS 2026-10-20f LANDED-WORD: what the lord lost, a held line's part taken back
     return res;
   },
   step: (f, now, bodies, rng) => { const out = []; egLordsStep(f.F, f.spec, now, bodies, rng, out, f.ctx); return out; },

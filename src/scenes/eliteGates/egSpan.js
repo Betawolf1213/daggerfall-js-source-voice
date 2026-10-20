@@ -126,7 +126,7 @@ import { egNicheBoxes, egIsleDisc } from '../../world/eliteGates/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../../systems/eliteGates/spireKit.js';
 import { spireStoneName } from '../../systems/eliteGates/spireOrrery.js';   // FIELD BUGS 2026-10-17e (ORRERY-SIGHT): a handle names its stone
-import { createEgOrrery } from './egOrrery.js';   // FIELD BUGS 2026-10-20d (ORRERY-STONES): an Athenaeum's stones stood, their levers the handles
+import { createEgOrrery } from './egOrrery.js';   // FIELD BUGS 2026-10-20f (ORRERY-STONES): an Athenaeum's stones stood, their levers the handles
 import { SD_STONES } from '../../net/superDungeon/sdBrain.js';
 import { SD_HALL_TEXT } from '../superDungeon/sdHall.js';   // ORRERY-SIGHT: the Hour's own words for a stone's hand
 import { spireCrumbleWait } from '../../systems/eliteGates/spireVestiges.js';   // EG-ZR (Elite-Gates.md section 15): Featherstep - my crumbles wait longer
@@ -854,7 +854,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   const away = (d) => { d.object.matrix.fill(0); d.hidden = true; };
   /** @type {any[]} */
   let targetList = [];
-  /** FIELD BUGS 2026-10-20d (ORRERY-STONES): each Athenaeum's stones, stood by the span's own `place` */
+  /** FIELD BUGS 2026-10-20f (ORRERY-STONES): each Athenaeum's stones, stood by the span's own `place` */
   const orrery = createEgOrrery({ seed, specs, place });
   /** THE FALLING WALLS: each hall's walkway as segments, each its bucket, its draw and the moment it fell */
   const walls = [];
@@ -1133,7 +1133,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
         for (let k = 0; k < indices.length; k++) indices[k] = k;
         try { collider?.addMesh?.(g.key, tris, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a false wall\'s collider', e?.message ?? e); }
       }
-      // the hands this circle offers the activation ray: each Athenaeum's Orrery stones, each engine. FIELD BUGS 2026-10-20d
+      // the hands this circle offers the activation ray: each Athenaeum's Orrery stones, each engine. FIELD BUGS 2026-10-20f
       // (ORRERY-STONES): a stone stands as the Hour's, on its own floor (ORRERY-HEIGHT's law), and its two levers are its
       // handles (scenes/eliteGates/egOrrery.js) - they were boxes in the air beside a gold disc, with nothing drawn there
       const list = [...orrery.stand({ renderer, collider })];

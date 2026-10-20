@@ -300,7 +300,7 @@ test('EG-H1 THE FAIR TRAIL (`spanFair`, net/eliteGates/egFair.js): support (a fl
   const R1 = egFairNew(2);
   for (let k = 0; k < 40; k++) egFairPose(R1, spec, { x: 80, y: 0, z: s0.z, ride: true }, T0 + k * 100);
   assert.equal(R1.brks, 0, 'a ride the piece holds is support, wherever the raw pose said');
-  // PIN MOVED (FIELD BUGS 2026-10-20d FAIR-STILL): its second gap stood still on the island, and a member standing still is seen
+  // PIN MOVED (FIELD BUGS 2026-10-20f FAIR-STILL): its second gap stood still on the island, and a member standing still is seen
   // standing (egStillGap) - the blind crossing is the move to the island made long
   const Bl = egFairNew(2);
   egFairPose(Bl, spec, { x: a.x, y: 0, z: a.z }, T0);

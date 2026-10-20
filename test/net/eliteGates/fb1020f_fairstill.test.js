@@ -1,4 +1,4 @@
-// FIELD BUGS 2026-10-20d - FAIR-STILL and DOOR-WORD (bible/01-Overview/bugs/Field-Bugs-2026-10-20d.md; ilovemybonk in #general, of
+// FIELD BUGS 2026-10-20f - FAIR-STILL and DOOR-WORD (bible/01-Overview/bugs/Field-Bugs-2026-10-20f.md; ilovemybonk in #general, of
 // the Elite Breach's spans: "There were a few instances with the 'cross.' Objectives where it seemed the game doesnt register i
 // made it to the end"). THE FAIR TRAIL (net/eliteGates/egFair.js, section 21) read a member's silence as blindness: a client says a
 // pose only when something about it changes (net/online.js sendPose - else every HEARTBEAT_MS, 20 s), so a member who waited out a
@@ -74,7 +74,7 @@ function cross(seed, h, waitMs) {
   return { opened: B.sg !== 'trial', atDoor: egAtDoor(spec, pts.at(-1)[0], pts.at(-1)[2], pts.at(-1)[1]), blind: A.blind / A.span, told };
 }
 
-test('FAIR-STILL (FIELD BUGS 2026-10-20d) THE LAW: a gap from held ground to held ground within EG_FAIR_SNAP_M is a member standing still - seen, judged as a stretch, never blind; one that went further, or began or ended in the air, stays blind (mutants: no still gap; the snap unread; the gap\'s start unread)', () => {
+test('FAIR-STILL (FIELD BUGS 2026-10-20f) THE LAW: a gap from held ground to held ground within EG_FAIR_SNAP_M is a member standing still - seen, judged as a stretch, never blind; one that went further, or began or ended in the air, stays blind (mutants: no still gap; the snap unread; the gap\'s start unread)', () => {
   const [{ seed, h }] = spans([1]), spec = egHallOf(seed, h, 0), a = spec.arrive, y = a.y ?? 0;
   assert.equal(egSupportAt(spec, a.x, y, a.z, 0), EG_HOLD.island, 'the arrival plate holds');
   // standing still three seconds, then the first step a client says as it moves off
@@ -107,7 +107,7 @@ test('FAIR-STILL (FIELD BUGS 2026-10-20d) THE LAW: a gap from held ground to hel
   assert.equal(egStillGap(A, A.last, { x: a.x, y, z: a.z }, EG_HOLD.none), false, 'ending in the air');
 });
 
-test('FAIR-STILL (FIELD BUGS 2026-10-20d) THE CROSSING: a member walking each span of the build\'s law along its main way, standing still two seconds before each timed piece with no pose said, opens its door - on the code before, the trail read every wait as unseen and nearly every door stayed shut with the member at it (mutant: no still gap)', () => {
+test('FAIR-STILL (FIELD BUGS 2026-10-20f) THE CROSSING: a member walking each span of the build\'s law along its main way, standing still two seconds before each timed piece with no pose said, opens its door - on the code before, the trail read every wait as unseen and nearly every door stayed shut with the member at it (mutant: no still gap)', () => {
   const all = spans([1, 2, 3]);
   assert.ok(all.length >= 8, `spans enough (${all.length})`);
   const shut = [];
@@ -119,7 +119,7 @@ test('FAIR-STILL (FIELD BUGS 2026-10-20d) THE CROSSING: a member walking each sp
   assert.deepEqual(shut, [], 'every door opens for a member who waited still');
 });
 
-test('DOOR-WORD (FIELD BUGS 2026-10-20d): a member at the door on a trail the door refuses is told why - a break\'s own reason, else `blind` - once a hall, to it alone, in the trial and when its `down` is refused in the closing; a fair member is told nothing; the wire carries the four words and no other, the law\'s own; the client says each, and never "You wait at the door" while the door refuses it (mutants: the word never said; said every beat; said to everyone; a break called blind; the client\'s door line unread)', () => {
+test('DOOR-WORD (FIELD BUGS 2026-10-20f): a member at the door on a trail the door refuses is told why - a break\'s own reason, else `blind` - once a hall, to it alone, in the trial and when its `down` is refused in the closing; a fair member is told nothing; the wire carries the four words and no other, the law\'s own; the client says each, and never "You wait at the door" while the door refuses it (mutants: the word never said; said every beat; said to everyone; a break called blind; the client\'s door line unread)', () => {
   assert.deepEqual([...EG_FAIR_WIRE_WORDS], [...EG_FAIR_WORDS], 'the wire\'s words are the law\'s');
   assert.ok(EG_RUN_KINDS.includes('efair'));
   for (const w of EG_FAIR_WORDS) assert.deepEqual(validEgOut({ t: 'eg', k: 'efair', w }), { k: 'efair', w });

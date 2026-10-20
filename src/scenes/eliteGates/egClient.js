@@ -388,7 +388,7 @@ export const EG_TONIC_TEXT = Object.freeze({ none: 'You hold no Spire Tonic.', f
  *  the false walls by name (systems/eliteGates/spireKit.js spireObjs). */
 const OBJ_NAME = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
 export const EG_GOT_TEXT = Object.freeze({ shard: 'You take a Vestige shard.', tonic: 'You take a Spire Tonic.', cant: 'You take a Cantrip.', lumen: 'You take 10 lumen.', rel: 'A Reliquary is sealed for you.', longstep: 'Long Step: crumbling ground holds half a second longer this span.' });
-/** FIELD BUGS 2026-10-20d DOOR-WORD: why the door will not take me (`efair` - net/eliteGates/egBrain.js doorWord): a break of the
+/** FIELD BUGS 2026-10-20f DOOR-WORD: why the door will not take me (`efair` - net/eliteGates/egBrain.js doorWord): a break of the
  *  Spire's law since my last island (net/eliteGates/egFair.js - its reason), or a crossing it saw too little of. A break clears on
  *  the last island stood on; a crossing seen too little is seen whole as I stand at the door (egStillGap). */
 export const EG_FAIR_TEXT = Object.freeze({
@@ -555,7 +555,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** EG-H3 (EG10): when the step into a new circle began waiting on its build still in flight (0: not waiting) */
   let swapWaitAt = 0;
   let downAt = -Infinity, downH = 0, placedH = 0, endSeen = null, endAt = 0, homeAskAt = -Infinity;
-  /** FIELD BUGS 2026-10-20d DOOR-WORD: the door's last word on why it will not take me - the hall and the reason (EG_FAIR_TEXT) */
+  /** FIELD BUGS 2026-10-20f DOOR-WORD: the door's last word on why it will not take me - the hall and the reason (EG_FAIR_TEXT) */
   let unfair = { h: 0, w: '' };
   let keysAt = -Infinity, claimAt = -Infinity, rdSeen = 0, callSaid = '';
   let door = null, doorH = 0, portal = null;
@@ -2004,7 +2004,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'eheal' && (w.why === 'rally' || w.why === 'cry') && w.p > 0 && !witness && entity.health > 0 && inSpire()) beatNow('rally', { t: w.p });   // AUDIT EG III (section 27.5): Rally's heal seen, heard and said
       if (w.k === 'eheal' && w.why === 'cry' && !witness && entity.health > 0 && inSpire()) spireRallyingCry();   // AUDIT EG IV (lane10 #14): a Court's phase turn gives back a spent Second Wind
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
-      if (w.k === 'eland') fight?.landed?.(w.i, w.d);   // FIELD BUGS 2026-10-20d LANDED-WORD: what my blow landed - its number
+      if (w.k === 'eland') fight?.landed?.(w.i, w.d);   // FIELD BUGS 2026-10-20f LANDED-WORD: what my blow landed - its number
       if (w.k === 'efair' && EG_FAIR_TEXT[w.w]) { unfair = { h: link.state().h | 0, w: w.w }; mid(EG_FAIR_TEXT[w.w]()); say(EG_FAIR_TEXT[w.w]()); }   // DOOR-WORD
       if (w.k === 'ebridge') say(w.s === me() ? EG_PRES_TEXT.bridgeMine : EG_PRES_TEXT.bridgeRaised(w.n || 'A companion'));   // AUDIT EG III: Spirebridge, said to the company
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
@@ -2152,7 +2152,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         trailFrame(E);   // AUDIT EG V (h; section 8.2): THE TRAIL
         pushStep();
         fight ??= makeFight(link);
-        fight?.landsWord?.(!!online()?.egLandOk);   // FIELD BUGS 2026-10-20d LANDED-WORD: my relay says what my blows land - the number is its word
+        fight?.landsWord?.(!!online()?.egLandOk);   // FIELD BUGS 2026-10-20f LANDED-WORD: my relay says what my blows land - the number is its word
         fight?.frame();
         presFrame(link.state(), t);   // EG-G1
         if (healOwed.size && Date.now() - healSentAt >= EG_HEAL_SEND_MS) healSend(Date.now());   // EG-ZF: what my companions healed in me, out

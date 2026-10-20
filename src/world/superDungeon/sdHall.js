@@ -392,7 +392,7 @@ export function buildHallModel() {
   return packRealmFaces(f);
 }
 /** STONE `i` ALONE, one mesh where the Hour stands it (its bezel, hand and gear their own meshes, as the hall's) - FIELD BUGS
- *  2026-10-20d ORRERY-STONES: the Spire's Athenaeum stands it on its own court, carried there by a translation
+ *  2026-10-20f ORRERY-STONES: the Spire's Athenaeum stands it on its own court, carried there by a translation
  *  (scenes/eliteGates/egOrrery.js). */
 export function buildStoneModel(i) {
   const f = faces();
