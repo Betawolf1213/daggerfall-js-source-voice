@@ -209,11 +209,12 @@
   {
     "name": "NODE-OUTLINE-the-outline-unwired",
     "file": "src/scenes/world.js",
-    "old": "createNodeOutlinePass(renderer, { glow: createNodeGlowPass(renderer) })",
-    "new": "createNodeOutlinePass(renderer)",
+    "old": "const nodeOutlinePass = createNodeOutlinePass(renderer);",
+    "new": "const nodeOutlinePass = { draw: () => 0 };",
     "tests": [
       "test/scenes/nodeoutline.test.js"
-    ]
+    ],
+    "note": "HOST-SPLIT (PIN MOVED): re-aimed by content - the outline builds its own fallback glow, so the host's line is the pass alone; unwired, it draws nothing."
   },
   {
     "name": "NODE-OUTLINE-the-drawn-trees-never-forgotten",
@@ -229,6 +230,15 @@
     "file": "src/render/renderer.js",
     "old": "drawn[i] = slots[i]?.runs.length ? slots[i] : null;",
     "new": "drawn[i] = null;",
+    "tests": [
+      "test/scenes/nodeoutline.test.js"
+    ]
+  },
+  {
+    "name": "NODE-OUTLINE-no-glow-of-its-own",
+    "file": "src/render/nodeOutline.js",
+    "old": "{ glow = createNodeGlowPass(renderer), now",
+    "new": "{ glow = null, now",
     "tests": [
       "test/scenes/nodeoutline.test.js"
     ]

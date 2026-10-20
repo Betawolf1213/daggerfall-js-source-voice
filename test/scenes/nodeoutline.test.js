@@ -308,7 +308,8 @@ test('NODE-OUTLINE the world host\'s pass (createNodeOutlinePass): a mark with p
 
 test('NODE-OUTLINE the wiring: the world host rings the marks through the outline, the glow its fallback, in the hook after each mode\'s opaque world (the street\'s, a dungeon\'s), none under the travel view; the renderer keeps the flats\' basis and the 3D trees its frame drew, forgotten each frame (mutants: the outline unwired; the drawn trees never forgotten)', () => {
   const w = src('src/scenes/world.js'), r = src('src/render/renderer.js');
-  assert.match(w, /const nodeOutlinePass = createNodeOutlinePass\(renderer, \{ glow: createNodeGlowPass\(renderer\) \}\);/);
+  assert.match(w, /const nodeOutlinePass = createNodeOutlinePass\(renderer\);/);   // PIN MOVED (HOST-SPLIT): the outline builds its own fallback glow - no entry in bootWorld
+  assert.match(src('src/render/nodeOutline.js'), /export function createNodeOutlinePass\(renderer, \{ glow = createNodeGlowPass\(renderer\), /, 'the fallback glow its own when the host hands none');
   assert.match(w, /const drawVeiledPeerBodies = \(\) => \{ peerBodies\?\.drawVeiled\(\); drawAuras\(\); nodeOutlinePass\.draw\(travelView\?\.active \? null : nodeMarksAt\(enchantFeet\(\)\)\); \};/);
   assert.doesNotMatch(w, /nodeGlowPass/, 'the glow is the outline\'s fallback alone');
   // PIN MOVED (the seams review's matrix-for-a-basis test): the three components the vec3 uniforms read, never a copy whole

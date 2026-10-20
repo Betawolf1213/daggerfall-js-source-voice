@@ -28,7 +28,7 @@ import { BAYER_GLSL } from './orderedDither.js';
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { billboardKey } from './billboardKey.js';
 import { windfallLawOn, swayShare } from './windfallSway.js';
-import { nodeGlows, createNodeGlowState, NODE_GLOW_MAX } from './nodeGlow.js';
+import { nodeGlows, createNodeGlowState, createNodeGlowPass, NODE_GLOW_MAX } from './nodeGlow.js';
 import { LPT_INSTANCE_FLOATS } from '../world/lowPolyTrees.js';
 
 /** The ring's width in the drawn image's pixels at OUTLINE_REF_ROWS rows - scaled with the image, held to OUTLINE_PX_MIN
@@ -513,7 +513,8 @@ const idleCall = (fn) => (globalThis.requestIdleCallback ? globalThis.requestIdl
 
 /**
  * THE WORLD HOST'S PASS: the gathering host's marks each frame - a mark with its pictures ringed by the outline, a mark
- * with none lit by the glow (`glow`, nodeGlow.js's pass - a body drawn as a 3D character), each kindling as it first
+ * with none lit by the glow (`glow`, nodeGlow.js's pass - a body drawn as a 3D character; the pass builds its own, so the
+ * host wires one pass and bootWorld holds no glow of its own - HOST-SPLIT), each kindling as it first
  * stands near (nodeGlows). The programs are built at IDLE once a node is first ringed (PERF-WARM's law) - nothing is
  * ringed until they stand; an outline that will not build costs the outline, never the game (its marks go to the glow).
  * A pass that ran is a foreign pass. `draw(marks)` answers how many it ringed; `marks` null forgets every node.
@@ -521,7 +522,7 @@ const idleCall = (fn) => (globalThis.requestIdleCallback ? globalThis.requestIdl
  * @param {{ glow?: { draw: (marks: any) => number } | null, now?: () => number, build?: (gl: any) => NodeOutlineRenderer,
  *   idle?: (fn: () => void) => void, reduced?: (nowS: number) => boolean }} [o]
  */
-export function createNodeOutlinePass(renderer, { glow = null, now = () => performance.now() / 1000, build = (gl) => new NodeOutlineRenderer(gl), idle = idleCall, reduced = reducedMotionReader() } = {}) {
+export function createNodeOutlinePass(renderer, { glow = createNodeGlowPass(renderer), now = () => performance.now() / 1000, build = (gl) => new NodeOutlineRenderer(gl), idle = idleCall, reduced = reducedMotionReader() } = {}) {
   const state = createNodeGlowState(), list = /** @type {any[]} */ ([]), bare = /** @type {any[]} */ ([]), ringed = /** @type {any[]} */ ([]);
   let pass = /** @type {NodeOutlineRenderer|null} */ (null), asked = false, dead = false, failed = false;
   const make = () => {
