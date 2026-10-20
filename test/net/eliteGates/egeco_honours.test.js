@@ -163,13 +163,13 @@ test('EG-E2 SPIRE CHAMPION: each Descent bracket\'s top ten companies at a seaso
   assert.deepEqual(titlesHeld({ handle: null, eg_honours: 4 }, {}).includes('kynbane'), false, 'a guest row holds no Spire honour');
 });
 
-test('EG-E2 FIRST OF THE SPIRE: granted as Hour\'s First is - a list in config (EG_FIRST_HANDLES, in wrangler.toml; SPIRE-FIRST: Severide, who took Redoubt 10 first, alone), the title and Firstlight while listed, any case, never a guest or a near name (mutants: the list not read; the aura without the list; a guest by name; Severide left off)', () => {
+test('EG-E2 FIRST OF THE SPIRE: granted as Hour\'s First is - a list in config (EG_FIRST_HANDLES, in wrangler.toml; SPIRE-FIRST: the account Serveride, who took Redoubt 10 first, alone), the title and Firstlight while listed, any case, never a guest or a near name - nor his character\'s name, which the herald read (SPIRE-FIRST-NAME) (mutants: the list not read; the aura without the list; a guest by name; Serveride left off; the character\'s name listed)', () => {
   const m = /^EG_FIRST_HANDLES = "([^"]*)"$/m.exec(readFileSync(new URL('../../../server-account/wrangler.toml', import.meta.url), 'utf8'));
   assert.ok(m, 'a var beside Hour\'s First\'s');
-  assert.equal(m[1], 'Severide', 'SPIRE-FIRST: the first company, and nobody else (PIN MOVED: it read empty until that company came)');
+  assert.equal(m[1], 'Serveride', 'SPIRE-FIRST: the first company\'s account, and nobody else (PIN MOVED: it read empty until that company came; SPIRE-FIRST-NAME: then Severide, his character\'s name off the herald, which no account\'s handle is)');
   const named = { EG_FIRST_HANDLES: m[1] }, acct = (handle) => ({ handle, created_at: 1_900_000_000, registered_at: 1_900_000_000 });
-  for (const h of ['Severide', 'severide', 'SEVERIDE']) assert.ok(titlesHeld(acct(h), named).includes('spirefirst') && aurasHeld(acct(h), named).includes('firstlight'), `${h}: the title and Firstlight, as the deployed list names him`);
-  for (const h of ['Severid', 'Severide2', 'Sever ide']) assert.ok(!isSpireFirst(acct(h), named), `${h}: another account`);
+  for (const h of ['Serveride', 'serveride', 'SERVERIDE']) assert.ok(titlesHeld(acct(h), named).includes('spirefirst') && aurasHeld(acct(h), named).includes('firstlight'), `${h}: the title and Firstlight, as the deployed list names him`);
+  for (const h of ['Severide', 'Serverid', 'Serveride2', 'Server ide']) assert.ok(!isSpireFirst(acct(h), named), `${h}: another account - Severide his character\'s name, never a handle the list grants`);
   const env = { EG_FIRST_HANDLES: ' Vanguard , Rook' };
   assert.deepEqual([...egFirstHandles(env)].sort(), ['rook', 'vanguard']);
   const row = (handle) => ({ handle, created_at: 1_900_000_000, registered_at: 1_900_000_000 });
@@ -276,7 +276,7 @@ test('EG-E2 THE SPIRE\'S THREE LOOKS, RUN: Beaconlight - its beacons lit one aft
   assert.ok(Math.min(...ring) / Math.max(...ring) > 0.7, `the dawn's white, not a colour (${ring.map((x) => x.toFixed(2))})`);
 });
 
-// ── SPIRE-FIRST: Firstlight, rebuilt as Severide's own ──────────────────
+// ── SPIRE-FIRST: Firstlight, rebuilt as Serveride's own ─────────────────
 
 /** Firstlight's functions at `t`, the eye at `eye` (the look's own uniforms otherwise). */
 const dawnAt = (t, { kindle = 1, eye = [0, 1.2, 5] } = {}) => { const g = fns(AURA_LOOK.firstlight, { t, kindle }); g.globals.uCamPos = eye; return g; };

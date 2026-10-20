@@ -144,7 +144,7 @@
 //   - THE BURNING STAIR (Wellhead-Walker's, 9): FALLING EMBERS - a spiral stair of STAIR_STEPS steps burning round the
 //     feet, each a little hotter than the one above it, its risers' lips lit, the whole stair turning DOWN; over it
 //     STAIR_EMBERS embers falling from over the head, cooling as they fall. It kindles DOWN - the embers' first fall.
-//   - FIRSTLIGHT (First of the Spire's, 10) - SPIRE-FIRST (2026-10-20, the owner, for Severide, the first company ever to
+//   - FIRSTLIGHT (First of the Spire's, 10) - SPIRE-FIRST (2026-10-20, the owner, for Serveride, the first company ever to
 //     take Redoubt 10, alone: "Since hes world first. He should get this title plus a custom aura"): rebuilt as his own,
 //     THE TEN REDOUBTS CLIMBED AND THE DAWN BREAKING. The climb (dawnClimb, node's law; the shader's dawnTaken its copy):
 //     the Redoubts taken one after another, I to X, X held, all of it down and again. THE GROUND: a dial - the dawn's
@@ -573,7 +573,7 @@ export const STAIR_H = 1.9;               // the embers fall from over the head
 export const STAIR_EMBERS = 20;
 /** Its rates: the stair turning down, its fire's flare, the embers' fall. */
 export const STAIR_HZ = Object.freeze({ descend: 1 / 12, flare: 1 / 2, ember: 1 / 4 });
-// SPIRE-FIRST (2026-10-20, the owner, for Severide, who took Redoubt 10 first and alone: "Since hes world first. He should
+// SPIRE-FIRST (2026-10-20, the owner, for Serveride, who took Redoubt 10 first and alone: "Since hes world first. He should
 // get this title plus a custom aura"): FIRSTLIGHT, REBUILT AS HIS OWN - only the first company ever holds it.
 export const DAWN_R = 0.9;                // Firstlight: its ring, the ten Redoubts standing on it, m
 export const DAWN_RING_M = 0.024;         // the ring's line
